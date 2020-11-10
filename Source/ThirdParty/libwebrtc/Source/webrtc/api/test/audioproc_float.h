@@ -22,6 +22,22 @@ namespace test {
 // This is an interface for the audio processing simulation utility. This
 // utility can be used to simulate the audioprocessing module using a recording
 // (either an AEC dump or wav files), and generate the output as a wav file.
+// Any audio_processing object specified in the input is used for the
+// simulation. The optional |audio_processing| object provides the
+// AudioProcessing instance that is used during the simulation. Note that when
+// the audio_processing object is specified all functionality that relies on
+// using the AudioProcessingBuilder is deactivated, since the AudioProcessing
+// object is already created and the builder is not used in the simulation. It
+// is needed to pass the command line flags as |argc| and |argv|, so these can
+// be interpreted properly by the utility. To see a list of all supported
+// command line flags, run the executable with the '--help' flag.
+int AudioprocFloat(rtc::scoped_refptr<AudioProcessing> audio_processing,
+                   int argc,
+                   char* argv[]);
+
+// This is an interface for the audio processing simulation utility. This
+// utility can be used to simulate the audioprocessing module using a recording
+// (either an AEC dump or wav files), and generate the output as a wav file.
 // The |ap_builder| object will be used to create the AudioProcessing instance
 // that is used during the simulation. The |ap_builder| supports setting of
 // injectable components, which will be passed on to the created AudioProcessing

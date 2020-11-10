@@ -85,7 +85,7 @@ ScenarioIceConnectionImpl::ScenarioIceConnectionImpl(
       signaling_thread_(rtc::Thread::Current()),
       network_thread_(manager_->network_thread()),
       certificate_(rtc::RTCCertificate::Create(
-          absl::WrapUnique(rtc::SSLIdentity::Generate("", ::rtc::KT_DEFAULT)))),
+          rtc::SSLIdentity::Create("", ::rtc::KT_DEFAULT))),
       transport_description_(
           /*transport_options*/ {},
           rtc::CreateRandomString(cricket::ICE_UFRAG_LENGTH),

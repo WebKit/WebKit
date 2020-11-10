@@ -67,7 +67,6 @@ PayloadTypeMapper::PayloadTypeMapper()
            {{kIsacCodecName, 32000, 1}, 104},
            {{kCnCodecName, 16000, 1}, 105},
            {{kCnCodecName, 32000, 1}, 106},
-           {{kGoogleSctpDataCodecName, 0, 0}, kGoogleSctpDataCodecPlType},
            {{kOpusCodecName,
              48000,
              2,

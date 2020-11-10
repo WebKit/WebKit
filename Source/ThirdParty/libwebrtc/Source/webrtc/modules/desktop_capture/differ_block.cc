@@ -35,7 +35,7 @@ bool VectorDifference(const uint8_t* image1, const uint8_t* image2) {
     // TODO(hclam): Implement a NEON version.
     diff_proc = &VectorDifference_C;
 #else
-    bool have_sse2 = WebRtc_GetCPUInfo(kSSE2) != 0;
+    bool have_sse2 = GetCPUInfo(kSSE2) != 0;
     // For x86 processors, check if SSE2 is supported.
     if (have_sse2 && kBlockSize == 32) {
       diff_proc = &VectorDifference_SSE2_W32;

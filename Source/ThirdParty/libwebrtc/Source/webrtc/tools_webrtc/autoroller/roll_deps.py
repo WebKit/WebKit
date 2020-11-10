@@ -56,7 +56,7 @@ CHROMIUM_LOG_TEMPLATE = CHROMIUM_SRC_URL + '/+log/%s'
 CHROMIUM_FILE_TEMPLATE = CHROMIUM_SRC_URL + '/+/%s/%s'
 
 COMMIT_POSITION_RE = re.compile('^Cr-Commit-Position: .*#([0-9]+).*$')
-CLANG_REVISION_RE = re.compile(r'^CLANG_REVISION = \'([0-9a-z]+)\'$')
+CLANG_REVISION_RE = re.compile(r'^CLANG_REVISION = \'([-0-9a-z]+)\'$')
 ROLL_BRANCH_NAME = 'roll_chromium_revision'
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -97,6 +97,10 @@ class RollError(Exception):
   pass
 
 
+def StrExpansion():
+  return lambda str_value: str_value
+
+
 def VarLookup(local_scope):
   return lambda var_name: local_scope['vars'][var_name]
 
@@ -104,6 +108,7 @@ def VarLookup(local_scope):
 def ParseDepsDict(deps_content):
   local_scope = {}
   global_scope = {
+    'Str': StrExpansion(),
     'Var': VarLookup(local_scope),
     'deps_os': {},
   }
@@ -598,11 +603,11 @@ def _UploadCL(commit_queue_mode):
     - 1: Run trybots but do not submit to CQ.
     - 0: Skip CQ, upload only.
   """
-  cmd = ['git', 'cl', 'upload', '--force', '--bypass-hooks', '--send-mail']
-  cmd.extend(['--cc', NOTIFY_EMAIL])
+  cmd = ['git', 'cl', 'upload', '--force', '--bypass-hooks']
   if commit_queue_mode >= 2:
     logging.info('Sending the CL to the CQ...')
     cmd.extend(['--use-commit-queue'])
+    cmd.extend(['--send-mail', '--cc', NOTIFY_EMAIL])
   elif commit_queue_mode >= 1:
     logging.info('Starting CQ dry run...')
     cmd.extend(['--cq-dry-run'])

@@ -40,5 +40,6 @@ if (rtc_include_tests) {
       "../../video:video_rtp_headers",
       "//testing/gtest",
     ]
+    absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
   }
 }

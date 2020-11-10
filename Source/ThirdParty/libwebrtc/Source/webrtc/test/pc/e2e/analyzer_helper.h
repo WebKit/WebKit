@@ -14,7 +14,8 @@
 #include <map>
 #include <string>
 
-#include "api/test/track_id_stream_label_map.h"
+#include "absl/strings/string_view.h"
+#include "api/test/track_id_stream_info_map.h"
 #include "rtc_base/synchronization/sequence_checker.h"
 #include "rtc_base/thread_annotations.h"
 
@@ -22,25 +23,40 @@ namespace webrtc {
 namespace webrtc_pc_e2e {
 
 // This class is a utility that provides bookkeeping capabilities that
-// are useful to associate stats reports track_ids to the remote stream_id.
+// are useful to associate stats reports track_ids to the remote stream info.
 // The framework will populate an instance of this class and it will pass
 // it to the Start method of Media Quality Analyzers.
 // An instance of AnalyzerHelper must only be accessed from a single
 // thread and since stats collection happens on the signaling thread,
-// both AddTrackToStreamMapping and GetStreamLabelFromTrackId must be
-// invoked from the signaling thread.
-class AnalyzerHelper : public TrackIdStreamLabelMap {
+// AddTrackToStreamMapping, GetStreamLabelFromTrackId and
+// GetSyncGroupLabelFromTrackId must be invoked from the signaling thread. Get
+// methods should be invoked only after all data is added. Mixing Get methods
+// with adding new data may lead to undefined behaviour.
+class AnalyzerHelper : public TrackIdStreamInfoMap {
  public:
   AnalyzerHelper();
 
   void AddTrackToStreamMapping(std::string track_id, std::string stream_label);
+  void AddTrackToStreamMapping(std::string track_id,
+                               std::string stream_label,
+                               std::string sync_group);
 
-  const std::string& GetStreamLabelFromTrackId(
-      const std::string& track_id) const override;
+  absl::string_view GetStreamLabelFromTrackId(
+      absl::string_view track_id) const override;
+
+  absl::string_view GetSyncGroupLabelFromTrackId(
+      absl::string_view track_id) const override;
 
  private:
+  struct StreamInfo {
+    std::string stream_label;
+    std::string sync_group;
+  };
+
+  const StreamInfo& GetStreamInfoFromTrackId(absl::string_view track_id) const;
+
   SequenceChecker signaling_sequence_checker_;
-  std::map<std::string, std::string> track_to_stream_map_
+  std::map<std::string, StreamInfo> track_to_stream_map_
       RTC_GUARDED_BY(signaling_sequence_checker_);
 };
 

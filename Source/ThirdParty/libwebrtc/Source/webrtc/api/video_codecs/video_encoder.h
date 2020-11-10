@@ -30,13 +30,12 @@
 
 namespace webrtc {
 
-class RTPFragmentationHeader;
 // TODO(pbos): Expose these through a public (root) header or change these APIs.
 struct CodecSpecificInfo;
 
 constexpr int kDefaultMinPixelsPerFrame = 320 * 180;
 
-class EncodedImageCallback {
+class RTC_EXPORT EncodedImageCallback {
  public:
   virtual ~EncodedImageCallback() {}
 
@@ -75,8 +74,7 @@ class EncodedImageCallback {
   // Callback function which is called when an image has been encoded.
   virtual Result OnEncodedImage(
       const EncodedImage& encoded_image,
-      const CodecSpecificInfo* codec_specific_info,
-      const RTPFragmentationHeader* fragmentation) = 0;
+      const CodecSpecificInfo* codec_specific_info) = 0;
 
   virtual void OnDroppedFrame(DropReason reason) {}
 };
@@ -175,6 +173,15 @@ class RTC_EXPORT VideoEncoder {
     // Note that this field is unrelated to any horizontal or vertical stride
     // requirements the encoder has on the incoming video frame buffers.
     int requested_resolution_alignment;
+
+    // Same as above but if true, each simulcast layer should also be divisible
+    // by |requested_resolution_alignment|.
+    // Note that scale factors |scale_resolution_down_by| may be adjusted so a
+    // common multiple is not too large to avoid largely cropped frames and
+    // possibly with an aspect ratio far from the original.
+    // Warning: large values of scale_resolution_down_by could be changed
+    // considerably, especially if |requested_resolution_alignment| is large.
+    bool apply_alignment_to_all_simulcast_layers;
 
     // If true, encoder supports working with a native handle (e.g. texture
     // handle for hw codecs) rather than requiring a raw I420 buffer.
@@ -320,9 +327,6 @@ class RTC_EXPORT VideoEncoder {
   static VideoCodecVP8 GetDefaultVp8Settings();
   static VideoCodecVP9 GetDefaultVp9Settings();
   static VideoCodecH264 GetDefaultH264Settings();
-#ifndef DISABLE_H265
-  static VideoCodecH265 GetDefaultH265Settings();
-#endif
 
   virtual ~VideoEncoder() {}
 

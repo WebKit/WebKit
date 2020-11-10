@@ -8,17 +8,17 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "modules/audio_processing/transient/transient_suppressor.h"
+#include "modules/audio_processing/transient/transient_suppressor_impl.h"
 
 #include "modules/audio_processing/transient/common.h"
 #include "test/gtest.h"
 
 namespace webrtc {
 
-TEST(TransientSuppressorTest, TypingDetectionLogicWorksAsExpectedForMono) {
+TEST(TransientSuppressorImplTest, TypingDetectionLogicWorksAsExpectedForMono) {
   static const int kNumChannels = 1;
 
-  TransientSuppressor ts;
+  TransientSuppressorImpl ts;
   ts.Initialize(ts::kSampleRate16kHz, ts::kSampleRate16kHz, kNumChannels);
 
   // Each key-press enables detection.

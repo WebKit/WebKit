@@ -35,7 +35,7 @@
 }
 
 - (void)setStats:(NSArray *)stats {
-  for (RTCLegacyStatsReport *report in stats) {
+  for (RTC_OBJC_TYPE(RTCLegacyStatsReport) * report in stats) {
     [_statsBuilder parseStatsReport:report];
   }
   _statsLabel.text = _statsBuilder.statsString;

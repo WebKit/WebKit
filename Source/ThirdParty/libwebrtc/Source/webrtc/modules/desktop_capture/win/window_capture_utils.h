@@ -15,6 +15,7 @@
 #include <windows.h>
 #include <wrl/client.h>
 
+#include "modules/desktop_capture/desktop_capturer.h"
 #include "modules/desktop_capture/desktop_geometry.h"
 #include "rtc_base/constructor_magic.h"
 
@@ -40,7 +41,7 @@ bool GetWindowRect(HWND window, DesktopRect* result);
 // This function should only be used by CroppingWindowCapturerWin. Instead a
 // DesktopRect CropWindowRect(const DesktopRect& rect)
 // should be added as a utility function to help CroppingWindowCapturerWin and
-// WindowCapturerWin to crop out the borders or shadow according to their
+// WindowCapturerWinGdi to crop out the borders or shadow according to their
 // scenarios. But this function is too generic and easy to be misused.
 bool GetCroppedWindowRect(HWND window,
                           bool avoid_cropping_border,
@@ -66,6 +67,15 @@ bool GetDcSize(HDC hdc, DesktopSize* size);
 // function returns false if native APIs fail.
 bool IsWindowMaximized(HWND window, bool* result);
 
+// Checks that the HWND is for a valid window, that window's visibility state is
+// visible, and that it is not minimized.
+bool IsWindowValidAndVisible(HWND window);
+
+// This function is passed into the EnumWindows API and filters out windows that
+// we don't want to capture, e.g. minimized or unresponsive windows and the
+// Start menu.
+BOOL CALLBACK FilterUncapturableWindows(HWND hwnd, LPARAM param);
+
 typedef HRESULT(WINAPI* DwmIsCompositionEnabledFunc)(BOOL* enabled);
 typedef HRESULT(WINAPI* DwmGetWindowAttributeFunc)(HWND hwnd,
                                                    DWORD flag,
@@ -84,6 +94,7 @@ class WindowCaptureHelperWin {
   bool IsWindowOnCurrentDesktop(HWND hwnd);
   bool IsWindowVisibleOnCurrentDesktop(HWND hwnd);
   bool IsWindowCloaked(HWND hwnd);
+  bool EnumerateCapturableWindows(DesktopCapturer::SourceList* results);
 
  private:
   HMODULE dwmapi_library_ = nullptr;

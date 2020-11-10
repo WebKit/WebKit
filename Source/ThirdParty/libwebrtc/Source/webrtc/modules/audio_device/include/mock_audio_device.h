@@ -32,76 +32,123 @@ class MockAudioDeviceModule : public AudioDeviceModule {
   }
 
   // AudioDeviceModule.
-  MOCK_CONST_METHOD1(ActiveAudioLayer, int32_t(AudioLayer* audioLayer));
-  MOCK_METHOD1(RegisterAudioCallback, int32_t(AudioTransport* audioCallback));
-  MOCK_METHOD0(Init, int32_t());
-  MOCK_METHOD0(Terminate, int32_t());
-  MOCK_CONST_METHOD0(Initialized, bool());
-  MOCK_METHOD0(PlayoutDevices, int16_t());
-  MOCK_METHOD0(RecordingDevices, int16_t());
-  MOCK_METHOD3(PlayoutDeviceName,
-               int32_t(uint16_t index,
-                       char name[kAdmMaxDeviceNameSize],
-                       char guid[kAdmMaxGuidSize]));
-  MOCK_METHOD3(RecordingDeviceName,
-               int32_t(uint16_t index,
-                       char name[kAdmMaxDeviceNameSize],
-                       char guid[kAdmMaxGuidSize]));
-  MOCK_METHOD1(SetPlayoutDevice, int32_t(uint16_t index));
-  MOCK_METHOD1(SetPlayoutDevice, int32_t(WindowsDeviceType device));
-  MOCK_METHOD1(SetRecordingDevice, int32_t(uint16_t index));
-  MOCK_METHOD1(SetRecordingDevice, int32_t(WindowsDeviceType device));
-  MOCK_METHOD1(PlayoutIsAvailable, int32_t(bool* available));
-  MOCK_METHOD0(InitPlayout, int32_t());
-  MOCK_CONST_METHOD0(PlayoutIsInitialized, bool());
-  MOCK_METHOD1(RecordingIsAvailable, int32_t(bool* available));
-  MOCK_METHOD0(InitRecording, int32_t());
-  MOCK_CONST_METHOD0(RecordingIsInitialized, bool());
-  MOCK_METHOD0(StartPlayout, int32_t());
-  MOCK_METHOD0(StopPlayout, int32_t());
-  MOCK_CONST_METHOD0(Playing, bool());
-  MOCK_METHOD0(StartRecording, int32_t());
-  MOCK_METHOD0(StopRecording, int32_t());
-  MOCK_CONST_METHOD0(Recording, bool());
-  MOCK_METHOD1(SetAGC, int32_t(bool enable));
-  MOCK_CONST_METHOD0(AGC, bool());
-  MOCK_METHOD0(InitSpeaker, int32_t());
-  MOCK_CONST_METHOD0(SpeakerIsInitialized, bool());
-  MOCK_METHOD0(InitMicrophone, int32_t());
-  MOCK_CONST_METHOD0(MicrophoneIsInitialized, bool());
-  MOCK_METHOD1(SpeakerVolumeIsAvailable, int32_t(bool* available));
-  MOCK_METHOD1(SetSpeakerVolume, int32_t(uint32_t volume));
-  MOCK_CONST_METHOD1(SpeakerVolume, int32_t(uint32_t* volume));
-  MOCK_CONST_METHOD1(MaxSpeakerVolume, int32_t(uint32_t* maxVolume));
-  MOCK_CONST_METHOD1(MinSpeakerVolume, int32_t(uint32_t* minVolume));
-  MOCK_METHOD1(MicrophoneVolumeIsAvailable, int32_t(bool* available));
-  MOCK_METHOD1(SetMicrophoneVolume, int32_t(uint32_t volume));
-  MOCK_CONST_METHOD1(MicrophoneVolume, int32_t(uint32_t* volume));
-  MOCK_CONST_METHOD1(MaxMicrophoneVolume, int32_t(uint32_t* maxVolume));
-  MOCK_CONST_METHOD1(MinMicrophoneVolume, int32_t(uint32_t* minVolume));
-  MOCK_METHOD1(SpeakerMuteIsAvailable, int32_t(bool* available));
-  MOCK_METHOD1(SetSpeakerMute, int32_t(bool enable));
-  MOCK_CONST_METHOD1(SpeakerMute, int32_t(bool* enabled));
-  MOCK_METHOD1(MicrophoneMuteIsAvailable, int32_t(bool* available));
-  MOCK_METHOD1(SetMicrophoneMute, int32_t(bool enable));
-  MOCK_CONST_METHOD1(MicrophoneMute, int32_t(bool* enabled));
-  MOCK_CONST_METHOD1(StereoPlayoutIsAvailable, int32_t(bool* available));
-  MOCK_METHOD1(SetStereoPlayout, int32_t(bool enable));
-  MOCK_CONST_METHOD1(StereoPlayout, int32_t(bool* enabled));
-  MOCK_CONST_METHOD1(StereoRecordingIsAvailable, int32_t(bool* available));
-  MOCK_METHOD1(SetStereoRecording, int32_t(bool enable));
-  MOCK_CONST_METHOD1(StereoRecording, int32_t(bool* enabled));
-  MOCK_CONST_METHOD1(PlayoutDelay, int32_t(uint16_t* delayMS));
-  MOCK_CONST_METHOD0(BuiltInAECIsAvailable, bool());
-  MOCK_CONST_METHOD0(BuiltInAGCIsAvailable, bool());
-  MOCK_CONST_METHOD0(BuiltInNSIsAvailable, bool());
-  MOCK_METHOD1(EnableBuiltInAEC, int32_t(bool enable));
-  MOCK_METHOD1(EnableBuiltInAGC, int32_t(bool enable));
-  MOCK_METHOD1(EnableBuiltInNS, int32_t(bool enable));
-  MOCK_CONST_METHOD0(GetPlayoutUnderrunCount, int32_t());
+  MOCK_METHOD(int32_t,
+              ActiveAudioLayer,
+              (AudioLayer * audioLayer),
+              (const, override));
+  MOCK_METHOD(int32_t,
+              RegisterAudioCallback,
+              (AudioTransport * audioCallback),
+              (override));
+  MOCK_METHOD(int32_t, Init, (), (override));
+  MOCK_METHOD(int32_t, Terminate, (), (override));
+  MOCK_METHOD(bool, Initialized, (), (const, override));
+  MOCK_METHOD(int16_t, PlayoutDevices, (), (override));
+  MOCK_METHOD(int16_t, RecordingDevices, (), (override));
+  MOCK_METHOD(int32_t,
+              PlayoutDeviceName,
+              (uint16_t index,
+               char name[kAdmMaxDeviceNameSize],
+               char guid[kAdmMaxGuidSize]),
+              (override));
+  MOCK_METHOD(int32_t,
+              RecordingDeviceName,
+              (uint16_t index,
+               char name[kAdmMaxDeviceNameSize],
+               char guid[kAdmMaxGuidSize]),
+              (override));
+  MOCK_METHOD(int32_t, SetPlayoutDevice, (uint16_t index), (override));
+  MOCK_METHOD(int32_t,
+              SetPlayoutDevice,
+              (WindowsDeviceType device),
+              (override));
+  MOCK_METHOD(int32_t, SetRecordingDevice, (uint16_t index), (override));
+  MOCK_METHOD(int32_t,
+              SetRecordingDevice,
+              (WindowsDeviceType device),
+              (override));
+  MOCK_METHOD(int32_t, PlayoutIsAvailable, (bool* available), (override));
+  MOCK_METHOD(int32_t, InitPlayout, (), (override));
+  MOCK_METHOD(bool, PlayoutIsInitialized, (), (const, override));
+  MOCK_METHOD(int32_t, RecordingIsAvailable, (bool* available), (override));
+  MOCK_METHOD(int32_t, InitRecording, (), (override));
+  MOCK_METHOD(bool, RecordingIsInitialized, (), (const, override));
+  MOCK_METHOD(int32_t, StartPlayout, (), (override));
+  MOCK_METHOD(int32_t, StopPlayout, (), (override));
+  MOCK_METHOD(bool, Playing, (), (const, override));
+  MOCK_METHOD(int32_t, StartRecording, (), (override));
+  MOCK_METHOD(int32_t, StopRecording, (), (override));
+  MOCK_METHOD(bool, Recording, (), (const, override));
+  MOCK_METHOD(int32_t, InitSpeaker, (), (override));
+  MOCK_METHOD(bool, SpeakerIsInitialized, (), (const, override));
+  MOCK_METHOD(int32_t, InitMicrophone, (), (override));
+  MOCK_METHOD(bool, MicrophoneIsInitialized, (), (const, override));
+  MOCK_METHOD(int32_t, SpeakerVolumeIsAvailable, (bool* available), (override));
+  MOCK_METHOD(int32_t, SetSpeakerVolume, (uint32_t volume), (override));
+  MOCK_METHOD(int32_t, SpeakerVolume, (uint32_t * volume), (const, override));
+  MOCK_METHOD(int32_t,
+              MaxSpeakerVolume,
+              (uint32_t * maxVolume),
+              (const, override));
+  MOCK_METHOD(int32_t,
+              MinSpeakerVolume,
+              (uint32_t * minVolume),
+              (const, override));
+  MOCK_METHOD(int32_t,
+              MicrophoneVolumeIsAvailable,
+              (bool* available),
+              (override));
+  MOCK_METHOD(int32_t, SetMicrophoneVolume, (uint32_t volume), (override));
+  MOCK_METHOD(int32_t,
+              MicrophoneVolume,
+              (uint32_t * volume),
+              (const, override));
+  MOCK_METHOD(int32_t,
+              MaxMicrophoneVolume,
+              (uint32_t * maxVolume),
+              (const, override));
+  MOCK_METHOD(int32_t,
+              MinMicrophoneVolume,
+              (uint32_t * minVolume),
+              (const, override));
+  MOCK_METHOD(int32_t, SpeakerMuteIsAvailable, (bool* available), (override));
+  MOCK_METHOD(int32_t, SetSpeakerMute, (bool enable), (override));
+  MOCK_METHOD(int32_t, SpeakerMute, (bool* enabled), (const, override));
+  MOCK_METHOD(int32_t,
+              MicrophoneMuteIsAvailable,
+              (bool* available),
+              (override));
+  MOCK_METHOD(int32_t, SetMicrophoneMute, (bool enable), (override));
+  MOCK_METHOD(int32_t, MicrophoneMute, (bool* enabled), (const, override));
+  MOCK_METHOD(int32_t,
+              StereoPlayoutIsAvailable,
+              (bool* available),
+              (const, override));
+  MOCK_METHOD(int32_t, SetStereoPlayout, (bool enable), (override));
+  MOCK_METHOD(int32_t, StereoPlayout, (bool* enabled), (const, override));
+  MOCK_METHOD(int32_t,
+              StereoRecordingIsAvailable,
+              (bool* available),
+              (const, override));
+  MOCK_METHOD(int32_t, SetStereoRecording, (bool enable), (override));
+  MOCK_METHOD(int32_t, StereoRecording, (bool* enabled), (const, override));
+  MOCK_METHOD(int32_t, PlayoutDelay, (uint16_t * delayMS), (const, override));
+  MOCK_METHOD(bool, BuiltInAECIsAvailable, (), (const, override));
+  MOCK_METHOD(bool, BuiltInAGCIsAvailable, (), (const, override));
+  MOCK_METHOD(bool, BuiltInNSIsAvailable, (), (const, override));
+  MOCK_METHOD(int32_t, EnableBuiltInAEC, (bool enable), (override));
+  MOCK_METHOD(int32_t, EnableBuiltInAGC, (bool enable), (override));
+  MOCK_METHOD(int32_t, EnableBuiltInNS, (bool enable), (override));
+  MOCK_METHOD(int32_t, GetPlayoutUnderrunCount, (), (const, override));
 #if defined(WEBRTC_IOS)
-  MOCK_CONST_METHOD1(GetPlayoutAudioParameters, int(AudioParameters* params));
-  MOCK_CONST_METHOD1(GetRecordAudioParameters, int(AudioParameters* params));
+  MOCK_METHOD(int,
+              GetPlayoutAudioParameters,
+              (AudioParameters * params),
+              (const, override));
+  MOCK_METHOD(int,
+              GetRecordAudioParameters,
+              (AudioParameters * params),
+              (const, override));
 #endif  // WEBRTC_IOS
 };
 }  // namespace test

@@ -15,8 +15,8 @@
 #include <algorithm>
 
 #include "api/scoped_refptr.h"
-#include "rtc_base/critical_section.h"
 #include "rtc_base/gunit.h"
+#include "rtc_base/synchronization/mutex.h"
 #include "test/gtest.h"
 
 class FakeAdmTest : public ::testing::Test, public webrtc::AudioTransport {
@@ -45,7 +45,7 @@ class FakeAdmTest : public ::testing::Test, public webrtc::AudioTransport {
                                   const uint32_t currentMicLevel,
                                   const bool keyPressed,
                                   uint32_t& newMicLevel) override {
-    rtc::CritScope cs(&crit_);
+    webrtc::MutexLock lock(&mutex_);
     rec_buffer_bytes_ = nSamples * nBytesPerSample;
     if ((rec_buffer_bytes_ == 0) ||
         (rec_buffer_bytes_ >
@@ -77,7 +77,7 @@ class FakeAdmTest : public ::testing::Test, public webrtc::AudioTransport {
                            size_t& nSamplesOut,
                            int64_t* elapsed_time_ms,
                            int64_t* ntp_time_ms) override {
-    rtc::CritScope cs(&crit_);
+    webrtc::MutexLock lock(&mutex_);
     ++pull_iterations_;
     const size_t audio_buffer_size = nSamples * nBytesPerSample;
     const size_t bytes_out =
@@ -91,11 +91,11 @@ class FakeAdmTest : public ::testing::Test, public webrtc::AudioTransport {
   }
 
   int push_iterations() const {
-    rtc::CritScope cs(&crit_);
+    webrtc::MutexLock lock(&mutex_);
     return push_iterations_;
   }
   int pull_iterations() const {
-    rtc::CritScope cs(&crit_);
+    webrtc::MutexLock lock(&mutex_);
     return pull_iterations_;
   }
 
@@ -115,7 +115,7 @@ class FakeAdmTest : public ::testing::Test, public webrtc::AudioTransport {
     return min_buffer_size;
   }
 
-  rtc::CriticalSection crit_;
+  mutable webrtc::Mutex mutex_;
 
   int push_iterations_;
   int pull_iterations_;

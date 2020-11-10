@@ -22,6 +22,7 @@
 
 #include "absl/types/optional.h"
 #include "api/array_view.h"
+#include "api/transport/field_trial_based_config.h"
 #include "api/video/video_bitrate_allocation.h"
 #include "api/video_codecs/sdp_video_format.h"
 #include "api/video_codecs/video_codec.h"
@@ -61,13 +62,14 @@ const int kMaxFramerateFps = 30;
 const int kMaxQp = 56;
 
 void ConfigureSimulcast(VideoCodec* codec_settings) {
+  FieldTrialBasedConfig trials;
   const std::vector<webrtc::VideoStream> streams = cricket::GetSimulcastConfig(
       /*min_layer=*/1, codec_settings->numberOfSimulcastStreams,
       codec_settings->width, codec_settings->height, kBitratePriority, kMaxQp,
-      /* is_screenshare = */ false, true);
+      /* is_screenshare = */ false, true, trials);
 
   for (size_t i = 0; i < streams.size(); ++i) {
-    SimulcastStream* ss = &codec_settings->simulcastStream[i];
+    SpatialLayer* ss = &codec_settings->simulcastStream[i];
     ss->width = static_cast<uint16_t>(streams[i].width);
     ss->height = static_cast<uint16_t>(streams[i].height);
     ss->numberOfTemporalLayers =
@@ -85,7 +87,7 @@ void ConfigureSvc(VideoCodec* codec_settings) {
 
   const std::vector<SpatialLayer> layers = GetSvcConfig(
       codec_settings->width, codec_settings->height, kMaxFramerateFps,
-      /*min_spatial_layers=*/1, codec_settings->VP9()->numberOfSpatialLayers,
+      /*first_active_layer=*/0, codec_settings->VP9()->numberOfSpatialLayers,
       codec_settings->VP9()->numberOfTemporalLayers,
       /* is_screen_sharing = */ false);
   ASSERT_EQ(codec_settings->VP9()->numberOfSpatialLayers, layers.size())
@@ -205,6 +207,9 @@ void VideoCodecTestFixtureImpl::Config::SetCodecSettings(
       codec_settings.VP9()->numberOfSpatialLayers =
           static_cast<uint8_t>(num_spatial_layers);
       break;
+    case kVideoCodecAV1:
+      codec_settings.qpMax = 63;
+      break;
     case kVideoCodecH264:
       codec_settings.H264()->frameDroppingOn = frame_dropper_on;
       codec_settings.H264()->keyFrameInterval = kBaseKeyFrameInterval;
@@ -274,8 +279,7 @@ std::string VideoCodecTestFixtureImpl::Config::ToString() const {
   if (codec_settings.numberOfSimulcastStreams > 1) {
     for (int i = 0; i < codec_settings.numberOfSimulcastStreams; ++i) {
       ss << "\n\n--> codec_settings.simulcastStream[" << i << "]";
-      const SimulcastStream& simulcast_stream =
-          codec_settings.simulcastStream[i];
+      const SpatialLayer& simulcast_stream = codec_settings.simulcastStream[i];
       ss << "\nwidth: " << simulcast_stream.width;
       ss << "\nheight: " << simulcast_stream.height;
       ss << "\nnum_temporal_layers: "

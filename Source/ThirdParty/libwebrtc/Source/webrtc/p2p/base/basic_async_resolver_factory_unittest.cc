@@ -30,6 +30,7 @@ class BasicAsyncResolverFactoryTest : public ::testing::Test,
     rtc::SocketAddress address("", 0);
     resolver->Start(address);
     ASSERT_TRUE_WAIT(address_resolved_, 10000 /*ms*/);
+    resolver->Destroy(false);
   }
 
   void SetAddressResolved(rtc::AsyncResolverInterface* resolver) {

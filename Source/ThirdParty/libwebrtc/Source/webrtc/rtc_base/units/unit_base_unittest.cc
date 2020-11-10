@@ -39,7 +39,7 @@ class TestUnit final : public rtc_units_impl::RelativeUnit<TestUnit> {
   }
 
  private:
-  friend class UnitBase<TestUnit>;
+  friend class rtc_units_impl::UnitBase<TestUnit>;
   static constexpr bool one_sided = false;
   using RelativeUnit<TestUnit>::RelativeUnit;
 };

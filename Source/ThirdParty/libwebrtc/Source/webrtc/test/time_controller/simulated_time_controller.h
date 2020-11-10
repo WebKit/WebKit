@@ -21,9 +21,9 @@
 #include "api/units/timestamp.h"
 #include "modules/include/module.h"
 #include "modules/utility/include/process_thread.h"
-#include "rtc_base/critical_section.h"
 #include "rtc_base/fake_clock.h"
 #include "rtc_base/platform_thread_types.h"
+#include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/synchronization/yield_policy.h"
 #include "rtc_base/thread_checker.h"
 
@@ -52,32 +52,34 @@ class SimulatedTimeControllerImpl : public TaskQueueFactory,
 
   std::unique_ptr<TaskQueueBase, TaskQueueDeleter> CreateTaskQueue(
       absl::string_view name,
-      Priority priority) const override;
+      Priority priority) const RTC_LOCKS_EXCLUDED(time_lock_) override;
 
   // Implements the YieldInterface by running ready tasks on all task queues,
   // except that if this method is called from a task, the task queue running
   // that task is skipped.
-  void YieldExecution() override;
+  void YieldExecution() RTC_LOCKS_EXCLUDED(time_lock_, lock_) override;
   // Create process thread with the name |thread_name|.
-  std::unique_ptr<ProcessThread> CreateProcessThread(const char* thread_name);
+  std::unique_ptr<ProcessThread> CreateProcessThread(const char* thread_name)
+      RTC_LOCKS_EXCLUDED(time_lock_, lock_);
   // Create thread using provided |socket_server|.
   std::unique_ptr<rtc::Thread> CreateThread(
       const std::string& name,
-      std::unique_ptr<rtc::SocketServer> socket_server);
+      std::unique_ptr<rtc::SocketServer> socket_server)
+      RTC_LOCKS_EXCLUDED(time_lock_, lock_);
 
   // Runs all runners in |runners_| that has tasks or modules ready for
   // execution.
-  void RunReadyRunners();
+  void RunReadyRunners() RTC_LOCKS_EXCLUDED(time_lock_, lock_);
   // Return |current_time_|.
-  Timestamp CurrentTime() const;
+  Timestamp CurrentTime() const RTC_LOCKS_EXCLUDED(time_lock_);
   // Return min of runner->GetNextRunTime() for runner in |runners_|.
-  Timestamp NextRunTime() const;
+  Timestamp NextRunTime() const RTC_LOCKS_EXCLUDED(lock_);
   // Set |current_time_| to |target_time|.
-  void AdvanceTime(Timestamp target_time);
+  void AdvanceTime(Timestamp target_time) RTC_LOCKS_EXCLUDED(time_lock_);
   // Adds |runner| to |runners_|.
-  void Register(SimulatedSequenceRunner* runner);
+  void Register(SimulatedSequenceRunner* runner) RTC_LOCKS_EXCLUDED(lock_);
   // Removes |runner| from |runners_|.
-  void Unregister(SimulatedSequenceRunner* runner);
+  void Unregister(SimulatedSequenceRunner* runner) RTC_LOCKS_EXCLUDED(lock_);
 
   // Indicates that |yielding_from| is not ready to run.
   void StartYield(TaskQueueBase* yielding_from);
@@ -87,9 +89,9 @@ class SimulatedTimeControllerImpl : public TaskQueueFactory,
  private:
   const rtc::PlatformThreadId thread_id_;
   const std::unique_ptr<rtc::Thread> dummy_thread_ = rtc::Thread::Create();
-  rtc::CriticalSection time_lock_;
+  mutable Mutex time_lock_;
   Timestamp current_time_ RTC_GUARDED_BY(time_lock_);
-  rtc::CriticalSection lock_;
+  mutable Mutex lock_;
   std::vector<SimulatedSequenceRunner*> runners_ RTC_GUARDED_BY(lock_);
   // Used in RunReadyRunners() to keep track of ready runners that are to be
   // processed in a round robin fashion. the reason it's a member is so that

@@ -43,6 +43,7 @@
 #include "api/rtp_transceiver_interface.h"
 #include "api/scoped_refptr.h"
 #include "api/task_queue/default_task_queue_factory.h"
+#include "api/transport/field_trial_based_config.h"
 #include "api/video_codecs/builtin_video_decoder_factory.h"
 #include "api/video_codecs/builtin_video_encoder_factory.h"
 #include "api/video_codecs/video_decoder_factory.h"
@@ -627,7 +628,7 @@ class MockTrackObserver : public ObserverInterface {
     }
   }
 
-  MOCK_METHOD0(OnChanged, void());
+  MOCK_METHOD(void, OnChanged, (), (override));
 
  private:
   NotifierInterface* notifier_;
@@ -646,12 +647,14 @@ class PeerConnectionFactoryForTest : public webrtc::PeerConnectionFactory {
     dependencies.network_thread = rtc::Thread::Current();
     dependencies.signaling_thread = rtc::Thread::Current();
     dependencies.task_queue_factory = CreateDefaultTaskQueueFactory();
+    dependencies.trials = std::make_unique<FieldTrialBasedConfig>();
     cricket::MediaEngineDependencies media_deps;
     media_deps.task_queue_factory = dependencies.task_queue_factory.get();
     // Use fake audio device module since we're only testing the interface
     // level, and using a real one could make tests flaky when run in parallel.
     media_deps.adm = FakeAudioCaptureModule::Create();
     SetMediaEngineDefaults(&media_deps);
+    media_deps.trials = dependencies.trials.get();
     dependencies.media_engine =
         cricket::CreateMediaEngine(std::move(media_deps));
     dependencies.call_factory = webrtc::CreateCallFactory();
@@ -1421,15 +1424,11 @@ TEST_P(PeerConnectionInterfaceTest, GetConfigurationAfterSetConfiguration) {
 
   PeerConnectionInterface::RTCConfiguration config = pc_->GetConfiguration();
   config.type = PeerConnectionInterface::kRelay;
-  config.use_datagram_transport = true;
-  config.use_datagram_transport_for_data_channels = true;
   EXPECT_TRUE(pc_->SetConfiguration(config).ok());
 
   PeerConnectionInterface::RTCConfiguration returned_config =
       pc_->GetConfiguration();
   EXPECT_EQ(PeerConnectionInterface::kRelay, returned_config.type);
-  EXPECT_TRUE(returned_config.use_datagram_transport);
-  EXPECT_TRUE(returned_config.use_datagram_transport_for_data_channels);
 }
 
 TEST_P(PeerConnectionInterfaceTest, SetConfigurationFailsAfterClose) {
@@ -2672,23 +2671,24 @@ TEST_P(PeerConnectionInterfaceTest, CloseAndTestStreamsAndStates) {
     EXPECT_EQ(1u, pc_->local_streams()->count());
     EXPECT_EQ(1u, pc_->remote_streams()->count());
   } else {
-    // Verify that the RtpTransceivers are still present but all stopped.
+    // Verify that the RtpTransceivers are still returned.
     EXPECT_EQ(2u, pc_->GetTransceivers().size());
-    for (const auto& transceiver : pc_->GetTransceivers()) {
-      EXPECT_TRUE(transceiver->stopped());
-    }
   }
 
   auto audio_receiver = GetFirstReceiverOfType(cricket::MEDIA_TYPE_AUDIO);
-  ASSERT_TRUE(audio_receiver);
   auto video_receiver = GetFirstReceiverOfType(cricket::MEDIA_TYPE_VIDEO);
-  ASSERT_TRUE(video_receiver);
-
-  // Track state may be updated asynchronously.
-  EXPECT_EQ_WAIT(MediaStreamTrackInterface::kEnded,
-                 audio_receiver->track()->state(), kTimeout);
-  EXPECT_EQ_WAIT(MediaStreamTrackInterface::kEnded,
-                 video_receiver->track()->state(), kTimeout);
+  if (sdp_semantics_ == SdpSemantics::kPlanB) {
+    ASSERT_TRUE(audio_receiver);
+    ASSERT_TRUE(video_receiver);
+    // Track state may be updated asynchronously.
+    EXPECT_EQ_WAIT(MediaStreamTrackInterface::kEnded,
+                   audio_receiver->track()->state(), kTimeout);
+    EXPECT_EQ_WAIT(MediaStreamTrackInterface::kEnded,
+                   video_receiver->track()->state(), kTimeout);
+  } else {
+    ASSERT_FALSE(audio_receiver);
+    ASSERT_FALSE(video_receiver);
+  }
 }
 
 // Test that PeerConnection methods fails gracefully after
@@ -3619,44 +3619,44 @@ TEST_P(PeerConnectionInterfaceTest,
 
 TEST_P(PeerConnectionInterfaceTest, SetBitrateWithoutMinSucceeds) {
   CreatePeerConnection();
-  PeerConnectionInterface::BitrateParameters bitrate;
-  bitrate.current_bitrate_bps = 100000;
+  BitrateSettings bitrate;
+  bitrate.start_bitrate_bps = 100000;
   EXPECT_TRUE(pc_->SetBitrate(bitrate).ok());
 }
 
 TEST_P(PeerConnectionInterfaceTest, SetBitrateNegativeMinFails) {
   CreatePeerConnection();
-  PeerConnectionInterface::BitrateParameters bitrate;
+  BitrateSettings bitrate;
   bitrate.min_bitrate_bps = -1;
   EXPECT_FALSE(pc_->SetBitrate(bitrate).ok());
 }
 
 TEST_P(PeerConnectionInterfaceTest, SetBitrateCurrentLessThanMinFails) {
   CreatePeerConnection();
-  PeerConnectionInterface::BitrateParameters bitrate;
+  BitrateSettings bitrate;
   bitrate.min_bitrate_bps = 5;
-  bitrate.current_bitrate_bps = 3;
+  bitrate.start_bitrate_bps = 3;
   EXPECT_FALSE(pc_->SetBitrate(bitrate).ok());
 }
 
 TEST_P(PeerConnectionInterfaceTest, SetBitrateCurrentNegativeFails) {
   CreatePeerConnection();
-  PeerConnectionInterface::BitrateParameters bitrate;
-  bitrate.current_bitrate_bps = -1;
+  BitrateSettings bitrate;
+  bitrate.start_bitrate_bps = -1;
   EXPECT_FALSE(pc_->SetBitrate(bitrate).ok());
 }
 
 TEST_P(PeerConnectionInterfaceTest, SetBitrateMaxLessThanCurrentFails) {
   CreatePeerConnection();
-  PeerConnectionInterface::BitrateParameters bitrate;
-  bitrate.current_bitrate_bps = 10;
+  BitrateSettings bitrate;
+  bitrate.start_bitrate_bps = 10;
   bitrate.max_bitrate_bps = 8;
   EXPECT_FALSE(pc_->SetBitrate(bitrate).ok());
 }
 
 TEST_P(PeerConnectionInterfaceTest, SetBitrateMaxLessThanMinFails) {
   CreatePeerConnection();
-  PeerConnectionInterface::BitrateParameters bitrate;
+  BitrateSettings bitrate;
   bitrate.min_bitrate_bps = 10;
   bitrate.max_bitrate_bps = 8;
   EXPECT_FALSE(pc_->SetBitrate(bitrate).ok());
@@ -3664,7 +3664,7 @@ TEST_P(PeerConnectionInterfaceTest, SetBitrateMaxLessThanMinFails) {
 
 TEST_P(PeerConnectionInterfaceTest, SetBitrateMaxNegativeFails) {
   CreatePeerConnection();
-  PeerConnectionInterface::BitrateParameters bitrate;
+  BitrateSettings bitrate;
   bitrate.max_bitrate_bps = -1;
   EXPECT_FALSE(pc_->SetBitrate(bitrate).ok());
 }
@@ -3675,8 +3675,8 @@ TEST_P(PeerConnectionInterfaceTest, SetBitrateMaxNegativeFails) {
 // be clamped succeeds.
 TEST_P(PeerConnectionInterfaceTest, SetBitrateCurrentLessThanImplicitMin) {
   CreatePeerConnection();
-  PeerConnectionInterface::BitrateParameters bitrate;
-  bitrate.current_bitrate_bps = 1;
+  BitrateSettings bitrate;
+  bitrate.start_bitrate_bps = 1;
   EXPECT_TRUE(pc_->SetBitrate(bitrate).ok());
 }
 

@@ -16,10 +16,11 @@
 #include <set>
 #include <string>
 
+#include "api/array_view.h"
 #include "api/test/video_quality_analyzer_interface.h"
 #include "api/video/encoded_image.h"
 #include "api/video/video_frame.h"
-#include "rtc_base/critical_section.h"
+#include "rtc_base/synchronization/mutex.h"
 
 namespace webrtc {
 namespace webrtc_pc_e2e {
@@ -33,21 +34,34 @@ class ExampleVideoQualityAnalyzer : public VideoQualityAnalyzerInterface {
   ExampleVideoQualityAnalyzer();
   ~ExampleVideoQualityAnalyzer() override;
 
-  void Start(std::string test_case_name, int max_threads_count) override;
-  uint16_t OnFrameCaptured(const std::string& stream_label,
+  void Start(std::string test_case_name,
+             rtc::ArrayView<const std::string> peer_names,
+             int max_threads_count) override;
+  uint16_t OnFrameCaptured(absl::string_view peer_name,
+                           const std::string& stream_label,
                            const VideoFrame& frame) override;
-  void OnFramePreEncode(const VideoFrame& frame) override;
-  void OnFrameEncoded(uint16_t frame_id,
-                      const EncodedImage& encoded_image) override;
-  void OnFrameDropped(EncodedImageCallback::DropReason reason) override;
-  void OnFramePreDecode(uint16_t frame_id,
+  void OnFramePreEncode(absl::string_view peer_name,
+                        const VideoFrame& frame) override;
+  void OnFrameEncoded(absl::string_view peer_name,
+                      uint16_t frame_id,
+                      const EncodedImage& encoded_image,
+                      const EncoderStats& stats) override;
+  void OnFrameDropped(absl::string_view peer_name,
+                      EncodedImageCallback::DropReason reason) override;
+  void OnFramePreDecode(absl::string_view peer_name,
+                        uint16_t frame_id,
                         const EncodedImage& encoded_image) override;
-  void OnFrameDecoded(const VideoFrame& frame,
-                      absl::optional<int32_t> decode_time_ms,
-                      absl::optional<uint8_t> qp) override;
-  void OnFrameRendered(const VideoFrame& frame) override;
-  void OnEncoderError(const VideoFrame& frame, int32_t error_code) override;
-  void OnDecoderError(uint16_t frame_id, int32_t error_code) override;
+  void OnFrameDecoded(absl::string_view peer_name,
+                      const VideoFrame& frame,
+                      const DecoderStats& stats) override;
+  void OnFrameRendered(absl::string_view peer_name,
+                       const VideoFrame& frame) override;
+  void OnEncoderError(absl::string_view peer_name,
+                      const VideoFrame& frame,
+                      int32_t error_code) override;
+  void OnDecoderError(absl::string_view peer_name,
+                      uint16_t frame_id,
+                      int32_t error_code) override;
   void Stop() override;
   std::string GetStreamLabel(uint16_t frame_id) override;
 
@@ -65,7 +79,7 @@ class ExampleVideoQualityAnalyzer : public VideoQualityAnalyzerInterface {
   // when it will be received in peer B, so we need to guard it with lock.
   // Also because analyzer will serve for all video streams it can be called
   // from different threads inside one peer.
-  rtc::CriticalSection lock_;
+  mutable Mutex lock_;
   // Stores frame ids, that are currently going from one peer to another. We
   // need to keep them to correctly determine dropped frames and also correctly
   // process frame id overlap.

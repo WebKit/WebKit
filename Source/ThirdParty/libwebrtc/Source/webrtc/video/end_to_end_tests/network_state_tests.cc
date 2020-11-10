@@ -15,6 +15,7 @@
 #include "call/fake_network_pipe.h"
 #include "call/simulated_network.h"
 #include "modules/rtp_rtcp/source/rtp_packet.h"
+#include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/task_queue_for_test.h"
 #include "system_wrappers/include/sleep.h"
 #include "test/call_test.h"
@@ -60,19 +61,19 @@ class NetworkStateEndToEndTest : public test::CallTest {
     bool SendRtp(const uint8_t* packet,
                  size_t length,
                  const PacketOptions& options) override {
-      rtc::CritScope lock(&crit_);
+      MutexLock lock(&mutex_);
       need_rtp_ = false;
       return true;
     }
 
     bool SendRtcp(const uint8_t* packet, size_t length) override {
-      rtc::CritScope lock(&crit_);
+      MutexLock lock(&mutex_);
       need_rtcp_ = false;
       return true;
     }
     bool need_rtp_;
     bool need_rtcp_;
-    rtc::CriticalSection crit_;
+    Mutex mutex_;
   };
   void VerifyNewVideoSendStreamsRespectNetworkState(
       MediaType network_to_bring_up,
@@ -177,7 +178,7 @@ TEST_F(NetworkStateEndToEndTest, RespectsNetworkState) {
           down_frames_(0) {}
 
     Action OnSendRtp(const uint8_t* packet, size_t length) override {
-      rtc::CritScope lock(&test_crit_);
+      MutexLock lock(&test_mutex_);
       RtpPacket rtp_packet;
       EXPECT_TRUE(rtp_packet.Parse(packet, length));
       if (rtp_packet.payload_size() == 0)
@@ -188,7 +189,7 @@ TEST_F(NetworkStateEndToEndTest, RespectsNetworkState) {
     }
 
     Action OnSendRtcp(const uint8_t* packet, size_t length) override {
-      rtc::CritScope lock(&test_crit_);
+      MutexLock lock(&test_mutex_);
       ++sender_rtcp_;
       packet_event_.Set();
       return SEND_PACKET;
@@ -200,7 +201,7 @@ TEST_F(NetworkStateEndToEndTest, RespectsNetworkState) {
     }
 
     Action OnReceiveRtcp(const uint8_t* packet, size_t length) override {
-      rtc::CritScope lock(&test_crit_);
+      MutexLock lock(&test_mutex_);
       ++receiver_rtcp_;
       packet_event_.Set();
       return SEND_PACKET;
@@ -239,7 +240,7 @@ TEST_F(NetworkStateEndToEndTest, RespectsNetworkState) {
         // Sender-side network down.
         sender_call_->SignalChannelNetworkState(MediaType::VIDEO, kNetworkDown);
         {
-          rtc::CritScope lock(&test_crit_);
+          MutexLock lock(&test_mutex_);
           // After network goes down we shouldn't be encoding more frames.
           sender_state_ = kNetworkDown;
         }
@@ -259,7 +260,7 @@ TEST_F(NetworkStateEndToEndTest, RespectsNetworkState) {
 
         // Network back up again for both.
         {
-          rtc::CritScope lock(&test_crit_);
+          MutexLock lock(&test_mutex_);
           // It's OK to encode frames again, as we're about to bring up the
           // network.
           sender_state_ = kNetworkUp;
@@ -277,7 +278,7 @@ TEST_F(NetworkStateEndToEndTest, RespectsNetworkState) {
     int32_t Encode(const VideoFrame& input_image,
                    const std::vector<VideoFrameType>* frame_types) override {
       {
-        rtc::CritScope lock(&test_crit_);
+        MutexLock lock(&test_mutex_);
         if (sender_state_ == kNetworkDown) {
           ++down_frames_;
           EXPECT_LE(down_frames_, 1)
@@ -298,7 +299,7 @@ TEST_F(NetworkStateEndToEndTest, RespectsNetworkState) {
       int initial_sender_rtcp;
       int initial_receiver_rtcp;
       {
-        rtc::CritScope lock(&test_crit_);
+        MutexLock lock(&test_mutex_);
         initial_sender_rtp = sender_rtp_;
         initial_sender_rtcp = sender_rtcp_;
         initial_receiver_rtcp = receiver_rtcp_;
@@ -308,7 +309,7 @@ TEST_F(NetworkStateEndToEndTest, RespectsNetworkState) {
       while (!sender_done || !receiver_done) {
         packet_event_.Wait(kSilenceTimeoutMs);
         int64_t time_now_ms = clock_->TimeInMilliseconds();
-        rtc::CritScope lock(&test_crit_);
+        MutexLock lock(&test_mutex_);
         if (sender_down) {
           ASSERT_LE(sender_rtp_ - initial_sender_rtp - sender_padding_,
                     kNumAcceptedDowntimeRtp)
@@ -340,18 +341,18 @@ TEST_F(NetworkStateEndToEndTest, RespectsNetworkState) {
     }
 
     TaskQueueBase* const task_queue_;
-    rtc::CriticalSection test_crit_;
+    Mutex test_mutex_;
     rtc::Event encoded_frames_;
     rtc::Event packet_event_;
     Call* sender_call_;
     Call* receiver_call_;
     test::VideoEncoderProxyFactory encoder_factory_;
-    NetworkState sender_state_ RTC_GUARDED_BY(test_crit_);
-    int sender_rtp_ RTC_GUARDED_BY(test_crit_);
-    int sender_padding_ RTC_GUARDED_BY(test_crit_);
-    int sender_rtcp_ RTC_GUARDED_BY(test_crit_);
-    int receiver_rtcp_ RTC_GUARDED_BY(test_crit_);
-    int down_frames_ RTC_GUARDED_BY(test_crit_);
+    NetworkState sender_state_ RTC_GUARDED_BY(test_mutex_);
+    int sender_rtp_ RTC_GUARDED_BY(test_mutex_);
+    int sender_padding_ RTC_GUARDED_BY(test_mutex_);
+    int sender_rtcp_ RTC_GUARDED_BY(test_mutex_);
+    int receiver_rtcp_ RTC_GUARDED_BY(test_mutex_);
+    int down_frames_ RTC_GUARDED_BY(test_mutex_);
   } test(task_queue());
 
   RunBaseTest(&test);

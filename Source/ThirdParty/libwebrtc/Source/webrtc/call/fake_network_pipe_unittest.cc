@@ -24,8 +24,10 @@ namespace webrtc {
 
 class MockReceiver : public PacketReceiver {
  public:
-  MOCK_METHOD3(DeliverPacket,
-               DeliveryStatus(MediaType, rtc::CopyOnWriteBuffer, int64_t));
+  MOCK_METHOD(DeliveryStatus,
+              DeliverPacket,
+              (MediaType, rtc::CopyOnWriteBuffer, int64_t),
+              (override));
   virtual ~MockReceiver() = default;
 };
 

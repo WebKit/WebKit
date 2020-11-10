@@ -53,8 +53,8 @@ rtc_library("rtc_event_pacing") {
   deps = [
     "../api:scoped_refptr",
     "../api/rtc_event_log",
-    "//third_party/abseil-cpp/absl/memory",
   ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/memory" ]
 }
 
 rtc_library("rtc_event_audio") {
@@ -75,8 +75,8 @@ rtc_library("rtc_event_audio") {
     "../api/rtc_event_log",
     "../modules/audio_coding:audio_network_adaptor_config",
     "../rtc_base:checks",
-    "//third_party/abseil-cpp/absl/memory",
   ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/memory" ]
 }
 
 rtc_library("rtc_event_bwe") {
@@ -101,6 +101,24 @@ rtc_library("rtc_event_bwe") {
     "../api/rtc_event_log",
     "../api/units:data_rate",
     "../modules/remote_bitrate_estimator",
+  ]
+  absl_deps = [
+    "//third_party/abseil-cpp/absl/memory",
+    "//third_party/abseil-cpp/absl/types:optional",
+  ]
+}
+
+rtc_library("rtc_event_frame_events") {
+  sources = [
+    "rtc_event_log/events/rtc_event_frame_decoded.cc",
+    "rtc_event_log/events/rtc_event_frame_decoded.h",
+  ]
+  deps = [
+    "../api/rtc_event_log",
+    "../api/video:video_frame",
+    "../rtc_base:timeutils",
+  ]
+  absl_deps = [
     "//third_party/abseil-cpp/absl/memory",
     "//third_party/abseil-cpp/absl/types:optional",
   ]
@@ -119,6 +137,8 @@ rtc_library("rtc_event_generic_packet_events") {
   deps = [
     "../api/rtc_event_log",
     "../rtc_base:timeutils",
+  ]
+  absl_deps = [
     "//third_party/abseil-cpp/absl/memory",
     "//third_party/abseil-cpp/absl/types:optional",
   ]
@@ -143,8 +163,8 @@ rtc_library("rtc_event_rtp_rtcp") {
     "../modules/rtp_rtcp:rtp_rtcp_format",
     "../rtc_base:checks",
     "../rtc_base:rtc_base_approved",
-    "//third_party/abseil-cpp/absl/memory",
   ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/memory" ]
 }
 
 rtc_library("rtc_event_video") {
@@ -160,8 +180,8 @@ rtc_library("rtc_event_video") {
     "../api:scoped_refptr",
     "../api/rtc_event_log",
     "../rtc_base:checks",
-    "//third_party/abseil-cpp/absl/memory",
   ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/memory" ]
 }
 
 # TODO(eladalon): Break down into (1) encoder and (2) decoder; we don't need
@@ -187,6 +207,8 @@ rtc_library("rtc_event_log_impl_encoder") {
     "../rtc_base:checks",
     "../rtc_base:ignore_wundef",
     "../rtc_base:rtc_base_approved",
+  ]
+  absl_deps = [
     "//third_party/abseil-cpp/absl/memory",
     "//third_party/abseil-cpp/absl/strings",
     "//third_party/abseil-cpp/absl/types:optional",
@@ -197,6 +219,7 @@ rtc_library("rtc_event_log_impl_encoder") {
       ":ice_log",
       ":rtc_event_audio",
       ":rtc_event_bwe",
+      ":rtc_event_frame_events",
       ":rtc_event_generic_packet_events",
       ":rtc_event_log2_proto",
       ":rtc_event_log_api",
@@ -245,8 +268,9 @@ if (rtc_enable_protobuf) {
       "../rtc_base:rtc_task_queue",
       "../rtc_base:safe_minmax",
       "../rtc_base/synchronization:sequence_checker",
-      "//third_party/abseil-cpp/absl/types:optional",
+      "../rtc_base/system:no_unique_address",
     ]
+    absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
   }
 }
 
@@ -305,6 +329,7 @@ if (rtc_enable_protobuf) {
       "../api/units:data_rate",
       "../api/units:time_delta",
       "../api/units:timestamp",
+      "../api/video:video_frame",
       "../call:video_stream_api",
       "../modules:module_api",
       "../modules:module_api_public",
@@ -318,6 +343,8 @@ if (rtc_enable_protobuf) {
       "../rtc_base:protobuf_utils",
       "../rtc_base:rtc_base_approved",
       "../rtc_base:rtc_numerics",
+    ]
+    absl_deps = [
       "//third_party/abseil-cpp/absl/memory",
       "//third_party/abseil-cpp/absl/types:optional",
     ]
@@ -341,6 +368,7 @@ if (rtc_enable_protobuf) {
         ":ice_log",
         ":rtc_event_audio",
         ":rtc_event_bwe",
+        ":rtc_event_frame_events",
         ":rtc_event_generic_packet_events",
         ":rtc_event_log2_proto",
         ":rtc_event_log_impl_encoder",
@@ -369,6 +397,8 @@ if (rtc_enable_protobuf) {
         "../test:fileutils",
         "../test:test_support",
         "//testing/gtest",
+      ]
+      absl_deps = [
         "//third_party/abseil-cpp/absl/memory",
         "//third_party/abseil-cpp/absl/types:optional",
       ]
@@ -417,8 +447,8 @@ rtc_library("ice_log") {
     "../api:libjingle_peerconnection_api",  # For api/dtls_transport_interface.h
     "../api/rtc_event_log",
     "../rtc_base:rtc_base_approved",
-    "//third_party/abseil-cpp/absl/memory",
   ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/memory" ]
 }
 
 if (rtc_include_tests) {

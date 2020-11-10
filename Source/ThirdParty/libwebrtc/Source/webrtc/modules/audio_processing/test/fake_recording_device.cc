@@ -38,7 +38,7 @@ class FakeRecordingDeviceWorker {
   void set_mic_level(const int level) { mic_level_ = level; }
   void set_undo_mic_level(const int level) { undo_mic_level_ = level; }
   virtual ~FakeRecordingDeviceWorker() = default;
-  virtual void ModifyBufferInt16(AudioFrame* buffer) = 0;
+  virtual void ModifyBufferInt16(rtc::ArrayView<int16_t> buffer) = 0;
   virtual void ModifyBufferFloat(ChannelBuffer<float>* buffer) = 0;
 
  protected:
@@ -57,7 +57,7 @@ class FakeRecordingDeviceIdentity final : public FakeRecordingDeviceWorker {
   explicit FakeRecordingDeviceIdentity(const int initial_mic_level)
       : FakeRecordingDeviceWorker(initial_mic_level) {}
   ~FakeRecordingDeviceIdentity() override = default;
-  void ModifyBufferInt16(AudioFrame* buffer) override {}
+  void ModifyBufferInt16(rtc::ArrayView<int16_t> buffer) override {}
   void ModifyBufferFloat(ChannelBuffer<float>* buffer) override {}
 };
 
@@ -68,10 +68,9 @@ class FakeRecordingDeviceLinear final : public FakeRecordingDeviceWorker {
   explicit FakeRecordingDeviceLinear(const int initial_mic_level)
       : FakeRecordingDeviceWorker(initial_mic_level) {}
   ~FakeRecordingDeviceLinear() override = default;
-  void ModifyBufferInt16(AudioFrame* buffer) override {
-    const size_t number_of_samples =
-        buffer->samples_per_channel_ * buffer->num_channels_;
-    int16_t* data = buffer->mutable_data();
+  void ModifyBufferInt16(rtc::ArrayView<int16_t> buffer) override {
+    const size_t number_of_samples = buffer.size();
+    int16_t* data = buffer.data();
     // If an undo level is specified, virtually restore the unmodified
     // microphone level; otherwise simulate the mic gain only.
     const float divisor =
@@ -111,12 +110,11 @@ class FakeRecordingDeviceAgc1 final : public FakeRecordingDeviceWorker {
   explicit FakeRecordingDeviceAgc1(const int initial_mic_level)
       : FakeRecordingDeviceWorker(initial_mic_level) {}
   ~FakeRecordingDeviceAgc1() override = default;
-  void ModifyBufferInt16(AudioFrame* buffer) override {
+  void ModifyBufferInt16(rtc::ArrayView<int16_t> buffer) override {
     const float scaling_factor =
         ComputeAgc1LinearFactor(undo_mic_level_, mic_level_);
-    const size_t number_of_samples =
-        buffer->samples_per_channel_ * buffer->num_channels_;
-    int16_t* data = buffer->mutable_data();
+    const size_t number_of_samples = buffer.size();
+    int16_t* data = buffer.data();
     for (size_t i = 0; i < number_of_samples; ++i) {
       data[i] = rtc::saturated_cast<int16_t>(data[i] * scaling_factor);
     }
@@ -178,7 +176,7 @@ void FakeRecordingDevice::SetUndoMicLevel(const int level) {
   worker_->set_undo_mic_level(level);
 }
 
-void FakeRecordingDevice::SimulateAnalogGain(AudioFrame* buffer) {
+void FakeRecordingDevice::SimulateAnalogGain(rtc::ArrayView<int16_t> buffer) {
   RTC_DCHECK(worker_);
   worker_->ModifyBufferInt16(buffer);
 }

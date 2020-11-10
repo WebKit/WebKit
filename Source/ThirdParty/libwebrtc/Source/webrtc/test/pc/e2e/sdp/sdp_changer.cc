@@ -28,7 +28,7 @@ using VideoCodecConfig = PeerConnectionE2EQualityTestFixture::VideoCodecConfig;
 std::string CodecRequiredParamsToString(
     const std::map<std::string, std::string>& codec_required_params) {
   rtc::StringBuilder out;
-  for (auto entry : codec_required_params) {
+  for (const auto& entry : codec_required_params) {
     out << entry.first << "=" << entry.second << ";";
   }
   return out.str();
@@ -47,7 +47,7 @@ std::vector<RtpCodecCapability> FilterVideoCodecCapabilities(
     RTC_LOG(INFO) << "Codec: " << codec.name;
     if (!codec.parameters.empty()) {
       RTC_LOG(INFO) << "Params:";
-      for (auto param : codec.parameters) {
+      for (const auto& param : codec.parameters) {
         RTC_LOG(INFO) << "  " << param.first << "=" << param.second;
       }
     }
@@ -62,7 +62,7 @@ std::vector<RtpCodecCapability> FilterVideoCodecCapabilities(
         continue;
       }
       bool parameters_matched = true;
-      for (auto item : codec_request.required_params) {
+      for (const auto& item : codec_request.required_params) {
         auto it = codec.parameters.find(item.first);
         if (it == codec.parameters.end()) {
           parameters_matched = false;
@@ -131,7 +131,7 @@ void SignalingInterceptor::FillSimulcastContext(
       media_desc->set_simulcast_description(simulcast_description);
 
       info.simulcast_description = media_desc->simulcast_description();
-      for (auto extension : media_desc->rtp_header_extensions()) {
+      for (const auto& extension : media_desc->rtp_header_extensions()) {
         if (extension.uri == RtpExtension::kMidUri) {
           info.mid_extension = extension;
         } else if (extension.uri == RtpExtension::kRidUri) {
@@ -443,7 +443,7 @@ LocalAndRemoteSdp SignalingInterceptor::PatchVp8Answer(
     // but it have to have receive layers instead of send. So we need to put
     // send layers from offer to receive layers in answer.
     cricket::SimulcastDescription simulcast_description;
-    for (auto layer : info.simulcast_description.send_layers()) {
+    for (const auto& layer : info.simulcast_description.send_layers()) {
       simulcast_description.receive_layers().AddLayerWithAlternatives(layer);
     }
     media_desc->set_simulcast_description(simulcast_description);

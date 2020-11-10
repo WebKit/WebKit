@@ -42,7 +42,7 @@ TEST_P(ResidualEchoEstimatorMultiChannel, BasicTest) {
   std::unique_ptr<RenderDelayBuffer> render_delay_buffer(
       RenderDelayBuffer::Create(config, kSampleRateHz, num_render_channels));
 
-  std::vector<std::array<float, kFftLengthBy2Plus1>> E2_main(
+  std::vector<std::array<float, kFftLengthBy2Plus1>> E2_refined(
       num_capture_channels);
   std::vector<std::array<float, kFftLengthBy2Plus1>> S2_linear(
       num_capture_channels);
@@ -69,18 +69,18 @@ TEST_P(ResidualEchoEstimatorMultiChannel, BasicTest) {
 
   std::vector<std::vector<float>> h(
       num_capture_channels,
-      std::vector<float>(GetTimeDomainLength(config.filter.main.length_blocks),
-                         0.f));
+      std::vector<float>(
+          GetTimeDomainLength(config.filter.refined.length_blocks), 0.f));
 
   for (auto& subtractor_output : output) {
     subtractor_output.Reset();
-    subtractor_output.s_main.fill(100.f);
+    subtractor_output.s_refined.fill(100.f);
   }
   y.fill(0.f);
 
   constexpr float kLevel = 10.f;
-  for (auto& E2_main_ch : E2_main) {
-    E2_main_ch.fill(kLevel);
+  for (auto& E2_refined_ch : E2_refined) {
+    E2_refined_ch.fill(kLevel);
   }
   S2_linear[0].fill(kLevel);
   for (auto& Y2_ch : Y2) {
@@ -96,7 +96,7 @@ TEST_P(ResidualEchoEstimatorMultiChannel, BasicTest) {
     render_delay_buffer->PrepareCaptureProcessing();
 
     aec_state.Update(delay_estimate, H2, h,
-                     *render_delay_buffer->GetRenderBuffer(), E2_main, Y2,
+                     *render_delay_buffer->GetRenderBuffer(), E2_refined, Y2,
                      output);
 
     estimator.Estimate(aec_state, *render_delay_buffer->GetRenderBuffer(),

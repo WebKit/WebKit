@@ -1,17 +1,17 @@
-//
-//  Copyright (c) 2020 The WebRTC project authors. All Rights Reserved.
-//
-//  Use of this source code is governed by a BSD-style license
-//  that can be found in the LICENSE file in the root of the source
-//  tree. An additional intellectual property rights grant can be found
-//  in the file PATENTS.  All contributing project authors may
-//  be found in the AUTHORS file in the root of the source tree.
-//
+/*
+ *  Copyright (c) 2020 The WebRTC project authors. All Rights Reserved.
+ *
+ *  Use of this source code is governed by a BSD-style license
+ *  that can be found in the LICENSE file in the root of the source
+ *  tree. An additional intellectual property rights grant can be found
+ *  in the file PATENTS.  All contributing project authors may
+ *  be found in the AUTHORS file in the root of the source tree.
+ */
 
 #ifndef API_VOIP_VOIP_BASE_H_
 #define API_VOIP_VOIP_BASE_H_
 
-#include "third_party/absl/types/optional.h"
+#include "absl/types/optional.h"
 
 namespace webrtc {
 
@@ -51,13 +51,11 @@ class VoipBase {
       Transport* transport,
       absl::optional<uint32_t> local_ssrc) = 0;
 
-  // Releases |channel_id| that has served the purpose.
-  // Released channel will be re-allocated again that invoking operations
-  // on released |channel_id| will lead to undefined behavior.
+  // Releases |channel_id| that no longer has any use.
   virtual void ReleaseChannel(ChannelId channel_id) = 0;
 
-  // Starts sending on |channel_id|. This will start microphone if first to
-  // start. Returns false if initialization has failed on selected microphone
+  // Starts sending on |channel_id|. This will start microphone if not started
+  // yet. Returns false if initialization has failed on selected microphone
   // device. API is subject to expand to reflect error condition to application
   // later.
   virtual bool StartSend(ChannelId channel_id) = 0;

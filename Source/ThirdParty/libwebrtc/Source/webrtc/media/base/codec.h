@@ -67,6 +67,8 @@ struct RTC_EXPORT Codec {
   int id;
   std::string name;
   int clockrate;
+  // Non key-value parameters such as the telephone-event "0‐15" are
+  // represented using an empty string as key, i.e. {"": "0-15"}.
   CodecParameterMap params;
   FeedbackParams feedback_params;
 
@@ -242,6 +244,9 @@ RTC_EXPORT bool IsSameCodec(const std::string& name1,
                             const CodecParameterMap& params1,
                             const std::string& name2,
                             const CodecParameterMap& params2);
+
+RTC_EXPORT void AddH264ConstrainedBaselineProfileToSupportedFormats(
+    std::vector<webrtc::SdpVideoFormat>* supported_formats);
 
 }  // namespace cricket
 

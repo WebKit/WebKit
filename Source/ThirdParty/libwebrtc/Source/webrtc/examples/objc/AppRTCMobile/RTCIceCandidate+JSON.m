@@ -19,24 +19,24 @@ static NSString const *kRTCICECandidateMLineIndexKey = @"label";
 static NSString const *kRTCICECandidateSdpKey = @"candidate";
 static NSString const *kRTCICECandidatesTypeKey = @"candidates";
 
+@implementation RTC_OBJC_TYPE (RTCIceCandidate)
+(JSON)
 
-@implementation RTCIceCandidate (JSON)
-
-+ (RTCIceCandidate *)candidateFromJSONDictionary:(NSDictionary *)dictionary {
+    + (RTC_OBJC_TYPE(RTCIceCandidate) *)candidateFromJSONDictionary : (NSDictionary *)dictionary {
   NSString *mid = dictionary[kRTCICECandidateMidKey];
   NSString *sdp = dictionary[kRTCICECandidateSdpKey];
   NSNumber *num = dictionary[kRTCICECandidateMLineIndexKey];
   NSInteger mLineIndex = [num integerValue];
-  return [[RTCIceCandidate alloc] initWithSdp:sdp
-                                sdpMLineIndex:mLineIndex
-                                       sdpMid:mid];
+  return [[RTC_OBJC_TYPE(RTCIceCandidate) alloc] initWithSdp:sdp
+                                               sdpMLineIndex:mLineIndex
+                                                      sdpMid:mid];
 }
 
-+ (NSData *)JSONDataForIceCandidates:(NSArray<RTCIceCandidate *> *)candidates
++ (NSData *)JSONDataForIceCandidates:(NSArray<RTC_OBJC_TYPE(RTCIceCandidate) *> *)candidates
                             withType:(NSString *)typeValue {
   NSMutableArray *jsonCandidates =
       [NSMutableArray arrayWithCapacity:candidates.count];
-  for (RTCIceCandidate *candidate in candidates) {
+  for (RTC_OBJC_TYPE(RTCIceCandidate) * candidate in candidates) {
     NSDictionary *jsonCandidate = [candidate JSONDictionary];
     [jsonCandidates addObject:jsonCandidate];
   }
@@ -56,14 +56,14 @@ static NSString const *kRTCICECandidatesTypeKey = @"candidates";
   return data;
 }
 
-+ (NSArray<RTCIceCandidate *> *)candidatesFromJSONDictionary:
++ (NSArray<RTC_OBJC_TYPE(RTCIceCandidate) *> *)candidatesFromJSONDictionary:
     (NSDictionary *)dictionary {
   NSArray *jsonCandidates = dictionary[kRTCICECandidatesTypeKey];
-  NSMutableArray<RTCIceCandidate *> *candidates =
+  NSMutableArray<RTC_OBJC_TYPE(RTCIceCandidate) *> *candidates =
       [NSMutableArray arrayWithCapacity:jsonCandidates.count];
   for (NSDictionary *jsonCandidate in jsonCandidates) {
-    RTCIceCandidate *candidate =
-        [RTCIceCandidate candidateFromJSONDictionary:jsonCandidate];
+    RTC_OBJC_TYPE(RTCIceCandidate) *candidate =
+        [RTC_OBJC_TYPE(RTCIceCandidate) candidateFromJSONDictionary:jsonCandidate];
     [candidates addObject:candidate];
   }
   return candidates;

@@ -70,46 +70,59 @@ int32_t FakeVp8Encoder::Release() {
   return result;
 }
 
-void FakeVp8Encoder::PopulateCodecSpecific(CodecSpecificInfo* codec_specific,
-                                           size_t size_bytes,
-                                           VideoFrameType frame_type,
-                                           int stream_idx,
-                                           uint32_t timestamp) {
+CodecSpecificInfo FakeVp8Encoder::PopulateCodecSpecific(
+    size_t size_bytes,
+    VideoFrameType frame_type,
+    int stream_idx,
+    uint32_t timestamp) {
   RTC_DCHECK_RUN_ON(&sequence_checker_);
-  codec_specific->codecType = kVideoCodecVP8;
-  codec_specific->codecSpecific.VP8.keyIdx = kNoKeyIdx;
-  codec_specific->codecSpecific.VP8.nonReference = false;
+  CodecSpecificInfo codec_specific;
+  codec_specific.codecType = kVideoCodecVP8;
+  codec_specific.codecSpecific.VP8.keyIdx = kNoKeyIdx;
+  codec_specific.codecSpecific.VP8.nonReference = false;
   if (size_bytes > 0) {
     frame_buffer_controller_->OnEncodeDone(
         stream_idx, timestamp, size_bytes,
-        frame_type == VideoFrameType::kVideoFrameKey, -1, codec_specific);
+        frame_type == VideoFrameType::kVideoFrameKey, -1, &codec_specific);
   } else {
     frame_buffer_controller_->OnFrameDropped(stream_idx, timestamp);
   }
+  return codec_specific;
 }
 
-std::unique_ptr<RTPFragmentationHeader> FakeVp8Encoder::EncodeHook(
-    EncodedImage* encoded_image,
-    CodecSpecificInfo* codec_specific) {
+CodecSpecificInfo FakeVp8Encoder::EncodeHook(
+    EncodedImage& encoded_image,
+    rtc::scoped_refptr<EncodedImageBuffer> buffer) {
   RTC_DCHECK_RUN_ON(&sequence_checker_);
-  uint8_t stream_idx = encoded_image->SpatialIndex().value_or(0);
+  uint8_t stream_idx = encoded_image.SpatialIndex().value_or(0);
   frame_buffer_controller_->NextFrameConfig(stream_idx,
-                                            encoded_image->Timestamp());
-  PopulateCodecSpecific(codec_specific, encoded_image->size(),
-                        encoded_image->_frameType, stream_idx,
-                        encoded_image->Timestamp());
+                                            encoded_image.Timestamp());
+  CodecSpecificInfo codec_specific =
+      PopulateCodecSpecific(encoded_image.size(), encoded_image._frameType,
+                            stream_idx, encoded_image.Timestamp());
 
   // Write width and height to the payload the same way as the real encoder
   // does.
-  WriteFakeVp8(encoded_image->data(), encoded_image->_encodedWidth,
-               encoded_image->_encodedHeight,
-               encoded_image->_frameType == VideoFrameType::kVideoFrameKey);
-  return nullptr;
+  WriteFakeVp8(buffer->data(), encoded_image._encodedWidth,
+               encoded_image._encodedHeight,
+               encoded_image._frameType == VideoFrameType::kVideoFrameKey);
+  return codec_specific;
 }
 
 VideoEncoder::EncoderInfo FakeVp8Encoder::GetEncoderInfo() const {
   EncoderInfo info;
   info.implementation_name = "FakeVp8Encoder";
+  MutexLock lock(&mutex_);
+  for (int sid = 0; sid < config_.numberOfSimulcastStreams; ++sid) {
+    int number_of_temporal_layers =
+        config_.simulcastStream[sid].numberOfTemporalLayers;
+    info.fps_allocation[sid].clear();
+    for (int tid = 0; tid < number_of_temporal_layers; ++tid) {
+      // {1/4, 1/2, 1} allocation for num layers = 3.
+      info.fps_allocation[sid].push_back(255 /
+                                         (number_of_temporal_layers - tid));
+    }
+  }
   return info;
 }
 

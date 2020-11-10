@@ -73,6 +73,7 @@ rtc_library("audio_device_buffer") {
     "../../rtc_base:checks",
     "../../rtc_base:rtc_base_approved",
     "../../rtc_base:rtc_task_queue",
+    "../../rtc_base/synchronization:mutex",
     "../../system_wrappers",
     "../../system_wrappers:metrics",
   ]
@@ -111,6 +112,8 @@ rtc_source_set("windows_core_audio_utility") {
       "../../rtc_base:checks",
       "../../rtc_base:rtc_base_approved",
     ]
+
+    libs = [ "oleaut32.lib" ]
   }
 }
 
@@ -144,8 +147,8 @@ rtc_source_set("audio_device_module_from_input_and_output") {
       "../../api/task_queue",
       "../../rtc_base:checks",
       "../../rtc_base:rtc_base_approved",
-      "//third_party/abseil-cpp/absl/types:optional",
     ]
+    absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
   }
 }
 
@@ -169,6 +172,7 @@ rtc_library("audio_device_impl") {
     "../../rtc_base:deprecation",
     "../../rtc_base:rtc_base_approved",
     "../../rtc_base:rtc_task_queue",
+    "../../rtc_base/synchronization:mutex",
     "../../rtc_base/system:arch",
     "../../rtc_base/system:file_wrapper",
     "../../rtc_base/task_utils:repeating_task",
@@ -259,7 +263,7 @@ rtc_library("audio_device_impl") {
     if (rtc_use_dummy_audio_file_devices) {
       defines += [ "WEBRTC_DUMMY_FILE_DEVICES" ]
     } else {
-      if (is_linux) {
+      if (is_linux || is_chromeos) {
         sources += [
           "linux/alsasymboltable_linux.cc",
           "linux/alsasymboltable_linux.h",
@@ -270,23 +274,23 @@ rtc_library("audio_device_impl") {
           "linux/latebindingsymboltable_linux.cc",
           "linux/latebindingsymboltable_linux.h",
         ]
-        defines += [ "LINUX_ALSA" ]
+        defines += [ "WEBRTC_ENABLE_LINUX_ALSA" ]
         libs = [ "dl" ]
         if (rtc_use_x11) {
           libs += [ "X11" ]
           defines += [ "WEBRTC_USE_X11" ]
         }
         if (rtc_include_pulse_audio) {
-          sources += [
-            "linux/audio_device_pulse_linux.cc",
-            "linux/audio_device_pulse_linux.h",
-            "linux/audio_mixer_manager_pulse_linux.cc",
-            "linux/audio_mixer_manager_pulse_linux.h",
-            "linux/pulseaudiosymboltable_linux.cc",
-            "linux/pulseaudiosymboltable_linux.h",
-          ]
-          defines += [ "LINUX_PULSE" ]
+          defines += [ "WEBRTC_ENABLE_LINUX_PULSE" ]
         }
+        sources += [
+          "linux/audio_device_pulse_linux.cc",
+          "linux/audio_device_pulse_linux.h",
+          "linux/audio_mixer_manager_pulse_linux.cc",
+          "linux/audio_mixer_manager_pulse_linux.h",
+          "linux/pulseaudiosymboltable_linux.cc",
+          "linux/pulseaudiosymboltable_linux.h",
+        ]
       }
       if (is_mac) {
         sources += [
@@ -311,7 +315,9 @@ rtc_library("audio_device_impl") {
           "wmcodecdspuuid.lib",
           "amstrmid.lib",
           "msdmo.lib",
+          "oleaut32.lib",
         ]
+        deps += [ "../../rtc_base:win32" ]
       }
       configs += [ ":audio_device_warnings_config" ]
     }
@@ -331,7 +337,7 @@ rtc_library("audio_device_impl") {
 if (is_mac) {
   rtc_source_set("audio_device_impl_frameworks") {
     visibility = [ ":*" ]
-    libs = [
+    frameworks = [
       # Needed for CoreGraphics:
       "ApplicationServices.framework",
 
@@ -381,13 +387,14 @@ if (rtc_include_tests) {
       "../../rtc_base:checks",
       "../../rtc_base:ignore_wundef",
       "../../rtc_base:rtc_base_approved",
+      "../../rtc_base/synchronization:mutex",
       "../../system_wrappers",
       "../../test:fileutils",
       "../../test:test_support",
       "../utility",
-      "//third_party/abseil-cpp/absl/types:optional",
     ]
-    if (is_linux || is_mac || is_win) {
+    absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
+    if (is_linux || is_chromeos || is_mac || is_win) {
       sources += [ "audio_device_unittest.cc" ]
     }
     if (is_win) {

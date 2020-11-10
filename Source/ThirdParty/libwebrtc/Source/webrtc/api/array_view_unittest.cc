@@ -38,7 +38,7 @@ void CallFixed(ArrayView<T, N> av) {}
 
 }  // namespace
 
-TEST(ArrayViewTest, TestConstructFromPtrAndArray) {
+TEST(ArrayViewDeathTest, TestConstructFromPtrAndArray) {
   char arr[] = "Arrr!";
   const char carr[] = "Carrr!";
   EXPECT_EQ(6u, Call<const char>(arr));
@@ -409,7 +409,7 @@ TEST(FixArrayViewTest, TestSwapFixed) {
   // swap(x, w);  // Compile error, because different sizes.
 }
 
-TEST(ArrayViewTest, TestIndexing) {
+TEST(ArrayViewDeathTest, TestIndexing) {
   char arr[] = "abcdefg";
   ArrayView<char> x(arr);
   const ArrayView<char> y(arr);

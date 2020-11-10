@@ -14,7 +14,7 @@
 #include <stddef.h>
 #include <stdio.h>
 
-#include "rtc_base/critical_section.h"
+#include <string>
 
 // Implementation that can read (exclusive) or write from/to a file.
 
@@ -65,6 +65,12 @@ class FileWrapper final {
   // writing buffered data fails. On failure, the file is nevertheless closed.
   // Calling Close on an already closed file does nothing and returns success.
   bool Close();
+
+  // Releases and returns the wrapped file without closing it. This call passes
+  // the ownership of the file to the caller, and the wrapper is no longer
+  // responsible for closing it. Similarly the previously wrapped file is no
+  // longer available for the wrapper to use in any aspect.
+  FILE* Release();
 
   // Write any buffered data to the underlying file. Returns true on success,
   // false on write error. Note: Flushing when closing, is not required.

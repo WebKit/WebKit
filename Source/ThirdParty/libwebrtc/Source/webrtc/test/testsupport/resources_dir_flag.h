@@ -13,7 +13,7 @@
 #ifndef TEST_TESTSUPPORT_RESOURCES_DIR_FLAG_H__
 #define TEST_TESTSUPPORT_RESOURCES_DIR_FLAG_H__
 
-#include "absl/flags/flag.h"
+#include "absl/flags/declare.h"
 
 ABSL_DECLARE_FLAG(std::string, resources_dir);
 

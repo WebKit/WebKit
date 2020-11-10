@@ -66,46 +66,7 @@ constexpr int kOpusSupportedFrameLengths[] = {10, 20, 40, 60};
 // PacketLossFractionSmoother uses an exponential filter with a time constant
 // of -1.0 / ln(0.9999) = 10000 ms.
 constexpr float kAlphaForPacketLossFractionSmoother = 0.9999f;
-
-// Optimize the loss rate to configure Opus. Basically, optimized loss rate is
-// the input loss rate rounded down to various levels, because a robustly good
-// audio quality is achieved by lowering the packet loss down.
-// Additionally, to prevent toggling, margins are used, i.e., when jumping to
-// a loss rate from below, a higher threshold is used than jumping to the same
-// level from above.
-float OptimizePacketLossRate(float new_loss_rate, float old_loss_rate) {
-  RTC_DCHECK_GE(new_loss_rate, 0.0f);
-  RTC_DCHECK_LE(new_loss_rate, 1.0f);
-  RTC_DCHECK_GE(old_loss_rate, 0.0f);
-  RTC_DCHECK_LE(old_loss_rate, 1.0f);
-  constexpr float kPacketLossRate20 = 0.20f;
-  constexpr float kPacketLossRate10 = 0.10f;
-  constexpr float kPacketLossRate5 = 0.05f;
-  constexpr float kPacketLossRate1 = 0.01f;
-  constexpr float kLossRate20Margin = 0.02f;
-  constexpr float kLossRate10Margin = 0.01f;
-  constexpr float kLossRate5Margin = 0.01f;
-  if (new_loss_rate >=
-      kPacketLossRate20 +
-          kLossRate20Margin *
-              (kPacketLossRate20 - old_loss_rate > 0 ? 1 : -1)) {
-    return kPacketLossRate20;
-  } else if (new_loss_rate >=
-             kPacketLossRate10 +
-                 kLossRate10Margin *
-                     (kPacketLossRate10 - old_loss_rate > 0 ? 1 : -1)) {
-    return kPacketLossRate10;
-  } else if (new_loss_rate >=
-             kPacketLossRate5 +
-                 kLossRate5Margin *
-                     (kPacketLossRate5 - old_loss_rate > 0 ? 1 : -1)) {
-    return kPacketLossRate5;
-  } else if (new_loss_rate >= kPacketLossRate1) {
-    return kPacketLossRate1;
-  } else {
-    return 0.0f;
-  }
-}
+constexpr float kMaxPacketLossFraction = 0.2f;
 
 int CalculateDefaultBitrate(int max_playback_rate, size_t num_channels) {
   const int bitrate = [&] {
@@ -201,61 +162,6 @@ int GetBitrateBps(const AudioEncoderOpusConfig& config) {
   return *config.bitrate_bps;
 }
 
-bool IsValidPacketLossRate(int value) {
-  return value >= 0 && value <= 100;
-}
-
-float ToFraction(int percent) {
-  return static_cast<float>(percent) / 100;
-}
-
-float GetMinPacketLossRate() {
-  constexpr char kPacketLossFieldTrial[] = "WebRTC-Audio-OpusMinPacketLossRate";
-  const bool use_opus_min_packet_loss_rate =
-      webrtc::field_trial::IsEnabled(kPacketLossFieldTrial);
-  if (use_opus_min_packet_loss_rate) {
-    const std::string field_trial_string =
-        webrtc::field_trial::FindFullName(kPacketLossFieldTrial);
-    constexpr int kDefaultMinPacketLossRate = 1;
-    int value = kDefaultMinPacketLossRate;
-    if (sscanf(field_trial_string.c_str(), "Enabled-%d", &value) == 1 &&
-        !IsValidPacketLossRate(value)) {
-      RTC_LOG(LS_WARNING) << "Invalid parameter for " << kPacketLossFieldTrial
-                          << ", using default value: "
-                          << kDefaultMinPacketLossRate;
-      value = kDefaultMinPacketLossRate;
-    }
-    return ToFraction(value);
-  }
-  return 0.0;
-}
-
-std::unique_ptr<AudioEncoderOpusImpl::NewPacketLossRateOptimizer>
-GetNewPacketLossRateOptimizer() {
-  constexpr char kPacketLossOptimizationName[] =
-      "WebRTC-Audio-NewOpusPacketLossRateOptimization";
-  const bool use_new_packet_loss_optimization =
-      webrtc::field_trial::IsEnabled(kPacketLossOptimizationName);
-  if (use_new_packet_loss_optimization) {
-    const std::string field_trial_string =
-        webrtc::field_trial::FindFullName(kPacketLossOptimizationName);
-    int min_rate;
-    int max_rate;
-    float slope;
-    if (sscanf(field_trial_string.c_str(), "Enabled-%d-%d-%f", &min_rate,
-               &max_rate, &slope) == 3 &&
-        IsValidPacketLossRate(min_rate) && IsValidPacketLossRate(max_rate)) {
-      return std::make_unique<AudioEncoderOpusImpl::NewPacketLossRateOptimizer>(
-          ToFraction(min_rate), ToFraction(max_rate), slope);
-    }
-    RTC_LOG(LS_WARNING) << "Invalid parameters for "
-                        << kPacketLossOptimizationName
-                        << ", using default values.";
-    return std::make_unique<AudioEncoderOpusImpl::NewPacketLossRateOptimizer>();
-  }
-  return nullptr;
-}
-
 std::vector<float> GetBitrateMultipliers() {
   constexpr char kBitrateMultipliersName[] =
       "WebRTC-Audio-OpusBitrateMultipliers";
@@ -297,21 +203,6 @@ int GetMultipliedBitrate(int bitrate, const std::vector<float>& multipliers) {
   return static_cast<int>(multipliers[bitrate_kbps - 5] * bitrate);
 }
 }  // namespace
-
-AudioEncoderOpusImpl::NewPacketLossRateOptimizer::NewPacketLossRateOptimizer(
-    float min_packet_loss_rate,
-    float max_packet_loss_rate,
-    float slope)
-    : min_packet_loss_rate_(min_packet_loss_rate),
-      max_packet_loss_rate_(max_packet_loss_rate),
-      slope_(slope) {}
-
-float AudioEncoderOpusImpl::NewPacketLossRateOptimizer::OptimizePacketLossRate(
-    float packet_loss_rate) const {
-  packet_loss_rate = slope_ * packet_loss_rate;
-  return std::min(std::max(packet_loss_rate, min_packet_loss_rate_),
-                  max_packet_loss_rate_);
-}
 
 void AudioEncoderOpusImpl::AppendSupportedEncoders(
     std::vector<AudioCodecSpec>* specs) {
@@ -466,20 +357,17 @@ AudioEncoderOpusImpl::AudioEncoderOpusImpl(
     : payload_type_(payload_type),
       send_side_bwe_with_overhead_(
           webrtc::field_trial::IsEnabled("WebRTC-SendSideBwe-WithOverhead")),
-      use_stable_target_for_adaptation_(webrtc::field_trial::IsEnabled(
+      use_stable_target_for_adaptation_(!webrtc::field_trial::IsDisabled(
           "WebRTC-Audio-StableTargetAdaptation")),
       adjust_bandwidth_(
           webrtc::field_trial::IsEnabled("WebRTC-AdjustOpusBandwidth")),
       bitrate_changed_(true),
       bitrate_multipliers_(GetBitrateMultipliers()),
       packet_loss_rate_(0.0),
-      min_packet_loss_rate_(GetMinPacketLossRate()),
-      new_packet_loss_optimizer_(GetNewPacketLossRateOptimizer()),
       inst_(nullptr),
       packet_loss_fraction_smoother_(new PacketLossFractionSmoother()),
       audio_network_adaptor_creator_(audio_network_adaptor_creator),
-      bitrate_smoother_(std::move(bitrate_smoother)),
-      consecutive_dtx_frames_(0) {
+      bitrate_smoother_(std::move(bitrate_smoother)) {
   RTC_DCHECK(0 <= payload_type && payload_type <= 127);
 
   // Sanity check of the redundant payload type field that we want to get rid
@@ -583,14 +471,14 @@ void AudioEncoderOpusImpl::DisableAudioNetworkAdaptor() {
 
 void AudioEncoderOpusImpl::OnReceivedUplinkPacketLossFraction(
     float uplink_packet_loss_fraction) {
-  if (!audio_network_adaptor_) {
-    packet_loss_fraction_smoother_->AddSample(uplink_packet_loss_fraction);
-    float average_fraction_loss = packet_loss_fraction_smoother_->GetAverage();
-    return SetProjectedPacketLossRate(average_fraction_loss);
+  if (audio_network_adaptor_) {
+    audio_network_adaptor_->SetUplinkPacketLossFraction(
+        uplink_packet_loss_fraction);
+    ApplyAudioNetworkAdaptor();
   }
-  audio_network_adaptor_->SetUplinkPacketLossFraction(
-      uplink_packet_loss_fraction);
-  ApplyAudioNetworkAdaptor();
+  packet_loss_fraction_smoother_->AddSample(uplink_packet_loss_fraction);
+  float average_fraction_loss = packet_loss_fraction_smoother_->GetAverage();
+  SetProjectedPacketLossRate(average_fraction_loss);
 }
 
 void AudioEncoderOpusImpl::OnReceivedTargetAudioBitrate(
@@ -701,6 +589,7 @@ AudioEncoder::EncodedInfo AudioEncoderOpusImpl::EncodeImpl(
                Num10msFramesPerPacket() * SamplesPer10msFrame());
 
   const size_t max_encoded_bytes = SufficientOutputBufferSize();
+  const size_t start_offset_bytes = encoded->size();
   EncodedInfo info;
   info.encoded_bytes = encoded->AppendData(
       max_encoded_bytes, [&](rtc::ArrayView<uint8_t> encoded) {
@@ -714,8 +603,6 @@ AudioEncoder::EncodedInfo AudioEncoderOpusImpl::EncodeImpl(
         return static_cast<size_t>(status);
       });
   input_buffer_.clear();
-
-  bool dtx_frame = (info.encoded_bytes <= 2);
 
   // Will use new packet size for next encoding.
   config_.frame_size_ms = next_frame_length_ms_;
@@ -731,14 +618,18 @@ AudioEncoder::EncodedInfo AudioEncoderOpusImpl::EncodeImpl(
   info.encoded_timestamp = first_timestamp_in_buffer_;
   info.payload_type = payload_type_;
   info.send_even_if_empty = true;  // Allows Opus to send empty packets.
-  // After 20 DTX frames (MAX_CONSECUTIVE_DTX) Opus will send a frame
-  // coding the background noise. Avoid flagging this frame as speech
-  // (even though there is a probability of the frame being speech).
-  info.speech = !dtx_frame && (consecutive_dtx_frames_ != 20);
   info.encoder_type = CodecType::kOpus;
 
-  // Increase or reset DTX counter.
-  consecutive_dtx_frames_ = (dtx_frame) ? (consecutive_dtx_frames_ + 1) : (0);
+  // Extract the VAD result from the encoded packet.
+  int has_voice = WebRtcOpus_PacketHasVoiceActivity(
+      &encoded->data()[start_offset_bytes], info.encoded_bytes);
+  if (has_voice == -1) {
+    // CELT mode packet or there was an error. This had set the speech flag to
+    // true historically.
+    info.speech = true;
+  } else {
+    info.speech = has_voice;
+  }
 
   return info;
 }
@@ -831,12 +722,7 @@ void AudioEncoderOpusImpl::SetNumChannelsToEncode(
 }
 
 void AudioEncoderOpusImpl::SetProjectedPacketLossRate(float fraction) {
-  if (new_packet_loss_optimizer_) {
-    fraction = new_packet_loss_optimizer_->OptimizePacketLossRate(fraction);
-  } else {
-    fraction = OptimizePacketLossRate(fraction, packet_loss_rate_);
-    fraction = std::max(fraction, min_packet_loss_rate_);
-  }
+  fraction = std::min(std::max(fraction, 0.0f), kMaxPacketLossFraction);
   if (packet_loss_rate_ != fraction) {
     packet_loss_rate_ = fraction;
     RTC_CHECK_EQ(
@@ -874,10 +760,6 @@ void AudioEncoderOpusImpl::ApplyAudioNetworkAdaptor() {
     SetTargetBitrate(*config.bitrate_bps);
   if (config.frame_length_ms)
     SetFrameLength(*config.frame_length_ms);
-  if (config.enable_fec)
-    SetFec(*config.enable_fec);
-  if (config.uplink_packet_loss_fraction)
-    SetProjectedPacketLossRate(*config.uplink_packet_loss_fraction);
   if (config.enable_dtx)
     SetDtx(*config.enable_dtx);
   if (config.num_channels)

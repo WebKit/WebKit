@@ -33,6 +33,8 @@ class QualityRampupExperiment final {
   // (max_bitrate_factor_) above |max_bitrate_kbps_| for |min_duration_ms_|.
   bool BwHigh(int64_t now_ms, uint32_t available_bw_kbps);
 
+  bool Enabled() const;
+
  private:
   explicit QualityRampupExperiment(
       const WebRtcKeyValueConfig* const key_value_config);

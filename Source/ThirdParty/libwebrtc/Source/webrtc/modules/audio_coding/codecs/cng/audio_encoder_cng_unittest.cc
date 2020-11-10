@@ -21,8 +21,11 @@
 #include "test/testsupport/rtc_expect_death.h"
 
 using ::testing::_;
+using ::testing::Eq;
 using ::testing::InSequence;
 using ::testing::Invoke;
+using ::testing::Not;
+using ::testing::Optional;
 using ::testing::Return;
 using ::testing::SetArgPointee;
 
@@ -231,6 +234,15 @@ TEST_F(AudioEncoderCngTest, CheckPacketLossFractionPropagation) {
   CreateCng(MakeCngConfig());
   EXPECT_CALL(*mock_encoder_, OnReceivedUplinkPacketLossFraction(0.5));
   cng_->OnReceivedUplinkPacketLossFraction(0.5);
+}
+
+TEST_F(AudioEncoderCngTest, CheckGetFrameLengthRangePropagation) {
+  CreateCng(MakeCngConfig());
+  auto expected_range =
+      std::make_pair(TimeDelta::Millis(20), TimeDelta::Millis(20));
+  EXPECT_CALL(*mock_encoder_, GetFrameLengthRange())
+      .WillRepeatedly(Return(absl::make_optional(expected_range)));
+  EXPECT_THAT(cng_->GetFrameLengthRange(), Optional(Eq(expected_range)));
 }
 
 TEST_F(AudioEncoderCngTest, EncodeCallsVad) {

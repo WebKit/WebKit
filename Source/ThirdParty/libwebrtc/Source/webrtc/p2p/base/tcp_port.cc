@@ -122,7 +122,8 @@ Connection* TCPPort::CreateConnection(const Candidate& address,
     return NULL;
   }
 
-  if (address.tcptype() == TCPTYPE_ACTIVE_STR ||
+  if ((address.tcptype() == TCPTYPE_ACTIVE_STR &&
+       address.type() != PRFLX_PORT_TYPE) ||
       (address.tcptype().empty() && address.address().port() == 0)) {
     // It's active only candidate, we should not try to create connections
     // for these candidates.
@@ -363,12 +364,12 @@ TCPConnection::TCPConnection(TCPPort* port,
     RTC_LOG(LS_VERBOSE) << ToString() << ": socket ipaddr: "
                         << socket_->GetLocalAddress().ToSensitiveString()
                         << ", port() Network:" << port->Network()->ToString();
-    RTC_DCHECK(absl::c_any_of(
-        port_->Network()->GetIPs(), [this](const rtc::InterfaceAddress& addr) {
 #if defined(WEBRTC_WEBKIT_BUILD)
-          if (socket_->GetLocalAddress().IsLoopbackIP())
-            return true;
+    RTC_DCHECK(socket->GetLocalAddress().IsLoopbackIP() || absl::c_any_of(
+#else
+    RTC_DCHECK(absl::c_any_of(
 #endif
+        port_->Network()->GetIPs(), [this](const rtc::InterfaceAddress& addr) {
           return socket_->GetLocalAddress().ipaddr() == addr;
         }));
     ConnectSocketSignals(socket);

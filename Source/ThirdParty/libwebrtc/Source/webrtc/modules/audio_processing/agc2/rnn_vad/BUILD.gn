@@ -11,46 +11,127 @@ import("../../../../webrtc.gni")
 rtc_library("rnn_vad") {
   visibility = [ "../*" ]
   sources = [
-    "auto_correlation.cc",
-    "auto_correlation.h",
-    "common.cc",
-    "common.h",
     "features_extraction.cc",
     "features_extraction.h",
-    "lp_residual.cc",
-    "lp_residual.h",
-    "pitch_info.h",
-    "pitch_search.cc",
-    "pitch_search.h",
-    "pitch_search_internal.cc",
-    "pitch_search_internal.h",
-    "ring_buffer.h",
     "rnn.cc",
     "rnn.h",
-    "sequence_buffer.h",
-    "spectral_features.cc",
-    "spectral_features.h",
-    "spectral_features_internal.cc",
-    "spectral_features_internal.h",
-    "symmetric_matrix_buffer.h",
   ]
 
-  defines = []
   if (rtc_build_with_neon && current_cpu != "arm64") {
     suppressed_configs += [ "//build/config/compiler:compiler_arm_fpu" ]
     cflags = [ "-mfpu=neon" ]
   }
 
   deps = [
+    ":rnn_vad_common",
+    ":rnn_vad_lp_residual",
+    ":rnn_vad_pitch",
+    ":rnn_vad_sequence_buffer",
+    ":rnn_vad_spectral_features",
     "..:biquad_filter",
     "../../../../api:array_view",
     "../../../../api:function_view",
     "../../../../rtc_base:checks",
-    "../../../../rtc_base:rtc_base_approved",
+    "../../../../rtc_base:logging",
     "../../../../rtc_base/system:arch",
-    "../../../../system_wrappers:cpu_features_api",
-    "../../utility:pffft_wrapper",
     "//third_party/rnnoise:rnn_vad",
+  ]
+}
+
+rtc_library("rnn_vad_auto_correlation") {
+  sources = [
+    "auto_correlation.cc",
+    "auto_correlation.h",
+  ]
+  deps = [
+    ":rnn_vad_common",
+    "../../../../api:array_view",
+    "../../../../rtc_base:checks",
+    "../../utility:pffft_wrapper",
+  ]
+}
+
+rtc_library("rnn_vad_common") {
+  # TODO(alessiob): Make this target visibility private.
+  visibility = [
+    ":*",
+    "..:rnn_vad_with_level",
+  ]
+  sources = [
+    "common.cc",
+    "common.h",
+  ]
+  deps = [
+    "../../../../rtc_base/system:arch",
+    "../../../../system_wrappers",
+  ]
+}
+
+rtc_library("rnn_vad_lp_residual") {
+  sources = [
+    "lp_residual.cc",
+    "lp_residual.h",
+  ]
+  deps = [
+    "../../../../api:array_view",
+    "../../../../rtc_base:checks",
+  ]
+}
+
+rtc_library("rnn_vad_pitch") {
+  sources = [
+    "pitch_info.h",
+    "pitch_search.cc",
+    "pitch_search.h",
+    "pitch_search_internal.cc",
+    "pitch_search_internal.h",
+  ]
+  deps = [
+    ":rnn_vad_auto_correlation",
+    ":rnn_vad_common",
+    "../../../../api:array_view",
+    "../../../../rtc_base:checks",
+  ]
+}
+
+rtc_source_set("rnn_vad_ring_buffer") {
+  sources = [ "ring_buffer.h" ]
+  deps = [
+    "../../../../api:array_view",
+    "../../../../rtc_base:checks",
+  ]
+}
+
+rtc_source_set("rnn_vad_sequence_buffer") {
+  sources = [ "sequence_buffer.h" ]
+  deps = [
+    "../../../../api:array_view",
+    "../../../../rtc_base:checks",
+  ]
+}
+
+rtc_library("rnn_vad_spectral_features") {
+  sources = [
+    "spectral_features.cc",
+    "spectral_features.h",
+    "spectral_features_internal.cc",
+    "spectral_features_internal.h",
+  ]
+  deps = [
+    ":rnn_vad_common",
+    ":rnn_vad_ring_buffer",
+    ":rnn_vad_symmetric_matrix_buffer",
+    "../../../../api:array_view",
+    "../../../../rtc_base:checks",
+    "../../utility:pffft_wrapper",
+  ]
+}
+
+rtc_source_set("rnn_vad_symmetric_matrix_buffer") {
+  sources = [ "symmetric_matrix_buffer.h" ]
+  deps = [
+    "../../../../api:array_view",
+    "../../../../rtc_base:checks",
   ]
 }
 
@@ -63,11 +144,12 @@ if (rtc_include_tests) {
     ]
     deps = [
       ":rnn_vad",
+      ":rnn_vad_common",
       "../../../../api:array_view",
       "../../../../api:scoped_refptr",
       "../../../../rtc_base:checks",
       "../../../../rtc_base/system:arch",
-      "../../../../system_wrappers:cpu_features_api",
+      "../../../../system_wrappers",
       "../../../../test:fileutils",
       "../../../../test:test_support",
     ]
@@ -108,6 +190,14 @@ if (rtc_include_tests) {
     ]
     deps = [
       ":rnn_vad",
+      ":rnn_vad_auto_correlation",
+      ":rnn_vad_common",
+      ":rnn_vad_lp_residual",
+      ":rnn_vad_pitch",
+      ":rnn_vad_ring_buffer",
+      ":rnn_vad_sequence_buffer",
+      ":rnn_vad_spectral_features",
+      ":rnn_vad_symmetric_matrix_buffer",
       ":test_utils",
       "../..:audioproc_test_utils",
       "../../../../api:array_view",
@@ -117,9 +207,9 @@ if (rtc_include_tests) {
       "../../../../rtc_base/system:arch",
       "../../../../test:test_support",
       "../../utility:pffft_wrapper",
-      "//third_party/abseil-cpp/absl/memory",
       "//third_party/rnnoise:rnn_vad",
     ]
+    absl_deps = [ "//third_party/abseil-cpp/absl/memory" ]
     data = unittest_resources
     if (is_ios) {
       deps += [ ":unittests_bundle_data" ]
@@ -131,6 +221,7 @@ if (rtc_include_tests) {
     sources = [ "rnn_vad_tool.cc" ]
     deps = [
       ":rnn_vad",
+      ":rnn_vad_common",
       "../../../../api:array_view",
       "../../../../common_audio",
       "../../../../rtc_base:rtc_base_approved",

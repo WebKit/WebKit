@@ -17,6 +17,7 @@
 #include <utility>
 #include <vector>
 
+#include "absl/strings/match.h"
 #include "media/base/rtp_utils.h"
 #include "pc/rtp_transport.h"
 #include "pc/srtp_session.h"
@@ -493,7 +494,7 @@ bool SrtpTransport::ParseKeyParams(const std::string& key_params,
   // example key_params: "inline:YUJDZGVmZ2hpSktMbW9QUXJzVHVWd3l6MTIzNDU2"
 
   // Fail if key-method is wrong.
-  if (key_params.find("inline:") != 0) {
+  if (!absl::StartsWith(key_params, "inline:")) {
     return false;
   }
 

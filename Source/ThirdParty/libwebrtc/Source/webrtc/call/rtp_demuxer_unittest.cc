@@ -14,7 +14,6 @@
 #include <set>
 #include <string>
 
-#include "call/ssrc_binding_observer.h"
 #include "call/test/mock_rtp_packet_sink_interface.h"
 #include "modules/rtp_rtcp/include/rtp_header_extension_map.h"
 #include "modules/rtp_rtcp/source/rtp_header_extensions.h"
@@ -31,30 +30,14 @@ namespace {
 
 using ::testing::_;
 using ::testing::AtLeast;
-using ::testing::AtMost;
 using ::testing::InSequence;
 using ::testing::NiceMock;
-
-class MockSsrcBindingObserver : public SsrcBindingObserver {
- public:
-  MOCK_METHOD2(OnSsrcBoundToRsid, void(const std::string& rsid, uint32_t ssrc));
-  MOCK_METHOD2(OnSsrcBoundToMid, void(const std::string& mid, uint32_t ssrc));
-  MOCK_METHOD3(OnSsrcBoundToMidRsid,
-               void(const std::string& mid,
-                    const std::string& rsid,
-                    uint32_t ssrc));
-  MOCK_METHOD2(OnSsrcBoundToPayloadType,
-               void(uint8_t payload_type, uint32_t ssrc));
-};
 
 class RtpDemuxerTest : public ::testing::Test {
  protected:
   ~RtpDemuxerTest() {
     for (auto* sink : sinks_to_tear_down_) {
       demuxer_.RemoveSink(sink);
-    }
-    for (auto* observer : observers_to_tear_down_) {
-      demuxer_.DeregisterSsrcBindingObserver(observer);
     }
   }
 
@@ -101,20 +84,6 @@ class RtpDemuxerTest : public ::testing::Test {
   bool RemoveSink(RtpPacketSinkInterface* sink) {
     sinks_to_tear_down_.erase(sink);
     return demuxer_.RemoveSink(sink);
-  }
-
-  // These are convenience methods for calling
-  // demuxer.{Register|Unregister}SsrcBindingObserver such that observers are
-  // automatically removed when the test finishes.
-
-  void RegisterSsrcBindingObserver(SsrcBindingObserver* observer) {
-    demuxer_.RegisterSsrcBindingObserver(observer);
-    observers_to_tear_down_.insert(observer);
-  }
-
-  void DeregisterSsrcBindingObserver(SsrcBindingObserver* observer) {
-    demuxer_.DeregisterSsrcBindingObserver(observer);
-    observers_to_tear_down_.erase(observer);
   }
 
   // The CreatePacket* methods are helpers for creating new RTP packets with
@@ -206,9 +175,10 @@ class RtpDemuxerTest : public ::testing::Test {
 
   RtpDemuxer demuxer_;
   std::set<RtpPacketSinkInterface*> sinks_to_tear_down_;
-  std::set<SsrcBindingObserver*> observers_to_tear_down_;
   uint16_t next_sequence_number_ = 1;
 };
+
+class RtpDemuxerDeathTest : public RtpDemuxerTest {};
 
 MATCHER_P(SamePacketAs, other, "") {
   return arg.Ssrc() == other.Ssrc() &&
@@ -746,73 +716,6 @@ TEST_F(RtpDemuxerTest, AssociatingByRsidAndBySsrcCannotTriggerDoubleCall) {
   EXPECT_TRUE(demuxer_.OnRtpPacket(*packet));
 }
 
-TEST_F(RtpDemuxerTest, ObserversNotifiedOfSsrcBoundToMid) {
-  const std::string mid = "v";
-  constexpr uint32_t ssrc = 10;
-
-  NiceMock<MockRtpPacketSink> sink;
-  AddSinkOnlyMid(mid, &sink);
-
-  MockSsrcBindingObserver observer;
-  RegisterSsrcBindingObserver(&observer);
-
-  auto packet = CreatePacketWithSsrcMid(ssrc, mid);
-  EXPECT_CALL(observer, OnSsrcBoundToMid(mid, ssrc));
-  EXPECT_TRUE(demuxer_.OnRtpPacket(*packet));
-}
-
-TEST_F(RtpDemuxerTest, ObserversNotifiedOfSsrcBoundToRsid) {
-  const std::string rsid = "1";
-  constexpr uint32_t ssrc = 111;
-
-  // Only RSIDs which the demuxer knows may be resolved.
-  NiceMock<MockRtpPacketSink> sink;
-  AddSinkOnlyRsid(rsid, &sink);
-
-  NiceMock<MockSsrcBindingObserver> rsid_resolution_observers[3];
-  for (auto& observer : rsid_resolution_observers) {
-    RegisterSsrcBindingObserver(&observer);
-    EXPECT_CALL(observer, OnSsrcBoundToRsid(rsid, ssrc)).Times(1);
-  }
-
-  // The expected calls to OnSsrcBoundToRsid() will be triggered by this.
-  auto packet = CreatePacketWithSsrcRsid(ssrc, rsid);
-  EXPECT_TRUE(demuxer_.OnRtpPacket(*packet));
-}
-
-TEST_F(RtpDemuxerTest, ObserversNotifiedOfSsrcBoundToMidRsid) {
-  const std::string mid = "v";
-  const std::string rsid = "1";
-  constexpr uint32_t ssrc = 10;
-
-  NiceMock<MockRtpPacketSink> sink;
-  AddSinkBothMidRsid(mid, rsid, &sink);
-
-  MockSsrcBindingObserver observer;
-  RegisterSsrcBindingObserver(&observer);
-
-  auto packet = CreatePacketWithSsrcMidRsid(ssrc, mid, rsid);
-  EXPECT_CALL(observer, OnSsrcBoundToMidRsid(mid, rsid, ssrc));
-  EXPECT_TRUE(demuxer_.OnRtpPacket(*packet));
-}
-
-TEST_F(RtpDemuxerTest, ObserversNotifiedOfSsrcBoundToPayloadType) {
-  constexpr uint8_t payload_type = 3;
-  constexpr uint32_t ssrc = 10;
-
-  RtpDemuxerCriteria criteria;
-  criteria.payload_types = {payload_type};
-  NiceMock<MockRtpPacketSink> sink;
-  AddSink(criteria, &sink);
-
-  MockSsrcBindingObserver observer;
-  RegisterSsrcBindingObserver(&observer);
-
-  auto packet = CreatePacketWithSsrc(ssrc);
-  packet->SetPayloadType(payload_type);
-  EXPECT_CALL(observer, OnSsrcBoundToPayloadType(payload_type, ssrc));
-  EXPECT_TRUE(demuxer_.OnRtpPacket(*packet));
-}
 
 // If one sink is associated with SSRC x, and another sink with RSID y, then if
 // we receive a packet with both SSRC x and RSID y, route that to only the sink
@@ -847,9 +750,6 @@ TEST_F(RtpDemuxerTest,
   NiceMock<MockRtpPacketSink> rsid_sink;
   AddSinkOnlyRsid(rsid, &rsid_sink);
 
-  NiceMock<MockSsrcBindingObserver> observer;
-  RegisterSsrcBindingObserver(&observer);
-
   // The SSRC was mapped to an SSRC sink, but was even active (packets flowed
   // over it).
   auto packet = CreatePacketWithSsrcRsid(ssrc, rsid);
@@ -860,7 +760,6 @@ TEST_F(RtpDemuxerTest,
   // is guaranteed.
   RemoveSink(&ssrc_sink);
   EXPECT_CALL(rsid_sink, OnRtpPacket(SamePacketAs(*packet))).Times(AtLeast(0));
-  EXPECT_CALL(observer, OnSsrcBoundToRsid(rsid, ssrc)).Times(AtLeast(0));
   EXPECT_TRUE(demuxer_.OnRtpPacket(*packet));
 }
 
@@ -1355,167 +1254,34 @@ TEST_F(RtpDemuxerTest, PacketWithMidAndUnknownRsidIsNotRoutedByPayloadType) {
   EXPECT_FALSE(demuxer_.OnRtpPacket(*packet));
 }
 
-// Observers are only notified of an SSRC binding to an RSID if we care about
-// the RSID (i.e., have a sink added for that RSID).
-TEST_F(RtpDemuxerTest, ObserversNotNotifiedOfUntrackedRsids) {
-  const std::string rsid = "1";
-  constexpr uint32_t ssrc = 111;
-
-  MockSsrcBindingObserver rsid_resolution_observers[3];
-  for (auto& observer : rsid_resolution_observers) {
-    RegisterSsrcBindingObserver(&observer);
-    EXPECT_CALL(observer, OnSsrcBoundToRsid(_, _)).Times(0);
-  }
-
-  // Since no sink is registered for this SSRC/RSID, expect the packet to not be
-  // routed and no observers notified of the SSRC -> RSID binding.
-  EXPECT_FALSE(demuxer_.OnRtpPacket(*CreatePacketWithSsrcRsid(ssrc, rsid)));
-}
-
-// Ensure that observers are notified of SSRC bindings only once per unique
-// binding source (e.g., SSRC -> MID, SSRC -> RSID, etc.)
-TEST_F(RtpDemuxerTest, ObserversNotifiedOfSsrcBoundtoMidOnlyOnce) {
-  const std::string mid = "v";
-  constexpr uint32_t ssrc = 10;
-
-  NiceMock<MockRtpPacketSink> sink;
-  AddSinkOnlyMid(mid, &sink);
-
-  MockSsrcBindingObserver observer;
-  RegisterSsrcBindingObserver(&observer);
-
-  EXPECT_CALL(observer, OnSsrcBoundToMid(mid, ssrc)).Times(1);
-
-  demuxer_.OnRtpPacket(*CreatePacketWithSsrcMid(ssrc, mid));
-  demuxer_.OnRtpPacket(*CreatePacketWithSsrcMid(ssrc, mid));
-}
-
-// Ensure that when a new SSRC -> MID binding is discovered observers are also
-// notified of that, even if there has already been an SSRC bound to the MID.
-TEST_F(RtpDemuxerTest, ObserversNotifiedOfSsrcBoundtoMidWhenSsrcChanges) {
-  const std::string mid = "v";
-  constexpr uint32_t ssrc1 = 10;
-  constexpr uint32_t ssrc2 = 11;
-
-  NiceMock<MockRtpPacketSink> sink;
-  AddSinkOnlyMid(mid, &sink);
-
-  MockSsrcBindingObserver observer;
-  RegisterSsrcBindingObserver(&observer);
-
-  InSequence seq;
-  EXPECT_CALL(observer, OnSsrcBoundToMid(mid, ssrc1)).Times(1);
-  EXPECT_CALL(observer, OnSsrcBoundToMid(mid, ssrc2)).Times(1);
-
-  auto p1 = CreatePacketWithSsrcMid(ssrc1, mid);
-  demuxer_.OnRtpPacket(*p1);
-
-  auto p2 = CreatePacketWithSsrcMid(ssrc2, mid);
-  demuxer_.OnRtpPacket(*p2);
-}
-
-TEST_F(RtpDemuxerTest, DeregisteredRsidObserversNotInformedOfResolutions) {
-  constexpr uint32_t ssrc = 111;
-  const std::string rsid = "a";
-  NiceMock<MockRtpPacketSink> sink;
-  AddSinkOnlyRsid(rsid, &sink);
-
-  // Register several, then deregister only one, to show that not all of the
-  // observers had been forgotten when one was removed.
-  MockSsrcBindingObserver observer_1;
-  MockSsrcBindingObserver observer_2_removed;
-  MockSsrcBindingObserver observer_3;
-
-  RegisterSsrcBindingObserver(&observer_1);
-  RegisterSsrcBindingObserver(&observer_2_removed);
-  RegisterSsrcBindingObserver(&observer_3);
-
-  DeregisterSsrcBindingObserver(&observer_2_removed);
-
-  EXPECT_CALL(observer_1, OnSsrcBoundToRsid(rsid, ssrc)).Times(1);
-  EXPECT_CALL(observer_2_removed, OnSsrcBoundToRsid(_, _)).Times(0);
-  EXPECT_CALL(observer_3, OnSsrcBoundToRsid(rsid, ssrc)).Times(1);
-
-  // The expected calls to OnSsrcBoundToRsid() will be triggered by this.
-  demuxer_.OnRtpPacket(*CreatePacketWithSsrcRsid(ssrc, rsid));
-}
-
-TEST_F(RtpDemuxerTest,
-       PacketFittingBothRsidSinkAndSsrcSinkTriggersResolutionCallbacks) {
-  constexpr uint32_t ssrc = 111;
-  NiceMock<MockRtpPacketSink> ssrc_sink;
-  AddSinkOnlySsrc(ssrc, &ssrc_sink);
-
-  const std::string rsid = "a";
-  NiceMock<MockRtpPacketSink> rsid_sink;
-  AddSinkOnlyRsid(rsid, &rsid_sink);
-
-  MockSsrcBindingObserver observer;
-  RegisterSsrcBindingObserver(&observer);
-
-  auto packet = CreatePacketWithSsrcRsid(ssrc, rsid);
-  EXPECT_CALL(observer, OnSsrcBoundToRsid(rsid, ssrc)).Times(1);
-  demuxer_.OnRtpPacket(*packet);
-}
-
-TEST_F(RtpDemuxerTest, MaliciousPeerCannotCauseMemoryOveruse) {
-  const std::string mid = "v";
-
-  NiceMock<MockRtpPacketSink> sink;
-  AddSinkOnlyMid(mid, &sink);
-
-  MockSsrcBindingObserver observer;
-  RegisterSsrcBindingObserver(&observer);
-
-  EXPECT_CALL(observer, OnSsrcBoundToMid(_, _))
-      .Times(AtMost(RtpDemuxer::kMaxSsrcBindings));
-
-  for (int i = 0; i < RtpDemuxer::kMaxSsrcBindings + 1; i++) {
-    auto packet = CreatePacketWithSsrcMid(i, mid);
-    EXPECT_TRUE(demuxer_.OnRtpPacket(*packet));
-  }
-}
-
 #if RTC_DCHECK_IS_ON && GTEST_HAS_DEATH_TEST && !defined(WEBRTC_ANDROID)
 
-TEST_F(RtpDemuxerTest, CriteriaMustBeNonEmpty) {
+TEST_F(RtpDemuxerDeathTest, CriteriaMustBeNonEmpty) {
   MockRtpPacketSink sink;
   RtpDemuxerCriteria criteria;
   EXPECT_DEATH(AddSink(criteria, &sink), "");
 }
 
-TEST_F(RtpDemuxerTest, RsidMustBeAlphaNumeric) {
+TEST_F(RtpDemuxerDeathTest, RsidMustBeAlphaNumeric) {
   MockRtpPacketSink sink;
   EXPECT_DEATH(AddSinkOnlyRsid("a_3", &sink), "");
 }
 
-TEST_F(RtpDemuxerTest, MidMustBeToken) {
+TEST_F(RtpDemuxerDeathTest, MidMustBeToken) {
   MockRtpPacketSink sink;
   EXPECT_DEATH(AddSinkOnlyMid("a(3)", &sink), "");
 }
 
-TEST_F(RtpDemuxerTest, RsidMustNotExceedMaximumLength) {
+TEST_F(RtpDemuxerDeathTest, RsidMustNotExceedMaximumLength) {
   MockRtpPacketSink sink;
   std::string rsid(BaseRtpStringExtension::kMaxValueSizeBytes + 1, 'a');
   EXPECT_DEATH(AddSinkOnlyRsid(rsid, &sink), "");
 }
 
-TEST_F(RtpDemuxerTest, MidMustNotExceedMaximumLength) {
+TEST_F(RtpDemuxerDeathTest, MidMustNotExceedMaximumLength) {
   MockRtpPacketSink sink;
   std::string mid(BaseRtpStringExtension::kMaxValueSizeBytes + 1, 'a');
   EXPECT_DEATH(AddSinkOnlyMid(mid, &sink), "");
-}
-
-TEST_F(RtpDemuxerTest, DoubleRegisterationOfSsrcBindingObserverDisallowed) {
-  MockSsrcBindingObserver observer;
-  RegisterSsrcBindingObserver(&observer);
-  EXPECT_DEATH(RegisterSsrcBindingObserver(&observer), "");
-}
-
-TEST_F(RtpDemuxerTest,
-       DregisterationOfNeverRegisteredSsrcBindingObserverDisallowed) {
-  MockSsrcBindingObserver observer;
-  EXPECT_DEATH(DeregisterSsrcBindingObserver(&observer), "");
 }
 
 #endif

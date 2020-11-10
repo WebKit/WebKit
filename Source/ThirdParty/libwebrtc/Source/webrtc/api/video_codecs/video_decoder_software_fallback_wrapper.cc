@@ -24,10 +24,13 @@
 #include "rtc_base/logging.h"
 #include "rtc_base/trace_event.h"
 #include "system_wrappers/include/field_trial.h"
+#include "system_wrappers/include/metrics.h"
 
 namespace webrtc {
 
 namespace {
+
+constexpr size_t kMaxConsequtiveHwErrors = 4;
 
 class VideoDecoderSoftwareFallbackWrapper final : public VideoDecoder {
  public:
@@ -53,6 +56,8 @@ class VideoDecoderSoftwareFallbackWrapper final : public VideoDecoder {
 
  private:
   bool InitFallbackDecoder();
+  void UpdateFallbackDecoderHistograms();
+
   int32_t InitHwDecoder();
 
   VideoDecoder& active_decoder() const;
@@ -70,6 +75,8 @@ class VideoDecoderSoftwareFallbackWrapper final : public VideoDecoder {
   const std::unique_ptr<VideoDecoder> fallback_decoder_;
   const std::string fallback_implementation_name_;
   DecodedImageCallback* callback_;
+  int32_t hw_decoded_frames_since_last_fallback_;
+  size_t hw_consequtive_generic_errors_;
 };
 
 VideoDecoderSoftwareFallbackWrapper::VideoDecoderSoftwareFallbackWrapper(
@@ -81,7 +88,9 @@ VideoDecoderSoftwareFallbackWrapper::VideoDecoderSoftwareFallbackWrapper(
       fallback_implementation_name_(
           std::string(fallback_decoder_->ImplementationName()) +
           " (fallback from: " + hw_decoder_->ImplementationName() + ")"),
-      callback_(nullptr) {}
+      callback_(nullptr),
+      hw_decoded_frames_since_last_fallback_(0),
+      hw_consequtive_generic_errors_(0) {}
 VideoDecoderSoftwareFallbackWrapper::~VideoDecoderSoftwareFallbackWrapper() =
     default;
 
@@ -134,6 +143,8 @@ bool VideoDecoderSoftwareFallbackWrapper::InitFallbackDecoder() {
     return false;
   }
 
+  UpdateFallbackDecoderHistograms();
+
   if (decoder_type_ == DecoderType::kHardware) {
     hw_decoder_->Release();
   }
@@ -142,6 +153,45 @@ bool VideoDecoderSoftwareFallbackWrapper::InitFallbackDecoder() {
   if (callback_)
     fallback_decoder_->RegisterDecodeCompleteCallback(callback_);
   return true;
+}
+
+void VideoDecoderSoftwareFallbackWrapper::UpdateFallbackDecoderHistograms() {
+  const std::string kFallbackHistogramsUmaPrefix =
+      "WebRTC.Video.HardwareDecodedFramesBetweenSoftwareFallbacks.";
+  // Each histogram needs its own code path for this to work otherwise the
+  // histogram names will be mixed up by the optimization that takes place.
+  switch (codec_settings_.codecType) {
+    case kVideoCodecGeneric:
+      RTC_HISTOGRAM_COUNTS_100000(kFallbackHistogramsUmaPrefix + "Generic",
+                                  hw_decoded_frames_since_last_fallback_);
+      break;
+    case kVideoCodecVP8:
+      RTC_HISTOGRAM_COUNTS_100000(kFallbackHistogramsUmaPrefix + "Vp8",
+                                  hw_decoded_frames_since_last_fallback_);
+      break;
+    case kVideoCodecVP9:
+      RTC_HISTOGRAM_COUNTS_100000(kFallbackHistogramsUmaPrefix + "Vp9",
+                                  hw_decoded_frames_since_last_fallback_);
+      break;
+    case kVideoCodecAV1:
+      RTC_HISTOGRAM_COUNTS_100000(kFallbackHistogramsUmaPrefix + "Av1",
+                                  hw_decoded_frames_since_last_fallback_);
+      break;
+    case kVideoCodecH264:
+      RTC_HISTOGRAM_COUNTS_100000(kFallbackHistogramsUmaPrefix + "H264",
+                                  hw_decoded_frames_since_last_fallback_);
+      break;
+#ifndef DISABLE_H265
+    case kVideoCodecH265:
+      RTC_HISTOGRAM_COUNTS_100000(kFallbackHistogramsUmaPrefix + "H265",
+                                  hw_decoded_frames_since_last_fallback_);
+      break;
+#endif
+    case kVideoCodecMultiplex:
+      RTC_HISTOGRAM_COUNTS_100000(kFallbackHistogramsUmaPrefix + "Multiplex",
+                                  hw_decoded_frames_since_last_fallback_);
+      break;
+  }
 }
 
 int32_t VideoDecoderSoftwareFallbackWrapper::Decode(
@@ -156,11 +206,24 @@ int32_t VideoDecoderSoftwareFallbackWrapper::Decode(
       int32_t ret = WEBRTC_VIDEO_CODEC_FALLBACK_SOFTWARE;
       ret = hw_decoder_->Decode(input_image, missing_frames, render_time_ms);
       if (ret != WEBRTC_VIDEO_CODEC_FALLBACK_SOFTWARE) {
-        return ret;
+        if (ret != WEBRTC_VIDEO_CODEC_ERROR) {
+          ++hw_decoded_frames_since_last_fallback_;
+          hw_consequtive_generic_errors_ = 0;
+          return ret;
+        }
+        if (input_image._frameType == VideoFrameType::kVideoFrameKey) {
+          // Only count errors on key-frames, since generic errors can happen
+          // with hw decoder due to many arbitrary reasons.
+          // However, requesting a key-frame is supposed to fix the issue.
+          ++hw_consequtive_generic_errors_;
+        }
+        if (hw_consequtive_generic_errors_ < kMaxConsequtiveHwErrors) {
+          return ret;
+        }
       }
 
       // HW decoder returned WEBRTC_VIDEO_CODEC_FALLBACK_SOFTWARE or
-      // initialization failed, fallback to software.
+      // too many generic errors on key-frames encountered.
       if (!InitFallbackDecoder()) {
         return ret;
       }

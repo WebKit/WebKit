@@ -15,7 +15,7 @@
 #include "api/rtp_headers.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
-#include "rtc_base/critical_section.h"
+#include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/thread_annotations.h"
 #include "system_wrappers/include/clock.h"
 
@@ -73,26 +73,26 @@ class AbsoluteCaptureTimeReceiver {
                                   uint32_t source,
                                   uint32_t rtp_timestamp,
                                   uint32_t rtp_clock_frequency) const
-      RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_);
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
 
   absl::optional<int64_t> AdjustEstimatedCaptureClockOffset(
       absl::optional<int64_t> received_value) const
-      RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_);
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
 
   Clock* const clock_;
 
-  rtc::CriticalSection crit_;
+  Mutex mutex_;
 
-  absl::optional<int64_t> remote_to_local_clock_offset_ RTC_GUARDED_BY(crit_);
+  absl::optional<int64_t> remote_to_local_clock_offset_ RTC_GUARDED_BY(mutex_);
 
-  Timestamp last_receive_time_ RTC_GUARDED_BY(crit_);
+  Timestamp last_receive_time_ RTC_GUARDED_BY(mutex_);
 
-  uint32_t last_source_ RTC_GUARDED_BY(crit_);
-  uint32_t last_rtp_timestamp_ RTC_GUARDED_BY(crit_);
-  uint32_t last_rtp_clock_frequency_ RTC_GUARDED_BY(crit_);
-  uint64_t last_absolute_capture_timestamp_ RTC_GUARDED_BY(crit_);
+  uint32_t last_source_ RTC_GUARDED_BY(mutex_);
+  uint32_t last_rtp_timestamp_ RTC_GUARDED_BY(mutex_);
+  uint32_t last_rtp_clock_frequency_ RTC_GUARDED_BY(mutex_);
+  uint64_t last_absolute_capture_timestamp_ RTC_GUARDED_BY(mutex_);
   absl::optional<int64_t> last_estimated_capture_clock_offset_
-      RTC_GUARDED_BY(crit_);
+      RTC_GUARDED_BY(mutex_);
 };  // AbsoluteCaptureTimeReceiver
 
 }  // namespace webrtc

@@ -98,8 +98,8 @@ EmulatedEndpoint* NetworkEmulationManagerImpl::CreateEndpoint(
   bool res = used_ip_addresses_.insert(*ip).second;
   RTC_CHECK(res) << "IP=" << ip->ToString() << " already in use";
   auto node = std::make_unique<EmulatedEndpointImpl>(
-      next_node_id_++, *ip, config.start_as_enabled, config.type, &task_queue_,
-      clock_);
+      next_node_id_++, *ip, config.stats_gathering_mode,
+      config.start_as_enabled, config.type, &task_queue_, clock_);
   EmulatedEndpoint* out = node.get();
   endpoints_.push_back(std::move(node));
   return out;
@@ -293,6 +293,22 @@ NetworkEmulationManagerImpl::CreateEmulatedNetworkManagerInterface(
   endpoints_containers_.push_back(std::move(endpoints_container));
   network_managers_.push_back(std::move(network_manager));
   return out;
+}
+
+void NetworkEmulationManagerImpl::GetStats(
+    rtc::ArrayView<EmulatedEndpoint*> endpoints,
+    std::function<void(std::unique_ptr<EmulatedNetworkStats>)> stats_callback) {
+  task_queue_.PostTask([endpoints, stats_callback]() {
+    EmulatedNetworkStatsBuilder stats_builder;
+    for (auto* endpoint : endpoints) {
+      // It's safe to cast here because EmulatedEndpointImpl can be the only
+      // implementation of EmulatedEndpoint, because only it has access to
+      // EmulatedEndpoint constructor.
+      auto endpoint_impl = static_cast<EmulatedEndpointImpl*>(endpoint);
+      stats_builder.AddEmulatedNetworkStats(*endpoint_impl->stats());
+    }
+    stats_callback(stats_builder.Build());
+  });
 }
 
 absl::optional<rtc::IPAddress>

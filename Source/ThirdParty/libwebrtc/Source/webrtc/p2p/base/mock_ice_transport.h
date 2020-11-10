@@ -32,15 +32,20 @@ class MockIceTransport : public IceTransportInternal {
     SignalWritableState(this);
   }
 
-  MOCK_METHOD4(SendPacket,
-               int(const char* data,
-                   size_t len,
-                   const rtc::PacketOptions& options,
-                   int flags));
-  MOCK_METHOD2(SetOption, int(rtc::Socket::Option opt, int value));
-  MOCK_METHOD0(GetError, int());
-  MOCK_CONST_METHOD0(GetIceRole, cricket::IceRole());
-  MOCK_METHOD1(GetStats, bool(cricket::IceTransportStats* ice_transport_stats));
+  MOCK_METHOD(int,
+              SendPacket,
+              (const char* data,
+               size_t len,
+               const rtc::PacketOptions& options,
+               int flags),
+              (override));
+  MOCK_METHOD(int, SetOption, (rtc::Socket::Option opt, int value), (override));
+  MOCK_METHOD(int, GetError, (), (override));
+  MOCK_METHOD(cricket::IceRole, GetIceRole, (), (const, override));
+  MOCK_METHOD(bool,
+              GetStats,
+              (cricket::IceTransportStats * ice_transport_stats),
+              (override));
 
   IceTransportState GetState() const override {
     return IceTransportState::STATE_INIT;

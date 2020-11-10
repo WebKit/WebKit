@@ -21,8 +21,10 @@ static constexpr uint32_t kSsrc = 8492;
 
 class MockStreamFeedbackObserver : public webrtc::StreamFeedbackObserver {
  public:
-  MOCK_METHOD1(OnPacketFeedbackVector,
-               void(std::vector<StreamPacketInfo> packet_feedback_vector));
+  MOCK_METHOD(void,
+              OnPacketFeedbackVector,
+              (std::vector<StreamPacketInfo> packet_feedback_vector),
+              (override));
 };
 
 RtpPacketSendInfo CreatePacket(uint32_t ssrc,
@@ -32,7 +34,6 @@ RtpPacketSendInfo CreatePacket(uint32_t ssrc,
   res.ssrc = ssrc;
   res.transport_sequence_number = transport_sequence_number;
   res.rtp_sequence_number = rtp_sequence_number;
-  res.has_rtp_sequence_number = true;
   return res;
 }
 }  // namespace

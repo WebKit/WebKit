@@ -114,7 +114,8 @@ TEST_F(MetricsTest, RtcHistogramsCounts_AddSample) {
 }
 
 #if RTC_DCHECK_IS_ON && GTEST_HAS_DEATH_TEST && !defined(WEBRTC_ANDROID)
-TEST_F(MetricsTest, RtcHistogramsCounts_InvalidIndex) {
+using MetricsDeathTest = MetricsTest;
+TEST_F(MetricsDeathTest, RtcHistogramsCounts_InvalidIndex) {
   EXPECT_DEATH(RTC_HISTOGRAMS_COUNTS_1000(-1, "Name", kSample), "");
   EXPECT_DEATH(RTC_HISTOGRAMS_COUNTS_1000(3, "Name", kSample), "");
   EXPECT_DEATH(RTC_HISTOGRAMS_COUNTS_1000(3u, "Name", kSample), "");

@@ -1,8 +1,8 @@
 include_rules = [
   "+base/third_party/libevent",
   "+json",
-  "+third_party/jsoncpp",
   "+system_wrappers",
+  "+third_party/jsoncpp",
 ]
 
 specific_include_rules = {

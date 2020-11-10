@@ -11,8 +11,10 @@
 #include "pc/rtp_transceiver.h"
 
 #include <string>
+#include <utility>
 
 #include "absl/algorithm/container.h"
+#include "api/rtp_parameters.h"
 #include "pc/channel_manager.h"
 #include "pc/rtp_media_utils.h"
 #include "pc/rtp_parameters_conversion.h"
@@ -20,9 +22,94 @@
 #include "rtc_base/logging.h"
 
 namespace webrtc {
+namespace {
+template <class T>
+RTCError VerifyCodecPreferences(const std::vector<RtpCodecCapability>& codecs,
+                                const std::vector<T>& send_codecs,
+                                const std::vector<T>& recv_codecs) {
+  // If the intersection between codecs and
+  // RTCRtpSender.getCapabilities(kind).codecs or the intersection between
+  // codecs and RTCRtpReceiver.getCapabilities(kind).codecs only contains RTX,
+  // RED or FEC codecs or is an empty set, throw InvalidModificationError.
+  // This ensures that we always have something to offer, regardless of
+  // transceiver.direction.
+
+  if (!absl::c_any_of(codecs, [&recv_codecs](const RtpCodecCapability& codec) {
+        return codec.name != cricket::kRtxCodecName &&
+               codec.name != cricket::kRedCodecName &&
+               codec.name != cricket::kFlexfecCodecName &&
+               absl::c_any_of(recv_codecs, [&codec](const T& recv_codec) {
+                 return recv_codec.MatchesCapability(codec);
+               });
+      })) {
+    return RTCError(RTCErrorType::INVALID_MODIFICATION,
+                    "Invalid codec preferences: Missing codec from recv "
+                    "codec capabilities.");
+  }
+
+  if (!absl::c_any_of(codecs, [&send_codecs](const RtpCodecCapability& codec) {
+        return codec.name != cricket::kRtxCodecName &&
+               codec.name != cricket::kRedCodecName &&
+               codec.name != cricket::kFlexfecCodecName &&
+               absl::c_any_of(send_codecs, [&codec](const T& send_codec) {
+                 return send_codec.MatchesCapability(codec);
+               });
+      })) {
+    return RTCError(RTCErrorType::INVALID_MODIFICATION,
+                    "Invalid codec preferences: Missing codec from send "
+                    "codec capabilities.");
+  }
+
+  // Let codecCapabilities be the union of
+  // RTCRtpSender.getCapabilities(kind).codecs and
+  // RTCRtpReceiver.getCapabilities(kind).codecs. For each codec in codecs, If
+  // codec is not in codecCapabilities, throw InvalidModificationError.
+  for (const auto& codec_preference : codecs) {
+    bool is_recv_codec =
+        absl::c_any_of(recv_codecs, [&codec_preference](const T& codec) {
+          return codec.MatchesCapability(codec_preference);
+        });
+
+    bool is_send_codec =
+        absl::c_any_of(send_codecs, [&codec_preference](const T& codec) {
+          return codec.MatchesCapability(codec_preference);
+        });
+
+    if (!is_recv_codec && !is_send_codec) {
+      return RTCError(
+          RTCErrorType::INVALID_MODIFICATION,
+          std::string("Invalid codec preferences: invalid codec with name \"") +
+              codec_preference.name + "\".");
+    }
+  }
+
+  // Check we have a real codec (not just rtx, red or fec)
+  if (absl::c_all_of(codecs, [](const RtpCodecCapability& codec) {
+        return codec.name == cricket::kRtxCodecName ||
+               codec.name == cricket::kRedCodecName ||
+               codec.name == cricket::kUlpfecCodecName;
+      })) {
+    return RTCError(RTCErrorType::INVALID_MODIFICATION,
+                    "Invalid codec preferences: codec list must have a non "
+                    "RTX, RED or FEC entry.");
+  }
+
+  return RTCError::OK();
+}
+
+TaskQueueBase* GetCurrentTaskQueueOrThread() {
+  TaskQueueBase* current = TaskQueueBase::Current();
+  if (!current)
+    current = rtc::ThreadManager::Instance()->CurrentThread();
+  return current;
+}
+
+}  // namespace
 
 RtpTransceiver::RtpTransceiver(cricket::MediaType media_type)
-    : unified_plan_(false), media_type_(media_type) {
+    : thread_(GetCurrentTaskQueueOrThread()),
+      unified_plan_(false),
+      media_type_(media_type) {
   RTC_DCHECK(media_type == cricket::MEDIA_TYPE_AUDIO ||
              media_type == cricket::MEDIA_TYPE_VIDEO);
 }
@@ -31,10 +118,13 @@ RtpTransceiver::RtpTransceiver(
     rtc::scoped_refptr<RtpSenderProxyWithInternal<RtpSenderInternal>> sender,
     rtc::scoped_refptr<RtpReceiverProxyWithInternal<RtpReceiverInternal>>
         receiver,
-    cricket::ChannelManager* channel_manager)
-    : unified_plan_(true),
+    cricket::ChannelManager* channel_manager,
+    std::vector<RtpHeaderExtensionCapability> header_extensions_offered)
+    : thread_(GetCurrentTaskQueueOrThread()),
+      unified_plan_(true),
       media_type_(sender->media_type()),
-      channel_manager_(channel_manager) {
+      channel_manager_(channel_manager),
+      header_extensions_to_offer_(std::move(header_extensions_offered)) {
   RTC_DCHECK(media_type_ == cricket::MEDIA_TYPE_AUDIO ||
              media_type_ == cricket::MEDIA_TYPE_VIDEO);
   RTC_DCHECK_EQ(sender->media_type(), receiver->media_type());
@@ -43,7 +133,7 @@ RtpTransceiver::RtpTransceiver(
 }
 
 RtpTransceiver::~RtpTransceiver() {
-  Stop();
+  StopInternal();
 }
 
 void RtpTransceiver::SetChannel(cricket::ChannelInterface* channel) {
@@ -197,23 +287,43 @@ bool RtpTransceiver::stopped() const {
   return stopped_;
 }
 
+bool RtpTransceiver::stopping() const {
+  RTC_DCHECK_RUN_ON(thread_);
+  return stopping_;
+}
+
 RtpTransceiverDirection RtpTransceiver::direction() const {
+  if (unified_plan_ && stopping())
+    return webrtc::RtpTransceiverDirection::kStopped;
+
   return direction_;
 }
 
-void RtpTransceiver::SetDirection(RtpTransceiverDirection new_direction) {
-  if (stopped()) {
-    return;
+RTCError RtpTransceiver::SetDirectionWithError(
+    RtpTransceiverDirection new_direction) {
+  if (unified_plan_ && stopping()) {
+    LOG_AND_RETURN_ERROR(RTCErrorType::INVALID_STATE,
+                         "Cannot set direction on a stopping transceiver.");
   }
-  if (new_direction == direction_) {
-    return;
+  if (new_direction == direction_)
+    return RTCError::OK();
+
+  if (new_direction == RtpTransceiverDirection::kStopped) {
+    LOG_AND_RETURN_ERROR(RTCErrorType::INVALID_PARAMETER,
+                         "The set direction 'stopped' is invalid.");
   }
+
   direction_ = new_direction;
   SignalNegotiationNeeded();
+
+  return RTCError::OK();
 }
 
 absl::optional<RtpTransceiverDirection> RtpTransceiver::current_direction()
     const {
+  if (unified_plan_ && stopped())
+    return webrtc::RtpTransceiverDirection::kStopped;
+
   return current_direction_;
 }
 
@@ -222,14 +332,78 @@ absl::optional<RtpTransceiverDirection> RtpTransceiver::fired_direction()
   return fired_direction_;
 }
 
-void RtpTransceiver::Stop() {
-  for (const auto& sender : senders_) {
+void RtpTransceiver::StopSendingAndReceiving() {
+  // 1. Let sender be transceiver.[[Sender]].
+  // 2. Let receiver be transceiver.[[Receiver]].
+  //
+  // 3. Stop sending media with sender.
+  //
+  // 4. Send an RTCP BYE for each RTP stream that was being sent by sender, as
+  // specified in [RFC3550].
+  RTC_DCHECK_RUN_ON(thread_);
+  for (const auto& sender : senders_)
     sender->internal()->Stop();
+
+  // 5. Stop receiving media with receiver.
+  for (const auto& receiver : receivers_)
+    receiver->internal()->StopAndEndTrack();
+
+  stopping_ = true;
+  direction_ = webrtc::RtpTransceiverDirection::kInactive;
+}
+
+RTCError RtpTransceiver::StopStandard() {
+  RTC_DCHECK_RUN_ON(thread_);
+  // If we're on Plan B, do what Stop() used to do there.
+  if (!unified_plan_) {
+    StopInternal();
+    return RTCError::OK();
   }
-  for (const auto& receiver : receivers_) {
-    receiver->internal()->Stop();
+  // 1. Let transceiver be the RTCRtpTransceiver object on which the method is
+  // invoked.
+  //
+  // 2. Let connection be the RTCPeerConnection object associated with
+  // transceiver.
+  //
+  // 3. If connection.[[IsClosed]] is true, throw an InvalidStateError.
+  if (is_pc_closed_) {
+    LOG_AND_RETURN_ERROR(RTCErrorType::INVALID_STATE,
+                         "PeerConnection is closed.");
   }
+
+  // 4. If transceiver.[[Stopping]] is true, abort these steps.
+  if (stopping_)
+    return RTCError::OK();
+
+  // 5. Stop sending and receiving given transceiver, and update the
+  // negotiation-needed flag for connection.
+  StopSendingAndReceiving();
+  SignalNegotiationNeeded();
+
+  return RTCError::OK();
+}
+
+void RtpTransceiver::StopInternal() {
+  StopTransceiverProcedure();
+}
+
+void RtpTransceiver::StopTransceiverProcedure() {
+  RTC_DCHECK_RUN_ON(thread_);
+  // As specified in the "Stop the RTCRtpTransceiver" procedure
+  // 1. If transceiver.[[Stopping]] is false, stop sending and receiving given
+  // transceiver.
+  if (!stopping_)
+    StopSendingAndReceiving();
+
+  // 2. Set transceiver.[[Stopped]] to true.
   stopped_ = true;
+
+  // Signal the updated change to the senders.
+  for (const auto& sender : senders_)
+    sender->internal()->SetTransceiverAsStopped();
+
+  // 3. Set transceiver.[[Receptive]] to false.
+  // 4. Set transceiver.[[CurrentDirection]] to null.
   current_direction_ = absl::nullopt;
 }
 
@@ -251,111 +425,80 @@ RTCError RtpTransceiver::SetCodecPreferences(
                            return absl::c_linear_search(codecs, codec);
                          });
 
+  // 6. to 8.
+  RTCError result;
   if (media_type_ == cricket::MEDIA_TYPE_AUDIO) {
-    std::vector<cricket::AudioCodec> audio_codecs;
-
     std::vector<cricket::AudioCodec> recv_codecs, send_codecs;
     channel_manager_->GetSupportedAudioReceiveCodecs(&recv_codecs);
     channel_manager_->GetSupportedAudioSendCodecs(&send_codecs);
 
-    // 6. If the intersection between codecs and
-    // RTCRtpSender.getCapabilities(kind).codecs or the intersection between
-    // codecs and RTCRtpReceiver.getCapabilities(kind).codecs only contains RTX,
-    // RED or FEC codecs or is an empty set, throw InvalidModificationError.
-    // This ensures that we always have something to offer, regardless of
-    // transceiver.direction.
-
-    if (!absl::c_any_of(
-            codecs, [&recv_codecs](const RtpCodecCapability& codec) {
-              return codec.name != cricket::kRtxCodecName &&
-                     codec.name != cricket::kRedCodecName &&
-                     codec.name != cricket::kFlexfecCodecName &&
-                     absl::c_any_of(
-                         recv_codecs,
-                         [&codec](const cricket::AudioCodec& recv_codec) {
-                           return recv_codec.MatchesCapability(codec);
-                         });
-            })) {
-      return RTCError(RTCErrorType::INVALID_MODIFICATION,
-                      "Invalid codec preferences: Missing codec from recv "
-                      "codec capabilities.");
-    }
-
-    if (!absl::c_any_of(
-            codecs, [&send_codecs](const RtpCodecCapability& codec) {
-              return codec.name != cricket::kRtxCodecName &&
-                     codec.name != cricket::kRedCodecName &&
-                     codec.name != cricket::kFlexfecCodecName &&
-                     absl::c_any_of(
-                         send_codecs,
-                         [&codec](const cricket::AudioCodec& send_codec) {
-                           return send_codec.MatchesCapability(codec);
-                         });
-            })) {
-      return RTCError(RTCErrorType::INVALID_MODIFICATION,
-                      "Invalid codec preferences: Missing codec from send "
-                      "codec capabilities.");
-    }
-
-    // 7. Let codecCapabilities be the union of
-    // RTCRtpSender.getCapabilities(kind).codecs and
-    // RTCRtpReceiver.getCapabilities(kind).codecs. 8.1 For each codec in
-    // codecs, If codec is not in codecCapabilities, throw
-    // InvalidModificationError.
-    for (const auto& codec_preference : codecs) {
-      bool is_recv_codec = absl::c_any_of(
-          recv_codecs, [&codec_preference](const cricket::AudioCodec& codec) {
-            return codec.MatchesCapability(codec_preference);
-          });
-
-      bool is_send_codec = absl::c_any_of(
-          send_codecs, [&codec_preference](const cricket::AudioCodec& codec) {
-            return codec.MatchesCapability(codec_preference);
-          });
-
-      if (!is_recv_codec && !is_send_codec) {
-        return RTCError(
-            RTCErrorType::INVALID_MODIFICATION,
-            std::string(
-                "Invalid codec preferences: invalid codec with name \"") +
-                codec_preference.name + "\".");
-      }
-    }
+    result = VerifyCodecPreferences(codecs, send_codecs, recv_codecs);
   } else if (media_type_ == cricket::MEDIA_TYPE_VIDEO) {
-    std::vector<cricket::VideoCodec> video_codecs;
-    // Video codecs are both for the receive and send side, so the checks are
-    // simpler than the audio ones.
-    channel_manager_->GetSupportedVideoCodecs(&video_codecs);
+    std::vector<cricket::VideoCodec> recv_codecs, send_codecs;
+    channel_manager_->GetSupportedVideoReceiveCodecs(&recv_codecs);
+    channel_manager_->GetSupportedVideoSendCodecs(&send_codecs);
 
-    // Validate codecs
-    for (const auto& codec_preference : codecs) {
-      if (!absl::c_any_of(video_codecs, [&codec_preference](
-                                            const cricket::VideoCodec& codec) {
-            return codec.MatchesCapability(codec_preference);
-          })) {
-        return RTCError(
-            RTCErrorType::INVALID_MODIFICATION,
-            std::string(
-                "Invalid codec preferences: invalid codec with name \"") +
-                codec_preference.name + "\".");
-      }
+    result = VerifyCodecPreferences(codecs, send_codecs, recv_codecs);
+  }
+
+  if (result.ok()) {
+    codec_preferences_ = codecs;
+  }
+
+  return result;
+}
+
+std::vector<RtpHeaderExtensionCapability>
+RtpTransceiver::HeaderExtensionsToOffer() const {
+  return header_extensions_to_offer_;
+}
+
+RTCError RtpTransceiver::SetOfferedRtpHeaderExtensions(
+    rtc::ArrayView<const RtpHeaderExtensionCapability>
+        header_extensions_to_offer) {
+  for (const auto& entry : header_extensions_to_offer) {
+    // Handle unsupported requests for mandatory extensions as per
+    // https://w3c.github.io/webrtc-extensions/#rtcrtptransceiver-interface.
+    // Note:
+    // - We do not handle setOfferedRtpHeaderExtensions algorithm step 2.1,
+    //   this has to be checked on a higher level. We naturally error out
+    //   in the handling of Step 2.2 if an unset URI is encountered.
+
+    // Step 2.2.
+    // Handle unknown extensions.
+    auto it = std::find_if(
+        header_extensions_to_offer_.begin(), header_extensions_to_offer_.end(),
+        [&entry](const auto& offered) { return entry.uri == offered.uri; });
+    if (it == header_extensions_to_offer_.end()) {
+      return RTCError(RTCErrorType::INVALID_PARAMETER,
+                      "Attempted to modify an unoffered extension.");
+    }
+
+    // Step 2.4-2.5.
+    // - Use of the transceiver interface indicates unified plan is in effect,
+    //   hence the MID extension needs to be enabled.
+    // - Also handle the mandatory video orientation extensions.
+    if ((entry.uri == RtpExtension::kMidUri ||
+         entry.uri == RtpExtension::kVideoRotationUri) &&
+        entry.direction != RtpTransceiverDirection::kSendRecv) {
+      return RTCError(RTCErrorType::INVALID_MODIFICATION,
+                      "Attempted to stop a mandatory extension.");
     }
   }
 
-  // Check we have a real codec (not just rtx, red or fec)
-  if (absl::c_all_of(codecs, [](const RtpCodecCapability& codec) {
-        return codec.name == cricket::kRtxCodecName ||
-               codec.name == cricket::kRedCodecName ||
-               codec.name == cricket::kUlpfecCodecName;
-      })) {
-    return RTCError(RTCErrorType::INVALID_MODIFICATION,
-                    "Invalid codec preferences: codec list must have a non "
-                    "RTX, RED or FEC entry.");
+  // Apply mutation after error checking.
+  for (const auto& entry : header_extensions_to_offer) {
+    auto it = std::find_if(
+        header_extensions_to_offer_.begin(), header_extensions_to_offer_.end(),
+        [&entry](const auto& offered) { return entry.uri == offered.uri; });
+    it->direction = entry.direction;
   }
-
-  codec_preferences_ = codecs;
 
   return RTCError::OK();
+}
+
+void RtpTransceiver::SetPeerConnectionClosed() {
+  is_pc_closed_ = true;
 }
 
 }  // namespace webrtc

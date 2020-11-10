@@ -37,8 +37,8 @@ Resampler::Resampler()
       my_out_frequency_khz_(0),
       my_mode_(kResamplerMode1To1),
       num_channels_(0),
-      slave_left_(nullptr),
-      slave_right_(nullptr) {}
+      helper_left_(nullptr),
+      helper_right_(nullptr) {}
 
 Resampler::Resampler(int inFreq, int outFreq, size_t num_channels)
     : Resampler() {
@@ -61,11 +61,11 @@ Resampler::~Resampler() {
   if (out_buffer_) {
     free(out_buffer_);
   }
-  if (slave_left_) {
-    delete slave_left_;
+  if (helper_left_) {
+    delete helper_left_;
   }
-  if (slave_right_) {
-    delete slave_right_;
+  if (helper_right_) {
+    delete helper_right_;
   }
 }
 
@@ -120,13 +120,13 @@ int Resampler::Reset(int inFreq, int outFreq, size_t num_channels) {
     free(out_buffer_);
     out_buffer_ = nullptr;
   }
-  if (slave_left_) {
-    delete slave_left_;
-    slave_left_ = nullptr;
+  if (helper_left_) {
+    delete helper_left_;
+    helper_left_ = nullptr;
   }
-  if (slave_right_) {
-    delete slave_right_;
-    slave_right_ = nullptr;
+  if (helper_right_) {
+    delete helper_right_;
+    helper_right_ = nullptr;
   }
 
   in_buffer_size_ = 0;
@@ -140,8 +140,8 @@ int Resampler::Reset(int inFreq, int outFreq, size_t num_channels) {
 
   if (num_channels_ == 2) {
     // Create two mono resamplers.
-    slave_left_ = new Resampler(inFreq, outFreq, 1);
-    slave_right_ = new Resampler(inFreq, outFreq, 1);
+    helper_left_ = new Resampler(inFreq, outFreq, 1);
+    helper_right_ = new Resampler(inFreq, outFreq, 1);
   }
 
   // Now create the states we need.
@@ -401,7 +401,7 @@ int Resampler::Push(const int16_t* samplesIn,
                     size_t maxLen,
                     size_t& outLen) {
   if (num_channels_ == 2) {
-    // Split up the signal and call the slave object for each channel
+    // Split up the signal and call the helper object for each channel
     int16_t* left =
         static_cast<int16_t*>(malloc(lengthIn * sizeof(int16_t) / 2));
     int16_t* right =
@@ -422,10 +422,10 @@ int Resampler::Push(const int16_t* samplesIn,
     size_t actualOutLen_left = 0;
     size_t actualOutLen_right = 0;
     // Do resampling for right channel
-    res |= slave_left_->Push(left, lengthIn, out_left, maxLen / 2,
-                             actualOutLen_left);
-    res |= slave_right_->Push(right, lengthIn, out_right, maxLen / 2,
-                              actualOutLen_right);
+    res |= helper_left_->Push(left, lengthIn, out_left, maxLen / 2,
+                              actualOutLen_left);
+    res |= helper_right_->Push(right, lengthIn, out_right, maxLen / 2,
+                               actualOutLen_right);
     if (res || (actualOutLen_left != actualOutLen_right)) {
       free(left);
       free(right);

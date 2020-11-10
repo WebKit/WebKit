@@ -17,7 +17,6 @@
 
 #include "api/array_view.h"
 #include "api/video/video_content_type.h"
-#include "api/video/video_frame_marking.h"
 #include "api/video/video_rotation.h"
 #include "api/video/video_timing.h"
 #include "modules/rtp_rtcp/include/rtp_cvo.h"
@@ -244,10 +243,6 @@ bool RtpHeaderParser::Parse(RTPHeader* header,
 
   header->extension.has_video_timing = false;
   header->extension.video_timing = {0u, 0u, 0u, 0u, 0u, 0u, false};
-
-  header->extension.has_frame_marking = false;
-  header->extension.frame_marking = {false, false,          false, false,
-                                     false, kNoTemporalIdx, 0,     0};
 
   if (X) {
     /* RTP header extension, RFC 3550.
@@ -497,15 +492,6 @@ void RtpHeaderParser::ParseOneByteExtensionHeader(
                                       &header->extension.video_timing);
           break;
         }
-        case kRtpExtensionFrameMarking: {
-          if (!FrameMarkingExtension::Parse(rtc::MakeArrayView(ptr, len + 1),
-                                            &header->extension.frame_marking)) {
-            RTC_LOG(LS_WARNING) << "Incorrect frame marking len: " << len;
-            return;
-          }
-          header->extension.has_frame_marking = true;
-          break;
-        }
         case kRtpExtensionRtpStreamId: {
           std::string name(reinterpret_cast<const char*>(ptr), len + 1);
           if (IsLegalRsidName(name)) {
@@ -534,7 +520,6 @@ void RtpHeaderParser::ParseOneByteExtensionHeader(
           break;
         }
         case kRtpExtensionGenericFrameDescriptor00:
-        case kRtpExtensionGenericFrameDescriptor01:
         case kRtpExtensionGenericFrameDescriptor02:
           RTC_LOG(WARNING)
               << "RtpGenericFrameDescriptor unsupported by rtp header parser.";

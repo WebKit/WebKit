@@ -55,8 +55,6 @@ std::unique_ptr<TransportDescription> TransportDescriptionFactory::CreateOffer(
     }
   }
 
-  desc->opaque_parameters = options.opaque_parameters;
-
   return desc;
 }
 
@@ -108,13 +106,6 @@ std::unique_ptr<TransportDescription> TransportDescriptionFactory::CreateAnswer(
     RTC_LOG(LS_WARNING) << "Failed to create TransportDescription answer "
                            "because of incompatible security settings";
     return NULL;
-  }
-
-  // Answers may only attach opaque parameters if the offer contained them as
-  // well.  The answer's parameters may differ, and it's up to the opaque
-  // transport implementation to decide if the difference is acceptable.
-  if (offer->opaque_parameters && options.opaque_parameters) {
-    desc->opaque_parameters = options.opaque_parameters;
   }
 
   return desc;

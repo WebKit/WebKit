@@ -455,7 +455,7 @@ TEST_F(PeerConnectionSimulcastTests, ServerSendsOfferToReceiveSimulcast) {
   std::string error;
   EXPECT_TRUE(remote->SetRemoteDescription(std::move(offer), &error)) << error;
   auto transceiver = remote->pc()->GetTransceivers()[0];
-  transceiver->SetDirection(RtpTransceiverDirection::kSendRecv);
+  transceiver->SetDirectionWithError(RtpTransceiverDirection::kSendRecv);
   EXPECT_TRUE(remote->CreateAnswerAndSetAsLocal());
   ValidateTransceiverParameters(transceiver, layers);
 }
@@ -478,7 +478,7 @@ TEST_F(PeerConnectionSimulcastTests, TransceiverIsNotRecycledWithSimulcast) {
   auto transceivers = remote->pc()->GetTransceivers();
   ASSERT_EQ(2u, transceivers.size());
   auto transceiver = transceivers[1];
-  transceiver->SetDirection(RtpTransceiverDirection::kSendRecv);
+  transceiver->SetDirectionWithError(RtpTransceiverDirection::kSendRecv);
   EXPECT_TRUE(remote->CreateAnswerAndSetAsLocal());
   ValidateTransceiverParameters(transceiver, layers);
 }
@@ -611,7 +611,7 @@ TEST_F(PeerConnectionSimulcastMetricsTests, IncomingSimulcastIsLogged) {
               ElementsAre(Pair(kSimulcastApiVersionSpecCompliant, 1)));
 
   auto transceiver = remote->pc()->GetTransceivers()[0];
-  transceiver->SetDirection(RtpTransceiverDirection::kSendRecv);
+  transceiver->SetDirectionWithError(RtpTransceiverDirection::kSendRecv);
   EXPECT_TRUE(remote->CreateAnswerAndSetAsLocal());
   EXPECT_THAT(LocalDescriptionSamples(),
               ElementsAre(Pair(kSimulcastApiVersionSpecCompliant, 2)));

@@ -18,22 +18,27 @@
 #include <vector>
 
 #include "rtc_base/checks.h"
-#include "rtc_base/critical_section.h"
-#include "test/testsupport/perf_test_graphjson_writer.h"
+#include "rtc_base/synchronization/mutex.h"
+#include "test/testsupport/file_utils.h"
 #include "test/testsupport/perf_test_histogram_writer.h"
-
-ABSL_FLAG(bool,
-          write_histogram_proto_json,
-          false,
-          "Use the histogram C++ API, which will write Histogram protos "
-          "instead of Chart JSON. See histogram.proto in third_party/catapult. "
-          "This flag only has effect  if --isolated_script_test_perf_output is "
-          "specified");
 
 namespace webrtc {
 namespace test {
 
 namespace {
+
+std::string UnitWithDirection(
+    const std::string& units,
+    webrtc::test::ImproveDirection improve_direction) {
+  switch (improve_direction) {
+    case webrtc::test::ImproveDirection::kNone:
+      return units;
+    case webrtc::test::ImproveDirection::kSmallerIsBetter:
+      return units + "_smallerIsBetter";
+    case webrtc::test::ImproveDirection::kBiggerIsBetter:
+      return units + "_biggerIsBetter";
+  }
+}
 
 template <typename Container>
 void OutputListToStream(std::ostream* ostream, const Container& values) {
@@ -56,7 +61,7 @@ class PlottableCounterPrinter {
   PlottableCounterPrinter() : output_(stdout) {}
 
   void SetOutput(FILE* output) {
-    rtc::CritScope lock(&crit_);
+    MutexLock lock(&mutex_);
     output_ = output;
   }
 
@@ -64,14 +69,14 @@ class PlottableCounterPrinter {
                   const std::string& trace_name,
                   const webrtc::SamplesStatsCounter& counter,
                   const std::string& units) {
-    rtc::CritScope lock(&crit_);
+    MutexLock lock(&mutex_);
     plottable_counters_.push_back({graph_name, trace_name, counter, units});
   }
 
   void Print(const std::vector<std::string>& desired_graphs_raw) const {
     std::set<std::string> desired_graphs(desired_graphs_raw.begin(),
                                          desired_graphs_raw.end());
-    rtc::CritScope lock(&crit_);
+    MutexLock lock(&mutex_);
     for (auto& counter : plottable_counters_) {
       if (!desired_graphs.empty()) {
         auto it = desired_graphs.find(counter.graph_name);
@@ -104,9 +109,9 @@ class PlottableCounterPrinter {
   }
 
  private:
-  rtc::CriticalSection crit_;
-  std::vector<PlottableCounter> plottable_counters_ RTC_GUARDED_BY(&crit_);
-  FILE* output_ RTC_GUARDED_BY(&crit_);
+  mutable Mutex mutex_;
+  std::vector<PlottableCounter> plottable_counters_ RTC_GUARDED_BY(&mutex_);
+  FILE* output_ RTC_GUARDED_BY(&mutex_);
 };
 
 PlottableCounterPrinter& GetPlottableCounterPrinter() {
@@ -119,7 +124,7 @@ class ResultsLinePrinter {
   ResultsLinePrinter() : output_(stdout) {}
 
   void SetOutput(FILE* output) {
-    rtc::CritScope lock(&crit_);
+    MutexLock lock(&mutex_);
     output_ = output;
   }
 
@@ -173,7 +178,7 @@ class ResultsLinePrinter {
                        const std::string& suffix,
                        const std::string& units,
                        bool important) {
-    rtc::CritScope lock(&crit_);
+    MutexLock lock(&mutex_);
     // <*>RESULT <graph_name>: <trace_name>= <value> <units>
     // <*>RESULT <graph_name>: <trace_name>= {<mean>, <std deviation>} <units>
     // <*>RESULT <graph_name>: <trace_name>= [<value>,value,value,...,] <units>
@@ -182,8 +187,8 @@ class ResultsLinePrinter {
             values.c_str(), suffix.c_str(), units.c_str());
   }
 
-  rtc::CriticalSection crit_;
-  FILE* output_ RTC_GUARDED_BY(&crit_);
+  Mutex mutex_;
+  FILE* output_ RTC_GUARDED_BY(&mutex_);
 };
 
 ResultsLinePrinter& GetResultsLinePrinter() {
@@ -192,13 +197,8 @@ ResultsLinePrinter& GetResultsLinePrinter() {
 }
 
 PerfTestResultWriter& GetPerfWriter() {
-  if (absl::GetFlag(FLAGS_write_histogram_proto_json)) {
-    static PerfTestResultWriter* writer = CreateHistogramWriter();
-    return *writer;
-  } else {
-    static PerfTestResultWriter* writer = CreateGraphJsonWriter();
-    return *writer;
-  }
+  static PerfTestResultWriter* writer = CreateHistogramWriter();
+  return *writer;
 }
 
 }  // namespace
@@ -220,11 +220,25 @@ void PrintPlottableResults(const std::vector<std::string>& desired_graphs) {
   GetPlottableCounterPrinter().Print(desired_graphs);
 }
 
-void WritePerfResults(const std::string& output_path) {
+bool WritePerfResults(const std::string& output_path) {
   std::string results = GetPerfResults();
-  std::fstream output(output_path, std::fstream::out);
-  output << results;
-  output.close();
+  CreateDir(DirName(output_path));
+  FILE* output = fopen(output_path.c_str(), "wb");
+  if (output == NULL) {
+    printf("Failed to write to %s.\n", output_path.c_str());
+    return false;
+  }
+  size_t written =
+      fwrite(results.c_str(), sizeof(char), results.size(), output);
+  fclose(output);
+
+  if (written != results.size()) {
+    long expected = results.size();
+    printf("Wrote %zu, tried to write %lu\n", written, expected);
+    return false;
+  }
+
+  return true;
 }
 
 void PrintResult(const std::string& measurement,

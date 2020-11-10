@@ -79,8 +79,8 @@ TEST(VectorMath, Accumulate) {
 
 #if defined(WEBRTC_ARCH_X86_FAMILY)
 
-TEST(VectorMath, Sqrt) {
-  if (WebRtc_GetCPUInfo(kSSE2) != 0) {
+TEST(VectorMath, Sse2Sqrt) {
+  if (GetCPUInfo(kSSE2) != 0) {
     std::array<float, kFftLengthBy2Plus1> x;
     std::array<float, kFftLengthBy2Plus1> z;
     std::array<float, kFftLengthBy2Plus1> z_sse2;
@@ -101,8 +101,30 @@ TEST(VectorMath, Sqrt) {
   }
 }
 
-TEST(VectorMath, Multiply) {
-  if (WebRtc_GetCPUInfo(kSSE2) != 0) {
+TEST(VectorMath, Avx2Sqrt) {
+  if (GetCPUInfo(kAVX2) != 0) {
+    std::array<float, kFftLengthBy2Plus1> x;
+    std::array<float, kFftLengthBy2Plus1> z;
+    std::array<float, kFftLengthBy2Plus1> z_avx2;
+
+    for (size_t k = 0; k < x.size(); ++k) {
+      x[k] = (2.f / 3.f) * k;
+    }
+
+    std::copy(x.begin(), x.end(), z.begin());
+    aec3::VectorMath(Aec3Optimization::kNone).Sqrt(z);
+    std::copy(x.begin(), x.end(), z_avx2.begin());
+    aec3::VectorMath(Aec3Optimization::kAvx2).Sqrt(z_avx2);
+    EXPECT_EQ(z, z_avx2);
+    for (size_t k = 0; k < z.size(); ++k) {
+      EXPECT_FLOAT_EQ(z[k], z_avx2[k]);
+      EXPECT_FLOAT_EQ(sqrtf(x[k]), z_avx2[k]);
+    }
+  }
+}
+
+TEST(VectorMath, Sse2Multiply) {
+  if (GetCPUInfo(kSSE2) != 0) {
     std::array<float, kFftLengthBy2Plus1> x;
     std::array<float, kFftLengthBy2Plus1> y;
     std::array<float, kFftLengthBy2Plus1> z;
@@ -122,8 +144,29 @@ TEST(VectorMath, Multiply) {
   }
 }
 
-TEST(VectorMath, Accumulate) {
-  if (WebRtc_GetCPUInfo(kSSE2) != 0) {
+TEST(VectorMath, Avx2Multiply) {
+  if (GetCPUInfo(kAVX2) != 0) {
+    std::array<float, kFftLengthBy2Plus1> x;
+    std::array<float, kFftLengthBy2Plus1> y;
+    std::array<float, kFftLengthBy2Plus1> z;
+    std::array<float, kFftLengthBy2Plus1> z_avx2;
+
+    for (size_t k = 0; k < x.size(); ++k) {
+      x[k] = k;
+      y[k] = (2.f / 3.f) * k;
+    }
+
+    aec3::VectorMath(Aec3Optimization::kNone).Multiply(x, y, z);
+    aec3::VectorMath(Aec3Optimization::kAvx2).Multiply(x, y, z_avx2);
+    for (size_t k = 0; k < z.size(); ++k) {
+      EXPECT_FLOAT_EQ(z[k], z_avx2[k]);
+      EXPECT_FLOAT_EQ(x[k] * y[k], z_avx2[k]);
+    }
+  }
+}
+
+TEST(VectorMath, Sse2Accumulate) {
+  if (GetCPUInfo(kSSE2) != 0) {
     std::array<float, kFftLengthBy2Plus1> x;
     std::array<float, kFftLengthBy2Plus1> z;
     std::array<float, kFftLengthBy2Plus1> z_sse2;
@@ -138,6 +181,26 @@ TEST(VectorMath, Accumulate) {
     for (size_t k = 0; k < z.size(); ++k) {
       EXPECT_FLOAT_EQ(z[k], z_sse2[k]);
       EXPECT_FLOAT_EQ(x[k] + 2.f * x[k], z_sse2[k]);
+    }
+  }
+}
+
+TEST(VectorMath, Avx2Accumulate) {
+  if (GetCPUInfo(kAVX2) != 0) {
+    std::array<float, kFftLengthBy2Plus1> x;
+    std::array<float, kFftLengthBy2Plus1> z;
+    std::array<float, kFftLengthBy2Plus1> z_avx2;
+
+    for (size_t k = 0; k < x.size(); ++k) {
+      x[k] = k;
+      z[k] = z_avx2[k] = 2.f * k;
+    }
+
+    aec3::VectorMath(Aec3Optimization::kNone).Accumulate(x, z);
+    aec3::VectorMath(Aec3Optimization::kAvx2).Accumulate(x, z_avx2);
+    for (size_t k = 0; k < z.size(); ++k) {
+      EXPECT_FLOAT_EQ(z[k], z_avx2[k]);
+      EXPECT_FLOAT_EQ(x[k] + 2.f * x[k], z_avx2[k]);
     }
   }
 }

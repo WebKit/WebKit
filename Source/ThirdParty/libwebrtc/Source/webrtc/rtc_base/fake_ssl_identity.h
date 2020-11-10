@@ -62,7 +62,6 @@ class FakeSSLIdentity : public SSLIdentity {
   ~FakeSSLIdentity() override;
 
   // SSLIdentity implementation.
-  FakeSSLIdentity* GetReference() const override;
   const SSLCertificate& certificate() const override;
   const SSLCertChain& cert_chain() const override;
   // Not implemented.
@@ -73,6 +72,8 @@ class FakeSSLIdentity : public SSLIdentity {
   virtual bool operator==(const SSLIdentity& other) const;
 
  private:
+  std::unique_ptr<SSLIdentity> CloneInternal() const override;
+
   std::unique_ptr<SSLCertChain> cert_chain_;
 };
 

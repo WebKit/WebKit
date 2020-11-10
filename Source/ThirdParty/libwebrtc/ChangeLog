@@ -1,3 +1,18 @@
+2020-11-10  Youenn Fablet  <youenn@apple.com> and Victor M Jaquez <vjaquez@igalia.com>
+
+        Update WebRTC liwebrtc to M87
+        https://bugs.webkit.org/show_bug.cgi?id=218436
+
+        Reviewed by Eric Carlson.
+
+        * CMakeLists.txt:
+        * Configurations/libwebrtc.iOS.exp:
+        * Configurations/libwebrtc.iOSsim.exp:
+        * Configurations/libwebrtc.mac.exp:
+        * Source/webrtc: Resynced.
+        * WebKit/libwebrtc-m87-diff: Added.
+        * libwebrtc.xcodeproj/project.pbxproj:
+
 2020-11-04  David Kilzer  <ddkilzer@apple.com>
 
         WebKit should remove unused debug variant support

@@ -9,6 +9,7 @@
  */
 
 #include <array>
+#include <map>
 #include <memory>
 #include <vector>
 
@@ -157,6 +158,33 @@ TEST_P(EncoderTest, TestDifferentBitrates) {
     num_bytes_high += high.size();
   }
   EXPECT_LT(num_bytes_low, num_bytes_high);
+}
+
+// Encodes an input audio sequence first with a low, then with a high target
+// bitrate *using the same encoder* and checks that the number of emitted bytes
+// in the first case is less than in the second case.
+TEST_P(EncoderTest, TestDynamicBitrateChange) {
+  constexpr int kLowBps = 20000;
+  constexpr int kHighBps = 25000;
+  constexpr int kStartBps = 30000;
+  auto encoder = CreateEncoder(GetIsacImpl(), GetSampleRateHz(),
+                               GetFrameSizeMs(), kStartBps);
+  std::map<int, int> num_bytes;
+  constexpr int kNumFrames = 200;  // 2 seconds.
+  for (int bitrate_bps : {kLowBps, kHighBps}) {
+    auto pcm_file = GetPcmTestFileReader(GetSampleRateHz());
+    encoder->OnReceivedTargetAudioBitrate(bitrate_bps);
+    for (int i = 0; i < kNumFrames; ++i) {
+      AudioFrame in;
+      pcm_file->Read10MsData(in);
+      rtc::Buffer buf;
+      encoder->Encode(/*rtp_timestamp=*/0, AudioFrameToView(in), &buf);
+      num_bytes[bitrate_bps] += buf.size();
+    }
+  }
+  // kHighBps / kLowBps == 1.25, so require the high-bitrate run to produce at
+  // least 1.2 times the number of bytes.
+  EXPECT_LT(1.2 * num_bytes[kLowBps], num_bytes[kHighBps]);
 }
 
 // Checks that, given a target bitrate, the encoder does not overshoot too much.

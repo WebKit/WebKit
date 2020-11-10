@@ -33,12 +33,12 @@
 #include "api/task_queue/task_queue_base.h"
 #include "rtc_base/arraysize.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/critical_section.h"
 #include "rtc_base/event.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/numerics/safe_conversions.h"
 #include "rtc_base/platform_thread.h"
 #include "rtc_base/time_utils.h"
+#include "rtc_base/synchronization/mutex.h"
 
 namespace webrtc {
 namespace {
@@ -205,7 +205,7 @@ class TaskQueueWin : public TaskQueueBase {
       timer_tasks_;
   UINT_PTR timer_id_ = 0;
   WorkerThread thread_;
-  rtc::CriticalSection pending_lock_;
+  Mutex pending_lock_;
   std::queue<std::unique_ptr<QueuedTask>> pending_
       RTC_GUARDED_BY(pending_lock_);
   HANDLE in_queue_;
@@ -235,7 +235,7 @@ void TaskQueueWin::Delete() {
 }
 
 void TaskQueueWin::PostTask(std::unique_ptr<QueuedTask> task) {
-  rtc::CritScope lock(&pending_lock_);
+  MutexLock lock(&pending_lock_);
   pending_.push(std::move(task));
   ::SetEvent(in_queue_);
 }
@@ -262,7 +262,7 @@ void TaskQueueWin::RunPendingTasks() {
   while (true) {
     std::unique_ptr<QueuedTask> task;
     {
-      rtc::CritScope lock(&pending_lock_);
+      MutexLock lock(&pending_lock_);
       if (pending_.empty())
         break;
       task = std::move(pending_.front());

@@ -194,10 +194,10 @@ IdentityAndInfo CreateFakeIdentityAndInfoFromDers(
 class SSLIdentityTest : public ::testing::Test {
  public:
   void SetUp() override {
-    identity_rsa1_.reset(SSLIdentity::Generate("test1", rtc::KT_RSA));
-    identity_rsa2_.reset(SSLIdentity::Generate("test2", rtc::KT_RSA));
-    identity_ecdsa1_.reset(SSLIdentity::Generate("test3", rtc::KT_ECDSA));
-    identity_ecdsa2_.reset(SSLIdentity::Generate("test4", rtc::KT_ECDSA));
+    identity_rsa1_ = SSLIdentity::Create("test1", rtc::KT_RSA);
+    identity_rsa2_ = SSLIdentity::Create("test2", rtc::KT_RSA);
+    identity_ecdsa1_ = SSLIdentity::Create("test3", rtc::KT_ECDSA);
+    identity_ecdsa2_ = SSLIdentity::Create("test4", rtc::KT_ECDSA);
 
     ASSERT_TRUE(identity_rsa1_);
     ASSERT_TRUE(identity_rsa2_);
@@ -303,8 +303,8 @@ class SSLIdentityTest : public ::testing::Test {
     std::string priv_pem = identity.PrivateKeyToPEMString();
     std::string publ_pem = identity.PublicKeyToPEMString();
     std::string cert_pem = identity.certificate().ToPEMString();
-    std::unique_ptr<SSLIdentity> clone(
-        SSLIdentity::FromPEMStrings(priv_pem, cert_pem));
+    std::unique_ptr<SSLIdentity> clone =
+        SSLIdentity::CreateFromPEMStrings(priv_pem, cert_pem);
     EXPECT_TRUE(clone);
 
     // Make sure the clone is identical to the original.
@@ -390,7 +390,7 @@ TEST_F(SSLIdentityTest, IdentityComparison) {
 
 TEST_F(SSLIdentityTest, FromPEMStringsRSA) {
   std::unique_ptr<SSLIdentity> identity(
-      SSLIdentity::FromPEMStrings(kRSA_PRIVATE_KEY_PEM, kRSA_CERT_PEM));
+      SSLIdentity::CreateFromPEMStrings(kRSA_PRIVATE_KEY_PEM, kRSA_CERT_PEM));
   EXPECT_TRUE(identity);
   EXPECT_EQ(kRSA_PRIVATE_KEY_PEM, identity->PrivateKeyToPEMString());
   EXPECT_EQ(kRSA_PUBLIC_KEY_PEM, identity->PublicKeyToPEMString());
@@ -398,8 +398,8 @@ TEST_F(SSLIdentityTest, FromPEMStringsRSA) {
 }
 
 TEST_F(SSLIdentityTest, FromPEMStringsEC) {
-  std::unique_ptr<SSLIdentity> identity(
-      SSLIdentity::FromPEMStrings(kECDSA_PRIVATE_KEY_PEM, kECDSA_CERT_PEM));
+  std::unique_ptr<SSLIdentity> identity(SSLIdentity::CreateFromPEMStrings(
+      kECDSA_PRIVATE_KEY_PEM, kECDSA_CERT_PEM));
   EXPECT_TRUE(identity);
   EXPECT_EQ(kECDSA_PRIVATE_KEY_PEM, identity->PrivateKeyToPEMString());
   EXPECT_EQ(kECDSA_PUBLIC_KEY_PEM, identity->PublicKeyToPEMString());
@@ -433,7 +433,7 @@ TEST_F(SSLIdentityTest, GetSignatureDigestAlgorithm) {
 
 TEST_F(SSLIdentityTest, SSLCertificateGetStatsRSA) {
   std::unique_ptr<SSLIdentity> identity(
-      SSLIdentity::FromPEMStrings(kRSA_PRIVATE_KEY_PEM, kRSA_CERT_PEM));
+      SSLIdentity::CreateFromPEMStrings(kRSA_PRIVATE_KEY_PEM, kRSA_CERT_PEM));
   std::unique_ptr<rtc::SSLCertificateStats> stats =
       identity->certificate().GetStats();
   EXPECT_EQ(stats->fingerprint, kRSA_FINGERPRINT);
@@ -443,8 +443,8 @@ TEST_F(SSLIdentityTest, SSLCertificateGetStatsRSA) {
 }
 
 TEST_F(SSLIdentityTest, SSLCertificateGetStatsECDSA) {
-  std::unique_ptr<SSLIdentity> identity(
-      SSLIdentity::FromPEMStrings(kECDSA_PRIVATE_KEY_PEM, kECDSA_CERT_PEM));
+  std::unique_ptr<SSLIdentity> identity(SSLIdentity::CreateFromPEMStrings(
+      kECDSA_PRIVATE_KEY_PEM, kECDSA_CERT_PEM));
   std::unique_ptr<rtc::SSLCertificateStats> stats =
       identity->certificate().GetStats();
   EXPECT_EQ(stats->fingerprint, kECDSA_FINGERPRINT);
@@ -580,14 +580,13 @@ class SSLIdentityExpirationTest : public ::testing::Test {
       time_t lifetime =
           rtc::CreateRandomId() % (0x80000000 - time_before_generation);
       rtc::KeyParams key_params = rtc::KeyParams::ECDSA(rtc::EC_NIST_P256);
-      SSLIdentity* identity =
-          rtc::SSLIdentity::GenerateWithExpiration("", key_params, lifetime);
+      auto identity =
+          rtc::SSLIdentity::Create("", key_params, lifetime);
       time_t time_after_generation = time(nullptr);
       EXPECT_LE(time_before_generation + lifetime,
                 identity->certificate().CertificateExpirationTime());
       EXPECT_GE(time_after_generation + lifetime,
                 identity->certificate().CertificateExpirationTime());
-      delete identity;
     }
   }
 };

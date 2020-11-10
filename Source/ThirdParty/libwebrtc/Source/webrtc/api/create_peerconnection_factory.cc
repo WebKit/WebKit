@@ -18,6 +18,7 @@
 #include "api/rtc_event_log/rtc_event_log_factory.h"
 #include "api/scoped_refptr.h"
 #include "api/task_queue/default_task_queue_factory.h"
+#include "api/transport/field_trial_based_config.h"
 #include "media/base/media_engine.h"
 #include "media/engine/webrtc_media_engine.h"
 #include "modules/audio_device/include/audio_device.h"
@@ -45,6 +46,7 @@ rtc::scoped_refptr<PeerConnectionFactoryInterface> CreatePeerConnectionFactory(
   dependencies.call_factory = CreateCallFactory();
   dependencies.event_log_factory = std::make_unique<RtcEventLogFactory>(
       dependencies.task_queue_factory.get());
+  dependencies.trials = std::make_unique<webrtc::FieldTrialBasedConfig>();
 
   cricket::MediaEngineDependencies media_dependencies;
   media_dependencies.task_queue_factory = dependencies.task_queue_factory.get();
@@ -59,6 +61,7 @@ rtc::scoped_refptr<PeerConnectionFactoryInterface> CreatePeerConnectionFactory(
   media_dependencies.audio_mixer = std::move(audio_mixer);
   media_dependencies.video_encoder_factory = std::move(video_encoder_factory);
   media_dependencies.video_decoder_factory = std::move(video_decoder_factory);
+  media_dependencies.trials = dependencies.trials.get();
   dependencies.media_engine =
       cricket::CreateMediaEngine(std::move(media_dependencies));
 

@@ -66,6 +66,14 @@ class RTC_LOCKABLE TaskQueueForTest : public rtc::TaskQueue {
   void SendTask(Closure&& task, rtc::Location loc) {
     ::webrtc::SendTask(loc, Get(), std::forward<Closure>(task));
   }
+
+  // Wait for the completion of all tasks posted prior to the
+  // WaitForPreviouslyPostedTasks() call.
+  void WaitForPreviouslyPostedTasks() {
+    // Post an empty task on the queue and wait for it to finish, to ensure
+    // that all already posted tasks on the queue get executed.
+    SendTask([]() {}, RTC_FROM_HERE);
+  }
 };
 
 }  // namespace webrtc

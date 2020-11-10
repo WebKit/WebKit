@@ -319,6 +319,14 @@ class RTCStatsMember : public RTCStatsMemberInterface {
   std::string ValueToString() const override;
   std::string ValueToJson() const override;
 
+  template <typename U>
+  inline T ValueOrDefault(U default_value) const {
+    if (is_defined()) {
+      return *(*this);
+    }
+    return default_value;
+  }
+
   // Assignment operators.
   T& operator=(const T& value) {
     value_ = value;
@@ -354,7 +362,6 @@ class RTCStatsMember : public RTCStatsMemberInterface {
  private:
   T value_;
 };
-
 
 #if !defined(WEBRTC_WEBKIT_BUILD)
 #define WEBRTC_DECLARE_RTCSTATSMEMBER_AS_EXTERN(T)                          \

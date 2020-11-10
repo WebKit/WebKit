@@ -22,7 +22,7 @@ AudioLevel::AudioLevel()
 AudioLevel::~AudioLevel() {}
 
 void AudioLevel::Reset() {
-  rtc::CritScope cs(&crit_sect_);
+  MutexLock lock(&mutex_);
   abs_max_ = 0;
   count_ = 0;
   current_level_full_range_ = 0;
@@ -31,24 +31,24 @@ void AudioLevel::Reset() {
 }
 
 int16_t AudioLevel::LevelFullRange() const {
-  rtc::CritScope cs(&crit_sect_);
+  MutexLock lock(&mutex_);
   return current_level_full_range_;
 }
 
 void AudioLevel::ResetLevelFullRange() {
-  rtc::CritScope cs(&crit_sect_);
+  MutexLock lock(&mutex_);
   abs_max_ = 0;
   count_ = 0;
   current_level_full_range_ = 0;
 }
 
 double AudioLevel::TotalEnergy() const {
-  rtc::CritScope cs(&crit_sect_);
+  MutexLock lock(&mutex_);
   return total_energy_;
 }
 
 double AudioLevel::TotalDuration() const {
-  rtc::CritScope cs(&crit_sect_);
+  MutexLock lock(&mutex_);
   return total_duration_;
 }
 
@@ -63,7 +63,7 @@ void AudioLevel::ComputeLevel(const AudioFrame& audioFrame, double duration) {
 
   // Protect member access using a lock since this method is called on a
   // dedicated audio thread in the RecordedDataIsAvailable() callback.
-  rtc::CritScope cs(&crit_sect_);
+  MutexLock lock(&mutex_);
 
   if (abs_value > abs_max_)
     abs_max_ = abs_value;

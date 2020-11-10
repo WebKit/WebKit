@@ -65,9 +65,10 @@ std::vector<int64_t> TimestampsMs(
 
 class MockTransportFeedbackSender : public TransportFeedbackSenderInterface {
  public:
-  MOCK_METHOD1(
-      SendCombinedRtcpPacket,
-      bool(std::vector<std::unique_ptr<rtcp::RtcpPacket>> feedback_packets));
+  MOCK_METHOD(bool,
+              SendCombinedRtcpPacket,
+              (std::vector<std::unique_ptr<rtcp::RtcpPacket>> feedback_packets),
+              (override));
 };
 
 class RemoteEstimatorProxyTest : public ::testing::Test {

@@ -43,7 +43,7 @@ class AndroidCallClient::PCObserver : public webrtc::PeerConnectionObserver {
   void OnIceCandidate(const webrtc::IceCandidateInterface* candidate) override;
 
  private:
-  const AndroidCallClient* client_;
+  AndroidCallClient* const client_;
 };
 
 namespace {
@@ -88,7 +88,7 @@ void AndroidCallClient::Call(JNIEnv* env,
                              const webrtc::JavaRef<jobject>& remote_sink) {
   RTC_DCHECK_RUN_ON(&thread_checker_);
 
-  rtc::CritScope lock(&pc_mutex_);
+  webrtc::MutexLock lock(&pc_mutex_);
   if (call_started_) {
     RTC_LOG(LS_WARNING) << "Call already started.";
     return;
@@ -112,7 +112,7 @@ void AndroidCallClient::Hangup(JNIEnv* env) {
   call_started_ = false;
 
   {
-    rtc::CritScope lock(&pc_mutex_);
+    webrtc::MutexLock lock(&pc_mutex_);
     if (pc_ != nullptr) {
       pc_->Close();
       pc_ = nullptr;
@@ -174,7 +174,7 @@ void AndroidCallClient::CreatePeerConnectionFactory() {
 }
 
 void AndroidCallClient::CreatePeerConnection() {
-  rtc::CritScope lock(&pc_mutex_);
+  webrtc::MutexLock lock(&pc_mutex_);
   webrtc::PeerConnectionInterface::RTCConfiguration config;
   config.sdp_semantics = webrtc::SdpSemantics::kUnifiedPlan;
   // DTLS SRTP has to be disabled for loopback to work.
@@ -205,7 +205,7 @@ void AndroidCallClient::CreatePeerConnection() {
 }
 
 void AndroidCallClient::Connect() {
-  rtc::CritScope lock(&pc_mutex_);
+  webrtc::MutexLock lock(&pc_mutex_);
   pc_->CreateOffer(new rtc::RefCountedObject<CreateOfferObserver>(pc_),
                    webrtc::PeerConnectionInterface::RTCOfferAnswerOptions());
 }
@@ -240,7 +240,7 @@ void AndroidCallClient::PCObserver::OnIceGatheringChange(
 void AndroidCallClient::PCObserver::OnIceCandidate(
     const webrtc::IceCandidateInterface* candidate) {
   RTC_LOG(LS_INFO) << "OnIceCandidate: " << candidate->server_url();
-  rtc::CritScope lock(&client_->pc_mutex_);
+  webrtc::MutexLock lock(&client_->pc_mutex_);
   RTC_DCHECK(client_->pc_ != nullptr);
   client_->pc_->AddIceCandidate(candidate);
 }

@@ -18,27 +18,38 @@ namespace webrtc {
 
 class MockAudioNetworkAdaptor : public AudioNetworkAdaptor {
  public:
-  virtual ~MockAudioNetworkAdaptor() { Die(); }
-  MOCK_METHOD0(Die, void());
+  ~MockAudioNetworkAdaptor() override { Die(); }
+  MOCK_METHOD(void, Die, ());
 
-  MOCK_METHOD1(SetUplinkBandwidth, void(int uplink_bandwidth_bps));
+  MOCK_METHOD(void, SetUplinkBandwidth, (int uplink_bandwidth_bps), (override));
 
-  MOCK_METHOD1(SetUplinkPacketLossFraction,
-               void(float uplink_packet_loss_fraction));
+  MOCK_METHOD(void,
+              SetUplinkPacketLossFraction,
+              (float uplink_packet_loss_fraction),
+              (override));
 
-  MOCK_METHOD1(SetRtt, void(int rtt_ms));
+  MOCK_METHOD(void, SetRtt, (int rtt_ms), (override));
 
-  MOCK_METHOD1(SetTargetAudioBitrate, void(int target_audio_bitrate_bps));
+  MOCK_METHOD(void,
+              SetTargetAudioBitrate,
+              (int target_audio_bitrate_bps),
+              (override));
 
-  MOCK_METHOD1(SetOverhead, void(size_t overhead_bytes_per_packet));
+  MOCK_METHOD(void,
+              SetOverhead,
+              (size_t overhead_bytes_per_packet),
+              (override));
 
-  MOCK_METHOD0(GetEncoderRuntimeConfig, AudioEncoderRuntimeConfig());
+  MOCK_METHOD(AudioEncoderRuntimeConfig,
+              GetEncoderRuntimeConfig,
+              (),
+              (override));
 
-  MOCK_METHOD1(StartDebugDump, void(FILE* file_handle));
+  MOCK_METHOD(void, StartDebugDump, (FILE * file_handle), (override));
 
-  MOCK_METHOD0(StopDebugDump, void());
+  MOCK_METHOD(void, StopDebugDump, (), (override));
 
-  MOCK_CONST_METHOD0(GetStats, ANAStats());
+  MOCK_METHOD(ANAStats, GetStats, (), (const, override));
 };
 
 }  // namespace webrtc

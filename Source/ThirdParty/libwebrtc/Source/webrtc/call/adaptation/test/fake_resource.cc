@@ -10,22 +10,35 @@
 
 #include "call/adaptation/test/fake_resource.h"
 
+#include <algorithm>
 #include <utility>
+
+#include "rtc_base/ref_counted_object.h"
 
 namespace webrtc {
 
-FakeResource::FakeResource(ResourceUsageState usage_state)
-    : FakeResource(usage_state, "FakeResource") {}
+// static
+rtc::scoped_refptr<FakeResource> FakeResource::Create(std::string name) {
+  return new rtc::RefCountedObject<FakeResource>(name);
+}
+
+FakeResource::FakeResource(std::string name)
+    : Resource(), name_(std::move(name)), listener_(nullptr) {}
 
 FakeResource::~FakeResource() {}
 
-void FakeResource::set_usage_state(ResourceUsageState usage_state) {
-  last_response_ = OnResourceUsageStateMeasured(usage_state);
+void FakeResource::SetUsageState(ResourceUsageState usage_state) {
+  if (listener_) {
+    listener_->OnResourceUsageStateMeasured(this, usage_state);
+  }
 }
-FakeResource::FakeResource(ResourceUsageState usage_state,
-                           const std::string& name)
-    : Resource(), name_(name) {
-  set_usage_state(usage_state);
+
+std::string FakeResource::Name() const {
+  return name_;
+}
+
+void FakeResource::SetResourceListener(ResourceListener* listener) {
+  listener_ = listener;
 }
 
 }  // namespace webrtc

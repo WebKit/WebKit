@@ -19,7 +19,6 @@
 #import "components/video_codec/RTCCodecSpecificInfoH265+Private.h"
 #endif
 #import "sdk/objc/api/peerconnection/RTCEncodedImage+Private.h"
-#import "sdk/objc/api/peerconnection/RTCRtpFragmentationHeader+Private.h"
 #import "sdk/objc/api/peerconnection/RTCVideoCodecInfo+Private.h"
 #import "sdk/objc/api/peerconnection/RTCVideoEncoderSettings+Private.h"
 #import "sdk/objc/api/video_codec/RTCVideoCodecConstants.h"
@@ -80,10 +79,8 @@ class ObjCVideoEncoder : public VideoEncoder {
 #endif
       }
 
-      std::unique_ptr<RTPFragmentationHeader> fragmentationHeader =
-          [header createNativeFragmentationHeader];
       EncodedImageCallback::Result res =
-          callback->OnEncodedImage(encodedImage, &codecSpecificInfo, fragmentationHeader.get());
+          callback->OnEncodedImage(encodedImage, &codecSpecificInfo);
       return res.error == EncodedImageCallback::Result::OK;
     }];
 
@@ -163,13 +160,8 @@ std::vector<SdpVideoFormat> ObjCVideoEncoderFactory::GetImplementations() const 
 
 VideoEncoderFactory::CodecInfo ObjCVideoEncoderFactory::QueryVideoEncoder(
     const SdpVideoFormat &format) const {
-  // TODO(andersc): This is a hack until we figure out how this should be done properly.
-  NSString *formatName = [NSString stringForStdString:format.name];
-  NSSet *wrappedSoftwareFormats =
-      [NSSet setWithObjects:kRTCVideoCodecVp8Name, kRTCVideoCodecVp9Name, nil];
 
-  CodecInfo codec_info;
-  codec_info.is_hardware_accelerated = ![wrappedSoftwareFormats containsObject:formatName];
+  VideoEncoderFactory::CodecInfo codec_info;
   codec_info.has_internal_source = false;
   return codec_info;
 }

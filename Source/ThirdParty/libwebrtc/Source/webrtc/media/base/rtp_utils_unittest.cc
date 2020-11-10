@@ -71,15 +71,25 @@ static uint8_t kRtpMsgWith2ByteExtnHeader[] = {
     // clang-format on
 };
 
-// RTP packet with single byte extension header of length 4 bytes.
-// Extension id = 3 and length = 3
-static uint8_t kRtpMsgWithAbsSendTimeExtension[] = {
+// RTP packet with two one-byte header extensions. The last 4 bytes consist of
+// abs-send-time with extension id = 3 and length = 3.
+static uint8_t kRtpMsgWithOneByteAbsSendTimeExtension[] = {
     0x90, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
     0xBE, 0xDE, 0x00, 0x02, 0x22, 0x00, 0x02, 0x1c, 0x32, 0xaa, 0xbb, 0xcc,
 };
 
-// Index of AbsSendTimeExtn data in message |kRtpMsgWithAbsSendTimeExtension|.
-static const int kAstIndexInRtpMsg = 21;
+// RTP packet with two two-byte header extensions. The last 5 bytes consist of
+// abs-send-time with extension id = 3 and length = 3.
+static uint8_t kRtpMsgWithTwoByteAbsSendTimeExtension[] = {
+    0x90, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x10, 0x00, 0x00, 0x02, 0x02, 0x01, 0x02, 0x03, 0x03, 0xaa, 0xbb, 0xcc,
+};
+
+// Index of AbsSendTimeExtn data in message
+// |kRtpMsgWithOneByteAbsSendTimeExtension|.
+static const int kAstIndexInOneByteRtpMsg = 21;
+// and in message |kRtpMsgWithTwoByteAbsSendTimeExtension|.
+static const int kAstIndexInTwoByteRtpMsg = 21;
 
 static const rtc::ArrayView<const char> kPcmuFrameArrayView =
     rtc::MakeArrayView(reinterpret_cast<const char*>(kPcmuFrame),
@@ -213,19 +223,17 @@ TEST(RtpUtilsTest, Valid2ByteExtnHdrRtpMessage) {
 }
 
 // Valid RTP packet which has 1 byte header AbsSendTime extension in it.
-TEST(RtpUtilsTest, ValidRtpPacketWithAbsSendTimeExtension) {
-  EXPECT_TRUE(ValidateRtpHeader(kRtpMsgWithAbsSendTimeExtension,
-                                sizeof(kRtpMsgWithAbsSendTimeExtension),
+TEST(RtpUtilsTest, ValidRtpPacketWithOneByteAbsSendTimeExtension) {
+  EXPECT_TRUE(ValidateRtpHeader(kRtpMsgWithOneByteAbsSendTimeExtension,
+                                sizeof(kRtpMsgWithOneByteAbsSendTimeExtension),
                                 nullptr));
 }
 
-// Verify handling of a 2 byte extension header RTP messsage. Currently these
-// messages are not supported.
-TEST(RtpUtilsTest, UpdateAbsSendTimeExtensionIn2ByteHeaderExtn) {
-  std::vector<uint8_t> data(
-      kRtpMsgWith2ByteExtnHeader,
-      kRtpMsgWith2ByteExtnHeader + sizeof(kRtpMsgWith2ByteExtnHeader));
-  EXPECT_FALSE(UpdateRtpAbsSendTimeExtension(&data[0], data.size(), 3, 0));
+// Valid RTP packet which has 2 byte header AbsSendTime extension in it.
+TEST(RtpUtilsTest, ValidRtpPacketWithTwoByteAbsSendTimeExtension) {
+  EXPECT_TRUE(ValidateRtpHeader(kRtpMsgWithTwoByteAbsSendTimeExtension,
+                                sizeof(kRtpMsgWithTwoByteAbsSendTimeExtension),
+                                nullptr));
 }
 
 // Verify finding an extension ID in the TURN send indication message.
@@ -276,19 +284,21 @@ TEST(RtpUtilsTest, UpdateAbsSendTimeExtensionInTurnSendIndication) {
 // without HMAC value in the packet.
 TEST(RtpUtilsTest, ApplyPacketOptionsWithDefaultValues) {
   rtc::PacketTimeUpdateParams packet_time_params;
-  std::vector<uint8_t> rtp_packet(kRtpMsgWithAbsSendTimeExtension,
-                                  kRtpMsgWithAbsSendTimeExtension +
-                                      sizeof(kRtpMsgWithAbsSendTimeExtension));
+  std::vector<uint8_t> rtp_packet(
+      kRtpMsgWithOneByteAbsSendTimeExtension,
+      kRtpMsgWithOneByteAbsSendTimeExtension +
+          sizeof(kRtpMsgWithOneByteAbsSendTimeExtension));
   rtp_packet.insert(rtp_packet.end(), kFakeTag, kFakeTag + sizeof(kFakeTag));
   EXPECT_TRUE(ApplyPacketOptions(&rtp_packet[0], rtp_packet.size(),
                                  packet_time_params, 0));
 
   // Making sure HMAC wasn't updated..
-  EXPECT_EQ(0, memcmp(&rtp_packet[sizeof(kRtpMsgWithAbsSendTimeExtension)],
-                      kFakeTag, 4));
+  EXPECT_EQ(0,
+            memcmp(&rtp_packet[sizeof(kRtpMsgWithOneByteAbsSendTimeExtension)],
+                   kFakeTag, 4));
 
   // Verify AbsouluteSendTime extension field wasn't modified.
-  EXPECT_EQ(0, memcmp(&rtp_packet[kAstIndexInRtpMsg], kTestAstValue,
+  EXPECT_EQ(0, memcmp(&rtp_packet[kAstIndexInOneByteRtpMsg], kTestAstValue,
                       sizeof(kTestAstValue)));
 }
 
@@ -299,34 +309,53 @@ TEST(RtpUtilsTest, ApplyPacketOptionsWithAuthParams) {
                                           kTestKey + sizeof(kTestKey));
   packet_time_params.srtp_auth_tag_len = 4;
 
-  std::vector<uint8_t> rtp_packet(kRtpMsgWithAbsSendTimeExtension,
-                                  kRtpMsgWithAbsSendTimeExtension +
-                                      sizeof(kRtpMsgWithAbsSendTimeExtension));
+  std::vector<uint8_t> rtp_packet(
+      kRtpMsgWithOneByteAbsSendTimeExtension,
+      kRtpMsgWithOneByteAbsSendTimeExtension +
+          sizeof(kRtpMsgWithOneByteAbsSendTimeExtension));
   rtp_packet.insert(rtp_packet.end(), kFakeTag, kFakeTag + sizeof(kFakeTag));
   EXPECT_TRUE(ApplyPacketOptions(&rtp_packet[0], rtp_packet.size(),
                                  packet_time_params, 0));
 
   uint8_t kExpectedTag[] = {0xc1, 0x7a, 0x8c, 0xa0};
-  EXPECT_EQ(0, memcmp(&rtp_packet[sizeof(kRtpMsgWithAbsSendTimeExtension)],
-                      kExpectedTag, sizeof(kExpectedTag)));
+  EXPECT_EQ(0,
+            memcmp(&rtp_packet[sizeof(kRtpMsgWithOneByteAbsSendTimeExtension)],
+                   kExpectedTag, sizeof(kExpectedTag)));
 
   // Verify AbsouluteSendTime extension field is not modified.
-  EXPECT_EQ(0, memcmp(&rtp_packet[kAstIndexInRtpMsg], kTestAstValue,
+  EXPECT_EQ(0, memcmp(&rtp_packet[kAstIndexInOneByteRtpMsg], kTestAstValue,
                       sizeof(kTestAstValue)));
 }
 
 // Verify finding an extension ID in a raw rtp message.
-TEST(RtpUtilsTest, UpdateAbsSendTimeExtensionInRtpPacket) {
-  std::vector<uint8_t> rtp_packet(kRtpMsgWithAbsSendTimeExtension,
-                                  kRtpMsgWithAbsSendTimeExtension +
-                                      sizeof(kRtpMsgWithAbsSendTimeExtension));
+TEST(RtpUtilsTest, UpdateOneByteAbsSendTimeExtensionInRtpPacket) {
+  std::vector<uint8_t> rtp_packet(
+      kRtpMsgWithOneByteAbsSendTimeExtension,
+      kRtpMsgWithOneByteAbsSendTimeExtension +
+          sizeof(kRtpMsgWithOneByteAbsSendTimeExtension));
 
   EXPECT_TRUE(UpdateRtpAbsSendTimeExtension(&rtp_packet[0], rtp_packet.size(),
                                             3, 51183266));
 
   // Verify that the timestamp was updated.
   const uint8_t kExpectedTimestamp[3] = {0xcc, 0xbb, 0xaa};
-  EXPECT_EQ(0, memcmp(&rtp_packet[kAstIndexInRtpMsg], kExpectedTimestamp,
+  EXPECT_EQ(0, memcmp(&rtp_packet[kAstIndexInOneByteRtpMsg], kExpectedTimestamp,
+                      sizeof(kExpectedTimestamp)));
+}
+
+// Verify finding an extension ID in a raw rtp message.
+TEST(RtpUtilsTest, UpdateTwoByteAbsSendTimeExtensionInRtpPacket) {
+  std::vector<uint8_t> rtp_packet(
+      kRtpMsgWithTwoByteAbsSendTimeExtension,
+      kRtpMsgWithTwoByteAbsSendTimeExtension +
+          sizeof(kRtpMsgWithTwoByteAbsSendTimeExtension));
+
+  EXPECT_TRUE(UpdateRtpAbsSendTimeExtension(&rtp_packet[0], rtp_packet.size(),
+                                            3, 51183266));
+
+  // Verify that the timestamp was updated.
+  const uint8_t kExpectedTimestamp[3] = {0xcc, 0xbb, 0xaa};
+  EXPECT_EQ(0, memcmp(&rtp_packet[kAstIndexInTwoByteRtpMsg], kExpectedTimestamp,
                       sizeof(kExpectedTimestamp)));
 }
 
@@ -339,20 +368,22 @@ TEST(RtpUtilsTest, ApplyPacketOptionsWithAuthParamsAndAbsSendTime) {
   packet_time_params.rtp_sendtime_extension_id = 3;
   // 3 is also present in the test message.
 
-  std::vector<uint8_t> rtp_packet(kRtpMsgWithAbsSendTimeExtension,
-                                  kRtpMsgWithAbsSendTimeExtension +
-                                      sizeof(kRtpMsgWithAbsSendTimeExtension));
+  std::vector<uint8_t> rtp_packet(
+      kRtpMsgWithOneByteAbsSendTimeExtension,
+      kRtpMsgWithOneByteAbsSendTimeExtension +
+          sizeof(kRtpMsgWithOneByteAbsSendTimeExtension));
   rtp_packet.insert(rtp_packet.end(), kFakeTag, kFakeTag + sizeof(kFakeTag));
   EXPECT_TRUE(ApplyPacketOptions(&rtp_packet[0], rtp_packet.size(),
                                  packet_time_params, 51183266));
 
   const uint8_t kExpectedTag[] = {0x81, 0xd1, 0x2c, 0x0e};
-  EXPECT_EQ(0, memcmp(&rtp_packet[sizeof(kRtpMsgWithAbsSendTimeExtension)],
-                      kExpectedTag, sizeof(kExpectedTag)));
+  EXPECT_EQ(0,
+            memcmp(&rtp_packet[sizeof(kRtpMsgWithOneByteAbsSendTimeExtension)],
+                   kExpectedTag, sizeof(kExpectedTag)));
 
   // Verify that the timestamp was updated.
   const uint8_t kExpectedTimestamp[3] = {0xcc, 0xbb, 0xaa};
-  EXPECT_EQ(0, memcmp(&rtp_packet[kAstIndexInRtpMsg], kExpectedTimestamp,
+  EXPECT_EQ(0, memcmp(&rtp_packet[kAstIndexInOneByteRtpMsg], kExpectedTimestamp,
                       sizeof(kExpectedTimestamp)));
 }
 

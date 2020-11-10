@@ -15,7 +15,7 @@
 #include <vector>
 
 #import "RTCCodecSpecificInfoH265.h"
-#import "api/peerconnection/RTCRtpFragmentationHeader+Private.h"
+//#import "api/peerconnection/RTCRtpFragmentationHeader+Private.h"
 #import "api/peerconnection/RTCVideoCodecInfo+Private.h"
 #import "base/RTCI420Buffer.h"
 #import "base/RTCVideoFrame.h"
@@ -540,20 +540,9 @@ void compressionOutputCallback(void* encoder,
     RTC_LOG(LS_INFO) << "Generated keyframe";
   }
 
-  // Convert the sample buffer into a buffer suitable for RTP packetization.
-  // TODO(tkchin): Allocate buffers through a pool.
   std::unique_ptr<rtc::Buffer> buffer(new rtc::Buffer());
-  RTCRtpFragmentationHeader* header;
-  {
-    std::unique_ptr<webrtc::RTPFragmentationHeader> header_cpp;
-    bool result = H265CMSampleBufferToAnnexBBuffer(sampleBuffer, isKeyframe,
-                                                   buffer.get(), &header_cpp);
-    header = [[RTCRtpFragmentationHeader alloc]
-        initWithNativeFragmentationHeader:header_cpp.get()];
-    if (!result) {
-      RTC_LOG(LS_ERROR) << "Failed to convert sample buffer.";
-      return;
-    }
+  if (!webrtc::H265CMSampleBufferToAnnexBBuffer(sampleBuffer, isKeyframe, buffer.get())) {
+    RTC_LOG(LS_INFO) << "Unable to parse H265 encoded buffer";
   }
 
   RTCEncodedImage* frame = [[RTCEncodedImage alloc] init];
@@ -575,7 +564,7 @@ void compressionOutputCallback(void* encoder,
 
   // FIXME: QP is ignored because there is no H.265 bitstream parser.
 
-  BOOL res = _callback(frame, [[RTCCodecSpecificInfoH265 alloc] init], header);
+  BOOL res = _callback(frame, [[RTCCodecSpecificInfoH265 alloc] init], nullptr);
   if (!res) {
     RTC_LOG(LS_ERROR) << "Encode callback failed.";
     return;

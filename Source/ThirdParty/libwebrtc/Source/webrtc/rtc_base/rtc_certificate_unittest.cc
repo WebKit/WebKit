@@ -33,7 +33,7 @@ class RTCCertificateTest : public ::testing::Test {
  protected:
   scoped_refptr<RTCCertificate> GenerateECDSA() {
     std::unique_ptr<SSLIdentity> identity(
-        SSLIdentity::Generate(kTestCertCommonName, KeyParams::ECDSA()));
+        SSLIdentity::Create(kTestCertCommonName, KeyParams::ECDSA()));
     RTC_CHECK(identity);
     return RTCCertificate::Create(std::move(identity));
   }
@@ -78,7 +78,7 @@ class RTCCertificateTest : public ::testing::Test {
     // is fast to generate.
     params.key_params = KeyParams::ECDSA();
 
-    std::unique_ptr<SSLIdentity> identity(SSLIdentity::GenerateForTest(params));
+    std::unique_ptr<SSLIdentity> identity(SSLIdentity::CreateForTest(params));
     return RTCCertificate::Create(std::move(identity));
   }
 };

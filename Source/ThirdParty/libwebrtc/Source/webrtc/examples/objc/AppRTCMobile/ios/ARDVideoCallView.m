@@ -25,7 +25,7 @@ static CGFloat const kLocalVideoViewSize = 120;
 static CGFloat const kLocalVideoViewPadding = 8;
 static CGFloat const kStatusBarHeight = 20;
 
-@interface ARDVideoCallView () <RTCVideoViewDelegate>
+@interface ARDVideoCallView () <RTC_OBJC_TYPE (RTCVideoViewDelegate)>
 @end
 
 @implementation ARDVideoCallView {
@@ -45,16 +45,17 @@ static CGFloat const kStatusBarHeight = 20;
   if (self = [super initWithFrame:frame]) {
 
 #if defined(RTC_SUPPORTS_METAL)
-    _remoteVideoView = [[RTCMTLVideoView alloc] initWithFrame:CGRectZero];
+    _remoteVideoView = [[RTC_OBJC_TYPE(RTCMTLVideoView) alloc] initWithFrame:CGRectZero];
 #else
-    RTCEAGLVideoView *remoteView = [[RTCEAGLVideoView alloc] initWithFrame:CGRectZero];
+    RTC_OBJC_TYPE(RTCEAGLVideoView) *remoteView =
+        [[RTC_OBJC_TYPE(RTCEAGLVideoView) alloc] initWithFrame:CGRectZero];
     remoteView.delegate = self;
     _remoteVideoView = remoteView;
 #endif
 
     [self addSubview:_remoteVideoView];
 
-    _localVideoView = [[RTCCameraPreviewView alloc] initWithFrame:CGRectZero];
+    _localVideoView = [[RTC_OBJC_TYPE(RTCCameraPreviewView) alloc] initWithFrame:CGRectZero];
     [self addSubview:_localVideoView];
 
     _statsView = [[ARDStatsView alloc] initWithFrame:CGRectZero];
@@ -62,10 +63,11 @@ static CGFloat const kStatusBarHeight = 20;
     [self addSubview:_statsView];
 
     _routeChangeButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    _routeChangeButton.backgroundColor = [UIColor whiteColor];
+    _routeChangeButton.backgroundColor = [UIColor grayColor];
     _routeChangeButton.layer.cornerRadius = kButtonSize / 2;
     _routeChangeButton.layer.masksToBounds = YES;
-    UIImage *image = [UIImage imageNamed:@"ic_surround_sound_black_24dp.png"];
+    UIImage *image = [UIImage imageForName:@"ic_surround_sound_black_24dp.png"
+                                     color:[UIColor whiteColor]];
     [_routeChangeButton setImage:image forState:UIControlStateNormal];
     [_routeChangeButton addTarget:self
                            action:@selector(onRouteChange:)
@@ -74,10 +76,10 @@ static CGFloat const kStatusBarHeight = 20;
 
     // TODO(tkchin): don't display this if we can't actually do camera switch.
     _cameraSwitchButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    _cameraSwitchButton.backgroundColor = [UIColor whiteColor];
+    _cameraSwitchButton.backgroundColor = [UIColor grayColor];
     _cameraSwitchButton.layer.cornerRadius = kButtonSize / 2;
     _cameraSwitchButton.layer.masksToBounds = YES;
-    image = [UIImage imageNamed:@"ic_switch_video_black_24dp.png"];
+    image = [UIImage imageForName:@"ic_switch_video_black_24dp.png" color:[UIColor whiteColor]];
     [_cameraSwitchButton setImage:image forState:UIControlStateNormal];
     [_cameraSwitchButton addTarget:self
                       action:@selector(onCameraSwitch:)
@@ -175,9 +177,9 @@ static CGFloat const kStatusBarHeight = 20;
       CGPointMake(CGRectGetMidX(bounds), CGRectGetMidY(bounds));
 }
 
-#pragma mark - RTCVideoViewDelegate
+#pragma mark - RTC_OBJC_TYPE(RTCVideoViewDelegate)
 
-- (void)videoView:(id<RTCVideoRenderer>)videoView didChangeVideoSize:(CGSize)size {
+- (void)videoView:(id<RTC_OBJC_TYPE(RTCVideoRenderer)>)videoView didChangeVideoSize:(CGSize)size {
   if (videoView == _remoteVideoView) {
     _remoteVideoSize = size;
   }
@@ -186,12 +188,28 @@ static CGFloat const kStatusBarHeight = 20;
 
 #pragma mark - Private
 
-- (void)onCameraSwitch:(id)sender {
-  [_delegate videoCallViewDidSwitchCamera:self];
+- (void)onCameraSwitch:(UIButton *)sender {
+  sender.enabled = false;
+  [_delegate videoCallView:self
+      shouldSwitchCameraWithCompletion:^(NSError *error) {
+        dispatch_async(dispatch_get_main_queue(), ^(void) {
+          sender.enabled = true;
+        });
+      }];
 }
 
-- (void)onRouteChange:(id)sender {
-  [_delegate videoCallViewDidChangeRoute:self];
+- (void)onRouteChange:(UIButton *)sender {
+  sender.enabled = false;
+  __weak ARDVideoCallView *weakSelf = self;
+  [_delegate videoCallView:self
+      shouldChangeRouteWithCompletion:^(void) {
+        ARDVideoCallView *strongSelf = weakSelf;
+        if (strongSelf) {
+          dispatch_async(dispatch_get_main_queue(), ^(void) {
+            sender.enabled = true;
+          });
+        }
+      }];
 }
 
 - (void)onHangup:(id)sender {

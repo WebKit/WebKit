@@ -39,7 +39,7 @@ BitrateAdjuster::BitrateAdjuster(float min_adjusted_bitrate_pct,
 }
 
 void BitrateAdjuster::SetTargetBitrateBps(uint32_t bitrate_bps) {
-  rtc::CritScope cs(&crit_);
+  MutexLock lock(&mutex_);
   // If the change in target bitrate is large, update the adjusted bitrate
   // immediately since it's likely we have gained or lost a sizeable amount of
   // bandwidth and we'll want to respond quickly.
@@ -58,22 +58,22 @@ void BitrateAdjuster::SetTargetBitrateBps(uint32_t bitrate_bps) {
 }
 
 uint32_t BitrateAdjuster::GetTargetBitrateBps() const {
-  rtc::CritScope cs(&crit_);
+  MutexLock lock(&mutex_);
   return target_bitrate_bps_;
 }
 
 uint32_t BitrateAdjuster::GetAdjustedBitrateBps() const {
-  rtc::CritScope cs(&crit_);
+  MutexLock lock(&mutex_);
   return adjusted_bitrate_bps_;
 }
 
 absl::optional<uint32_t> BitrateAdjuster::GetEstimatedBitrateBps() {
-  rtc::CritScope cs(&crit_);
+  MutexLock lock(&mutex_);
   return bitrate_tracker_.Rate(rtc::TimeMillis());
 }
 
 void BitrateAdjuster::Update(size_t frame_size) {
-  rtc::CritScope cs(&crit_);
+  MutexLock lock(&mutex_);
   uint32_t current_time_ms = rtc::TimeMillis();
   bitrate_tracker_.Update(frame_size, current_time_ms);
   UpdateBitrate(current_time_ms);
@@ -100,7 +100,7 @@ uint32_t BitrateAdjuster::GetMaxAdjustedBitrateBps() const {
 
 // Only safe to call this after Update calls have stopped
 void BitrateAdjuster::Reset() {
-  rtc::CritScope cs(&crit_);
+  MutexLock lock(&mutex_);
   target_bitrate_bps_ = 0;
   adjusted_bitrate_bps_ = 0;
   last_adjusted_target_bitrate_bps_ = 0;

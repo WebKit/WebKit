@@ -13,7 +13,7 @@
 #include <algorithm>
 #include <cmath>
 
-#include "common_audio/third_party/fft4g/fft4g.h"
+#include "common_audio/third_party/ooura/fft_size_256/fft4g.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {

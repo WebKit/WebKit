@@ -24,6 +24,8 @@ std::string VP9ProfileToString(VP9Profile profile) {
   switch (profile) {
     case VP9Profile::kProfile0:
       return "0";
+    case VP9Profile::kProfile1:
+      return "1";
     case VP9Profile::kProfile2:
       return "2";
   }
@@ -38,6 +40,8 @@ absl::optional<VP9Profile> StringToVP9Profile(const std::string& str) {
   switch (i.value()) {
     case 0:
       return VP9Profile::kProfile0;
+    case 1:
+      return VP9Profile::kProfile1;
     case 2:
       return VP9Profile::kProfile2;
     default:

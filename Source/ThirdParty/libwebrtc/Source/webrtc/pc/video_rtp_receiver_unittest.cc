@@ -32,16 +32,20 @@ class VideoRtpReceiverTest : public testing::Test {
     MockVideoMediaChannel(cricket::FakeVideoEngine* engine,
                           const cricket::VideoOptions& options)
         : FakeVideoMediaChannel(engine, options) {}
-    MOCK_METHOD2(SetRecordableEncodedFrameCallback,
-                 void(uint32_t,
-                      std::function<void(const RecordableEncodedFrame&)>));
-    MOCK_METHOD1(ClearRecordableEncodedFrameCallback, void(uint32_t));
-    MOCK_METHOD1(GenerateKeyFrame, void(uint32_t));
+    MOCK_METHOD(void,
+                SetRecordableEncodedFrameCallback,
+                (uint32_t, std::function<void(const RecordableEncodedFrame&)>),
+                (override));
+    MOCK_METHOD(void,
+                ClearRecordableEncodedFrameCallback,
+                (uint32_t),
+                (override));
+    MOCK_METHOD(void, GenerateKeyFrame, (uint32_t), (override));
   };
 
   class MockVideoSink : public rtc::VideoSinkInterface<RecordableEncodedFrame> {
    public:
-    MOCK_METHOD1(OnFrame, void(const RecordableEncodedFrame&));
+    MOCK_METHOD(void, OnFrame, (const RecordableEncodedFrame&), (override));
   };
 
   VideoRtpReceiverTest()

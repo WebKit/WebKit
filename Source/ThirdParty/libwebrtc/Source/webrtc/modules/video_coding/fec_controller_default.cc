@@ -20,7 +20,6 @@
 #include "system_wrappers/include/field_trial.h"
 
 namespace webrtc {
-using rtc::CritScope;
 
 const float kProtectionOverheadRateThreshold = 0.5;
 
@@ -54,7 +53,7 @@ void FecControllerDefault::SetEncodingData(size_t width,
                                            size_t height,
                                            size_t num_temporal_layers,
                                            size_t max_payload_size) {
-  CritScope lock(&crit_sect_);
+  MutexLock lock(&mutex_);
   loss_prot_logic_->UpdateFrameSize(width, height);
   loss_prot_logic_->UpdateNumLayers(num_temporal_layers);
   max_payload_size_ = max_payload_size;
@@ -94,7 +93,7 @@ uint32_t FecControllerDefault::UpdateFecRates(
   FecProtectionParams delta_fec_params;
   FecProtectionParams key_fec_params;
   {
-    CritScope lock(&crit_sect_);
+    MutexLock lock(&mutex_);
     loss_prot_logic_->UpdateBitRate(target_bitrate_kbps);
     loss_prot_logic_->UpdateRtt(round_trip_time_ms);
     // Update frame rate for the loss protection logic class: frame rate should
@@ -175,7 +174,7 @@ void FecControllerDefault::SetProtectionMethod(bool enable_fec,
   } else if (enable_fec) {
     method = media_optimization::kFec;
   }
-  CritScope lock(&crit_sect_);
+  MutexLock lock(&mutex_);
   loss_prot_logic_->SetMethod(method);
 }
 
@@ -183,7 +182,7 @@ void FecControllerDefault::UpdateWithEncodedData(
     const size_t encoded_image_length,
     const VideoFrameType encoded_image_frametype) {
   const size_t encoded_length = encoded_image_length;
-  CritScope lock(&crit_sect_);
+  MutexLock lock(&mutex_);
   if (encoded_length > 0) {
     const bool delta_frame =
         encoded_image_frametype != VideoFrameType::kVideoFrameKey;

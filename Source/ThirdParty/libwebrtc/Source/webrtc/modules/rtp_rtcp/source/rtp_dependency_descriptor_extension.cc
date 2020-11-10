@@ -10,6 +10,7 @@
 
 #include "modules/rtp_rtcp/source/rtp_dependency_descriptor_extension.h"
 
+#include <bitset>
 #include <cstdint>
 
 #include "api/array_view.h"
@@ -23,6 +24,7 @@ namespace webrtc {
 
 constexpr RTPExtensionType RtpDependencyDescriptorExtension::kId;
 constexpr char RtpDependencyDescriptorExtension::kUri[];
+constexpr std::bitset<32> RtpDependencyDescriptorExtension::kAllChainsAreActive;
 
 bool RtpDependencyDescriptorExtension::Parse(
     rtc::ArrayView<const uint8_t> data,
@@ -34,16 +36,20 @@ bool RtpDependencyDescriptorExtension::Parse(
 
 size_t RtpDependencyDescriptorExtension::ValueSize(
     const FrameDependencyStructure& structure,
+    std::bitset<32> active_chains,
     const DependencyDescriptor& descriptor) {
-  RtpDependencyDescriptorWriter writer(/*data=*/{}, structure, descriptor);
+  RtpDependencyDescriptorWriter writer(/*data=*/{}, structure, active_chains,
+                                       descriptor);
   return DivideRoundUp(writer.ValueSizeBits(), 8);
 }
 
 bool RtpDependencyDescriptorExtension::Write(
     rtc::ArrayView<uint8_t> data,
     const FrameDependencyStructure& structure,
+    std::bitset<32> active_chains,
     const DependencyDescriptor& descriptor) {
-  RtpDependencyDescriptorWriter writer(data, structure, descriptor);
+  RtpDependencyDescriptorWriter writer(data, structure, active_chains,
+                                       descriptor);
   return writer.Write();
 }
 

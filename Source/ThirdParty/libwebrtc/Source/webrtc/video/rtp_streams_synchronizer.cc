@@ -51,7 +51,7 @@ RtpStreamsSynchronizer::RtpStreamsSynchronizer(Syncable* syncable_video)
 RtpStreamsSynchronizer::~RtpStreamsSynchronizer() = default;
 
 void RtpStreamsSynchronizer::ConfigureSync(Syncable* syncable_audio) {
-  rtc::CritScope lock(&crit_);
+  MutexLock lock(&mutex_);
   if (syncable_audio == syncable_audio_) {
     // This prevents expensive no-ops.
     return;
@@ -76,7 +76,7 @@ void RtpStreamsSynchronizer::Process() {
   RTC_DCHECK_RUN_ON(&process_thread_checker_);
   last_sync_time_ = rtc::TimeNanos();
 
-  rtc::CritScope lock(&crit_);
+  MutexLock lock(&mutex_);
   if (!syncable_audio_) {
     return;
   }
@@ -89,8 +89,15 @@ void RtpStreamsSynchronizer::Process() {
     log_stats = true;
   }
 
+  int64_t last_audio_receive_time_ms =
+      audio_measurement_.latest_receive_time_ms;
   absl::optional<Syncable::Info> audio_info = syncable_audio_->GetInfo();
   if (!audio_info || !UpdateMeasurements(&audio_measurement_, *audio_info)) {
+    return;
+  }
+
+  if (last_audio_receive_time_ms == audio_measurement_.latest_receive_time_ms) {
+    // No new audio packet has been received since last update.
     return;
   }
 
@@ -157,7 +164,7 @@ bool RtpStreamsSynchronizer::GetStreamSyncOffsetInMs(
     int64_t* video_playout_ntp_ms,
     int64_t* stream_offset_ms,
     double* estimated_freq_khz) const {
-  rtc::CritScope lock(&crit_);
+  MutexLock lock(&mutex_);
   if (!syncable_audio_) {
     return false;
   }

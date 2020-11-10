@@ -28,15 +28,12 @@ class VideoEncoderFactory {
  public:
   // TODO(magjed): Try to get rid of this struct.
   struct CodecInfo {
-    // |is_hardware_accelerated| is true if the encoders created by this factory
-    // of the given codec will use hardware support.
-    bool is_hardware_accelerated;
     // |has_internal_source| is true if encoders created by this factory of the
     // given codec will use internal camera sources, meaning that they don't
     // require/expect frames to be delivered via webrtc::VideoEncoder::Encode.
     // This flag is used as the internal_source parameter to
     // webrtc::ViEExternalCodec::RegisterExternalSendCodec.
-    bool has_internal_source;
+    bool has_internal_source = false;
   };
 
   // An injectable class that is continuously updated with encoding conditions
@@ -73,8 +70,13 @@ class VideoEncoderFactory {
 
   // Returns information about how this format will be encoded. The specified
   // format must be one of the supported formats by this factory.
-  // TODO(magjed): Try to get rid of this method.
-  virtual CodecInfo QueryVideoEncoder(const SdpVideoFormat& format) const = 0;
+
+  // TODO(magjed): Try to get rid of this method. Since is_hardware_accelerated
+  // is unused, only factories producing internal source encoders (in itself a
+  // deprecated feature) needs to override this method.
+  virtual CodecInfo QueryVideoEncoder(const SdpVideoFormat& format) const {
+    return CodecInfo();
+  }
 
   // Creates a VideoEncoder for the specified format.
   virtual std::unique_ptr<VideoEncoder> CreateVideoEncoder(

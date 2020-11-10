@@ -14,13 +14,23 @@
 #include "api/call/call_factory_interface.h"
 #include "call/call.h"
 #include "call/call_config.h"
+#include "rtc_base/synchronization/sequence_checker.h"
+#include "rtc_base/system/no_unique_address.h"
 
 namespace webrtc {
 
 class CallFactory : public CallFactoryInterface {
+ public:
+  CallFactory();
+
+ private:
   ~CallFactory() override {}
 
   Call* CreateCall(const CallConfig& config) override;
+
+  RTC_NO_UNIQUE_ADDRESS SequenceChecker call_thread_;
+  rtc::scoped_refptr<SharedModuleThread> module_thread_
+      RTC_GUARDED_BY(call_thread_);
 };
 
 }  // namespace webrtc

@@ -93,7 +93,7 @@ TEST(MatchedFilter, TestNeonOptimizations) {
 // Verifies that the optimized methods for SSE2 are bitexact to their reference
 // counterparts.
 TEST(MatchedFilter, TestSse2Optimizations) {
-  bool use_sse2 = (WebRtc_GetCPUInfo(kSSE2) != 0);
+  bool use_sse2 = (GetCPUInfo(kSSE2) != 0);
   if (use_sse2) {
     Random random_generator(42U);
     constexpr float kSmoothing = 0.7f;
@@ -125,6 +125,47 @@ TEST(MatchedFilter, TestSse2Optimizations) {
 
         for (size_t j = 0; j < h.size(); ++j) {
           EXPECT_NEAR(h[j], h_SSE2[j], 0.00001f);
+        }
+
+        x_index = (x_index + sub_block_size) % x.size();
+      }
+    }
+  }
+}
+
+TEST(MatchedFilter, TestAvx2Optimizations) {
+  bool use_avx2 = (GetCPUInfo(kAVX2) != 0);
+  if (use_avx2) {
+    Random random_generator(42U);
+    constexpr float kSmoothing = 0.7f;
+    for (auto down_sampling_factor : kDownSamplingFactors) {
+      const size_t sub_block_size = kBlockSize / down_sampling_factor;
+      std::vector<float> x(2000);
+      RandomizeSampleVector(&random_generator, x);
+      std::vector<float> y(sub_block_size);
+      std::vector<float> h_AVX2(512);
+      std::vector<float> h(512);
+      int x_index = 0;
+      for (int k = 0; k < 1000; ++k) {
+        RandomizeSampleVector(&random_generator, y);
+
+        bool filters_updated = false;
+        float error_sum = 0.f;
+        bool filters_updated_AVX2 = false;
+        float error_sum_AVX2 = 0.f;
+
+        MatchedFilterCore_AVX2(x_index, h.size() * 150.f * 150.f, kSmoothing, x,
+                               y, h_AVX2, &filters_updated_AVX2,
+                               &error_sum_AVX2);
+
+        MatchedFilterCore(x_index, h.size() * 150.f * 150.f, kSmoothing, x, y,
+                          h, &filters_updated, &error_sum);
+
+        EXPECT_EQ(filters_updated, filters_updated_AVX2);
+        EXPECT_NEAR(error_sum, error_sum_AVX2, error_sum / 100000.f);
+
+        for (size_t j = 0; j < h.size(); ++j) {
+          EXPECT_NEAR(h[j], h_AVX2[j], 0.00001f);
         }
 
         x_index = (x_index + sub_block_size) % x.size();
@@ -375,7 +416,7 @@ TEST(MatchedFilter, NumberOfLagEstimates) {
 #if RTC_DCHECK_IS_ON && GTEST_HAS_DEATH_TEST && !defined(WEBRTC_ANDROID)
 
 // Verifies the check for non-zero windows size.
-TEST(MatchedFilter, ZeroWindowSize) {
+TEST(MatchedFilterDeathTest, ZeroWindowSize) {
   ApmDataDumper data_dumper(0);
   EchoCanceller3Config config;
   EXPECT_DEATH(MatchedFilter(&data_dumper, DetectOptimization(), 16, 0, 1, 1,
@@ -385,7 +426,7 @@ TEST(MatchedFilter, ZeroWindowSize) {
 }
 
 // Verifies the check for non-null data dumper.
-TEST(MatchedFilter, NullDataDumper) {
+TEST(MatchedFilterDeathTest, NullDataDumper) {
   EchoCanceller3Config config;
   EXPECT_DEATH(MatchedFilter(nullptr, DetectOptimization(), 16, 1, 1, 1, 150,
                              config.delay.delay_estimate_smoothing,
@@ -395,7 +436,7 @@ TEST(MatchedFilter, NullDataDumper) {
 
 // Verifies the check for that the sub block size is a multiple of 4.
 // TODO(peah): Activate the unittest once the required code has been landed.
-TEST(MatchedFilter, DISABLED_BlockSizeMultipleOf4) {
+TEST(MatchedFilterDeathTest, DISABLED_BlockSizeMultipleOf4) {
   ApmDataDumper data_dumper(0);
   EchoCanceller3Config config;
   EXPECT_DEATH(MatchedFilter(&data_dumper, DetectOptimization(), 15, 1, 1, 1,
@@ -407,7 +448,7 @@ TEST(MatchedFilter, DISABLED_BlockSizeMultipleOf4) {
 // Verifies the check for that there is an integer number of sub blocks that add
 // up to a block size.
 // TODO(peah): Activate the unittest once the required code has been landed.
-TEST(MatchedFilter, DISABLED_SubBlockSizeAddsUpToBlockSize) {
+TEST(MatchedFilterDeathTest, DISABLED_SubBlockSizeAddsUpToBlockSize) {
   ApmDataDumper data_dumper(0);
   EchoCanceller3Config config;
   EXPECT_DEATH(MatchedFilter(&data_dumper, DetectOptimization(), 12, 1, 1, 1,

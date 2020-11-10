@@ -10,6 +10,8 @@
 #ifndef VIDEO_TEST_MOCK_VIDEO_STREAM_ENCODER_H_
 #define VIDEO_TEST_MOCK_VIDEO_STREAM_ENCODER_H_
 
+#include <vector>
+
 #include "api/video/video_stream_encoder_interface.h"
 #include "test/gmock.h"
 
@@ -17,22 +19,44 @@ namespace webrtc {
 
 class MockVideoStreamEncoder : public VideoStreamEncoderInterface {
  public:
-  MOCK_METHOD2(SetSource,
-               void(rtc::VideoSourceInterface<VideoFrame>*,
-                    const DegradationPreference&));
-  MOCK_METHOD2(SetSink, void(EncoderSink*, bool));
-  MOCK_METHOD1(SetStartBitrate, void(int));
-  MOCK_METHOD0(SendKeyFrame, void());
-  MOCK_METHOD1(OnLossNotification, void(const VideoEncoder::LossNotification&));
-  MOCK_METHOD6(OnBitrateUpdated,
-               void(DataRate, DataRate, DataRate, uint8_t, int64_t, double));
-  MOCK_METHOD1(OnFrame, void(const VideoFrame&));
-  MOCK_METHOD1(SetBitrateAllocationObserver,
-               void(VideoBitrateAllocationObserver*));
-  MOCK_METHOD1(SetFecControllerOverride, void(FecControllerOverride*));
-  MOCK_METHOD0(Stop, void());
+  MOCK_METHOD(void,
+              AddAdaptationResource,
+              (rtc::scoped_refptr<Resource>),
+              (override));
+  MOCK_METHOD(std::vector<rtc::scoped_refptr<Resource>>,
+              GetAdaptationResources,
+              (),
+              (override));
+  MOCK_METHOD(void,
+              SetSource,
+              (rtc::VideoSourceInterface<VideoFrame>*,
+               const DegradationPreference&),
+              (override));
+  MOCK_METHOD(void, SetSink, (EncoderSink*, bool), (override));
+  MOCK_METHOD(void, SetStartBitrate, (int), (override));
+  MOCK_METHOD(void, SendKeyFrame, (), (override));
+  MOCK_METHOD(void,
+              OnLossNotification,
+              (const VideoEncoder::LossNotification&),
+              (override));
+  MOCK_METHOD(void,
+              OnBitrateUpdated,
+              (DataRate, DataRate, DataRate, uint8_t, int64_t, double),
+              (override));
+  MOCK_METHOD(void, OnFrame, (const VideoFrame&), (override));
+  MOCK_METHOD(void,
+              SetBitrateAllocationObserver,
+              (VideoBitrateAllocationObserver*),
+              (override));
+  MOCK_METHOD(void,
+              SetFecControllerOverride,
+              (FecControllerOverride*),
+              (override));
+  MOCK_METHOD(void, Stop, (), (override));
 
-  MOCK_METHOD2(MockedConfigureEncoder, void(const VideoEncoderConfig&, size_t));
+  MOCK_METHOD(void,
+              MockedConfigureEncoder,
+              (const VideoEncoderConfig&, size_t));
   // gtest generates implicit copy which is not allowed on VideoEncoderConfig,
   // so we can't mock ConfigureEncoder directly.
   void ConfigureEncoder(VideoEncoderConfig config,

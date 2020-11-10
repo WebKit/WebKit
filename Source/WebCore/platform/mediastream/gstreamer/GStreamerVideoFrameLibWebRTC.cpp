@@ -100,7 +100,7 @@ rtc::scoped_refptr<webrtc::I420BufferInterface> GStreamerVideoFrameLibWebRTC::To
         return nullptr;
     }
 
-    auto newBuffer = m_bufferPool.CreateBuffer(inFrame.width(), inFrame.height());
+    auto newBuffer = m_bufferPool.CreateI420Buffer(inFrame.width(), inFrame.height());
     ASSERT(newBuffer);
     if (!newBuffer) {
         GST_WARNING("RealtimeOutgoingVideoSourceGStreamer::videoSampleAvailable unable to allocate buffer for conversion to YUV");

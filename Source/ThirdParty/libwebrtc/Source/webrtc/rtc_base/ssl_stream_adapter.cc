@@ -10,6 +10,7 @@
 
 #include "rtc_base/ssl_stream_adapter.h"
 
+#include "absl/memory/memory.h"
 #include "rtc_base/openssl_stream_adapter.h"
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -89,12 +90,13 @@ bool IsGcmCryptoSuiteName(const std::string& crypto_suite) {
           crypto_suite == CS_AEAD_AES_128_GCM);
 }
 
-SSLStreamAdapter* SSLStreamAdapter::Create(StreamInterface* stream) {
-  return new OpenSSLStreamAdapter(stream);
+std::unique_ptr<SSLStreamAdapter> SSLStreamAdapter::Create(
+    std::unique_ptr<StreamInterface> stream) {
+  return std::make_unique<OpenSSLStreamAdapter>(std::move(stream));
 }
 
-SSLStreamAdapter::SSLStreamAdapter(StreamInterface* stream)
-    : StreamAdapterInterface(stream) {}
+SSLStreamAdapter::SSLStreamAdapter(std::unique_ptr<StreamInterface> stream)
+    : StreamAdapterInterface(stream.release()) {}
 
 SSLStreamAdapter::~SSLStreamAdapter() {}
 

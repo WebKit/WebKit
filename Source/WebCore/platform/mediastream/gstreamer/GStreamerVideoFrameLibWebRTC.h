@@ -25,7 +25,7 @@
 #include "LibWebRTCMacros.h"
 #include "webrtc/api/video/i420_buffer.h"
 #include "webrtc/api/video/video_frame.h"
-#include "webrtc/common_video/include/i420_buffer_pool.h"
+#include "webrtc/common_video/include/video_frame_buffer_pool.h"
 #include "webrtc/common_video/include/video_frame_buffer.h"
 #include "webrtc/rtc_base/ref_counted_object.h"
 
@@ -53,7 +53,7 @@ private:
 
     GRefPtr<GstSample> m_sample;
     GstVideoInfo m_info;
-    webrtc::I420BufferPool m_bufferPool;
+    webrtc::VideoFrameBufferPool m_bufferPool;
 };
 }
 

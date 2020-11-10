@@ -19,14 +19,14 @@ namespace webrtc {
 class MockAgc : public Agc {
  public:
   virtual ~MockAgc() {}
-  MOCK_METHOD3(Process,
-               void(const int16_t* audio, size_t length, int sample_rate_hz));
-  MOCK_METHOD1(GetRmsErrorDb, bool(int* error));
-  MOCK_METHOD0(Reset, void());
-  MOCK_METHOD1(set_target_level_dbfs, int(int level));
-  MOCK_CONST_METHOD0(target_level_dbfs, int());
-  MOCK_METHOD1(EnableStandaloneVad, void(bool enable));
-  MOCK_CONST_METHOD0(standalone_vad_enabled, bool());
+  MOCK_METHOD(void,
+              Process,
+              (const int16_t* audio, size_t length, int sample_rate_hz),
+              (override));
+  MOCK_METHOD(bool, GetRmsErrorDb, (int* error), (override));
+  MOCK_METHOD(void, Reset, (), (override));
+  MOCK_METHOD(int, set_target_level_dbfs, (int level), (override));
+  MOCK_METHOD(int, target_level_dbfs, (), (const, override));
 };
 
 }  // namespace webrtc

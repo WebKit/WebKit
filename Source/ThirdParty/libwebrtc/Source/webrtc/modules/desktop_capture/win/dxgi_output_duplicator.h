@@ -27,7 +27,6 @@
 #include "modules/desktop_capture/win/d3d_device.h"
 #include "modules/desktop_capture/win/dxgi_context.h"
 #include "modules/desktop_capture/win/dxgi_texture.h"
-#include "rtc_base/critical_section.h"
 #include "rtc_base/thread_annotations.h"
 
 namespace webrtc {

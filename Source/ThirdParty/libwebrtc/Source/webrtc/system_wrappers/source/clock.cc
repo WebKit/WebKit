@@ -17,7 +17,6 @@
 
 #include <mmsystem.h>
 
-#include "rtc_base/critical_section.h"
 
 #elif defined(WEBRTC_POSIX)
 
@@ -26,6 +25,7 @@
 
 #endif  // defined(WEBRTC_POSIX)
 
+#include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/synchronization/rw_lock_wrapper.h"
 #include "rtc_base/time_utils.h"
 
@@ -150,7 +150,7 @@ class WindowsRealTimeClock : public RealTimeClock {
     DWORD t;
     LARGE_INTEGER elapsed_ms;
     {
-      rtc::CritScope lock(&crit_);
+      MutexLock lock(&mutex_);
       // time MUST be fetched inside the critical section to avoid non-monotonic
       // last_time_ms_ values that'll register as incorrect wraparounds due to
       // concurrent calls to GetTime.
@@ -200,7 +200,7 @@ class WindowsRealTimeClock : public RealTimeClock {
     return ref;
   }
 
-  rtc::CriticalSection crit_;
+  Mutex mutex_;
   DWORD last_time_ms_;
   LONG num_timer_wraps_;
   const ReferencePoint ref_point_;

@@ -43,7 +43,7 @@ TimeStretch::ReturnCodes TimeStretch::Process(const int16_t* input,
     signal_len = input_len / num_channels_;
     signal_array.reset(new int16_t[signal_len]);
     signal = signal_array.get();
-    size_t j = master_channel_;
+    size_t j = kRefChannel;
     for (size_t i = 0; i < signal_len; ++i) {
       signal_array[i] = input[j];
       j += num_channels_;
@@ -187,7 +187,7 @@ bool TimeStretch::SpeechDetection(int32_t vec1_energy,
       (static_cast<int64_t>(vec1_energy) + vec2_energy) / 16);
   int32_t right_side;
   if (background_noise_.initialized()) {
-    right_side = background_noise_.Energy(master_channel_);
+    right_side = background_noise_.Energy(kRefChannel);
   } else {
     // If noise parameters have not been estimated, use a fixed threshold.
     right_side = 75000;

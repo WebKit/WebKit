@@ -35,6 +35,7 @@
 #include "rtc_base/string_utils.h"
 #include "rtc_base/strings/string_builder.h"
 #include "rtc_base/thread.h"
+#include "system_wrappers/include/field_trial.h"
 
 namespace rtc {
 namespace {
@@ -85,29 +86,10 @@ bool SortNetworks(const Network* a, const Network* b) {
   return a->key() < b->key();
 }
 
-std::string AdapterTypeToString(AdapterType type) {
-  switch (type) {
-    case ADAPTER_TYPE_ANY:
-      return "Wildcard";
-    case ADAPTER_TYPE_UNKNOWN:
-      return "Unknown";
-    case ADAPTER_TYPE_ETHERNET:
-      return "Ethernet";
-    case ADAPTER_TYPE_WIFI:
-      return "Wifi";
-    case ADAPTER_TYPE_CELLULAR:
-      return "Cellular";
-    case ADAPTER_TYPE_VPN:
-      return "VPN";
-    case ADAPTER_TYPE_LOOPBACK:
-      return "Loopback";
-    default:
-      RTC_NOTREACHED() << "Invalid type " << type;
-      return std::string();
-  }
-}
-
-uint16_t ComputeNetworkCostByType(int type) {
+uint16_t ComputeNetworkCostByType(int type,
+                                  bool use_differentiated_cellular_costs) {
+  // TODO(jonaso) : Rollout support for cellular network cost using A/B
+  // experiment to make sure it does not introduce regressions.
   switch (type) {
     case rtc::ADAPTER_TYPE_ETHERNET:
     case rtc::ADAPTER_TYPE_LOOPBACK:
@@ -115,7 +97,19 @@ uint16_t ComputeNetworkCostByType(int type) {
     case rtc::ADAPTER_TYPE_WIFI:
       return kNetworkCostLow;
     case rtc::ADAPTER_TYPE_CELLULAR:
-      return kNetworkCostHigh;
+      return kNetworkCostCellular;
+    case rtc::ADAPTER_TYPE_CELLULAR_2G:
+      return use_differentiated_cellular_costs ? kNetworkCostCellular2G
+                                               : kNetworkCostCellular;
+    case rtc::ADAPTER_TYPE_CELLULAR_3G:
+      return use_differentiated_cellular_costs ? kNetworkCostCellular3G
+                                               : kNetworkCostCellular;
+    case rtc::ADAPTER_TYPE_CELLULAR_4G:
+      return use_differentiated_cellular_costs ? kNetworkCostCellular4G
+                                               : kNetworkCostCellular;
+    case rtc::ADAPTER_TYPE_CELLULAR_5G:
+      return use_differentiated_cellular_costs ? kNetworkCostCellular5G
+                                               : kNetworkCostCellular;
     case rtc::ADAPTER_TYPE_ANY:
       // Candidates gathered from the any-address/wildcard ports, as backups,
       // are given the maximum cost so that if there are other candidates with
@@ -162,6 +156,18 @@ bool IsIgnoredIPv6(const InterfaceAddress& ip) {
   return false;
 }
 #endif  // !defined(__native_client__)
+
+// Note: consider changing to const Network* as arguments
+// if/when considering other changes that should not trigger
+// OnNetworksChanged.
+bool ShouldAdapterChangeTriggerNetworkChange(rtc::AdapterType old_type,
+                                             rtc::AdapterType new_type) {
+  // skip triggering OnNetworksChanged if
+  // changing from one cellular to another.
+  if (Network::IsCellular(old_type) && Network::IsCellular(new_type))
+    return false;
+  return true;
+}
 
 }  // namespace
 
@@ -259,7 +265,9 @@ webrtc::MdnsResponderInterface* NetworkManager::GetMdnsResponder() const {
 }
 
 NetworkManagerBase::NetworkManagerBase()
-    : enumeration_permission_(NetworkManager::ENUMERATION_ALLOWED) {}
+    : enumeration_permission_(NetworkManager::ENUMERATION_ALLOWED),
+      signal_network_preference_change_(webrtc::field_trial::IsEnabled(
+          "WebRTC-SignalNetworkPreferenceChange")) {}
 
 NetworkManagerBase::~NetworkManagerBase() {
   for (const auto& kv : networks_map_) {
@@ -366,12 +374,21 @@ void NetworkManagerBase::MergeNetworkList(const NetworkList& new_networks,
       merged_list.push_back(existing_net);
       if (net->type() != ADAPTER_TYPE_UNKNOWN &&
           net->type() != existing_net->type()) {
+        if (ShouldAdapterChangeTriggerNetworkChange(existing_net->type(),
+                                                    net->type())) {
+          *changed = true;
+        }
         existing_net->set_type(net->type());
-        *changed = true;
       }
       // If the existing network was not active, networks have changed.
       if (!existing_net->active()) {
         *changed = true;
+      }
+      if (net->network_preference() != existing_net->network_preference()) {
+        existing_net->set_network_preference(net->network_preference());
+        if (signal_network_preference_change_) {
+          *changed = true;
+        }
       }
       RTC_DCHECK(net->active());
       if (existing_net != net) {
@@ -461,12 +478,16 @@ Network* NetworkManagerBase::GetNetworkFromAddress(
   return nullptr;
 }
 
-BasicNetworkManager::BasicNetworkManager()
-    : thread_(nullptr), sent_first_update_(false), start_count_(0) {}
+BasicNetworkManager::BasicNetworkManager() {}
+
+BasicNetworkManager::BasicNetworkManager(
+    NetworkMonitorFactory* network_monitor_factory)
+    : network_monitor_factory_(network_monitor_factory) {}
 
 BasicNetworkManager::~BasicNetworkManager() {}
 
 void BasicNetworkManager::OnNetworksChanged() {
+  RTC_DCHECK_RUN_ON(thread_);
   RTC_LOG(LS_INFO) << "Network change was observed";
   UpdateNetworksOnce();
 }
@@ -523,6 +544,7 @@ void BasicNetworkManager::ConvertIfAddrs(struct ifaddrs* interfaces,
 
     AdapterType adapter_type = ADAPTER_TYPE_UNKNOWN;
     AdapterType vpn_underlying_adapter_type = ADAPTER_TYPE_UNKNOWN;
+    NetworkPreference network_preference = NetworkPreference::NEUTRAL;
     if (cursor->ifa_flags & IFF_LOOPBACK) {
       adapter_type = ADAPTER_TYPE_LOOPBACK;
     } else {
@@ -530,6 +552,8 @@ void BasicNetworkManager::ConvertIfAddrs(struct ifaddrs* interfaces,
       // Otherwise, get the adapter type based on a few name matching rules.
       if (network_monitor_) {
         adapter_type = network_monitor_->GetAdapterType(cursor->ifa_name);
+        network_preference =
+            network_monitor_->GetNetworkPreference(cursor->ifa_name);
       }
       if (adapter_type == ADAPTER_TYPE_UNKNOWN) {
         adapter_type = GetAdapterTypeFromName(cursor->ifa_name);
@@ -555,6 +579,7 @@ void BasicNetworkManager::ConvertIfAddrs(struct ifaddrs* interfaces,
       network->AddIP(ip);
       network->set_ignored(IsIgnoredNetwork(*network));
       network->set_underlying_type_for_vpn(vpn_underlying_adapter_type);
+      network->set_network_preference(network_preference);
       if (include_ignored || !network->ignored()) {
         current_networks[key] = network.get();
         networks->push_back(network.release());
@@ -567,6 +592,7 @@ void BasicNetworkManager::ConvertIfAddrs(struct ifaddrs* interfaces,
         existing_network->set_underlying_type_for_vpn(
             vpn_underlying_adapter_type);
       }
+      existing_network->set_network_preference(network_preference);
     }
   }
 }
@@ -780,6 +806,11 @@ bool BasicNetworkManager::IsIgnoredNetwork(const Network& network) const {
   }
 #endif
 
+  if (network_monitor_ &&
+      !network_monitor_->IsAdapterAvailable(network.name())) {
+    return true;
+  }
+
   // Ignore any networks with a 0.x.y.z IP
   if (network.prefix().family() == AF_INET) {
     return (network.prefix().v4AddressAsHostOrderInteger() < 0x01000000);
@@ -790,6 +821,8 @@ bool BasicNetworkManager::IsIgnoredNetwork(const Network& network) const {
 
 void BasicNetworkManager::StartUpdating() {
   thread_ = Thread::Current();
+  // Redundant but necessary for thread annotations.
+  RTC_DCHECK_RUN_ON(thread_);
   if (start_count_) {
     // If network interfaces are already discovered and signal is sent,
     // we should trigger network signal immediately for the new clients
@@ -804,7 +837,7 @@ void BasicNetworkManager::StartUpdating() {
 }
 
 void BasicNetworkManager::StopUpdating() {
-  RTC_DCHECK(Thread::Current() == thread_);
+  RTC_DCHECK_RUN_ON(thread_);
   if (!start_count_)
     return;
 
@@ -817,12 +850,11 @@ void BasicNetworkManager::StopUpdating() {
 }
 
 void BasicNetworkManager::StartNetworkMonitor() {
-  NetworkMonitorFactory* factory = NetworkMonitorFactory::GetFactory();
-  if (factory == nullptr) {
+  if (network_monitor_factory_ == nullptr) {
     return;
   }
   if (!network_monitor_) {
-    network_monitor_.reset(factory->CreateNetworkMonitor());
+    network_monitor_.reset(network_monitor_factory_->CreateNetworkMonitor());
     if (!network_monitor_) {
       return;
     }
@@ -840,6 +872,7 @@ void BasicNetworkManager::StopNetworkMonitor() {
 }
 
 void BasicNetworkManager::OnMessage(Message* msg) {
+  RTC_DCHECK_RUN_ON(thread_);
   switch (msg->message_id) {
     case kUpdateNetworksMessage: {
       UpdateNetworksContinually();
@@ -855,7 +888,6 @@ void BasicNetworkManager::OnMessage(Message* msg) {
 }
 
 IPAddress BasicNetworkManager::QueryDefaultLocalAddress(int family) const {
-  RTC_DCHECK(thread_ == Thread::Current());
   RTC_DCHECK(thread_->socketserver() != nullptr);
   RTC_DCHECK(family == AF_INET || family == AF_INET6);
 
@@ -884,8 +916,6 @@ void BasicNetworkManager::UpdateNetworksOnce() {
   if (!start_count_)
     return;
 
-  RTC_DCHECK(Thread::Current() == thread_);
-
   NetworkList list;
   if (!CreateNetworks(false, &list)) {
     SignalError();
@@ -909,6 +939,7 @@ void BasicNetworkManager::UpdateNetworksContinually() {
 }
 
 void BasicNetworkManager::DumpNetworks() {
+  RTC_DCHECK_RUN_ON(thread_);
   NetworkList list;
   GetNetworks(&list);
   RTC_LOG(LS_INFO) << "NetworkManager detected " << list.size() << " networks:";
@@ -931,7 +962,9 @@ Network::Network(const std::string& name,
       scope_id_(0),
       ignored_(false),
       type_(ADAPTER_TYPE_UNKNOWN),
-      preference_(0) {}
+      preference_(0),
+      use_differentiated_cellular_costs_(webrtc::field_trial::IsEnabled(
+          "WebRTC-UseDifferentiatedCellularCosts")) {}
 
 Network::Network(const std::string& name,
                  const std::string& desc,
@@ -946,7 +979,9 @@ Network::Network(const std::string& name,
       scope_id_(0),
       ignored_(false),
       type_(type),
-      preference_(0) {}
+      preference_(0),
+      use_differentiated_cellular_costs_(webrtc::field_trial::IsEnabled(
+          "WebRTC-UseDifferentiatedCellularCosts")) {}
 
 Network::Network(const Network&) = default;
 
@@ -1018,7 +1053,7 @@ webrtc::MdnsResponderInterface* Network::GetMdnsResponder() const {
 
 uint16_t Network::GetCost() const {
   AdapterType type = IsVpn() ? underlying_type_for_vpn_ : type_;
-  return ComputeNetworkCostByType(type);
+  return ComputeNetworkCostByType(type, use_differentiated_cellular_costs_);
 }
 
 std::string Network::ToString() const {

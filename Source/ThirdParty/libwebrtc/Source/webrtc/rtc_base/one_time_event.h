@@ -11,7 +11,7 @@
 #ifndef RTC_BASE_ONE_TIME_EVENT_H_
 #define RTC_BASE_ONE_TIME_EVENT_H_
 
-#include "rtc_base/critical_section.h"
+#include "rtc_base/synchronization/mutex.h"
 
 namespace webrtc {
 // Provides a simple way to perform an operation (such as logging) one
@@ -26,7 +26,7 @@ class OneTimeEvent {
  public:
   OneTimeEvent() {}
   bool operator()() {
-    rtc::CritScope cs(&critsect_);
+    MutexLock lock(&mutex_);
     if (happened_) {
       return false;
     }
@@ -36,7 +36,7 @@ class OneTimeEvent {
 
  private:
   bool happened_ = false;
-  rtc::CriticalSection critsect_;
+  Mutex mutex_;
 };
 
 // A non-thread-safe, ligher-weight version of the OneTimeEvent class.

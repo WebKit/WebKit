@@ -43,6 +43,7 @@ std::string VideoStream::ToString() const {
   ss << ", num_temporal_layers: " << num_temporal_layers.value_or(1);
   ss << ", bitrate_priority: " << bitrate_priority.value_or(0);
   ss << ", active: " << active;
+  ss << ", scale_down_by: " << scale_resolution_down_by;
 
   return ss.str();
 }
@@ -55,7 +56,8 @@ VideoEncoderConfig::VideoEncoderConfig()
       min_transmit_bitrate_bps(0),
       max_bitrate_bps(0),
       bitrate_priority(1.0),
-      number_of_streams(0) {}
+      number_of_streams(0),
+      legacy_conference_mode(false) {}
 
 VideoEncoderConfig::VideoEncoderConfig(VideoEncoderConfig&&) = default;
 
@@ -93,10 +95,6 @@ void VideoEncoderConfig::EncoderSpecificSettings::FillEncoderSpecificSettings(
     FillVideoCodecVp8(codec->VP8());
   } else if (codec->codecType == kVideoCodecVP9) {
     FillVideoCodecVp9(codec->VP9());
-#ifndef DISABLE_H265
-  } else if (codec->codecType == kVideoCodecH265) {
-    FillVideoCodecH265(codec->H265());
-#endif
   } else {
     RTC_NOTREACHED() << "Encoder specifics set/used for unknown codec type.";
   }
@@ -106,13 +104,6 @@ void VideoEncoderConfig::EncoderSpecificSettings::FillVideoCodecH264(
     VideoCodecH264* h264_settings) const {
   RTC_NOTREACHED();
 }
-
-#ifndef DISABLE_H265
-void VideoEncoderConfig::EncoderSpecificSettings::FillVideoCodecH265(
-    VideoCodecH265* h265_settings) const {
-  RTC_NOTREACHED();
-}
-#endif
 
 void VideoEncoderConfig::EncoderSpecificSettings::FillVideoCodecVp8(
     VideoCodecVP8* vp8_settings) const {
@@ -132,17 +123,6 @@ void VideoEncoderConfig::H264EncoderSpecificSettings::FillVideoCodecH264(
     VideoCodecH264* h264_settings) const {
   *h264_settings = specifics_;
 }
-
-#ifndef DISABLE_H265
-VideoEncoderConfig::H265EncoderSpecificSettings::H265EncoderSpecificSettings(
-    const VideoCodecH265& specifics)
-    : specifics_(specifics) {}
-
-void VideoEncoderConfig::H265EncoderSpecificSettings::FillVideoCodecH265(
-    VideoCodecH265* h265_settings) const {
-  *h265_settings = specifics_;
-}
-#endif
 
 VideoEncoderConfig::Vp8EncoderSpecificSettings::Vp8EncoderSpecificSettings(
     const VideoCodecVP8& specifics)

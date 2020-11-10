@@ -21,12 +21,10 @@
 #include "api/scoped_refptr.h"
 #include "api/video/color_space.h"
 #include "api/video/video_codec_constants.h"
-#include "api/video/video_codec_type.h"
 #include "api/video/video_content_type.h"
 #include "api/video/video_frame_type.h"
 #include "api/video/video_rotation.h"
 #include "api/video/video_timing.h"
-#include "common_types.h"  // NOLINT(build/include)
 #include "rtc_base/checks.h"
 #include "rtc_base/deprecation.h"
 #include "rtc_base/ref_count.h"
@@ -74,9 +72,8 @@ class RTC_EXPORT EncodedImage {
  public:
   EncodedImage();
   EncodedImage(EncodedImage&&);
-  // Discouraged: potentially expensive.
   EncodedImage(const EncodedImage&);
-  EncodedImage(uint8_t* buffer, size_t length, size_t capacity);
+  RTC_DEPRECATED EncodedImage(uint8_t* buffer, size_t length, size_t capacity);
 
   ~EncodedImage();
 
@@ -131,16 +128,6 @@ class RTC_EXPORT EncodedImage {
     RTC_DCHECK_LE(new_size, new_size == 0 ? 0 : capacity());
     size_ = new_size;
   }
-  // TODO(nisse): Delete, provide only read-only access to the buffer.
-  size_t capacity() const {
-    return buffer_ ? capacity_ : (encoded_data_ ? encoded_data_->size() : 0);
-  }
-
-  void set_buffer(uint8_t* buffer, size_t capacity) {
-    buffer_ = buffer;
-    capacity_ = capacity;
-  }
-
   void SetEncodedData(
       rtc::scoped_refptr<EncodedImageBufferInterface> encoded_data) {
     encoded_data_ = encoded_data;
@@ -160,24 +147,10 @@ class RTC_EXPORT EncodedImage {
     return encoded_data_;
   }
 
-  // TODO(nisse): Delete, provide only read-only access to the buffer.
-  uint8_t* data() {
-    return buffer_ ? buffer_
-                   : (encoded_data_ ? encoded_data_->data() : nullptr);
-  }
   const uint8_t* data() const {
     return buffer_ ? buffer_
                    : (encoded_data_ ? encoded_data_->data() : nullptr);
   }
-  // TODO(nisse): At some places, code accepts a const ref EncodedImage, but
-  // still writes to it, to clear padding at the end of the encoded data.
-  // Padding is required by ffmpeg; the best way to deal with that is likely to
-  // make this class ensure that buffers always have a few zero padding bytes.
-  uint8_t* mutable_data() const { return const_cast<uint8_t*>(data()); }
-
-  // TODO(bugs.webrtc.org/9378): Delete. Used by code that wants to modify a
-  // buffer corresponding to a const EncodedImage. Requires an un-owned buffer.
-  uint8_t* buffer() const { return buffer_; }
 
   // Hack to workaround lack of ownership of the encoded data. If we don't
   // already own the underlying data, make an owned copy.
@@ -198,7 +171,7 @@ class RTC_EXPORT EncodedImage {
   // When an application indicates non-zero values here, it is taken as an
   // indication that all future frames will be constrained with those limits
   // until the application indicates a change again.
-  PlayoutDelay playout_delay_ = {-1, -1};
+  VideoPlayoutDelay playout_delay_;
 
   struct Timing {
     uint8_t flags = VideoSendTiming::kInvalid;
@@ -213,14 +186,18 @@ class RTC_EXPORT EncodedImage {
   } timing_;
 
  private:
+  size_t capacity() const {
+    return buffer_ ? capacity_ : (encoded_data_ ? encoded_data_->size() : 0);
+  }
+
   // TODO(bugs.webrtc.org/9378): We're transitioning to always owning the
   // encoded data.
   rtc::scoped_refptr<EncodedImageBufferInterface> encoded_data_;
-  size_t size_;  // Size of encoded frame data.
+  size_t size_ = 0;  // Size of encoded frame data.
   // Non-null when used with an un-owned buffer.
-  uint8_t* buffer_;
+  uint8_t* buffer_ = nullptr;
   // Allocated size of _buffer; relevant only if it's non-null.
-  size_t capacity_;
+  size_t capacity_ = 0;
   uint32_t timestamp_rtp_ = 0;
   absl::optional<int> spatial_index_;
   std::map<int, size_t> spatial_layer_frame_size_bytes_;

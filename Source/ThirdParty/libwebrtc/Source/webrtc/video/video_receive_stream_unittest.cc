@@ -25,7 +25,6 @@
 #include "modules/rtp_rtcp/source/rtp_packet_to_send.h"
 #include "modules/utility/include/process_thread.h"
 #include "modules/video_coding/encoded_frame.h"
-#include "rtc_base/critical_section.h"
 #include "rtc_base/event.h"
 #include "system_wrappers/include/clock.h"
 #include "test/fake_decoder.h"
@@ -49,24 +48,30 @@ constexpr int kDefaultTimeOutMs = 50;
 
 class MockTransport : public Transport {
  public:
-  MOCK_METHOD3(SendRtp,
-               bool(const uint8_t* packet,
-                    size_t length,
-                    const PacketOptions& options));
-  MOCK_METHOD2(SendRtcp, bool(const uint8_t* packet, size_t length));
+  MOCK_METHOD(bool,
+              SendRtp,
+              (const uint8_t*, size_t length, const PacketOptions& options),
+              (override));
+  MOCK_METHOD(bool, SendRtcp, (const uint8_t*, size_t length), (override));
 };
 
 class MockVideoDecoder : public VideoDecoder {
  public:
-  MOCK_METHOD2(InitDecode,
-               int32_t(const VideoCodec* config, int32_t number_of_cores));
-  MOCK_METHOD3(Decode,
-               int32_t(const EncodedImage& input,
-                       bool missing_frames,
-                       int64_t render_time_ms));
-  MOCK_METHOD1(RegisterDecodeCompleteCallback,
-               int32_t(DecodedImageCallback* callback));
-  MOCK_METHOD0(Release, int32_t(void));
+  MOCK_METHOD(int32_t,
+              InitDecode,
+              (const VideoCodec*, int32_t number_of_cores),
+              (override));
+  MOCK_METHOD(int32_t,
+              Decode,
+              (const EncodedImage& input,
+               bool missing_frames,
+               int64_t render_time_ms),
+              (override));
+  MOCK_METHOD(int32_t,
+              RegisterDecodeCompleteCallback,
+              (DecodedImageCallback*),
+              (override));
+  MOCK_METHOD(int32_t, Release, (), (override));
   const char* ImplementationName() const { return "MockVideoDecoder"; }
 };
 
@@ -92,26 +97,20 @@ class VideoReceiveStreamTest : public ::testing::Test {
         task_queue_factory_(CreateDefaultTaskQueueFactory()),
         config_(&mock_transport_),
         call_stats_(Clock::GetRealTimeClock(), process_thread_.get()),
-        h264_decoder_factory_(&mock_h264_video_decoder_),
-        null_decoder_factory_(&mock_null_video_decoder_) {}
+        h264_decoder_factory_(&mock_h264_video_decoder_) {}
 
   void SetUp() {
     constexpr int kDefaultNumCpuCores = 2;
     config_.rtp.remote_ssrc = 1111;
     config_.rtp.local_ssrc = 2222;
     config_.renderer = &fake_renderer_;
+    config_.decoder_factory = &h264_decoder_factory_;
     VideoReceiveStream::Decoder h264_decoder;
     h264_decoder.payload_type = 99;
     h264_decoder.video_format = SdpVideoFormat("H264");
     h264_decoder.video_format.parameters.insert(
         {"sprop-parameter-sets", "Z0IACpZTBYmI,aMljiA=="});
-    h264_decoder.decoder_factory = &h264_decoder_factory_;
     config_.decoders.push_back(h264_decoder);
-    VideoReceiveStream::Decoder null_decoder;
-    null_decoder.payload_type = 98;
-    null_decoder.video_format = SdpVideoFormat("null");
-    null_decoder.decoder_factory = &null_decoder_factory_;
-    config_.decoders.push_back(null_decoder);
 
     clock_ = Clock::GetRealTimeClock();
     timing_ = new VCMTiming(clock_);
@@ -129,9 +128,7 @@ class VideoReceiveStreamTest : public ::testing::Test {
   VideoReceiveStream::Config config_;
   CallStats call_stats_;
   MockVideoDecoder mock_h264_video_decoder_;
-  MockVideoDecoder mock_null_video_decoder_;
   test::VideoDecoderProxyFactory h264_decoder_factory_;
-  test::VideoDecoderProxyFactory null_decoder_factory_;
   cricket::FakeVideoRenderer fake_renderer_;
   MockTransport mock_transport_;
   PacketRouter packet_router_;
@@ -170,7 +167,7 @@ TEST_F(VideoReceiveStreamTest, CreateFrameFromH264FmtpSpropAndIdr) {
 }
 
 TEST_F(VideoReceiveStreamTest, PlayoutDelay) {
-  const PlayoutDelay kPlayoutDelayMs = {123, 321};
+  const VideoPlayoutDelay kPlayoutDelayMs = {123, 321};
   std::unique_ptr<FrameObjectFake> test_frame(new FrameObjectFake());
   test_frame->id.picture_id = 0;
   test_frame->SetPlayoutDelay(kPlayoutDelayMs);
@@ -200,7 +197,7 @@ TEST_F(VideoReceiveStreamTest, PlayoutDelay) {
 
 TEST_F(VideoReceiveStreamTest, PlayoutDelayPreservesDefaultMaxValue) {
   const int default_max_playout_latency = timing_->max_playout_delay();
-  const PlayoutDelay kPlayoutDelayMs = {123, -1};
+  const VideoPlayoutDelay kPlayoutDelayMs = {123, -1};
 
   std::unique_ptr<FrameObjectFake> test_frame(new FrameObjectFake());
   test_frame->id.picture_id = 0;
@@ -216,7 +213,7 @@ TEST_F(VideoReceiveStreamTest, PlayoutDelayPreservesDefaultMaxValue) {
 
 TEST_F(VideoReceiveStreamTest, PlayoutDelayPreservesDefaultMinValue) {
   const int default_min_playout_latency = timing_->min_playout_delay();
-  const PlayoutDelay kPlayoutDelayMs = {-1, 321};
+  const VideoPlayoutDelay kPlayoutDelayMs = {-1, 321};
 
   std::unique_ptr<FrameObjectFake> test_frame(new FrameObjectFake());
   test_frame->id.picture_id = 0;
@@ -244,10 +241,10 @@ class VideoReceiveStreamTestWithFakeDecoder : public ::testing::Test {
     config_.rtp.remote_ssrc = 1111;
     config_.rtp.local_ssrc = 2222;
     config_.renderer = &fake_renderer_;
+    config_.decoder_factory = &fake_decoder_factory_;
     VideoReceiveStream::Decoder fake_decoder;
     fake_decoder.payload_type = 99;
     fake_decoder.video_format = SdpVideoFormat("VP8");
-    fake_decoder.decoder_factory = &fake_decoder_factory_;
     config_.decoders.push_back(fake_decoder);
     clock_ = Clock::GetRealTimeClock();
     ReCreateReceiveStream(VideoReceiveStream::RecordingState());
@@ -466,10 +463,10 @@ class VideoReceiveStreamTestWithSimulatedClock : public ::testing::Test {
     config.rtp.remote_ssrc = 1111;
     config.rtp.local_ssrc = 2222;
     config.renderer = renderer;
+    config.decoder_factory = decoder_factory;
     VideoReceiveStream::Decoder fake_decoder;
     fake_decoder.payload_type = 99;
     fake_decoder.video_format = SdpVideoFormat("VP8");
-    fake_decoder.decoder_factory = decoder_factory;
     config.decoders.push_back(fake_decoder);
     return config;
   }

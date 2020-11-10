@@ -55,7 +55,6 @@ DirectTransport::~DirectTransport() {
 }
 
 void DirectTransport::SetReceiver(PacketReceiver* receiver) {
-  rtc::CritScope cs(&process_lock_);
   fake_network_->SetReceiver(receiver);
 }
 
@@ -84,7 +83,7 @@ void DirectTransport::SendPacket(const uint8_t* data, size_t length) {
   int64_t send_time_us = rtc::TimeMicros();
   fake_network_->DeliverPacket(media_type, rtc::CopyOnWriteBuffer(data, length),
                                send_time_us);
-  rtc::CritScope cs(&process_lock_);
+  MutexLock lock(&process_lock_);
   if (!next_process_task_.Running())
     ProcessPackets();
 }
@@ -113,7 +112,7 @@ void DirectTransport::ProcessPackets() {
         if (auto delay_ms = fake_network_->TimeUntilNextProcess())
           return TimeDelta::Millis(*delay_ms);
         // Otherwise stop the task.
-        rtc::CritScope cs(&process_lock_);
+        MutexLock lock(&process_lock_);
         next_process_task_.Stop();
         // Since this task is stopped, return value doesn't matter.
         return TimeDelta::Zero();

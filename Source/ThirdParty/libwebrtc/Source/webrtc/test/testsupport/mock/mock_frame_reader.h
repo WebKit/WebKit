@@ -19,11 +19,11 @@ namespace test {
 
 class MockFrameReader : public FrameReader {
  public:
-  MOCK_METHOD0(Init, bool());
-  MOCK_METHOD0(ReadFrame, rtc::scoped_refptr<I420Buffer>());
-  MOCK_METHOD0(Close, void());
-  MOCK_METHOD0(FrameLength, size_t());
-  MOCK_METHOD0(NumberOfFrames, int());
+  MOCK_METHOD(bool, Init, (), (override));
+  MOCK_METHOD(rtc::scoped_refptr<I420Buffer>, ReadFrame, (), (override));
+  MOCK_METHOD(void, Close, (), (override));
+  MOCK_METHOD(size_t, FrameLength, (), (override));
+  MOCK_METHOD(int, NumberOfFrames, (), (override));
 };
 
 }  // namespace test

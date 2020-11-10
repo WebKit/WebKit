@@ -218,6 +218,68 @@ TEST_F(VideoDecoderSoftwareFallbackWrapperTest,
   fallback_wrapper_->Release();
 }
 
+TEST_F(VideoDecoderSoftwareFallbackWrapperTest, FallbacksOnTooManyErrors) {
+  VideoCodec codec = {};
+  fallback_wrapper_->InitDecode(&codec, 2);
+
+  fake_decoder_->decode_return_code_ = WEBRTC_VIDEO_CODEC_ERROR;
+  EncodedImage encoded_image;
+  encoded_image._frameType = VideoFrameType::kVideoFrameKey;
+  // Doesn't fallback from a single error.
+  fallback_wrapper_->Decode(encoded_image, false, -1);
+  EXPECT_STREQ("fake-decoder", fallback_wrapper_->ImplementationName());
+
+  // However, many frames with the same error, fallback should happen.
+  const int kNumFramesToEncode = 10;
+  for (int i = 0; i < kNumFramesToEncode; ++i) {
+    fallback_wrapper_->Decode(encoded_image, false, -1);
+  }
+  // Hard coded expected value since libvpx is the software implementation name
+  // for VP8. Change accordingly if the underlying implementation does.
+  EXPECT_STREQ("libvpx (fallback from: fake-decoder)",
+               fallback_wrapper_->ImplementationName());
+  fallback_wrapper_->Release();
+}
+
+TEST_F(VideoDecoderSoftwareFallbackWrapperTest,
+       DoesNotFallbackOnDeltaFramesErrors) {
+  VideoCodec codec = {};
+  fallback_wrapper_->InitDecode(&codec, 2);
+
+  fake_decoder_->decode_return_code_ = WEBRTC_VIDEO_CODEC_ERROR;
+  EncodedImage encoded_image;
+  encoded_image._frameType = VideoFrameType::kVideoFrameDelta;
+
+  // Many decoded frames with the same error
+  const int kNumFramesToEncode = 10;
+  for (int i = 0; i < kNumFramesToEncode; ++i) {
+    fallback_wrapper_->Decode(encoded_image, false, -1);
+  }
+  EXPECT_STREQ("fake-decoder", fallback_wrapper_->ImplementationName());
+
+  fallback_wrapper_->Release();
+}
+
+TEST_F(VideoDecoderSoftwareFallbackWrapperTest,
+       DoesNotFallbacksOnNonConsequtiveErrors) {
+  VideoCodec codec = {};
+  fallback_wrapper_->InitDecode(&codec, 2);
+
+  EncodedImage encoded_image;
+  encoded_image._frameType = VideoFrameType::kVideoFrameKey;
+
+  const int kNumFramesToEncode = 10;
+  for (int i = 0; i < kNumFramesToEncode; ++i) {
+    // Interleaved errors and successful decodes.
+    fake_decoder_->decode_return_code_ = WEBRTC_VIDEO_CODEC_ERROR;
+    fallback_wrapper_->Decode(encoded_image, false, -1);
+    fake_decoder_->decode_return_code_ = WEBRTC_VIDEO_CODEC_OK;
+    fallback_wrapper_->Decode(encoded_image, false, -1);
+  }
+  EXPECT_STREQ("fake-decoder", fallback_wrapper_->ImplementationName());
+  fallback_wrapper_->Release();
+}
+
 class ForcedSoftwareDecoderFallbackTest
     : public VideoDecoderSoftwareFallbackWrapperTest {
  public:

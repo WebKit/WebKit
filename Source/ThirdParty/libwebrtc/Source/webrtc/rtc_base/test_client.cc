@@ -75,7 +75,7 @@ std::unique_ptr<TestClient::Packet> TestClient::NextPacket(int timeout_ms) {
   int64_t end = TimeAfter(timeout_ms);
   while (TimeUntil(end) > 0) {
     {
-      CritScope cs(&crit_);
+      webrtc::MutexLock lock(&mutex_);
       if (packets_.size() != 0) {
         break;
       }
@@ -85,7 +85,7 @@ std::unique_ptr<TestClient::Packet> TestClient::NextPacket(int timeout_ms) {
 
   // Return the first packet placed in the queue.
   std::unique_ptr<Packet> packet;
-  CritScope cs(&crit_);
+  webrtc::MutexLock lock(&mutex_);
   if (packets_.size() > 0) {
     packet = std::move(packets_.front());
     packets_.erase(packets_.begin());
@@ -149,7 +149,7 @@ void TestClient::OnPacket(AsyncPacketSocket* socket,
                           size_t size,
                           const SocketAddress& remote_addr,
                           const int64_t& packet_time_us) {
-  CritScope cs(&crit_);
+  webrtc::MutexLock lock(&mutex_);
   packets_.push_back(
       std::make_unique<Packet>(remote_addr, buf, size, packet_time_us));
 }

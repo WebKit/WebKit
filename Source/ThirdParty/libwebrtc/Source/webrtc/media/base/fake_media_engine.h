@@ -349,7 +349,7 @@ class FakeVoiceMediaChannel : public RtpHelper<VoiceMediaChannel> {
   absl::optional<int> GetBaseMinimumPlayoutDelayMs(
       uint32_t ssrc) const override;
 
-  bool GetStats(VoiceMediaInfo* info) override;
+  bool GetStats(VoiceMediaInfo* info, bool get_and_clear_legacy_stats) override;
 
   void SetRawAudioSink(
       uint32_t ssrc,
@@ -514,7 +514,6 @@ class FakeDataMediaChannel : public RtpHelper<DataMediaChannel> {
 class FakeVoiceEngine : public VoiceEngineInterface {
  public:
   FakeVoiceEngine();
-  RtpCapabilities GetCapabilities() const override;
   void Init() override;
   rtc::scoped_refptr<webrtc::AudioState> GetAudioState() const override;
 
@@ -536,12 +535,17 @@ class FakeVoiceEngine : public VoiceEngineInterface {
   int GetInputLevel();
   bool StartAecDump(webrtc::FileWrapper file, int64_t max_size_bytes) override;
   void StopAecDump() override;
+  std::vector<webrtc::RtpHeaderExtensionCapability> GetRtpHeaderExtensions()
+      const override;
+  void SetRtpHeaderExtensions(
+      std::vector<webrtc::RtpHeaderExtensionCapability> header_extensions);
 
  private:
   std::vector<FakeVoiceMediaChannel*> channels_;
   std::vector<AudioCodec> recv_codecs_;
   std::vector<AudioCodec> send_codecs_;
   bool fail_create_channel_;
+  std::vector<webrtc::RtpHeaderExtensionCapability> header_extensions_;
 
   friend class FakeMediaEngine;
 };
@@ -549,7 +553,6 @@ class FakeVoiceEngine : public VoiceEngineInterface {
 class FakeVideoEngine : public VideoEngineInterface {
  public:
   FakeVideoEngine();
-  RtpCapabilities GetCapabilities() const override;
   bool SetOptions(const VideoOptions& options);
   VideoMediaChannel* CreateMediaChannel(
       webrtc::Call* call,
@@ -560,16 +563,24 @@ class FakeVideoEngine : public VideoEngineInterface {
       override;
   FakeVideoMediaChannel* GetChannel(size_t index);
   void UnregisterChannel(VideoMediaChannel* channel);
-  std::vector<VideoCodec> codecs() const override;
-  void SetCodecs(const std::vector<VideoCodec> codecs);
+  std::vector<VideoCodec> send_codecs() const override;
+  std::vector<VideoCodec> recv_codecs() const override;
+  void SetSendCodecs(const std::vector<VideoCodec>& codecs);
+  void SetRecvCodecs(const std::vector<VideoCodec>& codecs);
   bool SetCapture(bool capture);
+  std::vector<webrtc::RtpHeaderExtensionCapability> GetRtpHeaderExtensions()
+      const override;
+  void SetRtpHeaderExtensions(
+      std::vector<webrtc::RtpHeaderExtensionCapability> header_extensions);
 
  private:
   std::vector<FakeVideoMediaChannel*> channels_;
-  std::vector<VideoCodec> codecs_;
+  std::vector<VideoCodec> send_codecs_;
+  std::vector<VideoCodec> recv_codecs_;
   bool capture_;
   VideoOptions options_;
   bool fail_create_channel_;
+  std::vector<webrtc::RtpHeaderExtensionCapability> header_extensions_;
 
   friend class FakeMediaEngine;
 };

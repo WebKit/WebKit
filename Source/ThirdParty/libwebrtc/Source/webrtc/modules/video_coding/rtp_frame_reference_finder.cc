@@ -108,8 +108,6 @@ RtpFrameReferenceFinder::ManageFrameInternal(RtpFrameObject* frame) {
       return ManageFrameVp8(frame);
     case kVideoCodecVP9:
       return ManageFrameVp9(frame);
-    case kVideoCodecH264:
-      return ManageFrameH264(frame);
     case kVideoCodecGeneric:
       if (auto* generic_header = absl::get_if<RTPVideoHeaderLegacyGeneric>(
               &frame->GetRtpVideoHeader().video_type_header)) {
@@ -173,9 +171,9 @@ void RtpFrameReferenceFinder::UpdateLastPictureIdWithPadding(uint16_t seq_num) {
   // the keyframe they belong to due to wrapping sequence number. In order
   // to prevent this we advance the picture id of the keyframe every so often.
   if (ForwardDiff(gop_seq_num_it->first, seq_num) > 10000) {
-    RTC_DCHECK_EQ(1ul, last_seq_num_gop_.size());
-    last_seq_num_gop_[seq_num] = gop_seq_num_it->second;
-    last_seq_num_gop_.erase(gop_seq_num_it);
+    auto save = gop_seq_num_it->second;
+    last_seq_num_gop_.clear();
+    last_seq_num_gop_[seq_num] = save;
   }
 }
 
@@ -341,7 +339,16 @@ RtpFrameReferenceFinder::FrameDecision RtpFrameReferenceFinder::ManageFrameVp8(
     layer_info_it =
         layer_info_.emplace(unwrapped_tl0, layer_info_it->second).first;
     frame->num_references = 1;
-    frame->references[0] = layer_info_it->second[0];
+    int64_t last_pid_on_layer = layer_info_it->second[0];
+
+    // Is this an old frame that has already been used to update the state? If
+    // so, drop it.
+    if (AheadOrAt<uint16_t, kPicIdLength>(last_pid_on_layer,
+                                          frame->id.picture_id)) {
+      return kDrop;
+    }
+
+    frame->references[0] = last_pid_on_layer;
     UpdateLayerInfoVp8(frame, unwrapped_tl0, codec_header.temporalIdx);
     return kHandOff;
   }
@@ -349,8 +356,17 @@ RtpFrameReferenceFinder::FrameDecision RtpFrameReferenceFinder::ManageFrameVp8(
   // Layer sync frame, this frame only references its base layer frame.
   if (codec_header.layerSync) {
     frame->num_references = 1;
-    frame->references[0] = layer_info_it->second[0];
+    int64_t last_pid_on_layer = layer_info_it->second[codec_header.temporalIdx];
 
+    // Is this an old frame that has already been used to update the state? If
+    // so, drop it.
+    if (last_pid_on_layer != -1 &&
+        AheadOrAt<uint16_t, kPicIdLength>(last_pid_on_layer,
+                                          frame->id.picture_id)) {
+      return kDrop;
+    }
+
+    frame->references[0] = layer_info_it->second[0];
     UpdateLayerInfoVp8(frame, unwrapped_tl0, codec_header.temporalIdx);
     return kHandOff;
   }
@@ -695,130 +711,6 @@ void RtpFrameReferenceFinder::UnwrapPictureIds(RtpFrameObject* frame) {
   for (size_t i = 0; i < frame->num_references; ++i)
     frame->references[i] = unwrapper_.Unwrap(frame->references[i]);
   frame->id.picture_id = unwrapper_.Unwrap(frame->id.picture_id);
-}
-
-RtpFrameReferenceFinder::FrameDecision RtpFrameReferenceFinder::ManageFrameH264(
-    RtpFrameObject* frame) {
-  const FrameMarking& rtp_frame_marking = frame->GetFrameMarking();
-
-  uint8_t tid = rtp_frame_marking.temporal_id;
-  bool blSync = rtp_frame_marking.base_layer_sync;
-
-  if (tid == kNoTemporalIdx)
-    return ManageFramePidOrSeqNum(std::move(frame), kNoPictureId);
-
-  // Protect against corrupted packets with arbitrary large temporal idx.
-  if (tid >= kMaxTemporalLayers)
-    return kDrop;
-
-  frame->id.picture_id = frame->last_seq_num();
-
-  if (frame->frame_type() == VideoFrameType::kVideoFrameKey) {
-    // For H264, use last_seq_num_gop_ to simply store last picture id
-    // as a pair of unpadded and padded sequence numbers.
-    if (last_seq_num_gop_.empty()) {
-      last_seq_num_gop_.insert(std::make_pair(
-          0, std::make_pair(frame->id.picture_id, frame->id.picture_id)));
-    }
-  }
-
-  // Stash if we have no keyframe yet.
-  if (last_seq_num_gop_.empty())
-    return kStash;
-
-  // Check for gap in sequence numbers. Store in |not_yet_received_seq_num_|.
-  if (frame->frame_type() == VideoFrameType::kVideoFrameDelta) {
-    uint16_t last_pic_id_padded = last_seq_num_gop_.begin()->second.second;
-    if (AheadOf<uint16_t>(frame->id.picture_id, last_pic_id_padded)) {
-      do {
-        last_pic_id_padded = last_pic_id_padded + 1;
-        not_yet_received_seq_num_.insert(last_pic_id_padded);
-      } while (last_pic_id_padded != frame->id.picture_id);
-    }
-  }
-
-  int64_t unwrapped_tl0 = tl0_unwrapper_.Unwrap(rtp_frame_marking.tl0_pic_idx);
-
-  // Clean up info for base layers that are too old.
-  int64_t old_tl0_pic_idx = unwrapped_tl0 - kMaxLayerInfo;
-  auto clean_layer_info_to = layer_info_.lower_bound(old_tl0_pic_idx);
-  layer_info_.erase(layer_info_.begin(), clean_layer_info_to);
-
-  // Clean up info about not yet received frames that are too old.
-  uint16_t old_picture_id = frame->id.picture_id - kMaxNotYetReceivedFrames * 2;
-  auto clean_frames_to = not_yet_received_seq_num_.lower_bound(old_picture_id);
-  not_yet_received_seq_num_.erase(not_yet_received_seq_num_.begin(),
-                                  clean_frames_to);
-
-  if (frame->frame_type() == VideoFrameType::kVideoFrameKey) {
-    frame->num_references = 0;
-    layer_info_[unwrapped_tl0].fill(-1);
-    UpdateDataH264(frame, unwrapped_tl0, tid);
-    return kHandOff;
-  }
-
-  auto layer_info_it =
-      layer_info_.find(tid == 0 ? unwrapped_tl0 - 1 : unwrapped_tl0);
-
-  // Stash if we have no base layer frame yet.
-  if (layer_info_it == layer_info_.end())
-    return kStash;
-
-  // Base layer frame. Copy layer info from previous base layer frame.
-  if (tid == 0) {
-    layer_info_it =
-        layer_info_.insert(std::make_pair(unwrapped_tl0, layer_info_it->second))
-            .first;
-    frame->num_references = 1;
-    frame->references[0] = layer_info_it->second[0];
-    UpdateDataH264(frame, unwrapped_tl0, tid);
-    return kHandOff;
-  }
-
-  // This frame only references its base layer frame.
-  if (blSync) {
-    frame->num_references = 1;
-    frame->references[0] = layer_info_it->second[0];
-    UpdateDataH264(frame, unwrapped_tl0, tid);
-    return kHandOff;
-  }
-
-  // Find all references for general frame.
-  frame->num_references = 0;
-  for (uint8_t layer = 0; layer <= tid; ++layer) {
-    // Stash if we have not yet received frames on this temporal layer.
-    if (layer_info_it->second[layer] == -1)
-      return kStash;
-
-    // Drop if the last frame on this layer is ahead of this frame. A layer sync
-    // frame was received after this frame for the same base layer frame.
-    uint16_t last_frame_in_layer = layer_info_it->second[layer];
-    if (AheadOf<uint16_t>(last_frame_in_layer, frame->id.picture_id))
-      return kDrop;
-
-    // Stash and wait for missing frame between this frame and the reference
-    auto not_received_seq_num_it =
-        not_yet_received_seq_num_.upper_bound(last_frame_in_layer);
-    if (not_received_seq_num_it != not_yet_received_seq_num_.end() &&
-        AheadOf<uint16_t>(frame->id.picture_id, *not_received_seq_num_it)) {
-      return kStash;
-    }
-
-    if (!(AheadOf<uint16_t>(frame->id.picture_id, last_frame_in_layer))) {
-      RTC_LOG(LS_WARNING) << "Frame with picture id " << frame->id.picture_id
-                          << " and packet range [" << frame->first_seq_num()
-                          << ", " << frame->last_seq_num()
-                          << "] already received, "
-                             " dropping frame.";
-      return kDrop;
-    }
-
-    ++frame->num_references;
-    frame->references[layer] = last_frame_in_layer;
-  }
-
-  UpdateDataH264(frame, unwrapped_tl0, tid);
-  return kHandOff;
 }
 
 void RtpFrameReferenceFinder::UpdateLastPictureIdWithPaddingH264() {

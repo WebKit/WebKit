@@ -21,7 +21,7 @@
 namespace webrtc {
 namespace test {
 
-// An decoder factory with a single underlying AudioDecoder object, intended for
+// A decoder factory with a single underlying AudioDecoder object, intended for
 // test purposes. Each call to MakeAudioDecoder returns a proxy for the same
 // decoder, typically a mock or fake decoder.
 class AudioDecoderProxyFactory : public AudioDecoderFactory {

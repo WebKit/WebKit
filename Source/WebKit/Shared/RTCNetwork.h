@@ -29,6 +29,7 @@
 
 #include <WebCore/LibWebRTCMacros.h>
 #include <webrtc/rtc_base/network.h>
+#include <webrtc/rtc_base/socket_address.h>
 #include <wtf/Forward.h>
 
 namespace IPC {

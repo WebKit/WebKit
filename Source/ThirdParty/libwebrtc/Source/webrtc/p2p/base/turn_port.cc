@@ -367,7 +367,7 @@ void TurnPort::PrepareAddress() {
                      << server_address_.address.ToSensitiveString();
     if (!CreateTurnClientSocket()) {
       RTC_LOG(LS_ERROR) << "Failed to create TURN client socket";
-      OnAllocateError(STUN_ERROR_GLOBAL_FAILURE,
+      OnAllocateError(SERVER_NOT_REACHABLE_ERROR,
                       "Failed to create TURN client socket.");
       return;
     }
@@ -883,12 +883,17 @@ void TurnPort::OnAllocateError(int error_code, const std::string& reason) {
   // port initialization. This way it will not be blocking other port
   // creation.
   thread()->Post(RTC_FROM_HERE, this, MSG_ALLOCATE_ERROR);
+  std::string address = GetLocalAddress().HostAsSensitiveURIString();
+  int port = GetLocalAddress().port();
+  if (server_address_.proto == PROTO_TCP &&
+      server_address_.address.IsPrivateIP()) {
+    address.clear();
+    port = 0;
+  }
   SignalCandidateError(
-      this,
-      IceCandidateErrorEvent(GetLocalAddress().HostAsSensitiveURIString(),
-                             GetLocalAddress().port(),
-                             ReconstructedServerUrl(true /* use_hostname */),
-                             error_code, reason));
+      this, IceCandidateErrorEvent(
+                address, port, ReconstructedServerUrl(true /* use_hostname */),
+                error_code, reason));
 }
 
 void TurnPort::OnRefreshError() {

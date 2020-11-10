@@ -16,6 +16,7 @@
 #include "modules/include/module_common_types_public.h"
 #include "modules/rtp_rtcp/source/rtp_packet.h"
 #include "modules/video_coding/codecs/vp8/include/vp8.h"
+#include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/task_queue_for_test.h"
 #include "test/call_test.h"
 #include "test/gtest.h"
@@ -46,7 +47,7 @@ void RtpRtcpEndToEndTest::RespectsRtcpMode(RtcpMode rtcp_mode) {
 
    private:
     Action OnSendRtp(const uint8_t* packet, size_t length) override {
-      rtc::CritScope lock(&crit_);
+      MutexLock lock(&mutex_);
       if (++sent_rtp_ % 3 == 0)
         return DROP_PACKET;
 
@@ -54,7 +55,7 @@ void RtpRtcpEndToEndTest::RespectsRtcpMode(RtcpMode rtcp_mode) {
     }
 
     Action OnReceiveRtcp(const uint8_t* packet, size_t length) override {
-      rtc::CritScope lock(&crit_);
+      MutexLock lock(&mutex_);
       ++sent_rtcp_;
       test::RtcpPacketParser parser;
       EXPECT_TRUE(parser.Parse(packet, length));
@@ -105,11 +106,11 @@ void RtpRtcpEndToEndTest::RespectsRtcpMode(RtcpMode rtcp_mode) {
     }
 
     RtcpMode rtcp_mode_;
-    rtc::CriticalSection crit_;
+    Mutex mutex_;
     // Must be protected since RTCP can be sent by both the process thread
     // and the pacer thread.
-    int sent_rtp_ RTC_GUARDED_BY(&crit_);
-    int sent_rtcp_ RTC_GUARDED_BY(&crit_);
+    int sent_rtp_ RTC_GUARDED_BY(&mutex_);
+    int sent_rtcp_ RTC_GUARDED_BY(&mutex_);
   } test(rtcp_mode);
 
   RunBaseTest(&test);
@@ -176,7 +177,7 @@ void RtpRtcpEndToEndTest::TestRtpStatePreservation(
     }
 
     void ResetExpectedSsrcs(size_t num_expected_ssrcs) {
-      rtc::CritScope lock(&crit_);
+      MutexLock lock(&mutex_);
       ssrc_observed_.clear();
       ssrcs_to_observe_ = num_expected_ssrcs;
     }
@@ -185,7 +186,7 @@ void RtpRtcpEndToEndTest::TestRtpStatePreservation(
     void ValidateTimestampGap(uint32_t ssrc,
                               uint32_t timestamp,
                               bool only_padding)
-        RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_) {
+        RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_) {
       static const int32_t kMaxTimestampGap = kDefaultTimeoutMs * 90;
       auto timestamp_it = last_observed_timestamp_.find(ssrc);
       if (timestamp_it == last_observed_timestamp_.end()) {
@@ -240,7 +241,7 @@ void RtpRtcpEndToEndTest::TestRtpStatePreservation(
       }
 
       if (!ssrc_is_rtx_[ssrc]) {
-        rtc::CritScope lock(&crit_);
+        MutexLock lock(&mutex_);
         ValidateTimestampGap(ssrc, timestamp, only_padding);
 
         // Wait for media packets on all ssrcs.
@@ -261,7 +262,7 @@ void RtpRtcpEndToEndTest::TestRtpStatePreservation(
         uint32_t ssrc = rtcp_parser.sender_report()->sender_ssrc();
         uint32_t rtcp_timestamp = rtcp_parser.sender_report()->rtp_timestamp();
 
-        rtc::CritScope lock(&crit_);
+        MutexLock lock(&mutex_);
         ValidateTimestampGap(ssrc, rtcp_timestamp, false);
       }
       return SEND_PACKET;
@@ -272,9 +273,9 @@ void RtpRtcpEndToEndTest::TestRtpStatePreservation(
     std::map<uint32_t, uint32_t> last_observed_timestamp_;
     std::map<uint32_t, bool> ssrc_is_rtx_;
 
-    rtc::CriticalSection crit_;
-    size_t ssrcs_to_observe_ RTC_GUARDED_BY(crit_);
-    std::map<uint32_t, bool> ssrc_observed_ RTC_GUARDED_BY(crit_);
+    Mutex mutex_;
+    size_t ssrcs_to_observe_ RTC_GUARDED_BY(mutex_);
+    std::map<uint32_t, bool> ssrc_observed_ RTC_GUARDED_BY(mutex_);
   } observer(use_rtx);
 
   std::unique_ptr<test::PacketTransport> send_transport;
@@ -414,13 +415,13 @@ TEST_F(RtpRtcpEndToEndTest, DISABLED_TestFlexfecRtpStatePreservation) {
           num_flexfec_packets_sent_(0) {}
 
     void ResetPacketCount() {
-      rtc::CritScope lock(&crit_);
+      MutexLock lock(&mutex_);
       num_flexfec_packets_sent_ = 0;
     }
 
    private:
     Action OnSendRtp(const uint8_t* packet, size_t length) override {
-      rtc::CritScope lock(&crit_);
+      MutexLock lock(&mutex_);
 
       RtpPacket rtp_packet;
       EXPECT_TRUE(rtp_packet.Parse(packet, length));
@@ -468,10 +469,10 @@ TEST_F(RtpRtcpEndToEndTest, DISABLED_TestFlexfecRtpStatePreservation) {
     }
 
     absl::optional<uint16_t> last_observed_sequence_number_
-        RTC_GUARDED_BY(crit_);
-    absl::optional<uint32_t> last_observed_timestamp_ RTC_GUARDED_BY(crit_);
-    size_t num_flexfec_packets_sent_ RTC_GUARDED_BY(crit_);
-    rtc::CriticalSection crit_;
+        RTC_GUARDED_BY(mutex_);
+    absl::optional<uint32_t> last_observed_timestamp_ RTC_GUARDED_BY(mutex_);
+    size_t num_flexfec_packets_sent_ RTC_GUARDED_BY(mutex_);
+    Mutex mutex_;
   } observer;
 
   static constexpr int kFrameMaxWidth = 320;

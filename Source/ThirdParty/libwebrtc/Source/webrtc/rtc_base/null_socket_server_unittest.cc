@@ -25,7 +25,8 @@ namespace rtc {
 
 static const uint32_t kTimeout = 5000U;
 
-class NullSocketServerTest : public ::testing::Test, public MessageHandler {
+class NullSocketServerTest : public ::testing::Test,
+                             public MessageHandlerAutoCleanup {
  protected:
   void OnMessage(Message* message) override { ss_.WakeUp(); }
 

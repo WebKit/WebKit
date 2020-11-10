@@ -381,6 +381,15 @@ TEST_F(PhysicalSocketTest, TestCloseInClosedCallbackIPv6) {
   SocketTest::TestCloseInClosedCallbackIPv6();
 }
 
+TEST_F(PhysicalSocketTest, TestDeleteInReadCallbackIPv4) {
+  MAYBE_SKIP_IPV4;
+  SocketTest::TestDeleteInReadCallbackIPv4();
+}
+
+TEST_F(PhysicalSocketTest, TestDeleteInReadCallbackIPv6) {
+  SocketTest::TestDeleteInReadCallbackIPv6();
+}
+
 TEST_F(PhysicalSocketTest, TestSocketServerWaitIPv4) {
   MAYBE_SKIP_IPV4;
   SocketTest::TestSocketServerWaitIPv4();
@@ -499,139 +508,6 @@ TEST_F(PhysicalSocketTest,
   fake_network_binder.set_result(NetworkBindingResult::FAILURE);
   EXPECT_EQ(0, socket->Bind(SocketAddress(kIPv4Loopback, 0)));
   server_->set_network_binder(nullptr);
-}
-
-class PosixSignalDeliveryTest : public ::testing::Test {
- public:
-  static void RecordSignal(int signum) {
-    signals_received_.push_back(signum);
-    signaled_thread_ = Thread::Current();
-  }
-
- protected:
-  void SetUp() override { ss_.reset(new PhysicalSocketServer()); }
-
-  void TearDown() override {
-    ss_.reset(nullptr);
-    signals_received_.clear();
-    signaled_thread_ = nullptr;
-  }
-
-  bool ExpectSignal(int signum) {
-    if (signals_received_.empty()) {
-      RTC_LOG(LS_ERROR) << "ExpectSignal(): No signal received";
-      return false;
-    }
-    if (signals_received_[0] != signum) {
-      RTC_LOG(LS_ERROR) << "ExpectSignal(): Received signal "
-                        << signals_received_[0] << ", expected " << signum;
-      return false;
-    }
-    signals_received_.erase(signals_received_.begin());
-    return true;
-  }
-
-  bool ExpectNone() {
-    bool ret = signals_received_.empty();
-    if (!ret) {
-      RTC_LOG(LS_ERROR) << "ExpectNone(): Received signal "
-                        << signals_received_[0] << ", expected none";
-    }
-    return ret;
-  }
-
-  static std::vector<int> signals_received_;
-  static Thread* signaled_thread_;
-
-  std::unique_ptr<PhysicalSocketServer> ss_;
-};
-
-std::vector<int> PosixSignalDeliveryTest::signals_received_;
-Thread* PosixSignalDeliveryTest::signaled_thread_ = nullptr;
-
-// Test receiving a synchronous signal while not in Wait() and then entering
-// Wait() afterwards.
-// TODO(webrtc:7864): Fails on real iOS devices
-#if defined(WEBRTC_IOS) && defined(WEBRTC_ARCH_ARM_FAMILY)
-#define MAYBE_RaiseThenWait DISABLED_RaiseThenWait
-#else
-#define MAYBE_RaiseThenWait RaiseThenWait
-#endif
-TEST_F(PosixSignalDeliveryTest, MAYBE_RaiseThenWait) {
-  ASSERT_TRUE(ss_->SetPosixSignalHandler(SIGTERM, &RecordSignal));
-  raise(SIGTERM);
-  EXPECT_TRUE(ss_->Wait(0, true));
-  EXPECT_TRUE(ExpectSignal(SIGTERM));
-  EXPECT_TRUE(ExpectNone());
-}
-
-// Test that we can handle getting tons of repeated signals and that we see all
-// the different ones.
-// TODO(webrtc:7864): Fails on real iOS devices
-#if defined(WEBRTC_IOS) && defined(WEBRTC_ARCH_ARM_FAMILY)
-#define MAYBE_InsanelyManySignals DISABLED_InsanelyManySignals
-#else
-#define MAYBE_InsanelyManySignals InsanelyManySignals
-#endif
-TEST_F(PosixSignalDeliveryTest, MAYBE_InsanelyManySignals) {
-  ss_->SetPosixSignalHandler(SIGTERM, &RecordSignal);
-  ss_->SetPosixSignalHandler(SIGINT, &RecordSignal);
-  for (int i = 0; i < 10000; ++i) {
-    raise(SIGTERM);
-  }
-  raise(SIGINT);
-  EXPECT_TRUE(ss_->Wait(0, true));
-  // Order will be lowest signal numbers first.
-  EXPECT_TRUE(ExpectSignal(SIGINT));
-  EXPECT_TRUE(ExpectSignal(SIGTERM));
-  EXPECT_TRUE(ExpectNone());
-}
-
-// Test that a signal during a Wait() call is detected.
-TEST_F(PosixSignalDeliveryTest, SignalDuringWait) {
-  ss_->SetPosixSignalHandler(SIGALRM, &RecordSignal);
-  alarm(1);
-  EXPECT_TRUE(ss_->Wait(1500, true));
-  EXPECT_TRUE(ExpectSignal(SIGALRM));
-  EXPECT_TRUE(ExpectNone());
-}
-
-// Test that it works no matter what thread the kernel chooses to give the
-// signal to (since it's not guaranteed to be the one that Wait() runs on).
-// TODO(webrtc:7864): Fails on real iOS devices
-#if defined(WEBRTC_IOS) && defined(WEBRTC_ARCH_ARM_FAMILY)
-#define MAYBE_SignalOnDifferentThread DISABLED_SignalOnDifferentThread
-#else
-#define MAYBE_SignalOnDifferentThread SignalOnDifferentThread
-#endif
-TEST_F(PosixSignalDeliveryTest, DISABLED_SignalOnDifferentThread) {
-  ss_->SetPosixSignalHandler(SIGTERM, &RecordSignal);
-  // Mask out SIGTERM so that it can't be delivered to this thread.
-  sigset_t mask;
-  sigemptyset(&mask);
-  sigaddset(&mask, SIGTERM);
-  EXPECT_EQ(0, pthread_sigmask(SIG_SETMASK, &mask, nullptr));
-  // Start a new thread that raises it. It will have to be delivered to that
-  // thread. Our implementation should safely handle it and dispatch
-  // RecordSignal() on this thread.
-  std::unique_ptr<Thread> thread(Thread::CreateWithSocketServer());
-  thread->Start();
-  thread->PostTask(RTC_FROM_HERE, [&thread]() {
-    thread->socketserver()->Wait(1000, false);
-    // Allow SIGTERM. This will be the only thread with it not masked so it will
-    // be delivered to us.
-    sigset_t mask;
-    sigemptyset(&mask);
-    pthread_sigmask(SIG_SETMASK, &mask, nullptr);
-
-    // Raise it.
-    raise(SIGTERM);
-  });
-
-  EXPECT_TRUE(ss_->Wait(1500, true));
-  EXPECT_TRUE(ExpectSignal(SIGTERM));
-  EXPECT_EQ(Thread::Current(), signaled_thread_);
-  EXPECT_TRUE(ExpectNone());
 }
 
 #endif

@@ -11,9 +11,11 @@
 #ifndef API_TEST_NETWORK_EMULATION_MANAGER_H_
 #define API_TEST_NETWORK_EMULATION_MANAGER_H_
 
+#include <functional>
 #include <memory>
 #include <vector>
 
+#include "api/array_view.h"
 #include "api/test/network_emulation/network_emulation_interfaces.h"
 #include "api/test/simulated_network.h"
 #include "api/test/time_controller.h"
@@ -44,6 +46,13 @@ class EmulatedRoute;
 
 struct EmulatedEndpointConfig {
   enum class IpAddressFamily { kIpv4, kIpv6 };
+  enum class StatsGatheringMode {
+    // Gather main network stats counters.
+    kDefault,
+    // kDefault + also gather per packet statistics. In this mode more memory
+    // will be used.
+    kDebug
+  };
 
   IpAddressFamily generated_ip_family = IpAddressFamily::kIpv4;
   // If specified will be used as IP address for endpoint node. Must be unique
@@ -54,6 +63,7 @@ struct EmulatedEndpointConfig {
   bool start_as_enabled = true;
   // Network type which will be used to represent endpoint to WebRTC.
   rtc::AdapterType type = rtc::AdapterType::ADAPTER_TYPE_UNKNOWN;
+  StatsGatheringMode stats_gathering_mode = StatsGatheringMode::kDefault;
 };
 
 
@@ -64,12 +74,24 @@ class EmulatedNetworkManagerInterface {
  public:
   virtual ~EmulatedNetworkManagerInterface() = default;
 
+  // Returns non-null pointer to thread that have to be used as network thread
+  // for WebRTC to properly setup network emulation. Returned thread is owned
+  // by EmulatedNetworkManagerInterface implementation.
   virtual rtc::Thread* network_thread() = 0;
+  // Returns non-null pointer to network manager that have to be injected into
+  // WebRTC to properly setup network emulation. Returned manager is owned by
+  // EmulatedNetworkManagerInterface implementation.
   virtual rtc::NetworkManager* network_manager() = 0;
+  // Returns list of endpoints that are associated with this instance. Pointers
+  // are guaranteed to be non-null and are owned by NetworkEmulationManager.
+  virtual std::vector<EmulatedEndpoint*> endpoints() const = 0;
 
-  // Returns summarized network stats for endpoints for this manager.
+  // Passes summarized network stats for endpoints for this manager into
+  // specified |stats_callback|. Callback will be executed on network emulation
+  // internal task queue.
   virtual void GetStats(
-      std::function<void(EmulatedNetworkStats)> stats_callback) const = 0;
+      std::function<void(std::unique_ptr<EmulatedNetworkStats>)> stats_callback)
+      const = 0;
 };
 
 enum class TimeMode { kRealTime, kSimulated };
@@ -180,6 +202,14 @@ class NetworkEmulationManager {
   virtual EmulatedNetworkManagerInterface*
   CreateEmulatedNetworkManagerInterface(
       const std::vector<EmulatedEndpoint*>& endpoints) = 0;
+
+  // Passes summarized network stats for specified |endpoints| into specified
+  // |stats_callback|. Callback will be executed on network emulation
+  // internal task queue.
+  virtual void GetStats(
+      rtc::ArrayView<EmulatedEndpoint*> endpoints,
+      std::function<void(std::unique_ptr<EmulatedNetworkStats>)>
+          stats_callback) = 0;
 };
 
 }  // namespace webrtc

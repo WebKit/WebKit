@@ -18,10 +18,12 @@
 #include <vector>
 
 #include "absl/types/optional.h"
+#include "api/adaptation/resource.h"
 #include "api/call/transport.h"
 #include "api/crypto/crypto_options.h"
 #include "api/frame_transformer_interface.h"
 #include "api/rtp_parameters.h"
+#include "api/scoped_refptr.h"
 #include "api/video/video_content_type.h"
 #include "api/video/video_frame.h"
 #include "api/video/video_sink_interface.h"
@@ -29,6 +31,7 @@
 #include "api/video/video_stream_encoder_settings.h"
 #include "api/video_codecs/video_encoder_config.h"
 #include "call/rtp_config.h"
+#include "common_video/frame_counts.h"
 #include "common_video/include/quality_limitation_reason.h"
 #include "modules/rtp_rtcp/include/report_block_data.h"
 #include "modules/rtp_rtcp/include/rtcp_statistics.h"
@@ -40,15 +43,35 @@ class FrameEncryptorInterface;
 
 class VideoSendStream {
  public:
+  // Multiple StreamStats objects are present if simulcast is used (multiple
+  // kMedia streams) or if RTX or FlexFEC is negotiated. Multiple SVC layers, on
+  // the other hand, does not cause additional StreamStats.
   struct StreamStats {
+    enum class StreamType {
+      // A media stream is an RTP stream for audio or video. Retransmissions and
+      // FEC is either sent over the same SSRC or negotiated to be sent over
+      // separate SSRCs, in which case separate StreamStats objects exist with
+      // references to this media stream's SSRC.
+      kMedia,
+      // RTX streams are streams dedicated to retransmissions. They have a
+      // dependency on a single kMedia stream: |referenced_media_ssrc|.
+      kRtx,
+      // FlexFEC streams are streams dedicated to FlexFEC. They have a
+      // dependency on a single kMedia stream: |referenced_media_ssrc|.
+      kFlexfec,
+    };
+
     StreamStats();
     ~StreamStats();
 
     std::string ToString() const;
 
+    StreamType type = StreamType::kMedia;
+    // If |type| is kRtx or kFlexfec this value is present. The referenced SSRC
+    // is the kMedia stream that this stream is performing retransmissions or
+    // FEC for. If |type| is kMedia, this value is null.
+    absl::optional<uint32_t> referenced_media_ssrc;
     FrameCounts frame_counts;
-    bool is_rtx = false;
-    bool is_flexfec = false;
     int width = 0;
     int height = 0;
     // TODO(holmer): Move bitrate_bps out to the webrtc::Call layer.
@@ -63,6 +86,12 @@ class VideoSendStream {
     // A snapshot of the most recent Report Block with additional data of
     // interest to statistics. Used to implement RTCRemoteInboundRtpStreamStats.
     absl::optional<ReportBlockData> report_block_data;
+    double encode_frame_rate = 0.0;
+    int frames_encoded = 0;
+    absl::optional<uint64_t> qp_sum;
+    uint64_t total_encode_time_ms = 0;
+    uint64_t total_encoded_bytes_target = 0;
+    uint32_t huge_frames_sent = 0;
   };
 
   struct Stats {
@@ -84,7 +113,6 @@ class VideoSendStream {
     uint32_t frames_dropped_by_rate_limiter = 0;
     uint32_t frames_dropped_by_congestion_window = 0;
     uint32_t frames_dropped_by_encoder = 0;
-    absl::optional<uint64_t> qp_sum;
     // Bitrate the encoder is currently configured to use due to bandwidth
     // limitations.
     int target_media_bitrate_bps = 0;
@@ -110,6 +138,7 @@ class VideoSendStream {
     std::map<uint32_t, StreamStats> substreams;
     webrtc::VideoContentType content_type =
         webrtc::VideoContentType::UNSPECIFIED;
+    uint32_t frames_sent = 0;
     uint32_t huge_frames_sent = 0;
   };
 
@@ -188,6 +217,15 @@ class VideoSendStream {
   // Stops stream activity.
   // When a stream is stopped, it can't receive, process or deliver packets.
   virtual void Stop() = 0;
+
+  // If the resource is overusing, the VideoSendStream will try to reduce
+  // resolution or frame rate until no resource is overusing.
+  // TODO(https://crbug.com/webrtc/11565): When the ResourceAdaptationProcessor
+  // is moved to Call this method could be deleted altogether in favor of
+  // Call-level APIs only.
+  virtual void AddAdaptationResource(rtc::scoped_refptr<Resource> resource) = 0;
+  virtual std::vector<rtc::scoped_refptr<Resource>>
+  GetAdaptationResources() = 0;
 
   virtual void SetSource(
       rtc::VideoSourceInterface<webrtc::VideoFrame>* source,

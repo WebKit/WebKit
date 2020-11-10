@@ -25,27 +25,54 @@ class MockAecDump : public AecDump {
   MockAecDump();
   virtual ~MockAecDump();
 
-  MOCK_METHOD2(WriteInitMessage,
-               void(const ProcessingConfig& api_format, int64_t time_now_ms));
+  MOCK_METHOD(void,
+              WriteInitMessage,
+              (const ProcessingConfig& api_format, int64_t time_now_ms),
+              (override));
 
-  MOCK_METHOD1(AddCaptureStreamInput,
-               void(const AudioFrameView<const float>& src));
-  MOCK_METHOD1(AddCaptureStreamOutput,
-               void(const AudioFrameView<const float>& src));
-  MOCK_METHOD1(AddCaptureStreamInput, void(const AudioFrame& frame));
-  MOCK_METHOD1(AddCaptureStreamOutput, void(const AudioFrame& frame));
-  MOCK_METHOD1(AddAudioProcessingState,
-               void(const AudioProcessingState& state));
-  MOCK_METHOD0(WriteCaptureStreamMessage, void());
+  MOCK_METHOD(void,
+              AddCaptureStreamInput,
+              (const AudioFrameView<const float>& src),
+              (override));
+  MOCK_METHOD(void,
+              AddCaptureStreamOutput,
+              (const AudioFrameView<const float>& src),
+              (override));
+  MOCK_METHOD(void,
+              AddCaptureStreamInput,
+              (const int16_t* const data,
+               int num_channels,
+               int samples_per_channel),
+              (override));
+  MOCK_METHOD(void,
+              AddCaptureStreamOutput,
+              (const int16_t* const data,
+               int num_channels,
+               int samples_per_channel),
+              (override));
+  MOCK_METHOD(void,
+              AddAudioProcessingState,
+              (const AudioProcessingState& state),
+              (override));
+  MOCK_METHOD(void, WriteCaptureStreamMessage, (), (override));
 
-  MOCK_METHOD1(WriteRenderStreamMessage, void(const AudioFrame& frame));
-  MOCK_METHOD1(WriteRenderStreamMessage,
-               void(const AudioFrameView<const float>& src));
+  MOCK_METHOD(void,
+              WriteRenderStreamMessage,
+              (const int16_t* const data,
+               int num_channels,
+               int samples_per_channel),
+              (override));
+  MOCK_METHOD(void,
+              WriteRenderStreamMessage,
+              (const AudioFrameView<const float>& src),
+              (override));
 
-  MOCK_METHOD1(WriteConfig, void(const InternalAPMConfig& config));
+  MOCK_METHOD(void, WriteConfig, (const InternalAPMConfig& config), (override));
 
-  MOCK_METHOD1(WriteRuntimeSetting,
-               void(const AudioProcessing::RuntimeSetting& config));
+  MOCK_METHOD(void,
+              WriteRuntimeSetting,
+              (const AudioProcessing::RuntimeSetting& config),
+              (override));
 };
 
 }  // namespace test

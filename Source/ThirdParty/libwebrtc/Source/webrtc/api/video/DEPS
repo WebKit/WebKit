@@ -18,6 +18,10 @@ specific_include_rules = {
     "+rtc_base/memory/aligned_malloc.h",
   ],
 
+  "nv12_buffer\.h": [
+    "+rtc_base/memory/aligned_malloc.h",
+  ],
+
   "recordable_encoded_frame\.h": [
     "+rtc_base/ref_count.h",
   ],

@@ -621,7 +621,7 @@ TEST(ThresholdCurveTest, NearlyIdenticalCurvesSecondContinuesOnOtherRightSide) {
 // The higher-left point must be given as the first point, and the lower-right
 // point must be given as the second.
 // This necessarily produces a non-positive slope.
-TEST(ThresholdCurveTest, WrongOrderPoints) {
+TEST(ThresholdCurveDeathTest, WrongOrderPoints) {
   std::unique_ptr<ThresholdCurve> curve;
   constexpr ThresholdCurve::Point left{5, 10};
   constexpr ThresholdCurve::Point right{10, 5};

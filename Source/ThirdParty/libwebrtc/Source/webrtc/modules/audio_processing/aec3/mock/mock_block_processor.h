@@ -24,17 +24,26 @@ class MockBlockProcessor : public BlockProcessor {
   MockBlockProcessor();
   virtual ~MockBlockProcessor();
 
-  MOCK_METHOD4(
-      ProcessCapture,
-      void(bool level_change,
-           bool saturated_microphone_signal,
-           std::vector<std::vector<std::vector<float>>>* linear_output,
-           std::vector<std::vector<std::vector<float>>>* capture_block));
-  MOCK_METHOD1(BufferRender,
-               void(const std::vector<std::vector<std::vector<float>>>& block));
-  MOCK_METHOD1(UpdateEchoLeakageStatus, void(bool leakage_detected));
-  MOCK_CONST_METHOD1(GetMetrics, void(EchoControl::Metrics* metrics));
-  MOCK_METHOD1(SetAudioBufferDelay, void(int delay_ms));
+  MOCK_METHOD(void,
+              ProcessCapture,
+              (bool level_change,
+               bool saturated_microphone_signal,
+               std::vector<std::vector<std::vector<float>>>* linear_output,
+               std::vector<std::vector<std::vector<float>>>* capture_block),
+              (override));
+  MOCK_METHOD(void,
+              BufferRender,
+              (const std::vector<std::vector<std::vector<float>>>& block),
+              (override));
+  MOCK_METHOD(void,
+              UpdateEchoLeakageStatus,
+              (bool leakage_detected),
+              (override));
+  MOCK_METHOD(void,
+              GetMetrics,
+              (EchoControl::Metrics * metrics),
+              (const, override));
+  MOCK_METHOD(void, SetAudioBufferDelay, (int delay_ms), (override));
 };
 
 }  // namespace test

@@ -18,7 +18,6 @@
 #include "api/test/simulated_network.h"
 #include "call/simulated_packet_receiver.h"
 #include "call/video_send_stream.h"
-#include "rtc_base/critical_section.h"
 #include "rtc_base/event.h"
 #include "system_wrappers/include/field_trial.h"
 #include "test/direct_transport.h"

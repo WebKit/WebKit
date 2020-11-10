@@ -28,9 +28,9 @@
 #include "modules/audio_device/audio_device_impl.h"
 #include "modules/audio_device/include/mock_audio_transport.h"
 #include "rtc_base/arraysize.h"
-#include "rtc_base/critical_section.h"
 #include "rtc_base/event.h"
 #include "rtc_base/format_macros.h"
+#include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/time_utils.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
@@ -182,7 +182,7 @@ class FifoAudioStream : public AudioStreamInterface {
     }
     int16_t* memory = new int16_t[frames_per_buffer_];
     memcpy(static_cast<int16_t*>(&memory[0]), source, bytes_per_buffer_);
-    rtc::CritScope lock(&lock_);
+    MutexLock lock(&lock_);
     fifo_->push_back(memory);
     const size_t size = fifo_->size();
     if (size > largest_size_) {
@@ -198,7 +198,7 @@ class FifoAudioStream : public AudioStreamInterface {
   void Read(void* destination, size_t num_frames) override {
     ASSERT_EQ(num_frames, frames_per_buffer_);
     PRINTD("-");
-    rtc::CritScope lock(&lock_);
+    MutexLock lock(&lock_);
     if (fifo_->empty()) {
       memset(destination, 0, bytes_per_buffer_);
     } else {
@@ -229,7 +229,7 @@ class FifoAudioStream : public AudioStreamInterface {
   }
 
   using AudioBufferList = std::list<int16_t*>;
-  rtc::CriticalSection lock_;
+  Mutex lock_;
   const size_t frames_per_buffer_;
   const size_t bytes_per_buffer_;
   std::unique_ptr<AudioBufferList> fifo_;

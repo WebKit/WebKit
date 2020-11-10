@@ -46,6 +46,7 @@ class TimeController {
       const char* thread_name) = 0;
   // Creates an rtc::Thread instance. If |socket_server| is nullptr, a default
   // noop socket server is created.
+  // Returned thread is not null and started.
   virtual std::unique_ptr<rtc::Thread> CreateThread(
       const std::string& name,
       std::unique_ptr<rtc::SocketServer> socket_server = nullptr) = 0;
@@ -57,8 +58,11 @@ class TimeController {
   // for the given |duration|.
   virtual void AdvanceTime(TimeDelta duration) = 0;
 
-  // Waits until done() == true, polling done() in small time intervals.
-  bool Wait(const std::function<bool()>& done,
+  // Waits until condition() == true, polling condition() in small time
+  // intervals.
+  // Returns true if condition() was evaluated to true before |max_duration|
+  // elapsed and false otherwise.
+  bool Wait(const std::function<bool()>& condition,
             TimeDelta max_duration = TimeDelta::Seconds(5));
 };
 

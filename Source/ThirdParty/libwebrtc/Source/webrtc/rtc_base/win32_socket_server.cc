@@ -733,7 +733,7 @@ bool Win32SocketServer::Wait(int cms, bool process_io) {
     MSG msg;
     b = GetMessage(&msg, nullptr, s_wm_wakeup_id, s_wm_wakeup_id);
     {
-      CritScope scope(&cs_);
+      webrtc::MutexLock lock(&mutex_);
       posted_ = false;
     }
   } else {
@@ -747,7 +747,7 @@ void Win32SocketServer::WakeUp() {
   if (wnd_.handle()) {
     // Set the "message pending" flag, if not already set.
     {
-      CritScope scope(&cs_);
+      webrtc::MutexLock lock(&mutex_);
       if (posted_)
         return;
       posted_ = true;
@@ -760,7 +760,7 @@ void Win32SocketServer::WakeUp() {
 void Win32SocketServer::Pump() {
   // Clear the "message pending" flag.
   {
-    CritScope scope(&cs_);
+    webrtc::MutexLock lock(&mutex_);
     posted_ = false;
   }
 

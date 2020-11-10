@@ -16,13 +16,14 @@
 #include <string>
 #include <vector>
 
+#include "absl/strings/string_view.h"
 #include "api/test/video_quality_analyzer_interface.h"
 #include "api/video/encoded_image.h"
 #include "api/video/video_frame.h"
 #include "api/video_codecs/sdp_video_format.h"
 #include "api/video_codecs/video_decoder.h"
 #include "api/video_codecs/video_decoder_factory.h"
-#include "rtc_base/critical_section.h"
+#include "rtc_base/synchronization/mutex.h"
 #include "test/pc/e2e/analyzer/video/encoded_image_data_injector.h"
 #include "test/pc/e2e/analyzer/video/id_generator.h"
 
@@ -45,14 +46,15 @@ namespace webrtc_pc_e2e {
 // callback, where video analyzer will be called again and then decoded frame
 // will be passed to origin callback, provided by user.
 //
-// Quality decoder registers its own callback in origin decoder at the same
-// time, when user registers his callback in quality decoder.
+// Quality decoder registers its own callback in origin decoder, at the same
+// time the user registers their callback in quality decoder.
 class QualityAnalyzingVideoDecoder : public VideoDecoder {
  public:
   // Creates analyzing decoder. |id| is unique coding entity id, that will
   // be used to distinguish all encoders and decoders inside
   // EncodedImageDataInjector and EncodedImageIdExtracor.
   QualityAnalyzingVideoDecoder(int id,
+                               absl::string_view peer_name,
                                std::unique_ptr<VideoDecoder> delegate,
                                EncodedImageDataExtractor* extractor,
                                VideoQualityAnalyzerInterface* analyzer);
@@ -95,7 +97,7 @@ class QualityAnalyzingVideoDecoder : public VideoDecoder {
 
     rtc::scoped_refptr<webrtc::VideoFrameBuffer> dummy_frame_buffer_;
 
-    rtc::CriticalSection callback_lock_;
+    Mutex callback_lock_;
     DecodedImageCallback* delegate_callback_ RTC_GUARDED_BY(callback_lock_);
   };
 
@@ -104,6 +106,7 @@ class QualityAnalyzingVideoDecoder : public VideoDecoder {
                       absl::optional<uint8_t> qp);
 
   const int id_;
+  const std::string peer_name_;
   const std::string implementation_name_;
   std::unique_ptr<VideoDecoder> delegate_;
   EncodedImageDataExtractor* const extractor_;
@@ -113,7 +116,7 @@ class QualityAnalyzingVideoDecoder : public VideoDecoder {
   // VideoDecoder interface assumes async delivery of decoded video frames.
   // This lock is used to protect shared state, that have to be propagated
   // from received EncodedImage to resulted VideoFrame.
-  rtc::CriticalSection lock_;
+  Mutex lock_;
 
   std::map<uint32_t, uint16_t> timestamp_to_frame_id_ RTC_GUARDED_BY(lock_);
   // Stores currently being decoded images by frame id. Because
@@ -129,6 +132,7 @@ class QualityAnalyzingVideoDecoder : public VideoDecoder {
 class QualityAnalyzingVideoDecoderFactory : public VideoDecoderFactory {
  public:
   QualityAnalyzingVideoDecoderFactory(
+      absl::string_view peer_name,
       std::unique_ptr<VideoDecoderFactory> delegate,
       IdGenerator<int>* id_generator,
       EncodedImageDataExtractor* extractor,
@@ -144,6 +148,7 @@ class QualityAnalyzingVideoDecoderFactory : public VideoDecoderFactory {
       const std::string& receive_stream_id) override;
 
  private:
+  const std::string peer_name_;
   std::unique_ptr<VideoDecoderFactory> delegate_;
   IdGenerator<int>* const id_generator_;
   EncodedImageDataExtractor* const extractor_;

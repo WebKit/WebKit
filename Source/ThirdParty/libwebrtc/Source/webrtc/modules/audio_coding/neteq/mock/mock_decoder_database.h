@@ -23,22 +23,28 @@ class MockDecoderDatabase : public DecoderDatabase {
   explicit MockDecoderDatabase(
       rtc::scoped_refptr<AudioDecoderFactory> factory = nullptr)
       : DecoderDatabase(factory, absl::nullopt) {}
-  virtual ~MockDecoderDatabase() { Die(); }
-  MOCK_METHOD0(Die, void());
-  MOCK_CONST_METHOD0(Empty, bool());
-  MOCK_CONST_METHOD0(Size, int());
-  MOCK_METHOD0(Reset, void());
-  MOCK_METHOD2(RegisterPayload,
-               int(int rtp_payload_type, const SdpAudioFormat& audio_format));
-  MOCK_METHOD1(Remove, int(uint8_t rtp_payload_type));
-  MOCK_METHOD0(RemoveAll, void());
-  MOCK_CONST_METHOD1(GetDecoderInfo,
-                     const DecoderInfo*(uint8_t rtp_payload_type));
-  MOCK_METHOD2(SetActiveDecoder,
-               int(uint8_t rtp_payload_type, bool* new_decoder));
-  MOCK_CONST_METHOD0(GetActiveDecoder, AudioDecoder*());
-  MOCK_METHOD1(SetActiveCngDecoder, int(uint8_t rtp_payload_type));
-  MOCK_CONST_METHOD0(GetActiveCngDecoder, ComfortNoiseDecoder*());
+  ~MockDecoderDatabase() override { Die(); }
+  MOCK_METHOD(void, Die, ());
+  MOCK_METHOD(bool, Empty, (), (const, override));
+  MOCK_METHOD(int, Size, (), (const, override));
+  MOCK_METHOD(void, Reset, (), (override));
+  MOCK_METHOD(int,
+              RegisterPayload,
+              (int rtp_payload_type, const SdpAudioFormat& audio_format),
+              (override));
+  MOCK_METHOD(int, Remove, (uint8_t rtp_payload_type), (override));
+  MOCK_METHOD(void, RemoveAll, (), (override));
+  MOCK_METHOD(const DecoderInfo*,
+              GetDecoderInfo,
+              (uint8_t rtp_payload_type),
+              (const, override));
+  MOCK_METHOD(int,
+              SetActiveDecoder,
+              (uint8_t rtp_payload_type, bool* new_decoder),
+              (override));
+  MOCK_METHOD(AudioDecoder*, GetActiveDecoder, (), (const, override));
+  MOCK_METHOD(int, SetActiveCngDecoder, (uint8_t rtp_payload_type), (override));
+  MOCK_METHOD(ComfortNoiseDecoder*, GetActiveCngDecoder, (), (const, override));
 };
 
 }  // namespace webrtc

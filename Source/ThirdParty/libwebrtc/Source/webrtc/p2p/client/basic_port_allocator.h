@@ -106,8 +106,9 @@ enum class SessionState {
               // process will be started.
 };
 
-class RTC_EXPORT BasicPortAllocatorSession : public PortAllocatorSession,
-                                             public rtc::MessageHandler {
+class RTC_EXPORT BasicPortAllocatorSession
+    : public PortAllocatorSession,
+      public rtc::MessageHandlerAutoCleanup {
  public:
   BasicPortAllocatorSession(BasicPortAllocator* allocator,
                             const std::string& content_name,
@@ -269,6 +270,7 @@ class RTC_EXPORT BasicPortAllocatorSession : public PortAllocatorSession,
   std::vector<PortConfiguration*> configs_;
   std::vector<AllocationSequence*> sequences_;
   std::vector<PortData> ports_;
+  std::vector<IceCandidateErrorEvent> candidate_error_events_;
   uint32_t candidate_filter_ = CF_ALL;
   // Policy on how to prune turn ports, taken from the port allocator.
   webrtc::PortPrunePolicy turn_port_prune_policy_;
@@ -322,7 +324,7 @@ class TurnPort;
 
 // Performs the allocation of ports, in a sequenced (timed) manner, for a given
 // network and IP address.
-class AllocationSequence : public rtc::MessageHandler,
+class AllocationSequence : public rtc::MessageHandlerAutoCleanup,
                            public sigslot::has_slots<> {
  public:
   enum State {

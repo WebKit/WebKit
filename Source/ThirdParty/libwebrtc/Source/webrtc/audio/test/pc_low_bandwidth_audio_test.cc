@@ -10,12 +10,14 @@
 
 #include <memory>
 
+#include "absl/flags/declare.h"
 #include "absl/flags/flag.h"
 #include "api/test/create_network_emulation_manager.h"
 #include "api/test/create_peerconnection_quality_test_fixture.h"
 #include "api/test/network_emulation_manager.h"
 #include "api/test/peerconnection_quality_test_fixture.h"
 #include "api/test/simulated_network.h"
+#include "api/test/time_controller.h"
 #include "call/simulated_network.h"
 #include "test/gtest.h"
 #include "test/pc/e2e/network_quality_metrics_reporter.h"
@@ -70,12 +72,13 @@ CreateTwoNetworkLinks(NetworkEmulationManager* emulation,
 
 std::unique_ptr<webrtc_pc_e2e::PeerConnectionE2EQualityTestFixture>
 CreateTestFixture(const std::string& test_case_name,
+                  TimeController& time_controller,
                   std::pair<EmulatedNetworkManagerInterface*,
                             EmulatedNetworkManagerInterface*> network_links,
                   rtc::FunctionView<void(PeerConfigurer*)> alice_configurer,
                   rtc::FunctionView<void(PeerConfigurer*)> bob_configurer) {
   auto fixture = webrtc_pc_e2e::CreatePeerConnectionE2EQualityTestFixture(
-      test_case_name, /*audio_quality_analyzer=*/nullptr,
+      test_case_name, time_controller, /*audio_quality_analyzer=*/nullptr,
       /*video_quality_analyzer=*/nullptr);
   fixture->AddPeer(network_links.first->network_thread(),
                    network_links.first->network_manager(), alice_configurer);
@@ -105,12 +108,12 @@ std::string AudioOutputFile() {
 
 std::string PerfResultsOutputFile() {
   return webrtc::test::OutputPath() + "PCLowBandwidth_perf_" +
-         FileSampleRateSuffix() + ".json";
+         FileSampleRateSuffix() + ".pb";
 }
 
 void LogTestResults() {
   std::string perf_results_output_file = PerfResultsOutputFile();
-  webrtc::test::WritePerfResults(perf_results_output_file);
+  EXPECT_TRUE(webrtc::test::WritePerfResults(perf_results_output_file));
 
   const ::testing::TestInfo* const test_info =
       ::testing::UnitTest::GetInstance()->current_test_info();
@@ -127,7 +130,7 @@ TEST(PCLowBandwidthAudioTest, PCGoodNetworkHighBitrate) {
   std::unique_ptr<NetworkEmulationManager> network_emulation_manager =
       CreateNetworkEmulationManager();
   auto fixture = CreateTestFixture(
-      GetMetricTestCaseName(),
+      GetMetricTestCaseName(), *network_emulation_manager->time_controller(),
       CreateTwoNetworkLinks(network_emulation_manager.get(),
                             BuiltInNetworkBehaviorConfig()),
       [](PeerConfigurer* alice) {
@@ -154,7 +157,7 @@ TEST(PCLowBandwidthAudioTest, PC40kbpsNetwork) {
   config.queue_delay_ms = 400;
   config.loss_percent = 1;
   auto fixture = CreateTestFixture(
-      GetMetricTestCaseName(),
+      GetMetricTestCaseName(), *network_emulation_manager->time_controller(),
       CreateTwoNetworkLinks(network_emulation_manager.get(), config),
       [](PeerConfigurer* alice) {
         AudioConfig audio;

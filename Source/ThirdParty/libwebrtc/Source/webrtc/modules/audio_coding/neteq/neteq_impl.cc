@@ -51,6 +51,7 @@
 #include "rtc_base/strings/audio_format_to_string.h"
 #include "rtc_base/trace_event.h"
 #include "system_wrappers/include/clock.h"
+#include "system_wrappers/include/field_trial.h"
 
 namespace webrtc {
 namespace {
@@ -71,6 +72,24 @@ std::unique_ptr<NetEqController> CreateNetEqController(
   config.tick_timer = tick_timer;
   config.clock = clock;
   return controller_factory.CreateNetEqController(config);
+}
+
+int GetDelayChainLengthMs(int config_extra_delay_ms) {
+  constexpr char kExtraDelayFieldTrial[] = "WebRTC-Audio-NetEqExtraDelay";
+  if (webrtc::field_trial::IsEnabled(kExtraDelayFieldTrial)) {
+    const auto field_trial_string =
+        webrtc::field_trial::FindFullName(kExtraDelayFieldTrial);
+    int extra_delay_ms = -1;
+    if (sscanf(field_trial_string.c_str(), "Enabled-%d", &extra_delay_ms) ==
+            1 &&
+        extra_delay_ms >= 0 && extra_delay_ms <= 2000) {
+      RTC_LOG(LS_INFO) << "Delay chain length set to " << extra_delay_ms
+                       << " ms in field trial";
+      return (extra_delay_ms / 10) * 10;  // Rounding down to multiple of 10.
+    }
+  }
+  // Field trial not set, or invalid value read. Use value from config.
+  return config_extra_delay_ms;
 }
 
 }  // namespace
@@ -140,7 +159,10 @@ NetEqImpl::NetEqImpl(const NetEq::Config& config,
                                 10,  // Report once every 10 s.
                                 tick_timer_.get()),
       no_time_stretching_(config.for_test_no_time_stretching),
-      enable_rtx_handling_(config.enable_rtx_handling) {
+      enable_rtx_handling_(config.enable_rtx_handling),
+      output_delay_chain_ms_(
+          GetDelayChainLengthMs(config.extra_output_delay_ms)),
+      output_delay_chain_(rtc::CheckedDivExact(output_delay_chain_ms_, 10)) {
   RTC_LOG(LS_INFO) << "NetEq config: " << config.ToString();
   int fs = config.sample_rate_hz;
   if (fs != 8000 && fs != 16000 && fs != 32000 && fs != 48000) {
@@ -171,7 +193,7 @@ int NetEqImpl::InsertPacket(const RTPHeader& rtp_header,
                             rtc::ArrayView<const uint8_t> payload) {
   rtc::MsanCheckInitialized(payload);
   TRACE_EVENT0("webrtc", "NetEqImpl::InsertPacket");
-  rtc::CritScope lock(&crit_sect_);
+  MutexLock lock(&mutex_);
   if (InsertPacketInternal(rtp_header, payload) != 0) {
     return kFail;
   }
@@ -182,7 +204,7 @@ void NetEqImpl::InsertEmptyPacket(const RTPHeader& /*rtp_header*/) {
   // TODO(henrik.lundin) Handle NACK as well. This will make use of the
   // rtp_header parameter.
   // https://bugs.chromium.org/p/webrtc/issues/detail?id=7611
-  rtc::CritScope lock(&crit_sect_);
+  MutexLock lock(&mutex_);
   controller_->RegisterEmptyPacket();
 }
 
@@ -238,7 +260,7 @@ int NetEqImpl::GetAudio(AudioFrame* audio_frame,
                         bool* muted,
                         absl::optional<Operation> action_override) {
   TRACE_EVENT0("webrtc", "NetEqImpl::GetAudio");
-  rtc::CritScope lock(&crit_sect_);
+  MutexLock lock(&mutex_);
   if (GetAudioInternal(audio_frame, muted, action_override) != 0) {
     return kFail;
   }
@@ -255,11 +277,30 @@ int NetEqImpl::GetAudio(AudioFrame* audio_frame,
              last_output_sample_rate_hz_ == 32000 ||
              last_output_sample_rate_hz_ == 48000)
       << "Unexpected sample rate " << last_output_sample_rate_hz_;
+
+  if (!output_delay_chain_.empty()) {
+    if (output_delay_chain_empty_) {
+      for (auto& f : output_delay_chain_) {
+        f.CopyFrom(*audio_frame);
+      }
+      output_delay_chain_empty_ = false;
+      delayed_last_output_sample_rate_hz_ = last_output_sample_rate_hz_;
+    } else {
+      RTC_DCHECK_GE(output_delay_chain_ix_, 0);
+      RTC_DCHECK_LT(output_delay_chain_ix_, output_delay_chain_.size());
+      swap(output_delay_chain_[output_delay_chain_ix_], *audio_frame);
+      *muted = audio_frame->muted();
+      output_delay_chain_ix_ =
+          (output_delay_chain_ix_ + 1) % output_delay_chain_.size();
+      delayed_last_output_sample_rate_hz_ = audio_frame->sample_rate_hz();
+    }
+  }
+
   return kOK;
 }
 
 void NetEqImpl::SetCodecs(const std::map<int, SdpAudioFormat>& codecs) {
-  rtc::CritScope lock(&crit_sect_);
+  MutexLock lock(&mutex_);
   const std::vector<int> changed_payload_types =
       decoder_database_->SetCodecs(codecs);
   for (const int pt : changed_payload_types) {
@@ -272,13 +313,13 @@ bool NetEqImpl::RegisterPayloadType(int rtp_payload_type,
   RTC_LOG(LS_VERBOSE) << "NetEqImpl::RegisterPayloadType: payload type "
                       << rtp_payload_type << ", codec "
                       << rtc::ToString(audio_format);
-  rtc::CritScope lock(&crit_sect_);
+  MutexLock lock(&mutex_);
   return decoder_database_->RegisterPayload(rtp_payload_type, audio_format) ==
          DecoderDatabase::kOK;
 }
 
 int NetEqImpl::RemovePayloadType(uint8_t rtp_payload_type) {
-  rtc::CritScope lock(&crit_sect_);
+  MutexLock lock(&mutex_);
   int ret = decoder_database_->Remove(rtp_payload_type);
   if (ret == DecoderDatabase::kOK || ret == DecoderDatabase::kDecoderNotFound) {
     packet_buffer_->DiscardPacketsWithPayloadType(rtp_payload_type,
@@ -289,30 +330,32 @@ int NetEqImpl::RemovePayloadType(uint8_t rtp_payload_type) {
 }
 
 void NetEqImpl::RemoveAllPayloadTypes() {
-  rtc::CritScope lock(&crit_sect_);
+  MutexLock lock(&mutex_);
   decoder_database_->RemoveAll();
 }
 
 bool NetEqImpl::SetMinimumDelay(int delay_ms) {
-  rtc::CritScope lock(&crit_sect_);
+  MutexLock lock(&mutex_);
   if (delay_ms >= 0 && delay_ms <= 10000) {
     assert(controller_.get());
-    return controller_->SetMinimumDelay(delay_ms);
+    return controller_->SetMinimumDelay(
+        std::max(delay_ms - output_delay_chain_ms_, 0));
   }
   return false;
 }
 
 bool NetEqImpl::SetMaximumDelay(int delay_ms) {
-  rtc::CritScope lock(&crit_sect_);
+  MutexLock lock(&mutex_);
   if (delay_ms >= 0 && delay_ms <= 10000) {
     assert(controller_.get());
-    return controller_->SetMaximumDelay(delay_ms);
+    return controller_->SetMaximumDelay(
+        std::max(delay_ms - output_delay_chain_ms_, 0));
   }
   return false;
 }
 
 bool NetEqImpl::SetBaseMinimumDelayMs(int delay_ms) {
-  rtc::CritScope lock(&crit_sect_);
+  MutexLock lock(&mutex_);
   if (delay_ms >= 0 && delay_ms <= 10000) {
     return controller_->SetBaseMinimumDelay(delay_ms);
   }
@@ -320,47 +363,72 @@ bool NetEqImpl::SetBaseMinimumDelayMs(int delay_ms) {
 }
 
 int NetEqImpl::GetBaseMinimumDelayMs() const {
-  rtc::CritScope lock(&crit_sect_);
+  MutexLock lock(&mutex_);
   return controller_->GetBaseMinimumDelay();
 }
 
 int NetEqImpl::TargetDelayMs() const {
-  rtc::CritScope lock(&crit_sect_);
+  MutexLock lock(&mutex_);
   RTC_DCHECK(controller_.get());
-  return controller_->TargetLevelMs();
+  return controller_->TargetLevelMs() + output_delay_chain_ms_;
 }
 
 int NetEqImpl::FilteredCurrentDelayMs() const {
-  rtc::CritScope lock(&crit_sect_);
+  MutexLock lock(&mutex_);
   // Sum up the filtered packet buffer level with the future length of the sync
   // buffer.
   const int delay_samples =
       controller_->GetFilteredBufferLevel() + sync_buffer_->FutureLength();
   // The division below will truncate. The return value is in ms.
-  return delay_samples / rtc::CheckedDivExact(fs_hz_, 1000);
+  return delay_samples / rtc::CheckedDivExact(fs_hz_, 1000) +
+         output_delay_chain_ms_;
 }
 
 int NetEqImpl::NetworkStatistics(NetEqNetworkStatistics* stats) {
-  rtc::CritScope lock(&crit_sect_);
+  MutexLock lock(&mutex_);
   assert(decoder_database_.get());
-  const size_t total_samples_in_buffers =
-      packet_buffer_->NumSamplesInBuffer(decoder_frame_length_) +
-      sync_buffer_->FutureLength();
-  assert(controller_.get());
-  stats->preferred_buffer_size_ms = controller_->TargetLevelMs();
-  stats->jitter_peaks_found = controller_->PeakFound();
-  stats_->GetNetworkStatistics(fs_hz_, total_samples_in_buffers,
-                               decoder_frame_length_, stats);
+  *stats = CurrentNetworkStatisticsInternal();
+  stats_->GetNetworkStatistics(decoder_frame_length_, stats);
+  // Compensate for output delay chain.
+  stats->mean_waiting_time_ms += output_delay_chain_ms_;
+  stats->median_waiting_time_ms += output_delay_chain_ms_;
+  stats->min_waiting_time_ms += output_delay_chain_ms_;
+  stats->max_waiting_time_ms += output_delay_chain_ms_;
   return 0;
 }
 
+NetEqNetworkStatistics NetEqImpl::CurrentNetworkStatistics() const {
+  MutexLock lock(&mutex_);
+  return CurrentNetworkStatisticsInternal();
+}
+
+NetEqNetworkStatistics NetEqImpl::CurrentNetworkStatisticsInternal() const {
+  assert(decoder_database_.get());
+  NetEqNetworkStatistics stats;
+  const size_t total_samples_in_buffers =
+      packet_buffer_->NumSamplesInBuffer(decoder_frame_length_) +
+      sync_buffer_->FutureLength();
+
+  assert(controller_.get());
+  stats.preferred_buffer_size_ms = controller_->TargetLevelMs();
+  stats.jitter_peaks_found = controller_->PeakFound();
+  RTC_DCHECK_GT(fs_hz_, 0);
+  stats.current_buffer_size_ms =
+      static_cast<uint16_t>(total_samples_in_buffers * 1000 / fs_hz_);
+
+  // Compensate for output delay chain.
+  stats.current_buffer_size_ms += output_delay_chain_ms_;
+  stats.preferred_buffer_size_ms += output_delay_chain_ms_;
+  return stats;
+}
+
 NetEqLifetimeStatistics NetEqImpl::GetLifetimeStatistics() const {
-  rtc::CritScope lock(&crit_sect_);
+  MutexLock lock(&mutex_);
   return stats_->GetLifetimeStatistics();
 }
 
 NetEqOperationsAndState NetEqImpl::GetOperationsAndState() const {
-  rtc::CritScope lock(&crit_sect_);
+  MutexLock lock(&mutex_);
   auto result = stats_->GetOperationsAndState();
   result.current_buffer_size_ms =
       (packet_buffer_->NumSamplesInBuffer(decoder_frame_length_) +
@@ -374,19 +442,19 @@ NetEqOperationsAndState NetEqImpl::GetOperationsAndState() const {
 }
 
 void NetEqImpl::EnableVad() {
-  rtc::CritScope lock(&crit_sect_);
+  MutexLock lock(&mutex_);
   assert(vad_.get());
   vad_->Enable();
 }
 
 void NetEqImpl::DisableVad() {
-  rtc::CritScope lock(&crit_sect_);
+  MutexLock lock(&mutex_);
   assert(vad_.get());
   vad_->Disable();
 }
 
 absl::optional<uint32_t> NetEqImpl::GetPlayoutTimestamp() const {
-  rtc::CritScope lock(&crit_sect_);
+  MutexLock lock(&mutex_);
   if (first_packet_ || last_mode_ == Mode::kRfc3389Cng ||
       last_mode_ == Mode::kCodecInternalCng) {
     // We don't have a valid RTP timestamp until we have decoded our first
@@ -394,17 +462,24 @@ absl::optional<uint32_t> NetEqImpl::GetPlayoutTimestamp() const {
     // which is indicated by returning an empty value.
     return absl::nullopt;
   }
-  return timestamp_scaler_->ToExternal(playout_timestamp_);
+  size_t sum_samples_in_output_delay_chain = 0;
+  for (const auto& audio_frame : output_delay_chain_) {
+    sum_samples_in_output_delay_chain += audio_frame.samples_per_channel();
+  }
+  return timestamp_scaler_->ToExternal(
+      playout_timestamp_ -
+      static_cast<uint32_t>(sum_samples_in_output_delay_chain));
 }
 
 int NetEqImpl::last_output_sample_rate_hz() const {
-  rtc::CritScope lock(&crit_sect_);
-  return last_output_sample_rate_hz_;
+  MutexLock lock(&mutex_);
+  return delayed_last_output_sample_rate_hz_.value_or(
+      last_output_sample_rate_hz_);
 }
 
 absl::optional<NetEq::DecoderFormat> NetEqImpl::GetDecoderFormat(
     int payload_type) const {
-  rtc::CritScope lock(&crit_sect_);
+  MutexLock lock(&mutex_);
   const DecoderDatabase::DecoderInfo* const di =
       decoder_database_->GetDecoderInfo(payload_type);
   if (di) {
@@ -422,7 +497,7 @@ absl::optional<NetEq::DecoderFormat> NetEqImpl::GetDecoderFormat(
 }
 
 void NetEqImpl::FlushBuffers() {
-  rtc::CritScope lock(&crit_sect_);
+  MutexLock lock(&mutex_);
   RTC_LOG(LS_VERBOSE) << "FlushBuffers";
   packet_buffer_->Flush();
   assert(sync_buffer_.get());
@@ -435,7 +510,7 @@ void NetEqImpl::FlushBuffers() {
 }
 
 void NetEqImpl::EnableNack(size_t max_nack_list_size) {
-  rtc::CritScope lock(&crit_sect_);
+  MutexLock lock(&mutex_);
   if (!nack_enabled_) {
     const int kNackThresholdPackets = 2;
     nack_.reset(NackTracker::Create(kNackThresholdPackets));
@@ -446,13 +521,13 @@ void NetEqImpl::EnableNack(size_t max_nack_list_size) {
 }
 
 void NetEqImpl::DisableNack() {
-  rtc::CritScope lock(&crit_sect_);
+  MutexLock lock(&mutex_);
   nack_.reset();
   nack_enabled_ = false;
 }
 
 std::vector<uint16_t> NetEqImpl::GetNackList(int64_t round_trip_time_ms) const {
-  rtc::CritScope lock(&crit_sect_);
+  MutexLock lock(&mutex_);
   if (!nack_enabled_) {
     return std::vector<uint16_t>();
   }
@@ -461,23 +536,23 @@ std::vector<uint16_t> NetEqImpl::GetNackList(int64_t round_trip_time_ms) const {
 }
 
 std::vector<uint32_t> NetEqImpl::LastDecodedTimestamps() const {
-  rtc::CritScope lock(&crit_sect_);
+  MutexLock lock(&mutex_);
   return last_decoded_timestamps_;
 }
 
 int NetEqImpl::SyncBufferSizeMs() const {
-  rtc::CritScope lock(&crit_sect_);
+  MutexLock lock(&mutex_);
   return rtc::dchecked_cast<int>(sync_buffer_->FutureLength() /
                                  rtc::CheckedDivExact(fs_hz_, 1000));
 }
 
 const SyncBuffer* NetEqImpl::sync_buffer_for_test() const {
-  rtc::CritScope lock(&crit_sect_);
+  MutexLock lock(&mutex_);
   return sync_buffer_.get();
 }
 
 NetEq::Operation NetEqImpl::last_operation_for_test() const {
-  rtc::CritScope lock(&crit_sect_);
+  MutexLock lock(&mutex_);
   return last_operation_;
 }
 
@@ -1251,13 +1326,6 @@ int NetEqImpl::GetDecision(Operation* operation,
   int extracted_samples = 0;
   if (packet) {
     sync_buffer_->IncreaseEndTimestamp(packet->timestamp - end_timestamp);
-    if (controller_->CngOff()) {
-      // Adjustment of timestamp only corresponds to an actual packet loss
-      // if comfort noise is not played. If comfort noise was just played,
-      // this adjustment of timestamp is only done to get back in sync with the
-      // stream timestamp; no loss to report.
-      stats_->LostSamples(packet->timestamp - end_timestamp);
-    }
 
     if (*operation != Operation::kRfc3389Cng) {
       // We are about to decode and use a non-CNG packet.
@@ -1988,8 +2056,9 @@ int NetEqImpl::ExtractPackets(size_t required_samples,
     extracted_samples = packet->timestamp - first_timestamp + packet_duration;
 
     RTC_DCHECK(controller_);
-    stats_->JitterBufferDelay(packet_duration, waiting_time_ms,
-                              controller_->TargetLevelMs());
+    stats_->JitterBufferDelay(
+        packet_duration, waiting_time_ms + output_delay_chain_ms_,
+        controller_->TargetLevelMs() + output_delay_chain_ms_);
 
     packet_list->push_back(std::move(*packet));  // Store packet in list.
     packet = absl::nullopt;  // Ensure it's never used after the move.

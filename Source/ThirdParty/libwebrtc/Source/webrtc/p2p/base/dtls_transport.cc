@@ -14,6 +14,7 @@
 #include <memory>
 #include <utility>
 
+#include "absl/memory/memory.h"
 #include "api/rtc_event_log/rtc_event_log.h"
 #include "logging/rtc_event_log/events/rtc_event_dtls_transport_state.h"
 #include "logging/rtc_event_log/events/rtc_event_dtls_writable_state.h"
@@ -36,7 +37,10 @@ static const size_t kMinRtpPacketLen = 12;
 
 // Maximum number of pending packets in the queue. Packets are read immediately
 // after they have been written, so a capacity of "1" is sufficient.
-static const size_t kMaxPendingPackets = 1;
+//
+// However, this bug seems to indicate that's not the case: crbug.com/1063834
+// So, temporarily increasing it to 2 to see if that makes a difference.
+static const size_t kMaxPendingPackets = 2;
 
 // Minimum and maximum values for the initial DTLS handshake timeout. We'll pick
 // an initial timeout based on ICE RTT estimates, but clamp it to this range.
@@ -69,6 +73,8 @@ rtc::StreamResult StreamInterfaceChannel::Read(void* buffer,
                                                size_t buffer_len,
                                                size_t* read,
                                                int* error) {
+  RTC_DCHECK_RUN_ON(&sequence_checker_);
+
   if (state_ == rtc::SS_CLOSED)
     return rtc::SR_EOS;
   if (state_ == rtc::SS_OPENING)
@@ -85,6 +91,7 @@ rtc::StreamResult StreamInterfaceChannel::Write(const void* data,
                                                 size_t data_len,
                                                 size_t* written,
                                                 int* error) {
+  RTC_DCHECK_RUN_ON(&sequence_checker_);
   // Always succeeds, since this is an unreliable transport anyway.
   // TODO(zhihuang): Should this block if ice_transport_'s temporarily
   // unwritable?
@@ -98,20 +105,29 @@ rtc::StreamResult StreamInterfaceChannel::Write(const void* data,
 }
 
 bool StreamInterfaceChannel::OnPacketReceived(const char* data, size_t size) {
-  // We force a read event here to ensure that we don't overflow our queue.
-  bool ret = packets_.WriteBack(data, size, NULL);
-  RTC_CHECK(ret) << "Failed to write packet to queue.";
-  if (ret) {
-    SignalEvent(this, rtc::SE_READ, 0);
+  RTC_DCHECK_RUN_ON(&sequence_checker_);
+  if (packets_.size() > 0) {
+    RTC_LOG(LS_WARNING) << "Packet already in queue.";
   }
+  bool ret = packets_.WriteBack(data, size, NULL);
+  if (!ret) {
+    // Somehow we received another packet before the SSLStreamAdapter read the
+    // previous one out of our temporary buffer. In this case, we'll log an
+    // error and still signal the read event, hoping that it will read the
+    // packet currently in packets_.
+    RTC_LOG(LS_ERROR) << "Failed to write packet to queue.";
+  }
+  SignalEvent(this, rtc::SE_READ, 0);
   return ret;
 }
 
 rtc::StreamState StreamInterfaceChannel::GetState() const {
+  RTC_DCHECK_RUN_ON(&sequence_checker_);
   return state_;
 }
 
 void StreamInterfaceChannel::Close() {
+  RTC_DCHECK_RUN_ON(&sequence_checker_);
   packets_.Clear();
   state_ = rtc::SS_CLOSED;
 }
@@ -325,18 +341,19 @@ bool DtlsTransport::ExportKeyingMaterial(const std::string& label,
 
 bool DtlsTransport::SetupDtls() {
   RTC_DCHECK(dtls_role_);
-  StreamInterfaceChannel* downward = new StreamInterfaceChannel(ice_transport_);
+  {
+    auto downward = std::make_unique<StreamInterfaceChannel>(ice_transport_);
+    StreamInterfaceChannel* downward_ptr = downward.get();
 
-  dtls_.reset(rtc::SSLStreamAdapter::Create(downward));
-  if (!dtls_) {
-    RTC_LOG(LS_ERROR) << ToString() << ": Failed to create DTLS adapter.";
-    delete downward;
-    return false;
+    dtls_ = rtc::SSLStreamAdapter::Create(std::move(downward));
+    if (!dtls_) {
+      RTC_LOG(LS_ERROR) << ToString() << ": Failed to create DTLS adapter.";
+      return false;
+    }
+    downward_ = downward_ptr;
   }
 
-  downward_ = downward;
-
-  dtls_->SetIdentity(local_certificate_->identity()->GetReference());
+  dtls_->SetIdentity(local_certificate_->identity()->Clone());
   dtls_->SetMode(rtc::SSL_MODE_DTLS);
   dtls_->SetMaxProtocolVersion(ssl_max_version_);
   dtls_->SetServerRole(*dtls_role_);

@@ -15,9 +15,8 @@
 #include <string>
 #include <vector>
 
-#include "absl/flags/flag.h"
 #include "api/array_view.h"
-#include "rtc_base/numerics/samples_stats_counter.h"
+#include "api/numerics/samples_stats_counter.h"
 
 namespace webrtc {
 namespace test {
@@ -91,12 +90,11 @@ void PrintResult(const std::string& measurement,
                  const bool important,
                  ImproveDirection improve_direction = ImproveDirection::kNone);
 
-// If --write_histogram_proto_json=false, this returns all perf results to date
-// in a JSON string formatted as described in dashboard/docs/data-format.md
-// in https://github.com/catapult-project/catapult/blob/master/. If
-// --write_histogram_proto_json=true, returns a string-encoded proto as
-// described in tracing/tracing/proto/histogram.proto in
+// Returns a string-encoded proto as described in
+// tracing/tracing/proto/histogram.proto in
 // https://github.com/catapult-project/catapult/blob/master/.
+// If you want to print the proto in human readable format, use
+// tracing/bin/proto2json from third_party/catapult in your WebRTC checkout.
 std::string GetPerfResults();
 
 // Print into stdout plottable metrics for further post processing.
@@ -105,11 +103,15 @@ std::string GetPerfResults();
 // they will be skipped.
 void PrintPlottableResults(const std::vector<std::string>& desired_graphs);
 
-// Call GetPerfResults() and write its output to a file.
-void WritePerfResults(const std::string& output_path);
+// Call GetPerfResults() and write its output to a file. Returns false if we
+// failed to write to the file. If you want to print the proto in human readable
+// format, use tracing/bin/proto2json from third_party/catapult in your WebRTC
+// checkout.
+bool WritePerfResults(const std::string& output_path);
 
-// By default, perf results are printed to stdout. Set the FILE* to where they
-// should be printing instead.
+// By default, human-readable perf results are printed to stdout. Set the FILE*
+// to where they should be printing instead. These results are not used to
+// upload to the dashboard, however - this is only through WritePerfResults.
 void SetPerfResultsOutput(FILE* output);
 
 // Only for use by tests.
@@ -117,8 +119,5 @@ void ClearPerfResults();
 
 }  // namespace test
 }  // namespace webrtc
-
-// Only for use by tests.
-ABSL_DECLARE_FLAG(bool, write_histogram_proto_json);
 
 #endif  // TEST_TESTSUPPORT_PERF_TEST_H_

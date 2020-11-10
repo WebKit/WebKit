@@ -24,9 +24,8 @@
 #include "api/video/video_frame.h"
 #include "api/video_codecs/video_codec.h"
 #include "api/video_codecs/video_encoder.h"
-#include "modules/include/module_common_types.h"
 #include "modules/video_coding/include/video_codec_interface.h"
-#include "rtc_base/critical_section.h"
+#include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/synchronization/sequence_checker.h"
 #include "rtc_base/thread_annotations.h"
 #include "system_wrappers/include/clock.h"
@@ -40,21 +39,23 @@ class FakeEncoder : public VideoEncoder {
   virtual ~FakeEncoder() = default;
 
   // Sets max bitrate. Not thread-safe, call before registering the encoder.
-  void SetMaxBitrate(int max_kbps);
-  void SetQp(int qp);
+  void SetMaxBitrate(int max_kbps) RTC_LOCKS_EXCLUDED(mutex_);
+  void SetQp(int qp) RTC_LOCKS_EXCLUDED(mutex_);
 
   void SetFecControllerOverride(
       FecControllerOverride* fec_controller_override) override;
 
-  int32_t InitEncode(const VideoCodec* config,
-                     const Settings& settings) override;
+  int32_t InitEncode(const VideoCodec* config, const Settings& settings)
+      RTC_LOCKS_EXCLUDED(mutex_) override;
   int32_t Encode(const VideoFrame& input_image,
-                 const std::vector<VideoFrameType>* frame_types) override;
-  int32_t RegisterEncodeCompleteCallback(
-      EncodedImageCallback* callback) override;
+                 const std::vector<VideoFrameType>* frame_types)
+      RTC_LOCKS_EXCLUDED(mutex_) override;
+  int32_t RegisterEncodeCompleteCallback(EncodedImageCallback* callback)
+      RTC_LOCKS_EXCLUDED(mutex_) override;
   int32_t Release() override;
-  void SetRates(const RateControlParameters& parameters) override;
-  int GetConfiguredInputFramerate() const;
+  void SetRates(const RateControlParameters& parameters)
+      RTC_LOCKS_EXCLUDED(mutex_) override;
+  int GetConfiguredInputFramerate() const RTC_LOCKS_EXCLUDED(mutex_);
   EncoderInfo GetEncoderInfo() const override;
 
   static const char* kImplementationName;
@@ -78,28 +79,31 @@ class FakeEncoder : public VideoEncoder {
                       bool keyframe,
                       uint8_t num_simulcast_streams,
                       const VideoBitrateAllocation& target_bitrate,
-                      SimulcastStream simulcast_streams[kMaxSimulcastStreams],
-                      int framerate);
+                      SpatialLayer simulcast_streams[kMaxSimulcastStreams],
+                      int framerate) RTC_LOCKS_EXCLUDED(mutex_);
 
   // Called before the frame is passed to callback_->OnEncodedImage, to let
-  // subclasses fill out codec_specific, possibly modify encodedImage.
-  // Returns an RTPFragmentationHeader, if needed by the codec.
-  virtual std::unique_ptr<RTPFragmentationHeader> EncodeHook(
-      EncodedImage* encoded_image,
-      CodecSpecificInfo* codec_specific);
+  // subclasses fill out CodecSpecificInfo, possibly modify |encoded_image| or
+  // |buffer|.
+  virtual CodecSpecificInfo EncodeHook(
+      EncodedImage& encoded_image,
+      rtc::scoped_refptr<EncodedImageBuffer> buffer);
 
-  FrameInfo last_frame_info_ RTC_GUARDED_BY(crit_sect_);
+  void SetRatesLocked(const RateControlParameters& parameters)
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
+
+  FrameInfo last_frame_info_ RTC_GUARDED_BY(mutex_);
   Clock* const clock_;
 
-  VideoCodec config_ RTC_GUARDED_BY(crit_sect_);
-  EncodedImageCallback* callback_ RTC_GUARDED_BY(crit_sect_);
-  RateControlParameters current_rate_settings_ RTC_GUARDED_BY(crit_sect_);
-  int max_target_bitrate_kbps_ RTC_GUARDED_BY(crit_sect_);
-  bool pending_keyframe_ RTC_GUARDED_BY(crit_sect_);
-  uint32_t counter_ RTC_GUARDED_BY(crit_sect_);
-  rtc::CriticalSection crit_sect_;
+  VideoCodec config_ RTC_GUARDED_BY(mutex_);
+  EncodedImageCallback* callback_ RTC_GUARDED_BY(mutex_);
+  RateControlParameters current_rate_settings_ RTC_GUARDED_BY(mutex_);
+  int max_target_bitrate_kbps_ RTC_GUARDED_BY(mutex_);
+  bool pending_keyframe_ RTC_GUARDED_BY(mutex_);
+  uint32_t counter_ RTC_GUARDED_BY(mutex_);
+  mutable Mutex mutex_;
   bool used_layers_[kMaxSimulcastStreams];
-  absl::optional<int> qp_ RTC_GUARDED_BY(crit_sect_);
+  absl::optional<int> qp_ RTC_GUARDED_BY(mutex_);
 
   // Current byte debt to be payed over a number of frames.
   // The debt is acquired by keyframes overshooting the bitrate target.
@@ -112,12 +116,12 @@ class FakeH264Encoder : public FakeEncoder {
   virtual ~FakeH264Encoder() = default;
 
  private:
-  std::unique_ptr<RTPFragmentationHeader> EncodeHook(
-      EncodedImage* encoded_image,
-      CodecSpecificInfo* codec_specific) override;
+  CodecSpecificInfo EncodeHook(
+      EncodedImage& encoded_image,
+      rtc::scoped_refptr<EncodedImageBuffer> buffer) override;
 
-  int idr_counter_ RTC_GUARDED_BY(local_crit_sect_);
-  rtc::CriticalSection local_crit_sect_;
+  int idr_counter_ RTC_GUARDED_BY(local_mutex_);
+  Mutex local_mutex_;
 };
 
 class DelayedEncoder : public test::FakeEncoder {

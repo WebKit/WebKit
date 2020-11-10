@@ -20,12 +20,12 @@
 #include "call/video_receive_stream.h"
 #include "modules/include/module_common_types.h"
 #include "modules/video_coding/include/video_coding_defines.h"
-#include "rtc_base/critical_section.h"
 #include "rtc_base/numerics/histogram_percentile_counter.h"
 #include "rtc_base/numerics/moving_max_counter.h"
 #include "rtc_base/numerics/sample_counter.h"
 #include "rtc_base/rate_statistics.h"
 #include "rtc_base/rate_tracker.h"
+#include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/thread_annotations.h"
 #include "rtc_base/thread_checker.h"
 #include "video/quality_threshold.h"
@@ -124,19 +124,19 @@ class ReceiveStatisticsProxy : public VCMReceiveStatisticsCallback,
     rtc::HistogramPercentileCounter interframe_delay_percentiles;
   };
 
-  void QualitySample() RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_);
+  void QualitySample() RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
 
   // Removes info about old frames and then updates the framerate.
   void UpdateFramerate(int64_t now_ms) const
-      RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_);
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
 
   void UpdateDecodeTimeHistograms(int width,
                                   int height,
                                   int decode_time_ms) const
-      RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_);
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
 
   absl::optional<int64_t> GetCurrentEstimatedPlayoutNtpTimestampMs(
-      int64_t now_ms) const RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_);
+      int64_t now_ms) const RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
 
   Clock* const clock_;
   // Ownership of this object lies with the owner of the ReceiveStatisticsProxy
@@ -150,52 +150,52 @@ class ReceiveStatisticsProxy : public VCMReceiveStatisticsCallback,
   const int64_t start_ms_;
   const bool enable_decode_time_histograms_;
 
-  rtc::CriticalSection crit_;
-  int64_t last_sample_time_ RTC_GUARDED_BY(crit_);
-  QualityThreshold fps_threshold_ RTC_GUARDED_BY(crit_);
-  QualityThreshold qp_threshold_ RTC_GUARDED_BY(crit_);
-  QualityThreshold variance_threshold_ RTC_GUARDED_BY(crit_);
-  rtc::SampleCounter qp_sample_ RTC_GUARDED_BY(crit_);
-  int num_bad_states_ RTC_GUARDED_BY(crit_);
-  int num_certain_states_ RTC_GUARDED_BY(crit_);
+  mutable Mutex mutex_;
+  int64_t last_sample_time_ RTC_GUARDED_BY(mutex_);
+  QualityThreshold fps_threshold_ RTC_GUARDED_BY(mutex_);
+  QualityThreshold qp_threshold_ RTC_GUARDED_BY(mutex_);
+  QualityThreshold variance_threshold_ RTC_GUARDED_BY(mutex_);
+  rtc::SampleCounter qp_sample_ RTC_GUARDED_BY(mutex_);
+  int num_bad_states_ RTC_GUARDED_BY(mutex_);
+  int num_certain_states_ RTC_GUARDED_BY(mutex_);
   // Note: The |stats_.rtp_stats| member is not used or populated by this class.
-  mutable VideoReceiveStream::Stats stats_ RTC_GUARDED_BY(crit_);
-  RateStatistics decode_fps_estimator_ RTC_GUARDED_BY(crit_);
-  RateStatistics renders_fps_estimator_ RTC_GUARDED_BY(crit_);
-  rtc::RateTracker render_fps_tracker_ RTC_GUARDED_BY(crit_);
-  rtc::RateTracker render_pixel_tracker_ RTC_GUARDED_BY(crit_);
-  rtc::SampleCounter sync_offset_counter_ RTC_GUARDED_BY(crit_);
-  rtc::SampleCounter decode_time_counter_ RTC_GUARDED_BY(crit_);
-  rtc::SampleCounter jitter_buffer_delay_counter_ RTC_GUARDED_BY(crit_);
-  rtc::SampleCounter target_delay_counter_ RTC_GUARDED_BY(crit_);
-  rtc::SampleCounter current_delay_counter_ RTC_GUARDED_BY(crit_);
-  rtc::SampleCounter delay_counter_ RTC_GUARDED_BY(crit_);
+  mutable VideoReceiveStream::Stats stats_ RTC_GUARDED_BY(mutex_);
+  RateStatistics decode_fps_estimator_ RTC_GUARDED_BY(mutex_);
+  RateStatistics renders_fps_estimator_ RTC_GUARDED_BY(mutex_);
+  rtc::RateTracker render_fps_tracker_ RTC_GUARDED_BY(mutex_);
+  rtc::RateTracker render_pixel_tracker_ RTC_GUARDED_BY(mutex_);
+  rtc::SampleCounter sync_offset_counter_ RTC_GUARDED_BY(mutex_);
+  rtc::SampleCounter decode_time_counter_ RTC_GUARDED_BY(mutex_);
+  rtc::SampleCounter jitter_buffer_delay_counter_ RTC_GUARDED_BY(mutex_);
+  rtc::SampleCounter target_delay_counter_ RTC_GUARDED_BY(mutex_);
+  rtc::SampleCounter current_delay_counter_ RTC_GUARDED_BY(mutex_);
+  rtc::SampleCounter delay_counter_ RTC_GUARDED_BY(mutex_);
   std::unique_ptr<VideoQualityObserver> video_quality_observer_
-      RTC_GUARDED_BY(crit_);
+      RTC_GUARDED_BY(mutex_);
   mutable rtc::MovingMaxCounter<int> interframe_delay_max_moving_
-      RTC_GUARDED_BY(crit_);
+      RTC_GUARDED_BY(mutex_);
   std::map<VideoContentType, ContentSpecificStats> content_specific_stats_
-      RTC_GUARDED_BY(crit_);
-  MaxCounter freq_offset_counter_ RTC_GUARDED_BY(crit_);
+      RTC_GUARDED_BY(mutex_);
+  MaxCounter freq_offset_counter_ RTC_GUARDED_BY(mutex_);
   QpCounters qp_counters_ RTC_GUARDED_BY(decode_thread_);
-  int64_t avg_rtt_ms_ RTC_GUARDED_BY(crit_);
-  mutable std::map<int64_t, size_t> frame_window_ RTC_GUARDED_BY(&crit_);
-  VideoContentType last_content_type_ RTC_GUARDED_BY(&crit_);
-  VideoCodecType last_codec_type_ RTC_GUARDED_BY(&crit_);
-  absl::optional<int64_t> first_frame_received_time_ms_ RTC_GUARDED_BY(&crit_);
-  absl::optional<int64_t> first_decoded_frame_time_ms_ RTC_GUARDED_BY(&crit_);
-  absl::optional<int64_t> last_decoded_frame_time_ms_ RTC_GUARDED_BY(&crit_);
-  size_t num_delayed_frames_rendered_ RTC_GUARDED_BY(&crit_);
-  int64_t sum_missed_render_deadline_ms_ RTC_GUARDED_BY(&crit_);
+  int64_t avg_rtt_ms_ RTC_GUARDED_BY(mutex_);
+  mutable std::map<int64_t, size_t> frame_window_ RTC_GUARDED_BY(&mutex_);
+  VideoContentType last_content_type_ RTC_GUARDED_BY(&mutex_);
+  VideoCodecType last_codec_type_ RTC_GUARDED_BY(&mutex_);
+  absl::optional<int64_t> first_frame_received_time_ms_ RTC_GUARDED_BY(&mutex_);
+  absl::optional<int64_t> first_decoded_frame_time_ms_ RTC_GUARDED_BY(&mutex_);
+  absl::optional<int64_t> last_decoded_frame_time_ms_ RTC_GUARDED_BY(&mutex_);
+  size_t num_delayed_frames_rendered_ RTC_GUARDED_BY(&mutex_);
+  int64_t sum_missed_render_deadline_ms_ RTC_GUARDED_BY(&mutex_);
   // Mutable because calling Max() on MovingMaxCounter is not const. Yet it is
   // called from const GetStats().
   mutable rtc::MovingMaxCounter<TimingFrameInfo> timing_frame_info_counter_
-      RTC_GUARDED_BY(&crit_);
-  absl::optional<int> num_unique_frames_ RTC_GUARDED_BY(crit_);
+      RTC_GUARDED_BY(&mutex_);
+  absl::optional<int> num_unique_frames_ RTC_GUARDED_BY(mutex_);
   absl::optional<int64_t> last_estimated_playout_ntp_timestamp_ms_
-      RTC_GUARDED_BY(&crit_);
+      RTC_GUARDED_BY(&mutex_);
   absl::optional<int64_t> last_estimated_playout_time_ms_
-      RTC_GUARDED_BY(&crit_);
+      RTC_GUARDED_BY(&mutex_);
   rtc::ThreadChecker decode_thread_;
   rtc::ThreadChecker network_thread_;
   rtc::ThreadChecker main_thread_;

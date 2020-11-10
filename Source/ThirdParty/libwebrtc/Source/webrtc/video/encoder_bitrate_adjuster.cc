@@ -282,6 +282,13 @@ VideoBitrateAllocation EncoderBitrateAdjuster::AdjustRateAllocation(
                 (ti == 0 ? 0 : current_fps_allocation_[si][ti - 1])) /
             VideoEncoder::EncoderInfo::kMaxFramerateFraction;
 
+        if (fps_fraction <= 0.0) {
+          RTC_LOG(LS_WARNING)
+              << "Encoder config has temporal layer with non-zero bitrate "
+                 "allocation but zero framerate allocation.";
+          continue;
+        }
+
         overshoot_detectors_[si][ti]->SetTargetRate(
             DataRate::BitsPerSec(layer_bitrate_bps),
             fps_fraction * rates.framerate_fps, now_ms);

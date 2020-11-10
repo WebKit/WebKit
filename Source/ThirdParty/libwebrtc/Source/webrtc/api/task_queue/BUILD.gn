@@ -21,6 +21,8 @@ rtc_library("task_queue") {
     "../../rtc_base:checks",
     "../../rtc_base:macromagic",
     "../../rtc_base/system:rtc_export",
+  ]
+  absl_deps = [
     "//third_party/abseil-cpp/absl/base:config",
     "//third_party/abseil-cpp/absl/base:core_headers",
     "//third_party/abseil-cpp/absl/strings",
@@ -51,6 +53,8 @@ rtc_library("task_queue_test") {
     deps = [
       "../../../webrtc_overrides:webrtc_component",
       "../../test:test_support",
+    ]
+    absl_deps = [
       "//third_party/abseil-cpp/absl/memory",
       "//third_party/abseil-cpp/absl/strings",
     ]
@@ -62,6 +66,8 @@ rtc_library("task_queue_test") {
       "../../rtc_base:timeutils",
       "../../rtc_base/task_utils:to_queued_task",
       "../../test:test_support",
+    ]
+    absl_deps = [
       "//third_party/abseil-cpp/absl/memory",
       "//third_party/abseil-cpp/absl/strings",
     ]

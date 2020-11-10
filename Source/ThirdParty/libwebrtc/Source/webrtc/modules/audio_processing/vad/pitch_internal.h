@@ -11,6 +11,8 @@
 #ifndef MODULES_AUDIO_PROCESSING_VAD_PITCH_INTERNAL_H_
 #define MODULES_AUDIO_PROCESSING_VAD_PITCH_INTERNAL_H_
 
+namespace webrtc {
+
 // TODO(turajs): Write a description of this function. Also be consistent with
 // usage of |sampling_rate_hz| vs |kSamplingFreqHz|.
 void GetSubframesPitchParameters(int sampling_rate_hz,
@@ -22,5 +24,7 @@ void GetSubframesPitchParameters(int sampling_rate_hz,
                                  double* old_lag,
                                  double* log_pitch_gain,
                                  double* pitch_lag_hz);
+
+}  // namespace webrtc
 
 #endif  // MODULES_AUDIO_PROCESSING_VAD_PITCH_INTERNAL_H_

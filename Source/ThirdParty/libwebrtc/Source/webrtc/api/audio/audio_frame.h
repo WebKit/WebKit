@@ -14,6 +14,8 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include <utility>
+
 #include "api/audio/channel_layout.h"
 #include "api/rtp_packet_infos.h"
 #include "rtc_base/constructor_magic.h"
@@ -57,6 +59,8 @@ class AudioFrame {
   };
 
   AudioFrame();
+
+  friend void swap(AudioFrame& a, AudioFrame& b);
 
   // Resets all members to their default state.
   void Reset();

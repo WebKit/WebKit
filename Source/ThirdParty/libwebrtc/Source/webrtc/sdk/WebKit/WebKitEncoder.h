@@ -72,29 +72,15 @@ struct WebKitEncodedFrameInfo {
     template<class Decoder> static bool decode(Decoder&, WebKitEncodedFrameInfo&);
 };
 
-class WebKitRTPFragmentationHeader {
-public:
-    explicit WebKitRTPFragmentationHeader(webrtc::RTPFragmentationHeader* = nullptr);
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static bool decode(Decoder&, WebKitRTPFragmentationHeader&);
-
-    webrtc::RTPFragmentationHeader* value() { return m_value; };
-
-private:
-    webrtc::RTPFragmentationHeader* m_value { nullptr };
-    std::unique_ptr<webrtc::RTPFragmentationHeader> m_ownedHeader;
-};
-
 using LocalEncoder = void*;
-using LocalEncoderCallback = void (^)(const uint8_t* buffer, size_t size, const webrtc::WebKitEncodedFrameInfo&, webrtc::RTPFragmentationHeader*);
+using LocalEncoderCallback = void (^)(const uint8_t* buffer, size_t size, const webrtc::WebKitEncodedFrameInfo&);
 void* createLocalEncoder(const webrtc::SdpVideoFormat&, LocalEncoderCallback);
 void releaseLocalEncoder(LocalEncoder);
 void initializeLocalEncoder(LocalEncoder, uint16_t width, uint16_t height, unsigned int startBitrate, unsigned int maxBitrate, unsigned int minBitrate, uint32_t maxFramerate);
 void encodeLocalEncoderFrame(LocalEncoder, CVPixelBufferRef, int64_t timeStampNs, uint32_t timeStamp, webrtc::VideoRotation, bool isKeyframeRequired);
 void setLocalEncoderRates(LocalEncoder, uint32_t bitRate, uint32_t frameRate);
 void setLocalEncoderLowLatency(LocalEncoder, bool isLowLatencyEnabled);
-void encoderVideoTaskComplete(void*, webrtc::VideoCodecType, uint8_t* buffer, size_t length, const WebKitEncodedFrameInfo&, const webrtc::RTPFragmentationHeader*);
+void encoderVideoTaskComplete(void*, webrtc::VideoCodecType, uint8_t* buffer, size_t length, const WebKitEncodedFrameInfo&);
 
 template<class Decoder>
 bool WebKitEncodedFrameInfo::decode(Decoder& decoder, WebKitEncodedFrameInfo& info)
@@ -165,60 +151,6 @@ void WebKitEncodedFrameInfo::encode(Encoder& encoder) const
     encoder << timing.network2_timestamp_ms;
     encoder << timing.receive_start_ms;
     encoder << timing.receive_finish_ms;
-}
-
-inline WebKitRTPFragmentationHeader::WebKitRTPFragmentationHeader(webrtc::RTPFragmentationHeader* header)
-    : m_value(header)
-{
-}
-
-template<class Encoder>
-void WebKitRTPFragmentationHeader::encode(Encoder& encoder) const
-{
-    encoder << !!m_value;
-    if (!m_value)
-        return;
-
-    encoder << static_cast<unsigned>(m_value->Size());
-    for (unsigned i = 0; i < m_value->Size(); ++i) {
-        encoder << static_cast<unsigned>(m_value->Offset(i));
-        encoder << static_cast<unsigned>(m_value->Length(i));
-    }
-}
-
-template<class Decoder>
-bool WebKitRTPFragmentationHeader::decode(Decoder& decoder, WebKitRTPFragmentationHeader& header)
-{
-    bool hasValue;
-    if (!decoder.decode(hasValue))
-        return false;
-    
-    if (!hasValue) {
-        header.m_value = nullptr;
-        return true;
-    }
-
-    unsigned size;
-    if (!decoder.decode(size))
-        return false;
-
-    auto ownedHeader = std::make_unique<webrtc::RTPFragmentationHeader>();
-    ownedHeader->VerifyAndAllocateFragmentationHeader(size);
-    for (size_t i = 0; i < size; ++i) {
-        unsigned offset, length;
-        if (!decoder.decode(offset))
-            return false;
-        if (!decoder.decode(length))
-            return false;
-
-        ownedHeader->fragmentationOffset[i] = offset;
-        ownedHeader->fragmentationLength[i] = length;
-    }
-
-    header.m_ownedHeader = std::move(ownedHeader);
-    header.m_value = header.m_ownedHeader.get();
-
-    return true;
 }
 
 }

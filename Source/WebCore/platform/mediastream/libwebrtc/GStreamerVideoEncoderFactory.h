@@ -39,7 +39,7 @@ private:
     {
         GST_FIXME("Detect wether the decoder is HW accelerated");
 
-        return { false, false };
+        return { false };
     }
 };
 }

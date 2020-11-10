@@ -19,11 +19,11 @@
 
 #include "rtc_base/atomic_ops.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/critical_section.h"
 #include "rtc_base/event.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/platform_thread.h"
 #include "rtc_base/platform_thread_types.h"
+#include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/thread_annotations.h"
 #include "rtc_base/thread_checker.h"
 #include "rtc_base/time_utils.h"
@@ -120,7 +120,7 @@ class EventLogger final {
         arg.value.as_string = str_copy;
       }
     }
-    rtc::CritScope lock(&crit_);
+    webrtc::MutexLock lock(&mutex_);
     trace_events_.push_back(
         {name, category_enabled, phase, args, timestamp, 1, thread_id});
   }
@@ -136,7 +136,7 @@ class EventLogger final {
       bool shutting_down = shutdown_event_.Wait(kLoggingIntervalMs);
       std::vector<TraceEvent> events;
       {
-        rtc::CritScope lock(&crit_);
+        webrtc::MutexLock lock(&mutex_);
         trace_events_.swap(events);
       }
       std::string args_str;
@@ -196,7 +196,7 @@ class EventLogger final {
     output_file_ = file;
     output_file_owned_ = owned;
     {
-      rtc::CritScope lock(&crit_);
+      webrtc::MutexLock lock(&mutex_);
       // Since the atomic fast-path for adding events to the queue can be
       // bypassed while the logging thread is shutting down there may be some
       // stale events in the queue, hence the vector needs to be cleared to not
@@ -317,8 +317,8 @@ class EventLogger final {
     return output;
   }
 
-  rtc::CriticalSection crit_;
-  std::vector<TraceEvent> trace_events_ RTC_GUARDED_BY(crit_);
+  webrtc::Mutex mutex_;
+  std::vector<TraceEvent> trace_events_ RTC_GUARDED_BY(mutex_);
   rtc::PlatformThread logging_thread_;
   rtc::Event shutdown_event_;
   rtc::ThreadChecker thread_checker_;

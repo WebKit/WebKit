@@ -61,7 +61,7 @@ void RemoteEstimatorProxy::IncomingPacket(int64_t arrival_time_ms,
     RTC_LOG(LS_WARNING) << "Arrival time out of bounds: " << arrival_time_ms;
     return;
   }
-  rtc::CritScope cs(&lock_);
+  MutexLock lock(&lock_);
   media_ssrc_ = header.ssrc;
   int64_t seq = 0;
 
@@ -134,7 +134,7 @@ bool RemoteEstimatorProxy::LatestEstimate(std::vector<unsigned int>* ssrcs,
 }
 
 int64_t RemoteEstimatorProxy::TimeUntilNextProcess() {
-  rtc::CritScope cs(&lock_);
+  MutexLock lock(&lock_);
   if (!send_periodic_feedback_) {
     // Wait a day until next process.
     return 24 * 60 * 60 * 1000;
@@ -147,7 +147,7 @@ int64_t RemoteEstimatorProxy::TimeUntilNextProcess() {
 }
 
 void RemoteEstimatorProxy::Process() {
-  rtc::CritScope cs(&lock_);
+  MutexLock lock(&lock_);
   if (!send_periodic_feedback_) {
     return;
   }
@@ -169,7 +169,7 @@ void RemoteEstimatorProxy::OnBitrateChanged(int bitrate_bps) {
       kTwccReportSize * 8.0 * 1000.0 / send_config_.min_interval->ms();
 
   // Let TWCC reports occupy 5% of total bandwidth.
-  rtc::CritScope cs(&lock_);
+  MutexLock lock(&lock_);
   send_interval_ms_ = static_cast<int>(
       0.5 + kTwccReportSize * 8.0 * 1000.0 /
                 rtc::SafeClamp(send_config_.bandwidth_fraction * bitrate_bps,
@@ -178,7 +178,7 @@ void RemoteEstimatorProxy::OnBitrateChanged(int bitrate_bps) {
 
 void RemoteEstimatorProxy::SetSendPeriodicFeedback(
     bool send_periodic_feedback) {
-  rtc::CritScope cs(&lock_);
+  MutexLock lock(&lock_);
   send_periodic_feedback_ = send_periodic_feedback;
 }
 

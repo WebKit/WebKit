@@ -14,7 +14,7 @@ promise_test(async t => {
     const offer = await pc.createOffer();
 
     assert_true(offer.sdp.indexOf("packetization-mode=1;profile-level-id=42e01f") !== -1, "baseline, packetization mode 1");
-    assert_false(offer.sdp.indexOf("packetization-mode=0") !== -1, "packetization mode 0 is not offered");
+    assert_true(offer.sdp.indexOf("packetization-mode=0") !== -1, "packetization mode 0 is not offered");
 }, "Make sure packetization mode 1 is offered");
 
 const sdpStart = `v=0
@@ -39,12 +39,7 @@ promise_test(async t => {
     const sdp = sdpStart +`
 `;
     const pc = new RTCPeerConnection();
-    await pc.setRemoteDescription(new RTCSessionDescription({sdp: sdp, type: 'offer'})).then(() => {
-        assert_unreached();
-    }, (e) => {
-        assert_equals(e.name, "InvalidAccessError");
-        assert_equals(e.message, "Failed to set remote offer sdp: Failed to set remote video description send parameters.");
-    });
+    return pc.setRemoteDescription(new RTCSessionDescription({sdp: sdp, type: 'offer'}));
 }, "Offer without explicit H264 packetization mode");
 
 promise_test(async t => {
@@ -52,12 +47,7 @@ promise_test(async t => {
 a=fmtp:99 profile-level-id=42e01f;level-asymmetry-allowed=1;packetization-mode=0
 `;
     const pc = new RTCPeerConnection();
-    await pc.setRemoteDescription(new RTCSessionDescription({sdp: sdp, type: 'offer'})).then(() => {
-        assert_unreached();
-    }, (e) => {
-        assert_equals(e.name, "InvalidAccessError");
-        assert_equals(e.message, "Failed to set remote offer sdp: Failed to set remote video description send parameters.");
-    });
+    return pc.setRemoteDescription(new RTCSessionDescription({sdp: sdp, type: 'offer'}));
 }, "Offer with explicit H264 packetization mode 0");
 
 promise_test(async t => {

@@ -28,7 +28,7 @@ void VideoBroadcaster::AddOrUpdateSink(
     VideoSinkInterface<webrtc::VideoFrame>* sink,
     const VideoSinkWants& wants) {
   RTC_DCHECK(sink != nullptr);
-  rtc::CritScope cs(&sinks_and_wants_lock_);
+  webrtc::MutexLock lock(&sinks_and_wants_lock_);
   if (!FindSinkPair(sink)) {
     // |Sink| is a new sink, which didn't receive previous frame.
     previous_frame_sent_to_all_sinks_ = false;
@@ -40,23 +40,23 @@ void VideoBroadcaster::AddOrUpdateSink(
 void VideoBroadcaster::RemoveSink(
     VideoSinkInterface<webrtc::VideoFrame>* sink) {
   RTC_DCHECK(sink != nullptr);
-  rtc::CritScope cs(&sinks_and_wants_lock_);
+  webrtc::MutexLock lock(&sinks_and_wants_lock_);
   VideoSourceBase::RemoveSink(sink);
   UpdateWants();
 }
 
 bool VideoBroadcaster::frame_wanted() const {
-  rtc::CritScope cs(&sinks_and_wants_lock_);
+  webrtc::MutexLock lock(&sinks_and_wants_lock_);
   return !sink_pairs().empty();
 }
 
 VideoSinkWants VideoBroadcaster::wants() const {
-  rtc::CritScope cs(&sinks_and_wants_lock_);
+  webrtc::MutexLock lock(&sinks_and_wants_lock_);
   return current_wants_;
 }
 
 void VideoBroadcaster::OnFrame(const webrtc::VideoFrame& frame) {
-  rtc::CritScope cs(&sinks_and_wants_lock_);
+  webrtc::MutexLock lock(&sinks_and_wants_lock_);
   bool current_frame_was_discarded = false;
   for (auto& sink_pair : sink_pairs()) {
     if (sink_pair.wants.rotation_applied &&

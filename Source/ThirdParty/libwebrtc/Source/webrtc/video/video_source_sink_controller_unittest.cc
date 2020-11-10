@@ -30,8 +30,8 @@ class MockVideoSinkWithVideoFrame : public rtc::VideoSinkInterface<VideoFrame> {
  public:
   ~MockVideoSinkWithVideoFrame() override {}
 
-  MOCK_METHOD1(OnFrame, void(const VideoFrame& frame));
-  MOCK_METHOD0(OnDiscardedFrame, void());
+  MOCK_METHOD(void, OnFrame, (const VideoFrame& frame), (override));
+  MOCK_METHOD(void, OnDiscardedFrame, (), (override));
 };
 
 class MockVideoSourceWithVideoFrame
@@ -39,10 +39,15 @@ class MockVideoSourceWithVideoFrame
  public:
   ~MockVideoSourceWithVideoFrame() override {}
 
-  MOCK_METHOD2(AddOrUpdateSink,
-               void(rtc::VideoSinkInterface<VideoFrame>*,
-                    const rtc::VideoSinkWants&));
-  MOCK_METHOD1(RemoveSink, void(rtc::VideoSinkInterface<VideoFrame>*));
+  MOCK_METHOD(void,
+              AddOrUpdateSink,
+              (rtc::VideoSinkInterface<VideoFrame>*,
+               const rtc::VideoSinkWants&),
+              (override));
+  MOCK_METHOD(void,
+              RemoveSink,
+              (rtc::VideoSinkInterface<VideoFrame>*),
+              (override));
 };
 
 }  // namespace

@@ -44,13 +44,8 @@ VCMPacket::VCMPacket(const uint8_t* ptr,
       markerBit(rtp_header.markerBit),
       timesNacked(-1),
       completeNALU(kNaluIncomplete),
-#ifndef DISABLE_H265
-      insertStartCode((videoHeader.codec == kVideoCodecH264 || videoHeader.codec == kVideoCodecH265) &&
+      insertStartCode(videoHeader.codec == kVideoCodecH264 &&
                       videoHeader.is_first_packet_in_frame),
-#else
-       insertStartCode(videoHeader.codec == kVideoCodecH264 &&
-                       videoHeader.is_first_packet_in_frame),
-#endif
       video_header(videoHeader),
       packet_info(rtp_header, receive_time_ms) {
   if (is_first_packet_in_frame() && markerBit) {

@@ -31,6 +31,7 @@
 #include "test/fake_vp8_encoder.h"
 #include "test/frame_generator_capturer.h"
 #include "test/rtp_rtcp_observer.h"
+#include "test/run_loop.h"
 
 namespace webrtc {
 namespace test {
@@ -175,6 +176,8 @@ class CallTest : public ::testing::Test {
   VideoSendStream* GetVideoSendStream();
   FlexfecReceiveStream::Config* GetFlexFecConfig();
   TaskQueueBase* task_queue() { return task_queue_.get(); }
+
+  test::RunLoop loop_;
 
   Clock* const clock_;
   const FieldTrialBasedConfig field_trials_;

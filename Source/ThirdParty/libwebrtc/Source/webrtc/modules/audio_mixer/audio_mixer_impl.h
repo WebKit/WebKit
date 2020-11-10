@@ -22,8 +22,8 @@
 #include "modules/audio_mixer/frame_combiner.h"
 #include "modules/audio_mixer/output_rate_calculator.h"
 #include "rtc_base/constructor_magic.h"
-#include "rtc_base/critical_section.h"
 #include "rtc_base/race_checker.h"
+#include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/thread_annotations.h"
 
 namespace webrtc {
@@ -63,7 +63,7 @@ class AudioMixerImpl : public AudioMixer {
 
   void Mix(size_t number_of_channels,
            AudioFrame* audio_frame_for_mixing) override
-      RTC_LOCKS_EXCLUDED(crit_);
+      RTC_LOCKS_EXCLUDED(mutex_);
 
   // Returns true if the source was mixed last round. Returns
   // false and logs an error if the source was never added to the
@@ -83,12 +83,12 @@ class AudioMixerImpl : public AudioMixer {
   // Compute what audio sources to mix from audio_source_list_. Ramp
   // in and out. Update mixed status. Mixes up to
   // kMaximumAmountOfMixedAudioSources audio sources.
-  AudioFrameList GetAudioFromSources() RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_);
+  AudioFrameList GetAudioFromSources() RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
 
   // The critical section lock guards audio source insertion and
   // removal, which can be done from any thread. The race checker
   // checks that mixing is done sequentially.
-  rtc::CriticalSection crit_;
+  mutable Mutex mutex_;
   rtc::RaceChecker race_checker_;
 
   std::unique_ptr<OutputRateCalculator> output_rate_calculator_;
@@ -97,7 +97,7 @@ class AudioMixerImpl : public AudioMixer {
   size_t sample_size_ RTC_GUARDED_BY(race_checker_);
 
   // List of all audio sources. Note all lists are disjunct
-  SourceStatusList audio_source_list_ RTC_GUARDED_BY(crit_);  // May be mixed.
+  SourceStatusList audio_source_list_ RTC_GUARDED_BY(mutex_);  // May be mixed.
 
   // Component that handles actual adding of audio frames.
   FrameCombiner frame_combiner_ RTC_GUARDED_BY(race_checker_);

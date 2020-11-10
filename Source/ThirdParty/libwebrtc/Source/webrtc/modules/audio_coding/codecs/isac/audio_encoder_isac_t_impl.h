@@ -12,6 +12,7 @@
 #define MODULES_AUDIO_CODING_CODECS_ISAC_AUDIO_ENCODER_ISAC_T_IMPL_H_
 
 #include "rtc_base/checks.h"
+#include "rtc_base/numerics/safe_minmax.h"
 
 namespace webrtc {
 
@@ -81,6 +82,51 @@ int AudioEncoderIsacT<T>::GetTargetBitrate() const {
 }
 
 template <typename T>
+void AudioEncoderIsacT<T>::SetTargetBitrate(int target_bps) {
+  // Set target bitrate directly without subtracting per-packet overhead,
+  // because that's what AudioEncoderOpus does.
+  SetTargetBitrate(target_bps,
+                   /*subtract_per_packet_overhead=*/false);
+}
+
+template <typename T>
+void AudioEncoderIsacT<T>::OnReceivedTargetAudioBitrate(int target_bps) {
+  // Set target bitrate directly without subtracting per-packet overhead,
+  // because that's what AudioEncoderOpus does.
+  SetTargetBitrate(target_bps,
+                   /*subtract_per_packet_overhead=*/false);
+}
+
+template <typename T>
+void AudioEncoderIsacT<T>::OnReceivedUplinkBandwidth(
+    int target_audio_bitrate_bps,
+    absl::optional<int64_t> /*bwe_period_ms*/) {
+  // Set target bitrate, subtracting the per-packet overhead if
+  // WebRTC-SendSideBwe-WithOverhead is enabled, because that's what
+  // AudioEncoderOpus does.
+  SetTargetBitrate(
+      target_audio_bitrate_bps,
+      /*subtract_per_packet_overhead=*/send_side_bwe_with_overhead_);
+}
+
+template <typename T>
+void AudioEncoderIsacT<T>::OnReceivedUplinkAllocation(
+    BitrateAllocationUpdate update) {
+  // Set target bitrate, subtracting the per-packet overhead if
+  // WebRTC-SendSideBwe-WithOverhead is enabled, because that's what
+  // AudioEncoderOpus does.
+  SetTargetBitrate(
+      update.target_bitrate.bps<int>(),
+      /*subtract_per_packet_overhead=*/send_side_bwe_with_overhead_);
+}
+
+template <typename T>
+void AudioEncoderIsacT<T>::OnReceivedOverhead(
+    size_t overhead_bytes_per_packet) {
+  overhead_per_packet_ = DataSize::Bytes(overhead_bytes_per_packet);
+}
+
+template <typename T>
 AudioEncoder::EncodedInfo AudioEncoderIsacT<T>::EncodeImpl(
     uint32_t rtp_timestamp,
     rtc::ArrayView<const int16_t> audio,
@@ -117,6 +163,28 @@ AudioEncoder::EncodedInfo AudioEncoderIsacT<T>::EncodeImpl(
 template <typename T>
 void AudioEncoderIsacT<T>::Reset() {
   RecreateEncoderInstance(config_);
+}
+
+template <typename T>
+absl::optional<std::pair<TimeDelta, TimeDelta>>
+AudioEncoderIsacT<T>::GetFrameLengthRange() const {
+  return {{TimeDelta::Millis(config_.frame_size_ms),
+           TimeDelta::Millis(config_.frame_size_ms)}};
+}
+
+template <typename T>
+void AudioEncoderIsacT<T>::SetTargetBitrate(int target_bps,
+                                            bool subtract_per_packet_overhead) {
+  if (subtract_per_packet_overhead) {
+    const DataRate overhead_rate =
+        overhead_per_packet_ / TimeDelta::Millis(config_.frame_size_ms);
+    target_bps -= overhead_rate.bps();
+  }
+  target_bps = rtc::SafeClamp(target_bps, kMinBitrateBps,
+                              MaxBitrateBps(config_.sample_rate_hz));
+  int result = T::Control(isac_state_, target_bps, config_.frame_size_ms);
+  RTC_DCHECK_EQ(result, 0);
+  config_.bit_rate = target_bps;
 }
 
 template <typename T>

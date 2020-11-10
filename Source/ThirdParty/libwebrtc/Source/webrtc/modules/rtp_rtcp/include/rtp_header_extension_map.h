@@ -51,10 +51,6 @@ class RtpHeaderExtensionMap {
     return ids_[type];
   }
 
-  // TODO(danilchap): Remove use of the functions below.
-  RTC_DEPRECATED int32_t Register(RTPExtensionType type, int id) {
-    return RegisterByType(id, type) ? 0 : -1;
-  }
   int32_t Deregister(RTPExtensionType type);
   void Deregister(absl::string_view uri);
 

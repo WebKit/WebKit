@@ -103,14 +103,12 @@ NetEqStatsGetter::Stats NetEqStatsGetter::AverageStats() const {
         a.current_buffer_size_ms += b.current_buffer_size_ms;
         a.preferred_buffer_size_ms += b.preferred_buffer_size_ms;
         a.jitter_peaks_found += b.jitter_peaks_found;
-        a.packet_loss_rate += b.packet_loss_rate / 16384.0;
         a.expand_rate += b.expand_rate / 16384.0;
         a.speech_expand_rate += b.speech_expand_rate / 16384.0;
         a.preemptive_rate += b.preemptive_rate / 16384.0;
         a.accelerate_rate += b.accelerate_rate / 16384.0;
         a.secondary_decoded_rate += b.secondary_decoded_rate / 16384.0;
         a.secondary_discarded_rate += b.secondary_discarded_rate / 16384.0;
-        a.added_zero_samples += b.added_zero_samples;
         a.mean_waiting_time_ms += b.mean_waiting_time_ms;
         a.median_waiting_time_ms += b.median_waiting_time_ms;
         a.min_waiting_time_ms = std::min(

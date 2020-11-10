@@ -18,6 +18,7 @@
 #include "rtc_base/ref_count.h"
 #include "rtc_base/ref_counted_object.h"
 #include "rtc_base/synchronization/sequence_checker.h"
+#include "rtc_base/system/no_unique_address.h"
 
 // The implementation is borrowed from chromium except that it does not
 // implement SupportsWeakPtr.
@@ -103,7 +104,7 @@ class WeakReference {
 
     ~Flag() override;
 
-    ::webrtc::SequenceChecker checker_;
+    RTC_NO_UNIQUE_ADDRESS ::webrtc::SequenceChecker checker_;
     bool is_valid_;
   };
 
@@ -241,6 +242,10 @@ class WeakPtrFactory {
  public:
   explicit WeakPtrFactory(T* ptr) : ptr_(ptr) {}
 
+  WeakPtrFactory() = delete;
+  WeakPtrFactory(const WeakPtrFactory&) = delete;
+  WeakPtrFactory& operator=(const WeakPtrFactory&) = delete;
+
   ~WeakPtrFactory() { ptr_ = nullptr; }
 
   WeakPtr<T> GetWeakPtr() {
@@ -263,7 +268,6 @@ class WeakPtrFactory {
  private:
   internal::WeakReferenceOwner weak_reference_owner_;
   T* ptr_;
-  RTC_DISALLOW_IMPLICIT_CONSTRUCTORS(WeakPtrFactory);
 };
 
 }  // namespace rtc

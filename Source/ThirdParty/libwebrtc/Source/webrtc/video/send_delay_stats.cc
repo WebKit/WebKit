@@ -41,7 +41,7 @@ SendDelayStats::~SendDelayStats() {
 }
 
 void SendDelayStats::UpdateHistograms() {
-  rtc::CritScope lock(&crit_);
+  MutexLock lock(&mutex_);
   for (const auto& it : send_delay_counters_) {
     AggregatedStats stats = it.second->GetStats();
     if (stats.num_samples >= kMinRequiredPeriodicSamples) {
@@ -52,7 +52,7 @@ void SendDelayStats::UpdateHistograms() {
 }
 
 void SendDelayStats::AddSsrcs(const VideoSendStream::Config& config) {
-  rtc::CritScope lock(&crit_);
+  MutexLock lock(&mutex_);
   if (ssrcs_.size() > kMaxSsrcMapSize)
     return;
   for (const auto& ssrc : config.rtp.ssrcs)
@@ -73,7 +73,7 @@ void SendDelayStats::OnSendPacket(uint16_t packet_id,
                                   int64_t capture_time_ms,
                                   uint32_t ssrc) {
   // Packet sent to transport.
-  rtc::CritScope lock(&crit_);
+  MutexLock lock(&mutex_);
   if (ssrcs_.find(ssrc) == ssrcs_.end())
     return;
 
@@ -93,7 +93,7 @@ bool SendDelayStats::OnSentPacket(int packet_id, int64_t time_ms) {
   if (packet_id == -1)
     return false;
 
-  rtc::CritScope lock(&crit_);
+  MutexLock lock(&mutex_);
   auto it = packets_.find(packet_id);
   if (it == packets_.end())
     return false;

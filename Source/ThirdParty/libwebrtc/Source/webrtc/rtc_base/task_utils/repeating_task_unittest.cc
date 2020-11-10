@@ -40,8 +40,23 @@ void Sleep(TimeDelta time_delta) {
 
 class MockClosure {
  public:
-  MOCK_METHOD0(Call, TimeDelta());
-  MOCK_METHOD0(Delete, void());
+  MOCK_METHOD(TimeDelta, Call, ());
+  MOCK_METHOD(void, Delete, ());
+};
+
+class MockTaskQueue : public TaskQueueBase {
+ public:
+  MockTaskQueue() : task_queue_setter_(this) {}
+
+  MOCK_METHOD(void, Delete, (), (override));
+  MOCK_METHOD(void, PostTask, (std::unique_ptr<QueuedTask> task), (override));
+  MOCK_METHOD(void,
+              PostDelayedTask,
+              (std::unique_ptr<QueuedTask> task, uint32_t milliseconds),
+              (override));
+
+ private:
+  CurrentTaskQueueSetter task_queue_setter_;
 };
 
 class MoveOnlyClosure {
@@ -226,6 +241,39 @@ TEST(RepeatingTaskTest, Example) {
   task_queue.PostTask(Destructor{std::move(object)});
   // Do not wait for the destructor closure in order to create a race between
   // task queue destruction and running the desctructor closure.
+}
+
+TEST(RepeatingTaskTest, ClockIntegration) {
+  std::unique_ptr<QueuedTask> delayed_task;
+  uint32_t expected_ms = 0;
+  SimulatedClock clock(Timestamp::Millis(0));
+
+  NiceMock<MockTaskQueue> task_queue;
+  ON_CALL(task_queue, PostDelayedTask)
+      .WillByDefault(
+          Invoke([&delayed_task, &expected_ms](std::unique_ptr<QueuedTask> task,
+                                               uint32_t milliseconds) {
+            EXPECT_EQ(milliseconds, expected_ms);
+            delayed_task = std::move(task);
+          }));
+
+  expected_ms = 100;
+  RepeatingTaskHandle handle = RepeatingTaskHandle::DelayedStart(
+      &task_queue, TimeDelta::Millis(100),
+      [&clock]() {
+        EXPECT_EQ(Timestamp::Millis(100), clock.CurrentTime());
+        // Simulate work happening for 10ms.
+        clock.AdvanceTimeMilliseconds(10);
+        return TimeDelta::Millis(100);
+      },
+      &clock);
+
+  clock.AdvanceTimeMilliseconds(100);
+  QueuedTask* task_to_run = delayed_task.release();
+  expected_ms = 90;
+  EXPECT_FALSE(task_to_run->Run());
+  EXPECT_NE(nullptr, delayed_task.get());
+  handle.Stop();
 }
 
 }  // namespace webrtc

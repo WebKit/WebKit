@@ -46,8 +46,8 @@ class DecryptedFrameObserver : public test::EndToEndTest,
     encoder_config->codec_type = kVideoCodecVP8;
     VideoReceiveStream::Decoder decoder =
         test::CreateMatchingDecoder(*send_config);
-    decoder.decoder_factory = &decoder_factory_;
     for (auto& recv_config : *receive_configs) {
+      recv_config.decoder_factory = &decoder_factory_;
       recv_config.decoders.clear();
       recv_config.decoders.push_back(decoder);
       recv_config.renderer = this;

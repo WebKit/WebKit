@@ -16,6 +16,7 @@
 #include <algorithm>
 #include <string>
 
+#include "absl/strings/match.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/experiments/rate_control_settings.h"
 
@@ -24,8 +25,9 @@ namespace webrtc {
 CongestionWindowPushbackController::CongestionWindowPushbackController(
     const WebRtcKeyValueConfig* key_value_config)
     : add_pacing_(
-          key_value_config->Lookup("WebRTC-AddPacingToCongestionWindowPushback")
-              .find("Enabled") == 0),
+          absl::StartsWith(key_value_config->Lookup(
+                               "WebRTC-AddPacingToCongestionWindowPushback"),
+                           "Enabled")),
       min_pushback_target_bitrate_bps_(
           RateControlSettings::ParseFromKeyValueConfig(key_value_config)
               .CongestionWindowMinPushbackTargetBitrateBps()),

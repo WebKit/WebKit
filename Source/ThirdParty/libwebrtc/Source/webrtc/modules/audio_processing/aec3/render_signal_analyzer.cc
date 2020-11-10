@@ -118,7 +118,7 @@ void IdentifyStrongNarrowBandComponent(const RenderBuffer& render_buffer,
 }  // namespace
 
 RenderSignalAnalyzer::RenderSignalAnalyzer(const EchoCanceller3Config& config)
-    : strong_peak_freeze_duration_(config.filter.main.length_blocks) {
+    : strong_peak_freeze_duration_(config.filter.refined.length_blocks) {
   narrow_band_counters_.fill(0);
 }
 RenderSignalAnalyzer::~RenderSignalAnalyzer() = default;

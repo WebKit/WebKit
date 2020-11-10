@@ -34,13 +34,8 @@ namespace webrtc {
 
 class LibvpxVp8Encoder : public VideoEncoder {
  public:
-  LibvpxVp8Encoder();
-  explicit LibvpxVp8Encoder(std::unique_ptr<Vp8FrameBufferControllerFactory>
-                                frame_buffer_controller_factory);
-  explicit LibvpxVp8Encoder(std::unique_ptr<LibvpxInterface> interface);
-  LibvpxVp8Encoder(std::unique_ptr<Vp8FrameBufferControllerFactory>
-                       frame_buffer_controller_factory,
-                   std::unique_ptr<LibvpxInterface> interface);
+  LibvpxVp8Encoder(std::unique_ptr<LibvpxInterface> interface,
+                   VP8Encoder::Settings settings);
   ~LibvpxVp8Encoder() override;
 
   int Release() override;
@@ -100,23 +95,26 @@ class LibvpxVp8Encoder : public VideoEncoder {
 
   const std::unique_ptr<LibvpxInterface> libvpx_;
 
-  const absl::optional<std::vector<CpuSpeedExperiment::Config>>
-      experimental_cpu_speed_config_arm_;
+  const CpuSpeedExperiment experimental_cpu_speed_config_arm_;
   const RateControlSettings rate_control_settings_;
-  const absl::optional<int> screenshare_max_qp_;
 
-  EncodedImageCallback* encoded_complete_callback_;
+  // EncoderInfo::requested_resolution_alignment override from field trial.
+  const absl::optional<int> requested_resolution_alignment_override_;
+
+  EncodedImageCallback* encoded_complete_callback_ = nullptr;
   VideoCodec codec_;
-  bool inited_;
-  int64_t timestamp_;
-  int qp_max_;
-  int cpu_speed_default_;
-  int number_of_cores_;
-  uint32_t rc_max_intra_target_;
-  int num_active_streams_;
+  bool inited_ = false;
+  int64_t timestamp_ = 0;
+  int qp_max_ = 56;
+  int cpu_speed_default_ = -6;
+  int number_of_cores_ = 0;
+  uint32_t rc_max_intra_target_ = 0;
+  int num_active_streams_ = 0;
   const std::unique_ptr<Vp8FrameBufferControllerFactory>
       frame_buffer_controller_factory_;
   std::unique_ptr<Vp8FrameBufferController> frame_buffer_controller_;
+  const std::vector<VideoEncoder::ResolutionBitrateLimits>
+      resolution_bitrate_limits_;
   std::vector<bool> key_frame_request_;
   std::vector<bool> send_stream_;
   std::vector<int> cpu_speed_;
@@ -141,9 +139,9 @@ class LibvpxVp8Encoder : public VideoEncoder {
   static VariableFramerateExperiment ParseVariableFramerateConfig(
       std::string group_name);
   FramerateController framerate_controller_;
-  int num_steady_state_frames_;
+  int num_steady_state_frames_ = 0;
 
-  FecControllerOverride* fec_controller_override_;
+  FecControllerOverride* fec_controller_override_ = nullptr;
 };
 
 }  // namespace webrtc

@@ -38,45 +38,45 @@ void ReceiveSideCongestionController::WrappingBitrateEstimator::IncomingPacket(
     int64_t arrival_time_ms,
     size_t payload_size,
     const RTPHeader& header) {
-  rtc::CritScope cs(&crit_sect_);
+  MutexLock lock(&mutex_);
   PickEstimatorFromHeader(header);
   rbe_->IncomingPacket(arrival_time_ms, payload_size, header);
 }
 
 void ReceiveSideCongestionController::WrappingBitrateEstimator::Process() {
-  rtc::CritScope cs(&crit_sect_);
+  MutexLock lock(&mutex_);
   rbe_->Process();
 }
 
 int64_t ReceiveSideCongestionController::WrappingBitrateEstimator::
     TimeUntilNextProcess() {
-  rtc::CritScope cs(&crit_sect_);
+  MutexLock lock(&mutex_);
   return rbe_->TimeUntilNextProcess();
 }
 
 void ReceiveSideCongestionController::WrappingBitrateEstimator::OnRttUpdate(
     int64_t avg_rtt_ms,
     int64_t max_rtt_ms) {
-  rtc::CritScope cs(&crit_sect_);
+  MutexLock lock(&mutex_);
   rbe_->OnRttUpdate(avg_rtt_ms, max_rtt_ms);
 }
 
 void ReceiveSideCongestionController::WrappingBitrateEstimator::RemoveStream(
     unsigned int ssrc) {
-  rtc::CritScope cs(&crit_sect_);
+  MutexLock lock(&mutex_);
   rbe_->RemoveStream(ssrc);
 }
 
 bool ReceiveSideCongestionController::WrappingBitrateEstimator::LatestEstimate(
     std::vector<unsigned int>* ssrcs,
     unsigned int* bitrate_bps) const {
-  rtc::CritScope cs(&crit_sect_);
+  MutexLock lock(&mutex_);
   return rbe_->LatestEstimate(ssrcs, bitrate_bps);
 }
 
 void ReceiveSideCongestionController::WrappingBitrateEstimator::SetMinBitrate(
     int min_bitrate_bps) {
-  rtc::CritScope cs(&crit_sect_);
+  MutexLock lock(&mutex_);
   rbe_->SetMinBitrate(min_bitrate_bps);
   min_bitrate_bps_ = min_bitrate_bps;
 }

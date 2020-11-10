@@ -447,7 +447,7 @@ TEST(BufferTest, TestStruct) {
   EXPECT_EQ(kObsidian, buf[2].stone);
 }
 
-TEST(BufferTest, DieOnUseAfterMove) {
+TEST(BufferDeathTest, DieOnUseAfterMove) {
   Buffer buf(17);
   Buffer buf2 = std::move(buf);
   EXPECT_EQ(buf2.size(), 17u);

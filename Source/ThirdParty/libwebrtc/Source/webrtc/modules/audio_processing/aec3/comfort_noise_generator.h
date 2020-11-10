@@ -41,7 +41,8 @@ void EstimateComfortNoise(const std::array<float, kFftLengthBy2Plus1>& N2,
 // Generates the comfort noise.
 class ComfortNoiseGenerator {
  public:
-  ComfortNoiseGenerator(Aec3Optimization optimization,
+  ComfortNoiseGenerator(const EchoCanceller3Config& config,
+                        Aec3Optimization optimization,
                         size_t num_capture_channels);
   ComfortNoiseGenerator() = delete;
   ~ComfortNoiseGenerator();
@@ -64,6 +65,7 @@ class ComfortNoiseGenerator {
   const Aec3Optimization optimization_;
   uint32_t seed_;
   const size_t num_capture_channels_;
+  const float noise_floor_;
   std::unique_ptr<std::vector<std::array<float, kFftLengthBy2Plus1>>>
       N2_initial_;
   std::vector<std::array<float, kFftLengthBy2Plus1>> Y2_smoothed_;

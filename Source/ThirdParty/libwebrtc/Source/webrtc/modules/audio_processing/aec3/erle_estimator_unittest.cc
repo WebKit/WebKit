@@ -157,7 +157,7 @@ TEST_P(ErleEstimatorMultiChannel, VerifyErleIncreaseAndHold) {
                      num_render_channels, std::vector<float>(kBlockSize, 0.f)));
   std::vector<std::vector<std::array<float, kFftLengthBy2Plus1>>>
   filter_frequency_response(
-      config.filter.main.length_blocks,
+      config.filter.refined.length_blocks,
       std::vector<std::array<float, kFftLengthBy2Plus1>>(num_capture_channels));
   std::unique_ptr<RenderDelayBuffer> render_delay_buffer(
       RenderDelayBuffer::Create(config, kSampleRateHz, num_render_channels));
@@ -211,7 +211,7 @@ TEST_P(ErleEstimatorMultiChannel, VerifyErleTrackingOnOnsets) {
                      num_render_channels, std::vector<float>(kBlockSize, 0.f)));
   std::vector<std::vector<std::array<float, kFftLengthBy2Plus1>>>
   filter_frequency_response(
-      config.filter.main.length_blocks,
+      config.filter.refined.length_blocks,
       std::vector<std::array<float, kFftLengthBy2Plus1>>(num_capture_channels));
   std::unique_ptr<RenderDelayBuffer> render_delay_buffer(
       RenderDelayBuffer::Create(config, kSampleRateHz, num_render_channels));

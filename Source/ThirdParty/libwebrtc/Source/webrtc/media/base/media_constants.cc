@@ -98,36 +98,29 @@ const char kCodecParamMaxMessageSize[] = "x-google-max-message-size";
 const int kGoogleRtpDataCodecPlType = 109;
 const char kGoogleRtpDataCodecName[] = "google-data";
 
-const int kGoogleSctpDataCodecPlType = 108;
-const char kGoogleSctpDataCodecName[] = "google-sctp-data";
-
 const char kComfortNoiseCodecName[] = "CN";
 
 const char kVp8CodecName[] = "VP8";
 const char kVp9CodecName[] = "VP9";
 const char kAv1CodecName[] = "AV1X";
 const char kH264CodecName[] = "H264";
-#ifndef DISABLE_H265
-const char kH265CodecName[] = "H265";
-#endif
 
 // RFC 6184 RTP Payload Format for H.264 video
 const char kH264FmtpProfileLevelId[] = "profile-level-id";
 const char kH264FmtpLevelAsymmetryAllowed[] = "level-asymmetry-allowed";
 const char kH264FmtpPacketizationMode[] = "packetization-mode";
 const char kH264FmtpSpropParameterSets[] = "sprop-parameter-sets";
+const char kH264FmtpSpsPpsIdrInKeyframe[] = "sps-pps-idr-in-keyframe";
 const char kH264ProfileLevelConstrainedBaseline[] = "42e01f";
-#ifndef DISABLE_H265
-// RFC 7798 RTP Payload Format for H.265 video
-const char kH265FmtpProfileSpace[] = "profile-space";
-const char kH265FmtpProfileId[] = "profile-id";
-const char kH265FmtpTierFlag[] = "tier-flag";
-const char kH265FmtpLevelId[] = "level-id";
-#endif
+const char kH264ProfileLevelConstrainedHigh[] = "640c1f";
 
 const int kDefaultVideoMaxFramerate = 60;
 
 const size_t kConferenceMaxNumSpatialLayers = 3;
 const size_t kConferenceMaxNumTemporalLayers = 3;
 const size_t kConferenceDefaultNumTemporalLayers = 3;
+
+// RFC 3556 and RFC 3890
+const char kApplicationSpecificBandwidth[] = "AS";
+const char kTransportSpecificBandwidth[] = "TIAS";
 }  // namespace cricket

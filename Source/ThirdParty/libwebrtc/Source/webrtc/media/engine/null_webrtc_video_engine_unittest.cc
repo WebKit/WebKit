@@ -15,6 +15,7 @@
 
 #include "api/task_queue/default_task_queue_factory.h"
 #include "api/task_queue/task_queue_factory.h"
+#include "api/transport/field_trial_based_config.h"
 #include "media/engine/webrtc_voice_engine.h"
 #include "modules/audio_device/include/mock_audio_device.h"
 #include "modules/audio_processing/include/audio_processing.h"
@@ -31,11 +32,12 @@ TEST(NullWebRtcVideoEngineTest, CheckInterface) {
       webrtc::CreateDefaultTaskQueueFactory();
   rtc::scoped_refptr<webrtc::test::MockAudioDeviceModule> adm =
       webrtc::test::MockAudioDeviceModule::CreateNice();
+  webrtc::FieldTrialBasedConfig trials;
   auto audio_engine = std::make_unique<WebRtcVoiceEngine>(
       task_queue_factory.get(), adm,
       webrtc::MockAudioEncoderFactory::CreateUnusedFactory(),
       webrtc::MockAudioDecoderFactory::CreateUnusedFactory(), nullptr,
-      webrtc::AudioProcessingBuilder().Create());
+      webrtc::AudioProcessingBuilder().Create(), trials);
 
   CompositeMediaEngine engine(std::move(audio_engine),
                               std::make_unique<NullWebRtcVideoEngine>());

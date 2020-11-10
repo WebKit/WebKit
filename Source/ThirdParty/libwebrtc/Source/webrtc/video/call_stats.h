@@ -18,13 +18,15 @@
 #include "modules/include/module_common_types.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "rtc_base/constructor_magic.h"
-#include "rtc_base/critical_section.h"
+#include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/thread_checker.h"
 #include "system_wrappers/include/clock.h"
 
 namespace webrtc {
 
 // CallStats keeps track of statistics for a call.
+// TODO(webrtc:11489): Make call_stats_ not depend on ProcessThread and
+// make callbacks on the worker thread (TQ).
 class CallStats : public Module, public RtcpRttStats {
  public:
   // Time interval for updating the observers.
@@ -88,7 +90,7 @@ class CallStats : public Module, public RtcpRttStats {
   int64_t avg_rtt_ms_;
 
   // Protects |avg_rtt_ms_|.
-  rtc::CriticalSection avg_rtt_ms_lock_;
+  mutable Mutex avg_rtt_ms_lock_;
 
   // |sum_avg_rtt_ms_|, |num_avg_rtt_| and |time_of_first_rtt_ms_| are only used
   // on the ProcessThread when running. When the Process Thread is not running,

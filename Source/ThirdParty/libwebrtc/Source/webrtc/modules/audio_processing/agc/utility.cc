@@ -12,6 +12,8 @@
 
 #include <math.h>
 
+namespace webrtc {
+
 static const double kLog10 = 2.30258509299;
 static const double kLinear2DbScale = 20.0 / kLog10;
 static const double kLinear2LoudnessScale = 13.4 / kLog10;
@@ -33,3 +35,5 @@ double Db2Loudness(double db) {
 double Dbfs2Loudness(double dbfs) {
   return Db2Loudness(90 + dbfs);
 }
+
+}  // namespace webrtc

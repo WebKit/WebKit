@@ -16,7 +16,6 @@
 #include <vector>
 
 #include "api/media_stream_proxy.h"
-#include "api/media_stream_track_proxy.h"
 #include "api/video_track_source_proxy.h"
 #include "pc/jitter_buffer_delay.h"
 #include "pc/jitter_buffer_delay_proxy.h"
@@ -43,7 +42,7 @@ VideoRtpReceiver::VideoRtpReceiver(
     : worker_thread_(worker_thread),
       id_(receiver_id),
       source_(new RefCountedObject<VideoRtpTrackSource>(this)),
-      track_(VideoTrackProxy::Create(
+      track_(VideoTrackProxyWithInternal<VideoTrack>::Create(
           rtc::Thread::Current(),
           worker_thread,
           VideoTrack::Create(
@@ -109,9 +108,9 @@ void VideoRtpReceiver::SetDepacketizerToDecoderFrameTransformer(
   worker_thread_->Invoke<void>(RTC_FROM_HERE, [&] {
     RTC_DCHECK_RUN_ON(worker_thread_);
     frame_transformer_ = std::move(frame_transformer);
-    if (media_channel_ && ssrc_.has_value() && !stopped_) {
+    if (media_channel_ && !stopped_) {
       media_channel_->SetDepacketizerToDecoderFrameTransformer(
-          *ssrc_, frame_transformer_);
+          ssrc_.value_or(0), frame_transformer_);
     }
   });
 }
@@ -136,6 +135,11 @@ void VideoRtpReceiver::Stop() {
   stopped_ = true;
 }
 
+void VideoRtpReceiver::StopAndEndTrack() {
+  Stop();
+  track_->internal()->set_ended();
+}
+
 void VideoRtpReceiver::RestartMediaChannel(absl::optional<uint32_t> ssrc) {
   RTC_DCHECK(media_channel_);
   if (!stopped_ && ssrc_ == ssrc) {
@@ -157,9 +161,9 @@ void VideoRtpReceiver::RestartMediaChannel(absl::optional<uint32_t> ssrc) {
       SetEncodedSinkEnabled(true);
     }
 
-    if (frame_transformer_ && media_channel_ && ssrc_.has_value()) {
+    if (frame_transformer_ && media_channel_) {
       media_channel_->SetDepacketizerToDecoderFrameTransformer(
-          *ssrc_, frame_transformer_);
+          ssrc_.value_or(0), frame_transformer_);
     }
   });
 
@@ -267,6 +271,10 @@ void VideoRtpReceiver::SetMediaChannel(cricket::MediaChannel* media_channel) {
       }
       if (encoded_sink_enabled) {
         SetEncodedSinkEnabled(true);
+      }
+      if (frame_transformer_) {
+        media_channel_->SetDepacketizerToDecoderFrameTransformer(
+            ssrc_.value_or(0), frame_transformer_);
       }
     }
   });

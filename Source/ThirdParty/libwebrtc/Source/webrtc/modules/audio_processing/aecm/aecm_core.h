@@ -19,6 +19,10 @@ extern "C" {
 }
 #include "modules/audio_processing/aecm/aecm_defines.h"
 
+struct RealFFT;
+
+namespace webrtc {
+
 #ifdef _MSC_VER  // visual c++
 #define ALIGN8_BEG __declspec(align(8))
 #define ALIGN8_END
@@ -431,5 +435,7 @@ void WebRtcAecm_StoreAdaptiveChannel_mips(AecmCore* aecm,
 void WebRtcAecm_ResetAdaptiveChannel_mips(AecmCore* aecm);
 #endif
 #endif
+
+}  // namespace webrtc
 
 #endif

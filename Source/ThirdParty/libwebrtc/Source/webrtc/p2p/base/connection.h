@@ -65,13 +65,13 @@ class ConnectionRequest : public StunRequest {
   int resend_delay() override;
 
  private:
-  Connection* connection_;
+  Connection* const connection_;
 };
 
 // Represents a communication link between a port on the local client and a
 // port on the remote client.
 class Connection : public CandidatePairInterface,
-                   public rtc::MessageHandler,
+                   public rtc::MessageHandlerAutoCleanup,
                    public sigslot::has_slots<> {
  public:
   struct SentPing {
@@ -302,6 +302,20 @@ class Connection : public CandidatePairInterface,
   const rtc::EventBasedExponentialMovingAverage& GetRttEstimate() const {
     return rtt_estimate_;
   }
+
+  // Reset the connection to a state of a newly connected.
+  // - STATE_WRITE_INIT
+  // - receving = false
+  // - throw away all pending request
+  // - reset RttEstimate
+  //
+  // Keep the following unchanged:
+  // - connected
+  // - remote_candidate
+  // - statistics
+  //
+  // Does not trigger SignalStateChange
+  void ForgetLearnedState();
 
   void SendStunBindingResponse(const StunMessage* request);
   void SendGoogPingResponse(const StunMessage* request);

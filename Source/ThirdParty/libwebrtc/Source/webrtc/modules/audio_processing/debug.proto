@@ -91,6 +91,7 @@ message RuntimeSetting {
   optional float capture_fixed_post_gain = 3;
   optional int32 playout_volume_change = 4;
   optional PlayoutAudioDeviceInfo playout_audio_device_change = 5;
+  optional bool capture_output_used = 6;
 }
 
 message Event {

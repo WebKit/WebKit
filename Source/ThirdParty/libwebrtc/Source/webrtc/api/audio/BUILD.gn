@@ -61,8 +61,8 @@ rtc_library("aec3_config_json") {
     "../../rtc_base:rtc_base_approved",
     "../../rtc_base:rtc_json",
     "../../rtc_base/system:rtc_export",
-    "//third_party/abseil-cpp/absl/strings",
   ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/strings" ]
 }
 
 rtc_library("aec3_factory") {
@@ -86,4 +86,18 @@ rtc_source_set("echo_control") {
   visibility = [ "*" ]
   sources = [ "echo_control.h" ]
   deps = [ "../../rtc_base:checks" ]
+}
+
+rtc_source_set("echo_detector_creator") {
+  visibility = [ "*" ]
+  sources = [
+    "echo_detector_creator.cc",
+    "echo_detector_creator.h",
+  ]
+  deps = [
+    "../../api:scoped_refptr",
+    "../../modules/audio_processing:api",
+    "../../modules/audio_processing:audio_processing",
+    "../../rtc_base:refcount",
+  ]
 }

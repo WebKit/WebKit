@@ -42,7 +42,8 @@ static const uint32_t kDefaultTargetBitrateBps = 2000000;
 static const uint32_t kDefaultMaxBitrateBps = 2000000;
 static const uint32_t kDefaultMinTransmitBitrateBps = 400000;
 static const int kDefaultMaxQp = 48;
-static const uint32_t kScreenshareTl0BitrateBps = 200000;
+static const uint32_t kScreenshareTl0BitrateBps = 120000;
+static const uint32_t kScreenshareConferenceTl0BitrateBps = 200000;
 static const uint32_t kScreenshareCodecTargetBitrateBps = 200000;
 static const uint32_t kScreenshareDefaultFramerate = 5;
 // Bitrates for the temporal layers of the higher screenshare simulcast stream.
@@ -126,7 +127,7 @@ class VideoCodecInitializerTest : public ::testing::Test {
   VideoStream DefaultScreenshareStream() {
     VideoStream stream = DefaultStream();
     stream.min_bitrate_bps = 30000;
-    stream.target_bitrate_bps = kScreenshareTl0BitrateBps;
+    stream.target_bitrate_bps = kScreenshareCodecTargetBitrateBps;
     stream.max_bitrate_bps = 1000000;
     stream.max_framerate = kScreenshareDefaultFramerate;
     stream.num_temporal_layers = 2;
@@ -172,6 +173,23 @@ TEST_F(VideoCodecInitializerTest, SingleStreamVp8ScreenshareInactive) {
   EXPECT_EQ(1u, codec_out_.numberOfSimulcastStreams);
   EXPECT_EQ(1u, codec_out_.VP8()->numberOfTemporalLayers);
   EXPECT_EQ(0U, bitrate_allocation.get_sum_bps());
+}
+
+TEST_F(VideoCodecInitializerTest, TemporalLayeredVp8ScreenshareConference) {
+  SetUpFor(VideoCodecType::kVideoCodecVP8, 1, 2, true);
+  streams_.push_back(DefaultScreenshareStream());
+  EXPECT_TRUE(InitializeCodec());
+  bitrate_allocator_->SetLegacyConferenceMode(true);
+
+  EXPECT_EQ(1u, codec_out_.numberOfSimulcastStreams);
+  EXPECT_EQ(2u, codec_out_.VP8()->numberOfTemporalLayers);
+  VideoBitrateAllocation bitrate_allocation =
+      bitrate_allocator_->Allocate(VideoBitrateAllocationParameters(
+          kScreenshareCodecTargetBitrateBps, kScreenshareDefaultFramerate));
+  EXPECT_EQ(kScreenshareCodecTargetBitrateBps,
+            bitrate_allocation.get_sum_bps());
+  EXPECT_EQ(kScreenshareConferenceTl0BitrateBps,
+            bitrate_allocation.GetBitrate(0, 0));
 }
 
 TEST_F(VideoCodecInitializerTest, TemporalLayeredVp8Screenshare) {
@@ -346,24 +364,66 @@ TEST_F(VideoCodecInitializerTest, Vp9DeactivateLayers) {
   config_.simulcast_layers[1].active = true;
   config_.simulcast_layers[2].active = true;
   EXPECT_TRUE(InitializeCodec());
+  EXPECT_EQ(codec_out_.VP9()->numberOfSpatialLayers, 3);
   EXPECT_TRUE(codec_out_.spatialLayers[0].active);
   EXPECT_TRUE(codec_out_.spatialLayers[1].active);
   EXPECT_TRUE(codec_out_.spatialLayers[2].active);
 
   // Deactivate top layer.
+  config_.simulcast_layers[0].active = true;
+  config_.simulcast_layers[1].active = true;
   config_.simulcast_layers[2].active = false;
   EXPECT_TRUE(InitializeCodec());
+  EXPECT_EQ(codec_out_.VP9()->numberOfSpatialLayers, 3);
   EXPECT_TRUE(codec_out_.spatialLayers[0].active);
   EXPECT_TRUE(codec_out_.spatialLayers[1].active);
   EXPECT_FALSE(codec_out_.spatialLayers[2].active);
 
   // Deactivate middle layer.
-  config_.simulcast_layers[2].active = true;
+  config_.simulcast_layers[0].active = true;
   config_.simulcast_layers[1].active = false;
+  config_.simulcast_layers[2].active = true;
   EXPECT_TRUE(InitializeCodec());
+  EXPECT_EQ(codec_out_.VP9()->numberOfSpatialLayers, 3);
   EXPECT_TRUE(codec_out_.spatialLayers[0].active);
   EXPECT_FALSE(codec_out_.spatialLayers[1].active);
   EXPECT_TRUE(codec_out_.spatialLayers[2].active);
+
+  // Deactivate first layer.
+  config_.simulcast_layers[0].active = false;
+  config_.simulcast_layers[1].active = true;
+  config_.simulcast_layers[2].active = true;
+  EXPECT_TRUE(InitializeCodec());
+  EXPECT_EQ(codec_out_.VP9()->numberOfSpatialLayers, 2);
+  EXPECT_TRUE(codec_out_.spatialLayers[0].active);
+  EXPECT_TRUE(codec_out_.spatialLayers[1].active);
+
+  // HD singlecast.
+  config_.simulcast_layers[0].active = false;
+  config_.simulcast_layers[1].active = false;
+  config_.simulcast_layers[2].active = true;
+  EXPECT_TRUE(InitializeCodec());
+  EXPECT_EQ(codec_out_.VP9()->numberOfSpatialLayers, 1);
+  EXPECT_TRUE(codec_out_.spatialLayers[0].active);
+
+  // VGA singlecast.
+  config_.simulcast_layers[0].active = false;
+  config_.simulcast_layers[1].active = true;
+  config_.simulcast_layers[2].active = false;
+  EXPECT_TRUE(InitializeCodec());
+  EXPECT_EQ(codec_out_.VP9()->numberOfSpatialLayers, 2);
+  EXPECT_TRUE(codec_out_.spatialLayers[0].active);
+  EXPECT_FALSE(codec_out_.spatialLayers[1].active);
+
+  // QVGA singlecast.
+  config_.simulcast_layers[0].active = true;
+  config_.simulcast_layers[1].active = false;
+  config_.simulcast_layers[2].active = false;
+  EXPECT_TRUE(InitializeCodec());
+  EXPECT_EQ(codec_out_.VP9()->numberOfSpatialLayers, 3);
+  EXPECT_TRUE(codec_out_.spatialLayers[0].active);
+  EXPECT_FALSE(codec_out_.spatialLayers[1].active);
+  EXPECT_FALSE(codec_out_.spatialLayers[2].active);
 }
 
 }  // namespace webrtc

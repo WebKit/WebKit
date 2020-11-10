@@ -21,34 +21,10 @@
 #include "logging/rtc_event_log/rtc_event_log_parser.h"
 #include "modules/audio_coding/neteq/tools/neteq_stats_getter.h"
 #include "rtc_base/strings/string_builder.h"
+#include "rtc_tools/rtc_event_log_visualizer/analyzer_common.h"
 #include "rtc_tools/rtc_event_log_visualizer/plot_base.h"
-#include "rtc_tools/rtc_event_log_visualizer/triage_notifications.h"
 
 namespace webrtc {
-
-class AnalyzerConfig {
- public:
-  float GetCallTimeSec(int64_t timestamp_us) const {
-    int64_t offset = normalize_time_ ? begin_time_ : 0;
-    return static_cast<float>(timestamp_us - offset) / 1000000;
-  }
-
-  float CallBeginTimeSec() const { return GetCallTimeSec(begin_time_); }
-
-  float CallEndTimeSec() const { return GetCallTimeSec(end_time_); }
-
-  // Window and step size used for calculating moving averages, e.g. bitrate.
-  // The generated data points will be |step_| microseconds apart.
-  // Only events occurring at most |window_duration_| microseconds before the
-  // current data point will be part of the average.
-  int64_t window_duration_;
-  int64_t step_;
-
-  // First and last events of the log.
-  int64_t begin_time_;
-  int64_t end_time_;
-  bool normalize_time_;
-};
 
 class EventLogAnalyzer {
  public:
@@ -56,12 +32,17 @@ class EventLogAnalyzer {
   // duration of its lifetime. The ParsedRtcEventLogNew must not be destroyed or
   // modified while the EventLogAnalyzer is being used.
   EventLogAnalyzer(const ParsedRtcEventLog& log, bool normalize_time);
+  EventLogAnalyzer(const ParsedRtcEventLog& log, const AnalyzerConfig& config);
 
   void CreatePacketGraph(PacketDirection direction, Plot* plot);
 
   void CreateRtcpTypeGraph(PacketDirection direction, Plot* plot);
 
   void CreateAccumulatedPacketsGraph(PacketDirection direction, Plot* plot);
+
+  void CreatePacketRateGraph(PacketDirection direction, Plot* plot);
+
+  void CreateTotalPacketRateGraph(PacketDirection direction, Plot* plot);
 
   void CreatePlayoutGraph(Plot* plot);
 
@@ -98,32 +79,6 @@ class EventLogAnalyzer {
       std::string yaxis_label,
       Plot* plot);
 
-  void CreateAudioEncoderTargetBitrateGraph(Plot* plot);
-  void CreateAudioEncoderFrameLengthGraph(Plot* plot);
-  void CreateAudioEncoderPacketLossGraph(Plot* plot);
-  void CreateAudioEncoderEnableFecGraph(Plot* plot);
-  void CreateAudioEncoderEnableDtxGraph(Plot* plot);
-  void CreateAudioEncoderNumChannelsGraph(Plot* plot);
-
-  using NetEqStatsGetterMap =
-      std::map<uint32_t, std::unique_ptr<test::NetEqStatsGetter>>;
-  NetEqStatsGetterMap SimulateNetEq(const std::string& replacement_file_name,
-                                    int file_sample_rate_hz) const;
-
-  void CreateAudioJitterBufferGraph(uint32_t ssrc,
-                                    const test::NetEqStatsGetter* stats_getter,
-                                    Plot* plot) const;
-  void CreateNetEqNetworkStatsGraph(
-      const NetEqStatsGetterMap& neteq_stats_getters,
-      rtc::FunctionView<float(const NetEqNetworkStatistics&)> stats_extractor,
-      const std::string& plot_name,
-      Plot* plot) const;
-  void CreateNetEqLifetimeStatsGraph(
-      const NetEqStatsGetterMap& neteq_stats_getters,
-      rtc::FunctionView<float(const NetEqLifetimeStatistics&)> stats_extractor,
-      const std::string& plot_name,
-      Plot* plot) const;
-
   void CreateIceCandidatePairConfigGraph(Plot* plot);
   void CreateIceConnectivityCheckGraph(Plot* plot);
 
@@ -134,144 +89,10 @@ class EventLogAnalyzer {
   void PrintNotifications(FILE* file);
 
  private:
-  struct LayerDescription {
-    LayerDescription(uint32_t ssrc,
-                     uint8_t spatial_layer,
-                     uint8_t temporal_layer)
-        : ssrc(ssrc),
-          spatial_layer(spatial_layer),
-          temporal_layer(temporal_layer) {}
-    bool operator<(const LayerDescription& other) const {
-      if (ssrc != other.ssrc)
-        return ssrc < other.ssrc;
-      if (spatial_layer != other.spatial_layer)
-        return spatial_layer < other.spatial_layer;
-      return temporal_layer < other.temporal_layer;
-    }
-    uint32_t ssrc;
-    uint8_t spatial_layer;
-    uint8_t temporal_layer;
-  };
-
-  bool IsRtxSsrc(PacketDirection direction, uint32_t ssrc) const {
-    if (direction == kIncomingPacket) {
-      return parsed_log_.incoming_rtx_ssrcs().find(ssrc) !=
-             parsed_log_.incoming_rtx_ssrcs().end();
-    } else {
-      return parsed_log_.outgoing_rtx_ssrcs().find(ssrc) !=
-             parsed_log_.outgoing_rtx_ssrcs().end();
-    }
-  }
-
-  bool IsVideoSsrc(PacketDirection direction, uint32_t ssrc) const {
-    if (direction == kIncomingPacket) {
-      return parsed_log_.incoming_video_ssrcs().find(ssrc) !=
-             parsed_log_.incoming_video_ssrcs().end();
-    } else {
-      return parsed_log_.outgoing_video_ssrcs().find(ssrc) !=
-             parsed_log_.outgoing_video_ssrcs().end();
-    }
-  }
-
-  bool IsAudioSsrc(PacketDirection direction, uint32_t ssrc) const {
-    if (direction == kIncomingPacket) {
-      return parsed_log_.incoming_audio_ssrcs().find(ssrc) !=
-             parsed_log_.incoming_audio_ssrcs().end();
-    } else {
-      return parsed_log_.outgoing_audio_ssrcs().find(ssrc) !=
-             parsed_log_.outgoing_audio_ssrcs().end();
-    }
-  }
-
-  template <typename NetEqStatsType>
-  void CreateNetEqStatsGraphInternal(
-      const NetEqStatsGetterMap& neteq_stats,
-      rtc::FunctionView<const std::vector<std::pair<int64_t, NetEqStatsType>>*(
-          const test::NetEqStatsGetter*)> data_extractor,
-      rtc::FunctionView<float(const NetEqStatsType&)> stats_extractor,
-      const std::string& plot_name,
-      Plot* plot) const;
-
   template <typename IterableType>
   void CreateAccumulatedPacketsTimeSeries(Plot* plot,
                                           const IterableType& packets,
                                           const std::string& label);
-
-  void CreateStreamGapAlerts(PacketDirection direction);
-  void CreateTransmissionGapAlerts(PacketDirection direction);
-
-  std::string GetStreamName(PacketDirection direction, uint32_t ssrc) const {
-    char buffer[200];
-    rtc::SimpleStringBuilder name(buffer);
-    if (IsAudioSsrc(direction, ssrc)) {
-      name << "Audio ";
-    } else if (IsVideoSsrc(direction, ssrc)) {
-      name << "Video ";
-    } else {
-      name << "Unknown ";
-    }
-    if (IsRtxSsrc(direction, ssrc)) {
-      name << "RTX ";
-    }
-    if (direction == kIncomingPacket)
-      name << "(In) ";
-    else
-      name << "(Out) ";
-    name << "SSRC " << ssrc;
-    return name.str();
-  }
-
-  std::string GetLayerName(LayerDescription layer) const {
-    char buffer[100];
-    rtc::SimpleStringBuilder name(buffer);
-    name << "SSRC " << layer.ssrc << " sl " << layer.spatial_layer << ", tl "
-         << layer.temporal_layer;
-    return name.str();
-  }
-
-  void Alert_RtpLogTimeGap(PacketDirection direction,
-                           float time_seconds,
-                           int64_t duration) {
-    if (direction == kIncomingPacket) {
-      incoming_rtp_recv_time_gaps_.emplace_back(time_seconds, duration);
-    } else {
-      outgoing_rtp_send_time_gaps_.emplace_back(time_seconds, duration);
-    }
-  }
-
-  void Alert_RtcpLogTimeGap(PacketDirection direction,
-                            float time_seconds,
-                            int64_t duration) {
-    if (direction == kIncomingPacket) {
-      incoming_rtcp_recv_time_gaps_.emplace_back(time_seconds, duration);
-    } else {
-      outgoing_rtcp_send_time_gaps_.emplace_back(time_seconds, duration);
-    }
-  }
-
-  void Alert_SeqNumJump(PacketDirection direction,
-                        float time_seconds,
-                        uint32_t ssrc) {
-    if (direction == kIncomingPacket) {
-      incoming_seq_num_jumps_.emplace_back(time_seconds, ssrc);
-    } else {
-      outgoing_seq_num_jumps_.emplace_back(time_seconds, ssrc);
-    }
-  }
-
-  void Alert_CaptureTimeJump(PacketDirection direction,
-                             float time_seconds,
-                             uint32_t ssrc) {
-    if (direction == kIncomingPacket) {
-      incoming_capture_time_jumps_.emplace_back(time_seconds, ssrc);
-    } else {
-      outgoing_capture_time_jumps_.emplace_back(time_seconds, ssrc);
-    }
-  }
-
-  void Alert_OutgoingHighLoss(double avg_loss_fraction) {
-    outgoing_high_loss_alerts_.emplace_back(avg_loss_fraction);
-  }
 
   std::string GetCandidatePairLogDescriptionFromId(uint32_t candidate_pair_id);
 
@@ -280,20 +101,6 @@ class EventLogAnalyzer {
   // A list of SSRCs we are interested in analysing.
   // If left empty, all SSRCs will be considered relevant.
   std::vector<uint32_t> desired_ssrc_;
-
-  // Stores the timestamps for all log segments, in the form of associated start
-  // and end events.
-  std::vector<std::pair<int64_t, int64_t>> log_segments_;
-
-  std::vector<IncomingRtpReceiveTimeGap> incoming_rtp_recv_time_gaps_;
-  std::vector<IncomingRtcpReceiveTimeGap> incoming_rtcp_recv_time_gaps_;
-  std::vector<OutgoingRtpSendTimeGap> outgoing_rtp_send_time_gaps_;
-  std::vector<OutgoingRtcpSendTimeGap> outgoing_rtcp_send_time_gaps_;
-  std::vector<IncomingSeqNumJump> incoming_seq_num_jumps_;
-  std::vector<IncomingCaptureTimeJump> incoming_capture_time_jumps_;
-  std::vector<OutgoingSeqNoJump> outgoing_seq_num_jumps_;
-  std::vector<OutgoingCaptureTimeJump> outgoing_capture_time_jumps_;
-  std::vector<OutgoingHighLoss> outgoing_high_loss_alerts_;
 
   std::map<uint32_t, std::string> candidate_pair_desc_by_id_;
 

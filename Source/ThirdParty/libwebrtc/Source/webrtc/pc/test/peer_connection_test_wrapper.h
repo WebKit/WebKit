@@ -49,15 +49,21 @@ class PeerConnectionTestWrapper
       rtc::scoped_refptr<webrtc::AudioEncoderFactory> audio_encoder_factory,
       rtc::scoped_refptr<webrtc::AudioDecoderFactory> audio_decoder_factory);
 
+  rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface> pc_factory()
+      const {
+    return peer_connection_factory_;
+  }
   webrtc::PeerConnectionInterface* pc() { return peer_connection_.get(); }
 
   rtc::scoped_refptr<webrtc::DataChannelInterface> CreateDataChannel(
       const std::string& label,
       const webrtc::DataChannelInit& init);
 
+  void WaitForNegotiation();
+
   // Implements PeerConnectionObserver.
   void OnSignalingChange(
-      webrtc::PeerConnectionInterface::SignalingState new_state) override {}
+      webrtc::PeerConnectionInterface::SignalingState new_state) override;
   void OnAddTrack(
       rtc::scoped_refptr<webrtc::RtpReceiverInterface> receiver,
       const std::vector<rtc::scoped_refptr<webrtc::MediaStreamInterface>>&
@@ -121,6 +127,7 @@ class PeerConnectionTestWrapper
   rtc::scoped_refptr<FakeAudioCaptureModule> fake_audio_capture_module_;
   std::unique_ptr<webrtc::FakeVideoTrackRenderer> renderer_;
   int num_get_user_media_calls_ = 0;
+  bool pending_negotiation_;
 };
 
 #endif  // PC_TEST_PEER_CONNECTION_TEST_WRAPPER_H_

@@ -75,6 +75,8 @@ struct RTC_EXPORT AudioOptions {
   // and check if any other AudioOptions members are unused.
   absl::optional<bool> combined_audio_video_bwe;
   // Enable audio network adaptor.
+  // TODO(webrtc:11717): Remove this API in favor of adaptivePtime in
+  // RtpEncodingParameters.
   absl::optional<bool> audio_network_adaptor;
   // Config string for audio network adaptor.
   absl::optional<std::string> audio_network_adaptor_config;

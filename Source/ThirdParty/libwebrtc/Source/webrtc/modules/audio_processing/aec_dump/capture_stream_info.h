@@ -15,7 +15,6 @@
 #include <utility>
 #include <vector>
 
-#include "api/audio/audio_frame.h"
 #include "modules/audio_processing/aec_dump/write_to_file_task.h"
 #include "modules/audio_processing/include/aec_dump.h"
 #include "rtc_base/checks.h"
@@ -40,8 +39,12 @@ class CaptureStreamInfo {
   void AddInput(const AudioFrameView<const float>& src);
   void AddOutput(const AudioFrameView<const float>& src);
 
-  void AddInput(const AudioFrame& frame);
-  void AddOutput(const AudioFrame& frame);
+  void AddInput(const int16_t* const data,
+                int num_channels,
+                int samples_per_channel);
+  void AddOutput(const int16_t* const data,
+                 int num_channels,
+                 int samples_per_channel);
 
   void AddAudioProcessingState(const AecDump::AudioProcessingState& state);
 

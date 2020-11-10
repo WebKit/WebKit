@@ -100,7 +100,7 @@ bool StreamStatisticianImpl::UpdateOutOfOrder(const RtpPacketReceived& packet,
 }
 
 void StreamStatisticianImpl::UpdateCounters(const RtpPacketReceived& packet) {
-  rtc::CritScope cs(&stream_lock_);
+  MutexLock lock(&stream_lock_);
   RTC_DCHECK_EQ(ssrc_, packet.Ssrc());
   int64_t now_ms = clock_->TimeInMilliseconds();
 
@@ -159,17 +159,17 @@ void StreamStatisticianImpl::UpdateJitter(const RtpPacketReceived& packet,
 
 void StreamStatisticianImpl::SetMaxReorderingThreshold(
     int max_reordering_threshold) {
-  rtc::CritScope cs(&stream_lock_);
+  MutexLock lock(&stream_lock_);
   max_reordering_threshold_ = max_reordering_threshold;
 }
 
 void StreamStatisticianImpl::EnableRetransmitDetection(bool enable) {
-  rtc::CritScope cs(&stream_lock_);
+  MutexLock lock(&stream_lock_);
   enable_retransmit_detection_ = enable;
 }
 
 RtpReceiveStats StreamStatisticianImpl::GetStats() const {
-  rtc::CritScope cs(&stream_lock_);
+  MutexLock lock(&stream_lock_);
   RtpReceiveStats stats;
   stats.packets_lost = cumulative_loss_;
   // TODO(nisse): Can we return a float instead?
@@ -183,7 +183,7 @@ RtpReceiveStats StreamStatisticianImpl::GetStats() const {
 
 bool StreamStatisticianImpl::GetActiveStatisticsAndReset(
     RtcpStatistics* statistics) {
-  rtc::CritScope cs(&stream_lock_);
+  MutexLock lock(&stream_lock_);
   if (clock_->TimeInMilliseconds() - last_receive_time_ms_ >=
       kStatisticsTimeoutMs) {
     // Not active.
@@ -241,7 +241,7 @@ RtcpStatistics StreamStatisticianImpl::CalculateRtcpStatistics() {
 }
 
 absl::optional<int> StreamStatisticianImpl::GetFractionLostInPercent() const {
-  rtc::CritScope cs(&stream_lock_);
+  MutexLock lock(&stream_lock_);
   if (!ReceivedRtpPacket()) {
     return absl::nullopt;
   }
@@ -257,12 +257,12 @@ absl::optional<int> StreamStatisticianImpl::GetFractionLostInPercent() const {
 
 StreamDataCounters StreamStatisticianImpl::GetReceiveStreamDataCounters()
     const {
-  rtc::CritScope cs(&stream_lock_);
+  MutexLock lock(&stream_lock_);
   return receive_counters_;
 }
 
 uint32_t StreamStatisticianImpl::BitrateReceived() const {
-  rtc::CritScope cs(&stream_lock_);
+  MutexLock lock(&stream_lock_);
   return incoming_bitrate_.Rate(clock_->TimeInMilliseconds()).value_or(0);
 }
 
@@ -320,7 +320,7 @@ void ReceiveStatisticsImpl::OnRtpPacket(const RtpPacketReceived& packet) {
 
 StreamStatisticianImpl* ReceiveStatisticsImpl::GetStatistician(
     uint32_t ssrc) const {
-  rtc::CritScope cs(&receive_statistics_lock_);
+  MutexLock lock(&receive_statistics_lock_);
   const auto& it = statisticians_.find(ssrc);
   if (it == statisticians_.end())
     return NULL;
@@ -329,7 +329,7 @@ StreamStatisticianImpl* ReceiveStatisticsImpl::GetStatistician(
 
 StreamStatisticianImpl* ReceiveStatisticsImpl::GetOrCreateStatistician(
     uint32_t ssrc) {
-  rtc::CritScope cs(&receive_statistics_lock_);
+  MutexLock lock(&receive_statistics_lock_);
   StreamStatisticianImpl*& impl = statisticians_[ssrc];
   if (impl == nullptr) {  // new element
     impl = new StreamStatisticianImpl(ssrc, clock_, max_reordering_threshold_);
@@ -341,7 +341,7 @@ void ReceiveStatisticsImpl::SetMaxReorderingThreshold(
     int max_reordering_threshold) {
   std::map<uint32_t, StreamStatisticianImpl*> statisticians;
   {
-    rtc::CritScope cs(&receive_statistics_lock_);
+    MutexLock lock(&receive_statistics_lock_);
     max_reordering_threshold_ = max_reordering_threshold;
     statisticians = statisticians_;
   }
@@ -366,7 +366,7 @@ std::vector<rtcp::ReportBlock> ReceiveStatisticsImpl::RtcpReportBlocks(
     size_t max_blocks) {
   std::map<uint32_t, StreamStatisticianImpl*> statisticians;
   {
-    rtc::CritScope cs(&receive_statistics_lock_);
+    MutexLock lock(&receive_statistics_lock_);
     statisticians = statisticians_;
   }
   std::vector<rtcp::ReportBlock> result;

@@ -59,7 +59,7 @@ TEST(SimpleStringBuilder, StdString) {
 // off.
 #if (GTEST_HAS_DEATH_TEST && !defined(WEBRTC_ANDROID)) || !RTC_DCHECK_IS_ON
 
-TEST(SimpleStringBuilder, BufferOverrunConstCharP) {
+TEST(SimpleStringBuilderDeathTest, BufferOverrunConstCharP) {
   char sb_buf[4];
   SimpleStringBuilder sb(sb_buf);
   const char* const msg = "This is just too much";
@@ -71,7 +71,7 @@ TEST(SimpleStringBuilder, BufferOverrunConstCharP) {
 #endif
 }
 
-TEST(SimpleStringBuilder, BufferOverrunStdString) {
+TEST(SimpleStringBuilderDeathTest, BufferOverrunStdString) {
   char sb_buf[4];
   SimpleStringBuilder sb(sb_buf);
   sb << 12;
@@ -84,7 +84,7 @@ TEST(SimpleStringBuilder, BufferOverrunStdString) {
 #endif
 }
 
-TEST(SimpleStringBuilder, BufferOverrunInt) {
+TEST(SimpleStringBuilderDeathTest, BufferOverrunInt) {
   char sb_buf[4];
   SimpleStringBuilder sb(sb_buf);
   constexpr int num = -12345;
@@ -100,7 +100,7 @@ TEST(SimpleStringBuilder, BufferOverrunInt) {
 #endif
 }
 
-TEST(SimpleStringBuilder, BufferOverrunDouble) {
+TEST(SimpleStringBuilderDeathTest, BufferOverrunDouble) {
   char sb_buf[5];
   SimpleStringBuilder sb(sb_buf);
   constexpr double num = 123.456;
@@ -113,7 +113,7 @@ TEST(SimpleStringBuilder, BufferOverrunDouble) {
 #endif
 }
 
-TEST(SimpleStringBuilder, BufferOverrunConstCharPAlreadyFull) {
+TEST(SimpleStringBuilderDeathTest, BufferOverrunConstCharPAlreadyFull) {
   char sb_buf[4];
   SimpleStringBuilder sb(sb_buf);
   sb << 123;
@@ -126,7 +126,7 @@ TEST(SimpleStringBuilder, BufferOverrunConstCharPAlreadyFull) {
 #endif
 }
 
-TEST(SimpleStringBuilder, BufferOverrunIntAlreadyFull) {
+TEST(SimpleStringBuilderDeathTest, BufferOverrunIntAlreadyFull) {
   char sb_buf[4];
   SimpleStringBuilder sb(sb_buf);
   sb << "xyz";

@@ -40,6 +40,7 @@ if (!build_with_chromium) {
         ":rtc_unittests",
         ":slow_tests",
         ":video_engine_tests",
+        ":voip_unittests",
         ":webrtc_nonparallel_tests",
         ":webrtc_perf_tests",
         "common_audio:common_audio_unittests",
@@ -128,6 +129,10 @@ config("common_inherited_config") {
     defines += [ "RTC_DISABLE_CHECK_MSG" ]
   }
 
+  if (rtc_enable_avx2) {
+    defines += [ "WEBRTC_ENABLE_AVX2" ]
+  }
+
   # Some tests need to declare their own trace event handlers. If this define is
   # not set, the first time TRACE_EVENT_* is called it will store the return
   # value for the current handler in an static variable, so that subsequent
@@ -168,7 +173,7 @@ config("common_inherited_config") {
       "WEBRTC_IOS",
     ]
   }
-  if (is_linux) {
+  if (is_linux || is_chromeos) {
     defines += [ "WEBRTC_LINUX" ]
   }
   if (is_mac) {
@@ -264,6 +269,10 @@ config("common_config") {
     defines += [ "WEBRTC_USE_H264" ]
   }
 
+  if (rtc_use_absl_mutex) {
+    defines += [ "WEBRTC_ABSL_MUTEX" ]
+  }
+
   if (rtc_disable_logging) {
     defines += [ "RTC_DISABLE_LOGGING" ]
   }
@@ -274,6 +283,14 @@ config("common_config") {
 
   if (rtc_disable_metrics) {
     defines += [ "RTC_DISABLE_METRICS" ]
+  }
+
+  if (rtc_exclude_transient_suppressor) {
+    defines += [ "WEBRTC_EXCLUDE_TRANSIENT_SUPPRESSOR" ]
+  }
+
+  if (rtc_exclude_audio_processing_module) {
+    defines += [ "WEBRTC_EXCLUDE_AUDIO_PROCESSING_MODULE" ]
   }
 
   cflags = []
@@ -401,7 +418,7 @@ config("common_config") {
 }
 
 config("common_objc") {
-  libs = [ "Foundation.framework" ]
+  frameworks = [ "Foundation.framework" ]
 
   if (rtc_use_metal_rendering) {
     defines = [ "RTC_SUPPORTS_METAL" ]
@@ -423,7 +440,6 @@ if (!build_with_chromium) {
     defines = []
 
     deps = [
-      ":webrtc_common",
       "api:create_peerconnection_factory",
       "api:libjingle_peerconnection_api",
       "api:rtc_error",
@@ -498,15 +514,6 @@ if (!build_with_chromium) {
   }
 }
 
-rtc_source_set("webrtc_common") {
-  # Client code SHOULD NOT USE THIS TARGET, but for now it needs to be public
-  # because there exists client code that uses it.
-  # TODO(bugs.webrtc.org/9808): Move to private visibility as soon as that
-  # client code gets updated.
-  visibility = [ "*" ]
-  sources = [ "common_types.h" ]
-}
-
 if (use_libfuzzer || use_afl) {
   # This target is only here for gn to discover fuzzer build targets under
   # webrtc/test/fuzzers/.
@@ -521,17 +528,18 @@ if (rtc_include_tests) {
     testonly = true
 
     deps = [
-      ":webrtc_common",
       "api:compile_all_headers",
       "api:rtc_api_unittests",
       "api/audio/test:audio_api_unittests",
       "api/audio_codecs/test:audio_codecs_api_unittests",
+      "api/numerics:numerics_unittests",
       "api/transport:stun_unittest",
       "api/video/test:rtc_api_video_unittests",
       "api/video_codecs/test:video_codecs_api_unittests",
       "call:fake_network_pipe_unittests",
       "p2p:libstunprober_unittests",
       "p2p:rtc_p2p_unittests",
+      "rtc_base:robo_caller_unittests",
       "rtc_base:rtc_base_approved_unittests",
       "rtc_base:rtc_base_unittests",
       "rtc_base:rtc_json_unittests",
@@ -539,9 +547,11 @@ if (rtc_include_tests) {
       "rtc_base:rtc_operations_chain_unittests",
       "rtc_base:rtc_task_queue_unittests",
       "rtc_base:sigslot_unittest",
+      "rtc_base:untyped_function_unittest",
       "rtc_base:weak_ptr_unittests",
       "rtc_base/experiments:experiments_unittests",
       "rtc_base/synchronization:sequence_checker_unittests",
+      "rtc_base/task_utils:pending_task_safety_flag_unittests",
       "rtc_base/task_utils:to_queued_task_unittests",
       "sdk:sdk_tests",
       "test:rtp_test_utils",
@@ -568,6 +578,14 @@ if (rtc_include_tests) {
     if (is_ios || is_mac) {
       deps += [ "sdk:rtc_unittests_objc" ]
     }
+  }
+
+  rtc_test("benchmarks") {
+    testonly = true
+    deps = [
+      "rtc_base/synchronization:mutex_benchmark",
+      "test:benchmark_main",
+    ]
   }
 
   # This runs tests that must run in real time and therefore can take some
@@ -672,6 +690,18 @@ if (rtc_include_tests) {
       deps += [ "//testing/android/native_test:native_test_support" ]
       shard_timeout = 900
     }
+  }
+
+  rtc_test("voip_unittests") {
+    testonly = true
+    deps = [
+      "api/voip:voip_engine_factory_unittests",
+      "audio/voip/test:audio_channel_unittests",
+      "audio/voip/test:audio_egress_unittests",
+      "audio/voip/test:audio_ingress_unittests",
+      "audio/voip/test:voip_core_unittests",
+      "test:test_main",
+    ]
   }
 }
 

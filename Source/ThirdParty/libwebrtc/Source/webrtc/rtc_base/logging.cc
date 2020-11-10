@@ -8,6 +8,12 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "rtc_base/logging.h"
+
+#include <string.h>
+
+#if RTC_LOG_ENABLED()
+
 #if defined(WEBRTC_WIN)
 #include <windows.h>
 #if _MSC_VER < 1900
@@ -20,26 +26,30 @@
 #include <CoreServices/CoreServices.h>
 #elif defined(WEBRTC_ANDROID)
 #include <android/log.h>
+
 // Android has a 1024 limit on log inputs. We use 60 chars as an
 // approx for the header/tag portion.
 // See android/system/core/liblog/logd_write.c
 static const int kMaxLogLineSize = 1024 - 60;
 #endif  // WEBRTC_MAC && !defined(WEBRTC_IOS) || WEBRTC_ANDROID
 
-#include <limits.h>
+#include <inttypes.h>
+#include <stdio.h>
 #include <time.h>
 
 #include <algorithm>
 #include <cstdarg>
 #include <vector>
 
-#include "rtc_base/critical_section.h"
-#include "rtc_base/logging.h"
+#include "absl/base/attributes.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/platform_thread_types.h"
 #include "rtc_base/never_destroyed.h"
 #include "rtc_base/string_encode.h"
-#include "rtc_base/strings/string_builder.h"
 #include "rtc_base/string_utils.h"
+#include "rtc_base/strings/string_builder.h"
+#include "rtc_base/synchronization/mutex.h"
+#include "rtc_base/thread_annotations.h"
 #include "rtc_base/time_utils.h"
 
 namespace rtc {
@@ -52,7 +62,6 @@ static LoggingSeverity g_dbg_sev = LS_INFO;
 static LoggingSeverity g_min_sev = LS_NONE;
 static LoggingSeverity g_dbg_sev = LS_NONE;
 #endif
-static LogMessage::LogOutputCallback g_log_output_callback = nullptr;
 
 // Return the filename portion of the string (that following the last slash).
 const char* FilenameFromPath(const char* file) {
@@ -64,25 +73,17 @@ const char* FilenameFromPath(const char* file) {
     return (end1 > end2) ? end1 + 1 : end2 + 1;
 }
 
-// Global lock for log subsystem, only needed to serialize access to streamList().
-CriticalSection& logCriticalScope() {
-  static auto scope = makeNeverDestroyed<>(CriticalSection { });
-  return scope.get();
+// Global lock for log subsystem, only needed to serialize access to streams_.
+// TODO(bugs.webrtc.org/11665): this is not currently constant initialized and
+// trivially destructible.
+webrtc::Mutex& logMutex() {
+  static auto mutex = NeverDestroyed<webrtc::Mutex>();
+  return mutex.get();
 }
+
+static LogMessage::LogOutputCallback g_log_output_callback = nullptr;
 
 }  // namespace
-
-// Inefficient default implementation, override is recommended.
-void LogSink::OnLogMessage(const std::string& msg,
-                           LoggingSeverity severity,
-                           const char* tag) {
-  OnLogMessage(tag + (": " + msg), severity);
-}
-
-void LogSink::OnLogMessage(const std::string& msg,
-                           LoggingSeverity /* severity */) {
-  OnLogMessage(msg);
-}
 
 /////////////////////////////////////////////////////////////////////////////
 // LogMessage
@@ -94,15 +95,9 @@ bool LogMessage::log_to_stderr_ = true;
 // Note: we explicitly do not clean this up, because of the uncertain ordering
 // of destructors at program exit.  Let the person who sets the stream trigger
 // cleanup by setting to null, or let it leak (safe at program exit).
-typedef std::pair<LogSink*, LoggingSeverity> StreamAndSeverity;
-typedef std::list<StreamAndSeverity> StreamList;
-
-// The output streams and their associated severities
-StreamList& streamList()
-    RTC_EXCLUSIVE_LOCKS_REQUIRED(logCriticalScope()) {
-        static auto stream_list = makeNeverDestroyed<>(StreamList { });
-  return stream_list.get();
-}
+ABSL_CONST_INIT LogSink* LogMessage::streams_ RTC_GUARDED_BY(logMutex()) =
+    nullptr;
+ABSL_CONST_INIT std::atomic<bool> LogMessage::streams_empty_ = {true};
 
 // Boolean options default to false (0)
 bool LogMessage::thread_, LogMessage::timestamp_;
@@ -116,7 +111,6 @@ LogMessage::LogMessage(const char* file,
                        LogErrorContext err_ctx,
                        int err)
     : severity_(sev) {
-
   if (timestamp_) {
     // Use SystemTimeMillis so that even if tests use fake clocks, the timestamp
     // in log messages represents the real system time.
@@ -124,9 +118,13 @@ LogMessage::LogMessage(const char* file,
     // Also ensure WallClockStartTime is initialized, so that it matches
     // LogStartTime.
     WallClockStartTime();
-    print_stream_ << "[" << rtc::LeftPad('0', 3, rtc::ToString(time / 1000))
-                  << ":" << rtc::LeftPad('0', 3, rtc::ToString(time % 1000))
-                  << "] ";
+    // TODO(kwiberg): Switch to absl::StrFormat, if binary size is ok.
+    char timestamp[50];  // Maximum string length of an int64_t is 20.
+    int len =
+        snprintf(timestamp, sizeof(timestamp), "[%03" PRId64 ":%03" PRId64 "]",
+                 time / 1000, time % 1000);
+    RTC_DCHECK_LT(len, sizeof(timestamp));
+    print_stream_ << timestamp;
   }
 
   if (thread_) {
@@ -168,15 +166,6 @@ LogMessage::LogMessage(const char* file,
         break;
       }
 #endif  // WEBRTC_WIN
-#if defined(WEBRTC_MAC) && !defined(WEBRTC_IOS)
-/*
-      case ERRCTX_OSSTATUS: {
-        std::string desc(DescriptionFromOSStatus(err));
-        tmp << " " << (desc.empty() ? "Unknown error" : desc.c_str());
-        break;
-      }
-*/
-#endif  // WEBRTC_MAC && !defined(WEBRTC_IOS)
       default:
         break;
     }
@@ -219,13 +208,13 @@ LogMessage::~LogMessage() {
 #endif
   }
 
-  CritScope cs(&logCriticalScope());
-  for (auto& kv : streamList()) {
-    if (severity_ >= kv.second) {
+  webrtc::MutexLock lock(&logMutex());
+  for (LogSink* entry = streams_; entry != nullptr; entry = entry->next_) {
+    if (severity_ >= entry->min_severity_) {
 #if defined(WEBRTC_ANDROID)
-      kv.first->OnLogMessage(str, severity_, tag_);
+      entry->OnLogMessage(str, severity_, tag_);
 #else
-      kv.first->OnLogMessage(str);
+      entry->OnLogMessage(str, severity_);
 #endif
     }
   }
@@ -248,6 +237,17 @@ int LogMessage::GetMinLogSeverity() {
 LoggingSeverity LogMessage::GetLogToDebug() {
   return g_dbg_sev;
 }
+
+#if defined(WEBRTC_WEBKIT_BUILD)
+void LogMessage::SetLogOutput(LoggingSeverity min_sev, LogOutputCallback callback)
+{
+    g_dbg_sev = min_sev;
+    webrtc::MutexLock lock(&logMutex());
+    UpdateMinLogSeverity();
+    g_log_output_callback = callback;
+}
+#endif
+
 int64_t LogMessage::LogStartTime() {
   static const int64_t g_start = SystemTimeMillis();
   return g_start;
@@ -268,16 +268,8 @@ void LogMessage::LogTimestamps(bool on) {
 
 void LogMessage::LogToDebug(LoggingSeverity min_sev) {
   g_dbg_sev = min_sev;
-  CritScope cs(&logCriticalScope());
+  webrtc::MutexLock lock(&logMutex());
   UpdateMinLogSeverity();
-}
-
-void LogMessage::SetLogOutput(LoggingSeverity min_sev, LogOutputCallback callback)
-{
-  g_dbg_sev = min_sev;
-  CritScope cs(&logCriticalScope());
-  UpdateMinLogSeverity();
-  g_log_output_callback = callback;
 }
 
 void LogMessage::SetLogToStderr(bool log_to_stderr) {
@@ -285,30 +277,35 @@ void LogMessage::SetLogToStderr(bool log_to_stderr) {
 }
 
 int LogMessage::GetLogToStream(LogSink* stream) {
-  CritScope cs(&logCriticalScope());
+  webrtc::MutexLock lock(&logMutex());
   LoggingSeverity sev = LS_NONE;
-  for (auto& kv : streamList()) {
-    if (!stream || stream == kv.first) {
-      sev = std::min(sev, kv.second);
+  for (LogSink* entry = streams_; entry != nullptr; entry = entry->next_) {
+    if (stream == nullptr || stream == entry) {
+      sev = std::min(sev, entry->min_severity_);
     }
   }
   return sev;
 }
 
 void LogMessage::AddLogToStream(LogSink* stream, LoggingSeverity min_sev) {
-  CritScope cs(&logCriticalScope());
-  streamList().push_back(std::make_pair(stream, min_sev));
+  webrtc::MutexLock lock(&logMutex());
+  stream->min_severity_ = min_sev;
+  stream->next_ = streams_;
+  streams_ = stream;
+  streams_empty_.store(false, std::memory_order_relaxed);
   UpdateMinLogSeverity();
 }
 
 void LogMessage::RemoveLogToStream(LogSink* stream) {
-  CritScope cs(&logCriticalScope());
-  for (StreamList::iterator it = streamList().begin(); it != streamList().end(); ++it) {
-    if (stream == it->first) {
-      streamList().erase(it);
+  webrtc::MutexLock lock(&logMutex());
+  for (LogSink** entry = &streams_; *entry != nullptr;
+       entry = &(*entry)->next_) {
+    if (*entry == stream) {
+      *entry = (*entry)->next_;
       break;
     }
   }
+  streams_empty_.store(streams_ == nullptr, std::memory_order_relaxed);
   UpdateMinLogSeverity();
 }
 
@@ -330,8 +327,6 @@ void LogMessage::ConfigureLogging(const char* params) {
       LogThreads();
 
       // Logging levels
-    } else if (token == "sensitive") {
-      current_level = LS_SENSITIVE;
     } else if (token == "verbose") {
       current_level = LS_VERBOSE;
     } else if (token == "info") {
@@ -349,7 +344,7 @@ void LogMessage::ConfigureLogging(const char* params) {
     }
   }
 
-#if defined(WEBRTC_WIN)
+#if defined(WEBRTC_WIN) && !defined(WINUWP)
   if ((LS_NONE != debug_level) && !::IsDebuggerPresent()) {
     // First, attempt to attach to our parent's console... so if you invoke
     // from the command line, we'll see the output there.  Otherwise, create
@@ -358,17 +353,16 @@ void LogMessage::ConfigureLogging(const char* params) {
     if (!AttachConsole(ATTACH_PARENT_PROCESS))
       ::AllocConsole();
   }
-#endif  // WEBRTC_WIN
+#endif  // defined(WEBRTC_WIN) && !defined(WINUWP)
 
   LogToDebug(debug_level);
 }
 
 void LogMessage::UpdateMinLogSeverity()
-    RTC_EXCLUSIVE_LOCKS_REQUIRED(logCriticalScope()) {
+    RTC_EXCLUSIVE_LOCKS_REQUIRED(logMutex()) {
   LoggingSeverity min_sev = g_dbg_sev;
-  for (const auto& kv : streamList()) {
-    const LoggingSeverity sev = kv.second;
-    min_sev = std::min(min_sev, sev);
+  for (LogSink* entry = streams_; entry != nullptr; entry = entry->next_) {
+    min_sev = std::min(min_sev, entry->min_severity_);
   }
   g_min_sev = min_sev;
 }
@@ -424,13 +418,6 @@ void LogMessage::OutputToDebug(const std::string& str,
   // from the shell.
   int prio;
   switch (severity) {
-    case LS_SENSITIVE:
-      __android_log_write(ANDROID_LOG_INFO, tag, "SENSITIVE");
-      if (log_to_stderr) {
-        fprintf(stderr, "SENSITIVE");
-        fflush(stderr);
-      }
-      return;
     case LS_VERBOSE:
       prio = ANDROID_LOG_VERBOSE;
       break;
@@ -479,12 +466,7 @@ void LogMessage::OutputToDebug(const std::string& str,
 bool LogMessage::IsNoop(LoggingSeverity severity) {
   if (severity >= g_dbg_sev || severity >= g_min_sev)
     return false;
-
-  // TODO(tommi): We're grabbing this lock for every LogMessage instance that
-  // is going to be logged. This introduces unnecessary synchronization for
-  // a feature that's mostly used for testing.
-  CritScope cs(&logCriticalScope());
-  return streamList().size() == 0;
+  return streams_empty_.load(std::memory_order_relaxed);
 }
 
 void LogMessage::FinishPrintStream() {
@@ -525,11 +507,6 @@ void Log(const LogArgType* fmt, ...) {
     }
   }
 
-  if (LogMessage::IsNoop(meta.meta.Severity())) {
-    va_end(args);
-    return;
-  }
-
   LogMessage log_message(meta.meta.File(), meta.meta.Line(),
                          meta.meta.Severity(), meta.err_ctx, meta.err);
   if (tag) {
@@ -562,9 +539,11 @@ void Log(const LogArgType* fmt, ...) {
       case LogArgType::kLongDouble:
         log_message.stream() << va_arg(args, long double);
         break;
-      case LogArgType::kCharP:
-        log_message.stream() << va_arg(args, const char*);
+      case LogArgType::kCharP: {
+        const char* s = va_arg(args, const char*);
+        log_message.stream() << (s ? s : "(null)");
         break;
+      }
       case LogArgType::kStdString:
         log_message.stream() << *va_arg(args, const std::string*);
         break;
@@ -586,4 +565,19 @@ void Log(const LogArgType* fmt, ...) {
 }
 
 }  // namespace webrtc_logging_impl
+}  // namespace rtc
+#endif
+
+namespace rtc {
+// Inefficient default implementation, override is recommended.
+void LogSink::OnLogMessage(const std::string& msg,
+                           LoggingSeverity severity,
+                           const char* tag) {
+  OnLogMessage(tag + (": " + msg), severity);
+}
+
+void LogSink::OnLogMessage(const std::string& msg,
+                           LoggingSeverity /* severity */) {
+  OnLogMessage(msg);
+}
 }  // namespace rtc

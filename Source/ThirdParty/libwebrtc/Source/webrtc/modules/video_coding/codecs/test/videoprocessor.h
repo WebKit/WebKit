@@ -37,6 +37,7 @@
 #include "rtc_base/checks.h"
 #include "rtc_base/constructor_magic.h"
 #include "rtc_base/synchronization/sequence_checker.h"
+#include "rtc_base/system/no_unique_address.h"
 #include "rtc_base/thread_annotations.h"
 #include "rtc_base/thread_checker.h"
 #include "test/testsupport/frame_reader.h"
@@ -91,8 +92,7 @@ class VideoProcessor {
 
     Result OnEncodedImage(
         const webrtc::EncodedImage& encoded_image,
-        const webrtc::CodecSpecificInfo* codec_specific_info,
-        const webrtc::RTPFragmentationHeader* fragmentation) override {
+        const webrtc::CodecSpecificInfo* codec_specific_info) override {
       RTC_CHECK(codec_specific_info);
 
       // Post the callback to the right task queue, if needed.
@@ -250,7 +250,7 @@ class VideoProcessor {
   int64_t post_encode_time_ns_ RTC_GUARDED_BY(sequence_checker_);
 
   // This class must be operated on a TaskQueue.
-  SequenceChecker sequence_checker_;
+  RTC_NO_UNIQUE_ADDRESS SequenceChecker sequence_checker_;
 
   RTC_DISALLOW_COPY_AND_ASSIGN(VideoProcessor);
 };

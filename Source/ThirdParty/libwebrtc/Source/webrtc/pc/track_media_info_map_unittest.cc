@@ -83,19 +83,21 @@ rtc::scoped_refptr<MockRtpReceiverInternal> CreateMockRtpReceiver(
 
 class TrackMediaInfoMapTest : public ::testing::Test {
  public:
-  TrackMediaInfoMapTest()
+  TrackMediaInfoMapTest() : TrackMediaInfoMapTest(true) {}
+
+  explicit TrackMediaInfoMapTest(bool use_current_thread)
       : voice_media_info_(new cricket::VoiceMediaInfo()),
         video_media_info_(new cricket::VideoMediaInfo()),
         local_audio_track_(AudioTrack::Create("LocalAudioTrack", nullptr)),
         remote_audio_track_(AudioTrack::Create("RemoteAudioTrack", nullptr)),
-        local_video_track_(
-            VideoTrack::Create("LocalVideoTrack",
-                               FakeVideoTrackSource::Create(false),
-                               rtc::Thread::Current())),
-        remote_video_track_(
-            VideoTrack::Create("RemoteVideoTrack",
-                               FakeVideoTrackSource::Create(false),
-                               rtc::Thread::Current())) {}
+        local_video_track_(VideoTrack::Create(
+            "LocalVideoTrack",
+            FakeVideoTrackSource::Create(false),
+            use_current_thread ? rtc::Thread::Current() : nullptr)),
+        remote_video_track_(VideoTrack::Create(
+            "RemoteVideoTrack",
+            FakeVideoTrackSource::Create(false),
+            use_current_thread ? rtc::Thread::Current() : nullptr)) {}
 
   ~TrackMediaInfoMapTest() {
     // If we have a map the ownership has been passed to the map, only delete if
@@ -131,6 +133,7 @@ class TrackMediaInfoMapTest : public ::testing::Test {
         video_sender_info.local_stats[i++].ssrc = ssrc;
       }
       video_media_info_->senders.push_back(video_sender_info);
+      video_media_info_->aggregated_senders.push_back(video_sender_info);
     }
   }
 
@@ -416,7 +419,10 @@ TEST_F(TrackMediaInfoMapTest, GetAttachmentIdByTrack) {
 // base/test/gtest_util.h.
 #if RTC_DCHECK_IS_ON && GTEST_HAS_DEATH_TEST && !defined(WEBRTC_ANDROID)
 
-class TrackMediaInfoMapDeathTest : public TrackMediaInfoMapTest {};
+class TrackMediaInfoMapDeathTest : public TrackMediaInfoMapTest {
+ public:
+  TrackMediaInfoMapDeathTest() : TrackMediaInfoMapTest(false) {}
+};
 
 TEST_F(TrackMediaInfoMapDeathTest, MultipleOneSsrcReceiversPerTrack) {
   AddRtpReceiverWithSsrcs({1}, remote_audio_track_);

@@ -27,6 +27,7 @@ group("examples") {
       ":AppRTCMobile",
       ":AppRTCMobile_test_apk",
       ":libwebrtc_unity",
+      "androidvoip",
     ]
 
     # TODO(sakal): We include some code from the tests. Remove this dependency
@@ -44,7 +45,7 @@ group("examples") {
     deps += [ ":AppRTCMobile" ]
   }
 
-  if (is_linux || is_win) {
+  if (is_linux || is_chromeos || is_win) {
     deps += [
       ":peerconnection_server",
       ":stunserver",
@@ -87,7 +88,7 @@ if (is_android) {
     testonly = true
     apk_name = "AppRTCMobile"
     android_manifest = "androidapp/AndroidManifest.xml"
-    min_sdk_version = 16
+    min_sdk_version = 21
     target_sdk_version = 29
 
     deps = [
@@ -101,7 +102,7 @@ if (is_android) {
 
   rtc_android_library("AppRTCMobile_javalib") {
     testonly = true
-    android_manifest_for_lint = "androidapp/AndroidManifest.xml"
+    android_manifest = "androidapp/AndroidManifest.xml"
 
     sources = [
       "androidapp/src/org/appspot/apprtc/AppRTCAudioManager.java",
@@ -129,6 +130,7 @@ if (is_android) {
       "androidapp/src/org/appspot/apprtc/util/AsyncHttpURLConnection.java",
     ]
 
+    resources_package = "org.appspot.apprtc"
     deps = [
       ":AppRTCMobile_resources",
       "../rtc_base:base_java",
@@ -154,14 +156,49 @@ if (is_android) {
 
   android_resources("AppRTCMobile_resources") {
     testonly = true
-    resource_dirs = [ "androidapp/res" ]
+    sources = [
+      "androidapp/res/drawable-hdpi/disconnect.png",
+      "androidapp/res/drawable-hdpi/ic_action_full_screen.png",
+      "androidapp/res/drawable-hdpi/ic_action_return_from_full_screen.png",
+      "androidapp/res/drawable-hdpi/ic_launcher.png",
+      "androidapp/res/drawable-hdpi/ic_loopback_call.png",
+      "androidapp/res/drawable-ldpi/disconnect.png",
+      "androidapp/res/drawable-ldpi/ic_action_full_screen.png",
+      "androidapp/res/drawable-ldpi/ic_action_return_from_full_screen.png",
+      "androidapp/res/drawable-ldpi/ic_launcher.png",
+      "androidapp/res/drawable-ldpi/ic_loopback_call.png",
+      "androidapp/res/drawable-mdpi/disconnect.png",
+      "androidapp/res/drawable-mdpi/ic_action_full_screen.png",
+      "androidapp/res/drawable-mdpi/ic_action_return_from_full_screen.png",
+      "androidapp/res/drawable-mdpi/ic_launcher.png",
+      "androidapp/res/drawable-mdpi/ic_loopback_call.png",
+      "androidapp/res/drawable-xhdpi/disconnect.png",
+      "androidapp/res/drawable-xhdpi/ic_action_full_screen.png",
+      "androidapp/res/drawable-xhdpi/ic_action_return_from_full_screen.png",
+      "androidapp/res/drawable-xhdpi/ic_launcher.png",
+      "androidapp/res/drawable-xhdpi/ic_loopback_call.png",
+      "androidapp/res/layout/activity_call.xml",
+      "androidapp/res/layout/activity_connect.xml",
+      "androidapp/res/layout/fragment_call.xml",
+      "androidapp/res/layout/fragment_hud.xml",
+      "androidapp/res/menu/connect_menu.xml",
+      "androidapp/res/values-v17/styles.xml",
+      "androidapp/res/values-v21/styles.xml",
+      "androidapp/res/values/arrays.xml",
+      "androidapp/res/values/strings.xml",
+      "androidapp/res/xml/preferences.xml",
+    ]
+
+    # Needed for Bazel converter.
     custom_package = "org.appspot.apprtc"
+    resource_dirs = [ "androidapp/res" ]
+    assert(resource_dirs != [])  # Mark as used.
   }
 
   rtc_instrumentation_test_apk("AppRTCMobile_test_apk") {
     apk_name = "AppRTCMobileTest"
     android_manifest = "androidtests/AndroidManifest.xml"
-    min_sdk_version = 16
+    min_sdk_version = 21
     target_sdk_version = 21
 
     sources = [
@@ -172,7 +209,11 @@ if (is_android) {
 
     deps = [
       ":AppRTCMobile_javalib",
+      "../sdk/android:base_java",
+      "../sdk/android:camera_java",
       "../sdk/android:libjingle_peerconnection_java",
+      "../sdk/android:peerconnection_java",
+      "../sdk/android:video_api_java",
       "../sdk/android:video_java",
       "//third_party/android_support_test_runner:runner_java",
       "//third_party/junit",
@@ -268,7 +309,7 @@ if (is_ios || (is_mac && target_cpu != "x86")) {
     } else {
       deps += [ "../sdk:mac_framework_objc+link" ]
     }
-    libs = [
+    frameworks = [
       "CoreMedia.framework",
       "QuartzCore.framework",
     ]
@@ -310,7 +351,7 @@ if (is_ios || (is_mac && target_cpu != "x86")) {
         "../sdk:ios_framework_bundle",
       ]
 
-      libs = [ "AVFoundation.framework" ]
+      frameworks = [ "AVFoundation.framework" ]
     }
 
     ios_app_bundle("AppRTCMobile") {
@@ -344,14 +385,18 @@ if (is_ios || (is_mac && target_cpu != "x86")) {
     if (rtc_apprtcmobile_broadcast_extension) {
       bundle_data("AppRTCMobileBroadcastUpload_extension_bundle") {
         testonly = true
-        public_deps = [ ":AppRTCMobileBroadcastUpload" ]  # no-presubmit-check TODO(webrtc:8603)
+        public_deps = [  # no-presubmit-check TODO(webrtc:8603)
+          ":AppRTCMobileBroadcastUpload",  # prevent code format
+        ]
         sources = [ "$root_out_dir/AppRTCMobileBroadcastUpload.appex" ]
         outputs = [ "{{bundle_contents_dir}}/Plugins/{{source_file_part}}" ]
       }
 
       bundle_data("AppRTCMobileBroadcastSetupUI_extension_bundle") {
         testonly = true
-        public_deps = [ ":AppRTCMobileBroadcastSetupUI" ]  # no-presubmit-check TODO(webrtc:8603)
+        public_deps = [  # no-presubmit-check TODO(webrtc:8603)
+          ":AppRTCMobileBroadcastSetupUI",  # prevent code format
+        ]
         sources = [ "$root_out_dir/AppRTCMobileBroadcastSetupUI.appex" ]
         outputs = [ "{{bundle_contents_dir}}/Plugins/{{source_file_part}}" ]
       }
@@ -369,7 +414,7 @@ if (is_ios || (is_mac && target_cpu != "x86")) {
           "../sdk:ios_framework_bundle",
         ]
 
-        libs = [ "ReplayKit.framework" ]
+        frameworks = [ "ReplayKit.framework" ]
       }
 
       ios_appex_bundle("AppRTCMobileBroadcastUpload") {
@@ -393,7 +438,7 @@ if (is_ios || (is_mac && target_cpu != "x86")) {
 
         info_plist = "objc/AppRTCMobile/ios/broadcast_extension/BroadcastSetupUIInfo.plist"
 
-        libs = [ "ReplayKit.framework" ]
+        frameworks = [ "ReplayKit.framework" ]
 
         deps = [ ":AppRTCMobile_ios_bundle_data" ]
       }
@@ -449,6 +494,7 @@ if (is_ios || (is_mac && target_cpu != "x86")) {
         "../modules/audio_processing:api",
         "../pc:libjingle_peerconnection",
         "../rtc_base",
+        "../rtc_base/synchronization:mutex",
         "../sdk:base_objc",
         "../sdk:default_codec_factory_objc",
         "../sdk:helpers_objc",
@@ -507,7 +553,7 @@ if (is_ios || (is_mac && target_cpu != "x86")) {
 
       info_plist = "objc/AppRTCMobile/mac/Info.plist"
 
-      libs = [ "AppKit.framework" ]
+      frameworks = [ "AppKit.framework" ]
 
       ldflags = [
         "-rpath",
@@ -552,10 +598,10 @@ if (is_ios || (is_mac && target_cpu != "x86")) {
     configs += [ ":socketrocket_warning_config" ]
     public_configs = [ ":socketrocket_include_config" ]
 
-    libs = [
+    libs = [ "icucore" ]
+    frameworks = [
       "CFNetwork.framework",
       "Security.framework",
-      "icucore",
     ]
   }
 
@@ -585,7 +631,8 @@ if (is_ios || (is_mac && target_cpu != "x86")) {
         ]
       }
 
-      rtc_ios_xctest_test("apprtcmobile_tests") {
+      rtc_test("apprtcmobile_tests") {
+        is_xctest = true
         info_plist = "objc/AppRTCMobile/ios/Info.plist"
         sources = [ "objc/AppRTCMobile/tests/main.mm" ]
         deps = [
@@ -600,7 +647,7 @@ if (is_ios || (is_mac && target_cpu != "x86")) {
   }
 }
 
-if (is_linux || is_win) {
+if (is_linux || is_chromeos || is_win) {
   rtc_executable("peerconnection_client") {
     testonly = true
     sources = [
@@ -625,6 +672,7 @@ if (is_linux || is_win) {
       "../api/video_codecs:video_codecs_api",
       "../media:rtc_media_base",
       "../p2p:rtc_p2p",
+      "../pc:video_track_source",
       "../rtc_base:checks",
       "../rtc_base/third_party/sigslot",
       "../system_wrappers:field_trial",
@@ -642,9 +690,12 @@ if (is_linux || is_win) {
         "peerconnection/client/main_wnd.h",
       ]
       configs += [ "//build/config/win:windowed" ]
-      deps += [ "../media:rtc_media_base" ]
+      deps += [
+        "../media:rtc_media_base",
+        "../rtc_base:win32",
+      ]
     }
-    if (is_linux) {
+    if (is_linux || is_chromeos) {
       sources += [
         "peerconnection/client/linux/main.cc",
         "peerconnection/client/linux/main_wnd.cc",
@@ -772,6 +823,7 @@ if (is_win || is_android) {
       "../modules/video_capture:video_capture_module",
       "../pc:libjingle_peerconnection",
       "../pc:peerconnection",
+      "../pc:video_track_source",
       "../rtc_base",
       "../test:platform_video_capturer",
       "../test:video_test_common",
@@ -794,6 +846,7 @@ if (is_android) {
       "../sdk/android:camera_java",
       "../sdk/android:libjingle_peerconnection_java",
       "../sdk/android:peerconnection_java",
+      "../sdk/android:video_api_java",
       "../sdk/android:video_java",
       "//third_party/android_deps:com_android_support_support_annotations_java",
     ]
@@ -824,6 +877,7 @@ if (is_android) {
 
     deps = [
       ":AppRTCMobile_javalib",
+      "../sdk/android:peerconnection_java",
       "//base:base_java_test_support",
       "//third_party/google-truth:google_truth_java",
     ]

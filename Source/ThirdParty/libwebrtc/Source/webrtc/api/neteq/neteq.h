@@ -36,7 +36,6 @@ struct NetEqNetworkStatistics {
   uint16_t preferred_buffer_size_ms;  // Target buffer size in ms.
   uint16_t jitter_peaks_found;        // 1 if adding extra delay due to peaky
                                       // jitter; 0 otherwise.
-  uint16_t packet_loss_rate;          // Loss rate (network + late) in Q14.
   uint16_t expand_rate;         // Fraction (of original stream) of synthesized
                                 // audio inserted through expansion (in Q14).
   uint16_t speech_expand_rate;  // Fraction (of original stream) of synthesized
@@ -49,7 +48,6 @@ struct NetEqNetworkStatistics {
                                       // decoding (in Q14).
   uint16_t secondary_discarded_rate;  // Fraction of discarded FEC/RED data (in
                                       // Q14).
-  size_t added_zero_samples;  // Number of zero samples added in "off" mode.
   // Statistics for packet waiting times, i.e., the time between a packet
   // arrives until it is decoded.
   int mean_waiting_time_ms;
@@ -138,6 +136,10 @@ class NetEq {
     bool enable_rtx_handling = false;
     absl::optional<AudioCodecPairId> codec_pair_id;
     bool for_test_no_time_stretching = false;  // Use only for testing.
+    // Adds extra delay to the output of NetEq, without affecting jitter or
+    // loss behavior. This is mainly for testing. Value must be a non-negative
+    // multiple of 10 ms.
+    int extra_output_delay_ms = 0;
   };
 
   enum ReturnCodes { kOK = 0, kFail = -1 };
@@ -195,13 +197,6 @@ class NetEq {
   // Returns 0 on success, -1 on failure.
   virtual int InsertPacket(const RTPHeader& rtp_header,
                            rtc::ArrayView<const uint8_t> payload) = 0;
-
-  // Deprecated. Use the version without the `receive_timestamp` argument.
-  int InsertPacket(const RTPHeader& rtp_header,
-                   rtc::ArrayView<const uint8_t> payload,
-                   uint32_t /*receive_timestamp*/) {
-    return InsertPacket(rtp_header, payload);
-  }
 
   // Lets NetEq know that a packet arrived with an empty payload. This typically
   // happens when empty packets are used for probing the network channel, and
@@ -276,6 +271,9 @@ class NetEq {
   // Writes the current network statistics to |stats|. The statistics are reset
   // after the call.
   virtual int NetworkStatistics(NetEqNetworkStatistics* stats) = 0;
+
+  // Current values only, not resetting any state.
+  virtual NetEqNetworkStatistics CurrentNetworkStatistics() const = 0;
 
   // Returns a copy of this class's lifetime statistics. These statistics are
   // never reset.

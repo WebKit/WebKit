@@ -17,7 +17,6 @@
 #include <memory>
 #include <vector>
 
-#include "api/audio/audio_frame.h"
 #include "common_audio/channel_buffer.h"
 #include "modules/audio_processing/include/audio_processing.h"
 
@@ -109,12 +108,15 @@ class AudioBuffer {
   }
 
   // Copies data into the buffer.
-  void CopyFrom(const AudioFrame* frame);
-  void CopyFrom(const float* const* data, const StreamConfig& stream_config);
+  void CopyFrom(const int16_t* const interleaved_data,
+                const StreamConfig& stream_config);
+  void CopyFrom(const float* const* stacked_data,
+                const StreamConfig& stream_config);
 
   // Copies data from the buffer.
-  void CopyTo(AudioFrame* frame) const;
-  void CopyTo(const StreamConfig& stream_config, float* const* data);
+  void CopyTo(const StreamConfig& stream_config,
+              int16_t* const interleaved_data);
+  void CopyTo(const StreamConfig& stream_config, float* const* stacked_data);
   void CopyTo(AudioBuffer* buffer) const;
 
   // Splits the buffer data into frequency bands.
@@ -145,8 +147,6 @@ class AudioBuffer {
   const float* const* split_channels_const_f(Band band) const {
     return split_channels_const(band);
   }
-  void DeinterleaveFrom(const AudioFrame* frame) { CopyFrom(frame); }
-  void InterleaveTo(AudioFrame* frame) const { CopyTo(frame); }
 
  private:
   FRIEND_TEST_ALL_PREFIXES(AudioBufferTest,

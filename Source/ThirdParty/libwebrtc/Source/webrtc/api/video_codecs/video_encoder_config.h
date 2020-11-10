@@ -84,9 +84,6 @@ class VideoEncoderConfig {
     virtual void FillVideoCodecVp8(VideoCodecVP8* vp8_settings) const;
     virtual void FillVideoCodecVp9(VideoCodecVP9* vp9_settings) const;
     virtual void FillVideoCodecH264(VideoCodecH264* h264_settings) const;
-#ifndef DISABLE_H265
-    virtual void FillVideoCodecH265(VideoCodecH265* h265_settings) const;
-#endif
 
    private:
     ~EncoderSpecificSettings() override {}
@@ -101,17 +98,6 @@ class VideoEncoderConfig {
    private:
     VideoCodecH264 specifics_;
   };
-
-#ifndef DISABLE_H265
-  class H265EncoderSpecificSettings : public EncoderSpecificSettings {
-   public:
-    explicit H265EncoderSpecificSettings(const VideoCodecH265& specifics);
-    void FillVideoCodecH265(VideoCodecH265* h265_settings) const override;
-
-   private:
-    VideoCodecH265 specifics_;
-  };
-#endif
 
   class Vp8EncoderSpecificSettings : public EncoderSpecificSettings {
    public:
@@ -189,6 +175,9 @@ class VideoEncoderConfig {
 
   // Max number of encoded VideoStreams to produce.
   size_t number_of_streams;
+
+  // Legacy Google conference mode flag for simulcast screenshare
+  bool legacy_conference_mode;
 
  private:
   // Access to the copy constructor is private to force use of the Copy()

@@ -11,7 +11,7 @@
 #ifndef AUDIO_AUDIO_LEVEL_H_
 #define AUDIO_AUDIO_LEVEL_H_
 
-#include "rtc_base/critical_section.h"
+#include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/thread_annotations.h"
 
 namespace webrtc {
@@ -59,14 +59,14 @@ class AudioLevel {
  private:
   enum { kUpdateFrequency = 10 };
 
-  rtc::CriticalSection crit_sect_;
+  mutable Mutex mutex_;
 
-  int16_t abs_max_ RTC_GUARDED_BY(crit_sect_);
-  int16_t count_ RTC_GUARDED_BY(crit_sect_);
-  int16_t current_level_full_range_ RTC_GUARDED_BY(crit_sect_);
+  int16_t abs_max_ RTC_GUARDED_BY(mutex_);
+  int16_t count_ RTC_GUARDED_BY(mutex_);
+  int16_t current_level_full_range_ RTC_GUARDED_BY(mutex_);
 
-  double total_energy_ RTC_GUARDED_BY(crit_sect_) = 0.0;
-  double total_duration_ RTC_GUARDED_BY(crit_sect_) = 0.0;
+  double total_energy_ RTC_GUARDED_BY(mutex_) = 0.0;
+  double total_duration_ RTC_GUARDED_BY(mutex_) = 0.0;
 };
 
 }  // namespace voe

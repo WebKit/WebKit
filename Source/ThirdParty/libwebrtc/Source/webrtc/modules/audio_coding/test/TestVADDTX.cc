@@ -166,11 +166,13 @@ void TestVadDtx::Run(std::string in_filename,
     int i = &st - stats;  // Calculate the current position in stats.
     switch (expects[i]) {
       case 0: {
-        EXPECT_EQ(0u, st) << "stats[" << i << "] error.";
+        EXPECT_EQ(0u, st) << "stats[" << i << "] error. Output file "
+                          << out_filename;
         break;
       }
       case 1: {
-        EXPECT_GT(st, 0u) << "stats[" << i << "] error.";
+        EXPECT_GT(st, 0u) << "stats[" << i << "] error. Output file "
+                          << out_filename;
         break;
       }
     }
@@ -189,25 +191,29 @@ void TestWebRtcVadDtx::Perform() {
 
 // Test various configurations on VAD/DTX.
 void TestWebRtcVadDtx::RunTestCases(const SdpAudioFormat& codec_format) {
+  RegisterCodec(codec_format, absl::nullopt);
   Test(/*new_outfile=*/true,
-       /*expect_dtx_enabled=*/RegisterCodec(codec_format, absl::nullopt));
+       /*expect_vad_packets=*/codec_format.name == "opus");
 
+  RegisterCodec(codec_format, Vad::kVadAggressive);
   Test(/*new_outfile=*/false,
-       /*expect_dtx_enabled=*/RegisterCodec(codec_format, Vad::kVadAggressive));
+       /*expect_vad_packets=*/true);
 
+  RegisterCodec(codec_format, Vad::kVadLowBitrate);
   Test(/*new_outfile=*/false,
-       /*expect_dtx_enabled=*/RegisterCodec(codec_format, Vad::kVadLowBitrate));
+       /*expect_vad_packets=*/true);
 
-  Test(/*new_outfile=*/false, /*expect_dtx_enabled=*/RegisterCodec(
-           codec_format, Vad::kVadVeryAggressive));
+  RegisterCodec(codec_format, Vad::kVadVeryAggressive);
+  Test(/*new_outfile=*/false, /*expect_vad_packets=*/true);
 
+  RegisterCodec(codec_format, Vad::kVadNormal);
   Test(/*new_outfile=*/false,
-       /*expect_dtx_enabled=*/RegisterCodec(codec_format, Vad::kVadNormal));
+       /*expect_vad_packets=*/true);
 }
 
 // Set the expectation and run the test.
-void TestWebRtcVadDtx::Test(bool new_outfile, bool expect_dtx_enabled) {
-  int expects[] = {-1, 1, expect_dtx_enabled, 0, 0};
+void TestWebRtcVadDtx::Test(bool new_outfile, bool expect_vad_packets) {
+  int expects[] = {-1, 1, expect_vad_packets ? 1 : -1, 0, 0};
   if (new_outfile) {
     output_file_num_++;
   }
@@ -220,16 +226,20 @@ void TestWebRtcVadDtx::Test(bool new_outfile, bool expect_dtx_enabled) {
 
 // Following is the implementation of TestOpusDtx.
 void TestOpusDtx::Perform() {
-  int expects[] = {0, 1, 0, 0, 0};
+  int expects[] = {0, 0, 0, 0, 0};
 
   // Register Opus as send codec
   std::string out_filename =
       webrtc::test::OutputPath() + "testOpusDtx_outFile_mono.pcm";
   RegisterCodec({"opus", 48000, 2}, absl::nullopt);
+
   acm_send_->ModifyEncoder([](std::unique_ptr<AudioEncoder>* encoder_ptr) {
     (*encoder_ptr)->SetDtx(false);
   });
 
+  expects[static_cast<int>(AudioFrameType::kEmptyFrame)] = 0;
+  expects[static_cast<int>(AudioFrameType::kAudioFrameSpeech)] = 1;
+  expects[static_cast<int>(AudioFrameType::kAudioFrameCN)] = 1;
   Run(webrtc::test::ResourcePath("audio_coding/testfile32kHz", "pcm"), 32000, 1,
       out_filename, false, expects);
 
@@ -237,6 +247,7 @@ void TestOpusDtx::Perform() {
     (*encoder_ptr)->SetDtx(true);
   });
   expects[static_cast<int>(AudioFrameType::kEmptyFrame)] = 1;
+  expects[static_cast<int>(AudioFrameType::kAudioFrameSpeech)] = 1;
   expects[static_cast<int>(AudioFrameType::kAudioFrameCN)] = 1;
   Run(webrtc::test::ResourcePath("audio_coding/testfile32kHz", "pcm"), 32000, 1,
       out_filename, true, expects);
@@ -244,19 +255,26 @@ void TestOpusDtx::Perform() {
   // Register stereo Opus as send codec
   out_filename = webrtc::test::OutputPath() + "testOpusDtx_outFile_stereo.pcm";
   RegisterCodec({"opus", 48000, 2, {{"stereo", "1"}}}, absl::nullopt);
+
   acm_send_->ModifyEncoder([](std::unique_ptr<AudioEncoder>* encoder_ptr) {
     (*encoder_ptr)->SetDtx(false);
   });
   expects[static_cast<int>(AudioFrameType::kEmptyFrame)] = 0;
+  expects[static_cast<int>(AudioFrameType::kAudioFrameSpeech)] = 1;
   expects[static_cast<int>(AudioFrameType::kAudioFrameCN)] = 0;
   Run(webrtc::test::ResourcePath("audio_coding/teststereo32kHz", "pcm"), 32000,
       2, out_filename, false, expects);
 
   acm_send_->ModifyEncoder([](std::unique_ptr<AudioEncoder>* encoder_ptr) {
     (*encoder_ptr)->SetDtx(true);
+    // The default bitrate will not generate frames recognized as CN on desktop
+    // since the frames will be encoded as CELT. Set a low target bitrate to get
+    // consistent behaviour across platforms.
+    (*encoder_ptr)->OnReceivedTargetAudioBitrate(24000);
   });
 
   expects[static_cast<int>(AudioFrameType::kEmptyFrame)] = 1;
+  expects[static_cast<int>(AudioFrameType::kAudioFrameSpeech)] = 1;
   expects[static_cast<int>(AudioFrameType::kAudioFrameCN)] = 1;
   Run(webrtc::test::ResourcePath("audio_coding/teststereo32kHz", "pcm"), 32000,
       2, out_filename, true, expects);

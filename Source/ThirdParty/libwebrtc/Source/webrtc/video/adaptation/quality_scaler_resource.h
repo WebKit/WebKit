@@ -12,47 +12,48 @@
 #define VIDEO_ADAPTATION_QUALITY_SCALER_RESOURCE_H_
 
 #include <memory>
+#include <queue>
 #include <string>
 
+#include "absl/types/optional.h"
+#include "api/scoped_refptr.h"
+#include "api/video/video_adaptation_reason.h"
 #include "api/video_codecs/video_encoder.h"
-#include "call/adaptation/resource.h"
+#include "call/adaptation/degradation_preference_provider.h"
+#include "call/adaptation/resource_adaptation_processor_interface.h"
 #include "modules/video_coding/utility/quality_scaler.h"
+#include "rtc_base/ref_counted_object.h"
+#include "rtc_base/task_queue.h"
+#include "video/adaptation/video_stream_encoder_resource.h"
 
 namespace webrtc {
 
 // Handles interaction with the QualityScaler.
-// TODO(hbos): Add unittests specific to this class, it is currently only tested
-// indirectly by usage in the ResourceAdaptationProcessor (which is only tested
-// because of its usage in VideoStreamEncoder); all tests are currently in
-// video_stream_encoder_unittest.cc.
-// TODO(https://crbug.com/webrtc/11222): Move this class to the
-// video/adaptation/ subdirectory.
-class QualityScalerResource : public Resource,
-                              public AdaptationObserverInterface {
+class QualityScalerResource : public VideoStreamEncoderResource,
+                              public QualityScalerQpUsageHandlerInterface {
  public:
+  static rtc::scoped_refptr<QualityScalerResource> Create();
+
   QualityScalerResource();
+  ~QualityScalerResource() override;
 
   bool is_started() const;
 
   void StartCheckForOveruse(VideoEncoder::QpThresholds qp_thresholds);
   void StopCheckForOveruse();
-
   void SetQpThresholds(VideoEncoder::QpThresholds qp_thresholds);
   bool QpFastFilterLow();
   void OnEncodeCompleted(const EncodedImage& encoded_image,
                          int64_t time_sent_in_us);
   void OnFrameDropped(EncodedImageCallback::DropReason reason);
 
-  // AdaptationObserverInterface implementation.
-  // TODO(https://crbug.com/webrtc/11222, 11172): This resource also needs to
-  // signal when its stable to support multi-stream aware modules.
-  void AdaptUp(AdaptReason reason) override;
-  bool AdaptDown(AdaptReason reason) override;
-
-  std::string name() const override { return "QualityScalerResource"; }
+  // QualityScalerQpUsageHandlerInterface implementation.
+  void OnReportQpUsageHigh() override;
+  void OnReportQpUsageLow() override;
 
  private:
-  std::unique_ptr<QualityScaler> quality_scaler_;
+  std::unique_ptr<QualityScaler> quality_scaler_
+      RTC_GUARDED_BY(encoder_queue());
 };
 
 }  // namespace webrtc

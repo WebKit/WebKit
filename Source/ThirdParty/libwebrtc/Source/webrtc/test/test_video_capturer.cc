@@ -84,7 +84,7 @@ void TestVideoCapturer::UpdateVideoAdapter() {
 }
 
 VideoFrame TestVideoCapturer::MaybePreprocess(const VideoFrame& frame) {
-  rtc::CritScope crit(&lock_);
+  MutexLock lock(&lock_);
   if (preprocessor_ != nullptr) {
     return preprocessor_->Preprocess(frame);
   } else {

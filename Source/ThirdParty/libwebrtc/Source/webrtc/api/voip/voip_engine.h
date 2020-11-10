@@ -1,12 +1,12 @@
-//
-//  Copyright (c) 2020 The WebRTC project authors. All Rights Reserved.
-//
-//  Use of this source code is governed by a BSD-style license
-//  that can be found in the LICENSE file in the root of the source
-//  tree. An additional intellectual property rights grant can be found
-//  in the file PATENTS.  All contributing project authors may
-//  be found in the AUTHORS file in the root of the source tree.
-//
+/*
+ *  Copyright (c) 2020 The WebRTC project authors. All Rights Reserved.
+ *
+ *  Use of this source code is governed by a BSD-style license
+ *  that can be found in the LICENSE file in the root of the source
+ *  tree. An additional intellectual property rights grant can be found
+ *  in the file PATENTS.  All contributing project authors may
+ *  be found in the AUTHORS file in the root of the source tree.
+ */
 
 #ifndef API_VOIP_VOIP_ENGINE_H_
 #define API_VOIP_VOIP_ENGINE_H_
@@ -16,51 +16,62 @@ namespace webrtc {
 class VoipBase;
 class VoipCodec;
 class VoipNetwork;
+class VoipDtmf;
 
-// VoipEngine interfaces
+// VoipEngine is the main interface serving as the entry point for all VoIP
+// APIs. A single instance of VoipEngine should suffice the most of the need for
+// typical VoIP applications as it handles multiple media sessions including a
+// specialized session type like ad-hoc mesh conferencing. Below example code
+// describes the typical sequence of API usage. Each API header contains more
+// description on what the methods are used for.
 //
-// These pointer interfaces are valid as long as VoipEngine is available.
-// Therefore, application must synchronize the usage within the life span of
-// created VoipEngine instance.
+//   // Caller is responsible of setting desired audio components.
+//   VoipEngineConfig config;
+//   config.encoder_factory = CreateBuiltinAudioEncoderFactory();
+//   config.decoder_factory = CreateBuiltinAudioDecoderFactory();
+//   config.task_queue_factory = CreateDefaultTaskQueueFactory();
+//   config.audio_device =
+//       AudioDeviceModule::Create(AudioDeviceModule::kPlatformDefaultAudio,
+//                                 config.task_queue_factory.get());
+//   config.audio_processing = AudioProcessingBuilder().Create();
 //
-//   auto voip_engine =
-//       webrtc::VoipEngineBuilder()
-//           .SetAudioEncoderFactory(CreateBuiltinAudioEncoderFactory())
-//           .SetAudioDecoderFactory(CreateBuiltinAudioDecoderFactory())
-//           .Create();
+//   auto voip_engine = CreateVoipEngine(std::move(config));
+//   if (!voip_engine) return some_failure;
 //
-//   auto voip_base = voip_engine->Base();
-//   auto voip_codec = voip_engine->Codec();
-//   auto voip_network = voip_engine->Network();
+//   auto& voip_base = voip_engine->Base();
+//   auto& voip_codec = voip_engine->Codec();
+//   auto& voip_network = voip_engine->Network();
 //
-//   VoipChannel::Config config = { &app_transport_, 0xdeadc0de };
-//   int channel = voip_base.CreateChannel(config);
+//   absl::optional<ChannelId> channel =
+//       voip_base.CreateChannel(&app_transport_);
+//   if (!channel) return some_failure;
 //
-//   // After SDP offer/answer, payload type and codec usage have been
-//   // decided through negotiation.
-//   voip_codec.SetSendCodec(channel, ...);
-//   voip_codec.SetReceiveCodecs(channel, ...);
+//   // After SDP offer/answer, set payload type and codecs that have been
+//   // decided through SDP negotiation.
+//   voip_codec.SetSendCodec(*channel, ...);
+//   voip_codec.SetReceiveCodecs(*channel, ...);
 //
-//   // Start Send/Playout on voip channel.
-//   voip_base.StartSend(channel);
-//   voip_base.StartPlayout(channel);
+//   // Start sending and playing RTP on voip channel.
+//   voip_base.StartSend(*channel);
+//   voip_base.StartPlayout(*channel);
 //
-//   // Inject received rtp/rtcp thru voip network interface.
-//   voip_network.ReceivedRTPPacket(channel, rtp_data, rtp_size);
-//   voip_network.ReceivedRTCPPacket(channel, rtcp_data, rtcp_size);
+//   // Inject received RTP/RTCP through VoipNetwork interface.
+//   voip_network.ReceivedRTPPacket(*channel, ...);
+//   voip_network.ReceivedRTCPPacket(*channel, ...);
 //
 //   // Stop and release voip channel.
-//   voip_base.StopSend(channel);
-//   voip_base.StopPlayout(channel);
+//   voip_base.StopSend(*channel);
+//   voip_base.StopPlayout(*channel);
+//   voip_base.ReleaseChannel(*channel);
 //
-//   voip_base.ReleaseChannel(channel);
-//
+// Current VoipEngine defines three sub-API classes and is subject to expand in
+// near future.
 class VoipEngine {
  public:
   virtual ~VoipEngine() = default;
 
   // VoipBase is the audio session management interface that
-  // create/release/start/stop one-to-one audio media session.
+  // creates/releases/starts/stops an one-to-one audio media session.
   virtual VoipBase& Base() = 0;
 
   // VoipNetwork provides injection APIs that would enable application
@@ -70,6 +81,9 @@ class VoipEngine {
 
   // VoipCodec provides codec configuration APIs for encoder and decoders.
   virtual VoipCodec& Codec() = 0;
+
+  // VoipDtmf provides DTMF event APIs to register and send DTMF events.
+  virtual VoipDtmf& Dtmf() = 0;
 };
 
 }  // namespace webrtc

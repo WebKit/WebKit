@@ -90,8 +90,8 @@ class Resampler {
   size_t num_channels_;
 
   // Extra instance for stereo
-  Resampler* slave_left_;
-  Resampler* slave_right_;
+  Resampler* helper_left_;
+  Resampler* helper_right_;
 };
 
 }  // namespace webrtc

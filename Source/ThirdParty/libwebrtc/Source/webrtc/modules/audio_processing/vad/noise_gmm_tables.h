@@ -13,6 +13,8 @@
 #ifndef MODULES_AUDIO_PROCESSING_VAD_NOISE_GMM_TABLES_H_
 #define MODULES_AUDIO_PROCESSING_VAD_NOISE_GMM_TABLES_H_
 
+namespace webrtc {
+
 static const int kNoiseGmmNumMixtures = 12;
 static const int kNoiseGmmDim = 3;
 
@@ -74,4 +76,7 @@ static const double kNoiseGmmWeights[kNoiseGmmNumMixtures] = {
     -1.79789356118641e+01, -1.42830169160894e+01, -1.56500228061379e+01,
     -1.83124990950113e+01, -1.69979436177477e+01, -1.12329424387828e+01,
     -1.41311785780639e+01, -1.47171861448585e+01, -1.35963362781839e+01};
+
+}  // namespace webrtc
+
 #endif  // MODULES_AUDIO_PROCESSING_VAD_NOISE_GMM_TABLES_H_

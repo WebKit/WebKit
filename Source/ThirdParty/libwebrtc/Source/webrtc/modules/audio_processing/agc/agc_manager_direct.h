@@ -22,7 +22,6 @@
 namespace webrtc {
 
 class MonoAgc;
-class AudioFrame;
 class GainControl;
 
 // Direct interface to use AGC to set volume and compression values.

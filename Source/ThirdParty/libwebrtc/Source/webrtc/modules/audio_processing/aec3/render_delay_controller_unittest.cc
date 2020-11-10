@@ -325,7 +325,7 @@ TEST(RenderDelayController, DISABLED_AlignmentWithJitter) {
 #if RTC_DCHECK_IS_ON && GTEST_HAS_DEATH_TEST && !defined(WEBRTC_ANDROID)
 
 // Verifies the check for the capture signal block size.
-TEST(RenderDelayController, WrongCaptureSize) {
+TEST(RenderDelayControllerDeathTest, WrongCaptureSize) {
   std::vector<std::vector<float>> block(
       1, std::vector<float>(kBlockSize - 1, 0.f));
   EchoCanceller3Config config;
@@ -345,7 +345,7 @@ TEST(RenderDelayController, WrongCaptureSize) {
 // Verifies the check for correct sample rate.
 // TODO(peah): Re-enable the test once the issue with memory leaks during DEATH
 // tests on test bots has been fixed.
-TEST(RenderDelayController, DISABLED_WrongSampleRate) {
+TEST(RenderDelayControllerDeathTest, DISABLED_WrongSampleRate) {
   for (auto rate : {-1, 0, 8001, 16001}) {
     SCOPED_TRACE(ProduceDebugText(rate));
     EchoCanceller3Config config;

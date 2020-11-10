@@ -193,7 +193,7 @@ EncodedImage MultiplexEncodedImagePacker::PackAndRelease(
   combined_image.SetEncodedData(buffer);
 
   // header
-  header_offset = PackHeader(combined_image.data(), header);
+  header_offset = PackHeader(buffer->data(), header);
   RTC_DCHECK_EQ(header.first_component_header_offset,
                 kMultiplexImageHeaderSize);
 

@@ -97,14 +97,14 @@ TEST(RenderDelayBuffer, AlignFromDelay) {
 // Verifies the check for feasible delay.
 // TODO(peah): Re-enable the test once the issue with memory leaks during DEATH
 // tests on test bots has been fixed.
-TEST(RenderDelayBuffer, DISABLED_WrongDelay) {
+TEST(RenderDelayBufferDeathTest, DISABLED_WrongDelay) {
   std::unique_ptr<RenderDelayBuffer> delay_buffer(
       RenderDelayBuffer::Create(EchoCanceller3Config(), 48000, 1));
   EXPECT_DEATH(delay_buffer->AlignFromDelay(21), "");
 }
 
 // Verifies the check for the number of bands in the inserted blocks.
-TEST(RenderDelayBuffer, WrongNumberOfBands) {
+TEST(RenderDelayBufferDeathTest, WrongNumberOfBands) {
   for (auto rate : {16000, 32000, 48000}) {
     for (size_t num_channels : {1, 2, 8}) {
       SCOPED_TRACE(ProduceDebugText(rate));
@@ -120,7 +120,7 @@ TEST(RenderDelayBuffer, WrongNumberOfBands) {
 }
 
 // Verifies the check for the number of channels in the inserted blocks.
-TEST(RenderDelayBuffer, WrongNumberOfChannels) {
+TEST(RenderDelayBufferDeathTest, WrongNumberOfChannels) {
   for (auto rate : {16000, 32000, 48000}) {
     for (size_t num_channels : {1, 2, 8}) {
       SCOPED_TRACE(ProduceDebugText(rate));
@@ -136,7 +136,7 @@ TEST(RenderDelayBuffer, WrongNumberOfChannels) {
 }
 
 // Verifies the check of the length of the inserted blocks.
-TEST(RenderDelayBuffer, WrongBlockLength) {
+TEST(RenderDelayBufferDeathTest, WrongBlockLength) {
   for (auto rate : {16000, 32000, 48000}) {
     for (size_t num_channels : {1, 2, 8}) {
       SCOPED_TRACE(ProduceDebugText(rate));

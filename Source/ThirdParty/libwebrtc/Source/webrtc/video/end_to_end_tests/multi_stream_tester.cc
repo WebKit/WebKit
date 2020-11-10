@@ -102,9 +102,9 @@ void MultiStreamTester::RunTest() {
       VideoReceiveStream::Config receive_config(receiver_transport.get());
       receive_config.rtp.remote_ssrc = ssrc;
       receive_config.rtp.local_ssrc = test::CallTest::kReceiverLocalVideoSsrc;
+      receive_config.decoder_factory = &decoder_factory;
       VideoReceiveStream::Decoder decoder =
           test::CreateMatchingDecoder(send_config);
-      decoder.decoder_factory = &decoder_factory;
       receive_config.decoders.push_back(decoder);
 
       UpdateReceiveConfig(i, &receive_config);

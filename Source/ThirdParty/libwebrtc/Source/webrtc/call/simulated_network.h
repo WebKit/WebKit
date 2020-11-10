@@ -20,9 +20,9 @@
 #include "api/test/simulated_network.h"
 #include "api/units/data_size.h"
 #include "api/units/timestamp.h"
-#include "rtc_base/critical_section.h"
 #include "rtc_base/race_checker.h"
 #include "rtc_base/random.h"
+#include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/thread_annotations.h"
 #include "rtc_base/thread_checker.h"
 
@@ -62,6 +62,8 @@ class SimulatedNetwork : public SimulatedNetworkInterface {
 
   // Sets a new configuration. This won't affect packets already in the pipe.
   void SetConfig(const Config& config) override;
+  void UpdateConfig(std::function<void(BuiltInNetworkBehaviorConfig*)>
+                        config_modifier) override;
   void PauseTransmissionUntil(int64_t until_us) override;
 
   // NetworkBehaviorInterface
@@ -94,7 +96,7 @@ class SimulatedNetwork : public SimulatedNetworkInterface {
       RTC_RUN_ON(&process_checker_);
   ConfigState GetConfigState() const;
 
-  rtc::CriticalSection config_lock_;
+  mutable Mutex config_lock_;
 
   // |process_checker_| guards the data structures involved in delay and loss
   // processes, such as the packet queues.

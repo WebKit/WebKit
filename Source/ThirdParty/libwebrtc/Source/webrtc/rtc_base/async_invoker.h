@@ -87,7 +87,7 @@ namespace rtc {
 //   destruction. This can be done by starting each chain of invocations on the
 //   same thread on which it will be destroyed, or by using some other
 //   synchronization method.
-class AsyncInvoker : public MessageHandler {
+class AsyncInvoker : public MessageHandlerAutoCleanup {
  public:
   AsyncInvoker();
   ~AsyncInvoker() override;
@@ -167,97 +167,6 @@ class AsyncInvoker : public MessageHandler {
   friend class AsyncClosure;
 
   RTC_DISALLOW_COPY_AND_ASSIGN(AsyncInvoker);
-};
-
-// Similar to AsyncInvoker, but guards against the Thread being destroyed while
-// there are outstanding dangling pointers to it. It will connect to the current
-// thread in the constructor, and will get notified when that thread is
-// destroyed. After GuardedAsyncInvoker is constructed, it can be used from
-// other threads to post functors to the thread it was constructed on. If that
-// thread dies, any further calls to AsyncInvoke() will be safely ignored.
-class GuardedAsyncInvoker : public sigslot::has_slots<> {
- public:
-  GuardedAsyncInvoker();
-  ~GuardedAsyncInvoker() override;
-
-  // Synchronously execute all outstanding calls we own, and wait for calls to
-  // complete before returning. Optionally filter by message id. The destructor
-  // will not wait for outstanding calls, so if that behavior is desired, call
-  // Flush() first. Returns false if the thread has died.
-  bool Flush(uint32_t id = MQID_ANY);
-
-  // Call |functor| asynchronously with no callback upon completion. Returns
-  // immediately. Returns false if the thread has died.
-  template <class ReturnT, class FunctorT>
-  bool AsyncInvoke(const Location& posted_from,
-                   FunctorT&& functor,
-                   uint32_t id = 0) {
-    CritScope cs(&crit_);
-    if (thread_ == nullptr)
-      return false;
-    invoker_.AsyncInvoke<ReturnT, FunctorT>(
-        posted_from, thread_, std::forward<FunctorT>(functor), id);
-    return true;
-  }
-
-  // Call |functor| asynchronously with |delay_ms|, with no callback upon
-  // completion. Returns immediately. Returns false if the thread has died.
-  template <class ReturnT, class FunctorT>
-  bool AsyncInvokeDelayed(const Location& posted_from,
-                          FunctorT&& functor,
-                          uint32_t delay_ms,
-                          uint32_t id = 0) {
-    CritScope cs(&crit_);
-    if (thread_ == nullptr)
-      return false;
-    invoker_.AsyncInvokeDelayed<ReturnT, FunctorT>(
-        posted_from, thread_, std::forward<FunctorT>(functor), delay_ms, id);
-    return true;
-  }
-
-  // Call |functor| asynchronously, calling |callback| when done. Returns false
-  // if the thread has died.
-  template <class ReturnT, class FunctorT, class HostT>
-  bool AsyncInvoke(const Location& posted_from,
-                   const Location& callback_posted_from,
-                   FunctorT&& functor,
-                   void (HostT::*callback)(ReturnT),
-                   HostT* callback_host,
-                   uint32_t id = 0) {
-    CritScope cs(&crit_);
-    if (thread_ == nullptr)
-      return false;
-    invoker_.AsyncInvoke<ReturnT, FunctorT, HostT>(
-        posted_from, callback_posted_from, thread_,
-        std::forward<FunctorT>(functor), callback, callback_host, id);
-    return true;
-  }
-
-  // Call |functor| asynchronously calling |callback| when done. Overloaded for
-  // void return. Returns false if the thread has died.
-  template <class ReturnT, class FunctorT, class HostT>
-  bool AsyncInvoke(const Location& posted_from,
-                   const Location& callback_posted_from,
-                   FunctorT&& functor,
-                   void (HostT::*callback)(),
-                   HostT* callback_host,
-                   uint32_t id = 0) {
-    CritScope cs(&crit_);
-    if (thread_ == nullptr)
-      return false;
-    invoker_.AsyncInvoke<ReturnT, FunctorT, HostT>(
-        posted_from, callback_posted_from, thread_,
-        std::forward<FunctorT>(functor), callback, callback_host, id);
-    return true;
-  }
-
- private:
-  // Callback when |thread_| is destroyed.
-  void ThreadDestroyed();
-
-  CriticalSection crit_;
-  Thread* thread_ RTC_GUARDED_BY(crit_);
-  AsyncInvoker invoker_ RTC_GUARDED_BY(crit_);
 };
 
 }  // namespace rtc

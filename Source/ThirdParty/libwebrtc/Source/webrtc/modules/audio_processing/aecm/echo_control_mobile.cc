@@ -23,6 +23,10 @@ extern "C" {
 }
 #include "modules/audio_processing/aecm/aecm_core.h"
 
+namespace webrtc {
+
+namespace {
+
 #define BUF_SIZE_FRAMES 50  // buffer size (frames)
 // Maximum length of resampled signal. Must be an integer multiple of frames
 // (ceil(1/(1 + MIN_SKEW)*2) + 1)*FRAME_LEN
@@ -75,6 +79,8 @@ typedef struct {
   AecmCore* aecmCore;
 } AecMobile;
 
+}  // namespace
+
 // Estimates delay to set the position of the farend buffer read pointer
 // (controlled by knownDelay)
 static int WebRtcAecm_EstBufDelay(AecMobile* aecm, short msInSndCardBuf);
@@ -83,7 +89,8 @@ static int WebRtcAecm_EstBufDelay(AecMobile* aecm, short msInSndCardBuf);
 static int WebRtcAecm_DelayComp(AecMobile* aecm);
 
 void* WebRtcAecm_Create() {
-  AecMobile* aecm = static_cast<AecMobile*>(malloc(sizeof(AecMobile)));
+  // Allocate zero-filled memory.
+  AecMobile* aecm = static_cast<AecMobile*>(calloc(1, sizeof(AecMobile)));
 
   aecm->aecmCore = WebRtcAecm_CreateCore();
   if (!aecm->aecmCore) {
@@ -96,8 +103,6 @@ void* WebRtcAecm_Create() {
     WebRtcAecm_Free(aecm);
     return NULL;
   }
-
-  aecm->initFlag = 0;
 
 #ifdef AEC_DEBUG
   aecm->aecmCore->farFile = fopen("aecFar.pcm", "wb");
@@ -590,3 +595,5 @@ static int WebRtcAecm_DelayComp(AecMobile* aecm) {
 
   return 0;
 }
+
+}  // namespace webrtc

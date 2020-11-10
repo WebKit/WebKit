@@ -89,7 +89,7 @@ TEST(FrameCombiner, BasicApiCallsLimiter) {
 }
 
 // There are DCHECKs in place to check for invalid parameters.
-TEST(FrameCombiner, DebugBuildCrashesWithManyChannels) {
+TEST(FrameCombinerDeathTest, DebugBuildCrashesWithManyChannels) {
   FrameCombiner combiner(true);
   for (const int rate : {8000, 18000, 34000, 48000}) {
     for (const int number_of_channels : {10, 20, 21}) {
@@ -118,7 +118,7 @@ TEST(FrameCombiner, DebugBuildCrashesWithManyChannels) {
   }
 }
 
-TEST(FrameCombiner, DebugBuildCrashesWithHighRate) {
+TEST(FrameCombinerDeathTest, DebugBuildCrashesWithHighRate) {
   FrameCombiner combiner(true);
   for (const int rate : {50000, 96000, 128000, 196000}) {
     for (const int number_of_channels : {1, 2, 3}) {

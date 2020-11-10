@@ -39,7 +39,7 @@ SctpTransport::~SctpTransport() {
 }
 
 SctpTransportInformation SctpTransport::Information() const {
-  rtc::CritScope scope(&lock_);
+  MutexLock lock(&lock_);
   return info_;
 }
 
@@ -66,7 +66,7 @@ void SctpTransport::Clear() {
   RTC_DCHECK_RUN_ON(owner_thread_);
   RTC_DCHECK(internal());
   {
-    rtc::CritScope scope(&lock_);
+    MutexLock lock(&lock_);
     // Note that we delete internal_sctp_transport_, but
     // only drop the reference to dtls_transport_.
     dtls_transport_ = nullptr;
@@ -80,7 +80,7 @@ void SctpTransport::SetDtlsTransport(
   RTC_DCHECK_RUN_ON(owner_thread_);
   SctpTransportState next_state;
   {
-    rtc::CritScope scope(&lock_);
+    MutexLock lock(&lock_);
     next_state = info_.state();
     dtls_transport_ = transport;
     if (internal_sctp_transport_) {
@@ -103,7 +103,7 @@ void SctpTransport::Start(int local_port,
                           int remote_port,
                           int max_message_size) {
   {
-    rtc::CritScope scope(&lock_);
+    MutexLock lock(&lock_);
     // Record max message size on calling thread.
     info_ = SctpTransportInformation(info_.state(), info_.dtls_transport(),
                                      max_message_size, info_.MaxChannels());
@@ -125,7 +125,7 @@ void SctpTransport::UpdateInformation(SctpTransportState state) {
   bool must_send_update;
   SctpTransportInformation info_copy(SctpTransportState::kNew);
   {
-    rtc::CritScope scope(&lock_);
+    MutexLock lock(&lock_);
     must_send_update = (state != info_.state());
     // TODO(https://bugs.webrtc.org/10358): Update max channels from internal
     // SCTP transport when available.
@@ -149,7 +149,7 @@ void SctpTransport::UpdateInformation(SctpTransportState state) {
 void SctpTransport::OnAssociationChangeCommunicationUp() {
   RTC_DCHECK_RUN_ON(owner_thread_);
   {
-    rtc::CritScope scope(&lock_);
+    MutexLock lock(&lock_);
     RTC_DCHECK(internal_sctp_transport_);
     if (internal_sctp_transport_->max_outbound_streams() &&
         internal_sctp_transport_->max_inbound_streams()) {

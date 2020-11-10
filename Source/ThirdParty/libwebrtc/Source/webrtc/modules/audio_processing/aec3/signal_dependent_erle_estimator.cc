@@ -122,7 +122,7 @@ SignalDependentErleEstimator::SignalDependentErleEstimator(
     size_t num_capture_channels)
     : min_erle_(config.erle.min),
       num_sections_(config.erle.num_sections),
-      num_blocks_(config.filter.main.length_blocks),
+      num_blocks_(config.filter.refined.length_blocks),
       delay_headroom_blocks_(config.delay.delay_headroom_samples / kBlockSize),
       band_to_subband_(FormSubbandMap()),
       max_erle_(SetMaxErleSubbands(config.erle.max_l,
@@ -261,9 +261,9 @@ void SignalDependentErleEstimator::UpdateCorrectionFactors(
       for (size_t subband = 0; subband < kSubbands; ++subband) {
         // When aggregating the number of active sections in the filter for
         // different bands we choose to take the minimum of all of them. As an
-        // example, if for one of the bands it is the direct path its main
+        // example, if for one of the bands it is the direct path its refined
         // contributor to the final echo estimate, we consider the direct path
-        // is as well the main contributor for the subband that contains that
+        // is as well the refined contributor for the subband that contains that
         // particular band. That aggregate number of sections will be later used
         // as the identifier of the erle estimator that needs to be updated.
         RTC_DCHECK_LE(kBandBoundaries[subband + 1],

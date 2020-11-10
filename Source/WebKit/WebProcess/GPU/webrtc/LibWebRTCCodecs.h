@@ -52,7 +52,6 @@ class RemoteVideoSample;
 
 namespace webrtc {
 class VideoFrame;
-class WebKitRTPFragmentationHeader;
 struct WebKitEncodedFrameInfo;
 }
 
@@ -109,7 +108,7 @@ public:
 private:
     void failedDecoding(RTCDecoderIdentifier);
     void completedDecoding(RTCDecoderIdentifier, uint32_t timeStamp, WebCore::RemoteVideoSample&&);
-    void completedEncoding(RTCEncoderIdentifier, IPC::DataReference&&, const webrtc::WebKitEncodedFrameInfo&, webrtc::WebKitRTPFragmentationHeader&&);
+    void completedEncoding(RTCEncoderIdentifier, IPC::DataReference&&, const webrtc::WebKitEncodedFrameInfo&);
     RetainPtr<CVPixelBufferRef> convertToBGRA(CVPixelBufferRef);
 
 private:

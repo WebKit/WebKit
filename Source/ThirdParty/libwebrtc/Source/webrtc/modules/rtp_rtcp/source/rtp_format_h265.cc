@@ -15,6 +15,7 @@
 #include "modules/rtp_rtcp/source/byte_io.h"
 #include "modules/rtp_rtcp/source/rtp_format_h265.h"
 #include "modules/rtp_rtcp/source/rtp_packet_to_send.h"
+#include "modules/video_coding/codecs/h265/include/h265_globals.h"
 #include "rtc_base/logging.h"
 using namespace rtc;
 
@@ -102,19 +103,16 @@ bool ParseApStartOffsets(const uint8_t* nalu_ptr,
 RtpPacketizerH265::RtpPacketizerH265(
     rtc::ArrayView<const uint8_t> payload,
     PayloadSizeLimits limits,
-    H265PacketizationMode packetization_mode,
-    const RTPFragmentationHeader& fragmentation)
+    H265PacketizationMode packetization_mode)
     : limits_(limits),
       num_packets_left_(0) {
   // Guard against uninitialized memory in packetization_mode.
   RTC_CHECK(packetization_mode == H265PacketizationMode::NonInterleaved ||
             packetization_mode == H265PacketizationMode::SingleNalUnit);
 
-  for (size_t i = 0; i < fragmentation.fragmentationVectorSize; ++i) {
-    const uint8_t* fragment =
-        payload.data() + fragmentation.fragmentationOffset[i];
-    const size_t fragment_length = fragmentation.fragmentationLength[i];
-    input_fragments_.push_back(Fragment(fragment, fragment_length));
+  for (const auto& nalu :
+       H265::FindNaluIndices(payload.data(), payload.size())) {
+    input_fragments_.push_back(Fragment(payload.data() + nalu.payload_start_offset, nalu.payload_size));
   }
 
   if (!GeneratePackets(packetization_mode)) {

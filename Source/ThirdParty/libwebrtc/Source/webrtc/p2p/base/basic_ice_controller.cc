@@ -92,7 +92,7 @@ bool BasicIceController::HasPingableConnection() const {
   });
 }
 
-std::pair<Connection*, int> BasicIceController::SelectConnectionToPing(
+IceControllerInterface::PingResult BasicIceController::SelectConnectionToPing(
     int64_t last_ping_sent_ms) {
   // When the selected connection is not receiving or not writable, or any
   // active connection has not been pinged enough times, use the weak ping
@@ -110,8 +110,8 @@ std::pair<Connection*, int> BasicIceController::SelectConnectionToPing(
   if (rtc::TimeMillis() >= last_ping_sent_ms + ping_interval) {
     conn = FindNextPingableConnection();
   }
-  int delay = std::min(ping_interval, check_receiving_interval());
-  return std::make_pair(const_cast<Connection*>(conn), delay);
+  PingResult res(conn, std::min(ping_interval, check_receiving_interval()));
+  return res;
 }
 
 void BasicIceController::MarkConnectionPinged(const Connection* conn) {

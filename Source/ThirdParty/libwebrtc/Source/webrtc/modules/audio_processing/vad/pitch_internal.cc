@@ -12,6 +12,8 @@
 
 #include <cmath>
 
+namespace webrtc {
+
 // A 4-to-3 linear interpolation.
 // The interpolation constants are derived as following:
 // Input pitch parameters are updated every 7.5 ms. Within a 30-ms interval
@@ -49,3 +51,5 @@ void GetSubframesPitchParameters(int sampling_rate_hz,
     pitch_lag_hz[n] = (sampling_rate_hz) / (pitch_lag_hz[n]);
   }
 }
+
+}  // namespace webrtc

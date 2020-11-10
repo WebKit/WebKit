@@ -108,7 +108,7 @@
       # build anything).
       # TODO(http://crbug.com/1029452): Nuke these and isolate on builder
       # instead?
-      'Perf Android32 (K Nexus5)': 'release_bot_x64',
+      'Perf Android32 (M Nexus5)': 'release_bot_x64',
       'Perf Android32 (M AOSP Nexus6)': 'release_bot_x64',
       'Perf Android64 (M Nexus5X)': 'release_bot_x64',
       'Perf Android64 (O Pixel2)': 'release_bot_x64',
@@ -404,13 +404,16 @@
       'ios', 'release_bot', 'arm64', 'no_ios_code_signing', 'ios_use_goma_rbe'
     ],
     'ios_internal_debug_bot_arm64': [
-      'ios', 'debug_bot', 'arm64', 'ios_use_goma_rbe'
+      'ios', 'debug_bot', 'arm64', 'ios_use_goma_rbe',
+      'ios_code_signing_identity_description',
     ],
     'ios_internal_release_bot_arm64': [
-      'ios', 'release_bot', 'arm64', 'ios_use_goma_rbe'
+      'ios', 'release_bot', 'arm64', 'ios_use_goma_rbe',
+      'ios_code_signing_identity_description',
     ],
     'ios_internal_pure_release_bot_arm64': [
-      'ios', 'pure_release_bot', 'arm64', 'ios_use_goma_rbe'
+      'ios', 'pure_release_bot', 'arm64', 'ios_use_goma_rbe',
+      'ios_code_signing_identity_description',
     ],
     'ios_debug_bot_x64': [
       'ios', 'debug_bot', 'x64', 'ios_use_goma_rbe'
@@ -504,6 +507,10 @@
 
     'goma': {
       'gn_args': 'use_goma=true',
+    },
+
+    'ios_code_signing_identity_description': {
+      'gn_args': 'ios_code_signing_identity_description="Apple Development"',
     },
 
     'ios_use_goma_rbe': {

@@ -115,11 +115,6 @@ specific_include_rules = {
     "+rtc_base/ref_count.h",
   ],
 
-  "media_transport_interface\.h": [
-    "+rtc_base/copy_on_write_buffer.h",  # As used by datachannelinterface.h
-    "+rtc_base/network_route.h",
-  ],
-
   "packet_socket_factory\.h": [
     "+rtc_base/proxy_info.h",
     "+rtc_base/async_packet_socket.h",
@@ -133,7 +128,7 @@ specific_include_rules = {
     "+media/base/media_config.h",
     "+media/base/media_engine.h",
     "+p2p/base/port_allocator.h",
-    "+rtc_base/network.h",
+    "+rtc_base/network_monitor_factory.h",
     "+rtc_base/rtc_certificate.h",
     "+rtc_base/rtc_certificate_generator.h",
     "+rtc_base/socket_address.h",
@@ -177,6 +172,9 @@ specific_include_rules = {
     "+rtc_base/ref_count.h",
   ],
 
+  "set_local_description_observer_interface\.h": [
+    "+rtc_base/ref_count.h",
+  ],
   "set_remote_description_observer_interface\.h": [
     "+rtc_base/ref_count.h",
   ],
@@ -246,6 +244,10 @@ specific_include_rules = {
     "+modules/audio_processing/include/audio_processing.h",
   ],
 
+  "echo_detector_creator\.h": [
+    "+modules/audio_processing/include/audio_processing.h",
+  ],
+
   "fake_frame_decryptor\.h": [
     "+rtc_base/ref_counted_object.h",
   ],
@@ -259,7 +261,6 @@ specific_include_rules = {
   ],
 
   "simulated_network\.h": [
-    "+rtc_base/critical_section.h",
     "+rtc_base/random.h",
     "+rtc_base/thread_annotations.h",
   ],

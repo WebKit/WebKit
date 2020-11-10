@@ -42,7 +42,8 @@ rtc_library("primitives") {
   ]
 
   if (!build_with_mozilla) {
-    deps += [ "../../rtc_base" ]  # TODO(kjellander): Cleanup in bugs.webrtc.org/3806.
+    deps += [ "../../rtc_base" ]  # TODO(kjellander): Cleanup in
+                                  # bugs.webrtc.org/3806.
   }
 }
 
@@ -75,6 +76,9 @@ if (rtc_include_tests) {
         "window_finder_unittest.cc",
       ]
       public_configs = [ ":x11_config" ]
+      if (is_win) {
+        deps += [ "../../rtc_base:win32" ]
+      }
     }
   }
 
@@ -114,16 +118,18 @@ if (rtc_include_tests) {
       ":primitives",
       "../../rtc_base:checks",
       "../../rtc_base:rtc_base_approved",
-      "../../system_wrappers:cpu_features_api",
+      "../../system_wrappers",
       "../../test:test_support",
     ]
     if (rtc_desktop_capture_supported) {
       sources += [
         "screen_capturer_helper_unittest.cc",
-        "screen_capturer_mac_unittest.cc",
         "screen_capturer_unittest.cc",
         "window_capturer_unittest.cc",
       ]
+      if (is_mac) {
+        sources += [ "screen_capturer_mac_unittest.cc" ]
+      }
       deps += [ ":desktop_capture_mock" ]
       public_configs = [ ":x11_config" ]
     }
@@ -139,7 +145,7 @@ if (rtc_include_tests) {
       "screen_drawer.h",
     ]
 
-    if (is_linux) {
+    if (is_linux || is_chromeos) {
       sources += [ "screen_drawer_linux.cc" ]
     }
 
@@ -185,7 +191,7 @@ if (rtc_include_tests) {
   }
 }
 
-if (is_linux) {
+if (is_linux || is_chromeos) {
   if (rtc_use_pipewire) {
     pkg_config("gio") {
       packages = [
@@ -224,7 +230,8 @@ if (is_linux) {
 
 rtc_source_set("desktop_capture") {
   visibility = [ "*" ]
-  public_deps = [ ":desktop_capture_generic" ]  # no-presubmit-check TODO(webrtc:8603)
+  public_deps =  # no-presubmit-check TODO(webrtc:8603)
+      [ ":desktop_capture_generic" ]
   if (is_mac) {
     public_deps += [ ":desktop_capture_objc" ]
   }
@@ -260,7 +267,7 @@ if (is_mac) {
       "../../rtc_base/system:rtc_export",
       "../../sdk:helpers_objc",
     ]
-    libs = [
+    frameworks = [
       "AppKit.framework",
       "IOKit.framework",
       "IOSurface.framework",
@@ -355,7 +362,7 @@ rtc_library("desktop_capture_generic") {
       "window_capturer_linux.cc",
     ]
 
-    if (build_with_mozilla && is_linux) {
+    if (build_with_mozilla && (is_linux || is_chromeos)) {
       sources += [
         "app_capturer_linux.cc",
         "linux/app_capturer_x11.cc",
@@ -398,6 +405,7 @@ rtc_library("desktop_capture_generic") {
       "Xfixes",
       "Xrender",
       "Xrandr",
+      "Xtst",
     ]
   }
 
@@ -408,6 +416,21 @@ rtc_library("desktop_capture_generic") {
       "window_capturer_null.cc",
     ]
   }
+
+  deps = [
+    ":primitives",
+    "../../api:function_view",
+    "../../api:refcountedbase",
+    "../../api:scoped_refptr",
+    "../../rtc_base",  # TODO(kjellander): Cleanup in bugs.webrtc.org/3806.
+    "../../rtc_base:checks",
+    "../../rtc_base/synchronization:mutex",
+    "../../rtc_base/synchronization:rw_lock_wrapper",
+    "../../rtc_base/system:arch",
+    "../../rtc_base/system:rtc_export",
+    "../../system_wrappers",
+    "../../system_wrappers:metrics",
+  ]
 
   if (is_win) {
     sources += [
@@ -457,6 +480,10 @@ rtc_library("desktop_capture_generic") {
       "win/selected_window_context.h",
       "win/window_capture_utils.cc",
       "win/window_capture_utils.h",
+      "win/window_capturer_win_gdi.cc",
+      "win/window_capturer_win_gdi.h",
+      "win/window_capturer_win_wgc.cc",
+      "win/window_capturer_win_wgc.h",
       "window_capturer_win.cc",
       "window_finder_win.cc",
       "window_finder_win.h",
@@ -465,21 +492,10 @@ rtc_library("desktop_capture_generic") {
       "d3d11.lib",
       "dxgi.lib",
     ]
+    deps += [ "../../rtc_base:win32" ]
   }
 
-  deps = [
-    ":primitives",
-    "../../api:function_view",
-    "../../api:refcountedbase",
-    "../../api:scoped_refptr",
-    "../../rtc_base",  # TODO(kjellander): Cleanup in bugs.webrtc.org/3806.
-    "../../rtc_base:checks",
-    "../../rtc_base/synchronization:rw_lock_wrapper",
-    "../../rtc_base/system:arch",
-    "../../rtc_base/system:rtc_export",
-    "../../system_wrappers",
-    "../../system_wrappers:cpu_features_api",
-    "../../system_wrappers:metrics",
+  absl_deps = [
     "//third_party/abseil-cpp/absl/memory",
     "//third_party/abseil-cpp/absl/strings",
   ]

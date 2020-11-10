@@ -21,7 +21,6 @@
 #include "modules/include/module_common_types_public.h"
 #include "modules/rtp_rtcp/source/rtp_video_header.h"
 #include "modules/video_coding/codecs/vp9/include/vp9_globals.h"
-#include "rtc_base/critical_section.h"
 #include "rtc_base/numerics/sequence_number_util.h"
 #include "rtc_base/thread_annotations.h"
 

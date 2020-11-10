@@ -72,6 +72,22 @@ TEST_F(TestVCMJitterEstimator, TestLowRate) {
   }
 }
 
+TEST_F(TestVCMJitterEstimator, TestLowRateDisabled) {
+  test::ScopedFieldTrials field_trials(
+      "WebRTC-ReducedJitterDelayKillSwitch/Enabled/");
+  SetUp();
+
+  ValueGenerator gen(10);
+  uint64_t time_delta_us = rtc::kNumMicrosecsPerSec / 5;
+  for (int i = 0; i < 60; ++i) {
+    estimator_->UpdateEstimate(gen.Delay(), gen.FrameSize());
+    AdvanceClock(time_delta_us);
+    if (i > 2)
+      EXPECT_GT(estimator_->GetJitterEstimate(0, absl::nullopt), 0);
+    gen.Advance();
+  }
+}
+
 TEST_F(TestVCMJitterEstimator, TestUpperBound) {
   struct TestContext {
     TestContext()

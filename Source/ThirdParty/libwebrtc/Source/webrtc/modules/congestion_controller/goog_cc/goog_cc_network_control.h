@@ -33,7 +33,6 @@
 #include "modules/congestion_controller/goog_cc/delay_based_bwe.h"
 #include "modules/congestion_controller/goog_cc/probe_controller.h"
 #include "modules/congestion_controller/goog_cc/send_side_bandwidth_estimation.h"
-#include "rtc_base/constructor_magic.h"
 #include "rtc_base/experiments/field_trial_parser.h"
 #include "rtc_base/experiments/rate_control_settings.h"
 
@@ -48,6 +47,11 @@ class GoogCcNetworkController : public NetworkControllerInterface {
  public:
   GoogCcNetworkController(NetworkControllerConfig config,
                           GoogCcConfig goog_cc_config);
+
+  GoogCcNetworkController() = delete;
+  GoogCcNetworkController(const GoogCcNetworkController&) = delete;
+  GoogCcNetworkController& operator=(const GoogCcNetworkController&) = delete;
+
   ~GoogCcNetworkController() override;
 
   // NetworkControllerInterface
@@ -87,6 +91,7 @@ class GoogCcNetworkController : public NetworkControllerInterface {
   FieldTrialFlag safe_reset_acknowledged_rate_;
   const bool use_min_allocatable_as_lower_bound_;
   const bool ignore_probes_lower_than_network_estimate_;
+  const bool limit_probes_lower_than_throughput_estimate_;
   const RateControlSettings rate_control_settings_;
   const bool loss_based_stable_rate_;
 
@@ -136,8 +141,6 @@ class GoogCcNetworkController : public NetworkControllerInterface {
   bool previously_in_alr_ = false;
 
   absl::optional<DataSize> current_data_window_;
-
-  RTC_DISALLOW_IMPLICIT_CONSTRUCTORS(GoogCcNetworkController);
 };
 
 }  // namespace webrtc

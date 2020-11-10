@@ -53,7 +53,7 @@ using webrtc::testing::SSE_WRITE;
 using webrtc::testing::StreamSink;
 
 // Sends at a constant rate but with random packet sizes.
-struct Sender : public MessageHandler {
+struct Sender : public MessageHandlerAutoCleanup {
   Sender(Thread* th, AsyncSocket* s, uint32_t rt)
       : thread(th),
         socket(std::make_unique<AsyncUDPSocket>(s)),
@@ -99,7 +99,8 @@ struct Sender : public MessageHandler {
   char dummy[4096];
 };
 
-struct Receiver : public MessageHandler, public sigslot::has_slots<> {
+struct Receiver : public MessageHandlerAutoCleanup,
+                  public sigslot::has_slots<> {
   Receiver(Thread* th, AsyncSocket* s, uint32_t bw)
       : thread(th),
         socket(std::make_unique<AsyncUDPSocket>(s)),

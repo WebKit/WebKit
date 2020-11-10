@@ -67,8 +67,10 @@ std::vector<PacketResult> CreatePacketResults(
 
 class MockUtilityFunction : public PccUtilityFunctionInterface {
  public:
-  MOCK_CONST_METHOD1(Compute,
-                     double(const PccMonitorInterval& monitor_interval));
+  MOCK_METHOD(double,
+              Compute,
+              (const PccMonitorInterval& monitor_interval),
+              (const, override));
 };
 
 }  // namespace

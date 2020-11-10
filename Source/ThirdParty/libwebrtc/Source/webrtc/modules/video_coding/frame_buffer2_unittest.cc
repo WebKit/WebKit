@@ -108,21 +108,26 @@ class FrameObjectFake : public EncodedFrame {
 
 class VCMReceiveStatisticsCallbackMock : public VCMReceiveStatisticsCallback {
  public:
-  MOCK_METHOD3(OnCompleteFrame,
-               void(bool is_keyframe,
-                    size_t size_bytes,
-                    VideoContentType content_type));
-  MOCK_METHOD1(OnDroppedFrames, void(uint32_t frames_dropped));
-  MOCK_METHOD1(OnDiscardedPacketsUpdated, void(int discarded_packets));
-  MOCK_METHOD1(OnFrameCountsUpdated, void(const FrameCounts& frame_counts));
-  MOCK_METHOD6(OnFrameBufferTimingsUpdated,
-               void(int max_decode_ms,
-                    int current_delay_ms,
-                    int target_delay_ms,
-                    int jitter_buffer_ms,
-                    int min_playout_delay_ms,
-                    int render_delay_ms));
-  MOCK_METHOD1(OnTimingFrameInfoUpdated, void(const TimingFrameInfo& info));
+  MOCK_METHOD(void,
+              OnCompleteFrame,
+              (bool is_keyframe,
+               size_t size_bytes,
+               VideoContentType content_type),
+              (override));
+  MOCK_METHOD(void, OnDroppedFrames, (uint32_t frames_dropped), (override));
+  MOCK_METHOD(void,
+              OnFrameBufferTimingsUpdated,
+              (int max_decode_ms,
+               int current_delay_ms,
+               int target_delay_ms,
+               int jitter_buffer_ms,
+               int min_playout_delay_ms,
+               int render_delay_ms),
+              (override));
+  MOCK_METHOD(void,
+              OnTimingFrameInfoUpdated,
+              (const TimingFrameInfo& info),
+              (override));
 };
 
 class TestFrameBuffer2 : public ::testing::Test {
@@ -275,7 +280,7 @@ TEST_F(TestFrameBuffer2, ZeroPlayoutDelay) {
   VCMTiming timing(time_controller_.GetClock());
   buffer_.reset(
       new FrameBuffer(time_controller_.GetClock(), &timing, &stats_callback_));
-  const PlayoutDelay kPlayoutDelayMs = {0, 0};
+  const VideoPlayoutDelay kPlayoutDelayMs = {0, 0};
   std::unique_ptr<FrameObjectFake> test_frame(new FrameObjectFake());
   test_frame->id.picture_id = 0;
   test_frame->SetPlayoutDelay(kPlayoutDelayMs);

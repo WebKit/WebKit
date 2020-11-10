@@ -19,8 +19,8 @@
 #include "api/transport/network_types.h"
 #include "modules/include/module_common_types_public.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
-#include "rtc_base/critical_section.h"
 #include "rtc_base/network/sent_packet.h"
+#include "rtc_base/network_route.h"
 #include "rtc_base/thread_annotations.h"
 #include "rtc_base/thread_checker.h"
 
@@ -32,24 +32,26 @@ struct PacketFeedback {
   Timestamp creation_time = Timestamp::MinusInfinity();
   SentPacket sent;
   // Time corresponding to when the packet was received. Timestamped with the
-  // receiver's clock. For unreceived packet, Timestamp::PlusInfinity() is used.
+  // receiver's clock. For unreceived packet, Timestamp::PlusInfinity() is
+  // used.
   Timestamp receive_time = Timestamp::PlusInfinity();
 
-  // The network route ids that this packet is associated with.
-  uint16_t local_net_id = 0;
-  uint16_t remote_net_id = 0;
+  // The network route that this packet is associated with.
+  rtc::NetworkRoute network_route;
 };
 
 class InFlightBytesTracker {
  public:
   void AddInFlightPacketBytes(const PacketFeedback& packet);
   void RemoveInFlightPacketBytes(const PacketFeedback& packet);
-  DataSize GetOutstandingData(uint16_t local_net_id,
-                              uint16_t remote_net_id) const;
+  DataSize GetOutstandingData(const rtc::NetworkRoute& network_route) const;
 
  private:
-  using RemoteAndLocalNetworkId = std::pair<uint16_t, uint16_t>;
-  std::map<RemoteAndLocalNetworkId, DataSize> in_flight_data_;
+  struct NetworkRouteComparator {
+    bool operator()(const rtc::NetworkRoute& a,
+                    const rtc::NetworkRoute& b) const;
+  };
+  std::map<rtc::NetworkRoute, DataSize, NetworkRouteComparator> in_flight_data_;
 };
 
 class TransportFeedbackAdapter {
@@ -64,9 +66,9 @@ class TransportFeedbackAdapter {
 
   absl::optional<TransportPacketsFeedback> ProcessTransportFeedback(
       const rtcp::TransportFeedback& feedback,
-      Timestamp feedback_time);
+      Timestamp feedback_receive_time);
 
-  void SetNetworkIds(uint16_t local_id, uint16_t remote_id);
+  void SetNetworkRoute(const rtc::NetworkRoute& network_route);
 
   DataSize GetOutstandingData() const;
 
@@ -75,7 +77,7 @@ class TransportFeedbackAdapter {
 
   std::vector<PacketResult> ProcessTransportFeedbackInner(
       const rtcp::TransportFeedback& feedback,
-      Timestamp feedback_time);
+      Timestamp feedback_receive_time);
 
   DataSize pending_untracked_size_ = DataSize::Zero();
   Timestamp last_send_time_ = Timestamp::MinusInfinity();
@@ -91,8 +93,7 @@ class TransportFeedbackAdapter {
   Timestamp current_offset_ = Timestamp::MinusInfinity();
   TimeDelta last_timestamp_ = TimeDelta::MinusInfinity();
 
-  uint16_t local_net_id_ = 0;
-  uint16_t remote_net_id_ = 0;
+  rtc::NetworkRoute network_route_;
 };
 
 }  // namespace webrtc

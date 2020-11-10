@@ -166,8 +166,8 @@ bool PeerConnectionWrapper::SetRemoteDescription(
 bool PeerConnectionWrapper::SetRemoteDescription(
     std::unique_ptr<SessionDescriptionInterface> desc,
     RTCError* error_out) {
-  rtc::scoped_refptr<MockSetRemoteDescriptionObserver> observer =
-      new MockSetRemoteDescriptionObserver();
+  rtc::scoped_refptr<FakeSetRemoteDescriptionObserver> observer =
+      new FakeSetRemoteDescriptionObserver();
   pc()->SetRemoteDescription(std::move(desc), observer);
   EXPECT_EQ_WAIT(true, observer->called(), kDefaultTimeout);
   bool ok = observer->error().ok();

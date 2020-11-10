@@ -14,6 +14,7 @@
 #include <memory>
 
 #include "rtc_base/stream.h"
+#include "rtc_base/synchronization/mutex.h"
 
 namespace rtc {
 
@@ -103,7 +104,7 @@ class FifoBuffer final : public StreamInterface {
                                 size_t bytes,
                                 size_t offset,
                                 size_t* bytes_read)
-      RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_);
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
 
   // Helper method that implements WriteOffset. Caller must acquire a lock
   // when calling this method.
@@ -111,22 +112,22 @@ class FifoBuffer final : public StreamInterface {
                                  size_t bytes,
                                  size_t offset,
                                  size_t* bytes_written)
-      RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_);
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
 
   // keeps the opened/closed state of the stream
-  StreamState state_ RTC_GUARDED_BY(crit_);
+  StreamState state_ RTC_GUARDED_BY(mutex_);
   // the allocated buffer
-  std::unique_ptr<char[]> buffer_ RTC_GUARDED_BY(crit_);
+  std::unique_ptr<char[]> buffer_ RTC_GUARDED_BY(mutex_);
   // size of the allocated buffer
-  size_t buffer_length_ RTC_GUARDED_BY(crit_);
+  size_t buffer_length_ RTC_GUARDED_BY(mutex_);
   // amount of readable data in the buffer
-  size_t data_length_ RTC_GUARDED_BY(crit_);
+  size_t data_length_ RTC_GUARDED_BY(mutex_);
   // offset to the readable data
-  size_t read_position_ RTC_GUARDED_BY(crit_);
+  size_t read_position_ RTC_GUARDED_BY(mutex_);
   // stream callbacks are dispatched on this thread
   Thread* owner_;
   // object lock
-  CriticalSection crit_;
+  mutable webrtc::Mutex mutex_;
   RTC_DISALLOW_COPY_AND_ASSIGN(FifoBuffer);
 };
 

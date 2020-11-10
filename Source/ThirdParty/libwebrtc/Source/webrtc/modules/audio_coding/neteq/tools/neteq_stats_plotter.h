@@ -28,7 +28,7 @@ class NetEqStatsPlotter : public NetEqSimulationEndedCallback {
                     bool show_concealment_events,
                     std::string base_file_name);
 
-  void SimulationEnded(int64_t simulation_time_ms) override;
+  void SimulationEnded(int64_t simulation_time_ms, NetEq* neteq) override;
 
   NetEqStatsGetter* stats_getter() { return stats_getter_.get(); }
 

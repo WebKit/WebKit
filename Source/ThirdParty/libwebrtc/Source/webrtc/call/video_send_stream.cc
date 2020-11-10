@@ -17,12 +17,31 @@
 
 namespace webrtc {
 
+namespace {
+
+const char* StreamTypeToString(VideoSendStream::StreamStats::StreamType type) {
+  switch (type) {
+    case VideoSendStream::StreamStats::StreamType::kMedia:
+      return "media";
+    case VideoSendStream::StreamStats::StreamType::kRtx:
+      return "rtx";
+    case VideoSendStream::StreamStats::StreamType::kFlexfec:
+      return "flexfec";
+  }
+}
+
+}  // namespace
+
 VideoSendStream::StreamStats::StreamStats() = default;
 VideoSendStream::StreamStats::~StreamStats() = default;
 
 std::string VideoSendStream::StreamStats::ToString() const {
   char buf[1024];
   rtc::SimpleStringBuilder ss(buf);
+  ss << "type: " << StreamTypeToString(type);
+  if (referenced_media_ssrc.has_value())
+    ss << " (for: " << referenced_media_ssrc.value() << ")";
+  ss << ", ";
   ss << "width: " << width << ", ";
   ss << "height: " << height << ", ";
   ss << "key: " << frame_counts.key_frames << ", ";
@@ -64,7 +83,8 @@ std::string VideoSendStream::Stats::ToString(int64_t time_ms) const {
   ss << "#quality_adaptations: " << number_of_quality_adapt_changes;
   ss << '}';
   for (const auto& substream : substreams) {
-    if (!substream.second.is_rtx && !substream.second.is_flexfec) {
+    if (substream.second.type ==
+        VideoSendStream::StreamStats::StreamType::kMedia) {
       ss << " {ssrc: " << substream.first << ", ";
       ss << substream.second.ToString();
       ss << '}';

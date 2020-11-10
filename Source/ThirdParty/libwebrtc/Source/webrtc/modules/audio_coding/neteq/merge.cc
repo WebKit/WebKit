@@ -80,7 +80,7 @@ size_t Merge::Process(int16_t* input,
 
     if (channel == 0) {
       // Downsample, correlate, and find strongest correlation period for the
-      // master (i.e., first) channel only.
+      // reference (i.e., first) channel only.
       // Downsample to 4kHz sample rate.
       Downsample(input_channel.get(), input_length_per_channel,
                  expanded_channel.get(), expanded_length);

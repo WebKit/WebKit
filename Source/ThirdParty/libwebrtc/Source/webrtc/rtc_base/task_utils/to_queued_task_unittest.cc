@@ -126,5 +126,23 @@ TEST(ToQueuedTaskTest, AcceptsMoveOnlyCleanup) {
   RunTask(std::move(task));
 }
 
+TEST(ToQueuedTaskTest, PendingTaskSafetyFlag) {
+  rtc::scoped_refptr<PendingTaskSafetyFlag> flag =
+      PendingTaskSafetyFlag::Create();
+
+  int count = 0;
+  // Create two identical tasks that increment the |count|.
+  auto task1 = ToQueuedTask(flag, [&count]() { ++count; });
+  auto task2 = ToQueuedTask(flag, [&count]() { ++count; });
+
+  EXPECT_EQ(0, count);
+  RunTask(std::move(task1));
+  EXPECT_EQ(1, count);
+  flag->SetNotAlive();
+  // Now task2 should actually not run.
+  RunTask(std::move(task2));
+  EXPECT_EQ(1, count);
+}
+
 }  // namespace
 }  // namespace webrtc

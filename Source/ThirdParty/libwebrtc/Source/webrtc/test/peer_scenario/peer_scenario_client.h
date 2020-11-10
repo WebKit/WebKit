@@ -89,6 +89,7 @@ class PeerScenarioClient {
         {0, EmulatedEndpointConfig()}};
     CallbackHandlers handlers;
     PeerConnectionInterface::RTCConfiguration rtc_config;
+    bool disable_encryption = false;
     Config() { rtc_config.sdp_semantics = SdpSemantics::kUnifiedPlan; }
   };
 
@@ -136,9 +137,13 @@ class PeerScenarioClient {
 
   CallbackHandlers* handlers() { return &handlers_; }
 
-  // Note that there's no provision for munging SDP as that is deprecated
-  // behavior.
-  void CreateAndSetSdp(std::function<void(std::string)> offer_handler);
+  // The |munge_offer| function can be used to munge the SDP, i.e. modify a
+  // local description afer creating it but before setting it. Note that this is
+  // legacy behavior. It's added here only to be able to have test coverage for
+  // scenarios even if they are not spec compliant.
+  void CreateAndSetSdp(
+      std::function<void(SessionDescriptionInterface*)> munge_offer,
+      std::function<void(std::string)> offer_handler);
   void SetSdpOfferAndGetAnswer(std::string remote_offer,
                                std::function<void(std::string)> answer_handler);
   void SetSdpAnswer(

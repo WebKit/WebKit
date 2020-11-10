@@ -18,12 +18,11 @@ namespace webrtc {
 
 class MockRtcpBandwidthObserver : public RtcpBandwidthObserver {
  public:
-  MockRtcpBandwidthObserver();
-  ~MockRtcpBandwidthObserver();
-
-  MOCK_METHOD1(OnReceivedEstimatedBitrate, void(uint32_t));
-  MOCK_METHOD3(OnReceivedRtcpReceiverReport,
-               void(const ReportBlockList&, int64_t, int64_t));
+  MOCK_METHOD(void, OnReceivedEstimatedBitrate, (uint32_t), (override));
+  MOCK_METHOD(void,
+              OnReceivedRtcpReceiverReport,
+              (const ReportBlockList&, int64_t, int64_t),
+              (override));
 };
 }  // namespace webrtc
 #endif  // MODULES_RTP_RTCP_MOCKS_MOCK_RTCP_BANDWIDTH_OBSERVER_H_

@@ -19,7 +19,6 @@
 #include <vector>
 
 #include "api/video/encoded_image.h"
-#include "rtc_base/critical_section.h"
 #include "test/pc/e2e/analyzer/video/encoded_image_data_injector.h"
 
 namespace webrtc {
@@ -64,6 +63,8 @@ class DefaultEncodedImageDataInjector : public EncodedImageDataInjector,
                           bool discard,
                           const EncodedImage& source,
                           int /*coding_entity_id*/) override;
+
+  void Start(int expected_receivers_count) override {}
   EncodedImageExtractionResult ExtractData(const EncodedImage& source,
                                            int coding_entity_id) override;
 };

@@ -55,6 +55,16 @@ webrtc::RtpParameters CreateRtpParametersWithEncodings(StreamParams sp) {
   return parameters;
 }
 
+std::vector<webrtc::RtpExtension> GetDefaultEnabledRtpHeaderExtensions(
+    const RtpHeaderExtensionQueryInterface& query_interface) {
+  std::vector<webrtc::RtpExtension> extensions;
+  for (const auto& entry : query_interface.GetRtpHeaderExtensions()) {
+    if (entry.direction != webrtc::RtpTransceiverDirection::kStopped)
+      extensions.emplace_back(entry.uri, *entry.preferred_id);
+  }
+  return extensions;
+}
+
 webrtc::RTCError CheckRtpParametersValues(
     const webrtc::RtpParameters& rtp_parameters) {
   using webrtc::RTCErrorType;
@@ -151,10 +161,19 @@ webrtc::RTCError CheckRtpParametersInvalidModificationAndValues(
 }
 
 CompositeMediaEngine::CompositeMediaEngine(
-    std::unique_ptr<VoiceEngineInterface> voice_engine,
+    std::unique_ptr<webrtc::WebRtcKeyValueConfig> trials,
+    std::unique_ptr<VoiceEngineInterface> audio_engine,
     std::unique_ptr<VideoEngineInterface> video_engine)
-    : voice_engine_(std::move(voice_engine)),
+    : trials_(std::move(trials)),
+      voice_engine_(std::move(audio_engine)),
       video_engine_(std::move(video_engine)) {}
+
+CompositeMediaEngine::CompositeMediaEngine(
+    std::unique_ptr<VoiceEngineInterface> audio_engine,
+    std::unique_ptr<VideoEngineInterface> video_engine)
+    : CompositeMediaEngine(nullptr,
+                           std::move(audio_engine),
+                           std::move(video_engine)) {}
 
 CompositeMediaEngine::~CompositeMediaEngine() = default;
 

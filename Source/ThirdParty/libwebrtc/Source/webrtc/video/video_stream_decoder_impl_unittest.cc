@@ -27,21 +27,25 @@ using ::testing::Return;
 class MockVideoStreamDecoderCallbacks
     : public VideoStreamDecoderInterface::Callbacks {
  public:
-  MOCK_METHOD0(OnNonDecodableState, void());
-  MOCK_METHOD1(OnContinuousUntil,
-               void(const video_coding::VideoLayerFrameId& key));
-  MOCK_METHOD1(OnEncodedFrame, void(const video_coding::EncodedFrame& frame));
-  MOCK_METHOD3(OnDecodedFrame,
-               void(VideoFrame decodedImage,
-                    absl::optional<int> decode_time_ms,
-                    absl::optional<int> qp));
+  MOCK_METHOD(void, OnNonDecodableState, (), (override));
+  MOCK_METHOD(void,
+              OnContinuousUntil,
+              (const video_coding::VideoLayerFrameId& key),
+              (override));
+  MOCK_METHOD(
+      void,
+      OnDecodedFrame,
+      (VideoFrame frame,
+       const VideoStreamDecoderInterface::Callbacks::FrameInfo& frame_info),
+      (override));
 };
 
 class StubVideoDecoder : public VideoDecoder {
  public:
-  MOCK_METHOD2(InitDecode,
-               int32_t(const VideoCodec* codec_settings,
-                       int32_t number_of_cores));
+  MOCK_METHOD(int32_t,
+              InitDecode,
+              (const VideoCodec*, int32_t number_of_cores),
+              (override));
 
   int32_t Decode(const EncodedImage& input_image,
                  bool missing_frames,
@@ -57,10 +61,12 @@ class StubVideoDecoder : public VideoDecoder {
     return ret_code;
   }
 
-  MOCK_METHOD3(DecodeCall,
-               int32_t(const EncodedImage& input_image,
-                       bool missing_frames,
-                       int64_t render_time_ms));
+  MOCK_METHOD(int32_t,
+              DecodeCall,
+              (const EncodedImage& input_image,
+               bool missing_frames,
+               int64_t render_time_ms),
+              ());
 
   int32_t Release() override { return 0; }
 

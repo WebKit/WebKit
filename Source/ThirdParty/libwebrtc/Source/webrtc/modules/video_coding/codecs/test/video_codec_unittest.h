@@ -20,8 +20,8 @@
 #include "modules/video_coding/include/video_codec_interface.h"
 #include "modules/video_coding/utility/vp8_header_parser.h"
 #include "modules/video_coding/utility/vp9_uncompressed_header_parser.h"
-#include "rtc_base/critical_section.h"
 #include "rtc_base/event.h"
+#include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/thread_annotations.h"
 #include "test/gtest.h"
 
@@ -42,8 +42,7 @@ class VideoCodecUnitTest : public ::testing::Test {
         : test_(test) {}
 
     Result OnEncodedImage(const EncodedImage& frame,
-                          const CodecSpecificInfo* codec_specific_info,
-                          const RTPFragmentationHeader* fragmentation);
+                          const CodecSpecificInfo* codec_specific_info);
 
    private:
     VideoCodecUnitTest* const test_;
@@ -108,7 +107,7 @@ class VideoCodecUnitTest : public ::testing::Test {
   FakeDecodeCompleteCallback decode_complete_callback_;
 
   rtc::Event encoded_frame_event_;
-  rtc::CriticalSection encoded_frame_section_;
+  Mutex encoded_frame_section_;
   size_t wait_for_encoded_frames_threshold_;
   std::vector<EncodedImage> encoded_frames_
       RTC_GUARDED_BY(encoded_frame_section_);
@@ -116,7 +115,7 @@ class VideoCodecUnitTest : public ::testing::Test {
       RTC_GUARDED_BY(encoded_frame_section_);
 
   rtc::Event decoded_frame_event_;
-  rtc::CriticalSection decoded_frame_section_;
+  Mutex decoded_frame_section_;
   absl::optional<VideoFrame> decoded_frame_
       RTC_GUARDED_BY(decoded_frame_section_);
   absl::optional<uint8_t> decoded_qp_ RTC_GUARDED_BY(decoded_frame_section_);

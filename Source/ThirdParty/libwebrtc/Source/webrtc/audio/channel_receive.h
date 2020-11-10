@@ -22,6 +22,7 @@
 #include "api/call/audio_sink.h"
 #include "api/call/transport.h"
 #include "api/crypto/crypto_options.h"
+#include "api/frame_transformer_interface.h"
 #include "api/neteq/neteq_factory.h"
 #include "api/transport/rtp/rtp_source.h"
 #include "call/rtp_packet_sink_interface.h"
@@ -98,12 +99,13 @@ class ChannelReceiveInterface : public RtpPacketSinkInterface {
   virtual double GetTotalOutputDuration() const = 0;
 
   // Stats.
-  virtual NetworkStatistics GetNetworkStatistics() const = 0;
+  virtual NetworkStatistics GetNetworkStatistics(
+      bool get_and_clear_legacy_stats) const = 0;
   virtual AudioDecodingCallStats GetDecodingCallStatistics() const = 0;
 
   // Audio+Video Sync.
   virtual uint32_t GetDelayEstimate() const = 0;
-  virtual void SetMinimumPlayoutDelay(int delay_ms) = 0;
+  virtual bool SetMinimumPlayoutDelay(int delay_ms) = 0;
   virtual bool GetPlayoutRtpTimestamp(uint32_t* rtp_timestamp,
                                       int64_t* time_ms) const = 0;
   virtual void SetEstimatedPlayoutNtpTimestampMs(int64_t ntp_timestamp_ms,
@@ -137,6 +139,12 @@ class ChannelReceiveInterface : public RtpPacketSinkInterface {
   // Used for obtaining RTT for a receive-only channel.
   virtual void SetAssociatedSendChannel(
       const ChannelSendInterface* channel) = 0;
+
+  // Sets a frame transformer between the depacketizer and the decoder, to
+  // transform the received frames before decoding them.
+  virtual void SetDepacketizerToDecoderFrameTransformer(
+      rtc::scoped_refptr<webrtc::FrameTransformerInterface>
+          frame_transformer) = 0;
 };
 
 std::unique_ptr<ChannelReceiveInterface> CreateChannelReceive(
@@ -155,7 +163,8 @@ std::unique_ptr<ChannelReceiveInterface> CreateChannelReceive(
     rtc::scoped_refptr<AudioDecoderFactory> decoder_factory,
     absl::optional<AudioCodecPairId> codec_pair_id,
     rtc::scoped_refptr<FrameDecryptorInterface> frame_decryptor,
-    const webrtc::CryptoOptions& crypto_options);
+    const webrtc::CryptoOptions& crypto_options,
+    rtc::scoped_refptr<FrameTransformerInterface> frame_transformer);
 
 }  // namespace voe
 }  // namespace webrtc

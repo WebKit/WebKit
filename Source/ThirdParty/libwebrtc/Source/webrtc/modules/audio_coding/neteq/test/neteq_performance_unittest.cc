@@ -15,7 +15,7 @@
 
 // Runs a test with 10% packet losses and 10% clock drift, to exercise
 // both loss concealment and time-stretching code.
-TEST(NetEqPerformanceTest, Run) {
+TEST(NetEqPerformanceTest, 10_Pl_10_Drift) {
   const int kSimulationTimeMs = 10000000;
   const int kQuickSimulationTimeMs = 100000;
   const int kLossPeriod = 10;  // Drop every 10th packet.
@@ -33,7 +33,7 @@ TEST(NetEqPerformanceTest, Run) {
 // Runs a test with neither packet losses nor clock drift, to put
 // emphasis on the "good-weather" code path, which is presumably much
 // more lightweight.
-TEST(NetEqPerformanceTest, RunClean) {
+TEST(NetEqPerformanceTest, 0_Pl_0_Drift) {
   const int kSimulationTimeMs = 10000000;
   const int kQuickSimulationTimeMs = 100000;
   const int kLossPeriod = 0;        // No losses.

@@ -14,7 +14,7 @@ from collections import defaultdict
 from contextlib import contextmanager
 
 # Files and directories that are *skipped* by cpplint in the presubmit script.
-CPPLINT_BLACKLIST = [
+CPPLINT_EXCEPTIONS = [
   'api/video_codecs/video_decoder.h',
   'common_types.cc',
   'common_types.h',
@@ -45,12 +45,15 @@ CPPLINT_BLACKLIST = [
 #
 # Justifications for each filter:
 # - build/c++11         : Rvalue ref checks are unreliable (false positives),
-#                         include file and feature blacklists are
+#                         include file and feature blocklists are
 #                         google3-specific.
+# - runtime/references  : Mutable references are not banned by the Google
+#                         C++ style guide anymore (starting from May 2020).
 # - whitespace/operators: Same as above (doesn't seem sufficient to eliminate
 #                         all move-related errors).
-BLACKLIST_LINT_FILTERS = [
+DISABLED_LINT_FILTERS = [
   '-build/c++11',
+  '-runtime/references',
   '-whitespace/operators',
 ]
 
@@ -94,14 +97,19 @@ LEGACY_API_DIRS = (
 API_DIRS = NATIVE_API_DIRS[:] + LEGACY_API_DIRS[:]
 
 # TARGET_RE matches a GN target, and extracts the target name and the contents.
-TARGET_RE = re.compile(r'(?P<indent>\s*)\w+\("(?P<target_name>\w+)"\) {'
-                       r'(?P<target_contents>.*?)'
-                       r'(?P=indent)}',
-                       re.MULTILINE | re.DOTALL)
+TARGET_RE = re.compile(
+  r'(?P<indent>\s*)(?P<target_type>\w+)\("(?P<target_name>\w+)"\) {'
+  r'(?P<target_contents>.*?)'
+  r'(?P=indent)}',
+  re.MULTILINE | re.DOTALL)
 
 # SOURCES_RE matches a block of sources inside a GN target.
 SOURCES_RE = re.compile(r'sources \+?= \[(?P<sources>.*?)\]',
                         re.MULTILINE | re.DOTALL)
+
+# DEPS_RE matches a block of sources inside a GN target.
+DEPS_RE = re.compile(r'\bdeps \+?= \[(?P<deps>.*?)\]',
+                     re.MULTILINE | re.DOTALL)
 
 # FILE_PATH_RE matchies a file path.
 FILE_PATH_RE = re.compile(r'"(?P<file_path>(\w|\/)+)(?P<extension>\.\w+)"')
@@ -168,7 +176,7 @@ def CheckNativeApiHeaderChanges(input_api, output_api):
   """Checks to remind proper changing of native APIs."""
   files = []
   source_file_filter = lambda x: input_api.FilterSourceFile(
-      x, white_list=[r'.+\.(gn|gni|h)$'])
+      x, files_to_check=[r'.+\.(gn|gni|h)$'])
   for f in input_api.AffectedSourceFiles(source_file_filter):
     for path in API_DIRS:
       dn = os.path.dirname(f.LocalPath())
@@ -254,9 +262,9 @@ def CheckNoFRIEND_TEST(input_api, output_api,  # pylint: disable=invalid-name
       'use FRIEND_TEST_ALL_PREFIXES() instead.\n' + '\n'.join(problems))]
 
 
-def IsLintBlacklisted(blacklist_paths, file_path):
-  """ Checks if a file is blacklisted for lint check."""
-  for path in blacklist_paths:
+def IsLintDisabled(disabled_paths, file_path):
+  """ Checks if a file is disabled for lint check."""
+  for path in disabled_paths:
     if file_path == path or os.path.dirname(file_path).startswith(path):
       return True
   return False
@@ -264,7 +272,7 @@ def IsLintBlacklisted(blacklist_paths, file_path):
 
 def CheckApprovedFilesLintClean(input_api, output_api,
                                 source_file_filter=None):
-  """Checks that all new or non-blacklisted .cc and .h files pass cpplint.py.
+  """Checks that all new or non-exempt .cc and .h files pass cpplint.py.
   This check is based on CheckChangeLintsClean in
   depot_tools/presubmit_canned_checks.py but has less filters and only checks
   added files."""
@@ -277,22 +285,22 @@ def CheckApprovedFilesLintClean(input_api, output_api,
   cpplint._cpplint_state.ResetErrorCounts()
 
   lint_filters = cpplint._Filters()
-  lint_filters.extend(BLACKLIST_LINT_FILTERS)
+  lint_filters.extend(DISABLED_LINT_FILTERS)
   cpplint._SetFilters(','.join(lint_filters))
 
-  # Create a platform independent blacklist for cpplint.
-  blacklist_paths = [input_api.os_path.join(*path.split('/'))
-                     for path in CPPLINT_BLACKLIST]
+  # Create a platform independent exempt list for cpplint.
+  disabled_paths = [input_api.os_path.join(*path.split('/'))
+                     for path in CPPLINT_EXCEPTIONS]
 
   # Use the strictest verbosity level for cpplint.py (level 1) which is the
   # default when running cpplint.py from command line. To make it possible to
   # work with not-yet-converted code, we're only applying it to new (or
-  # moved/renamed) files and files not listed in CPPLINT_BLACKLIST.
+  # moved/renamed) files and files not listed in CPPLINT_EXCEPTIONS.
   verbosity_level = 1
   files = []
   for f in input_api.AffectedSourceFiles(source_file_filter):
     # Note that moved/renamed files also count as added.
-    if f.Action() == 'A' or not IsLintBlacklisted(blacklist_paths,
+    if f.Action() == 'A' or not IsLintDisabled(disabled_paths,
                                                   f.LocalPath()):
       files.append(f.AbsoluteLocalPath())
 
@@ -336,6 +344,37 @@ def CheckNoSourcesAbove(input_api, gn_files, output_api):
         'Violating GN files:' % '\n'.join(violating_source_entries),
         items=violating_gn_files)]
   return []
+
+
+def CheckAbseilDependencies(input_api, gn_files, output_api):
+  """Checks that Abseil dependencies are declared in `absl_deps`."""
+  absl_re = re.compile(r'third_party/abseil-cpp', re.MULTILINE | re.DOTALL)
+  target_types_to_check = [
+    'rtc_library',
+    'rtc_source_set',
+    'rtc_static_library',
+    'webrtc_fuzzer_test',
+  ]
+  error_msg = ('Abseil dependencies in target "%s" (file: %s) '
+              'should be moved to the "absl_deps" parameter.')
+  errors = []
+
+  for gn_file in gn_files:
+    gn_file_content = input_api.ReadFile(gn_file)
+    for target_match in TARGET_RE.finditer(gn_file_content):
+      target_type = target_match.group('target_type')
+      target_name = target_match.group('target_name')
+      target_contents = target_match.group('target_contents')
+      if target_type in target_types_to_check:
+        for deps_match in DEPS_RE.finditer(target_contents):
+          deps = deps_match.group('deps').splitlines()
+          for dep in deps:
+            if re.search(absl_re, dep):
+              errors.append(
+                output_api.PresubmitError(error_msg % (target_name,
+                                                       gn_file.LocalPath())))
+              break  # no need to warn more than once per target
+  return errors
 
 
 def CheckNoMixingSources(input_api, gn_files, output_api):
@@ -566,8 +605,8 @@ def CheckCheckIncludesIsNotUsed(gn_files, input_api, output_api):
 
 def CheckGnChanges(input_api, output_api):
   file_filter = lambda x: (input_api.FilterSourceFile(
-      x, white_list=(r'.+\.(gn|gni)$',),
-      black_list=(r'.*/presubmit_checks_lib/testdata/.*',)))
+      x, files_to_check=(r'.+\.(gn|gni)$',),
+      files_to_skip=(r'.*/presubmit_checks_lib/testdata/.*',)))
 
   gn_files = []
   for f in input_api.AffectedSourceFiles(file_filter):
@@ -577,6 +616,7 @@ def CheckGnChanges(input_api, output_api):
   if gn_files:
     result.extend(CheckNoSourcesAbove(input_api, gn_files, output_api))
     result.extend(CheckNoMixingSources(input_api, gn_files, output_api))
+    result.extend(CheckAbseilDependencies(input_api, gn_files, output_api))
     result.extend(CheckNoPackageBoundaryViolations(input_api, gn_files,
                                                    output_api))
     result.extend(CheckPublicDepsIsNotUsed(gn_files, input_api, output_api))
@@ -756,7 +796,7 @@ def RunPythonTests(input_api, output_api):
           input_api,
           output_api,
           directory,
-          whitelist=[r'.+_test\.py$']))
+          files_to_check=[r'.+_test\.py$']))
   return input_api.RunTests(tests, parallel=True)
 
 
@@ -810,28 +850,29 @@ def CommonChecks(input_api, output_api):
   results = []
   # Filter out files that are in objc or ios dirs from being cpplint-ed since
   # they do not follow C++ lint rules.
-  black_list = input_api.DEFAULT_BLACK_LIST + (
+  exception_list = input_api.DEFAULT_FILES_TO_SKIP + (
     r".*\bobjc[\\\/].*",
     r".*objc\.[hcm]+$",
   )
-  source_file_filter = lambda x: input_api.FilterSourceFile(x, None, black_list)
+  source_file_filter = lambda x: input_api.FilterSourceFile(x, None,
+                                                            exception_list)
   results.extend(CheckApprovedFilesLintClean(
       input_api, output_api, source_file_filter))
   results.extend(input_api.canned_checks.CheckLicense(
       input_api, output_api, _LicenseHeader(input_api)))
   results.extend(input_api.canned_checks.RunPylint(input_api, output_api,
-      black_list=(r'^base[\\\/].*\.py$',
-                  r'^build[\\\/].*\.py$',
-                  r'^buildtools[\\\/].*\.py$',
-                  r'^infra[\\\/].*\.py$',
-                  r'^ios[\\\/].*\.py$',
-                  r'^out.*[\\\/].*\.py$',
-                  r'^testing[\\\/].*\.py$',
-                  r'^third_party[\\\/].*\.py$',
-                  r'^tools[\\\/].*\.py$',
-                  # TODO(phoglund): should arguably be checked.
-                  r'^tools_webrtc[\\\/]mb[\\\/].*\.py$',
-                  r'^xcodebuild.*[\\\/].*\.py$',),
+      files_to_skip=(r'^base[\\\/].*\.py$',
+                     r'^build[\\\/].*\.py$',
+                     r'^buildtools[\\\/].*\.py$',
+                     r'^infra[\\\/].*\.py$',
+                     r'^ios[\\\/].*\.py$',
+                     r'^out.*[\\\/].*\.py$',
+                     r'^testing[\\\/].*\.py$',
+                     r'^third_party[\\\/].*\.py$',
+                     r'^tools[\\\/].*\.py$',
+                     # TODO(phoglund): should arguably be checked.
+                     r'^tools_webrtc[\\\/]mb[\\\/].*\.py$',
+                     r'^xcodebuild.*[\\\/].*\.py$',),
       pylintrc='pylintrc'))
 
   # TODO(nisse): talk/ is no more, so make below checks simpler?
@@ -847,12 +888,12 @@ def CommonChecks(input_api, output_api):
   # Also we will skip most checks for third_party directory.
   third_party_filter_list = (r'^third_party[\\\/].+',)
   eighty_char_sources = lambda x: input_api.FilterSourceFile(x,
-      black_list=build_file_filter_list + objc_filter_list +
+      files_to_skip=build_file_filter_list + objc_filter_list +
                  third_party_filter_list)
   hundred_char_sources = lambda x: input_api.FilterSourceFile(x,
-      white_list=objc_filter_list)
+      files_to_check=objc_filter_list)
   non_third_party_sources = lambda x: input_api.FilterSourceFile(x,
-      black_list=third_party_filter_list)
+      files_to_skip=third_party_filter_list)
 
   results.extend(input_api.canned_checks.CheckLongLines(
       input_api, output_api, maxlen=80, source_file_filter=eighty_char_sources))
@@ -864,7 +905,7 @@ def CommonChecks(input_api, output_api):
   results.extend(input_api.canned_checks.CheckChangeHasNoStrayWhitespace(
       input_api, output_api, source_file_filter=non_third_party_sources))
   results.extend(input_api.canned_checks.CheckAuthorizedAuthor(
-      input_api, output_api, bot_whitelist=[
+      input_api, output_api, bot_allowlist=[
           'chromium-webrtc-autoroll@webrtc-ci.iam.gserviceaccount.com'
       ]))
   results.extend(input_api.canned_checks.CheckChangeTodoHasOwner(
@@ -899,6 +940,8 @@ def CommonChecks(input_api, output_api):
   results.extend(CheckAbslMemoryInclude(
       input_api, output_api, non_third_party_sources))
   results.extend(CheckBannedAbslMakeUnique(
+      input_api, output_api, non_third_party_sources))
+  results.extend(CheckObjcApiSymbols(
       input_api, output_api, non_third_party_sources))
   return results
 
@@ -976,6 +1019,35 @@ def CheckBannedAbslMakeUnique(input_api, output_api, source_file_filter):
         files)]
   return []
 
+def CheckObjcApiSymbols(input_api, output_api, source_file_filter):
+  rtc_objc_export = re.compile(r'RTC_OBJC_EXPORT(.|\n){26}',
+                               re.MULTILINE | re.DOTALL)
+  file_filter = lambda f: (f.LocalPath().endswith(('.h'))
+                           and source_file_filter(f))
+
+  files = []
+  file_filter = lambda x: (input_api.FilterSourceFile(x)
+                           and source_file_filter(x))
+  for f in input_api.AffectedSourceFiles(file_filter):
+    if not f.LocalPath().endswith('.h') or not 'sdk/objc' in f.LocalPath():
+      continue
+    contents = input_api.ReadFile(f)
+    for match in rtc_objc_export.finditer(contents):
+      export_block = match.group(0)
+      if 'RTC_OBJC_TYPE' not in export_block:
+        files.append(f.LocalPath())
+
+  if len(files):
+    return [output_api.PresubmitError(
+        'RTC_OBJC_EXPORT types must be wrapped into an RTC_OBJC_TYPE() ' +
+        'macro.\n\n' +
+        'For example:\n' +
+        'RTC_OBJC_EXPORT @protocol RTC_OBJC_TYPE(RtcFoo)\n\n' +
+        'RTC_OBJC_EXPORT @interface RTC_OBJC_TYPE(RtcFoo)\n\n' +
+        'Please fix the following files:',
+        files)]
+  return []
+
 def CheckAbslMemoryInclude(input_api, output_api, source_file_filter):
   pattern = input_api.re.compile(
       r'^#include\s*"absl/memory/memory.h"', input_api.re.MULTILINE)
@@ -1033,7 +1105,7 @@ def CheckOrphanHeaders(input_api, output_api, source_file_filter):
   # eval-ed and thus doesn't have __file__.
   error_msg = """{} should be listed in {}."""
   results = []
-  orphan_blacklist = [
+  exempt_paths = [
     os.path.join('tools_webrtc', 'ios', 'SDK'),
   ]
   with _AddToPath(input_api.os_path.join(
@@ -1042,7 +1114,7 @@ def CheckOrphanHeaders(input_api, output_api, source_file_filter):
     from check_orphan_headers import IsHeaderInBuildGn
 
   file_filter = lambda x: input_api.FilterSourceFile(
-      x, black_list=orphan_blacklist) and source_file_filter(x)
+      x, files_to_skip=exempt_paths) and source_file_filter(x)
   for f in input_api.AffectedSourceFiles(file_filter):
     if f.LocalPath().endswith('.h'):
       file_path = os.path.abspath(f.LocalPath())
@@ -1061,7 +1133,7 @@ def CheckNewlineAtTheEndOfProtoFiles(input_api, output_api, source_file_filter):
   error_msg = 'File {} must end with exactly one newline.'
   results = []
   file_filter = lambda x: input_api.FilterSourceFile(
-      x, white_list=(r'.+\.proto$',)) and source_file_filter(x)
+      x, files_to_check=(r'.+\.proto$',)) and source_file_filter(x)
   for f in input_api.AffectedSourceFiles(file_filter):
     file_path = f.LocalPath()
     with open(file_path) as f:

@@ -31,6 +31,7 @@
 #include "modules/audio_processing/aec3/reverb_model_estimator.h"
 #include "modules/audio_processing/aec3/subtractor_output.h"
 #include "modules/audio_processing/aec3/subtractor_output_analyzer.h"
+#include "modules/audio_processing/aec3/transparent_mode.h"
 
 namespace webrtc {
 
@@ -107,7 +108,9 @@ class AecState {
   }
 
   // Returns whether the transparent mode is active
-  bool TransparentMode() const { return transparent_state_.Active(); }
+  bool TransparentModeActive() const {
+    return transparent_state_ && transparent_state_->Active();
+  }
 
   // Takes appropriate action at an echo path change.
   void HandleEchoPathChange(const EchoPathVariability& echo_path_variability);
@@ -135,7 +138,7 @@ class AecState {
       rtc::ArrayView<const std::vector<float>>
           adaptive_filter_impulse_responses,
       const RenderBuffer& render_buffer,
-      rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>> E2_main,
+      rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>> E2_refined,
       rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>> Y2,
       rtc::ArrayView<const SubtractorOutput> subtractor_output);
 
@@ -150,6 +153,9 @@ class AecState {
   std::unique_ptr<ApmDataDumper> data_dumper_;
   const EchoCanceller3Config config_;
   const size_t num_capture_channels_;
+  const bool deactivate_initial_state_reset_at_echo_path_change_;
+  const bool full_reset_at_echo_path_change_;
+  const bool subtractor_analyzer_reset_at_echo_path_change_;
 
   // Class for controlling the transition from the intial state, which in turn
   // controls when the filter parameters for the initial state should be used.
@@ -212,41 +218,8 @@ class AecState {
     absl::optional<DelayEstimate> external_delay_;
   } delay_state_;
 
-  // Class for detecting and toggling the transparent mode which causes the
-  // suppressor to apply no suppression.
-  class TransparentMode {
-   public:
-    explicit TransparentMode(const EchoCanceller3Config& config);
-
-    // Returns whether the transparent mode should be active.
-    bool Active() const { return transparency_activated_; }
-
-    // Resets the state of the detector.
-    void Reset();
-
-    // Updates the detection deciscion based on new data.
-    void Update(int filter_delay_blocks,
-                bool any_filter_consistent,
-                bool any_filter_converged,
-                bool all_filters_diverged,
-                bool active_render,
-                bool saturated_capture);
-
-   private:
-    const bool bounded_erl_;
-    const bool linear_and_stable_echo_path_;
-    size_t capture_block_counter_ = 0;
-    bool transparency_activated_ = false;
-    size_t active_blocks_since_sane_filter_;
-    bool sane_filter_observed_ = false;
-    bool finite_erl_recently_detected_ = false;
-    size_t non_converged_sequence_size_;
-    size_t diverged_sequence_size_ = 0;
-    size_t active_non_converged_sequence_size_ = 0;
-    size_t num_converged_blocks_ = 0;
-    bool recent_convergence_during_activity_ = false;
-    size_t strong_not_saturated_render_blocks_ = 0;
-  } transparent_state_;
+  // Classifier for toggling transparent mode when there is no echo.
+  std::unique_ptr<TransparentMode> transparent_state_;
 
   // Class for analyzing how well the linear filter is, and can be expected to,
   // perform on the current signals. The purpose of this is for using to
@@ -310,7 +283,6 @@ class AecState {
   size_t blocks_with_active_render_ = 0;
   bool capture_signal_saturation_ = false;
   FilterAnalyzer filter_analyzer_;
-  absl::optional<DelayEstimate> external_delay_;
   EchoAudibility echo_audibility_;
   ReverbModelEstimator reverb_model_estimator_;
   ReverbModel avg_render_reverb_;

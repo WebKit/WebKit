@@ -536,7 +536,11 @@ TEST_F(AudioDecoderIsacFloatTest, EncodeDecode) {
 }
 
 TEST_F(AudioDecoderIsacFloatTest, SetTargetBitrate) {
-  TestSetAndGetTargetBitratesWithFixedCodec(audio_encoder_.get(), 32000);
+  EXPECT_EQ(10000, SetAndGetTargetBitrate(audio_encoder_.get(), 9999));
+  EXPECT_EQ(10000, SetAndGetTargetBitrate(audio_encoder_.get(), 10000));
+  EXPECT_EQ(23456, SetAndGetTargetBitrate(audio_encoder_.get(), 23456));
+  EXPECT_EQ(32000, SetAndGetTargetBitrate(audio_encoder_.get(), 32000));
+  EXPECT_EQ(32000, SetAndGetTargetBitrate(audio_encoder_.get(), 32001));
 }
 
 TEST_F(AudioDecoderIsacSwbTest, EncodeDecode) {
@@ -549,7 +553,11 @@ TEST_F(AudioDecoderIsacSwbTest, EncodeDecode) {
 }
 
 TEST_F(AudioDecoderIsacSwbTest, SetTargetBitrate) {
-  TestSetAndGetTargetBitratesWithFixedCodec(audio_encoder_.get(), 32000);
+  EXPECT_EQ(10000, SetAndGetTargetBitrate(audio_encoder_.get(), 9999));
+  EXPECT_EQ(10000, SetAndGetTargetBitrate(audio_encoder_.get(), 10000));
+  EXPECT_EQ(23456, SetAndGetTargetBitrate(audio_encoder_.get(), 23456));
+  EXPECT_EQ(56000, SetAndGetTargetBitrate(audio_encoder_.get(), 56000));
+  EXPECT_EQ(56000, SetAndGetTargetBitrate(audio_encoder_.get(), 56001));
 }
 
 TEST_F(AudioDecoderIsacFixTest, EncodeDecode) {
@@ -569,7 +577,11 @@ TEST_F(AudioDecoderIsacFixTest, EncodeDecode) {
 }
 
 TEST_F(AudioDecoderIsacFixTest, SetTargetBitrate) {
-  TestSetAndGetTargetBitratesWithFixedCodec(audio_encoder_.get(), 32000);
+  EXPECT_EQ(10000, SetAndGetTargetBitrate(audio_encoder_.get(), 9999));
+  EXPECT_EQ(10000, SetAndGetTargetBitrate(audio_encoder_.get(), 10000));
+  EXPECT_EQ(23456, SetAndGetTargetBitrate(audio_encoder_.get(), 23456));
+  EXPECT_EQ(32000, SetAndGetTargetBitrate(audio_encoder_.get(), 32000));
+  EXPECT_EQ(32000, SetAndGetTargetBitrate(audio_encoder_.get(), 32001));
 }
 
 TEST_F(AudioDecoderG722Test, EncodeDecode) {

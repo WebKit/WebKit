@@ -15,10 +15,11 @@
 #include "rtc_base/event.h"
 #include "rtc_base/socket.h"
 #include "rtc_base/socket_server.h"
+#include "rtc_base/system/rtc_export.h"
 
 namespace rtc {
 
-class NullSocketServer : public SocketServer {
+class RTC_EXPORT NullSocketServer : public SocketServer {
  public:
   NullSocketServer();
   ~NullSocketServer() override;

@@ -13,7 +13,7 @@
 
 #include "modules/rtp_rtcp/include/rtp_header_extension_map.h"
 #include "modules/rtp_rtcp/source/rtp_utility.h"
-#include "rtc_base/critical_section.h"
+#include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/thread_annotations.h"
 
 namespace webrtc {
@@ -34,9 +34,8 @@ class RtpHeaderParserImpl : public RtpHeaderParser {
   bool DeregisterRtpHeaderExtension(RtpExtension extension) override;
 
  private:
-  rtc::CriticalSection critical_section_;
-  RtpHeaderExtensionMap rtp_header_extension_map_
-      RTC_GUARDED_BY(critical_section_);
+  mutable Mutex mutex_;
+  RtpHeaderExtensionMap rtp_header_extension_map_ RTC_GUARDED_BY(mutex_);
 };
 
 std::unique_ptr<RtpHeaderParser> RtpHeaderParser::CreateForTest() {
@@ -68,7 +67,7 @@ bool RtpHeaderParserImpl::Parse(const uint8_t* packet,
 
   RtpHeaderExtensionMap map;
   {
-    rtc::CritScope cs(&critical_section_);
+    MutexLock lock(&mutex_);
     map = rtp_header_extension_map_;
   }
 
@@ -79,24 +78,24 @@ bool RtpHeaderParserImpl::Parse(const uint8_t* packet,
   return true;
 }
 bool RtpHeaderParserImpl::RegisterRtpHeaderExtension(RtpExtension extension) {
-  rtc::CritScope cs(&critical_section_);
+  MutexLock lock(&mutex_);
   return rtp_header_extension_map_.RegisterByUri(extension.id, extension.uri);
 }
 
 bool RtpHeaderParserImpl::RegisterRtpHeaderExtension(RTPExtensionType type,
                                                      uint8_t id) {
-  rtc::CritScope cs(&critical_section_);
+  MutexLock lock(&mutex_);
   return rtp_header_extension_map_.RegisterByType(id, type);
 }
 
 bool RtpHeaderParserImpl::DeregisterRtpHeaderExtension(RtpExtension extension) {
-  rtc::CritScope cs(&critical_section_);
+  MutexLock lock(&mutex_);
   return rtp_header_extension_map_.Deregister(
       rtp_header_extension_map_.GetType(extension.id));
 }
 
 bool RtpHeaderParserImpl::DeregisterRtpHeaderExtension(RTPExtensionType type) {
-  rtc::CritScope cs(&critical_section_);
+  MutexLock lock(&mutex_);
   return rtp_header_extension_map_.Deregister(type) == 0;
 }
 }  // namespace webrtc

@@ -18,32 +18,42 @@ FrameForwarder::FrameForwarder() : sink_(nullptr) {}
 FrameForwarder::~FrameForwarder() {}
 
 void FrameForwarder::IncomingCapturedFrame(const VideoFrame& video_frame) {
-  rtc::CritScope lock(&crit_);
+  MutexLock lock(&mutex_);
   if (sink_)
     sink_->OnFrame(video_frame);
 }
 
 void FrameForwarder::AddOrUpdateSink(rtc::VideoSinkInterface<VideoFrame>* sink,
                                      const rtc::VideoSinkWants& wants) {
-  rtc::CritScope lock(&crit_);
+  MutexLock lock(&mutex_);
+  AddOrUpdateSinkLocked(sink, wants);
+}
+
+void FrameForwarder::AddOrUpdateSinkLocked(
+    rtc::VideoSinkInterface<VideoFrame>* sink,
+    const rtc::VideoSinkWants& wants) {
   RTC_DCHECK(!sink_ || sink_ == sink);
   sink_ = sink;
   sink_wants_ = wants;
 }
 
 void FrameForwarder::RemoveSink(rtc::VideoSinkInterface<VideoFrame>* sink) {
-  rtc::CritScope lock(&crit_);
+  MutexLock lock(&mutex_);
   RTC_DCHECK_EQ(sink, sink_);
   sink_ = nullptr;
 }
 
 rtc::VideoSinkWants FrameForwarder::sink_wants() const {
-  rtc::CritScope lock(&crit_);
+  MutexLock lock(&mutex_);
+  return sink_wants_;
+}
+
+rtc::VideoSinkWants FrameForwarder::sink_wants_locked() const {
   return sink_wants_;
 }
 
 bool FrameForwarder::has_sinks() const {
-  rtc::CritScope lock(&crit_);
+  MutexLock lock(&mutex_);
   return sink_ != nullptr;
 }
 

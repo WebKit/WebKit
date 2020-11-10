@@ -24,23 +24,29 @@ namespace webrtc {
 class MockAudioEncoderFactory
     : public ::testing::NiceMock<AudioEncoderFactory> {
  public:
-  MOCK_METHOD0(GetSupportedEncoders, std::vector<AudioCodecSpec>());
-  MOCK_METHOD1(QueryAudioEncoder,
-               absl::optional<AudioCodecInfo>(const SdpAudioFormat& format));
+  MOCK_METHOD(std::vector<AudioCodecSpec>,
+              GetSupportedEncoders,
+              (),
+              (override));
+  MOCK_METHOD(absl::optional<AudioCodecInfo>,
+              QueryAudioEncoder,
+              (const SdpAudioFormat& format),
+              (override));
 
   std::unique_ptr<AudioEncoder> MakeAudioEncoder(
       int payload_type,
       const SdpAudioFormat& format,
-      absl::optional<AudioCodecPairId> codec_pair_id) {
+      absl::optional<AudioCodecPairId> codec_pair_id) override {
     std::unique_ptr<AudioEncoder> return_value;
     MakeAudioEncoderMock(payload_type, format, codec_pair_id, &return_value);
     return return_value;
   }
-  MOCK_METHOD4(MakeAudioEncoderMock,
-               void(int payload_type,
-                    const SdpAudioFormat& format,
-                    absl::optional<AudioCodecPairId> codec_pair_id,
-                    std::unique_ptr<AudioEncoder>* return_value));
+  MOCK_METHOD(void,
+              MakeAudioEncoderMock,
+              (int payload_type,
+               const SdpAudioFormat& format,
+               absl::optional<AudioCodecPairId> codec_pair_id,
+               std::unique_ptr<AudioEncoder>*));
 
   // Creates a MockAudioEncoderFactory with no formats and that may not be
   // invoked to create a codec - useful for initializing a voice engine, for

@@ -1,0 +1,11 @@
+specific_include_rules = {
+  "mutex_abseil\.h": [
+    "+absl/synchronization"
+  ],
+  ".*_benchmark\.cc": [
+    "+benchmark",
+  ],
+  ".*_unittest\.cc": [
+    "+benchmark",
+  ]
+}

@@ -10,7 +10,9 @@
 
 #import <Foundation/Foundation.h>
 
-@class RTCLegacyStatsReport;
+#import <WebRTC/RTCMacros.h>
+
+@class RTC_OBJC_TYPE(RTCLegacyStatsReport);
 
 /** Class used to accumulate stats information into a single displayable string.
  */
@@ -24,6 +26,6 @@
 /** Parses the information in the stats report into an appropriate internal
  *  format used to generate the stats string.
  */
-- (void)parseStatsReport:(RTCLegacyStatsReport *)statsReport;
+- (void)parseStatsReport:(RTC_OBJC_TYPE(RTCLegacyStatsReport) *)statsReport;
 
 @end

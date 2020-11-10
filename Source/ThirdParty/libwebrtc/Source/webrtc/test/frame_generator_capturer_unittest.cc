@@ -22,8 +22,8 @@ using ::testing::Property;
 class MockVideoSinkInterfaceVideoFrame
     : public rtc::VideoSinkInterface<VideoFrame> {
  public:
-  MOCK_METHOD1(OnFrame, void(const VideoFrame& frame));
-  MOCK_METHOD0(OnDiscardedFrame, void());
+  MOCK_METHOD(void, OnFrame, (const VideoFrame& frame), (override));
+  MOCK_METHOD(void, OnDiscardedFrame, (), (override));
 };
 }  // namespace
 TEST(FrameGeneratorCapturerTest, CreateFromConfig) {

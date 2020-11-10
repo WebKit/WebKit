@@ -15,8 +15,8 @@
 #include <stdint.h>
 
 #include "absl/types/optional.h"
-#include "rtc_base/critical_section.h"
 #include "rtc_base/rate_statistics.h"
+#include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/system/rtc_export.h"
 #include "rtc_base/thread_annotations.h"
 
@@ -60,29 +60,31 @@ class RTC_EXPORT BitrateAdjuster {
   bool IsWithinTolerance(uint32_t bitrate_bps, uint32_t target_bitrate_bps);
 
   // Returns smallest possible adjusted value.
-  uint32_t GetMinAdjustedBitrateBps() const RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_);
+  uint32_t GetMinAdjustedBitrateBps() const
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
   // Returns largest possible adjusted value.
-  uint32_t GetMaxAdjustedBitrateBps() const RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_);
+  uint32_t GetMaxAdjustedBitrateBps() const
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
 
   void Reset();
   void UpdateBitrate(uint32_t current_time_ms)
-      RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_);
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
 
-  rtc::CriticalSection crit_;
+  mutable Mutex mutex_;
   const float min_adjusted_bitrate_pct_;
   const float max_adjusted_bitrate_pct_;
   // The bitrate we want.
-  volatile uint32_t target_bitrate_bps_ RTC_GUARDED_BY(crit_);
+  volatile uint32_t target_bitrate_bps_ RTC_GUARDED_BY(mutex_);
   // The bitrate we use to get what we want.
-  volatile uint32_t adjusted_bitrate_bps_ RTC_GUARDED_BY(crit_);
+  volatile uint32_t adjusted_bitrate_bps_ RTC_GUARDED_BY(mutex_);
   // The target bitrate that the adjusted bitrate was computed from.
-  volatile uint32_t last_adjusted_target_bitrate_bps_ RTC_GUARDED_BY(crit_);
+  volatile uint32_t last_adjusted_target_bitrate_bps_ RTC_GUARDED_BY(mutex_);
   // Used to estimate bitrate.
-  RateStatistics bitrate_tracker_ RTC_GUARDED_BY(crit_);
+  RateStatistics bitrate_tracker_ RTC_GUARDED_BY(mutex_);
   // The last time we tried to adjust the bitrate.
-  uint32_t last_bitrate_update_time_ms_ RTC_GUARDED_BY(crit_);
+  uint32_t last_bitrate_update_time_ms_ RTC_GUARDED_BY(mutex_);
   // The number of frames since the last time we tried to adjust the bitrate.
-  uint32_t frames_since_last_update_ RTC_GUARDED_BY(crit_);
+  uint32_t frames_since_last_update_ RTC_GUARDED_BY(mutex_);
 };
 
 }  // namespace webrtc

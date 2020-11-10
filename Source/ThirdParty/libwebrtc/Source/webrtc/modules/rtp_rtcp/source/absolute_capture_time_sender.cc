@@ -47,7 +47,7 @@ absl::optional<AbsoluteCaptureTime> AbsoluteCaptureTimeSender::OnSendPacket(
     absl::optional<int64_t> estimated_capture_clock_offset) {
   const Timestamp send_time = clock_->CurrentTime();
 
-  rtc::CritScope cs(&crit_);
+  MutexLock lock(&mutex_);
 
   if (!ShouldSendExtension(send_time, source, rtp_timestamp,
                            rtp_clock_frequency, absolute_capture_timestamp,

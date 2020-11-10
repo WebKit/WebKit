@@ -29,7 +29,9 @@ class FunctionVideoEncoderFactory final : public VideoEncoderFactory {
  public:
   explicit FunctionVideoEncoderFactory(
       std::function<std::unique_ptr<VideoEncoder>()> create)
-      : create_([create](const SdpVideoFormat&) { return create(); }) {}
+      : create_([create = std::move(create)](const SdpVideoFormat&) {
+          return create();
+        }) {}
   explicit FunctionVideoEncoderFactory(
       std::function<std::unique_ptr<VideoEncoder>(const SdpVideoFormat&)>
           create)
@@ -39,14 +41,6 @@ class FunctionVideoEncoderFactory final : public VideoEncoderFactory {
   std::vector<SdpVideoFormat> GetSupportedFormats() const override {
     RTC_NOTREACHED();
     return {};
-  }
-
-  CodecInfo QueryVideoEncoder(
-      const SdpVideoFormat& /* format */) const override {
-    CodecInfo codec_info;
-    codec_info.is_hardware_accelerated = false;
-    codec_info.has_internal_source = false;
-    return codec_info;
   }
 
   std::unique_ptr<VideoEncoder> CreateVideoEncoder(

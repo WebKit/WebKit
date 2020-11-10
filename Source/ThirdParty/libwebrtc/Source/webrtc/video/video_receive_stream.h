@@ -15,7 +15,6 @@
 #include <vector>
 
 #include "api/task_queue/task_queue_factory.h"
-#include "api/transport/media/media_transport_interface.h"
 #include "api/video/recordable_encoded_frame.h"
 #include "call/rtp_packet_sink_interface.h"
 #include "call/syncable.h"
@@ -24,7 +23,9 @@
 #include "modules/rtp_rtcp/source/source_tracker.h"
 #include "modules/video_coding/frame_buffer2.h"
 #include "modules/video_coding/video_receiver2.h"
+#include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/synchronization/sequence_checker.h"
+#include "rtc_base/system/no_unique_address.h"
 #include "rtc_base/task_queue.h"
 #include "system_wrappers/include/clock.h"
 #include "video/receive_statistics_proxy.h"
@@ -37,7 +38,6 @@ namespace webrtc {
 
 class CallStats;
 class ProcessThread;
-class RTPFragmentationHeader;
 class RtpStreamReceiverInterface;
 class RtpStreamReceiverControllerInterface;
 class RtxReceiveStream;
@@ -99,6 +99,8 @@ class VideoReceiveStream : public webrtc::VideoReceiveStream,
 
   void SetFrameDecryptor(
       rtc::scoped_refptr<FrameDecryptorInterface> frame_decryptor) override;
+  void SetDepacketizerToDecoderFrameTransformer(
+      rtc::scoped_refptr<FrameTransformerInterface> frame_transformer) override;
 
   // Implements rtc::VideoSinkInterface<VideoFrame>.
   void OnFrame(const VideoFrame& video_frame) override;
@@ -125,7 +127,7 @@ class VideoReceiveStream : public webrtc::VideoReceiveStream,
                                          int64_t time_ms) override;
 
   // SetMinimumPlayoutDelay is only called by A/V sync.
-  void SetMinimumPlayoutDelay(int delay_ms) override;
+  bool SetMinimumPlayoutDelay(int delay_ms) override;
 
   std::vector<webrtc::RtpSource> GetSources() const override;
 
@@ -149,9 +151,9 @@ class VideoReceiveStream : public webrtc::VideoReceiveStream,
 
   void UpdateHistograms();
 
-  SequenceChecker worker_sequence_checker_;
-  SequenceChecker module_process_sequence_checker_;
-  SequenceChecker network_sequence_checker_;
+  RTC_NO_UNIQUE_ADDRESS SequenceChecker worker_sequence_checker_;
+  RTC_NO_UNIQUE_ADDRESS SequenceChecker module_process_sequence_checker_;
+  RTC_NO_UNIQUE_ADDRESS SequenceChecker network_sequence_checker_;
 
   TaskQueueFactory* const task_queue_factory_;
 
@@ -204,7 +206,7 @@ class VideoReceiveStream : public webrtc::VideoReceiveStream,
   const int max_wait_for_keyframe_ms_;
   const int max_wait_for_frame_ms_;
 
-  rtc::CriticalSection playout_delay_lock_;
+  mutable Mutex playout_delay_lock_;
 
   // All of them tries to change current min_playout_delay on |timing_| but
   // source of the change request is different in each case. Among them the

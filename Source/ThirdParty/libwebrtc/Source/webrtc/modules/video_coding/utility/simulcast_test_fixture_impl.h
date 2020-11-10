@@ -50,6 +50,7 @@ class SimulcastTestFixtureImpl final : public SimulcastTestFixture {
   void TestSpatioTemporalLayers321PatternEncoder() override;
   void TestStrideEncodeDecode() override;
   void TestDecodeWidthHeightSet() override;
+  void TestEncoderInfoForDefaultTemporalLayerProfileHasFpsAllocation() override;
 
   static void DefaultSettings(VideoCodec* settings,
                               const int* temporal_layer_profile,

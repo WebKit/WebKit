@@ -54,18 +54,18 @@ rtc_static_library("ns") {
     "..:high_pass_filter",
     "../../../api:array_view",
     "../../../common_audio:common_audio_c",
-    "../../../common_audio/third_party/fft4g",
+    "../../../common_audio/third_party/ooura:fft_size_128",
+    "../../../common_audio/third_party/ooura:fft_size_256",
     "../../../rtc_base:checks",
     "../../../rtc_base:rtc_base_approved",
     "../../../rtc_base:safe_minmax",
     "../../../rtc_base/system:arch",
-    "../../../system_wrappers:cpu_features_api",
+    "../../../system_wrappers",
     "../../../system_wrappers:field_trial",
     "../../../system_wrappers:metrics",
     "../utility:cascaded_biquad_filter",
-    "../utility:ooura_fft",
-    "//third_party/abseil-cpp/absl/types:optional",
   ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
 }
 
 if (rtc_include_tests) {
@@ -87,11 +87,11 @@ if (rtc_include_tests) {
       "../../../rtc_base:rtc_base_approved",
       "../../../rtc_base:safe_minmax",
       "../../../rtc_base/system:arch",
-      "../../../system_wrappers:cpu_features_api",
+      "../../../system_wrappers",
       "../../../test:test_support",
       "../utility:cascaded_biquad_filter",
-      "//third_party/abseil-cpp/absl/types:optional",
     ]
+    absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
 
     defines = []
 

@@ -25,6 +25,7 @@
 #include "logging/rtc_event_log/events/rtc_event_bwe_update_loss_based.h"
 #include "logging/rtc_event_log/events/rtc_event_dtls_transport_state.h"
 #include "logging/rtc_event_log/events/rtc_event_dtls_writable_state.h"
+#include "logging/rtc_event_log/events/rtc_event_frame_decoded.h"
 #include "logging/rtc_event_log/events/rtc_event_generic_ack_received.h"
 #include "logging/rtc_event_log/events/rtc_event_generic_packet_received.h"
 #include "logging/rtc_event_log/events/rtc_event_generic_packet_sent.h"
@@ -71,6 +72,7 @@ class EventGenerator {
   std::unique_ptr<RtcEventBweUpdateLossBased> NewBweUpdateLossBased();
   std::unique_ptr<RtcEventDtlsTransportState> NewDtlsTransportState();
   std::unique_ptr<RtcEventDtlsWritableState> NewDtlsWritableState();
+  std::unique_ptr<RtcEventFrameDecoded> NewFrameDecodedEvent(uint32_t ssrc);
   std::unique_ptr<RtcEventGenericAckReceived> NewGenericAckReceived();
   std::unique_ptr<RtcEventGenericPacketReceived> NewGenericPacketReceived();
   std::unique_ptr<RtcEventGenericPacketSent> NewGenericPacketSent();
@@ -188,6 +190,9 @@ class EventVerifier {
   void VerifyLoggedDtlsWritableState(
       const RtcEventDtlsWritableState& original_event,
       const LoggedDtlsWritableState& logged_event) const;
+
+  void VerifyLoggedFrameDecoded(const RtcEventFrameDecoded& original_event,
+                                const LoggedFrameDecoded& logged_event) const;
 
   void VerifyLoggedIceCandidatePairConfig(
       const RtcEventIceCandidatePairConfig& original_event,

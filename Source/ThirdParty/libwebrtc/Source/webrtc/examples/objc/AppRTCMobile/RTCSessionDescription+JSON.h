@@ -10,9 +10,11 @@
 
 #import <WebRTC/RTCSessionDescription.h>
 
-@interface RTCSessionDescription (JSON)
+@interface RTC_OBJC_TYPE (RTCSessionDescription)
+(JSON)
 
-+ (RTCSessionDescription *)descriptionFromJSONDictionary:(NSDictionary *)dictionary;
+    + (RTC_OBJC_TYPE(RTCSessionDescription) *)descriptionFromJSONDictionary
+    : (NSDictionary *)dictionary;
 - (NSData *)JSONData;
 
 @end

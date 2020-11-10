@@ -198,4 +198,22 @@ TEST_F(StunRequestTest, TestNoEmptyRequest) {
   delete res;
 }
 
+// If the response contains an attribute in the "comprehension required" range
+// which is not recognized, the transaction should be considered a failure and
+// the response should be ignored.
+TEST_F(StunRequestTest, TestUnrecognizedComprehensionRequiredAttribute) {
+  StunMessage* req = CreateStunMessage(STUN_BINDING_REQUEST, NULL);
+
+  manager_.Send(new StunRequestThunker(req, this));
+  StunMessage* res = CreateStunMessage(STUN_BINDING_ERROR_RESPONSE, req);
+  res->AddAttribute(StunAttribute::CreateUInt32(0x7777));
+  EXPECT_FALSE(manager_.CheckResponse(res));
+
+  EXPECT_EQ(nullptr, response_);
+  EXPECT_FALSE(success_);
+  EXPECT_FALSE(failure_);
+  EXPECT_FALSE(timeout_);
+  delete res;
+}
+
 }  // namespace cricket

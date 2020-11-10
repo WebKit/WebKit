@@ -39,7 +39,7 @@ SimulatedProcessThread::~SimulatedProcessThread() {
 
 void SimulatedProcessThread::RunReady(Timestamp at_time) {
   CurrentTaskQueueSetter set_current(this);
-  rtc::CritScope lock(&lock_);
+  MutexLock lock(&lock_);
   std::vector<Module*> ready_modules;
   for (auto it = delayed_modules_.begin();
        it != delayed_modules_.end() && it->first <= at_time;
@@ -63,10 +63,10 @@ void SimulatedProcessThread::RunReady(Timestamp at_time) {
   while (!queue_.empty()) {
     std::unique_ptr<QueuedTask> task = std::move(queue_.front());
     queue_.pop_front();
-    lock_.Leave();
+    lock_.Unlock();
     bool should_delete = task->Run();
     RTC_CHECK(should_delete);
-    lock_.Enter();
+    lock_.Lock();
   }
   RTC_DCHECK(queue_.empty());
   if (!delayed_modules_.empty()) {
@@ -81,7 +81,7 @@ void SimulatedProcessThread::RunReady(Timestamp at_time) {
 void SimulatedProcessThread::Start() {
   std::vector<Module*> starting;
   {
-    rtc::CritScope lock(&lock_);
+    MutexLock lock(&lock_);
     if (process_thread_running_)
       return;
     process_thread_running_ = true;
@@ -91,7 +91,7 @@ void SimulatedProcessThread::Start() {
     module->ProcessThreadAttached(this);
 
   Timestamp at_time = handler_->CurrentTime();
-  rtc::CritScope lock(&lock_);
+  MutexLock lock(&lock_);
   for (auto& module : starting)
     delayed_modules_[GetNextTime(module, at_time)].push_back(module);
 
@@ -107,7 +107,7 @@ void SimulatedProcessThread::Start() {
 void SimulatedProcessThread::Stop() {
   std::vector<Module*> stopping;
   {
-    rtc::CritScope lock(&lock_);
+    MutexLock lock(&lock_);
     process_thread_running_ = false;
 
     for (auto& delayed : delayed_modules_) {
@@ -123,7 +123,7 @@ void SimulatedProcessThread::Stop() {
 }
 
 void SimulatedProcessThread::WakeUp(Module* module) {
-  rtc::CritScope lock(&lock_);
+  MutexLock lock(&lock_);
   for (auto it = delayed_modules_.begin(); it != delayed_modules_.end(); ++it) {
     if (RemoveByValue(&it->second, module))
       break;
@@ -136,7 +136,7 @@ void SimulatedProcessThread::WakeUp(Module* module) {
 void SimulatedProcessThread::RegisterModule(Module* module,
                                             const rtc::Location& from) {
   module->ProcessThreadAttached(this);
-  rtc::CritScope lock(&lock_);
+  MutexLock lock(&lock_);
   if (!process_thread_running_) {
     stopped_modules_.push_back(module);
   } else {
@@ -149,7 +149,7 @@ void SimulatedProcessThread::RegisterModule(Module* module,
 void SimulatedProcessThread::DeRegisterModule(Module* module) {
   bool modules_running;
   {
-    rtc::CritScope lock(&lock_);
+    MutexLock lock(&lock_);
     if (!process_thread_running_) {
       RemoveByValue(&stopped_modules_, module);
     } else {
@@ -165,14 +165,14 @@ void SimulatedProcessThread::DeRegisterModule(Module* module) {
 }
 
 void SimulatedProcessThread::PostTask(std::unique_ptr<QueuedTask> task) {
-  rtc::CritScope lock(&lock_);
+  MutexLock lock(&lock_);
   queue_.emplace_back(std::move(task));
   next_run_time_ = Timestamp::MinusInfinity();
 }
 
 void SimulatedProcessThread::PostDelayedTask(std::unique_ptr<QueuedTask> task,
                                              uint32_t milliseconds) {
-  rtc::CritScope lock(&lock_);
+  MutexLock lock(&lock_);
   Timestamp target_time =
       handler_->CurrentTime() + TimeDelta::Millis(milliseconds);
   delayed_tasks_[target_time].push_back(std::move(task));

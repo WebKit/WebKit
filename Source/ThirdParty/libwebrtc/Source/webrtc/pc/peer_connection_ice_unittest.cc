@@ -1041,9 +1041,11 @@ TEST_P(PeerConnectionIceTest, RestartIceCausesNegotiationNeeded) {
   auto callee = CreatePeerConnectionWithAudioVideo();
 
   ASSERT_TRUE(caller->ExchangeOfferAnswerWith(callee.get()));
-  caller->observer()->clear_negotiation_needed();
+  caller->observer()->clear_legacy_renegotiation_needed();
+  caller->observer()->clear_latest_negotiation_needed_event();
   caller->pc()->RestartIce();
-  EXPECT_TRUE(caller->observer()->negotiation_needed());
+  EXPECT_TRUE(caller->observer()->legacy_renegotiation_needed());
+  EXPECT_TRUE(caller->observer()->has_negotiation_needed_event());
 }
 
 // In Unified Plan, "onnegotiationneeded" is spec-compliant, including not
@@ -1064,14 +1066,17 @@ TEST_F(PeerConnectionIceTestUnifiedPlan,
   ASSERT_TRUE(callee->SetRemoteDescription(caller->CreateOfferAndSetAsLocal()));
   // ICE restart becomes needed while an O/A is pending and |caller| is the
   // offerer.
-  caller->observer()->clear_negotiation_needed();
+  caller->observer()->clear_legacy_renegotiation_needed();
+  caller->observer()->clear_latest_negotiation_needed_event();
   caller->pc()->RestartIce();
   // In Unified Plan, the event should not fire until we are back in the stable
   // signaling state.
-  EXPECT_FALSE(caller->observer()->negotiation_needed());
+  EXPECT_FALSE(caller->observer()->legacy_renegotiation_needed());
+  EXPECT_FALSE(caller->observer()->has_negotiation_needed_event());
   ASSERT_TRUE(
       caller->SetRemoteDescription(callee->CreateAnswerAndSetAsLocal()));
-  EXPECT_TRUE(caller->observer()->negotiation_needed());
+  EXPECT_TRUE(caller->observer()->legacy_renegotiation_needed());
+  EXPECT_TRUE(caller->observer()->has_negotiation_needed_event());
 }
 
 TEST_F(PeerConnectionIceTestUnifiedPlan,
@@ -1084,14 +1089,17 @@ TEST_F(PeerConnectionIceTestUnifiedPlan,
   ASSERT_TRUE(caller->SetRemoteDescription(callee->CreateOfferAndSetAsLocal()));
   // ICE restart becomes needed while an O/A is pending and |caller| is the
   // answerer.
-  caller->observer()->clear_negotiation_needed();
+  caller->observer()->clear_legacy_renegotiation_needed();
+  caller->observer()->clear_latest_negotiation_needed_event();
   caller->pc()->RestartIce();
   // In Unified Plan, the event should not fire until we are back in the stable
   // signaling state.
-  EXPECT_FALSE(caller->observer()->negotiation_needed());
+  EXPECT_FALSE(caller->observer()->legacy_renegotiation_needed());
+  EXPECT_FALSE(caller->observer()->has_negotiation_needed_event());
   ASSERT_TRUE(
       callee->SetRemoteDescription(caller->CreateAnswerAndSetAsLocal()));
-  EXPECT_TRUE(caller->observer()->negotiation_needed());
+  EXPECT_TRUE(caller->observer()->legacy_renegotiation_needed());
+  EXPECT_TRUE(caller->observer()->has_negotiation_needed_event());
 }
 
 TEST_F(PeerConnectionIceTestUnifiedPlan,
@@ -1102,14 +1110,16 @@ TEST_F(PeerConnectionIceTestUnifiedPlan,
   ASSERT_TRUE(caller->ExchangeOfferAnswerWith(callee.get()));
   // Local restart.
   caller->pc()->RestartIce();
-  caller->observer()->clear_negotiation_needed();
+  caller->observer()->clear_legacy_renegotiation_needed();
+  caller->observer()->clear_latest_negotiation_needed_event();
   // Remote restart and O/A exchange with |caller| as the answerer should
   // restart ICE locally as well.
   callee->pc()->RestartIce();
   ASSERT_TRUE(callee->ExchangeOfferAnswerWith(caller.get()));
   // Having restarted ICE by the remote offer, we do not need to renegotiate ICE
   // credentials when back in the stable signaling state.
-  EXPECT_FALSE(caller->observer()->negotiation_needed());
+  EXPECT_FALSE(caller->observer()->legacy_renegotiation_needed());
+  EXPECT_FALSE(caller->observer()->has_negotiation_needed_event());
 }
 
 TEST_F(PeerConnectionIceTestUnifiedPlan,
@@ -1119,10 +1129,13 @@ TEST_F(PeerConnectionIceTestUnifiedPlan,
 
   ASSERT_TRUE(caller->ExchangeOfferAnswerWith(callee.get()));
   caller->pc()->RestartIce();
-  EXPECT_TRUE(caller->observer()->negotiation_needed());
-  caller->observer()->clear_negotiation_needed();
+  EXPECT_TRUE(caller->observer()->legacy_renegotiation_needed());
+  EXPECT_TRUE(caller->observer()->has_negotiation_needed_event());
+  caller->observer()->clear_legacy_renegotiation_needed();
+  caller->observer()->clear_latest_negotiation_needed_event();
   caller->pc()->RestartIce();
-  EXPECT_FALSE(caller->observer()->negotiation_needed());
+  EXPECT_FALSE(caller->observer()->legacy_renegotiation_needed());
+  EXPECT_FALSE(caller->observer()->has_negotiation_needed_event());
 }
 
 // In Plan B, "onnegotiationneeded" is not spec-compliant, firing based on if
@@ -1140,15 +1153,19 @@ TEST_F(PeerConnectionIceTestPlanB,
   auto callee = CreatePeerConnectionWithAudioVideo();
 
   ASSERT_TRUE(callee->SetRemoteDescription(caller->CreateOfferAndSetAsLocal()));
-  caller->observer()->clear_negotiation_needed();
+  caller->observer()->clear_legacy_renegotiation_needed();
+  caller->observer()->clear_latest_negotiation_needed_event();
   caller->pc()->RestartIce();
-  EXPECT_TRUE(caller->observer()->negotiation_needed());
-  caller->observer()->clear_negotiation_needed();
+  EXPECT_TRUE(caller->observer()->legacy_renegotiation_needed());
+  EXPECT_TRUE(caller->observer()->has_negotiation_needed_event());
+  caller->observer()->clear_legacy_renegotiation_needed();
+  caller->observer()->clear_latest_negotiation_needed_event();
   ASSERT_TRUE(
       caller->SetRemoteDescription(callee->CreateAnswerAndSetAsLocal()));
   // In Plan B, the event fired early so we don't expect it to fire now. This is
   // not spec-compliant but follows the pattern of existing Plan B behavior.
-  EXPECT_FALSE(caller->observer()->negotiation_needed());
+  EXPECT_FALSE(caller->observer()->legacy_renegotiation_needed());
+  EXPECT_FALSE(caller->observer()->has_negotiation_needed_event());
 }
 
 TEST_F(PeerConnectionIceTestPlanB,
@@ -1157,15 +1174,19 @@ TEST_F(PeerConnectionIceTestPlanB,
   auto callee = CreatePeerConnectionWithAudioVideo();
 
   ASSERT_TRUE(caller->ExchangeOfferAnswerWith(callee.get()));
-  caller->observer()->clear_negotiation_needed();
+  caller->observer()->clear_legacy_renegotiation_needed();
+  caller->observer()->clear_latest_negotiation_needed_event();
   caller->pc()->RestartIce();
-  EXPECT_TRUE(caller->observer()->negotiation_needed());
-  caller->observer()->clear_negotiation_needed();
+  EXPECT_TRUE(caller->observer()->legacy_renegotiation_needed());
+  EXPECT_TRUE(caller->observer()->has_negotiation_needed_event());
+  caller->observer()->clear_legacy_renegotiation_needed();
+  caller->observer()->clear_latest_negotiation_needed_event();
   caller->pc()->RestartIce();
   // In Plan B, the event fires every time something changed, even if we have
   // already fired the event. This is not spec-compliant but follows the same
   // pattern of existing Plan B behavior.
-  EXPECT_TRUE(caller->observer()->negotiation_needed());
+  EXPECT_TRUE(caller->observer()->legacy_renegotiation_needed());
+  EXPECT_TRUE(caller->observer()->has_negotiation_needed_event());
 }
 
 // The following parameterized test verifies that if an offer is sent with a

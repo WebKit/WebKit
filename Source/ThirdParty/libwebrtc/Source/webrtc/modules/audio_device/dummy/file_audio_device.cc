@@ -139,7 +139,7 @@ int32_t FileAudioDevice::PlayoutIsAvailable(bool& available) {
 }
 
 int32_t FileAudioDevice::InitPlayout() {
-  rtc::CritScope lock(&_critSect);
+  MutexLock lock(&mutex_);
 
   if (_playing) {
     return -1;
@@ -169,7 +169,7 @@ int32_t FileAudioDevice::RecordingIsAvailable(bool& available) {
 }
 
 int32_t FileAudioDevice::InitRecording() {
-  rtc::CritScope lock(&_critSect);
+  MutexLock lock(&mutex_);
 
   if (_recording) {
     return -1;
@@ -228,7 +228,7 @@ int32_t FileAudioDevice::StartPlayout() {
 
 int32_t FileAudioDevice::StopPlayout() {
   {
-    rtc::CritScope lock(&_critSect);
+    MutexLock lock(&mutex_);
     _playing = false;
   }
 
@@ -238,7 +238,7 @@ int32_t FileAudioDevice::StopPlayout() {
     _ptrThreadPlay.reset();
   }
 
-  rtc::CritScope lock(&_critSect);
+  MutexLock lock(&mutex_);
 
   _playoutFramesLeft = 0;
   delete[] _playoutBuffer;
@@ -289,7 +289,7 @@ int32_t FileAudioDevice::StartRecording() {
 
 int32_t FileAudioDevice::StopRecording() {
   {
-    rtc::CritScope lock(&_critSect);
+    MutexLock lock(&mutex_);
     _recording = false;
   }
 
@@ -298,7 +298,7 @@ int32_t FileAudioDevice::StopRecording() {
     _ptrThreadRec.reset();
   }
 
-  rtc::CritScope lock(&_critSect);
+  MutexLock lock(&mutex_);
   _recordingFramesLeft = 0;
   if (_recordingBuffer) {
     delete[] _recordingBuffer;
@@ -426,7 +426,7 @@ int32_t FileAudioDevice::PlayoutDelay(uint16_t& delayMS) const {
 }
 
 void FileAudioDevice::AttachAudioBuffer(AudioDeviceBuffer* audioBuffer) {
-  rtc::CritScope lock(&_critSect);
+  MutexLock lock(&mutex_);
 
   _ptrAudioBuffer = audioBuffer;
 
@@ -456,13 +456,13 @@ bool FileAudioDevice::PlayThreadProcess() {
     return false;
   }
   int64_t currentTime = rtc::TimeMillis();
-  _critSect.Enter();
+  mutex_.Lock();
 
   if (_lastCallPlayoutMillis == 0 ||
       currentTime - _lastCallPlayoutMillis >= 10) {
-    _critSect.Leave();
+    mutex_.Unlock();
     _ptrAudioBuffer->RequestPlayoutData(_playoutFramesIn10MS);
-    _critSect.Enter();
+    mutex_.Lock();
 
     _playoutFramesLeft = _ptrAudioBuffer->GetPlayoutData(_playoutBuffer);
     RTC_DCHECK_EQ(_playoutFramesIn10MS, _playoutFramesLeft);
@@ -472,7 +472,7 @@ bool FileAudioDevice::PlayThreadProcess() {
     _lastCallPlayoutMillis = currentTime;
   }
   _playoutFramesLeft = 0;
-  _critSect.Leave();
+  mutex_.Unlock();
 
   int64_t deltaTimeMillis = rtc::TimeMillis() - currentTime;
   if (deltaTimeMillis < 10) {
@@ -488,7 +488,7 @@ bool FileAudioDevice::RecThreadProcess() {
   }
 
   int64_t currentTime = rtc::TimeMillis();
-  _critSect.Enter();
+  mutex_.Lock();
 
   if (_lastCallRecordMillis == 0 || currentTime - _lastCallRecordMillis >= 10) {
     if (_inputFile.is_open()) {
@@ -499,13 +499,13 @@ bool FileAudioDevice::RecThreadProcess() {
         _inputFile.Rewind();
       }
       _lastCallRecordMillis = currentTime;
-      _critSect.Leave();
+      mutex_.Unlock();
       _ptrAudioBuffer->DeliverRecordedData();
-      _critSect.Enter();
+      mutex_.Lock();
     }
   }
 
-  _critSect.Leave();
+  mutex_.Unlock();
 
   int64_t deltaTimeMillis = rtc::TimeMillis() - currentTime;
   if (deltaTimeMillis < 10) {

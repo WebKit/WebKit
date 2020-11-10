@@ -162,6 +162,12 @@ bool BitBuffer::ConsumeBits(size_t bit_count) {
 bool BitBuffer::ReadNonSymmetric(uint32_t* val, uint32_t num_values) {
   RTC_DCHECK_GT(num_values, 0);
   RTC_DCHECK_LE(num_values, uint32_t{1} << 31);
+  if (num_values == 1) {
+    // When there is only one possible value, it requires zero bits to store it.
+    // But ReadBits doesn't support reading zero bits.
+    *val = 0;
+    return true;
+  }
   size_t count_bits = CountBits(num_values);
   uint32_t num_min_bits_values = (uint32_t{1} << count_bits) - num_values;
 
@@ -308,6 +314,11 @@ bool BitBufferWriter::WriteBits(uint64_t val, size_t bit_count) {
 bool BitBufferWriter::WriteNonSymmetric(uint32_t val, uint32_t num_values) {
   RTC_DCHECK_LT(val, num_values);
   RTC_DCHECK_LE(num_values, uint32_t{1} << 31);
+  if (num_values == 1) {
+    // When there is only one possible value, it requires zero bits to store it.
+    // But WriteBits doesn't support writing zero bits.
+    return true;
+  }
   size_t count_bits = CountBits(num_values);
   uint32_t num_min_bits_values = (uint32_t{1} << count_bits) - num_values;
 

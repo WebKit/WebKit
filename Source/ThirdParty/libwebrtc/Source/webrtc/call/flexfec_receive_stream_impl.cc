@@ -22,7 +22,6 @@
 #include "call/rtp_stream_receiver_controller_interface.h"
 #include "modules/rtp_rtcp/include/flexfec_receiver.h"
 #include "modules/rtp_rtcp/include/receive_statistics.h"
-#include "modules/rtp_rtcp/include/rtp_rtcp.h"
 #include "modules/rtp_rtcp/source/rtp_packet_received.h"
 #include "modules/utility/include/process_thread.h"
 #include "rtc_base/checks.h"
@@ -119,12 +118,12 @@ std::unique_ptr<FlexfecReceiver> MaybeCreateFlexfecReceiver(
       recovered_packet_receiver));
 }
 
-std::unique_ptr<RtpRtcp> CreateRtpRtcpModule(
+std::unique_ptr<ModuleRtpRtcpImpl2> CreateRtpRtcpModule(
     Clock* clock,
     ReceiveStatistics* receive_statistics,
     const FlexfecReceiveStreamImpl::Config& config,
     RtcpRttStats* rtt_stats) {
-  RtpRtcp::Configuration configuration;
+  RtpRtcpInterface::Configuration configuration;
   configuration.audio = false;
   configuration.receiver_only = true;
   configuration.clock = clock;
@@ -132,7 +131,7 @@ std::unique_ptr<RtpRtcp> CreateRtpRtcpModule(
   configuration.outgoing_transport = config.rtcp_send_transport;
   configuration.rtt_stats = rtt_stats;
   configuration.local_media_ssrc = config.local_ssrc;
-  return RtpRtcp::Create(configuration);
+  return ModuleRtpRtcpImpl2::Create(configuration);
 }
 
 }  // namespace

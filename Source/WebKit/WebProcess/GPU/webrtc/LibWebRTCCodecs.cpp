@@ -389,7 +389,7 @@ void LibWebRTCCodecs::setEncodeRates(Encoder& encoder, uint32_t bitRate, uint32_
     encoder.connection->send(Messages::LibWebRTCCodecsProxy::SetEncodeRates { encoder.identifier, bitRate, frameRate }, 0);
 }
 
-void LibWebRTCCodecs::completedEncoding(RTCEncoderIdentifier identifier, IPC::DataReference&& data, const webrtc::WebKitEncodedFrameInfo& info, webrtc::WebKitRTPFragmentationHeader&& fragmentationHeader)
+void LibWebRTCCodecs::completedEncoding(RTCEncoderIdentifier identifier, IPC::DataReference&& data, const webrtc::WebKitEncodedFrameInfo& info)
 {
     ASSERT(isMainThread());
 
@@ -405,7 +405,7 @@ void LibWebRTCCodecs::completedEncoding(RTCEncoderIdentifier identifier, IPC::Da
     if (!encoder->encodedImageCallback)
         return;
 
-    webrtc::encoderVideoTaskComplete(encoder->encodedImageCallback, encoder->codecType, const_cast<uint8_t*>(data.data()), data.size(), info, fragmentationHeader.value());
+    webrtc::encoderVideoTaskComplete(encoder->encodedImageCallback, encoder->codecType, const_cast<uint8_t*>(data.data()), data.size(), info);
 }
 
 CVPixelBufferPoolRef LibWebRTCCodecs::pixelBufferPool(size_t width, size_t height, OSType type)

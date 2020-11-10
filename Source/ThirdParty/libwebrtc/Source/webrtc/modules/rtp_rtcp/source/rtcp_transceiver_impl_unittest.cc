@@ -10,6 +10,8 @@
 
 #include "modules/rtp_rtcp/source/rtcp_transceiver_impl.h"
 
+#include <memory>
+#include <utility>
 #include <vector>
 
 #include "absl/memory/memory.h"
@@ -55,15 +57,17 @@ using ::webrtc::test::RtcpPacketParser;
 
 class MockReceiveStatisticsProvider : public webrtc::ReceiveStatisticsProvider {
  public:
-  MOCK_METHOD1(RtcpReportBlocks, std::vector<ReportBlock>(size_t));
+  MOCK_METHOD(std::vector<ReportBlock>, RtcpReportBlocks, (size_t), (override));
 };
 
 class MockMediaReceiverRtcpObserver : public webrtc::MediaReceiverRtcpObserver {
  public:
-  MOCK_METHOD3(OnSenderReport, void(uint32_t, NtpTime, uint32_t));
-  MOCK_METHOD1(OnBye, void(uint32_t));
-  MOCK_METHOD2(OnBitrateAllocation,
-               void(uint32_t, const VideoBitrateAllocation&));
+  MOCK_METHOD(void, OnSenderReport, (uint32_t, NtpTime, uint32_t), (override));
+  MOCK_METHOD(void, OnBye, (uint32_t), (override));
+  MOCK_METHOD(void,
+              OnBitrateAllocation,
+              (uint32_t, const VideoBitrateAllocation&),
+              (override));
 };
 
 // Since some tests will need to wait for this period, make it small to avoid
@@ -675,12 +679,12 @@ TEST(RtcpTransceiverImplTest, CallsObserverOnByeBehindSenderReport) {
   rtcp_transceiver.AddMediaReceiverRtcpObserver(kRemoteSsrc, &observer);
 
   CompoundPacket compound;
-  SenderReport sr;
-  sr.SetSenderSsrc(kRemoteSsrc);
-  compound.Append(&sr);
-  Bye bye;
-  bye.SetSenderSsrc(kRemoteSsrc);
-  compound.Append(&bye);
+  auto sr = std::make_unique<SenderReport>();
+  sr->SetSenderSsrc(kRemoteSsrc);
+  compound.Append(std::move(sr));
+  auto bye = std::make_unique<Bye>();
+  bye->SetSenderSsrc(kRemoteSsrc);
+  compound.Append(std::move(bye));
   auto raw_packet = compound.Build();
 
   EXPECT_CALL(observer, OnBye(kRemoteSsrc));
@@ -696,11 +700,11 @@ TEST(RtcpTransceiverImplTest, CallsObserverOnByeBehindUnknownRtcpPacket) {
 
   CompoundPacket compound;
   // Use Application-Defined rtcp packet as unknown.
-  webrtc::rtcp::App app;
-  compound.Append(&app);
-  Bye bye;
-  bye.SetSenderSsrc(kRemoteSsrc);
-  compound.Append(&bye);
+  auto app = std::make_unique<webrtc::rtcp::App>();
+  compound.Append(std::move(app));
+  auto bye = std::make_unique<Bye>();
+  bye->SetSenderSsrc(kRemoteSsrc);
+  compound.Append(std::move(bye));
   auto raw_packet = compound.Build();
 
   EXPECT_CALL(observer, OnBye(kRemoteSsrc));

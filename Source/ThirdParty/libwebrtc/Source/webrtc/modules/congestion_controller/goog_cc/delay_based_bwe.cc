@@ -17,6 +17,7 @@
 #include <string>
 #include <utility>
 
+#include "absl/strings/match.h"
 #include "api/rtc_event_log/rtc_event.h"
 #include "api/rtc_event_log/rtc_event_log.h"
 #include "logging/rtc_event_log/events/rtc_event_bwe_update_delay_based.h"
@@ -113,9 +114,9 @@ DelayBasedBwe::DelayBasedBwe(const WebRtcKeyValueConfig* key_value_config,
       prev_bitrate_(DataRate::Zero()),
       has_once_detected_overuse_(false),
       prev_state_(BandwidthUsage::kBwNormal),
-      alr_limited_backoff_enabled_(
-          key_value_config->Lookup("WebRTC-Bwe-AlrLimitedBackoff")
-              .find("Enabled") == 0) {
+      alr_limited_backoff_enabled_(absl::StartsWith(
+          key_value_config->Lookup("WebRTC-Bwe-AlrLimitedBackoff"),
+          "Enabled")) {
   RTC_LOG(LS_INFO) << "Initialized DelayBasedBwe with small packet filtering "
                    << ignore_small_.Parser()->Encode()
                    << ", separate audio overuse detection"

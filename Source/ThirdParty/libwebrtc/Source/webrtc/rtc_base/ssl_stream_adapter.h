@@ -17,6 +17,8 @@
 #include <string>
 #include <vector>
 
+#include "absl/memory/memory.h"
+#include "rtc_base/deprecation.h"
 #include "rtc_base/ssl_certificate.h"
 #include "rtc_base/ssl_identity.h"
 #include "rtc_base/stream.h"
@@ -122,15 +124,17 @@ class SSLStreamAdapter : public StreamAdapterInterface {
   // Instantiate an SSLStreamAdapter wrapping the given stream,
   // (using the selected implementation for the platform).
   // Caller is responsible for freeing the returned object.
-  static SSLStreamAdapter* Create(StreamInterface* stream);
+  static std::unique_ptr<SSLStreamAdapter> Create(
+      std::unique_ptr<StreamInterface> stream);
 
-  explicit SSLStreamAdapter(StreamInterface* stream);
+  explicit SSLStreamAdapter(std::unique_ptr<StreamInterface> stream);
   ~SSLStreamAdapter() override;
 
   // Specify our SSL identity: key and certificate. SSLStream takes ownership
   // of the SSLIdentity object and will free it when appropriate. Should be
   // called no more than once on a given SSLStream instance.
-  virtual void SetIdentity(SSLIdentity* identity) = 0;
+  virtual void SetIdentity(std::unique_ptr<SSLIdentity> identity) = 0;
+  virtual SSLIdentity* GetIdentityForTesting() const = 0;
 
   // Call this to indicate that we are to play the server role (or client role,
   // if the default argument is replaced by SSL_CLIENT).

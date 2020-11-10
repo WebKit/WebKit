@@ -10,15 +10,16 @@
 
 #import "RTCIceServer+JSON.h"
 
-@implementation RTCIceServer (JSON)
+@implementation RTC_OBJC_TYPE (RTCIceServer)
+(JSON)
 
-+ (RTCIceServer *)serverFromJSONDictionary:(NSDictionary *)dictionary {
+    + (RTC_OBJC_TYPE(RTCIceServer) *)serverFromJSONDictionary : (NSDictionary *)dictionary {
   NSArray *turnUrls = dictionary[@"urls"];
   NSString *username = dictionary[@"username"] ?: @"";
   NSString *credential = dictionary[@"credential"] ?: @"";
-  return [[RTCIceServer alloc] initWithURLStrings:turnUrls
-                                         username:username
-                                       credential:credential];
+  return [[RTC_OBJC_TYPE(RTCIceServer) alloc] initWithURLStrings:turnUrls
+                                                        username:username
+                                                      credential:credential];
 }
 
 @end

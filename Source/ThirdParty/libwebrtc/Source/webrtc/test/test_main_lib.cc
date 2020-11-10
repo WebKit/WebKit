@@ -15,8 +15,8 @@
 #include <string>
 
 #include "absl/flags/flag.h"
-#include "absl/flags/parse.h"
 #include "absl/memory/memory.h"
+#include "absl/strings/match.h"
 #include "absl/types/optional.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/event_tracer.h"
@@ -27,7 +27,6 @@
 #include "system_wrappers/include/field_trial.h"
 #include "system_wrappers/include/metrics.h"
 #include "test/field_trial.h"
-#include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/testsupport/perf_test.h"
 #include "test/testsupport/resources_dir_flag.h"
@@ -47,30 +46,27 @@ ABSL_FLAG(std::string,
           ApplePersistenceIgnoreState,
           "",
           "Intentionally ignored flag intended for iOS simulator.");
+
+// This is the cousin of isolated_script_test_perf_output, but we can't dictate
+// where to write on iOS so the semantics of this flag are a bit different.
 ABSL_FLAG(
     bool,
-    save_chartjson_result,
+    write_perf_output_on_ios,
     false,
-    "Store the perf results in Documents/perf_result.json in the format "
-    "described by "
-    "https://github.com/catapult-project/catapult/blob/master/dashboard/docs/"
-    "data-format.md.");
+    "Store the perf results in Documents/perftest_result.pb in the format "
+    "described by histogram.proto in "
+    "https://chromium.googlesource.com/catapult/.");
 
 #else
-
-ABSL_FLAG(std::string,
-          isolated_script_test_output,
-          "",
-          "Path to output an empty JSON file which Chromium infra requires.");
 
 ABSL_FLAG(
     std::string,
     isolated_script_test_perf_output,
     "",
-    "Path where the perf results should be stored in the JSON format described "
-    "by "
-    "https://github.com/catapult-project/catapult/blob/master/dashboard/docs/"
-    "data-format.md.");
+    "Path where the perf results should be stored in proto format described "
+    "described by histogram.proto in "
+    "https://chromium.googlesource.com/catapult/.");
+
 #endif
 
 constexpr char kPlotAllMetrics[] = "all";
@@ -103,10 +99,65 @@ namespace {
 
 class TestMainImpl : public TestMain {
  public:
-  int Init(int* argc, char* argv[]) override {
-    ::testing::InitGoogleMock(argc, argv);
-    absl::ParseCommandLine(*argc, argv);
+  // In order to set up a fresh rtc::Thread state for each test and avoid
+  // accidentally carrying over pending tasks that might be sent from one test
+  // and executed while another test is running, we inject a TestListener
+  // that sets up a new rtc::Thread instance for the main thread, per test.
+  class TestListener : public ::testing::EmptyTestEventListener {
+   public:
+    TestListener() = default;
 
+   private:
+    bool IsDeathTest(const char* test_case_name, const char* test_name) {
+      // Workaround to avoid wrapping the main thread when we run death tests.
+      // The approach we take for detecting death tests is essentially the same
+      // as gtest does internally. Gtest does this:
+      //
+      // static const char kDeathTestCaseFilter[] = "*DeathTest:*DeathTest/*";
+      // ::testing::internal::UnitTestOptions::MatchesFilter(
+      //     test_case_name, kDeathTestCaseFilter);
+      //
+      // Our approach is a little more straight forward.
+      if (absl::EndsWith(test_case_name, "DeathTest"))
+        return true;
+
+      return absl::EndsWith(test_name, "DeathTest");
+    }
+
+    void OnTestStart(const ::testing::TestInfo& test_info) override {
+      if (!IsDeathTest(test_info.test_suite_name(), test_info.name())) {
+        // Ensure that main thread gets wrapped as an rtc::Thread.
+        // TODO(bugs.webrtc.org/9714): It might be better to avoid wrapping the
+        // main thread, or leave it to individual tests that need it. But as
+        // long as we have automatic thread wrapping, we need this to avoid that
+        // some other random thread (which one depending on which tests are run)
+        // gets automatically wrapped.
+        thread_ = rtc::Thread::CreateWithSocketServer();
+        thread_->WrapCurrent();
+        RTC_DCHECK_EQ(rtc::Thread::Current(), thread_.get());
+      } else {
+        RTC_LOG(LS_INFO) << "No thread auto wrap for death test.";
+      }
+    }
+
+    void OnTestEnd(const ::testing::TestInfo& test_info) override {
+      // Terminate the message loop. Note that if the test failed to clean
+      // up pending messages, this may execute part of the test. Ideally we
+      // should print a warning message here, or even fail the test if it leaks.
+      if (thread_) {
+        thread_->Quit();  // Signal quit.
+        thread_->Run();   // Flush + process Quit signal.
+        thread_->UnwrapCurrent();
+        thread_ = nullptr;
+      }
+    }
+
+    std::unique_ptr<rtc::Thread> thread_;
+  };
+
+  int Init(int* argc, char* argv[]) override { return Init(); }
+
+  int Init() override {
     // Make sure we always pull in the --resources_dir flag, even if the test
     // binary doesn't link with fileutils (downstream expects all test mains to
     // have this flag).
@@ -137,14 +188,7 @@ class TestMainImpl : public TestMain {
     rtc::InitializeSSL();
     rtc::SSLStreamAdapter::EnableTimeCallbackForTesting();
 
-    // Ensure that main thread gets wrapped as an rtc::Thread.
-    // TODO(bugs.webrt.org/9714): It might be better to avoid wrapping the main
-    // thread, or leave it to individual tests that need it. But as long as we
-    // have automatic thread wrapping, we need this to avoid that some other
-    // random thread (which one depending on which tests are run) gets
-    // automatically wrapped.
-    rtc::ThreadManager::Instance()->WrapCurrentThread();
-    RTC_CHECK(rtc::Thread::Current());
+    ::testing::UnitTest::GetInstance()->listeners().Append(new TestListener());
 
     return 0;
   }
@@ -171,28 +215,22 @@ class TestMainImpl : public TestMain {
 
 #if defined(WEBRTC_IOS)
     rtc::test::InitTestSuite(RUN_ALL_TESTS, argc, argv,
-                             absl::GetFlag(FLAGS_save_chartjson_result),
+                             absl::GetFlag(FLAGS_write_perf_output_on_ios),
                              metrics_to_plot);
     rtc::test::RunTestsFromIOSApp();
     int exit_code = 0;
 #else
     int exit_code = RUN_ALL_TESTS();
 
-    std::string chartjson_result_file =
+    std::string perf_output_file =
         absl::GetFlag(FLAGS_isolated_script_test_perf_output);
-    if (!chartjson_result_file.empty()) {
-      webrtc::test::WritePerfResults(chartjson_result_file);
+    if (!perf_output_file.empty()) {
+      if (!webrtc::test::WritePerfResults(perf_output_file)) {
+        return 1;
+      }
     }
     if (metrics_to_plot) {
       webrtc::test::PrintPlottableResults(*metrics_to_plot);
-    }
-
-    std::string result_filename =
-        absl::GetFlag(FLAGS_isolated_script_test_output);
-    if (!result_filename.empty()) {
-      std::ofstream result_file(result_filename);
-      result_file << "{\"version\": 3}";
-      result_file.close();
     }
 #endif
 

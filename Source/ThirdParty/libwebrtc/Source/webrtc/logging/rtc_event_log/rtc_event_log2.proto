@@ -20,7 +20,8 @@ message EventStream {
   repeated IncomingRtcpPackets incoming_rtcp_packets = 4;
   repeated OutgoingRtcpPackets outgoing_rtcp_packets = 5;
   repeated AudioPlayoutEvents audio_playout_events = 6;
-  // The field tags 7-15 are reserved for the most common events.
+  repeated FrameDecodedEvents frame_decoded_events = 7;
+  // The field tags 8-15 are reserved for the most common events.
   repeated BeginLogEvent begin_log_events = 16;
   repeated EndLogEvent end_log_events = 17;
   repeated LossBasedBweUpdates loss_based_bwe_updates = 18;
@@ -282,6 +283,50 @@ message AudioPlayoutEvents {
   // Delta encodings.
   optional bytes timestamp_ms_deltas = 101;
   optional bytes local_ssrc_deltas = 102;
+}
+
+message FrameDecodedEvents {
+  enum Codec {
+    CODEC_UNKNOWN = 0;
+    CODEC_GENERIC = 1;
+    CODEC_VP8 = 2;
+    CODEC_VP9 = 3;
+    CODEC_AV1 = 4;
+    CODEC_H264 = 5;
+  }
+
+  // required
+  optional int64 timestamp_ms = 1;
+
+  // required - The SSRC of the video stream that the frame belongs to.
+  optional fixed32 ssrc = 2;
+
+  // required - The predicted render time of the frame.
+  optional int64 render_time_ms = 3;
+
+  // required - The width (in pixels) of the frame.
+  optional int32 width = 4;
+
+  // required - The height (in pixels) of the frame.
+  optional int32 height = 5;
+
+  // required - The codec type of the frame.
+  optional Codec codec = 6;
+
+  // required - The QP (quantization parameter) of the frame. Range [0,255].
+  optional uint32 qp = 7;
+
+  // optional - required if the batch contains delta encoded events.
+  optional uint32 number_of_deltas = 15;
+
+  // Delta encodings.
+  optional bytes timestamp_ms_deltas = 101;
+  optional bytes ssrc_deltas = 102;
+  optional bytes render_time_ms_deltas = 103;
+  optional bytes width_deltas = 104;
+  optional bytes height_deltas = 105;
+  optional bytes codec_deltas = 106;
+  optional bytes qp_deltas = 107;
 }
 
 message BeginLogEvent {

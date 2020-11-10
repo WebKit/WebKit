@@ -571,16 +571,16 @@ const webrtc::EncodedImage* VideoProcessor::BuildAndStoreSuperframe(
   }
   const size_t payload_size_bytes = base_image.size() + encoded_image.size();
 
-  EncodedImage copied_image = encoded_image;
-  copied_image.SetEncodedData(EncodedImageBuffer::Create(payload_size_bytes));
+  auto buffer = EncodedImageBuffer::Create(payload_size_bytes);
   if (base_image.size()) {
     RTC_CHECK(base_image.data());
-    memcpy(copied_image.data(), base_image.data(), base_image.size());
+    memcpy(buffer->data(), base_image.data(), base_image.size());
   }
-  memcpy(copied_image.data() + base_image.size(), encoded_image.data(),
+  memcpy(buffer->data() + base_image.size(), encoded_image.data(),
          encoded_image.size());
 
-  copied_image.set_size(payload_size_bytes);
+  EncodedImage copied_image = encoded_image;
+  copied_image.SetEncodedData(buffer);
 
   // Replace previous EncodedImage for this spatial layer.
   merged_encoded_frames_.at(spatial_idx) = std::move(copied_image);

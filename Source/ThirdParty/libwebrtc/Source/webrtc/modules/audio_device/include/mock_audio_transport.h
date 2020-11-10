@@ -22,36 +22,42 @@ class MockAudioTransport : public AudioTransport {
   MockAudioTransport() {}
   ~MockAudioTransport() {}
 
-  MOCK_METHOD10(RecordedDataIsAvailable,
-                int32_t(const void* audioSamples,
-                        const size_t nSamples,
-                        const size_t nBytesPerSample,
-                        const size_t nChannels,
-                        const uint32_t samplesPerSec,
-                        const uint32_t totalDelayMS,
-                        const int32_t clockDrift,
-                        const uint32_t currentMicLevel,
-                        const bool keyPressed,
-                        uint32_t& newMicLevel));
+  MOCK_METHOD(int32_t,
+              RecordedDataIsAvailable,
+              (const void* audioSamples,
+               const size_t nSamples,
+               const size_t nBytesPerSample,
+               const size_t nChannels,
+               const uint32_t samplesPerSec,
+               const uint32_t totalDelayMS,
+               const int32_t clockDrift,
+               const uint32_t currentMicLevel,
+               const bool keyPressed,
+               uint32_t& newMicLevel),
+              (override));
 
-  MOCK_METHOD8(NeedMorePlayData,
-               int32_t(const size_t nSamples,
-                       const size_t nBytesPerSample,
-                       const size_t nChannels,
-                       const uint32_t samplesPerSec,
-                       void* audioSamples,
-                       size_t& nSamplesOut,
-                       int64_t* elapsed_time_ms,
-                       int64_t* ntp_time_ms));
+  MOCK_METHOD(int32_t,
+              NeedMorePlayData,
+              (const size_t nSamples,
+               const size_t nBytesPerSample,
+               const size_t nChannels,
+               const uint32_t samplesPerSec,
+               void* audioSamples,
+               size_t& nSamplesOut,
+               int64_t* elapsed_time_ms,
+               int64_t* ntp_time_ms),
+              (override));
 
-  MOCK_METHOD7(PullRenderData,
-               void(int bits_per_sample,
-                    int sample_rate,
-                    size_t number_of_channels,
-                    size_t number_of_frames,
-                    void* audio_data,
-                    int64_t* elapsed_time_ms,
-                    int64_t* ntp_time_ms));
+  MOCK_METHOD(void,
+              PullRenderData,
+              (int bits_per_sample,
+               int sample_rate,
+               size_t number_of_channels,
+               size_t number_of_frames,
+               void* audio_data,
+               int64_t* elapsed_time_ms,
+               int64_t* ntp_time_ms),
+              (override));
 };
 
 }  // namespace test

@@ -38,6 +38,8 @@ class SimulcastRateAllocator : public VideoBitrateAllocator {
                                          int temporal_id,
                                          bool base_heavy_tl3_alloc);
 
+  void SetLegacyConferenceMode(bool mode) override;
+
  private:
   void DistributeAllocationToSimulcastLayers(
       DataRate total_bitrate,
@@ -58,6 +60,7 @@ class SimulcastRateAllocator : public VideoBitrateAllocator {
   const StableTargetRateExperiment stable_rate_settings_;
   const RateControlSettings rate_control_settings_;
   std::vector<bool> stream_enabled_;
+  bool legacy_conference_mode_;
 
   RTC_DISALLOW_COPY_AND_ASSIGN(SimulcastRateAllocator);
 };

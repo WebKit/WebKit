@@ -118,7 +118,7 @@ TEST(VideoRtpDepacketizerAv1Test, AssembleFrameSetsOBUPayloadSizeWhenAbsent) {
                               0b0'0110'000,  // /  Frame
                               20, 30, 40};   // \  OBU
   rtc::ArrayView<const uint8_t> payloads[] = {payload1};
-  auto frame = VideoRtpDepacketizerAv1::AssembleFrame(payloads);
+  auto frame = VideoRtpDepacketizerAv1().AssembleFrame(payloads);
   ASSERT_TRUE(frame);
   rtc::ArrayView<const uint8_t> frame_view(*frame);
   EXPECT_TRUE(frame_view[0] & kObuHeaderHasSize);
@@ -133,7 +133,7 @@ TEST(VideoRtpDepacketizerAv1Test, AssembleFrameSetsOBUPayloadSizeWhenPresent) {
                               30,
                               40};  // \  obu_payload
   rtc::ArrayView<const uint8_t> payloads[] = {payload1};
-  auto frame = VideoRtpDepacketizerAv1::AssembleFrame(payloads);
+  auto frame = VideoRtpDepacketizerAv1().AssembleFrame(payloads);
   ASSERT_TRUE(frame);
   rtc::ArrayView<const uint8_t> frame_view(*frame);
   EXPECT_TRUE(frame_view[0] & kObuHeaderHasSize);
@@ -147,7 +147,7 @@ TEST(VideoRtpDepacketizerAv1Test,
                               0b010'01'000,           // | extension_header
                               20,           30, 40};  // \  OBU
   rtc::ArrayView<const uint8_t> payloads[] = {payload1};
-  auto frame = VideoRtpDepacketizerAv1::AssembleFrame(payloads);
+  auto frame = VideoRtpDepacketizerAv1().AssembleFrame(payloads);
   ASSERT_TRUE(frame);
   rtc::ArrayView<const uint8_t> frame_view(*frame);
   EXPECT_TRUE(frame_view[0] & kObuHeaderHasSize);
@@ -164,7 +164,7 @@ TEST(VideoRtpDepacketizerAv1Test,
                               30,
                               40};  // \  obu_payload
   rtc::ArrayView<const uint8_t> payloads[] = {payload1};
-  auto frame = VideoRtpDepacketizerAv1::AssembleFrame(payloads);
+  auto frame = VideoRtpDepacketizerAv1().AssembleFrame(payloads);
   ASSERT_TRUE(frame);
   rtc::ArrayView<const uint8_t> frame_view(*frame);
   EXPECT_TRUE(frame_view[0] & kObuHeaderHasSize);
@@ -176,7 +176,7 @@ TEST(VideoRtpDepacketizerAv1Test, AssembleFrameFromOnePacketWithOneObu) {
                               0b0'0110'000,  // /  Frame
                               20};           // \  OBU
   rtc::ArrayView<const uint8_t> payloads[] = {payload1};
-  auto frame = VideoRtpDepacketizerAv1::AssembleFrame(payloads);
+  auto frame = VideoRtpDepacketizerAv1().AssembleFrame(payloads);
   ASSERT_TRUE(frame);
   EXPECT_THAT(rtc::ArrayView<const uint8_t>(*frame),
               ElementsAre(0b0'0110'010, 1, 20));
@@ -190,7 +190,7 @@ TEST(VideoRtpDepacketizerAv1Test, AssembleFrameFromOnePacketWithTwoObus) {
                               0b0'0110'000,  // /  Frame
                               20};           // \  OBU
   rtc::ArrayView<const uint8_t> payloads[] = {payload1};
-  auto frame = VideoRtpDepacketizerAv1::AssembleFrame(payloads);
+  auto frame = VideoRtpDepacketizerAv1().AssembleFrame(payloads);
   ASSERT_TRUE(frame);
   EXPECT_THAT(rtc::ArrayView<const uint8_t>(*frame),
               ElementsAre(0b0'0001'010, 1, 10,    // Sequence Header OBU
@@ -203,7 +203,7 @@ TEST(VideoRtpDepacketizerAv1Test, AssembleFrameFromTwoPacketsWithOneObu) {
   const uint8_t payload2[] = {0b10'01'0000,  // aggregation header
                               40};
   rtc::ArrayView<const uint8_t> payloads[] = {payload1, payload2};
-  auto frame = VideoRtpDepacketizerAv1::AssembleFrame(payloads);
+  auto frame = VideoRtpDepacketizerAv1().AssembleFrame(payloads);
   ASSERT_TRUE(frame);
   EXPECT_THAT(rtc::ArrayView<const uint8_t>(*frame),
               ElementsAre(0b0'0110'010, 3, 20, 30, 40));
@@ -220,7 +220,7 @@ TEST(VideoRtpDepacketizerAv1Test, AssembleFrameFromTwoPacketsWithTwoObu) {
   const uint8_t payload2[] = {0b10'01'0000,  // aggregation header
                               40};           //
   rtc::ArrayView<const uint8_t> payloads[] = {payload1, payload2};
-  auto frame = VideoRtpDepacketizerAv1::AssembleFrame(payloads);
+  auto frame = VideoRtpDepacketizerAv1().AssembleFrame(payloads);
   ASSERT_TRUE(frame);
   EXPECT_THAT(rtc::ArrayView<const uint8_t>(*frame),
               ElementsAre(0b0'0001'010, 1, 10,            // SH
@@ -251,7 +251,7 @@ TEST(VideoRtpDepacketizerAv1Test,
                               70, 80, 90};   // \  tail of the frame OBU
 
   rtc::ArrayView<const uint8_t> payloads[] = {payload1, payload2};
-  auto frame = VideoRtpDepacketizerAv1::AssembleFrame(payloads);
+  auto frame = VideoRtpDepacketizerAv1().AssembleFrame(payloads);
   ASSERT_TRUE(frame);
   EXPECT_THAT(rtc::ArrayView<const uint8_t>(*frame),
               ElementsAre(  // Sequence header OBU
@@ -276,7 +276,7 @@ TEST(VideoRtpDepacketizerAv1Test, AssembleFrameWithOneObuFromManyPackets) {
 
   rtc::ArrayView<const uint8_t> payloads[] = {payload1, payload2, payload3,
                                               payload4};
-  auto frame = VideoRtpDepacketizerAv1::AssembleFrame(payloads);
+  auto frame = VideoRtpDepacketizerAv1().AssembleFrame(payloads);
   ASSERT_TRUE(frame);
   EXPECT_THAT(rtc::ArrayView<const uint8_t>(*frame),
               ElementsAre(0b0'0110'010, 8, 11, 12, 13, 14, 15, 16, 17, 18));
@@ -308,7 +308,7 @@ TEST(VideoRtpDepacketizerAv1Test,
                               33, 34, 35, 36};
   rtc::ArrayView<const uint8_t> payloads[] = {payload1, payload2, payload3,
                                               payload4};
-  auto frame = VideoRtpDepacketizerAv1::AssembleFrame(payloads);
+  auto frame = VideoRtpDepacketizerAv1().AssembleFrame(payloads);
   ASSERT_TRUE(frame);
   EXPECT_THAT(rtc::ArrayView<const uint8_t>(*frame),
               ElementsAre(0b0'0011'010, 2, 11, 12,  // Frame header
@@ -327,7 +327,7 @@ TEST(VideoRtpDepacketizerAv1Test,
   payload1[3] = 0b0'0110'000;  // obu_header with size and extension bits unset.
   payload1[4 + 42] = 0x42;
   rtc::ArrayView<const uint8_t> payloads[] = {payload1};
-  auto frame = VideoRtpDepacketizerAv1::AssembleFrame(payloads);
+  auto frame = VideoRtpDepacketizerAv1().AssembleFrame(payloads);
   ASSERT_TRUE(frame);
   EXPECT_EQ(frame->size(), 2 + 127u);
   rtc::ArrayView<const uint8_t> frame_view(*frame);
@@ -352,7 +352,7 @@ TEST(VideoRtpDepacketizerAv1Test,
   payload2[2 + 20] = 0x20;
 
   rtc::ArrayView<const uint8_t> payloads[] = {payload1, payload2};
-  auto frame = VideoRtpDepacketizerAv1::AssembleFrame(payloads);
+  auto frame = VideoRtpDepacketizerAv1().AssembleFrame(payloads);
   ASSERT_TRUE(frame);
   EXPECT_EQ(frame->size(), 3 + 128u);
   rtc::ArrayView<const uint8_t> frame_view(*frame);
@@ -370,7 +370,7 @@ TEST(VideoRtpDepacketizerAv1Test,
   const uint8_t payload2[] = {0b10'01'0000, 0b0'0110'000, 10, 20, 30};
   rtc::ArrayView<const uint8_t> payloads[] = {payload1, payload2};
 
-  auto frame = VideoRtpDepacketizerAv1::AssembleFrame(payloads);
+  auto frame = VideoRtpDepacketizerAv1().AssembleFrame(payloads);
   ASSERT_TRUE(frame);
   EXPECT_THAT(rtc::ArrayView<const uint8_t>(*frame),
               ElementsAre(0b0'0110'010, 3, 10, 20, 30));
@@ -382,7 +382,7 @@ TEST(VideoRtpDepacketizerAv1Test,
   const uint8_t payload2[] = {0b10'01'0000};
   rtc::ArrayView<const uint8_t> payloads[] = {payload1, payload2};
 
-  auto frame = VideoRtpDepacketizerAv1::AssembleFrame(payloads);
+  auto frame = VideoRtpDepacketizerAv1().AssembleFrame(payloads);
   ASSERT_TRUE(frame);
   EXPECT_THAT(rtc::ArrayView<const uint8_t>(*frame),
               ElementsAre(0b0'0110'010, 3, 10, 20, 30));

@@ -15,10 +15,12 @@
 #include <stdint.h>
 
 #include <memory>
+#include <utility>
 
 #include "absl/types/optional.h"
 #include "api/array_view.h"
 #include "api/audio_codecs/audio_encoder.h"
+#include "api/units/time_delta.h"
 #include "rtc_base/buffer.h"
 #include "rtc_base/constructor_magic.h"
 
@@ -60,6 +62,9 @@ class AudioEncoderCopyRed final : public AudioEncoder {
   void OnReceivedUplinkBandwidth(
       int target_audio_bitrate_bps,
       absl::optional<int64_t> bwe_period_ms) override;
+  void OnReceivedOverhead(size_t overhead_bytes_per_packet) override;
+  absl::optional<std::pair<TimeDelta, TimeDelta>> GetFrameLengthRange()
+      const override;
 
  protected:
   EncodedInfo EncodeImpl(uint32_t rtp_timestamp,
@@ -67,10 +72,16 @@ class AudioEncoderCopyRed final : public AudioEncoder {
                          rtc::Buffer* encoded) override;
 
  private:
+  size_t CalculateHeaderLength(size_t encoded_bytes) const;
+
   std::unique_ptr<AudioEncoder> speech_encoder_;
+  size_t max_packet_length_;
   int red_payload_type_;
   rtc::Buffer secondary_encoded_;
   EncodedInfoLeaf secondary_info_;
+  rtc::Buffer tertiary_encoded_;
+  EncodedInfoLeaf tertiary_info_;
+
   RTC_DISALLOW_COPY_AND_ASSIGN(AudioEncoderCopyRed);
 };
 

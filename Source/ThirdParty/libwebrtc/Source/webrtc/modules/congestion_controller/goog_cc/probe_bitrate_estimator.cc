@@ -179,7 +179,7 @@ absl::optional<DataRate> ProbeBitrateEstimator::HandleProbeAndEstimateBitrate(
         std::make_unique<RtcEventProbeResultSuccess>(cluster_id, res.bps()));
   }
   estimated_data_rate_ = res;
-  return *estimated_data_rate_;
+  return estimated_data_rate_;
 }
 
 absl::optional<DataRate>

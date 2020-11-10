@@ -15,7 +15,6 @@
 #include "api/video_codecs/sdp_video_format.h"
 #include "api/video_codecs/video_decoder.h"
 #include "api/video_codecs/video_encoder.h"
-#include "modules/include/module_common_types.h"
 #include "modules/video_coding/include/video_codec_interface.h"
 #include "modules/video_coding/include/video_error_codes.h"
 #include "rtc_base/checks.h"
@@ -42,11 +41,6 @@ std::vector<SdpVideoFormat> FakeVideoEncoderFactory::GetSupportedFormats()
     const {
   return std::vector<SdpVideoFormat>(
       1, SdpVideoFormat(kFakeCodecFactoryCodecName));
-}
-
-VideoEncoderFactory::CodecInfo FakeVideoEncoderFactory::QueryVideoEncoder(
-    const SdpVideoFormat& format) const {
-  return VideoEncoderFactory::CodecInfo{false, false};
 }
 
 std::unique_ptr<VideoEncoder> FakeVideoEncoderFactory::CreateVideoEncoder(

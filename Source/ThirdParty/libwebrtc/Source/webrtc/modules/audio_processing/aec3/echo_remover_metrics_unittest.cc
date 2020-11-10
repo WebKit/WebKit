@@ -23,7 +23,7 @@ namespace webrtc {
 #if RTC_DCHECK_IS_ON && GTEST_HAS_DEATH_TEST && !defined(WEBRTC_ANDROID)
 
 // Verifies the check for non-null input.
-TEST(UpdateDbMetric, NullValue) {
+TEST(UpdateDbMetricDeathTest, NullValue) {
   std::array<float, kFftLengthBy2Plus1> value;
   value.fill(0.f);
   EXPECT_DEATH(aec3::UpdateDbMetric(value, nullptr), "");

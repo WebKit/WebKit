@@ -15,7 +15,7 @@
 
 #include "modules/audio_coding/include/audio_coding_module.h"
 #include "modules/include/module_common_types.h"
-#include "rtc_base/critical_section.h"
+#include "rtc_base/synchronization/mutex.h"
 
 namespace webrtc {
 
@@ -88,7 +88,7 @@ class Channel : public AudioPacketizationCallback {
   // 60msec * 32 sample(max)/msec * 2 description (maybe) * 2 bytes/sample
   uint8_t _payloadData[60 * 32 * 2 * 2];
 
-  rtc::CriticalSection _channelCritSect;
+  Mutex _channelCritSect;
   FILE* _bitStreamFile;
   bool _saveBitStream;
   int16_t _lastPayloadType;

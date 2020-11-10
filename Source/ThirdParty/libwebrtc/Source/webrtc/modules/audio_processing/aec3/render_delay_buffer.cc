@@ -35,9 +35,15 @@
 #include "rtc_base/atomic_ops.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
+#include "system_wrappers/include/field_trial.h"
 
 namespace webrtc {
 namespace {
+
+bool UpdateCaptureCallCounterOnSkippedBlocks() {
+  return !field_trial::IsEnabled(
+      "WebRTC-Aec3RenderBufferCallCounterUpdateKillSwitch");
+}
 
 class RenderDelayBufferImpl final : public RenderDelayBuffer {
  public:
@@ -51,6 +57,7 @@ class RenderDelayBufferImpl final : public RenderDelayBuffer {
   BufferingEvent Insert(
       const std::vector<std::vector<std::vector<float>>>& block) override;
   BufferingEvent PrepareCaptureProcessing() override;
+  void HandleSkippedCaptureProcessing() override;
   bool AlignFromDelay(size_t delay) override;
   void AlignFromExternalDelay() override;
   size_t Delay() const override { return ComputeDelay(); }
@@ -72,6 +79,7 @@ class RenderDelayBufferImpl final : public RenderDelayBuffer {
   std::unique_ptr<ApmDataDumper> data_dumper_;
   const Aec3Optimization optimization_;
   const EchoCanceller3Config config_;
+  const bool update_capture_call_counter_on_skipped_blocks_;
   const float render_linear_amplitude_gain_;
   const rtc::LoggingSeverity delay_log_level_;
   size_t down_sampling_factor_;
@@ -122,6 +130,8 @@ RenderDelayBufferImpl::RenderDelayBufferImpl(const EchoCanceller3Config& config,
           new ApmDataDumper(rtc::AtomicOps::Increment(&instance_count_))),
       optimization_(DetectOptimization()),
       config_(config),
+      update_capture_call_counter_on_skipped_blocks_(
+          UpdateCaptureCallCounterOnSkippedBlocks()),
       render_linear_amplitude_gain_(
           std::pow(10.0f, config_.render_levels.render_power_gain_db / 20.f)),
       delay_log_level_(config_.delay.log_warning_on_delay_changes
@@ -133,7 +143,7 @@ RenderDelayBufferImpl::RenderDelayBufferImpl(const EchoCanceller3Config& config,
                                            : kBlockSize)),
       blocks_(GetRenderDelayBufferSize(down_sampling_factor_,
                                        config.delay.num_filters,
-                                       config.filter.main.length_blocks),
+                                       config.filter.refined.length_blocks),
               NumBandsForRate(sample_rate_hz),
               num_render_channels,
               kBlockSize),
@@ -147,7 +157,7 @@ RenderDelayBufferImpl::RenderDelayBufferImpl(const EchoCanceller3Config& config,
       render_decimator_(down_sampling_factor_),
       fft_(),
       render_ds_(sub_block_size_, 0.f),
-      buffer_headroom_(config.filter.main.length_blocks) {
+      buffer_headroom_(config.filter.refined.length_blocks) {
   RTC_DCHECK_EQ(blocks_.buffer.size(), ffts_.buffer.size());
   RTC_DCHECK_EQ(spectra_.buffer.size(), ffts_.buffer.size());
   for (size_t i = 0; i < blocks_.buffer.size(); ++i) {
@@ -241,6 +251,12 @@ RenderDelayBuffer::BufferingEvent RenderDelayBufferImpl::Insert(
   }
 
   return event;
+}
+
+void RenderDelayBufferImpl::HandleSkippedCaptureProcessing() {
+  if (update_capture_call_counter_on_skipped_blocks_) {
+    ++capture_call_counter_;
+  }
 }
 
 // Prepares the render buffers for processing another capture block.

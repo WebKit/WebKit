@@ -27,9 +27,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSArray<NSString *> *)availableVideoResolutions {
   NSMutableSet<NSArray<NSNumber *> *> *resolutions =
       [[NSMutableSet<NSArray<NSNumber *> *> alloc] init];
-  for (AVCaptureDevice *device in [RTCCameraVideoCapturer captureDevices]) {
+  for (AVCaptureDevice *device in [RTC_OBJC_TYPE(RTCCameraVideoCapturer) captureDevices]) {
     for (AVCaptureDeviceFormat *format in
-         [RTCCameraVideoCapturer supportedFormatsForDevice:device]) {
+         [RTC_OBJC_TYPE(RTCCameraVideoCapturer) supportedFormatsForDevice:device]) {
       CMVideoDimensions resolution =
           CMVideoFormatDescriptionGetDimensions(format.formatDescription);
       NSArray<NSNumber *> *resolutionObject = @[ @(resolution.width), @(resolution.height) ];
@@ -70,17 +70,17 @@ NS_ASSUME_NONNULL_BEGIN
   return YES;
 }
 
-- (NSArray<RTCVideoCodecInfo *> *)availableVideoCodecs {
-  return [RTCDefaultVideoEncoderFactory supportedCodecs];
+- (NSArray<RTC_OBJC_TYPE(RTCVideoCodecInfo) *> *)availableVideoCodecs {
+  return [RTC_OBJC_TYPE(RTCDefaultVideoEncoderFactory) supportedCodecs];
 }
 
-- (RTCVideoCodecInfo *)currentVideoCodecSettingFromStore {
+- (RTC_OBJC_TYPE(RTCVideoCodecInfo) *)currentVideoCodecSettingFromStore {
   [self registerStoreDefaults];
   NSData *codecData = [[self settingsStore] videoCodec];
   return [NSKeyedUnarchiver unarchiveObjectWithData:codecData];
 }
 
-- (BOOL)storeVideoCodecSetting:(RTCVideoCodecInfo *)videoCodec {
+- (BOOL)storeVideoCodecSetting:(RTC_OBJC_TYPE(RTCVideoCodecInfo) *)videoCodec {
   if (![[self availableVideoCodecs] containsObject:videoCodec]) {
     return NO;
   }
@@ -149,7 +149,7 @@ NS_ASSUME_NONNULL_BEGIN
   return [self availableVideoResolutions].firstObject;
 }
 
-- (RTCVideoCodecInfo *)defaultVideoCodecSetting {
+- (RTC_OBJC_TYPE(RTCVideoCodecInfo) *)defaultVideoCodecSetting {
   return [self availableVideoCodecs].firstObject;
 }
 

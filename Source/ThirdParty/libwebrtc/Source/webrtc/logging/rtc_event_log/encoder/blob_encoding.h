@@ -43,7 +43,7 @@ namespace webrtc {
 //
 // Note that the returned std::string might have been reserved for significantly
 // more memory than it ends up using. If the caller to EncodeBlobs() intends
-// to store the result long-term, he should consider shrink_to_fit()-ing it.
+// to store the result long-term, they should consider shrink_to_fit()-ing it.
 std::string EncodeBlobs(const std::vector<std::string>& blobs);
 std::vector<absl::string_view> DecodeBlobs(absl::string_view encoded_blobs,
                                            size_t num_of_blobs);

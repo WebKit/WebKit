@@ -11,6 +11,7 @@
 #import "ARDStatsBuilder.h"
 
 #import <WebRTC/RTCLegacyStatsReport.h>
+#import <WebRTC/RTCMacros.h>
 
 #import "ARDBitrateTracker.h"
 #import "ARDUtilities.h"
@@ -141,7 +142,7 @@
   return result;
 }
 
-- (void)parseStatsReport:(RTCLegacyStatsReport *)statsReport {
+- (void)parseStatsReport:(RTC_OBJC_TYPE(RTCLegacyStatsReport) *)statsReport {
   NSString *reportType = statsReport.type;
   if ([reportType isEqualToString:@"ssrc"] &&
       [statsReport.reportId rangeOfString:@"ssrc"].location != NSNotFound) {
@@ -179,7 +180,7 @@
   }
 }
 
-- (void)parseBweStatsReport:(RTCLegacyStatsReport *)statsReport {
+- (void)parseBweStatsReport:(RTC_OBJC_TYPE(RTCLegacyStatsReport) *)statsReport {
   [statsReport.values
       enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSString *value, BOOL *stop) {
         [self updateBweStatOfKey:key value:value];
@@ -206,7 +207,7 @@
   }
 }
 
-- (void)parseConnectionStatsReport:(RTCLegacyStatsReport *)statsReport {
+- (void)parseConnectionStatsReport:(RTC_OBJC_TYPE(RTCLegacyStatsReport) *)statsReport {
   NSString *activeConnection = statsReport.values[@"googActiveConnection"];
   if (![activeConnection isEqualToString:@"true"]) {
     return;
@@ -217,7 +218,7 @@
       }];
 }
 
-- (void)parseSendSsrcStatsReport:(RTCLegacyStatsReport *)statsReport {
+- (void)parseSendSsrcStatsReport:(RTC_OBJC_TYPE(RTCLegacyStatsReport) *)statsReport {
   NSDictionary *values = statsReport.values;
   if ([values objectForKey:@"googFrameRateSent"]) {
     // Video track.
@@ -238,7 +239,7 @@
   }
 }
 
-- (void)parseAudioSendStatsReport:(RTCLegacyStatsReport *)statsReport {
+- (void)parseAudioSendStatsReport:(RTC_OBJC_TYPE(RTCLegacyStatsReport) *)statsReport {
   [statsReport.values
       enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSString *value, BOOL *stop) {
         [self updateAudioSendStatOfKey:key value:value];
@@ -275,14 +276,14 @@
   }
 }
 
-- (void)parseVideoSendStatsReport:(RTCLegacyStatsReport *)statsReport {
+- (void)parseVideoSendStatsReport:(RTC_OBJC_TYPE(RTCLegacyStatsReport) *)statsReport {
   [statsReport.values
       enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSString *value, BOOL *stop) {
         [self updateVideoSendStatOfKey:key value:value];
       }];
 }
 
-- (void)parseRecvSsrcStatsReport:(RTCLegacyStatsReport *)statsReport {
+- (void)parseRecvSsrcStatsReport:(RTC_OBJC_TYPE(RTCLegacyStatsReport) *)statsReport {
   NSDictionary *values = statsReport.values;
   if ([values objectForKey:@"googFrameWidthReceived"]) {
     // Video track.
@@ -307,7 +308,7 @@
   }
 }
 
-- (void)parseAudioRecvStatsReport:(RTCLegacyStatsReport *)statsReport {
+- (void)parseAudioRecvStatsReport:(RTC_OBJC_TYPE(RTCLegacyStatsReport) *)statsReport {
   [statsReport.values
       enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSString *value, BOOL *stop) {
         [self updateAudioRecvStatOfKey:key value:value];
@@ -334,7 +335,7 @@
   }
 }
 
-- (void)parseVideoRecvStatsReport:(RTCLegacyStatsReport *)statsReport {
+- (void)parseVideoRecvStatsReport:(RTC_OBJC_TYPE(RTCLegacyStatsReport) *)statsReport {
   [statsReport.values
       enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSString *value, BOOL *stop) {
         [self updateVideoRecvStatOfKey:key value:value];

@@ -18,7 +18,7 @@ static const size_t kMaxPacketsInHistory = 5000;
 void TransportFeedbackDemuxer::RegisterStreamFeedbackObserver(
     std::vector<uint32_t> ssrcs,
     StreamFeedbackObserver* observer) {
-  rtc::CritScope cs(&observers_lock_);
+  MutexLock lock(&observers_lock_);
   RTC_DCHECK(observer);
   RTC_DCHECK(absl::c_find_if(observers_, [=](const auto& pair) {
                return pair.second == observer;
@@ -28,7 +28,7 @@ void TransportFeedbackDemuxer::RegisterStreamFeedbackObserver(
 
 void TransportFeedbackDemuxer::DeRegisterStreamFeedbackObserver(
     StreamFeedbackObserver* observer) {
-  rtc::CritScope cs(&observers_lock_);
+  MutexLock lock(&observers_lock_);
   RTC_DCHECK(observer);
   const auto it = absl::c_find_if(
       observers_, [=](const auto& pair) { return pair.second == observer; });
@@ -37,8 +37,8 @@ void TransportFeedbackDemuxer::DeRegisterStreamFeedbackObserver(
 }
 
 void TransportFeedbackDemuxer::AddPacket(const RtpPacketSendInfo& packet_info) {
-  rtc::CritScope cs(&lock_);
-  if (packet_info.has_rtp_sequence_number && packet_info.ssrc != 0) {
+  MutexLock lock(&lock_);
+  if (packet_info.ssrc != 0) {
     StreamFeedbackObserver::StreamPacketInfo info;
     info.ssrc = packet_info.ssrc;
     info.rtp_sequence_number = packet_info.rtp_sequence_number;
@@ -56,7 +56,7 @@ void TransportFeedbackDemuxer::OnTransportFeedback(
     const rtcp::TransportFeedback& feedback) {
   std::vector<StreamFeedbackObserver::StreamPacketInfo> stream_feedbacks;
   {
-    rtc::CritScope cs(&lock_);
+    MutexLock lock(&lock_);
     for (const auto& packet : feedback.GetAllPackets()) {
       int64_t seq_num =
           seq_num_unwrapper_.UnwrapWithoutUpdate(packet.sequence_number());
@@ -71,7 +71,7 @@ void TransportFeedbackDemuxer::OnTransportFeedback(
     }
   }
 
-  rtc::CritScope cs(&observers_lock_);
+  MutexLock lock(&observers_lock_);
   for (auto& observer : observers_) {
     std::vector<StreamFeedbackObserver::StreamPacketInfo> selected_feedback;
     for (const auto& packet_info : stream_feedbacks) {

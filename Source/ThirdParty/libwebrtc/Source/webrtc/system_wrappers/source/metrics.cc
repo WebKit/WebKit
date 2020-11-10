@@ -11,7 +11,8 @@
 
 #include <algorithm>
 
-#include "rtc_base/critical_section.h"
+#include "rtc_base/constructor_magic.h"
+#include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/thread_annotations.h"
 
 // Default implementation of histogram methods for WebRTC clients that do not
@@ -38,7 +39,7 @@ class RtcHistogram {
     sample = std::min(sample, max_);
     sample = std::max(sample, min_ - 1);  // Underflow bucket.
 
-    rtc::CritScope cs(&crit_);
+    MutexLock lock(&mutex_);
     if (info_.samples.size() == kMaxSampleMapSize &&
         info_.samples.find(sample) == info_.samples.end()) {
       return;
@@ -48,7 +49,7 @@ class RtcHistogram {
 
   // Returns a copy (or nullptr if there are no samples) and clears samples.
   std::unique_ptr<SampleInfo> GetAndReset() {
-    rtc::CritScope cs(&crit_);
+    MutexLock lock(&mutex_);
     if (info_.samples.empty())
       return nullptr;
 
@@ -64,19 +65,19 @@ class RtcHistogram {
 
   // Functions only for testing.
   void Reset() {
-    rtc::CritScope cs(&crit_);
+    MutexLock lock(&mutex_);
     info_.samples.clear();
   }
 
   int NumEvents(int sample) const {
-    rtc::CritScope cs(&crit_);
+    MutexLock lock(&mutex_);
     const auto it = info_.samples.find(sample);
     return (it == info_.samples.end()) ? 0 : it->second;
   }
 
   int NumSamples() const {
     int num_samples = 0;
-    rtc::CritScope cs(&crit_);
+    MutexLock lock(&mutex_);
     for (const auto& sample : info_.samples) {
       num_samples += sample.second;
     }
@@ -84,20 +85,20 @@ class RtcHistogram {
   }
 
   int MinSample() const {
-    rtc::CritScope cs(&crit_);
+    MutexLock lock(&mutex_);
     return (info_.samples.empty()) ? -1 : info_.samples.begin()->first;
   }
 
   std::map<int, int> Samples() const {
-    rtc::CritScope cs(&crit_);
+    MutexLock lock(&mutex_);
     return info_.samples;
   }
 
  private:
-  rtc::CriticalSection crit_;
+  mutable Mutex mutex_;
   const int min_;
   const int max_;
-  SampleInfo info_ RTC_GUARDED_BY(crit_);
+  SampleInfo info_ RTC_GUARDED_BY(mutex_);
 
   RTC_DISALLOW_COPY_AND_ASSIGN(RtcHistogram);
 };
@@ -111,7 +112,7 @@ class RtcHistogramMap {
                                 int min,
                                 int max,
                                 int bucket_count) {
-    rtc::CritScope cs(&crit_);
+    MutexLock lock(&mutex_);
     const auto& it = map_.find(name);
     if (it != map_.end())
       return reinterpret_cast<Histogram*>(it->second.get());
@@ -122,7 +123,7 @@ class RtcHistogramMap {
   }
 
   Histogram* GetEnumerationHistogram(const std::string& name, int boundary) {
-    rtc::CritScope cs(&crit_);
+    MutexLock lock(&mutex_);
     const auto& it = map_.find(name);
     if (it != map_.end())
       return reinterpret_cast<Histogram*>(it->second.get());
@@ -134,7 +135,7 @@ class RtcHistogramMap {
 
   void GetAndReset(
       std::map<std::string, std::unique_ptr<SampleInfo>>* histograms) {
-    rtc::CritScope cs(&crit_);
+    MutexLock lock(&mutex_);
     for (const auto& kv : map_) {
       std::unique_ptr<SampleInfo> info = kv.second->GetAndReset();
       if (info)
@@ -144,39 +145,39 @@ class RtcHistogramMap {
 
   // Functions only for testing.
   void Reset() {
-    rtc::CritScope cs(&crit_);
+    MutexLock lock(&mutex_);
     for (const auto& kv : map_)
       kv.second->Reset();
   }
 
   int NumEvents(const std::string& name, int sample) const {
-    rtc::CritScope cs(&crit_);
+    MutexLock lock(&mutex_);
     const auto& it = map_.find(name);
     return (it == map_.end()) ? 0 : it->second->NumEvents(sample);
   }
 
   int NumSamples(const std::string& name) const {
-    rtc::CritScope cs(&crit_);
+    MutexLock lock(&mutex_);
     const auto& it = map_.find(name);
     return (it == map_.end()) ? 0 : it->second->NumSamples();
   }
 
   int MinSample(const std::string& name) const {
-    rtc::CritScope cs(&crit_);
+    MutexLock lock(&mutex_);
     const auto& it = map_.find(name);
     return (it == map_.end()) ? -1 : it->second->MinSample();
   }
 
   std::map<int, int> Samples(const std::string& name) const {
-    rtc::CritScope cs(&crit_);
+    MutexLock lock(&mutex_);
     const auto& it = map_.find(name);
     return (it == map_.end()) ? std::map<int, int>() : it->second->Samples();
   }
 
  private:
-  rtc::CriticalSection crit_;
+  mutable Mutex mutex_;
   std::map<std::string, std::unique_ptr<RtcHistogram>> map_
-      RTC_GUARDED_BY(crit_);
+      RTC_GUARDED_BY(mutex_);
 
   RTC_DISALLOW_COPY_AND_ASSIGN(RtcHistogramMap);
 };

@@ -29,11 +29,11 @@
 #include "api/task_queue/task_queue_base.h"
 #include "base/third_party/libevent/event.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/critical_section.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/numerics/safe_conversions.h"
 #include "rtc_base/platform_thread.h"
 #include "rtc_base/platform_thread_types.h"
+#include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/thread_annotations.h"
 #include "rtc_base/time_utils.h"
 
@@ -130,7 +130,7 @@ class TaskQueueLibevent final : public TaskQueueBase {
   event_base* event_base_;
   event wakeup_event_;
   rtc::PlatformThread thread_;
-  rtc::CriticalSection pending_lock_;
+  Mutex pending_lock_;
   absl::InlinedVector<std::unique_ptr<QueuedTask>, 4> pending_
       RTC_GUARDED_BY(pending_lock_);
   // Holds a list of events pending timers for cleanup when the loop exits.
@@ -216,7 +216,7 @@ void TaskQueueLibevent::Delete() {
 
 void TaskQueueLibevent::PostTask(std::unique_ptr<QueuedTask> task) {
   {
-    rtc::CritScope lock(&pending_lock_);
+    MutexLock lock(&pending_lock_);
     bool had_pending_tasks = !pending_.empty();
     pending_.push_back(std::move(task));
 
@@ -282,7 +282,7 @@ void TaskQueueLibevent::OnWakeup(int socket,
     case kRunTasks: {
       absl::InlinedVector<std::unique_ptr<QueuedTask>, 4> tasks;
       {
-        rtc::CritScope lock(&me->pending_lock_);
+        MutexLock lock(&me->pending_lock_);
         tasks.swap(me->pending_);
       }
       RTC_DCHECK(!tasks.empty());

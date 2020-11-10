@@ -32,13 +32,17 @@
 #include "modules/rtp_rtcp/source/rtp_sender_egress.h"
 #include "modules/rtp_rtcp/source/rtp_sender_video.h"
 #include "modules/rtp_rtcp/source/rtp_utility.h"
+#include "modules/rtp_rtcp/source/video_fec_generator.h"
 #include "rtc_base/arraysize.h"
 #include "rtc_base/rate_limiter.h"
+#include "rtc_base/strings/string_builder.h"
+#include "rtc_base/task_utils/to_queued_task.h"
 #include "test/field_trial.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/mock_transport.h"
 #include "test/rtp_header_parser.h"
+#include "test/time_controller/simulated_time_controller.h"
 
 namespace webrtc {
 
@@ -46,8 +50,7 @@ namespace {
 enum : int {  // The first valid value is 1.
   kAbsoluteSendTimeExtensionId = 1,
   kAudioLevelExtensionId,
-  kGenericDescriptorId00,
-  kGenericDescriptorId01,
+  kGenericDescriptorId,
   kMidExtensionId,
   kRepairedRidExtensionId,
   kRidExtensionId,
@@ -75,12 +78,18 @@ const char kNoMid[] = "";
 using ::testing::_;
 using ::testing::AllOf;
 using ::testing::Contains;
+using ::testing::Each;
 using ::testing::ElementsAreArray;
+using ::testing::Eq;
 using ::testing::Field;
+using ::testing::Gt;
+using ::testing::IsEmpty;
 using ::testing::NiceMock;
+using ::testing::Not;
 using ::testing::Pointee;
 using ::testing::Property;
 using ::testing::Return;
+using ::testing::SizeIs;
 using ::testing::StrictMock;
 
 uint64_t ConvertMsToAbsSendTime(int64_t time_ms) {
@@ -102,9 +111,7 @@ class LoopbackTransportTest : public webrtc::Transport {
         kVideoTimingExtensionId);
     receivers_extensions_.Register<RtpMid>(kMidExtensionId);
     receivers_extensions_.Register<RtpGenericFrameDescriptorExtension00>(
-        kGenericDescriptorId00);
-    receivers_extensions_.Register<RtpGenericFrameDescriptorExtension01>(
-        kGenericDescriptorId01);
+        kGenericDescriptorId);
     receivers_extensions_.Register<RtpStreamId>(kRidExtensionId);
     receivers_extensions_.Register<RepairedRtpStreamId>(
         kRepairedRidExtensionId);
@@ -136,55 +143,43 @@ MATCHER_P(SameRtcEventTypeAs, value, "") {
 }
 
 struct TestConfig {
-  explicit TestConfig(bool with_overhead) : with_overhead(with_overhead) {}
+  TestConfig(bool with_overhead, bool deferred_fec)
+      : with_overhead(with_overhead), deferred_fec(deferred_fec) {}
   bool with_overhead = false;
+  bool deferred_fec = false;
 };
-
-std::string ToFieldTrialString(TestConfig config) {
-  std::string field_trials;
-  if (config.with_overhead) {
-    field_trials += "WebRTC-SendSideBwe-WithOverhead/Enabled/";
-  }
-  return field_trials;
-}
 
 class MockRtpPacketPacer : public RtpPacketSender {
  public:
   MockRtpPacketPacer() {}
   virtual ~MockRtpPacketPacer() {}
 
-  MOCK_METHOD1(EnqueuePackets,
-               void(std::vector<std::unique_ptr<RtpPacketToSend>>));
-
-  MOCK_METHOD2(CreateProbeCluster, void(int bitrate_bps, int cluster_id));
-
-  MOCK_METHOD0(Pause, void());
-  MOCK_METHOD0(Resume, void());
-  MOCK_METHOD1(SetCongestionWindow,
-               void(absl::optional<int64_t> congestion_window_bytes));
-  MOCK_METHOD1(UpdateOutstandingData, void(int64_t outstanding_bytes));
-  MOCK_METHOD1(SetAccountForAudioPackets, void(bool account_for_audio));
+  MOCK_METHOD(void,
+              EnqueuePackets,
+              (std::vector<std::unique_ptr<RtpPacketToSend>>),
+              (override));
 };
 
 class MockSendSideDelayObserver : public SendSideDelayObserver {
  public:
-  MOCK_METHOD4(SendSideDelayUpdated, void(int, int, uint64_t, uint32_t));
+  MOCK_METHOD(void,
+              SendSideDelayUpdated,
+              (int, int, uint64_t, uint32_t),
+              (override));
 };
 
 class MockSendPacketObserver : public SendPacketObserver {
  public:
-  MOCK_METHOD3(OnSendPacket, void(uint16_t, int64_t, uint32_t));
+  MOCK_METHOD(void, OnSendPacket, (uint16_t, int64_t, uint32_t), (override));
 };
 
 class MockTransportFeedbackObserver : public TransportFeedbackObserver {
  public:
-  MOCK_METHOD1(OnAddPacket, void(const RtpPacketSendInfo&));
-  MOCK_METHOD1(OnTransportFeedback, void(const rtcp::TransportFeedback&));
-};
-
-class MockOverheadObserver : public OverheadObserver {
- public:
-  MOCK_METHOD1(OnOverheadChanged, void(size_t overhead_bytes_per_packet));
+  MOCK_METHOD(void, OnAddPacket, (const RtpPacketSendInfo&), (override));
+  MOCK_METHOD(void,
+              OnTransportFeedback,
+              (const rtcp::TransportFeedback&),
+              (override));
 };
 
 class StreamDataTestCallback : public StreamDataCountersCallback {
@@ -218,22 +213,102 @@ class StreamDataTestCallback : public StreamDataCountersCallback {
   }
 };
 
+class TaskQueuePacketSender : public RtpPacketSender {
+ public:
+  TaskQueuePacketSender(TimeController* time_controller,
+                        std::unique_ptr<RtpPacketSender> packet_sender)
+      : time_controller_(time_controller),
+        packet_sender_(std::move(packet_sender)),
+        queue_(time_controller_->CreateTaskQueueFactory()->CreateTaskQueue(
+            "PacerQueue",
+            TaskQueueFactory::Priority::NORMAL)) {}
+
+  void EnqueuePackets(
+      std::vector<std::unique_ptr<RtpPacketToSend>> packets) override {
+    queue_->PostTask(ToQueuedTask([sender = packet_sender_.get(),
+                                   packets_ = std::move(packets)]() mutable {
+      sender->EnqueuePackets(std::move(packets_));
+    }));
+    // Trigger task we just enqueued to be executed by updating the simulated
+    // time controller.
+    time_controller_->AdvanceTime(TimeDelta::Zero());
+  }
+
+  TaskQueueBase* task_queue() const { return queue_.get(); }
+
+  TimeController* const time_controller_;
+  std::unique_ptr<RtpPacketSender> packet_sender_;
+  std::unique_ptr<TaskQueueBase, TaskQueueDeleter> queue_;
+};
+
 // Mimics ModuleRtpRtcp::RtpSenderContext.
 // TODO(sprang): Split up unit tests and test these components individually
 // wherever possible.
-struct RtpSenderContext {
-  explicit RtpSenderContext(const RtpRtcp::Configuration& config)
-      : packet_history_(config.clock),
+struct RtpSenderContext : public SequenceNumberAssigner {
+  RtpSenderContext(const RtpRtcpInterface::Configuration& config,
+                   TimeController* time_controller)
+      : time_controller_(time_controller),
+        packet_history_(config.clock, config.enable_rtx_padding_prioritization),
         packet_sender_(config, &packet_history_),
-        non_paced_sender_(&packet_sender_),
-        packet_generator_(
-            config,
-            &packet_history_,
-            config.paced_sender ? config.paced_sender : &non_paced_sender_) {}
+        pacer_(time_controller,
+               std::make_unique<RtpSenderEgress::NonPacedPacketSender>(
+                   &packet_sender_,
+                   this)),
+        packet_generator_(config,
+                          &packet_history_,
+                          config.paced_sender ? config.paced_sender : &pacer_) {
+  }
+  void AssignSequenceNumber(RtpPacketToSend* packet) override {
+    packet_generator_.AssignSequenceNumber(packet);
+  }
+  // Inject packet straight into RtpSenderEgress without passing through the
+  // pacer, but while still running on the pacer task queue.
+  void InjectPacket(std::unique_ptr<RtpPacketToSend> packet,
+                    const PacedPacketInfo& packet_info) {
+    pacer_.task_queue()->PostTask(
+        ToQueuedTask([sender_ = &packet_sender_, packet_ = std::move(packet),
+                      packet_info]() mutable {
+          sender_->SendPacket(packet_.get(), packet_info);
+        }));
+    time_controller_->AdvanceTime(TimeDelta::Zero());
+  }
+  TimeController* time_controller_;
   RtpPacketHistory packet_history_;
   RtpSenderEgress packet_sender_;
-  RtpSenderEgress::NonPacedPacketSender non_paced_sender_;
+  TaskQueuePacketSender pacer_;
   RTPSender packet_generator_;
+};
+
+class FieldTrialConfig : public WebRtcKeyValueConfig {
+ public:
+  FieldTrialConfig()
+      : overhead_enabled_(false),
+        deferred_fec_(false),
+        max_padding_factor_(1200) {}
+  ~FieldTrialConfig() override {}
+
+  void SetOverHeadEnabled(bool enabled) { overhead_enabled_ = enabled; }
+  void UseDeferredFec(bool enabled) { deferred_fec_ = enabled; }
+  void SetMaxPaddingFactor(double factor) { max_padding_factor_ = factor; }
+
+  std::string Lookup(absl::string_view key) const override {
+    if (key == "WebRTC-LimitPaddingSize") {
+      char string_buf[32];
+      rtc::SimpleStringBuilder ssb(string_buf);
+      ssb << "factor:" << max_padding_factor_;
+      return ssb.str();
+    } else if (key == "WebRTC-SendSideBwe-WithOverhead") {
+      return overhead_enabled_ ? "Enabled" : "Disabled";
+    } else if (key == "WebRTC-DeferredFecGeneration") {
+      return deferred_fec_ ? "Enabled" : "Disabled";
+    }
+    return "";
+  }
+
+ private:
+  bool overhead_enabled_;
+  bool deferred_fec_;
+  double max_padding_factor_;
 };
 
 }  // namespace
@@ -241,8 +316,9 @@ struct RtpSenderContext {
 class RtpSenderTest : public ::testing::TestWithParam<TestConfig> {
  protected:
   RtpSenderTest()
-      : fake_clock_(kStartTime),
-        retransmission_rate_limiter_(&fake_clock_, 1000),
+      : time_controller_(Timestamp::Millis(kStartTime)),
+        clock_(time_controller_.GetClock()),
+        retransmission_rate_limiter_(clock_, 1000),
         flexfec_sender_(0,
                         kFlexFecSsrc,
                         kSsrc,
@@ -250,9 +326,11 @@ class RtpSenderTest : public ::testing::TestWithParam<TestConfig> {
                         std::vector<RtpExtension>(),
                         std::vector<RtpExtensionSize>(),
                         nullptr,
-                        &fake_clock_),
-        kMarkerBit(true),
-        field_trials_(ToFieldTrialString(GetParam())) {}
+                        clock_),
+        kMarkerBit(true) {
+    field_trials_.SetOverHeadEnabled(GetParam().with_overhead);
+    field_trials_.UseDeferredFec(GetParam().deferred_fec);
+  }
 
   void SetUp() override { SetUpRtpSender(true, false, false); }
 
@@ -269,12 +347,20 @@ class RtpSenderTest : public ::testing::TestWithParam<TestConfig> {
   void SetUpRtpSender(bool pacer,
                       bool populate_network2,
                       bool always_send_mid_and_rid) {
-    RtpRtcp::Configuration config;
-    config.clock = &fake_clock_;
+    SetUpRtpSender(pacer, populate_network2, always_send_mid_and_rid,
+                   &flexfec_sender_);
+  }
+
+  void SetUpRtpSender(bool pacer,
+                      bool populate_network2,
+                      bool always_send_mid_and_rid,
+                      VideoFecGenerator* fec_generator) {
+    RtpRtcpInterface::Configuration config;
+    config.clock = clock_;
     config.outgoing_transport = &transport_;
     config.local_media_ssrc = kSsrc;
     config.rtx_send_ssrc = kRtxSsrc;
-    config.fec_generator = &flexfec_sender_;
+    config.fec_generator = fec_generator;
     config.event_log = &mock_rtc_event_log_;
     config.send_packet_observer = &send_packet_observer_;
     config.retransmission_rate_limiter = &retransmission_rate_limiter_;
@@ -282,12 +368,16 @@ class RtpSenderTest : public ::testing::TestWithParam<TestConfig> {
     config.populate_network2_timestamp = populate_network2;
     config.rtp_stats_callback = &rtp_stats_callback_;
     config.always_send_mid_and_rid = always_send_mid_and_rid;
-    rtp_sender_context_ = std::make_unique<RtpSenderContext>(config);
+    config.field_trials = &field_trials_;
+
+    rtp_sender_context_ =
+        std::make_unique<RtpSenderContext>(config, &time_controller_);
     rtp_sender()->SetSequenceNumber(kSeqNum);
     rtp_sender()->SetTimestampOffset(0);
   }
 
-  SimulatedClock fake_clock_;
+  GlobalSimulatedTimeController time_controller_;
+  Clock* const clock_;
   NiceMock<MockRtcEventLog> mock_rtc_event_log_;
   MockRtpPacketPacer mock_paced_sender_;
   StrictMock<MockSendPacketObserver> send_packet_observer_;
@@ -299,7 +389,7 @@ class RtpSenderTest : public ::testing::TestWithParam<TestConfig> {
 
   LoopbackTransportTest transport_;
   const bool kMarkerBit;
-  test::ScopedFieldTrials field_trials_;
+  FieldTrialConfig field_trials_;
   StreamDataTestCallback rtp_stats_callback_;
 
   std::unique_ptr<RtpPacketToSend> BuildRtpPacket(int payload_type,
@@ -331,7 +421,7 @@ class RtpSenderTest : public ::testing::TestWithParam<TestConfig> {
   }
 
   std::unique_ptr<RtpPacketToSend> SendGenericPacket() {
-    const int64_t kCaptureTimeMs = fake_clock_.TimeInMilliseconds();
+    const int64_t kCaptureTimeMs = clock_->TimeInMilliseconds();
     return SendPacket(kCaptureTimeMs, sizeof(kPayloadData));
   }
 
@@ -340,7 +430,7 @@ class RtpSenderTest : public ::testing::TestWithParam<TestConfig> {
     for (auto& packet :
          rtp_sender()->GeneratePadding(target_size_bytes, true)) {
       generated_bytes += packet->payload_size() + packet->padding_size();
-      rtp_egress()->SendPacket(packet.get(), PacedPacketInfo());
+      rtp_sender_context_->InjectPacket(std::move(packet), PacedPacketInfo());
     }
     return generated_bytes;
   }
@@ -463,15 +553,16 @@ TEST_P(RtpSenderTestWithoutPacer, AssignSequenceNumberMayAllowPaddingOnVideo) {
 
 TEST_P(RtpSenderTest, AssignSequenceNumberAllowsPaddingOnAudio) {
   MockTransport transport;
-  RtpRtcp::Configuration config;
+  RtpRtcpInterface::Configuration config;
   config.audio = true;
-  config.clock = &fake_clock_;
+  config.clock = clock_;
   config.outgoing_transport = &transport;
   config.paced_sender = &mock_paced_sender_;
   config.local_media_ssrc = kSsrc;
   config.event_log = &mock_rtc_event_log_;
   config.retransmission_rate_limiter = &retransmission_rate_limiter_;
-  rtp_sender_context_ = std::make_unique<RtpSenderContext>(config);
+  rtp_sender_context_ =
+      std::make_unique<RtpSenderContext>(config, &time_controller_);
 
   rtp_sender()->SetTimestampOffset(0);
 
@@ -511,18 +602,18 @@ TEST_P(RtpSenderTestWithoutPacer, AssignSequenceNumberSetPaddingTimestamps) {
 
 TEST_P(RtpSenderTestWithoutPacer,
        TransportFeedbackObserverGetsCorrectByteCount) {
-  constexpr int kRtpOverheadBytesPerPacket = 12 + 8;
-  NiceMock<MockOverheadObserver> mock_overhead_observer;
+  constexpr size_t kRtpOverheadBytesPerPacket = 12 + 8;
 
-  RtpRtcp::Configuration config;
-  config.clock = &fake_clock_;
+  RtpRtcpInterface::Configuration config;
+  config.clock = clock_;
   config.outgoing_transport = &transport_;
   config.local_media_ssrc = kSsrc;
   config.transport_feedback_callback = &feedback_observer_;
   config.event_log = &mock_rtc_event_log_;
   config.retransmission_rate_limiter = &retransmission_rate_limiter_;
-  config.overhead_observer = &mock_overhead_observer;
-  rtp_sender_context_ = std::make_unique<RtpSenderContext>(config);
+  config.field_trials = &field_trials_;
+  rtp_sender_context_ =
+      std::make_unique<RtpSenderContext>(config, &time_controller_);
 
   EXPECT_EQ(0, rtp_sender()->RegisterRtpHeaderExtension(
                    kRtpExtensionTransportSequenceNumber,
@@ -543,22 +634,22 @@ TEST_P(RtpSenderTestWithoutPacer,
                   Field(&RtpPacketSendInfo::length, expected_bytes),
                   Field(&RtpPacketSendInfo::pacing_info, PacedPacketInfo()))))
       .Times(1);
-  EXPECT_CALL(mock_overhead_observer,
-              OnOverheadChanged(kRtpOverheadBytesPerPacket))
-      .Times(1);
+  EXPECT_EQ(rtp_sender()->ExpectedPerPacketOverhead(),
+            kRtpOverheadBytesPerPacket);
   SendGenericPacket();
 }
 
 TEST_P(RtpSenderTestWithoutPacer, SendsPacketsWithTransportSequenceNumber) {
-  RtpRtcp::Configuration config;
-  config.clock = &fake_clock_;
+  RtpRtcpInterface::Configuration config;
+  config.clock = clock_;
   config.outgoing_transport = &transport_;
   config.local_media_ssrc = kSsrc;
   config.transport_feedback_callback = &feedback_observer_;
   config.event_log = &mock_rtc_event_log_;
   config.send_packet_observer = &send_packet_observer_;
   config.retransmission_rate_limiter = &retransmission_rate_limiter_;
-  rtp_sender_context_ = std::make_unique<RtpSenderContext>(config);
+  rtp_sender_context_ =
+      std::make_unique<RtpSenderContext>(config, &time_controller_);
 
   EXPECT_EQ(0, rtp_sender()->RegisterRtpHeaderExtension(
                    kRtpExtensionTransportSequenceNumber,
@@ -589,15 +680,16 @@ TEST_P(RtpSenderTestWithoutPacer, SendsPacketsWithTransportSequenceNumber) {
 }
 
 TEST_P(RtpSenderTestWithoutPacer, PacketOptionsNoRetransmission) {
-  RtpRtcp::Configuration config;
-  config.clock = &fake_clock_;
+  RtpRtcpInterface::Configuration config;
+  config.clock = clock_;
   config.outgoing_transport = &transport_;
   config.local_media_ssrc = kSsrc;
   config.transport_feedback_callback = &feedback_observer_;
   config.event_log = &mock_rtc_event_log_;
   config.send_packet_observer = &send_packet_observer_;
   config.retransmission_rate_limiter = &retransmission_rate_limiter_;
-  rtp_sender_context_ = std::make_unique<RtpSenderContext>(config);
+  rtp_sender_context_ =
+      std::make_unique<RtpSenderContext>(config, &time_controller_);
 
   SendGenericPacket();
 
@@ -644,17 +736,18 @@ TEST_P(RtpSenderTestWithoutPacer, DoesnSetIncludedInAllocationByDefault) {
 TEST_P(RtpSenderTestWithoutPacer, OnSendSideDelayUpdated) {
   StrictMock<MockSendSideDelayObserver> send_side_delay_observer_;
 
-  RtpRtcp::Configuration config;
-  config.clock = &fake_clock_;
+  RtpRtcpInterface::Configuration config;
+  config.clock = clock_;
   config.outgoing_transport = &transport_;
   config.local_media_ssrc = kSsrc;
   config.send_side_delay_observer = &send_side_delay_observer_;
   config.event_log = &mock_rtc_event_log_;
-  rtp_sender_context_ = std::make_unique<RtpSenderContext>(config);
+  rtp_sender_context_ =
+      std::make_unique<RtpSenderContext>(config, &time_controller_);
 
   FieldTrialBasedConfig field_trials;
   RTPSenderVideo::Config video_config;
-  video_config.clock = &fake_clock_;
+  video_config.clock = clock_;
   video_config.rtp_sender = rtp_sender();
   video_config.field_trials = &field_trials;
   RTPSenderVideo rtp_sender_video(video_config);
@@ -671,12 +764,12 @@ TEST_P(RtpSenderTestWithoutPacer, OnSendSideDelayUpdated) {
   EXPECT_CALL(send_side_delay_observer_,
               SendSideDelayUpdated(10, 10, 10, kSsrc))
       .Times(1);
-  int64_t capture_time_ms = fake_clock_.TimeInMilliseconds();
-  fake_clock_.AdvanceTimeMilliseconds(10);
+  int64_t capture_time_ms = clock_->TimeInMilliseconds();
+  time_controller_.AdvanceTime(TimeDelta::Millis(10));
   video_header.frame_type = VideoFrameType::kVideoFrameKey;
   EXPECT_TRUE(rtp_sender_video.SendVideo(
       kPayloadType, kCodecType, capture_time_ms * kCaptureTimeMsToRtpTimestamp,
-      capture_time_ms, kPayloadData, nullptr, video_header,
+      capture_time_ms, kPayloadData, video_header,
       kDefaultExpectedRetransmissionTimeMs));
 
   // Send another packet with 20 ms delay. The average, max and total should be
@@ -684,11 +777,11 @@ TEST_P(RtpSenderTestWithoutPacer, OnSendSideDelayUpdated) {
   EXPECT_CALL(send_side_delay_observer_,
               SendSideDelayUpdated(15, 20, 30, kSsrc))
       .Times(1);
-  fake_clock_.AdvanceTimeMilliseconds(10);
+  time_controller_.AdvanceTime(TimeDelta::Millis(10));
   video_header.frame_type = VideoFrameType::kVideoFrameKey;
   EXPECT_TRUE(rtp_sender_video.SendVideo(
       kPayloadType, kCodecType, capture_time_ms * kCaptureTimeMsToRtpTimestamp,
-      capture_time_ms, kPayloadData, nullptr, video_header,
+      capture_time_ms, kPayloadData, video_header,
       kDefaultExpectedRetransmissionTimeMs));
 
   // Send another packet at the same time, which replaces the last packet.
@@ -697,25 +790,25 @@ TEST_P(RtpSenderTestWithoutPacer, OnSendSideDelayUpdated) {
   // TODO(terelius): Is is not clear that this is the right behavior.
   EXPECT_CALL(send_side_delay_observer_, SendSideDelayUpdated(5, 10, 30, kSsrc))
       .Times(1);
-  capture_time_ms = fake_clock_.TimeInMilliseconds();
+  capture_time_ms = clock_->TimeInMilliseconds();
   video_header.frame_type = VideoFrameType::kVideoFrameKey;
   EXPECT_TRUE(rtp_sender_video.SendVideo(
       kPayloadType, kCodecType, capture_time_ms * kCaptureTimeMsToRtpTimestamp,
-      capture_time_ms, kPayloadData, nullptr, video_header,
+      capture_time_ms, kPayloadData, video_header,
       kDefaultExpectedRetransmissionTimeMs));
 
   // Send a packet 1 second later. The earlier packets should have timed
   // out, so both max and average should be the delay of this packet. The total
   // keeps increasing.
-  fake_clock_.AdvanceTimeMilliseconds(1000);
-  capture_time_ms = fake_clock_.TimeInMilliseconds();
-  fake_clock_.AdvanceTimeMilliseconds(1);
+  time_controller_.AdvanceTime(TimeDelta::Millis(1000));
+  capture_time_ms = clock_->TimeInMilliseconds();
+  time_controller_.AdvanceTime(TimeDelta::Millis(1));
   EXPECT_CALL(send_side_delay_observer_, SendSideDelayUpdated(1, 1, 31, kSsrc))
       .Times(1);
   video_header.frame_type = VideoFrameType::kVideoFrameKey;
   EXPECT_TRUE(rtp_sender_video.SendVideo(
       kPayloadType, kCodecType, capture_time_ms * kCaptureTimeMsToRtpTimestamp,
-      capture_time_ms, kPayloadData, nullptr, video_header,
+      capture_time_ms, kPayloadData, video_header,
       kDefaultExpectedRetransmissionTimeMs));
 }
 
@@ -731,8 +824,8 @@ TEST_P(RtpSenderTestWithoutPacer, OnSendPacketUpdated) {
 }
 
 TEST_P(RtpSenderTest, SendsPacketsWithTransportSequenceNumber) {
-  RtpRtcp::Configuration config;
-  config.clock = &fake_clock_;
+  RtpRtcpInterface::Configuration config;
+  config.clock = clock_;
   config.outgoing_transport = &transport_;
   config.paced_sender = &mock_paced_sender_;
   config.local_media_ssrc = kSsrc;
@@ -740,7 +833,8 @@ TEST_P(RtpSenderTest, SendsPacketsWithTransportSequenceNumber) {
   config.event_log = &mock_rtc_event_log_;
   config.send_packet_observer = &send_packet_observer_;
   config.retransmission_rate_limiter = &retransmission_rate_limiter_;
-  rtp_sender_context_ = std::make_unique<RtpSenderContext>(config);
+  rtp_sender_context_ =
+      std::make_unique<RtpSenderContext>(config, &time_controller_);
 
   rtp_sender()->SetSequenceNumber(kSeqNum);
   rtp_sender_context_->packet_history_.SetStorePacketsStatus(
@@ -771,7 +865,7 @@ TEST_P(RtpSenderTest, SendsPacketsWithTransportSequenceNumber) {
   packet->set_packet_type(RtpPacketMediaType::kVideo);
   // Transport sequence number is set by PacketRouter, before SendPacket().
   packet->SetExtension<TransportSequenceNumber>(kTransportSequenceNumber);
-  rtp_egress()->SendPacket(packet.get(), PacedPacketInfo());
+  rtp_sender_context_->InjectPacket(std::move(packet), PacedPacketInfo());
 
   uint16_t transport_seq_no;
   EXPECT_TRUE(
@@ -786,7 +880,7 @@ TEST_P(RtpSenderTest, WritesPacerExitToTimingExtension) {
       RtpPacketHistory::StorageMode::kStoreAndCull, 10);
   EXPECT_EQ(0, rtp_sender()->RegisterRtpHeaderExtension(
                    kRtpExtensionVideoTiming, kVideoTimingExtensionId));
-  int64_t capture_time_ms = fake_clock_.TimeInMilliseconds();
+  int64_t capture_time_ms = clock_->TimeInMilliseconds();
   auto packet = rtp_sender()->AllocatePacket();
   packet->SetPayloadType(kPayload);
   packet->SetMarker(true);
@@ -804,8 +898,8 @@ TEST_P(RtpSenderTest, WritesPacerExitToTimingExtension) {
                                       &RtpPacketToSend::Ssrc, kSsrc)))));
   EXPECT_TRUE(
       rtp_sender()->SendToNetwork(std::make_unique<RtpPacketToSend>(*packet)));
-  fake_clock_.AdvanceTimeMilliseconds(kStoredTimeInMs);
-  rtp_egress()->SendPacket(packet.get(), PacedPacketInfo());
+  time_controller_.AdvanceTime(TimeDelta::Millis(kStoredTimeInMs));
+  rtp_sender_context_->InjectPacket(std::move(packet), PacedPacketInfo());
   EXPECT_EQ(1, transport_.packets_sent());
   EXPECT_EQ(packet_size, transport_.last_sent_packet().size());
 
@@ -821,7 +915,7 @@ TEST_P(RtpSenderTest, WritesNetwork2ToTimingExtensionWithPacer) {
       RtpPacketHistory::StorageMode::kStoreAndCull, 10);
   EXPECT_EQ(0, rtp_sender()->RegisterRtpHeaderExtension(
                    kRtpExtensionVideoTiming, kVideoTimingExtensionId));
-  int64_t capture_time_ms = fake_clock_.TimeInMilliseconds();
+  int64_t capture_time_ms = clock_->TimeInMilliseconds();
   auto packet = rtp_sender()->AllocatePacket();
   packet->SetPayloadType(kPayload);
   packet->SetMarker(true);
@@ -841,8 +935,8 @@ TEST_P(RtpSenderTest, WritesNetwork2ToTimingExtensionWithPacer) {
                                       &RtpPacketToSend::Ssrc, kSsrc)))));
   EXPECT_TRUE(
       rtp_sender()->SendToNetwork(std::make_unique<RtpPacketToSend>(*packet)));
-  fake_clock_.AdvanceTimeMilliseconds(kStoredTimeInMs);
-  rtp_egress()->SendPacket(packet.get(), PacedPacketInfo());
+  time_controller_.AdvanceTime(TimeDelta::Millis(kStoredTimeInMs));
+  rtp_sender_context_->InjectPacket(std::move(packet), PacedPacketInfo());
 
   EXPECT_EQ(1, transport_.packets_sent());
   EXPECT_EQ(packet_size, transport_.last_sent_packet().size());
@@ -860,7 +954,7 @@ TEST_P(RtpSenderTest, WritesNetwork2ToTimingExtensionWithoutPacer) {
                    kRtpExtensionVideoTiming, kVideoTimingExtensionId));
   auto packet = rtp_sender()->AllocatePacket();
   packet->SetMarker(true);
-  packet->set_capture_time_ms(fake_clock_.TimeInMilliseconds());
+  packet->set_capture_time_ms(clock_->TimeInMilliseconds());
   const VideoSendTiming kVideoTiming = {0u, 0u, 0u, 0u, 0u, 0u, true};
   packet->SetExtension<VideoTimingExtension>(kVideoTiming);
   packet->set_allow_retransmission(true);
@@ -868,7 +962,7 @@ TEST_P(RtpSenderTest, WritesNetwork2ToTimingExtensionWithoutPacer) {
   packet->set_packet_type(RtpPacketMediaType::kVideo);
 
   const int kPropagateTimeMs = 10;
-  fake_clock_.AdvanceTimeMilliseconds(kPropagateTimeMs);
+  time_controller_.AdvanceTime(TimeDelta::Millis(kPropagateTimeMs));
 
   EXPECT_TRUE(rtp_sender()->SendToNetwork(std::move(packet)));
 
@@ -891,7 +985,7 @@ TEST_P(RtpSenderTest, TrafficSmoothingWithExtensions) {
   EXPECT_EQ(0,
             rtp_sender()->RegisterRtpHeaderExtension(
                 kRtpExtensionAbsoluteSendTime, kAbsoluteSendTimeExtensionId));
-  int64_t capture_time_ms = fake_clock_.TimeInMilliseconds();
+  int64_t capture_time_ms = clock_->TimeInMilliseconds();
   auto packet =
       BuildRtpPacket(kPayload, kMarkerBit, kTimestamp, capture_time_ms);
   size_t packet_size = packet->size();
@@ -907,8 +1001,8 @@ TEST_P(RtpSenderTest, TrafficSmoothingWithExtensions) {
   EXPECT_TRUE(
       rtp_sender()->SendToNetwork(std::make_unique<RtpPacketToSend>(*packet)));
   EXPECT_EQ(0, transport_.packets_sent());
-  fake_clock_.AdvanceTimeMilliseconds(kStoredTimeInMs);
-  rtp_egress()->SendPacket(packet.get(), PacedPacketInfo());
+  time_controller_.AdvanceTime(TimeDelta::Millis(kStoredTimeInMs));
+  rtp_sender_context_->InjectPacket(std::move(packet), PacedPacketInfo());
 
   // Process send bucket. Packet should now be sent.
   EXPECT_EQ(1, transport_.packets_sent());
@@ -920,7 +1014,7 @@ TEST_P(RtpSenderTest, TrafficSmoothingWithExtensions) {
   // Verify transmission time offset.
   EXPECT_EQ(kStoredTimeInMs * 90, rtp_header.extension.transmissionTimeOffset);
   uint64_t expected_send_time =
-      ConvertMsToAbsSendTime(fake_clock_.TimeInMilliseconds());
+      ConvertMsToAbsSendTime(clock_->TimeInMilliseconds());
   EXPECT_EQ(expected_send_time, rtp_header.extension.absoluteSendTime);
 }
 
@@ -936,7 +1030,7 @@ TEST_P(RtpSenderTest, TrafficSmoothingRetransmits) {
   EXPECT_EQ(0,
             rtp_sender()->RegisterRtpHeaderExtension(
                 kRtpExtensionAbsoluteSendTime, kAbsoluteSendTimeExtensionId));
-  int64_t capture_time_ms = fake_clock_.TimeInMilliseconds();
+  int64_t capture_time_ms = clock_->TimeInMilliseconds();
   auto packet =
       BuildRtpPacket(kPayload, kMarkerBit, kTimestamp, capture_time_ms);
   size_t packet_size = packet->size();
@@ -952,13 +1046,14 @@ TEST_P(RtpSenderTest, TrafficSmoothingRetransmits) {
   EXPECT_TRUE(
       rtp_sender()->SendToNetwork(std::make_unique<RtpPacketToSend>(*packet)));
   // Immediately process send bucket and send packet.
-  rtp_egress()->SendPacket(packet.get(), PacedPacketInfo());
+  rtp_sender_context_->InjectPacket(std::make_unique<RtpPacketToSend>(*packet),
+                                    PacedPacketInfo());
 
   EXPECT_EQ(1, transport_.packets_sent());
 
   // Retransmit packet.
   const int kStoredTimeInMs = 100;
-  fake_clock_.AdvanceTimeMilliseconds(kStoredTimeInMs);
+  time_controller_.AdvanceTime(TimeDelta::Millis(kStoredTimeInMs));
 
   EXPECT_CALL(mock_rtc_event_log_,
               LogProxy(SameRtcEventTypeAs(RtcEvent::Type::RtpPacketOutgoing)));
@@ -971,7 +1066,7 @@ TEST_P(RtpSenderTest, TrafficSmoothingRetransmits) {
           Pointee(Property(&RtpPacketToSend::SequenceNumber, kSeqNum))))));
   EXPECT_EQ(static_cast<int>(packet_size), rtp_sender()->ReSendPacket(kSeqNum));
   EXPECT_EQ(1, transport_.packets_sent());
-  rtp_egress()->SendPacket(packet.get(), PacedPacketInfo());
+  rtp_sender_context_->InjectPacket(std::move(packet), PacedPacketInfo());
 
   // Process send bucket. Packet should now be sent.
   EXPECT_EQ(2, transport_.packets_sent());
@@ -983,7 +1078,7 @@ TEST_P(RtpSenderTest, TrafficSmoothingRetransmits) {
   // Verify transmission time offset.
   EXPECT_EQ(kStoredTimeInMs * 90, rtp_header.extension.transmissionTimeOffset);
   uint64_t expected_send_time =
-      ConvertMsToAbsSendTime(fake_clock_.TimeInMilliseconds());
+      ConvertMsToAbsSendTime(clock_->TimeInMilliseconds());
   EXPECT_EQ(expected_send_time, rtp_header.extension.absoluteSendTime);
 }
 
@@ -1012,7 +1107,7 @@ TEST_P(RtpSenderTest, SendPadding) {
 
   webrtc::RTPHeader rtp_header;
 
-  int64_t capture_time_ms = fake_clock_.TimeInMilliseconds();
+  int64_t capture_time_ms = clock_->TimeInMilliseconds();
   auto packet =
       BuildRtpPacket(kPayload, kMarkerBit, timestamp, capture_time_ms);
   const uint32_t media_packet_timestamp = timestamp;
@@ -1031,8 +1126,8 @@ TEST_P(RtpSenderTest, SendPadding) {
   EXPECT_TRUE(
       rtp_sender()->SendToNetwork(std::make_unique<RtpPacketToSend>(*packet)));
   EXPECT_EQ(total_packets_sent, transport_.packets_sent());
-  fake_clock_.AdvanceTimeMilliseconds(kStoredTimeInMs);
-  rtp_egress()->SendPacket(packet.get(), PacedPacketInfo());
+  time_controller_.AdvanceTime(TimeDelta::Millis(kStoredTimeInMs));
+  rtp_sender_context_->InjectPacket(std::move(packet), PacedPacketInfo());
   ++seq_num;
 
   // Packet should now be sent. This test doesn't verify the regular video
@@ -1064,14 +1159,14 @@ TEST_P(RtpSenderTest, SendPadding) {
     int offset = timestamp - media_packet_timestamp;
     EXPECT_EQ(offset, rtp_header.extension.transmissionTimeOffset);
     uint64_t expected_send_time =
-        ConvertMsToAbsSendTime(fake_clock_.TimeInMilliseconds());
+        ConvertMsToAbsSendTime(clock_->TimeInMilliseconds());
     EXPECT_EQ(expected_send_time, rtp_header.extension.absoluteSendTime);
-    fake_clock_.AdvanceTimeMilliseconds(kPaddingPeriodMs);
+    time_controller_.AdvanceTime(TimeDelta::Millis(kPaddingPeriodMs));
     timestamp += 90 * kPaddingPeriodMs;
   }
 
   // Send a regular video packet again.
-  capture_time_ms = fake_clock_.TimeInMilliseconds();
+  capture_time_ms = clock_->TimeInMilliseconds();
   packet = BuildRtpPacket(kPayload, kMarkerBit, timestamp, capture_time_ms);
   packet_size = packet->size();
 
@@ -1084,7 +1179,7 @@ TEST_P(RtpSenderTest, SendPadding) {
           Pointee(Property(&RtpPacketToSend::SequenceNumber, seq_num))))));
   EXPECT_TRUE(
       rtp_sender()->SendToNetwork(std::make_unique<RtpPacketToSend>(*packet)));
-  rtp_egress()->SendPacket(packet.get(), PacedPacketInfo());
+  rtp_sender_context_->InjectPacket(std::move(packet), PacedPacketInfo());
 
   // Process send bucket.
   EXPECT_EQ(++total_packets_sent, transport_.packets_sent());
@@ -1097,7 +1192,7 @@ TEST_P(RtpSenderTest, SendPadding) {
   // Verify transmission time offset. This packet is sent without delay.
   EXPECT_EQ(0, rtp_header.extension.transmissionTimeOffset);
   uint64_t expected_send_time =
-      ConvertMsToAbsSendTime(fake_clock_.TimeInMilliseconds());
+      ConvertMsToAbsSendTime(clock_->TimeInMilliseconds());
   EXPECT_EQ(expected_send_time, rtp_header.extension.absoluteSendTime);
 }
 
@@ -1120,7 +1215,7 @@ TEST_P(RtpSenderTest, OnSendPacketUpdated) {
   auto packet = SendGenericPacket();
   packet->set_packet_type(RtpPacketMediaType::kVideo);
   packet->SetExtension<TransportSequenceNumber>(kTransportSequenceNumber);
-  rtp_egress()->SendPacket(packet.get(), PacedPacketInfo());
+  rtp_sender_context_->InjectPacket(std::move(packet), PacedPacketInfo());
 
   EXPECT_EQ(1, transport_.packets_sent());
 }
@@ -1142,7 +1237,7 @@ TEST_P(RtpSenderTest, OnSendPacketNotUpdatedForRetransmits) {
   auto packet = SendGenericPacket();
   packet->set_packet_type(RtpPacketMediaType::kRetransmission);
   packet->SetExtension<TransportSequenceNumber>(kTransportSequenceNumber);
-  rtp_egress()->SendPacket(packet.get(), PacedPacketInfo());
+  rtp_sender_context_->InjectPacket(std::move(packet), PacedPacketInfo());
 
   EXPECT_EQ(1, transport_.packets_sent());
   EXPECT_TRUE(transport_.last_options_.is_retransmit);
@@ -1153,7 +1248,7 @@ TEST_P(RtpSenderTestWithoutPacer, SendGenericVideo) {
   const VideoCodecType kCodecType = VideoCodecType::kVideoCodecGeneric;
   FieldTrialBasedConfig field_trials;
   RTPSenderVideo::Config video_config;
-  video_config.clock = &fake_clock_;
+  video_config.clock = clock_;
   video_config.rtp_sender = rtp_sender();
   video_config.field_trials = &field_trials;
   RTPSenderVideo rtp_sender_video(video_config);
@@ -1163,7 +1258,7 @@ TEST_P(RtpSenderTestWithoutPacer, SendGenericVideo) {
   RTPVideoHeader video_header;
   video_header.frame_type = VideoFrameType::kVideoFrameKey;
   ASSERT_TRUE(rtp_sender_video.SendVideo(kPayloadType, kCodecType, 1234, 4321,
-                                         payload, nullptr, video_header,
+                                         payload, video_header,
                                          kDefaultExpectedRetransmissionTimeMs));
 
   auto sent_payload = transport_.last_sent_packet().payload();
@@ -1179,7 +1274,7 @@ TEST_P(RtpSenderTestWithoutPacer, SendGenericVideo) {
 
   video_header.frame_type = VideoFrameType::kVideoFrameDelta;
   ASSERT_TRUE(rtp_sender_video.SendVideo(kPayloadType, kCodecType, 1234, 4321,
-                                         payload, nullptr, video_header,
+                                         payload, video_header,
                                          kDefaultExpectedRetransmissionTimeMs));
 
   sent_payload = transport_.last_sent_packet().payload();
@@ -1195,7 +1290,7 @@ TEST_P(RtpSenderTestWithoutPacer, SendRawVideo) {
 
   FieldTrialBasedConfig field_trials;
   RTPSenderVideo::Config video_config;
-  video_config.clock = &fake_clock_;
+  video_config.clock = clock_;
   video_config.rtp_sender = rtp_sender();
   video_config.field_trials = &field_trials;
   RTPSenderVideo rtp_sender_video(video_config);
@@ -1204,7 +1299,7 @@ TEST_P(RtpSenderTestWithoutPacer, SendRawVideo) {
   RTPVideoHeader video_header;
   video_header.frame_type = VideoFrameType::kVideoFrameKey;
   ASSERT_TRUE(rtp_sender_video.SendVideo(kPayloadType, absl::nullopt, 1234,
-                                         4321, payload, nullptr, video_header,
+                                         4321, payload, video_header,
                                          kDefaultExpectedRetransmissionTimeMs));
 
   auto sent_payload = transport_.last_sent_packet().payload();
@@ -1220,11 +1315,11 @@ TEST_P(RtpSenderTest, SendFlexfecPackets) {
   const std::vector<RtpExtensionSize> kNoRtpExtensionSizes;
   FlexfecSender flexfec_sender(kFlexfecPayloadType, kFlexFecSsrc, kSsrc, kNoMid,
                                kNoRtpExtensions, kNoRtpExtensionSizes,
-                               nullptr /* rtp_state */, &fake_clock_);
+                               nullptr /* rtp_state */, clock_);
 
   // Reset |rtp_sender_| to use FlexFEC.
-  RtpRtcp::Configuration config;
-  config.clock = &fake_clock_;
+  RtpRtcpInterface::Configuration config;
+  config.clock = clock_;
   config.outgoing_transport = &transport_;
   config.paced_sender = &mock_paced_sender_;
   config.local_media_ssrc = kSsrc;
@@ -1232,7 +1327,9 @@ TEST_P(RtpSenderTest, SendFlexfecPackets) {
   config.event_log = &mock_rtc_event_log_;
   config.send_packet_observer = &send_packet_observer_;
   config.retransmission_rate_limiter = &retransmission_rate_limiter_;
-  rtp_sender_context_ = std::make_unique<RtpSenderContext>(config);
+  config.field_trials = &field_trials_;
+  rtp_sender_context_ =
+      std::make_unique<RtpSenderContext>(config, &time_controller_);
 
   rtp_sender()->SetSequenceNumber(kSeqNum);
   rtp_sender_context_->packet_history_.SetStorePacketsStatus(
@@ -1240,9 +1337,15 @@ TEST_P(RtpSenderTest, SendFlexfecPackets) {
 
   FieldTrialBasedConfig field_trials;
   RTPSenderVideo::Config video_config;
-  video_config.clock = &fake_clock_;
+  video_config.clock = clock_;
   video_config.rtp_sender = rtp_sender();
-  video_config.fec_generator = &flexfec_sender;
+  if (!GetParam().deferred_fec) {
+    video_config.fec_generator = &flexfec_sender;
+  }
+  video_config.fec_type = flexfec_sender.GetFecType();
+  video_config.fec_overhead_bytes = flexfec_sender.MaxPacketOverhead();
+  video_config.fec_type = flexfec_sender.GetFecType();
+  video_config.fec_overhead_bytes = flexfec_sender.MaxPacketOverhead();
   video_config.field_trials = &field_trials;
   RTPSenderVideo rtp_sender_video(video_config);
 
@@ -1251,51 +1354,60 @@ TEST_P(RtpSenderTest, SendFlexfecPackets) {
   params.fec_rate = 15;
   params.max_fec_frames = 1;
   params.fec_mask_type = kFecMaskRandom;
-  rtp_sender_video.SetFecParameters(params, params);
+  flexfec_sender.SetProtectionParameters(params, params);
 
   uint16_t flexfec_seq_num;
   RTPVideoHeader video_header;
 
-    std::unique_ptr<RtpPacketToSend> media_packet;
-    std::unique_ptr<RtpPacketToSend> fec_packet;
+  std::unique_ptr<RtpPacketToSend> media_packet;
+  std::unique_ptr<RtpPacketToSend> fec_packet;
 
-    EXPECT_CALL(mock_paced_sender_, EnqueuePackets)
-        .WillOnce([&](std::vector<std::unique_ptr<RtpPacketToSend>> packets) {
-          for (auto& packet : packets) {
-            if (packet->packet_type() == RtpPacketMediaType::kVideo) {
-              EXPECT_EQ(packet->Ssrc(), kSsrc);
-              EXPECT_EQ(packet->SequenceNumber(), kSeqNum);
-              media_packet = std::move(packet);
-            } else {
-              EXPECT_EQ(packet->packet_type(),
+  EXPECT_CALL(mock_paced_sender_, EnqueuePackets)
+      .WillOnce([&](std::vector<std::unique_ptr<RtpPacketToSend>> packets) {
+        for (auto& packet : packets) {
+          if (packet->packet_type() == RtpPacketMediaType::kVideo) {
+            EXPECT_EQ(packet->Ssrc(), kSsrc);
+            EXPECT_EQ(packet->SequenceNumber(), kSeqNum);
+            media_packet = std::move(packet);
+            if (GetParam().deferred_fec) {
+              // Simulate RtpSenderEgress adding packet to fec generator.
+              flexfec_sender.AddPacketAndGenerateFec(*media_packet);
+              auto fec_packets = flexfec_sender.GetFecPackets();
+              EXPECT_EQ(fec_packets.size(), 1u);
+              fec_packet = std::move(fec_packets[0]);
+              EXPECT_EQ(fec_packet->packet_type(),
                         RtpPacketMediaType::kForwardErrorCorrection);
-              EXPECT_EQ(packet->Ssrc(), kFlexFecSsrc);
-              fec_packet = std::move(packet);
+              EXPECT_EQ(fec_packet->Ssrc(), kFlexFecSsrc);
             }
+          } else {
+            EXPECT_EQ(packet->packet_type(),
+                      RtpPacketMediaType::kForwardErrorCorrection);
+            fec_packet = std::move(packet);
+            EXPECT_EQ(fec_packet->Ssrc(), kFlexFecSsrc);
           }
-        });
+        }
+      });
 
-    video_header.frame_type = VideoFrameType::kVideoFrameKey;
-    EXPECT_TRUE(rtp_sender_video.SendVideo(
-        kMediaPayloadType, kCodecType, kTimestamp,
-        fake_clock_.TimeInMilliseconds(), kPayloadData, nullptr, video_header,
-        kDefaultExpectedRetransmissionTimeMs));
-    ASSERT_TRUE(media_packet != nullptr);
-    ASSERT_TRUE(fec_packet != nullptr);
+  video_header.frame_type = VideoFrameType::kVideoFrameKey;
+  EXPECT_TRUE(rtp_sender_video.SendVideo(
+      kMediaPayloadType, kCodecType, kTimestamp, clock_->TimeInMilliseconds(),
+      kPayloadData, video_header, kDefaultExpectedRetransmissionTimeMs));
+  ASSERT_TRUE(media_packet != nullptr);
+  ASSERT_TRUE(fec_packet != nullptr);
 
-    flexfec_seq_num = fec_packet->SequenceNumber();
-    rtp_egress()->SendPacket(media_packet.get(), PacedPacketInfo());
-    rtp_egress()->SendPacket(fec_packet.get(), PacedPacketInfo());
+  flexfec_seq_num = fec_packet->SequenceNumber();
+  rtp_sender_context_->InjectPacket(std::move(media_packet), PacedPacketInfo());
+  rtp_sender_context_->InjectPacket(std::move(fec_packet), PacedPacketInfo());
 
-    ASSERT_EQ(2, transport_.packets_sent());
-    const RtpPacketReceived& sent_media_packet = transport_.sent_packets_[0];
-    EXPECT_EQ(kMediaPayloadType, sent_media_packet.PayloadType());
-    EXPECT_EQ(kSeqNum, sent_media_packet.SequenceNumber());
-    EXPECT_EQ(kSsrc, sent_media_packet.Ssrc());
-    const RtpPacketReceived& sent_flexfec_packet = transport_.sent_packets_[1];
-    EXPECT_EQ(kFlexfecPayloadType, sent_flexfec_packet.PayloadType());
-    EXPECT_EQ(flexfec_seq_num, sent_flexfec_packet.SequenceNumber());
-    EXPECT_EQ(kFlexFecSsrc, sent_flexfec_packet.Ssrc());
+  ASSERT_EQ(2, transport_.packets_sent());
+  const RtpPacketReceived& sent_media_packet = transport_.sent_packets_[0];
+  EXPECT_EQ(kMediaPayloadType, sent_media_packet.PayloadType());
+  EXPECT_EQ(kSeqNum, sent_media_packet.SequenceNumber());
+  EXPECT_EQ(kSsrc, sent_media_packet.Ssrc());
+  const RtpPacketReceived& sent_flexfec_packet = transport_.sent_packets_[1];
+  EXPECT_EQ(kFlexfecPayloadType, sent_flexfec_packet.PayloadType());
+  EXPECT_EQ(flexfec_seq_num, sent_flexfec_packet.SequenceNumber());
+  EXPECT_EQ(kFlexFecSsrc, sent_flexfec_packet.Ssrc());
 }
 
 TEST_P(RtpSenderTestWithoutPacer, SendFlexfecPackets) {
@@ -1307,26 +1419,32 @@ TEST_P(RtpSenderTestWithoutPacer, SendFlexfecPackets) {
   const std::vector<RtpExtensionSize> kNoRtpExtensionSizes;
   FlexfecSender flexfec_sender(kFlexfecPayloadType, kFlexFecSsrc, kSsrc, kNoMid,
                                kNoRtpExtensions, kNoRtpExtensionSizes,
-                               nullptr /* rtp_state */, &fake_clock_);
+                               nullptr /* rtp_state */, clock_);
 
   // Reset |rtp_sender_| to use FlexFEC.
-  RtpRtcp::Configuration config;
-  config.clock = &fake_clock_;
+  RtpRtcpInterface::Configuration config;
+  config.clock = clock_;
   config.outgoing_transport = &transport_;
   config.local_media_ssrc = kSsrc;
   config.fec_generator = &flexfec_sender;
   config.event_log = &mock_rtc_event_log_;
   config.send_packet_observer = &send_packet_observer_;
   config.retransmission_rate_limiter = &retransmission_rate_limiter_;
-  rtp_sender_context_ = std::make_unique<RtpSenderContext>(config);
+  config.field_trials = &field_trials_;
+  rtp_sender_context_ =
+      std::make_unique<RtpSenderContext>(config, &time_controller_);
 
   rtp_sender()->SetSequenceNumber(kSeqNum);
 
   FieldTrialBasedConfig field_trials;
   RTPSenderVideo::Config video_config;
-  video_config.clock = &fake_clock_;
+  video_config.clock = clock_;
   video_config.rtp_sender = rtp_sender();
-  video_config.fec_generator = &flexfec_sender;
+  if (!GetParam().deferred_fec) {
+    video_config.fec_generator = &flexfec_sender;
+  }
+  video_config.fec_type = flexfec_sender.GetFecType();
+  video_config.fec_overhead_bytes = flexfec_sender_.MaxPacketOverhead();
   video_config.field_trials = &field_trials;
   RTPSenderVideo rtp_sender_video(video_config);
 
@@ -1335,7 +1453,11 @@ TEST_P(RtpSenderTestWithoutPacer, SendFlexfecPackets) {
   params.fec_rate = 15;
   params.max_fec_frames = 1;
   params.fec_mask_type = kFecMaskRandom;
-  rtp_sender_video.SetFecParameters(params, params);
+  if (GetParam().deferred_fec) {
+    rtp_egress()->SetFecProtectionParameters(params, params);
+  } else {
+    flexfec_sender.SetProtectionParameters(params, params);
+  }
 
   EXPECT_CALL(mock_rtc_event_log_,
               LogProxy(SameRtcEventTypeAs(RtcEvent::Type::RtpPacketOutgoing)))
@@ -1343,9 +1465,8 @@ TEST_P(RtpSenderTestWithoutPacer, SendFlexfecPackets) {
   RTPVideoHeader video_header;
   video_header.frame_type = VideoFrameType::kVideoFrameKey;
   EXPECT_TRUE(rtp_sender_video.SendVideo(
-      kMediaPayloadType, kCodecType, kTimestamp,
-      fake_clock_.TimeInMilliseconds(), kPayloadData, nullptr, video_header,
-      kDefaultExpectedRetransmissionTimeMs));
+      kMediaPayloadType, kCodecType, kTimestamp, clock_->TimeInMilliseconds(),
+      kPayloadData, video_header, kDefaultExpectedRetransmissionTimeMs));
 
   ASSERT_EQ(2, transport_.packets_sent());
   const RtpPacketReceived& media_packet = transport_.sent_packets_[0];
@@ -1638,27 +1759,20 @@ TEST_P(RtpSenderTest, FecOverheadRate) {
   const std::vector<RtpExtensionSize> kNoRtpExtensionSizes;
   FlexfecSender flexfec_sender(kFlexfecPayloadType, kFlexFecSsrc, kSsrc, kNoMid,
                                kNoRtpExtensions, kNoRtpExtensionSizes,
-                               nullptr /* rtp_state */, &fake_clock_);
+                               nullptr /* rtp_state */, clock_);
 
-  // Reset |rtp_sender_| to use FlexFEC.
-  RtpRtcp::Configuration config;
-  config.clock = &fake_clock_;
-  config.outgoing_transport = &transport_;
-  config.paced_sender = &mock_paced_sender_;
-  config.local_media_ssrc = kSsrc;
-  config.fec_generator = &flexfec_sender;
-  config.event_log = &mock_rtc_event_log_;
-  config.send_packet_observer = &send_packet_observer_;
-  config.retransmission_rate_limiter = &retransmission_rate_limiter_;
-  rtp_sender_context_ = std::make_unique<RtpSenderContext>(config);
-
-  rtp_sender()->SetSequenceNumber(kSeqNum);
+  // Reset |rtp_sender_| to use this FlexFEC instance.
+  SetUpRtpSender(false, false, false, &flexfec_sender);
 
   FieldTrialBasedConfig field_trials;
   RTPSenderVideo::Config video_config;
-  video_config.clock = &fake_clock_;
+  video_config.clock = clock_;
   video_config.rtp_sender = rtp_sender();
-  video_config.fec_generator = &flexfec_sender;
+  if (!GetParam().deferred_fec) {
+    video_config.fec_generator = &flexfec_sender;
+  }
+  video_config.fec_type = flexfec_sender.GetFecType();
+  video_config.fec_overhead_bytes = flexfec_sender.MaxPacketOverhead();
   video_config.field_trials = &field_trials;
   RTPSenderVideo rtp_sender_video(video_config);
   // Parameters selected to generate a single FEC packet per media packet.
@@ -1666,22 +1780,24 @@ TEST_P(RtpSenderTest, FecOverheadRate) {
   params.fec_rate = 15;
   params.max_fec_frames = 1;
   params.fec_mask_type = kFecMaskRandom;
-  rtp_sender_video.SetFecParameters(params, params);
+  if (GetParam().deferred_fec) {
+    rtp_egress()->SetFecProtectionParameters(params, params);
+  } else {
+    flexfec_sender.SetProtectionParameters(params, params);
+  }
 
   constexpr size_t kNumMediaPackets = 10;
   constexpr size_t kNumFecPackets = kNumMediaPackets;
   constexpr int64_t kTimeBetweenPacketsMs = 10;
-  EXPECT_CALL(mock_paced_sender_, EnqueuePackets).Times(kNumMediaPackets);
   for (size_t i = 0; i < kNumMediaPackets; ++i) {
     RTPVideoHeader video_header;
 
     video_header.frame_type = VideoFrameType::kVideoFrameKey;
     EXPECT_TRUE(rtp_sender_video.SendVideo(
-        kMediaPayloadType, kCodecType, kTimestamp,
-        fake_clock_.TimeInMilliseconds(), kPayloadData, nullptr, video_header,
-        kDefaultExpectedRetransmissionTimeMs));
+        kMediaPayloadType, kCodecType, kTimestamp, clock_->TimeInMilliseconds(),
+        kPayloadData, video_header, kDefaultExpectedRetransmissionTimeMs));
 
-    fake_clock_.AdvanceTimeMilliseconds(kTimeBetweenPacketsMs);
+    time_controller_.AdvanceTime(TimeDelta::Millis(kTimeBetweenPacketsMs));
   }
   constexpr size_t kRtpHeaderLength = 12;
   constexpr size_t kFlexfecHeaderLength = 20;
@@ -1689,9 +1805,20 @@ TEST_P(RtpSenderTest, FecOverheadRate) {
   constexpr size_t kPayloadLength = sizeof(kPayloadData);
   constexpr size_t kPacketLength = kRtpHeaderLength + kFlexfecHeaderLength +
                                    kGenericCodecHeaderLength + kPayloadLength;
-  EXPECT_NEAR(kNumFecPackets * kPacketLength * 8 /
-                  (kNumFecPackets * kTimeBetweenPacketsMs / 1000.0f),
-              rtp_sender_video.FecOverheadRate(), 500);
+
+  if (GetParam().deferred_fec) {
+    EXPECT_NEAR(
+        kNumFecPackets * kPacketLength * 8 /
+            (kNumFecPackets * kTimeBetweenPacketsMs / 1000.0f),
+        rtp_egress()
+            ->GetSendRates()[RtpPacketMediaType::kForwardErrorCorrection]
+            .bps<double>(),
+        500);
+  } else {
+    EXPECT_NEAR(kNumFecPackets * kPacketLength * 8 /
+                    (kNumFecPackets * kTimeBetweenPacketsMs / 1000.0f),
+                flexfec_sender.CurrentFecRate().bps<double>(), 500);
+  }
 }
 
 TEST_P(RtpSenderTest, BitrateCallbacks) {
@@ -1720,17 +1847,18 @@ TEST_P(RtpSenderTest, BitrateCallbacks) {
     uint32_t retransmit_bitrate_;
   } callback;
 
-  RtpRtcp::Configuration config;
-  config.clock = &fake_clock_;
+  RtpRtcpInterface::Configuration config;
+  config.clock = clock_;
   config.outgoing_transport = &transport_;
   config.local_media_ssrc = kSsrc;
   config.send_bitrate_observer = &callback;
   config.retransmission_rate_limiter = &retransmission_rate_limiter_;
-  rtp_sender_context_ = std::make_unique<RtpSenderContext>(config);
+  rtp_sender_context_ =
+      std::make_unique<RtpSenderContext>(config, &time_controller_);
 
   FieldTrialBasedConfig field_trials;
   RTPSenderVideo::Config video_config;
-  video_config.clock = &fake_clock_;
+  video_config.clock = clock_;
   video_config.rtp_sender = rtp_sender();
   video_config.field_trials = &field_trials;
   RTPSenderVideo rtp_sender_video(video_config);
@@ -1752,28 +1880,23 @@ TEST_P(RtpSenderTest, BitrateCallbacks) {
       RtpPacketHistory::StorageMode::kStoreAndCull, 1);
   uint32_t ssrc = rtp_sender()->SSRC();
 
-  // Initial process call so we get a new time window.
-  rtp_egress()->ProcessBitrateAndNotifyObservers();
-
   // Send a few frames.
   RTPVideoHeader video_header;
   for (uint32_t i = 0; i < kNumPackets; ++i) {
     video_header.frame_type = VideoFrameType::kVideoFrameKey;
     ASSERT_TRUE(rtp_sender_video.SendVideo(
-        kPayloadType, kCodecType, 1234, 4321, payload, nullptr, video_header,
+        kPayloadType, kCodecType, 1234, 4321, payload, video_header,
         kDefaultExpectedRetransmissionTimeMs));
-    fake_clock_.AdvanceTimeMilliseconds(kPacketInterval);
+    time_controller_.AdvanceTime(TimeDelta::Millis(kPacketInterval));
   }
-
-  rtp_egress()->ProcessBitrateAndNotifyObservers();
 
   // We get one call for every stats updated, thus two calls since both the
   // stream stats and the retransmit stats are updated once.
-  EXPECT_EQ(2u, callback.num_calls_);
+  EXPECT_EQ(kNumPackets, callback.num_calls_);
   EXPECT_EQ(ssrc, callback.ssrc_);
   const uint32_t kTotalPacketSize = kPacketOverhead + sizeof(payload);
   // Bitrate measured over delta between last and first timestamp, plus one.
-  const uint32_t kExpectedWindowMs = kNumPackets * kPacketInterval + 1;
+  const uint32_t kExpectedWindowMs = (kNumPackets - 1) * kPacketInterval + 1;
   const uint32_t kExpectedBitsAccumulated = kTotalPacketSize * kNumPackets * 8;
   const uint32_t kExpectedRateBps =
       (kExpectedBitsAccumulated * 1000 + (kExpectedWindowMs / 2)) /
@@ -1786,7 +1909,7 @@ TEST_P(RtpSenderTestWithoutPacer, StreamDataCountersCallbacks) {
   const VideoCodecType kCodecType = VideoCodecType::kVideoCodecGeneric;
   FieldTrialBasedConfig field_trials;
   RTPSenderVideo::Config video_config;
-  video_config.clock = &fake_clock_;
+  video_config.clock = clock_;
   video_config.rtp_sender = rtp_sender();
   video_config.field_trials = &field_trials;
   RTPSenderVideo rtp_sender_video(video_config);
@@ -1799,7 +1922,7 @@ TEST_P(RtpSenderTestWithoutPacer, StreamDataCountersCallbacks) {
   RTPVideoHeader video_header;
   video_header.frame_type = VideoFrameType::kVideoFrameKey;
   ASSERT_TRUE(rtp_sender_video.SendVideo(kPayloadType, kCodecType, 1234, 4321,
-                                         payload, nullptr, video_header,
+                                         payload, video_header,
                                          kDefaultExpectedRetransmissionTimeMs));
   StreamDataCounters expected;
   expected.transmitted.payload_bytes = 6;
@@ -1839,15 +1962,19 @@ TEST_P(RtpSenderTestWithoutPacer, StreamDataCountersCallbacksUlpfec) {
   const uint8_t kUlpfecPayloadType = 97;
   const uint8_t kPayloadType = 127;
   const VideoCodecType kCodecType = VideoCodecType::kVideoCodecGeneric;
-  FieldTrialBasedConfig field_trials;
-  UlpfecGenerator ulpfec_generator(kRedPayloadType, kUlpfecPayloadType,
-                                   &fake_clock_);
+
+  UlpfecGenerator ulpfec_generator(kRedPayloadType, kUlpfecPayloadType, clock_);
+  SetUpRtpSender(false, false, false, &ulpfec_generator);
   RTPSenderVideo::Config video_config;
-  video_config.clock = &fake_clock_;
+  video_config.clock = clock_;
   video_config.rtp_sender = rtp_sender();
-  video_config.field_trials = &field_trials;
+  video_config.field_trials = &field_trials_;
   video_config.red_payload_type = kRedPayloadType;
-  video_config.fec_generator = &ulpfec_generator;
+  if (!GetParam().deferred_fec) {
+    video_config.fec_generator = &ulpfec_generator;
+  }
+  video_config.fec_type = ulpfec_generator.GetFecType();
+  video_config.fec_overhead_bytes = ulpfec_generator.MaxPacketOverhead();
   RTPSenderVideo rtp_sender_video(video_config);
   uint8_t payload[] = {47, 11, 32, 93, 89};
   rtp_sender_context_->packet_history_.SetStorePacketsStatus(
@@ -1862,10 +1989,14 @@ TEST_P(RtpSenderTestWithoutPacer, StreamDataCountersCallbacksUlpfec) {
   fec_params.fec_mask_type = kFecMaskRandom;
   fec_params.fec_rate = 1;
   fec_params.max_fec_frames = 1;
-  rtp_sender_video.SetFecParameters(fec_params, fec_params);
+  if (GetParam().deferred_fec) {
+    rtp_egress()->SetFecProtectionParameters(fec_params, fec_params);
+  } else {
+    ulpfec_generator.SetProtectionParameters(fec_params, fec_params);
+  }
   video_header.frame_type = VideoFrameType::kVideoFrameDelta;
   ASSERT_TRUE(rtp_sender_video.SendVideo(kPayloadType, kCodecType, 1234, 4321,
-                                         payload, nullptr, video_header,
+                                         payload, video_header,
                                          kDefaultExpectedRetransmissionTimeMs));
   expected.transmitted.payload_bytes = 28;
   expected.transmitted.header_bytes = 24;
@@ -1924,12 +2055,12 @@ TEST_P(RtpSenderTestWithoutPacer, RespectsNackBitrateLimit) {
   std::vector<uint16_t> sequence_numbers;
   for (int32_t i = 0; i < kNumPackets; ++i) {
     sequence_numbers.push_back(kStartSequenceNumber + i);
-    fake_clock_.AdvanceTimeMilliseconds(1);
-    SendPacket(fake_clock_.TimeInMilliseconds(), kPacketSize);
+    time_controller_.AdvanceTime(TimeDelta::Millis(1));
+    SendPacket(clock_->TimeInMilliseconds(), kPacketSize);
   }
   EXPECT_EQ(kNumPackets, transport_.packets_sent());
 
-  fake_clock_.AdvanceTimeMilliseconds(1000 - kNumPackets);
+  time_controller_.AdvanceTime(TimeDelta::Millis(1000 - kNumPackets));
 
   // Resending should work - brings the bandwidth up to the limit.
   // NACK bitrate is capped to the same bitrate as the encoder, since the max
@@ -1938,140 +2069,192 @@ TEST_P(RtpSenderTestWithoutPacer, RespectsNackBitrateLimit) {
   EXPECT_EQ(kNumPackets * 2, transport_.packets_sent());
 
   // Must be at least 5ms in between retransmission attempts.
-  fake_clock_.AdvanceTimeMilliseconds(5);
+  time_controller_.AdvanceTime(TimeDelta::Millis(5));
 
   // Resending should not work, bandwidth exceeded.
   rtp_sender()->OnReceivedNack(sequence_numbers, 0);
   EXPECT_EQ(kNumPackets * 2, transport_.packets_sent());
 }
 
-TEST_P(RtpSenderTest, OnOverheadChanged) {
-  MockOverheadObserver mock_overhead_observer;
-  RtpRtcp::Configuration config;
-  config.clock = &fake_clock_;
+TEST_P(RtpSenderTest, UpdatingCsrcsUpdatedOverhead) {
+  RtpRtcpInterface::Configuration config;
+  config.clock = clock_;
   config.outgoing_transport = &transport_;
   config.local_media_ssrc = kSsrc;
   config.retransmission_rate_limiter = &retransmission_rate_limiter_;
-  config.overhead_observer = &mock_overhead_observer;
-  rtp_sender_context_ = std::make_unique<RtpSenderContext>(config);
+  rtp_sender_context_ =
+      std::make_unique<RtpSenderContext>(config, &time_controller_);
 
-  // RTP overhead is 12B.
-  EXPECT_CALL(mock_overhead_observer, OnOverheadChanged(12)).Times(1);
-  SendGenericPacket();
+  // Base RTP overhead is 12B.
+  EXPECT_EQ(rtp_sender()->ExpectedPerPacketOverhead(), 12u);
+
+  // Adding two csrcs adds 2*4 bytes to the header.
+  rtp_sender()->SetCsrcs({1, 2});
+  EXPECT_EQ(rtp_sender()->ExpectedPerPacketOverhead(), 20u);
+}
+
+TEST_P(RtpSenderTest, OnOverheadChanged) {
+  RtpRtcpInterface::Configuration config;
+  config.clock = clock_;
+  config.outgoing_transport = &transport_;
+  config.local_media_ssrc = kSsrc;
+  config.retransmission_rate_limiter = &retransmission_rate_limiter_;
+  rtp_sender_context_ =
+      std::make_unique<RtpSenderContext>(config, &time_controller_);
+
+  // Base RTP overhead is 12B.
+  EXPECT_EQ(rtp_sender()->ExpectedPerPacketOverhead(), 12u);
 
   rtp_sender()->RegisterRtpHeaderExtension(kRtpExtensionTransmissionTimeOffset,
                                            kTransmissionTimeOffsetExtensionId);
 
-  // TransmissionTimeOffset extension has a size of 8B.
-  // 12B + 8B = 20B
-  EXPECT_CALL(mock_overhead_observer, OnOverheadChanged(20)).Times(1);
-  SendGenericPacket();
+  // TransmissionTimeOffset extension has a size of 3B, but with the addition
+  // of header index and rounding to 4 byte boundary we end up with 20B total.
+  EXPECT_EQ(rtp_sender()->ExpectedPerPacketOverhead(), 20u);
 }
 
-TEST_P(RtpSenderTest, DoesNotUpdateOverheadOnEqualSize) {
-  MockOverheadObserver mock_overhead_observer;
-  RtpRtcp::Configuration config;
-  config.clock = &fake_clock_;
+TEST_P(RtpSenderTest, CountMidOnlyUntilAcked) {
+  RtpRtcpInterface::Configuration config;
+  config.clock = clock_;
   config.outgoing_transport = &transport_;
   config.local_media_ssrc = kSsrc;
   config.retransmission_rate_limiter = &retransmission_rate_limiter_;
-  config.overhead_observer = &mock_overhead_observer;
-  rtp_sender_context_ = std::make_unique<RtpSenderContext>(config);
+  rtp_sender_context_ =
+      std::make_unique<RtpSenderContext>(config, &time_controller_);
 
-  EXPECT_CALL(mock_overhead_observer, OnOverheadChanged(_)).Times(1);
-  SendGenericPacket();
-  SendGenericPacket();
+  // Base RTP overhead is 12B.
+  EXPECT_EQ(rtp_sender()->ExpectedPerPacketOverhead(), 12u);
+
+  rtp_sender()->RegisterRtpHeaderExtension(kRtpExtensionMid, kMidExtensionId);
+  rtp_sender()->RegisterRtpHeaderExtension(kRtpExtensionRtpStreamId,
+                                           kRidExtensionId);
+
+  // Counted only if set.
+  EXPECT_EQ(rtp_sender()->ExpectedPerPacketOverhead(), 12u);
+  rtp_sender()->SetMid("foo");
+  EXPECT_EQ(rtp_sender()->ExpectedPerPacketOverhead(), 36u);
+  rtp_sender()->SetRid("bar");
+  EXPECT_EQ(rtp_sender()->ExpectedPerPacketOverhead(), 52u);
+
+  // Ack received, mid/rid no longer sent.
+  rtp_sender()->OnReceivedAckOnSsrc(0);
+  EXPECT_EQ(rtp_sender()->ExpectedPerPacketOverhead(), 12u);
+}
+
+TEST_P(RtpSenderTest, DontCountVolatileExtensionsIntoOverhead) {
+  RtpRtcpInterface::Configuration config;
+  config.clock = clock_;
+  config.outgoing_transport = &transport_;
+  config.local_media_ssrc = kSsrc;
+  config.retransmission_rate_limiter = &retransmission_rate_limiter_;
+  rtp_sender_context_ =
+      std::make_unique<RtpSenderContext>(config, &time_controller_);
+
+  // Base RTP overhead is 12B.
+  EXPECT_EQ(rtp_sender()->ExpectedPerPacketOverhead(), 12u);
+
+  rtp_sender()->RegisterRtpHeaderExtension(kRtpExtensionInbandComfortNoise, 1);
+  rtp_sender()->RegisterRtpHeaderExtension(kRtpExtensionAbsoluteCaptureTime, 2);
+  rtp_sender()->RegisterRtpHeaderExtension(kRtpExtensionVideoRotation, 3);
+  rtp_sender()->RegisterRtpHeaderExtension(kRtpExtensionPlayoutDelay, 4);
+  rtp_sender()->RegisterRtpHeaderExtension(kRtpExtensionVideoContentType, 5);
+  rtp_sender()->RegisterRtpHeaderExtension(kRtpExtensionVideoTiming, 6);
+  rtp_sender()->RegisterRtpHeaderExtension(kRtpExtensionRepairedRtpStreamId, 7);
+  rtp_sender()->RegisterRtpHeaderExtension(kRtpExtensionColorSpace, 8);
+
+  // Still only 12B counted since can't count on above being sent.
+  EXPECT_EQ(rtp_sender()->ExpectedPerPacketOverhead(), 12u);
 }
 
 TEST_P(RtpSenderTest, SendPacketMatchesVideo) {
   std::unique_ptr<RtpPacketToSend> packet =
-      BuildRtpPacket(kPayload, true, 0, fake_clock_.TimeInMilliseconds());
+      BuildRtpPacket(kPayload, true, 0, clock_->TimeInMilliseconds());
   packet->set_packet_type(RtpPacketMediaType::kVideo);
 
   // Verify sent with correct SSRC.
-  packet = BuildRtpPacket(kPayload, true, 0, fake_clock_.TimeInMilliseconds());
+  packet = BuildRtpPacket(kPayload, true, 0, clock_->TimeInMilliseconds());
   packet->SetSsrc(kSsrc);
   packet->set_packet_type(RtpPacketMediaType::kVideo);
-  rtp_egress()->SendPacket(packet.get(), PacedPacketInfo());
+  rtp_sender_context_->InjectPacket(std::move(packet), PacedPacketInfo());
   EXPECT_EQ(transport_.packets_sent(), 1);
 }
 
 TEST_P(RtpSenderTest, SendPacketMatchesAudio) {
   std::unique_ptr<RtpPacketToSend> packet =
-      BuildRtpPacket(kPayload, true, 0, fake_clock_.TimeInMilliseconds());
+      BuildRtpPacket(kPayload, true, 0, clock_->TimeInMilliseconds());
   packet->set_packet_type(RtpPacketMediaType::kAudio);
 
   // Verify sent with correct SSRC.
-  packet = BuildRtpPacket(kPayload, true, 0, fake_clock_.TimeInMilliseconds());
+  packet = BuildRtpPacket(kPayload, true, 0, clock_->TimeInMilliseconds());
   packet->SetSsrc(kSsrc);
   packet->set_packet_type(RtpPacketMediaType::kAudio);
-  rtp_egress()->SendPacket(packet.get(), PacedPacketInfo());
+  rtp_sender_context_->InjectPacket(std::move(packet), PacedPacketInfo());
   EXPECT_EQ(transport_.packets_sent(), 1);
 }
 
 TEST_P(RtpSenderTest, SendPacketMatchesRetransmissions) {
   std::unique_ptr<RtpPacketToSend> packet =
-      BuildRtpPacket(kPayload, true, 0, fake_clock_.TimeInMilliseconds());
+      BuildRtpPacket(kPayload, true, 0, clock_->TimeInMilliseconds());
   packet->set_packet_type(RtpPacketMediaType::kRetransmission);
 
   // Verify sent with correct SSRC (non-RTX).
-  packet = BuildRtpPacket(kPayload, true, 0, fake_clock_.TimeInMilliseconds());
+  packet = BuildRtpPacket(kPayload, true, 0, clock_->TimeInMilliseconds());
   packet->SetSsrc(kSsrc);
   packet->set_packet_type(RtpPacketMediaType::kRetransmission);
-  rtp_egress()->SendPacket(packet.get(), PacedPacketInfo());
+  rtp_sender_context_->InjectPacket(std::move(packet), PacedPacketInfo());
   EXPECT_EQ(transport_.packets_sent(), 1);
 
   // RTX retransmission.
-  packet = BuildRtpPacket(kPayload, true, 0, fake_clock_.TimeInMilliseconds());
+  packet = BuildRtpPacket(kPayload, true, 0, clock_->TimeInMilliseconds());
   packet->SetSsrc(kRtxSsrc);
   packet->set_packet_type(RtpPacketMediaType::kRetransmission);
-  rtp_egress()->SendPacket(packet.get(), PacedPacketInfo());
+  rtp_sender_context_->InjectPacket(std::move(packet), PacedPacketInfo());
   EXPECT_EQ(transport_.packets_sent(), 2);
 }
 
 TEST_P(RtpSenderTest, SendPacketMatchesPadding) {
   std::unique_ptr<RtpPacketToSend> packet =
-      BuildRtpPacket(kPayload, true, 0, fake_clock_.TimeInMilliseconds());
+      BuildRtpPacket(kPayload, true, 0, clock_->TimeInMilliseconds());
   packet->set_packet_type(RtpPacketMediaType::kPadding);
 
   // Verify sent with correct SSRC (non-RTX).
-  packet = BuildRtpPacket(kPayload, true, 0, fake_clock_.TimeInMilliseconds());
+  packet = BuildRtpPacket(kPayload, true, 0, clock_->TimeInMilliseconds());
   packet->SetSsrc(kSsrc);
   packet->set_packet_type(RtpPacketMediaType::kPadding);
-  rtp_egress()->SendPacket(packet.get(), PacedPacketInfo());
+  rtp_sender_context_->InjectPacket(std::move(packet), PacedPacketInfo());
   EXPECT_EQ(transport_.packets_sent(), 1);
 
   // RTX padding.
-  packet = BuildRtpPacket(kPayload, true, 0, fake_clock_.TimeInMilliseconds());
+  packet = BuildRtpPacket(kPayload, true, 0, clock_->TimeInMilliseconds());
   packet->SetSsrc(kRtxSsrc);
   packet->set_packet_type(RtpPacketMediaType::kPadding);
-  rtp_egress()->SendPacket(packet.get(), PacedPacketInfo());
+  rtp_sender_context_->InjectPacket(std::move(packet), PacedPacketInfo());
   EXPECT_EQ(transport_.packets_sent(), 2);
 }
 
 TEST_P(RtpSenderTest, SendPacketMatchesFlexfec) {
   std::unique_ptr<RtpPacketToSend> packet =
-      BuildRtpPacket(kPayload, true, 0, fake_clock_.TimeInMilliseconds());
+      BuildRtpPacket(kPayload, true, 0, clock_->TimeInMilliseconds());
   packet->set_packet_type(RtpPacketMediaType::kForwardErrorCorrection);
 
   // Verify sent with correct SSRC.
-  packet = BuildRtpPacket(kPayload, true, 0, fake_clock_.TimeInMilliseconds());
+  packet = BuildRtpPacket(kPayload, true, 0, clock_->TimeInMilliseconds());
   packet->SetSsrc(kFlexFecSsrc);
   packet->set_packet_type(RtpPacketMediaType::kForwardErrorCorrection);
-  rtp_egress()->SendPacket(packet.get(), PacedPacketInfo());
+  rtp_sender_context_->InjectPacket(std::move(packet), PacedPacketInfo());
   EXPECT_EQ(transport_.packets_sent(), 1);
 }
 
 TEST_P(RtpSenderTest, SendPacketMatchesUlpfec) {
   std::unique_ptr<RtpPacketToSend> packet =
-      BuildRtpPacket(kPayload, true, 0, fake_clock_.TimeInMilliseconds());
+      BuildRtpPacket(kPayload, true, 0, clock_->TimeInMilliseconds());
   packet->set_packet_type(RtpPacketMediaType::kForwardErrorCorrection);
 
   // Verify sent with correct SSRC.
-  packet = BuildRtpPacket(kPayload, true, 0, fake_clock_.TimeInMilliseconds());
+  packet = BuildRtpPacket(kPayload, true, 0, clock_->TimeInMilliseconds());
   packet->SetSsrc(kSsrc);
   packet->set_packet_type(RtpPacketMediaType::kForwardErrorCorrection);
-  rtp_egress()->SendPacket(packet.get(), PacedPacketInfo());
+  rtp_sender_context_->InjectPacket(std::move(packet), PacedPacketInfo());
   EXPECT_EQ(transport_.packets_sent(), 1);
 }
 
@@ -2079,37 +2262,41 @@ TEST_P(RtpSenderTest, SendPacketHandlesRetransmissionHistory) {
   rtp_sender_context_->packet_history_.SetStorePacketsStatus(
       RtpPacketHistory::StorageMode::kStoreAndCull, 10);
 
+  // Ignore calls to EnqueuePackets() for this test.
+  EXPECT_CALL(mock_paced_sender_, EnqueuePackets).WillRepeatedly(Return());
+
   // Build a media packet and send it.
   std::unique_ptr<RtpPacketToSend> packet =
-      BuildRtpPacket(kPayload, true, 0, fake_clock_.TimeInMilliseconds());
+      BuildRtpPacket(kPayload, true, 0, clock_->TimeInMilliseconds());
   const uint16_t media_sequence_number = packet->SequenceNumber();
   packet->set_packet_type(RtpPacketMediaType::kVideo);
   packet->set_allow_retransmission(true);
-  rtp_egress()->SendPacket(packet.get(), PacedPacketInfo());
+  rtp_sender_context_->InjectPacket(std::move(packet), PacedPacketInfo());
 
   // Simulate retransmission request.
-  fake_clock_.AdvanceTimeMilliseconds(30);
+  time_controller_.AdvanceTime(TimeDelta::Millis(30));
   EXPECT_GT(rtp_sender()->ReSendPacket(media_sequence_number), 0);
 
   // Packet already pending, retransmission not allowed.
-  fake_clock_.AdvanceTimeMilliseconds(30);
+  time_controller_.AdvanceTime(TimeDelta::Millis(30));
   EXPECT_EQ(rtp_sender()->ReSendPacket(media_sequence_number), 0);
 
   // Packet exiting pacer, mark as not longer pending.
-  packet = BuildRtpPacket(kPayload, true, 0, fake_clock_.TimeInMilliseconds());
+  packet = BuildRtpPacket(kPayload, true, 0, clock_->TimeInMilliseconds());
   EXPECT_NE(packet->SequenceNumber(), media_sequence_number);
   packet->set_packet_type(RtpPacketMediaType::kRetransmission);
   packet->SetSsrc(kRtxSsrc);
   packet->set_retransmitted_sequence_number(media_sequence_number);
   packet->set_allow_retransmission(false);
-  rtp_egress()->SendPacket(packet.get(), PacedPacketInfo());
+  uint16_t seq_no = packet->SequenceNumber();
+  rtp_sender_context_->InjectPacket(std::move(packet), PacedPacketInfo());
 
   // Retransmissions allowed again.
-  fake_clock_.AdvanceTimeMilliseconds(30);
+  time_controller_.AdvanceTime(TimeDelta::Millis(30));
   EXPECT_GT(rtp_sender()->ReSendPacket(media_sequence_number), 0);
 
   // Retransmission of RTX packet should not be allowed.
-  EXPECT_EQ(rtp_sender()->ReSendPacket(packet->SequenceNumber()), 0);
+  EXPECT_EQ(rtp_sender()->ReSendPacket(seq_no), 0);
 }
 
 TEST_P(RtpSenderTest, SendPacketUpdatesExtensions) {
@@ -2125,21 +2312,21 @@ TEST_P(RtpSenderTest, SendPacketUpdatesExtensions) {
             0);
 
   std::unique_ptr<RtpPacketToSend> packet =
-      BuildRtpPacket(kPayload, true, 0, fake_clock_.TimeInMilliseconds());
-  packet->set_packetization_finish_time_ms(fake_clock_.TimeInMilliseconds());
+      BuildRtpPacket(kPayload, true, 0, clock_->TimeInMilliseconds());
+  packet->set_packetization_finish_time_ms(clock_->TimeInMilliseconds());
 
   const int32_t kDiffMs = 10;
-  fake_clock_.AdvanceTimeMilliseconds(kDiffMs);
+  time_controller_.AdvanceTime(TimeDelta::Millis(kDiffMs));
 
   packet->set_packet_type(RtpPacketMediaType::kVideo);
-  rtp_egress()->SendPacket(packet.get(), PacedPacketInfo());
+  rtp_sender_context_->InjectPacket(std::move(packet), PacedPacketInfo());
 
   const RtpPacketReceived& received_packet = transport_.last_sent_packet();
 
   EXPECT_EQ(received_packet.GetExtension<TransmissionOffset>(), kDiffMs * 90);
 
   EXPECT_EQ(received_packet.GetExtension<AbsoluteSendTime>(),
-            AbsoluteSendTime::MsTo24Bits(fake_clock_.TimeInMilliseconds()));
+            AbsoluteSendTime::MsTo24Bits(clock_->TimeInMilliseconds()));
 
   VideoSendTiming timing;
   EXPECT_TRUE(received_packet.GetExtension<VideoTimingExtension>(&timing));
@@ -2153,12 +2340,12 @@ TEST_P(RtpSenderTest, SendPacketSetsPacketOptions) {
                 kTransportSequenceNumberExtensionId),
             0);
   std::unique_ptr<RtpPacketToSend> packet =
-      BuildRtpPacket(kPayload, true, 0, fake_clock_.TimeInMilliseconds());
+      BuildRtpPacket(kPayload, true, 0, clock_->TimeInMilliseconds());
   packet->SetExtension<TransportSequenceNumber>(kPacketId);
 
   packet->set_packet_type(RtpPacketMediaType::kVideo);
   EXPECT_CALL(send_packet_observer_, OnSendPacket);
-  rtp_egress()->SendPacket(packet.get(), PacedPacketInfo());
+  rtp_sender_context_->InjectPacket(std::move(packet), PacedPacketInfo());
 
   EXPECT_EQ(transport_.last_options_.packet_id, kPacketId);
   EXPECT_TRUE(transport_.last_options_.included_in_allocation);
@@ -2166,10 +2353,10 @@ TEST_P(RtpSenderTest, SendPacketSetsPacketOptions) {
   EXPECT_FALSE(transport_.last_options_.is_retransmit);
 
   // Send another packet as retransmission, verify options are populated.
-  packet = BuildRtpPacket(kPayload, true, 0, fake_clock_.TimeInMilliseconds());
+  packet = BuildRtpPacket(kPayload, true, 0, clock_->TimeInMilliseconds());
   packet->SetExtension<TransportSequenceNumber>(kPacketId + 1);
   packet->set_packet_type(RtpPacketMediaType::kRetransmission);
-  rtp_egress()->SendPacket(packet.get(), PacedPacketInfo());
+  rtp_sender_context_->InjectPacket(std::move(packet), PacedPacketInfo());
   EXPECT_TRUE(transport_.last_options_.is_retransmit);
 }
 
@@ -2178,8 +2365,8 @@ TEST_P(RtpSenderTest, SendPacketUpdatesStats) {
 
   StrictMock<MockSendSideDelayObserver> send_side_delay_observer;
 
-  RtpRtcp::Configuration config;
-  config.clock = &fake_clock_;
+  RtpRtcpInterface::Configuration config;
+  config.clock = clock_;
   config.outgoing_transport = &transport_;
   config.local_media_ssrc = kSsrc;
   config.rtx_send_ssrc = kRtxSsrc;
@@ -2187,35 +2374,36 @@ TEST_P(RtpSenderTest, SendPacketUpdatesStats) {
   config.send_side_delay_observer = &send_side_delay_observer;
   config.event_log = &mock_rtc_event_log_;
   config.send_packet_observer = &send_packet_observer_;
-  rtp_sender_context_ = std::make_unique<RtpSenderContext>(config);
+  rtp_sender_context_ =
+      std::make_unique<RtpSenderContext>(config, &time_controller_);
   ASSERT_EQ(0, rtp_sender()->RegisterRtpHeaderExtension(
                    kRtpExtensionTransportSequenceNumber,
                    kTransportSequenceNumberExtensionId));
 
-  const int64_t capture_time_ms = fake_clock_.TimeInMilliseconds();
+  const int64_t capture_time_ms = clock_->TimeInMilliseconds();
 
   std::unique_ptr<RtpPacketToSend> video_packet =
-      BuildRtpPacket(kPayload, true, 0, fake_clock_.TimeInMilliseconds());
+      BuildRtpPacket(kPayload, true, 0, clock_->TimeInMilliseconds());
   video_packet->set_packet_type(RtpPacketMediaType::kVideo);
   video_packet->SetPayloadSize(kPayloadSize);
   video_packet->SetExtension<TransportSequenceNumber>(1);
 
   std::unique_ptr<RtpPacketToSend> rtx_packet =
-      BuildRtpPacket(kPayload, true, 0, fake_clock_.TimeInMilliseconds());
+      BuildRtpPacket(kPayload, true, 0, clock_->TimeInMilliseconds());
   rtx_packet->SetSsrc(kRtxSsrc);
   rtx_packet->set_packet_type(RtpPacketMediaType::kRetransmission);
   rtx_packet->SetPayloadSize(kPayloadSize);
   rtx_packet->SetExtension<TransportSequenceNumber>(2);
 
   std::unique_ptr<RtpPacketToSend> fec_packet =
-      BuildRtpPacket(kPayload, true, 0, fake_clock_.TimeInMilliseconds());
+      BuildRtpPacket(kPayload, true, 0, clock_->TimeInMilliseconds());
   fec_packet->SetSsrc(kFlexFecSsrc);
   fec_packet->set_packet_type(RtpPacketMediaType::kForwardErrorCorrection);
   fec_packet->SetPayloadSize(kPayloadSize);
   fec_packet->SetExtension<TransportSequenceNumber>(3);
 
   const int64_t kDiffMs = 25;
-  fake_clock_.AdvanceTimeMilliseconds(kDiffMs);
+  time_controller_.AdvanceTime(TimeDelta::Millis(kDiffMs));
 
   EXPECT_CALL(send_side_delay_observer,
               SendSideDelayUpdated(kDiffMs, kDiffMs, kDiffMs, kSsrc));
@@ -2225,15 +2413,15 @@ TEST_P(RtpSenderTest, SendPacketUpdatesStats) {
 
   EXPECT_CALL(send_packet_observer_, OnSendPacket(1, capture_time_ms, kSsrc));
 
-  rtp_egress()->SendPacket(video_packet.get(), PacedPacketInfo());
+  rtp_sender_context_->InjectPacket(std::move(video_packet), PacedPacketInfo());
 
   // Send packet observer not called for padding/retransmissions.
   EXPECT_CALL(send_packet_observer_, OnSendPacket(2, _, _)).Times(0);
-  rtp_egress()->SendPacket(rtx_packet.get(), PacedPacketInfo());
+  rtp_sender_context_->InjectPacket(std::move(rtx_packet), PacedPacketInfo());
 
   EXPECT_CALL(send_packet_observer_,
               OnSendPacket(3, capture_time_ms, kFlexFecSsrc));
-  rtp_egress()->SendPacket(fec_packet.get(), PacedPacketInfo());
+  rtp_sender_context_->InjectPacket(std::move(fec_packet), PacedPacketInfo());
 
   StreamDataCounters rtp_stats;
   StreamDataCounters rtx_stats;
@@ -2243,7 +2431,7 @@ TEST_P(RtpSenderTest, SendPacketUpdatesStats) {
   EXPECT_EQ(rtx_stats.retransmitted.packets, 1u);
 }
 
-TEST_P(RtpSenderTest, GeneratePaddingResendsOldPacketsWithRtx) {
+TEST_P(RtpSenderTest, GeneratedPaddingHasBweExtensions) {
   // Min requested size in order to use RTX payload.
   const size_t kMinPaddingSize = 50;
 
@@ -2262,16 +2450,84 @@ TEST_P(RtpSenderTest, GeneratePaddingResendsOldPacketsWithRtx) {
                    kRtpExtensionTransportSequenceNumber,
                    kTransportSequenceNumberExtensionId));
 
-  const size_t kPayloadPacketSize = 1234;
+  // Send a payload packet first, to enable padding and populate the packet
+  // history.
   std::unique_ptr<RtpPacketToSend> packet =
-      BuildRtpPacket(kPayload, true, 0, fake_clock_.TimeInMilliseconds());
+      BuildRtpPacket(kPayload, true, 0, clock_->TimeInMilliseconds());
+  packet->set_allow_retransmission(true);
+  packet->SetPayloadSize(kMinPaddingSize);
+  packet->set_packet_type(RtpPacketMediaType::kVideo);
+  EXPECT_CALL(send_packet_observer_, OnSendPacket).Times(1);
+  rtp_sender_context_->InjectPacket(std::move(packet), PacedPacketInfo());
+
+  // Generate a plain padding packet, check that extensions are registered.
+  std::vector<std::unique_ptr<RtpPacketToSend>> generated_packets =
+      rtp_sender()->GeneratePadding(/*target_size_bytes=*/1, true);
+  ASSERT_THAT(generated_packets, SizeIs(1));
+  auto& plain_padding = generated_packets.front();
+  EXPECT_GT(plain_padding->padding_size(), 0u);
+  EXPECT_TRUE(plain_padding->HasExtension<TransportSequenceNumber>());
+  EXPECT_TRUE(plain_padding->HasExtension<AbsoluteSendTime>());
+  EXPECT_TRUE(plain_padding->HasExtension<TransmissionOffset>());
+
+  // Verify all header extensions have been written.
+  rtp_sender_context_->InjectPacket(std::move(plain_padding),
+                                    PacedPacketInfo());
+  const auto& sent_plain_padding = transport_.last_sent_packet();
+  EXPECT_TRUE(sent_plain_padding.HasExtension<TransportSequenceNumber>());
+  EXPECT_TRUE(sent_plain_padding.HasExtension<AbsoluteSendTime>());
+  EXPECT_TRUE(sent_plain_padding.HasExtension<TransmissionOffset>());
+  webrtc::RTPHeader rtp_header;
+  sent_plain_padding.GetHeader(&rtp_header);
+  EXPECT_TRUE(rtp_header.extension.hasAbsoluteSendTime);
+  EXPECT_TRUE(rtp_header.extension.hasTransmissionTimeOffset);
+  EXPECT_TRUE(rtp_header.extension.hasTransportSequenceNumber);
+
+  // Generate a payload padding packets, check that extensions are registered.
+  generated_packets = rtp_sender()->GeneratePadding(kMinPaddingSize, true);
+  ASSERT_EQ(generated_packets.size(), 1u);
+  auto& payload_padding = generated_packets.front();
+  EXPECT_EQ(payload_padding->padding_size(), 0u);
+  EXPECT_TRUE(payload_padding->HasExtension<TransportSequenceNumber>());
+  EXPECT_TRUE(payload_padding->HasExtension<AbsoluteSendTime>());
+  EXPECT_TRUE(payload_padding->HasExtension<TransmissionOffset>());
+
+  // Verify all header extensions have been written.
+  rtp_sender_context_->InjectPacket(std::move(payload_padding),
+                                    PacedPacketInfo());
+  const auto& sent_payload_padding = transport_.last_sent_packet();
+  EXPECT_TRUE(sent_payload_padding.HasExtension<TransportSequenceNumber>());
+  EXPECT_TRUE(sent_payload_padding.HasExtension<AbsoluteSendTime>());
+  EXPECT_TRUE(sent_payload_padding.HasExtension<TransmissionOffset>());
+  sent_payload_padding.GetHeader(&rtp_header);
+  EXPECT_TRUE(rtp_header.extension.hasAbsoluteSendTime);
+  EXPECT_TRUE(rtp_header.extension.hasTransmissionTimeOffset);
+  EXPECT_TRUE(rtp_header.extension.hasTransportSequenceNumber);
+}
+
+TEST_P(RtpSenderTest, GeneratePaddingResendsOldPacketsWithRtx) {
+  // Min requested size in order to use RTX payload.
+  const size_t kMinPaddingSize = 50;
+
+  rtp_sender()->SetRtxStatus(kRtxRetransmitted | kRtxRedundantPayloads);
+  rtp_sender()->SetRtxPayloadType(kRtxPayload, kPayload);
+  rtp_sender_context_->packet_history_.SetStorePacketsStatus(
+      RtpPacketHistory::StorageMode::kStoreAndCull, 1);
+
+  ASSERT_EQ(0, rtp_sender()->RegisterRtpHeaderExtension(
+                   kRtpExtensionTransportSequenceNumber,
+                   kTransportSequenceNumberExtensionId));
+
+  const size_t kPayloadPacketSize = kMinPaddingSize;
+  std::unique_ptr<RtpPacketToSend> packet =
+      BuildRtpPacket(kPayload, true, 0, clock_->TimeInMilliseconds());
   packet->set_allow_retransmission(true);
   packet->SetPayloadSize(kPayloadPacketSize);
   packet->set_packet_type(RtpPacketMediaType::kVideo);
 
   // Send a dummy video packet so it ends up in the packet history.
   EXPECT_CALL(send_packet_observer_, OnSendPacket).Times(1);
-  rtp_egress()->SendPacket(packet.get(), PacedPacketInfo());
+  rtp_sender_context_->InjectPacket(std::move(packet), PacedPacketInfo());
 
   // Generated padding has large enough budget that the video packet should be
   // retransmitted as padding.
@@ -2283,17 +2539,6 @@ TEST_P(RtpSenderTest, GeneratePaddingResendsOldPacketsWithRtx) {
   EXPECT_EQ(padding_packet->Ssrc(), kRtxSsrc);
   EXPECT_EQ(padding_packet->payload_size(),
             kPayloadPacketSize + kRtxHeaderSize);
-  EXPECT_TRUE(padding_packet->HasExtension<TransportSequenceNumber>());
-  EXPECT_TRUE(padding_packet->HasExtension<AbsoluteSendTime>());
-  EXPECT_TRUE(padding_packet->HasExtension<TransmissionOffset>());
-
-  // Verify all header extensions are received.
-  rtp_egress()->SendPacket(padding_packet.get(), PacedPacketInfo());
-  webrtc::RTPHeader rtp_header;
-  transport_.last_sent_packet().GetHeader(&rtp_header);
-  EXPECT_TRUE(rtp_header.extension.hasAbsoluteSendTime);
-  EXPECT_TRUE(rtp_header.extension.hasTransmissionTimeOffset);
-  EXPECT_TRUE(rtp_header.extension.hasTransportSequenceNumber);
 
   // Not enough budged for payload padding, use plain padding instead.
   const size_t kPaddingBytesRequested = kMinPaddingSize - 1;
@@ -2308,21 +2553,53 @@ TEST_P(RtpSenderTest, GeneratePaddingResendsOldPacketsWithRtx) {
     EXPECT_EQ(packet->payload_size(), 0u);
     EXPECT_GT(packet->padding_size(), 0u);
     padding_bytes_generated += packet->padding_size();
-
-    EXPECT_TRUE(packet->HasExtension<TransportSequenceNumber>());
-    EXPECT_TRUE(packet->HasExtension<AbsoluteSendTime>());
-    EXPECT_TRUE(packet->HasExtension<TransmissionOffset>());
-
-    // Verify all header extensions are received.
-    rtp_egress()->SendPacket(packet.get(), PacedPacketInfo());
-    webrtc::RTPHeader rtp_header;
-    transport_.last_sent_packet().GetHeader(&rtp_header);
-    EXPECT_TRUE(rtp_header.extension.hasAbsoluteSendTime);
-    EXPECT_TRUE(rtp_header.extension.hasTransmissionTimeOffset);
-    EXPECT_TRUE(rtp_header.extension.hasTransportSequenceNumber);
   }
 
   EXPECT_EQ(padding_bytes_generated, kMaxPaddingSize);
+}
+
+TEST_P(RtpSenderTest, LimitsPayloadPaddingSize) {
+  // Limit RTX payload padding to 2x target size.
+  const double kFactor = 2.0;
+  field_trials_.SetMaxPaddingFactor(kFactor);
+  SetUpRtpSender(true, false, false);
+  rtp_sender()->SetRtxStatus(kRtxRetransmitted | kRtxRedundantPayloads);
+  rtp_sender()->SetRtxPayloadType(kRtxPayload, kPayload);
+  rtp_sender_context_->packet_history_.SetStorePacketsStatus(
+      RtpPacketHistory::StorageMode::kStoreAndCull, 1);
+
+  ASSERT_EQ(0, rtp_sender()->RegisterRtpHeaderExtension(
+                   kRtpExtensionTransportSequenceNumber,
+                   kTransportSequenceNumberExtensionId));
+
+  // Send a dummy video packet so it ends up in the packet history.
+  const size_t kPayloadPacketSize = 1234u;
+  std::unique_ptr<RtpPacketToSend> packet =
+      BuildRtpPacket(kPayload, true, 0, clock_->TimeInMilliseconds());
+  packet->set_allow_retransmission(true);
+  packet->SetPayloadSize(kPayloadPacketSize);
+  packet->set_packet_type(RtpPacketMediaType::kVideo);
+  EXPECT_CALL(send_packet_observer_, OnSendPacket).Times(1);
+  rtp_sender_context_->InjectPacket(std::move(packet), PacedPacketInfo());
+
+  // Smallest target size that will result in the sent packet being returned as
+  // padding.
+  const size_t kMinTargerSizeForPayload =
+      (kPayloadPacketSize + kRtxHeaderSize) / kFactor;
+
+  // Generated padding has large enough budget that the video packet should be
+  // retransmitted as padding.
+  EXPECT_THAT(
+      rtp_sender()->GeneratePadding(kMinTargerSizeForPayload, true),
+      AllOf(Not(IsEmpty()),
+            Each(Pointee(Property(&RtpPacketToSend::padding_size, Eq(0u))))));
+
+  // If payload padding is > 2x requested size, plain padding is returned
+  // instead.
+  EXPECT_THAT(
+      rtp_sender()->GeneratePadding(kMinTargerSizeForPayload - 1, true),
+      AllOf(Not(IsEmpty()),
+            Each(Pointee(Property(&RtpPacketToSend::padding_size, Gt(0u))))));
 }
 
 TEST_P(RtpSenderTest, GeneratePaddingCreatesPurePaddingWithoutRtx) {
@@ -2342,12 +2619,12 @@ TEST_P(RtpSenderTest, GeneratePaddingCreatesPurePaddingWithoutRtx) {
   // Send a dummy video packet so it ends up in the packet history. Since we
   // are not using RTX, it should never be used as padding.
   std::unique_ptr<RtpPacketToSend> packet =
-      BuildRtpPacket(kPayload, true, 0, fake_clock_.TimeInMilliseconds());
+      BuildRtpPacket(kPayload, true, 0, clock_->TimeInMilliseconds());
   packet->set_allow_retransmission(true);
   packet->SetPayloadSize(kPayloadPacketSize);
   packet->set_packet_type(RtpPacketMediaType::kVideo);
   EXPECT_CALL(send_packet_observer_, OnSendPacket).Times(1);
-  rtp_egress()->SendPacket(packet.get(), PacedPacketInfo());
+  rtp_sender_context_->InjectPacket(std::move(packet), PacedPacketInfo());
 
   // Payload padding not available without RTX, only generate plain padding on
   // the media SSRC.
@@ -2372,7 +2649,7 @@ TEST_P(RtpSenderTest, GeneratePaddingCreatesPurePaddingWithoutRtx) {
     EXPECT_TRUE(packet->HasExtension<TransmissionOffset>());
 
     // Verify all header extensions are received.
-    rtp_egress()->SendPacket(packet.get(), PacedPacketInfo());
+    rtp_sender_context_->InjectPacket(std::move(packet), PacedPacketInfo());
     webrtc::RTPHeader rtp_header;
     transport_.last_sent_packet().GetHeader(&rtp_header);
     EXPECT_TRUE(rtp_header.extension.hasAbsoluteSendTime);
@@ -2436,54 +2713,55 @@ TEST_P(RtpSenderTest, SetsCaptureTimeAndPopulatesTransmissionOffset) {
   const uint32_t kTimestampTicksPerMs = 90;
   const int64_t kOffsetMs = 10;
 
-    auto packet =
-        BuildRtpPacket(kPayload, kMarkerBit, fake_clock_.TimeInMilliseconds(),
-                       kMissingCaptureTimeMs);
-    packet->set_packet_type(RtpPacketMediaType::kVideo);
-    packet->ReserveExtension<TransmissionOffset>();
-    packet->AllocatePayload(sizeof(kPayloadData));
+  auto packet =
+      BuildRtpPacket(kPayload, kMarkerBit, clock_->TimeInMilliseconds(),
+                     kMissingCaptureTimeMs);
+  packet->set_packet_type(RtpPacketMediaType::kVideo);
+  packet->ReserveExtension<TransmissionOffset>();
+  packet->AllocatePayload(sizeof(kPayloadData));
 
-    std::unique_ptr<RtpPacketToSend> packet_to_pace;
-    EXPECT_CALL(mock_paced_sender_, EnqueuePackets)
-        .WillOnce([&](std::vector<std::unique_ptr<RtpPacketToSend>> packets) {
-          EXPECT_EQ(packets.size(), 1u);
-          EXPECT_GT(packets[0]->capture_time_ms(), 0);
-          packet_to_pace = std::move(packets[0]);
-        });
+  std::unique_ptr<RtpPacketToSend> packet_to_pace;
+  EXPECT_CALL(mock_paced_sender_, EnqueuePackets)
+      .WillOnce([&](std::vector<std::unique_ptr<RtpPacketToSend>> packets) {
+        EXPECT_EQ(packets.size(), 1u);
+        EXPECT_GT(packets[0]->capture_time_ms(), 0);
+        packet_to_pace = std::move(packets[0]);
+      });
 
-    packet->set_allow_retransmission(true);
-    EXPECT_TRUE(rtp_sender()->SendToNetwork(std::move(packet)));
+  packet->set_allow_retransmission(true);
+  EXPECT_TRUE(rtp_sender()->SendToNetwork(std::move(packet)));
 
-    fake_clock_.AdvanceTimeMilliseconds(kOffsetMs);
+  time_controller_.AdvanceTime(TimeDelta::Millis(kOffsetMs));
 
-    rtp_egress()->SendPacket(packet_to_pace.get(), PacedPacketInfo());
+  rtp_sender_context_->InjectPacket(std::move(packet_to_pace),
+                                    PacedPacketInfo());
 
-    EXPECT_EQ(1, transport_.packets_sent());
-    absl::optional<int32_t> transmission_time_extension =
-        transport_.sent_packets_.back().GetExtension<TransmissionOffset>();
-    ASSERT_TRUE(transmission_time_extension.has_value());
-    EXPECT_EQ(*transmission_time_extension, kOffsetMs * kTimestampTicksPerMs);
+  EXPECT_EQ(1, transport_.packets_sent());
+  absl::optional<int32_t> transmission_time_extension =
+      transport_.sent_packets_.back().GetExtension<TransmissionOffset>();
+  ASSERT_TRUE(transmission_time_extension.has_value());
+  EXPECT_EQ(*transmission_time_extension, kOffsetMs * kTimestampTicksPerMs);
 
-    // Retransmit packet. The RTX packet should get the same capture time as the
-    // original packet, so offset is delta from original packet to now.
-    fake_clock_.AdvanceTimeMilliseconds(kOffsetMs);
+  // Retransmit packet. The RTX packet should get the same capture time as the
+  // original packet, so offset is delta from original packet to now.
+  time_controller_.AdvanceTime(TimeDelta::Millis(kOffsetMs));
 
-    std::unique_ptr<RtpPacketToSend> rtx_packet_to_pace;
-    EXPECT_CALL(mock_paced_sender_, EnqueuePackets)
-        .WillOnce([&](std::vector<std::unique_ptr<RtpPacketToSend>> packets) {
-          EXPECT_GT(packets[0]->capture_time_ms(), 0);
-          rtx_packet_to_pace = std::move(packets[0]);
-        });
+  std::unique_ptr<RtpPacketToSend> rtx_packet_to_pace;
+  EXPECT_CALL(mock_paced_sender_, EnqueuePackets)
+      .WillOnce([&](std::vector<std::unique_ptr<RtpPacketToSend>> packets) {
+        EXPECT_GT(packets[0]->capture_time_ms(), 0);
+        rtx_packet_to_pace = std::move(packets[0]);
+      });
 
-    EXPECT_GT(rtp_sender()->ReSendPacket(kSeqNum), 0);
-    rtp_egress()->SendPacket(rtx_packet_to_pace.get(), PacedPacketInfo());
+  EXPECT_GT(rtp_sender()->ReSendPacket(kSeqNum), 0);
+  rtp_sender_context_->InjectPacket(std::move(rtx_packet_to_pace),
+                                    PacedPacketInfo());
 
-    EXPECT_EQ(2, transport_.packets_sent());
-    transmission_time_extension =
-        transport_.sent_packets_.back().GetExtension<TransmissionOffset>();
-    ASSERT_TRUE(transmission_time_extension.has_value());
-    EXPECT_EQ(*transmission_time_extension,
-              2 * kOffsetMs * kTimestampTicksPerMs);
+  EXPECT_EQ(2, transport_.packets_sent());
+  transmission_time_extension =
+      transport_.sent_packets_.back().GetExtension<TransmissionOffset>();
+  ASSERT_TRUE(transmission_time_extension.has_value());
+  EXPECT_EQ(*transmission_time_extension, 2 * kOffsetMs * kTimestampTicksPerMs);
 }
 
 TEST_P(RtpSenderTestWithoutPacer, ClearHistoryOnSequenceNumberCange) {
@@ -2505,13 +2783,13 @@ TEST_P(RtpSenderTestWithoutPacer, ClearHistoryOnSequenceNumberCange) {
   // Advance time and make sure it can be retransmitted, even if we try to set
   // the ssrc the what it already is.
   rtp_sender()->SetSequenceNumber(rtp_sender()->SequenceNumber());
-  fake_clock_.AdvanceTimeMilliseconds(kRtt);
+  time_controller_.AdvanceTime(TimeDelta::Millis(kRtt));
   EXPECT_GT(rtp_sender()->ReSendPacket(packet_seqence_number), 0);
 
   // Change the sequence number, then move the time and try to retransmit again.
   // The old packet should now be gone.
   rtp_sender()->SetSequenceNumber(rtp_sender()->SequenceNumber() - 1);
-  fake_clock_.AdvanceTimeMilliseconds(kRtt);
+  time_controller_.AdvanceTime(TimeDelta::Millis(kRtt));
   EXPECT_EQ(rtp_sender()->ReSendPacket(packet_seqence_number), 0);
 }
 
@@ -2533,24 +2811,69 @@ TEST_P(RtpSenderTest, IgnoresNackAfterDisablingMedia) {
         });
 
     SendGenericPacket();
-    rtp_egress()->SendPacket(packet_to_pace.get(), PacedPacketInfo());
+    rtp_sender_context_->InjectPacket(std::move(packet_to_pace),
+                                      PacedPacketInfo());
 
     ASSERT_EQ(1u, transport_.sent_packets_.size());
 
     // Disable media sending and try to retransmit the packet, it should fail.
     rtp_sender()->SetSendingMediaStatus(false);
-    fake_clock_.AdvanceTimeMilliseconds(kRtt);
+    time_controller_.AdvanceTime(TimeDelta::Millis(kRtt));
     EXPECT_LT(rtp_sender()->ReSendPacket(kSeqNum), 0);
+}
+
+TEST_P(RtpSenderTest, DoesntFecProtectRetransmissions) {
+  if (!GetParam().deferred_fec) {
+    // This test make sense only for deferred fec generation.
+    return;
+  }
+
+  // Set up retranmission without RTX, so that a plain copy of the old packet is
+  // re-sent instead.
+  const int64_t kRtt = 10;
+  rtp_sender()->SetSendingMediaStatus(true);
+  rtp_sender()->SetRtxStatus(kRtxOff);
+  rtp_sender_context_->packet_history_.SetStorePacketsStatus(
+      RtpPacketHistory::StorageMode::kStoreAndCull, 10);
+  rtp_sender_context_->packet_history_.SetRtt(kRtt);
+
+  // Send a packet so it is in the packet history, make sure to mark it for
+  // FEC protection.
+  std::unique_ptr<RtpPacketToSend> packet_to_pace;
+  EXPECT_CALL(mock_paced_sender_, EnqueuePackets)
+      .WillOnce([&](std::vector<std::unique_ptr<RtpPacketToSend>> packets) {
+        packet_to_pace = std::move(packets[0]);
+      });
+
+  SendGenericPacket();
+  packet_to_pace->set_fec_protect_packet(true);
+  rtp_sender_context_->InjectPacket(std::move(packet_to_pace),
+                                    PacedPacketInfo());
+
+  ASSERT_EQ(1u, transport_.sent_packets_.size());
+
+  // Re-send packet, the retransmitted packet should not have the FEC protection
+  // flag set.
+  EXPECT_CALL(mock_paced_sender_,
+              EnqueuePackets(Each(Pointee(
+                  Property(&RtpPacketToSend::fec_protect_packet, false)))));
+
+  time_controller_.AdvanceTime(TimeDelta::Millis(kRtt));
+  EXPECT_GT(rtp_sender()->ReSendPacket(kSeqNum), 0);
 }
 
 INSTANTIATE_TEST_SUITE_P(WithAndWithoutOverhead,
                          RtpSenderTest,
-                         ::testing::Values(TestConfig{false},
-                                           TestConfig{true}));
+                         ::testing::Values(TestConfig{false, false},
+                                           TestConfig{false, true},
+                                           TestConfig{true, false},
+                                           TestConfig{false, false}));
 
 INSTANTIATE_TEST_SUITE_P(WithAndWithoutOverhead,
                          RtpSenderTestWithoutPacer,
-                         ::testing::Values(TestConfig{false},
-                                           TestConfig{true}));
+                         ::testing::Values(TestConfig{false, false},
+                                           TestConfig{false, true},
+                                           TestConfig{true, false},
+                                           TestConfig{false, false}));
 
 }  // namespace webrtc

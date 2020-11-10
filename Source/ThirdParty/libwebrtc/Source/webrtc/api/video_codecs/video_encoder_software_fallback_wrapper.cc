@@ -17,6 +17,7 @@
 #include <string>
 #include <vector>
 
+#include "absl/strings/match.h"
 #include "absl/types/optional.h"
 #include "api/fec_controller_override.h"
 #include "api/video/i420_buffer.h"
@@ -71,7 +72,7 @@ absl::optional<ForcedFallbackParams> ParseFallbackParamsFromFieldTrials(
     const VideoEncoder& main_encoder) {
   const std::string field_trial =
       webrtc::field_trial::FindFullName(kVp8ForceFallbackEncoderFieldTrial);
-  if (field_trial.find("Enabled") != 0) {
+  if (!absl::StartsWith(field_trial, "Enabled")) {
     return absl::nullopt;
   }
 

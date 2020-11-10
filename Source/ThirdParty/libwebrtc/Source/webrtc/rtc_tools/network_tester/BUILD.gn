@@ -48,10 +48,12 @@ if (rtc_enable_protobuf) {
       "../../rtc_base:protobuf_utils",
       "../../rtc_base:rtc_base_approved",
       "../../rtc_base:rtc_task_queue",
+      "../../rtc_base/synchronization:mutex",
       "../../rtc_base/synchronization:sequence_checker",
+      "../../rtc_base/system:no_unique_address",
       "../../rtc_base/third_party/sigslot",
-      "//third_party/abseil-cpp/absl/types:optional",
     ]
+    absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
   }
 
   network_tester_unittests_resources = [
@@ -101,7 +103,7 @@ if (is_android) {
     testonly = true
     apk_name = "NetworkTesterMobile"
     android_manifest = "androidapp/AndroidManifest.xml"
-    min_sdk_version = 16
+    min_sdk_version = 21
     target_sdk_version = 24
 
     deps = [
@@ -115,13 +117,14 @@ if (is_android) {
 
   rtc_android_library("NetworkTesterMobile_javalib") {
     testonly = true
-    android_manifest_for_lint = "androidapp/AndroidManifest.xml"
+    android_manifest = "androidapp/AndroidManifest.xml"
 
     sources = [
       "androidapp/src/com/google/media/networktester/MainActivity.java",
       "androidapp/src/com/google/media/networktester/NetworkTester.java",
     ]
 
+    resources_package = "com.google.media.networktester"
     deps = [
       ":NetworkTesterMobile_resources",
       "../../rtc_base:base_java",
@@ -130,8 +133,24 @@ if (is_android) {
 
   android_resources("NetworkTesterMobile_resources") {
     testonly = true
-    resource_dirs = [ "androidapp/res" ]
     custom_package = "com.google.media.networktester"
+    sources = [
+      "androidapp/res/layout/activity_main.xml",
+      "androidapp/res/mipmap-hdpi/ic_launcher.png",
+      "androidapp/res/mipmap-mdpi/ic_launcher.png",
+      "androidapp/res/mipmap-xhdpi/ic_launcher.png",
+      "androidapp/res/mipmap-xxhdpi/ic_launcher.png",
+      "androidapp/res/mipmap-xxxhdpi/ic_launcher.png",
+      "androidapp/res/values-v17/styles.xml",
+      "androidapp/res/values-w820dp/dimens.xml",
+      "androidapp/res/values/colors.xml",
+      "androidapp/res/values/dimens.xml",
+      "androidapp/res/values/strings.xml",
+    ]
+
+    # Needed for Bazel converter.
+    resource_dirs = [ "androidapp/res" ]
+    assert(resource_dirs != [])  # Mark as used.
   }
 
   rtc_shared_library("network_tester_so") {

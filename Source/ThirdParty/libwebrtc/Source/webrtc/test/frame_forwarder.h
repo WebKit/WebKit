@@ -12,7 +12,7 @@
 
 #include "api/video/video_frame.h"
 #include "api/video/video_source_interface.h"
-#include "rtc_base/critical_section.h"
+#include "rtc_base/synchronization/mutex.h"
 
 namespace webrtc {
 namespace test {
@@ -26,18 +26,26 @@ class FrameForwarder : public rtc::VideoSourceInterface<VideoFrame> {
   FrameForwarder();
   ~FrameForwarder() override;
   // Forwards |video_frame| to the registered |sink_|.
-  virtual void IncomingCapturedFrame(const VideoFrame& video_frame);
-  rtc::VideoSinkWants sink_wants() const;
-  bool has_sinks() const;
+  virtual void IncomingCapturedFrame(const VideoFrame& video_frame)
+      RTC_LOCKS_EXCLUDED(mutex_);
+  rtc::VideoSinkWants sink_wants() const RTC_LOCKS_EXCLUDED(mutex_);
+  bool has_sinks() const RTC_LOCKS_EXCLUDED(mutex_);
 
  protected:
+  rtc::VideoSinkWants sink_wants_locked() const
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
   void AddOrUpdateSink(rtc::VideoSinkInterface<VideoFrame>* sink,
-                       const rtc::VideoSinkWants& wants) override;
-  void RemoveSink(rtc::VideoSinkInterface<VideoFrame>* sink) override;
+                       const rtc::VideoSinkWants& wants)
+      RTC_LOCKS_EXCLUDED(mutex_) override;
+  void AddOrUpdateSinkLocked(rtc::VideoSinkInterface<VideoFrame>* sink,
+                             const rtc::VideoSinkWants& wants)
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
+  void RemoveSink(rtc::VideoSinkInterface<VideoFrame>* sink)
+      RTC_LOCKS_EXCLUDED(mutex_) override;
 
-  rtc::CriticalSection crit_;
-  rtc::VideoSinkInterface<VideoFrame>* sink_ RTC_GUARDED_BY(crit_);
-  rtc::VideoSinkWants sink_wants_ RTC_GUARDED_BY(crit_);
+  mutable Mutex mutex_;
+  rtc::VideoSinkInterface<VideoFrame>* sink_ RTC_GUARDED_BY(mutex_);
+  rtc::VideoSinkWants sink_wants_ RTC_GUARDED_BY(mutex_);
 };
 
 }  // namespace test

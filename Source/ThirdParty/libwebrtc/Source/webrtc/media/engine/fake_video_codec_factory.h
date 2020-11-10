@@ -30,8 +30,6 @@ class RTC_EXPORT FakeVideoEncoderFactory : public VideoEncoderFactory {
 
   // VideoEncoderFactory implementation
   std::vector<SdpVideoFormat> GetSupportedFormats() const override;
-  VideoEncoderFactory::CodecInfo QueryVideoEncoder(
-      const SdpVideoFormat& format) const override;
   std::unique_ptr<VideoEncoder> CreateVideoEncoder(
       const SdpVideoFormat& format) override;
 };

@@ -8,6 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "absl/flags/declare.h"
 #include "absl/flags/flag.h"
 #include "api/test/simulated_network.h"
 #include "audio/test/audio_end_to_end_test.h"

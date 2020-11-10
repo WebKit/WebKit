@@ -280,7 +280,7 @@ EmulatedEndpointImpl* FakeNetworkSocketServer::GetEndpointNode(
 }
 
 void FakeNetworkSocketServer::Unregister(FakeNetworkSocket* socket) {
-  rtc::CritScope crit(&lock_);
+  MutexLock lock(&lock_);
   sockets_.erase(absl::c_find(sockets_, socket));
 }
 
@@ -297,7 +297,7 @@ rtc::AsyncSocket* FakeNetworkSocketServer::CreateAsyncSocket(int family,
   RTC_DCHECK(thread_) << "must be attached to thread before creating sockets";
   FakeNetworkSocket* out = new FakeNetworkSocket(this, thread_);
   {
-    rtc::CritScope crit(&lock_);
+    MutexLock lock(&lock_);
     sockets_.push_back(out);
   }
   return out;

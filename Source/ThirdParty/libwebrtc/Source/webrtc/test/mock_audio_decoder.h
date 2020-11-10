@@ -20,16 +20,18 @@ class MockAudioDecoder : public AudioDecoder {
  public:
   MockAudioDecoder();
   ~MockAudioDecoder();
-  MOCK_METHOD0(Die, void());
-  MOCK_METHOD5(DecodeInternal,
-               int(const uint8_t*, size_t, int, int16_t*, SpeechType*));
-  MOCK_CONST_METHOD0(HasDecodePlc, bool());
-  MOCK_METHOD2(DecodePlc, size_t(size_t, int16_t*));
-  MOCK_METHOD0(Reset, void());
-  MOCK_METHOD0(ErrorCode, int());
-  MOCK_CONST_METHOD2(PacketDuration, int(const uint8_t*, size_t));
-  MOCK_CONST_METHOD0(Channels, size_t());
-  MOCK_CONST_METHOD0(SampleRateHz, int());
+  MOCK_METHOD(void, Die, ());
+  MOCK_METHOD(int,
+              DecodeInternal,
+              (const uint8_t*, size_t, int, int16_t*, SpeechType*),
+              (override));
+  MOCK_METHOD(bool, HasDecodePlc, (), (const, override));
+  MOCK_METHOD(size_t, DecodePlc, (size_t, int16_t*), (override));
+  MOCK_METHOD(void, Reset, (), (override));
+  MOCK_METHOD(int, ErrorCode, (), (override));
+  MOCK_METHOD(int, PacketDuration, (const uint8_t*, size_t), (const, override));
+  MOCK_METHOD(size_t, Channels, (), (const, override));
+  MOCK_METHOD(int, SampleRateHz, (), (const, override));
 };
 
 }  // namespace webrtc

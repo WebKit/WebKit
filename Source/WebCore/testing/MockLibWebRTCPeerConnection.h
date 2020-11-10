@@ -227,7 +227,8 @@ private:
     webrtc::RtpTransceiverDirection direction() const final { return webrtc::RtpTransceiverDirection::kSendRecv; }
     void SetDirection(webrtc::RtpTransceiverDirection) final { }
     absl::optional<webrtc::RtpTransceiverDirection> current_direction() const final { return { }; }
-    void Stop() final { }
+    void StopInternal() final { }
+    webrtc::RTCError StopStandard() final { return { }; }
 
 private:
     rtc::scoped_refptr<webrtc::RtpSenderInterface> m_sender;
@@ -291,7 +292,7 @@ protected:
     rtc::scoped_refptr<webrtc::DataChannelInterface> CreateDataChannel(const std::string&, const webrtc::DataChannelInit*) final;
     webrtc::RTCErrorOr<rtc::scoped_refptr<webrtc::RtpSenderInterface>> AddTrack(rtc::scoped_refptr<webrtc::MediaStreamTrackInterface>, const std::vector<std::string>& streams) final;
     bool RemoveTrack(webrtc::RtpSenderInterface*) final;
-    webrtc::RTCError SetBitrate(const BitrateParameters&) final { return { }; }
+    webrtc::RTCError SetBitrate(const webrtc::BitrateSettings&) final { return { }; }
 
     void SetLocalDescription(webrtc::SetSessionDescriptionObserver*, webrtc::SessionDescriptionInterface*) override;
     bool GetStats(webrtc::StatsObserver*, webrtc::MediaStreamTrackInterface*, StatsOutputLevel) override { return false; }

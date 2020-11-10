@@ -17,6 +17,10 @@
 
 #include "rtc_base/checks.h"
 
+namespace webrtc {
+
+namespace {
+
 // Number of right shifts for scaling is linearly depending on number of bits in
 // the far-end binary spectrum.
 static const int kShiftsAtZero = 13;  // Right shifts at zero binary spectrum.
@@ -37,6 +41,8 @@ static const float kQ14Scaling = 1.f / (1 << 14);  // Scaling by 2^14 to get Q0.
 static const float kFractionSlope = 0.05f;
 static const float kMinFractionWhenPossiblyCausal = 0.5f;
 static const float kMinFractionWhenPossiblyNonCausal = 0.25f;
+
+}  // namespace
 
 // Counts and returns number of bits of a 32-bit word.
 static int BitCount(uint32_t u32) {
@@ -698,3 +704,5 @@ void WebRtc_MeanEstimatorFix(int32_t new_value,
   }
   *mean_value += diff;
 }
+
+}  // namespace webrtc

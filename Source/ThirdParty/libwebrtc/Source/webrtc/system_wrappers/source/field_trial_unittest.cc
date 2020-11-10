@@ -32,7 +32,7 @@ TEST(FieldTrialValidationTest, AcceptsValidInputs) {
   EXPECT_TRUE(FieldTrialsStringIsValid("Audio/Enabled/B/C/Audio/Enabled/"));
 }
 
-TEST(FieldTrialValidationTest, RejectsBadInputs) {
+TEST(FieldTrialValidationDeathTest, RejectsBadInputs) {
   // Bad delimiters
   RTC_EXPECT_DEATH(InitFieldTrialsFromString("Audio/EnabledVideo/Disabled/"),
                    "Invalid field trials string:");
@@ -90,7 +90,7 @@ TEST(FieldTrialMergingTest, MergesValidInput) {
       "Audio/Enabled/Video/Enabled/");
 }
 
-TEST(FieldTrialMergingTest, DchecksBadInput) {
+TEST(FieldTrialMergingDeathTest, DchecksBadInput) {
   RTC_EXPECT_DEATH(MergeFieldTrialsStrings("Audio/Enabled/", "garbage"),
                    "Invalid field trials string:");
 }

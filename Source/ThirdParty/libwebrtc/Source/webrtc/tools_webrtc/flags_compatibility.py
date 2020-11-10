@@ -16,16 +16,12 @@ import sys
 
 def main():
   parser = argparse.ArgumentParser()
-  parser.add_argument('--isolated-script-test-output')
   parser.add_argument('--isolated-script-test-perf-output')
   args, unrecognized_args = parser.parse_known_args()
 
   test_command = _ForcePythonInterpreter(unrecognized_args)
-  if args.isolated_script_test_output:
-    test_command += ['--isolated_script_test_output',
-                     args.isolated_script_test_output]
   if args.isolated_script_test_perf_output:
-    test_command += ['--isolated_script_test_perf_output',
+    test_command += ['--isolated_script_test_perf_output=' +
                      args.isolated_script_test_perf_output]
   logging.info('Running %r', test_command)
 

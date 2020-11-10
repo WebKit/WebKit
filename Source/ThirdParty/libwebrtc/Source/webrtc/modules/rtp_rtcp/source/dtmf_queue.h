@@ -15,7 +15,7 @@
 
 #include <list>
 
-#include "rtc_base/critical_section.h"
+#include "rtc_base/synchronization/mutex.h"
 
 namespace webrtc {
 class DtmfQueue {
@@ -35,7 +35,7 @@ class DtmfQueue {
   bool PendingDtmf() const;
 
  private:
-  rtc::CriticalSection dtmf_critsect_;
+  mutable Mutex dtmf_mutex_;
   std::list<Event> queue_;
 };
 }  // namespace webrtc

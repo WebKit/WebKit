@@ -13,6 +13,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include "api/priority.h"
 #include "rtc_base/byte_buffer.h"
 #include "rtc_base/copy_on_write_buffer.h"
 #include "rtc_base/logging.h"
@@ -32,6 +33,15 @@ enum DataChannelOpenMessageChannelType {
   DCOMCT_UNORDERED_RELIABLE = 0x80,
   DCOMCT_UNORDERED_PARTIAL_RTXS = 0x81,
   DCOMCT_UNORDERED_PARTIAL_TIME = 0x82,
+};
+
+// Values of priority in the DC open protocol message.
+// These are compared against an integer, so are enum, not enum class.
+enum DataChannelPriority {
+  DCO_PRIORITY_VERY_LOW = 128,
+  DCO_PRIORITY_LOW = 256,
+  DCO_PRIORITY_MEDIUM = 512,
+  DCO_PRIORITY_HIGH = 1024,
 };
 
 bool IsOpenMessage(const rtc::CopyOnWriteBuffer& payload) {
@@ -76,6 +86,18 @@ bool ParseDataChannelOpenMessage(const rtc::CopyOnWriteBuffer& payload,
         << "Could not read OPEN message reliabilility prioirty.";
     return false;
   }
+  // Parse priority as defined in
+  // https://w3c.github.io/webrtc-priority/#rtcdatachannel-processing-steps
+  if (priority <= DCO_PRIORITY_VERY_LOW) {
+    config->priority = Priority::kVeryLow;
+  } else if (priority <= DCO_PRIORITY_LOW) {
+    config->priority = Priority::kLow;
+  } else if (priority <= DCO_PRIORITY_MEDIUM) {
+    config->priority = Priority::kMedium;
+  } else {
+    config->priority = Priority::kHigh;
+  }
+
   uint32_t reliability_param;
   if (!buffer.ReadUInt32(&reliability_param)) {
     RTC_LOG(LS_WARNING) << "Could not read OPEN message reliabilility param.";
@@ -146,6 +168,24 @@ bool WriteDataChannelOpenMessage(const std::string& label,
   uint8_t channel_type = 0;
   uint32_t reliability_param = 0;
   uint16_t priority = 0;
+  // Set priority according to
+  // https://tools.ietf.org/html/draft-ietf-rtcweb-data-channel-12#section-6.4
+  if (config.priority) {
+    switch (*config.priority) {
+      case Priority::kVeryLow:
+        priority = DCO_PRIORITY_VERY_LOW;
+        break;
+      case Priority::kLow:
+        priority = DCO_PRIORITY_LOW;
+        break;
+      case Priority::kMedium:
+        priority = DCO_PRIORITY_MEDIUM;
+        break;
+      case Priority::kHigh:
+        priority = DCO_PRIORITY_HIGH;
+        break;
+    }
+  }
   if (config.ordered) {
     if (config.maxRetransmits) {
       channel_type = DCOMCT_ORDERED_PARTIAL_RTXS;

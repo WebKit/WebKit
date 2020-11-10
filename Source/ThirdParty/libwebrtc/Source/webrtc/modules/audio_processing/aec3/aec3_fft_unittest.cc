@@ -20,28 +20,28 @@ namespace webrtc {
 #if RTC_DCHECK_IS_ON && GTEST_HAS_DEATH_TEST && !defined(WEBRTC_ANDROID)
 
 // Verifies that the check for non-null input in Fft works.
-TEST(Aec3Fft, NullFftInput) {
+TEST(Aec3FftDeathTest, NullFftInput) {
   Aec3Fft fft;
   FftData X;
   EXPECT_DEATH(fft.Fft(nullptr, &X), "");
 }
 
 // Verifies that the check for non-null input in Fft works.
-TEST(Aec3Fft, NullFftOutput) {
+TEST(Aec3FftDeathTest, NullFftOutput) {
   Aec3Fft fft;
   std::array<float, kFftLength> x;
   EXPECT_DEATH(fft.Fft(&x, nullptr), "");
 }
 
 // Verifies that the check for non-null output in Ifft works.
-TEST(Aec3Fft, NullIfftOutput) {
+TEST(Aec3FftDeathTest, NullIfftOutput) {
   Aec3Fft fft;
   FftData X;
   EXPECT_DEATH(fft.Ifft(X, nullptr), "");
 }
 
 // Verifies that the check for non-null output in ZeroPaddedFft works.
-TEST(Aec3Fft, NullZeroPaddedFftOutput) {
+TEST(Aec3FftDeathTest, NullZeroPaddedFftOutput) {
   Aec3Fft fft;
   std::array<float, kFftLengthBy2> x;
   EXPECT_DEATH(fft.ZeroPaddedFft(x, Aec3Fft::Window::kRectangular, nullptr),
@@ -49,7 +49,7 @@ TEST(Aec3Fft, NullZeroPaddedFftOutput) {
 }
 
 // Verifies that the check for input length in ZeroPaddedFft works.
-TEST(Aec3Fft, ZeroPaddedFftWrongInputLength) {
+TEST(Aec3FftDeathTest, ZeroPaddedFftWrongInputLength) {
   Aec3Fft fft;
   FftData X;
   std::array<float, kFftLengthBy2 - 1> x;
@@ -57,7 +57,7 @@ TEST(Aec3Fft, ZeroPaddedFftWrongInputLength) {
 }
 
 // Verifies that the check for non-null output in PaddedFft works.
-TEST(Aec3Fft, NullPaddedFftOutput) {
+TEST(Aec3FftDeathTest, NullPaddedFftOutput) {
   Aec3Fft fft;
   std::array<float, kFftLengthBy2> x;
   std::array<float, kFftLengthBy2> x_old;
@@ -65,7 +65,7 @@ TEST(Aec3Fft, NullPaddedFftOutput) {
 }
 
 // Verifies that the check for input length in PaddedFft works.
-TEST(Aec3Fft, PaddedFftWrongInputLength) {
+TEST(Aec3FftDeathTest, PaddedFftWrongInputLength) {
   Aec3Fft fft;
   FftData X;
   std::array<float, kFftLengthBy2 - 1> x;
@@ -74,7 +74,7 @@ TEST(Aec3Fft, PaddedFftWrongInputLength) {
 }
 
 // Verifies that the check for length in the old value in PaddedFft works.
-TEST(Aec3Fft, PaddedFftWrongOldValuesLength) {
+TEST(Aec3FftDeathTest, PaddedFftWrongOldValuesLength) {
   Aec3Fft fft;
   FftData X;
   std::array<float, kFftLengthBy2> x;

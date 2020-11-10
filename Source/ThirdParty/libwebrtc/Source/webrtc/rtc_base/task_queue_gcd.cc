@@ -24,6 +24,7 @@
 #include "api/task_queue/task_queue_base.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
+#include "rtc_base/system/gcd_helpers.h"
 
 namespace webrtc {
 namespace {
@@ -67,16 +68,16 @@ class TaskQueueGcd : public TaskQueueBase {
 };
 
 TaskQueueGcd::TaskQueueGcd(absl::string_view queue_name, int gcd_priority)
-    : queue_(dispatch_queue_create(std::string(queue_name).c_str(),
-                                   DISPATCH_QUEUE_SERIAL)),
+    : queue_(RTCDispatchQueueCreateWithTarget(
+          std::string(queue_name).c_str(),
+          DISPATCH_QUEUE_SERIAL,
+          dispatch_get_global_queue(gcd_priority, 0))),
       is_active_(true) {
   RTC_CHECK(queue_);
   dispatch_set_context(queue_, this);
   // Assign a finalizer that will delete the queue when the last reference
   // is released. This may run after the TaskQueue::Delete.
   dispatch_set_finalizer_f(queue_, &DeleteQueue);
-
-  dispatch_set_target_queue(queue_, dispatch_get_global_queue(gcd_priority, 0));
 }
 
 TaskQueueGcd::~TaskQueueGcd() = default;

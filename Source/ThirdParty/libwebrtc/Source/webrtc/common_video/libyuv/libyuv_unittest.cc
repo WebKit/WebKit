@@ -31,6 +31,38 @@ void Calc16ByteAlignedStride(int width, int* stride_y, int* stride_uv) {
   *stride_uv = 16 * ((width + 31) / 32);
 }
 
+int PrintPlane(const uint8_t* buf,
+               int width,
+               int height,
+               int stride,
+               FILE* file) {
+  for (int i = 0; i < height; i++, buf += stride) {
+    if (fwrite(buf, 1, width, file) != static_cast<unsigned int>(width))
+      return -1;
+  }
+  return 0;
+}
+
+int PrintVideoFrame(const I420BufferInterface& frame, FILE* file) {
+  int width = frame.width();
+  int height = frame.height();
+  int chroma_width = frame.ChromaWidth();
+  int chroma_height = frame.ChromaHeight();
+
+  if (PrintPlane(frame.DataY(), width, height, frame.StrideY(), file) < 0) {
+    return -1;
+  }
+  if (PrintPlane(frame.DataU(), chroma_width, chroma_height, frame.StrideU(),
+                 file) < 0) {
+    return -1;
+  }
+  if (PrintPlane(frame.DataV(), chroma_width, chroma_height, frame.StrideV(),
+                 file) < 0) {
+    return -1;
+  }
+  return 0;
+}
+
 }  // Anonymous namespace
 
 class TestLibYuv : public ::testing::Test {

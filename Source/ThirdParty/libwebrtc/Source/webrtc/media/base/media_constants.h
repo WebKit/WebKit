@@ -124,42 +124,30 @@ extern const char kCodecParamMaxMessageSize[];
 extern const int kGoogleRtpDataCodecPlType;
 extern const char kGoogleRtpDataCodecName[];
 
-// TODO(pthatcher): Find an id that won't conflict with anything.  On
-// the other hand, it really shouldn't matter since the id won't be
-// used on the wire.
-extern const int kGoogleSctpDataCodecPlType;
-extern const char kGoogleSctpDataCodecName[];
-
 extern const char kComfortNoiseCodecName[];
 
 RTC_EXPORT extern const char kVp8CodecName[];
 RTC_EXPORT extern const char kVp9CodecName[];
 RTC_EXPORT extern const char kAv1CodecName[];
 RTC_EXPORT extern const char kH264CodecName[];
-#ifndef DISABLE_H265
-RTC_EXPORT extern const char kH265CodecName[];
-#endif
 
 // RFC 6184 RTP Payload Format for H.264 video
 RTC_EXPORT extern const char kH264FmtpProfileLevelId[];
 RTC_EXPORT extern const char kH264FmtpLevelAsymmetryAllowed[];
 RTC_EXPORT extern const char kH264FmtpPacketizationMode[];
 extern const char kH264FmtpSpropParameterSets[];
+extern const char kH264FmtpSpsPpsIdrInKeyframe[];
 extern const char kH264ProfileLevelConstrainedBaseline[];
-
-#ifndef DISABLE_H265
-// RFC 7798 RTP Payload Format for H.265 video
-RTC_EXPORT extern const char kH265FmtpProfileSpace[];
-RTC_EXPORT extern const char kH265FmtpProfileId[];
-RTC_EXPORT extern const char kH265FmtpTierFlag[];
-RTC_EXPORT extern const char kH265FmtpLevelId[];
-#endif
+extern const char kH264ProfileLevelConstrainedHigh[];
 
 extern const int kDefaultVideoMaxFramerate;
 
 extern const size_t kConferenceMaxNumSpatialLayers;
 extern const size_t kConferenceMaxNumTemporalLayers;
 extern const size_t kConferenceDefaultNumTemporalLayers;
+
+extern const char kApplicationSpecificBandwidth[];
+extern const char kTransportSpecificBandwidth[];
 }  // namespace cricket
 
 #endif  // MEDIA_BASE_MEDIA_CONSTANTS_H_

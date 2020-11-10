@@ -16,6 +16,7 @@
 #include "api/rtc_event_log/rtc_event_log_factory.h"
 #include "api/scoped_refptr.h"
 #include "api/task_queue/default_task_queue_factory.h"
+#include "api/transport/field_trial_based_config.h"
 #include "call/simulated_network.h"
 #include "media/engine/webrtc_media_engine.h"
 #include "media/engine/webrtc_media_engine_defaults.h"
@@ -59,6 +60,7 @@ rtc::scoped_refptr<PeerConnectionFactoryInterface> CreatePeerConnectionFactory(
       std::make_unique<RtcEventLogFactory>(pcf_deps.task_queue_factory.get());
   pcf_deps.network_thread = network_thread;
   pcf_deps.signaling_thread = signaling_thread;
+  pcf_deps.trials = std::make_unique<FieldTrialBasedConfig>();
   cricket::MediaEngineDependencies media_deps;
   media_deps.task_queue_factory = pcf_deps.task_queue_factory.get();
   media_deps.adm = TestAudioDeviceModule::Create(
@@ -67,6 +69,7 @@ rtc::scoped_refptr<PeerConnectionFactoryInterface> CreatePeerConnectionFactory(
                                                        kSamplingFrequency),
       TestAudioDeviceModule::CreateDiscardRenderer(kSamplingFrequency),
       /*speed=*/1.f);
+  media_deps.trials = pcf_deps.trials.get();
   SetMediaEngineDefaults(&media_deps);
   pcf_deps.media_engine = cricket::CreateMediaEngine(std::move(media_deps));
   return CreateModularPeerConnectionFactory(std::move(pcf_deps));

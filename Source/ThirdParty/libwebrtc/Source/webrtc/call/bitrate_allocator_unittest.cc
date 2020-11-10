@@ -47,7 +47,10 @@ auto AllocationLimitsEq(uint32_t min_allocatable_rate_bps,
 
 class MockLimitObserver : public BitrateAllocator::LimitObserver {
  public:
-  MOCK_METHOD1(OnAllocationLimitsChanged, void(BitrateAllocationLimits));
+  MOCK_METHOD(void,
+              OnAllocationLimitsChanged,
+              (BitrateAllocationLimits),
+              (override));
 };
 
 class TestBitrateObserver : public BitrateAllocatorObserver {

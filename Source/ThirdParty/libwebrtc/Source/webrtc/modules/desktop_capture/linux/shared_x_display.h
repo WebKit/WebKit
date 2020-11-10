@@ -18,6 +18,7 @@
 #include "api/ref_counted_base.h"
 #include "api/scoped_refptr.h"
 #include "rtc_base/constructor_magic.h"
+#include "rtc_base/system/rtc_export.h"
 
 // Including Xlib.h will involve evil defines (Bool, Status, True, False), which
 // easily conflict with other headers.
@@ -27,7 +28,7 @@ typedef union _XEvent XEvent;
 namespace webrtc {
 
 // A ref-counted object to store XDisplay connection.
-class SharedXDisplay : public rtc::RefCountedBase {
+class RTC_EXPORT SharedXDisplay : public rtc::RefCountedBase {
  public:
   class XEventHandler {
    public:
@@ -61,6 +62,8 @@ class SharedXDisplay : public rtc::RefCountedBase {
 
   // Processes pending XEvents, calling corresponding event handlers.
   void ProcessPendingXEvents();
+
+  void IgnoreXServerGrabs();
 
  protected:
   ~SharedXDisplay() override;

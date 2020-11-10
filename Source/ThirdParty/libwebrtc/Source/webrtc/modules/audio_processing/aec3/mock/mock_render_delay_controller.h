@@ -25,14 +25,15 @@ class MockRenderDelayController : public RenderDelayController {
   MockRenderDelayController();
   virtual ~MockRenderDelayController();
 
-  MOCK_METHOD1(Reset, void(bool reset_delay_statistics));
-  MOCK_METHOD0(LogRenderCall, void());
-  MOCK_METHOD3(GetDelay,
-               absl::optional<DelayEstimate>(
-                   const DownsampledRenderBuffer& render_buffer,
-                   size_t render_delay_buffer_delay,
-                   const std::vector<std::vector<float>>& capture));
-  MOCK_CONST_METHOD0(HasClockdrift, bool());
+  MOCK_METHOD(void, Reset, (bool reset_delay_statistics), (override));
+  MOCK_METHOD(void, LogRenderCall, (), (override));
+  MOCK_METHOD(absl::optional<DelayEstimate>,
+              GetDelay,
+              (const DownsampledRenderBuffer& render_buffer,
+               size_t render_delay_buffer_delay,
+               const std::vector<std::vector<float>>& capture),
+              (override));
+  MOCK_METHOD(bool, HasClockdrift, (), (const, override));
 };
 
 }  // namespace test

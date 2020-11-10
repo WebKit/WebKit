@@ -80,7 +80,8 @@ PeerConnectionTestWrapper::PeerConnectionTestWrapper(
     rtc::Thread* worker_thread)
     : name_(name),
       network_thread_(network_thread),
-      worker_thread_(worker_thread) {
+      worker_thread_(worker_thread),
+      pending_negotiation_(false) {
   pc_thread_checker_.Detach();
 }
 
@@ -135,6 +136,17 @@ PeerConnectionTestWrapper::CreateDataChannel(
   return peer_connection_->CreateDataChannel(label, &init);
 }
 
+void PeerConnectionTestWrapper::WaitForNegotiation() {
+  EXPECT_TRUE_WAIT(!pending_negotiation_, kMaxWait);
+}
+
+void PeerConnectionTestWrapper::OnSignalingChange(
+    webrtc::PeerConnectionInterface::SignalingState new_state) {
+  if (new_state == webrtc::PeerConnectionInterface::SignalingState::kStable) {
+    pending_negotiation_ = false;
+  }
+}
+
 void PeerConnectionTestWrapper::OnAddTrack(
     rtc::scoped_refptr<RtpReceiverInterface> receiver,
     const std::vector<rtc::scoped_refptr<MediaStreamInterface>>& streams) {
@@ -182,6 +194,7 @@ void PeerConnectionTestWrapper::OnSuccess(SessionDescriptionInterface* desc) {
 void PeerConnectionTestWrapper::CreateOffer(
     const webrtc::PeerConnectionInterface::RTCOfferAnswerOptions& options) {
   RTC_LOG(LS_INFO) << "PeerConnectionTestWrapper " << name_ << ": CreateOffer.";
+  pending_negotiation_ = true;
   peer_connection_->CreateOffer(this, options);
 }
 
@@ -189,6 +202,7 @@ void PeerConnectionTestWrapper::CreateAnswer(
     const webrtc::PeerConnectionInterface::RTCOfferAnswerOptions& options) {
   RTC_LOG(LS_INFO) << "PeerConnectionTestWrapper " << name_
                    << ": CreateAnswer.";
+  pending_negotiation_ = true;
   peer_connection_->CreateAnswer(this, options);
 }
 

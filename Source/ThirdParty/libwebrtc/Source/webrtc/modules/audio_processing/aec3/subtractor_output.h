@@ -25,20 +25,20 @@ struct SubtractorOutput {
   SubtractorOutput();
   ~SubtractorOutput();
 
-  std::array<float, kBlockSize> s_main;
-  std::array<float, kBlockSize> s_shadow;
-  std::array<float, kBlockSize> e_main;
-  std::array<float, kBlockSize> e_shadow;
-  FftData E_main;
-  std::array<float, kFftLengthBy2Plus1> E2_main;
-  std::array<float, kFftLengthBy2Plus1> E2_shadow;
-  float s2_main = 0.f;
-  float s2_shadow = 0.f;
-  float e2_main = 0.f;
-  float e2_shadow = 0.f;
+  std::array<float, kBlockSize> s_refined;
+  std::array<float, kBlockSize> s_coarse;
+  std::array<float, kBlockSize> e_refined;
+  std::array<float, kBlockSize> e_coarse;
+  FftData E_refined;
+  std::array<float, kFftLengthBy2Plus1> E2_refined;
+  std::array<float, kFftLengthBy2Plus1> E2_coarse;
+  float s2_refined = 0.f;
+  float s2_coarse = 0.f;
+  float e2_refined = 0.f;
+  float e2_coarse = 0.f;
   float y2 = 0.f;
-  float s_main_max_abs = 0.f;
-  float s_shadow_max_abs = 0.f;
+  float s_refined_max_abs = 0.f;
+  float s_coarse_max_abs = 0.f;
 
   // Reset the struct content.
   void Reset();

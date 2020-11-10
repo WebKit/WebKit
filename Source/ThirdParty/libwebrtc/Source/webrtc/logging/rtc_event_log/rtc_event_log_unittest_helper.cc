@@ -37,6 +37,7 @@
 #include "modules/rtp_rtcp/source/rtp_packet_to_send.h"
 #include "rtc_base/buffer.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/time_utils.h"
 #include "system_wrappers/include/ntp_time.h"
 #include "test/gtest.h"
 
@@ -145,6 +146,29 @@ std::unique_ptr<RtcEventDtlsWritableState>
 EventGenerator::NewDtlsWritableState() {
   bool writable = prng_.Rand<bool>();
   return std::make_unique<RtcEventDtlsWritableState>(writable);
+}
+
+std::unique_ptr<RtcEventFrameDecoded> EventGenerator::NewFrameDecodedEvent(
+    uint32_t ssrc) {
+  constexpr int kMinRenderDelayMs = 1;
+  constexpr int kMaxRenderDelayMs = 2000000;
+  constexpr int kMaxWidth = 15360;
+  constexpr int kMaxHeight = 8640;
+  constexpr int kMinWidth = 16;
+  constexpr int kMinHeight = 16;
+  constexpr int kNumCodecTypes = 5;
+
+  constexpr VideoCodecType kCodecList[kNumCodecTypes] = {
+      kVideoCodecGeneric, kVideoCodecVP8, kVideoCodecVP9, kVideoCodecAV1,
+      kVideoCodecH264};
+  const int64_t render_time_ms =
+      rtc::TimeMillis() + prng_.Rand(kMinRenderDelayMs, kMaxRenderDelayMs);
+  const int width = prng_.Rand(kMinWidth, kMaxWidth);
+  const int height = prng_.Rand(kMinHeight, kMaxHeight);
+  const VideoCodecType codec = kCodecList[prng_.Rand(0, kNumCodecTypes - 1)];
+  const uint8_t qp = prng_.Rand<uint8_t>();
+  return std::make_unique<RtcEventFrameDecoded>(render_time_ms, ssrc, width,
+                                                height, codec, qp);
 }
 
 std::unique_ptr<RtcEventProbeClusterCreated>
@@ -833,6 +857,18 @@ void EventVerifier::VerifyLoggedDtlsWritableState(
     const LoggedDtlsWritableState& logged_event) const {
   EXPECT_EQ(original_event.timestamp_ms(), logged_event.log_time_ms());
   EXPECT_EQ(original_event.writable(), logged_event.writable);
+}
+
+void EventVerifier::VerifyLoggedFrameDecoded(
+    const RtcEventFrameDecoded& original_event,
+    const LoggedFrameDecoded& logged_event) const {
+  EXPECT_EQ(original_event.timestamp_ms(), logged_event.log_time_ms());
+  EXPECT_EQ(original_event.ssrc(), logged_event.ssrc);
+  EXPECT_EQ(original_event.render_time_ms(), logged_event.render_time_ms);
+  EXPECT_EQ(original_event.width(), logged_event.width);
+  EXPECT_EQ(original_event.height(), logged_event.height);
+  EXPECT_EQ(original_event.codec(), logged_event.codec);
+  EXPECT_EQ(original_event.qp(), logged_event.qp);
 }
 
 void EventVerifier::VerifyLoggedIceCandidatePairConfig(

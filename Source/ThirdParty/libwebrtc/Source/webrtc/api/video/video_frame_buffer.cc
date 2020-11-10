@@ -35,6 +35,11 @@ const I010BufferInterface* VideoFrameBuffer::GetI010() const {
   return static_cast<const I010BufferInterface*>(this);
 }
 
+const NV12BufferInterface* VideoFrameBuffer::GetNV12() const {
+  RTC_CHECK(type() == Type::kNV12);
+  return static_cast<const NV12BufferInterface*>(this);
+}
+
 VideoFrameBuffer::Type I420BufferInterface::type() const {
   return Type::kI420;
 }
@@ -80,6 +85,18 @@ int I010BufferInterface::ChromaWidth() const {
 }
 
 int I010BufferInterface::ChromaHeight() const {
+  return (height() + 1) / 2;
+}
+
+VideoFrameBuffer::Type NV12BufferInterface::type() const {
+  return Type::kNV12;
+}
+
+int NV12BufferInterface::ChromaWidth() const {
+  return (width() + 1) / 2;
+}
+
+int NV12BufferInterface::ChromaHeight() const {
   return (height() + 1) / 2;
 }
 

@@ -16,18 +16,18 @@
 namespace rtc {
 
 int64_t FakeClock::TimeNanos() const {
-  CritScope cs(&lock_);
+  webrtc::MutexLock lock(&lock_);
   return time_ns_;
 }
 
 void FakeClock::SetTime(webrtc::Timestamp new_time) {
-  CritScope cs(&lock_);
+  webrtc::MutexLock lock(&lock_);
   RTC_DCHECK(new_time.us() * 1000 >= time_ns_);
   time_ns_ = new_time.us() * 1000;
 }
 
 void FakeClock::AdvanceTime(webrtc::TimeDelta delta) {
-  CritScope cs(&lock_);
+  webrtc::MutexLock lock(&lock_);
   time_ns_ += delta.ns();
 }
 

@@ -18,12 +18,15 @@ namespace webrtc {
 
 class MockDtmfToneGenerator : public DtmfToneGenerator {
  public:
-  virtual ~MockDtmfToneGenerator() { Die(); }
-  MOCK_METHOD0(Die, void());
-  MOCK_METHOD3(Init, int(int fs, int event, int attenuation));
-  MOCK_METHOD0(Reset, void());
-  MOCK_METHOD2(Generate, int(size_t num_samples, AudioMultiVector* output));
-  MOCK_CONST_METHOD0(initialized, bool());
+  ~MockDtmfToneGenerator() override { Die(); }
+  MOCK_METHOD(void, Die, ());
+  MOCK_METHOD(int, Init, (int fs, int event, int attenuation), (override));
+  MOCK_METHOD(void, Reset, (), (override));
+  MOCK_METHOD(int,
+              Generate,
+              (size_t num_samples, AudioMultiVector* output),
+              (override));
+  MOCK_METHOD(bool, initialized, (), (const, override));
 };
 
 }  // namespace webrtc

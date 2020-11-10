@@ -21,7 +21,6 @@ secondary_source = "//build/secondary/"
 # their includes checked for proper dependencies when you run either
 # "gn check" or "gn gen --check".
 check_targets = [
-  ":webrtc_common",
   "//api/*",
   "//audio/*",
   "//backup/*",
@@ -72,7 +71,7 @@ default_args = {
   # for unittests, it can be disabled (see third_party/libyuv/BUILD.gn)
   libyuv_use_gflags = false
 
-  enable_libaom_decoder = true
+  enable_libaom = true
 
   gtest_enable_absl_printers = true
 }

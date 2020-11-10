@@ -121,7 +121,7 @@ class NetEqTestFactory {
     // Prints concealment events.
     bool concealment_events = false;
     // Maximum allowed number of packets in the buffer.
-    static constexpr int default_max_nr_packets_in_buffer() { return 50; }
+    static constexpr int default_max_nr_packets_in_buffer() { return 200; }
     int max_nr_packets_in_buffer = default_max_nr_packets_in_buffer();
     // Number of dummy packets to put in the packet buffer at the start of the
     // simulation.

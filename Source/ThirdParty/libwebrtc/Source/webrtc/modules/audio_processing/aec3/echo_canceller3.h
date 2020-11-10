@@ -33,6 +33,11 @@
 
 namespace webrtc {
 
+// Method for adjusting config parameter dependencies.
+// Only to be used externally to AEC3 for testing purposes.
+// TODO(webrtc:5298): Move this to a separate file.
+EchoCanceller3Config AdjustConfig(const EchoCanceller3Config& config);
+
 // Functor for verifying the invariance of the frames being put into the render
 // queue.
 class Aec3RenderQueueItemVerifier {

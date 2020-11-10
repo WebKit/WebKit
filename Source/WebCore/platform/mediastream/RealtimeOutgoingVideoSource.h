@@ -37,7 +37,6 @@
 ALLOW_UNUSED_PARAMETERS_BEGIN
 
 #include <webrtc/api/media_stream_interface.h>
-#include <webrtc/common_video/include/i420_buffer_pool.h>
 
 ALLOW_UNUSED_PARAMETERS_END
 
@@ -113,6 +112,10 @@ private:
     bool is_screencast() const final { return false; }
     absl::optional<bool> needs_denoising() const final { return absl::optional<bool>(); }
     bool GetStats(Stats*) final { return false; };
+    bool SupportsEncodedOutput() const final { return false; }
+    void GenerateKeyFrame() final { }
+    void AddEncodedSink(rtc::VideoSinkInterface<webrtc::RecordableEncodedFrame>*) final { }
+    void RemoveEncodedSink(rtc::VideoSinkInterface<webrtc::RecordableEncodedFrame>*) final { }
 
     // MediaSourceInterface API
     SourceState state() const final { return SourceState(); }

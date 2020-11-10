@@ -23,7 +23,8 @@ class PythonPlot final : public Plot {
 
 class PythonPlotCollection final : public PlotCollection {
  public:
-  explicit PythonPlotCollection(bool shared_xaxis = false);
+  // This class is deprecated. Use PlotCollection and PrintPythonCode() instead.
+  RTC_DEPRECATED explicit PythonPlotCollection(bool shared_xaxis = false);
   ~PythonPlotCollection() override;
   void Draw() override;
   Plot* AppendNewPlot() override;

@@ -25,11 +25,11 @@
 #include "modules/audio_device/include/mock_audio_transport.h"
 #include "rtc_base/arraysize.h"
 #include "rtc_base/buffer.h"
-#include "rtc_base/critical_section.h"
 #include "rtc_base/event.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/numerics/safe_conversions.h"
 #include "rtc_base/race_checker.h"
+#include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/thread_annotations.h"
 #include "rtc_base/thread_checker.h"
 #include "rtc_base/time_utils.h"
@@ -39,6 +39,7 @@
 #ifdef WEBRTC_WIN
 #include "modules/audio_device/include/audio_device_factory.h"
 #include "modules/audio_device/win/core_audio_utility_win.h"
+
 #endif
 
 using ::testing::_;
@@ -137,7 +138,7 @@ class FifoAudioStream : public AudioStream {
   void Write(rtc::ArrayView<const int16_t> source) override {
     RTC_DCHECK_RUNS_SERIALIZED(&race_checker_);
     const size_t size = [&] {
-      rtc::CritScope lock(&lock_);
+      MutexLock lock(&lock_);
       fifo_.push_back(Buffer16(source.data(), source.size()));
       return fifo_.size();
     }();
@@ -152,7 +153,7 @@ class FifoAudioStream : public AudioStream {
   }
 
   void Read(rtc::ArrayView<int16_t> destination) override {
-    rtc::CritScope lock(&lock_);
+    MutexLock lock(&lock_);
     if (fifo_.empty()) {
       std::fill(destination.begin(), destination.end(), 0);
     } else {
@@ -183,7 +184,7 @@ class FifoAudioStream : public AudioStream {
   }
 
   size_t size() const {
-    rtc::CritScope lock(&lock_);
+    MutexLock lock(&lock_);
     return fifo_.size();
   }
 
@@ -199,7 +200,7 @@ class FifoAudioStream : public AudioStream {
 
   using Buffer16 = rtc::BufferT<int16_t>;
 
-  rtc::CriticalSection lock_;
+  mutable Mutex lock_;
   rtc::RaceChecker race_checker_;
 
   std::list<Buffer16> fifo_ RTC_GUARDED_BY(lock_);
@@ -230,7 +231,7 @@ class LatencyAudioStream : public AudioStream {
     if (read_count_ % (kNumCallbacksPerSecond / kImpulseFrequencyInHz) == 0) {
       PRINT(".");
       {
-        rtc::CritScope lock(&lock_);
+        MutexLock lock(&lock_);
         if (!pulse_time_) {
           pulse_time_ = rtc::TimeMillis();
         }
@@ -245,7 +246,7 @@ class LatencyAudioStream : public AudioStream {
   void Write(rtc::ArrayView<const int16_t> source) override {
     RTC_DCHECK_RUN_ON(&write_thread_checker_);
     RTC_DCHECK_RUNS_SERIALIZED(&race_checker_);
-    rtc::CritScope lock(&lock_);
+    MutexLock lock(&lock_);
     write_count_++;
     if (!pulse_time_) {
       // Avoid detection of new impulse response until a new impulse has
@@ -315,7 +316,7 @@ class LatencyAudioStream : public AudioStream {
           max_latency(), average_latency());
   }
 
-  rtc::CriticalSection lock_;
+  Mutex lock_;
   rtc::RaceChecker race_checker_;
   rtc::ThreadChecker read_thread_checker_;
   rtc::ThreadChecker write_thread_checker_;
@@ -390,7 +391,7 @@ class MockAudioTransport : public test::MockAudioTransport {
                 record_parameters_.frames_per_10ms_buffer());
     }
     {
-      rtc::CritScope lock(&lock_);
+      MutexLock lock(&lock_);
       rec_count_++;
     }
     // Write audio data to audio stream object if one has been injected.
@@ -430,7 +431,7 @@ class MockAudioTransport : public test::MockAudioTransport {
                 playout_parameters_.frames_per_10ms_buffer());
     }
     {
-      rtc::CritScope lock(&lock_);
+      MutexLock lock(&lock_);
       play_count_++;
     }
     samples_out = samples_per_channel * channels;
@@ -453,14 +454,14 @@ class MockAudioTransport : public test::MockAudioTransport {
   bool ReceivedEnoughCallbacks() {
     bool recording_done = false;
     if (rec_mode()) {
-      rtc::CritScope lock(&lock_);
+      MutexLock lock(&lock_);
       recording_done = rec_count_ >= num_callbacks_;
     } else {
       recording_done = true;
     }
     bool playout_done = false;
     if (play_mode()) {
-      rtc::CritScope lock(&lock_);
+      MutexLock lock(&lock_);
       playout_done = play_count_ >= num_callbacks_;
     } else {
       playout_done = true;
@@ -479,7 +480,7 @@ class MockAudioTransport : public test::MockAudioTransport {
   }
 
   void ResetCallbackCounters() {
-    rtc::CritScope lock(&lock_);
+    MutexLock lock(&lock_);
     if (play_mode()) {
       play_count_ = 0;
     }
@@ -489,7 +490,7 @@ class MockAudioTransport : public test::MockAudioTransport {
   }
 
  private:
-  rtc::CriticalSection lock_;
+  Mutex lock_;
   TransportType type_ = TransportType::kInvalid;
   rtc::Event* event_ = nullptr;
   AudioStream* audio_stream_ = nullptr;

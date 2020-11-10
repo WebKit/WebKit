@@ -19,74 +19,90 @@ namespace webrtc {
 
 class MockLibvpxVp8Interface : public LibvpxInterface {
  public:
-  MOCK_CONST_METHOD5(img_alloc,
-                     vpx_image_t*(vpx_image_t*,
-                                  vpx_img_fmt_t,
-                                  unsigned int,
-                                  unsigned int,
-                                  unsigned int));
-  MOCK_CONST_METHOD6(img_wrap,
-                     vpx_image_t*(vpx_image_t*,
-                                  vpx_img_fmt_t,
-                                  unsigned int,
-                                  unsigned int,
-                                  unsigned int,
-                                  unsigned char*));
-  MOCK_CONST_METHOD1(img_free, void(vpx_image_t* img));
-  MOCK_CONST_METHOD2(codec_enc_config_set,
-                     vpx_codec_err_t(vpx_codec_ctx_t*,
-                                     const vpx_codec_enc_cfg_t*));
-  MOCK_CONST_METHOD3(codec_enc_config_default,
-                     vpx_codec_err_t(vpx_codec_iface_t*,
-                                     vpx_codec_enc_cfg_t*,
-                                     unsigned int));
-  MOCK_CONST_METHOD4(codec_enc_init,
-                     vpx_codec_err_t(vpx_codec_ctx_t*,
-                                     vpx_codec_iface_t*,
-                                     const vpx_codec_enc_cfg_t*,
-                                     vpx_codec_flags_t));
-  MOCK_CONST_METHOD6(codec_enc_init_multi,
-                     vpx_codec_err_t(vpx_codec_ctx_t*,
-                                     vpx_codec_iface_t*,
-                                     vpx_codec_enc_cfg_t*,
-                                     int,
-                                     vpx_codec_flags_t,
-                                     vpx_rational_t*));
-  MOCK_CONST_METHOD1(codec_destroy, vpx_codec_err_t(vpx_codec_ctx_t*));
-  MOCK_CONST_METHOD3(codec_control,
-                     vpx_codec_err_t(vpx_codec_ctx_t*,
-                                     vp8e_enc_control_id,
-                                     uint32_t));
-  MOCK_CONST_METHOD3(codec_control,
-                     vpx_codec_err_t(vpx_codec_ctx_t*,
-                                     vp8e_enc_control_id,
-                                     int));
-  MOCK_CONST_METHOD3(codec_control,
-                     vpx_codec_err_t(vpx_codec_ctx_t*,
-                                     vp8e_enc_control_id,
-                                     int*));
-  MOCK_CONST_METHOD3(codec_control,
-                     vpx_codec_err_t(vpx_codec_ctx_t*,
-                                     vp8e_enc_control_id,
-                                     vpx_roi_map*));
-  MOCK_CONST_METHOD3(codec_control,
-                     vpx_codec_err_t(vpx_codec_ctx_t*,
-                                     vp8e_enc_control_id,
-                                     vpx_active_map*));
-  MOCK_CONST_METHOD3(codec_control,
-                     vpx_codec_err_t(vpx_codec_ctx_t*,
-                                     vp8e_enc_control_id,
-                                     vpx_scaling_mode*));
-  MOCK_CONST_METHOD6(codec_encode,
-                     vpx_codec_err_t(vpx_codec_ctx_t*,
-                                     const vpx_image_t*,
-                                     vpx_codec_pts_t,
-                                     uint64_t,
-                                     vpx_enc_frame_flags_t,
-                                     uint64_t));
-  MOCK_CONST_METHOD2(codec_get_cx_data,
-                     const vpx_codec_cx_pkt_t*(vpx_codec_ctx_t*,
-                                               vpx_codec_iter_t*));
+  MOCK_METHOD(
+      vpx_image_t*,
+      img_alloc,
+      (vpx_image_t*, vpx_img_fmt_t, unsigned int, unsigned int, unsigned int),
+      (const, override));
+  MOCK_METHOD(vpx_image_t*,
+              img_wrap,
+              (vpx_image_t*,
+               vpx_img_fmt_t,
+               unsigned int,
+               unsigned int,
+               unsigned int,
+               unsigned char*),
+              (const, override));
+  MOCK_METHOD(void, img_free, (vpx_image_t * img), (const, override));
+  MOCK_METHOD(vpx_codec_err_t,
+              codec_enc_config_set,
+              (vpx_codec_ctx_t*, const vpx_codec_enc_cfg_t*),
+              (const, override));
+  MOCK_METHOD(vpx_codec_err_t,
+              codec_enc_config_default,
+              (vpx_codec_iface_t*, vpx_codec_enc_cfg_t*, unsigned int),
+              (const, override));
+  MOCK_METHOD(vpx_codec_err_t,
+              codec_enc_init,
+              (vpx_codec_ctx_t*,
+               vpx_codec_iface_t*,
+               const vpx_codec_enc_cfg_t*,
+               vpx_codec_flags_t),
+              (const, override));
+  MOCK_METHOD(vpx_codec_err_t,
+              codec_enc_init_multi,
+              (vpx_codec_ctx_t*,
+               vpx_codec_iface_t*,
+               vpx_codec_enc_cfg_t*,
+               int,
+               vpx_codec_flags_t,
+               vpx_rational_t*),
+              (const, override));
+  MOCK_METHOD(vpx_codec_err_t,
+              codec_destroy,
+              (vpx_codec_ctx_t*),
+              (const, override));
+  MOCK_METHOD(vpx_codec_err_t,
+              codec_control,
+              (vpx_codec_ctx_t*, vp8e_enc_control_id, uint32_t),
+              (const, override));
+  MOCK_METHOD(vpx_codec_err_t,
+              codec_control,
+              (vpx_codec_ctx_t*, vp8e_enc_control_id, int),
+              (const, override));
+  MOCK_METHOD(vpx_codec_err_t,
+              codec_control,
+              (vpx_codec_ctx_t*, vp8e_enc_control_id, int*),
+              (const, override));
+  MOCK_METHOD(vpx_codec_err_t,
+              codec_control,
+              (vpx_codec_ctx_t*, vp8e_enc_control_id, vpx_roi_map*),
+              (const, override));
+  MOCK_METHOD(vpx_codec_err_t,
+              codec_control,
+              (vpx_codec_ctx_t*, vp8e_enc_control_id, vpx_active_map*),
+              (const, override));
+  MOCK_METHOD(vpx_codec_err_t,
+              codec_control,
+              (vpx_codec_ctx_t*, vp8e_enc_control_id, vpx_scaling_mode*),
+              (const, override));
+  MOCK_METHOD(vpx_codec_err_t,
+              codec_encode,
+              (vpx_codec_ctx_t*,
+               const vpx_image_t*,
+               vpx_codec_pts_t,
+               uint64_t,
+               vpx_enc_frame_flags_t,
+               uint64_t),
+              (const, override));
+  MOCK_METHOD(const vpx_codec_cx_pkt_t*,
+              codec_get_cx_data,
+              (vpx_codec_ctx_t*, vpx_codec_iter_t*),
+              (const, override));
+  MOCK_METHOD(const char*,
+              codec_error_detail,
+              (vpx_codec_ctx_t*),
+              (const, override));
 };
 
 }  // namespace webrtc

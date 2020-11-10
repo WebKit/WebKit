@@ -148,7 +148,7 @@ class TestConnectionWrapper : public sigslot::has_slots<> {
 // (between local port and TURN server) of kSimulatedRtt.
 class TurnPortTest : public ::testing::Test,
                      public sigslot::has_slots<>,
-                     public rtc::MessageHandler {
+                     public rtc::MessageHandlerAutoCleanup {
  public:
   TurnPortTest()
       : ss_(new TurnPortTestVirtualSocketServer()),

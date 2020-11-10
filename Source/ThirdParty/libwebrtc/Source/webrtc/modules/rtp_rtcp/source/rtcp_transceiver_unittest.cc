@@ -42,7 +42,10 @@ using ::webrtc::test::RtcpPacketParser;
 
 class MockMediaReceiverRtcpObserver : public webrtc::MediaReceiverRtcpObserver {
  public:
-  MOCK_METHOD3(OnSenderReport, void(uint32_t, webrtc::NtpTime, uint32_t));
+  MOCK_METHOD(void,
+              OnSenderReport,
+              (uint32_t, webrtc::NtpTime, uint32_t),
+              (override));
 };
 
 constexpr int kTimeoutMs = 1000;

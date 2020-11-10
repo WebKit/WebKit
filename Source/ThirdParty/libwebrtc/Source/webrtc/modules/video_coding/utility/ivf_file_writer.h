@@ -17,6 +17,7 @@
 #include <memory>
 
 #include "api/video/encoded_image.h"
+#include "api/video/video_codec_type.h"
 #include "rtc_base/constructor_magic.h"
 #include "rtc_base/system/file_wrapper.h"
 #include "rtc_base/time_utils.h"

@@ -91,7 +91,8 @@ int64_t NetEqTest::Run() {
     simulation_time += step_result.simulation_step_ms;
   } while (!step_result.is_simulation_finished);
   if (callbacks_.simulation_ended_callback) {
-    callbacks_.simulation_ended_callback->SimulationEnded(simulation_time);
+    callbacks_.simulation_ended_callback->SimulationEnded(simulation_time,
+                                                          neteq_.get());
   }
   return simulation_time;
 }
@@ -266,8 +267,12 @@ NetEqTest::SimulationStepResult NetEqTest::RunToNextGetAudio() {
       prev_lifetime_stats_ = lifetime_stats;
       const bool no_more_packets_to_decode =
           !input_->NextPacketTime() && !operations_state.next_packet_available;
-      result.is_simulation_finished =
-          no_more_packets_to_decode || input_->ended();
+      // End the simulation if the gap is too large. This indicates an issue
+      // with the event log file.
+      const bool simulation_step_too_large = result.simulation_step_ms > 1000;
+      result.is_simulation_finished = simulation_step_too_large ||
+                                      no_more_packets_to_decode ||
+                                      input_->ended();
       prev_ops_state_ = operations_state;
       return result;
     }

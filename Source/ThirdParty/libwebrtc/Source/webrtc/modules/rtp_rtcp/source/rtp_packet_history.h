@@ -19,8 +19,7 @@
 
 #include "api/function_view.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
-#include "rtc_base/constructor_magic.h"
-#include "rtc_base/critical_section.h"
+#include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/thread_annotations.h"
 
 namespace webrtc {
@@ -62,7 +61,12 @@ class RtpPacketHistory {
   // With kStoreAndCull, always remove packets after 3x max(1000ms, 3x rtt).
   static constexpr int kPacketCullingDelayFactor = 3;
 
-  explicit RtpPacketHistory(Clock* clock);
+  RtpPacketHistory(Clock* clock, bool enable_padding_prio);
+
+  RtpPacketHistory() = delete;
+  RtpPacketHistory(const RtpPacketHistory&) = delete;
+  RtpPacketHistory& operator=(const RtpPacketHistory&) = delete;
+
   ~RtpPacketHistory();
 
   // Set/get storage mode. Note that setting the state will clear the history,
@@ -192,7 +196,8 @@ class RtpPacketHistory {
       const StoredPacket& stored_packet);
 
   Clock* const clock_;
-  rtc::CriticalSection lock_;
+  const bool enable_padding_prio_;
+  mutable Mutex lock_;
   size_t number_to_store_ RTC_GUARDED_BY(lock_);
   StorageMode mode_ RTC_GUARDED_BY(lock_);
   int64_t rtt_ms_ RTC_GUARDED_BY(lock_);
@@ -210,8 +215,6 @@ class RtpPacketHistory {
   // Objects from |packet_history_| ordered by "most likely to be useful", used
   // in GetPayloadPaddingPacket().
   PacketPrioritySet padding_priority_ RTC_GUARDED_BY(lock_);
-
-  RTC_DISALLOW_IMPLICIT_CONSTRUCTORS(RtpPacketHistory);
 };
 }  // namespace webrtc
 #endif  // MODULES_RTP_RTCP_SOURCE_RTP_PACKET_HISTORY_H_

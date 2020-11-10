@@ -152,8 +152,7 @@ public class PeerConnectionClient {
   @Nullable
   private List<IceCandidate> queuedRemoteCandidates;
   private boolean isInitiator;
-  @Nullable
-  private SessionDescription localSdp; // either offer or answer SDP
+  @Nullable private SessionDescription localDescription; // either offer or answer description
   @Nullable
   private VideoCapturer videoCapturer;
   // enableVideo is set to true if video should be rendered and sent.
@@ -843,25 +842,24 @@ public class PeerConnectionClient {
     });
   }
 
-  public void setRemoteDescription(final SessionDescription sdp) {
+  public void setRemoteDescription(final SessionDescription desc) {
     executor.execute(() -> {
       if (peerConnection == null || isError) {
         return;
       }
-      String sdpDescription = sdp.description;
+      String sdp = desc.description;
       if (preferIsac) {
-        sdpDescription = preferCodec(sdpDescription, AUDIO_CODEC_ISAC, true);
+        sdp = preferCodec(sdp, AUDIO_CODEC_ISAC, true);
       }
       if (isVideoCallEnabled()) {
-        sdpDescription =
-            preferCodec(sdpDescription, getSdpVideoCodecName(peerConnectionParameters), false);
+        sdp = preferCodec(sdp, getSdpVideoCodecName(peerConnectionParameters), false);
       }
       if (peerConnectionParameters.audioStartBitrate > 0) {
-        sdpDescription = setStartBitrate(
-            AUDIO_CODEC_OPUS, false, sdpDescription, peerConnectionParameters.audioStartBitrate);
+        sdp = setStartBitrate(
+            AUDIO_CODEC_OPUS, false, sdp, peerConnectionParameters.audioStartBitrate);
       }
       Log.d(TAG, "Set remote SDP.");
-      SessionDescription sdpRemote = new SessionDescription(sdp.type, sdpDescription);
+      SessionDescription sdpRemote = new SessionDescription(desc.type, sdp);
       peerConnection.setRemoteDescription(sdpObserver, sdpRemote);
     });
   }
@@ -1002,8 +1000,8 @@ public class PeerConnectionClient {
 
   @SuppressWarnings("StringSplitter")
   private static String setStartBitrate(
-      String codec, boolean isVideoCodec, String sdpDescription, int bitrateKbps) {
-    String[] lines = sdpDescription.split("\r\n");
+      String codec, boolean isVideoCodec, String sdp, int bitrateKbps) {
+    String[] lines = sdp.split("\r\n");
     int rtpmapLineIndex = -1;
     boolean sdpFormatUpdated = false;
     String codecRtpMap = null;
@@ -1021,7 +1019,7 @@ public class PeerConnectionClient {
     }
     if (codecRtpMap == null) {
       Log.w(TAG, "No rtpmap for " + codec + " codec");
-      return sdpDescription;
+      return sdp;
     }
     Log.d(TAG, "Found " + codec + " rtpmap " + codecRtpMap + " at " + lines[rtpmapLineIndex]);
 
@@ -1112,12 +1110,12 @@ public class PeerConnectionClient {
     return joinString(newLineParts, " ", false /* delimiterAtEnd */);
   }
 
-  private static String preferCodec(String sdpDescription, String codec, boolean isAudio) {
-    final String[] lines = sdpDescription.split("\r\n");
+  private static String preferCodec(String sdp, String codec, boolean isAudio) {
+    final String[] lines = sdp.split("\r\n");
     final int mLineIndex = findMediaDescriptionLine(isAudio, lines);
     if (mLineIndex == -1) {
       Log.w(TAG, "No mediaDescription line, so can't prefer " + codec);
-      return sdpDescription;
+      return sdp;
     }
     // A list with all the payload types with name |codec|. The payload types are integers in the
     // range 96-127, but they are stored as strings here.
@@ -1132,12 +1130,12 @@ public class PeerConnectionClient {
     }
     if (codecPayloadTypes.isEmpty()) {
       Log.w(TAG, "No payload types with name " + codec);
-      return sdpDescription;
+      return sdp;
     }
 
     final String newMLine = movePayloadTypesToFront(codecPayloadTypes, lines[mLineIndex]);
     if (newMLine == null) {
-      return sdpDescription;
+      return sdp;
     }
     Log.d(TAG, "Change media description from: " + lines[mLineIndex] + " to " + newMLine);
     lines[mLineIndex] = newMLine;
@@ -1301,25 +1299,24 @@ public class PeerConnectionClient {
   // as well as adding remote ICE candidates once the answer SDP is set.
   private class SDPObserver implements SdpObserver {
     @Override
-    public void onCreateSuccess(final SessionDescription origSdp) {
-      if (localSdp != null) {
+    public void onCreateSuccess(final SessionDescription desc) {
+      if (localDescription != null) {
         reportError("Multiple SDP create.");
         return;
       }
-      String sdpDescription = origSdp.description;
+      String sdp = desc.description;
       if (preferIsac) {
-        sdpDescription = preferCodec(sdpDescription, AUDIO_CODEC_ISAC, true);
+        sdp = preferCodec(sdp, AUDIO_CODEC_ISAC, true);
       }
       if (isVideoCallEnabled()) {
-        sdpDescription =
-            preferCodec(sdpDescription, getSdpVideoCodecName(peerConnectionParameters), false);
+        sdp = preferCodec(sdp, getSdpVideoCodecName(peerConnectionParameters), false);
       }
-      final SessionDescription sdp = new SessionDescription(origSdp.type, sdpDescription);
-      localSdp = sdp;
+      final SessionDescription newDesc = new SessionDescription(desc.type, sdp);
+      localDescription = newDesc;
       executor.execute(() -> {
         if (peerConnection != null && !isError) {
-          Log.d(TAG, "Set local SDP from " + sdp.type);
-          peerConnection.setLocalDescription(sdpObserver, sdp);
+          Log.d(TAG, "Set local SDP from " + desc.type);
+          peerConnection.setLocalDescription(sdpObserver, newDesc);
         }
       });
     }
@@ -1336,7 +1333,7 @@ public class PeerConnectionClient {
           if (peerConnection.getRemoteDescription() == null) {
             // We've just set our local SDP so time to send it.
             Log.d(TAG, "Local SDP set succesfully");
-            events.onLocalDescription(localSdp);
+            events.onLocalDescription(localDescription);
           } else {
             // We've just set remote description, so drain remote
             // and send local ICE candidates.
@@ -1350,7 +1347,7 @@ public class PeerConnectionClient {
             // We've just set our local SDP so time to send it, drain
             // remote and send local ICE candidates.
             Log.d(TAG, "Local SDP set succesfully");
-            events.onLocalDescription(localSdp);
+            events.onLocalDescription(localDescription);
             drainCandidates();
           } else {
             // We've just set remote SDP - do nothing for now -

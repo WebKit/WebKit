@@ -11,6 +11,8 @@
 #ifndef MODULES_AUDIO_PROCESSING_AGC_UTILITY_H_
 #define MODULES_AUDIO_PROCESSING_AGC_UTILITY_H_
 
+namespace webrtc {
+
 // TODO(turajs): Add description of function.
 double Loudness2Db(double loudness);
 
@@ -19,5 +21,7 @@ double Linear2Loudness(double rms);
 double Db2Loudness(double db);
 
 double Dbfs2Loudness(double dbfs);
+
+}  // namespace webrtc
 
 #endif  // MODULES_AUDIO_PROCESSING_AGC_UTILITY_H_

@@ -50,7 +50,7 @@ void ProduceSinusoid(int sample_rate_hz,
 #if RTC_DCHECK_IS_ON && GTEST_HAS_DEATH_TEST && !defined(WEBRTC_ANDROID)
 
 // Verifies the check for null suppressor output.
-TEST(SuppressionFilter, NullOutput) {
+TEST(SuppressionFilterDeathTest, NullOutput) {
   std::vector<FftData> cn(1);
   std::vector<FftData> cn_high_bands(1);
   std::vector<FftData> E(1);
@@ -62,7 +62,7 @@ TEST(SuppressionFilter, NullOutput) {
 }
 
 // Verifies the check for allowed sample rate.
-TEST(SuppressionFilter, ProperSampleRate) {
+TEST(SuppressionFilterDeathTest, ProperSampleRate) {
   EXPECT_DEATH(SuppressionFilter(Aec3Optimization::kNone, 16001, 1), "");
 }
 

@@ -165,7 +165,7 @@ TEST(EchoPathDelayEstimator, NoDelayEstimatesForLowLevelRenderSignals) {
 // Verifies the check for the render blocksize.
 // TODO(peah): Re-enable the test once the issue with memory leaks during DEATH
 // tests on test bots has been fixed.
-TEST(EchoPathDelayEstimator, DISABLED_WrongRenderBlockSize) {
+TEST(EchoPathDelayEstimatorDeathTest, DISABLED_WrongRenderBlockSize) {
   ApmDataDumper data_dumper(0);
   EchoCanceller3Config config;
   EchoPathDelayEstimator estimator(&data_dumper, config, 1);
@@ -180,7 +180,7 @@ TEST(EchoPathDelayEstimator, DISABLED_WrongRenderBlockSize) {
 // Verifies the check for the capture blocksize.
 // TODO(peah): Re-enable the test once the issue with memory leaks during DEATH
 // tests on test bots has been fixed.
-TEST(EchoPathDelayEstimator, WrongCaptureBlockSize) {
+TEST(EchoPathDelayEstimatorDeathTest, WrongCaptureBlockSize) {
   ApmDataDumper data_dumper(0);
   EchoCanceller3Config config;
   EchoPathDelayEstimator estimator(&data_dumper, config, 1);
@@ -194,7 +194,7 @@ TEST(EchoPathDelayEstimator, WrongCaptureBlockSize) {
 }
 
 // Verifies the check for non-null data dumper.
-TEST(EchoPathDelayEstimator, NullDataDumper) {
+TEST(EchoPathDelayEstimatorDeathTest, NullDataDumper) {
   EXPECT_DEATH(EchoPathDelayEstimator(nullptr, EchoCanceller3Config(), 1), "");
 }
 

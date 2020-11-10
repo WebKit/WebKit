@@ -25,7 +25,7 @@ namespace aec3 {
 #if RTC_DCHECK_IS_ON && GTEST_HAS_DEATH_TEST && !defined(WEBRTC_ANDROID)
 
 // Verifies that the check for non-null output gains works.
-TEST(SuppressionGain, NullOutputGains) {
+TEST(SuppressionGainDeathTest, NullOutputGains) {
   std::vector<std::array<float, kFftLengthBy2Plus1>> E2(1, {0.f});
   std::vector<std::array<float, kFftLengthBy2Plus1>> R2(1, {0.f});
   std::vector<std::array<float, kFftLengthBy2Plus1>> S2(1);

@@ -51,12 +51,20 @@ struct IceControllerEvent {
 // - which connection to ping
 // - which connection to use
 // - which connection to prune
+// - which connection to forget learned state on
 //
-// P2PTransportChannel creates a |Connection| and adds a const pointer
-// to the IceController using |AddConnection|, i.e the IceController
-// should not call any non-const methods on a Connection.
+// The P2PTransportChannel owns (creates and destroys) Connections,
+// but P2PTransportChannel gives const pointers to the the IceController using
+// |AddConnection|, i.e the IceController should not call any non-const methods
+// on a Connection but signal back in the interface if any mutable function
+// shall be called.
 //
-// The IceController shall keeps track of all connections added
+// Current these are limited to:
+// Connection::Ping               - returned in PingResult
+// Connection::Prune              - retuned in PruneConnections
+// Connection::ForgetLearnedState - return in SwitchResult
+//
+// The IceController shall keep track of all connections added
 // (and not destroyed) and give them back using the connections()-function-
 //
 // When a Connection gets destroyed
@@ -71,6 +79,27 @@ class IceControllerInterface {
 
     // An optional recheck event for when a Switch() should be attempted again.
     absl::optional<IceControllerEvent> recheck_event;
+
+    // A vector with connection to run ForgetLearnedState on.
+    std::vector<const Connection*> connections_to_forget_state_on;
+  };
+
+  // This represents the result of a call to SelectConnectionToPing.
+  struct PingResult {
+    PingResult(const Connection* conn, int _recheck_delay_ms)
+        : connection(conn), recheck_delay_ms(_recheck_delay_ms) {}
+
+    // Connection that we should (optionally) ping.
+    const absl::optional<const Connection*> connection;
+
+    // The delay before P2PTransportChannel shall call SelectConnectionToPing()
+    // again.
+    //
+    // Since the IceController determines which connection to ping and
+    // only returns one connection at a time, the recheck_delay_ms does not have
+    // any obvious implication on bitrate for pings. E.g the recheck_delay_ms
+    // will be shorter if there are more connections available.
+    const int recheck_delay_ms = 0;
   };
 
   virtual ~IceControllerInterface() = default;
@@ -90,8 +119,7 @@ class IceControllerInterface {
   virtual bool HasPingableConnection() const = 0;
 
   // Select a connection to Ping, or nullptr if none.
-  virtual std::pair<Connection*, int> SelectConnectionToPing(
-      int64_t last_ping_sent_ms) = 0;
+  virtual PingResult SelectConnectionToPing(int64_t last_ping_sent_ms) = 0;
 
   // Compute the "STUN_ATTR_USE_CANDIDATE" for |conn|.
   virtual bool GetUseCandidateAttr(const Connection* conn,

@@ -20,7 +20,7 @@
 #include "absl/types/optional.h"
 #include "api/rtp_packet_infos.h"
 #include "api/transport/rtp/rtp_source.h"
-#include "rtc_base/critical_section.h"
+#include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/time_utils.h"
 #include "system_wrappers/include/clock.h"
 
@@ -116,7 +116,7 @@ class SourceTracker {
   void PruneEntries(int64_t now_ms) const RTC_EXCLUSIVE_LOCKS_REQUIRED(lock_);
 
   Clock* const clock_;
-  rtc::CriticalSection lock_;
+  mutable Mutex lock_;
 
   // Entries are stored in reverse chronological order (i.e. with the most
   // recently updated entries appearing first). Mutability is needed for timeout

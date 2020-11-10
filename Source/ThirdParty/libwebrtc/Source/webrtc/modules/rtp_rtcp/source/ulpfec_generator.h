@@ -21,9 +21,9 @@
 #include "modules/include/module_fec_types.h"
 #include "modules/rtp_rtcp/source/forward_error_correction.h"
 #include "modules/rtp_rtcp/source/video_fec_generator.h"
-#include "rtc_base/critical_section.h"
 #include "rtc_base/race_checker.h"
 #include "rtc_base/rate_statistics.h"
+#include "rtc_base/synchronization/mutex.h"
 
 namespace webrtc {
 
@@ -56,6 +56,8 @@ class UlpfecGenerator : public VideoFecGenerator {
 
   // Current rate of FEC packets generated, including all RTP-level headers.
   DataRate CurrentFecRate() const override;
+
+  absl::optional<RtpState> GetRtpState() override { return absl::nullopt; }
 
  private:
   struct Params {
@@ -110,9 +112,9 @@ class UlpfecGenerator : public VideoFecGenerator {
   Params current_params_ RTC_GUARDED_BY(race_checker_);
   bool keyframe_in_process_ RTC_GUARDED_BY(race_checker_);
 
-  rtc::CriticalSection crit_;
-  absl::optional<Params> pending_params_ RTC_GUARDED_BY(crit_);
-  RateStatistics fec_bitrate_ RTC_GUARDED_BY(crit_);
+  mutable Mutex mutex_;
+  absl::optional<Params> pending_params_ RTC_GUARDED_BY(mutex_);
+  RateStatistics fec_bitrate_ RTC_GUARDED_BY(mutex_);
 };
 
 }  // namespace webrtc

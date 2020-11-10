@@ -15,7 +15,7 @@
 #include "api/video/video_stream_encoder_interface.h"
 #include "call/rtp_video_sender_interface.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
-#include "rtc_base/critical_section.h"
+#include "rtc_base/synchronization/mutex.h"
 #include "system_wrappers/include/clock.h"
 
 namespace webrtc {
@@ -50,8 +50,8 @@ class EncoderRtcpFeedback : public RtcpIntraFrameObserver,
   const RtpVideoSenderInterface* rtp_video_sender_;
   VideoStreamEncoderInterface* const video_stream_encoder_;
 
-  rtc::CriticalSection crit_;
-  int64_t time_last_intra_request_ms_ RTC_GUARDED_BY(crit_);
+  Mutex mutex_;
+  int64_t time_last_intra_request_ms_ RTC_GUARDED_BY(mutex_);
 
   const int min_keyframe_send_interval_ms_;
 };

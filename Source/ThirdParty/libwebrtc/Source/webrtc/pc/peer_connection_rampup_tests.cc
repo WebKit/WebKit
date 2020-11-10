@@ -333,7 +333,7 @@ class PeerConnectionRampUpTest : public ::testing::Test {
   std::unique_ptr<PeerConnectionWrapperForRampUpTest> callee_;
 };
 
-TEST_F(PeerConnectionRampUpTest, TurnOverTCP) {
+TEST_F(PeerConnectionRampUpTest, Bwe_After_TurnOverTCP) {
   CreateTurnServer(cricket::ProtocolType::PROTO_TCP);
   PeerConnectionInterface::IceServer ice_server;
   std::string ice_server_url = "turn:" + std::string(kTurnInternalAddress) +
@@ -354,7 +354,7 @@ TEST_F(PeerConnectionRampUpTest, TurnOverTCP) {
   RunTest("turn_over_tcp");
 }
 
-TEST_F(PeerConnectionRampUpTest, TurnOverUDP) {
+TEST_F(PeerConnectionRampUpTest, Bwe_After_TurnOverUDP) {
   CreateTurnServer(cricket::ProtocolType::PROTO_UDP);
   PeerConnectionInterface::IceServer ice_server;
   std::string ice_server_url = "turn:" + std::string(kTurnInternalAddress) +
@@ -375,7 +375,7 @@ TEST_F(PeerConnectionRampUpTest, TurnOverUDP) {
   RunTest("turn_over_udp");
 }
 
-TEST_F(PeerConnectionRampUpTest, TurnOverTLS) {
+TEST_F(PeerConnectionRampUpTest, Bwe_After_TurnOverTLS) {
   CreateTurnServer(cricket::ProtocolType::PROTO_TLS, kTurnInternalAddress);
   PeerConnectionInterface::IceServer ice_server;
   std::string ice_server_url = "turns:" + std::string(kTurnInternalAddress) +
@@ -397,7 +397,7 @@ TEST_F(PeerConnectionRampUpTest, TurnOverTLS) {
   RunTest("turn_over_tls");
 }
 
-TEST_F(PeerConnectionRampUpTest, UDPPeerToPeer) {
+TEST_F(PeerConnectionRampUpTest, Bwe_After_UDPPeerToPeer) {
   PeerConnectionInterface::RTCConfiguration client_1_config;
   client_1_config.tcp_candidate_policy =
       PeerConnection::kTcpCandidatePolicyDisabled;
@@ -410,7 +410,7 @@ TEST_F(PeerConnectionRampUpTest, UDPPeerToPeer) {
   RunTest("udp_peer_to_peer");
 }
 
-TEST_F(PeerConnectionRampUpTest, TCPPeerToPeer) {
+TEST_F(PeerConnectionRampUpTest, Bwe_After_TCPPeerToPeer) {
   firewall_socket_server()->set_udp_sockets_enabled(false);
   ASSERT_TRUE(CreatePeerConnectionWrappers(
       PeerConnectionInterface::RTCConfiguration(),

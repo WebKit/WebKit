@@ -40,13 +40,11 @@ class TimeStretch {
       : sample_rate_hz_(sample_rate_hz),
         fs_mult_(sample_rate_hz / 8000),
         num_channels_(num_channels),
-        master_channel_(0),  // First channel is master.
         background_noise_(background_noise),
         max_input_value_(0) {
     assert(sample_rate_hz_ == 8000 || sample_rate_hz_ == 16000 ||
            sample_rate_hz_ == 32000 || sample_rate_hz_ == 48000);
     assert(num_channels_ > 0);
-    assert(master_channel_ < num_channels_);
     memset(auto_correlation_, 0, sizeof(auto_correlation_));
   }
 
@@ -86,11 +84,11 @@ class TimeStretch {
   static const size_t kMaxLag = 60;
   static const size_t kDownsampledLen = kCorrelationLen + kMaxLag;
   static const int kCorrelationThreshold = 14746;  // 0.9 in Q14.
+  static constexpr size_t kRefChannel = 0;  // First channel is reference.
 
   const int sample_rate_hz_;
   const int fs_mult_;  // Sample rate multiplier = sample_rate_hz_ / 8000.
   const size_t num_channels_;
-  const size_t master_channel_;
   const BackgroundNoise& background_noise_;
   int16_t max_input_value_;
   int16_t downsampled_input_[kDownsampledLen];

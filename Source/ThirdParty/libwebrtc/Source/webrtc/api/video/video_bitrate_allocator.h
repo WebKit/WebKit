@@ -40,6 +40,10 @@ class VideoBitrateAllocator {
 
   virtual VideoBitrateAllocation Allocate(
       VideoBitrateAllocationParameters parameters);
+
+  // Deprecated: Only used to work around issues with the legacy conference
+  // screenshare mode and shouldn't be needed by any subclasses.
+  virtual void SetLegacyConferenceMode(bool enabled);
 };
 
 class VideoBitrateAllocationObserver {

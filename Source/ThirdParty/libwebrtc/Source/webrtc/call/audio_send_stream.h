@@ -23,6 +23,7 @@
 #include "api/call/transport.h"
 #include "api/crypto/crypto_options.h"
 #include "api/crypto/frame_encryptor_interface.h"
+#include "api/frame_transformer_interface.h"
 #include "api/rtp_parameters.h"
 #include "api/scoped_refptr.h"
 #include "call/audio_sender.h"
@@ -139,6 +140,7 @@ class AudioSendStream : public AudioSender {
       bool nack_enabled = false;
       bool transport_cc_enabled = false;
       absl::optional<int> cng_payload_type;
+      absl::optional<int> red_payload_type;
       // If unset, use the encoder's default target bitrate.
       absl::optional<int> target_bitrate_bps;
     };
@@ -157,6 +159,10 @@ class AudioSendStream : public AudioSender {
     // encryptor in whatever way the caller choses. This is not required by
     // default.
     rtc::scoped_refptr<webrtc::FrameEncryptorInterface> frame_encryptor;
+
+    // An optional frame transformer used by insertable streams to transform
+    // encoded frames.
+    rtc::scoped_refptr<webrtc::FrameTransformerInterface> frame_transformer;
   };
 
   virtual ~AudioSendStream() = default;

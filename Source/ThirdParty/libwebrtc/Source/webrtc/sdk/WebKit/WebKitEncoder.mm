@@ -31,7 +31,6 @@
 #include "media/engine/encoder_simulcast_proxy.h"
 #include "modules/video_coding/utility/simulcast_utility.h"
 #include "sdk/objc/api/peerconnection/RTCEncodedImage+Private.h"
-#include "sdk/objc/api/peerconnection/RTCRtpFragmentationHeader+Private.h"
 #include "sdk/objc/api/peerconnection/RTCVideoCodecInfo+Private.h"
 #include "sdk/objc/api/peerconnection/RTCVideoEncoderSettings+Private.h"
 #include "sdk/objc/components/video_codec/RTCDefaultVideoEncoderFactory.h"
@@ -291,7 +290,7 @@ int32_t RemoteVideoEncoder::RegisterEncodeCompleteCallback(EncodedImageCallback*
     return videoEncoderCallbacks().registerEncodeCompleteCallback(m_internalEncoder, callback);
 }
 
-void encoderVideoTaskComplete(void* callback, webrtc::VideoCodecType codecType, uint8_t* buffer, size_t length, const WebKitEncodedFrameInfo& info, const webrtc::RTPFragmentationHeader* header)
+void encoderVideoTaskComplete(void* callback, webrtc::VideoCodecType codecType, uint8_t* buffer, size_t length, const WebKitEncodedFrameInfo& info)
 {
     webrtc::EncodedImage encodedImage(buffer, length, length);
     encodedImage._encodedWidth = info.width;
@@ -313,7 +312,7 @@ void encoderVideoTaskComplete(void* callback, webrtc::VideoCodecType codecType, 
     else if (codecType == kVideoCodecH265)
         codecSpecificInfo.codecSpecific.H265.packetization_mode = H265PacketizationMode::NonInterleaved;
 
-    static_cast<EncodedImageCallback*>(callback)->OnEncodedImage(encodedImage, &codecSpecificInfo, header);
+    static_cast<EncodedImageCallback*>(callback)->OnEncodedImage(encodedImage, &codecSpecificInfo);
 }
 
 void* createLocalEncoder(const webrtc::SdpVideoFormat& format, LocalEncoderCallback callback)
@@ -321,7 +320,7 @@ void* createLocalEncoder(const webrtc::SdpVideoFormat& format, LocalEncoderCallb
     auto *codecInfo = [[RTCVideoCodecInfo alloc] initWithNativeSdpVideoFormat: format];
     auto *encoder = [[WK_RTCLocalVideoH264H265Encoder alloc] initWithCodecInfo:codecInfo];
 
-    [encoder setCallback:^BOOL(RTCEncodedImage *_Nonnull frame, id<RTCCodecSpecificInfo> _Nonnull codecSpecificInfo,  RTCRtpFragmentationHeader *_Nonnull header) {
+    [encoder setCallback:^BOOL(RTCEncodedImage *_Nonnull frame, id<RTCCodecSpecificInfo> _Nonnull codecSpecificInfo, RTCRtpFragmentationHeader * _Nullable header) {
         EncodedImage encodedImage = [frame nativeEncodedImage];
 
         WebKitEncodedFrameInfo info;
@@ -337,7 +336,7 @@ void* createLocalEncoder(const webrtc::SdpVideoFormat& format, LocalEncoderCallb
         info.qp = encodedImage.qp_;
         info.timing = encodedImage.timing_;
 
-        callback(encodedImage.data(), encodedImage.size(), info, [header createNativeFragmentationHeader].get());
+        callback(encodedImage.data(), encodedImage.size(), info);
         return YES;
     }];
 

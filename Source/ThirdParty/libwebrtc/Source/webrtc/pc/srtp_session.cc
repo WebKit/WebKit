@@ -13,7 +13,6 @@
 #include "absl/base/attributes.h"
 #include "media/base/rtp_utils.h"
 #include "pc/external_hmac.h"
-#include "rtc_base/critical_section.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/ssl_stream_adapter.h"
 #include "system_wrappers/include/metrics.h"
@@ -364,16 +363,16 @@ bool SrtpSession::UpdateKey(int type,
 }
 
 ABSL_CONST_INIT int g_libsrtp_usage_count = 0;
-ABSL_CONST_INIT rtc::GlobalLock g_libsrtp_lock;
+ABSL_CONST_INIT webrtc::GlobalMutex g_libsrtp_lock(absl::kConstInit);
 
 void ProhibitLibsrtpInitialization() {
-  rtc::GlobalLockScope ls(&g_libsrtp_lock);
+  webrtc::GlobalMutexLock ls(&g_libsrtp_lock);
   ++g_libsrtp_usage_count;
 }
 
 // static
 bool SrtpSession::IncrementLibsrtpUsageCountAndMaybeInit() {
-  rtc::GlobalLockScope ls(&g_libsrtp_lock);
+  webrtc::GlobalMutexLock ls(&g_libsrtp_lock);
 
   RTC_DCHECK_GE(g_libsrtp_usage_count, 0);
   if (g_libsrtp_usage_count == 0) {
@@ -402,7 +401,7 @@ bool SrtpSession::IncrementLibsrtpUsageCountAndMaybeInit() {
 
 // static
 void SrtpSession::DecrementLibsrtpUsageCountAndMaybeDeinit() {
-  rtc::GlobalLockScope ls(&g_libsrtp_lock);
+  webrtc::GlobalMutexLock ls(&g_libsrtp_lock);
 
   RTC_DCHECK_GE(g_libsrtp_usage_count, 1);
   if (--g_libsrtp_usage_count == 0) {

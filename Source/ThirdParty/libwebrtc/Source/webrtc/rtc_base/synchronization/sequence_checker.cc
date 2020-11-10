@@ -9,11 +9,11 @@
  */
 #include "rtc_base/synchronization/sequence_checker.h"
 
-#include "rtc_base/logging.h"
-
 #if defined(WEBRTC_MAC)
 #include <dispatch/dispatch.h>
 #endif
+
+#include "rtc_base/strings/string_builder.h"
 
 namespace webrtc {
 namespace {
@@ -26,7 +26,15 @@ const void* GetSystemQueueRef() {
   return nullptr;
 #endif
 }
+
 }  // namespace
+
+std::string ExpectationToString(const webrtc::SequenceChecker* checker) {
+#if RTC_DCHECK_IS_ON
+  return checker->ExpectationToString();
+#endif
+  return std::string();
+}
 
 SequenceCheckerImpl::SequenceCheckerImpl()
     : attached_(true),
@@ -40,7 +48,7 @@ bool SequenceCheckerImpl::IsCurrent() const {
   const TaskQueueBase* const current_queue = TaskQueueBase::Current();
   const rtc::PlatformThreadRef current_thread = rtc::CurrentThreadRef();
   const void* const current_system_queue = GetSystemQueueRef();
-  rtc::CritScope scoped_lock(&lock_);
+  MutexLock scoped_lock(&lock_);
   if (!attached_) {  // Previously detached.
     attached_ = true;
     valid_thread_ = current_thread;
@@ -49,26 +57,56 @@ bool SequenceCheckerImpl::IsCurrent() const {
     return true;
   }
   if (valid_queue_ || current_queue) {
-    if (valid_queue_ != current_queue)
-      RTC_LOG(LS_ERROR) << "SequenceCheckerImpl queue check is failing";
     return valid_queue_ == current_queue;
   }
   if (valid_system_queue_ && valid_system_queue_ == current_system_queue) {
-    if (valid_queue_ != current_queue)
-      RTC_LOG(LS_ERROR) << "SequenceCheckerImpl system queue check is failing";
     return true;
   }
-  auto result = rtc::IsThreadRefEqual(valid_thread_, current_thread);
-  if (!result)
-    RTC_LOG(LS_ERROR) << "SequenceCheckerImpl thread check is failing";
-  return result;
+  return rtc::IsThreadRefEqual(valid_thread_, current_thread);
 }
 
 void SequenceCheckerImpl::Detach() {
-  rtc::CritScope scoped_lock(&lock_);
+  MutexLock scoped_lock(&lock_);
   attached_ = false;
   // We don't need to touch the other members here, they will be
   // reset on the next call to IsCurrent().
 }
+
+#if RTC_DCHECK_IS_ON
+std::string SequenceCheckerImpl::ExpectationToString() const {
+  const TaskQueueBase* const current_queue = TaskQueueBase::Current();
+  const rtc::PlatformThreadRef current_thread = rtc::CurrentThreadRef();
+  const void* const current_system_queue = GetSystemQueueRef();
+  MutexLock scoped_lock(&lock_);
+  if (!attached_)
+    return "Checker currently not attached.";
+
+  // The format of the string is meant to compliment the one we have inside of
+  // FatalLog() (checks.cc).  Example:
+  //
+  // # Expected: TQ: 0x0 SysQ: 0x7fff69541330 Thread: 0x11dcf6dc0
+  // # Actual:   TQ: 0x7fa8f0604190 SysQ: 0x7fa8f0604a30 Thread: 0x700006f1a000
+  // TaskQueue doesn't match
+
+  rtc::StringBuilder message;
+  message.AppendFormat(
+      "# Expected: TQ: %p SysQ: %p Thread: %p\n"
+      "# Actual:   TQ: %p SysQ: %p Thread: %p\n",
+      valid_queue_, valid_system_queue_,
+      reinterpret_cast<const void*>(valid_thread_), current_queue,
+      current_system_queue, reinterpret_cast<const void*>(current_thread));
+
+  if ((valid_queue_ || current_queue) && valid_queue_ != current_queue) {
+    message << "TaskQueue doesn't match\n";
+  } else if (valid_system_queue_ &&
+             valid_system_queue_ != current_system_queue) {
+    message << "System queue doesn't match\n";
+  } else if (!rtc::IsThreadRefEqual(valid_thread_, current_thread)) {
+    message << "Threads don't match\n";
+  }
+
+  return message.Release();
+}
+#endif  // RTC_DCHECK_IS_ON
 
 }  // namespace webrtc

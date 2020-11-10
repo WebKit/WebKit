@@ -17,11 +17,12 @@ include_rules = [
 
 specific_include_rules = {
   "video_receive_stream\.h": [
-    "+common_video/include",
-    "+media/base",
+    "+common_video/frame_counts.h",
   ],
   "video_send_stream\.h": [
-    "+common_video/include",
-    "+media/base",
+    "+common_video",
   ],
+  "rtp_transport_controller_send_interface\.h": [
+    "+common_video/frame_counts.h",
+  ]
 }

@@ -24,25 +24,41 @@ namespace cricket {
 // implementation of BaseChannel.
 class MockChannelInterface : public cricket::ChannelInterface {
  public:
-  MOCK_CONST_METHOD0(media_type, cricket::MediaType());
-  MOCK_CONST_METHOD0(media_channel, MediaChannel*());
-  MOCK_CONST_METHOD0(transport_name, const std::string&());
-  MOCK_CONST_METHOD0(content_name, const std::string&());
-  MOCK_CONST_METHOD0(enabled, bool());
-  MOCK_METHOD1(Enable, bool(bool));
-  MOCK_METHOD0(SignalFirstPacketReceived,
-               sigslot::signal1<ChannelInterface*>&());
-  MOCK_METHOD3(SetLocalContent,
-               bool(const cricket::MediaContentDescription*,
-                    webrtc::SdpType,
-                    std::string*));
-  MOCK_METHOD3(SetRemoteContent,
-               bool(const cricket::MediaContentDescription*,
-                    webrtc::SdpType,
-                    std::string*));
-  MOCK_CONST_METHOD0(local_streams, const std::vector<StreamParams>&());
-  MOCK_CONST_METHOD0(remote_streams, const std::vector<StreamParams>&());
-  MOCK_METHOD1(SetRtpTransport, bool(webrtc::RtpTransportInternal*));
+  MOCK_METHOD(cricket::MediaType, media_type, (), (const, override));
+  MOCK_METHOD(MediaChannel*, media_channel, (), (const, override));
+  MOCK_METHOD(const std::string&, transport_name, (), (const, override));
+  MOCK_METHOD(const std::string&, content_name, (), (const, override));
+  MOCK_METHOD(bool, enabled, (), (const, override));
+  MOCK_METHOD(bool, Enable, (bool), (override));
+  MOCK_METHOD(sigslot::signal1<ChannelInterface*>&,
+              SignalFirstPacketReceived,
+              (),
+              (override));
+  MOCK_METHOD(bool,
+              SetLocalContent,
+              (const cricket::MediaContentDescription*,
+               webrtc::SdpType,
+               std::string*),
+              (override));
+  MOCK_METHOD(bool,
+              SetRemoteContent,
+              (const cricket::MediaContentDescription*,
+               webrtc::SdpType,
+               std::string*),
+              (override));
+  MOCK_METHOD(bool, SetPayloadTypeDemuxingEnabled, (bool), (override));
+  MOCK_METHOD(const std::vector<StreamParams>&,
+              local_streams,
+              (),
+              (const, override));
+  MOCK_METHOD(const std::vector<StreamParams>&,
+              remote_streams,
+              (),
+              (const, override));
+  MOCK_METHOD(bool,
+              SetRtpTransport,
+              (webrtc::RtpTransportInternal*),
+              (override));
 };
 
 }  // namespace cricket

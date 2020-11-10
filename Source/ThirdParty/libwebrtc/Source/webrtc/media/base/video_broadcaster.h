@@ -15,7 +15,7 @@
 #include "api/video/video_frame_buffer.h"
 #include "api/video/video_source_interface.h"
 #include "media/base/video_source_base.h"
-#include "rtc_base/critical_section.h"
+#include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/thread_annotations.h"
 #include "rtc_base/thread_checker.h"
 
@@ -56,7 +56,7 @@ class VideoBroadcaster : public VideoSourceBase,
       int width,
       int height) RTC_EXCLUSIVE_LOCKS_REQUIRED(sinks_and_wants_lock_);
 
-  rtc::CriticalSection sinks_and_wants_lock_;
+  mutable webrtc::Mutex sinks_and_wants_lock_;
 
   VideoSinkWants current_wants_ RTC_GUARDED_BY(sinks_and_wants_lock_);
   rtc::scoped_refptr<webrtc::VideoFrameBuffer> black_frame_buffer_;

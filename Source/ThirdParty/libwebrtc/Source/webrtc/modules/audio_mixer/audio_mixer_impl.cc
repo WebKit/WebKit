@@ -126,7 +126,7 @@ void AudioMixerImpl::Mix(size_t number_of_channels,
   CalculateOutputFrequency();
 
   {
-    rtc::CritScope lock(&crit_);
+    MutexLock lock(&mutex_);
     const size_t number_of_streams = audio_source_list_.size();
     frame_combiner_.Combine(GetAudioFromSources(), number_of_channels,
                             OutputFrequency(), number_of_streams,
@@ -138,7 +138,7 @@ void AudioMixerImpl::Mix(size_t number_of_channels,
 
 void AudioMixerImpl::CalculateOutputFrequency() {
   RTC_DCHECK_RUNS_SERIALIZED(&race_checker_);
-  rtc::CritScope lock(&crit_);
+  MutexLock lock(&mutex_);
 
   std::vector<int> preferred_rates;
   std::transform(audio_source_list_.begin(), audio_source_list_.end(),
@@ -159,7 +159,7 @@ int AudioMixerImpl::OutputFrequency() const {
 
 bool AudioMixerImpl::AddSource(Source* audio_source) {
   RTC_DCHECK(audio_source);
-  rtc::CritScope lock(&crit_);
+  MutexLock lock(&mutex_);
   RTC_DCHECK(FindSourceInList(audio_source, &audio_source_list_) ==
              audio_source_list_.end())
       << "Source already added to mixer";
@@ -169,7 +169,7 @@ bool AudioMixerImpl::AddSource(Source* audio_source) {
 
 void AudioMixerImpl::RemoveSource(Source* audio_source) {
   RTC_DCHECK(audio_source);
-  rtc::CritScope lock(&crit_);
+  MutexLock lock(&mutex_);
   const auto iter = FindSourceInList(audio_source, &audio_source_list_);
   RTC_DCHECK(iter != audio_source_list_.end()) << "Source not present in mixer";
   audio_source_list_.erase(iter);
@@ -227,7 +227,7 @@ AudioFrameList AudioMixerImpl::GetAudioFromSources() {
 bool AudioMixerImpl::GetAudioSourceMixabilityStatusForTest(
     AudioMixerImpl::Source* audio_source) const {
   RTC_DCHECK_RUNS_SERIALIZED(&race_checker_);
-  rtc::CritScope lock(&crit_);
+  MutexLock lock(&mutex_);
 
   const auto iter = FindSourceInList(audio_source, &audio_source_list_);
   if (iter != audio_source_list_.end()) {

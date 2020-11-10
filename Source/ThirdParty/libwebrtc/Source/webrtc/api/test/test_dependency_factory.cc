@@ -14,22 +14,24 @@
 #include <utility>
 
 #include "rtc_base/checks.h"
-#include "rtc_base/thread_checker.h"
+#include "rtc_base/platform_thread_types.h"
 
 namespace webrtc {
 
+namespace {
 // This checks everything in this file gets called on the same thread. It's
 // static because it needs to look at the static methods too.
-rtc::ThreadChecker* GetThreadChecker() {
-  static rtc::ThreadChecker checker;
-  return &checker;
+bool IsValidTestDependencyFactoryThread() {
+  const rtc::PlatformThreadRef main_thread = rtc::CurrentThreadRef();
+  return rtc::IsThreadRefEqual(main_thread, rtc::CurrentThreadRef());
 }
+}  // namespace
 
 std::unique_ptr<TestDependencyFactory> TestDependencyFactory::instance_ =
     nullptr;
 
 const TestDependencyFactory& TestDependencyFactory::GetInstance() {
-  RTC_DCHECK(GetThreadChecker()->IsCurrent());
+  RTC_DCHECK(IsValidTestDependencyFactoryThread());
   if (instance_ == nullptr) {
     instance_ = std::make_unique<TestDependencyFactory>();
   }
@@ -38,14 +40,14 @@ const TestDependencyFactory& TestDependencyFactory::GetInstance() {
 
 void TestDependencyFactory::SetInstance(
     std::unique_ptr<TestDependencyFactory> instance) {
-  RTC_DCHECK(GetThreadChecker()->IsCurrent());
+  RTC_DCHECK(IsValidTestDependencyFactoryThread());
   RTC_CHECK(instance_ == nullptr);
   instance_ = std::move(instance);
 }
 
 std::unique_ptr<VideoQualityTestFixtureInterface::InjectionComponents>
 TestDependencyFactory::CreateComponents() const {
-  RTC_DCHECK(GetThreadChecker()->IsCurrent());
+  RTC_DCHECK(IsValidTestDependencyFactoryThread());
   return nullptr;
 }
 

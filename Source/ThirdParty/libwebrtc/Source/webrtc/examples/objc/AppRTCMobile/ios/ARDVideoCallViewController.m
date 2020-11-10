@@ -24,15 +24,15 @@
 
 @interface ARDVideoCallViewController () <ARDAppClientDelegate,
                                           ARDVideoCallViewDelegate,
-                                          RTCAudioSessionDelegate>
-@property(nonatomic, strong) RTCVideoTrack *remoteVideoTrack;
+                                          RTC_OBJC_TYPE (RTCAudioSessionDelegate)>
+@property(nonatomic, strong) RTC_OBJC_TYPE(RTCVideoTrack) * remoteVideoTrack;
 @property(nonatomic, readonly) ARDVideoCallView *videoCallView;
 @property(nonatomic, assign) AVAudioSessionPortOverride portOverride;
 @end
 
 @implementation ARDVideoCallViewController {
   ARDAppClient *_client;
-  RTCVideoTrack *_remoteVideoTrack;
+  RTC_OBJC_TYPE(RTCVideoTrack) * _remoteVideoTrack;
   ARDCaptureController *_captureController;
   ARDFileCaptureController *_fileCaptureController NS_AVAILABLE_IOS(10);
 }
@@ -62,7 +62,7 @@
       [self statusTextForState:RTCIceConnectionStateNew];
   self.view = _videoCallView;
 
-  RTCAudioSession *session = [RTCAudioSession sharedInstance];
+  RTC_OBJC_TYPE(RTCAudioSession) *session = [RTC_OBJC_TYPE(RTCAudioSession) sharedInstance];
   [session addDelegate:self];
 }
 
@@ -100,7 +100,7 @@
 }
 
 - (void)appClient:(ARDAppClient *)client
-    didCreateLocalCapturer:(RTCCameraVideoCapturer *)localCapturer {
+    didCreateLocalCapturer:(RTC_OBJC_TYPE(RTCCameraVideoCapturer) *)localCapturer {
   _videoCallView.localVideoView.captureSession = localCapturer.captureSession;
   ARDSettingsModel *settingsModel = [[ARDSettingsModel alloc] init];
   _captureController =
@@ -109,7 +109,7 @@
 }
 
 - (void)appClient:(ARDAppClient *)client
-    didCreateLocalFileCapturer:(RTCFileVideoCapturer *)fileCapturer {
+    didCreateLocalFileCapturer:(RTC_OBJC_TYPE(RTCFileVideoCapturer) *)fileCapturer {
 #if defined(__IPHONE_11_0) && (__IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_11_0)
   if (@available(iOS 10, *)) {
     _fileCaptureController = [[ARDFileCaptureController alloc] initWithCapturer:fileCapturer];
@@ -119,11 +119,11 @@
 }
 
 - (void)appClient:(ARDAppClient *)client
-    didReceiveLocalVideoTrack:(RTCVideoTrack *)localVideoTrack {
+    didReceiveLocalVideoTrack:(RTC_OBJC_TYPE(RTCVideoTrack) *)localVideoTrack {
 }
 
 - (void)appClient:(ARDAppClient *)client
-    didReceiveRemoteVideoTrack:(RTCVideoTrack *)remoteVideoTrack {
+    didReceiveRemoteVideoTrack:(RTC_OBJC_TYPE(RTCVideoTrack) *)remoteVideoTrack {
   self.remoteVideoTrack = remoteVideoTrack;
   __weak ARDVideoCallViewController *weakSelf = self;
   dispatch_async(dispatch_get_main_queue(), ^{
@@ -152,30 +152,34 @@
   [self hangup];
 }
 
-- (void)videoCallViewDidSwitchCamera:(ARDVideoCallView *)view {
-  // TODO(tkchin): Rate limit this so you can't tap continously on it.
-  // Probably through an animation.
-  [_captureController switchCamera];
+- (void)videoCallView:(ARDVideoCallView *)view
+    shouldSwitchCameraWithCompletion:(void (^)(NSError *))completion {
+  [_captureController switchCamera:completion];
 }
 
-- (void)videoCallViewDidChangeRoute:(ARDVideoCallView *)view {
+- (void)videoCallView:(ARDVideoCallView *)view
+    shouldChangeRouteWithCompletion:(void (^)(void))completion {
+  NSParameterAssert(completion);
   AVAudioSessionPortOverride override = AVAudioSessionPortOverrideNone;
   if (_portOverride == AVAudioSessionPortOverrideNone) {
     override = AVAudioSessionPortOverrideSpeaker;
   }
-  [RTCDispatcher dispatchAsyncOnType:RTCDispatcherTypeAudioSession
-                               block:^{
-    RTCAudioSession *session = [RTCAudioSession sharedInstance];
-    [session lockForConfiguration];
-    NSError *error = nil;
-    if ([session overrideOutputAudioPort:override error:&error]) {
-      self.portOverride = override;
-    } else {
-      RTCLogError(@"Error overriding output port: %@",
-                  error.localizedDescription);
-    }
-    [session unlockForConfiguration];
-  }];
+  [RTC_OBJC_TYPE(RTCDispatcher) dispatchAsyncOnType:RTCDispatcherTypeAudioSession
+                                              block:^{
+                                                RTC_OBJC_TYPE(RTCAudioSession) *session =
+                                                    [RTC_OBJC_TYPE(RTCAudioSession) sharedInstance];
+                                                [session lockForConfiguration];
+                                                NSError *error = nil;
+                                                if ([session overrideOutputAudioPort:override
+                                                                               error:&error]) {
+                                                  self.portOverride = override;
+                                                } else {
+                                                  RTCLogError(@"Error overriding output port: %@",
+                                                              error.localizedDescription);
+                                                }
+                                                [session unlockForConfiguration];
+                                                completion();
+                                              }];
 }
 
 - (void)videoCallViewDidEnableStats:(ARDVideoCallView *)view {
@@ -183,16 +187,16 @@
   _videoCallView.statsView.hidden = NO;
 }
 
-#pragma mark - RTCAudioSessionDelegate
+#pragma mark - RTC_OBJC_TYPE(RTCAudioSessionDelegate)
 
-- (void)audioSession:(RTCAudioSession *)audioSession
+- (void)audioSession:(RTC_OBJC_TYPE(RTCAudioSession) *)audioSession
     didDetectPlayoutGlitch:(int64_t)totalNumberOfGlitches {
   RTCLog(@"Audio session detected glitch, total: %lld", totalNumberOfGlitches);
 }
 
 #pragma mark - Private
 
-- (void)setRemoteVideoTrack:(RTCVideoTrack *)remoteVideoTrack {
+- (void)setRemoteVideoTrack:(RTC_OBJC_TYPE(RTCVideoTrack) *)remoteVideoTrack {
   if (_remoteVideoTrack == remoteVideoTrack) {
     return;
   }

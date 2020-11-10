@@ -112,10 +112,25 @@ std::string GainController2::ToString(
         "adaptive_digital: {"
           "enabled: "
             << (config.adaptive_digital.enabled ? "true" : "false") << ", "
-          "level_estimator: " << adaptive_digital_level_estimator << ", "
-          "extra_saturation_margin_db:"
-            << config.adaptive_digital.extra_saturation_margin_db << "}"
-          "}";
+          "level_estimator: {"
+            "type: " << adaptive_digital_level_estimator << ", "
+            "adjacent_speech_frames_threshold: "
+              << config.adaptive_digital
+                  .level_estimator_adjacent_speech_frames_threshold << ", "
+            "initial_saturation_margin_db: "
+              << config.adaptive_digital.initial_saturation_margin_db << ", "
+            "extra_saturation_margin_db: "
+              << config.adaptive_digital.extra_saturation_margin_db << "}, "
+          "gain_applier: {"
+            "adjacent_speech_frames_threshold: "
+              << config.adaptive_digital
+                  .gain_applier_adjacent_speech_frames_threshold << ", "
+            "max_gain_change_db_per_second: "
+              << config.adaptive_digital.max_gain_change_db_per_second << ", "
+            "max_output_noise_level_dbfs: "
+              << config.adaptive_digital.max_output_noise_level_dbfs << "}"
+        "}"
+        "}";
   // clang-format on
   return ss.Release();
 }

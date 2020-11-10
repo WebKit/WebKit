@@ -14,11 +14,12 @@
 #include <map>
 #include <string>
 
-#include "api/stats_types.h"
+#include "absl/strings/string_view.h"
+#include "api/numerics/samples_stats_counter.h"
 #include "api/test/audio_quality_analyzer_interface.h"
-#include "api/test/track_id_stream_label_map.h"
-#include "rtc_base/critical_section.h"
-#include "rtc_base/numerics/samples_stats_counter.h"
+#include "api/test/track_id_stream_info_map.h"
+#include "api/units/time_delta.h"
+#include "rtc_base/synchronization/mutex.h"
 #include "test/testsupport/perf_test.h"
 
 namespace webrtc {
@@ -29,25 +30,34 @@ struct AudioStreamStats {
   SamplesStatsCounter accelerate_rate;
   SamplesStatsCounter preemptive_rate;
   SamplesStatsCounter speech_expand_rate;
+  SamplesStatsCounter average_jitter_buffer_delay_ms;
   SamplesStatsCounter preferred_buffer_size_ms;
 };
 
-// TODO(bugs.webrtc.org/10430): Migrate to the new GetStats as soon as
-// bugs.webrtc.org/10428 is fixed.
 class DefaultAudioQualityAnalyzer : public AudioQualityAnalyzerInterface {
  public:
   void Start(std::string test_case_name,
-             TrackIdStreamLabelMap* analyzer_helper) override;
-  void OnStatsReports(const std::string& pc_label,
-                      const StatsReports& stats_reports) override;
+             TrackIdStreamInfoMap* analyzer_helper) override;
+  void OnStatsReports(
+      absl::string_view pc_label,
+      const rtc::scoped_refptr<const RTCStatsReport>& report) override;
   void Stop() override;
 
   // Returns audio quality stats per stream label.
   std::map<std::string, AudioStreamStats> GetAudioStreamsStats() const;
 
  private:
-  const std::string& GetStreamLabelFromStatsReport(
-      const StatsReport* stats_report) const;
+  struct StatsSample {
+    uint64_t total_samples_received = 0;
+    uint64_t concealed_samples = 0;
+    uint64_t removed_samples_for_acceleration = 0;
+    uint64_t inserted_samples_for_deceleration = 0;
+    uint64_t silent_concealed_samples = 0;
+    TimeDelta jitter_buffer_delay = TimeDelta::Zero();
+    TimeDelta jitter_buffer_target_delay = TimeDelta::Zero();
+    uint64_t jitter_buffer_emitted_count = 0;
+  };
+
   std::string GetTestCaseName(const std::string& stream_label) const;
   void ReportResult(const std::string& metric_name,
                     const std::string& stream_label,
@@ -56,10 +66,11 @@ class DefaultAudioQualityAnalyzer : public AudioQualityAnalyzerInterface {
                     webrtc::test::ImproveDirection improve_direction) const;
 
   std::string test_case_name_;
-  TrackIdStreamLabelMap* analyzer_helper_;
+  TrackIdStreamInfoMap* analyzer_helper_;
 
-  rtc::CriticalSection lock_;
+  mutable Mutex lock_;
   std::map<std::string, AudioStreamStats> streams_stats_ RTC_GUARDED_BY(lock_);
+  std::map<std::string, StatsSample> last_stats_sample_ RTC_GUARDED_BY(lock_);
 };
 
 }  // namespace webrtc_pc_e2e

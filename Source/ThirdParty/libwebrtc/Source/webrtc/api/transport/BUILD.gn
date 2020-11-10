@@ -14,10 +14,8 @@ rtc_library("bitrate_settings") {
     "bitrate_settings.cc",
     "bitrate_settings.h",
   ]
-  deps = [
-    "../../rtc_base/system:rtc_export",
-    "//third_party/abseil-cpp/absl/types:optional",
-  ]
+  deps = [ "../../rtc_base/system:rtc_export" ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
 }
 
 rtc_source_set("enums") {
@@ -41,6 +39,8 @@ rtc_library("network_control") {
     "../units:data_size",
     "../units:time_delta",
     "../units:timestamp",
+  ]
+  absl_deps = [
     "//third_party/abseil-cpp/absl/base:core_headers",
     "//third_party/abseil-cpp/absl/types:optional",
   ]
@@ -49,10 +49,8 @@ rtc_library("network_control") {
 rtc_source_set("webrtc_key_value_config") {
   visibility = [ "*" ]
   sources = [ "webrtc_key_value_config.h" ]
-  deps = [
-    "../../rtc_base/system:rtc_export",
-    "//third_party/abseil-cpp/absl/strings",
-  ]
+  deps = [ "../../rtc_base/system:rtc_export" ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/strings" ]
 }
 
 rtc_library("field_trial_based_config") {
@@ -64,26 +62,20 @@ rtc_library("field_trial_based_config") {
   deps = [
     ":webrtc_key_value_config",
     "../../system_wrappers:field_trial",
-    "//third_party/abseil-cpp/absl/strings",
   ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/strings" ]
 }
 
+# TODO(nisse): Rename?
 rtc_source_set("datagram_transport_interface") {
   visibility = [ "*" ]
-  sources = [
-    "congestion_control_interface.h",
-    "data_channel_transport_interface.h",
-    "datagram_transport_interface.h",
-  ]
+  sources = [ "data_channel_transport_interface.h" ]
   deps = [
-    ":network_control",
     "..:array_view",
     "..:rtc_error",
     "../../rtc_base:rtc_base_approved",
-    "../units:data_rate",
-    "../units:timestamp",
-    "//third_party/abseil-cpp/absl/types:optional",
   ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
 }
 
 rtc_library("goog_cc") {
@@ -99,6 +91,11 @@ rtc_library("goog_cc") {
     "../../modules/congestion_controller/goog_cc",
     "../../rtc_base:deprecation",
   ]
+}
+
+rtc_source_set("sctp_transport_factory_interface") {
+  visibility = [ "*" ]
+  sources = [ "sctp_transport_factory_interface.h" ]
 }
 
 rtc_source_set("stun_types") {
@@ -147,7 +144,6 @@ if (rtc_include_tests) {
     deps = [
       ":stun_types",
       "../../rtc_base",
-      "../../rtc_base:macromagic",
       "../../rtc_base:rtc_base_approved",
       "../../test:test_support",
       "//testing/gtest",

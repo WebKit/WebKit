@@ -29,14 +29,10 @@ using H264::ParseNaluType;
 const char kAnnexBHeaderBytes[4] = {0, 0, 0, 1};
 const size_t kAvccHeaderByteSize = sizeof(uint32_t);
 
-bool H264CMSampleBufferToAnnexBBuffer(
-    CMSampleBufferRef avcc_sample_buffer,
-    bool is_keyframe,
-    rtc::Buffer* annexb_buffer,
-    std::unique_ptr<RTPFragmentationHeader>* out_header) {
+bool H264CMSampleBufferToAnnexBBuffer(CMSampleBufferRef avcc_sample_buffer,
+                                      bool is_keyframe,
+                                      rtc::Buffer* annexb_buffer) {
   RTC_DCHECK(avcc_sample_buffer);
-  RTC_DCHECK(out_header);
-  out_header->reset(nullptr);
 
   // Get format description from the sample buffer.
   CMVideoFormatDescriptionRef description =
@@ -61,10 +57,6 @@ bool H264CMSampleBufferToAnnexBBuffer(
   // Truncate any previous data in the buffer without changing its capacity.
   annexb_buffer->SetSize(0);
 
-  size_t nalu_offset = 0;
-  std::vector<size_t> frag_offsets;
-  std::vector<size_t> frag_lengths;
-
   // Place all parameter sets at the front of buffer.
   if (is_keyframe) {
     size_t param_set_size = 0;
@@ -80,10 +72,6 @@ bool H264CMSampleBufferToAnnexBBuffer(
       annexb_buffer->AppendData(kAnnexBHeaderBytes, sizeof(kAnnexBHeaderBytes));
       annexb_buffer->AppendData(reinterpret_cast<const char*>(param_set),
                                 param_set_size);
-      // Update fragmentation.
-      frag_offsets.push_back(nalu_offset + sizeof(kAnnexBHeaderBytes));
-      frag_lengths.push_back(param_set_size);
-      nalu_offset += sizeof(kAnnexBHeaderBytes) + param_set_size;
     }
   }
 
@@ -132,10 +120,6 @@ bool H264CMSampleBufferToAnnexBBuffer(
     // Update buffer.
     annexb_buffer->AppendData(kAnnexBHeaderBytes, sizeof(kAnnexBHeaderBytes));
     annexb_buffer->AppendData(data_ptr + nalu_header_size, packet_size);
-    // Update fragmentation.
-    frag_offsets.push_back(nalu_offset + sizeof(kAnnexBHeaderBytes));
-    frag_lengths.push_back(packet_size);
-    nalu_offset += sizeof(kAnnexBHeaderBytes) + packet_size;
 
     size_t bytes_written = packet_size + sizeof(kAnnexBHeaderBytes);
     bytes_remaining -= bytes_written;
@@ -143,14 +127,6 @@ bool H264CMSampleBufferToAnnexBBuffer(
   }
   RTC_DCHECK_EQ(bytes_remaining, (size_t)0);
 
-  std::unique_ptr<RTPFragmentationHeader> header(new RTPFragmentationHeader());
-  header->VerifyAndAllocateFragmentationHeader(frag_offsets.size());
-  RTC_DCHECK_EQ(frag_lengths.size(), frag_offsets.size());
-  for (size_t i = 0; i < frag_offsets.size(); ++i) {
-    header->fragmentationOffset[i] = frag_offsets[i];
-    header->fragmentationLength[i] = frag_lengths[i];
-  }
-  *out_header = std::move(header);
   CFRelease(contiguous_buffer);
   return true;
 }
@@ -252,11 +228,8 @@ bool H264AnnexBBufferToCMSampleBuffer(const uint8_t* annexb_buffer,
 bool H265CMSampleBufferToAnnexBBuffer(
     CMSampleBufferRef hvcc_sample_buffer,
     bool is_keyframe,
-    rtc::Buffer* annexb_buffer,
-    std::unique_ptr<RTPFragmentationHeader> *out_header) {
+    rtc::Buffer* annexb_buffer) {
   RTC_DCHECK(hvcc_sample_buffer);
-  RTC_DCHECK(out_header);
-  out_header->reset(nullptr);
 
   // Get format description from the sample buffer.
   CMVideoFormatDescriptionRef description =
@@ -363,15 +336,8 @@ bool H265CMSampleBufferToAnnexBBuffer(
   }
   RTC_DCHECK_EQ(bytes_remaining, (size_t)0);
 
-  std::unique_ptr<RTPFragmentationHeader> header(new RTPFragmentationHeader());
-  header->VerifyAndAllocateFragmentationHeader(frag_offsets.size());
-  RTC_DCHECK_EQ(frag_lengths.size(), frag_offsets.size());
-  for (size_t i = 0; i < frag_offsets.size(); ++i) {
-    header->fragmentationOffset[i] = frag_offsets[i];
-    header->fragmentationLength[i] = frag_lengths[i];
-  }
-  *out_header = std::move(header);
   CFRelease(contiguous_buffer);
+
   return true;
 }
 
@@ -384,7 +350,7 @@ bool H265AnnexBBufferToCMSampleBuffer(const uint8_t* annexb_buffer,
   RTC_DCHECK(video_format);
   *out_sample_buffer = nullptr;
 
-  AnnexBBufferReader reader(annexb_buffer, annexb_buffer_size);
+  AnnexBBufferReader reader(annexb_buffer, annexb_buffer_size, false);
   if (reader.SeekToNextNaluOfType(H265::kVps)) {
     // Buffer contains an SPS NALU - skip it and the following PPS
     const uint8_t* data;
@@ -507,7 +473,7 @@ CMVideoFormatDescriptionRef CreateH265VideoFormatDescription(
     size_t annexb_buffer_size) {
   const uint8_t* param_set_ptrs[3] = {};
   size_t param_set_sizes[3] = {};
-  AnnexBBufferReader reader(annexb_buffer, annexb_buffer_size);
+  AnnexBBufferReader reader(annexb_buffer, annexb_buffer_size, false);
   // Skip everyting before the VPS, then read the VPS, SPS and PPS
   if (!reader.SeekToNextNaluOfType(H265::kVps)) {
     return nullptr;
@@ -539,10 +505,11 @@ CMVideoFormatDescriptionRef CreateH265VideoFormatDescription(
 #endif
 
 AnnexBBufferReader::AnnexBBufferReader(const uint8_t* annexb_buffer,
-                                       size_t length)
+                                       size_t length, bool isH264)
     : start_(annexb_buffer), length_(length) {
   RTC_DCHECK(annexb_buffer);
-  offsets_ = H264::FindNaluIndices(annexb_buffer, length);
+
+  offsets_ = isH264 ? H264::FindNaluIndices(annexb_buffer, length) : H265::FindNaluIndices(annexb_buffer, length);
   offset_ = offsets_.begin();
 }
 

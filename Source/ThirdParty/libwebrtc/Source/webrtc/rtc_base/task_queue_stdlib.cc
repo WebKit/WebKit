@@ -22,10 +22,10 @@
 #include "api/task_queue/queued_task.h"
 #include "api/task_queue/task_queue_base.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/critical_section.h"
 #include "rtc_base/event.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/platform_thread.h"
+#include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/thread_annotations.h"
 #include "rtc_base/time_utils.h"
 
@@ -97,7 +97,7 @@ class TaskQueueStdlib final : public TaskQueueBase {
   // tasks (including delayed tasks).
   rtc::PlatformThread thread_;
 
-  rtc::CriticalSection pending_lock_;
+  Mutex pending_lock_;
 
   // Indicates if the worker thread needs to shutdown now.
   bool thread_should_quit_ RTC_GUARDED_BY(pending_lock_){false};
@@ -135,7 +135,7 @@ void TaskQueueStdlib::Delete() {
   RTC_DCHECK(!IsCurrent());
 
   {
-    rtc::CritScope lock(&pending_lock_);
+    MutexLock lock(&pending_lock_);
     thread_should_quit_ = true;
   }
 
@@ -148,7 +148,7 @@ void TaskQueueStdlib::Delete() {
 
 void TaskQueueStdlib::PostTask(std::unique_ptr<QueuedTask> task) {
   {
-    rtc::CritScope lock(&pending_lock_);
+    MutexLock lock(&pending_lock_);
     OrderId order = thread_posting_order_++;
 
     pending_queue_.push(std::pair<OrderId, std::unique_ptr<QueuedTask>>(
@@ -166,7 +166,7 @@ void TaskQueueStdlib::PostDelayedTask(std::unique_ptr<QueuedTask> task,
   delay.next_fire_at_ms_ = fire_at;
 
   {
-    rtc::CritScope lock(&pending_lock_);
+    MutexLock lock(&pending_lock_);
     delay.order_ = ++thread_posting_order_;
     delayed_queue_[delay] = std::move(task);
   }
@@ -179,7 +179,7 @@ TaskQueueStdlib::NextTask TaskQueueStdlib::GetNextTask() {
 
   auto tick = rtc::TimeMillis();
 
-  rtc::CritScope lock(&pending_lock_);
+  MutexLock lock(&pending_lock_);
 
   if (thread_should_quit_) {
     result.final_task_ = true;

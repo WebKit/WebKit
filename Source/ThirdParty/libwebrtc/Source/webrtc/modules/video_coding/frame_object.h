@@ -13,8 +13,6 @@
 
 #include "absl/types/optional.h"
 #include "api/video/encoded_frame.h"
-#include "modules/rtp_rtcp/source/rtp_generic_frame_descriptor.h"
-#include "rtc_base/deprecation.h"
 
 namespace webrtc {
 namespace video_coding {
@@ -39,27 +37,6 @@ class RtpFrameObject : public EncodedFrame {
                  RtpPacketInfos packet_infos,
                  rtc::scoped_refptr<EncodedImageBuffer> image_buffer);
 
-  RTC_DEPRECATED
-  RtpFrameObject(
-      uint16_t first_seq_num,
-      uint16_t last_seq_num,
-      bool markerBit,
-      int times_nacked,
-      int64_t first_packet_received_time,
-      int64_t last_packet_received_time,
-      uint32_t rtp_timestamp,
-      int64_t ntp_time_ms,
-      const VideoSendTiming& timing,
-      uint8_t payload_type,
-      VideoCodecType codec,
-      VideoRotation rotation,
-      VideoContentType content_type,
-      const RTPVideoHeader& video_header,
-      const absl::optional<webrtc::ColorSpace>& color_space,
-      const absl::optional<RtpGenericFrameDescriptor>& generic_descriptor,
-      RtpPacketInfos packet_infos,
-      rtc::scoped_refptr<EncodedImageBuffer> image_buffer);
-
   ~RtpFrameObject() override;
   uint16_t first_seq_num() const;
   uint16_t last_seq_num() const;
@@ -70,9 +47,12 @@ class RtpFrameObject : public EncodedFrame {
   int64_t RenderTime() const override;
   bool delayed_by_retransmission() const override;
   const RTPVideoHeader& GetRtpVideoHeader() const;
-  const FrameMarking& GetFrameMarking() const;
+
+  uint8_t* mutable_data() { return image_buffer_->data(); }
 
  private:
+  // Reference for mutable access.
+  rtc::scoped_refptr<EncodedImageBuffer> image_buffer_;
   RTPVideoHeader rtp_video_header_;
   VideoCodecType codec_type_;
   uint16_t first_seq_num_;

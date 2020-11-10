@@ -11,6 +11,7 @@
 #include "modules/audio_coding/audio_network_adaptor/controller_manager.h"
 
 #include <cmath>
+#include <memory>
 #include <string>
 #include <utility>
 
@@ -20,6 +21,7 @@
 #include "modules/audio_coding/audio_network_adaptor/dtx_controller.h"
 #include "modules/audio_coding/audio_network_adaptor/fec_controller_plr_based.h"
 #include "modules/audio_coding/audio_network_adaptor/frame_length_controller.h"
+#include "modules/audio_coding/audio_network_adaptor/frame_length_controller_v2.h"
 #include "modules/audio_coding/audio_network_adaptor/util/threshold_curve.h"
 #include "rtc_base/ignore_wundef.h"
 #include "rtc_base/logging.h"
@@ -197,6 +199,14 @@ std::unique_ptr<BitrateController> CreateBitrateController(
           initial_bitrate_bps, initial_frame_length_ms,
           fl_increase_overhead_offset, fl_decrease_overhead_offset)));
 }
+
+std::unique_ptr<FrameLengthControllerV2> CreateFrameLengthControllerV2(
+    const audio_network_adaptor::config::FrameLengthControllerV2& config,
+    rtc::ArrayView<const int> encoder_frame_lengths_ms) {
+  return std::make_unique<FrameLengthControllerV2>(
+      encoder_frame_lengths_ms, config.min_payload_bitrate_bps(),
+      config.use_slow_adaptation());
+}
 #endif  // WEBRTC_ENABLE_PROTOBUF
 
 }  // namespace
@@ -276,6 +286,11 @@ std::unique_ptr<ControllerManager> ControllerManagerImpl::Create(
         controller = CreateBitrateController(
             controller_config.bitrate_controller(), initial_bitrate_bps,
             initial_frame_length_ms);
+        break;
+      case audio_network_adaptor::config::Controller::kFrameLengthControllerV2:
+        controller = CreateFrameLengthControllerV2(
+            controller_config.frame_length_controller_v2(),
+            encoder_frame_lengths_ms);
         break;
       default:
         RTC_NOTREACHED();

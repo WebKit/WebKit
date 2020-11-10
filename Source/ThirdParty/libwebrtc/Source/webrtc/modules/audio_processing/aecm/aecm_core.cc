@@ -24,10 +24,34 @@ extern "C" {
 #include "rtc_base/checks.h"
 #include "rtc_base/numerics/safe_conversions.h"
 
+namespace webrtc {
+
+namespace {
+
 #ifdef AEC_DEBUG
 FILE* dfile;
 FILE* testfile;
 #endif
+
+// Initialization table for echo channel in 8 kHz
+static const int16_t kChannelStored8kHz[PART_LEN1] = {
+    2040, 1815, 1590, 1498, 1405, 1395, 1385, 1418, 1451, 1506, 1562,
+    1644, 1726, 1804, 1882, 1918, 1953, 1982, 2010, 2025, 2040, 2034,
+    2027, 2021, 2014, 1997, 1980, 1925, 1869, 1800, 1732, 1683, 1635,
+    1604, 1572, 1545, 1517, 1481, 1444, 1405, 1367, 1331, 1294, 1270,
+    1245, 1239, 1233, 1247, 1260, 1282, 1303, 1338, 1373, 1407, 1441,
+    1470, 1499, 1524, 1549, 1565, 1582, 1601, 1621, 1649, 1676};
+
+// Initialization table for echo channel in 16 kHz
+static const int16_t kChannelStored16kHz[PART_LEN1] = {
+    2040, 1590, 1405, 1385, 1451, 1562, 1726, 1882, 1953, 2010, 2040,
+    2027, 2014, 1980, 1869, 1732, 1635, 1572, 1517, 1444, 1367, 1294,
+    1245, 1233, 1260, 1303, 1373, 1441, 1499, 1549, 1582, 1621, 1676,
+    1741, 1802, 1861, 1921, 1983, 2040, 2102, 2170, 2265, 2375, 2515,
+    2651, 2781, 2922, 3075, 3253, 3471, 3738, 3976, 4151, 4258, 4308,
+    4288, 4270, 4253, 4237, 4179, 4086, 3947, 3757, 3484, 3153};
+
+}  // namespace
 
 const int16_t WebRtcAecm_kCosTable[] = {
     8192,  8190,  8187,  8180,  8172,  8160,  8147,  8130,  8112,  8091,  8067,
@@ -99,23 +123,6 @@ const int16_t WebRtcAecm_kSinTable[] = {
     -2667, -2531, -2395, -2258, -2120, -1981, -1842, -1703, -1563, -1422, -1281,
     -1140, -998,  -856,  -713,  -571,  -428,  -285,  -142};
 
-// Initialization table for echo channel in 8 kHz
-static const int16_t kChannelStored8kHz[PART_LEN1] = {
-    2040, 1815, 1590, 1498, 1405, 1395, 1385, 1418, 1451, 1506, 1562,
-    1644, 1726, 1804, 1882, 1918, 1953, 1982, 2010, 2025, 2040, 2034,
-    2027, 2021, 2014, 1997, 1980, 1925, 1869, 1800, 1732, 1683, 1635,
-    1604, 1572, 1545, 1517, 1481, 1444, 1405, 1367, 1331, 1294, 1270,
-    1245, 1239, 1233, 1247, 1260, 1282, 1303, 1338, 1373, 1407, 1441,
-    1470, 1499, 1524, 1549, 1565, 1582, 1601, 1621, 1649, 1676};
-
-// Initialization table for echo channel in 16 kHz
-static const int16_t kChannelStored16kHz[PART_LEN1] = {
-    2040, 1590, 1405, 1385, 1451, 1562, 1726, 1882, 1953, 2010, 2040,
-    2027, 2014, 1980, 1869, 1732, 1635, 1572, 1517, 1444, 1367, 1294,
-    1245, 1233, 1260, 1303, 1373, 1441, 1499, 1549, 1582, 1621, 1676,
-    1741, 1802, 1861, 1921, 1983, 2040, 2102, 2170, 2265, 2375, 2515,
-    2651, 2781, 2922, 3075, 3253, 3471, 3738, 3976, 4151, 4258, 4308,
-    4288, 4270, 4253, 4237, 4179, 4086, 3947, 3757, 3484, 3153};
 
 // Moves the pointer to the next entry and inserts |far_spectrum| and
 // corresponding Q-domain in its buffer.
@@ -180,7 +187,8 @@ StoreAdaptiveChannel WebRtcAecm_StoreAdaptiveChannel;
 ResetAdaptiveChannel WebRtcAecm_ResetAdaptiveChannel;
 
 AecmCore* WebRtcAecm_CreateCore() {
-  AecmCore* aecm = static_cast<AecmCore*>(malloc(sizeof(AecmCore)));
+  // Allocate zero-filled memory.
+  AecmCore* aecm = static_cast<AecmCore*>(calloc(1, sizeof(AecmCore)));
 
   aecm->farFrameBuf =
       WebRtc_CreateBuffer(FRAME_LEN + PART_LEN, sizeof(int16_t));
@@ -1113,3 +1121,5 @@ void WebRtcAecm_FetchFarFrame(AecmCore* const aecm,
          sizeof(int16_t) * readLen);
   aecm->farBufReadPos += readLen;
 }
+
+}  // namespace webrtc

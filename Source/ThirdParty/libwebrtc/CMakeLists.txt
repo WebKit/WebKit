@@ -352,7 +352,9 @@ set(webrtc_SOURCES
     Source/third_party/usrsctp/usrsctplib/usrsctplib/user_mbuf.c
     Source/third_party/usrsctp/usrsctplib/usrsctplib/user_recv_thread.c
     Source/third_party/usrsctp/usrsctplib/usrsctplib/user_socket.c
+    Source/webrtc/api/adaptation/resource.cc
     Source/webrtc/api/audio/audio_frame.cc
+    Source/webrtc/api/audio/echo_detector_creator.cc
     Source/webrtc/api/audio/channel_layout.cc
     Source/webrtc/api/audio/echo_canceller3_config.cc
     Source/webrtc/api/audio/echo_canceller3_factory.cc
@@ -416,14 +418,12 @@ set(webrtc_SOURCES
     Source/webrtc/api/transport/bitrate_settings.cc
     Source/webrtc/api/transport/field_trial_based_config.cc
     Source/webrtc/api/transport/goog_cc_factory.cc
-    Source/webrtc/api/transport/media/audio_transport.cc
-    Source/webrtc/api/transport/media/media_transport_config.cc
-    Source/webrtc/api/transport/media/media_transport_interface.cc
-    Source/webrtc/api/transport/media/video_transport.cc
+    Source/webrtc/api/transport/rtp/dependency_descriptor.cc
     Source/webrtc/api/transport/network_types.cc
     Source/webrtc/api/transport/stun.cc
     Source/webrtc/api/units/data_rate.cc
     Source/webrtc/api/units/data_size.cc
+    Source/webrtc/api/units/frequency.cc
     Source/webrtc/api/units/time_delta.cc
     Source/webrtc/api/units/timestamp.cc
     Source/webrtc/api/video/builtin_video_bitrate_allocator_factory.cc
@@ -433,15 +433,17 @@ set(webrtc_SOURCES
     Source/webrtc/api/video/hdr_metadata.cc
     Source/webrtc/api/video/i010_buffer.cc
     Source/webrtc/api/video/i420_buffer.cc
+    Source/webrtc/api/video/nv12_buffer.cc
+    Source/webrtc/api/video/video_adaptation_counters.cc
     Source/webrtc/api/video/video_bitrate_allocation.cc
     Source/webrtc/api/video/video_bitrate_allocator.cc
     Source/webrtc/api/video/video_content_type.cc
     Source/webrtc/api/video/video_frame.cc
     Source/webrtc/api/video/video_frame_buffer.cc
+    Source/webrtc/api/video/video_frame_metadata.cc
     Source/webrtc/api/video/video_source_interface.cc
     Source/webrtc/api/video/video_stream_decoder_create.cc
     Source/webrtc/api/video/video_stream_encoder_create.cc
-    Source/webrtc/api/video/video_stream_encoder_observer.cc
     Source/webrtc/api/video/video_timing.cc
     Source/webrtc/api/video_codecs/builtin_video_decoder_factory.cc
     Source/webrtc/api/video_codecs/builtin_video_encoder_factory.cc
@@ -462,12 +464,21 @@ set(webrtc_SOURCES
     Source/webrtc/audio/audio_state.cc
     Source/webrtc/audio/audio_transport_impl.cc
     Source/webrtc/audio/channel_receive.cc
+    Source/webrtc/audio/channel_receive_frame_transformer_delegate.cc
     Source/webrtc/audio/channel_send.cc
+    Source/webrtc/audio/channel_send_frame_transformer_delegate.cc
     Source/webrtc/audio/null_audio_poller.cc
     Source/webrtc/audio/remix_resample.cc
     Source/webrtc/audio/utility/audio_frame_operations.cc
     Source/webrtc/audio/utility/channel_mixer.cc
     Source/webrtc/audio/utility/channel_mixing_matrix.cc
+    Source/webrtc/call/adaptation/video_stream_input_state_provider.cc
+    Source/webrtc/call/adaptation/degradation_preference_provider.cc
+    Source/webrtc/call/adaptation/broadcast_resource_listener.cc
+    Source/webrtc/call/adaptation/video_stream_input_state.cc
+    Source/webrtc/call/adaptation/adaptation_constraint.cc
+    Source/webrtc/call/adaptation/resource_adaptation_processor.cc
+    Source/webrtc/call/adaptation/video_stream_adapter.cc
     Source/webrtc/call/audio_receive_stream.cc
     Source/webrtc/call/audio_send_stream.cc
     Source/webrtc/call/audio_state.cc
@@ -480,12 +491,10 @@ set(webrtc_SOURCES
     Source/webrtc/call/flexfec_receive_stream.cc
     Source/webrtc/call/flexfec_receive_stream_impl.cc
     Source/webrtc/call/receive_time_calculator.cc
-    Source/webrtc/call/rtcp_demuxer.cc
     Source/webrtc/call/rtp_bitrate_configurator.cc
     Source/webrtc/call/rtp_config.cc
     Source/webrtc/call/rtp_demuxer.cc
     Source/webrtc/call/rtp_payload_params.cc
-    Source/webrtc/call/rtp_rtcp_demuxer_helper.cc
     Source/webrtc/call/rtp_stream_receiver_controller.cc
     Source/webrtc/call/rtp_transport_controller_send.cc
     Source/webrtc/call/rtp_video_sender.cc
@@ -496,9 +505,6 @@ set(webrtc_SOURCES
     Source/webrtc/call/video_send_stream.cc
     Source/webrtc/call/adaptation/encoder_settings.cc
     Source/webrtc/call/adaptation/resource_adaptation_processor_interface.cc
-    Source/webrtc/call/adaptation/resource.cc
-    Source/webrtc/call/adaptation/resource_consumer.cc
-    Source/webrtc/call/adaptation/resource_consumer_configuration.cc
     Source/webrtc/call/adaptation/video_source_restrictions.cc
     Source/webrtc/common_audio/audio_converter.cc
     Source/webrtc/common_audio/audio_util.cc
@@ -546,7 +552,8 @@ set(webrtc_SOURCES
     Source/webrtc/common_audio/signal_processing/sqrt_of_one_minus_x_squared.c
     Source/webrtc/common_audio/signal_processing/vector_scaling_operations.c
     Source/webrtc/common_audio/smoothing_filter.cc
-    Source/webrtc/common_audio/third_party/fft4g/fft4g.c
+    Source/webrtc/common_audio/third_party/ooura/fft_size_128/ooura_fft.cc
+    Source/webrtc/common_audio/third_party/ooura/fft_size_256/fft4g.cc
     Source/webrtc/common_audio/third_party/spl_sqrt_floor/spl_sqrt_floor.c
     Source/webrtc/common_audio/vad/vad.cc
     Source/webrtc/common_audio/vad/vad_core.c
@@ -565,10 +572,10 @@ set(webrtc_SOURCES
     Source/webrtc/common_video/h264/pps_parser.cc
     Source/webrtc/common_video/h264/sps_parser.cc
     Source/webrtc/common_video/h264/sps_vui_rewriter.cc
-    Source/webrtc/common_video/i420_buffer_pool.cc
     Source/webrtc/common_video/incoming_video_stream.cc
     Source/webrtc/common_video/libyuv/webrtc_libyuv.cc
     Source/webrtc/common_video/video_frame_buffer.cc
+    Source/webrtc/common_video/video_frame_buffer_pool.cc
     Source/webrtc/common_video/video_render_frames.cc
     Source/webrtc/logging/rtc_event_log/events/rtc_event_alr_state.cc
     Source/webrtc/logging/rtc_event_log/events/rtc_event_audio_network_adaptation.cc
@@ -796,6 +803,7 @@ set(webrtc_SOURCES
     Source/webrtc/modules/audio_processing/aec3/block_processor.cc
     Source/webrtc/modules/audio_processing/aec3/block_processor_metrics.cc
     Source/webrtc/modules/audio_processing/aec3/clockdrift_detector.cc
+    Source/webrtc/modules/audio_processing/aec3/coarse_filter_update_gain.cc
     Source/webrtc/modules/audio_processing/aec3/comfort_noise_generator.cc
     Source/webrtc/modules/audio_processing/aec3/decimator.cc
     Source/webrtc/modules/audio_processing/aec3/dominant_nearend_detector.cc
@@ -812,10 +820,10 @@ set(webrtc_SOURCES
     Source/webrtc/modules/audio_processing/aec3/filter_analyzer.cc
     Source/webrtc/modules/audio_processing/aec3/frame_blocker.cc
     Source/webrtc/modules/audio_processing/aec3/fullband_erle_estimator.cc
-    Source/webrtc/modules/audio_processing/aec3/main_filter_update_gain.cc
     Source/webrtc/modules/audio_processing/aec3/matched_filter.cc
     Source/webrtc/modules/audio_processing/aec3/matched_filter_lag_aggregator.cc
     Source/webrtc/modules/audio_processing/aec3/moving_average.cc
+    Source/webrtc/modules/audio_processing/aec3/refined_filter_update_gain.cc
     Source/webrtc/modules/audio_processing/aec3/render_buffer.cc
     Source/webrtc/modules/audio_processing/aec3/render_delay_buffer.cc
     Source/webrtc/modules/audio_processing/aec3/render_delay_controller.cc
@@ -826,7 +834,6 @@ set(webrtc_SOURCES
     Source/webrtc/modules/audio_processing/aec3/reverb_frequency_response.cc
     Source/webrtc/modules/audio_processing/aec3/reverb_model.cc
     Source/webrtc/modules/audio_processing/aec3/reverb_model_estimator.cc
-    Source/webrtc/modules/audio_processing/aec3/shadow_filter_update_gain.cc
     Source/webrtc/modules/audio_processing/aec3/signal_dependent_erle_estimator.cc
     Source/webrtc/modules/audio_processing/aec3/spectrum_buffer.cc
     Source/webrtc/modules/audio_processing/aec3/stationarity_estimator.cc
@@ -837,6 +844,7 @@ set(webrtc_SOURCES
     Source/webrtc/modules/audio_processing/aec3/subtractor_output_analyzer.cc
     Source/webrtc/modules/audio_processing/aec3/suppression_filter.cc
     Source/webrtc/modules/audio_processing/aec3/suppression_gain.cc
+    Source/webrtc/modules/audio_processing/aec3/transparent_mode.cc
     Source/webrtc/modules/audio_processing/aec_dump/null_aec_dump_factory.cc
     Source/webrtc/modules/audio_processing/aecm/aecm_core.cc
     Source/webrtc/modules/audio_processing/aecm/aecm_core_c.cc
@@ -844,10 +852,7 @@ set(webrtc_SOURCES
     Source/webrtc/modules/audio_processing/agc/agc.cc
     Source/webrtc/modules/audio_processing/agc/agc_manager_direct.cc
     Source/webrtc/modules/audio_processing/agc/utility.cc
-    Source/webrtc/modules/audio_processing/agc/legacy/analog_agc.c
-    Source/webrtc/modules/audio_processing/agc/legacy/digital_agc.c
     Source/webrtc/modules/audio_processing/agc/loudness_histogram.cc
-    Source/webrtc/modules/audio_processing/agc2/agc2_common.cc
     Source/webrtc/modules/audio_processing/agc2/adaptive_agc.cc
     Source/webrtc/modules/audio_processing/agc2/adaptive_digital_gain_applier.cc
     Source/webrtc/modules/audio_processing/agc2/adaptive_mode_level_estimator.cc
@@ -876,9 +881,12 @@ set(webrtc_SOURCES
     Source/webrtc/modules/audio_processing/agc2/vector_float_frame.cc
     Source/webrtc/modules/audio_processing/agc/agc.cc
     Source/webrtc/modules/audio_processing/agc/agc_manager_direct.cc
+    Source/webrtc/modules/audio_processing/agc/legacy/analog_agc.cc
+    Source/webrtc/modules/audio_processing/agc/legacy/digital_agc.cc
     Source/webrtc/modules/audio_processing/agc/loudness_histogram.cc
     Source/webrtc/modules/audio_processing/agc/utility.cc
     Source/webrtc/modules/audio_processing/audio_buffer.cc
+    Source/webrtc/modules/audio_processing/audio_processing_builder_impl.cc
     Source/webrtc/modules/audio_processing/audio_processing_impl.cc
     Source/webrtc/modules/audio_processing/echo_control_mobile_impl.cc
     Source/webrtc/modules/audio_processing/echo_detector/circular_buffer.cc
@@ -889,6 +897,7 @@ set(webrtc_SOURCES
     Source/webrtc/modules/audio_processing/gain_controller2.cc
     Source/webrtc/modules/audio_processing/high_pass_filter.cc
     Source/webrtc/modules/audio_processing/include/aec_dump.cc
+    Source/webrtc/modules/audio_processing/include/audio_frame_proxies.cc
     Source/webrtc/modules/audio_processing/include/audio_processing.cc
     Source/webrtc/modules/audio_processing/include/audio_processing_statistics.cc
     Source/webrtc/modules/audio_processing/include/config.cc
@@ -907,6 +916,7 @@ set(webrtc_SOURCES
     Source/webrtc/modules/audio_processing/ns/speech_probability_estimator.cc
     Source/webrtc/modules/audio_processing/ns/suppression_params.cc
     Source/webrtc/modules/audio_processing/ns/wiener_filter.cc
+    Source/webrtc/modules/audio_processing/optionally_built_submodule_creators.cc
     Source/webrtc/modules/audio_processing/residual_echo_detector.cc
     Source/webrtc/modules/audio_processing/rms_level.cc
     Source/webrtc/modules/audio_processing/splitting_filter.cc
@@ -917,14 +927,13 @@ set(webrtc_SOURCES
     Source/webrtc/modules/audio_processing/transient/file_utils.cc
     Source/webrtc/modules/audio_processing/transient/moving_moments.cc
     Source/webrtc/modules/audio_processing/transient/transient_detector.cc
-    Source/webrtc/modules/audio_processing/transient/transient_suppressor.cc
+    Source/webrtc/modules/audio_processing/transient/transient_suppressor_impl.cc
     Source/webrtc/modules/audio_processing/transient/wpd_node.cc
     Source/webrtc/modules/audio_processing/transient/wpd_tree.cc
     Source/webrtc/modules/audio_processing/typing_detection.cc
     Source/webrtc/modules/audio_processing/utility/cascaded_biquad_filter.cc
     Source/webrtc/modules/audio_processing/utility/delay_estimator.cc
     Source/webrtc/modules/audio_processing/utility/delay_estimator_wrapper.cc
-    Source/webrtc/modules/audio_processing/utility/ooura_fft.cc
     Source/webrtc/modules/audio_processing/utility/pffft_wrapper.cc
     Source/webrtc/modules/audio_processing/vad/gmm.cc
     Source/webrtc/modules/audio_processing/vad/pitch_based_vad.cc
@@ -935,12 +944,6 @@ set(webrtc_SOURCES
     Source/webrtc/modules/audio_processing/vad/vad_circular_buffer.cc
     Source/webrtc/modules/audio_processing/vad/voice_activity_detector.cc
     Source/webrtc/modules/audio_processing/voice_detection.cc
-    Source/webrtc/modules/congestion_controller/bbr/bandwidth_sampler.cc
-    Source/webrtc/modules/congestion_controller/bbr/bbr_factory.cc
-    Source/webrtc/modules/congestion_controller/bbr/bbr_network_controller.cc
-    Source/webrtc/modules/congestion_controller/bbr/data_transfer_tracker.cc
-    Source/webrtc/modules/congestion_controller/bbr/loss_rate_filter.cc
-    Source/webrtc/modules/congestion_controller/bbr/rtt_stats.cc
     Source/webrtc/modules/congestion_controller/goog_cc/acknowledged_bitrate_estimator.cc
     Source/webrtc/modules/congestion_controller/goog_cc/acknowledged_bitrate_estimator_interface.cc
     Source/webrtc/modules/congestion_controller/goog_cc/alr_detector.cc
@@ -950,7 +953,6 @@ set(webrtc_SOURCES
     Source/webrtc/modules/congestion_controller/goog_cc/goog_cc_network_control.cc
     Source/webrtc/modules/congestion_controller/goog_cc/link_capacity_estimator.cc
     Source/webrtc/modules/congestion_controller/goog_cc/loss_based_bandwidth_estimation.cc
-    Source/webrtc/modules/congestion_controller/goog_cc/median_slope_estimator.cc
     Source/webrtc/modules/congestion_controller/goog_cc/probe_bitrate_estimator.cc
     Source/webrtc/modules/congestion_controller/goog_cc/probe_controller.cc
     Source/webrtc/modules/congestion_controller/goog_cc/robust_throughput_estimator.cc
@@ -961,7 +963,6 @@ set(webrtc_SOURCES
     Source/webrtc/modules/congestion_controller/rtp/control_handler.cc
     Source/webrtc/modules/congestion_controller/rtp/transport_feedback_adapter.cc
     Source/webrtc/modules/congestion_controller/rtp/transport_feedback_demuxer.cc
-    Source/webrtc/modules/include/module_common_types.cc
     Source/webrtc/modules/pacing/bitrate_prober.cc
     Source/webrtc/modules/pacing/interval_budget.cc
     Source/webrtc/modules/pacing/paced_sender.cc
@@ -981,6 +982,7 @@ set(webrtc_SOURCES
     Source/webrtc/modules/rtp_rtcp/include/rtp_rtcp_defines.cc
     Source/webrtc/modules/rtp_rtcp/source/absolute_capture_time_receiver.cc
     Source/webrtc/modules/rtp_rtcp/source/absolute_capture_time_sender.cc
+    Source/webrtc/modules/rtp_rtcp/source/active_decode_targets_helper.cc
     Source/webrtc/modules/rtp_rtcp/source/create_video_rtp_depacketizer.cc
     Source/webrtc/modules/rtp_rtcp/source/dtmf_queue.cc
     Source/webrtc/modules/rtp_rtcp/source/fec_private_tables_bursty.cc
@@ -1042,10 +1044,12 @@ set(webrtc_SOURCES
     Source/webrtc/modules/rtp_rtcp/source/rtp_header_extensions.cc
     Source/webrtc/modules/rtp_rtcp/source/rtp_header_extension_size.cc
     Source/webrtc/modules/rtp_rtcp/source/rtp_packet.cc
+    Source/webrtc/modules/rtp_rtcp/source/rtp_packetizer_av1.cc
     Source/webrtc/modules/rtp_rtcp/source/rtp_packet_history.cc
     Source/webrtc/modules/rtp_rtcp/source/rtp_packet_received.cc
     Source/webrtc/modules/rtp_rtcp/source/rtp_packet_to_send.cc
     Source/webrtc/modules/rtp_rtcp/source/rtp_rtcp_impl.cc
+    Source/webrtc/modules/rtp_rtcp/source/rtp_rtcp_impl2.cc
     Source/webrtc/modules/rtp_rtcp/source/rtp_sender_audio.cc
     Source/webrtc/modules/rtp_rtcp/source/rtp_sender.cc
     Source/webrtc/modules/rtp_rtcp/source/rtp_sender_egress.cc
@@ -1057,17 +1061,20 @@ set(webrtc_SOURCES
     Source/webrtc/modules/rtp_rtcp/source/source_tracker.cc
     Source/webrtc/modules/rtp_rtcp/source/time_util.cc
     Source/webrtc/modules/rtp_rtcp/source/tmmbr_help.cc
-    Source/webrtc/modules/rtp_rtcp/source/transformable_encoded_frame.cc
     Source/webrtc/modules/rtp_rtcp/source/ulpfec_generator.cc
     Source/webrtc/modules/rtp_rtcp/source/ulpfec_header_reader_writer.cc
     Source/webrtc/modules/rtp_rtcp/source/ulpfec_receiver_impl.cc
+    Source/webrtc/modules/rtp_rtcp/source/video_rtp_depacketizer.cc
+    Source/webrtc/modules/rtp_rtcp/source/video_rtp_depacketizer_av1.cc
     Source/webrtc/modules/rtp_rtcp/source/video_rtp_depacketizer_generic.cc
     Source/webrtc/modules/rtp_rtcp/source/video_rtp_depacketizer_h264.cc
     Source/webrtc/modules/rtp_rtcp/source/video_rtp_depacketizer_raw.cc
     Source/webrtc/modules/rtp_rtcp/source/video_rtp_depacketizer_vp8.cc
+    Source/webrtc/modules/rtp_rtcp/source/video_rtp_depacketizer_vp9.cc
     Source/webrtc/modules/third_party/g722/g722_decode.c
     Source/webrtc/modules/third_party/g722/g722_encode.c
     Source/webrtc/modules/utility/source/process_thread_impl.cc
+    Source/webrtc/modules/video_coding/chain_diff_calculator.cc
     Source/webrtc/modules/video_coding/codecs/h264/h264.cc
     Source/webrtc/modules/video_coding/codecs/vp8/default_temporal_layers.cc
     Source/webrtc/modules/video_coding/codecs/vp8/libvpx_interface.cc
@@ -1077,11 +1084,11 @@ set(webrtc_SOURCES
     Source/webrtc/modules/video_coding/codecs/vp8/temporal_layers_checker.cc
     Source/webrtc/modules/video_coding/codecs/vp9/svc_config.cc
     Source/webrtc/modules/video_coding/codecs/vp9/svc_rate_allocator.cc
-    Source/webrtc/modules/video_coding/codecs/vp9/vp9_noop.cc
     Source/webrtc/modules/video_coding/codec_timer.cc
     Source/webrtc/modules/video_coding/decoder_database.cc
     Source/webrtc/modules/video_coding/decoding_state.cc
     Source/webrtc/modules/video_coding/encoded_frame.cc
+    Source/webrtc/modules/video_coding/event_wrapper.cc
     Source/webrtc/modules/video_coding/fec_controller_default.cc
     Source/webrtc/modules/video_coding/frame_buffer2.cc
     Source/webrtc/modules/video_coding/frame_buffer.cc
@@ -1097,7 +1104,7 @@ set(webrtc_SOURCES
     Source/webrtc/modules/video_coding/jitter_estimator.cc
     Source/webrtc/modules/video_coding/loss_notification_controller.cc
     Source/webrtc/modules/video_coding/media_opt_util.cc
-    Source/webrtc/modules/video_coding/nack_module.cc
+    Source/webrtc/modules/video_coding/nack_module2.cc
     Source/webrtc/modules/video_coding/packet_buffer.cc
     Source/webrtc/modules/video_coding/packet.cc
     Source/webrtc/modules/video_coding/receiver.cc
@@ -1115,6 +1122,7 @@ set(webrtc_SOURCES
     Source/webrtc/modules/video_coding/utility/simulcast_rate_allocator.cc
     Source/webrtc/modules/video_coding/utility/simulcast_utility.cc
     Source/webrtc/modules/video_coding/utility/vp8_header_parser.cc
+    Source/webrtc/modules/video_coding/utility/vp9_uncompressed_header_parser.cc
     Source/webrtc/modules/video_coding/video_codec_initializer.cc
     Source/webrtc/modules/video_coding/video_coding_defines.cc
     Source/webrtc/modules/video_coding/video_coding_impl.cc
@@ -1155,11 +1163,9 @@ set(webrtc_SOURCES
     Source/webrtc/pc/audio_track.cc
     Source/webrtc/pc/channel.cc
     Source/webrtc/pc/channel_manager.cc
-    Source/webrtc/pc/composite_data_channel_transport.cc
     Source/webrtc/pc/composite_rtp_transport.cc
-    Source/webrtc/pc/data_channel.cc
     Source/webrtc/pc/data_channel_controller.cc
-    Source/webrtc/pc/datagram_rtp_transport.cc
+    Source/webrtc/pc/data_channel_utils.cc
     Source/webrtc/pc/dtls_transport.cc
     Source/webrtc/pc/dtls_srtp_transport.cc
     Source/webrtc/pc/dtmf_sender.cc
@@ -1182,15 +1188,18 @@ set(webrtc_SOURCES
     Source/webrtc/pc/rtcp_mux_filter.cc
     Source/webrtc/pc/rtc_stats_collector.cc
     Source/webrtc/pc/rtc_stats_traversal.cc
+    Source/webrtc/pc/rtp_data_channel.cc
     Source/webrtc/pc/rtp_media_utils.cc
     Source/webrtc/pc/rtp_parameters_conversion.cc
     Source/webrtc/pc/rtp_receiver.cc
     Source/webrtc/pc/rtp_sender.cc
     Source/webrtc/pc/rtp_transceiver.cc
     Source/webrtc/pc/rtp_transport.cc
+    Source/webrtc/pc/sctp_data_channel.cc
     Source/webrtc/pc/sctp_data_channel_transport.cc
     Source/webrtc/pc/sctp_transport.cc
     Source/webrtc/pc/sctp_utils.cc
+    Source/webrtc/pc/sdp_offer_answer.cc
     Source/webrtc/pc/sdp_serializer.cc
     Source/webrtc/pc/sdp_utils.cc
     Source/webrtc/pc/session_description.cc
@@ -1200,6 +1209,7 @@ set(webrtc_SOURCES
     Source/webrtc/pc/srtp_transport.cc
     Source/webrtc/pc/stats_collector.cc
     Source/webrtc/pc/track_media_info_map.cc
+    Source/webrtc/pc/transceiver_list.cc
     Source/webrtc/pc/transport_stats.cc
     Source/webrtc/pc/video_rtp_receiver.cc
     Source/webrtc/pc/video_rtp_track_source.cc
@@ -1220,15 +1230,15 @@ set(webrtc_SOURCES
     Source/webrtc/rtc_base/copy_on_write_buffer.cc
     Source/webrtc/rtc_base/cpu_time.cc
     Source/webrtc/rtc_base/crc32.cc
-    Source/webrtc/rtc_base/critical_section.cc
     Source/webrtc/rtc_base/crypt_string.cc
+    Source/webrtc/rtc_base/deprecated/recursive_critical_section.cc
+    Source/webrtc/rtc_base/deprecated/signal_thread.cc
     Source/webrtc/rtc_base/data_rate_limiter.cc
     Source/webrtc/rtc_base/event.cc
     Source/webrtc/rtc_base/event_tracer.cc
     Source/webrtc/rtc_base/experiments/alr_experiment.cc
     Source/webrtc/rtc_base/experiments/balanced_degradation_settings.cc
     Source/webrtc/rtc_base/experiments/cpu_speed_experiment.cc
-    Source/webrtc/rtc_base/experiments/experimental_screenshare_settings.cc
     Source/webrtc/rtc_base/experiments/field_trial_list.cc
     Source/webrtc/rtc_base/experiments/field_trial_parser.cc
     Source/webrtc/rtc_base/experiments/field_trial_units.cc
@@ -1267,7 +1277,10 @@ set(webrtc_SOURCES
     Source/webrtc/rtc_base/net_helper.cc
     Source/webrtc/rtc_base/net_helpers.cc
     Source/webrtc/rtc_base/network.cc
+    Source/webrtc/rtc_base/network_constants.cc
     Source/webrtc/rtc_base/network_monitor.cc
+    Source/webrtc/rtc_base/network_monitor_factory.cc
+    Source/webrtc/rtc_base/network_route.cc
     Source/webrtc/rtc_base/network/sent_packet.cc
     Source/webrtc/rtc_base/null_socket_server.cc
     Source/webrtc/rtc_base/numerics/event_based_exponential_moving_average.cc
@@ -1276,7 +1289,6 @@ set(webrtc_SOURCES
     Source/webrtc/rtc_base/numerics/histogram_percentile_counter.cc
     Source/webrtc/rtc_base/numerics/moving_average.cc
     Source/webrtc/rtc_base/numerics/sample_counter.cc
-    Source/webrtc/rtc_base/numerics/samples_stats_counter.cc
     Source/webrtc/rtc_base/numerics/sample_stats.cc
     Source/webrtc/rtc_base/openssl_adapter.cc
     Source/webrtc/rtc_base/openssl_certificate.cc
@@ -1296,10 +1308,10 @@ set(webrtc_SOURCES
     Source/webrtc/rtc_base/rate_limiter.cc
     Source/webrtc/rtc_base/rate_statistics.cc
     Source/webrtc/rtc_base/rate_tracker.cc
+    Source/webrtc/rtc_base/robo_caller.cc
     Source/webrtc/rtc_base/rtc_certificate.cc
     Source/webrtc/rtc_base/rtc_certificate_generator.cc
     Source/webrtc/rtc_base/server_socket_adapters.cc
-    Source/webrtc/rtc_base/signal_thread.cc
     Source/webrtc/rtc_base/socket.cc
     Source/webrtc/rtc_base/socket_adapters.cc
     Source/webrtc/rtc_base/socket_address.cc
@@ -1314,16 +1326,20 @@ set(webrtc_SOURCES
     Source/webrtc/rtc_base/string_encode.cc
     Source/webrtc/rtc_base/strings/audio_format_to_string.cc
     Source/webrtc/rtc_base/strings/string_builder.cc
+    Source/webrtc/rtc_base/strings/string_format.cc
     Source/webrtc/rtc_base/string_to_number.cc
     Source/webrtc/rtc_base/string_utils.cc
+    Source/webrtc/rtc_base/synchronization/mutex.cc
     Source/webrtc/rtc_base/synchronization/rw_lock_posix.cc
     Source/webrtc/rtc_base/synchronization/rw_lock_wrapper.cc
     Source/webrtc/rtc_base/synchronization/sequence_checker.cc
+    Source/webrtc/rtc_base/synchronization/yield.cc
     Source/webrtc/rtc_base/synchronization/yield_policy.cc
     Source/webrtc/rtc_base/system/file_wrapper.cc
     Source/webrtc/rtc_base/task_queue.cc
     Source/webrtc/rtc_base/task_queue_stdlib.cc
     Source/webrtc/rtc_base/task_utils/repeating_task.cc
+    Source/webrtc/rtc_base/task_utils/pending_task_safety_flag.cc
     Source/webrtc/rtc_base/third_party/base64/base64.cc
     Source/webrtc/rtc_base/third_party/sigslot/sigslot.cc
     Source/webrtc/rtc_base/thread.cc
@@ -1333,7 +1349,6 @@ set(webrtc_SOURCES
     Source/webrtc/rtc_base/unique_id_generator.cc
     Source/webrtc/rtc_base/weak_ptr.cc
     Source/webrtc/rtc_base/zero_memory.cc
-    Source/webrtc/rtc_tools/rtp_generator/rtp_generator.cc
     Source/webrtc/stats/rtc_stats.cc
     Source/webrtc/stats/rtcstats_objects.cc
     Source/webrtc/stats/rtc_stats_report.cc
@@ -1347,14 +1362,18 @@ set(webrtc_SOURCES
     Source/webrtc/test/encoder_settings.cc
     Source/webrtc/test/field_trial.cc
     Source/webrtc/test/testsupport/file_utils.cc
-    Source/webrtc/video/adaptation/adaptation_counters.cc
+    Source/webrtc/video/adaptation/balanced_constraint.cc
+    Source/webrtc/video/adaptation/bitrate_constraint.cc
     Source/webrtc/video/adaptation/encode_usage_resource.cc
     Source/webrtc/video/adaptation/overuse_frame_detector.cc
+    Source/webrtc/video/adaptation/quality_rampup_experiment_helper.cc
     Source/webrtc/video/adaptation/quality_scaler_resource.cc
-    Source/webrtc/video/adaptation/resource_adaptation_processor.cc
-    Source/webrtc/video/adaptation/video_stream_adapter.cc
+    Source/webrtc/video/adaptation/video_stream_encoder_resource.cc
+    Source/webrtc/video/adaptation/video_stream_encoder_resource_manager.cc
+    Source/webrtc/video/alignment_adjuster.cc
     Source/webrtc/video/buffered_frame_decryptor.cc
     Source/webrtc/video/call_stats.cc
+    Source/webrtc/video/call_stats2.cc
     Source/webrtc/video/encoder_bitrate_adjuster.cc
     Source/webrtc/video/encoder_overshoot_detector.cc
     Source/webrtc/video/encoder_rtcp_feedback.cc
@@ -1363,9 +1382,12 @@ set(webrtc_SOURCES
     Source/webrtc/video/quality_limitation_reason_tracker.cc
     Source/webrtc/video/quality_threshold.cc
     Source/webrtc/video/receive_statistics_proxy.cc
+    Source/webrtc/video/receive_statistics_proxy2.cc
     Source/webrtc/video/report_block_stats.cc
     Source/webrtc/video/rtp_streams_synchronizer.cc
+    Source/webrtc/video/rtp_streams_synchronizer2.cc
     Source/webrtc/video/rtp_video_stream_receiver.cc
+    Source/webrtc/video/rtp_video_stream_receiver2.cc
     Source/webrtc/video/rtp_video_stream_receiver_frame_transformer_delegate.cc
     Source/webrtc/video/send_delay_stats.cc
     Source/webrtc/video/send_statistics_proxy.cc
@@ -1373,11 +1395,14 @@ set(webrtc_SOURCES
     Source/webrtc/video/stream_synchronization.cc
     Source/webrtc/video/transport_adapter.cc
     Source/webrtc/video/video_quality_observer.cc
+    Source/webrtc/video/video_quality_observer2.cc
     Source/webrtc/video/video_receive_stream.cc
+    Source/webrtc/video/video_receive_stream2.cc
     Source/webrtc/video/video_send_stream.cc
     Source/webrtc/video/video_send_stream_impl.cc
     Source/webrtc/video/video_source_sink_controller.cc
     Source/webrtc/video/video_stream_decoder.cc
+    Source/webrtc/video/video_stream_decoder2.cc
     Source/webrtc/video/video_stream_decoder_impl.cc
     Source/webrtc/video/video_stream_encoder.cc
     $<TARGET_OBJECTS:libsrtp>
@@ -1387,7 +1412,7 @@ if (WTF_CPU_X86_64 OR WTF_CPU_X86)
     list(APPEND webrtc_SOURCES
         Source/webrtc/common_audio/fir_filter_sse.cc
         Source/webrtc/common_audio/resampler/sinc_resampler_sse.cc
-        Source/webrtc/modules/audio_processing/utility/ooura_fft_sse2.cc
+        Source/webrtc/common_audio/third_party/ooura/fft_size_128/ooura_fft_sse2.cc
         Source/webrtc/modules/video_processing/util/denoiser_filter_sse2.cc
     )
 endif()
@@ -1427,6 +1452,7 @@ target_compile_definitions(webrtc PRIVATE
   WEBRTC_CODEC_ISAC
   WEBRTC_CODEC_OPUS
   WEBRTC_CODEC_RED
+  WEBRTC_ENABLE_LINUX_ALSA
   WEBRTC_INCLUDE_INTERNAL_AUDIO_DEVICE
   WEBRTC_INTELLIGIBILITY_ENHANCER=0
   WEBRTC_LINUX
@@ -1438,7 +1464,6 @@ target_compile_definitions(webrtc PRIVATE
   WEBRTC_USE_BUILTIN_ISAC_FIX=1
   WEBRTC_USE_BUILTIN_ISAC_FLOAT=0
   WTF_USE_DYNAMIC_ANNOTATIONS=1
-  LINUX_ALSA
   RTC_DISABLE_VP9
   _GNU_SOURCE
   __Userspace__

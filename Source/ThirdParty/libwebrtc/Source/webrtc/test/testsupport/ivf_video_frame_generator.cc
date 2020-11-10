@@ -53,7 +53,7 @@ IvfVideoFrameGenerator::IvfVideoFrameGenerator(const std::string& file_name)
       WEBRTC_VIDEO_CODEC_OK);
 }
 IvfVideoFrameGenerator::~IvfVideoFrameGenerator() {
-  rtc::CritScope crit(&lock_);
+  MutexLock lock(&lock_);
   if (!file_reader_) {
     return;
   }
@@ -62,7 +62,7 @@ IvfVideoFrameGenerator::~IvfVideoFrameGenerator() {
   // Reset decoder to prevent it from async access to |this|.
   video_decoder_.reset();
   {
-    rtc::CritScope frame_crit(&frame_decode_lock_);
+    MutexLock frame_lock(&frame_decode_lock_);
     next_frame_ = absl::nullopt;
     // Set event in case another thread is waiting on it.
     next_frame_decoded_.Set();
@@ -70,7 +70,7 @@ IvfVideoFrameGenerator::~IvfVideoFrameGenerator() {
 }
 
 FrameGeneratorInterface::VideoFrameData IvfVideoFrameGenerator::NextFrame() {
-  rtc::CritScope crit(&lock_);
+  MutexLock lock(&lock_);
   next_frame_decoded_.Reset();
   RTC_CHECK(file_reader_);
   if (!file_reader_->HasMoreFrames()) {
@@ -86,7 +86,7 @@ FrameGeneratorInterface::VideoFrameData IvfVideoFrameGenerator::NextFrame() {
   RTC_CHECK(decoded) << "Failed to decode next frame in "
                      << kMaxNextFrameWaitTemeoutMs << "ms. Can't continue";
 
-  rtc::CritScope frame_crit(&frame_decode_lock_);
+  MutexLock frame_lock(&frame_decode_lock_);
   rtc::scoped_refptr<VideoFrameBuffer> buffer =
       next_frame_->video_frame_buffer();
   if (width_ != static_cast<size_t>(buffer->width()) ||
@@ -102,7 +102,7 @@ FrameGeneratorInterface::VideoFrameData IvfVideoFrameGenerator::NextFrame() {
 }
 
 void IvfVideoFrameGenerator::ChangeResolution(size_t width, size_t height) {
-  rtc::CritScope crit(&lock_);
+  MutexLock lock(&lock_);
   width_ = width;
   height_ = height;
 }
@@ -126,7 +126,7 @@ void IvfVideoFrameGenerator::DecodedCallback::Decoded(
 }
 
 void IvfVideoFrameGenerator::OnFrameDecoded(const VideoFrame& decoded_frame) {
-  rtc::CritScope crit(&frame_decode_lock_);
+  MutexLock lock(&frame_decode_lock_);
   next_frame_ = decoded_frame;
   next_frame_decoded_.Set();
 }

@@ -16,7 +16,6 @@
 #include "api/rtp_headers.h"
 #include "api/video_codecs/video_codec.h"
 #include "api/video_codecs/video_decoder.h"
-#include "modules/include/module_common_types.h"
 #include "modules/utility/include/process_thread.h"
 #include "modules/video_coding/decoder_database.h"
 #include "modules/video_coding/encoded_frame.h"
@@ -31,7 +30,6 @@
 #include "modules/video_coding/timing.h"
 #include "modules/video_coding/video_coding_impl.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/critical_section.h"
 #include "rtc_base/location.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/one_time_event.h"
@@ -53,7 +51,6 @@ VideoReceiver::VideoReceiver(Clock* clock, VCMTiming* timing)
       drop_frames_until_keyframe_(false),
       max_nack_list_size_(0),
       _codecDataBase(),
-      _receiveStatsTimer(1000, clock_),
       _retransmissionTimer(10, clock_),
       _keyRequestTimer(500, clock_) {
   decoder_thread_checker_.Detach();
@@ -66,20 +63,13 @@ VideoReceiver::~VideoReceiver() {
 
 void VideoReceiver::Process() {
   RTC_DCHECK_RUN_ON(&module_thread_checker_);
-  // Receive-side statistics
-
-  // TODO(philipel): Remove this if block when we know what to do with
-  //                 ReceiveStatisticsProxy::QualitySample.
-  if (_receiveStatsTimer.TimeUntilProcess() == 0) {
-    _receiveStatsTimer.Processed();
-  }
 
   // Key frame requests
   if (_keyRequestTimer.TimeUntilProcess() == 0) {
     _keyRequestTimer.Processed();
     bool request_key_frame = _frameTypeCallback != nullptr;
     if (request_key_frame) {
-      rtc::CritScope cs(&process_crit_);
+      MutexLock lock(&process_mutex_);
       request_key_frame = _scheduleKeyRequest;
     }
     if (request_key_frame)
@@ -102,7 +92,7 @@ void VideoReceiver::Process() {
         ret = RequestKeyFrame();
       }
       if (ret == VCM_OK && !nackList.empty()) {
-        rtc::CritScope cs(&process_crit_);
+        MutexLock lock(&process_mutex_);
         if (_packetRequestCallback != nullptr) {
           _packetRequestCallback->ResendPackets(&nackList[0], nackList.size());
         }
@@ -124,11 +114,7 @@ void VideoReceiver::ProcessThreadAttached(ProcessThread* process_thread) {
 
 int64_t VideoReceiver::TimeUntilNextProcess() {
   RTC_DCHECK_RUN_ON(&module_thread_checker_);
-  int64_t timeUntilNextProcess = _receiveStatsTimer.TimeUntilProcess();
-  // We need a Process call more often if we are relying on
-  // retransmissions
-  timeUntilNextProcess =
-      VCM_MIN(timeUntilNextProcess, _retransmissionTimer.TimeUntilProcess());
+  int64_t timeUntilNextProcess = _retransmissionTimer.TimeUntilProcess();
 
   timeUntilNextProcess =
       VCM_MIN(timeUntilNextProcess, _keyRequestTimer.TimeUntilProcess());
@@ -195,7 +181,7 @@ int32_t VideoReceiver::Decode(uint16_t maxWaitTimeMs) {
 
   bool drop_frame = false;
   {
-    rtc::CritScope cs(&process_crit_);
+    MutexLock lock(&process_mutex_);
     if (drop_frames_until_keyframe_) {
       // Still getting delta frames, schedule another keyframe request as if
       // decode failed.
@@ -241,7 +227,7 @@ int32_t VideoReceiver::RequestKeyFrame() {
     if (ret < 0) {
       return ret;
     }
-    rtc::CritScope cs(&process_crit_);
+    MutexLock lock(&process_mutex_);
     _scheduleKeyRequest = false;
   } else {
     return VCM_MISSING_CALLBACK;
@@ -263,15 +249,15 @@ int32_t VideoReceiver::Decode(const VCMEncodedFrame& frame) {
 }
 
 // Register possible receive codecs, can be called multiple times
-int32_t VideoReceiver::RegisterReceiveCodec(const VideoCodec* receiveCodec,
-                                            int32_t numberOfCores,
-                                            bool requireKeyFrame) {
+int32_t VideoReceiver::RegisterReceiveCodec(uint8_t payload_type,
+                                            const VideoCodec* receiveCodec,
+                                            int32_t numberOfCores) {
   RTC_DCHECK_RUN_ON(&construction_thread_checker_);
   if (receiveCodec == nullptr) {
     return VCM_PARAMETER_ERROR;
   }
-  if (!_codecDataBase.RegisterReceiveCodec(receiveCodec, numberOfCores,
-                                           requireKeyFrame)) {
+  if (!_codecDataBase.RegisterReceiveCodec(payload_type, receiveCodec,
+                                           numberOfCores)) {
     return -1;
   }
   return 0;
@@ -303,7 +289,7 @@ int32_t VideoReceiver::IncomingPacket(const uint8_t* incomingPayload,
   // request scheduling to throttle the requests.
   if (ret == VCM_FLUSH_INDICATOR) {
     {
-      rtc::CritScope cs(&process_crit_);
+      MutexLock lock(&process_mutex_);
       drop_frames_until_keyframe_ = true;
     }
     RequestKeyFrame();

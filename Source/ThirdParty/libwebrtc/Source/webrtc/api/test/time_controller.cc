@@ -26,7 +26,7 @@ std::unique_ptr<TaskQueueFactory> TimeController::CreateTaskQueueFactory() {
   };
   return std::make_unique<FactoryWrapper>(GetTaskQueueFactory());
 }
-bool TimeController::Wait(const std::function<bool()>& done,
+bool TimeController::Wait(const std::function<bool()>& condition,
                           TimeDelta max_duration) {
   // Step size is chosen to be short enough to not significantly affect latency
   // in real time tests while being long enough to avoid adding too much load to
@@ -34,10 +34,10 @@ bool TimeController::Wait(const std::function<bool()>& done,
   const auto kStep = TimeDelta::Millis(5);
   for (auto elapsed = TimeDelta::Zero(); elapsed < max_duration;
        elapsed += kStep) {
-    if (done())
+    if (condition())
       return true;
     AdvanceTime(kStep);
   }
-  return done();
+  return condition();
 }
 }  // namespace webrtc

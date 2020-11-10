@@ -10,6 +10,7 @@
 
 #include "rtc_base/operations_chain.h"
 
+#include <atomic>
 #include <functional>
 #include <memory>
 #include <utility>
@@ -17,6 +18,7 @@
 
 #include "rtc_base/bind.h"
 #include "rtc_base/event.h"
+#include "rtc_base/gunit.h"
 #include "rtc_base/thread.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
@@ -24,6 +26,12 @@
 namespace rtc {
 
 using ::testing::ElementsAre;
+
+namespace {
+
+constexpr int kDefaultTimeout = 3000;
+
+}  // namespace
 
 class OperationTracker {
  public:
@@ -118,6 +126,31 @@ class OperationTrackerProxy {
           event_ptr->Set();
         });
     return event;
+  }
+
+  void SetOnChainEmptyCallback(std::function<void()> on_chain_empty_callback) {
+    Event event;
+    operations_chain_thread_->PostTask(
+        RTC_FROM_HERE,
+        [this, &event,
+         on_chain_empty_callback = std::move(on_chain_empty_callback)]() {
+          operations_chain_->SetOnChainEmptyCallback(
+              std::move(on_chain_empty_callback));
+          event.Set();
+        });
+    event.Wait(Event::kForever);
+  }
+
+  bool IsEmpty() {
+    Event event;
+    bool is_empty = false;
+    operations_chain_thread_->PostTask(
+        RTC_FROM_HERE, [this, &event, &is_empty]() {
+          is_empty = operations_chain_->IsEmpty();
+          event.Set();
+        });
+    event.Wait(Event::kForever);
+    return is_empty;
   }
 
   std::unique_ptr<Event> ReleaseOperationChain() {
@@ -326,6 +359,87 @@ TEST(OperationsChainTest, OperationsAreExecutedInOrder) {
           operation6_completed_event.get()));
 }
 
+TEST(OperationsChainTest, IsEmpty) {
+  OperationTrackerProxy operation_tracker_proxy;
+  operation_tracker_proxy.Initialize()->Wait(Event::kForever);
+
+  // The chain is initially empty.
+  EXPECT_TRUE(operation_tracker_proxy.IsEmpty());
+  // Chain a single event.
+  Event unblock_async_operation_event0;
+  auto async_operation_completed_event0 =
+      operation_tracker_proxy.PostAsynchronousOperation(
+          &unblock_async_operation_event0);
+  // The chain is not empty while an event is pending.
+  EXPECT_FALSE(operation_tracker_proxy.IsEmpty());
+  // Completing the operation empties the chain.
+  unblock_async_operation_event0.Set();
+  async_operation_completed_event0->Wait(Event::kForever);
+  EXPECT_TRUE(operation_tracker_proxy.IsEmpty());
+
+  // Chain multiple events.
+  Event unblock_async_operation_event1;
+  auto async_operation_completed_event1 =
+      operation_tracker_proxy.PostAsynchronousOperation(
+          &unblock_async_operation_event1);
+  Event unblock_async_operation_event2;
+  auto async_operation_completed_event2 =
+      operation_tracker_proxy.PostAsynchronousOperation(
+          &unblock_async_operation_event2);
+  // Again, the chain is not empty while an event is pending.
+  EXPECT_FALSE(operation_tracker_proxy.IsEmpty());
+  // Upon completing the first event, the chain is still not empty.
+  unblock_async_operation_event1.Set();
+  async_operation_completed_event1->Wait(Event::kForever);
+  EXPECT_FALSE(operation_tracker_proxy.IsEmpty());
+  // Completing the last evenet empties the chain.
+  unblock_async_operation_event2.Set();
+  async_operation_completed_event2->Wait(Event::kForever);
+  EXPECT_TRUE(operation_tracker_proxy.IsEmpty());
+}
+
+TEST(OperationsChainTest, OnChainEmptyCallback) {
+  OperationTrackerProxy operation_tracker_proxy;
+  operation_tracker_proxy.Initialize()->Wait(Event::kForever);
+
+  std::atomic<size_t> on_empty_callback_counter(0u);
+  operation_tracker_proxy.SetOnChainEmptyCallback(
+      [&on_empty_callback_counter] { ++on_empty_callback_counter; });
+
+  // Chain a single event.
+  Event unblock_async_operation_event0;
+  auto async_operation_completed_event0 =
+      operation_tracker_proxy.PostAsynchronousOperation(
+          &unblock_async_operation_event0);
+  // The callback is not invoked until the operation has completed.
+  EXPECT_EQ(0u, on_empty_callback_counter);
+  // Completing the operation empties the chain, invoking the callback.
+  unblock_async_operation_event0.Set();
+  async_operation_completed_event0->Wait(Event::kForever);
+  EXPECT_TRUE_WAIT(1u == on_empty_callback_counter, kDefaultTimeout);
+
+  // Chain multiple events.
+  Event unblock_async_operation_event1;
+  auto async_operation_completed_event1 =
+      operation_tracker_proxy.PostAsynchronousOperation(
+          &unblock_async_operation_event1);
+  Event unblock_async_operation_event2;
+  auto async_operation_completed_event2 =
+      operation_tracker_proxy.PostAsynchronousOperation(
+          &unblock_async_operation_event2);
+  // Again, the callback is not invoked until the operation has completed.
+  EXPECT_TRUE_WAIT(1u == on_empty_callback_counter, kDefaultTimeout);
+  // Upon completing the first event, the chain is still not empty, so the
+  // callback must not be invoked yet.
+  unblock_async_operation_event1.Set();
+  async_operation_completed_event1->Wait(Event::kForever);
+  EXPECT_TRUE_WAIT(1u == on_empty_callback_counter, kDefaultTimeout);
+  // Completing the last evenet empties the chain, invoking the callback.
+  unblock_async_operation_event2.Set();
+  async_operation_completed_event2->Wait(Event::kForever);
+  EXPECT_TRUE_WAIT(2u == on_empty_callback_counter, kDefaultTimeout);
+}
+
 TEST(OperationsChainTest,
      SafeToReleaseReferenceToOperationChainWhileOperationIsPending) {
   OperationTrackerProxy operation_tracker_proxy;
@@ -369,14 +483,15 @@ TEST(OperationsChainTest, FunctorIsNotDestroyedWhileExecuting) {
 
 #if RTC_DCHECK_IS_ON && GTEST_HAS_DEATH_TEST && !defined(WEBRTC_ANDROID)
 
-TEST(OperationsChainTest, OperationNotInvokingCallbackShouldCrash) {
+TEST(OperationsChainDeathTest, OperationNotInvokingCallbackShouldCrash) {
   scoped_refptr<OperationsChain> operations_chain = OperationsChain::Create();
   EXPECT_DEATH(
       operations_chain->ChainOperation([](std::function<void()> callback) {}),
       "");
 }
 
-TEST(OperationsChainTest, OperationInvokingCallbackMultipleTimesShouldCrash) {
+TEST(OperationsChainDeathTest,
+     OperationInvokingCallbackMultipleTimesShouldCrash) {
   scoped_refptr<OperationsChain> operations_chain = OperationsChain::Create();
   EXPECT_DEATH(
       operations_chain->ChainOperation([](std::function<void()> callback) {

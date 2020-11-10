@@ -14,9 +14,9 @@
 #include <utility>
 
 #include "absl/base/attributes.h"
-#include "rtc_base/critical_section.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/platform_thread_types.h"
+#include "rtc_base/synchronization/mutex.h"
 #include "sdk/android/native_api/stacktrace/stacktrace.h"
 
 namespace webrtc {
@@ -30,7 +30,7 @@ struct ThreadData {
 
 // The map of registered threads, and the lock that protects it. We create the
 // map on first use, and never destroy it.
-ABSL_CONST_INIT rtc::GlobalLock g_thread_registry_lock;
+ABSL_CONST_INIT GlobalMutex g_thread_registry_lock(absl::kConstInit);
 ABSL_CONST_INIT std::map<const ScopedRegisterThreadForDebugging*, ThreadData>*
     g_registered_threads = nullptr;
 
@@ -38,7 +38,7 @@ ABSL_CONST_INIT std::map<const ScopedRegisterThreadForDebugging*, ThreadData>*
 
 ScopedRegisterThreadForDebugging::ScopedRegisterThreadForDebugging(
     rtc::Location location) {
-  rtc::GlobalLockScope gls(&g_thread_registry_lock);
+  GlobalMutexLock gls(&g_thread_registry_lock);
   if (g_registered_threads == nullptr) {
     g_registered_threads =
         new std::map<const ScopedRegisterThreadForDebugging*, ThreadData>();
@@ -49,14 +49,14 @@ ScopedRegisterThreadForDebugging::ScopedRegisterThreadForDebugging(
 }
 
 ScopedRegisterThreadForDebugging::~ScopedRegisterThreadForDebugging() {
-  rtc::GlobalLockScope gls(&g_thread_registry_lock);
+  GlobalMutexLock gls(&g_thread_registry_lock);
   RTC_DCHECK(g_registered_threads != nullptr);
   const int num_erased = g_registered_threads->erase(this);
   RTC_DCHECK_EQ(num_erased, 1);
 }
 
 void PrintStackTracesOfRegisteredThreads() {
-  rtc::GlobalLockScope gls(&g_thread_registry_lock);
+  GlobalMutexLock gls(&g_thread_registry_lock);
   if (g_registered_threads == nullptr) {
     return;
   }

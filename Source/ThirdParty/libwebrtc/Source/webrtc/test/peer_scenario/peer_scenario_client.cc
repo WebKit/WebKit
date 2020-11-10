@@ -18,6 +18,7 @@
 #include "api/rtc_event_log/rtc_event_log_factory.h"
 #include "api/task_queue/default_task_queue_factory.h"
 #include "api/test/create_time_controller.h"
+#include "api/transport/field_trial_based_config.h"
 #include "api/video_codecs/builtin_video_decoder_factory.h"
 #include "api/video_codecs/builtin_video_encoder_factory.h"
 #include "media/engine/webrtc_media_engine.h"
@@ -125,8 +126,6 @@ class FakeVideoEncoderFactory : public VideoEncoderFactory {
   CodecInfo QueryVideoEncoder(const SdpVideoFormat& format) const override {
     RTC_CHECK_EQ(format.name, "VP8");
     CodecInfo info;
-    info.has_internal_source = false;
-    info.is_hardware_accelerated = false;
     return info;
   }
   std::unique_ptr<VideoEncoder> CreateVideoEncoder(
@@ -199,6 +198,7 @@ PeerScenarioClient::PeerScenarioClient(
       net->time_controller()->CreateTaskQueueFactory();
   pcf_deps.event_log_factory =
       std::make_unique<RtcEventLogFactory>(task_queue_factory_);
+  pcf_deps.trials = std::make_unique<FieldTrialBasedConfig>();
 
   cricket::MediaEngineDependencies media_deps;
   media_deps.task_queue_factory = task_queue_factory_;
@@ -223,6 +223,7 @@ PeerScenarioClient::PeerScenarioClient(
   }
   media_deps.audio_encoder_factory = CreateBuiltinAudioEncoderFactory();
   media_deps.audio_decoder_factory = CreateBuiltinAudioDecoderFactory();
+  media_deps.trials = pcf_deps.trials.get();
 
   pcf_deps.media_engine = cricket::CreateMediaEngine(std::move(media_deps));
   pcf_deps.fec_controller_factory = nullptr;
@@ -230,6 +231,9 @@ PeerScenarioClient::PeerScenarioClient(
   pcf_deps.network_state_predictor_factory = nullptr;
 
   pc_factory_ = CreateModularPeerConnectionFactory(std::move(pcf_deps));
+  PeerConnectionFactoryInterface::Options pc_options;
+  pc_options.disable_encryption = config.disable_encryption;
+  pc_factory_->SetOptions(pc_options);
 
   PeerConnectionDependencies pc_deps(observer_.get());
   pc_deps.allocator =
@@ -287,14 +291,17 @@ void PeerScenarioClient::AddVideoReceiveSink(
 }
 
 void PeerScenarioClient::CreateAndSetSdp(
+    std::function<void(SessionDescriptionInterface*)> munge_offer,
     std::function<void(std::string)> offer_handler) {
   RTC_DCHECK_RUN_ON(signaling_thread_);
   peer_connection_->CreateOffer(
       SdpCreateObserver([=](SessionDescriptionInterface* offer) {
         RTC_DCHECK_RUN_ON(signaling_thread_);
+        if (munge_offer) {
+          munge_offer(offer);
+        }
         std::string sdp_offer;
-        offer->ToString(&sdp_offer);
-        RTC_LOG(LS_INFO) << sdp_offer;
+        RTC_CHECK(offer->ToString(&sdp_offer));
         peer_connection_->SetLocalDescription(
             SdpSetObserver(
                 [sdp_offer, offer_handler]() { offer_handler(sdp_offer); }),

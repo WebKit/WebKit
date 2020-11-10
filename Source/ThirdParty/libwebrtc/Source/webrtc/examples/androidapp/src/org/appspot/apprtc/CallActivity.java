@@ -786,7 +786,7 @@ public class CallActivity extends Activity implements AppRTCClient.SignalingEven
   }
 
   @Override
-  public void onRemoteDescription(final SessionDescription sdp) {
+  public void onRemoteDescription(final SessionDescription desc) {
     final long delta = System.currentTimeMillis() - callStartedTimeMs;
     runOnUiThread(new Runnable() {
       @Override
@@ -795,8 +795,8 @@ public class CallActivity extends Activity implements AppRTCClient.SignalingEven
           Log.e(TAG, "Received remote SDP for non-initilized peer connection.");
           return;
         }
-        logAndToast("Received remote " + sdp.type + ", delay=" + delta + "ms");
-        peerConnectionClient.setRemoteDescription(sdp);
+        logAndToast("Received remote " + desc.type + ", delay=" + delta + "ms");
+        peerConnectionClient.setRemoteDescription(desc);
         if (!signalingParameters.initiator) {
           logAndToast("Creating ANSWER...");
           // Create answer. Answer SDP will be sent to offering client in
@@ -856,17 +856,17 @@ public class CallActivity extends Activity implements AppRTCClient.SignalingEven
   // All callbacks are invoked from peer connection client looper thread and
   // are routed to UI thread.
   @Override
-  public void onLocalDescription(final SessionDescription sdp) {
+  public void onLocalDescription(final SessionDescription desc) {
     final long delta = System.currentTimeMillis() - callStartedTimeMs;
     runOnUiThread(new Runnable() {
       @Override
       public void run() {
         if (appRtcClient != null) {
-          logAndToast("Sending " + sdp.type + ", delay=" + delta + "ms");
+          logAndToast("Sending " + desc.type + ", delay=" + delta + "ms");
           if (signalingParameters.initiator) {
-            appRtcClient.sendOfferSdp(sdp);
+            appRtcClient.sendOfferSdp(desc);
           } else {
-            appRtcClient.sendAnswerSdp(sdp);
+            appRtcClient.sendAnswerSdp(desc);
           }
         }
         if (peerConnectionParameters.videoMaxBitrate > 0) {

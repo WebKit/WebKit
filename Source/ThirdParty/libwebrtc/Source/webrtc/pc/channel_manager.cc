@@ -79,22 +79,14 @@ void ChannelManager::GetSupportedAudioReceiveCodecs(
   *codecs = media_engine_->voice().recv_codecs();
 }
 
-void ChannelManager::GetSupportedAudioRtpHeaderExtensions(
-    RtpHeaderExtensions* ext) const {
-  if (!media_engine_) {
-    return;
-  }
-  *ext = media_engine_->voice().GetCapabilities().header_extensions;
-}
-
-void ChannelManager::GetSupportedVideoCodecs(
+void ChannelManager::GetSupportedVideoSendCodecs(
     std::vector<VideoCodec>* codecs) const {
   if (!media_engine_) {
     return;
   }
   codecs->clear();
 
-  std::vector<VideoCodec> video_codecs = media_engine_->video().codecs();
+  std::vector<VideoCodec> video_codecs = media_engine_->video().send_codecs();
   for (const auto& video_codec : video_codecs) {
     if (!enable_rtx_ &&
         absl::EqualsIgnoreCase(kRtxCodecName, video_codec.name)) {
@@ -104,12 +96,21 @@ void ChannelManager::GetSupportedVideoCodecs(
   }
 }
 
-void ChannelManager::GetSupportedVideoRtpHeaderExtensions(
-    RtpHeaderExtensions* ext) const {
+void ChannelManager::GetSupportedVideoReceiveCodecs(
+    std::vector<VideoCodec>* codecs) const {
   if (!media_engine_) {
     return;
   }
-  *ext = media_engine_->video().GetCapabilities().header_extensions;
+  codecs->clear();
+
+  std::vector<VideoCodec> video_codecs = media_engine_->video().recv_codecs();
+  for (const auto& video_codec : video_codecs) {
+    if (!enable_rtx_ &&
+        absl::EqualsIgnoreCase(kRtxCodecName, video_codec.name)) {
+      continue;
+    }
+    codecs->push_back(video_codec);
+  }
 }
 
 void ChannelManager::GetSupportedDataCodecs(
@@ -140,6 +141,34 @@ bool ChannelManager::Init() {
   return initialized_;
 }
 
+RtpHeaderExtensions ChannelManager::GetDefaultEnabledAudioRtpHeaderExtensions()
+    const {
+  if (!media_engine_)
+    return {};
+  return GetDefaultEnabledRtpHeaderExtensions(media_engine_->voice());
+}
+
+std::vector<webrtc::RtpHeaderExtensionCapability>
+ChannelManager::GetSupportedAudioRtpHeaderExtensions() const {
+  if (!media_engine_)
+    return {};
+  return media_engine_->voice().GetRtpHeaderExtensions();
+}
+
+RtpHeaderExtensions ChannelManager::GetDefaultEnabledVideoRtpHeaderExtensions()
+    const {
+  if (!media_engine_)
+    return {};
+  return GetDefaultEnabledRtpHeaderExtensions(media_engine_->video());
+}
+
+std::vector<webrtc::RtpHeaderExtensionCapability>
+ChannelManager::GetSupportedVideoRtpHeaderExtensions() const {
+  if (!media_engine_)
+    return {};
+  return media_engine_->video().GetRtpHeaderExtensions();
+}
+
 void ChannelManager::Terminate() {
   RTC_DCHECK(initialized_);
   if (!initialized_) {
@@ -158,19 +187,20 @@ VoiceChannel* ChannelManager::CreateVoiceChannel(
     webrtc::Call* call,
     const cricket::MediaConfig& media_config,
     webrtc::RtpTransportInternal* rtp_transport,
-    const webrtc::MediaTransportConfig& media_transport_config,
     rtc::Thread* signaling_thread,
     const std::string& content_name,
     bool srtp_required,
     const webrtc::CryptoOptions& crypto_options,
     rtc::UniqueRandomIdGenerator* ssrc_generator,
     const AudioOptions& options) {
+  // TODO(bugs.webrtc.org/11992): Remove this workaround after updates in
+  // PeerConnection and add the expectation that we're already on the right
+  // thread.
   if (!worker_thread_->IsCurrent()) {
     return worker_thread_->Invoke<VoiceChannel*>(RTC_FROM_HERE, [&] {
       return CreateVoiceChannel(call, media_config, rtp_transport,
-                                media_transport_config, signaling_thread,
-                                content_name, srtp_required, crypto_options,
-                                ssrc_generator, options);
+                                signaling_thread, content_name, srtp_required,
+                                crypto_options, ssrc_generator, options);
     });
   }
 
@@ -192,7 +222,7 @@ VoiceChannel* ChannelManager::CreateVoiceChannel(
       absl::WrapUnique(media_channel), content_name, srtp_required,
       crypto_options, ssrc_generator);
 
-  voice_channel->Init_w(rtp_transport, media_transport_config);
+  voice_channel->Init_w(rtp_transport);
 
   VoiceChannel* voice_channel_ptr = voice_channel.get();
   voice_channels_.push_back(std::move(voice_channel));
@@ -228,7 +258,6 @@ VideoChannel* ChannelManager::CreateVideoChannel(
     webrtc::Call* call,
     const cricket::MediaConfig& media_config,
     webrtc::RtpTransportInternal* rtp_transport,
-    const webrtc::MediaTransportConfig& media_transport_config,
     rtc::Thread* signaling_thread,
     const std::string& content_name,
     bool srtp_required,
@@ -236,12 +265,15 @@ VideoChannel* ChannelManager::CreateVideoChannel(
     rtc::UniqueRandomIdGenerator* ssrc_generator,
     const VideoOptions& options,
     webrtc::VideoBitrateAllocatorFactory* video_bitrate_allocator_factory) {
+  // TODO(bugs.webrtc.org/11992): Remove this workaround after updates in
+  // PeerConnection and add the expectation that we're already on the right
+  // thread.
   if (!worker_thread_->IsCurrent()) {
     return worker_thread_->Invoke<VideoChannel*>(RTC_FROM_HERE, [&] {
-      return CreateVideoChannel(
-          call, media_config, rtp_transport, media_transport_config,
-          signaling_thread, content_name, srtp_required, crypto_options,
-          ssrc_generator, options, video_bitrate_allocator_factory);
+      return CreateVideoChannel(call, media_config, rtp_transport,
+                                signaling_thread, content_name, srtp_required,
+                                crypto_options, ssrc_generator, options,
+                                video_bitrate_allocator_factory);
     });
   }
 
@@ -264,7 +296,7 @@ VideoChannel* ChannelManager::CreateVideoChannel(
       absl::WrapUnique(media_channel), content_name, srtp_required,
       crypto_options, ssrc_generator);
 
-  video_channel->Init_w(rtp_transport, media_transport_config);
+  video_channel->Init_w(rtp_transport);
 
   VideoChannel* video_channel_ptr = video_channel.get();
   video_channels_.push_back(std::move(video_channel));
@@ -326,7 +358,7 @@ RtpDataChannel* ChannelManager::CreateRtpDataChannel(
       crypto_options, ssrc_generator);
 
   // Media Transports are not supported with Rtp Data Channel.
-  data_channel->Init_w(rtp_transport, webrtc::MediaTransportConfig());
+  data_channel->Init_w(rtp_transport);
 
   RtpDataChannel* data_channel_ptr = data_channel.get();
   data_channels_.push_back(std::move(data_channel));

@@ -145,6 +145,16 @@ TEST_F(IvfFileReaderTest, BasicVP9FileMsTimestamp) {
   ValidateContent(kVideoCodecVP9, true, 1);
 }
 
+TEST_F(IvfFileReaderTest, BasicAv1FileNtpTimestamp) {
+  CreateTestFile(kVideoCodecAV1, false, 1);
+  ValidateContent(kVideoCodecAV1, false, 1);
+}
+
+TEST_F(IvfFileReaderTest, BasicAv1FileMsTimestamp) {
+  CreateTestFile(kVideoCodecAV1, true, 1);
+  ValidateContent(kVideoCodecAV1, true, 1);
+}
+
 TEST_F(IvfFileReaderTest, BasicH264FileNtpTimestamp) {
   CreateTestFile(kVideoCodecH264, false, 1);
   ValidateContent(kVideoCodecH264, false, 1);
@@ -163,6 +173,11 @@ TEST_F(IvfFileReaderTest, MultilayerVp8FileNtpTimestamp) {
 TEST_F(IvfFileReaderTest, MultilayerVP9FileNtpTimestamp) {
   CreateTestFile(kVideoCodecVP9, false, 3);
   ValidateContent(kVideoCodecVP9, false, 3);
+}
+
+TEST_F(IvfFileReaderTest, MultilayerAv1FileNtpTimestamp) {
+  CreateTestFile(kVideoCodecAV1, false, 3);
+  ValidateContent(kVideoCodecAV1, false, 3);
 }
 
 TEST_F(IvfFileReaderTest, MultilayerH264FileNtpTimestamp) {

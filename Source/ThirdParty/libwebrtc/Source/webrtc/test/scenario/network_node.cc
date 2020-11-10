@@ -86,7 +86,7 @@ bool NetworkNodeTransport::SendRtp(const uint8_t* packet,
   sent_packet.info.packet_type = rtc::PacketType::kData;
   sender_call_->OnSentPacket(sent_packet);
 
-  rtc::CritScope crit(&crit_sect_);
+  MutexLock lock(&mutex_);
   if (!endpoint_)
     return false;
   rtc::CopyOnWriteBuffer buffer(packet, length);
@@ -97,7 +97,7 @@ bool NetworkNodeTransport::SendRtp(const uint8_t* packet,
 
 bool NetworkNodeTransport::SendRtcp(const uint8_t* packet, size_t length) {
   rtc::CopyOnWriteBuffer buffer(packet, length);
-  rtc::CritScope crit(&crit_sect_);
+  MutexLock lock(&mutex_);
   if (!endpoint_)
     return false;
   endpoint_->SendPacket(local_address_, remote_address_, buffer,
@@ -111,17 +111,17 @@ void NetworkNodeTransport::Connect(EmulatedEndpoint* endpoint,
   rtc::NetworkRoute route;
   route.connected = true;
   // We assume that the address will be unique in the lower bytes.
-  route.local_network_id = static_cast<uint16_t>(
-      receiver_address.ipaddr().v4AddressAsHostOrderInteger());
-  route.remote_network_id = static_cast<uint16_t>(
-      receiver_address.ipaddr().v4AddressAsHostOrderInteger());
+  route.local = rtc::RouteEndpoint::CreateWithNetworkId(static_cast<uint16_t>(
+      receiver_address.ipaddr().v4AddressAsHostOrderInteger()));
+  route.remote = rtc::RouteEndpoint::CreateWithNetworkId(static_cast<uint16_t>(
+      receiver_address.ipaddr().v4AddressAsHostOrderInteger()));
   route.packet_overhead = packet_overhead.bytes() +
                           receiver_address.ipaddr().overhead() +
                           cricket::kUdpHeaderSize;
   {
     // Only IPv4 address is supported.
     RTC_CHECK_EQ(receiver_address.family(), AF_INET);
-    rtc::CritScope crit(&crit_sect_);
+    MutexLock lock(&mutex_);
     endpoint_ = endpoint;
     local_address_ = rtc::SocketAddress(endpoint_->GetPeerLocalAddress(), 0);
     remote_address_ = receiver_address;
@@ -134,7 +134,7 @@ void NetworkNodeTransport::Connect(EmulatedEndpoint* endpoint,
 }
 
 void NetworkNodeTransport::Disconnect() {
-  rtc::CritScope crit(&crit_sect_);
+  MutexLock lock(&mutex_);
   current_network_route_.connected = false;
   sender_call_->GetTransportControllerSend()->OnNetworkRouteChanged(
       kDummyTransportName, current_network_route_);

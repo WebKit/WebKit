@@ -18,8 +18,8 @@
 #include "absl/types/optional.h"
 #include "modules/include/module_common_types_public.h"
 #include "modules/rtp_rtcp/include/receive_statistics.h"
-#include "rtc_base/critical_section.h"
 #include "rtc_base/rate_statistics.h"
+#include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/thread_annotations.h"
 
 namespace webrtc {
@@ -65,7 +65,7 @@ class StreamStatisticianImpl : public StreamStatistician {
 
   const uint32_t ssrc_;
   Clock* const clock_;
-  rtc::CriticalSection stream_lock_;
+  mutable Mutex stream_lock_;
   RateStatistics incoming_bitrate_ RTC_GUARDED_BY(&stream_lock_);
   // In number of packets or sequence numbers.
   int max_reordering_threshold_ RTC_GUARDED_BY(&stream_lock_);
@@ -123,7 +123,7 @@ class ReceiveStatisticsImpl : public ReceiveStatistics {
   StreamStatisticianImpl* GetOrCreateStatistician(uint32_t ssrc);
 
   Clock* const clock_;
-  rtc::CriticalSection receive_statistics_lock_;
+  mutable Mutex receive_statistics_lock_;
   uint32_t last_returned_ssrc_;
   int max_reordering_threshold_ RTC_GUARDED_BY(receive_statistics_lock_);
   std::map<uint32_t, StreamStatisticianImpl*> statisticians_

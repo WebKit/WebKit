@@ -58,16 +58,6 @@ const double kPerfectPSNR = 48.0f;
 //                   video frame.
 size_t CalcBufferSize(VideoType type, int width, int height);
 
-// TODO(mikhal): Add unit test for these two functions and determine location.
-// Print VideoFrame to file
-// Input:
-//    - frame       : Reference to video frame.
-//    - file        : pointer to file object. It is assumed that the file is
-//                    already open for writing.
-// Return value: 0 if OK, < 0 otherwise.
-int PrintVideoFrame(const VideoFrame& frame, FILE* file);
-int PrintVideoFrame(const I420BufferInterface& frame, FILE* file);
-
 // Extract buffer from VideoFrame or I420BufferInterface (consecutive
 // planes, no stride)
 // Input:

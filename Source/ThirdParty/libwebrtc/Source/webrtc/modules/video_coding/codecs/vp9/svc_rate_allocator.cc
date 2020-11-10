@@ -140,7 +140,8 @@ DataRate FindLayerTogglingThreshold(const VideoCodec& codec,
       }
     }
     upper_bound += DataRate::KilobitsPerSec(
-        codec.spatialLayers[num_active_layers - 1].minBitrate);
+        codec.spatialLayers[first_active_layer + num_active_layers - 1]
+            .minBitrate);
 
     // Do a binary search until upper and lower bound is the highest bitrate for
     // |num_active_layers| - 1 layers and lowest bitrate for |num_active_layers|

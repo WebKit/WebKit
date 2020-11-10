@@ -15,7 +15,7 @@
 
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
-#include "rtc_base/critical_section.h"
+#include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/thread_annotations.h"
 #include "rtc_base/time_utils.h"
 
@@ -43,7 +43,7 @@ class FakeClock : public ClockInterface {
   void AdvanceTime(webrtc::TimeDelta delta);
 
  private:
-  CriticalSection lock_;
+  mutable webrtc::Mutex lock_;
   int64_t time_ns_ RTC_GUARDED_BY(lock_) = 0;
 };
 

@@ -27,6 +27,7 @@
 #include "api/stats_types.h"
 #include "p2p/base/port.h"
 #include "pc/peer_connection_internal.h"
+#include "pc/stats_collector_interface.h"
 #include "rtc_base/network_constants.h"
 #include "rtc_base/ssl_certificate.h"
 
@@ -44,7 +45,7 @@ const char* AdapterTypeToStatsType(rtc::AdapterType type);
 // A mapping between track ids and their StatsReport.
 typedef std::map<std::string, StatsReport*> TrackIdMap;
 
-class StatsCollector {
+class StatsCollector : public StatsCollectorInterface {
  public:
   // The caller is responsible for ensuring that the pc outlives the
   // StatsCollector instance.
@@ -57,11 +58,13 @@ class StatsCollector {
   void AddTrack(MediaStreamTrackInterface* track);
 
   // Adds a local audio track that is used for getting some voice statistics.
-  void AddLocalAudioTrack(AudioTrackInterface* audio_track, uint32_t ssrc);
+  void AddLocalAudioTrack(AudioTrackInterface* audio_track,
+                          uint32_t ssrc) override;
 
   // Removes a local audio tracks that is used for getting some voice
   // statistics.
-  void RemoveLocalAudioTrack(AudioTrackInterface* audio_track, uint32_t ssrc);
+  void RemoveLocalAudioTrack(AudioTrackInterface* audio_track,
+                             uint32_t ssrc) override;
 
   // Gather statistics from the session and store them for future use.
   void UpdateStats(PeerConnectionInterface::StatsOutputLevel level);

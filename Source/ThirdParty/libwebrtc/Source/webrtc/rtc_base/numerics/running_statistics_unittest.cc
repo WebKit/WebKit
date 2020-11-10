@@ -21,6 +21,7 @@
 // Tests were copied from samples_stats_counter_unittest.cc.
 
 namespace webrtc {
+namespace webrtc_impl {
 namespace {
 
 RunningStatistics<double> CreateStatsFilledWithIntsFrom1ToN(int n) {
@@ -54,8 +55,6 @@ RunningStatistics<double> CreateStatsFromUniformDistribution(int n,
 class RunningStatisticsTest : public ::testing::TestWithParam<int> {};
 
 constexpr int SIZE_FOR_MERGE = 5;
-
-}  // namespace
 
 TEST(RunningStatistics, FullSimpleTest) {
   auto stats = CreateStatsFilledWithIntsFrom1ToN(100);
@@ -192,4 +191,6 @@ INSTANTIATE_TEST_SUITE_P(RunningStatisticsTests,
                          RunningStatisticsTest,
                          ::testing::Range(0, SIZE_FOR_MERGE + 1));
 
+}  // namespace
+}  // namespace webrtc_impl
 }  // namespace webrtc

@@ -8,23 +8,25 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include <array>
 #include <memory>
 #include <utility>
 
 #include "modules/audio_processing/aec_dump/mock_aec_dump.h"
+#include "modules/audio_processing/audio_processing_impl.h"
 #include "modules/audio_processing/include/audio_processing.h"
+#include "modules/audio_processing/test/audio_processing_builder_for_testing.h"
 
 using ::testing::_;
 using ::testing::AtLeast;
 using ::testing::Exactly;
-using ::testing::Matcher;
 using ::testing::StrictMock;
 
 namespace {
 std::unique_ptr<webrtc::AudioProcessing> CreateAudioProcessing() {
   webrtc::Config config;
   std::unique_ptr<webrtc::AudioProcessing> apm(
-      webrtc::AudioProcessingBuilder().Create(config));
+      webrtc::AudioProcessingBuilderForTesting().Create(config));
   RTC_DCHECK(apm);
   return apm;
 }
@@ -35,14 +37,6 @@ std::unique_ptr<webrtc::test::MockAecDump> CreateMockAecDump() {
   EXPECT_CALL(*mock_aec_dump.get(), WriteConfig(_)).Times(AtLeast(1));
   EXPECT_CALL(*mock_aec_dump.get(), WriteInitMessage(_, _)).Times(AtLeast(1));
   return std::unique_ptr<webrtc::test::MockAecDump>(std::move(mock_aec_dump));
-}
-
-std::unique_ptr<webrtc::AudioFrame> CreateFakeFrame() {
-  auto fake_frame = std::make_unique<webrtc::AudioFrame>();
-  fake_frame->num_channels_ = 1;
-  fake_frame->sample_rate_hz_ = 48000;
-  fake_frame->samples_per_channel_ = 480;
-  return fake_frame;
 }
 
 }  // namespace
@@ -57,27 +51,38 @@ TEST(AecDumpIntegration,
      RenderStreamShouldBeLoggedOnceEveryProcessReverseStream) {
   auto apm = CreateAudioProcessing();
   auto mock_aec_dump = CreateMockAecDump();
-  auto fake_frame = CreateFakeFrame();
+  constexpr int kNumChannels = 1;
+  constexpr int kNumSampleRateHz = 16000;
+  constexpr int kNumSamplesPerChannel = kNumSampleRateHz / 100;
+  std::array<int16_t, kNumSamplesPerChannel * kNumChannels> frame;
+  frame.fill(0.f);
+  webrtc::StreamConfig stream_config(kNumSampleRateHz, kNumChannels,
+                                     /*has_keyboard=*/false);
 
-  EXPECT_CALL(*mock_aec_dump.get(),
-              WriteRenderStreamMessage(Matcher<const webrtc::AudioFrame&>(_)))
+  EXPECT_CALL(*mock_aec_dump.get(), WriteRenderStreamMessage(_, _, _))
       .Times(Exactly(1));
 
   apm->AttachAecDump(std::move(mock_aec_dump));
-  apm->ProcessReverseStream(fake_frame.get());
+  apm->ProcessReverseStream(frame.data(), stream_config, stream_config,
+                            frame.data());
 }
 
 TEST(AecDumpIntegration, CaptureStreamShouldBeLoggedOnceEveryProcessStream) {
   auto apm = CreateAudioProcessing();
   auto mock_aec_dump = CreateMockAecDump();
-  auto fake_frame = CreateFakeFrame();
+  constexpr int kNumChannels = 1;
+  constexpr int kNumSampleRateHz = 16000;
+  constexpr int kNumSamplesPerChannel = kNumSampleRateHz / 100;
+  std::array<int16_t, kNumSamplesPerChannel * kNumChannels> frame;
+  frame.fill(0.f);
 
-  EXPECT_CALL(*mock_aec_dump.get(),
-              AddCaptureStreamInput(Matcher<const webrtc::AudioFrame&>(_)))
+  webrtc::StreamConfig stream_config(kNumSampleRateHz, kNumChannels,
+                                     /*has_keyboard=*/false);
+
+  EXPECT_CALL(*mock_aec_dump.get(), AddCaptureStreamInput(_, _, _))
       .Times(AtLeast(1));
 
-  EXPECT_CALL(*mock_aec_dump.get(),
-              AddCaptureStreamOutput(Matcher<const webrtc::AudioFrame&>(_)))
+  EXPECT_CALL(*mock_aec_dump.get(), AddCaptureStreamOutput(_, _, _))
       .Times(Exactly(1));
 
   EXPECT_CALL(*mock_aec_dump.get(), AddAudioProcessingState(_))
@@ -87,5 +92,5 @@ TEST(AecDumpIntegration, CaptureStreamShouldBeLoggedOnceEveryProcessStream) {
       .Times(Exactly(1));
 
   apm->AttachAecDump(std::move(mock_aec_dump));
-  apm->ProcessStream(fake_frame.get());
+  apm->ProcessStream(frame.data(), stream_config, stream_config, frame.data());
 }

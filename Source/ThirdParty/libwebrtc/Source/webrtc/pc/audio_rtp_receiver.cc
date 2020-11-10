@@ -42,8 +42,9 @@ AudioRtpReceiver::AudioRtpReceiver(
     : worker_thread_(worker_thread),
       id_(receiver_id),
       source_(new rtc::RefCountedObject<RemoteAudioSource>(worker_thread)),
-      track_(AudioTrackProxy::Create(rtc::Thread::Current(),
-                                     AudioTrack::Create(receiver_id, source_))),
+      track_(AudioTrackProxyWithInternal<AudioTrack>::Create(
+          rtc::Thread::Current(),
+          AudioTrack::Create(receiver_id, source_))),
       cached_track_enabled_(track_->enabled()),
       attachment_id_(GenerateUniqueId()),
       delay_(JitterBufferDelayProxy::Create(
@@ -146,6 +147,11 @@ void AudioRtpReceiver::Stop() {
   stopped_ = true;
 }
 
+void AudioRtpReceiver::StopAndEndTrack() {
+  Stop();
+  track_->internal()->set_ended();
+}
+
 void AudioRtpReceiver::RestartMediaChannel(absl::optional<uint32_t> ssrc) {
   RTC_DCHECK(media_channel_);
   if (!stopped_ && ssrc_ == ssrc) {
@@ -225,6 +231,19 @@ std::vector<RtpSource> AudioRtpReceiver::GetSources() const {
       RTC_FROM_HERE, [&] { return media_channel_->GetSources(*ssrc_); });
 }
 
+void AudioRtpReceiver::SetDepacketizerToDecoderFrameTransformer(
+    rtc::scoped_refptr<webrtc::FrameTransformerInterface> frame_transformer) {
+  worker_thread_->Invoke<void>(
+      RTC_FROM_HERE, [this, frame_transformer = std::move(frame_transformer)] {
+        RTC_DCHECK_RUN_ON(worker_thread_);
+        frame_transformer_ = frame_transformer;
+        if (media_channel_ && ssrc_.has_value() && !stopped_) {
+          media_channel_->SetDepacketizerToDecoderFrameTransformer(
+              *ssrc_, frame_transformer);
+        }
+      });
+}
+
 void AudioRtpReceiver::Reconfigure() {
   if (!media_channel_ || stopped_) {
     RTC_LOG(LS_ERROR)
@@ -237,6 +256,16 @@ void AudioRtpReceiver::Reconfigure() {
   // Reattach the frame decryptor if we were reconfigured.
   MaybeAttachFrameDecryptorToMediaChannel(
       ssrc_, worker_thread_, frame_decryptor_, media_channel_, stopped_);
+
+  if (media_channel_ && ssrc_.has_value() && !stopped_) {
+    worker_thread_->Invoke<void>(RTC_FROM_HERE, [this] {
+      RTC_DCHECK_RUN_ON(worker_thread_);
+      if (!frame_transformer_)
+        return;
+      media_channel_->SetDepacketizerToDecoderFrameTransformer(
+          *ssrc_, frame_transformer_);
+    });
+  }
 }
 
 void AudioRtpReceiver::SetObserver(RtpReceiverObserverInterface* observer) {

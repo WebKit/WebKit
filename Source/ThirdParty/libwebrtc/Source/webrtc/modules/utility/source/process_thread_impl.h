@@ -20,7 +20,7 @@
 #include "api/task_queue/queued_task.h"
 #include "modules/include/module.h"
 #include "modules/utility/include/process_thread.h"
-#include "rtc_base/critical_section.h"
+#include "rtc_base/deprecated/recursive_critical_section.h"
 #include "rtc_base/event.h"
 #include "rtc_base/location.h"
 #include "rtc_base/platform_thread.h"
@@ -92,7 +92,8 @@ class ProcessThreadImpl : public ProcessThread {
   // issues, but I haven't figured out what they are, if there are alignment
   // requirements for mutexes on Mac or if there's something else to it.
   // So be careful with changing the layout.
-  rtc::CriticalSection lock_;  // Used to guard modules_, tasks_ and stop_.
+  rtc::RecursiveCriticalSection
+      lock_;  // Used to guard modules_, tasks_ and stop_.
 
   rtc::ThreadChecker thread_checker_;
   rtc::Event wake_up_;

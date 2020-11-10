@@ -111,7 +111,7 @@ void AudioBuffer::set_downmixing_by_averaging() {
   downmix_by_averaging_ = true;
 }
 
-void AudioBuffer::CopyFrom(const float* const* data,
+void AudioBuffer::CopyFrom(const float* const* stacked_data,
                            const StreamConfig& stream_config) {
   RTC_DCHECK_EQ(stream_config.num_frames(), input_num_frames_);
   RTC_DCHECK_EQ(stream_config.num_channels(), input_num_channels_);
@@ -127,15 +127,16 @@ void AudioBuffer::CopyFrom(const float* const* data,
     if (downmix_by_averaging_) {
       const float kOneByNumChannels = 1.f / input_num_channels_;
       for (size_t i = 0; i < input_num_frames_; ++i) {
-        float value = data[0][i];
+        float value = stacked_data[0][i];
         for (size_t j = 1; j < input_num_channels_; ++j) {
-          value += data[j][i];
+          value += stacked_data[j][i];
         }
         downmix[i] = value * kOneByNumChannels;
       }
     }
-    const float* downmixed_data =
-        downmix_by_averaging_ ? downmix.data() : data[channel_for_downmixing_];
+    const float* downmixed_data = downmix_by_averaging_
+                                      ? downmix.data()
+                                      : stacked_data[channel_for_downmixing_];
 
     if (resampling_needed) {
       input_resamplers_[0]->Resample(downmixed_data, input_num_frames_,
@@ -147,7 +148,7 @@ void AudioBuffer::CopyFrom(const float* const* data,
   } else {
     if (resampling_needed) {
       for (size_t i = 0; i < num_channels_; ++i) {
-        input_resamplers_[i]->Resample(data[i], input_num_frames_,
+        input_resamplers_[i]->Resample(stacked_data[i], input_num_frames_,
                                        data_->channels()[i],
                                        buffer_num_frames_);
         FloatToFloatS16(data_->channels()[i], buffer_num_frames_,
@@ -155,14 +156,15 @@ void AudioBuffer::CopyFrom(const float* const* data,
       }
     } else {
       for (size_t i = 0; i < num_channels_; ++i) {
-        FloatToFloatS16(data[i], buffer_num_frames_, data_->channels()[i]);
+        FloatToFloatS16(stacked_data[i], buffer_num_frames_,
+                        data_->channels()[i]);
       }
     }
   }
 }
 
 void AudioBuffer::CopyTo(const StreamConfig& stream_config,
-                         float* const* data) {
+                         float* const* stacked_data) {
   RTC_DCHECK_EQ(stream_config.num_frames(), output_num_frames_);
 
   const bool resampling_needed = output_num_frames_ != buffer_num_frames_;
@@ -171,16 +173,18 @@ void AudioBuffer::CopyTo(const StreamConfig& stream_config,
       FloatS16ToFloat(data_->channels()[i], buffer_num_frames_,
                       data_->channels()[i]);
       output_resamplers_[i]->Resample(data_->channels()[i], buffer_num_frames_,
-                                      data[i], output_num_frames_);
+                                      stacked_data[i], output_num_frames_);
     }
   } else {
     for (size_t i = 0; i < num_channels_; ++i) {
-      FloatS16ToFloat(data_->channels()[i], buffer_num_frames_, data[i]);
+      FloatS16ToFloat(data_->channels()[i], buffer_num_frames_,
+                      stacked_data[i]);
     }
   }
 
   for (size_t i = num_channels_; i < stream_config.num_channels(); ++i) {
-    memcpy(data[i], data[0], output_num_frames_ * sizeof(**data));
+    memcpy(stacked_data[i], stacked_data[0],
+           output_num_frames_ * sizeof(**stacked_data));
   }
 }
 
@@ -225,14 +229,15 @@ void AudioBuffer::set_num_channels(size_t num_channels) {
 }
 
 // The resampler is only for supporting 48kHz to 16kHz in the reverse stream.
-void AudioBuffer::CopyFrom(const AudioFrame* frame) {
-  RTC_DCHECK_EQ(frame->num_channels_, input_num_channels_);
-  RTC_DCHECK_EQ(frame->samples_per_channel_, input_num_frames_);
+void AudioBuffer::CopyFrom(const int16_t* const interleaved_data,
+                           const StreamConfig& stream_config) {
+  RTC_DCHECK_EQ(stream_config.num_channels(), input_num_channels_);
+  RTC_DCHECK_EQ(stream_config.num_frames(), input_num_frames_);
   RestoreNumChannels();
 
   const bool resampling_required = input_num_frames_ != buffer_num_frames_;
 
-  const int16_t* interleaved = frame->data();
+  const int16_t* interleaved = interleaved_data;
   if (num_channels_ == 1) {
     if (input_num_channels_ == 1) {
       if (resampling_required) {
@@ -297,13 +302,16 @@ void AudioBuffer::CopyFrom(const AudioFrame* frame) {
   }
 }
 
-void AudioBuffer::CopyTo(AudioFrame* frame) const {
-  RTC_DCHECK(frame->num_channels_ == num_channels_ || num_channels_ == 1);
-  RTC_DCHECK_EQ(frame->samples_per_channel_, output_num_frames_);
+void AudioBuffer::CopyTo(const StreamConfig& stream_config,
+                         int16_t* const interleaved_data) {
+  const size_t config_num_channels = stream_config.num_channels();
+
+  RTC_DCHECK(config_num_channels == num_channels_ || num_channels_ == 1);
+  RTC_DCHECK_EQ(stream_config.num_frames(), output_num_frames_);
 
   const bool resampling_required = buffer_num_frames_ != output_num_frames_;
 
-  int16_t* interleaved = frame->mutable_data();
+  int16_t* interleaved = interleaved_data;
   if (num_channels_ == 1) {
     std::array<float, kMaxSamplesPerChannel> float_buffer;
 
@@ -314,14 +322,14 @@ void AudioBuffer::CopyTo(AudioFrame* frame) const {
     const float* deinterleaved =
         resampling_required ? float_buffer.data() : data_->channels()[0];
 
-    if (frame->num_channels_ == 1) {
+    if (config_num_channels == 1) {
       for (size_t j = 0; j < output_num_frames_; ++j) {
         interleaved[j] = FloatS16ToS16(deinterleaved[j]);
       }
     } else {
       for (size_t i = 0, k = 0; i < output_num_frames_; ++i) {
         float tmp = FloatS16ToS16(deinterleaved[i]);
-        for (size_t j = 0; j < frame->num_channels_; ++j, ++k) {
+        for (size_t j = 0; j < config_num_channels; ++j, ++k) {
           interleaved[k] = tmp;
         }
       }
@@ -342,19 +350,19 @@ void AudioBuffer::CopyTo(AudioFrame* frame) const {
         output_resamplers_[i]->Resample(data_->channels()[i],
                                         buffer_num_frames_, float_buffer.data(),
                                         output_num_frames_);
-        interleave_channel(i, frame->num_channels_, output_num_frames_,
+        interleave_channel(i, config_num_channels, output_num_frames_,
                            float_buffer.data(), interleaved);
       }
     } else {
       for (size_t i = 0; i < num_channels_; ++i) {
-        interleave_channel(i, frame->num_channels_, output_num_frames_,
+        interleave_channel(i, config_num_channels, output_num_frames_,
                            data_->channels()[i], interleaved);
       }
     }
 
-    for (size_t i = num_channels_; i < frame->num_channels_; ++i) {
+    for (size_t i = num_channels_; i < config_num_channels; ++i) {
       for (size_t j = 0, k = i, n = num_channels_; j < output_num_frames_;
-           ++j, k += frame->num_channels_, n += frame->num_channels_) {
+           ++j, k += config_num_channels, n += config_num_channels) {
         interleaved[k] = interleaved[n];
       }
     }

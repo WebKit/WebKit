@@ -62,7 +62,7 @@ typedef NS_ENUM(int, ARDAudioSettingsOptions) {
   return [_settingsModel availableVideoResolutions];
 }
 
-- (NSArray<RTCVideoCodecInfo *> *)videoCodecArray {
+- (NSArray<RTC_OBJC_TYPE(RTCVideoCodecInfo) *> *)videoCodecArray {
   return [_settingsModel availableVideoCodecs];
 }
 
@@ -214,7 +214,7 @@ updateListSelectionAtIndexPath:(NSIndexPath *)indexPath
     cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault
                                   reuseIdentifier:dequeueIdentifier];
   }
-  RTCVideoCodecInfo *codec = self.videoCodecArray[indexPath.row];
+  RTC_OBJC_TYPE(RTCVideoCodecInfo) *codec = self.videoCodecArray[indexPath.row];
   cell.textLabel.text = [codec humanReadableDescription];
   if ([codec isEqualToCodecInfo:[_settingsModel currentVideoCodecSettingFromStore]]) {
     cell.accessoryType = UITableViewCellAccessoryCheckmark;
@@ -231,7 +231,7 @@ updateListSelectionAtIndexPath:(NSIndexPath *)indexPath
     updateListSelectionAtIndexPath:indexPath
         inSection:ARDSettingsSectionVideoCodec];
 
-  RTCVideoCodecInfo *videoCodec = self.videoCodecArray[indexPath.row];
+  RTC_OBJC_TYPE(RTCVideoCodecInfo) *videoCodec = self.videoCodecArray[indexPath.row];
   [_settingsModel storeVideoCodecSetting:videoCodec];
 }
 

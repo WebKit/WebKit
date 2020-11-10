@@ -31,8 +31,8 @@
 #include "call/video_send_stream.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/dlrr.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/target_bitrate.h"
-#include "rtc_base/critical_section.h"
 #include "rtc_base/event.h"
+#include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/thread_annotations.h"
 #include "system_wrappers/include/clock.h"
 #include "test/call_test.h"
@@ -83,7 +83,7 @@ class RtcpXrObserver : public test::EndToEndTest {
  private:
   // Receive stream should send RR packets (and RRTR packets if enabled).
   Action OnReceiveRtcp(const uint8_t* packet, size_t length) override {
-    rtc::CritScope lock(&crit_);
+    MutexLock lock(&mutex_);
     test::RtcpPacketParser parser;
     EXPECT_TRUE(parser.Parse(packet, length));
 
@@ -100,7 +100,7 @@ class RtcpXrObserver : public test::EndToEndTest {
   }
   // Send stream should send SR packets (and DLRR packets if enabled).
   Action OnSendRtcp(const uint8_t* packet, size_t length) override {
-    rtc::CritScope lock(&crit_);
+    MutexLock lock(&mutex_);
     test::RtcpPacketParser parser;
     EXPECT_TRUE(parser.Parse(packet, length));
 
@@ -198,16 +198,16 @@ class RtcpXrObserver : public test::EndToEndTest {
 
   static const int kNumRtcpReportPacketsToObserve = 5;
 
-  rtc::CriticalSection crit_;
+  Mutex mutex_;
   const bool enable_rrtr_;
   const bool expect_target_bitrate_;
   const bool enable_zero_target_bitrate_;
   const VideoEncoderConfig::ContentType content_type_;
   int sent_rtcp_sr_;
-  int sent_rtcp_rr_ RTC_GUARDED_BY(&crit_);
-  int sent_rtcp_rrtr_ RTC_GUARDED_BY(&crit_);
-  bool sent_rtcp_target_bitrate_ RTC_GUARDED_BY(&crit_);
-  bool sent_zero_rtcp_target_bitrate_ RTC_GUARDED_BY(&crit_);
+  int sent_rtcp_rr_ RTC_GUARDED_BY(&mutex_);
+  int sent_rtcp_rrtr_ RTC_GUARDED_BY(&mutex_);
+  bool sent_rtcp_target_bitrate_ RTC_GUARDED_BY(&mutex_);
+  bool sent_zero_rtcp_target_bitrate_ RTC_GUARDED_BY(&mutex_);
   int sent_rtcp_dlrr_;
   BuiltInNetworkBehaviorConfig forward_transport_config_;
   SimulatedNetwork* send_simulated_network_;

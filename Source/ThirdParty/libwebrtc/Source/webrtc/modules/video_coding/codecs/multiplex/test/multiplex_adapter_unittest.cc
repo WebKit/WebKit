@@ -180,21 +180,17 @@ class TestMultiplexAdapter : public VideoCodecUnitTest,
 
  private:
   void SetUp() override {
-    EXPECT_CALL(*decoder_factory_, Die());
+    EXPECT_CALL(*decoder_factory_, Die);
     // The decoders/encoders will be owned by the caller of
     // CreateVideoDecoder()/CreateVideoEncoder().
-    VideoDecoder* decoder1 = VP9Decoder::Create().release();
-    VideoDecoder* decoder2 = VP9Decoder::Create().release();
-    EXPECT_CALL(*decoder_factory_, CreateVideoDecoderProxy(_))
-        .WillOnce(Return(decoder1))
-        .WillOnce(Return(decoder2));
+    EXPECT_CALL(*decoder_factory_, CreateVideoDecoder)
+        .Times(2)
+        .WillRepeatedly([] { return VP9Decoder::Create(); });
 
-    EXPECT_CALL(*encoder_factory_, Die());
-    VideoEncoder* encoder1 = VP9Encoder::Create().release();
-    VideoEncoder* encoder2 = VP9Encoder::Create().release();
-    EXPECT_CALL(*encoder_factory_, CreateVideoEncoderProxy(_))
-        .WillOnce(Return(encoder1))
-        .WillOnce(Return(encoder2));
+    EXPECT_CALL(*encoder_factory_, Die);
+    EXPECT_CALL(*encoder_factory_, CreateVideoEncoder)
+        .Times(2)
+        .WillRepeatedly([] { return VP9Encoder::Create(); });
 
     VideoCodecUnitTest::SetUp();
   }

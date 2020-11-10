@@ -215,7 +215,7 @@ public class WebRtcAudioTrack {
     }
   }
 
-  private boolean initPlayout(int sampleRate, int channels, double bufferSizeFactor) {
+  private int initPlayout(int sampleRate, int channels, double bufferSizeFactor) {
     threadChecker.checkIsOnValidThread();
     Logging.d(TAG,
         "initPlayout(sampleRate=" + sampleRate + ", channels=" + channels
@@ -244,14 +244,14 @@ public class WebRtcAudioTrack {
     // can happen that |minBufferSizeInBytes| contains an invalid value.
     if (minBufferSizeInBytes < byteBuffer.capacity()) {
       reportWebRtcAudioTrackInitError("AudioTrack.getMinBufferSize returns an invalid value.");
-      return false;
+      return -1;
     }
 
     // Ensure that prevision audio session was stopped correctly before trying
     // to create a new AudioTrack.
     if (audioTrack != null) {
       reportWebRtcAudioTrackInitError("Conflict with existing AudioTrack.");
-      return false;
+      return -1;
     }
     try {
       // Create an AudioTrack object and initialize its associated audio buffer.
@@ -273,7 +273,7 @@ public class WebRtcAudioTrack {
     } catch (IllegalArgumentException e) {
       reportWebRtcAudioTrackInitError(e.getMessage());
       releaseAudioResources();
-      return false;
+      return -1;
     }
 
     // It can happen that an AudioTrack is created but it was not successfully
@@ -282,11 +282,11 @@ public class WebRtcAudioTrack {
     if (audioTrack == null || audioTrack.getState() != AudioTrack.STATE_INITIALIZED) {
       reportWebRtcAudioTrackInitError("Initialization of audio track failed.");
       releaseAudioResources();
-      return false;
+      return -1;
     }
     logMainParameters();
     logMainParametersExtended();
-    return true;
+    return minBufferSizeInBytes;
   }
 
   private boolean startPlayout() {
@@ -431,6 +431,13 @@ public class WebRtcAudioTrack {
               // The effective size of the AudioTrack buffer that the app writes to.
               + "buffer size in frames: " + audioTrack.getBufferSizeInFrames());
     }
+  }
+
+  private int getBufferSizeInFrames() {
+    if (Build.VERSION.SDK_INT >= 23) {
+      return audioTrack.getBufferSizeInFrames();
+    }
+    return -1;
   }
 
   private void logBufferCapacityInFrames() {

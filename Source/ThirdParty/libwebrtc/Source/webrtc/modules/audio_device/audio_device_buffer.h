@@ -19,7 +19,7 @@
 #include "api/task_queue/task_queue_factory.h"
 #include "modules/audio_device/include/audio_device_defines.h"
 #include "rtc_base/buffer.h"
-#include "rtc_base/critical_section.h"
+#include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/task_queue.h"
 #include "rtc_base/thread_annotations.h"
 #include "rtc_base/thread_checker.h"
@@ -142,7 +142,7 @@ class AudioDeviceBuffer {
   // Main thread on which this object is created.
   rtc::ThreadChecker main_thread_checker_;
 
-  rtc::CriticalSection lock_;
+  Mutex lock_;
 
   // Task queue used to invoke LogStats() periodically. Tasks are executed on a
   // worker thread but it does not necessarily have to be the same thread for

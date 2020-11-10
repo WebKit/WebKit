@@ -100,9 +100,9 @@ int main(int argc, char* argv[]) {
     // Frame peak level.
     std::transform(samples.begin(), samples.begin() + audio_frame_length,
                    samples.begin(), [](int16_t s) { return std::abs(s); });
-    const auto* peak_level =
-        std::max_element(samples.begin(), samples.begin() + audio_frame_length);
-    const float level_curr = static_cast<float>(*peak_level) / 32768.f;
+    const int16_t peak_level = *std::max_element(
+        samples.cbegin(), samples.cbegin() + audio_frame_length);
+    const float level_curr = static_cast<float>(peak_level) / 32768.f;
 
     // Temporal smoothing.
     auto smooth = [&level_prev, &level_curr](float c) {

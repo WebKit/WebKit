@@ -28,6 +28,7 @@ ConnectionInfo::ConnectionInfo()
       sent_ping_responses(0),
       recv_total_bytes(0),
       recv_bytes_second(0),
+      packets_received(0),
       recv_ping_requests(0),
       recv_ping_responses(0),
       key(nullptr),

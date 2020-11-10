@@ -248,16 +248,15 @@ class FakePeerConnectionBase : public PeerConnectionInternal {
     return {};
   }
 
-  sigslot::signal1<DataChannel*>& SignalDataChannelCreated() override {
-    return SignalDataChannelCreated_;
+  sigslot::signal1<RtpDataChannel*>& SignalRtpDataChannelCreated() override {
+    return SignalRtpDataChannelCreated_;
+  }
+
+  sigslot::signal1<SctpDataChannel*>& SignalSctpDataChannelCreated() override {
+    return SignalSctpDataChannelCreated_;
   }
 
   cricket::RtpDataChannel* rtp_data_channel() const override { return nullptr; }
-
-  std::vector<rtc::scoped_refptr<DataChannel>> sctp_data_channels()
-      const override {
-    return {};
-  }
 
   absl::optional<std::string> sctp_transport_name() const override {
     return absl::nullopt;
@@ -299,7 +298,8 @@ class FakePeerConnectionBase : public PeerConnectionInternal {
   }
 
  protected:
-  sigslot::signal1<DataChannel*> SignalDataChannelCreated_;
+  sigslot::signal1<RtpDataChannel*> SignalRtpDataChannelCreated_;
+  sigslot::signal1<SctpDataChannel*> SignalSctpDataChannelCreated_;
 };
 
 }  // namespace webrtc

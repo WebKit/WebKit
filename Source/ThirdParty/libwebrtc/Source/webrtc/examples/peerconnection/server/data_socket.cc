@@ -31,7 +31,7 @@ const char DataSocket::kCrossOriginAllowHeaders[] =
     "Access-Control-Allow-Methods: POST, GET, OPTIONS\r\n"
     "Access-Control-Allow-Headers: Content-Type, "
     "Content-Length, Connection, Cache-Control\r\n"
-    "Access-Control-Expose-Headers: Content-Length, X-Peer-Id\r\n";
+    "Access-Control-Expose-Headers: Content-Length\r\n";
 
 #if defined(WIN32)
 class WinsockInitializer {

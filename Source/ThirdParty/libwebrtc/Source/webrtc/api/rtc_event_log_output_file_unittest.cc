@@ -141,14 +141,16 @@ TEST_F(RtcEventLogOutputFileTest, AllowReasonableFileSizeLimits) {
 }
 
 #if RTC_DCHECK_IS_ON && GTEST_HAS_DEATH_TEST && !defined(WEBRTC_ANDROID)
-TEST_F(RtcEventLogOutputFileTest, WritingToInactiveFileForbidden) {
+class RtcEventLogOutputFileDeathTest : public RtcEventLogOutputFileTest {};
+
+TEST_F(RtcEventLogOutputFileDeathTest, WritingToInactiveFileForbidden) {
   RtcEventLogOutputFile output_file(output_file_name_, 2);
   ASSERT_FALSE(output_file.Write("abc"));
   ASSERT_FALSE(output_file.IsActive());
   EXPECT_DEATH(output_file.Write("abc"), "");
 }
 
-TEST_F(RtcEventLogOutputFileTest, DisallowUnreasonableFileSizeLimits) {
+TEST_F(RtcEventLogOutputFileDeathTest, DisallowUnreasonableFileSizeLimits) {
   // Keeping in a temporary unique_ptr to make it clearer that the death is
   // triggered by construction, not destruction.
   std::unique_ptr<RtcEventLogOutputFile> output_file;

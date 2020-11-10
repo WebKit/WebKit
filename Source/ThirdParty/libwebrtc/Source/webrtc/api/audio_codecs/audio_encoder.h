@@ -244,7 +244,7 @@ class AudioEncoder {
   // information. This is used to calculated the full bitrate range, including
   // overhead.
   virtual absl::optional<std::pair<TimeDelta, TimeDelta>> GetFrameLengthRange()
-      const;
+      const = 0;
 
  protected:
   // Subclasses implement this to perform the actual encoding. Called by

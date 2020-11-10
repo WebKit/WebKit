@@ -26,8 +26,10 @@ namespace {
 
 class MockPacketRequestCallback : public VCMPacketRequestCallback {
  public:
-  MOCK_METHOD2(ResendPackets,
-               int32_t(const uint16_t* sequenceNumbers, uint16_t length));
+  MOCK_METHOD(int32_t,
+              ResendPackets,
+              (const uint16_t* sequenceNumbers, uint16_t length),
+              (override));
 };
 
 class MockVCMReceiveCallback : public VCMReceiveCallback {
@@ -35,11 +37,12 @@ class MockVCMReceiveCallback : public VCMReceiveCallback {
   MockVCMReceiveCallback() {}
   virtual ~MockVCMReceiveCallback() {}
 
-  MOCK_METHOD4(
-      FrameToRender,
-      int32_t(VideoFrame&, absl::optional<uint8_t>, int32_t, VideoContentType));
-  MOCK_METHOD1(OnIncomingPayloadType, void(int));
-  MOCK_METHOD1(OnDecoderImplementationName, void(const char*));
+  MOCK_METHOD(int32_t,
+              FrameToRender,
+              (VideoFrame&, absl::optional<uint8_t>, int32_t, VideoContentType),
+              (override));
+  MOCK_METHOD(void, OnIncomingPayloadType, (int), (override));
+  MOCK_METHOD(void, OnDecoderImplementationName, (const char*), (override));
 };
 
 class TestVideoReceiver : public ::testing::Test {
@@ -54,8 +57,8 @@ class TestVideoReceiver : public ::testing::Test {
     // Register decoder.
     receiver_.RegisterExternalDecoder(&decoder_, kUnusedPayloadType);
     webrtc::test::CodecSettings(kVideoCodecVP8, &settings_);
-    settings_.plType = kUnusedPayloadType;
-    EXPECT_EQ(0, receiver_.RegisterReceiveCodec(&settings_, 1, true));
+    EXPECT_EQ(
+        0, receiver_.RegisterReceiveCodec(kUnusedPayloadType, &settings_, 1));
 
     // Set protection mode.
     const size_t kMaxNackListSize = 250;

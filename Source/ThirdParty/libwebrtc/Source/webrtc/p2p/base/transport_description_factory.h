@@ -29,9 +29,6 @@ struct TransportOptions {
   // If true, ICE renomination is supported and will be used if it is also
   // supported by the remote side.
   bool enable_ice_renomination = false;
-
-  // Opaque parameters for plug-in transports.
-  absl::optional<OpaqueTransportParameters> opaque_parameters;
 };
 
 // Creates transport descriptions according to the supplied configuration.

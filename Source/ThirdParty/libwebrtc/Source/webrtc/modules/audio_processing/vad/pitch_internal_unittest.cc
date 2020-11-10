@@ -14,6 +14,8 @@
 
 #include "test/gtest.h"
 
+namespace webrtc {
+
 TEST(PitchInternalTest, test) {
   const int kSamplingRateHz = 8000;
   const int kNumInputParameters = 4;
@@ -48,3 +50,5 @@ TEST(PitchInternalTest, test) {
   EXPECT_NEAR(old_lag, expected_old_lag, 1e-6);
   EXPECT_NEAR(log_old_gain, expected_log_old_gain, 1e-8);
 }
+
+}  // namespace webrtc

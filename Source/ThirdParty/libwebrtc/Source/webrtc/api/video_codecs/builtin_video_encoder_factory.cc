@@ -50,8 +50,6 @@ class BuiltinVideoEncoderFactory : public VideoEncoderFactory {
     RTC_DCHECK(IsFormatSupported(
         internal_encoder_factory_->GetSupportedFormats(), format));
     VideoEncoderFactory::CodecInfo info;
-    info.has_internal_source = false;
-    info.is_hardware_accelerated = false;
     return info;
   }
 

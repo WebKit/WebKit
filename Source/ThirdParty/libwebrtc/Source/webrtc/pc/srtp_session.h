@@ -14,6 +14,8 @@
 #include <vector>
 
 #include "api/scoped_refptr.h"
+#include "rtc_base/constructor_magic.h"
+#include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/thread_checker.h"
 
 // Forward declaration to avoid pulling in libsrtp headers here
@@ -123,7 +125,7 @@ class SrtpSession {
   int rtp_auth_tag_len_ = 0;
   int rtcp_auth_tag_len_ = 0;
   bool inited_ = false;
-  static rtc::GlobalLock lock_;
+  static webrtc::GlobalMutex lock_;
   int last_send_seq_num_ = -1;
   bool external_auth_active_ = false;
   bool external_auth_enabled_ = false;

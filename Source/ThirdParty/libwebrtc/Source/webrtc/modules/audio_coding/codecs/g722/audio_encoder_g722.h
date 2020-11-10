@@ -12,9 +12,12 @@
 #define MODULES_AUDIO_CODING_CODECS_G722_AUDIO_ENCODER_G722_H_
 
 #include <memory>
+#include <utility>
 
+#include "absl/types/optional.h"
 #include "api/audio_codecs/audio_encoder.h"
 #include "api/audio_codecs/g722/audio_encoder_g722_config.h"
+#include "api/units/time_delta.h"
 #include "modules/audio_coding/codecs/g722/g722_interface.h"
 #include "rtc_base/buffer.h"
 #include "rtc_base/constructor_magic.h"
@@ -33,6 +36,8 @@ class AudioEncoderG722Impl final : public AudioEncoder {
   size_t Max10MsFramesInAPacket() const override;
   int GetTargetBitrate() const override;
   void Reset() override;
+  absl::optional<std::pair<TimeDelta, TimeDelta>> GetFrameLengthRange()
+      const override;
 
  protected:
   EncodedInfo EncodeImpl(uint32_t rtp_timestamp,

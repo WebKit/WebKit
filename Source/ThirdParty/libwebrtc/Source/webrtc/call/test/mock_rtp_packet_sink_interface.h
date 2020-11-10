@@ -17,7 +17,7 @@ namespace webrtc {
 
 class MockRtpPacketSink : public RtpPacketSinkInterface {
  public:
-  MOCK_METHOD1(OnRtpPacket, void(const RtpPacketReceived&));
+  MOCK_METHOD(void, OnRtpPacket, (const RtpPacketReceived&), (override));
 };
 
 }  // namespace webrtc

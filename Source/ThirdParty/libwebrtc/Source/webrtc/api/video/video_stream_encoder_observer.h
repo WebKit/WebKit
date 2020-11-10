@@ -15,6 +15,8 @@
 #include <vector>
 
 #include "absl/types/optional.h"
+#include "api/video/video_adaptation_counters.h"
+#include "api/video/video_adaptation_reason.h"
 #include "api/video/video_bitrate_allocation.h"
 #include "api/video/video_codec_constants.h"
 #include "api/video_codecs/video_encoder.h"
@@ -38,20 +40,17 @@ class CpuOveruseMetricsObserver {
 
 class VideoStreamEncoderObserver : public CpuOveruseMetricsObserver {
  public:
-  // Number of resolution and framerate reductions (unset if disabled).
-  struct AdaptationSteps {
-    AdaptationSteps();
-    absl::optional<int> num_resolution_reductions = 0;
-    absl::optional<int> num_framerate_reductions = 0;
-  };
+  struct AdaptationSettings {
+    AdaptationSettings()
+        : resolution_scaling_enabled(false), framerate_scaling_enabled(false) {}
 
-  // TODO(nisse): There are too many enums to represent this. Besides
-  // this one, see AdaptationObserverInterface::AdaptReason and
-  // WebRtcVideoChannel::AdaptReason.
-  enum class AdaptationReason {
-    kNone,  // Used for reset of counters.
-    kCpu,
-    kQuality,
+    AdaptationSettings(bool resolution_scaling_enabled,
+                       bool framerate_scaling_enabled)
+        : resolution_scaling_enabled(resolution_scaling_enabled),
+          framerate_scaling_enabled(framerate_scaling_enabled) {}
+
+    bool resolution_scaling_enabled;
+    bool framerate_scaling_enabled;
   };
 
   // TODO(nisse): Duplicates enum EncodedImageCallback::DropReason.
@@ -83,9 +82,15 @@ class VideoStreamEncoderObserver : public CpuOveruseMetricsObserver {
       const VideoEncoderConfig& encoder_config,
       const std::vector<VideoStream>& streams) = 0;
 
-  virtual void OnAdaptationChanged(AdaptationReason reason,
-                                   const AdaptationSteps& cpu_steps,
-                                   const AdaptationSteps& quality_steps) = 0;
+  virtual void OnAdaptationChanged(
+      VideoAdaptationReason reason,
+      const VideoAdaptationCounters& cpu_steps,
+      const VideoAdaptationCounters& quality_steps) = 0;
+  virtual void ClearAdaptationStats() = 0;
+
+  virtual void UpdateAdaptationSettings(
+      AdaptationSettings cpu_settings,
+      AdaptationSettings quality_settings) = 0;
   virtual void OnMinPixelLimitReached() = 0;
   virtual void OnInitialQualityResolutionAdaptDown() = 0;
 

@@ -54,6 +54,7 @@ LIB_TO_LICENSES_DICT = {
     'libsrtp': ['third_party/libsrtp/LICENSE'],
     'libvpx': ['third_party/libvpx/source/libvpx/LICENSE'],
     'libyuv': ['third_party/libyuv/LICENSE'],
+    'nasm': ['third_party/nasm/LICENSE'],
     'opus': ['third_party/opus/src/COPYING'],
     'pffft': ['third_party/pffft/LICENSE'],
     'protobuf': ['third_party/protobuf/LICENSE'],
@@ -67,7 +68,7 @@ LIB_TO_LICENSES_DICT = {
     'fft': ['modules/third_party/fft/LICENSE'],
     'g711': ['modules/third_party/g711/LICENSE'],
     'g722': ['modules/third_party/g722/LICENSE'],
-    'fft4g': ['common_audio/third_party/fft4g/LICENSE'],
+    'ooura': ['common_audio/third_party/ooura/LICENSE'],
     'spl_sqrt_floor': ['common_audio/third_party/spl_sqrt_floor/LICENSE'],
 
     # TODO(bugs.webrtc.org/1110): Remove this hack. This is not a lib.
@@ -77,6 +78,7 @@ LIB_TO_LICENSES_DICT = {
     # Compile time dependencies, no license needed:
     'yasm': [],
     'ow2_asm': [],
+    'jdk': [],
 }
 
 # Third_party library _regex_ to licences mapping. Keys are regular expression

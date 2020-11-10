@@ -21,6 +21,7 @@
 #include <openssl/ssl.h>
 #endif
 
+#include <atomic>
 #include <memory>
 #include <utility>
 #include <vector>
@@ -265,8 +266,24 @@ static long stream_ctrl(BIO* b, int cmd, long num, void* ptr) {
 // OpenSSLStreamAdapter
 /////////////////////////////////////////////////////////////////////////////
 
-OpenSSLStreamAdapter::OpenSSLStreamAdapter(StreamInterface* stream)
-    : SSLStreamAdapter(stream),
+static std::atomic<bool> g_use_legacy_tls_protocols_override(false);
+static std::atomic<bool> g_allow_legacy_tls_protocols(false);
+
+void SetAllowLegacyTLSProtocols(const absl::optional<bool>& allow) {
+  g_use_legacy_tls_protocols_override.store(allow.has_value());
+  if (allow.has_value())
+    g_allow_legacy_tls_protocols.store(allow.value());
+}
+
+bool ShouldAllowLegacyTLSProtocols() {
+  return g_use_legacy_tls_protocols_override.load()
+             ? g_allow_legacy_tls_protocols.load()
+             : !webrtc::field_trial::IsDisabled("WebRTC-LegacyTlsProtocols");
+}
+
+OpenSSLStreamAdapter::OpenSSLStreamAdapter(
+    std::unique_ptr<StreamInterface> stream)
+    : SSLStreamAdapter(std::move(stream)),
       state_(SSL_NONE),
       role_(SSL_CLIENT),
       ssl_read_needs_write_(false),
@@ -277,16 +294,19 @@ OpenSSLStreamAdapter::OpenSSLStreamAdapter(StreamInterface* stream)
       ssl_max_version_(SSL_PROTOCOL_TLS_12),
       // Default is to support legacy TLS protocols.
       // This will be changed to default non-support in M82 or M83.
-      support_legacy_tls_protocols_flag_(
-          !webrtc::field_trial::IsDisabled("WebRTC-LegacyTlsProtocols")) {}
+      support_legacy_tls_protocols_flag_(ShouldAllowLegacyTLSProtocols()) {}
 
 OpenSSLStreamAdapter::~OpenSSLStreamAdapter() {
   Cleanup(0);
 }
 
-void OpenSSLStreamAdapter::SetIdentity(SSLIdentity* identity) {
+void OpenSSLStreamAdapter::SetIdentity(std::unique_ptr<SSLIdentity> identity) {
   RTC_DCHECK(!identity_);
-  identity_.reset(static_cast<OpenSSLIdentity*>(identity));
+  identity_.reset(static_cast<OpenSSLIdentity*>(identity.release()));
+}
+
+OpenSSLIdentity* OpenSSLStreamAdapter::GetIdentityForTesting() const {
+  return identity_.get();
 }
 
 void OpenSSLStreamAdapter::SetServerRole(SSLRole role) {
@@ -664,7 +684,6 @@ StreamResult OpenSSLStreamAdapter::Read(void* data,
       RTC_LOG(LS_VERBOSE) << " -- remote side closed";
       Close();
       return SR_EOS;
-      break;
     default:
       Error("SSL_read", (ssl_error ? ssl_error : -1), 0, false);
       if (error) {
@@ -877,12 +896,13 @@ int OpenSSLStreamAdapter::ContinueSSL() {
 
     case SSL_ERROR_ZERO_RETURN:
     default:
-      RTC_LOG(LS_VERBOSE) << " -- error " << code;
       SSLHandshakeError ssl_handshake_err = SSLHandshakeError::UNKNOWN;
       int err_code = ERR_peek_last_error();
       if (err_code != 0 && ERR_GET_REASON(err_code) == SSL_R_NO_SHARED_CIPHER) {
         ssl_handshake_err = SSLHandshakeError::INCOMPATIBLE_CIPHERSUITE;
       }
+      RTC_LOG(LS_VERBOSE) << " -- error " << code << ", " << err_code << ", "
+                          << ERR_GET_REASON(err_code);
       SignalSSLHandshakeError(ssl_handshake_err);
       return (ssl_error != 0) ? ssl_error : -1;
   }
@@ -982,7 +1002,7 @@ SSL_CTX* OpenSSLStreamAdapter::SetupSSLContext() {
       default:
 #if defined(WEBRTC_WEBKIT_BUILD)
         SSL_CTX_set_min_proto_version(
-          ctx, ssl_mode_ == SSL_MODE_DTLS ? DTLS1_2_VERSION : TLS1_2_VERSION);
+            ctx, ssl_mode_ == SSL_MODE_DTLS ? DTLS1_2_VERSION : TLS1_2_VERSION);
 #endif
         SSL_CTX_set_max_proto_version(
             ctx, ssl_mode_ == SSL_MODE_DTLS ? DTLS1_2_VERSION : TLS1_2_VERSION);

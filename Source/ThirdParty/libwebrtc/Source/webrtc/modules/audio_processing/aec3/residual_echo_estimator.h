@@ -58,8 +58,17 @@ class ResidualEchoEstimator {
                  const RenderBuffer& render_buffer,
                  rtc::ArrayView<std::array<float, kFftLengthBy2Plus1>> R2);
 
+  // Gets the echo path gain to apply.
+  float GetEchoPathGain(const AecState& aec_state,
+                        bool gain_for_early_reflections) const;
+
   const EchoCanceller3Config config_;
   const size_t num_render_channels_;
+  const float early_reflections_transparent_mode_gain_;
+  const float late_reflections_transparent_mode_gain_;
+  const float early_reflections_general_gain_;
+  const float late_reflections_general_gain_;
+  const bool model_reverb_in_nonlinear_mode_;
   std::array<float, kFftLengthBy2Plus1> X2_noise_floor_;
   std::array<int, kFftLengthBy2Plus1> X2_noise_floor_counter_;
   ReverbModel echo_reverb_;

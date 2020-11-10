@@ -125,23 +125,24 @@ TEST(PffftTest, CreateWrapperWithValidSize) {
 
 #if !defined(NDEBUG) && GTEST_HAS_DEATH_TEST && !defined(WEBRTC_ANDROID)
 
-class PffftInvalidSizeTest : public ::testing::Test,
-                             public ::testing::WithParamInterface<size_t> {};
+class PffftInvalidSizeDeathTest : public ::testing::Test,
+                                  public ::testing::WithParamInterface<size_t> {
+};
 
-TEST_P(PffftInvalidSizeTest, DoNotCreateRealWrapper) {
+TEST_P(PffftInvalidSizeDeathTest, DoNotCreateRealWrapper) {
   size_t fft_size = GetParam();
   ASSERT_FALSE(Pffft::IsValidFftSize(fft_size, Pffft::FftType::kReal));
   EXPECT_DEATH(CreatePffftWrapper(fft_size, Pffft::FftType::kReal), "");
 }
 
-TEST_P(PffftInvalidSizeTest, DoNotCreateComplexWrapper) {
+TEST_P(PffftInvalidSizeDeathTest, DoNotCreateComplexWrapper) {
   size_t fft_size = GetParam();
   ASSERT_FALSE(Pffft::IsValidFftSize(fft_size, Pffft::FftType::kComplex));
   EXPECT_DEATH(CreatePffftWrapper(fft_size, Pffft::FftType::kComplex), "");
 }
 
 INSTANTIATE_TEST_SUITE_P(PffftTest,
-                         PffftInvalidSizeTest,
+                         PffftInvalidSizeDeathTest,
                          ::testing::Values(17,
                                            33,
                                            65,

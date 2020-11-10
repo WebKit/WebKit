@@ -52,40 +52,65 @@ bool Vp9ReadSyncCode(rtc::BitBuffer* br) {
   return true;
 }
 
-bool Vp9ReadColorConfig(rtc::BitBuffer* br, uint8_t profile) {
-  if (profile == 2 || profile == 3) {
-    // Bitdepth.
-    RETURN_FALSE_IF_ERROR(br->ConsumeBits(1));
+bool Vp9ReadColorConfig(rtc::BitBuffer* br,
+                        uint8_t profile,
+                        FrameInfo* frame_info) {
+  if (profile == 0 || profile == 1) {
+    frame_info->bit_detph = BitDept::k8Bit;
+  } else if (profile == 2 || profile == 3) {
+    uint32_t ten_or_twelve_bits;
+    RETURN_FALSE_IF_ERROR(br->ReadBits(&ten_or_twelve_bits, 1));
+    frame_info->bit_detph =
+        ten_or_twelve_bits ? BitDept::k12Bit : BitDept::k10Bit;
   }
   uint32_t color_space;
   RETURN_FALSE_IF_ERROR(br->ReadBits(&color_space, 3));
+  frame_info->color_space = static_cast<ColorSpace>(color_space);
 
   // SRGB is 7.
   if (color_space != 7) {
-    // YUV range flag.
-    RETURN_FALSE_IF_ERROR(br->ConsumeBits(1));
+    uint32_t color_range;
+    RETURN_FALSE_IF_ERROR(br->ReadBits(&color_range, 1));
+    frame_info->color_range =
+        color_range ? ColorRange::kFull : ColorRange::kStudio;
+
     if (profile == 1 || profile == 3) {
-      // 1 bit: subsampling x.
-      // 1 bit: subsampling y.
-      RETURN_FALSE_IF_ERROR(br->ConsumeBits(2));
-      uint32_t reserved_bit;
-      RETURN_FALSE_IF_ERROR(br->ReadBits(&reserved_bit, 1));
-      if (reserved_bit) {
-        RTC_LOG(LS_WARNING) << "Failed to get QP. Reserved bit set.";
-        return false;
+      uint32_t subsampling_x;
+      uint32_t subsampling_y;
+      RETURN_FALSE_IF_ERROR(br->ReadBits(&subsampling_x, 1));
+      RETURN_FALSE_IF_ERROR(br->ReadBits(&subsampling_y, 1));
+      if (subsampling_x) {
+        frame_info->sub_sampling =
+            subsampling_y ? YuvSubsampling::k420 : YuvSubsampling::k422;
+      } else {
+        frame_info->sub_sampling =
+            subsampling_y ? YuvSubsampling::k440 : YuvSubsampling::k444;
       }
-    }
-  } else {
-    if (profile == 1 || profile == 3) {
+
       uint32_t reserved_bit;
       RETURN_FALSE_IF_ERROR(br->ReadBits(&reserved_bit, 1));
       if (reserved_bit) {
-        RTC_LOG(LS_WARNING) << "Failed to get QP. Reserved bit set.";
+        RTC_LOG(LS_WARNING) << "Failed to parse header. Reserved bit set.";
         return false;
       }
     } else {
-      RTC_LOG(LS_WARNING) << "Failed to get QP. 4:4:4 color not supported in "
-                             "profile 0 or 2.";
+      // Profile 0 or 2.
+      frame_info->sub_sampling = YuvSubsampling::k420;
+    }
+  } else {
+    // SRGB
+    frame_info->color_range = ColorRange::kFull;
+    if (profile == 1 || profile == 3) {
+      frame_info->sub_sampling = YuvSubsampling::k444;
+      uint32_t reserved_bit;
+      RETURN_FALSE_IF_ERROR(br->ReadBits(&reserved_bit, 1));
+      if (reserved_bit) {
+        RTC_LOG(LS_WARNING) << "Failed to parse header. Reserved bit set.";
+        return false;
+      }
+    } else {
+      RTC_LOG(LS_WARNING) << "Failed to parse header. 4:4:4 color not supported"
+                             " in profile 0 or 2.";
       return false;
     }
   }
@@ -93,24 +118,38 @@ bool Vp9ReadColorConfig(rtc::BitBuffer* br, uint8_t profile) {
   return true;
 }
 
-bool Vp9ReadFrameSize(rtc::BitBuffer* br) {
-  // 2 bytes: frame width.
-  // 2 bytes: frame height.
-  return br->ConsumeBytes(4);
+bool Vp9ReadFrameSize(rtc::BitBuffer* br, FrameInfo* frame_info) {
+  // 16 bits: frame width - 1.
+  uint16_t frame_width_minus_one;
+  RETURN_FALSE_IF_ERROR(br->ReadUInt16(&frame_width_minus_one));
+  // 16 bits: frame height - 1.
+  uint16_t frame_height_minus_one;
+  RETURN_FALSE_IF_ERROR(br->ReadUInt16(&frame_height_minus_one));
+  frame_info->frame_width = frame_width_minus_one + 1;
+  frame_info->frame_height = frame_height_minus_one + 1;
+  return true;
 }
 
-bool Vp9ReadRenderSize(rtc::BitBuffer* br) {
-  uint32_t bit;
-  RETURN_FALSE_IF_ERROR(br->ReadBits(&bit, 1));
-  if (bit) {
-    // 2 bytes: render width.
-    // 2 bytes: render height.
-    RETURN_FALSE_IF_ERROR(br->ConsumeBytes(4));
+bool Vp9ReadRenderSize(rtc::BitBuffer* br, FrameInfo* frame_info) {
+  uint32_t render_and_frame_size_different;
+  RETURN_FALSE_IF_ERROR(br->ReadBits(&render_and_frame_size_different, 1));
+  if (render_and_frame_size_different) {
+    // 16 bits: render width - 1.
+    uint16_t render_width_minus_one;
+    RETURN_FALSE_IF_ERROR(br->ReadUInt16(&render_width_minus_one));
+    // 16 bits: render height - 1.
+    uint16_t render_height_minus_one;
+    RETURN_FALSE_IF_ERROR(br->ReadUInt16(&render_height_minus_one));
+    frame_info->render_width = render_width_minus_one + 1;
+    frame_info->render_height = render_height_minus_one + 1;
+  } else {
+    frame_info->render_width = frame_info->frame_width;
+    frame_info->render_height = frame_info->frame_height;
   }
   return true;
 }
 
-bool Vp9ReadFrameSizeFromRefs(rtc::BitBuffer* br) {
+bool Vp9ReadFrameSizeFromRefs(rtc::BitBuffer* br, FrameInfo* frame_info) {
   uint32_t found_ref = 0;
   for (size_t i = 0; i < kVp9NumRefsPerFrame; i++) {
     // Size in refs.
@@ -120,11 +159,11 @@ bool Vp9ReadFrameSizeFromRefs(rtc::BitBuffer* br) {
   }
 
   if (!found_ref) {
-    if (!Vp9ReadFrameSize(br)) {
+    if (!Vp9ReadFrameSize(br, frame_info)) {
       return false;
     }
   }
-  return Vp9ReadRenderSize(br);
+  return Vp9ReadRenderSize(br, frame_info);
 }
 
 bool Vp9ReadInterpolationFilter(rtc::BitBuffer* br) {
@@ -166,14 +205,14 @@ bool Vp9ReadLoopfilter(rtc::BitBuffer* br) {
 }
 }  // namespace
 
-bool GetQp(const uint8_t* buf, size_t length, int* qp) {
+bool Parse(const uint8_t* buf, size_t length, int* qp, FrameInfo* frame_info) {
   rtc::BitBuffer br(buf, length);
 
   // Frame marker.
   uint32_t frame_marker;
   RETURN_FALSE_IF_ERROR(br.ReadBits(&frame_marker, 2));
   if (frame_marker != 0x2) {
-    RTC_LOG(LS_WARNING) << "Failed to get QP. Frame marker should be 2.";
+    RTC_LOG(LS_WARNING) << "Failed to parse header. Frame marker should be 2.";
     return false;
   }
 
@@ -181,6 +220,7 @@ bool GetQp(const uint8_t* buf, size_t length, int* qp) {
   uint8_t profile;
   if (!Vp9ReadProfile(&br, &profile))
     return false;
+  frame_info->profile = profile;
 
   // Show existing frame.
   uint32_t show_existing_frame;
@@ -195,18 +235,21 @@ bool GetQp(const uint8_t* buf, size_t length, int* qp) {
   RETURN_FALSE_IF_ERROR(br.ReadBits(&frame_type, 1));
   RETURN_FALSE_IF_ERROR(br.ReadBits(&show_frame, 1));
   RETURN_FALSE_IF_ERROR(br.ReadBits(&error_resilient, 1));
+  frame_info->show_frame = show_frame;
+  frame_info->error_resilient = error_resilient;
 
-  if (!frame_type) {
+  if (frame_type == 0) {
+    // Key-frame.
     if (!Vp9ReadSyncCode(&br))
       return false;
-    if (!Vp9ReadColorConfig(&br, profile))
+    if (!Vp9ReadColorConfig(&br, profile, frame_info))
       return false;
-    if (!Vp9ReadFrameSize(&br))
+    if (!Vp9ReadFrameSize(&br, frame_info))
       return false;
-    if (!Vp9ReadRenderSize(&br))
+    if (!Vp9ReadRenderSize(&br, frame_info))
       return false;
-
   } else {
+    // Non-keyframe.
     uint32_t intra_only = 0;
     if (!show_frame)
       RETURN_FALSE_IF_ERROR(br.ReadBits(&intra_only, 1));
@@ -218,14 +261,14 @@ bool GetQp(const uint8_t* buf, size_t length, int* qp) {
         return false;
 
       if (profile > 0) {
-        if (!Vp9ReadColorConfig(&br, profile))
+        if (!Vp9ReadColorConfig(&br, profile, frame_info))
           return false;
       }
       // Refresh frame flags.
       RETURN_FALSE_IF_ERROR(br.ConsumeBits(8));
-      if (!Vp9ReadFrameSize(&br))
+      if (!Vp9ReadFrameSize(&br, frame_info))
         return false;
-      if (!Vp9ReadRenderSize(&br))
+      if (!Vp9ReadRenderSize(&br, frame_info))
         return false;
     } else {
       // Refresh frame flags.
@@ -237,7 +280,7 @@ bool GetQp(const uint8_t* buf, size_t length, int* qp) {
         RETURN_FALSE_IF_ERROR(br.ConsumeBits(4));
       }
 
-      if (!Vp9ReadFrameSizeFromRefs(&br))
+      if (!Vp9ReadFrameSizeFromRefs(&br, frame_info))
         return false;
 
       // Allow high precision mv.
@@ -267,6 +310,20 @@ bool GetQp(const uint8_t* buf, size_t length, int* qp) {
   return true;
 }
 
-}  // namespace vp9
+bool GetQp(const uint8_t* buf, size_t length, int* qp) {
+  FrameInfo frame_info;
+  return Parse(buf, length, qp, &frame_info);
+}
 
+absl::optional<FrameInfo> ParseIntraFrameInfo(const uint8_t* buf,
+                                              size_t length) {
+  int qp = 0;
+  FrameInfo frame_info;
+  if (Parse(buf, length, &qp, &frame_info) && frame_info.frame_width > 0) {
+    return frame_info;
+  }
+  return absl::nullopt;
+}
+
+}  // namespace vp9
 }  // namespace webrtc

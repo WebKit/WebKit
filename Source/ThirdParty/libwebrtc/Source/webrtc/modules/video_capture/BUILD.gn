@@ -36,11 +36,12 @@ rtc_library("video_capture_module") {
     "../../media:rtc_media_base",
     "../../rtc_base:rtc_base_approved",
     "../../rtc_base:stringutils",
+    "../../rtc_base/synchronization:mutex",
     "../../rtc_base/synchronization:rw_lock_wrapper",
     "../../system_wrappers",
-    "//third_party/abseil-cpp/absl/strings",
     "//third_party/libyuv",
   ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/strings" ]
 }
 
 if (!build_with_chromium) {
@@ -51,10 +52,11 @@ if (!build_with_chromium) {
       "../../api:scoped_refptr",
       "../../rtc_base:checks",
       "../../rtc_base:rtc_base_approved",
+      "../../rtc_base/synchronization:mutex",
       "../../system_wrappers",
     ]
 
-    if (is_linux) {
+    if (is_linux || is_chromeos) {
       sources = [
         "linux/device_info_linux.cc",
         "linux/device_info_linux.h",
@@ -76,7 +78,12 @@ if (!build_with_chromium) {
         "windows/video_capture_factory_windows.cc",
       ]
 
-      libs = [ "strmiids.lib" ]
+      libs = [
+        "ole32.lib",
+        "oleaut32.lib",
+        "strmiids.lib",
+        "user32.lib",
+      ]
 
       if (build_with_mozilla) {
         sources += [
@@ -106,13 +113,13 @@ if (!build_with_chromium) {
     rtc_test("video_capture_tests") {
       sources = [ "test/video_capture_unittest.cc" ]
       ldflags = []
-      if (is_linux || is_mac) {
+      if (is_linux || is_chromeos || is_mac) {
         ldflags += [
           "-lpthread",
           "-lm",
         ]
       }
-      if (is_linux) {
+      if (is_linux || is_chromeos) {
         ldflags += [
           "-lrt",
           "-lXext",
@@ -129,15 +136,16 @@ if (!build_with_chromium) {
         "../../api/video:video_rtp_headers",
         "../../common_video",
         "../../rtc_base:rtc_base_approved",
+        "../../rtc_base/synchronization:mutex",
         "../../system_wrappers",
         "../../test:frame_utils",
+        "../../test:test_main",
         "../../test:test_support",
         "../../test:video_test_common",
         "../utility",
         "//testing/gtest",
         "//third_party/abseil-cpp/absl/memory",
       ]
-      deps += [ "../../test:test_main" ]
     }
   }
 }

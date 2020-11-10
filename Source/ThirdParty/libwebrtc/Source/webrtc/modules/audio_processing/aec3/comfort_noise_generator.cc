@@ -31,6 +31,13 @@ namespace webrtc {
 
 namespace {
 
+// Computes the noise floor value that matches a WGN input of noise_floor_dbfs.
+float GetNoiseFloorFactor(float noise_floor_dbfs) {
+  // kdBfsNormalization = 20.f*log10(32768.f).
+  constexpr float kdBfsNormalization = 90.30899869919436f;
+  return 64.f * powf(10.f, (kdBfsNormalization + noise_floor_dbfs) * 0.1f);
+}
+
 // Table of sqrt(2) * sin(2*pi*i/32).
 constexpr float kSqrt2Sin[32] = {
     +0.0000000f, +0.2758994f, +0.5411961f, +0.7856950f, +1.0000000f,
@@ -92,11 +99,13 @@ void GenerateComfortNoise(Aec3Optimization optimization,
 
 }  // namespace
 
-ComfortNoiseGenerator::ComfortNoiseGenerator(Aec3Optimization optimization,
+ComfortNoiseGenerator::ComfortNoiseGenerator(const EchoCanceller3Config& config,
+                                             Aec3Optimization optimization,
                                              size_t num_capture_channels)
     : optimization_(optimization),
       seed_(42),
       num_capture_channels_(num_capture_channels),
+      noise_floor_(GetNoiseFloorFactor(config.comfort_noise.noise_floor_dbfs)),
       N2_initial_(
           std::make_unique<std::vector<std::array<float, kFftLengthBy2Plus1>>>(
               num_capture_channels_)),
@@ -153,16 +162,13 @@ void ComfortNoiseGenerator::Compute(
       }
     }
 
-    // Limit the noise to a floor matching a WGN input of -96 dBFS.
-    constexpr float kNoiseFloor = 17.1267f;
-
     for (size_t ch = 0; ch < num_capture_channels_; ++ch) {
       for (auto& n : N2_[ch]) {
-        n = std::max(n, kNoiseFloor);
+        n = std::max(n, noise_floor_);
       }
       if (N2_initial_) {
         for (auto& n : (*N2_initial_)[ch]) {
-          n = std::max(n, kNoiseFloor);
+          n = std::max(n, noise_floor_);
         }
       }
     }

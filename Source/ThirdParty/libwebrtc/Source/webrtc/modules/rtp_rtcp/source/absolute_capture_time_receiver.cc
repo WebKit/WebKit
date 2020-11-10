@@ -39,7 +39,7 @@ uint32_t AbsoluteCaptureTimeReceiver::GetSource(
 
 void AbsoluteCaptureTimeReceiver::SetRemoteToLocalClockOffset(
     absl::optional<int64_t> value_q32x32) {
-  rtc::CritScope cs(&crit_);
+  MutexLock lock(&mutex_);
 
   remote_to_local_clock_offset_ = value_q32x32;
 }
@@ -52,7 +52,7 @@ AbsoluteCaptureTimeReceiver::OnReceivePacket(
     const absl::optional<AbsoluteCaptureTime>& received_extension) {
   const Timestamp receive_time = clock_->CurrentTime();
 
-  rtc::CritScope cs(&crit_);
+  MutexLock lock(&mutex_);
 
   AbsoluteCaptureTime extension;
   if (received_extension == absl::nullopt) {

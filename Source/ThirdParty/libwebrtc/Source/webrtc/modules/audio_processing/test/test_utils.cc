@@ -133,9 +133,9 @@ size_t SamplesFromRate(int rate) {
   return static_cast<size_t>(AudioProcessing::kChunkSizeMs * rate / 1000);
 }
 
-void SetFrameSampleRate(AudioFrame* frame, int sample_rate_hz) {
-  frame->sample_rate_hz_ = sample_rate_hz;
-  frame->samples_per_channel_ =
+void SetFrameSampleRate(Int16FrameData* frame, int sample_rate_hz) {
+  frame->sample_rate_hz = sample_rate_hz;
+  frame->samples_per_channel =
       AudioProcessing::kChunkSizeMs * sample_rate_hz / 1000;
 }
 

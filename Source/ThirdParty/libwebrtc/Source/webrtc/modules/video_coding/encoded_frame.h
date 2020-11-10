@@ -34,15 +34,7 @@ class RTC_EXPORT VCMEncodedFrame : protected EncodedImage {
     _renderTimeMs = renderTimeMs;
   }
 
-  /**
-   *   Set the encoded frame size
-   */
-  void SetEncodedSize(uint32_t width, uint32_t height) {
-    _encodedWidth = width;
-    _encodedHeight = height;
-  }
-
-  void SetPlayoutDelay(PlayoutDelay playout_delay) {
+  void SetPlayoutDelay(VideoPlayoutDelay playout_delay) {
     playout_delay_ = playout_delay;
   }
 

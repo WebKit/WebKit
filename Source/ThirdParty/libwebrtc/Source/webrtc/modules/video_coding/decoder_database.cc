@@ -15,12 +15,8 @@
 
 namespace webrtc {
 
-VCMDecoderMapItem::VCMDecoderMapItem(VideoCodec* settings,
-                                     int number_of_cores,
-                                     bool require_key_frame)
-    : settings(settings),
-      number_of_cores(number_of_cores),
-      require_key_frame(require_key_frame) {
+VCMDecoderMapItem::VCMDecoderMapItem(VideoCodec* settings, int number_of_cores)
+    : settings(settings), number_of_cores(number_of_cores) {
   RTC_DCHECK_GE(number_of_cores, 0);
 }
 
@@ -33,7 +29,10 @@ VCMExtDecoderMapItem::VCMExtDecoderMapItem(
 VCMDecoderMapItem::~VCMDecoderMapItem() {}
 
 VCMDecoderDataBase::VCMDecoderDataBase()
-    : receive_codec_(), dec_map_(), dec_external_map_() {}
+    : current_payload_type_(0),
+      receive_codec_(),
+      dec_map_(),
+      dec_external_map_() {}
 
 VCMDecoderDataBase::~VCMDecoderDataBase() {
   ptr_decoder_.reset();
@@ -74,17 +73,17 @@ void VCMDecoderDataBase::RegisterExternalDecoder(VideoDecoder* external_decoder,
   dec_external_map_[payload_type] = ext_decoder;
 }
 
-bool VCMDecoderDataBase::RegisterReceiveCodec(const VideoCodec* receive_codec,
-                                              int number_of_cores,
-                                              bool require_key_frame) {
+bool VCMDecoderDataBase::RegisterReceiveCodec(uint8_t payload_type,
+                                              const VideoCodec* receive_codec,
+                                              int number_of_cores) {
   if (number_of_cores < 0) {
     return false;
   }
   // If payload value already exists, erase old and insert new.
-  DeregisterReceiveCodec(receive_codec->plType);
+  DeregisterReceiveCodec(payload_type);
   VideoCodec* new_receive_codec = new VideoCodec(*receive_codec);
-  dec_map_[receive_codec->plType] = new VCMDecoderMapItem(
-      new_receive_codec, number_of_cores, require_key_frame);
+  dec_map_[payload_type] =
+      new VCMDecoderMapItem(new_receive_codec, number_of_cores);
   return true;
 }
 
@@ -95,9 +94,10 @@ bool VCMDecoderDataBase::DeregisterReceiveCodec(uint8_t payload_type) {
   }
   delete it->second;
   dec_map_.erase(it);
-  if (receive_codec_.plType == payload_type) {
+  if (payload_type == current_payload_type_) {
     // This codec is currently in use.
     memset(&receive_codec_, 0, sizeof(VideoCodec));
+    current_payload_type_ = 0;
   }
   return true;
 }
@@ -107,24 +107,27 @@ VCMGenericDecoder* VCMDecoderDataBase::GetDecoder(
     VCMDecodedFrameCallback* decoded_frame_callback) {
   RTC_DCHECK(decoded_frame_callback->UserReceiveCallback());
   uint8_t payload_type = frame.PayloadType();
-  if (payload_type == receive_codec_.plType || payload_type == 0) {
+  if (payload_type == current_payload_type_ || payload_type == 0) {
     return ptr_decoder_.get();
   }
   // If decoder exists - delete.
   if (ptr_decoder_) {
     ptr_decoder_.reset();
     memset(&receive_codec_, 0, sizeof(VideoCodec));
+    current_payload_type_ = 0;
   }
   ptr_decoder_ = CreateAndInitDecoder(frame, &receive_codec_);
   if (!ptr_decoder_) {
     return nullptr;
   }
+  current_payload_type_ = frame.PayloadType();
   VCMReceiveCallback* callback = decoded_frame_callback->UserReceiveCallback();
-  callback->OnIncomingPayloadType(receive_codec_.plType);
+  callback->OnIncomingPayloadType(current_payload_type_);
   if (ptr_decoder_->RegisterDecodeCompleteCallback(decoded_frame_callback) <
       0) {
     ptr_decoder_.reset();
     memset(&receive_codec_, 0, sizeof(VideoCodec));
+    current_payload_type_ = 0;
     return nullptr;
   }
   return ptr_decoder_.get();
@@ -169,8 +172,10 @@ std::unique_ptr<VCMGenericDecoder> VCMDecoderDataBase::CreateAndInitDecoder(
     decoder_item->settings->width = frame.EncodedImage()._encodedWidth;
     decoder_item->settings->height = frame.EncodedImage()._encodedHeight;
   }
-  if (ptr_decoder->InitDecode(decoder_item->settings.get(),
-                              decoder_item->number_of_cores) < 0) {
+  int err = ptr_decoder->InitDecode(decoder_item->settings.get(),
+                                    decoder_item->number_of_cores);
+  if (err < 0) {
+    RTC_LOG(LS_ERROR) << "Failed to initialize decoder. Error code: " << err;
     return nullptr;
   }
   memcpy(new_codec, decoder_item->settings.get(), sizeof(VideoCodec));

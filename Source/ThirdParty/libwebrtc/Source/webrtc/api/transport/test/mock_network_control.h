@@ -18,11 +18,16 @@ namespace webrtc {
 
 class MockNetworkStateEstimator : public NetworkStateEstimator {
  public:
-  MOCK_METHOD0(GetCurrentEstimate, absl::optional<NetworkStateEstimate>());
-  MOCK_METHOD1(OnTransportPacketsFeedback,
-               void(const TransportPacketsFeedback&));
-  MOCK_METHOD1(OnReceivedPacket, void(const PacketResult&));
-  MOCK_METHOD1(OnRouteChange, void(const NetworkRouteChange&));
+  MOCK_METHOD(absl::optional<NetworkStateEstimate>,
+              GetCurrentEstimate,
+              (),
+              (override));
+  MOCK_METHOD(void,
+              OnTransportPacketsFeedback,
+              (const TransportPacketsFeedback&),
+              (override));
+  MOCK_METHOD(void, OnReceivedPacket, (const PacketResult&), (override));
+  MOCK_METHOD(void, OnRouteChange, (const NetworkRouteChange&), (override));
 };
 
 }  // namespace webrtc

@@ -118,7 +118,7 @@ static const rtc::RTCCertificatePEM kEcdsaPems[] = {
 
 class FakeRTCCertificateGenerator
     : public rtc::RTCCertificateGeneratorInterface,
-      public rtc::MessageHandler {
+      public rtc::MessageHandlerAutoCleanup {
  public:
   typedef rtc::TypedMessageData<
       rtc::scoped_refptr<rtc::RTCCertificateGeneratorCallback> >

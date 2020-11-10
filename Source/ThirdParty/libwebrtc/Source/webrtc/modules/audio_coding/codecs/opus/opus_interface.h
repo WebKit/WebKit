@@ -510,6 +510,22 @@ int WebRtcOpus_FecDurationEst(const uint8_t* payload,
 int WebRtcOpus_PacketHasFec(const uint8_t* payload,
                             size_t payload_length_bytes);
 
+/****************************************************************************
+ * WebRtcOpus_PacketHasVoiceActivity(...)
+ *
+ * This function returns the SILK VAD information encoded in the opus packet.
+ * For CELT-only packets that do not have VAD information, it returns -1.
+ * Input:
+ *        - payload              : Encoded data pointer
+ *        - payload_length_bytes : Bytes of encoded data
+ *
+ * Return value                  : 0 - no frame had the VAD flag set.
+ *                                 1 - at least one frame had the VAD flag set.
+ *                                -1 - VAD status could not be determined.
+ */
+int WebRtcOpus_PacketHasVoiceActivity(const uint8_t* payload,
+                                      size_t payload_length_bytes);
+
 #ifdef __cplusplus
 }  // extern "C"
 #endif

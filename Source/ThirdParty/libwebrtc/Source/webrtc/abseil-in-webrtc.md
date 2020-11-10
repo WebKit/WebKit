@@ -23,8 +23,10 @@ adds the first use.
 * `absl::variant` and related stuff from `absl/types/variant.h`.
 * The functions in `absl/algorithm/algorithm.h` and
   `absl/algorithm/container.h`.
+* `absl/base/const_init.h` for mutex initialization.
 * The macros in `absl/base/attributes.h`, `absl/base/config.h` and
   `absl/base/macros.h`.
+
 
 ## **Disallowed**
 
@@ -34,7 +36,7 @@ adds the first use.
 
 ### `absl::Mutex`
 
-*Use `rtc::CriticalSection` instead.*
+*Use `webrtc::Mutex` instead.*
 
 Chromium has a ban on new static initializers, and `absl::Mutex` uses
 one. To make `absl::Mutex` available, we would need to nicely ask the
@@ -61,3 +63,12 @@ has decided if they will change `absl::Span` to match.
 These are optimized for speed, not binary size. Even `StrCat` calls
 with a modest number of arguments can easily add several hundred bytes
 to the binary.
+
+## How to depend on Abseil
+
+For build targets `rtc_library`, `rtc_source_set` and `rtc_static_library`,
+dependencies on Abseil need to be listed in `absl_deps` instead of `deps`.
+
+This is needed in order to support the Abseil component build in Chromium. In
+such build mode, WebRTC will depend on a unique Abseil build target what will
+generate a shared library.

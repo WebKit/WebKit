@@ -18,12 +18,14 @@
 #include <type_traits>
 #include <utility>
 
+#include "absl/types/optional.h"
 #include "api/scoped_refptr.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/constructor_magic.h"
 #include "rtc_base/ref_count.h"
 #include "rtc_base/ref_counted_object.h"
 #include "rtc_base/synchronization/sequence_checker.h"
+#include "rtc_base/system/no_unique_address.h"
 
 namespace rtc {
 
@@ -112,6 +114,9 @@ class OperationsChain final : public RefCountedObject<RefCountInterface> {
   static scoped_refptr<OperationsChain> Create();
   ~OperationsChain();
 
+  void SetOnChainEmptyCallback(std::function<void()> on_chain_empty_callback);
+  bool IsEmpty() const;
+
   // Chains an operation. Chained operations are executed in FIFO order. The
   // operation starts when |functor| is executed by the OperationsChain and is
   // contractually obligated to invoke the callback passed to it when the
@@ -175,12 +180,14 @@ class OperationsChain final : public RefCountedObject<RefCountInterface> {
   std::function<void()> CreateOperationsChainCallback();
   void OnOperationComplete();
 
-  webrtc::SequenceChecker sequence_checker_;
+  RTC_NO_UNIQUE_ADDRESS webrtc::SequenceChecker sequence_checker_;
   // FIFO-list of operations that are chained. An operation that is executing
   // remains on this list until it has completed by invoking the callback passed
   // to it.
   std::queue<std::unique_ptr<rtc_operations_chain_internal::Operation>>
       chained_operations_ RTC_GUARDED_BY(sequence_checker_);
+  absl::optional<std::function<void()>> on_chain_empty_callback_
+      RTC_GUARDED_BY(sequence_checker_);
 
   RTC_DISALLOW_COPY_AND_ASSIGN(OperationsChain);
 };

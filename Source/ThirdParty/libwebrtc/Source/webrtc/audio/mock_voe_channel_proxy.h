@@ -28,96 +28,147 @@ namespace test {
 
 class MockChannelReceive : public voe::ChannelReceiveInterface {
  public:
-  MOCK_METHOD2(SetNACKStatus, void(bool enable, int max_packets));
-  MOCK_METHOD1(RegisterReceiverCongestionControlObjects,
-               void(PacketRouter* packet_router));
-  MOCK_METHOD0(ResetReceiverCongestionControlObjects, void());
-  MOCK_CONST_METHOD0(GetRTCPStatistics, CallReceiveStatistics());
-  MOCK_CONST_METHOD0(GetNetworkStatistics, NetworkStatistics());
-  MOCK_CONST_METHOD0(GetDecodingCallStatistics, AudioDecodingCallStats());
-  MOCK_CONST_METHOD0(GetSpeechOutputLevelFullRange, int());
-  MOCK_CONST_METHOD0(GetTotalOutputEnergy, double());
-  MOCK_CONST_METHOD0(GetTotalOutputDuration, double());
-  MOCK_CONST_METHOD0(GetDelayEstimate, uint32_t());
-  MOCK_METHOD1(SetSink, void(AudioSinkInterface* sink));
-  MOCK_METHOD1(OnRtpPacket, void(const RtpPacketReceived& packet));
-  MOCK_METHOD2(ReceivedRTCPPacket, void(const uint8_t* packet, size_t length));
-  MOCK_METHOD1(SetChannelOutputVolumeScaling, void(float scaling));
-  MOCK_METHOD2(GetAudioFrameWithInfo,
-               AudioMixer::Source::AudioFrameInfo(int sample_rate_hz,
-                                                  AudioFrame* audio_frame));
-  MOCK_CONST_METHOD0(PreferredSampleRate, int());
-  MOCK_METHOD1(SetAssociatedSendChannel,
-               void(const voe::ChannelSendInterface* send_channel));
-  MOCK_CONST_METHOD2(GetPlayoutRtpTimestamp,
-                     bool(uint32_t* rtp_timestamp, int64_t* time_ms));
-  MOCK_METHOD2(SetEstimatedPlayoutNtpTimestampMs,
-               void(int64_t ntp_timestamp_ms, int64_t time_ms));
-  MOCK_CONST_METHOD1(GetCurrentEstimatedPlayoutNtpTimestampMs,
-                     absl::optional<int64_t>(int64_t now_ms));
-  MOCK_CONST_METHOD0(GetSyncInfo, absl::optional<Syncable::Info>());
-  MOCK_METHOD1(SetMinimumPlayoutDelay, void(int delay_ms));
-  MOCK_METHOD1(SetBaseMinimumPlayoutDelayMs, bool(int delay_ms));
-  MOCK_CONST_METHOD0(GetBaseMinimumPlayoutDelayMs, int());
-  MOCK_CONST_METHOD0(GetReceiveCodec,
-                     absl::optional<std::pair<int, SdpAudioFormat>>());
-  MOCK_METHOD1(SetReceiveCodecs,
-               void(const std::map<int, SdpAudioFormat>& codecs));
-  MOCK_CONST_METHOD0(GetSources, std::vector<RtpSource>());
-  MOCK_METHOD0(StartPlayout, void());
-  MOCK_METHOD0(StopPlayout, void());
+  MOCK_METHOD(void, SetNACKStatus, (bool enable, int max_packets), (override));
+  MOCK_METHOD(void,
+              RegisterReceiverCongestionControlObjects,
+              (PacketRouter*),
+              (override));
+  MOCK_METHOD(void, ResetReceiverCongestionControlObjects, (), (override));
+  MOCK_METHOD(CallReceiveStatistics, GetRTCPStatistics, (), (const, override));
+  MOCK_METHOD(NetworkStatistics,
+              GetNetworkStatistics,
+              (bool),
+              (const, override));
+  MOCK_METHOD(AudioDecodingCallStats,
+              GetDecodingCallStatistics,
+              (),
+              (const, override));
+  MOCK_METHOD(int, GetSpeechOutputLevelFullRange, (), (const, override));
+  MOCK_METHOD(double, GetTotalOutputEnergy, (), (const, override));
+  MOCK_METHOD(double, GetTotalOutputDuration, (), (const, override));
+  MOCK_METHOD(uint32_t, GetDelayEstimate, (), (const, override));
+  MOCK_METHOD(void, SetSink, (AudioSinkInterface*), (override));
+  MOCK_METHOD(void, OnRtpPacket, (const RtpPacketReceived& packet), (override));
+  MOCK_METHOD(void,
+              ReceivedRTCPPacket,
+              (const uint8_t*, size_t length),
+              (override));
+  MOCK_METHOD(void, SetChannelOutputVolumeScaling, (float scaling), (override));
+  MOCK_METHOD(AudioMixer::Source::AudioFrameInfo,
+              GetAudioFrameWithInfo,
+              (int sample_rate_hz, AudioFrame*),
+              (override));
+  MOCK_METHOD(int, PreferredSampleRate, (), (const, override));
+  MOCK_METHOD(void,
+              SetAssociatedSendChannel,
+              (const voe::ChannelSendInterface*),
+              (override));
+  MOCK_METHOD(bool,
+              GetPlayoutRtpTimestamp,
+              (uint32_t*, int64_t*),
+              (const, override));
+  MOCK_METHOD(void,
+              SetEstimatedPlayoutNtpTimestampMs,
+              (int64_t ntp_timestamp_ms, int64_t time_ms),
+              (override));
+  MOCK_METHOD(absl::optional<int64_t>,
+              GetCurrentEstimatedPlayoutNtpTimestampMs,
+              (int64_t now_ms),
+              (const, override));
+  MOCK_METHOD(absl::optional<Syncable::Info>,
+              GetSyncInfo,
+              (),
+              (const, override));
+  MOCK_METHOD(bool, SetMinimumPlayoutDelay, (int delay_ms), (override));
+  MOCK_METHOD(bool, SetBaseMinimumPlayoutDelayMs, (int delay_ms), (override));
+  MOCK_METHOD(int, GetBaseMinimumPlayoutDelayMs, (), (const, override));
+  MOCK_METHOD((absl::optional<std::pair<int, SdpAudioFormat>>),
+              GetReceiveCodec,
+              (),
+              (const, override));
+  MOCK_METHOD(void,
+              SetReceiveCodecs,
+              ((const std::map<int, SdpAudioFormat>& codecs)),
+              (override));
+  MOCK_METHOD(void, StartPlayout, (), (override));
+  MOCK_METHOD(void, StopPlayout, (), (override));
+  MOCK_METHOD(
+      void,
+      SetDepacketizerToDecoderFrameTransformer,
+      (rtc::scoped_refptr<webrtc::FrameTransformerInterface> frame_transformer),
+      (override));
 };
 
 class MockChannelSend : public voe::ChannelSendInterface {
  public:
-  // GMock doesn't like move-only types, like std::unique_ptr.
-  virtual void SetEncoder(int payload_type,
-                          std::unique_ptr<AudioEncoder> encoder) {
-    return SetEncoderForMock(payload_type, &encoder);
-  }
-  MOCK_METHOD2(SetEncoderForMock,
-               void(int payload_type, std::unique_ptr<AudioEncoder>* encoder));
-  MOCK_METHOD1(
+  MOCK_METHOD(void,
+              SetEncoder,
+              (int payload_type, std::unique_ptr<AudioEncoder> encoder),
+              (override));
+  MOCK_METHOD(
+      void,
       ModifyEncoder,
-      void(rtc::FunctionView<void(std::unique_ptr<AudioEncoder>*)> modifier));
-  MOCK_METHOD1(CallEncoder,
-               void(rtc::FunctionView<void(AudioEncoder*)> modifier));
-  MOCK_METHOD1(SetRTCP_CNAME, void(absl::string_view c_name));
-  MOCK_METHOD2(SetSendAudioLevelIndicationStatus, void(bool enable, int id));
-  MOCK_METHOD2(RegisterSenderCongestionControlObjects,
-               void(RtpTransportControllerSendInterface* transport,
-                    RtcpBandwidthObserver* bandwidth_observer));
-  MOCK_METHOD0(ResetSenderCongestionControlObjects, void());
-  MOCK_CONST_METHOD0(GetRTCPStatistics, CallSendStatistics());
-  MOCK_CONST_METHOD0(GetRemoteRTCPReportBlocks, std::vector<ReportBlock>());
-  MOCK_CONST_METHOD0(GetANAStatistics, ANAStats());
-  MOCK_METHOD2(RegisterCngPayloadType,
-               void(int payload_type, int payload_frequency));
-  MOCK_METHOD2(SetSendTelephoneEventPayloadType,
-               void(int payload_type, int payload_frequency));
-  MOCK_METHOD2(SendTelephoneEventOutband, bool(int event, int duration_ms));
-  MOCK_METHOD1(OnBitrateAllocation, void(BitrateAllocationUpdate update));
-  MOCK_METHOD1(SetInputMute, void(bool muted));
-  MOCK_METHOD2(ReceivedRTCPPacket, void(const uint8_t* packet, size_t length));
-  // GMock doesn't like move-only types, like std::unique_ptr.
-  virtual void ProcessAndEncodeAudio(std::unique_ptr<AudioFrame> audio_frame) {
-    ProcessAndEncodeAudioForMock(&audio_frame);
-  }
-  MOCK_METHOD1(ProcessAndEncodeAudioForMock,
-               void(std::unique_ptr<AudioFrame>* audio_frame));
-  MOCK_METHOD1(SetTransportOverhead,
-               void(size_t transport_overhead_per_packet));
-  MOCK_CONST_METHOD0(GetRtpRtcp, RtpRtcp*());
-  MOCK_CONST_METHOD0(GetBitrate, int());
-  MOCK_METHOD1(OnTwccBasedUplinkPacketLossRate, void(float packet_loss_rate));
-  MOCK_METHOD1(OnRecoverableUplinkPacketLossRate,
-               void(float recoverable_packet_loss_rate));
-  MOCK_CONST_METHOD0(GetRTT, int64_t());
-  MOCK_METHOD0(StartSend, void());
-  MOCK_METHOD0(StopSend, void());
-  MOCK_METHOD1(
-      SetFrameEncryptor,
-      void(rtc::scoped_refptr<FrameEncryptorInterface> frame_encryptor));
+      (rtc::FunctionView<void(std::unique_ptr<AudioEncoder>*)> modifier),
+      (override));
+  MOCK_METHOD(void,
+              CallEncoder,
+              (rtc::FunctionView<void(AudioEncoder*)> modifier),
+              (override));
+  MOCK_METHOD(void, SetRTCP_CNAME, (absl::string_view c_name), (override));
+  MOCK_METHOD(void,
+              SetSendAudioLevelIndicationStatus,
+              (bool enable, int id),
+              (override));
+  MOCK_METHOD(void,
+              RegisterSenderCongestionControlObjects,
+              (RtpTransportControllerSendInterface*, RtcpBandwidthObserver*),
+              (override));
+  MOCK_METHOD(void, ResetSenderCongestionControlObjects, (), (override));
+  MOCK_METHOD(CallSendStatistics, GetRTCPStatistics, (), (const, override));
+  MOCK_METHOD(std::vector<ReportBlock>,
+              GetRemoteRTCPReportBlocks,
+              (),
+              (const, override));
+  MOCK_METHOD(ANAStats, GetANAStatistics, (), (const, override));
+  MOCK_METHOD(void,
+              RegisterCngPayloadType,
+              (int payload_type, int payload_frequency),
+              (override));
+  MOCK_METHOD(void,
+              SetSendTelephoneEventPayloadType,
+              (int payload_type, int payload_frequency),
+              (override));
+  MOCK_METHOD(bool,
+              SendTelephoneEventOutband,
+              (int event, int duration_ms),
+              (override));
+  MOCK_METHOD(void,
+              OnBitrateAllocation,
+              (BitrateAllocationUpdate update),
+              (override));
+  MOCK_METHOD(void, SetInputMute, (bool muted), (override));
+  MOCK_METHOD(void,
+              ReceivedRTCPPacket,
+              (const uint8_t*, size_t length),
+              (override));
+  MOCK_METHOD(void,
+              ProcessAndEncodeAudio,
+              (std::unique_ptr<AudioFrame>),
+              (override));
+  MOCK_METHOD(RtpRtcpInterface*, GetRtpRtcp, (), (const, override));
+  MOCK_METHOD(int, GetBitrate, (), (const, override));
+  MOCK_METHOD(int64_t, GetRTT, (), (const, override));
+  MOCK_METHOD(void, StartSend, (), (override));
+  MOCK_METHOD(void, StopSend, (), (override));
+  MOCK_METHOD(void,
+              SetFrameEncryptor,
+              (rtc::scoped_refptr<FrameEncryptorInterface> frame_encryptor),
+              (override));
+  MOCK_METHOD(
+      void,
+      SetEncoderToPacketizerFrameTransformer,
+      (rtc::scoped_refptr<webrtc::FrameTransformerInterface> frame_transformer),
+      (override));
 };
 }  // namespace test
 }  // namespace webrtc

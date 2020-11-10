@@ -79,6 +79,16 @@ RtpBitrateConfigurator::UpdateWithClientPreferences(
   return UpdateConstraints(bitrate_mask.start_bitrate_bps);
 }
 
+// Relay cap can change only max bitrate.
+absl::optional<BitrateConstraints> RtpBitrateConfigurator::UpdateWithRelayCap(
+    DataRate cap) {
+  if (cap.IsFinite()) {
+    RTC_DCHECK(!cap.IsZero());
+  }
+  max_bitrate_over_relay_ = cap;
+  return UpdateConstraints(absl::nullopt);
+}
+
 absl::optional<BitrateConstraints> RtpBitrateConfigurator::UpdateConstraints(
     const absl::optional<int>& new_start) {
   BitrateConstraints updated;
@@ -89,6 +99,8 @@ absl::optional<BitrateConstraints> RtpBitrateConfigurator::UpdateConstraints(
   updated.max_bitrate_bps =
       MinPositive(bitrate_config_mask_.max_bitrate_bps.value_or(-1),
                   base_bitrate_config_.max_bitrate_bps);
+  updated.max_bitrate_bps =
+      MinPositive(updated.max_bitrate_bps, max_bitrate_over_relay_.bps_or(-1));
 
   // If the combined min ends up greater than the combined max, the max takes
   // priority.

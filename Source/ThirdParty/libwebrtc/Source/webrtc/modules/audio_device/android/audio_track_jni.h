@@ -62,6 +62,7 @@ class AudioTrackJni {
     jmethodID set_stream_volume_;
     jmethodID get_stream_max_volume_;
     jmethodID get_stream_volume_;
+    jmethodID get_buffer_size_in_frames_;
   };
 
   explicit AudioTrackJni(AudioManager* audio_manager);

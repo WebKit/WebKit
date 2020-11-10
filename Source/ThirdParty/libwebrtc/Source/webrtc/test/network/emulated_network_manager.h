@@ -11,12 +11,12 @@
 #ifndef TEST_NETWORK_EMULATED_NETWORK_MANAGER_H_
 #define TEST_NETWORK_EMULATED_NETWORK_MANAGER_H_
 
+#include <functional>
 #include <memory>
 #include <vector>
 
 #include "api/test/network_emulation_manager.h"
 #include "api/test/time_controller.h"
-#include "rtc_base/critical_section.h"
 #include "rtc_base/ip_address.h"
 #include "rtc_base/network.h"
 #include "rtc_base/socket_server.h"
@@ -50,15 +50,18 @@ class EmulatedNetworkManager : public rtc::NetworkManagerBase,
   // EmulatedNetworkManagerInterface API
   rtc::Thread* network_thread() override { return network_thread_.get(); }
   rtc::NetworkManager* network_manager() override { return this; }
-  void GetStats(
-      std::function<void(EmulatedNetworkStats)> stats_callback) const override;
+  std::vector<EmulatedEndpoint*> endpoints() const override {
+    return endpoints_container_->GetEndpoints();
+  }
+  void GetStats(std::function<void(std::unique_ptr<EmulatedNetworkStats>)>
+                    stats_callback) const override;
 
  private:
   void UpdateNetworksOnce();
   void MaybeSignalNetworksChanged();
 
   TaskQueueForTest* const task_queue_;
-  EndpointsContainer* const endpoints_container_;
+  const EndpointsContainer* const endpoints_container_;
   std::unique_ptr<rtc::Thread> network_thread_;
 
   bool sent_first_update_ RTC_GUARDED_BY(network_thread_);

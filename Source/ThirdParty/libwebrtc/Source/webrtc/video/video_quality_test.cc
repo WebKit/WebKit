@@ -11,6 +11,10 @@
 
 #include <stdio.h>
 
+#if defined(WEBRTC_WIN)
+#include <conio.h>
+#endif
+
 #include <algorithm>
 #include <deque>
 #include <map>
@@ -27,6 +31,7 @@
 #include "api/video_codecs/video_encoder.h"
 #include "call/fake_network_pipe.h"
 #include "call/simulated_network.h"
+#include "media/base/media_constants.h"
 #include "media/engine/adm_helpers.h"
 #include "media/engine/encoder_simulcast_proxy.h"
 #include "media/engine/fake_video_codec_factory.h"
@@ -43,7 +48,6 @@
 #include "rtc_base/strings/string_builder.h"
 #include "rtc_base/task_queue_for_test.h"
 #include "test/platform_video_capturer.h"
-#include "test/run_loop.h"
 #include "test/testsupport/file_utils.h"
 #include "test/video_renderer.h"
 #include "video/frame_dumping_decoder.h"
@@ -234,8 +238,7 @@ class QualityTestVideoEncoder : public VideoEncoder,
  private:
   // Implement EncodedImageCallback
   Result OnEncodedImage(const EncodedImage& encoded_image,
-                        const CodecSpecificInfo* codec_specific_info,
-                        const RTPFragmentationHeader* fragmentation) override {
+                        const CodecSpecificInfo* codec_specific_info) override {
     if (codec_specific_info) {
       int simulcast_index;
       if (codec_specific_info->codecType == kVideoCodecVP9) {
@@ -254,8 +257,7 @@ class QualityTestVideoEncoder : public VideoEncoder,
       }
     }
 
-    return callback_->OnEncodedImage(encoded_image, codec_specific_info,
-                                     fragmentation);
+    return callback_->OnEncodedImage(encoded_image, codec_specific_info);
   }
 
   void OnDroppedFrame(DropReason reason) override {
@@ -269,6 +271,29 @@ class QualityTestVideoEncoder : public VideoEncoder,
   EncodedImageCallback* callback_ = nullptr;
   VideoCodec codec_settings_;
 };
+
+#if defined(WEBRTC_WIN) && !defined(WINUWP)
+void PressEnterToContinue(TaskQueueBase* task_queue) {
+  puts(">> Press ENTER to continue...");
+
+  while (!_kbhit() || _getch() != '\r') {
+    // Drive the message loop for the thread running the task_queue
+    SendTask(RTC_FROM_HERE, task_queue, [&]() {
+      MSG msg;
+      if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
+        TranslateMessage(&msg);
+        DispatchMessage(&msg);
+      }
+    });
+  }
+}
+#else
+void PressEnterToContinue(TaskQueueBase* /*task_queue*/) {
+  puts(">> Press ENTER to continue...");
+  while (getc(stdin) != '\n' && !feof(stdin))
+    ;  // NOLINT
+}
+#endif
 
 }  // namespace
 
@@ -406,58 +431,6 @@ VideoQualityTest::VideoQualityTest(
   network_controller_factory_ =
       std::move(injection_components_->network_controller_factory);
 }
-
-VideoQualityTest::Params::Params()
-    : call({false, false, BitrateConstraints(), 0}),
-      video{{false,
-             640,
-             480,
-             30,
-             50,
-             800,
-             800,
-             false,
-             "VP8",
-             1,
-             -1,
-             0,
-             false,
-             false,
-             false,
-             "",
-             0,
-             {},
-             0.0},
-            {false,
-             640,
-             480,
-             30,
-             50,
-             800,
-             800,
-             false,
-             "VP8",
-             1,
-             -1,
-             0,
-             false,
-             false,
-             false,
-             "",
-             0,
-             {},
-             0.0}},
-      audio({false, false, false, false}),
-      screenshare{{false, false, 10, 0}, {false, false, 10, 0}},
-      analyzer({"", 0.0, 0.0, 0, "", ""}),
-      config(absl::nullopt),
-      ss{{std::vector<VideoStream>(), 0, 0, -1, InterLayerPredMode::kOn,
-          std::vector<SpatialLayer>()},
-         {std::vector<VideoStream>(), 0, 0, -1, InterLayerPredMode::kOn,
-          std::vector<SpatialLayer>()}},
-      logging({"", "", ""}) {}
-
-VideoQualityTest::Params::~Params() = default;
 
 VideoQualityTest::InjectionComponents::InjectionComponents() = default;
 
@@ -788,17 +761,9 @@ void VideoQualityTest::SetupVideo(Transport* send_transport,
     }
 
     if (params_.call.generic_descriptor) {
-      // The generic descriptor is currently behind a field trial, so it needs
-      // to be set for this flag to have any effect.
-      // TODO(philipel): Remove this check when the experiment is removed.
-      RTC_CHECK(field_trial::IsEnabled("WebRTC-GenericDescriptor"));
-
       video_send_configs_[video_idx].rtp.extensions.emplace_back(
           RtpExtension::kGenericFrameDescriptorUri00,
           kGenericFrameDescriptorExtensionId00);
-      video_send_configs_[video_idx].rtp.extensions.emplace_back(
-          RtpExtension::kGenericFrameDescriptorUri01,
-          kGenericFrameDescriptorExtensionId01);
     }
 
     video_send_configs_[video_idx].rtp.extensions.emplace_back(
@@ -914,6 +879,10 @@ void VideoQualityTest::SetupVideo(Transport* send_transport,
                 VideoEncoderConfig::Vp9EncoderSpecificSettings>(vp9_settings);
       } else if (params_.video[video_idx].codec == "H264") {
         // Quality scaling is always on for H.264.
+      } else if (params_.video[video_idx].codec == cricket::kAv1CodecName) {
+        // TODO(bugs.webrtc.org/11404): Propagate the flag to
+        // aom_codec_enc_cfg_t::rc_resize_mode in Av1 encoder wrapper.
+        // Until then do nothing, specially do not crash.
       } else {
         RTC_NOTREACHED() << "Automatic scaling not supported for codec "
                          << params_.video[video_idx].codec << ", stream "
@@ -1135,6 +1104,11 @@ void VideoQualityTest::CreateCapturers() {
           static_cast<int>(params_.video[video_idx].width),
           static_cast<int>(params_.video[video_idx].height),
           test::FrameGeneratorInterface::OutputType::kI010, absl::nullopt);
+    } else if (params_.video[video_idx].clip_path == "GeneratorNV12") {
+      frame_generator = test::CreateSquareFrameGenerator(
+          static_cast<int>(params_.video[video_idx].width),
+          static_cast<int>(params_.video[video_idx].height),
+          test::FrameGeneratorInterface::OutputType::kNV12, absl::nullopt);
     } else if (params_.video[video_idx].clip_path.empty()) {
       video_sources_[video_idx] = test::CreateVideoCapturer(
           params_.video[video_idx].width, params_.video[video_idx].height,
@@ -1287,6 +1261,9 @@ void VideoQualityTest::RunWithAnalyzer(const Params& params) {
       is_quick_test_enabled
           ? kFramesSentInQuickTest
           : params_.analyzer.test_durations_secs * params_.video[0].fps,
+      is_quick_test_enabled
+          ? TimeDelta::Millis(1)
+          : TimeDelta::Seconds(params_.analyzer.test_durations_secs),
       graph_data_output_file, graph_title,
       kVideoSendSsrcs[params_.ss[0].selected_stream],
       kSendRtxSsrcs[params_.ss[0].selected_stream],
@@ -1570,7 +1547,7 @@ void VideoQualityTest::RunWithRenderers(const Params& params) {
     Start();
   });
 
-  test::PressEnterToContinue(task_queue());
+  PressEnterToContinue(task_queue());
 
   SendTask(RTC_FROM_HERE, task_queue(), [&]() {
     Stop();

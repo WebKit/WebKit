@@ -58,7 +58,7 @@ Vp9FrameBufferPool::GetFrameBuffer(size_t min_size) {
   RTC_DCHECK_GT(min_size, 0);
   rtc::scoped_refptr<Vp9FrameBuffer> available_buffer = nullptr;
   {
-    rtc::CritScope cs(&buffers_lock_);
+    MutexLock lock(&buffers_lock_);
     // Do we have a buffer we can recycle?
     for (const auto& buffer : allocated_buffers_) {
       if (buffer->HasOneRef()) {
@@ -91,7 +91,7 @@ Vp9FrameBufferPool::GetFrameBuffer(size_t min_size) {
 
 int Vp9FrameBufferPool::GetNumBuffersInUse() const {
   int num_buffers_in_use = 0;
-  rtc::CritScope cs(&buffers_lock_);
+  MutexLock lock(&buffers_lock_);
   for (const auto& buffer : allocated_buffers_) {
     if (!buffer->HasOneRef())
       ++num_buffers_in_use;
@@ -100,7 +100,7 @@ int Vp9FrameBufferPool::GetNumBuffersInUse() const {
 }
 
 bool Vp9FrameBufferPool::Resize(size_t max_number_of_buffers) {
-  rtc::CritScope cs(&buffers_lock_);
+  MutexLock lock(&buffers_lock_);
   size_t used_buffers_count = 0;
   for (const auto& buffer : allocated_buffers_) {
     // If the buffer is in use, the ref count will be >= 2, one from the list we
@@ -130,7 +130,7 @@ bool Vp9FrameBufferPool::Resize(size_t max_number_of_buffers) {
 }
 
 void Vp9FrameBufferPool::ClearPool() {
-  rtc::CritScope cs(&buffers_lock_);
+  MutexLock lock(&buffers_lock_);
   allocated_buffers_.clear();
 }
 

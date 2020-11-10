@@ -210,32 +210,23 @@ SpsVuiRewriter::ParseResult SpsVuiRewriter::ParseAndRewriteSps(
   return result;
 }
 
-void SpsVuiRewriter::ParseOutgoingBitstreamAndRewriteSps(
+rtc::Buffer SpsVuiRewriter::ParseOutgoingBitstreamAndRewrite(
     rtc::ArrayView<const uint8_t> buffer,
-    size_t num_nalus,
-    const size_t* nalu_offsets,
-    const size_t* nalu_lengths,
-    const webrtc::ColorSpace* color_space,
-    rtc::Buffer* output_buffer,
-    size_t* output_nalu_offsets,
-    size_t* output_nalu_lengths) {
+    const webrtc::ColorSpace* color_space) {
+  std::vector<H264::NaluIndex> nalus =
+      H264::FindNaluIndices(buffer.data(), buffer.size());
+
   // Allocate some extra space for potentially adding a missing VUI.
-  output_buffer->EnsureCapacity(buffer.size() + num_nalus * kMaxVuiSpsIncrease);
+  rtc::Buffer output_buffer(/*size=*/0, /*capacity=*/buffer.size() +
+                                            nalus.size() * kMaxVuiSpsIncrease);
 
-  const uint8_t* prev_nalu_ptr = buffer.data();
-  size_t prev_nalu_length = 0;
-
-  for (size_t i = 0; i < num_nalus; ++i) {
-    const uint8_t* nalu_ptr = buffer.data() + nalu_offsets[i];
-    const size_t nalu_length = nalu_lengths[i];
-
+  for (const H264::NaluIndex& nalu : nalus) {
     // Copy NAL unit start code.
-    const uint8_t* start_code_ptr = prev_nalu_ptr + prev_nalu_length;
+    const uint8_t* start_code_ptr = buffer.data() + nalu.start_offset;
     const size_t start_code_length =
-        (nalu_ptr - prev_nalu_ptr) - prev_nalu_length;
-    output_buffer->AppendData(start_code_ptr, start_code_length);
-
-    bool updated_sps = false;
+        nalu.payload_start_offset - nalu.start_offset;
+    const uint8_t* nalu_ptr = buffer.data() + nalu.payload_start_offset;
+    const size_t nalu_length = nalu.payload_size;
 
     if (H264::ParseNaluType(nalu_ptr[0]) == H264::NaluType::kSps) {
       // Check if stream uses picture order count type 0, and if so rewrite it
@@ -260,22 +251,20 @@ void SpsVuiRewriter::ParseOutgoingBitstreamAndRewriteSps(
           nalu_ptr + H264::kNaluTypeSize, nalu_length - H264::kNaluTypeSize,
           &sps, color_space, &output_nalu, Direction::kOutgoing);
       if (result == ParseResult::kVuiRewritten) {
-        updated_sps = true;
-        output_nalu_offsets[i] = output_buffer->size();
-        output_nalu_lengths[i] = output_nalu.size();
-        output_buffer->AppendData(output_nalu.data(), output_nalu.size());
+        output_buffer.AppendData(start_code_ptr, start_code_length);
+        output_buffer.AppendData(output_nalu.data(), output_nalu.size());
+        continue;
       }
+    } else if (H264::ParseNaluType(nalu_ptr[0]) == H264::NaluType::kAud) {
+      // Skip the access unit delimiter copy.
+      continue;
     }
 
-    if (!updated_sps) {
-      output_nalu_offsets[i] = output_buffer->size();
-      output_nalu_lengths[i] = nalu_length;
-      output_buffer->AppendData(nalu_ptr, nalu_length);
-    }
-
-    prev_nalu_ptr = nalu_ptr;
-    prev_nalu_length = nalu_length;
+    // vui wasn't rewritten and it is not aud, copy the nal unit as is.
+    output_buffer.AppendData(start_code_ptr, start_code_length);
+    output_buffer.AppendData(nalu_ptr, nalu_length);
   }
+  return output_buffer;
 }
 
 namespace {

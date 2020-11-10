@@ -27,6 +27,10 @@ extern "C" {
 #include "rtc_base/numerics/safe_conversions.h"
 #include "rtc_base/sanitizer.h"
 
+namespace webrtc {
+
+namespace {
+
 // Square root of Hanning window in Q14.
 static const ALIGN8_BEG int16_t WebRtcAecm_kSqrtHanning[] ALIGN8_END = {
     0,     399,   798,   1196,  1594,  1990,  2386,  2780,  3172,  3562,  3951,
@@ -57,7 +61,115 @@ static const int16_t kNoiseEstIncCount = 5;
 static void ComfortNoise(AecmCore* aecm,
                          const uint16_t* dfa,
                          ComplexInt16* out,
-                         const int16_t* lambda);
+                         const int16_t* lambda) {
+  int16_t i;
+  int16_t tmp16;
+  int32_t tmp32;
+
+  int16_t randW16[PART_LEN];
+  int16_t uReal[PART_LEN1];
+  int16_t uImag[PART_LEN1];
+  int32_t outLShift32;
+  int16_t noiseRShift16[PART_LEN1];
+
+  int16_t shiftFromNearToNoise = kNoiseEstQDomain - aecm->dfaCleanQDomain;
+  int16_t minTrackShift;
+
+  RTC_DCHECK_GE(shiftFromNearToNoise, 0);
+  RTC_DCHECK_LT(shiftFromNearToNoise, 16);
+
+  if (aecm->noiseEstCtr < 100) {
+    // Track the minimum more quickly initially.
+    aecm->noiseEstCtr++;
+    minTrackShift = 6;
+  } else {
+    minTrackShift = 9;
+  }
+
+  // Estimate noise power.
+  for (i = 0; i < PART_LEN1; i++) {
+    // Shift to the noise domain.
+    tmp32 = (int32_t)dfa[i];
+    outLShift32 = tmp32 << shiftFromNearToNoise;
+
+    if (outLShift32 < aecm->noiseEst[i]) {
+      // Reset "too low" counter
+      aecm->noiseEstTooLowCtr[i] = 0;
+      // Track the minimum.
+      if (aecm->noiseEst[i] < (1 << minTrackShift)) {
+        // For small values, decrease noiseEst[i] every
+        // |kNoiseEstIncCount| block. The regular approach below can not
+        // go further down due to truncation.
+        aecm->noiseEstTooHighCtr[i]++;
+        if (aecm->noiseEstTooHighCtr[i] >= kNoiseEstIncCount) {
+          aecm->noiseEst[i]--;
+          aecm->noiseEstTooHighCtr[i] = 0;  // Reset the counter
+        }
+      } else {
+        aecm->noiseEst[i] -=
+            ((aecm->noiseEst[i] - outLShift32) >> minTrackShift);
+      }
+    } else {
+      // Reset "too high" counter
+      aecm->noiseEstTooHighCtr[i] = 0;
+      // Ramp slowly upwards until we hit the minimum again.
+      if ((aecm->noiseEst[i] >> 19) > 0) {
+        // Avoid overflow.
+        // Multiplication with 2049 will cause wrap around. Scale
+        // down first and then multiply
+        aecm->noiseEst[i] >>= 11;
+        aecm->noiseEst[i] *= 2049;
+      } else if ((aecm->noiseEst[i] >> 11) > 0) {
+        // Large enough for relative increase
+        aecm->noiseEst[i] *= 2049;
+        aecm->noiseEst[i] >>= 11;
+      } else {
+        // Make incremental increases based on size every
+        // |kNoiseEstIncCount| block
+        aecm->noiseEstTooLowCtr[i]++;
+        if (aecm->noiseEstTooLowCtr[i] >= kNoiseEstIncCount) {
+          aecm->noiseEst[i] += (aecm->noiseEst[i] >> 9) + 1;
+          aecm->noiseEstTooLowCtr[i] = 0;  // Reset counter
+        }
+      }
+    }
+  }
+
+  for (i = 0; i < PART_LEN1; i++) {
+    tmp32 = aecm->noiseEst[i] >> shiftFromNearToNoise;
+    if (tmp32 > 32767) {
+      tmp32 = 32767;
+      aecm->noiseEst[i] = tmp32 << shiftFromNearToNoise;
+    }
+    noiseRShift16[i] = (int16_t)tmp32;
+
+    tmp16 = ONE_Q14 - lambda[i];
+    noiseRShift16[i] = (int16_t)((tmp16 * noiseRShift16[i]) >> 14);
+  }
+
+  // Generate a uniform random array on [0 2^15-1].
+  WebRtcSpl_RandUArray(randW16, PART_LEN, &aecm->seed);
+
+  // Generate noise according to estimated energy.
+  uReal[0] = 0;  // Reject LF noise.
+  uImag[0] = 0;
+  for (i = 1; i < PART_LEN1; i++) {
+    // Get a random index for the cos and sin tables over [0 359].
+    tmp16 = (int16_t)((359 * randW16[i - 1]) >> 15);
+
+    // Tables are in Q13.
+    uReal[i] =
+        (int16_t)((noiseRShift16[i] * WebRtcAecm_kCosTable[tmp16]) >> 13);
+    uImag[i] =
+        (int16_t)((-noiseRShift16[i] * WebRtcAecm_kSinTable[tmp16]) >> 13);
+  }
+  uImag[PART_LEN] = 0;
+
+  for (i = 0; i < PART_LEN1; i++) {
+    out[i].real = WebRtcSpl_AddSatW16(out[i].real, uReal[i]);
+    out[i].imag = WebRtcSpl_AddSatW16(out[i].imag, uImag[i]);
+  }
+}
 
 static void WindowAndFFT(AecmCore* aecm,
                          int16_t* fft,
@@ -254,6 +366,8 @@ static int TimeToFrequencyDomain(AecmCore* aecm,
 
   return time_signal_scaling;
 }
+
+}  // namespace
 
 int RTC_NO_SANITIZE("signed-integer-overflow")  // bugs.webrtc.org/8200
     WebRtcAecm_ProcessBlock(AecmCore* aecm,
@@ -554,115 +668,4 @@ int RTC_NO_SANITIZE("signed-integer-overflow")  // bugs.webrtc.org/8200
   return 0;
 }
 
-static void ComfortNoise(AecmCore* aecm,
-                         const uint16_t* dfa,
-                         ComplexInt16* out,
-                         const int16_t* lambda) {
-  int16_t i;
-  int16_t tmp16;
-  int32_t tmp32;
-
-  int16_t randW16[PART_LEN];
-  int16_t uReal[PART_LEN1];
-  int16_t uImag[PART_LEN1];
-  int32_t outLShift32;
-  int16_t noiseRShift16[PART_LEN1];
-
-  int16_t shiftFromNearToNoise = kNoiseEstQDomain - aecm->dfaCleanQDomain;
-  int16_t minTrackShift;
-
-  RTC_DCHECK_GE(shiftFromNearToNoise, 0);
-  RTC_DCHECK_LT(shiftFromNearToNoise, 16);
-
-  if (aecm->noiseEstCtr < 100) {
-    // Track the minimum more quickly initially.
-    aecm->noiseEstCtr++;
-    minTrackShift = 6;
-  } else {
-    minTrackShift = 9;
-  }
-
-  // Estimate noise power.
-  for (i = 0; i < PART_LEN1; i++) {
-    // Shift to the noise domain.
-    tmp32 = (int32_t)dfa[i];
-    outLShift32 = tmp32 << shiftFromNearToNoise;
-
-    if (outLShift32 < aecm->noiseEst[i]) {
-      // Reset "too low" counter
-      aecm->noiseEstTooLowCtr[i] = 0;
-      // Track the minimum.
-      if (aecm->noiseEst[i] < (1 << minTrackShift)) {
-        // For small values, decrease noiseEst[i] every
-        // |kNoiseEstIncCount| block. The regular approach below can not
-        // go further down due to truncation.
-        aecm->noiseEstTooHighCtr[i]++;
-        if (aecm->noiseEstTooHighCtr[i] >= kNoiseEstIncCount) {
-          aecm->noiseEst[i]--;
-          aecm->noiseEstTooHighCtr[i] = 0;  // Reset the counter
-        }
-      } else {
-        aecm->noiseEst[i] -=
-            ((aecm->noiseEst[i] - outLShift32) >> minTrackShift);
-      }
-    } else {
-      // Reset "too high" counter
-      aecm->noiseEstTooHighCtr[i] = 0;
-      // Ramp slowly upwards until we hit the minimum again.
-      if ((aecm->noiseEst[i] >> 19) > 0) {
-        // Avoid overflow.
-        // Multiplication with 2049 will cause wrap around. Scale
-        // down first and then multiply
-        aecm->noiseEst[i] >>= 11;
-        aecm->noiseEst[i] *= 2049;
-      } else if ((aecm->noiseEst[i] >> 11) > 0) {
-        // Large enough for relative increase
-        aecm->noiseEst[i] *= 2049;
-        aecm->noiseEst[i] >>= 11;
-      } else {
-        // Make incremental increases based on size every
-        // |kNoiseEstIncCount| block
-        aecm->noiseEstTooLowCtr[i]++;
-        if (aecm->noiseEstTooLowCtr[i] >= kNoiseEstIncCount) {
-          aecm->noiseEst[i] += (aecm->noiseEst[i] >> 9) + 1;
-          aecm->noiseEstTooLowCtr[i] = 0;  // Reset counter
-        }
-      }
-    }
-  }
-
-  for (i = 0; i < PART_LEN1; i++) {
-    tmp32 = aecm->noiseEst[i] >> shiftFromNearToNoise;
-    if (tmp32 > 32767) {
-      tmp32 = 32767;
-      aecm->noiseEst[i] = tmp32 << shiftFromNearToNoise;
-    }
-    noiseRShift16[i] = (int16_t)tmp32;
-
-    tmp16 = ONE_Q14 - lambda[i];
-    noiseRShift16[i] = (int16_t)((tmp16 * noiseRShift16[i]) >> 14);
-  }
-
-  // Generate a uniform random array on [0 2^15-1].
-  WebRtcSpl_RandUArray(randW16, PART_LEN, &aecm->seed);
-
-  // Generate noise according to estimated energy.
-  uReal[0] = 0;  // Reject LF noise.
-  uImag[0] = 0;
-  for (i = 1; i < PART_LEN1; i++) {
-    // Get a random index for the cos and sin tables over [0 359].
-    tmp16 = (int16_t)((359 * randW16[i - 1]) >> 15);
-
-    // Tables are in Q13.
-    uReal[i] =
-        (int16_t)((noiseRShift16[i] * WebRtcAecm_kCosTable[tmp16]) >> 13);
-    uImag[i] =
-        (int16_t)((-noiseRShift16[i] * WebRtcAecm_kSinTable[tmp16]) >> 13);
-  }
-  uImag[PART_LEN] = 0;
-
-  for (i = 0; i < PART_LEN1; i++) {
-    out[i].real = WebRtcSpl_AddSatW16(out[i].real, uReal[i]);
-    out[i].imag = WebRtcSpl_AddSatW16(out[i].imag, uImag[i]);
-  }
-}
+}  // namespace webrtc

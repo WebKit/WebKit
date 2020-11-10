@@ -14,7 +14,7 @@
 
 #include "call/rtp_demuxer.h"
 #include "call/rtp_stream_receiver_controller_interface.h"
-#include "rtc_base/critical_section.h"
+#include "rtc_base/deprecated/recursive_critical_section.h"
 
 namespace webrtc {
 
@@ -63,7 +63,7 @@ class RtpStreamReceiverController
   // to be called on the same thread, and OnRtpPacket to be called
   // by a single, but possibly distinct, thread. But applications not
   // using Call may have use threads differently.
-  rtc::CriticalSection lock_;
+  rtc::RecursiveCriticalSection lock_;
   RtpDemuxer demuxer_ RTC_GUARDED_BY(&lock_);
 };
 

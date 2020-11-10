@@ -109,7 +109,7 @@ bool IsOptimizationAvailable(Optimization optimization) {
   switch (optimization) {
     case Optimization::kSse2:
 #if defined(WEBRTC_ARCH_X86_FAMILY)
-      return WebRtc_GetCPUInfo(kSSE2) != 0;
+      return GetCPUInfo(kSSE2) != 0;
 #else
       return false;
 #endif

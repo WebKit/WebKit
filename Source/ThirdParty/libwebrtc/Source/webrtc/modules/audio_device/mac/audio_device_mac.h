@@ -19,9 +19,9 @@
 
 #include "modules/audio_device/audio_device_generic.h"
 #include "modules/audio_device/mac/audio_mixer_manager_mac.h"
-#include "rtc_base/critical_section.h"
 #include "rtc_base/event.h"
 #include "rtc_base/logging.h"
+#include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/thread_annotations.h"
 
 struct PaUtilRingBuffer;
@@ -69,8 +69,8 @@ class AudioDeviceMac : public AudioDeviceGeneric {
       AudioDeviceModule::AudioLayer& audioLayer) const;
 
   // Main initializaton and termination
-  virtual InitStatus Init();
-  virtual int32_t Terminate();
+  virtual InitStatus Init() RTC_LOCKS_EXCLUDED(mutex_);
+  virtual int32_t Terminate() RTC_LOCKS_EXCLUDED(mutex_);
   virtual bool Initialized() const;
 
   // Device enumeration
@@ -84,7 +84,7 @@ class AudioDeviceMac : public AudioDeviceGeneric {
                                       char guid[kAdmMaxGuidSize]);
 
   // Device selection
-  virtual int32_t SetPlayoutDevice(uint16_t index);
+  virtual int32_t SetPlayoutDevice(uint16_t index) RTC_LOCKS_EXCLUDED(mutex_);
   virtual int32_t SetPlayoutDevice(AudioDeviceModule::WindowsDeviceType device);
   virtual int32_t SetRecordingDevice(uint16_t index);
   virtual int32_t SetRecordingDevice(
@@ -92,52 +92,57 @@ class AudioDeviceMac : public AudioDeviceGeneric {
 
   // Audio transport initialization
   virtual int32_t PlayoutIsAvailable(bool& available);
-  virtual int32_t InitPlayout();
+  virtual int32_t InitPlayout() RTC_LOCKS_EXCLUDED(mutex_);
   virtual bool PlayoutIsInitialized() const;
   virtual int32_t RecordingIsAvailable(bool& available);
-  virtual int32_t InitRecording();
+  virtual int32_t InitRecording() RTC_LOCKS_EXCLUDED(mutex_);
   virtual bool RecordingIsInitialized() const;
 
   // Audio transport control
-  virtual int32_t StartPlayout();
-  virtual int32_t StopPlayout();
+  virtual int32_t StartPlayout() RTC_LOCKS_EXCLUDED(mutex_);
+  virtual int32_t StopPlayout() RTC_LOCKS_EXCLUDED(mutex_);
   virtual bool Playing() const;
-  virtual int32_t StartRecording();
-  virtual int32_t StopRecording();
+  virtual int32_t StartRecording() RTC_LOCKS_EXCLUDED(mutex_);
+  virtual int32_t StopRecording() RTC_LOCKS_EXCLUDED(mutex_);
   virtual bool Recording() const;
 
   // Audio mixer initialization
-  virtual int32_t InitSpeaker();
+  virtual int32_t InitSpeaker() RTC_LOCKS_EXCLUDED(mutex_);
   virtual bool SpeakerIsInitialized() const;
-  virtual int32_t InitMicrophone();
+  virtual int32_t InitMicrophone() RTC_LOCKS_EXCLUDED(mutex_);
   virtual bool MicrophoneIsInitialized() const;
 
   // Speaker volume controls
-  virtual int32_t SpeakerVolumeIsAvailable(bool& available);
+  virtual int32_t SpeakerVolumeIsAvailable(bool& available)
+      RTC_LOCKS_EXCLUDED(mutex_);
   virtual int32_t SetSpeakerVolume(uint32_t volume);
   virtual int32_t SpeakerVolume(uint32_t& volume) const;
   virtual int32_t MaxSpeakerVolume(uint32_t& maxVolume) const;
   virtual int32_t MinSpeakerVolume(uint32_t& minVolume) const;
 
   // Microphone volume controls
-  virtual int32_t MicrophoneVolumeIsAvailable(bool& available);
+  virtual int32_t MicrophoneVolumeIsAvailable(bool& available)
+      RTC_LOCKS_EXCLUDED(mutex_);
   virtual int32_t SetMicrophoneVolume(uint32_t volume);
   virtual int32_t MicrophoneVolume(uint32_t& volume) const;
   virtual int32_t MaxMicrophoneVolume(uint32_t& maxVolume) const;
   virtual int32_t MinMicrophoneVolume(uint32_t& minVolume) const;
 
   // Microphone mute control
-  virtual int32_t MicrophoneMuteIsAvailable(bool& available);
+  virtual int32_t MicrophoneMuteIsAvailable(bool& available)
+      RTC_LOCKS_EXCLUDED(mutex_);
   virtual int32_t SetMicrophoneMute(bool enable);
   virtual int32_t MicrophoneMute(bool& enabled) const;
 
   // Speaker mute control
-  virtual int32_t SpeakerMuteIsAvailable(bool& available);
+  virtual int32_t SpeakerMuteIsAvailable(bool& available)
+      RTC_LOCKS_EXCLUDED(mutex_);
   virtual int32_t SetSpeakerMute(bool enable);
   virtual int32_t SpeakerMute(bool& enabled) const;
 
   // Stereo support
-  virtual int32_t StereoPlayoutIsAvailable(bool& available);
+  virtual int32_t StereoPlayoutIsAvailable(bool& available)
+      RTC_LOCKS_EXCLUDED(mutex_);
   virtual int32_t SetStereoPlayout(bool enable);
   virtual int32_t StereoPlayout(bool& enabled) const;
   virtual int32_t StereoRecordingIsAvailable(bool& available);
@@ -147,11 +152,21 @@ class AudioDeviceMac : public AudioDeviceGeneric {
   // Delay information and control
   virtual int32_t PlayoutDelay(uint16_t& delayMS) const;
 
-  virtual void AttachAudioBuffer(AudioDeviceBuffer* audioBuffer);
+  virtual void AttachAudioBuffer(AudioDeviceBuffer* audioBuffer)
+      RTC_LOCKS_EXCLUDED(mutex_);
 
  private:
-  virtual int32_t MicrophoneIsAvailable(bool& available);
-  virtual int32_t SpeakerIsAvailable(bool& available);
+  int32_t InitSpeakerLocked() RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
+  int32_t InitMicrophoneLocked() RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
+
+  virtual int32_t MicrophoneIsAvailable(bool& available)
+      RTC_LOCKS_EXCLUDED(mutex_);
+  virtual int32_t MicrophoneIsAvailableLocked(bool& available)
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
+  virtual int32_t SpeakerIsAvailable(bool& available)
+      RTC_LOCKS_EXCLUDED(mutex_);
+  virtual int32_t SpeakerIsAvailableLocked(bool& available)
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
 
   static void AtomicSet32(int32_t* theValue, int32_t newValue);
   static int32_t AtomicGet32(int32_t* theValue);
@@ -229,13 +244,15 @@ class AudioDeviceMac : public AudioDeviceGeneric {
   OSStatus implDeviceIOProc(const AudioBufferList* inputData,
                             const AudioTimeStamp* inputTime,
                             AudioBufferList* outputData,
-                            const AudioTimeStamp* outputTime);
+                            const AudioTimeStamp* outputTime)
+      RTC_LOCKS_EXCLUDED(mutex_);
 
   OSStatus implOutConverterProc(UInt32* numberDataPackets,
                                 AudioBufferList* data);
 
   OSStatus implInDeviceIOProc(const AudioBufferList* inputData,
-                              const AudioTimeStamp* inputTime);
+                              const AudioTimeStamp* inputTime)
+      RTC_LOCKS_EXCLUDED(mutex_);
 
   OSStatus implInConverterProc(UInt32* numberDataPackets,
                                AudioBufferList* data);
@@ -249,7 +266,7 @@ class AudioDeviceMac : public AudioDeviceGeneric {
 
   AudioDeviceBuffer* _ptrAudioBuffer;
 
-  rtc::CriticalSection _critSect;
+  Mutex mutex_;
 
   rtc::Event _stopEventRec;
   rtc::Event _stopEvent;

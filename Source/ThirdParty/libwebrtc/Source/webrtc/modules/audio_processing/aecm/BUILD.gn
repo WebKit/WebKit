@@ -21,7 +21,7 @@ rtc_library("aecm_core") {
     "../../../rtc_base:checks",
     "../../../rtc_base:rtc_base_approved",
     "../../../rtc_base:sanitizer",
-    "../../../system_wrappers:cpu_features_api",
+    "../../../system_wrappers",
     "../utility:legacy_delay_estimator",
   ]
   cflags = []

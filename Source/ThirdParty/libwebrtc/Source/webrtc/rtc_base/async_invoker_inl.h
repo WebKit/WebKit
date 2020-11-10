@@ -13,7 +13,6 @@
 
 #include "api/scoped_refptr.h"
 #include "rtc_base/bind.h"
-#include "rtc_base/critical_section.h"
 #include "rtc_base/event.h"
 #include "rtc_base/message_handler.h"
 #include "rtc_base/ref_counted_object.h"

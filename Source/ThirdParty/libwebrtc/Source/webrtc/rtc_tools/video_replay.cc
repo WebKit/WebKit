@@ -335,7 +335,6 @@ class RtpReplayer final {
       for (auto& decoder : receive_config.decoders) {
         decoder = test::CreateMatchingDecoder(decoder.payload_type,
                                               decoder.video_format.name);
-        decoder.decoder_factory = stream_state->decoder_factory.get();
       }
       // Create a window for this config.
       std::stringstream window_title;
@@ -344,6 +343,7 @@ class RtpReplayer final {
           test::VideoRenderer::Create(window_title.str().c_str(), 640, 480));
       // Create a receive stream for this config.
       receive_config.renderer = stream_state->sinks.back().get();
+      receive_config.decoder_factory = stream_state->decoder_factory.get();
       stream_state->receive_streams.emplace_back(
           call->CreateVideoReceiveStream(std::move(receive_config)));
     }
@@ -402,7 +402,7 @@ class RtpReplayer final {
                 DecoderBitstreamFilename().c_str());
           });
     }
-    decoder.decoder_factory = stream_state->decoder_factory.get();
+    receive_config.decoder_factory = stream_state->decoder_factory.get();
     receive_config.decoders.push_back(decoder);
 
     stream_state->receive_streams.emplace_back(
@@ -521,6 +521,7 @@ int main(int argc, char* argv[]) {
       absl::GetFlag(FLAGS_transmission_offset_id)));
   RTC_CHECK(ValidateInputFilenameNotEmpty(absl::GetFlag(FLAGS_input_file)));
 
+  rtc::ThreadManager::Instance()->WrapCurrentThread();
   webrtc::test::RunTest(webrtc::RtpReplay);
   return 0;
 }

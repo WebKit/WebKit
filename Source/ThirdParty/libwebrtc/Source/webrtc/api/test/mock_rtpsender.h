@@ -21,16 +21,25 @@ namespace webrtc {
 
 class MockRtpSender : public rtc::RefCountedObject<RtpSenderInterface> {
  public:
-  MOCK_METHOD1(SetTrack, bool(MediaStreamTrackInterface*));
-  MOCK_CONST_METHOD0(track, rtc::scoped_refptr<MediaStreamTrackInterface>());
-  MOCK_CONST_METHOD0(ssrc, uint32_t());
-  MOCK_CONST_METHOD0(media_type, cricket::MediaType());
-  MOCK_CONST_METHOD0(id, std::string());
-  MOCK_CONST_METHOD0(stream_ids, std::vector<std::string>());
-  MOCK_CONST_METHOD0(init_send_encodings, std::vector<RtpEncodingParameters>());
-  MOCK_CONST_METHOD0(GetParameters, RtpParameters());
-  MOCK_METHOD1(SetParameters, RTCError(const RtpParameters&));
-  MOCK_CONST_METHOD0(GetDtmfSender, rtc::scoped_refptr<DtmfSenderInterface>());
+  MOCK_METHOD(bool, SetTrack, (MediaStreamTrackInterface*), (override));
+  MOCK_METHOD(rtc::scoped_refptr<MediaStreamTrackInterface>,
+              track,
+              (),
+              (const override));
+  MOCK_METHOD(uint32_t, ssrc, (), (const override));
+  MOCK_METHOD(cricket::MediaType, media_type, (), (const override));
+  MOCK_METHOD(std::string, id, (), (const override));
+  MOCK_METHOD(std::vector<std::string>, stream_ids, (), (const override));
+  MOCK_METHOD(std::vector<RtpEncodingParameters>,
+              init_send_encodings,
+              (),
+              (const override));
+  MOCK_METHOD(RtpParameters, GetParameters, (), (const override));
+  MOCK_METHOD(RTCError, SetParameters, (const RtpParameters&), (override));
+  MOCK_METHOD(rtc::scoped_refptr<DtmfSenderInterface>,
+              GetDtmfSender,
+              (),
+              (const override));
 };
 
 }  // namespace webrtc

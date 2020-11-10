@@ -233,7 +233,8 @@ TEST_F(QualityScalingTest, NoAdaptDownForLowStartBitrateWithScalingOff) {
 
 TEST_F(QualityScalingTest, NoAdaptDownForHighQp_Vp9) {
   // VP9 QP thresholds, low:1, high:1 -> high QP.
-  test::ScopedFieldTrials field_trials(kPrefix + "0,0,1,1,0,0" + kEnd);
+  test::ScopedFieldTrials field_trials(kPrefix + "0,0,1,1,0,0" + kEnd +
+                                       "WebRTC-VP9QualityScaler/Disabled/");
 
   // QualityScaler always disabled.
   const bool kAutomaticResize = true;

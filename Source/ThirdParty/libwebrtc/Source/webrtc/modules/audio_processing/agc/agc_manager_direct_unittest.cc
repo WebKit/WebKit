@@ -37,22 +37,23 @@ const int kMinMicLevel = 12;
 class MockGainControl : public GainControl {
  public:
   virtual ~MockGainControl() {}
-  MOCK_METHOD0(Initialize, void());
-  MOCK_CONST_METHOD0(is_enabled, bool());
-  MOCK_METHOD1(set_stream_analog_level, int(int level));
-  MOCK_CONST_METHOD0(stream_analog_level, int());
-  MOCK_METHOD1(set_mode, int(Mode mode));
-  MOCK_CONST_METHOD0(mode, Mode());
-  MOCK_METHOD1(set_target_level_dbfs, int(int level));
-  MOCK_CONST_METHOD0(target_level_dbfs, int());
-  MOCK_METHOD1(set_compression_gain_db, int(int gain));
-  MOCK_CONST_METHOD0(compression_gain_db, int());
-  MOCK_METHOD1(enable_limiter, int(bool enable));
-  MOCK_CONST_METHOD0(is_limiter_enabled, bool());
-  MOCK_METHOD2(set_analog_level_limits, int(int minimum, int maximum));
-  MOCK_CONST_METHOD0(analog_level_minimum, int());
-  MOCK_CONST_METHOD0(analog_level_maximum, int());
-  MOCK_CONST_METHOD0(stream_is_saturated, bool());
+  MOCK_METHOD(int, set_stream_analog_level, (int level), (override));
+  MOCK_METHOD(int, stream_analog_level, (), (const, override));
+  MOCK_METHOD(int, set_mode, (Mode mode), (override));
+  MOCK_METHOD(Mode, mode, (), (const, override));
+  MOCK_METHOD(int, set_target_level_dbfs, (int level), (override));
+  MOCK_METHOD(int, target_level_dbfs, (), (const, override));
+  MOCK_METHOD(int, set_compression_gain_db, (int gain), (override));
+  MOCK_METHOD(int, compression_gain_db, (), (const, override));
+  MOCK_METHOD(int, enable_limiter, (bool enable), (override));
+  MOCK_METHOD(bool, is_limiter_enabled, (), (const, override));
+  MOCK_METHOD(int,
+              set_analog_level_limits,
+              (int minimum, int maximum),
+              (override));
+  MOCK_METHOD(int, analog_level_minimum, (), (const, override));
+  MOCK_METHOD(int, analog_level_maximum, (), (const, override));
+  MOCK_METHOD(bool, stream_is_saturated, (), (const, override));
 };
 
 }  // namespace

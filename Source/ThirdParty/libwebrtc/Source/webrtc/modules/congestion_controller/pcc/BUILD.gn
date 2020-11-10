@@ -37,8 +37,8 @@ rtc_library("pcc_controller") {
     "../../../api/units:timestamp",
     "../../../rtc_base:checks",
     "../../../rtc_base:rtc_base_approved",
-    "//third_party/abseil-cpp/absl/types:optional",
   ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
 }
 
 rtc_library("monitor_interval") {
@@ -94,8 +94,8 @@ rtc_library("bitrate_controller") {
     "../../../api/transport:network_control",
     "../../../api/units:data_rate",
     "../../../rtc_base:rtc_base_approved",
-    "//third_party/abseil-cpp/absl/types:optional",
   ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
 }
 
 if (rtc_include_tests) {

@@ -24,7 +24,7 @@
 #include "call/call.h"
 #include "call/simulated_packet_receiver.h"
 #include "rtc_base/constructor_magic.h"
-#include "rtc_base/critical_section.h"
+#include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/thread_annotations.h"
 
 namespace webrtc {
@@ -204,14 +204,14 @@ class FakeNetworkPipe : public SimulatedPacketReceiverInterface {
 
   Clock* const clock_;
   // |config_lock| guards the mostly constant things like the callbacks.
-  rtc::CriticalSection config_lock_;
+  mutable Mutex config_lock_;
   const std::unique_ptr<NetworkBehaviorInterface> network_behavior_;
   PacketReceiver* receiver_ RTC_GUARDED_BY(config_lock_);
   Transport* const global_transport_;
 
   // |process_lock| guards the data structures involved in delay and loss
   // processes, such as the packet queues.
-  rtc::CriticalSection process_lock_;
+  Mutex process_lock_;
   // Packets  are added at the back of the deque, this makes the deque ordered
   // by increasing send time. The common case when removing packets from the
   // deque is removing early packets, which will be close to the front of the

@@ -147,6 +147,16 @@ TEST_F(IvfFileWriterTest, WritesBasicVP9FileMsTimestamp) {
   RunBasicFileStructureTest(kVideoCodecVP9, fourcc, true);
 }
 
+TEST_F(IvfFileWriterTest, WritesBasicAv1FileNtpTimestamp) {
+  const uint8_t fourcc[4] = {'A', 'V', '0', '1'};
+  RunBasicFileStructureTest(kVideoCodecAV1, fourcc, false);
+}
+
+TEST_F(IvfFileWriterTest, WritesBasicAv1FileMsTimestamp) {
+  const uint8_t fourcc[4] = {'A', 'V', '0', '1'};
+  RunBasicFileStructureTest(kVideoCodecAV1, fourcc, true);
+}
+
 TEST_F(IvfFileWriterTest, WritesBasicH264FileNtpTimestamp) {
   const uint8_t fourcc[4] = {'H', '2', '6', '4'};
   RunBasicFileStructureTest(kVideoCodecH264, fourcc, false);

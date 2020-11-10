@@ -23,6 +23,7 @@ class I420BufferInterface;
 class I420ABufferInterface;
 class I444BufferInterface;
 class I010BufferInterface;
+class NV12BufferInterface;
 
 // Base class for frame buffers of different types of pixel format and storage.
 // The tag in type() indicates how the data is represented, and each type is
@@ -50,6 +51,7 @@ class RTC_EXPORT VideoFrameBuffer : public rtc::RefCountInterface {
     kI420A,
     kI444,
     kI010,
+    kNV12,
   };
 
   // This function specifies in what pixel format the data is stored in.
@@ -79,6 +81,7 @@ class RTC_EXPORT VideoFrameBuffer : public rtc::RefCountInterface {
   const I420ABufferInterface* GetI420A() const;
   const I444BufferInterface* GetI444() const;
   const I010BufferInterface* GetI010() const;
+  const NV12BufferInterface* GetNV12() const;
 
  protected:
   ~VideoFrameBuffer() override {}
@@ -173,6 +176,42 @@ class I010BufferInterface : public PlanarYuv16BBuffer {
 
  protected:
   ~I010BufferInterface() override {}
+};
+
+class BiplanarYuvBuffer : public VideoFrameBuffer {
+ public:
+  virtual int ChromaWidth() const = 0;
+  virtual int ChromaHeight() const = 0;
+
+  // Returns the number of steps(in terms of Data*() return type) between
+  // successive rows for a given plane.
+  virtual int StrideY() const = 0;
+  virtual int StrideUV() const = 0;
+
+ protected:
+  ~BiplanarYuvBuffer() override {}
+};
+
+class BiplanarYuv8Buffer : public BiplanarYuvBuffer {
+ public:
+  virtual const uint8_t* DataY() const = 0;
+  virtual const uint8_t* DataUV() const = 0;
+
+ protected:
+  ~BiplanarYuv8Buffer() override {}
+};
+
+// Represents Type::kNV12. NV12 is full resolution Y and half-resolution
+// interleved UV.
+class NV12BufferInterface : public BiplanarYuv8Buffer {
+ public:
+  Type type() const override;
+
+  int ChromaWidth() const final;
+  int ChromaHeight() const final;
+
+ protected:
+  ~NV12BufferInterface() override {}
 };
 
 }  // namespace webrtc

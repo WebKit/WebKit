@@ -1,3 +1,22 @@
+2020-11-10  Youenn Fablet  <youenn@apple.com>
+
+        Update WebRTC liwebrtc to M87
+        https://bugs.webkit.org/show_bug.cgi?id=218436
+
+        Reviewed by Eric Carlson.
+
+        Update code now that fragmentation headers are computed at packetization time.
+
+        * Configurations/WebKit.xcconfig:
+        * GPUProcess/webrtc/LibWebRTCCodecsProxy.mm:
+        (WebKit::LibWebRTCCodecsProxy::createEncoder):
+        * Scripts/webkit/messages.py:
+        * Shared/RTCNetwork.h:
+        * WebProcess/GPU/webrtc/LibWebRTCCodecs.cpp:
+        (WebKit::LibWebRTCCodecs::completedEncoding):
+        * WebProcess/GPU/webrtc/LibWebRTCCodecs.h:
+        * WebProcess/GPU/webrtc/LibWebRTCCodecs.messages.in:
+
 2020-11-10  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         REGRESSION (r269525): Many layout tests crash when run under ASan

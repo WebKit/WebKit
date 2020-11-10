@@ -173,7 +173,7 @@ a script is available [here][framework-script]
 To build the framework with bitcode support, pass the `--bitcode` flag to the script like so
 
 ```
-$ python build_ios_libs.py --bitcode
+$ python tools_webrtc/ios/build_ios_libs.py --bitcode
 ```
 The resulting framework can be found in out_ios_libs/.
 

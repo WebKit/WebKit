@@ -167,8 +167,6 @@ class MockVideoEncoderFactory : public VideoEncoderFactory {
   std::unique_ptr<VideoEncoder> CreateVideoEncoder(
       const SdpVideoFormat& format) override;
 
-  CodecInfo QueryVideoEncoder(const SdpVideoFormat& format) const override;
-
   const std::vector<MockVideoEncoder*>& encoders() const;
   void SetEncoderNames(const std::vector<const char*>& encoder_names);
   void set_init_encode_return_value(int32_t value);
@@ -199,23 +197,22 @@ class MockVideoEncoder : public VideoEncoder {
         video_format_("unknown"),
         callback_(nullptr) {}
 
-  MOCK_METHOD1(SetFecControllerOverride,
-               void(FecControllerOverride* fec_controller_override));
+  MOCK_METHOD(void,
+              SetFecControllerOverride,
+              (FecControllerOverride * fec_controller_override),
+              (override));
 
-  // TODO(nisse): Valid overrides commented out, because the gmock
-  // methods don't use any override declarations, and we want to avoid
-  // warnings from -Winconsistent-missing-override. See
-  // http://crbug.com/428099.
   int32_t InitEncode(const VideoCodec* codecSettings,
                      const VideoEncoder::Settings& settings) override {
     codec_ = *codecSettings;
     return init_encode_return_value_;
   }
 
-  MOCK_METHOD2(
-      Encode,
-      int32_t(const VideoFrame& inputImage,
-              const std::vector<VideoFrameType>* frame_types) /* override */);
+  MOCK_METHOD(int32_t,
+              Encode,
+              (const VideoFrame& inputImage,
+               const std::vector<VideoFrameType>* frame_types),
+              (override));
 
   int32_t RegisterEncodeCompleteCallback(
       EncodedImageCallback* callback) override {
@@ -223,7 +220,7 @@ class MockVideoEncoder : public VideoEncoder {
     return 0;
   }
 
-  MOCK_METHOD0(Release, int32_t() /* override */);
+  MOCK_METHOD(int32_t, Release, (), (override));
 
   void SetRates(const RateControlParameters& parameters) {
     last_set_rates_ = parameters;
@@ -235,6 +232,8 @@ class MockVideoEncoder : public VideoEncoder {
     info.implementation_name = implementation_name_;
     info.scaling_settings = scaling_settings_;
     info.requested_resolution_alignment = requested_resolution_alignment_;
+    info.apply_alignment_to_all_simulcast_layers =
+        apply_alignment_to_all_simulcast_layers_;
     info.has_trusted_rate_controller = has_trusted_rate_controller_;
     info.is_hardware_accelerated = is_hardware_accelerated_;
     info.has_internal_source = has_internal_source_;
@@ -254,7 +253,7 @@ class MockVideoEncoder : public VideoEncoder {
     image._encodedHeight = height;
     CodecSpecificInfo codec_specific_info;
     codec_specific_info.codecType = webrtc::kVideoCodecVP8;
-    callback_->OnEncodedImage(image, &codec_specific_info, nullptr);
+    callback_->OnEncodedImage(image, &codec_specific_info);
   }
 
   void set_supports_native_handle(bool enabled) {
@@ -275,6 +274,10 @@ class MockVideoEncoder : public VideoEncoder {
 
   void set_requested_resolution_alignment(int requested_resolution_alignment) {
     requested_resolution_alignment_ = requested_resolution_alignment;
+  }
+
+  void set_apply_alignment_to_all_simulcast_layers(bool apply) {
+    apply_alignment_to_all_simulcast_layers_ = apply;
   }
 
   void set_has_trusted_rate_controller(bool trusted) {
@@ -313,6 +316,7 @@ class MockVideoEncoder : public VideoEncoder {
   std::string implementation_name_ = "unknown";
   VideoEncoder::ScalingSettings scaling_settings_;
   int requested_resolution_alignment_ = 1;
+  bool apply_alignment_to_all_simulcast_layers_ = false;
   bool has_trusted_rate_controller_ = false;
   bool is_hardware_accelerated_ = false;
   bool has_internal_source_ = false;
@@ -334,8 +338,7 @@ std::vector<SdpVideoFormat> MockVideoEncoderFactory::GetSupportedFormats()
 
 std::unique_ptr<VideoEncoder> MockVideoEncoderFactory::CreateVideoEncoder(
     const SdpVideoFormat& format) {
-  std::unique_ptr<MockVideoEncoder> encoder(
-      new ::testing::NiceMock<MockVideoEncoder>(this));
+  auto encoder = std::make_unique<::testing::NiceMock<MockVideoEncoder>>(this);
   encoder->set_init_encode_return_value(init_encode_return_value_);
   const char* encoder_name = encoder_names_.empty()
                                  ? "codec_implementation_name"
@@ -357,11 +360,6 @@ void MockVideoEncoderFactory::DestroyVideoEncoder(VideoEncoder* encoder) {
       break;
     }
   }
-}
-
-VideoEncoderFactory::CodecInfo MockVideoEncoderFactory::QueryVideoEncoder(
-    const SdpVideoFormat& format) const {
-  return CodecInfo();
 }
 
 const std::vector<MockVideoEncoder*>& MockVideoEncoderFactory::encoders()
@@ -431,8 +429,7 @@ class TestSimulcastEncoderAdapterFake : public ::testing::Test,
   }
 
   Result OnEncodedImage(const EncodedImage& encoded_image,
-                        const CodecSpecificInfo* codec_specific_info,
-                        const RTPFragmentationHeader* fragmentation) override {
+                        const CodecSpecificInfo* codec_specific_info) override {
     last_encoded_image_width_ = encoded_image._encodedWidth;
     last_encoded_image_height_ = encoded_image._encodedHeight;
     last_encoded_image_simulcast_index_ =
@@ -466,7 +463,6 @@ class TestSimulcastEncoderAdapterFake : public ::testing::Test,
     const VideoCodec& target =
         helper_->factory()->encoders()[stream_index]->codec();
     EXPECT_EQ(ref.codecType, target.codecType);
-    EXPECT_EQ(ref.plType, target.plType);
     EXPECT_EQ(ref.width, target.width);
     EXPECT_EQ(ref.height, target.height);
     EXPECT_EQ(ref.startBitrate, target.startBitrate);
@@ -762,7 +758,6 @@ TEST_F(TestSimulcastEncoderAdapterFake, ReinitDoesNotReorderEncoderSettings) {
 
     // webrtc::VideoCodec does not implement operator==.
     EXPECT_EQ(codec_before.codecType, codec_after.codecType);
-    EXPECT_EQ(codec_before.plType, codec_after.plType);
     EXPECT_EQ(codec_before.width, codec_after.width);
     EXPECT_EQ(codec_before.height, codec_after.height);
     EXPECT_EQ(codec_before.startBitrate, codec_after.startBitrate);
@@ -1271,6 +1266,31 @@ TEST_F(TestSimulcastEncoderAdapterFake,
   EXPECT_EQ(adapter_->GetEncoderInfo().requested_resolution_alignment, 28);
 }
 
+TEST_F(TestSimulcastEncoderAdapterFake,
+       ReportsApplyAlignmentToSimulcastLayers) {
+  SimulcastTestFixtureImpl::DefaultSettings(
+      &codec_, static_cast<const int*>(kTestTemporalLayerProfile),
+      kVideoCodecVP8);
+  codec_.numberOfSimulcastStreams = 3;
+
+  // No encoder has apply_alignment_to_all_simulcast_layers, report false.
+  EXPECT_EQ(0, adapter_->InitEncode(&codec_, kSettings));
+  ASSERT_EQ(3u, helper_->factory()->encoders().size());
+  for (MockVideoEncoder* encoder : helper_->factory()->encoders()) {
+    encoder->set_apply_alignment_to_all_simulcast_layers(false);
+  }
+  EXPECT_FALSE(
+      adapter_->GetEncoderInfo().apply_alignment_to_all_simulcast_layers);
+
+  // One encoder has apply_alignment_to_all_simulcast_layers, report true.
+  helper_->factory()
+      ->encoders()[1]
+      ->set_apply_alignment_to_all_simulcast_layers(true);
+  EXPECT_EQ(0, adapter_->InitEncode(&codec_, kSettings));
+  EXPECT_TRUE(
+      adapter_->GetEncoderInfo().apply_alignment_to_all_simulcast_layers);
+}
+
 TEST_F(TestSimulcastEncoderAdapterFake, ReportsInternalSource) {
   SimulcastTestFixtureImpl::DefaultSettings(
       &codec_, static_cast<const int*>(kTestTemporalLayerProfile),
@@ -1361,6 +1381,31 @@ TEST_F(TestSimulcastEncoderAdapterFake, SetRateDistributesBandwithAllocation) {
         (layer_bitrate_bps * bandwidth_allocation.bps()) / target_bitrate.bps(),
         encoders[i]->last_set_rates().bandwidth_allocation.bps())
         << i;
+  }
+}
+
+TEST_F(TestSimulcastEncoderAdapterFake, CanSetZeroBitrateWithHeadroom) {
+  SimulcastTestFixtureImpl::DefaultSettings(
+      &codec_, static_cast<const int*>(kTestTemporalLayerProfile),
+      kVideoCodecVP8);
+  codec_.numberOfSimulcastStreams = 3;
+
+  rate_allocator_.reset(new SimulcastRateAllocator(codec_));
+  EXPECT_EQ(0, adapter_->InitEncode(&codec_, kSettings));
+  adapter_->RegisterEncodeCompleteCallback(this);
+
+  // Set allocated bitrate to 0, but keep (network) bandwidth allocation.
+  VideoEncoder::RateControlParameters rate_params;
+  rate_params.framerate_fps = 30;
+  rate_params.bandwidth_allocation = DataRate::KilobitsPerSec(600);
+
+  adapter_->SetRates(rate_params);
+
+  std::vector<MockVideoEncoder*> encoders = helper_->factory()->encoders();
+
+  ASSERT_EQ(3u, encoders.size());
+  for (size_t i = 0; i < 3; ++i) {
+    EXPECT_EQ(0u, encoders[i]->last_set_rates().bitrate.get_sum_bps());
   }
 }
 

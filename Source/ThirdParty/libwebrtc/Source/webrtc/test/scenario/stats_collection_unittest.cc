@@ -25,17 +25,26 @@ void CreateAnalyzedStream(Scenario* s,
       VideoStreamConfig::Encoder::Implementation::kSoftware;
   config.hooks.frame_pair_handlers = {analyzer->Handler()};
   auto* caller = s->CreateClient("caller", CallClientConfig());
+  auto* callee = s->CreateClient("callee", CallClientConfig());
   auto route =
-      s->CreateRoutes(caller, {s->CreateSimulationNode(network_config)},
-                      s->CreateClient("callee", CallClientConfig()),
+      s->CreateRoutes(caller, {s->CreateSimulationNode(network_config)}, callee,
                       {s->CreateSimulationNode(NetworkSimulationConfig())});
-  auto* video = s->CreateVideoStream(route->forward(), config);
+  VideoStreamPair* video = s->CreateVideoStream(route->forward(), config);
   auto* audio = s->CreateAudioStream(route->forward(), AudioStreamConfig());
   s->Every(TimeDelta::Seconds(1), [=] {
     collectors->call.AddStats(caller->GetStats());
-    collectors->audio_receive.AddStats(audio->receive()->GetStats());
     collectors->video_send.AddStats(video->send()->GetStats(), s->Now());
-    collectors->video_receive.AddStats(video->receive()->GetStats());
+    collectors->audio_receive.AddStats(audio->receive()->GetStats());
+
+    // Querying the video stats from within the expected runtime environment
+    // (i.e. the TQ that belongs to the CallClient, not the Scenario TQ that
+    // we're currently on).
+    VideoReceiveStream::Stats video_receive_stats;
+    auto* video_stream = video->receive();
+    callee->SendTask([&video_stream, &video_receive_stats]() {
+      video_receive_stats = video_stream->GetStats();
+    });
+    collectors->video_receive.AddStats(video_receive_stats);
   });
 }
 }  // namespace
@@ -74,7 +83,7 @@ TEST(ScenarioAnalyzerTest, PsnrIsLowWhenNetworkIsBad) {
   }
   // This is a change detecting test, the targets are based on previous runs and
   // might change due to changes in configuration and encoder etc.
-  EXPECT_NEAR(analyzer.stats().psnr_with_freeze.Mean(), 16, 10);
+  EXPECT_NEAR(analyzer.stats().psnr_with_freeze.Mean(), 20, 10);
   EXPECT_NEAR(stats.call.stats().target_rate.Mean().kbps(), 75, 50);
   EXPECT_NEAR(stats.video_send.stats().media_bitrate.Mean().kbps(), 100, 50);
   EXPECT_NEAR(stats.video_receive.stats().resolution.Mean(), 180, 10);

@@ -15,6 +15,7 @@
 #include <algorithm>
 #include <string>
 
+#include "absl/strings/match.h"
 #include "absl/types/optional.h"
 #include "modules/remote_bitrate_estimator/include/bwe_defines.h"
 #include "modules/remote_bitrate_estimator/test/bwe_test_logging.h"
@@ -115,8 +116,9 @@ constexpr char TrendlineEstimatorSettings::kKey[];
 
 TrendlineEstimatorSettings::TrendlineEstimatorSettings(
     const WebRtcKeyValueConfig* key_value_config) {
-  if (key_value_config->Lookup(kBweWindowSizeInPacketsExperiment)
-          .find("Enabled") == 0) {
+  if (absl::StartsWith(
+          key_value_config->Lookup(kBweWindowSizeInPacketsExperiment),
+          "Enabled")) {
     window_size = ReadTrendlineFilterWindowSize(key_value_config);
   }
   Parser()->Parse(key_value_config->Lookup(TrendlineEstimatorSettings::kKey));

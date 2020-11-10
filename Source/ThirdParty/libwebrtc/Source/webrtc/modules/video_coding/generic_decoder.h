@@ -12,14 +12,15 @@
 #define MODULES_VIDEO_CODING_GENERIC_DECODER_H_
 
 #include <memory>
+#include <string>
 
 #include "api/units/time_delta.h"
 #include "modules/video_coding/encoded_frame.h"
 #include "modules/video_coding/include/video_codec_interface.h"
 #include "modules/video_coding/timestamp_map.h"
 #include "modules/video_coding/timing.h"
-#include "rtc_base/critical_section.h"
 #include "rtc_base/experiments/field_trial_parser.h"
+#include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/thread_checker.h"
 
 namespace webrtc {
@@ -69,7 +70,7 @@ class VCMDecodedFrameCallback : public DecodedImageCallback {
   // from the same thread, and therfore a lock is not required to access it.
   VCMReceiveCallback* _receiveCallback = nullptr;
   VCMTiming* _timing;
-  rtc::CriticalSection lock_;
+  Mutex lock_;
   VCMTimestampMap _timestampMap RTC_GUARDED_BY(lock_);
   int64_t ntp_offset_;
   // Set by the field trial WebRTC-SlowDownDecoder to simulate a slow decoder.
@@ -112,6 +113,7 @@ class VCMGenericDecoder {
   VideoCodecType _codecType;
   const bool _isExternal;
   VideoContentType _last_keyframe_content_type;
+  std::string implementation_name_;
 };
 
 }  // namespace webrtc

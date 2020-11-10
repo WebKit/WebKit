@@ -39,15 +39,16 @@
 #include "modules/audio_coding/neteq/tools/output_wav_file.h"
 #include "modules/audio_coding/neteq/tools/packet.h"
 #include "modules/audio_coding/neteq/tools/rtp_file_source.h"
-#include "rtc_base/critical_section.h"
 #include "rtc_base/event.h"
 #include "rtc_base/message_digest.h"
 #include "rtc_base/numerics/safe_conversions.h"
 #include "rtc_base/platform_thread.h"
 #include "rtc_base/ref_counted_object.h"
+#include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/system/arch.h"
 #include "rtc_base/thread_annotations.h"
 #include "system_wrappers/include/clock.h"
+#include "system_wrappers/include/cpu_features_wrapper.h"
 #include "system_wrappers/include/sleep.h"
 #include "test/audio_decoder_proxy_factory.h"
 #include "test/gtest.h"
@@ -113,7 +114,7 @@ class PacketizationCallbackStubOldApi : public AudioPacketizationCallback {
                    const uint8_t* payload_data,
                    size_t payload_len_bytes,
                    int64_t absolute_capture_timestamp_ms) override {
-    rtc::CritScope lock(&crit_sect_);
+    MutexLock lock(&mutex_);
     ++num_calls_;
     last_frame_type_ = frame_type;
     last_payload_type_ = payload_type;
@@ -123,42 +124,42 @@ class PacketizationCallbackStubOldApi : public AudioPacketizationCallback {
   }
 
   int num_calls() const {
-    rtc::CritScope lock(&crit_sect_);
+    MutexLock lock(&mutex_);
     return num_calls_;
   }
 
   int last_payload_len_bytes() const {
-    rtc::CritScope lock(&crit_sect_);
+    MutexLock lock(&mutex_);
     return rtc::checked_cast<int>(last_payload_vec_.size());
   }
 
   AudioFrameType last_frame_type() const {
-    rtc::CritScope lock(&crit_sect_);
+    MutexLock lock(&mutex_);
     return last_frame_type_;
   }
 
   int last_payload_type() const {
-    rtc::CritScope lock(&crit_sect_);
+    MutexLock lock(&mutex_);
     return last_payload_type_;
   }
 
   uint32_t last_timestamp() const {
-    rtc::CritScope lock(&crit_sect_);
+    MutexLock lock(&mutex_);
     return last_timestamp_;
   }
 
   void SwapBuffers(std::vector<uint8_t>* payload) {
-    rtc::CritScope lock(&crit_sect_);
+    MutexLock lock(&mutex_);
     last_payload_vec_.swap(*payload);
   }
 
  private:
-  int num_calls_ RTC_GUARDED_BY(crit_sect_);
-  AudioFrameType last_frame_type_ RTC_GUARDED_BY(crit_sect_);
-  int last_payload_type_ RTC_GUARDED_BY(crit_sect_);
-  uint32_t last_timestamp_ RTC_GUARDED_BY(crit_sect_);
-  std::vector<uint8_t> last_payload_vec_ RTC_GUARDED_BY(crit_sect_);
-  rtc::CriticalSection crit_sect_;
+  int num_calls_ RTC_GUARDED_BY(mutex_);
+  AudioFrameType last_frame_type_ RTC_GUARDED_BY(mutex_);
+  int last_payload_type_ RTC_GUARDED_BY(mutex_);
+  uint32_t last_timestamp_ RTC_GUARDED_BY(mutex_);
+  std::vector<uint8_t> last_payload_vec_ RTC_GUARDED_BY(mutex_);
+  mutable Mutex mutex_;
 };
 
 class AudioCodingModuleTestOldApi : public ::testing::Test {
@@ -252,6 +253,9 @@ class AudioCodingModuleTestOldApi : public ::testing::Test {
   Clock* clock_;
 };
 
+class AudioCodingModuleTestOldApiDeathTest
+    : public AudioCodingModuleTestOldApi {};
+
 TEST_F(AudioCodingModuleTestOldApi, VerifyOutputFrame) {
   AudioFrame audio_frame;
   const int kSampleRateHz = 32000;
@@ -271,7 +275,7 @@ TEST_F(AudioCodingModuleTestOldApi, VerifyOutputFrame) {
 // http://crbug.com/615050
 #if !defined(WEBRTC_WIN) && defined(__clang__) && RTC_DCHECK_IS_ON && \
     GTEST_HAS_DEATH_TEST && !defined(WEBRTC_ANDROID)
-TEST_F(AudioCodingModuleTestOldApi, FailOnZeroDesiredFrequency) {
+TEST_F(AudioCodingModuleTestOldApiDeathTest, FailOnZeroDesiredFrequency) {
   AudioFrame audio_frame;
   bool muted;
   RTC_EXPECT_DEATH(acm_->PlayoutData10Ms(0, &audio_frame, &muted),
@@ -469,7 +473,7 @@ class AudioCodingModuleMtTestOldApi : public AudioCodingModuleTestOldApi {
 
   virtual bool TestDone() {
     if (packet_cb_.num_calls() > kNumPackets) {
-      rtc::CritScope lock(&crit_sect_);
+      MutexLock lock(&mutex_);
       if (pull_audio_count_ > kNumPullCalls) {
         // Both conditions for completion are met. End the test.
         return true;
@@ -512,7 +516,7 @@ class AudioCodingModuleMtTestOldApi : public AudioCodingModuleTestOldApi {
   void CbInsertPacketImpl() {
     SleepMs(1);
     {
-      rtc::CritScope lock(&crit_sect_);
+      MutexLock lock(&mutex_);
       if (clock_->TimeInMilliseconds() < next_insert_packet_time_ms_) {
         return;
       }
@@ -534,7 +538,7 @@ class AudioCodingModuleMtTestOldApi : public AudioCodingModuleTestOldApi {
   void CbPullAudioImpl() {
     SleepMs(1);
     {
-      rtc::CritScope lock(&crit_sect_);
+      MutexLock lock(&mutex_);
       // Don't let the insert thread fall behind.
       if (next_insert_packet_time_ms_ < clock_->TimeInMilliseconds()) {
         return;
@@ -555,9 +559,9 @@ class AudioCodingModuleMtTestOldApi : public AudioCodingModuleTestOldApi {
   rtc::Event test_complete_;
   int send_count_;
   int insert_packet_count_;
-  int pull_audio_count_ RTC_GUARDED_BY(crit_sect_);
-  rtc::CriticalSection crit_sect_;
-  int64_t next_insert_packet_time_ms_ RTC_GUARDED_BY(crit_sect_);
+  int pull_audio_count_ RTC_GUARDED_BY(mutex_);
+  Mutex mutex_;
+  int64_t next_insert_packet_time_ms_ RTC_GUARDED_BY(mutex_);
   std::unique_ptr<SimulatedClock> fake_clock_;
 };
 
@@ -655,7 +659,7 @@ class AcmIsacMtTestOldApi : public AudioCodingModuleMtTestOldApi {
   // run).
   bool TestDone() override {
     if (packet_cb_.num_calls() > kNumPackets) {
-      rtc::CritScope lock(&crit_sect_);
+      MutexLock lock(&mutex_);
       if (pull_audio_count_ > kNumPullCalls) {
         // Both conditions for completion are met. End the test.
         return true;
@@ -755,7 +759,7 @@ class AcmReRegisterIsacMtTestOldApi : public AudioCodingModuleTestOldApi {
     rtc::Buffer encoded;
     AudioEncoder::EncodedInfo info;
     {
-      rtc::CritScope lock(&crit_sect_);
+      MutexLock lock(&mutex_);
       if (clock_->TimeInMilliseconds() < next_insert_packet_time_ms_) {
         return true;
       }
@@ -809,7 +813,7 @@ class AcmReRegisterIsacMtTestOldApi : public AudioCodingModuleTestOldApi {
       // End the test early if a fatal failure (ASSERT_*) has occurred.
       test_complete_.Set();
     }
-    rtc::CritScope lock(&crit_sect_);
+    MutexLock lock(&mutex_);
     if (!codec_registered_ &&
         receive_packet_count_ > kRegisterAfterNumPackets) {
       // Register the iSAC encoder.
@@ -828,10 +832,10 @@ class AcmReRegisterIsacMtTestOldApi : public AudioCodingModuleTestOldApi {
   std::atomic<bool> quit_;
 
   rtc::Event test_complete_;
-  rtc::CriticalSection crit_sect_;
-  bool codec_registered_ RTC_GUARDED_BY(crit_sect_);
-  int receive_packet_count_ RTC_GUARDED_BY(crit_sect_);
-  int64_t next_insert_packet_time_ms_ RTC_GUARDED_BY(crit_sect_);
+  Mutex mutex_;
+  bool codec_registered_ RTC_GUARDED_BY(mutex_);
+  int receive_packet_count_ RTC_GUARDED_BY(mutex_);
+  int64_t next_insert_packet_time_ms_ RTC_GUARDED_BY(mutex_);
   std::unique_ptr<AudioEncoderIsacFloatImpl> isac_encoder_;
   std::unique_ptr<SimulatedClock> fake_clock_;
   test::AudioLoop audio_loop_;
@@ -934,35 +938,59 @@ class AcmReceiverBitExactnessOldApi : public ::testing::Test {
 #if (defined(WEBRTC_CODEC_ISAC) || defined(WEBRTC_CODEC_ISACFX)) && \
     defined(WEBRTC_CODEC_ILBC)
 TEST_F(AcmReceiverBitExactnessOldApi, 8kHzOutput) {
-  Run(8000, PlatformChecksum("6c204b289486b0695b08a9e94fab1948",
-                             "ff5ffee2ee92f8fe61d9f2010b8a68a3",
-                             "53494a96f3db4a5b07d723e0cbac0ad7",
-                             "4598140b5e4f7ee66c5adad609e65a3e",
-                             "516c2859126ea4913f30d51af4a4f3dc"));
+  std::string others_checksum_reference =
+      GetCPUInfo(kAVX2) != 0 ? "6edbfe69b965a8687b8744ed1b8eb5a7"
+                             : "6c204b289486b0695b08a9e94fab1948";
+  std::string win64_checksum_reference =
+      GetCPUInfo(kAVX2) != 0 ? "405a50f0bcb8827e20aa944299fc59f6"
+                             : "ff5ffee2ee92f8fe61d9f2010b8a68a3";
+  Run(8000,
+      PlatformChecksum(others_checksum_reference, win64_checksum_reference,
+                       "53494a96f3db4a5b07d723e0cbac0ad7",
+                       "4598140b5e4f7ee66c5adad609e65a3e",
+                       "516c2859126ea4913f30d51af4a4f3dc"));
 }
 
 TEST_F(AcmReceiverBitExactnessOldApi, 16kHzOutput) {
-  Run(16000, PlatformChecksum("226dbdbce2354399c6df05371042cda3",
-                              "9c80bf5ec496c41ce8112e1523bf8c83",
-                              "11a6f170fdaffa81a2948af121f370af",
-                              "f2aad418af974a3b1694d5ae5cc2c3c7",
-                              "6133301a18be95c416984182816d859f"));
+  std::string others_checksum_reference =
+      GetCPUInfo(kAVX2) != 0 ? "295f031e051f1770b4ab4107dba768b5"
+                             : "226dbdbce2354399c6df05371042cda3";
+  std::string win64_checksum_reference =
+      GetCPUInfo(kAVX2) != 0 ? "58fd62a5c49ee513f9fa6fe7dbf62c97"
+                             : "9c80bf5ec496c41ce8112e1523bf8c83";
+  Run(16000,
+      PlatformChecksum(others_checksum_reference, win64_checksum_reference,
+                       "11a6f170fdaffa81a2948af121f370af",
+                       "f2aad418af974a3b1694d5ae5cc2c3c7",
+                       "6133301a18be95c416984182816d859f"));
 }
 
 TEST_F(AcmReceiverBitExactnessOldApi, 32kHzOutput) {
-  Run(32000, PlatformChecksum("f94665cc0e904d5d5cf0394e30ee4edd",
-                              "697934bcf0849f80d76ce20854161220",
-                              "3609aa5288c1d512e8e652ceabecb495",
-                              "100869c8dcde51346c2073e52a272d98",
-                              "55363bc9cdda6464a58044919157827b"));
+  std::string others_checksum_reference =
+      GetCPUInfo(kAVX2) != 0 ? "2895e5ab3146eaa78fa6843ed60e7e37"
+                             : "f94665cc0e904d5d5cf0394e30ee4edd";
+  std::string win64_checksum_reference =
+      GetCPUInfo(kAVX2) != 0 ? "04ce6a1dac5ffdd8438d804623d0132f"
+                             : "697934bcf0849f80d76ce20854161220";
+  Run(32000,
+      PlatformChecksum(others_checksum_reference, win64_checksum_reference,
+                       "3609aa5288c1d512e8e652ceabecb495",
+                       "100869c8dcde51346c2073e52a272d98",
+                       "55363bc9cdda6464a58044919157827b"));
 }
 
 TEST_F(AcmReceiverBitExactnessOldApi, 48kHzOutput) {
-  Run(48000, PlatformChecksum("2955d0b83602541fd92d9b820ebce68d",
-                              "f4a8386a6a49439ced60ed9a7c7f75fd",
-                              "d8169dfeba708b5212bdc365e08aee9d",
-                              "bd44bf97e7899186532f91235cef444d",
-                              "47594deaab5d9166cfbf577203b2563e"));
+  std::string others_checksum_reference =
+      GetCPUInfo(kAVX2) != 0 ? "640bca210e1b8dd229224d2a0c79ff1f"
+                             : "2955d0b83602541fd92d9b820ebce68d";
+  std::string win64_checksum_reference =
+      GetCPUInfo(kAVX2) != 0 ? "f59833d9b0924f4b0704707dd3589f80"
+                             : "f4a8386a6a49439ced60ed9a7c7f75fd";
+  Run(48000,
+      PlatformChecksum(others_checksum_reference, win64_checksum_reference,
+                       "d8169dfeba708b5212bdc365e08aee9d",
+                       "bd44bf97e7899186532f91235cef444d",
+                       "47594deaab5d9166cfbf577203b2563e"));
 }
 
 TEST_F(AcmReceiverBitExactnessOldApi, 48kHzOutputExternalDecoder) {
@@ -1040,9 +1068,14 @@ TEST_F(AcmReceiverBitExactnessOldApi, 48kHzOutputExternalDecoder) {
 
   rtc::scoped_refptr<rtc::RefCountedObject<ADFactory>> factory(
       new rtc::RefCountedObject<ADFactory>);
+  std::string others_checksum_reference =
+      GetCPUInfo(kAVX2) != 0 ? "640bca210e1b8dd229224d2a0c79ff1f"
+                             : "2955d0b83602541fd92d9b820ebce68d";
+  std::string win64_checksum_reference =
+      GetCPUInfo(kAVX2) != 0 ? "f59833d9b0924f4b0704707dd3589f80"
+                             : "f4a8386a6a49439ced60ed9a7c7f75fd";
   Run(48000,
-      PlatformChecksum("2955d0b83602541fd92d9b820ebce68d",
-                       "f4a8386a6a49439ced60ed9a7c7f75fd",
+      PlatformChecksum(others_checksum_reference, win64_checksum_reference,
                        "d8169dfeba708b5212bdc365e08aee9d",
                        "bd44bf97e7899186532f91235cef444d",
                        "47594deaab5d9166cfbf577203b2563e"),

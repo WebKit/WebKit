@@ -52,7 +52,8 @@ class RtcEvent {
     VideoSendStreamConfig,
     GenericPacketSent,
     GenericPacketReceived,
-    GenericAckReceived
+    GenericAckReceived,
+    FrameDecoded
   };
 
   RtcEvent();

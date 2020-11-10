@@ -15,7 +15,7 @@
 
 @implementation ARDExternalSampleCapturer
 
-- (instancetype)initWithDelegate:(__weak id<RTCVideoCapturerDelegate>)delegate {
+- (instancetype)initWithDelegate:(__weak id<RTC_OBJC_TYPE(RTCVideoCapturerDelegate)>)delegate {
   return [super initWithDelegate:delegate];
 }
 
@@ -32,12 +32,14 @@
     return;
   }
 
-  RTCCVPixelBuffer *rtcPixelBuffer = [[RTCCVPixelBuffer alloc] initWithPixelBuffer:pixelBuffer];
+  RTC_OBJC_TYPE(RTCCVPixelBuffer) *rtcPixelBuffer =
+      [[RTC_OBJC_TYPE(RTCCVPixelBuffer) alloc] initWithPixelBuffer:pixelBuffer];
   int64_t timeStampNs =
       CMTimeGetSeconds(CMSampleBufferGetPresentationTimeStamp(sampleBuffer)) * NSEC_PER_SEC;
-  RTCVideoFrame *videoFrame = [[RTCVideoFrame alloc] initWithBuffer:rtcPixelBuffer
-                                                           rotation:RTCVideoRotation_0
-                                                        timeStampNs:timeStampNs];
+  RTC_OBJC_TYPE(RTCVideoFrame) *videoFrame =
+      [[RTC_OBJC_TYPE(RTCVideoFrame) alloc] initWithBuffer:rtcPixelBuffer
+                                                  rotation:RTCVideoRotation_0
+                                               timeStampNs:timeStampNs];
   [self.delegate capturer:self didCaptureVideoFrame:videoFrame];
 }
 

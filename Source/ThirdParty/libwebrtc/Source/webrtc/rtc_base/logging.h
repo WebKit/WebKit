@@ -46,11 +46,12 @@
 
 #include <errno.h>
 
-#include <list>
+#include <atomic>
 #include <sstream>  // no-presubmit-check TODO(webrtc:8982)
 #include <string>
 #include <utility>
 
+#include "absl/meta/type_traits.h"
 #include "absl/strings/string_view.h"
 #include "rtc_base/constructor_magic.h"
 #include "rtc_base/deprecation.h"
@@ -63,14 +64,18 @@
 #define RTC_DLOG_IS_ON 0
 #endif
 
+#if defined(RTC_DISABLE_LOGGING)
+#define RTC_LOG_ENABLED() 0
+#else
+#define RTC_LOG_ENABLED() 1
+#endif
+
 namespace rtc {
 
 //////////////////////////////////////////////////////////////////////
 
 // Note that the non-standard LoggingSeverity aliases exist because they are
 // still in broad use.  The meanings of the levels are:
-//  LS_SENSITIVE: Information which should only be logged with the consent
-//   of the user, due to privacy concerns.
 //  LS_VERBOSE: This level is for data which we do not want to appear in the
 //   normal debug log, but should appear in diagnostic logs.
 //  LS_INFO: Chatty level used in debugging for all sorts of things, the default
@@ -79,7 +84,6 @@ namespace rtc {
 //  LS_ERROR: Something that should not have occurred.
 //  LS_NONE: Don't log.
 enum LoggingSeverity {
-  LS_SENSITIVE,
   LS_VERBOSE,
   LS_INFO,
   LS_WARNING,
@@ -93,16 +97,15 @@ enum LoggingSeverity {
 // LogErrorContext assists in interpreting the meaning of an error value.
 enum LogErrorContext {
   ERRCTX_NONE,
-  ERRCTX_ERRNO,     // System-local errno
-  ERRCTX_HRESULT,   // Windows HRESULT
-  ERRCTX_OSSTATUS,  // MacOS OSStatus
+  ERRCTX_ERRNO,    // System-local errno
+  ERRCTX_HRESULT,  // Windows HRESULT
 
   // Abbreviations for LOG_E macro
-  ERRCTX_EN = ERRCTX_ERRNO,     // LOG_E(sev, EN, x)
-  ERRCTX_HR = ERRCTX_HRESULT,   // LOG_E(sev, HR, x)
-  ERRCTX_OS = ERRCTX_OSSTATUS,  // LOG_E(sev, OS, x)
+  ERRCTX_EN = ERRCTX_ERRNO,    // LOG_E(sev, EN, x)
+  ERRCTX_HR = ERRCTX_HRESULT,  // LOG_E(sev, HR, x)
 };
 
+class LogMessage;
 // Virtual sink interface that can receive log messages.
 class LogSink {
  public:
@@ -114,6 +117,14 @@ class LogSink {
   virtual void OnLogMessage(const std::string& message,
                             LoggingSeverity severity);
   virtual void OnLogMessage(const std::string& message) = 0;
+
+ private:
+  friend class ::rtc::LogMessage;
+#if RTC_LOG_ENABLED()
+  // Members for LogMessage class to keep linked list of the registered sinks.
+  LogSink* next_ = nullptr;
+  LoggingSeverity min_severity_;
+#endif
 };
 
 namespace webrtc_logging_impl {
@@ -185,11 +196,10 @@ struct Val {
   T val;
 };
 
-// TODO(bugs.webrtc.org/9278): Get rid of this specialization when callers
-// don't need it anymore. No in-tree caller does, but some external callers
-// still do.
-template <>
-struct Val<LogArgType::kStdString, std::string> {
+// Case for when we need to construct a temp string and then print that.
+// (We can't use Val<CheckArgType::kStdString, const std::string*>
+// because we need somewhere to store the temp string.)
+struct ToStringVal {
   static constexpr LogArgType Type() { return LogArgType::kStdString; }
   const std::string* GetVal() const { return &val; }
   std::string val;
@@ -247,6 +257,15 @@ inline Val<LogArgType::kLogMetadataErr, LogMetadataErr> MakeVal(
   return {x};
 }
 
+// The enum class types are not implicitly convertible to arithmetic types.
+template <typename T,
+          absl::enable_if_t<std::is_enum<T>::value &&
+                            !std::is_arithmetic<T>::value>* = nullptr>
+inline decltype(MakeVal(std::declval<absl::underlying_type_t<T>>())) MakeVal(
+    T x) {
+  return {static_cast<absl::underlying_type_t<T>>(x)};
+}
+
 #ifdef WEBRTC_ANDROID
 inline Val<LogArgType::kLogMetadataTag, LogMetadataTag> MakeVal(
     const LogMetadataTag& x) {
@@ -254,27 +273,44 @@ inline Val<LogArgType::kLogMetadataTag, LogMetadataTag> MakeVal(
 }
 #endif
 
+template <typename T, class = void>
+struct has_to_log_string : std::false_type {};
+template <typename T>
+struct has_to_log_string<T, decltype(ToLogString(std::declval<T>()))>
+    : std::true_type {};
+
 // Handle arbitrary types other than the above by falling back to stringstream.
 // TODO(bugs.webrtc.org/9278): Get rid of this overload when callers don't need
 // it anymore. No in-tree caller does, but some external callers still do.
 template <
     typename T,
-    typename T1 =
-        typename std::remove_cv<typename std::remove_reference<T>::type>::type,
-    typename std::enable_if<
-        std::is_class<T1>::value && !std::is_same<T1, std::string>::value &&
-        !std::is_same<T1, LogMetadata>::value &&
+    typename T1 = absl::decay_t<T>,
+    absl::enable_if_t<std::is_class<T1>::value &&
+                      !std::is_same<T1, std::string>::value &&
+                      !std::is_same<T1, LogMetadata>::value &&
+                      !has_to_log_string<T1>::value &&
 #ifdef WEBRTC_ANDROID
-        !std::is_same<T1, LogMetadataTag>::value &&
+                      !std::is_same<T1, LogMetadataTag>::value &&
 #endif
-        !std::is_same<T1, LogMetadataErr>::value>::type* = nullptr>
-Val<LogArgType::kStdString, std::string> MakeVal(const T& x) {
+                      !std::is_same<T1, LogMetadataErr>::value>* = nullptr>
+ToStringVal MakeVal(const T& x) {
   std::ostringstream os;  // no-presubmit-check TODO(webrtc:8982)
   os << x;
   return {os.str()};
 }
 
+template <typename T, absl::enable_if_t<has_to_log_string<T>::value>* = nullptr>
+ToStringVal MakeVal(const T& x) {
+  return {ToLogString(x)};
+}
+
+#if RTC_LOG_ENABLED()
 void Log(const LogArgType* fmt, ...);
+#else
+inline void Log(const LogArgType* fmt, ...) {
+  // Do nothing, shouldn't be invoked
+}
+#endif
 
 // Ephemeral type that represents the result of the logging << operator.
 template <typename... Ts>
@@ -284,22 +320,20 @@ class LogStreamer;
 template <>
 class LogStreamer<> final {
  public:
-  template <
-      typename U,
-      typename std::enable_if<std::is_arithmetic<U>::value>::type* = nullptr>
-  RTC_FORCE_INLINE LogStreamer<decltype(MakeVal(std::declval<U>()))> operator<<(
-      U arg) const {
-    return LogStreamer<decltype(MakeVal(std::declval<U>()))>(MakeVal(arg),
-                                                             this);
+  template <typename U,
+            typename V = decltype(MakeVal(std::declval<U>())),
+            absl::enable_if_t<std::is_arithmetic<U>::value ||
+                              std::is_enum<U>::value>* = nullptr>
+  RTC_FORCE_INLINE LogStreamer<V> operator<<(U arg) const {
+    return LogStreamer<V>(MakeVal(arg), this);
   }
 
-  template <
-      typename U,
-      typename std::enable_if<!std::is_arithmetic<U>::value>::type* = nullptr>
-  RTC_FORCE_INLINE LogStreamer<decltype(MakeVal(std::declval<U>()))> operator<<(
-      const U& arg) const {
-    return LogStreamer<decltype(MakeVal(std::declval<U>()))>(MakeVal(arg),
-                                                             this);
+  template <typename U,
+            typename V = decltype(MakeVal(std::declval<U>())),
+            absl::enable_if_t<!std::is_arithmetic<U>::value &&
+                              !std::is_enum<U>::value>* = nullptr>
+  RTC_FORCE_INLINE LogStreamer<V> operator<<(const U& arg) const {
+    return LogStreamer<V>(MakeVal(arg), this);
   }
 
   template <typename... Us>
@@ -317,22 +351,20 @@ class LogStreamer<T, Ts...> final {
   RTC_FORCE_INLINE LogStreamer(T arg, const LogStreamer<Ts...>* prior)
       : arg_(arg), prior_(prior) {}
 
-  template <
-      typename U,
-      typename std::enable_if<std::is_arithmetic<U>::value>::type* = nullptr>
-  RTC_FORCE_INLINE LogStreamer<decltype(MakeVal(std::declval<U>())), T, Ts...>
-  operator<<(U arg) const {
-    return LogStreamer<decltype(MakeVal(std::declval<U>())), T, Ts...>(
-        MakeVal(arg), this);
+  template <typename U,
+            typename V = decltype(MakeVal(std::declval<U>())),
+            absl::enable_if_t<std::is_arithmetic<U>::value ||
+                              std::is_enum<U>::value>* = nullptr>
+  RTC_FORCE_INLINE LogStreamer<V, T, Ts...> operator<<(U arg) const {
+    return LogStreamer<V, T, Ts...>(MakeVal(arg), this);
   }
 
-  template <
-      typename U,
-      typename std::enable_if<!std::is_arithmetic<U>::value>::type* = nullptr>
-  RTC_FORCE_INLINE LogStreamer<decltype(MakeVal(std::declval<U>())), T, Ts...>
-  operator<<(const U& arg) const {
-    return LogStreamer<decltype(MakeVal(std::declval<U>())), T, Ts...>(
-        MakeVal(arg), this);
+  template <typename U,
+            typename V = decltype(MakeVal(std::declval<U>())),
+            absl::enable_if_t<!std::is_arithmetic<U>::value &&
+                              !std::is_enum<U>::value>* = nullptr>
+  RTC_FORCE_INLINE LogStreamer<V, T, Ts...> operator<<(const U& arg) const {
+    return LogStreamer<V, T, Ts...>(MakeVal(arg), this);
   }
 
   template <typename... Us>
@@ -351,15 +383,25 @@ class LogStreamer<T, Ts...> final {
 class LogCall final {
  public:
   // This can be any binary operator with precedence lower than <<.
+  // We return bool here to be able properly remove logging if
+  // RTC_DISABLE_LOGGING is defined.
   template <typename... Ts>
-  RTC_FORCE_INLINE void operator&(const LogStreamer<Ts...>& streamer) {
+  RTC_FORCE_INLINE bool operator&(const LogStreamer<Ts...>& streamer) {
     streamer.Call();
+    return true;
   }
 };
 
-// TODO(bugs.webrtc.org/9278): Remove this once it's no longer used.
-struct LogMessageVoidify {
-  void operator&(std::ostream&) {}  // no-presubmit-check TODO(webrtc:8982)
+// This class is used to explicitly ignore values in the conditional
+// logging macros.  This avoids compiler warnings like "value computed
+// is not used" and "statement has no effect".
+class LogMessageVoidify {
+ public:
+  LogMessageVoidify() = default;
+  // This has to be an operator with a precedence lower than << but
+  // higher than ?:
+  template <typename... Ts>
+  void operator&(LogStreamer<Ts...>&& streamer) {}
 };
 
 }  // namespace webrtc_logging_impl
@@ -370,8 +412,6 @@ struct LogMessageVoidify {
 // .cc file.
 class LogMessage {
  public:
-  LogMessage(const char* file, int line, LoggingSeverity sev);
-
   // Same as the above, but using a compile-time constant for the logging
   // severity. This saves space at the call site, since passing an empty struct
   // is generally the same as not passing an argument at all.
@@ -381,16 +421,16 @@ class LogMessage {
                            std::integral_constant<LoggingSeverity, S>)
       : LogMessage(file, line, S) {}
 
+#if RTC_LOG_ENABLED()
+  LogMessage(const char* file, int line, LoggingSeverity sev);
   LogMessage(const char* file,
              int line,
              LoggingSeverity sev,
              LogErrorContext err_ctx,
              int err);
-
 #if defined(WEBRTC_ANDROID)
   LogMessage(const char* file, int line, LoggingSeverity sev, const char* tag);
 #endif
-
   // DEPRECATED - DO NOT USE - PLEASE USE THE MACROS INSTEAD OF THE CLASS.
   // Android code should use the 'const char*' version since tags are static
   // and we want to avoid allocating a std::string copy per log line.
@@ -399,71 +439,115 @@ class LogMessage {
              int line,
              LoggingSeverity sev,
              const std::string& tag);
-
   ~LogMessage();
 
   void AddTag(const char* tag);
-
   rtc::StringBuilder& stream();
-
   // Returns the time at which this function was called for the first time.
   // The time will be used as the logging start time.
   // If this is not called externally, the LogMessage ctor also calls it, in
   // which case the logging start time will be the time of the first LogMessage
   // instance is created.
   static int64_t LogStartTime();
-
   // Returns the wall clock equivalent of |LogStartTime|, in seconds from the
   // epoch.
   static uint32_t WallClockStartTime();
-
   //  LogThreads: Display the thread identifier of the current thread
   static void LogThreads(bool on = true);
-
   //  LogTimestamps: Display the elapsed time of the program
   static void LogTimestamps(bool on = true);
-
   // These are the available logging channels
   //  Debug: Debug console on Windows, otherwise stderr
   static void LogToDebug(LoggingSeverity min_sev);
+  static LoggingSeverity GetLogToDebug();
 
+#if defined(WEBRTC_WEBKIT_BUILD)
   typedef void (*LogOutputCallback)(LoggingSeverity severity, const char*);
   static void SetLogOutput(LoggingSeverity min_sev, LogOutputCallback);
-  static LoggingSeverity GetLogToDebug();
+#endif
 
   // Sets whether logs will be directed to stderr in debug mode.
   static void SetLogToStderr(bool log_to_stderr);
-
-  //  Stream: Any non-blocking stream interface.  LogMessage takes ownership of
-  //   the stream. Multiple streams may be specified by using AddLogToStream.
-  //   LogToStream is retained for backwards compatibility; when invoked, it
-  //   will discard any previously set streams and install the specified stream.
-  //   GetLogToStream gets the severity for the specified stream, of if none
-  //   is specified, the minimum stream severity.
-  //   RemoveLogToStream removes the specified stream, without destroying it.
-  static int GetLogToStream(LogSink* stream = nullptr);
+  // Stream: Any non-blocking stream interface.
+  // Installs the |stream| to collect logs with severtiy |min_sev| or higher.
+  // |stream| must live until deinstalled by RemoveLogToStream.
+  // If |stream| is the first stream added to the system, we might miss some
+  // early concurrent log statement happening from another thread happening near
+  // this instant.
   static void AddLogToStream(LogSink* stream, LoggingSeverity min_sev);
+  // Removes the specified stream, without destroying it. When the method
+  // has completed, it's guaranteed that |stream| will receive no more logging
+  // calls.
   static void RemoveLogToStream(LogSink* stream);
-
+  // Returns the severity for the specified stream, of if none is specified,
+  // the minimum stream severity.
+  static int GetLogToStream(LogSink* stream = nullptr);
   // Testing against MinLogSeverity allows code to avoid potentially expensive
   // logging operations by pre-checking the logging level.
   static int GetMinLogSeverity();
-
   // Parses the provided parameter stream to configure the options above.
   // Useful for configuring logging from the command line.
   static void ConfigureLogging(const char* params);
-
   // Checks the current global debug severity and if the |streams_| collection
   // is empty. If |severity| is smaller than the global severity and if the
   // |streams_| collection is empty, the LogMessage will be considered a noop
   // LogMessage.
   static bool IsNoop(LoggingSeverity severity);
+  // Version of IsNoop that uses fewer instructions at the call site, since the
+  // caller doesn't have to pass an argument.
+  template <LoggingSeverity S>
+  RTC_NO_INLINE static bool IsNoop() {
+    return IsNoop(S);
+  }
+#else
+  // Next methods do nothing; no one will call these functions.
+  LogMessage(const char* file, int line, LoggingSeverity sev) {}
+  LogMessage(const char* file,
+             int line,
+             LoggingSeverity sev,
+             LogErrorContext err_ctx,
+             int err) {}
+#if defined(WEBRTC_ANDROID)
+  LogMessage(const char* file, int line, LoggingSeverity sev, const char* tag) {
+  }
+#endif
+  // DEPRECATED - DO NOT USE - PLEASE USE THE MACROS INSTEAD OF THE CLASS.
+  // Android code should use the 'const char*' version since tags are static
+  // and we want to avoid allocating a std::string copy per log line.
+  RTC_DEPRECATED
+  LogMessage(const char* file,
+             int line,
+             LoggingSeverity sev,
+             const std::string& tag) {}
+  ~LogMessage() = default;
+
+  inline void AddTag(const char* tag) {}
+  inline rtc::StringBuilder& stream() { return print_stream_; }
+  inline static int64_t LogStartTime() { return 0; }
+  inline static uint32_t WallClockStartTime() { return 0; }
+  inline static void LogThreads(bool on = true) {}
+  inline static void LogTimestamps(bool on = true) {}
+  inline static void LogToDebug(LoggingSeverity min_sev) {}
+  inline static LoggingSeverity GetLogToDebug() {
+    return LoggingSeverity::LS_INFO;
+  }
+  inline static void SetLogToStderr(bool log_to_stderr) {}
+  inline static void AddLogToStream(LogSink* stream, LoggingSeverity min_sev) {}
+  inline static void RemoveLogToStream(LogSink* stream) {}
+  inline static int GetLogToStream(LogSink* stream = nullptr) { return 0; }
+  inline static int GetMinLogSeverity() { return 0; }
+  inline static void ConfigureLogging(const char* params) {}
+  static constexpr bool IsNoop(LoggingSeverity severity) { return true; }
+  template <LoggingSeverity S>
+  static constexpr bool IsNoop() {
+    return IsNoop(S);
+  }
+#endif  // RTC_LOG_ENABLED()
 
  private:
   friend class LogMessageForTesting;
-  typedef std::pair<LogSink*, LoggingSeverity> StreamAndSeverity;
-  typedef std::list<StreamAndSeverity> StreamList;
 
+#if RTC_LOG_ENABLED()
   // Updates min_sev_ appropriately when debug sinks change.
   static void UpdateMinLogSeverity();
 
@@ -474,14 +558,11 @@ class LogMessage {
                             const char* tag);
 #else
   static void OutputToDebug(const std::string& msg, LoggingSeverity severity);
-#endif
+#endif  // defined(WEBRTC_ANDROID)
 
   // Called from the dtor (or from a test) to append optional extra error
   // information to the log stream and a newline character.
   void FinishPrintStream();
-
-  // The stringbuilder that buffers the formatted message before output
-  rtc::StringBuilder print_stream_;
 
   // The severity level of this message
   LoggingSeverity severity_;
@@ -496,13 +577,35 @@ class LogMessage {
   std::string extra_;
 
   // The output streams and their associated severities
-  static StreamList streams_;
+  static LogSink* streams_;
+
+  // Holds true with high probability if |streams_| is empty, false with high
+  // probability otherwise. Operated on with std::memory_order_relaxed because
+  // it's ok to lose or log some additional statements near the instant streams
+  // are added/removed.
+  static std::atomic<bool> streams_empty_;
 
   // Flags for formatting options
   static bool thread_, timestamp_;
 
   // Determines if logs will be directed to stderr in debug mode.
   static bool log_to_stderr_;
+#else  // RTC_LOG_ENABLED()
+  // Next methods do nothing; no one will call these functions.
+  inline static void UpdateMinLogSeverity() {}
+#if defined(WEBRTC_ANDROID)
+  inline static void OutputToDebug(const std::string& msg,
+                                   LoggingSeverity severity,
+                                   const char* tag) {}
+#else
+  inline static void OutputToDebug(const std::string& msg,
+                                   LoggingSeverity severity) {}
+#endif  // defined(WEBRTC_ANDROID)
+  inline void FinishPrintStream() {}
+#endif  // RTC_LOG_ENABLED()
+
+  // The stringbuilder that buffers the formatted message before output
+  rtc::StringBuilder print_stream_;
 
   RTC_DISALLOW_COPY_AND_ASSIGN(LogMessage);
 };
@@ -511,22 +614,18 @@ class LogMessage {
 // Logging Helpers
 //////////////////////////////////////////////////////////////////////
 
-// DEPRECATED.
-// TODO(bugs.webrtc.org/9278): Remove once there are no more users.
-#define RTC_LOG_SEVERITY_PRECONDITION(sev) \
-  (rtc::LogMessage::IsNoop(sev))           \
-      ? static_cast<void>(0)               \
-      : rtc::webrtc_logging_impl::LogMessageVoidify()&
+#define RTC_LOG_FILE_LINE(sev, file, line)        \
+  ::rtc::webrtc_logging_impl::LogCall() &         \
+      ::rtc::webrtc_logging_impl::LogStreamer<>() \
+          << ::rtc::webrtc_logging_impl::LogMetadata(file, line, sev)
 
-#define RTC_LOG_FILE_LINE(sev, file, line)      \
-  rtc::webrtc_logging_impl::LogCall() &         \
-      rtc::webrtc_logging_impl::LogStreamer<>() \
-          << rtc::webrtc_logging_impl::LogMetadata(file, line, sev)
-
-#define RTC_LOG(sev) RTC_LOG_FILE_LINE(rtc::sev, __FILE__, __LINE__)
+#define RTC_LOG(sev)                        \
+  !rtc::LogMessage::IsNoop<::rtc::sev>() && \
+      RTC_LOG_FILE_LINE(::rtc::sev, __FILE__, __LINE__)
 
 // The _V version is for when a variable is passed in.
-#define RTC_LOG_V(sev) RTC_LOG_FILE_LINE(sev, __FILE__, __LINE__)
+#define RTC_LOG_V(sev) \
+  !rtc::LogMessage::IsNoop(sev) && RTC_LOG_FILE_LINE(sev, __FILE__, __LINE__)
 
 // The _F version prefixes the message with the current function name.
 #if (defined(__GNUC__) && !defined(NDEBUG)) || defined(WANT_PRETTY_LOG_F)
@@ -538,19 +637,20 @@ class LogMessage {
 #define RTC_LOG_T_F(sev) RTC_LOG(sev) << this << ": " << __FUNCTION__ << ": "
 #endif
 
-#define RTC_LOG_CHECK_LEVEL(sev) rtc::LogCheckLevel(rtc::sev)
-#define RTC_LOG_CHECK_LEVEL_V(sev) rtc::LogCheckLevel(sev)
+#define RTC_LOG_CHECK_LEVEL(sev) ::rtc::LogCheckLevel(::rtc::sev)
+#define RTC_LOG_CHECK_LEVEL_V(sev) ::rtc::LogCheckLevel(sev)
 
 inline bool LogCheckLevel(LoggingSeverity sev) {
   return (LogMessage::GetMinLogSeverity() <= sev);
 }
 
-#define RTC_LOG_E(sev, ctx, err)                                    \
-    rtc::webrtc_logging_impl::LogCall() &                           \
-        rtc::webrtc_logging_impl::LogStreamer<>()                   \
-            << rtc::webrtc_logging_impl::LogMetadataErr {           \
-      {__FILE__, __LINE__, rtc::sev}, rtc::ERRCTX_##ctx, (err)      \
-    }
+#define RTC_LOG_E(sev, ctx, err)                                 \
+  !rtc::LogMessage::IsNoop<::rtc::sev>() &&                      \
+      ::rtc::webrtc_logging_impl::LogCall() &                    \
+          ::rtc::webrtc_logging_impl::LogStreamer<>()            \
+              << ::rtc::webrtc_logging_impl::LogMetadataErr {    \
+    {__FILE__, __LINE__, ::rtc::sev}, ::rtc::ERRCTX_##ctx, (err) \
+  }
 
 #define RTC_LOG_T(sev) RTC_LOG(sev) << this << ": "
 
@@ -582,12 +682,13 @@ inline const char* AdaptString(const std::string& str) {
 }
 }  // namespace webrtc_logging_impl
 
-#define RTC_LOG_TAG(sev, tag)                                                \
-    rtc::webrtc_logging_impl::LogCall() &                                    \
-        rtc::webrtc_logging_impl::LogStreamer<>()                            \
-            << rtc::webrtc_logging_impl::LogMetadataTag {                    \
-      sev, rtc::webrtc_logging_impl::AdaptString(tag)                        \
-    }
+#define RTC_LOG_TAG(sev, tag)                                 \
+  !rtc::LogMessage::IsNoop(sev) &&                            \
+      ::rtc::webrtc_logging_impl::LogCall() &                 \
+          ::rtc::webrtc_logging_impl::LogStreamer<>()         \
+              << ::rtc::webrtc_logging_impl::LogMetadataTag { \
+    sev, ::rtc::webrtc_logging_impl::AdaptString(tag)         \
+  }
 
 #else
 
@@ -603,9 +704,10 @@ inline const char* AdaptString(const std::string& str) {
 #define RTC_DLOG_V(sev) RTC_LOG_V(sev)
 #define RTC_DLOG_F(sev) RTC_LOG_F(sev)
 #else
-#define RTC_DLOG_EAT_STREAM_PARAMS() \
-  while (false)                      \
-  rtc::webrtc_logging_impl::LogStreamer<>()
+#define RTC_DLOG_EAT_STREAM_PARAMS()                \
+  while (false)                                     \
+  ::rtc::webrtc_logging_impl::LogMessageVoidify() & \
+      (::rtc::webrtc_logging_impl::LogStreamer<>())
 #define RTC_DLOG(sev) RTC_DLOG_EAT_STREAM_PARAMS()
 #define RTC_DLOG_V(sev) RTC_DLOG_EAT_STREAM_PARAMS()
 #define RTC_DLOG_F(sev) RTC_DLOG_EAT_STREAM_PARAMS()

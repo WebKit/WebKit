@@ -32,6 +32,7 @@
 #include "api/video/video_timing.h"
 #include "api/video_codecs/sdp_video_format.h"
 #include "call/rtp_config.h"
+#include "common_video/frame_counts.h"
 #include "modules/rtp_rtcp/include/rtcp_statistics.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 
@@ -70,10 +71,6 @@ class VideoReceiveStream {
     ~Decoder();
     std::string ToString() const;
 
-    // Ownership stays with WebrtcVideoEngine (delegated from PeerConnection).
-    // TODO(nisse): Move one level out, to VideoReceiveStream::Config, and later
-    // to the configuration of VideoStreamDecoder.
-    VideoDecoderFactory* decoder_factory = nullptr;
     SdpVideoFormat video_format;
 
     // Received RTP packets with this payload type will be sent to this decoder
@@ -172,6 +169,9 @@ class VideoReceiveStream {
 
     // Decoders for every payload that we can receive.
     std::vector<Decoder> decoders;
+
+    // Ownership stays with WebrtcVideoEngine (delegated from PeerConnection).
+    VideoDecoderFactory* decoder_factory = nullptr;
 
     // Receive-stream specific RTP settings.
     struct Rtp {
@@ -299,6 +299,11 @@ class VideoReceiveStream {
   // creation without resetting the decoder state.
   virtual void SetFrameDecryptor(
       rtc::scoped_refptr<FrameDecryptorInterface> frame_decryptor) = 0;
+
+  // Allows a frame transformer to be attached to a VideoReceiveStream after
+  // creation without resetting the decoder state.
+  virtual void SetDepacketizerToDecoderFrameTransformer(
+      rtc::scoped_refptr<FrameTransformerInterface> frame_transformer) = 0;
 
   // Sets and returns recording state. The old state is moved out
   // of the video receive stream and returned to the caller, and |state|

@@ -18,14 +18,13 @@ namespace webrtc {
 namespace webrtc_pc_e2e {
 
 void InternalStatsObserver::PollStats() {
-  peer_->pc()->GetStats(this, nullptr,
-                        webrtc::PeerConnectionInterface::StatsOutputLevel::
-                            kStatsOutputLevelStandard);
+  peer_->pc()->GetStats(this);
 }
 
-void InternalStatsObserver::OnComplete(const StatsReports& reports) {
+void InternalStatsObserver::OnStatsDelivered(
+    const rtc::scoped_refptr<const RTCStatsReport>& report) {
   for (auto* observer : observers_) {
-    observer->OnStatsReports(pc_label_, reports);
+    observer->OnStatsReports(pc_label_, report);
   }
 }
 

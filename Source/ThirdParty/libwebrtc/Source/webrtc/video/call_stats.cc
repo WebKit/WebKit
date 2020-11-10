@@ -129,7 +129,7 @@ void CallStats::Process() {
   max_rtt_ms_ = GetMaxRttMs(reports_);
   avg_rtt_ms = GetNewAvgRttMs(reports_, avg_rtt_ms);
   {
-    rtc::CritScope lock(&avg_rtt_ms_lock_);
+    MutexLock lock(&avg_rtt_ms_lock_);
     avg_rtt_ms_ = avg_rtt_ms;
   }
 
@@ -178,7 +178,7 @@ int64_t CallStats::LastProcessedRtt() const {
   // allow only reading this from the process thread (or TQ once we get there)
   // so that the lock isn't necessary.
 
-  rtc::CritScope cs(&avg_rtt_ms_lock_);
+  MutexLock lock(&avg_rtt_ms_lock_);
   return avg_rtt_ms_;
 }
 

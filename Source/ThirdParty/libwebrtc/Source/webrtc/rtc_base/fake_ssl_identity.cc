@@ -90,8 +90,8 @@ FakeSSLIdentity::FakeSSLIdentity(const FakeSSLIdentity& o)
 
 FakeSSLIdentity::~FakeSSLIdentity() = default;
 
-FakeSSLIdentity* FakeSSLIdentity::GetReference() const {
-  return new FakeSSLIdentity(*this);
+std::unique_ptr<SSLIdentity> FakeSSLIdentity::CloneInternal() const {
+  return std::make_unique<FakeSSLIdentity>(*this);
 }
 
 const SSLCertificate& FakeSSLIdentity::certificate() const {

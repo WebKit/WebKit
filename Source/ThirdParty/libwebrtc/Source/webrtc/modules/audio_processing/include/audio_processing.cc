@@ -62,6 +62,8 @@ int GetDefaultMaxInternalRate() {
 
 }  // namespace
 
+constexpr int AudioProcessing::kNativeSampleRatesHz[];
+
 void CustomProcessing::SetRuntimeSetting(
     AudioProcessing::RuntimeSetting setting) {}
 

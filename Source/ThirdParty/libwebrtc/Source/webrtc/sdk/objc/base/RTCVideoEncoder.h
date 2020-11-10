@@ -23,7 +23,7 @@ NS_ASSUME_NONNULL_BEGIN
 /** Callback block for encoder. */
 typedef BOOL (^RTCVideoEncoderCallback)(RTCEncodedImage *frame,
                                         id<RTCCodecSpecificInfo> info,
-                                        RTCRtpFragmentationHeader *header);
+                                        RTCRtpFragmentationHeader* __nullable header);
 
 /** Protocol for encoder implementations. */
 RTC_OBJC_EXPORT

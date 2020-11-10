@@ -73,7 +73,7 @@ class RTCCertificateGeneratorTest : public ::testing::Test {
       : fixture_(new RefCountedObject<RTCCertificateGeneratorFixture>()) {}
 
  protected:
-  static const int kGenerationTimeoutMs = 10000;
+  static constexpr int kGenerationTimeoutMs = 10000;
 
   scoped_refptr<RTCCertificateGeneratorFixture> fixture_;
 };

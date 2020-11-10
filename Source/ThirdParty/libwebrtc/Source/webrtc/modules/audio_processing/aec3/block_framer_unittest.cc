@@ -214,7 +214,8 @@ std::string ProduceDebugText(int sample_rate_hz, size_t num_channels) {
 }  // namespace
 
 #if RTC_DCHECK_IS_ON && GTEST_HAS_DEATH_TEST && !defined(WEBRTC_ANDROID)
-TEST(BlockFramer, WrongNumberOfBandsInBlockForInsertBlockAndExtractSubFrame) {
+TEST(BlockFramerDeathTest,
+     WrongNumberOfBandsInBlockForInsertBlockAndExtractSubFrame) {
   for (auto rate : {16000, 32000, 48000}) {
     for (auto correct_num_channels : {1, 2, 8}) {
       SCOPED_TRACE(ProduceDebugText(rate, correct_num_channels));
@@ -227,7 +228,7 @@ TEST(BlockFramer, WrongNumberOfBandsInBlockForInsertBlockAndExtractSubFrame) {
   }
 }
 
-TEST(BlockFramer,
+TEST(BlockFramerDeathTest,
      WrongNumberOfChannelsInBlockForInsertBlockAndExtractSubFrame) {
   for (auto rate : {16000, 32000, 48000}) {
     for (auto correct_num_channels : {1, 2, 8}) {
@@ -241,7 +242,7 @@ TEST(BlockFramer,
   }
 }
 
-TEST(BlockFramer,
+TEST(BlockFramerDeathTest,
      WrongNumberOfBandsInSubFrameForInsertBlockAndExtractSubFrame) {
   for (auto rate : {16000, 32000, 48000}) {
     for (auto correct_num_channels : {1, 2, 8}) {
@@ -255,7 +256,7 @@ TEST(BlockFramer,
   }
 }
 
-TEST(BlockFramer,
+TEST(BlockFramerDeathTest,
      WrongNumberOfChannelsInSubFrameForInsertBlockAndExtractSubFrame) {
   for (auto rate : {16000, 32000, 48000}) {
     for (auto correct_num_channels : {1, 2, 8}) {
@@ -269,7 +270,8 @@ TEST(BlockFramer,
   }
 }
 
-TEST(BlockFramer, WrongNumberOfSamplesInBlockForInsertBlockAndExtractSubFrame) {
+TEST(BlockFramerDeathTest,
+     WrongNumberOfSamplesInBlockForInsertBlockAndExtractSubFrame) {
   for (auto rate : {16000, 32000, 48000}) {
     for (auto correct_num_channels : {1, 2, 8}) {
       SCOPED_TRACE(ProduceDebugText(rate, correct_num_channels));
@@ -282,7 +284,7 @@ TEST(BlockFramer, WrongNumberOfSamplesInBlockForInsertBlockAndExtractSubFrame) {
   }
 }
 
-TEST(BlockFramer,
+TEST(BlockFramerDeathTest,
      WrongNumberOfSamplesInSubFrameForInsertBlockAndExtractSubFrame) {
   const size_t correct_num_channels = 1;
   for (auto rate : {16000, 32000, 48000}) {
@@ -295,7 +297,7 @@ TEST(BlockFramer,
   }
 }
 
-TEST(BlockFramer, WrongNumberOfBandsInBlockForInsertBlock) {
+TEST(BlockFramerDeathTest, WrongNumberOfBandsInBlockForInsertBlock) {
   for (auto rate : {16000, 32000, 48000}) {
     for (auto correct_num_channels : {1, 2, 8}) {
       SCOPED_TRACE(ProduceDebugText(rate, correct_num_channels));
@@ -308,7 +310,7 @@ TEST(BlockFramer, WrongNumberOfBandsInBlockForInsertBlock) {
   }
 }
 
-TEST(BlockFramer, WrongNumberOfChannelsInBlockForInsertBlock) {
+TEST(BlockFramerDeathTest, WrongNumberOfChannelsInBlockForInsertBlock) {
   for (auto rate : {16000, 32000, 48000}) {
     for (auto correct_num_channels : {1, 2, 8}) {
       SCOPED_TRACE(ProduceDebugText(rate, correct_num_channels));
@@ -321,7 +323,7 @@ TEST(BlockFramer, WrongNumberOfChannelsInBlockForInsertBlock) {
   }
 }
 
-TEST(BlockFramer, WrongNumberOfSamplesInBlockForInsertBlock) {
+TEST(BlockFramerDeathTest, WrongNumberOfSamplesInBlockForInsertBlock) {
   for (auto rate : {16000, 32000, 48000}) {
     for (auto correct_num_channels : {1, 2, 8}) {
       SCOPED_TRACE(ProduceDebugText(rate, correct_num_channels));
@@ -333,7 +335,7 @@ TEST(BlockFramer, WrongNumberOfSamplesInBlockForInsertBlock) {
   }
 }
 
-TEST(BlockFramer, WrongNumberOfPreceedingApiCallsForInsertBlock) {
+TEST(BlockFramerDeathTest, WrongNumberOfPreceedingApiCallsForInsertBlock) {
   for (size_t num_channels : {1, 2, 8}) {
     for (auto rate : {16000, 32000, 48000}) {
       for (size_t num_calls = 0; num_calls < 4; ++num_calls) {
@@ -351,17 +353,17 @@ TEST(BlockFramer, WrongNumberOfPreceedingApiCallsForInsertBlock) {
 }
 
 // Verifies that the verification for 0 number of channels works.
-TEST(BlockFramer, ZeroNumberOfChannelsParameter) {
+TEST(BlockFramerDeathTest, ZeroNumberOfChannelsParameter) {
   EXPECT_DEATH(BlockFramer(16000, 0), "");
 }
 
 // Verifies that the verification for 0 number of bands works.
-TEST(BlockFramer, ZeroNumberOfBandsParameter) {
+TEST(BlockFramerDeathTest, ZeroNumberOfBandsParameter) {
   EXPECT_DEATH(BlockFramer(0, 1), "");
 }
 
 // Verifies that the verification for null sub_frame pointer works.
-TEST(BlockFramer, NullSubFrameParameter) {
+TEST(BlockFramerDeathTest, NullSubFrameParameter) {
   EXPECT_DEATH(BlockFramer(1, 1).InsertBlockAndExtractSubFrame(
                    std::vector<std::vector<std::vector<float>>>(
                        1, std::vector<std::vector<float>>(

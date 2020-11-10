@@ -16,6 +16,7 @@
 #include <memory>
 #include <string>
 
+#include "absl/strings/match.h"
 #include "api/rtc_event_log/rtc_event.h"
 #include "api/rtc_event_log/rtc_event_log.h"
 #include "logging/rtc_event_log/events/rtc_event_bwe_update_loss_based.h"
@@ -60,7 +61,7 @@ bool BweLossExperimentIsEnabled() {
   std::string experiment_string =
       webrtc::field_trial::FindFullName(kBweLosExperiment);
   // The experiment is enabled iff the field trial string begins with "Enabled".
-  return experiment_string.find("Enabled") == 0;
+  return absl::StartsWith(experiment_string, "Enabled");
 }
 
 bool ReadBweLossExperimentParameters(float* low_loss_threshold,

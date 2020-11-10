@@ -40,7 +40,7 @@ TEST(AudioBufferTest, SetNumChannelsSetsChannelBuffersNumChannels) {
 }
 
 #if RTC_DCHECK_IS_ON && GTEST_HAS_DEATH_TEST && !defined(WEBRTC_ANDROID)
-TEST(AudioBufferTest, SetNumChannelsDeathTest) {
+TEST(AudioBufferDeathTest, SetNumChannelsDeathTest) {
   AudioBuffer ab(kSampleRateHz, kMono, kSampleRateHz, kMono, kSampleRateHz,
                  kMono);
   RTC_EXPECT_DEATH(ab.set_num_channels(kStereo), "num_channels");

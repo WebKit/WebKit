@@ -60,9 +60,7 @@ class ConfigurableFrameSizeEncoder : public VideoEncoder {
   EncodedImageCallback* callback_;
   absl::optional<std::function<void(void)>> post_encode_callback_;
 
-  const size_t max_frame_size_;
   size_t current_frame_size_;
-  std::unique_ptr<uint8_t[]> buffer_;
   VideoCodecType codec_type_;
 };
 

@@ -16,8 +16,8 @@
 #include "api/task_queue/default_task_queue_factory.h"
 #include "common_video/test/utilities.h"
 #include "modules/video_coding/timing.h"
-#include "rtc_base/critical_section.h"
 #include "rtc_base/event.h"
+#include "rtc_base/synchronization/mutex.h"
 #include "system_wrappers/include/clock.h"
 #include "test/fake_decoder.h"
 #include "test/gmock.h"
@@ -33,7 +33,7 @@ class ReceiveCallback : public VCMReceiveCallback {
                         int32_t decode_time_ms,
                         VideoContentType content_type) override {
     {
-      rtc::CritScope cs(&lock_);
+      MutexLock lock(&lock_);
       last_frame_ = videoFrame;
     }
     received_frame_event_.Set();
@@ -41,13 +41,13 @@ class ReceiveCallback : public VCMReceiveCallback {
   }
 
   absl::optional<VideoFrame> GetLastFrame() {
-    rtc::CritScope cs(&lock_);
+    MutexLock lock(&lock_);
     return last_frame_;
   }
 
   absl::optional<VideoFrame> WaitForFrame(int64_t wait_ms) {
     if (received_frame_event_.Wait(wait_ms)) {
-      rtc::CritScope cs(&lock_);
+      MutexLock lock(&lock_);
       return last_frame_;
     } else {
       return absl::nullopt;
@@ -55,7 +55,7 @@ class ReceiveCallback : public VCMReceiveCallback {
   }
 
  private:
-  rtc::CriticalSection lock_;
+  Mutex lock_;
   rtc::Event received_frame_event_;
   absl::optional<VideoFrame> last_frame_ RTC_GUARDED_BY(lock_);
 };

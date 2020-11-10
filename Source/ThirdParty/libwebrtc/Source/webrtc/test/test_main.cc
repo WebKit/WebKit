@@ -12,18 +12,21 @@
 
 #include "absl/debugging/failure_signal_handler.h"
 #include "absl/debugging/symbolize.h"
+#include "absl/flags/parse.h"
+#include "test/gmock.h"
 #include "test/test_main_lib.h"
 
 int main(int argc, char* argv[]) {
   // Initialize the symbolizer to get a human-readable stack trace
-  // TODO(crbug.com/1050976): Breaks iossim tests, re-enable when fixed.
-  // absl::InitializeSymbolizer(argv[0]);
+  absl::InitializeSymbolizer(argv[0]);
+  testing::InitGoogleMock(&argc, argv);
+  absl::ParseCommandLine(argc, argv);
 
-  // absl::FailureSignalHandlerOptions options;
-  // absl::InstallFailureSignalHandler(options);
+  absl::FailureSignalHandlerOptions options;
+  absl::InstallFailureSignalHandler(options);
 
   std::unique_ptr<webrtc::TestMain> main = webrtc::TestMain::Create();
-  int err_code = main->Init(&argc, argv);
+  int err_code = main->Init();
   if (err_code != 0) {
     return err_code;
   }

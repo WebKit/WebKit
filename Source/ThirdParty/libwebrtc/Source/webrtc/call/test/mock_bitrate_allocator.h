@@ -18,10 +18,15 @@
 namespace webrtc {
 class MockBitrateAllocator : public BitrateAllocatorInterface {
  public:
-  MOCK_METHOD2(AddObserver,
-               void(BitrateAllocatorObserver*, MediaStreamAllocationConfig));
-  MOCK_METHOD1(RemoveObserver, void(BitrateAllocatorObserver*));
-  MOCK_CONST_METHOD1(GetStartBitrate, int(BitrateAllocatorObserver*));
+  MOCK_METHOD(void,
+              AddObserver,
+              (BitrateAllocatorObserver*, MediaStreamAllocationConfig),
+              (override));
+  MOCK_METHOD(void, RemoveObserver, (BitrateAllocatorObserver*), (override));
+  MOCK_METHOD(int,
+              GetStartBitrate,
+              (BitrateAllocatorObserver*),
+              (const, override));
 };
 }  // namespace webrtc
 #endif  // CALL_TEST_MOCK_BITRATE_ALLOCATOR_H_

@@ -185,8 +185,8 @@ public class AppRTCAudioManager {
     // Note that, the sensor will not be active until start() has been called.
     proximitySensor = AppRTCProximitySensor.create(context,
         // This method will be called each time a state change is detected.
-        // Example: user holds his hand over the device (closer than ~5 cm),
-        // or removes his hand from the device.
+        // Example: user holds their hand over the device (closer than ~5 cm),
+        // or removes their hand from the device.
         this ::onProximitySensorChangedState);
 
     Log.d(TAG, "defaultAudioDevice: " + defaultAudioDevice);

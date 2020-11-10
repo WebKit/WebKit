@@ -109,7 +109,7 @@ class TestTurnServer : public TurnAuthInterface {
         rtc::SSLAdapter* adapter = rtc::SSLAdapter::Create(socket);
         adapter->SetRole(rtc::SSL_SERVER);
         adapter->SetIdentity(
-            rtc::SSLIdentity::Generate(common_name, rtc::KeyParams()));
+            rtc::SSLIdentity::Create(common_name, rtc::KeyParams()));
         adapter->SetIgnoreBadCert(ignore_bad_cert);
         socket = adapter;
       }

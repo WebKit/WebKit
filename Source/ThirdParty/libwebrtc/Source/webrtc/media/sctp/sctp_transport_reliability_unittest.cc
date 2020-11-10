@@ -18,6 +18,7 @@
 #include "rtc_base/gunit.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/random.h"
+#include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/thread.h"
 #include "test/gtest.h"
 
@@ -377,7 +378,7 @@ class SctpPingPong final {
     CreateTwoConnectedSctpTransportsWithAllStreams();
 
     {
-      rtc::CritScope cs(&lock_);
+      webrtc::MutexLock lock(&lock_);
       if (!errors_list_.empty()) {
         return false;
       }
@@ -397,7 +398,7 @@ class SctpPingPong final {
   std::vector<std::string> GetErrorsList() const {
     std::vector<std::string> result;
     {
-      rtc::CritScope cs(&lock_);
+      webrtc::MutexLock lock(&lock_);
       result = errors_list_;
     }
     return result;
@@ -566,7 +567,7 @@ class SctpPingPong final {
   }
 
   void ReportError(std::string error) {
-    rtc::CritScope cs(&lock_);
+    webrtc::MutexLock lock(&lock_);
     errors_list_.push_back(std::move(error));
   }
 
@@ -578,7 +579,7 @@ class SctpPingPong final {
   std::unique_ptr<cricket::SctpTransport> sctp_transport2_;
   std::unique_ptr<SctpDataSender> data_sender1_;
   std::unique_ptr<SctpDataSender> data_sender2_;
-  rtc::CriticalSection lock_;
+  mutable webrtc::Mutex lock_;
   std::vector<std::string> errors_list_ RTC_GUARDED_BY(lock_);
 
   const uint32_t id_;

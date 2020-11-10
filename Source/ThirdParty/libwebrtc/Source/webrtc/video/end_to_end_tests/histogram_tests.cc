@@ -11,6 +11,7 @@
 #include "absl/types/optional.h"
 #include "api/test/video/function_video_encoder_factory.h"
 #include "modules/video_coding/codecs/vp8/include/vp8.h"
+#include "rtc_base/synchronization/mutex.h"
 #include "system_wrappers/include/metrics.h"
 #include "test/call_test.h"
 #include "test/gtest.h"
@@ -59,7 +60,7 @@ void HistogramTest::VerifyHistogramStats(bool use_rtx,
       if (video_frame.ntp_time_ms() > 0 &&
           Clock::GetRealTimeClock()->CurrentNtpInMilliseconds() >=
               video_frame.ntp_time_ms()) {
-        rtc::CritScope lock(&crit_);
+        MutexLock lock(&mutex_);
         ++num_frames_received_;
       }
     }
@@ -82,7 +83,7 @@ void HistogramTest::VerifyHistogramStats(bool use_rtx,
 
     bool MinNumberOfFramesReceived() const {
       const int kMinRequiredHistogramSamples = 200;
-      rtc::CritScope lock(&crit_);
+      MutexLock lock(&mutex_);
       return num_frames_received_ > kMinRequiredHistogramSamples;
     }
 
@@ -131,13 +132,13 @@ void HistogramTest::VerifyHistogramStats(bool use_rtx,
       EXPECT_TRUE(Wait()) << "Timed out waiting for min frames to be received.";
     }
 
-    rtc::CriticalSection crit_;
+    mutable Mutex mutex_;
     const bool use_rtx_;
     const bool use_fec_;
     const bool screenshare_;
     test::FunctionVideoEncoderFactory encoder_factory_;
     absl::optional<int64_t> start_runtime_ms_;
-    int num_frames_received_ RTC_GUARDED_BY(&crit_);
+    int num_frames_received_ RTC_GUARDED_BY(&mutex_);
   } test(use_rtx, use_fec, screenshare);
 
   metrics::Reset();

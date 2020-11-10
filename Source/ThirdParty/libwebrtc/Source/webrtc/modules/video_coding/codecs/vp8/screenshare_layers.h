@@ -78,7 +78,7 @@ class ScreenshareLayers final : public Vp8FrameBufferController {
     DependencyInfo(absl::string_view indication_symbols,
                    Vp8FrameConfig frame_config)
         : decode_target_indications(
-              GenericFrameInfo::DecodeTargetInfo(indication_symbols)),
+              webrtc_impl::StringToDecodeTargetIndications(indication_symbols)),
           frame_config(frame_config) {}
 
     absl::InlinedVector<DecodeTargetIndication, 10> decode_target_indications;

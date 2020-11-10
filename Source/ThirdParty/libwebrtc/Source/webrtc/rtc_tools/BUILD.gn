@@ -17,12 +17,12 @@ group("rtc_tools") {
   deps = [
     ":frame_analyzer",
     ":video_file_reader",
-    ":video_quality_analysis",
   ]
   if (!build_with_chromium) {
     deps += [
       ":psnr_ssim_analyzer",
       ":rgba_to_i420_converter",
+      ":video_quality_analysis",
     ]
     if (rtc_enable_protobuf) {
       deps += [ ":chart_proto" ]
@@ -60,6 +60,8 @@ rtc_library("video_file_reader") {
     "../api/video:video_rtp_headers",
     "../rtc_base:checks",
     "../rtc_base:rtc_base_approved",
+  ]
+  absl_deps = [
     "//third_party/abseil-cpp/absl/strings",
     "//third_party/abseil-cpp/absl/types:optional",
   ]
@@ -77,6 +79,8 @@ rtc_library("video_file_writer") {
     "../api/video:video_frame_i420",
     "../api/video:video_rtp_headers",
     "../rtc_base:rtc_base_approved",
+  ]
+  absl_deps = [
     "//third_party/abseil-cpp/absl/strings",
     "//third_party/abseil-cpp/absl/types:optional",
   ]
@@ -107,9 +111,9 @@ rtc_library("video_quality_analysis") {
     "../rtc_base:checks",
     "../rtc_base:rtc_base_approved",
     "../test:perf_test",
-    "//third_party/abseil-cpp/absl/types:optional",
     "//third_party/libyuv",
   ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
 }
 
 rtc_executable("frame_analyzer") {
@@ -130,7 +134,9 @@ rtc_executable("frame_analyzer") {
   ]
 }
 
-if (!build_with_chromium && !build_with_mozilla) {
+# TODO(bugs.webrtc.org/11474): Enable this on win if needed. For now it
+# is only required for Linux and Android.
+if (!build_with_chromium && !build_with_mozilla && !is_win && !is_ios) {
   action("frame_analyzer_host") {
     script = "//tools_webrtc/executable_host_build.py"
     outputs = [ "${root_out_dir}/frame_analyzer_host" ]
@@ -317,8 +323,14 @@ if (!build_with_chromium) {
     rtc_library("event_log_visualizer_utils") {
       visibility = [ "*" ]
       sources = [
+        "rtc_event_log_visualizer/alerts.cc",
+        "rtc_event_log_visualizer/alerts.h",
+        "rtc_event_log_visualizer/analyze_audio.cc",
+        "rtc_event_log_visualizer/analyze_audio.h",
         "rtc_event_log_visualizer/analyzer.cc",
         "rtc_event_log_visualizer/analyzer.h",
+        "rtc_event_log_visualizer/analyzer_common.cc",
+        "rtc_event_log_visualizer/analyzer_common.h",
         "rtc_event_log_visualizer/log_simulation.cc",
         "rtc_event_log_visualizer/log_simulation.h",
         "rtc_event_log_visualizer/plot_base.cc",
@@ -327,11 +339,11 @@ if (!build_with_chromium) {
         "rtc_event_log_visualizer/plot_protobuf.h",
         "rtc_event_log_visualizer/plot_python.cc",
         "rtc_event_log_visualizer/plot_python.h",
-        "rtc_event_log_visualizer/triage_notifications.h",
       ]
       deps = [
         ":chart_proto",
         "../api:function_view",
+        "../rtc_base:deprecation",
         "../rtc_base:ignore_wundef",
 
         # TODO(kwiberg): Remove this dependency.
@@ -358,8 +370,12 @@ if (!build_with_chromium) {
         "../rtc_base:rtc_base_approved",
         "../rtc_base:rtc_numerics",
         "../rtc_base:stringutils",
+        "../test:explicit_key_value_config",
+      ]
+      absl_deps = [
         "//third_party/abseil-cpp/absl/algorithm:container",
         "//third_party/abseil-cpp/absl/strings",
+        "//third_party/abseil-cpp/absl/types:optional",
       ]
     }
   }
@@ -369,9 +385,7 @@ if (rtc_include_tests) {
   rtc_executable("yuv_to_ivf_converter") {
     visibility = [ "*" ]
     testonly = true
-    sources = [
-      "converter/yuv_to_ivf_converter.cc",
-    ]
+    sources = [ "converter/yuv_to_ivf_converter.cc" ]
     deps = [
       "../api:create_frame_generator",
       "../api:frame_generator_api",
@@ -391,6 +405,7 @@ if (rtc_include_tests) {
       "../rtc_base:logging",
       "../rtc_base:rtc_event",
       "../rtc_base:rtc_task_queue",
+      "../rtc_base/synchronization:mutex",
       "../rtc_base/system:file_wrapper",
       "../test:video_test_common",
       "../test:video_test_support",

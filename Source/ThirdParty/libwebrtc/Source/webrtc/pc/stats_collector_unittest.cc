@@ -23,9 +23,9 @@
 #include "call/call.h"
 #include "media/base/media_channel.h"
 #include "modules/audio_processing/include/audio_processing_statistics.h"
-#include "pc/data_channel.h"
 #include "pc/media_stream.h"
 #include "pc/media_stream_track.h"
+#include "pc/sctp_data_channel.h"
 #include "pc/test/fake_peer_connection_for_stats.h"
 #include "pc/test/fake_video_track_source.h"
 #include "pc/test/mock_rtp_receiver_internal.h"
@@ -682,8 +682,7 @@ class StatsCollectorTest : public ::testing::Test {
 
     // Fake certificate to report.
     rtc::scoped_refptr<rtc::RTCCertificate> local_certificate(
-        rtc::RTCCertificate::Create(
-            std::unique_ptr<rtc::SSLIdentity>(local_identity.GetReference())));
+        rtc::RTCCertificate::Create(local_identity.Clone()));
     pc->SetLocalCertificate(kTransportName, local_certificate);
     pc->SetRemoteCertChain(kTransportName,
                            remote_identity.cert_chain().Clone());
@@ -913,7 +912,7 @@ TEST_P(StatsCollectorTrackTest, BytesCounterHandles64Bits) {
   video_sender_info.payload_bytes_sent = kBytesSent;
   video_sender_info.header_and_padding_bytes_sent = 0;
   VideoMediaInfo video_info;
-  video_info.senders.push_back(video_sender_info);
+  video_info.aggregated_senders.push_back(video_sender_info);
 
   auto* video_media_channel = pc->AddVideoChannel("video", "transport");
   video_media_channel->SetStats(video_info);
@@ -996,7 +995,7 @@ TEST_P(StatsCollectorTrackTest, VideoBandwidthEstimationInfoIsReported) {
   video_sender_info.header_and_padding_bytes_sent = 12;
 
   VideoMediaInfo video_info;
-  video_info.senders.push_back(video_sender_info);
+  video_info.aggregated_senders.push_back(video_sender_info);
 
   auto* video_media_channel = pc->AddVideoChannel("video", "transport");
   video_media_channel->SetStats(video_info);
@@ -1094,7 +1093,7 @@ TEST_P(StatsCollectorTrackTest, TrackAndSsrcObjectExistAfterUpdateSsrcStats) {
   video_sender_info.payload_bytes_sent = kBytesSent - 12;
   video_sender_info.header_and_padding_bytes_sent = 12;
   VideoMediaInfo video_info;
-  video_info.senders.push_back(video_sender_info);
+  video_info.aggregated_senders.push_back(video_sender_info);
 
   auto* video_media_channel = pc->AddVideoChannel("video", "transport");
   video_media_channel->SetStats(video_info);
@@ -1149,7 +1148,7 @@ TEST_P(StatsCollectorTrackTest, TransportObjectLinkedFromSsrcObject) {
   video_sender_info.payload_bytes_sent = kBytesSent - 12;
   video_sender_info.header_and_padding_bytes_sent = 12;
   VideoMediaInfo video_info;
-  video_info.senders.push_back(video_sender_info);
+  video_info.aggregated_senders.push_back(video_sender_info);
 
   auto* video_media_channel = pc->AddVideoChannel("video", "transport");
   video_media_channel->SetStats(video_info);
@@ -1212,7 +1211,7 @@ TEST_P(StatsCollectorTrackTest, RemoteSsrcInfoIsPresent) {
   video_sender_info.add_ssrc(kSsrcOfTrack);
   video_sender_info.remote_stats.push_back(remote_ssrc_stats);
   VideoMediaInfo video_info;
-  video_info.senders.push_back(video_sender_info);
+  video_info.aggregated_senders.push_back(video_sender_info);
 
   auto* video_media_channel = pc->AddVideoChannel("video", "transport");
   video_media_channel->SetStats(video_info);
@@ -1854,7 +1853,7 @@ TEST_P(StatsCollectorTrackTest, VerifyVideoSendSsrcStats) {
   video_sender_info.frames_encoded = 10;
   video_sender_info.qp_sum = 11;
   VideoMediaInfo video_info;
-  video_info.senders.push_back(video_sender_info);
+  video_info.aggregated_senders.push_back(video_sender_info);
 
   auto* video_media_channel = pc->AddVideoChannel("video", "transport");
   video_media_channel->SetStats(video_info);

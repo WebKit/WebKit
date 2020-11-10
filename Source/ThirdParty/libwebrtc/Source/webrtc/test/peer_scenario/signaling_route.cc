@@ -58,9 +58,10 @@ void StartSdpNegotiation(
     PeerScenarioClient* callee,
     TrafficRoute* send_route,
     TrafficRoute* ret_route,
+    std::function<void(SessionDescriptionInterface* offer)> munge_offer,
     std::function<void(SessionDescriptionInterface*)> modify_offer,
     std::function<void(const SessionDescriptionInterface&)> exchange_finished) {
-  caller->CreateAndSetSdp([=](std::string sdp_offer) {
+  caller->CreateAndSetSdp(munge_offer, [=](std::string sdp_offer) {
     if (modify_offer) {
       auto offer = CreateSessionDescription(SdpType::kOffer, sdp_offer);
       modify_offer(offer.get());
@@ -92,15 +93,22 @@ void SignalingRoute::StartIceSignaling() {
 }
 
 void SignalingRoute::NegotiateSdp(
+    std::function<void(SessionDescriptionInterface*)> munge_offer,
     std::function<void(SessionDescriptionInterface*)> modify_offer,
     std::function<void(const SessionDescriptionInterface&)> exchange_finished) {
-  StartSdpNegotiation(caller_, callee_, send_route_, ret_route_, modify_offer,
-                      exchange_finished);
+  StartSdpNegotiation(caller_, callee_, send_route_, ret_route_, munge_offer,
+                      modify_offer, exchange_finished);
+}
+
+void SignalingRoute::NegotiateSdp(
+    std::function<void(SessionDescriptionInterface*)> modify_offer,
+    std::function<void(const SessionDescriptionInterface&)> exchange_finished) {
+  NegotiateSdp({}, modify_offer, exchange_finished);
 }
 
 void SignalingRoute::NegotiateSdp(
     std::function<void(const SessionDescriptionInterface&)> exchange_finished) {
-  NegotiateSdp({}, exchange_finished);
+  NegotiateSdp({}, {}, exchange_finished);
 }
 
 }  // namespace test

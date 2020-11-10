@@ -18,34 +18,40 @@ namespace webrtc {
 
 class MockDecodedImageCallback : public DecodedImageCallback {
  public:
-  MockDecodedImageCallback();
-  ~MockDecodedImageCallback() override;
-
-  MOCK_METHOD1(Decoded, int32_t(VideoFrame& decodedImage));  // NOLINT
-  MOCK_METHOD2(Decoded,
-               int32_t(VideoFrame& decodedImage,  // NOLINT
-                       int64_t decode_time_ms));
-  MOCK_METHOD3(Decoded,
-               void(VideoFrame& decodedImage,  // NOLINT
-                    absl::optional<int32_t> decode_time_ms,
-                    absl::optional<uint8_t> qp));
+  MOCK_METHOD(int32_t,
+              Decoded,
+              (VideoFrame & decoded_image),  // NOLINT
+              (override));
+  MOCK_METHOD(int32_t,
+              Decoded,
+              (VideoFrame & decoded_image,  // NOLINT
+               int64_t decode_time_ms),
+              (override));
+  MOCK_METHOD(void,
+              Decoded,
+              (VideoFrame & decoded_image,  // NOLINT
+               absl::optional<int32_t> decode_time_ms,
+               absl::optional<uint8_t> qp),
+              (override));
 };
 
 class MockVideoDecoder : public VideoDecoder {
  public:
-  MockVideoDecoder();
-  ~MockVideoDecoder() override;
-
-  MOCK_METHOD2(InitDecode,
-               int32_t(const VideoCodec* codecSettings, int32_t numberOfCores));
-  MOCK_METHOD3(Decode,
-               int32_t(const EncodedImage& inputImage,
-                       bool missingFrames,
-                       int64_t renderTimeMs));
-  MOCK_METHOD1(RegisterDecodeCompleteCallback,
-               int32_t(DecodedImageCallback* callback));
-  MOCK_METHOD0(Release, int32_t());
-  MOCK_METHOD0(Copy, VideoDecoder*());
+  MOCK_METHOD(int32_t,
+              InitDecode,
+              (const VideoCodec* codec_settings, int32_t number_of_cores),
+              (override));
+  MOCK_METHOD(int32_t,
+              Decode,
+              (const EncodedImage& input_image,
+               bool missing_frames,
+               int64_t render_time_ms),
+              (override));
+  MOCK_METHOD(int32_t,
+              RegisterDecodeCompleteCallback,
+              (DecodedImageCallback * callback),
+              (override));
+  MOCK_METHOD(int32_t, Release, (), (override));
 };
 
 }  // namespace webrtc

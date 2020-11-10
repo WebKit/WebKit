@@ -27,7 +27,7 @@ AdaptedVideoTrackSource::AdaptedVideoTrackSource(int required_alignment)
 AdaptedVideoTrackSource::~AdaptedVideoTrackSource() = default;
 
 bool AdaptedVideoTrackSource::GetStats(Stats* stats) {
-  rtc::CritScope lock(&stats_crit_);
+  webrtc::MutexLock lock(&stats_mutex_);
 
   if (!stats_) {
     return false;
@@ -93,7 +93,7 @@ bool AdaptedVideoTrackSource::AdaptFrame(int width,
                                          int* crop_x,
                                          int* crop_y) {
   {
-    rtc::CritScope lock(&stats_crit_);
+    webrtc::MutexLock lock(&stats_mutex_);
     stats_ = Stats{width, height};
   }
 

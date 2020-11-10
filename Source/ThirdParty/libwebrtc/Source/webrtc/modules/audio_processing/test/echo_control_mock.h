@@ -20,17 +20,21 @@ class AudioBuffer;
 
 class MockEchoControl : public EchoControl {
  public:
-  MOCK_METHOD1(AnalyzeRender, void(AudioBuffer* render));
-  MOCK_METHOD1(AnalyzeCapture, void(AudioBuffer* capture));
-  MOCK_METHOD2(ProcessCapture,
-               void(AudioBuffer* capture, bool echo_path_change));
-  MOCK_METHOD3(ProcessCapture,
-               void(AudioBuffer* capture,
-                    AudioBuffer* linear_output,
-                    bool echo_path_change));
-  MOCK_CONST_METHOD0(GetMetrics, EchoControl::Metrics());
-  MOCK_METHOD1(SetAudioBufferDelay, void(int delay_ms));
-  MOCK_CONST_METHOD0(ActiveProcessing, bool());
+  MOCK_METHOD(void, AnalyzeRender, (AudioBuffer * render), (override));
+  MOCK_METHOD(void, AnalyzeCapture, (AudioBuffer * capture), (override));
+  MOCK_METHOD(void,
+              ProcessCapture,
+              (AudioBuffer * capture, bool echo_path_change),
+              (override));
+  MOCK_METHOD(void,
+              ProcessCapture,
+              (AudioBuffer * capture,
+               AudioBuffer* linear_output,
+               bool echo_path_change),
+              (override));
+  MOCK_METHOD(EchoControl::Metrics, GetMetrics, (), (const, override));
+  MOCK_METHOD(void, SetAudioBufferDelay, (int delay_ms), (override));
+  MOCK_METHOD(bool, ActiveProcessing, (), (const, override));
 };
 
 }  // namespace webrtc

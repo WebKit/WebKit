@@ -412,24 +412,29 @@ class MockAsyncPacketSocket : public rtc::AsyncPacketSocket {
  public:
   ~MockAsyncPacketSocket() = default;
 
-  MOCK_CONST_METHOD0(GetLocalAddress, SocketAddress());
-  MOCK_CONST_METHOD0(GetRemoteAddress, SocketAddress());
-  MOCK_METHOD3(Send,
-               int(const void* pv,
-                   size_t cb,
-                   const rtc::PacketOptions& options));
+  MOCK_METHOD(SocketAddress, GetLocalAddress, (), (const, override));
+  MOCK_METHOD(SocketAddress, GetRemoteAddress, (), (const, override));
+  MOCK_METHOD(int,
+              Send,
+              (const void* pv, size_t cb, const rtc::PacketOptions& options),
+              (override));
 
-  MOCK_METHOD4(SendTo,
-               int(const void* pv,
-                   size_t cb,
-                   const SocketAddress& addr,
-                   const rtc::PacketOptions& options));
-  MOCK_METHOD0(Close, int());
-  MOCK_CONST_METHOD0(GetState, State());
-  MOCK_METHOD2(GetOption, int(rtc::Socket::Option opt, int* value));
-  MOCK_METHOD2(SetOption, int(rtc::Socket::Option opt, int value));
-  MOCK_CONST_METHOD0(GetError, int());
-  MOCK_METHOD1(SetError, void(int error));
+  MOCK_METHOD(int,
+              SendTo,
+              (const void* pv,
+               size_t cb,
+               const SocketAddress& addr,
+               const rtc::PacketOptions& options),
+              (override));
+  MOCK_METHOD(int, Close, (), (override));
+  MOCK_METHOD(State, GetState, (), (const, override));
+  MOCK_METHOD(int,
+              GetOption,
+              (rtc::Socket::Option opt, int* value),
+              (override));
+  MOCK_METHOD(int, SetOption, (rtc::Socket::Option opt, int value), (override));
+  MOCK_METHOD(int, GetError, (), (const, override));
+  MOCK_METHOD(void, SetError, (int error), (override));
 };
 
 // Test that outbound packets inherit the dscp value assigned to the socket.

@@ -17,7 +17,7 @@
 #include <string>
 
 #include "modules/audio_device/audio_device_generic.h"
-#include "rtc_base/critical_section.h"
+#include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/system/file_wrapper.h"
 #include "rtc_base/time_utils.h"
 
@@ -139,7 +139,7 @@ class FileAudioDevice : public AudioDeviceGeneric {
   int8_t* _playoutBuffer;    // In bytes.
   uint32_t _recordingFramesLeft;
   uint32_t _playoutFramesLeft;
-  rtc::CriticalSection _critSect;
+  Mutex mutex_;
 
   size_t _recordingBufferSizeIn10MS;
   size_t _recordingFramesIn10MS;

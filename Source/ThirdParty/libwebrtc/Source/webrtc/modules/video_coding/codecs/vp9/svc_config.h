@@ -14,14 +14,14 @@
 
 #include <vector>
 
-#include "common_types.h"  // NOLINT(build/include)
+#include "api/video_codecs/spatial_layer.h"
 
 namespace webrtc {
 
 std::vector<SpatialLayer> GetSvcConfig(size_t input_width,
                                        size_t input_height,
                                        float max_framerate_fps,
-                                       size_t min_spatial_layers,
+                                       size_t first_active_layer,
                                        size_t num_spatial_layers,
                                        size_t num_temporal_layers,
                                        bool is_screen_sharing);

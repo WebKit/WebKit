@@ -17,6 +17,8 @@
 #include "modules/audio_processing/utility/delay_estimator_internal.h"
 #include "rtc_base/checks.h"
 
+namespace webrtc {
+
 // Only bit |kBandFirst| through bit |kBandLast| are processed and
 // |kBandFirst| - |kBandLast| must be < 32.
 enum { kBandFirst = 12 };
@@ -483,3 +485,5 @@ float WebRtc_last_delay_quality(void* handle) {
   RTC_DCHECK(self);
   return WebRtc_binary_last_delay_quality(self->binary_handle);
 }
+
+}  // namespace webrtc

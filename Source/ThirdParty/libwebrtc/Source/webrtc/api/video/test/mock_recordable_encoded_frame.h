@@ -17,13 +17,18 @@
 namespace webrtc {
 class MockRecordableEncodedFrame : public RecordableEncodedFrame {
  public:
-  MOCK_CONST_METHOD0(encoded_buffer,
-                     rtc::scoped_refptr<const EncodedImageBufferInterface>());
-  MOCK_CONST_METHOD0(color_space, absl::optional<webrtc::ColorSpace>());
-  MOCK_CONST_METHOD0(codec, VideoCodecType());
-  MOCK_CONST_METHOD0(is_key_frame, bool());
-  MOCK_CONST_METHOD0(resolution, EncodedResolution());
-  MOCK_CONST_METHOD0(render_time, Timestamp());
+  MOCK_METHOD(rtc::scoped_refptr<const EncodedImageBufferInterface>,
+              encoded_buffer,
+              (),
+              (const, override));
+  MOCK_METHOD(absl::optional<webrtc::ColorSpace>,
+              color_space,
+              (),
+              (const, override));
+  MOCK_METHOD(VideoCodecType, codec, (), (const, override));
+  MOCK_METHOD(bool, is_key_frame, (), (const, override));
+  MOCK_METHOD(EncodedResolution, resolution, (), (const, override));
+  MOCK_METHOD(Timestamp, render_time, (), (const, override));
 };
 }  // namespace webrtc
 #endif  // API_VIDEO_TEST_MOCK_RECORDABLE_ENCODED_FRAME_H_

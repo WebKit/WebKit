@@ -21,10 +21,9 @@
 #include "api/video/encoded_image.h"
 #include "modules/rtp_rtcp/source/rtp_packet_received.h"
 #include "modules/rtp_rtcp/source/rtp_video_header.h"
-#include "modules/video_coding/frame_object.h"
 #include "rtc_base/copy_on_write_buffer.h"
-#include "rtc_base/critical_section.h"
 #include "rtc_base/numerics/sequence_number_util.h"
+#include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/thread_annotations.h"
 #include "system_wrappers/include/clock.h"
 
@@ -56,6 +55,9 @@ class PacketBuffer {
       return video_header.is_last_packet_in_frame;
     }
 
+    // If all its previous packets have been inserted into the packet buffer.
+    // Set and used internally by the PacketBuffer.
+    bool continuous = false;
     bool marker_bit = false;
     uint8_t payload_type = 0;
     uint16_t seq_num = 0;
@@ -70,7 +72,7 @@ class PacketBuffer {
     RtpPacketInfo packet_info;
   };
   struct InsertResult {
-    std::vector<std::unique_ptr<RtpFrameObject>> frames;
+    std::vector<std::unique_ptr<Packet>> packets;
     // Indicates if the packet buffer was cleared, which means that a key
     // frame request should be sent.
     bool buffer_cleared = false;
@@ -80,97 +82,73 @@ class PacketBuffer {
   PacketBuffer(Clock* clock, size_t start_buffer_size, size_t max_buffer_size);
   ~PacketBuffer();
 
-  InsertResult InsertPacket(std::unique_ptr<Packet> packet)
-      ABSL_MUST_USE_RESULT;
-  InsertResult InsertPadding(uint16_t seq_num) ABSL_MUST_USE_RESULT;
-  void ClearTo(uint16_t seq_num);
-  void Clear();
+  ABSL_MUST_USE_RESULT InsertResult InsertPacket(std::unique_ptr<Packet> packet)
+      RTC_LOCKS_EXCLUDED(mutex_);
+  ABSL_MUST_USE_RESULT InsertResult InsertPadding(uint16_t seq_num)
+      RTC_LOCKS_EXCLUDED(mutex_);
+  void ClearTo(uint16_t seq_num) RTC_LOCKS_EXCLUDED(mutex_);
+  void Clear() RTC_LOCKS_EXCLUDED(mutex_);
 
   // Timestamp (not RTP timestamp) of the last received packet/keyframe packet.
-  absl::optional<int64_t> LastReceivedPacketMs() const;
-  absl::optional<int64_t> LastReceivedKeyframePacketMs() const;
+  absl::optional<int64_t> LastReceivedPacketMs() const
+      RTC_LOCKS_EXCLUDED(mutex_);
+  absl::optional<int64_t> LastReceivedKeyframePacketMs() const
+      RTC_LOCKS_EXCLUDED(mutex_);
+  void ForceSpsPpsIdrIsH264Keyframe();
 
  private:
-  struct StoredPacket {
-    uint16_t seq_num() const { return packet->seq_num; }
-
-    // If this is the first packet of the frame.
-    bool frame_begin() const { return packet->is_first_packet_in_frame(); }
-
-    // If this is the last packet of the frame.
-    bool frame_end() const { return packet->is_last_packet_in_frame(); }
-
-    // If this slot is currently used.
-    bool used() const { return packet != nullptr; }
-
-    // If all its previous packets have been inserted into the packet buffer.
-    bool continuous = false;
-
-    std::unique_ptr<Packet> packet;
-  };
-
   Clock* const clock_;
 
+  // Clears with |mutex_| taken.
+  void ClearInternal() RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
+
   // Tries to expand the buffer.
-  bool ExpandBufferSize() RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_);
+  bool ExpandBufferSize() RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
 
   // Test if all previous packets has arrived for the given sequence number.
   bool PotentialNewFrame(uint16_t seq_num) const
-      RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_);
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
 
-  // Test if all packets of a frame has arrived, and if so, creates a frame.
-  // Returns a vector of received frames.
-  std::vector<std::unique_ptr<RtpFrameObject>> FindFrames(uint16_t seq_num)
-      RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_);
-
-  std::unique_ptr<RtpFrameObject> AssembleFrame(uint16_t first_seq_num,
-                                                uint16_t last_seq_num)
-      RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_);
-
-  // Get the packet with sequence number |seq_num|.
-  const Packet& GetPacket(uint16_t seq_num) const
-      RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_);
-
-  // Clears the packet buffer from |start_seq_num| to |stop_seq_num| where the
-  // endpoints are inclusive.
-  void ClearInterval(uint16_t start_seq_num, uint16_t stop_seq_num)
-      RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_);
+  // Test if all packets of a frame has arrived, and if so, returns packets to
+  // create frames.
+  std::vector<std::unique_ptr<Packet>> FindFrames(uint16_t seq_num)
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
 
   void UpdateMissingPackets(uint16_t seq_num)
-      RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_);
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
 
-  rtc::CriticalSection crit_;
+  mutable Mutex mutex_;
 
   // buffer_.size() and max_size_ must always be a power of two.
   const size_t max_size_;
 
   // The fist sequence number currently in the buffer.
-  uint16_t first_seq_num_ RTC_GUARDED_BY(crit_);
+  uint16_t first_seq_num_ RTC_GUARDED_BY(mutex_);
 
   // If the packet buffer has received its first packet.
-  bool first_packet_received_ RTC_GUARDED_BY(crit_);
+  bool first_packet_received_ RTC_GUARDED_BY(mutex_);
 
   // If the buffer is cleared to |first_seq_num_|.
-  bool is_cleared_to_first_seq_num_ RTC_GUARDED_BY(crit_);
+  bool is_cleared_to_first_seq_num_ RTC_GUARDED_BY(mutex_);
 
   // Buffer that holds the the inserted packets and information needed to
   // determine continuity between them.
-  std::vector<StoredPacket> buffer_ RTC_GUARDED_BY(crit_);
+  std::vector<std::unique_ptr<Packet>> buffer_ RTC_GUARDED_BY(mutex_);
 
   // Timestamp of the last received packet/keyframe packet.
-  absl::optional<int64_t> last_received_packet_ms_ RTC_GUARDED_BY(crit_);
+  absl::optional<int64_t> last_received_packet_ms_ RTC_GUARDED_BY(mutex_);
   absl::optional<int64_t> last_received_keyframe_packet_ms_
-      RTC_GUARDED_BY(crit_);
+      RTC_GUARDED_BY(mutex_);
   absl::optional<uint32_t> last_received_keyframe_rtp_timestamp_
-      RTC_GUARDED_BY(crit_);
+      RTC_GUARDED_BY(mutex_);
 
-  absl::optional<uint16_t> newest_inserted_seq_num_ RTC_GUARDED_BY(crit_);
+  absl::optional<uint16_t> newest_inserted_seq_num_ RTC_GUARDED_BY(mutex_);
   std::set<uint16_t, DescendingSeqNumComp<uint16_t>> missing_packets_
-      RTC_GUARDED_BY(crit_);
+      RTC_GUARDED_BY(mutex_);
 
   // Indicates if we should require SPS, PPS, and IDR for a particular
   // RTP timestamp to treat the corresponding frame as a keyframe.
-  const bool sps_pps_idr_is_h264_keyframe_;
+  bool sps_pps_idr_is_h264_keyframe_;
 };
 
 }  // namespace video_coding

@@ -149,6 +149,15 @@ void SocketTest::TestCloseInClosedCallbackIPv6() {
   CloseInClosedCallbackInternal(kIPv6Loopback);
 }
 
+void SocketTest::TestDeleteInReadCallbackIPv4() {
+  DeleteInReadCallbackInternal(kIPv4Loopback);
+}
+
+void SocketTest::TestDeleteInReadCallbackIPv6() {
+  MAYBE_SKIP_IPV6;
+  DeleteInReadCallbackInternal(kIPv6Loopback);
+}
+
 void SocketTest::TestSocketServerWaitIPv4() {
   SocketServerWaitInternal(kIPv4Loopback);
 }
@@ -651,7 +660,43 @@ void SocketTest::CloseInClosedCallbackInternal(const IPAddress& loopback) {
   EXPECT_TRUE(Socket::CS_CLOSED == client->GetState());
 }
 
-class Sleeper : public MessageHandler {
+// Helper class specifically for the test below.
+class SocketDeleter : public sigslot::has_slots<> {
+ public:
+  explicit SocketDeleter(std::unique_ptr<AsyncSocket> socket)
+      : socket_(std::move(socket)) {}
+
+  void Delete(AsyncSocket* other) { socket_.reset(); }
+
+  bool deleted() const { return socket_ == nullptr; }
+
+ private:
+  std::unique_ptr<AsyncSocket> socket_;
+};
+
+// Tested deleting a socket within another socket's read callback. A previous
+// iteration of the select loop failed in this situation, if both sockets
+// became readable at the same time.
+void SocketTest::DeleteInReadCallbackInternal(const IPAddress& loopback) {
+  std::unique_ptr<AsyncSocket> socket1(
+      ss_->CreateAsyncSocket(loopback.family(), SOCK_DGRAM));
+  std::unique_ptr<AsyncSocket> socket2(
+      ss_->CreateAsyncSocket(loopback.family(), SOCK_DGRAM));
+  EXPECT_EQ(0, socket1->Bind(SocketAddress(loopback, 0)));
+  EXPECT_EQ(0, socket2->Bind(SocketAddress(loopback, 0)));
+  EXPECT_EQ(3, socket1->SendTo("foo", 3, socket1->GetLocalAddress()));
+  EXPECT_EQ(3, socket2->SendTo("bar", 3, socket1->GetLocalAddress()));
+  // Sleep a while to ensure sends are both completed at the same time.
+  Thread::SleepMs(1000);
+
+  // Configure the helper class to delete socket 2 when socket 1 has a read
+  // event.
+  SocketDeleter deleter(std::move(socket2));
+  socket1->SignalReadEvent.connect(&deleter, &SocketDeleter::Delete);
+  EXPECT_TRUE_WAIT(deleter.deleted(), kTimeout);
+}
+
+class Sleeper : public MessageHandlerAutoCleanup {
  public:
   void OnMessage(Message* msg) override { Thread::Current()->SleepMs(500); }
 };

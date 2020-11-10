@@ -605,56 +605,62 @@ void Loopback() {
   call_bitrate_config.max_bitrate_bps =
       (ScreenshareMaxBitrateKbps() + VideoMaxBitrateKbps()) * 1000;
 
-  VideoQualityTest::Params params, camera_params, screenshare_params;
-  params.call = {absl::GetFlag(FLAGS_send_side_bwe),
-                 absl::GetFlag(FLAGS_generic_descriptor), call_bitrate_config,
-                 0};
+  VideoQualityTest::Params params;
+  params.call.send_side_bwe = absl::GetFlag(FLAGS_send_side_bwe);
+  params.call.generic_descriptor = absl::GetFlag(FLAGS_generic_descriptor);
+  params.call.call_bitrate_config = call_bitrate_config;
   params.call.dual_video = true;
-  params.video[screenshare_idx] = {true,
-                                   ScreenshareWidth(),
-                                   ScreenshareHeight(),
-                                   ScreenshareFps(),
-                                   ScreenshareMinBitrateKbps() * 1000,
-                                   ScreenshareTargetBitrateKbps() * 1000,
-                                   ScreenshareMaxBitrateKbps() * 1000,
-                                   false,
-                                   Codec(),
-                                   ScreenshareNumTemporalLayers(),
-                                   ScreenshareSelectedTL(),
-                                   ScreenshareMinTransmitBitrateKbps() * 1000,
-                                   false,  // ULPFEC disabled.
-                                   false,  // FlexFEC disabled.
-                                   false,  // Automatic scaling disabled
-                                   ""};
-  params.video[camera_idx] = {absl::GetFlag(FLAGS_video),
-                              VideoWidth(),
-                              VideoHeight(),
-                              VideoFps(),
-                              VideoMinBitrateKbps() * 1000,
-                              VideoTargetBitrateKbps() * 1000,
-                              VideoMaxBitrateKbps() * 1000,
-                              absl::GetFlag(FLAGS_suspend_below_min_bitrate),
-                              Codec(),
-                              VideoNumTemporalLayers(),
-                              VideoSelectedTL(),
-                              0,  // No min transmit bitrate.
-                              absl::GetFlag(FLAGS_use_ulpfec),
-                              absl::GetFlag(FLAGS_use_flexfec),
-                              false,
-                              VideoClip(),
-                              GetCaptureDevice()};
-  params.audio = {absl::GetFlag(FLAGS_audio),
-                  absl::GetFlag(FLAGS_audio_video_sync),
-                  absl::GetFlag(FLAGS_audio_dtx)};
-  params.logging = {RtcEventLogName(), RtpDumpName(), EncodedFramePath()};
-  params.analyzer = {"dual_streams",   0.0,         0.0, DurationSecs(),
-                     OutputFilename(), GraphTitle()};
+  params.video[screenshare_idx].enabled = true;
+  params.video[screenshare_idx].width = ScreenshareWidth();
+  params.video[screenshare_idx].height = ScreenshareHeight();
+  params.video[screenshare_idx].fps = ScreenshareFps();
+  params.video[screenshare_idx].min_bitrate_bps =
+      ScreenshareMinBitrateKbps() * 1000;
+  params.video[screenshare_idx].target_bitrate_bps =
+      ScreenshareTargetBitrateKbps() * 1000;
+  params.video[screenshare_idx].max_bitrate_bps =
+      ScreenshareMaxBitrateKbps() * 1000;
+  params.video[screenshare_idx].codec = Codec();
+  params.video[screenshare_idx].num_temporal_layers =
+      ScreenshareNumTemporalLayers();
+  params.video[screenshare_idx].selected_tl = ScreenshareSelectedTL();
+  params.video[screenshare_idx].min_transmit_bps =
+      ScreenshareMinTransmitBitrateKbps() * 1000;
+  params.video[camera_idx].enabled = absl::GetFlag(FLAGS_video);
+  params.video[camera_idx].width = VideoWidth();
+  params.video[camera_idx].height = VideoHeight();
+  params.video[camera_idx].fps = VideoFps();
+  params.video[camera_idx].min_bitrate_bps = VideoMinBitrateKbps() * 1000;
+  params.video[camera_idx].target_bitrate_bps = VideoTargetBitrateKbps() * 1000;
+  params.video[camera_idx].max_bitrate_bps = VideoMaxBitrateKbps() * 1000;
+  params.video[camera_idx].suspend_below_min_bitrate =
+      absl::GetFlag(FLAGS_suspend_below_min_bitrate);
+  params.video[camera_idx].codec = Codec();
+  params.video[camera_idx].num_temporal_layers = VideoNumTemporalLayers();
+  params.video[camera_idx].selected_tl = VideoSelectedTL();
+  params.video[camera_idx].ulpfec = absl::GetFlag(FLAGS_use_ulpfec);
+  params.video[camera_idx].flexfec = absl::GetFlag(FLAGS_use_flexfec);
+  params.video[camera_idx].clip_path = VideoClip();
+  params.video[camera_idx].capture_device_index = GetCaptureDevice();
+  params.audio.enabled = absl::GetFlag(FLAGS_audio);
+  params.audio.sync_video = absl::GetFlag(FLAGS_audio_video_sync);
+  params.audio.dtx = absl::GetFlag(FLAGS_audio_dtx);
+  params.logging.rtc_event_log_name = RtcEventLogName();
+  params.logging.rtp_dump_name = RtpDumpName();
+  params.logging.encoded_frame_base_path = EncodedFramePath();
+  params.analyzer.test_label = "dual_streams";
+  params.analyzer.test_durations_secs = DurationSecs();
+  params.analyzer.graph_data_output_filename = OutputFilename();
+  params.analyzer.graph_title = GraphTitle();
   params.config = pipe_config;
 
   params.screenshare[camera_idx].enabled = false;
-  params.screenshare[screenshare_idx] = {true, GenerateSlides(),
-                                         SlideChangeInterval(),
-                                         ScrollDuration(), Slides()};
+  params.screenshare[screenshare_idx].enabled = true;
+  params.screenshare[screenshare_idx].generate_slides = GenerateSlides();
+  params.screenshare[screenshare_idx].slide_change_interval =
+      SlideChangeInterval();
+  params.screenshare[screenshare_idx].scroll_duration = ScrollDuration();
+  params.screenshare[screenshare_idx].slides = Slides();
 
   if (VideoNumStreams() > 1 && VideoStream0().empty() &&
       VideoStream1().empty()) {

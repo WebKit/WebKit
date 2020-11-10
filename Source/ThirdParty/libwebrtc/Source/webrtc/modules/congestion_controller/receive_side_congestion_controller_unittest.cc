@@ -37,8 +37,10 @@ uint32_t AbsSendTime(int64_t t, int64_t denom) {
 
 class MockPacketRouter : public PacketRouter {
  public:
-  MOCK_METHOD2(OnReceiveBitrateChanged,
-               void(const std::vector<uint32_t>& ssrcs, uint32_t bitrate));
+  MOCK_METHOD(void,
+              OnReceiveBitrateChanged,
+              (const std::vector<uint32_t>& ssrcs, uint32_t bitrate),
+              (override));
 };
 
 const uint32_t kInitialBitrateBps = 60000;

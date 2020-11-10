@@ -43,6 +43,7 @@ def print_landmines():  # pylint: disable=invalid-name
            'https://codereview.webrtc.org/2786603002')
     print ('Clobber due to Win Debug linking errors in '
            'https://codereview.webrtc.org/2832063003/')
+    print 'Clobber win x86 bots (issues with isolated files).'
   if host_os() == 'mac':
     print 'Clobber due to iOS compile errors (crbug.com/694721)'
     print 'Clobber to unblock https://codereview.webrtc.org/2709573003'
@@ -54,6 +55,8 @@ def print_landmines():  # pylint: disable=invalid-name
            'landing (changing rtc_executable -> rtc_test on iOS)')
     print 'Another landmine for low_bandwidth_audio_test (webrtc:7430)'
     print 'Clobber to change neteq_rtpplay type to executable'
+    print 'Clobber to remove .xctest files.'
+    print 'Clobber to remove .xctest files (take 2).'
 
 
 def main():

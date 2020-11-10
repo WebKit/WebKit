@@ -242,12 +242,6 @@ your connection. Open one more tab using the same page. Connect it too (with a
 different name). It is now possible to exchange messages between the connected
 peers.
 
-### Relay Server
-
-Target name `relayserver`. Relays traffic when a direct peer-to-peer
-connection can't be established. Can be used with the call application above.
-
-
 ### STUN Server
 
 Target name `stunserver`. Implements the STUN protocol for Session Traversal
@@ -256,8 +250,7 @@ Utilities for NAT as documented in [RFC 5389][rfc-5389].
 
 ### TURN Server
 
-Target name `turnserver`. In active development to reach compatibility with
-[RFC 5766][rfc-5766].
+Target name `turnserver`. Used for unit tests.
 
 
 [ninja]: https://ninja-build.org/

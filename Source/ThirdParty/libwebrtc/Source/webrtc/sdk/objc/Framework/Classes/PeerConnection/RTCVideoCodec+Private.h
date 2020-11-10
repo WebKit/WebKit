@@ -9,7 +9,7 @@
  */
 
 #import "api/peerconnection/RTCEncodedImage+Private.h"
-#import "api/peerconnection/RTCRtpFragmentationHeader+Private.h"
+//#import "api/peerconnection/RTCRtpFragmentationHeader+Private.h"
 #import "api/peerconnection/RTCVideoCodecInfo+Private.h"
 #import "api/peerconnection/RTCVideoEncoderSettings+Private.h"
 #import "components/video_codec/RTCCodecSpecificInfoH264+Private.h"

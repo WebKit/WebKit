@@ -19,6 +19,7 @@
 
 #include "absl/algorithm/container.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/deprecated/recursive_critical_section.h"
 #include "rtc_base/fake_clock.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/physical_socket_server.h"

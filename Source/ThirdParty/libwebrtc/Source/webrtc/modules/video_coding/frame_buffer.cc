@@ -98,15 +98,16 @@ VCMFrameBufferEnum VCMFrameBuffer::InsertPacket(const VCMPacket& packet,
     }
   }
 
+  size_t oldSize = encoded_image_buffer_ ? encoded_image_buffer_->size() : 0;
   uint32_t requiredSizeBytes =
       size() + packet.sizeBytes +
       (packet.insertStartCode ? kH264StartCodeLengthBytes : 0);
-  if (requiredSizeBytes > capacity()) {
+  if (requiredSizeBytes > oldSize) {
     const uint8_t* prevBuffer = data();
     const uint32_t increments =
         requiredSizeBytes / kBufferIncStepSizeBytes +
         (requiredSizeBytes % kBufferIncStepSizeBytes > 0);
-    const uint32_t newSize = capacity() + increments * kBufferIncStepSizeBytes;
+    const uint32_t newSize = oldSize + increments * kBufferIncStepSizeBytes;
     if (newSize > kMaxJBFrameSizeBytes) {
       RTC_LOG(LS_ERROR) << "Failed to insert packet due to frame being too "
                            "big.";
@@ -133,7 +134,9 @@ VCMFrameBufferEnum VCMFrameBuffer::InsertPacket(const VCMPacket& packet,
   if (packet.sizeBytes > 0)
     CopyCodecSpecific(&packet.video_header);
 
-  int retVal = _sessionInfo.InsertPacket(packet, data(), frame_data);
+  int retVal = _sessionInfo.InsertPacket(
+      packet, encoded_image_buffer_ ? encoded_image_buffer_->data() : nullptr,
+      frame_data);
   if (retVal == -1) {
     return kSizeError;
   } else if (retVal == -2) {

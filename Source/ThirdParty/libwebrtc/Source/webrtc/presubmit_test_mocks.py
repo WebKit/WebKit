@@ -33,7 +33,8 @@ class MockInputApi(object):
     return self.files
 
   @classmethod
-  def FilterSourceFile(cls, affected_file, white_list=(), black_list=()):
+  def FilterSourceFile(cls, affected_file, files_to_check=(),
+                       files_to_skip=()):
     # pylint: disable=unused-argument
     return True
 

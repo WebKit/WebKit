@@ -46,16 +46,16 @@ class Fake : public FakeInterface {
     return new rtc::RefCountedObject<Fake>();
   }
   // Used to verify destructor is called on the correct thread.
-  MOCK_METHOD0(Destroy, void());
+  MOCK_METHOD(void, Destroy, ());
 
-  MOCK_METHOD0(VoidMethod0, void());
-  MOCK_METHOD0(Method0, std::string());
-  MOCK_CONST_METHOD0(ConstMethod0, std::string());
+  MOCK_METHOD(void, VoidMethod0, (), (override));
+  MOCK_METHOD(std::string, Method0, (), (override));
+  MOCK_METHOD(std::string, ConstMethod0, (), (const, override));
 
-  MOCK_METHOD1(Method1, std::string(std::string));
-  MOCK_CONST_METHOD1(ConstMethod1, std::string(std::string));
+  MOCK_METHOD(std::string, Method1, (std::string), (override));
+  MOCK_METHOD(std::string, ConstMethod1, (std::string), (const, override));
 
-  MOCK_METHOD2(Method2, std::string(std::string, std::string));
+  MOCK_METHOD(std::string, Method2, (std::string, std::string), (override));
 
  protected:
   Fake() {}
@@ -266,7 +266,7 @@ class FooInterface {
 class Foo : public FooInterface {
  public:
   Foo() {}
-  MOCK_METHOD0(Bar, void());
+  MOCK_METHOD(void, Bar, (), (override));
 };
 
 BEGIN_OWNED_PROXY_MAP(Foo)

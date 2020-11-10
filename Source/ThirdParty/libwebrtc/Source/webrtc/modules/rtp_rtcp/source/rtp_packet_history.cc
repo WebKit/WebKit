@@ -56,7 +56,7 @@ void RtpPacketHistory::StoredPacket::IncrementTimesRetransmitted(
   // Check if this StoredPacket is in the priority set. If so, we need to remove
   // it before updating |times_retransmitted_| since that is used in sorting,
   // and then add it back.
-  const bool in_priority_set = priority_set->erase(this) > 0;
+  const bool in_priority_set = priority_set && priority_set->erase(this) > 0;
   ++times_retransmitted_;
   if (in_priority_set) {
     auto it = priority_set->insert(this);
@@ -80,8 +80,9 @@ bool RtpPacketHistory::MoreUseful::operator()(StoredPacket* lhs,
   return lhs->insert_order() > rhs->insert_order();
 }
 
-RtpPacketHistory::RtpPacketHistory(Clock* clock)
+RtpPacketHistory::RtpPacketHistory(Clock* clock, bool enable_padding_prio)
     : clock_(clock),
+      enable_padding_prio_(enable_padding_prio),
       number_to_store_(0),
       mode_(StorageMode::kDisabled),
       rtt_ms_(-1),
@@ -92,7 +93,7 @@ RtpPacketHistory::~RtpPacketHistory() {}
 void RtpPacketHistory::SetStorePacketsStatus(StorageMode mode,
                                              size_t number_to_store) {
   RTC_DCHECK_LE(number_to_store, kMaxCapacity);
-  rtc::CritScope cs(&lock_);
+  MutexLock lock(&lock_);
   if (mode != StorageMode::kDisabled && mode_ != StorageMode::kDisabled) {
     RTC_LOG(LS_WARNING) << "Purging packet history in order to re-set status.";
   }
@@ -102,12 +103,12 @@ void RtpPacketHistory::SetStorePacketsStatus(StorageMode mode,
 }
 
 RtpPacketHistory::StorageMode RtpPacketHistory::GetStorageMode() const {
-  rtc::CritScope cs(&lock_);
+  MutexLock lock(&lock_);
   return mode_;
 }
 
 void RtpPacketHistory::SetRtt(int64_t rtt_ms) {
-  rtc::CritScope cs(&lock_);
+  MutexLock lock(&lock_);
   RTC_DCHECK_GE(rtt_ms, 0);
   rtt_ms_ = rtt_ms;
   // If storage is not disabled,  packets will be removed after a timeout
@@ -121,7 +122,7 @@ void RtpPacketHistory::SetRtt(int64_t rtt_ms) {
 void RtpPacketHistory::PutRtpPacket(std::unique_ptr<RtpPacketToSend> packet,
                                     absl::optional<int64_t> send_time_ms) {
   RTC_DCHECK(packet);
-  rtc::CritScope cs(&lock_);
+  MutexLock lock(&lock_);
   int64_t now_ms = clock_->TimeInMilliseconds();
   if (mode_ == StorageMode::kDisabled) {
     return;
@@ -158,16 +159,18 @@ void RtpPacketHistory::PutRtpPacket(std::unique_ptr<RtpPacketToSend> packet,
   packet_history_[packet_index] =
       StoredPacket(std::move(packet), send_time_ms, packets_inserted_++);
 
-  if (padding_priority_.size() >= kMaxPaddingtHistory - 1) {
-    padding_priority_.erase(std::prev(padding_priority_.end()));
+  if (enable_padding_prio_) {
+    if (padding_priority_.size() >= kMaxPaddingtHistory - 1) {
+      padding_priority_.erase(std::prev(padding_priority_.end()));
+    }
+    auto prio_it = padding_priority_.insert(&packet_history_[packet_index]);
+    RTC_DCHECK(prio_it.second) << "Failed to insert packet into prio set.";
   }
-  auto prio_it = padding_priority_.insert(&packet_history_[packet_index]);
-  RTC_DCHECK(prio_it.second) << "Failed to insert packet into prio set.";
 }
 
 std::unique_ptr<RtpPacketToSend> RtpPacketHistory::GetPacketAndSetSendTime(
     uint16_t sequence_number) {
-  rtc::CritScope cs(&lock_);
+  MutexLock lock(&lock_);
   if (mode_ == StorageMode::kDisabled) {
     return nullptr;
   }
@@ -183,7 +186,8 @@ std::unique_ptr<RtpPacketToSend> RtpPacketHistory::GetPacketAndSetSendTime(
   }
 
   if (packet->send_time_ms_) {
-    packet->IncrementTimesRetransmitted(&padding_priority_);
+    packet->IncrementTimesRetransmitted(
+        enable_padding_prio_ ? &padding_priority_ : nullptr);
   }
 
   // Update send-time and mark as no long in pacer queue.
@@ -206,7 +210,7 @@ std::unique_ptr<RtpPacketToSend> RtpPacketHistory::GetPacketAndMarkAsPending(
     uint16_t sequence_number,
     rtc::FunctionView<std::unique_ptr<RtpPacketToSend>(const RtpPacketToSend&)>
         encapsulate) {
-  rtc::CritScope cs(&lock_);
+  MutexLock lock(&lock_);
   if (mode_ == StorageMode::kDisabled) {
     return nullptr;
   }
@@ -237,7 +241,7 @@ std::unique_ptr<RtpPacketToSend> RtpPacketHistory::GetPacketAndMarkAsPending(
 }
 
 void RtpPacketHistory::MarkPacketAsSent(uint16_t sequence_number) {
-  rtc::CritScope cs(&lock_);
+  MutexLock lock(&lock_);
   if (mode_ == StorageMode::kDisabled) {
     return;
   }
@@ -253,12 +257,13 @@ void RtpPacketHistory::MarkPacketAsSent(uint16_t sequence_number) {
   // transmission count.
   packet->send_time_ms_ = clock_->TimeInMilliseconds();
   packet->pending_transmission_ = false;
-  packet->IncrementTimesRetransmitted(&padding_priority_);
+  packet->IncrementTimesRetransmitted(enable_padding_prio_ ? &padding_priority_
+                                                           : nullptr);
 }
 
 absl::optional<RtpPacketHistory::PacketState> RtpPacketHistory::GetPacketState(
     uint16_t sequence_number) const {
-  rtc::CritScope cs(&lock_);
+  MutexLock lock(&lock_);
   if (mode_ == StorageMode::kDisabled) {
     return absl::nullopt;
   }
@@ -306,13 +311,29 @@ std::unique_ptr<RtpPacketToSend> RtpPacketHistory::GetPayloadPaddingPacket() {
 std::unique_ptr<RtpPacketToSend> RtpPacketHistory::GetPayloadPaddingPacket(
     rtc::FunctionView<std::unique_ptr<RtpPacketToSend>(const RtpPacketToSend&)>
         encapsulate) {
-  rtc::CritScope cs(&lock_);
-  if (mode_ == StorageMode::kDisabled || padding_priority_.empty()) {
+  MutexLock lock(&lock_);
+  if (mode_ == StorageMode::kDisabled) {
     return nullptr;
   }
 
-  auto best_packet_it = padding_priority_.begin();
-  StoredPacket* best_packet = *best_packet_it;
+  StoredPacket* best_packet = nullptr;
+  if (enable_padding_prio_ && !padding_priority_.empty()) {
+    auto best_packet_it = padding_priority_.begin();
+    best_packet = *best_packet_it;
+  } else if (!enable_padding_prio_ && !packet_history_.empty()) {
+    // Prioritization not available, pick the last packet.
+    for (auto it = packet_history_.rbegin(); it != packet_history_.rend();
+         ++it) {
+      if (it->packet_ != nullptr) {
+        best_packet = &(*it);
+        break;
+      }
+    }
+  }
+  if (best_packet == nullptr) {
+    return nullptr;
+  }
+
   if (best_packet->pending_transmission_) {
     // Because PacedSender releases it's lock when it calls
     // GeneratePadding() there is the potential for a race where a new
@@ -328,14 +349,15 @@ std::unique_ptr<RtpPacketToSend> RtpPacketHistory::GetPayloadPaddingPacket(
   }
 
   best_packet->send_time_ms_ = clock_->TimeInMilliseconds();
-  best_packet->IncrementTimesRetransmitted(&padding_priority_);
+  best_packet->IncrementTimesRetransmitted(
+      enable_padding_prio_ ? &padding_priority_ : nullptr);
 
   return padding_packet;
 }
 
 void RtpPacketHistory::CullAcknowledgedPackets(
     rtc::ArrayView<const uint16_t> sequence_numbers) {
-  rtc::CritScope cs(&lock_);
+  MutexLock lock(&lock_);
   for (uint16_t sequence_number : sequence_numbers) {
     int packet_index = GetPacketIndex(sequence_number);
     if (packet_index < 0 ||
@@ -347,7 +369,7 @@ void RtpPacketHistory::CullAcknowledgedPackets(
 }
 
 bool RtpPacketHistory::SetPendingTransmission(uint16_t sequence_number) {
-  rtc::CritScope cs(&lock_);
+  MutexLock lock(&lock_);
   if (mode_ == StorageMode::kDisabled) {
     return false;
   }
@@ -362,7 +384,7 @@ bool RtpPacketHistory::SetPendingTransmission(uint16_t sequence_number) {
 }
 
 void RtpPacketHistory::Clear() {
-  rtc::CritScope cs(&lock_);
+  MutexLock lock(&lock_);
   Reset();
 }
 
@@ -414,7 +436,9 @@ std::unique_ptr<RtpPacketToSend> RtpPacketHistory::RemovePacket(
       std::move(packet_history_[packet_index].packet_);
 
   // Erase from padding priority set, if eligible.
-  padding_priority_.erase(&packet_history_[packet_index]);
+  if (enable_padding_prio_) {
+    padding_priority_.erase(&packet_history_[packet_index]);
+  }
 
   if (packet_index == 0) {
     while (!packet_history_.empty() &&

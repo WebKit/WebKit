@@ -101,28 +101,6 @@ void AsyncInvoker::DoInvokeDelayed(const Location& posted_from,
                       new ScopedMessageData<AsyncClosure>(std::move(closure)));
 }
 
-GuardedAsyncInvoker::GuardedAsyncInvoker() : thread_(Thread::Current()) {
-  thread_->SignalQueueDestroyed.connect(this,
-                                        &GuardedAsyncInvoker::ThreadDestroyed);
-}
-
-GuardedAsyncInvoker::~GuardedAsyncInvoker() {}
-
-bool GuardedAsyncInvoker::Flush(uint32_t id) {
-  CritScope cs(&crit_);
-  if (thread_ == nullptr)
-    return false;
-  invoker_.Flush(thread_, id);
-  return true;
-}
-
-void GuardedAsyncInvoker::ThreadDestroyed() {
-  CritScope cs(&crit_);
-  // We should never get more than one notification about the thread dying.
-  RTC_DCHECK(thread_ != nullptr);
-  thread_ = nullptr;
-}
-
 AsyncClosure::AsyncClosure(AsyncInvoker* invoker)
     : invoker_(invoker), invocation_complete_(invoker_->invocation_complete_) {
   invoker_->pending_invocations_.fetch_add(1, std::memory_order_relaxed);

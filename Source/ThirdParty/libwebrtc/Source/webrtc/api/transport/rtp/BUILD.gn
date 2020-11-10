@@ -14,15 +14,20 @@ rtc_source_set("rtp_source") {
   deps = [
     "../../../api:rtp_headers",
     "../../../rtc_base:checks",
-    "//third_party/abseil-cpp/absl/types:optional",
   ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
 }
 
 rtc_source_set("dependency_descriptor") {
   visibility = [ "*" ]
-  sources = [ "dependency_descriptor.h" ]
-  deps = [
+  sources = [
+    "dependency_descriptor.cc",
+    "dependency_descriptor.h",
+  ]
+  deps = [ "../../../rtc_base:checks" ]
+  absl_deps = [
     "//third_party/abseil-cpp/absl/container:inlined_vector",
+    "//third_party/abseil-cpp/absl/strings",
     "//third_party/abseil-cpp/absl/types:optional",
   ]
 }

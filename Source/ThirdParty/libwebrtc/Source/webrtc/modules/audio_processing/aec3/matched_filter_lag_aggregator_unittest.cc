@@ -144,7 +144,7 @@ TEST(MatchedFilterLagAggregator, DISABLED_PersistentAggregatedLag) {
 #if RTC_DCHECK_IS_ON && GTEST_HAS_DEATH_TEST && !defined(WEBRTC_ANDROID)
 
 // Verifies the check for non-null data dumper.
-TEST(MatchedFilterLagAggregator, NullDataDumper) {
+TEST(MatchedFilterLagAggregatorDeathTest, NullDataDumper) {
   EchoCanceller3Config config;
   EXPECT_DEATH(MatchedFilterLagAggregator(
                    nullptr, 10, config.delay.delay_selection_thresholds),

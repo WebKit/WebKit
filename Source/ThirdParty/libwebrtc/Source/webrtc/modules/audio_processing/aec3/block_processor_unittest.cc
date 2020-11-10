@@ -30,6 +30,7 @@ namespace {
 
 using ::testing::_;
 using ::testing::AtLeast;
+using ::testing::NiceMock;
 using ::testing::Return;
 using ::testing::StrictMock;
 
@@ -127,6 +128,14 @@ std::string ProduceDebugText(int sample_rate_hz) {
   rtc::StringBuilder ss;
   ss << "Sample rate: " << sample_rate_hz;
   return ss.Release();
+}
+
+void FillSampleVector(int call_counter,
+                      int delay,
+                      rtc::ArrayView<float> samples) {
+  for (size_t i = 0; i < samples.size(); ++i) {
+    samples[i] = (call_counter - delay) * 10000.0f + i;
+  }
 }
 
 }  // namespace
@@ -252,21 +261,21 @@ TEST(BlockProcessor, TestLongerCall) {
 #if RTC_DCHECK_IS_ON && GTEST_HAS_DEATH_TEST && !defined(WEBRTC_ANDROID)
 // TODO(gustaf): Re-enable the test once the issue with memory leaks during
 // DEATH tests on test bots has been fixed.
-TEST(BlockProcessor, DISABLED_VerifyRenderBlockSizeCheck) {
+TEST(BlockProcessorDeathTest, DISABLED_VerifyRenderBlockSizeCheck) {
   for (auto rate : {16000, 32000, 48000}) {
     SCOPED_TRACE(ProduceDebugText(rate));
     RunRenderBlockSizeVerificationTest(rate);
   }
 }
 
-TEST(BlockProcessor, VerifyCaptureBlockSizeCheck) {
+TEST(BlockProcessorDeathTest, VerifyCaptureBlockSizeCheck) {
   for (auto rate : {16000, 32000, 48000}) {
     SCOPED_TRACE(ProduceDebugText(rate));
     RunCaptureBlockSizeVerificationTest(rate);
   }
 }
 
-TEST(BlockProcessor, VerifyRenderNumBandsCheck) {
+TEST(BlockProcessorDeathTest, VerifyRenderNumBandsCheck) {
   for (auto rate : {16000, 32000, 48000}) {
     SCOPED_TRACE(ProduceDebugText(rate));
     RunRenderNumBandsVerificationTest(rate);
@@ -275,7 +284,7 @@ TEST(BlockProcessor, VerifyRenderNumBandsCheck) {
 
 // TODO(peah): Verify the check for correct number of bands in the capture
 // signal.
-TEST(BlockProcessor, VerifyCaptureNumBandsCheck) {
+TEST(BlockProcessorDeathTest, VerifyCaptureNumBandsCheck) {
   for (auto rate : {16000, 32000, 48000}) {
     SCOPED_TRACE(ProduceDebugText(rate));
     RunCaptureNumBandsVerificationTest(rate);
@@ -283,7 +292,7 @@ TEST(BlockProcessor, VerifyCaptureNumBandsCheck) {
 }
 
 // Verifiers that the verification for null ProcessCapture input works.
-TEST(BlockProcessor, NullProcessCaptureParameter) {
+TEST(BlockProcessorDeathTest, NullProcessCaptureParameter) {
   EXPECT_DEATH(std::unique_ptr<BlockProcessor>(
                    BlockProcessor::Create(EchoCanceller3Config(), 16000, 1, 1))
                    ->ProcessCapture(false, false, nullptr, nullptr),
@@ -300,5 +309,78 @@ TEST(BlockProcessor, DISABLED_WrongSampleRate) {
 }
 
 #endif
+
+// Verifies that external delay estimator delays are applied correctly when a
+// call begins with a sequence of capture blocks.
+TEST(BlockProcessor, ExternalDelayAppliedCorrectlyWithInitialCaptureCalls) {
+  constexpr int kNumRenderChannels = 1;
+  constexpr int kNumCaptureChannels = 1;
+  constexpr int kSampleRateHz = 16000;
+
+  EchoCanceller3Config config;
+  config.delay.use_external_delay_estimator = true;
+
+  std::unique_ptr<RenderDelayBuffer> delay_buffer(
+      RenderDelayBuffer::Create(config, kSampleRateHz, kNumRenderChannels));
+
+  std::unique_ptr<testing::NiceMock<webrtc::test::MockEchoRemover>>
+      echo_remover_mock(new NiceMock<webrtc::test::MockEchoRemover>());
+  webrtc::test::MockEchoRemover* echo_remover_mock_pointer =
+      echo_remover_mock.get();
+
+  std::unique_ptr<BlockProcessor> block_processor(BlockProcessor::Create(
+      config, kSampleRateHz, kNumRenderChannels, kNumCaptureChannels,
+      std::move(delay_buffer), /*delay_controller=*/nullptr,
+      std::move(echo_remover_mock)));
+
+  std::vector<std::vector<std::vector<float>>> render_block(
+      NumBandsForRate(kSampleRateHz),
+      std::vector<std::vector<float>>(kNumRenderChannels,
+                                      std::vector<float>(kBlockSize, 0.f)));
+  std::vector<std::vector<std::vector<float>>> capture_block(
+      NumBandsForRate(kSampleRateHz),
+      std::vector<std::vector<float>>(kNumCaptureChannels,
+                                      std::vector<float>(kBlockSize, 0.f)));
+
+  // Process...
+  // - 10 capture calls, where no render data is available,
+  // - 10 render calls, populating the buffer,
+  // - 2 capture calls, verifying that the delay was applied correctly.
+  constexpr int kDelayInBlocks = 5;
+  constexpr int kDelayInMs = 20;
+  block_processor->SetAudioBufferDelay(kDelayInMs);
+
+  int capture_call_counter = 0;
+  int render_call_counter = 0;
+  for (size_t k = 0; k < 10; ++k) {
+    FillSampleVector(++capture_call_counter, kDelayInBlocks,
+                     capture_block[0][0]);
+    block_processor->ProcessCapture(false, false, nullptr, &capture_block);
+  }
+  for (size_t k = 0; k < 10; ++k) {
+    FillSampleVector(++render_call_counter, 0, render_block[0][0]);
+    block_processor->BufferRender(render_block);
+  }
+
+  EXPECT_CALL(*echo_remover_mock_pointer, ProcessCapture)
+      .WillRepeatedly(
+          [](EchoPathVariability /*echo_path_variability*/,
+             bool /*capture_signal_saturation*/,
+             const absl::optional<DelayEstimate>& /*external_delay*/,
+             RenderBuffer* render_buffer,
+             std::vector<std::vector<std::vector<float>>>* /*linear_output*/,
+             std::vector<std::vector<std::vector<float>>>* capture) {
+            const auto& render = render_buffer->Block(0);
+            for (size_t i = 0; i < kBlockSize; ++i) {
+              EXPECT_FLOAT_EQ(render[0][0][i], (*capture)[0][0][i]);
+            }
+          });
+
+  FillSampleVector(++capture_call_counter, kDelayInBlocks, capture_block[0][0]);
+  block_processor->ProcessCapture(false, false, nullptr, &capture_block);
+
+  FillSampleVector(++capture_call_counter, kDelayInBlocks, capture_block[0][0]);
+  block_processor->ProcessCapture(false, false, nullptr, &capture_block);
+}
 
 }  // namespace webrtc

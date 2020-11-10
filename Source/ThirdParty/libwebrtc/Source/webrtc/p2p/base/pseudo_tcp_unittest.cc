@@ -44,7 +44,7 @@ class PseudoTcpForTest : public cricket::PseudoTcp {
 };
 
 class PseudoTcpTestBase : public ::testing::Test,
-                          public rtc::MessageHandler,
+                          public rtc::MessageHandlerAutoCleanup,
                           public cricket::IPseudoTcpNotify {
  public:
   PseudoTcpTestBase()

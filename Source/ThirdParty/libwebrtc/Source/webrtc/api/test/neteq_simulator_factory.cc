@@ -37,6 +37,7 @@ std::unique_ptr<NetEqSimulator> NetEqSimulatorFactory::CreateSimulatorFromFile(
   config.initial_dummy_packets = simulation_config.initial_dummy_packets;
   config.skip_get_audio_events = simulation_config.skip_get_audio_events;
   config.field_trial_string = simulation_config.field_trial_string;
+  config.output_audio_filename = simulation_config.output_audio_filename;
   return factory_->InitializeTestFromFile(
       std::string(event_log_filename), simulation_config.neteq_factory, config);
 }

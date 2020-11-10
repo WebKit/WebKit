@@ -15,6 +15,7 @@
 
 #include "api/media_stream_interface.h"
 #include "api/notifier.h"
+#include "rtc_base/logging.h"
 
 namespace webrtc {
 
@@ -38,6 +39,7 @@ class MediaStreamTrack : public Notifier<T> {
     }
     return fire_on_change;
   }
+  void set_ended() { set_state(MediaStreamTrackInterface::TrackState::kEnded); }
 
  protected:
   explicit MediaStreamTrack(const std::string& id)
@@ -53,7 +55,7 @@ class MediaStreamTrack : public Notifier<T> {
 
  private:
   bool enabled_;
-  std::string id_;
+  const std::string id_;
   MediaStreamTrackInterface::TrackState state_;
 };
 

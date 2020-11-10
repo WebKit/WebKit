@@ -15,7 +15,6 @@
 #include <string>
 
 #include "modules/audio_processing/test/audio_processing_simulator.h"
-#include "rtc_base/constructor_magic.h"
 #include "rtc_base/ignore_wundef.h"
 
 RTC_PUSH_IGNORING_WUNDEF()
@@ -33,7 +32,13 @@ namespace test {
 class AecDumpBasedSimulator final : public AudioProcessingSimulator {
  public:
   AecDumpBasedSimulator(const SimulationSettings& settings,
+                        rtc::scoped_refptr<AudioProcessing> audio_processing,
                         std::unique_ptr<AudioProcessingBuilder> ap_builder);
+
+  AecDumpBasedSimulator() = delete;
+  AecDumpBasedSimulator(const AecDumpBasedSimulator&) = delete;
+  AecDumpBasedSimulator& operator=(const AecDumpBasedSimulator&) = delete;
+
   ~AecDumpBasedSimulator() override;
 
   // Processes the messages in the aecdump file.
@@ -64,7 +69,6 @@ class AecDumpBasedSimulator final : public AudioProcessingSimulator {
   bool artificial_nearend_eof_reported_ = false;
   InterfaceType interface_used_ = InterfaceType::kNotSpecified;
   std::unique_ptr<std::ofstream> call_order_output_file_;
-  RTC_DISALLOW_IMPLICIT_CONSTRUCTORS(AecDumpBasedSimulator);
 };
 
 }  // namespace test

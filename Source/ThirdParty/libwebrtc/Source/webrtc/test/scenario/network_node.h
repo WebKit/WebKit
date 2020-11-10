@@ -22,6 +22,7 @@
 #include "call/simulated_network.h"
 #include "rtc_base/constructor_magic.h"
 #include "rtc_base/copy_on_write_buffer.h"
+#include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/task_queue.h"
 #include "test/network/network_emulation.h"
 #include "test/scenario/column_printer.h"
@@ -65,19 +66,19 @@ class NetworkNodeTransport : public Transport {
   void Disconnect();
 
   DataSize packet_overhead() {
-    rtc::CritScope crit(&crit_sect_);
+    MutexLock lock(&mutex_);
     return packet_overhead_;
   }
 
  private:
-  rtc::CriticalSection crit_sect_;
+  Mutex mutex_;
   Clock* const sender_clock_;
   Call* const sender_call_;
-  EmulatedEndpoint* endpoint_ RTC_GUARDED_BY(crit_sect_) = nullptr;
-  rtc::SocketAddress local_address_ RTC_GUARDED_BY(crit_sect_);
-  rtc::SocketAddress remote_address_ RTC_GUARDED_BY(crit_sect_);
-  DataSize packet_overhead_ RTC_GUARDED_BY(crit_sect_) = DataSize::Zero();
-  rtc::NetworkRoute current_network_route_ RTC_GUARDED_BY(crit_sect_);
+  EmulatedEndpoint* endpoint_ RTC_GUARDED_BY(mutex_) = nullptr;
+  rtc::SocketAddress local_address_ RTC_GUARDED_BY(mutex_);
+  rtc::SocketAddress remote_address_ RTC_GUARDED_BY(mutex_);
+  DataSize packet_overhead_ RTC_GUARDED_BY(mutex_) = DataSize::Zero();
+  rtc::NetworkRoute current_network_route_ RTC_GUARDED_BY(mutex_);
 };
 }  // namespace test
 }  // namespace webrtc

@@ -68,6 +68,6 @@ rtc_library("unittest") {
     "../../../../test:fileutils",
     "../../../../test:test_support",
     "//testing/gtest",
-    "//third_party/abseil-cpp/absl/types:optional",
   ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
 }

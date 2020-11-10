@@ -40,8 +40,7 @@ class FakeEncodedImageCallback : public EncodedImageCallback {
  public:
   FakeEncodedImageCallback() : num_frames_dropped_(0) {}
   Result OnEncodedImage(const EncodedImage& encoded_image,
-                        const CodecSpecificInfo* codec_specific_info,
-                        const RTPFragmentationHeader* fragmentation) override {
+                        const CodecSpecificInfo* codec_specific_info) override {
     return Result(Result::OK);
   }
   void OnDroppedFrame(DropReason reason) override { ++num_frames_dropped_; }
@@ -462,83 +461,55 @@ TEST(FrameEncodeMetadataWriterTest, CopiesPacketInfos) {
 
 TEST(FrameEncodeMetadataWriterTest, DoesNotRewriteBitstreamWithoutCodecInfo) {
   uint8_t buffer[] = {1, 2, 3};
-  EncodedImage image(buffer, sizeof(buffer), sizeof(buffer));
-  const RTPFragmentationHeader fragmentation;
+  auto image_buffer = EncodedImageBuffer::Create(buffer, sizeof(buffer));
+  EncodedImage image;
+  image.SetEncodedData(image_buffer);
 
   FakeEncodedImageCallback sink;
   FrameEncodeMetadataWriter encode_metadata_writer(&sink);
-  EXPECT_EQ(
-      encode_metadata_writer.UpdateBitstream(nullptr, &fragmentation, &image),
-      nullptr);
-  EXPECT_EQ(image.data(), buffer);
+  encode_metadata_writer.UpdateBitstream(nullptr, &image);
+  EXPECT_EQ(image.GetEncodedData(), image_buffer);
   EXPECT_EQ(image.size(), sizeof(buffer));
 }
 
 TEST(FrameEncodeMetadataWriterTest, DoesNotRewriteVp8Bitstream) {
   uint8_t buffer[] = {1, 2, 3};
-  EncodedImage image(buffer, sizeof(buffer), sizeof(buffer));
+  auto image_buffer = EncodedImageBuffer::Create(buffer, sizeof(buffer));
+  EncodedImage image;
+  image.SetEncodedData(image_buffer);
   CodecSpecificInfo codec_specific_info;
   codec_specific_info.codecType = kVideoCodecVP8;
-  const RTPFragmentationHeader fragmentation;
 
   FakeEncodedImageCallback sink;
   FrameEncodeMetadataWriter encode_metadata_writer(&sink);
-  EXPECT_EQ(encode_metadata_writer.UpdateBitstream(&codec_specific_info,
-                                                   &fragmentation, &image),
-            nullptr);
-  EXPECT_EQ(image.data(), buffer);
-  EXPECT_EQ(image.size(), sizeof(buffer));
-}
-
-TEST(FrameEncodeMetadataWriterTest,
-     DoesNotRewriteH264BitstreamWithoutFragmentation) {
-  uint8_t buffer[] = {1, 2, 3};
-  EncodedImage image(buffer, sizeof(buffer), sizeof(buffer));
-  CodecSpecificInfo codec_specific_info;
-  codec_specific_info.codecType = kVideoCodecH264;
-
-  FakeEncodedImageCallback sink;
-  FrameEncodeMetadataWriter encode_metadata_writer(&sink);
-  EXPECT_EQ(encode_metadata_writer.UpdateBitstream(&codec_specific_info,
-                                                   nullptr, &image),
-            nullptr);
-  EXPECT_EQ(image.data(), buffer);
+  encode_metadata_writer.UpdateBitstream(&codec_specific_info, &image);
+  EXPECT_EQ(image.GetEncodedData(), image_buffer);
   EXPECT_EQ(image.size(), sizeof(buffer));
 }
 
 TEST(FrameEncodeMetadataWriterTest, RewritesH264BitstreamWithNonOptimalSps) {
-  uint8_t original_sps[] = {0,    0,    0,    1,    H264::NaluType::kSps,
-                            0x00, 0x00, 0x03, 0x03, 0xF4,
-                            0x05, 0x03, 0xC7, 0xC0};
+  const uint8_t kOriginalSps[] = {0,    0,    0,    1,    H264::NaluType::kSps,
+                                  0x00, 0x00, 0x03, 0x03, 0xF4,
+                                  0x05, 0x03, 0xC7, 0xC0};
   const uint8_t kRewrittenSps[] = {0,    0,    0,    1,    H264::NaluType::kSps,
                                    0x00, 0x00, 0x03, 0x03, 0xF4,
                                    0x05, 0x03, 0xC7, 0xE0, 0x1B,
                                    0x41, 0x10, 0x8D, 0x00};
 
-  EncodedImage image(original_sps, sizeof(original_sps), sizeof(original_sps));
+  EncodedImage image;
+  image.SetEncodedData(
+      EncodedImageBuffer::Create(kOriginalSps, sizeof(kOriginalSps)));
   image._frameType = VideoFrameType::kVideoFrameKey;
 
   CodecSpecificInfo codec_specific_info;
   codec_specific_info.codecType = kVideoCodecH264;
 
-  RTPFragmentationHeader fragmentation;
-  fragmentation.VerifyAndAllocateFragmentationHeader(1);
-  fragmentation.fragmentationOffset[0] = 4;
-  fragmentation.fragmentationLength[0] = sizeof(original_sps) - 4;
-
   FakeEncodedImageCallback sink;
   FrameEncodeMetadataWriter encode_metadata_writer(&sink);
-  std::unique_ptr<RTPFragmentationHeader> modified_fragmentation =
-      encode_metadata_writer.UpdateBitstream(&codec_specific_info,
-                                             &fragmentation, &image);
+  encode_metadata_writer.UpdateBitstream(&codec_specific_info, &image);
 
-  ASSERT_NE(modified_fragmentation, nullptr);
   EXPECT_THAT(std::vector<uint8_t>(image.data(), image.data() + image.size()),
               testing::ElementsAreArray(kRewrittenSps));
-  ASSERT_THAT(modified_fragmentation->fragmentationVectorSize, 1U);
-  EXPECT_EQ(modified_fragmentation->fragmentationOffset[0], 4U);
-  EXPECT_EQ(modified_fragmentation->fragmentationLength[0],
-            sizeof(kRewrittenSps) - 4);
 }
 
 }  // namespace test

@@ -386,7 +386,7 @@ void AudioDeviceBuffer::LogStats(LogState state) {
 
   Stats stats;
   {
-    rtc::CritScope cs(&lock_);
+    MutexLock lock(&lock_);
     stats = stats_;
     stats_.max_rec_level = 0;
     stats_.max_play_level = 0;
@@ -468,20 +468,20 @@ void AudioDeviceBuffer::LogStats(LogState state) {
 void AudioDeviceBuffer::ResetRecStats() {
   RTC_DCHECK_RUN_ON(&task_queue_);
   last_stats_.ResetRecStats();
-  rtc::CritScope cs(&lock_);
+  MutexLock lock(&lock_);
   stats_.ResetRecStats();
 }
 
 void AudioDeviceBuffer::ResetPlayStats() {
   RTC_DCHECK_RUN_ON(&task_queue_);
   last_stats_.ResetPlayStats();
-  rtc::CritScope cs(&lock_);
+  MutexLock lock(&lock_);
   stats_.ResetPlayStats();
 }
 
 void AudioDeviceBuffer::UpdateRecStats(int16_t max_abs,
                                        size_t samples_per_channel) {
-  rtc::CritScope cs(&lock_);
+  MutexLock lock(&lock_);
   ++stats_.rec_callbacks;
   stats_.rec_samples += samples_per_channel;
   if (max_abs > stats_.max_rec_level) {
@@ -491,7 +491,7 @@ void AudioDeviceBuffer::UpdateRecStats(int16_t max_abs,
 
 void AudioDeviceBuffer::UpdatePlayStats(int16_t max_abs,
                                         size_t samples_per_channel) {
-  rtc::CritScope cs(&lock_);
+  MutexLock lock(&lock_);
   ++stats_.play_callbacks;
   stats_.play_samples += samples_per_channel;
   if (max_abs > stats_.max_play_level) {

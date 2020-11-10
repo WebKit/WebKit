@@ -60,23 +60,6 @@ VideoCodecH264 VideoEncoder::GetDefaultH264Settings() {
   return h264_settings;
 }
 
-#ifndef DISABLE_H265
-VideoCodecH265 VideoEncoder::GetDefaultH265Settings() {
-  VideoCodecH265 h265_settings;
-  memset(&h265_settings, 0, sizeof(h265_settings));
-
-  // h265_settings.profile = kProfileBase;
-  h265_settings.frameDroppingOn = true;
-  h265_settings.keyFrameInterval = 3000;
-  h265_settings.spsData = nullptr;
-  h265_settings.spsLen = 0;
-  h265_settings.ppsData = nullptr;
-  h265_settings.ppsLen = 0;
-
-  return h265_settings;
-}
-#endif
-
 VideoEncoder::ScalingSettings::ScalingSettings() = default;
 
 VideoEncoder::ScalingSettings::ScalingSettings(KOff) : ScalingSettings() {}
@@ -111,6 +94,7 @@ bool VideoEncoder::ResolutionBitrateLimits::operator==(
 VideoEncoder::EncoderInfo::EncoderInfo()
     : scaling_settings(VideoEncoder::ScalingSettings::kOff),
       requested_resolution_alignment(1),
+      apply_alignment_to_all_simulcast_layers(false),
       supports_native_handle(false),
       implementation_name("unknown"),
       has_trusted_rate_controller(false),
@@ -140,6 +124,8 @@ std::string VideoEncoder::EncoderInfo::ToString() const {
   oss << "min_pixels_per_frame = " << scaling_settings.min_pixels_per_frame
       << " }";
   oss << ", requested_resolution_alignment = " << requested_resolution_alignment
+      << ", apply_alignment_to_all_simulcast_layers = "
+      << apply_alignment_to_all_simulcast_layers
       << ", supports_native_handle = " << supports_native_handle
       << ", implementation_name = '" << implementation_name
       << "'"

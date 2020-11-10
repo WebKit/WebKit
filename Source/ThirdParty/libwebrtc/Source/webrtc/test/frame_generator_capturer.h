@@ -16,7 +16,7 @@
 #include "api/task_queue/task_queue_factory.h"
 #include "api/test/frame_generator_interface.h"
 #include "api/video/video_frame.h"
-#include "rtc_base/critical_section.h"
+#include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/task_queue.h"
 #include "rtc_base/task_utils/repeating_task.h"
 #include "system_wrappers/include/clock.h"
@@ -66,10 +66,10 @@ struct FrameGeneratorCapturerConfig {
     int framerate = 30;
     TimeDelta change_interval = TimeDelta::Seconds(10);
     struct Crop {
-      TimeDelta scroll_duration;
+      TimeDelta scroll_duration = TimeDelta::Seconds(0);
       absl::optional<int> width;
       absl::optional<int> height;
-    } crop = { TimeDelta::Seconds(0), { }, { } };
+    } crop;
     int width = 1850;
     int height = 1110;
     std::vector<std::string> paths = {
@@ -157,7 +157,7 @@ class FrameGeneratorCapturer : public TestVideoCapturer {
   bool sending_;
   SinkWantsObserver* sink_wants_observer_ RTC_GUARDED_BY(&lock_);
 
-  rtc::CriticalSection lock_;
+  Mutex lock_;
   std::unique_ptr<FrameGeneratorInterface> frame_generator_;
 
   int source_fps_ RTC_GUARDED_BY(&lock_);

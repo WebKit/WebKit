@@ -17,6 +17,7 @@
 #include "api/test/videocodec_test_stats.h"
 #include "api/video_codecs/video_decoder_factory.h"
 #include "api/video_codecs/video_encoder_factory.h"
+#include "media/base/h264_profile_level_id.h"
 #include "modules/video_coding/include/video_codec_interface.h"
 
 namespace webrtc {

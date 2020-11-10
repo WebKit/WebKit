@@ -18,8 +18,7 @@
 #include "api/transport/network_control.h"
 #include "modules/include/module.h"
 #include "modules/remote_bitrate_estimator/remote_estimator_proxy.h"
-#include "rtc_base/constructor_magic.h"
-#include "rtc_base/critical_section.h"
+#include "rtc_base/synchronization/mutex.h"
 
 namespace webrtc {
 class RemoteBitrateEstimator;
@@ -66,6 +65,11 @@ class ReceiveSideCongestionController : public CallStatsObserver,
    public:
     WrappingBitrateEstimator(RemoteBitrateObserver* observer, Clock* clock);
 
+    WrappingBitrateEstimator() = delete;
+    WrappingBitrateEstimator(const WrappingBitrateEstimator&) = delete;
+    WrappingBitrateEstimator& operator=(const WrappingBitrateEstimator&) =
+        delete;
+
     ~WrappingBitrateEstimator() override;
 
     void IncomingPacket(int64_t arrival_time_ms,
@@ -87,17 +91,15 @@ class ReceiveSideCongestionController : public CallStatsObserver,
 
    private:
     void PickEstimatorFromHeader(const RTPHeader& header)
-        RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_sect_);
-    void PickEstimator() RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_sect_);
+        RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
+    void PickEstimator() RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
     RemoteBitrateObserver* observer_;
     Clock* const clock_;
-    rtc::CriticalSection crit_sect_;
+    mutable Mutex mutex_;
     std::unique_ptr<RemoteBitrateEstimator> rbe_;
     bool using_absolute_send_time_;
     uint32_t packets_since_absolute_send_time_;
     int min_bitrate_bps_;
-
-    RTC_DISALLOW_IMPLICIT_CONSTRUCTORS(WrappingBitrateEstimator);
   };
 
   const FieldTrialBasedConfig field_trial_config_;

@@ -16,7 +16,6 @@
 
 #include "absl/types/optional.h"
 #include "api/video_codecs/sdp_video_format.h"
-#include "media/base/h264_profile_level_id.h"
 #include "media/base/media_constants.h"
 
 #if defined(WEBRTC_USE_H264)
@@ -44,6 +43,8 @@ bool IsH264CodecSupported() {
 #endif
 }
 
+}  // namespace
+
 SdpVideoFormat CreateH264Format(H264::Profile profile,
                                 H264::Level level,
                                 const std::string& packetization_mode) {
@@ -56,8 +57,6 @@ SdpVideoFormat CreateH264Format(H264::Profile profile,
        {cricket::kH264FmtpLevelAsymmetryAllowed, "1"},
        {cricket::kH264FmtpPacketizationMode, packetization_mode}});
 }
-
-}  // namespace
 
 void DisableRtcUseH264() {
 #if defined(WEBRTC_USE_H264)

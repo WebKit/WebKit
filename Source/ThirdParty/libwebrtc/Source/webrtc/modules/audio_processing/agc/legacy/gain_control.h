@@ -11,15 +11,7 @@
 #ifndef MODULES_AUDIO_PROCESSING_AGC_LEGACY_GAIN_CONTROL_H_
 #define MODULES_AUDIO_PROCESSING_AGC_LEGACY_GAIN_CONTROL_H_
 
-// Errors
-#define AGC_UNSPECIFIED_ERROR 18000
-#define AGC_UNSUPPORTED_FUNCTION_ERROR 18001
-#define AGC_UNINITIALIZED_ERROR 18002
-#define AGC_NULL_POINTER_ERROR 18003
-#define AGC_BAD_PARAMETER_ERROR 18004
-
-// Warnings
-#define AGC_BAD_PARAMETER_WARNING 18050
+namespace webrtc {
 
 enum {
   kAgcModeUnchanged,
@@ -35,10 +27,6 @@ typedef struct {
   int16_t compressionGaindB;  // default 9 dB
   uint8_t limiterEnable;      // default kAgcTrue (on)
 } WebRtcAgcConfig;
-
-#if defined(__cplusplus)
-extern "C" {
-#endif
 
 /*
  * This function analyses the number of samples passed to
@@ -260,8 +248,6 @@ int WebRtcAgc_Init(void* agcInst,
                    int16_t agcMode,
                    uint32_t fs);
 
-#if defined(__cplusplus)
-}
-#endif
+}  // namespace webrtc
 
 #endif  // MODULES_AUDIO_PROCESSING_AGC_LEGACY_GAIN_CONTROL_H_

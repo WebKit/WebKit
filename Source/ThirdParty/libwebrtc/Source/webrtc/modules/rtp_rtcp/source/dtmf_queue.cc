@@ -24,7 +24,7 @@ DtmfQueue::DtmfQueue() {}
 DtmfQueue::~DtmfQueue() {}
 
 bool DtmfQueue::AddDtmf(const Event& event) {
-  rtc::CritScope lock(&dtmf_critsect_);
+  MutexLock lock(&dtmf_mutex_);
   if (queue_.size() >= kDtmfOutbandMax) {
     return false;
   }
@@ -34,7 +34,7 @@ bool DtmfQueue::AddDtmf(const Event& event) {
 
 bool DtmfQueue::NextDtmf(Event* event) {
   RTC_DCHECK(event);
-  rtc::CritScope lock(&dtmf_critsect_);
+  MutexLock lock(&dtmf_mutex_);
   if (queue_.empty()) {
     return false;
   }
@@ -45,7 +45,7 @@ bool DtmfQueue::NextDtmf(Event* event) {
 }
 
 bool DtmfQueue::PendingDtmf() const {
-  rtc::CritScope lock(&dtmf_critsect_);
+  MutexLock lock(&dtmf_mutex_);
   return !queue_.empty();
 }
 }  // namespace webrtc

@@ -17,6 +17,7 @@
 #include <vector>
 
 #include "api/peer_connection_interface.h"
+#include "api/stats/rtc_stats_collector_callback.h"
 #include "api/test/stats_observer_interface.h"
 #include "test/pc/e2e/test_peer.h"
 
@@ -25,7 +26,7 @@ namespace webrtc_pc_e2e {
 
 // Helper class that will notify all the webrtc::test::StatsObserverInterface
 // objects subscribed.
-class InternalStatsObserver : public StatsObserver {
+class InternalStatsObserver : public RTCStatsCollectorCallback {
  public:
   InternalStatsObserver(std::string pc_label,
                         TestPeer* peer,
@@ -36,7 +37,8 @@ class InternalStatsObserver : public StatsObserver {
 
   void PollStats();
 
-  void OnComplete(const StatsReports& reports) override;
+  void OnStatsDelivered(
+      const rtc::scoped_refptr<const RTCStatsReport>& report) override;
 
  private:
   std::string pc_label_;

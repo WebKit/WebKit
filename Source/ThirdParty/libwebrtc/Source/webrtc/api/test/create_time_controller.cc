@@ -35,13 +35,18 @@ std::unique_ptr<CallFactoryInterface> CreateTimeControllerBasedCallFactory(
     explicit TimeControllerBasedCallFactory(TimeController* time_controller)
         : time_controller_(time_controller) {}
     Call* CreateCall(const Call::Config& config) override {
-      return Call::Create(config, time_controller_->GetClock(),
-                          time_controller_->CreateProcessThread("CallModules"),
+      if (!module_thread_) {
+        module_thread_ = SharedModuleThread::Create(
+            time_controller_->CreateProcessThread("CallModules"),
+            [this]() { module_thread_ = nullptr; });
+      }
+      return Call::Create(config, time_controller_->GetClock(), module_thread_,
                           time_controller_->CreateProcessThread("Pacer"));
     }
 
    private:
     TimeController* time_controller_;
+    rtc::scoped_refptr<SharedModuleThread> module_thread_;
   };
   return std::make_unique<TimeControllerBasedCallFactory>(time_controller);
 }

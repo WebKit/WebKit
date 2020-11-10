@@ -15,8 +15,8 @@
 #include <map>
 #include <memory>
 
-#include "rtc_base/critical_section.h"
 #include "rtc_base/logging.h"
+#include "rtc_base/synchronization/mutex.h"
 #include "third_party/catapult/tracing/tracing/value/diagnostics/reserved_infos.h"
 #include "third_party/catapult/tracing/tracing/value/histogram.h"
 
@@ -33,9 +33,9 @@ std::string AsJsonString(const std::string string) {
 
 class PerfTestHistogramWriter : public PerfTestResultWriter {
  public:
-  PerfTestHistogramWriter() : crit_() {}
+  PerfTestHistogramWriter() : mutex_() {}
   void ClearResults() override {
-    rtc::CritScope lock(&crit_);
+    MutexLock lock(&mutex_);
     histograms_.clear();
   }
 
@@ -75,7 +75,7 @@ class PerfTestHistogramWriter : public PerfTestResultWriter {
   std::string Serialize() const override {
     proto::HistogramSet histogram_set;
 
-    rtc::CritScope lock(&crit_);
+    MutexLock lock(&mutex_);
     for (const auto& histogram : histograms_) {
       std::unique_ptr<proto::Histogram> proto = histogram.second->toProto();
       histogram_set.mutable_histograms()->AddAllocated(proto.release());
@@ -108,11 +108,15 @@ class PerfTestHistogramWriter : public PerfTestResultWriter {
     // parlance). There should be several histograms with the same measurement
     // if they're for different stories.
     std::string measurement_and_story = graph_name + trace_name;
-    rtc::CritScope lock(&crit_);
+    MutexLock lock(&mutex_);
     if (histograms_.count(measurement_and_story) == 0) {
       proto::UnitAndDirection unit = ParseUnit(units, improve_direction);
       std::unique_ptr<catapult::HistogramBuilder> builder =
           std::make_unique<catapult::HistogramBuilder>(graph_name, unit);
+
+      // Set all summary options as false - we don't want to generate
+      // metric_std, metric_count, and so on for all metrics.
+      builder->SetSummaryOptions(proto::SummaryOptions());
       histograms_[measurement_and_story] = std::move(builder);
 
       proto::Diagnostic stories;
@@ -178,9 +182,9 @@ class PerfTestHistogramWriter : public PerfTestResultWriter {
   }
 
  private:
-  rtc::CriticalSection crit_;
+  mutable Mutex mutex_;
   std::map<std::string, std::unique_ptr<catapult::HistogramBuilder>> histograms_
-      RTC_GUARDED_BY(&crit_);
+      RTC_GUARDED_BY(&mutex_);
 };
 
 }  // namespace

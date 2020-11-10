@@ -38,14 +38,16 @@ constexpr uint32_t kSimulcastScreenshareMaxBitrateKbps = 1250;
 
 class MockTemporalLayers : public Vp8FrameBufferController {
  public:
-  MOCK_METHOD2(NextFrameConfig, Vp8FrameConfig(size_t, uint32_t));
-  MOCK_METHOD3(OnRatesUpdated, void(size_t, const std::vector<uint32_t>&, int));
-  MOCK_METHOD1(UpdateConfiguration, Vp8EncoderConfig(size_t));
-  MOCK_METHOD6(OnEncodeDone,
-               void(size_t, uint32_t, size_t, bool, int, CodecSpecificInfo*));
-  MOCK_METHOD4(FrameEncoded, void(size_t, uint32_t, size_t, int));
-  MOCK_CONST_METHOD0(Tl0PicIdx, uint8_t());
-  MOCK_CONST_METHOD1(GetTemporalLayerId, int(const Vp8FrameConfig&));
+  MOCK_METHOD(Vp8FrameConfig, NextFrameConfig, (size_t, uint32_t), (override));
+  MOCK_METHOD(void,
+              OnRatesUpdated,
+              (size_t, const std::vector<uint32_t>&, int),
+              (override));
+  MOCK_METHOD(Vp8EncoderConfig, UpdateConfiguration, (size_t), (override));
+  MOCK_METHOD(void,
+              OnEncodeDone,
+              (size_t, uint32_t, size_t, bool, int, CodecSpecificInfo*),
+              (override));
 };
 }  // namespace
 
@@ -86,8 +88,9 @@ class SimulcastRateAllocatorTest : public ::testing::TestWithParam<bool> {
     EXPECT_EQ(sum, actual.get_sum_bps());
   }
 
-  void CreateAllocator() {
+  void CreateAllocator(bool legacy_conference_mode = false) {
     allocator_.reset(new SimulcastRateAllocator(codec_));
+    allocator_->SetLegacyConferenceMode(legacy_conference_mode);
   }
 
   void SetupCodec3SL3TL(const std::vector<bool>& active_streams) {
@@ -667,9 +670,9 @@ INSTANTIATE_TEST_SUITE_P(ScreenshareTest,
                          ScreenshareRateAllocationTest,
                          ::testing::Bool());
 
-TEST_P(ScreenshareRateAllocationTest, BitrateBelowTl0) {
+TEST_P(ScreenshareRateAllocationTest, ConferenceBitrateBelowTl0) {
   SetupConferenceScreenshare(GetParam());
-  CreateAllocator();
+  CreateAllocator(true);
 
   VideoBitrateAllocation allocation =
       allocator_->Allocate(VideoBitrateAllocationParameters(
@@ -682,9 +685,9 @@ TEST_P(ScreenshareRateAllocationTest, BitrateBelowTl0) {
   EXPECT_EQ(allocation.is_bw_limited(), GetParam());
 }
 
-TEST_P(ScreenshareRateAllocationTest, BitrateAboveTl0) {
+TEST_P(ScreenshareRateAllocationTest, ConferenceBitrateAboveTl0) {
   SetupConferenceScreenshare(GetParam());
-  CreateAllocator();
+  CreateAllocator(true);
 
   uint32_t target_bitrate_kbps =
       (kLegacyScreenshareTargetBitrateKbps + kLegacyScreenshareMaxBitrateKbps) /
@@ -702,10 +705,10 @@ TEST_P(ScreenshareRateAllocationTest, BitrateAboveTl0) {
   EXPECT_EQ(allocation.is_bw_limited(), GetParam());
 }
 
-TEST_F(ScreenshareRateAllocationTest, BitrateAboveTl1) {
+TEST_F(ScreenshareRateAllocationTest, ConferenceBitrateAboveTl1) {
   // This test is only for the non-simulcast case.
   SetupConferenceScreenshare(false);
-  CreateAllocator();
+  CreateAllocator(true);
 
   VideoBitrateAllocation allocation =
       allocator_->Allocate(VideoBitrateAllocationParameters(

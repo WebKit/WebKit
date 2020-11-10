@@ -43,21 +43,25 @@
 
 namespace webrtc {
 class RtcEventLogEncoderTest
-    : public ::testing::TestWithParam<std::tuple<int, bool, size_t, bool>> {
+    : public ::testing::TestWithParam<
+          std::tuple<int, RtcEventLog::EncodingType, size_t, bool>> {
  protected:
   RtcEventLogEncoderTest()
       : seed_(std::get<0>(GetParam())),
         prng_(seed_),
-        new_encoding_(std::get<1>(GetParam())),
+        encoding_(std::get<1>(GetParam())),
         event_count_(std::get<2>(GetParam())),
         force_repeated_fields_(std::get<3>(GetParam())),
         gen_(seed_ * 880001UL),
-        verifier_(new_encoding_ ? RtcEventLog::EncodingType::NewFormat
-                                : RtcEventLog::EncodingType::Legacy) {
-    if (new_encoding_)
-      encoder_ = std::make_unique<RtcEventLogEncoderNewFormat>();
-    else
-      encoder_ = std::make_unique<RtcEventLogEncoderLegacy>();
+        verifier_(encoding_) {
+    switch (encoding_) {
+      case RtcEventLog::EncodingType::Legacy:
+        encoder_ = std::make_unique<RtcEventLogEncoderLegacy>();
+        break;
+      case RtcEventLog::EncodingType::NewFormat:
+        encoder_ = std::make_unique<RtcEventLogEncoderNewFormat>();
+        break;
+    }
   }
   ~RtcEventLogEncoderTest() override = default;
 
@@ -85,7 +89,7 @@ class RtcEventLogEncoderTest
   ParsedRtcEventLog parsed_log_;
   const uint64_t seed_;
   Random prng_;
-  const bool new_encoding_;
+  const RtcEventLog::EncodingType encoding_;
   const size_t event_count_;
   const bool force_repeated_fields_;
   test::EventGenerator gen_;
@@ -163,7 +167,7 @@ void RtcEventLogEncoderTest::TestRtpPackets() {
 
   // TODO(terelius): Test extensions for legacy encoding, too.
   RtpHeaderExtensionMap extension_map;
-  if (new_encoding_) {
+  if (encoding_ != RtcEventLog::EncodingType::Legacy) {
     extension_map = gen_.NewRtpHeaderExtensionMap(true);
   }
 
@@ -219,7 +223,7 @@ TEST_P(RtcEventLogEncoderTest, RtcEventAlrState) {
 }
 
 TEST_P(RtcEventLogEncoderTest, RtcEventRouteChange) {
-  if (!new_encoding_) {
+  if (encoding_ == RtcEventLog::EncodingType::Legacy) {
     return;
   }
   std::vector<std::unique_ptr<RtcEventRouteChange>> events(event_count_);
@@ -240,7 +244,7 @@ TEST_P(RtcEventLogEncoderTest, RtcEventRouteChange) {
 }
 
 TEST_P(RtcEventLogEncoderTest, RtcEventRemoteEstimate) {
-  if (!new_encoding_) {
+  if (encoding_ == RtcEventLog::EncodingType::Legacy) {
     return;
   }
   std::vector<std::unique_ptr<RtcEventRemoteEstimate>> events(event_count_);
@@ -507,7 +511,7 @@ TEST_P(RtcEventLogEncoderTest, RtcEventBweUpdateLossBased) {
 }
 
 TEST_P(RtcEventLogEncoderTest, RtcEventGenericPacketReceived) {
-  if (!new_encoding_) {
+  if (encoding_ == RtcEventLog::EncodingType::Legacy) {
     return;
   }
   std::vector<std::unique_ptr<RtcEventGenericPacketReceived>> events(
@@ -532,7 +536,7 @@ TEST_P(RtcEventLogEncoderTest, RtcEventGenericPacketReceived) {
 }
 
 TEST_P(RtcEventLogEncoderTest, RtcEventGenericPacketSent) {
-  if (!new_encoding_) {
+  if (encoding_ == RtcEventLog::EncodingType::Legacy) {
     return;
   }
   std::vector<std::unique_ptr<RtcEventGenericPacketSent>> events(event_count_);
@@ -555,7 +559,7 @@ TEST_P(RtcEventLogEncoderTest, RtcEventGenericPacketSent) {
 }
 
 TEST_P(RtcEventLogEncoderTest, RtcEventGenericAcksReceived) {
-  if (!new_encoding_) {
+  if (encoding_ == RtcEventLog::EncodingType::Legacy) {
     return;
   }
   std::vector<std::unique_ptr<RtcEventGenericAckReceived>> events(event_count_);
@@ -591,7 +595,7 @@ TEST_P(RtcEventLogEncoderTest, RtcEventDtlsTransportState) {
   ASSERT_TRUE(parsed_log_.ParseString(encoded).ok());
 
   const auto& dtls_transport_states = parsed_log_.dtls_transport_states();
-  if (!new_encoding_) {
+  if (encoding_ == RtcEventLog::EncodingType::Legacy) {
     ASSERT_EQ(dtls_transport_states.size(), 0u);
     return;
   }
@@ -617,7 +621,7 @@ TEST_P(RtcEventLogEncoderTest, RtcEventDtlsWritableState) {
   ASSERT_TRUE(parsed_log_.ParseString(encoded).ok());
 
   const auto& dtls_writable_states = parsed_log_.dtls_writable_states();
-  if (!new_encoding_) {
+  if (encoding_ == RtcEventLog::EncodingType::Legacy) {
     ASSERT_EQ(dtls_writable_states.size(), 0u);
     return;
   }
@@ -627,6 +631,61 @@ TEST_P(RtcEventLogEncoderTest, RtcEventDtlsWritableState) {
   for (size_t i = 0; i < event_count_; ++i) {
     verifier_.VerifyLoggedDtlsWritableState(*events[i],
                                             dtls_writable_states[i]);
+  }
+}
+
+TEST_P(RtcEventLogEncoderTest, RtcEventFrameDecoded) {
+  // SSRCs will be randomly assigned out of this small pool, significant only
+  // in that it also covers such edge cases as SSRC = 0 and SSRC = 0xffffffff.
+  // The pool is intentionally small, so as to produce collisions.
+  const std::vector<uint32_t> kSsrcPool = {0x00000000, 0x12345678, 0xabcdef01,
+                                           0xffffffff, 0x20171024, 0x19840730,
+                                           0x19831230};
+
+  std::map<uint32_t, std::vector<std::unique_ptr<RtcEventFrameDecoded>>>
+      original_events_by_ssrc;
+  for (size_t i = 0; i < event_count_; ++i) {
+    const uint32_t ssrc = kSsrcPool[prng_.Rand(kSsrcPool.size() - 1)];
+    std::unique_ptr<RtcEventFrameDecoded> event =
+        (original_events_by_ssrc[ssrc].empty() || !force_repeated_fields_)
+            ? gen_.NewFrameDecodedEvent(ssrc)
+            : original_events_by_ssrc[ssrc][0]->Copy();
+    history_.push_back(event->Copy());
+    original_events_by_ssrc[ssrc].push_back(std::move(event));
+  }
+
+  const std::string encoded =
+      encoder_->EncodeBatch(history_.begin(), history_.end());
+  auto status = parsed_log_.ParseString(encoded);
+  if (!status.ok())
+    RTC_LOG(LS_ERROR) << status.message();
+  ASSERT_TRUE(status.ok());
+
+  const auto& decoded_frames_by_ssrc = parsed_log_.decoded_frames();
+  if (encoding_ == RtcEventLog::EncodingType::Legacy) {
+    ASSERT_EQ(decoded_frames_by_ssrc.size(), 0u);
+    return;
+  }
+
+  // Same number of distinct SSRCs.
+  ASSERT_EQ(decoded_frames_by_ssrc.size(), original_events_by_ssrc.size());
+
+  for (const auto& original_event_it : original_events_by_ssrc) {
+    const uint32_t ssrc = original_event_it.first;
+    const std::vector<std::unique_ptr<RtcEventFrameDecoded>>& original_frames =
+        original_event_it.second;
+
+    const auto& parsed_event_it = decoded_frames_by_ssrc.find(ssrc);
+    ASSERT_TRUE(parsed_event_it != decoded_frames_by_ssrc.end());
+    const std::vector<LoggedFrameDecoded>& parsed_frames =
+        parsed_event_it->second;
+
+    // Same number events for the SSRC under examination.
+    ASSERT_EQ(original_frames.size(), parsed_frames.size());
+
+    for (size_t i = 0; i < original_frames.size(); ++i) {
+      verifier_.VerifyLoggedFrameDecoded(*original_frames[i], parsed_frames[i]);
+    }
   }
 }
 
@@ -675,13 +734,18 @@ TEST_P(RtcEventLogEncoderTest, RtcEventLoggingStarted) {
 }
 
 TEST_P(RtcEventLogEncoderTest, RtcEventLoggingStopped) {
-  const int64_t timestamp_us = rtc::TimeMicros();
-  std::string encoded = encoder_->EncodeLogEnd(timestamp_us);
+  const int64_t start_timestamp_us = rtc::TimeMicros();
+  const int64_t start_utc_time_us = rtc::TimeUTCMicros();
+  std::string encoded =
+      encoder_->EncodeLogStart(start_timestamp_us, start_utc_time_us);
+
+  const int64_t stop_timestamp_us = rtc::TimeMicros();
+  encoded += encoder_->EncodeLogEnd(stop_timestamp_us);
   ASSERT_TRUE(parsed_log_.ParseString(encoded).ok());
   const auto& stop_log_events = parsed_log_.stop_log_events();
 
   ASSERT_EQ(stop_log_events.size(), 1u);
-  verifier_.VerifyLoggedStopEvent(timestamp_us, stop_log_events[0]);
+  verifier_.VerifyLoggedStopEvent(stop_timestamp_us, stop_log_events[0]);
 }
 
 // TODO(eladalon/terelius): Test with multiple events in the batch.
@@ -1172,7 +1236,9 @@ INSTANTIATE_TEST_SUITE_P(
     RandomSeeds,
     RtcEventLogEncoderTest,
     ::testing::Combine(/* Random seed*: */ ::testing::Values(1, 2, 3, 4, 5),
-                       /* Encoding: */ ::testing::Bool(),
+                       /* Encoding: */
+                       ::testing::Values(RtcEventLog::EncodingType::Legacy,
+                                         RtcEventLog::EncodingType::NewFormat),
                        /* Event count: */ ::testing::Values(1, 2, 10, 100),
                        /* Repeated fields: */ ::testing::Bool()));
 

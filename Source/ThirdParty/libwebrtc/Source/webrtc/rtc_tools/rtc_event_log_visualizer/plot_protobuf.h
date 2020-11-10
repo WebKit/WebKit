@@ -23,16 +23,15 @@ class ProtobufPlot final : public Plot {
   ProtobufPlot();
   ~ProtobufPlot() override;
   void Draw() override;
-  void ExportProtobuf(webrtc::analytics::Chart* chart);
 };
 
 class ProtobufPlotCollection final : public PlotCollection {
  public:
-  ProtobufPlotCollection();
+  // This class is deprecated. Use PlotCollection and ExportProtobuf() instead.
+  RTC_DEPRECATED ProtobufPlotCollection();
   ~ProtobufPlotCollection() override;
   void Draw() override;
   Plot* AppendNewPlot() override;
-  void ExportProtobuf(webrtc::analytics::ChartCollection* collection);
 };
 
 }  // namespace webrtc

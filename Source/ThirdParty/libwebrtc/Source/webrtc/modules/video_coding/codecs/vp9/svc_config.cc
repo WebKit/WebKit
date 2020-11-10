@@ -16,6 +16,7 @@
 
 #include "modules/video_coding/codecs/vp9/include/vp9_globals.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/logging.h"
 
 namespace webrtc {
 
@@ -61,10 +62,10 @@ std::vector<SpatialLayer> ConfigureSvcScreenSharing(size_t input_width,
 std::vector<SpatialLayer> ConfigureSvcNormalVideo(size_t input_width,
                                                   size_t input_height,
                                                   float max_framerate_fps,
-                                                  size_t min_spatial_layers,
+                                                  size_t first_active_layer,
                                                   size_t num_spatial_layers,
                                                   size_t num_temporal_layers) {
-  RTC_DCHECK_LE(min_spatial_layers, num_spatial_layers);
+  RTC_DCHECK_LT(first_active_layer, num_spatial_layers);
   std::vector<SpatialLayer> spatial_layers;
 
   // Limit number of layers for given resolution.
@@ -74,11 +75,25 @@ std::vector<SpatialLayer> ConfigureSvcNormalVideo(size_t input_width,
   const size_t num_layers_fit_vert = static_cast<size_t>(
       std::floor(1 + std::max(0.0f, std::log2(1.0f * input_height /
                                               kMinVp9SpatialLayerHeight))));
-  num_spatial_layers =
-      std::min({num_spatial_layers, num_layers_fit_horz, num_layers_fit_vert});
-  num_spatial_layers = std::max(num_spatial_layers, min_spatial_layers);
+  const size_t limited_num_spatial_layers =
+      std::min(num_layers_fit_horz, num_layers_fit_vert);
+  if (limited_num_spatial_layers < num_spatial_layers) {
+    RTC_LOG(LS_WARNING) << "Reducing number of spatial layers from "
+                        << num_spatial_layers << " to "
+                        << limited_num_spatial_layers
+                        << " due to low input resolution.";
+    num_spatial_layers = limited_num_spatial_layers;
+  }
+  // First active layer must be configured.
+  num_spatial_layers = std::max(num_spatial_layers, first_active_layer + 1);
 
-  for (size_t sl_idx = 0; sl_idx < num_spatial_layers; ++sl_idx) {
+  // Ensure top layer is even enough.
+  int required_divisiblity = 1 << (num_spatial_layers - first_active_layer - 1);
+  input_width = input_width - input_width % required_divisiblity;
+  input_height = input_height - input_height % required_divisiblity;
+
+  for (size_t sl_idx = first_active_layer; sl_idx < num_spatial_layers;
+       ++sl_idx) {
     SpatialLayer spatial_layer = {0};
     spatial_layer.width = input_width >> (num_spatial_layers - sl_idx - 1);
     spatial_layer.height = input_height >> (num_spatial_layers - sl_idx - 1);
@@ -106,13 +121,26 @@ std::vector<SpatialLayer> ConfigureSvcNormalVideo(size_t input_width,
     spatial_layers.push_back(spatial_layer);
   }
 
+  // A workaround for sitiation when single HD layer is left with minBitrate
+  // about 500kbps. This would mean that there will always be at least 500kbps
+  // allocated to video regardless of how low is the actual BWE.
+  // Also, boost maxBitrate for the first layer to account for lost ability to
+  // predict from previous layers.
+  if (first_active_layer > 0) {
+    spatial_layers[0].minBitrate = kMinVp9SvcBitrateKbps;
+    // TODO(ilnik): tune this value or come up with a different formula to
+    // ensure that all singlecast configurations look good and not too much
+    // bitrate is added.
+    spatial_layers[0].maxBitrate *= 1.1;
+  }
+
   return spatial_layers;
 }
 
 std::vector<SpatialLayer> GetSvcConfig(size_t input_width,
                                        size_t input_height,
                                        float max_framerate_fps,
-                                       size_t min_spatial_layers,
+                                       size_t first_active_layer,
                                        size_t num_spatial_layers,
                                        size_t num_temporal_layers,
                                        bool is_screen_sharing) {
@@ -126,7 +154,7 @@ std::vector<SpatialLayer> GetSvcConfig(size_t input_width,
                                      max_framerate_fps, num_spatial_layers);
   } else {
     return ConfigureSvcNormalVideo(input_width, input_height, max_framerate_fps,
-                                   min_spatial_layers, num_spatial_layers,
+                                   first_active_layer, num_spatial_layers,
                                    num_temporal_layers);
   }
 }

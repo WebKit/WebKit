@@ -14,8 +14,8 @@
 
 #include <algorithm>
 
-#include "absl/algorithm/container.h"
 #include "absl/container/inlined_vector.h"
+#include "absl/strings/match.h"
 #include "absl/types/variant.h"
 #include "api/video/video_timing.h"
 #include "modules/video_coding/codecs/h264/include/h264_globals.h"
@@ -28,7 +28,6 @@
 #include "rtc_base/logging.h"
 #include "rtc_base/random.h"
 #include "rtc_base/time_utils.h"
-#include "system_wrappers/include/field_trial.h"
 
 namespace webrtc {
 
@@ -94,24 +93,16 @@ void PopulateRtpWithCodecSpecifics(const CodecSpecificInfo& info,
       h264_header.packetization_mode =
           info.codecSpecific.H264.packetization_mode;
       rtp->simulcastIdx = spatial_index.value_or(0);
-      rtp->frame_marking.temporal_id = kNoTemporalIdx;
-      if (info.codecSpecific.H264.temporal_idx != kNoTemporalIdx) {
-        rtp->frame_marking.temporal_id = info.codecSpecific.H264.temporal_idx;
-        rtp->frame_marking.layer_id = 0;
-        rtp->frame_marking.independent_frame =
-            info.codecSpecific.H264.idr_frame;
-        rtp->frame_marking.base_layer_sync =
-            info.codecSpecific.H264.base_layer_sync;
-      }
       return;
     }
 #ifndef DISABLE_H265
     case kVideoCodecH265: {
-      auto h265_header = rtp->video_type_header.emplace<RTPVideoHeaderH265>();
+      auto& h265_header = rtp->video_type_header.emplace<RTPVideoHeaderH265>();
       h265_header.packetization_mode =
           info.codecSpecific.H265.packetization_mode;
+      rtp->simulcastIdx = spatial_index.value_or(0);
+      return;
     }
-    return;
 #endif
     case kVideoCodecMultiplex:
     case kVideoCodecGeneric:
@@ -143,12 +134,12 @@ void SetVideoTiming(const EncodedImage& image, VideoSendTiming* timing) {
 }  // namespace
 
 RtpPayloadParams::RtpPayloadParams(const uint32_t ssrc,
-                                   const RtpPayloadState* state)
+                                   const RtpPayloadState* state,
+                                   const WebRtcKeyValueConfig& trials)
     : ssrc_(ssrc),
       generic_picture_id_experiment_(
-          field_trial::IsEnabled("WebRTC-GenericPictureId")),
-      generic_descriptor_experiment_(
-          !field_trial::IsDisabled("WebRTC-GenericDescriptor")) {
+          absl::StartsWith(trials.Lookup("WebRTC-GenericPictureId"),
+                           "Enabled")) {
   for (auto& spatial_layer : last_shared_frame_id_)
     spatial_layer.fill(-1);
 
@@ -192,9 +183,8 @@ RTPVideoHeader RtpPayloadParams::GetRtpVideoHeader(
 
   SetCodecSpecific(&rtp_video_header, first_frame_in_picture);
 
-  if (generic_descriptor_experiment_)
-    SetGeneric(codec_specific_info, shared_frame_id, is_keyframe,
-               &rtp_video_header);
+  SetGeneric(codec_specific_info, shared_frame_id, is_keyframe,
+             &rtp_video_header);
 
   return rtp_video_header;
 }
@@ -243,14 +233,6 @@ void RtpPayloadParams::SetCodecSpecific(RTPVideoHeader* rtp_video_header,
       vp9_header.tl0_pic_idx = state_.tl0_pic_idx;
     }
   }
-  if (rtp_video_header->codec == kVideoCodecH264) {
-    if (rtp_video_header->frame_marking.temporal_id != kNoTemporalIdx) {
-      if (rtp_video_header->frame_marking.temporal_id == 0) {
-        ++state_.tl0_pic_idx;
-      }
-      rtp_video_header->frame_marking.tl0_pic_idx = state_.tl0_pic_idx;
-    }
-  }
   if (generic_picture_id_experiment_ &&
       rtp_video_header->codec == kVideoCodecGeneric) {
     rtp_video_header->video_type_header.emplace<RTPVideoHeaderLegacyGeneric>()
@@ -267,12 +249,12 @@ RtpPayloadParams::GenericDescriptorFromFrameInfo(
   generic.frame_id = frame_id;
   generic.dependencies = dependencies_calculator_.FromBuffersUsage(
       frame_type, frame_id, frame_info.encoder_buffers);
+  generic.chain_diffs =
+      chains_calculator_.From(frame_id, frame_info.part_of_chain);
   generic.spatial_index = frame_info.spatial_id;
   generic.temporal_index = frame_info.temporal_id;
   generic.decode_target_indications = frame_info.decode_target_indications;
-  generic.discardable =
-      absl::c_linear_search(frame_info.decode_target_indications,
-                            DecodeTargetIndication::kDiscardable);
+  generic.active_decode_targets = frame_info.active_decode_targets;
   return generic;
 }
 
@@ -282,6 +264,11 @@ void RtpPayloadParams::SetGeneric(const CodecSpecificInfo* codec_specific_info,
                                   RTPVideoHeader* rtp_video_header) {
   if (codec_specific_info && codec_specific_info->generic_frame_info &&
       !codec_specific_info->generic_frame_info->encoder_buffers.empty()) {
+    if (is_keyframe) {
+      // Key frame resets all chains it is in.
+      chains_calculator_.Reset(
+          codec_specific_info->generic_frame_info->part_of_chain);
+    }
     rtp_video_header->generic =
         GenericDescriptorFromFrameInfo(*codec_specific_info->generic_frame_info,
                                        frame_id, rtp_video_header->frame_type);
@@ -310,6 +297,8 @@ void RtpPayloadParams::SetGeneric(const CodecSpecificInfo* codec_specific_info,
       return;
 #ifndef DISABLE_H265
     case VideoCodecType::kVideoCodecH265:
+      // FIXME: Implement H265 to generic descriptor.
+      return;
 #endif
     case VideoCodecType::kVideoCodecMultiplex:
       return;

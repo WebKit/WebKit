@@ -15,6 +15,7 @@
 
 #include "api/array_view.h"
 #include "modules/audio_processing/audio_processing_impl.h"
+#include "modules/audio_processing/test/audio_processing_builder_for_testing.h"
 #include "modules/audio_processing/test/test_utils.h"
 #include "rtc_base/atomic_ops.h"
 #include "rtc_base/event.h"
@@ -486,39 +487,36 @@ class CallSimulator : public ::testing::TestWithParam<SimulationConfig> {
     int num_capture_channels = 1;
     switch (simulation_config_.simulation_settings) {
       case SettingsType::kDefaultApmMobile: {
-        apm_.reset(AudioProcessingBuilder().Create());
+        apm_.reset(AudioProcessingBuilderForTesting().Create());
         ASSERT_TRUE(!!apm_);
         set_default_mobile_apm_runtime_settings(apm_.get());
         break;
       }
       case SettingsType::kDefaultApmDesktop: {
         Config config;
-        apm_.reset(AudioProcessingBuilder().Create(config));
+        apm_.reset(AudioProcessingBuilderForTesting().Create(config));
         ASSERT_TRUE(!!apm_);
         set_default_desktop_apm_runtime_settings(apm_.get());
-        apm_->SetExtraOptions(config);
         break;
       }
       case SettingsType::kAllSubmodulesTurnedOff: {
-        apm_.reset(AudioProcessingBuilder().Create());
+        apm_.reset(AudioProcessingBuilderForTesting().Create());
         ASSERT_TRUE(!!apm_);
         turn_off_default_apm_runtime_settings(apm_.get());
         break;
       }
       case SettingsType::kDefaultApmDesktopWithoutDelayAgnostic: {
         Config config;
-        apm_.reset(AudioProcessingBuilder().Create(config));
+        apm_.reset(AudioProcessingBuilderForTesting().Create(config));
         ASSERT_TRUE(!!apm_);
         set_default_desktop_apm_runtime_settings(apm_.get());
-        apm_->SetExtraOptions(config);
         break;
       }
       case SettingsType::kDefaultApmDesktopWithoutExtendedFilter: {
         Config config;
-        apm_.reset(AudioProcessingBuilder().Create(config));
+        apm_.reset(AudioProcessingBuilderForTesting().Create(config));
         ASSERT_TRUE(!!apm_);
         set_default_desktop_apm_runtime_settings(apm_.get());
-        apm_->SetExtraOptions(config);
         break;
       }
     }

@@ -152,7 +152,7 @@ class NetEqController {
   virtual void AddSampleMemory(int32_t value) = 0;
 
   // Returns the target buffer level in ms.
-  virtual int TargetLevelMs() = 0;
+  virtual int TargetLevelMs() const = 0;
 
   // Notify the NetEqController that a packet has arrived. Returns the relative
   // arrival delay, if it can be computed.

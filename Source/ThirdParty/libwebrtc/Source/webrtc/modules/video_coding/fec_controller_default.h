@@ -20,7 +20,7 @@
 #include "api/fec_controller.h"
 #include "modules/video_coding/media_opt_util.h"
 #include "rtc_base/constructor_magic.h"
-#include "rtc_base/critical_section.h"
+#include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/thread_annotations.h"
 #include "system_wrappers/include/clock.h"
 
@@ -54,10 +54,10 @@ class FecControllerDefault : public FecController {
   enum { kBitrateAverageWinMs = 1000 };
   Clock* const clock_;
   VCMProtectionCallback* protection_callback_;
-  rtc::CriticalSection crit_sect_;
+  Mutex mutex_;
   std::unique_ptr<media_optimization::VCMLossProtectionLogic> loss_prot_logic_
-      RTC_GUARDED_BY(crit_sect_);
-  size_t max_payload_size_ RTC_GUARDED_BY(crit_sect_);
+      RTC_GUARDED_BY(mutex_);
+  size_t max_payload_size_ RTC_GUARDED_BY(mutex_);
   RTC_DISALLOW_COPY_AND_ASSIGN(FecControllerDefault);
   const float overhead_threshold_;
 };

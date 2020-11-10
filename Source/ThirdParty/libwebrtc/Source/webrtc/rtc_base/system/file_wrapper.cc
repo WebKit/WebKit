@@ -118,4 +118,10 @@ bool FileWrapper::Close() {
   return success;
 }
 
+FILE* FileWrapper::Release() {
+  FILE* file = file_;
+  file_ = nullptr;
+  return file;
+}
+
 }  // namespace webrtc

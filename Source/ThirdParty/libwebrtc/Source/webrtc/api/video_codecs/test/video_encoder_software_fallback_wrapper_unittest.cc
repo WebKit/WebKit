@@ -29,7 +29,6 @@
 #include "api/video/video_rotation.h"
 #include "api/video_codecs/video_codec.h"
 #include "api/video_codecs/video_encoder.h"
-#include "modules/include/module_common_types.h"
 #include "modules/video_coding/codecs/vp8/include/vp8.h"
 #include "modules/video_coding/include/video_codec_interface.h"
 #include "modules/video_coding/include/video_error_codes.h"
@@ -82,8 +81,7 @@ VideoEncoder::EncoderInfo GetEncoderInfoWithInternalSource(
 class FakeEncodedImageCallback : public EncodedImageCallback {
  public:
   Result OnEncodedImage(const EncodedImage& encoded_image,
-                        const CodecSpecificInfo* codec_specific_info,
-                        const RTPFragmentationHeader* fragmentation) override {
+                        const CodecSpecificInfo* codec_specific_info) override {
     ++callback_count_;
     return Result(Result::OK, callback_count_);
   }
@@ -123,8 +121,7 @@ class VideoEncoderSoftwareFallbackWrapperTestBase : public ::testing::Test {
       last_video_frame_ = frame;
       if (encode_complete_callback_ &&
           encode_return_code_ == WEBRTC_VIDEO_CODEC_OK) {
-        encode_complete_callback_->OnEncodedImage(EncodedImage(), nullptr,
-                                                  nullptr);
+        encode_complete_callback_->OnEncodedImage(EncodedImage(), nullptr);
       }
       return encode_return_code_;
     }

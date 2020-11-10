@@ -60,9 +60,6 @@ class AlrDetector {
   // started or empty result if the sender is currently not application-limited.
   absl::optional<int64_t> GetApplicationLimitedRegionStartTime() const;
 
-  void UpdateBudgetWithElapsedTime(int64_t delta_time_ms);
-  void UpdateBudgetWithBytesSent(size_t bytes_sent);
-
  private:
   friend class GoogCcStatePrinter;
   const AlrDetectorConfig conf_;

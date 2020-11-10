@@ -376,33 +376,40 @@ void Loopback() {
   call_bitrate_config.max_bitrate_bps = -1;  // Don't cap bandwidth estimate.
 
   VideoQualityTest::Params params;
-  params.call = {absl::GetFlag(FLAGS_send_side_bwe),
-                 absl::GetFlag(FLAGS_generic_descriptor), call_bitrate_config,
-                 0};
-  params.video[0] = {absl::GetFlag(FLAGS_video),
-                     Width(),
-                     Height(),
-                     Fps(),
-                     MinBitrateKbps() * 1000,
-                     TargetBitrateKbps() * 1000,
-                     MaxBitrateKbps() * 1000,
-                     absl::GetFlag(FLAGS_suspend_below_min_bitrate),
-                     Codec(),
-                     NumTemporalLayers(),
-                     SelectedTL(),
-                     0,  // No min transmit bitrate.
-                     absl::GetFlag(FLAGS_use_ulpfec),
-                     absl::GetFlag(FLAGS_use_flexfec),
-                     NumStreams() < 2,  // Automatic quality scaling.
-                     Clip(),
-                     GetCaptureDevice()};
-  params.audio = {
-      absl::GetFlag(FLAGS_audio), absl::GetFlag(FLAGS_audio_video_sync),
-      absl::GetFlag(FLAGS_audio_dtx), absl::GetFlag(FLAGS_use_real_adm)};
-  params.logging = {RtcEventLogName(), RtpDumpName(), EncodedFramePath()};
+  params.call.send_side_bwe = absl::GetFlag(FLAGS_send_side_bwe);
+  params.call.generic_descriptor = absl::GetFlag(FLAGS_generic_descriptor);
+  params.call.call_bitrate_config = call_bitrate_config;
+
+  params.video[0].enabled = absl::GetFlag(FLAGS_video);
+  params.video[0].width = Width();
+  params.video[0].height = Height();
+  params.video[0].fps = Fps();
+  params.video[0].min_bitrate_bps = MinBitrateKbps() * 1000;
+  params.video[0].target_bitrate_bps = TargetBitrateKbps() * 1000;
+  params.video[0].max_bitrate_bps = MaxBitrateKbps() * 1000;
+  params.video[0].suspend_below_min_bitrate =
+      absl::GetFlag(FLAGS_suspend_below_min_bitrate);
+  params.video[0].codec = Codec();
+  params.video[0].num_temporal_layers = NumTemporalLayers();
+  params.video[0].selected_tl = SelectedTL();
+  params.video[0].min_transmit_bps = 0;
+  params.video[0].ulpfec = absl::GetFlag(FLAGS_use_ulpfec);
+  params.video[0].flexfec = absl::GetFlag(FLAGS_use_flexfec);
+  params.video[0].automatic_scaling = NumStreams() < 2;
+  params.video[0].clip_path = Clip();
+  params.video[0].capture_device_index = GetCaptureDevice();
+  params.audio.enabled = absl::GetFlag(FLAGS_audio);
+  params.audio.sync_video = absl::GetFlag(FLAGS_audio_video_sync);
+  params.audio.dtx = absl::GetFlag(FLAGS_audio_dtx);
+  params.audio.use_real_adm = absl::GetFlag(FLAGS_use_real_adm);
+  params.logging.rtc_event_log_name = RtcEventLogName();
+  params.logging.rtp_dump_name = RtpDumpName();
+  params.logging.encoded_frame_base_path = EncodedFramePath();
   params.screenshare[0].enabled = false;
-  params.analyzer = {"video",          0.0,         0.0, DurationSecs(),
-                     OutputFilename(), GraphTitle()};
+  params.analyzer.test_label = "video";
+  params.analyzer.test_durations_secs = DurationSecs();
+  params.analyzer.graph_data_output_filename = OutputFilename();
+  params.analyzer.graph_title = GraphTitle();
   params.config = pipe_config;
 
   if (NumStreams() > 1 && Stream0().empty() && Stream1().empty()) {

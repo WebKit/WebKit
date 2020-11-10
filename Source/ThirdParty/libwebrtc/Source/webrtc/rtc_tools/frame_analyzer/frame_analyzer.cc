@@ -164,7 +164,9 @@ int main(int argc, char* argv[]) {
   std::string chartjson_result_file =
       absl::GetFlag(FLAGS_chartjson_result_file);
   if (!chartjson_result_file.empty()) {
-    webrtc::test::WritePerfResults(chartjson_result_file);
+    if (!webrtc::test::WritePerfResults(chartjson_result_file)) {
+      return 1;
+    }
   }
   std::string aligned_output_file = absl::GetFlag(FLAGS_aligned_output_file);
   if (!aligned_output_file.empty()) {

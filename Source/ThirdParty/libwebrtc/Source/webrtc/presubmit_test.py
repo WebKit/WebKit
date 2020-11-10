@@ -1,4 +1,4 @@
-../../libwebrtc.xcodeproj/project.pbxproj #!/usr/bin/env python
+#!/usr/bin/env python
 
 #  Copyright 2017 The WebRTC project authors. All Rights Reserved.
 #

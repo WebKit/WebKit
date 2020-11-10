@@ -41,6 +41,13 @@ class RTC_EXPORT VideoTrackSource : public Notifier<VideoTrackSourceInterface> {
                        const rtc::VideoSinkWants& wants) override;
   void RemoveSink(rtc::VideoSinkInterface<VideoFrame>* sink) override;
 
+  bool SupportsEncodedOutput() const override { return false; }
+  void GenerateKeyFrame() override {}
+  void AddEncodedSink(
+      rtc::VideoSinkInterface<RecordableEncodedFrame>* sink) override {}
+  void RemoveEncodedSink(
+      rtc::VideoSinkInterface<RecordableEncodedFrame>* sink) override {}
+
  protected:
   virtual rtc::VideoSourceInterface<VideoFrame>* source() = 0;
 

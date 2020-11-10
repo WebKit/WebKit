@@ -19,10 +19,12 @@
 @protocol ARDVideoCallViewDelegate <NSObject>
 
 // Called when the camera switch button is pressed.
-- (void)videoCallViewDidSwitchCamera:(ARDVideoCallView *)view;
+- (void)videoCallView:(ARDVideoCallView *)view
+    shouldSwitchCameraWithCompletion:(void (^)(NSError *))completion;
 
 // Called when the route change button is pressed.
-- (void)videoCallViewDidChangeRoute:(ARDVideoCallView *)view;
+- (void)videoCallView:(ARDVideoCallView *)view
+    shouldChangeRouteWithCompletion:(void (^)(void))completion;
 
 // Called when the hangup button is pressed.
 - (void)videoCallViewDidHangup:(ARDVideoCallView *)view;
@@ -37,8 +39,8 @@
 @interface ARDVideoCallView : UIView
 
 @property(nonatomic, readonly) UILabel *statusLabel;
-@property(nonatomic, readonly) RTCCameraPreviewView *localVideoView;
-@property(nonatomic, readonly) __kindof UIView<RTCVideoRenderer> *remoteVideoView;
+@property(nonatomic, readonly) RTC_OBJC_TYPE(RTCCameraPreviewView) * localVideoView;
+@property(nonatomic, readonly) __kindof UIView<RTC_OBJC_TYPE(RTCVideoRenderer)> *remoteVideoView;
 @property(nonatomic, readonly) ARDStatsView *statsView;
 @property(nonatomic, weak) id<ARDVideoCallViewDelegate> delegate;
 

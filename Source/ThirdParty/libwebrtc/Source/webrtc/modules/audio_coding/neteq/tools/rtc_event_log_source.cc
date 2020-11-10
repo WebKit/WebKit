@@ -138,6 +138,11 @@ bool RtcEventLogSource::Initialize(const ParsedRtcEventLog& parsed_log,
       continue;
     }
     event_processor.AddEvents(rtp_packets.incoming_packets, handle_rtp_packet);
+    // If no SSRC filter has been set, use the first SSRC only. The simulator
+    // does not work properly with interleaved packets from multiple SSRCs.
+    if (!ssrc_filter.has_value()) {
+      ssrc_filter = rtp_packets.ssrc;
+    }
   }
 
   for (const auto& audio_playouts : parsed_log.audio_playout_events()) {

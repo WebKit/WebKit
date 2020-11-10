@@ -16,8 +16,8 @@
 
 #include "rtc_base/async_udp_socket.h"
 #include "rtc_base/constructor_magic.h"
-#include "rtc_base/critical_section.h"
 #include "rtc_base/fake_clock.h"
+#include "rtc_base/synchronization/mutex.h"
 
 namespace rtc {
 
@@ -105,7 +105,7 @@ class TestClient : public sigslot::has_slots<> {
   void AdvanceTime(int ms);
 
   ThreadProcessingFakeClock* fake_clock_ = nullptr;
-  CriticalSection crit_;
+  webrtc::Mutex mutex_;
   std::unique_ptr<AsyncPacketSocket> socket_;
   std::vector<std::unique_ptr<Packet>> packets_;
   int ready_to_send_count_ = 0;

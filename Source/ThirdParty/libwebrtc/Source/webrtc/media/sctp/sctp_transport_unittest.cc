@@ -12,6 +12,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <usrsctp.h>
 
 #include <memory>
 #include <string>
@@ -238,6 +239,73 @@ class SctpTransportTest : public ::testing::Test, public sigslot::has_slots<> {
   void OnChan2ReadyToSend() { ++transport2_ready_to_send_count_; }
 };
 
+TEST_F(SctpTransportTest, MessageInterleavedWithNotification) {
+  FakeDtlsTransport fake_dtls1("fake dtls 1", 0);
+  FakeDtlsTransport fake_dtls2("fake dtls 2", 0);
+  SctpFakeDataReceiver recv1;
+  SctpFakeDataReceiver recv2;
+  std::unique_ptr<SctpTransport> transport1(
+      CreateTransport(&fake_dtls1, &recv1));
+  std::unique_ptr<SctpTransport> transport2(
+      CreateTransport(&fake_dtls2, &recv2));
+
+  // Add a stream.
+  transport1->OpenStream(1);
+  transport2->OpenStream(1);
+
+  // Start SCTP transports.
+  transport1->Start(kSctpDefaultPort, kSctpDefaultPort, kSctpSendBufferSize);
+  transport2->Start(kSctpDefaultPort, kSctpDefaultPort, kSctpSendBufferSize);
+
+  // Connect the two fake DTLS transports.
+  fake_dtls1.SetDestination(&fake_dtls2, false);
+
+  // Ensure the SCTP association has been established
+  // Note: I'd rather watch for an assoc established state here but couldn't
+  //       find any exposed...
+  SendDataResult result;
+  ASSERT_TRUE(SendData(transport2.get(), 1, "meow", &result));
+  EXPECT_TRUE_WAIT(ReceivedData(&recv1, 1, "meow"), kDefaultTimeout);
+
+  // Detach the DTLS transport to ensure only we will inject packets from here
+  // on.
+  transport1->SetDtlsTransport(nullptr);
+
+  // Prepare chunk buffer and metadata
+  auto chunk = rtc::CopyOnWriteBuffer(32);
+  struct sctp_rcvinfo meta = {0};
+  meta.rcv_sid = 1;
+  meta.rcv_ssn = 1337;
+  meta.rcv_ppid = rtc::HostToNetwork32(51);  // text (complete)
+
+  // Inject chunk 1/2.
+  meta.rcv_tsn = 42;
+  meta.rcv_cumtsn = 42;
+  chunk.SetData("meow?", 5);
+  EXPECT_EQ(1, transport1->InjectDataOrNotificationFromSctpForTesting(
+                   chunk.data(), chunk.size(), meta, 0));
+
+  // Inject a notification in between chunks.
+  union sctp_notification notification;
+  memset(&notification, 0, sizeof(notification));
+  // Type chosen since it's not handled apart from being logged
+  notification.sn_header.sn_type = SCTP_PEER_ADDR_CHANGE;
+  notification.sn_header.sn_flags = 0;
+  notification.sn_header.sn_length = sizeof(notification);
+  EXPECT_EQ(1, transport1->InjectDataOrNotificationFromSctpForTesting(
+                   &notification, sizeof(notification), {0}, MSG_NOTIFICATION));
+
+  // Inject chunk 2/2
+  meta.rcv_tsn = 42;
+  meta.rcv_cumtsn = 43;
+  chunk.SetData(" rawr!", 6);
+  EXPECT_EQ(1, transport1->InjectDataOrNotificationFromSctpForTesting(
+                   chunk.data(), chunk.size(), meta, MSG_EOR));
+
+  // Expect the message to contain both chunks.
+  EXPECT_TRUE_WAIT(ReceivedData(&recv1, 1, "meow? rawr!"), kDefaultTimeout);
+}
+
 // Test that data can be sent end-to-end when an SCTP transport starts with one
 // transport (which is unwritable), and then switches to another transport. A
 // common scenario due to how BUNDLE works.
@@ -365,43 +433,15 @@ TEST_F(SctpTransportTest, SignalReadyToSendDataAfterDtlsWritable) {
   EXPECT_TRUE_WAIT(observer.ReadyToSend(), kDefaultTimeout);
 }
 
-// Test that after an SCTP socket's buffer is filled, SignalReadyToSendData
-// is fired after it begins to be drained.
-TEST_F(SctpTransportTest, SignalReadyToSendDataAfterBlocked) {
-  SetupConnectedTransportsWithTwoStreams();
-  // Wait for initial SCTP association to be formed.
-  EXPECT_EQ_WAIT(1, transport1_ready_to_send_count(), kDefaultTimeout);
-  // Make the fake transport unwritable so that messages pile up for the SCTP
-  // socket.
-  fake_dtls1()->SetWritable(false);
-  // Send messages until we get EWOULDBLOCK.
-  static const size_t kMaxMessages = 1024;
-  SendDataParams params;
-  params.sid = 1;
-  rtc::CopyOnWriteBuffer buf(1024);
-  memset(buf.data<uint8_t>(), 0, 1024);
-  SendDataResult result;
-  size_t message_count = 0;
-  for (; message_count < kMaxMessages; ++message_count) {
-    if (!transport1()->SendData(params, buf, &result) && result == SDR_BLOCK) {
-      break;
-    }
-  }
-  ASSERT_NE(kMaxMessages, message_count)
-      << "Sent max number of messages without getting SDR_BLOCK?";
-  // Make sure the ready-to-send count hasn't changed.
-  EXPECT_EQ(1, transport1_ready_to_send_count());
-  // Make the transport writable again and expect a "SignalReadyToSendData" at
-  // some point.
-  fake_dtls1()->SetWritable(true);
-  EXPECT_EQ_WAIT(2, transport1_ready_to_send_count(), kDefaultTimeout);
-  EXPECT_EQ_WAIT(message_count, receiver2()->num_messages_received(),
-                 kDefaultTimeout);
-}
+// Run the below tests using both ordered and unordered mode.
+class SctpTransportTestWithOrdered
+    : public SctpTransportTest,
+      public ::testing::WithParamInterface<bool> {};
 
 // Tests that a small message gets buffered and later sent by the SctpTransport
 // when the sctp library only accepts the message partially.
-TEST_F(SctpTransportTest, SendSmallBufferedOutgoingMessage) {
+TEST_P(SctpTransportTestWithOrdered, SendSmallBufferedOutgoingMessage) {
+  bool ordered = GetParam();
   SetupConnectedTransportsWithTwoStreams();
   // Wait for initial SCTP association to be formed.
   EXPECT_EQ_WAIT(1, transport1_ready_to_send_count(), kDefaultTimeout);
@@ -409,10 +449,6 @@ TEST_F(SctpTransportTest, SendSmallBufferedOutgoingMessage) {
   // socket.
   fake_dtls1()->SetWritable(false);
   SendDataResult result;
-  // TODO(bugs.webrtc.org/10939): We can't test this behavior unless we are
-  // sending in ordered mode becuase the sctp lib drops large buffered data in
-  // unordered mode.
-  bool ordered = true;
 
   // Fill almost all of sctp library's send buffer.
   ASSERT_TRUE(SendData(transport1(), /*sid=*/1,
@@ -444,7 +480,8 @@ TEST_F(SctpTransportTest, SendSmallBufferedOutgoingMessage) {
 
 // Tests that a large message gets buffered and later sent by the SctpTransport
 // when the sctp library only accepts the message partially.
-TEST_F(SctpTransportTest, SendLargeBufferedOutgoingMessage) {
+TEST_P(SctpTransportTestWithOrdered, SendLargeBufferedOutgoingMessage) {
+  bool ordered = GetParam();
   SetupConnectedTransportsWithTwoStreams();
   // Wait for initial SCTP association to be formed.
   EXPECT_EQ_WAIT(1, transport1_ready_to_send_count(), kDefaultTimeout);
@@ -452,10 +489,6 @@ TEST_F(SctpTransportTest, SendLargeBufferedOutgoingMessage) {
   // socket.
   fake_dtls1()->SetWritable(false);
   SendDataResult result;
-  // TODO(bugs.webrtc.org/10939): We can't test this behavior unless we are
-  // sending in ordered mode becuase the sctp lib drops large buffered data in
-  // unordered mode.
-  bool ordered = true;
 
   // Fill almost all of sctp library's send buffer.
   ASSERT_TRUE(SendData(transport1(), /*sid=*/1,
@@ -485,13 +518,14 @@ TEST_F(SctpTransportTest, SendLargeBufferedOutgoingMessage) {
   EXPECT_EQ(2u, receiver2()->num_messages_received());
 }
 
-TEST_F(SctpTransportTest, SendData) {
+TEST_P(SctpTransportTestWithOrdered, SendData) {
+  bool ordered = GetParam();
   SetupConnectedTransportsWithTwoStreams();
 
   SendDataResult result;
   RTC_LOG(LS_VERBOSE)
       << "transport1 sending: 'hello?' -----------------------------";
-  ASSERT_TRUE(SendData(transport1(), 1, "hello?", &result));
+  ASSERT_TRUE(SendData(transport1(), 1, "hello?", &result, ordered));
   EXPECT_EQ(SDR_SUCCESS, result);
   EXPECT_TRUE_WAIT(ReceivedData(receiver2(), 1, "hello?"), kDefaultTimeout);
   RTC_LOG(LS_VERBOSE) << "recv2.received=" << receiver2()->received()
@@ -505,7 +539,7 @@ TEST_F(SctpTransportTest, SendData) {
 
   RTC_LOG(LS_VERBOSE)
       << "transport2 sending: 'hi transport1' -----------------------------";
-  ASSERT_TRUE(SendData(transport2(), 2, "hi transport1", &result));
+  ASSERT_TRUE(SendData(transport2(), 2, "hi transport1", &result, ordered));
   EXPECT_EQ(SDR_SUCCESS, result);
   EXPECT_TRUE_WAIT(ReceivedData(receiver1(), 2, "hi transport1"),
                    kDefaultTimeout);
@@ -520,12 +554,13 @@ TEST_F(SctpTransportTest, SendData) {
 }
 
 // Sends a lot of large messages at once and verifies SDR_BLOCK is returned.
-TEST_F(SctpTransportTest, SendDataBlocked) {
+TEST_P(SctpTransportTestWithOrdered, SendDataBlocked) {
   SetupConnectedTransportsWithTwoStreams();
 
   SendDataResult result;
   SendDataParams params;
   params.sid = 1;
+  params.ordered = GetParam();
 
   std::vector<char> buffer(1024 * 64, 0);
 
@@ -537,6 +572,65 @@ TEST_F(SctpTransportTest, SendDataBlocked) {
   }
 
   EXPECT_EQ(SDR_BLOCK, result);
+}
+
+// Test that after an SCTP socket's buffer is filled, SignalReadyToSendData
+// is fired after it begins to be drained.
+TEST_P(SctpTransportTestWithOrdered, SignalReadyToSendDataAfterBlocked) {
+  SetupConnectedTransportsWithTwoStreams();
+  // Wait for initial SCTP association to be formed.
+  EXPECT_EQ_WAIT(1, transport1_ready_to_send_count(), kDefaultTimeout);
+  // Make the fake transport unwritable so that messages pile up for the SCTP
+  // socket.
+  fake_dtls1()->SetWritable(false);
+  // Send messages until we get EWOULDBLOCK.
+  static const size_t kMaxMessages = 1024;
+  SendDataParams params;
+  params.sid = 1;
+  params.ordered = GetParam();
+  rtc::CopyOnWriteBuffer buf(1024);
+  memset(buf.data<uint8_t>(), 0, 1024);
+  SendDataResult result;
+  size_t message_count = 0;
+  for (; message_count < kMaxMessages; ++message_count) {
+    if (!transport1()->SendData(params, buf, &result) && result == SDR_BLOCK) {
+      break;
+    }
+  }
+  ASSERT_NE(kMaxMessages, message_count)
+      << "Sent max number of messages without getting SDR_BLOCK?";
+  // Make sure the ready-to-send count hasn't changed.
+  EXPECT_EQ(1, transport1_ready_to_send_count());
+  // Make the transport writable again and expect a "SignalReadyToSendData" at
+  // some point.
+  fake_dtls1()->SetWritable(true);
+  EXPECT_EQ_WAIT(2, transport1_ready_to_send_count(), kDefaultTimeout);
+  EXPECT_EQ_WAIT(message_count, receiver2()->num_messages_received(),
+                 kDefaultTimeout);
+}
+
+INSTANTIATE_TEST_SUITE_P(SctpTransportTest,
+                         SctpTransportTestWithOrdered,
+                         ::testing::Bool());
+
+// This is a regression test that fails with earlier versions of SCTP in
+// unordered mode. See bugs.webrtc.org/10939.
+TEST_F(SctpTransportTest, SendsLargeDataBufferedBySctpLib) {
+  SetupConnectedTransportsWithTwoStreams();
+  // Wait for initial SCTP association to be formed.
+  EXPECT_EQ_WAIT(1, transport1_ready_to_send_count(), kDefaultTimeout);
+  // Make the fake transport unwritable so that messages pile up for the SCTP
+  // socket.
+  fake_dtls1()->SetWritable(false);
+
+  SendDataResult result;
+  std::string buffered_message(kSctpSendBufferSize - 1, 'a');
+  ASSERT_TRUE(SendData(transport1(), 1, buffered_message, &result, false));
+
+  fake_dtls1()->SetWritable(true);
+  EXPECT_EQ_WAIT(1, transport1_ready_to_send_count(), kDefaultTimeout);
+  EXPECT_TRUE_WAIT(ReceivedData(receiver2(), 1, buffered_message),
+                   kDefaultTimeout);
 }
 
 // Trying to send data for a nonexistent stream should fail.
@@ -574,6 +668,15 @@ TEST_F(SctpTransportTest, ClosesRemoteStream) {
   EXPECT_EQ(SDR_SUCCESS, result);
   EXPECT_TRUE_WAIT(ReceivedData(receiver1(), 2, "hi transport1"),
                    kDefaultTimeout);
+
+  // Close stream 1 on transport 1. Transport 2 should notify us.
+  transport1()->ResetStream(1);
+  EXPECT_TRUE_WAIT(transport2_observer.WasStreamClosed(1), kDefaultTimeout);
+}
+TEST_F(SctpTransportTest, ClosesRemoteStreamWithNoData) {
+  SetupConnectedTransportsWithTwoStreams();
+  SctpTransportObserver transport1_observer(transport1());
+  SctpTransportObserver transport2_observer(transport2());
 
   // Close stream 1 on transport 1. Transport 2 should notify us.
   transport1()->ResetStream(1);
@@ -686,6 +789,54 @@ TEST_F(SctpTransportTest, RejectsSendTooLargeMessages) {
   const char eleven_characters[] = "12345678901";
   SendDataResult result;
   EXPECT_FALSE(SendData(transport1(), 1, eleven_characters, &result));
+}
+
+// Regression test for: crbug.com/1137936
+TEST_F(SctpTransportTest, SctpRestartWithPendingDataDoesNotDeadlock) {
+  // In order to trigger a restart, we'll connect two transports, then
+  // disconnect them and connect the first to a third, which will initiate the
+  // new handshake.
+  FakeDtlsTransport fake_dtls1("fake dtls 1", 0);
+  FakeDtlsTransport fake_dtls2("fake dtls 2", 0);
+  FakeDtlsTransport fake_dtls3("fake dtls 3", 0);
+  SctpFakeDataReceiver recv1;
+  SctpFakeDataReceiver recv2;
+  SctpFakeDataReceiver recv3;
+
+  std::unique_ptr<SctpTransport> transport1(
+      CreateTransport(&fake_dtls1, &recv1));
+  std::unique_ptr<SctpTransport> transport2(
+      CreateTransport(&fake_dtls2, &recv2));
+  std::unique_ptr<SctpTransport> transport3(
+      CreateTransport(&fake_dtls3, &recv3));
+  SctpTransportObserver observer(transport1.get());
+
+  // Connect the first two transports.
+  fake_dtls1.SetDestination(&fake_dtls2, /*asymmetric=*/false);
+  transport1->OpenStream(1);
+  transport2->OpenStream(1);
+  transport1->Start(5000, 5000, kSctpSendBufferSize);
+  transport2->Start(5000, 5000, kSctpSendBufferSize);
+
+  // Sanity check that we can send data.
+  SendDataResult result;
+  ASSERT_TRUE(SendData(transport1.get(), 1, "foo", &result));
+  ASSERT_TRUE_WAIT(ReceivedData(&recv2, 1, "foo"), kDefaultTimeout);
+
+  // Disconnect the transports and attempt to send a message, which will be
+  // stored in an output queue; this is necessary to reproduce the bug.
+  fake_dtls1.SetDestination(nullptr, /*asymmetric=*/false);
+  EXPECT_TRUE(SendData(transport1.get(), 1, "bar", &result));
+
+  // Now connect to the third transport.
+  fake_dtls1.SetDestination(&fake_dtls3, /*asymmetric=*/false);
+  transport3->OpenStream(1);
+  transport3->Start(5000, 5000, kSctpSendBufferSize);
+
+  // Send data from the new endpoint to the original endpoint. If data is
+  // received that means the restart must have been successful.
+  EXPECT_TRUE(SendData(transport3.get(), 1, "baz", &result));
+  EXPECT_TRUE_WAIT(ReceivedData(&recv1, 1, "baz"), kDefaultTimeout);
 }
 
 }  // namespace cricket

@@ -11,7 +11,9 @@
 
 #include "media/engine/encoder_simulcast_proxy.h"
 
+#include <memory>
 #include <string>
+#include <utility>
 
 #include "api/test/mock_video_encoder.h"
 #include "api/test/mock_video_encoder_factory.h"
@@ -30,6 +32,7 @@ const VideoEncoder::Settings kSettings(kCapabilities, 4, 1200);
 }  // namespace
 
 using ::testing::_;
+using ::testing::ByMove;
 using ::testing::NiceMock;
 using ::testing::Return;
 
@@ -65,7 +68,7 @@ TEST(EncoderSimulcastProxy, ChoosesCorrectImplementation) {
                                        56};
   codec_settings.numberOfSimulcastStreams = 3;
 
-  NiceMock<MockVideoEncoder>* mock_encoder = new NiceMock<MockVideoEncoder>();
+  auto mock_encoder = std::make_unique<NiceMock<MockVideoEncoder>>();
   NiceMock<MockVideoEncoderFactory> simulcast_factory;
 
   EXPECT_CALL(*mock_encoder, InitEncode(_, _))
@@ -75,9 +78,9 @@ TEST(EncoderSimulcastProxy, ChoosesCorrectImplementation) {
   EXPECT_CALL(*mock_encoder, GetEncoderInfo())
       .WillRepeatedly(Return(encoder_info));
 
-  EXPECT_CALL(simulcast_factory, CreateVideoEncoderProxy(_))
+  EXPECT_CALL(simulcast_factory, CreateVideoEncoder)
       .Times(1)
-      .WillOnce(Return(mock_encoder));
+      .WillOnce(Return(ByMove(std::move(mock_encoder))));
 
   EncoderSimulcastProxy simulcast_enabled_proxy(&simulcast_factory,
                                                 SdpVideoFormat("VP8"));
@@ -86,39 +89,27 @@ TEST(EncoderSimulcastProxy, ChoosesCorrectImplementation) {
   EXPECT_EQ(kImplementationName,
             simulcast_enabled_proxy.GetEncoderInfo().implementation_name);
 
-  NiceMock<MockVideoEncoder>* mock_encoder1 = new NiceMock<MockVideoEncoder>();
-  NiceMock<MockVideoEncoder>* mock_encoder2 = new NiceMock<MockVideoEncoder>();
-  NiceMock<MockVideoEncoder>* mock_encoder3 = new NiceMock<MockVideoEncoder>();
-  NiceMock<MockVideoEncoder>* mock_encoder4 = new NiceMock<MockVideoEncoder>();
   NiceMock<MockVideoEncoderFactory> nonsimulcast_factory;
 
-  EXPECT_CALL(*mock_encoder1, InitEncode(_, _))
-      .WillOnce(
-          Return(WEBRTC_VIDEO_CODEC_ERR_SIMULCAST_PARAMETERS_NOT_SUPPORTED));
-  EXPECT_CALL(*mock_encoder1, GetEncoderInfo())
-      .WillRepeatedly(Return(encoder_info));
-
-  EXPECT_CALL(*mock_encoder2, InitEncode(_, _))
-      .WillOnce(Return(WEBRTC_VIDEO_CODEC_OK));
-  EXPECT_CALL(*mock_encoder2, GetEncoderInfo())
-      .WillRepeatedly(Return(encoder_info));
-
-  EXPECT_CALL(*mock_encoder3, InitEncode(_, _))
-      .WillOnce(Return(WEBRTC_VIDEO_CODEC_OK));
-  EXPECT_CALL(*mock_encoder3, GetEncoderInfo())
-      .WillRepeatedly(Return(encoder_info));
-
-  EXPECT_CALL(*mock_encoder4, InitEncode(_, _))
-      .WillOnce(Return(WEBRTC_VIDEO_CODEC_OK));
-  EXPECT_CALL(*mock_encoder4, GetEncoderInfo())
-      .WillRepeatedly(Return(encoder_info));
-
-  EXPECT_CALL(nonsimulcast_factory, CreateVideoEncoderProxy(_))
+  EXPECT_CALL(nonsimulcast_factory, CreateVideoEncoder)
       .Times(4)
-      .WillOnce(Return(mock_encoder1))
-      .WillOnce(Return(mock_encoder2))
-      .WillOnce(Return(mock_encoder3))
-      .WillOnce(Return(mock_encoder4));
+      .WillOnce([&] {
+        auto mock_encoder = std::make_unique<NiceMock<MockVideoEncoder>>();
+        EXPECT_CALL(*mock_encoder, InitEncode(_, _))
+            .WillOnce(Return(
+                WEBRTC_VIDEO_CODEC_ERR_SIMULCAST_PARAMETERS_NOT_SUPPORTED));
+        ON_CALL(*mock_encoder, GetEncoderInfo)
+            .WillByDefault(Return(encoder_info));
+        return mock_encoder;
+      })
+      .WillRepeatedly([&] {
+        auto mock_encoder = std::make_unique<NiceMock<MockVideoEncoder>>();
+        EXPECT_CALL(*mock_encoder, InitEncode(_, _))
+            .WillOnce(Return(WEBRTC_VIDEO_CODEC_OK));
+        ON_CALL(*mock_encoder, GetEncoderInfo)
+            .WillByDefault(Return(encoder_info));
+        return mock_encoder;
+      });
 
   EncoderSimulcastProxy simulcast_disabled_proxy(&nonsimulcast_factory,
                                                  SdpVideoFormat("VP8"));
@@ -133,15 +124,16 @@ TEST(EncoderSimulcastProxy, ChoosesCorrectImplementation) {
 }
 
 TEST(EncoderSimulcastProxy, ForwardsTrustedSetting) {
-  NiceMock<MockVideoEncoder>* mock_encoder = new NiceMock<MockVideoEncoder>();
+  auto mock_encoder_owned = std::make_unique<NiceMock<MockVideoEncoder>>();
+  auto* mock_encoder = mock_encoder_owned.get();
   NiceMock<MockVideoEncoderFactory> simulcast_factory;
 
   EXPECT_CALL(*mock_encoder, InitEncode(_, _))
       .WillOnce(Return(WEBRTC_VIDEO_CODEC_OK));
 
-  EXPECT_CALL(simulcast_factory, CreateVideoEncoderProxy(_))
+  EXPECT_CALL(simulcast_factory, CreateVideoEncoder)
       .Times(1)
-      .WillOnce(Return(mock_encoder));
+      .WillOnce(Return(ByMove(std::move(mock_encoder_owned))));
 
   EncoderSimulcastProxy simulcast_enabled_proxy(&simulcast_factory,
                                                 SdpVideoFormat("VP8"));
@@ -159,15 +151,16 @@ TEST(EncoderSimulcastProxy, ForwardsTrustedSetting) {
 }
 
 TEST(EncoderSimulcastProxy, ForwardsHardwareAccelerated) {
-  NiceMock<MockVideoEncoder>* mock_encoder = new NiceMock<MockVideoEncoder>();
+  auto mock_encoder_owned = std::make_unique<NiceMock<MockVideoEncoder>>();
+  NiceMock<MockVideoEncoder>* mock_encoder = mock_encoder_owned.get();
   NiceMock<MockVideoEncoderFactory> simulcast_factory;
 
   EXPECT_CALL(*mock_encoder, InitEncode(_, _))
       .WillOnce(Return(WEBRTC_VIDEO_CODEC_OK));
 
-  EXPECT_CALL(simulcast_factory, CreateVideoEncoderProxy(_))
+  EXPECT_CALL(simulcast_factory, CreateVideoEncoder)
       .Times(1)
-      .WillOnce(Return(mock_encoder));
+      .WillOnce(Return(ByMove(std::move(mock_encoder_owned))));
 
   EncoderSimulcastProxy simulcast_enabled_proxy(&simulcast_factory,
                                                 SdpVideoFormat("VP8"));
@@ -189,15 +182,16 @@ TEST(EncoderSimulcastProxy, ForwardsHardwareAccelerated) {
 }
 
 TEST(EncoderSimulcastProxy, ForwardsInternalSource) {
-  NiceMock<MockVideoEncoder>* mock_encoder = new NiceMock<MockVideoEncoder>();
+  auto mock_encoder_owned = std::make_unique<NiceMock<MockVideoEncoder>>();
+  NiceMock<MockVideoEncoder>* mock_encoder = mock_encoder_owned.get();
   NiceMock<MockVideoEncoderFactory> simulcast_factory;
 
   EXPECT_CALL(*mock_encoder, InitEncode(_, _))
       .WillOnce(Return(WEBRTC_VIDEO_CODEC_OK));
 
-  EXPECT_CALL(simulcast_factory, CreateVideoEncoderProxy(_))
+  EXPECT_CALL(simulcast_factory, CreateVideoEncoder)
       .Times(1)
-      .WillOnce(Return(mock_encoder));
+      .WillOnce(Return(ByMove(std::move(mock_encoder_owned))));
 
   EncoderSimulcastProxy simulcast_enabled_proxy(&simulcast_factory,
                                                 SdpVideoFormat("VP8"));

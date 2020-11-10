@@ -20,21 +20,22 @@
 #include "api/array_view.h"
 #include "api/frame_transformer_interface.h"
 #include "api/scoped_refptr.h"
+#include "api/task_queue/task_queue_base.h"
 #include "api/transport/rtp/dependency_descriptor.h"
 #include "api/video/video_codec_type.h"
 #include "api/video/video_frame_type.h"
-#include "modules/include/module_common_types.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/rtp_rtcp/source/absolute_capture_time_sender.h"
+#include "modules/rtp_rtcp/source/active_decode_targets_helper.h"
 #include "modules/rtp_rtcp/source/rtp_rtcp_config.h"
 #include "modules/rtp_rtcp/source/rtp_sender.h"
 #include "modules/rtp_rtcp/source/rtp_sender_video_frame_transformer_delegate.h"
 #include "modules/rtp_rtcp/source/rtp_video_header.h"
 #include "modules/rtp_rtcp/source/video_fec_generator.h"
-#include "rtc_base/critical_section.h"
 #include "rtc_base/one_time_event.h"
 #include "rtc_base/race_checker.h"
 #include "rtc_base/rate_statistics.h"
+#include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/synchronization/sequence_checker.h"
 #include "rtc_base/thread_annotations.h"
 
@@ -71,12 +72,17 @@ class RTPSenderVideo {
     RTPSender* rtp_sender = nullptr;
     FlexfecSender* flexfec_sender = nullptr;
     VideoFecGenerator* fec_generator = nullptr;
+    // Some FEC data is duplicated here in preparation of moving FEC to
+    // the egress stage.
+    absl::optional<VideoFecGenerator::FecType> fec_type;
+    size_t fec_overhead_bytes = 0;  // Per packet max FEC overhead.
     FrameEncryptorInterface* frame_encryptor = nullptr;
     bool require_frame_encryption = false;
     bool enable_retransmit_all_layers = false;
     absl::optional<int> red_payload_type;
     const WebRtcKeyValueConfig* field_trials = nullptr;
     rtc::scoped_refptr<FrameTransformerInterface> frame_transformer;
+    TaskQueueBase* send_transport_queue = nullptr;
   };
 
   explicit RTPSenderVideo(const Config& config);
@@ -85,21 +91,25 @@ class RTPSenderVideo {
 
   // expected_retransmission_time_ms.has_value() -> retransmission allowed.
   // Calls to this method is assumed to be externally serialized.
+  // |estimated_capture_clock_offset_ms| is an estimated clock offset between
+  // this sender and the original capturer, for this video packet. See
+  // http://www.webrtc.org/experiments/rtp-hdrext/abs-capture-time for more
+  // details. If the sender and the capture has the same clock, it is supposed
+  // to be zero valued, which is given as the default.
   bool SendVideo(int payload_type,
                  absl::optional<VideoCodecType> codec_type,
                  uint32_t rtp_timestamp,
                  int64_t capture_time_ms,
                  rtc::ArrayView<const uint8_t> payload,
-                 const RTPFragmentationHeader* fragmentation,
                  RTPVideoHeader video_header,
-                 absl::optional<int64_t> expected_retransmission_time_ms);
+                 absl::optional<int64_t> expected_retransmission_time_ms,
+                 absl::optional<int64_t> estimated_capture_clock_offset_ms = 0);
 
   bool SendEncodedImage(
       int payload_type,
       absl::optional<VideoCodecType> codec_type,
       uint32_t rtp_timestamp,
       const EncodedImage& encoded_image,
-      const RTPFragmentationHeader* fragmentation,
       RTPVideoHeader video_header,
       absl::optional<int64_t> expected_retransmission_time_ms);
 
@@ -112,13 +122,7 @@ class RTPSenderVideo {
   void SetVideoStructureUnderLock(
       const FrameDependencyStructure* video_structure);
 
-  // FlexFEC/ULPFEC.
-  // Set FEC rates, max frames before FEC is sent, and type of FEC masks.
-  void SetFecParameters(const FecProtectionParams& delta_params,
-                        const FecProtectionParams& key_params);
-
   uint32_t VideoBitrateSent() const;
-  uint32_t FecOverheadRate() const;
 
   // Returns the current packetization overhead rate, in bps. Note that this is
   // the payload overhead, eg the VP8 payload headers, not the RTP headers
@@ -143,6 +147,14 @@ class RTPSenderVideo {
     int64_t last_frame_time_ms;
   };
 
+  void AddRtpHeaderExtensions(
+      const RTPVideoHeader& video_header,
+      const absl::optional<AbsoluteCaptureTime>& absolute_capture_time,
+      bool first_packet,
+      bool last_packet,
+      RtpPacketToSend* packet) const
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(send_checker_);
+
   size_t FecPacketOverhead() const RTC_EXCLUSIVE_LOCKS_REQUIRED(send_checker_);
 
   void LogAndSendToNetwork(
@@ -153,7 +165,7 @@ class RTPSenderVideo {
 
   bool UpdateConditionalRetransmit(uint8_t temporal_id,
                                    int64_t expected_retransmission_time_ms)
-      RTC_EXCLUSIVE_LOCKS_REQUIRED(stats_crit_);
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(stats_mutex_);
 
   void MaybeUpdateCurrentPlayoutDelay(const RTPVideoHeader& header)
       RTC_EXCLUSIVE_LOCKS_REQUIRED(send_checker_);
@@ -173,24 +185,29 @@ class RTPSenderVideo {
       RTC_GUARDED_BY(send_checker_);
 
   // Current target playout delay.
-  PlayoutDelay current_playout_delay_ RTC_GUARDED_BY(send_checker_);
+  VideoPlayoutDelay current_playout_delay_ RTC_GUARDED_BY(send_checker_);
   // Flag indicating if we need to propagate |current_playout_delay_| in order
   // to guarantee it gets delivered.
   bool playout_delay_pending_;
+  // Set by the field trial WebRTC-ForceSendPlayoutDelay to override the playout
+  // delay of outgoing video frames.
+  const absl::optional<VideoPlayoutDelay> forced_playout_delay_;
 
   // Should never be held when calling out of this class.
-  rtc::CriticalSection crit_;
+  Mutex mutex_;
 
   const absl::optional<int> red_payload_type_;
   VideoFecGenerator* const fec_generator_;
+  absl::optional<VideoFecGenerator::FecType> fec_type_;
+  const size_t fec_overhead_bytes_;  // Per packet max FEC overhead.
 
-  rtc::CriticalSection stats_crit_;
+  mutable Mutex stats_mutex_;
   // Bitrate used for video payload and RTP headers.
-  RateStatistics video_bitrate_ RTC_GUARDED_BY(stats_crit_);
-  RateStatistics packetization_overhead_bitrate_ RTC_GUARDED_BY(stats_crit_);
+  RateStatistics video_bitrate_ RTC_GUARDED_BY(stats_mutex_);
+  RateStatistics packetization_overhead_bitrate_ RTC_GUARDED_BY(stats_mutex_);
 
   std::map<int, TemporalLayerStats> frame_stats_by_temporal_layer_
-      RTC_GUARDED_BY(stats_crit_);
+      RTC_GUARDED_BY(stats_mutex_);
 
   OneTimeEvent first_frame_sent_;
 
@@ -203,12 +220,15 @@ class RTPSenderVideo {
   // Set to true if the generic descriptor should be authenticated.
   const bool generic_descriptor_auth_experiment_;
 
-  const bool exclude_transport_sequence_number_from_fec_experiment_;
-
   AbsoluteCaptureTimeSender absolute_capture_time_sender_;
+  // Tracks updates to the active decode targets and decides when active decode
+  // targets bitmask should be attached to the dependency descriptor.
+  ActiveDecodeTargetsHelper active_decode_targets_tracker_;
 
   const rtc::scoped_refptr<RTPSenderVideoFrameTransformerDelegate>
       frame_transformer_delegate_;
+
+  const bool include_capture_clock_offset_;
 };
 
 }  // namespace webrtc

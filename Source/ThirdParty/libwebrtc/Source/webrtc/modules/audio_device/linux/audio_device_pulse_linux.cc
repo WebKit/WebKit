@@ -181,7 +181,7 @@ int32_t AudioDeviceLinuxPulse::Terminate() {
     return 0;
   }
   {
-    rtc::CritScope lock(&_critSect);
+    MutexLock lock(&mutex_);
     quit_ = true;
   }
   _mixerManager.Close();
@@ -872,7 +872,7 @@ int32_t AudioDeviceLinuxPulse::InitPlayout() {
 
   // Create a new play stream
   {
-    rtc::CritScope lock(&_critSect);
+    MutexLock lock(&mutex_);
     _playStream =
         LATE(pa_stream_new)(_paContext, "playStream", &playSampleSpec, NULL);
   }
@@ -945,7 +945,7 @@ int32_t AudioDeviceLinuxPulse::InitPlayout() {
 
   // Mark playout side as initialized
   {
-    rtc::CritScope lock(&_critSect);
+    MutexLock lock(&mutex_);
     _playIsInitialized = true;
     _sndCardPlayDelay = 0;
   }
@@ -1066,7 +1066,7 @@ int32_t AudioDeviceLinuxPulse::StartRecording() {
   _timeEventRec.Set();
   if (!_recStartEvent.Wait(10000)) {
     {
-      rtc::CritScope lock(&_critSect);
+      MutexLock lock(&mutex_);
       _startRec = false;
     }
     StopRecording();
@@ -1075,7 +1075,7 @@ int32_t AudioDeviceLinuxPulse::StartRecording() {
   }
 
   {
-    rtc::CritScope lock(&_critSect);
+    MutexLock lock(&mutex_);
     if (_recording) {
       // The recording state is set by the audio thread after recording
       // has started.
@@ -1090,7 +1090,7 @@ int32_t AudioDeviceLinuxPulse::StartRecording() {
 
 int32_t AudioDeviceLinuxPulse::StopRecording() {
   RTC_DCHECK(thread_checker_.IsCurrent());
-  rtc::CritScope lock(&_critSect);
+  MutexLock lock(&mutex_);
 
   if (!_recIsInitialized) {
     return 0;
@@ -1170,7 +1170,7 @@ int32_t AudioDeviceLinuxPulse::StartPlayout() {
 
   // Set state to ensure that playout starts from the audio thread.
   {
-    rtc::CritScope lock(&_critSect);
+    MutexLock lock(&mutex_);
     _startPlay = true;
   }
 
@@ -1181,7 +1181,7 @@ int32_t AudioDeviceLinuxPulse::StartPlayout() {
   _timeEventPlay.Set();
   if (!_playStartEvent.Wait(10000)) {
     {
-      rtc::CritScope lock(&_critSect);
+      MutexLock lock(&mutex_);
       _startPlay = false;
     }
     StopPlayout();
@@ -1190,7 +1190,7 @@ int32_t AudioDeviceLinuxPulse::StartPlayout() {
   }
 
   {
-    rtc::CritScope lock(&_critSect);
+    MutexLock lock(&mutex_);
     if (_playing) {
       // The playing state is set by the audio thread after playout
       // has started.
@@ -1205,7 +1205,7 @@ int32_t AudioDeviceLinuxPulse::StartPlayout() {
 
 int32_t AudioDeviceLinuxPulse::StopPlayout() {
   RTC_DCHECK(thread_checker_.IsCurrent());
-  rtc::CritScope lock(&_critSect);
+  MutexLock lock(&mutex_);
 
   if (!_playIsInitialized) {
     return 0;
@@ -1259,7 +1259,7 @@ int32_t AudioDeviceLinuxPulse::StopPlayout() {
 }
 
 int32_t AudioDeviceLinuxPulse::PlayoutDelay(uint16_t& delayMS) const {
-  rtc::CritScope lock(&_critSect);
+  MutexLock lock(&mutex_);
   delayMS = (uint16_t)_sndCardPlayDelay;
   return 0;
 }
@@ -1885,7 +1885,7 @@ int32_t AudioDeviceLinuxPulse::LatencyUsecs(pa_stream* stream) {
 
 int32_t AudioDeviceLinuxPulse::ReadRecordedData(const void* bufferData,
                                                 size_t bufferSize)
-    RTC_EXCLUSIVE_LOCKS_REQUIRED(_critSect) {
+    RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_) {
   size_t size = bufferSize;
   uint32_t numRecSamples = _recordBufferSize / (2 * _recChannels);
 
@@ -1953,7 +1953,7 @@ int32_t AudioDeviceLinuxPulse::ReadRecordedData(const void* bufferData,
 int32_t AudioDeviceLinuxPulse::ProcessRecordedData(int8_t* bufferData,
                                                    uint32_t bufferSizeInSamples,
                                                    uint32_t recDelay)
-    RTC_EXCLUSIVE_LOCKS_REQUIRED(_critSect) {
+    RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_) {
   _ptrAudioBuffer->SetRecordedBuffer(bufferData, bufferSizeInSamples);
 
   // TODO(andrew): this is a temporary hack, to avoid non-causal far- and
@@ -1998,7 +1998,7 @@ bool AudioDeviceLinuxPulse::PlayThreadProcess() {
     return true;
   }
 
-  rtc::CritScope lock(&_critSect);
+  MutexLock lock(&mutex_);
 
   if (quit_) {
     return false;
@@ -2170,7 +2170,7 @@ bool AudioDeviceLinuxPulse::RecThreadProcess() {
     return true;
   }
 
-  rtc::CritScope lock(&_critSect);
+  MutexLock lock(&mutex_);
   if (quit_) {
     return false;
   }

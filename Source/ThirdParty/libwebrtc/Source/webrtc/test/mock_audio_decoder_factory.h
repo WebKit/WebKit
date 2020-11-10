@@ -24,19 +24,23 @@ namespace webrtc {
 
 class MockAudioDecoderFactory : public AudioDecoderFactory {
  public:
-  MOCK_METHOD0(GetSupportedDecoders, std::vector<AudioCodecSpec>());
-  MOCK_METHOD1(IsSupportedDecoder, bool(const SdpAudioFormat&));
+  MOCK_METHOD(std::vector<AudioCodecSpec>,
+              GetSupportedDecoders,
+              (),
+              (override));
+  MOCK_METHOD(bool, IsSupportedDecoder, (const SdpAudioFormat&), (override));
   std::unique_ptr<AudioDecoder> MakeAudioDecoder(
       const SdpAudioFormat& format,
-      absl::optional<AudioCodecPairId> codec_pair_id) {
+      absl::optional<AudioCodecPairId> codec_pair_id) override {
     std::unique_ptr<AudioDecoder> return_value;
     MakeAudioDecoderMock(format, codec_pair_id, &return_value);
     return return_value;
   }
-  MOCK_METHOD3(MakeAudioDecoderMock,
-               void(const SdpAudioFormat& format,
-                    absl::optional<AudioCodecPairId> codec_pair_id,
-                    std::unique_ptr<AudioDecoder>* return_value));
+  MOCK_METHOD(void,
+              MakeAudioDecoderMock,
+              (const SdpAudioFormat& format,
+               absl::optional<AudioCodecPairId> codec_pair_id,
+               std::unique_ptr<AudioDecoder>*));
 
   // Creates a MockAudioDecoderFactory with no formats and that may not be
   // invoked to create a codec - useful for initializing a voice engine, for

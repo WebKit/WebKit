@@ -20,8 +20,8 @@
 #include "api/video/video_frame.h"
 #include "api/video_codecs/video_decoder.h"
 #include "modules/video_coding/utility/ivf_file_reader.h"
-#include "rtc_base/critical_section.h"
 #include "rtc_base/event.h"
+#include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/synchronization/sequence_checker.h"
 
 namespace webrtc {
@@ -71,11 +71,11 @@ class IvfVideoFrameGenerator : public FrameGeneratorInterface {
   // FrameGenerator is injected into PeerConnection via some scoped_ref object
   // and it can happen that the last pointer will be destroyed on the different
   // thread comparing to the one from which frames were read.
-  rtc::CriticalSection lock_;
+  Mutex lock_;
   // This lock is used to sync between sending and receiving frame from decoder.
   // We can't reuse |lock_| because then generator can be destroyed between
   // frame was sent to decoder and decoder callback was invoked.
-  rtc::CriticalSection frame_decode_lock_;
+  Mutex frame_decode_lock_;
 
   rtc::Event next_frame_decoded_;
   absl::optional<VideoFrame> next_frame_ RTC_GUARDED_BY(frame_decode_lock_);

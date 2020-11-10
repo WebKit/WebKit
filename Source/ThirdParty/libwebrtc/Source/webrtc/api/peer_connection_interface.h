@@ -73,6 +73,7 @@
 #include <string>
 #include <vector>
 
+#include "api/adaptation/resource.h"
 #include "api/async_resolver_factory.h"
 #include "api/audio/audio_mixer.h"
 #include "api/audio_codecs/audio_decoder_factory.h"
@@ -96,14 +97,15 @@
 #include "api/rtp_sender_interface.h"
 #include "api/rtp_transceiver_interface.h"
 #include "api/sctp_transport_interface.h"
+#include "api/set_local_description_observer_interface.h"
 #include "api/set_remote_description_observer_interface.h"
 #include "api/stats/rtc_stats_collector_callback.h"
 #include "api/stats_types.h"
 #include "api/task_queue/task_queue_factory.h"
 #include "api/transport/bitrate_settings.h"
 #include "api/transport/enums.h"
-#include "api/transport/media/media_transport_interface.h"
 #include "api/transport/network_control.h"
+#include "api/transport/sctp_transport_factory_interface.h"
 #include "api/transport/webrtc_key_value_config.h"
 #include "api/turn_customizer.h"
 #include "media/base/media_config.h"
@@ -112,7 +114,7 @@
 // inject a PacketSocketFactory and/or NetworkManager, and not expose
 // PortAllocator in the PeerConnection api.
 #include "p2p/base/port_allocator.h"  // nogncheck
-#include "rtc_base/network.h"
+#include "rtc_base/network_monitor_factory.h"
 #include "rtc_base/rtc_certificate.h"
 #include "rtc_base/rtc_certificate_generator.h"
 #include "rtc_base/socket_address.h"
@@ -613,34 +615,6 @@ class RTC_EXPORT PeerConnectionInterface : public rtc::RefCountInterface {
     // correctly. This flag will be deprecated soon. Do not rely on it.
     bool active_reset_srtp_params = false;
 
-    // DEPRECATED.  Do not use.  This option is ignored by peer connection.
-    // TODO(webrtc:9719):  Delete this option.
-    bool use_media_transport = false;
-
-    // DEPRECATED.  Do not use.  This option is ignored by peer connection.
-    // TODO(webrtc:9719):  Delete this option.
-    bool use_media_transport_for_data_channels = false;
-
-    // If MediaTransportFactory is provided in PeerConnectionFactory, this flag
-    // informs PeerConnection that it should use the DatagramTransportInterface
-    // for packets instead DTLS. It's invalid to set it to |true| if the
-    // MediaTransportFactory wasn't provided.
-    absl::optional<bool> use_datagram_transport;
-
-    // If MediaTransportFactory is provided in PeerConnectionFactory, this flag
-    // informs PeerConnection that it should use the DatagramTransport's
-    // implementation of DataChannelTransportInterface for data channels instead
-    // of SCTP-DTLS.
-    absl::optional<bool> use_datagram_transport_for_data_channels;
-
-    // If true, this PeerConnection will only use datagram transport for data
-    // channels when receiving an incoming offer that includes datagram
-    // transport parameters.  It will not request use of a datagram transport
-    // when it creates the initial, outgoing offer.
-    // This setting only applies when |use_datagram_transport_for_data_channels|
-    // is true.
-    absl::optional<bool> use_datagram_transport_for_data_channels_receive_only;
-
     // Defines advanced optional cryptographic settings related to SRTP and
     // frame encryption for native WebRTC. Setting this will overwrite any
     // settings set in PeerConnectionFactory (which is deprecated).
@@ -936,6 +910,10 @@ class RTC_EXPORT PeerConnectionInterface : public rtc::RefCountInterface {
       const std::string& label,
       const DataChannelInit* config) = 0;
 
+  // NOTE: For the following 6 methods, it's only safe to dereference the
+  // SessionDescriptionInterface on signaling_thread() (for example, calling
+  // ToString).
+
   // Returns the more recently applied description; "pending" if it exists, and
   // otherwise "current". See below.
   virtual const SessionDescriptionInterface* local_description() const = 0;
@@ -975,26 +953,66 @@ class RTC_EXPORT PeerConnectionInterface : public rtc::RefCountInterface {
                             const RTCOfferAnswerOptions& options) = 0;
 
   // Sets the local session description.
-  // The PeerConnection takes the ownership of |desc| even if it fails.
-  // The |observer| callback will be called when done.
-  // TODO(deadbeef): Change |desc| to be a unique_ptr, to make it clear
-  // that this method always takes ownership of it.
+  //
+  // According to spec, the local session description MUST be the same as was
+  // returned by CreateOffer() or CreateAnswer() or else the operation should
+  // fail. Our implementation however allows some amount of "SDP munging", but
+  // please note that this is HIGHLY DISCOURAGED. If you do not intent to munge
+  // SDP, the method below that doesn't take |desc| as an argument will create
+  // the offer or answer for you.
+  //
+  // The observer is invoked as soon as the operation completes, which could be
+  // before or after the SetLocalDescription() method has exited.
+  virtual void SetLocalDescription(
+      std::unique_ptr<SessionDescriptionInterface> desc,
+      rtc::scoped_refptr<SetLocalDescriptionObserverInterface> observer) {}
+  // Creates an offer or answer (depending on current signaling state) and sets
+  // it as the local session description.
+  //
+  // The observer is invoked as soon as the operation completes, which could be
+  // before or after the SetLocalDescription() method has exited.
+  virtual void SetLocalDescription(
+      rtc::scoped_refptr<SetLocalDescriptionObserverInterface> observer) {}
+  // Like SetLocalDescription() above, but the observer is invoked with a delay
+  // after the operation completes. This helps avoid recursive calls by the
+  // observer but also makes it possible for states to change in-between the
+  // operation completing and the observer getting called. This makes them racy
+  // for synchronizing peer connection states to the application.
+  // TODO(https://crbug.com/webrtc/11798): Delete these methods in favor of the
+  // ones taking SetLocalDescriptionObserverInterface as argument.
   virtual void SetLocalDescription(SetSessionDescriptionObserver* observer,
                                    SessionDescriptionInterface* desc) = 0;
-  // Implicitly creates an offer or answer (depending on the current signaling
-  // state) and performs SetLocalDescription() with the newly generated session
-  // description.
-  // TODO(hbos): Make pure virtual when implemented by downstream projects.
   virtual void SetLocalDescription(SetSessionDescriptionObserver* observer) {}
+
   // Sets the remote session description.
-  // The PeerConnection takes the ownership of |desc| even if it fails.
-  // The |observer| callback will be called when done.
-  // TODO(hbos): Remove when Chrome implements the new signature.
-  virtual void SetRemoteDescription(SetSessionDescriptionObserver* observer,
-                                    SessionDescriptionInterface* desc) {}
+  //
+  // (Unlike "SDP munging" before SetLocalDescription(), modifying a remote
+  // offer or answer is allowed by the spec.)
+  //
+  // The observer is invoked as soon as the operation completes, which could be
+  // before or after the SetRemoteDescription() method has exited.
   virtual void SetRemoteDescription(
       std::unique_ptr<SessionDescriptionInterface> desc,
       rtc::scoped_refptr<SetRemoteDescriptionObserverInterface> observer) = 0;
+  // Like SetRemoteDescription() above, but the observer is invoked with a delay
+  // after the operation completes. This helps avoid recursive calls by the
+  // observer but also makes it possible for states to change in-between the
+  // operation completing and the observer getting called. This makes them racy
+  // for synchronizing peer connection states to the application.
+  // TODO(https://crbug.com/webrtc/11798): Delete this method in favor of the
+  // ones taking SetRemoteDescriptionObserverInterface as argument.
+  virtual void SetRemoteDescription(SetSessionDescriptionObserver* observer,
+                                    SessionDescriptionInterface* desc) {}
+
+  // According to spec, we must only fire "negotiationneeded" if the Operations
+  // Chain is empty. This method takes care of validating an event previously
+  // generated with PeerConnectionObserver::OnNegotiationNeededEvent() to make
+  // sure that even if there was a delay (e.g. due to a PostTask) between the
+  // event being generated and the time of firing, the Operations Chain is empty
+  // and the event is still valid to be fired.
+  virtual bool ShouldFireNegotiationNeededEvent(uint32_t event_id) {
+    return true;
+  }
 
   virtual PeerConnectionInterface::RTCConfiguration GetConfiguration() = 0;
 
@@ -1043,28 +1061,13 @@ class RTC_EXPORT PeerConnectionInterface : public rtc::RefCountInterface {
   virtual bool RemoveIceCandidates(
       const std::vector<cricket::Candidate>& candidates) = 0;
 
-  // 0 <= min <= current <= max should hold for set parameters.
-  struct BitrateParameters {
-    BitrateParameters();
-    ~BitrateParameters();
-
-    absl::optional<int> min_bitrate_bps;
-    absl::optional<int> current_bitrate_bps;
-    absl::optional<int> max_bitrate_bps;
-  };
-
   // SetBitrate limits the bandwidth allocated for all RTP streams sent by
   // this PeerConnection. Other limitations might affect these limits and
   // are respected (for example "b=AS" in SDP).
   //
   // Setting |current_bitrate_bps| will reset the current bitrate estimate
   // to the provided value.
-  virtual RTCError SetBitrate(const BitrateSettings& bitrate);
-
-  // TODO(nisse): Deprecated - use version above. These two default
-  // implementations require subclasses to implement one or the other
-  // of the methods.
-  virtual RTCError SetBitrate(const BitrateParameters& bitrate_parameters);
+  virtual RTCError SetBitrate(const BitrateSettings& bitrate) = 0;
 
   // Enable/disable playout of received audio streams. Enabled by default. Note
   // that even if playout is enabled, streams will only be played out if the
@@ -1116,6 +1119,14 @@ class RTC_EXPORT PeerConnectionInterface : public rtc::RefCountInterface {
     return absl::nullopt;
   }
 
+  // When a resource is overused, the PeerConnection will try to reduce the load
+  // on the sysem, for example by reducing the resolution or frame rate of
+  // encoded streams. The Resource API allows injecting platform-specific usage
+  // measurements. The conditions to trigger kOveruse or kUnderuse are up to the
+  // implementation.
+  // TODO(hbos): Make pure virtual when implemented by downstream projects.
+  virtual void AddAdaptationResource(rtc::scoped_refptr<Resource> resource) {}
+
   // Start RtcEventLog using an existing output-sink. Takes ownership of
   // |output| and passes it on to Call, which will take the ownership. If the
   // operation fails the output will be closed and deallocated. The event log
@@ -1139,6 +1150,14 @@ class RTC_EXPORT PeerConnectionInterface : public rtc::RefCountInterface {
   // use the PeerConnectionObserver interface passed in on construction, and
   // thus the observer object can be safely destroyed.
   virtual void Close() = 0;
+
+  // The thread on which all PeerConnectionObserver callbacks will be invoked,
+  // as well as callbacks for other classes such as DataChannelObserver.
+  //
+  // Also the only thread on which it's safe to use SessionDescriptionInterface
+  // pointers.
+  // TODO(deadbeef): Make pure virtual when all subclasses implement it.
+  virtual rtc::Thread* signaling_thread() const { return nullptr; }
 
  protected:
   // Dtor protected as objects shouldn't be deleted via this interface.
@@ -1168,7 +1187,17 @@ class PeerConnectionObserver {
 
   // Triggered when renegotiation is needed. For example, an ICE restart
   // has begun.
-  virtual void OnRenegotiationNeeded() = 0;
+  // TODO(hbos): Delete in favor of OnNegotiationNeededEvent() when downstream
+  // projects have migrated.
+  virtual void OnRenegotiationNeeded() {}
+  // Used to fire spec-compliant onnegotiationneeded events, which should only
+  // fire when the Operations Chain is empty. The observer is responsible for
+  // queuing a task (e.g. Chromium: jump to main thread) to maybe fire the
+  // event. The event identified using |event_id| must only fire if
+  // PeerConnection::ShouldFireNegotiationNeededEvent() returns true since it is
+  // possible for the event to become invalidated by operations subsequently
+  // chained.
+  virtual void OnNegotiationNeededEvent(uint32_t event_id) {}
 
   // Called any time the legacy IceConnectionState changes.
   //
@@ -1330,8 +1359,12 @@ struct RTC_EXPORT PeerConnectionFactoryDependencies final {
   std::unique_ptr<NetworkStatePredictorFactoryInterface>
       network_state_predictor_factory;
   std::unique_ptr<NetworkControllerFactoryInterface> network_controller_factory;
-  std::unique_ptr<MediaTransportFactory> media_transport_factory;
+  // This will only be used if CreatePeerConnection is called without a
+  // |port_allocator|, causing the default allocator and network manager to be
+  // used.
+  std::unique_ptr<rtc::NetworkMonitorFactory> network_monitor_factory;
   std::unique_ptr<NetEqFactory> neteq_factory;
+  std::unique_ptr<SctpTransportFactoryInterface> sctp_factory;
   std::unique_ptr<WebRtcKeyValueConfig> trials;
 };
 

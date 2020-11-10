@@ -29,14 +29,17 @@ class MockAsyncResolver : public AsyncResolverInterface {
   }
   ~MockAsyncResolver() = default;
 
-  MOCK_METHOD1(Start, void(const rtc::SocketAddress&));
-  MOCK_CONST_METHOD2(GetResolvedAddress, bool(int family, SocketAddress* addr));
-  MOCK_CONST_METHOD0(GetError, int());
+  MOCK_METHOD(void, Start, (const rtc::SocketAddress&), (override));
+  MOCK_METHOD(bool,
+              GetResolvedAddress,
+              (int family, SocketAddress* addr),
+              (const, override));
+  MOCK_METHOD(int, GetError, (), (const, override));
 
   // Note that this won't delete the object like AsyncResolverInterface says in
   // order to avoid sanitizer failures caused by this being a synchronous
   // implementation. The test code should delete the object instead.
-  MOCK_METHOD1(Destroy, void(bool));
+  MOCK_METHOD(void, Destroy, (bool), (override));
 };
 
 }  // namespace rtc
@@ -45,7 +48,7 @@ namespace webrtc {
 
 class MockAsyncResolverFactory : public AsyncResolverFactory {
  public:
-  MOCK_METHOD0(Create, rtc::AsyncResolverInterface*());
+  MOCK_METHOD(rtc::AsyncResolverInterface*, Create, (), (override));
 };
 
 }  // namespace webrtc

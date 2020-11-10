@@ -1,8 +1,10 @@
 syntax = "proto2";
+
+package webrtc.audio_network_adaptor.config;
+
 option optimize_for = LITE_RUNTIME;
 option java_package = "org.webrtc.AudioNetworkAdaptor";
 option java_outer_classname = "Config";
-package webrtc.audio_network_adaptor.config;
 
 message FecController {
   message Threshold {
@@ -116,6 +118,19 @@ message FrameLengthController {
   optional int32 fl_60ms_to_40ms_bandwidth_bps = 12;
 }
 
+message FrameLengthControllerV2 {
+  // FrameLengthControllerV2 chooses the frame length by taking the target
+  // bitrate and subtracting the overhead bitrate to obtain the remaining
+  // bitrate for the payload. The chosen frame length is the shortest possible
+  // where the payload bitrate is more than |min_payload_bitrate_bps|.
+  optional int32 min_payload_bitrate_bps = 1;
+
+  // If true, uses the stable target bitrate to decide the frame length. This
+  // will result in less frame length toggling but spending more time at longer
+  // frame lengths compared to using the normal target bitrate.
+  optional bool use_slow_adaptation = 2;
+}
+
 message ChannelController {
   // Uplink bandwidth above which the number of encoded channels should switch
   // from 1 to 2.
@@ -164,6 +179,7 @@ message Controller {
     DtxController dtx_controller = 24;
     BitrateController bitrate_controller = 25;
     FecControllerRplrBased fec_controller_rplr_based = 26;
+    FrameLengthControllerV2 frame_length_controller_v2 = 27;
   }
 }
 
@@ -177,4 +193,3 @@ message ControllerManager {
   // made.
   optional float min_reordering_squared_distance = 3;
 }
-

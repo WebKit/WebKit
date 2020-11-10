@@ -19,6 +19,7 @@
 #include "rtc_base/logging.h"
 #include "rtc_base/platform_thread.h"
 #include "system_wrappers/include/field_trial.h"
+#include "system_wrappers/include/metrics.h"
 
 namespace webrtc {
 
@@ -27,13 +28,15 @@ AudioTrackJni::JavaAudioTrack::JavaAudioTrack(
     NativeRegistration* native_reg,
     std::unique_ptr<GlobalRef> audio_track)
     : audio_track_(std::move(audio_track)),
-      init_playout_(native_reg->GetMethodId("initPlayout", "(IID)Z")),
+      init_playout_(native_reg->GetMethodId("initPlayout", "(IID)I")),
       start_playout_(native_reg->GetMethodId("startPlayout", "()Z")),
       stop_playout_(native_reg->GetMethodId("stopPlayout", "()Z")),
       set_stream_volume_(native_reg->GetMethodId("setStreamVolume", "(I)Z")),
       get_stream_max_volume_(
           native_reg->GetMethodId("getStreamMaxVolume", "()I")),
-      get_stream_volume_(native_reg->GetMethodId("getStreamVolume", "()I")) {}
+      get_stream_volume_(native_reg->GetMethodId("getStreamVolume", "()I")),
+      get_buffer_size_in_frames_(
+          native_reg->GetMethodId("getBufferSizeInFrames", "()I")) {}
 
 AudioTrackJni::JavaAudioTrack::~JavaAudioTrack() {}
 
@@ -45,8 +48,29 @@ bool AudioTrackJni::JavaAudioTrack::InitPlayout(int sample_rate, int channels) {
              nullptr);
   if (buffer_size_factor == 0)
     buffer_size_factor = 1.0;
-  return audio_track_->CallBooleanMethod(init_playout_, sample_rate, channels,
-                                         buffer_size_factor);
+  int requested_buffer_size_bytes = audio_track_->CallIntMethod(
+      init_playout_, sample_rate, channels, buffer_size_factor);
+  // Update UMA histograms for both the requested and actual buffer size.
+  if (requested_buffer_size_bytes >= 0) {
+    // To avoid division by zero, we assume the sample rate is 48k if an invalid
+    // value is found.
+    sample_rate = sample_rate <= 0 ? 48000 : sample_rate;
+    // This calculation assumes that audio is mono.
+    const int requested_buffer_size_ms =
+        (requested_buffer_size_bytes * 1000) / (2 * sample_rate);
+    RTC_HISTOGRAM_COUNTS("WebRTC.Audio.AndroidNativeRequestedAudioBufferSizeMs",
+                         requested_buffer_size_ms, 0, 1000, 100);
+    int actual_buffer_size_frames =
+        audio_track_->CallIntMethod(get_buffer_size_in_frames_);
+    if (actual_buffer_size_frames >= 0) {
+      const int actual_buffer_size_ms =
+          actual_buffer_size_frames * 1000 / sample_rate;
+      RTC_HISTOGRAM_COUNTS("WebRTC.Audio.AndroidNativeAudioBufferSizeMs",
+                           actual_buffer_size_ms, 0, 1000, 100);
+    }
+    return true;
+  }
+  return false;
 }
 
 bool AudioTrackJni::JavaAudioTrack::StartPlayout() {

@@ -41,20 +41,22 @@ void CaptureStreamInfo::AddOutput(const AudioFrameView<const float>& src) {
   }
 }
 
-void CaptureStreamInfo::AddInput(const AudioFrame& frame) {
+void CaptureStreamInfo::AddInput(const int16_t* const data,
+                                 int num_channels,
+                                 int samples_per_channel) {
   RTC_DCHECK(task_);
   auto* stream = task_->GetEvent()->mutable_stream();
-  const size_t data_size =
-      sizeof(int16_t) * frame.samples_per_channel_ * frame.num_channels_;
-  stream->set_input_data(frame.data(), data_size);
+  const size_t data_size = sizeof(int16_t) * samples_per_channel * num_channels;
+  stream->set_input_data(data, data_size);
 }
 
-void CaptureStreamInfo::AddOutput(const AudioFrame& frame) {
+void CaptureStreamInfo::AddOutput(const int16_t* const data,
+                                  int num_channels,
+                                  int samples_per_channel) {
   RTC_DCHECK(task_);
   auto* stream = task_->GetEvent()->mutable_stream();
-  const size_t data_size =
-      sizeof(int16_t) * frame.samples_per_channel_ * frame.num_channels_;
-  stream->set_output_data(frame.data(), data_size);
+  const size_t data_size = sizeof(int16_t) * samples_per_channel * num_channels;
+  stream->set_output_data(data, data_size);
 }
 
 void CaptureStreamInfo::AddAudioProcessingState(

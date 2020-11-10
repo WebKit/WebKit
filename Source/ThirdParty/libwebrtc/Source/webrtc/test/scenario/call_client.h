@@ -113,6 +113,11 @@ class CallClient : public EmulatedNetworkReceiverInterface {
   void OnPacketReceived(EmulatedIpPacket packet) override;
   std::unique_ptr<RtcEventLogOutput> GetLogWriter(std::string name);
 
+  // Exposed publicly so that tests can execute tasks such as querying stats
+  // for media streams in the expected runtime environment (essentially what
+  // CallClient does internally for GetStats()).
+  void SendTask(std::function<void()> task);
+
  private:
   friend class Scenario;
   friend class CallClientPair;
@@ -129,7 +134,6 @@ class CallClient : public EmulatedNetworkReceiverInterface {
   uint32_t GetNextAudioLocalSsrc();
   uint32_t GetNextRtxSsrc();
   void AddExtensions(std::vector<RtpExtension> extensions);
-  void SendTask(std::function<void()> task);
   int16_t Bind(EmulatedEndpoint* endpoint);
   void UnBind();
 
@@ -152,6 +156,8 @@ class CallClient : public EmulatedNetworkReceiverInterface {
   std::map<uint32_t, MediaType> ssrc_media_types_;
   // Defined last so it's destroyed first.
   TaskQueueForTest task_queue_;
+
+  rtc::scoped_refptr<SharedModuleThread> module_thread_;
 
   const FieldTrialBasedConfig field_trials_;
 };

@@ -19,46 +19,45 @@ namespace webrtc {
 class MockNetEqController : public NetEqController {
  public:
   MockNetEqController() = default;
-  virtual ~MockNetEqController() { Die(); }
-  MOCK_METHOD0(Die, void());
-  MOCK_METHOD0(Reset, void());
-  MOCK_METHOD0(SoftReset, void());
-  MOCK_METHOD2(GetDecision,
-               NetEq::Operation(const NetEqStatus& neteq_status,
-                                bool* reset_decoder));
-  MOCK_METHOD6(Update,
-               void(uint16_t sequence_number,
-                    uint32_t timestamp,
-                    uint32_t last_played_out_timestamp,
-                    bool new_codec,
-                    bool cng_or_dtmf,
-                    size_t packet_length_samples));
-  MOCK_METHOD0(RegisterEmptyPacket, void());
-  MOCK_METHOD2(SetSampleRate, void(int fs_hz, size_t output_size_samples));
-  MOCK_METHOD1(SetMaximumDelay, bool(int delay_ms));
-  MOCK_METHOD1(SetMinimumDelay, bool(int delay_ms));
-  MOCK_METHOD1(SetBaseMinimumDelay, bool(int delay_ms));
-  MOCK_CONST_METHOD0(GetBaseMinimumDelay, int());
-  MOCK_CONST_METHOD0(CngRfc3389On, bool());
-  MOCK_CONST_METHOD0(CngOff, bool());
-  MOCK_METHOD0(SetCngOff, void());
-  MOCK_METHOD1(ExpandDecision, void(NetEq::Operation operation));
-  MOCK_METHOD1(AddSampleMemory, void(int32_t value));
-  MOCK_METHOD0(TargetLevelMs, int());
-  MOCK_METHOD6(PacketArrived,
-               absl::optional<int>(bool last_cng_or_dtmf,
-                                   size_t packet_length_samples,
-                                   bool should_update_stats,
-                                   uint16_t main_sequence_number,
-                                   uint32_t main_timestamp,
-                                   int fs_hz));
-  MOCK_CONST_METHOD0(PeakFound, bool());
-  MOCK_CONST_METHOD0(GetFilteredBufferLevel, int());
-  MOCK_METHOD1(set_sample_memory, void(int32_t value));
-  MOCK_CONST_METHOD0(noise_fast_forward, size_t());
-  MOCK_CONST_METHOD0(packet_length_samples, size_t());
-  MOCK_METHOD1(set_packet_length_samples, void(size_t value));
-  MOCK_METHOD1(set_prev_time_scale, void(bool value));
+  ~MockNetEqController() override { Die(); }
+  MOCK_METHOD(void, Die, ());
+  MOCK_METHOD(void, Reset, (), (override));
+  MOCK_METHOD(void, SoftReset, (), (override));
+  MOCK_METHOD(NetEq::Operation,
+              GetDecision,
+              (const NetEqStatus& neteq_status, bool* reset_decoder),
+              (override));
+  MOCK_METHOD(void, RegisterEmptyPacket, (), (override));
+  MOCK_METHOD(void,
+              SetSampleRate,
+              (int fs_hz, size_t output_size_samples),
+              (override));
+  MOCK_METHOD(bool, SetMaximumDelay, (int delay_ms), (override));
+  MOCK_METHOD(bool, SetMinimumDelay, (int delay_ms), (override));
+  MOCK_METHOD(bool, SetBaseMinimumDelay, (int delay_ms), (override));
+  MOCK_METHOD(int, GetBaseMinimumDelay, (), (const, override));
+  MOCK_METHOD(bool, CngRfc3389On, (), (const, override));
+  MOCK_METHOD(bool, CngOff, (), (const, override));
+  MOCK_METHOD(void, SetCngOff, (), (override));
+  MOCK_METHOD(void, ExpandDecision, (NetEq::Operation operation), (override));
+  MOCK_METHOD(void, AddSampleMemory, (int32_t value), (override));
+  MOCK_METHOD(int, TargetLevelMs, (), (const, override));
+  MOCK_METHOD(absl::optional<int>,
+              PacketArrived,
+              (bool last_cng_or_dtmf,
+               size_t packet_length_samples,
+               bool should_update_stats,
+               uint16_t main_sequence_number,
+               uint32_t main_timestamp,
+               int fs_hz),
+              (override));
+  MOCK_METHOD(bool, PeakFound, (), (const, override));
+  MOCK_METHOD(int, GetFilteredBufferLevel, (), (const, override));
+  MOCK_METHOD(void, set_sample_memory, (int32_t value), (override));
+  MOCK_METHOD(size_t, noise_fast_forward, (), (const, override));
+  MOCK_METHOD(size_t, packet_length_samples, (), (const, override));
+  MOCK_METHOD(void, set_packet_length_samples, (size_t value), (override));
+  MOCK_METHOD(void, set_prev_time_scale, (bool value), (override));
 };
 
 }  // namespace webrtc

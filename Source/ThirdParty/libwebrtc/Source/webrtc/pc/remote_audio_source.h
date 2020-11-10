@@ -18,8 +18,8 @@
 #include "api/call/audio_sink.h"
 #include "api/notifier.h"
 #include "pc/channel.h"
-#include "rtc_base/critical_section.h"
 #include "rtc_base/message_handler.h"
+#include "rtc_base/synchronization/mutex.h"
 
 namespace rtc {
 struct Message;
@@ -69,7 +69,7 @@ class RemoteAudioSource : public Notifier<AudioSourceInterface>,
   rtc::Thread* const main_thread_;
   rtc::Thread* const worker_thread_;
   std::list<AudioObserver*> audio_observers_;
-  rtc::CriticalSection sink_lock_;
+  Mutex sink_lock_;
   std::list<AudioTrackSinkInterface*> sinks_;
   SourceState state_;
 };

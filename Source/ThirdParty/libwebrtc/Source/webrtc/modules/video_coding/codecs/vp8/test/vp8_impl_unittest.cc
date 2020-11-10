@@ -94,10 +94,6 @@ class TestVp8Impl : public VideoCodecUnitTest {
               encoder_->Encode(input_frame, &frame_types));
     ASSERT_TRUE(WaitForEncodedFrame(encoded_frame, codec_specific_info));
     VerifyQpParser(*encoded_frame);
-    VideoEncoder::EncoderInfo encoder_info = encoder_->GetEncoderInfo();
-    EXPECT_EQ("libvpx", encoder_info.implementation_name);
-    EXPECT_EQ(false, encoder_info.is_hardware_accelerated);
-    EXPECT_EQ(false, encoder_info.has_internal_source);
     EXPECT_EQ(kVideoCodecVP8, codec_specific_info->codecType);
     EXPECT_EQ(0, encoded_frame->SpatialIndex());
   }
@@ -124,7 +120,8 @@ TEST_F(TestVp8Impl, ErrorResilienceDisabledForNoTemporalLayers) {
   codec_settings_.simulcastStream[0].numberOfTemporalLayers = 1;
 
   auto* const vpx = new NiceMock<MockLibvpxVp8Interface>();
-  LibvpxVp8Encoder encoder((std::unique_ptr<LibvpxInterface>(vpx)));
+  LibvpxVp8Encoder encoder((std::unique_ptr<LibvpxInterface>(vpx)),
+                           VP8Encoder::Settings());
   EXPECT_CALL(*vpx,
               codec_enc_init(
                   _, _, Field(&vpx_codec_enc_cfg_t::g_error_resilient, 0), _));
@@ -137,7 +134,8 @@ TEST_F(TestVp8Impl, DefaultErrorResilienceEnabledForTemporalLayers) {
   codec_settings_.VP8()->numberOfTemporalLayers = 2;
 
   auto* const vpx = new NiceMock<MockLibvpxVp8Interface>();
-  LibvpxVp8Encoder encoder((std::unique_ptr<LibvpxInterface>(vpx)));
+  LibvpxVp8Encoder encoder((std::unique_ptr<LibvpxInterface>(vpx)),
+                           VP8Encoder::Settings());
   EXPECT_CALL(*vpx,
               codec_enc_init(_, _,
                              Field(&vpx_codec_enc_cfg_t::g_error_resilient,
@@ -155,7 +153,8 @@ TEST_F(TestVp8Impl,
   codec_settings_.VP8()->numberOfTemporalLayers = 2;
 
   auto* const vpx = new NiceMock<MockLibvpxVp8Interface>();
-  LibvpxVp8Encoder encoder((std::unique_ptr<LibvpxInterface>(vpx)));
+  LibvpxVp8Encoder encoder((std::unique_ptr<LibvpxInterface>(vpx)),
+                           VP8Encoder::Settings());
   EXPECT_CALL(*vpx,
               codec_enc_init(_, _,
                              Field(&vpx_codec_enc_cfg_t::g_error_resilient,
@@ -167,7 +166,8 @@ TEST_F(TestVp8Impl,
 
 TEST_F(TestVp8Impl, SetRates) {
   auto* const vpx = new NiceMock<MockLibvpxVp8Interface>();
-  LibvpxVp8Encoder encoder((std::unique_ptr<LibvpxInterface>(vpx)));
+  LibvpxVp8Encoder encoder((std::unique_ptr<LibvpxInterface>(vpx)),
+                           VP8Encoder::Settings());
   EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK,
             encoder.InitEncode(&codec_settings_,
                                VideoEncoder::Settings(kCapabilities, 1, 1000)));
@@ -194,7 +194,8 @@ TEST_F(TestVp8Impl, DynamicSetRates) {
   test::ScopedFieldTrials field_trials(
       "WebRTC-VideoRateControl/vp8_dynamic_rate:true/");
   auto* const vpx = new NiceMock<MockLibvpxVp8Interface>();
-  LibvpxVp8Encoder encoder((std::unique_ptr<LibvpxInterface>(vpx)));
+  LibvpxVp8Encoder encoder((std::unique_ptr<LibvpxInterface>(vpx)),
+                           VP8Encoder::Settings());
   EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK,
             encoder.InitEncode(&codec_settings_,
                                VideoEncoder::Settings(kCapabilities, 1, 1000)));
@@ -514,13 +515,15 @@ TEST_F(TestVp8Impl, DontDropKeyframes) {
 
 TEST_F(TestVp8Impl, KeepsTimestampOnReencode) {
   auto* const vpx = new NiceMock<MockLibvpxVp8Interface>();
-  LibvpxVp8Encoder encoder((std::unique_ptr<LibvpxInterface>(vpx)));
+  LibvpxVp8Encoder encoder((std::unique_ptr<LibvpxInterface>(vpx)),
+                           VP8Encoder::Settings());
 
   // Settings needed to trigger ScreenshareLayers usage, which is required for
   // overshoot-drop-reencode logic.
   codec_settings_.maxBitrate = 1000;
   codec_settings_.mode = VideoCodecMode::kScreensharing;
   codec_settings_.VP8()->numberOfTemporalLayers = 2;
+  codec_settings_.legacy_conference_mode = true;
 
   EXPECT_CALL(*vpx, img_wrap(_, _, _, _, _, _))
       .WillOnce(Invoke([](vpx_image_t* img, vpx_img_fmt_t fmt, unsigned int d_w,
@@ -548,6 +551,64 @@ TEST_F(TestVp8Impl, KeepsTimestampOnReencode) {
   auto delta_frame =
       std::vector<VideoFrameType>{VideoFrameType::kVideoFrameDelta};
   encoder.Encode(NextInputFrame(), &delta_frame);
+}
+
+TEST(LibvpxVp8EncoderTest, GetEncoderInfoReturnsStaticInformation) {
+  auto* const vpx = new NiceMock<MockLibvpxVp8Interface>();
+  LibvpxVp8Encoder encoder((std::unique_ptr<LibvpxInterface>(vpx)),
+                           VP8Encoder::Settings());
+
+  const auto info = encoder.GetEncoderInfo();
+
+  EXPECT_FALSE(info.supports_native_handle);
+  EXPECT_FALSE(info.is_hardware_accelerated);
+  EXPECT_FALSE(info.has_internal_source);
+  EXPECT_TRUE(info.supports_simulcast);
+  EXPECT_EQ(info.implementation_name, "libvpx");
+  EXPECT_EQ(info.requested_resolution_alignment, 1);
+}
+
+TEST(LibvpxVp8EncoderTest, RequestedResolutionAlignmentFromFieldTrial) {
+  test::ScopedFieldTrials field_trials(
+      "WebRTC-VP8-GetEncoderInfoOverride/"
+      "requested_resolution_alignment:10/");
+
+  auto* const vpx = new NiceMock<MockLibvpxVp8Interface>();
+  LibvpxVp8Encoder encoder((std::unique_ptr<LibvpxInterface>(vpx)),
+                           VP8Encoder::Settings());
+
+  EXPECT_EQ(encoder.GetEncoderInfo().requested_resolution_alignment, 10);
+}
+
+TEST(LibvpxVp8EncoderTest,
+     GetEncoderInfoReturnsEmptyResolutionBitrateLimitsByDefault) {
+  auto* const vpx = new NiceMock<MockLibvpxVp8Interface>();
+  LibvpxVp8Encoder encoder((std::unique_ptr<LibvpxInterface>(vpx)),
+                           VP8Encoder::Settings());
+
+  const auto info = encoder.GetEncoderInfo();
+
+  EXPECT_TRUE(info.resolution_bitrate_limits.empty());
+}
+
+TEST(LibvpxVp8EncoderTest,
+     GetEncoderInfoReturnsResolutionBitrateLimitsAsConfigured) {
+  std::vector<VideoEncoder::ResolutionBitrateLimits> resolution_bitrate_limits =
+      {VideoEncoder::ResolutionBitrateLimits(/*frame_size_pixels=*/640 * 360,
+                                             /*min_start_bitrate_bps=*/300,
+                                             /*min_bitrate_bps=*/100,
+                                             /*max_bitrate_bps=*/1000),
+       VideoEncoder::ResolutionBitrateLimits(320 * 180, 100, 30, 500)};
+  VP8Encoder::Settings settings;
+  settings.resolution_bitrate_limits = resolution_bitrate_limits;
+
+  auto* const vpx = new NiceMock<MockLibvpxVp8Interface>();
+  LibvpxVp8Encoder encoder((std::unique_ptr<LibvpxInterface>(vpx)),
+                           std::move(settings));
+
+  const auto info = encoder.GetEncoderInfo();
+
+  EXPECT_EQ(info.resolution_bitrate_limits, resolution_bitrate_limits);
 }
 
 TEST_F(TestVp8Impl, GetEncoderInfoFpsAllocationNoLayers) {
@@ -606,6 +667,7 @@ TEST_F(TestVp8Impl, GetEncoderInfoFpsAllocationScreenshareLayers) {
   codec_settings_.simulcastStream[0].maxBitrate =
       kLegacyScreenshareTl1BitrateKbps;
   codec_settings_.simulcastStream[0].numberOfTemporalLayers = 2;
+  codec_settings_.legacy_conference_mode = true;
   EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK,
             encoder_->InitEncode(&codec_settings_, kSettings));
 
@@ -643,6 +705,28 @@ TEST_F(TestVp8Impl, GetEncoderInfoFpsAllocationSimulcastVideo) {
   expected_fps_allocation[0].push_back(EncoderInfo::kMaxFramerateFraction);
   expected_fps_allocation[1] = expected_fps_allocation[0];
   expected_fps_allocation[2] = expected_fps_allocation[0];
+  EXPECT_THAT(encoder_->GetEncoderInfo().fps_allocation,
+              ::testing::ElementsAreArray(expected_fps_allocation));
+
+  // Release encoder and re-init without temporal layers.
+  EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK, encoder_->Release());
+
+  // Sanity check fps allocation when not inited.
+  FramerateFractions default_fps_fraction[kMaxSpatialLayers];
+  default_fps_fraction[0].push_back(EncoderInfo::kMaxFramerateFraction);
+  EXPECT_THAT(encoder_->GetEncoderInfo().fps_allocation,
+              ::testing::ElementsAreArray(default_fps_fraction));
+
+  for (int i = 0; i < codec_settings_.numberOfSimulcastStreams; ++i) {
+    codec_settings_.simulcastStream[i].numberOfTemporalLayers = 1;
+  }
+  EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK,
+            encoder_->InitEncode(&codec_settings_, kSettings));
+
+  for (size_t i = 0; i < 3; ++i) {
+    expected_fps_allocation[i].clear();
+    expected_fps_allocation[i].push_back(EncoderInfo::kMaxFramerateFraction);
+  }
   EXPECT_THAT(encoder_->GetEncoderInfo().fps_allocation,
               ::testing::ElementsAreArray(expected_fps_allocation));
 }

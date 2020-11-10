@@ -15,7 +15,7 @@ namespace cricket {
 FakeVideoRenderer::FakeVideoRenderer() = default;
 
 void FakeVideoRenderer::OnFrame(const webrtc::VideoFrame& frame) {
-  rtc::CritScope cs(&crit_);
+  webrtc::MutexLock lock(&mutex_);
   // TODO(zhurunz) Check with VP8 team to see if we can remove this
   // tolerance on Y values. Some unit tests produce Y values close
   // to 16 rather than close to zero, for supposedly black frames.

@@ -13,6 +13,7 @@
 #include <string.h>
 
 #include <cstdint>
+#include <limits>
 #include <list>
 #include <memory>
 #include <string>
@@ -63,6 +64,7 @@
 #include "rtc_base/thread.h"
 #include "rtc_base/time_utils.h"
 #include "rtc_base/virtual_socket_server.h"
+#include "test/field_trial.h"
 #include "test/gtest.h"
 
 using rtc::AsyncPacketSocket;
@@ -1297,6 +1299,77 @@ TEST_F(PortTest, TestConnectionDead) {
   EXPECT_TRUE_WAIT(ch1.conn() == nullptr, kDefaultTimeout);
 }
 
+TEST_F(PortTest, TestConnectionDeadWithDeadConnectionTimeout) {
+  TestChannel ch1(CreateUdpPort(kLocalAddr1));
+  TestChannel ch2(CreateUdpPort(kLocalAddr2));
+  // Acquire address.
+  ch1.Start();
+  ch2.Start();
+  ASSERT_EQ_WAIT(1, ch1.complete_count(), kDefaultTimeout);
+  ASSERT_EQ_WAIT(1, ch2.complete_count(), kDefaultTimeout);
+
+  // Note: set field trials manually since they are parsed by
+  // P2PTransportChannel but P2PTransportChannel is not used in this test.
+  IceFieldTrials field_trials;
+  field_trials.dead_connection_timeout_ms = 90000;
+
+  // Create a connection again and receive a ping.
+  ch1.CreateConnection(GetCandidate(ch2.port()));
+  auto conn = ch1.conn();
+  conn->SetIceFieldTrials(&field_trials);
+
+  ASSERT_NE(conn, nullptr);
+  int64_t before_last_receiving = rtc::TimeMillis();
+  conn->ReceivedPing();
+  int64_t after_last_receiving = rtc::TimeMillis();
+  // The connection will be dead after 90s
+  conn->UpdateState(before_last_receiving + 90000 - 1);
+  rtc::Thread::Current()->ProcessMessages(100);
+  EXPECT_TRUE(ch1.conn() != nullptr);
+  conn->UpdateState(after_last_receiving + 90000 + 1);
+  EXPECT_TRUE_WAIT(ch1.conn() == nullptr, kDefaultTimeout);
+}
+
+TEST_F(PortTest, TestConnectionDeadOutstandingPing) {
+  auto port1 = CreateUdpPort(kLocalAddr1);
+  port1->SetIceRole(cricket::ICEROLE_CONTROLLING);
+  port1->SetIceTiebreaker(kTiebreaker1);
+  auto port2 = CreateUdpPort(kLocalAddr2);
+  port2->SetIceRole(cricket::ICEROLE_CONTROLLED);
+  port2->SetIceTiebreaker(kTiebreaker2);
+
+  TestChannel ch1(std::move(port1));
+  TestChannel ch2(std::move(port2));
+  // Acquire address.
+  ch1.Start();
+  ch2.Start();
+  ASSERT_EQ_WAIT(1, ch1.complete_count(), kDefaultTimeout);
+  ASSERT_EQ_WAIT(1, ch2.complete_count(), kDefaultTimeout);
+
+  // Note: set field trials manually since they are parsed by
+  // P2PTransportChannel but P2PTransportChannel is not used in this test.
+  IceFieldTrials field_trials;
+  field_trials.dead_connection_timeout_ms = 360000;
+
+  // Create a connection again and receive a ping and then send
+  // a ping and keep it outstanding.
+  ch1.CreateConnection(GetCandidate(ch2.port()));
+  auto conn = ch1.conn();
+  conn->SetIceFieldTrials(&field_trials);
+
+  ASSERT_NE(conn, nullptr);
+  conn->ReceivedPing();
+  int64_t send_ping_timestamp = rtc::TimeMillis();
+  conn->Ping(send_ping_timestamp);
+
+  // The connection will be dead 30s after the ping was sent.
+  conn->UpdateState(send_ping_timestamp + DEAD_CONNECTION_RECEIVE_TIMEOUT - 1);
+  rtc::Thread::Current()->ProcessMessages(100);
+  EXPECT_TRUE(ch1.conn() != nullptr);
+  conn->UpdateState(send_ping_timestamp + DEAD_CONNECTION_RECEIVE_TIMEOUT + 1);
+  EXPECT_TRUE_WAIT(ch1.conn() == nullptr, kDefaultTimeout);
+}
+
 // This test case verifies standard ICE features in STUN messages. Currently it
 // verifies Message Integrity attribute in STUN messages and username in STUN
 // binding request will have colon (":") between remote and local username.
@@ -1979,7 +2052,7 @@ TEST_F(PortTest, TestNetworkInfoAttribute) {
   ASSERT_TRUE_WAIT(lport->last_stun_msg() != NULL, kDefaultTimeout);
   IceMessage* msg = lport->last_stun_msg();
   const StunUInt32Attribute* network_info_attr =
-      msg->GetUInt32(STUN_ATTR_NETWORK_INFO);
+      msg->GetUInt32(STUN_ATTR_GOOG_NETWORK_INFO);
   ASSERT_TRUE(network_info_attr != NULL);
   uint32_t network_info = network_info_attr->value();
   EXPECT_EQ(lnetwork_id, network_info >> 16);
@@ -1996,7 +2069,7 @@ TEST_F(PortTest, TestNetworkInfoAttribute) {
   rconn->Ping(0);
   ASSERT_TRUE_WAIT(rport->last_stun_msg() != NULL, kDefaultTimeout);
   msg = rport->last_stun_msg();
-  network_info_attr = msg->GetUInt32(STUN_ATTR_NETWORK_INFO);
+  network_info_attr = msg->GetUInt32(STUN_ATTR_GOOG_NETWORK_INFO);
   ASSERT_TRUE(network_info_attr != NULL);
   network_info = network_info_attr->value();
   EXPECT_EQ(rnetwork_id, network_info >> 16);
@@ -2219,6 +2292,110 @@ TEST_F(PortTest, TestHandleStunMessageBadFingerprint) {
   EXPECT_FALSE(port->GetStunMessage(buf->Data(), buf->Length(), addr, &out_msg,
                                     &username));
   EXPECT_EQ(0, port->last_stun_error_code());
+}
+
+// Test handling a STUN message with unknown attributes in the
+// "comprehension-required" range. Should respond with an error with the
+// unknown attributes' IDs.
+TEST_F(PortTest,
+       TestHandleStunRequestWithUnknownComprehensionRequiredAttribute) {
+  // Our port will act as the "remote" port.
+  std::unique_ptr<TestPort> port(CreateTestPort(kLocalAddr2, "rfrag", "rpass"));
+
+  std::unique_ptr<IceMessage> in_msg, out_msg;
+  auto buf = std::make_unique<ByteBufferWriter>();
+  rtc::SocketAddress addr(kLocalAddr1);
+  std::string username;
+
+  // Build ordinary message with valid ufrag/pass.
+  in_msg = CreateStunMessageWithUsername(STUN_BINDING_REQUEST, "rfrag:lfrag");
+  in_msg->AddMessageIntegrity("rpass");
+  // Add a couple attributes with ID in comprehension-required range.
+  in_msg->AddAttribute(StunAttribute::CreateUInt32(0x7777));
+  in_msg->AddAttribute(StunAttribute::CreateUInt32(0x4567));
+  // ... And one outside the range.
+  in_msg->AddAttribute(StunAttribute::CreateUInt32(0xdead));
+  in_msg->AddFingerprint();
+  WriteStunMessage(*in_msg, buf.get());
+  ASSERT_TRUE(port->GetStunMessage(buf->Data(), buf->Length(), addr, &out_msg,
+                                   &username));
+  IceMessage* error_response = port->last_stun_msg();
+  ASSERT_NE(nullptr, error_response);
+
+  // Verify that the "unknown attribute" error response has the right error
+  // code, and includes an attribute that lists out the unrecognized attribute
+  // types.
+  EXPECT_EQ(STUN_ERROR_UNKNOWN_ATTRIBUTE, error_response->GetErrorCodeValue());
+  const StunUInt16ListAttribute* unknown_attributes =
+      error_response->GetUnknownAttributes();
+  ASSERT_NE(nullptr, unknown_attributes);
+  ASSERT_EQ(2u, unknown_attributes->Size());
+  EXPECT_EQ(0x7777, unknown_attributes->GetType(0));
+  EXPECT_EQ(0x4567, unknown_attributes->GetType(1));
+}
+
+// Similar to the above, but with a response instead of a request. In this
+// case the response should just be ignored and transaction treated is failed.
+TEST_F(PortTest,
+       TestHandleStunResponseWithUnknownComprehensionRequiredAttribute) {
+  // Generic setup.
+  auto lport = CreateTestPort(kLocalAddr1, "lfrag", "lpass");
+  lport->SetIceRole(cricket::ICEROLE_CONTROLLING);
+  auto rport = CreateTestPort(kLocalAddr2, "rfrag", "rpass");
+  rport->SetIceRole(cricket::ICEROLE_CONTROLLED);
+  lport->PrepareAddress();
+  rport->PrepareAddress();
+  ASSERT_FALSE(lport->Candidates().empty());
+  ASSERT_FALSE(rport->Candidates().empty());
+  Connection* lconn =
+      lport->CreateConnection(rport->Candidates()[0], Port::ORIGIN_MESSAGE);
+  Connection* rconn =
+      rport->CreateConnection(lport->Candidates()[0], Port::ORIGIN_MESSAGE);
+
+  // Send request.
+  lconn->Ping(0);
+  ASSERT_TRUE_WAIT(lport->last_stun_msg() != NULL, kDefaultTimeout);
+  rconn->OnReadPacket(lport->last_stun_buf()->data<char>(),
+                      lport->last_stun_buf()->size(), /* packet_time_us */ -1);
+
+  // Intercept request and add comprehension required attribute.
+  ASSERT_TRUE_WAIT(rport->last_stun_msg() != NULL, kDefaultTimeout);
+  auto modified_response = rport->last_stun_msg()->Clone();
+  modified_response->AddAttribute(StunAttribute::CreateUInt32(0x7777));
+  modified_response->RemoveAttribute(STUN_ATTR_FINGERPRINT);
+  modified_response->AddFingerprint();
+  ByteBufferWriter buf;
+  WriteStunMessage(*modified_response, &buf);
+  lconn->OnReadPacket(buf.Data(), buf.Length(), /* packet_time_us */ -1);
+  // Response should have been ignored, leaving us unwritable still.
+  EXPECT_FALSE(lconn->writable());
+}
+
+// Similar to the above, but with an indication. As with a response, it should
+// just be ignored.
+TEST_F(PortTest,
+       TestHandleStunIndicationWithUnknownComprehensionRequiredAttribute) {
+  // Generic set up.
+  auto lport = CreateTestPort(kLocalAddr2, "lfrag", "lpass");
+  lport->SetIceRole(cricket::ICEROLE_CONTROLLING);
+  auto rport = CreateTestPort(kLocalAddr2, "rfrag", "rpass");
+  rport->SetIceRole(cricket::ICEROLE_CONTROLLED);
+  lport->PrepareAddress();
+  rport->PrepareAddress();
+  ASSERT_FALSE(lport->Candidates().empty());
+  ASSERT_FALSE(rport->Candidates().empty());
+  Connection* lconn =
+      lport->CreateConnection(rport->Candidates()[0], Port::ORIGIN_MESSAGE);
+
+  // Generate indication with comprehension required attribute and verify it
+  // doesn't update last_ping_received.
+  auto in_msg = CreateStunMessage(STUN_BINDING_INDICATION);
+  in_msg->AddAttribute(StunAttribute::CreateUInt32(0x7777));
+  in_msg->AddFingerprint();
+  ByteBufferWriter buf;
+  WriteStunMessage(*in_msg, &buf);
+  lconn->OnReadPacket(buf.Data(), buf.Length(), /* packet_time_us */ -1);
+  EXPECT_EQ(0u, lconn->last_ping_received());
 }
 
 // Test handling of STUN binding indication messages . STUN binding
@@ -3361,6 +3538,160 @@ TEST_F(PortTest, TestAddConnectionWithSameAddress) {
   // Make sure the new connection was not deleted.
   rtc::Thread::Current()->ProcessMessages(300);
   EXPECT_TRUE(port->GetConnection(address) != nullptr);
+}
+
+// TODO(webrtc:11463) : Move Connection tests into separate unit test
+// splitting out shared test code as needed.
+
+class ConnectionTest : public PortTest {
+ public:
+  ConnectionTest() {
+    lport_ = CreateTestPort(kLocalAddr1, "lfrag", "lpass");
+    rport_ = CreateTestPort(kLocalAddr2, "rfrag", "rpass");
+    lport_->SetIceRole(cricket::ICEROLE_CONTROLLING);
+    lport_->SetIceTiebreaker(kTiebreaker1);
+    rport_->SetIceRole(cricket::ICEROLE_CONTROLLED);
+    rport_->SetIceTiebreaker(kTiebreaker2);
+
+    lport_->PrepareAddress();
+    rport_->PrepareAddress();
+  }
+
+  rtc::ScopedFakeClock clock_;
+  int num_state_changes_ = 0;
+
+  Connection* CreateConnection(IceRole role) {
+    Connection* conn;
+    if (role == cricket::ICEROLE_CONTROLLING) {
+      conn = lport_->CreateConnection(rport_->Candidates()[0],
+                                      Port::ORIGIN_MESSAGE);
+    } else {
+      conn = rport_->CreateConnection(lport_->Candidates()[0],
+                                      Port::ORIGIN_MESSAGE);
+    }
+    conn->SignalStateChange.connect(this,
+                                    &ConnectionTest::OnConnectionStateChange);
+    return conn;
+  }
+
+  void SendPingAndCaptureReply(Connection* lconn,
+                               Connection* rconn,
+                               int64_t ms,
+                               rtc::BufferT<uint8_t>* reply) {
+    TestPort* lport =
+        lconn->PortForTest() == lport_.get() ? lport_.get() : rport_.get();
+    TestPort* rport =
+        rconn->PortForTest() == rport_.get() ? rport_.get() : lport_.get();
+    lconn->Ping(rtc::TimeMillis());
+    ASSERT_TRUE_WAIT(lport->last_stun_msg(), kDefaultTimeout);
+    ASSERT_TRUE(lport->last_stun_buf());
+    rconn->OnReadPacket(lport->last_stun_buf()->data<char>(),
+                        lport->last_stun_buf()->size(),
+                        /* packet_time_us */ -1);
+    clock_.AdvanceTime(webrtc::TimeDelta::Millis(ms));
+    ASSERT_TRUE_WAIT(rport->last_stun_msg(), kDefaultTimeout);
+    ASSERT_TRUE(rport->last_stun_buf());
+    *reply = std::move(*rport->last_stun_buf());
+  }
+
+  void SendPingAndReceiveResponse(Connection* lconn,
+                                  Connection* rconn,
+                                  int64_t ms) {
+    rtc::BufferT<uint8_t> reply;
+    SendPingAndCaptureReply(lconn, rconn, ms, &reply);
+    lconn->OnReadPacket(reply.data<char>(), reply.size(),
+                        /* packet_time_us */ -1);
+  }
+
+  void OnConnectionStateChange(Connection* connection) { num_state_changes_++; }
+
+ private:
+  std::unique_ptr<TestPort> lport_;
+  std::unique_ptr<TestPort> rport_;
+};
+
+TEST_F(ConnectionTest, ConnectionForgetLearnedState) {
+  Connection* lconn = CreateConnection(ICEROLE_CONTROLLING);
+  Connection* rconn = CreateConnection(ICEROLE_CONTROLLED);
+
+  EXPECT_FALSE(lconn->writable());
+  EXPECT_FALSE(lconn->receiving());
+  EXPECT_TRUE(std::isnan(lconn->GetRttEstimate().GetAverage()));
+  EXPECT_EQ(lconn->GetRttEstimate().GetVariance(),
+            std::numeric_limits<double>::infinity());
+
+  SendPingAndReceiveResponse(lconn, rconn, 10);
+
+  EXPECT_TRUE(lconn->writable());
+  EXPECT_TRUE(lconn->receiving());
+  EXPECT_EQ(lconn->GetRttEstimate().GetAverage(), 10);
+  EXPECT_EQ(lconn->GetRttEstimate().GetVariance(),
+            std::numeric_limits<double>::infinity());
+
+  SendPingAndReceiveResponse(lconn, rconn, 11);
+
+  EXPECT_TRUE(lconn->writable());
+  EXPECT_TRUE(lconn->receiving());
+  EXPECT_NEAR(lconn->GetRttEstimate().GetAverage(), 10, 0.5);
+  EXPECT_LT(lconn->GetRttEstimate().GetVariance(),
+            std::numeric_limits<double>::infinity());
+
+  lconn->ForgetLearnedState();
+
+  EXPECT_FALSE(lconn->writable());
+  EXPECT_FALSE(lconn->receiving());
+  EXPECT_TRUE(std::isnan(lconn->GetRttEstimate().GetAverage()));
+  EXPECT_EQ(lconn->GetRttEstimate().GetVariance(),
+            std::numeric_limits<double>::infinity());
+}
+
+TEST_F(ConnectionTest, ConnectionForgetLearnedStateDiscardsPendingPings) {
+  Connection* lconn = CreateConnection(ICEROLE_CONTROLLING);
+  Connection* rconn = CreateConnection(ICEROLE_CONTROLLED);
+
+  SendPingAndReceiveResponse(lconn, rconn, 10);
+
+  EXPECT_TRUE(lconn->writable());
+  EXPECT_TRUE(lconn->receiving());
+
+  rtc::BufferT<uint8_t> reply;
+  SendPingAndCaptureReply(lconn, rconn, 10, &reply);
+
+  lconn->ForgetLearnedState();
+
+  EXPECT_FALSE(lconn->writable());
+  EXPECT_FALSE(lconn->receiving());
+
+  lconn->OnReadPacket(reply.data<char>(), reply.size(),
+                      /* packet_time_us */ -1);
+
+  // That reply was discarded due to the ForgetLearnedState() while it was
+  // outstanding.
+  EXPECT_FALSE(lconn->writable());
+  EXPECT_FALSE(lconn->receiving());
+
+  // But sending a new ping and getting a reply works.
+  SendPingAndReceiveResponse(lconn, rconn, 11);
+  EXPECT_TRUE(lconn->writable());
+  EXPECT_TRUE(lconn->receiving());
+}
+
+TEST_F(ConnectionTest, ConnectionForgetLearnedStateDoesNotTriggerStateChange) {
+  Connection* lconn = CreateConnection(ICEROLE_CONTROLLING);
+  Connection* rconn = CreateConnection(ICEROLE_CONTROLLED);
+
+  EXPECT_EQ(num_state_changes_, 0);
+  SendPingAndReceiveResponse(lconn, rconn, 10);
+
+  EXPECT_TRUE(lconn->writable());
+  EXPECT_TRUE(lconn->receiving());
+  EXPECT_EQ(num_state_changes_, 2);
+
+  lconn->ForgetLearnedState();
+
+  EXPECT_FALSE(lconn->writable());
+  EXPECT_FALSE(lconn->receiving());
+  EXPECT_EQ(num_state_changes_, 2);
 }
 
 }  // namespace cricket

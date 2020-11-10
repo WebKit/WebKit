@@ -17,6 +17,12 @@
 namespace webrtc {
 namespace test {
 
+int AudioprocFloat(rtc::scoped_refptr<AudioProcessing> audio_processing,
+                   int argc,
+                   char* argv[]) {
+  return AudioprocFloatImpl(std::move(audio_processing), argc, argv);
+}
+
 int AudioprocFloat(std::unique_ptr<AudioProcessingBuilder> ap_builder,
                    int argc,
                    char* argv[]) {

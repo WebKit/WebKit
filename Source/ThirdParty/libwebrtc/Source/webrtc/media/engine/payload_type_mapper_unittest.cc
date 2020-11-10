@@ -52,7 +52,6 @@ TEST_F(PayloadTypeMapperTest, WebRTCPayloadTypes) {
     return mapper_.FindMappingFor({name, 0, 0});
   };
   EXPECT_EQ(kGoogleRtpDataCodecPlType, data_mapping(kGoogleRtpDataCodecName));
-  EXPECT_EQ(kGoogleSctpDataCodecPlType, data_mapping(kGoogleSctpDataCodecName));
 
   EXPECT_EQ(102, mapper_.FindMappingFor({kIlbcCodecName, 8000, 1}));
   EXPECT_EQ(103, mapper_.FindMappingFor({kIsacCodecName, 16000, 1}));

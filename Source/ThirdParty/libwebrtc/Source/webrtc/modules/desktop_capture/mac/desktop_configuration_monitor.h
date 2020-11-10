@@ -19,7 +19,7 @@
 #include "api/ref_counted_base.h"
 #include "modules/desktop_capture/mac/desktop_configuration.h"
 #include "rtc_base/constructor_magic.h"
-#include "rtc_base/critical_section.h"
+#include "rtc_base/synchronization/mutex.h"
 
 namespace webrtc {
 
@@ -41,7 +41,7 @@ class DesktopConfigurationMonitor : public rtc::RefCountedBase {
   void DisplaysReconfigured(CGDirectDisplayID display,
                             CGDisplayChangeSummaryFlags flags);
 
-  rtc::CriticalSection desktop_configuration_lock_;
+  Mutex desktop_configuration_lock_;
   MacDesktopConfiguration desktop_configuration_
       RTC_GUARDED_BY(&desktop_configuration_lock_);
   std::set<CGDirectDisplayID> reconfiguring_displays_;

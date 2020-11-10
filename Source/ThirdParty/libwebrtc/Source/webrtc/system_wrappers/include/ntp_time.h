@@ -70,11 +70,15 @@ inline int64_t Int64MsToQ32x32(int64_t milliseconds) {
   double result =
       std::round(milliseconds * (NtpTime::kFractionsPerSecond / 1000.0));
 
-  if (result <= std::numeric_limits<int64_t>::min()) {
+  // Explicitly cast values to double to avoid implicit conversion warnings
+  // The conversion of the std::numeric_limits<int64_t>::max() triggers
+  // -Wimplicit-int-float-conversion warning in clang 10.0.0 without explicit
+  // cast
+  if (result <= static_cast<double>(std::numeric_limits<int64_t>::min())) {
     return std::numeric_limits<int64_t>::min();
   }
 
-  if (result >= std::numeric_limits<int64_t>::max()) {
+  if (result >= static_cast<double>(std::numeric_limits<int64_t>::max())) {
     return std::numeric_limits<int64_t>::max();
   }
 
@@ -89,11 +93,15 @@ inline uint64_t Int64MsToUQ32x32(int64_t milliseconds) {
   double result =
       std::round(milliseconds * (NtpTime::kFractionsPerSecond / 1000.0));
 
-  if (result <= std::numeric_limits<uint64_t>::min()) {
+  // Explicitly cast values to double to avoid implicit conversion warnings
+  // The conversion of the std::numeric_limits<int64_t>::max() triggers
+  // -Wimplicit-int-float-conversion warning in clang 10.0.0 without explicit
+  // cast
+  if (result <= static_cast<double>(std::numeric_limits<uint64_t>::min())) {
     return std::numeric_limits<uint64_t>::min();
   }
 
-  if (result >= std::numeric_limits<uint64_t>::max()) {
+  if (result >= static_cast<double>(std::numeric_limits<uint64_t>::max())) {
     return std::numeric_limits<uint64_t>::max();
   }
 

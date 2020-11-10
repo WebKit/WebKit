@@ -23,8 +23,8 @@ rtc_library("audio_encoder_opus_config") {
   deps = [
     "../../../rtc_base:rtc_base_approved",
     "../../../rtc_base/system:rtc_export",
-    "//third_party/abseil-cpp/absl/types:optional",
   ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
   defines = []
   if (rtc_opus_variable_complexity) {
     defines += [ "WEBRTC_OPUS_VARIABLE_COMPLEXITY=1" ]
@@ -49,6 +49,8 @@ rtc_library("audio_encoder_opus") {
     "../../../modules/audio_coding:webrtc_opus",
     "../../../rtc_base:rtc_base_approved",
     "../../../rtc_base/system:rtc_export",
+  ]
+  absl_deps = [
     "//third_party/abseil-cpp/absl/strings",
     "//third_party/abseil-cpp/absl/types:optional",
   ]
@@ -66,6 +68,8 @@ rtc_library("audio_decoder_opus") {
     "../../../modules/audio_coding:webrtc_opus",
     "../../../rtc_base:rtc_base_approved",
     "../../../rtc_base/system:rtc_export",
+  ]
+  absl_deps = [
     "//third_party/abseil-cpp/absl/strings",
     "//third_party/abseil-cpp/absl/types:optional",
   ]
@@ -82,8 +86,8 @@ rtc_library("audio_encoder_multiopus") {
     "../../../rtc_base:rtc_base_approved",
     "../../../rtc_base/system:rtc_export",
     "../opus:audio_encoder_opus_config",
-    "//third_party/abseil-cpp/absl/types:optional",
   ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
 }
 
 rtc_library("audio_decoder_multiopus") {
@@ -99,6 +103,8 @@ rtc_library("audio_decoder_multiopus") {
     "../../../modules/audio_coding:webrtc_multiopus",
     "../../../rtc_base:rtc_base_approved",
     "../../../rtc_base/system:rtc_export",
+  ]
+  absl_deps = [
     "//third_party/abseil-cpp/absl/memory",
     "//third_party/abseil-cpp/absl/strings",
     "//third_party/abseil-cpp/absl/types:optional",

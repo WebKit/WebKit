@@ -18,6 +18,7 @@
 #include <cstdio>
 #include <string>
 
+#include "absl/strings/match.h"
 #include "api/transport/network_types.h"
 #include "api/units/data_rate.h"
 #include "modules/remote_bitrate_estimator/include/bwe_defines.h"
@@ -37,12 +38,12 @@ constexpr char kBweBackOffFactorExperiment[] = "WebRTC-BweBackOffFactor";
 
 bool IsEnabled(const WebRtcKeyValueConfig& field_trials,
                absl::string_view key) {
-  return field_trials.Lookup(key).find("Enabled") == 0;
+  return absl::StartsWith(field_trials.Lookup(key), "Enabled");
 }
 
 bool IsNotDisabled(const WebRtcKeyValueConfig& field_trials,
                    absl::string_view key) {
-  return field_trials.Lookup(key).find("Disabled") != 0;
+  return !absl::StartsWith(field_trials.Lookup(key), "Disabled");
 }
 
 double ReadBackoffFactor(const WebRtcKeyValueConfig& key_value_config) {

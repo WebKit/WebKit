@@ -34,6 +34,7 @@ static const size_t kRtcpPayloadTypeOffset = 1;
 static const size_t kRtpExtensionHeaderLen = 4;
 static const size_t kAbsSendTimeExtensionLen = 3;
 static const size_t kOneByteExtensionHeaderLen = 1;
+static const size_t kTwoByteExtensionHeaderLen = 2;
 
 namespace {
 
@@ -424,10 +425,13 @@ bool UpdateRtpAbsSendTimeExtension(uint8_t* rtp,
 
   rtp += kRtpExtensionHeaderLen;  // Moving past extension header.
 
+  constexpr uint16_t kOneByteExtensionProfileId = 0xBEDE;
+  constexpr uint16_t kTwoByteExtensionProfileId = 0x1000;
+
   bool found = false;
-  // WebRTC is using one byte header extension.
-  // TODO(mallinath) - Handle two byte header extension.
-  if (profile_id == 0xBEDE) {  // OneByte extension header
+  if (profile_id == kOneByteExtensionProfileId ||
+      profile_id == kTwoByteExtensionProfileId) {
+    // OneByte extension header
     //  0
     //  0 1 2 3 4 5 6 7
     // +-+-+-+-+-+-+-+-+
@@ -445,24 +449,53 @@ bool UpdateRtpAbsSendTimeExtension(uint8_t* rtp,
     // +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
     // |                          data                                 |
     // +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+    // TwoByte extension header
+    //  0
+    //  0 1 2 3 4 5 6 7
+    // +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+    // |      ID       |    length     |
+    // +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+    //  0                   1                   2                   3
+    //  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+    // +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+    // |     0x10      |     0x00      |           length=3            |
+    // +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+    // |      ID       |      L=1      |     data      |      ID       |
+    // +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+    // |      L=2      |             data              |    0 (pad)    |
+    // +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+    // |      ID       |      L=2      |             data              |
+    // +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+    size_t extension_header_length = profile_id == kOneByteExtensionProfileId
+                                         ? kOneByteExtensionHeaderLen
+                                         : kTwoByteExtensionHeaderLen;
+
     const uint8_t* extension_start = rtp;
     const uint8_t* extension_end = extension_start + extension_length;
 
-    while (rtp < extension_end) {
-      const int id = (*rtp & 0xF0) >> 4;
-      const size_t length = (*rtp & 0x0F) + 1;
-      if (rtp + kOneByteExtensionHeaderLen + length > extension_end) {
+    // rtp + 1 since the minimum size per header extension is two bytes for both
+    // one- and two-byte header extensions.
+    while (rtp + 1 < extension_end) {
+      // See RFC8285 Section 4.2-4.3 for more information about one- and
+      // two-byte header extensions.
+      const int id =
+          profile_id == kOneByteExtensionProfileId ? (*rtp & 0xF0) >> 4 : *rtp;
+      const size_t length = profile_id == kOneByteExtensionProfileId
+                                ? (*rtp & 0x0F) + 1
+                                : *(rtp + 1);
+      if (rtp + extension_header_length + length > extension_end) {
         return false;
       }
-      // The 4-bit length is the number minus one of data bytes of this header
-      // extension element following the one-byte header.
       if (id == extension_id) {
-        UpdateAbsSendTimeExtensionValue(rtp + kOneByteExtensionHeaderLen,
-                                        length, time_us);
+        UpdateAbsSendTimeExtensionValue(rtp + extension_header_length, length,
+                                        time_us);
         found = true;
         break;
       }
-      rtp += kOneByteExtensionHeaderLen + length;
+      rtp += extension_header_length + length;
       // Counting padding bytes.
       while ((rtp < extension_end) && (*rtp == 0)) {
         ++rtp;

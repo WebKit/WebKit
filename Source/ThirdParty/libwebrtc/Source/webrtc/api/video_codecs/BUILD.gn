@@ -17,6 +17,8 @@ rtc_library("video_codecs_api") {
   sources = [
     "sdp_video_format.cc",
     "sdp_video_format.h",
+    "spatial_layer.cc",
+    "spatial_layer.h",
     "video_codec.cc",
     "video_codec.h",
     "video_decoder.cc",
@@ -38,7 +40,6 @@ rtc_library("video_codecs_api") {
   deps = [
     "..:fec_controller_api",
     "..:scoped_refptr",
-    "../..:webrtc_common",
     "../../modules/video_coding:codec_globals_headers",
     "../../rtc_base:checks",
     "../../rtc_base:rtc_base_approved",
@@ -49,6 +50,8 @@ rtc_library("video_codecs_api") {
     "../video:video_codec_constants",
     "../video:video_frame",
     "../video:video_rtp_headers",
+  ]
+  absl_deps = [
     "//third_party/abseil-cpp/absl/algorithm:container",
     "//third_party/abseil-cpp/absl/container:inlined_vector",
     "//third_party/abseil-cpp/absl/strings",
@@ -100,8 +103,8 @@ rtc_library("builtin_video_encoder_factory") {
     "../../media:rtc_media_base",
     "../../rtc_base:checks",
     "../../rtc_base/system:rtc_export",
-    "//third_party/abseil-cpp/absl/strings",
   ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/strings" ]
 }
 
 rtc_library("vp8_temporal_layers_factory") {
@@ -143,11 +146,15 @@ rtc_library("rtc_software_fallback_wrappers") {
     "../../rtc_base:rtc_base_approved",
     "../../rtc_base/system:rtc_export",
     "../../system_wrappers:field_trial",
+    "../../system_wrappers:metrics",
     "../video:encoded_image",
     "../video:video_bitrate_allocation",
     "../video:video_frame",
     "../video:video_rtp_headers",
+  ]
+  absl_deps = [
     "//third_party/abseil-cpp/absl/base:core_headers",
+    "//third_party/abseil-cpp/absl/strings",
     "//third_party/abseil-cpp/absl/types:optional",
   ]
 }

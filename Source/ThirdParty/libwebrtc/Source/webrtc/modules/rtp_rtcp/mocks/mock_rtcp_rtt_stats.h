@@ -18,11 +18,8 @@ namespace webrtc {
 
 class MockRtcpRttStats : public RtcpRttStats {
  public:
-  MockRtcpRttStats();
-  ~MockRtcpRttStats();
-
-  MOCK_METHOD1(OnRttUpdate, void(int64_t rtt));
-  MOCK_CONST_METHOD0(LastProcessedRtt, int64_t());
+  MOCK_METHOD(void, OnRttUpdate, (int64_t rtt), (override));
+  MOCK_METHOD(int64_t, LastProcessedRtt, (), (const, override));
 };
 }  // namespace webrtc
 #endif  // MODULES_RTP_RTCP_MOCKS_MOCK_RTCP_RTT_STATS_H_

@@ -27,14 +27,12 @@ namespace {
 // TODO(peah): Check whether it would make sense to add a threshold
 // to use for checking the bitexactness in a soft manner.
 bool VerifyFixedBitExactness(const webrtc::audioproc::Stream& msg,
-                             const AudioFrame& frame) {
-  if ((sizeof(int16_t) * frame.samples_per_channel_ * frame.num_channels_) !=
-      msg.output_data().size()) {
+                             const Int16Frame& frame) {
+  if (sizeof(frame.data[0]) * frame.data.size() != msg.output_data().size()) {
     return false;
   } else {
-    const int16_t* frame_data = frame.data();
-    for (size_t k = 0; k < frame.num_channels_ * frame.samples_per_channel_;
-         ++k) {
+    const int16_t* frame_data = frame.data.data();
+    for (int k = 0; k < frame.num_channels * frame.samples_per_channel; ++k) {
       if (msg.output_data().data()[k] != frame_data[k]) {
         return false;
       }
@@ -68,8 +66,11 @@ bool VerifyFloatBitExactness(const webrtc::audioproc::Stream& msg,
 
 AecDumpBasedSimulator::AecDumpBasedSimulator(
     const SimulationSettings& settings,
+    rtc::scoped_refptr<AudioProcessing> audio_processing,
     std::unique_ptr<AudioProcessingBuilder> ap_builder)
-    : AudioProcessingSimulator(settings, std::move(ap_builder)) {
+    : AudioProcessingSimulator(settings,
+                               std::move(audio_processing),
+                               std::move(ap_builder)) {
   MaybeOpenCallOrderFile();
 }
 
@@ -85,10 +86,9 @@ void AecDumpBasedSimulator::PrepareProcessStreamCall(
     interface_used_ = InterfaceType::kFixedInterface;
 
     // Populate input buffer.
-    RTC_CHECK_EQ(sizeof(*fwd_frame_.data()) * fwd_frame_.samples_per_channel_ *
-                     fwd_frame_.num_channels_,
+    RTC_CHECK_EQ(sizeof(fwd_frame_.data[0]) * fwd_frame_.data.size(),
                  msg.input_data().size());
-    memcpy(fwd_frame_.mutable_data(), msg.input_data().data(),
+    memcpy(fwd_frame_.data.data(), msg.input_data().data(),
            msg.input_data().size());
   } else {
     // Float interface processing.
@@ -113,7 +113,7 @@ void AecDumpBasedSimulator::PrepareProcessStreamCall(
     if (artificial_nearend_buffer_reader_->Read(
             artificial_nearend_buf_.get())) {
       if (msg.has_input_data()) {
-        int16_t* fwd_frame_data = fwd_frame_.mutable_data();
+        int16_t* fwd_frame_data = fwd_frame_.data.data();
         for (size_t k = 0; k < in_buf_->num_frames(); ++k) {
           fwd_frame_data[k] = rtc::saturated_cast<int16_t>(
               fwd_frame_data[k] +
@@ -184,10 +184,9 @@ void AecDumpBasedSimulator::PrepareReverseProcessStreamCall(
     interface_used_ = InterfaceType::kFixedInterface;
 
     // Populate input buffer.
-    RTC_CHECK_EQ(sizeof(int16_t) * rev_frame_.samples_per_channel_ *
-                     rev_frame_.num_channels_,
+    RTC_CHECK_EQ(sizeof(rev_frame_.data[0]) * rev_frame_.data.size(),
                  msg.data().size());
-    memcpy(rev_frame_.mutable_data(), msg.data().data(), msg.data().size());
+    memcpy(rev_frame_.data.data(), msg.data().data(), msg.data().size());
   } else {
     // Float interface processing.
     // Verify interface invariance.
@@ -210,7 +209,8 @@ void AecDumpBasedSimulator::PrepareReverseProcessStreamCall(
 }
 
 void AecDumpBasedSimulator::Process() {
-  CreateAudioProcessor();
+  ConfigureAudioProcessor();
+
   if (settings_.artificial_nearend_filename) {
     std::unique_ptr<WavReader> artificial_nearend_file(
         new WavReader(settings_.artificial_nearend_filename->c_str()));
@@ -241,7 +241,7 @@ void AecDumpBasedSimulator::Process() {
     fclose(dump_input_file_);
   }
 
-  DestroyAudioProcessor();
+  DetachAecDump();
 }
 
 void AecDumpBasedSimulator::HandleEvent(
@@ -287,7 +287,6 @@ void AecDumpBasedSimulator::HandleMessage(
     if (settings_.use_verbose_logging) {
       std::cout << "Setting used in config:" << std::endl;
     }
-    Config config;
     AudioProcessing::Config apm_config = ap_->GetConfig();
 
     if (msg.has_aec_enabled() || settings_.use_aec) {
@@ -438,7 +437,6 @@ void AecDumpBasedSimulator::HandleMessage(
     }
 
     ap_->ApplyConfig(apm_config);
-    ap_->SetExtraOptions(config);
   }
 }
 
@@ -544,6 +542,10 @@ void AecDumpBasedSimulator::HandleMessage(
         AudioProcessing::RuntimeSetting::CreatePlayoutAudioDeviceChange(
             {msg.playout_audio_device_change().id(),
              msg.playout_audio_device_change().max_volume()}));
+  } else if (msg.has_capture_output_used()) {
+    ap_->SetRuntimeSetting(
+        AudioProcessing::RuntimeSetting::CreateCaptureOutputUsedSetting(
+            msg.capture_output_used()));
   }
 }
 

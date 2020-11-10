@@ -17,6 +17,7 @@
 #include "audio/remix_resample.h"
 #include "audio/utility/audio_frame_operations.h"
 #include "call/audio_sender.h"
+#include "modules/audio_processing/include/audio_frame_proxies.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {
@@ -48,12 +49,15 @@ void ProcessCaptureFrame(uint32_t delay_ms,
                          bool swap_stereo_channels,
                          AudioProcessing* audio_processing,
                          AudioFrame* audio_frame) {
-  RTC_DCHECK(audio_processing);
   RTC_DCHECK(audio_frame);
-  audio_processing->set_stream_delay_ms(delay_ms);
-  audio_processing->set_stream_key_pressed(key_pressed);
-  int error = audio_processing->ProcessStream(audio_frame);
-  RTC_DCHECK_EQ(0, error) << "ProcessStream() error: " << error;
+  if (audio_processing) {
+    audio_processing->set_stream_delay_ms(delay_ms);
+    audio_processing->set_stream_key_pressed(key_pressed);
+    int error = ProcessAudioFrame(audio_processing, audio_frame);
+
+    RTC_DCHECK_EQ(0, error) << "ProcessStream() error: " << error;
+  }
+
   if (swap_stereo_channels) {
     AudioFrameOperations::SwapStereoChannels(audio_frame);
   }
@@ -83,7 +87,6 @@ AudioTransportImpl::AudioTransportImpl(AudioMixer* mixer,
                                        AudioProcessing* audio_processing)
     : audio_processing_(audio_processing), mixer_(mixer) {
   RTC_DCHECK(mixer);
-  RTC_DCHECK(audio_processing);
 }
 
 AudioTransportImpl::~AudioTransportImpl() {}
@@ -115,7 +118,7 @@ int32_t AudioTransportImpl::RecordedDataIsAvailable(
   size_t send_num_channels = 0;
   bool swap_stereo_channels = false;
   {
-    rtc::CritScope lock(&capture_lock_);
+    MutexLock lock(&capture_lock_);
     send_sample_rate_hz = send_sample_rate_hz_;
     send_num_channels = send_num_channels_;
     swap_stereo_channels = swap_stereo_channels_;
@@ -135,7 +138,8 @@ int32_t AudioTransportImpl::RecordedDataIsAvailable(
   // if we're using this feature or not.
   // TODO(solenberg): GetConfig() takes a lock. Work around that.
   bool typing_detected = false;
-  if (audio_processing_->GetConfig().voice_detection.enabled) {
+  if (audio_processing_ &&
+      audio_processing_->GetConfig().voice_detection.enabled) {
     if (audio_frame->vad_activity_ != AudioFrame::kVadUnknown) {
       bool vad_active = audio_frame->vad_activity_ == AudioFrame::kVadActive;
       typing_detected = typing_detection_.Process(key_pressed, vad_active);
@@ -145,7 +149,7 @@ int32_t AudioTransportImpl::RecordedDataIsAvailable(
   // Copy frame and push to each sending stream. The copy is required since an
   // encoding task will be posted internally to each stream.
   {
-    rtc::CritScope lock(&capture_lock_);
+    MutexLock lock(&capture_lock_);
     typing_noise_detected_ = typing_detected;
 
     RTC_DCHECK_GT(audio_frame->samples_per_channel_, 0);
@@ -190,8 +194,11 @@ int32_t AudioTransportImpl::NeedMorePlayData(const size_t nSamples,
   *elapsed_time_ms = mixed_frame_.elapsed_time_ms_;
   *ntp_time_ms = mixed_frame_.ntp_time_ms_;
 
-  const auto error = audio_processing_->ProcessReverseStream(&mixed_frame_);
-  RTC_DCHECK_EQ(error, AudioProcessing::kNoError);
+  if (audio_processing_) {
+    const auto error =
+        ProcessReverseAudioFrame(audio_processing_, &mixed_frame_);
+    RTC_DCHECK_EQ(error, AudioProcessing::kNoError);
+  }
 
   nSamplesOut = Resample(mixed_frame_, samplesPerSec, &render_resampler_,
                          static_cast<int16_t*>(audioSamples));
@@ -230,19 +237,19 @@ void AudioTransportImpl::PullRenderData(int bits_per_sample,
 void AudioTransportImpl::UpdateAudioSenders(std::vector<AudioSender*> senders,
                                             int send_sample_rate_hz,
                                             size_t send_num_channels) {
-  rtc::CritScope lock(&capture_lock_);
+  MutexLock lock(&capture_lock_);
   audio_senders_ = std::move(senders);
   send_sample_rate_hz_ = send_sample_rate_hz;
   send_num_channels_ = send_num_channels;
 }
 
 void AudioTransportImpl::SetStereoChannelSwapping(bool enable) {
-  rtc::CritScope lock(&capture_lock_);
+  MutexLock lock(&capture_lock_);
   swap_stereo_channels_ = enable;
 }
 
 bool AudioTransportImpl::typing_noise_detected() const {
-  rtc::CritScope lock(&capture_lock_);
+  MutexLock lock(&capture_lock_);
   return typing_noise_detected_;
 }
 }  // namespace webrtc

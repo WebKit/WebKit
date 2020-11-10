@@ -17,9 +17,9 @@
 #include "api/transport/network_control.h"
 #include "api/transport/webrtc_key_value_config.h"
 #include "modules/remote_bitrate_estimator/include/remote_bitrate_estimator.h"
-#include "rtc_base/critical_section.h"
 #include "rtc_base/experiments/field_trial_parser.h"
 #include "rtc_base/numerics/sequence_number_util.h"
+#include "rtc_base/synchronization/mutex.h"
 
 namespace webrtc {
 
@@ -92,7 +92,7 @@ class RemoteEstimatorProxy : public RemoteBitrateEstimator {
   const TransportWideFeedbackConfig send_config_;
   int64_t last_process_time_ms_;
 
-  rtc::CriticalSection lock_;
+  Mutex lock_;
   //  |network_state_estimator_| may be null.
   NetworkStateEstimator* const network_state_estimator_
       RTC_PT_GUARDED_BY(&lock_);

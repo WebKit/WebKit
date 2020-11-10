@@ -64,8 +64,6 @@ const float kMaxSampleDiffMarginFactor = 1.35f;
 const int kMinFramerate = 7;
 const int kMaxFramerate = 30;
 
-const auto kScaleReasonCpu = AdaptationObserverInterface::AdaptReason::kCpu;
-
 // Class for calculating the processing usage on the send-side (the average
 // processing time of a frame divided by the average time difference between
 // captured frames).
@@ -542,7 +540,7 @@ OveruseFrameDetector::~OveruseFrameDetector() {}
 void OveruseFrameDetector::StartCheckForOveruse(
     TaskQueueBase* task_queue_base,
     const CpuOveruseOptions& options,
-    AdaptationObserverInterface* overuse_observer) {
+    OveruseFrameDetectorObserverInterface* overuse_observer) {
   RTC_DCHECK_RUN_ON(&task_checker_);
   RTC_DCHECK(!check_overuse_task_.Running());
   RTC_DCHECK(overuse_observer != nullptr);
@@ -632,7 +630,7 @@ void OveruseFrameDetector::FrameSent(uint32_t timestamp,
 }
 
 void OveruseFrameDetector::CheckForOveruse(
-    AdaptationObserverInterface* observer) {
+    OveruseFrameDetectorObserverInterface* observer) {
   RTC_DCHECK_RUN_ON(&task_checker_);
   RTC_DCHECK(observer);
   ++num_process_times_;
@@ -665,12 +663,12 @@ void OveruseFrameDetector::CheckForOveruse(
     checks_above_threshold_ = 0;
     ++num_overuse_detections_;
 
-    observer->AdaptDown(kScaleReasonCpu);
+    observer->AdaptDown();
   } else if (IsUnderusing(*encode_usage_percent_, now_ms)) {
     last_rampup_time_ms_ = now_ms;
     in_quick_rampup_ = true;
 
-    observer->AdaptUp(kScaleReasonCpu);
+    observer->AdaptUp();
   }
 
   int rampup_delay =

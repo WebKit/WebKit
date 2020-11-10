@@ -11,8 +11,12 @@
 #ifndef MODULES_AUDIO_CODING_CODECS_ILBC_AUDIO_ENCODER_ILBC_H_
 #define MODULES_AUDIO_CODING_CODECS_ILBC_AUDIO_ENCODER_ILBC_H_
 
+#include <utility>
+
+#include "absl/types/optional.h"
 #include "api/audio_codecs/audio_encoder.h"
 #include "api/audio_codecs/ilbc/audio_encoder_ilbc_config.h"
+#include "api/units/time_delta.h"
 #include "modules/audio_coding/codecs/ilbc/ilbc.h"
 #include "rtc_base/constructor_magic.h"
 
@@ -32,6 +36,8 @@ class AudioEncoderIlbcImpl final : public AudioEncoder {
                          rtc::ArrayView<const int16_t> audio,
                          rtc::Buffer* encoded) override;
   void Reset() override;
+  absl::optional<std::pair<TimeDelta, TimeDelta>> GetFrameLengthRange()
+      const override;
 
  private:
   size_t RequiredOutputSizeBytes() const;

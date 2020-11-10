@@ -13,13 +13,9 @@ rtc_library("aec3") {
   configs += [ "..:apm_debug_dump" ]
   sources = [
     "adaptive_fir_filter.cc",
-    "adaptive_fir_filter.h",
     "adaptive_fir_filter_erl.cc",
-    "adaptive_fir_filter_erl.h",
     "aec3_common.cc",
-    "aec3_common.h",
     "aec3_fft.cc",
-    "aec3_fft.h",
     "aec_state.cc",
     "aec_state.h",
     "alignment_mixer.cc",
@@ -27,7 +23,6 @@ rtc_library("aec3") {
     "api_call_jitter_metrics.cc",
     "api_call_jitter_metrics.h",
     "block_buffer.cc",
-    "block_buffer.h",
     "block_delay_buffer.cc",
     "block_delay_buffer.h",
     "block_framer.cc",
@@ -38,6 +33,8 @@ rtc_library("aec3") {
     "block_processor_metrics.h",
     "clockdrift_detector.cc",
     "clockdrift_detector.h",
+    "coarse_filter_update_gain.cc",
+    "coarse_filter_update_gain.h",
     "comfort_noise_generator.cc",
     "comfort_noise_generator.h",
     "decimator.cc",
@@ -64,25 +61,21 @@ rtc_library("aec3") {
     "erle_estimator.cc",
     "erle_estimator.h",
     "fft_buffer.cc",
-    "fft_buffer.h",
-    "fft_data.h",
     "filter_analyzer.cc",
     "filter_analyzer.h",
     "frame_blocker.cc",
     "frame_blocker.h",
     "fullband_erle_estimator.cc",
     "fullband_erle_estimator.h",
-    "main_filter_update_gain.cc",
-    "main_filter_update_gain.h",
     "matched_filter.cc",
-    "matched_filter.h",
     "matched_filter_lag_aggregator.cc",
     "matched_filter_lag_aggregator.h",
     "moving_average.cc",
     "moving_average.h",
     "nearend_detector.h",
+    "refined_filter_update_gain.cc",
+    "refined_filter_update_gain.h",
     "render_buffer.cc",
-    "render_buffer.h",
     "render_delay_buffer.cc",
     "render_delay_buffer.h",
     "render_delay_controller.cc",
@@ -101,12 +94,9 @@ rtc_library("aec3") {
     "reverb_model.h",
     "reverb_model_estimator.cc",
     "reverb_model_estimator.h",
-    "shadow_filter_update_gain.cc",
-    "shadow_filter_update_gain.h",
     "signal_dependent_erle_estimator.cc",
     "signal_dependent_erle_estimator.h",
     "spectrum_buffer.cc",
-    "spectrum_buffer.h",
     "stationarity_estimator.cc",
     "stationarity_estimator.h",
     "subband_erle_estimator.cc",
@@ -123,7 +113,8 @@ rtc_library("aec3") {
     "suppression_filter.h",
     "suppression_gain.cc",
     "suppression_gain.h",
-    "vector_math.h",
+    "transparent_mode.cc",
+    "transparent_mode.h",
   ]
 
   defines = []
@@ -133,6 +124,14 @@ rtc_library("aec3") {
   }
 
   deps = [
+    ":adaptive_fir_filter",
+    ":adaptive_fir_filter_erl",
+    ":aec3_common",
+    ":aec3_fft",
+    ":fft_data",
+    ":matched_filter",
+    ":render_buffer",
+    ":vector_math",
     "..:apm_logging",
     "..:audio_buffer",
     "..:high_pass_filter",
@@ -143,14 +142,135 @@ rtc_library("aec3") {
     "../../../rtc_base:checks",
     "../../../rtc_base:rtc_base_approved",
     "../../../rtc_base:safe_minmax",
+    "../../../rtc_base/experiments:field_trial_parser",
     "../../../rtc_base/system:arch",
-    "../../../system_wrappers:cpu_features_api",
+    "../../../system_wrappers",
     "../../../system_wrappers:field_trial",
     "../../../system_wrappers:metrics",
     "../utility:cascaded_biquad_filter",
-    "../utility:ooura_fft",
-    "//third_party/abseil-cpp/absl/types:optional",
   ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
+
+  if (current_cpu == "x86" || current_cpu == "x64") {
+    deps += [ ":aec3_avx2" ]
+  }
+}
+
+rtc_source_set("aec3_common") {
+  sources = [ "aec3_common.h" ]
+}
+
+rtc_source_set("aec3_fft") {
+  sources = [ "aec3_fft.h" ]
+  deps = [
+    ":aec3_common",
+    ":fft_data",
+    "../../../api:array_view",
+    "../../../common_audio/third_party/ooura:fft_size_128",
+    "../../../rtc_base:checks",
+    "../../../rtc_base:rtc_base_approved",
+    "../../../rtc_base/system:arch",
+  ]
+}
+
+rtc_source_set("render_buffer") {
+  sources = [
+    "block_buffer.h",
+    "fft_buffer.h",
+    "render_buffer.h",
+    "spectrum_buffer.h",
+  ]
+  deps = [
+    ":aec3_common",
+    ":fft_data",
+    "../../../api:array_view",
+    "../../../rtc_base:checks",
+    "../../../rtc_base:rtc_base_approved",
+    "../../../rtc_base/system:arch",
+  ]
+}
+
+rtc_source_set("adaptive_fir_filter") {
+  sources = [ "adaptive_fir_filter.h" ]
+  deps = [
+    ":aec3_common",
+    ":aec3_fft",
+    ":fft_data",
+    ":render_buffer",
+    "..:apm_logging",
+    "../../../api:array_view",
+    "../../../rtc_base/system:arch",
+  ]
+}
+
+rtc_source_set("adaptive_fir_filter_erl") {
+  sources = [ "adaptive_fir_filter_erl.h" ]
+  deps = [
+    ":aec3_common",
+    "../../../api:array_view",
+    "../../../rtc_base/system:arch",
+  ]
+}
+
+rtc_source_set("matched_filter") {
+  sources = [ "matched_filter.h" ]
+  deps = [
+    ":aec3_common",
+    "../../../api:array_view",
+    "../../../rtc_base:rtc_base_approved",
+    "../../../rtc_base/system:arch",
+  ]
+}
+
+rtc_source_set("vector_math") {
+  sources = [ "vector_math.h" ]
+  deps = [
+    ":aec3_common",
+    "../../../api:array_view",
+    "../../../rtc_base:checks",
+    "../../../rtc_base/system:arch",
+  ]
+}
+
+rtc_source_set("fft_data") {
+  sources = [ "fft_data.h" ]
+  deps = [
+    ":aec3_common",
+    "../../../api:array_view",
+    "../../../rtc_base/system:arch",
+  ]
+}
+
+if (current_cpu == "x86" || current_cpu == "x64") {
+  rtc_library("aec3_avx2") {
+    configs += [ "..:apm_debug_dump" ]
+    sources = [
+      "adaptive_fir_filter_avx2.cc",
+      "adaptive_fir_filter_erl_avx2.cc",
+      "fft_data_avx2.cc",
+      "matched_filter_avx2.cc",
+      "vector_math_avx2.cc",
+    ]
+
+    if (is_win) {
+      cflags = [ "/arch:AVX2" ]
+    } else {
+      cflags = [
+        "-mavx2",
+        "-mfma",
+      ]
+    }
+
+    deps = [
+      ":adaptive_fir_filter",
+      ":adaptive_fir_filter_erl",
+      ":fft_data",
+      ":matched_filter",
+      ":vector_math",
+      "../../../api:array_view",
+      "../../../rtc_base:checks",
+    ]
+  }
 }
 
 if (rtc_include_tests) {
@@ -170,7 +290,15 @@ if (rtc_include_tests) {
     ]
 
     deps = [
+      ":adaptive_fir_filter",
+      ":adaptive_fir_filter_erl",
       ":aec3",
+      ":aec3_common",
+      ":aec3_fft",
+      ":fft_data",
+      ":matched_filter",
+      ":render_buffer",
+      ":vector_math",
       "..:apm_logging",
       "..:audio_buffer",
       "..:audio_processing",
@@ -182,11 +310,12 @@ if (rtc_include_tests) {
       "../../../rtc_base:rtc_base_approved",
       "../../../rtc_base:safe_minmax",
       "../../../rtc_base/system:arch",
-      "../../../system_wrappers:cpu_features_api",
+      "../../../system_wrappers",
+      "../../../test:field_trial",
       "../../../test:test_support",
       "../utility:cascaded_biquad_filter",
-      "//third_party/abseil-cpp/absl/types:optional",
     ]
+    absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
 
     defines = []
 
@@ -203,6 +332,7 @@ if (rtc_include_tests) {
         "block_processor_metrics_unittest.cc",
         "block_processor_unittest.cc",
         "clockdrift_detector_unittest.cc",
+        "coarse_filter_update_gain_unittest.cc",
         "comfort_noise_generator_unittest.cc",
         "decimator_unittest.cc",
         "echo_canceller3_unittest.cc",
@@ -215,10 +345,10 @@ if (rtc_include_tests) {
         "fft_data_unittest.cc",
         "filter_analyzer_unittest.cc",
         "frame_blocker_unittest.cc",
-        "main_filter_update_gain_unittest.cc",
         "matched_filter_lag_aggregator_unittest.cc",
         "matched_filter_unittest.cc",
         "moving_average_unittest.cc",
+        "refined_filter_update_gain_unittest.cc",
         "render_buffer_unittest.cc",
         "render_delay_buffer_unittest.cc",
         "render_delay_controller_metrics_unittest.cc",
@@ -226,7 +356,6 @@ if (rtc_include_tests) {
         "render_signal_analyzer_unittest.cc",
         "residual_echo_estimator_unittest.cc",
         "reverb_model_estimator_unittest.cc",
-        "shadow_filter_update_gain_unittest.cc",
         "signal_dependent_erle_estimator_unittest.cc",
         "subtractor_unittest.cc",
         "suppression_filter_unittest.cc",

@@ -85,9 +85,6 @@ declare_args() {
   # library that comes with WebRTC (i.e. rtc_build_ssl == 0).
   rtc_ssl_root = ""
 
-  # Selects fixed-point code where possible.
-  rtc_prefer_fixed_point = false
-
   # Enable when an external authentication mechanism is used for performing
   # packet authentication for RTP packets instead of libsrtp.
   rtc_enable_external_auth = build_with_chromium
@@ -95,6 +92,9 @@ declare_args() {
   # Selects whether debug dumps for the audio processing module
   # should be generated.
   apm_debug_dump = false
+
+  # Selects whether the audio processing module should be excluded.
+  rtc_exclude_audio_processing_module = false
 
   # Set this to true to enable BWE test logging.
   rtc_enable_bwe_test_logging = false
@@ -120,8 +120,8 @@ declare_args() {
   # Enable to use the Mozilla internal settings.
   build_with_mozilla = false
 
-  # Enable use of Android AAudio which requires Android SDK 26 or above and
-  # NDK r16 or above.
+  # Experimental: enable use of Android AAudio which requires Android SDK 26 or above
+  # and NDK r16 or above.
   rtc_enable_android_aaudio = false
 
   # Set to "func", "block", "edge" for coverage generation.
@@ -131,6 +131,8 @@ declare_args() {
   # See http://clang.llvm.org/docs/SanitizerCoverage.html .
   rtc_sanitize_coverage = ""
 
+  # Selects fixed-point code where possible.
+  rtc_prefer_fixed_point = false
   if (current_cpu == "arm" || current_cpu == "arm64") {
     rtc_prefer_fixed_point = true
   }
@@ -151,6 +153,9 @@ declare_args() {
   # bugs.webrtc.org/9213#c13 for more info.
   rtc_use_h264 =
       proprietary_codecs && !is_android && !is_ios && !(is_win && !is_clang)
+
+  # Enable this flag to make webrtc::Mutex be implemented by absl::Mutex.
+  rtc_use_absl_mutex = false
 
   # By default, use normal platform audio support or dummy audio, but don't
   # use file-based audio playout and record.
@@ -236,6 +241,14 @@ declare_args() {
   # standalone WebRTC.
   rtc_include_internal_audio_device = !build_with_chromium
 
+  # Set this to true to enable the avx2 support in webrtc.
+  # TODO: Make sure that AVX2 works also for non-clang compilers.
+  if (is_clang == true) {
+    rtc_enable_avx2 = true
+  } else {
+    rtc_enable_avx2 = false
+  }
+
   # Include tests in standalone checkout.
   rtc_include_tests = !build_with_chromium && !build_with_mozilla
 
@@ -255,6 +268,10 @@ declare_args() {
 
   # Set this to true to disable webrtc metrics.
   rtc_disable_metrics = false
+
+  # Set this to true to exclude the transient suppressor in the audio processing
+  # module from the build.
+  rtc_exclude_transient_suppressor = false
 }
 
 # Make it possible to provide custom locations for some libraries (move these
@@ -265,7 +282,7 @@ rtc_opus_dir = "//third_party/opus"
 # Desktop capturer is supported only on Windows, OSX and Linux.
 rtc_desktop_capture_supported =
     (is_win && current_os != "winuwp") || is_mac ||
-    (is_linux && (rtc_use_x11_extensions || rtc_use_pipewire))
+    ((is_linux || is_chromeos) && (rtc_use_x11_extensions || rtc_use_pipewire))
 
 ###############################################################################
 # Templates
@@ -316,16 +333,19 @@ set_defaults("rtc_test") {
 set_defaults("rtc_library") {
   configs = rtc_add_configs
   suppressed_configs = []
+  absl_deps = []
 }
 
 set_defaults("rtc_source_set") {
   configs = rtc_add_configs
   suppressed_configs = []
+  absl_deps = []
 }
 
 set_defaults("rtc_static_library") {
   configs = rtc_add_configs
   suppressed_configs = []
+  absl_deps = []
 }
 
 set_defaults("rtc_executable") {
@@ -425,7 +445,8 @@ template("rtc_test") {
     }
     if (!build_with_chromium && is_android) {
       android_manifest = webrtc_root + "test/android/AndroidManifest.xml"
-      min_sdk_version = 16
+      min_sdk_version = 21
+      target_sdk_version = 23
       deps += [ webrtc_root + "test:native_test_java" ]
     }
   }
@@ -518,6 +539,20 @@ template("rtc_source_set") {
     if (defined(invoker.public_configs)) {
       public_configs += invoker.public_configs
     }
+
+    # If absl_deps is [], no action is needed. If not [], then it needs to be
+    # converted to //third_party/abseil-cpp:absl when build_with_chromium=true
+    # otherwise it just needs to be added to deps.
+    if (absl_deps != []) {
+      if (!defined(deps)) {
+        deps = []
+      }
+      if (build_with_chromium) {
+        deps += [ "//third_party/abseil-cpp:absl" ]
+      } else {
+        deps += absl_deps
+      }
+    }
   }
 }
 
@@ -592,6 +627,20 @@ template("rtc_static_library") {
     }
     if (defined(invoker.public_configs)) {
       public_configs += invoker.public_configs
+    }
+
+    # If absl_deps is [], no action is needed. If not [], then it needs to be
+    # converted to //third_party/abseil-cpp:absl when build_with_chromium=true
+    # otherwise it just needs to be added to deps.
+    if (absl_deps != []) {
+      if (!defined(deps)) {
+        deps = []
+      }
+      if (build_with_chromium) {
+        deps += [ "//third_party/abseil-cpp:absl" ]
+      } else {
+        deps += absl_deps
+      }
     }
   }
 }
@@ -704,6 +753,20 @@ template("rtc_library") {
     }
     if (defined(invoker.public_configs)) {
       public_configs += invoker.public_configs
+    }
+
+    # If absl_deps is [], no action is needed. If not [], then it needs to be
+    # converted to //third_party/abseil-cpp:absl when build_with_chromium=true
+    # otherwise it just needs to be added to deps.
+    if (absl_deps != []) {
+      if (!defined(deps)) {
+        deps = []
+      }
+      if (build_with_chromium) {
+        deps += [ "//third_party/abseil-cpp:absl" ]
+      } else {
+        deps += absl_deps
+      }
     }
   }
 }
@@ -819,35 +882,6 @@ template("rtc_shared_library") {
 }
 
 if (is_ios) {
-  set_defaults("rtc_ios_xctest_test") {
-    configs = rtc_add_configs
-    suppressed_configs = []
-  }
-
-  template("rtc_ios_xctest_test") {
-    ios_xctest_test(target_name) {
-      forward_variables_from(invoker,
-                             "*",
-                             [
-                               "configs",
-                               "public_configs",
-                               "suppressed_configs",
-                               "visibility",
-                             ])
-      forward_variables_from(invoker, [ "visibility" ])
-      if (!defined(visibility)) {
-        visibility = webrtc_default_visibility
-      }
-      configs += invoker.configs
-      configs -= rtc_remove_configs
-      configs -= invoker.suppressed_configs
-      public_configs = [ rtc_common_inherited_config ]
-      if (defined(invoker.public_configs)) {
-        public_configs += invoker.public_configs
-      }
-    }
-  }
-
   # TODO: Generate module.modulemap file to enable use in Swift
   # projects. See "mac_framework_bundle_with_umbrella_header".
   template("ios_framework_bundle_with_umbrella_header") {
@@ -985,14 +1019,6 @@ if (is_android) {
       # Treat warnings as errors.
       errorprone_args += [ "-Werror" ]
 
-      # WebRTC supports API level 16 while Chromium only supports 19.
-      # (the manifest defines minimum supported SDK version)
-      if (defined(invoker.min_sdk_version)) {
-        min_sdk_version = invoker.min_sdk_version
-      } else {
-        min_sdk_version = 16
-      }
-
       # Add any arguments defined by the invoker.
       if (defined(invoker.errorprone_args)) {
         errorprone_args += invoker.errorprone_args
@@ -1003,6 +1029,7 @@ if (is_android) {
       }
 
       no_build_hooks = true
+      not_needed([ "android_manifest" ])
     }
   }
 

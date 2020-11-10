@@ -27,21 +27,27 @@ class MockRenderDelayBuffer : public RenderDelayBuffer {
   MockRenderDelayBuffer(int sample_rate_hz, size_t num_channels);
   virtual ~MockRenderDelayBuffer();
 
-  MOCK_METHOD0(Reset, void());
-  MOCK_METHOD1(Insert,
-               RenderDelayBuffer::BufferingEvent(
-                   const std::vector<std::vector<std::vector<float>>>& block));
-  MOCK_METHOD0(PrepareCaptureProcessing, RenderDelayBuffer::BufferingEvent());
-  MOCK_METHOD1(AlignFromDelay, bool(size_t delay));
-  MOCK_METHOD0(AlignFromExternalDelay, void());
-  MOCK_CONST_METHOD0(Delay, size_t());
-  MOCK_CONST_METHOD0(MaxDelay, size_t());
-  MOCK_METHOD0(GetRenderBuffer, RenderBuffer*());
-  MOCK_CONST_METHOD0(GetDownsampledRenderBuffer,
-                     const DownsampledRenderBuffer&());
-  MOCK_CONST_METHOD1(CausalDelay, bool(size_t delay));
-  MOCK_METHOD1(SetAudioBufferDelay, void(int delay_ms));
-  MOCK_METHOD0(HasReceivedBufferDelay, bool());
+  MOCK_METHOD(void, Reset, (), (override));
+  MOCK_METHOD(RenderDelayBuffer::BufferingEvent,
+              Insert,
+              (const std::vector<std::vector<std::vector<float>>>& block),
+              (override));
+  MOCK_METHOD(void, HandleSkippedCaptureProcessing, (), (override));
+  MOCK_METHOD(RenderDelayBuffer::BufferingEvent,
+              PrepareCaptureProcessing,
+              (),
+              (override));
+  MOCK_METHOD(bool, AlignFromDelay, (size_t delay), (override));
+  MOCK_METHOD(void, AlignFromExternalDelay, (), (override));
+  MOCK_METHOD(size_t, Delay, (), (const, override));
+  MOCK_METHOD(size_t, MaxDelay, (), (const, override));
+  MOCK_METHOD(RenderBuffer*, GetRenderBuffer, (), (override));
+  MOCK_METHOD(const DownsampledRenderBuffer&,
+              GetDownsampledRenderBuffer,
+              (),
+              (const, override));
+  MOCK_METHOD(void, SetAudioBufferDelay, (int delay_ms), (override));
+  MOCK_METHOD(bool, HasReceivedBufferDelay, (), (override));
 
  private:
   RenderBuffer* FakeGetRenderBuffer() { return &render_buffer_; }

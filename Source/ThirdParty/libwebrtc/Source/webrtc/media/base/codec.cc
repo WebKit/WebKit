@@ -57,6 +57,18 @@ bool IsSameCodecSpecific(const std::string& name1,
   return true;
 }
 
+bool IsCodecInList(
+    const webrtc::SdpVideoFormat& format,
+    const std::vector<webrtc::SdpVideoFormat>& existing_formats) {
+  for (auto existing_format : existing_formats) {
+    if (IsSameCodec(format.name, format.parameters, existing_format.name,
+                    existing_format.parameters)) {
+      return true;
+    }
+  }
+  return false;
+}
+
 }  // namespace
 
 FeedbackParams::FeedbackParams() = default;
@@ -421,6 +433,45 @@ bool IsSameCodec(const std::string& name1,
   // and certain codec-specific parameters match.
   return absl::EqualsIgnoreCase(name1, name2) &&
          IsSameCodecSpecific(name1, params1, name2, params2);
+}
+
+// If a decoder supports any H264 profile, it is implicitly assumed to also
+// support constrained base line even though it's not explicitly listed.
+void AddH264ConstrainedBaselineProfileToSupportedFormats(
+    std::vector<webrtc::SdpVideoFormat>* supported_formats) {
+  std::vector<webrtc::SdpVideoFormat> cbr_supported_formats;
+
+  // For any H264 supported profile, add the corresponding constrained baseline
+  // profile.
+  for (auto it = supported_formats->cbegin(); it != supported_formats->cend();
+       ++it) {
+    if (it->name == cricket::kH264CodecName) {
+      const absl::optional<webrtc::H264::ProfileLevelId> profile_level_id =
+          webrtc::H264::ParseSdpProfileLevelId(it->parameters);
+      if (profile_level_id && profile_level_id->profile !=
+                                  webrtc::H264::kProfileConstrainedBaseline) {
+        webrtc::SdpVideoFormat cbp_format = *it;
+        webrtc::H264::ProfileLevelId cbp_profile = *profile_level_id;
+        cbp_profile.profile = webrtc::H264::kProfileConstrainedBaseline;
+        cbp_format.parameters[cricket::kH264FmtpProfileLevelId] =
+            *webrtc::H264::ProfileLevelIdToString(cbp_profile);
+        cbr_supported_formats.push_back(cbp_format);
+      }
+    }
+  }
+
+  size_t original_size = supported_formats->size();
+  // ...if it's not already in the list.
+  std::copy_if(cbr_supported_formats.begin(), cbr_supported_formats.end(),
+               std::back_inserter(*supported_formats),
+               [supported_formats](const webrtc::SdpVideoFormat& format) {
+                 return !IsCodecInList(format, *supported_formats);
+               });
+
+  if (supported_formats->size() > original_size) {
+    RTC_LOG(LS_WARNING) << "Explicitly added H264 constrained baseline to list "
+                           "of supported formats.";
+  }
 }
 
 }  // namespace cricket

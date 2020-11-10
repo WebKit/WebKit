@@ -11,6 +11,7 @@
 #include "modules/desktop_capture/linux/shared_x_display.h"
 
 #include <X11/Xlib.h>
+#include <X11/extensions/XTest.h>
 
 #include <algorithm>
 
@@ -83,6 +84,17 @@ void SharedXDisplay::ProcessPendingXEvents() {
       if ((*it)->HandleXEvent(e))
         break;
     }
+  }
+}
+
+void SharedXDisplay::IgnoreXServerGrabs() {
+  int test_event_base = 0;
+  int test_error_base = 0;
+  int major = 0;
+  int minor = 0;
+  if (XTestQueryExtension(display(), &test_event_base, &test_error_base, &major,
+                          &minor)) {
+    XTestGrabControl(display(), true);
   }
 }
 

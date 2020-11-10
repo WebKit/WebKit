@@ -20,7 +20,7 @@ namespace rtc {
 namespace {
 class MockYieldHandler : public YieldInterface {
  public:
-  MOCK_METHOD0(YieldExecution, void());
+  MOCK_METHOD(void, YieldExecution, (), (override));
 };
 }  // namespace
 TEST(YieldPolicyTest, HandlerReceivesYieldSignalWhenSet) {

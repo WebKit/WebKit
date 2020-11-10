@@ -19,10 +19,12 @@
 #include "absl/types/optional.h"
 #include "api/crypto/frame_decryptor_interface.h"
 #include "api/media_stream_interface.h"
+#include "api/media_stream_track_proxy.h"
 #include "api/media_types.h"
 #include "api/rtp_parameters.h"
 #include "api/scoped_refptr.h"
 #include "media/base/media_channel.h"
+#include "pc/audio_track.h"
 #include "pc/jitter_buffer_delay_interface.h"
 #include "pc/remote_audio_source.h"
 #include "pc/rtp_receiver.h"
@@ -84,6 +86,7 @@ class AudioRtpReceiver : public ObserverInterface,
 
   // RtpReceiverInternal implementation.
   void Stop() override;
+  void StopAndEndTrack() override;
   void SetupMediaChannel(uint32_t ssrc) override;
   void SetupUnsignaledMediaChannel() override;
   uint32_t ssrc() const override { return ssrc_.value_or(0); }
@@ -104,6 +107,9 @@ class AudioRtpReceiver : public ObserverInterface,
 
   std::vector<RtpSource> GetSources() const override;
   int AttachmentId() const override { return attachment_id_; }
+  void SetDepacketizerToDecoderFrameTransformer(
+      rtc::scoped_refptr<webrtc::FrameTransformerInterface> frame_transformer)
+      override;
 
  private:
   void RestartMediaChannel(absl::optional<uint32_t> ssrc);
@@ -113,7 +119,7 @@ class AudioRtpReceiver : public ObserverInterface,
   rtc::Thread* const worker_thread_;
   const std::string id_;
   const rtc::scoped_refptr<RemoteAudioSource> source_;
-  const rtc::scoped_refptr<AudioTrackInterface> track_;
+  const rtc::scoped_refptr<AudioTrackProxyWithInternal<AudioTrack>> track_;
   cricket::VoiceMediaChannel* media_channel_ = nullptr;
   absl::optional<uint32_t> ssrc_;
   std::vector<rtc::scoped_refptr<MediaStreamInterface>> streams_;
@@ -128,6 +134,8 @@ class AudioRtpReceiver : public ObserverInterface,
   // Allows to thread safely change playout delay. Handles caching cases if
   // |SetJitterBufferMinimumDelay| is called before start.
   rtc::scoped_refptr<JitterBufferDelayInterface> delay_;
+  rtc::scoped_refptr<FrameTransformerInterface> frame_transformer_
+      RTC_GUARDED_BY(worker_thread_);
 };
 
 }  // namespace webrtc

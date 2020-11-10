@@ -41,7 +41,6 @@ AudioState::~AudioState() {
 }
 
 AudioProcessing* AudioState::audio_processing() {
-  RTC_DCHECK(config_.audio_processing);
   return config_.audio_processing.get();
 }
 

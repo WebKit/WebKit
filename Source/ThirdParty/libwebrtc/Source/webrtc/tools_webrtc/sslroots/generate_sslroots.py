@@ -25,7 +25,7 @@ import os
 import re
 import string
 
-_GENERATED_FILE = 'sslroots.h'
+_GENERATED_FILE = 'ssl_roots.h'
 _PREFIX = '__generated__'
 _EXTENSION = '.crt'
 _SUBJECT_NAME_ARRAY = 'subject_name'

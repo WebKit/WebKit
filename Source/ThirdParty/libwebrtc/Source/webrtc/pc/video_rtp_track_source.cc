@@ -31,7 +31,7 @@ rtc::VideoSinkInterface<VideoFrame>* VideoRtpTrackSource::sink() {
 
 void VideoRtpTrackSource::BroadcastRecordableEncodedFrame(
     const RecordableEncodedFrame& frame) const {
-  rtc::CritScope cs(&mu_);
+  MutexLock lock(&mu_);
   for (rtc::VideoSinkInterface<RecordableEncodedFrame>* sink : encoded_sinks_) {
     sink->OnFrame(frame);
   }
@@ -54,7 +54,7 @@ void VideoRtpTrackSource::AddEncodedSink(
   RTC_DCHECK(sink);
   size_t size = 0;
   {
-    rtc::CritScope cs(&mu_);
+    MutexLock lock(&mu_);
     RTC_DCHECK(std::find(encoded_sinks_.begin(), encoded_sinks_.end(), sink) ==
                encoded_sinks_.end());
     encoded_sinks_.push_back(sink);
@@ -70,7 +70,7 @@ void VideoRtpTrackSource::RemoveEncodedSink(
   RTC_DCHECK_RUN_ON(&worker_sequence_checker_);
   size_t size = 0;
   {
-    rtc::CritScope cs(&mu_);
+    MutexLock lock(&mu_);
     auto it = std::find(encoded_sinks_.begin(), encoded_sinks_.end(), sink);
     if (it != encoded_sinks_.end()) {
       encoded_sinks_.erase(it);

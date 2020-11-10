@@ -57,17 +57,7 @@ void EchoEmulatingCapturer::OnAudioRendered(
   }
   queue_input_.assign(data.begin(), data.end());
   if (!renderer_queue_.Insert(&queue_input_)) {
-    // Test audio device works too slow with sanitizers and on some platforms
-    // and can't properly process audio, so when capturer will be stopped
-    // renderer will quickly overfill the queue.
-    // TODO(crbug.com/webrtc/10850) remove it when test ADM will be fast enough.
-#if defined(THREAD_SANITIZER) || defined(MEMORY_SANITIZER) || \
-    defined(ADDRESS_SANITIZER) || defined(WEBRTC_ANDROID) ||  \
-    (defined(_MSC_VER) && !defined(__clang__) && !defined(NDEBUG))
     RTC_LOG(WARNING) << "Echo queue is full";
-#else
-    RTC_CHECK(false) << "Echo queue is full";
-#endif
   }
 }
 

@@ -96,12 +96,12 @@ VideoCaptureImpl::~VideoCaptureImpl() {
 
 void VideoCaptureImpl::RegisterCaptureDataCallback(
     rtc::VideoSinkInterface<VideoFrame>* dataCallBack) {
-  rtc::CritScope cs(&_apiCs);
+  MutexLock lock(&api_lock_);
   _dataCallBack = dataCallBack;
 }
 
 void VideoCaptureImpl::DeRegisterCaptureDataCallback() {
-  rtc::CritScope cs(&_apiCs);
+  MutexLock lock(&api_lock_);
   _dataCallBack = NULL;
 }
 int32_t VideoCaptureImpl::DeliverCapturedFrame(VideoFrame& captureFrame) {
@@ -118,7 +118,7 @@ int32_t VideoCaptureImpl::IncomingFrame(uint8_t* videoFrame,
                                         size_t videoFrameLength,
                                         const VideoCaptureCapability& frameInfo,
                                         int64_t captureTime /*=0*/) {
-  rtc::CritScope cs(&_apiCs);
+  MutexLock lock(&api_lock_);
 
   const int32_t width = frameInfo.width;
   const int32_t height = frameInfo.height;
@@ -223,7 +223,7 @@ int32_t VideoCaptureImpl::CaptureSettings(
 }
 
 int32_t VideoCaptureImpl::SetCaptureRotation(VideoRotation rotation) {
-  rtc::CritScope cs(&_apiCs);
+  MutexLock lock(&api_lock_);
   _rotateFrame = rotation;
   return 0;
 }

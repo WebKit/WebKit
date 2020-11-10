@@ -25,88 +25,74 @@ bool DataChannelController::HasDataChannels() const {
 bool DataChannelController::SendData(const cricket::SendDataParams& params,
                                      const rtc::CopyOnWriteBuffer& payload,
                                      cricket::SendDataResult* result) {
-  // RTC_DCHECK_RUN_ON(signaling_thread());
-  if (data_channel_transport()) {
-    SendDataParams send_params;
-    send_params.type = ToWebrtcDataMessageType(params.type);
-    send_params.ordered = params.ordered;
-    if (params.max_rtx_count >= 0) {
-      send_params.max_rtx_count = params.max_rtx_count;
-    } else if (params.max_rtx_ms >= 0) {
-      send_params.max_rtx_ms = params.max_rtx_ms;
-    }
-
-    RTCError error = network_thread()->Invoke<RTCError>(
-        RTC_FROM_HERE, [this, params, send_params, payload] {
-          return data_channel_transport()->SendData(params.sid, send_params,
-                                                    payload);
-        });
-
-    if (error.ok()) {
-      *result = cricket::SendDataResult::SDR_SUCCESS;
-      return true;
-    } else if (error.type() == RTCErrorType::RESOURCE_EXHAUSTED) {
-      // SCTP transport uses RESOURCE_EXHAUSTED when it's blocked.
-      // TODO(mellem):  Stop using RTCError here and get rid of the mapping.
-      *result = cricket::SendDataResult::SDR_BLOCK;
-      return false;
-    }
-    *result = cricket::SendDataResult::SDR_ERROR;
-    return false;
-  } else if (rtp_data_channel()) {
+  if (data_channel_transport())
+    return DataChannelSendData(params, payload, result);
+  if (rtp_data_channel())
     return rtp_data_channel()->SendData(params, payload, result);
-  }
   RTC_LOG(LS_ERROR) << "SendData called before transport is ready";
   return false;
 }
 
 bool DataChannelController::ConnectDataChannel(
-    DataChannel* webrtc_data_channel) {
+    RtpDataChannel* webrtc_data_channel) {
   RTC_DCHECK_RUN_ON(signaling_thread());
-  if (!rtp_data_channel() && !data_channel_transport()) {
+  if (!rtp_data_channel()) {
     // Don't log an error here, because DataChannels are expected to call
     // ConnectDataChannel in this state. It's the only way to initially tell
     // whether or not the underlying transport is ready.
     return false;
   }
-  if (data_channel_transport()) {
-    SignalDataChannelTransportWritable_s.connect(webrtc_data_channel,
-                                                 &DataChannel::OnChannelReady);
-    SignalDataChannelTransportReceivedData_s.connect(
-        webrtc_data_channel, &DataChannel::OnDataReceived);
-    SignalDataChannelTransportChannelClosing_s.connect(
-        webrtc_data_channel, &DataChannel::OnClosingProcedureStartedRemotely);
-    SignalDataChannelTransportChannelClosed_s.connect(
-        webrtc_data_channel, &DataChannel::OnClosingProcedureComplete);
-  }
-  if (rtp_data_channel()) {
-    rtp_data_channel()->SignalReadyToSendData.connect(
-        webrtc_data_channel, &DataChannel::OnChannelReady);
-    rtp_data_channel()->SignalDataReceived.connect(
-        webrtc_data_channel, &DataChannel::OnDataReceived);
-  }
+  rtp_data_channel()->SignalReadyToSendData.connect(
+      webrtc_data_channel, &RtpDataChannel::OnChannelReady);
+  rtp_data_channel()->SignalDataReceived.connect(
+      webrtc_data_channel, &RtpDataChannel::OnDataReceived);
   return true;
 }
 
 void DataChannelController::DisconnectDataChannel(
-    DataChannel* webrtc_data_channel) {
+    RtpDataChannel* webrtc_data_channel) {
   RTC_DCHECK_RUN_ON(signaling_thread());
-  if (!rtp_data_channel() && !data_channel_transport()) {
+  if (!rtp_data_channel()) {
     RTC_LOG(LS_ERROR)
-        << "DisconnectDataChannel called when rtp_data_channel_ and "
-           "sctp_transport_ are NULL.";
+        << "DisconnectDataChannel called when rtp_data_channel_ is NULL.";
     return;
   }
-  if (data_channel_transport()) {
-    SignalDataChannelTransportWritable_s.disconnect(webrtc_data_channel);
-    SignalDataChannelTransportReceivedData_s.disconnect(webrtc_data_channel);
-    SignalDataChannelTransportChannelClosing_s.disconnect(webrtc_data_channel);
-    SignalDataChannelTransportChannelClosed_s.disconnect(webrtc_data_channel);
+  rtp_data_channel()->SignalReadyToSendData.disconnect(webrtc_data_channel);
+  rtp_data_channel()->SignalDataReceived.disconnect(webrtc_data_channel);
+}
+
+bool DataChannelController::ConnectDataChannel(
+    SctpDataChannel* webrtc_data_channel) {
+  RTC_DCHECK_RUN_ON(signaling_thread());
+  if (!data_channel_transport()) {
+    // Don't log an error here, because DataChannels are expected to call
+    // ConnectDataChannel in this state. It's the only way to initially tell
+    // whether or not the underlying transport is ready.
+    return false;
   }
-  if (rtp_data_channel()) {
-    rtp_data_channel()->SignalReadyToSendData.disconnect(webrtc_data_channel);
-    rtp_data_channel()->SignalDataReceived.disconnect(webrtc_data_channel);
+  SignalDataChannelTransportWritable_s.connect(
+      webrtc_data_channel, &SctpDataChannel::OnTransportReady);
+  SignalDataChannelTransportReceivedData_s.connect(
+      webrtc_data_channel, &SctpDataChannel::OnDataReceived);
+  SignalDataChannelTransportChannelClosing_s.connect(
+      webrtc_data_channel, &SctpDataChannel::OnClosingProcedureStartedRemotely);
+  SignalDataChannelTransportChannelClosed_s.connect(
+      webrtc_data_channel, &SctpDataChannel::OnClosingProcedureComplete);
+  return true;
+}
+
+void DataChannelController::DisconnectDataChannel(
+    SctpDataChannel* webrtc_data_channel) {
+  RTC_DCHECK_RUN_ON(signaling_thread());
+  if (!data_channel_transport()) {
+    RTC_LOG(LS_ERROR)
+        << "DisconnectDataChannel called when sctp_transport_ is NULL.";
+    return;
   }
+  SignalDataChannelTransportWritable_s.disconnect(webrtc_data_channel);
+  SignalDataChannelTransportReceivedData_s.disconnect(webrtc_data_channel);
+  SignalDataChannelTransportChannelClosing_s.disconnect(webrtc_data_channel);
+  SignalDataChannelTransportChannelClosed_s.disconnect(webrtc_data_channel);
 }
 
 void DataChannelController::AddSctpDataStream(int sid) {
@@ -143,9 +129,17 @@ void DataChannelController::OnDataReceived(
   cricket::ReceiveDataParams params;
   params.sid = channel_id;
   params.type = ToCricketDataMessageType(type);
-  data_channel_transport_invoker_->AsyncInvoke<void>(
+  data_channel_transport_invoker_.AsyncInvoke<void>(
       RTC_FROM_HERE, signaling_thread(), [this, params, buffer] {
         RTC_DCHECK_RUN_ON(signaling_thread());
+        // TODO(bugs.webrtc.org/11547): The data being received should be
+        // delivered on the network thread. The way HandleOpenMessage_s works
+        // right now is that it's called for all types of buffers and operates
+        // as a selector function. Change this so that it's only called for
+        // buffers that it should be able to handle. Once we do that, we can
+        // deliver all other buffers on the network thread (change
+        // SignalDataChannelTransportReceivedData_s to
+        // SignalDataChannelTransportReceivedData_n).
         if (!HandleOpenMessage_s(params, buffer)) {
           SignalDataChannelTransportReceivedData_s(params, buffer);
         }
@@ -154,7 +148,7 @@ void DataChannelController::OnDataReceived(
 
 void DataChannelController::OnChannelClosing(int channel_id) {
   RTC_DCHECK_RUN_ON(network_thread());
-  data_channel_transport_invoker_->AsyncInvoke<void>(
+  data_channel_transport_invoker_.AsyncInvoke<void>(
       RTC_FROM_HERE, signaling_thread(), [this, channel_id] {
         RTC_DCHECK_RUN_ON(signaling_thread());
         SignalDataChannelTransportChannelClosing_s(channel_id);
@@ -163,7 +157,7 @@ void DataChannelController::OnChannelClosing(int channel_id) {
 
 void DataChannelController::OnChannelClosed(int channel_id) {
   RTC_DCHECK_RUN_ON(network_thread());
-  data_channel_transport_invoker_->AsyncInvoke<void>(
+  data_channel_transport_invoker_.AsyncInvoke<void>(
       RTC_FROM_HERE, signaling_thread(), [this, channel_id] {
         RTC_DCHECK_RUN_ON(signaling_thread());
         SignalDataChannelTransportChannelClosed_s(channel_id);
@@ -172,7 +166,7 @@ void DataChannelController::OnChannelClosed(int channel_id) {
 
 void DataChannelController::OnReadyToSend() {
   RTC_DCHECK_RUN_ON(network_thread());
-  data_channel_transport_invoker_->AsyncInvoke<void>(
+  data_channel_transport_invoker_.AsyncInvoke<void>(
       RTC_FROM_HERE, signaling_thread(), [this] {
         RTC_DCHECK_RUN_ON(signaling_thread());
         data_channel_transport_ready_to_send_ = true;
@@ -183,7 +177,7 @@ void DataChannelController::OnReadyToSend() {
 
 void DataChannelController::OnTransportClosed() {
   RTC_DCHECK_RUN_ON(network_thread());
-  data_channel_transport_invoker_->AsyncInvoke<void>(
+  data_channel_transport_invoker_.AsyncInvoke<void>(
       RTC_FROM_HERE, signaling_thread(), [this] {
         RTC_DCHECK_RUN_ON(signaling_thread());
         OnTransportChannelClosed();
@@ -192,12 +186,15 @@ void DataChannelController::OnTransportClosed() {
 
 void DataChannelController::SetupDataChannelTransport_n() {
   RTC_DCHECK_RUN_ON(network_thread());
-  data_channel_transport_invoker_ = std::make_unique<rtc::AsyncInvoker>();
+
+  // There's a new data channel transport.  This needs to be signaled to the
+  // |sctp_data_channels_| so that they can reopen and reconnect.  This is
+  // necessary when bundling is applied.
+  NotifyDataChannelsOfTransportCreated();
 }
 
 void DataChannelController::TeardownDataChannelTransport_n() {
   RTC_DCHECK_RUN_ON(network_thread());
-  data_channel_transport_invoker_ = nullptr;
   if (data_channel_transport()) {
     data_channel_transport()->SetDataSink(nullptr);
   }
@@ -219,15 +216,19 @@ void DataChannelController::OnTransportChanged(
       // There's a new data channel transport.  This needs to be signaled to the
       // |sctp_data_channels_| so that they can reopen and reconnect.  This is
       // necessary when bundling is applied.
-      data_channel_transport_invoker_->AsyncInvoke<void>(
-          RTC_FROM_HERE, signaling_thread(), [this] {
-            RTC_DCHECK_RUN_ON(signaling_thread());
-            for (auto channel : sctp_data_channels_) {
-              channel->OnTransportChannelCreated();
-            }
-          });
+      NotifyDataChannelsOfTransportCreated();
     }
   }
+}
+
+std::vector<DataChannelStats> DataChannelController::GetDataChannelStats()
+    const {
+  RTC_DCHECK_RUN_ON(signaling_thread());
+  std::vector<DataChannelStats> stats;
+  stats.reserve(sctp_data_channels_.size());
+  for (const auto& channel : sctp_data_channels_)
+    stats.push_back(channel->GetStats());
+  return stats;
 }
 
 bool DataChannelController::HandleOpenMessage_s(
@@ -254,21 +255,19 @@ bool DataChannelController::HandleOpenMessage_s(
 void DataChannelController::OnDataChannelOpenMessage(
     const std::string& label,
     const InternalDataChannelInit& config) {
-  rtc::scoped_refptr<DataChannel> channel(
-      InternalCreateDataChannel(label, &config));
+  rtc::scoped_refptr<DataChannelInterface> channel(
+      InternalCreateDataChannelWithProxy(label, &config));
   if (!channel.get()) {
     RTC_LOG(LS_ERROR) << "Failed to create DataChannel from the OPEN message.";
     return;
   }
 
-  rtc::scoped_refptr<DataChannelInterface> proxy_channel =
-      DataChannelProxy::Create(signaling_thread(), channel);
-  pc_->Observer()->OnDataChannel(std::move(proxy_channel));
+  pc_->Observer()->OnDataChannel(std::move(channel));
   pc_->NoteDataAddedEvent();
 }
 
-rtc::scoped_refptr<DataChannel>
-DataChannelController::InternalCreateDataChannel(
+rtc::scoped_refptr<DataChannelInterface>
+DataChannelController::InternalCreateDataChannelWithProxy(
     const std::string& label,
     const InternalDataChannelInit* config) {
   RTC_DCHECK_RUN_ON(signaling_thread());
@@ -280,51 +279,78 @@ DataChannelController::InternalCreateDataChannel(
         << "InternalCreateDataChannel: Data is not supported in this call.";
     return nullptr;
   }
-  InternalDataChannelInit new_config =
-      config ? (*config) : InternalDataChannelInit();
-  if (DataChannel::IsSctpLike(data_channel_type_)) {
-    if (new_config.id < 0) {
-      rtc::SSLRole role;
-      if ((pc_->GetSctpSslRole(&role)) &&
-          !sid_allocator_.AllocateSid(role, &new_config.id)) {
-        RTC_LOG(LS_ERROR)
-            << "No id can be allocated for the SCTP data channel.";
-        return nullptr;
-      }
-    } else if (!sid_allocator_.ReserveSid(new_config.id)) {
-      RTC_LOG(LS_ERROR) << "Failed to create a SCTP data channel "
-                           "because the id is already in use or out of range.";
-      return nullptr;
+  if (IsSctpLike(data_channel_type())) {
+    rtc::scoped_refptr<SctpDataChannel> channel =
+        InternalCreateSctpDataChannel(label, config);
+    if (channel) {
+      return SctpDataChannel::CreateProxy(channel);
+    }
+  } else if (data_channel_type() == cricket::DCT_RTP) {
+    rtc::scoped_refptr<RtpDataChannel> channel =
+        InternalCreateRtpDataChannel(label, config);
+    if (channel) {
+      return RtpDataChannel::CreateProxy(channel);
     }
   }
 
-  rtc::scoped_refptr<DataChannel> channel(
-      DataChannel::Create(this, data_channel_type(), label, new_config));
+  return nullptr;
+}
+
+rtc::scoped_refptr<RtpDataChannel>
+DataChannelController::InternalCreateRtpDataChannel(
+    const std::string& label,
+    const DataChannelInit* config) {
+  RTC_DCHECK_RUN_ON(signaling_thread());
+  DataChannelInit new_config = config ? (*config) : DataChannelInit();
+  rtc::scoped_refptr<RtpDataChannel> channel(
+      RtpDataChannel::Create(this, label, new_config, signaling_thread()));
+  if (!channel) {
+    return nullptr;
+  }
+  if (rtp_data_channels_.find(channel->label()) != rtp_data_channels_.end()) {
+    RTC_LOG(LS_ERROR) << "DataChannel with label " << channel->label()
+                      << " already exists.";
+    return nullptr;
+  }
+  rtp_data_channels_[channel->label()] = channel;
+  SignalRtpDataChannelCreated_(channel.get());
+  return channel;
+}
+
+rtc::scoped_refptr<SctpDataChannel>
+DataChannelController::InternalCreateSctpDataChannel(
+    const std::string& label,
+    const InternalDataChannelInit* config) {
+  RTC_DCHECK_RUN_ON(signaling_thread());
+  InternalDataChannelInit new_config =
+      config ? (*config) : InternalDataChannelInit();
+  if (new_config.id < 0) {
+    rtc::SSLRole role;
+    if ((pc_->GetSctpSslRole(&role)) &&
+        !sid_allocator_.AllocateSid(role, &new_config.id)) {
+      RTC_LOG(LS_ERROR) << "No id can be allocated for the SCTP data channel.";
+      return nullptr;
+    }
+  } else if (!sid_allocator_.ReserveSid(new_config.id)) {
+    RTC_LOG(LS_ERROR) << "Failed to create a SCTP data channel "
+                         "because the id is already in use or out of range.";
+    return nullptr;
+  }
+  rtc::scoped_refptr<SctpDataChannel> channel(SctpDataChannel::Create(
+      this, label, new_config, signaling_thread(), network_thread()));
   if (!channel) {
     sid_allocator_.ReleaseSid(new_config.id);
     return nullptr;
   }
-
-  if (channel->data_channel_type() == cricket::DCT_RTP) {
-    if (rtp_data_channels_.find(channel->label()) != rtp_data_channels_.end()) {
-      RTC_LOG(LS_ERROR) << "DataChannel with label " << channel->label()
-                        << " already exists.";
-      return nullptr;
-    }
-    rtp_data_channels_[channel->label()] = channel;
-  } else {
-    RTC_DCHECK(DataChannel::IsSctpLike(data_channel_type_));
-    sctp_data_channels_.push_back(channel);
-    channel->SignalClosed.connect(pc_,
-                                  &PeerConnection::OnSctpDataChannelClosed);
-  }
-  SignalDataChannelCreated_(channel.get());
+  sctp_data_channels_.push_back(channel);
+  channel->SignalClosed.connect(pc_, &PeerConnection::OnSctpDataChannelClosed);
+  SignalSctpDataChannelCreated_(channel.get());
   return channel;
 }
 
 void DataChannelController::AllocateSctpSids(rtc::SSLRole role) {
   RTC_DCHECK_RUN_ON(signaling_thread());
-  std::vector<rtc::scoped_refptr<DataChannel>> channels_to_close;
+  std::vector<rtc::scoped_refptr<SctpDataChannel>> channels_to_close;
   for (const auto& channel : sctp_data_channels_) {
     if (channel->id() < 0) {
       int sid;
@@ -343,7 +369,7 @@ void DataChannelController::AllocateSctpSids(rtc::SSLRole role) {
   }
 }
 
-void DataChannelController::OnSctpDataChannelClosed(DataChannel* channel) {
+void DataChannelController::OnSctpDataChannelClosed(SctpDataChannel* channel) {
   RTC_DCHECK_RUN_ON(signaling_thread());
   for (auto it = sctp_data_channels_.begin(); it != sctp_data_channels_.end();
        ++it) {
@@ -373,20 +399,20 @@ void DataChannelController::OnTransportChannelClosed() {
   RTC_DCHECK_RUN_ON(signaling_thread());
   // Use a temporary copy of the RTP/SCTP DataChannel list because the
   // DataChannel may callback to us and try to modify the list.
-  std::map<std::string, rtc::scoped_refptr<DataChannel>> temp_rtp_dcs;
+  std::map<std::string, rtc::scoped_refptr<RtpDataChannel>> temp_rtp_dcs;
   temp_rtp_dcs.swap(rtp_data_channels_);
   for (const auto& kv : temp_rtp_dcs) {
     kv.second->OnTransportChannelClosed();
   }
 
-  std::vector<rtc::scoped_refptr<DataChannel>> temp_sctp_dcs;
+  std::vector<rtc::scoped_refptr<SctpDataChannel>> temp_sctp_dcs;
   temp_sctp_dcs.swap(sctp_data_channels_);
   for (const auto& channel : temp_sctp_dcs) {
     channel->OnTransportChannelClosed();
   }
 }
 
-DataChannel* DataChannelController::FindDataChannelBySid(int sid) const {
+SctpDataChannel* DataChannelController::FindDataChannelBySid(int sid) const {
   RTC_DCHECK_RUN_ON(signaling_thread());
   for (const auto& channel : sctp_data_channels_) {
     if (channel->id() == sid) {
@@ -424,9 +450,10 @@ void DataChannelController::UpdateLocalRtpDataChannels(
 
 void DataChannelController::UpdateRemoteRtpDataChannels(
     const cricket::StreamParamsVec& streams) {
+  RTC_DCHECK_RUN_ON(signaling_thread());
+
   std::vector<std::string> existing_channels;
 
-  RTC_DCHECK_RUN_ON(signaling_thread());
   // Find new and active data channels.
   for (const cricket::StreamParams& params : streams) {
     // The data channel label is either the mslabel or the SSRC if the mslabel
@@ -447,12 +474,44 @@ void DataChannelController::UpdateRemoteRtpDataChannels(
   UpdateClosingRtpDataChannels(existing_channels, false);
 }
 
+cricket::DataChannelType DataChannelController::data_channel_type() const {
+  // TODO(bugs.webrtc.org/9987): Should be restricted to the signaling thread.
+  // RTC_DCHECK_RUN_ON(signaling_thread());
+  return data_channel_type_;
+}
+
+void DataChannelController::set_data_channel_type(
+    cricket::DataChannelType type) {
+  RTC_DCHECK_RUN_ON(signaling_thread());
+  data_channel_type_ = type;
+}
+
+DataChannelTransportInterface* DataChannelController::data_channel_transport()
+    const {
+  // TODO(bugs.webrtc.org/11547): Only allow this accessor to be called on the
+  // network thread.
+  // RTC_DCHECK_RUN_ON(network_thread());
+  return data_channel_transport_;
+}
+
+void DataChannelController::set_data_channel_transport(
+    DataChannelTransportInterface* transport) {
+  RTC_DCHECK_RUN_ON(network_thread());
+  data_channel_transport_ = transport;
+}
+
+const std::map<std::string, rtc::scoped_refptr<RtpDataChannel>>*
+DataChannelController::rtp_data_channels() const {
+  RTC_DCHECK_RUN_ON(signaling_thread());
+  return &rtp_data_channels_;
+}
+
 void DataChannelController::UpdateClosingRtpDataChannels(
     const std::vector<std::string>& active_channels,
     bool is_local_update) {
   auto it = rtp_data_channels_.begin();
   while (it != rtp_data_channels_.end()) {
-    DataChannel* data_channel = it->second;
+    RtpDataChannel* data_channel = it->second;
     if (absl::c_linear_search(active_channels, data_channel->label())) {
       ++it;
       continue;
@@ -464,7 +523,7 @@ void DataChannelController::UpdateClosingRtpDataChannels(
       data_channel->RemotePeerRequestClose();
     }
 
-    if (data_channel->state() == DataChannel::kClosed) {
+    if (data_channel->state() == RtpDataChannel::kClosed) {
       rtp_data_channels_.erase(it);
       it = rtp_data_channels_.begin();
     } else {
@@ -475,8 +534,11 @@ void DataChannelController::UpdateClosingRtpDataChannels(
 
 void DataChannelController::CreateRemoteRtpDataChannel(const std::string& label,
                                                        uint32_t remote_ssrc) {
-  rtc::scoped_refptr<DataChannel> channel(
-      InternalCreateDataChannel(label, nullptr));
+  if (data_channel_type() != cricket::DCT_RTP) {
+    return;
+  }
+  rtc::scoped_refptr<RtpDataChannel> channel(
+      InternalCreateRtpDataChannel(label, nullptr));
   if (!channel.get()) {
     RTC_LOG(LS_WARNING) << "Remote peer requested a DataChannel but"
                            "CreateDataChannel failed.";
@@ -484,8 +546,57 @@ void DataChannelController::CreateRemoteRtpDataChannel(const std::string& label,
   }
   channel->SetReceiveSsrc(remote_ssrc);
   rtc::scoped_refptr<DataChannelInterface> proxy_channel =
-      DataChannelProxy::Create(signaling_thread(), channel);
+      RtpDataChannel::CreateProxy(std::move(channel));
   pc_->Observer()->OnDataChannel(std::move(proxy_channel));
+}
+
+bool DataChannelController::DataChannelSendData(
+    const cricket::SendDataParams& params,
+    const rtc::CopyOnWriteBuffer& payload,
+    cricket::SendDataResult* result) {
+  // TODO(bugs.webrtc.org/11547): Expect method to be called on the network
+  // thread instead. Remove the Invoke() below and move assocated state to
+  // the network thread.
+  RTC_DCHECK_RUN_ON(signaling_thread());
+  RTC_DCHECK(data_channel_transport());
+
+  SendDataParams send_params;
+  send_params.type = ToWebrtcDataMessageType(params.type);
+  send_params.ordered = params.ordered;
+  if (params.max_rtx_count >= 0) {
+    send_params.max_rtx_count = params.max_rtx_count;
+  } else if (params.max_rtx_ms >= 0) {
+    send_params.max_rtx_ms = params.max_rtx_ms;
+  }
+
+  RTCError error = network_thread()->Invoke<RTCError>(
+      RTC_FROM_HERE, [this, params, send_params, payload] {
+        return data_channel_transport()->SendData(params.sid, send_params,
+                                                  payload);
+      });
+
+  if (error.ok()) {
+    *result = cricket::SendDataResult::SDR_SUCCESS;
+    return true;
+  } else if (error.type() == RTCErrorType::RESOURCE_EXHAUSTED) {
+    // SCTP transport uses RESOURCE_EXHAUSTED when it's blocked.
+    // TODO(mellem):  Stop using RTCError here and get rid of the mapping.
+    *result = cricket::SendDataResult::SDR_BLOCK;
+    return false;
+  }
+  *result = cricket::SendDataResult::SDR_ERROR;
+  return false;
+}
+
+void DataChannelController::NotifyDataChannelsOfTransportCreated() {
+  RTC_DCHECK_RUN_ON(network_thread());
+  data_channel_transport_invoker_.AsyncInvoke<void>(
+      RTC_FROM_HERE, signaling_thread(), [this] {
+        RTC_DCHECK_RUN_ON(signaling_thread());
+        for (const auto& channel : sctp_data_channels_) {
+          channel->OnTransportChannelCreated();
+        }
+      });
 }
 
 rtc::Thread* DataChannelController::network_thread() const {

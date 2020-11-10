@@ -31,13 +31,14 @@ using ::testing::StrictMock;
 namespace {
 class MockEncodedAudioFrame : public webrtc::AudioDecoder::EncodedAudioFrame {
  public:
-  MOCK_CONST_METHOD0(Duration, size_t());
+  MOCK_METHOD(size_t, Duration, (), (const, override));
 
-  MOCK_CONST_METHOD0(IsDtxPacket, bool());
+  MOCK_METHOD(bool, IsDtxPacket, (), (const, override));
 
-  MOCK_CONST_METHOD1(
-      Decode,
-      absl::optional<DecodeResult>(rtc::ArrayView<int16_t> decoded));
+  MOCK_METHOD(absl::optional<DecodeResult>,
+              Decode,
+              (rtc::ArrayView<int16_t> decoded),
+              (const, override));
 };
 
 // Helper class to generate packets. Packets must be deleted by the user.

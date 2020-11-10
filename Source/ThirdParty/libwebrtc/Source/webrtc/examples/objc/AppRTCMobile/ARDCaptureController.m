@@ -17,12 +17,12 @@
 const Float64 kFramerateLimit = 30.0;
 
 @implementation ARDCaptureController {
-  RTCCameraVideoCapturer *_capturer;
+  RTC_OBJC_TYPE(RTCCameraVideoCapturer) * _capturer;
   ARDSettingsModel *_settings;
   BOOL _usingFrontCamera;
 }
 
-- (instancetype)initWithCapturer:(RTCCameraVideoCapturer *)capturer
+- (instancetype)initWithCapturer:(RTC_OBJC_TYPE(RTCCameraVideoCapturer) *)capturer
                         settings:(ARDSettingsModel *)settings {
   if (self = [super init]) {
     _capturer = capturer;
@@ -34,6 +34,10 @@ const Float64 kFramerateLimit = 30.0;
 }
 
 - (void)startCapture {
+  [self startCapture:nil];
+}
+
+- (void)startCapture:(void (^)(NSError *))completion {
   AVCaptureDevicePosition position =
       _usingFrontCamera ? AVCaptureDevicePositionFront : AVCaptureDevicePositionBack;
   AVCaptureDevice *device = [self findDeviceForPosition:position];
@@ -48,7 +52,7 @@ const Float64 kFramerateLimit = 30.0;
 
   NSInteger fps = [self selectFpsForFormat:format];
 
-  [_capturer startCaptureWithDevice:device format:format fps:fps];
+  [_capturer startCaptureWithDevice:device format:format fps:fps completionHandler:completion];
 }
 
 - (void)stopCapture {
@@ -57,13 +61,19 @@ const Float64 kFramerateLimit = 30.0;
 
 - (void)switchCamera {
   _usingFrontCamera = !_usingFrontCamera;
-  [self startCapture];
+  [self startCapture:nil];
+}
+
+- (void)switchCamera:(void (^)(NSError *))completion {
+  _usingFrontCamera = !_usingFrontCamera;
+  [self startCapture:completion];
 }
 
 #pragma mark - Private
 
 - (AVCaptureDevice *)findDeviceForPosition:(AVCaptureDevicePosition)position {
-  NSArray<AVCaptureDevice *> *captureDevices = [RTCCameraVideoCapturer captureDevices];
+  NSArray<AVCaptureDevice *> *captureDevices =
+      [RTC_OBJC_TYPE(RTCCameraVideoCapturer) captureDevices];
   for (AVCaptureDevice *device in captureDevices) {
     if (device.position == position) {
       return device;
@@ -74,7 +84,7 @@ const Float64 kFramerateLimit = 30.0;
 
 - (AVCaptureDeviceFormat *)selectFormatForDevice:(AVCaptureDevice *)device {
   NSArray<AVCaptureDeviceFormat *> *formats =
-      [RTCCameraVideoCapturer supportedFormatsForDevice:device];
+      [RTC_OBJC_TYPE(RTCCameraVideoCapturer) supportedFormatsForDevice:device];
   int targetWidth = [_settings currentVideoResolutionWidthFromStore];
   int targetHeight = [_settings currentVideoResolutionHeightFromStore];
   AVCaptureDeviceFormat *selectedFormat = nil;

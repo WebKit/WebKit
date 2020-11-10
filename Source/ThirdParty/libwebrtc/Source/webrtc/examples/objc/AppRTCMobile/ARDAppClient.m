@@ -105,10 +105,10 @@ static int const kKbpsMultiplier = 1000;
 @end
 
 @implementation ARDAppClient {
-  RTCFileLogger *_fileLogger;
+  RTC_OBJC_TYPE(RTCFileLogger) * _fileLogger;
   ARDTimerProxy *_statsTimer;
   ARDSettingsModel *_settings;
-  RTCVideoTrack *_localVideoTrack;
+  RTC_OBJC_TYPE(RTCVideoTrack) * _localVideoTrack;
 }
 
 @synthesize shouldGetStats = _shouldGetStats;
@@ -172,7 +172,7 @@ static int const kKbpsMultiplier = 1000;
 - (void)configure {
   _messageQueue = [NSMutableArray array];
   _iceServers = [NSMutableArray array];
-  _fileLogger = [[RTCFileLogger alloc] init];
+  _fileLogger = [[RTC_OBJC_TYPE(RTCFileLogger) alloc] init];
   [_fileLogger start];
 }
 
@@ -224,11 +224,14 @@ static int const kKbpsMultiplier = 1000;
   _isLoopback = isLoopback;
   self.state = kARDAppClientStateConnecting;
 
-  RTCDefaultVideoDecoderFactory *decoderFactory = [[RTCDefaultVideoDecoderFactory alloc] init];
-  RTCDefaultVideoEncoderFactory *encoderFactory = [[RTCDefaultVideoEncoderFactory alloc] init];
+  RTC_OBJC_TYPE(RTCDefaultVideoDecoderFactory) *decoderFactory =
+      [[RTC_OBJC_TYPE(RTCDefaultVideoDecoderFactory) alloc] init];
+  RTC_OBJC_TYPE(RTCDefaultVideoEncoderFactory) *encoderFactory =
+      [[RTC_OBJC_TYPE(RTCDefaultVideoEncoderFactory) alloc] init];
   encoderFactory.preferredCodec = [settings currentVideoCodecSettingFromStore];
-  _factory = [[RTCPeerConnectionFactory alloc] initWithEncoderFactory:encoderFactory
-                                                       decoderFactory:decoderFactory];
+  _factory =
+      [[RTC_OBJC_TYPE(RTCPeerConnectionFactory) alloc] initWithEncoderFactory:encoderFactory
+                                                               decoderFactory:decoderFactory];
 
 #if defined(WEBRTC_IOS)
   if (kARDAppClientEnableTracing) {
@@ -365,38 +368,38 @@ static int const kKbpsMultiplier = 1000;
   }
 }
 
-#pragma mark - RTCPeerConnectionDelegate
+#pragma mark - RTC_OBJC_TYPE(RTCPeerConnectionDelegate)
 // Callbacks for this delegate occur on non-main thread and need to be
 // dispatched back to main queue as needed.
 
-- (void)peerConnection:(RTCPeerConnection *)peerConnection
+- (void)peerConnection:(RTC_OBJC_TYPE(RTCPeerConnection) *)peerConnection
     didChangeSignalingState:(RTCSignalingState)stateChanged {
   RTCLog(@"Signaling state changed: %ld", (long)stateChanged);
 }
 
-- (void)peerConnection:(RTCPeerConnection *)peerConnection
-          didAddStream:(RTCMediaStream *)stream {
+- (void)peerConnection:(RTC_OBJC_TYPE(RTCPeerConnection) *)peerConnection
+          didAddStream:(RTC_OBJC_TYPE(RTCMediaStream) *)stream {
   RTCLog(@"Stream with %lu video tracks and %lu audio tracks was added.",
          (unsigned long)stream.videoTracks.count,
          (unsigned long)stream.audioTracks.count);
 }
 
-- (void)peerConnection:(RTCPeerConnection *)peerConnection
-    didStartReceivingOnTransceiver:(RTCRtpTransceiver *)transceiver {
-  RTCMediaStreamTrack *track = transceiver.receiver.track;
+- (void)peerConnection:(RTC_OBJC_TYPE(RTCPeerConnection) *)peerConnection
+    didStartReceivingOnTransceiver:(RTC_OBJC_TYPE(RTCRtpTransceiver) *)transceiver {
+  RTC_OBJC_TYPE(RTCMediaStreamTrack) *track = transceiver.receiver.track;
   RTCLog(@"Now receiving %@ on track %@.", track.kind, track.trackId);
 }
 
-- (void)peerConnection:(RTCPeerConnection *)peerConnection
-       didRemoveStream:(RTCMediaStream *)stream {
+- (void)peerConnection:(RTC_OBJC_TYPE(RTCPeerConnection) *)peerConnection
+       didRemoveStream:(RTC_OBJC_TYPE(RTCMediaStream) *)stream {
   RTCLog(@"Stream was removed.");
 }
 
-- (void)peerConnectionShouldNegotiate:(RTCPeerConnection *)peerConnection {
+- (void)peerConnectionShouldNegotiate:(RTC_OBJC_TYPE(RTCPeerConnection) *)peerConnection {
   RTCLog(@"WARNING: Renegotiation needed but unimplemented.");
 }
 
-- (void)peerConnection:(RTCPeerConnection *)peerConnection
+- (void)peerConnection:(RTC_OBJC_TYPE(RTCPeerConnection) *)peerConnection
     didChangeIceConnectionState:(RTCIceConnectionState)newState {
   RTCLog(@"ICE state changed: %ld", (long)newState);
   dispatch_async(dispatch_get_main_queue(), ^{
@@ -404,18 +407,18 @@ static int const kKbpsMultiplier = 1000;
   });
 }
 
-- (void)peerConnection:(RTCPeerConnection *)peerConnection
+- (void)peerConnection:(RTC_OBJC_TYPE(RTCPeerConnection) *)peerConnection
     didChangeConnectionState:(RTCPeerConnectionState)newState {
   RTCLog(@"ICE+DTLS state changed: %ld", (long)newState);
 }
 
-- (void)peerConnection:(RTCPeerConnection *)peerConnection
+- (void)peerConnection:(RTC_OBJC_TYPE(RTCPeerConnection) *)peerConnection
     didChangeIceGatheringState:(RTCIceGatheringState)newState {
   RTCLog(@"ICE gathering state changed: %ld", (long)newState);
 }
 
-- (void)peerConnection:(RTCPeerConnection *)peerConnection
-    didGenerateIceCandidate:(RTCIceCandidate *)candidate {
+- (void)peerConnection:(RTC_OBJC_TYPE(RTCPeerConnection) *)peerConnection
+    didGenerateIceCandidate:(RTC_OBJC_TYPE(RTCIceCandidate) *)candidate {
   dispatch_async(dispatch_get_main_queue(), ^{
     ARDICECandidateMessage *message =
         [[ARDICECandidateMessage alloc] initWithCandidate:candidate];
@@ -423,8 +426,8 @@ static int const kKbpsMultiplier = 1000;
   });
 }
 
-- (void)peerConnection:(RTCPeerConnection *)peerConnection
-    didRemoveIceCandidates:(NSArray<RTCIceCandidate *> *)candidates {
+- (void)peerConnection:(RTC_OBJC_TYPE(RTCPeerConnection) *)peerConnection
+    didRemoveIceCandidates:(NSArray<RTC_OBJC_TYPE(RTCIceCandidate) *> *)candidates {
   dispatch_async(dispatch_get_main_queue(), ^{
     ARDICECandidateRemovalMessage *message =
         [[ARDICECandidateRemovalMessage alloc]
@@ -433,24 +436,24 @@ static int const kKbpsMultiplier = 1000;
   });
 }
 
-- (void)peerConnection:(RTCPeerConnection *)peerConnection
-     didChangeLocalCandidate:(RTCIceCandidate *)local
-    didChangeRemoteCandidate:(RTCIceCandidate *)remote
+- (void)peerConnection:(RTC_OBJC_TYPE(RTCPeerConnection) *)peerConnection
+     didChangeLocalCandidate:(RTC_OBJC_TYPE(RTCIceCandidate) *)local
+    didChangeRemoteCandidate:(RTC_OBJC_TYPE(RTCIceCandidate) *)remote
               lastReceivedMs:(int)lastDataReceivedMs
                didHaveReason:(NSString *)reason {
   RTCLog(@"ICE candidate pair changed because: %@", reason);
 }
 
-- (void)peerConnection:(RTCPeerConnection *)peerConnection
-    didOpenDataChannel:(RTCDataChannel *)dataChannel {
+- (void)peerConnection:(RTC_OBJC_TYPE(RTCPeerConnection) *)peerConnection
+    didOpenDataChannel:(RTC_OBJC_TYPE(RTCDataChannel) *)dataChannel {
 }
 
 #pragma mark - RTCSessionDescriptionDelegate
 // Callbacks for this delegate occur on non-main thread and need to be
 // dispatched back to main queue as needed.
 
-- (void)peerConnection:(RTCPeerConnection *)peerConnection
-    didCreateSessionDescription:(RTCSessionDescription *)sdp
+- (void)peerConnection:(RTC_OBJC_TYPE(RTCPeerConnection) *)peerConnection
+    didCreateSessionDescription:(RTC_OBJC_TYPE(RTCSessionDescription) *)sdp
                           error:(NSError *)error {
   dispatch_async(dispatch_get_main_queue(), ^{
     if (error) {
@@ -480,7 +483,7 @@ static int const kKbpsMultiplier = 1000;
   });
 }
 
-- (void)peerConnection:(RTCPeerConnection *)peerConnection
+- (void)peerConnection:(RTC_OBJC_TYPE(RTCPeerConnection) *)peerConnection
     didSetSessionDescriptionWithError:(NSError *)error {
   dispatch_async(dispatch_get_main_queue(), ^{
     if (error) {
@@ -499,15 +502,16 @@ static int const kKbpsMultiplier = 1000;
     // If we're answering and we've just set the remote offer we need to create
     // an answer and set the local description.
     if (!self.isInitiator && !self.peerConnection.localDescription) {
-      RTCMediaConstraints *constraints = [self defaultAnswerConstraints];
+      RTC_OBJC_TYPE(RTCMediaConstraints) *constraints = [self defaultAnswerConstraints];
       __weak ARDAppClient *weakSelf = self;
-      [self.peerConnection answerForConstraints:constraints
-                              completionHandler:^(RTCSessionDescription *sdp, NSError *error) {
-                                ARDAppClient *strongSelf = weakSelf;
-                                [strongSelf peerConnection:strongSelf.peerConnection
-                                    didCreateSessionDescription:sdp
-                                                          error:error];
-                              }];
+      [self.peerConnection
+          answerForConstraints:constraints
+             completionHandler:^(RTC_OBJC_TYPE(RTCSessionDescription) * sdp, NSError * error) {
+               ARDAppClient *strongSelf = weakSelf;
+               [strongSelf peerConnection:strongSelf.peerConnection
+                   didCreateSessionDescription:sdp
+                                         error:error];
+             }];
     }
   });
 }
@@ -544,12 +548,10 @@ static int const kKbpsMultiplier = 1000;
   self.state = kARDAppClientStateConnected;
 
   // Create peer connection.
-  RTCMediaConstraints *constraints = [self defaultPeerConnectionConstraints];
-  RTCConfiguration *config = [[RTCConfiguration alloc] init];
-  RTCCertificate *pcert = [RTCCertificate generateCertificateWithParams:@{
-    @"expires" : @100000,
-    @"name" : @"RSASSA-PKCS1-v1_5"
-  }];
+  RTC_OBJC_TYPE(RTCMediaConstraints) *constraints = [self defaultPeerConnectionConstraints];
+  RTC_OBJC_TYPE(RTCConfiguration) *config = [[RTC_OBJC_TYPE(RTCConfiguration) alloc] init];
+  RTC_OBJC_TYPE(RTCCertificate) *pcert = [RTC_OBJC_TYPE(RTCCertificate)
+      generateCertificateWithParams:@{@"expires" : @100000, @"name" : @"RSASSA-PKCS1-v1_5"}];
   config.iceServers = _iceServers;
   config.sdpSemantics = RTCSdpSemanticsUnifiedPlan;
   config.certificate = pcert;
@@ -562,14 +564,14 @@ static int const kKbpsMultiplier = 1000;
   if (_isInitiator) {
     // Send offer.
     __weak ARDAppClient *weakSelf = self;
-    [_peerConnection offerForConstraints:[self defaultOfferConstraints]
-                       completionHandler:^(RTCSessionDescription *sdp,
-                                           NSError *error) {
-      ARDAppClient *strongSelf = weakSelf;
-      [strongSelf peerConnection:strongSelf.peerConnection
-          didCreateSessionDescription:sdp
-                                error:error];
-    }];
+    [_peerConnection
+        offerForConstraints:[self defaultOfferConstraints]
+          completionHandler:^(RTC_OBJC_TYPE(RTCSessionDescription) * sdp, NSError * error) {
+            ARDAppClient *strongSelf = weakSelf;
+            [strongSelf peerConnection:strongSelf.peerConnection
+                didCreateSessionDescription:sdp
+                                      error:error];
+          }];
   } else {
     // Check if we've received an offer.
     [self drainMessageQueueIfReady];
@@ -619,7 +621,7 @@ static int const kKbpsMultiplier = 1000;
     case kARDSignalingMessageTypeAnswer: {
       ARDSessionDescriptionMessage *sdpMessage =
           (ARDSessionDescriptionMessage *)message;
-      RTCSessionDescription *description = sdpMessage.sessionDescription;
+      RTC_OBJC_TYPE(RTCSessionDescription) *description = sdpMessage.sessionDescription;
       __weak ARDAppClient *weakSelf = self;
       [_peerConnection setRemoteDescription:description
                           completionHandler:^(NSError *error) {
@@ -679,7 +681,7 @@ static int const kKbpsMultiplier = 1000;
 }
 
 - (void)setMaxBitrateForPeerConnectionVideoSender {
-  for (RTCRtpSender *sender in _peerConnection.senders) {
+  for (RTC_OBJC_TYPE(RTCRtpSender) * sender in _peerConnection.senders) {
     if (sender.track != nil) {
       if ([sender.track.kind isEqualToString:kARDVideoTrackKind]) {
         [self setMaxBitrate:[_settings currentMaxBitrateSettingFromStore] forVideoSender:sender];
@@ -688,20 +690,20 @@ static int const kKbpsMultiplier = 1000;
   }
 }
 
-- (void)setMaxBitrate:(NSNumber *)maxBitrate forVideoSender:(RTCRtpSender *)sender {
+- (void)setMaxBitrate:(NSNumber *)maxBitrate forVideoSender:(RTC_OBJC_TYPE(RTCRtpSender) *)sender {
   if (maxBitrate.intValue <= 0) {
     return;
   }
 
-  RTCRtpParameters *parametersToModify = sender.parameters;
-  for (RTCRtpEncodingParameters *encoding in parametersToModify.encodings) {
+  RTC_OBJC_TYPE(RTCRtpParameters) *parametersToModify = sender.parameters;
+  for (RTC_OBJC_TYPE(RTCRtpEncodingParameters) * encoding in parametersToModify.encodings) {
     encoding.maxBitrateBps = @(maxBitrate.intValue * kKbpsMultiplier);
   }
   [sender setParameters:parametersToModify];
 }
 
-- (RTCRtpTransceiver *)videoTransceiver {
-  for (RTCRtpTransceiver *transceiver in _peerConnection.transceivers) {
+- (RTC_OBJC_TYPE(RTCRtpTransceiver) *)videoTransceiver {
+  for (RTC_OBJC_TYPE(RTCRtpTransceiver) * transceiver in _peerConnection.transceivers) {
     if (transceiver.mediaType == RTCRtpMediaTypeVideo) {
       return transceiver;
     }
@@ -710,29 +712,30 @@ static int const kKbpsMultiplier = 1000;
 }
 
 - (void)createMediaSenders {
-  RTCMediaConstraints *constraints = [self defaultMediaAudioConstraints];
-  RTCAudioSource *source = [_factory audioSourceWithConstraints:constraints];
-  RTCAudioTrack *track = [_factory audioTrackWithSource:source
-                                                trackId:kARDAudioTrackId];
+  RTC_OBJC_TYPE(RTCMediaConstraints) *constraints = [self defaultMediaAudioConstraints];
+  RTC_OBJC_TYPE(RTCAudioSource) *source = [_factory audioSourceWithConstraints:constraints];
+  RTC_OBJC_TYPE(RTCAudioTrack) *track = [_factory audioTrackWithSource:source
+                                                               trackId:kARDAudioTrackId];
   [_peerConnection addTrack:track streamIds:@[ kARDMediaStreamId ]];
   _localVideoTrack = [self createLocalVideoTrack];
   if (_localVideoTrack) {
     [_peerConnection addTrack:_localVideoTrack streamIds:@[ kARDMediaStreamId ]];
     [_delegate appClient:self didReceiveLocalVideoTrack:_localVideoTrack];
     // We can set up rendering for the remote track right away since the transceiver already has an
-    // RTCRtpReceiver with a track. The track will automatically get unmuted and produce frames
-    // once RTP is received.
-    RTCVideoTrack *track = (RTCVideoTrack *)([self videoTransceiver].receiver.track);
+    // RTC_OBJC_TYPE(RTCRtpReceiver) with a track. The track will automatically get unmuted and
+    // produce frames once RTP is received.
+    RTC_OBJC_TYPE(RTCVideoTrack) *track =
+        (RTC_OBJC_TYPE(RTCVideoTrack) *)([self videoTransceiver].receiver.track);
     [_delegate appClient:self didReceiveRemoteVideoTrack:track];
   }
 }
 
-- (RTCVideoTrack *)createLocalVideoTrack {
+- (RTC_OBJC_TYPE(RTCVideoTrack) *)createLocalVideoTrack {
   if ([_settings currentAudioOnlySettingFromStore]) {
     return nil;
   }
 
-  RTCVideoSource *source = [_factory videoSource];
+  RTC_OBJC_TYPE(RTCVideoSource) *source = [_factory videoSource];
 
 #if !TARGET_IPHONE_SIMULATOR
   if (self.isBroadcast) {
@@ -740,13 +743,15 @@ static int const kKbpsMultiplier = 1000;
         [[ARDExternalSampleCapturer alloc] initWithDelegate:source];
     [_delegate appClient:self didCreateLocalExternalSampleCapturer:capturer];
   } else {
-    RTCCameraVideoCapturer *capturer = [[RTCCameraVideoCapturer alloc] initWithDelegate:source];
+    RTC_OBJC_TYPE(RTCCameraVideoCapturer) *capturer =
+        [[RTC_OBJC_TYPE(RTCCameraVideoCapturer) alloc] initWithDelegate:source];
     [_delegate appClient:self didCreateLocalCapturer:capturer];
   }
 #else
 #if defined(__IPHONE_11_0) && (__IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_11_0)
   if (@available(iOS 10, *)) {
-    RTCFileVideoCapturer *fileCapturer = [[RTCFileVideoCapturer alloc] initWithDelegate:source];
+    RTC_OBJC_TYPE(RTCFileVideoCapturer) *fileCapturer =
+        [[RTC_OBJC_TYPE(RTCFileVideoCapturer) alloc] initWithDelegate:source];
     [_delegate appClient:self didCreateLocalFileCapturer:fileCapturer];
   }
 #endif
@@ -781,40 +786,38 @@ static int const kKbpsMultiplier = 1000;
 
 #pragma mark - Defaults
 
- - (RTCMediaConstraints *)defaultMediaAudioConstraints {
-   NSDictionary *mandatoryConstraints = @{};
-   RTCMediaConstraints *constraints =
-       [[RTCMediaConstraints alloc] initWithMandatoryConstraints:mandatoryConstraints
-                                             optionalConstraints:nil];
-   return constraints;
+- (RTC_OBJC_TYPE(RTCMediaConstraints) *)defaultMediaAudioConstraints {
+  NSDictionary *mandatoryConstraints = @{};
+  RTC_OBJC_TYPE(RTCMediaConstraints) *constraints =
+      [[RTC_OBJC_TYPE(RTCMediaConstraints) alloc] initWithMandatoryConstraints:mandatoryConstraints
+                                                           optionalConstraints:nil];
+  return constraints;
 }
 
-- (RTCMediaConstraints *)defaultAnswerConstraints {
+- (RTC_OBJC_TYPE(RTCMediaConstraints) *)defaultAnswerConstraints {
   return [self defaultOfferConstraints];
 }
 
-- (RTCMediaConstraints *)defaultOfferConstraints {
+- (RTC_OBJC_TYPE(RTCMediaConstraints) *)defaultOfferConstraints {
   NSDictionary *mandatoryConstraints = @{
     @"OfferToReceiveAudio" : @"true",
     @"OfferToReceiveVideo" : @"true"
   };
-  RTCMediaConstraints* constraints =
-      [[RTCMediaConstraints alloc]
-          initWithMandatoryConstraints:mandatoryConstraints
-                   optionalConstraints:nil];
+  RTC_OBJC_TYPE(RTCMediaConstraints) *constraints =
+      [[RTC_OBJC_TYPE(RTCMediaConstraints) alloc] initWithMandatoryConstraints:mandatoryConstraints
+                                                           optionalConstraints:nil];
   return constraints;
 }
 
-- (RTCMediaConstraints *)defaultPeerConnectionConstraints {
+- (RTC_OBJC_TYPE(RTCMediaConstraints) *)defaultPeerConnectionConstraints {
   if (_defaultPeerConnectionConstraints) {
     return _defaultPeerConnectionConstraints;
   }
   NSString *value = _isLoopback ? @"false" : @"true";
   NSDictionary *optionalConstraints = @{ @"DtlsSrtpKeyAgreement" : value };
-  RTCMediaConstraints* constraints =
-      [[RTCMediaConstraints alloc]
-          initWithMandatoryConstraints:nil
-                   optionalConstraints:optionalConstraints];
+  RTC_OBJC_TYPE(RTCMediaConstraints) *constraints =
+      [[RTC_OBJC_TYPE(RTCMediaConstraints) alloc] initWithMandatoryConstraints:nil
+                                                           optionalConstraints:optionalConstraints];
   return constraints;
 }
 

@@ -19,9 +19,18 @@
 #include "modules/audio_processing/agc2/noise_spectrum_estimator.h"
 #include "modules/audio_processing/logging/apm_data_dumper.h"
 #include "rtc_base/checks.h"
+#include "system_wrappers/include/cpu_features_wrapper.h"
 
 namespace webrtc {
 namespace {
+
+bool IsSse2Available() {
+#if defined(WEBRTC_ARCH_X86_FAMILY)
+  return GetCPUInfo(kSSE2) != 0;
+#else
+  return false;
+#endif
+}
 
 void RemoveDcLevel(rtc::ArrayView<float> x) {
   RTC_DCHECK_LT(0, x.size());
@@ -109,7 +118,8 @@ void SignalClassifier::FrameExtender::ExtendFrame(
 SignalClassifier::SignalClassifier(ApmDataDumper* data_dumper)
     : data_dumper_(data_dumper),
       down_sampler_(data_dumper_),
-      noise_spectrum_estimator_(data_dumper_) {
+      noise_spectrum_estimator_(data_dumper_),
+      ooura_fft_(IsSse2Available()) {
   Initialize(48000);
 }
 SignalClassifier::~SignalClassifier() {}

@@ -137,15 +137,11 @@ class VideoTrackSourceInterface : public MediaSourceInterface,
   virtual bool GetStats(Stats* stats) = 0;
 
   // Returns true if encoded output can be enabled in the source.
-  // TODO(bugs.webrtc.org/11114): make pure virtual once downstream project
-  // adapts.
-  virtual bool SupportsEncodedOutput() const { return false; }
+  virtual bool SupportsEncodedOutput() const = 0;
 
   // Reliably cause a key frame to be generated in encoded output.
   // TODO(bugs.webrtc.org/11115): find optimal naming.
-  // TODO(bugs.webrtc.org/11114): make pure virtual once downstream project
-  // adapts.
-  virtual void GenerateKeyFrame() {}
+  virtual void GenerateKeyFrame() = 0;
 
   // Add an encoded video sink to the source and additionally cause
   // a key frame to be generated from the source. The sink will be
@@ -153,13 +149,11 @@ class VideoTrackSourceInterface : public MediaSourceInterface,
   // TODO(bugs.webrtc.org/11114): make pure virtual once downstream project
   // adapts.
   virtual void AddEncodedSink(
-      rtc::VideoSinkInterface<RecordableEncodedFrame>* sink) {}
+      rtc::VideoSinkInterface<RecordableEncodedFrame>* sink) = 0;
 
   // Removes an encoded video sink from the source.
-  // TODO(bugs.webrtc.org/11114): make pure virtual once downstream project
-  // adapts.
   virtual void RemoveEncodedSink(
-      rtc::VideoSinkInterface<RecordableEncodedFrame>* sink) {}
+      rtc::VideoSinkInterface<RecordableEncodedFrame>* sink) = 0;
 
  protected:
   ~VideoTrackSourceInterface() override = default;

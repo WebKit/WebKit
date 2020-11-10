@@ -25,9 +25,7 @@ constexpr char kPayloadNameVp9[] = "VP9";
 // frozen.
 constexpr char kPayloadNameAv1[] = "AV1X";
 constexpr char kPayloadNameH264[] = "H264";
-#ifndef DISABLE_H265
 constexpr char kPayloadNameH265[] = "H265";
-#endif
 constexpr char kPayloadNameGeneric[] = "Generic";
 constexpr char kPayloadNameMultiplex[] = "Multiplex";
 }  // namespace
@@ -59,30 +57,8 @@ bool VideoCodecH264::operator==(const VideoCodecH264& other) const {
           numberOfTemporalLayers == other.numberOfTemporalLayers);
 }
 
-#ifndef DISABLE_H265
-bool VideoCodecH265::operator==(const VideoCodecH265& other) const {
-  return (frameDroppingOn == other.frameDroppingOn &&
-          keyFrameInterval == other.keyFrameInterval &&
-          vpsLen == other.vpsLen && spsLen == other.spsLen &&
-          ppsLen == other.ppsLen &&
-          (spsLen == 0 || memcmp(spsData, other.spsData, spsLen) == 0) &&
-          (ppsLen == 0 || memcmp(ppsData, other.ppsData, ppsLen) == 0));
-}
-#endif
-
-bool SpatialLayer::operator==(const SpatialLayer& other) const {
-  return (width == other.width && height == other.height &&
-          maxFramerate == other.maxFramerate &&
-          numberOfTemporalLayers == other.numberOfTemporalLayers &&
-          maxBitrate == other.maxBitrate &&
-          targetBitrate == other.targetBitrate &&
-          minBitrate == other.minBitrate && qpMax == other.qpMax &&
-          active == other.active);
-}
-
 VideoCodec::VideoCodec()
     : codecType(kVideoCodecGeneric),
-      plType(0),
       width(0),
       height(0),
       startBitrate(0),
@@ -97,6 +73,7 @@ VideoCodec::VideoCodec()
       mode(VideoCodecMode::kRealtimeVideo),
       expect_encode_from_texture(false),
       timing_frame_thresholds({0, 0}),
+      legacy_conference_mode(false),
       codec_specific_() {}
 
 VideoCodecVP8* VideoCodec::VP8() {
@@ -128,18 +105,6 @@ const VideoCodecH264& VideoCodec::H264() const {
   RTC_DCHECK_EQ(codecType, kVideoCodecH264);
   return codec_specific_.H264;
 }
-
-#ifndef DISABLE_H265
-VideoCodecH265* VideoCodec::H265() {
-  RTC_DCHECK_EQ(codecType, kVideoCodecH265);
-  return &codec_specific_.H265;
-}
-
-const VideoCodecH265& VideoCodec::H265() const {
-  RTC_DCHECK_EQ(codecType, kVideoCodecH265);
-  return codec_specific_.H265;
-}
-#endif
 
 const char* CodecTypeToPayloadString(VideoCodecType type) {
   switch (type) {

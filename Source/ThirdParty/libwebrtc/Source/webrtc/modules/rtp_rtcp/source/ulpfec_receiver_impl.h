@@ -22,7 +22,7 @@
 #include "modules/rtp_rtcp/include/ulpfec_receiver.h"
 #include "modules/rtp_rtcp/source/forward_error_correction.h"
 #include "modules/rtp_rtcp/source/rtp_packet_received.h"
-#include "rtc_base/critical_section.h"
+#include "rtc_base/synchronization/mutex.h"
 
 namespace webrtc {
 
@@ -44,7 +44,7 @@ class UlpfecReceiverImpl : public UlpfecReceiver {
   const uint32_t ssrc_;
   const RtpHeaderExtensionMap extensions_;
 
-  rtc::CriticalSection crit_sect_;
+  mutable Mutex mutex_;
   RecoveredPacketReceiver* recovered_packet_callback_;
   std::unique_ptr<ForwardErrorCorrection> fec_;
   // TODO(nisse): The AddReceivedRedPacket method adds one or two packets to

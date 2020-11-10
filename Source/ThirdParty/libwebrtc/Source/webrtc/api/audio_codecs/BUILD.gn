@@ -38,6 +38,8 @@ rtc_library("audio_codecs_api") {
     "../../rtc_base:sanitizer",
     "../../rtc_base/system:rtc_export",
     "../units:time_delta",
+  ]
+  absl_deps = [
     "//third_party/abseil-cpp/absl/strings",
     "//third_party/abseil-cpp/absl/types:optional",
   ]

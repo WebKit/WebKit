@@ -149,9 +149,12 @@ SdpContentPredicate HaveSdesGcmCryptos(size_t num_crypto_suites) {
     if (cryptos.size() != num_crypto_suites) {
       return false;
     }
-    const cricket::CryptoParams first_params = cryptos[0];
-    return first_params.key_params.size() == 67U &&
-           first_params.cipher_suite == "AEAD_AES_256_GCM";
+    for (size_t i = 0; i < cryptos.size(); ++i) {
+      if (cryptos[i].key_params.size() == 67U &&
+          cryptos[i].cipher_suite == "AEAD_AES_256_GCM")
+        return true;
+    }
+    return false;
   };
 }
 
@@ -333,7 +336,14 @@ TEST_P(PeerConnectionCryptoTest, CorrectCryptoInAnswerWithSdesAndGcm) {
   auto caller = CreatePeerConnectionWithAudioVideo(config);
   auto callee = CreatePeerConnectionWithAudioVideo(config);
 
-  callee->SetRemoteDescription(caller->CreateOffer());
+  auto offer = caller->CreateOffer();
+  for (cricket::ContentInfo& content : offer->description()->contents()) {
+    auto cryptos = content.media_description()->cryptos();
+    cryptos.erase(cryptos.begin());  // Assumes that non-GCM is the default.
+    content.media_description()->set_cryptos(cryptos);
+  }
+
+  callee->SetRemoteDescription(std::move(offer));
   auto answer = callee->CreateAnswer();
   ASSERT_TRUE(answer);
 

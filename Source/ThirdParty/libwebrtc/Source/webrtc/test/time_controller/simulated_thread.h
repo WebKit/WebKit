@@ -12,6 +12,7 @@
 
 #include <memory>
 
+#include "rtc_base/synchronization/mutex.h"
 #include "test/time_controller/simulated_time_controller.h"
 
 namespace webrtc {
@@ -28,7 +29,7 @@ class SimulatedThread : public rtc::Thread,
   void RunReady(Timestamp at_time) override;
 
   Timestamp GetNextRunTime() const override {
-    rtc::CritScope lock(&lock_);
+    MutexLock lock(&lock_);
     return next_run_time_;
   }
 
@@ -61,7 +62,7 @@ class SimulatedThread : public rtc::Thread,
   sim_time_impl::SimulatedTimeControllerImpl* const handler_;
   // Using char* to be debugger friendly.
   char* name_;
-  rtc::CriticalSection lock_;
+  mutable Mutex lock_;
   Timestamp next_run_time_ RTC_GUARDED_BY(lock_) = Timestamp::PlusInfinity();
 };
 

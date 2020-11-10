@@ -41,30 +41,34 @@ EncodedImage DefaultEncodedImageDataInjector::InjectData(
     bool discard,
     const EncodedImage& source,
     int /*coding_entity_id*/) {
-  EncodedImage out = source;
-  out.SetEncodedData(
-      EncodedImageBuffer::Create(source.size() + kEncodedImageBufferExpansion));
-  memcpy(out.data(), source.data(), source.size());
+  auto buffer =
+      EncodedImageBuffer::Create(source.size() + kEncodedImageBufferExpansion);
+  memcpy(buffer->data(), source.data(), source.size());
+
   size_t insertion_pos = source.size();
-  out.data()[insertion_pos] = id & 0x00ff;
-  out.data()[insertion_pos + 1] = (id & 0xff00) >> 8;
-  out.data()[insertion_pos + 2] = source.size() & 0x000000ff;
-  out.data()[insertion_pos + 3] = (source.size() & 0x0000ff00) >> 8;
-  out.data()[insertion_pos + 4] = (source.size() & 0x00ff0000) >> 16;
-  out.data()[insertion_pos + 5] = (source.size() & 0xff000000) >> 24;
+  buffer->data()[insertion_pos] = id & 0x00ff;
+  buffer->data()[insertion_pos + 1] = (id & 0xff00) >> 8;
+  buffer->data()[insertion_pos + 2] = source.size() & 0x000000ff;
+  buffer->data()[insertion_pos + 3] = (source.size() & 0x0000ff00) >> 8;
+  buffer->data()[insertion_pos + 4] = (source.size() & 0x00ff0000) >> 16;
+  buffer->data()[insertion_pos + 5] = (source.size() & 0xff000000) >> 24;
 
   // We will store discard flag in the high bit of high byte of the size.
   RTC_CHECK_LT(source.size(), 1U << 31) << "High bit is already in use";
-  out.data()[insertion_pos + 5] =
-      out.data()[insertion_pos + 5] | ((discard ? 1 : 0) << 7);
+  buffer->data()[insertion_pos + 5] =
+      buffer->data()[insertion_pos + 5] | ((discard ? 1 : 0) << 7);
+
+  EncodedImage out = source;
+  out.SetEncodedData(buffer);
   return out;
 }
 
 EncodedImageExtractionResult DefaultEncodedImageDataInjector::ExtractData(
     const EncodedImage& source,
     int /*coding_entity_id*/) {
+  auto buffer = EncodedImageBuffer::Create(source.size());
   EncodedImage out = source;
-  out.SetEncodedData(EncodedImageBuffer::Create(source.size()));
+  out.SetEncodedData(buffer);
 
   size_t source_pos = source.size() - 1;
   absl::optional<uint16_t> id = absl::nullopt;
@@ -115,7 +119,7 @@ EncodedImageExtractionResult DefaultEncodedImageDataInjector::ExtractData(
     if (!info.discard) {
       // Copy next encoded image payload from concatenated buffer only if it is
       // not discarded.
-      memcpy(&out.data()[out_pos], &source.data()[source_pos], info.length);
+      memcpy(&buffer->data()[out_pos], &source.data()[source_pos], info.length);
       out_pos += info.length;
     }
     source_pos += info.length + kEncodedImageBufferExpansion;

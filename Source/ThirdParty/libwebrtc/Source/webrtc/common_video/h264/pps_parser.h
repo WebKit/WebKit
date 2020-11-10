@@ -13,7 +13,9 @@
 
 #include "absl/types/optional.h"
 
+#if defined(WEBRTC_WEBKIT_BUILD)
 #include <cstdint>
+#endif
 
 namespace rtc {
 class BitBuffer;

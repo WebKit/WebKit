@@ -86,7 +86,6 @@ void LogBasedNetworkControllerSimulation::OnPacketSent(
     packet_info.ssrc = packet.ssrc;
     packet_info.transport_sequence_number = packet.transport_seq_no;
     packet_info.rtp_sequence_number = packet.stream_seq_no;
-    packet_info.has_rtp_sequence_number = true;
     packet_info.length = packet.size;
     packet_info.pacing_info = probe_info;
     transport_feedback_.AddPacket(packet_info, packet.overhead,

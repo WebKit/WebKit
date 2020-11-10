@@ -31,7 +31,7 @@ class CompileTimeTestForGuardedBy {
   int CalledOnSequence() RTC_RUN_ON(sequence_checker_) { return guarded_; }
 
   void CallMeFromSequence() {
-    RTC_DCHECK_RUN_ON(&sequence_checker_) << "Should be called on sequence";
+    RTC_DCHECK_RUN_ON(&sequence_checker_);
     guarded_ = 41;
   }
 
@@ -158,7 +158,12 @@ void TestAnnotationsOnWrongQueue() {
 }
 
 #if RTC_DCHECK_IS_ON
-TEST(SequenceCheckerTest, TestAnnotationsOnWrongQueueDebug) {
+// Note: Ending the test suite name with 'DeathTest' is important as it causes
+// gtest to order this test before any other non-death-tests, to avoid potential
+// global process state pollution such as shared worker threads being started
+// (e.g. a side effect of calling InitCocoaMultiThreading() on Mac causes one or
+// two additional threads to be created).
+TEST(SequenceCheckerDeathTest, TestAnnotationsOnWrongQueueDebug) {
   ASSERT_DEATH({ TestAnnotationsOnWrongQueue(); }, "");
 }
 #else

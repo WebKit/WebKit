@@ -80,7 +80,8 @@ void EmulatedNetworkManager::StopUpdating() {
 }
 
 void EmulatedNetworkManager::GetStats(
-    std::function<void(EmulatedNetworkStats)> stats_callback) const {
+    std::function<void(std::unique_ptr<EmulatedNetworkStats>)> stats_callback)
+    const {
   task_queue_->PostTask([stats_callback, this]() {
     stats_callback(endpoints_container_->GetStats());
   });

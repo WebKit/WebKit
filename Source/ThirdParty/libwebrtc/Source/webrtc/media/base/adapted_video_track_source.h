@@ -21,7 +21,7 @@
 #include "api/video/video_source_interface.h"
 #include "media/base/video_adapter.h"
 #include "media/base/video_broadcaster.h"
-#include "rtc_base/critical_section.h"
+#include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/system/rtc_export.h"
 #include "rtc_base/thread_annotations.h"
 
@@ -79,10 +79,18 @@ class RTC_EXPORT AdaptedVideoTrackSource
 
   void OnSinkWantsChanged(const rtc::VideoSinkWants& wants);
 
+  // Encoded sinks not implemented for AdaptedVideoTrackSource.
+  bool SupportsEncodedOutput() const override { return false; }
+  void GenerateKeyFrame() override {}
+  void AddEncodedSink(
+      rtc::VideoSinkInterface<webrtc::RecordableEncodedFrame>* sink) override {}
+  void RemoveEncodedSink(
+      rtc::VideoSinkInterface<webrtc::RecordableEncodedFrame>* sink) override {}
+
   cricket::VideoAdapter video_adapter_;
 
-  rtc::CriticalSection stats_crit_;
-  absl::optional<Stats> stats_ RTC_GUARDED_BY(stats_crit_);
+  webrtc::Mutex stats_mutex_;
+  absl::optional<Stats> stats_ RTC_GUARDED_BY(stats_mutex_);
 
   VideoBroadcaster broadcaster_;
 };

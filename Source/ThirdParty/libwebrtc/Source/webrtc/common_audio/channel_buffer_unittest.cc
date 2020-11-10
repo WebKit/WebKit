@@ -53,12 +53,12 @@ TEST(IFChannelBufferTest, SettingNumChannelsOfOneChannelBufferSetsTheOther) {
 }
 
 #if RTC_DCHECK_IS_ON && GTEST_HAS_DEATH_TEST && !defined(WEBRTC_ANDROID)
-TEST(ChannelBufferTest, SetNumChannelsDeathTest) {
+TEST(ChannelBufferDeathTest, SetNumChannelsDeathTest) {
   ChannelBuffer<float> chb(kNumFrames, kMono);
   RTC_EXPECT_DEATH(chb.set_num_channels(kStereo), "num_channels");
 }
 
-TEST(IFChannelBufferTest, SetNumChannelsDeathTest) {
+TEST(IFChannelBufferDeathTest, SetNumChannelsDeathTest) {
   IFChannelBuffer ifchb(kNumFrames, kMono);
   RTC_EXPECT_DEATH(ifchb.ibuf()->set_num_channels(kStereo), "num_channels");
 }

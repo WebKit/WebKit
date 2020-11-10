@@ -15,19 +15,25 @@ gtest-parallel, renaming options and translating environment variables into
 flags. Developers should execute gtest-parallel directly.
 
 In particular, this translates the GTEST_SHARD_INDEX and GTEST_TOTAL_SHARDS
-environment variables to the --shard_index and --shard_count flags, renames
-the --isolated-script-test-output flag to --dump_json_test_results,
+environment variables to the --shard_index and --shard_count flags
 and interprets e.g. --workers=2x as 2 workers per core.
 
 Flags before '--' will be attempted to be understood as arguments to
 gtest-parallel. If gtest-parallel doesn't recognize the flag or the flag is
 after '--', the flag will be passed on to the test executable.
 
+--isolated-script-test-perf-output is renamed to
+--isolated_script_test_perf_output. The Android test runner needs the flag to
+be in the former form, but our tests require the latter, so this is the only
+place we can do it.
+
 If the --store-test-artifacts flag is set, an --output_dir must be also
 specified.
+
 The test artifacts will then be stored in a 'test_artifacts' subdirectory of the
 output dir, and will be compressed into a zip file once the test finishes
 executing.
+
 This is useful when running the tests in swarming, since the output directory
 is not known beforehand.
 
@@ -38,7 +44,6 @@ For example:
       --another_flag \
       --output_dir=SOME_OUTPUT_DIR \
       --store-test-artifacts
-      --isolated-script-test-output=SOME_DIR \
       --isolated-script-test-perf-output=SOME_OTHER_DIR \
       -- \
       --foo=bar \
@@ -56,7 +61,7 @@ Will be converted into:
       --test_artifacts_dir=SOME_OUTPUT_DIR/test_artifacts \
       --some_flag=some_value \
       --another_flag \
-      --isolated-script-test-perf-output=SOME_OTHER_DIR \
+      --isolated_script_test_perf_output=SOME_OTHER_DIR \
       --foo=bar \
       --baz
 
@@ -137,12 +142,6 @@ def ParseArgs(argv=None):
   # Syntax 'Nx' will be interpreted as N * number of cpu cores.
   gtest_group.AddArgument('-w', '--workers', type=_ParseWorkersOption)
 
-  # --isolated-script-test-output is used to upload results to the flakiness
-  # dashboard. This translation is made because gtest-parallel expects the flag
-  # to be called --dump_json_test_results instead.
-  gtest_group.AddArgument('--isolated-script-test-output',
-                          dest='dump_json_test_results')
-
   # Needed when the test wants to store test artifacts, because it doesn't know
   # what will be the swarming output dir.
   parser.add_argument('--store-test-artifacts', action='store_true')
@@ -157,16 +156,12 @@ def ParseArgs(argv=None):
 
   options, unrecognized_args = parser.parse_known_args(argv)
 
-  webrtc_flags_to_change = {
-    '--isolated-script-test-perf-output': '--isolated_script_test_perf_output',
-    '--isolated-script-test-output': '--isolated_script_test_output',
-  }
   args_to_pass = []
   for arg in unrecognized_args:
-    if any(arg.startswith(k) for k in webrtc_flags_to_change.keys()):
+    if arg.startswith('--isolated-script-test-perf-output'):
       arg_split = arg.split('=')
-      args_to_pass.append(
-        webrtc_flags_to_change[arg_split[0]] + '=' + arg_split[1])
+      assert len(arg_split) == 2, 'You must use the = syntax for this flag.'
+      args_to_pass.append('--isolated_script_test_perf_output=' + arg_split[1])
     else:
       args_to_pass.append(arg)
 

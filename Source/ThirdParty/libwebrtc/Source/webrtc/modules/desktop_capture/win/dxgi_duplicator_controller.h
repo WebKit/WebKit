@@ -25,7 +25,7 @@
 #include "modules/desktop_capture/win/dxgi_adapter_duplicator.h"
 #include "modules/desktop_capture/win/dxgi_context.h"
 #include "modules/desktop_capture/win/dxgi_frame.h"
-#include "rtc_base/critical_section.h"
+#include "rtc_base/deprecated/recursive_critical_section.h"
 
 namespace webrtc {
 
@@ -219,7 +219,7 @@ class DxgiDuplicatorController {
   std::atomic_int refcount_;
 
   // This lock must be locked whenever accessing any of the following objects.
-  rtc::CriticalSection lock_;
+  rtc::RecursiveCriticalSection lock_;
 
   // A self-incremented integer to compare with the one in Context. It ensures
   // a Context instance is always initialized after DxgiDuplicatorController.

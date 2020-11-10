@@ -25,9 +25,6 @@ if (current_cpu == "arm") {
 } else {
   audio_codec_defines += [ "WEBRTC_CODEC_ISAC" ]
 }
-if (!build_with_mozilla && !build_with_chromium) {
-  audio_codec_defines += [ "WEBRTC_CODEC_RED" ]
-}
 
 audio_coding_defines = audio_codec_defines
 neteq_defines = audio_codec_defines

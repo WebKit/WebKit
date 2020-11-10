@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env vpython
 # Copyright (c) 2015 The WebRTC project authors. All Rights Reserved.
 #
 # Use of this source code is governed by a BSD-style license
@@ -24,8 +24,6 @@ from roll_deps import CalculateChangedDeps, FindAddedDeps, \
   GetMatchingDepsEntries, ParseDepsDict, ParseLocalDepsFile, UpdateDepsFile, \
   ChromiumRevisionUpdate
 
-SRC_DIR = os.path.join(PARENT_DIR, os.pardir, os.pardir)
-sys.path.append(os.path.join(SRC_DIR, 'third_party', 'pymock'))
 import mock
 
 TEST_DATA_VARS = {

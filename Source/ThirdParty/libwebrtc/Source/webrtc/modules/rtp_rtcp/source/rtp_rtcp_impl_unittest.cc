@@ -15,7 +15,6 @@
 #include <set>
 
 #include "api/transport/field_trial_based_config.h"
-#include "api/video_codecs/video_codec.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/rtp_rtcp/source/rtcp_packet.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/nack.h"
@@ -37,6 +36,9 @@ const int64_t kOneWayNetworkDelayMs = 100;
 const uint8_t kBaseLayerTid = 0;
 const uint8_t kHigherLayerTid = 1;
 const uint16_t kSequenceNumber = 100;
+const uint8_t kPayloadType = 100;
+const int kWidth = 320;
+const int kHeight = 100;
 
 class RtcpRttStatsTestImpl : public RtcpRttStats {
  public:
@@ -143,7 +145,7 @@ class RtpRtcpModule : public RtcpPacketTypeCounterObserver {
 
  private:
   void CreateModuleImpl() {
-    RtpRtcp::Configuration config;
+    RtpRtcpInterface::Configuration config;
     config.audio = false;
     config.clock = clock_;
     config.outgoing_transport = &transport_;
@@ -185,11 +187,6 @@ class RtpRtcpImplTest : public ::testing::Test {
     video_config.field_trials = &field_trials;
     sender_video_ = std::make_unique<RTPSenderVideo>(video_config);
 
-    memset(&codec_, 0, sizeof(VideoCodec));
-    codec_.plType = 100;
-    codec_.width = 320;
-    codec_.height = 180;
-
     // Receive module.
     EXPECT_EQ(0, receiver_.impl_->SetSendingStatus(false));
     receiver_.impl_->SetSendingMediaStatus(false);
@@ -202,7 +199,6 @@ class RtpRtcpImplTest : public ::testing::Test {
   RtpRtcpModule sender_;
   std::unique_ptr<RTPSenderVideo> sender_video_;
   RtpRtcpModule receiver_;
-  VideoCodec codec_;
 
   void SendFrame(const RtpRtcpModule* module,
                  RTPSenderVideo* sender,
@@ -211,8 +207,8 @@ class RtpRtcpImplTest : public ::testing::Test {
     vp8_header.temporalIdx = tid;
     RTPVideoHeader rtp_video_header;
     rtp_video_header.frame_type = VideoFrameType::kVideoFrameKey;
-    rtp_video_header.width = codec_.width;
-    rtp_video_header.height = codec_.height;
+    rtp_video_header.width = kWidth;
+    rtp_video_header.height = kHeight;
     rtp_video_header.rotation = kVideoRotation_0;
     rtp_video_header.content_type = VideoContentType::UNSPECIFIED;
     rtp_video_header.playout_delay = {-1, -1};
@@ -223,9 +219,9 @@ class RtpRtcpImplTest : public ::testing::Test {
     rtp_video_header.video_timing = {0u, 0u, 0u, 0u, 0u, 0u, false};
 
     const uint8_t payload[100] = {0};
-    EXPECT_TRUE(module->impl_->OnSendingRtpFrame(0, 0, codec_.plType, true));
-    EXPECT_TRUE(sender->SendVideo(codec_.plType, VideoCodecType::kVideoCodecVP8,
-                                  0, 0, payload, nullptr, rtp_video_header, 0));
+    EXPECT_TRUE(module->impl_->OnSendingRtpFrame(0, 0, kPayloadType, true));
+    EXPECT_TRUE(sender->SendVideo(kPayloadType, VideoCodecType::kVideoCodecVP8,
+                                  0, 0, payload, rtp_video_header, 0));
   }
 
   void IncomingRtcpNack(const RtpRtcpModule* module, uint16_t sequence_number) {

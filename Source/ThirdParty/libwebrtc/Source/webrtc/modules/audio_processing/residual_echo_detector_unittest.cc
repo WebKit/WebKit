@@ -41,7 +41,8 @@ TEST(ResidualEchoDetectorTests, Echo) {
   }
   // We expect to detect echo with near certain likelihood.
   auto ed_metrics = echo_detector->GetMetrics();
-  EXPECT_NEAR(1.f, ed_metrics.echo_likelihood, 0.01f);
+  ASSERT_TRUE(ed_metrics.echo_likelihood);
+  EXPECT_NEAR(1.f, ed_metrics.echo_likelihood.value(), 0.01f);
 }
 
 TEST(ResidualEchoDetectorTests, NoEcho) {
@@ -63,7 +64,8 @@ TEST(ResidualEchoDetectorTests, NoEcho) {
   }
   // We expect to not detect any echo.
   auto ed_metrics = echo_detector->GetMetrics();
-  EXPECT_NEAR(0.f, ed_metrics.echo_likelihood, 0.01f);
+  ASSERT_TRUE(ed_metrics.echo_likelihood);
+  EXPECT_NEAR(0.f, ed_metrics.echo_likelihood.value(), 0.01f);
 }
 
 TEST(ResidualEchoDetectorTests, EchoWithRenderClockDrift) {
@@ -100,7 +102,8 @@ TEST(ResidualEchoDetectorTests, EchoWithRenderClockDrift) {
   // possible to make this decision right away. For this reason we only expect
   // an echo likelihood of 75% in this test.
   auto ed_metrics = echo_detector->GetMetrics();
-  EXPECT_GT(ed_metrics.echo_likelihood, 0.75f);
+  ASSERT_TRUE(ed_metrics.echo_likelihood);
+  EXPECT_GT(ed_metrics.echo_likelihood.value(), 0.75f);
 }
 
 TEST(ResidualEchoDetectorTests, EchoWithCaptureClockDrift) {
@@ -132,7 +135,8 @@ TEST(ResidualEchoDetectorTests, EchoWithCaptureClockDrift) {
   }
   // We expect to detect echo with near certain likelihood.
   auto ed_metrics = echo_detector->GetMetrics();
-  EXPECT_NEAR(1.f, ed_metrics.echo_likelihood, 0.01f);
+  ASSERT_TRUE(ed_metrics.echo_likelihood);
+  EXPECT_NEAR(1.f, ed_metrics.echo_likelihood.value(), 0.01f);
 }
 
 }  // namespace webrtc

@@ -106,18 +106,24 @@ webrtc::IceCandidatePairAddressFamily GetAddressFamilyByInt(
 }
 
 webrtc::IceCandidateNetworkType ConvertNetworkType(rtc::AdapterType type) {
-  if (type == rtc::ADAPTER_TYPE_ETHERNET) {
-    return webrtc::IceCandidateNetworkType::kEthernet;
-  } else if (type == rtc::ADAPTER_TYPE_LOOPBACK) {
-    return webrtc::IceCandidateNetworkType::kLoopback;
-  } else if (type == rtc::ADAPTER_TYPE_WIFI) {
-    return webrtc::IceCandidateNetworkType::kWifi;
-  } else if (type == rtc::ADAPTER_TYPE_VPN) {
-    return webrtc::IceCandidateNetworkType::kVpn;
-  } else if (type == rtc::ADAPTER_TYPE_CELLULAR) {
-    return webrtc::IceCandidateNetworkType::kCellular;
+  switch (type) {
+    case rtc::ADAPTER_TYPE_ETHERNET:
+      return webrtc::IceCandidateNetworkType::kEthernet;
+    case rtc::ADAPTER_TYPE_LOOPBACK:
+      return webrtc::IceCandidateNetworkType::kLoopback;
+    case rtc::ADAPTER_TYPE_WIFI:
+      return webrtc::IceCandidateNetworkType::kWifi;
+    case rtc::ADAPTER_TYPE_VPN:
+      return webrtc::IceCandidateNetworkType::kVpn;
+    case rtc::ADAPTER_TYPE_CELLULAR:
+    case rtc::ADAPTER_TYPE_CELLULAR_2G:
+    case rtc::ADAPTER_TYPE_CELLULAR_3G:
+    case rtc::ADAPTER_TYPE_CELLULAR_4G:
+    case rtc::ADAPTER_TYPE_CELLULAR_5G:
+      return webrtc::IceCandidateNetworkType::kCellular;
+    default:
+      return webrtc::IceCandidateNetworkType::kUnknown;
   }
-  return webrtc::IceCandidateNetworkType::kUnknown;
 }
 
 // When we don't have any RTT data, we have to pick something reasonable.  We
@@ -181,13 +187,13 @@ void ConnectionRequest::Prepare(StunMessage* request) {
   uint32_t network_info = connection_->port()->Network()->id();
   network_info = (network_info << 16) | connection_->port()->network_cost();
   request->AddAttribute(std::make_unique<StunUInt32Attribute>(
-      STUN_ATTR_NETWORK_INFO, network_info));
+      STUN_ATTR_GOOG_NETWORK_INFO, network_info));
 
   if (webrtc::field_trial::IsEnabled(
           "WebRTC-PiggybackIceCheckAcknowledgement") &&
       connection_->last_ping_id_received()) {
     request->AddAttribute(std::make_unique<StunByteStringAttribute>(
-        STUN_ATTR_LAST_ICE_CHECK_RECEIVED,
+        STUN_ATTR_GOOG_LAST_ICE_CHECK_RECEIVED,
         connection_->last_ping_id_received().value()));
   }
 
@@ -455,6 +461,7 @@ void Connection::OnReadPacket(const char* data,
     last_data_received_ = rtc::TimeMillis();
     UpdateReceiving(last_data_received_);
     recv_rate_tracker_.AddSamples(size);
+    stats_.packets_received++;
     SignalReadPacket(this, data, size, packet_time_us);
 
     // If timed out sending writability checks, start up again
@@ -609,7 +616,7 @@ void Connection::HandleStunBindingOrGoogPingRequest(IceMessage* msg) {
   // Note: If packets are re-ordered, we may get incorrect network cost
   // temporarily, but it should get the correct value shortly after that.
   const StunUInt32Attribute* network_attr =
-      msg->GetUInt32(STUN_ATTR_NETWORK_INFO);
+      msg->GetUInt32(STUN_ATTR_GOOG_NETWORK_INFO);
   if (network_attr) {
     uint32_t network_info = network_attr->value();
     uint16_t network_cost = static_cast<uint16_t>(network_info);
@@ -861,7 +868,7 @@ void Connection::HandlePiggybackCheckAcknowledgementIfAny(StunMessage* msg) {
   RTC_DCHECK(msg->type() == STUN_BINDING_REQUEST ||
              msg->type() == GOOG_PING_REQUEST);
   const StunByteStringAttribute* last_ice_check_received_attr =
-      msg->GetByteString(STUN_ATTR_LAST_ICE_CHECK_RECEIVED);
+      msg->GetByteString(STUN_ATTR_GOOG_LAST_ICE_CHECK_RECEIVED);
   if (last_ice_check_received_attr) {
     const std::string request_id = last_ice_check_received_attr->GetString();
     auto iter = absl::c_find_if(
@@ -912,12 +919,31 @@ void Connection::ReceivedPingResponse(
 
 bool Connection::dead(int64_t now) const {
   if (last_received() > 0) {
-    // If it has ever received anything, we keep it alive until it hasn't
-    // received anything for DEAD_CONNECTION_RECEIVE_TIMEOUT. This covers the
-    // normal case of a successfully used connection that stops working. This
-    // also allows a remote peer to continue pinging over a locally inactive
-    // (pruned) connection.
-    return (now > (last_received() + DEAD_CONNECTION_RECEIVE_TIMEOUT));
+    // If it has ever received anything, we keep it alive
+    // - if it has recevied last DEAD_CONNECTION_RECEIVE_TIMEOUT (30s)
+    // - if it has a ping outstanding shorter than
+    // DEAD_CONNECTION_RECEIVE_TIMEOUT (30s)
+    // - else if IDLE let it live field_trials_->dead_connection_timeout_ms
+    //
+    // This covers the normal case of a successfully used connection that stops
+    // working. This also allows a remote peer to continue pinging over a
+    // locally inactive (pruned) connection. This also allows the local agent to
+    // ping with longer interval than 30s as long as it shorter than
+    // |dead_connection_timeout_ms|.
+    if (now <= (last_received() + DEAD_CONNECTION_RECEIVE_TIMEOUT)) {
+      // Not dead since we have received the last 30s.
+      return false;
+    }
+    if (!pings_since_last_response_.empty()) {
+      // Outstanding pings: let it live until the ping is unreplied for
+      // DEAD_CONNECTION_RECEIVE_TIMEOUT.
+      return now > (pings_since_last_response_[0].sent_time +
+                    DEAD_CONNECTION_RECEIVE_TIMEOUT);
+    }
+
+    // No outstanding pings: let it live until
+    // field_trials_->dead_connection_timeout_ms has passed.
+    return now > (last_received() + field_trials_->dead_connection_timeout_ms);
   }
 
   if (active()) {
@@ -1265,24 +1291,16 @@ void Connection::MaybeUpdateLocalCandidate(ConnectionRequest* request,
   const uint32_t priority = priority_attr->value();
   std::string id = rtc::CreateRandomString(8);
 
-  Candidate new_local_candidate;
+  // Create a peer-reflexive candidate based on the local candidate.
+  Candidate new_local_candidate(local_candidate());
   new_local_candidate.set_id(id);
-  new_local_candidate.set_component(local_candidate().component());
   new_local_candidate.set_type(PRFLX_PORT_TYPE);
-  new_local_candidate.set_protocol(local_candidate().protocol());
   new_local_candidate.set_address(addr->GetAddress());
   new_local_candidate.set_priority(priority);
-  new_local_candidate.set_username(local_candidate().username());
-  new_local_candidate.set_password(local_candidate().password());
-  new_local_candidate.set_network_name(local_candidate().network_name());
-  new_local_candidate.set_network_type(local_candidate().network_type());
   new_local_candidate.set_related_address(local_candidate().address());
-  new_local_candidate.set_generation(local_candidate().generation());
   new_local_candidate.set_foundation(Port::ComputeFoundation(
       PRFLX_PORT_TYPE, local_candidate().protocol(),
       local_candidate().relay_protocol(), local_candidate().address()));
-  new_local_candidate.set_network_id(local_candidate().network_id());
-  new_local_candidate.set_network_cost(local_candidate().network_cost());
 
   // Change the local candidate of this Connection to the new prflx candidate.
   RTC_LOG(LS_INFO) << ToString() << ": Updating local candidate type to prflx.";
@@ -1332,6 +1350,15 @@ bool Connection::ShouldSendGoogPing(const StunMessage* message) {
     return true;
   }
   return false;
+}
+
+void Connection::ForgetLearnedState() {
+  RTC_LOG(LS_INFO) << ToString() << ": Connection forget learned state";
+  requests_.Clear();
+  receiving_ = false;
+  write_state_ = STATE_WRITE_INIT;
+  rtt_estimate_.Reset();
+  pings_since_last_response_.clear();
 }
 
 ProxyConnection::ProxyConnection(Port* port,

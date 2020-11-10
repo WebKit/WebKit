@@ -13,6 +13,7 @@
 
 #include "absl/types/optional.h"
 #include "api/transport/bitrate_settings.h"
+#include "api/units/data_rate.h"
 #include "rtc_base/constructor_magic.h"
 
 namespace webrtc {
@@ -44,6 +45,9 @@ class RtpBitrateConfigurator {
   absl::optional<BitrateConstraints> UpdateWithClientPreferences(
       const BitrateSettings& bitrate_mask);
 
+  // Apply a cap for relayed calls.
+  absl::optional<BitrateConstraints> UpdateWithRelayCap(DataRate cap);
+
  private:
   // Applies update to the BitrateConstraints cached in |config_|, resetting
   // with |new_start| if set.
@@ -61,6 +65,9 @@ class RtpBitrateConfigurator {
   // The config set by SetSdpBitrateParameters.
   // min >= 0, start != 0, max == -1 || max > 0
   BitrateConstraints base_bitrate_config_;
+
+  // Bandwidth cap applied for relayed calls.
+  DataRate max_bitrate_over_relay_ = DataRate::PlusInfinity();
 
   RTC_DISALLOW_COPY_AND_ASSIGN(RtpBitrateConfigurator);
 };

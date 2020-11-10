@@ -48,6 +48,9 @@ class RenderDelayBuffer {
   // an enum indicating whether there was a special event that occurred.
   virtual BufferingEvent PrepareCaptureProcessing() = 0;
 
+  // Called on capture blocks where PrepareCaptureProcessing is not called.
+  virtual void HandleSkippedCaptureProcessing() = 0;
+
   // Sets the buffer delay and returns a bool indicating whether the delay
   // changed.
   virtual bool AlignFromDelay(size_t delay) = 0;

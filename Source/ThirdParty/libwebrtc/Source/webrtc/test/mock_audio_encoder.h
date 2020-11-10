@@ -21,43 +21,50 @@ namespace webrtc {
 
 class MockAudioEncoder : public AudioEncoder {
  public:
-  // TODO(nisse): Valid overrides commented out, because the gmock
-  // methods don't use any override declarations, and we want to avoid
-  // warnings from -Winconsistent-missing-override. See
-  // http://crbug.com/428099.
   MockAudioEncoder();
   ~MockAudioEncoder();
-  MOCK_METHOD1(Mark, void(std::string desc));
-  MOCK_CONST_METHOD0(SampleRateHz, int());
-  MOCK_CONST_METHOD0(NumChannels, size_t());
-  MOCK_CONST_METHOD0(RtpTimestampRateHz, int());
-  MOCK_CONST_METHOD0(Num10MsFramesInNextPacket, size_t());
-  MOCK_CONST_METHOD0(Max10MsFramesInAPacket, size_t());
-  MOCK_CONST_METHOD0(GetTargetBitrate, int());
-  MOCK_CONST_METHOD0(GetFrameLengthRange,
-                     absl::optional<std::pair<TimeDelta, TimeDelta>>());
+  MOCK_METHOD(int, SampleRateHz, (), (const, override));
+  MOCK_METHOD(size_t, NumChannels, (), (const, override));
+  MOCK_METHOD(int, RtpTimestampRateHz, (), (const, override));
+  MOCK_METHOD(size_t, Num10MsFramesInNextPacket, (), (const, override));
+  MOCK_METHOD(size_t, Max10MsFramesInAPacket, (), (const, override));
+  MOCK_METHOD(int, GetTargetBitrate, (), (const, override));
+  MOCK_METHOD((absl::optional<std::pair<TimeDelta, TimeDelta>>),
+              GetFrameLengthRange,
+              (),
+              (const, override));
 
-  MOCK_METHOD0(Reset, void());
-  MOCK_METHOD1(SetFec, bool(bool enable));
-  MOCK_METHOD1(SetDtx, bool(bool enable));
-  MOCK_METHOD1(SetApplication, bool(Application application));
-  MOCK_METHOD1(SetMaxPlaybackRate, void(int frequency_hz));
-  MOCK_METHOD1(SetMaxBitrate, void(int max_bps));
-  MOCK_METHOD1(SetMaxPayloadSize, void(int max_payload_size_bytes));
-  MOCK_METHOD2(OnReceivedUplinkBandwidth,
-               void(int target_audio_bitrate_bps,
-                    absl::optional<int64_t> probing_interval_ms));
-  MOCK_METHOD1(OnReceivedUplinkPacketLossFraction,
-               void(float uplink_packet_loss_fraction));
+  MOCK_METHOD(void, Reset, (), (override));
+  MOCK_METHOD(bool, SetFec, (bool enable), (override));
+  MOCK_METHOD(bool, SetDtx, (bool enable), (override));
+  MOCK_METHOD(bool, SetApplication, (Application application), (override));
+  MOCK_METHOD(void, SetMaxPlaybackRate, (int frequency_hz), (override));
+  MOCK_METHOD(void,
+              OnReceivedUplinkBandwidth,
+              (int target_audio_bitrate_bps,
+               absl::optional<int64_t> probing_interval_ms),
+              (override));
+  MOCK_METHOD(void,
+              OnReceivedUplinkPacketLossFraction,
+              (float uplink_packet_loss_fraction),
+              (override));
+  MOCK_METHOD(void,
+              OnReceivedOverhead,
+              (size_t overhead_bytes_per_packet),
+              (override));
 
-  MOCK_METHOD2(EnableAudioNetworkAdaptor,
-               bool(const std::string& config_string, RtcEventLog* event_log));
+  MOCK_METHOD(bool,
+              EnableAudioNetworkAdaptor,
+              (const std::string& config_string, RtcEventLog*),
+              (override));
 
   // Note, we explicitly chose not to create a mock for the Encode method.
-  MOCK_METHOD3(EncodeImpl,
-               EncodedInfo(uint32_t timestamp,
-                           rtc::ArrayView<const int16_t> audio,
-                           rtc::Buffer* encoded));
+  MOCK_METHOD(EncodedInfo,
+              EncodeImpl,
+              (uint32_t timestamp,
+               rtc::ArrayView<const int16_t> audio,
+               rtc::Buffer*),
+              (override));
 
   class FakeEncoding {
    public:

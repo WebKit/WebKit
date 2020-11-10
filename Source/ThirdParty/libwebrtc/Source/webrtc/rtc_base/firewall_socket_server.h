@@ -14,11 +14,11 @@
 #include <vector>
 
 #include "rtc_base/async_socket.h"
-#include "rtc_base/critical_section.h"
 #include "rtc_base/ip_address.h"
 #include "rtc_base/socket.h"
 #include "rtc_base/socket_address.h"
 #include "rtc_base/socket_server.h"
+#include "rtc_base/synchronization/mutex.h"
 
 namespace rtc {
 
@@ -90,7 +90,7 @@ class FirewallSocketServer : public SocketServer {
  private:
   SocketServer* server_;
   FirewallManager* manager_;
-  CriticalSection crit_;
+  webrtc::Mutex mutex_;
   struct Rule {
     bool allow;
     FirewallProtocol p;
@@ -123,7 +123,7 @@ class FirewallManager {
   void ClearRules();
 
  private:
-  CriticalSection crit_;
+  webrtc::Mutex mutex_;
   std::vector<FirewallSocketServer*> servers_;
 };
 

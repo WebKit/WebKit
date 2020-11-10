@@ -70,7 +70,12 @@ absl::optional<webrtc::BuiltInNetworkBehaviorConfig> ParseDegradationConfig(
 }
 }  // namespace
 
+CallFactory::CallFactory() {
+  call_thread_.Detach();
+}
+
 Call* CallFactory::CreateCall(const Call::Config& config) {
+  RTC_DCHECK_RUN_ON(&call_thread_);
   absl::optional<webrtc::BuiltInNetworkBehaviorConfig> send_degradation_config =
       ParseDegradationConfig(true);
   absl::optional<webrtc::BuiltInNetworkBehaviorConfig>
@@ -82,7 +87,15 @@ Call* CallFactory::CreateCall(const Call::Config& config) {
                             config.task_queue_factory);
   }
 
-  return Call::Create(config);
+  if (!module_thread_) {
+    module_thread_ = SharedModuleThread::Create(
+        ProcessThread::Create("SharedModThread"), [this]() {
+          RTC_DCHECK_RUN_ON(&call_thread_);
+          module_thread_ = nullptr;
+        });
+  }
+
+  return Call::Create(config, module_thread_);
 }
 
 std::unique_ptr<CallFactoryInterface> CreateCallFactory() {

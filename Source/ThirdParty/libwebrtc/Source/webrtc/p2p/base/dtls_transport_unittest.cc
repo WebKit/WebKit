@@ -66,8 +66,7 @@ class DtlsTestClient : public sigslot::has_slots<> {
   explicit DtlsTestClient(const std::string& name) : name_(name) {}
   void CreateCertificate(rtc::KeyType key_type) {
     certificate_ =
-        rtc::RTCCertificate::Create(std::unique_ptr<rtc::SSLIdentity>(
-            rtc::SSLIdentity::Generate(name_, key_type)));
+        rtc::RTCCertificate::Create(rtc::SSLIdentity::Create(name_, key_type));
   }
   const rtc::scoped_refptr<rtc::RTCCertificate>& certificate() {
     return certificate_;

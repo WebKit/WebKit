@@ -13,7 +13,6 @@
 
 #include <memory>
 
-#include "modules/audio_processing/audio_buffer.h"
 #include "modules/audio_processing/include/aec_dump.h"
 #include "modules/audio_processing/include/audio_processing.h"
 #include "modules/audio_processing/include/audio_processing_statistics.h"
@@ -25,35 +24,47 @@ namespace test {
 class MockCustomProcessing : public CustomProcessing {
  public:
   virtual ~MockCustomProcessing() {}
-  MOCK_METHOD2(Initialize, void(int sample_rate_hz, int num_channels));
-  MOCK_METHOD1(Process, void(AudioBuffer* audio));
-  MOCK_METHOD1(SetRuntimeSetting,
-               void(AudioProcessing::RuntimeSetting setting));
-  MOCK_CONST_METHOD0(ToString, std::string());
+  MOCK_METHOD(void,
+              Initialize,
+              (int sample_rate_hz, int num_channels),
+              (override));
+  MOCK_METHOD(void, Process, (AudioBuffer * audio), (override));
+  MOCK_METHOD(void,
+              SetRuntimeSetting,
+              (AudioProcessing::RuntimeSetting setting),
+              (override));
+  MOCK_METHOD(std::string, ToString, (), (const, override));
 };
 
 class MockCustomAudioAnalyzer : public CustomAudioAnalyzer {
  public:
   virtual ~MockCustomAudioAnalyzer() {}
-  MOCK_METHOD2(Initialize, void(int sample_rate_hz, int num_channels));
-  MOCK_METHOD1(Analyze, void(const AudioBuffer* audio));
-  MOCK_CONST_METHOD0(ToString, std::string());
+  MOCK_METHOD(void,
+              Initialize,
+              (int sample_rate_hz, int num_channels),
+              (override));
+  MOCK_METHOD(void, Analyze, (const AudioBuffer* audio), (override));
+  MOCK_METHOD(std::string, ToString, (), (const, override));
 };
 
 class MockEchoControl : public EchoControl {
  public:
   virtual ~MockEchoControl() {}
-  MOCK_METHOD1(AnalyzeRender, void(AudioBuffer* render));
-  MOCK_METHOD1(AnalyzeCapture, void(AudioBuffer* capture));
-  MOCK_METHOD2(ProcessCapture,
-               void(AudioBuffer* capture, bool echo_path_change));
-  MOCK_METHOD3(ProcessCapture,
-               void(AudioBuffer* capture,
-                    AudioBuffer* linear_output,
-                    bool echo_path_change));
-  MOCK_CONST_METHOD0(GetMetrics, Metrics());
-  MOCK_METHOD1(SetAudioBufferDelay, void(int delay_ms));
-  MOCK_CONST_METHOD0(ActiveProcessing, bool());
+  MOCK_METHOD(void, AnalyzeRender, (AudioBuffer * render), (override));
+  MOCK_METHOD(void, AnalyzeCapture, (AudioBuffer * capture), (override));
+  MOCK_METHOD(void,
+              ProcessCapture,
+              (AudioBuffer * capture, bool echo_path_change),
+              (override));
+  MOCK_METHOD(void,
+              ProcessCapture,
+              (AudioBuffer * capture,
+               AudioBuffer* linear_output,
+               bool echo_path_change),
+              (override));
+  MOCK_METHOD(Metrics, GetMetrics, (), (const, override));
+  MOCK_METHOD(void, SetAudioBufferDelay, (int delay_ms), (override));
+  MOCK_METHOD(bool, ActiveProcessing, (), (const, override));
 };
 
 class MockAudioProcessing : public ::testing::NiceMock<AudioProcessing> {
@@ -62,77 +73,89 @@ class MockAudioProcessing : public ::testing::NiceMock<AudioProcessing> {
 
   virtual ~MockAudioProcessing() {}
 
-  MOCK_METHOD0(Initialize, int());
-  MOCK_METHOD6(Initialize,
-               int(int capture_input_sample_rate_hz,
-                   int capture_output_sample_rate_hz,
-                   int render_sample_rate_hz,
-                   ChannelLayout capture_input_layout,
-                   ChannelLayout capture_output_layout,
-                   ChannelLayout render_input_layout));
-  MOCK_METHOD1(Initialize, int(const ProcessingConfig& processing_config));
-  MOCK_METHOD1(ApplyConfig, void(const Config& config));
-  MOCK_METHOD1(SetExtraOptions, void(const webrtc::Config& config));
-  MOCK_CONST_METHOD0(proc_sample_rate_hz, int());
-  MOCK_CONST_METHOD0(proc_split_sample_rate_hz, int());
-  MOCK_CONST_METHOD0(num_input_channels, size_t());
-  MOCK_CONST_METHOD0(num_proc_channels, size_t());
-  MOCK_CONST_METHOD0(num_output_channels, size_t());
-  MOCK_CONST_METHOD0(num_reverse_channels, size_t());
-  MOCK_METHOD1(set_output_will_be_muted, void(bool muted));
-  MOCK_METHOD1(SetRuntimeSetting, void(RuntimeSetting setting));
-  MOCK_METHOD1(ProcessStream, int(AudioFrame* frame));
-  MOCK_METHOD7(ProcessStream,
-               int(const float* const* src,
-                   size_t samples_per_channel,
-                   int input_sample_rate_hz,
-                   ChannelLayout input_layout,
-                   int output_sample_rate_hz,
-                   ChannelLayout output_layout,
-                   float* const* dest));
-  MOCK_METHOD4(ProcessStream,
-               int(const float* const* src,
-                   const StreamConfig& input_config,
-                   const StreamConfig& output_config,
-                   float* const* dest));
-  MOCK_METHOD1(ProcessReverseStream, int(AudioFrame* frame));
-  MOCK_METHOD4(AnalyzeReverseStream,
-               int(const float* const* data,
-                   size_t samples_per_channel,
-                   int sample_rate_hz,
-                   ChannelLayout layout));
-  MOCK_METHOD2(AnalyzeReverseStream,
-               int(const float* const* data,
-                   const StreamConfig& reverse_config));
-  MOCK_METHOD4(ProcessReverseStream,
-               int(const float* const* src,
-                   const StreamConfig& input_config,
-                   const StreamConfig& output_config,
-                   float* const* dest));
-  MOCK_CONST_METHOD1(
-      GetLinearAecOutput,
-      bool(rtc::ArrayView<std::array<float, 160>> linear_output));
-  MOCK_METHOD1(set_stream_delay_ms, int(int delay));
-  MOCK_CONST_METHOD0(stream_delay_ms, int());
-  MOCK_CONST_METHOD0(was_stream_delay_set, bool());
-  MOCK_METHOD1(set_stream_key_pressed, void(bool key_pressed));
-  MOCK_METHOD1(set_delay_offset_ms, void(int offset));
-  MOCK_CONST_METHOD0(delay_offset_ms, int());
-  MOCK_METHOD1(set_stream_analog_level, void(int));
-  MOCK_CONST_METHOD0(recommended_stream_analog_level, int());
+  MOCK_METHOD(int, Initialize, (), (override));
+  MOCK_METHOD(int,
+              Initialize,
+              (int capture_input_sample_rate_hz,
+               int capture_output_sample_rate_hz,
+               int render_sample_rate_hz,
+               ChannelLayout capture_input_layout,
+               ChannelLayout capture_output_layout,
+               ChannelLayout render_input_layout),
+              (override));
+  MOCK_METHOD(int,
+              Initialize,
+              (const ProcessingConfig& processing_config),
+              (override));
+  MOCK_METHOD(void, ApplyConfig, (const Config& config), (override));
+  MOCK_METHOD(int, proc_sample_rate_hz, (), (const, override));
+  MOCK_METHOD(int, proc_split_sample_rate_hz, (), (const, override));
+  MOCK_METHOD(size_t, num_input_channels, (), (const, override));
+  MOCK_METHOD(size_t, num_proc_channels, (), (const, override));
+  MOCK_METHOD(size_t, num_output_channels, (), (const, override));
+  MOCK_METHOD(size_t, num_reverse_channels, (), (const, override));
+  MOCK_METHOD(void, set_output_will_be_muted, (bool muted), (override));
+  MOCK_METHOD(void, SetRuntimeSetting, (RuntimeSetting setting), (override));
+  MOCK_METHOD(int,
+              ProcessStream,
+              (const int16_t* const src,
+               const StreamConfig& input_config,
+               const StreamConfig& output_config,
+               int16_t* const dest),
+              (override));
+  MOCK_METHOD(int,
+              ProcessStream,
+              (const float* const* src,
+               const StreamConfig& input_config,
+               const StreamConfig& output_config,
+               float* const* dest),
+              (override));
+  MOCK_METHOD(int,
+              ProcessReverseStream,
+              (const int16_t* const src,
+               const StreamConfig& input_config,
+               const StreamConfig& output_config,
+               int16_t* const dest),
+              (override));
+  MOCK_METHOD(int,
+              AnalyzeReverseStream,
+              (const float* const* data, const StreamConfig& reverse_config),
+              (override));
+  MOCK_METHOD(int,
+              ProcessReverseStream,
+              (const float* const* src,
+               const StreamConfig& input_config,
+               const StreamConfig& output_config,
+               float* const* dest),
+              (override));
+  MOCK_METHOD(bool,
+              GetLinearAecOutput,
+              ((rtc::ArrayView<std::array<float, 160>> linear_output)),
+              (const, override));
+  MOCK_METHOD(int, set_stream_delay_ms, (int delay), (override));
+  MOCK_METHOD(int, stream_delay_ms, (), (const, override));
+  MOCK_METHOD(void, set_stream_key_pressed, (bool key_pressed), (override));
+  MOCK_METHOD(void, set_stream_analog_level, (int), (override));
+  MOCK_METHOD(int, recommended_stream_analog_level, (), (const, override));
+  MOCK_METHOD(bool,
+              CreateAndAttachAecDump,
+              (const std::string& file_name,
+               int64_t max_log_size_bytes,
+               rtc::TaskQueue* worker_queue),
+              (override));
+  MOCK_METHOD(bool,
+              CreateAndAttachAecDump,
+              (FILE * handle,
+               int64_t max_log_size_bytes,
+               rtc::TaskQueue* worker_queue),
+              (override));
+  MOCK_METHOD(void, AttachAecDump, (std::unique_ptr<AecDump>), (override));
+  MOCK_METHOD(void, DetachAecDump, (), (override));
 
-  virtual void AttachAecDump(std::unique_ptr<AecDump> aec_dump) {}
-  MOCK_METHOD0(DetachAecDump, void());
+  MOCK_METHOD(AudioProcessingStats, GetStatistics, (), (override));
+  MOCK_METHOD(AudioProcessingStats, GetStatistics, (bool), (override));
 
-  virtual void AttachPlayoutAudioGenerator(
-      std::unique_ptr<AudioGenerator> audio_generator) {}
-  MOCK_METHOD0(DetachPlayoutAudioGenerator, void());
-
-  MOCK_METHOD0(UpdateHistogramsOnCallEnd, void());
-  MOCK_METHOD0(GetStatistics, AudioProcessingStats());
-  MOCK_METHOD1(GetStatistics, AudioProcessingStats(bool));
-
-  MOCK_CONST_METHOD0(GetConfig, AudioProcessing::Config());
+  MOCK_METHOD(AudioProcessing::Config, GetConfig, (), (const, override));
 };
 
 }  // namespace test

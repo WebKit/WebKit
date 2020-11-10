@@ -103,7 +103,7 @@ TEST(CascadedBiquadFilter, TransparentConfiguration) {
 #if RTC_DCHECK_IS_ON && GTEST_HAS_DEATH_TEST && !defined(WEBRTC_ANDROID)
 // Verifies that the check of the lengths for the input and output works for the
 // non-in-place call.
-TEST(CascadedBiquadFilter, InputSizeCheckVerification) {
+TEST(CascadedBiquadFilterDeathTest, InputSizeCheckVerification) {
   const std::vector<float> input = CreateInputWithIncreasingValues(10);
   std::vector<float> output(input.size() - 1);
 

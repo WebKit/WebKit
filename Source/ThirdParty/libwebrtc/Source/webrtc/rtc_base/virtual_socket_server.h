@@ -17,6 +17,7 @@
 
 #include "rtc_base/checks.h"
 #include "rtc_base/constructor_magic.h"
+#include "rtc_base/deprecated/recursive_critical_section.h"
 #include "rtc_base/event.h"
 #include "rtc_base/fake_clock.h"
 #include "rtc_base/message_handler.h"
@@ -294,7 +295,7 @@ class VirtualSocketServer : public SocketServer, public sigslot::has_slots<> {
   std::map<rtc::IPAddress, rtc::IPAddress> alternative_address_mapping_;
   std::unique_ptr<Function> delay_dist_;
 
-  CriticalSection delay_crit_;
+  RecursiveCriticalSection delay_crit_;
 
   double drop_prob_;
   bool sending_blocked_ = false;
@@ -304,7 +305,7 @@ class VirtualSocketServer : public SocketServer, public sigslot::has_slots<> {
 // Implements the socket interface using the virtual network.  Packets are
 // passed as messages using the message queue of the socket server.
 class VirtualSocket : public AsyncSocket,
-                      public MessageHandler,
+                      public MessageHandlerAutoCleanup,
                       public sigslot::has_slots<> {
  public:
   VirtualSocket(VirtualSocketServer* server, int family, int type, bool async);
@@ -379,7 +380,7 @@ class VirtualSocket : public AsyncSocket,
   bool ready_to_send_ = true;
 
   // Critical section to protect the recv_buffer and queue_
-  CriticalSection crit_;
+  RecursiveCriticalSection crit_;
 
   // Network model that enforces bandwidth and capacity constraints
   NetworkQueue network_;

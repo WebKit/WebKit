@@ -10,11 +10,13 @@
 
 #import <WebRTC/RTCIceCandidate.h>
 
-@interface RTCIceCandidate (JSON)
+@interface RTC_OBJC_TYPE (RTCIceCandidate)
+(JSON)
 
-+ (RTCIceCandidate *)candidateFromJSONDictionary:(NSDictionary *)dictionary;
-+ (NSArray<RTCIceCandidate *> *)candidatesFromJSONDictionary:(NSDictionary *)dictionary;
-+ (NSData *)JSONDataForIceCandidates:(NSArray<RTCIceCandidate *> *)candidates
+    + (RTC_OBJC_TYPE(RTCIceCandidate) *)candidateFromJSONDictionary : (NSDictionary *)dictionary;
++ (NSArray<RTC_OBJC_TYPE(RTCIceCandidate) *> *)candidatesFromJSONDictionary:
+    (NSDictionary *)dictionary;
++ (NSData *)JSONDataForIceCandidates:(NSArray<RTC_OBJC_TYPE(RTCIceCandidate) *> *)candidates
                             withType:(NSString *)typeValue;
 - (NSData *)JSONData;
 

@@ -40,6 +40,8 @@ class CngTest : public ::testing::Test {
   int16_t speech_data_[640];  // Max size of CNG internal buffers.
 };
 
+class CngDeathTest : public CngTest {};
+
 void CngTest::SetUp() {
   FILE* input_file;
   const std::string file_name =
@@ -69,7 +71,7 @@ void CngTest::TestCngEncode(int sample_rate_hz, int quality) {
 
 #if GTEST_HAS_DEATH_TEST && !defined(WEBRTC_ANDROID)
 // Create CNG encoder, init with faulty values, free CNG encoder.
-TEST_F(CngTest, CngInitFail) {
+TEST_F(CngDeathTest, CngInitFail) {
   // Call with too few parameters.
   EXPECT_DEATH(
       {
@@ -86,7 +88,7 @@ TEST_F(CngTest, CngInitFail) {
 }
 
 // Encode Cng with too long input vector.
-TEST_F(CngTest, CngEncodeTooLong) {
+TEST_F(CngDeathTest, CngEncodeTooLong) {
   rtc::Buffer sid_data;
 
   // Create encoder.

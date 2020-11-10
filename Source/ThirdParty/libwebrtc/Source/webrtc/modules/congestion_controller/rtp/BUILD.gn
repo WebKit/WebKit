@@ -31,10 +31,11 @@ rtc_library("control_handler") {
     "../../../rtc_base:checks",
     "../../../rtc_base:safe_minmax",
     "../../../rtc_base/synchronization:sequence_checker",
+    "../../../rtc_base/system:no_unique_address",
     "../../../system_wrappers:field_trial",
     "../../pacing",
-    "//third_party/abseil-cpp/absl/types:optional",
   ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
 
   if (!build_with_mozilla) {
     deps += [ "../../../rtc_base" ]
@@ -54,12 +55,16 @@ rtc_library("transport_feedback") {
     "../../../api/transport:network_control",
     "../../../api/units:data_size",
     "../../../api/units:timestamp",
+    "../../../rtc_base",
     "../../../rtc_base:checks",
     "../../../rtc_base:rtc_base_approved",
     "../../../rtc_base/network:sent_packet",
+    "../../../rtc_base/synchronization:mutex",
     "../../../system_wrappers",
     "../../../system_wrappers:field_trial",
     "../../rtp_rtcp:rtp_rtcp_format",
+  ]
+  absl_deps = [
     "//third_party/abseil-cpp/absl/algorithm:container",
     "//third_party/abseil-cpp/absl/types:optional",
   ]

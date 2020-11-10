@@ -287,7 +287,8 @@ std::string ProduceDebugText(int sample_rate_hz, size_t num_channels) {
 }  // namespace
 
 #if RTC_DCHECK_IS_ON && GTEST_HAS_DEATH_TEST && !defined(WEBRTC_ANDROID)
-TEST(FrameBlocker, WrongNumberOfBandsInBlockForInsertSubFrameAndExtractBlock) {
+TEST(FrameBlockerDeathTest,
+     WrongNumberOfBandsInBlockForInsertSubFrameAndExtractBlock) {
   for (auto rate : {16000, 32000, 48000}) {
     for (size_t correct_num_channels : {1, 2, 4, 8}) {
       SCOPED_TRACE(ProduceDebugText(rate, correct_num_channels));
@@ -300,7 +301,7 @@ TEST(FrameBlocker, WrongNumberOfBandsInBlockForInsertSubFrameAndExtractBlock) {
   }
 }
 
-TEST(FrameBlocker,
+TEST(FrameBlockerDeathTest,
      WrongNumberOfChannelsInBlockForInsertSubFrameAndExtractBlock) {
   for (auto rate : {16000, 32000, 48000}) {
     for (size_t correct_num_channels : {1, 2, 4, 8}) {
@@ -314,7 +315,7 @@ TEST(FrameBlocker,
   }
 }
 
-TEST(FrameBlocker,
+TEST(FrameBlockerDeathTest,
      WrongNumberOfBandsInSubFrameForInsertSubFrameAndExtractBlock) {
   for (auto rate : {16000, 32000, 48000}) {
     for (size_t correct_num_channels : {1, 2, 4, 8}) {
@@ -328,7 +329,7 @@ TEST(FrameBlocker,
   }
 }
 
-TEST(FrameBlocker,
+TEST(FrameBlockerDeathTest,
      WrongNumberOfChannelsInSubFrameForInsertSubFrameAndExtractBlock) {
   for (auto rate : {16000, 32000, 48000}) {
     for (size_t correct_num_channels : {1, 2, 4, 8}) {
@@ -342,7 +343,7 @@ TEST(FrameBlocker,
   }
 }
 
-TEST(FrameBlocker,
+TEST(FrameBlockerDeathTest,
      WrongNumberOfSamplesInBlockForInsertSubFrameAndExtractBlock) {
   for (auto rate : {16000, 32000, 48000}) {
     for (size_t correct_num_channels : {1, 2, 4, 8}) {
@@ -356,7 +357,7 @@ TEST(FrameBlocker,
   }
 }
 
-TEST(FrameBlocker,
+TEST(FrameBlockerDeathTest,
      WrongNumberOfSamplesInSubFrameForInsertSubFrameAndExtractBlock) {
   for (auto rate : {16000, 32000, 48000}) {
     for (size_t correct_num_channels : {1, 2, 4, 8}) {
@@ -370,7 +371,7 @@ TEST(FrameBlocker,
   }
 }
 
-TEST(FrameBlocker, WrongNumberOfBandsInBlockForExtractBlock) {
+TEST(FrameBlockerDeathTest, WrongNumberOfBandsInBlockForExtractBlock) {
   for (auto rate : {16000, 32000, 48000}) {
     for (size_t correct_num_channels : {1, 2, 4, 8}) {
       SCOPED_TRACE(ProduceDebugText(rate, correct_num_channels));
@@ -383,7 +384,7 @@ TEST(FrameBlocker, WrongNumberOfBandsInBlockForExtractBlock) {
   }
 }
 
-TEST(FrameBlocker, WrongNumberOfChannelsInBlockForExtractBlock) {
+TEST(FrameBlockerDeathTest, WrongNumberOfChannelsInBlockForExtractBlock) {
   for (auto rate : {16000, 32000, 48000}) {
     for (size_t correct_num_channels : {1, 2, 4, 8}) {
       SCOPED_TRACE(ProduceDebugText(rate, correct_num_channels));
@@ -396,7 +397,7 @@ TEST(FrameBlocker, WrongNumberOfChannelsInBlockForExtractBlock) {
   }
 }
 
-TEST(FrameBlocker, WrongNumberOfSamplesInBlockForExtractBlock) {
+TEST(FrameBlockerDeathTest, WrongNumberOfSamplesInBlockForExtractBlock) {
   for (auto rate : {16000, 32000, 48000}) {
     for (size_t correct_num_channels : {1, 2, 4, 8}) {
       SCOPED_TRACE(ProduceDebugText(rate, correct_num_channels));
@@ -408,7 +409,7 @@ TEST(FrameBlocker, WrongNumberOfSamplesInBlockForExtractBlock) {
   }
 }
 
-TEST(FrameBlocker, WrongNumberOfPreceedingApiCallsForExtractBlock) {
+TEST(FrameBlockerDeathTest, WrongNumberOfPreceedingApiCallsForExtractBlock) {
   for (auto rate : {16000, 32000, 48000}) {
     for (size_t num_channels : {1, 2, 4, 8}) {
       for (size_t num_calls = 0; num_calls < 4; ++num_calls) {
@@ -426,17 +427,17 @@ TEST(FrameBlocker, WrongNumberOfPreceedingApiCallsForExtractBlock) {
 }
 
 // Verifies that the verification for 0 number of channels works.
-TEST(FrameBlocker, ZeroNumberOfChannelsParameter) {
+TEST(FrameBlockerDeathTest, ZeroNumberOfChannelsParameter) {
   EXPECT_DEATH(FrameBlocker(16000, 0), "");
 }
 
 // Verifies that the verification for 0 number of bands works.
-TEST(FrameBlocker, ZeroNumberOfBandsParameter) {
+TEST(FrameBlockerDeathTest, ZeroNumberOfBandsParameter) {
   EXPECT_DEATH(FrameBlocker(0, 1), "");
 }
 
 // Verifiers that the verification for null sub_frame pointer works.
-TEST(FrameBlocker, NullBlockParameter) {
+TEST(FrameBlockerDeathTest, NullBlockParameter) {
   std::vector<std::vector<std::vector<float>>> sub_frame(
       1, std::vector<std::vector<float>>(
              1, std::vector<float>(kSubFrameLength, 0.f)));

@@ -44,11 +44,19 @@ rtc_source_set("unused") {
   sources = [ "unused.h" ]
 }
 
+rtc_source_set("assume") {
+  sources = [ "assume.h" ]
+}
+
 rtc_source_set("rtc_export") {
   sources = [
     "rtc_export.h",
     "rtc_export_template.h",
   ]
+}
+
+rtc_source_set("no_unique_address") {
+  sources = [ "no_unique_address.h" ]
 }
 
 if (is_mac || is_ios) {
@@ -58,19 +66,28 @@ if (is_mac || is_ios) {
       "cocoa_threading.mm",
     ]
     deps = [ "..:checks" ]
-    libs = [ "Foundation.framework" ]
+    frameworks = [ "Foundation.framework" ]
+  }
+
+  rtc_library("gcd_helpers") {
+    sources = [
+      "gcd_helpers.h",
+      "gcd_helpers.m",
+    ]
+    include_dirs = [ "../.." ]
   }
 }
 
 rtc_source_set("thread_registry") {
   sources = [ "thread_registry.h" ]
-  deps = [ "..:rtc_base_approved" ]
+  deps = [
+    "..:rtc_base_approved",
+    "../synchronization:mutex",
+  ]
   if (is_android && !build_with_chromium) {
     sources += [ "thread_registry.cc" ]
-    deps += [
-      "../../sdk/android:native_api_stacktrace",
-      "//third_party/abseil-cpp/absl/base:core_headers",
-    ]
+    deps += [ "../../sdk/android:native_api_stacktrace" ]
+    absl_deps = [ "//third_party/abseil-cpp/absl/base:core_headers" ]
   }
 }
 

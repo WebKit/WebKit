@@ -68,6 +68,8 @@ rtc_library("audio_encoder_isac_fix") {
     "../../../modules/audio_coding:isac_fix",
     "../../../rtc_base:rtc_base_approved",
     "../../../rtc_base/system:rtc_export",
+  ]
+  absl_deps = [
     "//third_party/abseil-cpp/absl/strings",
     "//third_party/abseil-cpp/absl/types:optional",
   ]
@@ -85,6 +87,8 @@ rtc_library("audio_decoder_isac_fix") {
     "../../../modules/audio_coding:isac_fix",
     "../../../rtc_base:rtc_base_approved",
     "../../../rtc_base/system:rtc_export",
+  ]
+  absl_deps = [
     "//third_party/abseil-cpp/absl/strings",
     "//third_party/abseil-cpp/absl/types:optional",
   ]
@@ -102,6 +106,8 @@ rtc_library("audio_encoder_isac_float") {
     "../../../modules/audio_coding:isac",
     "../../../rtc_base:rtc_base_approved",
     "../../../rtc_base/system:rtc_export",
+  ]
+  absl_deps = [
     "//third_party/abseil-cpp/absl/strings",
     "//third_party/abseil-cpp/absl/types:optional",
   ]
@@ -119,6 +125,8 @@ rtc_library("audio_decoder_isac_float") {
     "../../../modules/audio_coding:isac",
     "../../../rtc_base:rtc_base_approved",
     "../../../rtc_base/system:rtc_export",
+  ]
+  absl_deps = [
     "//third_party/abseil-cpp/absl/strings",
     "//third_party/abseil-cpp/absl/types:optional",
   ]

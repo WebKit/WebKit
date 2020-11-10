@@ -209,21 +209,24 @@ OpenSSLIdentity::OpenSSLIdentity(std::unique_ptr<OpenSSLKeyPair> key_pair,
 
 OpenSSLIdentity::~OpenSSLIdentity() = default;
 
-OpenSSLIdentity* OpenSSLIdentity::GenerateInternal(
+std::unique_ptr<OpenSSLIdentity> OpenSSLIdentity::CreateInternal(
     const SSLIdentityParams& params) {
   std::unique_ptr<OpenSSLKeyPair> key_pair(
       OpenSSLKeyPair::Generate(params.key_params));
   if (key_pair) {
     std::unique_ptr<OpenSSLCertificate> certificate(
         OpenSSLCertificate::Generate(key_pair.get(), params));
-    if (certificate != nullptr)
-      return new OpenSSLIdentity(std::move(key_pair), std::move(certificate));
+    if (certificate != nullptr) {
+      return absl::WrapUnique(
+          new OpenSSLIdentity(std::move(key_pair), std::move(certificate)));
+    }
   }
   RTC_LOG(LS_INFO) << "Identity generation failed";
   return nullptr;
 }
 
-OpenSSLIdentity* OpenSSLIdentity::GenerateWithExpiration(
+// static
+std::unique_ptr<OpenSSLIdentity> OpenSSLIdentity::CreateWithExpiration(
     const std::string& common_name,
     const KeyParams& key_params,
     time_t certificate_lifetime) {
@@ -235,16 +238,17 @@ OpenSSLIdentity* OpenSSLIdentity::GenerateWithExpiration(
   params.not_after = now + certificate_lifetime;
   if (params.not_before > params.not_after)
     return nullptr;
-  return GenerateInternal(params);
+  return CreateInternal(params);
 }
 
-OpenSSLIdentity* OpenSSLIdentity::GenerateForTest(
+std::unique_ptr<OpenSSLIdentity> OpenSSLIdentity::CreateForTest(
     const SSLIdentityParams& params) {
-  return GenerateInternal(params);
+  return CreateInternal(params);
 }
 
-SSLIdentity* OpenSSLIdentity::FromPEMStrings(const std::string& private_key,
-                                             const std::string& certificate) {
+std::unique_ptr<SSLIdentity> OpenSSLIdentity::CreateFromPEMStrings(
+    const std::string& private_key,
+    const std::string& certificate) {
   std::unique_ptr<OpenSSLCertificate> cert(
       OpenSSLCertificate::FromPEMString(certificate));
   if (!cert) {
@@ -259,10 +263,11 @@ SSLIdentity* OpenSSLIdentity::FromPEMStrings(const std::string& private_key,
     return nullptr;
   }
 
-  return new OpenSSLIdentity(std::move(key_pair), std::move(cert));
+  return absl::WrapUnique(
+      new OpenSSLIdentity(std::move(key_pair), std::move(cert)));
 }
 
-SSLIdentity* OpenSSLIdentity::FromPEMChainStrings(
+std::unique_ptr<SSLIdentity> OpenSSLIdentity::CreateFromPEMChainStrings(
     const std::string& private_key,
     const std::string& certificate_chain) {
   BIO* bio = BIO_new_mem_buf(certificate_chain.data(),
@@ -300,8 +305,8 @@ SSLIdentity* OpenSSLIdentity::FromPEMChainStrings(
     return nullptr;
   }
 
-  return new OpenSSLIdentity(std::move(key_pair),
-                             std::make_unique<SSLCertChain>(std::move(certs)));
+  return absl::WrapUnique(new OpenSSLIdentity(
+      std::move(key_pair), std::make_unique<SSLCertChain>(std::move(certs))));
 }
 
 const OpenSSLCertificate& OpenSSLIdentity::certificate() const {
@@ -312,9 +317,11 @@ const SSLCertChain& OpenSSLIdentity::cert_chain() const {
   return *cert_chain_.get();
 }
 
-OpenSSLIdentity* OpenSSLIdentity::GetReference() const {
-  return new OpenSSLIdentity(absl::WrapUnique(key_pair_->GetReference()),
-                             cert_chain_->Clone());
+std::unique_ptr<SSLIdentity> OpenSSLIdentity::CloneInternal() const {
+  // We cannot use std::make_unique here because the referenced OpenSSLIdentity
+  // constructor is private.
+  return absl::WrapUnique(new OpenSSLIdentity(
+      absl::WrapUnique(key_pair_->GetReference()), cert_chain_->Clone()));
 }
 
 bool OpenSSLIdentity::ConfigureIdentity(SSL_CTX* ctx) {

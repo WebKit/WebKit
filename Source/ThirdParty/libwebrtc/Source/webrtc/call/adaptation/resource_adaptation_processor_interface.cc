@@ -12,8 +12,9 @@
 
 namespace webrtc {
 
-ResourceAdaptationProcessorListener::~ResourceAdaptationProcessorListener() {}
+ResourceAdaptationProcessorInterface::~ResourceAdaptationProcessorInterface() =
+    default;
 
-ResourceAdaptationProcessorInterface::~ResourceAdaptationProcessorInterface() {}
+ResourceLimitationsListener::~ResourceLimitationsListener() = default;
 
 }  // namespace webrtc

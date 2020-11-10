@@ -103,7 +103,7 @@ TEST(Decimator, NoLeakageFromUpperFrequencies) {
 
 #if RTC_DCHECK_IS_ON && GTEST_HAS_DEATH_TEST && !defined(WEBRTC_ANDROID)
 // Verifies the check for the input size.
-TEST(Decimator, WrongInputSize) {
+TEST(DecimatorDeathTest, WrongInputSize) {
   Decimator decimator(4);
   std::vector<float> x(kBlockSize - 1, 0.f);
   std::array<float, kBlockSize / 4> x_downsampled;
@@ -111,14 +111,14 @@ TEST(Decimator, WrongInputSize) {
 }
 
 // Verifies the check for non-null output parameter.
-TEST(Decimator, NullOutput) {
+TEST(DecimatorDeathTest, NullOutput) {
   Decimator decimator(4);
   std::vector<float> x(kBlockSize, 0.f);
   EXPECT_DEATH(decimator.Decimate(x, nullptr), "");
 }
 
 // Verifies the check for the output size.
-TEST(Decimator, WrongOutputSize) {
+TEST(DecimatorDeathTest, WrongOutputSize) {
   Decimator decimator(4);
   std::vector<float> x(kBlockSize, 0.f);
   std::array<float, kBlockSize / 4 - 1> x_downsampled;
@@ -126,7 +126,7 @@ TEST(Decimator, WrongOutputSize) {
 }
 
 // Verifies the check for the correct downsampling factor.
-TEST(Decimator, CorrectDownSamplingFactor) {
+TEST(DecimatorDeathTest, CorrectDownSamplingFactor) {
   EXPECT_DEATH(Decimator(3), "");
 }
 

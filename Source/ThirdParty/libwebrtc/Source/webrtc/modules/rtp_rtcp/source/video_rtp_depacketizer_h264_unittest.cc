@@ -16,7 +16,6 @@
 #include "absl/types/optional.h"
 #include "api/array_view.h"
 #include "common_video/h264/h264_common.h"
-#include "modules/include/module_common_types.h"
 #include "modules/rtp_rtcp/mocks/mock_rtp_rtcp.h"
 #include "modules/rtp_rtcp/source/byte_io.h"
 #include "rtc_base/copy_on_write_buffer.h"

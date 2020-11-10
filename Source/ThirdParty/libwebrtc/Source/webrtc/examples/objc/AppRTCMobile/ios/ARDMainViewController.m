@@ -28,10 +28,9 @@ static NSString *const barButtonImageString = @"ic_settings_black_24dp.png";
 // Launch argument to be passed to indicate that the app should start loopback immediatly
 static NSString *const loopbackLaunchProcessArgument = @"loopback";
 
-@interface ARDMainViewController () <
-    ARDMainViewDelegate,
-    ARDVideoCallViewControllerDelegate,
-    RTCAudioSessionDelegate>
+@interface ARDMainViewController () <ARDMainViewDelegate,
+                                     ARDVideoCallViewControllerDelegate,
+                                     RTC_OBJC_TYPE (RTCAudioSessionDelegate)>
 @property(nonatomic, strong) ARDMainView *mainView;
 @property(nonatomic, strong) AVAudioPlayer *audioPlayer;
 @end
@@ -57,13 +56,13 @@ static NSString *const loopbackLaunchProcessArgument = @"loopback";
   self.view = _mainView;
   [self addSettingsBarButton];
 
-  RTCAudioSessionConfiguration *webRTCConfig =
-      [RTCAudioSessionConfiguration webRTCConfiguration];
+  RTC_OBJC_TYPE(RTCAudioSessionConfiguration) *webRTCConfig =
+      [RTC_OBJC_TYPE(RTCAudioSessionConfiguration) webRTCConfiguration];
   webRTCConfig.categoryOptions = webRTCConfig.categoryOptions |
       AVAudioSessionCategoryOptionDefaultToSpeaker;
-  [RTCAudioSessionConfiguration setWebRTCConfiguration:webRTCConfig];
+  [RTC_OBJC_TYPE(RTCAudioSessionConfiguration) setWebRTCConfiguration:webRTCConfig];
 
-  RTCAudioSession *session = [RTCAudioSession sharedInstance];
+  RTC_OBJC_TYPE(RTCAudioSession) *session = [RTC_OBJC_TYPE(RTCAudioSession) sharedInstance];
   [session addDelegate:self];
 
   [self configureAudioSession];
@@ -124,7 +123,7 @@ static NSString *const loopbackLaunchProcessArgument = @"loopback";
 
   ARDSettingsModel *settingsModel = [[ARDSettingsModel alloc] init];
 
-  RTCAudioSession *session = [RTCAudioSession sharedInstance];
+  RTC_OBJC_TYPE(RTCAudioSession) *session = [RTC_OBJC_TYPE(RTCAudioSession) sharedInstance];
   session.useManualAudio = [settingsModel currentUseManualAudioConfigSettingFromStore];
   session.isAudioEnabled = NO;
 
@@ -135,6 +134,7 @@ static NSString *const loopbackLaunchProcessArgument = @"loopback";
                                              delegate:self];
   videoCallViewController.modalTransitionStyle =
       UIModalTransitionStyleCrossDissolve;
+  videoCallViewController.modalPresentationStyle = UIModalPresentationFullScreen;
   [self presentViewController:videoCallViewController
                      animated:YES
                    completion:nil];
@@ -158,32 +158,33 @@ static NSString *const loopbackLaunchProcessArgument = @"loopback";
       [self restartAudioPlayerIfNeeded];
     }];
   }
-  RTCAudioSession *session = [RTCAudioSession sharedInstance];
+  RTC_OBJC_TYPE(RTCAudioSession) *session = [RTC_OBJC_TYPE(RTCAudioSession) sharedInstance];
   session.isAudioEnabled = NO;
 }
 
-#pragma mark - RTCAudioSessionDelegate
+#pragma mark - RTC_OBJC_TYPE(RTCAudioSessionDelegate)
 
-- (void)audioSessionDidStartPlayOrRecord:(RTCAudioSession *)session {
+- (void)audioSessionDidStartPlayOrRecord:(RTC_OBJC_TYPE(RTCAudioSession) *)session {
   // Stop playback on main queue and then configure WebRTC.
-  [RTCDispatcher dispatchAsyncOnType:RTCDispatcherTypeMain
-                               block:^{
-                                 if (self.mainView.isAudioLoopPlaying) {
-                                   RTCLog(@"Stopping audio loop due to WebRTC start.");
-                                   [self.audioPlayer stop];
-                                 }
-                                 RTCLog(@"Setting isAudioEnabled to YES.");
-                                 session.isAudioEnabled = YES;
-                               }];
+  [RTC_OBJC_TYPE(RTCDispatcher)
+      dispatchAsyncOnType:RTCDispatcherTypeMain
+                    block:^{
+                      if (self.mainView.isAudioLoopPlaying) {
+                        RTCLog(@"Stopping audio loop due to WebRTC start.");
+                        [self.audioPlayer stop];
+                      }
+                      RTCLog(@"Setting isAudioEnabled to YES.");
+                      session.isAudioEnabled = YES;
+                    }];
 }
 
-- (void)audioSessionDidStopPlayOrRecord:(RTCAudioSession *)session {
+- (void)audioSessionDidStopPlayOrRecord:(RTC_OBJC_TYPE(RTCAudioSession) *)session {
   // WebRTC is done with the audio session. Restart playback.
-  [RTCDispatcher dispatchAsyncOnType:RTCDispatcherTypeMain
-                               block:^{
-    RTCLog(@"audioSessionDidStopPlayOrRecord");
-    [self restartAudioPlayerIfNeeded];
-  }];
+  [RTC_OBJC_TYPE(RTCDispatcher) dispatchAsyncOnType:RTCDispatcherTypeMain
+                                              block:^{
+                                                RTCLog(@"audioSessionDidStopPlayOrRecord");
+                                                [self restartAudioPlayerIfNeeded];
+                                              }];
 }
 
 #pragma mark - Private
@@ -202,13 +203,13 @@ static NSString *const loopbackLaunchProcessArgument = @"loopback";
 }
 
 - (void)configureAudioSession {
-  RTCAudioSessionConfiguration *configuration =
-      [[RTCAudioSessionConfiguration alloc] init];
+  RTC_OBJC_TYPE(RTCAudioSessionConfiguration) *configuration =
+      [[RTC_OBJC_TYPE(RTCAudioSessionConfiguration) alloc] init];
   configuration.category = AVAudioSessionCategoryAmbient;
   configuration.categoryOptions = AVAudioSessionCategoryOptionDuckOthers;
   configuration.mode = AVAudioSessionModeDefault;
 
-  RTCAudioSession *session = [RTCAudioSession sharedInstance];
+  RTC_OBJC_TYPE(RTCAudioSession) *session = [RTC_OBJC_TYPE(RTCAudioSession) sharedInstance];
   [session lockForConfiguration];
   BOOL hasSucceeded = NO;
   NSError *error = nil;

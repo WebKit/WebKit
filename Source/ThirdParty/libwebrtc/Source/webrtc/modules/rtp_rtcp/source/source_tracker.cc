@@ -25,7 +25,7 @@ void SourceTracker::OnFrameDelivered(const RtpPacketInfos& packet_infos) {
   }
 
   int64_t now_ms = clock_->TimeInMilliseconds();
-  rtc::CritScope lock_scope(&lock_);
+  MutexLock lock_scope(&lock_);
 
   for (const auto& packet_info : packet_infos) {
     for (uint32_t csrc : packet_info.csrcs()) {
@@ -54,7 +54,7 @@ std::vector<RtpSource> SourceTracker::GetSources() const {
   std::vector<RtpSource> sources;
 
   int64_t now_ms = clock_->TimeInMilliseconds();
-  rtc::CritScope lock_scope(&lock_);
+  MutexLock lock_scope(&lock_);
 
   PruneEntries(now_ms);
 

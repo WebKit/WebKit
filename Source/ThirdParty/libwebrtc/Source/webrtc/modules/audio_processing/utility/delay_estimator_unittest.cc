@@ -14,6 +14,8 @@
 #include "modules/audio_processing/utility/delay_estimator_wrapper.h"
 #include "test/gtest.h"
 
+namespace webrtc {
+
 namespace {
 
 enum { kSpectrumSize = 65 };
@@ -615,3 +617,5 @@ TEST_F(DelayEstimatorTest, VerifyHistorySizeIsSetAndKeptAfterInit) {
 // TODO(bjornv): Add tests for SoftReset...(...).
 
 }  // namespace
+
+}  // namespace webrtc

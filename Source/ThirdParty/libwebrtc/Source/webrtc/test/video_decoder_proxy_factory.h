@@ -20,7 +20,7 @@
 namespace webrtc {
 namespace test {
 
-// An decoder factory with a single underlying VideoDecoder object, intended for
+// A decoder factory with a single underlying VideoDecoder object, intended for
 // test purposes. Each call to CreateVideoDecoder returns a proxy for the same
 // decoder, typically an instance of FakeDecoder or MockEncoder.
 class VideoDecoderProxyFactory final : public VideoDecoderFactory {

@@ -294,8 +294,8 @@ static inline void fillRTCDataChannelStats(RTCStatsReport::DataChannelStats& sta
         stats.label = fromStdString(*rtcStats.label);
     if (rtcStats.protocol.is_defined())
         stats.protocol = fromStdString(*rtcStats.protocol);
-    if (rtcStats.datachannelid.is_defined())
-        stats.datachannelid = *rtcStats.datachannelid;
+    if (rtcStats.data_channel_identifier.is_defined())
+        stats.datachannelid = *rtcStats.data_channel_identifier;
     if (rtcStats.state.is_defined())
         stats.state = fromStdString(*rtcStats.state);
     if (rtcStats.messages_sent.is_defined())

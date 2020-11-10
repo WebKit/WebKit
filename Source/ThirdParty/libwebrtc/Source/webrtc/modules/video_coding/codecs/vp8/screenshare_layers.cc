@@ -36,6 +36,7 @@ constexpr int kMinTimeBetweenSyncs = kOneSecond90Khz * 2;
 constexpr int kMaxTimeBetweenSyncs = kOneSecond90Khz * 4;
 constexpr int kQpDeltaThresholdForSync = 8;
 constexpr int kMinBitrateKbpsForQpBoost = 500;
+constexpr auto kSwitch = DecodeTargetIndication::kSwitch;
 }  // namespace
 
 const double ScreenshareLayers::kMaxTL0FpsReduction = 2.5;
@@ -319,8 +320,7 @@ void ScreenshareLayers::OnEncodeDone(size_t stream_index,
   if (number_of_temporal_layers_ == 1) {
     vp8_info.temporalIdx = kNoTemporalIdx;
     vp8_info.layerSync = false;
-    generic_frame_info.decode_target_indications =
-        GenericFrameInfo::DecodeTargetInfo("S");
+    generic_frame_info.decode_target_indications = {kSwitch};
     generic_frame_info.encoder_buffers.emplace_back(
         0, /*referenced=*/!is_keyframe, /*updated=*/true);
   } else {
@@ -333,8 +333,6 @@ void ScreenshareLayers::OnEncodeDone(size_t stream_index,
           dependency_info->decode_target_indications;
     } else {
       RTC_DCHECK(is_keyframe);
-      generic_frame_info.decode_target_indications =
-          GenericFrameInfo::DecodeTargetInfo("SS");
     }
 
     if (is_keyframe) {
@@ -346,6 +344,7 @@ void ScreenshareLayers::OnEncodeDone(size_t stream_index,
       active_layer_ = 1;
       info->template_structure =
           GetTemplateStructure(number_of_temporal_layers_);
+      generic_frame_info.decode_target_indications = {kSwitch, kSwitch};
     } else if (active_layer_ >= 0 && layers_[active_layer_].state ==
                                          TemporalLayer::State::kKeyFrame) {
       layers_[active_layer_].state = TemporalLayer::State::kNormal;
@@ -429,21 +428,18 @@ FrameDependencyStructure ScreenshareLayers::GetTemplateStructure(
   FrameDependencyStructure template_structure;
   template_structure.num_decode_targets = num_layers;
 
-  using Builder = GenericFrameInfo::Builder;
   switch (num_layers) {
     case 1: {
-      template_structure.templates = {
-          Builder().T(0).Dtis("S").Build(),
-          Builder().T(0).Dtis("S").Fdiffs({1}).Build(),
-      };
+      template_structure.templates.resize(2);
+      template_structure.templates[0].T(0).Dtis("S");
+      template_structure.templates[1].T(0).Dtis("S").FrameDiffs({1});
       return template_structure;
     }
     case 2: {
-      template_structure.templates = {
-          Builder().T(0).Dtis("SS").Build(),
-          Builder().T(0).Dtis("SS").Fdiffs({1}).Build(),
-          Builder().T(1).Dtis("-S").Fdiffs({1}).Build(),
-      };
+      template_structure.templates.resize(3);
+      template_structure.templates[0].T(0).Dtis("SS");
+      template_structure.templates[1].T(0).Dtis("SS").FrameDiffs({1});
+      template_structure.templates[2].T(1).Dtis("-S").FrameDiffs({1});
       return template_structure;
     }
     default:

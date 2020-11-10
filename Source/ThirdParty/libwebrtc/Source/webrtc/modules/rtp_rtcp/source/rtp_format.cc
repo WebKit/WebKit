@@ -22,9 +22,6 @@
 #include "modules/rtp_rtcp/source/rtp_format_vp9.h"
 #include "modules/rtp_rtcp/source/rtp_packetizer_av1.h"
 #include "modules/video_coding/codecs/h264/include/h264_globals.h"
-#ifndef DISABLE_H265
-#include "modules/video_coding/codecs/h265/include/h265_globals.h"
-#endif
 #include "modules/video_coding/codecs/vp8/include/vp8_globals.h"
 #include "modules/video_coding/codecs/vp9/include/vp9_globals.h"
 #include "rtc_base/checks.h"
@@ -36,8 +33,7 @@ std::unique_ptr<RtpPacketizer> RtpPacketizer::Create(
     rtc::ArrayView<const uint8_t> payload,
     PayloadSizeLimits limits,
     // Codec-specific details.
-    const RTPVideoHeader& rtp_video_header,
-    const RTPFragmentationHeader* fragmentation) {
+    const RTPVideoHeader& rtp_video_header) {
   if (!type) {
     // Use raw packetizer.
     return std::make_unique<RtpPacketizerGeneric>(payload, limits);
@@ -45,37 +41,29 @@ std::unique_ptr<RtpPacketizer> RtpPacketizer::Create(
 
   switch (*type) {
     case kVideoCodecH264: {
-      RTC_CHECK(fragmentation);
       const auto& h264 =
           absl::get<RTPVideoHeaderH264>(rtp_video_header.video_type_header);
-      return std::make_unique<RtpPacketizerH264>(
-          payload, limits, h264.packetization_mode, *fragmentation);
+      return std::make_unique<RtpPacketizerH264>(payload, limits,
+                                                 h264.packetization_mode);
     }
-#ifndef DISABLE_H265
-    case kVideoCodecH265: {
-      RTC_CHECK(fragmentation);
-      const auto& h265 =
-          absl::get<RTPVideoHeaderH265>(rtp_video_header.video_type_header);
-      return absl::make_unique<RtpPacketizerH265>(
-          payload, limits, h265.packetization_mode, *fragmentation);
-    }
-#endif
     case kVideoCodecVP8: {
       const auto& vp8 =
           absl::get<RTPVideoHeaderVP8>(rtp_video_header.video_type_header);
       return std::make_unique<RtpPacketizerVp8>(payload, limits, vp8);
     }
-#if defined(RTC_ENABLE_VP9)
     case kVideoCodecVP9: {
       const auto& vp9 =
           absl::get<RTPVideoHeaderVP9>(rtp_video_header.video_type_header);
       return std::make_unique<RtpPacketizerVp9>(payload, limits, vp9);
     }
-#endif
-#if defined(RTC_ENABLE_AV1)
     case kVideoCodecAV1:
       return std::make_unique<RtpPacketizerAv1>(payload, limits,
                                                 rtp_video_header.frame_type);
+#ifndef DISABLE_H265
+    case kVideoCodecH265: {
+      return std::make_unique<RtpPacketizerGeneric>(payload, limits,
+                                                    rtp_video_header);
+    }
 #endif
     default: {
       return std::make_unique<RtpPacketizerGeneric>(payload, limits,

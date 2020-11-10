@@ -65,10 +65,10 @@ static NSInteger kARDTURNClientErrorBadResponse = -1;
       }
       NSDictionary *turnResponseDict = [NSDictionary dictionaryWithJSONData:data];
       NSMutableArray *turnServers = [NSMutableArray array];
-      [turnResponseDict[@"iceServers"] enumerateObjectsUsingBlock:
-                         ^(NSDictionary *obj, NSUInteger idx, BOOL *stop){
-          [turnServers addObject:[RTCIceServer serverFromJSONDictionary:obj]];
-        }];
+      [turnResponseDict[@"iceServers"]
+          enumerateObjectsUsingBlock:^(NSDictionary *obj, NSUInteger idx, BOOL *stop) {
+            [turnServers addObject:[RTC_OBJC_TYPE(RTCIceServer) serverFromJSONDictionary:obj]];
+          }];
       if (!turnServers) {
         NSError *responseError =
           [[NSError alloc] initWithDomain:kARDTURNClientErrorDomain

@@ -44,6 +44,12 @@ bool IsLegalRsidName(absl::string_view name) {
 
 StreamDataCounters::StreamDataCounters() : first_packet_time_ms(-1) {}
 
+RtpPacketCounter::RtpPacketCounter(const RtpPacket& packet)
+    : header_bytes(packet.headers_size()),
+      payload_bytes(packet.payload_size()),
+      padding_bytes(packet.padding_size()),
+      packets(1) {}
+
 void RtpPacketCounter::AddPacket(const RtpPacket& packet) {
   ++packets;
   header_bytes += packet.headers_size();

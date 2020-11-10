@@ -24,37 +24,55 @@ namespace webrtc {
 class MockRtpReceiverInternal : public RtpReceiverInternal {
  public:
   // RtpReceiverInterface methods.
-  MOCK_METHOD1(SetTrack, void(MediaStreamTrackInterface*));
-  MOCK_CONST_METHOD0(track, rtc::scoped_refptr<MediaStreamTrackInterface>());
-  MOCK_CONST_METHOD0(dtls_transport,
-                     rtc::scoped_refptr<DtlsTransportInterface>());
-  MOCK_CONST_METHOD0(stream_ids, std::vector<std::string>());
-  MOCK_CONST_METHOD0(streams,
-                     std::vector<rtc::scoped_refptr<MediaStreamInterface>>());
-  MOCK_CONST_METHOD0(media_type, cricket::MediaType());
-  MOCK_CONST_METHOD0(id, std::string());
-  MOCK_CONST_METHOD0(GetParameters, RtpParameters());
-  MOCK_METHOD1(SetObserver, void(RtpReceiverObserverInterface*));
-  MOCK_METHOD1(SetJitterBufferMinimumDelay, void(absl::optional<double>));
-  MOCK_CONST_METHOD0(GetSources, std::vector<RtpSource>());
-  MOCK_METHOD1(SetFrameDecryptor,
-               void(rtc::scoped_refptr<FrameDecryptorInterface>));
-  MOCK_CONST_METHOD0(GetFrameDecryptor,
-                     rtc::scoped_refptr<FrameDecryptorInterface>());
+  MOCK_METHOD(rtc::scoped_refptr<MediaStreamTrackInterface>,
+              track,
+              (),
+              (const, override));
+  MOCK_METHOD(rtc::scoped_refptr<DtlsTransportInterface>,
+              dtls_transport,
+              (),
+              (const, override));
+  MOCK_METHOD(std::vector<std::string>, stream_ids, (), (const, override));
+  MOCK_METHOD(std::vector<rtc::scoped_refptr<MediaStreamInterface>>,
+              streams,
+              (),
+              (const, override));
+  MOCK_METHOD(cricket::MediaType, media_type, (), (const, override));
+  MOCK_METHOD(std::string, id, (), (const, override));
+  MOCK_METHOD(RtpParameters, GetParameters, (), (const, override));
+  MOCK_METHOD(void, SetObserver, (RtpReceiverObserverInterface*), (override));
+  MOCK_METHOD(void,
+              SetJitterBufferMinimumDelay,
+              (absl::optional<double>),
+              (override));
+  MOCK_METHOD(std::vector<RtpSource>, GetSources, (), (const, override));
+  MOCK_METHOD(void,
+              SetFrameDecryptor,
+              (rtc::scoped_refptr<FrameDecryptorInterface>),
+              (override));
+  MOCK_METHOD(rtc::scoped_refptr<FrameDecryptorInterface>,
+              GetFrameDecryptor,
+              (),
+              (const, override));
 
   // RtpReceiverInternal methods.
-  MOCK_METHOD0(Stop, void());
-  MOCK_METHOD1(SetMediaChannel, void(cricket::MediaChannel*));
-  MOCK_METHOD1(SetupMediaChannel, void(uint32_t));
-  MOCK_METHOD0(SetupUnsignaledMediaChannel, void());
-  MOCK_CONST_METHOD0(ssrc, uint32_t());
-  MOCK_METHOD0(NotifyFirstPacketReceived, void());
-  MOCK_METHOD1(set_stream_ids, void(std::vector<std::string>));
-  MOCK_METHOD1(set_transport, void(rtc::scoped_refptr<DtlsTransportInterface>));
-  MOCK_METHOD1(
-      SetStreams,
-      void(const std::vector<rtc::scoped_refptr<MediaStreamInterface>>&));
-  MOCK_CONST_METHOD0(AttachmentId, int());
+  MOCK_METHOD(void, Stop, (), (override));
+  MOCK_METHOD(void, StopAndEndTrack, (), (override));
+  MOCK_METHOD(void, SetMediaChannel, (cricket::MediaChannel*), (override));
+  MOCK_METHOD(void, SetupMediaChannel, (uint32_t), (override));
+  MOCK_METHOD(void, SetupUnsignaledMediaChannel, (), (override));
+  MOCK_METHOD(uint32_t, ssrc, (), (const, override));
+  MOCK_METHOD(void, NotifyFirstPacketReceived, (), (override));
+  MOCK_METHOD(void, set_stream_ids, (std::vector<std::string>), (override));
+  MOCK_METHOD(void,
+              set_transport,
+              (rtc::scoped_refptr<DtlsTransportInterface>),
+              (override));
+  MOCK_METHOD(void,
+              SetStreams,
+              (const std::vector<rtc::scoped_refptr<MediaStreamInterface>>&),
+              (override));
+  MOCK_METHOD(int, AttachmentId, (), (const, override));
 };
 
 }  // namespace webrtc

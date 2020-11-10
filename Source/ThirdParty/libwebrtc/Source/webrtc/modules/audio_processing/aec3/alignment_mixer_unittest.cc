@@ -175,7 +175,7 @@ TEST(AlignmentMixer, FixedMode) {
 
 #if RTC_DCHECK_IS_ON && GTEST_HAS_DEATH_TEST && !defined(WEBRTC_ANDROID)
 
-TEST(AlignmentMixer, ZeroNumChannels) {
+TEST(AlignmentMixerDeathTest, ZeroNumChannels) {
   EXPECT_DEATH(
       AlignmentMixer(/*num_channels*/ 0, /*downmix*/ false,
                      /*adaptive_selection*/ false, /*excitation_limit*/ 1.f,
@@ -183,7 +183,7 @@ TEST(AlignmentMixer, ZeroNumChannels) {
       , "");
 }
 
-TEST(AlignmentMixer, IncorrectVariant) {
+TEST(AlignmentMixerDeathTest, IncorrectVariant) {
   EXPECT_DEATH(
       AlignmentMixer(/*num_channels*/ 1, /*downmix*/ true,
                      /*adaptive_selection*/ true, /*excitation_limit*/ 1.f,

@@ -53,27 +53,6 @@ RTCError PeerConnectionInterface::SetConfiguration(
   return RTCError();
 }
 
-RTCError PeerConnectionInterface::SetBitrate(const BitrateSettings& bitrate) {
-  BitrateParameters bitrate_parameters;
-  bitrate_parameters.min_bitrate_bps = bitrate.min_bitrate_bps;
-  bitrate_parameters.current_bitrate_bps = bitrate.start_bitrate_bps;
-  bitrate_parameters.max_bitrate_bps = bitrate.max_bitrate_bps;
-  return SetBitrate(bitrate_parameters);
-}
-
-RTCError PeerConnectionInterface::SetBitrate(
-    const BitrateParameters& bitrate_parameters) {
-  BitrateSettings bitrate;
-  bitrate.min_bitrate_bps = bitrate_parameters.min_bitrate_bps;
-  bitrate.start_bitrate_bps = bitrate_parameters.current_bitrate_bps;
-  bitrate.max_bitrate_bps = bitrate_parameters.max_bitrate_bps;
-  return SetBitrate(bitrate);
-}
-
-PeerConnectionInterface::BitrateParameters::BitrateParameters() = default;
-
-PeerConnectionInterface::BitrateParameters::~BitrateParameters() = default;
-
 PeerConnectionDependencies::PeerConnectionDependencies(
     PeerConnectionObserver* observer_in)
     : observer(observer_in) {}

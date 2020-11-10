@@ -11,6 +11,8 @@
 #ifndef MODULES_AUDIO_PROCESSING_AGC_GAIN_MAP_INTERNAL_H_
 #define MODULES_AUDIO_PROCESSING_AGC_GAIN_MAP_INTERNAL_H_
 
+namespace webrtc {
+
 static const int kGainMapSize = 256;
 // Uses parameters: si = 2, sf = 0.25, D = 8/256
 static const int kGainMap[kGainMapSize] = {
@@ -32,5 +34,7 @@ static const int kGainMap[kGainMapSize] = {
     56,  56,  57,  57,  57,  57,  58,  58,  58,  58,  59,  59,  59,  59,  60,
     60,  60,  60,  61,  61,  61,  61,  62,  62,  62,  62,  63,  63,  63,  63,
     64};
+
+}  // namespace webrtc
 
 #endif  // MODULES_AUDIO_PROCESSING_AGC_GAIN_MAP_INTERNAL_H_

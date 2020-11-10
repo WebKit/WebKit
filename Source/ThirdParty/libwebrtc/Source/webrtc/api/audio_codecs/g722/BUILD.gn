@@ -31,6 +31,8 @@ rtc_library("audio_encoder_g722") {
     "../../../rtc_base:rtc_base_approved",
     "../../../rtc_base:safe_minmax",
     "../../../rtc_base/system:rtc_export",
+  ]
+  absl_deps = [
     "//third_party/abseil-cpp/absl/strings",
     "//third_party/abseil-cpp/absl/types:optional",
   ]
@@ -48,6 +50,8 @@ rtc_library("audio_decoder_g722") {
     "../../../modules/audio_coding:g722",
     "../../../rtc_base:rtc_base_approved",
     "../../../rtc_base/system:rtc_export",
+  ]
+  absl_deps = [
     "//third_party/abseil-cpp/absl/strings",
     "//third_party/abseil-cpp/absl/types:optional",
   ]

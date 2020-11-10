@@ -23,6 +23,7 @@ build config.
 See [Development][webrtc-development] for instructions on how to update
 the code, building etc.
 
+
 ## Compiling
 
 1. Generate projects using GN.
@@ -44,8 +45,11 @@ to enable managing multiple configurations in parallel.
 2. Compile using:
 
 ```
-$ ninja -C out/Debug
+$ autoninja -C out/Debug
 ```
+
+(To list all available targets, run `autoninja -C out/Debug -t targets all`.)
+
 
 ## Using the Bundled Android SDK/NDK
 
@@ -58,6 +62,7 @@ $ . build/android/envsetup.sh
 ```
 
 Then you'll have `adb` and all the other Android tools in your `PATH`.
+
 
 ## Running the AppRTCMobile App
 
@@ -77,7 +82,7 @@ https://bugs.webrtc.org/9282*
 generating the build files using GN):
 
 ```
-$ ninja -C out/Debug AppRTCMobile
+$ autoninja -C out/Debug AppRTCMobile
 ```
 
 2. Generate the project files:
@@ -97,52 +102,55 @@ Android Studio's SDK. When asked whether to use the Gradle wrapper, press
 AppRTCMobile should now start on the device.
 
 If you do any changes to the C++ code, you have to compile the project using
-ninja after the changes (see step 1).
+autoninja after the changes (see step 1).
 
 *Note: Only "arm" is supported as the target_cpu when using Android Studio. This
 still allows you to run the application on 64-bit ARM devices. x86-based devices
 are not supported right now.*
 
 
-## Running WebRTC Native Tests on an Android Device
+## Running Tests on an Android Device
 
 To build APKs with the WebRTC native tests, follow these instructions.
 
-1. Ensure you have an Android device set in Developer mode connected via
-USB.
+1. Ensure you have an Android device set in Developer mode connected via USB.
 
-2. Compile as described in the section above.
-
-3. To see which tests are available: look in `out/Debug/bin`.
-
-4. Run a test on your device:
+2. Compile unit tests and/or instrumentation tests:
 
 ```
-$ out/Debug/bin/run_modules_unittests
+$ autoninja -C out/Debug android_instrumentation_test_apk
+$ autoninja -C out/Debug rtc_unittests
 ```
 
-5. If you want to limit to a subset of tests, use the `--gtest_filter flag`, e.g.
+3. You can find the generated test binaries in `out/Debug/bin`. To run instrumentation tests:
 
 ```
-$ out/Debug/bin/run_modules_unittests \
-  --gtest_filter=RtpRtcpAPITest.SSRC:RtpRtcpRtcpTest.*
+$ out/Debug/bin/run_android_instrumentation_test_apk -v
 ```
 
-6. **NOTICE:** The first time you run a test, you must accept a dialog on
+To run unit tests:
+
+```
+$ out/Debug/bin/run_rtc_unittests -v
+```
+
+Show verbose output with `-v` and filter tests with `--gtest-filter=SomeTest.*`. For example:
+
+```
+$ out/Debug/bin/run_android_instrumentation_test_apk -v \
+    --gtest_filter=VideoFrameBufferTest.*
+```
+
+For a full list of command line arguments, use `--help`.
+
+5. **NOTICE:** The first time you run a test, you must accept a dialog on
 the device!
 
 If want to run Release builds instead; pass `is_debug=false` to GN (and
 preferably generate the projects files into a directory like `out/Release`).
 Then use the scripts generated in `out/Release/bin` instead.
 
-
-## Running WebRTC Instrumentation Tests on an Android Device
-
-The instrumentation tests (like AppRTCMobileTest and
-libjingle_peerconnection_android_unittest) gets scripts generated in the same
-location as the native tests described in the previous section.
-
-[webrtc-prerequitite-sw]: https://webrtc.googlesource.com/src/+/refs/heads/master/docs/native-code/development/prerequisite-sw/index.md
+[webrtc-prerequisite-sw]: https://webrtc.googlesource.com/src/+/refs/heads/master/docs/native-code/development/prerequisite-sw/index.md
 [webrtc-jni-doc]: https://webrtc.googlesource.com/src/+/master/sdk/android/README
 [apprtc-doc]: https://webrtc.googlesource.com/src/+/master/examples/androidapp/README
 [ninja]: https://ninja-build.org/

@@ -54,7 +54,8 @@ Call* CreateCall(TimeController* time_controller,
                  RtcEventLog* event_log,
                  CallClientConfig config,
                  LoggingNetworkControllerFactory* network_controller_factory,
-                 rtc::scoped_refptr<AudioState> audio_state) {
+                 rtc::scoped_refptr<AudioState> audio_state,
+                 rtc::scoped_refptr<SharedModuleThread> call_thread) {
   CallConfig call_config(event_log);
   call_config.bitrate_config.max_bitrate_bps =
       config.transport.rates.max_rate.bps_or(-1);
@@ -67,7 +68,7 @@ Call* CreateCall(TimeController* time_controller,
   call_config.audio_state = audio_state;
   call_config.trials = config.field_trials;
   return Call::Create(call_config, time_controller->GetClock(),
-                      time_controller->CreateProcessThread("CallModules"),
+                      std::move(call_thread),
                       time_controller->CreateProcessThread("Pacer"));
 }
 
@@ -213,9 +214,14 @@ CallClient::CallClient(
     event_log_ = CreateEventLog(time_controller_->GetTaskQueueFactory(),
                                 log_writer_factory_.get());
     fake_audio_setup_ = InitAudio(time_controller_);
+    RTC_DCHECK(!module_thread_);
+    module_thread_ = SharedModuleThread::Create(
+        time_controller_->CreateProcessThread("CallThread"),
+        [this]() { module_thread_ = nullptr; });
+
     call_.reset(CreateCall(time_controller_, event_log_.get(), config,
                            &network_controller_factory_,
-                           fake_audio_setup_.audio_state));
+                           fake_audio_setup_.audio_state, module_thread_));
     transport_ = std::make_unique<NetworkNodeTransport>(clock_, call_.get());
   });
 }
@@ -223,6 +229,7 @@ CallClient::CallClient(
 CallClient::~CallClient() {
   SendTask([&] {
     call_.reset();
+    RTC_DCHECK(!module_thread_);  // Should be set to null in the lambda above.
     fake_audio_setup_ = {};
     rtc::Event done;
     event_log_->StopLogging([&done] { done.Set(); });

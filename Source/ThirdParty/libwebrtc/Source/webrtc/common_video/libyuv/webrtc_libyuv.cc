@@ -56,43 +56,6 @@ size_t CalcBufferSize(VideoType type, int width, int height) {
   return buffer_size;
 }
 
-static int PrintPlane(const uint8_t* buf,
-                      int width,
-                      int height,
-                      int stride,
-                      FILE* file) {
-  for (int i = 0; i < height; i++, buf += stride) {
-    if (fwrite(buf, 1, width, file) != static_cast<unsigned int>(width))
-      return -1;
-  }
-  return 0;
-}
-
-// TODO(nisse): Belongs with the test code?
-int PrintVideoFrame(const I420BufferInterface& frame, FILE* file) {
-  int width = frame.width();
-  int height = frame.height();
-  int chroma_width = frame.ChromaWidth();
-  int chroma_height = frame.ChromaHeight();
-
-  if (PrintPlane(frame.DataY(), width, height, frame.StrideY(), file) < 0) {
-    return -1;
-  }
-  if (PrintPlane(frame.DataU(), chroma_width, chroma_height, frame.StrideU(),
-                 file) < 0) {
-    return -1;
-  }
-  if (PrintPlane(frame.DataV(), chroma_width, chroma_height, frame.StrideV(),
-                 file) < 0) {
-    return -1;
-  }
-  return 0;
-}
-
-int PrintVideoFrame(const VideoFrame& frame, FILE* file) {
-  return PrintVideoFrame(*frame.video_frame_buffer()->ToI420(), file);
-}
-
 int ExtractBuffer(const rtc::scoped_refptr<I420BufferInterface>& input_frame,
                   size_t size,
                   uint8_t* buffer) {

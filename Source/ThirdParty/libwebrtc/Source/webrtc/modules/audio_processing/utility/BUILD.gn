@@ -30,48 +30,6 @@ rtc_library("legacy_delay_estimator") {
   deps = [ "../../../rtc_base:checks" ]
 }
 
-rtc_library("ooura_fft") {
-  sources = [
-    "ooura_fft.cc",
-    "ooura_fft.h",
-    "ooura_fft_tables_common.h",
-  ]
-  deps = [
-    "../../../rtc_base/system:arch",
-    "../../../system_wrappers:cpu_features_api",
-  ]
-  cflags = []
-
-  if (current_cpu == "x86" || current_cpu == "x64") {
-    sources += [
-      "ooura_fft_sse2.cc",
-      "ooura_fft_tables_neon_sse2.h",
-    ]
-    if (is_posix || is_fuchsia) {
-      cflags += [ "-msse2" ]
-    }
-  }
-
-  if (rtc_build_with_neon) {
-    sources += [
-      "ooura_fft_neon.cc",
-      "ooura_fft_tables_neon_sse2.h",
-    ]
-
-    deps += [ "../../../common_audio" ]
-
-    if (current_cpu != "arm64") {
-      # Enable compilation for the NEON instruction set.
-      suppressed_configs += [ "//build/config/compiler:compiler_arm_fpu" ]
-      cflags += [ "-mfpu=neon" ]
-    }
-  }
-
-  if (current_cpu == "mipsel" && mips_float_abi == "hard") {
-    sources += [ "ooura_fft_mips.cc" ]
-  }
-}
-
 rtc_library("pffft_wrapper") {
   visibility = [ "../*" ]
   sources = [

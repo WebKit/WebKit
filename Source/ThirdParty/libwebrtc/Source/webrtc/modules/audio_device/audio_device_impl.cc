@@ -37,10 +37,10 @@
 #include "modules/audio_device/android/opensles_player.h"
 #include "modules/audio_device/android/opensles_recorder.h"
 #elif defined(WEBRTC_LINUX)
-#if defined(LINUX_ALSA)
+#if defined(WEBRTC_ENABLE_LINUX_ALSA)
 #include "modules/audio_device/linux/audio_device_alsa_linux.h"
 #endif
-#if defined(LINUX_PULSE)
+#if defined(WEBRTC_ENABLE_LINUX_PULSE)
 #include "modules/audio_device/linux/audio_device_pulse_linux.h"
 #endif
 #elif defined(WEBRTC_IOS)
@@ -241,12 +241,13 @@ int32_t AudioDeviceModuleImpl::CreatePlatformSpecificObjects() {
 // END #if defined(WEBRTC_ANDROID)
 
 // Linux ADM implementation.
-// Note that, LINUX_ALSA is always defined by default when WEBRTC_LINUX is
-// defined. LINUX_PULSE depends on the 'rtc_include_pulse_audio' build flag.
+// Note that, WEBRTC_ENABLE_LINUX_ALSA is always defined by default when
+// WEBRTC_LINUX is defined. WEBRTC_ENABLE_LINUX_PULSE depends on the
+// 'rtc_include_pulse_audio' build flag.
 // TODO(bugs.webrtc.org/9127): improve support and make it more clear that
 // PulseAudio is the default selection.
 #elif defined(WEBRTC_LINUX)
-#if !defined(LINUX_PULSE)
+#if !defined(WEBRTC_ENABLE_LINUX_PULSE)
   // Build flag 'rtc_include_pulse_audio' is set to false. In this mode:
   // - kPlatformDefaultAudio => ALSA, and
   // - kLinuxAlsaAudio => ALSA, and
@@ -273,7 +274,7 @@ int32_t AudioDeviceModuleImpl::CreatePlatformSpecificObjects() {
     audio_device_.reset(new AudioDeviceLinuxALSA());
     RTC_LOG(WARNING) << "Linux ALSA APIs will be utilized.";
   }
-#endif  // #if !defined(LINUX_PULSE)
+#endif  // #if !defined(WEBRTC_ENABLE_LINUX_PULSE)
 #endif  // #if defined(WEBRTC_LINUX)
 
 // iOS ADM implementation.

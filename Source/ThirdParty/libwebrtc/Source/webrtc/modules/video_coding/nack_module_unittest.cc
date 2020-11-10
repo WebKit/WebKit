@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "modules/video_coding/nack_module.h"
+#include "modules/video_coding/deprecated/nack_module.h"
 
 #include <algorithm>
 #include <cstdint>
@@ -45,7 +45,7 @@ class TestNackModule : public ::testing::TestWithParam<bool>,
   static constexpr int64_t kDefaultRttMs = 20;
   std::unique_ptr<SimulatedClock> clock_;
   test::ScopedFieldTrials field_trial_;
-  NackModule nack_module_;
+  DEPRECATED_NackModule nack_module_;
   std::vector<uint16_t> sent_nacks_;
   int keyframes_requested_;
 };
@@ -352,7 +352,7 @@ class TestNackModuleWithFieldTrial : public ::testing::Test,
 
   test::ScopedFieldTrials nack_delay_field_trial_;
   std::unique_ptr<SimulatedClock> clock_;
-  NackModule nack_module_;
+  DEPRECATED_NackModule nack_module_;
   std::vector<uint16_t> sent_nacks_;
   int keyframes_requested_;
 };

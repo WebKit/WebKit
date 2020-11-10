@@ -16,6 +16,7 @@ rtc_library("system_wrappers") {
   visibility = [ "*" ]
   sources = [
     "include/clock.h",
+    "include/cpu_features_wrapper.h",
     "include/cpu_info.h",
     "include/ntp_time.h",
     "include/rtp_to_ntp_estimator.h",
@@ -30,16 +31,17 @@ rtc_library("system_wrappers") {
   defines = []
   libs = []
   deps = [
-    ":cpu_features_api",
+    ":field_trial",
     "../api:array_view",
     "../api/units:timestamp",
     "../modules:module_api_public",
     "../rtc_base:checks",
+    "../rtc_base/synchronization:mutex",
     "../rtc_base/synchronization:rw_lock_wrapper",
     "../rtc_base/system:arch",
     "../rtc_base/system:rtc_export",
-    "//third_party/abseil-cpp/absl/types:optional",
   ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
 
   if (is_android) {
     if (build_with_mozilla) {
@@ -49,15 +51,16 @@ rtc_library("system_wrappers") {
         "/nsprpub/pr/include",
       ]
     } else {
-      deps += [ ":cpu_features_android" ]
+      sources += [ "source/cpu_features_android.cc" ]
+      deps += [ "//third_party/android_sdk:cpu_features" ]
     }
 
     libs += [ "log" ]
   }
 
-  if (is_linux) {
+  if (is_linux || is_chromeos) {
     if (!build_with_chromium) {
-      deps += [ ":cpu_features_linux" ]
+      sources += [ "source/cpu_features_linux.cc" ]
     }
 
     libs += [ "rt" ]
@@ -68,17 +71,13 @@ rtc_library("system_wrappers") {
 
     # Windows needs ../rtc_base due to include of
     # webrtc/rtc_base/win32.h in source/clock.cc.
-    deps += [ "../rtc_base" ]
+    deps += [ "../rtc_base:win32" ]
   }
 
   deps += [
     "../rtc_base:rtc_base_approved",
     "../rtc_base:rtc_numerics",
   ]
-}
-
-rtc_source_set("cpu_features_api") {
-  sources = [ "include/cpu_features_wrapper.h" ]
 }
 
 rtc_library("field_trial") {
@@ -92,8 +91,8 @@ rtc_library("field_trial") {
     "../rtc_base:checks",
     "../rtc_base:logging",
     "../rtc_base:stringutils",
-    "//third_party/abseil-cpp/absl/strings",
   ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/strings" ]
 }
 
 rtc_library("metrics") {
@@ -106,25 +105,8 @@ rtc_library("metrics") {
   deps = [
     "../rtc_base:checks",
     "../rtc_base:rtc_base_approved",
+    "../rtc_base/synchronization:mutex",
   ]
-}
-
-if (is_android && !build_with_mozilla) {
-  rtc_library("cpu_features_android") {
-    sources = [ "source/cpu_features_android.c" ]
-
-    deps = [ "//third_party/android_sdk:cpu_features" ]
-  }
-}
-
-if (is_linux) {
-  rtc_library("cpu_features_linux") {
-    sources = [ "source/cpu_features_linux.c" ]
-    deps = [
-      ":cpu_features_api",
-      "../rtc_base/system:arch",
-    ]
-  }
 }
 
 if (rtc_include_tests) {

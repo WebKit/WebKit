@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:id="@+id/scroll_view"
+  android:layout_width="match_parent"
+  android:layout_height="wrap_content"
+  android:focusable="true"
+  android:focusableInTouchMode="true"
+  tools:context="org.webrtc.examples.androidvoip.MainActivity">
+
+  <LinearLayout
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="8dp">
+
+    <TextView
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginBottom="15dp"
+      android:layout_marginLeft="15dp"
+      android:layout_marginTop="15dp"
+      android:text="@string/local_endpoint_text_view"
+      android:textSize="19dp"
+      android:textStyle="bold"
+      android:textColor="@color/almost_black" />
+
+    <!--Local IP Adress-->
+    <LinearLayout
+      android:orientation="horizontal"
+      android:layout_width="match_parent"
+      android:layout_height="48dp"
+      android:layout_gravity="center_vertical" >
+
+      <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:text="@string/ip_address_text_view"
+        android:textSize="16dp" />
+
+      <TextView
+        android:id="@+id/local_ip_address_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:layout_marginRight="15dp"
+        android:textSize="16dp" />
+
+    </LinearLayout>
+
+    <!--Local Port Number-->
+    <LinearLayout
+      android:orientation="horizontal"
+      android:layout_width="match_parent"
+      android:layout_height="48dp"
+      android:layout_gravity="center_vertical">
+
+      <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="15dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:text="@string/port_number_text_view"
+        android:textSize="16dp" />
+
+      <EditText
+        android:id="@+id/local_port_number_edit_text"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_marginRight="15dp"
+        android:layout_weight="1"
+        android:text="10000"
+        android:inputType="number"
+        android:textSize="16dp" />
+
+    </LinearLayout>
+
+    <TextView
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginBottom="15dp"
+      android:layout_marginLeft="15dp"
+      android:layout_marginTop="30dp"
+      android:text="@string/remote_endpoint_text_view"
+      android:textSize="19dp"
+      android:textStyle="bold"
+      android:textColor="@color/almost_black" />
+
+    <!--Remote IP Adress-->
+    <LinearLayout
+      android:orientation="horizontal"
+      android:layout_width="match_parent"
+      android:layout_height="48dp"
+      android:layout_gravity="center_vertical">
+
+      <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="15dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:text="@string/ip_address_text_view"
+        android:textSize="16dp" />
+
+      <EditText
+        android:id="@+id/remote_ip_address_edit_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="15dp"
+        android:layout_weight="1"
+        android:inputType="number"
+        android:digits="0123456789."
+        android:textSize="16dp" />
+
+    </LinearLayout>
+
+    <!--Remote Port Number-->
+    <LinearLayout
+      android:orientation="horizontal"
+      android:layout_width="match_parent"
+      android:layout_height="48dp"
+      android:layout_gravity="center_vertical">
+
+      <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="15dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:text="@string/port_number_text_view"
+        android:textSize="16dp" />
+
+      <EditText
+        android:id="@+id/remote_port_number_edit_text"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_marginRight="15dp"
+        android:layout_weight="1"
+        android:text="10000"
+        android:inputType="number"
+        android:textSize="16dp" />
+
+    </LinearLayout>
+
+    <TextView
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginBottom="15dp"
+      android:layout_marginLeft="15dp"
+      android:layout_marginTop="30dp"
+      android:text="@string/encoder_text_view"
+      android:textSize="19dp"
+      android:textStyle="bold"
+      android:textColor="@color/almost_black" />
+
+    <Spinner
+      android:id="@+id/encoder_spinner"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginBottom="15dp"
+      android:layout_marginLeft="15dp"
+      android:layout_marginTop="10dp"/>
+
+    <LinearLayout
+      android:orientation="horizontal"
+      android:layout_width="match_parent"
+      android:layout_height="48dp"
+      android:layout_marginTop="20dp"
+      android:layout_gravity="center_vertical">
+
+      <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="15dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="25dp"
+        android:text="@string/decoder_text_view"
+        android:textSize="19dp"
+        android:textStyle="bold"
+        android:textColor="@color/almost_black" />
+
+      <Button
+        android:id="@+id/decoder_selection_button"
+        android:text="@string/decoder_selection_button"
+        style="?android:attr/buttonBarButtonStyle"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_marginRight="15dp"
+        android:layout_weight="1" />
+
+    </LinearLayout>
+
+
+    <TextView
+      android:id="@+id/decoders_text_view"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="15dp"
+      android:layout_marginBottom="30dp"
+      android:layout_marginLeft="15dp"
+      android:layout_marginRight="15dp"
+      android:text="@string/decoders_text_view_default"
+      android:textSize="16dp" />
+
+
+    <RelativeLayout
+      android:id="@+id/switch_layout"
+      android:layout_width="fill_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="15dp"
+      android:visibility="gone" >
+
+      <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginBottom="45dp"
+        android:background="@color/light_gray" />
+
+      <LinearLayout
+        android:id="@+id/start_send_switch_layout"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_gravity="center_vertical"
+        android:layout_below="@id/divider" >
+
+        <TextView
+          android:layout_width="wrap_content"
+          android:layout_height="match_parent"
+          android:layout_marginLeft="15dp"
+          android:gravity="left"
+          android:layout_weight="1"
+          android:text="@string/start_send_text_view"
+          android:textSize="16dp" />
+
+        <Switch
+          android:id="@+id/start_send_switch"
+          android:layout_width="wrap_content"
+          android:layout_height="match_parent"
+          android:layout_marginRight="15dp"
+          android:gravity="right"
+          android:layout_weight="1" />
+
+      </LinearLayout>
+
+      <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_gravity="center_vertical"
+        android:layout_below="@id/start_send_switch_layout">
+
+        <TextView
+          android:id="@+id/start_playout_text_view"
+          android:layout_width="wrap_content"
+          android:layout_height="match_parent"
+          android:layout_marginLeft="15dp"
+          android:gravity="left"
+          android:layout_weight="1"
+          android:text="@string/start_playout_text_view"
+          android:textSize="16dp" />
+
+        <Switch
+          android:id="@+id/start_playout_switch"
+          android:layout_width="wrap_content"
+          android:layout_height="match_parent"
+          android:layout_marginRight="15dp"
+          android:gravity="right"
+          android:layout_weight="1" />
+
+      </LinearLayout>
+
+    </RelativeLayout>
+
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:gravity="center"
+      android:orientation="vertical" >
+
+      <ToggleButton
+        android:id="@+id/session_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:textOff="@string/session_button_text_off"
+        android:textOn="@string/session_button_text_on"
+        style="?android:attr/buttonStyle" />
+
+    </LinearLayout>
+
+  </LinearLayout>
+
+</ScrollView>

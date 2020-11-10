@@ -54,10 +54,9 @@ rtc_library("common_audio") {
     "../rtc_base/system:arch",
     "../rtc_base/system:file_wrapper",
     "../system_wrappers",
-    "../system_wrappers:cpu_features_api",
-    "third_party/fft4g",
-    "//third_party/abseil-cpp/absl/types:optional",
+    "third_party/ooura:fft_size_256",
   ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
 
   defines = []
 
@@ -67,6 +66,7 @@ rtc_library("common_audio") {
 
   if (current_cpu == "x86" || current_cpu == "x64") {
     deps += [ ":common_audio_sse2" ]
+    deps += [ ":common_audio_avx2" ]
   }
 }
 
@@ -184,8 +184,7 @@ rtc_library("common_audio_c") {
     "../rtc_base:sanitizer",
     "../rtc_base/system:arch",
     "../system_wrappers",
-    "../system_wrappers:cpu_features_api",
-    "third_party/fft4g",
+    "third_party/ooura:fft_size_256",
     "third_party/spl_sqrt_floor",
   ]
 }
@@ -231,10 +230,11 @@ rtc_library("fir_filter_factory") {
     "../rtc_base:checks",
     "../rtc_base:rtc_base_approved",
     "../rtc_base/system:arch",
-    "../system_wrappers:cpu_features_api",
+    "../system_wrappers",
   ]
   if (current_cpu == "x86" || current_cpu == "x64") {
     deps += [ ":common_audio_sse2" ]
+    deps += [ ":common_audio_avx2" ]
   }
   if (rtc_build_with_neon) {
     deps += [ ":common_audio_neon" ]
@@ -251,6 +251,31 @@ if (current_cpu == "x86" || current_cpu == "x64") {
 
     if (is_posix || is_fuchsia) {
       cflags = [ "-msse2" ]
+    }
+
+    deps = [
+      ":fir_filter",
+      ":sinc_resampler",
+      "../rtc_base:checks",
+      "../rtc_base:rtc_base_approved",
+      "../rtc_base/memory:aligned_malloc",
+    ]
+  }
+
+  rtc_library("common_audio_avx2") {
+    sources = [
+      "fir_filter_avx2.cc",
+      "fir_filter_avx2.h",
+      "resampler/sinc_resampler_avx2.cc",
+    ]
+
+    if (is_win) {
+      cflags = [ "/arch:AVX2" ]
+    } else {
+      cflags = [
+        "-mavx2",
+        "-mfma",
+      ]
     }
 
     deps = [
@@ -356,7 +381,7 @@ if (rtc_include_tests) {
       "../rtc_base:rtc_base_approved",
       "../rtc_base:rtc_base_tests_utils",
       "../rtc_base/system:arch",
-      "../system_wrappers:cpu_features_api",
+      "../system_wrappers",
       "../test:fileutils",
       "../test:rtc_expect_death",
       "../test:test_main",

@@ -16,6 +16,7 @@
 #include <utility>
 
 #include "api/task_queue/queued_task.h"
+#include "rtc_base/task_utils/pending_task_safety_flag.h"
 
 namespace webrtc {
 namespace webrtc_new_closure_impl {
@@ -33,6 +34,25 @@ class ClosureTask : public QueuedTask {
   }
 
   typename std::decay<Closure>::type closure_;
+};
+
+template <typename Closure>
+class SafetyClosureTask : public QueuedTask {
+ public:
+  explicit SafetyClosureTask(rtc::scoped_refptr<PendingTaskSafetyFlag> safety,
+                             Closure&& closure)
+      : closure_(std::forward<Closure>(closure)),
+        safety_flag_(std::move(safety)) {}
+
+ private:
+  bool Run() override {
+    if (safety_flag_->alive())
+      closure_();
+    return true;
+  }
+
+  typename std::decay<Closure>::type closure_;
+  rtc::scoped_refptr<PendingTaskSafetyFlag> safety_flag_;
 };
 
 // Extends ClosureTask to also allow specifying cleanup code.
@@ -60,7 +80,26 @@ std::unique_ptr<QueuedTask> ToQueuedTask(Closure&& closure) {
       std::forward<Closure>(closure));
 }
 
-template <typename Closure, typename Cleanup>
+template <typename Closure>
+std::unique_ptr<QueuedTask> ToQueuedTask(
+    rtc::scoped_refptr<PendingTaskSafetyFlag> safety,
+    Closure&& closure) {
+  return std::make_unique<webrtc_new_closure_impl::SafetyClosureTask<Closure>>(
+      std::move(safety), std::forward<Closure>(closure));
+}
+
+template <typename Closure>
+std::unique_ptr<QueuedTask> ToQueuedTask(const ScopedTaskSafety& safety,
+                                         Closure&& closure) {
+  return ToQueuedTask(safety.flag(), std::forward<Closure>(closure));
+}
+
+template <typename Closure,
+          typename Cleanup,
+          typename std::enable_if<!std::is_same<
+              typename std::remove_const<
+                  typename std::remove_reference<Closure>::type>::type,
+              ScopedTaskSafety>::value>::type* = nullptr>
 std::unique_ptr<QueuedTask> ToQueuedTask(Closure&& closure, Cleanup&& cleanup) {
   return std::make_unique<
       webrtc_new_closure_impl::ClosureTaskWithCleanup<Closure, Cleanup>>(

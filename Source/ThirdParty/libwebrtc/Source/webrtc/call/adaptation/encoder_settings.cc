@@ -21,6 +21,18 @@ EncoderSettings::EncoderSettings(VideoEncoder::EncoderInfo encoder_info,
       encoder_config_(std::move(encoder_config)),
       video_codec_(std::move(video_codec)) {}
 
+EncoderSettings::EncoderSettings(const EncoderSettings& other)
+    : encoder_info_(other.encoder_info_),
+      encoder_config_(other.encoder_config_.Copy()),
+      video_codec_(other.video_codec_) {}
+
+EncoderSettings& EncoderSettings::operator=(const EncoderSettings& other) {
+  encoder_info_ = other.encoder_info_;
+  encoder_config_ = other.encoder_config_.Copy();
+  video_codec_ = other.video_codec_;
+  return *this;
+}
+
 const VideoEncoder::EncoderInfo& EncoderSettings::encoder_info() const {
   return encoder_info_;
 }

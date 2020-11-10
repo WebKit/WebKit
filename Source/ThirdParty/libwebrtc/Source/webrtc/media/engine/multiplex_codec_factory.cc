@@ -57,14 +57,6 @@ std::vector<SdpVideoFormat> MultiplexEncoderFactory::GetSupportedFormats()
   return formats;
 }
 
-VideoEncoderFactory::CodecInfo MultiplexEncoderFactory::QueryVideoEncoder(
-    const SdpVideoFormat& format) const {
-  if (!IsMultiplexCodec(cricket::VideoCodec(format)))
-    return factory_->QueryVideoEncoder(format);
-  return factory_->QueryVideoEncoder(
-      SdpVideoFormat(kMultiplexAssociatedCodecName));
-}
-
 std::unique_ptr<VideoEncoder> MultiplexEncoderFactory::CreateVideoEncoder(
     const SdpVideoFormat& format) {
   if (!IsMultiplexCodec(cricket::VideoCodec(format)))

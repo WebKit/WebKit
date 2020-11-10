@@ -61,7 +61,8 @@ float SimulcastRateAllocator::GetTemporalRateAllocation(
 SimulcastRateAllocator::SimulcastRateAllocator(const VideoCodec& codec)
     : codec_(codec),
       stable_rate_settings_(StableTargetRateExperiment::ParseFromFieldTrials()),
-      rate_control_settings_(RateControlSettings::ParseFromFieldTrials()) {}
+      rate_control_settings_(RateControlSettings::ParseFromFieldTrials()),
+      legacy_conference_mode_(false) {}
 
 SimulcastRateAllocator::~SimulcastRateAllocator() = default;
 
@@ -150,7 +151,7 @@ void SimulcastRateAllocator::DistributeAllocationToSimulcastLayers(
   size_t top_active_layer = active_layer;
   // Allocate up to the target bitrate for each active simulcast layer.
   for (; active_layer < codec_.numberOfSimulcastStreams; ++active_layer) {
-    const SimulcastStream& stream =
+    const SpatialLayer& stream =
         codec_.simulcastStream[layer_index[active_layer]];
     if (!stream.active) {
       stream_enabled_[layer_index[active_layer]] = false;
@@ -193,7 +194,7 @@ void SimulcastRateAllocator::DistributeAllocationToSimulcastLayers(
   // TODO(sprang): Allocate up to max bitrate for all layers once we have a
   //               better idea of possible performance implications.
   if (left_in_total_allocation > DataRate::Zero()) {
-    const SimulcastStream& stream = codec_.simulcastStream[top_active_layer];
+    const SpatialLayer& stream = codec_.simulcastStream[top_active_layer];
     DataRate initial_layer_rate = DataRate::BitsPerSec(
         allocated_bitrates->GetSpatialLayerSum(top_active_layer));
     DataRate additional_allocation = std::min(
@@ -228,12 +229,8 @@ void SimulcastRateAllocator::DistributeAllocationToTemporalLayers(
     uint32_t max_bitrate_kbps;
     // Legacy temporal-layered only screenshare, or simulcast screenshare
     // with legacy mode for simulcast stream 0.
-    const bool conference_screenshare_mode =
-        codec_.mode == VideoCodecMode::kScreensharing &&
-        ((num_spatial_streams == 1 && num_temporal_streams == 2) ||  // Legacy.
-         (num_spatial_streams > 1 && simulcast_id == 0 &&
-          num_temporal_streams == 2));  // Simulcast.
-    if (conference_screenshare_mode) {
+    if (codec_.mode == VideoCodecMode::kScreensharing &&
+        legacy_conference_mode_ && simulcast_id == 0) {
       // TODO(holmer): This is a "temporary" hack for screensharing, where we
       // interpret the startBitrate as the encoder target bitrate. This is
       // to allow for a different max bitrate, so if the codec can't meet
@@ -253,7 +250,8 @@ void SimulcastRateAllocator::DistributeAllocationToTemporalLayers(
     if (num_temporal_streams == 1) {
       tl_allocation.push_back(target_bitrate_kbps);
     } else {
-      if (conference_screenshare_mode) {
+      if (codec_.mode == VideoCodecMode::kScreensharing &&
+          legacy_conference_mode_ && simulcast_id == 0) {
         tl_allocation = ScreenshareTemporalLayerAllocation(
             target_bitrate_kbps, max_bitrate_kbps, simulcast_id);
       } else {
@@ -336,6 +334,10 @@ int SimulcastRateAllocator::NumTemporalStreams(size_t simulcast_id) const {
       codec_.codecType == kVideoCodecVP8 && codec_.numberOfSimulcastStreams == 0
           ? codec_.VP8().numberOfTemporalLayers
           : codec_.simulcastStream[simulcast_id].numberOfTemporalLayers);
+}
+
+void SimulcastRateAllocator::SetLegacyConferenceMode(bool enabled) {
+  legacy_conference_mode_ = enabled;
 }
 
 }  // namespace webrtc

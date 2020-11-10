@@ -33,7 +33,8 @@ NetEqStatsPlotter::NetEqStatsPlotter(bool make_matlab_plot,
   stats_getter_.reset(new NetEqStatsGetter(std::move(delay_analyzer)));
 }
 
-void NetEqStatsPlotter::SimulationEnded(int64_t simulation_time_ms) {
+void NetEqStatsPlotter::SimulationEnded(int64_t simulation_time_ms,
+                                        NetEq* /*neteq*/) {
   if (make_matlab_plot_) {
     auto matlab_script_name = base_file_name_;
     std::replace(matlab_script_name.begin(), matlab_script_name.end(), '.',

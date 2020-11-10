@@ -47,6 +47,7 @@ namespace cricket {
 const char STUN_ERROR_REASON_TRY_ALTERNATE_SERVER[] = "Try Alternate Server";
 const char STUN_ERROR_REASON_BAD_REQUEST[] = "Bad Request";
 const char STUN_ERROR_REASON_UNAUTHORIZED[] = "Unauthorized";
+const char STUN_ERROR_REASON_UNKNOWN_ATTRIBUTE[] = "Unknown Attribute";
 const char STUN_ERROR_REASON_FORBIDDEN[] = "Forbidden";
 const char STUN_ERROR_REASON_STALE_CREDENTIALS[] = "Stale Credentials";
 const char STUN_ERROR_REASON_ALLOCATION_MISMATCH[] = "Allocation Mismatch";
@@ -138,6 +139,18 @@ void StunMessage::ClearAttributes() {
   }
   attrs_.clear();
   length_ = 0;
+}
+
+std::vector<uint16_t> StunMessage::GetNonComprehendedAttributes() const {
+  std::vector<uint16_t> unknown_attributes;
+  for (auto& attr : attrs_) {
+    // "comprehension-required" range is 0x0000-0x7FFF.
+    if (attr->type() >= 0x0000 && attr->type() <= 0x7FFF &&
+        GetAttributeValueType(attr->type()) == STUN_VALUE_UNKNOWN) {
+      unknown_attributes.push_back(attr->type());
+    }
+  }
+  return unknown_attributes;
 }
 
 const StunAddressAttribute* StunMessage::GetAddress(int type) const {
@@ -542,7 +555,7 @@ StunAttributeValueType StunMessage::GetAttributeValueType(int type) const {
       return STUN_VALUE_BYTE_STRING;
     case STUN_ATTR_RETRANSMIT_COUNT:
       return STUN_VALUE_UINT32;
-    case STUN_ATTR_LAST_ICE_CHECK_RECEIVED:
+    case STUN_ATTR_GOOG_LAST_ICE_CHECK_RECEIVED:
       return STUN_VALUE_BYTE_STRING;
     case STUN_ATTR_GOOG_MISC_INFO:
       return STUN_VALUE_UINT16_LIST;
@@ -1296,7 +1309,7 @@ StunMessage* TurnMessage::CreateNew() const {
 StunAttributeValueType IceMessage::GetAttributeValueType(int type) const {
   switch (type) {
     case STUN_ATTR_PRIORITY:
-    case STUN_ATTR_NETWORK_INFO:
+    case STUN_ATTR_GOOG_NETWORK_INFO:
     case STUN_ATTR_NOMINATION:
       return STUN_VALUE_UINT32;
     case STUN_ATTR_USE_CANDIDATE:

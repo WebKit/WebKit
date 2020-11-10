@@ -16,6 +16,7 @@
 #include "api/video_codecs/sdp_video_format.h"
 #include "media/base/codec.h"
 #include "media/base/media_constants.h"
+#include "modules/video_coding/codecs/av1/libaom_av1_encoder.h"
 #include "modules/video_coding/codecs/h264/include/h264.h"
 #include "modules/video_coding/codecs/vp8/include/vp8.h"
 #include "modules/video_coding/codecs/vp9/include/vp9.h"
@@ -23,23 +24,21 @@
 
 namespace webrtc {
 
-std::vector<SdpVideoFormat> InternalEncoderFactory::GetSupportedFormats()
-    const {
+std::vector<SdpVideoFormat> InternalEncoderFactory::SupportedFormats() {
   std::vector<SdpVideoFormat> supported_codecs;
   supported_codecs.push_back(SdpVideoFormat(cricket::kVp8CodecName));
   for (const webrtc::SdpVideoFormat& format : webrtc::SupportedVP9Codecs())
     supported_codecs.push_back(format);
   for (const webrtc::SdpVideoFormat& format : webrtc::SupportedH264Codecs())
     supported_codecs.push_back(format);
+  if (kIsLibaomAv1EncoderSupported)
+    supported_codecs.push_back(SdpVideoFormat(cricket::kAv1CodecName));
   return supported_codecs;
 }
 
-VideoEncoderFactory::CodecInfo InternalEncoderFactory::QueryVideoEncoder(
-    const SdpVideoFormat& format) const {
-  CodecInfo info;
-  info.is_hardware_accelerated = false;
-  info.has_internal_source = false;
-  return info;
+std::vector<SdpVideoFormat> InternalEncoderFactory::GetSupportedFormats()
+    const {
+  return SupportedFormats();
 }
 
 std::unique_ptr<VideoEncoder> InternalEncoderFactory::CreateVideoEncoder(
@@ -50,6 +49,9 @@ std::unique_ptr<VideoEncoder> InternalEncoderFactory::CreateVideoEncoder(
     return VP9Encoder::Create(cricket::VideoCodec(format));
   if (absl::EqualsIgnoreCase(format.name, cricket::kH264CodecName))
     return H264Encoder::Create(cricket::VideoCodec(format));
+  if (kIsLibaomAv1EncoderSupported &&
+      absl::EqualsIgnoreCase(format.name, cricket::kAv1CodecName))
+    return CreateLibaomAv1Encoder();
   RTC_LOG(LS_ERROR) << "Trying to created encoder of unsupported format "
                     << format.name;
   return nullptr;

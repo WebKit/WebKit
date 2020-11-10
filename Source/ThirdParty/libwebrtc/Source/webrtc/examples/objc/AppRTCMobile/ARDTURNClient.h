@@ -10,7 +10,9 @@
 
 #import <Foundation/Foundation.h>
 
-@class RTCIceServer;
+#import <WebRTC/RTCMacros.h>
+
+@class RTC_OBJC_TYPE(RTCIceServer);
 
 @protocol ARDTURNClient <NSObject>
 

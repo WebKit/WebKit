@@ -87,7 +87,7 @@ TestInputs::TestInputs(const EchoCanceller3Config& cfg,
       E2_(num_capture_channels),
       H2_(num_capture_channels,
           std::vector<std::array<float, kFftLengthBy2Plus1>>(
-              cfg.filter.main.length_blocks)),
+              cfg.filter.refined.length_blocks)),
       x_(1,
          std::vector<std::vector<float>>(num_render_channels,
                                          std::vector<float>(kBlockSize, 0.f))),
@@ -156,9 +156,9 @@ TEST_P(SignalDependentErleEstimatorMultiChannel, SweepSettings) {
     for (size_t delay_headroom = 0; delay_headroom < 5; ++delay_headroom) {
       for (size_t num_sections = 2; num_sections < max_length_blocks;
            ++num_sections) {
-        cfg.filter.main.length_blocks = blocks;
-        cfg.filter.main_initial.length_blocks =
-            std::min(cfg.filter.main_initial.length_blocks, blocks);
+        cfg.filter.refined.length_blocks = blocks;
+        cfg.filter.refined_initial.length_blocks =
+            std::min(cfg.filter.refined_initial.length_blocks, blocks);
         cfg.delay.delay_headroom_samples = delay_headroom * kBlockSize;
         cfg.erle.num_sections = num_sections;
         if (EchoCanceller3Config::Validate(&cfg)) {
@@ -185,8 +185,8 @@ TEST_P(SignalDependentErleEstimatorMultiChannel, LongerRun) {
   const size_t num_render_channels = std::get<0>(GetParam());
   const size_t num_capture_channels = std::get<1>(GetParam());
   EchoCanceller3Config cfg;
-  cfg.filter.main.length_blocks = 2;
-  cfg.filter.main_initial.length_blocks = 1;
+  cfg.filter.refined.length_blocks = 2;
+  cfg.filter.refined_initial.length_blocks = 1;
   cfg.delay.delay_headroom_samples = 0;
   cfg.delay.hysteresis_limit_blocks = 0;
   cfg.erle.num_sections = 2;

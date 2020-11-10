@@ -38,15 +38,6 @@ class RtpGenericFrameDescriptor {
   bool LastPacketInSubFrame() const { return end_of_subframe_; }
   void SetLastPacketInSubFrame(bool last) { end_of_subframe_ = last; }
 
-  // Denotes whether the frame is discardable. That is, whether skipping it
-  // would have no effect on the decodability of subsequent frames.
-  // An absl::optional is used because version 0 of the extension did not
-  // support this flag. (The optional aspect is relevant only when parsing.)
-  // TODO(bugs.webrtc.org/10243): Make this into a plain bool when v00 of
-  // the extension is deprecated.
-  absl::optional<bool> Discardable() const { return discardable_; }
-  void SetDiscardable(bool discardable) { discardable_ = discardable; }
-
   // Properties below undefined if !FirstPacketInSubFrame()
   // Valid range for temporal layer: [0, 7]
   int TemporalLayer() const;
@@ -73,8 +64,6 @@ class RtpGenericFrameDescriptor {
  private:
   bool beginning_of_subframe_ = false;
   bool end_of_subframe_ = false;
-
-  absl::optional<bool> discardable_;
 
   uint16_t frame_id_ = 0;
   uint8_t spatial_layers_ = 1;

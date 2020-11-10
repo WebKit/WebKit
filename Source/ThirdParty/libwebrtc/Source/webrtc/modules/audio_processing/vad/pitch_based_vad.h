@@ -53,4 +53,5 @@ class PitchBasedVad {
 };
 
 }  // namespace webrtc
+
 #endif  // MODULES_AUDIO_PROCESSING_VAD_PITCH_BASED_VAD_H_

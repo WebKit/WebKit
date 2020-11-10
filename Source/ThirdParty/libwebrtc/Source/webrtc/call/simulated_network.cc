@@ -87,7 +87,7 @@ SimulatedNetwork::SimulatedNetwork(Config config, uint64_t random_seed)
 SimulatedNetwork::~SimulatedNetwork() = default;
 
 void SimulatedNetwork::SetConfig(const Config& config) {
-  rtc::CritScope crit(&config_lock_);
+  MutexLock lock(&config_lock_);
   config_state_.config = config;  // Shallow copy of the struct.
   double prob_loss = config.loss_percent / 100.0;
   if (config_state_.config.avg_burst_loss_length == -1) {
@@ -111,8 +111,14 @@ void SimulatedNetwork::SetConfig(const Config& config) {
   }
 }
 
+void SimulatedNetwork::UpdateConfig(
+    std::function<void(BuiltInNetworkBehaviorConfig*)> config_modifier) {
+  MutexLock lock(&config_lock_);
+  config_modifier(&config_state_.config);
+}
+
 void SimulatedNetwork::PauseTransmissionUntil(int64_t until_us) {
-  rtc::CritScope crit(&config_lock_);
+  MutexLock lock(&config_lock_);
   config_state_.pause_transmission_until_us = until_us;
 }
 
@@ -254,7 +260,7 @@ void SimulatedNetwork::UpdateCapacityQueue(ConfigState state,
 }
 
 SimulatedNetwork::ConfigState SimulatedNetwork::GetConfigState() const {
-  rtc::CritScope crit(&config_lock_);
+  MutexLock lock(&config_lock_);
   return config_state_;
 }
 

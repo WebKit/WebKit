@@ -91,14 +91,14 @@ TEST_P(EchoRemoverMultiChannel, BasicApiCalls) {
 // Verifies the check for the samplerate.
 // TODO(peah): Re-enable the test once the issue with memory leaks during DEATH
 // tests on test bots has been fixed.
-TEST(EchoRemover, DISABLED_WrongSampleRate) {
+TEST(EchoRemoverDeathTest, DISABLED_WrongSampleRate) {
   EXPECT_DEATH(std::unique_ptr<EchoRemover>(
                    EchoRemover::Create(EchoCanceller3Config(), 8001, 1, 1)),
                "");
 }
 
 // Verifies the check for the capture block size.
-TEST(EchoRemover, WrongCaptureBlockSize) {
+TEST(EchoRemoverDeathTest, WrongCaptureBlockSize) {
   absl::optional<DelayEstimate> delay_estimate;
   for (auto rate : {16000, 32000, 48000}) {
     SCOPED_TRACE(ProduceDebugText(rate));
@@ -121,7 +121,7 @@ TEST(EchoRemover, WrongCaptureBlockSize) {
 // Verifies the check for the number of capture bands.
 // TODO(peah): Re-enable the test once the issue with memory leaks during DEATH
 // tests on test bots has been fixed.c
-TEST(EchoRemover, DISABLED_WrongCaptureNumBands) {
+TEST(EchoRemoverDeathTest, DISABLED_WrongCaptureNumBands) {
   absl::optional<DelayEstimate> delay_estimate;
   for (auto rate : {16000, 32000, 48000}) {
     SCOPED_TRACE(ProduceDebugText(rate));
@@ -143,7 +143,7 @@ TEST(EchoRemover, DISABLED_WrongCaptureNumBands) {
 }
 
 // Verifies the check for non-null capture block.
-TEST(EchoRemover, NullCapture) {
+TEST(EchoRemoverDeathTest, NullCapture) {
   absl::optional<DelayEstimate> delay_estimate;
   std::unique_ptr<EchoRemover> remover(
       EchoRemover::Create(EchoCanceller3Config(), 16000, 1, 1));

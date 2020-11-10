@@ -17,6 +17,7 @@
 #include "api/ice_transport_interface.h"
 #include "api/scoped_refptr.h"
 #include "p2p/base/dtls_transport.h"
+#include "rtc_base/synchronization/mutex.h"
 
 namespace webrtc {
 
@@ -42,12 +43,12 @@ class DtlsTransport : public DtlsTransportInterface,
   void Clear();
 
   cricket::DtlsTransportInternal* internal() {
-    rtc::CritScope scope(&lock_);
+    MutexLock lock(&lock_);
     return internal_dtls_transport_.get();
   }
 
   const cricket::DtlsTransportInternal* internal() const {
-    rtc::CritScope scope(&lock_);
+    MutexLock lock(&lock_);
     return internal_dtls_transport_.get();
   }
 
@@ -61,7 +62,7 @@ class DtlsTransport : public DtlsTransportInterface,
 
   DtlsTransportObserverInterface* observer_ = nullptr;
   rtc::Thread* owner_thread_;
-  rtc::CriticalSection lock_;
+  mutable Mutex lock_;
   DtlsTransportInformation info_ RTC_GUARDED_BY(lock_);
   std::unique_ptr<cricket::DtlsTransportInternal> internal_dtls_transport_
       RTC_GUARDED_BY(lock_);

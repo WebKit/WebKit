@@ -70,7 +70,7 @@ class DecisionLogic : public NetEqController {
   // Adds |value| to |sample_memory_|.
   void AddSampleMemory(int32_t value) override { sample_memory_ += value; }
 
-  int TargetLevelMs() override {
+  int TargetLevelMs() const override {
     return ((delay_manager_->TargetLevel() * packet_length_samples_) >> 8) /
            rtc::CheckedDivExact(sample_rate_, 1000);
   }

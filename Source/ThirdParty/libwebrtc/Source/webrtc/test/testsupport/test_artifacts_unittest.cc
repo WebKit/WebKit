@@ -14,6 +14,7 @@
 
 #include <string>
 
+#include "absl/flags/declare.h"
 #include "absl/flags/flag.h"
 #include "rtc_base/system/file_wrapper.h"
 #include "test/gtest.h"

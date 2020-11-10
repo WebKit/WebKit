@@ -16,6 +16,7 @@
 
 #include "absl/types/optional.h"
 #include "api/video/encoded_image.h"
+#include "api/video_codecs/video_codec.h"
 #include "rtc_base/system/file_wrapper.h"
 
 namespace webrtc {

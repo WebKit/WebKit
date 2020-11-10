@@ -17,6 +17,7 @@
 #include <utility>
 #include <vector>
 
+#include "api/array_view.h"
 #include "api/test/network_emulation_manager.h"
 #include "api/test/simulated_network.h"
 #include "api/test/time_controller.h"
@@ -82,6 +83,10 @@ class NetworkEmulationManagerImpl : public NetworkEmulationManager {
 
   EmulatedNetworkManagerInterface* CreateEmulatedNetworkManagerInterface(
       const std::vector<EmulatedEndpoint*>& endpoints) override;
+
+  void GetStats(rtc::ArrayView<EmulatedEndpoint*> endpoints,
+                std::function<void(std::unique_ptr<EmulatedNetworkStats>)>
+                    stats_callback) override;
 
   TimeController* time_controller() override { return time_controller_.get(); }
 

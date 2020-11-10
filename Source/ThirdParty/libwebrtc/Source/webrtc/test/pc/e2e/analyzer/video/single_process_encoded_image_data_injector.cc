@@ -10,32 +10,15 @@
 
 #include "test/pc/e2e/analyzer/video/single_process_encoded_image_data_injector.h"
 
-#include <inttypes.h>
 #include <algorithm>
 #include <cstddef>
 
 #include "absl/memory/memory.h"
 #include "api/video/encoded_image.h"
-#include "modules/rtp_rtcp/source/byte_io.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/logging.h"
 
 namespace webrtc {
 namespace webrtc_pc_e2e {
-namespace {
-
-// Number of bytes from the beginning of the EncodedImage buffer that will be
-// used to store frame id and sub id.
-constexpr size_t kUsedBufferSize = 3;
-
-std::string UInt64ToHex(uint64_t value) {
-  char buffer[50];
-  snprintf(buffer, sizeof(buffer), "0x%016" PRIx64, value);
-
-  return std::string(buffer);
-}
-
-}  // namespace
 
 SingleProcessEncodedImageDataInjector::SingleProcessEncodedImageDataInjector() =
     default;
@@ -47,163 +30,126 @@ EncodedImage SingleProcessEncodedImageDataInjector::InjectData(
     bool discard,
     const EncodedImage& source,
     int coding_entity_id) {
-  RTC_CHECK(source.size() >= kUsedBufferSize);
+  RTC_CHECK(source.size() >= ExtractionInfo::kUsedBufferSize);
 
   ExtractionInfo info;
-  info.length = source.size();
   info.discard = discard;
-  size_t insertion_pos = source.size() - kUsedBufferSize;
-  memcpy(info.origin_data, &source.data()[insertion_pos], kUsedBufferSize);
+  size_t insertion_pos = source.size() - ExtractionInfo::kUsedBufferSize;
+  memcpy(info.origin_data, &source.data()[insertion_pos],
+         ExtractionInfo::kUsedBufferSize);
   {
-    rtc::CritScope crit(&lock_);
+    MutexLock lock(&lock_);
     // Will create new one if missed.
     ExtractionInfoVector& ev = extraction_cache_[id];
     info.sub_id = ev.next_sub_id++;
     ev.infos[info.sub_id] = info;
   }
 
+  auto buffer = EncodedImageBuffer::Create(source.data(), source.size());
+  buffer->data()[insertion_pos] = id & 0x00ff;
+  buffer->data()[insertion_pos + 1] = (id & 0xff00) >> 8;
+  buffer->data()[insertion_pos + 2] = info.sub_id;
+
   EncodedImage out = source;
-  out.data()[insertion_pos] = id & 0x00ff;
-  out.data()[insertion_pos + 1] = (id & 0xff00) >> 8;
-  out.data()[insertion_pos + 2] = info.sub_id;
-
-  // Debug logging start
-  RTC_CHECK_GE(source.size(), 8);
-  DebugLogEntry entry;
-  entry.side = LogSide::kSend;
-  entry.frame_id = id;
-  entry.size = source.size();
-  entry.image_starting = ByteReader<uint64_t>::ReadBigEndian(source.data());
-  entry.image_ending =
-      ByteReader<uint64_t>::ReadBigEndian(&source.data()[source.size() - 8]);
-  {
-    rtc::CritScope crit(&debug_lock_);
-    debug_logs.push_back(entry);
-  }
-  // Debug logging end
-
+  out.SetEncodedData(buffer);
   return out;
 }
 
 EncodedImageExtractionResult SingleProcessEncodedImageDataInjector::ExtractData(
     const EncodedImage& source,
     int coding_entity_id) {
+  size_t size = source.size();
+  auto buffer = EncodedImageBuffer::Create(source.data(), source.size());
   EncodedImage out = source;
+  out.SetEncodedData(buffer);
 
-  // Both |source| and |out| image will share the same buffer for payload or
-  // out will have a copy for it, so we can operate on the |out| buffer only.
-  uint8_t* buffer = out.data();
-  size_t size = out.size();
+  std::vector<size_t> frame_sizes;
+  std::vector<size_t> frame_sl_index;
+  size_t max_spatial_index = out.SpatialIndex().value_or(0);
+  for (size_t i = 0; i <= max_spatial_index; ++i) {
+    auto frame_size = source.SpatialLayerFrameSize(i);
+    if (frame_size.value_or(0)) {
+      frame_sl_index.push_back(i);
+      frame_sizes.push_back(frame_size.value());
+    }
+  }
+  if (frame_sizes.empty()) {
+    frame_sizes.push_back(size);
+  }
 
-  // Debug logging start
-  RTC_CHECK_GE(source.size(), 8);
-  DebugLogEntry entry;
-  entry.side = LogSide::kReceive;
-  entry.size = source.size();
-  entry.image_starting = ByteReader<uint64_t>::ReadBigEndian(source.data());
-  entry.image_ending =
-      ByteReader<uint64_t>::ReadBigEndian(&source.data()[source.size() - 8]);
-  bool is_debug_logged = false;
-  // Debug logging end
-
-  // |pos| is pointing to end of current encoded image.
-  size_t pos = size - 1;
+  size_t prev_frames_size = 0;
   absl::optional<uint16_t> id = absl::nullopt;
   bool discard = true;
   std::vector<ExtractionInfo> extraction_infos;
-  // Go through whole buffer and find all related extraction infos in
-  // order from 1st encoded image to the last.
-  while (true) {
-    size_t insertion_pos = pos - kUsedBufferSize + 1;
+  for (size_t frame_size : frame_sizes) {
+    size_t insertion_pos =
+        prev_frames_size + frame_size - ExtractionInfo::kUsedBufferSize;
     // Extract frame id from first 2 bytes starting from insertion pos.
-    uint16_t next_id = buffer[insertion_pos] + (buffer[insertion_pos + 1] << 8);
+    uint16_t next_id = buffer->data()[insertion_pos] +
+                       (buffer->data()[insertion_pos + 1] << 8);
     // Extract frame sub id from second 3 byte starting from insertion pos.
-    uint8_t sub_id = buffer[insertion_pos + 2];
+    uint8_t sub_id = buffer->data()[insertion_pos + 2];
     RTC_CHECK(!id || *id == next_id)
         << "Different frames encoded into single encoded image: " << *id
         << " vs " << next_id;
     id = next_id;
-
-    // Debug logging start
-    if (!is_debug_logged) {
-      entry.frame_id = next_id;
-      {
-        rtc::CritScope crit(&debug_lock_);
-        debug_logs.push_back(entry);
-      }
-      is_debug_logged = true;
-    }
-    // Debug logging end
-
     ExtractionInfo info;
     {
-      rtc::CritScope crit(&lock_);
+      MutexLock lock(&lock_);
       auto ext_vector_it = extraction_cache_.find(next_id);
-      // We replace RTC_CHECK on if here to add some debug logging.
-      if (ext_vector_it == extraction_cache_.end()) {
-        {
-          rtc::CritScope crit(&debug_lock_);
-          RTC_LOG(INFO) << "##################################################";
-          RTC_LOG(INFO) << "# SingleProcessEncodedImageDataInjector crashed! #";
-          RTC_LOG(INFO) << "##################################################";
-          for (const auto& entry : debug_logs) {
-            RTC_LOG(INFO) << "## SPEIDI: Frame: " << entry.frame_id
-                          << "; Side: "
-                          << (entry.side == LogSide::kSend ? "kSend"
-                                                           : "kReceive")
-                          << "; Size: " << entry.size
-                          << "; EncodedImage starts with: "
-                          << UInt64ToHex(entry.image_starting)
-                          << "; EncodedImage ends with: "
-                          << UInt64ToHex(entry.image_ending);
-          }
-        }
-        RTC_CHECK(false) << "Unknown frame_id=" << next_id;
-      }
-      // RTC_CHECK(ext_vector_it != extraction_cache_.end())
-      //     << "Unknown frame_id=" << next_id;
+      RTC_CHECK(ext_vector_it != extraction_cache_.end())
+          << "Unknown frame_id=" << next_id;
 
       auto info_it = ext_vector_it->second.infos.find(sub_id);
       RTC_CHECK(info_it != ext_vector_it->second.infos.end())
           << "Unknown sub_id=" << sub_id << " for frame_id=" << next_id;
+      info_it->second.received_count++;
       info = info_it->second;
-      ext_vector_it->second.infos.erase(info_it);
+      if (info.received_count == expected_receivers_count_) {
+        ext_vector_it->second.infos.erase(info_it);
+      }
     }
-    extraction_infos.push_back(info);
     // We need to discard encoded image only if all concatenated encoded images
     // have to be discarded.
     discard = discard && info.discard;
-    if (pos < info.length) {
-      break;
-    }
-    pos -= info.length;
+
+    extraction_infos.push_back(info);
+    prev_frames_size += frame_size;
   }
   RTC_CHECK(id);
-  std::reverse(extraction_infos.begin(), extraction_infos.end());
+
   if (discard) {
     out.set_size(0);
+    for (size_t i = 0; i <= max_spatial_index; ++i) {
+      out.SetSpatialLayerFrameSize(i, 0);
+    }
     return EncodedImageExtractionResult{*id, out, true};
   }
 
   // Make a pass from begin to end to restore origin payload and erase discarded
   // encoded images.
-  pos = 0;
-  auto extraction_infos_it = extraction_infos.begin();
-  while (pos < size) {
-    RTC_DCHECK(extraction_infos_it != extraction_infos.end());
-    const ExtractionInfo& info = *extraction_infos_it;
+  size_t pos = 0;
+  for (size_t frame_index = 0; frame_index < frame_sizes.size();
+       ++frame_index) {
+    RTC_CHECK(pos < size);
+    const size_t frame_size = frame_sizes[frame_index];
+    const ExtractionInfo& info = extraction_infos[frame_index];
     if (info.discard) {
       // If this encoded image is marked to be discarded - erase it's payload
       // from the buffer.
-      memmove(&buffer[pos], &buffer[pos + info.length],
-              size - pos - info.length);
-      size -= info.length;
+      memmove(&buffer->data()[pos], &buffer->data()[pos + frame_size],
+              size - pos - frame_size);
+      RTC_CHECK_LT(frame_index, frame_sl_index.size())
+          << "codec doesn't support discard option or the image, that was "
+             "supposed to be discarded, is lost";
+      out.SetSpatialLayerFrameSize(frame_sl_index[frame_index], 0);
+      size -= frame_size;
     } else {
-      memcpy(&buffer[pos + info.length - kUsedBufferSize], info.origin_data,
-             kUsedBufferSize);
-      pos += info.length;
+      memcpy(
+          &buffer->data()[pos + frame_size - ExtractionInfo::kUsedBufferSize],
+          info.origin_data, ExtractionInfo::kUsedBufferSize);
+      pos += frame_size;
     }
-    ++extraction_infos_it;
   }
   out.set_size(pos);
 

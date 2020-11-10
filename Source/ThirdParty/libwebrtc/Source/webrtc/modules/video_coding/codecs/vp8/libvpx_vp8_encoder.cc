@@ -33,7 +33,6 @@
 #include "modules/video_coding/utility/simulcast_rate_allocator.h"
 #include "modules/video_coding/utility/simulcast_utility.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/experiments/experimental_screenshare_settings.h"
 #include "rtc_base/experiments/field_trial_parser.h"
 #include "rtc_base/experiments/field_trial_units.h"
 #include "rtc_base/logging.h"
@@ -45,12 +44,17 @@
 namespace webrtc {
 namespace {
 #if defined(WEBRTC_IOS)
-const char kVP8IosMaxNumberOfThreadFieldTrial[] =
+constexpr char kVP8IosMaxNumberOfThreadFieldTrial[] =
     "WebRTC-VP8IosMaxNumberOfThread";
-const char kVP8IosMaxNumberOfThreadFieldTrialParameter[] = "max_thread";
+constexpr char kVP8IosMaxNumberOfThreadFieldTrialParameter[] = "max_thread";
 #endif
 
-const char kVp8ForcePartitionResilience[] =
+constexpr char kVp8GetEncoderInfoOverrideFieldTrial[] =
+    "WebRTC-VP8-GetEncoderInfoOverride";
+constexpr char kVp8RequestedResolutionAlignmentFieldTrialParameter[] =
+    "requested_resolution_alignment";
+
+constexpr char kVp8ForcePartitionResilience[] =
     "WebRTC-VP8-ForcePartitionResilience";
 
 // QP is obtained from VP8-bitstream for HW, so the QP corresponds to the
@@ -203,6 +207,11 @@ void ApplyVp8EncoderConfigToVpxConfig(const Vp8EncoderConfig& encoder_config,
     vpx_config->ts_periodicity = ts_config.ts_periodicity;
     std::copy(ts_config.ts_layer_id.begin(), ts_config.ts_layer_id.end(),
               std::begin(vpx_config->ts_layer_id));
+  } else {
+    vpx_config->ts_number_layers = 1;
+    vpx_config->ts_rate_decimator[0] = 1;
+    vpx_config->ts_periodicity = 1;
+    vpx_config->ts_layer_id[0] = 0;
   }
 
   if (encoder_config.rc_target_bitrate.has_value()) {
@@ -218,17 +227,36 @@ void ApplyVp8EncoderConfigToVpxConfig(const Vp8EncoderConfig& encoder_config,
   }
 }
 
+absl::optional<int> GetRequestedResolutionAlignmentOverride() {
+  const std::string trial_string =
+      field_trial::FindFullName(kVp8GetEncoderInfoOverrideFieldTrial);
+  FieldTrialOptional<int> requested_resolution_alignment(
+      kVp8RequestedResolutionAlignmentFieldTrialParameter);
+  ParseFieldTrial({&requested_resolution_alignment}, trial_string);
+  return requested_resolution_alignment.GetOptional();
+}
+
 }  // namespace
 
 std::unique_ptr<VideoEncoder> VP8Encoder::Create() {
-  return VP8Encoder::Create(nullptr);
+  return std::make_unique<LibvpxVp8Encoder>(LibvpxInterface::CreateEncoder(),
+                                            VP8Encoder::Settings());
+}
+
+std::unique_ptr<VideoEncoder> VP8Encoder::Create(
+    VP8Encoder::Settings settings) {
+  return std::make_unique<LibvpxVp8Encoder>(LibvpxInterface::CreateEncoder(),
+                                            std::move(settings));
 }
 
 std::unique_ptr<VideoEncoder> VP8Encoder::Create(
     std::unique_ptr<Vp8FrameBufferControllerFactory>
         frame_buffer_controller_factory) {
-  return std::make_unique<LibvpxVp8Encoder>(
-      std::move(frame_buffer_controller_factory));
+  VP8Encoder::Settings settings;
+  settings.frame_buffer_controller_factory =
+      std::move(frame_buffer_controller_factory);
+  return std::make_unique<LibvpxVp8Encoder>(LibvpxInterface::CreateEncoder(),
+                                            std::move(settings));
 }
 
 vpx_enc_frame_flags_t LibvpxVp8Encoder::EncodeFlags(
@@ -260,43 +288,19 @@ vpx_enc_frame_flags_t LibvpxVp8Encoder::EncodeFlags(
   return flags;
 }
 
-LibvpxVp8Encoder::LibvpxVp8Encoder()
-    : LibvpxVp8Encoder(nullptr, LibvpxInterface::CreateEncoder()) {}
-
-LibvpxVp8Encoder::LibvpxVp8Encoder(
-    std::unique_ptr<Vp8FrameBufferControllerFactory>
-        frame_buffer_controller_factory)
-    : LibvpxVp8Encoder(std::move(frame_buffer_controller_factory),
-                       LibvpxInterface::CreateEncoder()) {}
-
-LibvpxVp8Encoder::LibvpxVp8Encoder(std::unique_ptr<LibvpxInterface> interface)
-    : LibvpxVp8Encoder(nullptr, std::move(interface)) {}
-
-LibvpxVp8Encoder::LibvpxVp8Encoder(
-    std::unique_ptr<Vp8FrameBufferControllerFactory>
-        frame_buffer_controller_factory,
-    std::unique_ptr<LibvpxInterface> interface)
+LibvpxVp8Encoder::LibvpxVp8Encoder(std::unique_ptr<LibvpxInterface> interface,
+                                   VP8Encoder::Settings settings)
     : libvpx_(std::move(interface)),
-      experimental_cpu_speed_config_arm_(CpuSpeedExperiment::GetConfigs()),
       rate_control_settings_(RateControlSettings::ParseFromFieldTrials()),
-      screenshare_max_qp_(
-          ExperimentalScreenshareSettings::ParseFromFieldTrials().MaxQp()),
-      encoded_complete_callback_(nullptr),
-      inited_(false),
-      timestamp_(0),
-      qp_max_(56),  // Setting for max quantizer.
-      cpu_speed_default_(-6),
-      number_of_cores_(0),
-      rc_max_intra_target_(0),
-      num_active_streams_(0),
+      requested_resolution_alignment_override_(
+          GetRequestedResolutionAlignmentOverride()),
       frame_buffer_controller_factory_(
-          std::move(frame_buffer_controller_factory)),
+          std::move(settings.frame_buffer_controller_factory)),
+      resolution_bitrate_limits_(std::move(settings.resolution_bitrate_limits)),
       key_frame_request_(kMaxSimulcastStreams, false),
       variable_framerate_experiment_(ParseVariableFramerateConfig(
           "WebRTC-VP8VariableFramerateScreenshare")),
-      framerate_controller_(variable_framerate_experiment_.framerate_limit),
-      num_steady_state_frames_(0),
-      fec_controller_override_(nullptr) {
+      framerate_controller_(variable_framerate_experiment_.framerate_limit) {
   // TODO(eladalon/ilnik): These reservations might be wasting memory.
   // InitEncode() is resizing to the actual size, which might be smaller.
   raw_images_.reserve(kMaxSimulcastStreams);
@@ -414,7 +418,9 @@ void LibvpxVp8Encoder::SetRates(const RateControlParameters& parameters) {
     vpx_codec_err_t err =
         libvpx_->codec_enc_config_set(&encoders_[i], &vpx_configs_[i]);
     if (err != VPX_CODEC_OK) {
-      RTC_LOG(LS_WARNING) << "Error configuring codec, error code: " << err;
+      RTC_LOG(LS_WARNING) << "Error configuring codec, error code: " << err
+                          << ", details: "
+                          << libvpx_->codec_error_detail(&encoders_[i]);
     }
   }
 }
@@ -593,9 +599,6 @@ int LibvpxVp8Encoder::InitEncode(const VideoCodec* inst,
     qp_max_ = std::max(rate_control_settings_.LibvpxVp8QpMax().value(),
                        static_cast<int>(vpx_configs_[0].rc_min_quantizer));
   }
-  if (codec_.mode == VideoCodecMode::kScreensharing && screenshare_max_qp_) {
-    qp_max_ = *screenshare_max_qp_;
-  }
   vpx_configs_[0].rc_max_quantizer = qp_max_;
   vpx_configs_[0].rc_undershoot_pct = 100;
   vpx_configs_[0].rc_overshoot_pct = 15;
@@ -726,13 +729,16 @@ int LibvpxVp8Encoder::GetCpuSpeed(int width, int height) {
   // On mobile platform, use a lower speed setting for lower resolutions for
   // CPUs with 4 or more cores.
   RTC_DCHECK_GT(number_of_cores_, 0);
+  if (experimental_cpu_speed_config_arm_
+          .GetValue(width * height, number_of_cores_)
+          .has_value()) {
+    return experimental_cpu_speed_config_arm_
+        .GetValue(width * height, number_of_cores_)
+        .value();
+  }
+
   if (number_of_cores_ <= 3)
     return -12;
-
-  if (experimental_cpu_speed_config_arm_) {
-    return CpuSpeedExperiment::GetValue(width * height,
-                                        *experimental_cpu_speed_config_arm_);
-  }
 
   if (width * height <= 352 * 288)
     return -8;
@@ -893,7 +899,7 @@ size_t LibvpxVp8Encoder::SteadyStateSize(int sid, int tid) {
   const int encoder_id = encoders_.size() - 1 - sid;
   size_t bitrate_bps;
   float fps;
-  if (SimulcastUtility::IsConferenceModeScreenshare(codec_) ||
+  if ((SimulcastUtility::IsConferenceModeScreenshare(codec_) && sid == 0) ||
       vpx_configs_[encoder_id].ts_number_layers <= 1) {
     // In conference screenshare there's no defined per temporal layer bitrate
     // and framerate.
@@ -1212,7 +1218,7 @@ int LibvpxVp8Encoder::GetEncodedPartitions(const VideoFrame& input_image,
                                &qp_128);
         encoded_images_[encoder_idx].qp_ = qp_128;
         encoded_complete_callback_->OnEncodedImage(encoded_images_[encoder_idx],
-                                                   &codec_specific, nullptr);
+                                                   &codec_specific);
         const size_t steady_state_size = SteadyStateSize(
             stream_idx, codec_specific.codecSpecific.VP8.temporalIdx);
         if (qp_128 > variable_framerate_experiment_.steady_state_qp ||
@@ -1244,6 +1250,13 @@ VideoEncoder::EncoderInfo LibvpxVp8Encoder::GetEncoderInfo() const {
   info.is_hardware_accelerated = false;
   info.has_internal_source = false;
   info.supports_simulcast = true;
+  if (!resolution_bitrate_limits_.empty()) {
+    info.resolution_bitrate_limits = resolution_bitrate_limits_;
+  }
+  if (requested_resolution_alignment_override_) {
+    info.requested_resolution_alignment =
+        *requested_resolution_alignment_override_;
+  }
 
   const bool enable_scaling =
       num_active_streams_ == 1 &&
@@ -1258,28 +1271,31 @@ VideoEncoder::EncoderInfo LibvpxVp8Encoder::GetEncoderInfo() const {
     info.scaling_settings.min_pixels_per_frame =
         rate_control_settings_.LibvpxVp8MinPixels().value();
   }
-  // |encoder_idx| is libvpx index where 0 is highest resolution.
-  // |si| is simulcast index, where 0 is lowest resolution.
-  for (size_t si = 0, encoder_idx = encoders_.size() - 1; si < encoders_.size();
-       ++si, --encoder_idx) {
-    info.fps_allocation[si].clear();
-    if ((codec_.numberOfSimulcastStreams > si &&
-         !codec_.simulcastStream[si].active) ||
-        (si == 0 && SimulcastUtility::IsConferenceModeScreenshare(codec_))) {
-      // No defined frame rate fractions if not active or if using
-      // ScreenshareLayers, leave vector empty and continue;
-      continue;
-    }
-    if (vpx_configs_[encoder_idx].ts_number_layers <= 1) {
-      info.fps_allocation[si].push_back(EncoderInfo::kMaxFramerateFraction);
-    } else {
-      for (size_t ti = 0; ti < vpx_configs_[encoder_idx].ts_number_layers;
-           ++ti) {
-        RTC_DCHECK_GT(vpx_configs_[encoder_idx].ts_rate_decimator[ti], 0);
-        info.fps_allocation[si].push_back(rtc::saturated_cast<uint8_t>(
-            EncoderInfo::kMaxFramerateFraction /
-                vpx_configs_[encoder_idx].ts_rate_decimator[ti] +
-            0.5));
+
+  if (inited_) {
+    // |encoder_idx| is libvpx index where 0 is highest resolution.
+    // |si| is simulcast index, where 0 is lowest resolution.
+    for (size_t si = 0, encoder_idx = encoders_.size() - 1;
+         si < encoders_.size(); ++si, --encoder_idx) {
+      info.fps_allocation[si].clear();
+      if ((codec_.numberOfSimulcastStreams > si &&
+           !codec_.simulcastStream[si].active) ||
+          (si == 0 && SimulcastUtility::IsConferenceModeScreenshare(codec_))) {
+        // No defined frame rate fractions if not active or if using
+        // ScreenshareLayers, leave vector empty and continue;
+        continue;
+      }
+      if (vpx_configs_[encoder_idx].ts_number_layers <= 1) {
+        info.fps_allocation[si].push_back(EncoderInfo::kMaxFramerateFraction);
+      } else {
+        for (size_t ti = 0; ti < vpx_configs_[encoder_idx].ts_number_layers;
+             ++ti) {
+          RTC_DCHECK_GT(vpx_configs_[encoder_idx].ts_rate_decimator[ti], 0);
+          info.fps_allocation[si].push_back(rtc::saturated_cast<uint8_t>(
+              EncoderInfo::kMaxFramerateFraction /
+                  vpx_configs_[encoder_idx].ts_rate_decimator[ti] +
+              0.5));
+        }
       }
     }
   }
@@ -1296,14 +1312,14 @@ int LibvpxVp8Encoder::RegisterEncodeCompleteCallback(
 // static
 LibvpxVp8Encoder::VariableFramerateExperiment
 LibvpxVp8Encoder::ParseVariableFramerateConfig(std::string group_name) {
-  FieldTrialFlag enabled = FieldTrialFlag("Enabled");
+  FieldTrialFlag disabled = FieldTrialFlag("Disabled");
   FieldTrialParameter<double> framerate_limit("min_fps", 5.0);
   FieldTrialParameter<int> qp("min_qp", 15);
   FieldTrialParameter<int> undershoot_percentage("undershoot", 30);
-  ParseFieldTrial({&enabled, &framerate_limit, &qp, &undershoot_percentage},
+  ParseFieldTrial({&disabled, &framerate_limit, &qp, &undershoot_percentage},
                   field_trial::FindFullName(group_name));
   VariableFramerateExperiment config;
-  config.enabled = enabled.Get();
+  config.enabled = !disabled.Get();
   config.framerate_limit = framerate_limit.Get();
   config.steady_state_qp = qp.Get();
   config.steady_state_undershoot_percentage = undershoot_percentage.Get();

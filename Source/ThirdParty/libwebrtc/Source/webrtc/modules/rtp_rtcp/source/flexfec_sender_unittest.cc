@@ -326,7 +326,7 @@ TEST(FlexfecSenderTest, SetsAndGetsRtpState) {
   EXPECT_EQ(initial_rtp_state.start_timestamp + 1 * kVideoPayloadTypeFrequency,
             fec_packet->Timestamp());
 
-  RtpState updated_rtp_state = sender.GetRtpState();
+  RtpState updated_rtp_state = sender.GetRtpState().value();
   EXPECT_EQ(initial_rtp_state.sequence_number + 2,
             updated_rtp_state.sequence_number);
   EXPECT_EQ(initial_rtp_state.start_timestamp,

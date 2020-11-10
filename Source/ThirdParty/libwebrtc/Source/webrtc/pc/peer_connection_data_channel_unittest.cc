@@ -45,8 +45,8 @@
 #ifdef WEBRTC_ANDROID
 #include "pc/test/android_test_initializer.h"
 #endif
-#include "pc/test/fake_sctp_transport.h"
 #include "rtc_base/virtual_socket_server.h"
+#include "test/pc/sctp/fake_sctp_transport.h"
 
 namespace webrtc {
 
@@ -58,45 +58,19 @@ using ::testing::Values;
 
 namespace {
 
-PeerConnectionFactoryDependencies CreatePeerConnectionFactoryDependencies(
-    rtc::Thread* network_thread,
-    rtc::Thread* worker_thread,
-    rtc::Thread* signaling_thread,
-    std::unique_ptr<cricket::MediaEngineInterface> media_engine,
-    std::unique_ptr<CallFactoryInterface> call_factory) {
+PeerConnectionFactoryDependencies CreatePeerConnectionFactoryDependencies() {
   PeerConnectionFactoryDependencies deps;
-  deps.network_thread = network_thread;
-  deps.worker_thread = worker_thread;
-  deps.signaling_thread = signaling_thread;
+  deps.network_thread = rtc::Thread::Current();
+  deps.worker_thread = rtc::Thread::Current();
+  deps.signaling_thread = rtc::Thread::Current();
   deps.task_queue_factory = CreateDefaultTaskQueueFactory();
-  deps.media_engine = std::move(media_engine);
-  deps.call_factory = std::move(call_factory);
+  deps.media_engine = std::make_unique<cricket::FakeMediaEngine>();
+  deps.call_factory = CreateCallFactory();
+  deps.sctp_factory = std::make_unique<FakeSctpTransportFactory>();
   return deps;
 }
 
 }  // namespace
-
-class PeerConnectionFactoryForDataChannelTest
-    : public rtc::RefCountedObject<PeerConnectionFactory> {
- public:
-  PeerConnectionFactoryForDataChannelTest()
-      : rtc::RefCountedObject<PeerConnectionFactory>(
-            CreatePeerConnectionFactoryDependencies(
-                rtc::Thread::Current(),
-                rtc::Thread::Current(),
-                rtc::Thread::Current(),
-                std::make_unique<cricket::FakeMediaEngine>(),
-                CreateCallFactory())) {}
-
-  std::unique_ptr<cricket::SctpTransportInternalFactory>
-  CreateSctpTransportInternalFactory() {
-    auto factory = std::make_unique<FakeSctpTransportFactory>();
-    last_fake_sctp_transport_factory_ = factory.get();
-    return factory;
-  }
-
-  FakeSctpTransportFactory* last_fake_sctp_transport_factory_ = nullptr;
-};
 
 class PeerConnectionWrapperForDataChannelTest : public PeerConnectionWrapper {
  public:
@@ -155,10 +129,12 @@ class PeerConnectionDataChannelBaseTest : public ::testing::Test {
   WrapperPtr CreatePeerConnection(
       const RTCConfiguration& config,
       const PeerConnectionFactoryInterface::Options factory_options) {
-    rtc::scoped_refptr<PeerConnectionFactoryForDataChannelTest> pc_factory(
-        new PeerConnectionFactoryForDataChannelTest());
+    auto factory_deps = CreatePeerConnectionFactoryDependencies();
+    FakeSctpTransportFactory* fake_sctp_transport_factory =
+        static_cast<FakeSctpTransportFactory*>(factory_deps.sctp_factory.get());
+    rtc::scoped_refptr<PeerConnectionFactoryInterface> pc_factory =
+        CreateModularPeerConnectionFactory(std::move(factory_deps));
     pc_factory->SetOptions(factory_options);
-    RTC_CHECK(pc_factory->Initialize());
     auto observer = std::make_unique<MockPeerConnectionObserver>();
     RTCConfiguration modified_config = config;
     modified_config.sdp_semantics = sdp_semantics_;
@@ -171,9 +147,7 @@ class PeerConnectionDataChannelBaseTest : public ::testing::Test {
     observer->SetPeerConnectionInterface(pc.get());
     auto wrapper = std::make_unique<PeerConnectionWrapperForDataChannelTest>(
         pc_factory, pc, std::move(observer));
-    RTC_DCHECK(pc_factory->last_fake_sctp_transport_factory_);
-    wrapper->set_sctp_transport_factory(
-        pc_factory->last_fake_sctp_transport_factory_);
+    wrapper->set_sctp_transport_factory(fake_sctp_transport_factory);
     return wrapper;
   }
 

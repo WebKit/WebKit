@@ -135,28 +135,8 @@ void VCMEncodedFrame::CopyCodecSpecific(const RTPVideoHeader* header) {
       }
       case kVideoCodecH264: {
         _codecSpecificInfo.codecType = kVideoCodecH264;
-
-        // The following H264 codec specific data are not used elsewhere.
-        // Instead they are read directly from the frame marking extension.
-        // These codec specific data structures should be removed
-        // when frame marking is used.
-        _codecSpecificInfo.codecSpecific.H264.temporal_idx = kNoTemporalIdx;
-        if (header->frame_marking.temporal_id != kNoTemporalIdx) {
-          _codecSpecificInfo.codecSpecific.H264.temporal_idx =
-              header->frame_marking.temporal_id;
-          _codecSpecificInfo.codecSpecific.H264.base_layer_sync =
-              header->frame_marking.base_layer_sync;
-          _codecSpecificInfo.codecSpecific.H264.idr_frame =
-              header->frame_marking.independent_frame;
-        }
         break;
       }
-#ifndef DISABLE_H265
-      case kVideoCodecH265: {
-        _codecSpecificInfo.codecType = kVideoCodecH265;
-        break;
-      }
-#endif
       default: {
         _codecSpecificInfo.codecType = kVideoCodecGeneric;
         break;

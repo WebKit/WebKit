@@ -12,7 +12,9 @@
 
 #include <tuple>
 
+#include "media/base/h264_profile_level_id.h"
 #include "media/base/vp9_profile.h"
+#include "modules/video_coding/codecs/h264/include/h264.h"
 #include "rtc_base/gunit.h"
 
 using cricket::AudioCodec;
@@ -436,6 +438,69 @@ TEST(CodecTest, TestToCodecParameters) {
   ASSERT_EQ(1u, codec_params_2.parameters.size());
   EXPECT_EQ("p1", codec_params_2.parameters.begin()->first);
   EXPECT_EQ("a1", codec_params_2.parameters.begin()->second);
+}
+
+TEST(CodecTest, H264CostrainedBaselineIsAddedIfH264IsSupported) {
+  const std::vector<webrtc::SdpVideoFormat> kExplicitlySupportedFormats = {
+      webrtc::CreateH264Format(webrtc::H264::kProfileBaseline,
+                               webrtc::H264::kLevel3_1, "1"),
+      webrtc::CreateH264Format(webrtc::H264::kProfileBaseline,
+                               webrtc::H264::kLevel3_1, "0")};
+
+  std::vector<webrtc::SdpVideoFormat> supported_formats =
+      kExplicitlySupportedFormats;
+  cricket::AddH264ConstrainedBaselineProfileToSupportedFormats(
+      &supported_formats);
+
+  const webrtc::SdpVideoFormat kH264ConstrainedBasedlinePacketization1 =
+      webrtc::CreateH264Format(webrtc::H264::kProfileConstrainedBaseline,
+                               webrtc::H264::kLevel3_1, "1");
+  const webrtc::SdpVideoFormat kH264ConstrainedBasedlinePacketization0 =
+      webrtc::CreateH264Format(webrtc::H264::kProfileConstrainedBaseline,
+                               webrtc::H264::kLevel3_1, "0");
+
+  EXPECT_EQ(supported_formats[0], kExplicitlySupportedFormats[0]);
+  EXPECT_EQ(supported_formats[1], kExplicitlySupportedFormats[1]);
+  EXPECT_EQ(supported_formats[2], kH264ConstrainedBasedlinePacketization1);
+  EXPECT_EQ(supported_formats[3], kH264ConstrainedBasedlinePacketization0);
+}
+
+TEST(CodecTest, H264CostrainedBaselineIsNotAddedIfH264IsUnsupported) {
+  const std::vector<webrtc::SdpVideoFormat> kExplicitlySupportedFormats = {
+      {cricket::kVp9CodecName,
+       {{webrtc::kVP9FmtpProfileId,
+         VP9ProfileToString(webrtc::VP9Profile::kProfile0)}}}};
+
+  std::vector<webrtc::SdpVideoFormat> supported_formats =
+      kExplicitlySupportedFormats;
+  cricket::AddH264ConstrainedBaselineProfileToSupportedFormats(
+      &supported_formats);
+
+  EXPECT_EQ(supported_formats[0], kExplicitlySupportedFormats[0]);
+  EXPECT_EQ(supported_formats.size(), kExplicitlySupportedFormats.size());
+}
+
+TEST(CodecTest, H264CostrainedBaselineNotAddedIfAlreadySpecified) {
+  const std::vector<webrtc::SdpVideoFormat> kExplicitlySupportedFormats = {
+      webrtc::CreateH264Format(webrtc::H264::kProfileBaseline,
+                               webrtc::H264::kLevel3_1, "1"),
+      webrtc::CreateH264Format(webrtc::H264::kProfileBaseline,
+                               webrtc::H264::kLevel3_1, "0"),
+      webrtc::CreateH264Format(webrtc::H264::kProfileConstrainedBaseline,
+                               webrtc::H264::kLevel3_1, "1"),
+      webrtc::CreateH264Format(webrtc::H264::kProfileConstrainedBaseline,
+                               webrtc::H264::kLevel3_1, "0")};
+
+  std::vector<webrtc::SdpVideoFormat> supported_formats =
+      kExplicitlySupportedFormats;
+  cricket::AddH264ConstrainedBaselineProfileToSupportedFormats(
+      &supported_formats);
+
+  EXPECT_EQ(supported_formats[0], kExplicitlySupportedFormats[0]);
+  EXPECT_EQ(supported_formats[1], kExplicitlySupportedFormats[1]);
+  EXPECT_EQ(supported_formats[2], kExplicitlySupportedFormats[2]);
+  EXPECT_EQ(supported_formats[3], kExplicitlySupportedFormats[3]);
+  EXPECT_EQ(supported_formats.size(), kExplicitlySupportedFormats.size());
 }
 
 // Tests that the helper IsSameCodec returns the correct value for codecs that

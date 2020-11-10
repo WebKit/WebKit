@@ -61,7 +61,7 @@ struct RTC_EXPORT EchoCanceller3Config {
   } delay;
 
   struct Filter {
-    struct MainConfiguration {
+    struct RefinedConfiguration {
       size_t length_blocks;
       float leakage_converged;
       float leakage_diverged;
@@ -70,23 +70,24 @@ struct RTC_EXPORT EchoCanceller3Config {
       float noise_gate;
     };
 
-    struct ShadowConfiguration {
+    struct CoarseConfiguration {
       size_t length_blocks;
       float rate;
       float noise_gate;
     };
 
-    MainConfiguration main = {13, 0.00005f, 0.05f, 0.001f, 2.f, 20075344.f};
-    ShadowConfiguration shadow = {13, 0.7f, 20075344.f};
+    RefinedConfiguration refined = {13,     0.00005f, 0.05f,
+                                    0.001f, 2.f,      20075344.f};
+    CoarseConfiguration coarse = {13, 0.7f, 20075344.f};
 
-    MainConfiguration main_initial = {12,     0.005f, 0.5f,
-                                      0.001f, 2.f,    20075344.f};
-    ShadowConfiguration shadow_initial = {12, 0.9f, 20075344.f};
+    RefinedConfiguration refined_initial = {12,     0.005f, 0.5f,
+                                            0.001f, 2.f,    20075344.f};
+    CoarseConfiguration coarse_initial = {12, 0.9f, 20075344.f};
 
     size_t config_change_duration_blocks = 250;
     float initial_state_seconds = 2.5f;
     bool conservative_initial_phase = false;
-    bool enable_shadow_filter_output_usage = true;
+    bool enable_coarse_filter_output_usage = true;
     bool use_linear_filter = true;
     bool export_linear_aec_output = false;
   } filter;
@@ -143,6 +144,10 @@ struct RTC_EXPORT EchoCanceller3Config {
     size_t render_pre_window_size = 1;
     size_t render_post_window_size = 1;
   } echo_model;
+
+  struct ComfortNoise {
+    float noise_floor_dbfs = -96.03406f;
+  } comfort_noise;
 
   struct Suppressor {
     Suppressor();
@@ -210,8 +215,8 @@ struct RTC_EXPORT EchoCanceller3Config {
     struct HighBandsSuppression {
       float enr_threshold = 1.f;
       float max_gain_during_echo = 1.f;
-      float anti_howling_activation_threshold = 25.f;
-      float anti_howling_gain = 0.01f;
+      float anti_howling_activation_threshold = 400.f;
+      float anti_howling_gain = 1.f;
     } high_bands_suppression;
 
     float floor_first_increase = 0.00001f;

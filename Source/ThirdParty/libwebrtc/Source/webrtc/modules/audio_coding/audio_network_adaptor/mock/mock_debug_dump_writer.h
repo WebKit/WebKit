@@ -18,20 +18,24 @@ namespace webrtc {
 
 class MockDebugDumpWriter : public DebugDumpWriter {
  public:
-  virtual ~MockDebugDumpWriter() { Die(); }
-  MOCK_METHOD0(Die, void());
+  ~MockDebugDumpWriter() override { Die(); }
+  MOCK_METHOD(void, Die, ());
 
-  MOCK_METHOD2(DumpEncoderRuntimeConfig,
-               void(const AudioEncoderRuntimeConfig& config,
-                    int64_t timestamp));
-  MOCK_METHOD2(DumpNetworkMetrics,
-               void(const Controller::NetworkMetrics& metrics,
-                    int64_t timestamp));
+  MOCK_METHOD(void,
+              DumpEncoderRuntimeConfig,
+              (const AudioEncoderRuntimeConfig& config, int64_t timestamp),
+              (override));
+  MOCK_METHOD(void,
+              DumpNetworkMetrics,
+              (const Controller::NetworkMetrics& metrics, int64_t timestamp),
+              (override));
 #if WEBRTC_ENABLE_PROTOBUF
-  MOCK_METHOD2(DumpControllerManagerConfig,
-               void(const audio_network_adaptor::config::ControllerManager&
-                        controller_manager_config,
-                    int64_t timestamp));
+  MOCK_METHOD(void,
+              DumpControllerManagerConfig,
+              (const audio_network_adaptor::config::ControllerManager&
+                   controller_manager_config,
+               int64_t timestamp),
+              (override));
 #endif
 };
 

@@ -45,6 +45,9 @@ class VideoFecGenerator {
   // will lack sequence numbers, that needs to be set externally.
   // TODO(bugs.webrtc.org/11340): Actually FlexFec sets seq#, fix that!
   virtual std::vector<std::unique_ptr<RtpPacketToSend>> GetFecPackets() = 0;
+  // Only called on the VideoSendStream queue, after operation has shut down,
+  // and only populated if there is an RtpState (e.g. FlexFec).
+  virtual absl::optional<RtpState> GetRtpState() = 0;
 };
 
 }  // namespace webrtc

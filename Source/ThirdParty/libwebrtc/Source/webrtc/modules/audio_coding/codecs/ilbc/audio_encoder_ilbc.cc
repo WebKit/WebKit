@@ -127,6 +127,12 @@ void AudioEncoderIlbcImpl::Reset() {
   num_10ms_frames_buffered_ = 0;
 }
 
+absl::optional<std::pair<TimeDelta, TimeDelta>>
+AudioEncoderIlbcImpl::GetFrameLengthRange() const {
+  return {{TimeDelta::Millis(num_10ms_frames_per_packet_ * 10),
+           TimeDelta::Millis(num_10ms_frames_per_packet_ * 10)}};
+}
+
 size_t AudioEncoderIlbcImpl::RequiredOutputSizeBytes() const {
   switch (num_10ms_frames_per_packet_) {
     case 2:

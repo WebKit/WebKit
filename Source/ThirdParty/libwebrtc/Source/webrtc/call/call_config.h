@@ -30,8 +30,6 @@ struct CallConfig {
   CallConfig(const CallConfig&);
   ~CallConfig();
 
-  RTC_DEPRECATED static constexpr int kDefaultStartBitrateBps = 300000;
-
   // Bitrate config used until valid bitrate estimates are calculated. Also
   // used to cap total bitrate used. This comes from the remote connection.
   BitrateConstraints bitrate_config;

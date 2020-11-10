@@ -128,6 +128,7 @@ void BlockProcessorImpl::ProcessCapture(
     }
   } else {
     // If no render data has yet arrived, do not process the capture signal.
+    render_buffer_->HandleSkippedCaptureProcessing();
     return;
   }
 

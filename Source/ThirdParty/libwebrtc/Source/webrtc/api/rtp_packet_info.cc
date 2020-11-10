@@ -32,18 +32,6 @@ RtpPacketInfo::RtpPacketInfo(
       absolute_capture_time_(absolute_capture_time),
       receive_time_ms_(receive_time_ms) {}
 
-RtpPacketInfo::RtpPacketInfo(uint32_t ssrc,
-                             std::vector<uint32_t> csrcs,
-                             uint32_t rtp_timestamp,
-                             absl::optional<uint8_t> audio_level,
-                             int64_t receive_time_ms)
-    : RtpPacketInfo(ssrc,
-                    std::move(csrcs),
-                    rtp_timestamp,
-                    audio_level,
-                    /*absolute_capture_time=*/absl::nullopt,
-                    receive_time_ms) {}
-
 RtpPacketInfo::RtpPacketInfo(const RTPHeader& rtp_header,
                              int64_t receive_time_ms)
     : ssrc_(rtp_header.ssrc),

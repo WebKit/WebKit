@@ -65,10 +65,14 @@ rtc_library("adaptive_digital") {
     "../../../api:array_view",
     "../../../common_audio",
     "../../../rtc_base:checks",
+    "../../../rtc_base:logging",
     "../../../rtc_base:rtc_base_approved",
+    "../../../rtc_base:safe_compare",
     "../../../rtc_base:safe_minmax",
     "../../../system_wrappers:metrics",
   ]
+
+  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
 }
 
 rtc_library("biquad_filter") {
@@ -83,15 +87,8 @@ rtc_library("biquad_filter") {
   ]
 }
 
-rtc_library("common") {
-  sources = [
-    "agc2_common.cc",
-    "agc2_common.h",
-  ]
-  deps = [
-    "../../../rtc_base:rtc_base_approved",
-    "../../../system_wrappers:field_trial",
-  ]
+rtc_source_set("common") {
+  sources = [ "agc2_common.h" ]
 }
 
 rtc_library("fixed_digital") {
@@ -150,9 +147,10 @@ rtc_library("noise_level_estimator") {
     "..:audio_frame_view",
     "../../../api:array_view",
     "../../../common_audio",
+    "../../../common_audio/third_party/ooura:fft_size_128",
     "../../../rtc_base:checks",
     "../../../rtc_base:macromagic",
-    "../utility:ooura_fft",
+    "../../../system_wrappers",
   ]
 
   configs += [ "..:apm_debug_dump" ]
@@ -164,11 +162,13 @@ rtc_library("rnn_vad_with_level") {
     "vad_with_level.h",
   ]
   deps = [
+    ":common",
     "..:audio_frame_view",
     "../../../api:array_view",
     "../../../common_audio",
     "../../../rtc_base:checks",
     "rnn_vad",
+    "rnn_vad:rnn_vad_common",
   ]
 }
 
@@ -194,6 +194,7 @@ rtc_library("adaptive_digital_unittests") {
     "../../../rtc_base:checks",
     "../../../rtc_base:gunit_helpers",
     "../../../rtc_base:rtc_base_approved",
+    "../../../test:test_support",
   ]
 }
 
@@ -260,9 +261,12 @@ rtc_library("rnn_vad_with_level_unittests") {
   testonly = true
   sources = [ "vad_with_level_unittest.cc" ]
   deps = [
+    ":common",
     ":rnn_vad_with_level",
     "..:audio_frame_view",
     "../../../rtc_base:gunit_helpers",
+    "../../../rtc_base:safe_compare",
+    "../../../test:test_support",
   ]
 }
 

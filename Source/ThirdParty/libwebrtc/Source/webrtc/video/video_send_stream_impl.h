@@ -35,13 +35,12 @@
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/utility/include/process_thread.h"
 #include "modules/video_coding/include/video_codec_interface.h"
-#include "rtc_base/critical_section.h"
 #include "rtc_base/experiments/field_trial_parser.h"
+#include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/task_queue.h"
 #include "rtc_base/task_utils/repeating_task.h"
 #include "rtc_base/thread_annotations.h"
 #include "rtc_base/weak_ptr.h"
-#include "video/call_stats.h"
 #include "video/encoder_rtcp_feedback.h"
 #include "video/send_delay_stats.h"
 #include "video/send_statistics_proxy.h"
@@ -75,7 +74,7 @@ class VideoSendStreamImpl : public webrtc::BitrateAllocatorObserver,
       Clock* clock,
       SendStatisticsProxy* stats_proxy,
       rtc::TaskQueue* worker_queue,
-      CallStats* call_stats,
+      RtcpRttStats* call_stats,
       RtpTransportControllerSendInterface* transport,
       BitrateAllocatorInterface* bitrate_allocator,
       SendDelayStats* send_delay_stats,
@@ -116,6 +115,7 @@ class VideoSendStreamImpl : public webrtc::BitrateAllocatorObserver,
 
   void OnEncoderConfigurationChanged(
       std::vector<VideoStream> streams,
+      bool is_svc,
       VideoEncoderConfig::ContentType content_type,
       int min_transmit_bitrate_bps) override;
 
@@ -124,8 +124,7 @@ class VideoSendStreamImpl : public webrtc::BitrateAllocatorObserver,
   // Called on an arbitrary encoder callback thread.
   EncodedImageCallback::Result OnEncodedImage(
       const EncodedImage& encoded_image,
-      const CodecSpecificInfo* codec_specific_info,
-      const RTPFragmentationHeader* fragmentation) override;
+      const CodecSpecificInfo* codec_specific_info) override;
 
   // Implements EncodedImageCallback.
   void OnDroppedFrame(EncodedImageCallback::DropReason reason) override;
@@ -161,11 +160,10 @@ class VideoSendStreamImpl : public webrtc::BitrateAllocatorObserver,
   std::atomic_bool activity_;
   bool timed_out_ RTC_GUARDED_BY(worker_queue_);
 
-  CallStats* const call_stats_;
   RtpTransportControllerSendInterface* const transport_;
   BitrateAllocatorInterface* const bitrate_allocator_;
 
-  rtc::CriticalSection ivf_writers_crit_;
+  Mutex ivf_writers_mutex_;
 
   bool disable_padding_;
   int max_padding_bitrate_;

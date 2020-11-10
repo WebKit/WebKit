@@ -104,5 +104,11 @@ TEST(TestFakeVp8Codec, TestDecodeWidthHeightSet) {
   fixture->TestDecodeWidthHeightSet();
 }
 
+TEST(TestFakeVp8Codec,
+     TestEncoderInfoForDefaultTemporalLayerProfileHasFpsAllocation) {
+  auto fixture = CreateSpecificSimulcastTestFixture();
+  fixture->TestEncoderInfoForDefaultTemporalLayerProfileHasFpsAllocation();
+}
+
 }  // namespace test
 }  // namespace webrtc

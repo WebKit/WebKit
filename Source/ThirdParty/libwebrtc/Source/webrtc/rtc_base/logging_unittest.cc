@@ -359,5 +359,19 @@ TEST(LogTest, EnumsAreSupported) {
   stream.Close();
 }
 
+TEST(LogTest, NoopSeverityDoesNotRunStringFormatting) {
+  if (!LogMessage::IsNoop(LS_VERBOSE)) {
+    RTC_LOG(LS_WARNING) << "Skipping test since verbose logging is turned on.";
+    return;
+  }
+  bool was_called = false;
+  auto cb = [&was_called]() {
+    was_called = true;
+    return "This could be an expensive callback.";
+  };
+  RTC_LOG(LS_VERBOSE) << "This should not be logged: " << cb();
+  EXPECT_FALSE(was_called);
+}
+
 }  // namespace rtc
-#endif
+#endif  // RTC_LOG_ENABLED()

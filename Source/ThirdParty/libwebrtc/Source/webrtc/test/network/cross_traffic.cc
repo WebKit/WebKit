@@ -144,13 +144,16 @@ void TcpMessageRouteImpl::SendMessage(size_t size,
           cwnd_ = 10;
           ssthresh_ = INFINITY;
         }
-        size_t data_left = size;
-        size_t kMaxPacketSize = 1200;
+        int64_t data_left = static_cast<int64_t>(size);
+        int64_t kMaxPacketSize = 1200;
+        int64_t kMinPacketSize = 4;
         Message message{std::move(handler)};
         while (data_left > 0) {
-          size_t packet_size = std::min(data_left, kMaxPacketSize);
+          int64_t packet_size = std::min(data_left, kMaxPacketSize);
           int fragment_id = next_fragment_id_++;
-          pending_.push_back(MessageFragment{fragment_id, packet_size});
+          pending_.push_back(MessageFragment{
+              fragment_id,
+              static_cast<size_t>(std::max(kMinPacketSize, packet_size))});
           message.pending_fragment_ids.insert(fragment_id);
           data_left -= packet_size;
         }

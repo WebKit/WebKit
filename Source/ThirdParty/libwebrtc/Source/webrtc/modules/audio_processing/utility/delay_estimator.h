@@ -16,6 +16,8 @@
 
 #include <stdint.h>
 
+namespace webrtc {
+
 static const int32_t kMaxBitCountsQ9 = (32 << 9);  // 32 matching bits in Q9.
 
 typedef struct {
@@ -249,5 +251,7 @@ float WebRtc_binary_last_delay_quality(BinaryDelayEstimator* self);
 void WebRtc_MeanEstimatorFix(int32_t new_value,
                              int factor,
                              int32_t* mean_value);
+
+}  // namespace webrtc
 
 #endif  // MODULES_AUDIO_PROCESSING_UTILITY_DELAY_ESTIMATOR_H_

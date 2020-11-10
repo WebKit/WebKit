@@ -22,19 +22,14 @@ DtlsTransportState TranslateState(cricket::DtlsTransportState internal_state) {
   switch (internal_state) {
     case cricket::DTLS_TRANSPORT_NEW:
       return DtlsTransportState::kNew;
-      break;
     case cricket::DTLS_TRANSPORT_CONNECTING:
       return DtlsTransportState::kConnecting;
-      break;
     case cricket::DTLS_TRANSPORT_CONNECTED:
       return DtlsTransportState::kConnected;
-      break;
     case cricket::DTLS_TRANSPORT_CLOSED:
       return DtlsTransportState::kClosed;
-      break;
     case cricket::DTLS_TRANSPORT_FAILED:
       return DtlsTransportState::kFailed;
-      break;
   }
 }
 
@@ -61,7 +56,7 @@ DtlsTransport::~DtlsTransport() {
 }
 
 DtlsTransportInformation DtlsTransport::Information() {
-  rtc::CritScope scope(&lock_);
+  MutexLock lock(&lock_);
   return info_;
 }
 
@@ -90,7 +85,7 @@ void DtlsTransport::Clear() {
   // into DtlsTransport, so we can't hold the lock while releasing.
   std::unique_ptr<cricket::DtlsTransportInternal> transport_to_release;
   {
-    rtc::CritScope scope(&lock_);
+    MutexLock lock(&lock_);
     transport_to_release = std::move(internal_dtls_transport_);
     ice_transport_->Clear();
   }
@@ -114,7 +109,7 @@ void DtlsTransport::OnInternalDtlsState(
 
 void DtlsTransport::UpdateInformation() {
   RTC_DCHECK_RUN_ON(owner_thread_);
-  rtc::CritScope scope(&lock_);
+  MutexLock lock(&lock_);
   if (internal_dtls_transport_) {
     if (internal_dtls_transport_->dtls_state() ==
         cricket::DTLS_TRANSPORT_CONNECTED) {

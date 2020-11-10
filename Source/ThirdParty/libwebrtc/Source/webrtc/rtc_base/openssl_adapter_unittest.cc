@@ -25,28 +25,34 @@ namespace {
 class MockAsyncSocket : public AsyncSocket {
  public:
   virtual ~MockAsyncSocket() = default;
-  MOCK_METHOD1(Accept, AsyncSocket*(SocketAddress*));
-  MOCK_CONST_METHOD0(GetLocalAddress, SocketAddress());
-  MOCK_CONST_METHOD0(GetRemoteAddress, SocketAddress());
-  MOCK_METHOD1(Bind, int(const SocketAddress&));
-  MOCK_METHOD1(Connect, int(const SocketAddress&));
-  MOCK_METHOD2(Send, int(const void*, size_t));
-  MOCK_METHOD3(SendTo, int(const void*, size_t, const SocketAddress&));
-  MOCK_METHOD3(Recv, int(void*, size_t, int64_t*));
-  MOCK_METHOD4(RecvFrom, int(void*, size_t, SocketAddress*, int64_t*));
-  MOCK_METHOD1(Listen, int(int));
-  MOCK_METHOD0(Close, int());
-  MOCK_CONST_METHOD0(GetError, int());
-  MOCK_METHOD1(SetError, void(int));
-  MOCK_CONST_METHOD0(GetState, ConnState());
-  MOCK_METHOD2(GetOption, int(Option, int*));
-  MOCK_METHOD2(SetOption, int(Option, int));
+  MOCK_METHOD(AsyncSocket*, Accept, (SocketAddress*), (override));
+  MOCK_METHOD(SocketAddress, GetLocalAddress, (), (const, override));
+  MOCK_METHOD(SocketAddress, GetRemoteAddress, (), (const, override));
+  MOCK_METHOD(int, Bind, (const SocketAddress&), (override));
+  MOCK_METHOD(int, Connect, (const SocketAddress&), (override));
+  MOCK_METHOD(int, Send, (const void*, size_t), (override));
+  MOCK_METHOD(int,
+              SendTo,
+              (const void*, size_t, const SocketAddress&),
+              (override));
+  MOCK_METHOD(int, Recv, (void*, size_t, int64_t*), (override));
+  MOCK_METHOD(int,
+              RecvFrom,
+              (void*, size_t, SocketAddress*, int64_t*),
+              (override));
+  MOCK_METHOD(int, Listen, (int), (override));
+  MOCK_METHOD(int, Close, (), (override));
+  MOCK_METHOD(int, GetError, (), (const, override));
+  MOCK_METHOD(void, SetError, (int), (override));
+  MOCK_METHOD(ConnState, GetState, (), (const, override));
+  MOCK_METHOD(int, GetOption, (Option, int*), (override));
+  MOCK_METHOD(int, SetOption, (Option, int), (override));
 };
 
 class MockCertVerifier : public SSLCertificateVerifier {
  public:
   virtual ~MockCertVerifier() = default;
-  MOCK_METHOD1(Verify, bool(const SSLCertificate&));
+  MOCK_METHOD(bool, Verify, (const SSLCertificate&), (override));
 };
 
 }  // namespace
@@ -80,7 +86,7 @@ TEST(OpenSSLAdapterTest, TestTransformAlpnProtocols) {
 TEST(OpenSSLAdapterTest, TestBeginSSLBeforeConnection) {
   AsyncSocket* async_socket = new MockAsyncSocket();
   OpenSSLAdapter adapter(async_socket);
-  EXPECT_EQ(adapter.StartSSL("webrtc.org", false), 0);
+  EXPECT_EQ(adapter.StartSSL("webrtc.org"), 0);
 }
 
 // Verifies that the adapter factory can create new adapters.

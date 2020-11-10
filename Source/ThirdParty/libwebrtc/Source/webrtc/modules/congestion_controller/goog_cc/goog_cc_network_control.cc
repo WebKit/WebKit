@@ -21,6 +21,7 @@
 #include <utility>
 #include <vector>
 
+#include "absl/strings/match.h"
 #include "api/units/time_delta.h"
 #include "logging/rtc_event_log/events/rtc_event_remote_estimate.h"
 #include "modules/congestion_controller/goog_cc/alr_detector.h"
@@ -41,7 +42,13 @@ constexpr TimeDelta kLossUpdateInterval = TimeDelta::Millis(1000);
 // the number of bytes that can be transmitted per interval.
 // Increasing this factor will result in lower delays in cases of bitrate
 // overshoots from the encoder.
-const float kDefaultPaceMultiplier = 2.5f;
+constexpr float kDefaultPaceMultiplier = 2.5f;
+
+// If the probe result is far below the current throughput estimate
+// it's unlikely that the probe is accurate, so we don't want to drop too far.
+// However, if we actually are overusing, we want to drop to something slightly
+// below the current throughput estimate to drain the network queues.
+constexpr double kProbeDropThroughputFraction = 0.85;
 
 int64_t GetBpsOrDefault(const absl::optional<DataRate>& rate,
                         int64_t fallback_bps) {
@@ -53,11 +60,11 @@ int64_t GetBpsOrDefault(const absl::optional<DataRate>& rate,
 }
 
 bool IsEnabled(const WebRtcKeyValueConfig* config, absl::string_view key) {
-  return config->Lookup(key).find("Enabled") == 0;
+  return absl::StartsWith(config->Lookup(key), "Enabled");
 }
 
 bool IsNotDisabled(const WebRtcKeyValueConfig* config, absl::string_view key) {
-  return config->Lookup(key).find("Disabled") != 0;
+  return !absl::StartsWith(config->Lookup(key), "Disabled");
 }
 }  // namespace
 
@@ -74,6 +81,9 @@ GoogCcNetworkController::GoogCcNetworkController(NetworkControllerConfig config,
       ignore_probes_lower_than_network_estimate_(IsNotDisabled(
           key_value_config_,
           "WebRTC-Bwe-IgnoreProbesLowerThanNetworkStateEstimate")),
+      limit_probes_lower_than_throughput_estimate_(
+          IsEnabled(key_value_config_,
+                    "WebRTC-Bwe-LimitProbesLowerThanThroughputEstimate")),
       rate_control_settings_(
           RateControlSettings::ParseFromKeyValueConfig(key_value_config_)),
       loss_based_stable_rate_(
@@ -492,7 +502,7 @@ NetworkControlUpdate GoogCcNetworkController::OnTransportPacketsFeedback(
     network_estimator_->OnTransportPacketsFeedback(report);
     auto prev_estimate = estimate_;
     estimate_ = network_estimator_->GetCurrentEstimate();
-    // TODO(srte): Make OnTransportPacketsFeedback signal wether the state
+    // TODO(srte): Make OnTransportPacketsFeedback signal whether the state
     // changed to avoid the need for this check.
     if (estimate_ && (!prev_estimate || estimate_->last_feed_time !=
                                             prev_estimate->last_feed_time)) {
@@ -506,6 +516,20 @@ NetworkControlUpdate GoogCcNetworkController::OnTransportPacketsFeedback(
       estimate_ && *probe_bitrate < delay_based_bwe_->last_estimate() &&
       *probe_bitrate < estimate_->link_capacity_lower) {
     probe_bitrate.reset();
+  }
+  if (limit_probes_lower_than_throughput_estimate_ && probe_bitrate &&
+      acknowledged_bitrate) {
+    // Limit the backoff to something slightly below the acknowledged
+    // bitrate. ("Slightly below" because we want to drain the queues
+    // if we are actually overusing.)
+    // The acknowledged bitrate shouldn't normally be higher than the delay
+    // based estimate, but it could happen e.g. due to packet bursts or
+    // encoder overshoot. We use std::min to ensure that a probe result
+    // below the current BWE never causes an increase.
+    DataRate limit =
+        std::min(delay_based_bwe_->last_estimate(),
+                 *acknowledged_bitrate * kProbeDropThroughputFraction);
+    probe_bitrate = std::max(*probe_bitrate, limit);
   }
 
   NetworkControlUpdate update;

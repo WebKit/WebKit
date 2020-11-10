@@ -20,7 +20,7 @@
 #include "absl/flags/parse.h"
 #include "common_audio/include/audio_util.h"
 #include "modules/audio_processing/agc/agc.h"
-#include "modules/audio_processing/transient/transient_suppressor.h"
+#include "modules/audio_processing/transient/transient_suppressor_impl.h"
 #include "test/gtest.h"
 #include "test/testsupport/file_utils.h"
 
@@ -165,7 +165,7 @@ void void_main() {
 
   Agc agc;
 
-  TransientSuppressor suppressor;
+  TransientSuppressorImpl suppressor;
   suppressor.Initialize(absl::GetFlag(FLAGS_sample_rate_hz), detection_rate_hz,
                         absl::GetFlag(FLAGS_num_channels));
 

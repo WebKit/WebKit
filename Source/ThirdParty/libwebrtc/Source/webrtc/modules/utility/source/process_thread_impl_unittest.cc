@@ -37,9 +37,9 @@ static const int kEventWaitTimeout = 500;
 
 class MockModule : public Module {
  public:
-  MOCK_METHOD0(TimeUntilNextProcess, int64_t());
-  MOCK_METHOD0(Process, void());
-  MOCK_METHOD1(ProcessThreadAttached, void(ProcessThread*));
+  MOCK_METHOD(int64_t, TimeUntilNextProcess, (), (override));
+  MOCK_METHOD(void, Process, (), (override));
+  MOCK_METHOD(void, ProcessThreadAttached, (ProcessThread*), (override));
 };
 
 class RaiseEventTask : public QueuedTask {

@@ -54,6 +54,7 @@ struct ConnectionInfo {
 
   size_t recv_total_bytes;     // Total bytes received on this connection.
   size_t recv_bytes_second;    // Bps over the last measurement interval.
+  size_t packets_received;     // Number of packets that were received.
   size_t recv_ping_requests;   // Number of STUN ping request received.
   size_t recv_ping_responses;  // Number of STUN ping response received.
   Candidate local_candidate;   // The local candidate for this connection.

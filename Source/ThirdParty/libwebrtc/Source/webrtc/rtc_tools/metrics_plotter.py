@@ -24,6 +24,7 @@ Where json data has the following format:
 }
 """
 
+import argparse
 import fileinput
 import json
 import matplotlib.pyplot as plt
@@ -38,8 +39,19 @@ MICROSECONDS_IN_SECOND = 1e6
 
 
 def main():
+  parser = argparse.ArgumentParser(
+      description='Plots metrics exported from WebRTC perf tests')
+  parser.add_argument('-m', '--metrics', type=str, nargs='*',
+      help='Metrics to plot. If nothing specified then will plot all available')
+  args = parser.parse_args()
+
+  metrics_to_plot = set()
+  if args.metrics:
+    for metric in args.metrics:
+      metrics_to_plot.add(metric)
+
   metrics = []
-  for line in fileinput.input():
+  for line in fileinput.input('-'):
     line = line.strip()
     if line.startswith(LINE_PREFIX):
       line = line.replace(LINE_PREFIX, '')
@@ -48,13 +60,18 @@ def main():
       print line
 
   for metric in metrics:
+    if len(metrics_to_plot) > 0 and metric[GRAPH_NAME] not in metrics_to_plot:
+      continue
+
     figure = plt.figure()
     figure.canvas.set_window_title(metric[TRACE_NAME])
 
     x_values = []
     y_values = []
     start_x = None
-    for sample in metric['samples']:
+    samples = metric['samples']
+    samples.sort(key=lambda x: x['time'])
+    for sample in samples:
       if start_x is None:
         start_x = sample['time']
       # Time is us, we want to show it in seconds.

@@ -108,6 +108,15 @@ class RtpPacketToSend : public RtpPacket {
   void set_is_key_frame(bool is_key_frame) { is_key_frame_ = is_key_frame; }
   bool is_key_frame() const { return is_key_frame_; }
 
+  // Indicates if packets should be protected by FEC (Forward Error Correction).
+  void set_fec_protect_packet(bool protect) { fec_protect_packet_ = protect; }
+  bool fec_protect_packet() const { return fec_protect_packet_; }
+
+  // Indicates if packet is using RED encapsulation, in accordance with
+  // https://tools.ietf.org/html/rfc2198
+  void set_is_red(bool is_red) { is_red_ = is_red; }
+  bool is_red() const { return is_red_; }
+
  private:
   int64_t capture_time_ms_ = 0;
   absl::optional<RtpPacketMediaType> packet_type_;
@@ -116,6 +125,8 @@ class RtpPacketToSend : public RtpPacket {
   std::vector<uint8_t> application_data_;
   bool is_first_packet_of_frame_ = false;
   bool is_key_frame_ = false;
+  bool fec_protect_packet_ = false;
+  bool is_red_ = false;
 };
 
 }  // namespace webrtc

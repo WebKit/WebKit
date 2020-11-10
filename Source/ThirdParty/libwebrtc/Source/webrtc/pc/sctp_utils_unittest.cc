@@ -45,6 +45,13 @@ class SctpUtilsTest : public ::testing::Test {
     }
 
     ASSERT_TRUE(buffer.ReadUInt16(&priority));
+    if (config.priority) {
+      // Exact values are checked by round-trip conversion, but
+      // all values defined are greater than zero.
+      EXPECT_GT(priority, 0);
+    } else {
+      EXPECT_EQ(priority, 0);
+    }
 
     ASSERT_TRUE(buffer.ReadUInt32(&reliability));
     if (config.maxRetransmits || config.maxRetransmitTime) {
@@ -134,6 +141,27 @@ TEST_F(SctpUtilsTest, WriteParseOpenMessageWithMaxRetransmits) {
   EXPECT_EQ(config.ordered, output_config.ordered);
   EXPECT_EQ(config.maxRetransmits, output_config.maxRetransmits);
   EXPECT_FALSE(output_config.maxRetransmitTime);
+}
+
+TEST_F(SctpUtilsTest, WriteParseOpenMessageWithPriority) {
+  webrtc::DataChannelInit config;
+  std::string label = "abc";
+  config.protocol = "y";
+  config.priority = webrtc::Priority::kVeryLow;
+
+  rtc::CopyOnWriteBuffer packet;
+  ASSERT_TRUE(webrtc::WriteDataChannelOpenMessage(label, config, &packet));
+
+  VerifyOpenMessageFormat(packet, label, config);
+
+  std::string output_label;
+  webrtc::DataChannelInit output_config;
+  ASSERT_TRUE(webrtc::ParseDataChannelOpenMessage(packet, &output_label,
+                                                  &output_config));
+
+  EXPECT_EQ(label, output_label);
+  ASSERT_TRUE(output_config.priority);
+  EXPECT_EQ(*config.priority, *output_config.priority);
 }
 
 TEST_F(SctpUtilsTest, WriteParseAckMessage) {

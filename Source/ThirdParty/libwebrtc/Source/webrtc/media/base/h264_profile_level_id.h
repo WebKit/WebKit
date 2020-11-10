@@ -15,11 +15,18 @@
 #include <string>
 
 #include "absl/types/optional.h"
-#include "common_types.h"  // NOLINT(build/include)
 #include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
 namespace H264 {
+
+enum Profile {
+  kProfileConstrainedBaseline,
+  kProfileBaseline,
+  kProfileMain,
+  kProfileConstrainedHigh,
+  kProfileHigh,
+};
 
 // Map containting SDP codec parameters.
 typedef std::map<std::string, std::string> CodecParameterMap;

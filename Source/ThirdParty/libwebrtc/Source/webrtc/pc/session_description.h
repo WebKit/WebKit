@@ -26,6 +26,7 @@
 #include "api/rtp_parameters.h"
 #include "api/rtp_transceiver_interface.h"
 #include "media/base/media_channel.h"
+#include "media/base/media_constants.h"
 #include "media/base/stream_params.h"
 #include "p2p/base/transport_description.h"
 #include "p2p/base/transport_info.h"
@@ -87,9 +88,6 @@ class MediaContentDescription {
 
   virtual bool has_codecs() const = 0;
 
-  RTC_DEPRECATED virtual MediaContentDescription* Copy() const {
-    return CloneInternal();
-  }
   // Copy operator that returns an unique_ptr.
   // Not a virtual function.
   // If a type-specific variant of Clone() is desired, override it, or
@@ -129,6 +127,10 @@ class MediaContentDescription {
 
   virtual int bandwidth() const { return bandwidth_; }
   virtual void set_bandwidth(int bandwidth) { bandwidth_ = bandwidth; }
+  virtual std::string bandwidth_type() const { return bandwidth_type_; }
+  virtual void set_bandwidth_type(std::string bandwidth_type) {
+    bandwidth_type_ = bandwidth_type;
+  }
 
   virtual const std::vector<CryptoParams>& cryptos() const { return cryptos_; }
   virtual void AddCrypto(const CryptoParams& params) {
@@ -148,13 +150,6 @@ class MediaContentDescription {
   }
   virtual void AddRtpHeaderExtension(const webrtc::RtpExtension& ext) {
     rtp_header_extensions_.push_back(ext);
-    rtp_header_extensions_set_ = true;
-  }
-  virtual void AddRtpHeaderExtension(const cricket::RtpHeaderExtension& ext) {
-    webrtc::RtpExtension webrtc_extension;
-    webrtc_extension.uri = ext.uri;
-    webrtc_extension.id = ext.id;
-    rtp_header_extensions_.push_back(webrtc_extension);
     rtp_header_extensions_set_ = true;
   }
   virtual void ClearRtpHeaderExtensions() {
@@ -256,18 +251,12 @@ class MediaContentDescription {
     receive_rids_ = rids;
   }
 
-  virtual const absl::optional<std::string>& alt_protocol() const {
-    return alt_protocol_;
-  }
-  virtual void set_alt_protocol(const absl::optional<std::string>& protocol) {
-    alt_protocol_ = protocol;
-  }
-
  protected:
   bool rtcp_mux_ = false;
   bool rtcp_reduced_size_ = false;
   bool remote_estimate_ = false;
   int bandwidth_ = kAutoBandwidth;
+  std::string bandwidth_type_ = kApplicationSpecificBandwidth;
   std::string protocol_;
   std::vector<CryptoParams> cryptos_;
   std::vector<webrtc::RtpExtension> rtp_header_extensions_;
@@ -285,18 +274,12 @@ class MediaContentDescription {
   SimulcastDescription simulcast_;
   std::vector<RidDescription> receive_rids_;
 
-  absl::optional<std::string> alt_protocol_;
-
  private:
   // Copy function that returns a raw pointer. Caller will assert ownership.
   // Should only be called by the Clone() function. Must be implemented
   // by each final subclass.
   virtual MediaContentDescription* CloneInternal() const = 0;
 };
-
-// TODO(bugs.webrtc.org/8620): Remove this alias once downstream projects have
-// updated.
-using ContentDescription = MediaContentDescription;
 
 template <class C>
 class MediaContentDescriptionImpl : public MediaContentDescription {
@@ -349,9 +332,6 @@ class AudioContentDescription : public MediaContentDescriptionImpl<AudioCodec> {
  public:
   AudioContentDescription() {}
 
-  RTC_DEPRECATED virtual AudioContentDescription* Copy() const {
-    return CloneInternal();
-  }
   virtual MediaType type() const { return MEDIA_TYPE_AUDIO; }
   virtual AudioContentDescription* as_audio() { return this; }
   virtual const AudioContentDescription* as_audio() const { return this; }
@@ -364,9 +344,6 @@ class AudioContentDescription : public MediaContentDescriptionImpl<AudioCodec> {
 
 class VideoContentDescription : public MediaContentDescriptionImpl<VideoCodec> {
  public:
-  RTC_DEPRECATED virtual VideoContentDescription* Copy() const {
-    return CloneInternal();
-  }
   virtual MediaType type() const { return MEDIA_TYPE_VIDEO; }
   virtual VideoContentDescription* as_video() { return this; }
   virtual const VideoContentDescription* as_video() const { return this; }
@@ -437,10 +414,6 @@ enum class MediaProtocolType {
   kSctp  // Section will use the SCTP protocol (e.g., for a data channel).
          // https://tools.ietf.org/html/rfc4960
 };
-
-// TODO(bugs.webrtc.org/8620): Remove once downstream projects have updated.
-constexpr MediaProtocolType NS_JINGLE_RTP = MediaProtocolType::kRtp;
-constexpr MediaProtocolType NS_JINGLE_DRAFT_SCTP = MediaProtocolType::kSctp;
 
 // Represents a session description section. Most information about the section
 // is stored in the description, which is a subclass of MediaContentDescription.

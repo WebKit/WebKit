@@ -32,7 +32,7 @@ namespace {
 EchoCanceller3Config CreateConfigForTest(float default_decay) {
   EchoCanceller3Config cfg;
   cfg.ep_strength.default_len = default_decay;
-  cfg.filter.main.length_blocks = 40;
+  cfg.filter.refined.length_blocks = 40;
   return cfg;
 }
 
@@ -47,11 +47,11 @@ class ReverbModelEstimatorTest {
         estimated_decay_(default_decay),
         h_(num_capture_channels,
            std::vector<float>(
-               aec3_config_.filter.main.length_blocks * kBlockSize,
+               aec3_config_.filter.refined.length_blocks * kBlockSize,
                0.f)),
         H2_(num_capture_channels,
             std::vector<std::array<float, kFftLengthBy2Plus1>>(
-                aec3_config_.filter.main.length_blocks)),
+                aec3_config_.filter.refined.length_blocks)),
         quality_linear_(num_capture_channels, 1.0f) {
     CreateImpulseResponseWithDecay();
   }
@@ -78,10 +78,10 @@ void ReverbModelEstimatorTest::CreateImpulseResponseWithDecay() {
   const Aec3Fft fft;
   for (const auto& h_k : h_) {
     RTC_DCHECK_EQ(h_k.size(),
-                  aec3_config_.filter.main.length_blocks * kBlockSize);
+                  aec3_config_.filter.refined.length_blocks * kBlockSize);
   }
   for (const auto& H2_k : H2_) {
-    RTC_DCHECK_EQ(H2_k.size(), aec3_config_.filter.main.length_blocks);
+    RTC_DCHECK_EQ(H2_k.size(), aec3_config_.filter.refined.length_blocks);
   }
   RTC_DCHECK_EQ(kFilterDelayBlocks, 2);
 

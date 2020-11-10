@@ -1,3 +1,14 @@
+2020-11-10  Youenn Fablet  <youenn@apple.com>
+
+        Update WebRTC liwebrtc to M87
+        https://bugs.webkit.org/show_bug.cgi?id=218436
+
+        Reviewed by Eric Carlson.
+
+        We now have to explicitly support all packetization modes, which is similar to what Chrome is doing.
+
+        * webrtc/h264-packetization-mode.html:
+
 2020-11-10  Rob Buis  <rbuis@igalia.com>
 
         Parse aspect-ratio CSS property

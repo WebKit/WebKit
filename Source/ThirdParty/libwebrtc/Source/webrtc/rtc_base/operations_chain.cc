@@ -49,6 +49,17 @@ OperationsChain::~OperationsChain() {
   RTC_DCHECK(chained_operations_.empty());
 }
 
+void OperationsChain::SetOnChainEmptyCallback(
+    std::function<void()> on_chain_empty_callback) {
+  RTC_DCHECK_RUN_ON(&sequence_checker_);
+  on_chain_empty_callback_ = std::move(on_chain_empty_callback);
+}
+
+bool OperationsChain::IsEmpty() const {
+  RTC_DCHECK_RUN_ON(&sequence_checker_);
+  return chained_operations_.empty();
+}
+
 std::function<void()> OperationsChain::CreateOperationsChainCallback() {
   return [handle = rtc::scoped_refptr<CallbackHandle>(
               new CallbackHandle(this))]() { handle->OnOperationComplete(); };
@@ -59,9 +70,12 @@ void OperationsChain::OnOperationComplete() {
   // The front element is the operation that just completed, remove it.
   RTC_DCHECK(!chained_operations_.empty());
   chained_operations_.pop();
-  // If there are any other operations chained, execute the next one.
+  // If there are any other operations chained, execute the next one. Otherwise,
+  // invoke the "on chain empty" callback if it has been set.
   if (!chained_operations_.empty()) {
     chained_operations_.front()->Run();
+  } else if (on_chain_empty_callback_.has_value()) {
+    on_chain_empty_callback_.value()();
   }
 }
 

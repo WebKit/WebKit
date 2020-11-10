@@ -19,6 +19,8 @@ rtc_library("generic_frame_descriptor") {
     "../../api/transport/rtp:dependency_descriptor",
     "../../api/video:video_codec_constants",
     "../../rtc_base:checks",
+  ]
+  absl_deps = [
     "//third_party/abseil-cpp/absl/container:inlined_vector",
     "//third_party/abseil-cpp/absl/strings",
     "//third_party/abseil-cpp/absl/types:optional",

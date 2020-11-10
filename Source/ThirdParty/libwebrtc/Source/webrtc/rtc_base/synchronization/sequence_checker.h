@@ -10,9 +10,11 @@
 #ifndef RTC_BASE_SYNCHRONIZATION_SEQUENCE_CHECKER_H_
 #define RTC_BASE_SYNCHRONIZATION_SEQUENCE_CHECKER_H_
 
+#include <type_traits>
+
 #include "api/task_queue/task_queue_base.h"
-#include "rtc_base/critical_section.h"
 #include "rtc_base/platform_thread_types.h"
+#include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/system/rtc_export.h"
 #include "rtc_base/thread_annotations.h"
 
@@ -34,8 +36,13 @@ class RTC_EXPORT SequenceCheckerImpl {
   // used exclusively on another thread.
   void Detach();
 
+  // Returns a string that is formatted to match with the error string printed
+  // by RTC_CHECK() when a condition is not met.
+  // This is used in conjunction with the RTC_DCHECK_RUN_ON() macro.
+  std::string ExpectationToString() const;
+
  private:
-  rtc::CriticalSection lock_;
+  mutable Mutex lock_;
   // These are mutable so that IsCurrent can set them.
   mutable bool attached_ RTC_GUARDED_BY(lock_);
   mutable rtc::PlatformThreadRef valid_thread_ RTC_GUARDED_BY(lock_);
@@ -162,8 +169,19 @@ class RTC_SCOPED_LOCKABLE SequenceCheckerScope {
 #define RTC_RUN_ON(x) \
   RTC_THREAD_ANNOTATION_ATTRIBUTE__(exclusive_locks_required(x))
 
+namespace webrtc {
+std::string ExpectationToString(const webrtc::SequenceChecker* checker);
+
+// Catch-all implementation for types other than explicitly supported above.
+template <typename ThreadLikeObject>
+std::string ExpectationToString(const ThreadLikeObject*) {
+  return std::string();
+}
+
+}  // namespace webrtc
+
 #define RTC_DCHECK_RUN_ON(x)                                              \
   webrtc::webrtc_seq_check_impl::SequenceCheckerScope seq_check_scope(x); \
-  RTC_DCHECK((x)->IsCurrent())
+  RTC_DCHECK((x)->IsCurrent()) << webrtc::ExpectationToString(x)
 
 #endif  // RTC_BASE_SYNCHRONIZATION_SEQUENCE_CHECKER_H_

@@ -27,112 +27,171 @@ class MockPeerConnectionInterface
     : public rtc::RefCountedObject<webrtc::PeerConnectionInterface> {
  public:
   // PeerConnectionInterface
-  MOCK_METHOD0(local_streams, rtc::scoped_refptr<StreamCollectionInterface>());
-  MOCK_METHOD0(remote_streams, rtc::scoped_refptr<StreamCollectionInterface>());
-  MOCK_METHOD1(AddStream, bool(MediaStreamInterface*));
-  MOCK_METHOD1(RemoveStream, void(MediaStreamInterface*));
-  MOCK_METHOD2(AddTrack,
-               RTCErrorOr<rtc::scoped_refptr<RtpSenderInterface>>(
-                   rtc::scoped_refptr<MediaStreamTrackInterface>,
-                   const std::vector<std::string>&));
-  MOCK_METHOD2(AddTrack,
-               rtc::scoped_refptr<RtpSenderInterface>(
-                   MediaStreamTrackInterface*,
-                   std::vector<MediaStreamInterface*>));
-  MOCK_METHOD1(RemoveTrack, bool(RtpSenderInterface*));
-  MOCK_METHOD1(RemoveTrackNew,
-               RTCError(rtc::scoped_refptr<RtpSenderInterface>));
-  MOCK_METHOD1(AddTransceiver,
-               RTCErrorOr<rtc::scoped_refptr<RtpTransceiverInterface>>(
-                   rtc::scoped_refptr<MediaStreamTrackInterface>));
-  MOCK_METHOD2(AddTransceiver,
-               RTCErrorOr<rtc::scoped_refptr<RtpTransceiverInterface>>(
-                   rtc::scoped_refptr<MediaStreamTrackInterface>,
-                   const RtpTransceiverInit&));
-  MOCK_METHOD1(AddTransceiver,
-               RTCErrorOr<rtc::scoped_refptr<RtpTransceiverInterface>>(
-                   cricket::MediaType));
-  MOCK_METHOD2(AddTransceiver,
-               RTCErrorOr<rtc::scoped_refptr<RtpTransceiverInterface>>(
-                   cricket::MediaType,
-                   const RtpTransceiverInit&));
-  MOCK_METHOD2(CreateSender,
-               rtc::scoped_refptr<RtpSenderInterface>(const std::string&,
-                                                      const std::string&));
-  MOCK_CONST_METHOD0(GetSenders,
-                     std::vector<rtc::scoped_refptr<RtpSenderInterface>>());
-  MOCK_CONST_METHOD0(GetReceivers,
-                     std::vector<rtc::scoped_refptr<RtpReceiverInterface>>());
-  MOCK_CONST_METHOD0(
-      GetTransceivers,
-      std::vector<rtc::scoped_refptr<RtpTransceiverInterface>>());
-  MOCK_METHOD3(GetStats,
-               bool(StatsObserver*,
-                    MediaStreamTrackInterface*,
-                    StatsOutputLevel));
-  MOCK_METHOD1(GetStats, void(RTCStatsCollectorCallback*));
-  MOCK_METHOD2(GetStats,
-               void(rtc::scoped_refptr<RtpSenderInterface>,
-                    rtc::scoped_refptr<RTCStatsCollectorCallback>));
-  MOCK_METHOD2(GetStats,
-               void(rtc::scoped_refptr<RtpReceiverInterface>,
-                    rtc::scoped_refptr<RTCStatsCollectorCallback>));
-  MOCK_METHOD0(ClearStatsCache, void());
-  MOCK_CONST_METHOD0(GetSctpTransport,
-                     rtc::scoped_refptr<SctpTransportInterface>());
-  MOCK_METHOD2(
-      CreateDataChannel,
-      rtc::scoped_refptr<DataChannelInterface>(const std::string&,
-                                               const DataChannelInit*));
-  MOCK_CONST_METHOD0(local_description, const SessionDescriptionInterface*());
-  MOCK_CONST_METHOD0(remote_description, const SessionDescriptionInterface*());
-  MOCK_CONST_METHOD0(current_local_description,
-                     const SessionDescriptionInterface*());
-  MOCK_CONST_METHOD0(current_remote_description,
-                     const SessionDescriptionInterface*());
-  MOCK_CONST_METHOD0(pending_local_description,
-                     const SessionDescriptionInterface*());
-  MOCK_CONST_METHOD0(pending_remote_description,
-                     const SessionDescriptionInterface*());
-  MOCK_METHOD0(RestartIce, void());
-  MOCK_METHOD2(CreateOffer,
-               void(CreateSessionDescriptionObserver*,
-                    const RTCOfferAnswerOptions&));
-  MOCK_METHOD2(CreateAnswer,
-               void(CreateSessionDescriptionObserver*,
-                    const RTCOfferAnswerOptions&));
-  MOCK_METHOD2(SetLocalDescription,
-               void(SetSessionDescriptionObserver*,
-                    SessionDescriptionInterface*));
-  MOCK_METHOD2(SetRemoteDescription,
-               void(SetSessionDescriptionObserver*,
-                    SessionDescriptionInterface*));
-  MOCK_METHOD2(SetRemoteDescription,
-               void(std::unique_ptr<SessionDescriptionInterface>,
-                    rtc::scoped_refptr<SetRemoteDescriptionObserverInterface>));
-  MOCK_METHOD0(GetConfiguration, PeerConnectionInterface::RTCConfiguration());
-  MOCK_METHOD1(SetConfiguration,
-               RTCError(const PeerConnectionInterface::RTCConfiguration&));
-  MOCK_METHOD1(AddIceCandidate, bool(const IceCandidateInterface*));
-  MOCK_METHOD1(RemoveIceCandidates,
-               bool(const std::vector<cricket::Candidate>&));
-  MOCK_METHOD1(SetBitrate, RTCError(const BitrateSettings&));
-  MOCK_METHOD1(SetBitrate, RTCError(const BitrateParameters&));
-  MOCK_METHOD1(SetAudioPlayout, void(bool));
-  MOCK_METHOD1(SetAudioRecording, void(bool));
-  MOCK_METHOD1(LookupDtlsTransportByMid,
-               rtc::scoped_refptr<DtlsTransportInterface>(const std::string&));
-  MOCK_METHOD0(signaling_state, SignalingState());
-  MOCK_METHOD0(ice_connection_state, IceConnectionState());
-  MOCK_METHOD0(standardized_ice_connection_state, IceConnectionState());
-  MOCK_METHOD0(peer_connection_state, PeerConnectionState());
-  MOCK_METHOD0(ice_gathering_state, IceGatheringState());
-  MOCK_METHOD0(can_trickle_ice_candidates, absl::optional<bool>());
-  MOCK_METHOD2(StartRtcEventLog,
-               bool(std::unique_ptr<RtcEventLogOutput>, int64_t));
-  MOCK_METHOD1(StartRtcEventLog, bool(std::unique_ptr<RtcEventLogOutput>));
-  MOCK_METHOD0(StopRtcEventLog, void());
-  MOCK_METHOD0(Close, void());
+  MOCK_METHOD(rtc::scoped_refptr<StreamCollectionInterface>,
+              local_streams,
+              (),
+              (override));
+  MOCK_METHOD(rtc::scoped_refptr<StreamCollectionInterface>,
+              remote_streams,
+              (),
+              (override));
+  MOCK_METHOD(bool, AddStream, (MediaStreamInterface*), (override));
+  MOCK_METHOD(void, RemoveStream, (MediaStreamInterface*), (override));
+  MOCK_METHOD(RTCErrorOr<rtc::scoped_refptr<RtpSenderInterface>>,
+              AddTrack,
+              (rtc::scoped_refptr<MediaStreamTrackInterface>,
+               const std::vector<std::string>&),
+              (override));
+  MOCK_METHOD(bool, RemoveTrack, (RtpSenderInterface*), (override));
+  MOCK_METHOD(RTCError,
+              RemoveTrackNew,
+              (rtc::scoped_refptr<RtpSenderInterface>),
+              (override));
+  MOCK_METHOD(RTCErrorOr<rtc::scoped_refptr<RtpTransceiverInterface>>,
+              AddTransceiver,
+              (rtc::scoped_refptr<MediaStreamTrackInterface>),
+              (override));
+  MOCK_METHOD(RTCErrorOr<rtc::scoped_refptr<RtpTransceiverInterface>>,
+              AddTransceiver,
+              (rtc::scoped_refptr<MediaStreamTrackInterface>,
+               const RtpTransceiverInit&),
+              (override));
+  MOCK_METHOD(RTCErrorOr<rtc::scoped_refptr<RtpTransceiverInterface>>,
+              AddTransceiver,
+              (cricket::MediaType),
+              (override));
+  MOCK_METHOD(RTCErrorOr<rtc::scoped_refptr<RtpTransceiverInterface>>,
+              AddTransceiver,
+              (cricket::MediaType, const RtpTransceiverInit&),
+              (override));
+  MOCK_METHOD(rtc::scoped_refptr<RtpSenderInterface>,
+              CreateSender,
+              (const std::string&, const std::string&),
+              (override));
+  MOCK_METHOD(std::vector<rtc::scoped_refptr<RtpSenderInterface>>,
+              GetSenders,
+              (),
+              (const override));
+  MOCK_METHOD(std::vector<rtc::scoped_refptr<RtpReceiverInterface>>,
+              GetReceivers,
+              (),
+              (const override));
+  MOCK_METHOD(std::vector<rtc::scoped_refptr<RtpTransceiverInterface>>,
+              GetTransceivers,
+              (),
+              (const override));
+  MOCK_METHOD(bool,
+              GetStats,
+              (StatsObserver*, MediaStreamTrackInterface*, StatsOutputLevel),
+              (override));
+  MOCK_METHOD(void, GetStats, (RTCStatsCollectorCallback*), (override));
+  MOCK_METHOD(void,
+              GetStats,
+              (rtc::scoped_refptr<RtpSenderInterface>,
+               rtc::scoped_refptr<RTCStatsCollectorCallback>),
+              (override));
+  MOCK_METHOD(void,
+              GetStats,
+              (rtc::scoped_refptr<RtpReceiverInterface>,
+               rtc::scoped_refptr<RTCStatsCollectorCallback>),
+              (override));
+  MOCK_METHOD(void, ClearStatsCache, (), (override));
+  MOCK_METHOD(rtc::scoped_refptr<SctpTransportInterface>,
+              GetSctpTransport,
+              (),
+              (const override));
+  MOCK_METHOD(rtc::scoped_refptr<DataChannelInterface>,
+              CreateDataChannel,
+              (const std::string&, const DataChannelInit*),
+              (override));
+  MOCK_METHOD(const SessionDescriptionInterface*,
+              local_description,
+              (),
+              (const override));
+  MOCK_METHOD(const SessionDescriptionInterface*,
+              remote_description,
+              (),
+              (const override));
+  MOCK_METHOD(const SessionDescriptionInterface*,
+              current_local_description,
+              (),
+              (const override));
+  MOCK_METHOD(const SessionDescriptionInterface*,
+              current_remote_description,
+              (),
+              (const override));
+  MOCK_METHOD(const SessionDescriptionInterface*,
+              pending_local_description,
+              (),
+              (const override));
+  MOCK_METHOD(const SessionDescriptionInterface*,
+              pending_remote_description,
+              (),
+              (const override));
+  MOCK_METHOD(void, RestartIce, (), (override));
+  MOCK_METHOD(void,
+              CreateOffer,
+              (CreateSessionDescriptionObserver*, const RTCOfferAnswerOptions&),
+              (override));
+  MOCK_METHOD(void,
+              CreateAnswer,
+              (CreateSessionDescriptionObserver*, const RTCOfferAnswerOptions&),
+              (override));
+  MOCK_METHOD(void,
+              SetLocalDescription,
+              (SetSessionDescriptionObserver*, SessionDescriptionInterface*),
+              (override));
+  MOCK_METHOD(void,
+              SetRemoteDescription,
+              (SetSessionDescriptionObserver*, SessionDescriptionInterface*),
+              (override));
+  MOCK_METHOD(void,
+              SetRemoteDescription,
+              (std::unique_ptr<SessionDescriptionInterface>,
+               rtc::scoped_refptr<SetRemoteDescriptionObserverInterface>),
+              (override));
+  MOCK_METHOD(PeerConnectionInterface::RTCConfiguration,
+              GetConfiguration,
+              (),
+              (override));
+  MOCK_METHOD(RTCError,
+              SetConfiguration,
+              (const PeerConnectionInterface::RTCConfiguration&),
+              (override));
+  MOCK_METHOD(bool,
+              AddIceCandidate,
+              (const IceCandidateInterface*),
+              (override));
+  MOCK_METHOD(bool,
+              RemoveIceCandidates,
+              (const std::vector<cricket::Candidate>&),
+              (override));
+  MOCK_METHOD(RTCError, SetBitrate, (const BitrateSettings&), (override));
+  MOCK_METHOD(void, SetAudioPlayout, (bool), (override));
+  MOCK_METHOD(void, SetAudioRecording, (bool), (override));
+  MOCK_METHOD(rtc::scoped_refptr<DtlsTransportInterface>,
+              LookupDtlsTransportByMid,
+              (const std::string&),
+              (override));
+  MOCK_METHOD(SignalingState, signaling_state, (), (override));
+  MOCK_METHOD(IceConnectionState, ice_connection_state, (), (override));
+  MOCK_METHOD(IceConnectionState,
+              standardized_ice_connection_state,
+              (),
+              (override));
+  MOCK_METHOD(PeerConnectionState, peer_connection_state, (), (override));
+  MOCK_METHOD(IceGatheringState, ice_gathering_state, (), (override));
+  MOCK_METHOD(absl::optional<bool>, can_trickle_ice_candidates, (), (override));
+  MOCK_METHOD(bool,
+              StartRtcEventLog,
+              (std::unique_ptr<RtcEventLogOutput>, int64_t),
+              (override));
+  MOCK_METHOD(bool,
+              StartRtcEventLog,
+              (std::unique_ptr<RtcEventLogOutput>),
+              (override));
+  MOCK_METHOD(void, StopRtcEventLog, (), (override));
+  MOCK_METHOD(void, Close, (), (override));
 };
 
 static_assert(!std::is_abstract<MockPeerConnectionInterface>::value, "");
