@@ -54,6 +54,7 @@ private:
 
     Ref<WorkQueue> m_workQueue;
     RunLoop::Timer<MockAudioDestinationCocoa> m_timer;
+    Function<void(Function<void()>&&)> m_dispatchToRenderThread;
     uint32_t m_numberOfFramesToProcess { 384 };
 };
 

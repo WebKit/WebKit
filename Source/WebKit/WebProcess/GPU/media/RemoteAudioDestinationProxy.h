@@ -87,7 +87,6 @@ private:
 
 #if PLATFORM(COCOA)
     void storageChanged(SharedMemory*) final;
-    void renderOnRenderingThead(size_t framesToRender) final;
 #endif
 
     // IPC::MessageReceiver
@@ -105,7 +104,6 @@ private:
     std::unique_ptr<WebCore::CARingBuffer> m_ringBuffer;
     std::unique_ptr<WebCore::WebAudioBufferList> m_audioBufferList;
     uint64_t m_currentFrame { 0 };
-    WTF::Function<void(uint64_t, uint64_t)> m_renderCompletionHandler;
 #endif
 
     Function<void(Function<void()>&&)> m_dispatchToRenderThread;

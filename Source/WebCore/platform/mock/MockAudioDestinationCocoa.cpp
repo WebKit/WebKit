@@ -48,6 +48,12 @@ MockAudioDestinationCocoa::~MockAudioDestinationCocoa() = default;
 void MockAudioDestinationCocoa::start(Function<void(Function<void()>&&)>&& dispatchToRenderThread, CompletionHandler<void(bool)>&& completionHandler)
 {
     m_dispatchToRenderThread = WTFMove(dispatchToRenderThread);
+    if (!m_dispatchToRenderThread) {
+        m_dispatchToRenderThread = [this](Function<void()>&& function) {
+            m_workQueue->dispatch(WTFMove(function));
+        };
+    }
+
     m_timer.startRepeating(Seconds { m_numberOfFramesToProcess / sampleRate() });
     setIsPlaying(true);
 
@@ -61,7 +67,7 @@ void MockAudioDestinationCocoa::stop(CompletionHandler<void(bool)>&& completionH
     m_timer.stop();
     setIsPlaying(false);
 
-    m_workQueue->dispatch([completionHandler = WTFMove(completionHandler)]() mutable {
+    m_dispatchToRenderThread([completionHandler = WTFMove(completionHandler)]() mutable {
         callOnMainThread([completionHandler = WTFMove(completionHandler)]() mutable {
             completionHandler(true);
         });
@@ -70,7 +76,7 @@ void MockAudioDestinationCocoa::stop(CompletionHandler<void(bool)>&& completionH
 
 void MockAudioDestinationCocoa::tick()
 {
-    m_workQueue->dispatch([this, sampleRate = sampleRate(), numberOfFramesToProcess = m_numberOfFramesToProcess] {
+    m_dispatchToRenderThread([this, sampleRate = sampleRate(), numberOfFramesToProcess = m_numberOfFramesToProcess] {
         AudioStreamBasicDescription streamFormat;
         getAudioStreamBasicDescription(streamFormat);
 

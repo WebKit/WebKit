@@ -54,7 +54,6 @@ public:
 protected:
     WEBCORE_EXPORT bool hasEnoughFrames(UInt32 numberOfFrames) const;
     WEBCORE_EXPORT OSStatus render(double sampleTime, uint64_t hostTime, UInt32 numberOfFrames, AudioBufferList* ioData) final;
-    WEBCORE_EXPORT virtual void renderOnRenderingThead(size_t framesToRender);
 
     WEBCORE_EXPORT void setIsPlaying(bool);
     bool isPlaying() final { return m_isPlaying; }
@@ -65,13 +64,13 @@ protected:
 
     WEBCORE_EXPORT void getAudioStreamBasicDescription(AudioStreamBasicDescription&);
 
-    Function<void(Function<void()>&&)> m_dispatchToRenderThread;
-
 private:
     friend Ref<AudioDestination> AudioDestination::create(AudioIOCallback&, const String&, unsigned, unsigned, float);
 
     void start(Function<void(Function<void()>&&)>&&, CompletionHandler<void(bool)>&&) override;
     void stop(CompletionHandler<void(bool)>&&) override;
+
+    void renderOnRenderingThead(size_t framesToRender);
 
     // AudioSourceProvider.
     WEBCORE_EXPORT void provideInput(AudioBus*, size_t framesToProcess) final;
@@ -92,6 +91,8 @@ private:
 
     std::unique_ptr<MultiChannelResampler> m_resampler;
     AudioIOPosition m_outputTimestamp;
+
+    Function<void(Function<void()>&&)> m_dispatchToRenderThread;
 
     float m_contextSampleRate;
 
