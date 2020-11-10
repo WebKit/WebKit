@@ -1,3 +1,17 @@
+2020-11-10  Said Abou-Hallawa  <said@apple.com>
+
+        [macCatalyst] Fix various build breaks
+        https://bugs.webkit.org/show_bug.cgi?id=218771
+
+        Reviewed by Tim Horton.
+
+        Use 'BOOL' instead of 'bool' for the functions arguments to resolve the 
+        conflict with _setBoolValue which takes 'BOOL'.
+
+        * WebView/WebPreferences.mm:
+        (-[WebPreferences setAVKitEnabled:]):
+        (-[WebPreferences setNetworkDataUsageTrackingEnabled:]):
+
 2020-11-09  Said Abou-Hallawa  <said@apple.com>
 
         [GPU Process] Control the life cycle of the platform image by a new class named NativeImage

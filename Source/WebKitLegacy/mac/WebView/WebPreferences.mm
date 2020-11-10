@@ -2064,7 +2064,7 @@ static NSString *classIBCreatorID = nil;
     return [self _boolValueForKey:WebKitAVKitEnabled];
 }
 
-- (void)setAVKitEnabled:(bool)flag
+- (void)setAVKitEnabled:(BOOL)flag
 {
 #if HAVE(AVKIT)
     [self _setBoolValue:flag forKey:WebKitAVKitEnabled];
@@ -2076,7 +2076,7 @@ static NSString *classIBCreatorID = nil;
     return [self _boolValueForKey:WebKitNetworkDataUsageTrackingEnabledPreferenceKey];
 }
 
-- (void)setNetworkDataUsageTrackingEnabled:(bool)trackingEnabled
+- (void)setNetworkDataUsageTrackingEnabled:(BOOL)trackingEnabled
 {
     [self _setBoolValue:trackingEnabled forKey:WebKitNetworkDataUsageTrackingEnabledPreferenceKey];
 }

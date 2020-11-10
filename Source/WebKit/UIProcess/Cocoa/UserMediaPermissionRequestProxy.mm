@@ -122,7 +122,7 @@ void UserMediaPermissionRequestProxy::doDefaultAction()
 
 namespace WebKit {
 
-void UserMediaPermissionRequestProxy::doDefaultAction()
+NO_RETURN_DUE_TO_ASSERT void UserMediaPermissionRequestProxy::doDefaultAction()
 {
     ASSERT_NOT_REACHED();
 }

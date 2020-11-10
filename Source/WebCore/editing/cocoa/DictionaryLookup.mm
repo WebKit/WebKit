@@ -246,9 +246,9 @@ SOFT_LINK_CLASS_OPTIONAL(RevealCore, RVSelection)
     
     for (NSValue *v in rects) {
         CGRect imgSrcRect = [_view convertRect:v.CGRectValue fromView:nil];
-        RetainPtr<CGImageRef> imageRef = _image->nativeImage();
+        auto nativeImage = _image->nativeImage();
         CGRect origin = CGRectMake(imgSrcRect.origin.x - highlightRect.origin.x, imgSrcRect.origin.y - highlightRect.origin.y, highlightRect.size.width, highlightRect.size.height);
-        CGContextDrawImage(context, origin, imageRef.get());
+        CGContextDrawImage(context, origin, nativeImage->platformImage().get());
     }
 }
 
