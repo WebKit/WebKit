@@ -254,19 +254,21 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const Line::Run
         auto logicalLeft = horizontalAligmentOffset + run.logicalLeft();
         if (run.isBox()) {
             auto& inlineLevelBoxGeometry = formattingContext().geometryForBox(layoutBox);
-            auto logicalHeight = inlineLevelBoxGeometry.marginBoxHeight();
-            auto ascent = logicalHeight;
+            auto marginBoxHeight = inlineLevelBoxGeometry.marginBoxHeight();
+            auto ascent = InlineLayoutUnit { };
             if (layoutBox.isInlineBlockBox() && layoutBox.establishesInlineFormattingContext()) {
                 auto& formattingState = layoutState().establishedInlineFormattingState(downcast<ContainerBox>(layoutBox));
                 auto& lastLine = formattingState.lines().last();
                 auto inlineBlockBaseline = lastLine.logicalTop() + lastLine.baseline();
                 ascent = inlineLevelBoxGeometry.marginBefore() + inlineLevelBoxGeometry.borderTop() + inlineLevelBoxGeometry.paddingTop().valueOr(0) + inlineBlockBaseline;
-            }
-            auto atomicInlineLevelBox = LineBox::InlineLevelBox::createAtomicInlineLevelBox(layoutBox, logicalLeft, { run.logicalWidth(), logicalHeight });
+            } else if (layoutBox.isReplacedBox())
+                ascent = downcast<ReplacedBox>(layoutBox).baseline().valueOr(marginBoxHeight);
+            else
+                ascent = marginBoxHeight;
+            auto atomicInlineLevelBox = LineBox::InlineLevelBox::createAtomicInlineLevelBox(layoutBox, logicalLeft, { run.logicalWidth(), marginBoxHeight });
             atomicInlineLevelBox->setBaseline(ascent);
-            ASSERT(logicalHeight >= ascent);
-            atomicInlineLevelBox->setLayoutBounds(LineBox::InlineLevelBox::LayoutBounds { ascent, logicalHeight - ascent });
-            if (logicalHeight)
+            atomicInlineLevelBox->setLayoutBounds(LineBox::InlineLevelBox::LayoutBounds { ascent, marginBoxHeight - ascent });
+            if (marginBoxHeight)
                 atomicInlineLevelBox->setIsNonEmpty();
             lineBox.addInlineLevelBox(WTFMove(atomicInlineLevelBox));
         } else if (run.isInlineBoxStart()) {
