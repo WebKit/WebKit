@@ -276,8 +276,6 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderObject& child, Incl
             SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonSupportedChild, reasons, includeReasons);
         if (style.width().isPercent() || style.height().isPercent())
             SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonSupportedChild, reasons, includeReasons);
-        if (style.objectFit() != RenderStyle::initialObjectFit())
-            SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonSupportedChild, reasons, includeReasons);
 
         if (is<RenderImage>(replaced)) {
             auto& image = downcast<RenderImage>(replaced);
