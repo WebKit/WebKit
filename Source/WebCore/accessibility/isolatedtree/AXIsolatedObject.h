@@ -113,7 +113,7 @@ private:
     void fillChildrenVectorForProperty(AXPropertyName, AccessibilityChildrenVector&) const;
     void setMathscripts(AXPropertyName, AXCoreObject&);
     void insertMathPairs(Vector<std::pair<AXID, AXID>>&, AccessibilityMathMultiscriptPairs&);
-    template<typename U> void performFunctionOnMainThread(U&&);
+    template<typename U> void performFunctionOnMainThread(U&&) const;
 
     // Attribute retrieval overrides.
     bool isHeading() const override { return boolAttributeValue(AXPropertyName::IsHeading); }
@@ -455,9 +455,9 @@ private:
     void increment() override;
     void decrement() override;
     bool performDismissAction() override;
-    void scrollToMakeVisible() const override { }
-    void scrollToMakeVisibleWithSubFocus(const IntRect&) const override { }
-    void scrollToGlobalPoint(const IntPoint&) const override { }
+    void scrollToMakeVisible() const override;
+    void scrollToMakeVisibleWithSubFocus(const IntRect&) const override;
+    void scrollToGlobalPoint(const IntPoint&) const override;
     bool replaceTextInRange(const String&, const PlainTextRange&) override;
     bool insertText(const String&) override;
     void makeRangeVisible(const PlainTextRange&) override { }
@@ -503,7 +503,7 @@ private:
     bool isPressed() const override;
     bool isUnvisited() const override { return boolAttributeValue(AXPropertyName::IsUnvisited); }
     bool isLinked() const override;
-    bool isVisible() const override;
+    bool isVisible() const override { return boolAttributeValue(AXPropertyName::IsVisible); }
     bool isCollapsed() const override;
     bool isSelectedOptionActive() const override;
     bool hasBoldFont() const override { return boolAttributeValue(AXPropertyName::HasBoldFont); }

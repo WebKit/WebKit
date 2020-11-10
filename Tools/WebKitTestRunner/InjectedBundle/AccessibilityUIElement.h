@@ -175,6 +175,7 @@ public:
     bool isChecked() const;
     bool isIndeterminate() const;
     bool isVisible() const;
+    bool isOnScreen() const;
     bool isOffScreen() const;
     bool isCollapsed() const;
     bool isIgnored() const;

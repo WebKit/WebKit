@@ -3100,6 +3100,9 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         return object ? object->wrapper() : nil;
     }
 
+    if ([attributeName isEqualToString:@"AXIsOnScreen"])
+        return [NSNumber numberWithBool:backingObject->isOnScreen()];
+
     return nil;
 }
 

@@ -1613,6 +1613,14 @@ bool AccessibilityUIElement::isVisible() const
     return false;
 }
 
+bool AccessibilityUIElement::isOnScreen() const
+{
+    id value = attributeValue(m_element.get(), @"AXIsOnScreen");
+    if ([value isKindOfClass:[NSNumber class]])
+        return [value boolValue];
+    return false;
+}
+
 bool AccessibilityUIElement::isOffScreen() const
 {
     return false;

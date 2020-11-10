@@ -153,6 +153,7 @@ public:
     bool isExpanded() const;
     bool isChecked() const;
     bool isVisible() const;
+    bool isOnScreen() const;
     bool isOffScreen() const;
     bool isCollapsed() const;
     bool isIgnored() const;

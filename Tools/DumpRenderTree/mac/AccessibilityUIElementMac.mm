@@ -1540,6 +1540,17 @@ bool AccessibilityUIElement::isVisible() const
     return false;
 }
 
+bool AccessibilityUIElement::isOnScreen() const
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    id value = [m_element accessibilityAttributeValue:@"AXIsOnScreen"];
+    if ([value isKindOfClass:[NSNumber class]])
+        return [value boolValue];
+    END_AX_OBJC_EXCEPTIONS
+
+    return false;
+}
+
 bool AccessibilityUIElement::isOffScreen() const
 {
     // FIXME: implement

@@ -1,3 +1,19 @@
+2020-11-10  Andres Gonzalez  <andresg_22@apple.com>
+
+        Fix for LayoutTests/accessibility/mac/search-predicate.html in isolated tree mode.
+        https://bugs.webkit.org/show_bug.cgi?id=218732
+
+        Reviewed by Chris Fleizach.
+
+        Exposed isOnScreen method to JS.
+
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.cpp:
+        (WTR::AccessibilityUIElement::isOnScreen const):
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.h:
+        * WebKitTestRunner/InjectedBundle/Bindings/AccessibilityUIElement.idl:
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        (WTR::AccessibilityUIElement::isOnScreen const):
+
 2020-11-10  Aakash Jain  <aakash_jain@apple.com>
 
         [build.webkit.org] Only upload to S3 when running on production server

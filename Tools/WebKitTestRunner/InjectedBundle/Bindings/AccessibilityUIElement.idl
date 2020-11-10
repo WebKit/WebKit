@@ -99,6 +99,7 @@
     readonly attribute boolean isIgnored;
     readonly attribute boolean isSingleLine;
     readonly attribute boolean isMultiLine;
+    readonly attribute boolean isOnScreen;
     readonly attribute boolean isOffScreen;
     readonly attribute boolean isValid;
     readonly attribute long hierarchicalLevel;

@@ -104,6 +104,7 @@ void AccessibilityUIElement::resetSelectedTextMarkerRange() { }
 void AccessibilityUIElement::setBoolAttributeValue(JSStringRef, bool) { }
 void AccessibilityUIElement::setValue(JSStringRef) { }
 JSValueRef AccessibilityUIElement::searchTextWithCriteria(JSContextRef, JSValueRef, JSStringRef, JSStringRef) { return nullptr; }
+bool AccessibilityUIElement::isOnScreen() const { return true; }
 #endif
 
 #if !PLATFORM(COCOA) || !HAVE(ACCESSIBILITY)

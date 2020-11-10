@@ -622,7 +622,7 @@ AXCoreObject* AXIsolatedObject::scrollBar(AccessibilityOrientation orientation)
 }
 
 template<typename U>
-void AXIsolatedObject::performFunctionOnMainThread(U&& lambda)
+void AXIsolatedObject::performFunctionOnMainThread(U&& lambda) const
 {
     Accessibility::performFunctionOnMainThread([&lambda, this] () {
         if (auto* object = associatedAXObject())
@@ -650,6 +650,27 @@ bool AXIsolatedObject::performDismissAction()
         if (auto* axObject = associatedAXObject())
             return axObject->performDismissAction();
         return false;
+    });
+}
+
+void AXIsolatedObject::scrollToMakeVisible() const
+{
+    performFunctionOnMainThread([] (AXCoreObject* axObject) {
+        axObject->scrollToMakeVisible();
+    });
+}
+
+void AXIsolatedObject::scrollToMakeVisibleWithSubFocus(const IntRect& rect) const
+{
+    performFunctionOnMainThread([&rect] (AXCoreObject* axObject) {
+        axObject->scrollToMakeVisibleWithSubFocus(rect);
+    });
+}
+
+void AXIsolatedObject::scrollToGlobalPoint(const IntPoint& point) const
+{
+    performFunctionOnMainThread([&point] (AXCoreObject* axObject) {
+        axObject->scrollToGlobalPoint(point);
     });
 }
 
@@ -1268,12 +1289,6 @@ bool AXIsolatedObject::isPressed() const
 }
 
 bool AXIsolatedObject::isLinked() const
-{
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
-bool AXIsolatedObject::isVisible() const
 {
     ASSERT_NOT_REACHED();
     return false;
