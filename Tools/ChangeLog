@@ -1,3 +1,17 @@
+2020-11-10  Aakash Jain  <aakash_jain@apple.com>
+
+        [build.webkit.org] Update ExtractTestResults step for new buildbot
+        https://bugs.webkit.org/show_bug.cgi?id=218759
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/build-webkit-org/steps.py:
+        (ExtractTestResults): Making this step similar to corresponding EWS step. Also added name to this step to make it more readable (than MasterShellCommand).
+        (ExtractTestResults.__init__):
+        (ExtractTestResults.resultDirectoryURL):
+        (ExtractTestResults.start):
+        * CISupport/build-webkit-org/steps_unittest.py: Updated unit-tests to handle step name change.
+
 2020-11-10  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] [REGRESSSION(r269390) Several editing/ tests are flaky

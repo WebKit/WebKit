@@ -40,7 +40,8 @@ RESULTS_SERVER_API_KEY = 'RESULTS_SERVER_API_KEY'
 S3URL = "https://s3-us-west-2.amazonaws.com/"
 USE_BUILDBOT_VERSION2 = os.getenv('USE_BUILDBOT_VERSION2') is not None
 WithProperties = properties.WithProperties
-
+if USE_BUILDBOT_VERSION2:
+    Interpolate = properties.Interpolate
 
 class TestWithFailureCount(shell.Test):
     failedTestsFormatString = "%d test%s failed"
@@ -1075,23 +1076,32 @@ class TransferToS3(master.MasterShellCommand):
 
 
 class ExtractTestResults(master.MasterShellCommand):
-    zipFile = WithProperties("public_html/results/%(buildername)s/r%(got_revision)s (%(buildnumber)s).zip")
-    resultDirectory = WithProperties("public_html/results/%(buildername)s/r%(got_revision)s (%(buildnumber)s)")
-    descriptionDone = ["uploaded results"]
+    name = 'extract-test-results'
+    descriptionDone = ['Extracted test results']
+    renderables = ['resultDirectory', 'zipFile']
 
     def __init__(self, **kwargs):
         kwargs['command'] = ""
         if USE_BUILDBOT_VERSION2:
             kwargs['logEnviron'] = False
+            self.zipFile = Interpolate('public_html/results/%(prop:buildername)s/r%(prop:got_revision)s (%(prop:buildnumber)s).zip')
+            self.resultDirectory = Interpolate('public_html/results/%(prop:buildername)s/r%(prop:got_revision)s (%(prop:buildnumber)s)')
+            kwargs['command'] = ['unzip', '-q', '-o', self.zipFile, '-d', self.resultDirectory]
         master.MasterShellCommand.__init__(self, **kwargs)
 
     def resultDirectoryURL(self):
-        return self.build.getProperties().render(self.resultDirectory).replace("public_html/", "/") + "/"
+        if USE_BUILDBOT_VERSION2:
+            return self.resultDirectory.replace('public_html/', '/') + '/'
+        else:
+            return self.build.getProperties().render(self.resultDirectory).replace('public_html/', '/') + '/'
 
     def start(self):
-        self.zipfile = self.build.getProperties().render(self.zipFile)
-        self.resultDirectory = self.build.getProperties().render(self.resultDirectory)
-        self.command = ['unzip', '-q', '-o', self.zipfile, '-d', self.resultDirectory]
+        if not USE_BUILDBOT_VERSION2:
+            self.zipFile = WithProperties("public_html/results/%(buildername)s/r%(got_revision)s (%(buildnumber)s).zip")
+            self.resultDirectory = WithProperties("public_html/results/%(buildername)s/r%(got_revision)s (%(buildnumber)s)")
+            self.zipFile = self.build.getProperties().render(self.zipFile)
+            self.resultDirectory = self.build.getProperties().render(self.resultDirectory)
+            self.command = ['unzip', '-q', '-o', self.zipFile, '-d', self.resultDirectory]
         return master.MasterShellCommand.start(self)
 
     def addCustomURLs(self):
