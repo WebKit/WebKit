@@ -1,3 +1,18 @@
+2020-11-10  Martin Robinson  <mrobinson@igalia.com>
+
+        Scroll-snap on the root aligns to the body margin edge, not the viewport edge
+        https://bugs.webkit.org/show_bug.cgi?id=210476
+        <rdar://problem/61755103>
+
+        Reviewed by Simon Fraser.
+
+        Added tests for new behavior.
+
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-mainframe-horizontal-with-margin-expected.txt: Added.
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-mainframe-horizontal-with-margin.html: Added.
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-mainframe-vertical-with-margin-expected.txt: Added.
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-mainframe-vertical-with-margin.html: Added.
+
 2020-11-09  Chris Dumez  <cdumez@apple.com>
 
         Unexpose obsolete HTMLAppletElement interface

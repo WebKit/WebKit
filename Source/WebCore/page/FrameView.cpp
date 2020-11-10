@@ -941,7 +941,13 @@ void FrameView::updateSnapOffsets()
         return;
     }
 
+    // updateSnapOffsetsForScrollableArea calculates scroll offsets with all rectangles having their origin at the
+    // padding box rectangle of the scrollable element. Unlike for overflow:scroll, the FrameView viewport includes
+    // the root element margins. This means that we need to offset the viewport rectangle to make it relative to
+    // the padding box of the root element.
     LayoutRect viewport = LayoutRect(IntPoint(), baseLayoutViewportSize());
+    viewport.move(-rootRenderer->marginLeft(), -rootRenderer->marginTop());
+
     updateSnapOffsetsForScrollableArea(*this, *rootRenderer, *styleToUse, viewport);
 }
 
