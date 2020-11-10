@@ -1,3 +1,13 @@
+2020-11-10  Andres Gonzalez  <andresg_22@apple.com>
+
+        Fix for LayoutTests/accessibility/mac/search-subrole.html in isolated tree mode.
+        https://bugs.webkit.org/show_bug.cgi?id=218766
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/mac/search-subrole.html: Modify so that it works in both
+        isolated tree mode on and off.
+
 2020-11-10  Youenn Fablet  <youenn@apple.com>
 
         Update WebRTC liwebrtc to M87

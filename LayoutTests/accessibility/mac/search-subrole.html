@@ -39,26 +39,20 @@
 <div id="console"></div>
 
 <script>
-
     description("This tests that we can detect a search field based on a few heuristics.");
 
     if (window.accessibilityController) {
-
         for (var k = 1; k <= 7; k++) {
-            document.getElementById("search" + k).focus();
-            var search = accessibilityController.focusedElement;
+            var search = accessibilityController.accessibleElementById("search" + k);
             shouldBe("search.subrole", "'AXSubrole: AXSearchField'");
         }
 
         for (var k = 1; k <= 3; k++) {
-            document.getElementById("nosearch" + k).focus();
-            var nosearch = accessibilityController.focusedElement;
+            var nosearch = accessibilityController.accessibleElementById("nosearch" + k);
             shouldBe("nosearch.subrole", "'AXSubrole: '");
         }
     }
-
 </script>
-
 <script src="../../resources/js-test-post.js"></script>
 </body>
 </html>
