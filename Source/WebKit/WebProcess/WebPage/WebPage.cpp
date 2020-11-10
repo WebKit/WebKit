@@ -741,6 +741,18 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     m_page->settings().setContentDispositionAttachmentSandboxEnabled(true);
     setSmartInsertDeleteEnabled(parameters.smartInsertDeleteEnabled);
     WebCore::setAdditionalSupportedImageTypes(parameters.additionalSupportedImageTypes);
+
+    // FIXME(207716): The following should be removed when the GPU process is complete.
+    static bool hasConsumedMediaExtensionHandles = false;
+    if (!hasConsumedMediaExtensionHandles && parameters.mediaExtensionHandles.size()) {
+        SandboxExtension::consumePermanently(parameters.mediaExtensionHandles);
+        hasConsumedMediaExtensionHandles = true;
+    }
+    static bool hasConsumedGPUIOKitExtensionHandles = false;
+    if (!hasConsumedGPUIOKitExtensionHandles && parameters.gpuIOKitExtensionHandles.size()) {
+        SandboxExtension::consumePermanently(parameters.gpuIOKitExtensionHandles);
+        hasConsumedGPUIOKitExtensionHandles = true;
+    }
 #endif
 
 #if HAVE(APP_ACCENT_COLORS)

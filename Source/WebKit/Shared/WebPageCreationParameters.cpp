@@ -114,6 +114,9 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
 #if PLATFORM(COCOA)
     encoder << smartInsertDeleteEnabled;
     encoder << additionalSupportedImageTypes;
+    // FIXME(207716): The following should be removed when the GPU process is complete.
+    encoder << mediaExtensionHandles;
+    encoder << gpuIOKitExtensionHandles;
 #endif
 #if HAVE(APP_ACCENT_COLORS)
     encoder << accentColor;
@@ -362,6 +365,20 @@ Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decod
         return WTF::nullopt;
     if (!decoder.decode(parameters.additionalSupportedImageTypes))
         return WTF::nullopt;
+
+    // FIXME(207716): The following should be removed when the GPU process is complete.
+    Optional<SandboxExtension::HandleArray> mediaExtensionHandles;
+    decoder >> mediaExtensionHandles;
+    if (!mediaExtensionHandles)
+        return WTF::nullopt;
+    parameters.mediaExtensionHandles = WTFMove(*mediaExtensionHandles);
+    // FIXME(207716): End region to remove.
+
+    Optional<SandboxExtension::HandleArray> gpuIOKitExtensionHandles;
+    decoder >> gpuIOKitExtensionHandles;
+    if (!gpuIOKitExtensionHandles)
+        return WTF::nullopt;
+    parameters.gpuIOKitExtensionHandles = WTFMove(*gpuIOKitExtensionHandles);
 #endif
 
 #if HAVE(APP_ACCENT_COLORS)

@@ -214,60 +214,6 @@ static bool isInternalInstall()
     return isInternal;
 }
 
-// FIXME(207716): The following should be removed when the GPU process is complete.
-static const Vector<ASCIILiteral>& mediaRelatedMachServices()
-{
-    ASSERT(isMainThread());
-    static const auto services = makeNeverDestroyed(Vector<ASCIILiteral> {
-        "com.apple.audio.AudioComponentPrefs"_s, "com.apple.audio.AudioComponentRegistrar"_s,
-        "com.apple.audio.AudioQueueServer"_s, "com.apple.audio.toolbox.reporting.service"_s, "com.apple.coremedia.endpoint.xpc"_s,
-        "com.apple.coremedia.routediscoverer.xpc"_s, "com.apple.coremedia.routingcontext.xpc"_s,
-        "com.apple.coremedia.volumecontroller.xpc"_s, "com.apple.accessibility.mediaaccessibilityd"_s,
-        "com.apple.mediaremoted.xpc"_s,
-#if PLATFORM(IOS_FAMILY)
-        "com.apple.audio.AudioSession"_s, "com.apple.MediaPlayer.RemotePlayerService"_s,
-        "com.apple.coremedia.admin"_s,
-        "com.apple.coremedia.asset.xpc"_s, "com.apple.coremedia.assetimagegenerator.xpc"_s,
-        "com.apple.coremedia.audiodeviceclock.xpc"_s, "com.apple.coremedia.audioprocessingtap.xpc"_s,
-        "com.apple.coremedia.capturesession"_s, "com.apple.coremedia.capturesource"_s,
-        "com.apple.coremedia.compressionsession"_s, "com.apple.coremedia.cpe.xpc"_s,
-        "com.apple.coremedia.cpeprotector.xpc"_s, "com.apple.coremedia.customurlloader.xpc"_s,
-        "com.apple.coremedia.decompressionsession"_s, "com.apple.coremedia.figcontentkeysession.xpc"_s,
-        "com.apple.coremedia.figcpecryptor"_s, "com.apple.coremedia.formatreader.xpc"_s,
-        "com.apple.coremedia.player.xpc"_s, "com.apple.coremedia.remaker"_s,
-        "com.apple.coremedia.remotequeue"_s, "com.apple.coremedia.routingsessionmanager.xpc"_s,
-        "com.apple.coremedia.samplebufferaudiorenderer.xpc"_s, "com.apple.coremedia.samplebufferrendersynchronizer.xpc"_s,
-        "com.apple.coremedia.sandboxserver.xpc"_s, "com.apple.coremedia.sts"_s,
-        "com.apple.coremedia.systemcontroller.xpc"_s, "com.apple.coremedia.videoqueue"_s,
-        "com.apple.coremedia.visualcontext.xpc"_s, "com.apple.airplay.apsynccontroller.xpc"_s,
-        "com.apple.audio.AURemoteIOServer"_s
-#endif
-#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
-        "com.apple.coremedia.endpointstream.xpc"_s, "com.apple.coremedia.endpointplaybacksession.xpc"_s,
-        "com.apple.coremedia.endpointremotecontrolsession.xpc"_s, "com.apple.coremedia.videodecoder"_s,
-        "com.apple.coremedia.videoencoder"_s, "com.apple.BluetoothServices"_s
-#endif
-    });
-    return services;
-}
-
-static const Vector<ASCIILiteral>& gpuIOKitClasses()
-{
-    ASSERT(isMainThread());
-    static const auto services = makeNeverDestroyed(Vector<ASCIILiteral> {
-#if PLATFORM(IOS_FAMILY)
-        "AGXDeviceUserClient"_s,
-        "AppleJPEGDriverUserClient"_s,
-        "IOGPU"_s,
-        "IOMobileFramebufferUserClient"_s,
-        "IOSurfaceAcceleratorClient"_s,
-        "IOSurfaceRootUserClient"_s,
-#endif
-    });
-    return services;
-
-}
-
 #if PLATFORM(IOS_FAMILY)
 static const Vector<ASCIILiteral>& nonBrowserServices()
 {
@@ -471,23 +417,6 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
     parameters.focusRingColor = RenderThemeIOS::systemFocusRingColor();
     parameters.localizedDeviceModel = localizedDeviceModel();
 #endif
-
-    // Allow microphone access if either preference is set because WebRTC requires microphone access.
-    bool needWebProcessExtensions = !m_defaultPageGroup->preferences().useGPUProcessForMediaEnabled()
-        || !m_defaultPageGroup->preferences().captureAudioInGPUProcessEnabled()
-        || !m_defaultPageGroup->preferences().captureVideoInGPUProcessEnabled();
-
-    if (needWebProcessExtensions) {
-        // FIXME(207716): The following should be removed when the GPU process is complete.
-        parameters.mediaExtensionHandles = SandboxExtension::createHandlesForMachLookup(mediaRelatedMachServices(), WTF::nullopt);
-    }
-
-    if (!m_defaultPageGroup->preferences().useGPUProcessForMediaEnabled()
-        || (!m_defaultPageGroup->preferences().captureVideoInGPUProcessEnabled() && !m_defaultPageGroup->preferences().captureVideoInUIProcessEnabled())
-        || !m_defaultPageGroup->preferences().useGPUProcessForCanvasRenderingEnabled()
-        || !m_defaultPageGroup->preferences().useGPUProcessForDOMRenderingEnabled()
-        || !m_defaultPageGroup->preferences().useGPUProcessForWebGLEnabled())
-        parameters.gpuIOKitExtensionHandles = SandboxExtension::createHandlesForIOKitClassExtensions(gpuIOKitClasses(), WTF::nullopt);
 
 #if ENABLE(CFPREFS_DIRECT_MODE) && PLATFORM(IOS_FAMILY)
     if (_AXSApplicationAccessibilityEnabled())

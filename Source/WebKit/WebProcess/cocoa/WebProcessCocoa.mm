@@ -344,10 +344,6 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     RenderThemeIOS::setFocusRingColor(parameters.focusRingColor);
 #endif
 
-    // FIXME(207716): The following should be removed when the GPU process is complete.
-    SandboxExtension::consumePermanently(parameters.mediaExtensionHandles);
-    SandboxExtension::consumePermanently(parameters.gpuIOKitExtensionHandles);
-
 #if ENABLE(CFPREFS_DIRECT_MODE)
     if (parameters.preferencesExtensionHandles) {
         SandboxExtension::consumePermanently(*parameters.preferencesExtensionHandles);
