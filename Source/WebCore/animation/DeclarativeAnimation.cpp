@@ -350,7 +350,7 @@ void DeclarativeAnimation::enqueueDOMEvent(const AtomString& eventType, Seconds 
         return;
 
     auto time = secondsToWebAnimationsAPITime(elapsedTime) / 1000;
-    const auto& pseudoId = PseudoElement::pseudoElementNameForEvents(m_owningPseudoId);
+    auto pseudoId = pseudoIdAsString(m_owningPseudoId);
     auto timelineTime = timeline() ? timeline()->currentTime() : WTF::nullopt;
     auto event = createEvent(eventType, time, pseudoId, timelineTime);
     event->setTarget(m_owningElement.get());

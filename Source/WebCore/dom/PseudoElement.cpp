@@ -48,20 +48,6 @@ const QualifiedName& pseudoElementTagName()
     return name;
 }
 
-String PseudoElement::pseudoElementNameForEvents(PseudoId pseudoId)
-{
-    static NeverDestroyed<const String> after(MAKE_STATIC_STRING_IMPL("::after"));
-    static NeverDestroyed<const String> before(MAKE_STATIC_STRING_IMPL("::before"));
-    switch (pseudoId) {
-    case PseudoId::After:
-        return after;
-    case PseudoId::Before:
-        return before;
-    default:
-        return emptyString();
-    }
-}
-
 PseudoElement::PseudoElement(Element& host, PseudoId pseudoId)
     : Element(pseudoElementTagName(), host.document(), CreatePseudoElement)
     , m_hostElement(&host)

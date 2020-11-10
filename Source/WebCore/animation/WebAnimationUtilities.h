@@ -51,6 +51,7 @@ inline double secondsToWebAnimationsAPITime(const Seconds time)
 const auto timeEpsilon = Seconds::fromMilliseconds(0.001);
 
 bool compareAnimationsByCompositeOrder(const WebAnimation&, const WebAnimation&);
+String pseudoIdAsString(PseudoId);
 
 } // namespace WebCore
 

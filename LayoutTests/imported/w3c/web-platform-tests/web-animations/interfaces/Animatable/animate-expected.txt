@@ -143,8 +143,8 @@ PASS animate() with pseudoElement parameter creates an Animation object for ::ma
 PASS animate() with pseudoElement parameter creates an Animation object for ::first-line
 PASS animate() with pseudoElement an Animation object targeting the correct pseudo-element
 PASS animate() with pseudoElement without content creates an Animation object targeting the correct pseudo-element
-FAIL animate() with pseudoElement an Animation object targeting the correct pseudo-element for ::marker assert_equals: The returned Animation targets the correct selector expected "::marker" but got ""
-FAIL animate() with pseudoElement an Animation object targeting the correct pseudo-element for ::first-line assert_equals: The returned Animation targets the correct selector expected "::first-line" but got ""
+PASS animate() with pseudoElement an Animation object targeting the correct pseudo-element for ::marker
+PASS animate() with pseudoElement an Animation object targeting the correct pseudo-element for ::first-line
 PASS animate() with a non-null invalid pseudoElement '' throws a SyntaxError
 PASS animate() with a non-null invalid pseudoElement 'before' throws a SyntaxError
 PASS animate() with a non-null invalid pseudoElement ':abc' throws a SyntaxError

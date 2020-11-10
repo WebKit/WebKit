@@ -178,4 +178,36 @@ bool compareAnimationsByCompositeOrder(const WebAnimation& a, const WebAnimation
     return a.globalPosition() < b.globalPosition();
 }
 
+String pseudoIdAsString(PseudoId pseudoId)
+{
+    static NeverDestroyed<const String> after(MAKE_STATIC_STRING_IMPL("::after"));
+    static NeverDestroyed<const String> before(MAKE_STATIC_STRING_IMPL("::before"));
+    static NeverDestroyed<const String> firstLetter(MAKE_STATIC_STRING_IMPL("::first-letter"));
+    static NeverDestroyed<const String> firstLine(MAKE_STATIC_STRING_IMPL("::first-line"));
+    static NeverDestroyed<const String> highlight(MAKE_STATIC_STRING_IMPL("::highlight"));
+    static NeverDestroyed<const String> marker(MAKE_STATIC_STRING_IMPL("::marker"));
+    static NeverDestroyed<const String> selection(MAKE_STATIC_STRING_IMPL("::selection"));
+    static NeverDestroyed<const String> scrollbar(MAKE_STATIC_STRING_IMPL("::scrollbar"));
+    switch (pseudoId) {
+    case PseudoId::After:
+        return after;
+    case PseudoId::Before:
+        return before;
+    case PseudoId::FirstLetter:
+        return firstLetter;
+    case PseudoId::FirstLine:
+        return firstLine;
+    case PseudoId::Highlight:
+        return highlight;
+    case PseudoId::Marker:
+        return marker;
+    case PseudoId::Selection:
+        return selection;
+    case PseudoId::Scrollbar:
+        return scrollbar;
+    default:
+        return emptyString();
+    }
+}
+
 } // namespace WebCore

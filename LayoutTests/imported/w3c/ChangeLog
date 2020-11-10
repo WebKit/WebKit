@@ -1,3 +1,16 @@
+2020-11-10  Antoine Quint  <graouts@webkit.org>
+
+        [Web Animations] KeyframeEffect.pseudoElement does not return a valid string when targeting ::marker or ::first-letter
+        https://bugs.webkit.org/show_bug.cgi?id=218741
+        <rdar://problem/71229846>
+
+        Reviewed by Dean Jackson.
+
+        Mark two new PASS results showing that KeyframeEffect.pseudoElement shows the correct value
+        when targeting ::marker or ::first-letter.
+
+        * web-platform-tests/web-animations/interfaces/Animatable/animate-expected.txt:
+
 2020-11-09  Chris Dumez  <cdumez@apple.com>
 
         Unexpose obsolete HTMLAppletElement interface

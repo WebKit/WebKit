@@ -1177,7 +1177,7 @@ const String KeyframeEffect::pseudoElement() const
     // The target pseudo-selector. null if this effect has no effect target or if the effect target is an element (i.e. not a pseudo-element).
     // When the effect target is a pseudo-element, this specifies the pseudo-element selector (e.g. ::before).
     if (targetsPseudoElement())
-        return PseudoElement::pseudoElementNameForEvents(m_pseudoId);
+        return pseudoIdAsString(m_pseudoId);
     return { };
 }
 

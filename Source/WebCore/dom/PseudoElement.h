@@ -46,8 +46,6 @@ public:
     bool canStartSelection() const override { return false; }
     bool canContainRangeEndPoint() const override { return false; }
 
-    static String pseudoElementNameForEvents(PseudoId);
-
 private:
     PseudoElement(Element&, PseudoId);
 
