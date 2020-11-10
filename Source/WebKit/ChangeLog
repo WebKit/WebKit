@@ -1,3 +1,32 @@
+2020-11-10  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r269610. rdar://problem/71247293
+
+    REGRESSION (r269557): ASSERTION FAILED: Completion handler should always be called under WebCore::HTMLMediaElement::exitFullscreen
+    https://bugs.webkit.org/show_bug.cgi?id=218722
+    
+    Reviewed by Eric Carlson.
+    
+    No new tests, covered by an existing test that is crashing on the bots.
+    
+    * WebProcess/cocoa/VideoFullscreenManager.mm:
+    (WebKit::VideoFullscreenManager::exitVideoFullscreenForVideoElement):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@269610 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-11-09  Peng Liu  <peng.liu6@apple.com>
+
+            REGRESSION (r269557): ASSERTION FAILED: Completion handler should always be called under WebCore::HTMLMediaElement::exitFullscreen
+            https://bugs.webkit.org/show_bug.cgi?id=218722
+
+            Reviewed by Eric Carlson.
+
+            No new tests, covered by an existing test that is crashing on the bots.
+
+            * WebProcess/cocoa/VideoFullscreenManager.mm:
+            (WebKit::VideoFullscreenManager::exitVideoFullscreenForVideoElement):
+
 2020-11-09  Joonghun Park  <jh718.park@samsung.com>
 
         Unreviewed. Fix the build warning below since r269525.
