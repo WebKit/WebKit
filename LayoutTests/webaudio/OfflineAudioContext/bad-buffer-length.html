@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+description("Make sure that the length returned by OfflineAudioContext even if we failed to construct the rendering buffer.");
+
+shouldBe("new OfflineAudioContext(1, 2**29, 44000).length", "2**29");
+</script>
+</body>
+</html>

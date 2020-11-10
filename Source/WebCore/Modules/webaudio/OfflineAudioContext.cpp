@@ -38,12 +38,13 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(OfflineAudioContext);
 
-inline OfflineAudioContext::OfflineAudioContext(Document& document, unsigned numberOfChannels, float sampleRate, RefPtr<AudioBuffer>&& renderTarget)
+inline OfflineAudioContext::OfflineAudioContext(Document& document, unsigned numberOfChannels, unsigned length, float sampleRate, RefPtr<AudioBuffer>&& renderTarget)
     : BaseAudioContext(document, numberOfChannels, sampleRate, WTFMove(renderTarget))
+    , m_length(length)
 {
 }
 
-ExceptionOr<Ref<OfflineAudioContext>> OfflineAudioContext::create(ScriptExecutionContext& context, unsigned numberOfChannels, size_t length, float sampleRate)
+ExceptionOr<Ref<OfflineAudioContext>> OfflineAudioContext::create(ScriptExecutionContext& context, unsigned numberOfChannels, unsigned length, float sampleRate)
 {
     if (!is<Document>(context))
         return Exception { NotSupportedError, "OfflineAudioContext is only supported in Document contexts"_s };
@@ -55,7 +56,10 @@ ExceptionOr<Ref<OfflineAudioContext>> OfflineAudioContext::create(ScriptExecutio
         return Exception { SyntaxError, "sampleRate is not in range"_s };
 
     auto renderTarget = AudioBuffer::create(numberOfChannels, length, sampleRate);
-    auto audioContext = adoptRef(*new OfflineAudioContext(downcast<Document>(context), numberOfChannels, sampleRate, WTFMove(renderTarget)));
+    if (!renderTarget)
+        context.addConsoleMessage(MessageSource::JS, MessageLevel::Warning, makeString("Failed to construct internal AudioBuffer with ", numberOfChannels, " channel(s), a sample rate of ", sampleRate, " and a length of ", length, "."));
+
+    auto audioContext = adoptRef(*new OfflineAudioContext(downcast<Document>(context), numberOfChannels, length, sampleRate, WTFMove(renderTarget)));
     audioContext->suspendIfNeeded();
     return audioContext;
 }
@@ -215,11 +219,6 @@ void OfflineAudioContext::didFinishOfflineRendering(ExceptionOr<Ref<AudioBuffer>
         return;
     }
     promise->resolve<IDLInterface<AudioBuffer>>(result.releaseReturnValue());
-}
-
-unsigned OfflineAudioContext::length() const
-{
-    return renderTarget()->length();
 }
 
 void OfflineAudioContext::offlineLock(bool& mustReleaseLock)

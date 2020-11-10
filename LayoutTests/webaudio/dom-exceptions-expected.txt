@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: Failed to construct internal AudioBuffer with 1 channel(s), a sample rate of 44100 and a length of 1448390656.
 
 PASS # AUDIT TASK RUNNER STARTED.
 PASS Executing "initialize"

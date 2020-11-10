@@ -36,7 +36,7 @@ namespace WebCore {
 class OfflineAudioContext final : public BaseAudioContext {
     WTF_MAKE_ISO_ALLOCATED(OfflineAudioContext);
 public:
-    static ExceptionOr<Ref<OfflineAudioContext>> create(ScriptExecutionContext&, unsigned numberOfChannels, size_t length, float sampleRate);
+    static ExceptionOr<Ref<OfflineAudioContext>> create(ScriptExecutionContext&, unsigned numberOfChannels, unsigned length, float sampleRate);
     
     static ExceptionOr<Ref<OfflineAudioContext>> create(ScriptExecutionContext&, const OfflineAudioContextOptions&);
 
@@ -44,7 +44,7 @@ public:
     void suspendOfflineRendering(double suspendTime, Ref<DeferredPromise>&&);
     void resumeOfflineRendering(Ref<DeferredPromise>&&);
 
-    unsigned length() const;
+    unsigned length() const { return m_length; }
     bool shouldSuspend() final;
 
     OfflineAudioDestinationNode* destination() { return static_cast<OfflineAudioDestinationNode*>(BaseAudioContext::destination()); }
@@ -72,7 +72,7 @@ public:
     };
 
 private:
-    OfflineAudioContext(Document&, unsigned numberOfChannels, float sampleRate, RefPtr<AudioBuffer>&& renderTarget);
+    OfflineAudioContext(Document&, unsigned numberOfChannels, unsigned length, float sampleRate, RefPtr<AudioBuffer>&& renderTarget);
 
     void didFinishOfflineRendering(ExceptionOr<Ref<AudioBuffer>>&&) final;
     void didSuspendRendering(size_t frame) final;
@@ -80,6 +80,7 @@ private:
 
     RefPtr<DeferredPromise> m_pendingOfflineRenderingPromise;
     HashMap<unsigned /* frame */, RefPtr<DeferredPromise>, WTF::IntHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> m_suspendRequests;
+    unsigned m_length;
     bool m_didStartOfflineRendering { false };
 };
 
