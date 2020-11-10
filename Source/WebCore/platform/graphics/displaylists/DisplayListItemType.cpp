@@ -31,7 +31,7 @@
 namespace WebCore {
 namespace DisplayList {
 
-size_t sizeOfItemInBytes(ItemType type)
+static size_t sizeOfItemInBytes(ItemType type)
 {
     switch (type) {
     case ItemType::Save:
@@ -242,6 +242,11 @@ bool isDrawingItem(ItemType type)
     }
     ASSERT_NOT_REACHED();
     return false;
+}
+
+size_t paddedSizeOfTypeAndItemInBytes(ItemType type)
+{
+    return sizeof(uint64_t) + roundUpToMultipleOf(alignof(uint64_t), sizeOfItemInBytes(type));
 }
 
 bool isInlineItem(ItemType type)

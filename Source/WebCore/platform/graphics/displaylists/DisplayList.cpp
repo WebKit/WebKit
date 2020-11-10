@@ -340,13 +340,12 @@ void DisplayList::iterator::updateCurrentItem()
         m_currentExtent = WTF::nullopt;
 
     auto* client = items.m_readingClient;
-    auto sizeOfTypeAndItem = sizeOfItemInBytes(itemType) + sizeof(ItemType);
-    m_currentBufferForItem = sizeOfTypeAndItem <= sizeOfFixedBufferForCurrentItem ? m_fixedBufferForCurrentItem : reinterpret_cast<uint8_t*>(fastMalloc(sizeOfTypeAndItem));
+    auto paddedSizeOfTypeAndItem = paddedSizeOfTypeAndItemInBytes(itemType);
+    m_currentBufferForItem = paddedSizeOfTypeAndItem <= sizeOfFixedBufferForCurrentItem ? m_fixedBufferForCurrentItem : reinterpret_cast<uint8_t*>(fastMalloc(paddedSizeOfTypeAndItem));
     if (!isInlineItem(itemType) && client) {
-        auto sizeOfData = reinterpret_cast<size_t*>(m_cursor + sizeof(ItemType))[0];
-        auto* startOfPadding = m_cursor + sizeof(ItemType) + sizeof(size_t);
-        size_t padding = (alignof(uint64_t) - reinterpret_cast<uintptr_t>(startOfPadding) % alignof(uint64_t)) % alignof(uint64_t);
-        auto decodedItemHandle = client->decodeItem(startOfPadding + padding, sizeOfData, itemType, m_currentBufferForItem);
+        auto dataLength = reinterpret_cast<uint64_t*>(m_cursor)[1];
+        auto* startOfData = m_cursor + 2 * sizeof(uint64_t);
+        auto decodedItemHandle = client->decodeItem(startOfData, dataLength, itemType, m_currentBufferForItem);
         if (!decodedItemHandle) {
             // FIXME: Instead of crashing, this needs to fail gracefully and inform the caller.
             // For the time being, this assertion makes bugs in item buffer encoding logic easier
@@ -355,10 +354,10 @@ void DisplayList::iterator::updateCurrentItem()
             RELEASE_ASSERT_NOT_REACHED();
         }
         m_currentBufferForItem[0] = static_cast<uint8_t>(itemType);
-        m_currentItemSizeInBuffer = sizeof(ItemType) + sizeof(size_t) + padding + sizeOfData;
+        m_currentItemSizeInBuffer = 2 * sizeof(uint64_t) + roundUpToMultipleOf(alignof(uint64_t), dataLength);
     } else {
         ItemHandle { m_cursor }.copyTo({ m_currentBufferForItem });
-        m_currentItemSizeInBuffer = sizeOfTypeAndItem;
+        m_currentItemSizeInBuffer = paddedSizeOfTypeAndItem;
     }
 }
 

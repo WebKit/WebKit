@@ -53,12 +53,15 @@ struct ItemBufferHandle {
 
 using ItemBufferHandles = Vector<ItemBufferHandle, 2>;
 
-// An ItemHandle wraps a pointer to an ItemType, followed immediately by an item of that type.
+// An ItemHandle wraps a pointer to an ItemType followed immediately by an item of that type.
+// Each item handle data pointer is aligned to 8 bytes, and the item itself is also aligned
+// to 8 bytes. To ensure this, the item type consists of 8 bytes (1 byte for the type and 7
+// bytes of padding).
 struct ItemHandle {
     uint8_t* data { nullptr };
 
     void apply(GraphicsContext&);
-    void destroy();
+    WEBCORE_EXPORT void destroy();
     bool isDrawingItem() const { return WebCore::DisplayList::isDrawingItem(type()); }
 
     operator bool() const { return !!(*this); }
@@ -69,13 +72,12 @@ struct ItemHandle {
 #endif
 
     ItemType type() const { return static_cast<ItemType>(data[0]); }
-    size_t size() const { return sizeof(ItemType) + sizeOfItemInBytes(type()); }
 
     template<typename T> bool is() const { return type() == T::itemType; }
     template<typename T> T& get() const
     {
         ASSERT(is<T>());
-        return *reinterpret_cast<T*>(&data[sizeof(ItemType)]);
+        return *reinterpret_cast<T*>(&data[sizeof(uint64_t)]);
     }
 
     void copyTo(ItemHandle destination) const;
@@ -134,32 +136,28 @@ public:
     // writable buffer handle; if remaining buffer capacity is insufficient to store the item, a
     // new buffer will be allocated (either by the ItemBufferWritingClient, if set, or by the item
     // buffer itself if there is no client). Items are placed back-to-back in these item buffers,
-    // with an ItemType separating each item.
+    // with padding after each item to ensure that all items are aligned to 8 bytes.
     //
     // If a writing client is present and requires custom encoding for the given item type T, the
     // item buffer will ask the client for an opaque SharedBuffer containing encoded data for the
     // item. This encoded data is then appended to the item buffer, with padding to ensure that
-    // the start of this data is aligned to 8 bytes, if necessary. When consuming encoded item
-    // data, a corresponding ItemBufferReadingClient will be required to convert this encoded data
-    // back into an item of type T.
+    // the start and end of this data are aligned to 8 bytes, if necessary. When consuming encoded
+    // item data, a corresponding ItemBufferReadingClient will be required to convert this encoded
+    // data back into an item of type T.
     template<typename T, class... Args> void append(Args&&... args)
     {
         static_assert(std::is_trivially_destructible<T>::value || !T::isInlineItem);
-        constexpr auto sizeOfTypeAndItem = sizeof(ItemType) + sizeof(T);
 
         if (!T::isInlineItem && m_writingClient) {
-            static uint8_t itemBuffer[sizeOfTypeAndItem];
-            itemBuffer[0] = static_cast<uint8_t>(T::itemType);
-            new (itemBuffer + sizeof(ItemType)) T(std::forward<Args>(args)...);
-            if (auto sharedBuffer = m_writingClient->encodeItem({ itemBuffer })) {
-                swapWritableBufferIfNeeded(sharedBuffer->size() + sizeof(ItemType) + sizeof(size_t) + alignof(uint64_t));
-                m_writableBuffer.data[m_writtenNumberOfBytes] = static_cast<uint8_t>(T::itemType);
-                appendDataAndLength(sharedBuffer.releaseNonNull(), m_writableBuffer.data + m_writtenNumberOfBytes + sizeof(ItemType));
-            }
+            static uint8_t temporaryItemBuffer[sizeof(uint64_t) + sizeof(T)];
+            temporaryItemBuffer[0] = static_cast<uint8_t>(T::itemType);
+            new (temporaryItemBuffer + sizeof(uint64_t)) T(std::forward<Args>(args)...);
+            appendEncodedData({ temporaryItemBuffer });
+            ItemHandle { temporaryItemBuffer }.destroy();
             return;
         }
 
-        swapWritableBufferIfNeeded(sizeOfTypeAndItem);
+        swapWritableBufferIfNeeded(paddedSizeOfTypeAndItemInBytes(T::itemType));
 
         if (!std::is_trivially_destructible<T>::value)
             m_itemsToDestroyInAllocatedBuffers.append({ &m_writableBuffer.data[m_writtenNumberOfBytes] });
@@ -175,13 +173,13 @@ private:
     void forEachItemBuffer(Function<void(const ItemBufferHandle&)>&&) const;
 
     WEBCORE_EXPORT void swapWritableBufferIfNeeded(size_t numberOfBytes);
-    WEBCORE_EXPORT void appendDataAndLength(Ref<SharedBuffer>&&, uint8_t*);
+    WEBCORE_EXPORT void appendEncodedData(ItemHandle);
     template<typename T, class... Args> void uncheckedAppend(Args&&... args)
     {
         auto* startOfItem = &m_writableBuffer.data[m_writtenNumberOfBytes];
         startOfItem[0] = static_cast<uint8_t>(T::itemType);
-        new (startOfItem + sizeof(ItemType)) T(std::forward<Args>(args)...);
-        m_writtenNumberOfBytes += sizeof(ItemType) + sizeOfItemInBytes(T::itemType);
+        new (startOfItem + sizeof(uint64_t)) T(std::forward<Args>(args)...);
+        m_writtenNumberOfBytes += paddedSizeOfTypeAndItemInBytes(T::itemType);
     }
 
     ItemBufferReadingClient* m_readingClient { nullptr };

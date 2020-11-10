@@ -98,7 +98,7 @@ enum class ItemType : uint8_t {
     ApplyDeviceScaleFactor,
 };
 
-WEBCORE_EXPORT size_t sizeOfItemInBytes(ItemType);
+WEBCORE_EXPORT size_t paddedSizeOfTypeAndItemInBytes(ItemType);
 WEBCORE_EXPORT bool isInlineItem(ItemType);
 WEBCORE_EXPORT bool isDrawingItem(ItemType);
 

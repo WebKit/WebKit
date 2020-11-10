@@ -1,3 +1,17 @@
+2020-11-10  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r269525): Many layout tests crash when run under ASan
+        https://bugs.webkit.org/show_bug.cgi?id=218733
+        <rdar://problem/71206273>
+
+        Reviewed by Tim Horton.
+
+        Construct the item 8 bytes after the handle offset, instead of 1 byte (also, add a FIXME indicating that we some
+        way of achieving this without requiring WebKit2 to be aware of an item handle's memory layout).
+
+        * GPUProcess/graphics/RemoteRenderingBackend.h:
+        (WebKit::RemoteRenderingBackend::decodeAndCreate):
+
 2020-11-10  Chris Dumez  <cdumez@apple.com>
 
         [GPUProcess] Regression(r268632) Garbage is rendered on speakers when using WebAudio

@@ -555,255 +555,256 @@ void ItemHandle::copyTo(ItemHandle destination) const
 {
     auto itemType = type();
     destination.data[0] = static_cast<uint8_t>(itemType);
+    auto itemOffset = destination.data + sizeof(uint64_t);
     switch (itemType) {
     case ItemType::ClipOutToPath: {
-        new (destination.data + sizeof(ItemType)) ClipOutToPath(get<ClipOutToPath>());
+        new (itemOffset) ClipOutToPath(get<ClipOutToPath>());
         return;
     }
     case ItemType::ClipPath: {
-        new (destination.data + sizeof(ItemType)) ClipPath(get<ClipPath>());
+        new (itemOffset) ClipPath(get<ClipPath>());
         return;
     }
     case ItemType::ClipToDrawingCommands: {
-        new (destination.data + sizeof(ItemType)) ClipToDrawingCommands(get<ClipToDrawingCommands>());
+        new (itemOffset) ClipToDrawingCommands(get<ClipToDrawingCommands>());
         return;
     }
     case ItemType::DrawFocusRingPath: {
-        new (destination.data + sizeof(ItemType)) DrawFocusRingPath(get<DrawFocusRingPath>());
+        new (itemOffset) DrawFocusRingPath(get<DrawFocusRingPath>());
         return;
     }
     case ItemType::DrawFocusRingRects: {
-        new (destination.data + sizeof(ItemType)) DrawFocusRingRects(get<DrawFocusRingRects>());
+        new (itemOffset) DrawFocusRingRects(get<DrawFocusRingRects>());
         return;
     }
     case ItemType::DrawGlyphs: {
-        new (destination.data + sizeof(ItemType)) DrawGlyphs(get<DrawGlyphs>());
+        new (itemOffset) DrawGlyphs(get<DrawGlyphs>());
         return;
     }
     case ItemType::DrawImage: {
-        new (destination.data + sizeof(ItemType)) DrawImage(get<DrawImage>());
+        new (itemOffset) DrawImage(get<DrawImage>());
         return;
     }
     case ItemType::DrawImageBuffer: {
-        new (destination.data + sizeof(ItemType)) DrawImageBuffer(get<DrawImageBuffer>());
+        new (itemOffset) DrawImageBuffer(get<DrawImageBuffer>());
         return;
     }
     case ItemType::DrawLinesForText: {
-        new (destination.data + sizeof(ItemType)) DrawLinesForText(get<DrawLinesForText>());
+        new (itemOffset) DrawLinesForText(get<DrawLinesForText>());
         return;
     }
     case ItemType::DrawNativeImage: {
-        new (destination.data + sizeof(ItemType)) DrawNativeImage(get<DrawNativeImage>());
+        new (itemOffset) DrawNativeImage(get<DrawNativeImage>());
         return;
     }
     case ItemType::DrawPath: {
-        new (destination.data + sizeof(ItemType)) DrawPath(get<DrawPath>());
+        new (itemOffset) DrawPath(get<DrawPath>());
         return;
     }
     case ItemType::DrawPattern: {
-        new (destination.data + sizeof(ItemType)) DrawPattern(get<DrawPattern>());
+        new (itemOffset) DrawPattern(get<DrawPattern>());
         return;
     }
     case ItemType::DrawTiledImage: {
-        new (destination.data + sizeof(ItemType)) DrawTiledImage(get<DrawTiledImage>());
+        new (itemOffset) DrawTiledImage(get<DrawTiledImage>());
         return;
     }
     case ItemType::DrawTiledScaledImage: {
-        new (destination.data + sizeof(ItemType)) DrawTiledScaledImage(get<DrawTiledScaledImage>());
+        new (itemOffset) DrawTiledScaledImage(get<DrawTiledScaledImage>());
         return;
     }
     case ItemType::FillCompositedRect: {
-        new (destination.data + sizeof(ItemType)) FillCompositedRect(get<FillCompositedRect>());
+        new (itemOffset) FillCompositedRect(get<FillCompositedRect>());
         return;
     }
     case ItemType::FillPath: {
-        new (destination.data + sizeof(ItemType)) FillPath(get<FillPath>());
+        new (itemOffset) FillPath(get<FillPath>());
         return;
     }
     case ItemType::FillRectWithColor: {
-        new (destination.data + sizeof(ItemType)) FillRectWithColor(get<FillRectWithColor>());
+        new (itemOffset) FillRectWithColor(get<FillRectWithColor>());
         return;
     }
     case ItemType::FillRectWithGradient: {
-        new (destination.data + sizeof(ItemType)) FillRectWithGradient(get<FillRectWithGradient>());
+        new (itemOffset) FillRectWithGradient(get<FillRectWithGradient>());
         return;
     }
     case ItemType::FillRectWithRoundedHole: {
-        new (destination.data + sizeof(ItemType)) FillRectWithRoundedHole(get<FillRectWithRoundedHole>());
+        new (itemOffset) FillRectWithRoundedHole(get<FillRectWithRoundedHole>());
         return;
     }
     case ItemType::FillRoundedRect: {
-        new (destination.data + sizeof(ItemType)) FillRoundedRect(get<FillRoundedRect>());
+        new (itemOffset) FillRoundedRect(get<FillRoundedRect>());
         return;
     }
     case ItemType::PutImageData: {
-        new (destination.data + sizeof(ItemType)) PutImageData(get<PutImageData>());
+        new (itemOffset) PutImageData(get<PutImageData>());
         return;
     }
     case ItemType::SetLineDash: {
-        new (destination.data + sizeof(ItemType)) SetLineDash(get<SetLineDash>());
+        new (itemOffset) SetLineDash(get<SetLineDash>());
         return;
     }
     case ItemType::SetState: {
-        new (destination.data + sizeof(ItemType)) SetState(get<SetState>());
+        new (itemOffset) SetState(get<SetState>());
         return;
     }
     case ItemType::StrokePath: {
-        new (destination.data + sizeof(ItemType)) StrokePath(get<StrokePath>());
+        new (itemOffset) StrokePath(get<StrokePath>());
         return;
     }
     case ItemType::ApplyDeviceScaleFactor: {
-        new (destination.data + sizeof(ItemType)) ApplyDeviceScaleFactor(get<ApplyDeviceScaleFactor>());
+        new (itemOffset) ApplyDeviceScaleFactor(get<ApplyDeviceScaleFactor>());
         return;
     }
 #if USE(CG)
     case ItemType::ApplyFillPattern: {
-        new (destination.data + sizeof(ItemType)) ApplyFillPattern(get<ApplyFillPattern>());
+        new (itemOffset) ApplyFillPattern(get<ApplyFillPattern>());
         return;
     }
     case ItemType::ApplyStrokePattern: {
-        new (destination.data + sizeof(ItemType)) ApplyStrokePattern(get<ApplyStrokePattern>());
+        new (itemOffset) ApplyStrokePattern(get<ApplyStrokePattern>());
         return;
     }
 #endif
     case ItemType::BeginTransparencyLayer: {
-        new (destination.data + sizeof(ItemType)) BeginTransparencyLayer(get<BeginTransparencyLayer>());
+        new (itemOffset) BeginTransparencyLayer(get<BeginTransparencyLayer>());
         return;
     }
     case ItemType::ClearRect: {
-        new (destination.data + sizeof(ItemType)) ClearRect(get<ClearRect>());
+        new (itemOffset) ClearRect(get<ClearRect>());
         return;
     }
     case ItemType::ClearShadow: {
-        new (destination.data + sizeof(ItemType)) ClearShadow(get<ClearShadow>());
+        new (itemOffset) ClearShadow(get<ClearShadow>());
         return;
     }
     case ItemType::Clip: {
-        new (destination.data + sizeof(ItemType)) Clip(get<Clip>());
+        new (itemOffset) Clip(get<Clip>());
         return;
     }
     case ItemType::ClipOut: {
-        new (destination.data + sizeof(ItemType)) ClipOut(get<ClipOut>());
+        new (itemOffset) ClipOut(get<ClipOut>());
         return;
     }
     case ItemType::ConcatenateCTM: {
-        new (destination.data + sizeof(ItemType)) ConcatenateCTM(get<ConcatenateCTM>());
+        new (itemOffset) ConcatenateCTM(get<ConcatenateCTM>());
         return;
     }
     case ItemType::DrawDotsForDocumentMarker: {
-        new (destination.data + sizeof(ItemType)) DrawDotsForDocumentMarker(get<DrawDotsForDocumentMarker>());
+        new (itemOffset) DrawDotsForDocumentMarker(get<DrawDotsForDocumentMarker>());
         return;
     }
     case ItemType::DrawEllipse: {
-        new (destination.data + sizeof(ItemType)) DrawEllipse(get<DrawEllipse>());
+        new (itemOffset) DrawEllipse(get<DrawEllipse>());
         return;
     }
     case ItemType::DrawLine: {
-        new (destination.data + sizeof(ItemType)) DrawLine(get<DrawLine>());
+        new (itemOffset) DrawLine(get<DrawLine>());
         return;
     }
     case ItemType::DrawRect: {
-        new (destination.data + sizeof(ItemType)) DrawRect(get<DrawRect>());
+        new (itemOffset) DrawRect(get<DrawRect>());
         return;
     }
     case ItemType::EndTransparencyLayer: {
-        new (destination.data + sizeof(ItemType)) EndTransparencyLayer(get<EndTransparencyLayer>());
+        new (itemOffset) EndTransparencyLayer(get<EndTransparencyLayer>());
         return;
     }
     case ItemType::FillEllipse: {
-        new (destination.data + sizeof(ItemType)) FillEllipse(get<FillEllipse>());
+        new (itemOffset) FillEllipse(get<FillEllipse>());
         return;
     }
 #if ENABLE(INLINE_PATH_DATA)
     case ItemType::FillInlinePath: {
-        new (destination.data + sizeof(ItemType)) FillInlinePath(get<FillInlinePath>());
+        new (itemOffset) FillInlinePath(get<FillInlinePath>());
         return;
     }
 #endif
     case ItemType::FillRect: {
-        new (destination.data + sizeof(ItemType)) FillRect(get<FillRect>());
+        new (itemOffset) FillRect(get<FillRect>());
         return;
     }
     case ItemType::FlushContext: {
-        new (destination.data + sizeof(ItemType)) FlushContext(get<FlushContext>());
+        new (itemOffset) FlushContext(get<FlushContext>());
         return;
     }
     case ItemType::MetaCommandSwitchTo: {
-        new (destination.data + sizeof(ItemType)) MetaCommandSwitchTo(get<MetaCommandSwitchTo>());
+        new (itemOffset) MetaCommandSwitchTo(get<MetaCommandSwitchTo>());
         return;
     }
     case ItemType::PaintFrameForMedia: {
-        new (destination.data + sizeof(ItemType)) PaintFrameForMedia(get<PaintFrameForMedia>());
+        new (itemOffset) PaintFrameForMedia(get<PaintFrameForMedia>());
         return;
     }
     case ItemType::Restore: {
-        new (destination.data + sizeof(ItemType)) Restore(get<Restore>());
+        new (itemOffset) Restore(get<Restore>());
         return;
     }
     case ItemType::Rotate: {
-        new (destination.data + sizeof(ItemType)) Rotate(get<Rotate>());
+        new (itemOffset) Rotate(get<Rotate>());
         return;
     }
     case ItemType::Save: {
-        new (destination.data + sizeof(ItemType)) Save(get<Save>());
+        new (itemOffset) Save(get<Save>());
         return;
     }
     case ItemType::Scale: {
-        new (destination.data + sizeof(ItemType)) Scale(get<Scale>());
+        new (itemOffset) Scale(get<Scale>());
         return;
     }
     case ItemType::SetCTM: {
-        new (destination.data + sizeof(ItemType)) SetCTM(get<SetCTM>());
+        new (itemOffset) SetCTM(get<SetCTM>());
         return;
     }
     case ItemType::SetInlineFillColor: {
-        new (destination.data + sizeof(ItemType)) SetInlineFillColor(get<SetInlineFillColor>());
+        new (itemOffset) SetInlineFillColor(get<SetInlineFillColor>());
         return;
     }
     case ItemType::SetInlineFillGradient: {
-        new (destination.data + sizeof(ItemType)) SetInlineFillGradient(get<SetInlineFillGradient>());
+        new (itemOffset) SetInlineFillGradient(get<SetInlineFillGradient>());
         return;
     }
     case ItemType::SetInlineStrokeColor: {
-        new (destination.data + sizeof(ItemType)) SetInlineStrokeColor(get<SetInlineStrokeColor>());
+        new (itemOffset) SetInlineStrokeColor(get<SetInlineStrokeColor>());
         return;
     }
     case ItemType::SetLineCap: {
-        new (destination.data + sizeof(ItemType)) SetLineCap(get<SetLineCap>());
+        new (itemOffset) SetLineCap(get<SetLineCap>());
         return;
     }
     case ItemType::SetLineJoin: {
-        new (destination.data + sizeof(ItemType)) SetLineJoin(get<SetLineJoin>());
+        new (itemOffset) SetLineJoin(get<SetLineJoin>());
         return;
     }
     case ItemType::SetMiterLimit: {
-        new (destination.data + sizeof(ItemType)) SetMiterLimit(get<SetMiterLimit>());
+        new (itemOffset) SetMiterLimit(get<SetMiterLimit>());
         return;
     }
     case ItemType::SetStrokeThickness: {
-        new (destination.data + sizeof(ItemType)) SetStrokeThickness(get<SetStrokeThickness>());
+        new (itemOffset) SetStrokeThickness(get<SetStrokeThickness>());
         return;
     }
     case ItemType::StrokeEllipse: {
-        new (destination.data + sizeof(ItemType)) StrokeEllipse(get<StrokeEllipse>());
+        new (itemOffset) StrokeEllipse(get<StrokeEllipse>());
         return;
     }
 #if ENABLE(INLINE_PATH_DATA)
     case ItemType::StrokeInlinePath: {
-        new (destination.data + sizeof(ItemType)) StrokeInlinePath(get<StrokeInlinePath>());
+        new (itemOffset) StrokeInlinePath(get<StrokeInlinePath>());
         return;
     }
 #endif
     case ItemType::StrokeRect: {
-        new (destination.data + sizeof(ItemType)) StrokeRect(get<StrokeRect>());
+        new (itemOffset) StrokeRect(get<StrokeRect>());
         return;
     }
     case ItemType::StrokeLine: {
-        new (destination.data + sizeof(ItemType)) StrokeLine(get<StrokeLine>());
+        new (itemOffset) StrokeLine(get<StrokeLine>());
         return;
     }
     case ItemType::Translate: {
-        new (destination.data + sizeof(ItemType)) Translate(get<Translate>());
+        new (itemOffset) Translate(get<Translate>());
         return;
     }
     }
@@ -883,7 +884,7 @@ void ItemBuffer::clear()
 
 void ItemBuffer::swapWritableBufferIfNeeded(size_t numberOfBytes)
 {
-    constexpr auto sizeForBufferSwitchItem = sizeof(ItemType) + sizeof(MetaCommandSwitchTo);
+    auto sizeForBufferSwitchItem = paddedSizeOfTypeAndItemInBytes(ItemType::MetaCommandSwitchTo);
     if (m_writtenNumberOfBytes + numberOfBytes + sizeForBufferSwitchItem <= m_writableBuffer.capacity)
         return;
 
@@ -899,16 +900,22 @@ void ItemBuffer::swapWritableBufferIfNeeded(size_t numberOfBytes)
     m_writableBuffer = WTFMove(nextBuffer);
 }
 
-void ItemBuffer::appendDataAndLength(Ref<SharedBuffer>&& data, uint8_t* location)
+void ItemBuffer::appendEncodedData(ItemHandle temporaryItem)
 {
-    reinterpret_cast<size_t*>(location)[0] = data->size();
+    auto data = m_writingClient->encodeItem(temporaryItem);
+    if (!data)
+        return;
 
-    auto* startOfPadding = location + sizeof(size_t);
-    size_t padding = (alignof(uint64_t) - reinterpret_cast<uintptr_t>(startOfPadding) % alignof(uint64_t)) % alignof(uint64_t);
-    auto* startOfData = startOfPadding + padding;
-    memcpy(startOfData, data->dataAsUInt8Ptr(), data->size());
+    auto dataLength = data->size();
+    auto additionalCapacityForEncodedItem = 2 * sizeof(uint64_t) + roundUpToMultipleOf(alignof(uint64_t), dataLength);
 
-    m_writtenNumberOfBytes += sizeof(ItemType) + sizeof(size_t) + padding + data->size();
+    swapWritableBufferIfNeeded(additionalCapacityForEncodedItem);
+
+    m_writableBuffer.data[m_writtenNumberOfBytes] = static_cast<uint8_t>(temporaryItem.type());
+    reinterpret_cast<uint64_t*>(m_writableBuffer.data + m_writtenNumberOfBytes)[1] = dataLength;
+    memcpy(m_writableBuffer.data + m_writtenNumberOfBytes + 2 * sizeof(uint64_t), data->dataAsUInt8Ptr(), dataLength);
+
+    m_writtenNumberOfBytes += additionalCapacityForEncodedItem;
 }
 
 } // namespace DisplayList

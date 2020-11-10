@@ -84,7 +84,9 @@ private:
     Optional<WebCore::DisplayList::ItemHandle> WARN_UNUSED_RETURN decodeAndCreate(const uint8_t* data, size_t length, uint8_t* handleLocation)
     {
         if (auto item = IPC::Decoder::decodeSingleObject<T>(data, length)) {
-            new (handleLocation + sizeof(WebCore::DisplayList::ItemType)) T(WTFMove(*item));
+            // FIXME: WebKit2 should not need to know that the first 8 bytes at the handle are reserved for the type.
+            // Need to figure out a way to keep this knowledge within display list code in WebCore.
+            new (handleLocation + sizeof(uint64_t)) T(WTFMove(*item));
             return {{ handleLocation }};
         }
         return WTF::nullopt;

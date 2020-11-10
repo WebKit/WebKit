@@ -177,7 +177,7 @@ TEST(DisplayListTests, ItemBufferClient)
         {
             EXPECT_EQ(type, ItemType::StrokePath);
             EXPECT_EQ(dataLength, sizeof(size_t));
-            new (handleLocation + sizeof(ItemType)) StrokePath(m_items[*reinterpret_cast<const size_t*>(data)]);
+            new (handleLocation + sizeof(uint64_t)) StrokePath(m_items[*reinterpret_cast<const size_t*>(data)]);
             return {{ handleLocation }};
         }
 
