@@ -1,3 +1,12 @@
+2020-11-10  Ryan Haddad  <ryanhaddad@apple.com>
+
+        [Debug] imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.ellipse.basics.html is asserting
+        https://bugs.webkit.org/show_bug.cgi?id=218671
+
+        Unreviewed test gardening.
+
+        * TestExpectations: Skip the test since it consistently crashes.
+
 2020-11-10  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK][WPE] Rebaseline tests after r269510, r269598, r269600 and r269612.
