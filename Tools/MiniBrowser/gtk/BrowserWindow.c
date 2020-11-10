@@ -971,6 +971,8 @@ static const GActionEntry editActions[] = {
     { "JustifyRight", NULL, NULL, "false", editingActionCallback, { 0 } },
     { "Indent", editingActionCallback, NULL, NULL, NULL, { 0 } },
     { "Outdent", editingActionCallback, NULL, NULL, NULL, { 0 } },
+    { "InsertUnorderedList", editingActionCallback, NULL, NULL, NULL, { 0 } },
+    { "InsertOrderedList", editingActionCallback, NULL, NULL, NULL, { 0 } },
 };
 
 static void browserWindowSetupEditorToolbar(BrowserWindow *window)
@@ -1059,6 +1061,22 @@ static void browserWindowSetupEditorToolbar(BrowserWindow *window)
 #endif
     addToolbarButton(groupBox, TOOLBAR_BUTTON_NORMAL, "format-indent-more-symbolic", "edit.Indent");
     addToolbarButton(groupBox, TOOLBAR_BUTTON_NORMAL, "format-indent-less-symbolic", "edit.Outdent");
+#if GTK_CHECK_VERSION(3, 98, 5)
+    gtk_box_append(GTK_BOX(toolbar), groupBox);
+#else
+    gtk_box_pack_start(GTK_BOX(toolbar), groupBox, FALSE, FALSE, 0);
+    gtk_widget_show(groupBox);
+#endif
+
+    groupBox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+#if GTK_CHECK_VERSION(3, 98, 5)
+    gtk_widget_add_css_class(groupBox, "linked");
+#else
+    gtk_style_context_add_class(gtk_widget_get_style_context(groupBox), GTK_STYLE_CLASS_LINKED);
+#endif
+    /* Not the best icons for these, but we don't have insert list icons in GTK. */
+    addToolbarButton(groupBox, TOOLBAR_BUTTON_NORMAL, "media-record-symbolic", "edit.InsertUnorderedList");
+    addToolbarButton(groupBox, TOOLBAR_BUTTON_NORMAL, "zoom-original-symbolic", "edit.InsertOrderedList");
 #if GTK_CHECK_VERSION(3, 98, 5)
     gtk_box_append(GTK_BOX(toolbar), groupBox);
 #else
