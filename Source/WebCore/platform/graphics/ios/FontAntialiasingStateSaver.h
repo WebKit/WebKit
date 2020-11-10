@@ -33,6 +33,7 @@
 namespace WebCore {
 
 class FontAntialiasingStateSaver {
+    WTF_MAKE_NONCOPYABLE(FontAntialiasingStateSaver);
 public:
     FontAntialiasingStateSaver(CGContextRef context, bool useOrientationDependentFontAntialiasing)
 #if !PLATFORM(IOS_FAMILY_SIMULATOR)
@@ -46,6 +47,14 @@ public:
 #endif
     }
 
+    ~FontAntialiasingStateSaver()
+    {
+#if !PLATFORM(IOS_FAMILY_SIMULATOR)
+        if (m_useOrientationDependentFontAntialiasing)
+            CGContextSetFontAntialiasingStyle(m_context, m_oldAntialiasingStyle);
+#endif
+    }
+
     void setup(bool isLandscapeOrientation)
     {
 #if !PLATFORM(IOS_FAMILY_SIMULATOR)
@@ -55,14 +64,6 @@ public:
         CGContextSetFontAntialiasingStyle(m_context, isLandscapeOrientation ? kCGFontAntialiasingStyleFilterLight : kCGFontAntialiasingStyleUnfiltered);
 #else
     UNUSED_PARAM(isLandscapeOrientation);
-#endif
-    }
-
-    void restore()
-    {
-#if !PLATFORM(IOS_FAMILY_SIMULATOR)
-        if (m_useOrientationDependentFontAntialiasing)
-            CGContextSetFontAntialiasingStyle(m_context, m_oldAntialiasingStyle);
 #endif
     }
 

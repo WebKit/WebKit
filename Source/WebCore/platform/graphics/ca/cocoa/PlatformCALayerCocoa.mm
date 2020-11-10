@@ -31,6 +31,7 @@
 #import "GraphicsLayerCA.h"
 #import "IOSurface.h"
 #import "LengthFunctions.h"
+#import "LocalCurrentGraphicsContext.h"
 #import "PlatformCAAnimationCocoa.h"
 #import "PlatformCAFilters.h"
 #import "ScrollbarThemeMac.h"
@@ -1155,64 +1156,53 @@ void PlatformCALayer::drawLayerContents(GraphicsContext& graphicsContext, WebCor
     if (!layerContents->platformCALayerRepaintCount(platformCALayer))
         layerPaintBehavior |= GraphicsLayerPaintFirstTilePaint;
 
-    GraphicsContextStateSaver saver(graphicsContext);
-
-    // We never use CompositingCoordinatesOrientation::BottomUp on Mac.
-    ASSERT(layerContents->platformCALayerContentsOrientation() == GraphicsLayer::CompositingCoordinatesOrientation::TopDown);
-
-#if PLATFORM(IOS_FAMILY)
-    WTF::Optional<FontAntialiasingStateSaver> fontAntialiasingState;
-#endif
-    if (graphicsContext.hasPlatformContext()) {
-        CGContextRef context = graphicsContext.platformContext();
-#if PLATFORM(IOS_FAMILY)
-        WKSetCurrentGraphicsContext(context);
-
-        fontAntialiasingState = FontAntialiasingStateSaver { context, !![platformCALayer->platformLayer() isOpaque] };
-        fontAntialiasingState->setup([WAKWindow hasLandscapeOrientation]);
-#else
-        [NSGraphicsContext saveGraphicsState];
-
-        // Set up an NSGraphicsContext for the context, so that parts of AppKit that rely on
-        // the current NSGraphicsContext (e.g. NSCell drawing) get the right one.
-        NSGraphicsContext* layerContext = [NSGraphicsContext graphicsContextWithCGContext:context flipped:YES];
-        [NSGraphicsContext setCurrentContext:layerContext];
-#endif
-    }
-    
     {
-        graphicsContext.setIsCALayerContext(true);
-        graphicsContext.setIsAcceleratedContext(platformCALayer->acceleratesDrawing());
+        GraphicsContextStateSaver saver(graphicsContext);
+        WTF::Optional<LocalCurrentGraphicsContext> platformContextSaver;
+#if PLATFORM(IOS_FAMILY)
+        WTF::Optional<FontAntialiasingStateSaver> fontAntialiasingState;
+#endif
 
-        if (!layerContents->platformCALayerContentsOpaque() && !platformCALayer->supportsSubpixelAntialiasedText() && FontCascade::isSubpixelAntialiasingAvailable()) {
-            // Turn off font smoothing to improve the appearance of text rendered onto a transparent background.
-            graphicsContext.setShouldSmoothFonts(false);
+        // We never use CompositingCoordinatesOrientation::BottomUp on Mac.
+        ASSERT(layerContents->platformCALayerContentsOrientation() == GraphicsLayer::CompositingCoordinatesOrientation::TopDown);
+
+        if (graphicsContext.hasPlatformContext()) {
+            platformContextSaver.emplace(graphicsContext);
+#if PLATFORM(IOS_FAMILY)
+            CGContextRef context = graphicsContext.platformContext();
+            WKSetCurrentGraphicsContext(context);
+            fontAntialiasingState.emplace(context, !![platformCALayer->platformLayer() isOpaque]);
+            fontAntialiasingState->setup([WAKWindow hasLandscapeOrientation]);
+#endif
         }
+        
+        {
+            graphicsContext.setIsCALayerContext(true);
+            graphicsContext.setIsAcceleratedContext(platformCALayer->acceleratesDrawing());
+
+            if (!layerContents->platformCALayerContentsOpaque() && !platformCALayer->supportsSubpixelAntialiasedText() && FontCascade::isSubpixelAntialiasingAvailable()) {
+                // Turn off font smoothing to improve the appearance of text rendered onto a transparent background.
+                graphicsContext.setShouldSmoothFonts(false);
+            }
 
 #if PLATFORM(MAC)
-        // It's important to get the clip from the context, because it may be significantly
-        // smaller than the layer bounds (e.g. tiled layers)
-        ThemeMac::setFocusRingClipRect(graphicsContext.clipBounds());
+            // It's important to get the clip from the context, because it may be significantly
+            // smaller than the layer bounds (e.g. tiled layers)
+            ThemeMac::setFocusRingClipRect(graphicsContext.clipBounds());
 #endif
 
-        for (const auto& rect : dirtyRects) {
-            GraphicsContextStateSaver stateSaver(graphicsContext);
-            graphicsContext.clip(rect);
+            for (const auto& rect : dirtyRects) {
+                GraphicsContextStateSaver stateSaver(graphicsContext);
+                graphicsContext.clip(rect);
 
-            layerContents->platformCALayerPaintContents(platformCALayer, graphicsContext, rect, layerPaintBehavior);
+                layerContents->platformCALayerPaintContents(platformCALayer, graphicsContext, rect, layerPaintBehavior);
+            }
+
+#if PLATFORM(MAC)
+            ThemeMac::setFocusRingClipRect(FloatRect());
+#endif
         }
-
-#if PLATFORM(IOS_FAMILY)
-        if (fontAntialiasingState)
-            fontAntialiasingState->restore();
-#else
-        ThemeMac::setFocusRingClipRect(FloatRect());
-
-        [NSGraphicsContext restoreGraphicsState];
-#endif
     }
-
-    saver.restore();
 
     // Re-fetch the layer owner, since <rdar://problem/9125151> indicates that it might have been destroyed during painting.
     layerContents = platformCALayer->owner();

@@ -537,8 +537,6 @@ void LegacyTileCache::drawWindowContent(LegacyTileLayer* layer, CGContextRef con
         CGRect dirtyRectInSuper = [hostLayer() convertRect:dirtyRect fromLayer:layer];
         [m_window displayRect:dirtyRectInSuper];
     }
-
-    fontAntialiasingState.restore();
     
     if (drawingFlags == DrawingFlags::Snapshotting)
         [m_window setIsInSnapshottingPaint:NO];
