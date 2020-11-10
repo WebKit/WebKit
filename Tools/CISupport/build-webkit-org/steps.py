@@ -34,6 +34,7 @@ import cStringIO
 import urllib
 
 APPLE_WEBKIT_AWS_PROXY = "http://proxy01.webkit.org:3128"
+BUILD_WEBKIT_HOSTNAME = 'build.webkit.org'
 CURRENT_HOSTNAME = socket.gethostname().strip()
 RESULTS_WEBKIT_URL = 'https://results.webkit.org'
 RESULTS_SERVER_API_KEY = 'RESULTS_SERVER_API_KEY'
@@ -1073,6 +1074,9 @@ class TransferToS3(master.MasterShellCommand):
 
     def finished(self, result):
         return master.MasterShellCommand.finished(self, result)
+
+    def doStepIf(self, step):
+        return CURRENT_HOSTNAME == BUILD_WEBKIT_HOSTNAME
 
 
 class ExtractTestResults(master.MasterShellCommand):
