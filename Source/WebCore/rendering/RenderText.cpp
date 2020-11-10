@@ -715,9 +715,10 @@ LayoutRect RenderText::localCaretRect(const InlineRunAndOffset& runAndOffset, La
         return LayoutRect();
 
     auto& textRun = downcast<LayoutIntegration::TextRunIterator>(runAndOffset.run);
+    auto line = textRun.line();
 
-    float left = textRun->positionForOffset(runAndOffset.offset);
-    return textRun.line()->computeCaretRect(left, caretWidth, extraWidthToEndOfLine);
+    float position = textRun->positionForOffset(runAndOffset.offset);
+    return line->containingBlock().computeCaretRect(line->selectionRect(), position, caretWidth, extraWidthToEndOfLine);
 }
 
 ALWAYS_INLINE float RenderText::widthFromCache(const FontCascade& f, unsigned start, unsigned len, float xPos, HashSet<const Font*>* fallbackFonts, GlyphOverflow* glyphOverflow, const RenderStyle& style) const

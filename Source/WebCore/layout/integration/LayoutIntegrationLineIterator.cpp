@@ -179,59 +179,6 @@ int PathLine::blockDirectionPointInLine() const
     return !containingBlock().style().isFlippedBlocksWritingMode() ? std::max(top(), selectionTop()) : std::min(bottom(), selectionBottom());
 }
 
-IntRect PathLine::computeCaretRect(float logicalLeftPosition, unsigned caretWidth, LayoutUnit* extraWidthToEndOfLine) const
-{
-    int height = selectionBottom() - selectionTop();
-    int top = selectionTop();
-
-    // Distribute the caret's width to either side of the offset.
-    float left = logicalLeftPosition;
-    int caretWidthLeftOfOffset = caretWidth / 2;
-    left -= caretWidthLeftOfOffset;
-    int caretWidthRightOfOffset = caretWidth - caretWidthLeftOfOffset;
-    left = roundf(left);
-
-    float lineLeft = logicalLeft();
-    float lineRight = logicalRight();
-
-    if (extraWidthToEndOfLine)
-        *extraWidthToEndOfLine = lineRight - (left + caretWidth);
-
-    const RenderStyle& blockStyle = containingBlock().style();
-
-    bool rightAligned = false;
-    switch (blockStyle.textAlign()) {
-    case TextAlignMode::Right:
-    case TextAlignMode::WebKitRight:
-        rightAligned = true;
-        break;
-    case TextAlignMode::Left:
-    case TextAlignMode::WebKitLeft:
-    case TextAlignMode::Center:
-    case TextAlignMode::WebKitCenter:
-        break;
-    case TextAlignMode::Justify:
-    case TextAlignMode::Start:
-        rightAligned = !blockStyle.isLeftToRightDirection();
-        break;
-    case TextAlignMode::End:
-        rightAligned = blockStyle.isLeftToRightDirection();
-        break;
-    }
-
-    float leftEdge = std::min<float>(0, lineLeft);
-    float rightEdge = std::max<float>(containingBlock().logicalWidth(), lineRight);
-
-    if (rightAligned) {
-        left = std::max(left, leftEdge);
-        left = std::min(left, lineRight - caretWidth);
-    } else {
-        left = std::min(left, rightEdge - caretWidthRightOfOffset);
-        left = std::max(left, lineLeft);
-    }
-    return blockStyle.isHorizontalWritingMode() ? IntRect(left, top, caretWidth, height) : IntRect(top, left, height, caretWidth);
-}
-
 }
 }
 

@@ -398,6 +398,7 @@ public:
     void addFloatsToNewParent(RenderBlockFlow& toBlockFlow) const;
     
     LayoutUnit endPaddingWidthForCaret() const;
+    IntRect computeCaretRect(const LayoutRect& lineSelectionRect, float logicalLeftPosition, unsigned caretWidth, LayoutUnit* extraWidthToEndOfLine) const;
 
 protected:
     bool shouldResetLogicalHeightBeforeLayout() const override { return true; }
