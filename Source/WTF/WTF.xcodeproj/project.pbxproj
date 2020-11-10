@@ -317,6 +317,7 @@
 		1469419416EAAFF80024E146 /* SchedulePair.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SchedulePair.h; sourceTree = "<group>"; };
 		1469419A16EAB10A0024E146 /* AutodrainedPool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AutodrainedPool.h; sourceTree = "<group>"; };
 		1469419B16EAB10A0024E146 /* AutodrainedPool.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AutodrainedPool.cpp; sourceTree = "<group>"; };
+		147628E5255B3F6F00F093B9 /* CFRunLoopSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CFRunLoopSPI.h; sourceTree = "<group>"; };
 		14933E21228C22DF00F79E46 /* DataVaultSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataVaultSPI.h; sourceTree = "<group>"; };
 		149EF16216BBFE0D000A4331 /* TriState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TriState.h; sourceTree = "<group>"; };
 		14E785E71DFB330100209BD1 /* OrdinalNumber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OrdinalNumber.h; sourceTree = "<group>"; };
@@ -1513,6 +1514,7 @@
 			isa = PBXGroup;
 			children = (
 				DCEE21FA1CEA7538000C2396 /* CFBundleSPI.h */,
+				147628E5255B3F6F00F093B9 /* CFRunLoopSPI.h */,
 				1CCDB1511E566BC5006C73C0 /* CFStringSPI.h */,
 			);
 			path = cf;
