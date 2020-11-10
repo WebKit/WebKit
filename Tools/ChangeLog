@@ -1,3 +1,18 @@
+2020-11-10  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] [REGRESSSION(r269390) Several editing/ tests are flaky
+        https://bugs.webkit.org/show_bug.cgi?id=218607
+
+        Reviewed by Adrian Perez de Castro.
+
+        After r269390 some of the internal preferences like LiveRangeSelectionEnabled
+        are not resetted to their default value on WTR between test runs.
+        So when a test changes some of this properties it may cause failures on
+        the next tests that will run on the same WTR process.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetPreferencesToConsistentValues): Add back the call to WKPreferencesResetAllInternalDebugFeatures() that was removed on r269390.
+
 2020-11-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] MiniBrowser: add buttons to insert ordered/unordered lists to editor toolbar

@@ -829,6 +829,7 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
     WKPreferencesResetTestRunnerOverrides(preferences);
 
     WKPreferencesEnableAllExperimentalFeatures(preferences);
+    WKPreferencesResetAllInternalDebugFeatures(preferences);
 
     // FIXME: Convert these to default values for TestOptions.
     WKPreferencesSetProcessSwapOnNavigationEnabled(preferences, options.shouldEnableProcessSwapOnNavigation());
