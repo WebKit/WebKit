@@ -552,12 +552,6 @@ void AcceleratedBackingStoreWayland::snapshot(GtkSnapshot* gtkSnapshot)
 
     graphene_rect_t bounds = GRAPHENE_RECT_INIT(0, 0, static_cast<float>(cairo_image_surface_get_width(m_surface.get())), static_cast<float>(cairo_image_surface_get_height(m_surface.get())));
     RefPtr<cairo_t> cr = adoptRef(gtk_snapshot_append_cairo(gtkSnapshot, &bounds));
-
-    // The compositor renders the texture flipped for gdk, fix that here.
-    cairo_matrix_t transform;
-    cairo_matrix_init(&transform, 1, 0, 0, -1, 0, cairo_image_surface_get_height(m_surface.get()) / m_webPage.deviceScaleFactor());
-    cairo_transform(cr.get(), &transform);
-
     cairo_set_source_surface(cr.get(), m_surface.get(), 0, 0);
     cairo_set_operator(cr.get(), CAIRO_OPERATOR_OVER);
     cairo_paint(cr.get());

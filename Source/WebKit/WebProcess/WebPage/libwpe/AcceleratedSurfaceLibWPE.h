@@ -46,7 +46,7 @@ public:
     void clientResize(const WebCore::IntSize&) override;
     bool shouldPaintMirrored() const override
     {
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) && !USE(GTK4)
         return true;
 #else
         return false;

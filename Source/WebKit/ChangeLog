@@ -1,5 +1,18 @@
 2020-11-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK4] WebView is flipped
+        https://bugs.webkit.org/show_bug.cgi?id=218354
+
+        Reviewed by Adrian Perez de Castro.
+
+        Stop painting y-flipped textures when buildig with GTK4.
+
+        * UIProcess/gtk/AcceleratedBackingStoreWayland.cpp:
+        (WebKit::AcceleratedBackingStoreWayland::snapshot):
+        * WebProcess/WebPage/libwpe/AcceleratedSurfaceLibWPE.h:
+
+2020-11-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Crash in WebKit::DropTarget::drop
         https://bugs.webkit.org/show_bug.cgi?id=217482
 
