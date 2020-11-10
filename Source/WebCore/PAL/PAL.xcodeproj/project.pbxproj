@@ -181,6 +181,10 @@
 		A3C66CDD1F462D6A009E6EE9 /* SessionID.h in Headers */ = {isa = PBXBuildFile; fileRef = A3C66CDB1F462D6A009E6EE9 /* SessionID.h */; };
 		ABCA536824895DB900361BFF /* CoreMotionSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = ABCA536724895DB900361BFF /* CoreMotionSPI.h */; };
 		C15CBB3523F3548A00300CC7 /* NSUserDefaultsSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = C15CBB3223F34A1200300CC7 /* NSUserDefaultsSPI.h */; };
+		CD6122CC2559B6AC00FC657A /* OutputContext.h in Headers */ = {isa = PBXBuildFile; fileRef = CD6122CA2559B6AC00FC657A /* OutputContext.h */; };
+		CD6122CD2559B6AC00FC657A /* OutputContext.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD6122CB2559B6AC00FC657A /* OutputContext.mm */; };
+		CD6122D02559B8F200FC657A /* OutputDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = CD6122CE2559B8F200FC657A /* OutputDevice.h */; };
+		CD6122D12559B8F200FC657A /* OutputDevice.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD6122CF2559B8F200FC657A /* OutputDevice.mm */; };
 		CDACB3602387425B0018D7CE /* MediaToolboxSoftLink.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDACB35E23873E480018D7CE /* MediaToolboxSoftLink.cpp */; };
 		CDACB361238742740018D7CE /* MediaToolboxSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = CDACB35F23873E480018D7CE /* MediaToolboxSoftLink.h */; };
 		CDF91113220E4EEC001EA39E /* CelestialSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CDF91112220E4EEC001EA39E /* CelestialSPI.h */; };
@@ -377,6 +381,10 @@
 		C138EA1A2436447200656DF1 /* CoreServicesSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CoreServicesSPI.h; sourceTree = "<group>"; };
 		C15CBB3223F34A1200300CC7 /* NSUserDefaultsSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NSUserDefaultsSPI.h; sourceTree = "<group>"; };
 		C2147A4A1EFD0AA600056FA5 /* CopyPALHeaders.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = CopyPALHeaders.xcconfig; sourceTree = "<group>"; };
+		CD6122CA2559B6AC00FC657A /* OutputContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OutputContext.h; sourceTree = "<group>"; };
+		CD6122CB2559B6AC00FC657A /* OutputContext.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = OutputContext.mm; sourceTree = "<group>"; };
+		CD6122CE2559B8F200FC657A /* OutputDevice.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OutputDevice.h; sourceTree = "<group>"; };
+		CD6122CF2559B8F200FC657A /* OutputDevice.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = OutputDevice.mm; sourceTree = "<group>"; };
 		CDACB35E23873E480018D7CE /* MediaToolboxSoftLink.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MediaToolboxSoftLink.cpp; sourceTree = "<group>"; };
 		CDACB35F23873E480018D7CE /* MediaToolboxSoftLink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaToolboxSoftLink.h; sourceTree = "<group>"; };
 		CDF91112220E4EEC001EA39E /* CelestialSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CelestialSPI.h; sourceTree = "<group>"; };
@@ -406,6 +414,10 @@
 			children = (
 				0C00CFD11F68CE4600AAC26D /* MediaTimeAVFoundation.cpp */,
 				0C00CFD21F68CE4600AAC26D /* MediaTimeAVFoundation.h */,
+				CD6122CA2559B6AC00FC657A /* OutputContext.h */,
+				CD6122CB2559B6AC00FC657A /* OutputContext.mm */,
+				CD6122CE2559B8F200FC657A /* OutputDevice.h */,
+				CD6122CF2559B8F200FC657A /* OutputDevice.mm */,
 			);
 			path = avfoundation;
 			sourceTree = "<group>";
@@ -874,6 +886,8 @@
 				570AB8F920AF6E3D00B8BE87 /* NSXPCConnectionSPI.h in Headers */,
 				0C5AF91F1F43A4C7002EAC02 /* OpenGLESSPI.h in Headers */,
 				31647FB1251759EF0010F8FB /* OpenGLSoftLinkCocoa.h in Headers */,
+				CD6122CC2559B6AC00FC657A /* OutputContext.h in Headers */,
+				CD6122D02559B8F200FC657A /* OutputDevice.h in Headers */,
 				A169B041248EF05200EE8B7B /* PassKitInstallmentsSPI.h in Headers */,
 				A1F63C9F21A4DBF7006FB43B /* PassKitSoftLink.h in Headers */,
 				0C2DA1551F3BEB4900DBC317 /* PassKitSPI.h in Headers */,
@@ -1011,6 +1025,8 @@
 				0CF99CA41F736375007EE793 /* MediaTimeAVFoundation.cpp in Sources */,
 				CDACB3602387425B0018D7CE /* MediaToolboxSoftLink.cpp in Sources */,
 				31647FB0251759DD0010F8FB /* OpenGLSoftLinkCocoa.mm in Sources */,
+				CD6122CD2559B6AC00FC657A /* OutputContext.mm in Sources */,
+				CD6122D12559B8F200FC657A /* OutputDevice.mm in Sources */,
 				A1F63CA021A4DBF7006FB43B /* PassKitSoftLink.mm in Sources */,
 				A1175B4F1F6B337300C4B9F0 /* PopupMenu.mm in Sources */,
 				4450FC9F21F5F602004DFA56 /* QuickLookSoftLink.mm in Sources */,

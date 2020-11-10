@@ -33,6 +33,8 @@
 #include "MediaDecodingConfiguration.h"
 #include "MediaPlayer.h"
 #include "VP9UtilitiesCocoa.h"
+#include <pal/avfoundation/OutputContext.h>
+#include <pal/avfoundation/OutputDevice.h>
 
 #include "VideoToolboxSoftLink.h"
 
@@ -124,6 +126,26 @@ void createMediaPlayerDecodingConfigurationCocoa(MediaDecodingConfiguration&& co
         if (MediaPlayer::supportsType(parameters) != MediaPlayer::SupportsType::IsSupported) {
             callback({{ }, WTFMove(configuration)});
             return;
+        }
+
+        if (configuration.audio->spatialRendering) {
+            auto context = PAL::OutputContext::sharedAudioPresentationOutputContext();
+            if (!context || !WTF::allOf(context->outputDevices(), [] (auto& device) {
+                return device.supportsSpatialAudio();
+            })) {
+                callback({{ }, WTFMove(configuration)});
+                return;
+            }
+
+            // Only multichannel audio can be spatially rendered.
+            if (!configuration.audio->channels.isNull()) {
+                bool isOk = false;
+                auto parsedChannels = configuration.audio->channels.toDouble(&isOk);
+                if (!isOk || parsedChannels <= 2) {
+                    callback({{ }, WTFMove(configuration)});
+                    return;
+                }
+            }
         }
         info.supported = true;
     }

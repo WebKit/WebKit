@@ -32,8 +32,9 @@ namespace WebCore {
 struct AudioConfiguration {
     String contentType;
     String channels;
-    uint64_t bitrate;
-    uint32_t samplerate;
+    Optional<uint64_t> bitrate;
+    Optional<uint32_t> samplerate;
+    Optional<bool> spatialRendering;
 };
 
 } // namespace WebCore

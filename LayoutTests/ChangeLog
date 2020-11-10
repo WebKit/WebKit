@@ -1,3 +1,14 @@
+2020-11-10  Jer Noble  <jer.noble@apple.com>
+
+        Add support for AudioConfiguration.spatialRendering
+        https://bugs.webkit.org/show_bug.cgi?id=218727
+        <rdar://problem/71213348>
+
+        Reviewed by Eric Carlson.
+
+        * media/mediacapabilities/mock-decodingInfo-spatialRendering-expected.txt: Added.
+        * media/mediacapabilities/mock-decodingInfo-spatialRendering.html: Added.
+
 2020-11-10  Ryan Haddad  <ryanhaddad@apple.com>
 
         [Debug] imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.ellipse.basics.html is asserting

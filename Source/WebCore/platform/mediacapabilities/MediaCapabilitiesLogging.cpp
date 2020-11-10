@@ -66,9 +66,14 @@ static Ref<JSON::Object> toJSONObject(const AudioConfiguration& configuration)
 {
     auto object = JSON::Object::create();
     object->setString("contentType"_s, configuration.contentType);
-    object->setString("channels"_s, configuration.channels);
-    object->setInteger("bitrate"_s, static_cast<int>(configuration.bitrate));
-    object->setDouble("samplerate"_s, configuration.samplerate);
+    if (!configuration.channels.isNull())
+        object->setString("channels"_s, configuration.channels);
+    if (configuration.bitrate)
+        object->setInteger("bitrate"_s, static_cast<int>(configuration.bitrate.value()));
+    if (configuration.samplerate)
+        object->setDouble("samplerate"_s, configuration.samplerate.value());
+    if (configuration.spatialRendering)
+        object->setBoolean("spatialRendering"_s, configuration.spatialRendering.value());
     return object;
 }
 

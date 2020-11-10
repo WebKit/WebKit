@@ -86,6 +86,7 @@
 #import <functional>
 #import <objc/runtime.h>
 #import <pal/avfoundation/MediaTimeAVFoundation.h>
+#import <pal/avfoundation/OutputContext.h>
 #import <pal/spi/cocoa/AVFoundationSPI.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/BlockObjCExceptions.h>
@@ -2745,24 +2746,8 @@ static NSString *exernalDeviceDisplayNameForPlayer(AVPlayer *player)
     if (!PAL::isAVFoundationFrameworkAvailable())
         return nil;
 
-    if ([PAL::getAVOutputContextClass() respondsToSelector:@selector(sharedAudioPresentationOutputContext)]) {
-        AVOutputContext *outputContext = [PAL::getAVOutputContextClass() sharedAudioPresentationOutputContext];
-
-        if (![outputContext respondsToSelector:@selector(supportsMultipleOutputDevices)]
-            || ![outputContext supportsMultipleOutputDevices]
-            || ![outputContext respondsToSelector:@selector(outputDevices)])
-            return [outputContext deviceName];
-
-        auto outputDeviceNames = adoptNS([[NSMutableArray alloc] init]);
-        for (AVOutputDevice *outputDevice in [outputContext outputDevices]) {
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-            auto outputDeviceName = adoptNS([[outputDevice name] copy]);
-ALLOW_DEPRECATED_DECLARATIONS_END
-            [outputDeviceNames addObject:outputDeviceName.get()];
-        }
-
-        return [outputDeviceNames componentsJoinedByString:@" + "];
-    }
+    if (auto context = OutputContext::sharedAudioPresentationOutputContext())
+        return context->deviceName();
 
     if (player.externalPlaybackType != AVPlayerExternalPlaybackTypeAirPlay)
         return nil;

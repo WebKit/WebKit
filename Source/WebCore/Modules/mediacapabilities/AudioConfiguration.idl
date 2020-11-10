@@ -31,4 +31,5 @@
   DOMString channels;
   unsigned long long bitrate;
   unsigned long samplerate;
+  boolean spatialRendering;
 };

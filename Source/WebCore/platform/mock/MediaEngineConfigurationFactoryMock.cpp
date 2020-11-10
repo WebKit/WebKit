@@ -61,8 +61,14 @@ static bool canDecodeMedia(const MediaDecodingConfiguration& configuration)
 
     // Audio decoding support limited to audio/mp4.
     auto audioConfig = configuration.audio;
-    if (audioConfig)
-        return ContentType(audioConfig->contentType).containerType() == "audio/mp4";
+    if (audioConfig) {
+        if (ContentType(audioConfig->contentType).containerType() != "audio/mp4")
+            return false;
+
+        // Can only support spatial rendering of tracks with multichannel audio:
+        if (audioConfig->spatialRendering.valueOr(false) && audioConfig->channels.toDouble() <= 2)
+            return false;
+    }
 
     return true;
 }
@@ -74,7 +80,7 @@ static bool canSmoothlyDecodeMedia(const MediaDecodingConfiguration& configurati
         return false;
 
     auto audioConfig = configuration.audio;
-    if (audioConfig)
+    if (audioConfig && !audioConfig->channels.isNull())
         return audioConfig->channels == "2";
 
     return true;
@@ -87,8 +93,8 @@ static bool canPowerEfficientlyDecodeMedia(const MediaDecodingConfiguration& con
         return false;
 
     auto audioConfig = configuration.audio;
-    if (audioConfig)
-        return audioConfig->bitrate <= 1000;
+    if (audioConfig && audioConfig->bitrate)
+        return audioConfig->bitrate.value() <= 1000;
 
     return true;
 }
@@ -125,7 +131,7 @@ static bool canSmoothlyEncodeMedia(const MediaEncodingConfiguration& configurati
         return false;
 
     auto audioConfig = configuration.audio;
-    if (audioConfig && audioConfig->channels != "2")
+    if (audioConfig && !audioConfig->channels.isNull() && audioConfig->channels != "2")
         return false;
 
     return true;
@@ -138,7 +144,7 @@ static bool canPowerEfficientlyEncodeMedia(const MediaEncodingConfiguration& con
         return false;
 
     auto audioConfig = configuration.audio;
-    if (audioConfig && audioConfig->bitrate > 1000)
+    if (audioConfig && audioConfig->bitrate && audioConfig->bitrate.value() > 1000)
         return false;
 
     return true;

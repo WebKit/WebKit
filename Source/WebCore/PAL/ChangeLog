@@ -1,3 +1,29 @@
+2020-11-10  Jer Noble  <jer.noble@apple.com>
+
+        Add support for AudioConfiguration.spatialRendering
+        https://bugs.webkit.org/show_bug.cgi?id=218727
+        <rdar://problem/71213348>
+
+        Reviewed by Eric Carlson.
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/avfoundation/OutputContext.h: Copied from Source/WebCore/platform/mediacapabilities/AudioConfiguration.h.
+        (PAL::OutputContext::platformContext const):
+        * pal/avfoundation/OutputContext.mm: Added.
+        (PAL::OutputContext::OutputContext):
+        (PAL::OutputContext::sharedAudioPresentationOutputContext):
+        (PAL::OutputContext::supportsMultipleOutputDevices):
+        (PAL::OutputContext::deviceName):
+        (PAL::OutputContext::outputDevices const):
+        * pal/avfoundation/OutputDevice.h: Copied from Source/WebCore/platform/mediacapabilities/AudioConfiguration.h.
+        (PAL::OutputDevice::platformDevice const):
+        * pal/avfoundation/OutputDevice.mm: Copied from Source/WebCore/platform/mediacapabilities/AudioConfiguration.h.
+        (PAL::OutputDevice::OutputDevice):
+        (PAL::OutputDevice::name const):
+        (PAL::OutputDevice::deviceFeatures const):
+        (PAL::OutputDevice::supportsSpatialAudio const):
+        * pal/spi/cocoa/AVFoundationSPI.h:
+
 2020-11-04  David Kilzer  <ddkilzer@apple.com>
 
         WebKit should remove unused debug variant support
