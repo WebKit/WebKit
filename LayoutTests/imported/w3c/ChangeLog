@@ -1,3 +1,17 @@
+2020-11-10  Rob Buis  <rbuis@igalia.com>
+
+        Parse aspect-ratio CSS property
+        https://bugs.webkit.org/show_bug.cgi?id=218437
+
+        Reviewed by Darin Adler.
+
+        Add improved test results.
+
+        * web-platform-tests/css/css-cascade/all-prop-initial-xml-expected.txt:
+        * web-platform-tests/css/css-sizing/aspect-ratio/parsing/contain-intrinsic-size-computed-expected.txt:
+        * web-platform-tests/css/css-sizing/aspect-ratio/parsing/contain-intrinsic-size-valid-expected.txt:
+        * web-platform-tests/css/cssom/cssstyledeclaration-csstext-expected.txt:
+
 2020-11-10  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-flex] Import image-as-flexitem-* WPT tests

@@ -76,6 +76,8 @@ public:
     URL completeURL(const String& url) const;
 
     bool isContentOpaque { false };
+
+    bool aspectRatioEnabled { false };
 };
 
 bool operator==(const CSSParserContext&, const CSSParserContext&);

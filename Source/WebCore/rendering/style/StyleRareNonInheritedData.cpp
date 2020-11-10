@@ -43,6 +43,8 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     : opacity(RenderStyle::initialOpacity())
     , aspectRatioDenominator(RenderStyle::initialAspectRatioDenominator())
     , aspectRatioNumerator(RenderStyle::initialAspectRatioNumerator())
+    , aspectRatioWidth(RenderStyle::initialAspectRatioWidth())
+    , aspectRatioHeight(RenderStyle::initialAspectRatioHeight())
     , perspective(RenderStyle::initialPerspective())
     , perspectiveOriginX(RenderStyle::initialPerspectiveOriginX())
     , perspectiveOriginY(RenderStyle::initialPerspectiveOriginY())
@@ -121,6 +123,8 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
     , opacity(o.opacity)
     , aspectRatioDenominator(o.aspectRatioDenominator)
     , aspectRatioNumerator(o.aspectRatioNumerator)
+    , aspectRatioWidth(o.aspectRatioWidth)
+    , aspectRatioHeight(o.aspectRatioHeight)
     , perspective(o.perspective)
     , perspectiveOriginX(o.perspectiveOriginX)
     , perspectiveOriginY(o.perspectiveOriginY)
@@ -222,6 +226,8 @@ StyleRareNonInheritedData::~StyleRareNonInheritedData() = default;
 bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) const
 {
     return opacity == o.opacity
+        && aspectRatioWidth == o.aspectRatioWidth
+        && aspectRatioHeight == o.aspectRatioHeight
         && aspectRatioDenominator == o.aspectRatioDenominator
         && aspectRatioNumerator == o.aspectRatioNumerator
         && perspective == o.perspective

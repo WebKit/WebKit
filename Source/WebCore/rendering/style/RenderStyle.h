@@ -504,6 +504,8 @@ public:
     AspectRatioType aspectRatioType() const { return static_cast<AspectRatioType>(m_rareNonInheritedData->aspectRatioType); }
     float aspectRatioDenominator() const { return m_rareNonInheritedData->aspectRatioDenominator; }
     float aspectRatioNumerator() const { return m_rareNonInheritedData->aspectRatioNumerator; }
+    double aspectRatioWidth() const { return m_rareNonInheritedData->aspectRatioWidth; }
+    double aspectRatioHeight() const { return m_rareNonInheritedData->aspectRatioHeight; }
     BoxAlignment boxAlign() const { return static_cast<BoxAlignment>(m_rareNonInheritedData->deprecatedFlexibleBox->align); }
     BoxDirection boxDirection() const { return static_cast<BoxDirection>(m_inheritedFlags.boxDirection); }
     float boxFlex() const { return m_rareNonInheritedData->deprecatedFlexibleBox->flex; }
@@ -1011,6 +1013,7 @@ public:
     void setAspectRatioType(AspectRatioType aspectRatioType) { SET_VAR(m_rareNonInheritedData, aspectRatioType, static_cast<unsigned>(aspectRatioType)); }
     void setAspectRatioDenominator(float v) { SET_VAR(m_rareNonInheritedData, aspectRatioDenominator, v); }
     void setAspectRatioNumerator(float v) { SET_VAR(m_rareNonInheritedData, aspectRatioNumerator, v); }
+    void setAspectRatio(double width, double height) { SET_VAR(m_rareNonInheritedData, aspectRatioWidth, width); SET_VAR(m_rareNonInheritedData, aspectRatioHeight, height); }
 
     void setListStyleStringValue(const AtomString& value) { SET_VAR(m_rareInheritedData, listStyleStringValue, value); }
     void setListStyleType(ListStyleType v) { m_inheritedFlags.listStyleType = static_cast<unsigned>(v); }
@@ -1612,6 +1615,8 @@ public:
     static AspectRatioType initialAspectRatioType() { return AspectRatioType::Auto; }
     static float initialAspectRatioDenominator() { return 1; }
     static float initialAspectRatioNumerator() { return 1; }
+    static double initialAspectRatioWidth() { return 1.0; }
+    static double initialAspectRatioHeight() { return 1.0; }
     static Order initialRTLOrdering() { return Order::Logical; }
     static float initialTextStrokeWidth() { return 0; }
     static unsigned short initialColumnCount() { return 1; }

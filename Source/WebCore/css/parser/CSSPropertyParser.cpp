@@ -3931,6 +3931,41 @@ static RefPtr<CSSValue> consumeWebkitAspectRatio(CSSParserTokenRange& range)
     return CSSAspectRatioValue::create(leftValue->floatValue(), rightValue->floatValue());
 }
 
+static RefPtr<CSSValue> consumeAspectRatio(CSSParserTokenRange& range)
+{
+    RefPtr<CSSPrimitiveValue> autoValue;
+    if (range.peek().type() == IdentToken)
+        autoValue = consumeIdent<CSSValueAuto>(range);
+
+    if (range.atEnd())
+        return RefPtr<CSSValue>(WTFMove(autoValue));
+
+    auto leftValue = consumeNumber(range, ValueRangeNonNegative);
+    if (!leftValue)
+        return nullptr;
+
+    bool slashSeen = consumeSlashIncludingWhitespace(range);
+
+    auto rightValue = consumeNumber(range, ValueRangeNonNegative);
+    if (rightValue && !slashSeen)
+        return nullptr;
+    if (!slashSeen && !rightValue) // A missing right-hand is treated as 1.
+        rightValue = CSSValuePool::singleton().createValue(1, CSSUnitType::CSS_NUMBER);
+    if (!autoValue)
+        autoValue = consumeIdent<CSSValueAuto>(range);
+
+    auto ratioList = CSSValueList::createSlashSeparated();
+    ratioList->append(leftValue.releaseNonNull());
+    if (rightValue)
+        ratioList->append(rightValue.releaseNonNull());
+    if (!autoValue)
+        return RefPtr<CSSValue>(WTFMove(ratioList));
+    auto list = CSSValueList::createSpaceSeparated();
+    list->append(CSSValuePool::singleton().createIdentifierValue(CSSValueAuto));
+    list->append(ratioList);
+    return RefPtr<CSSValue>(WTFMove(list));
+}
+
 static RefPtr<CSSValue> consumeTextEmphasisPosition(CSSParserTokenRange& range)
 {
     bool foundOverOrUnder = false;
@@ -4488,6 +4523,10 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
         return consumeAlt(m_range, m_context);
     case CSSPropertyWebkitAspectRatio:
         return consumeWebkitAspectRatio(m_range);
+    case CSSPropertyAspectRatio:
+        if (!m_context.aspectRatioEnabled)
+            return nullptr;
+        return consumeAspectRatio(m_range);
     case CSSPropertyWebkitTextEmphasisPosition:
         return consumeTextEmphasisPosition(m_range);
 #if ENABLE(DARK_MODE_CSS)

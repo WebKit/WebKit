@@ -4481,6 +4481,17 @@
                 "status": "experimental"
             }
         },
+        "aspect-ratio": {
+            "codegen-properties": {
+                "custom": "All"
+            },
+            "status": {
+                "status": "experimental"
+            },
+            "specification": {
+                "url": "https://drafts.csswg.org/css-sizing-4/#aspect-ratio"
+            }
+        },
         "-webkit-backface-visibility": {
             "values": [
                 "visible",

@@ -60,6 +60,18 @@ AdClickAttributionEnabled:
     WebCore:
       default: false
 
+AspectRatioEnabled:
+  type: bool
+  humanReadableName: "CSS Aspect Ratio"
+  humanReadableDescription: "Enable aspect-ratio CSS property"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 # FIXME: This is on by default in WebKit2. Perhaps we should consider turning it on for WebKitLegacy as well.
 AspectRatioOfImgFromWidthAndHeightEnabled:
   type: bool

@@ -108,6 +108,8 @@ public:
 
     float aspectRatioDenominator;
     float aspectRatioNumerator;
+    double aspectRatioWidth;
+    double aspectRatioHeight;
 
     float perspective;
     Length perspectiveOriginX;
@@ -204,7 +206,7 @@ public:
 
     unsigned textDecorationStyle : 3; // TextDecorationStyle
 
-    unsigned aspectRatioType : 2;
+    unsigned aspectRatioType : 3;
 
 #if ENABLE(CSS_COMPOSITING)
     unsigned effectiveBlendMode: 5; // EBlendMode

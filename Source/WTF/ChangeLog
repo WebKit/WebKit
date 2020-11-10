@@ -1,3 +1,14 @@
+2020-11-10  Rob Buis  <rbuis@igalia.com>
+
+        Parse aspect-ratio CSS property
+        https://bugs.webkit.org/show_bug.cgi?id=218437
+
+        Reviewed by Darin Adler.
+
+        Add an experimental preference for aspect-ratio.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
 2020-11-09  Alan Bujtas  <zalan@apple.com>
 
         Unreviewed, reverting r269603.

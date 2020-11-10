@@ -3460,8 +3460,32 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
                 return cssValuePool.createIdentifierValue(CSSValueFromDimensions);
             case AspectRatioType::FromIntrinsic:
                 return cssValuePool.createIdentifierValue(CSSValueFromIntrinsic);
-            case AspectRatioType::Specified:
+            case AspectRatioType::Ratio:
                 return CSSAspectRatioValue::create(style.aspectRatioNumerator(), style.aspectRatioDenominator());
+            case AspectRatioType::AutoAndRatio:
+                break;
+            }
+            ASSERT_NOT_REACHED();
+            return nullptr;
+        case CSSPropertyAspectRatio:
+            switch (style.aspectRatioType()) {
+            case AspectRatioType::Auto:
+                return cssValuePool.createIdentifierValue(CSSValueAuto);
+            case AspectRatioType::AutoAndRatio:
+            case AspectRatioType::Ratio: {
+                auto ratioList = CSSValueList::createSlashSeparated();
+                ratioList->append(cssValuePool.createValue(style.aspectRatioWidth(), CSSUnitType::CSS_NUMBER));
+                ratioList->append(cssValuePool.createValue(style.aspectRatioHeight(), CSSUnitType::CSS_NUMBER));
+                if (style.aspectRatioType() == AspectRatioType::Ratio)
+                    return ratioList;
+                auto list = CSSValueList::createSpaceSeparated();
+                list->append(cssValuePool.createIdentifierValue(CSSValueAuto));
+                list->append(ratioList);
+                return list;
+            }
+            case AspectRatioType::FromDimensions:
+            case AspectRatioType::FromIntrinsic:
+                break;
             }
             ASSERT_NOT_REACHED();
             return nullptr;
