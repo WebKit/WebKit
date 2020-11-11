@@ -1,3 +1,9 @@
+2020-11-10  Noam Rosenthal  <noam@webkit.org>
+
+        Unreviewed, cleanup my watchlist entries.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2020-11-10  Lauro Moura  <lmoura@igalia.com>
 
         [GLIB] Update page-visibility test after r269665
