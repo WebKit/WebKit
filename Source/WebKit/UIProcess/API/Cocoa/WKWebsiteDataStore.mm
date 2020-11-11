@@ -239,7 +239,7 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
             _WKWebsiteDataTypeSearchFieldRecentSearches,
             _WKWebsiteDataTypeResourceLoadStatistics,
             _WKWebsiteDataTypeCredentials,
-            _WKWebsiteDataTypePrivateClickMeasurements,
+            _WKWebsiteDataTypeAdClickAttributions,
             _WKWebsiteDataTypeAlternativeServices
 #if !TARGET_OS_IPHONE
             , _WKWebsiteDataTypePlugInData

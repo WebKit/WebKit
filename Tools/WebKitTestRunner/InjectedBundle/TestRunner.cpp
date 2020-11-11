@@ -1995,35 +1995,35 @@ void TestRunner::abortModal()
     postSynchronousMessage("AbortModal");
 }
 
-void TestRunner::dumpPrivateClickMeasurement()
+void TestRunner::dumpAdClickAttribution()
 {
-    postSynchronousPageMessage("DumpPrivateClickMeasurement");
+    postSynchronousPageMessage("DumpAdClickAttribution");
 }
 
-void TestRunner::clearPrivateClickMeasurement()
+void TestRunner::clearAdClickAttribution()
 {
-    postSynchronousPageMessage("ClearPrivateClickMeasurement");
+    postSynchronousPageMessage("ClearAdClickAttribution");
 }
 
-void TestRunner::clearPrivateClickMeasurementsThroughWebsiteDataRemoval()
+void TestRunner::clearAdClickAttributionsThroughWebsiteDataRemoval()
 {
-    postSynchronousMessage("ClearPrivateClickMeasurementsThroughWebsiteDataRemoval");
+    postSynchronousMessage("ClearAdClickAttributionsThroughWebsiteDataRemoval");
 }
 
-void TestRunner::setPrivateClickMeasurementOverrideTimerForTesting(bool value)
+void TestRunner::setAdClickAttributionOverrideTimerForTesting(bool value)
 {
-    postSynchronousPageMessage("SetPrivateClickMeasurementOverrideTimerForTesting", value);
+    postSynchronousPageMessage("SetAdClickAttributionOverrideTimerForTesting", value);
 }
 
-void TestRunner::setPrivateClickMeasurementConversionURLForTesting(JSStringRef urlString)
+void TestRunner::setAdClickAttributionConversionURLForTesting(JSStringRef urlString)
 {
-    postSynchronousPageMessage("SetPrivateClickMeasurementConversionURLForTesting",
+    postSynchronousPageMessage("SetAdClickAttributionConversionURLForTesting",
         adoptWK(WKURLCreateWithUTF8CString(toWTFString(urlString).utf8().data())));
 }
 
-void TestRunner::markPrivateClickMeasurementsAsExpiredForTesting()
+void TestRunner::markAdClickAttributionsAsExpiredForTesting()
 {
-    postSynchronousPageMessage("MarkPrivateClickMeasurementsAsExpiredForTesting");
+    postSynchronousPageMessage("MarkAdClickAttributionsAsExpiredForTesting");
 }
 
 bool TestRunner::hasAppBoundSession()

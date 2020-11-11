@@ -2880,37 +2880,37 @@ void WKPageGetApplicationManifest_b(WKPageRef page, WKPageGetApplicationManifest
 }
 #endif
 
-void WKPageDumpPrivateClickMeasurement(WKPageRef page, WKPageDumpPrivateClickMeasurementFunction callback, void* callbackContext)
+void WKPageDumpAdClickAttribution(WKPageRef page, WKPageDumpAdClickAttributionFunction callback, void* callbackContext)
 {
-    toImpl(page)->dumpPrivateClickMeasurement([callbackContext, callback] (const String& privateClickMeasurement) {
-        callback(WebKit::toAPI(privateClickMeasurement.impl()), callbackContext);
+    toImpl(page)->dumpAdClickAttribution([callbackContext, callback] (const String& adClickAttribution) {
+        callback(WebKit::toAPI(adClickAttribution.impl()), callbackContext);
     });
 }
 
-void WKPageClearPrivateClickMeasurement(WKPageRef page, WKPageClearPrivateClickMeasurementFunction callback, void* callbackContext)
+void WKPageClearAdClickAttribution(WKPageRef page, WKPageClearAdClickAttributionFunction callback, void* callbackContext)
 {
-    toImpl(page)->clearPrivateClickMeasurement([callbackContext, callback] () {
+    toImpl(page)->clearAdClickAttribution([callbackContext, callback] () {
         callback(callbackContext);
     });
 }
 
-void WKPageSetPrivateClickMeasurementOverrideTimerForTesting(WKPageRef page, bool value, WKPageSetPrivateClickMeasurementOverrideTimerForTestingFunction callback, void* callbackContext)
+void WKPageSetAdClickAttributionOverrideTimerForTesting(WKPageRef page, bool value, WKPageSetAdClickAttributionOverrideTimerForTestingFunction callback, void* callbackContext)
 {
-    toImpl(page)->setPrivateClickMeasurementOverrideTimerForTesting(value, [callbackContext, callback] () {
+    toImpl(page)->setAdClickAttributionOverrideTimerForTesting(value, [callbackContext, callback] () {
         callback(callbackContext);
     });
 }
 
-void WKPageSetPrivateClickMeasurementConversionURLForTesting(WKPageRef page, WKURLRef URLRef, WKPageSetPrivateClickMeasurementConversionURLForTestingFunction callback, void* callbackContext)
+void WKPageSetAdClickAttributionConversionURLForTesting(WKPageRef page, WKURLRef URLRef, WKPageSetAdClickAttributionConversionURLForTestingFunction callback, void* callbackContext)
 {
-    toImpl(page)->setPrivateClickMeasurementConversionURLForTesting(URL(URL(), toWTFString(URLRef)), [callbackContext, callback] () {
+    toImpl(page)->setAdClickAttributionConversionURLForTesting(URL(URL(), toWTFString(URLRef)), [callbackContext, callback] () {
         callback(callbackContext);
     });
 }
 
-void WKPageMarkPrivateClickMeasurementsAsExpiredForTesting(WKPageRef page, WKPageMarkPrivateClickMeasurementsAsExpiredForTestingFunction callback, void* callbackContext)
+void WKPageMarkAdClickAttributionsAsExpiredForTesting(WKPageRef page, WKPageMarkAdClickAttributionsAsExpiredForTestingFunction callback, void* callbackContext)
 {
-    toImpl(page)->markPrivateClickMeasurementsAsExpiredForTesting([callbackContext, callback] () {
+    toImpl(page)->markAdClickAttributionsAsExpiredForTesting([callbackContext, callback] () {
         callback(callbackContext);
     });
 }

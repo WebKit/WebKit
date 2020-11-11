@@ -817,9 +817,9 @@ void WKWebsiteDataStoreClearAllDeviceOrientationPermissions(WKWebsiteDataStoreRe
 #endif
 }
 
-void WKWebsiteDataStoreClearPrivateClickMeasurementsThroughWebsiteDataRemoval(WKWebsiteDataStoreRef dataStoreRef, void* context, WKWebsiteDataStoreClearPrivateClickMeasurementsThroughWebsiteDataRemovalFunction callback)
+void WKWebsiteDataStoreClearAdClickAttributionsThroughWebsiteDataRemoval(WKWebsiteDataStoreRef dataStoreRef, void* context, WKWebsiteDataStoreClearAdClickAttributionsThroughWebsiteDataRemovalFunction callback)
 {
-    OptionSet<WebKit::WebsiteDataType> dataTypes = WebKit::WebsiteDataType::PrivateClickMeasurements;
+    OptionSet<WebKit::WebsiteDataType> dataTypes = WebKit::WebsiteDataType::AdClickAttributions;
     WebKit::toImpl(dataStoreRef)->removeData(dataTypes, WallTime::fromRawSeconds(0), [context, callback] {
         callback(context);
     });

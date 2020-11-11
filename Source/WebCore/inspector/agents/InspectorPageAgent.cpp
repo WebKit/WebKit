@@ -382,7 +382,7 @@ Protocol::ErrorStringOr<void> InspectorPageAgent::disable()
     inspectedPageSettings.setWebRTCEncryptionEnabledInspectorOverride(WTF::nullopt);
     inspectedPageSettings.setWebSecurityEnabledInspectorOverride(WTF::nullopt);
 
-    m_client->setDeveloperPreferenceOverride(InspectorClient::DeveloperPreference::PrivateClickMeasurementDebugModeEnabled, WTF::nullopt);
+    m_client->setDeveloperPreferenceOverride(InspectorClient::DeveloperPreference::AdClickAttributionDebugModeEnabled, WTF::nullopt);
     m_client->setDeveloperPreferenceOverride(InspectorClient::DeveloperPreference::ITPDebugModeEnabled, WTF::nullopt);
     m_client->setDeveloperPreferenceOverride(InspectorClient::DeveloperPreference::MockCaptureDevicesEnabled, WTF::nullopt);
 
@@ -431,8 +431,8 @@ Protocol::ErrorStringOr<void> InspectorPageAgent::overrideSetting(Protocol::Page
     auto& inspectedPageSettings = m_inspectedPage.settings();
 
     switch (setting) {
-    case Protocol::Page::Setting::PrivateClickMeasurementDebugModeEnabled:
-        m_client->setDeveloperPreferenceOverride(InspectorClient::DeveloperPreference::PrivateClickMeasurementDebugModeEnabled, value);
+    case Protocol::Page::Setting::AdClickAttributionDebugModeEnabled:
+        m_client->setDeveloperPreferenceOverride(InspectorClient::DeveloperPreference::AdClickAttributionDebugModeEnabled, value);
         return { };
 
     case Protocol::Page::Setting::AuthorAndUserStylesEnabled:

@@ -66,7 +66,7 @@ interface TestRunner {
     undefined dumpDOMAsWebArchive();
     undefined dumpPolicyDelegateCallbacks();
     undefined dumpResourceLoadStatistics();
-    undefined dumpPrivateClickMeasurement();
+    undefined dumpAdClickAttribution();
 
     undefined clearDOMCaches();
     undefined clearDOMCache(DOMString origin);
@@ -397,10 +397,10 @@ interface TestRunner {
     undefined cleanUpKeychain(DOMString attrLabel, optional DOMString applicationLabelBase64);
     boolean keyExistsInKeychain(DOMString attrLabel, DOMString applicationLabelBase64);
 
-    // Private Click Measurement
-    undefined clearPrivateClickMeasurement();
-    undefined clearPrivateClickMeasurementsThroughWebsiteDataRemoval();
-    undefined setPrivateClickMeasurementOverrideTimerForTesting(boolean value);
-    undefined setPrivateClickMeasurementConversionURLForTesting(DOMString url);
-    undefined markPrivateClickMeasurementsAsExpiredForTesting();
+    // Ad Click Attribution
+    undefined clearAdClickAttribution();
+    undefined clearAdClickAttributionsThroughWebsiteDataRemoval();
+    undefined setAdClickAttributionOverrideTimerForTesting(boolean value);
+    undefined setAdClickAttributionConversionURLForTesting(DOMString url);
+    undefined markAdClickAttributionsAsExpiredForTesting();
 };

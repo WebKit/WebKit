@@ -1046,7 +1046,7 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
     statisticsResetToConsistentState();
     clearLoadedSubresourceDomains();
     clearAppBoundSession();
-    clearPrivateClickMeasurement();
+    clearAdClickAttribution();
 
     WKPageDispatchActivityStateUpdateForTesting(m_mainWebView->page());
 
@@ -3508,35 +3508,35 @@ void TestController::setServiceWorkerFetchTimeoutForTesting(double seconds)
     WKWebsiteDataStoreSetServiceWorkerFetchTimeoutForTesting(websiteDataStore(), seconds);
 }
 
-struct PrivateClickMeasurementStringResultCallbackContext {
-    explicit PrivateClickMeasurementStringResultCallbackContext(TestController& controller)
+struct AdClickAttributionStringResultCallbackContext {
+    explicit AdClickAttributionStringResultCallbackContext(TestController& controller)
         : testController(controller)
     {
     }
     
     TestController& testController;
     bool done { false };
-    WKRetainPtr<WKStringRef> privateClickMeasurementRepresentation;
+    WKRetainPtr<WKStringRef> adClickAttributionRepresentation;
 };
 
-static void privateClickMeasurementStringResultCallback(WKStringRef privateClickMeasurementRepresentation, void* userData)
+static void adClickAttributionStringResultCallback(WKStringRef adClickAttributionRepresentation, void* userData)
 {
-    auto* context = static_cast<PrivateClickMeasurementStringResultCallbackContext*>(userData);
-    context->privateClickMeasurementRepresentation = privateClickMeasurementRepresentation;
+    auto* context = static_cast<AdClickAttributionStringResultCallbackContext*>(userData);
+    context->adClickAttributionRepresentation = adClickAttributionRepresentation;
     context->done = true;
     context->testController.notifyDone();
 }
 
-String TestController::dumpPrivateClickMeasurement()
+String TestController::dumpAdClickAttribution()
 {
-    PrivateClickMeasurementStringResultCallbackContext callbackContext(*this);
-    WKPageDumpPrivateClickMeasurement(m_mainWebView->page(), privateClickMeasurementStringResultCallback, &callbackContext);
+    AdClickAttributionStringResultCallbackContext callbackContext(*this);
+    WKPageDumpAdClickAttribution(m_mainWebView->page(), adClickAttributionStringResultCallback, &callbackContext);
     runUntil(callbackContext.done, noTimeout);
-    return toWTFString(callbackContext.privateClickMeasurementRepresentation.get());
+    return toWTFString(callbackContext.adClickAttributionRepresentation.get());
 }
 
-struct PrivateClickMeasurementVoidCallbackContext {
-    explicit PrivateClickMeasurementVoidCallbackContext(TestController& controller)
+struct AdClickAttributionVoidCallbackContext {
+    explicit AdClickAttributionVoidCallbackContext(TestController& controller)
         : testController(controller)
     {
     }
@@ -3545,45 +3545,45 @@ struct PrivateClickMeasurementVoidCallbackContext {
     bool done { false };
 };
 
-static void privateClickMeasurementVoidCallback(void* userData)
+static void adClickAttributionVoidCallback(void* userData)
 {
-    auto* context = static_cast<PrivateClickMeasurementVoidCallbackContext*>(userData);
+    auto* context = static_cast<AdClickAttributionVoidCallbackContext*>(userData);
     context->done = true;
     context->testController.notifyDone();
 }
 
-void TestController::clearPrivateClickMeasurement()
+void TestController::clearAdClickAttribution()
 {
-    PrivateClickMeasurementVoidCallbackContext callbackContext(*this);
-    WKPageClearPrivateClickMeasurement(m_mainWebView->page(), privateClickMeasurementVoidCallback, &callbackContext);
+    AdClickAttributionVoidCallbackContext callbackContext(*this);
+    WKPageClearAdClickAttribution(m_mainWebView->page(), adClickAttributionVoidCallback, &callbackContext);
     runUntil(callbackContext.done, noTimeout);
 }
 
-void TestController::clearPrivateClickMeasurementsThroughWebsiteDataRemoval()
+void TestController::clearAdClickAttributionsThroughWebsiteDataRemoval()
 {
-    PrivateClickMeasurementVoidCallbackContext callbackContext(*this);
-    WKWebsiteDataStoreClearPrivateClickMeasurementsThroughWebsiteDataRemoval(websiteDataStore(), &callbackContext, privateClickMeasurementVoidCallback);
+    AdClickAttributionVoidCallbackContext callbackContext(*this);
+    WKWebsiteDataStoreClearAdClickAttributionsThroughWebsiteDataRemoval(websiteDataStore(), &callbackContext, adClickAttributionVoidCallback);
     runUntil(callbackContext.done, noTimeout);
 }
 
-void TestController::setPrivateClickMeasurementOverrideTimerForTesting(bool value)
+void TestController::setAdClickAttributionOverrideTimerForTesting(bool value)
 {
-    PrivateClickMeasurementVoidCallbackContext callbackContext(*this);
-    WKPageSetPrivateClickMeasurementOverrideTimerForTesting(m_mainWebView->page(), value, privateClickMeasurementVoidCallback, &callbackContext);
+    AdClickAttributionVoidCallbackContext callbackContext(*this);
+    WKPageSetAdClickAttributionOverrideTimerForTesting(m_mainWebView->page(), value, adClickAttributionVoidCallback, &callbackContext);
     runUntil(callbackContext.done, noTimeout);
 }
 
-void TestController::setPrivateClickMeasurementConversionURLForTesting(WKURLRef url)
+void TestController::setAdClickAttributionConversionURLForTesting(WKURLRef url)
 {
-    PrivateClickMeasurementVoidCallbackContext callbackContext(*this);
-    WKPageSetPrivateClickMeasurementConversionURLForTesting(m_mainWebView->page(), url, privateClickMeasurementVoidCallback, &callbackContext);
+    AdClickAttributionVoidCallbackContext callbackContext(*this);
+    WKPageSetAdClickAttributionConversionURLForTesting(m_mainWebView->page(), url, adClickAttributionVoidCallback, &callbackContext);
     runUntil(callbackContext.done, noTimeout);
 }
 
-void TestController::markPrivateClickMeasurementsAsExpiredForTesting()
+void TestController::markAdClickAttributionsAsExpiredForTesting()
 {
-    PrivateClickMeasurementVoidCallbackContext callbackContext(*this);
-    WKPageMarkPrivateClickMeasurementsAsExpiredForTesting(m_mainWebView->page(), privateClickMeasurementVoidCallback, &callbackContext);
+    AdClickAttributionVoidCallbackContext callbackContext(*this);
+    WKPageMarkAdClickAttributionsAsExpiredForTesting(m_mainWebView->page(), adClickAttributionVoidCallback, &callbackContext);
     runUntil(callbackContext.done, noTimeout);
 }
 

@@ -1,0 +1,9 @@
+Tests that triggering of ad click attribution conversions through cross-site redirects do not work.
+
+
+Unconverted Ad Click Attributions:
+WebCore::AdClickAttribution 1
+Source: 127.0.0.1
+Destination: localhost
+Campaign ID: 3
+No conversion data.

@@ -243,8 +243,8 @@ void TestInvocation::dumpResults()
     if (m_shouldDumpResourceLoadStatistics)
         m_textOutput.append(m_savedResourceLoadStatistics.isNull() ? TestController::singleton().dumpResourceLoadStatistics() : m_savedResourceLoadStatistics);
 
-    if (m_shouldDumpPrivateClickMeasurement)
-        m_textOutput.append(TestController::singleton().dumpPrivateClickMeasurement());
+    if (m_shouldDumpAdClickAttribution)
+        m_textOutput.append(TestController::singleton().dumpAdClickAttribution());
     
     if (m_textOutput.length() || !m_audioResult)
         dump(m_textOutput.toString().utf8().data());
@@ -1304,18 +1304,18 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         return nullptr;
     }
 
-    if (WKStringIsEqualToUTF8CString(messageName, "DumpPrivateClickMeasurement")) {
-        dumpPrivateClickMeasurement();
+    if (WKStringIsEqualToUTF8CString(messageName, "DumpAdClickAttribution")) {
+        dumpAdClickAttribution();
         return nullptr;
     }
     
-    if (WKStringIsEqualToUTF8CString(messageName, "ClearPrivateClickMeasurement")) {
-        TestController::singleton().clearPrivateClickMeasurement();
+    if (WKStringIsEqualToUTF8CString(messageName, "ClearAdClickAttribution")) {
+        TestController::singleton().clearAdClickAttribution();
         return nullptr;
     }
 
-    if (WKStringIsEqualToUTF8CString(messageName, "ClearPrivateClickMeasurementsThroughWebsiteDataRemoval")) {
-        TestController::singleton().clearPrivateClickMeasurementsThroughWebsiteDataRemoval();
+    if (WKStringIsEqualToUTF8CString(messageName, "ClearAdClickAttributionsThroughWebsiteDataRemoval")) {
+        TestController::singleton().clearAdClickAttributionsThroughWebsiteDataRemoval();
         return nullptr;
     }
     
@@ -1324,19 +1324,19 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         return nullptr;
     }
 
-    if (WKStringIsEqualToUTF8CString(messageName, "SetPrivateClickMeasurementOverrideTimerForTesting")) {
-        TestController::singleton().setPrivateClickMeasurementOverrideTimerForTesting(booleanValue(messageBody));
+    if (WKStringIsEqualToUTF8CString(messageName, "SetAdClickAttributionOverrideTimerForTesting")) {
+        TestController::singleton().setAdClickAttributionOverrideTimerForTesting(booleanValue(messageBody));
         return nullptr;
     }
     
-    if (WKStringIsEqualToUTF8CString(messageName, "SetPrivateClickMeasurementConversionURLForTesting")) {
+    if (WKStringIsEqualToUTF8CString(messageName, "SetAdClickAttributionConversionURLForTesting")) {
         ASSERT(WKGetTypeID(messageBody) == WKURLGetTypeID());
-        TestController::singleton().setPrivateClickMeasurementConversionURLForTesting(static_cast<WKURLRef>(messageBody));
+        TestController::singleton().setAdClickAttributionConversionURLForTesting(static_cast<WKURLRef>(messageBody));
         return nullptr;
     }
 
-    if (WKStringIsEqualToUTF8CString(messageName, "MarkPrivateClickMeasurementsAsExpiredForTesting")) {
-        TestController::singleton().markPrivateClickMeasurementsAsExpiredForTesting();
+    if (WKStringIsEqualToUTF8CString(messageName, "MarkAdClickAttributionsAsExpiredForTesting")) {
+        TestController::singleton().markAdClickAttributionsAsExpiredForTesting();
         return nullptr;
     }
 
@@ -1533,9 +1533,9 @@ void TestInvocation::dumpResourceLoadStatistics()
     m_shouldDumpResourceLoadStatistics = true;
 }
 
-void TestInvocation::dumpPrivateClickMeasurement()
+void TestInvocation::dumpAdClickAttribution()
 {
-    m_shouldDumpPrivateClickMeasurement = true;
+    m_shouldDumpAdClickAttribution = true;
 }
 
 void TestInvocation::performCustomMenuAction()

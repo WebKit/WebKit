@@ -1,0 +1,85 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <script src="/js-test-resources/ui-helper.js"></script>
+    <script src="resources/util.js"></script>
+</head>
+<body onload="setTimeout(runTest, 0)">
+<div id="description">Tests that the attribution is not updated if it gets a second conversion with lower priority.</div>
+<a id="targetLink">Link</a><br>
+<div id="output"></div>
+<script>
+    const path = "/adClickAttribution/second-conversion-with-lower-priority.html";
+    const configuration = [
+        {
+            href: "http://localhost:8000" + path + "?stepTwo",
+            adcampaignid: "3",
+            addestination: "http://localhost:8000"
+        }
+    ];
+
+    prepareTest();
+
+    function configureLink(index) {
+        let linkElement = document.getElementById("targetLink");
+        linkElement.setAttribute("href", configuration[index].href);
+        linkElement.setAttribute("adcampaignid", configuration[index].adcampaignid);
+        linkElement.setAttribute("addestination", configuration[index].addestination);
+    }
+
+    function activateElement(elementID) {
+        var element = document.getElementById(elementID);
+        var centerX = element.offsetLeft + element.offsetWidth / 2;
+        var centerY = element.offsetTop + element.offsetHeight / 2;
+        UIHelper.activateAt(centerX, centerY).then(
+            function () {
+            },
+            function () {
+                document.getElementById("output").innerText = "FAIL Promise rejected.";
+                tearDownAndFinish();
+            }
+        );
+    }
+
+    function convert(priority, callback) {
+        let pixelElement = document.getElementById("pixel");
+        if (pixelElement)
+            document.body.removeChild(pixelElement);
+
+        let imageElement = document.createElement("img");
+        imageElement.src = "https://127.0.0.1:8443/adClickAttribution/resources/redirectToConversion.php?conversionData=12&priority=" + priority;
+        imageElement.id = "pixel";
+        imageElement.onerror = callback;
+        document.body.appendChild(imageElement);
+    }
+
+    function runTest() {
+        if (window.testRunner) {
+            if (window.location.search === "") {
+                // Ad click 127.0.0.1 –> localhost.
+                configureLink(0);
+                activateElement("targetLink");
+            } else if (window.location.search === "?stepTwo") {
+                // Convert the ad click with priority 4.
+                convert("04", function() {
+                    // Convert the ad click with priority 3.
+                    convert("03", function() {
+                        testRunner.dumpAdClickAttribution();
+                        document.body.removeChild(document.getElementById("targetLink"));
+                        document.body.removeChild(document.getElementById("pixel"));
+                        tearDownAndFinish();
+                    });
+                });
+            } else {
+                document.getElementById("output").innerText = "FAIL Unknown window.location.search == " + window.location.search + ".";
+                testRunner.notifyDone();
+            }
+        } else {
+            document.getElementById("output").innerText = "FAIL No testRunner.";
+        }
+    }
+</script>
+</body>
+</html>

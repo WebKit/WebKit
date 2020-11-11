@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-class PrivateClickMeasurement;
+class AdClickAttribution;
 class DOMTokenList;
 
 // Link relation bitmask values.
@@ -100,7 +100,7 @@ private:
 
     void sendPings(const URL& destinationURL);
 
-    Optional<PrivateClickMeasurement> parsePrivateClickMeasurement() const;
+    Optional<AdClickAttribution> parseAdClickAttribution() const;
 
     void handleClick(Event&);
 

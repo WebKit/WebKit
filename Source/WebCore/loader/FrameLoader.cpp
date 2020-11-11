@@ -422,7 +422,7 @@ void FrameLoader::checkContentPolicy(const ResourceResponse& response, PolicyChe
     client().dispatchDecidePolicyForResponse(response, activeDocumentLoader()->request(), identifier, activeDocumentLoader()->downloadAttribute(), WTFMove(function));
 }
 
-void FrameLoader::changeLocation(const URL& url, const String& passedTarget, Event* triggeringEvent, LockHistory lockHistory, LockBackForwardList lockBackForwardList, const ReferrerPolicy& referrerPolicy, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, Optional<NewFrameOpenerPolicy> openerPolicy, const AtomString& downloadAttribute, const SystemPreviewInfo& systemPreviewInfo, Optional<PrivateClickMeasurement>&& privateClickMeasurement)
+void FrameLoader::changeLocation(const URL& url, const String& passedTarget, Event* triggeringEvent, LockHistory lockHistory, LockBackForwardList lockBackForwardList, const ReferrerPolicy& referrerPolicy, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, Optional<NewFrameOpenerPolicy> openerPolicy, const AtomString& downloadAttribute, const SystemPreviewInfo& systemPreviewInfo, Optional<AdClickAttribution>&& adClickAttribution)
 {
     auto* frame = lexicalFrameFromCommonVM();
     auto initiatedByMainFrame = frame && frame->isMainFrame() ? InitiatedByMainFrame::Yes : InitiatedByMainFrame::Unknown;
@@ -435,10 +435,10 @@ void FrameLoader::changeLocation(const URL& url, const String& passedTarget, Eve
     frameLoadRequest.setReferrerPolicy(referrerPolicy);
     frameLoadRequest.setShouldOpenExternalURLsPolicy(shouldOpenExternalURLsPolicy);
     frameLoadRequest.disableShouldReplaceDocumentIfJavaScriptURL();
-    changeLocation(WTFMove(frameLoadRequest), triggeringEvent, WTFMove(privateClickMeasurement));
+    changeLocation(WTFMove(frameLoadRequest), triggeringEvent, WTFMove(adClickAttribution));
 }
 
-void FrameLoader::changeLocation(FrameLoadRequest&& frameRequest, Event* triggeringEvent, Optional<PrivateClickMeasurement>&& privateClickMeasurement)
+void FrameLoader::changeLocation(FrameLoadRequest&& frameRequest, Event* triggeringEvent, Optional<AdClickAttribution>&& adClickAttribution)
 {
     FRAMELOADER_RELEASE_LOG_IF_ALLOWED(ResourceLoading, "changeLocation: frame load started");
     ASSERT(frameRequest.resourceRequest().httpMethod() == "GET");
@@ -456,7 +456,7 @@ void FrameLoader::changeLocation(FrameLoadRequest&& frameRequest, Event* trigger
 
     m_frame.document()->contentSecurityPolicy()->upgradeInsecureRequestIfNeeded(frameRequest.resourceRequest(), ContentSecurityPolicy::InsecureRequestType::Navigation);
 
-    loadFrameRequest(WTFMove(frameRequest), triggeringEvent, { }, WTFMove(privateClickMeasurement));
+    loadFrameRequest(WTFMove(frameRequest), triggeringEvent, { }, WTFMove(adClickAttribution));
 }
 
 void FrameLoader::submitForm(Ref<FormSubmission>&& submission)
@@ -1239,7 +1239,7 @@ void FrameLoader::setupForReplace()
     detachChildren();
 }
 
-void FrameLoader::loadFrameRequest(FrameLoadRequest&& request, Event* event, RefPtr<FormState>&& formState, Optional<PrivateClickMeasurement>&& privateClickMeasurement)
+void FrameLoader::loadFrameRequest(FrameLoadRequest&& request, Event* event, RefPtr<FormState>&& formState, Optional<AdClickAttribution>&& adClickAttribution)
 {
     FRAMELOADER_RELEASE_LOG_IF_ALLOWED(ResourceLoading, "loadFrameRequest: frame load started");
 
@@ -1287,7 +1287,7 @@ void FrameLoader::loadFrameRequest(FrameLoadRequest&& request, Event* event, Ref
     if (request.resourceRequest().httpMethod() == "POST")
         loadPostRequest(WTFMove(request), referrer, loadType, event, WTFMove(formState), WTFMove(completionHandler));
     else
-        loadURL(WTFMove(request), referrer, loadType, event, WTFMove(formState), WTFMove(privateClickMeasurement), WTFMove(completionHandler));
+        loadURL(WTFMove(request), referrer, loadType, event, WTFMove(formState), WTFMove(adClickAttribution), WTFMove(completionHandler));
 }
 
 static ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicyToApply(Frame& currentFrame, InitiatedByMainFrame initiatedByMainFrame, ShouldOpenExternalURLsPolicy propagatedPolicy)
@@ -1329,7 +1329,7 @@ bool FrameLoader::isStopLoadingAllowed() const
     return m_pageDismissalEventBeingDispatched == PageDismissalType::None;
 }
 
-void FrameLoader::loadURL(FrameLoadRequest&& frameLoadRequest, const String& referrer, FrameLoadType newLoadType, Event* event, RefPtr<FormState>&& formState, Optional<PrivateClickMeasurement>&& privateClickMeasurement, CompletionHandler<void()>&& completionHandler)
+void FrameLoader::loadURL(FrameLoadRequest&& frameLoadRequest, const String& referrer, FrameLoadType newLoadType, Event* event, RefPtr<FormState>&& formState, Optional<AdClickAttribution>&& adClickAttribution, CompletionHandler<void()>&& completionHandler)
 {
     FRAMELOADER_RELEASE_LOG_IF_ALLOWED(ResourceLoading, "loadURL: frame load started");
     ASSERT(frameLoadRequest.resourceRequest().httpMethod() == "GET");
@@ -1348,7 +1348,7 @@ void FrameLoader::loadURL(FrameLoadRequest&& frameLoadRequest, const String& ref
     auto targetFrame = isFormSubmission ? nullptr : makeRefPtr(findFrameForNavigation(effectiveFrameName));
     if (targetFrame && targetFrame != &m_frame) {
         frameLoadRequest.setFrameName("_self");
-        targetFrame->loader().loadURL(WTFMove(frameLoadRequest), referrer, newLoadType, event, WTFMove(formState), WTFMove(privateClickMeasurement), completionHandlerCaller.release());
+        targetFrame->loader().loadURL(WTFMove(frameLoadRequest), referrer, newLoadType, event, WTFMove(formState), WTFMove(adClickAttribution), completionHandlerCaller.release());
         return;
     }
 
@@ -1367,8 +1367,8 @@ void FrameLoader::loadURL(FrameLoadRequest&& frameLoadRequest, const String& ref
     NavigationAction action { frameLoadRequest.requester(), request, frameLoadRequest.initiatedByMainFrame(), newLoadType, isFormSubmission, event, frameLoadRequest.shouldOpenExternalURLsPolicy(), frameLoadRequest.downloadAttribute() };
     action.setLockHistory(frameLoadRequest.lockHistory());
     action.setLockBackForwardList(frameLoadRequest.lockBackForwardList());
-    if (privateClickMeasurement && m_frame.isMainFrame())
-        action.setPrivateClickMeasurement(WTFMove(*privateClickMeasurement));
+    if (adClickAttribution && m_frame.isMainFrame())
+        action.setAdClickAttribution(WTFMove(*adClickAttribution));
 
     NewFrameOpenerPolicy openerPolicy = frameLoadRequest.newFrameOpenerPolicy();
     AllowNavigationToInvalidURL allowNavigationToInvalidURL = frameLoadRequest.allowNavigationToInvalidURL();

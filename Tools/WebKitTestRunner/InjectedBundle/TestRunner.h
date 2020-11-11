@@ -507,13 +507,13 @@ public:
 
     unsigned long serverTrustEvaluationCallbackCallsCount();
 
-    // Private Click Measurement.
-    void dumpPrivateClickMeasurement();
-    void clearPrivateClickMeasurement();
-    void clearPrivateClickMeasurementsThroughWebsiteDataRemoval();
-    void setPrivateClickMeasurementOverrideTimerForTesting(bool value);
-    void setPrivateClickMeasurementConversionURLForTesting(JSStringRef);
-    void markPrivateClickMeasurementsAsExpiredForTesting();
+    // Ad Click Attribution.
+    void dumpAdClickAttribution();
+    void clearAdClickAttribution();
+    void clearAdClickAttributionsThroughWebsiteDataRemoval();
+    void setAdClickAttributionOverrideTimerForTesting(bool value);
+    void setAdClickAttributionConversionURLForTesting(JSStringRef);
+    void markAdClickAttributionsAsExpiredForTesting();
 
 private:
     TestRunner();

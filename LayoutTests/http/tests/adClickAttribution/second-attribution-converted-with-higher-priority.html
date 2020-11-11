@@ -1,0 +1,92 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <script src="/js-test-resources/ui-helper.js"></script>
+    <script src="resources/util.js"></script>
+</head>
+<body onload="setTimeout(runTest, 0)">
+<div id="description">Tests that a second attribution conversion with higher priority replaces an older with lower priority.</div>
+<a id="targetLink">Link</a><br>
+<div id="output"></div>
+<script>
+    const path = "/adClickAttribution/second-attribution-converted-with-higher-priority.html";
+    const configuration = [
+        {
+            href: "http://localhost:8000" + path + "?stepTwo",
+            adcampaignid: "3",
+            addestination: "http://localhost:8000"
+        },
+        {
+            href: "http://localhost:8000" + path + "?stepFour",
+            adcampaignid: "4",
+            addestination: "http://localhost:8000"
+        }
+    ];
+
+    prepareTest();
+
+    function configureLink(index) {
+        let linkElement = document.getElementById("targetLink");
+        linkElement.setAttribute("href", configuration[index].href);
+        linkElement.setAttribute("adcampaignid", configuration[index].adcampaignid);
+        linkElement.setAttribute("addestination", configuration[index].addestination);
+    }
+
+    function activateElement(elementID) {
+        var element = document.getElementById(elementID);
+        var centerX = element.offsetLeft + element.offsetWidth / 2;
+        var centerY = element.offsetTop + element.offsetHeight / 2;
+        UIHelper.activateAt(centerX, centerY).then(
+            function () {
+            },
+            function () {
+                document.getElementById("output").innerText = "FAIL Promise rejected.";
+                tearDownAndFinish();
+            }
+        );
+    }
+
+    function runTest() {
+        if (window.testRunner) {
+            if (window.location.search === "") {
+                // First ad click 127.0.0.1 –> localhost.
+                configureLink(0);
+                activateElement("targetLink");
+            } else if (window.location.search === "?stepTwo") {
+                // Convert the first ad click with priority 3 and navigate back to 127.0.0.1.
+                let imageElement = document.createElement("img");
+                imageElement.src = "https://127.0.0.1:8443/adClickAttribution/resources/redirectToConversion.php?conversionData=12&priority=03";
+                imageElement.id = "pixel";
+                imageElement.onerror = function(e) {
+                    document.location.href = "http://127.0.0.1:8000" + path + "?stepThree";
+                };
+                document.body.appendChild(imageElement);
+            } else if (window.location.search === "?stepThree") {
+                // Second ad click 127.0.0.1 –> localhost.
+                configureLink(1);
+                activateElement("targetLink");
+            } else if (window.location.search === "?stepFour") {
+                // Convert the second ad click with priority 4 and finish.
+                let imageElement = document.createElement("img");
+                imageElement.src = "https://127.0.0.1:8443/adClickAttribution/resources/redirectToConversion.php?conversionData=12&priority=04";
+                imageElement.id = "pixel";
+                imageElement.onerror = function(e) {
+                    testRunner.dumpAdClickAttribution();
+                    document.body.removeChild(document.getElementById("targetLink"));
+                    document.body.removeChild(document.getElementById("pixel"));
+                    tearDownAndFinish();
+                };
+                document.body.appendChild(imageElement);
+            } else {
+                document.getElementById("output").innerText = "FAIL Unknown window.location.search == " + window.location.search + ".";
+                tearDownAndFinish();
+            }
+        } else {
+            document.getElementById("output").innerText = "FAIL No testRunner.";
+        }
+    }
+</script>
+</body>
+</html>

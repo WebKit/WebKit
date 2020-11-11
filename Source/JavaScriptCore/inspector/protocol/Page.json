@@ -9,7 +9,7 @@
             "type": "string",
             "description": "List of settings able to be overridden by WebInspector.",
             "enum": [
-                "PrivateClickMeasurementDebugModeEnabled",
+                "AdClickAttributionDebugModeEnabled",
                 "AuthorAndUserStylesEnabled",
                 "ICECandidateFilteringEnabled",
                 "ITPDebugModeEnabled",

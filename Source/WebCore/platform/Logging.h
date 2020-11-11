@@ -39,6 +39,7 @@ namespace WebCore {
 
 #define WEBCORE_LOG_CHANNELS(M) \
     M(Accessibility) \
+    M(AdClickAttribution) \
     M(Animations) \
     M(ApplePay) \
     M(Archives) \
@@ -90,7 +91,6 @@ namespace WebCore {
     M(PlatformLeaks) \
     M(Plugins) \
     M(PopupBlocking) \
-    M(PrivateClickMeasurement) \
     M(Progress) \
     M(RemoteInspector) \
     M(RequestAnimationFrame) \

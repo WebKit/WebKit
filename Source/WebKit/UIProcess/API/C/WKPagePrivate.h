@@ -169,16 +169,16 @@ typedef void (^WKPageGetApplicationManifestBlock)(void);
 WK_EXPORT void WKPageGetApplicationManifest_b(WKPageRef page, WKPageGetApplicationManifestBlock block);
 #endif
 
-typedef void (*WKPageDumpPrivateClickMeasurementFunction)(WKStringRef privateClickMeasurementRepresentation, void* functionContext);
-WK_EXPORT void WKPageDumpPrivateClickMeasurement(WKPageRef, WKPageDumpPrivateClickMeasurementFunction, void* callbackContext);
-typedef void (*WKPageClearPrivateClickMeasurementFunction)(void* functionContext);
-WK_EXPORT void WKPageClearPrivateClickMeasurement(WKPageRef, WKPageClearPrivateClickMeasurementFunction, void* callbackContext);
-typedef void (*WKPageSetPrivateClickMeasurementOverrideTimerForTestingFunction)(void* functionContext);
-WK_EXPORT void WKPageSetPrivateClickMeasurementOverrideTimerForTesting(WKPageRef page, bool value, WKPageSetPrivateClickMeasurementOverrideTimerForTestingFunction callback, void* callbackContext);
-typedef void (*WKPageSetPrivateClickMeasurementConversionURLForTestingFunction)(void* functionContext);
-WK_EXPORT void WKPageSetPrivateClickMeasurementConversionURLForTesting(WKPageRef page, WKURLRef urlString, WKPageSetPrivateClickMeasurementConversionURLForTestingFunction callback, void* callbackContext);
-typedef void (*WKPageMarkPrivateClickMeasurementsAsExpiredForTestingFunction)(void* functionContext);
-WK_EXPORT void WKPageMarkPrivateClickMeasurementsAsExpiredForTesting(WKPageRef page, WKPageMarkPrivateClickMeasurementsAsExpiredForTestingFunction callback, void* callbackContext);
+typedef void (*WKPageDumpAdClickAttributionFunction)(WKStringRef adClickAttributionRepresentation, void* functionContext);
+WK_EXPORT void WKPageDumpAdClickAttribution(WKPageRef, WKPageDumpAdClickAttributionFunction, void* callbackContext);
+typedef void (*WKPageClearAdClickAttributionFunction)(void* functionContext);
+WK_EXPORT void WKPageClearAdClickAttribution(WKPageRef, WKPageClearAdClickAttributionFunction, void* callbackContext);
+typedef void (*WKPageSetAdClickAttributionOverrideTimerForTestingFunction)(void* functionContext);
+WK_EXPORT void WKPageSetAdClickAttributionOverrideTimerForTesting(WKPageRef page, bool value, WKPageSetAdClickAttributionOverrideTimerForTestingFunction callback, void* callbackContext);
+typedef void (*WKPageSetAdClickAttributionConversionURLForTestingFunction)(void* functionContext);
+WK_EXPORT void WKPageSetAdClickAttributionConversionURLForTesting(WKPageRef page, WKURLRef urlString, WKPageSetAdClickAttributionConversionURLForTestingFunction callback, void* callbackContext);
+typedef void (*WKPageMarkAdClickAttributionsAsExpiredForTestingFunction)(void* functionContext);
+WK_EXPORT void WKPageMarkAdClickAttributionsAsExpiredForTesting(WKPageRef page, WKPageMarkAdClickAttributionsAsExpiredForTestingFunction callback, void* callbackContext);
 
 WK_EXPORT void WKPageSetMockCameraOrientation(WKPageRef page, uint64_t orientation);
 WK_EXPORT bool WKPageIsMockRealtimeMediaSourceCenterEnabled(WKPageRef page);

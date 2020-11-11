@@ -139,6 +139,7 @@
 #include "WebViewDidMoveToWindowObserver.h"
 #include "WebWheelEventCoalescer.h"
 #include "WebsiteDataStore.h"
+#include <WebCore/AdClickAttribution.h>
 #include <WebCore/BitmapImage.h>
 #include <WebCore/CompositionHighlight.h>
 #include <WebCore/CrossSiteNavigationDataTransfer.h>
@@ -162,7 +163,6 @@
 #include <WebCore/MediaStreamRequest.h>
 #include <WebCore/PerformanceLoggingClient.h>
 #include <WebCore/PlatformEvent.h>
-#include <WebCore/PrivateClickMeasurement.h>
 #include <WebCore/PublicSuffix.h>
 #include <WebCore/RenderEmbeddedObject.h>
 #include <WebCore/ResourceLoadStatistics.h>
@@ -4652,17 +4652,17 @@ void WebPageProxy::didCommitLoadForFrame(FrameIdentifier frameID, FrameInfoData&
     frame->didCommitLoad(mimeType, webCertificateInfo, containsPluginDocument);
 
     if (frame->isMainFrame()) {
-        Optional<WebCore::PrivateClickMeasurement> privateClickMeasurement;
-        if (m_newPageNavigationPrivateClickMeasurement)
-            privateClickMeasurement = m_newPageNavigationPrivateClickMeasurement;
-        else if (navigation && navigation->privateClickMeasurement())
-            privateClickMeasurement = navigation->privateClickMeasurement();
-        if (privateClickMeasurement) {
-            if (privateClickMeasurement->destination().matches(frame->url()))
-                websiteDataStore().networkProcess().send(Messages::NetworkProcess::StorePrivateClickMeasurement(m_websiteDataStore->sessionID(), *privateClickMeasurement), 0);
+        Optional<WebCore::AdClickAttribution> adClickAttribution;
+        if (m_newPageNavigationAdClickAttribution)
+            adClickAttribution = m_newPageNavigationAdClickAttribution;
+        else if (navigation && navigation->adClickAttribution())
+            adClickAttribution = navigation->adClickAttribution();
+        if (adClickAttribution) {
+            if (adClickAttribution->destination().matches(frame->url()))
+                websiteDataStore().networkProcess().send(Messages::NetworkProcess::StoreAdClickAttribution(m_websiteDataStore->sessionID(), *adClickAttribution), 0);
         }
     }
-    m_newPageNavigationPrivateClickMeasurement.reset();
+    m_newPageNavigationAdClickAttribution.reset();
 
     if (frame->isMainFrame()) {
         m_mainFrameHasCustomContentProvider = frameHasCustomContentProvider;
@@ -5524,7 +5524,7 @@ void WebPageProxy::createNewPage(FrameInfoData&& originatingFrameInfoData, WebPa
     auto* originatingPage = m_process->webPage(originatingPageID);
     auto originatingFrameInfo = API::FrameInfo::create(WTFMove(originatingFrameInfoData), originatingPage);
     auto mainFrameURL = m_mainFrame ? m_mainFrame->url() : URL();
-    auto completionHandler = [this, protectedThis = makeRef(*this), mainFrameURL, request, reply = WTFMove(reply), privateClickMeasurement = navigationActionData.privateClickMeasurement] (RefPtr<WebPageProxy> newPage) mutable {
+    auto completionHandler = [this, protectedThis = makeRef(*this), mainFrameURL, request, reply = WTFMove(reply), adClickAttribution = navigationActionData.adClickAttribution] (RefPtr<WebPageProxy> newPage) mutable {
         if (!newPage) {
             reply(WTF::nullopt, WTF::nullopt);
             return;
@@ -5536,7 +5536,7 @@ void WebPageProxy::createNewPage(FrameInfoData&& originatingFrameInfoData, WebPa
 
         newPage->m_shouldSuppressAppLinksInNextNavigationPolicyDecision = mainFrameURL.host() == request.url().host();
 
-        newPage->m_newPageNavigationPrivateClickMeasurement = privateClickMeasurement;
+        newPage->m_newPageNavigationAdClickAttribution = adClickAttribution;
 #if HAVE(APP_SSO)
         newPage->m_shouldSuppressSOAuthorizationInNextNavigationPolicyDecision = true;
 #endif
@@ -9956,29 +9956,29 @@ void WebPageProxy::systemPreviewActionTriggered(const WebCore::SystemPreviewInfo
 }
 #endif
 
-void WebPageProxy::dumpPrivateClickMeasurement(CompletionHandler<void(const String&)>&& completionHandler)
+void WebPageProxy::dumpAdClickAttribution(CompletionHandler<void(const String&)>&& completionHandler)
 {
-    websiteDataStore().networkProcess().sendWithAsyncReply(Messages::NetworkProcess::DumpPrivateClickMeasurement(m_websiteDataStore->sessionID()), WTFMove(completionHandler));
+    websiteDataStore().networkProcess().sendWithAsyncReply(Messages::NetworkProcess::DumpAdClickAttribution(m_websiteDataStore->sessionID()), WTFMove(completionHandler));
 }
 
-void WebPageProxy::clearPrivateClickMeasurement(CompletionHandler<void()>&& completionHandler)
+void WebPageProxy::clearAdClickAttribution(CompletionHandler<void()>&& completionHandler)
 {
-    websiteDataStore().networkProcess().sendWithAsyncReply(Messages::NetworkProcess::ClearPrivateClickMeasurement(m_websiteDataStore->sessionID()), WTFMove(completionHandler));
+    websiteDataStore().networkProcess().sendWithAsyncReply(Messages::NetworkProcess::ClearAdClickAttribution(m_websiteDataStore->sessionID()), WTFMove(completionHandler));
 }
 
-void WebPageProxy::setPrivateClickMeasurementOverrideTimerForTesting(bool value, CompletionHandler<void()>&& completionHandler)
+void WebPageProxy::setAdClickAttributionOverrideTimerForTesting(bool value, CompletionHandler<void()>&& completionHandler)
 {
-    websiteDataStore().networkProcess().sendWithAsyncReply(Messages::NetworkProcess::SetPrivateClickMeasurementOverrideTimerForTesting(m_websiteDataStore->sessionID(), value), WTFMove(completionHandler));
+    websiteDataStore().networkProcess().sendWithAsyncReply(Messages::NetworkProcess::SetAdClickAttributionOverrideTimerForTesting(m_websiteDataStore->sessionID(), value), WTFMove(completionHandler));
 }
 
-void WebPageProxy::setPrivateClickMeasurementConversionURLForTesting(const URL& url, CompletionHandler<void()>&& completionHandler)
+void WebPageProxy::setAdClickAttributionConversionURLForTesting(const URL& url, CompletionHandler<void()>&& completionHandler)
 {
-    websiteDataStore().networkProcess().sendWithAsyncReply(Messages::NetworkProcess::SetPrivateClickMeasurementConversionURLForTesting(m_websiteDataStore->sessionID(), url), WTFMove(completionHandler));
+    websiteDataStore().networkProcess().sendWithAsyncReply(Messages::NetworkProcess::SetAdClickAttributionConversionURLForTesting(m_websiteDataStore->sessionID(), url), WTFMove(completionHandler));
 }
 
-void WebPageProxy::markPrivateClickMeasurementsAsExpiredForTesting(CompletionHandler<void()>&& completionHandler)
+void WebPageProxy::markAdClickAttributionsAsExpiredForTesting(CompletionHandler<void()>&& completionHandler)
 {
-    websiteDataStore().networkProcess().sendWithAsyncReply(Messages::NetworkProcess::MarkPrivateClickMeasurementsAsExpiredForTesting(m_websiteDataStore->sessionID()), WTFMove(completionHandler));
+    websiteDataStore().networkProcess().sendWithAsyncReply(Messages::NetworkProcess::MarkAdClickAttributionsAsExpiredForTesting(m_websiteDataStore->sessionID()), WTFMove(completionHandler));
 }
 
 #if ENABLE(SPEECH_SYNTHESIS)

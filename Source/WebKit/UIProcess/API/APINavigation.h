@@ -32,7 +32,7 @@
 #include "ProcessThrottler.h"
 #include "WebBackForwardListItem.h"
 #include "WebContentMode.h"
-#include <WebCore/PrivateClickMeasurement.h>
+#include <WebCore/AdClickAttribution.h>
 #include <WebCore/ProcessIdentifier.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/SecurityOriginData.h>
@@ -153,7 +153,7 @@ public:
 
     const std::unique_ptr<SubstituteData>& substituteData() const { return m_substituteData; }
 
-    const Optional<WebCore::PrivateClickMeasurement>& privateClickMeasurement() const { return m_lastNavigationAction.privateClickMeasurement; }
+    const Optional<WebCore::AdClickAttribution>& adClickAttribution() const { return m_lastNavigationAction.adClickAttribution; }
 
     void setClientNavigationActivity(WebKit::ProcessThrottler::ActivityVariant&& activity) { m_clientNavigationActivity = WTFMove(activity); }
 

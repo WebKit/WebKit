@@ -2050,9 +2050,9 @@ void WebsiteDataStore::isResourceLoadStatisticsEphemeral(CompletionHandler<void(
 #endif
 }
 
-void WebsiteDataStore::setPrivateClickMeasurementDebugMode(bool enabled)
+void WebsiteDataStore::setAdClickAttributionDebugMode(bool enabled)
 {
-    networkProcess().setPrivateClickMeasurementDebugMode(enabled);
+    networkProcess().setAdClickAttributionDebugMode(enabled);
 }
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)

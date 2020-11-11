@@ -113,11 +113,8 @@ WI.ConsoleMessage.MessageSource = {
     MediaSource: "mediasource",
     WebRTC: "webrtc",
     ITPDebug: "itp-debug",
-    PrivateClickMeasurement: "private-click-measurement",
-    Other: "other",
-
-    // COMPATIBILITY (iOS 14.0): `Console.ChannelSource.AdClickAttribution` was renamed to `Console.ChannelSource.PrivateClickMeasurement`.
     AdClickAttribution: "ad-click-attribution",
+    Other: "other",
 };
 
 WI.ConsoleMessage.MessageType = {

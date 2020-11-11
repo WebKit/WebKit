@@ -273,7 +273,7 @@
 #define WebKitServerTimingEnabledPreferenceKey @"WebKitServerTimingEnabled"
 #define WebKitCSSCustomPropertiesAndValuesEnabledPreferenceKey @"WebKitCSSCustomPropertiesAndValuesEnabled"
 #define WebKitResizeObserverEnabledPreferenceKey @"WebKitResizeObserverEnabled"
-#define WebKitPrivateClickMeasurementEnabledPreferenceKey @"WebKitPrivateClickMeasurementEnabled"
+#define WebKitAdClickAttributionEnabledPreferenceKey @"WebKitAdClickAttributionEnabled"
 #define WebKitFetchAPIKeepAliveEnabledPreferenceKey @"WebKitFetchAPIKeepAliveEnabled"
 #define WebKitGenericCueAPIEnabledKey @"WebKitGenericCueAPIEnabled"
 #define WebKitAspectRatioOfImgFromWidthAndHeightEnabledPreferenceKey @"WebKitAspectRatioOfImgFromWidthAndHeightEnabled"

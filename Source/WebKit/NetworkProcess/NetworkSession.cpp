@@ -26,6 +26,7 @@
 #include "config.h"
 #include "NetworkSession.h"
 
+#include "AdClickAttributionManager.h"
 #include "Logging.h"
 #include "NetworkProcess.h"
 #include "NetworkProcessProxyMessages.h"
@@ -33,11 +34,11 @@
 #include "NetworkResourceLoader.h"
 #include "NetworkSessionCreationParameters.h"
 #include "PingLoad.h"
-#include "PrivateClickMeasurementManager.h"
 #include "WebPageProxy.h"
 #include "WebPageProxyMessages.h"
 #include "WebProcessProxy.h"
 #include "WebSocketTask.h"
+#include <WebCore/AdClickAttribution.h>
 #include <WebCore/CookieJar.h>
 #include <WebCore/ResourceRequest.h>
 
@@ -90,7 +91,7 @@ NetworkSession::NetworkSession(NetworkProcess& networkProcess, const NetworkSess
     , m_firstPartyWebsiteDataRemovalMode(parameters.resourceLoadStatisticsParameters.firstPartyWebsiteDataRemovalMode)
     , m_standaloneApplicationDomain(parameters.resourceLoadStatisticsParameters.standaloneApplicationDomain)
 #endif
-    , m_privateClickMeasurement(makeUniqueRef<PrivateClickMeasurementManager>(networkProcess, parameters.sessionID))
+    , m_adClickAttribution(makeUniqueRef<AdClickAttributionManager>(networkProcess, parameters.sessionID))
     , m_testSpeedMultiplier(parameters.testSpeedMultiplier)
     , m_allowsServerPreconnect(parameters.allowsServerPreconnect)
 {
@@ -119,7 +120,7 @@ NetworkSession::NetworkSession(NetworkProcess& networkProcess, const NetworkSess
 
     m_isStaleWhileRevalidateEnabled = parameters.staleWhileRevalidateEnabled;
 
-    m_privateClickMeasurement->setPingLoadFunction([this, weakThis = makeWeakPtr(this)](NetworkResourceLoadParameters&& loadParameters, CompletionHandler<void(const WebCore::ResourceError&, const WebCore::ResourceResponse&)>&& completionHandler) {
+    m_adClickAttribution->setPingLoadFunction([this, weakThis = makeWeakPtr(this)](NetworkResourceLoadParameters&& loadParameters, CompletionHandler<void(const WebCore::ResourceError&, const WebCore::ResourceResponse&)>&& completionHandler) {
         if (!weakThis)
             return;
         // PingLoad manages its own lifetime, deleting itself when its purpose has been fulfilled.
@@ -303,44 +304,44 @@ void NetworkSession::resetCNAMEDomainData()
 }
 #endif // ENABLE(RESOURCE_LOAD_STATISTICS)
 
-void NetworkSession::storePrivateClickMeasurement(WebCore::PrivateClickMeasurement&& privateClickMeasurement)
+void NetworkSession::storeAdClickAttribution(WebCore::AdClickAttribution&& adClickAttribution)
 {
-    m_privateClickMeasurement->storeUnconverted(WTFMove(privateClickMeasurement));
+    m_adClickAttribution->storeUnconverted(WTFMove(adClickAttribution));
 }
 
-void NetworkSession::handlePrivateClickMeasurementConversion(PrivateClickMeasurement::Conversion&& conversion, const URL& requestURL, const WebCore::ResourceRequest& redirectRequest)
+void NetworkSession::handleAdClickAttributionConversion(AdClickAttribution::Conversion&& conversion, const URL& requestURL, const WebCore::ResourceRequest& redirectRequest)
 {
-    m_privateClickMeasurement->handleConversion(WTFMove(conversion), requestURL, redirectRequest);
+    m_adClickAttribution->handleConversion(WTFMove(conversion), requestURL, redirectRequest);
 }
 
-void NetworkSession::dumpPrivateClickMeasurement(CompletionHandler<void(String)>&& completionHandler)
+void NetworkSession::dumpAdClickAttribution(CompletionHandler<void(String)>&& completionHandler)
 {
-    m_privateClickMeasurement->toString(WTFMove(completionHandler));
+    m_adClickAttribution->toString(WTFMove(completionHandler));
 }
 
-void NetworkSession::clearPrivateClickMeasurement()
+void NetworkSession::clearAdClickAttribution()
 {
-    m_privateClickMeasurement->clear();
+    m_adClickAttribution->clear();
 }
 
-void NetworkSession::clearPrivateClickMeasurementForRegistrableDomain(WebCore::RegistrableDomain&& domain)
+void NetworkSession::clearAdClickAttributionForRegistrableDomain(WebCore::RegistrableDomain&& domain)
 {
-    m_privateClickMeasurement->clearForRegistrableDomain(WTFMove(domain));
+    m_adClickAttribution->clearForRegistrableDomain(WTFMove(domain));
 }
 
-void NetworkSession::setPrivateClickMeasurementOverrideTimerForTesting(bool value)
+void NetworkSession::setAdClickAttributionOverrideTimerForTesting(bool value)
 {
-    m_privateClickMeasurement->setOverrideTimerForTesting(value);
+    m_adClickAttribution->setOverrideTimerForTesting(value);
 }
 
-void NetworkSession::setPrivateClickMeasurementConversionURLForTesting(URL&& url)
+void NetworkSession::setAdClickAttributionConversionURLForTesting(URL&& url)
 {
-    m_privateClickMeasurement->setConversionURLForTesting(WTFMove(url));
+    m_adClickAttribution->setConversionURLForTesting(WTFMove(url));
 }
 
-void NetworkSession::markPrivateClickMeasurementsAsExpiredForTesting()
+void NetworkSession::markAdClickAttributionsAsExpiredForTesting()
 {
-    m_privateClickMeasurement->markAllUnconvertedAsExpiredForTesting();
+    m_adClickAttribution->markAllUnconvertedAsExpiredForTesting();
 }
 
 void NetworkSession::addKeptAliveLoad(Ref<NetworkResourceLoader>&& loader)

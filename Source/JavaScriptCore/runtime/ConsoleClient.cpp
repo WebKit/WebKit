@@ -105,8 +105,8 @@ static void appendMessagePrefix(StringBuilder& builder, MessageSource source, Me
     case MessageSource::ITPDebug:
         sourceString = "ITPDEBUG"_s;
         break;
-    case MessageSource::PrivateClickMeasurement:
-        sourceString = "PRIVATECLICKMEASUREMENT"_s;
+    case MessageSource::AdClickAttribution:
+        sourceString = "ADCLICKATTRIBUTION"_s;
         break;
     case MessageSource::Other:
         sourceString = "OTHER"_s;

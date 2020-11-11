@@ -149,7 +149,7 @@ public:
     void setResourceLoadStatisticsDebugMode(bool, CompletionHandler<void()>&&);
     void isResourceLoadStatisticsEphemeral(CompletionHandler<void(bool)>&&) const;
 
-    void setPrivateClickMeasurementDebugMode(bool);
+    void setAdClickAttributionDebugMode(bool);
 
     uint64_t perOriginStorageQuota() const { return m_resolvedConfiguration->perOriginStorageQuota(); }
     uint64_t perThirdPartyOriginStorageQuota() const;

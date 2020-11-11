@@ -202,7 +202,7 @@ public:
     void setDomainsWithUserInteraction(HashSet<WebCore::RegistrableDomain>&&);
 #endif
 
-    void setPrivateClickMeasurementDebugMode(bool);
+    void setAdClickAttributionDebugMode(bool);
     
     void synthesizeAppIsBackground(bool background);
 

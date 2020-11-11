@@ -51,7 +51,7 @@ GPUProcess/webrtc/RemoteSampleBufferDisplayLayer.cpp
 GPUProcess/webrtc/RemoteSampleBufferDisplayLayerManager.cpp
 
 
-NetworkProcess/PrivateClickMeasurementManager.cpp
+NetworkProcess/AdClickAttributionManager.cpp
 NetworkProcess/NetworkActivityTracker.cpp
 NetworkProcess/NetworkCORSPreflightChecker.cpp
 NetworkProcess/NetworkConnectionToWebProcess.cpp

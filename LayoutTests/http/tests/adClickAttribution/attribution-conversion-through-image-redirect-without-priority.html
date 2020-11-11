@@ -1,0 +1,52 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <script src="/js-test-resources/ui-helper.js"></script>
+    <script src="resources/util.js"></script>
+</head>
+<body onload="setTimeout(runTest, 0)">
+<div id="description">Tests triggering of ad click attribution conversions without priority.</div>
+<a id="targetLink" href="http://localhost:8000/adClickAttribution/attribution-conversion-through-image-redirect-without-priority.html?stepTwo" adcampaignid="3" addestination="http://localhost:8000">Link</a><br>
+<div id="output"></div>
+<script>
+    prepareTest();
+
+    function activateElement(elementID) {
+        var element = document.getElementById(elementID);
+        var centerX = element.offsetLeft + element.offsetWidth / 2;
+        var centerY = element.offsetTop + element.offsetHeight / 2;
+        UIHelper.activateAt(centerX, centerY).then(
+            function () {
+            },
+            function () {
+                document.getElementById("output").innerText = "FAIL Promise rejected.";
+                tearDownAndFinish();
+            }
+        );
+    }
+
+    function runTest() {
+        if (window.testRunner) {
+            if (window.location.search === "?stepTwo") {
+                let imageElement = document.createElement("img");
+                imageElement.src = "https://127.0.0.1:8443/adClickAttribution/resources/redirectToConversion.php?conversionData=12";
+                imageElement.id = "pixel";
+                imageElement.onerror = function() {
+                    testRunner.dumpAdClickAttribution();
+                    document.body.removeChild(document.getElementById("targetLink"));
+                    document.body.removeChild(document.getElementById("pixel"));
+                    tearDownAndFinish();
+                };
+                document.body.appendChild(imageElement);
+            } else {
+                activateElement("targetLink");
+            }
+        } else {
+            document.getElementById("output").innerText = "FAIL No testRunner.";
+        }
+    }
+</script>
+</body>
+</html>

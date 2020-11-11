@@ -65,7 +65,7 @@ public:
     virtual void timelineRecordingChanged(bool) { }
 
     enum class DeveloperPreference {
-        PrivateClickMeasurementDebugModeEnabled,
+        AdClickAttributionDebugModeEnabled,
         ITPDebugModeEnabled,
         MockCaptureDevicesEnabled,
     };
@@ -83,7 +83,7 @@ namespace WTF {
 template<> struct EnumTraits<WebCore::InspectorClient::DeveloperPreference> {
     using values = EnumValues<
         WebCore::InspectorClient::DeveloperPreference,
-        WebCore::InspectorClient::DeveloperPreference::PrivateClickMeasurementDebugModeEnabled,
+        WebCore::InspectorClient::DeveloperPreference::AdClickAttributionDebugModeEnabled,
         WebCore::InspectorClient::DeveloperPreference::ITPDebugModeEnabled,
         WebCore::InspectorClient::DeveloperPreference::MockCaptureDevicesEnabled
     >;

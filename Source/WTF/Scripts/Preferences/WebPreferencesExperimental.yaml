@@ -37,6 +37,29 @@ AccessibilityObjectModelEnabled:
     WebKit:
       default: false
 
+AdClickAttributionDebugModeEnabled:
+  type: bool
+  humanReadableName: "Ad Click Attribution Debug Mode"
+  humanReadableDescription: "Enable Ad Click Attribution Debug Mode"
+  webcoreBinding: RuntimeEnabledFeatures
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+
+AdClickAttributionEnabled:
+  type: bool
+  humanReadableName: "Ad Click Attribution"
+  humanReadableDescription: "Enable Ad Click Attribution for Cross-Site Link Navigations"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 AspectRatioEnabled:
   type: bool
   humanReadableName: "CSS Aspect Ratio"
@@ -607,29 +630,6 @@ PerElementSpeakerSelectionEnabled:
   humanReadableName: "Allow per media element speaker device selection"
   humanReadableDescription: "Allow per media element speaker device selection"
   condition: ENABLE(MEDIA_STREAM)
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: false
-    WebCore:
-      default: false
-
-PrivateClickMeasurementDebugModeEnabled:
-  type: bool
-  humanReadableName: "Private Click Measurement Debug Mode"
-  humanReadableDescription: "Enable Private Click Measurement Debug Mode"
-  webcoreBinding: RuntimeEnabledFeatures
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: false
-
-PrivateClickMeasurementEnabled:
-  type: bool
-  humanReadableName: "Private Click Measurement"
-  humanReadableDescription: "Enable Private Click Measurement for Cross-Site Link Navigations"
   defaultValue:
     WebKitLegacy:
       default: false

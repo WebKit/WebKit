@@ -1239,7 +1239,7 @@
 		63C32C281E98119000699BD0 /* _WKGeolocationPositionInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 63C32C271E98119000699BD0 /* _WKGeolocationPositionInternal.h */; };
 		65B86F1E12F11DE300B7DD8A /* WKBundleInspector.h in Headers */ = {isa = PBXBuildFile; fileRef = 65B86F1812F11D7B00B7DD8A /* WKBundleInspector.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6A5080BF1F0EDAAA00E617C5 /* WKWindowFeaturesPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 6A5080BE1F0EDAAA00E617C5 /* WKWindowFeaturesPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		6BD05865220CE8C2000BED5C /* PrivateClickMeasurementManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 6BD05863220CE8C2000BED5C /* PrivateClickMeasurementManager.h */; };
+		6BD05865220CE8C2000BED5C /* AdClickAttributionManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 6BD05863220CE8C2000BED5C /* AdClickAttributionManager.h */; };
 		6BE969C11E54D452008B7483 /* corePrediction_model in Resources */ = {isa = PBXBuildFile; fileRef = 6BE969C01E54D452008B7483 /* corePrediction_model */; };
 		6BE969CB1E54D4CF008B7483 /* ResourceLoadStatisticsClassifierCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = 6BE969C91E54D4CF008B7483 /* ResourceLoadStatisticsClassifierCocoa.h */; };
 		6BE969CD1E54E054008B7483 /* ResourceLoadStatisticsClassifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 6BE969CC1E54E054008B7483 /* ResourceLoadStatisticsClassifier.h */; };
@@ -4224,8 +4224,8 @@
 		65B86F1712F11D7B00B7DD8A /* WKBundleInspector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKBundleInspector.cpp; sourceTree = "<group>"; };
 		65B86F1812F11D7B00B7DD8A /* WKBundleInspector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBundleInspector.h; sourceTree = "<group>"; };
 		6A5080BE1F0EDAAA00E617C5 /* WKWindowFeaturesPrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKWindowFeaturesPrivate.h; sourceTree = "<group>"; };
-		6BD05863220CE8C2000BED5C /* PrivateClickMeasurementManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrivateClickMeasurementManager.h; sourceTree = "<group>"; };
-		6BD05864220CE8C2000BED5C /* PrivateClickMeasurementManager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PrivateClickMeasurementManager.cpp; sourceTree = "<group>"; };
+		6BD05863220CE8C2000BED5C /* AdClickAttributionManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AdClickAttributionManager.h; sourceTree = "<group>"; };
+		6BD05864220CE8C2000BED5C /* AdClickAttributionManager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AdClickAttributionManager.cpp; sourceTree = "<group>"; };
 		6BE969C01E54D452008B7483 /* corePrediction_model */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = corePrediction_model; sourceTree = "<group>"; };
 		6BE969C61E54D4B6008B7483 /* ResourceLoadStatisticsClassifier.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceLoadStatisticsClassifier.cpp; sourceTree = "<group>"; };
 		6BE969C81E54D4CF008B7483 /* ResourceLoadStatisticsClassifierCocoa.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceLoadStatisticsClassifierCocoa.cpp; sourceTree = "<group>"; };
@@ -7916,6 +7916,8 @@
 				93BA04D92151ADCD007F455F /* ServiceWorker */,
 				413075971DE84ED70039EC69 /* webrtc */,
 				93B26143227D143100B97A76 /* WebStorage */,
+				6BD05864220CE8C2000BED5C /* AdClickAttributionManager.cpp */,
+				6BD05863220CE8C2000BED5C /* AdClickAttributionManager.h */,
 				53F3CAA5206C443E0086490E /* NetworkActivityTracker.cpp */,
 				535BCB902069C49C00CCCE02 /* NetworkActivityTracker.h */,
 				513A16491630A9BF005D7D22 /* NetworkConnectionToWebProcess.cpp */,
@@ -7970,8 +7972,6 @@
 				5CE85B1F1C88E6430070BFCE /* PingLoad.h */,
 				83A0ED331F747CC7003299EB /* PreconnectTask.cpp */,
 				83A0ED321F747CC6003299EB /* PreconnectTask.h */,
-				6BD05864220CE8C2000BED5C /* PrivateClickMeasurementManager.cpp */,
-				6BD05863220CE8C2000BED5C /* PrivateClickMeasurementManager.h */,
 				E1B78470163F24690007B692 /* RemoteNetworkingContext.h */,
 				41287D4D225C161F009A3E26 /* WebSocketTask.h */,
 			);
@@ -10894,6 +10894,7 @@
 				A182D5B51BE6BD250087A7CC /* AccessibilityIOS.h in Headers */,
 				E3CAAA442413279900CED2E2 /* AccessibilitySupportSPI.h in Headers */,
 				A7D792D81767CCA300881CBE /* ActivityAssertion.h in Headers */,
+				6BD05865220CE8C2000BED5C /* AdClickAttributionManager.h in Headers */,
 				634842511FB26E7100946E3C /* APIApplicationManifest.h in Headers */,
 				BC64697011DBE603006455B0 /* APIArray.h in Headers */,
 				2E5C770E1FA7D429005932C3 /* APIAttachment.h in Headers */,
@@ -11286,7 +11287,6 @@
 				C15CBB3623F3777100300CC7 /* PreferenceObserver.h in Headers */,
 				AAB145E6223F931200E489D8 /* PrefetchCache.h in Headers */,
 				E1CC1B9012D7EADF00625838 /* PrintInfo.h in Headers */,
-				6BD05865220CE8C2000BED5C /* PrivateClickMeasurementManager.h in Headers */,
 				86F9536518FF58F5001DB2EF /* ProcessAssertion.h in Headers */,
 				BC1A7C581136E19C00FB7167 /* ProcessLauncher.h in Headers */,
 				463FD4821EB94EC000A2982C /* ProcessTerminationReason.h in Headers */,

@@ -203,8 +203,8 @@ public:
     void setLineHeightUnitsEnabled(bool isEnabled) { m_lineHeightUnitsEnabled = isEnabled; }
     bool lineHeightUnitsEnabled() const { return m_lineHeightUnitsEnabled; }
 
-    bool privateClickMeasurementDebugModeEnabled() const { return m_privateClickMeasurementDebugModeEnabled; }
-    void setPrivateClickMeasurementDebugModeEnabled(bool isEnabled) { m_privateClickMeasurementDebugModeEnabled = isEnabled; }
+    bool adClickAttributionDebugModeEnabled() const { return m_adClickAttributionDebugModeEnabled; }
+    void setAdClickAttributionDebugModeEnabled(bool isEnabled) { m_adClickAttributionDebugModeEnabled = isEnabled; }
 
 #if ENABLE(TOUCH_EVENTS)
     bool mouseEventsSimulationEnabled() const { return m_mouseEventsSimulationEnabled; }
@@ -346,7 +346,7 @@ private:
     // https://github.com/w3c/csswg-drafts/issues/3257 have been sorted out.
     bool m_lineHeightUnitsEnabled { false };
 
-    bool m_privateClickMeasurementDebugModeEnabled { false };
+    bool m_adClickAttributionDebugModeEnabled { false };
 
 #if ENABLE(TOUCH_EVENTS)
     bool m_mouseEventsSimulationEnabled { false };

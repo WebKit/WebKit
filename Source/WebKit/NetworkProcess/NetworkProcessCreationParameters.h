@@ -79,7 +79,7 @@ struct NetworkProcessCreationParameters {
     Vector<String> urlSchemesRegisteredAsLocal;
     Vector<String> urlSchemesRegisteredAsNoAccess;
 
-    bool enablePrivateClickMeasurementDebugMode { false };
+    bool enableAdClickAttributionDebugMode { false };
 };
 
 } // namespace WebKit

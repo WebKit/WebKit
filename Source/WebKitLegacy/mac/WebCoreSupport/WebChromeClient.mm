@@ -124,7 +124,7 @@ NSString *WebConsoleMessageMediaMessageSource = @"MediaMessageSource";
 NSString *WebConsoleMessageMediaSourceMessageSource = @"MediaSourceMessageSource";
 NSString *WebConsoleMessageWebRTCMessageSource = @"WebRTCMessageSource";
 NSString *WebConsoleMessageITPDebugMessageSource = @"ITPDebugMessageSource";
-NSString *WebConsoleMessagePrivateClickMeasurementMessageSource = @"PrivateClickMeasurementMessageSource";
+NSString *WebConsoleMessageAdClickAttributionMessageSource = @"AdClickAttributionMessageSource";
 NSString *WebConsoleMessageOtherMessageSource = @"OtherMessageSource";
 
 NSString *WebConsoleMessageDebugMessageLevel = @"DebugMessageLevel";
@@ -403,8 +403,8 @@ inline static NSString *stringForMessageSource(MessageSource source)
         return WebConsoleMessageWebRTCMessageSource;
     case MessageSource::ITPDebug:
         return WebConsoleMessageITPDebugMessageSource;
-    case MessageSource::PrivateClickMeasurement:
-        return WebConsoleMessagePrivateClickMeasurementMessageSource;
+    case MessageSource::AdClickAttribution:
+        return WebConsoleMessageAdClickAttributionMessageSource;
     case MessageSource::Other:
         return WebConsoleMessageOtherMessageSource;
     }
