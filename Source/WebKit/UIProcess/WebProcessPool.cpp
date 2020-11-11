@@ -157,7 +157,12 @@ using namespace WebCore;
 
 DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, processPoolCounter, ("WebProcessPool"));
 
-const Seconds serviceWorkerTerminationDelay { 5_s };
+constexpr Seconds serviceWorkerTerminationDelay { 5_s };
+
+#if ENABLE(GPU_PROCESS)
+constexpr Seconds resetGPUProcessCrashCountDelay { 30_s };
+constexpr unsigned maximumGPUProcessRelaunchAttemptsBeforeKillingWebProcesses { 2 };
+#endif
 
 static uint64_t generateListenerIdentifier()
 {
@@ -260,6 +265,9 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
     , m_processSuppressionDisabledForPageCounter([this](RefCounterEvent) { updateProcessSuppressionState(); })
     , m_hiddenPageThrottlingAutoIncreasesCounter([this](RefCounterEvent) { m_hiddenPageThrottlingTimer.startOneShot(0_s); })
     , m_hiddenPageThrottlingTimer(RunLoop::main(), this, &WebProcessPool::updateHiddenPageThrottlingAutoIncreaseLimit)
+#if ENABLE(GPU_PROCESS)
+    , m_resetGPUProcessCrashCountTimer(RunLoop::main(), this, &WebProcessPool::resetGPUProcessCrashCount)
+#endif
     , m_foregroundWebProcessCounter([this](RefCounterEvent) { updateProcessAssertions(); })
     , m_backgroundWebProcessCounter([this](RefCounterEvent) { updateProcessAssertions(); })
     , m_backForwardCache(makeUniqueRef<WebBackForwardCache>(*this))
@@ -488,6 +496,7 @@ GPUProcessProxy& WebProcessPool::ensureGPUProcess()
 
 void WebProcessPool::gpuProcessCrashed(ProcessID identifier)
 {
+    WEBPROCESSPOOL_RELEASE_LOG_ERROR(Process, "gpuProcessCrashed: PID: %d", identifier);
     m_gpuProcess = nullptr;
 
     m_client.gpuProcessDidCrash(this, identifier);
@@ -495,7 +504,18 @@ void WebProcessPool::gpuProcessCrashed(ProcessID identifier)
     for (auto& process : processes)
         process->gpuProcessCrashed();
 
-    // FIXME: We should consider terminating all WebProcesses whenever the GPUProcess crashes several times in a short amount of time.
+    if (++m_recentGPUProcessCrashCount > maximumGPUProcessRelaunchAttemptsBeforeKillingWebProcesses) {
+        WEBPROCESSPOOL_RELEASE_LOG_ERROR(Process, "gpuProcessCrashed: GPU Process has crashed more than %u times in the last %g seconds, terminating all WebProcesses", maximumGPUProcessRelaunchAttemptsBeforeKillingWebProcesses, resetGPUProcessCrashCountDelay.seconds());
+        m_resetGPUProcessCrashCountTimer.stop();
+        m_recentGPUProcessCrashCount = 0;
+        terminateAllWebContentProcesses();
+    } else if (!m_resetGPUProcessCrashCountTimer.isActive())
+        m_resetGPUProcessCrashCountTimer.startOneShot(resetGPUProcessCrashCountDelay);
+}
+
+void WebProcessPool::resetGPUProcessCrashCount()
+{
+    m_recentGPUProcessCrashCount = 0;
 }
 
 void WebProcessPool::getGPUProcessConnection(WebProcessProxy& webProcessProxy, Messages::WebProcessProxy::GetGPUProcessConnection::DelayedReply&& reply)
@@ -1451,6 +1471,7 @@ void WebProcessPool::stopMemorySampler()
 
 void WebProcessPool::terminateAllWebContentProcesses()
 {
+    WEBPROCESSPOOL_RELEASE_LOG_ERROR(Process, "terminateAllWebContentProcesses");
     Vector<RefPtr<WebProcessProxy>> processes = m_processes;
     for (auto& process : processes)
         process->terminate();

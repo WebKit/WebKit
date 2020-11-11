@@ -355,6 +355,8 @@ public:
 
 #if ENABLE(GPU_PROCESS)
     void gpuProcessCrashed(ProcessID);
+    void resetGPUProcessCrashCount();
+
     void getGPUProcessConnection(WebProcessProxy&, Messages::WebProcessProxy::GetGPUProcessConnectionDelayedReply&&);
 
     GPUProcessProxy& ensureGPUProcess();
@@ -687,6 +689,11 @@ private:
     ProcessSuppressionDisabledCounter m_processSuppressionDisabledForPageCounter;
     HiddenPageThrottlingAutoIncreasesCounter m_hiddenPageThrottlingAutoIncreasesCounter;
     RunLoop::Timer<WebProcessPool> m_hiddenPageThrottlingTimer;
+
+#if ENABLE(GPU_PROCESS)
+    RunLoop::Timer<WebProcessPool> m_resetGPUProcessCrashCountTimer;
+    unsigned m_recentGPUProcessCrashCount { 0 };
+#endif
 
 #if PLATFORM(COCOA)
     RetainPtr<NSMutableDictionary> m_bundleParameters;

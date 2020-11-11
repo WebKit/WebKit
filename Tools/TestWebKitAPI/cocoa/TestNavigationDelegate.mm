@@ -124,6 +124,20 @@
     self.didFinishNavigation = nil;
 }
 
+- (void)waitForWebContentProcessDidTerminate
+{
+    EXPECT_FALSE(self.webContentProcessDidTerminate);
+
+    __block bool crashed = false;
+    self.webContentProcessDidTerminate = ^(WKWebView *) {
+        crashed = true;
+    };
+
+    TestWebKitAPI::Util::run(&crashed);
+
+    self.webContentProcessDidTerminate = nil;
+}
+
 - (void)waitForDidFinishNavigationWithPreferences:(WKWebpagePreferences *)preferences
 {
     EXPECT_FALSE(self.decidePolicyForNavigationActionWithPreferences);
@@ -205,6 +219,17 @@
     }];
     TestWebKitAPI::Util::run(&presentationUpdateHappened);
 #endif
+}
+
+- (void)_test_waitForWebContentProcessDidTerminate
+{
+    EXPECT_FALSE(self.navigationDelegate);
+
+    auto navigationDelegate = adoptNS([[TestNavigationDelegate alloc] init]);
+    self.navigationDelegate = navigationDelegate.get();
+    [navigationDelegate waitForWebContentProcessDidTerminate];
+
+    self.navigationDelegate = nil;
 }
 
 @end
