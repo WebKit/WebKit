@@ -34,7 +34,7 @@ from buildbot.test.fake.remotecommand import Expect, ExpectRemoteRef, ExpectShel
 from buildbot.test.util.steps import BuildStepMixin
 from buildbot.util import identifiers as buildbot_identifiers
 from mock import call
-from twisted.internet import error, reactor
+from twisted.internet import defer, error, reactor
 from twisted.python import failure, log
 from twisted.trial import unittest
 
@@ -2590,6 +2590,8 @@ class TestDownloadBuiltProduct(BuildStepMixinAdditions, unittest.TestCase):
 
 
 class TestDownloadBuiltProductFromMaster(BuildStepMixinAdditions, unittest.TestCase):
+    READ_LIMIT = 1000
+
     def setUp(self):
         self.longMessage = True
         return self.setUpBuildStep()
@@ -2597,38 +2599,63 @@ class TestDownloadBuiltProductFromMaster(BuildStepMixinAdditions, unittest.TestC
     def tearDown(self):
         return self.tearDownBuildStep()
 
+    @staticmethod
+    def downloadFileRecordingContents(limit, recorder):
+        def behavior(command):
+            reader = command.args['reader']
+            data = reader.remote_read(limit)
+            recorder(data)
+            reader.remote_close()
+        return behavior
+
+    @defer.inlineCallbacks
     def test_success(self):
-        self.setupStep(DownloadBuiltProductFromMaster())
+        self.setupStep(DownloadBuiltProductFromMaster(mastersrc=__file__))
         self.setProperty('fullPlatform', 'ios-simulator-12')
         self.setProperty('configuration', 'release')
         self.setProperty('architecture', 'x86_64')
         self.setProperty('patch_id', '1234')
+        self.expectHidden(False)
+        buf = []
         self.expectRemoteCommands(
-            ExpectShell(workdir='wkdir',
-                        logEnviron=False,
-                        command=['python', 'Tools/CISupport/download-built-product', '--release', 'https://ews-build.webkit.org/archives/ios-simulator-12-x86_64-release/1234.zip'],
-                        )
+            Expect('downloadFile', dict(
+                workerdest='WebKitBuild/release.zip', workdir='wkdir',
+                blocksize=1024 * 256, maxsize=None, mode=0o0644,
+                reader=ExpectRemoteRef(remotetransfer.FileReader),
+            ))
+            + Expect.behavior(self.downloadFileRecordingContents(self.READ_LIMIT, buf.append))
             + 0,
         )
-        self.expectOutcome(result=SUCCESS, state_string='Downloaded built product')
-        return self.runStep()
+        self.expectOutcome(result=SUCCESS, state_string='downloading to release.zip')
 
+        yield self.runStep()
+
+        buf = ''.join(buf)
+        self.assertEqual(len(buf), self.READ_LIMIT)
+        with open(__file__, 'rb') as masterFile:
+            data = masterFile.read(self.READ_LIMIT)
+            if data != buf:
+                self.assertEqual(buf, data)
+
+    @defer.inlineCallbacks
     def test_failure(self):
-        self.setupStep(DownloadBuiltProductFromMaster())
+        self.setupStep(DownloadBuiltProductFromMaster(mastersrc=__file__))
         self.setProperty('fullPlatform', 'mac-sierra')
         self.setProperty('configuration', 'debug')
         self.setProperty('architecture', 'x86_64')
         self.setProperty('patch_id', '123456')
+        buf = []
         self.expectRemoteCommands(
-            ExpectShell(workdir='wkdir',
-                        logEnviron=False,
-                        command=['python', 'Tools/CISupport/download-built-product', '--debug', 'https://ews-build.webkit.org/archives/mac-sierra-x86_64-debug/123456.zip'],
-                        )
-            + ExpectShell.log('stdio', stdout='Unexpected failure.')
+            Expect('downloadFile', dict(
+                workerdest='WebKitBuild/debug.zip', workdir='wkdir',
+                blocksize=1024 * 256, maxsize=None, mode=0o0644,
+                reader=ExpectRemoteRef(remotetransfer.FileReader),
+            ))
+            + Expect.behavior(self.downloadFileRecordingContents(self.READ_LIMIT, buf.append))
             + 2,
         )
         self.expectOutcome(result=FAILURE, state_string='Failed to download built product from build master')
-        return self.runStep()
+        yield self.runStep()
 
 
 class TestExtractBuiltProduct(BuildStepMixinAdditions, unittest.TestCase):

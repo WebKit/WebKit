@@ -43,7 +43,6 @@ S3URL = 'https://s3-us-west-2.amazonaws.com/'
 S3_RESULTS_URL = 'https://ews-build.s3-us-west-2.amazonaws.com/'
 CURRENT_HOSTNAME = socket.gethostname().strip()
 EWS_BUILD_HOSTNAME = 'ews-build.webkit.org'
-EWS_BUILD_URL = os.environ.get('EWS_BUILD_URL', 'https://{}/'.format(EWS_BUILD_HOSTNAME))
 EWS_URL = 'https://ews.webkit.org/'
 RESULTS_DB_URL = 'https://results.webkit.org/'
 WithProperties = properties.WithProperties
@@ -2445,20 +2444,28 @@ class DownloadBuiltProduct(shell.ShellCommand):
         return rc
 
 
-class DownloadBuiltProductFromMaster(DownloadBuiltProduct):
-    command = ['python', 'Tools/CISupport/download-built-product',
-        WithProperties('--%(configuration)s'),
-        WithProperties(EWS_BUILD_URL + 'archives/%(fullPlatform)s-%(architecture)s-%(configuration)s/%(patch_id)s.zip')]
+class DownloadBuiltProductFromMaster(transfer.FileDownload):
+    mastersrc = WithProperties('public_html/archives/%(fullPlatform)s-%(architecture)s-%(configuration)s/%(patch_id)s.zip')
+    workerdest = WithProperties('WebKitBuild/%(configuration)s.zip')
+    name = 'download-built-product-from-master'
+    description = ['downloading built product from buildbot master']
+    descriptionDone = ['Downloaded built product']
     haltOnFailure = True
     flunkOnFailure = True
+
+    def __init__(self, **kwargs):
+        # Allow the unit test to override mastersrc
+        if 'mastersrc' not in kwargs:
+            kwargs['mastersrc'] = self.mastersrc
+        kwargs['workerdest'] = self.workerdest
+        kwargs['mode'] = 0o0644
+        kwargs['blocksize'] = 1024 * 256
+        transfer.FileDownload.__init__(self, **kwargs)
 
     def getResultSummary(self):
         if self.results != SUCCESS:
             return {u'step': u'Failed to download built product from build master'}
-        return shell.ShellCommand.getResultSummary(self)
-
-    def evaluateCommand(self, cmd):
-        return shell.ShellCommand.evaluateCommand(self, cmd)
+        return super(DownloadBuiltProductFromMaster, self).getResultSummary()
 
 
 class ExtractBuiltProduct(shell.ShellCommand):

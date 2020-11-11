@@ -1,3 +1,19 @@
+2020-11-11  Angelos Oikonomopoulos  <angelos@igalia.com>
+
+        Use FileDownload to fetch built product from master
+        https://bugs.webkit.org/show_bug.cgi?id=218440
+
+        Reviewed by Aakash Jain.
+
+        This removes the need for a front-end web server to serve the static
+        files.
+
+        * CISupport/ews-build/steps.py:
+        (DownloadBuiltProductFromMaster):
+        (DownloadBuiltProductFromMaster.__init__):
+        (DownloadBuiltProductFromMaster.getResultSummary):
+        * CISupport/ews-build/steps_unittest.py:
+
 2020-11-10  Noam Rosenthal  <noam@webkit.org>
 
         Unreviewed, cleanup my watchlist entries.
