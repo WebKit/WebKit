@@ -1,0 +1,5 @@
+PASS navigator.language is "es-es"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

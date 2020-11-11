@@ -1,3 +1,16 @@
+2020-11-11  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed test gardening, add Mojave specific baselines.
+
+        * platform/mac-mojave/fast/text/international/system-language/navigator-language/navigator-language-en-US-expected.txt: Added.
+        * platform/mac-mojave/fast/text/international/system-language/navigator-language/navigator-language-en-expected.txt: Added.
+        * platform/mac-mojave/fast/text/international/system-language/navigator-language/navigator-language-es-ES-expected.txt: Added.
+        * platform/mac-mojave/fast/text/international/system-language/navigator-language/navigator-language-es-expected.txt: Added.
+        * platform/mac-mojave/fast/text/international/system-language/navigator-language/navigator-language-fr-expected.txt: Added.
+        * platform/mac-mojave/fast/text/international/system-language/navigator-language/navigator-language-hi-expected.txt: Added.
+        * platform/mac-mojave/fast/text/international/system-language/navigator-language/navigator-language-pt-BR-expected.txt: Added.
+        * platform/mac-mojave/fast/text/international/system-language/navigator-language/navigator-language-ru-expected.txt: Added.
+
 2020-11-11  Rob Buis  <rbuis@igalia.com>
 
         Resync web-platform-tests/css/css-sizing/aspect-ratio from upstream
