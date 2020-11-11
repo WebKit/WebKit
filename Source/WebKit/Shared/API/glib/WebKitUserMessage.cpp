@@ -251,7 +251,7 @@ const char* webkit_user_message_get_name(WebKitUserMessage* message)
  *
  * Get the @message parameters
  *
- * Returns: (transfer none): the message parameters
+ * Returns: (transfer none) (nullable): the message parameters
  *
  * Since: 2.28
  */
@@ -268,7 +268,7 @@ GVariant* webkit_user_message_get_parameters(WebKitUserMessage* message)
  *
  * Get the @message list of file descritpor
  *
- * Returns: (transfer none): the message list of file descriptors
+ * Returns: (transfer none) (nullable): the message list of file descriptors
  *
  * Since: 2.28
  */
