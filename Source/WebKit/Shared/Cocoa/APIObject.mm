@@ -99,6 +99,10 @@
 #import "_WKApplicationManifestInternal.h"
 #endif
 
+#if ENABLE(INSPECTOR_EXTENSIONS)
+#import "_WKInspectorExtensionInternal.h"
+#endif
+
 static const size_t minimumObjectAlignment = alignof(std::aligned_storage<std::numeric_limits<size_t>::max()>::type);
 static_assert(minimumObjectAlignment >= alignof(void*), "Objects should always be at least pointer-aligned.");
 static const size_t maximumExtraSpaceForAlignment = minimumObjectAlignment - alignof(void*);
@@ -269,6 +273,12 @@ void* Object::newObject(size_t size, Type type)
     case Type::InspectorConfiguration:
         wrapper = [_WKInspectorConfiguration alloc];
         break;
+
+#if ENABLE(INSPECTOR_EXTENSIONS)
+    case Type::InspectorExtension:
+        wrapper = [_WKInspectorExtension alloc];
+        break;
+#endif
 
     case Type::Navigation:
         wrapper = [WKNavigation alloc];

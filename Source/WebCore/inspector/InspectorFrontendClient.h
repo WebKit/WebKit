@@ -36,14 +36,16 @@
 #include "InspectorDebuggableType.h"
 #include "UserInterfaceLayoutDirection.h"
 #include <wtf/Forward.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class FloatRect;
 class InspectorFrontendAPIDispatcher;
+class Page;
 
-class InspectorFrontendClient {
+class InspectorFrontendClient : public CanMakeWeakPtr<InspectorFrontendClient> {
 public:
     enum class DockSide {
         Undocked = 0,
@@ -111,6 +113,7 @@ public:
 
     WEBCORE_EXPORT virtual void sendMessageToBackend(const String&) = 0;
     WEBCORE_EXPORT virtual InspectorFrontendAPIDispatcher& frontendAPIDispatcher() = 0;
+    WEBCORE_EXPORT virtual Page* frontendPage() = 0;
 
     WEBCORE_EXPORT virtual bool isUnderTest() = 0;
 };

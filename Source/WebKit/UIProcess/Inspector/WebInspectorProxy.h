@@ -37,6 +37,7 @@
 #include <WebCore/InspectorFrontendClient.h>
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(MAC)
@@ -69,6 +70,9 @@ class WebFrameProxy;
 class WebInspectorProxyClient;
 class WebPageProxy;
 class WebPreferences;
+#if ENABLE(INSPECTOR_EXTENSIONS)
+class WebInspectorUIExtensionControllerProxy;
+#endif
 
 enum class AttachmentSide {
     Bottom,
@@ -80,6 +84,7 @@ class WebInspectorProxy
     : public API::ObjectImpl<API::Object::Type::Inspector>
     , public IPC::MessageReceiver
     , public Inspector::FrontendChannel
+    , public CanMakeWeakPtr<WebInspectorProxy>
 #if PLATFORM(WIN)
     , public WebCore::WindowMessageListener
 #endif
@@ -101,6 +106,10 @@ public:
     // Public APIs
     WebPageProxy* inspectedPage() const { return m_inspectedPage; }
     WebPageProxy* inspectorPage() const { return m_inspectorPage; }
+
+#if ENABLE(INSPECTOR_EXTENSIONS)
+    WebInspectorUIExtensionControllerProxy& extensionController() const { return *m_extensionController; }
+#endif
 
     bool isConnected() const { return !!m_inspectorPage; }
     bool isVisible() const { return m_isVisible; }
@@ -286,6 +295,10 @@ private:
     WebPageProxy* m_inspectorPage { nullptr };
     std::unique_ptr<API::InspectorClient> m_inspectorClient;
 
+#if ENABLE(INSPECTOR_EXTENSIONS)
+    std::unique_ptr<WebInspectorUIExtensionControllerProxy> m_extensionController;
+#endif
+    
     bool m_underTest { false };
     bool m_isVisible { false };
     bool m_isAttached { false };

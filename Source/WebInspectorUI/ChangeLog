@@ -1,3 +1,36 @@
+2020-11-11  Brian Burg  <bburg@apple.com>
+
+        [Cocoa] Inspector Extensions: Add _WKInspectorExtension and related plumbing
+        https://bugs.webkit.org/show_bug.cgi?id=217783
+        <rdar://problem/69968787>
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Main.html: Add new files.
+
+        * UserInterface/Controllers/AppControllerBase.js:
+        (WI.AppControllerBase):
+        (WI.AppControllerBase.prototype.get extensionController):
+        Hang the extension controller off of the global singleton, as there can only be one.
+
+        * UserInterface/Controllers/WebInspectorExtensionController.js:
+        (WI.WebInspectorExtensionController):
+        (WI.WebInspectorExtensionController.prototype.registerExtension):
+        (WI.WebInspectorExtensionController.prototype.unregisterExtension):
+        Added. For now, just keep the UUIDs in a map and log the result.
+
+        * UserInterface/Models/WebInspectorExtension.js:
+        (WI.WebInspectorExtension):
+        (WI.WebInspectorExtension.prototype.get extensionID):
+        (WI.WebInspectorExtension.prototype.get displayName):
+        Added. This is a data object for now.
+
+        * UserInterface/Protocol/InspectorFrontendAPI.js:
+        (InspectorFrontendAPI.loadCompleted):
+        (InspectorFrontendAPI.registerExtension):
+        (InspectorFrontendAPI.unregisterExtension):
+        Added. Forward invocations to the extension controller.
+
 2020-11-10  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r269660.
