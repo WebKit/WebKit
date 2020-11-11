@@ -126,9 +126,12 @@ void RemoteRenderingBackend::createImageBuffer(const FloatSize& logicalSize, Ren
 
 void RemoteRenderingBackend::applyDisplayList(const SharedDisplayListHandle& handle, RenderingResourceIdentifier renderingResourceIdentifier, ShouldFlushContext flushContext)
 {
+    Vector<Ref<SharedMemory>> removedItemBuffers;
     auto displayList = handle.createDisplayList([&] (DisplayList::ItemBufferIdentifier identifier) -> uint8_t* {
-        if (auto sharedMemory = m_sharedItemBuffers.take(identifier))
+        if (auto sharedMemory = m_sharedItemBuffers.take(identifier)) {
+            removedItemBuffers.append(*sharedMemory);
             return reinterpret_cast<uint8_t*>(sharedMemory->data());
+        }
         return nullptr;
     });
 

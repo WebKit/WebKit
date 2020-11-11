@@ -1,3 +1,50 @@
+2020-11-10  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r269617. rdar://problem/71261924
+
+    Fix crashes when mapping shared display list item data into display lists in the GPU process
+    https://bugs.webkit.org/show_bug.cgi?id=218739
+    
+    Reviewed by Tim Horton.
+    
+    I added a "stop-gap" mechanism in r269525 to allow the GPU process to handle newly refactored display list
+    items by encoding display list items directly into shared memory buffers in the web process and reading them
+    back in the GPU process, using standard IPC messages only, and also without reusing any shared memory buffers.
+    
+    However, I introduced a bug in this "stop-gap" mechanism when I tried to clean up some GPU-process-side logic
+    for unregistering these shared memory buffers in the GPU process, by taking shared memory buffers out of the
+    map in the GPU process without ensuring that they're kept alive over the course of applying the display list.
+    
+    This code is going away soon anyways (see webkit.org/b/218426), but in the meantime, we should at least ensure
+    that this temporary shared memory mechanism doesn't cause huge waves of layout test failures.
+    
+    * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+    (WebKit::RemoteRenderingBackend::applyDisplayList):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@269617 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-11-10  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            Fix crashes when mapping shared display list item data into display lists in the GPU process
+            https://bugs.webkit.org/show_bug.cgi?id=218739
+
+            Reviewed by Tim Horton.
+
+            I added a "stop-gap" mechanism in r269525 to allow the GPU process to handle newly refactored display list
+            items by encoding display list items directly into shared memory buffers in the web process and reading them
+            back in the GPU process, using standard IPC messages only, and also without reusing any shared memory buffers.
+
+            However, I introduced a bug in this "stop-gap" mechanism when I tried to clean up some GPU-process-side logic
+            for unregistering these shared memory buffers in the GPU process, by taking shared memory buffers out of the
+            map in the GPU process without ensuring that they're kept alive over the course of applying the display list.
+
+            This code is going away soon anyways (see webkit.org/b/218426), but in the meantime, we should at least ensure
+            that this temporary shared memory mechanism doesn't cause huge waves of layout test failures.
+
+            * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+            (WebKit::RemoteRenderingBackend::applyDisplayList):
+
 2020-11-10  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r269610. rdar://problem/71247293
