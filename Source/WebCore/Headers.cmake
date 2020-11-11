@@ -103,7 +103,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/mediastream/UserMediaClient.h
     Modules/mediastream/UserMediaController.h
     Modules/mediastream/UserMediaRequest.h
-    Modules/mediastream/UserMediaRequestIdentifier.h
 
     Modules/notifications/Notification.h
     Modules/notifications/NotificationClient.h

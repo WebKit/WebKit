@@ -23,7 +23,6 @@
 #include <WebCore/CaptureDevice.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/MediaStreamRequest.h>
-#include <WebCore/UserMediaRequestIdentifier.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -37,7 +36,7 @@ class UserMediaPermissionRequestManagerProxy;
 
 class UserMediaPermissionRequestProxy : public API::ObjectImpl<API::Object::Type::UserMediaPermissionRequest> {
 public:
-    static Ref<UserMediaPermissionRequestProxy> create(UserMediaPermissionRequestManagerProxy& manager, WebCore::UserMediaRequestIdentifier userMediaID, WebCore::FrameIdentifier mainFrameID, WebCore::FrameIdentifier frameID, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin, Vector<WebCore::CaptureDevice>&& audioDevices, Vector<WebCore::CaptureDevice>&& videoDevices, WebCore::MediaStreamRequest&& request)
+    static Ref<UserMediaPermissionRequestProxy> create(UserMediaPermissionRequestManagerProxy& manager, uint64_t userMediaID, WebCore::FrameIdentifier mainFrameID, WebCore::FrameIdentifier frameID, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin, Vector<WebCore::CaptureDevice>&& audioDevices, Vector<WebCore::CaptureDevice>&& videoDevices, WebCore::MediaStreamRequest&& request)
     {
         return adoptRef(*new UserMediaPermissionRequestProxy(manager, userMediaID, mainFrameID, frameID, WTFMove(userMediaDocumentOrigin), WTFMove(topLevelDocumentOrigin), WTFMove(audioDevices), WTFMove(videoDevices), WTFMove(request)));
     }
@@ -66,7 +65,7 @@ public:
     bool hasPersistentAccess() const { return m_hasPersistentAccess; }
     void setHasPersistentAccess() { m_hasPersistentAccess = true; }
 
-    WebCore::UserMediaRequestIdentifier userMediaID() const { return m_userMediaID; }
+    uint64_t userMediaID() const { return m_userMediaID; }
     WebCore::FrameIdentifier mainFrameID() const { return m_mainFrameID; }
     WebCore::FrameIdentifier frameID() const { return m_frameID; }
 
@@ -93,10 +92,10 @@ public:
 #endif
 
 private:
-    UserMediaPermissionRequestProxy(UserMediaPermissionRequestManagerProxy&, WebCore::UserMediaRequestIdentifier, WebCore::FrameIdentifier mainFrameID, WebCore::FrameIdentifier, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin, Vector<WebCore::CaptureDevice>&& audioDevices, Vector<WebCore::CaptureDevice>&& videoDevices, WebCore::MediaStreamRequest&&);
+    UserMediaPermissionRequestProxy(UserMediaPermissionRequestManagerProxy&, uint64_t userMediaID, WebCore::FrameIdentifier mainFrameID, WebCore::FrameIdentifier, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin, Vector<WebCore::CaptureDevice>&& audioDevices, Vector<WebCore::CaptureDevice>&& videoDevices, WebCore::MediaStreamRequest&&);
 
     UserMediaPermissionRequestManagerProxy* m_manager;
-    WebCore::UserMediaRequestIdentifier m_userMediaID;
+    uint64_t m_userMediaID;
     WebCore::FrameIdentifier m_mainFrameID;
     WebCore::FrameIdentifier m_frameID;
     Ref<WebCore::SecurityOrigin> m_userMediaDocumentSecurityOrigin;

@@ -204,7 +204,7 @@ void UserMediaPermissionRequestManagerProxy::denyRequest(UserMediaPermissionRequ
     if (!m_page.hasRunningProcess())
         return;
 
-    ALWAYS_LOG(LOGIDENTIFIER, request.userMediaID().toUInt64(), ", reason: ", reason);
+    ALWAYS_LOG(LOGIDENTIFIER, request.userMediaID(), ", reason: ", reason);
 
     if (reason == UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::PermissionDenied)
         m_deniedRequests.append(DeniedRequest { request.mainFrameID(), request.userMediaDocumentSecurityOrigin(), request.topLevelDocumentSecurityOrigin(), request.requiresAudioCapture(), request.requiresVideoCapture(), request.requiresDisplayCapture() });
@@ -225,7 +225,7 @@ void UserMediaPermissionRequestManagerProxy::grantRequest(UserMediaPermissionReq
         return;
 
 #if ENABLE(MEDIA_STREAM)
-    ALWAYS_LOG(LOGIDENTIFIER, request.userMediaID().toUInt64(), ", video: ", request.videoDevice().label(), ", audio: ", request.audioDevice().label());
+    ALWAYS_LOG(LOGIDENTIFIER, request.userMediaID(), ", video: ", request.videoDevice().label(), ", audio: ", request.audioDevice().label());
 
     auto& userMediaDocumentSecurityOrigin = request.userMediaDocumentSecurityOrigin();
     auto& topLevelDocumentSecurityOrigin = request.topLevelDocumentSecurityOrigin();
@@ -242,7 +242,7 @@ void UserMediaPermissionRequestManagerProxy::grantRequest(UserMediaPermissionReq
 #if ENABLE(MEDIA_STREAM)
 void UserMediaPermissionRequestManagerProxy::finishGrantingRequest(UserMediaPermissionRequestProxy& request)
 {
-    ALWAYS_LOG(LOGIDENTIFIER, request.userMediaID().toUInt64());
+    ALWAYS_LOG(LOGIDENTIFIER, request.userMediaID());
     if (!UserMediaProcessManager::singleton().willCreateMediaStream(*this, request.hasAudioDevice(), request.hasVideoDevice())) {
         denyRequest(request, UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::OtherFailure, "Unable to extend sandbox.");
         return;
@@ -392,22 +392,13 @@ UserMediaPermissionRequestManagerProxy::RequestAction UserMediaPermissionRequest
 }
 #endif
 
-void UserMediaPermissionRequestManagerProxy::requestUserMediaPermissionForFrame(WebCore::UserMediaRequestIdentifier userMediaID, FrameIdentifier frameID, MediaStreamRequest&& userRequest)
+void UserMediaPermissionRequestManagerProxy::requestUserMediaPermissionForFrame(uint64_t userMediaID, FrameIdentifier frameID, Ref<SecurityOrigin>&& userMediaDocumentOrigin, Ref<SecurityOrigin>&& topLevelDocumentOrigin, MediaStreamRequest&& userRequest)
 {
 #if ENABLE(MEDIA_STREAM)
     if (!m_page.hasRunningProcess())
         return;
 
-    ALWAYS_LOG(LOGIDENTIFIER, userMediaID.toUInt64());
-
-    auto* webFrame = m_page.process().webFrame(frameID);
-    if (!webFrame) {
-        m_page.send(Messages::WebPage::UserMediaAccessWasDenied(userMediaID, toWebCore(UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::PermissionDenied), { }));
-        return;
-    }
-
-    auto topLevelDocumentOrigin = SecurityOrigin::createFromString(m_page.pageLoadState().activeURL());
-    auto userMediaDocumentOrigin = SecurityOrigin::createFromString(webFrame->url().string());
+    ALWAYS_LOG(LOGIDENTIFIER, userMediaID);
 
     auto request = UserMediaPermissionRequestProxy::create(*this, userMediaID, m_page.mainFrame()->frameID(), frameID, WTFMove(userMediaDocumentOrigin), WTFMove(topLevelDocumentOrigin), { }, { }, WTFMove(userRequest));
     if (m_currentUserMediaRequest) {
@@ -426,6 +417,8 @@ void UserMediaPermissionRequestManagerProxy::requestUserMediaPermissionForFrame(
 #else
     UNUSED_PARAM(userMediaID);
     UNUSED_PARAM(frameID);
+    UNUSED_PARAM(userMediaDocumentOrigin);
+    UNUSED_PARAM(topLevelDocumentOrigin);
     UNUSED_PARAM(userRequest);
 #endif
 }
@@ -468,7 +461,7 @@ void UserMediaPermissionRequestManagerProxy::startProcessingUserMediaPermissionR
 
 void UserMediaPermissionRequestManagerProxy::processUserMediaPermissionRequest()
 {
-    ALWAYS_LOG(LOGIDENTIFIER, m_currentUserMediaRequest->userMediaID().toUInt64(), ", persistent access: ", m_currentUserMediaRequest->hasPersistentAccess());
+    ALWAYS_LOG(LOGIDENTIFIER, m_currentUserMediaRequest->userMediaID(), ", persistent access: ", m_currentUserMediaRequest->hasPersistentAccess());
 
     auto& userMediaDocumentSecurityOrigin = m_currentUserMediaRequest->userMediaDocumentSecurityOrigin();
     auto& topLevelDocumentSecurityOrigin = m_currentUserMediaRequest->topLevelDocumentSecurityOrigin();
@@ -506,7 +499,7 @@ void UserMediaPermissionRequestManagerProxy::processUserMediaPermissionRequest()
 #if ENABLE(MEDIA_STREAM)
 void UserMediaPermissionRequestManagerProxy::processUserMediaPermissionInvalidRequest(const String& invalidConstraint)
 {
-    ALWAYS_LOG(LOGIDENTIFIER, m_currentUserMediaRequest->userMediaID().toUInt64());
+    ALWAYS_LOG(LOGIDENTIFIER, m_currentUserMediaRequest->userMediaID());
     bool filterConstraint = !m_currentUserMediaRequest->hasPersistentAccess() && !wasGrantedVideoOrAudioAccess(m_currentUserMediaRequest->frameID(), m_currentUserMediaRequest->userMediaDocumentSecurityOrigin(), m_currentUserMediaRequest->topLevelDocumentSecurityOrigin());
 
     denyRequest(*m_currentUserMediaRequest, UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::InvalidConstraint, filterConstraint ? String { } : invalidConstraint);
@@ -514,7 +507,7 @@ void UserMediaPermissionRequestManagerProxy::processUserMediaPermissionInvalidRe
 
 void UserMediaPermissionRequestManagerProxy::processUserMediaPermissionValidRequest(Vector<CaptureDevice>&& audioDevices, Vector<CaptureDevice>&& videoDevices, String&& deviceIdentifierHashSalt)
 {
-    ALWAYS_LOG(LOGIDENTIFIER, m_currentUserMediaRequest->userMediaID().toUInt64(), ", video: ", videoDevices.size(), " audio: ", audioDevices.size());
+    ALWAYS_LOG(LOGIDENTIFIER, m_currentUserMediaRequest->userMediaID(), ", video: ", videoDevices.size(), " audio: ", audioDevices.size());
     if (videoDevices.isEmpty() && audioDevices.isEmpty()) {
         denyRequest(*m_currentUserMediaRequest, UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::NoConstraints, emptyString());
         return;
@@ -525,7 +518,7 @@ void UserMediaPermissionRequestManagerProxy::processUserMediaPermissionValidRequ
     m_currentUserMediaRequest->setEligibleAudioDeviceUIDs(WTFMove(audioDevices));
 
     auto action = getRequestAction(*m_currentUserMediaRequest);
-    ALWAYS_LOG(LOGIDENTIFIER, m_currentUserMediaRequest->userMediaID().toUInt64(), ", action: ", action);
+    ALWAYS_LOG(LOGIDENTIFIER, m_currentUserMediaRequest->userMediaID(), ", action: ", action);
 
     if (action == RequestAction::Deny) {
         denyRequest(*m_currentUserMediaRequest, UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::PermissionDenied, emptyString());
@@ -545,7 +538,7 @@ void UserMediaPermissionRequestManagerProxy::processUserMediaPermissionValidRequ
 
     if (m_page.isControlledByAutomation()) {
         if (WebAutomationSession* automationSession = m_page.process().processPool().automationSession()) {
-            ALWAYS_LOG(LOGIDENTIFIER, m_currentUserMediaRequest->userMediaID().toUInt64(), ", page controlled by automation");
+            ALWAYS_LOG(LOGIDENTIFIER, m_currentUserMediaRequest->userMediaID(), ", page controlled by automation");
             if (automationSession->shouldAllowGetUserMediaForPage(m_page))
                 grantRequest(*m_currentUserMediaRequest);
             else
@@ -555,7 +548,7 @@ void UserMediaPermissionRequestManagerProxy::processUserMediaPermissionValidRequ
     }
 
     if (m_page.preferences().mockCaptureDevicesEnabled() && !m_page.preferences().mockCaptureDevicesPromptEnabled()) {
-        ALWAYS_LOG(LOGIDENTIFIER, m_currentUserMediaRequest->userMediaID().toUInt64(), ", mock devices don't require prompt");
+        ALWAYS_LOG(LOGIDENTIFIER, m_currentUserMediaRequest->userMediaID(), ", mock devices don't require prompt");
         grantRequest(*m_currentUserMediaRequest);
         return;
     }
@@ -685,20 +678,12 @@ Vector<CaptureDevice> UserMediaPermissionRequestManagerProxy::computeFilteredDev
 }
 #endif
 
-void UserMediaPermissionRequestManagerProxy::enumerateMediaDevicesForFrame(FrameIdentifier frameID, CompletionHandler<void(const Vector<CaptureDevice>&, const String&)>&& completionHandler)
+void UserMediaPermissionRequestManagerProxy::enumerateMediaDevicesForFrame(FrameIdentifier frameID, Ref<SecurityOrigin>&& userMediaDocumentOrigin, Ref<SecurityOrigin>&& topLevelDocumentOrigin, CompletionHandler<void(const Vector<CaptureDevice>&, const String&)>&& completionHandler)
 {
 #if ENABLE(MEDIA_STREAM)
     ALWAYS_LOG(LOGIDENTIFIER);
 
-    auto* webFrame = m_page.process().webFrame(frameID);
-    if (!webFrame) {
-        completionHandler({ }, { });
-        return;
-    }
-    auto topLevelDocumentOrigin = SecurityOrigin::createFromString(m_page.pageLoadState().activeURL());
-    auto userMediaDocumentOrigin = SecurityOrigin::createFromString(webFrame->url().string());
-
-    auto callback = [this, frameID, topLevelDocumentOrigin, userMediaDocumentOrigin, completionHandler = WTFMove(completionHandler)](PermissionInfo permissionInfo) mutable {
+    auto callback = [this, frameID, userMediaDocumentOrigin, topLevelDocumentOrigin, completionHandler = WTFMove(completionHandler)](PermissionInfo permissionInfo) mutable {
         auto callCompletionHandler = makeScopeExit([&completionHandler] {
             completionHandler({ }, { });
         });
@@ -748,6 +733,8 @@ void UserMediaPermissionRequestManagerProxy::enumerateMediaDevicesForFrame(Frame
     getUserMediaPermissionInfo(frameID, WTFMove(userMediaDocumentOrigin), WTFMove(topLevelDocumentOrigin), WTFMove(callback));
 #else
     UNUSED_PARAM(frameID);
+    UNUSED_PARAM(userMediaDocumentOrigin);
+    UNUSED_PARAM(topLevelDocumentOrigin);
     completionHandler({ }, { });
 #endif
 }

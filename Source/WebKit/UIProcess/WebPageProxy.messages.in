@@ -285,8 +285,8 @@ messages -> WebPageProxy {
 
 #if ENABLE(MEDIA_STREAM)
     # MediaSteam messages
-    RequestUserMediaPermissionForFrame(WebCore::UserMediaRequestIdentifier userMediaID, WebCore::FrameIdentifier frameID, struct WebCore::MediaStreamRequest request)
-    EnumerateMediaDevicesForFrame(WebCore::FrameIdentifier frameID) -> (Vector<WebCore::CaptureDevice> devices, String mediaDeviceIdentifierHashSalt) Async
+    RequestUserMediaPermissionForFrame(uint64_t userMediaID, WebCore::FrameIdentifier frameID, struct WebCore::SecurityOriginData userMediaDocumentOriginIdentifier, struct WebCore::SecurityOriginData topLevelDocumentOriginIdentifier, struct WebCore::MediaStreamRequest request)
+    EnumerateMediaDevicesForFrame(WebCore::FrameIdentifier frameID, struct WebCore::SecurityOriginData userMediaDocumentOriginIdentifier, struct WebCore::SecurityOriginData topLevelDocumentOriginIdentifier) -> (Vector<WebCore::CaptureDevice> devices, String mediaDeviceIdentifierHashSalt) Async
     BeginMonitoringCaptureDevices()
 #endif
 

@@ -235,7 +235,6 @@ def types_that_cannot_be_forward_declared():
         'WebCore::SleepDisablerIdentifier',
         'WebCore::SpeechRecognitionConnectionClientIdentifier',
         'WebCore::SWServerConnectionIdentifier',
-        'WebCore::UserMediaRequestIdentifier',
         'WebCore::WebSocketIdentifier',
         'WebKit::ActivityStateChangeID',
         'WebKit::AudioMediaStreamTrackRendererIdentifier',

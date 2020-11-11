@@ -4462,14 +4462,14 @@ void WebPage::didReceiveNotificationPermissionDecision(uint64_t notificationID, 
 
 #if ENABLE(MEDIA_STREAM)
 
-void WebPage::userMediaAccessWasGranted(UserMediaRequestIdentifier userMediaID, WebCore::CaptureDevice&& audioDevice, WebCore::CaptureDevice&& videoDevice, String&& mediaDeviceIdentifierHashSalt, SandboxExtension::Handle&& handle, CompletionHandler<void()>&& completionHandler)
+void WebPage::userMediaAccessWasGranted(uint64_t userMediaID, WebCore::CaptureDevice&& audioDevice, WebCore::CaptureDevice&& videoDevice, String&& mediaDeviceIdentifierHashSalt, SandboxExtension::Handle&& handle, CompletionHandler<void()>&& completionHandler)
 {
     SandboxExtension::consumePermanently(handle);
 
     m_userMediaPermissionRequestManager->userMediaAccessWasGranted(userMediaID, WTFMove(audioDevice), WTFMove(videoDevice), WTFMove(mediaDeviceIdentifierHashSalt), WTFMove(completionHandler));
 }
 
-void WebPage::userMediaAccessWasDenied(UserMediaRequestIdentifier userMediaID, uint64_t reason, String&& invalidConstraint)
+void WebPage::userMediaAccessWasDenied(uint64_t userMediaID, uint64_t reason, String&& invalidConstraint)
 {
     m_userMediaPermissionRequestManager->userMediaAccessWasDenied(userMediaID, static_cast<UserMediaRequest::MediaAccessDenialReason>(reason), WTFMove(invalidConstraint));
 }

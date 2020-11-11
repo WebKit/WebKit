@@ -79,7 +79,8 @@ void UserMediaPermissionRequestManager::sendUserMediaRequest(UserMediaRequest& u
     WebFrame* webFrame = WebFrame::fromCoreFrame(*frame);
     ASSERT(webFrame);
 
-    m_page.send(Messages::WebPageProxy::RequestUserMediaPermissionForFrame(userRequest.identifier(), webFrame->frameID(), userRequest.request()));
+    auto* topLevelDocumentOrigin = userRequest.topLevelDocumentOrigin();
+    m_page.send(Messages::WebPageProxy::RequestUserMediaPermissionForFrame(userRequest.identifier().toUInt64(), webFrame->frameID(), userRequest.userMediaDocumentOrigin()->data(), topLevelDocumentOrigin->data(), userRequest.request()));
 }
 
 void UserMediaPermissionRequestManager::cancelUserMediaRequest(UserMediaRequest& request)
@@ -116,9 +117,9 @@ void UserMediaPermissionRequestManager::mediaCanStart(Document& document)
         sendUserMediaRequest(pendingRequest);
 }
 
-void UserMediaPermissionRequestManager::userMediaAccessWasGranted(UserMediaRequestIdentifier requestID, CaptureDevice&& audioDevice, CaptureDevice&& videoDevice, String&& deviceIdentifierHashSalt, CompletionHandler<void()>&& completionHandler)
+void UserMediaPermissionRequestManager::userMediaAccessWasGranted(uint64_t requestID, CaptureDevice&& audioDevice, CaptureDevice&& videoDevice, String&& deviceIdentifierHashSalt, CompletionHandler<void()>&& completionHandler)
 {
-    auto request = m_ongoingUserMediaRequests.take(requestID);
+    auto request = m_ongoingUserMediaRequests.take(makeObjectIdentifier<UserMediaRequestIdentifierType>(requestID));
     if (!request) {
         completionHandler();
         return;
@@ -127,9 +128,9 @@ void UserMediaPermissionRequestManager::userMediaAccessWasGranted(UserMediaReque
     request->allow(WTFMove(audioDevice), WTFMove(videoDevice), WTFMove(deviceIdentifierHashSalt), WTFMove(completionHandler));
 }
 
-void UserMediaPermissionRequestManager::userMediaAccessWasDenied(UserMediaRequestIdentifier requestID, UserMediaRequest::MediaAccessDenialReason reason, String&& invalidConstraint)
+void UserMediaPermissionRequestManager::userMediaAccessWasDenied(uint64_t requestID, UserMediaRequest::MediaAccessDenialReason reason, String&& invalidConstraint)
 {
-    auto request = m_ongoingUserMediaRequests.take(requestID);
+    auto request = m_ongoingUserMediaRequests.take(makeObjectIdentifier<UserMediaRequestIdentifierType>(requestID));
     if (!request)
         return;
 
@@ -144,7 +145,7 @@ void UserMediaPermissionRequestManager::enumerateMediaDevices(Document& document
         return;
     }
 
-    m_page.sendWithAsyncReply(Messages::WebPageProxy::EnumerateMediaDevicesForFrame { WebFrame::fromCoreFrame(*frame)->frameID() }, WTFMove(completionHandler));
+    m_page.sendWithAsyncReply(Messages::WebPageProxy::EnumerateMediaDevicesForFrame { WebFrame::fromCoreFrame(*frame)->frameID(), document.securityOrigin().data(), document.topOrigin().data() }, WTFMove(completionHandler));
 }
 
 UserMediaClient::DeviceChangeObserverToken UserMediaPermissionRequestManager::addDeviceChangeObserver(Function<void()>&& observer)

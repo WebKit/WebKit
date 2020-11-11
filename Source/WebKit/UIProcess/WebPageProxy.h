@@ -105,7 +105,6 @@
 #include <WebCore/TextGranularity.h>
 #include <WebCore/TextManipulationController.h>
 #include <WebCore/UserInterfaceLayoutDirection.h>
-#include <WebCore/UserMediaRequestIdentifier.h>
 #include <WebCore/ViewportArguments.h>
 #include <memory>
 #include <wtf/CompletionHandler.h>
@@ -1973,8 +1972,8 @@ private:
 #if ENABLE(MEDIA_STREAM)
     UserMediaPermissionRequestManagerProxy& userMediaPermissionRequestManager();
 #endif
-    void requestUserMediaPermissionForFrame(WebCore::UserMediaRequestIdentifier, WebCore::FrameIdentifier, WebCore::MediaStreamRequest&&);
-    void enumerateMediaDevicesForFrame(WebCore::FrameIdentifier, CompletionHandler<void(const Vector<WebCore::CaptureDevice>&, const String&)>&&);
+    void requestUserMediaPermissionForFrame(uint64_t userMediaID, WebCore::FrameIdentifier, const WebCore::SecurityOriginData& userMediaDocumentOriginIdentifier, const WebCore::SecurityOriginData& topLevelDocumentOriginIdentifier, WebCore::MediaStreamRequest&&);
+    void enumerateMediaDevicesForFrame(WebCore::FrameIdentifier, const WebCore::SecurityOriginData& userMediaDocumentOriginData, const WebCore::SecurityOriginData& topLevelDocumentOriginData, CompletionHandler<void(const Vector<WebCore::CaptureDevice>&, const String&)>&&);
     void beginMonitoringCaptureDevices();
 
     void runModal();

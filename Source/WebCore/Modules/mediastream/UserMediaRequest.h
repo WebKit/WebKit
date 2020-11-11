@@ -40,8 +40,8 @@
 #include "MediaConstraints.h"
 #include "MediaStreamPrivate.h"
 #include "MediaStreamRequest.h"
-#include "UserMediaRequestIdentifier.h"
 #include <wtf/CompletionHandler.h>
+#include <wtf/ObjectIdentifier.h>
 #include <wtf/UniqueRef.h>
 
 namespace WebCore {
@@ -50,6 +50,9 @@ class MediaStream;
 class SecurityOrigin;
 
 template<typename IDLType> class DOMPromiseDeferred;
+
+enum UserMediaRequestIdentifierType { };
+using UserMediaRequestIdentifier = ObjectIdentifier<UserMediaRequestIdentifierType>;
 
 class UserMediaRequest : public RefCounted<UserMediaRequest>, public ActiveDOMObject {
 public:
@@ -71,6 +74,8 @@ public:
     const MediaConstraints& audioConstraints() const { return m_request.audioConstraints; }
     const MediaConstraints& videoConstraints() const { return m_request.videoConstraints; }
 
+    WEBCORE_EXPORT SecurityOrigin* userMediaDocumentOrigin() const;
+    WEBCORE_EXPORT SecurityOrigin* topLevelDocumentOrigin() const;
     WEBCORE_EXPORT Document* document() const;
 
     const MediaStreamRequest& request() const { return m_request; }
