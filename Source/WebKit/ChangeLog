@@ -1,3 +1,16 @@
+2020-11-10  Chris Dumez  <cdumez@apple.com>
+
+        Webkit incorrectly setting visibilityState to "prerender" when opening link in new tab
+        https://bugs.webkit.org/show_bug.cgi?id=215851
+        <rdar://problem/67817100>
+
+        Reviewed by Geoff Garen.
+
+        * Shared/API/c/WKSharedAPICast.h:
+        (WebKit::toVisibilityState):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDocumentGtk.cpp:
+        (webkit_dom_document_get_visibility_state):
+
 2020-11-10  Tim Horton  <timothy_horton@apple.com>
 
         Use GraphicsContext instead of CGContext in RemoteLayerBackingStore

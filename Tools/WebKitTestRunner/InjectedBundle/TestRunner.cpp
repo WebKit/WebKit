@@ -591,7 +591,7 @@ void TestRunner::clearDidReceiveServerRedirectForProvisionalNavigation()
 
 void TestRunner::setPageVisibility(JSStringRef state)
 {
-    InjectedBundle::singleton().setHidden(JSStringIsEqualToUTF8CString(state, "hidden") || JSStringIsEqualToUTF8CString(state, "prerender"));
+    InjectedBundle::singleton().setHidden(JSStringIsEqualToUTF8CString(state, "hidden"));
 }
 
 void TestRunner::resetPageVisibility()

@@ -120,16 +120,16 @@ void PageVisibilityStateWithWindowChanges::runTest(View view)
     // This WebView does not have a window and superview. PageVisibility should be "hidden".
     EXPECT_NULL([view window]);
     EXPECT_NULL([view superview]);
-    EXPECT_JS_EQ(view, "document.visibilityState", "prerender");
+    EXPECT_JS_EQ(view, "document.visibilityState", "hidden");
     EXPECT_JS_EQ(view, "document.hidden", "true");
 
-    // Add it to a non-visible window. PageVisibility should still be "prerender".
+    // Add it to a non-visible window. PageVisibility should still be "hidden".
     RetainPtr<NSWindow> window = adoptNS([[NSWindow alloc] initWithContentRect:view.frame styleMask:NSWindowStyleMaskBorderless | NSWindowStyleMaskMiniaturizable backing:NSBackingStoreBuffered defer:NO]);
     [window.get().contentView addSubview:view];
     EXPECT_NOT_NULL([view window]);
     EXPECT_NOT_NULL([view superview]);
     EXPECT_FALSE([window.get() isVisible]);
-    EXPECT_JS_EQ(view, "document.visibilityState", "prerender");
+    EXPECT_JS_EQ(view, "document.visibilityState", "hidden");
     EXPECT_JS_EQ(view, "document.hidden", "true");
 
     // Make the window visible. PageVisibility should become "visible".

@@ -391,8 +391,6 @@
         return @"hidden";
     case WebCore::VisibilityState::Visible:
         return @"visible";
-    case WebCore::VisibilityState::Prerender:
-        return @"prerender";
     }
 }
 

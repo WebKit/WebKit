@@ -942,7 +942,7 @@ inline WebCore::VisibilityState toVisibilityState(WKPageVisibilityState wkPageVi
     case kWKPageVisibilityStateHidden:
         return WebCore::VisibilityState::Hidden;
     case kWKPageVisibilityStatePrerender:
-        return WebCore::VisibilityState::Prerender;
+        return WebCore::VisibilityState::Hidden;
     }
 
     ASSERT_NOT_REACHED();

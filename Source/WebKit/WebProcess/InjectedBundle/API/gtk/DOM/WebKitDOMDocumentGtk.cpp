@@ -1887,8 +1887,6 @@ gchar* webkit_dom_document_get_visibility_state(WebKitDOMDocument* self)
         return convertToUTF8String("hidden");
     case WebCore::VisibilityState::Visible:
         return convertToUTF8String("visible");
-    case WebCore::VisibilityState::Prerender:
-        return convertToUTF8String("prerender");
     }
     ASSERT_NOT_REACHED();
     return nullptr;

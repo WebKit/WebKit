@@ -749,8 +749,6 @@ static WebPageVisibilityState kit(WebCore::VisibilityState visibilityState)
         return WebPageVisibilityStateVisible;
     case WebCore::VisibilityState::Hidden:
         return WebPageVisibilityStateHidden;
-    case WebCore::VisibilityState::Prerender:
-        return WebPageVisibilityStatePrerender;
     }
 
     ASSERT_NOT_REACHED();

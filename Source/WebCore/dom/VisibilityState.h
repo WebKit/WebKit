@@ -34,8 +34,7 @@ namespace WebCore {
 
 enum class VisibilityState {
     Hidden,
-    Visible,
-    Prerender
+    Visible
 };
 
 } // namespace WebCore

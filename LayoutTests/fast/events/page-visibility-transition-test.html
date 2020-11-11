@@ -19,11 +19,6 @@ function makePageHidden() {
         testRunner.setPageVisibility("hidden");
 }
 
-function makePagePrerender() {
-    if (window.testRunner)
-        testRunner.setPageVisibility("prerender");
-}
-
 function makePageUnloaded() {
     if (window.testRunner)
         testRunner.setPageVisibility("unloaded");

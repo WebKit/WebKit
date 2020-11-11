@@ -2315,8 +2315,6 @@ VisibilityState Page::visibilityState() const
 {
     if (isVisible())
         return VisibilityState::Visible;
-    if (m_isPrerender)
-        return VisibilityState::Prerender;
     return VisibilityState::Hidden;
 }
 

@@ -1,3 +1,19 @@
+2020-11-10  Chris Dumez  <cdumez@apple.com>
+
+        Webkit incorrectly setting visibilityState to "prerender" when opening link in new tab
+        https://bugs.webkit.org/show_bug.cgi?id=215851
+        <rdar://problem/67817100>
+
+        Reviewed by Geoff Garen.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/VisibilityState.mm: Added.
+        (TEST):
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setPageVisibility):
+
 2020-11-10  Darin Adler  <darin@apple.com>
 
         Remove another function that implicitly uses the composed tree (intersects with range)

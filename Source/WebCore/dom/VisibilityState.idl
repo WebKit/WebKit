@@ -23,5 +23,4 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// FIXME: Missing "unloaded" value (https://www.w3.org/TR/page-visibility/#sec-document-interface).
-enum VisibilityState { "hidden", "visible", "prerender" };
+enum VisibilityState { "hidden", "visible" };
