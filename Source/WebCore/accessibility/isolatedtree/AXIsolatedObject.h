@@ -386,19 +386,19 @@ private:
     unsigned selectionStart() const override { return 0; }
     unsigned selectionEnd() const override { return 0; }
     String selectedText() const override { return String(); }
-    VisiblePositionRange visiblePositionRange() const override { return VisiblePositionRange(); }
-    VisiblePositionRange visiblePositionRangeForLine(unsigned) const override { return VisiblePositionRange(); }
+    VisiblePositionRange visiblePositionRange() const override;
+    VisiblePositionRange visiblePositionRangeForLine(unsigned) const override;
     Optional<SimpleRange> elementRange() const override;
-    VisiblePositionRange visiblePositionRangeForUnorderedPositions(const VisiblePosition&, const VisiblePosition&) const override { return VisiblePositionRange(); }
-    VisiblePositionRange positionOfLeftWord(const VisiblePosition&) const override { return VisiblePositionRange(); }
-    VisiblePositionRange positionOfRightWord(const VisiblePosition&) const override { return VisiblePositionRange(); }
-    VisiblePositionRange leftLineVisiblePositionRange(const VisiblePosition&) const override { return VisiblePositionRange(); }
-    VisiblePositionRange rightLineVisiblePositionRange(const VisiblePosition&) const override { return VisiblePositionRange(); }
-    VisiblePositionRange sentenceForPosition(const VisiblePosition&) const override { return VisiblePositionRange(); }
-    VisiblePositionRange paragraphForPosition(const VisiblePosition&) const override { return VisiblePositionRange(); }
-    VisiblePositionRange styleRangeForPosition(const VisiblePosition&) const override { return VisiblePositionRange(); }
-    VisiblePositionRange visiblePositionRangeForRange(const PlainTextRange&) const override { return VisiblePositionRange(); }
-    VisiblePositionRange lineRangeForPosition(const VisiblePosition&) const override { return VisiblePositionRange(); }
+    VisiblePositionRange visiblePositionRangeForUnorderedPositions(const VisiblePosition&, const VisiblePosition&) const override;
+    VisiblePositionRange positionOfLeftWord(const VisiblePosition&) const override;
+    VisiblePositionRange positionOfRightWord(const VisiblePosition&) const override;
+    VisiblePositionRange leftLineVisiblePositionRange(const VisiblePosition&) const override;
+    VisiblePositionRange rightLineVisiblePositionRange(const VisiblePosition&) const override;
+    VisiblePositionRange sentenceForPosition(const VisiblePosition&) const override;
+    VisiblePositionRange paragraphForPosition(const VisiblePosition&) const override;
+    VisiblePositionRange styleRangeForPosition(const VisiblePosition&) const override;
+    VisiblePositionRange visiblePositionRangeForRange(const PlainTextRange&) const override;
+    VisiblePositionRange lineRangeForPosition(const VisiblePosition&) const override;
     Optional<SimpleRange> rangeForPlainTextRange(const PlainTextRange&) const override { return WTF::nullopt; }
     String stringForRange(const SimpleRange&) const override;
     IntRect boundsForVisiblePositionRange(const VisiblePositionRange&) const override { return IntRect(); }
