@@ -1,0 +1,89 @@
+<html><head></head><body>
+<script src="../../resources/js-test.js"></script>
+<script>
+
+description("Test the intersects function that checks if a range intersects another range.")
+
+function range(startContainer, startOffset, endContainer, endOffset)
+{
+    return new StaticRange({ startContainer: startContainer, startOffset: startOffset, endContainer: endContainer, endOffset: endOffset })
+}
+
+function collapsedRange(container, offset)
+{
+    return range(container, offset, container, offset)
+}
+
+function contentsRange(node)
+{
+    return range(node, 0, node, node.childNodes.length)
+}
+
+function shouldIntersectSelf(a)
+{
+    shouldBeTrue("internals.rangeIntersectsRange(" + a + ", " + a + ", 'ComposedTree')")
+}
+
+function shouldIntersect(a, b)
+{
+    shouldBeTrue("internals.rangeIntersectsRange(" + a + ", " + b + ", 'ComposedTree')")
+    shouldBeTrue("internals.rangeIntersectsRange(" + b + ", " + a + ", 'ComposedTree')")
+}
+
+function shouldNotIntersect(a, b)
+{
+    shouldBeFalse("internals.rangeIntersectsRange(" + a + ", " + b + ", 'ComposedTree')")
+    shouldBeFalse("internals.rangeIntersectsRange(" + b + ", " + a + ", 'ComposedTree')")
+}
+
+let documentElement = document.documentElement;
+let body = document.body;
+
+shouldIntersectSelf("contentsRange(document)")
+shouldIntersectSelf("contentsRange(documentElement)")
+shouldIntersectSelf("contentsRange(body)")
+
+shouldIntersect("contentsRange(document)", "contentsRange(documentElement)")
+shouldIntersect("contentsRange(document)", "contentsRange(body)")
+shouldIntersect("contentsRange(documentElement)", "contentsRange(body)")
+
+shouldIntersect("contentsRange(document)", "contentsRange(documentElement)")
+
+shouldIntersect("contentsRange(documentElement)", "contentsRange(body)")
+
+shouldIntersect("contentsRange(document)", "collapsedRange(document, 0)")
+shouldIntersect("contentsRange(document)", "collapsedRange(document, 1)")
+shouldNotIntersect("contentsRange(document)", "collapsedRange(document, 2)")
+
+shouldIntersect("range(document, 0, document, 2)", "contentsRange(document)")
+shouldIntersect("contentsRange(document)", "range(document, 1, document, 2)")
+
+shouldNotIntersect("range(document, 0, documentElement, 0)", "contentsRange(body)")
+shouldIntersect("range(document, 0, body, 0)", "collapsedRange(body, 0)")
+
+let a = document.createElement("div")
+shouldNotIntersect("contentsRange(document)", "contentsRange(a)")
+
+body.appendChild(a)
+
+let b = document.createElement("div")
+body.appendChild(b)
+
+let c = document.createElement("div")
+b.appendChild(c)
+
+let d = document.createElement("div")
+a.appendChild(d)
+
+let e = document.createElement("div")
+let f = document.createElement("div")
+e.appendChild(f)
+shouldNotIntersect("contentsRange(body)", "contentsRange(f)")
+
+let g = document.createElement("textarea");
+c.appendChild(g)
+let h = internals.ensureUserAgentShadowRoot(g).firstChild
+shouldIntersect("contentsRange(body)", "contentsRange(h)")
+
+</script>
+</body></html>

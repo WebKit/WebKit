@@ -391,7 +391,7 @@ void DOMSelection::addRange(Range& liveRange)
     }
     auto range = makeSimpleRange(liveRange);
     if (auto selectedRange = selection.selection().toNormalizedRange()) {
-        if (!selectedRange->start.container->containingShadowRoot() && intersects<Tree>(*selectedRange, range))
+        if (!selectedRange->start.container->containingShadowRoot() && intersects(*selectedRange, range))
             selection.setSelection(unionRange(*selectedRange, range));
         return;
     }
@@ -433,7 +433,7 @@ bool DOMSelection::containsNode(Node& node, bool allowPartial) const
     if (node.isTextNode() && !node.document().settings().liveRangeSelectionEnabled())
         allowPartial = true;
     auto range = this->range();
-    return range && (allowPartial ? intersects<Tree>(*range, node) : contains<Tree>(*range, node));
+    return range && (allowPartial ? intersects(*range, node) : contains(*range, node));
 }
 
 ExceptionOr<void> DOMSelection::selectAllChildren(Node& node)

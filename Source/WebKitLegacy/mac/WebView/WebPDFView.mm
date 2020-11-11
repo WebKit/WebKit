@@ -636,23 +636,14 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
     return NO;
 }
 
-static bool isFrameInRange(WebCore::Frame& frame, const WebCore::SimpleRange& range)
-{
-    for (auto* ownerElement = frame.ownerElement(); ownerElement; ownerElement = ownerElement->document().ownerElement()) {
-        if (&ownerElement->document() == &range.start.document())
-            return intersects(range, *ownerElement);
-    }
-    return false;
-}
-
 - (NSUInteger)countMatchesForText:(NSString *)string inDOMRange:(DOMRange *)range options:(WebFindOptions)options limit:(NSUInteger)limit markMatches:(BOOL)markMatches
 {
-    if (range && !isFrameInRange(*core([dataSource webFrame]), makeSimpleRange(*core(range))))
+    if (range && !containsCrossingDocumentBoundaries(makeSimpleRange(*core(range)), *core([dataSource webFrame])->document()))
         return 0;
 
     PDFSelection *previousMatch = nil;
     NSMutableArray *matches = [[NSMutableArray alloc] initWithCapacity:limit];
-    
+
     for (;;) {
         PDFSelection *nextMatch = [self _nextMatchFor:string direction:YES caseSensitive:!(options & WebFindOptionsCaseInsensitive) wrap:NO fromSelection:previousMatch startInSelection:NO];
         if (!nextMatch)
@@ -664,7 +655,7 @@ static bool isFrameInRange(WebCore::Frame& frame, const WebCore::SimpleRange& ra
         if ([matches count] >= limit)
             break;
     }
-    
+
     [self _setTextMatches:matches];
     [matches release];
     

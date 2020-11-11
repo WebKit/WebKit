@@ -969,6 +969,9 @@ enum TreeType {
     DOMString treeOrderBoundaryPoints(Node containerA, unsigned long offsetA, Node containerB, unsigned long offsetB, optional TreeType tree = "Tree");
     boolean rangeContainsNode(AbstractRange range, Node node, optional TreeType tree = "Tree");
     boolean rangeContainsRange(AbstractRange outerRange, AbstractRange innerRange, optional TreeType tree = "Tree");
+    boolean rangeContainsBoundaryPoint(AbstractRange outerRange, Node container, unsigned long offset, optional TreeType tree = "Tree");
+    boolean rangeIntersectsNode(AbstractRange range, Node node, optional TreeType tree = "Tree");
+    boolean rangeIntersectsRange(AbstractRange outerRange, AbstractRange innerRange, optional TreeType tree = "Tree");
 
     undefined systemBeep();
 };

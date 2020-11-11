@@ -3545,7 +3545,7 @@ static bool isFrameInRange(Frame& frame, const SimpleRange& range)
 {
     for (auto* ownerElement = frame.ownerElement(); ownerElement; ownerElement = ownerElement->document().ownerElement()) {
         if (&ownerElement->document() == &range.start.document())
-            return intersects(range, *ownerElement);
+            return intersects<ComposedTree>(range, *ownerElement);
     }
     return false;
 }
@@ -3703,7 +3703,7 @@ void Editor::scanSelectionForTelephoneNumbers()
             addMarker(range, DocumentMarker::TelephoneNumber);
 
             // Only consider ranges with a detected telephone number if they overlap with the selection.
-            if (intersects(range, selectedRange))
+            if (intersects<ComposedTree>(range, selectedRange))
                 m_detectedTelephoneNumberRanges.append(range);
         }
     }

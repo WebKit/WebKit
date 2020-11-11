@@ -787,6 +787,13 @@ Optional<SimpleRange> makeSimpleRange(const VisiblePositionRange& range)
     return makeSimpleRange(range.start, range.end);
 }
 
+VisiblePositionRange makeVisiblePositionRange(const Optional<SimpleRange>& range)
+{
+    if (!range)
+        return { };
+    return { makeContainerOffsetPosition(range->start), makeContainerOffsetPosition(range->end) };
+}
+
 PartialOrdering documentOrder(const VisiblePosition& a, const VisiblePosition& b)
 {
     // FIXME: Should two positions with different affinity be considered equivalent or not?

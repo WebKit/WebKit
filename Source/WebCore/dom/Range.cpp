@@ -160,7 +160,7 @@ ExceptionOr<bool> Range::isPointInRange(Node& container, unsigned offset)
             return false;
         return checkResult.releaseException();
     }
-    return contains<Tree>(makeSimpleRange(*this), { container, offset });
+    return contains(makeSimpleRange(*this), { container, offset });
 }
 
 ExceptionOr<short> Range::comparePoint(Node& container, unsigned offset) const
@@ -260,7 +260,7 @@ ExceptionOr<void> Range::deleteContents()
 
 bool Range::intersectsNode(Node& node) const
 {
-    return intersects<Tree>(makeSimpleRange(*this), node);
+    return intersects(makeSimpleRange(*this), node);
 }
 
 static inline Node* highestAncestorUnderCommonRoot(Node* node, Node* commonRoot)

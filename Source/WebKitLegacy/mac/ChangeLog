@@ -1,3 +1,16 @@
+2020-11-10  Darin Adler  <darin@apple.com>
+
+        Remove another function that implicitly uses the composed tree (intersects with range)
+        https://bugs.webkit.org/show_bug.cgi?id=218726
+
+        Reviewed by Ryosuke Niwa.
+
+        * WebView/WebPDFView.mm:
+        (isFrameInRange): Deleted. This function used intersects, and deleting it side-steps
+        the issue of calling the intersects function template from outside WebCore.
+        (-[WebPDFView countMatchesForText:inDOMRange:options:limit:markMatches:]):
+        Use containsCrossingDocumentBoundaries instead of isFrameInRange.
+
 2020-11-10  John Wilander  <wilander@apple.com>
 
         PCM: Change from ad-click-attribution to private-click-measurement (in all forms, including .well-known URL)

@@ -139,6 +139,7 @@ struct VisiblePositionRange {
 };
 
 WEBCORE_EXPORT Optional<SimpleRange> makeSimpleRange(const VisiblePositionRange&);
+WEBCORE_EXPORT VisiblePositionRange makeVisiblePositionRange(const Optional<SimpleRange>&);
 
 Node* commonInclusiveAncestor(const VisiblePositionRange&);
 

@@ -6046,9 +6046,24 @@ bool Internals::rangeContainsNode(const AbstractRange& range, Node& node, TreeTy
     return containsForTesting(convertType(type), makeSimpleRange(range), node);
 }
 
+bool Internals::rangeContainsBoundaryPoint(const AbstractRange& range, Node& container, unsigned offset, TreeType type)
+{
+    return containsForTesting(convertType(type), makeSimpleRange(range), { container, offset });
+}
+
 bool Internals::rangeContainsRange(const AbstractRange& outerRange, const AbstractRange& innerRange, TreeType type)
 {
     return containsForTesting(convertType(type), makeSimpleRange(outerRange), makeSimpleRange(innerRange));
+}
+
+bool Internals::rangeIntersectsNode(const AbstractRange& range, Node& node, TreeType type)
+{
+    return intersectsForTesting(convertType(type), makeSimpleRange(range), node);
+}
+
+bool Internals::rangeIntersectsRange(const AbstractRange& a, const AbstractRange& b, TreeType type)
+{
+    return intersectsForTesting(convertType(type), makeSimpleRange(a), makeSimpleRange(b));
 }
 
 } // namespace WebCore

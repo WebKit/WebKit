@@ -4155,10 +4155,8 @@ void WebPage::requestDocumentEditingContext(DocumentEditingContextRequest reques
     Ref<Frame> frame = m_page->focusController().focusedOrMainFrame();
     VisibleSelection selection = frame->selection().selection();
 
-    VisiblePosition rangeOfInterestStart;
-    VisiblePosition rangeOfInterestEnd;
-    VisiblePosition selectionStart = selection.visibleStart();
-    VisiblePosition selectionEnd = selection.visibleEnd();
+    VisiblePositionRange rangeOfInterest;
+    auto selectionRange = VisiblePositionRange { selection.visibleStart(), selection.visibleEnd() };
 
     bool isSpatialRequest = request.options.containsAny({ DocumentEditingContextRequest::Options::Spatial, DocumentEditingContextRequest::Options::SpatialAndCurrentSelection });
     bool wantsRects = request.options.contains(DocumentEditingContextRequest::Options::Rects);
@@ -4172,42 +4170,40 @@ void WebPage::requestDocumentEditingContext(DocumentEditingContextRequest reques
         }
 
         if (!request.rect.isEmpty()) {
-            rangeOfInterestStart = closestEditablePositionInElementForAbsolutePoint(*element, roundedIntPoint(request.rect.minXMinYCorner()));
-            rangeOfInterestEnd = closestEditablePositionInElementForAbsolutePoint(*element, roundedIntPoint(request.rect.maxXMaxYCorner()));
+            rangeOfInterest.start = closestEditablePositionInElementForAbsolutePoint(*element, roundedIntPoint(request.rect.minXMinYCorner()));
+            rangeOfInterest.end = closestEditablePositionInElementForAbsolutePoint(*element, roundedIntPoint(request.rect.maxXMaxYCorner()));
         } else if (is<HTMLTextFormControlElement>(element)) {
             auto& textFormControlElement = downcast<HTMLTextFormControlElement>(*element);
-            rangeOfInterestStart = textFormControlElement.visiblePositionForIndex(0);
-            rangeOfInterestEnd = textFormControlElement.visiblePositionForIndex(textFormControlElement.value().length());
+            rangeOfInterest.start = textFormControlElement.visiblePositionForIndex(0);
+            rangeOfInterest.end = textFormControlElement.visiblePositionForIndex(textFormControlElement.value().length());
         } else {
-            rangeOfInterestStart = firstPositionInOrBeforeNode(element.get());
-            rangeOfInterestEnd = lastPositionInOrAfterNode(element.get());
+            rangeOfInterest.start = firstPositionInOrBeforeNode(element.get());
+            rangeOfInterest.end = lastPositionInOrAfterNode(element.get());
         }
     } else if (isSpatialRequest) {
         // FIXME: We might need to be a bit more careful that we get something useful (test the other corners?).
-        rangeOfInterestStart = visiblePositionForPointInRootViewCoordinates(frame.get(), request.rect.minXMinYCorner());
-        rangeOfInterestEnd = visiblePositionForPointInRootViewCoordinates(frame.get(), request.rect.maxXMaxYCorner());
-    } else if (!selection.isNone()) {
-        rangeOfInterestStart = selectionStart;
-        rangeOfInterestEnd = selectionEnd;
-    }
+        rangeOfInterest.start = visiblePositionForPointInRootViewCoordinates(frame.get(), request.rect.minXMinYCorner());
+        rangeOfInterest.end = visiblePositionForPointInRootViewCoordinates(frame.get(), request.rect.maxXMaxYCorner());
+    } else if (!selection.isNone())
+        rangeOfInterest = selectionRange;
 
-    if (rangeOfInterestEnd < rangeOfInterestStart)
-        std::exchange(rangeOfInterestStart, rangeOfInterestEnd);
+    if (rangeOfInterest.end < rangeOfInterest.start)
+        std::exchange(rangeOfInterest.start, rangeOfInterest.end);
 
     if (request.options.contains(DocumentEditingContextRequest::Options::SpatialAndCurrentSelection)) {
-        if (selectionStart < rangeOfInterestStart)
-            rangeOfInterestStart = selectionStart;
-        if (selectionEnd > rangeOfInterestEnd)
-            rangeOfInterestEnd = selectionEnd;
+        if (selectionRange.start < rangeOfInterest.start)
+            rangeOfInterest.start = selectionRange.start;
+        if (selectionRange.end > rangeOfInterest.end)
+            rangeOfInterest.end = selectionRange.end;
     }
 
-    if (rangeOfInterestStart.isNull() || rangeOfInterestStart.isOrphan() || rangeOfInterestEnd.isNull() || rangeOfInterestEnd.isOrphan()) {
+    if (rangeOfInterest.start.isNull() || rangeOfInterest.start.isOrphan() || rangeOfInterest.end.isNull() || rangeOfInterest.end.isOrphan()) {
         completionHandler({ });
         return;
     }
 
     // The subset of the selection that is inside the range of interest.
-    auto rangeOfInterestInSelection = constrainRangeToSelection(selection, { rangeOfInterestStart, rangeOfInterestEnd });
+    auto rangeOfInterestInSelection = constrainRangeToSelection(selection, rangeOfInterest);
     if (rangeOfInterestInSelection.isNull()) {
         completionHandler({ });
         return;
@@ -4217,11 +4213,11 @@ void WebPage::requestDocumentEditingContext(DocumentEditingContextRequest reques
     VisiblePosition contextAfterEnd;
     auto compositionRange = frame->editor().compositionRange();
     if (request.granularityCount) {
-        contextBeforeStart = moveByGranularityRespectingWordBoundary(rangeOfInterestStart, request.surroundingGranularity, request.granularityCount, SelectionDirection::Backward);
-        contextAfterEnd = moveByGranularityRespectingWordBoundary(rangeOfInterestEnd, request.surroundingGranularity, request.granularityCount, SelectionDirection::Forward);
+        contextBeforeStart = moveByGranularityRespectingWordBoundary(rangeOfInterest.start, request.surroundingGranularity, request.granularityCount, SelectionDirection::Backward);
+        contextAfterEnd = moveByGranularityRespectingWordBoundary(rangeOfInterest.end, request.surroundingGranularity, request.granularityCount, SelectionDirection::Forward);
     } else {
-        contextBeforeStart = rangeOfInterestStart;
-        contextAfterEnd = rangeOfInterestEnd;
+        contextBeforeStart = rangeOfInterest.start;
+        contextAfterEnd = rangeOfInterest.end;
         if (wantsMarkedTextRects && compositionRange) {
             // In the case where the client has requested marked text rects make sure that the context
             // range encompasses the entire marked text range so that we don't return a truncated result.
@@ -4246,11 +4242,9 @@ void WebPage::requestDocumentEditingContext(DocumentEditingContextRequest reques
     context.contextBefore = makeString(contextBeforeStart, rangeOfInterestInSelection.start);
     context.selectedText = makeString(rangeOfInterestInSelection.start, rangeOfInterestInSelection.end);
     context.contextAfter = makeString(rangeOfInterestInSelection.end, contextAfterEnd);
-    if (compositionRange && intersects(*makeSimpleRange(rangeOfInterestStart, rangeOfInterestEnd), *compositionRange)) {
-        VisiblePosition compositionStart(makeDeprecatedLegacyPosition(compositionRange->start));
-        VisiblePosition compositionEnd(makeDeprecatedLegacyPosition(compositionRange->end));
-        context.markedText = makeString(compositionStart, compositionEnd);
-        context.selectedRangeInMarkedText.location = distanceBetweenPositions(rangeOfInterestInSelection.start, compositionStart);
+    if (auto compositionVisiblePositionRange = makeVisiblePositionRange(compositionRange); intersects(rangeOfInterest, compositionVisiblePositionRange)) {
+        context.markedText = makeString(compositionVisiblePositionRange.start, compositionVisiblePositionRange.end);
+        context.selectedRangeInMarkedText.location = distanceBetweenPositions(rangeOfInterestInSelection.start, compositionVisiblePositionRange.start);
         context.selectedRangeInMarkedText.length = [context.selectedText.string length];
     }
 

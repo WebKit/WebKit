@@ -1,3 +1,19 @@
+2020-11-10  Darin Adler  <darin@apple.com>
+
+        Remove another function that implicitly uses the composed tree (intersects with range)
+        https://bugs.webkit.org/show_bug.cgi?id=218726
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/dom/rangeContainsBoundaryPoint-expected.txt: Added.
+        * fast/dom/rangeContainsBoundaryPoint.html: Added.
+        * fast/dom/rangeIntersectsNode-expected.txt: Added.
+        * fast/dom/rangeIntersectsNode.html: Added.
+        * fast/dom/rangeIntersectsRange-expected.txt: Added.
+        * fast/dom/rangeIntersectsRange.html: Added.
+        These tests were formerly part of TestWebKitAPI. Moving to internals-style tests at
+        Ryosuke's suggestion since these are not something exposed as API or SPI.
+
 2020-11-10  John Wilander  <wilander@apple.com>
 
         PCM: Change from ad-click-attribution to private-click-measurement (in all forms, including .well-known URL)

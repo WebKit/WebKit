@@ -1608,7 +1608,7 @@ PlainTextRange AccessibilityRenderObject::documentBasedSelectedTextRange() const
 
     auto visibleSelection = selection();
     auto selectionRange = visibleSelection.firstRange();
-    if (!selectionRange || !intersects(*selectionRange, *node))
+    if (!selectionRange || !intersects<ComposedTree>(*selectionRange, *node))
         return PlainTextRange();
 
     int start = indexForVisiblePosition(visibleSelection.start());

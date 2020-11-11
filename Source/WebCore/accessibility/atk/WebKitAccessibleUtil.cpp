@@ -156,7 +156,7 @@ bool selectionBelongsToObject(AccessibilityObject* coreObject, VisibleSelection&
         return false;
 
     auto range = selection.firstRange();
-    return range && intersects(*range, *coreObject->node());
+    return range && intersects<ComposedTree>(*range, *coreObject->node());
 }
 
 AXCoreObject* objectFocusedAndCaretOffsetUnignored(AXCoreObject* referenceObject, int& offset)

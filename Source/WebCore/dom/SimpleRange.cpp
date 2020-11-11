@@ -27,6 +27,7 @@
 #include "SimpleRange.h"
 
 #include "CharacterData.h"
+#include "HTMLFrameOwnerElement.h"
 #include "NodeTraversal.h"
 #include "ShadowRoot.h"
 
@@ -47,90 +48,6 @@ SimpleRange::SimpleRange(BoundaryPoint&& start, BoundaryPoint&& end)
 bool operator==(const SimpleRange& a, const SimpleRange& b)
 {
     return a.start == b.start && a.end == b.end;
-}
-
-// FIXME: Create BoundaryPoint.cpp and move this there.
-Optional<BoundaryPoint> makeBoundaryPointBeforeNode(Node& node)
-{
-    auto parent = node.parentNode();
-    if (!parent)
-        return WTF::nullopt;
-    return BoundaryPoint { *parent, node.computeNodeIndex() };
-}
-
-// FIXME: Create BoundaryPoint.cpp and move this there.
-Optional<BoundaryPoint> makeBoundaryPointAfterNode(Node& node)
-{
-    auto parent = node.parentNode();
-    if (!parent)
-        return WTF::nullopt;
-    return BoundaryPoint { *parent, node.computeNodeIndex() + 1 };
-}
-
-// FIXME: Create BoundaryPoint.cpp and move this there.
-static bool isOffsetBeforeChild(ContainerNode& container, unsigned offset, Node& child)
-{
-    if (!offset)
-        return true;
-    // If the container is not the parent, the child is part of a shadow tree, which we sort between offset 0 and offset 1.
-    if (child.parentNode() != &container)
-        return false;
-    unsigned currentOffset = 0;
-    for (auto currentChild = container.firstChild(); currentChild && currentChild != &child; currentChild = currentChild->nextSibling()) {
-        if (offset <= ++currentOffset)
-            return true;
-    }
-    return false;
-}
-
-// FIXME: Create BoundaryPoint.cpp and move this there.
-// FIXME: Once we move to C++20, replace with the C++20 <=> operator.
-// FIXME: This could return std::strong_ordering if we had that, or the equivalent.
-static PartialOrdering order(unsigned a, unsigned b)
-{
-    if (a < b)
-        return PartialOrdering::less;
-    if (a > b)
-        return PartialOrdering::greater;
-    return PartialOrdering::equivalent;
-}
-
-// FIXME: Create BoundaryPoint.cpp and move this there.
-template<TreeType treeType> PartialOrdering treeOrder(const BoundaryPoint& a, const BoundaryPoint& b)
-{
-    if (a.container.ptr() == b.container.ptr())
-        return order(a.offset, b.offset);
-
-    for (auto ancestor = b.container.ptr(); ancestor; ) {
-        auto nextAncestor = parent<treeType>(*ancestor);
-        if (nextAncestor == a.container.ptr())
-            return isOffsetBeforeChild(*nextAncestor, a.offset, *ancestor) ? PartialOrdering::less : PartialOrdering::greater;
-        ancestor = nextAncestor;
-    }
-
-    for (auto ancestor = a.container.ptr(); ancestor; ) {
-        auto nextAncestor = parent<treeType>(*ancestor);
-        if (nextAncestor == b.container.ptr())
-            return isOffsetBeforeChild(*nextAncestor, b.offset, *ancestor) ? PartialOrdering::greater : PartialOrdering::less;
-        ancestor = nextAncestor;
-    }
-
-    return treeOrder<treeType>(a.container, b.container);
-}
-
-// FIXME: Create BoundaryPoint.cpp and move this there.
-PartialOrdering treeOrderForTesting(TreeType type, const BoundaryPoint& a, const BoundaryPoint& b)
-{
-    switch (type) {
-    case Tree:
-        return treeOrder<Tree>(a, b);
-    case ShadowIncludingTree:
-        return treeOrder<ShadowIncludingTree>(a, b);
-    case ComposedTree:
-        return treeOrder<ComposedTree>(a, b);
-    }
-    ASSERT_NOT_REACHED();
-    return PartialOrdering::unordered;
 }
 
 Optional<SimpleRange> makeRangeSelectingNode(Node& node)
@@ -239,6 +156,20 @@ template<TreeType treeType> bool contains(const SimpleRange& range, const Option
 
 template bool contains<ComposedTree>(const SimpleRange&, const Optional<BoundaryPoint>&);
 
+bool containsForTesting(TreeType type, const SimpleRange& range, const BoundaryPoint& point)
+{
+    switch (type) {
+    case Tree:
+        return contains<Tree>(range, point);
+    case ShadowIncludingTree:
+        return contains<ShadowIncludingTree>(range, point);
+    case ComposedTree:
+        return contains<ComposedTree>(range, point);
+    }
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
 template<TreeType treeType> PartialOrdering treeOrder(const SimpleRange& range, const BoundaryPoint& point)
 {
     if (auto order = treeOrder<treeType>(range.start, point); !is_lt(order))
@@ -288,10 +219,20 @@ template<TreeType treeType> bool intersects(const SimpleRange& a, const SimpleRa
 }
 
 template bool intersects<Tree>(const SimpleRange&, const SimpleRange&);
+template bool intersects<ComposedTree>(const SimpleRange&, const SimpleRange&);
 
-bool intersects(const SimpleRange& a, const SimpleRange& b)
+bool intersectsForTesting(TreeType type, const SimpleRange& a, const SimpleRange& b)
 {
-    return intersects<ComposedTree>(a, b);
+    switch (type) {
+    case Tree:
+        return intersects<Tree>(a, b);
+    case ShadowIncludingTree:
+        return intersects<ShadowIncludingTree>(a, b);
+    case ComposedTree:
+        return intersects<ComposedTree>(a, b);
+    }
+    ASSERT_NOT_REACHED();
+    return false;
 }
 
 static bool compareByComposedTreeOrder(const BoundaryPoint& a, const BoundaryPoint& b)
@@ -307,7 +248,7 @@ SimpleRange unionRange(const SimpleRange& a, const SimpleRange& b)
 Optional<SimpleRange> intersection(const Optional<SimpleRange>& a, const Optional<SimpleRange>& b)
 {
     // FIXME: Can this be done more efficiently, with fewer calls to treeOrder?
-    if (!a || !b || !intersects(*a, *b))
+    if (!a || !b || !intersects<ComposedTree>(*a, *b))
         return WTF::nullopt;
     return { { std::max(a->start, b->start, compareByComposedTreeOrder), std::min(a->end, b->end, compareByComposedTreeOrder) } };
 }
@@ -337,16 +278,18 @@ bool containsForTesting(TreeType type, const SimpleRange& range, const Node& nod
     return false;
 }
 
-template<TreeType treeType> bool contains(const Node& outer, const Node& inner);
+template<TreeType treeType> bool contains(const Node& outer, const Node& inner)
+{
+    for (auto inclusiveAncestor = &inner; inclusiveAncestor; inclusiveAncestor = parent<treeType>(*inclusiveAncestor)) {
+        if (inclusiveAncestor == &outer)
+            return true;
+    }
+    return false;
+}
 
 template<> bool contains<Tree>(const Node& outer, const Node& inner)
 {
-    return outer.contains(inner);
-}
-
-template<> bool contains<ComposedTree>(const Node& outer, const Node& inner)
-{
-    // FIXME: This is what the code did before, but it is not correct!
+    // We specialize here because we want to take advantage of optimizations in Node::isDescendantOf.
     return outer.contains(inner);
 }
 
@@ -361,11 +304,31 @@ template<TreeType treeType> bool intersects(const SimpleRange& range, const Node
 }
 
 template bool intersects<Tree>(const SimpleRange&, const Node&);
+template bool intersects<ComposedTree>(const SimpleRange&, const Node&);
 
-bool intersects(const SimpleRange& range, const Node& node)
+bool intersectsForTesting(TreeType type, const SimpleRange& range, const Node& node)
 {
-    return intersects<ComposedTree>(range, node);
+    switch (type) {
+    case Tree:
+        return intersects<Tree>(range, node);
+    case ShadowIncludingTree:
+        return intersects<ShadowIncludingTree>(range, node);
+    case ComposedTree:
+        return intersects<ComposedTree>(range, node);
+    }
+    ASSERT_NOT_REACHED();
+    return false;
+}
 
+bool containsCrossingDocumentBoundaries(const SimpleRange& range, Node& node)
+{
+    auto* ancestor = &node;
+    while (&range.start.document() != &ancestor->document()) {
+        ancestor = ancestor->document().ownerElement();
+        if (!ancestor)
+            return false;
+    }
+    return contains<ComposedTree>(range, *ancestor);
 }
 
 }

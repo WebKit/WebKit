@@ -67,14 +67,18 @@ template<TreeType = Tree> Node* commonInclusiveAncestor(const SimpleRange&);
 
 template<TreeType = Tree> bool contains(const SimpleRange&, const BoundaryPoint&);
 template<TreeType = Tree> bool contains(const SimpleRange&, const Optional<BoundaryPoint>&);
-template<TreeType> bool contains(const SimpleRange& outerRange, const SimpleRange& innerRange);
-template<TreeType> bool contains(const SimpleRange&, const Node&);
+template<TreeType = Tree> bool contains(const SimpleRange& outerRange, const SimpleRange& innerRange);
+template<TreeType = Tree> bool contains(const SimpleRange&, const Node&);
 
 WEBCORE_EXPORT bool containsForTesting(TreeType, const SimpleRange& outerRange, const SimpleRange& innerRange);
 WEBCORE_EXPORT bool containsForTesting(TreeType, const SimpleRange&, const Node&);
+WEBCORE_EXPORT bool containsForTesting(TreeType, const SimpleRange&, const BoundaryPoint&);
 
-template<TreeType> bool intersects(const SimpleRange&, const SimpleRange&);
-template<TreeType> bool intersects(const SimpleRange&, const Node&);
+template<TreeType = Tree> bool intersects(const SimpleRange&, const SimpleRange&);
+template<TreeType = Tree> bool intersects(const SimpleRange&, const Node&);
+
+WEBCORE_EXPORT bool intersectsForTesting(TreeType, const SimpleRange&, const SimpleRange&);
+WEBCORE_EXPORT bool intersectsForTesting(TreeType, const SimpleRange&, const Node&);
 
 // Returns equivalent if point is in range.
 template<TreeType = Tree> PartialOrdering treeOrder(const SimpleRange&, const BoundaryPoint&);
@@ -88,8 +92,6 @@ OffsetRange characterDataOffsetRange(const SimpleRange&, const Node&);
 
 // FIXME: Start of functions that are deprecated since they silently default to ComposedTree.
 
-WEBCORE_EXPORT bool intersects(const SimpleRange&, const SimpleRange&);
-WEBCORE_EXPORT bool intersects(const SimpleRange&, const Node&);
 WEBCORE_EXPORT SimpleRange unionRange(const SimpleRange&, const SimpleRange&);
 WEBCORE_EXPORT Optional<SimpleRange> intersection(const Optional<SimpleRange>&, const Optional<SimpleRange>&);
 
@@ -98,6 +100,8 @@ IntersectingNodeRange intersectingNodes(const SimpleRange&);
 
 class IntersectingNodeRangeWithQuirk;
 IntersectingNodeRangeWithQuirk intersectingNodesWithDeprecatedZeroOffsetStartQuirk(const SimpleRange&);
+
+WEBCORE_EXPORT bool containsCrossingDocumentBoundaries(const SimpleRange&, Node&);
 
 // FIXME: End of functions that are deprecated since they silently default to ComposedTree.
 

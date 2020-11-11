@@ -1,3 +1,15 @@
+2020-11-10  Darin Adler  <darin@apple.com>
+
+        Remove another function that implicitly uses the composed tree (intersects with range)
+        https://bugs.webkit.org/show_bug.cgi?id=218726
+
+        Reviewed by Ryosuke Niwa.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::requestDocumentEditingContext): Refactor to use VisiblePositionRange and
+        to call intersects on two of them, to improve the code readability and also sidestep the
+        issue of calling the intersects template function from outside WebCore.
+
 2020-11-10  John Wilander  <wilander@apple.com>
 
         PCM: Change from ad-click-attribution to private-click-measurement (in all forms, including .well-known URL)
