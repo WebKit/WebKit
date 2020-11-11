@@ -2,7 +2,7 @@
 PASS e.style['aspect-ratio'] = "auto" should set the property value
 PASS e.style['aspect-ratio'] = "16" should set the property value
 PASS e.style['aspect-ratio'] = "1/1" should set the property value
-PASS e.style['aspect-ratio'] = "16.3" should set the property value
+PASS e.style['aspect-ratio'] = "16.3 / 1" should set the property value
 PASS e.style['aspect-ratio'] = "16 / 9" should set the property value
 PASS e.style['aspect-ratio'] = "16.3 / 9.4" should set the property value
 PASS e.style['aspect-ratio'] = "16/9" should set the property value

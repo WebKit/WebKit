@@ -11,7 +11,7 @@
 <!-- min-content width is 300px, clamped by max-width to 100px. The transferred min-width
      would be 200px but should not override the explicit max-width, so the resulting div
      should be 100px wide. This should then size the green div to a width of 100px. -->
-<div style="min-height: 200px; max-width: 100px; -webkit-aspect-ratio: 1/1;">
+<div style="min-height: 200px; max-width: 100px; aspect-ratio: 1/1;">
   <div style="width: 300px;"></div>
   <div style="height: 100px; background: green;"></div>
 </div>

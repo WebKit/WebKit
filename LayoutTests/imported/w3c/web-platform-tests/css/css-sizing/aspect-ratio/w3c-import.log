@@ -9,7 +9,7 @@ Do NOT modify or remove this file.
 
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
-aspect-ratio
+None
 Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
@@ -100,6 +100,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/block-aspect-ratio-027.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/block-aspect-ratio-028-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/block-aspect-ratio-028.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/block-aspect-ratio-029-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/block-aspect-ratio-with-margin-collapsing-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/block-aspect-ratio-with-margin-collapsing-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/block-aspect-ratio-with-margin-collapsing-002-expected.xht
@@ -233,4 +234,25 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-026.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-027-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-027.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-028.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/small-aspect-ratio-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/zero-or-infinity-001-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/zero-or-infinity-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/zero-or-infinity-002-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/zero-or-infinity-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/zero-or-infinity-003-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/zero-or-infinity-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/zero-or-infinity-004-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/zero-or-infinity-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/zero-or-infinity-005-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/zero-or-infinity-005.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/zero-or-infinity-006-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/zero-or-infinity-006.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/zero-or-infinity-007-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/zero-or-infinity-007.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/zero-or-infinity-008-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/zero-or-infinity-008.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/zero-or-infinity-009-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/zero-or-infinity-009.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/zero-or-infinity-010-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/zero-or-infinity-010.html
