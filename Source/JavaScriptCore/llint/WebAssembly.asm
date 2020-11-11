@@ -214,9 +214,17 @@ macro restoreCalleeSavesUsedByWasm()
     end
 end
 
+macro loadWasmInstanceFromTLSTo(reg)
+if  HAVE_FAST_TLS
+    tls_loadp WTF_WASM_CONTEXT_KEY, reg
+else
+    crash()
+end
+end
+
 macro loadWasmInstanceFromTLS()
 if  HAVE_FAST_TLS
-    tls_loadp WTF_WASM_CONTEXT_KEY, wasmInstance
+    loadWasmInstanceFromTLSTo(wasmInstance)
 else
     crash()
 end
@@ -508,6 +516,30 @@ op(wasm_throw_from_slow_path_trampoline, macro ()
     move wasmInstance, a2
     # Slow paths and the throwException macro store the exception code in the ArgumentCountIncludingThis slot
     loadi ArgumentCountIncludingThis + PayloadOffset[cfr], a3
+    cCall4(_slow_path_wasm_throw_exception)
+
+    if ARM64E
+        move r0, a0
+        leap JSCConfig + constexpr JSC::offsetOfJSCConfigGateMap + (constexpr Gate::exceptionHandler) * PtrSize, a1
+        jmp [a1], NativeToJITGatePtrTag # ExceptionHandlerPtrTag
+    else
+        jmp r0, ExceptionHandlerPtrTag
+    end
+end)
+
+op(wasm_throw_from_fault_handler_trampoline, macro ()
+    move wasmInstance, a2
+    btqz a1, .instanceReady # a1 is non-zero if FastTLS is enabled.
+    loadWasmInstanceFromTLSTo(a2)
+.instanceReady:
+    loadp Wasm::Instance::m_pointerToTopEntryFrame[a2], a0
+    loadp [a0], a0
+    copyCalleeSavesToEntryFrameCalleeSavesBuffer(a0)
+
+    move constexpr Wasm::ExceptionType::OutOfBoundsMemoryAccess, a3
+    # a2 is Wasm::Instance
+    move 0, a1
+    move cfr, a0
     cCall4(_slow_path_wasm_throw_exception)
 
     if ARM64E

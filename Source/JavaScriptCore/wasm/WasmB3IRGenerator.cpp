@@ -425,19 +425,6 @@ B3IRGenerator::B3IRGenerator(const ModuleInformation& info, Procedure& procedure
             }
             this->emitExceptionCheck(jit, ExceptionType::OutOfBoundsMemoryAccess);
         });
-
-        switch (m_mode) {
-        case MemoryMode::BoundsChecking:
-            break;
-        case MemoryMode::Signaling:
-            // Most memory accesses in signaling mode don't do an explicit
-            // exception check because they can rely on fault handling to detect
-            // out-of-bounds accesses. FaultSignalHandler nonetheless needs the
-            // thunk to exist so that it can jump to that thunk.
-            if (UNLIKELY(!Thunks::singleton().stub(throwExceptionFromWasmThunkGenerator)))
-                CRASH();
-            break;
-        }
     }
 
     {

@@ -29,10 +29,12 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "ExecutableAllocator.h"
+#include "LLIntData.h"
 #include "MachineContext.h"
 #include "WasmCallee.h"
 #include "WasmCalleeRegistry.h"
 #include "WasmCapabilities.h"
+#include "WasmContextInlines.h"
 #include "WasmExceptionType.h"
 #include "WasmMemory.h"
 #include "WasmThunks.h"
@@ -80,13 +82,8 @@ static SignalAction trapHandler(Signal, SigInfo& sigInfo, PlatformRegisters& con
                 dataLogLnIf(WasmFaultSignalHandlerInternal::verbose, "function start: ", RawPointer(start), " end: ", RawPointer(end));
                 if (start <= faultingInstruction && faultingInstruction < end) {
                     dataLogLnIf(WasmFaultSignalHandlerInternal::verbose, "found match");
-                    MacroAssemblerCodeRef<JITThunkPtrTag> exceptionStub = Thunks::singleton().existingStub(throwExceptionFromWasmThunkGenerator);
-                    // If for whatever reason we don't have a stub then we should just treat this like a regular crash.
-                    if (!exceptionStub)
-                        break;
-                    dataLogLnIf(WasmFaultSignalHandlerInternal::verbose, "found stub: ", RawPointer(exceptionStub.code().executableAddress()));
-                    MachineContext::argumentPointer<1>(context) = reinterpret_cast<void*>(ExceptionType::OutOfBoundsMemoryAccess);
-                    MachineContext::setInstructionPointer(context, exceptionStub.code().retagged<CFunctionPtrTag>());
+                    MachineContext::argumentPointer<1>(context) = reinterpret_cast<void*>(static_cast<uintptr_t>(Wasm::Context::useFastTLS()));
+                    MachineContext::setInstructionPointer(context, LLInt::getCodePtr<CFunctionPtrTag>(wasm_throw_from_fault_handler_trampoline));
                     return SignalAction::Handled;
                 }
             }
