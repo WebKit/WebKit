@@ -1,3 +1,16 @@
+2020-11-11  Sihui Liu  <sihui_liu@apple.com>
+
+        REGRESSION (r269348): ASSERTION FAILED: !m_messageReceiverMapCount under WebKit::SpeechRecognitionServer::~SpeechRecognitionServer
+        https://bugs.webkit.org/show_bug.cgi?id=218770
+        <rdar://problem/71252234>
+
+        Reviewed by Youenn Fablet.
+
+        Remove SpeechRecognitionServer from MessageReceiverMap before it is destroyed. 
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::~WebProcessProxy):
+
 2020-11-11  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (r269657): ASSERTION FAILED: Completion handler should always be called under WebKit::GPUProcessProxy::~GPUProcessProxy
