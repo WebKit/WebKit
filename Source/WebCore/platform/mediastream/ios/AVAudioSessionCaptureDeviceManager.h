@@ -28,10 +28,12 @@
 #if ENABLE(MEDIA_STREAM) && PLATFORM(IOS_FAMILY)
 
 #include "CaptureDeviceManager.h"
+#include "GenericTaskQueue.h"
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
 #include <wtf/RetainPtr.h>
 
+OBJC_CLASS AVAudioSession;
 OBJC_CLASS WebAVAudioSessionAvailableInputsListener;
 
 namespace WebCore {
@@ -48,19 +50,23 @@ public:
     const Vector<CaptureDevice>& speakerDevices() const { return m_speakerDevices; }
     Optional<CaptureDevice> captureDeviceWithPersistentID(CaptureDevice::DeviceType, const String&);
 
-    Vector<AVAudioSessionCaptureDevice>& audioSessionCaptureDevices();
     Optional<AVAudioSessionCaptureDevice> audioSessionDeviceWithUID(const String&);
+    
+    void scheduleUpdateCaptureDevices();
 
 private:
-    AVAudioSessionCaptureDeviceManager() = default;
+    AVAudioSessionCaptureDeviceManager();
     ~AVAudioSessionCaptureDeviceManager();
 
     void refreshAudioCaptureDevices();
+    Vector<AVAudioSessionCaptureDevice>& audioSessionCaptureDevices();
 
     Optional<Vector<CaptureDevice>> m_devices;
     Vector<CaptureDevice> m_speakerDevices;
     Optional<Vector<AVAudioSessionCaptureDevice>> m_audioSessionCaptureDevices;
     RetainPtr<WebAVAudioSessionAvailableInputsListener> m_listener;
+    RetainPtr<AVAudioSession> m_audioSession;
+    GenericTaskQueue<Timer> m_updateDeviceStateQueue;
 };
 
 } // namespace WebCore

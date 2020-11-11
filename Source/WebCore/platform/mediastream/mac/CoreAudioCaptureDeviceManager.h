@@ -29,6 +29,7 @@
 
 #include "CaptureDevice.h"
 #include "CaptureDeviceManager.h"
+#include "GenericTaskQueue.h"
 #include <CoreAudio/CoreAudio.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
@@ -57,10 +58,12 @@ private:
 
     enum class NotifyIfDevicesHaveChanged { Notify, DoNotNotify };
     void refreshAudioCaptureDevices(NotifyIfDevicesHaveChanged);
+    void scheduleUpdateCaptureDevices();
 
     Vector<CaptureDevice> m_captureDevices;
     Vector<CaptureDevice> m_speakerDevices;
     Vector<CoreAudioCaptureDevice> m_coreAudioCaptureDevices;
+    GenericTaskQueue<Timer> m_updateDeviceStateQueue;
 };
 
 } // namespace WebCore

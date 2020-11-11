@@ -1,3 +1,13 @@
+2020-11-11  Eric Carlson  <eric.carlson@apple.com>
+
+        USB microphone not recognized iOS Safari
+        https://bugs.webkit.org/show_bug.cgi?id=211192
+        <rdar://problem/62607313>
+
+        Reviewed by Youenn Fablet.
+
+        * pal/spi/cocoa/AVFoundationSPI.h: Declare +[AVAudioSession initAuxiliarySession].
+
 2020-11-10  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed internal macOS build-fix.

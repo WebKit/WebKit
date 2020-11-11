@@ -29,43 +29,53 @@
 #if ENABLE(MEDIA_STREAM) && PLATFORM(IOS_FAMILY)
 
 #import "AVAudioSessionCaptureDevice.h"
+#import "Logging.h"
 #import "RealtimeMediaSourceCenter.h"
 #import <AVFoundation/AVAudioSession.h>
+#import <pal/spi/cocoa/AVFoundationSPI.h>
+#import <wtf/Assertions.h>
+#import <wtf/MainThread.h>
 #import <wtf/Vector.h>
 
 #import <pal/cocoa/AVFoundationSoftLink.h>
 
-void* AvailableInputsContext = &AvailableInputsContext;
-
 @interface WebAVAudioSessionAvailableInputsListener : NSObject {
-    WTF::Function<void()> _callback;
+    WebCore::AVAudioSessionCaptureDeviceManager* _callback;
 }
 @end
 
 @implementation WebAVAudioSessionAvailableInputsListener
-- (id)initWithCallback:(WTF::Function<void()>&&)callback
+- (id)initWithCallback:(WebCore::AVAudioSessionCaptureDeviceManager *)callback audioSession:(AVAudioSession *)session
 {
     self = [super init];
     if (!self)
         return nil;
 
-    _callback = WTFMove(callback);
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(routeDidChange:) name:PAL::get_AVFoundation_AVAudioSessionRouteChangeNotification() object:session];
+
+    _callback = callback;
+
     return self;
 }
 
 - (void)invalidate
 {
     _callback = nullptr;
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey, id> *)change context:(void *)context
+- (void)routeDidChange:(NSNotification *)notification
 {
-    UNUSED_PARAM(keyPath);
-    UNUSED_PARAM(object);
-    UNUSED_PARAM(change);
-    if (context == AvailableInputsContext && _callback)
-        _callback();
+    if (!_callback)
+        return;
+
+    callOnWebThreadOrDispatchAsyncOnMainThread([protectedSelf = retainPtr(self)]() mutable {
+        if (auto* callback = protectedSelf->_callback)
+            callback->scheduleUpdateCaptureDevices();
+    });
+
 }
+
 @end
 
 namespace WebCore {
@@ -74,6 +84,24 @@ AVAudioSessionCaptureDeviceManager& AVAudioSessionCaptureDeviceManager::singleto
 {
     static NeverDestroyed<AVAudioSessionCaptureDeviceManager> manager;
     return manager;
+}
+
+AVAudioSessionCaptureDeviceManager::AVAudioSessionCaptureDeviceManager()
+{
+#if !PLATFORM(MACCATALYST)
+    m_audioSession = adoptNS([[PAL::getAVAudioSessionClass() alloc] initAuxiliarySession]);
+#else
+    // FIXME: Figure out if this is correct for Catalyst, where auxiliary session isn't available.
+    m_audioSession = [PAL::getAVAudioSessionClass() sharedInstance];
+#endif
+    
+    NSError *error = nil;
+    auto options = AVAudioSessionCategoryOptionAllowBluetooth | AVAudioSessionCategoryOptionMixWithOthers;
+    [m_audioSession setCategory:AVAudioSessionCategoryPlayAndRecord mode:AVAudioSessionModeVideoChat options:options error:&error];
+    if (error) {
+        RELEASE_LOG_ERROR(WebRTC, "Failed to set audio session category with error: %@.", error.localizedDescription);
+        return;
+    }
 }
 
 AVAudioSessionCaptureDeviceManager::~AVAudioSessionCaptureDeviceManager()
@@ -108,9 +136,6 @@ Vector<AVAudioSessionCaptureDevice>& AVAudioSessionCaptureDeviceManager::audioSe
 
 Optional<AVAudioSessionCaptureDevice> AVAudioSessionCaptureDeviceManager::audioSessionDeviceWithUID(const String& deviceID)
 {
-    if (!m_audioSessionCaptureDevices)
-        refreshAudioCaptureDevices();
-
     for (auto& device : audioSessionCaptureDevices()) {
         if (device.persistentId() == deviceID)
             return device;
@@ -118,30 +143,59 @@ Optional<AVAudioSessionCaptureDevice> AVAudioSessionCaptureDeviceManager::audioS
     return WTF::nullopt;
 }
 
+void AVAudioSessionCaptureDeviceManager::scheduleUpdateCaptureDevices()
+{
+    if (m_updateDeviceStateQueue.hasPendingTasks())
+        return;
+
+    m_updateDeviceStateQueue.enqueueTask([this] {
+        refreshAudioCaptureDevices();
+    });
+}
+
 void AVAudioSessionCaptureDeviceManager::refreshAudioCaptureDevices()
 {
-    if (!m_listener) {
-        m_listener = adoptNS([[WebAVAudioSessionAvailableInputsListener alloc] initWithCallback:[this] {
-            refreshAudioCaptureDevices();
-        }]);
-        [[PAL::getAVAudioSessionClass() sharedInstance] addObserver:m_listener.get() forKeyPath:@"availableInputs" options:0 context:AvailableInputsContext];
-    }
+    if (!m_listener)
+        m_listener = adoptNS([[WebAVAudioSessionAvailableInputsListener alloc] initWithCallback:this audioSession:m_audioSession.get()]);
+
+    NSError *error = nil;
+    [m_audioSession setActive:YES withOptions:0 error:&error];
+    if (error)
+        RELEASE_LOG_ERROR(WebRTC, "Failed to activate audio session with error: %@.", error.localizedDescription);
 
     Vector<AVAudioSessionCaptureDevice> newAudioDevices;
     Vector<CaptureDevice> newDevices;
-
-    for (AVAudioSessionPortDescription *portDescription in [PAL::getAVAudioSessionClass() sharedInstance].availableInputs) {
-        auto audioDevice = AVAudioSessionCaptureDevice::create(portDescription);
+    auto *defaultInput = [m_audioSession currentRoute].inputs.firstObject;
+    for (AVAudioSessionPortDescription *portDescription in [m_audioSession availableInputs]) {
+        auto audioDevice = AVAudioSessionCaptureDevice::create(portDescription, defaultInput);
         newDevices.append(audioDevice);
         newAudioDevices.append(WTFMove(audioDevice));
     }
 
+    bool firstTime = !m_devices;
+    bool haveDeviceChanges = !m_devices || newAudioDevices.size() != m_devices->size();
+    if (!haveDeviceChanges) {
+        for (size_t i = 0; i < newAudioDevices.size(); ++i) {
+            auto& oldState = (*m_devices)[i];
+            auto& newState = newAudioDevices[i];
+            if (newState.type() != oldState.type() || newState.persistentId() != oldState.persistentId() || newState.enabled() != oldState.enabled() || newState.isDefault() != oldState.isDefault())
+                haveDeviceChanges = true;
+        }
+    }
+
+    if (!haveDeviceChanges && !firstTime)
+        return;
+
     m_audioSessionCaptureDevices = WTFMove(newAudioDevices);
+    std::sort(newDevices.begin(), newDevices.end(), [] (auto& first, auto& second) -> bool {
+        return first.isDefault() && !second.isDefault();
+    });
     m_devices = WTFMove(newDevices);
 
-    deviceChanged();
+    if (!firstTime)
+        deviceChanged();
 }
 
 } // namespace WebCore
 
-#endif // ENABLE(MEDIA_STREAM) && PLATFORM(MAC)
+#endif // ENABLE(MEDIA_STREAM) && PLATFORM(IOS_FAMILY)

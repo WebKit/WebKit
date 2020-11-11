@@ -63,6 +63,9 @@ public:
     bool enabled() const { return m_enabled; }
     void setEnabled(bool enabled) { m_enabled = enabled; }
 
+    bool isDefault() const { return m_default; }
+    void setIsDefault(bool isDefault) { m_default = isDefault; }
+
     explicit operator bool() const { return m_type != DeviceType::Unknown; }
 
 #if ENABLE(MEDIA_STREAM)
@@ -73,6 +76,7 @@ public:
         encoder << m_label;
         encoder << m_groupId;
         encoder << m_enabled;
+        encoder << m_default;
         encoder << m_type;
     }
 
@@ -99,6 +103,11 @@ public:
         if (!enabled)
             return WTF::nullopt;
 
+        Optional<bool> isDefault;
+        decoder >> isDefault;
+        if (!isDefault)
+            return WTF::nullopt;
+
         Optional<CaptureDevice::DeviceType> type;
         decoder >> type;
         if (!type)
@@ -106,6 +115,7 @@ public:
 
         Optional<CaptureDevice> device = {{ WTFMove(*persistentId), WTFMove(*type), WTFMove(*label), WTFMove(*groupId) }};
         device->setEnabled(*enabled);
+        device->setIsDefault(*isDefault);
         return device;
     }
 #endif
@@ -116,6 +126,7 @@ private:
     String m_label;
     String m_groupId;
     bool m_enabled { false };
+    bool m_default { false };
 };
 
 } // namespace WebCore

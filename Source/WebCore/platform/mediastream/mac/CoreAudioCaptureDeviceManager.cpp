@@ -128,28 +128,14 @@ static bool isValidCaptureDevice(const CoreAudioCaptureDevice& device)
     return true;
 }
 
-static inline Optional<CoreAudioCaptureDevice> getDefaultCaptureInputDevice()
+void CoreAudioCaptureDeviceManager::scheduleUpdateCaptureDevices()
 {
-    AudioObjectPropertyAddress address { kAudioHardwarePropertyDefaultInputDevice, kAudioObjectPropertyScopeGlobal, kAudioObjectPropertyElementMaster };
-    UInt32 propertySize = sizeof(AudioDeviceID);
-    AudioDeviceID deviceID = kAudioDeviceUnknown;
-    auto err = AudioObjectGetPropertyData(kAudioObjectSystemObject, &address, 0, nullptr, &propertySize, &deviceID);
+    if (m_updateDeviceStateQueue.hasPendingTasks())
+        return;
 
-    if (err != noErr || deviceID == kAudioDeviceUnknown)
-        return { };
-    return CoreAudioCaptureDevice::create(deviceID, CaptureDevice::DeviceType::Microphone, { });
-}
-
-static inline Optional<CoreAudioCaptureDevice> getDefaultCaptureOutputDevice()
-{
-    AudioObjectPropertyAddress address { kAudioHardwarePropertyDefaultOutputDevice, kAudioObjectPropertyScopeGlobal, kAudioObjectPropertyElementMaster };
-    UInt32 propertySize = sizeof(AudioDeviceID);
-    AudioDeviceID deviceID = kAudioDeviceUnknown;
-    auto err = AudioObjectGetPropertyData(kAudioObjectSystemObject, &address, 0, nullptr, &propertySize, &deviceID);
-
-    if (err != noErr || deviceID == kAudioDeviceUnknown)
-        return { };
-    return CoreAudioCaptureDevice::create(deviceID, CaptureDevice::DeviceType::Speaker, { });
+    m_updateDeviceStateQueue.enqueueTask([this] {
+        refreshAudioCaptureDevices(NotifyIfDevicesHaveChanged::Notify);
+    });
 }
 
 Vector<CoreAudioCaptureDevice>& CoreAudioCaptureDeviceManager::coreAudioCaptureDevices()
@@ -165,7 +151,7 @@ Vector<CoreAudioCaptureDevice>& CoreAudioCaptureDeviceManager::coreAudioCaptureD
                 notify |= (properties[i].mSelector == kAudioHardwarePropertyDevices || properties[i].mSelector == kAudioHardwarePropertyDefaultInputDevice || properties[i].mSelector == kAudioHardwarePropertyDefaultOutputDevice);
 
             if (notify)
-                CoreAudioCaptureDeviceManager::singleton().refreshAudioCaptureDevices(NotifyIfDevicesHaveChanged::Notify);
+                CoreAudioCaptureDeviceManager::singleton().scheduleUpdateCaptureDevices();
         };
 
         AudioObjectPropertyAddress address = { kAudioHardwarePropertyDevices, kAudioObjectPropertyScopeGlobal, kAudioObjectPropertyElementMaster };
@@ -223,10 +209,6 @@ static inline Vector<CoreAudioCaptureDevice> computeAudioDeviceList()
 
     Vector<CoreAudioCaptureDevice> audioDevices;
 
-    auto defaultInputDevice = getDefaultCaptureInputDevice();
-    if (defaultInputDevice)
-        audioDevices.append(WTFMove(*defaultInputDevice));
-
     // Microphones
     for (size_t i = 0; i < deviceCount; i++) {
         AudioObjectID deviceID = deviceIDs[i];
@@ -238,10 +220,6 @@ static inline Vector<CoreAudioCaptureDevice> computeAudioDeviceList()
         if (microphoneDevice && isValidCaptureDevice(microphoneDevice.value()))
             audioDevices.append(WTFMove(microphoneDevice.value()));
     }
-
-    auto defaultOutputDevice = getDefaultCaptureOutputDevice();
-    if (defaultOutputDevice)
-        audioDevices.append(WTFMove(*defaultOutputDevice));
 
     // Speakers
     for (size_t i = 0; i < deviceCount; i++) {
@@ -285,26 +263,27 @@ void CoreAudioCaptureDeviceManager::refreshAudioCaptureDevices(NotifyIfDevicesHa
     bool haveDeviceChanges = audioDevices.size() != m_coreAudioCaptureDevices.size();
     if (!haveDeviceChanges) {
         for (size_t cptr = 0; cptr < audioDevices.size(); ++cptr) {
-            if (audioDevices[cptr].type() != m_coreAudioCaptureDevices[cptr].type() || audioDevices[cptr].deviceID() != m_coreAudioCaptureDevices[cptr].deviceID() || audioDevices[cptr].enabled() != m_coreAudioCaptureDevices[cptr].enabled()) {
+            auto& oldDevice = m_coreAudioCaptureDevices[cptr];
+            auto& newDevice = audioDevices[cptr];
+            if (newDevice.type() != oldDevice.type() || newDevice.deviceID() != oldDevice.deviceID() || newDevice.isDefault() != oldDevice.isDefault() || newDevice.enabled() != oldDevice.enabled() || newDevice.isDefault() != oldDevice.isDefault())
                 haveDeviceChanges = true;
-                break;
-            }
         }
     }
     if (!haveDeviceChanges)
         return;
 
+    std::sort(audioDevices.begin(), audioDevices.end(), [] (auto& first, auto& second) -> bool {
+        return first.isDefault() && !second.isDefault();
+    });
     m_coreAudioCaptureDevices = WTFMove(audioDevices);
 
     m_captureDevices.clear();
     m_speakerDevices.clear();
     for (auto& device : m_coreAudioCaptureDevices) {
-        CaptureDevice captureDevice { device.persistentId(), device.type(), device.label(), device.groupId() };
-        captureDevice.setEnabled(device.enabled());
         if (device.type() == CaptureDevice::DeviceType::Microphone)
-            m_captureDevices.append(WTFMove(captureDevice));
+            m_captureDevices.append(device);
         else
-            m_speakerDevices.append(WTFMove(captureDevice));
+            m_speakerDevices.append(device);
     }
 
     if (notify == NotifyIfDevicesHaveChanged::Notify) {

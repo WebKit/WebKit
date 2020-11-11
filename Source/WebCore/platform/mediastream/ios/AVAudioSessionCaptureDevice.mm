@@ -32,19 +32,16 @@
 
 namespace WebCore {
 
-AVAudioSessionCaptureDevice AVAudioSessionCaptureDevice::create(AVAudioSessionPortDescription* portDescription)
+AVAudioSessionCaptureDevice AVAudioSessionCaptureDevice::create(AVAudioSessionPortDescription* deviceInput, AVAudioSessionPortDescription *defaultInput)
 {
-    String persistentID = portDescription.UID;
-    String label = portDescription.portName;
-    auto device = AVAudioSessionCaptureDevice(portDescription, persistentID, label);
-    device.setEnabled(portDescription.dataSources.count);
-    return device;
+    return AVAudioSessionCaptureDevice(deviceInput, defaultInput);
 }
 
-AVAudioSessionCaptureDevice::AVAudioSessionCaptureDevice(AVAudioSessionPortDescription* portDescription, const String& persistentID, const String& label)
-    : CaptureDevice(persistentID, CaptureDevice::DeviceType::Microphone, label)
-    , m_portDescription(portDescription)
+AVAudioSessionCaptureDevice::AVAudioSessionCaptureDevice(AVAudioSessionPortDescription *deviceInput, AVAudioSessionPortDescription *defaultInput)
+    : CaptureDevice(deviceInput.UID, CaptureDevice::DeviceType::Microphone, deviceInput.portName)
 {
+    setEnabled(true);
+    setIsDefault(defaultInput && [defaultInput.UID isEqualToString:deviceInput.UID]);
 }
 
 }
