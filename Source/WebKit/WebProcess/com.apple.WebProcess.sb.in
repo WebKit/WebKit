@@ -1432,11 +1432,12 @@
 (when (defined? 'mach-bootstrap)
     (allow mach-bootstrap
         (apply-message-filter
-            (allow xpc-message-send (with telemetry))
+            (deny xpc-message-send (with telemetry))
             (allow xpc-message-send (message-number
                 204
                 207
                 301
+                711
                 800
                 804
                 )
@@ -1448,9 +1449,10 @@
 (when (defined? 'mach-kernel-endpoint)
     (allow mach-kernel-endpoint
         (apply-message-filter
-            (allow mach-message-send (with telemetry))
+            (deny mach-message-send (with telemetry))
             (allow mach-message-send (kernel-mig-routine
                 _mach_make_memory_entry
+                clock_get_time
                 host_get_io_master
                 host_info
                 host_request_notification
@@ -1482,6 +1484,7 @@
                 io_service_get_matching_services_bin
                 io_service_open_extended
                 mach_port_get_refs
+                mach_port_request_notification
                 mach_port_set_attributes
                 mach_vm_copy
                 mach_vm_map_external
@@ -1507,18 +1510,21 @@
 )
 
 (when (defined? 'syscall-mach)
-    (allow syscall-mach (with telemetry))
+    (deny syscall-mach (with telemetry))
     (allow syscall-mach (machtrap-number
+        MSC__kernelrpc_mach_port_allocate_trap
         MSC__kernelrpc_mach_port_construct_trap
         MSC__kernelrpc_mach_port_deallocate_trap
         MSC__kernelrpc_mach_port_destruct_trap
         MSC__kernelrpc_mach_port_extract_member_trap
+        MSC__kernelrpc_mach_port_get_attributes_trap
         MSC__kernelrpc_mach_port_guard_trap
         MSC__kernelrpc_mach_port_insert_member_trap
         MSC__kernelrpc_mach_port_insert_right_trap
         MSC__kernelrpc_mach_port_mod_refs_trap
         MSC__kernelrpc_mach_port_request_notification_trap
         MSC__kernelrpc_mach_port_type_trap
+        MSC__kernelrpc_mach_port_unguard_trap
         MSC__kernelrpc_mach_vm_allocate_trap
         MSC__kernelrpc_mach_vm_deallocate_trap
         MSC__kernelrpc_mach_vm_map_trap
@@ -1533,6 +1539,7 @@
         MSC_mk_timer_arm
         MSC_mk_timer_cancel
         MSC_mk_timer_create
+        MSC_mk_timer_destroy
         MSC_pid_for_task
         MSC_semaphore_signal_trap
         MSC_semaphore_timedwait_trap
@@ -1540,6 +1547,7 @@
         MSC_syscall_thread_switch
         MSC_task_name_for_pid
         MSC_thread_get_special_reply_port
+        MSC_thread_self_trap
         )
     )
 )

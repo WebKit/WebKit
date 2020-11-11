@@ -1,3 +1,17 @@
+2020-11-10  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Enforce message filtering in the WebContent process
+        https://bugs.webkit.org/show_bug.cgi?id=218756
+        <rdar://problem/71240766>
+
+        Reviewed by David Kilzer.
+
+        Based on telemetry, we should deny access to messages not being used in the WebContent process on macOS.
+
+        No new tests, covered by existing tests.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2020-11-10  Chris Dumez  <cdumez@apple.com>
 
         Webkit incorrectly setting visibilityState to "prerender" when opening link in new tab
