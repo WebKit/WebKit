@@ -1101,8 +1101,8 @@ inspector/runtime/callFunctionOn-emulateUserGesture-userIsInteracting.html [ Ski
 # Target domain is only present in WK2.
 http/tests/inspector/target [ Skip ]
 
-# ITP and AdClickAttribution are WK2 only.
-inspector/page/overrideSetting-AdClickAttributionDebugModeEnabled.html [ Skip ]
+# ITP and PrivateClickMeasurement are WK2 only.
+inspector/page/overrideSetting-PrivateClickMeasurementDebugModeEnabled.html [ Skip ]
 inspector/page/overrideSetting-ITPDebugModeEnabled.html [ Skip ]
 
 # These conformance tests are no longer in sync with the latest specification
@@ -2772,7 +2772,7 @@ webkit.org/b/179069 imported/w3c/web-platform-tests/html/semantics/embedded-cont
 webkit.org/b/157068 [ Debug ] imported/w3c/web-platform-tests/fetch/nosniff/importscripts.html [ Pass Crash ]
 webkit.org/b/157068 [ Release ] imported/w3c/web-platform-tests/fetch/nosniff/importscripts.html [ Pass Failure ]
 
-http/tests/adClickAttribution [ Skip ]
+http/tests/privateClickMeasurement [ Skip ]
 
 # Application Manifest tests
 webkit.org/b/153152 http/tests/security/contentSecurityPolicy/manifest-src-allowed.html [ Skip ]

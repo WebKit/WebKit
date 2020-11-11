@@ -1517,7 +1517,7 @@ layout/tableformatting/TableFormattingContextQuirks.cpp
 layout/tableformatting/TableFormattingState.cpp
 layout/tableformatting/TableGrid.cpp
 layout/tableformatting/TableLayout.cpp
-loader/AdClickAttribution.cpp
+loader/PrivateClickMeasurement.cpp
 loader/ApplicationManifestLoader.cpp
 loader/CanvasActivityRecord.cpp
 loader/ContentFilter.cpp

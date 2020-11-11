@@ -66,7 +66,6 @@ const TestFeatures& TestOptions::defaults()
             // These are WebPreference values that must always be set as they may
             // differ from the default set in the WebPreferences*.yaml configuration.
             { "AcceleratedDrawingEnabled", false },
-            { "AdClickAttributionEnabled", false },
             { "AllowCrossOriginSubresourcesToAskForCredentials", false },
             { "AllowFileAccessFromFileURLs", true },
             { "AllowTopNavigationToDataURLs", true },
@@ -96,6 +95,7 @@ const TestFeatures& TestOptions::defaults()
             { "ModernMediaControlsEnabled", true },
             { "NeedsStorageAccessFromFileURLsQuirk", false },
             { "PluginsEnabled", true },
+            { "PrivateClickMeasurementEnabled", false },
             { "RequestIdleCallbackEnabled", false },
             { "ResizeObserverEnabled", false },
             { "SelectionAcrossShadowBoundariesEnabled", true },

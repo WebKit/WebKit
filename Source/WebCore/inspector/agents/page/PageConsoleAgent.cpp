@@ -107,7 +107,7 @@ Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::Console::Channel>>> PageCons
     addLogChannel(Protocol::Console::ChannelSource::MediaSource);
     addLogChannel(Protocol::Console::ChannelSource::WebRTC);
     addLogChannel(Protocol::Console::ChannelSource::ITPDebug);
-    addLogChannel(Protocol::Console::ChannelSource::AdClickAttribution);
+    addLogChannel(Protocol::Console::ChannelSource::PrivateClickMeasurement);
     addLogChannel(Protocol::Console::ChannelSource::Other);
 
     return channels;

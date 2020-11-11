@@ -1,5 +1,0 @@
-Tests that storage of ad click attribution is disabled in ephemeral sessions.
-
-
-
-No stored Ad Click Attribution data.

@@ -1,0 +1,5 @@
+Tests that storage of private click measurement is disabled in ephemeral sessions.
+
+
+
+No stored Private Click Measurement data.

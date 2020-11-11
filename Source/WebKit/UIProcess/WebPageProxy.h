@@ -1684,11 +1684,11 @@ public:
     void contentFilterDidBlockLoadForFrameShared(Ref<WebProcessProxy>&&, const WebCore::ContentFilterUnblockHandler&, WebCore::FrameIdentifier);
 #endif
 
-    void dumpAdClickAttribution(CompletionHandler<void(const String&)>&&);
-    void clearAdClickAttribution(CompletionHandler<void()>&&);
-    void setAdClickAttributionOverrideTimerForTesting(bool value, CompletionHandler<void()>&&);
-    void setAdClickAttributionConversionURLForTesting(const URL&, CompletionHandler<void()>&&);
-    void markAdClickAttributionsAsExpiredForTesting(CompletionHandler<void()>&&);
+    void dumpPrivateClickMeasurement(CompletionHandler<void(const String&)>&&);
+    void clearPrivateClickMeasurement(CompletionHandler<void()>&&);
+    void setPrivateClickMeasurementOverrideTimerForTesting(bool value, CompletionHandler<void()>&&);
+    void setPrivateClickMeasurementConversionURLForTesting(const URL&, CompletionHandler<void()>&&);
+    void markPrivateClickMeasurementsAsExpiredForTesting(CompletionHandler<void()>&&);
 
 #if ENABLE(SPEECH_SYNTHESIS)
     void speechSynthesisVoiceList(CompletionHandler<void(Vector<WebSpeechSynthesisVoice>&&)>&&);
@@ -2887,7 +2887,7 @@ private:
 
     size_t m_suspendMediaPlaybackCounter { 0 };
 
-    Optional<WebCore::AdClickAttribution> m_newPageNavigationAdClickAttribution;
+    Optional<WebCore::PrivateClickMeasurement> m_newPageNavigationPrivateClickMeasurement;
 };
 
 } // namespace WebKit

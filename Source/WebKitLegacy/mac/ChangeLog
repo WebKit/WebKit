@@ -1,3 +1,28 @@
+2020-11-10  John Wilander  <wilander@apple.com>
+
+        PCM: Change from ad-click-attribution to private-click-measurement (in all forms, including .well-known URL)
+        https://bugs.webkit.org/show_bug.cgi?id=218730
+        <rdar://problem/71094296>
+
+        Reviewed by Devin Rousso.
+
+        Change to the official name of the proposed standard Private Click Measurement
+        https://github.com/privacycg/private-click-measurement.
+
+        This includes a change of the reporting URL from 
+        "/.well-known/ad-click-attribution/" to
+        "/.well-known/private-click-measurement/".
+
+        * WebCoreSupport/WebChromeClient.mm:
+        (stringForMessageSource):
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (-[WebPreferences privateClickMeasurementEnabled]):
+        (-[WebPreferences setPrivateClickMeasurementEnabled:]):
+        (-[WebPreferences adClickAttributionEnabled]): Deleted.
+        (-[WebPreferences setAdClickAttributionEnabled:]): Deleted.
+        * WebView/WebPreferencesPrivate.h:
+
 2020-11-10  Simon Fraser  <simon.fraser@apple.com>
 
         Make PlatformWheelEventPhase an enum class

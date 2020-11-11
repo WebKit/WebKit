@@ -21,8 +21,8 @@
 [
     Exposed=Window
 ] interface HTMLAnchorElement : HTMLElement {
-    [CEReactions=NotNeeded, EnabledBySetting=AdClickAttribution, Reflect] attribute DOMString adcampaignid;
-    [CEReactions=NotNeeded, EnabledBySetting=AdClickAttribution, Reflect] attribute DOMString addestination;
+    [CEReactions=NotNeeded, EnabledBySetting=PrivateClickMeasurement, Reflect] attribute DOMString adcampaignid;
+    [CEReactions=NotNeeded, EnabledBySetting=PrivateClickMeasurement, Reflect] attribute DOMString addestination;
     [CEReactions=NotNeeded, Reflect] attribute DOMString charset;
     [CEReactions=NotNeeded, Reflect] attribute DOMString coords;
     [CEReactions=NotNeeded, Conditional=DOWNLOAD_ATTRIBUTE, EnabledBySetting=DownloadAttribute, Reflect] attribute DOMString download;

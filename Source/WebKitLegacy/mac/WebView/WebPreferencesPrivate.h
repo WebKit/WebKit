@@ -334,7 +334,7 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 @property (nonatomic) BOOL serverTimingEnabled;
 @property (nonatomic) BOOL CSSCustomPropertiesAndValuesEnabled;
 @property (nonatomic) BOOL resizeObserverEnabled;
-@property (nonatomic) BOOL adClickAttributionEnabled;
+@property (nonatomic) BOOL privateClickMeasurementEnabled;
 @property (nonatomic) BOOL fetchAPIKeepAliveEnabled;
 @property (nonatomic) BOOL genericCueAPIEnabled;
 @property (nonatomic) BOOL aspectRatioOfImgFromWidthAndHeightEnabled;

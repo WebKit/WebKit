@@ -270,7 +270,7 @@ Page* WebChromeClient::createWindow(Frame& frame, const WindowFeatures& windowFe
     navigationActionData.canHandleRequest = m_page.canHandleRequest(navigationAction.resourceRequest());
     navigationActionData.shouldOpenExternalURLsPolicy = navigationAction.shouldOpenExternalURLsPolicy();
     navigationActionData.downloadAttribute = navigationAction.downloadAttribute();
-    navigationActionData.adClickAttribution = navigationAction.adClickAttribution();
+    navigationActionData.privateClickMeasurement = navigationAction.privateClickMeasurement();
 
     WebFrame* webFrame = WebFrame::fromCoreFrame(frame);
 

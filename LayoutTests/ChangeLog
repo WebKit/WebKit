@@ -1,3 +1,75 @@
+2020-11-10  John Wilander  <wilander@apple.com>
+
+        PCM: Change from ad-click-attribution to private-click-measurement (in all forms, including .well-known URL)
+        https://bugs.webkit.org/show_bug.cgi?id=218730
+        <rdar://problem/71094296>
+
+        Reviewed by Devin Rousso.
+
+        Change to the official name of the proposed standard Private Click Measurement
+        https://github.com/privacycg/private-click-measurement.
+
+        This includes a change of the reporting URL from 
+        "/.well-known/ad-click-attribution/" to
+        "/.well-known/private-click-measurement/".
+
+        * TestExpectations:
+        * http/tests/adClickAttribution/attribution-conversion-through-cross-site-image-redirect-expected.txt: Removed.
+        * http/tests/adClickAttribution/expired-attributions-removed-expected.txt: Removed.
+        * http/tests/adClickAttribution/resources/redirectToConversionOnIPAddress.php: Removed.
+        * http/tests/adClickAttribution/store-ad-click-attribution-expected.txt: Removed.
+        * http/tests/adClickAttribution/store-disabled-in-ephemeral-session-expected.txt: Removed.
+        * http/tests/contentextensions/block-ad-click-attribution-expected.txt: Removed.
+        * http/tests/contentextensions/block-private-click-measurement-expected.txt: Added.
+        * http/tests/contentextensions/block-private-click-measurement.html: Renamed from LayoutTests/http/tests/contentextensions/block-ad-click-attribution.html.
+        * http/tests/contentextensions/block-private-click-measurement.html.json: Renamed from LayoutTests/http/tests/contentextensions/block-ad-click-attribution.html.json.
+        * http/tests/privateClickMeasurement/anchor-tag-attributes-reflect-expected.txt: Renamed from LayoutTests/http/tests/adClickAttribution/anchor-tag-attributes-reflect-expected.txt.
+        * http/tests/privateClickMeasurement/anchor-tag-attributes-reflect.html: Renamed from LayoutTests/http/tests/adClickAttribution/anchor-tag-attributes-reflect.html.
+        * http/tests/privateClickMeasurement/anchor-tag-attributes-validation-expected.txt: Renamed from LayoutTests/http/tests/adClickAttribution/anchor-tag-attributes-validation-expected.txt.
+        * http/tests/privateClickMeasurement/anchor-tag-attributes-validation.html: Renamed from LayoutTests/http/tests/adClickAttribution/anchor-tag-attributes-validation.html.
+        * http/tests/privateClickMeasurement/attribution-conversion-through-cross-site-image-redirect-expected.txt: Added.
+        * http/tests/privateClickMeasurement/attribution-conversion-through-cross-site-image-redirect.html: Renamed from LayoutTests/http/tests/adClickAttribution/attribution-conversion-through-cross-site-image-redirect.html.
+        * http/tests/privateClickMeasurement/attribution-conversion-through-image-redirect-in-new-window-expected.txt: Renamed from LayoutTests/http/tests/adClickAttribution/attribution-conversion-through-image-redirect-in-new-window-expected.txt.
+        * http/tests/privateClickMeasurement/attribution-conversion-through-image-redirect-in-new-window.html: Renamed from LayoutTests/http/tests/adClickAttribution/attribution-conversion-through-image-redirect-in-new-window.html.
+        * http/tests/privateClickMeasurement/attribution-conversion-through-image-redirect-with-priority-expected.txt: Renamed from LayoutTests/http/tests/adClickAttribution/attribution-conversion-through-image-redirect-with-priority-expected.txt.
+        * http/tests/privateClickMeasurement/attribution-conversion-through-image-redirect-with-priority.html: Renamed from LayoutTests/http/tests/adClickAttribution/attribution-conversion-through-image-redirect-with-priority.html.
+        * http/tests/privateClickMeasurement/attribution-conversion-through-image-redirect-without-priority-expected.txt: Renamed from LayoutTests/http/tests/adClickAttribution/attribution-conversion-through-image-redirect-without-priority-expected.txt.
+        * http/tests/privateClickMeasurement/attribution-conversion-through-image-redirect-without-priority.html: Renamed from LayoutTests/http/tests/adClickAttribution/attribution-conversion-through-image-redirect-without-priority.html.
+        * http/tests/privateClickMeasurement/clear-through-website-data-removal-expected.txt: Renamed from LayoutTests/http/tests/adClickAttribution/clear-through-website-data-removal-expected.txt.
+        * http/tests/privateClickMeasurement/clear-through-website-data-removal.html: Renamed from LayoutTests/http/tests/adClickAttribution/clear-through-website-data-removal.html.
+        * http/tests/privateClickMeasurement/conversion-disabled-in-ephemeral-session-expected.txt: Renamed from LayoutTests/http/tests/adClickAttribution/conversion-disabled-in-ephemeral-session-expected.txt.
+        * http/tests/privateClickMeasurement/conversion-disabled-in-ephemeral-session.html: Renamed from LayoutTests/http/tests/adClickAttribution/conversion-disabled-in-ephemeral-session.html.
+        * http/tests/privateClickMeasurement/expired-attributions-removed-expected.txt: Added.
+        * http/tests/privateClickMeasurement/expired-attributions-removed.html: Renamed from LayoutTests/http/tests/adClickAttribution/expired-attributions-removed.html.
+        * http/tests/privateClickMeasurement/resources/conversionFilePath.php: Renamed from LayoutTests/http/tests/adClickAttribution/resources/conversionFilePath.php.
+        * http/tests/privateClickMeasurement/resources/conversionReport.php: Renamed from LayoutTests/http/tests/adClickAttribution/resources/conversionReport.php.
+        * http/tests/privateClickMeasurement/resources/convertAndPostMessageBack.html: Renamed from LayoutTests/http/tests/adClickAttribution/resources/convertAndPostMessageBack.html.
+        * http/tests/privateClickMeasurement/resources/getConversionData.php: Renamed from LayoutTests/http/tests/adClickAttribution/resources/getConversionData.php.
+        * http/tests/privateClickMeasurement/resources/redirectToConversion.php: Renamed from LayoutTests/http/tests/adClickAttribution/resources/redirectToConversion.php.
+        * http/tests/privateClickMeasurement/resources/redirectToConversionOnIPAddress.php: Added.
+        * http/tests/privateClickMeasurement/resources/util.js: Renamed from LayoutTests/http/tests/adClickAttribution/resources/util.js.
+        (prepareTest):
+        (tearDownAndFinish):
+        * http/tests/privateClickMeasurement/second-attribution-converted-with-higher-priority-expected.txt: Renamed from LayoutTests/http/tests/adClickAttribution/second-attribution-converted-with-higher-priority-expected.txt.
+        * http/tests/privateClickMeasurement/second-attribution-converted-with-higher-priority.html: Renamed from LayoutTests/http/tests/adClickAttribution/second-attribution-converted-with-higher-priority.html.
+        * http/tests/privateClickMeasurement/second-attribution-converted-with-lower-priority-expected.txt: Renamed from LayoutTests/http/tests/adClickAttribution/second-attribution-converted-with-lower-priority-expected.txt.
+        * http/tests/privateClickMeasurement/second-attribution-converted-with-lower-priority.html: Renamed from LayoutTests/http/tests/adClickAttribution/second-attribution-converted-with-lower-priority.html.
+        * http/tests/privateClickMeasurement/second-conversion-with-higher-priority-expected.txt: Renamed from LayoutTests/http/tests/adClickAttribution/second-conversion-with-higher-priority-expected.txt.
+        * http/tests/privateClickMeasurement/second-conversion-with-higher-priority.html: Renamed from LayoutTests/http/tests/adClickAttribution/second-conversion-with-higher-priority.html.
+        * http/tests/privateClickMeasurement/second-conversion-with-lower-priority-expected.txt: Renamed from LayoutTests/http/tests/adClickAttribution/second-conversion-with-lower-priority-expected.txt.
+        * http/tests/privateClickMeasurement/second-conversion-with-lower-priority.html: Renamed from LayoutTests/http/tests/adClickAttribution/second-conversion-with-lower-priority.html.
+        * http/tests/privateClickMeasurement/send-attribution-conversion-request-expected.txt: Renamed from LayoutTests/http/tests/adClickAttribution/send-attribution-conversion-request-expected.txt.
+        * http/tests/privateClickMeasurement/send-attribution-conversion-request.html: Renamed from LayoutTests/http/tests/adClickAttribution/send-attribution-conversion-request.html.
+        * http/tests/privateClickMeasurement/store-disabled-in-ephemeral-session-expected.txt: Added.
+        * http/tests/privateClickMeasurement/store-disabled-in-ephemeral-session.html: Renamed from LayoutTests/http/tests/adClickAttribution/store-disabled-in-ephemeral-session.html.
+        * http/tests/privateClickMeasurement/store-private-click-measurement-expected.txt: Added.
+        * http/tests/privateClickMeasurement/store-private-click-measurement.html: Renamed from LayoutTests/http/tests/adClickAttribution/store-ad-click-attribution.html.
+        * inspector/page/overrideSetting-AdClickAttributionDebugModeEnabled-expected.txt: Removed.
+        * inspector/page/overrideSetting-PrivateClickMeasurementDebugModeEnabled-expected.txt: Added.
+        * inspector/page/overrideSetting-PrivateClickMeasurementDebugModeEnabled.html: Renamed from LayoutTests/inspector/page/overrideSetting-AdClickAttributionDebugModeEnabled.html.
+        * platform/mac-wk2/TestExpectations:
+        * platform/wk2/TestExpectations:
+
 2020-11-10  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][Integration] Enable vertical alignment on replaced content

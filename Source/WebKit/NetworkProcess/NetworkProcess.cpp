@@ -330,7 +330,7 @@ void NetworkProcess::initializeNetworkProcess(NetworkProcessCreationParameters&&
 
     setCacheModel(parameters.cacheModel);
 
-    setAdClickAttributionDebugMode(parameters.enableAdClickAttributionDebugMode);
+    setPrivateClickMeasurementDebugMode(parameters.enablePrivateClickMeasurementDebugMode);
 
     for (auto& supplement : m_supplements.values())
         supplement->initialize(parameters);
@@ -1313,18 +1313,18 @@ void NetworkProcess::setThirdPartyCNAMEDomainForTesting(PAL::SessionID sessionID
 }
 #endif // ENABLE(RESOURCE_LOAD_STATISTICS)
 
-void NetworkProcess::setAdClickAttributionDebugMode(bool debugMode)
+void NetworkProcess::setPrivateClickMeasurementDebugMode(bool debugMode)
 {
-    if (RuntimeEnabledFeatures::sharedFeatures().adClickAttributionDebugModeEnabled() == debugMode)
+    if (RuntimeEnabledFeatures::sharedFeatures().privateClickMeasurementDebugModeEnabled() == debugMode)
         return;
 
-    RuntimeEnabledFeatures::sharedFeatures().setAdClickAttributionDebugModeEnabled(debugMode);
+    RuntimeEnabledFeatures::sharedFeatures().setPrivateClickMeasurementDebugModeEnabled(debugMode);
 
-    String message = debugMode ? "[Ad Click Attribution] Turned Debug Mode on."_s : "[Ad Click Attribution] Turned Debug Mode off."_s;
+    String message = debugMode ? "[Private Click Measurement] Turned Debug Mode on."_s : "[Private Click Measurement] Turned Debug Mode off."_s;
     for (auto& networkConnectionToWebProcess : m_webProcessConnections.values()) {
         if (networkConnectionToWebProcess->sessionID().isEphemeral())
             continue;
-        networkConnectionToWebProcess->broadcastConsoleMessage(MessageSource::AdClickAttribution, MessageLevel::Info, message);
+        networkConnectionToWebProcess->broadcastConsoleMessage(MessageSource::PrivateClickMeasurement, MessageLevel::Info, message);
     }
 }
 
@@ -1583,9 +1583,9 @@ void NetworkProcess::deleteWebsiteData(PAL::SessionID sessionID, OptionSet<Websi
     if (websiteDataTypes.contains(WebsiteDataType::DiskCache) && !sessionID.isEphemeral())
         clearDiskCache(modifiedSince, [clearTasksHandler = WTFMove(clearTasksHandler)] { });
 
-    if (websiteDataTypes.contains(WebsiteDataType::AdClickAttributions)) {
+    if (websiteDataTypes.contains(WebsiteDataType::PrivateClickMeasurements)) {
         if (auto* networkSession = this->networkSession(sessionID))
-            networkSession->clearAdClickAttribution();
+            networkSession->clearPrivateClickMeasurement();
     }
 
 #if HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
@@ -1644,10 +1644,10 @@ void NetworkProcess::deleteWebsiteDataForOrigins(PAL::SessionID sessionID, Optio
     }
 #endif
 
-    if (websiteDataTypes.contains(WebsiteDataType::AdClickAttributions)) {
+    if (websiteDataTypes.contains(WebsiteDataType::PrivateClickMeasurements)) {
         if (auto* networkSession = this->networkSession(sessionID)) {
             for (auto& originData : originDatas)
-                networkSession->clearAdClickAttributionForRegistrableDomain(RegistrableDomain::uncheckedCreateFromHost(originData.host));
+                networkSession->clearPrivateClickMeasurementForRegistrableDomain(RegistrableDomain::uncheckedCreateFromHost(originData.host));
         }
     }
     
@@ -2532,48 +2532,48 @@ void NetworkProcess::platformFlushCookies(const PAL::SessionID&, CompletionHandl
 
 #endif
 
-void NetworkProcess::storeAdClickAttribution(PAL::SessionID sessionID, WebCore::AdClickAttribution&& adClickAttribution)
+void NetworkProcess::storePrivateClickMeasurement(PAL::SessionID sessionID, WebCore::PrivateClickMeasurement&& privateClickMeasurement)
 {
     if (auto* session = networkSession(sessionID))
-        session->storeAdClickAttribution(WTFMove(adClickAttribution));
+        session->storePrivateClickMeasurement(WTFMove(privateClickMeasurement));
 }
 
-void NetworkProcess::dumpAdClickAttribution(PAL::SessionID sessionID, CompletionHandler<void(String)>&& completionHandler)
+void NetworkProcess::dumpPrivateClickMeasurement(PAL::SessionID sessionID, CompletionHandler<void(String)>&& completionHandler)
 {
     if (auto* session = networkSession(sessionID))
-        return session->dumpAdClickAttribution(WTFMove(completionHandler));
+        return session->dumpPrivateClickMeasurement(WTFMove(completionHandler));
 
     completionHandler({ });
 }
 
-void NetworkProcess::clearAdClickAttribution(PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
+void NetworkProcess::clearPrivateClickMeasurement(PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
 {
     if (auto* session = networkSession(sessionID))
-        session->clearAdClickAttribution();
+        session->clearPrivateClickMeasurement();
     
     completionHandler();
 }
 
-void NetworkProcess::setAdClickAttributionOverrideTimerForTesting(PAL::SessionID sessionID, bool value, CompletionHandler<void()>&& completionHandler)
+void NetworkProcess::setPrivateClickMeasurementOverrideTimerForTesting(PAL::SessionID sessionID, bool value, CompletionHandler<void()>&& completionHandler)
 {
     if (auto* session = networkSession(sessionID))
-        session->setAdClickAttributionOverrideTimerForTesting(value);
+        session->setPrivateClickMeasurementOverrideTimerForTesting(value);
     
     completionHandler();
 }
 
-void NetworkProcess::setAdClickAttributionConversionURLForTesting(PAL::SessionID sessionID, URL&& url, CompletionHandler<void()>&& completionHandler)
+void NetworkProcess::setPrivateClickMeasurementConversionURLForTesting(PAL::SessionID sessionID, URL&& url, CompletionHandler<void()>&& completionHandler)
 {
     if (auto* session = networkSession(sessionID))
-        session->setAdClickAttributionConversionURLForTesting(WTFMove(url));
+        session->setPrivateClickMeasurementConversionURLForTesting(WTFMove(url));
     
     completionHandler();
 }
 
-void NetworkProcess::markAdClickAttributionsAsExpiredForTesting(PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
+void NetworkProcess::markPrivateClickMeasurementsAsExpiredForTesting(PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
 {
     if (auto* session = networkSession(sessionID))
-        session->markAdClickAttributionsAsExpiredForTesting();
+        session->markPrivateClickMeasurementsAsExpiredForTesting();
 
     completionHandler();
 }

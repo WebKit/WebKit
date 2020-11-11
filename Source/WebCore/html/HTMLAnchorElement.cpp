@@ -24,7 +24,6 @@
 #include "config.h"
 #include "HTMLAnchorElement.h"
 
-#include "AdClickAttribution.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "DOMTokenList.h"
@@ -44,6 +43,7 @@
 #include "MouseEvent.h"
 #include "PingLoader.h"
 #include "PlatformMouseEvent.h"
+#include "PrivateClickMeasurement.h"
 #include "RegistrableDomain.h"
 #include "RenderImage.h"
 #include "ResourceRequest.h"
@@ -404,15 +404,15 @@ bool HTMLAnchorElement::isSystemPreviewLink()
 }
 #endif
 
-Optional<AdClickAttribution> HTMLAnchorElement::parseAdClickAttribution() const
+Optional<PrivateClickMeasurement> HTMLAnchorElement::parsePrivateClickMeasurement() const
 {
-    using Campaign = AdClickAttribution::Campaign;
-    using Source = AdClickAttribution::Source;
-    using Destination = AdClickAttribution::Destination;
+    using Campaign = PrivateClickMeasurement::Campaign;
+    using Source = PrivateClickMeasurement::Source;
+    using Destination = PrivateClickMeasurement::Destination;
 
     auto* page = document().page();
     if (!page || page->sessionID().isEphemeral()
-        || !document().settings().adClickAttributionEnabled()
+        || !document().settings().privateClickMeasurementEnabled()
         || !UserGestureIndicator::processingUserGesture())
         return WTF::nullopt;
 
@@ -423,24 +423,24 @@ Optional<AdClickAttribution> HTMLAnchorElement::parseAdClickAttribution() const
     auto adDestinationAttr = attributeWithoutSynchronization(addestinationAttr);
     
     if (adCampaignIDAttr.isEmpty() || adDestinationAttr.isEmpty()) {
-        document().addConsoleMessage(MessageSource::Other, MessageLevel::Warning, "Both adcampaignid and addestination need to be set for Ad Click Attribution to work."_s);
+        document().addConsoleMessage(MessageSource::Other, MessageLevel::Warning, "Both adcampaignid and addestination need to be set for Private Click Measurement to work."_s);
         return WTF::nullopt;
     }
 
     RefPtr<Frame> frame = document().frame();
     if (!frame || !frame->isMainFrame()) {
-        document().addConsoleMessage(MessageSource::Other, MessageLevel::Warning, "Ad Click Attribution is only supported in the main frame."_s);
+        document().addConsoleMessage(MessageSource::Other, MessageLevel::Warning, "Private Click Measurement is only supported in the main frame."_s);
         return WTF::nullopt;
     }
     
     auto adCampaignID = parseHTMLNonNegativeInteger(adCampaignIDAttr);
     if (!adCampaignID) {
-        document().addConsoleMessage(MessageSource::Other, MessageLevel::Warning, "adcampaignid can not be converted to a non-negative integer which is required for Ad Click Attribution."_s);
+        document().addConsoleMessage(MessageSource::Other, MessageLevel::Warning, "adcampaignid can not be converted to a non-negative integer which is required for Private Click Measurement."_s);
         return WTF::nullopt;
     }
     
-    if (adCampaignID.value() > AdClickAttribution::MaxEntropy) {
-        document().addConsoleMessage(MessageSource::Other, MessageLevel::Warning, makeString("adcampaignid must have a non-negative value less than or equal to ", AdClickAttribution::MaxEntropy, " for Ad Click Attribution."));
+    if (adCampaignID.value() > PrivateClickMeasurement::MaxEntropy) {
+        document().addConsoleMessage(MessageSource::Other, MessageLevel::Warning, makeString("adcampaignid must have a non-negative value less than or equal to ", PrivateClickMeasurement::MaxEntropy, " for Private Click Measurement."));
         return WTF::nullopt;
     }
 
@@ -456,7 +456,7 @@ Optional<AdClickAttribution> HTMLAnchorElement::parseAdClickAttribution() const
         return WTF::nullopt;
     }
 
-    return AdClickAttribution { Campaign(adCampaignID.value()), Source(documentRegistrableDomain), Destination(adDestinationURL) };
+    return PrivateClickMeasurement { Campaign(adCampaignID.value()), Source(documentRegistrableDomain), Destination(adDestinationURL) };
 }
 
 void HTMLAnchorElement::handleClick(Event& event)
@@ -518,12 +518,12 @@ void HTMLAnchorElement::handleClick(Event& event)
     else if (hasRel(Relation::NoOpener) || (document().settings().blankAnchorTargetImpliesNoOpenerEnabled() && equalIgnoringASCIICase(effectiveTarget, "_blank")))
         newFrameOpenerPolicy = NewFrameOpenerPolicy::Suppress;
 
-    auto adClickAttribution = parseAdClickAttribution();
-    // A matching conversion event needs to happen before the complete ad click attributionURL can be
-    // created. Thus, it should be empty for now.
-    ASSERT(!adClickAttribution || adClickAttribution->reportURL().isNull());
+    auto privateClickMeasurement = parsePrivateClickMeasurement();
+    // A matching conversion event needs to happen before the complete private click measurement
+    // URL can be created. Thus, it should be empty for now.
+    ASSERT(!privateClickMeasurement || privateClickMeasurement->reportURL().isNull());
     
-    frame->loader().changeLocation(completedURL, effectiveTarget, &event, LockHistory::No, LockBackForwardList::No, referrerPolicy, document().shouldOpenExternalURLsPolicyToPropagate(), newFrameOpenerPolicy, downloadAttribute, systemPreviewInfo, WTFMove(adClickAttribution));
+    frame->loader().changeLocation(completedURL, effectiveTarget, &event, LockHistory::No, LockBackForwardList::No, referrerPolicy, document().shouldOpenExternalURLsPolicyToPropagate(), newFrameOpenerPolicy, downloadAttribute, systemPreviewInfo, WTFMove(privateClickMeasurement));
 
     sendPings(completedURL);
 }

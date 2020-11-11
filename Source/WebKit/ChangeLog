@@ -1,3 +1,153 @@
+2020-11-10  John Wilander  <wilander@apple.com>
+
+        PCM: Change from ad-click-attribution to private-click-measurement (in all forms, including .well-known URL)
+        https://bugs.webkit.org/show_bug.cgi?id=218730
+        <rdar://problem/71094296>
+
+        Reviewed by Devin Rousso.
+
+        Change to the official name of the proposed standard Private Click Measurement
+        https://github.com/privacycg/private-click-measurement.
+
+        This includes a change of the reporting URL from 
+        "/.well-known/ad-click-attribution/" to
+        "/.well-known/private-click-measurement/".
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::initializeNetworkProcess):
+        (WebKit::NetworkProcess::setPrivateClickMeasurementDebugMode):
+        (WebKit::NetworkProcess::deleteWebsiteData):
+        (WebKit::NetworkProcess::deleteWebsiteDataForOrigins):
+        (WebKit::NetworkProcess::storePrivateClickMeasurement):
+        (WebKit::NetworkProcess::dumpPrivateClickMeasurement):
+        (WebKit::NetworkProcess::clearPrivateClickMeasurement):
+        (WebKit::NetworkProcess::setPrivateClickMeasurementOverrideTimerForTesting):
+        (WebKit::NetworkProcess::setPrivateClickMeasurementConversionURLForTesting):
+        (WebKit::NetworkProcess::markPrivateClickMeasurementsAsExpiredForTesting):
+        (WebKit::NetworkProcess::setAdClickAttributionDebugMode): Deleted.
+        (WebKit::NetworkProcess::storeAdClickAttribution): Deleted.
+        (WebKit::NetworkProcess::dumpAdClickAttribution): Deleted.
+        (WebKit::NetworkProcess::clearAdClickAttribution): Deleted.
+        (WebKit::NetworkProcess::setAdClickAttributionOverrideTimerForTesting): Deleted.
+        (WebKit::NetworkProcess::setAdClickAttributionConversionURLForTesting): Deleted.
+        (WebKit::NetworkProcess::markAdClickAttributionsAsExpiredForTesting): Deleted.
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/NetworkProcessCreationParameters.cpp:
+        (WebKit::NetworkProcessCreationParameters::encode const):
+        (WebKit::NetworkProcessCreationParameters::decode):
+        * NetworkProcess/NetworkProcessCreationParameters.h:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::willSendRedirectedRequest):
+        (WebKit::NetworkResourceLoader::continueWillSendRedirectedRequest):
+        * NetworkProcess/NetworkResourceLoader.h:
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::NetworkSession):
+        (WebKit::NetworkSession::storePrivateClickMeasurement):
+        (WebKit::NetworkSession::handlePrivateClickMeasurementConversion):
+        (WebKit::NetworkSession::dumpPrivateClickMeasurement):
+        (WebKit::NetworkSession::clearPrivateClickMeasurement):
+        (WebKit::NetworkSession::clearPrivateClickMeasurementForRegistrableDomain):
+        (WebKit::NetworkSession::setPrivateClickMeasurementOverrideTimerForTesting):
+        (WebKit::NetworkSession::setPrivateClickMeasurementConversionURLForTesting):
+        (WebKit::NetworkSession::markPrivateClickMeasurementsAsExpiredForTesting):
+        (WebKit::NetworkSession::storeAdClickAttribution): Deleted.
+        (WebKit::NetworkSession::handleAdClickAttributionConversion): Deleted.
+        (WebKit::NetworkSession::dumpAdClickAttribution): Deleted.
+        (WebKit::NetworkSession::clearAdClickAttribution): Deleted.
+        (WebKit::NetworkSession::clearAdClickAttributionForRegistrableDomain): Deleted.
+        (WebKit::NetworkSession::setAdClickAttributionOverrideTimerForTesting): Deleted.
+        (WebKit::NetworkSession::setAdClickAttributionConversionURLForTesting): Deleted.
+        (WebKit::NetworkSession::markAdClickAttributionsAsExpiredForTesting): Deleted.
+        * NetworkProcess/NetworkSession.h:
+        * NetworkProcess/PrivateClickMeasurementManager.cpp: Renamed from Source/WebKit/NetworkProcess/AdClickAttributionManager.cpp.
+        (WebKit::PrivateClickMeasurementManager::storeUnconverted):
+        (WebKit::PrivateClickMeasurementManager::handleConversion):
+        (WebKit::PrivateClickMeasurementManager::startTimer):
+        (WebKit::PrivateClickMeasurementManager::convert):
+        (WebKit::PrivateClickMeasurementManager::fireConversionRequest):
+        (WebKit::PrivateClickMeasurementManager::firePendingConversionRequests):
+        (WebKit::PrivateClickMeasurementManager::clear):
+        (WebKit::PrivateClickMeasurementManager::clearForRegistrableDomain):
+        (WebKit::PrivateClickMeasurementManager::clearExpired):
+        (WebKit::PrivateClickMeasurementManager::toString const):
+        (WebKit::PrivateClickMeasurementManager::setConversionURLForTesting):
+        (WebKit::PrivateClickMeasurementManager::markAllUnconvertedAsExpiredForTesting):
+        (WebKit::PrivateClickMeasurementManager::debugModeEnabled const):
+        * NetworkProcess/PrivateClickMeasurementManager.h: Renamed from Source/WebKit/NetworkProcess/AdClickAttributionManager.h.
+        (WebKit::PrivateClickMeasurementManager::PrivateClickMeasurementManager):
+        (WebKit::PrivateClickMeasurementManager::m_sessionID):
+        (WebKit::PrivateClickMeasurementManager::setPingLoadFunction):
+        (WebKit::PrivateClickMeasurementManager::setOverrideTimerForTesting):
+        * Platform/Logging.h:
+        * Shared/NavigationActionData.cpp:
+        (WebKit::NavigationActionData::encode const):
+        (WebKit::NavigationActionData::decode):
+        * Shared/NavigationActionData.h:
+        * Shared/WebsiteData/WebsiteData.cpp:
+        (WebKit::WebsiteData::ownerProcess):
+        * Shared/WebsiteData/WebsiteDataType.h:
+        * Sources.txt:
+        * UIProcess/API/APINavigation.h:
+        (API::Navigation::privateClickMeasurement const):
+        (API::Navigation::adClickAttribution const): Deleted.
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageDumpPrivateClickMeasurement):
+        (WKPageClearPrivateClickMeasurement):
+        (WKPageSetPrivateClickMeasurementOverrideTimerForTesting):
+        (WKPageSetPrivateClickMeasurementConversionURLForTesting):
+        (WKPageMarkPrivateClickMeasurementsAsExpiredForTesting):
+        (WKPageDumpAdClickAttribution): Deleted.
+        (WKPageClearAdClickAttribution): Deleted.
+        (WKPageSetAdClickAttributionOverrideTimerForTesting): Deleted.
+        (WKPageSetAdClickAttributionConversionURLForTesting): Deleted.
+        (WKPageMarkAdClickAttributionsAsExpiredForTesting): Deleted.
+        * UIProcess/API/C/WKPagePrivate.h:
+        * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+        (WKWebsiteDataStoreClearPrivateClickMeasurementsThroughWebsiteDataRemoval):
+        (WKWebsiteDataStoreClearAdClickAttributionsThroughWebsiteDataRemoval): Deleted.
+        * UIProcess/API/C/WKWebsiteDataStoreRef.h:
+        * UIProcess/API/Cocoa/WKWebsiteDataRecord.mm:
+        (dataTypesToString):
+        * UIProcess/API/Cocoa/WKWebsiteDataRecordInternal.h:
+        (WebKit::toWebsiteDataType):
+        (WebKit::toWKWebsiteDataTypes):
+        * UIProcess/API/Cocoa/WKWebsiteDataRecordPrivate.h:
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (+[WKWebsiteDataStore _allWebsiteDataTypesIncludingPrivate]):
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeNetworkProcess):
+        * UIProcess/Inspector/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::setDeveloperPreferenceOverride):
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::setPrivateClickMeasurementDebugMode):
+        (WebKit::NetworkProcessProxy::setAdClickAttributionDebugMode): Deleted.
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didCommitLoadForFrame):
+        (WebKit::WebPageProxy::createNewPage):
+        (WebKit::WebPageProxy::dumpPrivateClickMeasurement):
+        (WebKit::WebPageProxy::clearPrivateClickMeasurement):
+        (WebKit::WebPageProxy::setPrivateClickMeasurementOverrideTimerForTesting):
+        (WebKit::WebPageProxy::setPrivateClickMeasurementConversionURLForTesting):
+        (WebKit::WebPageProxy::markPrivateClickMeasurementsAsExpiredForTesting):
+        (WebKit::WebPageProxy::dumpAdClickAttribution): Deleted.
+        (WebKit::WebPageProxy::clearAdClickAttribution): Deleted.
+        (WebKit::WebPageProxy::setAdClickAttributionOverrideTimerForTesting): Deleted.
+        (WebKit::WebPageProxy::setAdClickAttributionConversionURLForTesting): Deleted.
+        (WebKit::WebPageProxy::markAdClickAttributionsAsExpiredForTesting): Deleted.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::setPrivateClickMeasurementDebugMode):
+        (WebKit::WebsiteDataStore::setAdClickAttributionDebugMode): Deleted.
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::createWindow):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction):
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+
 2020-11-10  Simon Fraser  <simon.fraser@apple.com>
 
         Make PlatformWheelEventPhase an enum class

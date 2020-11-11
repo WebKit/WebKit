@@ -340,12 +340,12 @@ public:
 
     bool isDoingMediaCapture() const;
 
-    String dumpAdClickAttribution();
-    void clearAdClickAttribution();
-    void clearAdClickAttributionsThroughWebsiteDataRemoval();
-    void setAdClickAttributionOverrideTimerForTesting(bool value);
-    void setAdClickAttributionConversionURLForTesting(WKURLRef);
-    void markAdClickAttributionsAsExpiredForTesting();
+    String dumpPrivateClickMeasurement();
+    void clearPrivateClickMeasurement();
+    void clearPrivateClickMeasurementsThroughWebsiteDataRemoval();
+    void setPrivateClickMeasurementOverrideTimerForTesting(bool value);
+    void setPrivateClickMeasurementConversionURLForTesting(WKURLRef);
+    void markPrivateClickMeasurementsAsExpiredForTesting();
 
     void didSetAppBoundDomains() const;
 
