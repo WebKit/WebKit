@@ -19,8 +19,8 @@ function shouldThrow(func, errorMessage) {
 }
 
 function test() {
-    let range = " – "; // This is not usual space unfortuantely in ICU 66.
-    if ($vm.icuVersion() > 66)
+    let range = " – "; // This is not usual space unfortuantely in older ICU versions.
+    if ($vm.icuVersion() >= 65)
         range = " – ";
 
     let date1 = new Date(Date.UTC(2007, 0, 10, 10, 0, 0));

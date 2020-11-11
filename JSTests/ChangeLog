@@ -1,3 +1,24 @@
+2020-11-10  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        stress/intl-datetimeformat-formatrange.js and stress/intl-datetimeformat-formatrange-relevant-extensions.js fail with ICU 65.1
+        https://bugs.webkit.org/show_bug.cgi?id=218763
+
+        Reviewed by Yusuke Suzuki.
+
+        Yesterday Red Hat upgraded its internal CI to Fedora 32 (ICU 65.1), causing
+        stress/intl-datetimeformat-formatrange-relevant-extensions.js and
+        stress/intl-datetimeformat-formatrange.js to begin failing. The problem is that the space
+        characters used in the range format changed at some point. The current version of the test
+        expects normal ASCII space characters for ICU 67 and newer, and special spaces for older
+        versions of ICU.
+
+        The test passes for me locally on Fedora 33 (ICU 67.1), so perhaps we just need to use the
+        new codepath for ICU 65 and 66 as well.
+
+        * stress/intl-datetimeformat-formatrange-relevant-extensions.js:
+        * stress/intl-datetimeformat-formatrange.js:
+        (test):
+
 2020-11-09  Keith Miller  <keith_miller@apple.com>
 
         Add microbenchmark for FinalizationRegistry basic usage
