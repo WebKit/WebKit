@@ -62,7 +62,6 @@ enum class CFType : uint8_t {
     CFString,
     CFURL,
     SecCertificate,
-    SecIdentity,
 #if HAVE(SEC_KEYCHAIN)
     SecKeychainItem,
 #endif
@@ -104,8 +103,6 @@ static CFType typeFromCFTypeRef(CFTypeRef type)
         return CFType::CFURL;
     if (typeID == SecCertificateGetTypeID())
         return CFType::SecCertificate;
-    if (typeID == SecIdentityGetTypeID())
-        return CFType::SecIdentity;
 #if HAVE(SEC_KEYCHAIN)
     if (typeID == SecKeychainItemGetTypeID())
         return CFType::SecKeychainItem;
@@ -157,9 +154,6 @@ void encode(Encoder& encoder, CFTypeRef typeRef)
         return;
     case CFType::SecCertificate:
         encode(encoder, static_cast<SecCertificateRef>(const_cast<void*>(typeRef)));
-        return;
-    case CFType::SecIdentity:
-        encode(encoder, static_cast<SecIdentityRef>(const_cast<void*>(typeRef)));
         return;
 #if HAVE(SEC_KEYCHAIN)
     case CFType::SecKeychainItem:
@@ -256,13 +250,6 @@ bool decode(Decoder& decoder, RetainPtr<CFTypeRef>& result)
         if (!decode(decoder, certificate))
             return false;
         result = adoptCF(certificate.leakRef());
-        return true;
-    }
-    case CFType::SecIdentity: {
-        RetainPtr<SecIdentityRef> identity;
-        if (!decode(decoder, identity))
-            return false;
-        result = adoptCF(identity.leakRef());
         return true;
     }
 #if HAVE(SEC_KEYCHAIN)
@@ -660,99 +647,6 @@ bool decode(Decoder& decoder, RetainPtr<SecCertificateRef>& result)
     return true;
 }
 
-#if PLATFORM(IOS_FAMILY)
-static bool secKeyRefDecodingAllowed;
-
-void setAllowsDecodingSecKeyRef(bool allowsDecodingSecKeyRef)
-{
-    secKeyRefDecodingAllowed = allowsDecodingSecKeyRef;
-}
-
-static CFDataRef copyPersistentRef(SecKeyRef key)
-{
-    RELEASE_ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessCredentials));
-    // This function differs from SecItemCopyPersistentRef in that it specifies an access group.
-    // This is necessary in case there are multiple copies of the key in the keychain, because we
-    // need a reference to the one that the Networking process will be able to access.
-    CFDataRef persistentRef = nullptr;
-    SecItemCopyMatching((CFDictionaryRef)@{
-        (id)kSecReturnPersistentRef: @YES,
-        (id)kSecValueRef: (id)key,
-        (id)kSecAttrSynchronizable: (id)kSecAttrSynchronizableAny,
-        (id)kSecAttrAccessGroup: @"com.apple.identities",
-    }, (CFTypeRef*)&persistentRef);
-
-    return persistentRef;
-}
-#endif
-
-void encode(Encoder& encoder, SecIdentityRef identity)
-{
-    SecCertificateRef certificate = nullptr;
-    SecIdentityCopyCertificate(identity, &certificate);
-    encode(encoder, certificate);
-    CFRelease(certificate);
-
-    SecKeyRef key = nullptr;
-    SecIdentityCopyPrivateKey(identity, &key);
-
-    CFDataRef keyData = nullptr;
-#if PLATFORM(IOS_FAMILY)
-    keyData = copyPersistentRef(key);
-#endif
-#if PLATFORM(MAC)
-    RELEASE_ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessCredentials));
-    SecKeychainItemCreatePersistentReference((SecKeychainItemRef)key, &keyData);
-#endif
-    CFRelease(key);
-
-    encoder << !!keyData;
-    if (keyData) {
-        encode(encoder, keyData);
-        CFRelease(keyData);
-    }
-}
-
-bool decode(Decoder& decoder, RetainPtr<SecIdentityRef>& result)
-{
-    RetainPtr<SecCertificateRef> certificate;
-    if (!decode(decoder, certificate))
-        return false;
-
-    bool hasKey;
-    if (!decoder.decode(hasKey))
-        return false;
-
-    if (!hasKey)
-        return true;
-
-    RetainPtr<CFDataRef> keyData;
-    if (!decode(decoder, keyData))
-        return false;
-
-#if PLATFORM(COCOA)
-    if (!hasProcessPrivilege(ProcessPrivilege::CanAccessCredentials))
-        return true;
-#endif
-
-    SecKeyRef key = nullptr;
-#if PLATFORM(IOS_FAMILY)
-    if (secKeyRefDecodingAllowed)
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        SecKeyFindWithPersistentRef(keyData.get(), &key);
-        ALLOW_DEPRECATED_DECLARATIONS_END
-#endif
-#if PLATFORM(MAC)
-    SecKeychainItemCopyFromPersistentReference(keyData.get(), (SecKeychainItemRef*)&key);
-#endif
-    if (key) {
-        result = adoptCF(SecIdentityCreate(kCFAllocatorDefault, certificate.get(), key));
-        CFRelease(key);
-    }
-
-    return true;
-}
-
 #if HAVE(SEC_KEYCHAIN)
 void encode(Encoder& encoder, SecKeychainItemRef keychainItem)
 {
@@ -856,7 +750,6 @@ template<> struct EnumTraits<IPC::CFType> {
     IPC::CFType::CFString,
     IPC::CFType::CFURL,
     IPC::CFType::SecCertificate,
-    IPC::CFType::SecIdentity,
 #if HAVE(SEC_KEYCHAIN)
     IPC::CFType::SecKeychainItem,
 #endif

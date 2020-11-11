@@ -78,7 +78,6 @@ SecTaskRef SecTaskCreateWithAuditToken(CFAllocatorRef, audit_token_t);
 SecTaskRef SecTaskCreateFromSelf(CFAllocatorRef);
 CFTypeRef SecTaskCopyValueForEntitlement(SecTaskRef, CFStringRef entitlement, CFErrorRef*);
 SecIdentityRef SecIdentityCreate(CFAllocatorRef, SecCertificateRef, SecKeyRef);
-OSStatus SecKeyFindWithPersistentRef(CFDataRef persistentRef, SecKeyRef* lookedUpData);
 SecAccessControlRef SecAccessControlCreateFromData(CFAllocatorRef, CFDataRef, CFErrorRef*);
 CFDataRef SecAccessControlCopyData(SecAccessControlRef);
 

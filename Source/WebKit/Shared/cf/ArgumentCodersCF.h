@@ -79,10 +79,6 @@ WARN_UNUSED_RETURN bool decode(Decoder&, RetainPtr<CFURLRef>& result);
 void encode(Encoder&, SecCertificateRef);
 WARN_UNUSED_RETURN bool decode(Decoder&, RetainPtr<SecCertificateRef>& result);
 
-// SecIdentityRef
-void encode(Encoder&, SecIdentityRef);
-WARN_UNUSED_RETURN bool decode(Decoder&, RetainPtr<SecIdentityRef>& result);
-
 #if HAVE(SEC_KEYCHAIN)
 // SecKeychainItemRef
 void encode(Encoder&, SecKeychainItemRef);
@@ -99,10 +95,6 @@ WARN_UNUSED_RETURN bool decode(Decoder&, RetainPtr<SecAccessControlRef>& result)
 // SecTrustRef
 void encode(Encoder&, SecTrustRef);
 WARN_UNUSED_RETURN bool decode(Decoder&, RetainPtr<SecTrustRef>&);
-#endif
-
-#if PLATFORM(IOS_FAMILY)
-void setAllowsDecodingSecKeyRef(bool);
 #endif
 
 CFTypeRef tokenNullptrTypeRef();

@@ -454,59 +454,14 @@ bool ArgumentCoder<WebCore::ProtectionSpace>::decodePlatformData(Decoder& decode
 void ArgumentCoder<WebCore::Credential>::encodePlatformData(Encoder& encoder, const WebCore::Credential& credential)
 {
     NSURLCredential *nsCredential = credential.nsCredential();
-    // NSURLCredential doesn't serialize identities correctly, so we encode the pieces individually
-    // in the identity case. See <rdar://problem/18802434>.
-    if (SecIdentityRef identity = nsCredential.identity) {
-        encoder << true;
-        IPC::encode(encoder, identity);
-
-        if (NSArray *certificates = nsCredential.certificates) {
-            encoder << true;
-            IPC::encode(encoder, (__bridge CFArrayRef)certificates);
-        } else
-            encoder << false;
-
-        encoder << static_cast<uint64_t>(nsCredential.persistence);
-        return;
-    }
-
-    encoder << false;
     encoder << nsCredential;
 }
 
 bool ArgumentCoder<WebCore::Credential>::decodePlatformData(Decoder& decoder, WebCore::Credential& credential)
 {
-    bool hasIdentity;
-    if (!decoder.decode(hasIdentity))
-        return false;
-
-    if (hasIdentity) {
-        RetainPtr<SecIdentityRef> identity;
-        if (!IPC::decode(decoder, identity))
-            return false;
-
-        RetainPtr<CFArrayRef> certificates;
-        bool hasCertificates;
-        if (!decoder.decode(hasCertificates))
-            return false;
-
-        if (hasCertificates) {
-            if (!IPC::decode(decoder, certificates))
-                return false;
-        }
-
-        uint64_t persistence;
-        if (!decoder.decode(persistence))
-            return false;
-
-        credential = WebCore::Credential(adoptNS([[NSURLCredential alloc] initWithIdentity:identity.get() certificates:(__bridge NSArray *)certificates.get() persistence:(NSURLCredentialPersistence)persistence]).get());
-        return true;
-    }
-
     auto nsCredential = IPC::decode<NSURLCredential>(decoder);
     if (!nsCredential)
         return false;
-
     credential = WebCore::Credential { nsCredential->get() };
     return true;
 }

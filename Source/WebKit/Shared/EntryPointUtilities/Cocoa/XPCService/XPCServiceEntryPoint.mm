@@ -52,19 +52,6 @@ bool XPCServiceInitializerDelegate::checkEntitlements()
         }
     }
 #endif
-#if PLATFORM(IOS_FAMILY)
-    auto value = adoptOSObject(xpc_connection_copy_entitlement_value(m_connection.get(), "keychain-access-groups"));
-    if (value && xpc_get_type(value.get()) == XPC_TYPE_ARRAY) {
-        xpc_array_apply(value.get(), ^bool(size_t index, xpc_object_t object) {
-            if (xpc_get_type(object) == XPC_TYPE_STRING && !strcmp(xpc_string_get_string_ptr(object), "com.apple.identities")) {
-                IPC::setAllowsDecodingSecKeyRef(true);
-                return false;
-            }
-            return true;
-        });
-    }
-#endif
-
     return true;
 }
 

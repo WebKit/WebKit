@@ -1,3 +1,37 @@
+2020-11-11  Alex Christensen  <achristensen@webkit.org>
+
+        Don't look in keychain for SecKeyRef after deserializing SecIdentityRef
+        https://bugs.webkit.org/show_bug.cgi?id=218809
+        <rdar://problem/69394018>
+
+        Reviewed by Geoffrey Garen.
+
+        In ye olden days of WebKit2, we used to use special code to serialize an NSURLCredential with an identity.
+        We needed to serialize the certificate chain and a way to look in the keychain to find the private key.
+        That didn't work with third party apps not entitled to look in the keychain, and it also didn't work with hardware
+        keys that retain the private key themselves, so we introduced SecKeyProxy.  Now, all those things work and we don't
+        serialize SecIdentityRefs any more, so let's remove the problematic dead code that would have tried.
+        Luckily, we now have API tests that verify that client certificate authentication still works.
+
+        r169938 added a restriction to looking in the keychain only if the parent app has entitlements needed to do so.
+        That restriction isn't needed any more because nobody looks in the keychain from the network process.
+
+        r269162 entirely removed looking in the keychain for private keys for client certificate authentication.
+        This is moving in that same direction.
+
+        * Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceEntryPoint.mm:
+        (WebKit::XPCServiceInitializerDelegate::checkEntitlements):
+        * Shared/cf/ArgumentCodersCF.cpp:
+        (IPC::typeFromCFTypeRef):
+        (IPC::encode):
+        (IPC::decode):
+        (IPC::setAllowsDecodingSecKeyRef): Deleted.
+        (IPC::copyPersistentRef): Deleted.
+        * Shared/cf/ArgumentCodersCF.h:
+        * Shared/mac/WebCoreArgumentCodersMac.mm:
+        (IPC::ArgumentCoder<WebCore::Credential>::encodePlatformData):
+        (IPC::ArgumentCoder<WebCore::Credential>::decodePlatformData):
+
 2020-11-11  Sihui Liu  <sihui_liu@apple.com>
 
         REGRESSION (r269348): ASSERTION FAILED: !m_messageReceiverMapCount under WebKit::SpeechRecognitionServer::~SpeechRecognitionServer
