@@ -60,7 +60,7 @@ protected:
     float sampleRate() const final { return m_contextSampleRate; }
     WEBCORE_EXPORT unsigned framesPerBuffer() const final;
 
-    unsigned numberOfOutputChannels() const;
+    WEBCORE_EXPORT unsigned numberOfOutputChannels() const;
 
     WEBCORE_EXPORT void getAudioStreamBasicDescription(AudioStreamBasicDescription&);
 

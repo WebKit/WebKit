@@ -495,8 +495,7 @@ void WebProcessPool::gpuProcessCrashed(ProcessID identifier)
     for (auto& process : processes)
         process->gpuProcessCrashed();
 
-    // FIXME: We should avoid terminating all WebProcesses whenever the GPUProcess crashes.
-    terminateAllWebContentProcesses();
+    // FIXME: We should consider terminating all WebProcesses whenever the GPUProcess crashes several times in a short amount of time.
 }
 
 void WebProcessPool::getGPUProcessConnection(WebProcessProxy& webProcessProxy, Messages::WebProcessProxy::GetGPUProcessConnection::DelayedReply&& reply)

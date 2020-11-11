@@ -82,6 +82,12 @@ GPUProcessConnection::~GPUProcessConnection()
 
 void GPUProcessConnection::didClose(IPC::Connection&)
 {
+    auto protector = makeRef(*this);
+    WebProcess::singleton().gpuProcessConnectionClosed(*this);
+
+    auto clients = m_clients;
+    for (auto& client : clients)
+        client.gpuProcessConnectionDidClose(*this);
 }
 
 void GPUProcessConnection::didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName)

@@ -1,3 +1,33 @@
+2020-11-11  Chris Dumez  <cdumez@apple.com>
+
+        [GPUProcess] Seamlessly resume WebAudio playback if the GPU Process crashes
+        https://bugs.webkit.org/show_bug.cgi?id=218806
+
+        Reviewed by Geoffrey Garen.
+
+        In case of a GPU process crash, we were previously terminating all WebProcesses.
+        This patch makes it so that WebProcesses are no longer terminated in such cases.
+        Additionally, this patch makes sure that if WebAudio is rendering audio while
+        the GPU Process crashes, the GPU process will get relaunched right away and
+        audio rendering will seamlessly continue.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::gpuProcessCrashed):
+        * WebProcess/GPU/GPUProcessConnection.cpp:
+        (WebKit::GPUProcessConnection::didClose):
+        * WebProcess/GPU/GPUProcessConnection.h:
+        (WebKit::GPUProcessConnection::Client::gpuProcessConnectionDidClose):
+        (WebKit::GPUProcessConnection::addClient):
+        (WebKit::GPUProcessConnection::removeClient):
+        * WebProcess/GPU/media/RemoteAudioDestinationProxy.cpp:
+        (WebKit::RemoteAudioDestinationProxy::RemoteAudioDestinationProxy):
+        (WebKit::RemoteAudioDestinationProxy::connectToGPUProcess):
+        (WebKit::RemoteAudioDestinationProxy::gpuProcessConnectionDidClose):
+        * WebProcess/GPU/media/RemoteAudioDestinationProxy.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::gpuProcessConnectionClosed):
+        * WebProcess/WebProcess.h:
+
 2020-11-11  Alex Christensen  <achristensen@webkit.org>
 
         Use _CFURLConnectionSetFrameworkStubs instead of DYLD_INTERPOSE on Intel Macs

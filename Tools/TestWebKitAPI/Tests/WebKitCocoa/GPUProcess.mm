@@ -48,6 +48,15 @@ TEST(GPUProcess, RelaunchOnCrash)
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:configuration.get()]);
     [webView synchronouslyLoadTestPageNamed:@"audio-context-playing"];
 
+    // evaluateJavaScript gives us the user gesture we need to reliably start audio playback on all platforms.
+    __block bool done = false;
+    [webView evaluateJavaScript:@"startPlaying()" completionHandler:^(id result, NSError *error) {
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    auto webViewPID = [webView _webProcessIdentifier];
+
     auto* processPool = configuration.get().processPool;
     unsigned timeout = 0;
     while (![processPool _gpuProcessIdentifier] && timeout++ < 100)
@@ -57,13 +66,26 @@ TEST(GPUProcess, RelaunchOnCrash)
     if (![processPool _gpuProcessIdentifier])
         return;
 
-    auto initialPID = [processPool _gpuProcessIdentifier];
-    kill(initialPID, 9);
+    timeout = 0;
+    while (![webView _isPlayingAudio] && timeout++ < 100)
+        TestWebKitAPI::Util::sleep(0.1);
+    EXPECT_TRUE([webView _isPlayingAudio]);
+
+    auto initialGPUProcessPID = [processPool _gpuProcessIdentifier];
+    kill(initialGPUProcessPID, 9);
 
     // Make sure the GPU process gets relaunched.
     timeout = 0;
-    while ((![processPool _gpuProcessIdentifier] || [processPool _gpuProcessIdentifier] == initialPID) && timeout++ < 100)
+    while ((![processPool _gpuProcessIdentifier] || [processPool _gpuProcessIdentifier] == initialGPUProcessPID) && timeout++ < 100)
         TestWebKitAPI::Util::sleep(0.1);
     EXPECT_NE([processPool _gpuProcessIdentifier], 0);
-    EXPECT_NE([processPool _gpuProcessIdentifier], initialPID);
+    EXPECT_NE([processPool _gpuProcessIdentifier], initialGPUProcessPID);
+
+    // Make sure the WebView's WebProcess did not crash or get terminated.
+    EXPECT_EQ(webViewPID, [webView _webProcessIdentifier]);
+
+    timeout = 0;
+    while (![webView _isPlayingAudio] && timeout++ < 100)
+        TestWebKitAPI::Util::sleep(0.1);
+    EXPECT_TRUE([webView _isPlayingAudio]);
 }
