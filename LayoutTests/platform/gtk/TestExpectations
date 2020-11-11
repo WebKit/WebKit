@@ -1773,7 +1773,8 @@ webkit.org/b/198830 [ Release ] media/track/audio-track-add-remove.html [ Pass C
 
 webkit.org/b/198830 [ Release ] webrtc/getUserMedia-webaudio-autoplay.html [ Pass Crash ]
 webkit.org/b/198830 [ Release ] webrtc/video-autoplay4.html [ Pass Crash ]
-webkit.org/b/198830 [ Release ] webrtc/video-getParameters.html [ Pass Crash ]
+webkit.org/b/198830 [ Release ] webrtc/video-getParameters.html [ Pass Crash Failure ]
+webkit.org/b/218787 [ Debug ] webrtc/video-getParameters.html [ Failure ]
 
 webkit.org/b/198830 [ Release ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_playing.html [ Pass Crash ]
 

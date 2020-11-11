@@ -812,7 +812,8 @@ webkit.org/b/193641 webrtc/video-setDirection.html [ Failure ]
 
 webkit.org/b/194611 http/wpt/webrtc/getUserMedia-processSwapping.html [ Failure ]
 
-webkit.org/b/198830 webkit.org/b/211765 [ Release ] webrtc/video-autoplay.html [ Pass Timeout Crash ]
+webkit.org/b/198830 webkit.org/b/211765 webkit.org/b/218787 [ Release ] webrtc/video-autoplay.html [ Pass Timeout Crash Failure ]
+webkit.org/b/218787 [ Debug ] webrtc/video-autoplay.html [ Failure ]
 
 webkit.org/b/201267 webrtc/video-h264.html [ Failure ]
 
@@ -820,7 +821,7 @@ webkit.org/b/212809 webrtc/datachannel/gather-candidates-networkprocess-crash.ht
 
 webkit.org/b/213780 webrtc/vp9.html [ Failure ]
 
-webkit.org/b/215005 webrtc/h264-baseline.html [ Crash ]
+webkit.org/b/215005 webkit.org/b/218787 webrtc/h264-baseline.html [ Crash Timeout ]
 # h264-high.html is marked as slow in the root expectation
 webkit.org/b/215007 [ Release ] webrtc/h264-high.html [ Timeout ]
 webkit.org/b/215007 [ Debug ] webrtc/h264-high.html [ Slow Failure ]
@@ -829,8 +830,8 @@ webkit.org/b/187064 webrtc/video-rotation-no-cvo.html [ Failure Crash ]
 
 webkit.org/b/216777 webkit.org/b/191009 webrtc/video-mute-vp8.html [ Crash Timeout Pass ]
 
-webkit.org/b/206464 webrtc/peerconnection-page-cache-long.html [ Failure Pass ]
-webkit.org/b/206464 webrtc/peerconnection-page-cache.html [ Failure Pass ]
+webkit.org/b/206464 webkit.org/b/218787 webrtc/peerconnection-page-cache-long.html [ Failure Pass Timeout ]
+webkit.org/b/206464 webkit.org/b/218787 webrtc/peerconnection-page-cache.html [ Failure Pass Timeout ]
 
 webkit.org/b/206583 [ Release ] webrtc/video-gpuProcess.html [ Failure ]
 webkit.org/b/206583 [ Debug ] webrtc/video-gpuProcess.html [ Timeout ]
@@ -844,6 +845,27 @@ webkit.org/b/216538 webrtc/captureCanvas-webrtc-software-h264-baseline.html [ Fa
 webkit.org/b/216763 webrtc/captureCanvas-webrtc-software-h264-high.html [ Crash Failure ]
 
 webkit.org/b/218221 webrtc/vp9-profile2.html [ Failure ]
+
+# Failures after libwebrtc M87 update
+webkit.org/b/218787 webrtc/direction-change.html [ Crash ]
+webkit.org/b/218787 webrtc/h264-packetization-mode.html [ Crash ]
+webkit.org/b/218787 webrtc/connection-state.html [ Failure ]
+webkit.org/b/218787 webrtc/createOfferAnswer.html [ Failure ]
+webkit.org/b/218787 webrtc/disable-encryption.html [ Failure ]
+webkit.org/b/218787 webrtc/ephemeral-certificates-and-cnames.html [ Failure ]
+webkit.org/b/218787 webrtc/libwebrtc/setLocalDescriptionCrash.html [ Failure ]
+webkit.org/b/218787 webrtc/msection-recycling.html [ Failure ]
+webkit.org/b/218787 webrtc/multi-audio.html [ Failure ]
+webkit.org/b/218787 webrtc/release-after-getting-track.html [ Failure ]
+webkit.org/b/218787 webrtc/remove-track.html [ Failure ]
+webkit.org/b/218787 webrtc/utf8-sdp.html [ Failure ]
+webkit.org/b/218787 webrtc/video-mediastreamtrack-stats.html [ Failure ]
+webkit.org/b/218787 webrtc/video-receivers.html [ Failure ]
+webkit.org/b/218787 webrtc/video-replace-track-to-null.html [ Failure ]
+webkit.org/b/218787 webrtc/video-stats.html [ Failure ]
+webkit.org/b/218787 fast/mediastream/RTCPeerConnection-statsSelector.html [ Timeout ]
+webkit.org/b/218787 webrtc/concurrentVideoPlayback.html [ Timeout ]
+webkit.org/b/218787 webrtc/ice-candidate-sdpMLineIndex.html [ Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WebRTC-related bugs
