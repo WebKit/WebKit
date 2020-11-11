@@ -119,7 +119,7 @@ std::unique_ptr<InlineTextBox> RenderSVGInlineText::createTextBox()
     return box; 
 }
 
-LayoutRect RenderSVGInlineText::localCaretRect(const InlineRunAndOffset& runAndOffset, LayoutUnit*) const
+LayoutRect RenderSVGInlineText::localCaretRect(const InlineRunAndOffset& runAndOffset, CaretRectMode) const
 {
     auto* box = runAndOffset.run ? runAndOffset.run->legacyInlineBox() : nullptr;
     auto caretOffset = runAndOffset.offset;

@@ -4430,7 +4430,7 @@ void RenderBox::computePositionedLogicalHeightReplaced(LogicalExtentComputedValu
     computedValues.m_position = logicalTopPos;
 }
 
-LayoutRect RenderBox::localCaretRect(const InlineRunAndOffset& runAndOffset, LayoutUnit* extraWidthToEndOfLine) const
+LayoutRect RenderBox::localCaretRect(const InlineRunAndOffset& runAndOffset, CaretRectMode caretRectMode) const
 {
     // VisiblePositions at offsets inside containers either a) refer to the positions before/after
     // those containers (tables and select elements) or b) refer to the position inside an empty block.
@@ -4462,9 +4462,6 @@ LayoutRect RenderBox::localCaretRect(const InlineRunAndOffset& runAndOffset, Lay
     if (fontHeight > rect.height() || (!isReplaced() && !isTable()))
         rect.setHeight(fontHeight);
 
-    if (extraWidthToEndOfLine)
-        *extraWidthToEndOfLine = x() + width() - rect.maxX();
-
     // Move to local coords
     rect.moveBy(-location());
 
@@ -4476,10 +4473,10 @@ LayoutRect RenderBox::localCaretRect(const InlineRunAndOffset& runAndOffset, Lay
         rect.setY(rect.y() + paddingTop() + borderTop());
     }
 
-    if (!isHorizontalWritingMode())
-        return rect.transposedRect();
+    if (caretRectMode == CaretRectMode::ExpandToEndOfLine)
+        rect.shiftMaxXEdgeTo(x() + width());
 
-    return rect;
+    return isHorizontalWritingMode() ? rect : rect.transposedRect();
 }
 
 VisiblePosition RenderBox::positionForPoint(const LayoutPoint& point, const RenderFragmentContainer* fragment)

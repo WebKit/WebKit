@@ -224,12 +224,12 @@ Position RenderedPosition::positionAtRightBoundaryOfBiDiRun() const
     return makeDeprecatedLegacyPosition(previousLeafOnLine()->renderer().node(), previousLeafOnLine()->rightmostCaretOffset());
 }
 
-IntRect RenderedPosition::absoluteRect(LayoutUnit* extraWidthToEndOfLine) const
+IntRect RenderedPosition::absoluteRect(CaretRectMode caretRectMode) const
 {
     if (isNull())
         return IntRect();
 
-    IntRect localRect = snappedIntRect(const_cast<RenderObject*>(m_renderer)->localCaretRect({ m_run, m_offset }, extraWidthToEndOfLine));
+    IntRect localRect = snappedIntRect(m_renderer->localCaretRect({ m_run, m_offset }, caretRectMode));
     return localRect == IntRect() ? IntRect() : m_renderer->localToAbsoluteQuad(FloatRect(localRect)).enclosingBoundingBox();
 }
 

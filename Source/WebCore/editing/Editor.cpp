@@ -3346,18 +3346,7 @@ IntRect Editor::firstRectForRange(const SimpleRange& range) const
     if (inSameLine(start, end))
         return enclosingIntRect(unitedBoundingBoxes(RenderObject::absoluteTextQuads(range)));
 
-    LayoutUnit extraWidthToEndOfLine;
-    IntRect startCaretRect = RenderedPosition(start).absoluteRect(&extraWidthToEndOfLine);
-    if (startCaretRect == IntRect())
-        return IntRect();
-
-    // When start and end aren't on the same line, we want to go from start to the end of its line.
-    auto result = startCaretRect;
-    if (startCaretRect.width() == caretWidth)
-        result.expand(extraWidthToEndOfLine, 0);
-    else
-        result.expand(0, extraWidthToEndOfLine);
-    return result;
+    return RenderedPosition(start).absoluteRect(CaretRectMode::ExpandToEndOfLine);
 }
 
 bool Editor::shouldChangeSelection(const VisibleSelection& oldSelection, const VisibleSelection& newSelection, Affinity affinity, bool stillSelecting) const

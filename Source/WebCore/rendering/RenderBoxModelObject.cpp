@@ -2626,7 +2626,7 @@ void RenderBoxModelObject::clearFirstLetterRemainingText()
     firstLetterRemainingTextMap().remove(this);
 }
 
-LayoutRect RenderBoxModelObject::localCaretRectForEmptyElement(LayoutUnit width, LayoutUnit textIndentOffset) const
+LayoutRect RenderBoxModelObject::localCaretRectForEmptyElement(LayoutUnit width, LayoutUnit textIndentOffset, CaretRectMode caretRectMode) const
 {
     ASSERT(!firstChild());
 
@@ -2689,7 +2689,13 @@ LayoutRect RenderBoxModelObject::localCaretRectForEmptyElement(LayoutUnit width,
     auto lineHeight = this->lineHeight(true, currentStyle.isHorizontalWritingMode() ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes);
     auto height = std::min(lineHeight, LayoutUnit { currentStyle.fontMetrics().height() });
     auto y = paddingTop() + borderTop() + (lineHeight > height ? (lineHeight - height) / 2 : LayoutUnit { });
-    return currentStyle.isHorizontalWritingMode() ? LayoutRect(x, y, caretWidth, height) : LayoutRect(y, x, height, caretWidth);
+
+    auto rect = LayoutRect(x, y, caretWidth, height);
+
+    if (caretRectMode == CaretRectMode::ExpandToEndOfLine)
+        rect.shiftMaxXEdgeTo(width);
+
+    return currentStyle.isHorizontalWritingMode() ? rect : rect.transposedRect();
 }
 
 bool RenderBoxModelObject::shouldAntialiasLines(GraphicsContext& context)

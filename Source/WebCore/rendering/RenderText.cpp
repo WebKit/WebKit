@@ -709,7 +709,7 @@ VisiblePosition RenderText::positionForPoint(const LayoutPoint& point, const Ren
     return createVisiblePosition(0, Affinity::Downstream);
 }
 
-LayoutRect RenderText::localCaretRect(const InlineRunAndOffset& runAndOffset, LayoutUnit* extraWidthToEndOfLine) const
+LayoutRect RenderText::localCaretRect(const InlineRunAndOffset& runAndOffset, CaretRectMode caretRectMode) const
 {
     if (!runAndOffset.run)
         return LayoutRect();
@@ -718,7 +718,7 @@ LayoutRect RenderText::localCaretRect(const InlineRunAndOffset& runAndOffset, La
     auto line = textRun.line();
 
     float position = textRun->positionForOffset(runAndOffset.offset);
-    return line->containingBlock().computeCaretRect(line->selectionRect(), position, caretWidth, extraWidthToEndOfLine);
+    return line->containingBlock().computeCaretRect(line->selectionRect(), position, caretWidth, caretRectMode);
 }
 
 ALWAYS_INLINE float RenderText::widthFromCache(const FontCascade& f, unsigned start, unsigned len, float xPos, HashSet<const Font*>* fallbackFonts, GlyphOverflow* glyphOverflow, const RenderStyle& style) const

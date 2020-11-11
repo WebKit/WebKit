@@ -158,7 +158,7 @@ void RenderLineBreak::setSelectionState(HighlightState state)
     m_inlineBoxWrapper->root().setHasSelectedChildren(state != HighlightState::None);
 }
 
-LayoutRect RenderLineBreak::localCaretRect(const InlineRunAndOffset& runAndOffset, LayoutUnit* extraWidthToEndOfLine) const
+LayoutRect RenderLineBreak::localCaretRect(const InlineRunAndOffset& runAndOffset, CaretRectMode caretRectMode) const
 {
     ASSERT(!runAndOffset.offset);
     ASSERT(runAndOffset.run == LayoutIntegration::runFor(*this));
@@ -167,7 +167,7 @@ LayoutRect RenderLineBreak::localCaretRect(const InlineRunAndOffset& runAndOffse
         return LayoutRect();
 
     auto line = runAndOffset.run.line();
-    return line->containingBlock().computeCaretRect(line->selectionRect(), line->logicalLeft(), caretWidth, extraWidthToEndOfLine);
+    return line->containingBlock().computeCaretRect(line->selectionRect(), line->logicalLeft(), caretWidth, caretRectMode);
 }
 
 IntRect RenderLineBreak::linesBoundingBox() const
@@ -214,7 +214,7 @@ void RenderLineBreak::collectSelectionRects(Vector<SelectionRect>& rects, unsign
     const RootInlineBox& rootBox = box->root();
 
     auto line = LayoutIntegration::LineIterator(&rootBox);
-    LayoutRect rect = rootBox.blockFlow().computeCaretRect(line->selectionRect(), line->logicalLeft(), 0, nullptr);
+    LayoutRect rect = rootBox.blockFlow().computeCaretRect(line->selectionRect(), line->logicalLeft(), 0);
 
     if (rootBox.isFirstAfterPageBreak()) {
         if (box->isHorizontal())

@@ -61,4 +61,10 @@ enum MapCoordinatesMode {
 };
 typedef unsigned MapCoordinatesFlags;
 
+enum class CaretRectMode {
+    Normal,
+    ExpandToEndOfLine
+};
+
+
 }

@@ -674,7 +674,7 @@ public:
     virtual bool shouldPaintSelectionGaps() const { return false; }
 
     // Returns the local coordinates of the caret within this render object.
-    virtual LayoutRect localCaretRect(const InlineRunAndOffset&, LayoutUnit* extraWidthToEndOfLine = nullptr) const;
+    virtual LayoutRect localCaretRect(const InlineRunAndOffset&, CaretRectMode = CaretRectMode::Normal) const;
 
     // When performing a global document tear-down, or when going into the back/forward cache, the renderer of the document is cleared.
     bool renderTreeBeingDestroyed() const;

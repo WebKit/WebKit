@@ -498,7 +498,7 @@ override;
 
     bool shouldTreatChildAsReplacedInTableCells() const;
     
-    LayoutRect localCaretRect(const InlineRunAndOffset&, LayoutUnit* extraWidthToEndOfLine = nullptr) const override;
+    LayoutRect localCaretRect(const InlineRunAndOffset&, CaretRectMode) const override;
 
     virtual LayoutRect overflowClipRect(const LayoutPoint& location, RenderFragmentContainer* = nullptr, OverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize, PaintPhase = PaintPhase::BlockBackground) const;
     virtual LayoutRect overflowClipRectForChildLayers(const LayoutPoint& location, RenderFragmentContainer* fragment, OverlayScrollbarSizeRelevancy relevancy) const { return overflowClipRect(location, fragment, relevancy); }

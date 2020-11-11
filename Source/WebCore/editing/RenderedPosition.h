@@ -69,7 +69,7 @@ public:
     Position positionAtLeftBoundaryOfBiDiRun() const;
     Position positionAtRightBoundaryOfBiDiRun() const;
 
-    IntRect absoluteRect(LayoutUnit* extraWidthToEndOfLine = nullptr) const;
+    IntRect absoluteRect(CaretRectMode = CaretRectMode::Normal) const;
 
 private:
     bool operator==(const RenderedPosition&) const { return false; }

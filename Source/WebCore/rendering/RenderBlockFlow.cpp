@@ -4438,7 +4438,7 @@ void RenderBlockFlow::computeInlinePreferredLogicalWidths(LayoutUnit& minLogical
     maxLogicalWidth = preferredWidth(maxLogicalWidth, inlineMax);
 }
 
-IntRect RenderBlockFlow::computeCaretRect(const LayoutRect& lineSelectionRect, float logicalLeftPosition, unsigned caretWidth, LayoutUnit* extraWidthToEndOfLine) const
+LayoutRect RenderBlockFlow::computeCaretRect(const LayoutRect& lineSelectionRect, float logicalLeftPosition, unsigned caretWidth, CaretRectMode caretRectMode) const
 {
     int height = lineSelectionRect.height();
     int top = lineSelectionRect.y();
@@ -4452,9 +4452,6 @@ IntRect RenderBlockFlow::computeCaretRect(const LayoutRect& lineSelectionRect, f
 
     float lineLeft = lineSelectionRect.x();
     float lineRight = lineSelectionRect.maxX();
-
-    if (extraWidthToEndOfLine)
-        *extraWidthToEndOfLine = lineRight - (left + caretWidth);
 
     bool rightAligned = false;
     switch (style().textAlign()) {
@@ -4486,7 +4483,13 @@ IntRect RenderBlockFlow::computeCaretRect(const LayoutRect& lineSelectionRect, f
         left = std::min(left, rightEdge - caretWidthRightOfOffset);
         left = std::max(left, lineLeft);
     }
-    return style().isHorizontalWritingMode() ? IntRect(left, top, caretWidth, height) : IntRect(top, left, height, caretWidth);
+
+    auto rect = IntRect(left, top, caretWidth, height);
+
+    if (caretRectMode == CaretRectMode::ExpandToEndOfLine)
+        rect.shiftMaxXEdgeTo(lineRight);
+
+    return style().isHorizontalWritingMode() ? rect : rect.transposedRect();
 }
 
 }

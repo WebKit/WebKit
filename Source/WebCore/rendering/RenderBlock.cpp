@@ -2841,19 +2841,13 @@ void RenderBlock::updateHitTestResult(HitTestResult& result, const LayoutPoint& 
     }
 }
 
-LayoutRect RenderBlock::localCaretRect(const InlineRunAndOffset& runAndOffset, LayoutUnit* extraWidthToEndOfLine) const
+LayoutRect RenderBlock::localCaretRect(const InlineRunAndOffset& runAndOffset, CaretRectMode caretRectMode) const
 {
     // Do the normal calculation in most cases.
     if (firstChild())
-        return RenderBox::localCaretRect(runAndOffset, extraWidthToEndOfLine);
+        return RenderBox::localCaretRect(runAndOffset, caretRectMode);
 
-    LayoutRect caretRect = localCaretRectForEmptyElement(width(), textIndentOffset());
-
-    // FIXME: Does this need to adjust for vertical orientation?
-    if (extraWidthToEndOfLine)
-        *extraWidthToEndOfLine = width() - caretRect.maxX();
-
-    return caretRect;
+    return localCaretRectForEmptyElement(width(), textIndentOffset(), caretRectMode);
 }
 
 void RenderBlock::addFocusRingRectsForInlineChildren(Vector<LayoutRect>&, const LayoutPoint&, const RenderLayerModelObject*)

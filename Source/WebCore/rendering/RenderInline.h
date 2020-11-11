@@ -86,7 +86,7 @@ public:
     void setAlwaysCreateLineBoxes() { setRenderInlineAlwaysCreatesLineBoxes(true); }
     void updateAlwaysCreateLineBoxes(bool fullLayout);
 
-    LayoutRect localCaretRect(const InlineRunAndOffset&, LayoutUnit* extraWidthToEndOfLine) const final;
+    LayoutRect localCaretRect(const InlineRunAndOffset&, CaretRectMode) const final;
 
     bool hitTestCulledInline(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset);
 
