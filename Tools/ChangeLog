@@ -1,3 +1,14 @@
+2020-11-11  Aakash Jain  <aakash_jain@apple.com>
+
+        [build.webkit.org] Update CheckOutSource step for new buildbot
+        https://bugs.webkit.org/show_bug.cgi?id=218802
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/build-webkit-org/steps.py:
+        (CheckOutSource):
+        (CheckOutSource.__init__):
+
 2020-11-11  Chris Dumez  <cdumez@apple.com>
 
         [GPUProcess] Seamlessly resume WebAudio playback if the GPU Process crashes

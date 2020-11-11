@@ -21,7 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from buildbot.process import buildstep, factory, properties
-from buildbot.steps import master, shell, source, transfer, trigger
+from buildbot.steps import master, shell, transfer, trigger
 from buildbot.status.builder import SUCCESS, FAILURE, WARNINGS, SKIPPED, EXCEPTION
 
 from twisted.internet import defer
@@ -44,7 +44,9 @@ WithProperties = properties.WithProperties
 if USE_BUILDBOT_VERSION2:
     Interpolate = properties.Interpolate
     from buildbot.process import logobserver
+    from buildbot.steps.source.svn import SVN
 else:
+    from buildbot.steps.source import SVN
     logobserver = lambda: None
     logobserver.LineConsumerLogObserver = type('LineConsumerLogObserver', (object,), {})
 
@@ -131,14 +133,16 @@ class ConfigureBuild(buildstep.BuildStep):
         return defer.succeed(None)
 
 
-class CheckOutSource(source.SVN):
-    mode = "update"
-
+class CheckOutSource(SVN):
     def __init__(self, **kwargs):
-        kwargs['baseURL'] = "https://svn.webkit.org/repository/webkit/"
-        kwargs['defaultBranch'] = "trunk"
-        kwargs['mode'] = self.mode
-        source.SVN.__init__(self, **kwargs)
+        if USE_BUILDBOT_VERSION2:
+            kwargs['repourl'] = 'https://svn.webkit.org/repository/webkit/trunk'
+            kwargs['mode'] = 'incremental'
+        else:
+            kwargs['baseURL'] = "https://svn.webkit.org/repository/webkit/"
+            kwargs['defaultBranch'] = "trunk"
+            kwargs['mode'] = 'update'
+        super(CheckOutSource, self).__init__(**kwargs)
 
 
 class InstallWin32Dependencies(shell.Compile):
