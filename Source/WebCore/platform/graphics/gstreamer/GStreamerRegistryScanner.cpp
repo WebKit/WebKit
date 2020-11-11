@@ -613,7 +613,7 @@ GStreamerRegistryScanner::RegistryLookupResult GStreamerRegistryScanner::isConfi
         auto& audioConfiguration = mediaConfiguration.audio.value();
         GST_DEBUG("Checking %s support for audio configuration: \"%s\" %s channels, bitrate: %" G_GUINT64_FORMAT " samplerate: %u", configLogString,
             audioConfiguration.contentType.utf8().data(), audioConfiguration.channels.utf8().data(),
-            audioConfiguration.bitrate, audioConfiguration.samplerate);
+            audioConfiguration.bitrate.valueOr(0), audioConfiguration.samplerate.valueOr(0));
         auto contentType = ContentType(audioConfiguration.contentType);
         isSupported = isContainerTypeSupported(configuration, contentType.containerType());
     }
