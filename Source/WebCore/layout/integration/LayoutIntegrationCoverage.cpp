@@ -38,6 +38,7 @@
 #include "RenderView.h"
 #include "RuntimeEnabledFeatures.h"
 #include "Settings.h"
+#include <pal/Logging.h>
 #include <wtf/OptionSet.h>
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
@@ -76,6 +77,317 @@
 
 namespace WebCore {
 namespace LayoutIntegration {
+
+#ifndef NDEBUG
+static void printReason(AvoidanceReason reason, TextStream& stream)
+{
+    switch (reason) {
+    case AvoidanceReason::FlowIsInsideANonMultiColumnThread:
+        stream << "flow is inside a non-multicolumn container";
+        break;
+    case AvoidanceReason::FlowHasHorizonalWritingMode:
+        stream << "horizontal writing mode";
+        break;
+    case AvoidanceReason::FlowHasOutline:
+        stream << "outline";
+        break;
+    case AvoidanceReason::FlowIsRuby:
+        stream << "ruby";
+        break;
+    case AvoidanceReason::FlowHasHangingPunctuation:
+        stream << "hanging punctuation";
+        break;
+    case AvoidanceReason::FlowIsPaginated:
+        stream << "paginated";
+        break;
+    case AvoidanceReason::FlowHasTextOverflow:
+        stream << "text-overflow";
+        break;
+    case AvoidanceReason::FlowIsDepricatedFlexBox:
+        stream << "depricatedFlexBox";
+        break;
+    case AvoidanceReason::FlowParentIsPlaceholderElement:
+        stream << "placeholder element";
+        break;
+    case AvoidanceReason::FlowParentIsTextAreaWithWrapping:
+        stream << "wrapping textarea";
+        break;
+    case AvoidanceReason::FlowHasNonSupportedChild:
+        stream << "nested renderers";
+        break;
+    case AvoidanceReason::FlowHasUnsupportedFloat:
+        stream << "complicated float";
+        break;
+    case AvoidanceReason::FlowHasUnsupportedUnderlineDecoration:
+        stream << "text-underline-position: under";
+        break;
+    case AvoidanceReason::FlowHasJustifiedNonLatinText:
+        stream << "text-align: justify with non-latin text";
+        break;
+    case AvoidanceReason::FlowHasOverflowNotVisible:
+        stream << "overflow: hidden | scroll | auto";
+        break;
+    case AvoidanceReason::FlowHasWebKitNBSPMode:
+        stream << "-webkit-nbsp-mode: space";
+        break;
+    case AvoidanceReason::FlowIsNotLTR:
+        stream << "dir is not LTR";
+        break;
+    case AvoidanceReason::FlowHasLineBoxContainProperty:
+        stream << "line-box-contain value indicates variable line height";
+        break;
+    case AvoidanceReason::FlowIsNotTopToBottom:
+        stream << "non top-to-bottom flow";
+        break;
+    case AvoidanceReason::FlowHasNonNormalUnicodeBiDi:
+        stream << "non-normal Unicode bidi";
+        break;
+    case AvoidanceReason::FlowHasRTLOrdering:
+        stream << "-webkit-rtl-ordering";
+        break;
+    case AvoidanceReason::FlowHasLineAlignEdges:
+        stream << "-webkit-line-align edges";
+        break;
+    case AvoidanceReason::FlowHasLineSnap:
+        stream << "-webkit-line-snap property";
+        break;
+    case AvoidanceReason::FlowHasTextEmphasisFillOrMark:
+        stream << "text-emphasis (fill/mark)";
+        break;
+    case AvoidanceReason::FlowHasPseudoFirstLine:
+        stream << "first-line";
+        break;
+    case AvoidanceReason::FlowHasPseudoFirstLetter:
+        stream << "first-letter";
+        break;
+    case AvoidanceReason::FlowHasTextCombine:
+        stream << "text combine";
+        break;
+    case AvoidanceReason::FlowHasTextFillBox:
+        stream << "background-color (text-fill)";
+        break;
+    case AvoidanceReason::FlowHasBorderFitLines:
+        stream << "-webkit-border-fit";
+        break;
+    case AvoidanceReason::FlowHasNonAutoLineBreak:
+        stream << "line-break is not auto";
+        break;
+    case AvoidanceReason::FlowHasTextSecurity:
+        stream << "text-security is not none";
+        break;
+    case AvoidanceReason::FlowHasSVGFont:
+        stream << "SVG font";
+        break;
+    case AvoidanceReason::FlowTextHasDirectionCharacter:
+        stream << "direction character";
+        break;
+    case AvoidanceReason::FlowIsMissingPrimaryFont:
+        stream << "missing primary font";
+        break;
+    case AvoidanceReason::FlowPrimaryFontIsInsufficient:
+        stream << "missing glyph or glyph needs another font";
+        break;
+    case AvoidanceReason::FlowTextIsCombineText:
+        stream << "text is combine";
+        break;
+    case AvoidanceReason::FlowTextIsRenderCounter:
+        stream << "unsupported RenderCounter";
+        break;
+    case AvoidanceReason::FlowTextIsRenderQuote:
+        stream << "unsupported RenderQuote";
+        break;
+    case AvoidanceReason::FlowTextIsTextFragment:
+        stream << "unsupported TextFragment";
+        break;
+    case AvoidanceReason::FlowTextIsSVGInlineText:
+        stream << "unsupported SVGInlineText";
+        break;
+    case AvoidanceReason::FlowHasComplexFontCodePath:
+        stream << "text with complex font codepath";
+        break;
+    case AvoidanceReason::FlowHasTextShadow:
+        stream << "text-shadow";
+        break;
+    case AvoidanceReason::FlowChildIsSelected:
+        stream << "selected content";
+        break;
+    case AvoidanceReason::FlowFontHasOverflowGlyph:
+        stream << "-webkit-line-box-contain: glyphs with overflowing text.";
+        break;
+    case AvoidanceReason::FlowTextHasSurrogatePair:
+        stream << "surrogate pair";
+        break;
+    case AvoidanceReason::MultiColumnFlowIsNotTopLevel:
+        stream << "non top level column";
+        break;
+    case AvoidanceReason::MultiColumnFlowHasColumnSpanner:
+        stream << "column has spanner";
+        break;
+    case AvoidanceReason::MultiColumnFlowVerticalAlign:
+        stream << "column with vertical-align != baseline";
+        break;
+    case AvoidanceReason::MultiColumnFlowIsFloating:
+        stream << "column with floating objects";
+        break;
+    case AvoidanceReason::FlowIncludesDocumentMarkers:
+        stream << "text includes document markers";
+        break;
+    case AvoidanceReason::FlowDoesNotEstablishInlineFormattingContext:
+        stream << "flow does not establishes inline formatting context";
+        break;
+    default:
+        break;
+    }
+}
+
+static void printReasons(OptionSet<AvoidanceReason> reasons, TextStream& stream)
+{
+    stream << " ";
+    for (auto reason : reasons) {
+        printReason(reason, stream);
+        stream << ", ";
+    }
+}
+
+static void printTextForSubtree(const RenderObject& renderer, unsigned& charactersLeft, TextStream& stream)
+{
+    if (!charactersLeft)
+        return;
+    if (is<RenderText>(renderer)) {
+        String text = downcast<RenderText>(renderer).text();
+        text = text.stripWhiteSpace();
+        unsigned len = std::min(charactersLeft, text.length());
+        stream << text.left(len);
+        charactersLeft -= len;
+        return;
+    }
+    if (!is<RenderElement>(renderer))
+        return;
+    for (const auto* child = downcast<RenderElement>(renderer).firstChild(); child; child = child->nextSibling())
+        printTextForSubtree(*child, charactersLeft, stream);
+}
+
+static unsigned textLengthForSubtree(const RenderObject& renderer)
+{
+    if (is<RenderText>(renderer))
+        return downcast<RenderText>(renderer).text().length();
+    if (!is<RenderElement>(renderer))
+        return 0;
+    unsigned textLength = 0;
+    for (const auto* child = downcast<RenderElement>(renderer).firstChild(); child; child = child->nextSibling())
+        textLength += textLengthForSubtree(*child);
+    return textLength;
+}
+
+static void collectNonEmptyLeafRenderBlockFlows(const RenderObject& renderer, HashSet<const RenderBlockFlow*>& leafRenderers)
+{
+    if (is<RenderText>(renderer)) {
+        if (!downcast<RenderText>(renderer).text().length())
+            return;
+        // Find RenderBlockFlow ancestor.
+        for (const auto* current = renderer.parent(); current; current = current->parent()) {
+            if (!is<RenderBlockFlow>(current))
+                continue;
+            leafRenderers.add(downcast<RenderBlockFlow>(current));
+            break;
+        }
+        return;
+    }
+    if (!is<RenderElement>(renderer))
+        return;
+    for (const auto* child = downcast<RenderElement>(renderer).firstChild(); child; child = child->nextSibling())
+        collectNonEmptyLeafRenderBlockFlows(*child, leafRenderers);
+}
+
+static void collectNonEmptyLeafRenderBlockFlowsForCurrentPage(HashSet<const RenderBlockFlow*>& leafRenderers)
+{
+    for (const auto* document : Document::allDocuments()) {
+        if (!document->renderView() || document->backForwardCacheState() != Document::NotInBackForwardCache)
+            continue;
+        if (!document->isHTMLDocument() && !document->isXHTMLDocument())
+            continue;
+        collectNonEmptyLeafRenderBlockFlows(*document->renderView(), leafRenderers);
+    }
+}
+
+static void printModernLineLayoutBlockList(void)
+{
+    HashSet<const RenderBlockFlow*> leafRenderers;
+    collectNonEmptyLeafRenderBlockFlowsForCurrentPage(leafRenderers);
+    if (!leafRenderers.size()) {
+        WTFLogAlways("No text found in this document\n");
+        return;
+    }
+    TextStream stream;
+    stream << "---------------------------------------------------\n";
+    for (const auto* flow : leafRenderers) {
+        auto reasons = canUseForLineLayoutWithReason(*flow, IncludeReasons::All);
+        if (reasons.isEmpty())
+            continue;
+        unsigned printedLength = 30;
+        stream << "\"";
+        printTextForSubtree(*flow, printedLength, stream);
+        for (;printedLength > 0; --printedLength)
+            stream << " ";
+        stream << "\"(" << textLengthForSubtree(*flow) << "):";
+        printReasons(reasons, stream);
+        stream << "\n";
+    }
+    stream << "---------------------------------------------------\n";
+    WTFLogAlways("%s", stream.release().utf8().data());
+}
+
+static void printModernLineLayoutCoverage(void)
+{
+    HashSet<const RenderBlockFlow*> leafRenderers;
+    collectNonEmptyLeafRenderBlockFlowsForCurrentPage(leafRenderers);
+    if (!leafRenderers.size()) {
+        WTFLogAlways("No text found in this document\n");
+        return;
+    }
+    TextStream stream;
+    HashMap<AvoidanceReason, unsigned, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> flowStatistics;
+    unsigned textLength = 0;
+    unsigned unsupportedTextLength = 0;
+    unsigned numberOfUnsupportedLeafBlocks = 0;
+    unsigned supportedButForcedToLineLayoutTextLength = 0;
+    unsigned numberOfSupportedButForcedToLineLayoutLeafBlocks = 0;
+    for (const auto* flow : leafRenderers) {
+        auto flowLength = textLengthForSubtree(*flow);
+        textLength += flowLength;
+        auto reasons = canUseForLineLayoutWithReason(*flow, IncludeReasons::All);
+        if (reasons.isEmpty()) {
+            if (flow->lineLayoutPath() == RenderBlockFlow::ForceLineBoxesPath) {
+                supportedButForcedToLineLayoutTextLength += flowLength;
+                ++numberOfSupportedButForcedToLineLayoutLeafBlocks;
+            }
+            continue;
+        }
+        ++numberOfUnsupportedLeafBlocks;
+        unsupportedTextLength += flowLength;
+        for (auto reason : reasons) {
+            auto result = flowStatistics.add(static_cast<uint64_t>(reason), flowLength);
+            if (!result.isNewEntry)
+                result.iterator->value += flowLength;
+        }
+    }
+    stream << "---------------------------------------------------\n";
+    if (supportedButForcedToLineLayoutTextLength) {
+        stream << "Modern line layout potential coverage: " << (float)(textLength - unsupportedTextLength) / (float)textLength * 100 << "%\n\n";
+        stream << "Modern line layout actual coverage: " << (float)(textLength - unsupportedTextLength - supportedButForcedToLineLayoutTextLength) / (float)textLength * 100 << "%\nForced line layout blocks: " << numberOfSupportedButForcedToLineLayoutLeafBlocks << " content length: " << supportedButForcedToLineLayoutTextLength << "(" << (float)supportedButForcedToLineLayoutTextLength / (float)textLength * 100 << "%)";
+    } else
+        stream << "Modern line layout coverage: " << (float)(textLength - unsupportedTextLength) / (float)textLength * 100 << "%";
+    stream << "\n\n";
+    stream << "Number of blocks: total(" <<  leafRenderers.size() << ") legacy(" << numberOfUnsupportedLeafBlocks << ")\nContent length: total(" <<
+        textLength << ") legacy(" << unsupportedTextLength << ")\n";
+    for (const auto& reasonEntry : flowStatistics) {
+        printReason(static_cast<AvoidanceReason>(reasonEntry.key), stream);
+        stream << ": " << (float)reasonEntry.value / (float)textLength * 100 << "%\n";
+    }
+    stream << "---------------------------------------------------\n";
+    WTFLogAlways("%s", stream.release().utf8().data());
+}
+#endif
 
 template <typename CharacterType> OptionSet<AvoidanceReason> canUseForCharacter(CharacterType, bool textIsJustified, IncludeReasons);
 
@@ -312,9 +624,15 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderObject& child, Incl
     return reasons;
 }
 
-
 OptionSet<AvoidanceReason> canUseForLineLayoutWithReason(const RenderBlockFlow& flow, IncludeReasons includeReasons)
 {
+#ifndef NDEBUG
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        PAL::registerNotifyCallback("com.apple.WebKit.showModernLineLayoutCoverage", WTF::Function<void()> { printModernLineLayoutCoverage });
+        PAL::registerNotifyCallback("com.apple.WebKit.showModernLineLayoutReasons", WTF::Function<void()> { printModernLineLayoutBlockList });
+    });
+#endif
     OptionSet<AvoidanceReason> reasons;
     // FIXME: For tests that disable SLL and expect to get CLL.
     if (!flow.settings().simpleLineLayoutEnabled())
