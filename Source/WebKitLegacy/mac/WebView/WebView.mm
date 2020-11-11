@@ -3088,7 +3088,6 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings.setNeedsKeyboardEventDisambiguationQuirks([self _needsKeyboardEventDisambiguationQuirks]);
     settings.setEnforceCSSMIMETypeInNoQuirksMode(!_CFAppVersionCheckLessThan(CFSTR("com.apple.iWeb"), -1, 2.1));
     settings.setNeedsIsLoadingInAPISenseQuirk([self _needsIsLoadingInAPISenseQuirk]);
-    settings.setExperimentalNotificationsEnabled([preferences experimentalNotificationsEnabled]);
 #endif
 
 #if PLATFORM(IOS_FAMILY)

@@ -395,7 +395,6 @@ public:
         @NO, WebKitUserStyleSheetEnabledPreferenceKey,
         @"", WebKitUserStyleSheetLocationPreferenceKey,
         @NO, WebKitShrinksStandaloneImagesToFitPreferenceKey,
-        @NO, WebKitExperimentalNotificationsEnabledPreferenceKey,
         @YES, WebKitAllowAnimatedImagesPreferenceKey,
         @YES, WebKitAllowAnimatedImageLoopingPreferenceKey,
         @"1800", WebKitBackForwardCacheExpirationIntervalKey,
@@ -1577,16 +1576,6 @@ public:
 - (void)setLocalStorageEnabled:(BOOL)localStorageEnabled
 {
     [self _setBoolValue:localStorageEnabled forKey:WebKitLocalStorageEnabledPreferenceKey];
-}
-
-- (BOOL)experimentalNotificationsEnabled
-{
-    return [self _boolValueForKey:WebKitExperimentalNotificationsEnabledPreferenceKey];
-}
-
-- (void)setExperimentalNotificationsEnabled:(BOOL)experimentalNotificationsEnabled
-{
-    [self _setBoolValue:experimentalNotificationsEnabled forKey:WebKitExperimentalNotificationsEnabledPreferenceKey];
 }
 
 + (WebPreferences *)_getInstanceForIdentifier:(NSString *)ident
@@ -3500,6 +3489,15 @@ static NSString *classIBCreatorID = nil;
 }
 
 - (BOOL)accelerated2dCanvasEnabled
+{
+    return NO;
+}
+
+- (void)setExperimentalNotificationsEnabled:(BOOL)enabled
+{
+}
+
+- (BOOL)experimentalNotificationsEnabled
 {
     return NO;
 }

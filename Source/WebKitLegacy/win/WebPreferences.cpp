@@ -1686,9 +1686,8 @@ HRESULT WebPreferences::setLocalStorageDatabasePath(_In_ BSTR location)
     return S_OK;
 }
 
-HRESULT WebPreferences::setExperimentalNotificationsEnabled(BOOL enabled)
+HRESULT WebPreferences::setExperimentalNotificationsEnabled(BOOL)
 {
-    setBoolValue(WebKitExperimentalNotificationsEnabledPreferenceKey, enabled);
     return S_OK;
 }
 
@@ -1696,7 +1695,7 @@ HRESULT WebPreferences::experimentalNotificationsEnabled(_Out_ BOOL* enabled)
 {
     if (!enabled)
         return E_POINTER;
-    *enabled = boolValueForKey(WebKitExperimentalNotificationsEnabledPreferenceKey);
+    *enabled = true;
     return S_OK;
 }
 

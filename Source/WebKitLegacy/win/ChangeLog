@@ -1,3 +1,17 @@
+2020-11-11  Sam Weinig  <weinig@apple.com>
+
+        Remove unused ExperimentalNotificationsEnabled setting
+        https://bugs.webkit.org/show_bug.cgi?id=218813
+
+        Reviewed by Tim Horton.
+
+        * WebPreferences.cpp:
+        (WebPreferences::setExperimentalNotificationsEnabled):
+        (WebPreferences::experimentalNotificationsEnabled):
+        * WebView.cpp:
+        (WebView::notifyPreferencesChanged):
+        Obsolete ExperimentalNotificationsEnabled preference as it does nothing.
+
 2020-11-09  Chris Dumez  <cdumez@apple.com>
 
         Unexpose obsolete HTMLAppletElement interface

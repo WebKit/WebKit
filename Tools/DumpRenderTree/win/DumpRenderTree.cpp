@@ -883,7 +883,6 @@ static void resetWebPreferencesToConsistentValues(IWebPreferences* preferences)
     preferences->setShouldPrintBackgrounds(TRUE);
     preferences->setCacheModel(WebCacheModelDocumentBrowser);
     prefsPrivate->setXSSAuditorEnabled(FALSE);
-    prefsPrivate->setExperimentalNotificationsEnabled(FALSE);
     preferences->setPlugInsEnabled(TRUE);
     preferences->setTextAreasAreResizable(TRUE);
     preferences->setUsesPageCache(FALSE);

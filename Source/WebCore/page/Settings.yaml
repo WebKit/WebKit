@@ -187,12 +187,6 @@ EnforceCSSMIMETypeInNoQuirksMode:
     WebCore:
       default: true
 
-ExperimentalNotificationsEnabled:
-  type: bool
-  defaultValue:
-    WebCore:
-      default: false
-
 FixedBackgroundsPaintRelativeToDocument:
   type: bool
   defaultValue:

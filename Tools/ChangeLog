@@ -1,3 +1,16 @@
+2020-11-11  Sam Weinig  <weinig@apple.com>
+
+        Remove unused ExperimentalNotificationsEnabled setting
+        https://bugs.webkit.org/show_bug.cgi?id=218813
+
+        Reviewed by Tim Horton.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetWebPreferencesToConsistentValues):
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (resetWebPreferencesToConsistentValues):
+        Stop setting ExperimentalNotificationsEnabled to false. It does nothing.
+
 2020-11-11  Chris Dumez  <cdumez@apple.com>
 
         Terminate WebProcesses if GPUProcess crashes more than twice in 30 seconds

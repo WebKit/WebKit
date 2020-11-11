@@ -856,7 +856,6 @@ static void resetWebPreferencesToConsistentValues(WebPreferences *preferences)
     [preferences setDownloadAttributeEnabled:YES];
     [preferences setEditableLinkBehavior:WebKitEditableLinkOnlyLiveWithShiftKey];
     [preferences setEncryptedMediaAPIEnabled:YES];
-    [preferences setExperimentalNotificationsEnabled:NO];
     [preferences setFantasyFontFamily:@"Papyrus"];
     [preferences setFixedFontFamily:@"Courier"];
     [preferences setFrameFlattening:WebKitFrameFlatteningDisabled];
