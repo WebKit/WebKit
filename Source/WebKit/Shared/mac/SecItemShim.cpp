@@ -143,7 +143,6 @@ void initializeSecItemShim(NetworkProcess& process)
 {
     globalNetworkProcess() = makeWeakPtr(process);
 
-#if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && !CPU(X86_64))
     struct _CFNFrameworksStubs stubs = {
         .version = 0,
         .SecItem_stub_CopyMatching = webSecItemCopyMatching,
@@ -153,19 +152,6 @@ void initializeSecItemShim(NetworkProcess& process)
     };
 
     _CFURLConnectionSetFrameworkStubs(&stubs);
-#endif
-
-#if PLATFORM(MAC) && CPU(X86_64)
-    const SecItemShimCallbacks callbacks = {
-        webSecItemCopyMatching,
-        webSecItemAdd,
-        webSecItemUpdate,
-        webSecItemDelete
-    };
-    
-    SecItemShimInitializeFunc func = reinterpret_cast<SecItemShimInitializeFunc>(dlsym(RTLD_DEFAULT, "WebKitSecItemShimInitialize"));
-    func(callbacks);
-#endif
 }
 
 } // namespace WebKit

@@ -1,5 +1,23 @@
 2020-11-11  Alex Christensen  <achristensen@webkit.org>
 
+        Use _CFURLConnectionSetFrameworkStubs instead of DYLD_INTERPOSE on Intel Macs
+        https://bugs.webkit.org/show_bug.cgi?id=218810
+
+        Reviewed by Geoffrey Garen.
+
+        A long, long time ago, we realized that CFNetwork was looking in the keychain for persistent credentials,
+        and in order to make the network process get credentials as the UI process, we introduced SecItemShim which
+        used DYLD_INTERPOSE to intercept the calls to the security framework and synchronously message the UI process
+        for those calls.  Over the last 6 years we have realized that doesn't work on iOS or Apple silicon Macs, so
+        we use _CFURLConnectionSetFrameworkStubs instead.  That works on Intel Macs, too, and I'm reasonably certain
+        that using it everywhere won't break anything, so as a step towards rdar://problem/15588174 which should allow
+        us to use asynchronous messages and no more globalNetworkProcess pointer, let's stop using DYLD_INTERPOSE.
+
+        * Shared/mac/SecItemShim.cpp:
+        (WebKit::initializeSecItemShim):
+
+2020-11-11  Alex Christensen  <achristensen@webkit.org>
+
         Don't look in keychain for SecKeyRef after deserializing SecIdentityRef
         https://bugs.webkit.org/show_bug.cgi?id=218809
         <rdar://problem/69394018>
