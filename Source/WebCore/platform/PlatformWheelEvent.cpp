@@ -35,13 +35,13 @@ namespace WebCore {
 TextStream& operator<<(TextStream& ts, PlatformWheelEventPhase phase)
 {
     switch (phase) {
-    case PlatformWheelEventPhaseNone: ts << "none"; break;
-    case PlatformWheelEventPhaseBegan: ts << "began"; break;
-    case PlatformWheelEventPhaseStationary: ts << "stationary"; break;
-    case PlatformWheelEventPhaseChanged: ts << "changed"; break;
-    case PlatformWheelEventPhaseEnded: ts << "ended"; break;
-    case PlatformWheelEventPhaseCancelled: ts << "cancelled"; break;
-    case PlatformWheelEventPhaseMayBegin: ts << "mayBegin"; break;
+    case PlatformWheelEventPhase::None: ts << "none"; break;
+    case PlatformWheelEventPhase::Began: ts << "began"; break;
+    case PlatformWheelEventPhase::Stationary: ts << "stationary"; break;
+    case PlatformWheelEventPhase::Changed: ts << "changed"; break;
+    case PlatformWheelEventPhase::Ended: ts << "ended"; break;
+    case PlatformWheelEventPhase::Cancelled: ts << "cancelled"; break;
+    case PlatformWheelEventPhase::MayBegin: ts << "mayBegin"; break;
     }
     return ts;
 }

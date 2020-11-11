@@ -56,14 +56,14 @@ enum PlatformWheelEventGranularity : uint8_t {
 
 #if ENABLE(KINETIC_SCROLLING)
 
-enum PlatformWheelEventPhase : uint8_t {
-    PlatformWheelEventPhaseNone = 0,
-    PlatformWheelEventPhaseBegan = 1 << 0,
-    PlatformWheelEventPhaseStationary = 1 << 1,
-    PlatformWheelEventPhaseChanged = 1 << 2,
-    PlatformWheelEventPhaseEnded = 1 << 3,
-    PlatformWheelEventPhaseCancelled = 1 << 4,
-    PlatformWheelEventPhaseMayBegin = 1 << 5,
+enum class PlatformWheelEventPhase : uint8_t {
+    None        = 0,
+    Began       = 1 << 0,
+    Stationary  = 1 << 1,
+    Changed     = 1 << 2,
+    Ended       = 1 << 3,
+    Cancelled   = 1 << 4,
+    MayBegin    = 1 << 5,
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, PlatformWheelEventPhase);
@@ -183,8 +183,8 @@ protected:
     FloatSize m_scrollingVelocity;
 
 #if ENABLE(KINETIC_SCROLLING)
-    PlatformWheelEventPhase m_phase { PlatformWheelEventPhaseNone };
-    PlatformWheelEventPhase m_momentumPhase { PlatformWheelEventPhaseNone };
+    PlatformWheelEventPhase m_phase { PlatformWheelEventPhase::None };
+    PlatformWheelEventPhase m_momentumPhase { PlatformWheelEventPhase::None };
 #endif
     bool m_hasPreciseScrollingDeltas { false };
 #if PLATFORM(COCOA)
@@ -198,36 +198,36 @@ protected:
 
 inline bool PlatformWheelEvent::useLatchedEventElement() const
 {
-    return m_phase == PlatformWheelEventPhaseBegan
-        || m_phase == PlatformWheelEventPhaseChanged
-        || m_momentumPhase == PlatformWheelEventPhaseBegan
-        || m_momentumPhase == PlatformWheelEventPhaseChanged
-        || (m_phase == PlatformWheelEventPhaseEnded && m_momentumPhase == PlatformWheelEventPhaseNone);
+    return m_phase == PlatformWheelEventPhase::Began
+        || m_phase == PlatformWheelEventPhase::Changed
+        || m_momentumPhase == PlatformWheelEventPhase::Began
+        || m_momentumPhase == PlatformWheelEventPhase::Changed
+        || (m_phase == PlatformWheelEventPhase::Ended && m_momentumPhase == PlatformWheelEventPhase::None);
 }
 
 inline bool PlatformWheelEvent::isGestureStart() const
 {
-    return m_phase == PlatformWheelEventPhaseBegan || m_phase == PlatformWheelEventPhaseMayBegin;
+    return m_phase == PlatformWheelEventPhase::Began || m_phase == PlatformWheelEventPhase::MayBegin;
 }
 
 inline bool PlatformWheelEvent::isGestureContinuation() const
 {
-    return m_phase == PlatformWheelEventPhaseChanged;
+    return m_phase == PlatformWheelEventPhase::Changed;
 }
 
 inline bool PlatformWheelEvent::shouldResetLatching() const
 {
-    return m_phase == PlatformWheelEventPhaseCancelled || m_phase == PlatformWheelEventPhaseMayBegin || (m_phase == PlatformWheelEventPhaseNone && m_momentumPhase == PlatformWheelEventPhaseNone) || isEndOfMomentumScroll();
+    return m_phase == PlatformWheelEventPhase::Cancelled || m_phase == PlatformWheelEventPhase::MayBegin || (m_phase == PlatformWheelEventPhase::None && m_momentumPhase == PlatformWheelEventPhase::None) || isEndOfMomentumScroll();
 }
 
 inline bool PlatformWheelEvent::isNonGestureEvent() const
 {
-    return m_phase == PlatformWheelEventPhaseNone && m_momentumPhase == PlatformWheelEventPhaseNone;
+    return m_phase == PlatformWheelEventPhase::None && m_momentumPhase == PlatformWheelEventPhase::None;
 }
 
 inline bool PlatformWheelEvent::isEndOfMomentumScroll() const
 {
-    return m_phase == PlatformWheelEventPhaseNone && m_momentumPhase == PlatformWheelEventPhaseEnded;
+    return m_phase == PlatformWheelEventPhase::None && m_momentumPhase == PlatformWheelEventPhase::Ended;
 }
 
 #endif // ENABLE(ASYNC_SCROLLING)
@@ -236,23 +236,23 @@ inline bool PlatformWheelEvent::isEndOfMomentumScroll() const
 
 inline bool PlatformWheelEvent::isGestureBegin() const
 {
-    return m_phase == PlatformWheelEventPhaseMayBegin
-        || m_phase == PlatformWheelEventPhaseBegan;
+    return m_phase == PlatformWheelEventPhase::MayBegin
+        || m_phase == PlatformWheelEventPhase::Began;
 }
 
 inline bool PlatformWheelEvent::isGestureCancel() const
 {
-    return m_phase == PlatformWheelEventPhaseCancelled;
+    return m_phase == PlatformWheelEventPhase::Cancelled;
 }
 
 inline bool PlatformWheelEvent::isEndOfNonMomentumScroll() const
 {
-    return m_phase == PlatformWheelEventPhaseEnded && m_momentumPhase == PlatformWheelEventPhaseNone;
+    return m_phase == PlatformWheelEventPhase::Ended && m_momentumPhase == PlatformWheelEventPhase::None;
 }
 
 inline bool PlatformWheelEvent::isTransitioningToMomentumScroll() const
 {
-    return m_phase == PlatformWheelEventPhaseNone && m_momentumPhase == PlatformWheelEventPhaseBegan;
+    return m_phase == PlatformWheelEventPhase::None && m_momentumPhase == PlatformWheelEventPhase::Began;
 }
 
 inline FloatPoint PlatformWheelEvent::swipeVelocity() const

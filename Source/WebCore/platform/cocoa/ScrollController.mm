@@ -123,10 +123,10 @@ bool ScrollController::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
     if (processWheelEventForScrollSnap(wheelEvent))
         return false; // FIXME: Why don't we report that we handled it?
 #endif
-    if (wheelEvent.phase() == PlatformWheelEventPhaseMayBegin || wheelEvent.phase() == PlatformWheelEventPhaseCancelled)
+    if (wheelEvent.phase() == PlatformWheelEventPhase::MayBegin || wheelEvent.phase() == PlatformWheelEventPhase::Cancelled)
         return false;
 
-    if (wheelEvent.phase() == PlatformWheelEventPhaseBegan) {
+    if (wheelEvent.phase() == PlatformWheelEventPhase::Began) {
         // FIXME: Trying to decide if a gesture is horizontal or vertical at the "began" phase is very error-prone.
         auto direction = directionFromEvent(wheelEvent, ScrollEventAxis::Horizontal);
         // FIXME: pinnedInDirection() needs cleanup.
@@ -152,15 +152,15 @@ bool ScrollController::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
         return true;
     }
 
-    if (wheelEvent.phase() == PlatformWheelEventPhaseEnded) {
+    if (wheelEvent.phase() == PlatformWheelEventPhase::Ended) {
         snapRubberBand();
         updateRubberBandingState();
         return true;
     }
 
-    bool isMomentumScrollEvent = (wheelEvent.momentumPhase() != PlatformWheelEventPhaseNone);
+    bool isMomentumScrollEvent = (wheelEvent.momentumPhase() != PlatformWheelEventPhase::None);
     if (m_ignoreMomentumScrolls && (isMomentumScrollEvent || m_snapRubberbandTimer)) {
-        if (wheelEvent.momentumPhase() == PlatformWheelEventPhaseEnded) {
+        if (wheelEvent.momentumPhase() == PlatformWheelEventPhase::Ended) {
             m_ignoreMomentumScrolls = false;
             return true;
         }
@@ -207,7 +207,7 @@ bool ScrollController::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
     PlatformWheelEventPhase momentumPhase = wheelEvent.momentumPhase();
 
     // If we are starting momentum scrolling then do some setup.
-    if (!m_momentumScrollInProgress && (momentumPhase == PlatformWheelEventPhaseBegan || momentumPhase == PlatformWheelEventPhaseChanged))
+    if (!m_momentumScrollInProgress && (momentumPhase == PlatformWheelEventPhase::Began || momentumPhase == PlatformWheelEventPhase::Changed))
         m_momentumScrollInProgress = true;
 
     auto timeDelta = wheelEvent.timestamp() - m_lastMomentumScrollTimestamp;
@@ -316,7 +316,7 @@ bool ScrollController::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
         }
     }
 
-    if (m_momentumScrollInProgress && momentumPhase == PlatformWheelEventPhaseEnded) {
+    if (m_momentumScrollInProgress && momentumPhase == PlatformWheelEventPhase::Ended) {
         m_momentumScrollInProgress = false;
         m_ignoreMomentumScrolls = false;
         m_lastMomentumScrollTimestamp = { };
@@ -612,35 +612,35 @@ void ScrollController::updateRubberBandingEdges(IntSize clientStretch)
 #if PLATFORM(MAC)
 static inline WheelEventStatus toWheelEventStatus(PlatformWheelEventPhase phase, PlatformWheelEventPhase momentumPhase)
 {
-    if (phase == PlatformWheelEventPhaseNone) {
+    if (phase == PlatformWheelEventPhase::None) {
         switch (momentumPhase) {
-        case PlatformWheelEventPhaseBegan:
+        case PlatformWheelEventPhase::Began:
             return WheelEventStatus::MomentumScrollBegin;
                 
-        case PlatformWheelEventPhaseChanged:
+        case PlatformWheelEventPhase::Changed:
             return WheelEventStatus::MomentumScrolling;
                 
-        case PlatformWheelEventPhaseEnded:
+        case PlatformWheelEventPhase::Ended:
             return WheelEventStatus::MomentumScrollEnd;
 
-        case PlatformWheelEventPhaseNone:
+        case PlatformWheelEventPhase::None:
             return WheelEventStatus::StatelessScrollEvent;
 
         default:
             return WheelEventStatus::Unknown;
         }
     }
-    if (momentumPhase == PlatformWheelEventPhaseNone) {
+    if (momentumPhase == PlatformWheelEventPhase::None) {
         switch (phase) {
-        case PlatformWheelEventPhaseBegan:
-        case PlatformWheelEventPhaseMayBegin:
+        case PlatformWheelEventPhase::Began:
+        case PlatformWheelEventPhase::MayBegin:
             return WheelEventStatus::UserScrollBegin;
                 
-        case PlatformWheelEventPhaseChanged:
+        case PlatformWheelEventPhase::Changed:
             return WheelEventStatus::UserScrolling;
                 
-        case PlatformWheelEventPhaseEnded:
-        case PlatformWheelEventPhaseCancelled:
+        case PlatformWheelEventPhase::Ended:
+        case PlatformWheelEventPhase::Cancelled:
             return WheelEventStatus::UserScrollEnd;
                 
         default:

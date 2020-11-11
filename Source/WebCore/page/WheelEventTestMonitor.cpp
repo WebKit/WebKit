@@ -110,10 +110,10 @@ void WheelEventTestMonitor::removeDeferralForReason(ScrollableAreaIdentifier ide
 void WheelEventTestMonitor::receivedWheelEvent(const PlatformWheelEvent& event)
 {
 #if ENABLE(KINETIC_SCROLLING)
-    if (event.phase() == PlatformWheelEventPhaseEnded || event.phase() == PlatformWheelEventPhaseCancelled)
+    if (event.phase() == PlatformWheelEventPhase::Ended || event.phase() == PlatformWheelEventPhase::Cancelled)
         m_receivedWheelEndOrCancel = true;
 
-    if (event.momentumPhase() == PlatformWheelEventPhaseEnded)
+    if (event.momentumPhase() == PlatformWheelEventPhase::Ended)
         m_receivedMomentumEnd = true;
 #endif
 }

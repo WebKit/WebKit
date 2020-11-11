@@ -124,9 +124,9 @@ bool ScrollingTreeScrollingNodeDelegateMac::handleWheelEvent(const PlatformWheel
 {
     bool wasInMomentumPhase = m_inMomentumPhase;
 
-    if (wheelEvent.momentumPhase() == PlatformWheelEventPhaseBegan)
+    if (wheelEvent.momentumPhase() == PlatformWheelEventPhase::Began)
         m_inMomentumPhase = true;
-    else if (wheelEvent.momentumPhase() == PlatformWheelEventPhaseEnded || wheelEvent.momentumPhase() == PlatformWheelEventPhaseCancelled)
+    else if (wheelEvent.momentumPhase() == PlatformWheelEventPhase::Ended || wheelEvent.momentumPhase() == PlatformWheelEventPhase::Cancelled)
         m_inMomentumPhase = false;
     
     if (wasInMomentumPhase != m_inMomentumPhase) {
@@ -145,9 +145,9 @@ bool ScrollingTreeScrollingNodeDelegateMac::handleWheelEvent(const PlatformWheel
     if (isInUserScroll != wasInUserScroll)
         scrollingNode().setUserScrollInProgress(isInUserScroll);
 
-    // PlatformWheelEventPhaseMayBegin fires when two fingers touch the trackpad, and is used to flash overlay scrollbars.
+    // PlatformWheelEventPhase::MayBegin fires when two fingers touch the trackpad, and is used to flash overlay scrollbars.
     // We know we're scrollable at this point, so handle the event.
-    if (wheelEvent.phase() == PlatformWheelEventPhaseMayBegin)
+    if (wheelEvent.phase() == PlatformWheelEventPhase::MayBegin)
         return true;
 
     auto handled = m_scrollController.handleWheelEvent(wheelEvent);

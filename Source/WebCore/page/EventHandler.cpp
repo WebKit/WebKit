@@ -294,7 +294,7 @@ static inline ScrollGranularity wheelGranularityToScrollGranularity(unsigned del
 static void handleWheelEventPhaseInScrollableArea(ScrollableArea& scrollableArea, const WheelEvent& wheelEvent)
 {
 #if PLATFORM(MAC)
-    if (wheelEvent.phase() == PlatformWheelEventPhaseMayBegin || wheelEvent.phase() == PlatformWheelEventPhaseCancelled)
+    if (wheelEvent.phase() == PlatformWheelEventPhase::MayBegin || wheelEvent.phase() == PlatformWheelEventPhase::Cancelled)
         scrollableArea.scrollAnimator().handleWheelEventPhase(wheelEvent.phase());
 #else
     UNUSED_PARAM(scrollableArea);
@@ -319,9 +319,9 @@ static bool handleWheelEventInAppropriateEnclosingBox(Node* startNode, const Whe
 {
     bool shouldHandleEvent = wheelEvent.deltaX() || wheelEvent.deltaY();
 #if ENABLE(WHEEL_EVENT_LATCHING)
-    shouldHandleEvent |= wheelEvent.phase() == PlatformWheelEventPhaseEnded;
+    shouldHandleEvent |= wheelEvent.phase() == PlatformWheelEventPhase::Ended;
 #if ENABLE(CSS_SCROLL_SNAP)
-    shouldHandleEvent |= wheelEvent.momentumPhase() == PlatformWheelEventPhaseEnded;
+    shouldHandleEvent |= wheelEvent.momentumPhase() == PlatformWheelEventPhase::Ended;
 #endif
 #endif
     if (!startNode->renderer())

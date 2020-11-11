@@ -617,7 +617,7 @@ ScrollPinningBehavior ScrollingTree::scrollPinningBehavior()
 
 bool ScrollingTree::willWheelEventStartSwipeGesture(const PlatformWheelEvent& wheelEvent)
 {
-    if (wheelEvent.phase() != PlatformWheelEventPhaseBegan)
+    if (wheelEvent.phase() != PlatformWheelEventPhase::Began)
         return false;
 
     LockHolder lock(m_swipeStateMutex);

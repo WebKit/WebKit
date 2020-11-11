@@ -808,7 +808,7 @@ static ContainerNode* findEnclosingScrollableContainer(ContainerNode* node, cons
         if (!scrollableArea)
             continue;
 
-        if (wheelEvent.phase() == PlatformWheelEventPhaseMayBegin || wheelEvent.phase() == PlatformWheelEventPhaseCancelled)
+        if (wheelEvent.phase() == PlatformWheelEventPhase::MayBegin || wheelEvent.phase() == PlatformWheelEventPhase::Cancelled)
             return candidate;
 
         if ((biasedDelta.height() > 0 && !scrollableArea->scrolledToTop()) || (biasedDelta.height() < 0 && !scrollableArea->scrolledToBottom())
@@ -891,14 +891,14 @@ void EventHandler::recordWheelEventForDeltaFilter(const PlatformWheelEvent& whee
         return;
 
     switch (wheelEvent.phase()) {
-        case PlatformWheelEventPhaseBegan:
-            page->wheelEventDeltaFilter()->beginFilteringDeltas();
-            break;
-        case PlatformWheelEventPhaseEnded:
-            page->wheelEventDeltaFilter()->endFilteringDeltas();
-            break;
-        default:
-            break;
+    case PlatformWheelEventPhase::Began:
+        page->wheelEventDeltaFilter()->beginFilteringDeltas();
+        break;
+    case PlatformWheelEventPhase::Ended:
+        page->wheelEventDeltaFilter()->endFilteringDeltas();
+        break;
+    default:
+        break;
     }
     page->wheelEventDeltaFilter()->updateFromDelta(FloatSize(wheelEvent.deltaX(), wheelEvent.deltaY()));
 }
@@ -974,7 +974,7 @@ void EventHandler::processWheelEventForScrollSnap(const PlatformWheelEvent& whee
         return;
 
     // Special case handling for ending wheel gesture to activate snap animation:
-    if (wheelEvent.phase() != PlatformWheelEventPhaseEnded && wheelEvent.momentumPhase() != PlatformWheelEventPhaseEnded)
+    if (wheelEvent.phase() != PlatformWheelEventPhase::Ended && wheelEvent.momentumPhase() != PlatformWheelEventPhase::Ended)
         return;
 
 #if ENABLE(CSS_SCROLL_SNAP)

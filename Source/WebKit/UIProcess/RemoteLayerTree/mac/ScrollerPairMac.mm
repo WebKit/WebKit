@@ -144,14 +144,14 @@ ScrollerPairMac::~ScrollerPairMac()
 bool ScrollerPairMac::handleWheelEvent(const WebCore::PlatformWheelEvent& event)
 {
     switch (event.phase()) {
-    case WebCore::PlatformWheelEventPhaseBegan:
+    case WebCore::PlatformWheelEventPhase::Began:
         [m_scrollerImpPair beginScrollGesture];
         break;
-    case WebCore::PlatformWheelEventPhaseEnded:
-    case WebCore::PlatformWheelEventPhaseCancelled:
+    case WebCore::PlatformWheelEventPhase::Ended:
+    case WebCore::PlatformWheelEventPhase::Cancelled:
         [m_scrollerImpPair endScrollGesture];
         break;
-    case WebCore::PlatformWheelEventPhaseMayBegin:
+    case WebCore::PlatformWheelEventPhase::MayBegin:
         [m_scrollerImpPair beginScrollGesture];
         [m_scrollerImpPair contentAreaScrolled];
         break;

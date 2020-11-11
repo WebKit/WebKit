@@ -169,41 +169,36 @@ static int clickCountForEvent(NSEvent *event)
     }
 }
 
+static PlatformWheelEventPhase phaseFromNSEventPhase(NSEventPhase eventPhase)
+{
+    switch (eventPhase) {
+    case NSEventPhaseNone:
+        return PlatformWheelEventPhase::None;
+    case NSEventPhaseBegan:
+        return PlatformWheelEventPhase::Began;
+    case NSEventPhaseStationary:
+        return PlatformWheelEventPhase::Stationary;
+    case NSEventPhaseChanged:
+        return PlatformWheelEventPhase::Changed;
+    case NSEventPhaseEnded:
+        return PlatformWheelEventPhase::Ended;
+    case NSEventPhaseCancelled:
+        return PlatformWheelEventPhase::Cancelled;
+    case NSEventPhaseMayBegin:
+        return PlatformWheelEventPhase::MayBegin;
+    }
+
+    return PlatformWheelEventPhase::None;
+}
+
 static PlatformWheelEventPhase momentumPhaseForEvent(NSEvent *event)
 {
-    uint32_t phase = PlatformWheelEventPhaseNone;
-
-    if ([event momentumPhase] & NSEventPhaseBegan)
-        phase |= PlatformWheelEventPhaseBegan;
-    if ([event momentumPhase] & NSEventPhaseStationary)
-        phase |= PlatformWheelEventPhaseStationary;
-    if ([event momentumPhase] & NSEventPhaseChanged)
-        phase |= PlatformWheelEventPhaseChanged;
-    if ([event momentumPhase] & NSEventPhaseEnded)
-        phase |= PlatformWheelEventPhaseEnded;
-    if ([event momentumPhase] & NSEventPhaseCancelled)
-        phase |= PlatformWheelEventPhaseCancelled;
-
-    return static_cast<PlatformWheelEventPhase>(phase);
+    return phaseFromNSEventPhase([event momentumPhase]);
 }
 
 static PlatformWheelEventPhase phaseForEvent(NSEvent *event)
 {
-    uint32_t phase = PlatformWheelEventPhaseNone; 
-    if ([event phase] & NSEventPhaseBegan)
-        phase |= PlatformWheelEventPhaseBegan;
-    if ([event phase] & NSEventPhaseStationary)
-        phase |= PlatformWheelEventPhaseStationary;
-    if ([event phase] & NSEventPhaseChanged)
-        phase |= PlatformWheelEventPhaseChanged;
-    if ([event phase] & NSEventPhaseEnded)
-        phase |= PlatformWheelEventPhaseEnded;
-    if ([event phase] & NSEventPhaseCancelled)
-        phase |= PlatformWheelEventPhaseCancelled;
-    if ([event momentumPhase] & NSEventPhaseMayBegin)
-        phase |= PlatformWheelEventPhaseMayBegin;
-
-    return static_cast<PlatformWheelEventPhase>(phase);
+    return phaseFromNSEventPhase([event phase]);
 }
 
 static inline String textFromEvent(NSEvent* event)

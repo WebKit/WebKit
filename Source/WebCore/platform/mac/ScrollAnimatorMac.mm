@@ -1246,12 +1246,12 @@ void ScrollAnimatorMac::handleWheelEventPhase(PlatformWheelEventPhase phase)
     // So set it to true here.
     m_haveScrolledSincePageLoad = true;
 
-// FIXME: Need to ensure we get PlatformWheelEventPhaseEnded.
-    if (phase == PlatformWheelEventPhaseBegan)
+    // FIXME: Need to ensure we get PlatformWheelEventPhase::Ended.
+    if (phase == PlatformWheelEventPhase::Began)
         didBeginScrollGesture();
-    else if (phase == PlatformWheelEventPhaseEnded || phase == PlatformWheelEventPhaseCancelled)
+    else if (phase == PlatformWheelEventPhase::Ended || phase == PlatformWheelEventPhase::Cancelled)
         didEndScrollGesture();
-    else if (phase == PlatformWheelEventPhaseMayBegin)
+    else if (phase == PlatformWheelEventPhase::MayBegin)
         mayBeginScrollGesture();
 }
 
@@ -1328,7 +1328,7 @@ RectEdges<bool> ScrollAnimatorMac::edgePinnedState() const
 // allowsVerticalStretching(), and allowsHorizontalStretching() with the implementation in ScrollingTreeFrameScrollingNodeMac.
 static bool newGestureIsStarting(const PlatformWheelEvent& wheelEvent)
 {
-    return wheelEvent.phase() == PlatformWheelEventPhaseMayBegin || wheelEvent.phase() == PlatformWheelEventPhaseBegan;
+    return wheelEvent.phase() == PlatformWheelEventPhase::MayBegin || wheelEvent.phase() == PlatformWheelEventPhase::Began;
 }
 
 bool ScrollAnimatorMac::isAlreadyPinnedInDirectionOfGesture(const PlatformWheelEvent& wheelEvent, ScrollEventAxis axis) const
@@ -1350,7 +1350,7 @@ static bool gestureShouldBeginSnap(const PlatformWheelEvent& wheelEvent, const V
     if (!snapOffsets)
         return false;
     
-    if (wheelEvent.phase() != PlatformWheelEventPhaseEnded && !wheelEvent.isEndOfMomentumScroll())
+    if (wheelEvent.phase() != PlatformWheelEventPhase::Ended && !wheelEvent.isEndOfMomentumScroll())
         return false;
 
     return true;
