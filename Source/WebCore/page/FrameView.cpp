@@ -4261,7 +4261,7 @@ void FrameView::willPaintContents(GraphicsContext& context, const IntRect&, Pain
         m_paintBehavior.add(PaintBehavior::Snapshotting);
     }
 
-    paintingState.isFlatteningPaintOfRootFrame = (m_paintBehavior & PaintBehavior::FlattenCompositingLayers) && !frame().ownerElement();
+    paintingState.isFlatteningPaintOfRootFrame = (m_paintBehavior & PaintBehavior::FlattenCompositingLayers) && !frame().ownerElement() && !context.detectingContentfulPaint();
     if (paintingState.isFlatteningPaintOfRootFrame)
         notifyWidgetsInAllFrames(WillPaintFlattened);
 
