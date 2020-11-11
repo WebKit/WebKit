@@ -740,7 +740,7 @@ static void testWebViewPageVisibility(WebViewTest* test, gconstpointer)
     g_assert_nonnull(javascriptResult);
     g_assert_no_error(error.get());
     GUniquePtr<char> valueString(WebViewTest::javascriptResultToCString(javascriptResult));
-    g_assert_cmpstr(valueString.get(), ==, "prerender");
+    g_assert_cmpstr(valueString.get(), ==, "hidden");
 
     javascriptResult = test->runJavaScriptAndWaitUntilFinished("document.hidden;", &error.outPtr());
     g_assert_nonnull(javascriptResult);
