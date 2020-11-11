@@ -34,6 +34,7 @@
 #include "RenderingBackendIdentifier.h"
 #include <WebCore/DisplayList.h>
 #include <WebCore/RenderingResourceIdentifier.h>
+#include <wtf/Deque.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -50,6 +51,8 @@ enum class RenderingMode : bool;
 
 namespace WebKit {
 
+class DisplayListWriterHandle;
+
 class RemoteRenderingBackendProxy
     : public IPC::MessageSender
     , private IPC::MessageReceiver
@@ -60,7 +63,7 @@ public:
     ~RemoteRenderingBackendProxy();
 
     RemoteResourceCacheProxy& remoteResourceCacheProxy() { return m_remoteResourceCacheProxy; }
-    WebCore::DisplayList::ItemBufferHandle createItemBuffer(size_t);
+    WebCore::DisplayList::ItemBufferHandle createItemBuffer(size_t capacity, WebCore::RenderingResourceIdentifier destinationBufferIdentifier);
 
     // IPC::MessageSender.
     IPC::Connection* messageSenderConnection() const override;
@@ -72,7 +75,7 @@ public:
     // Messages to be sent.
     RefPtr<WebCore::ImageBuffer> createImageBuffer(const WebCore::FloatSize&, WebCore::RenderingMode, float resolutionScale, WebCore::ColorSpace);
     RefPtr<WebCore::ImageData> getImageData(WebCore::AlphaPremultiplication outputFormat, const WebCore::IntRect& srcRect, WebCore::RenderingResourceIdentifier);
-    void submitDisplayList(const WebCore::DisplayList::DisplayList&, WebCore::RenderingResourceIdentifier);
+    void submitDisplayList(const WebCore::DisplayList::DisplayList&, WebCore::RenderingResourceIdentifier destinationBufferIdentifier);
     WebCore::DisplayList::FlushIdentifier flushDisplayListAndCommit(const WebCore::DisplayList::DisplayList&, WebCore::RenderingResourceIdentifier);
     void releaseRemoteResource(WebCore::RenderingResourceIdentifier);
 
@@ -82,12 +85,16 @@ public:
 private:
     RemoteRenderingBackendProxy();
 
+    void updateReusableHandles();
+
     // Messages to be received.
     void imageBufferBackendWasCreated(const WebCore::FloatSize& logicalSize, const WebCore::IntSize& backendSize, float resolutionScale, WebCore::ColorSpace, ImageBufferBackendHandle, WebCore::RenderingResourceIdentifier);
     void flushDisplayListWasCommitted(WebCore::DisplayList::FlushIdentifier, WebCore::RenderingResourceIdentifier);
 
     RemoteResourceCacheProxy m_remoteResourceCacheProxy;
-    HashMap<WebCore::DisplayList::ItemBufferIdentifier, RefPtr<SharedMemory>> m_sharedItemBuffers;
+    HashMap<WebCore::DisplayList::ItemBufferIdentifier, RefPtr<DisplayListWriterHandle>> m_sharedDisplayListHandles;
+    Deque<WebCore::DisplayList::ItemBufferIdentifier> m_identifiersOfReusableHandles;
+    HashSet<WebCore::DisplayList::ItemBufferIdentifier> m_identifiersOfHandlesAvailableForWriting;
     RenderingBackendIdentifier m_renderingBackendIdentifier { RenderingBackendIdentifier::generate() };
 };
 

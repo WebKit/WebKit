@@ -1,3 +1,153 @@
+2020-11-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Concurrent display lists] Add an initial implementation of concurrent display list rendering
+        https://bugs.webkit.org/show_bug.cgi?id=218426
+        <rdar://problem/71167220>
+
+        Reviewed by Ryosuke Niwa.
+
+        This patch adds a first-cut implementation of concurrent display list rendering, which allows the GPU and web
+        processes to read and write display list data at the same time. To achieve this, we remove the placeholder
+        shared memory display list encoding mechanism previously added in <webkit.org/b/218406>, and replace it with a
+        new model in which a writer (i.e. the web process) and a reader (i.e. the GPU process) share a set of reusable
+        shared memory buffers which contain display list item data. As the writer appends data to shared memory, it
+        increments a counter in each shared memory buffer that represents the number of bytes that the reader has yet to
+        read; as the reader reads display list items from shared memory, it decrements this counter.
+
+        This patch also implements a simple strategy for reusing these shared item buffers. The web process maintains a
+        queue of reusable buffers; when display list items are appended and the current writable buffer is out of
+        capacity, the display list item buffer calls out to WebKit2 via a client method to request more shared memory.
+        Here, the web process traverses the queue of reusable item buffers in search of a buffer with sufficient
+        capacity; if found, we hand this back to WebCore as an opaque `ItemBufferHandle`; otherwise, we allocate a new
+        reusable shared memory buffer. Item buffers that have been used become reusable only after they are (1) no
+        longer being read from -- i.e., the counter value is 0, and (2) they are not actively being written to.
+        Buffers that have been used are lazily reintroduced into the reuse queue when a display list requests a handle
+        to writable item buffer data.
+
+        See below for more details.
+
+        * GPUProcess/graphics/DisplayListReaderHandle.cpp: Copied from Source/WebKit/Shared/SharedDisplayListHandle.cpp.
+        (WebKit::DisplayListReaderHandle::advance):
+        (WebKit::DisplayListReaderHandle::displayListForReading const):
+        * GPUProcess/graphics/DisplayListReaderHandle.h: Copied from Source/WebKit/Shared/SharedDisplayListHandle.cpp.
+        (WebKit::DisplayListReaderHandle::create):
+        (WebKit::DisplayListReaderHandle::DisplayListReaderHandle):
+
+        Add a new helper class to represent a shared display list item buffer that the GPU process can use to consume
+        display list items. Advancing the cursor in `DisplayListReaderHandle` decrements the "remaining bytes" counter;
+        the class also has a helper method for creating a new `DisplayList` with a given offset into the shared buffer,
+        as well the number of bytes to read.
+
+        * GPUProcess/graphics/RemoteImageBuffer.h:
+
+        Handle the `MetaCommandSwitchTo` and `FlushContext` items by (respectively) informing the rendering backend
+        about the next buffer to read from, and sending a "flush committed" IPC message back to the web process.
+
+        (WebKit::RemoteImageBuffer::RemoteImageBuffer):
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::applyDisplayListsFromHandle):
+        (WebKit::RemoteRenderingBackend::wakeUpAndApplyDisplayList):
+
+        This is the main loop in the GPU process that is responsible for applying incoming display list item data. This
+        IPC endpoint receives information about where to start (i.e. an item buffer ID and an offset into shared memory
+        in that buffer) and begins reading ranges of display list item data inside that buffer. After it is done
+        processing all of its unread bytes, it then checks the unread byte count once again, and continues the loop if
+        the web process has advanced this count.
+
+        (WebKit::RemoteRenderingBackend::setNextItemBufferToRead):
+        (WebKit::RemoteRenderingBackend::didCreateSharedDisplayListHandle):
+
+        Add logic to handle the case where we reached the end of an item buffer, but the next buffer identifier is still
+        unknown to us (since it is still "in transit" via the `DidCreateSharedDisplayListHandle` IPC message). In this
+        case, we remember the next buffer identifier in `m_nextItemBufferToRead`, and exit the processing loop inside
+        `wakeUpAndApplyDisplayList`. Upon receiving the shared memory handle in `didCreateSharedDisplayListHandle`, we
+        then automatically resume display list processing, starting from the beginning of this new buffer.
+
+        (WebKit::RemoteRenderingBackend::applyDisplayList): Deleted.
+        (WebKit::RemoteRenderingBackend::submitDisplayList): Deleted.
+        (WebKit::RemoteRenderingBackend::flushDisplayListAndCommit): Deleted.
+        (WebKit::RemoteRenderingBackend::didCreateSharedItemData): Deleted.
+
+        We don't need any of these methods anymore, now that there is only one codepath for processing display list
+        items. See `RemoteRenderingBackend::wakeUpAndApplyDisplayList` above. Also, rename `didCreateSharedItemData`
+        to `didCreateSharedDisplayListHandle` (also above).
+
+        * GPUProcess/graphics/RemoteRenderingBackend.h:
+        * GPUProcess/graphics/RemoteRenderingBackend.messages.in:
+        * Shared/SharedDisplayListHandle.h:
+        (WebKit::SharedDisplayListHandle::sharedMemory):
+        (WebKit::SharedDisplayListHandle::sharedMemory const):
+        (WebKit::SharedDisplayListHandle::identifier const):
+        (WebKit::SharedDisplayListHandle::data const):
+        (WebKit::SharedDisplayListHandle::unreadBytes):
+        (WebKit::SharedDisplayListHandle::Lock::Lock):
+        (WebKit::SharedDisplayListHandle::Lock::~Lock):
+        (WebKit::SharedDisplayListHandle::SharedDisplayListHandle):
+        (WebKit::SharedDisplayListHandle::header):
+        (WebKit::SharedDisplayListHandle::header const):
+        (WebKit::SharedDisplayListHandle::encode const): Deleted.
+        (WebKit::SharedDisplayListHandle::decode): Deleted.
+
+        Repurpose `SharedDisplayListHandle` to serve as a base class for both `DisplayListReaderHandle` and
+        `DisplayListWriterHandle`. This base class is aware of the memory layout of the display list item buffer in
+        shared memory (in particular, the fact that the first 8 bytes are the atomic lock and the next 8 bytes contain
+        the unread byte counter).
+
+        Internally, this uses a protected RAII class, `SharedDisplayListHandle::Lock`, to grab the lock before either
+        reading or writing the unread bytes count.
+
+        * Sources.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/GPU/graphics/DisplayListWriterHandle.cpp: Added.
+        (WebKit::DisplayListWriterHandle::advance):
+        (WebKit::DisplayListWriterHandle::availableCapacity const):
+        (WebKit::DisplayListWriterHandle::createHandle const):
+        (WebKit::DisplayListWriterHandle::resetWritableOffsetIfPossible):
+
+        This helper method moves the writable offset (see below) back to the start of the buffer if it is not being read
+        from by the GPU process.
+
+        * WebProcess/GPU/graphics/DisplayListWriterHandle.h: Renamed from Source/WebKit/Shared/SharedDisplayListHandle.cpp.
+        (WebKit::DisplayListWriterHandle::create):
+        (WebKit::DisplayListWriterHandle::writableOffset const):
+
+        Similar to `DisplayListReaderHandle`, except that this contains logic specific to the web process for writing
+        display list items into shared memory. Advancing the cursor in `DisplayListWriterHandle` increments the counter.
+        It also increments the `writableOffset` of the handle, which represents the minimum offset into the shared
+        buffer that may contain newly appended display list items.
+
+        (WebKit::DisplayListWriterHandle::DisplayListWriterHandle):
+        * WebProcess/GPU/graphics/RemoteImageBufferProxy.h:
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp:
+        (WebKit::RemoteRenderingBackendProxy::submitDisplayList):
+        (WebKit::RemoteRenderingBackendProxy::updateReusableHandles):
+
+        This private helper iterates the set of buffers that are not currently being written to, and adds each one to
+        the reusable buffer queue only if its writable offset is at the start.
+
+        (WebKit::RemoteRenderingBackendProxy::createItemBuffer):
+
+        Implements logic that hands shared item buffer data handles to WebCore for writing display list items. This will
+        try to reuse an item buffer in the reuse queue, if possible, and fall back to allocating a new chunk of shared
+        memory if no reusable buffer is found (or the existing buffers have insufficient capacity). The fact that we
+        iterate through each reusable buffer in order, combined with the above logic in `updateReusableHandles`, ensures
+        that once we begin writing to a item buffer, we will continue using that item buffer until it exhausts available
+        capacity.
+
+        This property is important because it allows the GPU process to simply start reading item data from a given
+        offset and buffer ID (specified in the `WakeUpAndApplyDisplayList` IPC message), and seamlessly continue
+        reading data even after it exhausts all available item data in the current buffer by continuing from the start
+        of the item buffer that contains the next display list items (which we learn in the GPU process by encountering
+        a `MetaCommandSwitchTo` item at the end of the previous buffer).
+
+        In "steady state" (wherein both processes are concurrently writing and reading items as quickly as possible),
+        this means that as the web process is busy filling up each item buffer with item data, the GPU process is also
+        busy applying all the item data in one buffer and automatically moving on to the next buffer with no additional
+        IPC messages required.
+
+        (WebKit::RemoteRenderingBackendProxy::flushDisplayListAndCommit): Deleted.
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.h:
+
 2020-11-11  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r269244.

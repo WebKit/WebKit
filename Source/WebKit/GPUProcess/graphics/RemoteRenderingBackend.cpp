@@ -28,10 +28,12 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "DisplayListReaderHandle.h"
 #include "GPUConnectionToWebProcess.h"
 #include "PlatformRemoteImageBuffer.h"
 #include "RemoteRenderingBackendMessages.h"
 #include "RemoteRenderingBackendProxyMessages.h"
+#include <wtf/CheckedArithmetic.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -124,44 +126,86 @@ void RemoteRenderingBackend::createImageBuffer(const FloatSize& logicalSize, Ren
     m_remoteResourceCache.cacheImageBuffer(makeRef(*imageBuffer));
 }
 
-void RemoteRenderingBackend::applyDisplayList(const SharedDisplayListHandle& handle, RenderingResourceIdentifier renderingResourceIdentifier, ShouldFlushContext flushContext)
+void RemoteRenderingBackend::applyDisplayListsFromHandle(ImageBuffer& destination, DisplayListReaderHandle& handle, size_t initialOffset)
 {
-    Vector<Ref<SharedMemory>> removedItemBuffers;
-    auto displayList = handle.createDisplayList([&] (DisplayList::ItemBufferIdentifier identifier) -> uint8_t* {
-        if (auto sharedMemory = m_sharedItemBuffers.take(identifier)) {
-            removedItemBuffers.append(*sharedMemory);
-            return reinterpret_cast<uint8_t*>(sharedMemory->data());
+    auto handleProtector = makeRef(handle);
+
+    size_t offset = initialOffset;
+    size_t sizeToRead = 0;
+
+    do {
+        sizeToRead = handle.unreadBytes();
+    } while (!sizeToRead);
+
+    while (sizeToRead) {
+        auto displayList = handle.displayListForReading(offset, sizeToRead, *this);
+        if (UNLIKELY(!displayList)) {
+            // FIXME: Add a message check to terminate the web process.
+            ASSERT_NOT_REACHED();
+            return;
         }
-        return nullptr;
-    });
 
-    if (!displayList) {
+        destination.submitDisplayList(*displayList);
+
+        CheckedSize checkedOffset = offset;
+        checkedOffset += sizeToRead;
+        if (UNLIKELY(checkedOffset.hasOverflowed())) {
+            // FIXME: Add a message check to terminate the web process.
+            ASSERT_NOT_REACHED();
+            return;
+        }
+
+        offset = checkedOffset.unsafeGet();
+
+        if (UNLIKELY(offset > handle.sharedMemory().size())) {
+            // FIXME: Add a message check to terminate the web process.
+            ASSERT_NOT_REACHED();
+            return;
+        }
+
+        sizeToRead = handle.advance(sizeToRead);
+    }
+}
+
+void RemoteRenderingBackend::wakeUpAndApplyDisplayList(DisplayList::ItemBufferIdentifier initialIdentifier, uint64_t initialOffset, RenderingResourceIdentifier destinationBufferIdentifier)
+{
+    auto imageBuffer = m_remoteResourceCache.cachedImageBuffer(destinationBufferIdentifier);
+    if (UNLIKELY(!imageBuffer)) {
         // FIXME: Add a message check to terminate the web process.
+        ASSERT_NOT_REACHED();
         return;
     }
 
-    auto imageBuffer = m_remoteResourceCache.cachedImageBuffer(renderingResourceIdentifier);
-    if (!imageBuffer) {
+    auto initialHandle = m_sharedDisplayListHandles.get(initialIdentifier);
+    if (UNLIKELY(!initialHandle)) {
         // FIXME: Add a message check to terminate the web process.
+        ASSERT_NOT_REACHED();
         return;
     }
 
-    displayList->setItemBufferClient(this);
-    imageBuffer->submitDisplayList(*displayList);
+    applyDisplayListsFromHandle(*imageBuffer, *initialHandle, initialOffset);
 
-    if (flushContext == ShouldFlushContext::Yes)
-        imageBuffer->flushContext();
+    while (m_nextItemBufferToRead) {
+        auto nextHandle = m_sharedDisplayListHandles.get(m_nextItemBufferToRead);
+        if (!nextHandle) {
+            // If the handle identifier is currently unknown, wait until the GPU process receives an
+            // IPC message with a shared memory handle to the next item buffer.
+            break;
+        }
+        // Otherwise, continue reading the next display list item buffer from the start.
+        m_nextItemBufferToRead = { };
+        applyDisplayListsFromHandle(*imageBuffer, *nextHandle, SharedDisplayListHandle::reservedCapacityAtStart);
+    }
 }
 
-void RemoteRenderingBackend::submitDisplayList(const SharedDisplayListHandle& handle, RenderingResourceIdentifier renderingResourceIdentifier)
+void RemoteRenderingBackend::setNextItemBufferToRead(DisplayList::ItemBufferIdentifier identifier)
 {
-    applyDisplayList(handle, renderingResourceIdentifier, ShouldFlushContext::No);
-}
-
-void RemoteRenderingBackend::flushDisplayListAndCommit(const SharedDisplayListHandle& handle, DisplayList::FlushIdentifier flushIdentifier, RenderingResourceIdentifier renderingResourceIdentifier)
-{
-    applyDisplayList(handle, renderingResourceIdentifier, ShouldFlushContext::Yes);
-    flushDisplayListWasCommitted(flushIdentifier, renderingResourceIdentifier);
+    if (UNLIKELY(m_nextItemBufferToRead)) {
+        // FIXME: Add a message check to terminate the web process.
+        ASSERT_NOT_REACHED();
+        return;
+    }
+    m_nextItemBufferToRead = identifier;
 }
 
 void RemoteRenderingBackend::getImageData(AlphaPremultiplication outputFormat, IntRect srcRect, RenderingResourceIdentifier renderingResourceIdentifier, CompletionHandler<void(IPC::ImageDataReference&&)>&& completionHandler)
@@ -177,10 +221,21 @@ void RemoteRenderingBackend::releaseRemoteResource(RenderingResourceIdentifier r
     m_remoteResourceCache.releaseRemoteResource(renderingResourceIdentifier);
 }
 
-void RemoteRenderingBackend::didCreateSharedItemData(DisplayList::ItemBufferIdentifier identifier, const SharedMemory::IPCHandle& handle)
+void RemoteRenderingBackend::didCreateSharedDisplayListHandle(DisplayList::ItemBufferIdentifier identifier, const SharedMemory::IPCHandle& handle, RenderingResourceIdentifier destinationBufferIdentifier)
 {
-    if (auto sharedMemory = SharedMemory::map(handle.handle, SharedMemory::Protection::ReadOnly))
-        m_sharedItemBuffers.set(identifier, WTFMove(sharedMemory));
+    if (UNLIKELY(m_sharedDisplayListHandles.contains(identifier))) {
+        // FIXME: Add a message check to terminate the web process.
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    if (auto sharedMemory = SharedMemory::map(handle.handle, SharedMemory::Protection::ReadWrite))
+        m_sharedDisplayListHandles.set(identifier, DisplayListReaderHandle::create(identifier, sharedMemory.releaseNonNull()));
+
+    if (m_nextItemBufferToRead == identifier) {
+        m_nextItemBufferToRead = { };
+        wakeUpAndApplyDisplayList(identifier, SharedDisplayListHandle::reservedCapacityAtStart, destinationBufferIdentifier);
+    }
 }
 
 Optional<DisplayList::ItemHandle> WARN_UNUSED_RETURN RemoteRenderingBackend::decodeItem(const uint8_t* data, size_t length, DisplayList::ItemType type, uint8_t* handleLocation)

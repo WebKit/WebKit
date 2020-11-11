@@ -52,6 +52,7 @@ public:
     RemoteImageBuffer(std::unique_ptr<BackendType>&& backend, RemoteRenderingBackend& remoteRenderingBackend, WebCore::RenderingResourceIdentifier renderingResourceIdentifier)
         : BaseConcreteImageBuffer(WTFMove(backend), renderingResourceIdentifier)
         , m_remoteRenderingBackend(remoteRenderingBackend)
+        , m_renderingResourceIdentifier(renderingResourceIdentifier)
     {
         m_remoteRenderingBackend.imageBufferBackendWasCreated(m_backend->logicalSize(), m_backend->backendSize(), m_backend->resolutionScale(), m_backend->colorSpace(), m_backend->createImageBufferBackendHandle(), renderingResourceIdentifier);
     }
@@ -83,12 +84,15 @@ private:
         }
 
         if (item.is<WebCore::DisplayList::FlushContext>()) {
-            // FIXME: Not implemented yet.
+            BaseConcreteImageBuffer::flushContext();
+            auto identifier = item.get<WebCore::DisplayList::FlushContext>().identifier();
+            m_remoteRenderingBackend.flushDisplayListWasCommitted(identifier, m_renderingResourceIdentifier);
             return true;
         }
 
         if (item.is<WebCore::DisplayList::MetaCommandSwitchTo>()) {
-            // FIXME: Not implemented yet.
+            auto nextBufferIdentifier = item.get<WebCore::DisplayList::MetaCommandSwitchTo>().identifier();
+            m_remoteRenderingBackend.setNextItemBufferToRead(nextBufferIdentifier);
             return true;
         }
 
@@ -96,6 +100,7 @@ private:
     }
 
     RemoteRenderingBackend& m_remoteRenderingBackend;
+    WebCore::RenderingResourceIdentifier m_renderingResourceIdentifier;
 };
 
 } // namespace WebKit

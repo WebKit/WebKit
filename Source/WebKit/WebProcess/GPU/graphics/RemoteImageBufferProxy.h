@@ -34,6 +34,7 @@
 #include <WebCore/DisplayListImageBuffer.h>
 #include <WebCore/DisplayListItems.h>
 #include <WebCore/DisplayListRecorder.h>
+#include <wtf/SystemTracing.h>
 
 namespace WebKit {
 
@@ -139,6 +140,7 @@ protected:
 
     void flushDrawingContext() override
     {
+        TraceScope tracingScope(FlushRemoteImageBufferStart, FlushRemoteImageBufferEnd);
         flushDrawingContextAndCommit();
         timeoutWaitForFlushDisplayListWasCommitted();
     }
@@ -152,8 +154,9 @@ protected:
         if (displayList.isEmpty())
             return;
 
-        TraceScope tracingScope(FlushRemoteImageBufferStart, FlushRemoteImageBufferEnd, 1);
-        m_sentFlushIdentifier = m_remoteRenderingBackendProxy->flushDisplayListAndCommit(displayList, m_renderingResourceIdentifier);
+        m_sentFlushIdentifier = WebCore::DisplayList::FlushIdentifier::generate();
+        displayList.template append<WebCore::DisplayList::FlushContext>(m_sentFlushIdentifier);
+        m_remoteRenderingBackendProxy->submitDisplayList(displayList, m_renderingResourceIdentifier);
         m_itemCountInCurrentDisplayList = 0;
         displayList.clear();
     }
@@ -163,7 +166,6 @@ protected:
         if (!m_remoteRenderingBackendProxy || displayList.isEmpty())
             return;
 
-        TraceScope tracingScope(FlushRemoteImageBufferStart, FlushRemoteImageBufferEnd);
         m_remoteRenderingBackendProxy->submitDisplayList(displayList, m_renderingResourceIdentifier);
     }
 
@@ -182,7 +184,7 @@ protected:
     WebCore::DisplayList::ItemBufferHandle createItemBuffer(size_t capacity) override
     {
         if (m_remoteRenderingBackendProxy)
-            return m_remoteRenderingBackendProxy->createItemBuffer(capacity);
+            return m_remoteRenderingBackendProxy->createItemBuffer(capacity, m_renderingResourceIdentifier);
 
         ASSERT_NOT_REACHED();
         return { };

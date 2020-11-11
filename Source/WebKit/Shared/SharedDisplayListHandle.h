@@ -25,42 +25,76 @@
 
 #pragma once
 
+#include "SharedMemory.h"
 #include <WebCore/DisplayList.h>
+#include <wtf/Atomics.h>
+#include <wtf/RefCounted.h>
+#include <wtf/Threading.h>
 
 namespace WebKit {
 
-class SharedDisplayListHandle {
+class SharedDisplayListHandle : public RefCounted<SharedDisplayListHandle> {
 public:
-    using ItemBufferProvider = Function<uint8_t*(WebCore::DisplayList::ItemBufferIdentifier)>;
+    virtual ~SharedDisplayListHandle() = default;
 
-    SharedDisplayListHandle(const WebCore::DisplayList::DisplayList&);
-    std::unique_ptr<WebCore::DisplayList::DisplayList> createDisplayList(ItemBufferProvider&&) const;
+    static constexpr auto reservedCapacityAtStart = 2 * sizeof(uint64_t);
 
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<SharedDisplayListHandle> decode(Decoder&);
+    SharedMemory& sharedMemory() { return m_sharedMemory.get(); }
+    const SharedMemory& sharedMemory() const { return m_sharedMemory.get(); }
 
-private:
-    SharedDisplayListHandle(Vector<std::pair<WebCore::DisplayList::ItemBufferIdentifier, size_t>>&& buffers)
-        : m_buffers(WTFMove(buffers))
+    WebCore::DisplayList::ItemBufferIdentifier identifier() const { return m_identifier; }
+    uint8_t* data() const { return reinterpret_cast<uint8_t*>(sharedMemory().data()); }
+
+    uint64_t unreadBytes()
+    {
+        auto locker = SharedDisplayListHandle::Lock { *this };
+        return header().unreadBytes;
+    }
+
+    virtual size_t advance(size_t amount) = 0;
+
+protected:
+    class Lock {
+    public:
+        Lock(SharedDisplayListHandle& handle)
+            : m_handle(handle)
+        {
+            auto& atomicValue = m_handle.header().lock;
+            while (true) {
+                // FIXME: We need to avoid waiting forever in the case where the web content process
+                // holds on to the lock indefinitely (or crashes while holding the lock).
+                uint64_t unlocked = 0;
+                if (atomicValue.compareExchangeWeak(unlocked, 1))
+                    break;
+                Thread::yield();
+            }
+        }
+
+        ~Lock()
+        {
+            m_handle.header().lock.store(0);
+        }
+
+    private:
+        SharedDisplayListHandle& m_handle;
+    };
+
+    SharedDisplayListHandle(WebCore::DisplayList::ItemBufferIdentifier identifier, Ref<SharedMemory>&& sharedMemory)
+        : m_identifier(identifier)
+        , m_sharedMemory(WTFMove(sharedMemory))
     {
     }
 
-    Vector<std::pair<WebCore::DisplayList::ItemBufferIdentifier, size_t>> m_buffers;
+    struct DisplayListSharedMemoryHeader {
+        Atomic<uint64_t> lock;
+        uint64_t unreadBytes;
+    };
+
+    DisplayListSharedMemoryHeader& header() { return *reinterpret_cast<DisplayListSharedMemoryHeader*>(data()); }
+
+private:
+    WebCore::DisplayList::ItemBufferIdentifier m_identifier;
+    Ref<SharedMemory> m_sharedMemory;
 };
-
-template<class Encoder> void SharedDisplayListHandle::encode(Encoder& encoder) const
-{
-    encoder << m_buffers;
-}
-
-template<class Decoder> Optional<SharedDisplayListHandle> SharedDisplayListHandle::decode(Decoder& decoder)
-{
-    Optional<Vector<std::pair<WebCore::DisplayList::ItemBufferIdentifier, size_t>>> buffers;
-    decoder >> buffers;
-    if (!buffers)
-        return WTF::nullopt;
-
-    return {{ WTFMove(*buffers) }};
-}
 
 } // namespace WebKit

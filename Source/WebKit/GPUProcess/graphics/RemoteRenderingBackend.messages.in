@@ -24,10 +24,9 @@
 
 messages -> RemoteRenderingBackend NotRefCounted {
     CreateImageBuffer(WebCore::FloatSize logicalSize, WebCore::RenderingMode renderingMode, float resolutionScale, WebCore::ColorSpace colorSpace, WebCore::RenderingResourceIdentifier renderingResourceIdentifier)
-    SubmitDisplayList(WebKit::SharedDisplayListHandle displayList, WebCore::RenderingResourceIdentifier renderingResourceIdentifier)
-    FlushDisplayListAndCommit(WebKit::SharedDisplayListHandle displayList, WebCore::DisplayList::FlushIdentifier flushIdentifier, WebCore::RenderingResourceIdentifier renderingResourceIdentifier)
+    WakeUpAndApplyDisplayList(WebCore::DisplayList::ItemBufferIdentifier initialIdentifier, uint64_t initialOffset, WebCore::RenderingResourceIdentifier destinationBufferIdentifier)
     GetImageData(enum:uint8_t WebCore::AlphaPremultiplication outputFormat, WebCore::IntRect srcRect, WebCore::RenderingResourceIdentifier renderingResourceIdentifier) -> (IPC::ImageDataReference imageData) Synchronous
-    DidCreateSharedItemData(WebCore::DisplayList::ItemBufferIdentifier identifier, WebKit::SharedMemory::IPCHandle handle)
+    DidCreateSharedDisplayListHandle(WebCore::DisplayList::ItemBufferIdentifier identifier, WebKit::SharedMemory::IPCHandle handle, WebCore::RenderingResourceIdentifier destinationBufferIdentifier)
     ReleaseRemoteResource(WebCore::RenderingResourceIdentifier renderingResourceIdentifier)
 }
 

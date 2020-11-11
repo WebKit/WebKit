@@ -24,30 +24,28 @@
  */
 
 #include "config.h"
-#include "SharedDisplayListHandle.h"
+#include "DisplayListReaderHandle.h"
 
 namespace WebKit {
 using namespace WebCore;
 
-SharedDisplayListHandle::SharedDisplayListHandle(const DisplayList::DisplayList& displayList)
+size_t DisplayListReaderHandle::advance(size_t amount)
 {
-    displayList.forEachItemBuffer([&] (auto& handle) {
-        m_buffers.append({ handle.identifier, handle.capacity });
-    });
+    auto locker = SharedDisplayListHandle::Lock { *this };
+    if (LIKELY(amount <= header().unreadBytes))
+        return header().unreadBytes -= amount;
+
+    // FIXME: This should result in terminating the web process.
+    ASSERT_NOT_REACHED();
+    header().unreadBytes = 0;
+    return 0;
 }
 
-std::unique_ptr<DisplayList::DisplayList> SharedDisplayListHandle::createDisplayList(ItemBufferProvider&& bufferProvider) const
+std::unique_ptr<DisplayList::DisplayList> DisplayListReaderHandle::displayListForReading(size_t offset, size_t capacity, DisplayList::ItemBufferReadingClient& client) const
 {
-    DisplayList::ItemBufferHandles handles;
-    handles.reserveInitialCapacity(m_buffers.size());
-    for (auto& [identifier, capacity] : m_buffers) {
-        auto* data = bufferProvider(identifier);
-        if (!data)
-            return nullptr;
-
-        handles.uncheckedAppend({ identifier, data, capacity });
-    }
-    return makeUnique<DisplayList::DisplayList>(WTFMove(handles));
+    auto displayList = makeUnique<DisplayList::DisplayList>(DisplayList::ItemBufferHandles {{ identifier(), data() + offset, capacity }});
+    displayList->setItemBufferClient(&client);
+    return displayList;
 }
 
 } // namespace WebKit
