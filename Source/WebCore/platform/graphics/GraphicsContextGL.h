@@ -55,6 +55,10 @@ class HostWindow;
 class ImageBuffer;
 class ImageData;
 
+#if ENABLE(VIDEO) && USE(AVFOUNDATION)
+class GraphicsContextGLCV;
+#endif
+
 class GraphicsContextGL : public RefCounted<GraphicsContextGL> {
 public:
     enum {
@@ -778,6 +782,11 @@ public:
         DOMSourceNone,
     };
 
+    enum class FlipY : bool {
+        No,
+        Yes
+    };
+
     virtual PlatformGraphicsContextGL platformGraphicsContextGL() const = 0;
     virtual PlatformGLObject platformTexture() const = 0;
     virtual PlatformLayer* platformLayer() const = 0;
@@ -1285,6 +1294,11 @@ public:
     virtual void setFailNextGPUStatusCheck() = 0;
 
     virtual void prepareForDisplay() = 0;
+
+#if ENABLE(VIDEO) && USE(AVFOUNDATION)
+    // Returns interface for CV interaction if the functionality is present.
+    virtual GraphicsContextGLCV* asCV() = 0;
+#endif
 
 #if !USE(ANGLE)
     // Helper to texImage2D with pixel==0 case: pixels are initialized to 0.

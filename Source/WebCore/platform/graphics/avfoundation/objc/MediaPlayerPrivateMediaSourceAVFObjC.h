@@ -56,7 +56,6 @@ class MediaSourcePrivateAVFObjC;
 class PixelBufferConformerCV;
 class PlatformClockCM;
 class VideoLayerManagerObjC;
-class VideoTextureCopierCV;
 class WebCoreDecompressionSession;
 
 
@@ -323,7 +322,6 @@ private:
     bool m_hasAvailableVideoFrame { false };
     bool m_allRenderersHaveAvailableSamples { false };
     bool m_visible { false };
-    std::unique_ptr<VideoTextureCopierCV> m_videoTextureCopier;
     RetainPtr<CVOpenGLTextureRef> m_lastTexture;
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     RefPtr<MediaPlaybackTarget> m_playbackTarget;

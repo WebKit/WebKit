@@ -510,6 +510,10 @@ public:
 
     void prepareForDisplay() final;
 
+#if ENABLE(VIDEO) && USE(AVFOUNDATION)
+    GraphicsContextGLCV* asCV() final;
+#endif
+
 private:
     GraphicsContextGLOpenGL(GraphicsContextGLAttributes, HostWindow*, Destination = Destination::Offscreen, GraphicsContextGLOpenGL* sharedContext = nullptr);
 
@@ -748,6 +752,9 @@ private:
     void* m_displayBufferPbuffer { nullptr };
 
     bool m_hasSwitchedToHighPerformanceGPU { false };
+#endif
+#if ENABLE(VIDEO) && USE(AVFOUNDATION)
+    std::unique_ptr<GraphicsContextGLCV> m_cv;
 #endif
 };
 

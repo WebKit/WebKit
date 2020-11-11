@@ -46,6 +46,10 @@
 #import <OpenGL/CGLRenderers.h>
 #endif
 
+#if ENABLE(VIDEO) && USE(AVFOUNDATION)
+#include "GraphicsContextGLCV.h"
+#endif
+
 namespace WebCore {
 
 #if ASSERT_ENABLED

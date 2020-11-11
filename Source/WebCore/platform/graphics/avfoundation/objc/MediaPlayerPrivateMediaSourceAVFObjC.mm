@@ -33,13 +33,14 @@
 #import "AVStreamDataParserMIMETypeCache.h"
 #import "CDMSessionAVStreamSession.h"
 #import "GraphicsContextCG.h"
+#import "GraphicsContextGLCV.h"
+#import "GraphicsContextGLOpenGL.h"
 #import "Logging.h"
 #import "MediaSourcePrivateAVFObjC.h"
 #import "MediaSourcePrivateClient.h"
 #import "PixelBufferConformerCV.h"
 #import "TextTrackRepresentation.h"
 #import "VideoLayerManagerObjC.h"
-#import "VideoTextureCopierCV.h"
 #import "WebCoreDecompressionSession.h"
 #import <AVFoundation/AVAsset.h>
 #import <AVFoundation/AVTime.h>
@@ -646,14 +647,12 @@ bool MediaPlayerPrivateMediaSourceAVFObjC::copyVideoTextureToPlatformTexture(Gra
         if (!m_lastPixelBuffer)
             return false;
     }
-
-    size_t width = CVPixelBufferGetWidth(m_lastPixelBuffer.get());
-    size_t height = CVPixelBufferGetHeight(m_lastPixelBuffer.get());
-
-    if (!m_videoTextureCopier)
-        m_videoTextureCopier = makeUnique<VideoTextureCopierCV>(*context);
-
-    return m_videoTextureCopier->copyImageToPlatformTexture(m_lastPixelBuffer.get(), width, height, outputTexture, outputTarget, level, internalFormat, format, type, premultiplyAlpha, flipY);
+    auto contextCV = context->asCV();
+    if (!contextCV)
+        return false;
+    UNUSED_VARIABLE(premultiplyAlpha);
+    ASSERT_UNUSED(outputTarget, outputTarget == GraphicsContextGL::TEXTURE_2D);
+    return contextCV->copyPixelBufferToTexture(m_lastPixelBuffer.get(), outputTexture, level, internalFormat, format, type, GraphicsContextGLCV::FlipY(flipY));
 }
 
 bool MediaPlayerPrivateMediaSourceAVFObjC::hasAvailableVideoFrame() const

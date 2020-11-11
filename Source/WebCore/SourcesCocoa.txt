@@ -377,7 +377,7 @@ platform/graphics/coretext/FontPlatformDataCoreText.cpp
 platform/graphics/coretext/GlyphPageCoreText.cpp
 platform/graphics/cv/ImageTransferSessionVT.mm
 platform/graphics/cv/PixelBufferConformerCV.cpp
-platform/graphics/cv/VideoTextureCopierCV.cpp
+platform/graphics/cv/GraphicsContextGLCVANGLE.cpp
 platform/graphics/coreimage/FilterEffectRendererCoreImage.mm
 platform/graphics/displaylists/DisplayListDrawGlyphsRecorderCoreText.cpp
 platform/graphics/gpu/TilingData.cpp

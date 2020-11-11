@@ -49,6 +49,10 @@
 #include <Accelerate/Accelerate.h>
 #endif
 
+#if ENABLE(VIDEO) && USE(AVFOUNDATION)
+#include "GraphicsContextGLCVANGLE.h"
+#endif
+
 // Skip the inclusion of ANGLE's explicit context entry points for now.
 #define GL_ANGLE_explicit_context
 #define GL_ANGLE_explicit_context_gles1
@@ -2585,6 +2589,14 @@ void GraphicsContextGLOpenGL::readPixels(GCGLint x, GCGLint y, GCGLsizei width, 
     UNUSED_PARAM(dstOffset);
 }
 
+#if ENABLE(VIDEO) && USE(AVFOUNDATION)
+GraphicsContextGLCV* GraphicsContextGLOpenGL::asCV()
+{
+    if (!m_cv)
+        m_cv = makeUnique<GraphicsContextGLCVANGLE>(*this);
+    return m_cv.get();
+}
+#endif
 }
 
 #endif // ENABLE(GRAPHICS_CONTEXT_GL) && USE(ANGLE)

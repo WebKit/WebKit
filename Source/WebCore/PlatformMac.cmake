@@ -326,9 +326,9 @@ list(APPEND WebCore_SOURCES
     platform/graphics/coretext/FontPlatformDataCoreText.cpp
     platform/graphics/coretext/GlyphPageCoreText.cpp
 
+    platform/graphics/cv/GraphicsContextGLCVANGLE.cpp
     platform/graphics/cv/ImageRotationSessionVT.mm
     platform/graphics/cv/PixelBufferConformerCV.cpp
-    platform/graphics/cv/VideoTextureCopierCV.cpp
 
     platform/graphics/gpu/TilingData.cpp
 
