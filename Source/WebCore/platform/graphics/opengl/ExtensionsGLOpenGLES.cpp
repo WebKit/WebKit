@@ -85,6 +85,8 @@ bool ExtensionsGLOpenGLES::isEnabled(const String& name)
 
 void ExtensionsGLOpenGLES::framebufferTexture2DMultisampleIMG(unsigned long target, unsigned long attachment, unsigned long textarget, unsigned texture, int level, unsigned long samples)
 {
+    if (!m_context->makeContextCurrent())
+        return;
     if (m_glFramebufferTexture2DMultisampleIMG)
         m_glFramebufferTexture2DMultisampleIMG(target, attachment, textarget, texture, level, samples);
     else
@@ -93,6 +95,8 @@ void ExtensionsGLOpenGLES::framebufferTexture2DMultisampleIMG(unsigned long targ
 
 void ExtensionsGLOpenGLES::renderbufferStorageMultisampleIMG(unsigned long target, unsigned long samples, unsigned long internalformat, unsigned long width, unsigned long height)
 {
+    if (!m_context->makeContextCurrent())
+        return;
     if (m_glRenderbufferStorageMultisampleIMG)
         m_glRenderbufferStorageMultisampleIMG(target, samples, internalformat, width, height);
     else
@@ -106,6 +110,8 @@ void ExtensionsGLOpenGLES::blitFramebuffer(long /* srcX0 */, long /* srcY0 */, l
 
 void ExtensionsGLOpenGLES::renderbufferStorageMultisample(unsigned long target, unsigned long samples, unsigned long internalformat, unsigned long width, unsigned long height)
 {
+    if (!m_context->makeContextCurrent())
+        return;
     if (m_glRenderbufferStorageMultisampleIMG)
         renderbufferStorageMultisampleIMG(target, samples, internalformat, width, height);
     else
@@ -129,8 +135,9 @@ void ExtensionsGLOpenGLES::popGroupMarkerEXT(void)
 
 PlatformGLObject ExtensionsGLOpenGLES::createVertexArrayOES()
 {
-    m_context->makeContextCurrent();
     if (m_glGenVertexArraysOES) {
+        if (!m_context->makeContextCurrent())
+            return 0;
         GLuint array = 0;
         m_glGenVertexArraysOES(1, &array);
         return array;
@@ -144,33 +151,35 @@ void ExtensionsGLOpenGLES::deleteVertexArrayOES(PlatformGLObject array)
 {
     if (!array)
         return;
-
-    m_context->makeContextCurrent();
-    if (m_glDeleteVertexArraysOES)
+    if (m_glDeleteVertexArraysOES) {
+        if (!m_context->makeContextCurrent())
+            return;
         m_glDeleteVertexArraysOES(1, &array);
-    else
-        m_context->synthesizeGLError(GL_INVALID_OPERATION);
+        return;
+    }
+    m_context->synthesizeGLError(GL_INVALID_OPERATION);
 }
 
 GCGLboolean ExtensionsGLOpenGLES::isVertexArrayOES(PlatformGLObject array)
 {
     if (!array)
         return GL_FALSE;
-
-    m_context->makeContextCurrent();
-    if (m_glIsVertexArrayOES)
+    if (m_glIsVertexArrayOES) {
+        if (!m_context->makeContextCurrent())
+            return GL_FALSE;
         return m_glIsVertexArrayOES(array);
-
+    }
     m_context->synthesizeGLError(GL_INVALID_OPERATION);
     return false;
 }
 
 void ExtensionsGLOpenGLES::bindVertexArrayOES(PlatformGLObject array)
 {
-    m_context->makeContextCurrent();
-    if (m_glBindVertexArrayOES)
+    if (m_glBindVertexArrayOES) {
+        if (!m_context->makeContextCurrent())
+            return;
         m_glBindVertexArrayOES(array);
-    else
+    } else
         m_context->synthesizeGLError(GL_INVALID_OPERATION);
 }
 
@@ -188,8 +197,9 @@ int ExtensionsGLOpenGLES::getGraphicsResetStatusARB()
     if (m_contextResetStatus != GL_NO_ERROR)
         return m_contextResetStatus;
     if (m_glGetGraphicsResetStatusEXT) {
-        m_context->makeContextCurrent();
-        int reasonForReset = m_glGetGraphicsResetStatusEXT();
+        int reasonForReset = UNKNOWN_CONTEXT_RESET_ARB;
+        if (m_context->makeContextCurrent())
+            reasonForReset = m_glGetGraphicsResetStatusEXT();
         if (reasonForReset != GL_NO_ERROR)
             m_contextResetStatus = reasonForReset;
         return reasonForReset;
@@ -202,7 +212,9 @@ int ExtensionsGLOpenGLES::getGraphicsResetStatusARB()
 void ExtensionsGLOpenGLES::readnPixelsEXT(int x, int y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLsizei bufSize, void *data)
 {
     if (m_glReadnPixelsEXT) {
-        m_context->makeContextCurrent();
+        if (!m_context->makeContextCurrent())
+            return;
+
         // FIXME: remove the two glFlush calls when the driver bug is fixed, i.e.,
         // all previous rendering calls should be done before reading pixels.
         ::glFlush();
@@ -219,7 +231,9 @@ void ExtensionsGLOpenGLES::readnPixelsEXT(int x, int y, GCGLsizei width, GCGLsiz
 void ExtensionsGLOpenGLES::getnUniformfvEXT(GCGLuint program, int location, GCGLsizei bufSize, float *params)
 {
     if (m_glGetnUniformfvEXT) {
-        m_context->makeContextCurrent();
+        if (!m_context->makeContextCurrent())
+            return;
+
         m_glGetnUniformfvEXT(program, location, bufSize, params);
         return;
     }
@@ -230,7 +244,9 @@ void ExtensionsGLOpenGLES::getnUniformfvEXT(GCGLuint program, int location, GCGL
 void ExtensionsGLOpenGLES::getnUniformivEXT(GCGLuint program, int location, GCGLsizei bufSize, int *params)
 {
     if (m_glGetnUniformivEXT) {
-        m_context->makeContextCurrent();
+        if (!m_context->makeContextCurrent())
+            return;
+
         m_glGetnUniformivEXT(program, location, bufSize, params);
         return;
     }
@@ -245,7 +261,9 @@ void ExtensionsGLOpenGLES::drawArraysInstanced(GCGLenum mode, GCGLint first, GCG
         return;
     }
 
-    m_context->makeContextCurrent();
+    if (!m_context->makeContextCurrent())
+        return;
+
     m_glDrawArraysInstancedANGLE(mode, first, count, primcount);
 }
 
@@ -256,7 +274,9 @@ void ExtensionsGLOpenGLES::drawElementsInstanced(GCGLenum mode, GCGLsizei count,
         return;
     }
 
-    m_context->makeContextCurrent();
+    if (!m_context->makeContextCurrent())
+        return;
+
     m_glDrawElementsInstancedANGLE(mode, count, type, reinterpret_cast<GLvoid*>(static_cast<intptr_t>(offset)), primcount);
 }
 
@@ -267,7 +287,9 @@ void ExtensionsGLOpenGLES::vertexAttribDivisor(GCGLuint index, GCGLuint divisor)
         return;
     }
 
-    m_context->makeContextCurrent();
+    if (!m_context->makeContextCurrent())
+        return;
+
     m_glVertexAttribDivisorANGLE(index, divisor);
 }
 

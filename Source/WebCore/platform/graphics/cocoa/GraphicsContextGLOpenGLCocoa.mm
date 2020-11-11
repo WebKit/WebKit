@@ -387,10 +387,8 @@ GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes att
 GraphicsContextGLOpenGL::~GraphicsContextGLOpenGL()
 {
     GraphicsContextGLOpenGLManager::sharedManager().removeContext(this);
-
-    if (m_contextObj) {
+    if (makeContextCurrent()) {
         GraphicsContextGLAttributes attrs = contextAttributes();
-        makeContextCurrent(); // TODO: check result.
         gl::DeleteTextures(1, &m_texture);
 
         if (attrs.antialias) {
@@ -407,18 +405,18 @@ GraphicsContextGLOpenGL::~GraphicsContextGLOpenGL()
             gl::DeleteTextures(1, &m_preserveDrawingBufferTexture);
         if (m_preserveDrawingBufferFBO)
             gl::DeleteFramebuffers(1, &m_preserveDrawingBufferFBO);
-
-        if (m_displayBufferPbuffer) {
-            EGL_ReleaseTexImage(m_displayObj, m_displayBufferPbuffer, EGL_BACK_BUFFER);
-            EGL_DestroySurface(m_displayObj, m_displayBufferPbuffer);
-        }
+    }
+    if (m_displayBufferPbuffer)
+        EGL_DestroySurface(m_displayObj, m_displayBufferPbuffer);
+    if (m_webGLLayer) {
         auto recycledBuffer = [m_webGLLayer recycleBuffer];
         if (recycledBuffer.handle)
             EGL_DestroySurface(m_displayObj, recycledBuffer.handle);
         auto contentsHandle = [m_webGLLayer detachClient];
         if (contentsHandle)
             EGL_DestroySurface(m_displayObj, contentsHandle);
-
+    }
+    if (m_contextObj) {
         EGL_MakeCurrent(m_displayObj, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
         EGL_DestroyContext(m_displayObj, m_contextObj);
     }
@@ -552,12 +550,10 @@ void GraphicsContextGLOpenGL::setContextVisibility(bool isVisible)
 #if PLATFORM(MAC)
 void GraphicsContextGLOpenGL::updateCGLContext()
 {
-    if (!m_contextObj)
+    if (!makeContextCurrent())
         return;
-
     LOG(WebGL, "Detected a mux switch or display reconfiguration. Call CGLUpdateContext. (%p)", this);
 
-    makeContextCurrent();
     EGLDeviceEXT device = nullptr;
     EGL_QueryDisplayAttribEXT(m_displayObj, EGL_DEVICE_EXT, reinterpret_cast<EGLAttrib*>(&device));
     CGLContextObj cglContext = nullptr;
