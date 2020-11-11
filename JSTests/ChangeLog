@@ -1,3 +1,22 @@
+2020-11-10  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Align %TypedArray% behavior with recent spec adjustments
+        https://bugs.webkit.org/show_bug.cgi?id=218776
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/reflect-set.js:
+        * stress/typedarray-functions-with-neutered.js:
+        * stress/typedarray-includes.js:
+        * stress/typedarray-indexOf.js:
+        * stress/typedarray-join.js: Added.
+        * stress/typedarray-lastIndexOf.js:
+        Update tests.
+
+        * test262/expectations.yaml:
+        Mark a handful of test cases as temporarily failing.
+        These will disappear in a future test262 update.
+
 2020-11-10  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         stress/intl-datetimeformat-formatrange.js and stress/intl-datetimeformat-formatrange-relevant-extensions.js fail with ICU 65.1

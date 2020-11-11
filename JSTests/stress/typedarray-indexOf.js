@@ -44,6 +44,9 @@ for (constructor of typedArrays) {
     shouldBe("a.indexOf(undefined)", "-1");
     shouldBe("a.indexOf({1: ''})", "-1");
     shouldBe("a.indexOf(\"\")", "-1");
+
+    shouldBe("a.indexOf(undefined, { valueOf() { transferArrayBuffer(a.buffer); return 0; } })", "-1");
+    shouldThrow("a.indexOf(undefined)");
 }
 
 

@@ -838,6 +838,9 @@ test/built-ins/TypedArray/prototype/findIndex/predicate-may-detach-buffer.js:
 test/built-ins/TypedArray/prototype/forEach/callbackfn-detachbuffer.js:
   default: 'Test262Error: Expected a TypeError but got a Test262Error (Testing with Float64Array.)'
   strict mode: 'Test262Error: Expected a TypeError but got a Test262Error (Testing with Float64Array.)'
+test/built-ins/TypedArray/prototype/includes/detached-buffer-tointeger.js:
+  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
+  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
 test/built-ins/TypedArray/prototype/map/callbackfn-detachbuffer.js:
   default: 'Test262Error: Expected a TypeError but got a Test262Error (Testing with Float64Array.)'
   strict mode: 'Test262Error: Expected a TypeError but got a Test262Error (Testing with Float64Array.)'
@@ -934,9 +937,18 @@ test/built-ins/TypedArrayConstructors/internals/Set/detached-buffer-realm.js:
 test/built-ins/TypedArrayConstructors/internals/Set/detached-buffer.js:
   default: 'Test262Error: `sample[0] = 1` is false Expected SameValue(«1», «false») to be true (Testing with Float64Array.)'
   strict mode: 'Test262Error: `sample[0] = 1` is false Expected SameValue(«1», «false») to be true (Testing with Float64Array.)'
+test/built-ins/TypedArrayConstructors/internals/Set/key-is-minus-zero.js:
+  default: 'Test262Error: Reflect.set(sample, "-0", 1) must return false Expected SameValue(«true», «false») to be true (Testing with Float64Array.)'
+  strict mode: 'Test262Error: Reflect.set(sample, "-0", 1) must return false Expected SameValue(«true», «false») to be true (Testing with Float64Array.)'
+test/built-ins/TypedArrayConstructors/internals/Set/key-is-not-integer.js:
+  default: 'Test262Error: Reflect.set(sample, "1.1", 1) must return false Expected SameValue(«true», «false») to be true (Testing with Float64Array.)'
+  strict mode: 'Test262Error: Reflect.set(sample, "1.1", 1) must return false Expected SameValue(«true», «false») to be true (Testing with Float64Array.)'
+test/built-ins/TypedArrayConstructors/internals/Set/key-is-out-of-bounds.js:
+  default: 'Test262Error: Reflect.set(sample, "-1", 1) must return false Expected SameValue(«true», «false») to be true (Testing with Float64Array.)'
+  strict mode: 'Test262Error: Reflect.set(sample, "-1", 1) must return false Expected SameValue(«true», «false») to be true (Testing with Float64Array.)'
 test/built-ins/TypedArrayConstructors/internals/Set/tonumber-value-detached-buffer.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «false») to be true (Testing with Float64Array.)'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «false») to be true (Testing with Float64Array.)'
+  default: 'Test262Error: Expected SameValue(«true», «false») to be true (Testing with Float64Array.)'
+  strict mode: 'Test262Error: Expected SameValue(«true», «false») to be true (Testing with Float64Array.)'
 test/intl402/DateTimeFormat/prototype/formatRange/en-US.js:
   default: 'Test262Error: Expected SameValue(«1/3/2019 – 1/5/2019», «1/3/2019 – 1/5/2019») to be true'
   strict mode: 'Test262Error: Expected SameValue(«1/3/2019 – 1/5/2019», «1/3/2019 – 1/5/2019») to be true'
@@ -2538,12 +2550,6 @@ test/language/statements/class/elements/nested-direct-eval-err-contains-argument
 test/language/statements/class/elements/nested-private-direct-eval-err-contains-arguments.js:
   default: 'Test262Error: Expected a SyntaxError but got a ReferenceError'
   strict mode: 'Test262Error: Expected a SyntaxError but got a ReferenceError'
-test/language/statements/class/elements/privatefieldget-primitive-receiver.js:
-  default: 'Bad exit code: 5'
-  strict mode: 'Bad exit code: 5'
-test/language/statements/class/elements/privatefieldput-primitive-receiver.js:
-  default: 'Bad exit code: 5'
-  strict mode: 'Bad exit code: 5'
 test/language/statements/class/gen-method-static/forbidden-ext/b2/cls-decl-gen-meth-static-forbidden-ext-indirect-access-own-prop-caller-get.js:
   default: 'TypeError: Function.caller used to retrieve generator body'
 test/language/statements/class/gen-method-static/forbidden-ext/b2/cls-decl-gen-meth-static-forbidden-ext-indirect-access-own-prop-caller-value.js:

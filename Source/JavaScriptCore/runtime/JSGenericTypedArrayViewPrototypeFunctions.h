@@ -198,7 +198,7 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncIncludes(VM& vm, JSGl
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     if (thisObject->isDetached())
-        return throwVMTypeError(globalObject, scope, typedArrayBufferHasBeenDetachedErrorMessage);
+        return JSValue::encode(jsBoolean(valueToFind.isUndefined()));
 
     typename ViewClass::ElementType* array = thisObject->typedVector();
     auto targetOption = ViewClass::toAdaptorNativeFromValueWithoutCoercion(valueToFind);
@@ -243,7 +243,7 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncIndexOf(VM& vm, JSGlo
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     if (thisObject->isDetached())
-        return throwVMTypeError(globalObject, scope, typedArrayBufferHasBeenDetachedErrorMessage);
+        return JSValue::encode(jsNumber(-1));
 
     typename ViewClass::ElementType* array = thisObject->typedVector();
     auto targetOption = ViewClass::toAdaptorNativeFromValueWithoutCoercion(valueToFind);
@@ -269,16 +269,18 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncJoin(VM& vm, JSGlobal
     if (thisObject->isDetached())
         return throwVMTypeError(globalObject, scope, typedArrayBufferHasBeenDetachedErrorMessage);
 
-    // 22.2.3.14
+    unsigned length = thisObject->length();
     auto joinWithSeparator = [&] (StringView separator) -> EncodedJSValue {
-        ViewClass* thisObject = jsCast<ViewClass*>(callFrame->thisValue());
-        unsigned length = thisObject->length();
-
         JSStringJoiner joiner(globalObject, separator, length);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
-        for (unsigned i = 0; i < length; i++) {
-            joiner.append(globalObject, thisObject->getIndexQuickly(i));
-            RETURN_IF_EXCEPTION(scope, encodedJSValue());
+        if (!thisObject->isDetached()) {
+            for (unsigned i = 0; i < length; i++) {
+                joiner.append(globalObject, thisObject->getIndexQuickly(i));
+                RETURN_IF_EXCEPTION(scope, encodedJSValue());
+            }
+        } else {
+            for (unsigned i = 0; i < length; i++)
+                joiner.appendEmptyString();
         }
         RELEASE_AND_RETURN(scope, JSValue::encode(joiner.join(globalObject)));
     };
@@ -292,8 +294,6 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncJoin(VM& vm, JSGlobal
     JSString* separatorString = separatorValue.toString(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-    if (thisObject->isDetached())
-        return throwVMTypeError(globalObject, scope, typedArrayBufferHasBeenDetachedErrorMessage);
     auto viewWithString = separatorString->viewWithUnderlyingString(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     return joinWithSeparator(viewWithString.view);
@@ -331,7 +331,7 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncLastIndexOf(VM& vm, J
     }
 
     if (thisObject->isDetached())
-        return throwVMTypeError(globalObject, scope, typedArrayBufferHasBeenDetachedErrorMessage);
+        return JSValue::encode(jsNumber(-1));
 
     auto targetOption = ViewClass::toAdaptorNativeFromValueWithoutCoercion(valueToFind);
     if (!targetOption)

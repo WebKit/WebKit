@@ -691,6 +691,11 @@ var symbol = Symbol();
         shouldBe(Reflect.set(object, 0, 42, receiver), true);
         shouldBe(Reflect.get(object, 0), 42);
         shouldBe(receiver.hasOwnProperty(0), false);
+
+        var object = new TypedArray(1);
+        transferArrayBuffer(object.buffer);
+        shouldBe(Reflect.set(object, 0, 42), true);
+        shouldBe(Reflect.get(object, 0), undefined);
     };
 })());
 

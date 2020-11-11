@@ -1,3 +1,35 @@
+2020-11-10  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Align %TypedArray% behavior with recent spec adjustments
+        https://bugs.webkit.org/show_bug.cgi?id=218776
+
+        Reviewed by Yusuke Suzuki.
+
+        The recent spec changes for typed arrays with detached buffers had certain ripple effects,
+        namely the following two PRs which will be presented in next week's TC39 meeting.
+        Since no controversy is expected, this patch addresses them now, though test262 adjustments are forthcoming.
+
+        1. https://github.com/tc39/ecma262/pull/2210
+           It is correct that `ta[i] = n` doesn't throw when `ta` has a detached buffer or `i` is otherwise OOB,
+           but by not throwing, Reflect.set(ta, i, n) is obliged to return true.
+
+        2. https://github.com/tc39/ecma262/pull/2221
+           Until now, %TypedArray%.prototype.{includes, indexOf, join, lastIndexOf} lacked a rigorous specification;
+           in particular, each has a parameter that may detach the buffer upon valueOf or toString, and the expected
+           behavior was not made clear. It seems most sensible to do what the corresponding Array methods do upon
+           `array.length = 0`: make use of the cached length but don't access indices, such that indexOf/lastIndexOf
+           return -1 while includes/join act as if the elements were all `undefined`.
+
+        * runtime/JSGenericTypedArrayViewInlines.h:
+        (JSC::JSGenericTypedArrayView<Adaptor>::put):
+        (JSC::JSGenericTypedArrayView<Adaptor>::defineOwnProperty):
+        (JSC::JSGenericTypedArrayView<Adaptor>::putByIndex):
+        * runtime/JSGenericTypedArrayViewPrototypeFunctions.h:
+        (JSC::genericTypedArrayViewProtoFuncIncludes):
+        (JSC::genericTypedArrayViewProtoFuncIndexOf):
+        (JSC::genericTypedArrayViewProtoFuncJoin):
+        (JSC::genericTypedArrayViewProtoFuncLastIndexOf):
+
 2020-11-10  John Wilander  <wilander@apple.com>
 
         PCM: Change from ad-click-attribution to private-click-measurement (in all forms, including .well-known URL)

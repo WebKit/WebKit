@@ -41,6 +41,9 @@ for (constructor of typedArrays) {
     shouldBe("a.lastIndexOf(undefined)", "-1");
     shouldBe("a.lastIndexOf({1: ''})", "-1");
     shouldBe("a.lastIndexOf(\"\")", "-1");
+
+    shouldBe("a.lastIndexOf(undefined, { valueOf() { transferArrayBuffer(a.buffer); return 0; } })", "-1");
+    shouldThrow("a.lastIndexOf(undefined)");
 }
 
 

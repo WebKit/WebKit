@@ -365,7 +365,7 @@ bool JSGenericTypedArrayView<Adaptor>::put(
     if (isCanonicalNumericIndexString(propertyName)) {
         // Cases like '-0', '1.1', etc. are still obliged to give the RHS a chance to throw.
         toNativeFromValue<Adaptor>(globalObject, value);
-        return false;
+        return true;
     }
 
     return Base::put(thisObject, globalObject, propertyName, value, slot);
@@ -403,7 +403,7 @@ bool JSGenericTypedArrayView<Adaptor>::defineOwnProperty(
             return throwTypeErrorIfNeeded("Attempting to store non-writable property on a typed array at index: ");
 
         if (descriptor.value())
-            RELEASE_AND_RETURN(scope, thisObject->putByIndex(thisObject, globalObject, index.value(), descriptor.value(), shouldThrow));
+            RELEASE_AND_RETURN(scope, thisObject->setIndex(globalObject, index.value(), descriptor.value()));
 
         return true;
     }
@@ -449,7 +449,8 @@ bool JSGenericTypedArrayView<Adaptor>::putByIndex(
     JSCell* cell, JSGlobalObject* globalObject, unsigned propertyName, JSValue value, bool)
 {
     JSGenericTypedArrayView* thisObject = jsCast<JSGenericTypedArrayView*>(cell);
-    return thisObject->setIndex(globalObject, propertyName, value);
+    thisObject->setIndex(globalObject, propertyName, value);
+    return true;
 }
 
 template<typename Adaptor>
