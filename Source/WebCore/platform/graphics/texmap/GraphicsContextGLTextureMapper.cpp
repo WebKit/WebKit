@@ -139,8 +139,7 @@ GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes att
 #else
     m_texmapLayer = WTF::makeUnique<TextureMapperGCGLPlatformLayer>(*this, destination);
 #endif
-    bool success = makeContextCurrent();
-    ASSERT_UNUSED(success, success);
+    makeContextCurrent();
 
     validateAttributes();
     attributes = contextAttributes(); // They may have changed during validation.
@@ -214,8 +213,7 @@ GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes att
     m_texmapLayer = makeUnique<TextureMapperGCGLPlatformLayer>(*this, destination);
 #endif
 
-    bool success = makeContextCurrent();
-    ASSERT_UNUSED(success, success);
+    makeContextCurrent();
 
     validateAttributes();
     attributes = contextAttributes(); // They may have changed during validation.
@@ -335,8 +333,7 @@ GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes att
 #if USE(ANGLE)
 GraphicsContextGLOpenGL::~GraphicsContextGLOpenGL()
 {
-    bool success = makeContextCurrent();
-    ASSERT_UNUSED(success, success);
+    makeContextCurrent();
     if (m_texture)
         gl::DeleteTextures(1, &m_texture);
 #if USE(COORDINATED_GRAPHICS)
@@ -380,8 +377,7 @@ GraphicsContextGLOpenGL::~GraphicsContextGLOpenGL()
 #else
 GraphicsContextGLOpenGL::~GraphicsContextGLOpenGL()
 {
-    bool success = makeContextCurrent();
-    ASSERT_UNUSED(success, success);
+    makeContextCurrent();
     if (m_texture)
         ::glDeleteTextures(1, &m_texture);
 #if USE(COORDINATED_GRAPHICS)

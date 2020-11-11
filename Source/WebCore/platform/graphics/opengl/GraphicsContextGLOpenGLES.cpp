@@ -42,9 +42,7 @@ namespace WebCore {
 
 void GraphicsContextGLOpenGL::readPixels(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, void* data)
 {
-    if (!makeContextCurrent())
-        return;
-
+    makeContextCurrent();
 
     auto attributes = contextAttributes();
 
@@ -190,17 +188,13 @@ void GraphicsContextGLOpenGL::resolveMultisamplingIfNecessary(const IntRect&)
 
 void GraphicsContextGLOpenGL::renderbufferStorage(GCGLenum target, GCGLenum internalformat, GCGLsizei width, GCGLsizei height)
 {
-    if (!makeContextCurrent())
-        return;
-
+    makeContextCurrent();
     ::glRenderbufferStorage(target, internalformat, width, height);
 }
 
 void GraphicsContextGLOpenGL::getIntegerv(GCGLenum pname, GCGLint* value)
 {
-    if (!makeContextCurrent())
-        return;
-
+    makeContextCurrent();
     ::glGetIntegerv(pname, value);
 }
 
@@ -209,9 +203,7 @@ void GraphicsContextGLOpenGL::getShaderPrecisionFormat(GCGLenum shaderType, GCGL
     ASSERT(range);
     ASSERT(precision);
 
-    if (!makeContextCurrent())
-        return;
-
+    makeContextCurrent();
     ::glGetShaderPrecisionFormat(shaderType, precisionType, range, precision);
 }
 
@@ -240,17 +232,13 @@ void GraphicsContextGLOpenGL::validateAttributes()
 
 void GraphicsContextGLOpenGL::depthRange(GCGLclampf zNear, GCGLclampf zFar)
 {
-    if (!makeContextCurrent())
-        return;
-
+    makeContextCurrent();
     ::glDepthRangef(zNear, zFar);
 }
 
 void GraphicsContextGLOpenGL::clearDepth(GCGLclampf depth)
 {
-    if (!makeContextCurrent())
-        return;
-
+    makeContextCurrent();
     ::glClearDepthf(depth);
 }
 
@@ -290,9 +278,7 @@ GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes att
     , m_private(makeUnique<GraphicsContextGLOpenGLPrivate>(this, destination))
 {
     ASSERT_UNUSED(sharedContext, !sharedContext);
-    if (!makeContextCurrent())
-        return;
-
+    makeContextCurrent();
     
     validateAttributes();
     attributes = contextAttributes(); // They may have changed during validation.
@@ -357,9 +343,7 @@ GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes att
 
 GraphicsContextGLOpenGL::~GraphicsContextGLOpenGL()
 {
-    if (!makeContextCurrent())
-        return;
-
+    makeContextCurrent();
     ::glDeleteTextures(1, &m_texture);
 
     auto attributes = contextAttributes();

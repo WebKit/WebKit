@@ -50,25 +50,17 @@ ExtensionsGLOpenGL::~ExtensionsGLOpenGL() = default;
 
 void ExtensionsGLOpenGL::blitFramebuffer(long srcX0, long srcY0, long srcX1, long srcY1, long dstX0, long dstY0, long dstX1, long dstY1, unsigned long mask, unsigned long filter)
 {
-    if (!m_context->makeContextCurrent())
-        return;
-
     ::glBlitFramebufferEXT(srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, mask, filter);
 }
 
 void ExtensionsGLOpenGL::renderbufferStorageMultisample(unsigned long target, unsigned long samples, unsigned long internalformat, unsigned long width, unsigned long height)
 {
-    if (!m_context->makeContextCurrent())
-        return;
-
     ::glRenderbufferStorageMultisampleEXT(target, samples, internalformat, width, height);
 }
 
 PlatformGLObject ExtensionsGLOpenGL::createVertexArrayOES()
 {
-    if (!m_context->makeContextCurrent())
-        return 0;
-
+    m_context->makeContextCurrent();
     GLuint array = 0;
 #if PLATFORM(GTK) || PLATFORM(WIN)
     if (isVertexArrayObjectSupported())
@@ -84,9 +76,7 @@ void ExtensionsGLOpenGL::deleteVertexArrayOES(PlatformGLObject array)
     if (!array)
         return;
 
-    if (!m_context->makeContextCurrent())
-        return;
-
+    m_context->makeContextCurrent();
 #if PLATFORM(GTK) || PLATFORM(WIN)
     if (isVertexArrayObjectSupported())
         glDeleteVertexArrays(1, &array);
@@ -100,9 +90,7 @@ GCGLboolean ExtensionsGLOpenGL::isVertexArrayOES(PlatformGLObject array)
     if (!array)
         return GL_FALSE;
 
-    if (!m_context->makeContextCurrent())
-        return GL_FALSE;
-
+    m_context->makeContextCurrent();
 #if PLATFORM(GTK) || PLATFORM(WIN)
     if (isVertexArrayObjectSupported())
         return glIsVertexArray(array);
@@ -114,9 +102,7 @@ GCGLboolean ExtensionsGLOpenGL::isVertexArrayOES(PlatformGLObject array)
 
 void ExtensionsGLOpenGL::bindVertexArrayOES(PlatformGLObject array)
 {
-    if (!m_context->makeContextCurrent())
-        return;
-
+    m_context->makeContextCurrent();
 #if PLATFORM(GTK) || PLATFORM(WIN)
     if (isVertexArrayObjectSupported())
         glBindVertexArray(array);
@@ -210,9 +196,6 @@ bool ExtensionsGLOpenGL::supportsExtension(const String& name)
 
 void ExtensionsGLOpenGL::drawBuffersEXT(GCGLsizei n, const GCGLenum* bufs)
 {
-    if (!m_context->makeContextCurrent())
-        return;
-
     //  FIXME: implement support for other platforms.
 #if PLATFORM(GTK)
     ::glDrawBuffers(n, bufs);
@@ -224,9 +207,7 @@ void ExtensionsGLOpenGL::drawBuffersEXT(GCGLsizei n, const GCGLenum* bufs)
 
 void ExtensionsGLOpenGL::drawArraysInstanced(GCGLenum mode, GCGLint first, GCGLsizei count, GCGLsizei primcount)
 {
-    if (!m_context->makeContextCurrent())
-        return;
-
+    m_context->makeContextCurrent();
 #if PLATFORM(GTK)
     ::glDrawArraysInstanced(mode, first, count, primcount);
 #else
@@ -239,9 +220,7 @@ void ExtensionsGLOpenGL::drawArraysInstanced(GCGLenum mode, GCGLint first, GCGLs
 
 void ExtensionsGLOpenGL::drawElementsInstanced(GCGLenum mode, GCGLsizei count, GCGLenum type, long long offset, GCGLsizei primcount)
 {
-    if (!m_context->makeContextCurrent())
-        return;
-
+    m_context->makeContextCurrent();
 #if PLATFORM(GTK)
     ::glDrawElementsInstanced(mode, count, type, reinterpret_cast<GLvoid*>(static_cast<intptr_t>(offset)), primcount);
 #else
@@ -255,9 +234,7 @@ void ExtensionsGLOpenGL::drawElementsInstanced(GCGLenum mode, GCGLsizei count, G
 
 void ExtensionsGLOpenGL::vertexAttribDivisor(GCGLuint index, GCGLuint divisor)
 {
-    if (!m_context->makeContextCurrent())
-        return;
-
+    m_context->makeContextCurrent();
 #if PLATFORM(GTK)
     ::glVertexAttribDivisor(index, divisor);
 #else

@@ -237,9 +237,7 @@ void GraphicsContextGLOpenGL::resolveMultisamplingIfNecessary(const IntRect& rec
 
 void GraphicsContextGLOpenGL::renderbufferStorage(GCGLenum target, GCGLenum internalformat, GCGLsizei width, GCGLsizei height)
 {
-    if (!makeContextCurrent())
-        return;
-
+    makeContextCurrent();
 #if USE(OPENGL)
     switch (internalformat) {
     case DEPTH_STENCIL:
@@ -266,9 +264,7 @@ void GraphicsContextGLOpenGL::getIntegerv(GCGLenum pname, GCGLint* value)
     // because desktop GL's corresponding queries return the number of components
     // whereas GLES2 return the number of vectors (each vector has 4 components).
     // Therefore, the value returned by desktop GL needs to be divided by 4.
-    if (!makeContextCurrent())
-        return;
-
+    makeContextCurrent();
     switch (pname) {
 #if USE(OPENGL)
     case MAX_FRAGMENT_UNIFORM_VECTORS:
@@ -314,9 +310,7 @@ void GraphicsContextGLOpenGL::getShaderPrecisionFormat(GCGLenum shaderType, GCGL
     ASSERT(range);
     ASSERT(precision);
 
-    if (!makeContextCurrent())
-        return;
-
+    makeContextCurrent();
 
     switch (precisionType) {
     case GraphicsContextGL::LOW_INT:
@@ -409,17 +403,13 @@ bool GraphicsContextGLOpenGL::texImage2D(GCGLenum target, GCGLint level, GCGLenu
 
 void GraphicsContextGLOpenGL::depthRange(GCGLclampf zNear, GCGLclampf zFar)
 {
-    if (!makeContextCurrent())
-        return;
-
+    makeContextCurrent();
     ::glDepthRange(zNear, zFar);
 }
 
 void GraphicsContextGLOpenGL::clearDepth(GCGLclampf depth)
 {
-    if (!makeContextCurrent())
-        return;
-
+    makeContextCurrent();
     ::glClearDepth(depth);
 }
 
@@ -438,9 +428,7 @@ void GraphicsContextGLOpenGL::readPixels(GCGLint x, GCGLint y, GCGLsizei width, 
 
     // FIXME: remove the two glFlush calls when the driver bug is fixed, i.e.,
     // all previous rendering calls should be done before reading pixels.
-    if (!makeContextCurrent())
-        return;
-
+    makeContextCurrent();
     ::glFlush();
     ASSERT(m_state.boundReadFBO == m_state.boundDrawFBO);
     if (attrs.antialias && m_state.boundDrawFBO == m_multisampleFBO) {
