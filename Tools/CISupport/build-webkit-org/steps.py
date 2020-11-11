@@ -43,6 +43,30 @@ USE_BUILDBOT_VERSION2 = os.getenv('USE_BUILDBOT_VERSION2') is not None
 WithProperties = properties.WithProperties
 if USE_BUILDBOT_VERSION2:
     Interpolate = properties.Interpolate
+    from buildbot.process import logobserver
+else:
+    logobserver = lambda: None
+    logobserver.LineConsumerLogObserver = type('LineConsumerLogObserver', (object,), {})
+
+
+class ParseByLineLogObserver(logobserver.LineConsumerLogObserver):
+    """A pretty wrapper for LineConsumerLogObserver to avoid
+       repeatedly setting up generator processors."""
+    def __init__(self, consumeLineFunc):
+        if not callable(consumeLineFunc):
+            raise Exception("Error: ParseByLineLogObserver requires consumeLineFunc to be callable.")
+        self.consumeLineFunc = consumeLineFunc
+        super(ParseByLineLogObserver, self).__init__(self.consumeLineGenerator)
+
+    def consumeLineGenerator(self):
+        """The generator LineConsumerLogObserver expects."""
+        try:
+            while True:
+                stream, line = yield
+                self.consumeLineFunc(line)
+        except GeneratorExit:
+            return
+
 
 class TestWithFailureCount(shell.Test):
     failedTestsFormatString = "%d test%s failed"
@@ -469,6 +493,15 @@ class RunWebKitTests(shell.Test):
                "--exit-after-n-failures", "500",
                WithProperties("--%(configuration)s")]
 
+    # FIXME: This will break if run-webkit-tests changes its default log formatter.
+    nrwt_log_message_regexp = re.compile(r'\d{2}:\d{2}:\d{2}(\.\d+)?\s+\d+\s+(?P<message>.*)')
+    expressions = [
+        ('flakes', re.compile(r'Unexpected flakiness.+\((\d+)\)')),
+        ('new passes', re.compile(r'Expected to .+, but passed:\s+\((\d+)\)')),
+        ('missing results', re.compile(r'Regressions: Unexpected missing results\s+\((\d+)\)')),
+        ('failures', re.compile(r'Regressions: Unexpected.+\((\d+)\)')),
+    ]
+
     def __init__(self, *args, **kwargs):
         kwargs['logEnviron'] = False
         shell.Test.__init__(self, *args, **kwargs)
@@ -476,6 +509,10 @@ class RunWebKitTests(shell.Test):
     def start(self):
         if USE_BUILDBOT_VERSION2:
             self.workerEnvironment[RESULTS_SERVER_API_KEY] = os.getenv(RESULTS_SERVER_API_KEY)
+            self.log_observer = ParseByLineLogObserver(self.parseOutputLine)
+            self.addLogObserver('stdio', self.log_observer)
+            self.incorrectLayoutLines = []
+            self.testFailures = {}
         else:
             self.slaveEnvironment[RESULTS_SERVER_API_KEY] = os.getenv(RESULTS_SERVER_API_KEY)
 
@@ -493,9 +530,6 @@ class RunWebKitTests(shell.Test):
             self.setCommand(self.command + additionalArguments)
         return shell.Test.start(self)
 
-    # FIXME: This will break if run-webkit-tests changes its default log formatter.
-    nrwt_log_message_regexp = re.compile(r'\d{2}:\d{2}:\d{2}(\.\d+)?\s+\d+\s+(?P<message>.*)')
-
     def _strip_python_logging_prefix(self, line):
         match_object = self.nrwt_log_message_regexp.match(line)
         if match_object:
@@ -503,20 +537,15 @@ class RunWebKitTests(shell.Test):
         return line
 
     def _parseRunWebKitTestsOutput(self, logText):
+        # FIXME: delete this method after switching to Buildbot v2
         incorrectLayoutLines = []
-        expressions = [
-            ('flakes', re.compile(r'Unexpected flakiness.+\((\d+)\)')),
-            ('new passes', re.compile(r'Expected to .+, but passed:\s+\((\d+)\)')),
-            ('missing results', re.compile(r'Regressions: Unexpected missing results\s+\((\d+)\)')),
-            ('failures', re.compile(r'Regressions: Unexpected.+\((\d+)\)')),
-        ]
         testFailures = {}
 
         for line in logText.splitlines():
             if line.find('Exiting early') >= 0 or line.find('leaks found') >= 0:
                 incorrectLayoutLines.append(self._strip_python_logging_prefix(line))
                 continue
-            for name, expression in expressions:
+            for name, expression in self.expressions:
                 match = expression.search(line)
 
                 if match:
@@ -530,13 +559,32 @@ class RunWebKitTests(shell.Test):
 
         self.incorrectLayoutLines = incorrectLayoutLines
 
+    def parseOutputLine(self, line):
+        if r'Exiting early' in line or r'leaks found' in line:
+            self.incorrectLayoutLines.append(self._strip_python_logging_prefix(line))
+            return
+
+        for name, expression in self.expressions:
+            match = expression.search(line)
+            if match:
+                self.testFailures[name] = self.testFailures.get(name, 0) + int(match.group(1))
+
+    def processTestFailures(self):
+        for name, result in self.testFailures.items():
+            self.incorrectLayoutLines.append(str(result) + ' ' + name)
+
     def commandComplete(self, cmd):
+        # FIXME: delete this method after switching to Buildbot v2
         shell.Test.commandComplete(self, cmd)
 
-        logText = cmd.logs['stdio'].getText()
-        self._parseRunWebKitTestsOutput(logText)
+        if not USE_BUILDBOT_VERSION2:
+            logText = cmd.logs['stdio'].getText()
+            self._parseRunWebKitTestsOutput(logText)
 
     def evaluateCommand(self, cmd):
+        if USE_BUILDBOT_VERSION2:
+            self.processTestFailures()
+
         result = SUCCESS
 
         if self.incorrectLayoutLines:
@@ -561,10 +609,20 @@ class RunWebKitTests(shell.Test):
 
         return result
 
+    def getResultSummary(self):
+        status = self.name
+
+        if self.results != SUCCESS and self.incorrectLayoutLines:
+            status = u' '.join(self.incorrectLayoutLines)
+            return {u'step': status}
+        return super(RunWebKitTests, self).getResultSummary()
+
     def getText(self, cmd, results):
+        # FIXME: delete this method after switching to Buildbot v2
         return self.getText2(cmd, results)
 
     def getText2(self, cmd, results):
+        # FIXME: delete this method after switching to Buildbot v2
         if results != SUCCESS and self.incorrectLayoutLines:
             return self.incorrectLayoutLines
 

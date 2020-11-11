@@ -1,3 +1,26 @@
+2020-11-11  Aakash Jain  <aakash_jain@apple.com>
+
+        [build.webkit.org] Update RunWebKitTests step for new buildbot
+        https://bugs.webkit.org/show_bug.cgi?id=218805
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/build-webkit-org/steps.py:
+        (ParseByLineLogObserver):  New helper class to replace usage of LineConsumerLogObserver. This both makes it
+        easier to adopt the generator-based approach and reduces duplication of: while True, try, run some code,
+        then except GeneratorExit.
+        (ParseByLineLogObserver.__init__): Takes one argument: the function to run against each line produced.
+        (RunWebKitTests):
+        (RunWebKitTests.start): Initialize log_observer and appropriate variables.
+        (RunWebKitTests._parseRunWebKitTestsOutput): Added FIXME to remove this method after switching to buildbot v2.
+        (RunWebKitTests.parseOutputLine): Method to parse each log line as it is generated.
+        (RunWebKitTests.processTestFailures): Method to summarize the test failure information.
+        (RunWebKitTests.commandComplete): 
+        (RunWebKitTests.evaluateCommand): Call processTestFailures method before processing results.
+        (RunWebKitTests.getResultSummary): Method to show step summary in new buildbot.
+        (RunWebKitTests.getText): Added FIXME to remove this method after switching to buildbot v2.
+        (RunWebKitTests.getText2): Ditto.
+
 2020-11-11  Angelos Oikonomopoulos  <angelos@igalia.com>
 
         Use FileDownload to fetch built product from master
