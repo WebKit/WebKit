@@ -54,14 +54,7 @@ extern "C" WTF_EXPORT_PRIVATE Slot g_config[];
 namespace WTF {
 
 constexpr size_t ConfigAlignment = CeilingOnPageSize;
-// FIXME: We will move BytecodeArray out of Config and protect it with ARM-IA key at compile time.
-// Until it is done, we increase ConfigSize in Linux.
-// https://bugs.webkit.org/show_bug.cgi?id=218592
-#if !OS(DARWIN)
-constexpr size_t ConfigSizeToProtect = std::max(CeilingOnPageSize, 32 * KB);
-#else
 constexpr size_t ConfigSizeToProtect = std::max(CeilingOnPageSize, 16 * KB);
-#endif
 
 struct Config {
     WTF_EXPORT_PRIVATE static void permanentlyFreeze();
