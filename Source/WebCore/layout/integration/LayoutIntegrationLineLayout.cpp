@@ -114,6 +114,9 @@ void LineLayout::updateReplacedDimensions(const RenderBox& replaced)
     auto& replacedBox = downcast<Layout::ReplacedBox>(layoutBox);
 
     replacedBox.setContentSizeForIntegration({ replaced.contentLogicalWidth(), replaced.contentLogicalHeight() });
+
+    auto baseline = replaced.baselinePosition(AlphabeticBaseline, false /* firstLine */, HorizontalLine, PositionOnContainingLine);
+    replacedBox.setBaseline(baseline);
 }
 
 void LineLayout::updateStyle(const RenderBoxModelObject& renderer)
