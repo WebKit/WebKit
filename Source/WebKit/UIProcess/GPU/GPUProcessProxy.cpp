@@ -324,6 +324,17 @@ void GPUProcessProxy::removeSession(PAL::SessionID sessionID)
         send(Messages::GPUProcess::RemoveSession { sessionID }, 0);
 }
 
+void GPUProcessProxy::sendPrepareToSuspend(IsSuspensionImminent isSuspensionImminent, CompletionHandler<void()>&& completionHandler)
+{
+    sendWithAsyncReply(Messages::GPUProcess::PrepareToSuspend(isSuspensionImminent == IsSuspensionImminent::Yes), WTFMove(completionHandler), 0, { }, ShouldStartProcessThrottlerActivity::No);
+}
+
+void GPUProcessProxy::sendProcessDidResume()
+{
+    if (canSendMessage())
+        send(Messages::GPUProcess::ProcessDidResume(), 0);
+}
+
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
 void GPUProcessProxy::didCreateContextForVisibilityPropagation(LayerHostingContextID contextID)
 {

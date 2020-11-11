@@ -1,3 +1,24 @@
+2020-11-11  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (r269657): ASSERTION FAILED: Completion handler should always be called under WebKit::GPUProcessProxy::~GPUProcessProxy
+        https://bugs.webkit.org/show_bug.cgi?id=218807
+        <rdar://problem/71285627>
+
+        Reviewed by Geoffrey Garen.
+
+        GPUProcessProxy::sendPrepareToSuspend() was failing to send the IPC to the GPUProcess and was also
+        failing to call its completion handler, thus asserting in Debug. Update GPUProcessProxy to actually
+        send the PrepareToSuspend / ProcessDidResume IPCs to the GPUProcess. The GPUProcess actually already
+        had an implementation to deal with those IPCs.
+
+        No new tests, covered by existing tests that are crashing in debug.
+
+        * GPUProcess/GPUProcess.messages.in:
+        * UIProcess/GPU/GPUProcessProxy.cpp:
+        (WebKit::GPUProcessProxy::sendPrepareToSuspend):
+        (WebKit::GPUProcessProxy::sendProcessDidResume):
+        * UIProcess/GPU/GPUProcessProxy.h:
+
 2020-11-11  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Concurrent display lists] Add an initial implementation of concurrent display list rendering

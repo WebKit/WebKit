@@ -61,10 +61,6 @@ public:
     ProcessThrottler& throttler() final { return m_throttler; }
     void updateProcessAssertion();
 
-    // ProcessThrottlerClient
-    void sendProcessDidResume() final { }
-    ASCIILiteral clientName() const final { return "GPUProcess"_s; }
-
 #if ENABLE(MEDIA_STREAM)
     void setUseMockCaptureDevices(bool);
     void setOrientationForMediaCapture(uint64_t orientation);
@@ -92,7 +88,9 @@ private:
     void gpuProcessCrashed();
 
     // ProcessThrottlerClient
-    void sendPrepareToSuspend(IsSuspensionImminent, CompletionHandler<void()>&&) final { }
+    ASCIILiteral clientName() const final { return "GPUProcess"_s; }
+    void sendPrepareToSuspend(IsSuspensionImminent, CompletionHandler<void()>&&) final;
+    void sendProcessDidResume() final;
 
     // ProcessLauncher::Client
     void didFinishLaunching(ProcessLauncher*, IPC::Connection::Identifier) override;

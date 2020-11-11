@@ -30,6 +30,9 @@ messages -> GPUProcess {
     ProcessDidTransitionToForeground()
     ProcessDidTransitionToBackground()
 
+    PrepareToSuspend(bool isSuspensionImminent) -> () Async
+    ProcessDidResume()
+
     AddSession(PAL::SessionID sessionID, struct WebKit::GPUProcessSessionParameters parameters)
     RemoveSession(PAL::SessionID sessionID)
 
