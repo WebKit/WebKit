@@ -406,7 +406,7 @@ public:
 
     void clipOut(const FloatRect&);
     void clipOutRoundedRect(const FloatRoundedRect&);
-    void clipPath(const Path&, WindRule = WindRule::EvenOdd);
+    WEBCORE_EXPORT void clipPath(const Path&, WindRule = WindRule::EvenOdd);
     void clipToImageBuffer(ImageBuffer&, const FloatRect&);
 
     enum class ClipToDrawingCommandsResult : bool { Success, FailedToCreateImageBuffer };

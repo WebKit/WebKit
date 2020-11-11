@@ -239,16 +239,16 @@ bool RemoteLayerBackingStore::display()
     swapToValidFrontBuffer();
 
     if (m_acceleratesDrawing) {
-        RetainPtr<CGImageRef> backImage;
+        RefPtr<WebCore::NativeImage> backImage;
         if (m_backBuffer.surface && !willPaintEntireBackingStore)
-            backImage = m_backBuffer.surface->createImage();
+            backImage = WebCore::NativeImage::create(m_backBuffer.surface->createImage().get());
 
         if (m_frontBuffer.surface) {
             WebCore::GraphicsContext& context = m_frontBuffer.surface->ensureGraphicsContext();
 
             context.scale(WebCore::FloatSize(1, -1));
             context.translate(0, -expandedScaledSize.height());
-            drawInContext(context, backImage.get());
+            drawInContext(context, WTFMove(backImage));
 
             m_frontBuffer.surface->releaseGraphicsContext();
         }
@@ -256,12 +256,12 @@ bool RemoteLayerBackingStore::display()
         ASSERT(!m_acceleratesDrawing);
         std::unique_ptr<WebCore::GraphicsContext> context = m_frontBuffer.bitmap->createGraphicsContext();
 
-        RetainPtr<CGImageRef> backImage;
+        RefPtr<WebCore::NativeImage> backImage;
         if (m_backBuffer.bitmap && !willPaintEntireBackingStore)
-            backImage = m_backBuffer.bitmap->makeCGImage();
+            backImage = WebCore::NativeImage::create(m_backBuffer.bitmap->makeCGImage().get());
 
         if (context)
-            drawInContext(*context, backImage.get());
+            drawInContext(*context, WTFMove(backImage));
     }
     
     m_layer->owner()->platformCALayerLayerDidDisplay(m_layer);
@@ -269,7 +269,7 @@ bool RemoteLayerBackingStore::display()
     return true;
 }
 
-void RemoteLayerBackingStore::drawInContext(WebCore::GraphicsContext& context, CGImageRef backImage)
+void RemoteLayerBackingStore::drawInContext(WebCore::GraphicsContext& context, RefPtr<WebCore::NativeImage>&& backImage)
 {
     WebCore::FloatSize scaledSize = m_size;
     scaledSize.scale(m_scale);
@@ -295,24 +295,21 @@ void RemoteLayerBackingStore::drawInContext(WebCore::GraphicsContext& context, C
         m_paintingRects.append(scaledRect);
     }
 
-    CGRect cgPaintingRects[WebCore::PlatformCALayer::webLayerMaxRectsToPaint];
-    for (size_t i = 0, dirtyRectCount = m_paintingRects.size(); i < dirtyRectCount; ++i) {
-        WebCore::FloatRect scaledPaintingRect = m_paintingRects[i];
+    if (backImage)
+        context.drawNativeImage(*backImage, scaledLayerBounds.size(), scaledLayerBounds, scaledLayerBounds, { WebCore::CompositeOperator::Copy });
+
+    if (m_paintingRects.size() == 1) {
+        WebCore::FloatRect scaledPaintingRect = m_paintingRects[0];
         scaledPaintingRect.scale(m_scale);
-        cgPaintingRects[i] = scaledPaintingRect;
+        context.clip(scaledPaintingRect);
+    } else {
+        WebCore::Path clipPath;
+        for (auto rect : m_paintingRects) {
+            rect.scale(m_scale);
+            clipPath.addRect(rect);
+        }
+        context.clipPath(clipPath);
     }
-
-    CGContextRef cgContext = context.platformContext();
-
-    if (backImage) {
-        WebCore::CGContextStateSaver stateSaver(cgContext);
-        CGContextSetBlendMode(cgContext, kCGBlendModeCopy);
-        CGContextTranslateCTM(cgContext, 0, scaledLayerBounds.height());
-        CGContextScaleCTM(cgContext, 1, -1);
-        CGContextDrawImage(cgContext, scaledLayerBounds, backImage);
-    }
-
-    CGContextClipToRects(cgContext, cgPaintingRects, m_paintingRects.size());
 
     if (!m_isOpaque)
         context.clearRect(scaledLayerBounds);

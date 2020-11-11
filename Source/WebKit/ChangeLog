@@ -1,3 +1,15 @@
+2020-11-10  Tim Horton  <timothy_horton@apple.com>
+
+        Use GraphicsContext instead of CGContext in RemoteLayerBackingStore
+        https://bugs.webkit.org/show_bug.cgi?id=218738
+
+        Reviewed by Wenson Hsieh.
+
+        * Shared/RemoteLayerTree/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::drawInContext):
+        Make use of the GraphicsContext abstraction instead of dropping down
+        to CGContext, in preparation for DisplayList rendering.
+
 2020-11-10  Darin Adler  <darin@apple.com>
 
         Remove another function that implicitly uses the composed tree (intersects with range)

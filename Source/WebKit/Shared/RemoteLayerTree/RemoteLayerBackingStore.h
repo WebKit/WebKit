@@ -36,6 +36,7 @@ OBJC_CLASS CALayer;
 
 // FIXME: Make PlatformCALayerRemote.cpp Objective-C so we can include WebLayer.h here and share the typedef.
 namespace WebCore {
+class NativeImage;
 typedef Vector<WebCore::FloatRect, 5> RepaintRectList;
 }
 
@@ -96,7 +97,7 @@ public:
     MonotonicTime lastDisplayTime() const { return m_lastDisplayTime; }
 
 private:
-    void drawInContext(WebCore::GraphicsContext&, CGImageRef backImage);
+    void drawInContext(WebCore::GraphicsContext&, RefPtr<WebCore::NativeImage>&& backImage);
     void clearBackingStore();
     void swapToValidFrontBuffer();
 
