@@ -72,6 +72,8 @@ static size_t sizeOfItemInBytes(ItemType type)
         return sizeof(Clip);
     case ItemType::ClipOut:
         return sizeof(ClipOut);
+    case ItemType::ClipToImageBuffer:
+        return sizeof(ClipToImageBuffer);
     case ItemType::ClipOutToPath:
         return sizeof(ClipOutToPath);
     case ItemType::ClipPath:
@@ -172,6 +174,7 @@ bool isDrawingItem(ItemType type)
     case ItemType::ClearShadow:
     case ItemType::Clip:
     case ItemType::ClipOut:
+    case ItemType::ClipToImageBuffer:
     case ItemType::ClipOutToPath:
     case ItemType::ClipPath:
     case ItemType::ClipToDrawingCommands:
@@ -273,6 +276,7 @@ bool isInlineItem(ItemType type)
     case ItemType::ClearShadow:
     case ItemType::Clip:
     case ItemType::ClipOut:
+    case ItemType::ClipToImageBuffer:
     case ItemType::ConcatenateCTM:
     case ItemType::DrawDotsForDocumentMarker:
     case ItemType::DrawEllipse:

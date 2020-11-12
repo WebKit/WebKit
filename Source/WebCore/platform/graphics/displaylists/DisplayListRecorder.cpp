@@ -414,9 +414,10 @@ IntRect Recorder::clipBounds()
     return IntRect(-2048, -2048, 4096, 4096);
 }
 
-void Recorder::clipToImageBuffer(ImageBuffer&, const FloatRect&)
+void Recorder::clipToImageBuffer(ImageBuffer& imageBuffer, const FloatRect& destRect)
 {
-    WTFLogAlways("GraphicsContext::clipToImageBuffer is not compatible with DisplayList::Recorder.");
+    m_displayList.cacheImageBuffer(imageBuffer);
+    append<ClipToImageBuffer>(imageBuffer.renderingResourceIdentifier(), destRect);
 }
 
 void Recorder::clipToDrawingCommands(const FloatRect& destination, ColorSpace colorSpace, Function<void(GraphicsContext&)>&& drawingFunction)

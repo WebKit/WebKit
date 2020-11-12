@@ -38,6 +38,8 @@ public:
 
     void draw(GraphicsContext&, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions&) override;
     void drawPattern(GraphicsContext&, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions&) override;
+    
+    void clipToMask(GraphicsContext&, const FloatRect& destRect) override;
 
     AffineTransform baseTransform() const override;
 

@@ -48,6 +48,7 @@ enum class ItemType : uint8_t {
     ClearShadow,
     Clip,
     ClipOut,
+    ClipToImageBuffer,
     ClipOutToPath,
     ClipPath,
     ClipToDrawingCommands,

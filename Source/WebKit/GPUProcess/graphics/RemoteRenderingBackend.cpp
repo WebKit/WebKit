@@ -296,6 +296,7 @@ Optional<DisplayList::ItemHandle> WARN_UNUSED_RETURN RemoteRenderingBackend::dec
     case DisplayList::ItemType::ClearShadow:
     case DisplayList::ItemType::Clip:
     case DisplayList::ItemType::ClipOut:
+    case DisplayList::ItemType::ClipToImageBuffer:
     case DisplayList::ItemType::ConcatenateCTM:
     case DisplayList::ItemType::DrawDotsForDocumentMarker:
     case DisplayList::ItemType::DrawEllipse:

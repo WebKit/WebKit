@@ -302,6 +302,23 @@ static TextStream& operator<<(TextStream& ts, const ClipOut& item)
     return ts;
 }
 
+NO_RETURN_DUE_TO_ASSERT void ClipToImageBuffer::apply(GraphicsContext&) const
+{
+    ASSERT_NOT_REACHED();
+}
+
+void ClipToImageBuffer::apply(GraphicsContext& context, WebCore::ImageBuffer& imageBuffer) const
+{
+    context.clipToImageBuffer(imageBuffer, m_destinationRect);
+}
+
+static TextStream& operator<<(TextStream& ts, const ClipToImageBuffer& item)
+{
+    ts.dumpProperty("image-buffer-identifier", item.imageBufferIdentifier());
+    ts.dumpProperty("dest-rect", item.destinationRect());
+    return ts;
+}
+
 void ClipOutToPath::apply(GraphicsContext& context) const
 {
     context.clipOut(m_path);
@@ -1006,6 +1023,7 @@ static TextStream& operator<<(TextStream& ts, ItemType type)
     case ItemType::SetMiterLimit: ts << "set-miter-limit"; break;
     case ItemType::Clip: ts << "clip"; break;
     case ItemType::ClipOut: ts << "clip-out"; break;
+    case ItemType::ClipToImageBuffer: ts << "clip-to-image-buffer"; break;
     case ItemType::ClipOutToPath: ts << "clip-out-to-path"; break;
     case ItemType::ClipPath: ts << "clip-path"; break;
     case ItemType::ClipToDrawingCommands: ts << "clip-to-image-buffer"; break;
@@ -1108,6 +1126,9 @@ TextStream& operator<<(TextStream& ts, ItemHandle item)
         break;
     case ItemType::ClipOut:
         ts << item.get<ClipOut>();
+        break;
+    case ItemType::ClipToImageBuffer:
+        ts << item.get<ClipToImageBuffer>();
         break;
     case ItemType::ClipOutToPath:
         ts << item.get<ClipOutToPath>();

@@ -120,6 +120,10 @@ void ItemHandle::apply(GraphicsContext& context)
         get<ClipOut>().apply(context);
         return;
     }
+    case ItemType::ClipToImageBuffer: {
+        get<ClipToImageBuffer>().apply(context);
+        return;
+    }
     case ItemType::ClipOutToPath: {
         get<ClipOutToPath>().apply(context);
         return;
@@ -396,6 +400,10 @@ void ItemHandle::destroy()
         static_assert(std::is_trivially_destructible<ClipOut>::value);
         return;
     }
+    case ItemType::ClipToImageBuffer: {
+        static_assert(std::is_trivially_destructible<ClipToImageBuffer>::value);
+        return;
+    }
     case ItemType::ConcatenateCTM: {
         static_assert(std::is_trivially_destructible<ConcatenateCTM>::value);
         return;
@@ -649,6 +657,10 @@ void ItemHandle::copyTo(ItemHandle destination) const
     }
     case ItemType::ClipOut: {
         new (itemOffset) ClipOut(get<ClipOut>());
+        return;
+    }
+    case ItemType::ClipToImageBuffer: {
+        new (itemOffset) ClipToImageBuffer(get<ClipToImageBuffer>());
         return;
     }
     case ItemType::ConcatenateCTM: {

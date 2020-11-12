@@ -886,6 +886,19 @@ GraphicsContext::ClipToDrawingCommandsResult GraphicsContext::clipToDrawingComma
     return ClipToDrawingCommandsResult::Success;
 }
 
+void GraphicsContext::clipToImageBuffer(ImageBuffer& imageBuffer, const FloatRect& destinationRect)
+{
+    if (paintingDisabled())
+        return;
+
+    if (m_impl) {
+        m_impl->clipToImageBuffer(imageBuffer, destinationRect);
+        return;
+    }
+
+    imageBuffer.clipToMask(*this, destinationRect);
+}
+
 #if !USE(CG) && !USE(DIRECT2D) && !USE(CAIRO)
 IntRect GraphicsContext::clipBounds() const
 {

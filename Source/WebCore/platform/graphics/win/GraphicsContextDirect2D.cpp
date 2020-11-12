@@ -431,15 +431,6 @@ void GraphicsContext::drawPattern(Image& image, const FloatRect& destRect, const
         Direct2D::drawPattern(*platformContext(), WTFMove(tileImage), IntSize(image.size()), destRect, tileRect, patternTransform, phase, options.compositeOperator(), options.blendMode());
 }
 
-void GraphicsContext::clipToImageBuffer(ImageBuffer& buffer, const FloatRect& destRect)
-{
-    if (paintingDisabled())
-        return;
-
-    FloatSize bufferDestinationSize = buffer.sizeForDestinationSize(destRect.size());
-    notImplemented();
-}
-
 // Draws a filled rectangle with a stroked border.
 void GraphicsContext::drawRect(const FloatRect& rect, float borderThickness)
 {

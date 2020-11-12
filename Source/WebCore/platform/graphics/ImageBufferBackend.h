@@ -90,6 +90,8 @@ public:
     WEBCORE_EXPORT virtual RefPtr<Image> sinkIntoImage(PreserveResolution);
     WEBCORE_EXPORT virtual void drawConsuming(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions&);
 
+    virtual void clipToMask(GraphicsContext&, const FloatRect&) { }
+
     WEBCORE_EXPORT void convertToLuminanceMask();
     virtual void transformColorSpace(ColorSpace, ColorSpace) { }
 

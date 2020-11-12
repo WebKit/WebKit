@@ -250,6 +250,7 @@ protected:
         case WebCore::DisplayList::ItemType::ClearShadow:
         case WebCore::DisplayList::ItemType::Clip:
         case WebCore::DisplayList::ItemType::ClipOut:
+        case WebCore::DisplayList::ItemType::ClipToImageBuffer:
         case WebCore::DisplayList::ItemType::ConcatenateCTM:
         case WebCore::DisplayList::ItemType::DrawDotsForDocumentMarker:
         case WebCore::DisplayList::ItemType::DrawEllipse:

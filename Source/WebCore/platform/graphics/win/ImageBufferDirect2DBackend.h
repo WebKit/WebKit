@@ -47,6 +47,8 @@ public:
 
     RefPtr<Image> sinkIntoImage(PreserveResolution) override;
 
+    void clipToMask(GraphicsContext&, const FloatRect& destRect) override;
+
     String toDataURL(const String& mimeType, Optional<double> quality, PreserveResolution) const override;
     Vector<uint8_t> toData(const String& mimeType, Optional<double> quality) const override;
     Vector<uint8_t> toBGRAData() const override;

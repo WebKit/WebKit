@@ -255,21 +255,6 @@ void GraphicsContext::clipPath(const Path& path, WindRule clipRule)
     Cairo::clipPath(*platformContext(), path, clipRule);
 }
 
-void GraphicsContext::clipToImageBuffer(ImageBuffer& buffer, const FloatRect& destRect)
-{
-    if (paintingDisabled())
-        return;
-
-    if (m_impl) {
-        m_impl->clipToImageBuffer(buffer, destRect);
-        return;
-    }
-
-    ASSERT(hasPlatformContext());
-    if (auto nativeImage = buffer.copyNativeImage(DontCopyBackingStore))
-        Cairo::clipToImageBuffer(*platformContext(), nativeImage->platformImage().get(), destRect);
-}
-
 IntRect GraphicsContext::clipBounds() const
 {
     if (paintingDisabled())

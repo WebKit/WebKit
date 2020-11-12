@@ -96,6 +96,8 @@ public:
 
     WEBCORE_EXPORT static RefPtr<Image> sinkIntoImage(RefPtr<ImageBuffer>, PreserveResolution = PreserveResolution::No);
     static void drawConsuming(RefPtr<ImageBuffer>, GraphicsContext&, const FloatRect& destRect, const FloatRect& srcRect = FloatRect(0, 0, -1, -1), const ImagePaintingOptions& = { });
+    
+    virtual void clipToMask(GraphicsContext&, const FloatRect& destRect) = 0;
 
     virtual void convertToLuminanceMask() = 0;
     virtual void transformColorSpace(ColorSpace srcColorSpace, ColorSpace dstColorSpace) = 0;

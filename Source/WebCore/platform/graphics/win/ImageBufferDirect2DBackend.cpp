@@ -289,6 +289,11 @@ void ImageBufferDirect2DBackend::drawPattern(GraphicsContext& destContext, const
         image->drawPattern(destContext, destRect, adjustedSrcRect, patternTransform, phase, spacing, options);
 }
 
+void ImageBufferDirect2DBackend::clipToMask(GraphicsContext&, const FloatRect&)
+{
+    notImplemented();
+}
+
 String ImageBufferDirect2DBackend::toDataURL(const String&, Optional<double>, PreserveResolution) const
 {
     notImplemented();

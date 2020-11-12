@@ -740,6 +740,30 @@ private:
     FloatRect m_rect;
 };
 
+class ClipToImageBuffer {
+public:
+    static constexpr ItemType itemType = ItemType::ClipToImageBuffer;
+    static constexpr bool isInlineItem = true;
+    static constexpr bool isDrawingItem = false;
+
+    ClipToImageBuffer(RenderingResourceIdentifier imageBufferIdentifier, const FloatRect& destinationRect)
+        : m_imageBufferIdentifier(imageBufferIdentifier)
+        , m_destinationRect(destinationRect)
+    {
+    }
+    
+    RenderingResourceIdentifier imageBufferIdentifier() const { return m_imageBufferIdentifier; }
+    FloatRect destinationRect() const { return m_destinationRect; }
+
+    void apply(GraphicsContext&, WebCore::ImageBuffer&) const;
+
+    NO_RETURN_DUE_TO_ASSERT void apply(GraphicsContext&) const;
+
+private:
+    RenderingResourceIdentifier m_imageBufferIdentifier;
+    FloatRect m_destinationRect;
+};
+
 class ClipOutToPath {
 public:
     static constexpr ItemType itemType = ItemType::ClipOutToPath;
@@ -2310,6 +2334,7 @@ template<> struct EnumTraits<WebCore::DisplayList::ItemType> {
     WebCore::DisplayList::ItemType::ClearShadow,
     WebCore::DisplayList::ItemType::Clip,
     WebCore::DisplayList::ItemType::ClipOut,
+    WebCore::DisplayList::ItemType::ClipToImageBuffer,
     WebCore::DisplayList::ItemType::ClipOutToPath,
     WebCore::DisplayList::ItemType::ClipPath,
     WebCore::DisplayList::ItemType::ClipToDrawingCommands,

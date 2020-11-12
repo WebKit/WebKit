@@ -222,6 +222,8 @@ void DisplayList::append(ItemHandle item)
         return append<Clip>(item.get<Clip>());
     case ItemType::ClipOut:
         return append<ClipOut>(item.get<ClipOut>());
+    case ItemType::ClipToImageBuffer:
+        return append<ClipToImageBuffer>(item.get<ClipToImageBuffer>());
     case ItemType::ClipOutToPath:
         return append<ClipOutToPath>(item.get<ClipOutToPath>());
     case ItemType::ClipPath:

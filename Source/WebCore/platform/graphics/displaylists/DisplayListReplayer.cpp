@@ -50,6 +50,13 @@ void Replayer::applyItem(ItemHandle item)
     if (m_delegate && m_delegate->apply(item, m_context))
         return;
 
+    if (item.is<ClipToImageBuffer>()) {
+        auto& clipItem = item.get<ClipToImageBuffer>();
+        if (auto* imageBuffer = m_imageBuffers.get(clipItem.imageBufferIdentifier()))
+            clipItem.apply(m_context, *imageBuffer);
+        return;
+    }
+
     if (item.is<DrawImageBuffer>()) {
         auto& drawItem = item.get<DrawImageBuffer>();
         if (auto* imageBuffer = m_imageBuffers.get(drawItem.imageBufferIdentifier()))

@@ -175,6 +175,14 @@ protected:
             backend->drawConsuming(destContext, destRect, srcRect, options);
         }
     }
+    
+    void clipToMask(GraphicsContext& destContext, const FloatRect& destRect) override
+    {
+        if (auto* backend = ensureBackendCreated()) {
+            flushContext();
+            backend->clipToMask(destContext, destRect);
+        }
+    }
 
     void convertToLuminanceMask() override
     {
