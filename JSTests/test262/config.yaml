@@ -33,6 +33,10 @@ skip:
 
     # remove once it's no longer in test262
     - String.prototype.item
+
+    # test262 bot is using Catalina's ICU 64, upgrading to Big Sur is required
+    # https://bugs.webkit.org/show_bug.cgi?id=218844
+    - test/intl402/DateTimeFormat/prototype/formatRangeToParts
   paths:
     - test/built-ins/DataView/prototype/getBigInt64
     - test/built-ins/DataView/prototype/getBigUint64
