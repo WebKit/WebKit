@@ -133,7 +133,7 @@ WebsiteDataProcessType WebsiteData::ownerProcess(WebsiteDataType dataType)
         return WebsiteDataProcessType::Network;
     case WebsiteDataType::DeviceIdHashSalt:
         return WebsiteDataProcessType::UI;
-    case WebsiteDataType::AdClickAttributions:
+    case WebsiteDataType::PrivateClickMeasurements:
         return WebsiteDataProcessType::Network;
 #if HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
     case WebsiteDataType::AlternativeServices:

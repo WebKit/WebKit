@@ -41,7 +41,7 @@ extern "C" {
 
 #define WEBKIT2_LOG_CHANNELS(M) \
     M(ActivityState) \
-    M(AdClickAttribution) \
+    M(PrivateClickMeasurement) \
     M(AppSSO) \
     M(Automation) \
     M(AutomationInteractions) \

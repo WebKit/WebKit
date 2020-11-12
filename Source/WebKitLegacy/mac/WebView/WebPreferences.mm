@@ -3222,14 +3222,14 @@ static NSString *classIBCreatorID = nil;
     [self _setBoolValue:flag forKey:WebKitResizeObserverEnabledPreferenceKey];
 }
 
-- (BOOL)adClickAttributionEnabled
+- (BOOL)privateClickMeasurementEnabled
 {
-    return [self _boolValueForKey:WebKitAdClickAttributionEnabledPreferenceKey];
+    return [self _boolValueForKey:WebKitPrivateClickMeasurementEnabledPreferenceKey];
 }
 
-- (void)setAdClickAttributionEnabled:(BOOL)flag
+- (void)setPrivateClickMeasurementEnabled:(BOOL)flag
 {
-    [self _setBoolValue:flag forKey:WebKitAdClickAttributionEnabledPreferenceKey];
+    [self _setBoolValue:flag forKey:WebKitPrivateClickMeasurementEnabledPreferenceKey];
 }
 
 - (BOOL)fetchAPIKeepAliveEnabled

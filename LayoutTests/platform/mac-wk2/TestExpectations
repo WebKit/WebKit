@@ -1080,9 +1080,6 @@ webkit.org/b/68278 http/tests/history/back-with-fragment-change.php [ Pass Failu
 # <rdar://problem/37330377> ASan tests exiting early due to timeouts
 [ Release ] imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys [ Skip ]
 
-# <rdar://problem/60063002> REGRESSION: (r257758) http/tests/adClickAttribution/conversion-disabled-in-ephemeral-session.html is crashing
-http/tests/adClickAttribution/conversion-disabled-in-ephemeral-session.html [ Pass Crash ]
-
 # <rdar://problem/60105927> [ Mac wk2 Release ] webgpu/whlsl/make-array-reference.html is flaky failing
 [ Release ] webgpu/whlsl/make-array-reference.html [ Pass Failure ]
 
@@ -1131,8 +1128,8 @@ webrtc/simulcast-h264.html [ Pass Timeout ]
 # <rdar://problem/63275213> REGRESSION: http/tests/IndexedDB/storage-limit-1.https.html is a flaky failure
 [ BigSur+ Release ] http/tests/IndexedDB/storage-limit-1.https.html [ Pass Failure ]
 
-# <rdar://problem/63357481> http/tests/adClickAttribution/send-attribution-conversion-request.html is a super flaky failure
-[ BigSur+ Debug ] http/tests/adClickAttribution/send-attribution-conversion-request.html [ Pass Failure ]
+# <rdar://problem/63357481> http/tests/privateClickMeasurement/send-attribution-conversion-request.html is a super flaky failure
+[ BigSur+ Debug ] http/tests/privateClickMeasurement/send-attribution-conversion-request.html [ Pass Failure ]
 
 # <rdar://problem/63554249> [20A279] DQ bots are seeing http/tests/cache/disk-cache/disk-cache-validation-back-navigation-policy.html and http/tests/cache/disk-cache/disk-cache-validation-no-body.html are timing out
 webkit.org/b/179796 http/tests/cache/disk-cache/disk-cache-validation-back-navigation-policy.html [ Pass Failure Timeout ]

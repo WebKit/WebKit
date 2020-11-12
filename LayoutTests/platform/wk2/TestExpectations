@@ -746,7 +746,7 @@ storage/indexeddb/IDBObject-leak.html [ Pass ]
 
 fast/forms/call-text-did-change-in-text-field-when-typing.html [ Pass ]
 
-http/tests/adClickAttribution [ Pass ]
+http/tests/privateClickMeasurement [ Pass ]
 
 # User interaction is a WebKit2 concept.
 inspector/debugger/evaluateOnCallFrame-emulateUserGesture-userIsInteracting.html [ Pass ]
@@ -756,8 +756,8 @@ inspector/runtime/callFunctionOn-emulateUserGesture-userIsInteracting.html [ Pas
 # Target domain is only present in WebKit2.
 http/tests/inspector/target [ Pass ]
 
-# ITP and AdClickAttribution are WK2 only.
-inspector/page/overrideSetting-AdClickAttributionDebugModeEnabled.html [ Pass ]
+# ITP and PrivateClickMeasurement are WK2 only.
+inspector/page/overrideSetting-PrivateClickMeasurementDebugModeEnabled.html [ Pass ]
 inspector/page/overrideSetting-ITPDebugModeEnabled.html [ Pass ]
 
 # Highlighting marked text ranges from layout tests is only supported in WebKit2.

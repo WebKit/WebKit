@@ -1,3 +1,69 @@
+2020-11-11  John Wilander  <wilander@apple.com>
+
+        PCM: Change from ad-click-attribution to private-click-measurement (in all forms, including .well-known URL)
+        https://bugs.webkit.org/show_bug.cgi?id=218730
+        <rdar://problem/71094296>
+
+        Reviewed by Alex Christensen.
+
+        Change to the official name of the proposed standard Private Click Measurement
+        https://github.com/privacycg/private-click-measurement.
+
+        This includes a change of the reporting URL from 
+        "/.well-known/ad-click-attribution/" to
+        "/.well-known/private-click-measurement/".
+
+        * DumpRenderTree/TestOptions.cpp:
+        (WTR::TestOptions::defaults):
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebCore/AdClickAttribution.cpp: Removed.
+        * TestWebKitAPI/Tests/WebCore/PrivateClickMeasurement.cpp: Added.
+        (TestWebKitAPI::TEST):
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::dumpPrivateClickMeasurement):
+        (WTR::TestRunner::clearPrivateClickMeasurement):
+        (WTR::TestRunner::clearPrivateClickMeasurementsThroughWebsiteDataRemoval):
+        (WTR::TestRunner::setPrivateClickMeasurementOverrideTimerForTesting):
+        (WTR::TestRunner::setPrivateClickMeasurementConversionURLForTesting):
+        (WTR::TestRunner::markPrivateClickMeasurementsAsExpiredForTesting):
+        (WTR::TestRunner::dumpAdClickAttribution): Deleted.
+        (WTR::TestRunner::clearAdClickAttribution): Deleted.
+        (WTR::TestRunner::clearAdClickAttributionsThroughWebsiteDataRemoval): Deleted.
+        (WTR::TestRunner::setAdClickAttributionOverrideTimerForTesting): Deleted.
+        (WTR::TestRunner::setAdClickAttributionConversionURLForTesting): Deleted.
+        (WTR::TestRunner::markAdClickAttributionsAsExpiredForTesting): Deleted.
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetStateToConsistentValues):
+        (WTR::PrivateClickMeasurementStringResultCallbackContext::PrivateClickMeasurementStringResultCallbackContext):
+        (WTR::privateClickMeasurementStringResultCallback):
+        (WTR::TestController::dumpPrivateClickMeasurement):
+        (WTR::PrivateClickMeasurementVoidCallbackContext::PrivateClickMeasurementVoidCallbackContext):
+        (WTR::privateClickMeasurementVoidCallback):
+        (WTR::TestController::clearPrivateClickMeasurement):
+        (WTR::TestController::clearPrivateClickMeasurementsThroughWebsiteDataRemoval):
+        (WTR::TestController::setPrivateClickMeasurementOverrideTimerForTesting):
+        (WTR::TestController::setPrivateClickMeasurementConversionURLForTesting):
+        (WTR::TestController::markPrivateClickMeasurementsAsExpiredForTesting):
+        (WTR::AdClickAttributionStringResultCallbackContext::AdClickAttributionStringResultCallbackContext): Deleted.
+        (WTR::adClickAttributionStringResultCallback): Deleted.
+        (WTR::TestController::dumpAdClickAttribution): Deleted.
+        (WTR::AdClickAttributionVoidCallbackContext::AdClickAttributionVoidCallbackContext): Deleted.
+        (WTR::adClickAttributionVoidCallback): Deleted.
+        (WTR::TestController::clearAdClickAttribution): Deleted.
+        (WTR::TestController::clearAdClickAttributionsThroughWebsiteDataRemoval): Deleted.
+        (WTR::TestController::setAdClickAttributionOverrideTimerForTesting): Deleted.
+        (WTR::TestController::setAdClickAttributionConversionURLForTesting): Deleted.
+        (WTR::TestController::markAdClickAttributionsAsExpiredForTesting): Deleted.
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::dumpResults):
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+        (WTR::TestInvocation::dumpPrivateClickMeasurement):
+        (WTR::TestInvocation::dumpAdClickAttribution): Deleted.
+        * WebKitTestRunner/TestInvocation.h:
+
 2020-11-11  Tim Horton  <timothy_horton@apple.com>
 
         Add minimal support for deep color IOSurface backing store to ImageBuffer

@@ -1,5 +1,0 @@
-Tests that both unconverted and converted attributions are cleared on website data removal.
-
-
-
-No stored Ad Click Attribution data.

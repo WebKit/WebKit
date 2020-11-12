@@ -1,3 +1,25 @@
+2020-11-11  John Wilander  <wilander@apple.com>
+
+        PCM: Change from ad-click-attribution to private-click-measurement (in all forms, including .well-known URL)
+        https://bugs.webkit.org/show_bug.cgi?id=218730
+        <rdar://problem/71094296>
+
+        Reviewed by Alex Christensen.
+
+        Change to the official name of the proposed standard Private Click Measurement
+        https://github.com/privacycg/private-click-measurement.
+
+        This includes a change of the reporting URL from 
+        "/.well-known/ad-click-attribution/" to
+        "/.well-known/private-click-measurement/".
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Base/Main.js:
+        * UserInterface/Models/ConsoleMessage.js:
+        * UserInterface/Models/IssueMessage.js:
+        (WI.IssueMessage):
+        * UserInterface/Protocol/Legacy/14.0/InspectorBackendCommands.js:
+
 2020-11-11  Brian Burg  <bburg@apple.com>
 
         [Cocoa] Inspector Extensions: Add _WKInspectorExtension and related plumbing

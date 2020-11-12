@@ -100,7 +100,7 @@ public:
 
     bool canOpenWindows() const { return m_canOpenWindows; }
 
-    void dumpAdClickAttribution();
+    void dumpPrivateClickMeasurement();
     void performCustomMenuAction();
 
     void willCreateNewPage();
@@ -162,7 +162,7 @@ private:
     bool m_pixelResultIsPending { false };
     bool m_shouldDumpResourceLoadStatistics { false };
     bool m_canOpenWindows { false };
-    bool m_shouldDumpAdClickAttribution { false };
+    bool m_shouldDumpPrivateClickMeasurement { false };
     WhatToDump m_whatToDump { WhatToDump::RenderTree };
 
     StringBuilder m_textOutput;

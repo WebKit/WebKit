@@ -1,0 +1,10 @@
+[
+  {
+    "trigger": {
+      "url-filter": "/.well-known/private-click-measurement/"
+    },
+    "action": {
+      "type": "block"
+    }
+  }
+]

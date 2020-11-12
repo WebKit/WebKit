@@ -29,9 +29,9 @@
 #include "SandboxExtension.h"
 #include "ServiceWorkerSoftUpdateLoader.h"
 #include "WebResourceLoadStatisticsStore.h"
-#include <WebCore/AdClickAttribution.h>
 #include <WebCore/BlobRegistryImpl.h>
 #include <WebCore/NetworkStorageSession.h>
+#include <WebCore/PrivateClickMeasurement.h>
 #include <WebCore/RegistrableDomain.h>
 #include <pal/SessionID.h>
 #include <wtf/HashSet.h>
@@ -51,7 +51,7 @@ struct SecurityOriginData;
 
 namespace WebKit {
 
-class AdClickAttributionManager;
+class PrivateClickMeasurementManager;
 class NetworkDataTask;
 class NetworkProcess;
 class NetworkResourceLoader;
@@ -116,14 +116,14 @@ public:
     virtual bool hasAppBoundSession() const { return false; }
     virtual void clearAppBoundSession() { }
 #endif
-    void storeAdClickAttribution(WebCore::AdClickAttribution&&);
-    void handleAdClickAttributionConversion(WebCore::AdClickAttribution::Conversion&&, const URL& requestURL, const WebCore::ResourceRequest& redirectRequest);
-    void dumpAdClickAttribution(CompletionHandler<void(String)>&&);
-    void clearAdClickAttribution();
-    void clearAdClickAttributionForRegistrableDomain(WebCore::RegistrableDomain&&);
-    void setAdClickAttributionOverrideTimerForTesting(bool value);
-    void setAdClickAttributionConversionURLForTesting(URL&&);
-    void markAdClickAttributionsAsExpiredForTesting();
+    void storePrivateClickMeasurement(WebCore::PrivateClickMeasurement&&);
+    void handlePrivateClickMeasurementConversion(WebCore::PrivateClickMeasurement::Conversion&&, const URL& requestURL, const WebCore::ResourceRequest& redirectRequest);
+    void dumpPrivateClickMeasurement(CompletionHandler<void(String)>&&);
+    void clearPrivateClickMeasurement();
+    void clearPrivateClickMeasurementForRegistrableDomain(WebCore::RegistrableDomain&&);
+    void setPrivateClickMeasurementOverrideTimerForTesting(bool value);
+    void setPrivateClickMeasurementConversionURLForTesting(URL&&);
+    void markPrivateClickMeasurementsAsExpiredForTesting();
 
     void addKeptAliveLoad(Ref<NetworkResourceLoader>&&);
     void removeKeptAliveLoad(NetworkResourceLoader&);
@@ -175,7 +175,7 @@ protected:
     Optional<WebCore::RegistrableDomain> m_thirdPartyCNAMEDomainForTesting;
 #endif
     bool m_isStaleWhileRevalidateEnabled { false };
-    UniqueRef<AdClickAttributionManager> m_adClickAttribution;
+    UniqueRef<PrivateClickMeasurementManager> m_privateClickMeasurement;
 
     HashSet<Ref<NetworkResourceLoader>> m_keptAliveLoads;
 

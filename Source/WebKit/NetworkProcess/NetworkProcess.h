@@ -39,7 +39,6 @@
 #include "WebResourceLoadStatisticsStore.h"
 #include "WebsiteData.h"
 #include <JavaScriptCore/ConsoleTypes.h>
-#include <WebCore/AdClickAttribution.h>
 #include <WebCore/ClientOrigin.h>
 #include <WebCore/CrossSiteNavigationDataTransfer.h>
 #include <WebCore/DiagnosticLoggingClient.h>
@@ -47,6 +46,7 @@
 #include <WebCore/IDBKeyData.h>
 #include <WebCore/MessagePortChannelRegistry.h>
 #include <WebCore/PageIdentifier.h>
+#include <WebCore/PrivateClickMeasurement.h>
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/ServiceWorkerIdentifier.h>
 #include <WebCore/ServiceWorkerTypes.h>
@@ -275,7 +275,7 @@ public:
     void setThirdPartyCNAMEDomainForTesting(PAL::SessionID, WebCore::RegistrableDomain&&, CompletionHandler<void()>&&);
 #endif
 
-    void setAdClickAttributionDebugMode(bool);
+    void setPrivateClickMeasurementDebugMode(bool);
 
     using CacheStorageRootPathCallback = CompletionHandler<void(String&&)>;
     void cacheStorageRootPath(PAL::SessionID, CacheStorageRootPathCallback&&);
@@ -332,12 +332,12 @@ public:
     void removeCacheEngine(const PAL::SessionID&);
     void requestStorageSpace(PAL::SessionID, const WebCore::ClientOrigin&, uint64_t quota, uint64_t currentSize, uint64_t spaceRequired, CompletionHandler<void(Optional<uint64_t>)>&&);
 
-    void storeAdClickAttribution(PAL::SessionID, WebCore::AdClickAttribution&&);
-    void dumpAdClickAttribution(PAL::SessionID, CompletionHandler<void(String)>&&);
-    void clearAdClickAttribution(PAL::SessionID, CompletionHandler<void()>&&);
-    void setAdClickAttributionOverrideTimerForTesting(PAL::SessionID, bool value, CompletionHandler<void()>&&);
-    void setAdClickAttributionConversionURLForTesting(PAL::SessionID, URL&&, CompletionHandler<void()>&&);
-    void markAdClickAttributionsAsExpiredForTesting(PAL::SessionID, CompletionHandler<void()>&&);
+    void storePrivateClickMeasurement(PAL::SessionID, WebCore::PrivateClickMeasurement&&);
+    void dumpPrivateClickMeasurement(PAL::SessionID, CompletionHandler<void(String)>&&);
+    void clearPrivateClickMeasurement(PAL::SessionID, CompletionHandler<void()>&&);
+    void setPrivateClickMeasurementOverrideTimerForTesting(PAL::SessionID, bool value, CompletionHandler<void()>&&);
+    void setPrivateClickMeasurementConversionURLForTesting(PAL::SessionID, URL&&, CompletionHandler<void()>&&);
+    void markPrivateClickMeasurementsAsExpiredForTesting(PAL::SessionID, CompletionHandler<void()>&&);
 
     RefPtr<WebCore::StorageQuotaManager> storageQuotaManager(PAL::SessionID, const WebCore::ClientOrigin&);
 

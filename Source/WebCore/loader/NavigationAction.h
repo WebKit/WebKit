@@ -28,11 +28,11 @@
 
 #pragma once
 
-#include "AdClickAttribution.h"
 #include "BackForwardItemIdentifier.h"
 #include "FrameLoaderTypes.h"
 #include "GlobalFrameIdentifier.h"
 #include "LayoutPoint.h"
+#include "PrivateClickMeasurement.h"
 #include "ResourceRequest.h"
 #include "SecurityOrigin.h"
 #include "UserGestureIndicator.h"
@@ -137,8 +137,8 @@ public:
     LockBackForwardList lockBackForwardList() const { return m_lockBackForwardList; }
     void setLockBackForwardList(LockBackForwardList lockBackForwardList) { m_lockBackForwardList = lockBackForwardList; }
 
-    const Optional<AdClickAttribution>& adClickAttribution() const { return m_adClickAttribution; };
-    void setAdClickAttribution(AdClickAttribution&& adClickAttribution) { m_adClickAttribution = adClickAttribution; };
+    const Optional<PrivateClickMeasurement>& privateClickMeasurement() const { return m_privateClickMeasurement; };
+    void setPrivateClickMeasurement(PrivateClickMeasurement&& privateClickMeasurement) { m_privateClickMeasurement = privateClickMeasurement; };
 
 private:
     // Do not add a strong reference to the originating document or a subobject that holds the
@@ -159,7 +159,7 @@ private:
     Optional<BackForwardItemIdentifier> m_sourceBackForwardItemIdentifier;
     LockHistory m_lockHistory { LockHistory::No };
     LockBackForwardList m_lockBackForwardList { LockBackForwardList::No };
-    Optional<AdClickAttribution> m_adClickAttribution;
+    Optional<PrivateClickMeasurement> m_privateClickMeasurement;
 };
 
 } // namespace WebCore

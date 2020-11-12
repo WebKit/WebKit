@@ -148,7 +148,7 @@ messages -> NetworkProcess LegacyReceiver {
     SetThirdPartyCNAMEDomainForTesting(PAL::SessionID sessionID, WebCore::RegistrableDomain domain) -> () Async
 #endif
 
-    SetAdClickAttributionDebugMode(bool debugMode)
+    SetPrivateClickMeasurementDebugMode(bool debugMode)
 
     SetSessionIsControlledByAutomation(PAL::SessionID sessionID, bool controlled);
 
@@ -161,12 +161,12 @@ messages -> NetworkProcess LegacyReceiver {
 
     SyncLocalStorage() -> () Async
 
-    StoreAdClickAttribution(PAL::SessionID sessionID, WebCore::AdClickAttribution adClickAttribution)
-    DumpAdClickAttribution(PAL::SessionID sessionID) -> (String adClickAttributionState) Async
-    ClearAdClickAttribution(PAL::SessionID sessionID) -> () Async
-    SetAdClickAttributionOverrideTimerForTesting(PAL::SessionID sessionID, bool value) -> () Async
-    SetAdClickAttributionConversionURLForTesting(PAL::SessionID sessionID, URL url) -> () Async
-    MarkAdClickAttributionsAsExpiredForTesting(PAL::SessionID sessionID) -> () Async
+    StorePrivateClickMeasurement(PAL::SessionID sessionID, WebCore::PrivateClickMeasurement privateClickMeasurement)
+    DumpPrivateClickMeasurement(PAL::SessionID sessionID) -> (String privateClickMeasurementState) Async
+    ClearPrivateClickMeasurement(PAL::SessionID sessionID) -> () Async
+    SetPrivateClickMeasurementOverrideTimerForTesting(PAL::SessionID sessionID, bool value) -> () Async
+    SetPrivateClickMeasurementConversionURLForTesting(PAL::SessionID sessionID, URL url) -> () Async
+    MarkPrivateClickMeasurementsAsExpiredForTesting(PAL::SessionID sessionID) -> () Async
     GetLocalStorageOriginDetails(PAL::SessionID sessionID) -> (Vector<WebKit::LocalStorageDatabaseTracker::OriginDetails> details) Async
 
     SetServiceWorkerFetchTimeoutForTesting(Seconds seconds) -> () Synchronous

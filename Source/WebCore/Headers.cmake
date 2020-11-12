@@ -732,7 +732,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     layout/integration/LayoutIntegrationRunIteratorModernPath.h
     layout/layouttree/LayoutBox.h
 
-    loader/AdClickAttribution.h
     loader/CanvasActivityRecord.h
     loader/ContentFilterClient.h
     loader/CookieJar.h
@@ -765,6 +764,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     loader/NetscapePlugInStreamLoader.h
     loader/PingLoader.h
     loader/PolicyChecker.h
+    loader/PrivateClickMeasurement.h
     loader/ProgressTracker.h
     loader/ProgressTrackerClient.h
     loader/ResourceCryptographicDigest.h

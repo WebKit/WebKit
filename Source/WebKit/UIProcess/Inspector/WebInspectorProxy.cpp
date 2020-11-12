@@ -667,9 +667,9 @@ void WebInspectorProxy::timelineRecordingChanged(bool active)
 void WebInspectorProxy::setDeveloperPreferenceOverride(WebCore::InspectorClient::DeveloperPreference developerPreference, Optional<bool> overrideValue)
 {
     switch (developerPreference) {
-    case InspectorClient::DeveloperPreference::AdClickAttributionDebugModeEnabled:
+    case InspectorClient::DeveloperPreference::PrivateClickMeasurementDebugModeEnabled:
         if (m_inspectedPage)
-            m_inspectedPage->websiteDataStore().setAdClickAttributionDebugMode(overrideValue && overrideValue.value());
+            m_inspectedPage->websiteDataStore().setPrivateClickMeasurementDebugMode(overrideValue && overrideValue.value());
         return;
 
     case InspectorClient::DeveloperPreference::ITPDebugModeEnabled:

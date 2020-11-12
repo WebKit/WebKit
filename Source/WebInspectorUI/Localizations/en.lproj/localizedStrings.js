@@ -993,6 +993,7 @@ localizedStrings["Previous Sibling"] = "Previous Sibling";
 localizedStrings["Primary Key"] = "Primary Key";
 localizedStrings["Primary Key \u2014 %s"] = "Primary Key \u2014 %s";
 localizedStrings["Priority"] = "Priority";
+localizedStrings["Private Click Measurement Debug Mode"] = "Private Click Measurement Debug Mode";
 localizedStrings["Probe Expression"] = "Probe Expression";
 localizedStrings["Probe Sample Recorded"] = "Probe Sample Recorded";
 localizedStrings["Probes"] = "Probes";
