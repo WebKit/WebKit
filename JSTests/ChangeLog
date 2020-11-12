@@ -1,3 +1,13 @@
+2020-11-12  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, rebaseline test262's config.yaml part 2
+
+        test262 bot is using Catalina, it should use Big Sur. filed in [1].
+
+        [1]: https://bugs.webkit.org/show_bug.cgi?id=218844
+
+        * test262/config.yaml:
+
 2020-11-11  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, rebaseline test262's config.yaml
