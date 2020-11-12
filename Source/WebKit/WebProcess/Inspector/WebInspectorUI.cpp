@@ -93,6 +93,11 @@ void WebInspectorUI::establishConnection(WebPageProxyIdentifier inspectedPageIde
 
 void WebInspectorUI::updateConnection()
 {
+    if (m_backendConnection) {
+        m_backendConnection->invalidate();
+        m_backendConnection = nullptr;
+    }
+
 #if USE(UNIX_DOMAIN_SOCKETS)
     IPC::Connection::SocketPair socketPair = IPC::Connection::createPlatformConnection();
     IPC::Connection::Identifier connectionIdentifier(socketPair.server);
@@ -116,6 +121,11 @@ void WebInspectorUI::updateConnection()
 #else
     notImplemented();
     return;
+#endif
+
+#if USE(UNIX_DOMAIN_SOCKETS) || OS(DARWIN) || PLATFORM(WIN)
+    m_backendConnection = IPC::Connection::createServerConnection(connectionIdentifier, *this);
+    m_backendConnection->open();
 #endif
 
     WebProcess::singleton().parentProcessConnection()->send(Messages::WebInspectorProxy::SetFrontendConnection(connectionClientPort), m_inspectedPageIdentifier);
@@ -165,6 +175,11 @@ void WebInspectorUI::bringToFront()
 void WebInspectorUI::closeWindow()
 {
     WebProcess::singleton().parentProcessConnection()->send(Messages::WebInspectorProxy::DidClose(), m_inspectedPageIdentifier);
+
+    if (m_backendConnection) {
+        m_backendConnection->invalidate();
+        m_backendConnection = nullptr;
+    }
 
     if (m_frontendController) {
         m_frontendController->setInspectorFrontendClient(nullptr);

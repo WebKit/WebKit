@@ -1,3 +1,21 @@
+2020-11-11  Brian Burg  <bburg@apple.com>
+
+        REGRESSION(r267411): Unable to "Start Element Selection" with Web Inspector closed
+        https://bugs.webkit.org/show_bug.cgi?id=218838
+        <rdar://problem/71158215>
+
+        Reviewed by Devin Rousso.
+
+        The inspector side of the connection between WebInspector (inspected WebProcess) and
+        WebInspectorUI (inspector WebProcess) was mistakenly removed in r267411. Revert those changes.
+        Without a valid frontend connection, WebInspector cannot forward some IPC messages
+        to WebInspectorUI including StartElementSelection.
+
+        * WebProcess/Inspector/WebInspectorUI.cpp:
+        (WebKit::WebInspectorUI::updateConnection):
+        (WebKit::WebInspectorUI::closeWindow):
+        * WebProcess/Inspector/WebInspectorUI.h:
+
 2020-11-11  Said Abou-Hallawa  <said@apple.com>
 
         [GPU Process] Delete the DisplayList items: DrawImage and DrawTiledImage

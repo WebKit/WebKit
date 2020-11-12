@@ -172,6 +172,8 @@ private:
     std::unique_ptr<WebInspectorUIExtensionController> m_extensionController;
 #endif
 
+    RefPtr<IPC::Connection> m_backendConnection;
+
     WebPageProxyIdentifier m_inspectedPageIdentifier;
     bool m_underTest { false };
     DebuggableInfoData m_debuggableInfo;
