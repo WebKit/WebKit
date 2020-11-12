@@ -1,3 +1,14 @@
+2020-11-11  Said Abou-Hallawa  <said@apple.com>
+
+        [GPU Process] Delete the DisplayList items: DrawImage and DrawTiledImage
+        https://bugs.webkit.org/show_bug.cgi?id=218839
+
+        Reviewed by Tim Horton.
+
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::decodeItem):
+        * WebProcess/GPU/graphics/RemoteImageBufferProxy.h:
+
 2020-11-11  Chris Dumez  <cdumez@apple.com>
 
         Add RunLoop::Timer constructor taking in a WTF::Function

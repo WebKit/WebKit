@@ -404,47 +404,6 @@ static TextStream& operator<<(TextStream& ts, const DrawGlyphs& item)
     return ts;
 }
 
-void DrawImage::apply(GraphicsContext& context) const
-{
-    context.drawImage(m_image.get(), m_destination, m_source, m_imagePaintingOptions);
-}
-
-static TextStream& operator<<(TextStream& ts, const DrawImage& item)
-{
-    ts.dumpProperty("image", item.image());
-    ts.dumpProperty("source-rect", item.source());
-    ts.dumpProperty("dest-rect", item.destination());
-    return ts;
-}
-
-void DrawTiledImage::apply(GraphicsContext& context) const
-{
-    context.drawTiledImage(m_image.get(), m_destination, m_source, m_tileSize, m_spacing, m_imagePaintingOptions);
-}
-
-static TextStream& operator<<(TextStream& ts, const DrawTiledImage& item)
-{
-    ts.dumpProperty("image", item.image());
-    ts.dumpProperty("source-point", item.source());
-    ts.dumpProperty("dest-rect", item.destination());
-    ts.dumpProperty("tile-size", item.tileSize());
-    ts.dumpProperty("spacing", item.spacing());
-    return ts;
-}
-
-void DrawTiledScaledImage::apply(GraphicsContext& context) const
-{
-    context.drawTiledImage(m_image.get(), m_destination, m_source, m_tileScaleFactor, m_hRule, m_vRule, m_imagePaintingOptions);
-}
-
-static TextStream& operator<<(TextStream& ts, const DrawTiledScaledImage& item)
-{
-    ts.dumpProperty("image", item.image());
-    ts.dumpProperty("source-rect", item.source());
-    ts.dumpProperty("dest-rect", item.destination());
-    return ts;
-}
-
 NO_RETURN_DUE_TO_ASSERT void DrawImageBuffer::apply(GraphicsContext&) const
 {
     ASSERT_NOT_REACHED();
@@ -1051,9 +1010,6 @@ static TextStream& operator<<(TextStream& ts, ItemType type)
     case ItemType::ClipPath: ts << "clip-path"; break;
     case ItemType::ClipToDrawingCommands: ts << "clip-to-image-buffer"; break;
     case ItemType::DrawGlyphs: ts << "draw-glyphs"; break;
-    case ItemType::DrawImage: ts << "draw-image"; break;
-    case ItemType::DrawTiledImage: ts << "draw-tiled-image"; break;
-    case ItemType::DrawTiledScaledImage: ts << "draw-tiled-scaled-image"; break;
     case ItemType::DrawImageBuffer: ts << "draw-image-buffer"; break;
     case ItemType::DrawNativeImage: ts << "draw-native-image"; break;
     case ItemType::DrawPattern: ts << "draw-pattern"; break;
@@ -1164,15 +1120,6 @@ TextStream& operator<<(TextStream& ts, ItemHandle item)
         break;
     case ItemType::DrawGlyphs:
         ts << item.get<DrawGlyphs>();
-        break;
-    case ItemType::DrawImage:
-        ts << item.get<DrawImage>();
-        break;
-    case ItemType::DrawTiledImage:
-        ts << item.get<DrawTiledImage>();
-        break;
-    case ItemType::DrawTiledScaledImage:
-        ts << item.get<DrawTiledScaledImage>();
         break;
     case ItemType::DrawImageBuffer:
         ts << item.get<DrawImageBuffer>();

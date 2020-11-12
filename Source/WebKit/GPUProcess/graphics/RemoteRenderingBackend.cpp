@@ -260,18 +260,12 @@ Optional<DisplayList::ItemHandle> WARN_UNUSED_RETURN RemoteRenderingBackend::dec
         return decodeAndCreate<DisplayList::DrawFocusRingRects>(data, length, handleLocation);
     case DisplayList::ItemType::DrawGlyphs:
         return decodeAndCreate<DisplayList::DrawGlyphs>(data, length, handleLocation);
-    case DisplayList::ItemType::DrawImage:
-        return decodeAndCreate<DisplayList::DrawImage>(data, length, handleLocation);
     case DisplayList::ItemType::DrawLinesForText:
         return decodeAndCreate<DisplayList::DrawLinesForText>(data, length, handleLocation);
     case DisplayList::ItemType::DrawPath:
         return decodeAndCreate<DisplayList::DrawPath>(data, length, handleLocation);
     case DisplayList::ItemType::DrawPattern:
         return decodeAndCreate<DisplayList::DrawPattern>(data, length, handleLocation);
-    case DisplayList::ItemType::DrawTiledImage:
-        return decodeAndCreate<DisplayList::DrawTiledImage>(data, length, handleLocation);
-    case DisplayList::ItemType::DrawTiledScaledImage:
-        return decodeAndCreate<DisplayList::DrawTiledScaledImage>(data, length, handleLocation);
     case DisplayList::ItemType::FillCompositedRect:
         return decodeAndCreate<DisplayList::FillCompositedRect>(data, length, handleLocation);
     case DisplayList::ItemType::FillPath:

@@ -80,12 +80,6 @@ static size_t sizeOfItemInBytes(ItemType type)
         return sizeof(ClipToDrawingCommands);
     case ItemType::DrawGlyphs:
         return sizeof(DrawGlyphs);
-    case ItemType::DrawImage:
-        return sizeof(DrawImage);
-    case ItemType::DrawTiledImage:
-        return sizeof(DrawTiledImage);
-    case ItemType::DrawTiledScaledImage:
-        return sizeof(DrawTiledScaledImage);
     case ItemType::DrawImageBuffer:
         return sizeof(DrawImageBuffer);
     case ItemType::DrawNativeImage:
@@ -207,7 +201,6 @@ bool isDrawingItem(ItemType type)
     case ItemType::DrawFocusRingPath:
     case ItemType::DrawFocusRingRects:
     case ItemType::DrawGlyphs:
-    case ItemType::DrawImage:
     case ItemType::DrawImageBuffer:
     case ItemType::DrawLine:
     case ItemType::DrawLinesForText:
@@ -215,8 +208,6 @@ bool isDrawingItem(ItemType type)
     case ItemType::DrawPath:
     case ItemType::DrawPattern:
     case ItemType::DrawRect:
-    case ItemType::DrawTiledImage:
-    case ItemType::DrawTiledScaledImage:
     case ItemType::EndTransparencyLayer:
     case ItemType::FillCompositedRect:
     case ItemType::FillEllipse:
@@ -258,12 +249,9 @@ bool isInlineItem(ItemType type)
     case ItemType::DrawFocusRingPath:
     case ItemType::DrawFocusRingRects:
     case ItemType::DrawGlyphs:
-    case ItemType::DrawImage:
     case ItemType::DrawLinesForText:
     case ItemType::DrawPath:
     case ItemType::DrawPattern:
-    case ItemType::DrawTiledImage:
-    case ItemType::DrawTiledScaledImage:
     case ItemType::FillCompositedRect:
     case ItemType::FillPath:
     case ItemType::FillRectWithColor:

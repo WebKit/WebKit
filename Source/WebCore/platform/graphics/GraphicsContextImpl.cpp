@@ -37,27 +37,4 @@ GraphicsContextImpl::~GraphicsContextImpl()
 {
 }
 
-ImageDrawResult GraphicsContextImpl::drawImageImpl(GraphicsContext& context, Image& image, const FloatRect& destination, const FloatRect& source, const ImagePaintingOptions& options)
-{
-    InterpolationQualityMaintainer interpolationQualityForThisScope(context, options.interpolationQuality());
-    return image.draw(context, destination, source, options);
-}
-
-ImageDrawResult GraphicsContextImpl::drawTiledImageImpl(GraphicsContext& context, Image& image, const FloatRect& destination, const FloatPoint& source, const FloatSize& tileSize, const FloatSize& spacing, const ImagePaintingOptions& options)
-{
-    InterpolationQualityMaintainer interpolationQualityForThisScope(context, options.interpolationQuality());
-    return image.drawTiled(context, destination, source, tileSize, spacing, options);
-}
-
-ImageDrawResult GraphicsContextImpl::drawTiledImageImpl(GraphicsContext& context, Image& image, const FloatRect& destination, const FloatRect& source, const FloatSize& tileScaleFactor, Image::TileRule hRule, Image::TileRule vRule, const ImagePaintingOptions& options)
-{
-    if (hRule == Image::StretchTile && vRule == Image::StretchTile) {
-        // Just do a scale.
-        return drawImageImpl(context, image, destination, source, options);
-    }
-
-    InterpolationQualityMaintainer interpolationQualityForThisScope(context, options.interpolationQuality());
-    return image.drawTiled(context, destination, source, tileScaleFactor, hRule, vRule, options.compositeOperator());
-}
-
 } // namespace WebCore

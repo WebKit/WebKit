@@ -136,18 +136,6 @@ void ItemHandle::apply(GraphicsContext& context)
         get<DrawGlyphs>().apply(context);
         return;
     }
-    case ItemType::DrawImage: {
-        get<DrawImage>().apply(context);
-        return;
-    }
-    case ItemType::DrawTiledImage: {
-        get<DrawTiledImage>().apply(context);
-        return;
-    }
-    case ItemType::DrawTiledScaledImage: {
-        get<DrawTiledScaledImage>().apply(context);
-        return;
-    }
     case ItemType::DrawImageBuffer: {
         get<DrawImageBuffer>().apply(context);
         return;
@@ -322,10 +310,6 @@ void ItemHandle::destroy()
         get<DrawGlyphs>().~DrawGlyphs();
         return;
     }
-    case ItemType::DrawImage: {
-        get<DrawImage>().~DrawImage();
-        return;
-    }
     case ItemType::DrawLinesForText: {
         get<DrawLinesForText>().~DrawLinesForText();
         return;
@@ -336,14 +320,6 @@ void ItemHandle::destroy()
     }
     case ItemType::DrawPattern: {
         get<DrawPattern>().~DrawPattern();
-        return;
-    }
-    case ItemType::DrawTiledImage: {
-        get<DrawTiledImage>().~DrawTiledImage();
-        return;
-    }
-    case ItemType::DrawTiledScaledImage: {
-        get<DrawTiledScaledImage>().~DrawTiledScaledImage();
         return;
     }
     case ItemType::FillCompositedRect: {
@@ -581,10 +557,6 @@ void ItemHandle::copyTo(ItemHandle destination) const
         new (itemOffset) DrawGlyphs(get<DrawGlyphs>());
         return;
     }
-    case ItemType::DrawImage: {
-        new (itemOffset) DrawImage(get<DrawImage>());
-        return;
-    }
     case ItemType::DrawImageBuffer: {
         new (itemOffset) DrawImageBuffer(get<DrawImageBuffer>());
         return;
@@ -603,14 +575,6 @@ void ItemHandle::copyTo(ItemHandle destination) const
     }
     case ItemType::DrawPattern: {
         new (itemOffset) DrawPattern(get<DrawPattern>());
-        return;
-    }
-    case ItemType::DrawTiledImage: {
-        new (itemOffset) DrawTiledImage(get<DrawTiledImage>());
-        return;
-    }
-    case ItemType::DrawTiledScaledImage: {
-        new (itemOffset) DrawTiledScaledImage(get<DrawTiledScaledImage>());
         return;
     }
     case ItemType::FillCompositedRect: {

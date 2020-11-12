@@ -268,21 +268,6 @@ void GraphicsContextImplDirect2D::drawGlyphs(const Font& font, const GlyphBuffer
         state.textDrawingMode, state.strokeThickness, state.shadowOffset, state.shadowColor);
 }
 
-ImageDrawResult GraphicsContextImplDirect2D::drawImage(Image& image, const FloatRect& destination, const FloatRect& source, const ImagePaintingOptions& imagePaintingOptions)
-{
-    return GraphicsContextImpl::drawImageImpl(graphicsContext(), image, destination, source, imagePaintingOptions);
-}
-
-ImageDrawResult GraphicsContextImplDirect2D::drawTiledImage(Image& image, const FloatRect& destination, const FloatPoint& source, const FloatSize& tileSize, const FloatSize& spacing, const ImagePaintingOptions& imagePaintingOptions)
-{
-    return GraphicsContextImpl::drawTiledImageImpl(graphicsContext(), image, destination, source, tileSize, spacing, imagePaintingOptions);
-}
-
-ImageDrawResult GraphicsContextImplDirect2D::drawTiledImage(Image& image, const FloatRect& destination, const FloatRect& source, const FloatSize& tileScaleFactor, Image::TileRule hRule, Image::TileRule vRule, const ImagePaintingOptions& imagePaintingOptions)
-{
-    return GraphicsContextImpl::drawTiledImageImpl(graphicsContext(), image, destination, source, tileScaleFactor, hRule, vRule, imagePaintingOptions);
-}
-
 void GraphicsContextImplDirect2D::drawNativeImage(NativeImage& image, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
 {
     auto& state = graphicsContext().state();

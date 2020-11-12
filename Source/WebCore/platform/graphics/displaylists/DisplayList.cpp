@@ -232,12 +232,6 @@ void DisplayList::append(ItemHandle item)
     }
     case ItemType::DrawGlyphs:
         return append<DrawGlyphs>(item.get<DrawGlyphs>());
-    case ItemType::DrawImage:
-        return append<DrawImage>(item.get<DrawImage>());
-    case ItemType::DrawTiledImage:
-        return append<DrawTiledImage>(item.get<DrawTiledImage>());
-    case ItemType::DrawTiledScaledImage:
-        return append<DrawTiledScaledImage>(item.get<DrawTiledScaledImage>());
     case ItemType::DrawImageBuffer:
         return append<DrawImageBuffer>(item.get<DrawImageBuffer>());
     case ItemType::DrawNativeImage:

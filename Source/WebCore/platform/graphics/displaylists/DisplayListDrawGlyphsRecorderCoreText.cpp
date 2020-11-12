@@ -352,8 +352,8 @@ void DrawGlyphsRecorder::recordDrawImage(CGRenderingStateRef, CGGStateRef gstate
     m_owner.translate(0, rect.size.height + 2 * rect.origin.y);
     m_owner.scale(FloatSize(1, -1));
 
-    auto image = BitmapImage::create(cgImage);
-    m_owner.append<DrawImage>(image, FloatRect(rect), FloatRect {{ }, image->size()}, ImagePaintingOptions { ImageOrientation::OriginTopLeft });
+    auto image = NativeImage::create(adoptCF(cgImage));
+    m_owner.drawNativeImage(*image, image->size(), FloatRect(rect), FloatRect {{ }, image->size()}, ImagePaintingOptions { ImageOrientation::OriginTopLeft });
 
     // Undo the above y-flip to restore the context.
     m_owner.scale(FloatSize(1, -1));

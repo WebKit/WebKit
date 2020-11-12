@@ -214,18 +214,12 @@ protected:
             return IPC::Encoder::encodeSingleObject<WebCore::DisplayList::DrawFocusRingRects>(item.get<WebCore::DisplayList::DrawFocusRingRects>());
         case WebCore::DisplayList::ItemType::DrawGlyphs:
             return IPC::Encoder::encodeSingleObject<WebCore::DisplayList::DrawGlyphs>(item.get<WebCore::DisplayList::DrawGlyphs>());
-        case WebCore::DisplayList::ItemType::DrawImage:
-            return IPC::Encoder::encodeSingleObject<WebCore::DisplayList::DrawImage>(item.get<WebCore::DisplayList::DrawImage>());
         case WebCore::DisplayList::ItemType::DrawLinesForText:
             return IPC::Encoder::encodeSingleObject<WebCore::DisplayList::DrawLinesForText>(item.get<WebCore::DisplayList::DrawLinesForText>());
         case WebCore::DisplayList::ItemType::DrawPath:
             return IPC::Encoder::encodeSingleObject<WebCore::DisplayList::DrawPath>(item.get<WebCore::DisplayList::DrawPath>());
         case WebCore::DisplayList::ItemType::DrawPattern:
             return IPC::Encoder::encodeSingleObject<WebCore::DisplayList::DrawPattern>(item.get<WebCore::DisplayList::DrawPattern>());
-        case WebCore::DisplayList::ItemType::DrawTiledImage:
-            return IPC::Encoder::encodeSingleObject<WebCore::DisplayList::DrawTiledImage>(item.get<WebCore::DisplayList::DrawTiledImage>());
-        case WebCore::DisplayList::ItemType::DrawTiledScaledImage:
-            return IPC::Encoder::encodeSingleObject<WebCore::DisplayList::DrawTiledScaledImage>(item.get<WebCore::DisplayList::DrawTiledScaledImage>());
         case WebCore::DisplayList::ItemType::FillCompositedRect:
             return IPC::Encoder::encodeSingleObject<WebCore::DisplayList::FillCompositedRect>(item.get<WebCore::DisplayList::FillCompositedRect>());
         case WebCore::DisplayList::ItemType::FillPath:

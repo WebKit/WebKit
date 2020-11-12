@@ -167,24 +167,6 @@ void Recorder::drawGlyphs(const Font& font, const GlyphBuffer& glyphBuffer, unsi
     m_drawGlyphsRecorder.drawGlyphs(font, glyphBuffer, from, numGlyphs, startPoint, smoothingMode);
 }
 
-ImageDrawResult Recorder::drawImage(Image& image, const FloatRect& destination, const FloatRect& source, const ImagePaintingOptions& imagePaintingOptions)
-{
-    append<DrawImage>(image, destination, source, imagePaintingOptions);
-    return ImageDrawResult::DidRecord;
-}
-
-ImageDrawResult Recorder::drawTiledImage(Image& image, const FloatRect& destination, const FloatPoint& source, const FloatSize& tileSize, const FloatSize& spacing, const ImagePaintingOptions& imagePaintingOptions)
-{
-    append<DrawTiledImage>(image, destination, source, tileSize, spacing, imagePaintingOptions);
-    return ImageDrawResult::DidRecord;
-}
-
-ImageDrawResult Recorder::drawTiledImage(Image& image, const FloatRect& destination, const FloatRect& source, const FloatSize& tileScaleFactor, Image::TileRule hRule, Image::TileRule vRule, const ImagePaintingOptions& imagePaintingOptions)
-{
-    append<DrawTiledScaledImage>(image, destination, source, tileScaleFactor, hRule, vRule, imagePaintingOptions);
-    return ImageDrawResult::DidRecord;
-}
-
 void Recorder::drawImageBuffer(WebCore::ImageBuffer& imageBuffer, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
 {
     // FIXME: Call imageBuffer.flushDrawingContext() when <https://webkit.org/b/218773> is fixed.
