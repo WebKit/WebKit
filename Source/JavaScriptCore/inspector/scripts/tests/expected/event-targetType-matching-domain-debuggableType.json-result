@@ -232,12 +232,12 @@ void DomainBackendDispatcher::dispatch(long protocol_requestId, const String& pr
 
     auto protocol_parameters = protocol_message->getObject("params"_s);
 
-    if (protocol_method == "Command") {
+    if (protocol_method == "Command"_s) {
         Command(protocol_requestId, WTFMove(protocol_parameters));
         return;
     }
 
-    m_backendDispatcher->reportProtocolError(BackendDispatcher::MethodNotFound, "'Domain." + protocol_method + "' was not found");
+    m_backendDispatcher->reportProtocolError(BackendDispatcher::MethodNotFound, makeString("'Domain."_s, protocol_method, "' was not found"_s));
 }
 
 void DomainBackendDispatcher::Command(long protocol_requestId, RefPtr<JSON::Object>&&)

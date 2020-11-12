@@ -484,11 +484,6 @@ Ref<Value> Value::create(const String& value)
     return adoptRef(*new Value(value));
 }
 
-Ref<Value> Value::create(const char* value)
-{
-    return adoptRef(*new Value(value));
-}
-
 RefPtr<Value> Value::asValue()
 {
     return this;

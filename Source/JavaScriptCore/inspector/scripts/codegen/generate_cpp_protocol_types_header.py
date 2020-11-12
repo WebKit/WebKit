@@ -276,7 +276,7 @@ class CppProtocolTypesHeaderGenerator(CppGenerator):
             open_members = Generator.open_fields(type_declaration)
             for type_member in open_members:
                 export_macro = self.model().framework.setting('export_macro', None)
-                lines.append('    %s static const char* %sKey;' % (export_macro, type_member.member_name))
+                lines.append('    %s static const ASCIILiteral %sKey;' % (export_macro, type_member.member_name))
 
         lines.append('};')
         return self.wrap_with_guard_for_condition(type_declaration.condition, '\n'.join(lines))

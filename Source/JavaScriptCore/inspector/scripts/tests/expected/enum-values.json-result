@@ -243,12 +243,12 @@ void CommandDomainBackendDispatcher::dispatch(long protocol_requestId, const Str
 
     auto protocol_parameters = protocol_message->getObject("params"_s);
 
-    if (protocol_method == "command") {
+    if (protocol_method == "command"_s) {
         command(protocol_requestId, WTFMove(protocol_parameters));
         return;
     }
 
-    m_backendDispatcher->reportProtocolError(BackendDispatcher::MethodNotFound, "'CommandDomain." + protocol_method + "' was not found");
+    m_backendDispatcher->reportProtocolError(BackendDispatcher::MethodNotFound, makeString("'CommandDomain."_s, protocol_method, "' was not found"_s));
 }
 
 void CommandDomainBackendDispatcher::command(long protocol_requestId, RefPtr<JSON::Object>&& protocol_parameters)
@@ -566,18 +566,18 @@ namespace Protocol {
 
 namespace TestHelpers {
 
-static const char* const enum_constant_values[] = {
-    "shared",
-    "1",
-    "2",
-    "sharedRequired",
-    "grey",
-    "sharedOptional",
-    "green",
-    "black",
-    "red",
-    "white",
-    "blue",
+static const ASCIILiteral enum_constant_values[] = {
+    "shared"_s,
+    "1"_s,
+    "2"_s,
+    "sharedRequired"_s,
+    "grey"_s,
+    "sharedOptional"_s,
+    "green"_s,
+    "black"_s,
+    "red"_s,
+    "white"_s,
+    "blue"_s,
 };
 
 String getEnumConstantValue(int code) {

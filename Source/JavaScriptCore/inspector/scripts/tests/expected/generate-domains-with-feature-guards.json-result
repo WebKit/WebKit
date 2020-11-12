@@ -236,12 +236,12 @@ void Network1BackendDispatcher::dispatch(long protocol_requestId, const String& 
 
     auto protocol_parameters = protocol_message->getObject("params"_s);
 
-    if (protocol_method == "loadResource") {
+    if (protocol_method == "loadResource"_s) {
         loadResource(protocol_requestId, WTFMove(protocol_parameters));
         return;
     }
 
-    m_backendDispatcher->reportProtocolError(BackendDispatcher::MethodNotFound, "'Network1." + protocol_method + "' was not found");
+    m_backendDispatcher->reportProtocolError(BackendDispatcher::MethodNotFound, makeString("'Network1."_s, protocol_method, "' was not found"_s));
 }
 
 void Network1BackendDispatcher::loadResource(long protocol_requestId, RefPtr<JSON::Object>&&)

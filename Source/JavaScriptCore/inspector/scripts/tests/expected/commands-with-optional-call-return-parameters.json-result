@@ -235,16 +235,16 @@ void DatabaseBackendDispatcher::dispatch(long protocol_requestId, const String& 
 
     auto protocol_parameters = protocol_message->getObject("params"_s);
 
-    if (protocol_method == "executeAllOptionalParameters") {
+    if (protocol_method == "executeAllOptionalParameters"_s) {
         executeAllOptionalParameters(protocol_requestId, WTFMove(protocol_parameters));
         return;
     }
-    if (protocol_method == "executeNoOptionalParameters") {
+    if (protocol_method == "executeNoOptionalParameters"_s) {
         executeNoOptionalParameters(protocol_requestId, WTFMove(protocol_parameters));
         return;
     }
 
-    m_backendDispatcher->reportProtocolError(BackendDispatcher::MethodNotFound, "'Database." + protocol_method + "' was not found");
+    m_backendDispatcher->reportProtocolError(BackendDispatcher::MethodNotFound, makeString("'Database."_s, protocol_method, "' was not found"_s));
 }
 
 void DatabaseBackendDispatcher::executeAllOptionalParameters(long protocol_requestId, RefPtr<JSON::Object>&& protocol_parameters)
@@ -665,14 +665,14 @@ namespace Protocol {
 
 namespace TestHelpers {
 
-static const char* const enum_constant_values[] = {
-    "red",
-    "green",
-    "blue",
-    "cyan",
-    "magenta",
-    "yellow",
-    "black",
+static const ASCIILiteral enum_constant_values[] = {
+    "red"_s,
+    "green"_s,
+    "blue"_s,
+    "cyan"_s,
+    "magenta"_s,
+    "yellow"_s,
+    "black"_s,
 };
 
 String getEnumConstantValue(int code) {

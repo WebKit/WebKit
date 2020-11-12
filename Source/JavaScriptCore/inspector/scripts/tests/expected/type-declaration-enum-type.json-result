@@ -429,14 +429,14 @@ namespace Protocol {
 
 namespace TestHelpers {
 
-static const char* const enum_constant_values[] = {
-    "Pigs",
-    "Cows",
-    "Cats",
-    "Hens",
-    "Ducks",
-    "Crows",
-    "Flamingos",
+static const ASCIILiteral enum_constant_values[] = {
+    "Pigs"_s,
+    "Cows"_s,
+    "Cats"_s,
+    "Hens"_s,
+    "Ducks"_s,
+    "Crows"_s,
+    "Flamingos"_s,
 };
 
 String getEnumConstantValue(int code) {

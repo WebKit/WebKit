@@ -468,10 +468,10 @@ namespace Protocol {
 
 namespace TestHelpers {
 
-static const char* const enum_constant_values[] = {
-    "null",
-    "string",
-    "array",
+static const ASCIILiteral enum_constant_values[] = {
+    "null"_s,
+    "string"_s,
+    "array"_s,
 };
 
 String getEnumConstantValue(int code) {

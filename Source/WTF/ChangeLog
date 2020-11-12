@@ -1,3 +1,22 @@
+2020-11-12  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: ensure that `JSON::ArrayOf<T>` doesn't allow `addItem` to be called with a type other than `T`
+        https://bugs.webkit.org/show_bug.cgi?id=218686
+
+        Reviewed by Brian Burg.
+
+        * wtf/JSONValues.h:
+        (WTF::JSONImpl::Value::Value):
+        (WTF::JSONImpl::Value::Value):
+        (WTF::JSONImpl::ArrayOf::addItem):
+        * wtf/JSONValues.cpp:
+        (WTF::JSONImpl::Value::create):
+        Right now, `JSON::ArrayOf<T>` always has `addItem` overloads for `int`, `double`, `String`,
+        and `Ref<T>` (even when `T` is not a `JSON::Value`). This means that a `JSON::ArrayOf<int>`
+        can call `addItem(42.0)` or `addItem("foo"_s)` and it would work. This doesn't really match
+        the intention of `JSON::ArrayOf<T>`, so add some template `std::enable_if` to ensure that
+        the only `addItem` overload that exists is the one that matches `T`.
+
 2020-11-12  Zalan Bujtas  <zalan@apple.com>
 
         Show legacy line layout visual coverage instead of "simple line" layout.

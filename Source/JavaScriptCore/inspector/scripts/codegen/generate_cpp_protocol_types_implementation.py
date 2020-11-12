@@ -91,8 +91,8 @@ class CppProtocolTypesImplementationGenerator(CppGenerator):
             return []
 
         lines = []
-        lines.append('static const char* const enum_constant_values[] = {')
-        lines.extend(['    "%s",' % enum_value for enum_value in self.assigned_enum_values()])
+        lines.append('static const ASCIILiteral enum_constant_values[] = {')
+        lines.extend(['    "%s"_s,' % enum_value for enum_value in self.assigned_enum_values()])
         lines.append('};')
         lines.append('')
         lines.append('String getEnumConstantValue(int code) {')
@@ -181,7 +181,7 @@ class CppProtocolTypesImplementationGenerator(CppGenerator):
             for type_declaration in [decl for decl in type_declarations if Generator.type_has_open_fields(decl.type)]:
                 open_members = Generator.open_fields(type_declaration)
                 for type_member in sorted(open_members, key=lambda member: member.member_name):
-                    domain_lines.append('const char* Protocol::%s::%s::%sKey = "%s";' % (domain.domain_name, ucfirst(type_declaration.type_name), type_member.member_name, type_member.member_name))
+                    domain_lines.append('const ASCIILiteral Protocol::%s::%s::%sKey = "%s"_s;' % (domain.domain_name, ucfirst(type_declaration.type_name), type_member.member_name, type_member.member_name))
             if len(domain_lines):
                 lines.append(self.wrap_with_guard_for_condition(domain.condition, '\n'.join(domain_lines)))
 

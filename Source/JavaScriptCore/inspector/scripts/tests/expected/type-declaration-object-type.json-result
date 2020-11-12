@@ -1008,13 +1008,13 @@ namespace Protocol {
 
 namespace TestHelpers {
 
-static const char* const enum_constant_values[] = {
-    "None",
-    "Left",
-    "Middle",
-    "Right",
-    "LTR",
-    "RTL",
+static const ASCIILiteral enum_constant_values[] = {
+    "None"_s,
+    "Left"_s,
+    "Middle"_s,
+    "Right"_s,
+    "LTR"_s,
+    "RTL"_s,
 };
 
 String getEnumConstantValue(int code) {

@@ -1,3 +1,14 @@
+2020-11-12  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: ensure that `JSON::ArrayOf<T>` doesn't allow `addItem` to be called with a type other than `T`
+        https://bugs.webkit.org/show_bug.cgi?id=218686
+
+        Reviewed by Brian Burg.
+
+        * TestWebKitAPI/Tests/WTF/JSONValue.cpp:
+        (TestWebKitAPI::TEST):
+        Use `_s` and `makeString` to ensure that the `String` function overload is used.
+
 2020-11-12  Ali Juma  <ajuma@chromium.org>
 
         configure-xcode-for-embedded-development breaks @available in Swift files

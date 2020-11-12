@@ -127,7 +127,7 @@ private:
 
 ${dispatchCases}
 
-    m_backendDispatcher->reportProtocolError(BackendDispatcher::MethodNotFound, "'${domainName}." + protocol_method + "' was not found");
+    m_backendDispatcher->reportProtocolError(BackendDispatcher::MethodNotFound, makeString("'${domainName}."_s, protocol_method, "' was not found"_s));
 }""")
 
     BackendDispatcherImplementationLargeSwitch = (
@@ -139,22 +139,13 @@ ${dispatchCases}
 
     using CallHandler = void (${domainName}BackendDispatcher::*)(long protocol_requestId, RefPtr<JSON::Object>&& protocol_message);
     using DispatchMap = HashMap<String, CallHandler>;
-    static NeverDestroyed<DispatchMap> dispatchMap;
-    if (dispatchMap.get().isEmpty()) {
-        static const struct MethodTable {
-            const char* name;
-            CallHandler handler;
-        } commands[] = {
+    static NeverDestroyed<DispatchMap> dispatchMap = DispatchMap({
 ${dispatchCases}
-        };
-        size_t length = WTF_ARRAY_LENGTH(commands);
-        for (size_t i = 0; i < length; ++i)
-            dispatchMap.get().add(commands[i].name, commands[i].handler);
-    }
+    });
 
-    auto findResult = dispatchMap.get().find(protocol_method);
-    if (findResult == dispatchMap.get().end()) {
-        m_backendDispatcher->reportProtocolError(BackendDispatcher::MethodNotFound, "'${domainName}." + protocol_method + "' was not found");
+    auto findResult = dispatchMap->find(protocol_method);
+    if (findResult == dispatchMap->end()) {
+        m_backendDispatcher->reportProtocolError(BackendDispatcher::MethodNotFound, makeString("'${domainName}."_s, protocol_method, "' was not found"_s));
         return;
     }
 

@@ -77,7 +77,6 @@ public:
     static Ref<Value> create(int);
     static Ref<Value> create(double);
     static Ref<Value> create(const String&);
-    static Ref<Value> create(const char*);
 
     enum class Type {
         Null = 0,
@@ -146,15 +145,6 @@ protected:
         : m_type { Type::String }
     {
         m_value.string = value.impl();
-        if (m_value.string)
-            m_value.string->ref();
-    }
-
-    explicit Value(const char* value)
-        : m_type { Type::String }
-    {
-        String wrapper(value);
-        m_value.string = wrapper.impl();
         if (m_value.string)
             m_value.string->ref();
     }
@@ -415,24 +405,47 @@ private:
     }
 
 public:
-    void addItem(Ref<T>&& value)
+
+    template <typename V = T>
+    std::enable_if_t<std::is_same_v<bool, V> || std::is_same_v<Value, V>> addItem(bool value)
     {
-        castedArray().pushValue(WTFMove(value));
-    }
-    
-    void addItem(const String& value)
-    {
-        castedArray().pushString(value);
+        castedArray().pushBoolean(value);
     }
 
-    void addItem(int value)
+    template <typename V = T>
+    std::enable_if_t<std::is_same_v<int, V> || std::is_same_v<Value, V>> addItem(int value)
     {
         castedArray().pushInteger(value);
     }
 
-    void addItem(double value)
+    template <typename V = T>
+    std::enable_if_t<std::is_same_v<double, V> || std::is_same_v<Value, V>> addItem(double value)
     {
         castedArray().pushDouble(value);
+    }
+
+    template <typename V = T>
+    std::enable_if_t<std::is_same_v<String, V> || std::is_same_v<Value, V>> addItem(const String& value)
+    {
+        castedArray().pushString(value);
+    }
+
+    template <typename V = T>
+    std::enable_if_t<std::is_base_of_v<Value, V> && !std::is_base_of_v<ObjectBase, V> && !std::is_base_of_v<ArrayBase, V>> addItem(Ref<Value>&& value)
+    {
+        castedArray().pushValue(WTFMove(value));
+    }
+
+    template <typename V = T>
+    std::enable_if_t<std::is_base_of_v<ObjectBase, V>> addItem(Ref<ObjectBase>&& value)
+    {
+        castedArray().pushObject(WTFMove(value));
+    }
+
+    template <typename V = T>
+    std::enable_if_t<std::is_base_of_v<ArrayBase, V>> addItem(Ref<ArrayBase>&& value)
+    {
+        castedArray().pushArray(WTFMove(value));
     }
 
     static Ref<ArrayOf<T>> create()

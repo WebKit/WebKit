@@ -120,7 +120,7 @@ class CppBackendDispatcherImplementationGenerator(CppGenerator):
         cases = []
 
         first_command_string = "\n".join([
-            '    if (protocol_method == "%s") {' % commands[0].command_name,
+            '    if (protocol_method == "%s"_s) {' % commands[0].command_name,
             '        %s(protocol_requestId, WTFMove(protocol_parameters));' % commands[0].command_name,
             '        return;',
             '    }',
@@ -129,7 +129,7 @@ class CppBackendDispatcherImplementationGenerator(CppGenerator):
 
         for command in commands[1:]:
             additional_command_string = "\n".join([
-                '    if (protocol_method == "%s") {' % command.command_name,
+                '    if (protocol_method == "%s"_s) {' % command.command_name,
                 '        %s(protocol_requestId, WTFMove(protocol_parameters));' % command.command_name,
                 '        return;',
                 '    }',
@@ -152,7 +152,7 @@ class CppBackendDispatcherImplementationGenerator(CppGenerator):
                 'domainName': domain.domain_name,
                 'commandName': command.command_name
             }
-            cases.append(self.wrap_with_guard_for_condition(command.condition, '            { "%(commandName)s", &%(domainName)sBackendDispatcher::%(commandName)s },' % args))
+            cases.append(self.wrap_with_guard_for_condition(command.condition, '        { "%(commandName)s"_s, &%(domainName)sBackendDispatcher::%(commandName)s },' % args))
 
         switch_args = {
             'domainName': domain.domain_name,

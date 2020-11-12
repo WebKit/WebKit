@@ -256,13 +256,13 @@ void NetworkBackendDispatcher::dispatch(long protocol_requestId, const String& p
     auto protocol_parameters = protocol_message->getObject("params"_s);
 
 #if COMMAND-MAC
-    if (protocol_method == "loadResource") {
+    if (protocol_method == "loadResource"_s) {
         loadResource(protocol_requestId, WTFMove(protocol_parameters));
         return;
     }
 #endif // COMMAND-MAC
 
-    m_backendDispatcher->reportProtocolError(BackendDispatcher::MethodNotFound, "'Network." + protocol_method + "' was not found");
+    m_backendDispatcher->reportProtocolError(BackendDispatcher::MethodNotFound, makeString("'Network."_s, protocol_method, "' was not found"_s));
 }
 
 #if COMMAND-MAC

@@ -291,12 +291,12 @@ void Network1BackendDispatcher::dispatch(long protocol_requestId, const String& 
 
     auto protocol_parameters = protocol_message->getObject("params"_s);
 
-    if (protocol_method == "loadResource1") {
+    if (protocol_method == "loadResource1"_s) {
         loadResource1(protocol_requestId, WTFMove(protocol_parameters));
         return;
     }
 
-    m_backendDispatcher->reportProtocolError(BackendDispatcher::MethodNotFound, "'Network1." + protocol_method + "' was not found");
+    m_backendDispatcher->reportProtocolError(BackendDispatcher::MethodNotFound, makeString("'Network1."_s, protocol_method, "' was not found"_s));
 }
 
 void Network1BackendDispatcher::loadResource1(long protocol_requestId, RefPtr<JSON::Object>&&)
@@ -339,28 +339,19 @@ void Network3BackendDispatcher::dispatch(long protocol_requestId, const String& 
 
     using CallHandler = void (Network3BackendDispatcher::*)(long protocol_requestId, RefPtr<JSON::Object>&& protocol_message);
     using DispatchMap = HashMap<String, CallHandler>;
-    static NeverDestroyed<DispatchMap> dispatchMap;
-    if (dispatchMap.get().isEmpty()) {
-        static const struct MethodTable {
-            const char* name;
-            CallHandler handler;
-        } commands[] = {
-            { "loadResource1", &Network3BackendDispatcher::loadResource1 },
-            { "loadResource2", &Network3BackendDispatcher::loadResource2 },
-            { "loadResource3", &Network3BackendDispatcher::loadResource3 },
-            { "loadResource4", &Network3BackendDispatcher::loadResource4 },
-            { "loadResource5", &Network3BackendDispatcher::loadResource5 },
-            { "loadResource6", &Network3BackendDispatcher::loadResource6 },
-            { "loadResource7", &Network3BackendDispatcher::loadResource7 },
-        };
-        size_t length = WTF_ARRAY_LENGTH(commands);
-        for (size_t i = 0; i < length; ++i)
-            dispatchMap.get().add(commands[i].name, commands[i].handler);
-    }
+    static NeverDestroyed<DispatchMap> dispatchMap = DispatchMap({
+        { "loadResource1"_s, &Network3BackendDispatcher::loadResource1 },
+        { "loadResource2"_s, &Network3BackendDispatcher::loadResource2 },
+        { "loadResource3"_s, &Network3BackendDispatcher::loadResource3 },
+        { "loadResource4"_s, &Network3BackendDispatcher::loadResource4 },
+        { "loadResource5"_s, &Network3BackendDispatcher::loadResource5 },
+        { "loadResource6"_s, &Network3BackendDispatcher::loadResource6 },
+        { "loadResource7"_s, &Network3BackendDispatcher::loadResource7 },
+    });
 
-    auto findResult = dispatchMap.get().find(protocol_method);
-    if (findResult == dispatchMap.get().end()) {
-        m_backendDispatcher->reportProtocolError(BackendDispatcher::MethodNotFound, "'Network3." + protocol_method + "' was not found");
+    auto findResult = dispatchMap->find(protocol_method);
+    if (findResult == dispatchMap->end()) {
+        m_backendDispatcher->reportProtocolError(BackendDispatcher::MethodNotFound, makeString("'Network3."_s, protocol_method, "' was not found"_s));
         return;
     }
 

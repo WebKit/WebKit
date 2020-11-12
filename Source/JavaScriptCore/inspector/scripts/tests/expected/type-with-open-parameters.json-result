@@ -453,7 +453,7 @@ public:
     }
 
     // Property names for type generated as open.
-    None static const char* alphaKey;
+    None static const ASCIILiteral alphaKey;
 };
 
 } // Test
@@ -504,7 +504,7 @@ namespace Inspector {
 
 namespace Protocol {
 
-const char* Protocol::Test::OpenParameters::alphaKey = "alpha";
+const ASCIILiteral Protocol::Test::OpenParameters::alphaKey = "alpha"_s;
 
 } // namespace Protocol
 
