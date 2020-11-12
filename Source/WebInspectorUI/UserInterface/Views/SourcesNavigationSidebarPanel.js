@@ -1080,8 +1080,10 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
             let resourceTreeElement = null;
             if (resource instanceof WI.CSSStyleSheet)
                 resourceTreeElement = new WI.CSSStyleSheetTreeElement(resource);
-            else
-                resourceTreeElement = new WI.ResourceTreeElement(resource, resource, {allowDirectoryAsName: true, hideOrigin: true});
+            else {
+                let constructor = resource.type === WI.Resource.Type.WebSocket ? WI.WebSocketResourceTreeElement : WI.ResourceTreeElement;
+                resourceTreeElement = new constructor(resource, resource, {allowDirectoryAsName: true, hideOrigin: true});
+            }
 
             let index = insertionIndexForObjectInListSortedByFunction(resourceTreeElement, parentTreeElement.children, this._boundCompareTreeElements);
             parentTreeElement.insertChild(resourceTreeElement, index);
