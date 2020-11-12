@@ -194,15 +194,7 @@ MediaPlayerEnums::SupportsType SourceBufferParserAVFObjC::isContentTypeSupported
         extendedType = makeString(type.containerType(), "; codecs=\"", outputCodecs, "\"");
     }
 
-    auto& streamDataParserCache = AVStreamDataParserMIMETypeCache::singleton();
-    if (streamDataParserCache.isAvailable())
-        return streamDataParserCache.canDecodeType(extendedType);
-
-    auto& assetCache = AVAssetMIMETypeCache::singleton();
-    if (assetCache.isAvailable())
-        return assetCache.canDecodeType(extendedType);
-
-    return MediaPlayerEnums::SupportsType::IsNotSupported;
+    return AVStreamDataParserMIMETypeCache::singleton().canDecodeType(extendedType);
 }
 
 SourceBufferParserAVFObjC::SourceBufferParserAVFObjC()

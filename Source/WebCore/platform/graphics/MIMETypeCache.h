@@ -42,21 +42,22 @@ public:
     MIMETypeCache() = default;
     virtual ~MIMETypeCache() = default;
 
-    bool supportsContainerType(const String&);
-    MediaPlayerEnums::SupportsType canDecodeType(const String&);
-
+    virtual bool isAvailable() const;
     virtual const HashSet<String, ASCIICaseInsensitiveHash>& staticContainerTypeList();
     virtual bool isUnsupportedContainerType(const String&);
+    virtual MediaPlayerEnums::SupportsType canDecodeType(const String&);
+    virtual HashSet<String, ASCIICaseInsensitiveHash>& supportedTypes();
 
-    HashSet<String, ASCIICaseInsensitiveHash>& supportedTypes();
-    virtual void addSupportedTypes(const Vector<String>&);
-
-    virtual bool isAvailable() const;
     bool isEmpty() const;
+    bool supportsContainerType(const String&);
+
+protected:
+    void addSupportedTypes(const Vector<String>&);
 
 private:
     virtual void initializeCache(HashSet<String, ASCIICaseInsensitiveHash>&);
     virtual bool canDecodeExtendedType(const ContentType&);
+
     bool shouldOverrideExtendedType(const ContentType&);
 
     Optional<HashSet<String, ASCIICaseInsensitiveHash>> m_supportedTypes;

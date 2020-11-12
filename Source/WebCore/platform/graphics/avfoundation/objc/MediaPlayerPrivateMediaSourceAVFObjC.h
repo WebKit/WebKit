@@ -73,7 +73,7 @@ public:
     // MediaPlayer Factory Methods
     static bool isAvailable();
     static void getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>& types);
-    static MediaPlayer::SupportsType supportsType(const MediaEngineSupportParameters&);
+    static MediaPlayer::SupportsType supportsTypeAndCodecs(const MediaEngineSupportParameters&);
 
     ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
     void addAudioRenderer(AVSampleBufferAudioRenderer*);

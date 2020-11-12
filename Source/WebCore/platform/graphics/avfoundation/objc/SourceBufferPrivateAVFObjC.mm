@@ -1194,7 +1194,7 @@ bool SourceBufferPrivateAVFObjC::canSwitchToType(const ContentType& contentType)
     MediaEngineSupportParameters parameters;
     parameters.isMediaSource = true;
     parameters.type = contentType;
-    return MediaPlayerPrivateMediaSourceAVFObjC::supportsType(parameters) != MediaPlayer::SupportsType::IsNotSupported;
+    return MediaPlayerPrivateMediaSourceAVFObjC::supportsTypeAndCodecs(parameters) != MediaPlayer::SupportsType::IsNotSupported;
 }
 
 void SourceBufferPrivateAVFObjC::setVideoLayer(AVSampleBufferDisplayLayer* layer)

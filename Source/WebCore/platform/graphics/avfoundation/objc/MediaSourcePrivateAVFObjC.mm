@@ -83,7 +83,7 @@ MediaSourcePrivate::AddStatus MediaSourcePrivateAVFObjC::addSourceBuffer(const C
     MediaEngineSupportParameters parameters;
     parameters.isMediaSource = true;
     parameters.type = contentType;
-    if (MediaPlayerPrivateMediaSourceAVFObjC::supportsType(parameters) == MediaPlayer::SupportsType::IsNotSupported)
+    if (MediaPlayerPrivateMediaSourceAVFObjC::supportsTypeAndCodecs(parameters) == MediaPlayer::SupportsType::IsNotSupported)
         return NotSupported;
 
     auto parser = SourceBufferParser::create(contentType);

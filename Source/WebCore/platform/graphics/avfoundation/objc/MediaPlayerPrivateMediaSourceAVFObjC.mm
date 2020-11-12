@@ -210,7 +210,7 @@ private:
 
     MediaPlayer::SupportsType supportsTypeAndCodecs(const MediaEngineSupportParameters& parameters) const final
     {
-        return MediaPlayerPrivateMediaSourceAVFObjC::supportsType(parameters);
+        return MediaPlayerPrivateMediaSourceAVFObjC::supportsTypeAndCodecs(parameters);
     }
 };
 
@@ -236,18 +236,10 @@ bool MediaPlayerPrivateMediaSourceAVFObjC::isAvailable()
 
 void MediaPlayerPrivateMediaSourceAVFObjC::getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>& types)
 {
-    auto& streamDataParserCache = AVStreamDataParserMIMETypeCache::singleton();
-    if (streamDataParserCache.isAvailable()) {
-        types = streamDataParserCache.supportedTypes();
-        return;
-    }
-
-    auto& assetCache = AVAssetMIMETypeCache::singleton();
-    if (assetCache.isAvailable())
-        types = assetCache.supportedTypes();
+    types = AVStreamDataParserMIMETypeCache::singleton().supportedTypes();
 }
 
-MediaPlayer::SupportsType MediaPlayerPrivateMediaSourceAVFObjC::supportsType(const MediaEngineSupportParameters& parameters)
+MediaPlayer::SupportsType MediaPlayerPrivateMediaSourceAVFObjC::supportsTypeAndCodecs(const MediaEngineSupportParameters& parameters)
 {
     // This engine does not support non-media-source sources.
     if (!parameters.isMediaSource)

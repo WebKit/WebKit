@@ -710,7 +710,6 @@ public:
     WEBCORE_EXPORT static void setRegisterRemotePlayerCallback(RegisterRemotePlayerCallback&&);
 };
 
-
 inline String MediaPlayer::audioOutputDeviceId() const
 {
     return m_client ? m_client->audioOutputDeviceId() : String { };

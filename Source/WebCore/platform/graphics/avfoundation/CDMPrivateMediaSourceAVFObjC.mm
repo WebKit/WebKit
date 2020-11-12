@@ -114,7 +114,7 @@ bool CDMPrivateMediaSourceAVFObjC::supportsKeySystemAndMimeType(const String& ke
     parameters.isMediaSource = true;
     parameters.type = ContentType(mimeType);
 
-    return MediaPlayerPrivateMediaSourceAVFObjC::supportsType(parameters) != MediaPlayer::SupportsType::IsNotSupported;
+    return MediaPlayerPrivateMediaSourceAVFObjC::supportsTypeAndCodecs(parameters) != MediaPlayer::SupportsType::IsNotSupported;
 }
 
 bool CDMPrivateMediaSourceAVFObjC::supportsMIMEType(const String& mimeType)
@@ -127,7 +127,7 @@ bool CDMPrivateMediaSourceAVFObjC::supportsMIMEType(const String& mimeType)
     parameters.isMediaSource = true;
     parameters.type = ContentType(mimeType);
 
-    return MediaPlayerPrivateMediaSourceAVFObjC::supportsType(parameters) != MediaPlayer::SupportsType::IsNotSupported;
+    return MediaPlayerPrivateMediaSourceAVFObjC::supportsTypeAndCodecs(parameters) != MediaPlayer::SupportsType::IsNotSupported;
 }
 
 std::unique_ptr<LegacyCDMSession> CDMPrivateMediaSourceAVFObjC::createSession(LegacyCDMSessionClient* client)

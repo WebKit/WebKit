@@ -36,6 +36,9 @@
 #include "WebProcess.h"
 #include "WebProcessCreationParameters.h"
 #include <WebCore/MediaPlayer.h>
+#include <wtf/HashFunctions.h>
+#include <wtf/HashMap.h>
+#include <wtf/StdLibExtras.h>
 
 namespace WebKit {
 
@@ -124,8 +127,6 @@ RemoteMediaPlayerMIMETypeCache& RemoteMediaPlayerManager::typeCache(MediaPlayerE
 
 void RemoteMediaPlayerManager::initialize(const WebProcessCreationParameters& parameters)
 {
-    UNUSED_PARAM(parameters);
-
 #if PLATFORM(COCOA)
     if (parameters.mediaMIMETypes.isEmpty())
         return;
@@ -133,6 +134,8 @@ void RemoteMediaPlayerManager::initialize(const WebProcessCreationParameters& pa
     auto& cache = typeCache(MediaPlayerEnums::MediaEngineIdentifier::AVFoundation);
     if (cache.isEmpty())
         cache.addSupportedTypes(parameters.mediaMIMETypes);
+#else
+    UNUSED_PARAM(parameters);
 #endif
 }
 
@@ -195,25 +198,9 @@ MediaPlayerIdentifier RemoteMediaPlayerManager::findRemotePlayerId(const MediaPl
     return { };
 }
 
-
 void RemoteMediaPlayerManager::getSupportedTypes(MediaPlayerEnums::MediaEngineIdentifier remoteEngineIdentifier, HashSet<String, ASCIICaseInsensitiveHash>& result)
 {
-    auto& cache = typeCache(remoteEngineIdentifier);
-    if (!cache.isEmpty()) {
-        result = HashSet<String, ASCIICaseInsensitiveHash>();
-        for (auto& type : cache.supportedTypes())
-            result.add(type);
-        return;
-    }
-
-    Vector<String> types;
-    if (!gpuProcessConnection().connection().sendSync(Messages::RemoteMediaPlayerManagerProxy::GetSupportedTypes(remoteEngineIdentifier), Messages::RemoteMediaPlayerManagerProxy::GetSupportedTypes::Reply(types), 0))
-        return;
-
-    result = HashSet<String, ASCIICaseInsensitiveHash>();
-    for (auto& type : types)
-        result.add(type);
-    cache.addSupportedTypes(types);
+    result = typeCache(remoteEngineIdentifier).supportedTypes();
 }
 
 MediaPlayer::SupportsType RemoteMediaPlayerManager::supportsTypeAndCodecs(MediaPlayerEnums::MediaEngineIdentifier remoteEngineIdentifier, const MediaEngineSupportParameters& parameters)

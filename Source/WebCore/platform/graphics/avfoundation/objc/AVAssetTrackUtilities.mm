@@ -98,7 +98,6 @@ bool assetTrackMeetsHardwareDecodeRequirements(AVAssetTrack *track, const Vector
     return codecsMeetHardwareDecodeRequirements(codecs, contentTypesRequiringHardwareDecode);
 }
 
-
 }
 
 #endif

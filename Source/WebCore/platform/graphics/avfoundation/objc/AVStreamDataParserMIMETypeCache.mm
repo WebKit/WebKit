@@ -54,6 +54,49 @@ AVStreamDataParserMIMETypeCache& AVStreamDataParserMIMETypeCache::singleton()
     return cache.get();
 }
 
+bool AVStreamDataParserMIMETypeCache::isAvailable() const
+{
+#if ENABLE(VIDEO) && USE(AVFOUNDATION)
+#if PLATFORM(MACCATALYST)
+    // FIXME: This should be using AVFoundationLibraryIsAvailable() instead, but doing so causes soft-linking
+    // to subsequently fail on certain symbols. See <rdar://problem/42224780> for more details.
+    if (!PAL::AVFoundationLibrary())
+        return false;
+#else
+    if (!AVFoundationLibraryIsAvailable())
+        return false;
+#endif
+
+    return [PAL::getAVStreamDataParserClass() respondsToSelector:@selector(audiovisualMIMETypes)];
+#else
+    return false;
+#endif
+}
+
+MediaPlayerEnums::SupportsType AVStreamDataParserMIMETypeCache::canDecodeType(const String& type)
+{
+    if (isAvailable())
+        return MIMETypeCache::canDecodeType(type);
+
+    auto& assetCache = AVAssetMIMETypeCache::singleton();
+    if (assetCache.isAvailable())
+        return assetCache.canDecodeType(type);
+
+    return MediaPlayerEnums::SupportsType::IsNotSupported;
+}
+
+HashSet<String, ASCIICaseInsensitiveHash>& AVStreamDataParserMIMETypeCache::supportedTypes()
+{
+    if (isAvailable())
+        return MIMETypeCache::supportedTypes();
+
+    auto& assetCache = AVAssetMIMETypeCache::singleton();
+    if (assetCache.isAvailable())
+        return assetCache.supportedTypes();
+
+    return MIMETypeCache::supportedTypes();
+}
+
 bool AVStreamDataParserMIMETypeCache::canDecodeExtendedType(const ContentType& type)
 {
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
@@ -75,25 +118,6 @@ bool AVStreamDataParserMIMETypeCache::canDecodeExtendedType(const ContentType& t
 #endif
 
     return false;
-}
-
-bool AVStreamDataParserMIMETypeCache::isAvailable() const
-{
-#if ENABLE(VIDEO) && USE(AVFOUNDATION)
-#if PLATFORM(MACCATALYST)
-    // FIXME: This should be using AVFoundationLibraryIsAvailable() instead, but doing so causes soft-linking
-    // to subsequently fail on certain symbols. See <rdar://problem/42224780> for more details.
-    if (!PAL::AVFoundationLibrary())
-        return false;
-#else
-    if (!AVFoundationLibraryIsAvailable())
-        return false;
-#endif
-
-    return [PAL::getAVStreamDataParserClass() respondsToSelector:@selector(audiovisualMIMETypes)];
-#else
-    return false;
-#endif
 }
 
 void AVStreamDataParserMIMETypeCache::initializeCache(HashSet<String, ASCIICaseInsensitiveHash>& cache)

@@ -1,3 +1,44 @@
+2020-11-11  Peng Liu  <peng.liu6@apple.com>
+
+        Update RemoteMediaPlayerMIMETypeCache to add the support for AVFoundationMSE media engine
+        https://bugs.webkit.org/show_bug.cgi?id=218788
+
+        Reviewed by Eric Carlson.
+
+        Originally, `RemoteMediaPlayerMIMETypeCache` inherits from `MIMETypeCache`.
+        It needs to implement three functions: `isAvailable()`, `canDecodeExtendedType()`,
+        `supportedTypes()` through IPC messages, and the IPC message receivers in
+        `RemoteMediaPlayerManagerProxy` needs to repeat the work done by `AVAssetMIMETypeCache`
+        and `AVStreamDataParserMIMETypeCache`.
+
+        Actually, `MediaPlayerRemoteFactory` only needs two functions from
+        `RemoteMediaPlayerMIMETypeCache`: `supportedTypes()`  and `supportsTypeAndCodecs()`.
+        We can implement these two functions with IPC messages to `RemoteMediaPlayerManagerProxy`
+        and cache the results to avoid too many IPC messages. In addition, the implementation of
+        the IPC message receivers in `RemoteMediaPlayerManagerProxy` can reuse the implementation
+        of `AVAssetMIMETypeCache` and `AVStreamDataParserMIMETypeCache`.
+
+        * GPUProcess/media/RemoteMediaPlayerManagerProxy.cpp:
+        (WebKit::RemoteMediaPlayerManagerProxy::supportsTypeAndCodecs):
+        (WebKit::RemoteMediaPlayerManagerProxy::canDecodeExtendedType): Deleted.
+        * GPUProcess/media/RemoteMediaPlayerManagerProxy.h:
+        * GPUProcess/media/RemoteMediaPlayerManagerProxy.messages.in:
+        * WebProcess/GPU/media/RemoteAudioDestinationProxy.h:
+        * WebProcess/GPU/media/RemoteCDMInstanceSession.cpp:
+        * WebProcess/GPU/media/RemoteMediaPlayerMIMETypeCache.cpp:
+        (WebKit::RemoteMediaPlayerMIMETypeCache::addSupportedTypes):
+        (WebKit::RemoteMediaPlayerMIMETypeCache::supportedTypes):
+        (WebKit::RemoteMediaPlayerMIMETypeCache::supportsTypeAndCodecs):
+        (WebKit::RemoteMediaPlayerMIMETypeCache::mimeCache const): Deleted.
+        (WebKit::RemoteMediaPlayerMIMETypeCache::staticContainerTypeList): Deleted.
+        (WebKit::RemoteMediaPlayerMIMETypeCache::isUnsupportedContainerType): Deleted.
+        (WebKit::RemoteMediaPlayerMIMETypeCache::canDecodeExtendedType): Deleted.
+        (WebKit::RemoteMediaPlayerMIMETypeCache::initializeCache): Deleted.
+        * WebProcess/GPU/media/RemoteMediaPlayerMIMETypeCache.h:
+        * WebProcess/GPU/media/RemoteMediaPlayerManager.cpp:
+        (WebKit::RemoteMediaPlayerManager::getSupportedTypes):
+        (RemoteMediaPlayerManager::initialize):
+
 2020-11-11  Tim Horton  <timothy_horton@apple.com>
 
         Add minimal support for deep color IOSurface backing store to ImageBuffer

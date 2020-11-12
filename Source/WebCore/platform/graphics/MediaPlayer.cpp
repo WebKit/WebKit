@@ -233,10 +233,9 @@ static void buildMediaEnginesVector()
     ASSERT(mediaEngineVectorLock.isLocked());
 
 #if USE(AVFOUNDATION)
-
     if (DeprecatedGlobalSettings::isAVFoundationEnabled()) {
-
         auto& registerRemoteEngine = registerRemotePlayerCallback();
+
 #if PLATFORM(COCOA)
         if (registerRemoteEngine)
             registerRemoteEngine(addMediaEngine, MediaPlayerEnums::MediaEngineIdentifier::AVFoundation);
@@ -245,7 +244,10 @@ static void buildMediaEnginesVector()
 #endif
 
 #if ENABLE(MEDIA_SOURCE)
-        MediaPlayerPrivateMediaSourceAVFObjC::registerMediaEngine(addMediaEngine);
+        if (registerRemoteEngine)
+            registerRemoteEngine(addMediaEngine, MediaPlayerEnums::MediaEngineIdentifier::AVFoundationMSE);
+        else
+            MediaPlayerPrivateMediaSourceAVFObjC::registerMediaEngine(addMediaEngine);
 #endif
 
 #if ENABLE(MEDIA_STREAM)
