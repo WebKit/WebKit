@@ -216,6 +216,11 @@ void RemoteRenderingBackend::getImageData(AlphaPremultiplication outputFormat, I
     completionHandler(IPC::ImageDataReference(WTFMove(imageData)));
 }
 
+void RemoteRenderingBackend::cacheNativeImage(Ref<NativeImage>&& image)
+{
+    m_remoteResourceCache.cacheNativeImage(WTFMove(image));
+}
+
 void RemoteRenderingBackend::releaseRemoteResource(RenderingResourceIdentifier renderingResourceIdentifier)
 {
     m_remoteResourceCache.releaseRemoteResource(renderingResourceIdentifier);
@@ -257,8 +262,6 @@ Optional<DisplayList::ItemHandle> WARN_UNUSED_RETURN RemoteRenderingBackend::dec
         return decodeAndCreate<DisplayList::DrawImage>(data, length, handleLocation);
     case DisplayList::ItemType::DrawLinesForText:
         return decodeAndCreate<DisplayList::DrawLinesForText>(data, length, handleLocation);
-    case DisplayList::ItemType::DrawNativeImage:
-        return decodeAndCreate<DisplayList::DrawNativeImage>(data, length, handleLocation);
     case DisplayList::ItemType::DrawPath:
         return decodeAndCreate<DisplayList::DrawPath>(data, length, handleLocation);
     case DisplayList::ItemType::DrawPattern:
@@ -301,6 +304,7 @@ Optional<DisplayList::ItemHandle> WARN_UNUSED_RETURN RemoteRenderingBackend::dec
     case DisplayList::ItemType::DrawDotsForDocumentMarker:
     case DisplayList::ItemType::DrawEllipse:
     case DisplayList::ItemType::DrawImageBuffer:
+    case DisplayList::ItemType::DrawNativeImage:
     case DisplayList::ItemType::DrawLine:
     case DisplayList::ItemType::DrawRect:
     case DisplayList::ItemType::EndTransparencyLayer:

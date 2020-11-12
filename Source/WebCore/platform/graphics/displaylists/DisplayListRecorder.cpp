@@ -187,14 +187,17 @@ ImageDrawResult Recorder::drawTiledImage(Image& image, const FloatRect& destinat
 
 void Recorder::drawImageBuffer(WebCore::ImageBuffer& imageBuffer, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
 {
-    imageBuffer.flushDrawingContext();
-    m_displayList.cacheImageBuffer(makeRef(imageBuffer));
+    // FIXME: Call imageBuffer.flushDrawingContext() when <https://webkit.org/b/218773> is fixed.
+    m_displayList.cacheImageBuffer(imageBuffer);
     append<DrawImageBuffer>(imageBuffer.renderingResourceIdentifier(), destRect, srcRect, options);
 }
 
 void Recorder::drawNativeImage(NativeImage& image, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
 {
-    append<DrawNativeImage>(image, imageSize, destRect, srcRect, options);
+    if (m_delegate)
+        m_delegate->cacheNativeImage(image);
+    m_displayList.cacheNativeImage(image);
+    append<DrawNativeImage>(image.renderingResourceIdentifier(), imageSize, destRect, srcRect, options);
 }
 
 void Recorder::drawPattern(Image& image, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)

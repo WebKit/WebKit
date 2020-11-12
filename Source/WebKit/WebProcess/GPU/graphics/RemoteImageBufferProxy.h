@@ -61,6 +61,7 @@ public:
         if (!m_remoteRenderingBackendProxy)
             return;
         flushDrawingContext();
+        m_remoteRenderingBackendProxy->remoteResourceCacheProxy().releaseImageBuffer(m_renderingResourceIdentifier);
         m_remoteRenderingBackendProxy->releaseRemoteResource(m_renderingResourceIdentifier);
     }
 
@@ -81,6 +82,8 @@ protected:
         , m_remoteRenderingBackendProxy(makeWeakPtr(remoteRenderingBackendProxy))
     {
         ASSERT(m_remoteRenderingBackendProxy);
+        m_remoteRenderingBackendProxy->remoteResourceCacheProxy().cacheImageBuffer(*this);
+
         m_drawingContext.displayList().setItemBufferClient(this);
         m_drawingContext.displayList().setTracksDrawingItemExtents(false);
     }
@@ -181,6 +184,12 @@ protected:
         displayList.clear();
     }
 
+    void cacheNativeImage(WebCore::NativeImage& image) override
+    {
+        if (m_remoteRenderingBackendProxy)
+            m_remoteRenderingBackendProxy->remoteResourceCacheProxy().cacheNativeImage(image);
+    }
+
     WebCore::DisplayList::ItemBufferHandle createItemBuffer(size_t capacity) override
     {
         if (m_remoteRenderingBackendProxy)
@@ -209,8 +218,6 @@ protected:
             return IPC::Encoder::encodeSingleObject<WebCore::DisplayList::DrawImage>(item.get<WebCore::DisplayList::DrawImage>());
         case WebCore::DisplayList::ItemType::DrawLinesForText:
             return IPC::Encoder::encodeSingleObject<WebCore::DisplayList::DrawLinesForText>(item.get<WebCore::DisplayList::DrawLinesForText>());
-        case WebCore::DisplayList::ItemType::DrawNativeImage:
-            return IPC::Encoder::encodeSingleObject<WebCore::DisplayList::DrawNativeImage>(item.get<WebCore::DisplayList::DrawNativeImage>());
         case WebCore::DisplayList::ItemType::DrawPath:
             return IPC::Encoder::encodeSingleObject<WebCore::DisplayList::DrawPath>(item.get<WebCore::DisplayList::DrawPath>());
         case WebCore::DisplayList::ItemType::DrawPattern:
@@ -253,6 +260,7 @@ protected:
         case WebCore::DisplayList::ItemType::DrawDotsForDocumentMarker:
         case WebCore::DisplayList::ItemType::DrawEllipse:
         case WebCore::DisplayList::ItemType::DrawImageBuffer:
+        case WebCore::DisplayList::ItemType::DrawNativeImage:
         case WebCore::DisplayList::ItemType::DrawLine:
         case WebCore::DisplayList::ItemType::DrawRect:
         case WebCore::DisplayList::ItemType::EndTransparencyLayer:

@@ -457,29 +457,26 @@ void DrawImageBuffer::apply(GraphicsContext& context, WebCore::ImageBuffer& imag
 
 static TextStream& operator<<(TextStream& ts, const DrawImageBuffer& item)
 {
-    ts.dumpProperty("rendering-resource-identifier", item.renderingResourceIdentifier());
+    ts.dumpProperty("image-buffer-identifier", item.imageBufferIdentifier());
     ts.dumpProperty("source-rect", item.source());
     ts.dumpProperty("dest-rect", item.destinationRect());
     return ts;
 }
 
-DrawNativeImage::DrawNativeImage(NativeImage& image, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
-    : m_image(image)
-    , m_imageSize(imageSize)
-    , m_destinationRect(destRect)
-    , m_srcRect(srcRect)
-    , m_options(options)
+NO_RETURN_DUE_TO_ASSERT void DrawNativeImage::apply(GraphicsContext&) const
 {
+    ASSERT_NOT_REACHED();
 }
 
-void DrawNativeImage::apply(GraphicsContext& context) const
+void DrawNativeImage::apply(GraphicsContext& context, NativeImage& image) const
 {
-    context.drawNativeImage(m_image, m_imageSize, m_destinationRect, m_srcRect, m_options);
+    context.drawNativeImage(image, m_imageSize, m_destinationRect, m_srcRect, m_options);
 }
 
 static TextStream& operator<<(TextStream& ts, const DrawNativeImage& item)
 {
     // FIXME: dump more stuff.
+    ts.dumpProperty("image-identifier", item.imageIdentifier());
     ts.dumpProperty("source-rect", item.source());
     ts.dumpProperty("dest-rect", item.destinationRect());
     return ts;

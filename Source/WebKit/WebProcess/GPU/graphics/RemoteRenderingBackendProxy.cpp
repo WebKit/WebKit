@@ -101,7 +101,6 @@ RefPtr<ImageBuffer> RemoteRenderingBackendProxy::createImageBuffer(const FloatSi
 
     if (imageBuffer) {
         send(Messages::RemoteRenderingBackend::CreateImageBuffer(size, renderingMode, resolutionScale, colorSpace, imageBuffer->renderingResourceIdentifier()), m_renderingBackendIdentifier);
-        m_remoteResourceCacheProxy.cacheImageBuffer(imageBuffer->renderingResourceIdentifier(), imageBuffer.get());
         return imageBuffer;
     }
 
@@ -139,9 +138,13 @@ void RemoteRenderingBackendProxy::submitDisplayList(const DisplayList::DisplayLi
     }
 }
 
+void RemoteRenderingBackendProxy::cacheNativeImage(NativeImage& image)
+{
+    send(Messages::RemoteRenderingBackend::CacheNativeImage(makeRef(image)), m_renderingBackendIdentifier);
+}
+
 void RemoteRenderingBackendProxy::releaseRemoteResource(RenderingResourceIdentifier renderingResourceIdentifier)
 {
-    m_remoteResourceCacheProxy.releaseImageBuffer(renderingResourceIdentifier);
     send(Messages::RemoteRenderingBackend::ReleaseRemoteResource(renderingResourceIdentifier), m_renderingBackendIdentifier);
 }
 

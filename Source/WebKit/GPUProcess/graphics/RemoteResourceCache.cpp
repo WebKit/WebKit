@@ -42,9 +42,17 @@ ImageBuffer* RemoteResourceCache::cachedImageBuffer(RenderingResourceIdentifier 
     return m_imageBuffers.get(renderingResourceIdentifier);
 }
 
+void RemoteResourceCache::cacheNativeImage(Ref<NativeImage>&& image)
+{
+    auto addResult = m_nativeImages.add(image->renderingResourceIdentifier(), WTFMove(image));
+    ASSERT_UNUSED(addResult, addResult.isNewEntry);
+}
+
 void RemoteResourceCache::releaseRemoteResource(RenderingResourceIdentifier renderingResourceIdentifier)
 {
     if (m_imageBuffers.remove(renderingResourceIdentifier))
+        return;
+    if (m_nativeImages.remove(renderingResourceIdentifier))
         return;
     // Caching the remote resource should have happened before releasing it.
     ASSERT_NOT_REACHED();

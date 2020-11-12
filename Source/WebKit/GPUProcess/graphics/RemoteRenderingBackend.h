@@ -45,6 +45,7 @@ class DisplayList;
 class Item;
 }
 class FloatSize;
+class NativeImage;
 enum class ColorSpace : uint8_t;
 enum class RenderingMode : bool;
 }
@@ -105,6 +106,7 @@ private:
     void createImageBuffer(const WebCore::FloatSize& logicalSize, WebCore::RenderingMode, float resolutionScale, WebCore::ColorSpace, WebCore::RenderingResourceIdentifier);
     void wakeUpAndApplyDisplayList(WebCore::DisplayList::ItemBufferIdentifier initialIdentifier, uint64_t initialOffset, WebCore::RenderingResourceIdentifier destinationBufferIdentifier);
     void getImageData(WebCore::AlphaPremultiplication outputFormat, WebCore::IntRect srcRect, WebCore::RenderingResourceIdentifier, CompletionHandler<void(IPC::ImageDataReference&&)>&&);
+    void cacheNativeImage(Ref<WebCore::NativeImage>&&);
     void releaseRemoteResource(WebCore::RenderingResourceIdentifier);
     void didCreateSharedDisplayListHandle(WebCore::DisplayList::ItemBufferIdentifier, const SharedMemory::IPCHandle&, WebCore::RenderingResourceIdentifier destinationBufferIdentifier);
 

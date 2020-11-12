@@ -66,6 +66,7 @@ public:
         virtual ~Delegate() { }
         virtual void willAppendItemOfType(ItemType) { }
         virtual void didAppendItemOfType(ItemType) { }
+        virtual void cacheNativeImage(NativeImage&) { }
     };
 
 private:

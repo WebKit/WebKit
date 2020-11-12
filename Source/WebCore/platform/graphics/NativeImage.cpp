@@ -37,9 +37,29 @@ RefPtr<NativeImage> NativeImage::create(PlatformImagePtr&& platformImage)
     return adoptRef(*new NativeImage(WTFMove(platformImage)));
 }
 
+RefPtr<NativeImage> NativeImage::create(const PlatformImagePtr& platformImage, RenderingResourceIdentifier renderingResourceIdentifier)
+{
+    if (!platformImage)
+        return nullptr;
+    return adoptRef(*new NativeImage(platformImage, renderingResourceIdentifier));
+}
+
 NativeImage::NativeImage(PlatformImagePtr&& platformImage)
     : m_platformImage(WTFMove(platformImage))
+    , m_renderingResourceIdentifier(RenderingResourceIdentifier::generate())
 {
+}
+
+NativeImage::NativeImage(const PlatformImagePtr& platformImage, RenderingResourceIdentifier renderingResourceIdentifier)
+    : m_platformImage(platformImage)
+    , m_renderingResourceIdentifier(renderingResourceIdentifier)
+{
+}
+
+NativeImage::~NativeImage()
+{
+    if (m_observer)
+        m_observer->releaseNativeImage(m_renderingResourceIdentifier);
 }
 
 } // namespace WebCore

@@ -52,6 +52,7 @@ void DisplayList::dump() const
 
 DisplayList::DisplayList(DisplayList&& other)
     : m_imageBuffers(std::exchange(other.m_imageBuffers, { }))
+    , m_nativeImages(std::exchange(other.m_nativeImages, { }))
     , m_items(std::exchange(other.m_items, nullptr))
     , m_drawingItemExtents(std::exchange(other.m_drawingItemExtents, { }))
 {
@@ -68,6 +69,7 @@ DisplayList::~DisplayList() = default;
 DisplayList& DisplayList::operator=(DisplayList&& other)
 {
     m_imageBuffers = std::exchange(other.m_imageBuffers, { });
+    m_nativeImages = std::exchange(other.m_nativeImages, { });
     m_items = std::exchange(other.m_items, nullptr);
     m_drawingItemExtents = std::exchange(other.m_drawingItemExtents, { });
     return *this;
@@ -79,6 +81,7 @@ void DisplayList::clear()
         m_items->clear();
     m_drawingItemExtents.clear();
     m_imageBuffers.clear();
+    m_nativeImages.clear();
 }
 
 bool DisplayList::shouldDumpForFlags(AsTextFlags flags, ItemHandle item)

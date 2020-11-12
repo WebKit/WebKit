@@ -70,7 +70,8 @@ private:
     {
         if (!displayList.isEmpty()) {
             const auto& imageBuffers = m_remoteRenderingBackend.remoteResourceCache().imageBuffers();
-            WebCore::DisplayList::Replayer replayer { BaseConcreteImageBuffer::context(), displayList, &imageBuffers, this };
+            const auto& nativeImages = m_remoteRenderingBackend.remoteResourceCache().nativeImages();
+            WebCore::DisplayList::Replayer replayer { BaseConcreteImageBuffer::context(), displayList, &imageBuffers, &nativeImages, this };
             replayer.replay();
         }
     }

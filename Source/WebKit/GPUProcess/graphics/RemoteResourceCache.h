@@ -44,12 +44,15 @@ public:
 
     void cacheImageBuffer(Ref<WebCore::ImageBuffer>&&);
     WebCore::ImageBuffer* cachedImageBuffer(WebCore::RenderingResourceIdentifier);
+    void cacheNativeImage(Ref<WebCore::NativeImage>&&);
     void releaseRemoteResource(WebCore::RenderingResourceIdentifier);
     
     const WebCore::ImageBufferHashMap& imageBuffers() const { return m_imageBuffers; }
+    const WebCore::NativeImageHashMap& nativeImages() const { return m_nativeImages; }
 
 private:
     WebCore::ImageBufferHashMap m_imageBuffers;
+    WebCore::NativeImageHashMap m_nativeImages;
 };
 
 } // namespace WebKit

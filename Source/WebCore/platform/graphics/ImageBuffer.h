@@ -31,6 +31,7 @@
 #include "RenderingMode.h"
 #include "RenderingResourceIdentifier.h"
 #include <wtf/RefCounted.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -39,7 +40,7 @@ class DisplayList;
 class DrawingContext;
 }
 
-class ImageBuffer : public RefCounted<ImageBuffer> {
+class ImageBuffer : public RefCounted<ImageBuffer>, public CanMakeWeakPtr<ImageBuffer> {
 public:
     // Will return a null pointer on allocation failure.
     WEBCORE_EXPORT static RefPtr<ImageBuffer> create(const FloatSize&, RenderingMode, ShouldUseDisplayList, RenderingPurpose, float resolutionScale = 1, ColorSpace = ColorSpace::SRGB, const HostWindow* = nullptr);

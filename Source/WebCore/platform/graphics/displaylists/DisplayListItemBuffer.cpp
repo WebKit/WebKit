@@ -330,10 +330,6 @@ void ItemHandle::destroy()
         get<DrawLinesForText>().~DrawLinesForText();
         return;
     }
-    case ItemType::DrawNativeImage: {
-        get<DrawNativeImage>().~DrawNativeImage();
-        return;
-    }
     case ItemType::DrawPath: {
         get<DrawPath>().~DrawPath();
         return;
@@ -438,6 +434,10 @@ void ItemHandle::destroy()
     }
     case ItemType::DrawImageBuffer: {
         static_assert(std::is_trivially_destructible<DrawImageBuffer>::value);
+        return;
+    }
+    case ItemType::DrawNativeImage: {
+        static_assert(std::is_trivially_destructible<DrawNativeImage>::value);
         return;
     }
     case ItemType::DrawLine: {

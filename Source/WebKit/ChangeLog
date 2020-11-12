@@ -1,3 +1,67 @@
+2020-11-11  Said Abou-Hallawa  <said@apple.com>
+
+        [GPU Process] Cache the NativeImage in GPU Process and allow referencing it with its RemoteResourceIdentifier
+        https://bugs.webkit.org/show_bug.cgi?id=217596
+
+        Reviewed by Simon Fraser.
+
+        Recorder::drawNativeImage() will ensure the NativeImage is cached before
+        recording the DrawNativeImage item with the renderingResourceIdentifier.
+
+        Because RemoteImageBufferProxy is a superclass of DisplayList::Recorder::
+        Delegate, it will ensure the NativeImage is cached in its RemoteResourceCacheProxy.
+
+        If the NativeImage is registered in RemoteResourceCacheProxy for the first
+        time, it is going to be sent as an IPC message to GPU. Upon receiving this
+        message, RemoteRenderingBackend will cache this NativeImage in its
+        RemoteResourceCache. This message has to be received for any NativeImage
+        only once for its entire life time.
+
+        When flushing the DisplayList of any ImageBuffer, RemoteImageBuffer will
+        ensure the NativeImages are cached in the RemoteResourceCache are passed
+        to DisplayList::Replayer so it can use them to get NativeImage for every
+        DrawNativeImage with the same renderingResourceIdentifier it was recorded
+        with.
+
+        When NativeImage is bing destroyed, its destructor will call its observer
+        virtual method releaseNativeImage(). RemoteResourceCacheProxy will be a
+        superclass NativeImage::Observer so its overriding method will be called.
+        When RemoteResourceCacheProxy::releaseNativeImage() is called it is going
+        to delete the NativeImage from RemoteResourceCacheProxy and is going to
+        send a message to GPU to delete the corresponding NativeImage from
+        RemoteResourceCache via RemoteRenderingBackend::releaseRemoteResource().
+
+        * GPUProcess/graphics/RemoteImageBuffer.h:
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::cacheNativeImage):
+        (WebKit::RemoteRenderingBackend::decodeItem):
+        * GPUProcess/graphics/RemoteRenderingBackend.h:
+        * GPUProcess/graphics/RemoteRenderingBackend.messages.in:
+        * GPUProcess/graphics/RemoteResourceCache.cpp:
+        (WebKit::RemoteResourceCache::cacheNativeImage):
+        (WebKit::RemoteResourceCache::releaseRemoteResource):
+        * GPUProcess/graphics/RemoteResourceCache.h:
+        (WebKit::RemoteResourceCache::nativeImages const):
+        * Scripts/webkit/messages.py:
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<Ref<NativeImage>>::encode):
+        (IPC::ArgumentCoder<Ref<NativeImage>>::decode):
+        * WebProcess/GPU/graphics/RemoteImageBufferProxy.h:
+        (WebKit::RemoteImageBufferProxy::~RemoteImageBufferProxy):
+        (WebKit::RemoteImageBufferProxy::RemoteImageBufferProxy):
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp:
+        (WebKit::RemoteRenderingBackendProxy::createImageBuffer):
+        (WebKit::RemoteRenderingBackendProxy::cacheNativeImage):
+        (WebKit::RemoteRenderingBackendProxy::releaseRemoteResource):
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.h:
+        * WebProcess/GPU/graphics/RemoteResourceCacheProxy.cpp:
+        (WebKit::RemoteResourceCacheProxy::RemoteResourceCacheProxy):
+        (WebKit::RemoteResourceCacheProxy::cacheImageBuffer):
+        (WebKit::RemoteResourceCacheProxy::cachedImageBuffer):
+        (WebKit::RemoteResourceCacheProxy::cacheNativeImage):
+        (WebKit::RemoteResourceCacheProxy::releaseNativeImage):
+        * WebProcess/GPU/graphics/RemoteResourceCacheProxy.h:
+
 2020-11-11  Chris Dumez  <cdumez@apple.com>
 
         Terminate WebProcesses if GPUProcess crashes more than twice in 30 seconds

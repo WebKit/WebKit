@@ -1215,6 +1215,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/MediaPlayerPrivate.h
     platform/graphics/MediaUsageInfo.h
     platform/graphics/NativeImage.h
+    platform/graphics/NativeImageReference.h
     platform/graphics/OpenGLESShims.h
     platform/graphics/OpenGLShims.h
     platform/graphics/Path.h

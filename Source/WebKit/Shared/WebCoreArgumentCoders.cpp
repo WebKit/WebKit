@@ -1115,6 +1115,7 @@ void ArgumentCoder<Ref<NativeImage>>::encode(Encoder& encoder, const Ref<NativeI
     ShareableBitmap::Handle handle;
     bitmap->createHandle(handle);
 
+    encoder << image->renderingResourceIdentifier();
     encoder << handle;
 }
 
@@ -1125,6 +1126,10 @@ Optional<Ref<NativeImage>> ArgumentCoder<Ref<NativeImage>>::decode(Decoder& deco
     if (!didCreateGraphicsContext.hasValue() || !didCreateGraphicsContext.value())
         return WTF::nullopt;
 
+    RenderingResourceIdentifier renderingResourceIdentifier;
+    if (!decoder.decode(renderingResourceIdentifier))
+        return WTF::nullopt;
+    
     ShareableBitmap::Handle handle;
     if (!decoder.decode(handle))
         return WTF::nullopt;
@@ -1138,6 +1143,10 @@ Optional<Ref<NativeImage>> ArgumentCoder<Ref<NativeImage>>::decode(Decoder& deco
         return WTF::nullopt;
 
     auto nativeImage = image->nativeImage();
+    if (!nativeImage)
+        return WTF::nullopt;
+
+    nativeImage = NativeImage::create(nativeImage->platformImage(), renderingResourceIdentifier);
     if (!nativeImage)
         return WTF::nullopt;
 

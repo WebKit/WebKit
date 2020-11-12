@@ -260,7 +260,6 @@ bool isInlineItem(ItemType type)
     case ItemType::DrawGlyphs:
     case ItemType::DrawImage:
     case ItemType::DrawLinesForText:
-    case ItemType::DrawNativeImage:
     case ItemType::DrawPath:
     case ItemType::DrawPattern:
     case ItemType::DrawTiledImage:
@@ -290,6 +289,7 @@ bool isInlineItem(ItemType type)
     case ItemType::DrawDotsForDocumentMarker:
     case ItemType::DrawEllipse:
     case ItemType::DrawImageBuffer:
+    case ItemType::DrawNativeImage:
     case ItemType::DrawLine:
     case ItemType::DrawRect:
     case ItemType::EndTransparencyLayer:

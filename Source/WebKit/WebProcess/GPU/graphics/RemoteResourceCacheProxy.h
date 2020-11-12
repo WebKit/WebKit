@@ -27,6 +27,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include <WebCore/NativeImage.h>
 #include <WebCore/RenderingResourceIdentifier.h>
 #include <wtf/HashMap.h>
 
@@ -36,18 +37,27 @@ class ImageBuffer;
 
 namespace WebKit {
 
-class RemoteResourceCacheProxy {
-public:
-    RemoteResourceCacheProxy() = default;
+class RemoteRenderingBackendProxy;
 
-    void cacheImageBuffer(WebCore::RenderingResourceIdentifier, WebCore::ImageBuffer*);
+class RemoteResourceCacheProxy : public WebCore::NativeImage::Observer {
+public:
+    RemoteResourceCacheProxy(RemoteRenderingBackendProxy&);
+
+    void cacheImageBuffer(WebCore::ImageBuffer&);
     WebCore::ImageBuffer* cachedImageBuffer(WebCore::RenderingResourceIdentifier);
     void releaseImageBuffer(WebCore::RenderingResourceIdentifier);
 
-private:
-    using RemoteImageBufferProxyHashMap = HashMap<WebCore::RenderingResourceIdentifier, WebCore::ImageBuffer*>;
+    void cacheNativeImage(WebCore::NativeImage&);
 
-    RemoteImageBufferProxyHashMap m_imageBuffers;
+private:
+    using ImageBufferHashMap = HashMap<WebCore::RenderingResourceIdentifier, WeakPtr<WebCore::ImageBuffer>>;
+    using NativeImageHashMap = HashMap<WebCore::RenderingResourceIdentifier, WeakPtr<WebCore::NativeImage>>;
+    
+    void releaseNativeImage(WebCore::RenderingResourceIdentifier) override;
+
+    ImageBufferHashMap m_imageBuffers;
+    NativeImageHashMap m_nativeImages;
+    RemoteRenderingBackendProxy& m_remoteRenderingBackendProxy;
 };
 
 } // namespace WebKit

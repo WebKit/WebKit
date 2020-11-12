@@ -42,7 +42,7 @@ class Replayer {
     WTF_MAKE_NONCOPYABLE(Replayer);
 public:
     class Delegate;
-    WEBCORE_EXPORT Replayer(GraphicsContext&, const DisplayList&, const ImageBufferHashMap* = nullptr, Delegate* = nullptr);
+    WEBCORE_EXPORT Replayer(GraphicsContext&, const DisplayList&, const ImageBufferHashMap* = nullptr, const NativeImageHashMap* = nullptr, Delegate* = nullptr);
     WEBCORE_EXPORT ~Replayer();
 
     WEBCORE_EXPORT std::unique_ptr<DisplayList> replay(const FloatRect& initialClip = { }, bool trackReplayList = false);
@@ -59,6 +59,7 @@ private:
     GraphicsContext& m_context;
     const DisplayList& m_displayList;
     const ImageBufferHashMap& m_imageBuffers;
+    const NativeImageHashMap& m_nativeImages;
     Delegate* m_delegate;
 };
 

@@ -1244,15 +1244,15 @@ public:
     static constexpr bool isInlineItem = true;
     static constexpr bool isDrawingItem = true;
 
-    DrawImageBuffer(RenderingResourceIdentifier renderingResourceIdentifier, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
-        : m_renderingResourceIdentifier(renderingResourceIdentifier)
+    DrawImageBuffer(RenderingResourceIdentifier imageBufferIdentifier, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
+        : m_imageBufferIdentifier(imageBufferIdentifier)
         , m_destinationRect(destRect)
         , m_srcRect(srcRect)
         , m_options(options)
     {
     }
 
-    RenderingResourceIdentifier renderingResourceIdentifier() const { return m_renderingResourceIdentifier; }
+    RenderingResourceIdentifier imageBufferIdentifier() const { return m_imageBufferIdentifier; }
     FloatRect source() const { return m_srcRect; }
     FloatRect destinationRect() const { return m_destinationRect; }
     ImagePaintingOptions options() const { return m_options; }
@@ -1265,7 +1265,7 @@ public:
     Optional<FloatRect> localBounds(const GraphicsContext&) const { return m_destinationRect; }
 
 private:
-    RenderingResourceIdentifier m_renderingResourceIdentifier;
+    RenderingResourceIdentifier m_imageBufferIdentifier;
     FloatRect m_destinationRect;
     FloatRect m_srcRect;
     ImagePaintingOptions m_options;
@@ -1274,70 +1274,35 @@ private:
 class DrawNativeImage {
 public:
     static constexpr ItemType itemType = ItemType::DrawNativeImage;
-    static constexpr bool isInlineItem = false;
+    static constexpr bool isInlineItem = true;
     static constexpr bool isDrawingItem = true;
 
-    WEBCORE_EXPORT DrawNativeImage(NativeImage&, const FloatSize& selfSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions&);
+    DrawNativeImage(RenderingResourceIdentifier imageIdentifier, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
+        : m_imageIdentifier(imageIdentifier)
+        , m_imageSize(imageSize)
+        , m_destinationRect(destRect)
+        , m_srcRect(srcRect)
+        , m_options(options)
+    {
+    }
 
+    RenderingResourceIdentifier imageIdentifier() const { return m_imageIdentifier; }
     const FloatRect& source() const { return m_srcRect; }
     const FloatRect& destinationRect() const { return m_destinationRect; }
 
-    void apply(GraphicsContext&) const;
+    NO_RETURN_DUE_TO_ASSERT void apply(GraphicsContext&) const;
+    void apply(GraphicsContext&, NativeImage&) const;
 
     Optional<FloatRect> globalBounds() const { return WTF::nullopt; }
     Optional<FloatRect> localBounds(const GraphicsContext&) const { return m_destinationRect; }
 
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<DrawNativeImage> decode(Decoder&);
-
 private:
-    Ref<NativeImage> m_image;
+    RenderingResourceIdentifier m_imageIdentifier;
     FloatSize m_imageSize;
     FloatRect m_destinationRect;
     FloatRect m_srcRect;
     ImagePaintingOptions m_options;
 };
-
-template<class Encoder>
-void DrawNativeImage::encode(Encoder& encoder) const
-{
-    encoder << m_image;
-    encoder << m_imageSize;
-    encoder << m_destinationRect;
-    encoder << m_srcRect;
-    encoder << m_options;
-}
-
-template<class Decoder>
-Optional<DrawNativeImage> DrawNativeImage::decode(Decoder& decoder)
-{
-    Optional<Ref<NativeImage>> image;
-    decoder >> image;
-    if (!image)
-        return WTF::nullopt;
-
-    Optional<FloatSize> imageSize;
-    decoder >> imageSize;
-    if (!imageSize)
-        return WTF::nullopt;
-
-    Optional<FloatRect> destinationRect;
-    decoder >> destinationRect;
-    if (!destinationRect)
-        return WTF::nullopt;
-
-    Optional<FloatRect> srcRect;
-    decoder >> srcRect;
-    if (!srcRect)
-        return WTF::nullopt;
-
-    Optional<ImagePaintingOptions> options;
-    decoder >> options;
-    if (!options)
-        return WTF::nullopt;
-
-    return {{ *image, *imageSize, *destinationRect, *srcRect, *options }};
-}
 
 class DrawPattern {
 public:

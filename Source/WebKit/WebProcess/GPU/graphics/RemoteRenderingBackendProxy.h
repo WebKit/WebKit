@@ -77,6 +77,7 @@ public:
     RefPtr<WebCore::ImageData> getImageData(WebCore::AlphaPremultiplication outputFormat, const WebCore::IntRect& srcRect, WebCore::RenderingResourceIdentifier);
     void submitDisplayList(const WebCore::DisplayList::DisplayList&, WebCore::RenderingResourceIdentifier destinationBufferIdentifier);
     WebCore::DisplayList::FlushIdentifier flushDisplayListAndCommit(const WebCore::DisplayList::DisplayList&, WebCore::RenderingResourceIdentifier);
+    void cacheNativeImage(WebCore::NativeImage&);
     void releaseRemoteResource(WebCore::RenderingResourceIdentifier);
 
     bool waitForImageBufferBackendWasCreated();
@@ -91,7 +92,7 @@ private:
     void imageBufferBackendWasCreated(const WebCore::FloatSize& logicalSize, const WebCore::IntSize& backendSize, float resolutionScale, WebCore::ColorSpace, ImageBufferBackendHandle, WebCore::RenderingResourceIdentifier);
     void flushDisplayListWasCommitted(WebCore::DisplayList::FlushIdentifier, WebCore::RenderingResourceIdentifier);
 
-    RemoteResourceCacheProxy m_remoteResourceCacheProxy;
+    RemoteResourceCacheProxy m_remoteResourceCacheProxy { *this };
     HashMap<WebCore::DisplayList::ItemBufferIdentifier, RefPtr<DisplayListWriterHandle>> m_sharedDisplayListHandles;
     Deque<WebCore::DisplayList::ItemBufferIdentifier> m_identifiersOfReusableHandles;
     HashSet<WebCore::DisplayList::ItemBufferIdentifier> m_identifiersOfHandlesAvailableForWriting;

@@ -760,9 +760,6 @@ ImageDrawResult GraphicsContext::drawImage(Image& image, const FloatRect& destin
     if (paintingDisabled())
         return ImageDrawResult::DidNothing;
 
-    if (m_impl)
-        return m_impl->drawImage(image, destination, source, options);
-
     InterpolationQualityMaintainer interpolationQualityForThisScope(*this, options.interpolationQuality());
     return image.draw(*this, destination, source, options);
 }
@@ -771,9 +768,6 @@ ImageDrawResult GraphicsContext::drawTiledImage(Image& image, const FloatRect& d
 {
     if (paintingDisabled())
         return ImageDrawResult::DidNothing;
-
-    if (m_impl)
-        return m_impl->drawTiledImage(image, destination, source, tileSize, spacing, options);
 
     InterpolationQualityMaintainer interpolationQualityForThisScope(*this, options.interpolationQuality());
     return image.drawTiled(*this, destination, source, tileSize, spacing, options);
@@ -784,9 +778,6 @@ ImageDrawResult GraphicsContext::drawTiledImage(Image& image, const FloatRect& d
 {
     if (paintingDisabled())
         return ImageDrawResult::DidNothing;
-
-    if (m_impl)
-        return m_impl->drawTiledImage(image, destination, source, tileScaleFactor, hRule, vRule, options);
 
     if (hRule == Image::StretchTile && vRule == Image::StretchTile) {
         // Just do a scale.

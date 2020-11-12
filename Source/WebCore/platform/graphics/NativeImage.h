@@ -30,27 +30,48 @@
 #include "Color.h"
 #include "IntSize.h"
 #include "PlatformImage.h"
+#include "RenderingResourceIdentifier.h"
+#include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
-class NativeImage : public RefCounted<NativeImage> {
+class NativeImage : public RefCounted<NativeImage>, public CanMakeWeakPtr<NativeImage> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
+    class Observer {
+    public:
+        virtual ~Observer() = default;
+        virtual void releaseNativeImage(RenderingResourceIdentifier) = 0;
+    protected:
+        Observer() = default;
+    };
+
     static WEBCORE_EXPORT RefPtr<NativeImage> create(PlatformImagePtr&&);
+    static WEBCORE_EXPORT RefPtr<NativeImage> create(const PlatformImagePtr&, RenderingResourceIdentifier);
+
+    WEBCORE_EXPORT ~NativeImage();
 
     const PlatformImagePtr& platformImage() const { return m_platformImage; }
+    RenderingResourceIdentifier renderingResourceIdentifier() const { return m_renderingResourceIdentifier; }
 
     WEBCORE_EXPORT IntSize size() const;
     bool hasAlpha() const;
     Color singlePixelSolidColor() const;
 
+    void setObserver(Observer* observer) { m_observer = observer; }
     void clearSubimages();
 
 private:
     NativeImage(PlatformImagePtr&&);
+    NativeImage(const PlatformImagePtr&, RenderingResourceIdentifier);
 
     PlatformImagePtr m_platformImage;
+    Observer* m_observer { nullptr };
+    RenderingResourceIdentifier m_renderingResourceIdentifier;
 };
+
+using NativeImageHashMap = HashMap<RenderingResourceIdentifier, Ref<NativeImage>>;
 
 } // namespace WebCore

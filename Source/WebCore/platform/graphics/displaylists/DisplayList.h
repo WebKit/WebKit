@@ -77,6 +77,7 @@ public:
     String asText(AsTextFlags) const;
 
     const ImageBufferHashMap& imageBuffers() const { return m_imageBuffers; }
+    const NativeImageHashMap& nativeImages() const { return m_nativeImages; }
 
     WEBCORE_EXPORT void setItemBufferClient(ItemBufferReadingClient*);
     WEBCORE_EXPORT void setItemBufferClient(ItemBufferWritingClient*);
@@ -153,14 +154,24 @@ private:
         m_drawingItemExtents.append(WTFMove(extent));
     }
 
-    void cacheImageBuffer(Ref<WebCore::ImageBuffer>&& imageBuffer)
+    void cacheImageBuffer(WebCore::ImageBuffer& imageBuffer)
     {
-        m_imageBuffers.add(imageBuffer->renderingResourceIdentifier(), WTFMove(imageBuffer));
+        m_imageBuffers.ensure(imageBuffer.renderingResourceIdentifier(), [&]() {
+            return makeRef(imageBuffer);
+        });
     }
 
+    void cacheNativeImage(NativeImage& image)
+    {
+        m_nativeImages.ensure(image.renderingResourceIdentifier(), [&]() {
+            return makeRef(image);
+        });
+    }
+    
     static bool shouldDumpForFlags(AsTextFlags, ItemHandle);
 
     ImageBufferHashMap m_imageBuffers;
+    NativeImageHashMap m_nativeImages;
     std::unique_ptr<ItemBuffer> m_items;
     Vector<Optional<FloatRect>> m_drawingItemExtents;
     bool m_tracksDrawingItemExtents { true };

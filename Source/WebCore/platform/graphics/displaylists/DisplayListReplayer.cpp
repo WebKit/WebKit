@@ -34,10 +34,11 @@
 namespace WebCore {
 namespace DisplayList {
 
-Replayer::Replayer(GraphicsContext& context, const DisplayList& displayList, const ImageBufferHashMap* imageBuffers, Delegate* delegate)
+Replayer::Replayer(GraphicsContext& context, const DisplayList& displayList, const ImageBufferHashMap* imageBuffers, const NativeImageHashMap* nativeImages, Delegate* delegate)
     : m_context(context)
     , m_displayList(displayList)
     , m_imageBuffers(imageBuffers ? *imageBuffers : m_displayList.imageBuffers())
+    , m_nativeImages(nativeImages ? *nativeImages : m_displayList.nativeImages())
     , m_delegate(delegate)
 {
 }
@@ -51,8 +52,15 @@ void Replayer::applyItem(ItemHandle item)
 
     if (item.is<DrawImageBuffer>()) {
         auto& drawItem = item.get<DrawImageBuffer>();
-        if (auto* imageBuffer = m_imageBuffers.get(drawItem.renderingResourceIdentifier()))
+        if (auto* imageBuffer = m_imageBuffers.get(drawItem.imageBufferIdentifier()))
             drawItem.apply(m_context, *imageBuffer);
+        return;
+    }
+    
+    if (item.is<DrawNativeImage>()) {
+        auto& drawItem = item.get<DrawNativeImage>();
+        if (auto* image = m_nativeImages.get(drawItem.imageIdentifier()))
+            drawItem.apply(m_context, *image);
         return;
     }
 

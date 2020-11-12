@@ -29,26 +29,52 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "RemoteRenderingBackendProxy.h"
-#include <WebCore/ImageBuffer.h>
 
 namespace WebKit {
 using namespace WebCore;
 
-void RemoteResourceCacheProxy::cacheImageBuffer(RenderingResourceIdentifier renderingResourceIdentifier, WebCore::ImageBuffer* imageBuffer)
+RemoteResourceCacheProxy::RemoteResourceCacheProxy(RemoteRenderingBackendProxy& remoteRenderingBackendProxy)
+    : m_remoteRenderingBackendProxy(remoteRenderingBackendProxy)
 {
-    auto addResult = m_imageBuffers.add(renderingResourceIdentifier, imageBuffer);
+}
+
+void RemoteResourceCacheProxy::cacheImageBuffer(WebCore::ImageBuffer& imageBuffer)
+{
+    auto addResult = m_imageBuffers.add(imageBuffer.renderingResourceIdentifier(), makeWeakPtr(imageBuffer));
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
 }
 
 ImageBuffer* RemoteResourceCacheProxy::cachedImageBuffer(RenderingResourceIdentifier renderingResourceIdentifier)
 {
-    return m_imageBuffers.get(renderingResourceIdentifier);
+    return m_imageBuffers.get(renderingResourceIdentifier).get();
 }
 
 void RemoteResourceCacheProxy::releaseImageBuffer(RenderingResourceIdentifier renderingResourceIdentifier)
 {
     bool found = m_imageBuffers.remove(renderingResourceIdentifier);
     ASSERT_UNUSED(found, found);
+}
+
+void RemoteResourceCacheProxy::cacheNativeImage(NativeImage& image)
+{
+    m_nativeImages.ensure(image.renderingResourceIdentifier(), [&]() {
+        // Set itself as an observer to NativeImage, so releaseNativeImage()
+        // gets called when NativeImage is being deleleted.
+        image.setObserver(this);
+
+        // Tell the GPU process to cache this resource.
+        m_remoteRenderingBackendProxy.cacheNativeImage(image);
+        return makeWeakPtr(image);
+    });
+}
+
+void RemoteResourceCacheProxy::releaseNativeImage(RenderingResourceIdentifier renderingResourceIdentifier)
+{
+    if (!m_nativeImages.remove(renderingResourceIdentifier))
+        return;
+
+    // Tell the GPU process to remove this resource.
+    m_remoteRenderingBackendProxy.releaseRemoteResource(renderingResourceIdentifier);
 }
 
 } // namespace WebKit
