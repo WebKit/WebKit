@@ -1,3 +1,15 @@
+2020-11-12  Angelos Oikonomopoulos  <angelos@igalia.com>
+
+        [JSC] Skip stress/lars-sab-workers.js on arm32
+        https://bugs.webkit.org/show_bug.cgi?id=218797
+
+        Reviewed by Žan Doberšek.
+
+        The test is currently flaky on arm32 when run in bytecode-cache mode.
+        Skip pending further investigation.
+
+        * stress/lars-sab-workers.js:
+
 2020-11-12  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, rebaseline test262's config.yaml part 2

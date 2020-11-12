@@ -1,3 +1,4 @@
+//@ skip if $architecture == "arm"
 var sab = new SharedArrayBuffer(100 * 4);
 
 var memory = new Int32Array(sab);
