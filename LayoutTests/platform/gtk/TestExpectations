@@ -1529,8 +1529,8 @@ webkit.org/b/144864 fast/events/clear-drag-state.html [ Failure ]
 
 webkit.org/b/145051 webkit.org/b/198830 [ Release ] media/video-rtl.html [ ImageOnlyFailure Pass Crash ]
 
-webkit.org/b/145170 fast/events/wheelevent-in-horizontal-scrollbar-in-rtl.html [ Failure Pass ]
-webkit.org/b/145170 fast/events/wheelevent-in-vertical-scrollbar-in-rtl.html [ Failure Pass ]
+webkit.org/b/145170 fast/events/wheel/wheelevent-in-horizontal-scrollbar-in-rtl.html [ Failure Pass ]
+webkit.org/b/145170 fast/events/wheel/wheelevent-in-vertical-scrollbar-in-rtl.html [ Failure Pass ]
 
 webkit.org/b/145258 media/video-controller-child-rate.html [ Failure Pass ]
 
@@ -2407,16 +2407,16 @@ webkit.org/b/30620 fast/xsl/sort-locale.xml [ Failure ]
 webkit.org/b/53986 svg/text/caret-in-svg-text.xhtml [ Failure ]
 
 # Paged continuousMouseScrollBy() events are not supported in GTK.
-Bug(GTK) fast/events/platform-wheelevent-paging-x-in-non-scrolling-div.html [ Failure Timeout ]
-Bug(GTK) fast/events/platform-wheelevent-paging-x-in-non-scrolling-page.html [ Failure ]
-Bug(GTK) fast/events/platform-wheelevent-paging-x-in-scrolling-div.html [ Failure ]
-Bug(GTK) fast/events/platform-wheelevent-paging-x-in-scrolling-page.html [ Failure ]
-Bug(GTK) fast/events/platform-wheelevent-paging-xy-in-scrolling-div.html [ Failure ]
-Bug(GTK) fast/events/platform-wheelevent-paging-xy-in-scrolling-page.html [ Failure ]
-Bug(GTK) fast/events/platform-wheelevent-paging-y-in-non-scrolling-div.html [ Failure ]
-Bug(GTK) fast/events/platform-wheelevent-paging-y-in-non-scrolling-page.html [ Failure ]
-Bug(GTK) fast/events/platform-wheelevent-paging-y-in-scrolling-div.html [ Failure ]
-Bug(GTK) fast/events/platform-wheelevent-paging-y-in-scrolling-page.html [ Failure ]
+Bug(GTK) fast/events/wheel/platform-wheelevent-paging-x-in-non-scrolling-div.html [ Failure Timeout ]
+Bug(GTK) fast/events/wheel/platform-wheelevent-paging-x-in-non-scrolling-page.html [ Failure ]
+Bug(GTK) fast/events/wheel/platform-wheelevent-paging-x-in-scrolling-div.html [ Failure ]
+Bug(GTK) fast/events/wheel/platform-wheelevent-paging-x-in-scrolling-page.html [ Failure ]
+Bug(GTK) fast/events/wheel/platform-wheelevent-paging-xy-in-scrolling-div.html [ Failure ]
+Bug(GTK) fast/events/wheel/platform-wheelevent-paging-xy-in-scrolling-page.html [ Failure ]
+Bug(GTK) fast/events/wheel/platform-wheelevent-paging-y-in-non-scrolling-div.html [ Failure ]
+Bug(GTK) fast/events/wheel/platform-wheelevent-paging-y-in-non-scrolling-page.html [ Failure ]
+Bug(GTK) fast/events/wheel/platform-wheelevent-paging-y-in-scrolling-div.html [ Failure ]
+Bug(GTK) fast/events/wheel/platform-wheelevent-paging-y-in-scrolling-page.html [ Failure ]
 
 # Need to add functionality to DumpRenderTree to handle scrollbar policy changes
 Bug(GTK) fast/overflow/scrollbar-restored-and-then-locked.html [ Failure ]

@@ -121,9 +121,12 @@ fast/forms/file/entries-api/image-no-transcode-open-panel.html [ Pass ]
 
 # WebKitTestRunner needs a more complete implementation of eventSender
 # <https://bugs.webkit.org/show_bug.cgi?id=42194>
+editing/mac/pasteboard/dataTransfer-set-data-file-url.html
+editing/mac/pasteboard/drag-selections-to-contenteditable.html
 editing/pasteboard/4947130.html
 editing/pasteboard/cleanup-on-move.html
 editing/pasteboard/copy-standalone-image-crash.html
+editing/pasteboard/drag-drop-paragraph-crasher.html
 editing/pasteboard/emacs-cntl-y-001.html
 editing/pasteboard/emacs-ctrl-k-y-001.html
 editing/pasteboard/files-during-page-drags.html
@@ -141,28 +144,27 @@ editing/selection/doubleclick-whitespace.html
 editing/selection/drag-to-contenteditable-iframe.html
 editing/selection/mixed-editability-10.html
 editing/selection/select-out-of-editable.html
-editing/spelling/spellcheck-paste.html
-editing/spelling/spellcheck-paste-disabled.html
 editing/spelling/spellcheck-paste-continuous-disabled.html
+editing/spelling/spellcheck-paste-disabled.html
+editing/spelling/spellcheck-paste.html
 fast/dom/vertical-scrollbar-in-rtl.html
 fast/events/5056619.html
 fast/events/autoscroll-in-textfield.html
 fast/events/bogus-dropEffect-effectAllowed.html
 fast/events/content-changed-during-drop.html
-fast/events/continuous-platform-wheelevent-in-scrolling-div.html
-fast/events/crash-on-mutate-during-drop.html
 fast/events/context-onmousedown-event.html
+fast/events/crash-on-mutate-during-drop.html
 fast/events/drag-and-drop-dataTransfer-types-nocrash.html
 fast/events/drag-and-drop-fire-drag-dragover.html
-fast/events/drag-and-drop.html
-fast/events/drag-and-drop-link.html
-fast/events/drag-and-drop-link-fast-multiple-times-does-not-crash.html
 fast/events/drag-and-drop-link-containing-block.html
+fast/events/drag-and-drop-link-fast-multiple-times-does-not-crash.html
+fast/events/drag-and-drop-link.html
+fast/events/drag-and-drop.html
 fast/events/drag-image-with-border-image.html
 fast/events/drag-in-frames.html
 fast/events/drag-parent-node.html
-fast/events/draggable-div-nodata.html
 fast/events/draggable-div-customdata.html
+fast/events/draggable-div-nodata.html
 fast/events/dropzone-001.html
 fast/events/dropzone-002.html
 fast/events/dropzone-003.html
@@ -174,9 +176,10 @@ fast/events/node-event-anchor-lock.html
 fast/events/ondragenter.html
 fast/events/right-click-focus.html
 fast/events/standalone-image-drag-to-editable.html
-fast/events/wheelevent-in-horizontal-scrollbar-in-rtl.html
-fast/events/wheelevent-in-vertical-scrollbar-in-rtl.html
-fast/events/wheelevent-direction-inverted-from-device.html
+fast/events/wheel/continuous-platform-wheelevent-in-scrolling-div.html
+fast/events/wheel/wheelevent-direction-inverted-from-device.html
+fast/events/wheel/wheelevent-in-horizontal-scrollbar-in-rtl.html
+fast/events/wheel/wheelevent-in-vertical-scrollbar-in-rtl.html
 fast/forms/drag-into-textarea.html
 fast/forms/drag-out-of-textarea.html
 fast/forms/listbox-typeahead-cyrillic.html
@@ -190,9 +193,7 @@ http/tests/local/drag-over-remote-content.html
 http/tests/misc/bubble-drag-events.html
 http/tests/security/drag-drop-same-unique-origin.html
 http/tests/security/drag-over-remote-content-iframe.html
-editing/mac/pasteboard/dataTransfer-set-data-file-url.html
-editing/mac/pasteboard/drag-selections-to-contenteditable.html
-editing/pasteboard/drag-drop-paragraph-crasher.html
+
 
 # [WK2] [Mac] Spellcheck tests don't seem to work
 webkit.org/b/105616 editing/spelling/context-menu-suggestions-multiword-selection.html

@@ -240,16 +240,16 @@ compositing/rtl/rtl-iframe-relative.html [ Skip ]
 fast/css/draggable-region-parser.html
 
 # Skip because this platform does not support a paging mouse wheel event
-fast/events/platform-wheelevent-paging-x-in-non-scrolling-div.html
-fast/events/platform-wheelevent-paging-x-in-non-scrolling-page.html
-fast/events/platform-wheelevent-paging-x-in-scrolling-div.html
-fast/events/platform-wheelevent-paging-x-in-scrolling-page.html
-fast/events/platform-wheelevent-paging-xy-in-scrolling-div.html
-fast/events/platform-wheelevent-paging-xy-in-scrolling-page.html
-fast/events/platform-wheelevent-paging-y-in-non-scrolling-div.html
-fast/events/platform-wheelevent-paging-y-in-non-scrolling-page.html
-fast/events/platform-wheelevent-paging-y-in-scrolling-div.html
-fast/events/platform-wheelevent-paging-y-in-scrolling-page.html
+fast/events/wheel/platform-wheelevent-paging-x-in-non-scrolling-div.html [ Skip ]
+fast/events/wheel/platform-wheelevent-paging-x-in-non-scrolling-page.html [ Skip ]
+fast/events/wheel/platform-wheelevent-paging-x-in-scrolling-div.html [ Skip ]
+fast/events/wheel/platform-wheelevent-paging-x-in-scrolling-page.html [ Skip ]
+fast/events/wheel/platform-wheelevent-paging-xy-in-scrolling-div.html [ Skip ]
+fast/events/wheel/platform-wheelevent-paging-xy-in-scrolling-page.html [ Skip ]
+fast/events/wheel/platform-wheelevent-paging-y-in-non-scrolling-div.html [ Skip ]
+fast/events/wheel/platform-wheelevent-paging-y-in-non-scrolling-page.html [ Skip ]
+fast/events/wheel/platform-wheelevent-paging-y-in-scrolling-div.html [ Skip ]
+fast/events/wheel/platform-wheelevent-paging-y-in-scrolling-page.html [ Skip ]
 
 # Pointer Lock can only check some of the API at the moment.
 pointer-lock/bug90391-move-then-window-open-crash.html

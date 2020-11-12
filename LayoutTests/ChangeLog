@@ -1,3 +1,72 @@
+2020-11-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Move tests in fast/events that dispatch platform wheel events to their own directory
+        https://bugs.webkit.org/show_bug.cgi?id=218869
+
+        Reviewed by Tim Horton.
+
+        Move tests in fast/events that rely on dispatching wheel events via eventSender to their own directory for
+        easier skipping on particular platforms.
+
+        Tests that synthesize DOM events remain in fast/events, since they are cross-platform.
+        
+        Fix up some linter and sorting errors in TestExpectations.
+
+        * fast/events/wheel/continuous-platform-wheelevent-in-scrolling-div-expected.txt: Renamed from LayoutTests/fast/events/continuous-platform-wheelevent-in-scrolling-div-expected.txt.
+        * fast/events/wheel/continuous-platform-wheelevent-in-scrolling-div.html: Renamed from LayoutTests/fast/events/continuous-platform-wheelevent-in-scrolling-div.html.
+        * fast/events/wheel/platform-wheelevent-in-scrolling-div-expected.txt: Renamed from LayoutTests/fast/events/platform-wheelevent-in-scrolling-div-expected.txt.
+        * fast/events/wheel/platform-wheelevent-in-scrolling-div.html: Renamed from LayoutTests/fast/events/platform-wheelevent-in-scrolling-div.html.
+        * fast/events/wheel/platform-wheelevent-paging-x-in-non-scrolling-div-expected.txt: Renamed from LayoutTests/fast/events/platform-wheelevent-paging-x-in-non-scrolling-div-expected.txt.
+        * fast/events/wheel/platform-wheelevent-paging-x-in-non-scrolling-div.html: Renamed from LayoutTests/fast/events/platform-wheelevent-paging-x-in-non-scrolling-div.html.
+        * fast/events/wheel/platform-wheelevent-paging-x-in-non-scrolling-page-expected.txt: Renamed from LayoutTests/fast/events/platform-wheelevent-paging-x-in-non-scrolling-page-expected.txt.
+        * fast/events/wheel/platform-wheelevent-paging-x-in-non-scrolling-page.html: Renamed from LayoutTests/fast/events/platform-wheelevent-paging-x-in-non-scrolling-page.html.
+        * fast/events/wheel/platform-wheelevent-paging-x-in-scrolling-div-expected.txt: Renamed from LayoutTests/fast/events/platform-wheelevent-paging-x-in-scrolling-div-expected.txt.
+        * fast/events/wheel/platform-wheelevent-paging-x-in-scrolling-div.html: Renamed from LayoutTests/fast/events/platform-wheelevent-paging-x-in-scrolling-div.html.
+        * fast/events/wheel/platform-wheelevent-paging-x-in-scrolling-page-expected.txt: Renamed from LayoutTests/fast/events/platform-wheelevent-paging-x-in-scrolling-page-expected.txt.
+        * fast/events/wheel/platform-wheelevent-paging-x-in-scrolling-page.html: Renamed from LayoutTests/fast/events/platform-wheelevent-paging-x-in-scrolling-page.html.
+        * fast/events/wheel/platform-wheelevent-paging-xy-in-scrolling-div-expected.txt: Renamed from LayoutTests/fast/events/platform-wheelevent-paging-xy-in-scrolling-div-expected.txt.
+        * fast/events/wheel/platform-wheelevent-paging-xy-in-scrolling-div.html: Renamed from LayoutTests/fast/events/platform-wheelevent-paging-xy-in-scrolling-div.html.
+        * fast/events/wheel/platform-wheelevent-paging-xy-in-scrolling-page-expected.txt: Renamed from LayoutTests/fast/events/platform-wheelevent-paging-xy-in-scrolling-page-expected.txt.
+        * fast/events/wheel/platform-wheelevent-paging-xy-in-scrolling-page.html: Renamed from LayoutTests/fast/events/platform-wheelevent-paging-xy-in-scrolling-page.html.
+        * fast/events/wheel/platform-wheelevent-paging-y-in-non-scrolling-div-expected.txt: Renamed from LayoutTests/fast/events/platform-wheelevent-paging-y-in-non-scrolling-div-expected.txt.
+        * fast/events/wheel/platform-wheelevent-paging-y-in-non-scrolling-div.html: Renamed from LayoutTests/fast/events/platform-wheelevent-paging-y-in-non-scrolling-div.html.
+        * fast/events/wheel/platform-wheelevent-paging-y-in-non-scrolling-page-expected.txt: Renamed from LayoutTests/fast/events/platform-wheelevent-paging-y-in-non-scrolling-page-expected.txt.
+        * fast/events/wheel/platform-wheelevent-paging-y-in-non-scrolling-page.html: Renamed from LayoutTests/fast/events/platform-wheelevent-paging-y-in-non-scrolling-page.html.
+        * fast/events/wheel/platform-wheelevent-paging-y-in-scrolling-div-expected.txt: Renamed from LayoutTests/fast/events/platform-wheelevent-paging-y-in-scrolling-div-expected.txt.
+        * fast/events/wheel/platform-wheelevent-paging-y-in-scrolling-div.html: Renamed from LayoutTests/fast/events/platform-wheelevent-paging-y-in-scrolling-div.html.
+        * fast/events/wheel/platform-wheelevent-paging-y-in-scrolling-page-expected.txt: Renamed from LayoutTests/fast/events/platform-wheelevent-paging-y-in-scrolling-page-expected.txt.
+        * fast/events/wheel/platform-wheelevent-paging-y-in-scrolling-page.html: Renamed from LayoutTests/fast/events/platform-wheelevent-paging-y-in-scrolling-page.html.
+        * fast/events/wheel/wheel-event-destroys-frame-expected.txt: Renamed from LayoutTests/fast/events/wheel-event-destroys-frame-expected.txt.
+        * fast/events/wheel/wheel-event-destroys-frame.html: Renamed from LayoutTests/fast/events/wheel-event-destroys-frame.html.
+        * fast/events/wheel/wheel-event-destroys-overflow-expected.txt: Renamed from LayoutTests/fast/events/wheel-event-destroys-overflow-expected.txt.
+        * fast/events/wheel/wheel-event-destroys-overflow.html: Renamed from LayoutTests/fast/events/wheel-event-destroys-overflow.html.
+        * fast/events/wheel/wheel-event-outside-body-expected.txt: Renamed from LayoutTests/fast/events/wheel-event-outside-body-expected.txt.
+        * fast/events/wheel/wheel-event-outside-body.html: Renamed from LayoutTests/fast/events/wheel-event-outside-body.html.
+        * fast/events/wheel/wheelevent-basic-expected.txt: Renamed from LayoutTests/fast/events/wheelevent-basic-expected.txt.
+        * fast/events/wheel/wheelevent-basic.html: Renamed from LayoutTests/fast/events/wheelevent-basic.html.
+        * fast/events/wheel/wheelevent-direction-inverted-from-device-expected.txt: Renamed from LayoutTests/fast/events/wheelevent-direction-inverted-from-device-expected.txt.
+        * fast/events/wheel/wheelevent-direction-inverted-from-device.html: Renamed from LayoutTests/fast/events/wheelevent-direction-inverted-from-device.html.
+        * fast/events/wheel/wheelevent-in-horizontal-scrollbar-in-rtl-expected.txt: Renamed from LayoutTests/fast/events/wheelevent-in-horizontal-scrollbar-in-rtl-expected.txt.
+        * fast/events/wheel/wheelevent-in-horizontal-scrollbar-in-rtl.html: Renamed from LayoutTests/fast/events/wheelevent-in-horizontal-scrollbar-in-rtl.html.
+        * fast/events/wheel/wheelevent-in-text-node-expected.txt: Renamed from LayoutTests/fast/events/wheelevent-in-text-node-expected.txt.
+        * fast/events/wheel/wheelevent-in-text-node.html: Renamed from LayoutTests/fast/events/wheelevent-in-text-node.html.
+        * fast/events/wheel/wheelevent-in-vertical-scrollbar-in-rtl-expected.txt: Renamed from LayoutTests/fast/events/wheelevent-in-vertical-scrollbar-in-rtl-expected.txt.
+        * fast/events/wheel/wheelevent-in-vertical-scrollbar-in-rtl.html: Renamed from LayoutTests/fast/events/wheelevent-in-vertical-scrollbar-in-rtl.html.
+        * fast/events/wheel/wheelevent-mousewheel-interaction-expected.txt: Renamed from LayoutTests/fast/events/wheelevent-mousewheel-interaction-expected.txt.
+        * fast/events/wheel/wheelevent-mousewheel-interaction.html: Renamed from LayoutTests/fast/events/wheelevent-mousewheel-interaction.html.
+        * fast/scrolling/mac/wheel-event-listener-region-inside-overflow-expected.txt: Added.
+        * platform/glib/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/events/wheel/wheelevent-in-horizontal-scrollbar-in-rtl-expected.txt: Renamed from LayoutTests/platform/gtk/fast/events/wheelevent-in-horizontal-scrollbar-in-rtl-expected.txt.
+        * platform/gtk/fast/events/wheel/wheelevent-in-vertical-scrollbar-in-rtl-expected.txt: Renamed from LayoutTests/platform/gtk/fast/events/wheelevent-in-vertical-scrollbar-in-rtl-expected.txt.
+        * platform/ios/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/win/TestExpectations:
+        * platform/wincairo/TestExpectations:
+        * platform/wk2/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2020-11-12  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][Integration] Enable inline replaced support

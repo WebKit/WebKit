@@ -1916,11 +1916,11 @@ fast/events/shadow-event-path-2.html [ Failure ]
 fast/events/shadow-event-path.html [ Failure ]
 fast/events/special-key-events-in-input-text.html [ Failure ]
 fast/events/tabindex-focus-blur-all.html [ Timeout ]
-fast/events/wheel-event-destroys-overflow.html [ Skip ] # Crash
-fast/events/wheel-event-outside-body.html [ Skip ] # Crash
-fast/events/wheelevent-basic.html [ Failure ]
-fast/events/wheelevent-in-horizontal-scrollbar-in-rtl.html [ Failure ]
-fast/events/wheelevent-in-vertical-scrollbar-in-rtl.html [ Failure ]
+fast/events/wheel/wheel-event-destroys-overflow.html [ Skip ] # Crash
+fast/events/wheel/wheel-event-outside-body.html [ Skip ] # Crash
+fast/events/wheel/wheelevent-basic.html [ Failure ]
+fast/events/wheel/wheelevent-in-horizontal-scrollbar-in-rtl.html [ Failure ]
+fast/events/wheel/wheelevent-in-vertical-scrollbar-in-rtl.html [ Failure ]
 fast/filter-image/background-filter-image.html [ ImageOnlyFailure ]
 fast/filter-image/filter-image.html [ ImageOnlyFailure ]
 fast/harness/render-tree-as-text-options.html [ Failure ]
