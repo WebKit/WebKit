@@ -40,8 +40,7 @@
 #include "LayoutIntegrationRunIterator.h"
 #include "Logging.h"
 #include "Range.h"
-#include "RenderBlock.h"
-#include "RootInlineBox.h"
+#include "RenderBlockFlow.h"
 #include "SimpleRange.h"
 #include "Text.h"
 #include "TextIterator.h"
@@ -656,13 +655,16 @@ IntRect VisiblePosition::absoluteCaretBounds(bool* insideFixed) const
 
 FloatRect VisiblePosition::absoluteSelectionBoundsForLine() const
 {
-    auto inlineBox = inlineBoxAndOffset().box;
-    if (!inlineBox)
+    auto run = inlineRunAndOffset().run;
+    if (!run)
         return { };
 
-    auto& root = inlineBox->root();
-    auto localRect = FloatRect { root.x(), root.selectionTop(), root.width(), root.selectionHeight() };
-    return root.renderer().localToAbsoluteQuad(localRect).boundingBox();
+    auto line = run.line();
+    auto localRect = FloatRect { FloatPoint { line->logicalLeft(), line->selectionTop() }, FloatPoint { line->logicalRight(), line->selectionBottom() } };
+    if (!line->isHorizontal())
+        localRect = localRect.transposedRect();
+
+    return line->containingBlock().localToAbsoluteQuad(localRect).boundingBox();
 }
 
 int VisiblePosition::lineDirectionPointForBlockDirectionNavigation() const

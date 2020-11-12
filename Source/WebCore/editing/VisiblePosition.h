@@ -70,9 +70,6 @@ public:
     InlineRunAndOffset inlineRunAndOffset() const;
     InlineRunAndOffset inlineRunAndOffset(TextDirection primaryDirection) const;
 
-    InlineBoxAndOffset inlineBoxAndOffset() const;
-    InlineBoxAndOffset inlineBoxAndOffset(TextDirection primaryDirection) const;
-
     struct LocalCaretRect {
         LayoutRect rect;
         RenderObject* renderer { nullptr };
@@ -179,16 +176,6 @@ inline bool operator<=(const VisiblePosition& a, const VisiblePosition& b)
 inline bool operator>=(const VisiblePosition& a, const VisiblePosition& b)
 {
     return is_gteq(documentOrder(a, b));
-}
-
-inline auto VisiblePosition::inlineBoxAndOffset() const -> InlineBoxAndOffset
-{
-    return m_deepPosition.inlineBoxAndOffset(m_affinity);
-}
-
-inline auto VisiblePosition::inlineBoxAndOffset(TextDirection primaryDirection) const -> InlineBoxAndOffset
-{
-    return m_deepPosition.inlineBoxAndOffset(m_affinity, primaryDirection);
 }
 
 } // namespace WebCore
