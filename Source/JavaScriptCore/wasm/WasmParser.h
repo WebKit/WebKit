@@ -85,6 +85,7 @@ protected:
 
     PartialResult WARN_UNUSED_RETURN parseBlockSignature(const ModuleInformation&, BlockSignature&);
     bool WARN_UNUSED_RETURN parseValueType(Type&);
+    bool WARN_UNUSED_RETURN parseRefType(Type&);
     bool WARN_UNUSED_RETURN parseExternalKind(ExternalKind&);
 
     size_t m_offset = 0;
@@ -304,6 +305,13 @@ ALWAYS_INLINE bool Parser<SuccessType>::parseValueType(Type& result)
         return false;
     result = static_cast<Type>(value);
     return true;
+}
+
+template<typename SuccessType>
+ALWAYS_INLINE bool Parser<SuccessType>::parseRefType(Type& result)
+{
+    const bool parsed = parseValueType(result);
+    return parsed && isRefType(result);
 }
 
 template<typename SuccessType>

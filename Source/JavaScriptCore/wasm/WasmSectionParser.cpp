@@ -474,7 +474,9 @@ auto SectionParser::parseInitExpr(uint8_t& opcode, uint64_t& bitsOrImportNumber,
     }
 
     case RefNull: {
-        resultType = Funcref;
+        Type typeOfNull;
+        WASM_PARSER_FAIL_IF(!parseRefType(typeOfNull), "ref.null type must be a reference type");
+        resultType = typeOfNull;
         bitsOrImportNumber = JSValue::encode(jsNull());
         break;
     }

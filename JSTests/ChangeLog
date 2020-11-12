@@ -1,3 +1,36 @@
+2020-11-12  Dmitry Bezhetskov  <dbezhetskov@igalia.com>
+
+        [WASM-References] Support imm for ref.null
+        https://bugs.webkit.org/show_bug.cgi?id=218744
+
+        Reviewed by Yusuke Suzuki.
+        
+        Updated the Builder DSL and spec tests for ref.null extern/funcref.
+        Spec is here - https://webassembly.github.io/reference-types/core/.
+
+        * wasm/Builder.js:
+        (export.default.Builder.prototype._registerSectionBuilders.const.section.in.WASM.description.section.switch.section.case.string_appeared_here.this.section):
+        * wasm/Builder_WebAssemblyBinary.js:
+        (const.putInitExpr):
+        * wasm/LowLevelBinary.js:
+        (export.default.LowLevelBinary.prototype.ref_type):
+        * wasm/WASM.js:
+        * wasm/references-spec-tests/ref_is_null.js:
+        * wasm/references-spec-tests/ref_null.js:
+        * wasm/references/externref_globals.js:
+        * wasm/references/externref_modules.js:
+        * wasm/references/externref_table.js:
+        * wasm/references/externref_table_import.js:
+        (makeImport):
+        (string_appeared_here.fullGC.assert.eq.1.exports.get_tbl.makeImport):
+        (string_appeared_here.fullGC.assert.eq.1.exports.get_tbl):
+        * wasm/references/func_ref.js:
+        (assert.eq.instance.exports.fix):
+        * wasm/references/is_null.js:
+        (checkRefNullWithI32ImmType):
+        * wasm/references/multitable.js:
+        * wasm/wasm.json:
+
 2020-11-12  Angelos Oikonomopoulos  <angelos@igalia.com>
 
         [JSC] Skip stress/lars-sab-workers.js on arm32

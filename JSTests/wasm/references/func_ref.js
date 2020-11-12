@@ -203,7 +203,7 @@ function makeFuncrefIdent() {
         .End()
 
         .Function("set_glob_null", { params: [], ret: "void" })
-            .RefNull()
+            .RefNull("funcref")
             .Call(0)
         .End()
 

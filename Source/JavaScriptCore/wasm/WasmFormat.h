@@ -84,6 +84,11 @@ inline bool isSubtype(Type sub, Type parent)
         return true;
     return sub == Funcref && parent == Externref;
 }
+
+inline bool isRefType(Type type)
+{
+    return type == Externref || type == Funcref;
+}
     
 enum class ExternalKind : uint8_t {
     // FIXME auto-generate this. https://bugs.webkit.org/show_bug.cgi?id=165231

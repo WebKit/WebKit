@@ -37,7 +37,7 @@ import Builder from '../Builder.js';
             .End()
 
             .Function("set_tbl_null", { params: [], ret: "void" })
-                .RefNull()
+                .RefNull("externref")
                 .Call(0)
             .End()
           .End().WebAssembly().get()), { imp: { tbl }});
@@ -103,7 +103,7 @@ import Builder from '../Builder.js';
             .End()
 
             .Function("set_tbl_null", { params: [], ret: "void" })
-                .RefNull()
+                .RefNull("externref")
                 .Call(0)
             .End()
           .End().WebAssembly().get()), { imp: { tbl: new WebAssembly.Table({initial:2, element:"externref"}) }});
@@ -142,7 +142,7 @@ import Builder from '../Builder.js';
             .End()
 
             .Function("set_tbl_null", { params: [], ret: "void" })
-                .RefNull()
+                .RefNull("externref")
                 .Call(0)
             .End()
           .End().WebAssembly().get()), { imp: { tbl: $1.exports.tbl }});

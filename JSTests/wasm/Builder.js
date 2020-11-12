@@ -307,6 +307,9 @@ const _checkImms = (op, imms, expectedImms, ret) => {
         case "target_table": break; // improve checking https://bugs.webkit.org/show_bug.cgi?id=163421
         case "reserved": break; // improve checking https://bugs.webkit.org/show_bug.cgi?id=163421
         case "table_index": break; // improve checking https://bugs.webkit.org/show_bug.cgi?id=163421
+        case "reftype":
+            assert.truthy(WASM.isValidRefType(imms[idx]), `Invalid ref type on ${op}: "${imms[idx]}"`);
+            break;
         default: throw new Error(`Implementation problem: unhandled immediate "${expect.name}" on "${op}"`);
         }
     }
@@ -542,7 +545,7 @@ export default class Builder {
                             return _errorHandlingProxyFor(globalBuilder);
                         },
                         RefNull: (type, mutability) => {
-                            s.data.push({ type, op: "ref.null", mutability: _normalizeMutability(mutability) });
+                            s.data.push({ type, op: "ref.null", mutability: _normalizeMutability(mutability), reftype: type});
                             return _errorHandlingProxyFor(globalBuilder);
                         }
                     };

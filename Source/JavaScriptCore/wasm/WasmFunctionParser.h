@@ -493,7 +493,9 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
 
     case RefNull: {
         WASM_PARSER_FAIL_IF(!Options::useWebAssemblyReferences(), "references are not enabled");
-        m_expressionStack.constructAndAppend(Funcref, m_context.addConstant(Funcref, JSValue::encode(jsNull())));
+        Type typeOfNull;
+        WASM_PARSER_FAIL_IF(!parseRefType(typeOfNull), "ref.null type must be a reference type");
+        m_expressionStack.constructAndAppend(typeOfNull, m_context.addConstant(typeOfNull, JSValue::encode(jsNull())));
         return { };
     }
 

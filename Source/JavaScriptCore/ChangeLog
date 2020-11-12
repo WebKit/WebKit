@@ -1,3 +1,23 @@
+2020-11-12  Dmitry Bezhetskov  <dbezhetskov@igalia.com>
+
+        [WASM-References] Support imm for ref.null
+        https://bugs.webkit.org/show_bug.cgi?id=218744
+
+        Reviewed by Yusuke Suzuki.
+        
+        Updated ref.null according to the ref-types spec:
+        https://github.com/WebAssembly/reference-types/.
+
+        * wasm/WasmFormat.h:
+        (JSC::Wasm::isRefType):
+        * wasm/WasmFunctionParser.h:
+        (JSC::Wasm::FunctionParser<Context>::parseExpression):
+        * wasm/WasmParser.h:
+        (JSC::Wasm::Parser<SuccessType>::parseRefType):
+        * wasm/WasmSectionParser.cpp:
+        (JSC::Wasm::SectionParser::parseInitExpr):
+        * wasm/wasm.json:
+
 2020-11-11  John Wilander  <wilander@apple.com>
 
         PCM: Change from ad-click-attribution to private-click-measurement (in all forms, including .well-known URL)

@@ -41,6 +41,8 @@ const _valueTypeSet = new Set(description.value_type);
 export const isValidValueType = v => _valueTypeSet.has(v);
 const _blockTypeSet = new Set(description.block_type);
 export const isValidBlockType = v => _blockTypeSet.has(v);
+const _refTypeSet = new Set(description.ref_type);
+export const isValidRefType = v => _refTypeSet.has(v);
 export const externalKindValue = _mapValues(description.external_kind);
 export const sections = Object.keys(description.section);
 export const sectionEncodingType = description.section[sections[0]].type;

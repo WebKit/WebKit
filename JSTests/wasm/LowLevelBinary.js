@@ -202,6 +202,11 @@ export default class LowLevelBinary {
             throw new Error(`Invalid block type ${v}`);
         this.varint7(WASM.typeValue[v]);
     }
+    ref_type(v) {
+        if (!WASM.isValidRefType(v))
+            throw new Error(`Invalid elem type ${v}`);
+        this.varint7(WASM.typeValue[v]);
+    }
     string(str) {
         let patch = this.newPatchable("varuint32");
         for (const char of str) {

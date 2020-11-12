@@ -17,7 +17,7 @@ const $1 = new WebAssembly.Instance(new WebAssembly.Module((new Builder())
         .End()
 
         .Function("i", { params: [], ret: "externref" })
-            .RefNull()
+            .RefNull("externref")
             .Call(0)
         .End()
 
@@ -27,7 +27,7 @@ const $1 = new WebAssembly.Instance(new WebAssembly.Module((new Builder())
         .End()
 
         .Function("k", { params: [], ret: "i32" })
-            .RefNull()
+            .RefNull("externref")
             .RefIsNull()
         .End()
       .End().WebAssembly().get()));
@@ -62,12 +62,12 @@ const $2 = new WebAssembly.Instance(new WebAssembly.Module((new Builder())
         .End()
 
         .Function("call_h_null", { params: [], ret: "externref" })
-          .RefNull()
+          .RefNull("externref")
           .Call(0)
         .End()
 
         .Function("call_j_null", { params: [], ret: "i32" })
-          .RefNull()
+          .RefNull("externref")
           .Call(1)
         .End()
 
@@ -86,7 +86,7 @@ const $2 = new WebAssembly.Instance(new WebAssembly.Module((new Builder())
         .End()
 
         .Function("call_ident_null", { params: [], ret: "externref" })
-          .RefNull()
+          .RefNull("externref")
           .Call(2)
         .End()
 

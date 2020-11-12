@@ -33,7 +33,7 @@ const $1 = new WebAssembly.Instance(new WebAssembly.Module((new Builder())
         .End()
 
         .Function("set_tbl_null", { params: [], ret: "void" })
-            .RefNull()
+            .RefNull("externref")
             .Call(0)
         .End()
       .End().WebAssembly().get()));
