@@ -1,3 +1,15 @@
+2020-11-11  Sam Weinig  <weinig@apple.com>
+
+        Move more WebKitLegacy preferences bound to Settings to WebPreferences.yaml
+        https://bugs.webkit.org/show_bug.cgi?id=218826
+
+        Reviewed by Tim Horton.
+
+        * Scripts/Preferences/WebPreferences.yaml:
+        Move AcceleratedCompositingForFixedPositionEnabled, ForceWebGLUsesLowPower, 
+        RubberBandingForSubScrollableRegionsEnabled, ShrinksStandaloneImagesToFit and
+        VisualViewportEnabled to WebPreferences.yaml
+
 2020-11-11  John Wilander  <wilander@apple.com>
 
         PCM: Change from ad-click-attribution to private-click-measurement (in all forms, including .well-known URL)

@@ -882,7 +882,6 @@ static void resetWebPreferencesToConsistentValues(WebPreferences *preferences)
     [preferences setSansSerifFontFamily:@"Helvetica"];
     [preferences setSelectionAcrossShadowBoundariesEnabled:YES];
     [preferences setSerifFontFamily:@"Times"];
-    [preferences setShrinksStandaloneImagesToFit:YES];
     [preferences setSourceBufferChangeTypeEnabled:YES];
     [preferences setStandardFontFamily:@"Times"];
     [preferences setSubpixelAntialiasedLayerTextEnabled:NO];

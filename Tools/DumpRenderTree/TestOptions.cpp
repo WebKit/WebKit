@@ -99,6 +99,7 @@ const TestFeatures& TestOptions::defaults()
             { "RequestIdleCallbackEnabled", false },
             { "ResizeObserverEnabled", false },
             { "SelectionAcrossShadowBoundariesEnabled", true },
+            { "ShrinksStandaloneImagesToFit", true },
             { "SpatialNavigationEnabled", false },
             { "TabsToLinks", false },
             { "TelephoneNumberParsingEnabled", false },

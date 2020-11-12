@@ -55,6 +55,18 @@ AcceleratedCompositingEnabled:
     WebCore:
       default: true
 
+AcceleratedCompositingForFixedPositionEnabled:
+  type: bool
+  defaultValue:
+    WebKitLegacy:
+      default: true
+    WebKit:
+      PLATFORM(IOS_FAMILY): true
+      default: false
+    WebCore:
+      PLATFORM(IOS_FAMILY): true
+      default: false
+
 AggressiveTileRetentionEnabled:
   type: bool
   defaultValue:
@@ -736,6 +748,16 @@ ForceUpdateScrollbarsOnMainThreadForPerformanceTesting:
   defaultValue:
     WebKitLegacy:
       default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
+ForceWebGLUsesLowPower:
+  type: bool
+  defaultValue:
+    WebKitLegacy:
+      default: true
     WebKit:
       default: false
     WebCore:
@@ -1680,6 +1702,17 @@ RequiresUserGestureToLoadVideo:
       "PLATFORM(IOS_FAMILY)": true
       default: false
 
+RubberBandingForSubScrollableRegionsEnabled:
+  type: bool
+  condition: ENABLE(RUBBER_BANDING)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: true
+    WebCore:
+      default: true
+
 SafeBrowsingEnabled:
   type: bool
   webcoreBinding: none
@@ -1941,6 +1974,16 @@ ShowsURLsInToolTipsEnabled:
       default: false
     WebCore:
       default: false
+
+ShrinksStandaloneImagesToFit:
+  type: bool
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: true
+    WebCore:
+      default: true
 
 # FIXME: This is handled via WebView SPI rather than WebPreferences for WebKitLegacy. We should change the SPI to lookup the WebPreferences value instead.
 SmartInsertDeleteEnabled:
@@ -2222,6 +2265,18 @@ ViewportFitEnabled:
       default: true
     WebCore:
       default: false
+
+VisualViewportEnabled:
+  type: bool
+  webcoreOnChange: setNeedsRecalcStyleInAllFrames
+  defaultValue:
+    WebKitLegacy:
+      PLATFORM(IOS_FAMILY): false
+      default: true
+    WebKit:
+      default: true
+    WebCore:
+      default: true
 
 WantsBalancedSetDefersLoadingBehavior:
   type: bool

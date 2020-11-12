@@ -1,3 +1,16 @@
+2020-11-11  Sam Weinig  <weinig@apple.com>
+
+        Move more WebKitLegacy preferences bound to Settings to WebPreferences.yaml
+        https://bugs.webkit.org/show_bug.cgi?id=218826
+
+        Reviewed by Tim Horton.
+
+        * DumpRenderTree/TestOptions.cpp:
+        (WTR::TestOptions::defaults):
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetWebPreferencesToConsistentValues):
+        Switch to using TestOptions for ShrinksStandaloneImagesToFit now that it is supported.
+
 2020-11-11  John Wilander  <wilander@apple.com>
 
         PCM: Change from ad-click-attribution to private-click-measurement (in all forms, including .well-known URL)

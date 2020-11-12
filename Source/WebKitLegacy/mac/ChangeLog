@@ -1,3 +1,22 @@
+2020-11-11  Sam Weinig  <weinig@apple.com>
+
+        Move more WebKitLegacy preferences bound to Settings to WebPreferences.yaml
+        https://bugs.webkit.org/show_bug.cgi?id=218826
+
+        Reviewed by Tim Horton.
+
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        Remove manual defaults for ShrinksStandaloneImagesToFit and ForceWebGLUsesLowPower
+        now they are generated.
+
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):
+        Remove manual setting of AcceleratedCompositingForFixedPositionEnabled, ForceWebGLUsesLowPower, 
+        RubberBandingForSubScrollableRegionsEnabled, ShrinksStandaloneImagesToFit and
+        VisualViewportEnabled now that they are generated.
+
+
 2020-11-11  John Wilander  <wilander@apple.com>
 
         PCM: Change from ad-click-attribution to private-click-measurement (in all forms, including .well-known URL)

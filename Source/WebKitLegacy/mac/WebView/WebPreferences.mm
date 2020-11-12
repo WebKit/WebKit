@@ -394,14 +394,12 @@ public:
 
         @NO, WebKitUserStyleSheetEnabledPreferenceKey,
         @"", WebKitUserStyleSheetLocationPreferenceKey,
-        @NO, WebKitShrinksStandaloneImagesToFitPreferenceKey,
         @YES, WebKitAllowAnimatedImagesPreferenceKey,
         @YES, WebKitAllowAnimatedImageLoopingPreferenceKey,
         @"1800", WebKitBackForwardCacheExpirationIntervalKey,
         @NO, WebKitPrivateBrowsingEnabledPreferenceKey,
         @(cacheModelForMainBundle([[NSBundle mainBundle] bundleIdentifier])), WebKitCacheModelPreferenceKey,
         @YES, WebKitZoomsTextOnlyPreferenceKey,
-        @YES, WebKitForceWebGLUsesLowPowerPreferenceKey,
         @NO, WebKitUsePreHTML5ParserQuirksKey,
         [NSNumber numberWithLongLong:ApplicationCacheStorage::noQuota()], WebKitApplicationCacheTotalQuota,
 

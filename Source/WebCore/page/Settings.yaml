@@ -29,13 +29,6 @@ AcceleratedCompositedAnimationsEnabled:
     WebCore:
       default: true
 
-AcceleratedCompositingForFixedPositionEnabled:
-  type: bool
-  defaultValue:
-    WebCore:
-      PLATFORM(IOS_FAMILY): true
-      default: false
-
 AcceleratedFiltersEnabled:
   type: bool
   defaultValue:
@@ -230,12 +223,6 @@ ForceCompositingMode:
 ForcePendingWebGLPolicy:
   type: bool
   webcoreGetter: isForcePendingWebGLPolicy
-  defaultValue:
-    WebCore:
-      default: false
-
-ForceWebGLUsesLowPower:
-  type: bool
   defaultValue:
     WebCore:
       default: false
@@ -536,13 +523,6 @@ RepaintOutsideLayoutEnabled:
     WebCore:
       default: false
 
-RubberBandingForSubScrollableRegionsEnabled:
-  type: bool
-  condition: ENABLE(RUBBER_BANDING)
-  defaultValue:
-    WebCore:
-      default: true
-
 ScrollingCoordinatorEnabled:
   type: bool
   defaultValue:
@@ -601,12 +581,6 @@ ShouldInjectUserScriptsInInitialEmptyDocument:
   defaultValue:
     WebCore:
       default: false
-
-ShrinksStandaloneImagesToFit:
-  type: bool
-  defaultValue:
-    WebCore:
-      default: true
 
 StorageAccessAPIPerPageScopeEnabled:
   type: bool
@@ -748,13 +722,6 @@ VideoPlaybackRequiresUserGesture:
     WebCore:
       PLATFORM(IOS_FAMILY): true
       default: false
-
-VisualViewportEnabled:
-  type: bool
-  webcoreOnChange: setNeedsRecalcStyleInAllFrames
-  defaultValue:
-    WebCore:
-      default: true
 
 WebGLErrorsToConsoleEnabled:
   type: bool
