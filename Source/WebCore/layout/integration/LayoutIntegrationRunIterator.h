@@ -39,7 +39,6 @@ class RenderText;
 namespace LayoutIntegration {
 
 class LineIterator;
-class LineRunIterator;
 class TextRunIterator;
 
 struct EndIterator { };
@@ -84,7 +83,6 @@ public:
 
 protected:
     friend class RunIterator;
-    friend class LineRunIterator;
     friend class TextRunIterator;
 
     // To help with debugging.
@@ -137,10 +135,15 @@ public:
 
     bool atEnd() const;
 
-    LineRunIterator nextOnLine() const;
-    LineRunIterator previousOnLine() const;
-    LineRunIterator nextOnLineIgnoringLineBreak() const;
-    LineRunIterator previousOnLineIgnoringLineBreak() const;
+    RunIterator nextOnLine() const;
+    RunIterator previousOnLine() const;
+    RunIterator nextOnLineIgnoringLineBreak() const;
+    RunIterator previousOnLineIgnoringLineBreak() const;
+
+    RunIterator& traverseNextOnLine();
+    RunIterator& traversePreviousOnLine();
+    RunIterator& traverseNextOnLineIgnoringLineBreak();
+    RunIterator& traversePreviousOnLineIgnoringLineBreak();
 
     LineIterator line() const;
 
@@ -167,21 +170,12 @@ public:
     TextRunIterator nextTextRunInTextOrder() const { return TextRunIterator(*this).traverseNextTextRunInTextOrder(); }
 
 private:
+    RunIterator& traverseNextOnLine() = delete;
+    RunIterator& traversePreviousOnLine() = delete;
+    RunIterator& traverseNextOnLineIgnoringLineBreak() = delete;
+    RunIterator& traversePreviousOnLineIgnoringLineBreak() = delete;
+
     const PathTextRun& get() const { return downcast<PathTextRun>(m_run); }
-};
-
-class LineRunIterator : public RunIterator {
-public:
-    LineRunIterator() { }
-    LineRunIterator(const RunIterator&);
-    LineRunIterator(PathRun::PathVariant&&);
-
-    LineRunIterator& operator++() { return traverseNextOnLine(); }
-
-    LineRunIterator& traverseNextOnLine();
-    LineRunIterator& traversePreviousOnLine();
-    LineRunIterator& traverseNextOnLineIgnoringLineBreak();
-    LineRunIterator& traversePreviousOnLineIgnoringLineBreak();
 };
 
 class TextRunRange {
@@ -203,7 +197,6 @@ TextRunIterator firstTextRunInTextOrderFor(const RenderText&);
 TextRunRange textRunsFor(const RenderText&);
 RunIterator runFor(const RenderLineBreak&);
 RunIterator runFor(const RenderBox&);
-LineRunIterator lineRun(const RunIterator&);
 
 // -----------------------------------------------
 

@@ -81,28 +81,28 @@ bool LineIterator::operator==(const LineIterator& other) const
     });
 }
 
-LineRunIterator LineIterator::firstRun() const
+RunIterator LineIterator::firstRun() const
 {
     return WTF::switchOn(m_line.m_pathVariant, [](auto& path) -> RunIterator {
         return { path.firstRun() };
     });
 }
 
-LineRunIterator LineIterator::lastRun() const
+RunIterator LineIterator::lastRun() const
 {
     return WTF::switchOn(m_line.m_pathVariant, [](auto& path) -> RunIterator {
         return { path.lastRun() };
     });
 }
 
-LineRunIterator LineIterator::logicalStartRunWithNode() const
+RunIterator LineIterator::logicalStartRunWithNode() const
 {
     return WTF::switchOn(m_line.m_pathVariant, [](auto& path) -> RunIterator {
         return { path.logicalStartRunWithNode() };
     });
 }
 
-LineRunIterator LineIterator::logicalEndRunWithNode() const
+RunIterator LineIterator::logicalEndRunWithNode() const
 {
     return WTF::switchOn(m_line.m_pathVariant, [](auto& path) -> RunIterator {
         return { path.logicalEndRunWithNode() };
@@ -129,14 +129,14 @@ LineIterator lastLineFor(const RenderBlockFlow& flow)
     return { LineIteratorLegacyPath { flow.lastRootBox() } };
 }
 
-LineRunIterator LineIterator::closestRunForPoint(const IntPoint& pointInContents, bool editableOnly)
+RunIterator LineIterator::closestRunForPoint(const IntPoint& pointInContents, bool editableOnly)
 {
     if (atEnd())
         return { };
     return closestRunForLogicalLeftPosition(m_line.isHorizontal() ? pointInContents.x() : pointInContents.y(), editableOnly);
 }
 
-LineRunIterator LineIterator::closestRunForLogicalLeftPosition(int leftPosition, bool editableOnly)
+RunIterator LineIterator::closestRunForLogicalLeftPosition(int leftPosition, bool editableOnly)
 {
     auto isEditable = [&](auto run)
     {

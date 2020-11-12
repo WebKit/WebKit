@@ -790,7 +790,7 @@ static VisiblePosition startPositionForLine(const VisiblePosition& c, LineEndpoi
     }
 
     Node* startNode;
-    LayoutIntegration::LineRunIterator startRun;
+    LayoutIntegration::RunIterator startRun;
     if (mode == UseLogicalOrdering) {
         startRun = line.logicalStartRunWithNode();
         if (!startRun)
@@ -865,7 +865,7 @@ static VisiblePosition endPositionForLine(const VisiblePosition& c, LineEndpoint
     }
 
     Node* endNode;
-    LayoutIntegration::LineRunIterator endRun;
+    LayoutIntegration::RunIterator endRun;
     if (mode == UseLogicalOrdering) {
         endRun = line.logicalEndRunWithNode();
         if (!endRun)

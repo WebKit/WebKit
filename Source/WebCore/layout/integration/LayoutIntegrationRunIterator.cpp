@@ -64,24 +64,24 @@ void RunIterator::setAtEnd()
     });
 }
 
-LineRunIterator RunIterator::nextOnLine() const
+RunIterator RunIterator::nextOnLine() const
 {
-    return LineRunIterator(*this).traverseNextOnLine();
+    return RunIterator(*this).traverseNextOnLine();
 }
 
-LineRunIterator RunIterator::previousOnLine() const
+RunIterator RunIterator::previousOnLine() const
 {
-    return LineRunIterator(*this).traversePreviousOnLine();
+    return RunIterator(*this).traversePreviousOnLine();
 }
 
-LineRunIterator RunIterator::nextOnLineIgnoringLineBreak() const
+RunIterator RunIterator::nextOnLineIgnoringLineBreak() const
 {
-    return LineRunIterator(*this).traverseNextOnLineIgnoringLineBreak();
+    return RunIterator(*this).traverseNextOnLineIgnoringLineBreak();
 }
 
-LineRunIterator RunIterator::previousOnLineIgnoringLineBreak() const
+RunIterator RunIterator::previousOnLineIgnoringLineBreak() const
 {
-    return LineRunIterator(*this).traversePreviousOnLineIgnoringLineBreak();
+    return RunIterator(*this).traversePreviousOnLineIgnoringLineBreak();
 }
 
 LineIterator RunIterator::line() const
@@ -118,17 +118,7 @@ TextRunIterator& TextRunIterator::traverseNextTextRunInTextOrder()
     return *this;
 }
 
-LineRunIterator::LineRunIterator(PathRun::PathVariant&& pathVariant)
-    : RunIterator(WTFMove(pathVariant))
-{
-}
-
-LineRunIterator::LineRunIterator(const RunIterator& runIterator)
-    : RunIterator(runIterator)
-{
-}
-
-LineRunIterator& LineRunIterator::traverseNextOnLine()
+RunIterator& RunIterator::traverseNextOnLine()
 {
     WTF::switchOn(m_run.m_pathVariant, [](auto& path) {
         path.traverseNextOnLine();
@@ -136,7 +126,7 @@ LineRunIterator& LineRunIterator::traverseNextOnLine()
     return *this;
 }
 
-LineRunIterator& LineRunIterator::traversePreviousOnLine()
+RunIterator& RunIterator::traversePreviousOnLine()
 {
     WTF::switchOn(m_run.m_pathVariant, [](auto& path) {
         path.traversePreviousOnLine();
@@ -144,7 +134,7 @@ LineRunIterator& LineRunIterator::traversePreviousOnLine()
     return *this;
 }
 
-LineRunIterator& LineRunIterator::traverseNextOnLineIgnoringLineBreak()
+RunIterator& RunIterator::traverseNextOnLineIgnoringLineBreak()
 {
     traverseNextOnLine();
     if (!atEnd() && m_run.isLineBreak())
@@ -152,7 +142,7 @@ LineRunIterator& LineRunIterator::traverseNextOnLineIgnoringLineBreak()
     return *this;
 }
 
-LineRunIterator& LineRunIterator::traversePreviousOnLineIgnoringLineBreak()
+RunIterator& RunIterator::traversePreviousOnLineIgnoringLineBreak()
 {
     traversePreviousOnLine();
     if (!atEnd() && m_run.isLineBreak())
@@ -205,11 +195,6 @@ RunIterator runFor(const RenderBox& renderer)
         return lineLayout->runFor(renderer);
 #endif
     return { RunIteratorLegacyPath(renderer.inlineBoxWrapper()) };
-}
-
-LineRunIterator lineRun(const RunIterator& runIterator)
-{
-    return LineRunIterator(runIterator);
 }
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
