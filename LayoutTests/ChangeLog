@@ -1,3 +1,14 @@
+2020-11-12  Sergio Villar Senin  <svillar@igalia.com>
+
+        Crash in RenderBox::overrideContainingBlockContentHeight()
+        https://bugs.webkit.org/show_bug.cgi?id=218504
+        <rdar://problem/70989103>
+
+        Reviewed by Zalan Bujtas.
+
+        * fast/flexbox/flex-column-vertical-rl-dynamic-child-crash-expected.txt: Added.
+        * fast/flexbox/flex-column-vertical-rl-dynamic-child-crash.html: Added.
+
 2020-11-12  Zalan Bujtas  <zalan@apple.com>
 
         Show legacy line layout visual coverage instead of "simple line" layout.

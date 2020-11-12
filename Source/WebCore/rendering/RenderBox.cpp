@@ -1178,7 +1178,7 @@ bool RenderBox::hasOverridingContainingBlockContentHeight() const
 
     return cb->style().isHorizontalWritingMode()
         ? gOverridingContainingBlockContentLogicalHeightMap && gOverridingContainingBlockContentLogicalHeightMap->contains(this)
-        : gOverridingContainingBlockContentLogicalHeightMap && gOverridingContainingBlockContentLogicalHeightMap->contains(this);
+        : gOverridingContainingBlockContentLogicalWidthMap && gOverridingContainingBlockContentLogicalWidthMap->contains(this);
 }
 
 Optional<LayoutUnit> RenderBox::overridingContainingBlockContentLogicalWidth() const
