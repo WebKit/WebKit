@@ -45,7 +45,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(ImageBufferShareableBitmapBackend);
 
 std::unique_ptr<ImageBufferShareableBitmapBackend> ImageBufferShareableBitmapBackend::create(const FloatSize& size, float resolutionScale, ColorSpace colorSpace, PixelFormat pixelFormat, const HostWindow*)
 {
-    ASSERT(pixelFormat == PixelFormat::RGBA8);
+    ASSERT(pixelFormat == PixelFormat::BGRA8);
 
     IntSize backendSize = calculateBackendSize(size, resolutionScale);
     if (backendSize.isEmpty())

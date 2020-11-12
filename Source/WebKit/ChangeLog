@@ -1,3 +1,14 @@
+2020-11-12  Tim Horton  <timothy_horton@apple.com>
+
+        canvas-createPattern-video-modify-crash-log.txt asserts on debug GPUProcess bots
+        https://bugs.webkit.org/show_bug.cgi?id=218872
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/GPU/graphics/ImageBufferShareableBitmapBackend.cpp:
+        (WebKit::ImageBufferShareableBitmapBackend::create):
+        This assertion is wrong; make it the same as the one in ImageBufferCGBitmapBackend.
+
 2020-11-12  Said Abou-Hallawa  <said@apple.com>
 
         [GPU Process] GraphicsContext::drawPattern() should take a NativeImage argument
