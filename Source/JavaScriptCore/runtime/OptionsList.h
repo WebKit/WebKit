@@ -493,6 +493,7 @@ JS_EXPORT_PRIVATE bool canUseJITCage();
     v(Bool, useWebAssemblyMultiValues, true, Normal, "Allow types from the wasm mulit-values spec.") \
     v(Bool, useWeakRefs, true, Normal, "Expose the WeakRef constructor.") \
     v(Bool, useIntlDateTimeFormatDayPeriod, true, Normal, "Expose the Intl.DateTimeFormat dayPeriod feature.") \
+    v(Bool, useIntlDateTimeFormatRangeToParts, true, Normal, "Expose the Intl.DateTimeFormat#formatRangeToParts feature.") \
     v(Bool, useAtMethod, false, Normal, "Expose the at() method on Array and %TypedArray%.") \
     v(Bool, useSharedArrayBuffer, false, Normal, nullptr) \
     v(Bool, useArrayAllocationProfiling, true, Normal, "If true, we will use our normal array allocation profiling. If false, the allocation profile will always claim to be undecided.") \

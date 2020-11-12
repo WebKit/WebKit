@@ -813,14 +813,13 @@ runtime/IntlCache.cpp
 runtime/IntlCollator.cpp
 runtime/IntlCollatorConstructor.cpp
 runtime/IntlCollatorPrototype.cpp
-runtime/IntlDateTimeFormat.cpp
+runtime/IntlDateTimeFormat.cpp @no-unify // Confine U_HIDE_DRAFT_API's effect to this file.
 runtime/IntlDateTimeFormatConstructor.cpp
 runtime/IntlDateTimeFormatPrototype.cpp
 runtime/IntlDisplayNames.cpp
 runtime/IntlDisplayNamesConstructor.cpp
 runtime/IntlDisplayNamesPrototype.cpp
-// Confine U_HIDE_DRAFT_API's effect in this file.
-runtime/IntlListFormat.cpp @no-unify
+runtime/IntlListFormat.cpp @no-unify // Confine U_HIDE_DRAFT_API's effect in this file.
 runtime/IntlListFormatConstructor.cpp
 runtime/IntlListFormatPrototype.cpp
 runtime/IntlLocale.cpp

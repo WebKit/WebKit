@@ -1,5 +1,49 @@
 2020-11-11  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Implement Intl.DateTimeFormat.formatRangeToParts
+        https://bugs.webkit.org/show_bug.cgi?id=213822
+        <rdar://problem/69328711>
+
+        Reviewed by Ross Kirsling.
+
+        This patch implements Intl.DateTimeFormat.formatRangeToParts. It is already stage-4 (included in the spec).
+        The inputs are date interval, and this function generates array of parts of formatted string of date interval.
+        Currently, required ICU APIs are draft status. So, for now, we track ABI changes, and use APIs with careful version checks.
+
+        However, currently, OpenSource macOS WebKit is built with specific ICU header (ICU 62 headers). So for now, we disable it
+        in OpenSource macOS WebKit build. But we enable it for Apple Internal SDK WebKit build. We can enable it if we include
+        multiple ICU header sets and select appropriate one against the linked ICU version. In the other platforms, they are using
+        corresponding ICU headers so that we can just enable it.
+
+        There are two interesting implementation topics.
+
+        1. From ICU 67, the signature of udtitvfmt_formatToResult is changed. We need to switch the implementation with fine grained ICU version checks.
+        2. udtitvfmt_formatToResult does not have an ability to configure gregorian calendar change date: before that date, the calendar is julian.
+           In ECMAScript spec, we need to ignore this gregorian calendar change date, and we should handle all gregorian calendar dates as is even if
+           the dates are older than gregorian calendar change date. However, since udtitvfmt_formatToResult does not offer the above ability,
+           ICU automatically switches the calendar between gregorian and julian. To fix this issue, ICU 67 introduced udtitvfmt_formatCalendarToResult,
+           which can take an explicit calendar for each input date so that we configure gregorian calendar change date. But this only exists after ICU 67.
+           In the implementations using ICU 64-66, we just use udtitvfmt_formatToResult.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * runtime/IntlDateTimeFormat.cpp:
+        (JSC::UDateIntervalFormatDeleter::operator()):
+        (JSC::IntlDateTimeFormat::formatToParts const):
+        (JSC::definitelyAfterGregorianCalendarChangeDate):
+        (JSC::formattedValueFromDateRange):
+        (JSC::IntlDateTimeFormat::formatRange):
+        (JSC::IntlDateTimeFormat::formatRangeToParts):
+        * runtime/IntlDateTimeFormat.h:
+        * runtime/IntlDateTimeFormatPrototype.cpp:
+        (JSC::IntlDateTimeFormatPrototype::create):
+        (JSC::IntlDateTimeFormatPrototype::finishCreation):
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/IntlDateTimeFormatPrototype.h:
+        * runtime/OptionsList.h:
+
+2020-11-11  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] wasm fault trampoline should be C code since it is tagged as CFunctionPtr
         https://bugs.webkit.org/show_bug.cgi?id=218781
 

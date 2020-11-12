@@ -31,10 +31,13 @@ shouldThrow(() => {
     fmt0.formatRange();
 }, `TypeError: startDate or endDate is undefined`);
 
+shouldThrow(() => {
+    fmt0.formatRange(new Date(Date.UTC(2008, 0, 20, 10, 0, 0)), new Date(Date.UTC(2007, 0, 10, 10, 0, 0)));
+}, `RangeError: startDate is larger than endDate`);
 
 function test() {
-    let range = " – "; // This is not usual space unfortuantely in older ICU versions.
-    if ($vm.icuVersion() >= 65)
+    let range = " – ";
+    if ($vm.icuVersion() >= 67)
         range = " – ";
 
     let date1 = new Date(Date.UTC(2007, 0, 10, 10, 0, 0));
@@ -52,6 +55,7 @@ function test() {
             timeZone: 'America/Los_Angeles',
         });
         shouldBe(fmt1.format(date1), `1/10/07, 2:00 AM`);
+        shouldBe(fmt1.formatRange(date1, date1), `1/10/07, 2:00 AM`);
         shouldBe(fmt1.formatRange(date1, date2), `1/10/07, 2:00${range}3:00 AM`);
         shouldBe(fmt1.formatRange(date1, date3), `1/10/07, 2:00 AM${range}1/20/07, 2:00 AM`);
     }
@@ -64,6 +68,7 @@ function test() {
             timeZone: 'America/Los_Angeles',
         });
         shouldBe(fmt1.format(date1), `1/10/07`);
+        shouldBe(fmt1.formatRange(date1, date1), `1/10/07`);
         shouldBe(fmt1.formatRange(date1, date2), `1/10/07`);
         shouldBe(fmt1.formatRange(date1, date3), `1/10/07${range}1/20/07`);
     }
@@ -75,6 +80,7 @@ function test() {
             timeZone: 'America/Los_Angeles',
         });
         shouldBe(fmt1.format(date1), `2007`);
+        shouldBe(fmt1.formatRange(date1, date1), `2007`);
         shouldBe(fmt1.formatRange(date1, date2), `2007`);
         shouldBe(fmt1.formatRange(date1, date4), `2007${range}2008`);
     }
@@ -89,6 +95,7 @@ function test() {
             timeZone: 'UTC',
         });
         shouldBe(fmt1.format(date1), `1/10/07, 10:00 AM`);
+        shouldBe(fmt1.formatRange(date1, date1), `1/10/07, 10:00 AM`);
         shouldBe(fmt1.formatRange(date1, date2), `1/10/07, 10:00${range}11:00 AM`);
         shouldBe(fmt1.formatRange(date1, date3), `1/10/07, 10:00 AM${range}1/20/07, 10:00 AM`);
     }
@@ -101,6 +108,7 @@ function test() {
             timeZone: 'America/Los_Angeles',
         });
         shouldBe(fmt2.format(date1), `Jan 10, 2007`);
+        shouldBe(fmt2.formatRange(date1, date1), `Jan 10, 2007`);
         shouldBe(fmt2.formatRange(date1, date2), `Jan 10, 2007`);
         shouldBe(fmt2.formatRange(date1, date3), `Jan 10${range}20, 2007`);
     }
@@ -130,5 +138,5 @@ function test() {
     }
 }
 
-if ($vm.icuVersion() >= 64)
+if (Intl.DateTimeFormat.formatRange)
     test();

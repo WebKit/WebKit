@@ -1,3 +1,54 @@
+2020-11-11  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Implement Intl.DateTimeFormat.formatRangeToParts
+        https://bugs.webkit.org/show_bug.cgi?id=213822
+        <rdar://problem/69328711>
+
+        Reviewed by Ross Kirsling.
+
+        * stress/intl-datetimeformat-formatrange-relevant-extensions.js:
+        * stress/intl-datetimeformat-formatrange-should-not-handle-gregorian-change-date.js: Added.
+        (shouldBe):
+        (vm.icuHeaderVersion):
+        * stress/intl-datetimeformat-formatrange.js:
+        (shouldThrow):
+        (test):
+        * stress/intl-datetimeformat-formatrangetoparts-relevant-extensions-ja.js: Added.
+        (shouldBe):
+        (compareParts):
+        (shouldThrow):
+        (Intl.DateTimeFormat.formatRangeToParts.compareParts.fmt1.formatRangeToParts):
+        (Intl.DateTimeFormat.formatRangeToParts.compareParts.fmt2.formatRangeToParts):
+        (Intl.DateTimeFormat.formatRangeToParts.compareParts.fmt3.formatRangeToParts):
+        (Intl.DateTimeFormat.formatRangeToParts.compareParts.fmt4.formatRangeToParts):
+        (Intl.DateTimeFormat.formatRangeToParts.compareParts.fmt5.formatRangeToParts):
+        (Intl.DateTimeFormat.formatRangeToParts.vm.icuVersion):
+        (Intl.DateTimeFormat.formatRangeToParts.compareParts.fmt6.formatRangeToParts):
+        (Intl.DateTimeFormat.formatRangeToParts.compareParts.fmt7.formatRangeToParts):
+        (Intl.DateTimeFormat.formatRangeToParts.compareParts.fmt8.formatRangeToParts):
+        (Intl.DateTimeFormat.formatRangeToParts.compareParts.fmt9.formatRangeToParts):
+        (Intl.DateTimeFormat.formatRangeToParts.compareParts.fmt10.formatRangeToParts):
+        (Intl.DateTimeFormat.formatRangeToParts.compareParts.fmt11.formatRangeToParts):
+        (Intl.DateTimeFormat.formatRangeToParts.compareParts.fmt12.formatRangeToParts):
+        (Intl.DateTimeFormat.formatRangeToParts.compareParts.fmt13.formatRangeToParts):
+        (Intl.DateTimeFormat.formatRangeToParts.compareParts.fmt14.formatRangeToParts):
+        (Intl.DateTimeFormat.formatRangeToParts.compareParts.fmt15.formatRangeToParts):
+        (Intl.DateTimeFormat.formatRangeToParts.compareParts.fmt16.formatRangeToParts):
+        * stress/intl-datetimeformat-formatrangetoparts-relevant-extensions.js: Added.
+        (shouldBe):
+        (compareParts):
+        (shouldThrow):
+        * stress/intl-datetimeformat-formatrangetoparts-should-not-handle-gregorian-change-date.js: Added.
+        (shouldBe):
+        (compareParts):
+        (vm.icuHeaderVersion):
+        * stress/intl-datetimeformat-formatrangetoparts.js: Added.
+        (shouldBe):
+        (compareParts):
+        (shouldThrow):
+        * test262/config.yaml:
+        * test262/expectations.yaml: This failure is because of CLDR data inside ICU. ICU 67 will fix them.
+
 2020-11-10  Ross Kirsling  <ross.kirsling@sony.com>
 
         Align %TypedArray% behavior with recent spec adjustments

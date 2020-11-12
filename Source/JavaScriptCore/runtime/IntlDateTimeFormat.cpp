@@ -34,12 +34,32 @@
 #include "ObjectConstructor.h"
 #include <unicode/ucal.h>
 #include <unicode/uenum.h>
+#include <wtf/Range.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/unicode/icu/ICUHelpers.h>
 
+#if HAVE(ICU_U_DATE_INTERVAL_FORMAT_FORMAT_RANGE_TO_PARTS)
+#include <unicode/uformattedvalue.h>
+#ifdef U_HIDE_DRAFT_API
+#undef U_HIDE_DRAFT_API
+#endif
+#endif // HAVE(ICU_U_DATE_INTERVAL_FORMAT_FORMAT_RANGE_TO_PARTS)
+#include <unicode/udateintervalformat.h>
+#if HAVE(ICU_U_DATE_INTERVAL_FORMAT_FORMAT_RANGE_TO_PARTS)
+#define U_HIDE_DRAFT_API 1
+#endif // HAVE(ICU_U_DATE_INTERVAL_FORMAT_FORMAT_RANGE_TO_PARTS)
+
 namespace JSC {
 
-static const double minECMAScriptTime = -8.64E15;
+// We do not use ICUDeleter<udtitvfmt_close> because we do not want to include udateintervalformat.h in IntlDateTimeFormat.h.
+// udateintervalformat.h needs to be included with #undef U_HIDE_DRAFT_API, and we would like to minimize this effect in IntlDateTimeFormat.cpp.
+void UDateIntervalFormatDeleter::operator()(UDateIntervalFormat* formatter)
+{
+    if (formatter)
+        udtitvfmt_close(formatter);
+}
+
+static constexpr double minECMAScriptTime = -8.64E15;
 
 const ClassInfo IntlDateTimeFormat::s_info = { "Object", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(IntlDateTimeFormat) };
 
@@ -1248,7 +1268,7 @@ static ASCIILiteral partTypeString(UDateFormatField field)
 }
 
 // https://tc39.es/ecma402/#sec-formatdatetimetoparts
-JSValue IntlDateTimeFormat::formatToParts(JSGlobalObject* globalObject, double value) const
+JSValue IntlDateTimeFormat::formatToParts(JSGlobalObject* globalObject, double value, JSString* sourceType) const
 {
     ASSERT(m_dateFormat);
 
@@ -1289,6 +1309,8 @@ JSValue IntlDateTimeFormat::formatToParts(JSGlobalObject* globalObject, double v
             JSObject* part = constructEmptyObject(globalObject);
             part->putDirect(vm, vm.propertyNames->type, literalString);
             part->putDirect(vm, vm.propertyNames->value, value);
+            if (sourceType)
+                part->putDirect(vm, vm.propertyNames->source, sourceType);
             parts->push(globalObject, part);
             RETURN_IF_EXCEPTION(scope, { });
         }
@@ -1300,11 +1322,12 @@ JSValue IntlDateTimeFormat::formatToParts(JSGlobalObject* globalObject, double v
             JSObject* part = constructEmptyObject(globalObject);
             part->putDirect(vm, vm.propertyNames->type, type);
             part->putDirect(vm, vm.propertyNames->value, value);
+            if (sourceType)
+                part->putDirect(vm, vm.propertyNames->source, sourceType);
             parts->push(globalObject, part);
             RETURN_IF_EXCEPTION(scope, { });
         }
     }
-
 
     return parts;
 }
@@ -1357,6 +1380,71 @@ UDateIntervalFormat* IntlDateTimeFormat::createDateIntervalFormatIfNecessary(JSG
     return m_dateIntervalFormat.get();
 }
 
+#if HAVE(ICU_U_DATE_INTERVAL_FORMAT_FORMAT_RANGE_TO_PARTS)
+
+// If a date is after Oct 15, 1582, the configuration of gregorian calendar change date in UCalendar does not affect
+// on the formatted string. To ensure that it is after Oct 15 in all timezones, we add one day to gregorian calendar
+// change date in UTC, so that this check can conservatively answer whether the date is definitely after gregorian
+// calendar change date.
+static inline bool definitelyAfterGregorianCalendarChangeDate(double millisecondsFromEpoch)
+{
+    constexpr double gregorianCalendarReformDateInUTC = -12219292800000.0;
+    return millisecondsFromEpoch >= (gregorianCalendarReformDateInUTC + msPerDay);
+}
+
+static std::unique_ptr<UFormattedDateInterval, ICUDeleter<udtitvfmt_closeResult>> formattedValueFromDateRange(UDateIntervalFormat& dateIntervalFormat, UDateFormat& dateFormat, double startDate, double endDate, UErrorCode& status)
+{
+    auto result = std::unique_ptr<UFormattedDateInterval, ICUDeleter<udtitvfmt_closeResult>>(udtitvfmt_openResult(&status));
+    if (U_FAILURE(status))
+        return nullptr;
+
+    // After ICU 67, udtitvfmt_formatToResult's signature is changed.
+#if U_ICU_VERSION_MAJOR_NUM >= 67
+    // UFormattedDateInterval does not have a way to configure gregorian calendar change date while ECMAScript requires that
+    // gregorian calendar change should not have effect (we are setting ucal_setGregorianChange(cal, minECMAScriptTime, &status) explicitly).
+    // As a result, if the input date is older than gregorian calendar change date (Oct 15, 1582), the formatted string becomes
+    // julian calendar date.
+    // udtitvfmt_formatCalendarToResult API offers the way to set calendar to each date of the input, so that we can use UDateFormat's
+    // calendar which is already configured to meet ECMAScript's requirement (effectively clearing gregorian calendar change date).
+    //
+    // If we can ensure that startDate is after gregorian calendar change date, we can just use udtitvfmt_formatToResult since gregorian
+    // calendar change date does not affect on the formatted string.
+    //
+    // https://unicode-org.atlassian.net/browse/ICU-20705
+    if (definitelyAfterGregorianCalendarChangeDate(startDate))
+        udtitvfmt_formatToResult(&dateIntervalFormat, startDate, endDate, result.get(), &status);
+    else {
+        auto createCalendarForDate = [](const UCalendar* calendar, double date, UErrorCode& status) -> std::unique_ptr<UCalendar, ICUDeleter<ucal_close>> {
+            auto result = std::unique_ptr<UCalendar, ICUDeleter<ucal_close>>(ucal_clone(calendar, &status));
+            if (U_FAILURE(status))
+                return nullptr;
+            ucal_setMillis(result.get(), date, &status);
+            if (U_FAILURE(status))
+                return nullptr;
+            return result;
+        };
+
+        auto calendar = udat_getCalendar(&dateFormat);
+
+        auto startCalendar = createCalendarForDate(calendar, startDate, status);
+        if (U_FAILURE(status))
+            return nullptr;
+
+        auto endCalendar = createCalendarForDate(calendar, endDate, status);
+        if (U_FAILURE(status))
+            return nullptr;
+
+        udtitvfmt_formatCalendarToResult(&dateIntervalFormat, startCalendar.get(), endCalendar.get(), result.get(), &status);
+    }
+#else
+    UNUSED_PARAM(dateFormat);
+    udtitvfmt_formatToResult(&dateIntervalFormat, result.get(), startDate, endDate, &status);
+#endif
+    return result;
+}
+
+#endif // HAVE(ICU_U_DATE_INTERVAL_FORMAT_FORMAT_RANGE_TO_PARTS)
+
 JSValue IntlDateTimeFormat::formatRange(JSGlobalObject* globalObject, double startDate, double endDate)
 {
     ASSERT(m_dateFormat);
@@ -1375,6 +1463,36 @@ JSValue IntlDateTimeFormat::formatRange(JSGlobalObject* globalObject, double sta
     auto* dateIntervalFormat = createDateIntervalFormatIfNecessary(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
+#if HAVE(ICU_U_DATE_INTERVAL_FORMAT_FORMAT_RANGE_TO_PARTS)
+    // If the date is older than gregorian calendar change date, we need to explicitly pass configured UCalendar to
+    // udtitvfmt_formatCalendarToResult to generate a correct formatted string.
+    // The comment in formattedValueFromDateRange describes the details.
+    if (!definitelyAfterGregorianCalendarChangeDate(startDate)) {
+        UErrorCode status = U_ZERO_ERROR;
+        auto result = formattedValueFromDateRange(*dateIntervalFormat, *m_dateFormat, startDate, endDate, status);
+        if (U_FAILURE(status)) {
+            throwTypeError(globalObject, scope, "Failed to format date interval"_s);
+            return { };
+        }
+
+        // UFormattedValue is owned by UFormattedDateInterval. We do not need to close it.
+        auto formattedValue = udtitvfmt_resultAsValue(result.get(), &status);
+        if (U_FAILURE(status)) {
+            throwTypeError(globalObject, scope, "Failed to format date interval"_s);
+            return { };
+        }
+
+        int32_t formattedStringLength = 0;
+        const UChar* formattedStringPointer = ufmtval_getString(formattedValue, &formattedStringLength, &status);
+        if (U_FAILURE(status)) {
+            throwTypeError(globalObject, scope, "Failed to format date interval"_s);
+            return { };
+        }
+
+        return jsString(vm, String(formattedStringPointer, formattedStringLength));
+    }
+#endif
+
     Vector<UChar, 32> buffer;
     auto status = callBufferProducingFunction(udtitvfmt_format, dateIntervalFormat, startDate, endDate, buffer, nullptr);
     if (U_FAILURE(status)) {
@@ -1384,5 +1502,239 @@ JSValue IntlDateTimeFormat::formatRange(JSGlobalObject* globalObject, double sta
 
     return jsString(vm, String(buffer));
 }
+
+JSValue IntlDateTimeFormat::formatRangeToParts(JSGlobalObject* globalObject, double startDate, double endDate)
+{
+    ASSERT(m_dateFormat);
+
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+#if HAVE(ICU_U_DATE_INTERVAL_FORMAT_FORMAT_RANGE_TO_PARTS)
+    // http://tc39.es/proposal-intl-DateTimeFormat-formatRange/#sec-partitiondatetimerangepattern
+    startDate = timeClip(startDate);
+    endDate = timeClip(endDate);
+    if (std::isnan(startDate) || std::isnan(endDate)) {
+        throwRangeError(globalObject, scope, "Passed date is out of range"_s);
+        return { };
+    }
+
+    auto* dateIntervalFormat = createDateIntervalFormatIfNecessary(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    auto dateFieldsPracticallyEqual = [](const UFormattedValue* formattedValue, UErrorCode& status) {
+        auto iterator = std::unique_ptr<UConstrainedFieldPosition, ICUDeleter<ucfpos_close>>(ucfpos_open(&status));
+        if (U_FAILURE(status))
+            return false;
+
+        // We only care about UFIELD_CATEGORY_DATE_INTERVAL_SPAN category.
+        ucfpos_constrainCategory(iterator.get(), UFIELD_CATEGORY_DATE_INTERVAL_SPAN, &status);
+        if (U_FAILURE(status))
+            return false;
+
+        bool hasSpan = ufmtval_nextPosition(formattedValue, iterator.get(), &status);
+        if (U_FAILURE(status))
+            return false;
+
+        return !hasSpan;
+    };
+
+    UErrorCode status = U_ZERO_ERROR;
+    auto result = formattedValueFromDateRange(*dateIntervalFormat, *m_dateFormat, startDate, endDate, status);
+    if (U_FAILURE(status)) {
+        throwTypeError(globalObject, scope, "Failed to format date interval"_s);
+        return { };
+    }
+
+    // UFormattedValue is owned by UFormattedDateInterval. We do not need to close it.
+    auto formattedValue = udtitvfmt_resultAsValue(result.get(), &status);
+    if (U_FAILURE(status)) {
+        throwTypeError(globalObject, scope, "Failed to format date interval"_s);
+        return { };
+    }
+
+    auto sharedString = jsNontrivialString(vm, "shared"_s);
+
+    // If the formatted parts of startDate and endDate are the same, it is possible that the resulted string does not look like range.
+    // For example, if the requested format only includes "year" and startDate and endDate are the same year, the result just contains one year.
+    // In that case, startDate and endDate are *practically-equal* (spec term), and we generate parts as we call `formatToParts(startDate)` with
+    // `source: "shared"` additional fields.
+    bool equal = dateFieldsPracticallyEqual(formattedValue, status);
+    if (U_FAILURE(status)) {
+        throwTypeError(globalObject, scope, "Failed to format date interval"_s);
+        return { };
+    }
+
+    if (equal)
+        RELEASE_AND_RETURN(scope, formatToParts(globalObject, startDate, sharedString));
+
+    // ICU produces ranges for the formatted string, and we construct parts array from that.
+    // For example, startDate = Jan 3, 2019, endDate = Jan 5, 2019 with en-US locale is,
+    //
+    // Formatted string: "1/3/2019 – 1/5/2019"
+    //                    | | |  |   | | |  |
+    //                    B C |  |   F G |  |
+    //                    |   +-D+   |   +-H+
+    //                    |      |   |      |
+    //                    +--A---+   +--E---+
+    //
+    // Ranges ICU generates:
+    //     A:    (0, 8)   UFIELD_CATEGORY_DATE_INTERVAL_SPAN startRange
+    //     B:    (0, 1)   UFIELD_CATEGORY_DATE month
+    //     C:    (2, 3)   UFIELD_CATEGORY_DATE day
+    //     D:    (4, 8)   UFIELD_CATEGORY_DATE year
+    //     E:    (11, 19) UFIELD_CATEGORY_DATE_INTERVAL_SPAN endRange
+    //     F:    (11, 12) UFIELD_CATEGORY_DATE month
+    //     G:    (13, 14) UFIELD_CATEGORY_DATE day
+    //     H:    (15, 19) UFIELD_CATEGORY_DATE year
+    //
+    //  We use UFIELD_CATEGORY_DATE_INTERVAL_SPAN range to determine each part is either "startRange", "endRange", or "shared".
+    //  It is gurarnteed that UFIELD_CATEGORY_DATE_INTERVAL_SPAN comes first before any other parts including that range.
+    //  For example, in the above formatted string, " – " is "shared" part. For UFIELD_CATEGORY_DATE ranges, we generate corresponding
+    //  part object with types such as "month". And non populated parts (e.g. "/") become "literal" parts.
+    //  In the above case, expected parts are,
+    //
+    //     { type: "month", value: "1", source: "startRange" },
+    //     { type: "literal", value: "/", source: "startRange" },
+    //     { type: "day", value: "3", source: "startRange" },
+    //     { type: "literal", value: "/", source: "startRange" },
+    //     { type: "year", value: "2019", source: "startRange" },
+    //     { type: "literal", value: " - ", source: "shared" },
+    //     { type: "month", value: "1", source: "endRange" },
+    //     { type: "literal", value: "/", source: "endRange" },
+    //     { type: "day", value: "5", source: "endRange" },
+    //     { type: "literal", value: "/", source: "endRange" },
+    //     { type: "year", value: "2019", source: "endRange" },
+    //
+
+    JSArray* parts = JSArray::tryCreate(vm, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous), 0);
+    if (!parts) {
+        throwOutOfMemoryError(globalObject, scope);
+        return { };
+    }
+
+    int32_t formattedStringLength = 0;
+    const UChar* formattedStringPointer = ufmtval_getString(formattedValue, &formattedStringLength, &status);
+    if (U_FAILURE(status)) {
+        throwTypeError(globalObject, scope, "Failed to format date interval"_s);
+        return { };
+    }
+    String resultString(formattedStringPointer, formattedStringLength);
+
+    // We care multiple categories (UFIELD_CATEGORY_DATE and UFIELD_CATEGORY_DATE_INTERVAL_SPAN).
+    // So we do not constraint iterator.
+    auto iterator = std::unique_ptr<UConstrainedFieldPosition, ICUDeleter<ucfpos_close>>(ucfpos_open(&status));
+    if (U_FAILURE(status)) {
+        throwTypeError(globalObject, scope, "Failed to format date interval"_s);
+        return { };
+    }
+
+    auto startRangeString = jsNontrivialString(vm, "startRange"_s);
+    auto endRangeString = jsNontrivialString(vm, "endRange"_s);
+    auto literalString = jsNontrivialString(vm, "literal"_s);
+
+    WTF::Range<int32_t> startRange { -1, -1 };
+    WTF::Range<int32_t> endRange { -1, -1 };
+
+    auto createPart = [&] (JSString* type, int32_t beginIndex, int32_t length) {
+        auto sourceType = [&](int32_t index) -> JSString* {
+            if (startRange.contains(index))
+                return startRangeString;
+            if (endRange.contains(index))
+                return endRangeString;
+            return sharedString;
+        };
+
+        auto value = jsString(vm, resultString.substring(beginIndex, length));
+        JSObject* part = constructEmptyObject(globalObject);
+        part->putDirect(vm, vm.propertyNames->type, type);
+        part->putDirect(vm, vm.propertyNames->value, value);
+        part->putDirect(vm, vm.propertyNames->source, sourceType(beginIndex));
+        return part;
+    };
+
+    int32_t resultLength = resultString.length();
+    int32_t previousEndIndex = 0;
+    while (true) {
+        bool next = ufmtval_nextPosition(formattedValue, iterator.get(), &status);
+        if (U_FAILURE(status)) {
+            throwTypeError(globalObject, scope, "Failed to format date interval"_s);
+            return { };
+        }
+        if (!next)
+            break;
+
+        int32_t category = ucfpos_getCategory(iterator.get(), &status);
+        if (U_FAILURE(status)) {
+            throwTypeError(globalObject, scope, "Failed to format date interval"_s);
+            return { };
+        }
+
+        int32_t fieldType = ucfpos_getField(iterator.get(), &status);
+        if (U_FAILURE(status)) {
+            throwTypeError(globalObject, scope, "Failed to format date interval"_s);
+            return { };
+        }
+
+        int32_t beginIndex = 0;
+        int32_t endIndex = 0;
+        ucfpos_getIndexes(iterator.get(), &beginIndex, &endIndex, &status);
+        if (U_FAILURE(status)) {
+            throwTypeError(globalObject, scope, "Failed to format date interval"_s);
+            return { };
+        }
+
+        dataLogLnIf(IntlDateTimeFormatInternal::verbose, category, " ", fieldType, " (", beginIndex, ", ", endIndex, ")");
+
+        if (category != UFIELD_CATEGORY_DATE && category != UFIELD_CATEGORY_DATE_INTERVAL_SPAN)
+            continue;
+        if (category == UFIELD_CATEGORY_DATE && fieldType < 0)
+            continue;
+
+        if (previousEndIndex < beginIndex) {
+            JSObject* part = createPart(literalString, previousEndIndex, beginIndex - previousEndIndex);
+            parts->push(globalObject, part);
+            RETURN_IF_EXCEPTION(scope, { });
+            previousEndIndex = beginIndex;
+        }
+
+        if (category == UFIELD_CATEGORY_DATE_INTERVAL_SPAN) {
+            // > The special field category UFIELD_CATEGORY_DATE_INTERVAL_SPAN is used to indicate which datetime
+            // > primitives came from which arguments: 0 means fromCalendar, and 1 means toCalendar. The span category
+            // > will always occur before the corresponding fields in UFIELD_CATEGORY_DATE in the nextPosition() iterator.
+            // from ICU comment. So, field 0 is startRange, field 1 is endRange.
+            if (!fieldType)
+                startRange = WTF::Range<int32_t>(beginIndex, endIndex);
+            else {
+                ASSERT(fieldType == 1);
+                endRange = WTF::Range<int32_t>(beginIndex, endIndex);
+            }
+            continue;
+        }
+
+        ASSERT(category == UFIELD_CATEGORY_DATE);
+
+        auto type = jsString(vm, partTypeString(UDateFormatField(fieldType)));
+        JSObject* part = createPart(type, beginIndex, endIndex - beginIndex);
+        parts->push(globalObject, part);
+        RETURN_IF_EXCEPTION(scope, { });
+        previousEndIndex = endIndex;
+    }
+
+    if (previousEndIndex < resultLength) {
+        JSObject* part = createPart(literalString, previousEndIndex, resultLength - previousEndIndex);
+        parts->push(globalObject, part);
+        RETURN_IF_EXCEPTION(scope, { });
+    }
+
+    return parts;
+#else
+    UNUSED_PARAM(startDate);
+    UNUSED_PARAM(endDate);
+    throwTypeError(globalObject, scope, "Failed to format date interval"_s);
+    return { };
+#endif
+}
+
 
 } // namespace JSC

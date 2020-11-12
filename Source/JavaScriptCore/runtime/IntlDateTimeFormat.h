@@ -27,14 +27,26 @@
 
 #include "JSObject.h"
 #include <unicode/udat.h>
-#include <unicode/udateintervalformat.h>
 #include <wtf/unicode/icu/ICUHelpers.h>
+
+struct UDateIntervalFormat;
+
+#if !defined(HAVE_ICU_U_DATE_INTERVAL_FORMAT_FORMAT_RANGE_TO_PARTS)
+// ICU header is up-to-date if the build is non-Darwin or using Apple Internal SDK.
+#if (USE(APPLE_INTERNAL_SDK) || !OS(DARWIN)) && U_ICU_VERSION_MAJOR_NUM >= 64
+#define HAVE_ICU_U_DATE_INTERVAL_FORMAT_FORMAT_RANGE_TO_PARTS 1
+#endif
+#endif
 
 namespace JSC {
 
 enum class RelevantExtensionKey : uint8_t;
 
 class JSBoundFunction;
+
+struct UDateIntervalFormatDeleter {
+    JS_EXPORT_PRIVATE void operator()(UDateIntervalFormat*);
+};
 
 class IntlDateTimeFormat final : public JSNonFinalObject {
 public:
@@ -60,8 +72,9 @@ public:
 
     void initializeDateTimeFormat(JSGlobalObject*, JSValue locales, JSValue options);
     JSValue format(JSGlobalObject*, double value) const;
-    JSValue formatToParts(JSGlobalObject*, double value) const;
+    JSValue formatToParts(JSGlobalObject*, double value, JSString* sourceType = nullptr) const;
     JSValue formatRange(JSGlobalObject*, double startDate, double endDate);
+    JSValue formatRangeToParts(JSGlobalObject*, double startDate, double endDate);
     JSObject* resolvedOptions(JSGlobalObject*) const;
 
     JSBoundFunction* boundFormat() const { return m_boundFormat.get(); }
@@ -112,7 +125,6 @@ private:
     static void replaceHourCycleInPattern(Vector<UChar, 32>&, HourCycle);
 
     using UDateFormatDeleter = ICUDeleter<udat_close>;
-    using UDateIntervalFormatDeleter = ICUDeleter<udtitvfmt_close>;
 
     WriteBarrier<JSBoundFunction> m_boundFormat;
     std::unique_ptr<UDateFormat, UDateFormatDeleter> m_dateFormat;
