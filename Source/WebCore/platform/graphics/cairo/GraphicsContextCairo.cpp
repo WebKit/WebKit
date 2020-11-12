@@ -655,19 +655,13 @@ void GraphicsContext::fillRectWithRoundedHole(const FloatRect& rect, const Float
     Cairo::fillRectWithRoundedHole(*platformContext(), rect, roundedHoleRect, Cairo::FillSource(state), Cairo::ShadowState(state));
 }
 
-void GraphicsContext::drawPattern(Image& image, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
+void GraphicsContext::drawPlatformPattern(const PlatformImagePtr& image, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
 {
-    if (paintingDisabled())
+    if (paintingDisabled() || !patternTransform.isInvertible())
         return;
-
-    if (m_impl) {
-        m_impl->drawPattern(image, destRect, tileRect, patternTransform, phase, spacing, options);
-        return;
-    }
 
     ASSERT(hasPlatformContext());
-    if (auto nativeImage = image.nativeImageForCurrentFrame())
-        Cairo::drawPattern(*platformContext(), nativeImage->platformImage().get(), IntSize(image.size()), destRect, tileRect, patternTransform, phase, options);
+    Cairo::drawPattern(*platformContext(), image.get(), IntSize(imageSize), destRect, tileRect, patternTransform, phase, options);
 }
 
 void GraphicsContext::setPlatformShouldAntialias(bool enable)

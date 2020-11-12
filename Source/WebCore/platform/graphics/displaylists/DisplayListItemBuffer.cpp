@@ -322,10 +322,6 @@ void ItemHandle::destroy()
         get<DrawPath>().~DrawPath();
         return;
     }
-    case ItemType::DrawPattern: {
-        get<DrawPattern>().~DrawPattern();
-        return;
-    }
     case ItemType::FillCompositedRect: {
         get<FillCompositedRect>().~FillCompositedRect();
         return;
@@ -422,6 +418,10 @@ void ItemHandle::destroy()
     }
     case ItemType::DrawNativeImage: {
         static_assert(std::is_trivially_destructible<DrawNativeImage>::value);
+        return;
+    }
+    case ItemType::DrawPattern: {
+        static_assert(std::is_trivially_destructible<DrawPattern>::value);
         return;
     }
     case ItemType::DrawLine: {
@@ -577,12 +577,12 @@ void ItemHandle::copyTo(ItemHandle destination) const
         new (itemOffset) DrawNativeImage(get<DrawNativeImage>());
         return;
     }
-    case ItemType::DrawPath: {
-        new (itemOffset) DrawPath(get<DrawPath>());
-        return;
-    }
     case ItemType::DrawPattern: {
         new (itemOffset) DrawPattern(get<DrawPattern>());
+        return;
+    }
+    case ItemType::DrawPath: {
+        new (itemOffset) DrawPath(get<DrawPath>());
         return;
     }
     case ItemType::FillCompositedRect: {

@@ -415,15 +415,10 @@ static void patternReleaseCallback(void* info)
     });
 }
 
-void GraphicsContext::drawPattern(Image& image, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
+void GraphicsContext::drawPlatformPattern(const PlatformImagePtr& image, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
 {
     if (paintingDisabled() || !patternTransform.isInvertible())
         return;
-
-    if (m_impl) {
-        m_impl->drawPattern(image, destRect, tileRect, patternTransform, phase, spacing, options);
-        return;
-    }
 
     CGContextRef context = platformContext();
     CGContextStateSaver stateSaver(context);
@@ -442,26 +437,23 @@ void GraphicsContext::drawPattern(Image& image, const FloatRect& destRect, const
     float adjustedX = phase.x() - destRect.x() + tileRect.x() * narrowPrecisionToFloat(patternTransform.a()); // We translated the context so that destRect.x() is the origin, so subtract it out.
     float adjustedY = destRect.height() - (phase.y() - destRect.y() + tileRect.y() * narrowPrecisionToFloat(patternTransform.d()) + scaledTileHeight);
 
-    auto tileImage = image.preTransformedNativeImageForCurrentFrame(options.orientation() == ImageOrientation::FromImage);
-
-    float h = CGImageGetHeight(tileImage->platformImage().get());
+    float h = CGImageGetHeight(image.get());
 
     RetainPtr<CGImageRef> subImage;
-    FloatSize imageSize = image.size();
     if (tileRect.size() == imageSize)
-        subImage = tileImage->platformImage();
+        subImage = image;
     else {
         // Copying a sub-image out of a partially-decoded image stops the decoding of the original image. It should never happen
         // because sub-images are only used for border-image, which only renders when the image is fully decoded.
-        ASSERT(h == image.height());
-        subImage = adoptCF(CGImageCreateWithImageInRect(tileImage->platformImage().get(), tileRect));
+        ASSERT(h == imageSize.height());
+        subImage = adoptCF(CGImageCreateWithImageInRect(image.get(), tileRect));
     }
 
     // If we need to paint gaps between tiles because we have a partially loaded image or non-zero spacing,
     // fall back to the less efficient CGPattern-based mechanism.
     float scaledTileWidth = tileRect.width() * narrowPrecisionToFloat(patternTransform.a());
-    float w = CGImageGetWidth(tileImage->platformImage().get());
-    if (w == image.size().width() && h == image.size().height() && !spacing.width() && !spacing.height()) {
+    float w = CGImageGetWidth(image.get());
+    if (w == imageSize.width() && h == imageSize.height() && !spacing.width() && !spacing.height()) {
         // FIXME: CG seems to snap the images to integral sizes. When we care (e.g. with border-image-repeat: round),
         // we should tile all but the last, and stetch the last image to fit.
         CGContextDrawTiledImage(context, FloatRect(adjustedX, adjustedY, scaledTileWidth, scaledTileHeight), subImage.get());
@@ -470,7 +462,7 @@ void GraphicsContext::drawPattern(Image& image, const FloatRect& destRect, const
         CGAffineTransform matrix = CGAffineTransformMake(narrowPrecisionToCGFloat(patternTransform.a()), 0, 0, narrowPrecisionToCGFloat(patternTransform.d()), adjustedX, adjustedY);
         matrix = CGAffineTransformConcat(matrix, CGContextGetCTM(context));
         // The top of a partially-decoded image is drawn at the bottom of the tile. Map it to the top.
-        matrix = CGAffineTransformTranslate(matrix, 0, image.size().height() - h);
+        matrix = CGAffineTransformTranslate(matrix, 0, imageSize.height() - h);
 #if PLATFORM(IOS_FAMILY)
         matrix = CGAffineTransformScale(matrix, 1, -1);
         matrix = CGAffineTransformTranslate(matrix, 0, -h);

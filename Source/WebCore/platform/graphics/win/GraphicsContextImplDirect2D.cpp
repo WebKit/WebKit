@@ -274,11 +274,10 @@ void GraphicsContextImplDirect2D::drawNativeImage(NativeImage& image, const Floa
     Direct2D::drawNativeImage(m_platformContext, image.platformImage().get(), imageSize, destRect, srcRect, options, state.alpha, Direct2D::ShadowState(state));
 }
 
-void GraphicsContextImplDirect2D::drawPattern(Image& image, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize&, const ImagePaintingOptions& options)
+void GraphicsContextImplDirect2D::drawPattern((NativeImage& image, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize&, const ImagePaintingOptions& options)
 {
-    auto* context = &graphicsContext();
-    if (auto surface = image.nativeImageForCurrentFrame(context))
-        Direct2D::drawPattern(m_platformContext, WTFMove(surface), IntSize(image.size()), destRect, tileRect, patternTransform, phase, options.compositeOperator(), options.blendMode());
+    if (auto surface = image.platformImage())
+        Direct2D::drawPattern(m_platformContext, WTFMove(surface), IntSize(imageSize), destRect, tileRect, patternTransform, phase, options.compositeOperator(), options.blendMode());
 }
 
 void GraphicsContextImplDirect2D::drawRect(const FloatRect& rect, float borderThickness)

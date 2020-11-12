@@ -458,25 +458,31 @@ static TextStream& operator<<(TextStream& ts, const DrawNativeImage& item)
     return ts;
 }
 
-DrawPattern::DrawPattern(Image& image, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
-    : m_image(image)
-    , m_patternTransform(patternTransform)
-    , m_tileRect(tileRect)
+DrawPattern::DrawPattern(RenderingResourceIdentifier imageIdentifier, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
+    : m_imageIdentifier(imageIdentifier)
+    , m_imageSize(imageSize)
     , m_destination(destRect)
+    , m_tileRect(tileRect)
+    , m_patternTransform(patternTransform)
     , m_phase(phase)
     , m_spacing(spacing)
     , m_options(options)
 {
 }
 
-void DrawPattern::apply(GraphicsContext& context) const
+NO_RETURN_DUE_TO_ASSERT void DrawPattern::apply(GraphicsContext&) const
 {
-    context.drawPattern(m_image.get(), m_destination, m_tileRect, m_patternTransform, m_phase, m_spacing, m_options);
+    ASSERT_NOT_REACHED();
+}
+
+void DrawPattern::apply(GraphicsContext& context, NativeImage& image) const
+{
+    context.drawPattern(image, m_imageSize, m_destination, m_tileRect, m_patternTransform, m_phase, m_spacing, m_options);
 }
 
 static TextStream& operator<<(TextStream& ts, const DrawPattern& item)
 {
-    ts.dumpProperty("image", item.image());
+    ts.dumpProperty("image-identifier", item.imageIdentifier());
     ts.dumpProperty("pattern-transform", item.patternTransform());
     ts.dumpProperty("tile-rect", item.tileRect());
     ts.dumpProperty("dest-rect", item.destRect());

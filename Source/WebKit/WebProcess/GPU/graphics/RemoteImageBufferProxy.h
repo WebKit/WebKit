@@ -218,8 +218,6 @@ protected:
             return IPC::Encoder::encodeSingleObject<WebCore::DisplayList::DrawLinesForText>(item.get<WebCore::DisplayList::DrawLinesForText>());
         case WebCore::DisplayList::ItemType::DrawPath:
             return IPC::Encoder::encodeSingleObject<WebCore::DisplayList::DrawPath>(item.get<WebCore::DisplayList::DrawPath>());
-        case WebCore::DisplayList::ItemType::DrawPattern:
-            return IPC::Encoder::encodeSingleObject<WebCore::DisplayList::DrawPattern>(item.get<WebCore::DisplayList::DrawPattern>());
         case WebCore::DisplayList::ItemType::FillCompositedRect:
             return IPC::Encoder::encodeSingleObject<WebCore::DisplayList::FillCompositedRect>(item.get<WebCore::DisplayList::FillCompositedRect>());
         case WebCore::DisplayList::ItemType::FillPath:
@@ -256,6 +254,7 @@ protected:
         case WebCore::DisplayList::ItemType::DrawEllipse:
         case WebCore::DisplayList::ItemType::DrawImageBuffer:
         case WebCore::DisplayList::ItemType::DrawNativeImage:
+        case WebCore::DisplayList::ItemType::DrawPattern:
         case WebCore::DisplayList::ItemType::DrawLine:
         case WebCore::DisplayList::ItemType::DrawRect:
         case WebCore::DisplayList::ItemType::EndTransparencyLayer:

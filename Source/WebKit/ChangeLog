@@ -1,3 +1,14 @@
+2020-11-12  Said Abou-Hallawa  <said@apple.com>
+
+        [GPU Process] GraphicsContext::drawPattern() should take a NativeImage argument
+        https://bugs.webkit.org/show_bug.cgi?id=218865
+
+        Reviewed by Simon Fraser.
+
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::decodeItem):
+        * WebProcess/GPU/graphics/RemoteImageBufferProxy.h:
+
 2020-11-12  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] IOKit sandbox violation when enabling all GPU runtime flags

@@ -1079,90 +1079,35 @@ private:
 class DrawPattern {
 public:
     static constexpr ItemType itemType = ItemType::DrawPattern;
-    static constexpr bool isInlineItem = false;
+    static constexpr bool isInlineItem = true;
     static constexpr bool isDrawingItem = true;
 
-    WEBCORE_EXPORT DrawPattern(Image&, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& = { });
+    WEBCORE_EXPORT DrawPattern(RenderingResourceIdentifier, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& = { });
 
-    const Image& image() const { return m_image.get(); }
-    const AffineTransform& patternTransform() const { return m_patternTransform; }
-    FloatRect tileRect() const { return m_tileRect; }
+    RenderingResourceIdentifier imageIdentifier() const { return m_imageIdentifier; }
+    FloatSize imageSize() const { return m_imageSize; }
     FloatRect destRect() const { return m_destination; }
+    FloatRect tileRect() const { return m_tileRect; }
+    const AffineTransform& patternTransform() const { return m_patternTransform; }
     FloatPoint phase() const { return m_phase; }
     FloatSize spacing() const { return m_spacing; }
 
-    void apply(GraphicsContext&) const;
+    NO_RETURN_DUE_TO_ASSERT void apply(GraphicsContext&) const;
+    void apply(GraphicsContext&, NativeImage&) const;
 
     Optional<FloatRect> globalBounds() const { return WTF::nullopt; }
     Optional<FloatRect> localBounds(const GraphicsContext&) const { return m_destination; }
 
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<DrawPattern> decode(Decoder&);
-
 private:
-    mutable Ref<Image> m_image; // FIXME: Drawing images can cause their animations to progress. This shouldn't have to be mutable.
-    AffineTransform m_patternTransform;
-    FloatRect m_tileRect;
+    RenderingResourceIdentifier m_imageIdentifier;
+    FloatSize m_imageSize;
     FloatRect m_destination;
+    FloatRect m_tileRect;
+    AffineTransform m_patternTransform;
     FloatPoint m_phase;
     FloatSize m_spacing;
     ImagePaintingOptions m_options;
 };
-
-template<class Encoder>
-void DrawPattern::encode(Encoder& encoder) const
-{
-    ImageHandle imageHandle;
-    imageHandle.image = m_image.ptr();
-    encoder << imageHandle;
-    encoder << m_patternTransform;
-    encoder << m_tileRect;
-    encoder << m_destination;
-    encoder << m_phase;
-    encoder << m_spacing;
-    encoder << m_options;
-}
-
-template<class Decoder>
-Optional<DrawPattern> DrawPattern::decode(Decoder& decoder)
-{
-    Optional<ImageHandle> imageHandle;
-    decoder >> imageHandle;
-    if (!imageHandle)
-        return WTF::nullopt;
-
-    Optional<AffineTransform> patternTransform;
-    decoder >> patternTransform;
-    if (!patternTransform)
-        return WTF::nullopt;
-
-    Optional<FloatRect> tileRect;
-    decoder >> tileRect;
-    if (!tileRect)
-        return WTF::nullopt;
-
-    Optional<FloatRect> destination;
-    decoder >> destination;
-    if (!destination)
-        return WTF::nullopt;
-
-    Optional<FloatPoint> phase;
-    decoder >> phase;
-    if (!phase)
-        return WTF::nullopt;
-
-    Optional<FloatSize> spacing;
-    decoder >> spacing;
-    if (!spacing)
-        return WTF::nullopt;
-
-    Optional<ImagePaintingOptions> options;
-    decoder >> options;
-    if (!options)
-        return WTF::nullopt;
-
-    return {{ *imageHandle->image, *destination, *tileRect, *patternTransform, *phase, *spacing, *options }};
-}
 
 class BeginTransparencyLayer {
 public:

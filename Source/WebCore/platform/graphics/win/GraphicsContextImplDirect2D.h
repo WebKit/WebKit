@@ -69,8 +69,8 @@ public:
     void drawGlyphs(const Font&, const GlyphBuffer&, unsigned, unsigned, const FloatPoint&, FontSmoothingMode) override;
 
     bool drawImageBuffer(ImageBuffer&, const FloatRect& destination, const FloatRect& source, const ImagePaintingOptions&) override;
-    bool drawNativeImage(NativeImage&, const FloatSize& selfSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions&) override;
-    void drawPattern(Image&, const FloatRect&, const FloatRect&, const AffineTransform&, const FloatPoint&, const FloatSize&, const ImagePaintingOptions&) override;
+    bool drawNativeImage(NativeImage&, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions&) override;
+    void drawPattern((NativeImage&, const FloatSize& imageSize, const FloatRect&, const FloatRect&, const AffineTransform&, const FloatPoint&, const FloatSize&, const ImagePaintingOptions&) override;
 
     void drawRect(const FloatRect&, float) override;
     void drawLine(const FloatPoint&, const FloatPoint&) override;

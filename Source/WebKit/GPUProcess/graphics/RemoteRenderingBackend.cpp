@@ -264,8 +264,6 @@ Optional<DisplayList::ItemHandle> WARN_UNUSED_RETURN RemoteRenderingBackend::dec
         return decodeAndCreate<DisplayList::DrawLinesForText>(data, length, handleLocation);
     case DisplayList::ItemType::DrawPath:
         return decodeAndCreate<DisplayList::DrawPath>(data, length, handleLocation);
-    case DisplayList::ItemType::DrawPattern:
-        return decodeAndCreate<DisplayList::DrawPattern>(data, length, handleLocation);
     case DisplayList::ItemType::FillCompositedRect:
         return decodeAndCreate<DisplayList::FillCompositedRect>(data, length, handleLocation);
     case DisplayList::ItemType::FillPath:
@@ -302,6 +300,7 @@ Optional<DisplayList::ItemHandle> WARN_UNUSED_RETURN RemoteRenderingBackend::dec
     case DisplayList::ItemType::DrawEllipse:
     case DisplayList::ItemType::DrawImageBuffer:
     case DisplayList::ItemType::DrawNativeImage:
+    case DisplayList::ItemType::DrawPattern:
     case DisplayList::ItemType::DrawLine:
     case DisplayList::ItemType::DrawRect:
     case DisplayList::ItemType::EndTransparencyLayer:

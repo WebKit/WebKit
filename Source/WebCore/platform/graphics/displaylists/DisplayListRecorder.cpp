@@ -182,9 +182,12 @@ void Recorder::drawNativeImage(NativeImage& image, const FloatSize& imageSize, c
     append<DrawNativeImage>(image.renderingResourceIdentifier(), imageSize, destRect, srcRect, options);
 }
 
-void Recorder::drawPattern(Image& image, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
+void Recorder::drawPattern(NativeImage& image, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
 {
-    append<DrawPattern>(image, destRect, tileRect, patternTransform, phase, spacing, options);
+    if (m_delegate)
+        m_delegate->cacheNativeImage(image);
+    m_displayList.cacheNativeImage(image);
+    append<DrawPattern>(image.renderingResourceIdentifier(), imageSize, destRect, tileRect, patternTransform, phase, spacing, options);
 }
 
 void Recorder::save()

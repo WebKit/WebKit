@@ -842,6 +842,19 @@ void GraphicsContext::drawConsumingImageBuffer(RefPtr<ImageBuffer> image, const 
     ImageBuffer::drawConsuming(WTFMove(image), *this, destination, source, options);
 }
 
+void GraphicsContext::drawPattern(NativeImage& image, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
+{
+    if (paintingDisabled() || !patternTransform.isInvertible())
+        return;
+
+    if (m_impl) {
+        m_impl->drawPattern(image, imageSize, destRect, tileRect, patternTransform, phase, spacing, options);
+        return;
+    }
+
+    drawPlatformPattern(image.platformImage(), imageSize, destRect, tileRect, patternTransform, phase, spacing, options);
+}
+
 void GraphicsContext::clipRoundedRect(const FloatRoundedRect& rect)
 {
     if (paintingDisabled())

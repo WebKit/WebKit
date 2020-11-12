@@ -276,10 +276,10 @@ void GraphicsContextImplCairo::drawNativeImage(NativeImage& image, const FloatSi
     Cairo::drawPlatformImage(m_platformContext, image.platformImage().get(), destRect, srcRect, { options, state.imageInterpolationQuality }, state.alpha, Cairo::ShadowState(state));
 }
 
-void GraphicsContextImplCairo::drawPattern(Image& image, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize&, const ImagePaintingOptions& options)
+void GraphicsContextImplCairo::drawPattern(NativeImage& image, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
 {
-    if (auto nativeImage = image.nativeImageForCurrentFrame())
-        Cairo::drawPattern(m_platformContext, nativeImage->platformImage().get(), IntSize(image.size()), destRect, tileRect, patternTransform, phase, options);
+    UNUSED_PARAM(spacing);
+    Cairo::drawPattern(m_platformContext, image.platformImage().get(), IntSize(imageSize), destRect, tileRect, patternTransform, phase, options);
 }
 
 void GraphicsContextImplCairo::drawRect(const FloatRect& rect, float borderThickness)

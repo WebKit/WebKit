@@ -45,31 +45,42 @@ Replayer::Replayer(GraphicsContext& context, const DisplayList& displayList, con
 
 Replayer::~Replayer() = default;
 
+template<class T>
+inline static bool applyImageBufferItem(GraphicsContext& context, const ImageBufferHashMap& imageBuffers, ItemHandle item)
+{
+    if (!item.is<T>())
+        return false;
+    auto& imageBufferItem = item.get<T>();
+    if (auto* imageBuffer = imageBuffers.get(imageBufferItem.imageBufferIdentifier()))
+        imageBufferItem.apply(context, *imageBuffer);
+    return true;
+}
+
+template<class T>
+inline static bool applyNativeImageItem(GraphicsContext& context, const NativeImageHashMap& nativeImages, ItemHandle item)
+{
+    if (!item.is<T>())
+        return false;
+    auto& nativeImageItem = item.get<T>();
+    if (auto* image = nativeImages.get(nativeImageItem.imageIdentifier()))
+        nativeImageItem.apply(context, *image);
+    return true;
+}
+
 void Replayer::applyItem(ItemHandle item)
 {
     if (m_delegate && m_delegate->apply(item, m_context))
         return;
 
-    if (item.is<ClipToImageBuffer>()) {
-        auto& clipItem = item.get<ClipToImageBuffer>();
-        if (auto* imageBuffer = m_imageBuffers.get(clipItem.imageBufferIdentifier()))
-            clipItem.apply(m_context, *imageBuffer);
+    if (applyImageBufferItem<DrawImageBuffer>(m_context, m_imageBuffers, item))
         return;
-    }
+    if (applyImageBufferItem<ClipToImageBuffer>(m_context, m_imageBuffers, item))
+        return;
 
-    if (item.is<DrawImageBuffer>()) {
-        auto& drawItem = item.get<DrawImageBuffer>();
-        if (auto* imageBuffer = m_imageBuffers.get(drawItem.imageBufferIdentifier()))
-            drawItem.apply(m_context, *imageBuffer);
+    if (applyNativeImageItem<DrawNativeImage>(m_context, m_nativeImages, item))
         return;
-    }
-    
-    if (item.is<DrawNativeImage>()) {
-        auto& drawItem = item.get<DrawNativeImage>();
-        if (auto* image = m_nativeImages.get(drawItem.imageIdentifier()))
-            drawItem.apply(m_context, *image);
+    if (applyNativeImageItem<DrawPattern>(m_context, m_nativeImages, item))
         return;
-    }
 
     item.apply(m_context);
 }

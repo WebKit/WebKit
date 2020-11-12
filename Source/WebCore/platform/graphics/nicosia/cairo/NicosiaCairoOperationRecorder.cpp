@@ -560,7 +560,7 @@ void CairoOperationRecorder::drawNativeImage(NativeImage& nativeImage, const Flo
     append(createCommand<DrawNativeImage>(nativeImage.platformImage(), destRect, srcRect, ImagePaintingOptions(options, state.imageInterpolationQuality), state.alpha, Cairo::ShadowState(state)));
 }
 
-void CairoOperationRecorder::drawPattern(Image& image, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
+void CairoOperationRecorder::drawPattern(NativeImage& nativeImage, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
 {
     struct DrawPattern final : PaintingOperation, OperationData<RefPtr<cairo_surface_t>, IntSize, FloatRect, FloatRect, AffineTransform, FloatPoint, ImagePaintingOptions> {
         virtual ~DrawPattern() = default;
@@ -577,8 +577,7 @@ void CairoOperationRecorder::drawPattern(Image& image, const FloatRect& destRect
     };
 
     UNUSED_PARAM(spacing);
-    if (auto nativeImage = image.nativeImageForCurrentFrame())
-        append(createCommand<DrawPattern>(nativeImage->platformImage(), IntSize(image.size()), destRect, tileRect, patternTransform, phase, options));
+    append(createCommand<DrawPattern>(nativeImage.platformImage(), IntSize(imageSize), destRect, tileRect, patternTransform, phase, options));
 }
 
 void CairoOperationRecorder::drawRect(const FloatRect& rect, float borderThickness)

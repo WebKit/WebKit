@@ -208,8 +208,8 @@ bool isDrawingItem(ItemType type)
     case ItemType::DrawLine:
     case ItemType::DrawLinesForText:
     case ItemType::DrawNativeImage:
-    case ItemType::DrawPath:
     case ItemType::DrawPattern:
+    case ItemType::DrawPath:
     case ItemType::DrawRect:
     case ItemType::EndTransparencyLayer:
     case ItemType::FillCompositedRect:
@@ -254,7 +254,6 @@ bool isInlineItem(ItemType type)
     case ItemType::DrawGlyphs:
     case ItemType::DrawLinesForText:
     case ItemType::DrawPath:
-    case ItemType::DrawPattern:
     case ItemType::FillCompositedRect:
     case ItemType::FillPath:
     case ItemType::FillRectWithColor:
@@ -282,6 +281,7 @@ bool isInlineItem(ItemType type)
     case ItemType::DrawEllipse:
     case ItemType::DrawImageBuffer:
     case ItemType::DrawNativeImage:
+    case ItemType::DrawPattern:
     case ItemType::DrawLine:
     case ItemType::DrawRect:
     case ItemType::EndTransparencyLayer:
