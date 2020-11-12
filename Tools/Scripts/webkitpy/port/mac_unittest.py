@@ -49,7 +49,7 @@ class MacTest(darwin_testcase.DarwinTest):
 
     # 2 minor versions from the current version should always be a future version.
     FUTURE_VERSION = Version.from_iterable(MacPort.CURRENT_VERSION)
-    FUTURE_VERSION.minor += 2
+    FUTURE_VERSION.major += 2
 
 
     def test_version(self):
@@ -203,8 +203,8 @@ class MacTest(darwin_testcase.DarwinTest):
 
     def test_big_sur_baseline_search_path(self):
         search_path = self.make_port(port_name='macos-big-sur').default_baseline_search_path()
-        self.assertEqual(search_path[0], '/mock-checkout/LayoutTests/platform/mac-catalina-wk1')
-        self.assertEqual(search_path[1], '/mock-checkout/LayoutTests/platform/mac-catalina')
+        self.assertEqual(search_path[0], '/mock-checkout/LayoutTests/platform/mac-bigsur-wk1')
+        self.assertEqual(search_path[1], '/mock-checkout/LayoutTests/platform/mac-bigsur')
         self.assertEqual(search_path[2], '/mock-checkout/LayoutTests/platform/mac-wk1')
         self.assertEqual(search_path[3], '/mock-checkout/LayoutTests/platform/mac')
 

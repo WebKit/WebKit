@@ -1,3 +1,16 @@
+2020-11-11  Ryan Haddad  <ryanhaddad@apple.com>
+
+        [webkitpy] Bump CURRENT_VERSION to 11.0 for Mac port
+        https://bugs.webkit.org/show_bug.cgi?id=218581
+
+        Reviewed by Jonathan Bedard.
+
+        * Scripts/webkitpy/port/mac.py:
+        (MacPort):
+        * Scripts/webkitpy/port/mac_unittest.py:
+        (MacTest):
+        (MacTest.test_big_sur_baseline_search_path):
+
 2020-11-11  Sam Weinig  <weinig@apple.com>
 
         Remove unused ExperimentalNotificationsEnabled setting

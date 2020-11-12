@@ -46,8 +46,8 @@ _log = logging.getLogger(__name__)
 class MacPort(DarwinPort):
     port_name = "mac"
 
-    CURRENT_VERSION = Version(10, 15)
-    LAST_MACOSX = Version(10, 16)  # FIXME: Once we don't need to support the seed, deprecate in favor of Catalina
+    CURRENT_VERSION = Version(11, 0)
+    LAST_MACOSX = Version(10, 15)
 
     SDK = 'macosx'
 
