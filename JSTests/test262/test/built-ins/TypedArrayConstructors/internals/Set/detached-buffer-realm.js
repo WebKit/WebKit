@@ -33,5 +33,6 @@ testWithTypedArrayConstructors(function(TA) {
   let OtherTA = other[TA.name];
   let sample = new OtherTA(1);
   $DETACHBUFFER(sample.buffer);
-  assert.sameValue(sample[0] = 1, false, '`sample[0] = 1` is false');
+  sample[0] = 1;
+  assert.sameValue(sample[0], undefined, '`sample[0]` is undefined');
 });

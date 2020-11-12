@@ -3,7 +3,7 @@
 /*---
 esid: sec-integer-indexed-exotic-objects-defineownproperty-p-desc
 description: >
-  Returns false if key is a numeric index and Desc.[[Configurable]] is true
+  Returns true if key is a numeric index and Desc.[[Configurable]] is true
 info: |
   9.4.5.3 [[DefineOwnProperty]] ( P, Desc)
   ...
@@ -11,8 +11,12 @@ info: |
     a. Let numericIndex be ! CanonicalNumericIndexString(P).
     b. If numericIndex is not undefined, then
       ...
-      viii. If Desc has a [[Configurable]] field and if Desc.[[Configurable]] is
-      true, return false.
+      If Desc has a [[Configurable]] field and if Desc.[[Configurable]] is false, return false.
+      ...
+
+      If Desc has a [[Value]] field, then
+        Let value be Desc.[[Value]].
+        Return ? IntegerIndexedElementSet(O, numericIndex, value).
   ...
 includes: [testBigIntTypedArray.js]
 features: [BigInt, Reflect, TypedArray]
@@ -28,8 +32,8 @@ testWithBigIntTypedArrayConstructors(function(TA) {
       enumerable: true,
       writable: true
     }),
-    false,
+    true,
     "defineProperty's result"
   );
-  assert.sameValue(sample[0], 0n, "side effect check");
+  assert.sameValue(sample[0], 42n, "side effect check");
 });

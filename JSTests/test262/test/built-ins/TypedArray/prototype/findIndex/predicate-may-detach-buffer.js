@@ -7,28 +7,26 @@ description: >
 info: |
   22.2.3.11 %TypedArray%.prototype.findIndex ( predicate [ , thisArg ] )
 
-  %TypedArray%.prototype.findIndex is a distinct function that implements the
-  same algorithm as Array.prototype.findIndex as defined in 22.1.3.9 except that
-  the this object's [[ArrayLength]] internal slot is accessed in place of
-  performing a [[Get]] of "length".
+    %TypedArray%.prototype.findIndex is a distinct function that implements the
+    same algorithm as Array.prototype.findIndex as defined in 22.1.3.9 except that
+    the this object's [[ArrayLength]] internal slot is accessed in place of
+    performing a [[Get]] of "length".
 
-  ...
+    ...
 
   22.1.3.9 Array.prototype.findIndex ( predicate[ , thisArg ] )
 
-  ...
-  6. Repeat, while k < len
+    Repeat, while k < len,
+      Let Pk be ! ToString(F(k)).
+      Let kValue be ? Get(O, Pk).
+      Let testResult be ! ToBoolean(? Call(predicate, thisArg, « kValue, F(k), O »)).
     ...
-    b. Let kValue be ? Get(O, Pk).
-    c. Let testResult be ToBoolean(? Call(predicate, T, « kValue, k, O »)).
-  ...
 
-  9.4.5.8 IntegerIndexedElementGet ( O, index )
+  IntegerIndexedElementGet ( O, index )
 
-  ...
-  3. Let buffer be the value of O's [[ViewedArrayBuffer]] internal slot.
-  4. If IsDetachedBuffer(buffer) is true, throw a TypeError exception.
-  ...
+    Let buffer be the value of O's [[ViewedArrayBuffer]] internal slot.
+    If IsDetachedBuffer(buffer) is true, return undefined.
+
 includes: [testTypedArray.js, detachArrayBuffer.js]
 features: [TypedArray]
 ---*/
@@ -36,16 +34,12 @@ features: [TypedArray]
 testWithTypedArrayConstructors(function(TA) {
   var sample = new TA(2);
   var loops = 0;
-  var completion = false;
 
-  assert.throws(TypeError, function() {
-    sample.findIndex(function() {
-      loops++;
+  sample.findIndex(function() {
+    if (loops === 0) {
       $DETACHBUFFER(sample.buffer);
-      completion = true;
-    });
-  }, "throws a TypeError getting a value from the detached buffer");
-
-  assert.sameValue(loops, 1, "predicated is called once");
-  assert(completion, "abrupt completion does not come from DETACHBUFFER");
+    }
+    loops++;
+  });
+  assert.sameValue(loops, 2, "predicate is called once");
 });

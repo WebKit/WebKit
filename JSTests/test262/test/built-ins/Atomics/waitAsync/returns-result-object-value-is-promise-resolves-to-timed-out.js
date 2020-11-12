@@ -23,6 +23,7 @@ info: |
   Return _resultObject_.
 
 flags: [async]
+includes: [atomicsHelper.js]
 features: [Atomics.waitAsync, TypedArray, SharedArrayBuffer, destructuring-binding, Atomics, arrow-function]
 ---*/
 assert.sameValue(typeof Atomics.waitAsync, 'function', 'The value of `typeof Atomics.waitAsync` is "function"');

@@ -39,5 +39,5 @@ testWithBigIntTypedArrayConstructors(function(TA) {
   });
 
   assert.sameValue(result, false);
-  assert.sameValue(ta[0], false);
+  assert.sameValue(ta[0], undefined);
 });

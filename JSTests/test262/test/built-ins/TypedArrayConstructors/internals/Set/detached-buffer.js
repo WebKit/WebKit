@@ -29,12 +29,18 @@ features: [align-detached-buffer-semantics-with-web-reality, TypedArray]
 testWithTypedArrayConstructors(function(TA) {
   let sample = new TA([42]);
   $DETACHBUFFER(sample.buffer);
-  assert.sameValue(sample[0] = 1, false, '`sample[0] = 1` is false');
-  assert.sameValue(sample['1.1'] = 1, false, '`sample[\'1.1\'] = 1` is false');
-  assert.sameValue(sample['-0'] = 1, false, '`sample[\'-0\'] = 1` is false');
-  assert.sameValue(sample['-1'] = 1, false, '`sample[\'-1\'] = 1` is false');
-  assert.sameValue(sample['1'] = 1, false, '`sample[\'1\'] = 1` is false');
-  assert.sameValue(sample['2'] = 1, false, '`sample[\'2\'] = 1` is false');
+  sample[0] = 1;
+  assert.sameValue(sample[0], undefined, '`sample[0] = 1` is undefined');
+  sample['1.1'] = 1;
+  assert.sameValue(sample['1.1'], undefined, '`sample[\'1.1\'] = 1` is undefined');
+  sample['-0'] = 1;
+  assert.sameValue(sample['-0'], undefined, '`sample[\'-0\'] = 1` is undefined');
+  sample['-1'] = 1;
+  assert.sameValue(sample['-1'], undefined, '`sample[\'-1\'] = 1` is undefined');
+  sample['1'] = 1;
+  assert.sameValue(sample['1'], undefined, '`sample[\'1\'] = 1` is undefined');
+  sample['2'] = 1;
+  assert.sameValue(sample['2'], undefined, '`sample[\'2\'] = 1` is undefined');
 
   let obj = {
     valueOf() {

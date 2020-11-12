@@ -11,10 +11,12 @@ info: |
     a. Let numericIndex be ! CanonicalNumericIndexString(P).
     b. If numericIndex is not undefined, then
       ...
-      v. If Desc has a [[Writable]] field and if Desc.[[Writable]] is false,
-        return false.
+      If Desc has a [[Value]] field, then
+        Let value be Desc.[[Value]].
+        Return ? IntegerIndexedElementSet(O, numericIndex, value).
+
   ...
-includes: [testBigIntTypedArray.js, propertyHelper.js]
+includes: [testBigIntTypedArray.js]
 features: [align-detached-buffer-semantics-with-web-reality, BigInt, Reflect, TypedArray]
 ---*/
 testWithBigIntTypedArrayConstructors(function(TA) {
@@ -30,7 +32,7 @@ testWithBigIntTypedArrayConstructors(function(TA) {
   assert.sameValue(sample[0], 8n, 'The value of sample[0] is 8n');
   var desc = Object.getOwnPropertyDescriptor(sample, '0');
   assert.sameValue(desc.value, 8n, 'The value of desc.value is 8n');
+  assert.sameValue(desc.configurable, true, 'The value of desc.configurable is true');
+  assert.sameValue(desc.enumerable, true, 'The value of desc.enumerable is true');
   assert.sameValue(desc.writable, true, 'The value of desc.writable is true');
-  verifyEnumerable(sample, '0');
-  verifyNotConfigurable(sample, '0');
 });

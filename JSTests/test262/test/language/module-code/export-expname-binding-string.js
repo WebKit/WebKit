@@ -14,5 +14,5 @@ features: [arbitrary-module-namespace-names]
 ---*/
 import * as Scouts from "./export-expname_FIXTURE.js";
 
-assert.sameValue(Scouts.Mercury, undefined);
+assert.sameValue(Scouts.Mercury, globalThis.Mercury);
 assert.sameValue(Scouts["☿"], globalThis.Mercury);

@@ -30,7 +30,7 @@ info: |
           Let desc be the PropertyDescriptor { [[Configurable]]: false, [[Writable]]: false }.
         Perform ? DefinePropertyOrThrow(O, k, desc).
   Return true.
-
+features: [WeakRef]
 ---*/
 
 Object.seal(new WeakRef({}));

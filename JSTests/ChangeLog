@@ -1,3 +1,140 @@
+2020-11-12  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Upgrade test262
+        https://bugs.webkit.org/show_bug.cgi?id=218845
+
+        Reviewed by Alexey Shvayka.
+
+        One failing test is test262 bug and tracked in https://github.com/tc39/test262/pull/2898.
+
+        * test262/expectations.yaml:
+        * test262/harness/atomicsHelper.js:
+        * test262/latest-changes-summary.txt:
+        * test262/test/built-ins/Atomics/waitAsync/bigint/true-for-timeout.js:
+        * test262/test/built-ins/Atomics/waitAsync/returns-result-object-value-is-promise-resolves-to-timed-out.js:
+        * test262/test/built-ins/Atomics/waitAsync/true-for-timeout.js:
+        * test262/test/built-ins/Object/seal/configurable-attribute-all-own-properties-set-from-true-to-false-property-are-unaltered.js: Renamed from JSTests/test262/test/built-ins/Object/seal/object-seal-the-configurable-attribute-of-all-own-properties-of-o-are-set-from-true-to-false-and-other-attributes-of-the-property-are-unaltered.js.
+        * test262/test/built-ins/Object/seal/configurable-attribute-own-accessor-property-set-from-true-to-false-property-are-unaltered.js: Renamed from JSTests/test262/test/built-ins/Object/seal/object-seal-the-configurable-attribute-of-own-accessor-property-of-o-is-set-from-true-to-false-and-other-attributes-of-the-property-are-unaltered.js.
+        * test262/test/built-ins/Object/seal/seal-finalizationregistry.js:
+        * test262/test/built-ins/Object/seal/seal-weakref.js:
+        * test262/test/built-ins/String/prototype/split/arguments-are-objects-and-instance-is-string-first-object-have-overrided-to-string-function-and-value-of-function-that-throw-exception-second-object-have-overrided-value-of-function-that-throw-exception.js: Removed.
+        * test262/test/built-ins/String/prototype/split/separator-override-tostring-limit-override-valueof-throws.js: Renamed from JSTests/test262/test/built-ins/String/prototype/split/arguments-are-objects-and-instance-is-string-first-object-have-overrided-to-string-function-second-object-have-overrided-value-of-function-that-throw-exception.js.
+        * test262/test/built-ins/String/prototype/split/separator-override-tostring-limit-override-valueof-tostring-throws.js: Renamed from JSTests/test262/test/built-ins/String/prototype/split/arguments-are-objects-and-instance-is-string-first-object-have-overrided-to-string-function-second-object-have-overrided-value-of-function-and-to-string-function-that-throw-exception.js.
+        * test262/test/built-ins/String/prototype/split/separator-override-tostring-limit-override-valueof-tostring.js: Renamed from JSTests/test262/test/built-ins/String/prototype/split/arguments-are-objects-and-instance-is-string-first-object-have-overrided-to-string-function-second-object-have-overrided-value-of-and-to-string-functions.js.
+        * test262/test/built-ins/String/prototype/split/separator-override-tostring-limit-override-valueof.js: Renamed from JSTests/test262/test/built-ins/String/prototype/split/arguments-are-objects-and-instance-is-string-first-object-have-overrided-to-string-function-second-object-have-overrided-value-of-function.js.
+        * test262/test/built-ins/String/prototype/split/separator-override-tostring-throws-limit-override-valueof-throws.js: Renamed from JSTests/test262/test/built-ins/String/prototype/split/arguments-are-objects-and-instance-is-string-first-object-have-overrided-to-string-function-that-throw-exception-second-object-have-overrided-value-of-function-that-throw-exception.js.
+        * test262/test/built-ins/String/prototype/split/separator-override-valueof.js: Renamed from JSTests/test262/test/built-ins/String/prototype/split/argument-is-function-and-instance-is-string-object-object-have-overrided-to-string-and-value-of-functions.js.
+        * test262/test/built-ins/String/prototype/split/transferred-to-custom.js: Added.
+        (Splittable.this.toString):
+        (Splittable.this.valueOf):
+        (Splittable):
+        * test262/test/built-ins/String/prototype/split/transferred-to-number-separator-override-tostring-returns-regexp.js: Renamed from JSTests/test262/test/built-ins/String/prototype/split/argument-is-object-and-instance-is-number-object-have-overrided-to-string-function-that-return-regexp.js.
+        * test262/test/built-ins/String/prototype/split/valueOf-is-called-for-limit-argument.js: Added.
+        (let.limit.toString):
+        (let.limit.valueOf):
+        * test262/test/built-ins/TypedArray/prototype/every/BigInt/callbackfn-detachbuffer.js:
+        (testWithBigIntTypedArrayConstructors):
+        * test262/test/built-ins/TypedArray/prototype/every/callbackfn-detachbuffer.js:
+        (testWithTypedArrayConstructors):
+        * test262/test/built-ins/TypedArray/prototype/filter/BigInt/callbackfn-detachbuffer.js:
+        (testWithBigIntTypedArrayConstructors):
+        * test262/test/built-ins/TypedArray/prototype/filter/callbackfn-detachbuffer.js:
+        (testWithTypedArrayConstructors):
+        * test262/test/built-ins/TypedArray/prototype/find/BigInt/predicate-may-detach-buffer.js:
+        (testWithBigIntTypedArrayConstructors):
+        * test262/test/built-ins/TypedArray/prototype/find/predicate-may-detach-buffer.js:
+        (testWithTypedArrayConstructors):
+        * test262/test/built-ins/TypedArray/prototype/findIndex/predicate-may-detach-buffer.js:
+        (testWithTypedArrayConstructors):
+        * test262/test/built-ins/TypedArray/prototype/forEach/BigInt/callbackfn-detachbuffer.js:
+        (testWithBigIntTypedArrayConstructors):
+        * test262/test/built-ins/TypedArray/prototype/forEach/callbackfn-detachbuffer.js:
+        (testWithTypedArrayConstructors):
+        * test262/test/built-ins/TypedArray/prototype/map/BigInt/callbackfn-detachbuffer.js:
+        (testWithBigIntTypedArrayConstructors):
+        * test262/test/built-ins/TypedArray/prototype/map/callbackfn-detachbuffer.js:
+        (testWithTypedArrayConstructors):
+        * test262/test/built-ins/TypedArray/prototype/reduce/BigInt/callbackfn-detachbuffer.js:
+        (testWithBigIntTypedArrayConstructors):
+        * test262/test/built-ins/TypedArray/prototype/reduce/callbackfn-detachbuffer.js:
+        (testWithTypedArrayConstructors):
+        * test262/test/built-ins/TypedArray/prototype/reduceRight/BigInt/callbackfn-detachbuffer.js:
+        (testWithBigIntTypedArrayConstructors):
+        * test262/test/built-ins/TypedArray/prototype/reduceRight/callbackfn-detachbuffer.js:
+        (testWithTypedArrayConstructors):
+        * test262/test/built-ins/TypedArray/prototype/slice/BigInt/detached-buffer-custom-ctor-other-targettype.js:
+        (testWithBigIntTypedArrayConstructors.get sample): Deleted.
+        * test262/test/built-ins/TypedArray/prototype/slice/detached-buffer-custom-ctor-other-targettype.js:
+        (testWithTypedArrayConstructors.get sample): Deleted.
+        * test262/test/built-ins/TypedArray/prototype/some/BigInt/callbackfn-detachbuffer.js:
+        (testWithBigIntTypedArrayConstructors):
+        * test262/test/built-ins/TypedArray/prototype/some/callbackfn-detachbuffer.js:
+        (testWithTypedArrayConstructors):
+        * test262/test/built-ins/TypedArrayConstructors/internals/DefineOwnProperty/BigInt/detached-buffer-realm.js:
+        * test262/test/built-ins/TypedArrayConstructors/internals/DefineOwnProperty/BigInt/key-is-numericindex-desc-configurable.js:
+        (testWithBigIntTypedArrayConstructors):
+        * test262/test/built-ins/TypedArrayConstructors/internals/DefineOwnProperty/BigInt/key-is-numericindex.js:
+        (testWithBigIntTypedArrayConstructors):
+        * test262/test/built-ins/TypedArrayConstructors/internals/DefineOwnProperty/key-is-numericindex-desc-configurable.js:
+        (testWithTypedArrayConstructors):
+        * test262/test/built-ins/TypedArrayConstructors/internals/DefineOwnProperty/key-is-numericindex.js:
+        (testWithTypedArrayConstructors):
+        * test262/test/built-ins/TypedArrayConstructors/internals/GetOwnProperty/BigInt/index-prop-desc.js:
+        (testWithBigIntTypedArrayConstructors):
+        * test262/test/built-ins/TypedArrayConstructors/internals/GetOwnProperty/index-prop-desc.js:
+        (testWithTypedArrayConstructors):
+        * test262/test/built-ins/TypedArrayConstructors/internals/Set/BigInt/detached-buffer-realm.js:
+        (testWithBigIntTypedArrayConstructors):
+        * test262/test/built-ins/TypedArrayConstructors/internals/Set/BigInt/detached-buffer.js:
+        (testWithBigIntTypedArrayConstructors):
+        * test262/test/built-ins/TypedArrayConstructors/internals/Set/BigInt/tonumber-value-detached-buffer.js:
+        (testWithBigIntTypedArrayConstructors):
+        * test262/test/built-ins/TypedArrayConstructors/internals/Set/detached-buffer-realm.js:
+        (testWithTypedArrayConstructors):
+        * test262/test/built-ins/TypedArrayConstructors/internals/Set/detached-buffer.js:
+        (testWithTypedArrayConstructors):
+        * test262/test/built-ins/TypedArrayConstructors/internals/Set/tonumber-value-detached-buffer.js:
+        (testWithTypedArrayConstructors):
+        * test262/test/intl402/DateTimeFormat/intl-legacy-constructed-symbol-on-unwrap.js: Added.
+        (try.get target):
+        (catch):
+        * test262/test/intl402/DateTimeFormat/intl-legacy-constructed-symbol.js: Added.
+        * test262/test/intl402/NumberFormat/intl-legacy-constructed-symbol-on-unwrap.js: Added.
+        (try.get target):
+        (catch):
+        * test262/test/intl402/NumberFormat/intl-legacy-constructed-symbol.js: Added.
+        * test262/test/language/eval-code/direct/arrow-fn-body-cntns-arguments-fn-decl-params-cntns-dflt-assignment-arrow-func-declare-arguments-assign-incl-def-param-arrow-arguments.js: Removed.
+        * test262/test/language/eval-code/direct/arrow-fn-body-cntns-arguments-fn-decl-params-cntns-dflt-assignment-arrow-func-declare-arguments-assign.js: Removed.
+        * test262/test/language/literals/string/legacy-non-octal-escape-sequence-1-strict-explicit-pragma.js: Added.
+        (invalid):
+        * test262/test/language/literals/string/legacy-non-octal-escape-sequence-2-strict-explicit-pragma.js: Added.
+        (invalid):
+        * test262/test/language/literals/string/legacy-non-octal-escape-sequence-3-strict-explicit-pragma.js: Added.
+        (invalid):
+        * test262/test/language/literals/string/legacy-non-octal-escape-sequence-4-strict-explicit-pragma.js: Added.
+        (invalid):
+        * test262/test/language/literals/string/legacy-non-octal-escape-sequence-5-strict-explicit-pragma.js: Added.
+        (invalid):
+        * test262/test/language/literals/string/legacy-non-octal-escape-sequence-6-strict-explicit-pragma.js: Added.
+        (invalid):
+        * test262/test/language/literals/string/legacy-non-octal-escape-sequence-7-strict-explicit-pragma.js: Added.
+        (invalid):
+        * test262/test/language/literals/string/legacy-non-octal-escape-sequence-8-strict-explicit-pragma.js: Added.
+        (invalid):
+        * test262/test/language/literals/string/legacy-non-octal-escape-sequence-9-strict-explicit-pragma.js: Added.
+        (invalid):
+        * test262/test/language/module-code/export-expname-binding-string.js:
+        * test262/test/language/module-code/export-expname-from-as-unpaired-surrogate.js: Added.
+        * test262/test/language/module-code/export-expname-from-star-unpaired-surrogate.js: Added.
+        * test262/test/language/module-code/export-expname-from-unpaired-surrogate.js: Added.
+        * test262/test/language/module-code/export-expname-import-unpaired-surrogate.js: Added.
+        * test262/test/language/module-code/export-expname-string-binding.js: Added.
+        (foo):
+        * test262/test/language/module-code/export-expname-unpaired-surrogate.js: Added.
+        (Foo):
+        * test262/test/language/module-code/export-expname_FIXTURE.js:
+        * test262/test262-Revision.txt:
+
 2020-11-12  Dmitry Bezhetskov  <dbezhetskov@igalia.com>
 
         [WASM-References] Support imm for ref.null

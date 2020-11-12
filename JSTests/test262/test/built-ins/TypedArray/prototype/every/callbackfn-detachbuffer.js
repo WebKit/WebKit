@@ -15,7 +15,7 @@ info: |
   22.1.3.5 Array.prototype.every ( callbackfn [ , thisArg ] )
 
   ...
-  6. Repeat, while k < len
+  5. Repeat, while k < len
     ...
     c. If kPresent is true, then
       i. Let kValue be ? Get(O, Pk).
@@ -29,16 +29,13 @@ testWithTypedArrayConstructors(function(TA) {
   var loops = 0;
   var sample = new TA(2);
 
-  assert.throws(TypeError, function() {
-    sample.every(function() {
-      if (loops === 1) {
-        throw new Test262Error("callbackfn called twice");
-      }
+  sample.every(function() {
+    if (loops === 0) {
       $DETACHBUFFER(sample.buffer);
-      loops++;
-      return true;
-    });
+    }
+    loops++;
+    return true;
   });
 
-  assert.sameValue(loops, 1);
+  assert.sameValue(loops, 2);
 });

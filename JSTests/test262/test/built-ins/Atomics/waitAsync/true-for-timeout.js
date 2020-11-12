@@ -17,6 +17,7 @@ info: |
     Boolean -> If argument is true, return 1. If argument is false, return +0.
 
 flags: [async]
+includes: [atomicsHelper.js]
 features: [Atomics.waitAsync, SharedArrayBuffer, TypedArray, Atomics, computed-property-names, Symbol, Symbol.toPrimitive, arrow-function]
 ---*/
 assert.sameValue(typeof Atomics.waitAsync, 'function', 'The value of `typeof Atomics.waitAsync` is "function"');

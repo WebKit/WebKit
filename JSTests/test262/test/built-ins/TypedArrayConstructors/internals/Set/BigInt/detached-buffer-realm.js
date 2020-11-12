@@ -3,7 +3,7 @@
 /*---
 esid: sec-integer-indexed-exotic-objects-set-p-v-receiver
 description: >
-  Returns false if Throws a TypeError if key has a numeric index and object has a detached
+  Returns false if key has a numeric index and object has a detached
   buffer (honoring the Realm of the current execution context)
 info: |
   9.4.5.5 [[Set]] ( P, V, Receiver)
@@ -33,5 +33,6 @@ testWithBigIntTypedArrayConstructors(function(TA) {
   let OtherTA = other[TA.name];
   let sample = new OtherTA(1);
   $DETACHBUFFER(sample.buffer);
-  assert.sameValue(sample[0] = 1n, false, '`sample[0] = 1n` is false');
+  sample[0] = 1n;
+  assert.sameValue(sample[0], undefined, '`sample[0]` is undefined');
 });

@@ -30,15 +30,13 @@ testWithBigIntTypedArrayConstructors(function(TA) {
   var loops = 0;
   var sample = new TA(2);
 
-  assert.throws(TypeError, function() {
-    sample.reduce(function() {
-      if (loops === 1) {
-        throw new Test262Error("callbackfn called twice");
-      }
+  sample.reduce(function() {
+    if (loops === 0) {
       $DETACHBUFFER(sample.buffer);
-      loops++;
-    }, 0);
-  });
+    }
+    loops++;
+    return true;
+  }, 0);
 
-  assert.sameValue(loops, 1, "callbackfn called only once");
+  assert.sameValue(loops, 2);
 });
