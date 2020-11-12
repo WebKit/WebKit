@@ -35,8 +35,6 @@ WI.addMouseDownContextMenuHandlers = function(element, populateContextMenuCallba
         if (ignoreMouseDown)
             return;
 
-        ignoreMouseDown = true;
-
         let contextMenu = WI.ContextMenu.createFromEvent(event);
         contextMenu.addBeforeShowCallback(() => {
             ignoreMouseDown = false;
@@ -44,6 +42,7 @@ WI.addMouseDownContextMenuHandlers = function(element, populateContextMenuCallba
 
         populateContextMenuCallback(contextMenu, event);
 
+        ignoreMouseDown = !contextMenu.isEmpty();
         contextMenu.show();
     });
 
