@@ -15,9 +15,8 @@ layer at (0,0) size 800x600
               RenderBlock {P} at (0,36) size 484x20
                 RenderText {#text} at (0,0) size 151x19
                   text run at (0,0) width 151: "This text is underneath."
-      RenderText {#text} at (504,89) size 4x19
-        text run at (504,89) width 4: " "
-      RenderEmbeddedObject {OBJECT} at (0,109) size 500x100
+      RenderText {#text} at (0,0) size 0x0
+      RenderEmbeddedObject {OBJECT} at (0,104) size 500x100
         layer at (0,0) size 500x100
           RenderView at (0,0) size 500x100
         layer at (0,0) size 500x100

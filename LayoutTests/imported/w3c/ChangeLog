@@ -1,3 +1,13 @@
+2020-11-12  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][Integration] Enable inline replaced support
+        https://bugs.webkit.org/show_bug.cgi?id=218514
+        <rdar://problem/71239028>
+
+        Reviewed by Antti Koivisto.
+
+        * web-platform-tests/html/browsers/sandboxing/sandbox-parse-noscript-expected.txt:
+
 2020-11-11  Rob Buis  <rbuis@igalia.com>
 
         Resync web-platform-tests/css/css-sizing/aspect-ratio from upstream

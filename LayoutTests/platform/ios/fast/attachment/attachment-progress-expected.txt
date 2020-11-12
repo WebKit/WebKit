@@ -13,8 +13,7 @@ layer at (0,0) size 800x284
       RenderText {#text} at (488,0) size 4x19
         text run at (488,0) width 4: " "
       RenderAttachment {ATTACHMENT} at (492,15) size 160x119 [color=#007AFF]
-      RenderText {#text} at (652,0) size 4x19
-        text run at (652,0) width 4: " "
+      RenderText {#text} at (0,0) size 0x0
       RenderAttachment {ATTACHMENT} at (0,149) size 160x119 [color=#007AFF]
       RenderText {#text} at (160,134) size 4x19
         text run at (160,134) width 4: " "
