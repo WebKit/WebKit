@@ -1,3 +1,11 @@
+2020-11-12  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed follow-up to r268965.
+
+        * UIProcess/API/glib/WebKitSettings.cpp:
+        (webkit_settings_get_enable_accelerated_2d_canvas):
+        Use the FALSE identifier, following GLib styling guidelines.
+
 2020-11-12  Alexander Mikhaylenko  <exalm7659@gmail.com>
 
         [GTK] Swipe navigation shadow is blurry on hidpi

@@ -3180,7 +3180,7 @@ gboolean webkit_settings_get_enable_accelerated_2d_canvas(WebKitSettings* settin
 {
     g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), FALSE);
 
-    return false;
+    return FALSE;
 }
 
 /**
