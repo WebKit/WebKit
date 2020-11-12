@@ -1,5 +1,32 @@
 2020-11-12  Chris Dumez  <cdumez@apple.com>
 
+        [GPUProcess] Add basic GPUProcess crash handling for media playback
+        https://bugs.webkit.org/show_bug.cgi?id=218825
+
+        Reviewed by Eric Carlson.
+
+        When the GPU process crashes and there are pending media players, we
+        now relaunch the GPU process and ask those media players to reconstuct
+        their private media players, reload the file and resume playback if
+        necessary. This ensures that in case of a GPU process crash while the
+        user is playing a video, the video just seamlessly keeps playing from
+        where it was before the crash.
+
+        Before this patch, we would end up busy looping and the WebContent process
+        would use 100% CPU after a GPU process crash.
+
+        * WebProcess/GPU/GPUProcessConnection.h:
+        (WebKit::GPUProcessConnection::addClient):
+        (WebKit::GPUProcessConnection::removeClient):
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.h:
+        * WebProcess/GPU/media/RemoteMediaPlayerManager.cpp:
+        (WebKit::proxyConfigurationForPlayer):
+        (WebKit::RemoteMediaPlayerManager::gpuProcessConnection const):
+        (WebKit::RemoteMediaPlayerManager::gpuProcessConnectionDidClose):
+        * WebProcess/GPU/media/RemoteMediaPlayerManager.h:
+
+2020-11-12  Chris Dumez  <cdumez@apple.com>
+
         ASSERTION FAILED: isValidIdentifier(m_identifier) seen with TestWebKitAPI.GPUProcess.WebProcessTerminationAfterTooManyGPUProcessCrashes
         https://bugs.webkit.org/show_bug.cgi?id=218856
         <rdar://problem/71331809>

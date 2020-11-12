@@ -93,8 +93,8 @@ public:
 
         virtual void gpuProcessConnectionDidClose(GPUProcessConnection&) { }
     };
-    void addClient(Client& client) { m_clients.add(client); }
-    void removeClient(Client& client) { m_clients.remove(client); }
+    void addClient(const Client& client) { m_clients.add(client); }
+    void removeClient(const Client& client) { m_clients.remove(client); }
 
 private:
     GPUProcessConnection(IPC::Connection::Identifier);

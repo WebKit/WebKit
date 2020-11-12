@@ -526,6 +526,21 @@ const MediaPlayerFactory* MediaPlayer::nextBestMediaEngine(const MediaPlayerFact
     return bestMediaEngineForSupportParameters(parameters, current);
 }
 
+void MediaPlayer::reloadAndResumePlaybackIfNeeded()
+{
+    auto previousMediaTime = currentTime();
+    bool wasPaused = paused();
+
+    m_currentMediaEngine = nullptr;
+    loadWithNextMediaEngine(nullptr);
+
+    prepareToPlay();
+    if (!wasPaused)
+        play();
+    if (previousMediaTime)
+        seekWhenPossible(previousMediaTime);
+}
+
 void MediaPlayer::loadWithNextMediaEngine(const MediaPlayerFactory* current)
 {
 #if ENABLE(MEDIA_SOURCE) 
@@ -715,6 +730,14 @@ void MediaPlayer::seekWithTolerance(const MediaTime& time, const MediaTime& nega
 void MediaPlayer::seek(const MediaTime& time)
 {
     m_private->seek(time);
+}
+
+void MediaPlayer::seekWhenPossible(const MediaTime& time)
+{
+    if (m_private->readyState() < MediaPlayer::ReadyState::HaveMetadata)
+        m_pendingSeekRequest = time;
+    else
+        seek(time);
 }
 
 bool MediaPlayer::paused() const
@@ -1231,6 +1254,8 @@ void MediaPlayer::networkStateChanged()
 void MediaPlayer::readyStateChanged()
 {
     client().mediaPlayerReadyStateChanged();
+    if (m_pendingSeekRequest && m_private->readyState() == MediaPlayer::ReadyState::HaveMetadata)
+        seek(*std::exchange(m_pendingSeekRequest, WTF::nullopt));
 }
 
 void MediaPlayer::volumeChanged(double newVolume)

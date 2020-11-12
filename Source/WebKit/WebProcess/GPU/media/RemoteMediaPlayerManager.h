@@ -47,7 +47,7 @@ struct TrackPrivateRemoteConfiguration;
 
 class RemoteMediaPlayerManager
     : public WebProcessSupplement
-    , public CanMakeWeakPtr<RemoteMediaPlayerManager> {
+    , public GPUProcessConnection::Client {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit RemoteMediaPlayerManager(WebProcess&);
@@ -71,6 +71,9 @@ private:
 
     // WebProcessSupplement
     void initialize(const WebProcessCreationParameters&) final;
+
+    // GPUProcessConnection::Client
+    void gpuProcessConnectionDidClose(GPUProcessConnection&) final;
 
     friend class MediaPlayerRemoteFactory;
     void getSupportedTypes(WebCore::MediaPlayerEnums::MediaEngineIdentifier, HashSet<String, ASCIICaseInsensitiveHash>&);

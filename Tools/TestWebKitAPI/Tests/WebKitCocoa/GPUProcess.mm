@@ -197,3 +197,66 @@ TEST(GPUProcess, WebProcessTerminationAfterTooManyGPUProcessCrashes)
         TestWebKitAPI::Util::sleep(0.1);
     EXPECT_TRUE([webView _isPlayingAudio]);
 }
+
+TEST(GPUProcess, CrashWhilePlayingVideo)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    for (_WKInternalDebugFeature *feature in [WKPreferences _internalDebugFeatures]) {
+        if ([feature.key isEqualToString:@"UseGPUProcessForMediaEnabled"]) {
+            [[configuration preferences] _setEnabled:YES forInternalDebugFeature:feature];
+            break;
+        }
+    }
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:configuration.get()]);
+    [webView synchronouslyLoadTestPageNamed:@"large-videos-with-audio"];
+
+    __block bool done = false;
+    [webView evaluateJavaScript:@"document.getElementsByTagName('video')[0].play() && true" completionHandler:^(id result, NSError *error) {
+        EXPECT_TRUE(!error);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    auto webViewPID = [webView _webProcessIdentifier];
+
+    // The GPU process should get launched.
+    auto* processPool = configuration.get().processPool;
+    unsigned timeout = 0;
+    while (![processPool _gpuProcessIdentifier] && timeout++ < 100)
+        TestWebKitAPI::Util::sleep(0.1);
+
+    EXPECT_NE([processPool _gpuProcessIdentifier], 0);
+    if (![processPool _gpuProcessIdentifier])
+        return;
+    auto gpuProcessPID = [processPool _gpuProcessIdentifier];
+
+    // Audio should be playing.
+    timeout = 0;
+    while (![webView _isPlayingAudio] && timeout++ < 100)
+        TestWebKitAPI::Util::sleep(0.1);
+    EXPECT_TRUE([webView _isPlayingAudio]);
+
+    // Kill the GPU Process.
+    kill(gpuProcessPID, 9);
+
+    // GPU Process should get relaunched.
+    timeout = 0;
+    while ((![processPool _gpuProcessIdentifier] || [processPool _gpuProcessIdentifier] == gpuProcessPID) && timeout++ < 100)
+        TestWebKitAPI::Util::sleep(0.1);
+    EXPECT_NE([processPool _gpuProcessIdentifier], 0);
+    EXPECT_NE([processPool _gpuProcessIdentifier], gpuProcessPID);
+    gpuProcessPID = [processPool _gpuProcessIdentifier];
+
+    // Make sure the WebProcess did not crash.
+    EXPECT_EQ(webViewPID, [webView _webProcessIdentifier]);
+
+    // Audio should resume playing.
+    timeout = 0;
+    while (![webView _isPlayingAudio] && timeout++ < 100)
+        TestWebKitAPI::Util::sleep(0.1);
+    EXPECT_TRUE([webView _isPlayingAudio]);
+
+    EXPECT_EQ(gpuProcessPID, [processPool _gpuProcessIdentifier]);
+    EXPECT_EQ(webViewPID, [webView _webProcessIdentifier]);
+}

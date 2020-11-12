@@ -307,6 +307,8 @@ public:
     bool doesHaveAttribute(const AtomString&, AtomString* value = nullptr) const;
     PlatformLayer* platformLayer() const;
 
+    void reloadAndResumePlaybackIfNeeded();
+
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     RetainPtr<PlatformLayer> createVideoFullscreenLayer();
     void setVideoFullscreenLayer(PlatformLayer*, WTF::Function<void()>&& completionHandler = [] { });
@@ -381,6 +383,7 @@ public:
     MediaTime duration() const;
     MediaTime currentTime() const;
     void seek(const MediaTime&);
+    void seekWhenPossible(const MediaTime&);
     void seekWithTolerance(const MediaTime&, const MediaTime& negativeTolerance, const MediaTime& positiveTolerance);
 
     MediaTime startTime() const;
@@ -656,6 +659,7 @@ private:
     ContentType m_contentType;
     String m_keySystem;
     Optional<MediaPlayerEnums::MediaEngineIdentifier> m_activeEngineIdentifier;
+    Optional<MediaTime> m_pendingSeekRequest;
     IntSize m_size;
     Preload m_preload { Preload::Auto };
     double m_volume { 1 };

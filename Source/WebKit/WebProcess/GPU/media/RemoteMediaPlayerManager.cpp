@@ -265,10 +265,28 @@ void RemoteMediaPlayerManager::setUseGPUProcess(bool useGPUProcess)
 
 GPUProcessConnection& RemoteMediaPlayerManager::gpuProcessConnection() const
 {
-    if (!m_gpuProcessConnection)
+    if (!m_gpuProcessConnection) {
         m_gpuProcessConnection = &WebProcess::singleton().ensureGPUProcessConnection();
+        m_gpuProcessConnection->addClient(*this);
+    }
 
     return *m_gpuProcessConnection;
+}
+
+void RemoteMediaPlayerManager::gpuProcessConnectionDidClose(GPUProcessConnection& connection)
+{
+    ASSERT(m_gpuProcessConnection == &connection);
+    connection.removeClient(*this);
+
+    m_gpuProcessConnection = nullptr;
+
+    auto players = m_players;
+    for (auto& player : players.values()) {
+        if (player) {
+            player->player()->reloadAndResumePlaybackIfNeeded();
+            ASSERT_WITH_MESSAGE(!player, "reloadAndResumePlaybackIfNeeded should destroy this player and construct a new one");
+        }
+    }
 }
 
 } // namespace WebKit
