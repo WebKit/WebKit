@@ -1,3 +1,22 @@
+2020-11-12  Lauro Moura  <lmoura@igalia.com>
+
+        [WPE][TestWebKitAPI] Wait for RenderingState::Started to avoid flakiness
+        https://bugs.webkit.org/show_bug.cgi?id=218841
+
+        Reviewed by Adrian Perez de Castro.
+
+        The external audio rendering test asked JS to play the video but
+        checked the condition right away. As with other tests, the full side
+        effects of the JS call might not have propagated, causing the
+        assertion to fail. This became especially visible after the build with
+        r269579.
+
+        So, like the other conditions in the test, add a method to wait for
+        the condition.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitWebView.cpp:
+        (AudioRenderingWebViewTest::waitUntilStarted): Added
+
 2020-11-11  Sam Weinig  <weinig@apple.com>
 
         Move more WebKitLegacy preferences bound to Settings to WebPreferences.yaml

@@ -1416,6 +1416,19 @@ public:
         wpe_audio_packet_export_release(packet_export);
     }
 
+    void waitUntilStarted()
+    {
+        g_timeout_add(200, [](gpointer userData) -> gboolean {
+            auto* test = static_cast<AudioRenderingWebViewTest*>(userData);
+            if (test->state() == RenderingState::Started) {
+                test->quitMainLoop();
+                return G_SOURCE_REMOVE;
+            }
+            return G_SOURCE_CONTINUE;
+        }, this);
+        g_main_loop_run(m_mainLoop);
+    }
+
     void waitUntilPaused()
     {
         g_timeout_add(200, [](gpointer userData) -> gboolean {
@@ -1458,6 +1471,7 @@ static void testWebViewExternalAudioRendering(AudioRenderingWebViewTest* test, g
     test->waitUntilLoadFinished();
 
     test->runJavaScriptAndWaitUntilFinished("playVideo();", nullptr);
+    test->waitUntilStarted();
     g_assert(test->state() == RenderingState::Started);
     test->runJavaScriptAndWaitUntilFinished("pauseVideo();", nullptr);
     test->waitUntilPaused();
