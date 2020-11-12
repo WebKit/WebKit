@@ -133,7 +133,7 @@ class ConfigureBuild(buildstep.BuildStep):
         return defer.succeed(None)
 
 
-class CheckOutSource(SVN):
+class CheckOutSource(SVN, object):
     def __init__(self, **kwargs):
         if USE_BUILDBOT_VERSION2:
             kwargs['repourl'] = 'https://svn.webkit.org/repository/webkit/trunk'
