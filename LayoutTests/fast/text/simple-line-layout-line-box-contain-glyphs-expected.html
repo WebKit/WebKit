@@ -9,8 +9,10 @@ div {
 }
 </style>
 <script>
-  if (window.internals)
-    internals.settings.setSimpleLineLayoutDebugBordersEnabled(false);
+  if (window.internals) {
+    internals.settings.setLegacyLineLayoutVisualCoverageEnabled(true);
+    internals.settings.setSimpleLineLayoutEnabled(false);
+ }
 </script>
 </head>
 <body>

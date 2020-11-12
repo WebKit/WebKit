@@ -1,3 +1,18 @@
+2020-11-12  Zalan Bujtas  <zalan@apple.com>
+
+        Show legacy line layout visual coverage instead of "simple line" layout.
+        https://bugs.webkit.org/show_bug.cgi?id=218695
+
+        Reviewed by Antti Koivisto.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (-[WebPreferences legacyLineLayoutVisualCoverageEnabled]):
+        (-[WebPreferences setLegacyLineLayoutVisualCoverageEnabled:]):
+        (-[WebPreferences simpleLineLayoutDebugBordersEnabled]): Deleted.
+        (-[WebPreferences setSimpleLineLayoutDebugBordersEnabled:]): Deleted.
+        * WebView/WebPreferencesPrivate.h:
+
 2020-11-11  Sam Weinig  <weinig@apple.com>
 
         Move more WebKitLegacy preferences bound to Settings to WebPreferences.yaml

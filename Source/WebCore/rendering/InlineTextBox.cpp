@@ -1163,6 +1163,8 @@ void InlineTextBox::paintMarkedTextForeground(PaintInfo& paintInfo, const FloatR
             textPainter.setShadowColorFilter(&lineStyle.appleColorFilter());
     }
     textPainter.setEmphasisMark(emphasisMark, emphasisMarkOffset, combinedText());
+    if (auto* debugShadow = debugTextShadow())
+        textPainter.setShadow(debugShadow);
 
     TextRun textRun = createTextRun();
     textPainter.setGlyphDisplayListIfNeeded(*this, paintInfo, font, context, textRun);
@@ -1427,6 +1429,15 @@ String InlineTextBox::text(bool ignoreCombinedText, bool ignoreHyphen) const
 inline const RenderCombineText* InlineTextBox::combinedText() const
 {
     return lineStyle().hasTextCombine() && is<RenderCombineText>(renderer()) && downcast<RenderCombineText>(renderer()).isCombined() ? &downcast<RenderCombineText>(renderer()) : nullptr;
+}
+
+ShadowData* InlineTextBox::debugTextShadow()
+{
+    if (!renderer().settings().legacyLineLayoutVisualCoverageEnabled())
+        return nullptr;
+
+    static NeverDestroyed<ShadowData> debugTextShadow(IntPoint(0, 0), 10, 20, ShadowStyle::Normal, true, SRGBA<uint8_t> { 150, 0, 0, 190 });
+    return &debugTextShadow.get();
 }
 
 ExpansionBehavior InlineTextBox::expansionBehavior() const

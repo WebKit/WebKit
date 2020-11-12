@@ -9,8 +9,10 @@
   }
 </style>
 <script>
-  if (window.internals)
-    internals.settings.setLegacyLineLayoutVisualCoverageEnabled(true);
+  if (window.internals) {
+    internals.settings.setLegacyLineLayoutVisualCoverageEnabled(false);
+    internals.settings.setSimpleLineLayoutEnabled(false);
+  }
 </script>
 </head>
 <body>

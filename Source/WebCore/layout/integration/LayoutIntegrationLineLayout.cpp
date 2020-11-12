@@ -406,8 +406,6 @@ void LineLayout::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         TextPainter textPainter(paintInfo.context());
         textPainter.setFont(style.fontCascade());
         textPainter.setStyle(computeTextPaintStyle(flow().frame(), style, paintInfo));
-        if (auto* debugShadow = debugTextShadow())
-            textPainter.setShadow(debugShadow);
 
         textPainter.setGlyphDisplayListIfNeeded(run, paintInfo, style.fontCascade(), paintInfo.context(), textRun);
         textPainter.paint(textRun, rect, textOrigin);
@@ -467,15 +465,6 @@ bool LineLayout::hitTest(const HitTestRequest& request, HitTestResult& result, c
     }
 
     return false;
-}
-
-ShadowData* LineLayout::debugTextShadow()
-{
-    if (!flow().settings().simpleLineLayoutDebugBordersEnabled())
-        return nullptr;
-
-    static NeverDestroyed<ShadowData> debugTextShadow(IntPoint(0, 0), 10, 20, ShadowStyle::Normal, true, SRGBA<uint8_t> { 0, 0, 150, 150 });
-    return &debugTextShadow.get();
 }
 
 void LineLayout::releaseCaches(RenderView& view)
