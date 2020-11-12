@@ -572,8 +572,10 @@ WI.DOMManager = class DOMManager extends WI.Object
 
     hideDOMNodeHighlight()
     {
-        let target = WI.assumingMainTarget();
-        target.DOMAgent.hideHighlight();
+        for (let target of WI.targets) {
+            if (target.hasCommand("DOM.hideHighlight"))
+                target.DOMAgent.hideHighlight();
+        }
     }
 
     highlightDOMNodeForTwoSeconds(nodeId)
