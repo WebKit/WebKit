@@ -453,5 +453,5 @@ function test() {
     }
 }
 
-if (Intl.DateTimeFormat.formatRangeToParts)
+if (Intl.DateTimeFormat.prototype.formatRangeToParts)
     test();

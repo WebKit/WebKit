@@ -1,5 +1,32 @@
 2020-11-11  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        Unreviewed, fix wrong tests at the final clean up
+        https://bugs.webkit.org/show_bug.cgi?id=213822
+
+        * stress/intl-datetimeformat-formatrange.js:
+        * stress/intl-datetimeformat-formatrangetoparts-relevant-extensions-ja.js:
+        (Intl.DateTimeFormat.formatRangeToParts.compareParts.fmt1.formatRangeToParts): Deleted.
+        (Intl.DateTimeFormat.formatRangeToParts.compareParts.fmt2.formatRangeToParts): Deleted.
+        (Intl.DateTimeFormat.formatRangeToParts.compareParts.fmt3.formatRangeToParts): Deleted.
+        (Intl.DateTimeFormat.formatRangeToParts.compareParts.fmt4.formatRangeToParts): Deleted.
+        (Intl.DateTimeFormat.formatRangeToParts.compareParts.fmt5.formatRangeToParts): Deleted.
+        (Intl.DateTimeFormat.formatRangeToParts.vm.icuVersion): Deleted.
+        (Intl.DateTimeFormat.formatRangeToParts.compareParts.fmt6.formatRangeToParts): Deleted.
+        (Intl.DateTimeFormat.formatRangeToParts.compareParts.fmt7.formatRangeToParts): Deleted.
+        (Intl.DateTimeFormat.formatRangeToParts.compareParts.fmt8.formatRangeToParts): Deleted.
+        (Intl.DateTimeFormat.formatRangeToParts.compareParts.fmt9.formatRangeToParts): Deleted.
+        (Intl.DateTimeFormat.formatRangeToParts.compareParts.fmt10.formatRangeToParts): Deleted.
+        (Intl.DateTimeFormat.formatRangeToParts.compareParts.fmt11.formatRangeToParts): Deleted.
+        (Intl.DateTimeFormat.formatRangeToParts.compareParts.fmt12.formatRangeToParts): Deleted.
+        (Intl.DateTimeFormat.formatRangeToParts.compareParts.fmt13.formatRangeToParts): Deleted.
+        (Intl.DateTimeFormat.formatRangeToParts.compareParts.fmt14.formatRangeToParts): Deleted.
+        (Intl.DateTimeFormat.formatRangeToParts.compareParts.fmt15.formatRangeToParts): Deleted.
+        (Intl.DateTimeFormat.formatRangeToParts.compareParts.fmt16.formatRangeToParts): Deleted.
+        * stress/intl-datetimeformat-formatrangetoparts-relevant-extensions.js:
+        * stress/intl-datetimeformat-formatrangetoparts.js:
+
+2020-11-11  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Implement Intl.DateTimeFormat.formatRangeToParts
         https://bugs.webkit.org/show_bug.cgi?id=213822
         <rdar://problem/69328711>

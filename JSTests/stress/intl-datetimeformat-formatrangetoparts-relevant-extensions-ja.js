@@ -37,7 +37,7 @@ let date6 = new Date(Date.UTC(2007, 0, 10, 14, 0, 0));
 let date7 = new Date(Date.UTC(2007, 0, 10, 23, 0, 0));
 let date8 = new Date(Date.UTC(2007, 0, 11, 0, 0, 0));
 
-if (Intl.DateTimeFormat.formatRangeToParts) {
+if (Intl.DateTimeFormat.prototype.formatRangeToParts) {
     // Test three relavant extensions.
     // "nu" NumberingSystem
     let fmt1 = new Intl.DateTimeFormat("ja", {

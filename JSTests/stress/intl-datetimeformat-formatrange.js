@@ -138,5 +138,5 @@ function test() {
     }
 }
 
-if (Intl.DateTimeFormat.formatRange)
+if (Intl.DateTimeFormat.prototype.formatRange)
     test();
