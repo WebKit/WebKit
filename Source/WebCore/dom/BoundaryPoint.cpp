@@ -28,6 +28,10 @@
 
 namespace WebCore {
 
+template PartialOrdering treeOrder<Tree>(const BoundaryPoint&, const BoundaryPoint&);
+template PartialOrdering treeOrder< ShadowIncludingTree >(const BoundaryPoint&, const BoundaryPoint&);
+template PartialOrdering treeOrder<ComposedTree>(const BoundaryPoint&, const BoundaryPoint&);
+
 Optional<BoundaryPoint> makeBoundaryPointBeforeNode(Node& node)
 {
     auto parent = node.parentNode();
