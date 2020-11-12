@@ -1,3 +1,19 @@
+2020-11-12  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] IOKit sandbox violation when enabling all GPU runtime flags
+        https://bugs.webkit.org/show_bug.cgi?id=218820
+        <rdar://problem/71296116>
+
+        Reviewed by Brent Fulgham.
+
+        When enabling all GPU runtime flags on iOS, there is an iokit-open sandbox violation for the IOKit class AGXDeviceUserClient
+        in the WebContent process. When all GPU runtime flags are enabled, IOKit extensions are not provided to the WebContent process,
+        which should then fall back to a set of rules allowing use of these IOKit classes, with logging. There seems to be a problem
+        with the fallback for this specific IOKit class, which this patch addresses by adding an extra requirement to the rule. The
+        extra requirement is that IOKit extensions have not been provided for these IOKit classes.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2020-11-12  Chris Dumez  <cdumez@apple.com>
 
         [GPUProcess] Add basic GPUProcess crash handling for media playback

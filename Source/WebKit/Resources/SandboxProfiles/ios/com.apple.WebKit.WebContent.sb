@@ -472,18 +472,6 @@
 (with-filter (system-attribute apple-internal)
   (mobile-preferences-read "com.apple.PrototypeTools"))
 
-(allow iokit-open (with report) (with telemetry-backtrace)
-    (iokit-user-client-class "IOMobileFramebufferUserClient")
-    (iokit-user-client-class "AGXDeviceUserClient")
-    (iokit-user-client-class "AppleJPEGDriverUserClient")
-    (iokit-user-client-class "IOSurfaceAcceleratorClient")
-    (iokit-user-client-class "IOSurfaceRootUserClient")
-)
-
-(allow iokit-open (with report) (with telemetry-backtrace)
-    (iokit-connection "IOGPU")
-)
-
 (with-elevated-precedence
     (allow file-read*
            (subpath "/usr/lib"
@@ -981,6 +969,27 @@
 
 (deny mach-lookup (with telemetry-backtrace)
     (global-name "com.apple.mobilegestalt.xpc")
+)
+
+;; FIXME: This is just for logging. Remove when the GPU process is enabled by default.
+(allow iokit-open (with report) (with telemetry-backtrace)
+    (require-all
+        (require-not (extension "com.apple.webkit.extension.iokit"))
+        (iokit-user-client-class
+            "IOMobileFramebufferUserClient"
+            "AGXDeviceUserClient"
+            "AppleJPEGDriverUserClient"
+            "IOSurfaceAcceleratorClient"
+            "IOSurfaceRootUserClient"
+        )
+    )
+)
+
+(allow iokit-open (with report) (with telemetry-backtrace)
+    (require-all
+        (require-not (extension "com.apple.webkit.extension.iokit"))
+        (iokit-connection "IOGPU")
+    )
 )
 
 (allow mach-lookup
