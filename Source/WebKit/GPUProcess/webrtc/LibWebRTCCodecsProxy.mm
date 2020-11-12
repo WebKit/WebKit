@@ -192,7 +192,6 @@ void LibWebRTCCodecsProxy::encodeFrame(RTCEncoderIdentifier identifier, WebCore:
 
 void LibWebRTCCodecsProxy::setEncodeRates(RTCEncoderIdentifier identifier, uint32_t bitRate, uint32_t frameRate)
 {
-    ASSERT(m_encoders.contains(identifier));
     auto encoder = m_encoders.get(identifier);
     if (!encoder)
         return;

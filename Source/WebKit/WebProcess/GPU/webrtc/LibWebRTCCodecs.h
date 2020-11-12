@@ -27,6 +27,7 @@
 
 #if USE(LIBWEBRTC) && PLATFORM(COCOA) && ENABLE(GPU_PROCESS)
 
+#include "Connection.h"
 #include "MessageReceiver.h"
 #include "RTCDecoderIdentifier.h"
 #include "RTCEncoderIdentifier.h"
@@ -57,10 +58,11 @@ struct WebKitEncodedFrameInfo;
 
 namespace WebKit {
 
-class LibWebRTCCodecs : private IPC::MessageReceiver {
+class LibWebRTCCodecs : public IPC::Connection::ThreadMessageReceiverRefCounted {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    LibWebRTCCodecs() = default;
+    LibWebRTCCodecs();
+    ~LibWebRTCCodecs();
 
     static void setCallbacks(bool useGPUProcess);
 
@@ -111,12 +113,19 @@ private:
     void completedEncoding(RTCEncoderIdentifier, IPC::DataReference&&, const webrtc::WebKitEncodedFrameInfo&);
     RetainPtr<CVPixelBufferRef> convertToBGRA(CVPixelBufferRef);
 
+    void setConnection(IPC::Connection&);
+
+    // IPC::Connection::ThreadMessageReceiver
+    void dispatchToThread(Function<void()>&&) final;
+
 private:
     HashMap<RTCDecoderIdentifier, std::unique_ptr<Decoder>> m_decoders;
     HashSet<RTCDecoderIdentifier> m_decodingErrors;
 
     HashMap<RTCEncoderIdentifier, std::unique_ptr<Encoder>> m_encoders;
 
+    RefPtr<IPC::Connection> m_connection;
+    Ref<WorkQueue> m_queue;
     std::unique_ptr<WebCore::ImageTransferSessionVT> m_imageTransferSession;
     std::unique_ptr<WebCore::PixelBufferConformerCV> m_pixelBufferConformer;
     RetainPtr<CVPixelBufferPoolRef> m_pixelBufferPool;
