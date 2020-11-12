@@ -1,3 +1,22 @@
+2020-11-12  Ali Juma  <ajuma@chromium.org>
+
+        configure-xcode-for-embedded-development breaks @available in Swift files
+        https://bugs.webkit.org/show_bug.cgi?id=218850
+
+        Reviewed by Jonathan Bedard.
+
+        The changes applied by configure-xcode-for-embedded-development
+        for AvailabilityProhibitedInternal.h cause API_AVAILABLE to be ignored
+        in Objective-C, but @available is not ignored in Swift. As a result,
+        if an Objective-C method marked with API_AVAILABLE makes a call
+        into a Swift class marked with @available, this can lead to an
+        availability warning even when the calling method is only available
+        when the callee is available.
+
+        To fix this, ensure that @available is also ignored in Swift.
+
+        * Scripts/configure-xcode-for-embedded-development:
+
 2020-11-12  Chris Dumez  <cdumez@apple.com>
 
         [GPUProcess] Add basic GPUProcess crash handling for media playback
