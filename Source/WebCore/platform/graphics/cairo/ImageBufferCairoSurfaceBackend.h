@@ -47,7 +47,7 @@ public:
     void putImageData(AlphaPremultiplication inputFormat, const ImageData&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat) override;
 
 protected:
-    ImageBufferCairoSurfaceBackend(const FloatSize& logicalSize, const IntSize& backendSize, float resolutionScale, ColorSpace, RefPtr<cairo_surface_t>&&);
+    ImageBufferCairoSurfaceBackend(const FloatSize& logicalSize, const IntSize& backendSize, float resolutionScale, ColorSpace, PixelFormat, RefPtr<cairo_surface_t>&&);
 
     RefPtr<NativeImage> cairoSurfaceCoerceToImage() const;
     unsigned bytesPerRow() const override;

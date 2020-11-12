@@ -149,7 +149,6 @@ RefPtr<ShareableBitmap> ShareableBitmap::create(const IntSize& size, Configurati
 
 RefPtr<ShareableBitmap> ShareableBitmap::create(const Handle& handle, SharedMemory::Protection protection)
 {
-    // Create the shared memory.
     auto sharedMemory = SharedMemory::map(handle.m_handle, protection);
     if (!sharedMemory)
         return nullptr;

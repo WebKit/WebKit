@@ -191,7 +191,7 @@ IOSurface::IOSurface(IntSize size, IntSize contextSize, CGColorSpaceRef colorSpa
     NSDictionary *options;
 
     switch (format) {
-    case Format::RGBA:
+    case Format::BGRA:
         options = optionsFor32BitSurface(size, 'BGRA');
         break;
 #if HAVE(IOSURFACE_RGB10)
@@ -279,7 +279,7 @@ CGContextRef IOSurface::ensurePlatformContext(const HostWindow* hostWindow)
     size_t bitsPerPixel = 32;
     
     switch (format()) {
-    case Format::RGBA:
+    case Format::BGRA:
         break;
 #if HAVE(IOSURFACE_RGB10)
     case Format::RGB10:
@@ -356,7 +356,7 @@ IOSurface::Format IOSurface::format() const
 {
     unsigned pixelFormat = IOSurfaceGetPixelFormat(m_surface.get());
     if (pixelFormat == 'BGRA')
-        return Format::RGBA;
+        return Format::BGRA;
 
 #if HAVE(IOSURFACE_RGB10)
     if (pixelFormat == 'w30r')
@@ -370,7 +370,7 @@ IOSurface::Format IOSurface::format() const
         return Format::YUV422;
 
     ASSERT_NOT_REACHED();
-    return Format::RGBA;
+    return Format::BGRA;
 }
 
 IOSurfaceID IOSurface::surfaceID() const
@@ -459,11 +459,36 @@ void IOSurface::migrateColorSpaceToProperties()
     IOSurfaceSetValue(m_surface.get(), kIOSurfaceColorSpace, colorSpaceProperties.get());
 }
 
+IOSurface::Format IOSurface::formatForPixelFormat(PixelFormat format)
+{
+    switch (format) {
+    case PixelFormat::RGBA8:
+        RELEASE_ASSERT_NOT_REACHED();
+        return IOSurface::Format::BGRA;
+    case PixelFormat::BGRA8:
+        return IOSurface::Format::BGRA;
+#if HAVE(IOSURFACE_RGB10)
+    case PixelFormat::RGB10:
+        return IOSurface::Format::RGB10;
+    case PixelFormat::RGB10A8:
+        return IOSurface::Format::RGB10A8;
+#else
+    case PixelFormat::RGB10:
+    case PixelFormat::RGB10A8:
+        RELEASE_ASSERT_NOT_REACHED();
+        return IOSurface::Format::BGRA;
+#endif
+    }
+
+    ASSERT_NOT_REACHED();
+    return IOSurface::Format::BGRA;
+}
+
 static TextStream& operator<<(TextStream& ts, IOSurface::Format format)
 {
     switch (format) {
-    case IOSurface::Format::RGBA:
-        ts << "RGBA";
+    case IOSurface::Format::BGRA:
+        ts << "BGRA";
         break;
     case IOSurface::Format::YUV422:
         ts << "YUV422";

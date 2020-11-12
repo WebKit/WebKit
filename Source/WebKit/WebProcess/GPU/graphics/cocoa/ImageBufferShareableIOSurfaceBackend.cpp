@@ -37,13 +37,13 @@ using namespace WebCore;
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(ImageBufferShareableIOSurfaceBackend);
 
-std::unique_ptr<ImageBufferShareableIOSurfaceBackend> ImageBufferShareableIOSurfaceBackend::create(const FloatSize& size, float resolutionScale, ColorSpace colorSpace, const HostWindow*)
+std::unique_ptr<ImageBufferShareableIOSurfaceBackend> ImageBufferShareableIOSurfaceBackend::create(const FloatSize& size, float resolutionScale, ColorSpace colorSpace, PixelFormat pixelFormat, const HostWindow*)
 {
     IntSize backendSize = calculateBackendSize(size, resolutionScale);
     if (backendSize.isEmpty())
         return nullptr;
 
-    auto surface = IOSurface::create(backendSize, backendSize, cachedCGColorSpace(colorSpace));
+    auto surface = IOSurface::create(backendSize, backendSize, cachedCGColorSpace(colorSpace), IOSurface::formatForPixelFormat(pixelFormat));
     if (!surface)
         return nullptr;
 
@@ -53,10 +53,10 @@ std::unique_ptr<ImageBufferShareableIOSurfaceBackend> ImageBufferShareableIOSurf
 
     CGContextClearRect(cgContext.get(), FloatRect(FloatPoint::zero(), backendSize));
 
-    return makeUnique<ImageBufferShareableIOSurfaceBackend>(size, backendSize, resolutionScale, colorSpace, WTFMove(surface));
+    return makeUnique<ImageBufferShareableIOSurfaceBackend>(size, backendSize, resolutionScale, colorSpace, pixelFormat, WTFMove(surface));
 }
 
-std::unique_ptr<ImageBufferShareableIOSurfaceBackend> ImageBufferShareableIOSurfaceBackend::create(const FloatSize& logicalSize, const IntSize& internalSize, float resolutionScale, ColorSpace colorSpace, ImageBufferBackendHandle handle)
+std::unique_ptr<ImageBufferShareableIOSurfaceBackend> ImageBufferShareableIOSurfaceBackend::create(const FloatSize& logicalSize, const IntSize& internalSize, float resolutionScale, ColorSpace colorSpace, PixelFormat pixelFormat, ImageBufferBackendHandle handle)
 {
     if (!WTF::holds_alternative<MachSendRight>(handle)) {
         ASSERT_NOT_REACHED();
@@ -67,7 +67,7 @@ std::unique_ptr<ImageBufferShareableIOSurfaceBackend> ImageBufferShareableIOSurf
     if (!surface)
         return nullptr;
 
-    return makeUnique<ImageBufferShareableIOSurfaceBackend>(logicalSize, internalSize, resolutionScale, colorSpace, WTFMove(surface));
+    return makeUnique<ImageBufferShareableIOSurfaceBackend>(logicalSize, internalSize, resolutionScale, colorSpace, pixelFormat, WTFMove(surface));
 }
 
 ImageBufferBackendHandle ImageBufferShareableIOSurfaceBackend::createImageBufferBackendHandle() const

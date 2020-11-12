@@ -54,9 +54,11 @@ enum class PreserveResolution : uint8_t {
     Yes,
 };
 
-enum class ColorFormat : uint8_t {
-    RGBA,
-    BGRA
+enum class PixelFormat : uint8_t {
+    RGBA8,
+    BGRA8,
+    RGB10,
+    RGB10A8,
 };
 
 class ImageBufferBackend {
@@ -72,6 +74,7 @@ public:
     IntSize backendSize() const { return m_backendSize; }
     float resolutionScale() const { return m_resolutionScale; }
     ColorSpace colorSpace() const { return m_colorSpace; }
+    PixelFormat pixelFormat() const { return m_pixelFormat; }
 
     virtual AffineTransform baseTransform() const { return AffineTransform(); }
     virtual size_t memoryCost() const { return 4 * m_backendSize.area().unsafeGet(); }
@@ -104,10 +107,9 @@ public:
     static constexpr bool isAccelerated = false;
 
 protected:
-    WEBCORE_EXPORT ImageBufferBackend(const FloatSize& logicalSize, const IntSize& backendSize, float resolutionScale, ColorSpace);
+    WEBCORE_EXPORT ImageBufferBackend(const FloatSize& logicalSize, const IntSize& backendSize, float resolutionScale, ColorSpace, PixelFormat);
 
     virtual unsigned bytesPerRow() const { return 4 * m_backendSize.width(); }
-    virtual ColorFormat backendColorFormat() const { return ColorFormat::RGBA; }
 
     template<typename T>
     T toBackendCoordinates(T t) const
@@ -122,8 +124,8 @@ protected:
     IntRect backendRect() const { return IntRect(IntPoint::zero(), m_backendSize); };
 
     WEBCORE_EXPORT virtual void copyImagePixels(
-        AlphaPremultiplication srcAlphaFormat, ColorFormat srcColorFormat, unsigned srcBytesPerRow, uint8_t* srcRows,
-        AlphaPremultiplication destAlphaFormat, ColorFormat destColorFormat, unsigned destBytesPerRow, uint8_t* destRows, const IntSize&) const;
+        AlphaPremultiplication srcAlphaFormat, PixelFormat srcPixelFormat, unsigned srcBytesPerRow, uint8_t* srcRows,
+        AlphaPremultiplication destAlphaFormat, PixelFormat destPixelFormat, unsigned destBytesPerRow, uint8_t* destRows, const IntSize&) const;
 
     WEBCORE_EXPORT Vector<uint8_t> toBGRAData(void* data) const;
 
@@ -134,6 +136,21 @@ protected:
     IntSize m_backendSize;
     float m_resolutionScale;
     ColorSpace m_colorSpace;
+    PixelFormat m_pixelFormat;
 };
 
 } // namespace WebCore
+
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::PixelFormat> {
+    using values = EnumValues<
+    WebCore::PixelFormat,
+    WebCore::PixelFormat::RGBA8,
+    WebCore::PixelFormat::BGRA8,
+    WebCore::PixelFormat::RGB10,
+    WebCore::PixelFormat::RGB10A8
+    >;
+};
+
+} // namespace WTF

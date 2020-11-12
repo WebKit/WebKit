@@ -43,10 +43,10 @@ class ImageBufferShareableBitmapBackend : public WebCore::PlatformImageBufferBac
     WTF_MAKE_ISO_ALLOCATED(ImageBufferShareableBitmapBackend);
     WTF_MAKE_NONCOPYABLE(ImageBufferShareableBitmapBackend);
 public:
-    static std::unique_ptr<ImageBufferShareableBitmapBackend> create(const WebCore::FloatSize& logicalSize, const float resolutionScale, WebCore::ColorSpace, const WebCore::HostWindow*);
-    static std::unique_ptr<ImageBufferShareableBitmapBackend> create(const WebCore::FloatSize& logicalSize, const WebCore::IntSize& internalSize, float resolutionScale, WebCore::ColorSpace, ImageBufferBackendHandle);
+    static std::unique_ptr<ImageBufferShareableBitmapBackend> create(const WebCore::FloatSize& logicalSize, const float resolutionScale, WebCore::ColorSpace, WebCore::PixelFormat, const WebCore::HostWindow*);
+    static std::unique_ptr<ImageBufferShareableBitmapBackend> create(const WebCore::FloatSize& logicalSize, const WebCore::IntSize& internalSize, float resolutionScale, WebCore::ColorSpace, WebCore::PixelFormat, ImageBufferBackendHandle);
 
-    ImageBufferShareableBitmapBackend(const WebCore::FloatSize& logicalSize, const WebCore::IntSize& physicalSize, float resolutionScale, WebCore::ColorSpace, RefPtr<ShareableBitmap>&&, std::unique_ptr<WebCore::GraphicsContext>&&);
+    ImageBufferShareableBitmapBackend(const WebCore::FloatSize& logicalSize, const WebCore::IntSize& physicalSize, float resolutionScale, WebCore::ColorSpace, WebCore::PixelFormat, RefPtr<ShareableBitmap>&&, std::unique_ptr<WebCore::GraphicsContext>&&);
 
     ImageBufferBackendHandle createImageBufferBackendHandle() const;
 
@@ -60,8 +60,6 @@ public:
     void putImageData(WebCore::AlphaPremultiplication inputFormat, const WebCore::ImageData&, const WebCore::IntRect& srcRect, const WebCore::IntPoint& destPoint, WebCore::AlphaPremultiplication destFormat) override;
 
 private:
-    WebCore::ColorFormat backendColorFormat() const override { return WebCore::ColorFormat::BGRA; }
-
     RefPtr<ShareableBitmap> m_bitmap;
     std::unique_ptr<WebCore::GraphicsContext> m_context;
 };

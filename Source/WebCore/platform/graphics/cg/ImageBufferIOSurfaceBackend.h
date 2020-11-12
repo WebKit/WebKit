@@ -39,11 +39,11 @@ class WEBCORE_EXPORT ImageBufferIOSurfaceBackend : public ImageBufferCGBackend {
 public:
     static IntSize calculateBackendSize(const FloatSize& logicalSize, float resolutionScale);
 
-    static std::unique_ptr<ImageBufferIOSurfaceBackend> create(const FloatSize&, float resolutionScale, ColorSpace, CGColorSpaceRef, const HostWindow*);
-    static std::unique_ptr<ImageBufferIOSurfaceBackend> create(const FloatSize&, float resolutionScale, ColorSpace, const HostWindow*);
+    static std::unique_ptr<ImageBufferIOSurfaceBackend> create(const FloatSize&, float resolutionScale, ColorSpace, CGColorSpaceRef, PixelFormat, const HostWindow*);
+    static std::unique_ptr<ImageBufferIOSurfaceBackend> create(const FloatSize&, float resolutionScale, ColorSpace, PixelFormat, const HostWindow*);
     static std::unique_ptr<ImageBufferIOSurfaceBackend> create(const FloatSize&, const GraphicsContext&);
 
-    ImageBufferIOSurfaceBackend(const FloatSize& logicalSize, const IntSize& physicalSize, float resolutionScale, ColorSpace, std::unique_ptr<IOSurface>&&);
+    ImageBufferIOSurfaceBackend(const FloatSize& logicalSize, const IntSize& physicalSize, float resolutionScale, ColorSpace, PixelFormat, std::unique_ptr<IOSurface>&&);
 
     GraphicsContext& context() const override;
     void flushContext() override;
@@ -69,7 +69,6 @@ public:
 protected:
     static RetainPtr<CGColorSpaceRef> contextColorSpace(const GraphicsContext&);
     unsigned bytesPerRow() const override;
-    ColorFormat backendColorFormat() const override;
 
     std::unique_ptr<IOSurface> m_surface;
     mutable bool m_requiresDrawAfterPutImageData { false };

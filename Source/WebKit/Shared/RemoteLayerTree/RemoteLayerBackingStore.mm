@@ -166,7 +166,7 @@ WebCore::IntSize RemoteLayerBackingStore::backingStoreSize() const
 unsigned RemoteLayerBackingStore::bytesPerPixel() const
 {
     switch (surfaceBufferFormat()) {
-    case WebCore::IOSurface::Format::RGBA: return 4;
+    case WebCore::IOSurface::Format::BGRA: return 4;
     case WebCore::IOSurface::Format::YUV422: return 2;
 #if HAVE(IOSURFACE_RGB10)
     case WebCore::IOSurface::Format::RGB10: return 4;
@@ -474,7 +474,7 @@ WebCore::IOSurface::Format RemoteLayerBackingStore::surfaceBufferFormat() const
         return m_isOpaque ? WebCore::IOSurface::Format::RGB10 : WebCore::IOSurface::Format::RGB10A8;
 #endif
 
-    return WebCore::IOSurface::Format::RGBA;
+    return WebCore::IOSurface::Format::BGRA;
 }
 
 } // namespace WebKit

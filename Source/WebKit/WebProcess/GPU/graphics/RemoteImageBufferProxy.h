@@ -65,10 +65,10 @@ public:
         m_remoteRenderingBackendProxy->releaseRemoteResource(m_renderingResourceIdentifier);
     }
 
-    void createBackend(const WebCore::FloatSize& logicalSize, const WebCore::IntSize& backendSize, float resolutionScale, WebCore::ColorSpace colorSpace, ImageBufferBackendHandle handle)
+    void createBackend(const WebCore::FloatSize& logicalSize, const WebCore::IntSize& backendSize, float resolutionScale, WebCore::ColorSpace colorSpace, WebCore::PixelFormat pixelFormat, ImageBufferBackendHandle handle)
     {
         ASSERT(!m_backend);
-        m_backend = BackendType::create(logicalSize, backendSize, resolutionScale, colorSpace, WTFMove(handle));
+        m_backend = BackendType::create(logicalSize, backendSize, resolutionScale, colorSpace, pixelFormat, WTFMove(handle));
     }
 
     void commitFlushDisplayList(WebCore::DisplayList::FlushIdentifier flushIdentifier)

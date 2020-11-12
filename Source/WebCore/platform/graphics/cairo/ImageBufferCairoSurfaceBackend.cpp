@@ -43,8 +43,8 @@
 
 namespace WebCore {
 
-ImageBufferCairoSurfaceBackend::ImageBufferCairoSurfaceBackend(const FloatSize& logicalSize, const IntSize& backendSize, float resolutionScale, ColorSpace colorSpace, RefPtr<cairo_surface_t>&& surface)
-    : ImageBufferCairoBackend(logicalSize, backendSize, resolutionScale, colorSpace)
+ImageBufferCairoSurfaceBackend::ImageBufferCairoSurfaceBackend(const FloatSize& logicalSize, const IntSize& backendSize, float resolutionScale, ColorSpace colorSpace, PixelFormat pixelFormat, RefPtr<cairo_surface_t>&& surface)
+    : ImageBufferCairoBackend(logicalSize, backendSize, resolutionScale, colorSpace, pixelFormat)
     , m_surface(WTFMove(surface))
 {
     ASSERT(cairo_surface_status(m_surface.get()) == CAIRO_STATUS_SUCCESS);

@@ -50,7 +50,6 @@ public:
 protected:
     using ImageBufferBackend::ImageBufferBackend;
 
-    ColorFormat backendColorFormat() const override { return ColorFormat::BGRA; }
     virtual void platformTransformColorSpace(const std::array<uint8_t, 256>&) { }
 };
 

@@ -34,9 +34,9 @@ template<typename BackendType>
 class ConcreteImageBuffer : public ImageBuffer {
 public:
     template<typename ImageBufferType = ConcreteImageBuffer, typename... Arguments>
-    static RefPtr<ImageBufferType> create(const FloatSize& size, float resolutionScale, ColorSpace colorSpace, const HostWindow* hostWindow, Arguments&&... arguments)
+    static RefPtr<ImageBufferType> create(const FloatSize& size, float resolutionScale, ColorSpace colorSpace, PixelFormat pixelFormat, const HostWindow* hostWindow, Arguments&&... arguments)
     {
-        auto backend = BackendType::create(size, resolutionScale, colorSpace, hostWindow);
+        auto backend = BackendType::create(size, resolutionScale, colorSpace, pixelFormat, hostWindow);
         if (!backend)
             return nullptr;
         return adoptRef(new ImageBufferType(WTFMove(backend), std::forward<Arguments>(arguments)...));

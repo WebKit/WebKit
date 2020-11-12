@@ -43,8 +43,10 @@ using namespace WebCore;
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(ImageBufferShareableBitmapBackend);
 
-std::unique_ptr<ImageBufferShareableBitmapBackend> ImageBufferShareableBitmapBackend::create(const FloatSize& size, float resolutionScale, ColorSpace colorSpace, const HostWindow*)
+std::unique_ptr<ImageBufferShareableBitmapBackend> ImageBufferShareableBitmapBackend::create(const FloatSize& size, float resolutionScale, ColorSpace colorSpace, PixelFormat pixelFormat, const HostWindow*)
 {
+    ASSERT(pixelFormat == PixelFormat::RGBA8);
+
     IntSize backendSize = calculateBackendSize(size, resolutionScale);
     if (backendSize.isEmpty())
         return nullptr;
@@ -61,10 +63,10 @@ std::unique_ptr<ImageBufferShareableBitmapBackend> ImageBufferShareableBitmapBac
     if (!context)
         return nullptr;
 
-    return makeUnique<ImageBufferShareableBitmapBackend>(size, backendSize, resolutionScale, colorSpace, WTFMove(bitmap), WTFMove(context));
+    return makeUnique<ImageBufferShareableBitmapBackend>(size, backendSize, resolutionScale, colorSpace, pixelFormat, WTFMove(bitmap), WTFMove(context));
 }
 
-std::unique_ptr<ImageBufferShareableBitmapBackend> ImageBufferShareableBitmapBackend::create(const FloatSize& logicalSize, const IntSize& backendSize, float resolutionScale, ColorSpace colorSpace, ImageBufferBackendHandle handle)
+std::unique_ptr<ImageBufferShareableBitmapBackend> ImageBufferShareableBitmapBackend::create(const FloatSize& logicalSize, const IntSize& backendSize, float resolutionScale, ColorSpace colorSpace, PixelFormat pixelFormat, ImageBufferBackendHandle handle)
 {
     if (!WTF::holds_alternative<ShareableBitmap::Handle>(handle)) {
         ASSERT_NOT_REACHED();
@@ -79,11 +81,11 @@ std::unique_ptr<ImageBufferShareableBitmapBackend> ImageBufferShareableBitmapBac
     if (!context)
         return nullptr;
 
-    return makeUnique<ImageBufferShareableBitmapBackend>(logicalSize, backendSize, resolutionScale, colorSpace, WTFMove(bitmap), WTFMove(context));
+    return makeUnique<ImageBufferShareableBitmapBackend>(logicalSize, backendSize, resolutionScale, colorSpace, pixelFormat, WTFMove(bitmap), WTFMove(context));
 }
 
-ImageBufferShareableBitmapBackend::ImageBufferShareableBitmapBackend(const FloatSize& logicalSize, const IntSize& physicalSize, float resolutionScale, ColorSpace colorSpace, RefPtr<ShareableBitmap>&& bitmap, std::unique_ptr<GraphicsContext>&& context)
-    : PlatformImageBufferBackend(logicalSize, physicalSize, resolutionScale, colorSpace)
+ImageBufferShareableBitmapBackend::ImageBufferShareableBitmapBackend(const FloatSize& logicalSize, const IntSize& physicalSize, float resolutionScale, ColorSpace colorSpace, PixelFormat pixelFormat, RefPtr<ShareableBitmap>&& bitmap, std::unique_ptr<GraphicsContext>&& context)
+    : PlatformImageBufferBackend(logicalSize, physicalSize, resolutionScale, colorSpace, pixelFormat)
     , m_bitmap(WTFMove(bitmap))
     , m_context(WTFMove(context))
 {

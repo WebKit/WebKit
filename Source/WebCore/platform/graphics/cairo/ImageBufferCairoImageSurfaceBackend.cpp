@@ -41,8 +41,10 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(ImageBufferCairoImageSurfaceBackend);
 
-std::unique_ptr<ImageBufferCairoImageSurfaceBackend> ImageBufferCairoImageSurfaceBackend::create(const FloatSize& size, float resolutionScale, ColorSpace colorSpace, const HostWindow*)
+std::unique_ptr<ImageBufferCairoImageSurfaceBackend> ImageBufferCairoImageSurfaceBackend::create(const FloatSize& size, float resolutionScale, ColorSpace colorSpace, PixelFormat pixelFormat, const HostWindow*)
 {
+    ASSERT(pixelFormat == PixelFormat::BGRA8);
+
     static cairo_user_data_key_t s_surfaceDataKey;
 
     IntSize backendSize = calculateBackendSize(size, resolutionScale);
@@ -59,16 +61,16 @@ std::unique_ptr<ImageBufferCairoImageSurfaceBackend> ImageBufferCairoImageSurfac
         fastFree(data);
     });
 
-    return std::unique_ptr<ImageBufferCairoImageSurfaceBackend>(new ImageBufferCairoImageSurfaceBackend(size, backendSize, resolutionScale, colorSpace, WTFMove(surface)));
+    return std::unique_ptr<ImageBufferCairoImageSurfaceBackend>(new ImageBufferCairoImageSurfaceBackend(size, backendSize, resolutionScale, colorSpace, pixelFormat, WTFMove(surface)));
 }
 
 std::unique_ptr<ImageBufferCairoImageSurfaceBackend> ImageBufferCairoImageSurfaceBackend::create(const FloatSize& size, const GraphicsContext&)
 {
-    return ImageBufferCairoImageSurfaceBackend::create(size, 1, ColorSpace::SRGB, nullptr);
+    return ImageBufferCairoImageSurfaceBackend::create(size, 1, ColorSpace::SRGB, PixelFormat::BGRA8, nullptr);
 }
 
-ImageBufferCairoImageSurfaceBackend::ImageBufferCairoImageSurfaceBackend(const FloatSize& logicalSize, const IntSize& backendSize, float resolutionScale, ColorSpace colorSpace, RefPtr<cairo_surface_t>&& surface)
-    : ImageBufferCairoSurfaceBackend(logicalSize, backendSize, resolutionScale, colorSpace, WTFMove(surface))
+ImageBufferCairoImageSurfaceBackend::ImageBufferCairoImageSurfaceBackend(const FloatSize& logicalSize, const IntSize& backendSize, float resolutionScale, ColorSpace colorSpace, PixelFormat pixelFormat, RefPtr<cairo_surface_t>&& surface)
+    : ImageBufferCairoSurfaceBackend(logicalSize, backendSize, resolutionScale, colorSpace, pixelFormat, WTFMove(surface))
 {
     ASSERT(cairo_surface_get_type(m_surface.get()) == CAIRO_SURFACE_TYPE_IMAGE);
 }

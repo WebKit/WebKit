@@ -31,11 +31,12 @@
 
 namespace WebCore {
 
-ImageBufferBackend::ImageBufferBackend(const FloatSize& logicalSize, const IntSize& backendSize, float resolutionScale, ColorSpace colorSpace)
+ImageBufferBackend::ImageBufferBackend(const FloatSize& logicalSize, const IntSize& backendSize, float resolutionScale, ColorSpace colorSpace, PixelFormat pixelFormat)
     : m_logicalSize(logicalSize)
     , m_backendSize(backendSize)
     , m_resolutionScale(resolutionScale)
     , m_colorSpace(colorSpace)
+    , m_pixelFormat(pixelFormat)
 {
 }
 
@@ -105,13 +106,13 @@ Vector<uint8_t> ImageBufferBackend::toBGRAData(void* data) const
     uint8_t* srcRows = reinterpret_cast<uint8_t*>(data);
 
     copyImagePixels(
-        AlphaPremultiplication::Premultiplied, backendColorFormat(), srcBytesPerRow, srcRows,
-        AlphaPremultiplication::Unpremultiplied, ColorFormat::BGRA, destBytesPerRow, result.data(), m_logicalSize);
+        AlphaPremultiplication::Premultiplied, pixelFormat(), srcBytesPerRow, srcRows,
+        AlphaPremultiplication::Unpremultiplied, PixelFormat::BGRA8, destBytesPerRow, result.data(), m_logicalSize);
 
     return result;
 }
 
-static inline void copyPremultipliedToPremultiplied(ColorFormat srcColorFormat, const uint8_t* srcPixel, ColorFormat destColorFormat, uint8_t* destPixel)
+static inline void copyPremultipliedToPremultiplied(PixelFormat srcPixelFormat, const uint8_t* srcPixel, PixelFormat destPixelFormat, uint8_t* destPixel)
 {
     uint8_t alpha = srcPixel[3];
     if (!alpha) {
@@ -119,7 +120,7 @@ static inline void copyPremultipliedToPremultiplied(ColorFormat srcColorFormat, 
         return;
     }
 
-    if (srcColorFormat == destColorFormat) {
+    if (srcPixelFormat == destPixelFormat) {
         reinterpret_cast<uint32_t*>(destPixel)[0] = reinterpret_cast<const uint32_t*>(srcPixel)[0];
         return;
     }
@@ -131,15 +132,15 @@ static inline void copyPremultipliedToPremultiplied(ColorFormat srcColorFormat, 
     destPixel[3] = srcPixel[3];
 }
 
-static inline void copyPremultipliedToUnpremultiplied(ColorFormat srcColorFormat, const uint8_t* srcPixel, ColorFormat destColorFormat, uint8_t* destPixel)
+static inline void copyPremultipliedToUnpremultiplied(PixelFormat srcPixelFormat, const uint8_t* srcPixel, PixelFormat destPixelFormat, uint8_t* destPixel)
 {
     uint8_t alpha = srcPixel[3];
     if (!alpha || alpha == 255) {
-        copyPremultipliedToPremultiplied(srcColorFormat, srcPixel, destColorFormat, destPixel);
+        copyPremultipliedToPremultiplied(srcPixelFormat, srcPixel, destPixelFormat, destPixel);
         return;
     }
 
-    if (srcColorFormat == destColorFormat) {
+    if (srcPixelFormat == destPixelFormat) {
         destPixel[0] = (srcPixel[0] * 255) / alpha;
         destPixel[1] = (srcPixel[1] * 255) / alpha;
         destPixel[2] = (srcPixel[2] * 255) / alpha;
@@ -154,15 +155,15 @@ static inline void copyPremultipliedToUnpremultiplied(ColorFormat srcColorFormat
     destPixel[3] = alpha;
 }
 
-static inline void copyUnpremultipliedToPremultiplied(ColorFormat srcColorFormat, const uint8_t* srcPixel, ColorFormat destColorFormat, uint8_t* destPixel)
+static inline void copyUnpremultipliedToPremultiplied(PixelFormat srcPixelFormat, const uint8_t* srcPixel, PixelFormat destPixelFormat, uint8_t* destPixel)
 {
     uint8_t alpha = srcPixel[3];
     if (!alpha || alpha == 255) {
-        copyPremultipliedToPremultiplied(srcColorFormat, srcPixel, destColorFormat, destPixel);
+        copyPremultipliedToPremultiplied(srcPixelFormat, srcPixel, destPixelFormat, destPixel);
         return;
     }
 
-    if (srcColorFormat == destColorFormat) {
+    if (srcPixelFormat == destPixelFormat) {
         destPixel[0] = (srcPixel[0] * alpha + 254) / 255;
         destPixel[1] = (srcPixel[1] * alpha + 254) / 255;
         destPixel[2] = (srcPixel[2] * alpha + 254) / 255;
@@ -177,9 +178,9 @@ static inline void copyUnpremultipliedToPremultiplied(ColorFormat srcColorFormat
     destPixel[3] = alpha;
 }
 
-static inline void copyUnpremultipliedToUnpremultiplied(ColorFormat srcColorFormat, const uint8_t* srcPixel, ColorFormat destColorFormat, uint8_t* destPixel)
+static inline void copyUnpremultipliedToUnpremultiplied(PixelFormat srcPixelFormat, const uint8_t* srcPixel, PixelFormat destPixelFormat, uint8_t* destPixel)
 {
-    if (srcColorFormat == destColorFormat) {
+    if (srcPixelFormat == destPixelFormat) {
         reinterpret_cast<uint32_t*>(destPixel)[0] = reinterpret_cast<const uint32_t*>(srcPixel)[0];
         return;
     }
@@ -191,38 +192,42 @@ static inline void copyUnpremultipliedToUnpremultiplied(ColorFormat srcColorForm
     destPixel[3] = srcPixel[3];
 }
 
-template<void (*copyFunctor)(ColorFormat, const uint8_t*, ColorFormat, uint8_t*)>
+template<void (*copyFunctor)(PixelFormat, const uint8_t*, PixelFormat, uint8_t*)>
 static inline void copyImagePixelsUnaccelerated(
-    ColorFormat srcColorFormat, unsigned srcBytesPerRow, uint8_t* srcRows,
-    ColorFormat destColorFormat, unsigned destBytesPerRow, uint8_t* destRows, const IntSize& size)
+    PixelFormat srcPixelFormat, unsigned srcBytesPerRow, uint8_t* srcRows,
+    PixelFormat destPixelFormat, unsigned destBytesPerRow, uint8_t* destRows, const IntSize& size)
 {
     size_t bytesPerRow = size.width() * 4;
     for (int y = 0; y < size.height(); ++y) {
         for (size_t x = 0; x < bytesPerRow; x += 4)
-            copyFunctor(srcColorFormat, &srcRows[x], destColorFormat, &destRows[x]);
+            copyFunctor(srcPixelFormat, &srcRows[x], destPixelFormat, &destRows[x]);
         srcRows += srcBytesPerRow;
         destRows += destBytesPerRow;
     }
 }
 
 void ImageBufferBackend::copyImagePixels(
-    AlphaPremultiplication srcAlphaFormat, ColorFormat srcColorFormat, unsigned srcBytesPerRow, uint8_t* srcRows,
-    AlphaPremultiplication destAlphaFormat, ColorFormat destColorFormat, unsigned destBytesPerRow, uint8_t* destRows, const IntSize& size) const
+    AlphaPremultiplication srcAlphaFormat, PixelFormat srcPixelFormat, unsigned srcBytesPerRow, uint8_t* srcRows,
+    AlphaPremultiplication destAlphaFormat, PixelFormat destPixelFormat, unsigned destBytesPerRow, uint8_t* destRows, const IntSize& size) const
 {
+    // We don't currently support getting or putting pixel data with deep color buffers.
+    ASSERT(srcPixelFormat == PixelFormat::RGBA8 || srcPixelFormat == PixelFormat::BGRA8);
+    ASSERT(destPixelFormat == PixelFormat::RGBA8 || destPixelFormat == PixelFormat::BGRA8);
+
     if (srcAlphaFormat == destAlphaFormat) {
         if (srcAlphaFormat == AlphaPremultiplication::Premultiplied)
-            copyImagePixelsUnaccelerated<copyPremultipliedToPremultiplied>(srcColorFormat, srcBytesPerRow, srcRows, destColorFormat, destBytesPerRow, destRows, size);
+            copyImagePixelsUnaccelerated<copyPremultipliedToPremultiplied>(srcPixelFormat, srcBytesPerRow, srcRows, destPixelFormat, destBytesPerRow, destRows, size);
         else
-            copyImagePixelsUnaccelerated<copyUnpremultipliedToUnpremultiplied>(srcColorFormat, srcBytesPerRow, srcRows, destColorFormat, destBytesPerRow, destRows, size);
+            copyImagePixelsUnaccelerated<copyUnpremultipliedToUnpremultiplied>(srcPixelFormat, srcBytesPerRow, srcRows, destPixelFormat, destBytesPerRow, destRows, size);
         return;
     }
 
     if (destAlphaFormat == AlphaPremultiplication::Unpremultiplied) {
-        copyImagePixelsUnaccelerated<copyPremultipliedToUnpremultiplied>(srcColorFormat, srcBytesPerRow, srcRows, destColorFormat, destBytesPerRow, destRows, size);
+        copyImagePixelsUnaccelerated<copyPremultipliedToUnpremultiplied>(srcPixelFormat, srcBytesPerRow, srcRows, destPixelFormat, destBytesPerRow, destRows, size);
         return;
     }
 
-    copyImagePixelsUnaccelerated<copyUnpremultipliedToPremultiplied>(srcColorFormat, srcBytesPerRow, srcRows, destColorFormat, destBytesPerRow, destRows, size);
+    copyImagePixelsUnaccelerated<copyUnpremultipliedToPremultiplied>(srcPixelFormat, srcBytesPerRow, srcRows, destPixelFormat, destBytesPerRow, destRows, size);
 }
 
 RefPtr<ImageData> ImageBufferBackend::getImageData(AlphaPremultiplication outputFormat, const IntRect& srcRect, void* data) const
@@ -252,8 +257,8 @@ RefPtr<ImageData> ImageBufferBackend::getImageData(AlphaPremultiplication output
     uint8_t* srcRows = reinterpret_cast<uint8_t*>(data) + srcRectClipped.y() * srcBytesPerRow + srcRectClipped.x() * 4;
 
     copyImagePixels(
-        AlphaPremultiplication::Premultiplied, backendColorFormat(), srcBytesPerRow, srcRows,
-        outputFormat, ColorFormat::RGBA, destBytesPerRow, destRows, destRect.size());
+        AlphaPremultiplication::Premultiplied, pixelFormat(), srcBytesPerRow, srcRows,
+        outputFormat, PixelFormat::RGBA8, destBytesPerRow, destRows, destRect.size());
 
     return imageData;
 }
@@ -283,8 +288,8 @@ void ImageBufferBackend::putImageData(AlphaPremultiplication inputFormat, const 
     uint8_t* srcRows = imageData.data()->data() + srcRectClipped.y() * srcBytesPerRow + srcRectClipped.x() * 4;
 
     copyImagePixels(
-        inputFormat, ColorFormat::RGBA, srcBytesPerRow, srcRows,
-        destFormat, backendColorFormat(), destBytesPerRow, destRows, destRect.size());
+        inputFormat, PixelFormat::RGBA8, srcBytesPerRow, srcRows,
+        destFormat, pixelFormat(), destBytesPerRow, destRows, destRect.size());
 }
 
 } // namespace WebCore

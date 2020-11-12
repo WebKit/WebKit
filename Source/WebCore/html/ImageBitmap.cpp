@@ -84,7 +84,7 @@ RefPtr<ImageBuffer> ImageBitmap::createImageBuffer(ScriptExecutionContext& scrip
         auto& document = downcast<Document>(scriptExecutionContext);
         if (document.view() && document.view()->root()) {
             auto hostWindow = document.view()->root()->hostWindow();
-            return ImageBuffer::create(size, renderingMode, ShouldUseDisplayList::No, RenderingPurpose::Canvas, resolutionScale, ColorSpace::SRGB, hostWindow);
+            return ImageBuffer::create(size, renderingMode, ShouldUseDisplayList::No, RenderingPurpose::Canvas, resolutionScale, ColorSpace::SRGB, PixelFormat::BGRA8, hostWindow);
         }
     }
 

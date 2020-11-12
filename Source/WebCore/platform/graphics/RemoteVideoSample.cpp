@@ -56,7 +56,7 @@ static inline std::unique_ptr<IOSurface> transferBGRAPixelBufferToIOSurface(CVPi
     }
 
     IntSize size { static_cast<int>(CVPixelBufferGetWidth(pixelBuffer)), static_cast<int>(CVPixelBufferGetHeight(pixelBuffer)) };
-    auto ioSurface =  IOSurface::create(size, sRGBColorSpaceRef(), IOSurface::Format::RGBA);
+    auto ioSurface =  IOSurface::create(size, sRGBColorSpaceRef(), IOSurface::Format::BGRA);
 
     IOSurface::Locker lock(*ioSurface);
     vImage_Buffer src;

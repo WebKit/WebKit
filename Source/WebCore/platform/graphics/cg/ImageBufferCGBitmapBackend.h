@@ -36,8 +36,8 @@ class ImageBufferCGBitmapBackend : public ImageBufferCGBackend {
     WTF_MAKE_ISO_ALLOCATED(ImageBufferCGBitmapBackend);
     WTF_MAKE_NONCOPYABLE(ImageBufferCGBitmapBackend);
 public:
-    static std::unique_ptr<ImageBufferCGBitmapBackend> create(const FloatSize&, float resolutionScale, ColorSpace, CGColorSpaceRef, const HostWindow*);
-    static std::unique_ptr<ImageBufferCGBitmapBackend> create(const FloatSize&, float resolutionScale, ColorSpace, const HostWindow*);
+    static std::unique_ptr<ImageBufferCGBitmapBackend> create(const FloatSize&, float resolutionScale, ColorSpace, CGColorSpaceRef, PixelFormat, const HostWindow*);
+    static std::unique_ptr<ImageBufferCGBitmapBackend> create(const FloatSize&, float resolutionScale, ColorSpace, PixelFormat, const HostWindow*);
     static std::unique_ptr<ImageBufferCGBitmapBackend> create(const FloatSize&, const GraphicsContext&);
 
     GraphicsContext& context() const override;
@@ -52,11 +52,7 @@ public:
     static constexpr bool isOriginAtUpperLeftCorner = true;
 
 private:
-    ImageBufferCGBitmapBackend(const FloatSize& logicalSize, const IntSize& physicalSize, float resolutionScale, ColorSpace, void* data, RetainPtr<CGDataProviderRef>&&, std::unique_ptr<GraphicsContext>&&);
-
-#if PLATFORM(IOS_FAMILY)
-    ColorFormat backendColorFormat() const override { return ColorFormat::BGRA; }
-#endif
+    ImageBufferCGBitmapBackend(const FloatSize& logicalSize, const IntSize& physicalSize, float resolutionScale, ColorSpace, PixelFormat, void* data, RetainPtr<CGDataProviderRef>&&, std::unique_ptr<GraphicsContext>&&);
 
     void* m_data;
     RetainPtr<CGDataProviderRef> m_dataProvider;

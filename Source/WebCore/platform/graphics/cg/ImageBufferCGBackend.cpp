@@ -79,7 +79,7 @@ static RefPtr<Image> createBitmapImageAfterScalingIfNeeded(RefPtr<NativeImage>&&
     if (resolutionScale == 1 || preserveResolution == PreserveResolution::Yes)
         image = NativeImage::create(createCroppedImageIfNecessary(image->platformImage().get(), backendSize));
     else {
-        auto context = adoptCF(CGBitmapContextCreate(0, logicalSize.width(), logicalSize.height(), 8, 4 * logicalSize.width(), sRGBColorSpaceRef(), kCGImageAlphaPremultipliedLast));
+        auto context = adoptCF(CGBitmapContextCreate(0, logicalSize.width(), logicalSize.height(), 8, 4 * logicalSize.width(), sRGBColorSpaceRef(), kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host));
         CGContextSetBlendMode(context.get(), kCGBlendModeCopy);
         CGContextClipToRect(context.get(), FloatRect(FloatPoint::zero(), logicalSize));
         FloatSize imageSizeInUserSpace = logicalSize;
@@ -162,7 +162,7 @@ RetainPtr<CFDataRef> ImageBufferCGBackend::toCFData(const String& mimeType, Opti
         image = createCroppedImageIfNecessary(image.get(), backendSize());
     } else {
         image = copyNativeImage(DontCopyBackingStore)->platformImage();
-        auto context = adoptCF(CGBitmapContextCreate(0, backendSize().width(), backendSize().height(), 8, 4 * backendSize().width(), sRGBColorSpaceRef(), kCGImageAlphaPremultipliedLast));
+        auto context = adoptCF(CGBitmapContextCreate(0, backendSize().width(), backendSize().height(), 8, 4 * backendSize().width(), sRGBColorSpaceRef(), kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host));
         CGContextSetBlendMode(context.get(), kCGBlendModeCopy);
         CGContextClipToRect(context.get(), CGRectMake(0, 0, backendSize().width(), backendSize().height()));
         CGContextDrawImage(context.get(), CGRectMake(0, 0, backendSize().width(), backendSize().height()), image.get());
@@ -203,11 +203,11 @@ static inline vImage_Buffer makeVImageBuffer(unsigned bytesPerRow, uint8_t* rows
 }
 
 static inline void copyImagePixelsAccelerated(
-    AlphaPremultiplication srcAlphaFormat, ColorFormat srcColorFormat, vImage_Buffer& src,
-    AlphaPremultiplication destAlphaFormat, ColorFormat destColorFormat, vImage_Buffer& dest)
+    AlphaPremultiplication srcAlphaFormat, PixelFormat srcPixelFormat, vImage_Buffer& src,
+    AlphaPremultiplication destAlphaFormat, PixelFormat destPixelFormat, vImage_Buffer& dest)
 {
     if (srcAlphaFormat == destAlphaFormat) {
-        ASSERT(srcColorFormat != destColorFormat);
+        ASSERT(srcPixelFormat != destPixelFormat);
         // The destination alpha format can be unpremultiplied in the
         // case of an ImageBitmap created from an ImageData with
         // premultiplyAlpha=="none".
@@ -219,18 +219,18 @@ static inline void copyImagePixelsAccelerated(
     }
 
     if (destAlphaFormat == AlphaPremultiplication::Unpremultiplied) {
-        if (srcColorFormat == ColorFormat::RGBA)
+        if (srcPixelFormat == PixelFormat::RGBA8)
             vImageUnpremultiplyData_RGBA8888(&src, &dest, kvImageNoFlags);
         else
             vImageUnpremultiplyData_BGRA8888(&src, &dest, kvImageNoFlags);
     } else {
-        if (srcColorFormat == ColorFormat::RGBA)
+        if (srcPixelFormat == PixelFormat::RGBA8)
             vImagePremultiplyData_RGBA8888(&src, &dest, kvImageNoFlags);
         else
             vImagePremultiplyData_BGRA8888(&src, &dest, kvImageNoFlags);
     }
 
-    if (srcColorFormat != destColorFormat) {
+    if (srcPixelFormat != destPixelFormat) {
         // Swap pixel channels BGRA <-> RGBA.
         const uint8_t map[4] = { 2, 1, 0, 3 };
         vImagePermuteChannels_ARGB8888(&dest, &dest, map, kvImageNoFlags);
@@ -238,18 +238,22 @@ static inline void copyImagePixelsAccelerated(
 }
 
 void ImageBufferCGBackend::copyImagePixels(
-    AlphaPremultiplication srcAlphaFormat, ColorFormat srcColorFormat, unsigned srcBytesPerRow, uint8_t* srcRows,
-    AlphaPremultiplication destAlphaFormat, ColorFormat destColorFormat, unsigned destBytesPerRow, uint8_t* destRows, const IntSize& size) const
+    AlphaPremultiplication srcAlphaFormat, PixelFormat srcPixelFormat, unsigned srcBytesPerRow, uint8_t* srcRows,
+    AlphaPremultiplication destAlphaFormat, PixelFormat destPixelFormat, unsigned destBytesPerRow, uint8_t* destRows, const IntSize& size) const
 {
-    if (srcAlphaFormat == destAlphaFormat && srcColorFormat == destColorFormat) {
-        ImageBufferBackend::copyImagePixels(srcAlphaFormat, srcColorFormat, srcBytesPerRow, srcRows, destAlphaFormat, destColorFormat, destBytesPerRow, destRows, size);
+    // We don't currently support getting or putting pixel data with deep color buffers.
+    ASSERT(srcPixelFormat == PixelFormat::RGBA8 || srcPixelFormat == PixelFormat::BGRA8);
+    ASSERT(destPixelFormat == PixelFormat::RGBA8 || destPixelFormat == PixelFormat::BGRA8);
+
+    if (srcAlphaFormat == destAlphaFormat && srcPixelFormat == destPixelFormat) {
+        ImageBufferBackend::copyImagePixels(srcAlphaFormat, srcPixelFormat, srcBytesPerRow, srcRows, destAlphaFormat, destPixelFormat, destBytesPerRow, destRows, size);
         return;
     }
 
     vImage_Buffer src = makeVImageBuffer(srcBytesPerRow, srcRows, size);
     vImage_Buffer dest = makeVImageBuffer(destBytesPerRow, destRows, size);
 
-    copyImagePixelsAccelerated(srcAlphaFormat, srcColorFormat, src, destAlphaFormat, destColorFormat, dest);
+    copyImagePixelsAccelerated(srcAlphaFormat, srcPixelFormat, src, destAlphaFormat, destPixelFormat, dest);
 }
 #endif
 
