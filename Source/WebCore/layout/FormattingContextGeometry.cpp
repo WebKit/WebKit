@@ -68,7 +68,7 @@ Optional<LayoutUnit> FormattingContext::Geometry::computedHeightValue(const Box&
 {
     auto& style = layoutBox.style();
     auto height = heightType == HeightType::Normal ? style.logicalHeight() : heightType == HeightType::Min ? style.logicalMinHeight() : style.logicalMaxHeight();
-    if (height.isUndefined() || height.isAuto())
+    if (height.isUndefined() || height.isAuto() || height.isMaxContent() || height.isMinContent() || height.isFitContent())
         return { };
 
     if (height.isFixed())
