@@ -1,3 +1,15 @@
+2020-11-11  Chris Dumez  <cdumez@apple.com>
+
+        Add RunLoop::Timer constructor taking in a WTF::Function
+        https://bugs.webkit.org/show_bug.cgi?id=218828
+
+        Reviewed by Darin Adler.
+
+        Add RunLoop::Timer constructor taking in a WTF::Function instead of a function pointer.
+        This is similar to what was done for WebCore::Timer.
+
+        * wtf/RunLoop.h:
+
 2020-11-11  Sam Weinig  <weinig@apple.com>
 
         Move more WebKitLegacy preferences bound to Settings to WebPreferences.yaml

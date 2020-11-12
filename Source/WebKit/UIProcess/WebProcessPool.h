@@ -355,7 +355,6 @@ public:
 
 #if ENABLE(GPU_PROCESS)
     void gpuProcessCrashed(ProcessID);
-    void resetGPUProcessCrashCount();
 
     void getGPUProcessConnection(WebProcessProxy&, Messages::WebProcessProxy::GetGPUProcessConnectionDelayedReply&&);
 

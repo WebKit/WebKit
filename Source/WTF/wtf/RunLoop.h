@@ -27,6 +27,7 @@
 
 #pragma once
 
+#include <functional>
 #include <wtf/Condition.h>
 #include <wtf/Deque.h>
 #include <wtf/Forward.h>
@@ -169,18 +170,20 @@ public:
 
         Timer(RunLoop& runLoop, TimerFiredClass* o, TimerFiredFunction f)
             : TimerBase(runLoop)
-            , m_function(f)
-            , m_object(o)
+            , m_function(std::bind(f, o))
+        {
+        }
+
+        Timer(RunLoop& runLoop, Function<void ()>&& function)
+            : TimerBase(runLoop)
+            , m_function(WTFMove(function))
         {
         }
 
     private:
-        void fired() override { (m_object->*m_function)(); }
+        void fired() override { m_function(); }
 
-        // This order should be maintained due to MSVC bug.
-        // http://computer-programming-forum.com/7-vc.net/6fbc30265f860ad1.htm
-        TimerFiredFunction m_function;
-        TimerFiredClass* m_object;
+        Function<void()> m_function;
     };
 
 private:

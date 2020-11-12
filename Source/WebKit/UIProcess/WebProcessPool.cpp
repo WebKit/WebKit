@@ -266,7 +266,7 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
     , m_hiddenPageThrottlingAutoIncreasesCounter([this](RefCounterEvent) { m_hiddenPageThrottlingTimer.startOneShot(0_s); })
     , m_hiddenPageThrottlingTimer(RunLoop::main(), this, &WebProcessPool::updateHiddenPageThrottlingAutoIncreaseLimit)
 #if ENABLE(GPU_PROCESS)
-    , m_resetGPUProcessCrashCountTimer(RunLoop::main(), this, &WebProcessPool::resetGPUProcessCrashCount)
+    , m_resetGPUProcessCrashCountTimer(RunLoop::main(), [this] { m_recentGPUProcessCrashCount = 0; })
 #endif
     , m_foregroundWebProcessCounter([this](RefCounterEvent) { updateProcessAssertions(); })
     , m_backgroundWebProcessCounter([this](RefCounterEvent) { updateProcessAssertions(); })
@@ -511,11 +511,6 @@ void WebProcessPool::gpuProcessCrashed(ProcessID identifier)
         terminateAllWebContentProcesses();
     } else if (!m_resetGPUProcessCrashCountTimer.isActive())
         m_resetGPUProcessCrashCountTimer.startOneShot(resetGPUProcessCrashCountDelay);
-}
-
-void WebProcessPool::resetGPUProcessCrashCount()
-{
-    m_recentGPUProcessCrashCount = 0;
 }
 
 void WebProcessPool::getGPUProcessConnection(WebProcessProxy& webProcessProxy, Messages::WebProcessProxy::GetGPUProcessConnection::DelayedReply&& reply)

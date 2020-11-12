@@ -1,3 +1,16 @@
+2020-11-11  Chris Dumez  <cdumez@apple.com>
+
+        Add RunLoop::Timer constructor taking in a WTF::Function
+        https://bugs.webkit.org/show_bug.cgi?id=218828
+
+        Reviewed by Darin Adler.
+
+        Use the new RunLoop::Timer constructor to simplify the code a bit.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::m_resetGPUProcessCrashCountTimer):
+        * UIProcess/WebProcessPool.h:
+
 2020-11-11  John Wilander  <wilander@apple.com>
 
         PCM: Change from ad-click-attribution to private-click-measurement (in all forms, including .well-known URL)
