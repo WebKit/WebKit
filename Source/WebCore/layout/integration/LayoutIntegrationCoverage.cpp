@@ -587,6 +587,9 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderObject& child, Incl
         if (style.width().isPercent() || style.height().isPercent())
             SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonSupportedChild, reasons, includeReasons);
 
+        if (style.verticalAlign() == VerticalAlign::Sub || style.verticalAlign() == VerticalAlign::Super)
+            SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonSupportedChild, reasons, includeReasons);
+
         if (is<RenderImage>(replaced)) {
             auto& image = downcast<RenderImage>(replaced);
             if (image.imageMap())
@@ -611,7 +614,7 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderObject& child, Incl
             SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonSupportedChild, reasons, includeReasons);
 
         auto& style = block.style();
-        if (style.verticalAlign() != VerticalAlign::Baseline)
+        if (style.verticalAlign() == VerticalAlign::Sub || style.verticalAlign() == VerticalAlign::Super)
             SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonSupportedChild, reasons, includeReasons);
         if (style.width().isPercent() || style.height().isPercent())
             SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonSupportedChild, reasons, includeReasons);
