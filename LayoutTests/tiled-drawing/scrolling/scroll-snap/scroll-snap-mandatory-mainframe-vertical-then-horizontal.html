@@ -25,39 +25,42 @@
             #item5 { background-color: fuchsia; }
         </style>
         <script src="../../../resources/js-test.js"></script>
+        <script src="../../../resources/ui-helper.js"></script>
+        <script src="resources/mainframe-scroll-snap-test.js"></script>
         <script>
         window.jsTestIsAsync = true;
 
-        function scrollSnapTest()
+        async function runTest()
         {
-            var startPosX = document.body.offsetLeft + 20;
-            var startPosY = document.body.offsetTop + 20;
-            eventSender.monitorWheelEvents();
-            eventSender.mouseMoveTo(startPosX, startPosY);
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'began', 'none');
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'changed', 'none');
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, 0, 'changed', 'none');
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, 0, 'changed', 'none');
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, 0, 'changed', 'none');
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'ended', 'none');
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, 0, 'none', 'begin');
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(-4, 0, 'none', 'continue');
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'none', 'end');
-            eventSender.callAfterScrollingCompletes(() => {
-                if (document.scrollingElement.scrollTop == 0)
-                    testPassed("scroll offset snapped back to top.");
-                else
-                    testFailed(`did not honor snap points (expected 0, observed ${document.scrollingElement.scrollTop}).`);
+            // These arrays are arguments that will be passed to eventSender.mouseScrollByWithWheelAndMomentumPhases.
+            let scrollMotions = [
+                [0, -1, 'began', 'none'],
+                [0, -1, 'changed', 'none'],
+                [-1, 0, 'changed', 'none'],
+                [-1, 0, 'changed', 'none'],
+                [-1, 0, 'changed', 'none'],
+                [0, 0, 'ended', 'none'],
+                [-1, 0, 'none', 'begin'],
+                [-4, 0, 'none', 'continue'],
+                [0, 0, 'none', 'end'],
+            ];
 
-                finishJSTest();
-            });
+            await UIHelper.delayFor(0);
+            await doScrollTest(document.scrollingElement, VERTICAL_AND_HORIZONTAL, scrollMotions);
+
+            if (document.scrollingElement.scrollTop == 0)
+                testPassed("scroll offset snapped back to top.");
+            else
+                testFailed(`did not honor snap points (expected 0, observed ${document.scrollingElement.scrollTop}).`);
+
+            finishJSTest();
         }
 
         function onLoad()
         {
             if (window.eventSender) {
                 internals.setPlatformMomentumScrollingPredictionEnabled(false);
-                setTimeout(scrollSnapTest, 0);
+                runTest();
             } else {
                 var messageLocation = document.getElementById('item0');
                 var message = document.createElement('div');

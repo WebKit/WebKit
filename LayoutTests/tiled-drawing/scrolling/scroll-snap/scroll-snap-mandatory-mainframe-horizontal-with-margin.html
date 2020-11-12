@@ -29,81 +29,30 @@
             #item5 { background-color: fuchsia; }
         </style>
         <script src="../../../resources/js-test.js"></script>
+        <script src="../../../resources/ui-helper.js"></script>
+        <script src="resources/mainframe-scroll-snap-test.js"></script>
         <script>
         window.jsTestIsAsync = true;
 
-        var targetScroller;
-        var scrollPositionBeforeGlide;
-        var scrollPositionBeforeSnap;
-
-        function checkForScrollSnap()
+        async function runTests()
         {
-            // The div should have snapped back to the previous position
-            if (targetScroller.scrollLeft != scrollPositionBeforeSnap)
-                testFailed("div did not snap back to proper location. Expected " + scrollPositionBeforeSnap + ", but got " + targetScroller.scrollLeft);
-            else
-                testPassed("div honored snap points.");
-
+            await UIHelper.delayFor(0);
+            await scrollGlideShouldScrollTo(document.scrollingElement, HORIZONTAL, "window.innerWidth + 50");
+            await UIHelper.delayFor(0);
+            await shortScrollShouldSnapBack(document.scrollingElement, HORIZONTAL);
             finishJSTest();
-        }
-
-        function scrollSnapTest()
-        {
-            scrollPositionBeforeSnap = targetScroller.scrollLeft;
-
-            var startPosX = targetScroller.offsetLeft + 20;
-            var startPosY = targetScroller.offsetTop + 20;
-            eventSender.monitorWheelEvents();
-            eventSender.mouseMoveTo(startPosX, startPosY); // Make sure we are just outside the iFrame
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, 0, 'began', 'none');
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, 0, 'changed', 'none');
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, 0, 'changed', 'none');
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'ended', 'none');
-            eventSender.callAfterScrollingCompletes(checkForScrollSnap);
-        }
-
-        function checkForScrollGlide()
-        {
-            // The div should have scrolled (glided) to the next snap point, which should be the width
-            // of the first div plus the root element's left margin (50 pixels).
-            if (targetScroller.scrollLeft == window.innerWidth + 50)
-                testPassed("div scrolled to next window.");
-            else
-                testFailed("div did not honor snap points. Expected " + window.innerWidth + ", but got " + targetScroller.scrollLeft);
-
-            setTimeout(scrollSnapTest, 0);
-        }
-
-        function scrollGlideTest()
-        {
-            scrollPositionBeforeGlide = targetScroller.scrollLeft;
-
-            var startPosX = targetScroller.offsetLeft + 20;
-            var startPosY = targetScroller.offsetTop + 20;
-            eventSender.monitorWheelEvents();
-            eventSender.mouseMoveTo(startPosX, startPosY); // Make sure we are just outside the iFrame
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, 0, 'began', 'none');
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, 0, 'changed', 'none');
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, 0, 'changed', 'none');
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, 0, 'changed', 'none');
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'ended', 'none');
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, 0, 'none', 'begin');
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, 0, 'none', 'continue');
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'none', 'end');
-            eventSender.callAfterScrollingCompletes(checkForScrollGlide);
         }
 
         function onLoad()
         {
-            targetScroller = document.scrollingElement;
             if (window.eventSender) {
                 internals.setPlatformMomentumScrollingPredictionEnabled(false);
-                setTimeout(scrollGlideTest, 0);
+                runTests();
             } else {
                 var messageLocation = document.getElementById('item0');
                 var message = document.createElement('div');
                 message.innerHTML = "<p>To run this test manually, scroll the page horizontally. The page should "
-                    + "alternate between uniform colors which fill the view.<p>";
+                    + "snap between uniform colors which fill the view.<p>";
                 messageLocation.appendChild(message);
             }
         }

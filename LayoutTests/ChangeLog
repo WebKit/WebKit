@@ -1,3 +1,22 @@
+2020-11-12  Martin Robinson  <mrobinson@igalia.com>
+
+        Simplify mainframe tests tiled-drawing/scrolling/scroll-snap
+        https://bugs.webkit.org/show_bug.cgi?id=218757
+
+        Reviewed by Simon Fraser.
+
+        * tiled-drawing/scrolling/scroll-snap/resources/mainframe-scroll-snap-test.js: Added. Allows
+        sharing the mainframe scroll testing code between tests and reimplements them with Promises.
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-mainframe-horizontal-legacy.html:
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-mainframe-horizontal-with-margin.html:
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-mainframe-horizontal.html:
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-mainframe-slow-horizontal.html:
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-mainframe-slow-vertical.html:
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-mainframe-vertical-legacy.html:
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-mainframe-vertical-then-horizontal.html:
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-mainframe-vertical-with-margin.html:
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-mainframe-vertical.html:
+
 2020-11-12  Sergio Villar Senin  <svillar@igalia.com>
 
         Crash in RenderBox::overrideContainingBlockContentHeight()
