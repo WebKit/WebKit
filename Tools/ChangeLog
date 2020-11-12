@@ -1,5 +1,14 @@
 2020-11-12  Aakash Jain  <aakash_jain@apple.com>
 
+        [build.webkit.org] replace c['slavePortnum'] with c['protocols'] in master_buildbot2.cfg
+        https://bugs.webkit.org/show_bug.cgi?id=218819
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/build-webkit-org/master_buildbot2.cfg:
+
+2020-11-12  Aakash Jain  <aakash_jain@apple.com>
+
         [build.webkit.org] Update CheckOutSource step for new buildbot (follow-up fix)
         https://bugs.webkit.org/show_bug.cgi?id=218802
         <rdar://problem/71295484>
