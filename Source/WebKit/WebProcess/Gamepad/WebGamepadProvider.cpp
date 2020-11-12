@@ -29,6 +29,7 @@
 #if ENABLE(GAMEPAD)
 
 #include "GamepadData.h"
+#include "Logging.h"
 #include "WebGamepad.h"
 #include "WebProcess.h"
 #include "WebProcessPoolMessages.h"

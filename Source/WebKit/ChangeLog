@@ -1,3 +1,9 @@
+2020-11-12  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Unreviewed, non-unified build fix.
+
+        * WebProcess/Gamepad/WebGamepadProvider.cpp: Add missing Logging.h header.
+
 2020-11-12  Zalan Bujtas  <zalan@apple.com>
 
         Show legacy line layout visual coverage instead of "simple line" layout.
