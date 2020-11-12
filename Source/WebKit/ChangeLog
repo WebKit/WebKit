@@ -1,3 +1,27 @@
+2020-11-12  Chris Dumez  <cdumez@apple.com>
+
+        ASSERTION FAILED: isValidIdentifier(m_identifier) seen with TestWebKitAPI.GPUProcess.WebProcessTerminationAfterTooManyGPUProcessCrashes
+        https://bugs.webkit.org/show_bug.cgi?id=218856
+        <rdar://problem/71331809>
+
+        Reviewed by Tim Horton.
+
+        The API test is repeatedly killing the GPU process. As a result, it is possible for the
+        GPUProcess to crash while RemoteAudioDestinationProxy::connectToGPUProcess() is in the
+        middle of its RemoteAudioDestinationManager::CreateAudioDestination() synchronous IPC.
+        The function would fail to check if the IPC was successful and proceed with an invalid
+        destinationID in such cases, causing the crash.
+
+        We now check if the sendSync() was successful. If it wasn't we now log an error and
+        return early. RemoteAudioDestinationManager::gpuProcessConnectionDidClose() will get
+        called later on to notify us that the GPU Process crashed and it will call
+        connectToGPUProcess() again.
+
+        No new tests, covered by existing API test that is flakily crashing.
+
+        * WebProcess/GPU/media/RemoteAudioDestinationProxy.cpp:
+        (WebKit::RemoteAudioDestinationProxy::connectToGPUProcess):
+
 2020-11-12  Youenn Fablet  <youenn@apple.com>
 
         WebProcess should process WebRTC codecs IPC messages from the GPU Process in a background thread

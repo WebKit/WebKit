@@ -29,6 +29,7 @@
 #if ENABLE(GPU_PROCESS) && ENABLE(WEB_AUDIO)
 
 #include "GPUConnectionToWebProcess.h"
+#include "Logging.h"
 #include "RemoteAudioDestinationManagerMessages.h"
 #include "RemoteAudioDestinationProxyMessages.h"
 #include "WebProcess.h"
@@ -81,11 +82,17 @@ void RemoteAudioDestinationProxy::connectToGPUProcess()
 
     auto& connection = WebProcess::singleton().ensureGPUProcessConnection();
     connection.addClient(*this);
-    connection.connection().sendSync(
+    bool didSucceed = connection.connection().sendSync(
         Messages::RemoteAudioDestinationManager::CreateAudioDestination(m_inputDeviceId, m_numberOfInputChannels, numberOfOutputChannels(), sampleRate(), hardwareSampleRate()),
         Messages::RemoteAudioDestinationManager::CreateAudioDestination::Reply(destinationID), 0);
-    connection.connection().addThreadMessageReceiver(Messages::RemoteAudioDestinationProxy::messageReceiverName(), this, destinationID.toUInt64());
 
+    if (!didSucceed) {
+        // The GPUProcess likely crashed during this synchronous IPC. gpuProcessConnectionDidClose() will get called to reconnect to the GPUProcess.
+        RELEASE_LOG_ERROR(Media, "RemoteAudioDestinationProxy::connectToGPUProcess: Failed to send RemoteAudioDestinationManager::CreateAudioDestination() IPC (GPU process likely crashed)");
+        return;
+    }
+
+    connection.connection().addThreadMessageReceiver(Messages::RemoteAudioDestinationProxy::messageReceiverName(), this, destinationID.toUInt64());
     m_destinationID = destinationID;
 
 #if PLATFORM(COCOA)
