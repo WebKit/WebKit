@@ -3191,14 +3191,15 @@ LayoutUnit RenderBox::computeReplacedLogicalHeightUsing(SizeType heightType, Len
                     break;
                 container = container->containingBlock();
             }
+            bool hasPerpendicularContainingBlock = container->isHorizontalWritingMode() != isHorizontalWritingMode();
             Optional<LayoutUnit> stretchedHeight;
             if (is<RenderBlock>(container)) {
                 auto* block = downcast<RenderBlock>(container);
                 block->addPercentHeightDescendant(*const_cast<RenderBox*>(this));
                 if (block->isFlexItem())
                     stretchedHeight = downcast<RenderFlexibleBox>(block->parent())->childLogicalHeightForPercentageResolution(*block);
-                else if (block->isGridItem() && block->hasOverridingLogicalHeight())
-                    stretchedHeight = block->overridingLogicalHeight() - block->borderAndPaddingLogicalHeight();
+                else if (block->isGridItem() && block->hasOverridingLogicalHeight() && !hasPerpendicularContainingBlock)
+                    stretchedHeight = block->overridingContentLogicalHeight();
             }
 
             // FIXME: This calculation is not patched for block-flow yet.
@@ -3222,7 +3223,7 @@ LayoutUnit RenderBox::computeReplacedLogicalHeightUsing(SizeType heightType, Len
             else if (stretchedHeight)
                 availableHeight = stretchedHeight.value();
             else {
-                availableHeight = containingBlockLogicalHeightForContent(IncludeMarginBorderPadding);
+                availableHeight = hasPerpendicularContainingBlock ? containingBlockLogicalWidthForContent() : containingBlockLogicalHeightForContent(IncludeMarginBorderPadding);
                 // It is necessary to use the border-box to match WinIE's broken
                 // box model.  This is essential for sizing inside
                 // table cells using percentage heights.
