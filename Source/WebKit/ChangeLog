@@ -1,3 +1,14 @@
+2020-11-12  Alexander Mikhaylenko  <exalm7659@gmail.com>
+
+        [GTK] Swipe navigation shadow is blurry on hidpi
+        https://bugs.webkit.org/show_bug.cgi?id=218800
+
+        Reviewed by Carlos Garcia Campos.
+
+        * UIProcess/gtk/ViewGestureControllerGtk.cpp:
+        (WebKit::createElementPattern): Scale surface size and set its scale factor.
+        (WebKit::ViewGestureController::beginSwipeGesture): Pass scale factor to createElementPattern().
+
 2020-11-11  Brian Burg  <bburg@apple.com>
 
         REGRESSION(r267411): Unable to "Start Element Selection" with Web Inspector closed

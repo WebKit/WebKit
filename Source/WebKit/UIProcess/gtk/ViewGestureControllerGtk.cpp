@@ -300,10 +300,12 @@ GRefPtr<GtkStyleContext> ViewGestureController::createStyleContext(const char* n
     return adoptGRef(context);
 }
 
-static RefPtr<cairo_pattern_t> createElementPattern(GtkStyleContext* context, int width, int height)
+static RefPtr<cairo_pattern_t> createElementPattern(GtkStyleContext* context, int width, int height, int scale)
 {
-    RefPtr<cairo_surface_t> surface = adoptRef(cairo_image_surface_create(CAIRO_FORMAT_ARGB32, width, height));
+    RefPtr<cairo_surface_t> surface = adoptRef(cairo_image_surface_create(CAIRO_FORMAT_ARGB32, width * scale, height * scale));
     RefPtr<cairo_t> cr = adoptRef(cairo_create(surface.get()));
+
+    cairo_surface_set_device_scale(surface.get(), scale, scale);
 
     gtk_render_background(context, cr.get(), 0, 0, width, height);
     gtk_render_frame(context, cr.get(), 0, 0, width, height);
@@ -361,23 +363,25 @@ void ViewGestureController::beginSwipeGesture(WebBackForwardListItem* targetItem
         gtk_css_provider_load_from_resource(m_cssProvider.get(), "/org/webkitgtk/resources/css/gtk-theme.css");
     }
 
+    int scale = gtk_widget_get_scale_factor(m_webPageProxy.viewWidget());
+
     GRefPtr<GtkStyleContext> context = createStyleContext("dimming");
-    m_swipeDimmingPattern = createElementPattern(context.get(), size.width(), size.height());
+    m_swipeDimmingPattern = createElementPattern(context.get(), size.width(), size.height(), scale);
 
     context = createStyleContext("shadow");
     m_swipeShadowSize = elementWidth(context.get());
     if (m_swipeShadowSize)
-        m_swipeShadowPattern = createElementPattern(context.get(), m_swipeShadowSize, size.height());
+        m_swipeShadowPattern = createElementPattern(context.get(), m_swipeShadowSize, size.height(), scale);
 
     context = createStyleContext("border");
     m_swipeBorderSize = elementWidth(context.get());
     if (m_swipeBorderSize)
-        m_swipeBorderPattern = createElementPattern(context.get(), m_swipeBorderSize, size.height());
+        m_swipeBorderPattern = createElementPattern(context.get(), m_swipeBorderSize, size.height(), scale);
 
     context = createStyleContext("outline");
     m_swipeOutlineSize = elementWidth(context.get());
     if (m_swipeOutlineSize)
-        m_swipeOutlinePattern = createElementPattern(context.get(), m_swipeOutlineSize, size.height());
+        m_swipeOutlinePattern = createElementPattern(context.get(), m_swipeOutlineSize, size.height(), scale);
 }
 
 void ViewGestureController::handleSwipeGesture(WebBackForwardListItem*, double, SwipeDirection)
