@@ -1,3 +1,12 @@
+2020-11-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add system trace points for the GPU process display list processing loop
+        https://bugs.webkit.org/show_bug.cgi?id=218824
+
+        Reviewed by Simon Fraser.
+
+        * Tracing/SystemTracePoints.plist:
+
 2020-11-11  Ryan Haddad  <ryanhaddad@apple.com>
 
         [webkitpy] Bump CURRENT_VERSION to 11.0 for Mac port

@@ -505,6 +505,18 @@
                  <key>CodeEnd</key>
                  <string>14006</string>
              </dict>
+             <dict>
+                 <key>Name</key>
+                 <string>Wake up and apply display list</string>
+                 <key>Type</key>
+                 <string>Interval</string>
+                 <key>Component</key>
+                 <string>47</string>
+                 <key>CodeBegin</key>
+                 <string>16001</string>
+                 <key>CodeEnd</key>
+                 <string>16002</string>
+             </dict>
          </array>
      </dict>
  </array>

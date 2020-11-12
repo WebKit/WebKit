@@ -34,6 +34,7 @@
 #include "RemoteRenderingBackendMessages.h"
 #include "RemoteRenderingBackendProxyMessages.h"
 #include <wtf/CheckedArithmetic.h>
+#include <wtf/SystemTracing.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -169,6 +170,7 @@ void RemoteRenderingBackend::applyDisplayListsFromHandle(ImageBuffer& destinatio
 
 void RemoteRenderingBackend::wakeUpAndApplyDisplayList(DisplayList::ItemBufferIdentifier initialIdentifier, uint64_t initialOffset, RenderingResourceIdentifier destinationBufferIdentifier)
 {
+    TraceScope tracingScope(WakeUpAndApplyDisplayListStart, WakeUpAndApplyDisplayListEnd);
     auto imageBuffer = m_remoteResourceCache.cachedImageBuffer(destinationBufferIdentifier);
     if (UNLIKELY(!imageBuffer)) {
         // FIXME: Add a message check to terminate the web process.

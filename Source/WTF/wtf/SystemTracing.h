@@ -124,6 +124,10 @@ enum TracePointCode {
     ProcessLaunchEnd,
     InitializeSandboxStart,
     InitializeSandboxEnd,
+
+    GPUProcessRange = 16000,
+    WakeUpAndApplyDisplayListStart,
+    WakeUpAndApplyDisplayListEnd,
 };
 
 #ifdef __cplusplus
