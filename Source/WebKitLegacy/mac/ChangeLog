@@ -1,3 +1,49 @@
+2020-11-12  Sam Weinig  <weinig@apple.com>
+
+        Move more WebKitLegacy specific settings usage to WebPreferences.yaml
+        https://bugs.webkit.org/show_bug.cgi?id=218852
+
+        Reviewed by Tim Horton.
+
+        This batch focuses on settings with defaults based on SDK/host app conditions.
+
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        * WebView/WebPreferencesDefaultValues.h:
+        * WebView/WebPreferencesDefaultValues.mm:
+        (WebKit::defaultAllowContentSecurityPolicySourceStarToMatchAnyProtocol):
+        (WebKit::defaultLoadDeferringEnabled):
+        (WebKit::defaultWindowFocusRestricted):
+        (WebKit::defaultUsePreHTML5ParserQuirks):
+        (WebKit::defaultNeedsAdobeFrameReloadingQuirk):
+        (WebKit::defaultTreatsAnyTextCSSLinkAsStylesheet):
+        (WebKit::defaultNeedsFrameNameFallbackToIdQuirk):
+        (WebKit::defaultNeedsKeyboardEventDisambiguationQuirks):
+        (WebKit::defaultEnforceCSSMIMETypeInNoQuirksMode):
+        (WebKit::defaultNeedsIsLoadingInAPISenseQuirk):
+        (WebKit::defaultUseLegacyBackgroundSizeShorthandBehavior):
+        (WebKit::defaultAllowDisplayOfInsecureContent):
+        (WebKit::defaultAllowRunningOfInsecureContent):
+        (WebKit::defaultShouldConvertInvalidURLsToBlank):
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+        (needsSelfRetainWhileLoadingQuirk):
+        (-[WebView _preferencesChanged:]):
+        (-[WebView dealloc]):
+        (-[WebView setFrameLoadDelegate:]):
+        (shouldEnableLoadDeferring): Deleted.
+        (shouldRestrictWindowFocus): Deleted.
+        (shouldUseLegacyBackgroundSizeShorthandBehavior): Deleted.
+        (shouldAllowDisplayAndRunningOfInsecureContent): Deleted.
+        (shouldAllowContentSecurityPolicySourceStarToMatchAnyProtocol): Deleted.
+        (shouldConvertInvalidURLsToBlank): Deleted.
+        (-[WebView _needsAdobeFrameReloadingQuirk]): Deleted.
+        (-[WebView _needsLinkElementTextCSSQuirk]): Deleted.
+        (-[WebView _needsFrameNameFallbackToIdQuirk]): Deleted.
+        (-[WebView _needsIsLoadingInAPISenseQuirk]): Deleted.
+        (-[WebView _needsKeyboardEventDisambiguationQuirks]): Deleted.
+        (-[WebView _needsPreHTML5ParserQuirks]): Deleted.
+
 2020-11-12  Zalan Bujtas  <zalan@apple.com>
 
         Show legacy line layout visual coverage instead of "simple line" layout.

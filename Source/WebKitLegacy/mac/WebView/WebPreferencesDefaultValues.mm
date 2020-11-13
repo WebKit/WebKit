@@ -25,10 +25,12 @@
 
 #import "WebPreferencesDefaultValues.h"
 
+#import "WebKitVersionChecks.h"
 #import <Foundation/NSBundle.h>
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/VersionChecks.h>
 #import <mach-o/dyld.h>
+#import <pal/spi/cf/CFUtilitiesSPI.h>
 #import <pal/spi/cocoa/FeatureFlagsSPI.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #import <wtf/spi/darwin/dyldSPI.h>
@@ -74,6 +76,7 @@ bool defaultWebGPUEnabled()
 #endif // ENABLE(WEBGPU)
 
 #if HAVE(INCREMENTAL_PDF_APIS)
+
 bool defaultIncrementalPDFEnabled()
 {
 #if HAVE(SYSTEM_FEATURE_FLAGS)
@@ -82,6 +85,7 @@ bool defaultIncrementalPDFEnabled()
 
     return false;
 }
+
 #endif
 
 #if ENABLE(WEBXR)
@@ -144,7 +148,91 @@ bool defaultWebSQLEnabled()
     return webSQLEnabled;
 }
 
+bool defaultAllowContentSecurityPolicySourceStarToMatchAnyProtocol()
+{
+    static bool shouldAllowContentSecurityPolicySourceStarToMatchAnyProtocol = !WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_CONTENT_SECURITY_POLICY_SOURCE_STAR_PROTOCOL_RESTRICTION);
+    return shouldAllowContentSecurityPolicySourceStarToMatchAnyProtocol;
+}
+
 #endif // PLATFORM(IOS_FAMILY)
+
+#if PLATFORM(MAC)
+
+bool defaultLoadDeferringEnabled()
+{
+    return !WebCore::MacApplication::isAdobeInstaller();
+}
+
+bool defaultWindowFocusRestricted()
+{
+    return !WebCore::MacApplication::isHRBlock();
+}
+
+bool defaultUsePreHTML5ParserQuirks()
+{
+    // AOL Instant Messenger and Microsoft My Day contain markup incompatible
+    // with the new HTML5 parser. If these applications were linked against a
+    // version of WebKit prior to the introduction of the HTML5 parser, enable
+    // parser quirks to maintain compatibility. For details, see
+    // <https://bugs.webkit.org/show_bug.cgi?id=46134> and
+    // <https://bugs.webkit.org/show_bug.cgi?id=46334>.
+    static bool isApplicationNeedingParserQuirks = !WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_HTML5_PARSER)
+        && (WebCore::MacApplication::isAOLInstantMessenger() || WebCore::MacApplication::isMicrosoftMyDay());
+
+    // Mail.app must continue to display HTML email that contains quirky markup.
+    static bool isAppleMail = WebCore::MacApplication::isAppleMail();
+
+    return isApplicationNeedingParserQuirks || isAppleMail;
+}
+
+bool defaultNeedsAdobeFrameReloadingQuirk()
+{
+    static bool needsQuirk = _CFAppVersionCheckLessThan(CFSTR("com.adobe.Acrobat"), -1, 9.0)
+        || _CFAppVersionCheckLessThan(CFSTR("com.adobe.Acrobat.Pro"), -1, 9.0)
+        || _CFAppVersionCheckLessThan(CFSTR("com.adobe.Reader"), -1, 9.0)
+        || _CFAppVersionCheckLessThan(CFSTR("com.adobe.distiller"), -1, 9.0)
+        || _CFAppVersionCheckLessThan(CFSTR("com.adobe.Contribute"), -1, 4.2)
+        || _CFAppVersionCheckLessThan(CFSTR("com.adobe.dreamweaver-9.0"), -1, 9.1)
+        || _CFAppVersionCheckLessThan(CFSTR("com.macromedia.fireworks"), -1, 9.1)
+        || _CFAppVersionCheckLessThan(CFSTR("com.adobe.InCopy"), -1, 5.1)
+        || _CFAppVersionCheckLessThan(CFSTR("com.adobe.InDesign"), -1, 5.1)
+        || _CFAppVersionCheckLessThan(CFSTR("com.adobe.Soundbooth"), -1, 2);
+
+    return needsQuirk;
+}
+
+bool defaultTreatsAnyTextCSSLinkAsStylesheet()
+{
+    static bool needsQuirk = !WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITHOUT_LINK_ELEMENT_TEXT_CSS_QUIRK)
+        && _CFAppVersionCheckLessThan(CFSTR("com.e-frontier.shade10"), -1, 10.6);
+    return needsQuirk;
+}
+
+bool defaultNeedsFrameNameFallbackToIdQuirk()
+{
+    static bool needsQuirk = _CFAppVersionCheckLessThan(CFSTR("info.colloquy"), -1, 2.5);
+    return needsQuirk;
+}
+
+bool defaultNeedsKeyboardEventDisambiguationQuirks()
+{
+    static bool needsQuirks = !WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_IE_COMPATIBLE_KEYBOARD_EVENT_DISPATCH) && !WebCore::MacApplication::isSafari();
+    return needsQuirks;
+}
+
+bool defaultEnforceCSSMIMETypeInNoQuirksMode()
+{
+    static bool needsQuirk = !_CFAppVersionCheckLessThan(CFSTR("com.apple.iWeb"), -1, 2.1);
+    return needsQuirk;
+}
+
+bool defaultNeedsIsLoadingInAPISenseQuirk()
+{
+    static bool needsQuirk = _CFAppVersionCheckLessThan(CFSTR("com.apple.iAdProducer"), -1, 2.1);
+    return needsQuirk;
+}
+
+#endif // PLATFORM(MAC)
 
 bool defaultAttachmentElementEnabled()
 {
@@ -159,6 +247,39 @@ bool defaultShouldRestrictBaseURLSchemes()
 {
     static bool shouldRestrictBaseURLSchemes = linkedOnOrAfter(WebCore::SDKVersion::FirstThatRestrictsBaseURLSchemes);
     return shouldRestrictBaseURLSchemes;
+}
+
+bool defaultUseLegacyBackgroundSizeShorthandBehavior()
+{
+#if PLATFORM(IOS_FAMILY)
+    static bool shouldUseLegacyBackgroundSizeShorthandBehavior = !WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITHOUT_LEGACY_BACKGROUNDSIZE_SHORTHAND_BEHAVIOR);
+#else
+    static bool shouldUseLegacyBackgroundSizeShorthandBehavior = WebCore::MacApplication::isVersions()
+        && !WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITHOUT_LEGACY_BACKGROUNDSIZE_SHORTHAND_BEHAVIOR);
+#endif
+    return shouldUseLegacyBackgroundSizeShorthandBehavior;
+}
+
+bool defaultAllowDisplayOfInsecureContent()
+{
+    static bool shouldAllowDisplayOfInsecureContent = !WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_INSECURE_CONTENT_BLOCKING);
+    return shouldAllowDisplayOfInsecureContent;
+}
+
+bool defaultAllowRunningOfInsecureContent()
+{
+    static bool shouldAllowRunningOfInsecureContent = !WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_INSECURE_CONTENT_BLOCKING);
+    return shouldAllowRunningOfInsecureContent;
+}
+
+bool defaultShouldConvertInvalidURLsToBlank()
+{
+#if PLATFORM(IOS_FAMILY)
+    static bool shouldConvertInvalidURLsToBlank = dyld_get_program_sdk_version() >= DYLD_IOS_VERSION_10_0;
+#else
+    static bool shouldConvertInvalidURLsToBlank = dyld_get_program_sdk_version() >= DYLD_MACOSX_VERSION_10_12;
+#endif
+    return shouldConvertInvalidURLsToBlank;
 }
 
 } // namespace WebKit

@@ -77,11 +77,32 @@ AggressiveTileRetentionEnabled:
     WebCore:
       default: false
 
+AllowContentSecurityPolicySourceStarToMatchAnyProtocol:
+  type: bool
+  defaultValue:
+    WebKitLegacy:
+      PLATFORM(IOS_FAMILY): WebKit::defaultAllowContentSecurityPolicySourceStarToMatchAnyProtocol()
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 AllowCrossOriginSubresourcesToAskForCredentials:
   type: bool
   defaultValue:
     WebKitLegacy:
       default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
+AllowDisplayOfInsecureContent:
+  type: bool
+  defaultValue:
+    WebKitLegacy:
+      default: WebKit::defaultAllowDisplayOfInsecureContent()
     WebKit:
       default: false
     WebCore:
@@ -116,6 +137,16 @@ AllowMultiElementImplicitSubmission:
   defaultValue:
     WebKitLegacy:
       default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
+AllowRunningOfInsecureContent:
+  type: bool
+  defaultValue:
+    WebKitLegacy:
+      default: WebKit::defaultAllowRunningOfInsecureContent()
     WebKit:
       default: false
     WebCore:
@@ -681,6 +712,17 @@ EncryptedMediaAPIEnabled:
     WebCore:
       default: false
 
+EnforceCSSMIMETypeInNoQuirksMode:
+  type: bool
+  defaultValue:
+    WebKitLegacy:
+      PLATFORM(MAC): WebKit::defaultEnforceCSSMIMETypeInNoQuirksMode()
+      default: true
+    WebKit:
+      default: true
+    WebCore:
+      default: true
+
 EnumeratingAllNetworkInterfacesEnabled:
   type: bool
   webcoreBinding: none
@@ -1182,6 +1224,17 @@ LinkPreloadEnabled:
     WebCore:
       default: true
 
+LoadDeferringEnabled:
+  type: bool
+  defaultValue:
+    WebKitLegacy:
+      PLATFORM(MAC): WebKit::defaultLoadDeferringEnabled()
+      default: true
+    WebKit:
+      default: true
+    WebCore:
+      default: true
+
 # This only suppresses the network load of the image URL. A cached image will still be rendered if requested.
 LoadsImagesAutomatically:
   type: bool
@@ -1459,6 +1512,58 @@ ModernMediaControlsEnabled:
       default: true
     WebKit:
       "PLATFORM(COCOA)": true
+      default: false
+
+NeedsAdobeFrameReloadingQuirk:
+  comment: 'FIXME: This quirk is needed because of Radar 4674537 and 5211271. We need
+    to phase it out once Adobe can fix the bug from their end.'
+  type: bool
+  webcoreGetter: needsAcrobatFrameReloadingQuirk
+  defaultValue:
+    WebKitLegacy:
+      PLATFORM(MAC): WebKit::defaultNeedsAdobeFrameReloadingQuirk()
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
+NeedsFrameNameFallbackToIdQuirk:
+  type: bool
+  defaultValue:
+    WebKitLegacy:
+      PLATFORM(MAC): WebKit::defaultNeedsFrameNameFallbackToIdQuirk()
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
+NeedsIsLoadingInAPISenseQuirk:
+  comment: Some apps needs isLoadingInAPISense to account for active subresource loaders.
+  type: bool
+  defaultValue:
+    WebKitLegacy:
+      PLATFORM(MAC): WebKit::defaultNeedsIsLoadingInAPISenseQuirk()
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
+NeedsKeyboardEventDisambiguationQuirks:
+  comment: This is a quirk we are pro-actively applying to old applications. It changes
+    keyboard event dispatching, making keyIdentifier available on keypress events,
+    making charCode available on keydown/keyup events, and getting keypress dispatched
+    in more cases.
+  type: bool
+  defaultValue:
+    WebKitLegacy:
+      PLATFORM(MAC): WebKit::defaultNeedsKeyboardEventDisambiguationQuirks()
+      default: false
+    WebKit:
+      default: false
+    WebCore:
       default: false
 
 NeedsSiteSpecificQuirks:
@@ -1814,6 +1919,16 @@ ShouldAllowUserInstalledFonts:
   defaultValue:
     WebKitLegacy:
       default: true
+    WebKit:
+      default: true
+    WebCore:
+      default: true
+
+ShouldConvertInvalidURLsToBlank:
+  type: bool
+  defaultValue:
+    WebKitLegacy:
+      default: WebKit::defaultShouldConvertInvalidURLsToBlank()
     WebKit:
       default: true
     WebCore:
@@ -2182,6 +2297,17 @@ ThreadedScrollingEnabled:
     WebKit:
       default: true
 
+TreatsAnyTextCSSLinkAsStylesheet:
+  type: bool
+  defaultValue:
+    WebKitLegacy:
+      PLATFORM(MAC): WebKit::defaultTreatsAnyTextCSSLinkAsStylesheet()
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 UseGiantTiles:
   type: bool
   defaultValue:
@@ -2192,10 +2318,31 @@ UseGiantTiles:
     WebCore:
       default: false
 
+UseLegacyBackgroundSizeShorthandBehavior:
+  type: bool
+  defaultValue:
+    WebKitLegacy:
+      default: WebKit::defaultUseLegacyBackgroundSizeShorthandBehavior()
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 UseLegacyTextAlignPositionedElementBehavior:
   type: bool
   defaultValue:
     WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
+UsePreHTML5ParserQuirks:
+  type: bool
+  defaultValue:
+    WebKitLegacy:
+      PLATFORM(MAC): WebKit::defaultUsePreHTML5ParserQuirks()
       default: false
     WebKit:
       default: false
@@ -2346,6 +2493,19 @@ WebShareEnabled:
       default: false
     WebCore:
       default: false
+
+WindowFocusRestricted:
+  comment: When enabled, window.blur() does not change focus, and window.focus() only
+    changes focus when invoked from the context that created the window.
+  type: bool
+  defaultValue:
+    WebKitLegacy:
+      PLATFORM(MAC): WebKit::defaultWindowFocusRestricted()
+      default: true
+    WebKit:
+      default: true
+    WebCore:
+      default: true
 
 XSSAuditorEnabled:
   type: bool

@@ -35,24 +35,6 @@ AcceleratedFiltersEnabled:
     WebCore:
       default: false
 
-AllowContentSecurityPolicySourceStarToMatchAnyProtocol:
-  type: bool
-  defaultValue:
-    WebCore:
-      default: false
-
-AllowDisplayOfInsecureContent:
-  type: bool
-  defaultValue:
-    WebCore:
-      default: false
-
-AllowRunningOfInsecureContent:
-  type: bool
-  defaultValue:
-    WebCore:
-      default: false
-
 AnimatedImageDebugCanvasDrawingEnabled:
   type: bool
   defaultValue:
@@ -173,12 +155,6 @@ EditingBehaviorType:
       OS(WINDOWS): EditingWindowsBehavior
       OS(UNIX): EditingUnixBehavior
       default: EditingMacBehavior
-
-EnforceCSSMIMETypeInNoQuirksMode:
-  type: bool
-  defaultValue:
-    WebCore:
-      default: true
 
 FixedBackgroundsPaintRelativeToDocument:
   type: bool
@@ -355,12 +331,6 @@ LegacyBeforeLoadEventEnabled:
     WebCore:
       default: false
 
-LoadDeferringEnabled:
-  type: bool
-  defaultValue:
-    WebCore:
-      default: true
-
 LocalStorageDatabasePath:
   type: String
   defaultValue:
@@ -430,16 +400,6 @@ MinimumAccelerated2dCanvasSize:
     WebCore:
       default: 257*256
 
-NeedsAdobeFrameReloadingQuirk:
-  comment: >-
-    FIXME: This quirk is needed because of Radar 4674537 and 5211271. We need to phase it
-    out once Adobe can fix the bug from their end.
-  type: bool
-  webcoreGetter: needsAcrobatFrameReloadingQuirk
-  defaultValue:
-    WebCore:
-      default: false
-
 NeedsDeferKeyDownAndKeyPressTimersUntilNextEditingCommandQuirk:
   comment: >-
     This is an iOS-specific quirk. Unlike Mac, keyboard operations are asynchronous and hence a DOM update as
@@ -448,30 +408,6 @@ NeedsDeferKeyDownAndKeyPressTimersUntilNextEditingCommandQuirk:
     to have occurred on expiration. When enabled, this quirk puts all such scheduled timers in a holding tank
     until the keyboard performs the insertion or deletion. This gives Google Sheets the illusion that the DOM
     update happened within the same event loop iteration that the keypress event was dispatched in.
-  type: bool
-  defaultValue:
-    WebCore:
-      default: false
-
-NeedsFrameNameFallbackToIdQuirk:
-  type: bool
-  defaultValue:
-    WebCore:
-      default: false
-
-NeedsIsLoadingInAPISenseQuirk:
-  comment: >-
-    Some apps needs isLoadingInAPISense to account for active subresource loaders.
-  type: bool
-  defaultValue:
-    WebCore:
-      default: false
-
-NeedsKeyboardEventDisambiguationQuirks:
-  comment: >-
-    This is a quirk we are pro-actively applying to old applications. It changes keyboard event dispatching,
-    making keyIdentifier available on keypress events, making charCode available on keydown/keyup events,
-    and getting keypress dispatched in more cases.
   type: bool
   defaultValue:
     WebCore:
@@ -551,12 +487,6 @@ SessionStorageQuota:
   defaultValue:
     WebCore:
       default: StorageMap::noQuota
-
-ShouldConvertInvalidURLsToBlank:
-  type: bool
-  defaultValue:
-    WebCore:
-      default: true
 
 ShouldDispatchSyntheticMouseEventsWhenModifyingSelection:
   type: bool
@@ -647,12 +577,6 @@ TreatIPAddressAsDomain:
     WebCore:
       default: false
 
-TreatsAnyTextCSSLinkAsStylesheet:
-  type: bool
-  defaultValue:
-    WebCore:
-      default: false
-
 UnhandledPromiseRejectionToConsoleEnabled:
   type: bool
   defaultValue:
@@ -673,18 +597,6 @@ UseAnonymousModeWhenFetchingMaskImages:
       default: true
 
 UseImageDocumentForSubframePDF:
-  type: bool
-  defaultValue:
-    WebCore:
-      default: false
-
-UseLegacyBackgroundSizeShorthandBehavior:
-  type: bool
-  defaultValue:
-    WebCore:
-      default: false
-
-UsePreHTML5ParserQuirks:
   type: bool
   defaultValue:
     WebCore:
@@ -741,16 +653,6 @@ WebkitImageReadyEventEnabled:
   defaultValue:
     WebCore:
       default: false
-
-WindowFocusRestricted:
-  comment: >-
-    When enabled, window.blur() does not change focus, and
-    window.focus() only changes focus when invoked from the context that
-    created the window.
-  type: bool
-  defaultValue:
-    WebCore:
-      default: true
 
 YouTubeFlashPluginReplacementEnabled:
   type: bool

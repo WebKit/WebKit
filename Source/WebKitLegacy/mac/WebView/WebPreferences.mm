@@ -400,7 +400,6 @@ public:
         @NO, WebKitPrivateBrowsingEnabledPreferenceKey,
         @(cacheModelForMainBundle([[NSBundle mainBundle] bundleIdentifier])), WebKitCacheModelPreferenceKey,
         @YES, WebKitZoomsTextOnlyPreferenceKey,
-        @NO, WebKitUsePreHTML5ParserQuirksKey,
         [NSNumber numberWithLongLong:ApplicationCacheStorage::noQuota()], WebKitApplicationCacheTotalQuota,
 
         // FIXME: Are these relevent to WebKitLegacy? If not, we should remove them.

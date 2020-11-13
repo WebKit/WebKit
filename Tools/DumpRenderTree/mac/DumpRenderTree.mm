@@ -885,7 +885,6 @@ static void resetWebPreferencesToConsistentValues(WebPreferences *preferences)
     [preferences setSourceBufferChangeTypeEnabled:YES];
     [preferences setStandardFontFamily:@"Times"];
     [preferences setSubpixelAntialiasedLayerTextEnabled:NO];
-    [preferences setUsePreHTML5ParserQuirks:NO];
     [preferences setVideoPlaybackRequiresUserGesture:NO];
     [preferences setWebAudioEnabled:YES];
     [preferences setWebSQLEnabled:YES];
