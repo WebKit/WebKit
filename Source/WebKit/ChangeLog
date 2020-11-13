@@ -1,3 +1,17 @@
+2020-11-12  Alex Christensen  <achristensen@webkit.org>
+
+        Remove SecItemShim.dylib
+        https://bugs.webkit.org/show_bug.cgi?id=218862
+
+        Reviewed by Alexey Proskuryakov.
+
+        This is dead code since r269697.
+
+        * Shared/mac/SecItemShim.cpp:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/mac/SecItemShimLibrary.h: Removed.
+        * WebProcess/mac/SecItemShimLibrary.mm: Removed.
+
 2020-11-12  Tim Horton  <timothy_horton@apple.com>
 
         canvas-createPattern-video-modify-crash-log.txt asserts on debug GPUProcess bots

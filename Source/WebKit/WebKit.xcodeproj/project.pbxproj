@@ -862,7 +862,6 @@
 		37A709A71E3EA0FD00CA5969 /* WKDataDetectorTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 37A709A61E3EA0FD00CA5969 /* WKDataDetectorTypes.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		37A709A91E3EA40C00CA5969 /* WKDataDetectorTypesInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 37A709A81E3EA40C00CA5969 /* WKDataDetectorTypesInternal.h */; };
 		37B0D1841C1E499A00D40D64 /* PluginProcessShim.dylib in Copy Shims */ = {isa = PBXBuildFile; fileRef = 1AC25FB012A48EA700BD2671 /* PluginProcessShim.dylib */; };
-		37B0D1851C1E499A00D40D64 /* SecItemShim.dylib in Copy Shims */ = {isa = PBXBuildFile; fileRef = 510031F61379CACB00C8DFE4 /* SecItemShim.dylib */; };
 		37B47E2D1D64DB76005F4EFF /* objcSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 37B47E2C1D64DB76005F4EFF /* objcSPI.h */; };
 		37B5045219EEF31300CE2CF8 /* WKErrorPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 37B5045119EEF31300CE2CF8 /* WKErrorPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		37BEC4DD1948FC6A008B4286 /* WebCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AA1C79A100E7FC50078DEBC /* WebCore.framework */; };
@@ -984,8 +983,6 @@
 		511065FD23EC957B005443D6 /* WKContentWorldInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 511065FB23EC956B005443D6 /* WKContentWorldInternal.h */; };
 		5110AE0D133C16CB0072717A /* WKIconDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = 5110AE0B133C16CB0072717A /* WKIconDatabase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		511F7D411EB1BCF500E47B83 /* WebsiteDataStoreParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 511F7D401EB1BCEE00E47B83 /* WebsiteDataStoreParameters.h */; };
-		511F8A7B138B460900A95F44 /* SecItemShimLibrary.h in Headers */ = {isa = PBXBuildFile; fileRef = 511F8A77138B460900A95F44 /* SecItemShimLibrary.h */; };
-		511F8A81138B485D00A95F44 /* SecItemShimLibrary.mm in Sources */ = {isa = PBXBuildFile; fileRef = 511F8A78138B460900A95F44 /* SecItemShimLibrary.mm */; };
 		5120C8351E5B74B90025B250 /* _WKWebsiteDataStoreConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 5120C8331E5B71570025B250 /* _WKWebsiteDataStoreConfiguration.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		512127C41908239A00DAF35C /* WebPasteboardOverrides.h in Headers */ = {isa = PBXBuildFile; fileRef = 512127C21908239A00DAF35C /* WebPasteboardOverrides.h */; };
 		51217461164C20E30037A5C1 /* ShareableResource.h in Headers */ = {isa = PBXBuildFile; fileRef = 5121745F164C20E30037A5C1 /* ShareableResource.h */; };
@@ -1997,13 +1994,6 @@
 			remoteGlobalIDString = 1AC25FAF12A48EA700BD2671;
 			remoteInfo = PluginProcessShim;
 		};
-		37B1D0151C1E421100D67FE9 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 510031EA1379CACB00C8DFE4;
-			remoteInfo = SecItemShim;
-		};
 		37F7407812721F740093869B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
@@ -2054,13 +2044,6 @@
 			remoteInfo = WebKit2Service;
 		};
 		E1AC2E2D20F7B98800B0897D /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = E1AC2E2720F7B94C00B0897D;
-			remoteInfo = "Unlock Keychain";
-		};
-		E1AC2E2F20F7B98E00B0897D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
 			proxyType = 1;
@@ -2139,7 +2122,6 @@
 			dstSubfolderSpec = 10;
 			files = (
 				37B0D1841C1E499A00D40D64 /* PluginProcessShim.dylib in Copy Shims */,
-				37B0D1851C1E499A00D40D64 /* SecItemShim.dylib in Copy Shims */,
 			);
 			name = "Copy Shims";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3680,7 +3662,6 @@
 		4A410F4819AF7B80002EBAB5 /* WebUserMediaClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebUserMediaClient.cpp; sourceTree = "<group>"; };
 		4A410F4919AF7B80002EBAB5 /* WebUserMediaClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebUserMediaClient.h; sourceTree = "<group>"; };
 		4F601430155C5A32001FBDE0 /* BlockingResponseMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlockingResponseMap.h; sourceTree = "<group>"; };
-		510031F61379CACB00C8DFE4 /* SecItemShim.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = SecItemShim.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		51021E9B12B16788005C033C /* WebContextMenuClientMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebContextMenuClientMac.mm; sourceTree = "<group>"; };
 		5104F5A11F19D7CF004CF821 /* CookieStorageUtilsCF.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CookieStorageUtilsCF.mm; sourceTree = "<group>"; };
 		510523711C73D22B007993CB /* WebIDBConnectionToServer.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebIDBConnectionToServer.messages.in; sourceTree = "<group>"; };
@@ -3708,8 +3689,6 @@
 		5110AE0B133C16CB0072717A /* WKIconDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKIconDatabase.h; sourceTree = "<group>"; };
 		511F7D3F1EB1BCEE00E47B83 /* WebsiteDataStoreParameters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebsiteDataStoreParameters.cpp; sourceTree = "<group>"; };
 		511F7D401EB1BCEE00E47B83 /* WebsiteDataStoreParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebsiteDataStoreParameters.h; sourceTree = "<group>"; };
-		511F8A77138B460900A95F44 /* SecItemShimLibrary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SecItemShimLibrary.h; path = ../../WebProcess/mac/SecItemShimLibrary.h; sourceTree = "<group>"; };
-		511F8A78138B460900A95F44 /* SecItemShimLibrary.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SecItemShimLibrary.mm; path = ../../WebProcess/mac/SecItemShimLibrary.mm; sourceTree = "<group>"; };
 		5120C8331E5B71570025B250 /* _WKWebsiteDataStoreConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKWebsiteDataStoreConfiguration.h; sourceTree = "<group>"; };
 		5120C8341E5B71570025B250 /* _WKWebsiteDataStoreConfiguration.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKWebsiteDataStoreConfiguration.mm; sourceTree = "<group>"; };
 		512127C11908239A00DAF35C /* WebPasteboardOverrides.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebPasteboardOverrides.cpp; sourceTree = "<group>"; };
@@ -5572,13 +5551,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		510031EE1379CACB00C8DFE4 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		5742A2ED2535613F00B7BA14 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -5640,7 +5612,6 @@
 				372EBB462017E64300085064 /* com.apple.WebKit.WebContent.Development.xpc */,
 				BC3DE46615A91763008D26FC /* com.apple.WebKit.WebContent.xpc */,
 				1AC25FB012A48EA700BD2671 /* PluginProcessShim.dylib */,
-				510031F61379CACB00C8DFE4 /* SecItemShim.dylib */,
 				8DC2EF5B0486A6940098B216 /* WebKit.framework */,
 			);
 			name = Products;
@@ -9704,8 +9675,6 @@
 				51D130521382EAC000351EDD /* SecItemResponseData.h */,
 				E18E6947169B77C8009B6670 /* SecItemShim.cpp */,
 				E18E6948169B77C8009B6670 /* SecItemShim.h */,
-				511F8A77138B460900A95F44 /* SecItemShimLibrary.h */,
-				511F8A78138B460900A95F44 /* SecItemShimLibrary.mm */,
 				BCE23262122C6CF300D5C35A /* WebCoreArgumentCodersMac.mm */,
 				BC111B5B112F629800337BAB /* WebEventFactory.h */,
 				BC111B5C112F629800337BAB /* WebEventFactory.mm */,
@@ -10808,13 +10777,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		510031EB1379CACB00C8DFE4 /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		8DC2EF500486A6940098B216 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -11407,7 +11369,6 @@
 				51D130541382EAC000351EDD /* SecItemRequestData.h in Headers */,
 				51D130561382EAC000351EDD /* SecItemResponseData.h in Headers */,
 				E179088F169BAA6A006904C7 /* SecItemShim.h in Headers */,
-				511F8A7B138B460900A95F44 /* SecItemShimLibrary.h in Headers */,
 				E18E690C169B563F009B6670 /* SecItemShimProxy.h in Headers */,
 				E18E6918169B667B009B6670 /* SecItemShimProxyMessages.h in Headers */,
 				570AB8F320AE3BD700B8BE87 /* SecKeyProxyStore.h in Headers */,
@@ -12223,24 +12184,6 @@
 			productReference = 372EBB462017E64300085064 /* com.apple.WebKit.WebContent.Development.xpc */;
 			productType = "com.apple.product-type.xpc-service";
 		};
-		510031EA1379CACB00C8DFE4 /* SecItemShim */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 510031F21379CACB00C8DFE4 /* Build configuration list for PBXNativeTarget "SecItemShim" */;
-			buildPhases = (
-				510031EB1379CACB00C8DFE4 /* Headers */,
-				510031EC1379CACB00C8DFE4 /* Sources */,
-				510031EE1379CACB00C8DFE4 /* Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				E1AC2E3020F7B98E00B0897D /* PBXTargetDependency */,
-			);
-			name = SecItemShim;
-			productName = PluginProcessShim;
-			productReference = 510031F61379CACB00C8DFE4 /* SecItemShim.dylib */;
-			productType = "com.apple.product-type.library.dynamic";
-		};
 		5742A2E52535613F00B7BA14 /* WebAuthn */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 5742A2F32535613F00B7BA14 /* Build configuration list for PBXNativeTarget "WebAuthn" */;
@@ -12302,7 +12245,6 @@
 				37F7407912721F740093869B /* PBXTargetDependency */,
 				2D11BA052126A5AE006F8878 /* PBXTargetDependency */,
 				37B1D0141C1E421100D67FE9 /* PBXTargetDependency */,
-				37B1D0161C1E421100D67FE9 /* PBXTargetDependency */,
 			);
 			name = WebKit;
 			productInstallPath = "$(HOME)/Library/Frameworks";
@@ -12410,7 +12352,6 @@
 				2D7DEBD821269C6B00B9F73C /* Generate Unified Sources */,
 				C0CE72851247E66800BC0EC4 /* Derived Sources */,
 				1AC25FAF12A48EA700BD2671 /* PluginProcessShim */,
-				510031EA1379CACB00C8DFE4 /* SecItemShim */,
 				BC3DE46515A91763008D26FC /* WebContent */,
 				372EBB382017E64300085064 /* WebContent.Development */,
 				BC8283B016B4BF7700A278FE /* Networking */,
@@ -13060,14 +13001,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		510031EC1379CACB00C8DFE4 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				511F8A81138B485D00A95F44 /* SecItemShimLibrary.mm in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		5742A2EA2535613F00B7BA14 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -13575,11 +13508,6 @@
 			target = 1AC25FAF12A48EA700BD2671 /* PluginProcessShim */;
 			targetProxy = 37B1D0131C1E421100D67FE9 /* PBXContainerItemProxy */;
 		};
-		37B1D0161C1E421100D67FE9 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 510031EA1379CACB00C8DFE4 /* SecItemShim */;
-			targetProxy = 37B1D0151C1E421100D67FE9 /* PBXContainerItemProxy */;
-		};
 		37F7407912721F740093869B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = C0CE72851247E66800BC0EC4 /* Derived Sources */;
@@ -13619,11 +13547,6 @@
 			isa = PBXTargetDependency;
 			target = E1AC2E2720F7B94C00B0897D /* Unlock Keychain */;
 			targetProxy = E1AC2E2D20F7B98800B0897D /* PBXContainerItemProxy */;
-		};
-		E1AC2E3020F7B98E00B0897D /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = E1AC2E2720F7B94C00B0897D /* Unlock Keychain */;
-			targetProxy = E1AC2E2F20F7B98E00B0897D /* PBXContainerItemProxy */;
 		};
 		E1AC2E3220F7B99B00B0897D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -13800,30 +13723,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 372EBB4A2017E76000085064 /* WebContentService.Development.xcconfig */;
 			buildSettings = {
-			};
-			name = Production;
-		};
-		510031F31379CACB00C8DFE4 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = A1EDD2DC1884B9B500BBFE98 /* SecItemShim.xcconfig */;
-			buildSettings = {
-				PRODUCT_NAME = SecItemShim;
-			};
-			name = Debug;
-		};
-		510031F41379CACB00C8DFE4 /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = A1EDD2DC1884B9B500BBFE98 /* SecItemShim.xcconfig */;
-			buildSettings = {
-				PRODUCT_NAME = SecItemShim;
-			};
-			name = Release;
-		};
-		510031F51379CACB00C8DFE4 /* Production */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = A1EDD2DC1884B9B500BBFE98 /* SecItemShim.xcconfig */;
-			buildSettings = {
-				PRODUCT_NAME = SecItemShim;
 			};
 			name = Production;
 		};
@@ -14107,16 +14006,6 @@
 				372EBB432017E64300085064 /* Debug */,
 				372EBB442017E64300085064 /* Release */,
 				372EBB452017E64300085064 /* Production */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Production;
-		};
-		510031F21379CACB00C8DFE4 /* Build configuration list for PBXNativeTarget "SecItemShim" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				510031F31379CACB00C8DFE4 /* Debug */,
-				510031F41379CACB00C8DFE4 /* Release */,
-				510031F51379CACB00C8DFE4 /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;

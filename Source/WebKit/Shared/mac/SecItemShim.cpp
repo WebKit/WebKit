@@ -32,7 +32,6 @@
 #include "NetworkProcess.h"
 #include "SecItemRequestData.h"
 #include "SecItemResponseData.h"
-#include "SecItemShimLibrary.h"
 #include "SecItemShimProxyMessages.h"
 #include <Security/Security.h>
 #include <atomic>
