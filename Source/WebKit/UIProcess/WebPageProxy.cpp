@@ -509,6 +509,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref
     , m_isSmartInsertDeleteEnabled(TextChecker::isSmartInsertDeleteEnabled())
 #endif
     , m_pageLoadState(*this)
+    , m_updateReportedMediaCaptureStateTimer(RunLoop::main(), this, &WebPageProxy::updateReportedMediaCaptureState)
     , m_inspectorController(makeUnique<WebPageInspectorController>(*this))
 #if ENABLE(REMOTE_INSPECTOR)
     , m_inspectorDebuggable(makeUnique<WebPageDebuggable>(*this))
@@ -9052,14 +9053,11 @@ void WebPageProxy::updateReportedMediaCaptureState()
     bool haveReportedCapture = m_reportedMediaCaptureState & MediaProducer::MediaCaptureMask;
     bool willReportCapture = activeCaptureState;
 
-    if (haveReportedCapture && !willReportCapture && m_delayStopCapturingReportingTimer.isActive())
+    if (haveReportedCapture && !willReportCapture && m_updateReportedMediaCaptureStateTimer.isActive())
         return;
 
-    if (!haveReportedCapture && willReportCapture) {
-        m_delayStopCapturingReportingTimer.doTask([this] {
-            updateReportedMediaCaptureState();
-        }, m_mediaCaptureReportingDelay);
-    }
+    if (!haveReportedCapture && willReportCapture)
+        m_updateReportedMediaCaptureStateTimer.startOneShot(m_mediaCaptureReportingDelay);
 
     m_reportedMediaCaptureState = activeCaptureState;
     m_uiClient->mediaCaptureStateDidChange(m_mediaState);

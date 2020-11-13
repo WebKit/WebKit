@@ -1,3 +1,18 @@
+2020-11-13  Geoffrey Garen  <ggaren@apple.com>
+
+        Removed DeferrableTaskTimer
+        https://bugs.webkit.org/show_bug.cgi?id=218874
+
+        Reviewed by Chris Dumez.
+
+        It was (mostly) redundant.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::updateReportedMediaCaptureState):
+        * UIProcess/WebPageProxy.h: Use WTF::RunLoop::Timer instead of
+        WebCore::Timer because WebCore::Timer for WebKit code in the UI process
+        is a no-no, which can crash if the UI process also uses WebThread.
+
 2020-11-13  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Issue sandbox extension to the WebContent process for com.apple.lskdd

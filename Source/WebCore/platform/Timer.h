@@ -52,7 +52,7 @@ public:
     WEBCORE_EXPORT void start(Seconds nextFireInterval, Seconds repeatInterval);
 
     void startRepeating(Seconds repeatInterval) { start(repeatInterval, repeatInterval); }
-    void startOneShot(Seconds interval) { start(interval, 0_s); }
+    void startOneShot(Seconds delay) { start(delay, 0_s); }
 
     WEBCORE_EXPORT void stop();
     bool isActive() const;
@@ -109,6 +109,16 @@ private:
 class Timer : public TimerBase {
     WTF_MAKE_FAST_ALLOCATED;
 public:
+    static void schedule(Seconds delay, WTF::Function<void()>&& function)
+    {
+        auto* timer = new Timer([] { });
+        timer->m_function = [timer, function = WTFMove(function)] {
+            function();
+            delete timer;
+        };
+        timer->startOneShot(delay);
+    }
+
     template <typename TimerFiredClass, typename TimerFiredBaseClass>
     Timer(TimerFiredClass& object, void (TimerFiredBaseClass::*function)())
         : m_function(std::bind(function, &object))
@@ -149,7 +159,7 @@ public:
     {
     }
 
-    DeferrableOneShotTimer(WTF::Function<void ()>&& function, Seconds delay)
+    DeferrableOneShotTimer(WTF::Function<void()>&& function, Seconds delay)
         : m_function(WTFMove(function))
         , m_delay(delay)
         , m_shouldRestartWhenTimerFires(false)
@@ -194,39 +204,5 @@ private:
     Seconds m_delay;
     bool m_shouldRestartWhenTimerFires;
 };
-
-class DeferrableTaskTimer final : private TimerBase {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    DeferrableTaskTimer() = default;
-
-    void doTask(Function<void()>&&, Seconds);
-    void cancel();
-    bool isActive() const { return TimerBase::isActive(); }
-
-private:
-    void fired() final;
-
-    Function<void()> m_function;
-};
-
-inline void DeferrableTaskTimer::fired()
-{
-    std::exchange(m_function, { })();
-}
-
-inline void DeferrableTaskTimer::doTask(Function<void()>&& function, Seconds delay)
-{
-    ASSERT(!isActive());
-    ASSERT(!m_function);
-    m_function = WTFMove(function);
-    startOneShot(delay);
-}
-
-inline void DeferrableTaskTimer::cancel()
-{
-    std::exchange(m_function, { });
-    stop();
-}
 
 }

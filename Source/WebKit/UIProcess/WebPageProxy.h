@@ -2755,7 +2755,7 @@ private:
 
     // To make sure capture indicators are visible long enough, m_reportedMediaCaptureState is the same as m_mediaState except that we might delay a bit transition from capturing to not-capturing.
     WebCore::MediaProducer::MediaStateFlags m_reportedMediaCaptureState { WebCore::MediaProducer::IsNotPlaying };
-    WebCore::DeferrableTaskTimer m_delayStopCapturingReportingTimer;
+    RunLoop::Timer<WebPageProxy> m_updateReportedMediaCaptureStateTimer;
     static constexpr Seconds DefaultMediaCaptureReportingDelay { 3_s };
     Seconds m_mediaCaptureReportingDelay { DefaultMediaCaptureReportingDelay };
 
