@@ -1,3 +1,15 @@
+2020-11-13  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Remove SecItemShim.dylib from network service link
+        https://bugs.webkit.org/show_bug.cgi?id=218892
+
+        Reviewed by Antti Koivisto.
+
+        Fixes a build failure after
+        https://bugs.webkit.org/show_bug.cgi?id=218862
+
+        * Configurations/NetworkService.xcconfig:
+
 2020-11-12  Youenn Fablet  <youenn@apple.com>
 
         Add infrastructure for WebRTC transforms
