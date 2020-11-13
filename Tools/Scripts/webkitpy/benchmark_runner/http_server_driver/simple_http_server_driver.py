@@ -32,6 +32,7 @@ class SimpleHTTPServerDriver(HTTPServerDriver):
         interface_args = []
         if self._ip:
             interface_args.extend(['--interface', self._ip])
+        self._server_port = 0
         self._server_process = subprocess.Popen(["python", http_server_path, web_root] + interface_args, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         max_attempt = 5
         interval = 0.5
@@ -86,6 +87,7 @@ class SimpleHTTPServerDriver(HTTPServerDriver):
 
     def kill_server(self):
         try:
+            self._server_port = 0
             if not self._server_process:
                 return
             if self._server_process.poll() is None:

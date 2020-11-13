@@ -1,3 +1,15 @@
+2020-11-13  Jonathan Bedard  <jbedard@apple.com>
+
+        REGRESSION: r269514 Reset server port before restarting webserver
+        https://bugs.webkit.org/show_bug.cgi?id=218918
+        <rdar://problem/71380345>
+
+        Reviewed by Stephanie Lewis.
+
+        * Scripts/webkitpy/benchmark_runner/http_server_driver/simple_http_server_driver.py:
+        (SimpleHTTPServerDriver.serve): Reset server port.
+        (SimpleHTTPServerDriver.kill_server): Ditto.
+
 2020-11-13  Aakash Jain  <aakash_jain@apple.com>
 
         [build.webkit.org] Update RunAPITests step for new buildbot
