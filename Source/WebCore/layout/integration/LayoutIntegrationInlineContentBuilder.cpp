@@ -28,6 +28,7 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "BidiResolver.h"
 #include "InlineFormattingContext.h"
 #include "InlineFormattingState.h"
 #include "LayoutBoxGeometry.h"
@@ -57,6 +58,92 @@ inline static float lineOverflowWidth(const RenderBlockFlow& flow, InlineLayoutU
         endPadding = 1;
     lineBoxLogicalWidth += endPadding;
     return std::max(lineLogicalWidth, lineBoxLogicalWidth);
+}
+
+class Iterator {
+public:
+    Iterator() = default;
+    Iterator(const Layout::InlineLineRuns* runList, size_t currentRunIndex);
+
+    void increment();
+    unsigned offset() const { return m_offset; }
+    UCharDirection direction() const;
+
+    bool operator==(const Iterator& other) const { return offset() == other.offset(); }
+    bool operator!=(const Iterator& other) const { return offset() != other.offset(); };
+    bool atEnd() const { return !m_runList || m_runIndex == m_runList->size(); };
+
+private:
+    const Layout::LineRun& currentRun() const { return m_runList->at(m_runIndex); }
+
+    const Layout::InlineLineRuns* m_runList { nullptr };
+    size_t m_offset { 0 };
+    size_t m_runIndex { 0 };
+    size_t m_runOffset { 0 };
+};
+
+Iterator::Iterator(const Layout::InlineLineRuns* runList, size_t runIndex)
+    : m_runList(runList)
+    , m_runIndex(runIndex)
+{
+}
+
+UCharDirection Iterator::direction() const
+{
+    ASSERT(m_runList);
+    ASSERT(!atEnd());
+    auto& textContent = currentRun().text();
+    if (!textContent)
+        return U_OTHER_NEUTRAL;
+    return u_charDirection(textContent->content()[textContent->start() + m_runOffset]);
+}
+
+void Iterator::increment()
+{
+    ASSERT(m_runList);
+    ASSERT(!atEnd());
+    ++m_offset;
+    auto& currentRun = this->currentRun();
+    if (auto& textContent = currentRun.text()) {
+        if (++m_runOffset < textContent->length())
+            return;
+    }
+    ++m_runIndex;
+    m_runOffset = 0;
+}
+
+class BidiRun {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    BidiRun(unsigned start, unsigned end, BidiContext*, UCharDirection);
+
+    size_t start() const { return m_start; }
+    size_t end() const { return m_end; }
+    unsigned char level() const { return m_level; }
+
+    BidiRun* next() const { return m_next.get(); }
+    void setNext(std::unique_ptr<BidiRun>&& next) { m_next = WTFMove(next); }
+    std::unique_ptr<BidiRun> takeNext() { return WTFMove(m_next); }
+
+private:
+    std::unique_ptr<BidiRun> m_next;
+    size_t m_start { 0 };
+    size_t m_end { 0 };
+    unsigned char m_level { 0 };
+};
+
+BidiRun::BidiRun(unsigned start, unsigned end, BidiContext* context, UCharDirection direction)
+    : m_start(start)
+    , m_end(end)
+    , m_level(context->level())
+{
+    ASSERT(context);
+    if (direction == U_OTHER_NEUTRAL)
+        direction = context->dir();
+    if (m_level % 2)
+        m_level = (direction == U_LEFT_TO_RIGHT || direction == U_ARABIC_NUMBER || direction == U_EUROPEAN_NUMBER) ? m_level + 1 : m_level;
+    else
+        m_level = (direction == U_RIGHT_TO_LEFT) ? m_level + 1 : (direction == U_ARABIC_NUMBER || direction == U_EUROPEAN_NUMBER) ? m_level + 2 : m_level;
 }
 
 InlineContentBuilder::InlineContentBuilder(const Layout::LayoutState& layoutState, const RenderBlockFlow& blockFlow)
@@ -112,6 +199,14 @@ void InlineContentBuilder::createDisplayLineRuns(const Layout::InlineFormattingS
     if (runList.isEmpty())
         return;
     auto& lines = inlineFormattingState.lines();
+
+    BidiResolver<Iterator, BidiRun> bidiResolver;
+    // FIXME: Add support for override.
+    bidiResolver.setStatus(BidiStatus(m_layoutState.root().style().direction(), false));
+    // FIXME: Grab the nested isolates from the previous line.
+    bidiResolver.setPosition(Iterator(&runList, 0), 0);
+    bidiResolver.createBidiRunsForLine(Iterator(&runList, runList.size()));
+
     Vector<bool> hasAdjustedTrailingLineList(lines.size(), false);
 
     auto createDisplayBoxRun = [&](auto& lineRun) {
@@ -187,12 +282,17 @@ void InlineContentBuilder::createDisplayLineRuns(const Layout::InlineFormattingS
         inlineContent.runs.append(displayRun);
     };
 
-    for (auto& lineRun : inlineFormattingState.lineRuns()) {
-        if (auto& text = lineRun.text())
-            createDisplayTextRunForRange(lineRun, text->start(), text->end());
-        else
-            createDisplayBoxRun(lineRun);
-    }
+    auto& bidiRuns = bidiResolver.runs();
+    if (bidiRuns.runCount() == 1) {
+        // Fast path for cases when there's no bidi boundary.
+        for (auto& lineRun : inlineFormattingState.lineRuns()) {
+            if (auto& text = lineRun.text())
+                createDisplayTextRunForRange(lineRun, text->start(), text->end());
+            else
+                createDisplayBoxRun(lineRun);
+        }
+    } else
+        ASSERT_NOT_IMPLEMENTED_YET();
 }
 
 void InlineContentBuilder::createDisplayLines(const Layout::InlineFormattingState& inlineFormattingState, InlineContent& inlineContent, const LineLevelVisualAdjustmentsForRunsList& lineLevelVisualAdjustmentsForRuns) const
