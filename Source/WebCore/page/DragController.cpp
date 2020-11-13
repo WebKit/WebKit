@@ -684,10 +684,7 @@ bool DragController::canProcessDrag(const DragData& dragData)
         return true;
 #endif
 
-    if (is<HTMLPlugInElement>(*dragNode)) {
-        if (!downcast<HTMLPlugInElement>(*dragNode).canProcessDrag() && !dragNode->hasEditableStyle())
-            return false;
-    } else if (!dragNode->hasEditableStyle())
+    if (!dragNode->hasEditableStyle())
         return false;
 
     if (m_didInitiateDrag && m_documentUnderMouse == m_dragInitiator && result.isSelected())

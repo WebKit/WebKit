@@ -372,9 +372,6 @@ security/contentSecurityPolicy/plugins-types-blocks-youtube-plugin-replacement.h
 # Opera-submitted tests to W3C for <track>, a lot of failures still.
 webkit.org/b/103926 media/track/opera [ Skip ]
 
-# Snapshotted plugins not enabled
-webkit.org/b/98696 plugins/snapshotting [ Skip ]
-
 # TODO Impossible to test text-only-zoom from DRT on Windows
 webkit.org/b/35013 svg/zoom/text/ [ Skip ]
 
@@ -478,9 +475,6 @@ fast/text/user-installed-fonts/shadow.html [ Skip ]
 
 # testRunner.dumpPolicyDelegateCallbacks is not a function
 loader/navigation-policy/should-open-external-urls [ Skip ]
-
-# testRunner.setBlockAllPlugins is not a function.
-plugins/unavailable-plugin-indicator-obscurity.html [ Skip ]
 
 # testRunner.setPluginSupportedMode is not a function
 plugins/unsupported-plugin.html [ Skip ]

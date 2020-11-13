@@ -55,7 +55,7 @@ struct PluginCreationParameters;
 
 class PluginProxy : public Plugin {
 public:
-    static Ref<PluginProxy> create(uint64_t pluginProcessToken, bool isRestartedProcess);
+    static Ref<PluginProxy> create(uint64_t pluginProcessToken);
     ~PluginProxy();
 
     uint64_t pluginInstanceID() const { return m_pluginInstanceID; }
@@ -65,7 +65,7 @@ public:
     void didReceiveSyncPluginProxyMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&);
 
 private:
-    explicit PluginProxy(uint64_t pluginProcessToken, bool isRestartedProcess);
+    explicit PluginProxy(uint64_t pluginProcessToken);
 
     // Plugin
     bool initialize(const Parameters&) override;
@@ -184,10 +184,10 @@ private:
     void didCreatePluginInternal(bool wantsWheelEvents, uint32_t remoteLayerClientID);
     void didFailToCreatePluginInternal();
 
-    uint64_t m_pluginProcessToken;
+    uint64_t m_pluginProcessToken { 0 };
 
     RefPtr<PluginProcessConnection> m_connection;
-    uint64_t m_pluginInstanceID;
+    uint64_t m_pluginInstanceID { 0 };
 
     WebCore::IntSize m_pluginSize;
 
@@ -205,27 +205,25 @@ private:
     RefPtr<ShareableBitmap> m_pluginBackingStore;
     
     // Whether all of the plug-in backing store contains valid data.
-    bool m_pluginBackingStoreContainsValidData;
+    bool m_pluginBackingStoreContainsValidData { false };
 
-    bool m_isStarted;
+    bool m_isStarted { false };
 
     // Whether we're called invalidate in response to an update call, and are now waiting for a paint call.
-    bool m_waitingForPaintInResponseToUpdate;
+    bool m_waitingForPaintInResponseToUpdate { false };
 
     // Whether we should send wheel events to this plug-in or not.
-    bool m_wantsWheelEvents;
+    bool m_wantsWheelEvents { false };
 
     // The client ID for the CA layer in the plug-in process. Will be 0 if the plug-in is not a CA plug-in.
-    uint32_t m_remoteLayerClientID;
-    
+    uint32_t m_remoteLayerClientID { 0 };
+
     std::unique_ptr<PluginCreationParameters> m_pendingPluginCreationParameters;
-    bool m_waitingOnAsynchronousInitialization;
+    bool m_waitingOnAsynchronousInitialization { false };
 
 #if PLATFORM(COCOA)
     RetainPtr<CALayer> m_pluginLayer;
 #endif
-
-    bool m_isRestartedProcess;
 };
 
 } // namespace WebKit

@@ -1,4 +1,0 @@
-This test ensures that quicktime plugins can also be snapshotted. We make the plugin here too small to be the primary plugin, thus it should get snapshotted.
-
-PASS
-

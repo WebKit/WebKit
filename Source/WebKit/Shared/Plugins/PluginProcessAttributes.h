@@ -30,11 +30,6 @@
 
 namespace WebKit {
 
-enum class PluginProcessType : bool {
-    Normal,
-    Snapshot,
-};
-
 enum class PluginProcessSandboxPolicy : bool {
     Normal,
     Unsandboxed,
@@ -42,7 +37,6 @@ enum class PluginProcessSandboxPolicy : bool {
 
 struct PluginProcessAttributes {
     PluginModuleInfo moduleInfo;
-    PluginProcessType processType;
     PluginProcessSandboxPolicy sandboxPolicy;
 };
 

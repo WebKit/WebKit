@@ -41,7 +41,6 @@ PluginProcessCreationParameters::PluginProcessCreationParameters()
 
 void PluginProcessCreationParameters::encode(IPC::Encoder& encoder) const
 {
-    encoder << processType;
     encoder << supportsAsynchronousPluginInitialization;
     encoder << minimumLifetime;
     encoder << terminationTimeout;
@@ -53,8 +52,6 @@ void PluginProcessCreationParameters::encode(IPC::Encoder& encoder) const
 
 bool PluginProcessCreationParameters::decode(IPC::Decoder& decoder, PluginProcessCreationParameters& result)
 {
-    if (!decoder.decode(result.processType))
-        return false;
     if (!decoder.decode(result.supportsAsynchronousPluginInitialization))
         return false;
     if (!decoder.decode(result.minimumLifetime))

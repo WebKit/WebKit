@@ -159,8 +159,6 @@ struct WebProcessCreationParameters {
     HashMap<String, bool> notificationPermissions;
 #endif
 
-    Vector<String> plugInAutoStartOrigins;
-
 #if ENABLE(NETSCAPE_PLUGIN_API)
     HashMap<String, HashMap<String, HashMap<String, WebCore::PluginLoadClientPolicy>>> pluginLoadClientPolicies;
 #endif

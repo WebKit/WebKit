@@ -513,30 +513,21 @@ void WKContextSetJavaScriptGarbageCollectorTimerEnabled(WKContextRef contextRef,
     WebKit::toImpl(contextRef)->setJavaScriptGarbageCollectorTimerEnabled(enable);
 }
 
-WKDictionaryRef WKContextCopyPlugInAutoStartOriginHashes(WKContextRef contextRef)
+WKDictionaryRef WKContextCopyPlugInAutoStartOriginHashes(WKContextRef)
 {
-    return WebKit::toAPI(&WebKit::toImpl(contextRef)->plugInAutoStartOriginHashes().leakRef());
+    return nullptr;
 }
 
-void WKContextSetPlugInAutoStartOriginHashes(WKContextRef contextRef, WKDictionaryRef dictionaryRef)
+void WKContextSetPlugInAutoStartOriginHashes(WKContextRef, WKDictionaryRef)
 {
-    if (!dictionaryRef)
-        return;
-    WebKit::toImpl(contextRef)->setPlugInAutoStartOriginHashes(*WebKit::toImpl(dictionaryRef));
 }
 
-void WKContextSetPlugInAutoStartOriginsFilteringOutEntriesAddedAfterTime(WKContextRef contextRef, WKDictionaryRef dictionaryRef, double time)
+void WKContextSetPlugInAutoStartOriginsFilteringOutEntriesAddedAfterTime(WKContextRef, WKDictionaryRef, double)
 {
-    if (!dictionaryRef)
-        return;
-    WebKit::toImpl(contextRef)->setPlugInAutoStartOriginsFilteringOutEntriesAddedAfterTime(*WebKit::toImpl(dictionaryRef), WallTime::fromRawSeconds(time));
 }
 
-void WKContextSetPlugInAutoStartOrigins(WKContextRef contextRef, WKArrayRef arrayRef)
+void WKContextSetPlugInAutoStartOrigins(WKContextRef, WKArrayRef)
 {
-    if (!arrayRef)
-        return;
-    WebKit::toImpl(contextRef)->setPlugInAutoStartOrigins(*WebKit::toImpl(arrayRef));
 }
 
 void WKContextSetInvalidMessageFunction(WKContextInvalidMessageFunction invalidMessageFunction)

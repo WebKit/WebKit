@@ -180,7 +180,6 @@ class HTMLImageElement;
 class HTMLMenuElement;
 class HTMLMenuItemElement;
 class HTMLPlugInElement;
-class HTMLPlugInImageElement;
 class IntPoint;
 class KeyboardEvent;
 class MediaPlaybackTargetContext;
@@ -1118,15 +1117,6 @@ public:
     void didFinishCheckingText(uint64_t requestID, const Vector<WebCore::TextCheckingResult>&);
     void didCancelCheckingText(uint64_t requestID);
 
-#if ENABLE(PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC)
-    void determinePrimarySnapshottedPlugIn();
-    void determinePrimarySnapshottedPlugInTimerFired();
-    void resetPrimarySnapshottedPlugIn();
-    bool matchesPrimaryPlugIn(const String& pageOrigin, const String& pluginOrigin, const String& mimeType) const;
-    bool plugInIntersectsSearchRect(WebCore::HTMLPlugInImageElement& pluginImageElement);
-    bool plugInIsPrimarySize(WebCore::HTMLPlugInImageElement& pluginImageElement, unsigned &pluginArea);
-#endif
-
 #if ENABLE(DATA_DETECTION)
     void setDataDetectionResults(NSArray *);
     void detectDataInAllFrames(uint64_t, CompletionHandler<void(const DataDetectionResult&)>&&);
@@ -1834,15 +1824,6 @@ private:
     bool m_shouldPlayMediaInGPUProcess { false };
 #if ENABLE(APP_BOUND_DOMAINS)
     bool m_needsInAppBrowserPrivacyQuirks { false };
-#endif
-#if ENABLE(PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC)
-    bool m_readyToFindPrimarySnapshottedPlugin { false };
-    bool m_didFindPrimarySnapshottedPlugin { false };
-    unsigned m_numberOfPrimarySnapshotDetectionAttempts { 0 };
-    String m_primaryPlugInPageOrigin;
-    String m_primaryPlugInOrigin;
-    String m_primaryPlugInMimeType;
-    RunLoop::Timer<WebPage> m_determinePrimarySnapshottedPlugInTimer;
 #endif
 
     // The layer hosting mode.

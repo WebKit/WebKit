@@ -58,7 +58,6 @@ class LibWebRTCProvider;
 class MediaRecorderProvider;
 class PaymentCoordinatorClient;
 class PerformanceLoggingClient;
-class PlugInClient;
 class PluginInfoProvider;
 class ProgressTrackerClient;
 class SocketProvider;
@@ -102,7 +101,6 @@ public:
 
     UniqueRef<LibWebRTCProvider> libWebRTCProvider;
 
-    std::unique_ptr<PlugInClient> plugInClient;
     UniqueRef<ProgressTrackerClient> progressTrackerClient;
     Ref<BackForwardClient> backForwardClient;
     Ref<CookieJar> cookieJar;

@@ -353,8 +353,6 @@ bool FrameLoader::SubframeLoader::loadPlugin(HTMLPlugInImageElement& pluginEleme
     if (!renderer)
         return false;
 
-    pluginElement.subframeLoaderWillCreatePlugIn(url);
-
     IntSize contentSize = roundedIntSize(LayoutSize(renderer->contentWidth(), renderer->contentHeight()));
     bool loadManually = is<PluginDocument>(document) && !m_containsPlugins && downcast<PluginDocument>(document).shouldLoadPluginManually();
 
@@ -378,7 +376,6 @@ bool FrameLoader::SubframeLoader::loadPlugin(HTMLPlugInImageElement& pluginEleme
         return false;
     }
 
-    pluginElement.subframeLoaderDidCreatePlugIn(*widget);
     renderer->setWidget(WTFMove(widget));
     m_containsPlugins = true;
     return true;

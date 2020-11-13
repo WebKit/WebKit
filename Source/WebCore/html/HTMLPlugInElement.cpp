@@ -41,7 +41,6 @@
 #include "PluginViewBase.h"
 #include "RenderEmbeddedObject.h"
 #include "RenderLayer.h"
-#include "RenderSnapshottedPlugIn.h"
 #include "RenderView.h"
 #include "RenderWidget.h"
 #include "ScriptController.h"
@@ -68,10 +67,7 @@ using namespace HTMLNames;
 
 HTMLPlugInElement::HTMLPlugInElement(const QualifiedName& tagName, Document& document)
     : HTMLFrameOwnerElement(tagName, document)
-    , m_inBeforeLoadEventHandler(false)
     , m_swapRendererTimer(*this, &HTMLPlugInElement::swapRendererTimerFired)
-    , m_isCapturingMouseEvents(false)
-    , m_displayState(Playing)
 {
     setHasCustomStyleResolveCallbacks();
 }
@@ -79,12 +75,6 @@ HTMLPlugInElement::HTMLPlugInElement(const QualifiedName& tagName, Document& doc
 HTMLPlugInElement::~HTMLPlugInElement()
 {
     ASSERT(!m_instance); // cleared in detach()
-}
-
-bool HTMLPlugInElement::canProcessDrag() const
-{
-    const PluginViewBase* plugin = is<PluginViewBase>(pluginWidget()) ? downcast<PluginViewBase>(pluginWidget()) : nullptr;
-    return plugin ? plugin->canProcessDrag() : false;
 }
 
 bool HTMLPlugInElement::willRespondToMouseClickEvents()
@@ -206,21 +196,8 @@ void HTMLPlugInElement::defaultEventHandler(Event& event)
     if (!is<RenderWidget>(renderer))
         return;
 
-    if (is<RenderEmbeddedObject>(*renderer)) {
-        if (downcast<RenderEmbeddedObject>(*renderer).isPluginUnavailable()) {
-            downcast<RenderEmbeddedObject>(*renderer).handleUnavailablePluginIndicatorEvent(&event);
-            return;
-        }
-
-        if (is<RenderSnapshottedPlugIn>(*renderer) && displayState() < Restarting) {
-            downcast<RenderSnapshottedPlugIn>(*renderer).handleEvent(event);
-            HTMLFrameOwnerElement::defaultEventHandler(event);
-            return;
-        }
-
-        if (displayState() < Playing)
-            return;
-    }
+    if (is<RenderEmbeddedObject>(*renderer) && downcast<RenderEmbeddedObject>(*renderer).isPluginUnavailable())
+        downcast<RenderEmbeddedObject>(*renderer).handleUnavailablePluginIndicatorEvent(&event);
 
     // Don't keep the widget alive over the defaultEventHandler call, since that can do things like navigate.
     {
@@ -289,7 +266,7 @@ RenderPtr<RenderElement> HTMLPlugInElement::createElementRenderer(RenderStyle&& 
 
 void HTMLPlugInElement::swapRendererTimerFired()
 {
-    ASSERT(displayState() == PreparingPluginReplacement || displayState() == DisplayingSnapshot);
+    ASSERT(displayState() == PreparingPluginReplacement);
     if (userAgentShadowRoot())
         return;
     
@@ -304,9 +281,9 @@ void HTMLPlugInElement::setDisplayState(DisplayState state)
         return;
 
     m_displayState = state;
-    
+
     m_swapRendererTimer.stop();
-    if (state == DisplayingSnapshot || displayState() == PreparingPluginReplacement)
+    if (displayState() == PreparingPluginReplacement)
         m_swapRendererTimer.startOneShot(0_s);
 }
 

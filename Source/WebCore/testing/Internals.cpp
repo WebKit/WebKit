@@ -4039,9 +4039,9 @@ ExceptionOr<String> Internals::unavailablePluginReplacementText(Element& element
     return String { downcast<RenderEmbeddedObject>(*renderer).pluginReplacementTextIfUnavailable() };
 }
 
-bool Internals::isPluginSnapshotted(Element& element)
+bool Internals::isPluginSnapshotted(Element&)
 {
-    return is<HTMLPlugInElement>(element) && downcast<HTMLPlugInElement>(element).displayState() <= HTMLPlugInElement::DisplayingSnapshot;
+    return false;
 }
 
 bool Internals::pluginIsBelowSizeThreshold(Element& element)

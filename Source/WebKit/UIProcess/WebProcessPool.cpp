@@ -740,8 +740,6 @@ WebProcessDataStoreParameters WebProcessPool::webProcessDataStoreParameters(WebP
     if (!javaScriptConfigurationDirectory.isEmpty())
         SandboxExtension::createHandleWithoutResolvingPath(javaScriptConfigurationDirectory, SandboxExtension::Type::ReadWrite, javaScriptConfigurationDirectoryExtensionHandle);
         
-    auto plugInAutoStartOriginHashes = m_plugInAutoStartProvider.autoStartOriginHashesCopy(websiteDataStore.sessionID());
-
     return WebProcessDataStoreParameters {
         websiteDataStore.sessionID(),
         WTFMove(applicationCacheDirectory),
@@ -755,7 +753,6 @@ WebProcessDataStoreParameters WebProcessPool::webProcessDataStoreParameters(WebP
         WTFMove(mediaKeyStorageDirectoryExtensionHandle),
         WTFMove(javaScriptConfigurationDirectory),
         WTFMove(javaScriptConfigurationDirectoryExtensionHandle),
-        WTFMove(plugInAutoStartOriginHashes),
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
         websiteDataStore.thirdPartyCookieBlockingMode(),
         m_domainsWithUserInteraction,
@@ -821,8 +818,6 @@ void WebProcessPool::initializeNewWebProcess(WebProcessProxy& process, WebsiteDa
     parameters.notificationPermissions = supplement<WebNotificationManagerProxy>()->notificationPermissions();
 #endif
 
-    parameters.plugInAutoStartOrigins = copyToVector(m_plugInAutoStartProvider.autoStartOrigins());
-
     parameters.memoryCacheDisabled = m_memoryCacheDisabled;
     parameters.attrStyleEnabled = m_configuration->attrStyleEnabled();
 
@@ -832,10 +827,6 @@ void WebProcessPool::initializeNewWebProcess(WebProcessProxy& process, WebsiteDa
     parameters.hasSelectionServices = serviceController.hasSelectionServices();
     parameters.hasRichContentServices = serviceController.hasRichContentServices();
     serviceController.refreshExistingServices();
-#endif
-
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    parameters.pluginLoadClientPolicies = m_pluginLoadClientPolicies;
 #endif
 
 #if OS(LINUX)
@@ -1653,53 +1644,6 @@ void WebProcessPool::setJavaScriptGarbageCollectorTimerEnabled(bool flag)
 {
     sendToAllProcesses(Messages::WebProcess::SetJavaScriptGarbageCollectorTimerEnabled(flag));
 }
-
-Ref<API::Dictionary> WebProcessPool::plugInAutoStartOriginHashes() const
-{
-    return m_plugInAutoStartProvider.autoStartOriginsTableCopy();
-}
-
-void WebProcessPool::setPlugInAutoStartOriginHashes(API::Dictionary& dictionary)
-{
-    m_plugInAutoStartProvider.setAutoStartOriginsTable(dictionary);
-}
-
-void WebProcessPool::setPlugInAutoStartOrigins(API::Array& array)
-{
-    m_plugInAutoStartProvider.setAutoStartOriginsArray(array);
-}
-
-void WebProcessPool::setPlugInAutoStartOriginsFilteringOutEntriesAddedAfterTime(API::Dictionary& dictionary, WallTime time)
-{
-    m_plugInAutoStartProvider.setAutoStartOriginsFilteringOutEntriesAddedAfterTime(dictionary, time);
-}
-
-#if ENABLE(NETSCAPE_PLUGIN_API)
-void WebProcessPool::setPluginLoadClientPolicy(WebCore::PluginLoadClientPolicy policy, const String& host, const String& bundleIdentifier, const String& versionString)
-{
-    auto& policiesForHost = m_pluginLoadClientPolicies.ensure(host, [] {
-        return HashMap<String, HashMap<String, WebCore::PluginLoadClientPolicy>>();
-    }).iterator->value;
-    auto& versionsToPolicies = policiesForHost.ensure(bundleIdentifier, [] {
-        return HashMap<String, WebCore::PluginLoadClientPolicy>();
-    }).iterator->value;
-    versionsToPolicies.set(versionString, policy);
-
-    sendToAllProcesses(Messages::WebProcess::SetPluginLoadClientPolicy(policy, host, bundleIdentifier, versionString));
-}
-
-void WebProcessPool::resetPluginLoadClientPolicies(HashMap<String, HashMap<String, HashMap<String, WebCore::PluginLoadClientPolicy>>>&& pluginLoadClientPolicies)
-{
-    m_pluginLoadClientPolicies = WTFMove(pluginLoadClientPolicies);
-    sendToAllProcesses(Messages::WebProcess::ResetPluginLoadClientPolicies(m_pluginLoadClientPolicies));
-}
-
-void WebProcessPool::clearPluginClientPolicies()
-{
-    m_pluginLoadClientPolicies.clear();
-    sendToAllProcesses(Messages::WebProcess::ClearPluginClientPolicies());
-}
-#endif
 
 void WebProcessPool::addSupportedPlugin(String&& matchingDomain, String&& name, HashSet<String>&& mimeTypes, HashSet<String> extensions)
 {

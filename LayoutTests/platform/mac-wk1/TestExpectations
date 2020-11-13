@@ -290,10 +290,6 @@ webkit.org/b/187230 editing/mac/style/do-not-crash-when-showing-font-panel.html 
 # Fails with WebKit1 only.
 editing/secure-input/reset-state-on-navigation.html [ Failure ]
 
-# Plug-in blocking callback doesn't exist in WebKit1.
-plugins/unavailable-plugin-indicator-obscurity.html
-http/tests/plugins/plugin-allow-then-reload.html [ Skip ]
-
 http/tests/plugins/nounsupported-plugin.html [ Skip ]
 http/tests/plugins/supported-plugin-all-origin-visibility.html [ Skip ]
 http/tests/plugins/supported-plugin-origin-specific-visibility.html [ Skip ]
@@ -383,9 +379,6 @@ fast/forms/validation-message-clone.html
 fast/forms/validation-message-in-relative-body.html
 fast/forms/validation-message-appearance.html
 fast/forms/validation-message-on-textarea.html
-
-# Disable snapshotting tests on WK1 only
-plugins/snapshotting
 
 # Disable small plugin blocking on WK1
 plugins/small-plugin-blocked.html [ Skip ]

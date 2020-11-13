@@ -203,10 +203,7 @@ void NavigationState::setNavigationDelegate(id <WKNavigationDelegate> delegate)
 #if PLATFORM(MAC)
     m_navigationDelegateMethods.webViewWebGLLoadPolicyForURL = [delegate respondsToSelector:@selector(_webView:webGLLoadPolicyForURL:decisionHandler:)];
     m_navigationDelegateMethods.webViewResolveWebGLLoadPolicyForURL = [delegate respondsToSelector:@selector(_webView:resolveWebGLLoadPolicyForURL:decisionHandler:)];
-    m_navigationDelegateMethods.webViewDidFailToInitializePlugInWithInfo = [delegate respondsToSelector:@selector(_webView:didFailToInitializePlugInWithInfo:)];
-    m_navigationDelegateMethods.webViewDidBlockInsecurePluginVersionWithInfo = [delegate respondsToSelector:@selector(_webView:didBlockInsecurePluginVersionWithInfo:)];
     m_navigationDelegateMethods.webViewBackForwardListItemAddedRemoved = [delegate respondsToSelector:@selector(_webView:backForwardListItemAdded:removed:)];
-    m_navigationDelegateMethods.webViewDecidePolicyForPluginLoadWithCurrentPolicyPluginInfoCompletionHandler = [delegate respondsToSelector:@selector(_webView:decidePolicyForPluginLoadWithCurrentPolicy:pluginInfo:completionHandler:)];
 #endif
     m_navigationDelegateMethods.webViewWillGoToBackForwardListItemInBackForwardCache = [delegate respondsToSelector:@selector(_webView:willGoToBackForwardListItem:inPageCache:)];
 #if HAVE(APP_SSO)
@@ -325,86 +322,6 @@ NavigationState::NavigationClient::~NavigationClient()
 }
 
 #if PLATFORM(MAC)
-bool NavigationState::NavigationClient::didFailToInitializePlugIn(WebPageProxy&, API::Dictionary& info)
-{
-    if (!m_navigationState.m_navigationDelegateMethods.webViewDidFailToInitializePlugInWithInfo)
-        return false;
-    
-    auto navigationDelegate = m_navigationState.m_navigationDelegate.get();
-    if (!navigationDelegate)
-        return false;
-    
-    [(id <WKNavigationDelegatePrivate>)navigationDelegate _webView:m_navigationState.m_webView didFailToInitializePlugInWithInfo:wrapper(info)];
-    return true;
-}
-
-bool NavigationState::NavigationClient::didBlockInsecurePluginVersion(WebPageProxy&, API::Dictionary& info)
-{
-    if (!m_navigationState.m_navigationDelegateMethods.webViewDidBlockInsecurePluginVersionWithInfo)
-        return false;
-
-    auto navigationDelegate = m_navigationState.m_navigationDelegate.get();
-    if (!navigationDelegate)
-        return false;
-
-    [(id <WKNavigationDelegatePrivate>)navigationDelegate _webView:m_navigationState.m_webView didBlockInsecurePluginVersionWithInfo:wrapper(info)];
-    return true;
-}
-
-static WebKit::PluginModuleLoadPolicy pluginModuleLoadPolicy(_WKPluginModuleLoadPolicy policy)
-{
-    switch (policy) {
-    case _WKPluginModuleLoadPolicyLoadNormally:
-        return WebKit::PluginModuleLoadNormally;
-    case _WKPluginModuleLoadPolicyLoadUnsandboxed:
-        return WebKit::PluginModuleLoadUnsandboxed;
-    case _WKPluginModuleLoadPolicyBlockedForSecurity:
-        return WebKit::PluginModuleBlockedForSecurity;
-    case _WKPluginModuleLoadPolicyBlockedForCompatibility:
-        return WebKit::PluginModuleBlockedForCompatibility;
-    }
-    ASSERT_NOT_REACHED();
-    return WebKit::PluginModuleLoadNormally;
-}
-
-static _WKPluginModuleLoadPolicy wkPluginModuleLoadPolicy(WebKit::PluginModuleLoadPolicy policy)
-{
-    switch (policy) {
-    case WebKit::PluginModuleLoadNormally:
-        return _WKPluginModuleLoadPolicyLoadNormally;
-    case WebKit::PluginModuleLoadUnsandboxed:
-        return _WKPluginModuleLoadPolicyLoadUnsandboxed;
-    case WebKit::PluginModuleBlockedForSecurity:
-        return _WKPluginModuleLoadPolicyBlockedForSecurity;
-    case WebKit::PluginModuleBlockedForCompatibility:
-        return _WKPluginModuleLoadPolicyBlockedForCompatibility;
-    }
-    ASSERT_NOT_REACHED();
-    return _WKPluginModuleLoadPolicyLoadNormally;
-}
-
-void NavigationState::NavigationClient::decidePolicyForPluginLoad(WebKit::WebPageProxy&, WebKit::PluginModuleLoadPolicy currentPluginLoadPolicy, API::Dictionary& pluginInformation, CompletionHandler<void(WebKit::PluginModuleLoadPolicy, const String&)>&& completionHandler)
-{
-    if (!m_navigationState.m_navigationDelegateMethods.webViewDecidePolicyForPluginLoadWithCurrentPolicyPluginInfoCompletionHandler) {
-        completionHandler(currentPluginLoadPolicy, { });
-        return;
-    }
-    
-    auto navigationDelegate = m_navigationState.m_navigationDelegate.get();
-    if (!navigationDelegate) {
-        completionHandler(currentPluginLoadPolicy, { });
-        return;
-    }
-
-    auto checker = CompletionHandlerCallChecker::create(navigationDelegate.get(), @selector(_webView:decidePolicyForPluginLoadWithCurrentPolicy:pluginInfo:completionHandler:));
-    [(id <WKNavigationDelegatePrivate>)navigationDelegate _webView:m_navigationState.m_webView decidePolicyForPluginLoadWithCurrentPolicy:wkPluginModuleLoadPolicy(currentPluginLoadPolicy) pluginInfo:wrapper(pluginInformation) completionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler), checker = WTFMove(checker)](_WKPluginModuleLoadPolicy policy, NSString *unavailabilityDescription) mutable {
-        if (checker->completionHandlerHasBeenCalled())
-            return;
-        checker->didCallCompletionHandler();
-        completionHandler(pluginModuleLoadPolicy(policy), unavailabilityDescription);
-    }).get()];
-}
-
 inline WebCore::WebGLLoadPolicy toWebCoreWebGLLoadPolicy(_WKWebGLLoadPolicy policy)
 {
     switch (policy) {

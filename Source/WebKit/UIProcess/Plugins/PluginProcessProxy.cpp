@@ -235,14 +235,8 @@ void PluginProcessProxy::didFinishLaunching(ProcessLauncher*, IPC::Connection::I
     m_connection->open();
     
     PluginProcessCreationParameters parameters;
-    parameters.processType = m_pluginProcessAttributes.processType;
-    if (parameters.processType == PluginProcessType::Snapshot) {
-        parameters.minimumLifetime = snapshottingMinimumLifetime;
-        parameters.terminationTimeout = snapshottingShutdownTimeout;
-    } else {
-        parameters.minimumLifetime = minimumLifetime;
-        parameters.terminationTimeout = shutdownTimeout;
-    }
+    parameters.minimumLifetime = minimumLifetime;
+    parameters.terminationTimeout = shutdownTimeout;
 
     platformInitializePluginProcess(parameters);
 

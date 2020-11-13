@@ -297,7 +297,7 @@ public:
     ContinuationChainNode* continuationChainNode() const;
 
 protected:
-    LayoutUnit computedCSSPadding(const Length&) const;
+    WEBCORE_EXPORT LayoutUnit computedCSSPadding(const Length&) const;
     virtual void absoluteQuadsIgnoringContinuation(const FloatRect&, Vector<FloatQuad>&, bool* /*wasFixed*/) const { ASSERT_NOT_REACHED(); }
     void collectAbsoluteQuadsForContinuation(Vector<FloatQuad>& quads, bool* wasFixed) const;
 

@@ -61,35 +61,6 @@ WebPluginInfoProvider::~WebPluginInfoProvider()
 {
 }
 
-#if PLATFORM(MAC)
-void WebPluginInfoProvider::setPluginLoadClientPolicy(WebCore::PluginLoadClientPolicy clientPolicy, const String& host, const String& bundleIdentifier, const String& versionString)
-{
-    String hostToSet = host.isNull() || !host.length() ? "*" : host;
-    String bundleIdentifierToSet = bundleIdentifier.isNull() || !bundleIdentifier.length() ? "*" : bundleIdentifier;
-    String versionStringToSet = versionString.isNull() || !versionString.length() ? "*" : versionString;
-
-    PluginPolicyMapsByIdentifier policiesByIdentifier;
-    if (m_hostsToPluginIdentifierData.contains(hostToSet))
-        policiesByIdentifier = m_hostsToPluginIdentifierData.get(hostToSet);
-
-    PluginLoadClientPoliciesByBundleVersion versionsToPolicies;
-    if (policiesByIdentifier.contains(bundleIdentifierToSet))
-        versionsToPolicies = policiesByIdentifier.get(bundleIdentifierToSet);
-
-    versionsToPolicies.set(versionStringToSet, clientPolicy);
-    policiesByIdentifier.set(bundleIdentifierToSet, WTFMove(versionsToPolicies));
-    m_hostsToPluginIdentifierData.set(hostToSet, policiesByIdentifier);
-
-    clearPagesPluginData();
-}
-
-void WebPluginInfoProvider::clearPluginClientPolicies()
-{
-    m_hostsToPluginIdentifierData.clear();
-    clearPagesPluginData();
-}
-#endif
-
 void WebPluginInfoProvider::refreshPlugins()
 {
 #if ENABLE(NETSCAPE_PLUGIN_API)
@@ -143,7 +114,7 @@ Vector<WebCore::PluginInfo> WebPluginInfoProvider::webVisiblePluginInfo(Page& pa
 }
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
-void WebPluginInfoProvider::populatePluginCache(const WebCore::Page& page)
+void WebPluginInfoProvider::populatePluginCache(const WebCore::Page&)
 {
     if (!m_pluginCacheIsPopulated) {
 #if PLATFORM(COCOA)
@@ -162,101 +133,6 @@ void WebPluginInfoProvider::populatePluginCache(const WebCore::Page& page)
         m_shouldRefreshPlugins = false;
         m_pluginCacheIsPopulated = true;
     }
-
-#if PLATFORM(MAC)
-    String pageHost = page.mainFrame().loader().documentLoader()->responseURL().host().toString();
-    if (pageHost.isNull())
-        return;
-    for (auto& info : m_cachedPlugins) {
-        if (auto clientPolicy = pluginLoadClientPolicyForHost(pageHost, info))
-            info.clientLoadPolicy = *clientPolicy;
-    }
-#else
-    UNUSED_PARAM(page);
-#endif // not PLATFORM(MAC)
-}
-#endif
-
-#if PLATFORM(MAC)
-Optional<WebCore::PluginLoadClientPolicy> WebPluginInfoProvider::pluginLoadClientPolicyForHost(const String& host, const WebCore::PluginInfo& info) const
-{
-    String hostToLookUp = host;
-    String identifier = info.bundleIdentifier;
-
-    auto policiesByIdentifierIterator = m_hostsToPluginIdentifierData.find(hostToLookUp);
-
-    if (!identifier.isNull() && policiesByIdentifierIterator == m_hostsToPluginIdentifierData.end()) {
-        if (!replaceHostWithMatchedWildcardHost(hostToLookUp, identifier))
-            hostToLookUp = "*";
-        policiesByIdentifierIterator = m_hostsToPluginIdentifierData.find(hostToLookUp);
-        if (hostToLookUp != "*" && policiesByIdentifierIterator == m_hostsToPluginIdentifierData.end()) {
-            hostToLookUp = "*";
-            policiesByIdentifierIterator = m_hostsToPluginIdentifierData.find(hostToLookUp);
-        }
-    }
-    if (policiesByIdentifierIterator == m_hostsToPluginIdentifierData.end())
-        return WTF::nullopt;
-
-    auto& policiesByIdentifier = policiesByIdentifierIterator->value;
-
-    if (!identifier)
-        identifier = "*";
-
-    auto identifierPolicyIterator = policiesByIdentifier.find(identifier);
-    if (identifier != "*" && identifierPolicyIterator == policiesByIdentifier.end()) {
-        identifier = "*";
-        identifierPolicyIterator = policiesByIdentifier.find(identifier);
-    }
-
-    if (identifierPolicyIterator == policiesByIdentifier.end())
-        return WTF::nullopt;
-
-    auto& versionsToPolicies = identifierPolicyIterator->value;
-
-    String version = info.versionString;
-    if (!version)
-        version = "*";
-    auto policyIterator = versionsToPolicies.find(version);
-    if (version != "*" && policyIterator == versionsToPolicies.end()) {
-        version = "*";
-        policyIterator = versionsToPolicies.find(version);
-    }
-
-    if (policyIterator == versionsToPolicies.end())
-        return WTF::nullopt;
-
-    return policyIterator->value;
-}
-
-String WebPluginInfoProvider::longestMatchedWildcardHostForHost(const String& host) const
-{
-    String longestMatchedHost;
-
-    for (auto& key : m_hostsToPluginIdentifierData.keys()) {
-        if (key.contains('*') && key != "*" && stringMatchesWildcardString(host, key)) {
-            if (key.length() > longestMatchedHost.length())
-                longestMatchedHost = key;
-            else if (key.length() == longestMatchedHost.length() && codePointCompareLessThan(key, longestMatchedHost))
-                longestMatchedHost = key;
-        }
-    }
-
-    return longestMatchedHost;
-}
-
-bool WebPluginInfoProvider::replaceHostWithMatchedWildcardHost(String& host, const String& identifier) const
-{
-    String matchedWildcardHost = longestMatchedWildcardHostForHost(host);
-
-    if (matchedWildcardHost.isNull())
-        return false;
-
-    auto plugInIdentifierData = m_hostsToPluginIdentifierData.find(matchedWildcardHost);
-    if (plugInIdentifierData == m_hostsToPluginIdentifierData.end() || !plugInIdentifierData->value.contains(identifier))
-        return false;
-
-    host = matchedWildcardHost;
-    return true;
 }
 #endif
 

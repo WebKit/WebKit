@@ -795,14 +795,12 @@
 		31A2EC5614899C0900810D71 /* NotificationPermissionRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 31A2EC531489982500810D71 /* NotificationPermissionRequest.h */; };
 		31A2EC74148D59CA00810D71 /* WKNotificationPermissionRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 31A2EC72148D59BB00810D71 /* WKNotificationPermissionRequest.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		31A505FA1680025500A930EB /* WebContextClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 31A505F81680025500A930EB /* WebContextClient.h */; };
-		31A67E0D165B2A99006CBA66 /* PlugInAutoStartProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 31A67E0B165B2A99006CBA66 /* PlugInAutoStartProvider.h */; };
 		31B3628F2141EA5D007BFA53 /* APIInternalDebugFeature.h in Headers */ = {isa = PBXBuildFile; fileRef = 31B3628E2141EA4D007BFA53 /* APIInternalDebugFeature.h */; };
 		31B362952141EBCD007BFA53 /* _WKInternalDebugFeature.h in Headers */ = {isa = PBXBuildFile; fileRef = 31B362942141EBAD007BFA53 /* _WKInternalDebugFeature.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		31B362972141EBD9007BFA53 /* _WKInternalDebugFeatureInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 31B362932141EBAD007BFA53 /* _WKInternalDebugFeatureInternal.h */; };
 		31B362992141F6E8007BFA53 /* WebPreferencesInternalDebugFeatures.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31B362982141F6E0007BFA53 /* WebPreferencesInternalDebugFeatures.cpp */; };
 		31BA924D148831260062EDB5 /* WebNotificationManagerMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31BA9248148830810062EDB5 /* WebNotificationManagerMessageReceiver.cpp */; };
 		31BA924E148831260062EDB5 /* WebNotificationManagerMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 31BA9249148830810062EDB5 /* WebNotificationManagerMessages.h */; };
-		31D5929F166E060000E6BF02 /* WebPlugInClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 31D5929D166E060000E6BF02 /* WebPlugInClient.h */; };
 		31D755C11D91B81500843BD1 /* WKTextChecker.h in Headers */ = {isa = PBXBuildFile; fileRef = 314888FF1D91B11D00377042 /* WKTextChecker.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		31F060E11654318500F3281C /* NetworkSocketChannelMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31F060DD1654317500F3281C /* NetworkSocketChannelMessageReceiver.cpp */; };
 		330934471315B9220097A7BC /* WebCookieManagerMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 330934431315B9220097A7BC /* WebCookieManagerMessageReceiver.cpp */; };
@@ -3293,8 +3291,6 @@
 		31A2EC75148D65BB00810D71 /* WKNotificationPermissionRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKNotificationPermissionRequest.cpp; sourceTree = "<group>"; };
 		31A505F71680025500A930EB /* WebContextClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebContextClient.cpp; sourceTree = "<group>"; };
 		31A505F81680025500A930EB /* WebContextClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebContextClient.h; sourceTree = "<group>"; };
-		31A67E0A165B2A99006CBA66 /* PlugInAutoStartProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlugInAutoStartProvider.cpp; sourceTree = "<group>"; };
-		31A67E0B165B2A99006CBA66 /* PlugInAutoStartProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlugInAutoStartProvider.h; sourceTree = "<group>"; };
 		31ABA79C215AF9E000C90E31 /* HighPerformanceGPUManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HighPerformanceGPUManager.h; sourceTree = "<group>"; };
 		31ABA79D215AF9E000C90E31 /* HighPerformanceGPUManager.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = HighPerformanceGPUManager.mm; sourceTree = "<group>"; };
 		31B3628E2141EA4D007BFA53 /* APIInternalDebugFeature.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = APIInternalDebugFeature.h; sourceTree = "<group>"; };
@@ -3305,8 +3301,6 @@
 		31B362982141F6E0007BFA53 /* WebPreferencesInternalDebugFeatures.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebPreferencesInternalDebugFeatures.cpp; path = DerivedSources/WebKit2/WebPreferencesInternalDebugFeatures.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
 		31BA9248148830810062EDB5 /* WebNotificationManagerMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebNotificationManagerMessageReceiver.cpp; path = DerivedSources/WebKit2/WebNotificationManagerMessageReceiver.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
 		31BA9249148830810062EDB5 /* WebNotificationManagerMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebNotificationManagerMessages.h; path = DerivedSources/WebKit2/WebNotificationManagerMessages.h; sourceTree = BUILT_PRODUCTS_DIR; };
-		31D5929C166E05FF00E6BF02 /* WebPlugInClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebPlugInClient.cpp; sourceTree = "<group>"; };
-		31D5929D166E060000E6BF02 /* WebPlugInClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPlugInClient.h; sourceTree = "<group>"; };
 		31EA25D0134F78B2005B1452 /* NativeWebMouseEventMac.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = NativeWebMouseEventMac.mm; sourceTree = "<group>"; };
 		31EA25D3134F78D6005B1452 /* NativeWebMouseEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NativeWebMouseEvent.h; sourceTree = "<group>"; };
 		31F060DD1654317500F3281C /* NetworkSocketChannelMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = NetworkSocketChannelMessageReceiver.cpp; path = DerivedSources/WebKit2/NetworkSocketChannelMessageReceiver.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -6572,8 +6566,6 @@
 			isa = PBXGroup;
 			children = (
 				1AEFCC0D11D01F41008219D3 /* mac */,
-				31A67E0A165B2A99006CBA66 /* PlugInAutoStartProvider.cpp */,
-				31A67E0B165B2A99006CBA66 /* PlugInAutoStartProvider.h */,
 				1AEFCC1111D01F96008219D3 /* PluginInfoStore.cpp */,
 				1AEFCC1011D01F96008219D3 /* PluginInfoStore.h */,
 				1A0EC602124A9F2C007EF4A5 /* PluginProcessManager.cpp */,
@@ -9068,8 +9060,6 @@
 				0F850FE51ED7C39F00FB77A7 /* WebPerformanceLoggingClient.h */,
 				1A3E736011CC2659007BD539 /* WebPlatformStrategies.cpp */,
 				1A3E735F11CC2659007BD539 /* WebPlatformStrategies.h */,
-				31D5929C166E05FF00E6BF02 /* WebPlugInClient.cpp */,
-				31D5929D166E060000E6BF02 /* WebPlugInClient.h */,
 				D3B9484211FF4B6500032B39 /* WebPopupMenu.cpp */,
 				D3B9484311FF4B6500032B39 /* WebPopupMenu.h */,
 				1A1E093118861D3800D2DC49 /* WebProgressTrackerClient.cpp */,
@@ -11265,7 +11255,6 @@
 				CDA29A201CBEB5FB00901CCF /* PlaybackSessionManagerProxy.h in Headers */,
 				CDA29A2B1CBEB67A00901CCF /* PlaybackSessionManagerProxyMessages.h in Headers */,
 				1A6FB7D311E651E200DB1371 /* Plugin.h in Headers */,
-				31A67E0D165B2A99006CBA66 /* PlugInAutoStartProvider.h in Headers */,
 				1A9FBA8D13FF04E600DEED67 /* PluginComplexTextInputState.h in Headers */,
 				1AA56F2911E92BC80061B882 /* PluginController.h in Headers */,
 				1A8EF4CB1252403700F7067F /* PluginControllerProxy.h in Headers */,
@@ -11621,7 +11610,6 @@
 				1AB1F7991D1B3613007C9BD1 /* WebPaymentCoordinatorProxyMessages.h in Headers */,
 				0F850FE71ED7C39F00FB77A7 /* WebPerformanceLoggingClient.h in Headers */,
 				1A3E736111CC2659007BD539 /* WebPlatformStrategies.h in Headers */,
-				31D5929F166E060000E6BF02 /* WebPlugInClient.h in Headers */,
 				BC5744F012638FB3006F0F12 /* WebPopupItem.h in Headers */,
 				D3B9484711FF4B6500032B39 /* WebPopupMenu.h in Headers */,
 				BC574E631267D080006F0F12 /* WebPopupMenuProxy.h in Headers */,

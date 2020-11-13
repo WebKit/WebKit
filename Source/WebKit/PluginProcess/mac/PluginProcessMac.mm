@@ -373,19 +373,9 @@ bool PluginProcess::openFile(const String& fullPath)
     return result;
 }
 
-static void muteAudio(void)
-{
-    AudioObjectPropertyAddress propertyAddress = { kAudioHardwarePropertyProcessIsAudible, kAudioObjectPropertyScopeGlobal, kAudioObjectPropertyElementMaster };
-    UInt32 propertyData = 0;
-    OSStatus result = AudioObjectSetPropertyData(kAudioObjectSystemObject, &propertyAddress, 0, 0, sizeof(UInt32), &propertyData);
-    ASSERT_UNUSED(result, result == noErr);
-}
-
 void PluginProcess::platformInitializePluginProcess(PluginProcessCreationParameters&& parameters)
 {
     m_compositingRenderServerPort = WTFMove(parameters.acceleratedCompositingPort);
-    if (parameters.processType == PluginProcessType::Snapshot)
-        muteAudio();
 
     [NSURLCache setSharedURLCache:adoptNS([[NSURLCache alloc]
         initWithMemoryCapacity:pluginMemoryCacheSize

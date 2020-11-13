@@ -42,27 +42,17 @@
 #import <WebCore/WebGLBlocklist.h>
 #import <wtf/RetainPtr.h>
 
-bool WKContextIsPlugInUpdateAvailable(WKContextRef contextRef, WKStringRef plugInBundleIdentifierRef)
+bool WKContextIsPlugInUpdateAvailable(WKContextRef, WKStringRef)
 {
-#if PLATFORM(IOS_FAMILY)
     return false;
-#else
-    return WebCore::PluginBlocklist::isPluginUpdateAvailable((__bridge NSString *)adoptCF(WKStringCopyCFString(kCFAllocatorDefault, plugInBundleIdentifierRef)).get());
-#endif
 }
 
-void WKContextSetPluginLoadClientPolicy(WKContextRef contextRef, WKPluginLoadClientPolicy policy, WKStringRef host, WKStringRef bundleIdentifier, WKStringRef versionString)
+void WKContextSetPluginLoadClientPolicy(WKContextRef, WKPluginLoadClientPolicy, WKStringRef, WKStringRef, WKStringRef)
 {
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    WebKit::toImpl(contextRef)->setPluginLoadClientPolicy(WebKit::toPluginLoadClientPolicy(policy), WebKit::toWTFString(host), WebKit::toWTFString(bundleIdentifier), WebKit::toWTFString(versionString));
-#endif
 }
 
-void WKContextClearPluginClientPolicies(WKContextRef contextRef)
+void WKContextClearPluginClientPolicies(WKContextRef)
 {
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    WebKit::toImpl(contextRef)->clearPluginClientPolicies();
-#endif
 }
 
 WKDictionaryRef WKContextCopyPlugInInfoForBundleIdentifier(WKContextRef contextRef, WKStringRef plugInBundleIdentifierRef)

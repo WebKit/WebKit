@@ -386,8 +386,6 @@ protected:
     virtual bool paintMediaFullScreenVolumeSliderTrack(const RenderObject&, const PaintInfo&, const IntRect&) { return true; }
     virtual bool paintMediaFullScreenVolumeSliderThumb(const RenderObject&, const PaintInfo&, const IntRect&) { return true; }
 
-    virtual bool paintSnapshottedPluginOverlay(const RenderObject&, const PaintInfo&, const IntRect&) { return true; }
-
 #if ENABLE(SERVICE_CONTROLS)
     virtual bool paintImageControlsButton(const RenderObject&, const PaintInfo&, const IntRect&) { return true; }
 #endif

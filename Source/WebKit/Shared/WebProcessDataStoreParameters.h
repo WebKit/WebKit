@@ -45,7 +45,6 @@ struct WebProcessDataStoreParameters {
     SandboxExtension::Handle mediaKeyStorageDirectoryExtensionHandle;
     String javaScriptConfigurationDirectory;
     SandboxExtension::Handle javaScriptConfigurationDirectoryExtensionHandle;
-    HashMap<unsigned, WallTime> plugInAutoStartOriginHashes;
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     WebCore::ThirdPartyCookieBlockingMode thirdPartyCookieBlockingMode { WebCore::ThirdPartyCookieBlockingMode::All };
     HashSet<WebCore::RegistrableDomain> domainsWithUserInteraction;
@@ -71,7 +70,6 @@ void WebProcessDataStoreParameters::encode(Encoder& encoder) const
     encoder << mediaKeyStorageDirectoryExtensionHandle;
     encoder << javaScriptConfigurationDirectory;
     encoder << javaScriptConfigurationDirectoryExtensionHandle;
-    encoder << plugInAutoStartOriginHashes;
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     encoder << thirdPartyCookieBlockingMode;
     encoder << domainsWithUserInteraction;
@@ -136,11 +134,6 @@ Optional<WebProcessDataStoreParameters> WebProcessDataStoreParameters::decode(De
     if (!javaScriptConfigurationDirectoryExtensionHandle)
         return WTF::nullopt;
         
-    Optional<HashMap<unsigned, WallTime>> plugInAutoStartOriginHashes;
-    decoder >> plugInAutoStartOriginHashes;
-    if (!plugInAutoStartOriginHashes)
-        return WTF::nullopt;
-
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     Optional<WebCore::ThirdPartyCookieBlockingMode> thirdPartyCookieBlockingMode;
     decoder >> thirdPartyCookieBlockingMode;
@@ -170,7 +163,6 @@ Optional<WebProcessDataStoreParameters> WebProcessDataStoreParameters::decode(De
         WTFMove(*mediaKeyStorageDirectoryExtensionHandle),
         WTFMove(javaScriptConfigurationDirectory),
         WTFMove(*javaScriptConfigurationDirectoryExtensionHandle),
-        WTFMove(*plugInAutoStartOriginHashes),
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
         *thirdPartyCookieBlockingMode,
         WTFMove(*domainsWithUserInteraction),

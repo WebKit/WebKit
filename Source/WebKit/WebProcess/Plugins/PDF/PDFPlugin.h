@@ -230,7 +230,6 @@ private:
 
     bool shouldAllowScripting() final { return false; }
     bool shouldAllowNavigationFromDrags() final { return true; }
-    bool shouldAlwaysAutoStart() const final { return true; }
 
     // ScrollableArea functions.
     bool isPDFPlugin() const final { return true; }

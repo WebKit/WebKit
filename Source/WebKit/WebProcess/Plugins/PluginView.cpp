@@ -53,7 +53,6 @@
 #include <WebCore/FrameView.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/HTMLPlugInElement.h>
-#include <WebCore/HTMLPlugInImageElement.h>
 #include <WebCore/HTTPHeaderNames.h>
 #include <WebCore/HostWindow.h>
 #include <WebCore/MIMETypeRegistry.h>
@@ -78,9 +77,6 @@
 namespace WebKit {
 using namespace JSC;
 using namespace WebCore;
-
-// This simulated mouse click delay in HTMLPlugInImageElement.cpp should generally be the same or shorter than this delay.
-static const Seconds pluginSnapshotTimerDelay { 1100_ms };
 
 class PluginView::URLRequest : public RefCounted<URLRequest> {
 public:
@@ -306,7 +302,6 @@ PluginView::PluginView(HTMLPlugInElement& pluginElement, Ref<Plugin>&& plugin, c
     , m_webPage(webPage(m_pluginElement.get()))
     , m_parameters(parameters)
     , m_pendingURLRequestsTimer(RunLoop::main(), this, &PluginView::pendingURLRequestsTimerFired)
-    , m_pluginSnapshotTimer(*this, &PluginView::pluginSnapshotTimerFired, pluginSnapshotTimerDelay)
 {
     m_webPage->addPluginView(this);
 }
@@ -358,11 +353,8 @@ void PluginView::destroyPluginAndReset()
 
 void PluginView::recreateAndInitialize(Ref<Plugin>&& plugin)
 {
-    if (m_plugin) {
-        if (m_pluginSnapshotTimer.isActive())
-            m_pluginSnapshotTimer.stop();
+    if (m_plugin)
         destroyPluginAndReset();
-    }
 
     m_plugin = WTFMove(plugin);
     m_isInitialized = false;
@@ -597,10 +589,6 @@ void PluginView::initializePlugin()
 
     m_pluginElement->document().addAudioProducer(*this);
 
-#if ENABLE(PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC)
-    HTMLPlugInImageElement& plugInImageElement = downcast<HTMLPlugInImageElement>(*m_pluginElement);
-    m_didPlugInStartOffScreen = !m_webPage->plugInIntersectsSearchRect(plugInImageElement);
-#endif
     m_plugin->initialize(*this, m_parameters);
     
     // Plug-in initialization continued in didFailToInitializePlugin() or didInitializePlugin().
@@ -614,7 +602,7 @@ void PluginView::didFailToInitializePlugin()
     String frameURLString = frame()->loader().documentLoader()->responseURL().string();
     String pageURLString = m_webPage->corePage()->mainFrame().loader().documentLoader()->responseURL().string();
     m_webPage->send(Messages::WebPageProxy::DidFailToInitializePlugin(m_parameters.mimeType, frameURLString, pageURLString));
-#endif // ENABLE(NETSCAPE_PLUGIN_API)
+#endif
 }
 
 void PluginView::didInitializePlugin()
@@ -634,25 +622,10 @@ void PluginView::didInitializePlugin()
     redeliverManualStream();
 
 #if PLATFORM(COCOA)
-    if (m_pluginElement->displayState() < HTMLPlugInElement::Restarting) {
-        if (m_plugin->pluginLayer() && frame()) {
-            frame()->view()->enterCompositingMode();
-            m_pluginElement->invalidateStyleAndLayerComposition();
-        }
-        if (frame() && !frame()->settings().maximumPlugInSnapshotAttempts()) {
-            beginSnapshottingRunningPlugin();
-            return;
-        }
-        m_pluginSnapshotTimer.restart();
-    } else {
-        if (m_plugin->pluginLayer() && frame()) {
-            frame()->view()->enterCompositingMode();
-            m_pluginElement->invalidateStyleAndLayerComposition();
-        }
-        if (m_pluginElement->displayState() == HTMLPlugInElement::RestartingWithPendingMouseClick)
-            m_pluginElement->dispatchPendingMouseClick();
+    if (m_plugin->pluginLayer() && frame()) {
+        frame()->view()->enterCompositingMode();
+        m_pluginElement->invalidateStyleAndLayerComposition();
     }
-
     m_plugin->visibilityDidChange(isVisible());
     m_plugin->windowVisibilityChanged(m_webPage->isVisibleOrOccluded());
     m_plugin->windowFocusChanged(m_webPage->windowIsFocused());
@@ -783,7 +756,7 @@ void PluginView::setFrameRect(const WebCore::IntRect& rect)
 
 void PluginView::paint(GraphicsContext& context, const IntRect& /*dirtyRect*/, Widget::SecurityOriginPaintPolicy, EventRegionContext*)
 {
-    if (!m_plugin || !m_isInitialized || m_pluginElement->displayState() < HTMLPlugInElement::Restarting)
+    if (!m_plugin || !m_isInitialized)
         return;
 
     if (context.paintingDisabled()) {
@@ -926,24 +899,18 @@ void PluginView::handleEvent(Event& event)
             frame()->eventHandler().setCapturingMouseEventsElement(nullptr);
 
         didHandleEvent = m_plugin->handleMouseEvent(static_cast<const WebMouseEvent&>(*currentEvent));
-        if (event.type() != eventNames().mousemoveEvent)
-            pluginDidReceiveUserInteraction();
     } else if (eventNames().isWheelEventType(event.type())
-        && currentEvent->type() == WebEvent::Wheel && m_plugin->wantsWheelEvents()) {
+        && currentEvent->type() == WebEvent::Wheel && m_plugin->wantsWheelEvents())
         didHandleEvent = m_plugin->handleWheelEvent(static_cast<const WebWheelEvent&>(*currentEvent));
-        pluginDidReceiveUserInteraction();
-    } else if (event.type() == eventNames().mouseoverEvent && currentEvent->type() == WebEvent::MouseMove)
+    else if (event.type() == eventNames().mouseoverEvent && currentEvent->type() == WebEvent::MouseMove)
         didHandleEvent = m_plugin->handleMouseEnterEvent(static_cast<const WebMouseEvent&>(*currentEvent));
     else if (event.type() == eventNames().mouseoutEvent && currentEvent->type() == WebEvent::MouseMove)
         didHandleEvent = m_plugin->handleMouseLeaveEvent(static_cast<const WebMouseEvent&>(*currentEvent));
-    else if (event.type() == eventNames().contextmenuEvent && currentEvent->type() == WebEvent::MouseDown) {
+    else if (event.type() == eventNames().contextmenuEvent && currentEvent->type() == WebEvent::MouseDown)
         didHandleEvent = m_plugin->handleContextMenuEvent(static_cast<const WebMouseEvent&>(*currentEvent));
-        pluginDidReceiveUserInteraction();
-    } else if ((event.type() == eventNames().keydownEvent && currentEvent->type() == WebEvent::KeyDown)
-               || (event.type() == eventNames().keyupEvent && currentEvent->type() == WebEvent::KeyUp)) {
+    else if ((event.type() == eventNames().keydownEvent && currentEvent->type() == WebEvent::KeyDown)
+        || (event.type() == eventNames().keyupEvent && currentEvent->type() == WebEvent::KeyUp))
         didHandleEvent = m_plugin->handleKeyboardEvent(static_cast<const WebKeyboardEvent&>(*currentEvent));
-        pluginDidReceiveUserInteraction();
-    }
 
     if (didHandleEvent)
         event.setDefaultHandled();
@@ -983,7 +950,7 @@ bool PluginView::shouldAllowNavigationFromDrags() const
 
 bool PluginView::shouldNotAddLayer() const
 {
-    return m_pluginElement->displayState() < HTMLPlugInElement::Restarting && !m_plugin->supportsSnapshotting();
+    return false;
 }
 
 void PluginView::willDetachRenderer()
@@ -1330,9 +1297,6 @@ void PluginView::invalidateRect(const IntRect& dirtyRect)
         return;
 #endif
 
-    if (m_pluginElement->displayState() < HTMLPlugInElement::Restarting)
-        return;
-
     auto* renderer = m_pluginElement->renderer();
     if (!is<RenderEmbeddedObject>(renderer))
         return;
@@ -1519,13 +1483,6 @@ bool PluginView::isAcceleratedCompositingEnabled()
     if (!frame())
         return false;
     
-    // We know that some plug-ins can support snapshotting without needing
-    // accelerated compositing. Since we're trying to snapshot them anyway,
-    // put them into normal compositing mode. A side benefit is that this might
-    // allow the entire page to stay in that mode.
-    if (m_pluginElement->displayState() < HTMLPlugInElement::Restarting && m_parameters.mimeType == "application/x-shockwave-flash")
-        return false;
-
     return frame()->settings().acceleratedCompositingEnabled();
 }
 
@@ -1678,149 +1635,6 @@ void PluginView::didFailLoad(WebFrame* webFrame, bool wasCancelled)
     webFrame->setLoadListener(nullptr);
     
     m_plugin->frameDidFail(request->requestID(), wasCancelled);
-}
-
-#if PLATFORM(COCOA)
-static bool isAlmostSolidColor(BitmapImage* bitmap)
-{
-    CGImageRef image = bitmap->nativeImage()->platformImage().get();
-    ASSERT(CGImageGetBitsPerComponent(image) == 8);
-
-    CGBitmapInfo imageInfo = CGImageGetBitmapInfo(image);
-    if (!(imageInfo & kCGBitmapByteOrder32Little) || (imageInfo & kCGBitmapAlphaInfoMask) != kCGImageAlphaPremultipliedFirst) {
-        // FIXME: Consider being able to handle other pixel formats.
-        ASSERT_NOT_REACHED();
-        return false;
-    }
-
-    size_t width = CGImageGetWidth(image);
-    size_t height = CGImageGetHeight(image);
-    size_t bytesPerRow = CGImageGetBytesPerRow(image);
-
-    RetainPtr<CFDataRef> provider = adoptCF(CGDataProviderCopyData(CGImageGetDataProvider(image)));
-    const UInt8* data = CFDataGetBytePtr(provider.get());
-
-    // Overlay a grid of sampling dots on top of a grayscale version of the image.
-    // For the interior points, calculate the difference in luminance among the sample point
-    // and its surrounds points, scaled by transparency.
-    const unsigned sampleRows = 7;
-    const unsigned sampleCols = 7;
-    // FIXME: Refine the proper number of samples, and accommodate different aspect ratios.
-    if (width < sampleCols || height < sampleRows)
-        return false;
-
-    // Ensure that the last row/column land on the image perimeter.
-    const float strideWidth = static_cast<float>(width - 1) / (sampleCols - 1);
-    const float strideHeight = static_cast<float>(height - 1) / (sampleRows - 1);
-    float samples[sampleRows][sampleCols];
-
-    // Find the luminance of the sample points.
-    float y = 0;
-    const UInt8* row = data;
-    for (unsigned i = 0; i < sampleRows; ++i) {
-        float x = 0;
-        for (unsigned j = 0; j < sampleCols; ++j) {
-            const UInt8* p0 = row + (static_cast<int>(x + .5)) * 4;
-            // R G B A
-            samples[i][j] = (0.2125 * *p0 + 0.7154 * *(p0+1) + 0.0721 * *(p0+2)) * *(p0+3) / 255;
-            x += strideWidth;
-        }
-        y += strideHeight;
-        row = data + (static_cast<int>(y + .5)) * bytesPerRow;
-    }
-
-    // Determine the image score.
-    float accumScore = 0;
-    for (unsigned i = 1; i < sampleRows - 1; ++i) {
-        for (unsigned j = 1; j < sampleCols - 1; ++j) {
-            float diff = samples[i - 1][j] + samples[i + 1][j] + samples[i][j - 1] + samples[i][j + 1] - 4 * samples[i][j];
-            accumScore += diff * diff;
-        }
-    }
-
-    // The score for a given sample can be within the range of 0 and 255^2.
-    return accumScore < 2500 * (sampleRows - 2) * (sampleCols - 2);
-}
-#endif
-
-void PluginView::pluginSnapshotTimerFired()
-{
-#if ENABLE(PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC)
-    HTMLPlugInImageElement& plugInImageElement = downcast<HTMLPlugInImageElement>(*m_pluginElement);
-    bool isPlugInOnScreen = m_webPage->plugInIntersectsSearchRect(plugInImageElement);
-    bool plugInCameOnScreen = isPlugInOnScreen && m_didPlugInStartOffScreen;
-    bool snapshotFound = false;
-#endif
-
-    if (m_plugin && m_plugin->supportsSnapshotting()) {
-        // Snapshot might be 0 if plugin size is 0x0.
-        RefPtr<ShareableBitmap> snapshot = m_plugin->snapshot();
-        RefPtr<Image> snapshotImage;
-        if (snapshot)
-            snapshotImage = snapshot->createImage();
-        m_pluginElement->updateSnapshot(snapshotImage.get());
-
-        if (snapshotImage) {
-#if ENABLE(PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC)
-            bool snapshotIsAlmostSolidColor = isAlmostSolidColor(downcast<BitmapImage>(snapshotImage.get()));
-            snapshotFound = !snapshotIsAlmostSolidColor;
-#endif
-
-#if PLATFORM(COCOA)
-            unsigned maximumSnapshotRetries = frame() ? frame()->settings().maximumPlugInSnapshotAttempts() : 0;
-            if (snapshotIsAlmostSolidColor && m_countSnapshotRetries < maximumSnapshotRetries && !plugInCameOnScreen) {
-                ++m_countSnapshotRetries;
-                m_pluginSnapshotTimer.restart();
-                return;
-            }
-#endif
-        }
-    }
-
-#if ENABLE(PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC)
-    unsigned candidateArea = 0;
-    unsigned maximumSnapshotRetries = frame() ? frame()->settings().maximumPlugInSnapshotAttempts() : 0;
-    bool noSnapshotFoundAfterMaxRetries = m_countSnapshotRetries == maximumSnapshotRetries && !isPlugInOnScreen && !snapshotFound;
-    if (m_webPage->plugInIsPrimarySize(plugInImageElement, candidateArea)
-        && (noSnapshotFoundAfterMaxRetries || plugInCameOnScreen))
-        m_pluginElement->setDisplayState(HTMLPlugInElement::Playing);
-    else
-#endif
-        m_pluginElement->setDisplayState(HTMLPlugInElement::DisplayingSnapshot);
-}
-
-void PluginView::beginSnapshottingRunningPlugin()
-{
-    m_pluginSnapshotTimer.restart();
-}
-
-bool PluginView::shouldAlwaysAutoStart() const
-{
-    if (!m_plugin)
-        return PluginViewBase::shouldAlwaysAutoStart();
-
-    if (MIMETypeRegistry::isJavaAppletMIMEType(m_parameters.mimeType))
-        return true;
-
-    return m_plugin->shouldAlwaysAutoStart();
-}
-
-void PluginView::pluginDidReceiveUserInteraction()
-{
-    if (frame() && !frame()->settings().plugInSnapshottingEnabled())
-        return;
-
-    if (m_didReceiveUserInteraction)
-        return;
-
-    m_didReceiveUserInteraction = true;
-
-    HTMLPlugInImageElement& plugInImageElement = downcast<HTMLPlugInImageElement>(*m_pluginElement);
-    String pageOrigin = plugInImageElement.document().page()->mainFrame().document()->baseURL().host().toString();
-    String pluginOrigin = plugInImageElement.loadedUrl().host().toString();
-    String mimeType = plugInImageElement.serviceType();
-
-    WebProcess::singleton().plugInDidReceiveUserInteraction(pageOrigin, pluginOrigin, mimeType);
 }
 
 bool PluginView::shouldCreateTransientPaintingSnapshot() const

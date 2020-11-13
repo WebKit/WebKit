@@ -249,96 +249,16 @@ static WKProcessPool *sharedProcessPool;
 
 #if !TARGET_OS_IPHONE
 
-#if ENABLE(NETSCAPE_PLUGIN_API)
-
-static HashMap<String, HashMap<String, HashMap<String, WebCore::PluginLoadClientPolicy>>> toPluginLoadClientPoliciesHashMap(NSDictionary* dictionary)
-{
-    __block HashMap<String, HashMap<String, HashMap<String, WebCore::PluginLoadClientPolicy>>> pluginLoadClientPolicies;
-    [dictionary enumerateKeysAndObjectsUsingBlock:^(id nsHost, id nsPoliciesForHost, BOOL *stop) {
-        if (![nsHost isKindOfClass:[NSString class]]) {
-            RELEASE_LOG_ERROR(Plugins, "_resetPluginLoadClientPolicies was called with dictionary in wrong format");
-            return;
-        }
-        if (![nsPoliciesForHost isKindOfClass:[NSDictionary class]]) {
-            RELEASE_LOG_ERROR(Plugins, "_resetPluginLoadClientPolicies was called with dictionary in wrong format");
-            return;
-        }
-
-        String host = (NSString *)nsHost;
-        __block HashMap<String, HashMap<String, WebCore::PluginLoadClientPolicy>> policiesForHost;
-        [nsPoliciesForHost enumerateKeysAndObjectsUsingBlock:^(id nsIdentifier, id nsVersionsToPolicies, BOOL *stop) {
-            if (![nsIdentifier isKindOfClass:[NSString class]]) {
-                RELEASE_LOG_ERROR(Plugins, "_resetPluginLoadClientPolicies was called with dictionary in wrong format");
-                return;
-            }
-            if (![nsVersionsToPolicies isKindOfClass:[NSDictionary class]]) {
-                RELEASE_LOG_ERROR(Plugins, "_resetPluginLoadClientPolicies was called with dictionary in wrong format");
-                return;
-            }
-
-            String bundleIdentifier = (NSString *)nsIdentifier;
-            __block HashMap<String, WebCore::PluginLoadClientPolicy> versionsToPolicies;
-            [nsVersionsToPolicies enumerateKeysAndObjectsUsingBlock:^(id nsVersion, id nsPolicy, BOOL *stop) {
-                if (![nsVersion isKindOfClass:[NSString class]]) {
-                    RELEASE_LOG_ERROR(Plugins, "_resetPluginLoadClientPolicies was called with dictionary in wrong format");
-                    return;
-                }
-                if (![nsPolicy isKindOfClass:[NSNumber class]]) {
-                    RELEASE_LOG_ERROR(Plugins, "_resetPluginLoadClientPolicies was called with dictionary in wrong format");
-                    return;
-                }
-                unsigned policy = ((NSNumber *)nsPolicy).unsignedIntValue;
-                if (!WTF::isValidEnum<WebCore::PluginLoadClientPolicy>(policy)) {
-                    RELEASE_LOG_ERROR(Plugins, "_resetPluginLoadClientPolicies was called with dictionary in wrong format");
-                    return;
-                }
-                String version = (NSString *)nsVersion;
-                versionsToPolicies.add(version, static_cast<WebCore::PluginLoadClientPolicy>(policy));
-            }];
-            if (!versionsToPolicies.isEmpty())
-                policiesForHost.add(bundleIdentifier, WTFMove(versionsToPolicies));
-        }];
-        if (!policiesForHost.isEmpty())
-            pluginLoadClientPolicies.add(host, WTFMove(policiesForHost));
-    }];
-    return pluginLoadClientPolicies;
-}
-
-static NSDictionary *policiesHashMapToDictionary(const HashMap<String, HashMap<String, HashMap<String, WebCore::PluginLoadClientPolicy>>>& map)
-{
-    auto policies = adoptNS([[NSMutableDictionary alloc] initWithCapacity:map.size()]);
-    for (auto& hostPair : map) {
-        NSString *host = hostPair.key;
-        policies.get()[host] = adoptNS([[NSMutableDictionary alloc] initWithCapacity:hostPair.value.size()]).get();
-        for (auto& bundleIdentifierPair : hostPair.value) {
-            NSString *bundlerIdentifier = bundleIdentifierPair.key;
-            policies.get()[host][bundlerIdentifier] = adoptNS([[NSMutableDictionary alloc] initWithCapacity:bundleIdentifierPair.value.size()]).get();
-            for (auto& versionPair : bundleIdentifierPair.value) {
-                NSString *version = versionPair.key;
-                auto policyValue = static_cast<std::underlying_type_t<WebCore::PluginLoadClientPolicy>>(versionPair.value);
-                policies.get()[host][bundlerIdentifier][version] = adoptNS([[NSNumber alloc] initWithUnsignedInt:policyValue]).get();
-            }
-        }
-    }
-    return policies.autorelease();
-}
-
-#endif
-
 - (void)_resetPluginLoadClientPolicies:(NSDictionary *)policies
 {
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    _processPool->resetPluginLoadClientPolicies(toPluginLoadClientPoliciesHashMap(policies));
-#endif
 }
 
 -(NSDictionary *)_pluginLoadClientPolicies
 {
-    auto& map = _processPool->pluginLoadClientPolicies();
-    return policiesHashMapToDictionary(map);
+    return @{ };
 }
-#endif
 
+#endif
 
 - (id <_WKDownloadDelegate>)_downloadDelegate
 {

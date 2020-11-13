@@ -2232,7 +2232,6 @@ rendering/RenderScrollbarTheme.cpp
 rendering/RenderSearchField.cpp
 rendering/RenderSelectionInfo.cpp
 rendering/RenderSlider.cpp
-rendering/RenderSnapshottedPlugIn.cpp
 rendering/RenderTable.cpp
 rendering/RenderTableCaption.cpp
 rendering/RenderTableCell.cpp

@@ -349,12 +349,6 @@ MaximumHTMLParserDOMTreeDepth:
     WebCore:
       default: defaultMaximumHTMLParserDOMTreeDepth
 
-MaximumPlugInSnapshotAttempts:
-  type: uint32_t
-  defaultValue:
-    WebCore:
-      default: 20
-
 MaximumSourceBufferSize:
   comment: >-
     Allow SourceBuffers to store up to 304MB each, enough for approximately five minutes

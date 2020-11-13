@@ -55,7 +55,7 @@ class PluginProcessManager {
 public:
     static PluginProcessManager& singleton();
 
-    uint64_t pluginProcessToken(const PluginModuleInfo&, PluginProcessType, PluginProcessSandboxPolicy);
+    uint64_t pluginProcessToken(const PluginModuleInfo&, PluginProcessSandboxPolicy);
 
     bool getPluginProcessConnection(uint64_t pluginProcessToken, Messages::WebProcessProxy::GetPluginProcessConnectionDelayedReply&&);
     void removePluginProcessProxy(PluginProcessProxy*);

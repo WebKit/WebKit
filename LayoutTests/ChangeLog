@@ -1,3 +1,28 @@
+2020-11-12  Darin Adler  <darin@apple.com>
+
+        Remove unused advanced plug-in features: snapshotting and plug-in load policy
+        https://bugs.webkit.org/show_bug.cgi?id=218835
+
+        Reviewed by Tim Horton.
+
+        * http/tests/plugins/plugin-allow-then-reload-expected.txt: Removed.
+        * http/tests/plugins/plugin-allow-then-reload.html: Removed.
+        This was testing a behavior that's no longer supported, blocking a plug-in so
+        completely that it doesn't show up in the plug-in list.
+
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-ui/appearance-cssom-001-expected.txt:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/css-ui/appearance-cssom-001-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-ui/appearance-cssom-001-expected.txt:
+        Updated for progression.
+
+        * platform/mac-wk1/TestExpectations: Removed snapshotting expectations.
+        * platform/mac-wk2/TestExpectations: Ditto.
+        * platform/win/TestExpectations: Ditto.
+        * platform/wincairo/TestExpectations: Ditto.
+
+        * platform/mac-wk2/plugins/snapshotting: Removed.
+        * plugins/snapshotting: Removed.
+
 2020-11-13  Sam Weinig  <weinig@apple.com>
 
         Cleanup InternalSettings

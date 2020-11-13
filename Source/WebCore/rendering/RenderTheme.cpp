@@ -413,8 +413,6 @@ bool RenderTheme::paint(const RenderBox& box, ControlStates& controlStates, cons
         return paintSearchFieldResultsDecorationPart(box, paintInfo, integralSnappedRect);
     case SearchFieldResultsButtonPart:
         return paintSearchFieldResultsButton(box, paintInfo, integralSnappedRect);
-    case SnapshottedPluginOverlayPart:
-        return paintSnapshottedPluginOverlay(box, paintInfo, integralSnappedRect);
 #if ENABLE(SERVICE_CONTROLS)
     case ImageControlsButtonPart:
         return paintImageControlsButton(box, paintInfo, integralSnappedRect);

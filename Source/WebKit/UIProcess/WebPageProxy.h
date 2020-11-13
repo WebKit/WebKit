@@ -2246,7 +2246,7 @@ private:
 #endif
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
-    void findPlugin(const String& mimeType, WebKit::PluginProcessType, const String& urlString, const String& frameURLString, const String& pageURLString, bool allowOnlyApplicationPlugins, Messages::WebPageProxy::FindPluginDelayedReply&&);
+    void findPlugin(const String& mimeType, const String& urlString, const String& frameURLString, const String& pageURLString, bool allowOnlyApplicationPlugins, Messages::WebPageProxy::FindPluginDelayedReply&&);
 #endif
 
 #if USE(QUICK_LOOK)

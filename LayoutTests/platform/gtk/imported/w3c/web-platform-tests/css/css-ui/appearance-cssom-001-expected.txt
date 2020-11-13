@@ -116,7 +116,7 @@ PASS -webkit-appearance: sheet (invalid)
 FAIL -webkit-appearance: slider-vertical (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "slider-vertical"
 FAIL -webkit-appearance: sliderthumb-horizontal (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "sliderthumb-horizontal"
 FAIL -webkit-appearance: sliderthumb-vertical (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "sliderthumb-vertical"
-FAIL -webkit-appearance: snapshotted-plugin-overlay (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "snapshotted-plugin-overlay"
+PASS -webkit-appearance: snapshotted-plugin-overlay (invalid)
 PASS -webkit-appearance: spinner (invalid)
 PASS -webkit-appearance: spinner-downbutton (invalid)
 PASS -webkit-appearance: spinner-textfield (invalid)

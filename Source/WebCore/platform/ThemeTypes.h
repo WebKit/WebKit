@@ -85,7 +85,6 @@ enum ControlPart {
     SearchFieldResultsDecorationPart,
     SearchFieldResultsButtonPart,
     SearchFieldCancelButtonPart,
-    SnapshottedPluginOverlayPart,
     TextFieldPart,
     RelevancyLevelIndicatorPart,
     ContinuousCapacityLevelIndicatorPart,

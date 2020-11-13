@@ -2370,12 +2370,11 @@ static NSString *classIBCreatorID = nil;
 
 - (BOOL)plugInSnapshottingEnabled
 {
-    return [self _boolValueForKey:WebKitPlugInSnapshottingEnabledPreferenceKey];
+    return NO;
 }
 
 - (void)setPlugInSnapshottingEnabled:(BOOL)enabled
 {
-    [self _setBoolValue:enabled forKey:WebKitPlugInSnapshottingEnabledPreferenceKey];
 }
 
 - (BOOL)hiddenPageDOMTimerThrottlingEnabled

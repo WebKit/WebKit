@@ -27,9 +27,6 @@
 
 #include "AuxiliaryProcess.h"
 #include "CacheModel.h"
-#if ENABLE(MEDIA_STREAM)
-#include "MediaDeviceSandboxExtensions.h"
-#endif
 #include "PluginProcessConnectionManager.h"
 #include "SandboxExtension.h"
 #include "StorageAreaIdentifier.h"
@@ -58,6 +55,10 @@
 #include <wtf/RefCounter.h>
 #include <wtf/text/AtomString.h>
 #include <wtf/text/AtomStringHash.h>
+
+#if ENABLE(MEDIA_STREAM)
+#include "MediaDeviceSandboxExtensions.h"
+#endif
 
 #if PLATFORM(COCOA)
 #include <WebCore/ScreenProperties.h>
@@ -179,12 +180,6 @@ public:
     const WTF::MachSendRight& compositingRenderServerPort() const { return m_compositingRenderServerPort; }
 #endif
 
-    bool shouldPlugInAutoStartFromOrigin(WebPage&, const String& pageOrigin, const String& pluginOrigin, const String& mimeType);
-    void plugInDidStartFromOrigin(const String& pageOrigin, const String& pluginOrigin, const String& mimeType);
-    void plugInDidReceiveUserInteraction(const String& pageOrigin, const String& pluginOrigin, const String& mimeType);
-    void setPluginLoadClientPolicy(WebCore::PluginLoadClientPolicy, const String& host, const String& bundleIdentifier, const String& versionString);
-    void resetPluginLoadClientPolicies(const HashMap<String, HashMap<String, HashMap<String, WebCore::PluginLoadClientPolicy>>>&);
-    void clearPluginClientPolicies();
     void refreshPlugins();
 
     bool fullKeyboardAccessEnabled() const { return m_fullKeyboardAccessEnabled; }
@@ -414,10 +409,6 @@ private:
     void userPreferredLanguagesChanged() const;
     void fullKeyboardAccessModeChanged(bool fullKeyboardAccessEnabled);
 
-    bool isPlugInAutoStartOriginHash(unsigned plugInOriginHash);
-    void didAddPlugInAutoStartOriginHash(unsigned plugInOriginHash, WallTime expirationTime);
-    void resetPlugInAutoStartOriginHashes(HashMap<unsigned, WallTime>&& hashes);
-
     void platformSetCacheModel(CacheModel);
 
     void setEnhancedAccessibility(bool);
@@ -560,9 +551,6 @@ private:
     RefPtr<ViewUpdateDispatcher> m_viewUpdateDispatcher;
 #endif
     RefPtr<WebInspectorInterruptDispatcher> m_webInspectorInterruptDispatcher;
-
-    HashMap<unsigned, WallTime> m_plugInAutoStartOriginHashes;
-    HashSet<String> m_plugInAutoStartOrigins;
 
     bool m_hasSetCacheModel { false };
     CacheModel m_cacheModel { CacheModel::DocumentViewer };

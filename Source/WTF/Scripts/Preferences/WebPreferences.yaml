@@ -336,16 +336,6 @@ AuthorAndUserStylesEnabled:
     WebCore:
       default: true
 
-AutostartOriginPlugInSnapshottingEnabled:
-  type: bool
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
-
 BackForwardCacheSupportsPlugins:
   type: bool
   webKitLegacyPreferenceKey: WebKitPageCacheSupportsPluginsPreferenceKey
@@ -1710,16 +1700,6 @@ PictureInPictureAPIEnabled:
     WebCore:
       default: true
 
-PlugInSnapshottingEnabled:
-  type: bool
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: false
-    WebCore:
-      default: false
-
 PluginsEnabled:
   type: bool
   webcoreGetter: arePluginsEnabled
@@ -1731,16 +1711,6 @@ PluginsEnabled:
       default: false
     WebCore:
       default: false
-
-PrimaryPlugInSnapshotDetectionEnabled:
-  type: bool
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
 
 PunchOutWhiteBackgroundsInDarkMode:
   type: bool
@@ -2111,16 +2081,6 @@ SmartInsertDeleteEnabled:
       default: true
     WebCore:
       default: true
-
-SnapshotAllPlugIns:
-  type: bool
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: false
-    WebCore:
-      default: false
 
 SourceBufferChangeTypeEnabled:
   type: bool

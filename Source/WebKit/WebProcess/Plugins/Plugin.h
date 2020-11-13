@@ -285,8 +285,6 @@ public:
 
     virtual WebCore::IntPoint convertToRootView(const WebCore::IntPoint& pointInLocalCoordinates) const;
 
-    virtual bool shouldAlwaysAutoStart() const { return false; }
-
     virtual RefPtr<WebCore::SharedBuffer> liveResourceData() const = 0;
 
     virtual bool performDictionaryLookupAtLocation(const WebCore::FloatPoint&) = 0;

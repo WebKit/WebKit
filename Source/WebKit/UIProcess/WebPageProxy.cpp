@@ -2707,7 +2707,7 @@ WebPreferencesStore WebPageProxy::preferencesStore() const
 }
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
-void WebPageProxy::findPlugin(const String& mimeType, PluginProcessType processType, const String& urlString, const String& frameURLString, const String& pageURLString, bool allowOnlyApplicationPlugins, Messages::WebPageProxy::FindPlugin::DelayedReply&& reply)
+void WebPageProxy::findPlugin(const String& mimeType, const String& urlString, const String& frameURLString, const String& pageURLString, bool allowOnlyApplicationPlugins, Messages::WebPageProxy::FindPlugin::DelayedReply&& reply)
 {
     PageClientProtector protector(pageClient());
 
@@ -2736,7 +2736,7 @@ void WebPageProxy::findPlugin(const String& mimeType, PluginProcessType processT
     auto pluginInformation = createPluginInformationDictionary(plugin, frameURLString, String(), pageURLString, String(), String());
 #endif
 
-    auto findPluginCompletion = [processType, reply = WTFMove(reply), newMimeType = WTFMove(newMimeType), plugin = WTFMove(plugin)] (uint32_t pluginLoadPolicy, const String& unavailabilityDescription) mutable {
+    auto findPluginCompletion = [reply = WTFMove(reply), newMimeType = WTFMove(newMimeType), plugin = WTFMove(plugin)] (uint32_t pluginLoadPolicy, const String& unavailabilityDescription) mutable {
         PluginProcessSandboxPolicy pluginProcessSandboxPolicy = PluginProcessSandboxPolicy::Normal;
         switch (pluginLoadPolicy) {
         case PluginModuleLoadNormally:
@@ -2752,7 +2752,7 @@ void WebPageProxy::findPlugin(const String& mimeType, PluginProcessType processT
             return;
         }
 
-        reply(PluginProcessManager::singleton().pluginProcessToken(plugin, processType, pluginProcessSandboxPolicy), newMimeType, pluginLoadPolicy, unavailabilityDescription, false);
+        reply(PluginProcessManager::singleton().pluginProcessToken(plugin, pluginProcessSandboxPolicy), newMimeType, pluginLoadPolicy, unavailabilityDescription, false);
     };
 
 #if PLATFORM(COCOA)

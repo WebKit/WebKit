@@ -2638,18 +2638,6 @@ bool RenderLayerBacking::paintsContent(RenderLayer::PaintedContentRequest& reque
     return paintsContent;
 }
 
-static bool isRestartedPlugin(RenderObject& renderer)
-{
-    if (!is<RenderEmbeddedObject>(renderer))
-        return false;
-
-    auto& element = downcast<RenderEmbeddedObject>(renderer).frameOwnerElement();
-    if (!is<HTMLPlugInElement>(element))
-        return false;
-
-    return downcast<HTMLPlugInElement>(element).isRestartedPlugin();
-}
-
 static bool isCompositedPlugin(RenderObject& renderer)
 {
     return is<RenderEmbeddedObject>(renderer) && downcast<RenderEmbeddedObject>(renderer).allowsAcceleratedCompositing();
@@ -2666,7 +2654,7 @@ bool RenderLayerBacking::isSimpleContainerCompositingLayer(PaintedContentsInfo& 
     if (hasBackingSharingLayers())
         return false;
 
-    if (renderer().isRenderReplaced() && (!isCompositedPlugin(renderer()) || isRestartedPlugin(renderer())))
+    if (renderer().isRenderReplaced() && !isCompositedPlugin(renderer()))
         return false;
 
     if (renderer().isTextControl())

@@ -2298,24 +2298,6 @@ void WKPageSetPageNavigationClient(WKPageRef pageRef, const WKPageNavigationClie
             if (!apiNotifications.isEmpty())
                 m_client.contentRuleListNotification(toAPI(&page), toURLRef(url.string().impl()), toAPI(API::Array::create(WTFMove(apiListIdentifiers)).ptr()), toAPI(API::Array::create(WTFMove(apiNotifications)).ptr()), m_client.base.clientInfo);
         }
-#if ENABLE(NETSCAPE_PLUGIN_API)
-        void decidePolicyForPluginLoad(WebPageProxy& page, PluginModuleLoadPolicy currentPluginLoadPolicy, API::Dictionary& pluginInformation, CompletionHandler<void(PluginModuleLoadPolicy, const String&)>&& completionHandler) override
-        {
-            WKStringRef unavailabilityDescriptionOut = 0;
-            PluginModuleLoadPolicy loadPolicy = currentPluginLoadPolicy;
-            
-            if (m_client.decidePolicyForPluginLoad)
-                loadPolicy = toPluginModuleLoadPolicy(m_client.decidePolicyForPluginLoad(toAPI(&page), toWKPluginLoadPolicy(currentPluginLoadPolicy), toAPI(&pluginInformation), &unavailabilityDescriptionOut, m_client.base.clientInfo));
-            
-            String unavailabilityDescription;
-            if (unavailabilityDescriptionOut) {
-                RefPtr<API::String> webUnavailabilityDescription = adoptRef(toImpl(unavailabilityDescriptionOut));
-                unavailabilityDescription = webUnavailabilityDescription->string();
-            }
-            
-            completionHandler(loadPolicy, unavailabilityDescription);
-        }
-#endif
     };
 
     WebPageProxy* webPageProxy = toImpl(pageRef);

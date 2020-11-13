@@ -1,2 +1,0 @@
-
-PASS, plugin did receive mouse click event.

@@ -1104,12 +1104,11 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
 
 - (void)_setPlugInSnapshottingEnabled:(BOOL)enabled
 {
-    _preferences->setPlugInSnapshottingEnabled(enabled);
 }
 
 - (BOOL)_plugInSnapshottingEnabled
 {
-    return _preferences->plugInSnapshottingEnabled();
+    return NO;
 }
 
 - (void)_setViewGestureDebuggingEnabled:(BOOL)enabled

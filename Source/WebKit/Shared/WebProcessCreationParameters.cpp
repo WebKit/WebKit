@@ -112,7 +112,6 @@ void WebProcessCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << notificationPermissions;
 #endif
 
-    encoder << plugInAutoStartOrigins;
     encoder << memoryCacheDisabled;
     encoder << attrStyleEnabled;
 
@@ -120,10 +119,6 @@ void WebProcessCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << hasImageServices;
     encoder << hasSelectionServices;
     encoder << hasRichContentServices;
-#endif
-
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    encoder << pluginLoadClientPolicies;
 #endif
 
 #if PLATFORM(COCOA)
@@ -351,8 +346,6 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
         return false;
 #endif
 
-    if (!decoder.decode(parameters.plugInAutoStartOrigins))
-        return false;
     if (!decoder.decode(parameters.memoryCacheDisabled))
         return false;
     if (!decoder.decode(parameters.attrStyleEnabled))
@@ -364,11 +357,6 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
     if (!decoder.decode(parameters.hasSelectionServices))
         return false;
     if (!decoder.decode(parameters.hasRichContentServices))
-        return false;
-#endif
-
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    if (!decoder.decode(parameters.pluginLoadClientPolicies))
         return false;
 #endif
 

@@ -134,9 +134,6 @@ private:
 #if PLATFORM(MAC)
         void webGLLoadPolicy(WebPageProxy&, const URL&, CompletionHandler<void(WebCore::WebGLLoadPolicy)>&&) const final;
         void resolveWebGLLoadPolicy(WebPageProxy&, const URL&, CompletionHandler<void(WebCore::WebGLLoadPolicy)>&&) const final;
-        bool didFailToInitializePlugIn(WebPageProxy&, API::Dictionary&) final;
-        bool didBlockInsecurePluginVersion(WebPageProxy&, API::Dictionary&) final;
-        void decidePolicyForPluginLoad(WebKit::WebPageProxy&, WebKit::PluginModuleLoadPolicy, API::Dictionary&, CompletionHandler<void(WebKit::PluginModuleLoadPolicy, const WTF::String&)>&&) final;
         bool didChangeBackForwardList(WebPageProxy&, WebBackForwardListItem*, const Vector<Ref<WebBackForwardListItem>>&) final;
 #endif
         bool willGoToBackForwardListItem(WebPageProxy&, WebBackForwardListItem&, bool inBackForwardCache) final;
@@ -255,9 +252,6 @@ private:
         bool webViewWebGLLoadPolicyForURL : 1;
         bool webViewResolveWebGLLoadPolicyForURL : 1;
         bool webViewBackForwardListItemAddedRemoved : 1;
-        bool webViewDidFailToInitializePlugInWithInfo : 1;
-        bool webViewDidBlockInsecurePluginVersionWithInfo : 1;
-        bool webViewDecidePolicyForPluginLoadWithCurrentPolicyPluginInfoCompletionHandler : 1;
 #endif
         bool webViewWillGoToBackForwardListItemInBackForwardCache : 1;
 

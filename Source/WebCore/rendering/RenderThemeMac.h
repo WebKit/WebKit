@@ -156,8 +156,6 @@ private:
     bool supportsClosedCaptioning() const final { return true; }
 #endif
 
-    bool paintSnapshottedPluginOverlay(const RenderObject&, const PaintInfo&, const IntRect&) final;
-
 #if ENABLE(ATTACHMENT_ELEMENT)
     LayoutSize attachmentIntrinsicSize(const RenderAttachment&) const final;
     int attachmentBaseline(const RenderAttachment&) const final;

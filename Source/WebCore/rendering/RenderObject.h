@@ -217,7 +217,6 @@ public:
     virtual bool isMedia() const { return false; }
     virtual bool isMenuList() const { return false; }
     virtual bool isMeter() const { return false; }
-    virtual bool isSnapshottedPlugIn() const { return false; }
     virtual bool isProgress() const { return false; }
     virtual bool isRenderButton() const { return false; }
     virtual bool isRenderIFrame() const { return false; }

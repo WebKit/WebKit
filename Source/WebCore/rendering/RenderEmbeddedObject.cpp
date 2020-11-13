@@ -177,47 +177,6 @@ void RenderEmbeddedObject::setUnavailablePluginIndicatorIsPressed(bool pressed)
     repaint();
 }
 
-void RenderEmbeddedObject::paintSnapshotImage(PaintInfo& paintInfo, const LayoutPoint& paintOffset, Image& image)
-{
-    LayoutUnit cWidth = contentWidth();
-    LayoutUnit cHeight = contentHeight();
-    if (!cWidth || !cHeight)
-        return;
-
-    GraphicsContext& context = paintInfo.context();
-    LayoutSize contentSize(cWidth, cHeight);
-    LayoutPoint contentLocation = location() + paintOffset;
-    contentLocation.move(borderLeft() + paddingLeft(), borderTop() + paddingTop());
-
-    LayoutRect rect(contentLocation, contentSize);
-    IntRect alignedRect = snappedIntRect(rect);
-    if (alignedRect.width() <= 0 || alignedRect.height() <= 0)
-        return;
-
-    InterpolationQuality interpolation = chooseInterpolationQuality(context, image, &image, alignedRect.size());
-    context.drawImage(image, alignedRect, { imageOrientation(), interpolation });
-}
-
-void RenderEmbeddedObject::paintContents(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
-{
-    if (!is<HTMLPlugInElement>(frameOwnerElement()))
-        return;
-
-    HTMLPlugInElement& plugInElement = downcast<HTMLPlugInElement>(frameOwnerElement());
-
-    if (plugInElement.displayState() > HTMLPlugInElement::DisplayingSnapshot) {
-        RenderWidget::paintContents(paintInfo, paintOffset);
-        if (!plugInElement.isRestartedPlugin())
-            return;
-    }
-
-    if (!is<HTMLPlugInImageElement>(plugInElement))
-        return;
-
-    if (Image* snapshot = downcast<HTMLPlugInImageElement>(plugInElement).snapshotImage())
-        paintSnapshotImage(paintInfo, paintOffset, *snapshot);
-}
-
 void RenderEmbeddedObject::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     // The relevant repainted object heuristic is not tuned for plugin documents.
@@ -380,8 +339,6 @@ void RenderEmbeddedObject::layout()
     StackStats::LayoutCheckPoint layoutCheckPoint;
     ASSERT(needsLayout());
 
-    LayoutSize oldSize = contentBoxRect().size();
-
     updateLogicalWidth();
     updateLogicalHeight();
 
@@ -392,52 +349,10 @@ void RenderEmbeddedObject::layout()
 
     updateLayerTransform();
 
-    bool wasMissingWidget = false;
-    if (!widget() && canHaveWidget()) {
-        wasMissingWidget = true;
+    if (!widget())
         view().frameView().addEmbeddedObjectToUpdate(*this);
-    }
 
     clearNeedsLayout();
-
-    LayoutSize newSize = contentBoxRect().size();
-
-    if (!wasMissingWidget && newSize.width() >= oldSize.width() && newSize.height() >= oldSize.height()) {
-        HTMLFrameOwnerElement& element = frameOwnerElement();
-        if (is<HTMLPlugInImageElement>(element)) {
-            HTMLPlugInImageElement& plugInImageElement = downcast<HTMLPlugInImageElement>(element);
-            if (plugInImageElement.displayState() > HTMLPlugInElement::DisplayingSnapshot && plugInImageElement.snapshotDecision() == HTMLPlugInImageElement::MaySnapshotWhenResized) {
-                plugInImageElement.setNeedsCheckForSizeChange();
-                view().frameView().addEmbeddedObjectToUpdate(*this);
-            }
-        }
-    }
-
-    if (!canHaveChildren())
-        return;
-
-    // This code copied from RenderMedia::layout().
-    RenderObject* child = firstChild();
-
-    if (!child)
-        return;
-
-    auto& childBox = downcast<RenderBox>(*child);
-
-    if (newSize == oldSize && !childBox.needsLayout())
-        return;
-    
-    // When calling layout() on a child node, a parent must either push a LayoutStateMaintainter, or
-    // instantiate LayoutStateDisabler. Since using a LayoutStateMaintainer is slightly more efficient,
-    // and this method will be called many times per second during playback, use a LayoutStateMaintainer:
-    LayoutStateMaintainer statePusher(*this, locationOffset(), hasTransform() || hasReflection() || style().isFlippedBlocksWritingMode());
-    
-    childBox.setLocation(LayoutPoint(borderLeft(), borderTop()) + LayoutSize(paddingLeft(), paddingTop()));
-    childBox.mutableStyle().setHeight(Length(newSize.height(), Fixed));
-    childBox.mutableStyle().setWidth(Length(newSize.width(), Fixed));
-    childBox.setNeedsLayout(MarkOnlyThis);
-    childBox.layout();
-    clearChildNeedsLayout();
 }
 
 bool RenderEmbeddedObject::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)
@@ -481,7 +396,6 @@ bool RenderEmbeddedObject::logicalScroll(ScrollLogicalDirection direction, Scrol
     // Plugins don't expose a writing direction, so assuming horizontal LTR.
     return scroll(logicalToPhysical(direction, true, false), granularity, multiplier, stopElement);
 }
-
 
 bool RenderEmbeddedObject::isInUnavailablePluginIndicator(const FloatPoint& point) const
 {
@@ -541,14 +455,6 @@ CursorDirective RenderEmbeddedObject::getCursor(const LayoutPoint& point, Cursor
         return DoNotSetCursor;
     }
     return RenderWidget::getCursor(point, cursor);
-}
-
-bool RenderEmbeddedObject::canHaveChildren() const
-{
-    if (isSnapshottedPlugIn())
-        return true;
-
-    return false;
 }
 
 }

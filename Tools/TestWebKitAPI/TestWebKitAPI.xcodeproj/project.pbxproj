@@ -786,7 +786,6 @@
 		839AA35F21A26B0300980DD6 /* client-side-redirect.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 839AA35E21A26ACD00980DD6 /* client-side-redirect.html */; };
 		83A2CFDE2481B3520018B2D3 /* ProcessSuspension.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83A2CFDC2481B32F0018B2D3 /* ProcessSuspension.mm */; };
 		83B6DE6F1EE75221001E792F /* RestoreSessionState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83B6DE6E1EE7520F001E792F /* RestoreSessionState.cpp */; };
-		83BAEE8D1EF4625500DDE894 /* PluginLoadClientPolicies.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83BAEE8C1EF4625500DDE894 /* PluginLoadClientPolicies.mm */; };
 		83BC5AC020E6C0DF00F5879F /* StartLoadInDidFailProvisionalLoad.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83BC5ABF20E6C0D300F5879F /* StartLoadInDidFailProvisionalLoad.mm */; };
 		83DB79691EF63B3C00BFA5E5 /* Function.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83DB79671EF63B3C00BFA5E5 /* Function.cpp */; };
 		83F22C6420B355F80034277E /* NoPolicyDelegateResponse.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83F22C6320B355EB0034277E /* NoPolicyDelegateResponse.mm */; };
@@ -2383,7 +2382,6 @@
 		83A2CFDC2481B32F0018B2D3 /* ProcessSuspension.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ProcessSuspension.mm; sourceTree = "<group>"; };
 		83B6DE6E1EE7520F001E792F /* RestoreSessionState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RestoreSessionState.cpp; sourceTree = "<group>"; };
 		83B88A331C80056D00BB2418 /* HTMLParserIdioms.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLParserIdioms.cpp; sourceTree = "<group>"; };
-		83BAEE8C1EF4625500DDE894 /* PluginLoadClientPolicies.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PluginLoadClientPolicies.mm; sourceTree = "<group>"; };
 		83BC5ABF20E6C0D300F5879F /* StartLoadInDidFailProvisionalLoad.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = StartLoadInDidFailProvisionalLoad.mm; sourceTree = "<group>"; };
 		83DB79671EF63B3C00BFA5E5 /* Function.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Function.cpp; sourceTree = "<group>"; };
 		83F22C6320B355EB0034277E /* NoPolicyDelegateResponse.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NoPolicyDelegateResponse.mm; sourceTree = "<group>"; };
@@ -3342,7 +3340,6 @@
 				51D8C18F2267B26700797E40 /* PDFLinkReferrer.mm */,
 				516281262325C19100BB7E42 /* PDFSnapshot.mm */,
 				3FCC4FE41EC4E8520076E37C /* PictureInPictureDelegate.mm */,
-				83BAEE8C1EF4625500DDE894 /* PluginLoadClientPolicies.mm */,
 				DFB8FF312492F51A00F00B0D /* Preconnect.mm */,
 				C95501BE19AD2FAF0049BE3E /* Preferences.mm */,
 				CD227E43211A4D5D00D285AF /* PreferredAudioBufferSize.mm */,
@@ -5370,7 +5367,6 @@
 				E325C90723E3870200BC7D3B /* PictureInPictureSupport.mm in Sources */,
 				7CCE7EA61A411A0F00447C4C /* PlatformUtilitiesMac.mm in Sources */,
 				7CCE7EA71A411A1300447C4C /* PlatformWebViewMac.mm in Sources */,
-				83BAEE8D1EF4625500DDE894 /* PluginLoadClientPolicies.mm in Sources */,
 				F4010B8324DA267F00A876E2 /* PoseAsClass.mm in Sources */,
 				DFB8FF322492F52400F00B0D /* Preconnect.mm in Sources */,
 				1D67BFDC2433E0A7006B5047 /* PreemptVideoFullscreen.mm in Sources */,

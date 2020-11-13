@@ -1066,14 +1066,13 @@ bool WKPreferencesGetScrollingPerformanceLoggingEnabled(WKPreferencesRef prefere
     return toImpl(preferencesRef)->scrollingPerformanceLoggingEnabled();
 }
 
-void WKPreferencesSetPlugInSnapshottingEnabled(WKPreferencesRef preferencesRef, bool enabled)
+void WKPreferencesSetPlugInSnapshottingEnabled(WKPreferencesRef, bool)
 {
-    toImpl(preferencesRef)->setPlugInSnapshottingEnabled(enabled);
 }
 
 bool WKPreferencesGetPlugInSnapshottingEnabled(WKPreferencesRef preferencesRef)
 {
-    return toImpl(preferencesRef)->plugInSnapshottingEnabled();
+    return false;
 }
 
 void WKPreferencesSetPluginSandboxProfilesEnabledForAllPlugins(WKPreferencesRef preferencesRef, bool enabled)
@@ -1089,34 +1088,31 @@ bool WKPreferencesGetPluginSandboxProfilesEnabledForAllPlugins(WKPreferencesRef 
     return toImpl(preferencesRef)->experimentalPlugInSandboxProfilesEnabled();
 }
 
-void WKPreferencesSetSnapshotAllPlugIns(WKPreferencesRef preferencesRef, bool enabled)
+void WKPreferencesSetSnapshotAllPlugIns(WKPreferencesRef, bool)
 {
-    toImpl(preferencesRef)->setSnapshotAllPlugIns(enabled);
 }
 
-bool WKPreferencesGetSnapshotAllPlugIns(WKPreferencesRef preferencesRef)
+bool WKPreferencesGetSnapshotAllPlugIns(WKPreferencesRef)
 {
-    return toImpl(preferencesRef)->snapshotAllPlugIns();
+    return false;
 }
 
-void WKPreferencesSetAutostartOriginPlugInSnapshottingEnabled(WKPreferencesRef preferencesRef, bool enabled)
+void WKPreferencesSetAutostartOriginPlugInSnapshottingEnabled(WKPreferencesRef, bool)
 {
-    toImpl(preferencesRef)->setAutostartOriginPlugInSnapshottingEnabled(enabled);
 }
 
 bool WKPreferencesGetAutostartOriginPlugInSnapshottingEnabled(WKPreferencesRef preferencesRef)
 {
-    return toImpl(preferencesRef)->autostartOriginPlugInSnapshottingEnabled();
+    return false;
 }
 
 void WKPreferencesSetPrimaryPlugInSnapshotDetectionEnabled(WKPreferencesRef preferencesRef, bool enabled)
 {
-    toImpl(preferencesRef)->setPrimaryPlugInSnapshotDetectionEnabled(enabled);
 }
 
 bool WKPreferencesGetPrimaryPlugInSnapshotDetectionEnabled(WKPreferencesRef preferencesRef)
 {
-    return toImpl(preferencesRef)->primaryPlugInSnapshotDetectionEnabled();
+    return false;
 }
 
 void WKPreferencesSetPDFPluginEnabled(WKPreferencesRef preferencesRef, bool enabled)

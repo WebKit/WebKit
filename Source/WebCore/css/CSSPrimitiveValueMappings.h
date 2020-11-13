@@ -587,9 +587,6 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ControlPart e)
     case SearchFieldCancelButtonPart:
         m_value.valueID = CSSValueSearchfieldCancelButton;
         break;
-    case SnapshottedPluginOverlayPart:
-        m_value.valueID = CSSValueSnapshottedPluginOverlay;
-        break;
     case TextFieldPart:
         m_value.valueID = CSSValueTextfield;
         break;

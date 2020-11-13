@@ -1,4 +1,0 @@
-This tests that a dominant blank plugin that starts off screen and is moved in to view autoplays
-
-PASS
-

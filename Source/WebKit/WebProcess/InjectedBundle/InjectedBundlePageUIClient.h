@@ -29,7 +29,6 @@
 #include "APIInjectedBundlePageUIClient.h"
 #include "WKBundlePage.h"
 #include "WebEvent.h"
-#include <WebCore/RenderSnapshottedPlugIn.h>
 #include <wtf/Forward.h>
 
 namespace API {

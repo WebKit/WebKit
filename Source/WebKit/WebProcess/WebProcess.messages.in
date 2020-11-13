@@ -57,11 +57,6 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
 
     SetHasStylusDevice(bool hasStylusDevice)
 
-    DidAddPlugInAutoStartOriginHash(uint32_t hash, WallTime expirationTime)
-    ResetPlugInAutoStartOriginHashes(HashMap<uint32_t,WallTime> hashes)
-    SetPluginLoadClientPolicy(WebCore::PluginLoadClientPolicy policy, String host, String bundleIdentifier, String versionString)
-    ResetPluginLoadClientPolicies(HashMap<String, HashMap<String, HashMap<String, WebCore::PluginLoadClientPolicy>>> pluginLoadClientPolicies)
-    ClearPluginClientPolicies()
     RefreshPlugins()
 
     void StartMemorySampler(WebKit::SandboxExtension::Handle sampleLogFileHandle, String sampleLogFilePath, double interval);

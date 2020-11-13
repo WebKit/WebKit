@@ -51,14 +51,13 @@ PluginProcessManager::PluginProcessManager()
 {
 }
 
-uint64_t PluginProcessManager::pluginProcessToken(const PluginModuleInfo& pluginModuleInfo, PluginProcessType pluginProcessType, PluginProcessSandboxPolicy pluginProcessSandboxPolicy)
+uint64_t PluginProcessManager::pluginProcessToken(const PluginModuleInfo& pluginModuleInfo, PluginProcessSandboxPolicy pluginProcessSandboxPolicy)
 {
     // See if we know this token already.
     for (size_t i = 0; i < m_pluginProcessTokens.size(); ++i) {
         const PluginProcessAttributes& attributes = m_pluginProcessTokens[i].first;
 
         if (attributes.moduleInfo.path == pluginModuleInfo.path
-            && attributes.processType == pluginProcessType
             && attributes.sandboxPolicy == pluginProcessSandboxPolicy)
             return m_pluginProcessTokens[i].second;
     }
@@ -73,7 +72,6 @@ uint64_t PluginProcessManager::pluginProcessToken(const PluginModuleInfo& plugin
 
     PluginProcessAttributes attributes;
     attributes.moduleInfo = pluginModuleInfo;
-    attributes.processType = pluginProcessType;
     attributes.sandboxPolicy = pluginProcessSandboxPolicy;
 
     m_pluginProcessTokens.append(std::make_pair(WTFMove(attributes), token));
@@ -105,7 +103,7 @@ void PluginProcessManager::removePluginProcessProxy(PluginProcessProxy* pluginPr
 
 void PluginProcessManager::fetchWebsiteData(const PluginModuleInfo& plugin, OptionSet<WebsiteDataFetchOption> fetchOptions, WTF::Function<void (Vector<String>)>&& completionHandler)
 {
-    auto token = pluginProcessToken(plugin, PluginProcessType::Normal, PluginProcessSandboxPolicy::Normal);
+    auto token = pluginProcessToken(plugin, PluginProcessSandboxPolicy::Normal);
     auto pluginProcess = fetchOptions.contains(WebsiteDataFetchOption::DoNotCreateProcesses) ? getPluginProcess(token) : getOrCreatePluginProcess(token);
     if (!pluginProcess) {
         completionHandler({ });
@@ -117,13 +115,13 @@ void PluginProcessManager::fetchWebsiteData(const PluginModuleInfo& plugin, Opti
 
 void PluginProcessManager::deleteWebsiteData(const PluginModuleInfo& plugin, WallTime modifiedSince, WTF::Function<void ()>&& completionHandler)
 {
-    PluginProcessProxy* pluginProcess = getOrCreatePluginProcess(pluginProcessToken(plugin, PluginProcessType::Normal, PluginProcessSandboxPolicy::Normal));
+    PluginProcessProxy* pluginProcess = getOrCreatePluginProcess(pluginProcessToken(plugin, PluginProcessSandboxPolicy::Normal));
     pluginProcess->deleteWebsiteData(modifiedSince, WTFMove(completionHandler));
 }
 
 void PluginProcessManager::deleteWebsiteDataForHostNames(const PluginModuleInfo& plugin, const Vector<String>& hostNames,WTF::Function<void ()>&& completionHandler)
 {
-    PluginProcessProxy* pluginProcess = getOrCreatePluginProcess(pluginProcessToken(plugin, PluginProcessType::Normal, PluginProcessSandboxPolicy::Normal));
+    PluginProcessProxy* pluginProcess = getOrCreatePluginProcess(pluginProcessToken(plugin, PluginProcessSandboxPolicy::Normal));
     pluginProcess->deleteWebsiteDataForHostNames(hostNames, WTFMove(completionHandler));
 }
 

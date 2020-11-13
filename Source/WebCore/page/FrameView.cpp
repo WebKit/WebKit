@@ -1345,13 +1345,9 @@ void FrameView::addEmbeddedObjectToUpdate(RenderEmbeddedObject& embeddedObject)
     if (!m_embeddedObjectsToUpdate)
         m_embeddedObjectsToUpdate = makeUnique<ListHashSet<RenderEmbeddedObject*>>();
 
-    HTMLFrameOwnerElement& element = embeddedObject.frameOwnerElement();
-    if (is<HTMLObjectElement>(element) || is<HTMLEmbedElement>(element)) {
-        // Tell the DOM element that it needs a widget update.
-        HTMLPlugInImageElement& pluginElement = downcast<HTMLPlugInImageElement>(element);
-        if (!pluginElement.needsCheckForSizeChange())
-            pluginElement.setNeedsWidgetUpdate(true);
-    }
+    auto& element = embeddedObject.frameOwnerElement();
+    if (is<HTMLPlugInImageElement>(element))
+        downcast<HTMLPlugInImageElement>(element).setNeedsWidgetUpdate(true);
 
     m_embeddedObjectsToUpdate->add(&embeddedObject);
 }
@@ -3238,26 +3234,12 @@ void FrameView::updateEmbeddedObject(RenderEmbeddedObject& embeddedObject)
     if (embeddedObject.isPluginUnavailable())
         return;
 
-    HTMLFrameOwnerElement& element = embeddedObject.frameOwnerElement();
-
-    if (embeddedObject.isSnapshottedPlugIn()) {
-        if (is<HTMLObjectElement>(element) || is<HTMLEmbedElement>(element)) {
-            HTMLPlugInImageElement& pluginElement = downcast<HTMLPlugInImageElement>(element);
-            pluginElement.checkSnapshotStatus();
-        }
-        return;
-    }
+    auto& element = embeddedObject.frameOwnerElement();
 
     auto weakRenderer = makeWeakPtr(embeddedObject);
 
-    // FIXME: This could turn into a real virtual dispatch if we defined
-    // updateWidget(PluginCreationOption) on HTMLElement.
     if (is<HTMLPlugInImageElement>(element)) {
-        HTMLPlugInImageElement& pluginElement = downcast<HTMLPlugInImageElement>(element);
-        if (pluginElement.needsCheckForSizeChange()) {
-            pluginElement.checkSnapshotStatus();
-            return;
-        }
+        auto& pluginElement = downcast<HTMLPlugInImageElement>(element);
         if (pluginElement.needsWidgetUpdate())
             pluginElement.updateWidget(CreatePlugins::Yes);
     } else
@@ -3284,7 +3266,7 @@ bool FrameView::updateEmbeddedObjects()
     m_embeddedObjectsToUpdate->add(nullptr);
 
     while (!m_embeddedObjectsToUpdate->isEmpty()) {
-        RenderEmbeddedObject* embeddedObject = m_embeddedObjectsToUpdate->takeFirst();
+        auto embeddedObject = m_embeddedObjectsToUpdate->takeFirst();
         if (!embeddedObject)
             break;
         updateEmbeddedObject(*embeddedObject);

@@ -869,7 +869,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/PageOverlayController.h
     page/PerformanceLogging.h
     page/PerformanceLoggingClient.h
-    page/PlugInClient.h
     page/PointerCaptureController.h
     page/PointerCharacteristics.h
     page/PointerLockController.h
@@ -1450,7 +1449,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     rendering/RenderPtr.h
     rendering/RenderReplaced.h
     rendering/RenderSelectionInfo.h
-    rendering/RenderSnapshottedPlugIn.h
     rendering/RenderText.h
     rendering/RenderTextControl.h
     rendering/RenderTextLineBoxes.h

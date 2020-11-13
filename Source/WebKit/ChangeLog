@@ -1,3 +1,246 @@
+2020-11-12  Darin Adler  <darin@apple.com>
+
+        Remove unused advanced plug-in features: snapshotting and plug-in load policy
+        https://bugs.webkit.org/show_bug.cgi?id=218835
+
+        Reviewed by Tim Horton.
+
+        * PluginProcess/mac/PluginProcessMac.mm:
+        (WebKit::muteAudio): Deleted.
+        (WebKit::PluginProcess::platformInitializePluginProcess):
+
+        * Scripts/webkit/messages.py: Remove PluginProcessType.
+        * Shared/Plugins/PluginProcessAttributes.h: Ditto.
+        * Shared/Plugins/PluginProcessCreationParameters.cpp:
+        (WebKit::PluginProcessCreationParameters::encode const): Ditto.
+        (WebKit::PluginProcessCreationParameters::decode): Ditto.
+        * Shared/Plugins/PluginProcessCreationParameters.h: Ditto.
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode const): Remove plugInAutoStartOrigins
+        and pluginLoadClientPolicies.
+        (WebKit::WebProcessCreationParameters::decode): Ditto.
+        * Shared/WebProcessCreationParameters.h: Ditto.
+
+        * Shared/WebProcessDataStoreParameters.h:
+        (WebKit::WebProcessDataStoreParameters::encode const): Remove plugInAutoStartOriginHashes.
+        (WebKit::WebProcessDataStoreParameters::decode): Ditto.
+
+        * Sources.txt: Remove PlugInAutoStartProvider.cpp and WebPlugInClient.cpp.
+
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextCopyPlugInAutoStartOriginHashes): Return nullptr.
+        (WKContextSetPlugInAutoStartOriginHashes): Do nothing.
+        (WKContextSetPlugInAutoStartOriginsFilteringOutEntriesAddedAfterTime): Ditto.
+        (WKContextSetPlugInAutoStartOrigins): Ditto.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageNavigationClient): Remove decidePolicyForPluginLoad.
+
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetPlugInSnapshottingEnabled): Do nothing.
+        (WKPreferencesGetPlugInSnapshottingEnabled): Return false.
+        (WKPreferencesSetSnapshotAllPlugIns): Do nothing.
+        (WKPreferencesGetSnapshotAllPlugIns): Return false.
+        (WKPreferencesSetAutostartOriginPlugInSnapshottingEnabled): Do nothing.
+        (WKPreferencesGetAutostartOriginPlugInSnapshottingEnabled): Return false.
+        (WKPreferencesSetPrimaryPlugInSnapshotDetectionEnabled): Do nothing.
+        (WKPreferencesGetPrimaryPlugInSnapshotDetectionEnabled): Return false.
+
+        * UIProcess/API/C/mac/WKContextPrivateMac.mm:
+        (WKContextIsPlugInUpdateAvailable): Return false.
+        (WKContextSetPluginLoadClientPolicy): Do nothing.
+        (WKContextClearPluginClientPolicies): Do nothing.
+
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (-[WKPreferences _setPlugInSnapshottingEnabled:]): Do nothing.
+        (-[WKPreferences _plugInSnapshottingEnabled]): Return NO.
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (toPluginLoadClientPoliciesHashMap): Deleted.
+        (policiesHashMapToDictionary): Deleted.
+        (-[WKProcessPool _resetPluginLoadClientPolicies:]): Do nothing.
+        (-[WKProcessPool _pluginLoadClientPolicies]): Return an empty dictionary.
+
+        * UIProcess/Cocoa/NavigationState.h: Remove didFailToInitializePlugIn,
+        didBlockInsecurePluginVersion, decidePolicyForPluginLoad,
+        webViewDidFailToInitializePlugInWithInfo,
+        webViewDidBlockInsecurePluginVersionWithInfo, and
+        webViewDecidePolicyForPluginLoadWithCurrentPolicyPluginInfoCompletionHandler.
+
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::setNavigationDelegate): Updated for abvoe removals.
+        (WebKit::NavigationState::NavigationClient::didFailToInitializePlugIn): Deleted.
+        (WebKit::NavigationState::NavigationClient::didBlockInsecurePluginVersion): Deleted.
+        (WebKit::pluginModuleLoadPolicy): Deleted.
+        (WebKit::wkPluginModuleLoadPolicy): Deleted.
+        (WebKit::NavigationState::NavigationClient::decidePolicyForPluginLoad): Deleted.
+
+        * UIProcess/Plugins/PlugInAutoStartProvider.cpp: Removed.
+        * UIProcess/Plugins/PlugInAutoStartProvider.h: Removed.
+
+        * UIProcess/Plugins/PluginProcessManager.cpp:
+        (WebKit::PluginProcessManager::pluginProcessToken): Removed the
+        pluginProcessType argument.
+        (WebKit::PluginProcessManager::fetchWebsiteData): Ditto.
+        (WebKit::PluginProcessManager::deleteWebsiteData): Ditto.
+        (WebKit::PluginProcessManager::deleteWebsiteDataForHostNames): Ditto.
+        * UIProcess/Plugins/PluginProcessManager.h: Ditto.
+
+        * UIProcess/Plugins/PluginProcessProxy.cpp:
+        (WebKit::PluginProcessProxy::didFinishLaunching): Removed the code to
+        handle PluginProcessType::Snapshot.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::findPlugin): Removed the processType argument.
+        * UIProcess/WebPageProxy.h: Ditto.
+        * UIProcess/WebPageProxy.messages.in: Ditto.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::webProcessDataStoreParameters): Removed
+        plugInAutoStartOriginHashes.
+        (WebKit::WebProcessPool::initializeNewWebProcess): Removed
+        plugInAutoStartOrigins and pluginLoadClientPolicies.
+        (WebKit::WebProcessPool::plugInAutoStartOriginHashes const): Deleted.
+        (WebKit::WebProcessPool::setPlugInAutoStartOriginHashes): Deleted.
+        (WebKit::WebProcessPool::setPlugInAutoStartOrigins): Deleted.
+        (WebKit::WebProcessPool::setPlugInAutoStartOriginsFilteringOutEntriesAddedAfterTime): Deleted.
+        (WebKit::WebProcessPool::setPluginLoadClientPolicy): Deleted.
+        (WebKit::WebProcessPool::resetPluginLoadClientPolicies): Deleted.
+        (WebKit::WebProcessPool::clearPluginClientPolicies): Deleted.
+
+        * UIProcess/WebProcessPool.h: Removed setPluginLoadClientPolicy,
+        resetPluginLoadClientPolicies, clearPluginClientPolicies,
+        pluginLoadClientPolicies, plugInAutoStartOriginHashes,
+        setPlugInAutoStartOriginHashes, setPlugInAutoStartOrigins,
+        setPlugInAutoStartOriginsFilteringOutEntriesAddedAfterTime,
+        plugInAutoStartProvider, m_plugInAutoStartProvider, and
+        m_pluginLoadClientPolicies.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::addPlugInAutoStartOriginHash): Deleted.
+        (WebKit::WebProcessProxy::plugInDidReceiveUserInteraction): Deleted.
+        * UIProcess/WebProcessProxy.h: Ditto.
+        * UIProcess/WebProcessProxy.messages.in: Ditto.
+
+        * WebKit.xcodeproj/project.pbxproj: Removed PlugInAutoStartProvider.cpp/h
+        and WebPlugInClient.cpp/h.
+
+        * WebProcess/InjectedBundle/InjectedBundlePageUIClient.h:
+        Removed include of RenderSnapshottedPlugIn.h.
+
+        * WebProcess/Plugins/Netscape/mac/PluginProxyMac.mm:
+        (WebKit::PluginProxy::pluginLayer): Removed code to handle
+        m_isRestartedProcess.
+
+        * WebProcess/Plugins/PDF/PDFPlugin.h: Removed shouldAlwaysAutoStart.
+        * WebProcess/Plugins/Plugin.h: Ditto.
+
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::create): Removed isRestartedProcess argument.
+        (WebKit::PluginProxy::PluginProxy): Ditto. Also moved initialization
+        to the class definition.
+        * WebProcess/Plugins/PluginProxy.h: Updated for the above changes.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::PluginView): Removed m_pluginSnapshotTimer.
+        (WebKit::PluginView::recreateAndInitialize): Removed code to manage
+        m_pluginSnapshotTimer.
+        (WebKit::PluginView::initializePlugin): Removed code to set
+        m_didPlugInStartOffScreen.
+        (WebKit::PluginView::didInitializePlugin): Removed code to handle
+        restarting plug-ins.
+        (WebKit::PluginView::paint): Ditto.
+        (WebKit::PluginView::handleEvent): Removed calls to
+        pluginDidReceiveUserInteraction.
+        (WebKit::PluginView::shouldNotAddLayer const): Return false.
+        (WebKit::PluginView::invalidateRect): Removed code to handle
+        restarting plug-ins.
+        (WebKit::PluginView::isAcceleratedCompositingEnabled): Removed
+        some Flash-specific code.
+        (WebKit::isAlmostSolidColor): Deleted.
+        (WebKit::PluginView::pluginSnapshotTimerFired): Deleted.
+        (WebKit::PluginView::beginSnapshottingRunningPlugin): Deleted.
+        (WebKit::PluginView::shouldAlwaysAutoStart const): Deleted.
+        (WebKit::PluginView::pluginDidReceiveUserInteraction): Deleted.
+
+        * WebProcess/Plugins/PluginView.h: Removed pluginSnapshotTimerFired,
+        pluginDidReceiveUserInteraction, shouldAlwaysAutoStart,
+        beginSnapshottingRunningPlugin, m_didPlugInStartOffScreen,
+        m_pluginSnapshotTimer, m_countSnapshotRetries, m_didReceiveUserInteraction.
+
+        * WebProcess/Plugins/WebPluginInfoProvider.cpp:
+        (WebKit::WebPluginInfoProvider::setPluginLoadClientPolicy): Deleted.
+        (WebKit::WebPluginInfoProvider::clearPluginClientPolicies): Deleted.
+        (WebKit::WebPluginInfoProvider::populatePluginCache): Do not call
+        pluginLoadClientPolicyForHost.
+        (WebKit::WebPluginInfoProvider::pluginLoadClientPolicyForHost const): Deleted.
+        (WebKit::WebPluginInfoProvider::longestMatchedWildcardHostForHost const): Deleted.
+        (WebKit::WebPluginInfoProvider::replaceHostWithMatchedWildcardHost const): Deleted.
+
+        * WebProcess/Plugins/WebPluginInfoProvider.h: Removed setPluginLoadClientPolicy,
+        clearPluginClientPolicies, pluginLoadClientPolicyForHost,
+        longestMatchedWildcardHostForHost, replaceHostWithMatchedWildcardHost,
+        PluginLoadClientPoliciesByBundleVersion, PluginPolicyMapsByIdentifier, and
+        m_hostsToPluginIdentifierData.
+
+        * WebProcess/WebCoreSupport/WebPlugInClient.cpp: Removed.
+        * WebProcess/WebCoreSupport/WebPlugInClient.h: Removed.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage): Removed code to initialize
+        m_determinePrimarySnapshottedPlugInTimer, plugInClient, and processType.
+        (WebKit::WebPage::createPlugin): Removed isRestartedProcess.
+        (WebKit::WebPage::close): Removed m_determinePrimarySnapshottedPlugInTimer code.
+        (WebKit::WebPage::addPluginView): Ditto.
+        (WebKit::WebPage::removePluginView): Ditto.
+        (WebKit::WebPage::canPluginHandleResponse): Removed plug-in process type.
+        (WebKit::WebPage::didCommitLoad): Removed call to resetPrimarySnapshottedPlugIn.
+        (WebKit::WebPage::didFinishLoad): Removed m_determinePrimarySnapshottedPlugInTimer
+        code.
+        (WebKit::WebPage::determinePrimarySnapshottedPlugInTimerFired): Deleted.
+        (WebKit::WebPage::determinePrimarySnapshottedPlugIn): Deleted.
+        (WebKit::WebPage::resetPrimarySnapshottedPlugIn): Deleted.
+        (WebKit::WebPage::matchesPrimaryPlugIn const): Deleted.
+        (WebKit::WebPage::plugInIntersectsSearchRect): Deleted.
+        (WebKit::WebPage::plugInIsPrimarySize): Deleted.
+
+        * WebProcess/WebPage/WebPage.h: Removed determinePrimarySnapshottedPlugIn,
+        determinePrimarySnapshottedPlugInTimerFired, resetPrimarySnapshottedPlugIn,
+        matchesPrimaryPlugIn, plugInIntersectsSearchRect, plugInIsPrimarySize,
+        m_readyToFindPrimarySnapshottedPlugin, m_didFindPrimarySnapshottedPlugin,
+        m_numberOfPrimarySnapshotDetectionAttempts, m_primaryPlugInPageOrigin,
+        m_primaryPlugInOrigin, m_primaryPlugInMimeType, and
+        m_determinePrimarySnapshottedPlugInTimer.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess): Removed code to set
+        m_plugInAutoStartOrigins and call to resetPluginLoadClientPolicies.
+        (WebKit::WebProcess::setWebsiteDataStoreParameters): Removed call
+        to resetPlugInAutoStartOriginHashes.
+        (WebKit::addCaseFoldedCharacters): Deleted.
+        (WebKit::hashForPlugInOrigin): Deleted.
+        (WebKit::WebProcess::isPlugInAutoStartOriginHash): Deleted.
+        (WebKit::WebProcess::shouldPlugInAutoStartFromOrigin): Deleted.
+        (WebKit::WebProcess::plugInDidStartFromOrigin): Deleted.
+        (WebKit::WebProcess::didAddPlugInAutoStartOriginHash): Deleted.
+        (WebKit::WebProcess::resetPlugInAutoStartOriginHashes): Deleted.
+        (WebKit::WebProcess::plugInDidReceiveUserInteraction): Deleted.
+        (WebKit::WebProcess::setPluginLoadClientPolicy): Deleted.
+        (WebKit::WebProcess::resetPluginLoadClientPolicies): Deleted.
+        (WebKit::WebProcess::clearPluginClientPolicies): Deleted.
+
+        * WebProcess/WebProcess.h: Removed shouldPlugInAutoStartFromOrigin,
+        plugInDidStartFromOrigin, plugInDidReceiveUserInteraction,
+        setPluginLoadClientPolicy, resetPluginLoadClientPolicies,
+        clearPluginClientPolicies, isPlugInAutoStartOriginHash,
+        didAddPlugInAutoStartOriginHash, resetPlugInAutoStartOriginHashes,
+        m_plugInAutoStartOriginHashes, and m_plugInAutoStartOrigins.
+
+        * WebProcess/WebProcess.messages.in: Removed
+        DidAddPlugInAutoStartOriginHash, ResetPlugInAutoStartOriginHashes,
+        SetPluginLoadClientPolicy, ResetPluginLoadClientPolicies, and
+        ClearPluginClientPolicies.
+
 2020-11-12  Simon Fraser  <simon.fraser@apple.com>
 
         Force wheel event listeners on the root to be passive

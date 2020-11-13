@@ -454,7 +454,6 @@ UIProcess/Notifications/WebNotification.cpp
 UIProcess/Notifications/WebNotificationManagerProxy.cpp
 UIProcess/Notifications/WebNotificationProvider.cpp
 
-UIProcess/Plugins/PlugInAutoStartProvider.cpp
 UIProcess/Plugins/PluginInfoStore.cpp
 UIProcess/Plugins/PluginProcessManager.cpp
 UIProcess/Plugins/PluginProcessProxy.cpp
@@ -656,7 +655,6 @@ WebProcess/WebCoreSupport/WebMessagePortChannelProvider.cpp
 WebProcess/WebCoreSupport/WebNotificationClient.cpp
 WebProcess/WebCoreSupport/WebPerformanceLoggingClient.cpp
 WebProcess/WebCoreSupport/WebPlatformStrategies.cpp
-WebProcess/WebCoreSupport/WebPlugInClient.cpp
 WebProcess/WebCoreSupport/WebPopupMenu.cpp
 WebProcess/WebCoreSupport/WebProgressTrackerClient.cpp
 WebProcess/WebCoreSupport/WebResourceLoadObserver.cpp

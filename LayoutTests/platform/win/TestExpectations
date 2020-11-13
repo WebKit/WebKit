@@ -644,9 +644,6 @@ fast/events/clear-drag-state.html [ Failure ]
 # Need support for ResourceHandle::didChangePriority and DRT support
 webkit.org/b/111016 http/tests/loading/promote-img-preload-priority.html [ Skip ] # Crash
 
-# TODO Snapshotted plugins not enabled on WK1
-webkit.org/b/98696 plugins/snapshotting [ Skip ]
-
 # TODO Exclude WebSQL tests:
 webkit.org/b/116559 storage/websql/ [ Skip ]
 

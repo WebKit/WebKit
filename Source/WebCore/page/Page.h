@@ -122,7 +122,6 @@ class PaymentCoordinator;
 class PerformanceLogging;
 class PerformanceLoggingClient;
 class PerformanceMonitor;
-class PlugInClient;
 class PluginData;
 class PluginInfoProvider;
 class PluginViewBase;
@@ -257,7 +256,6 @@ public:
     bool canStartMedia() const { return m_canStartMedia; }
 
     EditorClient& editorClient() { return m_editorClient.get(); }
-    PlugInClient* plugInClient() const { return m_plugInClient.get(); }
 
     Frame& mainFrame() { return m_mainFrame.get(); }
     const Frame& mainFrame() const { return m_mainFrame.get(); }
@@ -900,7 +898,6 @@ private:
     RefPtr<PluginData> m_pluginData;
 
     UniqueRef<EditorClient> m_editorClient;
-    std::unique_ptr<PlugInClient> m_plugInClient;
     std::unique_ptr<ValidationMessageClient> m_validationMessageClient;
     std::unique_ptr<DiagnosticLoggingClient> m_diagnosticLoggingClient;
     std::unique_ptr<PerformanceLoggingClient> m_performanceLoggingClient;

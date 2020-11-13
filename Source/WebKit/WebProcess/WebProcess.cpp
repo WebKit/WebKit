@@ -457,9 +457,6 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
 
     setTerminationTimeout(parameters.terminationTimeout);
 
-    for (auto& origin : parameters.plugInAutoStartOrigins)
-        m_plugInAutoStartOrigins.add(origin);
-
     setMemoryCacheDisabled(parameters.memoryCacheDisabled);
 
     WebCore::RuntimeEnabledFeatures::sharedFeatures().setAttrStyleEnabled(parameters.attrStyleEnabled);
@@ -476,10 +473,6 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
         RetainPtr<CFDataRef> auditData = adoptCF(CFDataCreate(nullptr, (const UInt8*)&*auditToken, sizeof(*auditToken)));
         Inspector::RemoteInspector::singleton().setParentProcessInformation(WebCore::presentingApplicationPID(), auditData);
     }
-#endif
-
-#if ENABLE(NETSCAPE_PLUGIN_API) && PLATFORM(MAC)
-    resetPluginLoadClientPolicies(parameters.pluginLoadClientPolicies);
 #endif
 
 #if ENABLE(GAMEPAD)
@@ -531,8 +524,6 @@ void WebProcess::setWebsiteDataStoreParameters(WebProcessDataStoreParameters&& p
     }
     
 #endif
-
-    resetPlugInAutoStartOriginHashes(WTFMove(parameters.plugInAutoStartOriginHashes));
 
     for (auto& supplement : m_supplements.values())
         supplement->setWebsiteDataStore(parameters);
@@ -894,141 +885,9 @@ void WebProcess::userGestureTokenDestroyed(UserGestureToken& token)
     parentProcessConnection()->send(Messages::WebProcessProxy::DidDestroyUserGestureToken(identifier), 0);
 }
 
-static inline void addCaseFoldedCharacters(StringHasher& hasher, const String& string)
-{
-    if (string.isEmpty())
-        return;
-    if (string.is8Bit()) {
-        hasher.addCharacters<LChar, ASCIICaseInsensitiveHash::FoldCase<LChar>>(string.characters8(), string.length());
-        return;
-    }
-    hasher.addCharacters<UChar, ASCIICaseInsensitiveHash::FoldCase<UChar>>(string.characters16(), string.length());
-}
-
-static unsigned hashForPlugInOrigin(const String& pageOrigin, const String& pluginOrigin, const String& mimeType)
-{
-    // We want to avoid concatenating the strings and then taking the hash, since that could lead to an expensive conversion.
-    // We also want to avoid using the hash() function in StringImpl or ASCIICaseInsensitiveHash because that masks out bits for the use of flags.
-    StringHasher hasher;
-    addCaseFoldedCharacters(hasher, pageOrigin);
-    hasher.addCharacter(0);
-    addCaseFoldedCharacters(hasher, pluginOrigin);
-    hasher.addCharacter(0);
-    addCaseFoldedCharacters(hasher, mimeType);
-    return hasher.hash();
-}
-
-bool WebProcess::isPlugInAutoStartOriginHash(unsigned plugInOriginHash)
-{
-    auto it = m_plugInAutoStartOriginHashes.find(plugInOriginHash);
-    if (it == m_plugInAutoStartOriginHashes.end())
-        return false;
-
-    return WallTime::now() < it->value;
-}
-
-bool WebProcess::shouldPlugInAutoStartFromOrigin(WebPage& webPage, const String& pageOrigin, const String& pluginOrigin, const String& mimeType)
-{
-    if (!pluginOrigin.isEmpty() && m_plugInAutoStartOrigins.contains(pluginOrigin))
-        return true;
-
-#if ENABLE(PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC)
-    // The plugin wasn't in the general list, so check if it similar to the primary plugin for the page (if we've found one).
-    if (webPage.matchesPrimaryPlugIn(pageOrigin, pluginOrigin, mimeType))
-        return true;
-#else
-    UNUSED_PARAM(webPage);
-#endif
-
-    // Lastly check against the more explicit hash list.
-    return isPlugInAutoStartOriginHash(hashForPlugInOrigin(pageOrigin, pluginOrigin, mimeType));
-}
-
-void WebProcess::plugInDidStartFromOrigin(const String& pageOrigin, const String& pluginOrigin, const String& mimeType)
-{
-    if (pageOrigin.isEmpty()) {
-        LOG(Plugins, "Not adding empty page origin");
-        return;
-    }
-
-    unsigned plugInOriginHash = hashForPlugInOrigin(pageOrigin, pluginOrigin, mimeType);
-    if (isPlugInAutoStartOriginHash(plugInOriginHash)) {
-        LOG(Plugins, "Hash %x already exists as auto-start origin (request for %s)", plugInOriginHash, pageOrigin.utf8().data());
-        return;
-    }
-
-    // We might attempt to start another plugin before the didAddPlugInAutoStartOrigin message
-    // comes back from the parent process. Temporarily add this hash to the list with a thirty
-    // second timeout. That way, even if the parent decides not to add it, we'll only be
-    // incorrect for a little while.
-    m_plugInAutoStartOriginHashes.set(plugInOriginHash, WallTime::now() + 30_s * 1000);
-
-    parentProcessConnection()->send(Messages::WebProcessProxy::AddPlugInAutoStartOriginHash(pageOrigin, plugInOriginHash), 0);
-}
-
-void WebProcess::didAddPlugInAutoStartOriginHash(unsigned plugInOriginHash, WallTime expirationTime)
-{
-    // When called, some web process (which also might be this one) added the origin for auto-starting,
-    // or received user interaction.
-    // Set the bit to avoid having redundantly call into the UI process upon user interaction.
-    m_plugInAutoStartOriginHashes.set(plugInOriginHash, expirationTime);
-}
-
-void WebProcess::resetPlugInAutoStartOriginHashes(HashMap<unsigned, WallTime>&& hashes)
-{
-    m_plugInAutoStartOriginHashes = WTFMove(hashes);
-}
-
-void WebProcess::plugInDidReceiveUserInteraction(const String& pageOrigin, const String& pluginOrigin, const String& mimeType)
-{
-    if (pageOrigin.isEmpty())
-        return;
-
-    unsigned plugInOriginHash = hashForPlugInOrigin(pageOrigin, pluginOrigin, mimeType);
-    if (!plugInOriginHash)
-        return;
-
-    auto it = m_plugInAutoStartOriginHashes.find(plugInOriginHash);
-    if (it == m_plugInAutoStartOriginHashes.end())
-        return;
-
-    if (it->value - WallTime::now() > plugInAutoStartExpirationTimeUpdateThreshold)
-        return;
-
-    parentProcessConnection()->send(Messages::WebProcessProxy::PlugInDidReceiveUserInteraction(plugInOriginHash), 0);
-}
-
-void WebProcess::setPluginLoadClientPolicy(WebCore::PluginLoadClientPolicy policy, const String& host, const String& bundleIdentifier, const String& versionString)
-{
-#if ENABLE(NETSCAPE_PLUGIN_API) && PLATFORM(MAC)
-    WebPluginInfoProvider::singleton().setPluginLoadClientPolicy(policy, host, bundleIdentifier, versionString);
-#endif
-}
-
-void WebProcess::resetPluginLoadClientPolicies(const HashMap<WTF::String, HashMap<WTF::String, HashMap<WTF::String, WebCore::PluginLoadClientPolicy>>>& pluginLoadClientPolicies)
-{
-#if ENABLE(NETSCAPE_PLUGIN_API) && PLATFORM(MAC)
-    clearPluginClientPolicies();
-
-    for (auto& hostPair : pluginLoadClientPolicies) {
-        for (auto& bundleIdentifierPair : hostPair.value) {
-            for (auto& versionPair : bundleIdentifierPair.value)
-                WebPluginInfoProvider::singleton().setPluginLoadClientPolicy(versionPair.value, hostPair.key, bundleIdentifierPair.key, versionPair.key);
-        }
-    }
-#endif
-}
-
 void WebProcess::isJITEnabled(CompletionHandler<void(bool)>&& completionHandler)
 {
     completionHandler(JSC::Options::useJIT());
-}
-
-void WebProcess::clearPluginClientPolicies()
-{
-#if ENABLE(NETSCAPE_PLUGIN_API) && PLATFORM(MAC)
-    WebPluginInfoProvider::singleton().clearPluginClientPolicies();
-#endif
 }
 
 void WebProcess::refreshPlugins()
