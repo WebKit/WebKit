@@ -1111,11 +1111,21 @@ void SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegment(const Init
             appendError(true);
             return;
         }
+
+        Vector<std::pair<AtomString, TrackBuffer>> newTrackBuffers;
+
         // 3.2 Add the appropriate track descriptions from this initialization segment to each of the track buffers.
         ASSERT(segment.audioTracks.size() == audioTracks().length());
         for (auto& audioTrackInfo : segment.audioTracks) {
             if (audioTracks().length() == 1) {
-                audioTracks().item(0)->setPrivate(*audioTrackInfo.track);
+                auto* track = audioTracks().item(0);
+                auto oldId = track->id();
+                auto newId = audioTrackInfo.track->id();
+                track->setPrivate(*audioTrackInfo.track);
+                if (newId != oldId) {
+                    auto trackBuffer = m_trackBufferMap.take(oldId);
+                    newTrackBuffers.append(std::make_pair(newId, WTFMove(trackBuffer)));
+                }
                 break;
             }
 
@@ -1127,7 +1137,14 @@ void SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegment(const Init
         ASSERT(segment.videoTracks.size() == videoTracks().length());
         for (auto& videoTrackInfo : segment.videoTracks) {
             if (videoTracks().length() == 1) {
-                videoTracks().item(0)->setPrivate(*videoTrackInfo.track);
+                auto* track = videoTracks().item(0);
+                auto oldId = track->id();
+                auto newId = videoTrackInfo.track->id();
+                track->setPrivate(*videoTrackInfo.track);
+                if (newId != oldId) {
+                    auto trackBuffer = m_trackBufferMap.take(oldId);
+                    newTrackBuffers.append(std::make_pair(newId, WTFMove(trackBuffer)));
+                }
                 break;
             }
 
@@ -1139,13 +1156,25 @@ void SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegment(const Init
         ASSERT(segment.textTracks.size() == textTracks().length());
         for (auto& textTrackInfo : segment.textTracks) {
             if (textTracks().length() == 1) {
-                downcast<InbandTextTrack>(*textTracks().item(0)).setPrivate(*textTrackInfo.track);
+                auto* track = downcast<InbandTextTrack>(textTracks().item(0));
+                auto oldId = track->id();
+                auto newId = textTrackInfo.track->id();
+                track->setPrivate(*textTrackInfo.track);
+                if (newId != oldId) {
+                    auto trackBuffer = m_trackBufferMap.take(oldId);
+                    newTrackBuffers.append(std::make_pair(newId, WTFMove(trackBuffer)));
+                }
                 break;
             }
 
             auto textTrack = textTracks().getTrackById(textTrackInfo.track->id());
             ASSERT(textTrack);
             downcast<InbandTextTrack>(*textTrack).setPrivate(*textTrackInfo.track);
+        }
+
+        while (!newTrackBuffers.isEmpty()) {
+            auto trackPair = newTrackBuffers.takeLast();
+            m_trackBufferMap.add(trackPair.first, WTFMove(trackPair.second));
         }
 
         // 3.3 Set the need random access point flag on all track buffers to true.

@@ -1,3 +1,51 @@
+2020-11-13  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r269121. rdar://problem/71381839
+
+    [MSE] Handle trackId changing across Initialization Segments
+    https://bugs.webkit.org/show_bug.cgi?id=218294
+    <rdar://problem/70771306>
+    
+    Reviewed by Eric Carlson.
+    
+    Source/WebCore:
+    
+    Test: media/media-source/media-source-trackid-change.html
+    
+    When appending an initialization segment after the receivedFirstInitializationSegment flag is
+    true, and when the number of video or audio tracks is 1, the trackId is allowed to change across
+    initialiaztion segments. When this occurs, move the TrackBuffer inside the trackBufferMap to
+    refer to the new trackId, so that when MediaSamples are parsed, they're put into the correct
+    TrackBuffer.
+    
+    * Modules/mediasource/SourceBuffer.cpp:
+    (WebCore::SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegment):
+    * html/track/AudioTrack.cpp:
+    (WebCore::AudioTrack::setPrivate):
+    * html/track/InbandTextTrack.cpp:
+    (WebCore::InbandTextTrack::setPrivate):
+    * html/track/VideoTrack.cpp:
+    (WebCore::VideoTrack::setPrivate):
+    
+    LayoutTests:
+    
+    * media/media-source/media-source-trackid-change-expected.txt: Added.
+    * media/media-source/media-source-trackid-change.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@269121 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-10-28  Jer Noble  <jer.noble@apple.com>
+
+            [MSE] Handle trackId changing across Initialization Segments
+            https://bugs.webkit.org/show_bug.cgi?id=218294
+            <rdar://problem/70771306>
+
+            Reviewed by Eric Carlson.
+
+            * media/media-source/media-source-trackid-change-expected.txt: Added.
+            * media/media-source/media-source-trackid-change.html: Added.
+
 2020-11-04  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r269025. rdar://problem/70970161
