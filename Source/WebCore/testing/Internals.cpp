@@ -597,10 +597,6 @@ Internals::Internals(Document& document)
         document.page()->group().captionPreferences().setTestingMode(true);
 #endif
 
-#if ENABLE(MEDIA_STREAM)
-    setMediaCaptureRequiresSecureConnection(false);
-#endif
-
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     if (document.page())
         document.page()->setMockMediaPlaybackTargetPickerEnabled(true);
@@ -1621,13 +1617,6 @@ void Internals::setShouldInterruptAudioOnPageVisibilityChange(bool shouldInterru
     Document* document = contextDocument();
     if (auto* page = document->page())
         page->settings().setInterruptAudioOnPageVisibilityChangeEnabled(shouldInterrupt);
-}
-
-void Internals::setMediaCaptureRequiresSecureConnection(bool enabled)
-{
-    Document* document = contextDocument();
-    if (auto* page = document->page())
-        page->settings().setMediaCaptureRequiresSecureConnection(enabled);
 }
 
 static ExceptionOr<std::unique_ptr<MediaRecorderPrivate>> createRecorderMockSource(MediaStreamPrivate& stream, const MediaRecorderPrivateOptions&)

@@ -1,7 +1,7 @@
 This tests shift + selecting two discontinuous elements with user-select: all. WebKit should select the both elements instead of moving the selection.
 To manually test, click to select the first element and shift-click the second element. WebKit should select both elements.
 
-After clicking on the first element (Mac):
+After clicking on the first element (mac):
 | "
 "
 | <div>
@@ -18,7 +18,7 @@ Some other text.
 | "
 "
 
-After shift clicking on the second element (Mac):
+After shift clicking on the second element (mac):
 | "
 "
 | <div>
@@ -35,7 +35,7 @@ Some other text.
 | "
 "
 
-After clicking on the second element (Mac):
+After clicking on the second element (mac):
 | "
 "
 | <div>
@@ -52,7 +52,7 @@ Some other text.
 | "
 "
 
-After shift clicking on the first element (Mac):
+After shift clicking on the first element (mac):
 | "
 "
 | <div>
@@ -69,7 +69,7 @@ Some other text.
 | "
 "
 
-After clicking on the first element (Win):
+After clicking on the first element (win):
 | "
 "
 | <div>
@@ -86,7 +86,7 @@ Some other text.
 | "
 "
 
-After shift clicking on the second element (Win):
+After shift clicking on the second element (win):
 | "
 "
 | <div>
@@ -103,7 +103,7 @@ Some other text.
 | "
 "
 
-After clicking on the second element (Win):
+After clicking on the second element (win):
 | "
 "
 | <div>
@@ -120,7 +120,7 @@ Some other text.
 | "
 "
 
-After shift clicking on the first element (Win):
+After shift clicking on the first element (win):
 | "
 "
 | <div>
@@ -137,7 +137,7 @@ Some other text.
 | "
 "
 
-After clicking on the first element (Unix):
+After clicking on the first element (unix):
 | "
 "
 | <div>
@@ -154,7 +154,7 @@ Some other text.
 | "
 "
 
-After shift clicking on the second element (Unix):
+After shift clicking on the second element (unix):
 | "
 "
 | <div>
@@ -171,7 +171,7 @@ Some other text.
 | "
 "
 
-After clicking on the second element (Unix):
+After clicking on the second element (unix):
 | "
 "
 | <div>
@@ -188,7 +188,7 @@ Some other text.
 | "
 "
 
-After shift clicking on the first element (Unix):
+After shift clicking on the first element (unix):
 | "
 "
 | <div>

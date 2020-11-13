@@ -27,6 +27,7 @@
 #include "config.h"
 #include "WebCoreTestSupport.h"
 
+#include "DeprecatedGlobalSettings.h"
 #include "Frame.h"
 #include "InternalSettings.h"
 #include "Internals.h"
@@ -143,7 +144,7 @@ void initializeLogChannelsIfNecessary()
 
 void setAllowsAnySSLCertificate(bool allowAnySSLCertificate)
 {
-    InternalSettings::setAllowsAnySSLCertificate(allowAnySSLCertificate);
+    DeprecatedGlobalSettings::setAllowsAnySSLCertificate(allowAnySSLCertificate);
 }
 
 void setLinkedOnOrAfterEverythingForTesting()

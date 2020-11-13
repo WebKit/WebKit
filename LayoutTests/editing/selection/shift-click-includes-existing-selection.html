@@ -37,7 +37,7 @@ Markup.waitUntilDone();
     if (!window.testRunner)
         return;
 
-    internals.settings.setEditingBehavior("Mac");
+    internals.settings.setEditingBehavior("mac");
     Markup.dump(document.getElementById("container"), "Before extending the selection");
 
     await UIHelper.callFunctionAndWaitForEvent(() => UIHelper.activateElement(document.getElementById("end"), ["shiftKey"]), document.body, "click");
