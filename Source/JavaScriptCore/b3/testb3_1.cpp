@@ -496,6 +496,7 @@ void run(const char* filter)
     RUN(testCheckSubImm());
     RUN(testCheckSubBadImm());
     RUN(testCheckSub());
+    RUN(testCheckSubBitAnd());
     RUN(testCheckSub64());
     RUN(testCheckSubFold(100, 200));
     RUN(testCheckSubFoldFail(-2147483647, 100));
