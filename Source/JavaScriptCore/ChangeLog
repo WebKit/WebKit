@@ -1,3 +1,12 @@
+2020-11-13  Sergey Rubanov  <chi187@gmail.com>
+
+        WebAssembly: opcodes for table.grow and table.size are mixed up
+        https://bugs.webkit.org/show_bug.cgi?id=218644
+
+        Reviewed by Yusuke Suzuki.
+
+        * wasm/wasm.json:
+
 2020-11-12  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: ensure that `JSON::ArrayOf<T>` doesn't allow `addItem` to be called with a type other than `T`

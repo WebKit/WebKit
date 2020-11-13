@@ -1,3 +1,12 @@
+2020-11-13  Sergey Rubanov  <chi187@gmail.com>
+
+        WebAssembly: opcodes for table.grow and table.size are mixed up
+        https://bugs.webkit.org/show_bug.cgi?id=218644
+
+        Reviewed by Yusuke Suzuki.
+
+        * workers/wasm-references/test.js:
+
 2020-11-12  Darin Adler  <darin@apple.com>
 
         Remove unused advanced plug-in features: snapshotting and plug-in load policy

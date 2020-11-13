@@ -1,5 +1,16 @@
 2020-11-13  Sergey Rubanov  <chi187@gmail.com>
 
+        WebAssembly: opcodes for table.grow and table.size are mixed up
+        https://bugs.webkit.org/show_bug.cgi?id=218644
+
+        Reviewed by Yusuke Suzuki.
+
+        * wasm/stress/table-grow-table-size.js: Added.
+        (async test):
+        * wasm/wasm.json:
+
+2020-11-13  Sergey Rubanov  <chi187@gmail.com>
+
         WebAssembly: update wabt.js
         https://bugs.webkit.org/show_bug.cgi?id=218876
 
