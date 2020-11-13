@@ -32,6 +32,7 @@
 #include "ExceptionOr.h"
 #include "HEVCUtilities.h"
 #include "IDLTypes.h"
+#include "MockRTCRtpTransform.h"
 #include "OrientationNotifier.h"
 #include "PageConsoleClient.h"
 #include "RealtimeMediaSource.h"
@@ -606,6 +607,7 @@ public:
     void setWebRTCH265Support(bool);
     void setWebRTCVP9Support(bool);
     void setWebRTCVP9VTBSupport(bool);
+    Ref<MockRTCRtpTransform> createMockRTCRtpTransform();
     void setEnableWebRTCEncryption(bool);
     void setUseDTLS10(bool);
     void setUseGPUProcessForWebRTC(bool);

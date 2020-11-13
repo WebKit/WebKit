@@ -35,6 +35,7 @@
 #include "MediaStreamTrack.h"
 #include "RTCRtpReceiverBackend.h"
 #include "RTCRtpSynchronizationSource.h"
+#include "RTCRtpTransform.h"
 #include "ScriptWrappable.h"
 
 namespace WebCore {
@@ -50,6 +51,7 @@ public:
     {
         return adoptRef(*new RTCRtpReceiver(connection, WTFMove(track), WTFMove(backend)));
     }
+    ~RTCRtpReceiver();
 
     static Optional<RTCRtpCapabilities> getCapabilities(ScriptExecutionContext&, const String& kind);
 
@@ -65,12 +67,16 @@ public:
     RTCRtpReceiverBackend* backend() { return m_backend.get(); }
     void getStats(Ref<DeferredPromise>&&);
 
+    RTCRtpTransform* transform() { return m_transform.get(); }
+    ExceptionOr<void> setTransform(RefPtr<RTCRtpTransform>&&);
+
 private:
     RTCRtpReceiver(PeerConnectionBackend&, Ref<MediaStreamTrack>&&, std::unique_ptr<RTCRtpReceiverBackend>&&);
 
     Ref<MediaStreamTrack> m_track;
     std::unique_ptr<RTCRtpReceiverBackend> m_backend;
     WeakPtr<PeerConnectionBackend> m_connection;
+    RefPtr<RTCRtpTransform> m_transform;
 };
 
 } // namespace WebCore

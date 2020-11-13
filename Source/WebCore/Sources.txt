@@ -164,12 +164,16 @@ Modules/mediastream/RTCPeerConnection.cpp
 Modules/mediastream/RTCPeerConnectionIceEvent.cpp
 Modules/mediastream/RTCRtpReceiver.cpp
 Modules/mediastream/RTCRtpSender.cpp
+Modules/mediastream/RTCRtpTransform.cpp
 Modules/mediastream/RTCRtpTransceiver.cpp
 Modules/mediastream/RTCSessionDescription.cpp
 Modules/mediastream/RTCTrackEvent.cpp
 Modules/mediastream/UserMediaController.cpp
 Modules/mediastream/UserMediaRequest.cpp
 Modules/mediastream/libwebrtc/LibWebRTCCertificateGenerator.cpp
+Modules/mediastream/libwebrtc/LibWebRTCRtpReceiverTransformBackend.cpp
+Modules/mediastream/libwebrtc/LibWebRTCRtpSenderTransformBackend.cpp
+Modules/mediastream/libwebrtc/LibWebRTCRtpTransformBackend.cpp
 Modules/notifications/Notification.cpp
 Modules/notifications/NotificationController.cpp
 Modules/paymentrequest/MerchantValidationEvent.cpp
@@ -3321,6 +3325,7 @@ JSRTCRtpSender.cpp
 JSRTCRtpSynchronizationSource.cpp
 JSRTCRtpTransceiver.cpp
 JSRTCRtpTransceiverDirection.cpp
+JSRTCRtpTransform.cpp
 JSRTCSdpType.cpp
 JSRTCSessionDescription.cpp
 JSRTCSessionDescriptionInit.cpp

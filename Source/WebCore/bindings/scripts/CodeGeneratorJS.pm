@@ -3222,9 +3222,9 @@ sub GenerateHeader
     if (ShouldGenerateWrapperOwnerCode($hasParent, $interface)) {
         if ($interfaceName ne "Node" && $codeGenerator->InheritsInterface($interface, "Node")) {
             $headerIncludes{"JSNode.h"} = 1;
-            push(@headerContent, "class JS${interfaceName}Owner : public JSNodeOwner {\n");
+            push(@headerContent, "class ${exportMacro}JS${interfaceName}Owner : public JSNodeOwner {\n");
         } else {
-            push(@headerContent, "class JS${interfaceName}Owner : public JSC::WeakHandleOwner {\n");
+            push(@headerContent, "class ${exportMacro}JS${interfaceName}Owner : public JSC::WeakHandleOwner {\n");
         }
         $headerIncludes{"<wtf/NeverDestroyed.h>"} = 1;
         push(@headerContent, "public:\n");

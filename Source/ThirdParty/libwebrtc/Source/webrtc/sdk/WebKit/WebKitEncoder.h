@@ -80,7 +80,7 @@ void initializeLocalEncoder(LocalEncoder, uint16_t width, uint16_t height, unsig
 void encodeLocalEncoderFrame(LocalEncoder, CVPixelBufferRef, int64_t timeStampNs, uint32_t timeStamp, webrtc::VideoRotation, bool isKeyframeRequired);
 void setLocalEncoderRates(LocalEncoder, uint32_t bitRate, uint32_t frameRate);
 void setLocalEncoderLowLatency(LocalEncoder, bool isLowLatencyEnabled);
-void encoderVideoTaskComplete(void*, webrtc::VideoCodecType, uint8_t* buffer, size_t length, const WebKitEncodedFrameInfo&);
+void encoderVideoTaskComplete(void*, webrtc::VideoCodecType, const uint8_t* buffer, size_t length, const WebKitEncodedFrameInfo&);
 
 template<class Decoder>
 bool WebKitEncodedFrameInfo::decode(Decoder& decoder, WebKitEncodedFrameInfo& info)

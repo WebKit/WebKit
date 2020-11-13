@@ -258,12 +258,15 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/mediastream/RTCRtpHeaderExtensionParameters.idl \
     $(WebCore)/Modules/mediastream/RTCRtpParameters.idl \
     $(WebCore)/Modules/mediastream/RTCRtpReceiver.idl \
+    $(WebCore)/Modules/mediastream/RTCRtpReceiver+Transform.idl \
     $(WebCore)/Modules/mediastream/RTCRtpRtxParameters.idl \
     $(WebCore)/Modules/mediastream/RTCRtpSendParameters.idl \
     $(WebCore)/Modules/mediastream/RTCRtpSender.idl \
+    $(WebCore)/Modules/mediastream/RTCRtpSender+Transform.idl \
     $(WebCore)/Modules/mediastream/RTCRtpSynchronizationSource.idl \
     $(WebCore)/Modules/mediastream/RTCRtpTransceiver.idl \
     $(WebCore)/Modules/mediastream/RTCRtpTransceiverDirection.idl \
+    $(WebCore)/Modules/mediastream/RTCRtpTransform.idl \
     $(WebCore)/Modules/mediastream/RTCSdpType.idl \
     $(WebCore)/Modules/mediastream/RTCSessionDescription.idl \
     $(WebCore)/Modules/mediastream/RTCSessionDescriptionInit.idl \
@@ -1226,6 +1229,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/testing/MockPaymentContactFields.idl \
     $(WebCore)/testing/MockPaymentCoordinator.idl \
     $(WebCore)/testing/MockPaymentError.idl \
+    $(WebCore)/testing/MockRTCRtpTransform.idl \
     $(WebCore)/testing/MockWebAuthenticationConfiguration.idl \
     $(WebCore)/testing/ServiceWorkerInternals.idl \
     $(WebCore)/testing/TypeConversions.idl \

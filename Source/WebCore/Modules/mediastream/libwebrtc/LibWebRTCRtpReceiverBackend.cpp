@@ -25,7 +25,9 @@
 #include "config.h"
 #include "LibWebRTCRtpReceiverBackend.h"
 
+#include "LibWebRTCRtpReceiverTransformBackend.h"
 #include "LibWebRTCUtils.h"
+#include "RTCRtpTransformBackend.h"
 #include "RealtimeIncomingAudioSource.h"
 #include "RealtimeIncomingVideoSource.h"
 
@@ -114,6 +116,10 @@ Ref<RealtimeMediaSource> LibWebRTCRtpReceiverBackend::createSource()
     RELEASE_ASSERT_NOT_REACHED();
 }
 
+Ref<RTCRtpTransformBackend> LibWebRTCRtpReceiverBackend::createRTCRtpTransformBackend()
+{
+    return LibWebRTCRtpReceiverTransformBackend::create(m_rtcReceiver);
+}
 
 } // namespace WebCore
 

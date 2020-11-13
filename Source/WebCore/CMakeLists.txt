@@ -399,13 +399,16 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/mediastream/RTCRtpFecParameters.idl
     Modules/mediastream/RTCRtpHeaderExtensionParameters.idl
     Modules/mediastream/RTCRtpParameters.idl
+    Modules/mediastream/RTCRtpReceiver+Transform.idl
     Modules/mediastream/RTCRtpReceiver.idl
     Modules/mediastream/RTCRtpRtxParameters.idl
     Modules/mediastream/RTCRtpSendParameters.idl
+    Modules/mediastream/RTCRtpSender+Transform.idl
     Modules/mediastream/RTCRtpSender.idl
     Modules/mediastream/RTCRtpSynchronizationSource.idl
     Modules/mediastream/RTCRtpTransceiver.idl
     Modules/mediastream/RTCRtpTransceiverDirection.idl
+    Modules/mediastream/RTCRtpTransform.idl
     Modules/mediastream/RTCSdpType.idl
     Modules/mediastream/RTCSessionDescription.idl
     Modules/mediastream/RTCSessionDescriptionInit.idl
@@ -1749,6 +1752,7 @@ set(WebCoreTestSupport_IDL_FILES
     testing/MockCDMFactory.idl
     testing/MockContentFilterSettings.idl
     testing/MockPageOverlay.idl
+    testing/MockRTCRtpTransform.idl
     testing/ServiceWorkerInternals.idl
     testing/TypeConversions.idl
 )
@@ -1772,6 +1776,7 @@ list(APPEND WebCoreTestSupport_SOURCES
     testing/MockLibWebRTCPeerConnection.cpp
     testing/MockPageOverlay.cpp
     testing/MockPageOverlayClient.cpp
+    testing/MockRTCRtpTransform.cpp
     testing/ServiceWorkerInternals.cpp
     testing/js/WebCoreTestSupport.cpp
 )

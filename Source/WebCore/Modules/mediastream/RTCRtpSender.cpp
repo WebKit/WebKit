@@ -66,7 +66,11 @@ RTCRtpSender::RTCRtpSender(RTCPeerConnection& connection, String&& trackKind, Ve
     ASSERT(m_backend);
 }
 
-RTCRtpSender::~RTCRtpSender() = default;
+RTCRtpSender::~RTCRtpSender()
+{
+    if (m_transform)
+        m_transform->detachFromSender(*this);
+}
 
 void RTCRtpSender::setTrackToNull()
 {
@@ -77,6 +81,9 @@ void RTCRtpSender::setTrackToNull()
 
 void RTCRtpSender::stop()
 {
+    if (m_transform)
+        m_transform->detachFromSender(*this);
+
     m_trackId = { };
     m_track = nullptr;
     m_backend = nullptr;
@@ -184,6 +191,20 @@ Optional<RTCRtpTransceiverDirection> RTCRtpSender::currentTransceiverDirection()
         return { };
 
     return senderTransceiver->currentDirection();
+}
+
+ExceptionOr<void> RTCRtpSender::setTransform(RefPtr<RTCRtpTransform>&& transform)
+{
+    if (transform && transform->isAttached())
+        return Exception { InvalidStateError, "transform is already in use"_s };
+
+    if (m_transform)
+        m_transform->detachFromSender(*this);
+    m_transform = WTFMove(transform);
+    if (m_transform)
+        m_transform->attachToSender(*this);
+
+    return { };
 }
 
 } // namespace WebCore

@@ -70,6 +70,7 @@ private:
     RTCRtpSendParameters getParameters() const final;
     void setParameters(const RTCRtpSendParameters&, DOMPromiseDeferred<void>&&) final;
     std::unique_ptr<RTCDTMFSenderBackend> createDTMFBackend() final;
+    Ref<RTCRtpTransformBackend> createRTCRtpTransformBackend() final;
 
     void startSource();
     void stopSource();

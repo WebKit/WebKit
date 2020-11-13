@@ -984,6 +984,19 @@ WebRTCH265CodecEnabled:
     WebKit:
       default: false
 
+WebRTCInsertableStreamsEnabled:
+  type: bool
+  condition: ENABLE(WEB_RTC)
+  humanReadableName: "WebRTC Insertable Streams API"
+  humanReadableDescription: "Enable WebRTC Insertable Streams API"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 # FIXME: This is not relevent for WebKitLegacy, so should be excluded from WebKitLegacy entirely.
 WebRTCPlatformCodecsInGPUProcessEnabled:
   type: bool

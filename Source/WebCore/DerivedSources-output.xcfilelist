@@ -1105,10 +1105,10 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHashChangeEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHashChangeEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHdrMetadataType.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHdrMetadataType.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHighlightRegister.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHighlightRegister.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHighlight.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHighlight.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHighlightRegister.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHighlightRegister.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHistory.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHistory.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHkdfParams.cpp
@@ -1341,6 +1341,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMockPaymentCoordinator.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMockPaymentCoordinator.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMockPaymentError.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMockPaymentError.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMockRTCRtpTransform.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMockRTCRtpTransform.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMockWebAuthenticationConfiguration.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMockWebAuthenticationConfiguration.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMouseEvent.cpp
@@ -1697,12 +1699,16 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCRtpHeaderExtensionParameters.c
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCRtpHeaderExtensionParameters.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCRtpParameters.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCRtpParameters.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCRtpReceiver+Transform.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCRtpReceiver+Transform.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCRtpReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCRtpReceiver.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCRtpRtxParameters.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCRtpRtxParameters.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCRtpSendParameters.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCRtpSendParameters.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCRtpSender+Transform.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCRtpSender+Transform.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCRtpSender.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCRtpSender.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCRtpSynchronizationSource.cpp
@@ -1711,6 +1717,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCRtpTransceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCRtpTransceiver.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCRtpTransceiverDirection.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCRtpTransceiverDirection.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCRtpTransform.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCRtpTransform.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCSdpType.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCSdpType.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCSessionDescription.cpp

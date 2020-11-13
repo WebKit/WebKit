@@ -290,9 +290,11 @@ int32_t RemoteVideoEncoder::RegisterEncodeCompleteCallback(EncodedImageCallback*
     return videoEncoderCallbacks().registerEncodeCompleteCallback(m_internalEncoder, callback);
 }
 
-void encoderVideoTaskComplete(void* callback, webrtc::VideoCodecType codecType, uint8_t* buffer, size_t length, const WebKitEncodedFrameInfo& info)
+void encoderVideoTaskComplete(void* callback, webrtc::VideoCodecType codecType, const uint8_t* buffer, size_t length, const WebKitEncodedFrameInfo& info)
 {
-    webrtc::EncodedImage encodedImage(buffer, length, length);
+    webrtc::EncodedImage encodedImage;
+    encodedImage.SetEncodedData(EncodedImageBuffer::Create(buffer, length));
+
     encodedImage._encodedWidth = info.width;
     encodedImage._encodedHeight = info.height;
     encodedImage.SetTimestamp(info.timeStamp);

@@ -441,7 +441,7 @@ void LibWebRTCCodecs::completedEncoding(RTCEncoderIdentifier identifier, IPC::Da
     if (!encoder->encodedImageCallback)
         return;
 
-    webrtc::encoderVideoTaskComplete(encoder->encodedImageCallback, encoder->codecType, const_cast<uint8_t*>(data.data()), data.size(), info);
+    webrtc::encoderVideoTaskComplete(encoder->encodedImageCallback, encoder->codecType, data.data(), data.size(), info);
 }
 
 CVPixelBufferPoolRef LibWebRTCCodecs::pixelBufferPool(size_t width, size_t height, OSType type)

@@ -31,12 +31,15 @@
 
 namespace WebCore {
 
+class RTCRtpTransformBackend;
+
 class RTCRtpReceiverBackend {
 public:
     virtual ~RTCRtpReceiverBackend() = default;
     virtual RTCRtpParameters getParameters() { return { }; }
     virtual Vector<RTCRtpContributingSource> getContributingSources() const { return { }; }
     virtual Vector<RTCRtpSynchronizationSource> getSynchronizationSources() const { return { }; }
+    virtual Ref<RTCRtpTransformBackend> createRTCRtpTransformBackend() = 0;
 };
 
 } // namespace WebCore

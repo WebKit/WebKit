@@ -174,6 +174,7 @@ namespace WebCore {
     macro(MediaStream) \
     macro(MediaStreamTrack) \
     macro(MerchantValidationEvent) \
+    macro(MockRTCRtpTransform) \
     macro(ModernMediaControls) \
     macro(NavigatorCredentials) \
     macro(NavigatorMediaDevices) \
@@ -220,6 +221,7 @@ namespace WebCore {
     macro(RTCRtpReceiver) \
     macro(RTCRtpSender) \
     macro(RTCRtpTransceiver) \
+    macro(RTCRtpTransform) \
     macro(RTCSessionDescription) \
     macro(RTCStatsReport) \
     macro(RTCTrackEvent) \

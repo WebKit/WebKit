@@ -1,3 +1,17 @@
+2020-11-12  Youenn Fablet  <youenn@apple.com>
+
+        Add infrastructure for WebRTC transforms
+        https://bugs.webkit.org/show_bug.cgi?id=218750
+
+        Reviewed by Eric Carlson.
+
+        Make sure buffer is owned by the encoded image object.
+
+        * Configurations/libwebrtc.mac.exp:
+        * Source/webrtc/sdk/WebKit/WebKitEncoder.h:
+        * Source/webrtc/sdk/WebKit/WebKitEncoder.mm:
+        (webrtc::encoderVideoTaskComplete):
+
 2020-11-10  Youenn Fablet  <youenn@apple.com> and Victor M Jaquez <vjaquez@igalia.com>
 
         Update WebRTC liwebrtc to M87

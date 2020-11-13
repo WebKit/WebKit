@@ -129,8 +129,8 @@ $(PROJECT_DIR)/Modules/geolocation/PositionCallback.idl
 $(PROJECT_DIR)/Modules/geolocation/PositionError.idl
 $(PROJECT_DIR)/Modules/geolocation/PositionErrorCallback.idl
 $(PROJECT_DIR)/Modules/geolocation/PositionOptions.idl
-$(PROJECT_DIR)/Modules/highlight/HighlightRegister.idl
 $(PROJECT_DIR)/Modules/highlight/Highlight.idl
+$(PROJECT_DIR)/Modules/highlight/HighlightRegister.idl
 $(PROJECT_DIR)/Modules/indexeddb/DOMWindow+IndexedDatabase.idl
 $(PROJECT_DIR)/Modules/indexeddb/IDBCursor.idl
 $(PROJECT_DIR)/Modules/indexeddb/IDBCursorDirection.idl
@@ -233,13 +233,16 @@ $(PROJECT_DIR)/Modules/mediastream/RTCRtpEncodingParameters.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCRtpFecParameters.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCRtpHeaderExtensionParameters.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCRtpParameters.idl
+$(PROJECT_DIR)/Modules/mediastream/RTCRtpReceiver+Transform.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCRtpReceiver.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCRtpRtxParameters.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCRtpSendParameters.idl
+$(PROJECT_DIR)/Modules/mediastream/RTCRtpSender+Transform.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCRtpSender.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCRtpSynchronizationSource.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCRtpTransceiver.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCRtpTransceiverDirection.idl
+$(PROJECT_DIR)/Modules/mediastream/RTCRtpTransform.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCSdpType.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCSessionDescription.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCSessionDescriptionInit.idl
@@ -289,6 +292,7 @@ $(PROJECT_DIR)/Modules/quota/WorkerNavigator+StorageQuota.idl
 $(PROJECT_DIR)/Modules/remoteplayback/HTMLMediaElement+RemotePlayback.idl
 $(PROJECT_DIR)/Modules/remoteplayback/RemotePlayback.idl
 $(PROJECT_DIR)/Modules/remoteplayback/RemotePlaybackAvailabilityCallback.idl
+$(PROJECT_DIR)/Modules/speech/DOMWindow+SpeechSynthesis.idl
 $(PROJECT_DIR)/Modules/speech/SpeechRecognition.idl
 $(PROJECT_DIR)/Modules/speech/SpeechRecognitionAlternative.idl
 $(PROJECT_DIR)/Modules/speech/SpeechRecognitionErrorCode.idl
@@ -296,7 +300,6 @@ $(PROJECT_DIR)/Modules/speech/SpeechRecognitionErrorEvent.idl
 $(PROJECT_DIR)/Modules/speech/SpeechRecognitionEvent.idl
 $(PROJECT_DIR)/Modules/speech/SpeechRecognitionResult.idl
 $(PROJECT_DIR)/Modules/speech/SpeechRecognitionResultList.idl
-$(PROJECT_DIR)/Modules/speech/DOMWindow+SpeechSynthesis.idl
 $(PROJECT_DIR)/Modules/speech/SpeechSynthesis.idl
 $(PROJECT_DIR)/Modules/speech/SpeechSynthesisEvent.idl
 $(PROJECT_DIR)/Modules/speech/SpeechSynthesisUtterance.idl
@@ -1301,6 +1304,7 @@ $(PROJECT_DIR)/testing/MockPaymentAddress.idl
 $(PROJECT_DIR)/testing/MockPaymentContactFields.idl
 $(PROJECT_DIR)/testing/MockPaymentCoordinator.idl
 $(PROJECT_DIR)/testing/MockPaymentError.idl
+$(PROJECT_DIR)/testing/MockRTCRtpTransform.idl
 $(PROJECT_DIR)/testing/MockWebAuthenticationConfiguration.idl
 $(PROJECT_DIR)/testing/ServiceWorkerInternals.idl
 $(PROJECT_DIR)/testing/TypeConversions.idl

@@ -30,9 +30,11 @@
 #include "JSDOMPromiseDeferred.h"
 #include "LibWebRTCDTMFSenderBackend.h"
 #include "LibWebRTCPeerConnectionBackend.h"
+#include "LibWebRTCRtpSenderTransformBackend.h"
 #include "LibWebRTCUtils.h"
 #include "RTCPeerConnection.h"
 #include "RTCRtpSender.h"
+#include "RTCRtpTransformBackend.h"
 #include "ScriptExecutionContext.h"
 
 namespace WebCore {
@@ -134,6 +136,11 @@ void LibWebRTCRtpSenderBackend::setParameters(const RTCRtpSendParameters& parame
 std::unique_ptr<RTCDTMFSenderBackend> LibWebRTCRtpSenderBackend::createDTMFBackend()
 {
     return makeUnique<LibWebRTCDTMFSenderBackend>(m_rtcSender->GetDtmfSender());
+}
+
+Ref<RTCRtpTransformBackend> LibWebRTCRtpSenderBackend::createRTCRtpTransformBackend()
+{
+    return LibWebRTCRtpSenderTransformBackend::create(m_rtcSender);
 }
 
 RealtimeOutgoingVideoSource* LibWebRTCRtpSenderBackend::videoSource()

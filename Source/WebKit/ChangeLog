@@ -1,3 +1,16 @@
+2020-11-12  Youenn Fablet  <youenn@apple.com>
+
+        Add infrastructure for WebRTC transforms
+        https://bugs.webkit.org/show_bug.cgi?id=218750
+
+        Reviewed by Eric Carlson.
+
+        Remove no longer needed const casting.
+
+        * Configurations/WebKit.xcconfig:
+        * WebProcess/GPU/webrtc/LibWebRTCCodecs.cpp:
+        (WebKit::LibWebRTCCodecs::completedEncoding):
+
 2020-11-12  Alex Christensen  <achristensen@webkit.org>
 
         Remove SecItemShim.dylib
