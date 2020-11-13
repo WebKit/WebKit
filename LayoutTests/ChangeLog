@@ -1,3 +1,12 @@
+2020-11-12  Truitt Savell  <tsavell@apple.com>
+
+        REGRESSION: [ Mac wk2 ] webrtc/captureCanvas-webrtc-software-h264-baseline.html is flaky failing
+        https://bugs.webkit.org/show_bug.cgi?id=218875
+
+        unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2020-11-12  Simon Fraser  <simon.fraser@apple.com>
 
         Move tests in fast/events that dispatch platform wheel events to their own directory
