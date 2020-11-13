@@ -1,3 +1,12 @@
+2020-11-13  Eric Carlson  <eric.carlson@apple.com>
+
+        Add _STAttributionDisplayName to macOS WebContent Info.plist
+        https://bugs.webkit.org/show_bug.cgi?id=218900
+
+        Reviewed by Youenn Fablet.
+
+        * WebProcess/EntryPoint/Cocoa/XPCService/WebContentService/Info-OSX.plist:
+
 2020-11-13  Miguel Gomez  <magomez@igalia.com>
 
         [GTK][WPE] CSS backdrop overlay corners are not rounded on results.webkit.org

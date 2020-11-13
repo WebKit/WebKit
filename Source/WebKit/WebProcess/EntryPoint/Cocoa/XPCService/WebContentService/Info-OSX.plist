@@ -36,6 +36,8 @@
 	<true/>
 	<key>NSMainNibFile</key>
 	<string>WebContentProcess</string>
+	<key>_STAttributionDisplayName</key>
+	<string>Website</string>
 	<key>XPCService</key>
 	<dict>
 		<key>JoinExistingSession</key>
