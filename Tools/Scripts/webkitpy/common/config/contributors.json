@@ -3492,9 +3492,11 @@
       "emails" : [
          "kkinnunen@apple.com"
       ],
+      "expertise" : "WebGL",
       "nicks" : [
          "kimmok"
-      ]
+      ],
+      "status" : "committer"
    },
    "Kinuko Yasuda" : {
       "emails" : [

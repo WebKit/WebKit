@@ -1,3 +1,12 @@
+2020-11-13  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Add Kimmo Kinnunen as committer
+        https://bugs.webkit.org/show_bug.cgi?id=218888
+
+        Reviewed by Antti Koivisto.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2020-11-12  Sam Weinig  <weinig@apple.com>
 
         Move more WebKitLegacy specific settings usage to WebPreferences.yaml
