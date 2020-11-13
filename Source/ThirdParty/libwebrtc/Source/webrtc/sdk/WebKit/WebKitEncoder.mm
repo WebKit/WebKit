@@ -248,6 +248,7 @@ int32_t RemoteVideoEncoder::InitEncode(const VideoCodec* codec, const Settings&)
 
 int32_t RemoteVideoEncoder::Release()
 {
+    RegisterEncodeCompleteCallback(nullptr);
     return 0;
 }
 

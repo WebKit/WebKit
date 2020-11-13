@@ -1,3 +1,15 @@
+2020-11-13  Youenn Fablet  <youenn@apple.com>
+
+        Remote encoder should set its encoder frame callback to nullptr when being released
+        https://bugs.webkit.org/show_bug.cgi?id=218906
+
+        Reviewed by Eric Carlson.
+
+        * Source/webrtc/sdk/WebKit/WebKitEncoder.mm:
+        (webrtc::RemoteVideoEncoder::Release):
+        We need to reset the callback at Release call time so that WebKit will take a lock to set it back to null.
+        That way, we ensure to not call this callback while libwebrtc expects not to be called.
+
 2020-11-12  Youenn Fablet  <youenn@apple.com>
 
         Add infrastructure for WebRTC transforms
