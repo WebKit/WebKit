@@ -1,3 +1,43 @@
+2020-11-13  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r266052. rdar://problem/71378190
+
+    RTCRtpSynchronizationSource.rtpTimestamp is not present
+    https://bugs.webkit.org/show_bug.cgi?id=215722
+    
+    Patch by Justin Uberti <justin@uberti.name> on 2020-08-24
+    Reviewed by Youenn Fablet.
+    
+    LayoutTests/imported/w3c:
+    
+    Updated expectations file to indicate that tests checking for .rtpTimestamp now pass.
+    
+    * LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCRtpReceiver-getSynchronizationSources.https-expected.txt:
+    
+    Source/WebCore:
+    
+    Updated expected results in LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCRtpReceiver-getSynchronizationSources.https-expected.txt.
+    
+    * Modules/mediastream/RTCRtpContributingSource.idl:
+    * Modules/mediastream/RTCRtpContributingSource.idl:
+    * Modules/mediastream/RTCRtpSynchronizationSource.idl:
+    Minor modification to ensure JSRTCRtpSynchronizationSource.cpp gets regenerated.
+    * Modules/mediastream/libwebrtc/LibWebRTCRtpReceiverBackend.cpp:
+    (WebCore::fillRTCRtpContributingSource):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@266052 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-08-24  Justin Uberti  <justin@uberti.name>
+
+            RTCRtpSynchronizationSource.rtpTimestamp is not present
+            https://bugs.webkit.org/show_bug.cgi?id=215722
+
+            Reviewed by Youenn Fablet.
+
+            Updated expectations file to indicate that tests checking for .rtpTimestamp now pass.
+
+            * LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCRtpReceiver-getSynchronizationSources.https-expected.txt:
+
 2020-10-06  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r267833. rdar://problem/70024626
