@@ -82,4 +82,8 @@ bool defaultAllowDisplayOfInsecureContent();
 bool defaultAllowRunningOfInsecureContent();
 bool defaultShouldConvertInvalidURLsToBlank();
 
+#if PLATFORM(MAC)
+bool defaultPassiveWheelListenersAsDefaultOnDocument();
+#endif
+
 } // namespace WebKit

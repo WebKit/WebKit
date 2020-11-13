@@ -275,6 +275,11 @@ fast/events/wheel/continuous-platform-wheelevent-in-scrolling-div.html [ Failure
 fast/events/wheel/platform-wheelevent-in-scrolling-div.html [ Failure Timeout ]
 fast/events/wheel/wheelevent-in-horizontal-scrollbar-in-rtl.html [ Failure ]
 fast/events/wheel/wheelevent-in-vertical-scrollbar-in-rtl.html [ Failure ]
+fast/events/wheel/wheel-event-listeners-on-body-made-passive.html [ Skip ]
+fast/events/wheel/wheel-event-listeners-on-document-made-passive.html [ Skip ]
+fast/events/wheel/wheel-event-listeners-on-window-left-active.html [ Skip ]
+fast/events/wheel/wheel-event-listeners-on-window-made-passive.html [ Skip ]
+
 scrollbars/scroll-rtl-or-bt-layer.html [ Timeout ]
 webkit.org/b/208559 fast/scrolling/arrow-key-scroll-in-rtl-document.html [ Skip ]
 webkit.org/b/208559 fast/scrolling/programmatic-scroll-to-zero-zero.html [ Skip ]

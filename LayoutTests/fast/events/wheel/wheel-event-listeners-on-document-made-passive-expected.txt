@@ -1,0 +1,7 @@
+Tests that a wheel event handler on the document is passive (cannot prevent scrolling)
+PASS windowScrollEventCount > 0 is true
+PASS defaultPrevented is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

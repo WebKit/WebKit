@@ -11,9 +11,6 @@
         (rect (0,0) width=800 height=600)
       (wheel event listener region
         (rect (0,0) width=800 height=600)
-        (non-passive
-          (rect (0,0) width=800 height=600)
-        )
       )
       )
     )

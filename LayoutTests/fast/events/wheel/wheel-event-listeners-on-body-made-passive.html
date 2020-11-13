@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            height: 5000px;
+        }
+    </style>
+    <script src="../../../resources/js-test-pre.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script>
+        var jsTestIsAsync = true;
+
+        let windowScrollEventCount = 0;
+        let defaultPrevented;
+
+        async function testScroll()
+        {
+            await UIHelper.mouseWheelScrollAt(100, 100);
+            shouldBeTrue('windowScrollEventCount > 0');
+            shouldBeFalse('defaultPrevented');
+            finishJSTest();
+        }
+
+        window.addEventListener('load', () => {
+            debug('Tests that a wheel event handler on the body is passive (cannot prevent scrolling)')
+            document.body.addEventListener('wheel', (event) => {
+                event.preventDefault();
+                defaultPrevented = event.defaultPrevented;
+            });
+
+            window.addEventListener('scroll', () => {
+                ++windowScrollEventCount;
+            }, false);
+
+            setTimeout(testScroll, 0);
+        }, false);
+    </script>
+</head>
+<body>
+    <script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

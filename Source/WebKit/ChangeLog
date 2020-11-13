@@ -1,3 +1,23 @@
+2020-11-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Force wheel event listeners on the root to be passive
+        https://bugs.webkit.org/show_bug.cgi?id=218842
+        <rdar://problem/71312668>
+
+        Reviewed by Chris Dumez.
+
+        Following Blink (https://www.chromestatus.com/feature/6662647093133312) force 'wheel' and
+        'mousewheel' event listeners on root objects (window, document and body) to be passive if
+        they were not explicitly registered as non-passive.
+
+        This behavior is controlled by an experimental feature flag, and a linked-on-or-after check
+        to avoid changing behavior for apps that embed WebKit until they link against new SDKs.
+
+        * Shared/WebPreferencesDefaultValues.cpp:
+        (WebKit::defaultCSSOMViewScrollingAPIEnabled):
+        (WebKit::defaultPassiveWheelListenersAsDefaultOnDocument):
+        * Shared/WebPreferencesDefaultValues.h:
+
 2020-11-13  Eric Carlson  <eric.carlson@apple.com>
 
         Add _STAttributionDisplayName to macOS WebContent Info.plist

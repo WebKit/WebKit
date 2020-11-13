@@ -803,15 +803,33 @@ bool Quirks::shouldBypassAsyncScriptDeferring() const
 
 bool Quirks::shouldMakeEventListenerPassive(const EventTarget& eventTarget, const AtomString& eventType, const EventListener& eventListener)
 {
-    if (eventNames().isTouchScrollBlockingEventType(eventType)) {
-        if (is<DOMWindow>(eventTarget)) {
-            auto& window = downcast<DOMWindow>(eventTarget);
-            if (auto* document = window.document())
-                return document->settings().passiveTouchListenersAsDefaultOnDocument();
-        } else if (is<Node>(eventTarget)) {
+    auto eventTargetIsRoot = [](const EventTarget& eventTarget) {
+        if (is<DOMWindow>(eventTarget))
+            return true;
+
+        if (is<Node>(eventTarget)) {
             auto& node = downcast<Node>(eventTarget);
-            if (is<Document>(node) || node.document().documentElement() == &node || node.document().body() == &node)
-                return node.document().settings().passiveTouchListenersAsDefaultOnDocument();
+            return is<Document>(node) || node.document().documentElement() == &node || node.document().body() == &node;
+        }
+        return false;
+    };
+
+    auto documentFromEventTarget = [](const EventTarget& eventTarget) -> Document* {
+        return downcast<Document>(eventTarget.scriptExecutionContext());
+    };
+
+    if (eventNames().isTouchScrollBlockingEventType(eventType)) {
+        if (eventTargetIsRoot(eventTarget)) {
+            if (auto* document = documentFromEventTarget(eventTarget))
+                return document->settings().passiveTouchListenersAsDefaultOnDocument();
+        }
+        return false;
+    }
+
+    if (eventNames().isWheelEventType(eventType)) {
+        if (eventTargetIsRoot(eventTarget)) {
+            if (auto* document = documentFromEventTarget(eventTarget))
+                return document->settings().passiveWheelListenersAsDefaultOnDocument();
         }
         return false;
     }

@@ -52,6 +52,16 @@ bool defaultCSSOMViewScrollingAPIEnabled()
 
 #endif
 
+#if PLATFORM(MAC)
+
+bool defaultPassiveWheelListenersAsDefaultOnDocument()
+{
+    static bool result = linkedOnOrAfter(WebCore::SDKVersion::FirstThatDefaultsToPassiveWheelListenersOnDocument);
+    return result;
+}
+
+#endif
+
 #if PLATFORM(MAC) || PLATFORM(IOS_FAMILY)
 
 bool defaultDisallowSyncXHRDuringPageDismissalEnabled()

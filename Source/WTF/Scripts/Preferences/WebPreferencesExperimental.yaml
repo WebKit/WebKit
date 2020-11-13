@@ -601,6 +601,20 @@ PaintTimingEnabled:
     WebKit:
       default: true
 
+PassiveWheelListenersAsDefaultOnDocument:
+  type: bool
+  humanReadableName: "Wheel Event listeners on the root made passive"
+  humanReadableDescription: "Force wheel event listeners registered on the window, document or body to be passive"
+  defaultValue:
+    WebKitLegacy:
+      "PLATFORM(MAC)": WebKit::defaultPassiveWheelListenersAsDefaultOnDocument()
+      default: true
+    WebKit:
+      "PLATFORM(MAC)": WebKit::defaultPassiveWheelListenersAsDefaultOnDocument()
+      default: true
+    WebCore:
+      default: true
+
 # FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely.
 PerElementSpeakerSelectionEnabled:
   type: bool

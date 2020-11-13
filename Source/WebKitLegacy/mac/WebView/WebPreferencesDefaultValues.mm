@@ -132,7 +132,8 @@ bool defaultInlineMediaPlaybackRequiresPlaysInlineAttribute()
 
 bool defaultPassiveTouchListenersAsDefaultOnDocument()
 {
-    return linkedOnOrAfter(WebCore::SDKVersion::FirstThatDefaultsToPassiveTouchListenersOnDocument);
+    static bool result = linkedOnOrAfter(WebCore::SDKVersion::FirstThatDefaultsToPassiveTouchListenersOnDocument);
+    return result;
 }
 
 bool defaultRequiresUserGestureToLoadVideo()
@@ -281,5 +282,15 @@ bool defaultShouldConvertInvalidURLsToBlank()
 #endif
     return shouldConvertInvalidURLsToBlank;
 }
+
+#if PLATFORM(MAC)
+
+bool defaultPassiveWheelListenersAsDefaultOnDocument()
+{
+    static bool result = linkedOnOrAfter(WebCore::SDKVersion::FirstThatDefaultsToPassiveWheelListenersOnDocument);
+    return result;
+}
+
+#endif
 
 } // namespace WebKit

@@ -47,6 +47,10 @@ bool defaultTextAutosizingUsesIdempotentMode();
 #endif
 #endif
 
+#if PLATFORM(MAC)
+bool defaultPassiveWheelListenersAsDefaultOnDocument();
+#endif
+
 #if PLATFORM(MAC) || PLATFORM(IOS_FAMILY)
 bool defaultDisallowSyncXHRDuringPageDismissalEnabled();
 #endif
