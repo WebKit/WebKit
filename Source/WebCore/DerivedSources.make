@@ -1498,6 +1498,7 @@ USER_AGENT_STYLE_SHEETS = \
     $(WebCore)/css/dialog.css \
     $(WebCore)/css/fullscreen.css \
     $(WebCore)/css/html.css \
+    $(WebCore)/css/iOSFormControlRefresh.css \
     $(WebCore)/css/mathml.css \
     $(WebCore)/css/mediaControls.css \
     $(WebCore)/css/plugIns.css \

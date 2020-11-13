@@ -84,6 +84,9 @@ StyleSheetContents* UserAgentStyle::dataListStyleSheet;
 #if ENABLE(INPUT_TYPE_COLOR)
 StyleSheetContents* UserAgentStyle::colorInputStyleSheet;
 #endif
+#if ENABLE(IOS_FORM_CONTROL_REFRESH)
+StyleSheetContents* UserAgentStyle::iOSFormControlRefreshStyleSheet;
+#endif
 
 #if PLATFORM(IOS_FAMILY)
 #define DEFAULT_OUTLINE_WIDTH "3px"
@@ -295,6 +298,13 @@ void UserAgentStyle::ensureDefaultStyleSheetsForElement(const Element& element)
         addToDefaultStyle(*fullscreenStyleSheet);
     }
 #endif // ENABLE(FULLSCREEN_API)
+
+#if ENABLE(IOS_FORM_CONTROL_REFRESH)
+    if (!iOSFormControlRefreshStyleSheet && element.document().settings().iOSFormControlRefreshEnabled()) {
+        iOSFormControlRefreshStyleSheet = parseUASheet(iOSFormControlRefreshUserAgentStyleSheet, sizeof(iOSFormControlRefreshUserAgentStyleSheet));
+        addToDefaultStyle(*iOSFormControlRefreshStyleSheet);
+    }
+#endif
 
     ASSERT(defaultStyle->features().idsInRules.isEmpty());
     ASSERT(mathMLStyleSheet || defaultStyle->features().siblingRules.isEmpty());

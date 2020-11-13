@@ -306,6 +306,19 @@ ICECandidateFilteringEnabled:
     WebCore:
       default: true
 
+IOSFormControlRefreshEnabled:
+  type: bool
+  humanReadableName: "iOS Form Control Refresh"
+  humanReadableDescription: "Enable the new appearance for form controls on iOS"
+  condition: ENABLE(IOS_FORM_CONTROL_REFRESH)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 IPCTestingAPIEnabled:
   type: bool
   humanReadableName: "IPC Testing API"
