@@ -30,7 +30,6 @@ import os
 import re
 import socket
 import json
-import cStringIO
 import urllib
 
 APPLE_WEBKIT_AWS_PROXY = "http://proxy01.webkit.org:3128"
@@ -47,6 +46,7 @@ if USE_BUILDBOT_VERSION2:
     from buildbot.process.results import Results
     from buildbot.steps.source.svn import SVN
 else:
+    import cStringIO
     from buildbot.steps.source import SVN
     logobserver = lambda: None
     logobserver.LineConsumerLogObserver = type('LineConsumerLogObserver', (object,), {})
@@ -272,6 +272,10 @@ class CompileWebKit(shell.Compile):
         architecture = self.getProperty('architecture')
         additionalArguments = self.getProperty('additionalArguments')
 
+        if USE_BUILDBOT_VERSION2:
+            self.log_observer = ParseByLineLogObserver(self.parseOutputLine)
+            self.addLogObserver('stdio', self.log_observer)
+
         if additionalArguments:
             self.setCommand(self.command + additionalArguments)
         if platform in ('mac', 'ios', 'tvos', 'watchos') and architecture:
@@ -289,7 +293,24 @@ class CompileWebKit(shell.Compile):
 
         return shell.Compile.start(self)
 
+    def parseOutputLine(self, line):
+        if "arning:" in line:
+            self._addToLog('warnings', line + '\n')
+        if "rror:" in line:
+            self._addToLog('errors', line + '\n')
+
+    @defer.inlineCallbacks
+    def _addToLog(self, logName, message):
+        try:
+            log = self.getLog(logName)
+        except KeyError:
+            log = yield self.addLog(logName)
+        log.addStdout(message)
+
     def createSummary(self, log):
+        # FIXME: delete this method after switching to Buildbot v2
+        if USE_BUILDBOT_VERSION2:
+            return
         platform = self.getProperty('platform')
         if platform.startswith('mac'):
             warnings = []

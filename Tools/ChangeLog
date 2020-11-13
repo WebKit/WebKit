@@ -1,3 +1,16 @@
+2020-11-13  Aakash Jain  <aakash_jain@apple.com>
+
+        [build.webkit.org] Update CompileWebKit step for new buildbot
+        https://bugs.webkit.org/show_bug.cgi?id=218922
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/build-webkit-org/steps.py:
+        (CompileWebKit.start): Initialize logobserver.
+        (CompileWebKit.parseOutputLine): Method to process each line.
+        (CompileWebKit._addToLog): Method to add to the log which is displayed in UI.
+        (CompileWebKit.createSummary):
+
 2020-11-13  Jonathan Bedard  <jbedard@apple.com>
 
         REGRESSION: r269514 Reset server port before restarting webserver
