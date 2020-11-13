@@ -604,8 +604,8 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderObject& child, Incl
 #endif
 
 #if ALLOW_INLINE_BLOCK
-    if (is<RenderBlock>(child)) {
-        auto& block = downcast<RenderBlock>(child);
+    if (is<RenderBlockFlow>(child)) {
+        auto& block = downcast<RenderBlockFlow>(child);
         if (!block.isReplaced() || !block.isInline())
             SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonSupportedChild, reasons, includeReasons)
         if (block.isFloating() || block.isPositioned())
@@ -614,6 +614,8 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderObject& child, Incl
             SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonSupportedChild, reasons, includeReasons);
 
         auto& style = block.style();
+        if (block.style().display() != DisplayType::InlineBlock)
+            SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonSupportedChild, reasons, includeReasons)
         if (style.verticalAlign() == VerticalAlign::Sub || style.verticalAlign() == VerticalAlign::Super)
             SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonSupportedChild, reasons, includeReasons);
         if (style.width().isPercent() || style.height().isPercent())
