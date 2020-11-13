@@ -1,3 +1,43 @@
+2020-11-13  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r269208. rdar://problem/71378171
+
+    AX: Incorrect list of voices being displayed on iOS
+    https://bugs.webkit.org/show_bug.cgi?id=218293
+    
+    Reviewed by Per Arne Vollan.
+    
+    Source/WebCore:
+    
+    Limit the voices that we display in WebSpeech to only built-in system voices. This was the intention of the "compact"
+    decision, but some mobile assets have compact voices, which are not available WebContent.
+    
+    * platform/ios/PlatformSpeechSynthesizerIOS.mm:
+    (WebCore::PlatformSpeechSynthesizer::initializeVoiceList):
+    
+    Source/WebCore/PAL:
+    
+    * PAL.xcodeproj/project.pbxproj:
+    * pal/PlatformMac.cmake:
+    * pal/spi/cocoa/AXSpeechManagerSPI.h: Added.
+    
+    Source/WTF:
+    
+    * wtf/PlatformHave.h:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@269208 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-10-30  Chris Fleizach  <cfleizach@apple.com>
+
+            AX: Incorrect list of voices being displayed on iOS
+            https://bugs.webkit.org/show_bug.cgi?id=218293
+
+            Reviewed by Per Arne Vollan.
+
+            * PAL.xcodeproj/project.pbxproj:
+            * pal/PlatformMac.cmake:
+            * pal/spi/cocoa/AXSpeechManagerSPI.h: Added.
+
 2020-10-15  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r268308. rdar://problem/70321629
