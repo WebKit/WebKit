@@ -1,3 +1,20 @@
+2020-11-13  Aakash Jain  <aakash_jain@apple.com>
+
+        [build.webkit.org] Update RunAPITests step for new buildbot
+        https://bugs.webkit.org/show_bug.cgi?id=218907
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/build-webkit-org/steps.py:
+        (TestWithFailureCount.getText): Added FIXME to remove this method after switching to buildbot v2.
+        (TestWithFailureCount.getText2): Added FIXME to remove this method after switching to buildbot v2.
+        (TestWithFailureCount.getResultSummary): Method to generate custom step summary.
+        (RunWebKitTests.getResultSummary): Removed unnecessary u'', python3 defaults to unicode anyways.
+        (RunAPITests):
+        (RunAPITests.start): Use ParseByLineLogObserver.
+        (RunAPITests.countFailures):
+        (RunAPITests.parseOutputLine): Method to process each line.
+
 2020-11-12  Darin Adler  <darin@apple.com>
 
         Remove unused advanced plug-in features: snapshotting and plug-in load policy

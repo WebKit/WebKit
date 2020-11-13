@@ -44,6 +44,7 @@ WithProperties = properties.WithProperties
 if USE_BUILDBOT_VERSION2:
     Interpolate = properties.Interpolate
     from buildbot.process import logobserver
+    from buildbot.process.results import Results
     from buildbot.steps.source.svn import SVN
 else:
     from buildbot.steps.source import SVN
@@ -91,13 +92,26 @@ class TestWithFailureCount(shell.Test):
         return SUCCESS
 
     def getText(self, cmd, results):
+        # FIXME: delete this method after switching to Buildbot v2
         return self.getText2(cmd, results)
 
     def getText2(self, cmd, results):
+        # FIXME: delete this method after switching to Buildbot v2
         if results != SUCCESS and self.failedTestCount:
             return [self.failedTestsFormatString % (self.failedTestCount, self.failedTestPluralSuffix)]
 
         return [self.name]
+
+    def getResultSummary(self):
+        status = self.name
+
+        if self.results != SUCCESS:
+            if self.failedTestCount:
+                status = self.failedTestsFormatString % (self.failedTestCount, self.failedTestPluralSuffix)
+            else:
+                status += ' ({})'.format(Results[self.results])
+
+        return {'step': status}
 
 
 class ConfigureBuild(buildstep.BuildStep):
@@ -617,8 +631,8 @@ class RunWebKitTests(shell.Test):
         status = self.name
 
         if self.results != SUCCESS and self.incorrectLayoutLines:
-            status = u' '.join(self.incorrectLayoutLines)
-            return {u'step': status}
+            status = ' '.join(self.incorrectLayoutLines)
+            return {'step': status}
         return super(RunWebKitTests, self).getResultSummary()
 
     def getText(self, cmd, results):
@@ -664,6 +678,7 @@ class RunAPITests(TestWithFailureCount):
         "--report", RESULTS_WEBKIT_URL,
     ]
     failedTestsFormatString = "%d api test%s failed or timed out"
+    test_summary_re = re.compile(r'Ran (?P<ran>\d+) tests of (?P<total>\d+) with (?P<passed>\d+) successful')
 
     def __init__(self, *args, **kwargs):
         kwargs['logEnviron'] = False
@@ -672,18 +687,29 @@ class RunAPITests(TestWithFailureCount):
     def start(self):
         if USE_BUILDBOT_VERSION2:
             self.workerEnvironment[RESULTS_SERVER_API_KEY] = os.getenv(RESULTS_SERVER_API_KEY)
+            self.log_observer = ParseByLineLogObserver(self.parseOutputLine)
+            self.addLogObserver('stdio', self.log_observer)
+            self.failedTestCount = 0
         else:
             self.slaveEnvironment[RESULTS_SERVER_API_KEY] = os.getenv(RESULTS_SERVER_API_KEY)
         appendCustomTestingFlags(self, self.getProperty('platform'), self.getProperty('device_model'))
         return shell.Test.start(self)
 
     def countFailures(self, cmd):
+        if USE_BUILDBOT_VERSION2:
+            return self.failedTestCount
+
         log_text = cmd.logs['stdio'].getText()
 
         match = re.search(r'Ran (?P<ran>\d+) tests of (?P<total>\d+) with (?P<passed>\d+) successful', log_text)
         if not match:
             return -1
         return int(match.group('ran')) - int(match.group('passed'))
+
+    def parseOutputLine(self, line):
+        match = self.test_summary_re.match(line)
+        if match:
+            self.failedTestCount = int(match.group('ran')) - int(match.group('passed'))
 
 
 class RunPythonTests(TestWithFailureCount):
