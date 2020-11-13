@@ -1,3 +1,13 @@
+2020-11-13  Aakash Jain  <aakash_jain@apple.com>
+
+        [build.webkit.org] Use python3 to run transfer-to-s3 script
+        https://bugs.webkit.org/show_bug.cgi?id=218904
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/build-webkit-org/steps.py:
+        (TransferToS3.start):
+
 2020-11-13  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         Add Kimmo Kinnunen as committer

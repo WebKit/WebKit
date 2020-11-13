@@ -1132,6 +1132,8 @@ class TransferToS3(master.MasterShellCommand):
         master.MasterShellCommand.__init__(self, **kwargs)
 
     def start(self):
+        if USE_BUILDBOT_VERSION2:
+            self.command[0] = 'python3'
         return master.MasterShellCommand.start(self)
 
     def finished(self, result):
