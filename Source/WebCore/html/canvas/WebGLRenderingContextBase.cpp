@@ -711,7 +711,7 @@ std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(Can
     }
 
     auto context = GraphicsContextGLOpenGL::create(attributes, hostWindow);
-    if (!context || !context->makeContextCurrent()) {
+    if (!context) {
         if (canvasElement) {
             canvasElement->dispatchEvent(WebGLContextEvent::create(eventNames().webglcontextcreationerrorEvent,
                 Event::CanBubble::No, Event::IsCancelable::Yes, "Could not create a WebGL context."));
@@ -4349,9 +4349,10 @@ void WebGLRenderingContextBase::readPixels(GCGLint x, GCGLint y, GCGLsizei width
     void* data = pixels.baseAddress();
 
 #if USE(ANGLE)
-        GCGLsizei length, columns, rows;
-        m_context->makeContextCurrent();
-        m_context->getExtensions().readnPixelsRobustANGLE(x, y, width, height, format, type, pixels.byteLength(), &length, &columns, &rows, data, false);
+    GCGLsizei length = 0;
+    GCGLsizei columns = 0;
+    GCGLsizei rows = 0;
+    m_context->getExtensions().readnPixelsRobustANGLE(x, y, width, height, format, type, pixels.byteLength(), &length, &columns, &rows, data, false);
 #else
     if (m_isRobustnessEXTSupported)
         m_context->getExtensions().readnPixelsEXT(x, y, width, height, format, type, pixels.byteLength(), data);

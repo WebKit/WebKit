@@ -108,7 +108,6 @@ public:
     PlatformLayer* platformLayer() const final;
 #endif
 
-    bool makeContextCurrent();
 #if PLATFORM(IOS_FAMILY)
     enum class ReleaseBehavior {
         PreserveThreadResources,
@@ -517,6 +516,9 @@ public:
 private:
     GraphicsContextGLOpenGL(GraphicsContextGLAttributes, HostWindow*, Destination = Destination::Offscreen, GraphicsContextGLOpenGL* sharedContext = nullptr);
 
+    // Called once by all the public entry points that eventually call OpenGL.
+    // Called once by all the public entry points of ExtensionsGL that eventually call OpenGL.
+    bool makeContextCurrent() WARN_UNUSED_RETURN;
 
     // Take into account the user's requested context creation attributes,
     // in particular stencil and antialias, and determine which could or
