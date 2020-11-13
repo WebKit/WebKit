@@ -115,6 +115,7 @@
 		1D12CC4B2411BCAE00FDA0A3 /* FeatureFlagsSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 1D12CC4A2411BCAE00FDA0A3 /* FeatureFlagsSPI.h */; };
 		293EE4A824154F8F0047493D /* AccessibilitySupportSoftLink.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 293EE4A624154F8F0047493D /* AccessibilitySupportSoftLink.cpp */; };
 		293EE4A924154F8F0047493D /* AccessibilitySupportSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 293EE4A724154F8F0047493D /* AccessibilitySupportSoftLink.h */; };
+		29CDEBA62548D57F007C07B7 /* AXSpeechManagerSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 29CDEB9E2548D055007C07B7 /* AXSpeechManagerSPI.h */; };
 		2D02E93C2056FAA700A13797 /* AudioToolboxSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D02E93B2056FAA700A13797 /* AudioToolboxSPI.h */; };
 		2E1342CC215AA10A007199D2 /* UIKitSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E1342CA215AA10A007199D2 /* UIKitSoftLink.h */; };
 		2E1342CD215AA10A007199D2 /* UIKitSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2E1342CB215AA10A007199D2 /* UIKitSoftLink.mm */; };
@@ -304,6 +305,7 @@
 		1D12CC4A2411BCAE00FDA0A3 /* FeatureFlagsSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FeatureFlagsSPI.h; sourceTree = "<group>"; };
 		293EE4A624154F8F0047493D /* AccessibilitySupportSoftLink.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilitySupportSoftLink.cpp; sourceTree = "<group>"; };
 		293EE4A724154F8F0047493D /* AccessibilitySupportSoftLink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AccessibilitySupportSoftLink.h; sourceTree = "<group>"; };
+		29CDEB9E2548D055007C07B7 /* AXSpeechManagerSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AXSpeechManagerSPI.h; sourceTree = "<group>"; };
 		2D02E93B2056FAA700A13797 /* AudioToolboxSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioToolboxSPI.h; sourceTree = "<group>"; };
 		2E1342CA215AA10A007199D2 /* UIKitSoftLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIKitSoftLink.h; sourceTree = "<group>"; };
 		2E1342CB215AA10A007199D2 /* UIKitSoftLink.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = UIKitSoftLink.mm; sourceTree = "<group>"; };
@@ -454,6 +456,7 @@
 				411A9AC02525D4CA00807D7E /* AVAssetWriterSPI.h */,
 				0C7785701F45130F00F4EBB6 /* AVFoundationSPI.h */,
 				0C2DA1221F3BEB4900DBC317 /* AVKitSPI.h */,
+				29CDEB9E2548D055007C07B7 /* AXSpeechManagerSPI.h */,
 				0C2DA1231F3BEB4900DBC317 /* CFNSURLConnectionSPI.h */,
 				7A36D0F8223AD9AB00B0522E /* CommonCryptoSPI.h */,
 				ABCA536724895DB900361BFF /* CoreMotionSPI.h */,
@@ -898,6 +901,7 @@
 				0C2DA1471F3BEB4900DBC317 /* URLFormattingSPI.h in Headers */,
 				07611DB6243FA5BF00D80704 /* UsageTrackingSoftLink.h in Headers */,
 				0C2DA1591F3BEB4900DBC317 /* WebFilterEvaluatorSPI.h in Headers */,
+				29CDEBA62548D57F007C07B7 /* AXSpeechManagerSPI.h in Headers */,
 				A10826F91F576292004772AC /* WebPanel.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
