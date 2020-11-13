@@ -802,7 +802,7 @@ void PropertyListNode::emitSaveComputedFieldName(BytecodeGenerator& generator, P
     ASSERT(node.isComputedClassField());
     RefPtr<RegisterID> propertyExpr;
 
-    // The 'name' refers to a synthetic numeric variable name in the private name scope, where the property key is saved for later use.
+    // The 'name' refers to a synthetic private name in the class scope, where the property key is saved for later use.
     const Identifier& description = *node.name();
     Variable var = generator.variable(description);
     ASSERT(!var.local());
@@ -4817,12 +4817,14 @@ RegisterID* AwaitExprNode::emitBytecode(BytecodeGenerator& generator, RegisterID
 void DefineFieldNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
 {
     RefPtr<RegisterID> value = generator.newTemporary();
+    bool shouldSetFunctionName = false;
 
     if (!m_assign)
         generator.emitLoad(value.get(), jsUndefined());
     else {
         generator.emitNode(value.get(), m_assign);
-        if (m_ident && generator.shouldSetFunctionName(m_assign))
+        shouldSetFunctionName = generator.shouldSetFunctionName(m_assign);
+        if (m_ident && shouldSetFunctionName && m_type != DefineFieldNode::Type::ComputedName)
             generator.emitSetFunctionName(value.get(), *m_ident);
     }
 
@@ -4850,7 +4852,7 @@ void DefineFieldNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
         // https://bugs.webkit.org/show_bug.cgi?id=198330
 
         // For ComputedNames, the expression has already been evaluated earlier during evaluation of a ClassExprNode.
-        // Here, `m_ident` refers to an integer ID in a class lexical scope, containing the value already converted to an Expression.
+        // Here, `m_ident` refers to private symbol ID in a class lexical scope, containing the value already converted to an Expression.
         Variable var = generator.variable(*m_ident);
         ASSERT_WITH_MESSAGE(!var.local(), "Computed names must be stored in captured variables");
 
@@ -4858,6 +4860,8 @@ void DefineFieldNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
         RefPtr<RegisterID> scope = generator.emitResolveScope(nullptr, var);
         RefPtr<RegisterID> privateName = generator.newTemporary();
         generator.emitGetFromScope(privateName.get(), scope.get(), var, ThrowIfNotFound);
+        if (shouldSetFunctionName)
+            generator.emitSetFunctionName(value.get(), privateName.get());
         generator.emitProfileType(privateName.get(), var, m_position, m_position + m_ident->length());
         generator.emitCallDefineProperty(generator.thisRegister(), privateName.get(), value.get(), nullptr, nullptr, BytecodeGenerator::PropertyConfigurable | BytecodeGenerator::PropertyWritable | BytecodeGenerator::PropertyEnumerable, m_position);
         break;

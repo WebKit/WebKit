@@ -52,6 +52,7 @@ namespace JSC {
 
         const Identifier& makeBigIntDecimalIdentifier(VM&, const Identifier&, uint8_t radix);
         const Identifier& makeNumericIdentifier(VM&, double number);
+        const Identifier& makePrivateIdentifier(VM&, ASCIILiteral, unsigned);
 
     public:
         static const int MaximumCachableCharacter = 128;

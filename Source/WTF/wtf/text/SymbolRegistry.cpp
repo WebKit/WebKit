@@ -28,6 +28,11 @@
 
 namespace WTF {
 
+SymbolRegistry::SymbolRegistry(Type type)
+    : m_symbolType(type)
+{
+}
+
 SymbolRegistry::~SymbolRegistry()
 {
     for (auto& key : m_table) {
@@ -44,9 +49,14 @@ Ref<RegisteredSymbolImpl> SymbolRegistry::symbolForKey(const String& rep)
         return *static_cast<SymbolImpl*>(addResult.iterator->impl())->asRegisteredSymbolImpl();
     }
 
-    auto symbol = RegisteredSymbolImpl::create(*rep.impl(), *this);
-    *addResult.iterator = SymbolRegistryKey(&symbol.get());
-    return symbol;
+    RefPtr<RegisteredSymbolImpl> symbol;
+    if (m_symbolType == Type::PrivateSymbol)
+        symbol = RegisteredSymbolImpl::createPrivate(*rep.impl(), *this);
+    else
+        symbol = RegisteredSymbolImpl::create(*rep.impl(), *this);
+
+    *addResult.iterator = SymbolRegistryKey(symbol.get());
+    return symbol.releaseNonNull();
 }
 
 void SymbolRegistry::remove(RegisteredSymbolImpl& uid)

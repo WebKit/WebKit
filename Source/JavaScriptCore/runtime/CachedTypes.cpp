@@ -702,14 +702,18 @@ public:
     {
         m_isAtomic = string.isAtom();
         m_isSymbol = string.isSymbol();
+        m_isRegistered = false;
         m_isWellKnownSymbol = false;
+        m_isPrivate = false;
         RefPtr<StringImpl> impl = const_cast<StringImpl*>(&string);
 
         if (m_isSymbol) {
             SymbolImpl* symbol = static_cast<SymbolImpl*>(impl.get());
+            m_isRegistered = symbol->isRegistered();
+            m_isPrivate = symbol->isPrivate();
             if (!symbol->isNullSymbol()) {
                 // We have special handling for well-known symbols.
-                if (!symbol->isPrivate()) {
+                if (!m_isPrivate) {
                     m_isWellKnownSymbol = true;
                     impl = symbol->substring(strlen("Symbol."));
                 }
@@ -742,10 +746,17 @@ public:
                 return AtomStringImpl::add(buffer, m_length).leakRef();
 
             SymbolImpl* symbol;
-            if (m_isWellKnownSymbol)
-                symbol = decoder.vm().propertyNames->builtinNames().lookUpWellKnownSymbol(buffer, m_length);
+            VM& vm = decoder.vm();
+            if (m_isRegistered) {
+                String str(buffer, m_length);
+                if (m_isPrivate)
+                    symbol = static_cast<SymbolImpl*>(&vm.privateSymbolRegistry().symbolForKey(str).leakRef());
+                else
+                    symbol = static_cast<SymbolImpl*>(&vm.symbolRegistry().symbolForKey(str).leakRef());
+            } else if (m_isWellKnownSymbol)
+                symbol = vm.propertyNames->builtinNames().lookUpWellKnownSymbol(buffer, m_length);
             else
-                symbol = decoder.vm().propertyNames->builtinNames().lookUpPrivateName(buffer, m_length);
+                symbol = vm.propertyNames->builtinNames().lookUpPrivateName(buffer, m_length);
             RELEASE_ASSERT(symbol);
             String str = symbol;
             StringImpl* impl = str.releaseImpl().get();
@@ -773,6 +784,8 @@ private:
     bool m_isSymbol : 1;
     bool m_isWellKnownSymbol : 1;
     bool m_isAtomic : 1;
+    bool m_isRegistered : 1;
+    bool m_isPrivate : 1;
     unsigned m_length;
 };
 

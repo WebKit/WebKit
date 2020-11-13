@@ -78,7 +78,8 @@ class SymbolRegistry {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(SymbolRegistry);
 public:
-    SymbolRegistry() = default;
+    enum class Type : uint8_t { PublicSymbol, PrivateSymbol };
+    WTF_EXPORT_PRIVATE SymbolRegistry(Type = Type::PublicSymbol);
     WTF_EXPORT_PRIVATE ~SymbolRegistry();
 
     WTF_EXPORT_PRIVATE Ref<RegisteredSymbolImpl> symbolForKey(const String&);
@@ -87,6 +88,7 @@ public:
 
 private:
     HashSet<SymbolRegistryKey> m_table;
+    Type m_symbolType;
 };
 
 inline SymbolRegistryKey::SymbolRegistryKey(StringImpl* uid)

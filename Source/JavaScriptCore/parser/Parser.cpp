@@ -2837,6 +2837,8 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseClassDeclarat
     return context.createClassDeclStatement(location, classExpr, classStart, classEnd, classStartLine, classEndLine);
 }
 
+static constexpr ASCIILiteral instanceComputedNamePrefix { "instanceComputedName"_s };
+
 template <typename LexerType>
 template <class TreeBuilder> TreeClassExpression Parser<LexerType>::parseClass(TreeBuilder& context, FunctionNameRequirements requirements, ParserClassInfo<TreeBuilder>& info)
 {
@@ -2996,7 +2998,7 @@ parseMethod:
             }
 
             if (computedPropertyName) {
-                ident = &m_parserArena.identifierArena().makeNumericIdentifier(m_vm, numComputedFields++);
+                ident = &m_parserArena.identifierArena().makePrivateIdentifier(m_vm, instanceComputedNamePrefix, numComputedFields++);
                 DeclarationResultMask declarationResult = classScope->declareLexicalVariable(ident, true);
                 ASSERT_UNUSED(declarationResult, declarationResult == DeclarationResult::Valid);
                 classScope->useVariable(ident, false);
@@ -3077,7 +3079,6 @@ template <class TreeBuilder> TreeSourceElements Parser<LexerType>::parseInstance
 
         JSTokenLocation fieldLocation = tokenLocation();
         const Identifier* ident = nullptr;
-        TreeExpression computedPropertyName = 0;
         DefineFieldNode::Type type = DefineFieldNode::Type::Name;
         switch (m_token.m_type) {
         case PRIVATENAME:
@@ -3101,14 +3102,15 @@ template <class TreeBuilder> TreeSourceElements Parser<LexerType>::parseInstance
             ASSERT(ident);
             next();
             break;
-        case OPENBRACKET:
+        case OPENBRACKET: {
             next();
-            computedPropertyName = parseAssignmentExpression(context);
+            TreeExpression computedPropertyName = parseAssignmentExpression(context);
             failIfFalse(computedPropertyName, "Cannot parse computed property name");
             handleProductionOrFail(CLOSEBRACKET, "]", "end", "computed property name");
-            ident = &m_parserArena.identifierArena().makeNumericIdentifier(m_vm, numComputedFields++);
+            ident = &m_parserArena.identifierArena().makePrivateIdentifier(m_vm, instanceComputedNamePrefix, numComputedFields++);
             type = DefineFieldNode::Type::ComputedName;
             break;
+        }
         default:
             if (m_token.m_type & KeywordTokenFlag)
                 goto namedKeyword;

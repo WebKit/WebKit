@@ -714,6 +714,7 @@ public:
 
     AtomStringTable* m_atomStringTable;
     WTF::SymbolRegistry m_symbolRegistry;
+    WTF::SymbolRegistry m_privateSymbolRegistry;
     CommonIdentifiers* propertyNames;
     const ArgList* emptyList;
     SmallStrings smallStrings;
@@ -725,6 +726,7 @@ public:
 
     AtomStringTable* atomStringTable() const { return m_atomStringTable; }
     WTF::SymbolRegistry& symbolRegistry() { return m_symbolRegistry; }
+    WTF::SymbolRegistry& privateSymbolRegistry() { return m_privateSymbolRegistry; }
 
     Strong<JSBigInt> heapBigIntConstantOne;
 

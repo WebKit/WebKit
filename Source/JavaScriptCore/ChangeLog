@@ -1,3 +1,32 @@
+2020-11-13  Xan López  <xan@igalia.com>
+
+        [JSC] Use symbols as identifiers for class fields computed names storage
+        https://bugs.webkit.org/show_bug.cgi?id=216172
+
+        Reviewed by Yusuke Suzuki.
+
+        Use private symbols for the property keys of the class fields with
+        computed names. This is cleaner than using raw numeric identifiers and
+        will be less cumbersome when we add static fields. It also prevents
+        potential collisions if other features want to store data in the class
+        scope.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::PropertyListNode::emitSaveComputedFieldName): adapt a comment.
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseClass): use private identifiers for computed fields property keys.
+        (JSC::Parser<LexerType>::parseInstanceFieldInitializerSourceElements): ditto.
+        * parser/ParserArena.cpp:
+        (JSC::IdentifierArena::makePrivateIdentifier): method to create a private identifier.
+        * parser/ParserArena.h:
+        * runtime/CachedTypes.cpp:
+        (JSC::CachedUniquedStringImplBase::encode): consider registered symbols, they are used by the parser now.
+        (JSC::CachedUniquedStringImplBase::decode const): ditto.
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+        (JSC::VM::privateSymbolRegistry): create a private symbol registry too.
+
 2020-11-13  Sergey Rubanov  <chi187@gmail.com>
 
         WebAssembly: opcodes for table.grow and table.size are mixed up

@@ -107,4 +107,12 @@ const Identifier& IdentifierArena::makeBigIntDecimalIdentifier(VM& vm, const Ide
     return m_identifiers.last();
 }
 
+const Identifier& IdentifierArena::makePrivateIdentifier(VM& vm, ASCIILiteral prefix, unsigned identifier)
+{
+    String symbolName = makeString(prefix, identifier);
+    auto symbol = vm.privateSymbolRegistry().symbolForKey(symbolName);
+    m_identifiers.append(Identifier::fromUid(symbol));
+    return m_identifiers.last();
+}
+
 }

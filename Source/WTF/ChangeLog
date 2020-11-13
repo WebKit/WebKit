@@ -1,3 +1,24 @@
+2020-11-13  Xan López  <xan@igalia.com>
+
+        [JSC] Use symbols as identifiers for class fields computed names storage
+        https://bugs.webkit.org/show_bug.cgi?id=216172
+
+        Reviewed by Yusuke Suzuki.
+
+        Use private symbols for the property keys of the class fields with
+        computed names. This is cleaner than using raw numeric identifiers and
+        will be less cumbersome when we add static fields. It also prevents
+        potential collisions if other features want to store data in the class
+        scope.
+
+        * wtf/text/SymbolImpl.cpp:
+        (WTF::RegisteredSymbolImpl::createPrivate): add a method to create a registered private symbol from a string key.
+        * wtf/text/SymbolImpl.h:
+        * wtf/text/SymbolRegistry.cpp:
+        (WTF::SymbolRegistry::symbolForKey): consider that we can hold private symbols now too.
+        * wtf/text/SymbolRegistry.h:
+        (WTF::SymbolRegistry::SymbolRegistry): new enum type for public/private symbols.
+
 2020-11-12  Darin Adler  <darin@apple.com>
 
         Remove unused advanced plug-in features: snapshotting and plug-in load policy

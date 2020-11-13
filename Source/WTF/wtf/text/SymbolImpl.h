@@ -156,15 +156,16 @@ private:
     void clearSymbolRegistry() { m_symbolRegistry = nullptr; }
 
     static Ref<RegisteredSymbolImpl> create(StringImpl& rep, SymbolRegistry&);
+    static Ref<RegisteredSymbolImpl> createPrivate(StringImpl& rep, SymbolRegistry&);
 
-    RegisteredSymbolImpl(const LChar* characters, unsigned length, Ref<StringImpl>&& base, SymbolRegistry& registry)
-        : SymbolImpl(characters, length, WTFMove(base), s_flagIsRegistered)
+    RegisteredSymbolImpl(const LChar* characters, unsigned length, Ref<StringImpl>&& base, SymbolRegistry& registry, Flags flags = s_flagIsRegistered)
+        : SymbolImpl(characters, length, WTFMove(base), flags)
         , m_symbolRegistry(&registry)
     {
     }
 
-    RegisteredSymbolImpl(const UChar* characters, unsigned length, Ref<StringImpl>&& base, SymbolRegistry& registry)
-        : SymbolImpl(characters, length, WTFMove(base), s_flagIsRegistered)
+    RegisteredSymbolImpl(const UChar* characters, unsigned length, Ref<StringImpl>&& base, SymbolRegistry& registry, Flags flags = s_flagIsRegistered)
+        : SymbolImpl(characters, length, WTFMove(base), flags)
         , m_symbolRegistry(&registry)
     {
     }

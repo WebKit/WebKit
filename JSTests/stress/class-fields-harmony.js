@@ -906,3 +906,24 @@ x()();
   assertSame(thisInConstructor, c);
 }
 
+// Additional tests by the WebKit project.
+
+{
+  let x = 0;
+  let y = 'foo';
+  let z = { name: 'test' };
+
+  let C = class {
+    [x] = () => {
+      return 2;
+    };
+    [y] = class {};
+    [z] = class D {};
+  }
+
+  let c = new C();
+  assertSame(c[x](), 2);
+  assertSame(c[x].name, '0');
+  assertSame(c[y].name, 'foo');
+  assertSame(c[z].name, 'D');
+}
