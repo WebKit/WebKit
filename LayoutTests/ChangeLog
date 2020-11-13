@@ -1,5 +1,47 @@
 2020-11-13  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r269384. rdar://problem/71381924
+
+    REGRESSION (r257839): Miscomputed style due to computed 'rem' value in matched declaration cache
+    https://bugs.webkit.org/show_bug.cgi?id=218561
+    <rdar://problem/70074191>
+    
+    Reviewed by Zalan Bujtas.
+    
+    Source/WebCore:
+    
+    Test: fast/dom/focus-rem-style-update.html
+    
+    Call to focus() causes computed style update for the element’s ancestor chain before the the document
+    has otherwise been styled (using the shortcut mechanism introduced in r257839). This style, which uses ‘rem’
+    unit and so depends on root element font size, gets cached in MatchedDeclarationsCache. The root font size
+    then changes but during the resulting style update we use this cached value, failing to re-resolve ‘rem’.
+    
+    * style/StyleTreeResolver.cpp:
+    (WebCore::Style::TreeResolver::resolveElement):
+    
+    Invalidate matched declarations cache also when there is no existing document element style.
+    
+    LayoutTests:
+    
+    * fast/dom/focus-rem-style-update-expected.html: Added.
+    * fast/dom/focus-rem-style-update.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@269384 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-11-04  Antti Koivisto  <antti@apple.com>
+
+            REGRESSION (r257839): Miscomputed style due to computed 'rem' value in matched declaration cache
+            https://bugs.webkit.org/show_bug.cgi?id=218561
+            <rdar://problem/70074191>
+
+            Reviewed by Zalan Bujtas.
+
+            * fast/dom/focus-rem-style-update-expected.html: Added.
+            * fast/dom/focus-rem-style-update.html: Added.
+
+2020-11-13  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r269121. rdar://problem/71381839
 
     [MSE] Handle trackId changing across Initialization Segments
