@@ -224,9 +224,8 @@ ElementUpdates TreeResolver::resolveElement(Element& element)
         m_documentElementStyle = RenderStyle::clonePtr(*update.style);
         scope().resolver.setOverrideDocumentElementStyle(m_documentElementStyle.get());
 
-        if (update.change != NoChange && existingStyle && existingStyle->computedFontPixelSize() != update.style->computedFontPixelSize()) {
+        if (!existingStyle || existingStyle->computedFontPixelSize() != update.style->computedFontPixelSize()) {
             // "rem" units are relative to the document element's font size so we need to recompute everything.
-            // In practice this is rare.
             scope().resolver.invalidateMatchedDeclarationsCache();
             descendantsToResolve = DescendantsToResolve::All;
         }
