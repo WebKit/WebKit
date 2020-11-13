@@ -1,5 +1,49 @@
 2020-11-13  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r269321. rdar://problem/71083861
+
+    Protect against HTMLMediaElement being destroyed during disptachEvent().
+    https://bugs.webkit.org/show_bug.cgi?id=218398
+    <rdar://problem/67613836>
+    
+    Reviewed by Chris Dumez.
+    
+    Make the MainThreadGenericEventQueue protect the target as well as the owner of the queue.
+    
+    Drive-by fix: Create the scoped `eventFiringScope` object after the `protect` object, to ensure
+    that the member variable set by the first scope will safely occur.
+    
+    Drive-by fix #2: Also null-check the result of document().page() within HTMLMediaElement::dispatchEvent().
+    
+    * dom/GenericEventQueue.cpp:
+    (WebCore::MainThreadGenericEventQueue::dispatchOneEvent):
+    * html/HTMLMediaElement.cpp:
+    (WebCore::HTMLMediaElement::dispatchEvent):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@269321 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-11-03  Jer Noble  <jer.noble@apple.com>
+
+            Protect against HTMLMediaElement being destroyed during disptachEvent().
+            https://bugs.webkit.org/show_bug.cgi?id=218398
+            <rdar://problem/67613836>
+
+            Reviewed by Chris Dumez.
+
+            Make the MainThreadGenericEventQueue protect the target as well as the owner of the queue.
+
+            Drive-by fix: Create the scoped `eventFiringScope` object after the `protect` object, to ensure
+            that the member variable set by the first scope will safely occur.
+
+            Drive-by fix #2: Also null-check the result of document().page() within HTMLMediaElement::dispatchEvent().
+
+            * dom/GenericEventQueue.cpp:
+            (WebCore::MainThreadGenericEventQueue::dispatchOneEvent):
+            * html/HTMLMediaElement.cpp:
+            (WebCore::HTMLMediaElement::dispatchEvent):
+
+2020-11-13  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r269208. rdar://problem/71378171
 
     AX: Incorrect list of voices being displayed on iOS
