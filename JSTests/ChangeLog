@@ -1,3 +1,64 @@
+2020-11-13  Sergey Rubanov  <chi187@gmail.com>
+
+        WebAssembly: update wabt.js
+        https://bugs.webkit.org/show_bug.cgi?id=218876
+
+        Reviewed by Yusuke Suzuki.
+
+        * wasm/libwabt.js:
+        (WabtModule): Deleted.
+        * wasm/regress/llint-callee-saves-with-fast-memory.js:
+        (async test):
+        * wasm/regress/llint-callee-saves-without-fast-memory.js:
+        (async test):
+        * wasm/regress/regression-with-loop.js:
+        (async test):
+        * wasm/regress/stack-consistency.js:
+        (async test):
+        * wasm/stress/js-wasm-call-many-return-types-on-stack-no-args.js:
+        (async buildWat):
+        (async test):
+        (buildWat): Deleted.
+        * wasm/stress/js-wasm-js-varying-arities.js:
+        (async paramForwarder):
+        (async test):
+        (paramForwarder): Deleted.
+        * wasm/stress/local-ref.js:
+        (async test):
+        * wasm/stress/loop-more-args-than-results.js:
+        (async test):
+        * wasm/stress/set-local-enclosed-stack.js:
+        (async test):
+        (assert.eq.instance.exports.foo): Deleted.
+        (assert.eq): Deleted.
+        * wasm/stress/top-most-enclosing-stack.js:
+        (async test):
+        * wasm/stress/trunc-int-min-minus-one.js:
+        (async test):
+        * wasm/stress/wasm-js-call-many-return-types-on-stack-no-args.js:
+        (async buildWat):
+        (async test):
+        (buildWat): Deleted.
+        * wasm/stress/wasm-js-multi-value-exception-in-iterator.js:
+        (async buildWat):
+        (async test):
+        (buildWat.throwError): Deleted.
+        (buildWat.throwErrorInIterator): Deleted.
+        (buildWat.tooManyValues): Deleted.
+        (buildWat.tooFewValues): Deleted.
+        (buildWat): Deleted.
+        * wasm/stress/wasm-wasm-call-indirect-many-return-types-on-stack.js:
+        (async buildWat):
+        (async test):
+        (buildWat): Deleted.
+        * wasm/stress/wasm-wasm-call-many-return-types-on-stack-no-args.js:
+        (async buildWat):
+        (async test):
+        (buildWat): Deleted.
+        * wasm/wabt-wrapper.js:
+        (export.async compile):
+        (export.compile): Deleted.
+
 2020-11-12  Caio Lima  <ticaiolima@gmail.com>
 
         [Intl][ARMv7][MIPS] Skip stress/intl-datetimeformat-formatrange.js

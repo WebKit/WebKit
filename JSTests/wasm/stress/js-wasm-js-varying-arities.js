@@ -3,7 +3,7 @@ import * as assert from "../assert.js";
 
 const maxArities = 64;
 
-function paramForwarder(numParams, paramType, value, imports) {
+async function paramForwarder(numParams, paramType, value, imports) {
     let body = "";
     let inlineCheck = "";
     for (let i = 0; i < numParams; ++i) {
@@ -29,34 +29,38 @@ function paramForwarder(numParams, paramType, value, imports) {
 )
 `;
 
-    return instantiate(wat, imports);
+    return await instantiate(wat, imports);
 }
 
-for (let wasmArity = 20;  wasmArity < maxArities; ++wasmArity) {
-    let callerArity;
-    let numChecked = 0;
+async function test () {
+    for (let wasmArity = 20; wasmArity < maxArities; ++wasmArity) {
+        let callerArity;
+        let numChecked = 0;
 
-    const check = value => {
-        assert.isNumber(value);
-        if (callerArity <= wasmArity) {
-            if (numChecked < callerArity)
-                assert.eq(value, 64);
-            else
-                assert.eq(value, NaN);
-        } else {
-            if (numChecked < wasmArity)
-                assert.eq(value, 64);
-            else
-                asseert.eq(value, NaN);
+        const check = value => {
+            assert.isNumber(value);
+            if (callerArity <= wasmArity) {
+                if (numChecked < callerArity)
+                    assert.eq(value, 64);
+                else
+                    assert.eq(value, NaN);
+            } else {
+                if (numChecked < wasmArity)
+                    assert.eq(value, 64);
+                else
+                    asseert.eq(value, NaN);
+            }
+            ++numChecked;
         }
-        ++numChecked;
-    }
 
-    const instance = paramForwarder(wasmArity, "f64", 64, { env: { check } });
-    for (callerArity = 0; callerArity < maxArities; ++callerArity) {
-        const params = Array(callerArity + 1).fill(64);
-        params[0] = callerArity;
-        const result = instance.exports.func(...params);
-        numChecked = 0;
+        const instance = await paramForwarder(wasmArity, "f64", 64, {env: {check}});
+        for (callerArity = 0; callerArity < maxArities; ++callerArity) {
+            const params = Array(callerArity + 1).fill(64);
+            params[0] = callerArity;
+            instance.exports.func(...params);
+            numChecked = 0;
+        }
     }
 }
+
+assert.asyncTest(test());

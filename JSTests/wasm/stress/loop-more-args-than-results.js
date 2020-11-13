@@ -1,3 +1,4 @@
+import * as assert from '../assert.js';
 import { instantiate } from "../wabt-wrapper.js";
 
 let wat = `
@@ -12,7 +13,11 @@ let wat = `
 )
 `;
 
-let instance = instantiate(wat);
+async function test() {
+    let instance = await instantiate(wat);
 
-if (instance.exports.test() !== 0)
-    throw new Error();
+    if (instance.exports.test() !== 0)
+        throw new Error();
+}
+
+assert.asyncTest(test());

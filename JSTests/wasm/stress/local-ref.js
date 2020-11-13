@@ -1,11 +1,16 @@
 //@ requireOptions("--useWebAssemblyReferences=1")
+import * as assert from '../assert.js';
 import { instantiate } from "../wabt-wrapper.js";
 
-instantiate(`
-(module
-  (func
-    (local anyref)
-    (local anyref)
-  )
-)
-`);
+async function test() {
+    await instantiate(`
+        (module
+          (func
+            (local externref)
+            (local externref)
+          )
+        )
+    `);
+}
+
+assert.asyncTest(test());
