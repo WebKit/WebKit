@@ -7749,7 +7749,7 @@ static const Vector<ASCIILiteral>& mediaRelatedMachServices()
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
         "com.apple.coremedia.endpointstream.xpc"_s, "com.apple.coremedia.endpointplaybacksession.xpc"_s,
         "com.apple.coremedia.endpointremotecontrolsession.xpc"_s, "com.apple.coremedia.videodecoder"_s,
-        "com.apple.coremedia.videoencoder"_s, "com.apple.BluetoothServices"_s
+        "com.apple.coremedia.videoencoder"_s, "com.apple.lskdd"_s, "com.apple.BluetoothServices"_s
 #endif
     });
     return services;

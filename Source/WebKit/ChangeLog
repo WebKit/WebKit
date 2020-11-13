@@ -1,3 +1,19 @@
+2020-11-13  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Issue sandbox extension to the WebContent process for com.apple.lskdd
+        https://bugs.webkit.org/show_bug.cgi?id=218920
+        <rdar://problem/69168801>
+
+        Reviewed by Geoffrey Garen.
+
+        This is a Media related service, and a sandbox extension should be issued to the WebContent process based on GPU runtime settings.
+
+        No new tests, covered by existing tests.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::mediaRelatedMachServices):
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2020-11-13  Claudio Saavedra  <csaavedra@igalia.com>
 
         Non-unified build fixes.
