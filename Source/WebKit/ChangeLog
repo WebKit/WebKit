@@ -1,3 +1,16 @@
+2020-11-13  Alex Christensen  <achristensen@webkit.org>
+
+        Remove more SecItemShim leftovers
+        https://bugs.webkit.org/show_bug.cgi?id=218919
+
+        Reviewed by Geoffrey Garen.
+
+        * Configurations/SecItemShim.xcconfig: Removed.
+        * NetworkProcess/EntryPoint/Cocoa/XPCService/NetworkServiceEntryPoint.mm:
+        (NETWORK_SERVICE_INITIALIZER):
+        * PlatformMac.cmake:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2020-11-12  Darin Adler  <darin@apple.com>
 
         Remove unused advanced plug-in features: snapshotting and plug-in load policy

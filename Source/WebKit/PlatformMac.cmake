@@ -138,10 +138,6 @@ list(APPEND NetworkProcess_SOURCES
     ${XPCService_SOURCES}
 )
 
-list(APPEND NetworkProcess_LIBRARIES
-    SecItemShim
-)
-
 # FIXME: These should not have Development in production builds.
 set(WebProcess_OUTPUT_NAME com.apple.WebKit.WebContent.Development)
 set(NetworkProcess_OUTPUT_NAME com.apple.WebKit.Networking.Development)
@@ -456,19 +452,6 @@ set(ObjCForwardingHeaders
 foreach (_file ${ObjCForwardingHeaders})
     file(WRITE ${FORWARDING_HEADERS_DIR}/WebKit/${_file} "#import <WebKitLegacy/${_file}>")
 endforeach ()
-
-set(SecItemShimDirectory ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/Versions/A/Frameworks)
-add_library(SecItemShim SHARED WebProcess/mac/SecItemShimLibrary.mm)
-WEBKIT_CREATE_SYMLINK(SecItemShim ${SecItemShimDirectory} ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/Frameworks)
-set_target_properties(SecItemShim PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${SecItemShimDirectory})
-set_target_properties(SecItemShim PROPERTIES PREFIX "")
-target_link_libraries(SecItemShim ${SECURITY_LIBRARY})
-target_include_directories(SecItemShim PRIVATE
-    ${CMAKE_BINARY_DIR}
-    ${FORWARDING_HEADERS_DIR}
-    ${WEBKIT_DIR}
-)
-add_dependencies(SecItemShim WebCore)
 
 # FIXME: These should not be necessary.
 file(WRITE ${FORWARDING_HEADERS_DIR}/WebKit/WKImageCG.h "#import <WebKit/Shared/API/c/cg/WKImageCG.h>")
