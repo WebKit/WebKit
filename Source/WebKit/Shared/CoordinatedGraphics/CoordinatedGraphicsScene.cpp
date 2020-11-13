@@ -306,6 +306,8 @@ void CoordinatedGraphicsScene::updateSceneState()
                             layer.setFilters(layerState.filters);
                         if (layerState.delta.backdropFiltersChanged)
                             layer.setBackdropLayer(layerState.backdropLayer ? &texmapLayer(*layerState.backdropLayer) : nullptr);
+                        if (layerState.delta.backdropFiltersRectChanged)
+                            layer.setBackdropFiltersRect(layerState.backdropFiltersRect);
                         if (layerState.delta.animationsChanged)
                             layer.setAnimations(layerState.animations);
 

@@ -185,6 +185,7 @@ public:
         RefPtr<CompositionLayer> replica;
         RefPtr<CompositionLayer> mask;
         RefPtr<CompositionLayer> backdropLayer;
+        WebCore::FloatRoundedRect backdropFiltersRect;
 
         RefPtr<ContentLayer> contentLayer;
         RefPtr<BackingStore> backingStore;
@@ -252,6 +253,8 @@ public:
             staging.filters = pending.filters;
         if (pending.delta.backdropFiltersChanged)
             staging.backdropLayer = pending.backdropLayer;
+        if (pending.delta.backdropFiltersRectChanged)
+            staging.backdropFiltersRect = pending.backdropFiltersRect;
         if (pending.delta.animationsChanged)
             staging.animations = pending.animations;
 

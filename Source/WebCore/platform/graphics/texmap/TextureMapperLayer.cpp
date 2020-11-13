@@ -231,7 +231,7 @@ void TextureMapperLayer::paintSelfAndChildren(const TextureMapperPaintOptions& o
         clipTransform.translate(options.offset.width(), options.offset.height());
         clipTransform.multiply(options.transform);
         clipTransform.multiply(m_layerTransforms.combined);
-        options.textureMapper.beginClip(clipTransform, FloatRoundedRect(layerRect()));
+        options.textureMapper.beginClip(clipTransform, m_state.backdropFiltersRect);
         m_state.backdropLayer->paintRecursive(options);
         options.textureMapper.endClip();
     }
@@ -559,6 +559,11 @@ void TextureMapperLayer::setBackdropLayer(TextureMapperLayer* backdropLayer)
         m_state.backdropLayer = makeWeakPtr(*backdropLayer);
     } else
         m_state.backdropLayer = nullptr;
+}
+
+void TextureMapperLayer::setBackdropFiltersRect(const FloatRoundedRect& backdropFiltersRect)
+{
+    m_state.backdropFiltersRect = backdropFiltersRect;
 }
 
 void TextureMapperLayer::setPosition(const FloatPoint& position)
