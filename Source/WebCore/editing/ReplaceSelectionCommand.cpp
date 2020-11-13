@@ -800,7 +800,8 @@ void ReplaceSelectionCommand::moveNodeOutOfAncestor(Node& node, Node& ancestor, 
     } else {
         RefPtr<Node> nodeToSplitTo = splitTreeToNode(node, ancestor, true);
         removeNode(node);
-        insertNodeBefore(WTFMove(protectedNode), *nodeToSplitTo);
+        if (nodeToSplitTo)
+            insertNodeBefore(WTFMove(protectedNode), *nodeToSplitTo);
     }
 
     document().updateLayoutIgnorePendingStylesheets();

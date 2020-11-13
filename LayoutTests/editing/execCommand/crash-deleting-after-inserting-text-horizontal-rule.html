@@ -1,0 +1,28 @@
+<html>
+<head>
+<script>
+function testonload() {
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    document.getSelection().selectAllChildren(pre);
+    document.execCommand("insertText", false, "PASS");
+    document.execCommand("insertHorizontalRule", false);
+}
+function iframehandler() {
+    document.execCommand("forwardDelete", false);
+}
+</script>
+</head>
+<body onload=testonload()>
+This tests that we do not crash while deleting the selection.
+<details open="true" contenteditable="true">
+<p>
+<iframe onload="iframehandler()"></iframe>
+<table>
+<pre id="pre"></pre>
+</table>
+</p>
+</details>
+</body>
+</html>

@@ -1,0 +1,5 @@
+This tests that we do not crash while deleting the selection.
+
+PASS
+
+

@@ -1,3 +1,16 @@
+2020-11-13  Julian Gonzalez  <julian_a_gonzalez@apple.com>
+
+        Crash in ReplaceSelectionCommand::moveNodeOutOfAncestor
+        https://bugs.webkit.org/show_bug.cgi?id=218878
+
+        Reviewed by Alex Christensen.
+
+        Add simple test that selects elements, and using execCommand() inserts text
+        and a horizontal rule, and performs a deletion.
+
+        * editing/execCommand/crash-deleting-after-inserting-text-horizontal-rule-expected.txt: Added.
+        * editing/execCommand/crash-deleting-after-inserting-text-horizontal-rule.html: Added.
+
 2020-11-13  Rob Buis  <rbuis@igalia.com>
 
         Null check anchorNode of endingSelection start
