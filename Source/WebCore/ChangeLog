@@ -1,5 +1,36 @@
 2020-11-13  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r268782. rdar://problem/71381941
+
+    Release assert in ~Node due to render element of pseudo element not getting removed in time
+    https://bugs.webkit.org/show_bug.cgi?id=217996
+    
+    Patch by Julian Gonzalez <julian_a_gonzalez@apple.com> on 2020-10-20
+    Reviewed by Ryosuke Niwa.
+    
+    When attaching a shadow root to an element, remember to tear down renderers not only if
+    one exists on the element, but also if it uses display: contents.
+    
+    * dom/Element.cpp:
+    (WebCore::Element::addShadowRoot):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@268782 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-10-20  Julian Gonzalez  <julian_a_gonzalez@apple.com>
+
+            Release assert in ~Node due to render element of pseudo element not getting removed in time
+            https://bugs.webkit.org/show_bug.cgi?id=217996
+
+            Reviewed by Ryosuke Niwa.
+
+            When attaching a shadow root to an element, remember to tear down renderers not only if
+            one exists on the element, but also if it uses display: contents.
+
+            * dom/Element.cpp:
+            (WebCore::Element::addShadowRoot):
+
+2020-11-13  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r266052. rdar://problem/71378190
 
     RTCRtpSynchronizationSource.rtpTimestamp is not present
