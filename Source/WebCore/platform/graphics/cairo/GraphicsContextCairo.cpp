@@ -661,6 +661,7 @@ void GraphicsContext::drawPlatformPattern(const PlatformImagePtr& image, const F
         return;
 
     ASSERT(hasPlatformContext());
+    UNUSED_PARAM(spacing);
     Cairo::drawPattern(*platformContext(), image.get(), IntSize(imageSize), destRect, tileRect, patternTransform, phase, options);
 }
 
