@@ -1,3 +1,17 @@
+2020-11-13  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, skip new ICU related tests in MIPS and ARMv7 and adjust it for ICU 65
+        https://bugs.webkit.org/show_bug.cgi?id=213822
+
+        * stress/intl-datetimeformat-formatrange-relevant-extensions.js:
+        * stress/intl-datetimeformat-formatrange-should-not-handle-gregorian-change-date.js:
+        * stress/intl-datetimeformat-formatrange.js:
+        (test):
+        * stress/intl-datetimeformat-formatrangetoparts-relevant-extensions-ja.js:
+        * stress/intl-datetimeformat-formatrangetoparts-relevant-extensions.js:
+        * stress/intl-datetimeformat-formatrangetoparts-should-not-handle-gregorian-change-date.js:
+        * stress/intl-datetimeformat-formatrangetoparts.js:
+
 2020-11-13  Sergey Rubanov  <chi187@gmail.com>
 
         WebAssembly: opcodes for table.grow and table.size are mixed up

@@ -1,3 +1,4 @@
+//@ skip if ["arm", "mips"].include?($architecture) # Due to ICU version.
 function shouldBe(actual, expected) {
     if (actual !== expected)
         throw new Error('bad value: ' + actual + ' expected value: ' + expected);

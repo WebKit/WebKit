@@ -1,3 +1,4 @@
+//@ skip if ["arm", "mips"].include?($architecture) # Due to ICU version.
 // Copyright 2019 the V8 project authors. All rights reserved.
 // Copyright 2020 Apple Inc. All rights reserved.
 // Use of this source code is governed by a BSD-style license.

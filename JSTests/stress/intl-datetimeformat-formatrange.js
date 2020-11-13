@@ -39,7 +39,7 @@ shouldThrow(() => {
 
 function test() {
     let range = " – ";
-    if ($vm.icuVersion() >= 67)
+    if ($vm.icuVersion() >= 67 || $vm.icuVersion() === 65)
         range = " – ";
 
     let date1 = new Date(Date.UTC(2007, 0, 10, 10, 0, 0));
