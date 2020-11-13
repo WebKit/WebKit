@@ -31,6 +31,7 @@ typedef double DOMHighResTimeStamp;
     JSGenerateToJSObject,
 ] dictionary RTCRtpContributingSource {
     required DOMHighResTimeStamp timestamp;
+    required unsigned long rtpTimestamp;
     required unsigned long source;
     double audioLevel;
 };
