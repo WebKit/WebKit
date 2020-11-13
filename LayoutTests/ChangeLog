@@ -1,3 +1,15 @@
+2020-11-13  Rob Buis  <rbuis@igalia.com>
+
+        Null check anchorNode of endingSelection start
+        https://bugs.webkit.org/show_bug.cgi?id=218492
+
+        Reviewed by Alex Christensen.
+
+        Add testcase.
+
+        * editing/deleting/delete-contenteditable-crash-expected.txt: Added.
+        * editing/deleting/delete-contenteditable-crash.html: Added.
+
 2020-11-13  Miguel Gomez  <magomez@igalia.com>
 
         [GTK][WPE] CSS backdrop overlay corners are not rounded on results.webkit.org
