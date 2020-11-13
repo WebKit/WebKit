@@ -302,7 +302,13 @@ li {
     text-align: -webkit-match-parent;
 }
 
+/* FIXME: this should also match ::before::marker and ::after::marker but we don't support
+   this yet. When we do, we can remove the code specific to ::before and ::after in
+   RenderListItem::computeMarkerStyle(), see bugs.webkit.org/b/218897. */
 ::marker {
+    unicode-bidi: isolate;
+    font-variant-numeric: tabular-nums;
+    white-space: pre;
     text-transform: none;
 }
 

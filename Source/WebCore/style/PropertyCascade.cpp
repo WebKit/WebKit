@@ -70,6 +70,7 @@ static inline bool shouldApplyPropertyInParseOrder(CSSPropertyID propertyID)
 }
 
 // https://www.w3.org/TR/css-pseudo-4/#marker-pseudo (Editor's Draft, 25 July 2017)
+// FIXME: this is outdated, see https://bugs.webkit.org/show_bug.cgi?id=218791.
 static inline bool isValidMarkerStyleProperty(CSSPropertyID id)
 {
     switch (id) {
@@ -91,6 +92,18 @@ static inline bool isValidMarkerStyleProperty(CSSPropertyID id)
     case CSSPropertyFontOpticalSizing:
     case CSSPropertyFontVariationSettings:
 #endif
+    case CSSPropertyAnimationDuration:
+    case CSSPropertyAnimationTimingFunction:
+    case CSSPropertyAnimationDelay:
+    case CSSPropertyAnimationIterationCount:
+    case CSSPropertyAnimationDirection:
+    case CSSPropertyAnimationFillMode:
+    case CSSPropertyAnimationPlayState:
+    case CSSPropertyAnimationName:
+    case CSSPropertyTransitionDuration:
+    case CSSPropertyTransitionTimingFunction:
+    case CSSPropertyTransitionDelay:
+    case CSSPropertyTransitionProperty:
         return true;
     default:
         break;

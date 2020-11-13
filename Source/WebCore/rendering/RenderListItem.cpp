@@ -31,9 +31,11 @@
 #include "HTMLUListElement.h"
 #include "InlineElementBox.h"
 #include "PseudoElement.h"
+#include "RenderStyleConstants.h"
 #include "RenderTreeBuilder.h"
 #include "RenderView.h"
 #include "StyleInheritedData.h"
+#include "UnicodeBidi.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/StackStats.h>
 #include <wtf/StdLibExtras.h>
@@ -58,23 +60,27 @@ RenderListItem::~RenderListItem()
 
 RenderStyle RenderListItem::computeMarkerStyle() const
 {
+    if (!is<PseudoElement>(element())) {
+        auto markerStyle = getCachedPseudoStyle(PseudoId::Marker, &style());
+        ASSERT(markerStyle);
+        return RenderStyle::clone(*markerStyle);
+    }
+
     // The marker always inherits from the list item, regardless of where it might end
     // up (e.g., in some deeply nested line box). See CSS3 spec.
-    // FIXME: The marker should only inherit all font properties and the color property
-    // according to the CSS Pseudo-Elements Module Level 4 spec.
-    //
-    // Although the CSS Pseudo-Elements Module Level 4 spec. saids to add ::marker to the UA sheet
-    // we apply it here as an optimization because it only applies to markers. That is, it does not
-    // apply to all elements.
-    RenderStyle parentStyle = RenderStyle::clone(style());
+    auto markerStyle = RenderStyle::create();
+    markerStyle.inheritFrom(style());
+
+    // In the case of a ::before or ::after pseudo-element, we manually apply the properties
+    // otherwise set in the user-agent stylesheet since we don't support ::before::marker or
+    // ::after::marker. See bugs.webkit.org/b/218897.
     auto fontDescription = style().fontDescription();
     fontDescription.setVariantNumericSpacing(FontVariantNumericSpacing::TabularNumbers);
-    parentStyle.setFontDescription(WTFMove(fontDescription));
-    parentStyle.fontCascade().update(&document().fontSelector());
-    if (auto markerStyle = getCachedPseudoStyle(PseudoId::Marker, &parentStyle))
-        return RenderStyle::clone(*markerStyle);
-    auto markerStyle = RenderStyle::create();
-    markerStyle.inheritFrom(parentStyle);
+    markerStyle.setFontDescription(WTFMove(fontDescription));
+    markerStyle.fontCascade().update(&document().fontSelector());
+    markerStyle.setUnicodeBidi(EUnicodeBidi::Isolate);
+    markerStyle.setWhiteSpace(WhiteSpace::Pre);
+    markerStyle.setTextTransform(TextTransform::None);
     return markerStyle;
 }
 

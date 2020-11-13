@@ -1,3 +1,15 @@
+2020-11-13  Antoine Quint  <graouts@webkit.org>
+
+        Support more properties on ::marker
+        https://bugs.webkit.org/show_bug.cgi?id=218894
+        <rdar://problem/71368343>
+
+        Reviewed by Antti Koivisto.
+
+        Mark some WPT progressions.
+
+        * web-platform-tests/css/css-pseudo/parsing/marker-supported-properties-expected.txt:
+
 2020-11-12  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][Integration] Enable inline replaced support

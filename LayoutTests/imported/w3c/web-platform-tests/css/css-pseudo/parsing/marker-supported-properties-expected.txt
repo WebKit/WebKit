@@ -22,19 +22,19 @@ FAIL Property unicode-bidi value 'plaintext' in ::marker assert_equals: expected
 FAIL Property direction value 'rtl' in ::marker assert_equals: expected "rtl" but got "ltr"
 FAIL Property content value '"foo"' in ::marker assert_equals: expected "\"foo\"" but got ""
 FAIL Property animation value '1s linear 2s infinite alternate forwards paused anim' in ::marker assert_equals: expected "1s linear 2s infinite alternate forwards paused anim" but got ""
-FAIL Property animation-delay value '1s' in ::marker assert_equals: expected "1s" but got "0s"
-FAIL Property animation-direction value 'alternate' in ::marker assert_equals: expected "alternate" but got "normal"
-FAIL Property animation-duration value '2s' in ::marker assert_equals: expected "2s" but got "0s"
-FAIL Property animation-fill-mode value 'forwards' in ::marker assert_equals: expected "forwards" but got "none"
-FAIL Property animation-iteration-count value 'infinite' in ::marker assert_equals: expected "infinite" but got "1"
-FAIL Property animation-name value 'anim' in ::marker assert_equals: expected "anim" but got "none"
-FAIL Property animation-play-state value 'paused' in ::marker assert_equals: expected "paused" but got "running"
-FAIL Property animation-timing-function value 'linear' in ::marker assert_equals: expected "linear" but got "ease"
-FAIL Property transition value 'display 1s linear 2s' in ::marker assert_equals: expected "display 1s linear 2s" but got "all 0s ease 0s"
-FAIL Property transition-delay value '1s' in ::marker assert_equals: expected "1s" but got "0s"
-FAIL Property transition-duration value '2s' in ::marker assert_equals: expected "2s" but got "0s"
-FAIL Property transition-property value 'display' in ::marker assert_equals: expected "display" but got "all"
-FAIL Property transition-timing-function value 'linear' in ::marker assert_equals: expected "linear" but got "ease"
+PASS Property animation-delay value '1s' in ::marker
+PASS Property animation-direction value 'alternate' in ::marker
+PASS Property animation-duration value '2s' in ::marker
+PASS Property animation-fill-mode value 'forwards' in ::marker
+PASS Property animation-iteration-count value 'infinite' in ::marker
+PASS Property animation-name value 'anim' in ::marker
+PASS Property animation-play-state value 'paused' in ::marker
+PASS Property animation-timing-function value 'linear' in ::marker
+PASS Property transition value 'display 1s linear 2s' in ::marker
+PASS Property transition-delay value '1s' in ::marker
+PASS Property transition-duration value '2s' in ::marker
+PASS Property transition-property value 'display' in ::marker
+PASS Property transition-timing-function value 'linear' in ::marker
 PASS Property display value 'none' in ::marker
 PASS Property position value 'absolute' in ::marker
 PASS Property float value 'right' in ::marker
