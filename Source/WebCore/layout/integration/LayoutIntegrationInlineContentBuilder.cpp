@@ -65,11 +65,11 @@ InlineContentBuilder::InlineContentBuilder(const Layout::LayoutState& layoutStat
 {
 }
 
-void InlineContentBuilder::build(InlineContent& inlineContent, const Layout::InlineFormattingState& inlineFormattingState) const
+void InlineContentBuilder::build(const Layout::InlineFormattingState& inlineFormattingState, InlineContent& inlineContent) const
 {
     auto lineLevelVisualAdjustmentsForRuns = computeLineLevelVisualAdjustmentsForRuns(inlineFormattingState);
-    constructDisplayLineRuns(inlineContent, inlineFormattingState, lineLevelVisualAdjustmentsForRuns);
-    constructDisplayLines(inlineContent, inlineFormattingState, lineLevelVisualAdjustmentsForRuns);
+    createDisplayLineRuns(inlineFormattingState, inlineContent, lineLevelVisualAdjustmentsForRuns);
+    createDisplayLines(inlineFormattingState, inlineContent, lineLevelVisualAdjustmentsForRuns);
 }
 
 InlineContentBuilder::LineLevelVisualAdjustmentsForRunsList InlineContentBuilder::computeLineLevelVisualAdjustmentsForRuns(const Layout::InlineFormattingState& inlineFormattingState) const
@@ -106,7 +106,7 @@ InlineContentBuilder::LineLevelVisualAdjustmentsForRunsList InlineContentBuilder
     return lineLevelVisualAdjustmentsForRuns;
 }
 
-void InlineContentBuilder::constructDisplayLineRuns(InlineContent& inlineContent, const Layout::InlineFormattingState& inlineFormattingState, const LineLevelVisualAdjustmentsForRunsList& lineLevelVisualAdjustmentsForRuns) const
+void InlineContentBuilder::createDisplayLineRuns(const Layout::InlineFormattingState& inlineFormattingState, InlineContent& inlineContent, const LineLevelVisualAdjustmentsForRunsList& lineLevelVisualAdjustmentsForRuns) const
 {
     auto& runList = inlineFormattingState.lineRuns();
     if (runList.isEmpty())
@@ -195,7 +195,7 @@ void InlineContentBuilder::constructDisplayLineRuns(InlineContent& inlineContent
     }
 }
 
-void InlineContentBuilder::constructDisplayLines(InlineContent& inlineContent, const Layout::InlineFormattingState& inlineFormattingState, const LineLevelVisualAdjustmentsForRunsList& lineLevelVisualAdjustmentsForRuns) const
+void InlineContentBuilder::createDisplayLines(const Layout::InlineFormattingState& inlineFormattingState, InlineContent& inlineContent, const LineLevelVisualAdjustmentsForRunsList& lineLevelVisualAdjustmentsForRuns) const
 {
     auto& lines = inlineFormattingState.lines();
     auto& lineBoxes = inlineFormattingState.lineBoxes();

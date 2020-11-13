@@ -45,14 +45,14 @@ class InlineContentBuilder {
 public:
     InlineContentBuilder(const Layout::LayoutState&, const RenderBlockFlow&);
 
-    void build(InlineContent&, const Layout::InlineFormattingState&) const;
+    void build(const Layout::InlineFormattingState&, InlineContent&) const;
 
 private:
     using LineLevelVisualAdjustmentsForRunsList = Vector<LineLevelVisualAdjustmentsForRuns>;
 
     LineLevelVisualAdjustmentsForRunsList computeLineLevelVisualAdjustmentsForRuns(const Layout::InlineFormattingState&) const;
-    void constructDisplayLineRuns(InlineContent&, const Layout::InlineFormattingState&, const LineLevelVisualAdjustmentsForRunsList&) const;
-    void constructDisplayLines(InlineContent&, const Layout::InlineFormattingState&, const LineLevelVisualAdjustmentsForRunsList&) const;
+    void createDisplayLineRuns(const Layout::InlineFormattingState&, InlineContent&, const LineLevelVisualAdjustmentsForRunsList&) const;
+    void createDisplayLines(const Layout::InlineFormattingState&, InlineContent&, const LineLevelVisualAdjustmentsForRunsList&) const;
 
     const Layout::LayoutState& m_layoutState;
     const RenderBlockFlow& m_blockFlow;
