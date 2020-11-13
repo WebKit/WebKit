@@ -108,20 +108,70 @@ InlineContentBuilder::LineLevelVisualAdjustmentsForRunsList InlineContentBuilder
 
 void InlineContentBuilder::constructDisplayLineRuns(InlineContent& inlineContent, const Layout::InlineFormattingState& inlineFormattingState, const LineLevelVisualAdjustmentsForRunsList& lineLevelVisualAdjustmentsForRuns) const
 {
+    auto& runList = inlineFormattingState.lineRuns();
+    if (runList.isEmpty())
+        return;
     auto& lines = inlineFormattingState.lines();
-    auto initialContaingBlockSize = m_layoutState.viewportSize();
     Vector<bool> hasAdjustedTrailingLineList(lines.size(), false);
-    for (auto& lineRun : inlineFormattingState.lineRuns()) {
+
+    auto createDisplayBoxRun = [&](auto& lineRun) {
+        auto lineIndex = lineRun.lineIndex();
+        auto& line = lines[lineIndex];
+        // Inline boxes are relative to the line box while final Runs need to be relative to the parent Box
+        // FIXME: Shouldn't we just leave them be relative to the line box?
+        auto runRect = FloatRect { lineRun.logicalRect() };
+        runRect.moveBy({ line.logicalLeft(), line.logicalTop() });
+        if (lineLevelVisualAdjustmentsForRuns[lineIndex].needsIntegralPosition)
+            runRect.setY(roundToInt(runRect.y()));
+        // FIXME: Add support for non-text ink overflow.
+        // FIXME: Add support for cases when the run is after ellipsis.
+        inlineContent.runs.append({ lineIndex, lineRun.layoutBox(), runRect, runRect, { }, { } });
+    };
+
+    auto createDisplayTextRunForRange = [&](auto& lineRun, auto startOffset, auto endOffset) {
+        RELEASE_ASSERT(startOffset < endOffset);
         auto& layoutBox = lineRun.layoutBox();
+        auto lineIndex = lineRun.lineIndex();
+        auto& line = lines[lineIndex];
+        auto runRect = FloatRect { lineRun.logicalRect() };
+        // Inline boxes are relative to the line box while final Runs need to be relative to the parent Box
+        // FIXME: Shouldn't we just leave them be relative to the line box?
+        runRect.moveBy({ line.logicalLeft(), line.logicalTop() });
+        if (lineLevelVisualAdjustmentsForRuns[lineIndex].needsIntegralPosition)
+            runRect.setY(roundToInt(runRect.y()));
+
         auto& style = layoutBox.style();
+        auto text = lineRun.text();
+        auto adjustedContentToRenderer = [&] {
+            auto originalContent = text->content().substring(text->start(), text->length());
+            if (text->needsHyphen())
+                return makeString(originalContent, style.hyphenString());
+            if (lineLevelVisualAdjustmentsForRuns[lineIndex].needsTrailingContentReplacement) {
+                // Currently it's ellipsis replacement only, but adding support for "text-overflow: string" should be relatively simple.
+                if (hasAdjustedTrailingLineList[lineIndex]) {
+                    // This line already has adjusted trailing. Any runs after the ellipsis should render blank.
+                    return emptyString();
+                }
+                auto runLogicalRect = lineRun.logicalRect();
+                auto lineLogicalRight = line.logicalRight();
+                auto ellipsisWidth = style.fontCascade().width(WebCore::TextRun { &horizontalEllipsis });
+                if (runLogicalRect.right() + ellipsisWidth > lineLogicalRight) {
+                    // The next run with ellipsis would surely overflow. So let's just add it to this run even if
+                    // it makes the run wider than it originally was.
+                    hasAdjustedTrailingLineList[lineIndex] = true;
+                    float resultWidth = 0;
+                    auto maxWidth = line.logicalWidth() - runLogicalRect.left();
+                    return StringTruncator::rightTruncate(originalContent, maxWidth, style.fontCascade(), resultWidth, true);
+                }
+            }
+            return String();
+        };
+
         auto computedInkOverflow = [&] (auto runRect) {
-            // FIXME: Add support for non-text ink overflow.
-            if (!lineRun.text())
-                return runRect;
             auto inkOverflow = runRect;
+            auto initialContaingBlockSize = m_layoutState.viewportSize();
             auto strokeOverflow = std::ceil(style.computedStrokeWidth(ceiledIntSize(initialContaingBlockSize)));
             inkOverflow.inflate(strokeOverflow);
-
             auto letterSpacing = style.fontCascade().letterSpacing();
             if (letterSpacing < 0) {
                 // Last letter's negative spacing shrinks logical rect. Push it to ink overflow.
@@ -129,46 +179,19 @@ void InlineContentBuilder::constructDisplayLineRuns(InlineContent& inlineContent
             }
             return inkOverflow;
         };
-        auto runRect = FloatRect { lineRun.logicalRect() };
-        // Inline boxes are relative to the line box while final Runs need to be relative to the parent Box
-        // FIXME: Shouldn't we just leave them be relative to the line box?
-        auto lineIndex = lineRun.lineIndex();
-        auto& line = lines[lineIndex];
-        runRect.moveBy({ line.logicalLeft(), line.logicalTop() });
-        if (lineLevelVisualAdjustmentsForRuns[lineIndex].needsIntegralPosition)
-            runRect.setY(roundToInt(runRect.y()));
-
-        WTF::Optional<Run::TextContent> textContent;
-        if (auto text = lineRun.text()) {
-            auto adjustedContentToRenderer = [&] {
-                auto originalContent = text->content().substring(text->start(), text->length());
-                if (text->needsHyphen())
-                    return makeString(originalContent, style.hyphenString());
-                if (lineLevelVisualAdjustmentsForRuns[lineIndex].needsTrailingContentReplacement) {
-                    // Currently it's ellipsis replacement only, but adding support for "text-overflow: string" should be relatively simple.
-                    if (hasAdjustedTrailingLineList[lineIndex]) {
-                        // This line already has adjusted trailing. Any runs after the ellipsis should render blank.
-                        return emptyString();
-                    }
-                    auto runLogicalRect = lineRun.logicalRect();
-                    auto lineLogicalRight = line.logicalRight();
-                    auto ellipsisWidth = style.fontCascade().width(WebCore::TextRun { &horizontalEllipsis });
-                    if (runLogicalRect.right() + ellipsisWidth > lineLogicalRight) {
-                        // The next run with ellipsis would surely overflow. So let's just add it to this run even if
-                        // it makes the run wider than it originally was.
-                        hasAdjustedTrailingLineList[lineIndex] = true;
-                        float resultWidth = 0;
-                        auto maxWidth = line.logicalWidth() - runLogicalRect.left();
-                        return StringTruncator::rightTruncate(originalContent, maxWidth, style.fontCascade(), resultWidth, true);
-                    }
-                }
-                return String();
-            };
-            textContent = Run::TextContent { text->start(), text->length(), text->content(), adjustedContentToRenderer(), text->needsHyphen() };
-        }
+        RELEASE_ASSERT(startOffset >= text->start() && startOffset < text->end());
+        RELEASE_ASSERT(endOffset > text->start() && endOffset <= text->end());
+        auto textContent = Run::TextContent { startOffset, endOffset - startOffset, text->content(), adjustedContentToRenderer(), text->needsHyphen() };
         auto expansion = Run::Expansion { lineRun.expansion().behavior, lineRun.expansion().horizontalExpansion };
         auto displayRun = Run { lineIndex, layoutBox, runRect, computedInkOverflow(runRect), expansion, textContent };
         inlineContent.runs.append(displayRun);
+    };
+
+    for (auto& lineRun : inlineFormattingState.lineRuns()) {
+        if (auto& text = lineRun.text())
+            createDisplayTextRunForRange(lineRun, text->start(), text->end());
+        else
+            createDisplayBoxRun(lineRun);
     }
 }
 
