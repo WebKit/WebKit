@@ -1,3 +1,15 @@
+2020-11-13  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, reverting r269776.
+
+        The test added with this change is asserting
+
+        Reverted changeset:
+
+        "Null check anchorNode of endingSelection start"
+        https://bugs.webkit.org/show_bug.cgi?id=218492
+        https://trac.webkit.org/changeset/269776
+
 2020-11-13  Sergey Rubanov  <chi187@gmail.com>
 
         WebAssembly: opcodes for table.grow and table.size are mixed up

@@ -761,7 +761,7 @@ void DeleteSelectionCommand::mergeParagraphs()
     // The endingPosition was likely clobbered by the move, so recompute it (moveParagraph selects the moved paragraph).
 
     // FIXME (Bug 211793): endingSelection() becomes disconnected in moveParagraph
-    if (auto* anchorNode = endingSelection().start().anchorNode(); anchorNode && anchorNode->isConnected())
+    if (endingSelection().start().anchorNode()->isConnected())
         m_endingPosition = endingSelection().start();
 }
 
