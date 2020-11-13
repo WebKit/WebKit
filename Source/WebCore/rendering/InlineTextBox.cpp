@@ -52,6 +52,7 @@
 #include "RenderView.h"
 #include "RenderedDocumentMarker.h"
 #include "RuntimeEnabledFeatures.h"
+#include "Settings.h"
 #include "Text.h"
 #include "TextDecorationPainter.h"
 #include "TextPaintStyle.h"

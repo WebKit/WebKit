@@ -27,6 +27,7 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "Color.h"
 #include "DisplayFillLayerImageGeometry.h"
 #include "FloatRoundedRect.h"
 #include "RectEdges.h"

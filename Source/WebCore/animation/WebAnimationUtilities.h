@@ -31,6 +31,8 @@
 
 namespace WebCore {
 
+enum class PseudoId : uint16_t;
+
 class Element;
 class WebAnimation;
 

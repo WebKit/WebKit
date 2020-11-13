@@ -1,3 +1,13 @@
+2020-11-13  Claudio Saavedra  <csaavedra@igalia.com>
+
+        Non-unified build fixes.
+        https://bugs.webkit.org/show_bug.cgi?id=218905
+
+        Unreviewed.
+
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        * GPUProcess/graphics/RemoteResourceCache.h:
+
 2020-11-13  Alex Christensen  <achristensen@webkit.org>
 
         Remove more SecItemShim leftovers

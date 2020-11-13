@@ -19,6 +19,7 @@
 
 #pragma once
 
+#include <wtf/WeakPtr.h>
 #include <wtf/text/AtomString.h>
 
 namespace WebCore {

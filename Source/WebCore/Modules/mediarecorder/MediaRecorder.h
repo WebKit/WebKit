@@ -33,6 +33,7 @@
 #include "MediaStream.h"
 #include "MediaStreamTrackPrivate.h"
 #include "Timer.h"
+#include <wtf/Deque.h>
 #include <wtf/UniqueRef.h>
 
 namespace WebCore {

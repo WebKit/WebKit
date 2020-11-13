@@ -20,6 +20,7 @@
 
 #pragma once
 
+#include "Frame.h"
 #include "HTMLElement.h"
 #include "ReferrerPolicy.h"
 #include <wtf/HashCountedSet.h>
@@ -27,7 +28,6 @@
 
 namespace WebCore {
 
-class Frame;
 class RenderWidget;
 
 class HTMLFrameOwnerElement : public HTMLElement {

@@ -31,6 +31,8 @@
 #include "DisplayListReaderHandle.h"
 #include "GPUConnectionToWebProcess.h"
 #include "PlatformRemoteImageBuffer.h"
+#include "RemoteMediaPlayerManagerProxy.h"
+#include "RemoteMediaPlayerProxy.h"
 #include "RemoteRenderingBackendMessages.h"
 #include "RemoteRenderingBackendProxyMessages.h"
 #include <wtf/CheckedArithmetic.h>

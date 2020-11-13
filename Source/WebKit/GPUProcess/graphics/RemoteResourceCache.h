@@ -27,12 +27,10 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include <WebCore/ImageBuffer.h>
+#include <WebCore/NativeImage.h>
 #include <WebCore/RenderingResourceIdentifier.h>
 #include <wtf/HashMap.h>
-
-namespace WebCore {
-class ImageBuffer;
-}
 
 namespace WebKit {
 

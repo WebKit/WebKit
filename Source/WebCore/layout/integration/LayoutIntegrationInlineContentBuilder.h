@@ -27,6 +27,8 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include <wtf/Vector.h>
+
 namespace WebCore {
 
 class RenderBlockFlow;

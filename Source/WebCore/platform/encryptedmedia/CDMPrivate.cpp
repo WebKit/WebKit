@@ -36,6 +36,7 @@
 #include "MediaPlayer.h"
 #include "NotImplemented.h"
 #include "ParsedContentType.h"
+#include "SharedBuffer.h"
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {

@@ -27,6 +27,7 @@
 #if ENABLE(WEB_RTC) && USE(LIBWEBRTC)
 
 #include "LibWebRTCRtpTransformBackend.h"
+#include <wtf/Ref.h>
 
 ALLOW_UNUSED_PARAMETERS_BEGIN
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
