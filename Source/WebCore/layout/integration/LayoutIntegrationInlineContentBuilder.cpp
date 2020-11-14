@@ -210,17 +210,21 @@ void InlineContentBuilder::createDisplayLineRuns(const Layout::InlineFormattingS
     Vector<bool> hasAdjustedTrailingLineList(lines.size(), false);
 
     auto createDisplayBoxRun = [&](auto& lineRun) {
+        auto& layoutBox = lineRun.layoutBox();
         auto lineIndex = lineRun.lineIndex();
         auto& line = lines[lineIndex];
         // Inline boxes are relative to the line box while final Runs need to be relative to the parent Box
         // FIXME: Shouldn't we just leave them be relative to the line box?
         auto runRect = FloatRect { lineRun.logicalRect() };
-        runRect.moveBy({ line.logicalLeft(), line.logicalTop() });
+        // Line runs are margin box based, let's convert them to border box.
+        auto& geometry = m_layoutState.geometryForBox(layoutBox);
+        runRect.moveBy({ line.logicalLeft() + std::max(geometry.marginStart(), 0_lu), line.logicalTop() + geometry.marginBefore() });
+        runRect.setSize({ geometry.borderBoxWidth(), geometry.borderBoxHeight() });
         if (lineLevelVisualAdjustmentsForRuns[lineIndex].needsIntegralPosition)
             runRect.setY(roundToInt(runRect.y()));
         // FIXME: Add support for non-text ink overflow.
         // FIXME: Add support for cases when the run is after ellipsis.
-        inlineContent.runs.append({ lineIndex, lineRun.layoutBox(), runRect, runRect, { }, { } });
+        inlineContent.runs.append({ lineIndex, layoutBox, runRect, runRect, { }, { } });
     };
 
     auto createDisplayTextRunForRange = [&](auto& lineRun, auto startOffset, auto endOffset) {

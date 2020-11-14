@@ -154,11 +154,8 @@ void LineLayout::constructContent()
         if (!layoutBox.isReplacedBox())
             continue;
 
-        auto& runRect = run.rect();
         auto& renderer = downcast<RenderBox>(m_boxTree.rendererForLayoutBox(layoutBox));
-        auto& boxGeometry = m_layoutState.geometryForBox(layoutBox);
-        auto borderBoxLocation = FloatPoint { runRect.x() + std::max(boxGeometry.marginStart(), 0_lu), runRect.y() + boxGeometry.marginBefore() };
-        renderer.setLocation(flooredLayoutPoint(borderBoxLocation));
+        renderer.setLocation(flooredLayoutPoint(run.rect().location()));
     }
 
     m_inlineContent->clearGapAfterLastLine = m_inlineFormattingState.clearGapAfterLastLine();
