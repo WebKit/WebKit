@@ -205,6 +205,9 @@ webkit.org/b/215405 accessibility/gtk/combobox-descendants-orientation-crash.htm
 webkit.org/b/215405 accessibility/gtk/text-for-range-combo-box.html [ Failure ]
 webkit.org/b/215405 inspector/dom/getAccessibilityPropertiesForNode.html [ Failure ]
 
+# Compositing
+webkit.org/b/218942 imported/w3c/web-platform-tests/css/css-color/composited-filters-under-opacity.html [ ImageOnlyFailure ]
+
 # CSS
 webkit.org/b/216161 imported/w3c/web-platform-tests/css/css-pseudo/text-selection.html [ Failure Pass ]
 

@@ -1,3 +1,11 @@
+2020-11-14  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK] Gardening imported/w3c/web-platform-tests/css/css-color/composited-filters-under-opacity.html
+
+        Unreviewed test gardening.
+
+        * platform/gtk/TestExpectations:
+
 2020-11-13  Lauro Moura  <lmoura@igalia.com>
 
         [GLIB] Gardening some failures
