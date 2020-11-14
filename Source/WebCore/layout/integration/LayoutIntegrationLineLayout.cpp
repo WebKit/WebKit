@@ -110,12 +110,24 @@ bool LineLayout::canUseForAfterStyleChange(const RenderBlockFlow& flow, StyleDif
 
 void LineLayout::updateReplacedDimensions(const RenderBox& replaced)
 {
-    auto& layoutBox = m_boxTree.layoutBoxForRenderer(replaced);
+    updateLayoutBoxDimensions(replaced);
+}
+
+void LineLayout::updateInlineBlockDimensions(const RenderBlock& inlineBlock)
+{
+    updateLayoutBoxDimensions(inlineBlock);
+}
+
+void LineLayout::updateLayoutBoxDimensions(const RenderBox& replacedOrInlineBlock)
+{
+    auto& layoutBox = m_boxTree.layoutBoxForRenderer(replacedOrInlineBlock);
+    // Internally both replaced and inline-box content use replaced boxes.
     auto& replacedBox = downcast<Layout::ReplacedBox>(layoutBox);
 
-    replacedBox.setContentSizeForIntegration({ replaced.contentLogicalWidth(), replaced.contentLogicalHeight() });
+    // Always use the physical size here for inline level boxes (this is where the logical vs. physical coords flip happens).
+    replacedBox.setContentSizeForIntegration({ replacedOrInlineBlock.contentWidth(), replacedOrInlineBlock.contentHeight() });
 
-    auto baseline = replaced.baselinePosition(AlphabeticBaseline, false /* firstLine */, HorizontalLine, PositionOnContainingLine);
+    auto baseline = replacedOrInlineBlock.baselinePosition(AlphabeticBaseline, false /* firstLine */, HorizontalLine, PositionOnContainingLine);
     replacedBox.setBaseline(baseline);
 }
 

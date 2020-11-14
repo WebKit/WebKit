@@ -3621,8 +3621,8 @@ void RenderBlockFlow::layoutModernLines(bool relayoutChildren, LayoutUnit& repai
         if (is<RenderBlock>(renderer)) {
             auto& block = downcast<RenderBlock>(renderer);
             block.layoutIfNeeded();
-            // FIXME: Taking the same path as replaced for now.
-            layoutFormattingContextLineLayout.updateReplacedDimensions(block);
+            ASSERT(block.style().display() == DisplayType::InlineBlock);
+            layoutFormattingContextLineLayout.updateInlineBlockDimensions(block);
             continue;
         }
 

@@ -64,6 +64,7 @@ public:
     static bool canUseForAfterStyleChange(const RenderBlockFlow&, StyleDifference);
 
     void updateReplacedDimensions(const RenderBox&);
+    void updateInlineBlockDimensions(const RenderBlock&);
     void updateStyle(const RenderBoxModelObject&);
     void layout();
 
@@ -101,6 +102,7 @@ private:
     void prepareFloatingState();
     void constructContent();
     InlineContent& ensureInlineContent();
+    void updateLayoutBoxDimensions(const RenderBox&);
 
     RenderBlockFlow& flow() { return m_boxTree.flow(); }
 
