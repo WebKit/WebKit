@@ -34,7 +34,7 @@ namespace Inspector {
 
 class RemoteInspectorServer final : public RemoteInspectorSocketEndpoint::Listener {
 public:
-    ~RemoteInspectorServer();
+    ~RemoteInspectorServer() final;
 
     JS_EXPORT_PRIVATE static RemoteInspectorServer& singleton();
 

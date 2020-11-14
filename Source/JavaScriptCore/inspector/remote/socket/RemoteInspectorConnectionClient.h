@@ -41,7 +41,7 @@ class MessageParser;
 
 class JS_EXPORT_PRIVATE RemoteInspectorConnectionClient : public RemoteInspectorSocketEndpoint::Client {
 public:
-    virtual ~RemoteInspectorConnectionClient();
+    ~RemoteInspectorConnectionClient() override;
 
     Optional<ConnectionID> connectInet(const char* serverAddr, uint16_t serverPort);
     Optional<ConnectionID> createClient(PlatformSocketType);

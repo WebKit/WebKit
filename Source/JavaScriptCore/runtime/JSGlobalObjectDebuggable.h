@@ -44,7 +44,7 @@ class JSGlobalObjectDebuggable final : public Inspector::RemoteInspectionTarget 
     WTF_MAKE_NONCOPYABLE(JSGlobalObjectDebuggable);
 public:
     JSGlobalObjectDebuggable(JSGlobalObject&);
-    ~JSGlobalObjectDebuggable() { }
+    ~JSGlobalObjectDebuggable() final { }
 
     Inspector::RemoteControllableTarget::Type type() const final { return m_type; }
     void setIsITML() { m_type = Inspector::RemoteControllableTarget::Type::ITML; }

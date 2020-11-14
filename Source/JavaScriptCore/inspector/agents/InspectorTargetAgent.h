@@ -40,16 +40,16 @@ class JS_EXPORT_PRIVATE InspectorTargetAgent final : public InspectorAgentBase, 
     WTF_MAKE_FAST_ALLOCATED;
 public:
     InspectorTargetAgent(FrontendRouter&, BackendDispatcher&);
-    ~InspectorTargetAgent();
+    ~InspectorTargetAgent() final;
 
     // InspectorAgentBase
-    void didCreateFrontendAndBackend(FrontendRouter*, BackendDispatcher*);
-    void willDestroyFrontendAndBackend(DisconnectReason);
+    void didCreateFrontendAndBackend(FrontendRouter*, BackendDispatcher*) final;
+    void willDestroyFrontendAndBackend(DisconnectReason) final;
 
     // TargetBackendDispatcherHandler
-    Protocol::ErrorStringOr<void> setPauseOnStart(bool);
-    Protocol::ErrorStringOr<void> resume(const String& targetId);
-    Protocol::ErrorStringOr<void> sendMessageToTarget(const String& targetId, const String& message);
+    Protocol::ErrorStringOr<void> setPauseOnStart(bool) final;
+    Protocol::ErrorStringOr<void> resume(const String& targetId) final;
+    Protocol::ErrorStringOr<void> sendMessageToTarget(const String& targetId, const String& message) final;
 
     // Target lifecycle.
     void targetCreated(InspectorTarget&);

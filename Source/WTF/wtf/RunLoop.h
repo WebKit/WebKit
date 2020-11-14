@@ -82,7 +82,7 @@ public:
     WTF_EXPORT_PRIVATE static bool isMain();
     ~RunLoop() final;
 
-    WTF_EXPORT_PRIVATE void dispatch(Function<void()>&&);
+    WTF_EXPORT_PRIVATE void dispatch(Function<void()>&&) final;
     WTF_EXPORT_PRIVATE void dispatchAfter(Seconds, Function<void()>&&);
 #if USE(COCOA_EVENT_LOOP)
     WTF_EXPORT_PRIVATE static void dispatch(const SchedulePairHashSet&, Function<void()>&&);
