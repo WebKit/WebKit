@@ -1,3 +1,30 @@
+2020-11-14  Rob Buis  <rbuis@igalia.com>
+
+        Remove -webkit-aspect-ratio support
+        https://bugs.webkit.org/show_bug.cgi?id=218384
+
+        Reviewed by Simon Fraser.
+
+        Remove tests for -webkit-aspect-ratio.
+
+        * fast/css/aspect-ratio-inheritance-expected.txt: Removed.
+        * fast/css/aspect-ratio-inheritance.html: Removed.
+        * fast/css/aspect-ratio-parsing-tests-expected.txt: Removed.
+        * fast/css/aspect-ratio-parsing-tests.html: Removed.
+        * fast/css/aspect-ratio/badchess-tall.png: Removed.
+        * fast/css/aspect-ratio/badchess-wide.png: Removed.
+        * fast/css/aspect-ratio/columns-expected.html: Removed.
+        * fast/css/aspect-ratio/columns.html: Removed.
+        * fast/css/aspect-ratio/containers-expected.html: Removed.
+        * fast/css/aspect-ratio/containers.html: Removed.
+        * fast/css/aspect-ratio/simple-expected.html: Removed.
+        * fast/css/aspect-ratio/simple.html: Removed.
+        * platform/gtk/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-csstext-expected.txt:
+        * platform/ios-13/imported/w3c/web-platform-tests/css/css-cascade/all-prop-initial-xml-expected.txt:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-csstext-expected.txt:
+        * platform/ios/imported/w3c/web-platform-tests/css/css-cascade/all-prop-initial-xml-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-csstext-expected.txt:
+
 2020-11-14  Lauro Moura  <lmoura@igalia.com>
 
         [GTK] Gardening imported/w3c/web-platform-tests/css/css-color/composited-filters-under-opacity.html

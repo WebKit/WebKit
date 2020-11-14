@@ -26,7 +26,6 @@
 #include "CSSComputedStyleDeclaration.h"
 
 #include "BasicShapeFunctions.h"
-#include "CSSAspectRatioValue.h"
 #include "CSSBasicShapes.h"
 #include "CSSBorderImage.h"
 #include "CSSBorderImageSliceValue.h"
@@ -3452,21 +3451,6 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             return timingFunctionValue(style.animations());
         case CSSPropertyWebkitAppearance:
             return cssValuePool.createValue(style.appearance());
-        case CSSPropertyWebkitAspectRatio:
-            switch (style.aspectRatioType()) {
-            case AspectRatioType::Auto:
-                return cssValuePool.createIdentifierValue(CSSValueAuto);
-            case AspectRatioType::FromDimensions:
-                return cssValuePool.createIdentifierValue(CSSValueFromDimensions);
-            case AspectRatioType::FromIntrinsic:
-                return cssValuePool.createIdentifierValue(CSSValueFromIntrinsic);
-            case AspectRatioType::Ratio:
-                return CSSAspectRatioValue::create(style.aspectRatioNumerator(), style.aspectRatioDenominator());
-            case AspectRatioType::AutoAndRatio:
-                break;
-            }
-            ASSERT_NOT_REACHED();
-            return nullptr;
         case CSSPropertyAspectRatio:
             switch (style.aspectRatioType()) {
             case AspectRatioType::Auto:
@@ -3483,9 +3467,6 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
                 list->append(ratioList);
                 return list;
             }
-            case AspectRatioType::FromDimensions:
-            case AspectRatioType::FromIntrinsic:
-                break;
             }
             ASSERT_NOT_REACHED();
             return nullptr;

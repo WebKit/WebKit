@@ -502,8 +502,6 @@ public:
     float opacity() const { return m_rareNonInheritedData->opacity; }
     ControlPart appearance() const { return static_cast<ControlPart>(m_rareNonInheritedData->appearance); }
     AspectRatioType aspectRatioType() const { return static_cast<AspectRatioType>(m_rareNonInheritedData->aspectRatioType); }
-    float aspectRatioDenominator() const { return m_rareNonInheritedData->aspectRatioDenominator; }
-    float aspectRatioNumerator() const { return m_rareNonInheritedData->aspectRatioNumerator; }
     double aspectRatioWidth() const { return m_rareNonInheritedData->aspectRatioWidth; }
     double aspectRatioHeight() const { return m_rareNonInheritedData->aspectRatioHeight; }
     BoxAlignment boxAlign() const { return static_cast<BoxAlignment>(m_rareNonInheritedData->deprecatedFlexibleBox->align); }
@@ -1011,8 +1009,6 @@ public:
     void setCaptionSide(CaptionSide v) { m_inheritedFlags.captionSide = static_cast<unsigned>(v); }
 
     void setAspectRatioType(AspectRatioType aspectRatioType) { SET_VAR(m_rareNonInheritedData, aspectRatioType, static_cast<unsigned>(aspectRatioType)); }
-    void setAspectRatioDenominator(float v) { SET_VAR(m_rareNonInheritedData, aspectRatioDenominator, v); }
-    void setAspectRatioNumerator(float v) { SET_VAR(m_rareNonInheritedData, aspectRatioNumerator, v); }
     void setAspectRatio(double width, double height) { SET_VAR(m_rareNonInheritedData, aspectRatioWidth, width); SET_VAR(m_rareNonInheritedData, aspectRatioHeight, height); }
 
     void setListStyleStringValue(const AtomString& value) { SET_VAR(m_rareInheritedData, listStyleStringValue, value); }
@@ -1613,8 +1609,6 @@ public:
     static Resize initialResize() { return Resize::None; }
     static ControlPart initialAppearance() { return NoControlPart; }
     static AspectRatioType initialAspectRatioType() { return AspectRatioType::Auto; }
-    static float initialAspectRatioDenominator() { return 1; }
-    static float initialAspectRatioNumerator() { return 1; }
     static double initialAspectRatioWidth() { return 1.0; }
     static double initialAspectRatioHeight() { return 1.0; }
     static Order initialRTLOrdering() { return Order::Logical; }

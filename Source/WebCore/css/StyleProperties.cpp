@@ -1321,7 +1321,6 @@ bool StyleProperties::traverseSubresources(const WTF::Function<bool (const Cache
 static const CSSPropertyID blockProperties[] = {
     CSSPropertyOrphans,
     CSSPropertyOverflow, // This can be also be applied to replaced elements
-    CSSPropertyWebkitAspectRatio,
     CSSPropertyColumnCount,
     CSSPropertyColumnGap,
     CSSPropertyRowGap,

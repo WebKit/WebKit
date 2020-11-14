@@ -4472,15 +4472,6 @@
                 "url": "https://www.w3.org/TR/css-ui-4/#propdef-appearance"
             }
         },
-        "-webkit-aspect-ratio": {
-            "inherited": true,
-            "codegen-properties": {
-                "custom": "All"
-            },
-            "status": {
-                "status": "experimental"
-            }
-        },
         "aspect-ratio": {
             "codegen-properties": {
                 "custom": "All"

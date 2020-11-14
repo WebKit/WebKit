@@ -106,8 +106,6 @@ public:
 
     float opacity;
 
-    float aspectRatioDenominator;
-    float aspectRatioNumerator;
     double aspectRatioWidth;
     double aspectRatioHeight;
 

@@ -91,8 +91,6 @@ TextStream& operator<<(TextStream& ts, AspectRatioType aspectRatioType)
 {
     switch (aspectRatioType) {
     case AspectRatioType::Auto: ts << "auto"; break;
-    case AspectRatioType::FromIntrinsic: ts << "from-intrinsic"; break;
-    case AspectRatioType::FromDimensions: ts << "from-dimensions"; break;
     case AspectRatioType::Ratio: ts << "ratio"; break;
     case AspectRatioType::AutoAndRatio: ts << "autoandratio"; break;
     }

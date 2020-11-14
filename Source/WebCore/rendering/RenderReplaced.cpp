@@ -108,18 +108,6 @@ void RenderReplaced::layout()
     updateLogicalWidth();
     updateLogicalHeight();
 
-    // Now that we've calculated our preferred layout, we check to see
-    // if we should further constrain sizing to the intrinsic aspect ratio.
-    if (style().aspectRatioType() == AspectRatioType::FromIntrinsic && !m_intrinsicSize.isEmpty()) {
-        float aspectRatio = m_intrinsicSize.aspectRatio();
-        LayoutSize frameSize = size();
-        float frameAspectRatio = frameSize.aspectRatio();
-        if (frameAspectRatio < aspectRatio)
-            setHeight(computeReplacedLogicalHeightRespectingMinMaxHeight(frameSize.height() * frameAspectRatio / aspectRatio));
-        else if (frameAspectRatio > aspectRatio)
-            setWidth(computeReplacedLogicalWidthRespectingMinMaxWidth(frameSize.width() * aspectRatio / frameAspectRatio, ComputePreferred));
-    }
-
     clearOverflow();
     addVisualEffectOverflow();
     updateLayerTransform();
@@ -367,10 +355,8 @@ bool RenderReplaced::setNeedsLayoutIfNeededAfterIntrinsicSizeChange()
         || style().logicalMaxWidth().isPercentOrCalculated()
         || style().logicalMinWidth().isPercentOrCalculated();
     
-    bool layoutSizeDependsOnIntrinsicSize = style().aspectRatioType() == AspectRatioType::FromIntrinsic;
-    
     // Flex layout algorithm uses the intrinsic image width/height even if width/height are specified.
-    if (!imageSizeIsConstrained || containingBlockNeedsToRecomputePreferredSize || layoutSizeDependsOnIntrinsicSize || isFlexItem()) {
+    if (!imageSizeIsConstrained || containingBlockNeedsToRecomputePreferredSize || isFlexItem()) {
         setNeedsLayout();
         return true;
     }

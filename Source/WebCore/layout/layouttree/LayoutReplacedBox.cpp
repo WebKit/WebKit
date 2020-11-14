@@ -86,7 +86,7 @@ LayoutUnit ReplacedBox::intrinsicRatio() const
 
 bool ReplacedBox::hasAspectRatio() const
 {
-    return isImage() || style().aspectRatioType() == AspectRatioType::FromIntrinsic;
+    return isImage();
 }
 
 }

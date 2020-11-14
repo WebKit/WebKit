@@ -1339,10 +1339,6 @@ dense
 // -webkit-column-fill
 balance
 
-// -webkit-aspect-ratio
-from-dimensions
-from-intrinsic
-
 #if defined(ENABLE_CSS_TRAILING_WORD) && ENABLE_CSS_TRAILING_WORD
 // -apple-trailing-word
 -webkit-partially-balanced
