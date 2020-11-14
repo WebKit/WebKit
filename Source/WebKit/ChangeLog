@@ -1,3 +1,17 @@
+2020-11-13  Chris Dumez  <cdumez@apple.com>
+
+        [GPUProcess] Add basic low memory handling in the GPUProcess
+        https://bugs.webkit.org/show_bug.cgi?id=218926
+        <rdar://problem/70300888>
+
+        Reviewed by Geoffrey Garen.
+
+        Add basic low memory handling in the GPUProcess. For now, the GPUProcess only calls
+        WTF::releaseFastMallocFreeMemory() on low memory warning.
+
+        * GPUProcess/GPUProcess.cpp:
+        (WebKit::GPUProcess::initializeGPUProcess):
+
 2020-11-13  Kate Cheney  <katherine_cheney@apple.com>
 
         Can't login to Microsoft Teams
