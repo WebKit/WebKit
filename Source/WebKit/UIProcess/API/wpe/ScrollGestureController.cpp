@@ -70,8 +70,8 @@ bool ScrollGestureController::handleEvent(const struct wpe_input_touch_event_raw
                 0, 0, 0,
             };
 
-            auto xOffset = std::abs(touchPoint->x - m_start.x);
-            auto yOffset = std::abs(touchPoint->y - m_start.y);
+            uint32_t xOffset = std::abs(touchPoint->x - m_start.x);
+            uint32_t yOffset = std::abs(touchPoint->y - m_start.y);
 
             if (xOffset >= axisLockReleaseThreshold)
                 m_xAxisLockBroken = true;

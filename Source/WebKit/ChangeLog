@@ -1,3 +1,13 @@
+2020-11-14  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed, suppressing GCC compilation warnings.
+
+        * UIProcess/API/wpe/ScrollGestureController.cpp:
+        (WebKit::ScrollGestureController::handleEvent):
+        Explicitly store the std::abs() results as uint32_t values. This avoids
+        comparison between the otherwise-signed return values and the unsigned
+        constants.
+
 2020-11-13  Sihui Liu  <sihui_liu@apple.com>
 
         Implement basic permission check for SpeechRecognition
