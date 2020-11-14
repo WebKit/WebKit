@@ -404,7 +404,7 @@ void LineBoxBuilder::computeLineBoxHeightAndalignInlineLevelBoxesVertically(Line
         HashMap<LineBox::InlineLevelBox*, InlineLayoutUnit> inlineLevelBoxAbsoluteBaselineOffsetMap;
         inlineLevelBoxAbsoluteBaselineOffsetMap.add(&rootInlineBox, InlineLayoutUnit { });
 
-        auto maximumTopOffsetFromRootInlineBoxBaseline = rootInlineBox.isEmpty() ? InlineLayoutUnit() : rootInlineBox.layoutBounds().ascent;
+        auto maximumTopOffsetFromRootInlineBoxBaseline = rootInlineBox.isEmpty() ? std::numeric_limits<InlineLayoutUnit>::min() : rootInlineBox.layoutBounds().ascent;
 
         for (auto& inlineLevelBox : lineBox.nonRootInlineLevelBoxes()) {
             auto absoluteBaselineOffset = InlineLayoutUnit { };
