@@ -1,5 +1,35 @@
 2020-11-13  Chris Dumez  <cdumez@apple.com>
 
+        [GPUProcess] Add basic GPUProcess crash handling for canvas
+        https://bugs.webkit.org/show_bug.cgi?id=218924
+
+        Reviewed by Simon Fraser.
+
+        Update RemoteRenderingBackendProxy to be a GPUProcessConnection::Client so that it
+        gets notified when the IPC connection to the GPUProcess gets severed. When this
+        happens, RemoteRenderingBackendProxy clears all its SharedMemory handles and
+        sends IPC messages to the GPU process to recreate all the ImageBuffers we had.
+
+        * WebProcess/GPU/graphics/RemoteImageBufferProxy.h:
+        (WebKit::RemoteImageBufferProxy::create):
+        (WebKit::RemoteImageBufferProxy::clearBackend):
+        (WebKit::RemoteImageBufferProxy::size const):
+        (WebKit::RemoteImageBufferProxy::renderingMode const):
+        (WebKit::RemoteImageBufferProxy::colorSpace const):
+        (WebKit::RemoteImageBufferProxy::pixelFormat const):
+        (WebKit::RemoteImageBufferProxy::RemoteImageBufferProxy):
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp:
+        (WebKit::RemoteRenderingBackendProxy::RemoteRenderingBackendProxy):
+        (WebKit::RemoteRenderingBackendProxy::connectToGPUProcess):
+        (WebKit::recreateImage):
+        (WebKit::RemoteRenderingBackendProxy::gpuProcessConnectionDidClose):
+        (WebKit::RemoteRenderingBackendProxy::createImageBuffer):
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.h:
+        * WebProcess/GPU/graphics/RemoteResourceCacheProxy.h:
+        (WebKit::RemoteResourceCacheProxy::imageBuffers const):
+
+2020-11-13  Chris Dumez  <cdumez@apple.com>
+
         [GPUProcess] Add basic low memory handling in the GPUProcess
         https://bugs.webkit.org/show_bug.cgi?id=218926
         <rdar://problem/70300888>

@@ -27,6 +27,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "GPUProcessConnection.h"
 #include "ImageBufferBackendHandle.h"
 #include "MessageReceiver.h"
 #include "MessageSender.h"
@@ -56,7 +57,7 @@ class DisplayListWriterHandle;
 class RemoteRenderingBackendProxy
     : public IPC::MessageSender
     , private IPC::MessageReceiver
-    , public CanMakeWeakPtr<RemoteRenderingBackendProxy> {
+    , public GPUProcessConnection::Client {
 public:
     static std::unique_ptr<RemoteRenderingBackendProxy> create();
 
@@ -86,6 +87,11 @@ public:
 private:
     RemoteRenderingBackendProxy();
 
+    // GPUProcessConnection::Client
+    void gpuProcessConnectionDidClose(GPUProcessConnection&) final;
+
+    void connectToGPUProcess();
+    void reestablishGPUProcessConnection();
     void updateReusableHandles();
 
     // Messages to be received.

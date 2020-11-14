@@ -48,12 +48,12 @@ class RemoteImageBufferProxy : public WebCore::DisplayList::ImageBuffer<BackendT
     using BaseDisplayListImageBuffer::m_renderingResourceIdentifier;
 
 public:
-    static RefPtr<RemoteImageBufferProxy> create(const WebCore::FloatSize& size, float resolutionScale, RemoteRenderingBackendProxy& remoteRenderingBackendProxy)
+    static RefPtr<RemoteImageBufferProxy> create(const WebCore::FloatSize& size, WebCore::RenderingMode renderingMode, float resolutionScale, WebCore::ColorSpace colorSpace, WebCore::PixelFormat pixelFormat, RemoteRenderingBackendProxy& remoteRenderingBackendProxy)
     {
         if (BackendType::calculateBackendSize(size, resolutionScale).isEmpty())
             return nullptr;
 
-        return adoptRef(new RemoteImageBufferProxy(size, remoteRenderingBackendProxy));
+        return adoptRef(new RemoteImageBufferProxy(size, renderingMode, resolutionScale, colorSpace, pixelFormat, remoteRenderingBackendProxy));
     }
 
     ~RemoteImageBufferProxy()
@@ -64,6 +64,8 @@ public:
         m_remoteRenderingBackendProxy->remoteResourceCacheProxy().releaseImageBuffer(m_renderingResourceIdentifier);
         m_remoteRenderingBackendProxy->releaseRemoteResource(m_renderingResourceIdentifier);
     }
+
+    void clearBackend() { m_backend = nullptr; }
 
     void createBackend(const WebCore::FloatSize& logicalSize, const WebCore::IntSize& backendSize, float resolutionScale, WebCore::ColorSpace colorSpace, WebCore::PixelFormat pixelFormat, ImageBufferBackendHandle handle)
     {
@@ -76,10 +78,21 @@ public:
         m_receivedFlushIdentifier = flushIdentifier;
     }
 
+    const WebCore::FloatSize& size() const { return m_size; }
+    WebCore::RenderingMode renderingMode() const { return m_renderingMode; }
+    float resolutionScale() const final { return m_resolutionScale; }
+    WebCore::ColorSpace colorSpace() const { return m_colorSpace; }
+    WebCore::PixelFormat pixelFormat() const { return m_pixelFormat; }
+
 protected:
-    RemoteImageBufferProxy(const WebCore::FloatSize& size, RemoteRenderingBackendProxy& remoteRenderingBackendProxy)
+    RemoteImageBufferProxy(const WebCore::FloatSize& size, WebCore::RenderingMode renderingMode, float resolutionScale, WebCore::ColorSpace colorSpace, WebCore::PixelFormat pixelFormat, RemoteRenderingBackendProxy& remoteRenderingBackendProxy)
         : BaseDisplayListImageBuffer(size, this)
         , m_remoteRenderingBackendProxy(makeWeakPtr(remoteRenderingBackendProxy))
+        , m_size(size)
+        , m_renderingMode(renderingMode)
+        , m_resolutionScale(resolutionScale)
+        , m_colorSpace(colorSpace)
+        , m_pixelFormat(pixelFormat)
     {
         ASSERT(m_remoteRenderingBackendProxy);
         m_remoteRenderingBackendProxy->remoteResourceCacheProxy().cacheImageBuffer(*this);
@@ -303,6 +316,11 @@ protected:
     WebCore::DisplayList::FlushIdentifier m_receivedFlushIdentifier;
     WeakPtr<RemoteRenderingBackendProxy> m_remoteRenderingBackendProxy;
     size_t m_itemCountInCurrentDisplayList { 0 };
+    WebCore::FloatSize m_size;
+    WebCore::RenderingMode m_renderingMode;
+    float m_resolutionScale;
+    WebCore::ColorSpace m_colorSpace;
+    WebCore::PixelFormat m_pixelFormat;
 };
 
 } // namespace WebKit

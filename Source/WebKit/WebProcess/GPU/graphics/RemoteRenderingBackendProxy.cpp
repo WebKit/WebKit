@@ -30,7 +30,6 @@
 
 #include "DisplayListWriterHandle.h"
 #include "GPUConnectionToWebProcess.h"
-#include "GPUProcessConnection.h"
 #include "ImageDataReference.h"
 #include "PlatformRemoteImageBufferProxy.h"
 #include "RemoteRenderingBackendMessages.h"
@@ -49,12 +48,7 @@ std::unique_ptr<RemoteRenderingBackendProxy> RemoteRenderingBackendProxy::create
 
 RemoteRenderingBackendProxy::RemoteRenderingBackendProxy()
 {
-    // Register itself as a MessageReceiver in the GPUProcessConnection.
-    IPC::MessageReceiverMap& messageReceiverMap = WebProcess::singleton().ensureGPUProcessConnection().messageReceiverMap();
-    messageReceiverMap.addMessageReceiver(Messages::RemoteRenderingBackendProxy::messageReceiverName(), m_renderingBackendIdentifier.toUInt64(), *this);
-
-    // Create the RemoteRenderingBackend
-    send(Messages::GPUConnectionToWebProcess::CreateRenderingBackend(m_renderingBackendIdentifier), 0);
+    connectToGPUProcess();
 }
 
 RemoteRenderingBackendProxy::~RemoteRenderingBackendProxy()
@@ -65,6 +59,47 @@ RemoteRenderingBackendProxy::~RemoteRenderingBackendProxy()
 
     // Release the RemoteRenderingBackend.
     send(Messages::GPUConnectionToWebProcess::ReleaseRenderingBackend(m_renderingBackendIdentifier), 0);
+}
+
+void RemoteRenderingBackendProxy::connectToGPUProcess()
+{
+    auto& connection = WebProcess::singleton().ensureGPUProcessConnection();
+    connection.addClient(*this);
+    connection.messageReceiverMap().addMessageReceiver(Messages::RemoteRenderingBackendProxy::messageReceiverName(), m_renderingBackendIdentifier.toUInt64(), *this);
+
+    send(Messages::GPUConnectionToWebProcess::CreateRenderingBackend(m_renderingBackendIdentifier), 0);
+}
+
+template<typename T>
+static void recreateImageBuffer(RemoteRenderingBackendProxy& proxy, T& imageBuffer, RenderingResourceIdentifier resourceIdentifier, RenderingBackendIdentifier renderingBackendIdentifier)
+{
+    imageBuffer.clearBackend();
+    proxy.send(Messages::RemoteRenderingBackend::CreateImageBuffer(imageBuffer.size(), imageBuffer.renderingMode(), imageBuffer.resolutionScale(), imageBuffer.colorSpace(), imageBuffer.pixelFormat(), resourceIdentifier), renderingBackendIdentifier);
+}
+
+void RemoteRenderingBackendProxy::reestablishGPUProcessConnection()
+{
+    connectToGPUProcess();
+
+    for (auto& pair : m_remoteResourceCacheProxy.imageBuffers()) {
+        if (auto& baseImageBuffer = pair.value) {
+            if (is<AcceleratedRemoteImageBufferProxy>(*baseImageBuffer))
+                recreateImageBuffer(*this, downcast<AcceleratedRemoteImageBufferProxy>(*baseImageBuffer), pair.key, m_renderingBackendIdentifier);
+            else
+                recreateImageBuffer(*this, downcast<UnacceleratedRemoteImageBufferProxy>(*baseImageBuffer), pair.key, m_renderingBackendIdentifier);
+        }
+    }
+}
+
+void RemoteRenderingBackendProxy::gpuProcessConnectionDidClose(GPUProcessConnection& previousConnection)
+{
+    previousConnection.removeClient(*this);
+
+    m_identifiersOfReusableHandles.clear();
+    m_identifiersOfHandlesAvailableForWriting.clear();
+    m_sharedDisplayListHandles.clear();
+
+    reestablishGPUProcessConnection();
 }
 
 IPC::Connection* RemoteRenderingBackendProxy::messageSenderConnection() const
@@ -94,10 +129,10 @@ RefPtr<ImageBuffer> RemoteRenderingBackendProxy::createImageBuffer(const FloatSi
     RefPtr<ImageBuffer> imageBuffer;
 
     if (renderingMode == RenderingMode::Accelerated)
-        imageBuffer = AcceleratedRemoteImageBufferProxy::create(size, resolutionScale, *this);
+        imageBuffer = AcceleratedRemoteImageBufferProxy::create(size, renderingMode, resolutionScale, colorSpace, pixelFormat, *this);
 
     if (!imageBuffer)
-        imageBuffer = UnacceleratedRemoteImageBufferProxy::create(size, resolutionScale, *this);
+        imageBuffer = UnacceleratedRemoteImageBufferProxy::create(size, renderingMode, resolutionScale, colorSpace, pixelFormat, *this);
 
     if (imageBuffer) {
         send(Messages::RemoteRenderingBackend::CreateImageBuffer(size, renderingMode, resolutionScale, colorSpace, pixelFormat, imageBuffer->renderingResourceIdentifier()), m_renderingBackendIdentifier);

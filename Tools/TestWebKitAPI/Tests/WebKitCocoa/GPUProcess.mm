@@ -35,6 +35,30 @@
 #import <WebKit/_WKInternalDebugFeature.h>
 #import <wtf/RetainPtr.h>
 
+#if PLATFORM(MAC)
+typedef NSImage *PlatformImage;
+typedef NSWindow *PlatformWindow;
+
+static RetainPtr<CGImageRef> convertToCGImage(NSImage *image)
+{
+    return [image CGImageForProposedRect:nil context:nil hints:nil];
+}
+
+#else
+typedef UIImage *PlatformImage;
+typedef UIWindow *PlatformWindow;
+
+static RetainPtr<CGImageRef> convertToCGImage(UIImage *image)
+{
+    return image.CGImage;
+}
+#endif
+
+static NSInteger getPixelIndex(NSInteger x, NSInteger y, NSInteger width)
+{
+    return (y * width + x) * 4;
+}
+
 TEST(GPUProcess, RelaunchOnCrash)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -259,4 +283,152 @@ TEST(GPUProcess, CrashWhilePlayingVideo)
 
     EXPECT_EQ(gpuProcessPID, [processPool _gpuProcessIdentifier]);
     EXPECT_EQ(webViewPID, [webView _webProcessIdentifier]);
+}
+
+static NSString *testCanvasPage = @"<body> \n"
+    "<canvas id='myCanvas' width='400px' height='400px'>\n"
+    "<script> \n"
+    "var context = document.getElementById('myCanvas').getContext('2d'); \n"
+    "</script> \n"
+    "</body>";
+
+TEST(GPUProcess, CanvasBasicCrashHandling)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    for (_WKInternalDebugFeature *feature in [WKPreferences _internalDebugFeatures]) {
+        if ([feature.key isEqualToString:@"UseGPUProcessForCanvasRenderingEnabled"]) {
+            [[configuration preferences] _setEnabled:YES forInternalDebugFeature:feature];
+            break;
+        }
+    }
+
+    NSInteger viewWidth = 400;
+    NSInteger viewHeight = 400;
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, viewWidth, viewHeight) configuration:configuration.get() addToWindow:NO]);
+
+    RetainPtr<PlatformWindow> window;
+    CGFloat backingScaleFactor;
+
+#if PLATFORM(MAC)
+    window = adoptNS([[NSWindow alloc] initWithContentRect:[webView frame] styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:NO]);
+    [[window contentView] addSubview:webView.get()];
+    backingScaleFactor = [window backingScaleFactor];
+#elif PLATFORM(IOS_FAMILY)
+    window = adoptNS([[UIWindow alloc] initWithFrame:[webView frame]]);
+    [window addSubview:webView.get()];
+    backingScaleFactor = [[window screen] scale];
+#endif
+
+    [webView synchronouslyLoadHTMLString:testCanvasPage];
+
+    auto webViewPID = [webView _webProcessIdentifier];
+
+    // Try painting the canvas red.
+    __block bool done = false;
+    [webView evaluateJavaScript:@"context.fillStyle = '#FF0000'; context.fillRect(0, 0, 400, 400);" completionHandler:^(id result, NSError *error) {
+        EXPECT_TRUE(!error);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    [webView waitForNextPresentationUpdate];
+
+    // The GPU process should have been launched.
+    auto* processPool = configuration.get().processPool;
+    unsigned timeout = 0;
+    while (![processPool _gpuProcessIdentifier] && timeout++ < 100)
+        TestWebKitAPI::Util::sleep(0.1);
+    auto gpuProcessPID = [processPool _gpuProcessIdentifier];
+    EXPECT_NE(0, gpuProcessPID);
+
+    auto snapshotConfiguration = adoptNS([[WKSnapshotConfiguration alloc] init]);
+    [snapshotConfiguration setRect:NSMakeRect(0, 0, 150, 150)];
+    [snapshotConfiguration setSnapshotWidth:@(150)];
+    [snapshotConfiguration setAfterScreenUpdates:YES];
+
+    // Make sure a red square is painted.
+    done = false;
+    [webView takeSnapshotWithConfiguration:snapshotConfiguration.get() completionHandler:^(PlatformImage snapshotImage, NSError *error) {
+        EXPECT_TRUE(!error);
+
+        RetainPtr<CGImageRef> cgImage = convertToCGImage(snapshotImage);
+        RetainPtr<CGColorSpaceRef> colorSpace = adoptCF(CGColorSpaceCreateDeviceRGB());
+
+        NSInteger viewWidthInPixels = viewWidth * backingScaleFactor;
+        NSInteger viewHeightInPixels = viewHeight * backingScaleFactor;
+
+        uint8_t *rgba = (unsigned char *)calloc(viewWidthInPixels * viewHeightInPixels * 4, sizeof(unsigned char));
+        RetainPtr<CGContextRef> context = CGBitmapContextCreate(rgba, viewWidthInPixels, viewHeightInPixels, 8, 4 * viewWidthInPixels, colorSpace.get(), kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big);
+        CGContextDrawImage(context.get(), CGRectMake(0, 0, viewWidthInPixels, viewHeightInPixels), cgImage.get());
+
+        NSInteger pixelIndex = getPixelIndex(50, 50, viewWidthInPixels);
+        EXPECT_EQ(255, rgba[pixelIndex]);
+        EXPECT_EQ(0, rgba[pixelIndex + 1]);
+        EXPECT_EQ(0, rgba[pixelIndex + 2]);
+
+        pixelIndex = getPixelIndex(100, 100, viewWidthInPixels);
+        EXPECT_EQ(255, rgba[pixelIndex]);
+        EXPECT_EQ(0, rgba[pixelIndex + 1]);
+        EXPECT_EQ(0, rgba[pixelIndex + 2]);
+
+        free(rgba);
+
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    // Kill the GPUProcess.
+    kill(gpuProcessPID, 9);
+
+    // GPU Process should get relaunched.
+    timeout = 0;
+    while ((![processPool _gpuProcessIdentifier] || [processPool _gpuProcessIdentifier] == gpuProcessPID) && timeout++ < 100)
+        TestWebKitAPI::Util::sleep(0.1);
+    EXPECT_NE([processPool _gpuProcessIdentifier], 0);
+    EXPECT_NE([processPool _gpuProcessIdentifier], gpuProcessPID);
+    gpuProcessPID = [processPool _gpuProcessIdentifier];
+
+    // WebProcess should not have crashed.
+    EXPECT_EQ(webViewPID, [webView _webProcessIdentifier]);
+
+    // Try painting the canvas green.
+    done = false;
+    [webView evaluateJavaScript:@"context.fillStyle = '#00FF00'; context.fillRect(0, 0, 400, 400);" completionHandler:^(id result, NSError *error) {
+        EXPECT_TRUE(!error);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    [webView waitForNextPresentationUpdate];
+
+    // Make sure a green square is painted.
+    done = false;
+    [webView takeSnapshotWithConfiguration:snapshotConfiguration.get() completionHandler:^(PlatformImage snapshotImage, NSError *error) {
+        EXPECT_TRUE(!error);
+
+        RetainPtr<CGImageRef> cgImage = convertToCGImage(snapshotImage);
+        RetainPtr<CGColorSpaceRef> colorSpace = adoptCF(CGColorSpaceCreateDeviceRGB());
+
+        NSInteger viewWidthInPixels = viewWidth * backingScaleFactor;
+        NSInteger viewHeightInPixels = viewHeight * backingScaleFactor;
+
+        uint8_t *rgba = (unsigned char *)calloc(viewWidthInPixels * viewHeightInPixels * 4, sizeof(unsigned char));
+        RetainPtr<CGContextRef> context = CGBitmapContextCreate(rgba, viewWidthInPixels, viewHeightInPixels, 8, 4 * viewWidthInPixels, colorSpace.get(), kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big);
+        CGContextDrawImage(context.get(), CGRectMake(0, 0, viewWidthInPixels, viewHeightInPixels), cgImage.get());
+
+        NSInteger pixelIndex = getPixelIndex(50, 50, viewWidthInPixels);
+        EXPECT_EQ(0, rgba[pixelIndex]);
+        EXPECT_EQ(255, rgba[pixelIndex + 1]);
+        EXPECT_EQ(0, rgba[pixelIndex + 2]);
+
+        pixelIndex = getPixelIndex(100, 100, viewWidthInPixels);
+        EXPECT_EQ(0, rgba[pixelIndex]);
+        EXPECT_EQ(255, rgba[pixelIndex + 1]);
+        EXPECT_EQ(0, rgba[pixelIndex + 2]);
+
+        free(rgba);
+
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
 }

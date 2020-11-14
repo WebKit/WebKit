@@ -49,8 +49,10 @@ public:
 
     void cacheNativeImage(WebCore::NativeImage&);
 
-private:
     using ImageBufferHashMap = HashMap<WebCore::RenderingResourceIdentifier, WeakPtr<WebCore::ImageBuffer>>;
+    const ImageBufferHashMap& imageBuffers() const { return m_imageBuffers; }
+
+private:
     using NativeImageHashMap = HashMap<WebCore::RenderingResourceIdentifier, WeakPtr<WebCore::NativeImage>>;
     
     void releaseNativeImage(WebCore::RenderingResourceIdentifier) override;

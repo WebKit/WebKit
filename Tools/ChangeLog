@@ -1,3 +1,17 @@
+2020-11-13  Chris Dumez  <cdumez@apple.com>
+
+        [GPUProcess] Add basic GPUProcess crash handling for canvas
+        https://bugs.webkit.org/show_bug.cgi?id=218924
+
+        Reviewed by Simon Fraser.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/GPUProcess.mm:
+        (convertToCGImage):
+        (getPixelIndex):
+        (TEST):
+
 2020-11-13  Aakash Jain  <aakash_jain@apple.com>
 
         [build.webkit.org] Update CompileWebKit step for new buildbot
