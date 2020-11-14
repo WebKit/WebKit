@@ -1,5 +1,22 @@
 2020-11-13  Antoine Quint  <graouts@webkit.org>
 
+        Support animations on more pseudo-elements
+        https://bugs.webkit.org/show_bug.cgi?id=218792
+        <rdar://problem/71274485>
+
+        Reviewed by Antti Koivisto.
+
+        Add PASS results for WPT tests running animations on ::marker pseudo-elements.
+
+        * web-platform-tests/css/css-animations/Document-getAnimations.tentative-expected.txt:
+        * web-platform-tests/css/css-animations/animationevent-marker-pseudoelement-expected.txt:
+        * web-platform-tests/css/css-animations/event-order.tentative-expected.txt:
+        * web-platform-tests/css/css-pseudo/marker-animate-expected.txt:
+        * web-platform-tests/css/css-pseudo/parsing/marker-supported-properties-in-animation-expected.txt:
+        * web-platform-tests/css/css-transitions/Document-getAnimations.tentative-expected.txt:
+
+2020-11-13  Antoine Quint  <graouts@webkit.org>
+
         Add support for discrete animations of many CSS properties
         https://bugs.webkit.org/show_bug.cgi?id=218902
 

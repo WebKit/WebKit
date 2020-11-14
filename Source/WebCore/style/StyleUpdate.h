@@ -50,11 +50,12 @@ struct ElementUpdate {
 
 enum class DescendantsToResolve { None, ChildrenWithExplicitInherit, Children, All };
 
+using PseudoIdToElementUpdateMap = HashMap<PseudoId, ElementUpdate, WTF::IntHash<PseudoId>, WTF::StrongEnumHashTraits<PseudoId>>;
+
 struct ElementUpdates {
     ElementUpdate update;
     DescendantsToResolve descendantsToResolve { DescendantsToResolve::None };
-    Optional<ElementUpdate> beforePseudoElementUpdate;
-    Optional<ElementUpdate> afterPseudoElementUpdate;
+    PseudoIdToElementUpdateMap pseudoElementUpdates;
 };
 
 struct TextUpdate {

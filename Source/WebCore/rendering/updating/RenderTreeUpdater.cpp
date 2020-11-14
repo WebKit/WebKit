@@ -191,7 +191,7 @@ void RenderTreeUpdater::updateRenderTree(ContainerNode& root)
         }
 
         if (elementUpdates)
-            updateElementRenderer(element, elementUpdates->update);
+            updateElementRenderer(element, *elementUpdates);
 
         storePreviousRenderer(element);
 
@@ -251,13 +251,13 @@ void RenderTreeUpdater::popParentsToDepth(unsigned depth)
 void RenderTreeUpdater::updateBeforeDescendants(Element& element, const Style::ElementUpdates* updates)
 {
     if (updates)
-        generatedContent().updatePseudoElement(element, updates->beforePseudoElementUpdate, PseudoId::Before);
+        generatedContent().updatePseudoElement(element, *updates, PseudoId::Before);
 }
 
 void RenderTreeUpdater::updateAfterDescendants(Element& element, const Style::ElementUpdates* updates)
 {
     if (updates)
-        generatedContent().updatePseudoElement(element, updates->afterPseudoElementUpdate, PseudoId::After);
+        generatedContent().updatePseudoElement(element, *updates, PseudoId::After);
 
     auto* renderer = element.renderer();
     if (!renderer)
@@ -297,13 +297,23 @@ void RenderTreeUpdater::updateRendererStyle(RenderElement& renderer, RenderStyle
     m_builder.normalizeTreeAfterStyleChange(renderer, oldStyle);
 }
 
-void RenderTreeUpdater::updateElementRenderer(Element& element, const Style::ElementUpdate& update)
+void RenderTreeUpdater::updateElementRenderer(Element& element, const Style::ElementUpdates& updates)
 {
 #if PLATFORM(IOS_FAMILY)
     ContentChangeObserver::StyleChangeScope observingScope(m_document, element);
 #endif
 
-    bool shouldTearDownRenderers = update.change == Style::Change::Renderer && (element.renderer() || element.hasDisplayContents());
+    auto& elementUpdate = updates.update;
+    auto elementUpdateStyle = RenderStyle::clonePtr(*elementUpdate.style);
+
+    for (auto& it : updates.pseudoElementUpdates) {
+        auto pseudoId = it.key;
+        if (pseudoId == PseudoId::Before || pseudoId == PseudoId::After)
+            continue;
+        elementUpdateStyle->addCachedPseudoStyle(RenderStyle::clonePtr(*it.value.style));
+    }
+
+    bool shouldTearDownRenderers = elementUpdate.change == Style::Change::Renderer && (element.renderer() || element.hasDisplayContents());
     if (shouldTearDownRenderers) {
         if (!element.renderer()) {
             // We may be tearing down a descendant renderer cached in renderTreePosition.
@@ -311,15 +321,15 @@ void RenderTreeUpdater::updateElementRenderer(Element& element, const Style::Ele
         }
 
         // display:none cancels animations.
-        auto teardownType = update.style->display() == DisplayType::None ? TeardownType::RendererUpdateCancelingAnimations : TeardownType::RendererUpdate;
+        auto teardownType = elementUpdate.style->display() == DisplayType::None ? TeardownType::RendererUpdateCancelingAnimations : TeardownType::RendererUpdate;
         tearDownRenderers(element, teardownType, m_builder);
 
         renderingParent().didCreateOrDestroyChildRenderer = true;
     }
 
-    bool hasDisplayContents = update.style->display() == DisplayType::Contents;
+    bool hasDisplayContents = elementUpdate.style->display() == DisplayType::Contents;
     if (hasDisplayContents)
-        element.storeDisplayContentsStyle(RenderStyle::clonePtr(*update.style));
+        element.storeDisplayContentsStyle(WTFMove(elementUpdateStyle));
     else
         element.resetComputedStyle();
 
@@ -327,7 +337,7 @@ void RenderTreeUpdater::updateElementRenderer(Element& element, const Style::Ele
     if (shouldCreateNewRenderer) {
         if (element.hasCustomStyleResolveCallbacks())
             element.willAttachRenderers();
-        createRenderer(element, RenderStyle::clone(*update.style));
+        createRenderer(element, WTFMove(*elementUpdateStyle));
 
         renderingParent().didCreateOrDestroyChildRenderer = true;
         return;
@@ -337,20 +347,20 @@ void RenderTreeUpdater::updateElementRenderer(Element& element, const Style::Ele
         return;
     auto& renderer = *element.renderer();
 
-    if (update.recompositeLayer) {
-        updateRendererStyle(renderer, RenderStyle::clone(*update.style), StyleDifference::RecompositeLayer);
+    if (elementUpdate.recompositeLayer) {
+        updateRendererStyle(renderer, WTFMove(*elementUpdateStyle), StyleDifference::RecompositeLayer);
         return;
     }
 
-    if (update.change == Style::Change::None) {
-        if (pseudoStyleCacheIsInvalid(&renderer, update.style.get())) {
-            updateRendererStyle(renderer, RenderStyle::clone(*update.style), StyleDifference::Equal);
+    if (elementUpdate.change == Style::Change::None) {
+        if (pseudoStyleCacheIsInvalid(&renderer, elementUpdateStyle.get())) {
+            updateRendererStyle(renderer, WTFMove(*elementUpdateStyle), StyleDifference::Equal);
             return;
         }
         return;
     }
 
-    updateRendererStyle(renderer, RenderStyle::clone(*update.style), StyleDifference::Equal);
+    updateRendererStyle(renderer, WTFMove(*elementUpdateStyle), StyleDifference::Equal);
 }
 
 void RenderTreeUpdater::createRenderer(Element& element, RenderStyle&& style)

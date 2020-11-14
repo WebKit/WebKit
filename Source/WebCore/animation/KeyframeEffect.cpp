@@ -72,14 +72,12 @@ static Element* elementOrPseudoElementForStyleable(const Optional<const Styleabl
         return nullptr;
 
     switch (styleable->pseudoId) {
-    case PseudoId::None:
-        return &styleable->element;
     case PseudoId::Before:
         return styleable->element.beforePseudoElement();
     case PseudoId::After:
         return styleable->element.afterPseudoElement();
     default:
-        return nullptr;
+        return &styleable->element;
     }
 }
 
@@ -1147,17 +1145,15 @@ bool KeyframeEffect::targetsPseudoElement() const
 
 Element* KeyframeEffect::targetElementOrPseudoElement() const
 {
-    if (!targetsPseudoElement())
-        return m_target.get();
+    if (m_target) {
+        if (m_pseudoId == PseudoId::Before)
+            return m_target->beforePseudoElement();
 
-    if (m_pseudoId == PseudoId::Before)
-        return m_target->beforePseudoElement();
+        if (m_pseudoId == PseudoId::After)
+            return m_target->afterPseudoElement();
+    }
 
-    if (m_pseudoId == PseudoId::After)
-        return m_target->afterPseudoElement();
-
-    // We only support targeting ::before and ::after pseudo-elements at the moment.
-    return nullptr;
+    return m_target.get();
 }
 
 void KeyframeEffect::setTarget(RefPtr<Element>&& newTarget)

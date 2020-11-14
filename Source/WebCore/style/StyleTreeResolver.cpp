@@ -54,6 +54,7 @@
 #include "StyleScope.h"
 #include "Text.h"
 #include "WebAnimationTypes.h"
+#include "WebAnimationUtilities.h"
 
 namespace WebCore {
 
@@ -244,8 +245,11 @@ ElementUpdates TreeResolver::resolveElement(Element& element)
         }
     }
 
-    auto beforeUpdate = resolvePseudoStyle(element, update, PseudoId::Before);
-    auto afterUpdate = resolvePseudoStyle(element, update, PseudoId::After);
+    PseudoIdToElementUpdateMap pseudoUpdates;
+    for (PseudoId pseudoId = PseudoId::FirstPublicPseudoId; pseudoId < PseudoId::FirstInternalPseudoId; pseudoId = static_cast<PseudoId>(static_cast<unsigned>(pseudoId) + 1)) {
+        if (auto elementUpdate = resolvePseudoStyle(element, update, pseudoId))
+            pseudoUpdates.set(pseudoId, WTFMove(*elementUpdate));
+    }
 
 #if ENABLE(TOUCH_ACTION_REGIONS)
     // FIXME: Track this exactly.
@@ -257,11 +261,13 @@ ElementUpdates TreeResolver::resolveElement(Element& element)
         m_document.setMayHaveEditableElements();
 #endif
 
-    return { WTFMove(update), descendantsToResolve, WTFMove(beforeUpdate), WTFMove(afterUpdate) };
+    return { WTFMove(update), descendantsToResolve, WTFMove(pseudoUpdates) };
 }
 
-ElementUpdate TreeResolver::resolvePseudoStyle(Element& element, const ElementUpdate& elementUpdate, PseudoId pseudoId)
+Optional<ElementUpdate> TreeResolver::resolvePseudoStyle(Element& element, const ElementUpdate& elementUpdate, PseudoId pseudoId)
 {
+    if (pseudoId == PseudoId::Marker && elementUpdate.style->display() != DisplayType::ListItem)
+        return { };
     if (elementUpdate.style->display() == DisplayType::None)
         return { };
     if (!elementUpdate.style->hasPseudoStyle(pseudoId))
@@ -271,8 +277,7 @@ ElementUpdate TreeResolver::resolvePseudoStyle(Element& element, const ElementUp
     if (!pseudoStyle)
         return { };
 
-    auto* pseudoElement = pseudoId == PseudoId::Before ? element.beforePseudoElement() : element.afterPseudoElement();
-    bool hasAnimations = pseudoElement && pseudoElement->isTargetedByKeyframeEffectRequiringPseudoElement();
+    bool hasAnimations = pseudoStyle->hasAnimationsOrTransitions() || element.hasKeyframeEffects(pseudoId);
     if (!pseudoElementRendererIsNeeded(pseudoStyle.get()) && !hasAnimations)
         return { };
 

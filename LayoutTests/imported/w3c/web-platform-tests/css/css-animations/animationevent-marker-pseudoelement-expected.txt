@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT AnimationEvent should have the correct pseudoElement memeber Test timed out
+PASS AnimationEvent should have the correct pseudoElement memeber
 

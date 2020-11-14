@@ -83,11 +83,9 @@ void PseudoElement::clearHostElement()
 
 bool PseudoElement::rendererIsNeeded(const RenderStyle& style)
 {
-    return pseudoElementRendererIsNeeded(&style) || isTargetedByKeyframeEffectRequiringPseudoElement();
-}
+    if (pseudoElementRendererIsNeeded(&style))
+        return true;
 
-bool PseudoElement::isTargetedByKeyframeEffectRequiringPseudoElement()
-{
     if (m_hostElement) {
         if (auto* stack = m_hostElement->keyframeEffectStack(pseudoId()))
             return stack->requiresPseudoElement();

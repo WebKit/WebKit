@@ -62,7 +62,7 @@ private:
     ElementUpdates resolveElement(Element&);
 
     ElementUpdate createAnimatedElementUpdate(std::unique_ptr<RenderStyle>, const Styleable&, Change);
-    ElementUpdate resolvePseudoStyle(Element&, const ElementUpdate&, PseudoId);
+    Optional<ElementUpdate> resolvePseudoStyle(Element&, const ElementUpdate&, PseudoId);
 
     struct Scope : RefCounted<Scope> {
         WTF_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(TreeResolverScope);
