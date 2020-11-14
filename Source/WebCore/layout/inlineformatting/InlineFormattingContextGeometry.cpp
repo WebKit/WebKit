@@ -268,7 +268,9 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const Line::Run
             auto atomicInlineLevelBox = LineBox::InlineLevelBox::createAtomicInlineLevelBox(layoutBox, logicalLeft, { run.logicalWidth(), marginBoxHeight });
             atomicInlineLevelBox->setBaseline(ascent);
             atomicInlineLevelBox->setLayoutBounds(LineBox::InlineLevelBox::LayoutBounds { ascent, marginBoxHeight - ascent });
-            if (marginBoxHeight)
+            // While in practice when the negative vertical margin makes the layout bounds empty (e.g: height: 100px; margin-top: -100px;), and this inline
+            // level box contributes 0px to the line box height, it should not be considered empty.
+            if (marginBoxHeight || inlineLevelBoxGeometry.marginBefore() || inlineLevelBoxGeometry.marginAfter())
                 atomicInlineLevelBox->setIsNonEmpty();
             lineBox.addInlineLevelBox(WTFMove(atomicInlineLevelBox));
         } else if (run.isInlineBoxStart()) {
