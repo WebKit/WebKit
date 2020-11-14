@@ -302,6 +302,11 @@ webkit.org/b/216292 [ Debug ] imported/w3c/web-platform-tests/css/css-flexbox/qu
 # Times out due to missing event 'callAfterScrollingCompletes'.
 webkit.org/b/212202 fast/events/wheel/platform-wheelevent-in-scrolling-div.html [ Skip ]
 
+webkit.org/b/218931 fast/events/wheel/wheel-event-listeners-on-body-made-passive.html [ Timeout ]
+webkit.org/b/218931 fast/events/wheel/wheel-event-listeners-on-document-made-passive.html [ Timeout ]
+webkit.org/b/218931 fast/events/wheel/wheel-event-listeners-on-window-left-active.html [ Timeout ]
+webkit.org/b/218931 fast/events/wheel/wheel-event-listeners-on-window-made-passive.html [ Timeout ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Events-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -862,6 +867,7 @@ webkit.org/b/218787 webrtc/video-stats.html [ Failure ]
 webkit.org/b/218787 fast/mediastream/RTCPeerConnection-statsSelector.html [ Timeout ]
 webkit.org/b/218787 webrtc/concurrentVideoPlayback.html [ Timeout ]
 webkit.org/b/218787 webrtc/ice-candidate-sdpMLineIndex.html [ Timeout ]
+webkit.org/b/218787 webrtc/webrtc-transform.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WebRTC-related bugs

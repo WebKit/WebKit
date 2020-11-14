@@ -1,3 +1,12 @@
+2020-11-13  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] Gardening some failures
+
+        Unreviewed test gardening.
+
+        * platform/glib/TestExpectations:
+        * platform/gtk/TestExpectations:
+
 2020-11-13  Sihui Liu  <sihui_liu@apple.com>
 
         Implement basic permission check for SpeechRecognition

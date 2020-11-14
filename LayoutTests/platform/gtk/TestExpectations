@@ -213,6 +213,8 @@ webkit.org/b/210528 media/video-supports-fullscreen.html [ Pass ]
 
 # Layout
 webkit.org/b/218510 fast/dom/Range/getBoundingClientRect.html [ Failure ]
+webkit.org/b/218930 fast/inline/simple-line-layout-16bit-content.html [ ImageOnlyFailure ]
+webkit.org/b/218930 fast/text/simple-lines-hover.html [ ImageOnlyFailure ]
 
 # Media - GTK-X11 flaky crash
 webkit.org/b/215499 [ Release ] media/video-load-networkState.html [ Crash Pass ]
