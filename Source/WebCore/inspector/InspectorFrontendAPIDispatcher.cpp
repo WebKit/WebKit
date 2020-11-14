@@ -65,13 +65,15 @@ void InspectorFrontendAPIDispatcher::frontendLoaded()
     ASSERT(m_frontendPage);
     m_frontendLoaded = true;
 
-    evaluateQueuedExpressions();
+    // In some convoluted WebKitLegacy-only scenarios, the backend may try to dispatch events to the frontend
+    // underneath InspectorFrontendHost::loaded() when it is unsafe to execute script, causing suspend() to
+    // be called before the frontend has fully loaded. See <https://bugs.webkit.org/show_bug.cgi?id=218840>.
+    if (!m_suspended)
+        evaluateQueuedExpressions();
 }
 
 void InspectorFrontendAPIDispatcher::suspend(UnsuspendSoon unsuspendSoon)
 {
-    ASSERT(m_frontendLoaded);
-
     if (m_suspended)
         return;
 
@@ -95,7 +97,8 @@ void InspectorFrontendAPIDispatcher::unsuspend()
 
     m_suspended = false;
 
-    evaluateQueuedExpressions();
+    if (m_frontendLoaded)
+        evaluateQueuedExpressions();
 }
 
 JSC::JSGlobalObject* InspectorFrontendAPIDispatcher::frontendGlobalObject()
