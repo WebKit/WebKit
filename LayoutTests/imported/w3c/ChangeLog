@@ -1,3 +1,22 @@
+2020-11-13  Antoine Quint  <graouts@webkit.org>
+
+        Add support for discrete animations of many CSS properties
+        https://bugs.webkit.org/show_bug.cgi?id=218902
+
+        Reviewed by Antti Koivisto.
+
+        By virtue of animation a host of new properties, we run an extra 551 tests and pass 518 of them.
+
+        * web-platform-tests/css/css-logical/animations/float-interpolation-expected.txt:
+        * web-platform-tests/css/css-position/animations/position-interpolation-expected.txt:
+        * web-platform-tests/css/css-transitions/properties-value-003-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/accumulation-per-property-001-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/accumulation-per-property-002-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/addition-per-property-001-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/addition-per-property-002-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-001-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-002-expected.txt:
+
 2020-11-12  Darin Adler  <darin@apple.com>
 
         Remove unused advanced plug-in features: snapshotting and plug-in load policy

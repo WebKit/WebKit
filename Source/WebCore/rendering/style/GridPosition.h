@@ -94,4 +94,6 @@ private:
     String m_namedGridLine;
 };
 
+WTF::TextStream& operator<<(WTF::TextStream&, const GridPosition&);
+
 } // namespace WebCore

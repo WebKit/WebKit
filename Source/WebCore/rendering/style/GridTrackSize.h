@@ -143,4 +143,6 @@ private:
     bool m_maxTrackBreadthIsFixed : 1;
 };
 
+WTF::TextStream& operator<<(WTF::TextStream&, const GridTrackSize&);
+
 } // namespace WebCore

@@ -103,4 +103,19 @@ void GridPosition::setMaxPositionForTesting(unsigned maxPosition)
     gMaxPositionForTesting = static_cast<int>(maxPosition);
 }
 
+TextStream& operator<<(TextStream& ts, const GridPosition& o)
+{
+    switch (o.type()) {
+    case AutoPosition:
+        return ts << "auto";
+    case ExplicitPosition:
+        return ts << o.namedGridLine() << " " << o.integerPosition();
+    case SpanPosition:
+        return ts << "span" << " " << o.namedGridLine() << " " << o.integerPosition();
+    case NamedGridAreaPosition:
+        return ts << o.namedGridLine();
+    }
+    return ts;
+}
+
 } // namespace WebCore
