@@ -43,11 +43,11 @@ class WebPage;
 
 using SpeechRecognitionConnectionIdentifier = WebCore::PageIdentifier;
 
-class WebSpeechRecognitionConnection : public WebCore::SpeechRecognitionConnection, private IPC::MessageReceiver, private IPC::MessageSender {
+class WebSpeechRecognitionConnection final : public WebCore::SpeechRecognitionConnection, private IPC::MessageReceiver, private IPC::MessageSender {
 public:
     static Ref<WebSpeechRecognitionConnection> create(SpeechRecognitionConnectionIdentifier);
 
-    void start(WebCore::SpeechRecognitionConnectionClientIdentifier, const String& lang, bool continuous, bool interimResults, uint64_t maxAlternatives) final;
+    void start(WebCore::SpeechRecognitionConnectionClientIdentifier, const String& lang, bool continuous, bool interimResults, uint64_t maxAlternatives, WebCore::ClientOrigin&&) final;
     void stop(WebCore::SpeechRecognitionConnectionClientIdentifier) final;
     void abort(WebCore::SpeechRecognitionConnectionClientIdentifier) final;
 
@@ -56,7 +56,7 @@ private:
     ~WebSpeechRecognitionConnection();
 
     void registerClient(WebCore::SpeechRecognitionConnectionClient&) final;
-    void didReceiveUpdate(const WebCore::SpeechRecognitionUpdate&) final;
+    void didReceiveUpdate(WebCore::SpeechRecognitionUpdate&&) final;
     void invalidate(WebCore::SpeechRecognitionConnectionClientIdentifier);
 
     // IPC::MessageReceiver.

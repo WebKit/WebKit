@@ -30,87 +30,108 @@
 #include "WebSpeechRecognitionConnectionMessages.h"
 #include <WebCore/SpeechRecognitionUpdate.h>
 
+#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, messageSenderConnection())
+
 namespace WebKit {
 
-SpeechRecognitionServer::SpeechRecognitionServer(Ref<IPC::Connection>&& connection, SpeechRecognitionServerIdentifier identifier)
+SpeechRecognitionServer::SpeechRecognitionServer(Ref<IPC::Connection>&& connection, SpeechRecognitionServerIdentifier identifier, SpeechRecognitionPermissionChecker&& permissionChecker)
     : m_connection(WTFMove(connection))
     , m_identifier(identifier)
+    , m_permissionChecker(WTFMove(permissionChecker))
 {
 }
 
-void SpeechRecognitionServer::start(WebCore::SpeechRecognitionRequestInfo&& requestInfo)
+void SpeechRecognitionServer::start(WebCore::SpeechRecognitionConnectionClientIdentifier clientIdentifier, String&& lang, bool continuous, bool interimResults, uint64_t maxAlternatives, WebCore::ClientOrigin&& origin)
 {
-    auto request = WebCore::SpeechRecognitionRequest::create(WTFMove(requestInfo));
-    m_pendingRequests.append(WTFMove(request));
+    MESSAGE_CHECK(clientIdentifier);
+    ASSERT(!m_pendingRequests.contains(clientIdentifier));
+    ASSERT(!m_ongoingRequests.contains(clientIdentifier));
+    auto requestInfo = SpeechRecognitionRequestInfo { clientIdentifier, WTFMove(lang), continuous, interimResults, maxAlternatives, WTFMove(origin) };
+    auto& pendingRequest = m_pendingRequests.add(clientIdentifier, makeUnique<WebCore::SpeechRecognitionRequest>(WTFMove(requestInfo))).iterator->value;
 
-    processNextPendingRequestIfNeeded();
+    requestPermissionForRequest(*pendingRequest);
 }
 
-void SpeechRecognitionServer::processNextPendingRequestIfNeeded()
+void SpeechRecognitionServer::requestPermissionForRequest(WebCore::SpeechRecognitionRequest& request)
 {
-    if (m_currentRequest)
-        return;
+    m_permissionChecker(request.clientOrigin(), [this, weakThis = makeWeakPtr(this), weakRequest = makeWeakPtr(request)](SpeechRecognitionPermissionDecision decision) mutable {
+        if (!weakThis)
+            return;
 
-    if (m_pendingRequests.isEmpty())
-        return;
+        if (!weakRequest)
+            return;
 
-    m_currentRequest = m_pendingRequests.takeFirst();
-    startPocessingRequest(*m_currentRequest);
+        auto identifier = weakRequest->clientIdentifier();
+        auto takenRequest = m_pendingRequests.take(identifier);
+        if (decision == SpeechRecognitionPermissionDecision::Deny) {
+            auto error = SpeechRecognitionError { SpeechRecognitionErrorType::NotAllowed, "Permission check failed"_s };
+            sendUpdate(identifier, WebCore::SpeechRecognitionUpdateType::Error, error);
+            return;
+        }
+
+        m_ongoingRequests.add(identifier, WTFMove(takenRequest));
+        handleRequest(*m_ongoingRequests.get(identifier));
+    });
 }
 
 void SpeechRecognitionServer::stop(WebCore::SpeechRecognitionConnectionClientIdentifier clientIdentifier)
 {
-    if (m_currentRequest && m_currentRequest->clientIdentifier() == clientIdentifier) {
-        stopProcessingRequest(*m_currentRequest);
+    MESSAGE_CHECK(clientIdentifier);
+    if (m_pendingRequests.remove(clientIdentifier)) {
+        sendUpdate(clientIdentifier, WebCore::SpeechRecognitionUpdateType::End);
         return;
     }
 
-    removePendingRequest(clientIdentifier);
+    ASSERT(m_ongoingRequests.contains(clientIdentifier));
+    stopRequest(*m_ongoingRequests.get(clientIdentifier));
 }
 
 void SpeechRecognitionServer::abort(WebCore::SpeechRecognitionConnectionClientIdentifier clientIdentifier)
 {
-    if (m_currentRequest && m_currentRequest->clientIdentifier() == clientIdentifier) {
-        m_currentRequest = nullptr;
-        auto update = WebCore::SpeechRecognitionUpdate::create(clientIdentifier, WebCore::SpeechRecognitionUpdateType::End);
-        send(Messages::WebSpeechRecognitionConnection::DidReceiveUpdate(update), m_identifier);
-
-        processNextPendingRequestIfNeeded();
+    MESSAGE_CHECK(clientIdentifier);
+    if (m_pendingRequests.remove(clientIdentifier)) {
+        sendUpdate(clientIdentifier, WebCore::SpeechRecognitionUpdateType::End);
         return;
     }
 
-    removePendingRequest(clientIdentifier);
-}
-
-void SpeechRecognitionServer::removePendingRequest(WebCore::SpeechRecognitionConnectionClientIdentifier clientIdentifier)
-{
-    RefPtr<WebCore::SpeechRecognitionRequest> takenRequest;
-    auto pendingRequests = std::exchange(m_pendingRequests, { });
-    while (!pendingRequests.isEmpty()) {
-        auto request = pendingRequests.takeFirst();
-        if (request->clientIdentifier() == clientIdentifier) {
-            auto update = WebCore::SpeechRecognitionUpdate::create(clientIdentifier, WebCore::SpeechRecognitionUpdateType::End);
-            send(Messages::WebSpeechRecognitionConnection::DidReceiveUpdate(update), m_identifier);
-            continue;
-        }
-        m_pendingRequests.append(WTFMove(request));
-    }
+    ASSERT(m_ongoingRequests.contains(clientIdentifier));
+    auto request = m_ongoingRequests.take(clientIdentifier);
+    abortRequest(*request);
+    auto update = WebCore::SpeechRecognitionUpdate::create(clientIdentifier, WebCore::SpeechRecognitionUpdateType::End);
+    send(Messages::WebSpeechRecognitionConnection::DidReceiveUpdate(update), m_identifier);
 }
 
 void SpeechRecognitionServer::invalidate(WebCore::SpeechRecognitionConnectionClientIdentifier clientIdentifier)
 {
-    if (m_currentRequest && m_currentRequest->clientIdentifier() == clientIdentifier) {
-        m_currentRequest = nullptr;
-        processNextPendingRequestIfNeeded();
-    }
+    MESSAGE_CHECK(clientIdentifier);
+    auto request = m_ongoingRequests.take(clientIdentifier);
+    if (request)
+        abortRequest(*request);
 }
 
-void SpeechRecognitionServer::startPocessingRequest(WebCore::SpeechRecognitionRequest&)
+void SpeechRecognitionServer::handleRequest(WebCore::SpeechRecognitionRequest& request)
 {
+    // TODO: start capturing audio and recognition.
 }
 
-void SpeechRecognitionServer::stopProcessingRequest(WebCore::SpeechRecognitionRequest&)
+void SpeechRecognitionServer::stopRequest(WebCore::SpeechRecognitionRequest& request)
 {
+    // TODO: stop capturing audio and finalizing results by recognizing captured audio.
+}
+
+void SpeechRecognitionServer::abortRequest(WebCore::SpeechRecognitionRequest& request)
+{
+    // TODO: stop capturing audio and recognition immediately without generating results.
+}
+
+void SpeechRecognitionServer::sendUpdate(SpeechRecognitionConnectionClientIdentifier clientIdentifier, SpeechRecognitionUpdateType type, Optional<SpeechRecognitionError> error, Optional<Vector<SpeechRecognitionResultData>> result)
+{
+    auto update = WebCore::SpeechRecognitionUpdate::create(clientIdentifier, type);
+    if (type == SpeechRecognitionUpdateType::Error)
+        update = WebCore::SpeechRecognitionUpdate::createError(clientIdentifier, *error);
+    if (type == SpeechRecognitionUpdateType::Result)
+        update = WebCore::SpeechRecognitionUpdate::createResult(clientIdentifier, *result);
+    send(Messages::WebSpeechRecognitionConnection::DidReceiveUpdate(update), m_identifier);
 }
 
 IPC::Connection* SpeechRecognitionServer::messageSenderConnection() const
@@ -124,3 +145,5 @@ uint64_t SpeechRecognitionServer::messageSenderDestinationID() const
 }
 
 } // namespace WebKit
+
+#undef MESSAGE_CHECK

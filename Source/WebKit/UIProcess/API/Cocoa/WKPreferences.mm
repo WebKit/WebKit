@@ -1436,6 +1436,16 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
 #endif
 }
 
+- (BOOL)_speechRecognitionEnabled
+{
+    return _preferences->speechRecognitionEnabled();
+}
+
+- (void)_setSpeechRecognitionEnabled:(BOOL)speechRecognitionEnabled
+{
+    _preferences->setSpeechRecognitionEnabled(speechRecognitionEnabled);
+}
+
 @end
 
 

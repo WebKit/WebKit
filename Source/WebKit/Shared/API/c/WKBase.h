@@ -141,6 +141,7 @@ typedef const struct OpaqueWKWebsiteDataConfigurationStore* WKWebsiteDataStoreCo
 typedef const struct OpaqueWKWebsiteDataStore* WKWebsiteDataStoreRef;
 typedef const struct OpaqueWKWebsitePolicies* WKWebsitePoliciesRef;
 typedef const struct OpaqueWKWindowFeatures* WKWindowFeaturesRef;
+typedef const struct OpaqueWKSpeechRecognitionPermissionCallback* WKSpeechRecognitionPermissionCallbackRef;
 
 /* WebKit2 Bundle types */
 

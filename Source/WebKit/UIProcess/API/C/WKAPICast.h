@@ -79,6 +79,7 @@ class AuthenticationDecisionListener;
 class DownloadProxy;
 class GeolocationPermissionRequest;
 class NotificationPermissionRequest;
+class SpeechRecognitionPermissionCallback;
 class UserMediaPermissionCheckProxy;
 class UserMediaPermissionRequestProxy;
 class WebBackForwardList;
@@ -152,6 +153,7 @@ WK_ADD_API_MAPPING(WKPreferencesRef, WebPreferences)
 WK_ADD_API_MAPPING(WKProtectionSpaceRef, WebProtectionSpace)
 WK_ADD_API_MAPPING(WKResourceLoadStatisticsManagerRef, WebResourceLoadStatisticsManager)
 WK_ADD_API_MAPPING(WKSessionStateRef, API::SessionState)
+WK_ADD_API_MAPPING(WKSpeechRecognitionPermissionCallbackRef, SpeechRecognitionPermissionCallback)
 WK_ADD_API_MAPPING(WKTextCheckerRef, WebTextChecker)
 WK_ADD_API_MAPPING(WKUserContentControllerRef, WebUserContentControllerProxy)
 WK_ADD_API_MAPPING(WKUserContentExtensionStoreRef, API::ContentRuleListStore)

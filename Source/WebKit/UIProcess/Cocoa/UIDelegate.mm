@@ -1332,4 +1332,26 @@ void UIDelegate::UIClient::imageOrMediaDocumentSizeChanged(const WebCore::IntSiz
     [static_cast<id <WKUIDelegatePrivate>>(delegate) _webView:m_uiDelegate.m_webView imageOrMediaDocumentSizeChanged:newSize];
 }
 
+void UIDelegate::UIClient::decidePolicyForSpeechRecognitionPermissionRequest(WebKit::WebPageProxy& page, API::SecurityOrigin& origin, CompletionHandler<void(bool)>&& completionHandler)
+{
+    auto delegate = (id <WKUIDelegatePrivate>)m_uiDelegate.m_delegate.get();
+    if (!delegate) {
+        completionHandler(false);
+        return;
+    }
+
+    if (![delegate respondsToSelector:@selector(_webView:requestSpeechRecognitionPermissionForOrigin:decisionHandler:)]) {
+        completionHandler(false);
+        return;
+    }
+
+    auto checker = CompletionHandlerCallChecker::create(delegate, @selector(_webView:requestSpeechRecognitionPermissionForOrigin:decisionHandler:));
+    [delegate _webView:m_uiDelegate.m_webView requestSpeechRecognitionPermissionForOrigin:wrapper(origin) decisionHandler:makeBlockPtr([completionHandler = std::exchange(completionHandler, { }), checker = WTFMove(checker)] (BOOL granted) mutable {
+        if (checker->completionHandlerHasBeenCalled())
+            return;
+        checker->didCallCompletionHandler();
+        completionHandler(granted);
+    }).get()];
+}
+
 } // namespace WebKit

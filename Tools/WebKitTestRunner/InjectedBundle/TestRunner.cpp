@@ -2069,6 +2069,11 @@ void TestRunner::didSetAppBoundDomainsCallback()
     callTestRunnerCallback(DidSetAppBoundDomainsCallbackID);
 }
 
+void TestRunner::setIsSpeechRecognitionPermissionGranted(bool granted)
+{
+    postSynchronousPageMessage("setIsSpeechRecognitionPermissionGranted", granted);
+}
+
 ALLOW_DEPRECATED_DECLARATIONS_END
 
 } // namespace WTR

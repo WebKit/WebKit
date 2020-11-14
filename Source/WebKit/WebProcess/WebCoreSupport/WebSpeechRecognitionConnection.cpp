@@ -59,10 +59,9 @@ void WebSpeechRecognitionConnection::registerClient(WebCore::SpeechRecognitionCo
     m_clientMap.add(client.identifier(), makeWeakPtr(client));
 }
 
-void WebSpeechRecognitionConnection::start(WebCore::SpeechRecognitionConnectionClientIdentifier clientIdentifier, const String& lang, bool continuous, bool interimResults, uint64_t maxAlternatives)
+void WebSpeechRecognitionConnection::start(WebCore::SpeechRecognitionConnectionClientIdentifier clientIdentifier, const String& lang, bool continuous, bool interimResults, uint64_t maxAlternatives, WebCore::ClientOrigin&& clientOrigin)
 {
-    WebCore::SpeechRecognitionRequestInfo info { clientIdentifier, lang, continuous, interimResults, maxAlternatives };
-    send(Messages::SpeechRecognitionServer::Start(info));
+    send(Messages::SpeechRecognitionServer::Start(clientIdentifier, lang, continuous, interimResults, maxAlternatives, WTFMove(clientOrigin)));
 }
 
 void WebSpeechRecognitionConnection::stop(WebCore::SpeechRecognitionConnectionClientIdentifier clientIdentifier)
@@ -80,7 +79,7 @@ void WebSpeechRecognitionConnection::invalidate(WebCore::SpeechRecognitionConnec
     send(Messages::SpeechRecognitionServer::Invalidate(clientIdentifier));
 }
 
-void WebSpeechRecognitionConnection::didReceiveUpdate(const WebCore::SpeechRecognitionUpdate& update)
+void WebSpeechRecognitionConnection::didReceiveUpdate(WebCore::SpeechRecognitionUpdate&& update)
 {
     auto clientIdentifier = update.clientIdentifier();
     if (!m_clientMap.contains(clientIdentifier))

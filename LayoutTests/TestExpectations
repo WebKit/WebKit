@@ -177,6 +177,7 @@ storage/indexeddb/modern/opendatabase-after-storage-crash.html [ Skip ]
 storage/indexeddb/IDBObject-leak.html [ Skip ]
 fast/forms/call-text-did-change-in-text-field-when-typing.html [ Skip ]
 http/tests/in-app-browser-privacy/ [ Skip ]
+fast/speechrecognition/permission-error.html [ Skip ]
 
 # Only partial support on Cocoa platforms.
 imported/w3c/web-platform-tests/speech-api/ [ Skip ]

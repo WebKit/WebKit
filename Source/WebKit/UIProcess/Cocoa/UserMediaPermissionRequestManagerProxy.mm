@@ -26,6 +26,7 @@
 #import "config.h"
 #import "UserMediaPermissionRequestManagerProxy.h"
 
+#import "MediaPermissionUtilities.h"
 #import "SandboxUtilities.h"
 #import "TCCSPI.h"
 #import "WebPageProxy.h"
@@ -37,40 +38,12 @@
 #import <pal/cocoa/AVFoundationSoftLink.h>
 #import <wtf/spi/darwin/SandboxSPI.h>
 
-SOFT_LINK_PRIVATE_FRAMEWORK(TCC)
-SOFT_LINK(TCC, TCCAccessPreflight, TCCAccessPreflightResult, (CFStringRef service, CFDictionaryRef options), (service, options))
-SOFT_LINK(TCC, TCCAccessPreflightWithAuditToken, TCCAccessPreflightResult, (CFStringRef service, audit_token_t token, CFDictionaryRef options), (service, token, options))
-SOFT_LINK_CONSTANT(TCC, kTCCServiceMicrophone, CFStringRef)
-SOFT_LINK_CONSTANT(TCC, kTCCServiceCamera, CFStringRef)
-
 namespace WebKit {
 
 bool UserMediaPermissionRequestManagerProxy::permittedToCaptureAudio()
 {
 #if ENABLE(MEDIA_STREAM)
-
-#if PLATFORM(MAC)
-    static std::once_flag onceFlag;
-    static bool entitled = true;
-    std::call_once(onceFlag, [] {
-        if (!currentProcessIsSandboxed())
-            return;
-
-        int result = sandbox_check(getpid(), "device-microphone", SANDBOX_FILTER_NONE);
-        entitled = !result;
-        if (result == -1)
-            WTFLogAlways("Error checking 'device-microphone' sandbox access, errno=%ld", (long)errno);
-    });
-    if (!entitled)
-        return false;
-#endif // PLATFORM(MAC)
-
-    static TCCAccessPreflightResult access = TCCAccessPreflight(getkTCCServiceMicrophone(), NULL);
-    if (access == kTCCAccessPreflightGranted)
-        return true;
-
-    static bool isPermitted = dynamic_objc_cast<NSString>(NSBundle.mainBundle.infoDictionary[@"NSMicrophoneUsageDescription"]).length;
-    return isPermitted;
+    return checkSandboxRequirementForType(MediaPermissionType::Audio) && checkUsageDescriptionStringForType(MediaPermissionType::Audio);
 #else
     return false;
 #endif
@@ -79,49 +52,13 @@ bool UserMediaPermissionRequestManagerProxy::permittedToCaptureAudio()
 bool UserMediaPermissionRequestManagerProxy::permittedToCaptureVideo()
 {
 #if ENABLE(MEDIA_STREAM)
-
-#if PLATFORM(MAC)
-    static std::once_flag onceFlag;
-    static bool entitled = true;
-    std::call_once(onceFlag, [] {
-        if (!currentProcessIsSandboxed())
-            return;
-
-        int result = sandbox_check(getpid(), "device-camera", SANDBOX_FILTER_NONE);
-        entitled = !result;
-        if (result == -1)
-            WTFLogAlways("Error checking 'device-camera' sandbox access, errno=%ld", (long)errno);
-    });
-    if (!entitled)
-        return false;
-#endif // PLATFORM(MAC)
-
-    static TCCAccessPreflightResult access = TCCAccessPreflight(getkTCCServiceCamera(), NULL);
-    if (access == kTCCAccessPreflightGranted)
-        return true;
-
-    static bool isPermitted = dynamic_objc_cast<NSString>(NSBundle.mainBundle.infoDictionary[@"NSCameraUsageDescription"]).length;
-    return isPermitted;
+    return checkSandboxRequirementForType(MediaPermissionType::Video) && checkUsageDescriptionStringForType(MediaPermissionType::Video);
 #else
     return false;
 #endif
 }
 
 #if ENABLE(MEDIA_STREAM)
-static void requestAVCaptureAccessForMediaType(CompletionHandler<void(BOOL authorized)>&& completionHandler, AVMediaType type)
-{
-    auto decisionHandler = makeBlockPtr([completionHandler = WTFMove(completionHandler)](BOOL authorized) mutable {
-        if (!isMainThread()) {
-            callOnMainThread([completionHandler = WTFMove(completionHandler), authorized]() mutable {
-                completionHandler(authorized);
-            });
-            return;
-        }
-        completionHandler(authorized);
-    });
-    [PAL::getAVCaptureDeviceClass() requestAccessForMediaType:type completionHandler:decisionHandler.get()];
-}
-
 void UserMediaPermissionRequestManagerProxy::requestSystemValidation(const WebPageProxy& page, UserMediaPermissionRequestProxy& request, CompletionHandler<void(bool)>&& callback)
 {
     if (page.preferences().mockCaptureDevicesEnabled()) {
@@ -130,36 +67,36 @@ void UserMediaPermissionRequestManagerProxy::requestSystemValidation(const WebPa
     }
 
     // FIXME: Add TCC entitlement check for screensharing.
-    bool requiresAudioCapture = request.requiresAudioCapture();
-    bool requiresVideoCapture = request.requiresVideoCapture();
-
-    auto microphoneAuthorizationStatus = !requiresAudioCapture ? AVAuthorizationStatusAuthorized : [PAL::getAVCaptureDeviceClass() authorizationStatusForMediaType:AVMediaTypeAudio];
-    if (microphoneAuthorizationStatus == AVAuthorizationStatusDenied || microphoneAuthorizationStatus == AVAuthorizationStatusRestricted) {
+    auto audioStatus = request.requiresAudioCapture() ? checkAVCaptureAccessForType(MediaPermissionType::Audio) : MediaPermissionResult::Granted;
+    if (audioStatus == MediaPermissionResult::Denied) {
         callback(false);
         return;
     }
 
-    auto cameraAuthorizationStatus = !requiresVideoCapture ? AVAuthorizationStatusAuthorized : [PAL::getAVCaptureDeviceClass() authorizationStatusForMediaType:AVMediaTypeVideo];
-    if (cameraAuthorizationStatus == AVAuthorizationStatusDenied || cameraAuthorizationStatus == AVAuthorizationStatusRestricted) {
+    auto videoStatus = request.requiresVideoCapture() ? checkAVCaptureAccessForType(MediaPermissionType::Video) : MediaPermissionResult::Granted;
+    if (videoStatus == MediaPermissionResult::Denied) {
         callback(false);
         return;
     }
 
-    bool requiresVideoTCCPrompt = requiresVideoCapture && cameraAuthorizationStatus == AVAuthorizationStatusNotDetermined;
-    auto completionHandler = requiresVideoTCCPrompt ? [request = makeRef(request), callback = WTFMove(callback)](bool isOK) mutable {
-        if (!isOK) {
-            callback(false);
-            return;
-        }
-        requestAVCaptureAccessForMediaType(WTFMove(callback), AVMediaTypeVideo);
-    } : WTFMove(callback);
-
-    bool requiresAudioTCCPrompt = requiresAudioCapture && microphoneAuthorizationStatus == AVAuthorizationStatusNotDetermined;
-    if (!requiresAudioTCCPrompt) {
-        completionHandler(true);
+    if (audioStatus == MediaPermissionResult::Unknown) {
+        requestAVCaptureAccessForType(MediaPermissionType::Audio, [videoStatus, completionHandler = WTFMove(callback)](bool authorized) mutable {
+            if (videoStatus == MediaPermissionResult::Granted) {
+                completionHandler(authorized);
+                return;
+            }
+                
+            requestAVCaptureAccessForType(MediaPermissionType::Video, WTFMove(completionHandler));
+        });
         return;
     }
-    requestAVCaptureAccessForMediaType(WTFMove(completionHandler), AVMediaTypeAudio);
+
+    if (videoStatus == MediaPermissionResult::Unknown) {
+        requestAVCaptureAccessForType(MediaPermissionType::Video, WTFMove(callback));
+        return;
+    }
+
+    callback(true);
 }
 #endif // ENABLE(MEDIA_STREAM)
 

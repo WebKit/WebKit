@@ -515,6 +515,8 @@ public:
     void setPrivateClickMeasurementConversionURLForTesting(JSStringRef);
     void markPrivateClickMeasurementsAsExpiredForTesting();
 
+    void setIsSpeechRecognitionPermissionGranted(bool);
+
 private:
     TestRunner();
 

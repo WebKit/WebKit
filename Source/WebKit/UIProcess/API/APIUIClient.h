@@ -202,6 +202,7 @@ public:
         return API::InspectorConfiguration::create();
     }
 
+    virtual void decidePolicyForSpeechRecognitionPermissionRequest(WebKit::WebPageProxy&, API::SecurityOrigin&, CompletionHandler<void(bool)>&& completionHandler) { completionHandler(false); }
 };
 
 } // namespace API

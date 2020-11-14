@@ -63,6 +63,7 @@
 #include "PageClient.h"
 #include "PluginInformation.h"
 #include "PrintInfo.h"
+#include "SpeechRecognitionPermissionRequest.h"
 #include "WKAPICast.h"
 #include "WKPagePolicyClientInternal.h"
 #include "WKPageRenderingProgressEventsInternal.h"
@@ -115,7 +116,7 @@ template<> struct ClientTraits<WKPagePolicyClientBase> {
 };
 
 template<> struct ClientTraits<WKPageUIClientBase> {
-    typedef std::tuple<WKPageUIClientV0, WKPageUIClientV1, WKPageUIClientV2, WKPageUIClientV3, WKPageUIClientV4, WKPageUIClientV5, WKPageUIClientV6, WKPageUIClientV7, WKPageUIClientV8, WKPageUIClientV9, WKPageUIClientV10, WKPageUIClientV11, WKPageUIClientV12, WKPageUIClientV13, WKPageUIClientV14> Versions;
+    typedef std::tuple<WKPageUIClientV0, WKPageUIClientV1, WKPageUIClientV2, WKPageUIClientV3, WKPageUIClientV4, WKPageUIClientV5, WKPageUIClientV6, WKPageUIClientV7, WKPageUIClientV8, WKPageUIClientV9, WKPageUIClientV10, WKPageUIClientV11, WKPageUIClientV12, WKPageUIClientV13, WKPageUIClientV14, WKPageUIClientV15> Versions;
 };
 
 #if ENABLE(CONTEXT_MENUS)
@@ -2110,6 +2111,13 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
             completionHandler(WebKit::WebAuthenticationPanelResult::Presented);
         }
 #endif
+        void decidePolicyForSpeechRecognitionPermissionRequest(WebPageProxy& page, API::SecurityOrigin& origin, CompletionHandler<void(bool)>&& completionHandler) final
+        {
+            if (!m_client.decidePolicyForSpeechRecognitionPermissionRequest)
+                return;
+
+            m_client.decidePolicyForSpeechRecognitionPermissionRequest(toAPI(&page), toAPI(&origin), toAPI(SpeechRecognitionPermissionCallback::create(WTFMove(completionHandler)).ptr()));
+        }
     };
 
     toImpl(pageRef)->setUIClient(makeUnique<UIClient>(wkClient));

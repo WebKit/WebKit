@@ -31,15 +31,16 @@ namespace WebCore {
 
 class SpeechRecognitionConnectionClient;
 class SpeechRecognitionUpdate;
+struct ClientOrigin;
 
 class SpeechRecognitionConnection : public RefCounted<SpeechRecognitionConnection> {
 public:
     virtual ~SpeechRecognitionConnection() { }
     virtual void registerClient(SpeechRecognitionConnectionClient&) = 0;
-    virtual void start(SpeechRecognitionConnectionClientIdentifier, const String& lang, bool continuous, bool interimResults, uint64_t maxAlternatives) = 0;
+    virtual void start(SpeechRecognitionConnectionClientIdentifier, const String& lang, bool continuous, bool interimResults, uint64_t maxAlternatives, ClientOrigin&&) = 0;
     virtual void stop(SpeechRecognitionConnectionClientIdentifier) = 0;
     virtual void abort(SpeechRecognitionConnectionClientIdentifier) = 0;
-    virtual void didReceiveUpdate(const SpeechRecognitionUpdate&) = 0;
+    virtual void didReceiveUpdate(SpeechRecognitionUpdate&&) = 0;
 };
 
 } // namespace WebCore

@@ -52,8 +52,8 @@ String convertEnumerationToString(SpeechRecognitionUpdateType);
 class SpeechRecognitionUpdate {
 public:
     WEBCORE_EXPORT static SpeechRecognitionUpdate create(SpeechRecognitionConnectionClientIdentifier, SpeechRecognitionUpdateType);
-    static SpeechRecognitionUpdate createError(SpeechRecognitionConnectionClientIdentifier, const SpeechRecognitionError&);
-    static SpeechRecognitionUpdate createResult(SpeechRecognitionConnectionClientIdentifier, const Vector<SpeechRecognitionResultData>&);
+    WEBCORE_EXPORT static SpeechRecognitionUpdate createError(SpeechRecognitionConnectionClientIdentifier, const SpeechRecognitionError&);
+    WEBCORE_EXPORT static SpeechRecognitionUpdate createResult(SpeechRecognitionConnectionClientIdentifier, const Vector<SpeechRecognitionResultData>&);
 
     SpeechRecognitionConnectionClientIdentifier clientIdentifier() const { return m_clientIdentifier; }
     SpeechRecognitionUpdateType type() const { return m_type; }
@@ -65,7 +65,7 @@ public:
 
 private:
     using Content = Variant<WTF::Monostate, SpeechRecognitionError, Vector<SpeechRecognitionResultData>>;
-    WEBCORE_EXPORT explicit SpeechRecognitionUpdate(SpeechRecognitionConnectionClientIdentifier, SpeechRecognitionUpdateType, Content = WTF::Monostate());
+    WEBCORE_EXPORT SpeechRecognitionUpdate(SpeechRecognitionConnectionClientIdentifier, SpeechRecognitionUpdateType, Content);
 
     SpeechRecognitionConnectionClientIdentifier m_clientIdentifier;
     SpeechRecognitionUpdateType m_type;

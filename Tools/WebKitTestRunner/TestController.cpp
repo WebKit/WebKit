@@ -62,6 +62,7 @@
 #include <WebKit/WKProtectionSpace.h>
 #include <WebKit/WKRetainPtr.h>
 #include <WebKit/WKSecurityOriginRef.h>
+#include <WebKit/WKSpeechRecognitionPermissionCallback.h>
 #include <WebKit/WKTextChecker.h>
 #include <WebKit/WKURL.h>
 #include <WebKit/WKUserContentControllerRef.h>
@@ -295,6 +296,21 @@ static bool shouldAllowDeviceOrientationAndMotionAccess(WKPageRef, WKSecurityOri
 // A placeholder to tell WebKit the client is WebKitTestRunner.
 static void runWebAuthenticationPanel()
 {
+}
+
+static void decidePolicyForSpeechRecognitionPermissionRequest(WKPageRef, WKSecurityOriginRef, WKSpeechRecognitionPermissionCallbackRef callback)
+{
+    TestController::singleton().completeSpeechRecognitionPermissionCheck(callback);
+}
+
+void TestController::completeSpeechRecognitionPermissionCheck(WKSpeechRecognitionPermissionCallbackRef callback)
+{
+    WKSpeechRecognitionPermissionCallbackComplete(callback, m_isSpeechRecognitionPermissionGranted);
+}
+
+void TestController::setIsSpeechRecognitionPermissionGranted(bool granted)
+{
+    m_isSpeechRecognitionPermissionGranted = granted;
 }
 
 WKPageRef TestController::createOtherPage(WKPageRef, WKPageConfigurationRef configuration, WKNavigationActionRef navigationAction, WKWindowFeaturesRef windowFeatures, const void *clientInfo)
@@ -650,8 +666,8 @@ void TestController::createWebViewWithOptions(const TestOptions& options)
     WKHTTPCookieStoreDeleteAllCookies(WKWebsiteDataStoreGetHTTPCookieStore(websiteDataStore()), nullptr, nullptr);
 
     platformCreateWebView(configuration.get(), options);
-    WKPageUIClientV14 pageUIClient = {
-        { 14, m_mainWebView.get() },
+    WKPageUIClientV15 pageUIClient = {
+        { 15, m_mainWebView.get() },
         0, // createNewPage_deprecatedForUseWithV0
         0, // showPage
         0, // close
@@ -724,7 +740,8 @@ void TestController::createWebViewWithOptions(const TestOptions& options)
         0, // didResignInputElementStrongPasswordAppearance
         0, // requestStorageAccessConfirm
         shouldAllowDeviceOrientationAndMotionAccess,
-        runWebAuthenticationPanel
+        runWebAuthenticationPanel,
+        decidePolicyForSpeechRecognitionPermissionRequest
     };
     WKPageSetPageUIClient(m_mainWebView->page(), &pageUIClient.base);
 
@@ -1053,6 +1070,8 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
     m_didReceiveServerRedirectForProvisionalNavigation = false;
     m_serverTrustEvaluationCallbackCallsCount = 0;
     m_shouldDismissJavaScriptAlertsAsynchronously = false;
+
+    setIsSpeechRecognitionPermissionGranted(true);
 
     auto loadAboutBlank = [this] {
         m_doneResetting = false;

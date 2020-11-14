@@ -1369,6 +1369,7 @@
 		933E835523A07C0600DEF289 /* WebIDBServer.h in Headers */ = {isa = PBXBuildFile; fileRef = 933E835323A07BF800DEF289 /* WebIDBServer.h */; };
 		933E835A23A1AE2800DEF289 /* WebIDBServerMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 933E835923A1ADF500DEF289 /* WebIDBServerMessages.h */; };
 		933E835B23A1B75000DEF289 /* WebIDBServerMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 933E835823A1ADF500DEF289 /* WebIDBServerMessageReceiver.cpp */; };
+		9342589A255B535A0059EEDD /* MediaPermissionUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 93425898255B534B0059EEDD /* MediaPermissionUtilities.h */; };
 		934B724419F5B9BE00AE96D6 /* WKActionMenuItemTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 934B724319F5B9BE00AE96D6 /* WKActionMenuItemTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9356F2DC2152B6B500E6D5DF /* WebSWClientConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 517A53021F4793B200DCDC0A /* WebSWClientConnection.h */; };
 		9356F2DD2152B6F600E6D5DF /* WebSWServerConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 93BA04E02151ADF4007F455F /* WebSWServerConnection.h */; };
@@ -1403,6 +1404,9 @@
 		93D6B787254CCD8C0058DD3A /* WebSpeechRecognitionConnectionMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 93D6B786254CCD8B0058DD3A /* WebSpeechRecognitionConnectionMessages.h */; };
 		93D6B788254CCD940058DD3A /* WebSpeechRecognitionConnectionMessagesReplies.h in Headers */ = {isa = PBXBuildFile; fileRef = 93D6B77E254CCABB0058DD3A /* WebSpeechRecognitionConnectionMessagesReplies.h */; };
 		93D6B78A254CD43E0058DD3A /* WebSpeechRecognitionConnectionMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93D6B77D254CCABB0058DD3A /* WebSpeechRecognitionConnectionMessageReceiver.cpp */; };
+		93D6B7B4255268D50058DD3A /* SpeechRecognitionPermissionRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 93D6B7AF255268A10058DD3A /* SpeechRecognitionPermissionRequest.h */; };
+		93D6B7B5255268D70058DD3A /* SpeechRecognitionPermissionManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 93D6B7B2255268A20058DD3A /* SpeechRecognitionPermissionManager.h */; };
+		93D6B7B925534A170058DD3A /* WKSpeechRecognitionPermissionCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 93D6B7B725534A110058DD3A /* WKSpeechRecognitionPermissionCallback.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93E6A4EE1BC5DD3900F8A0E7 /* _WKHitTestResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 93E6A4ED1BC5DD3900F8A0E7 /* _WKHitTestResult.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F549B41E3174B7000E7239 /* WKSnapshotConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 93F549B31E3174B7000E7239 /* WKSnapshotConfiguration.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		950F2880252414EA00B74F1C /* WKMouseDeviceObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = 950F287E252414E900B74F1C /* WKMouseDeviceObserver.h */; };
@@ -4450,6 +4454,8 @@
 		933E835723A1A87200DEF289 /* WebIDBServer.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebIDBServer.messages.in; sourceTree = "<group>"; };
 		933E835823A1ADF500DEF289 /* WebIDBServerMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebIDBServerMessageReceiver.cpp; path = DerivedSources/WebKit2/WebIDBServerMessageReceiver.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
 		933E835923A1ADF500DEF289 /* WebIDBServerMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebIDBServerMessages.h; path = DerivedSources/WebKit2/WebIDBServerMessages.h; sourceTree = BUILT_PRODUCTS_DIR; };
+		9342588F2555DCA50059EEDD /* MediaPermissionUtilities.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = MediaPermissionUtilities.mm; sourceTree = "<group>"; };
+		93425898255B534B0059EEDD /* MediaPermissionUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaPermissionUtilities.h; sourceTree = "<group>"; };
 		934B724319F5B9BE00AE96D6 /* WKActionMenuItemTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKActionMenuItemTypes.h; sourceTree = "<group>"; };
 		935EEB951277616D003322B8 /* WKBundleBackForwardList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKBundleBackForwardList.cpp; sourceTree = "<group>"; };
 		935EEB961277616D003322B8 /* WKBundleBackForwardList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBundleBackForwardList.h; sourceTree = "<group>"; };
@@ -4510,6 +4516,11 @@
 		93D6B780254CCABC0058DD3A /* SpeechRecognitionServerMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpeechRecognitionServerMessages.h; sourceTree = "<group>"; };
 		93D6B781254CCABC0058DD3A /* SpeechRecognitionServerMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpeechRecognitionServerMessageReceiver.cpp; sourceTree = "<group>"; };
 		93D6B786254CCD8B0058DD3A /* WebSpeechRecognitionConnectionMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSpeechRecognitionConnectionMessages.h; sourceTree = "<group>"; };
+		93D6B7AF255268A10058DD3A /* SpeechRecognitionPermissionRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpeechRecognitionPermissionRequest.h; sourceTree = "<group>"; };
+		93D6B7B0255268A10058DD3A /* SpeechRecognitionPermissionManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpeechRecognitionPermissionManager.cpp; sourceTree = "<group>"; };
+		93D6B7B2255268A20058DD3A /* SpeechRecognitionPermissionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpeechRecognitionPermissionManager.h; sourceTree = "<group>"; };
+		93D6B7B725534A110058DD3A /* WKSpeechRecognitionPermissionCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKSpeechRecognitionPermissionCallback.h; sourceTree = "<group>"; };
+		93D6B7B825534A120058DD3A /* WKSpeechRecognitionPermissionCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKSpeechRecognitionPermissionCallback.cpp; sourceTree = "<group>"; };
 		93E6A4ED1BC5DD3900F8A0E7 /* _WKHitTestResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKHitTestResult.h; sourceTree = "<group>"; };
 		93F549B31E3174B7000E7239 /* WKSnapshotConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKSnapshotConfiguration.h; sourceTree = "<group>"; };
 		93F549B51E3174DA000E7239 /* WKSnapshotConfiguration.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKSnapshotConfiguration.mm; sourceTree = "<group>"; };
@@ -6448,6 +6459,7 @@
 				7A821F4D1E2F679E00604577 /* LegacyCustomProtocolManagerClient.mm */,
 				A1DF631118E0B7C8003A3E2A /* LegacyDownloadClient.h */,
 				A1DF631018E0B7C8003A3E2A /* LegacyDownloadClient.mm */,
+				9342588F2555DCA50059EEDD /* MediaPermissionUtilities.mm */,
 				411286EF21C8A90C003A8550 /* MediaUtilities.h */,
 				411286F021C8A90D003A8550 /* MediaUtilities.mm */,
 				1ABC3DF41899E437004F0626 /* NavigationState.h */,
@@ -9187,6 +9199,7 @@
 				5CEABA2B2333251400797797 /* LegacyGlobalSettings.cpp */,
 				5CEABA2A2333247700797797 /* LegacyGlobalSettings.h */,
 				31607F3819627002009B87DA /* LegacySessionStateCoding.h */,
+				93425898255B534B0059EEDD /* MediaPermissionUtilities.h */,
 				BC6EDAA5111271C600E7678B /* PageClient.h */,
 				1AC75379183A9FDA0072CB15 /* PageLoadState.cpp */,
 				1AC7537A183A9FDB0072CB15 /* PageLoadState.h */,
@@ -9206,6 +9219,9 @@
 				BC111B08112F5E3C00337BAB /* ResponsivenessTimer.cpp */,
 				1A30066C1110F4F70031937C /* ResponsivenessTimer.h */,
 				5CA98549210BEB5A0057EB6B /* SafeBrowsingWarning.h */,
+				93D6B7B0255268A10058DD3A /* SpeechRecognitionPermissionManager.cpp */,
+				93D6B7B2255268A20058DD3A /* SpeechRecognitionPermissionManager.h */,
+				93D6B7AF255268A10058DD3A /* SpeechRecognitionPermissionRequest.h */,
 				93D6B76B254B89580058DD3A /* SpeechRecognitionServer.cpp */,
 				93D6B76C254B89580058DD3A /* SpeechRecognitionServer.h */,
 				93D6B77A254C984D0058DD3A /* SpeechRecognitionServer.messages.in */,
@@ -9547,6 +9563,8 @@
 				33367639130C99DC006C9DE2 /* WKResourceCacheManager.h */,
 				1ADE46B01954EC61000F7985 /* WKSessionStateRef.cpp */,
 				1ADE46B11954EC61000F7985 /* WKSessionStateRef.h */,
+				93D6B7B825534A120058DD3A /* WKSpeechRecognitionPermissionCallback.cpp */,
+				93D6B7B725534A110058DD3A /* WKSpeechRecognitionPermissionCallback.h */,
 				51F886A31F2C214A00C193EF /* WKTestingSupport.cpp */,
 				51F886A41F2C214A00C193EF /* WKTestingSupport.h */,
 				314888FE1D91B11D00377042 /* WKTextChecker.cpp */,
@@ -11141,6 +11159,7 @@
 				1A6D86C21DF75265007745E8 /* MachMessage.h in Headers */,
 				BCC56F791159957D001CCAF9 /* MachPort.h in Headers */,
 				1A24B5F311F531E800C38269 /* MachUtilities.h in Headers */,
+				9342589A255B535A0059EEDD /* MediaPermissionUtilities.h in Headers */,
 				07E19EFC23D401F10094FFB4 /* MediaPlayerPrivateRemoteMessages.h in Headers */,
 				07E19EFD23D401F10094FFB4 /* MediaPlayerPrivateRemoteMessagesReplies.h in Headers */,
 				51933DEF1965EB31008AC3EA /* MenuUtilities.h in Headers */,
@@ -11381,6 +11400,8 @@
 				57BBEA6D22BC0BFE00273995 /* SOAuthorizationLoadPolicy.h in Headers */,
 				576CA9D722B862180030143C /* SOAuthorizationNSURLExtras.h in Headers */,
 				57FD318522B35169008D0E8B /* SOAuthorizationSession.h in Headers */,
+				93D6B7B5255268D70058DD3A /* SpeechRecognitionPermissionManager.h in Headers */,
+				93D6B7B4255268D50058DD3A /* SpeechRecognitionPermissionRequest.h in Headers */,
 				93D6B772254BB5190058DD3A /* SpeechRecognitionServer.h in Headers */,
 				93D6B784254CCD0E0058DD3A /* SpeechRecognitionServerMessages.h in Headers */,
 				93D6B785254CCD430058DD3A /* SpeechRecognitionServerMessagesReplies.h in Headers */,
@@ -11996,6 +12017,7 @@
 				513E462D1AD837560016234A /* WKSharingServicePickerDelegate.h in Headers */,
 				93F549B41E3174B7000E7239 /* WKSnapshotConfiguration.h in Headers */,
 				57FD318722B35170008D0E8B /* WKSOAuthorizationDelegate.h in Headers */,
+				93D6B7B925534A170058DD3A /* WKSpeechRecognitionPermissionCallback.h in Headers */,
 				7A78FF32224191960096483E /* WKStorageAccessAlert.h in Headers */,
 				BC407606124FF0270068F20A /* WKString.h in Headers */,
 				BC40761A124FF0370068F20A /* WKStringCF.h in Headers */,

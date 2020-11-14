@@ -304,6 +304,7 @@ class RemoteLayerTreeScrollingPerformanceData;
 class RemoteLayerTreeTransaction;
 class RemoteScrollingCoordinatorProxy;
 class SecKeyProxyStore;
+class SpeechRecognitionPermissionManager;
 class UserData;
 class ViewSnapshot;
 class VisitedLinkStore;
@@ -364,6 +365,7 @@ struct UserMessage;
 
 enum class NegotiatedLegacyTLS : bool;
 enum class ProcessSwapRequestedByClient : bool;
+enum class SpeechRecognitionPermissionDecision : bool;
 enum class UndoOrRedo : bool;
 enum class WebContentMode : uint8_t;
 
@@ -1818,6 +1820,8 @@ public:
     void setMediaCaptureReportingDelay(Seconds captureReportingDelay) { m_mediaCaptureReportingDelay = captureReportingDelay; }
     size_t suspendMediaPlaybackCounter() { return m_suspendMediaPlaybackCounter; }
 
+    void requestSpeechRecognitionPermission(const WebCore::ClientOrigin&, CompletionHandler<void(SpeechRecognitionPermissionDecision)>&&);
+
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, Ref<API::PageConfiguration>&&);
     void platformInitialize();
@@ -2839,6 +2843,9 @@ private:
     };
     Optional<SpeechSynthesisData> m_speechSynthesisData;
 #endif
+
+    std::unique_ptr<SpeechRecognitionPermissionManager> m_speechRecognitionPermissionManager;
+
 #if USE(DIRECT2D)
     COMPtr<ID3D11Device1> m_device;
 #endif

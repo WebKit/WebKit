@@ -41,6 +41,10 @@
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/spi/darwin/SandboxSPI.h>
 
+#if PLATFORM(IOS_FAMILY)
+#import "AccessibilitySupportSPI.h"
+#endif
+
 #if ENABLE(REMOTE_INSPECTOR)
 #import <JavaScriptCore/RemoteInspectorConstants.h>
 #endif

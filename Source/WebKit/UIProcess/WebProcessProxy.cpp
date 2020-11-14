@@ -37,6 +37,7 @@
 #include "PluginInfoStore.h"
 #include "PluginProcessManager.h"
 #include "ProvisionalPageProxy.h"
+#include "SpeechRecognitionPermissionRequest.h"
 #include "SpeechRecognitionServerMessages.h"
 #include "TextChecker.h"
 #include "TextCheckerState.h"
@@ -1703,7 +1704,25 @@ void WebProcessProxy::createSpeechRecognitionServer(SpeechRecognitionServerIdent
 {
     auto speechRecognitionServer = m_speechRecognitionServerMap.add(identifier, nullptr);
     ASSERT(speechRecognitionServer.isNewEntry);
-    speechRecognitionServer.iterator->value = makeUnique<SpeechRecognitionServer>(makeRef(*connection()), identifier);
+    WebPageProxy* targetPage = nullptr;
+    for (auto* page : pages()) {
+        if (page && page->webPageID() == identifier) {
+            targetPage = page;
+            break;
+        }
+    }
+
+    if (!targetPage)
+        return;
+
+    speechRecognitionServer.iterator->value = makeUnique<SpeechRecognitionServer>(makeRef(*connection()), identifier, [weakPage = makeWeakPtr(targetPage)](auto& origin, auto&& completionHandler) mutable {
+        if (!weakPage) {
+            completionHandler(SpeechRecognitionPermissionDecision::Deny);
+            return;
+        }
+
+        weakPage->requestSpeechRecognitionPermission(origin, WTFMove(completionHandler));
+    });
     addMessageReceiver(Messages::SpeechRecognitionServer::messageReceiverName(), identifier, *speechRecognitionServer.iterator->value);
 }
 

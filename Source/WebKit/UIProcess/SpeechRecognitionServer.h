@@ -28,32 +28,40 @@
 #include "MessageReceiver.h"
 #include "MessageSender.h"
 #include <WebCore/PageIdentifier.h>
+#include <WebCore/SpeechRecognitionError.h>
 #include <WebCore/SpeechRecognitionRequest.h>
+#include <WebCore/SpeechRecognitionResultData.h>
 #include <wtf/Deque.h>
+
+namespace WebCore {
+enum class SpeechRecognitionUpdateType;
+struct ClientOrigin;
+}
 
 namespace WebKit {
 
 class WebProcessProxy;
+enum class SpeechRecognitionPermissionDecision : bool;
 
 using SpeechRecognitionServerIdentifier = WebCore::PageIdentifier;
+using SpeechRecognitionPermissionChecker = Function<void(const WebCore::ClientOrigin&, CompletionHandler<void(SpeechRecognitionPermissionDecision)>&&)>;
 
 class SpeechRecognitionServer : public CanMakeWeakPtr<SpeechRecognitionServer>, public IPC::MessageReceiver, private IPC::MessageSender {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    SpeechRecognitionServer(Ref<IPC::Connection>&&, SpeechRecognitionServerIdentifier);
+    SpeechRecognitionServer(Ref<IPC::Connection>&&, SpeechRecognitionServerIdentifier, SpeechRecognitionPermissionChecker&&);
 
-    void start(WebCore::SpeechRecognitionRequestInfo&&);
+    void start(WebCore::SpeechRecognitionConnectionClientIdentifier, String&& lang, bool continuous, bool interimResults, uint64_t maxAlternatives, WebCore::ClientOrigin&&);
     void stop(WebCore::SpeechRecognitionConnectionClientIdentifier);
     void abort(WebCore::SpeechRecognitionConnectionClientIdentifier);
     void invalidate(WebCore::SpeechRecognitionConnectionClientIdentifier);
 
 private:
-    void processNextPendingRequestIfNeeded();
-    void removePendingRequest(WebCore::SpeechRecognitionConnectionClientIdentifier);
-
-    // TODO: implement these.
-    void startPocessingRequest(WebCore::SpeechRecognitionRequest&);
-    void stopProcessingRequest(WebCore::SpeechRecognitionRequest&);
+    void requestPermissionForRequest(WebCore::SpeechRecognitionRequest&);
+    void handleRequest(WebCore::SpeechRecognitionRequest&);
+    void stopRequest(WebCore::SpeechRecognitionRequest&);
+    void abortRequest(WebCore::SpeechRecognitionRequest&);
+    void sendUpdate(WebCore::SpeechRecognitionConnectionClientIdentifier, WebCore::SpeechRecognitionUpdateType, Optional<WebCore::SpeechRecognitionError> = WTF::nullopt, Optional<Vector<WebCore::SpeechRecognitionResultData>> = WTF::nullopt);
 
     // IPC::MessageReceiver.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
@@ -64,8 +72,9 @@ private:
 
     Ref<IPC::Connection> m_connection;
     SpeechRecognitionServerIdentifier m_identifier;
-    Deque<Ref<WebCore::SpeechRecognitionRequest>> m_pendingRequests;
-    RefPtr<WebCore::SpeechRecognitionRequest> m_currentRequest;
+    HashMap<WebCore::SpeechRecognitionConnectionClientIdentifier, std::unique_ptr<WebCore::SpeechRecognitionRequest>> m_pendingRequests;
+    HashMap<WebCore::SpeechRecognitionConnectionClientIdentifier, std::unique_ptr<WebCore::SpeechRecognitionRequest>> m_ongoingRequests;
+    SpeechRecognitionPermissionChecker m_permissionChecker;
 };
 
 } // namespace WebKit

@@ -403,4 +403,7 @@ interface TestRunner {
     undefined setPrivateClickMeasurementOverrideTimerForTesting(boolean value);
     undefined setPrivateClickMeasurementConversionURLForTesting(DOMString url);
     undefined markPrivateClickMeasurementsAsExpiredForTesting();
+
+    // SpeechRecognition
+    undefined setIsSpeechRecognitionPermissionGranted(boolean value);
 };

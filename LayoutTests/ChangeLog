@@ -1,3 +1,19 @@
+2020-11-13  Sihui Liu  <sihui_liu@apple.com>
+
+        Implement basic permission check for SpeechRecognition
+        https://bugs.webkit.org/show_bug.cgi?id=218476
+        <rdar://problem/71222638>
+
+        Reviewed by Youenn Fablet.
+
+        * TestExpectations:
+        * fast/speechrecognition/permission-error-expected.txt: Added.
+        * fast/speechrecognition/permission-error.html: Added.
+        * fast/speechrecognition/resources/removed-iframe.html: Added.
+        * fast/speechrecognition/start-recognition-in-removed-iframe-expected.txt: Added.
+        * fast/speechrecognition/start-recognition-in-removed-iframe.html: Added.
+        * platform/wk2/TestExpectations:
+
 2020-11-13  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, reverting r269776.

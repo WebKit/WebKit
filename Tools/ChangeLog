@@ -1,3 +1,33 @@
+2020-11-13  Sihui Liu  <sihui_liu@apple.com>
+
+        Implement basic permission check for SpeechRecognition
+        https://bugs.webkit.org/show_bug.cgi?id=218476
+        <rdar://problem/71222638>
+
+        Reviewed by Youenn Fablet.
+
+        * MiniBrowser/mac/Info.plist:
+        * MobileMiniBrowser/MobileMiniBrowser/Info.plist:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/SpeechRecognition.mm: Added.
+        (-[SpeechRecognitionPermissionUIDelegate _webView:requestSpeechRecognitionPermissionForOrigin:decisionHandler:]):
+        (-[SpeechRecognitionMessageHandler userContentController:didReceiveScriptMessage:]):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/speechrecognition-user-permission-persistence.html: Added.
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setIsSpeechRecognitionPermissionGranted):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::decidePolicyForSpeechRecognitionPermissionRequest):
+        (WTR::TestController::completeSpeechRecognitionPermissionCheck):
+        (WTR::TestController::setIsSpeechRecognitionPermissionGranted):
+        (WTR::TestController::createWebViewWithOptions):
+        (WTR::TestController::resetStateToConsistentValues):
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+
 2020-11-13  Chris Dumez  <cdumez@apple.com>
 
         [GPUProcess] Add basic GPUProcess crash handling for canvas

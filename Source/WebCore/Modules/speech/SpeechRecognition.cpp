@@ -26,6 +26,7 @@
 #include "config.h"
 #include "SpeechRecognition.h"
 
+#include "ClientOrigin.h"
 #include "Document.h"
 #include "EventNames.h"
 #include "Page.h"
@@ -69,7 +70,8 @@ ExceptionOr<void> SpeechRecognition::startRecognition()
     if (!m_connection)
         return Exception { UnknownError, "Recognition does not have a valid connection"_s };
 
-    m_connection->start(identifier(), m_lang, m_continuous, m_interimResults, m_maxAlternatives);
+    auto& document = downcast<Document>(*scriptExecutionContext());
+    m_connection->start(identifier(), m_lang, m_continuous, m_interimResults, m_maxAlternatives, ClientOrigin { document.topOrigin().data(), document.securityOrigin().data() });
     m_state = State::Starting;
     return { };
 }

@@ -351,6 +351,9 @@ public:
 
     WKURLRef currentTestURL() const;
 
+    void completeSpeechRecognitionPermissionCheck(WKSpeechRecognitionPermissionCallbackRef);
+    void setIsSpeechRecognitionPermissionGranted(bool);
+
 private:
     WKRetainPtr<WKPageConfigurationRef> generatePageConfiguration(const TestOptions&);
     WKRetainPtr<WKContextConfigurationRef> generateContextConfiguration(const TestOptions&) const;
@@ -640,6 +643,8 @@ private:
 #if PLATFORM(COCOA)
     bool m_hasSetApplicationBundleIdentifier { false };
 #endif
+
+    bool m_isSpeechRecognitionPermissionGranted { false };
 };
 
 } // namespace WTR

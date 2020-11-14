@@ -161,6 +161,7 @@ private:
 #if ENABLE(WEB_AUTHN)
         void runWebAuthenticationPanel(WebPageProxy&, API::WebAuthenticationPanel&, WebFrameProxy&, FrameInfoData&&, CompletionHandler<void(WebAuthenticationPanelResult)>&&) final;
 #endif
+        void decidePolicyForSpeechRecognitionPermissionRequest(WebPageProxy&, API::SecurityOrigin&, CompletionHandler<void(bool)>&&) final;
 
         UIDelegate& m_uiDelegate;
     };

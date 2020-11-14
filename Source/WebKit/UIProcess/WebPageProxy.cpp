@@ -86,6 +86,7 @@
 #include "ProvisionalPageProxy.h"
 #include "SafeBrowsingWarning.h"
 #include "SharedBufferDataReference.h"
+#include "SpeechRecognitionPermissionManager.h"
 #include "SyntheticEditingCommandType.h"
 #include "TextChecker.h"
 #include "TextCheckerState.h"
@@ -4893,6 +4894,8 @@ void WebPageProxy::didChangeMainDocument(FrameIdentifier frameID)
     UNUSED_PARAM(frameID);
 #endif
     m_isQuotaIncreaseDenied = false;
+
+    m_speechRecognitionPermissionManager = nullptr;
 }
 
 void WebPageProxy::viewIsBecomingVisible()
@@ -7606,6 +7609,8 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
 #if ENABLE(WEB_AUTHN)
     m_websiteDataStore->authenticatorManager().cancelRequest(m_webPageID, WTF::nullopt);
 #endif
+
+    m_speechRecognitionPermissionManager = nullptr;
 }
 
 void WebPageProxy::resetStateAfterProcessExited(ProcessTerminationReason terminationReason)
@@ -10233,6 +10238,14 @@ void WebPageProxy::dispatchActivityStateUpdateForTesting()
     RunLoop::current().dispatch([protectedThis = makeRef(*this)] {
         protectedThis->dispatchActivityStateChange();
     });
+}
+
+void WebPageProxy::requestSpeechRecognitionPermission(const WebCore::ClientOrigin& clientOrigin, CompletionHandler<void(SpeechRecognitionPermissionDecision)>&& completionHandler)
+{
+    if (!m_speechRecognitionPermissionManager)
+        m_speechRecognitionPermissionManager = makeUnique<SpeechRecognitionPermissionManager>(*this);
+
+    m_speechRecognitionPermissionManager->request(clientOrigin, WTFMove(completionHandler));
 }
 
 } // namespace WebKit

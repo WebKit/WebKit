@@ -28,11 +28,6 @@
 
 namespace WebCore {
 
-Ref<SpeechRecognitionRequest> SpeechRecognitionRequest::create(SpeechRecognitionRequestInfo&& requestInfo)
-{
-    return adoptRef(*new SpeechRecognitionRequest(WTFMove(requestInfo)));
-}
-
 SpeechRecognitionRequest::SpeechRecognitionRequest(SpeechRecognitionRequestInfo&& requestInfo)
     : m_info(WTFMove(requestInfo))
 {

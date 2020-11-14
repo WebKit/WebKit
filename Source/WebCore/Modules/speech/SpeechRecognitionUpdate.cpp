@@ -60,7 +60,7 @@ String convertEnumerationToString(SpeechRecognitionUpdateType enumerationValue)
 
 SpeechRecognitionUpdate SpeechRecognitionUpdate::create(SpeechRecognitionConnectionClientIdentifier clientIdentifier, SpeechRecognitionUpdateType type)
 {
-    return SpeechRecognitionUpdate { clientIdentifier, type };
+    return SpeechRecognitionUpdate { clientIdentifier, type, WTF::Monostate() };
 }
 
 SpeechRecognitionUpdate SpeechRecognitionUpdate::createError(SpeechRecognitionConnectionClientIdentifier clientIdentifier, const SpeechRecognitionError& error)
@@ -83,7 +83,7 @@ SpeechRecognitionUpdate::SpeechRecognitionUpdate(SpeechRecognitionConnectionClie
 SpeechRecognitionError SpeechRecognitionUpdate::error() const
 {
     return WTF::switchOn(m_content,
-        [] (SpeechRecognitionError& error) { return error; },
+        [] (const SpeechRecognitionError& error) { return error; },
         [] (const auto&) { return SpeechRecognitionError(); }
     );
 }
@@ -91,7 +91,7 @@ SpeechRecognitionError SpeechRecognitionUpdate::error() const
 Vector<SpeechRecognitionResultData> SpeechRecognitionUpdate::result() const
 {
     return WTF::switchOn(m_content,
-        [] (Vector<SpeechRecognitionResultData>& data) { return data; },
+        [] (const Vector<SpeechRecognitionResultData>& data) { return data; },
         [] (const auto&) { return Vector<SpeechRecognitionResultData> { }; }
     );
 }

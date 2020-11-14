@@ -1,3 +1,113 @@
+2020-11-13  Sihui Liu  <sihui_liu@apple.com>
+
+        Implement basic permission check for SpeechRecognition
+        https://bugs.webkit.org/show_bug.cgi?id=218476
+        <rdar://problem/71222638>
+
+        Reviewed by Youenn Fablet.
+
+        Introduce SpeechRecognitionPermissionManager, which checks and requests speech recognition permissions before 
+        we actually start capturing audio and perform recognition. SpeechRecognitionPermissionManager is per-page, like
+        SpeechRecognitionServer. The checks include:
+        1. Sandbox requirement for microphone
+        2. TCC check for microphone
+        3. TCC check for SFSpeechRecognizer
+        4. User permission on speech recognition for origin
+
+        Add a delegate function for requesting user permission. By default, user permission is not granted.
+
+        API test: WebKit2.SpeechRecognitionUserPermissionPersistence
+
+        * Headers.cmake:
+        * Shared/API/APIObject.h:
+        * Shared/API/c/WKBase.h:
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * UIProcess/API/APIUIClient.h:
+        (API::UIClient::decidePolicyForSpeechRecognitionPermissionRequest):
+        * UIProcess/API/C/WKAPICast.h:
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageUIClient):
+        * UIProcess/API/C/WKPageUIClient.h:
+        * UIProcess/API/C/WKSpeechRecognitionPermissionCallback.cpp: Added.
+        (WKSpeechRecognitionPermissionCallbackGetTypeID):
+        (WKSpeechRecognitionPermissionCallbackComplete):
+        * UIProcess/API/C/WKSpeechRecognitionPermissionCallback.h: Added.
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (-[WKPreferences _speechRecognitionEnabled]):
+        (-[WKPreferences _setSpeechRecognitionEnabled:]):
+        * UIProcess/API/Cocoa/WKPreferencesPrivate.h:
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+        * UIProcess/Cocoa/MediaPermissionUtilities.mm: Added.
+        (WebKit::checkSandboxRequirementForType):
+        (WebKit::checkUsageDescriptionStringForType):
+        (WebKit::checkUsageDescriptionStringForSpeechRecognition):
+        (WebKit::requestAVCaptureAccessForType):
+        (WebKit::checkAVCaptureAccessForType):
+        (WebKit::requestSpeechRecognitionAccess):
+        (WebKit::checkSpeechRecognitionServiceAccess):
+        * UIProcess/Cocoa/UIDelegate.h:
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::UIClient::decidePolicyForSpeechRecognitionPermissionRequest):
+        * UIProcess/Cocoa/UserMediaPermissionRequestManagerProxy.mm:
+        (WebKit::UserMediaPermissionRequestManagerProxy::permittedToCaptureAudio):
+        (WebKit::UserMediaPermissionRequestManagerProxy::permittedToCaptureVideo):
+        (WebKit::UserMediaPermissionRequestManagerProxy::requestSystemValidation):
+        (WebKit::requestAVCaptureAccessForMediaType): Deleted.
+        * UIProcess/Cocoa/WebProcessProxyCocoa.mm:
+        * UIProcess/MediaPermissionUtilities.h: Copied from Added.
+        * UIProcess/SpeechRecognitionPermissionManager.cpp: Added.
+        (WebKit::computeMicrophoneAccess):
+        (WebKit::computeSpeechRecognitionServiceAccess):
+        (WebKit::SpeechRecognitionPermissionManager::SpeechRecognitionPermissionManager):
+        (WebKit::SpeechRecognitionPermissionManager::~SpeechRecognitionPermissionManager):
+        (WebKit::SpeechRecognitionPermissionManager::request):
+        (WebKit::SpeechRecognitionPermissionManager::startNextRequest):
+        (WebKit::SpeechRecognitionPermissionManager::startProcessingRequest):
+        (WebKit::SpeechRecognitionPermissionManager::continueProcessingRequest):
+        (WebKit::SpeechRecognitionPermissionManager::completeCurrentRequest):
+        (WebKit::SpeechRecognitionPermissionManager::requestSpeechRecognitionServiceAccess):
+        (WebKit::SpeechRecognitionPermissionManager::requestMicrophoneAccess):
+        (WebKit::SpeechRecognitionPermissionManager::requestUserPermission):
+        * UIProcess/SpeechRecognitionPermissionManager.h: Added.
+        * UIProcess/SpeechRecognitionPermissionRequest.h: Added.
+        (WebKit::SpeechRecognitionPermissionRequest::create):
+        (WebKit::SpeechRecognitionPermissionRequest::complete):
+        (WebKit::SpeechRecognitionPermissionRequest::origin const):
+        (WebKit::SpeechRecognitionPermissionRequest::SpeechRecognitionPermissionRequest):
+        (WebKit::SpeechRecognitionPermissionCallback::create):
+        (WebKit::SpeechRecognitionPermissionCallback::complete):
+        (WebKit::SpeechRecognitionPermissionCallback::SpeechRecognitionPermissionCallback):
+        * UIProcess/SpeechRecognitionServer.cpp:
+        (WebKit::SpeechRecognitionServer::SpeechRecognitionServer):
+        (WebKit::SpeechRecognitionServer::start):
+        (WebKit::SpeechRecognitionServer::requestPermissionForRequest):
+        (WebKit::SpeechRecognitionServer::stop):
+        (WebKit::SpeechRecognitionServer::abort):
+        (WebKit::SpeechRecognitionServer::invalidate):
+        (WebKit::SpeechRecognitionServer::handleRequest):
+        (WebKit::SpeechRecognitionServer::stopRequest):
+        (WebKit::SpeechRecognitionServer::abortRequest):
+        (WebKit::SpeechRecognitionServer::sendUpdate):
+        (WebKit::SpeechRecognitionServer::processNextPendingRequestIfNeeded): Deleted.
+        (WebKit::SpeechRecognitionServer::removePendingRequest): Deleted.
+        (WebKit::SpeechRecognitionServer::startPocessingRequest): Deleted.
+        (WebKit::SpeechRecognitionServer::stopProcessingRequest): Deleted.
+        * UIProcess/SpeechRecognitionServer.h:
+        * UIProcess/SpeechRecognitionServer.messages.in:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didChangeMainDocument):
+        (WebKit::WebPageProxy::resetState):
+        (WebKit::WebPageProxy::requestSpeechRecognitionPermission):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::createSpeechRecognitionServer):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/WebSpeechRecognitionConnection.cpp:
+        (WebKit::WebSpeechRecognitionConnection::start):
+        (WebKit::WebSpeechRecognitionConnection::didReceiveUpdate):
+        * WebProcess/WebCoreSupport/WebSpeechRecognitionConnection.h:
+
 2020-11-13  Chris Dumez  <cdumez@apple.com>
 
         [GPUProcess] Add basic GPUProcess crash handling for canvas

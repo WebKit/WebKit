@@ -152,6 +152,8 @@ struct UIEdgeInsets;
 
 - (void)_webView:(WKWebView *)webView willShareActivityItems:(NSArray *)activityItems WK_API_AVAILABLE(ios(WK_IOS_TBA));
 
+- (void)_webView:(WKWebView *)webView requestSpeechRecognitionPermissionForOrigin:(WKSecurityOrigin *)origin decisionHandler:(void (^)(BOOL authorized))decisionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
 #if TARGET_OS_IPHONE
 
 - (BOOL)_webView:(WKWebView *)webView shouldIncludeAppLinkActionsForElement:(_WKActivatedElementInfo *)element WK_API_AVAILABLE(ios(9.0));

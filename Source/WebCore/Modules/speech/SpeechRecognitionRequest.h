@@ -30,19 +30,19 @@
 
 namespace WebCore {
 
-class SpeechRecognitionRequest : public RefCounted<SpeechRecognitionRequest> {
+class SpeechRecognitionRequest : public CanMakeWeakPtr<SpeechRecognitionRequest> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
-    WEBCORE_EXPORT static Ref<SpeechRecognitionRequest> create(SpeechRecognitionRequestInfo&&);
+    WEBCORE_EXPORT explicit SpeechRecognitionRequest(SpeechRecognitionRequestInfo&&);
 
     SpeechRecognitionConnectionClientIdentifier clientIdentifier() const { return m_info.clientIdentifier; }
     const String& lang() const { return m_info.lang; }
     bool continuous() const { return m_info.continuous;; }
     bool interimResults() const { return m_info.interimResults; }
     uint64_t maxAlternatives() const { return m_info.maxAlternatives; }
+    const ClientOrigin clientOrigin() const { return m_info.clientOrigin; }
 
 private:
-    explicit SpeechRecognitionRequest(SpeechRecognitionRequestInfo&&);
-
     SpeechRecognitionRequestInfo m_info;
 };
 

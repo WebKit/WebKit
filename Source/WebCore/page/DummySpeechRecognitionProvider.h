@@ -39,10 +39,10 @@ public:
             return adoptRef(*new DummySpeechRecognitionConnection());
         }
         void registerClient(SpeechRecognitionConnectionClient&) final { }
-        void start(SpeechRecognitionConnectionClientIdentifier, const String&, bool, bool, uint64_t) final { }
+        void start(SpeechRecognitionConnectionClientIdentifier, const String&, bool, bool, uint64_t, ClientOrigin&&) final { }
         void stop(SpeechRecognitionConnectionClientIdentifier) final { }
         void abort(SpeechRecognitionConnectionClientIdentifier) final { }
-        void didReceiveUpdate(const SpeechRecognitionUpdate&) final { }
+        void didReceiveUpdate(SpeechRecognitionUpdate&&) final { }
     };
     DummySpeechRecognitionProvider() = default;
     SpeechRecognitionConnection& speechRecognitionConnection()
