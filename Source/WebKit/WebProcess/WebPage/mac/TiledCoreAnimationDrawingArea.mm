@@ -38,6 +38,8 @@
 #import "WebPage.h"
 #import "WebPageCreationParameters.h"
 #import "WebPageProxyMessages.h"
+#import "WebPreferencesKeys.h"
+#import "WebPreferencesStore.h"
 #import "WebProcess.h"
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <QuartzCore/QuartzCore.h>
@@ -213,13 +215,13 @@ void TiledCoreAnimationDrawingArea::triggerRenderingUpdate()
     scheduleRenderingUpdateRunLoopObserver();
 }
 
-void TiledCoreAnimationDrawingArea::updatePreferences(const WebPreferencesStore&)
+void TiledCoreAnimationDrawingArea::updatePreferences(const WebPreferencesStore& store)
 {
     Settings& settings = m_webPage.corePage()->settings();
 
 #if ENABLE(ASYNC_SCROLLING)
     if (AsyncScrollingCoordinator* scrollingCoordinator = downcast<AsyncScrollingCoordinator>(m_webPage.corePage()->scrollingCoordinator())) {
-        bool scrollingPerformanceLoggingEnabled = m_webPage.scrollingPerformanceLoggingEnabled();
+        bool scrollingPerformanceLoggingEnabled = store.getBoolValueForKey(WebPreferencesKey::scrollingPerformanceLoggingEnabledKey());
         
         RefPtr<ScrollingTree> scrollingTree = scrollingCoordinator->scrollingTree();
         ScrollingThread::dispatch([scrollingTree, scrollingPerformanceLoggingEnabled] {

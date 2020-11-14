@@ -55,6 +55,10 @@ bool defaultPassiveWheelListenersAsDefaultOnDocument();
 bool defaultDisallowSyncXHRDuringPageDismissalEnabled();
 #endif
 
+#if PLATFORM(MAC)
+bool defaultAppleMailPaginationQuirkEnabled();
+#endif
+
 #if !PLATFORM(MACCATALYST) && !PLATFORM(WATCHOS)
 bool allowsDeprecatedSynchronousXMLHttpRequestDuringUnload();
 #endif

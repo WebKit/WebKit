@@ -7837,19 +7837,6 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     parameters.canShowWhileLocked = m_configuration->canShowWhileLocked();
 #endif
 
-#if PLATFORM(MAC)
-    parameters.appleMailPaginationQuirkEnabled = appleMailPaginationQuirkEnabled();
-#else
-    parameters.appleMailPaginationQuirkEnabled = false;
-#endif
-    
-#if PLATFORM(MAC)
-    // FIXME: Need to support iOS too, but there is no isAppleMail for iOS.
-    parameters.appleMailLinesClampEnabled = appleMailLinesClampEnabled();
-#else
-    parameters.appleMailLinesClampEnabled = false;
-#endif
-
 #if PLATFORM(COCOA)
     parameters.smartInsertDeleteEnabled = m_isSmartInsertDeleteEnabled;
     parameters.additionalSupportedImageTypes = m_configuration->additionalSupportedImageTypes();

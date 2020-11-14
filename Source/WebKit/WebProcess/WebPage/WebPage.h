@@ -1074,9 +1074,6 @@ public:
     bool artificialPluginInitializationDelayEnabled() const { return m_artificialPluginInitializationDelayEnabled; }
     void setArtificialPluginInitializationDelayEnabled(bool enabled) { m_artificialPluginInitializationDelayEnabled = enabled; }
 
-    bool scrollingPerformanceLoggingEnabled() const { return m_scrollingPerformanceLoggingEnabled; }
-    void setScrollingPerformanceLoggingEnabled(bool);
-
 #if PLATFORM(COCOA)
     bool shouldUsePDFPlugin() const;
     bool pdfPluginEnabled() const { return m_pdfPluginEnabled; }
@@ -1813,7 +1810,6 @@ private:
     bool m_asynchronousPluginInitializationEnabled { false };
     bool m_asynchronousPluginInitializationEnabledForAllPlugins { false };
     bool m_artificialPluginInitializationDelayEnabled { false };
-    bool m_scrollingPerformanceLoggingEnabled { false };
     bool m_mainFrameIsScrollable { true };
 
     bool m_alwaysShowsHorizontalScroller { false };

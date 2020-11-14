@@ -82,6 +82,14 @@ bool defaultDisallowSyncXHRDuringPageDismissalEnabled()
 
 #endif
 
+#if PLATFORM(MAC)
+
+bool defaultAppleMailPaginationQuirkEnabled()
+{
+    return WebCore::MacApplication::isAppleMail();
+}
+
+#endif
 
 static bool defaultAsyncFrameAndOverflowScrollingEnabled()
 {

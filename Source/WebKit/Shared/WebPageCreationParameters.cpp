@@ -127,8 +127,6 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
 #if PLATFORM(WIN)
     encoder << nativeWindowHandle;
 #endif
-    encoder << appleMailPaginationQuirkEnabled;
-    encoder << appleMailLinesClampEnabled;
     encoder << shouldScaleViewToFitDocument;
     encoder << userInterfaceLayoutDirection;
     encoder << observedLayoutMilestones;
@@ -395,12 +393,6 @@ Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decod
     if (!decoder.decode(parameters.nativeWindowHandle))
         return WTF::nullopt;
 #endif
-
-    if (!decoder.decode(parameters.appleMailPaginationQuirkEnabled))
-        return WTF::nullopt;
-
-    if (!decoder.decode(parameters.appleMailLinesClampEnabled))
-        return WTF::nullopt;
 
     if (!decoder.decode(parameters.shouldScaleViewToFitDocument))
         return WTF::nullopt;

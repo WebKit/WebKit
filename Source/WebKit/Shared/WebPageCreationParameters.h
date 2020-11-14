@@ -186,8 +186,6 @@ struct WebPageCreationParameters {
 #if PLATFORM(WIN)
     uint64_t nativeWindowHandle;
 #endif
-    bool appleMailPaginationQuirkEnabled;
-    bool appleMailLinesClampEnabled;
     bool shouldScaleViewToFitDocument;
 
     WebCore::UserInterfaceLayoutDirection userInterfaceLayoutDirection;

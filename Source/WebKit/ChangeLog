@@ -1,3 +1,47 @@
+2020-11-13  Sam Weinig  <weinig@apple.com>
+
+        Move some more WebKit and WebKitLegacy preferences bound to Settings to WebPreferences.yaml
+        https://bugs.webkit.org/show_bug.cgi?id=218914
+
+        Reviewed by Tim Horton.
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode const):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::creationParameters):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::appleMailPaginationQuirkEnabled): Deleted.
+        (WebKit::WebPageProxy::appleMailLinesClampEnabled): Deleted.
+        Removes appleMailPaginationQuirkEnabled and appleMailLinesClampEnabled. 
+        appleMailPaginationQuirkEnabled is now handled via the preferences infrastructure
+        and appleMailLinesClampEnabled was unused.
+
+        * Shared/WebPreferencesDefaultValues.cpp:
+        (WebKit::defaultAppleMailPaginationQuirkEnabled):
+        * Shared/WebPreferencesDefaultValues.h:
+        Adds default value for AppleMailPaginationQuirkEnabled, which is now in WebPreferences.yaml.
+        Moved from WebPageProxyMac.mm
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+        Removes explicit setting of setAppleMailPaginationQuirkEnabled, setContentDispositionAttachmentSandboxEnabled,
+        setScrollingPerformanceLoggingEnabled and setUseImageDocumentForSubframePDF which are all generated now.
+        LayoutViewportHeightExpansionFactor was already generated so this call was just redundant.
+
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::setScrollingPerformanceLoggingEnabled): Deleted.
+        It's also no longer necessary to store m_scrollingPerformanceLoggingEnabled as the value
+        can be extracted directly from the store in the one place it was read. setScrollingPerformanceLoggingEnabled
+        was never called, so has been removed.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::updatePreferences):
+        Extract scrollingPerformanceLoggingEnabled directly from the store rather than having the page
+        set it just for this one place to read it.
+
 2020-11-13  Geoffrey Garen  <ggaren@apple.com>
 
         Removed DeferrableTaskTimer

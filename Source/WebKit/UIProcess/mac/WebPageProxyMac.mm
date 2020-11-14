@@ -591,16 +591,6 @@ CGRect WebPageProxy::boundsOfLayerInLayerBackedWindowCoordinates(CALayer *layer)
     return pageClient().boundsOfLayerInLayerBackedWindowCoordinates(layer);
 }
 
-bool WebPageProxy::appleMailPaginationQuirkEnabled()
-{
-    return MacApplication::isAppleMail();
-}
-
-bool WebPageProxy::appleMailLinesClampEnabled()
-{
-    return MacApplication::isAppleMail();
-}
-
 void WebPageProxy::updateEditorState(const EditorState& editorState)
 {
     bool couldChangeSecureInputState = m_editorState.isInPasswordField != editorState.isInPasswordField || m_editorState.selectionIsNone;

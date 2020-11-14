@@ -41,12 +41,6 @@ AnimatedImageDebugCanvasDrawingEnabled:
     WebCore:
       default: false
 
-AppleMailPaginationQuirkEnabled:
-  type: bool
-  defaultValue:
-    WebCore:
-      default: false
-
 AudioPlaybackRequiresUserGesture:
   type: bool
   defaultValue:
@@ -87,18 +81,6 @@ ClipboardAccessPolicy:
   defaultValue:
     WebCore:
       default: ClipboardAccessPolicy::RequiresUserGesture
-
-ContentDispositionAttachmentSandboxEnabled:
-  comment: >-
-    Some ports (e.g. iOS) might choose to display attachments inline, regardless of whether the
-    response includes the HTTP header \"Content-Disposition: attachment\". This setting enables
-    a sandbox around these attachments. The sandbox enforces all frame sandbox flags (see enum
-    SandboxFlag in SecurityContext.h), and also disables <meta http-equiv> processing and subframe
-    loading.
-  type: bool
-  defaultValue:
-    WebCore:
-      default: false
 
 CrossOriginCheckInGetMatchedCSSRulesDisabled:
   type: bool
@@ -459,13 +441,6 @@ ScrollingCoordinatorEnabled:
     WebCore:
       default: false
 
-ScrollingPerformanceLoggingEnabled:
-  type: bool
-  webcoreOnChange: scrollingPerformanceLoggingEnabledChanged
-  defaultValue:
-    WebCore:
-      default: false
-
 ScrollingTreeIncludesFrames:
   type: bool
   defaultValue:
@@ -589,12 +564,6 @@ UseAnonymousModeWhenFetchingMaskImages:
   defaultValue:
     WebCore:
       default: true
-
-UseImageDocumentForSubframePDF:
-  type: bool
-  defaultValue:
-    WebCore:
-      default: false
 
 UserInterfaceDirectionPolicy:
   type: uint32_t

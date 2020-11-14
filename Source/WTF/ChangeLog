@@ -1,3 +1,17 @@
+2020-11-13  Sam Weinig  <weinig@apple.com>
+
+        Move some more WebKit and WebKitLegacy preferences bound to Settings to WebPreferences.yaml
+        https://bugs.webkit.org/show_bug.cgi?id=218914
+
+        Reviewed by Tim Horton.
+
+        Moves AppleMailPaginationQuirkEnabled, ContentDispositionAttachmentSandboxEnabled and
+        UseImageDocumentForSubframePDF from Settings.yaml to WebPreferences.yaml. Merges in
+        WebCore values from ScrollingPerformanceLoggingEnabled and removes binding override
+        since it can now be fully generated. 
+
+        * Scripts/Preferences/WebPreferences.yaml:
+
 2020-11-13  Xan López  <xan@igalia.com>
 
         [JSC] Use symbols as identifiers for class fields computed names storage
