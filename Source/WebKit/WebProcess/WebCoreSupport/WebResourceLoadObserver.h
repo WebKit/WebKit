@@ -39,6 +39,9 @@ class WebPage;
 
 class WebResourceLoadObserver final : public WebCore::ResourceLoadObserver {
 public:
+    using TopFrameDomain = WebCore::RegistrableDomain;
+    using SubFrameDomain = WebCore::RegistrableDomain;
+
     WebResourceLoadObserver(WebCore::ResourceLoadStatistics::IsEphemeral);
     ~WebResourceLoadObserver();
 
@@ -63,7 +66,10 @@ public:
     bool hasStatistics() const final { return !m_resourceStatisticsMap.isEmpty(); }
 
     void setDomainsWithUserInteraction(HashSet<WebCore::RegistrableDomain>&& domains) final { m_domainsWithUserInteraction = WTFMove(domains); }
+    void setDomainsWithCrossPageStorageAccess(HashMap<TopFrameDomain, SubFrameDomain>&&, CompletionHandler<void()>&&) final;
     bool hasHadUserInteraction(const WebCore::RegistrableDomain&) const final;
+    bool hasCrossPageStorageAccess(const SubFrameDomain&, const TopFrameDomain&) const final;
+
 private:
     WebCore::ResourceLoadStatistics& ensureResourceStatisticsForRegistrableDomain(const WebCore::RegistrableDomain&);
     void scheduleNotificationIfNeeded();
@@ -81,6 +87,7 @@ private:
     WebCore::Timer m_notificationTimer;
 
     HashSet<WebCore::RegistrableDomain> m_domainsWithUserInteraction;
+    HashMap<TopFrameDomain, SubFrameDomain> m_domainsWithCrossPageStorageAccess;
 #if !RELEASE_LOG_DISABLED
     uint64_t m_loggingCounter { 0 };
     static bool shouldLogUserInteraction;

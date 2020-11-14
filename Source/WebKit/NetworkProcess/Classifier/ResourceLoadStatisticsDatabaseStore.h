@@ -159,6 +159,7 @@ private:
     Vector<RegistrableDomain> domainsToBlockAndDeleteCookiesFor() const;
     Vector<RegistrableDomain> domainsToBlockButKeepCookiesFor() const;
     Vector<RegistrableDomain> domainsWithUserInteractionAsFirstParty() const;
+    HashMap<TopFrameDomain, SubResourceDomain> domainsWithStorageAccess() const;
 
     struct DomainData {
         unsigned domainID;

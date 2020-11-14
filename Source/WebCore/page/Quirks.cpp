@@ -42,6 +42,7 @@
 #include "JSEventListener.h"
 #include "LayoutUnit.h"
 #include "NamedNodeMap.h"
+#include "NetworkStorageSession.h"
 #include "ResourceLoadObserver.h"
 #include "RuntimeEnabledFeatures.h"
 #include "SVGPathElement.h"
@@ -961,9 +962,26 @@ static bool isKinjaLoginAvatarElement(const Element& element)
 
     return false;
 }
+
+static bool isMicrosoftLoginElement(const Element& element)
+{
+    if (!element.hasClass())
+        return false;
+
+    auto& classNames = element.classNames();
+    return classNames.contains("glyph_signIn_circle") || classNames.contains("mectrl_headertext") || classNames.contains("mectrl_header") || classNames.contains("ext-button primary") || classNames.contains("ext-primary");
+}
+
+static bool isMicrosoftDomain(const RegistrableDomain& domain)
+{
+    static NeverDestroyed<RegistrableDomain> microsoftDotCom = RegistrableDomain::uncheckedCreateFromRegistrableDomainString("microsoft.com"_s);
+    static NeverDestroyed<RegistrableDomain> liveDotCom = RegistrableDomain::uncheckedCreateFromRegistrableDomainString("live.com"_s);
+
+    return domain == microsoftDotCom || domain == liveDotCom;
+}
 #endif
 
-Quirks::StorageAccessResult Quirks::triggerOptionalStorageAccessQuirk(const Element& element, const AtomString& eventType) const
+Quirks::StorageAccessResult Quirks::triggerOptionalStorageAccessQuirk(Element& element, const PlatformMouseEvent& platformEvent, const AtomString& eventType, int detail, Element* relatedTarget) const
 {
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     if (!needsQuirks())
@@ -1033,10 +1051,32 @@ Quirks::StorageAccessResult Quirks::triggerOptionalStorageAccessQuirk(const Elem
                 return Quirks::StorageAccessResult::ShouldCancelEvent;
             }
         }
+
+        // Microsoft Teams login case.
+        // FIXME(218779): Remove this quirk once microsoft.com completes their login flow redesign.
+        if (isMicrosoftDomain(domain) && isMicrosoftLoginElement(element)) {
+            auto firstPartyDomain = NetworkStorageSession::mapToTopDomain(RegistrableDomain::uncheckedCreateFromHost(m_document->topDocument().securityOrigin().host()));
+            if (auto loginDomain = NetworkStorageSession::loginDomainForFirstParty(firstPartyDomain)) {
+                if (!ResourceLoadObserver::shared().hasCrossPageStorageAccess(*loginDomain, firstPartyDomain)) {
+                    DocumentStorageAccess::requestStorageAccessForNonDocumentQuirk(*m_document, WTFMove(*loginDomain), [firstPartyDomain, loginDomain, &element, platformEvent, eventType, detail, relatedTarget](StorageAccessWasGranted storageAccessGranted) mutable {
+                        if (storageAccessGranted == StorageAccessWasGranted::Yes) {
+                            ResourceLoadObserver::shared().setDomainsWithCrossPageStorageAccess({{ firstPartyDomain, *loginDomain }}, [&element, platformEvent, eventType, detail, relatedTarget] {
+                                element.dispatchMouseEvent(platformEvent, eventType, detail, relatedTarget);
+                            });
+                        }
+                    });
+                    return Quirks::StorageAccessResult::ShouldCancelEvent;
+                }
+            }
+            return Quirks::StorageAccessResult::ShouldNotCancelEvent;
+        }
     }
 #else
     UNUSED_PARAM(element);
+    UNUSED_PARAM(platformEvent);
     UNUSED_PARAM(eventType);
+    UNUSED_PARAM(detail);
+    UNUSED_PARAM(relatedTarget);
 #endif
     return Quirks::StorageAccessResult::ShouldNotCancelEvent;
 }

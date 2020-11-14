@@ -521,6 +521,8 @@ void WebProcess::setWebsiteDataStoreParameters(WebProcessDataStoreParameters&& p
         if (!ResourceLoadObserver::sharedIfExists())
             ResourceLoadObserver::setShared(*new WebResourceLoadObserver(parameters.sessionID.isEphemeral() ? WebCore::ResourceLoadStatistics::IsEphemeral::Yes : WebCore::ResourceLoadStatistics::IsEphemeral::No));
         ResourceLoadObserver::shared().setDomainsWithUserInteraction(WTFMove(parameters.domainsWithUserInteraction));
+        if (!parameters.sessionID.isEphemeral())
+            ResourceLoadObserver::shared().setDomainsWithCrossPageStorageAccess(WTFMove(parameters.domainsWithStorageAccessQuirk), [] { });
     }
     
 #endif
@@ -1863,6 +1865,15 @@ void WebProcess::setThirdPartyCookieBlockingMode(ThirdPartyCookieBlockingMode th
 void WebProcess::setDomainsWithUserInteraction(HashSet<WebCore::RegistrableDomain>&& domains)
 {
     ResourceLoadObserver::shared().setDomainsWithUserInteraction(WTFMove(domains));
+}
+
+void WebProcess::setDomainsWithCrossPageStorageAccess(HashMap<TopFrameDomain, SubResourceDomain>&& domains, CompletionHandler<void()>&& completionHandler)
+{
+    for (auto& domain : domains.keys()) {
+        for (auto& webPage : m_pageMap.values())
+            webPage->addDomainWithPageLevelStorageAccess(domain, domains.get(domain));
+    }
+    ResourceLoadObserver::shared().setDomainsWithCrossPageStorageAccess(WTFMove(domains), WTFMove(completionHandler));
 }
 
 void WebProcess::sendResourceLoadStatisticsDataImmediately(CompletionHandler<void()>&& completionHandler)

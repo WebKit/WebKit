@@ -1,3 +1,68 @@
+2020-11-13  Kate Cheney  <katherine_cheney@apple.com>
+
+        Can't login to Microsoft Teams
+        https://bugs.webkit.org/show_bug.cgi?id=218778
+        <rdar://problem/36331568>
+
+        Reviewed by John Wilander.
+
+        This is a temporary quirk to assist a high-traffic website while they
+        complete the large task of migrating away from login flows that
+        require third party cookies. This quirk will be removed when the site
+        is updated.
+
+        Create a quirk to call the Storage Access API on behalf of Microsoft.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        (WebKit::ResourceLoadStatisticsDatabaseStore::grantStorageAccess):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::grantStorageAccessInternal):
+        Relax the requirement for user interaction for a specific third party
+        needing cookies for authentication purposes.
+
+        (WebKit::ResourceLoadStatisticsDatabaseStore::clear):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::cookieAccess):
+        Relax the requirement for user interaction for a specific third party
+        needing cookies for authentication purposes.
+
+        (WebKit::ResourceLoadStatisticsDatabaseStore::domainsWithStorageAccess const):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::updateCookieBlocking):
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.h:
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.cpp:
+        (WebKit::ResourceLoadStatisticsMemoryStore::clear):
+        (WebKit::ResourceLoadStatisticsMemoryStore::updateCookieBlocking):
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::requestStorageAccessEphemeral):
+        Relax user interaction for reasons above.
+
+        (WebKit::WebResourceLoadStatisticsStore::callUpdatePrevalentDomainsToBlockCookiesForHandler):
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.h:
+        (WebKit::RegistrableDomainsToBlockCookiesFor::isolatedCopy const):
+        * Shared/WebProcessDataStoreParameters.h:
+        (WebKit::WebProcessDataStoreParameters::encode const):
+        (WebKit::WebProcessDataStoreParameters::decode):
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::setDomainsWithCrossPageStorageAccess):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.messages.in:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::webProcessDataStoreParameters):
+        (WebKit::WebProcessPool::setDomainsWithCrossPageStorageAccess):
+        * UIProcess/WebProcessPool.h:
+        * WebProcess/WebCoreSupport/WebResourceLoadObserver.cpp:
+        (WebKit::WebResourceLoadObserver::hasCrossPageStorageAccess const):
+        (WebKit::WebResourceLoadObserver::setDomainsWithCrossPageStorageAccess):
+        * WebProcess/WebCoreSupport/WebResourceLoadObserver.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::setWebsiteDataStoreParameters):
+        (WebKit::WebProcess::setDomainsWithCrossPageStorageAccess):
+        Add quirk'd domains to have page level storage access to be able to
+        use document.cookie.
+
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+        Forward domains with the storage access quirk to the web process to
+        avoid an async call to the network process.
+
 2020-11-13  Sam Weinig  <weinig@apple.com>
 
         Move some more WebKit and WebKitLegacy preferences bound to Settings to WebPreferences.yaml

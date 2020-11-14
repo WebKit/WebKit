@@ -1324,7 +1324,10 @@ void ResourceLoadStatisticsDatabaseStore::grantStorageAccess(SubFrameDomain&& su
             return;
         }
         ASSERT(subFrameStatus.first == AddedRecord::No);
-        ASSERT(hasHadUserInteraction(subFrameDomain, OperatingDatesWindow::Long));
+#if ASSERT_ENABLED
+        if (!NetworkStorageSession::canRequestStorageAccessForLoginPurposesWithoutPriorUserInteraction(subFrameDomain, topFrameDomain))
+            ASSERT(hasHadUserInteraction(subFrameDomain, OperatingDatesWindow::Long));
+#endif
         insertDomainRelationshipList(storageAccessUnderTopFrameDomainsQuery, HashSet<RegistrableDomain>({ topFrameDomain }), *subFrameStatus.second);
     }
 
@@ -1348,7 +1351,10 @@ void ResourceLoadStatisticsDatabaseStore::grantStorageAccessInternal(SubFrameDom
             return;
         }
         ASSERT(subFrameStatus.first == AddedRecord::No);
-        ASSERT(hasHadUserInteraction(subFrameDomain, OperatingDatesWindow::Long));
+#if ASSERT_ENABLED
+        if (!NetworkStorageSession::canRequestStorageAccessForLoginPurposesWithoutPriorUserInteraction(subFrameDomain, topFrameDomain))
+            ASSERT(hasHadUserInteraction(subFrameDomain, OperatingDatesWindow::Long));
+#endif
         ASSERT(hasUserGrantedStorageAccessThroughPrompt(*subFrameStatus.second, topFrameDomain) == StorageAccessPromptWasShown::Yes);
 #endif
         setUserInteraction(subFrameDomain, true, WallTime::now());
@@ -2003,7 +2009,7 @@ void ResourceLoadStatisticsDatabaseStore::clear(CompletionHandler<void()>&& comp
     removeAllStorageAccess([callbackAggregator] { });
 
     auto registrableDomainsToBlockAndDeleteCookiesFor = ensurePrevalentResourcesForDebugMode();
-    RegistrableDomainsToBlockCookiesFor domainsToBlock { registrableDomainsToBlockAndDeleteCookiesFor, { }, { } };
+    RegistrableDomainsToBlockCookiesFor domainsToBlock { registrableDomainsToBlockAndDeleteCookiesFor, { }, { }, { } };
     updateCookieBlockingForDomains(domainsToBlock, [callbackAggregator] { });
 }
 
@@ -2036,7 +2042,7 @@ CookieAccess ResourceLoadStatisticsDatabaseStore::cookieAccess(const SubResource
     if (!areAllThirdPartyCookiesBlockedUnder(topFrameDomain) && !isPrevalent)
         return CookieAccess::BasedOnCookiePolicy;
 
-    if (!hadUserInteraction)
+    if (!NetworkStorageSession::canRequestStorageAccessForLoginPurposesWithoutPriorUserInteraction(subresourceDomain, topFrameDomain) && !hadUserInteraction)
         return CookieAccess::CannotRequest;
 
     return CookieAccess::OnlyIfGranted;
@@ -2103,6 +2109,22 @@ Vector<RegistrableDomain> ResourceLoadStatisticsDatabaseStore::domainsWithUserIn
     return results;
 }
 
+HashMap<TopFrameDomain, SubResourceDomain> ResourceLoadStatisticsDatabaseStore::domainsWithStorageAccess() const
+{
+    ASSERT(!RunLoop::isMain());
+
+    HashMap<WebCore::RegistrableDomain, WebCore::RegistrableDomain> results;
+    SQLiteStatement statement(m_database, "SELECT subFrameDomain, registrableDomain FROM (SELECT o.registrableDomain as subFrameDomain, s.topLevelDomainID as topLevelDomainID FROM ObservedDomains as o INNER JOIN StorageAccessUnderTopFrameDomains as s WHERE o.domainID = s.domainID) as z INNER JOIN ObservedDomains ON domainID = z.topLevelDomainID;"_s);
+
+    if (statement.prepare() != SQLITE_OK)
+        return results;
+
+    while (statement.step() == SQLITE_ROW)
+        results.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString(statement.getColumnText(1)), RegistrableDomain::uncheckedCreateFromRegistrableDomainString(statement.getColumnText(0)));
+
+    return results;
+}
+
 void ResourceLoadStatisticsDatabaseStore::updateCookieBlocking(CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
@@ -2110,13 +2132,14 @@ void ResourceLoadStatisticsDatabaseStore::updateCookieBlocking(CompletionHandler
     auto domainsToBlockAndDeleteCookiesFor = this->domainsToBlockAndDeleteCookiesFor();
     auto domainsToBlockButKeepCookiesFor = this->domainsToBlockButKeepCookiesFor();
     auto domainsWithUserInteractionAsFirstParty = this->domainsWithUserInteractionAsFirstParty();
+    auto domainsWithStorageAccess = this->domainsWithStorageAccess();
 
-    if (domainsToBlockAndDeleteCookiesFor.isEmpty() && domainsToBlockButKeepCookiesFor.isEmpty() && domainsWithUserInteractionAsFirstParty.isEmpty()) {
+    if (domainsToBlockAndDeleteCookiesFor.isEmpty() && domainsToBlockButKeepCookiesFor.isEmpty() && domainsWithUserInteractionAsFirstParty.isEmpty() && domainsWithStorageAccess.isEmpty()) {
         completionHandler();
         return;
     }
 
-    RegistrableDomainsToBlockCookiesFor domainsToBlock { domainsToBlockAndDeleteCookiesFor, domainsToBlockButKeepCookiesFor, domainsWithUserInteractionAsFirstParty };
+    RegistrableDomainsToBlockCookiesFor domainsToBlock { domainsToBlockAndDeleteCookiesFor, domainsToBlockButKeepCookiesFor, domainsWithUserInteractionAsFirstParty, domainsWithStorageAccess };
 
     if (debugLoggingEnabled() && (!domainsToBlockAndDeleteCookiesFor.isEmpty() || !domainsToBlockButKeepCookiesFor.isEmpty()))
         debugLogDomainsInBatches("Applying cross-site tracking restrictions", domainsToBlock);

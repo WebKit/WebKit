@@ -756,6 +756,7 @@ WebProcessDataStoreParameters WebProcessPool::webProcessDataStoreParameters(WebP
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
         websiteDataStore.thirdPartyCookieBlockingMode(),
         m_domainsWithUserInteraction,
+        m_domainsWithCrossPageStorageAccessQuirk,
 #endif
         websiteDataStore.resourceLoadStatisticsEnabled()
     };
@@ -1953,6 +1954,17 @@ void WebProcessPool::setDomainsWithUserInteraction(HashSet<WebCore::RegistrableD
 {
     sendToAllProcesses(Messages::WebProcess::SetDomainsWithUserInteraction(domains));
     m_domainsWithUserInteraction = WTFMove(domains);
+}
+
+void WebProcessPool::setDomainsWithCrossPageStorageAccess(HashMap<TopFrameDomain, SubResourceDomain>&& domains, CompletionHandler<void()>&& completionHandler)
+{    
+    auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
+
+    for (auto& process : processes())
+        process->sendWithAsyncReply(Messages::WebProcess::SetDomainsWithCrossPageStorageAccess(domains), [callbackAggregator] { });
+
+    for (auto& topDomain : domains.keys())
+        m_domainsWithCrossPageStorageAccessQuirk.add(topDomain, domains.get(topDomain));
 }
 
 void WebProcessPool::seedResourceLoadStatisticsForTesting(const RegistrableDomain& firstPartyDomain, const RegistrableDomain& thirdPartyDomain, bool shouldScheduleNotification, CompletionHandler<void()>&& completionHandler)

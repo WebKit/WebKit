@@ -470,7 +470,7 @@ void WebResourceLoadStatisticsStore::requestStorageAccessEphemeral(const Registr
 {
     ASSERT(isEphemeral());
 
-    if (!m_networkSession || !m_domainsWithEphemeralUserInteraction.contains(subFrameDomain))
+    if (!m_networkSession || (!m_domainsWithEphemeralUserInteraction.contains(subFrameDomain) && !NetworkStorageSession::canRequestStorageAccessForLoginPurposesWithoutPriorUserInteraction(subFrameDomain, topFrameDomain)))
         return completionHandler({ StorageAccessWasGranted::No, StorageAccessPromptWasShown::No, scope, topFrameDomain, subFrameDomain });
 
     CompletionHandler<void(bool)> requestConfirmationCompletionHandler = [this, protectedThis = makeRef(*this), subFrameDomain, topFrameDomain, frameID, webPageID, scope, completionHandler = WTFMove(completionHandler)] (bool userDidGrantAccess) mutable {
@@ -1256,6 +1256,23 @@ void WebResourceLoadStatisticsStore::callUpdatePrevalentDomainsToBlockCookiesFor
         if (m_domainsWithUserInteractionQuirk != domainsWithUserInteractionQuirk) {
             m_domainsWithUserInteractionQuirk = domainsWithUserInteractionQuirk;
             m_networkSession->networkProcess().parentProcessConnection()->send(Messages::NetworkProcessProxy::SetDomainsWithUserInteraction(domainsWithUserInteractionQuirk), 0);
+        }
+
+        HashMap<TopFrameDomain, SubResourceDomain> domainsWithStorageAccessQuirk;
+        for (auto& firstPartyDomain : domainsToBlock.domainsWithStorageAccess.keys()) {
+            auto requestingDomain = domainsToBlock.domainsWithStorageAccess.get(firstPartyDomain);
+            if (NetworkStorageSession::loginDomainMatchesRequestingDomain(firstPartyDomain, requestingDomain))
+                domainsWithStorageAccessQuirk.add(firstPartyDomain, requestingDomain);
+        }
+
+        if (m_domainsWithCrossPageStorageAccessQuirk != domainsWithStorageAccessQuirk) {
+            if (m_networkSession) {
+                if (auto* storageSession = m_networkSession->networkStorageSession())
+                    storageSession->setDomainsWithCrossPageStorageAccess(domainsWithStorageAccessQuirk);
+                m_networkSession->networkProcess().parentProcessConnection()->sendWithAsyncReply(Messages::NetworkProcessProxy::SetDomainsWithCrossPageStorageAccess(domainsWithStorageAccessQuirk), [this, domainsWithStorageAccessQuirk] () mutable {
+                    m_domainsWithCrossPageStorageAccessQuirk = domainsWithStorageAccessQuirk;
+                });
+            }
         }
     }
 

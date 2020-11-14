@@ -418,6 +418,24 @@ void WebResourceLoadObserver::logSubresourceLoadingForTesting(const RegistrableD
         m_notificationTimer.stop();
 }
 
+bool WebResourceLoadObserver::hasCrossPageStorageAccess(const SubFrameDomain& subDomain, const TopFrameDomain& topDomain) const
+{
+    auto it = m_domainsWithCrossPageStorageAccess.find(topDomain);
+
+    if (it != m_domainsWithCrossPageStorageAccess.end())
+        return it->value == subDomain;
+
+    return false;
+}
+
+void WebResourceLoadObserver::setDomainsWithCrossPageStorageAccess(HashMap<TopFrameDomain, SubFrameDomain>&& domains, CompletionHandler<void()>&& completionHandler)
+{
+    for (auto& topDomain : domains.keys())
+        m_domainsWithCrossPageStorageAccess.add(topDomain, domains.get(topDomain));
+
+    completionHandler();
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(RESOURCE_LOAD_STATISTICS)

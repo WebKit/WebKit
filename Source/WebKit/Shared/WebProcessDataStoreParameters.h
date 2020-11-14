@@ -33,6 +33,9 @@
 namespace WebKit {
 
 struct WebProcessDataStoreParameters {
+    using TopFrameDomain = WebCore::RegistrableDomain;
+    using SubResourceDomain = WebCore::RegistrableDomain;
+
     PAL::SessionID sessionID;
     String applicationCacheDirectory;
     SandboxExtension::Handle applicationCacheDirectoryExtensionHandle;
@@ -48,6 +51,8 @@ struct WebProcessDataStoreParameters {
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     WebCore::ThirdPartyCookieBlockingMode thirdPartyCookieBlockingMode { WebCore::ThirdPartyCookieBlockingMode::All };
     HashSet<WebCore::RegistrableDomain> domainsWithUserInteraction;
+    HashMap<TopFrameDomain, SubResourceDomain> domainsWithStorageAccessQuirk;
+
 #endif
     bool resourceLoadStatisticsEnabled { false };
 
@@ -73,6 +78,7 @@ void WebProcessDataStoreParameters::encode(Encoder& encoder) const
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     encoder << thirdPartyCookieBlockingMode;
     encoder << domainsWithUserInteraction;
+    encoder << domainsWithStorageAccessQuirk;
 #endif
     encoder << resourceLoadStatisticsEnabled;
 }
@@ -144,6 +150,11 @@ Optional<WebProcessDataStoreParameters> WebProcessDataStoreParameters::decode(De
     decoder >> domainsWithUserInteraction;
     if (!domainsWithUserInteraction)
         return WTF::nullopt;
+    
+    Optional<HashMap<TopFrameDomain, SubResourceDomain>> domainsWithStorageAccessQuirk;
+    decoder >> domainsWithStorageAccessQuirk;
+    if (!domainsWithStorageAccessQuirk)
+        return WTF::nullopt;
 #endif
 
     bool resourceLoadStatisticsEnabled = false;
@@ -166,6 +177,7 @@ Optional<WebProcessDataStoreParameters> WebProcessDataStoreParameters::decode(De
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
         *thirdPartyCookieBlockingMode,
         WTFMove(*domainsWithUserInteraction),
+        WTFMove(*domainsWithStorageAccessQuirk),
 #endif
         resourceLoadStatisticsEnabled
     };

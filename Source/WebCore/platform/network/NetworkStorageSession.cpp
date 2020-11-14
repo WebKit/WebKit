@@ -209,6 +209,18 @@ void NetworkStorageSession::setDomainsWithUserInteractionAsFirstParty(const Vect
     m_registrableDomainsWithUserInteractionAsFirstParty.add(domains.begin(), domains.end());
 }
 
+void NetworkStorageSession::setDomainsWithCrossPageStorageAccess(const HashMap<TopFrameDomain, SubResourceDomain>& domains)
+{
+    m_pairsGrantedCrossPageStorageAccess.clear();
+    for (auto& topFrameDomain : domains.keys())
+        grantCrossPageStorageAccess(topFrameDomain, domains.get(topFrameDomain));
+}
+
+void NetworkStorageSession::grantCrossPageStorageAccess(const TopFrameDomain& topFrameDomain, const SubResourceDomain& resourceDomain)
+{
+    m_pairsGrantedCrossPageStorageAccess.add(topFrameDomain, resourceDomain);
+}
+
 bool NetworkStorageSession::hasStorageAccess(const RegistrableDomain& resourceDomain, const RegistrableDomain& firstPartyDomain, Optional<FrameIdentifier> frameID, PageIdentifier pageID) const
 {
     if (frameID) {
@@ -227,6 +239,10 @@ bool NetworkStorageSession::hasStorageAccess(const RegistrableDomain& resourceDo
             if (it != pagesGrantedIterator->value.end() && it->value == resourceDomain)
                 return true;
         }
+
+        auto it = m_pairsGrantedCrossPageStorageAccess.find(firstPartyDomain);
+        if (it != m_pairsGrantedCrossPageStorageAccess.end() && it->value == resourceDomain)
+            return true;
     }
 
     return false;
@@ -244,6 +260,11 @@ Vector<String> NetworkStorageSession::getAllStorageAccessEntries() const
     
 void NetworkStorageSession::grantStorageAccess(const RegistrableDomain& resourceDomain, const RegistrableDomain& firstPartyDomain, Optional<FrameIdentifier> frameID, PageIdentifier pageID)
 {
+    if (NetworkStorageSession::loginDomainMatchesRequestingDomain(firstPartyDomain, resourceDomain)) {
+        grantCrossPageStorageAccess(firstPartyDomain, resourceDomain);
+        return;
+    }
+
     if (!frameID) {
         if (firstPartyDomain.isEmpty())
             return;
@@ -297,6 +318,7 @@ void NetworkStorageSession::removeAllStorageAccess()
 {
     m_pagesGrantedStorageAccess.clear();
     m_framesGrantedStorageAccess.clear();
+    m_pairsGrantedCrossPageStorageAccess.clear();
 }
 
 void NetworkStorageSession::setCacheMaxAgeCapForPrevalentResources(Seconds seconds)
@@ -351,6 +373,52 @@ Optional<Seconds> NetworkStorageSession::clientSideCookieCap(const RegistrableDo
 
     return m_ageCapForClientSideCookies;
 }
+
+HashMap<RegistrableDomain, RegistrableDomain>& NetworkStorageSession::storageAccessQuirks()
+{
+    static NeverDestroyed<HashMap<RegistrableDomain, RegistrableDomain>> map = [] {
+        HashMap<RegistrableDomain, RegistrableDomain> map;
+        map.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("microsoft.com"),
+            RegistrableDomain::uncheckedCreateFromRegistrableDomainString("microsoftonline.com"_s));
+        return map;
+    }();
+    return map.get();
+}
+
+bool NetworkStorageSession::loginDomainMatchesRequestingDomain(const TopFrameDomain& topFrameDomain, const SubResourceDomain& resourceDomain)
+{
+    auto loginDomain = WebCore::NetworkStorageSession::loginDomainForFirstParty(topFrameDomain);
+    return loginDomain && resourceDomain == loginDomain;
+}
+
+bool NetworkStorageSession::canRequestStorageAccessForLoginPurposesWithoutPriorUserInteraction(const SubResourceDomain& resourceDomain, const TopFrameDomain& topFrameDomain)
+{
+    return loginDomainMatchesRequestingDomain(topFrameDomain, resourceDomain);
+}
+
+Optional<RegistrableDomain> NetworkStorageSession::loginDomainForFirstParty(const RegistrableDomain& topFrameDomain)
+{
+    auto it = storageAccessQuirks().find(topFrameDomain);
+    if (it != storageAccessQuirks().end())
+        return it->value;
+    return WTF::nullopt;
+}
+
+RegistrableDomain NetworkStorageSession::mapToTopDomain(const RegistrableDomain& domainToMap)
+{
+    static NeverDestroyed<HashMap<RegistrableDomain, RegistrableDomain>> map = [] {
+        HashMap<RegistrableDomain, RegistrableDomain> map;
+        map.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("live.com"),
+            RegistrableDomain::uncheckedCreateFromRegistrableDomainString("microsoft.com"_s));
+        return map;
+    }();
+
+    auto it = map.get().find(domainToMap);
+    if (it != map.get().end())
+        return it->value;
+    return domainToMap;
+}
+
 #endif // ENABLE(RESOURCE_LOAD_STATISTICS)
 
 }

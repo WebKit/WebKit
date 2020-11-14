@@ -37,6 +37,7 @@ class EventTarget;
 class HTMLElement;
 class HTMLVideoElement;
 class LayoutUnit;
+class PlatformMouseEvent;
 
 class Quirks {
     WTF_MAKE_NONCOPYABLE(Quirks); WTF_MAKE_FAST_ALLOCATED;
@@ -112,7 +113,7 @@ public:
     bool shouldAvoidPastingImagesAsWebContent() const;
 
     enum StorageAccessResult : bool { ShouldNotCancelEvent, ShouldCancelEvent };
-    StorageAccessResult triggerOptionalStorageAccessQuirk(const Element&, const AtomString& eventType) const;
+    StorageAccessResult triggerOptionalStorageAccessQuirk(Element&, const PlatformMouseEvent&, const AtomString& eventType, int, Element*) const;
 
     bool needsVP9FullRangeFlagQuirk() const;
     bool needsHDRPixelDepthQuirk() const;
@@ -154,4 +155,4 @@ private:
     mutable Optional<bool> m_needsBlackFullscreenBackgroundQuirk;
 };
 
-}
+} // namespace WebCore
