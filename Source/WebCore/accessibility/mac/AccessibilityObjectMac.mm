@@ -105,8 +105,9 @@ bool AccessibilityObject::accessibilityIgnoreAttachment() const
         return true;
 
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    if ([wrapper() attachmentView])
-        return [[wrapper() attachmentView] accessibilityIsIgnored];
+    id attachmentView = widget ? NSAccessibilityUnignoredDescendant(widget->platformWidget()) : nil;
+    if (attachmentView)
+        return [attachmentView accessibilityIsIgnored];
     ALLOW_DEPRECATED_DECLARATIONS_END
 
     // Attachments are ignored by default (unless we determine that we should expose them).
