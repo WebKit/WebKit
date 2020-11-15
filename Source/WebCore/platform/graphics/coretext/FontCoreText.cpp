@@ -699,7 +699,8 @@ void Font::determinePitch()
 FloatRect Font::platformBoundsForGlyph(Glyph glyph) const
 {
     FloatRect boundingBox;
-    boundingBox = CTFontGetBoundingRectsForGlyphs(m_platformData.ctFont(), platformData().orientation() == FontOrientation::Vertical ? kCTFontOrientationVertical : kCTFontOrientationHorizontal, &glyph, 0, 1);
+    CGRect emptyRect;
+    boundingBox = CTFontGetBoundingRectsForGlyphs(m_platformData.ctFont(), platformData().orientation() == FontOrientation::Vertical ? kCTFontOrientationVertical : kCTFontOrientationHorizontal, &glyph, &emptyRect, 1);
     boundingBox.setY(-boundingBox.maxY());
     if (m_syntheticBoldOffset)
         boundingBox.setWidth(boundingBox.width() + m_syntheticBoldOffset);
@@ -743,7 +744,8 @@ bool Font::isProbablyOnlyUsedToRenderIcons() const
     UniChar lowercaseACharacter = 'a';
     CGGlyph lowercaseAGlyph;
     if (CTFontGetGlyphsForCharacters(platformFont, &lowercaseACharacter, &lowercaseAGlyph, 1)) {
-        if (!CGRectIsEmpty(CTFontGetBoundingRectsForGlyphs(platformFont, kCTFontOrientationDefault, &lowercaseAGlyph, nullptr, 1)))
+        CGRect emptyRect;
+        if (!CGRectIsEmpty(CTFontGetBoundingRectsForGlyphs(platformFont, kCTFontOrientationDefault, &lowercaseAGlyph, &emptyRect, 1)))
             return false;
     }
 
