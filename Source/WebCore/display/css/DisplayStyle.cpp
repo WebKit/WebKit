@@ -57,6 +57,11 @@ static RefPtr<FillLayer> deepCopy(const FillLayer& layer)
 }
 
 Style::Style(const RenderStyle& style)
+    : Style(style, &style)
+{
+}
+
+Style::Style(const RenderStyle& style, const RenderStyle* styleForBackground)
     : m_fontCascade(style.fontCascade())
     , m_whiteSpace(style.whiteSpace())
     , m_tabSize(style.tabSize())
@@ -64,14 +69,20 @@ Style::Style(const RenderStyle& style)
     // FIXME: Is currentColor resolved here?
     m_color = style.visitedDependentColorWithColorFilter(CSSPropertyColor);
 
-    m_backgroundColor = style.visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
-    m_backgroundLayers = deepCopy(style.backgroundLayers());
+    if (styleForBackground)
+        setupBackground(*styleForBackground);
 
     if (!style.hasAutoUsedZIndex())
         m_zIndex = style.usedZIndex();
 
     setIsPositioned(style.position() != PositionType::Static);
     setIsFloating(style.floating() != Float::No);
+}
+
+void Style::setupBackground(const RenderStyle& style)
+{
+    m_backgroundColor = style.visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
+    m_backgroundLayers = deepCopy(style.backgroundLayers());
 }
 
 bool Style::hasBackground() const

@@ -33,6 +33,7 @@
 
 namespace WebCore {
 class FillLayer;
+class RenderStyle;
 class StyleImage;
 
 namespace Layout {
@@ -80,7 +81,7 @@ private:
     bool m_hasNonLocalGeometry { false }; // Has background-attachment: fixed. Implies that we can't always cheaply compute destRect.
 };
 
-Vector<FillLayerImageGeometry, 1> calculateFillLayerImageGeometry(const Layout::Box&, const Layout::BoxGeometry&, LayoutSize offsetFromRoot, float pixelSnappingFactor);
+Vector<FillLayerImageGeometry, 1> calculateFillLayerImageGeometry(const RenderStyle&, const Layout::BoxGeometry&, LayoutSize offsetFromRoot, float pixelSnappingFactor);
 
 } // namespace Display
 } // namespace WebCore

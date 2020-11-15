@@ -58,6 +58,7 @@ public:
     };
 
     explicit Style(const RenderStyle&);
+    explicit Style(const RenderStyle&, const RenderStyle* styleForBackground);
 
     const Color& color() const { return m_color; }
 
@@ -87,6 +88,8 @@ public:
     const TabSize& tabSize() const { return m_tabSize; }
 
 private:
+    void setupBackground(const RenderStyle&);
+
     void setIsPositioned(bool value) { m_flags.set({ Flags::Positioned }, value); }
     void setIsFloating(bool value) { m_flags.set({ Flags::Floating }, value); }
 

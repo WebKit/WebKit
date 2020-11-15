@@ -36,7 +36,9 @@
 #include "InlineLineGeometry.h"
 #include "LayoutBoxGeometry.h"
 #include "LayoutContainerBox.h"
+#include "LayoutInitialContainingBlock.h"
 #include "LayoutReplacedBox.h"
+#include "Logging.h"
 
 namespace WebCore {
 namespace Display {
@@ -46,18 +48,61 @@ BoxFactory::BoxFactory(float pixelSnappingFactor)
 {
 }
 
-std::unique_ptr<Box> BoxFactory::displayBoxForRootBox(const Layout::ContainerBox& rootLayoutBox, const Layout::BoxGeometry& geometry) const
+RootBackgroundPropagation BoxFactory::determineRootBackgroundPropagation(const Layout::ContainerBox& rootLayoutBox)
 {
+    auto* documentElementBox = documentElementBoxFromRootBox(rootLayoutBox);
+    auto* bodyBox = bodyBoxFromRootBox(rootLayoutBox);
+
+    if (documentElementBox && documentElementBox->style().hasBackground())
+        return RootBackgroundPropagation::None;
+
+    if (bodyBox && bodyBox->style().hasBackground())
+        return RootBackgroundPropagation::BodyToRoot;
+    
+    return RootBackgroundPropagation::None;
+}
+
+std::unique_ptr<Box> BoxFactory::displayBoxForRootBox(const Layout::ContainerBox& rootLayoutBox, const Layout::BoxGeometry& geometry, RootBackgroundPropagation rootBackgroundPropagation) const
+{
+    ASSERT(is<Layout::InitialContainingBlock>(rootLayoutBox));
+
     // FIXME: Need to do logical -> physical coordinate mapping here.
     auto borderBoxRect = LayoutRect { Layout::BoxGeometry::borderBoxRect(geometry) };
 
-    auto style = Style { rootLayoutBox.style() };
+    auto* documentElementBox = documentElementBoxFromRootBox(rootLayoutBox);
+
+    const RenderStyle* styleForBackground = documentElementBox ? &documentElementBox->style() : nullptr;
+
+    if (rootBackgroundPropagation == RootBackgroundPropagation::BodyToRoot) {
+        if (auto* bodyBox = bodyBoxFromRootBox(rootLayoutBox))
+            styleForBackground = &bodyBox->style();
+    }
+
+    auto style = Style { rootLayoutBox.style(), styleForBackground };
+
     auto rootBox = makeUnique<ContainerBox>(snapRectToDevicePixels(borderBoxRect, m_pixelSnappingFactor), WTFMove(style));
-    setupBoxModelBox(*rootBox, rootLayoutBox, geometry, { });
+    setupBoxModelBox(*rootBox, rootLayoutBox, styleForBackground, geometry, { });
     return rootBox;
 }
 
+std::unique_ptr<Box> BoxFactory::displayBoxForBodyBox(const Layout::Box& layoutBox, const Layout::BoxGeometry& geometry, RootBackgroundPropagation rootBackgroundPropagation, LayoutSize offsetFromRoot) const
+{
+    const RenderStyle* styleForBackground = &layoutBox.style();
+    
+    if (rootBackgroundPropagation == RootBackgroundPropagation::BodyToRoot)
+        styleForBackground = nullptr;
+    
+    auto style = Style { layoutBox.style(), styleForBackground };
+    return displayBoxForLayoutBox(layoutBox, styleForBackground, geometry, offsetFromRoot, WTFMove(style));
+}
+
 std::unique_ptr<Box> BoxFactory::displayBoxForLayoutBox(const Layout::Box& layoutBox, const Layout::BoxGeometry& geometry, LayoutSize offsetFromRoot) const
+{
+    auto style = Style { layoutBox.style() };
+    return displayBoxForLayoutBox(layoutBox, &layoutBox.style(), geometry, offsetFromRoot, WTFMove(style));
+}
+
+std::unique_ptr<Box> BoxFactory::displayBoxForLayoutBox(const Layout::Box& layoutBox, const RenderStyle* styleForBackground, const Layout::BoxGeometry& geometry, LayoutSize offsetFromRoot, Style&& style) const
 {
     // FIXME: Need to map logical to physical rects.
     auto borderBoxRect = LayoutRect { Layout::BoxGeometry::borderBoxRect(geometry) };
@@ -65,10 +110,6 @@ std::unique_ptr<Box> BoxFactory::displayBoxForLayoutBox(const Layout::Box& layou
     auto pixelSnappedBorderBoxRect = snapRectToDevicePixels(borderBoxRect, m_pixelSnappingFactor);
 
     // FIXME: Handle isAnonymous()
-    // FIXME: Do hoisting of <body> styles to the root where appropriate.
-
-    // FIXME: Need to do logical -> physical coordinate mapping here.
-    auto style = Style { layoutBox.style() };
     
     if (is<Layout::ReplacedBox>(layoutBox)) {
         // FIXME: Don't assume it's an image.
@@ -77,14 +118,14 @@ std::unique_ptr<Box> BoxFactory::displayBoxForLayoutBox(const Layout::Box& layou
             image = cachedImage->image();
 
         auto imageBox = makeUnique<ImageBox>(pixelSnappedBorderBoxRect, WTFMove(style), WTFMove(image));
-        setupBoxModelBox(*imageBox, layoutBox, geometry, offsetFromRoot);
+        setupBoxModelBox(*imageBox, layoutBox, styleForBackground, geometry, offsetFromRoot);
         return imageBox;
     }
     
     if (is<Layout::ContainerBox>(layoutBox)) {
         // FIXME: The decision to make a ContainerBox should be made based on whether this Display::Box will have children.
         auto containerBox = makeUnique<ContainerBox>(pixelSnappedBorderBoxRect, WTFMove(style));
-        setupBoxModelBox(*containerBox, layoutBox, geometry, offsetFromRoot);
+        setupBoxModelBox(*containerBox, layoutBox, styleForBackground, geometry, offsetFromRoot);
         return containerBox;
     }
 
@@ -128,12 +169,14 @@ void BoxFactory::setupBoxGeometry(BoxModelBox& box, const Layout::Box&, const La
     }
 }
 
-std::unique_ptr<BoxDecorationData> BoxFactory::constructBoxDecorationData(const Layout::Box& layoutBox, const Layout::BoxGeometry& layoutGeometry, LayoutSize offsetFromRoot) const
+std::unique_ptr<BoxDecorationData> BoxFactory::constructBoxDecorationData(const Layout::Box& layoutBox, const RenderStyle* styleForBackground, const Layout::BoxGeometry& layoutGeometry, LayoutSize offsetFromRoot) const
 {
     auto boxDecorationData = makeUnique<BoxDecorationData>();
 
-    auto backgroundImageGeometry = calculateFillLayerImageGeometry(layoutBox, layoutGeometry, offsetFromRoot, m_pixelSnappingFactor);
-    boxDecorationData->setBackgroundImageGeometry(WTFMove(backgroundImageGeometry));
+    if (styleForBackground) {
+        auto backgroundImageGeometry = calculateFillLayerImageGeometry(*styleForBackground, layoutGeometry, offsetFromRoot, m_pixelSnappingFactor);
+        boxDecorationData->setBackgroundImageGeometry(WTFMove(backgroundImageGeometry));
+    }
 
     bool includeLogicalLeftEdge = true; // FIXME.
     bool includeLogicalRightEdge = true; // FIXME.
@@ -154,18 +197,39 @@ std::unique_ptr<BoxDecorationData> BoxFactory::constructBoxDecorationData(const 
     return boxDecorationData;
 }
 
-void BoxFactory::setupBoxModelBox(BoxModelBox& box, const Layout::Box& layoutBox, const Layout::BoxGeometry& layoutGeometry, LayoutSize offsetFromRoot) const
+void BoxFactory::setupBoxModelBox(BoxModelBox& box, const Layout::Box& layoutBox, const RenderStyle* styleForBackground, const Layout::BoxGeometry& layoutGeometry, LayoutSize offsetFromRoot) const
 {
     setupBoxGeometry(box, layoutBox, layoutGeometry, offsetFromRoot);
 
     auto& renderStyle = layoutBox.style();
-    if (!renderStyle.hasBackground() && !renderStyle.hasBorder())
+    if (!(styleForBackground && styleForBackground->hasBackground()) && !renderStyle.hasBorder())
         return;
 
-    auto boxDecorationData = constructBoxDecorationData(layoutBox, layoutGeometry, offsetFromRoot);
+    auto boxDecorationData = constructBoxDecorationData(layoutBox, styleForBackground, layoutGeometry, offsetFromRoot);
     box.setBoxDecorationData(WTFMove(boxDecorationData));
 }
 
+const Layout::ContainerBox* BoxFactory::documentElementBoxFromRootBox(const Layout::ContainerBox& rootLayoutBox)
+{
+    auto* documentBox = rootLayoutBox.firstChild();
+    if (!documentBox || !documentBox->isDocumentBox() || !is<Layout::ContainerBox>(documentBox))
+        return nullptr;
+
+    return downcast<Layout::ContainerBox>(documentBox);
+}
+
+const Layout::Box* BoxFactory::bodyBoxFromRootBox(const Layout::ContainerBox& rootLayoutBox)
+{
+    auto* documentBox = rootLayoutBox.firstChild();
+    if (!documentBox || !documentBox->isDocumentBox() || !is<Layout::ContainerBox>(documentBox))
+        return nullptr;
+
+    auto* bodyBox = downcast<Layout::ContainerBox>(documentBox)->firstChild();
+    if (!bodyBox || !bodyBox->isBodyBox())
+        return nullptr;
+
+    return bodyBox;
+}
 
 } // namespace Display
 } // namespace WebCore

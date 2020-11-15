@@ -374,10 +374,8 @@ static FillLayerImageGeometry geometryForLayer(const FillLayer& fillLayer, Layou
     return pixelSnappedFillLayerImageGeometry(destinationRect, tileSize, phase, spaceSize, fillLayer.attachment(), pixelSnappingFactor);
 }
 
-Vector<FillLayerImageGeometry, 1> calculateFillLayerImageGeometry(const Layout::Box& layoutBox, const Layout::BoxGeometry& boxGeometry, LayoutSize offsetFromRoot, float pixelSnappingFactor)
+Vector<FillLayerImageGeometry, 1> calculateFillLayerImageGeometry(const RenderStyle& renderStyle, const Layout::BoxGeometry& boxGeometry, LayoutSize offsetFromRoot, float pixelSnappingFactor)
 {
-    auto& renderStyle = layoutBox.style();
-
     // FIXME: Need to map logical to physical rects.
     auto borderBoxRect = LayoutRect { Layout::BoxGeometry::borderBoxRect(boxGeometry) };
     borderBoxRect.move(offsetFromRoot);

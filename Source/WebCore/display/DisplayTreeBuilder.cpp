@@ -51,7 +51,7 @@ TreeBuilder::TreeBuilder(float pixelSnappingFactor)
 {
 }
 
-std::unique_ptr<Tree> TreeBuilder::build(const Layout::LayoutState& layoutState) const
+std::unique_ptr<Tree> TreeBuilder::build(const Layout::LayoutState& layoutState)
 {
     ASSERT(layoutState.hasRoot());
 
@@ -61,8 +61,10 @@ std::unique_ptr<Tree> TreeBuilder::build(const Layout::LayoutState& layoutState)
     LOG_WITH_STREAM(FormattingContextLayout, stream << "Building display tree for:\n" << layoutTreeAsText(rootLayoutBox, &layoutState));
 #endif
 
+    m_rootBackgroundPropgation = BoxFactory::determineRootBackgroundPropagation(rootLayoutBox);
+
     auto geometry = layoutState.geometryForBox(rootLayoutBox);
-    auto rootDisplayBox = m_boxFactory.displayBoxForRootBox(rootLayoutBox, geometry);
+    auto rootDisplayBox = m_boxFactory.displayBoxForRootBox(rootLayoutBox, geometry, m_rootBackgroundPropgation);
     auto rootDisplayContainerBox = std::unique_ptr<ContainerBox> { downcast<ContainerBox>(rootDisplayBox.release()) };
 
     if (!rootLayoutBox.firstChild())
@@ -119,7 +121,12 @@ void TreeBuilder::buildInlineDisplayTree(const Layout::LayoutState& layoutState,
 void TreeBuilder::recursiveBuildDisplayTree(const Layout::LayoutState& layoutState, LayoutSize offsetFromRoot, const Layout::Box& layoutBox, InsertionPosition& insertionPosition) const
 {
     auto geometry = layoutState.geometryForBox(layoutBox);
-    auto displayBox = m_boxFactory.displayBoxForLayoutBox(layoutBox, geometry, offsetFromRoot);
+    std::unique_ptr<Box> displayBox;
+    
+    if (layoutBox.isBodyBox())
+        displayBox = m_boxFactory.displayBoxForBodyBox(layoutBox, geometry, m_rootBackgroundPropgation, offsetFromRoot);
+    else
+        displayBox = m_boxFactory.displayBoxForLayoutBox(layoutBox, geometry, offsetFromRoot);
     
     insert(WTFMove(displayBox), insertionPosition);
 

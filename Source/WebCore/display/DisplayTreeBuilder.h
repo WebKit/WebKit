@@ -55,7 +55,7 @@ class TreeBuilder {
 public:
     explicit TreeBuilder(float pixelSnappingFactor);
 
-    std::unique_ptr<Tree> build(const Layout::LayoutState&) const;
+    std::unique_ptr<Tree> build(const Layout::LayoutState&);
 
 private:
     struct InsertionPosition {
@@ -70,6 +70,7 @@ private:
     void insert(std::unique_ptr<Box>&&, InsertionPosition&) const;
 
     BoxFactory m_boxFactory;
+    RootBackgroundPropagation m_rootBackgroundPropgation { RootBackgroundPropagation::None };
 };
 
 #if ENABLE(TREE_DEBUGGING)

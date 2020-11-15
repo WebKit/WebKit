@@ -47,20 +47,33 @@ class Box;
 class BoxDecorationData;
 class BoxModelBox;
 
+enum class RootBackgroundPropagation : uint8_t {
+    None,
+    BodyToRoot,
+};
+
 class BoxFactory {
 public:
     explicit BoxFactory(float pixelSnappingFactor);
 
-    std::unique_ptr<Box> displayBoxForRootBox(const Layout::ContainerBox&, const Layout::BoxGeometry&) const;
+    static RootBackgroundPropagation determineRootBackgroundPropagation(const Layout::ContainerBox& rootLayoutBox);
+
+    std::unique_ptr<Box> displayBoxForRootBox(const Layout::ContainerBox&, const Layout::BoxGeometry&, RootBackgroundPropagation) const;
+    std::unique_ptr<Box> displayBoxForBodyBox(const Layout::Box&, const Layout::BoxGeometry&, RootBackgroundPropagation, LayoutSize offsetFromRoot) const;
     std::unique_ptr<Box> displayBoxForLayoutBox(const Layout::Box&, const Layout::BoxGeometry&, LayoutSize offsetFromRoot) const;
 
     std::unique_ptr<Box> displayBoxForTextRun(const Layout::LineRun&, const Layout::InlineLineGeometry&, LayoutSize offsetFromRoot) const;
+
 private:
+    std::unique_ptr<Box> displayBoxForLayoutBox(const Layout::Box&, const RenderStyle* styleForBackground, const Layout::BoxGeometry&, LayoutSize offsetFromRoot, Style&&) const;
 
     void setupBoxGeometry(BoxModelBox&, const Layout::Box&, const Layout::BoxGeometry&, LayoutSize offsetFromRoot) const;
-    void setupBoxModelBox(BoxModelBox&, const Layout::Box&, const Layout::BoxGeometry&, LayoutSize offsetFromRoot) const;
+    void setupBoxModelBox(BoxModelBox&, const Layout::Box&, const RenderStyle* styleForBackground, const Layout::BoxGeometry&, LayoutSize offsetFromRoot) const;
 
-    std::unique_ptr<BoxDecorationData> constructBoxDecorationData(const Layout::Box&, const Layout::BoxGeometry&, LayoutSize offsetFromRoot) const;
+    std::unique_ptr<BoxDecorationData> constructBoxDecorationData(const Layout::Box&, const RenderStyle* styleForBackground, const Layout::BoxGeometry&, LayoutSize offsetFromRoot) const;
+
+    static const Layout::ContainerBox* documentElementBoxFromRootBox(const Layout::ContainerBox& rootLayoutBox);
+    static const Layout::Box* bodyBoxFromRootBox(const Layout::ContainerBox& rootLayoutBox);
 
     float m_pixelSnappingFactor { 1 };
 };
