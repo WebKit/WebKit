@@ -1122,6 +1122,14 @@ LayoutSize FormattingContext::Geometry::inFlowPositionedPositionOffset(const Box
     return { leftPositionOffset, topPositionOffset };
 }
 
+inline static WritingMode usedWritingMode(const Box& layoutBox)
+{
+    // https://www.w3.org/TR/css-writing-modes-4/#logical-direction-layout
+    // Flow-relative directions are calculated with respect to the writing mode of the containing block of the box.
+    // For inline-level boxes, the writing mode of the parent box is used instead.
+    return layoutBox.isInlineLevelBox() ? layoutBox.parent().style().writingMode() : layoutBox.containingBlock().style().writingMode();
+}
+
 Edges FormattingContext::Geometry::computedBorder(const Box& layoutBox) const
 {
     auto& style = layoutBox.style();
@@ -1149,14 +1157,18 @@ ComputedHorizontalMargin FormattingContext::Geometry::computedHorizontalMargin(c
 {
     auto& style = layoutBox.style();
     auto containingBlockWidth = horizontalConstraints.logicalWidth;
-    return { computedValue(style.marginStart(), containingBlockWidth), computedValue(style.marginEnd(), containingBlockWidth) };
+    if (isHorizontalWritingMode(usedWritingMode(layoutBox)))
+        return { computedValue(style.marginLeft(), containingBlockWidth), computedValue(style.marginRight(), containingBlockWidth) };
+    return { computedValue(style.marginTop(), containingBlockWidth), computedValue(style.marginBottom(), containingBlockWidth) };
 }
 
 ComputedVerticalMargin FormattingContext::Geometry::computedVerticalMargin(const Box& layoutBox, const HorizontalConstraints& horizontalConstraints) const
 {
     auto& style = layoutBox.style();
     auto containingBlockWidth = horizontalConstraints.logicalWidth;
-    return { computedValue(style.marginBefore(), containingBlockWidth), computedValue(style.marginAfter(), containingBlockWidth) };
+    if (isHorizontalWritingMode(usedWritingMode(layoutBox)))
+        return { computedValue(style.marginTop(), containingBlockWidth), computedValue(style.marginBottom(), containingBlockWidth) };
+    return { computedValue(style.marginLeft(), containingBlockWidth), computedValue(style.marginRight(), containingBlockWidth) };
 }
 
 FormattingContext::IntrinsicWidthConstraints FormattingContext::Geometry::constrainByMinMaxWidth(const Box& layoutBox, IntrinsicWidthConstraints intrinsicWidth) const
