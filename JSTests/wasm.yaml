@@ -79,8 +79,6 @@
   cmd: runWebAssemblySpecTest :normal
 - path: wasm/spec-tests/br_table.wast.js
   cmd: runWebAssemblySpecTest :normal
-- path: wasm/spec-tests/break-drop.wast.js
-  cmd: runWebAssemblySpecTest :normal
 - path: wasm/spec-tests/call.wast.js
   cmd: runWebAssemblySpecTest :normal
 - path: wasm/spec-tests/call_indirect.wast.js
@@ -90,8 +88,6 @@
 - path: wasm/spec-tests/const.wast.js
   cmd: runWebAssemblySpecTest :normal
 - path: wasm/spec-tests/conversions.wast.js
-  cmd: runWebAssemblySpecTest :normal
-- path: wasm/spec-tests/custom_section.wast.js
   cmd: runWebAssemblySpecTest :normal
 - path: wasm/spec-tests/endianness.wast.js
   cmd: runWebAssemblySpecTest :normal
@@ -125,9 +121,7 @@
   cmd: runWebAssemblySpecTest :normal
 - path: wasm/spec-tests/func_ptrs.wast.js
   cmd: runWebAssemblySpecTest :normal
-- path: wasm/spec-tests/get_local.wast.js
-  cmd: runWebAssemblySpecTest :normal
-- path: wasm/spec-tests/globals.wast.js
+- path: wasm/spec-tests/global.wast.js
   cmd: runWebAssemblySpecTest :normal
 - path: wasm/spec-tests/i32.wast.js
   cmd: runWebAssemblySpecTest :normal
@@ -142,8 +136,6 @@
 - path: wasm/spec-tests/int_exprs.wast.js
   cmd: runWebAssemblySpecTest :normal
 - path: wasm/spec-tests/int_literals.wast.js
-  cmd: runWebAssemblySpecTest :normal
-- path: wasm/spec-tests/jsapi.js
   cmd: runWebAssemblySpecTest :normal
 - path: wasm/spec-tests/labels.wast.js
   cmd: runWebAssemblySpecTest :normal
@@ -163,13 +155,9 @@
   cmd: runWebAssemblySpecTest :normal
 - path: wasm/spec-tests/nop.wast.js
   cmd: runWebAssemblySpecTest :normal
-- path: wasm/spec-tests/resizing.wast.js
-  cmd: runWebAssemblySpecTest :normal
 - path: wasm/spec-tests/return.wast.js
   cmd: runWebAssemblySpecTest :normal
 - path: wasm/spec-tests/select.wast.js
-  cmd: runWebAssemblySpecTest :normal
-- path: wasm/spec-tests/set_local.wast.js
   cmd: runWebAssemblySpecTest :normal
 - path: wasm/spec-tests/skip-stack-guard-page.wast.js
   cmd: runWebAssemblySpecTest :normal
@@ -177,19 +165,15 @@
   cmd: runWebAssemblySpecTest :normal
 - path: wasm/spec-tests/start.wast.js
   cmd: runWebAssemblySpecTest :normal
-- path: wasm/spec-tests/store_retval.wast.js
-  cmd: runWebAssemblySpecTest :normal
 - path: wasm/spec-tests/switch.wast.js
   cmd: runWebAssemblySpecTest :normal
-- path: wasm/spec-tests/tee_local.wast.js
+- path: wasm/spec-tests/table.wast.js
   cmd: runWebAssemblySpecTest :normal
 - path: wasm/spec-tests/token.wast.js
   cmd: runWebAssemblySpecTest :normal
 - path: wasm/spec-tests/traps.wast.js
   cmd: runWebAssemblySpecTest :normal
 - path: wasm/spec-tests/type.wast.js
-  cmd: runWebAssemblySpecTest :normal
-- path: wasm/spec-tests/typecheck.wast.js
   cmd: runWebAssemblySpecTest :normal
 - path: wasm/spec-tests/unreachable.wast.js
   cmd: runWebAssemblySpecTest :normal
