@@ -127,6 +127,10 @@ void LineLayout::updateLayoutBoxDimensions(const RenderBox& replacedOrInlineBloc
     // Always use the physical size here for inline level boxes (this is where the logical vs. physical coords flip happens).
     replacedBox.setContentSizeForIntegration({ replacedOrInlineBlock.contentWidth(), replacedOrInlineBlock.contentHeight() });
 
+    auto& replacedBoxGeometry = m_layoutState.ensureGeometryForBox(replacedBox);
+    replacedBoxGeometry.setVerticalScrollbarWidth(replacedOrInlineBlock.verticalScrollbarWidth());
+    replacedBoxGeometry.setHorizontalScrollbarHeight(replacedOrInlineBlock.horizontalScrollbarHeight());
+
     auto baseline = replacedOrInlineBlock.baselinePosition(AlphabeticBaseline, false /* firstLine */, HorizontalLine, PositionOnContainingLine);
     replacedBox.setBaseline(baseline);
 }

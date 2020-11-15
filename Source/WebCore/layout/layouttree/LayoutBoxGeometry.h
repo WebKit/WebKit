@@ -91,13 +91,16 @@ public:
     LayoutUnit paddingBoxHeight() const { return paddingTop().valueOr(0) + contentBoxHeight() + paddingBottom().valueOr(0); }
     LayoutUnit paddingBoxWidth() const { return paddingLeft().valueOr(0) + contentBoxWidth() + paddingRight().valueOr(0); }
 
-    LayoutUnit borderBoxHeight() const { return borderTop() + paddingBoxHeight() + borderBottom(); }
-    LayoutUnit borderBoxWidth() const { return borderLeft() + paddingBoxWidth() + borderRight(); }
+    LayoutUnit borderBoxHeight() const { return borderTop() + paddingBoxHeight() + horizontalScrollbarHeight() + borderBottom(); }
+    LayoutUnit borderBoxWidth() const { return borderLeft() + paddingBoxWidth() + verticalScrollbarWidth() + borderRight(); }
     LayoutUnit marginBoxHeight() const { return marginBefore() + borderBoxHeight() + marginAfter(); }
     LayoutUnit marginBoxWidth() const { return marginStart() + borderBoxWidth() + marginEnd(); }
 
     LayoutUnit verticalMarginBorderAndPadding() const { return marginBefore() + verticalBorder() + verticalPadding().valueOr(0) + marginAfter(); }
     LayoutUnit horizontalMarginBorderAndPadding() const { return marginStart() + horizontalBorder() + horizontalPadding().valueOr(0) + marginEnd(); }
+
+    LayoutUnit verticalScrollbarWidth() const { return m_verticalScrollbarWidth; }
+    LayoutUnit horizontalScrollbarHeight() const { return m_horizontalScrollbarHeight; }
 
     Rect marginBox() const;
     Rect borderBox() const;
@@ -126,6 +129,9 @@ public:
 
     void setVerticalPadding(Layout::VerticalEdges);
     void setPadding(Optional<Layout::Edges>);
+
+    void setVerticalScrollbarWidth(LayoutUnit width) { m_verticalScrollbarWidth = width; }
+    void setHorizontalScrollbarHeight(LayoutUnit height) { m_horizontalScrollbarHeight = height; }
 
 private:
     LayoutUnit logicalTop() const;
@@ -159,6 +165,9 @@ private:
 
     Layout::Edges m_border;
     Optional<Layout::Edges> m_padding;
+
+    LayoutUnit m_verticalScrollbarWidth;
+    LayoutUnit m_horizontalScrollbarHeight;
 
 #if ASSERT_ENABLED
     bool m_hasValidTop { false };

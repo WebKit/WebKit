@@ -43,6 +43,8 @@ BoxGeometry::BoxGeometry(const BoxGeometry& other)
     , m_verticalMargin(other.m_verticalMargin)
     , m_border(other.m_border)
     , m_padding(other.m_padding)
+    , m_verticalScrollbarWidth(other.m_verticalScrollbarWidth)
+    , m_horizontalScrollbarHeight(other.m_horizontalScrollbarHeight)
 #if ASSERT_ENABLED
     , m_hasValidTop(other.m_hasValidTop)
     , m_hasValidLeft(other.m_hasValidLeft)
@@ -88,8 +90,8 @@ Rect BoxGeometry::paddingBox() const
     Rect paddingBox;
     paddingBox.setTop(borderBox.top() + borderTop());
     paddingBox.setLeft(borderBox.left() + borderLeft());
-    paddingBox.setHeight(borderBox.bottom() - borderTop() - borderBottom());
-    paddingBox.setWidth(borderBox.width() - borderLeft() - borderRight());
+    paddingBox.setHeight(borderBox.bottom() - horizontalScrollbarHeight() - borderBottom() - borderTop());
+    paddingBox.setWidth(borderBox.width() - borderRight() - verticalScrollbarWidth() - borderLeft());
     return paddingBox;
 }
 
