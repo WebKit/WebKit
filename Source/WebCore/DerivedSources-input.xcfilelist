@@ -236,6 +236,7 @@ $(PROJECT_DIR)/Modules/mediastream/RTCRtpParameters.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCRtpReceiver+Transform.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCRtpReceiver.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCRtpRtxParameters.idl
+$(PROJECT_DIR)/Modules/mediastream/RTCRtpSFrameTransform.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCRtpSendParameters.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCRtpSender+Transform.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCRtpSender.idl

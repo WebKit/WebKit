@@ -124,6 +124,10 @@ class TextTrackCueGeneric;
 class ServiceWorker;
 #endif
 
+#if ENABLE(WEB_RTC)
+class RTCRtpSFrameTransform;
+#endif
+
 #if ENABLE(WEBXR)
 class WebXRTest;
 #endif
@@ -607,6 +611,7 @@ public:
     void setWebRTCVP9Support(bool);
     void setWebRTCVP9VTBSupport(bool);
     Ref<MockRTCRtpTransform> createMockRTCRtpTransform();
+    uint64_t sframeCounter(const RTCRtpSFrameTransform&);
     void setEnableWebRTCEncryption(bool);
     void setUseDTLS10(bool);
     void setUseGPUProcessForWebRTC(bool);

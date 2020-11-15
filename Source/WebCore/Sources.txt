@@ -163,6 +163,8 @@ Modules/mediastream/RTCIceTransport.cpp
 Modules/mediastream/RTCPeerConnection.cpp
 Modules/mediastream/RTCPeerConnectionIceEvent.cpp
 Modules/mediastream/RTCRtpReceiver.cpp
+Modules/mediastream/RTCRtpSFrameTransform.cpp
+Modules/mediastream/RTCRtpSFrameTransformer.cpp
 Modules/mediastream/RTCRtpSender.cpp
 Modules/mediastream/RTCRtpTransform.cpp
 Modules/mediastream/RTCRtpTransceiver.cpp
@@ -3320,6 +3322,7 @@ JSRTCRtpHeaderExtensionParameters.cpp
 JSRTCRtpParameters.cpp
 JSRTCRtpReceiver.cpp
 JSRTCRtpRtxParameters.cpp
+JSRTCRtpSFrameTransform.cpp
 JSRTCRtpSendParameters.cpp
 JSRTCRtpSender.cpp
 JSRTCRtpSynchronizationSource.cpp

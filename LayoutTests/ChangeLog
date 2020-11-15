@@ -1,3 +1,13 @@
+2020-11-15  Youenn Fablet  <youenn@apple.com>
+
+        Add a WebRTC SFrame transform
+        https://bugs.webkit.org/show_bug.cgi?id=218752
+
+        Reviewed by Eric Carlson.
+
+        * webrtc/audio-sframe-expected.txt: Added.
+        * webrtc/audio-sframe.html: Added.
+
 2020-11-15  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] WebAudio to MediaStream support

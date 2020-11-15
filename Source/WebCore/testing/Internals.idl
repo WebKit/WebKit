@@ -803,6 +803,7 @@ enum TreeType {
     [Conditional=WEB_RTC] undefined setWebRTCVP9Support(boolean allowed);
     [Conditional=WEB_RTC] undefined setWebRTCVP9VTBSupport(boolean allowed);
     [Conditional=WEB_RTC] MockRTCRtpTransform createMockRTCRtpTransform();
+    [Conditional=WEB_RTC] unsigned long long sframeCounter(RTCRtpSFrameTransform transform);
 
     [Conditional=MEDIA_STREAM] undefined setMockAudioTrackChannelNumber(MediaStreamTrack track, unsigned short count);
     [Conditional=MEDIA_STREAM] undefined setShouldInterruptAudioOnPageVisibilityChange(boolean shouldInterrupt);

@@ -153,6 +153,7 @@
 #include "PluginData.h"
 #include "PrintContext.h"
 #include "PseudoElement.h"
+#include "RTCRtpSFrameTransform.h"
 #include "Range.h"
 #include "ReadableStream.h"
 #include "RenderEmbeddedObject.h"
@@ -1579,6 +1580,11 @@ void Internals::setWebRTCVP9VTBSupport(bool value)
 Ref<MockRTCRtpTransform> Internals::createMockRTCRtpTransform()
 {
     return MockRTCRtpTransform::create();
+}
+
+uint64_t Internals::sframeCounter(const RTCRtpSFrameTransform& transform)
+{
+    return transform.counterForTesting();
 }
 
 void Internals::setEnableWebRTCEncryption(bool value)

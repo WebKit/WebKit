@@ -1,3 +1,19 @@
+2020-11-15  Youenn Fablet  <youenn@apple.com>
+
+        Add a WebRTC SFrame transform
+        https://bugs.webkit.org/show_bug.cgi?id=218752
+
+        Reviewed by Eric Carlson.
+
+        Add unit tests that validate SFrame generation and parsing.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebCore/RTCRtpSFrameTransformerTests.cpp: Added.
+        (TestWebKitAPI::getRawKey):
+        (TestWebKitAPI::createVideoTransformer):
+        (TestWebKitAPI::checkVectorsAreEqual):
+        (TestWebKitAPI::TEST):
+
 2020-11-13  Sihui Liu  <sihui_liu@apple.com>
 
         Implement basic permission check for SpeechRecognition

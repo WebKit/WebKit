@@ -26,6 +26,7 @@
 [
     Conditional=WEB_RTC,
     JSGenerateToJSObject,
+    JSGenerateToNativeObject,
     LegacyNoInterfaceObject,
 ] interface MockRTCRtpTransform : RTCRtpTransform {
     readonly attribute boolean isProcessing;
