@@ -57,7 +57,7 @@ const RealtimeMediaSourceSettings& MediaStreamAudioSource::settings()
     return m_currentSettings;
 }
 
-#if !PLATFORM(COCOA)
+#if !PLATFORM(COCOA) && !USE(GSTREAMER)
 void MediaStreamAudioSource::consumeAudio(AudioBus&, size_t)
 {
 }

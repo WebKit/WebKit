@@ -84,9 +84,11 @@ void RealtimeOutgoingAudioSourceLibWebRTC::audioSamplesAvailable(const MediaTime
             nullptr));
     }
 
-    LockHolder locker(m_adapterMutex);
-    auto buffer = gst_sample_get_buffer(data.getSample());
-    gst_adapter_push(m_adapter.get(), gst_buffer_ref(buffer));
+    {
+        LockHolder locker(m_adapterMutex);
+        auto* buffer = gst_sample_get_buffer(data.getSample());
+        gst_adapter_push(m_adapter.get(), gst_buffer_ref(buffer));
+    }
     LibWebRTCProvider::callOnWebRTCSignalingThread([protectedThis = makeRef(*this)] {
         protectedThis->pullAudioData();
     });

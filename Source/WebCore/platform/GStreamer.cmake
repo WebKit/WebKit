@@ -6,6 +6,7 @@ if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
     )
 
     list(APPEND WebCore_SOURCES
+        Modules/webaudio/MediaStreamAudioSourceGStreamer.cpp
         platform/graphics/gstreamer/AudioTrackPrivateGStreamer.cpp
         platform/graphics/gstreamer/GLVideoSinkGStreamer.cpp
         platform/graphics/gstreamer/GRefPtrGStreamer.cpp

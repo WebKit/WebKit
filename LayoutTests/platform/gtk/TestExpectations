@@ -720,8 +720,6 @@ webkit.org/b/187064 webrtc/datachannel/mdns-ice-candidates.html
 webkit.org/b/187064 webrtc/libwebrtc/descriptionGetters.html
 webkit.org/b/177533 webrtc/video-interruption.html
 
-webkit.org/b/186933 webrtc/peer-connection-createMediaStreamDestination.html
-
 imported/w3c/web-platform-tests/webrtc/ [ Skip ]
 http/tests/webrtc [ Skip ]
 

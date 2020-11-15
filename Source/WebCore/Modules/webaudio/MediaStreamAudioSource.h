@@ -60,7 +60,7 @@ private:
     String m_deviceId;
     RealtimeMediaSourceSettings m_currentSettings;
     std::unique_ptr<PlatformAudioData> m_audioBuffer;
-#if USE(AVFOUNDATION)
+#if USE(AVFOUNDATION) || USE(GSTREAMER)
     size_t m_numberOfFrames { 0 };
 #endif
 };
