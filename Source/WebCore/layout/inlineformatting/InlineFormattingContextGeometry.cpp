@@ -404,7 +404,9 @@ void LineBoxBuilder::computeLineBoxHeightAndalignInlineLevelBoxesVertically(Line
         HashMap<LineBox::InlineLevelBox*, InlineLayoutUnit> inlineLevelBoxAbsoluteBaselineOffsetMap;
         inlineLevelBoxAbsoluteBaselineOffsetMap.add(&rootInlineBox, InlineLayoutUnit { });
 
-        auto maximumTopOffsetFromRootInlineBoxBaseline = rootInlineBox.isEmpty() ? std::numeric_limits<InlineLayoutUnit>::min() : rootInlineBox.layoutBounds().ascent;
+        auto maximumTopOffsetFromRootInlineBoxBaseline = Optional<InlineLayoutUnit> { };
+        if (!rootInlineBox.isEmpty())
+            maximumTopOffsetFromRootInlineBoxBaseline = rootInlineBox.layoutBounds().ascent;
 
         for (auto& inlineLevelBox : lineBox.nonRootInlineLevelBoxes()) {
             auto absoluteBaselineOffset = InlineLayoutUnit { };
@@ -463,9 +465,9 @@ void LineBoxBuilder::computeLineBoxHeightAndalignInlineLevelBoxesVertically(Line
             inlineLevelBoxAbsoluteBaselineOffsetMap.add(inlineLevelBox.get(), absoluteBaselineOffset);
             auto affectsRootInlineBoxVerticalPosition = quirks.shouldInlineLevelBoxStretchLineBox(lineBox, *inlineLevelBox);
             if (affectsRootInlineBoxVerticalPosition)
-                maximumTopOffsetFromRootInlineBoxBaseline = std::max(maximumTopOffsetFromRootInlineBoxBaseline, absoluteBaselineOffset + inlineLevelBox->layoutBounds().ascent);
+                maximumTopOffsetFromRootInlineBoxBaseline = std::max(maximumTopOffsetFromRootInlineBoxBaseline.valueOr(std::numeric_limits<InlineLayoutUnit>::lowest()), absoluteBaselineOffset + inlineLevelBox->layoutBounds().ascent);
         }
-        auto rootInlineBoxLogicalTop = maximumTopOffsetFromRootInlineBoxBaseline - rootInlineBox.baseline();
+        auto rootInlineBoxLogicalTop = maximumTopOffsetFromRootInlineBoxBaseline.valueOr(0.f) - rootInlineBox.baseline();
         rootInlineBox.setLogicalTop(rootInlineBoxLogicalTop);
     };
     computeRootInlineBoxVerticalPosition();
