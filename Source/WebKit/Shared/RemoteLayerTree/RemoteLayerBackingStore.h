@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "ShareableBitmap.h"
+#include "ImageBufferBackendHandle.h"
 #include <WebCore/FloatRect.h>
 #include <WebCore/IOSurface.h>
 #include <WebCore/Region.h>
@@ -37,6 +37,7 @@ OBJC_CLASS CALayer;
 // FIXME: Make PlatformCALayerRemote.cpp Objective-C so we can include WebLayer.h here and share the typedef.
 namespace WebCore {
 class NativeImage;
+class ThreadSafeImageBufferFlusher;
 typedef Vector<WebCore::FloatRect, 5> RepaintRectList;
 }
 
@@ -76,14 +77,10 @@ public:
 
     bool hasFrontBuffer() const
     {
-#if HAVE(IOSURFACE)
-        if (m_acceleratesDrawing)
-            return !!m_frontBuffer.surface;
-#endif
-        return !!m_frontBuffer.bitmap;
+        return !!m_frontBuffer.imageBuffer;
     }
 
-    RetainPtr<CGContextRef> takeFrontContextPendingFlush();
+    std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher> takePendingFlusher();
 
     enum class BufferType {
         Front,
@@ -97,14 +94,11 @@ public:
     MonotonicTime lastDisplayTime() const { return m_lastDisplayTime; }
 
 private:
-    void drawInContext(WebCore::GraphicsContext&, RefPtr<WebCore::NativeImage>&& backImage);
+    void drawInContext(WebCore::GraphicsContext&);
     void clearBackingStore();
     void swapToValidFrontBuffer();
 
-#if HAVE(IOSURFACE)
-    WebCore::IOSurface::Format surfaceBufferFormat() const;
-#endif
-
+    WebCore::PixelFormat pixelFormat() const;
     WebCore::IntSize backingStoreSize() const;
 
     PlatformCALayerRemote* m_layer;
@@ -116,22 +110,12 @@ private:
     WebCore::Region m_dirtyRegion;
 
     struct Buffer {
-        RefPtr<ShareableBitmap> bitmap;
-#if HAVE(IOSURFACE)
-        std::unique_ptr<WebCore::IOSurface> surface;
+        RefPtr<WebCore::ImageBuffer> imageBuffer;
         bool isVolatile = false;
-#endif
 
         explicit operator bool() const
         {
-#if HAVE(IOSURFACE)
-            if (surface)
-                return true;
-#endif
-            if (bitmap)
-                return true;
-
-            return false;
+            return !!imageBuffer;
         }
 
         void discard();
@@ -139,12 +123,10 @@ private:
 
     Buffer m_frontBuffer;
     Buffer m_backBuffer;
-#if HAVE(IOSURFACE)
     Buffer m_secondaryBackBuffer;
-    WTF::MachSendRight m_frontBufferSendRight;
-#endif
+    Optional<ImageBufferBackendHandle> m_bufferHandle;
 
-    RetainPtr<CGContextRef> m_frontContextPendingFlush;
+    std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher> m_frontBufferFlusher;
 
     bool m_acceleratesDrawing { false };
     bool m_deepColor { false };

@@ -40,6 +40,23 @@ namespace WebKit {
 
 class RemoteRenderingBackend;
 
+class ThreadSafeRemoteImageBufferFlusher : public WebCore::ThreadSafeImageBufferFlusher {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    ThreadSafeRemoteImageBufferFlusher(WebCore::ImageBuffer& imageBuffer)
+    {
+        // FIXME: We shouldn't synchronously wait on the flush until flush() is called, but have to invent
+        // a thread-safe way to wait on the incoming message.
+        imageBuffer.flushDrawingContext();
+    }
+
+    void flush() override
+    {
+    }
+
+private:
+};
+
 template<typename BackendType>
 class RemoteImageBufferProxy : public WebCore::DisplayList::ImageBuffer<BackendType>, public WebCore::DisplayList::Recorder::Delegate, public WebCore::DisplayList::ItemBufferWritingClient {
     using BaseDisplayListImageBuffer = WebCore::DisplayList::ImageBuffer<BackendType>;
@@ -83,6 +100,12 @@ public:
     float resolutionScale() const final { return m_resolutionScale; }
     WebCore::ColorSpace colorSpace() const { return m_colorSpace; }
     WebCore::PixelFormat pixelFormat() const { return m_pixelFormat; }
+
+    ImageBufferBackendHandle createImageBufferBackendHandle()
+    {
+        ensureBackendCreated();
+        return m_backend->createImageBufferBackendHandle();
+    }
 
 protected:
     RemoteImageBufferProxy(const WebCore::FloatSize& size, WebCore::RenderingMode renderingMode, float resolutionScale, WebCore::ColorSpace colorSpace, WebCore::PixelFormat pixelFormat, RemoteRenderingBackendProxy& remoteRenderingBackendProxy)
@@ -310,6 +333,11 @@ protected:
     {
         if (type == WebCore::DisplayList::ItemType::DrawImageBuffer)
             flushDrawingContext();
+    }
+
+    std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher> createFlusher() override
+    {
+        return WTF::makeUnique<ThreadSafeRemoteImageBufferFlusher>(*this);
     }
 
     WebCore::DisplayList::FlushIdentifier m_sentFlushIdentifier;

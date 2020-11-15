@@ -43,6 +43,23 @@
 
 namespace WebCore {
 
+class ThreadSafeImageBufferFlusherCG : public ThreadSafeImageBufferFlusher {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    ThreadSafeImageBufferFlusherCG(CGContextRef context)
+        : m_context(context)
+    {
+    }
+
+    void flush() override
+    {
+        CGContextFlush(m_context.get());
+    }
+
+private:
+    RetainPtr<CGContextRef> m_context;
+};
+
 RetainPtr<CGColorSpaceRef> ImageBufferCGBackend::contextColorSpace(const GraphicsContext& context)
 {
 #if PLATFORM(COCOA)
@@ -57,9 +74,8 @@ RetainPtr<CGColorSpaceRef> ImageBufferCGBackend::contextColorSpace(const Graphic
     return nullptr;
 #endif
 }
-#
 
-void ImageBufferCGBackend::setupContext()
+void ImageBufferCGBackend::setupContext() const
 {
     // The initial CTM matches DisplayList::Recorder::clipToDrawingCommands()'s initial CTM.
     context().scale(FloatSize(1, -1));
@@ -205,6 +221,11 @@ String ImageBufferCGBackend::toDataURL(const String& mimeType, Optional<double> 
     if (auto data = toCFData(mimeType, quality, preserveResolution))
         return dataURL(data.get(), mimeType);
     return "data:,"_s;
+}
+
+std::unique_ptr<ThreadSafeImageBufferFlusher> ImageBufferCGBackend::createFlusher()
+{
+    return WTF::makeUnique<ThreadSafeImageBufferFlusherCG>(context().platformContext());
 }
 
 #if USE(ACCELERATE)

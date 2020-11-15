@@ -50,6 +50,7 @@ class ImageBuffer;
 #endif
 
 enum class PixelFormat : uint8_t;
+enum class VolatilityState : uint8_t;
 
 class IOSurface final {
     WTF_MAKE_FAST_ALLOCATED;
@@ -128,19 +129,13 @@ public:
     WEBCORE_EXPORT GraphicsContext& ensureGraphicsContext();
     WEBCORE_EXPORT CGContextRef ensurePlatformContext(const HostWindow* = nullptr);
 
-    enum class SurfaceState {
-        Valid,
-        Empty
-    };
-
     // Querying volatility can be expensive, so in cases where the surface is
-    // going to be used immediately, use the return value of setIsVolatile to
+    // going to be used immediately, use the return value of setVolatile to
     // determine whether the data was purged, instead of first calling state() or isVolatile().
-    SurfaceState state() const;
+    VolatilityState state() const;
     bool isVolatile() const;
 
-    // setIsVolatile only has an effect on iOS and OS 10.9 and above.
-    WEBCORE_EXPORT SurfaceState setIsVolatile(bool);
+    WEBCORE_EXPORT VolatilityState setVolatile(bool);
 
     IntSize size() const { return m_size; }
     size_t totalBytes() const { return m_totalBytes; }

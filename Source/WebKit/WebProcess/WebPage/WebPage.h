@@ -245,6 +245,7 @@ class NotificationPermissionRequestManager;
 class PDFPlugin;
 class PageBanner;
 class PluginView;
+class RemoteRenderingBackendProxy;
 class RemoteWebInspectorUI;
 class TextCheckingControllerProxy;
 class UserMediaPermissionRequestManager;
@@ -1361,6 +1362,10 @@ public:
 
     void synchronizeCORSDisablingPatternsWithNetworkProcess();
 
+#if ENABLE(GPU_PROCESS)
+    RemoteRenderingBackendProxy& ensureRemoteRenderingBackendProxy();
+#endif
+
 private:
     WebPage(WebCore::PageIdentifier, WebPageCreationParameters&&);
 
@@ -2162,6 +2167,10 @@ private:
 #if ENABLE(IPC_TESTING_API)
     bool m_ipcTestingAPIEnabled { false };
     uint64_t m_visitedLinkTableID;
+#endif
+
+#if ENABLE(GPU_PROCESS)
+    std::unique_ptr<RemoteRenderingBackendProxy> m_remoteRenderingBackendProxy;
 #endif
 };
 

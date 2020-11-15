@@ -61,6 +61,20 @@ enum class PixelFormat : uint8_t {
     RGB10A8,
 };
 
+enum class VolatilityState : uint8_t {
+    Valid,
+    Empty
+};
+
+class ThreadSafeImageBufferFlusher {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(ThreadSafeImageBufferFlusher);
+public:
+    ThreadSafeImageBufferFlusher() = default;
+    virtual ~ThreadSafeImageBufferFlusher() = default;
+    virtual void flush() = 0;
+};
+
 class ImageBufferBackend {
 public:
     WEBCORE_EXPORT virtual ~ImageBufferBackend() = default;
@@ -104,6 +118,13 @@ public:
 
     virtual PlatformLayer* platformLayer() const { return nullptr; }
     virtual bool copyToPlatformTexture(GraphicsContextGLOpenGL&, GCGLenum, PlatformGLObject, GCGLenum, bool, bool) const { return false; }
+
+    virtual bool isInUse() const { return false; }
+    virtual void releaseGraphicsContext() { ASSERT_NOT_REACHED(); }
+    virtual VolatilityState setVolatile(bool) { return VolatilityState::Valid; }
+    virtual void releaseBufferToPool() { }
+
+    virtual std::unique_ptr<ThreadSafeImageBufferFlusher> createFlusher() { return nullptr; }
     
     static constexpr bool isOriginAtUpperLeftCorner = false;
     static constexpr bool isAccelerated = false;

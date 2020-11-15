@@ -29,13 +29,16 @@
 #import "ArgumentCoders.h"
 #import "MachPort.h"
 #import "PlatformCALayerRemote.h"
+#import "PlatformRemoteImageBufferProxy.h"
 #import "RemoteLayerBackingStoreCollection.h"
 #import "RemoteLayerTreeContext.h"
 #import "ShareableBitmap.h"
 #import "WebCoreArgumentCoders.h"
+#import "WebProcess.h"
 #import <QuartzCore/QuartzCore.h>
 #import <WebCore/GraphicsContextCG.h>
 #import <WebCore/IOSurface.h>
+#import <WebCore/ImageBuffer.h>
 #import <WebCore/PlatformCALayerClient.h>
 #import <WebCore/WebLayer.h>
 #import <mach/mach_port.h>
@@ -99,18 +102,15 @@ void RemoteLayerBackingStore::encode(IPC::Encoder& encoder) const
     encoder << m_acceleratesDrawing;
     encoder << m_isOpaque;
 
-    if (m_acceleratesDrawing) {
-        if (m_frontBuffer.surface)
-            encoder << m_frontBuffer.surface->createSendRight();
+    Optional<ImageBufferBackendHandle> handle;
+    if (m_frontBuffer.imageBuffer) {
+        // FIXME: We need to flatten the class hierarchy so we can avoid this bifurcation.
+        if (m_acceleratesDrawing)
+            handle = static_cast<AcceleratedRemoteImageBufferProxy *>(m_frontBuffer.imageBuffer.get())->createImageBufferBackendHandle();
         else
-            encoder << WTF::MachSendRight();
-        return;
+            handle = static_cast<UnacceleratedRemoteImageBufferProxy *>(m_frontBuffer.imageBuffer.get())->createImageBufferBackendHandle();
     }
 
-    ASSERT(!m_acceleratesDrawing);
-
-    ShareableBitmap::Handle handle;
-    m_frontBuffer.bitmap->createHandle(handle);
     encoder << handle;
 }
 
@@ -128,20 +128,8 @@ bool RemoteLayerBackingStore::decode(IPC::Decoder& decoder, RemoteLayerBackingSt
     if (!decoder.decode(result.m_isOpaque))
         return false;
 
-    if (result.m_acceleratesDrawing) {
-        MachSendRight sendRight;
-        if (!decoder.decode(sendRight))
-            return false;
-        result.m_frontBufferSendRight = WTFMove(sendRight);
-        return true;
-    }
-
-    ASSERT(!result.m_acceleratesDrawing);
-
-    ShareableBitmap::Handle handle;
-    if (!decoder.decode(handle))
+    if (!decoder.decode(result.m_bufferHandle))
         return false;
-    result.m_frontBuffer.bitmap = ShareableBitmap::create(handle);
 
     return true;
 }
@@ -163,52 +151,48 @@ WebCore::IntSize RemoteLayerBackingStore::backingStoreSize() const
     return roundedIntSize(scaledSize);
 }
 
+WebCore::PixelFormat RemoteLayerBackingStore::pixelFormat() const
+{
+#if HAVE(IOSURFACE_RGB10)
+    if (m_acceleratesDrawing && m_deepColor)
+        return m_isOpaque ? WebCore::PixelFormat::RGB10 : WebCore::PixelFormat::RGB10A8;
+#endif
+
+    return WebCore::PixelFormat::BGRA8;
+}
+
 unsigned RemoteLayerBackingStore::bytesPerPixel() const
 {
-    switch (surfaceBufferFormat()) {
-    case WebCore::IOSurface::Format::BGRA: return 4;
-    case WebCore::IOSurface::Format::YUV422: return 2;
-#if HAVE(IOSURFACE_RGB10)
-    case WebCore::IOSurface::Format::RGB10: return 4;
-    case WebCore::IOSurface::Format::RGB10A8: return 5;
-#endif
+    switch (pixelFormat()) {
+    case WebCore::PixelFormat::RGBA8: return 4;
+    case WebCore::PixelFormat::BGRA8: return 4;
+    case WebCore::PixelFormat::RGB10: return 4;
+    case WebCore::PixelFormat::RGB10A8: return 5;
     }
     return 4;
 }
 
 void RemoteLayerBackingStore::swapToValidFrontBuffer()
 {
-    WebCore::IntSize expandedScaledSize = backingStoreSize();
+    std::swap(m_frontBuffer, m_backBuffer);
 
-    if (m_acceleratesDrawing) {
-        if (!m_backBuffer.surface || m_backBuffer.surface->isInUse()) {
-            std::swap(m_backBuffer, m_secondaryBackBuffer);
-            if (m_backBuffer.surface && m_backBuffer.surface->isInUse())
-                m_backBuffer.discard();
-        }
+    if (m_frontBuffer.imageBuffer)
+        return;
 
-        std::swap(m_frontBuffer, m_backBuffer);
-
-        if (!m_frontBuffer.surface)
-            m_frontBuffer.surface = WebCore::IOSurface::create(expandedScaledSize, WebCore::sRGBColorSpaceRef(), surfaceBufferFormat());
-
-        setBufferVolatility(BufferType::Front, false);
+    if (WebProcess::singleton().shouldUseRemoteRenderingFor(WebCore::RenderingPurpose::DOM)) {
+        m_frontBuffer.imageBuffer = m_layer->context()->ensureRemoteRenderingBackendProxy().createImageBuffer(backingStoreSize(), m_acceleratesDrawing ? WebCore::RenderingMode::Accelerated : WebCore::RenderingMode::Unaccelerated, 1, WebCore::ColorSpace::SRGB, pixelFormat());
         return;
     }
 
-    ASSERT(!m_acceleratesDrawing);
-    std::swap(m_frontBuffer, m_backBuffer);
-
-    if (!m_frontBuffer.bitmap) {
-        ShareableBitmap::Configuration bitmapConfiguration;
-        bitmapConfiguration.isOpaque = m_isOpaque;
-        m_frontBuffer.bitmap = ShareableBitmap::createShareable(expandedScaledSize, bitmapConfiguration);
-    }
+    if (m_acceleratesDrawing)
+        m_frontBuffer.imageBuffer = WebCore::ConcreteImageBuffer<AcceleratedImageBufferShareableBackend>::create(backingStoreSize(), 1, WebCore::ColorSpace::SRGB, pixelFormat(), nullptr);
+    else
+        m_frontBuffer.imageBuffer = WebCore::ConcreteImageBuffer<UnacceleratedImageBufferShareableBackend>::create(backingStoreSize(), 1, WebCore::ColorSpace::SRGB, pixelFormat(), nullptr);
 }
 
 bool RemoteLayerBackingStore::display()
 {
-    ASSERT(!m_frontContextPendingFlush);
+    ASSERT(!m_frontBufferFlusher);
 
     m_lastDisplayTime = MonotonicTime::now();
 
@@ -234,43 +218,13 @@ bool RemoteLayerBackingStore::display()
     }
 
     WebCore::IntRect expandedScaledLayerBounds(WebCore::IntPoint(), expandedScaledSize);
-    bool willPaintEntireBackingStore = m_dirtyRegion.contains(layerBounds);
 
     swapToValidFrontBuffer();
 
-    if (m_acceleratesDrawing) {
-        RefPtr<WebCore::NativeImage> backImage;
-        if (m_backBuffer.surface && !willPaintEntireBackingStore)
-            backImage = WebCore::NativeImage::create(m_backBuffer.surface->createImage().get());
+    WebCore::GraphicsContext& context = m_frontBuffer.imageBuffer->context();
 
-        if (m_frontBuffer.surface) {
-            WebCore::GraphicsContext& context = m_frontBuffer.surface->ensureGraphicsContext();
+    WebCore::GraphicsContextStateSaver stateSaver(context);
 
-            context.scale(WebCore::FloatSize(1, -1));
-            context.translate(0, -expandedScaledSize.height());
-            drawInContext(context, WTFMove(backImage));
-
-            m_frontBuffer.surface->releaseGraphicsContext();
-        }
-    } else {
-        ASSERT(!m_acceleratesDrawing);
-        std::unique_ptr<WebCore::GraphicsContext> context = m_frontBuffer.bitmap->createGraphicsContext();
-
-        RefPtr<WebCore::NativeImage> backImage;
-        if (m_backBuffer.bitmap && !willPaintEntireBackingStore)
-            backImage = WebCore::NativeImage::create(m_backBuffer.bitmap->makeCGImage().get());
-
-        if (context)
-            drawInContext(*context, WTFMove(backImage));
-    }
-    
-    m_layer->owner()->platformCALayerLayerDidDisplay(m_layer);
-    
-    return true;
-}
-
-void RemoteLayerBackingStore::drawInContext(WebCore::GraphicsContext& context, RefPtr<WebCore::NativeImage>&& backImage)
-{
     WebCore::FloatSize scaledSize = m_size;
     scaledSize.scale(m_scale);
     WebCore::IntRect scaledLayerBounds(WebCore::IntPoint(), WebCore::roundedIntSize(scaledSize));
@@ -295,8 +249,10 @@ void RemoteLayerBackingStore::drawInContext(WebCore::GraphicsContext& context, R
         m_paintingRects.append(scaledRect);
     }
 
-    if (backImage)
-        context.drawNativeImage(*backImage, scaledLayerBounds.size(), scaledLayerBounds, scaledLayerBounds, { WebCore::CompositeOperator::Copy });
+    if (!m_dirtyRegion.contains(layerBounds)) {
+        ASSERT(m_backBuffer.imageBuffer);
+        context.drawImageBuffer(*m_backBuffer.imageBuffer, { 0, 0 });
+    }
 
     if (m_paintingRects.size() == 1) {
         WebCore::FloatRect scaledPaintingRect = m_paintingRects[0];
@@ -357,7 +313,14 @@ void RemoteLayerBackingStore::drawInContext(WebCore::GraphicsContext& context, R
     m_dirtyRegion = WebCore::Region();
     m_paintingRects.clear();
 
-    m_frontContextPendingFlush = context.platformContext();
+    m_frontBufferFlusher = m_frontBuffer.imageBuffer->createFlusher();
+
+    m_layer->owner()->platformCALayerLayerDidDisplay(m_layer);
+
+    // FIXME: This method has a weird name. This is "submit work".
+    m_frontBuffer.imageBuffer->flushDrawingContextAndCommit();
+
+    return true;
 }
 
 void RemoteLayerBackingStore::enumerateRectsBeingDrawn(WebCore::GraphicsContext& context, void (^block)(WebCore::FloatRect))
@@ -377,45 +340,47 @@ void RemoteLayerBackingStore::enumerateRectsBeingDrawn(WebCore::GraphicsContext&
 
 void RemoteLayerBackingStore::applyBackingStoreToLayer(CALayer *layer, LayerContentsType contentsType)
 {
+    ASSERT(m_bufferHandle);
     layer.contentsOpaque = m_isOpaque;
 
     if (acceleratesDrawing()) {
         switch (contentsType) {
-        case LayerContentsType::IOSurface:
-            if (!m_frontBuffer.surface) {
-                ASSERT(m_frontBufferSendRight);
-                m_frontBuffer.surface = WebCore::IOSurface::createFromSendRight(WTFMove(m_frontBufferSendRight), WebCore::sRGBColorSpaceRef());
-            }
-            layer.contents = m_frontBuffer.surface ? m_frontBuffer.surface->asLayerContents() : nil;
+        case LayerContentsType::IOSurface: {
+            auto surface = WebCore::IOSurface::createFromSendRight(WTFMove(WTF::get<MachSendRight>(*m_bufferHandle)), WebCore::sRGBColorSpaceRef());
+            layer.contents = surface ? surface->asLayerContents() : nil;
             break;
+        }
         case LayerContentsType::CAMachPort:
-            ASSERT(m_frontBufferSendRight);
-            layer.contents = (__bridge id)adoptCF(CAMachPortCreate(m_frontBufferSendRight.leakSendRight())).get();
+            layer.contents = (__bridge id)adoptCF(CAMachPortCreate(WTF::get<MachSendRight>(*m_bufferHandle).leakSendRight())).get();
             break;
         }
         return;
     }
 
     ASSERT(!acceleratesDrawing());
-    layer.contents = (__bridge id)m_frontBuffer.bitmap->makeCGImageCopy().get();
+    auto bitmap = ShareableBitmap::create(WTF::get<ShareableBitmap::Handle>(*m_bufferHandle));
+    layer.contents = (__bridge id)bitmap->makeCGImageCopy().get();
 }
 
-RetainPtr<CGContextRef> RemoteLayerBackingStore::takeFrontContextPendingFlush()
+std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher> RemoteLayerBackingStore::takePendingFlusher()
 {
-    return WTFMove(m_frontContextPendingFlush);
+    return std::exchange(m_frontBufferFlusher, nullptr);
 }
 
 bool RemoteLayerBackingStore::setBufferVolatility(BufferType type, bool isVolatile)
 {
+    if (!acceleratesDrawing())
+        return true;
+
     // Return value is true if we succeeded in making volatile.
     auto makeVolatile = [] (Buffer& buffer) -> bool {
-        if (!buffer.surface || buffer.isVolatile)
+        if (!buffer.imageBuffer || buffer.isVolatile)
             return true;
 
-        buffer.surface->releaseGraphicsContext();
+        buffer.imageBuffer->releaseGraphicsContext();
 
-        if (!buffer.surface->isInUse()) {
-            buffer.surface->setIsVolatile(true);
+        if (!buffer.imageBuffer->isInUse()) {
+            buffer.imageBuffer->setVolatile(true);
             buffer.isVolatile = true;
             return true;
         }
@@ -425,13 +390,13 @@ bool RemoteLayerBackingStore::setBufferVolatility(BufferType type, bool isVolati
 
     // Return value is true if we need to repaint.
     auto makeNonVolatile = [] (Buffer& buffer) -> bool {
-        if (!buffer.surface || !buffer.isVolatile)
+        if (!buffer.imageBuffer || !buffer.isVolatile)
             return false;
 
-        auto previousState = buffer.surface->setIsVolatile(false);
+        auto previousState = buffer.imageBuffer->setVolatile(false);
         buffer.isVolatile = false;
 
-        return previousState == WebCore::IOSurface::SurfaceState::Empty;
+        return previousState == WebCore::VolatilityState::Empty;
     };
 
     switch (type) {
@@ -461,20 +426,10 @@ bool RemoteLayerBackingStore::setBufferVolatility(BufferType type, bool isVolati
 
 void RemoteLayerBackingStore::Buffer::discard()
 {
-    if (surface)
-        WebCore::IOSurface::moveToPool(WTFMove(surface));
     isVolatile = false;
-    bitmap = nullptr;
-}
-
-WebCore::IOSurface::Format RemoteLayerBackingStore::surfaceBufferFormat() const
-{
-#if HAVE(IOSURFACE_RGB10)
-    if (m_deepColor)
-        return m_isOpaque ? WebCore::IOSurface::Format::RGB10 : WebCore::IOSurface::Format::RGB10A8;
-#endif
-
-    return WebCore::IOSurface::Format::BGRA;
+    if (imageBuffer)
+        imageBuffer->releaseBufferToPool();
+    imageBuffer = nullptr;
 }
 
 } // namespace WebKit

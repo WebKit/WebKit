@@ -258,6 +258,39 @@ protected:
         return false;
     }
 
+    bool isInUse() const override
+    {
+        if (auto* backend = ensureBackendCreated())
+            return backend->isInUse();
+        return false;
+    }
+
+    void releaseGraphicsContext() override
+    {
+        if (auto* backend = ensureBackendCreated())
+            return backend->releaseGraphicsContext();
+    }
+
+    VolatilityState setVolatile(bool isVolatile) override
+    {
+        if (auto* backend = ensureBackendCreated())
+            return backend->setVolatile(isVolatile);
+        return VolatilityState::Valid;
+    }
+
+    std::unique_ptr<ThreadSafeImageBufferFlusher> createFlusher() override
+    {
+        if (auto* backend = ensureBackendCreated())
+            return backend->createFlusher();
+        return nullptr;
+    }
+
+    void releaseBufferToPool() override
+    {
+        if (auto* backend = ensureBackendCreated())
+            backend->releaseBufferToPool();
+    }
+
     std::unique_ptr<BackendType> m_backend;
     RenderingResourceIdentifier m_renderingResourceIdentifier;
 };

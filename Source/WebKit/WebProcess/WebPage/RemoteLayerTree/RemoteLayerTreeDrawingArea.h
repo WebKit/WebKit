@@ -39,6 +39,7 @@
 
 namespace WebCore {
 class PlatformCALayer;
+class ThreadSafeImageBufferFlusher;
 }
 
 namespace WebKit {
@@ -125,17 +126,17 @@ private:
 
     class BackingStoreFlusher : public ThreadSafeRefCounted<BackingStoreFlusher> {
     public:
-        static Ref<BackingStoreFlusher> create(IPC::Connection*, std::unique_ptr<IPC::Encoder>, Vector<RetainPtr<CGContextRef>>);
+        static Ref<BackingStoreFlusher> create(IPC::Connection*, std::unique_ptr<IPC::Encoder>, Vector<std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher>>);
 
         void flush();
         bool hasFlushed() const { return m_hasFlushed; }
 
     private:
-        BackingStoreFlusher(IPC::Connection*, std::unique_ptr<IPC::Encoder>, Vector<RetainPtr<CGContextRef>>);
+        BackingStoreFlusher(IPC::Connection*, std::unique_ptr<IPC::Encoder>, Vector<std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher>>);
 
         RefPtr<IPC::Connection> m_connection;
         std::unique_ptr<IPC::Encoder> m_commitEncoder;
-        Vector<RetainPtr<CGContextRef>> m_contextsToFlush;
+        Vector<std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher>> m_flushers;
 
         std::atomic<bool> m_hasFlushed;
     };

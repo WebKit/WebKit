@@ -384,13 +384,13 @@ void RemoteLayerTreeDrawingArea::updateRendering()
 
     // FIXME: Move all backing store flushing management to RemoteLayerBackingStoreCollection.
     bool hadAnyChangedBackingStore = false;
-    Vector<RetainPtr<CGContextRef>> contextsToFlush;
+    Vector<std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher>> flushers;
     for (auto& layer : layerTransaction.changedLayers()) {
         if (layer->properties().changedProperties & RemoteLayerTreeTransaction::BackingStoreChanged) {
             hadAnyChangedBackingStore = true;
             if (layer->properties().backingStore) {
-                if (auto contextPendingFlush = layer->properties().backingStore->takeFrontContextPendingFlush())
-                    contextsToFlush.append(contextPendingFlush);
+                if (auto pendingFlusher = layer->properties().backingStore->takePendingFlusher())
+                    flushers.append(WTFMove(pendingFlusher));
             }
         }
 
@@ -402,7 +402,7 @@ void RemoteLayerTreeDrawingArea::updateRendering()
     if (hadAnyChangedBackingStore)
         backingStoreCollection.scheduleVolatilityTimer();
 
-    RefPtr<BackingStoreFlusher> backingStoreFlusher = BackingStoreFlusher::create(WebProcess::singleton().parentProcessConnection(), WTFMove(commitEncoder), WTFMove(contextsToFlush));
+    RefPtr<BackingStoreFlusher> backingStoreFlusher = BackingStoreFlusher::create(WebProcess::singleton().parentProcessConnection(), WTFMove(commitEncoder), WTFMove(flushers));
     m_pendingBackingStoreFlusher = backingStoreFlusher;
 
     auto pageID = m_webPage.identifier();
@@ -451,15 +451,15 @@ bool RemoteLayerTreeDrawingArea::markLayersVolatileImmediatelyIfPossible()
     return m_remoteLayerTreeContext->backingStoreCollection().markAllBackingStoreVolatileImmediatelyIfPossible();
 }
 
-Ref<RemoteLayerTreeDrawingArea::BackingStoreFlusher> RemoteLayerTreeDrawingArea::BackingStoreFlusher::create(IPC::Connection* connection, std::unique_ptr<IPC::Encoder> encoder, Vector<RetainPtr<CGContextRef>> contextsToFlush)
+Ref<RemoteLayerTreeDrawingArea::BackingStoreFlusher> RemoteLayerTreeDrawingArea::BackingStoreFlusher::create(IPC::Connection* connection, std::unique_ptr<IPC::Encoder> encoder, Vector<std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher>> flushers)
 {
-    return adoptRef(*new RemoteLayerTreeDrawingArea::BackingStoreFlusher(connection, WTFMove(encoder), WTFMove(contextsToFlush)));
+    return adoptRef(*new RemoteLayerTreeDrawingArea::BackingStoreFlusher(connection, WTFMove(encoder), WTFMove(flushers)));
 }
 
-RemoteLayerTreeDrawingArea::BackingStoreFlusher::BackingStoreFlusher(IPC::Connection* connection, std::unique_ptr<IPC::Encoder> encoder, Vector<RetainPtr<CGContextRef>> contextsToFlush)
+RemoteLayerTreeDrawingArea::BackingStoreFlusher::BackingStoreFlusher(IPC::Connection* connection, std::unique_ptr<IPC::Encoder> encoder, Vector<std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher>> flushers)
     : m_connection(connection)
     , m_commitEncoder(WTFMove(encoder))
-    , m_contextsToFlush(WTFMove(contextsToFlush))
+    , m_flushers(WTFMove(flushers))
     , m_hasFlushed(false)
 {
 }
@@ -470,8 +470,8 @@ void RemoteLayerTreeDrawingArea::BackingStoreFlusher::flush()
 
     TraceScope tracingScope(BackingStoreFlushStart, BackingStoreFlushEnd);
     
-    for (auto& context : m_contextsToFlush)
-        CGContextFlush(context.get());
+    for (auto& flusher : m_flushers)
+        flusher->flush();
     m_hasFlushed = true;
 
     m_connection->sendMessage(WTFMove(m_commitEncoder), { });

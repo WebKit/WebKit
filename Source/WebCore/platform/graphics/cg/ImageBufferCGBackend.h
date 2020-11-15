@@ -46,11 +46,13 @@ public:
     String toDataURL(const String& mimeType, Optional<double> quality, PreserveResolution) const override;
     Vector<uint8_t> toData(const String& mimeType, Optional<double> quality) const override;
 
+    std::unique_ptr<ThreadSafeImageBufferFlusher> createFlusher() override;
+
 protected:
     using ImageBufferBackend::ImageBufferBackend;
 
     static RetainPtr<CGColorSpaceRef> contextColorSpace(const GraphicsContext&);
-    void setupContext();
+    void setupContext() const;
     virtual RetainPtr<CFDataRef> toCFData(const String& mimeType, Optional<double> quality, PreserveResolution) const;
 
 #if USE(ACCELERATE)

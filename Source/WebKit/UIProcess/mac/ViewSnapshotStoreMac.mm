@@ -28,6 +28,7 @@
 
 #import <CoreGraphics/CoreGraphics.h>
 #import <WebCore/IOSurface.h>
+#import <WebCore/ImageBuffer.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
@@ -74,15 +75,15 @@ void ViewSnapshot::clearImage()
     m_surface = nullptr;
 }
 
-WebCore::IOSurface::SurfaceState ViewSnapshot::setVolatile(bool becomeVolatile)
+WebCore::VolatilityState ViewSnapshot::setVolatile(bool becomeVolatile)
 {
     if (ViewSnapshotStore::singleton().disableSnapshotVolatilityForTesting())
-        return WebCore::IOSurface::SurfaceState::Valid;
+        return WebCore::VolatilityState::Valid;
 
     if (!m_surface)
-        return WebCore::IOSurface::SurfaceState::Empty;
+        return WebCore::VolatilityState::Empty;
 
-    return m_surface->setIsVolatile(becomeVolatile);
+    return m_surface->setVolatile(becomeVolatile);
 }
 
 id ViewSnapshot::asLayerContents()
@@ -90,7 +91,7 @@ id ViewSnapshot::asLayerContents()
     if (!m_surface)
         return nullptr;
 
-    if (setVolatile(false) != WebCore::IOSurface::SurfaceState::Valid) {
+    if (setVolatile(false) != WebCore::VolatilityState::Valid) {
         clearImage();
         return nullptr;
     }

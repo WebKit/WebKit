@@ -1,3 +1,67 @@
+2020-11-15  Tim Horton  <timothy_horton@apple.com>
+
+        Initial implementation of DOM rendering via the GPU process
+        https://bugs.webkit.org/show_bug.cgi?id=218928
+
+        Reviewed by Simon Fraser.
+
+        * Shared/RemoteLayerTree/RemoteLayerBackingStore.h:
+        (WebKit::RemoteLayerBackingStore::hasFrontBuffer const):
+        (WebKit::RemoteLayerBackingStore::Buffer::operator bool const):
+        * Shared/RemoteLayerTree/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::encode const):
+        (WebKit::RemoteLayerBackingStore::decode):
+        (WebKit::RemoteLayerBackingStore::pixelFormat const):
+        (WebKit::RemoteLayerBackingStore::bytesPerPixel const):
+        (WebKit::RemoteLayerBackingStore::swapToValidFrontBuffer):
+        (WebKit::RemoteLayerBackingStore::display):
+        (WebKit::RemoteLayerBackingStore::applyBackingStoreToLayer):
+        (WebKit::RemoteLayerBackingStore::takePendingFlusher):
+        (WebKit::RemoteLayerBackingStore::setBufferVolatility):
+        (WebKit::RemoteLayerBackingStore::Buffer::discard):
+        (WebKit::RemoteLayerBackingStore::drawInContext): Deleted.
+        (WebKit::RemoteLayerBackingStore::takeFrontContextPendingFlush): Deleted.
+        (WebKit::RemoteLayerBackingStore::surfaceBufferFormat const): Deleted.
+        Reimplement RemoteLayerBackingStore in terms of ImageBuffer instead of
+        using ShareableBitmap + IOSurface explicitly.
+        We use ConcreteImageBuffer versions of the shareable backends in the WebContent process
+        in the non-GPU-process case, and normal DisplayList-backed RemoteImageBufferProxies
+        in the GPU process case.
+
+        * UIProcess/ViewSnapshotStore.h:
+        * UIProcess/mac/ViewSnapshotStoreMac.mm:
+        (WebKit::ViewSnapshot::setVolatile):
+        (WebKit::ViewSnapshot::asLayerContents):
+        * WebProcess/GPU/graphics/ImageBufferBackendHandle.h:
+        * WebProcess/GPU/graphics/RemoteImageBufferProxy.h:
+        (WebKit::ThreadSafeRemoteImageBufferFlusher::ThreadSafeRemoteImageBufferFlusher):
+        Add a hack to emulate ThreadSafeRemoteImageBufferFlusher; right now,
+        we'll synchronously flush on the main thread when creating the flusher;
+        a future patch will move this into the flush() method so that RemoteLayerBackingStore
+        can do it on a secondary queue.
+
+        (WebKit::RemoteImageBufferProxy::createImageBufferBackendHandle):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::createImageBuffer const):
+        (WebKit::WebChromeClient::ensureRemoteRenderingBackendProxy const): Deleted.
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeContext.h:
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeContext.mm:
+        (WebKit::RemoteLayerTreeContext::ensureRemoteRenderingBackendProxy):
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.h:
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::updateRendering):
+        (WebKit::RemoteLayerTreeDrawingArea::BackingStoreFlusher::create):
+        (WebKit::RemoteLayerTreeDrawingArea::BackingStoreFlusher::BackingStoreFlusher):
+        (WebKit::RemoteLayerTreeDrawingArea::BackingStoreFlusher::flush):
+        Reimplement BackingStoreFlusher in terms of the abstract ThreadSafeImageBufferFlusher.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::ensureRemoteRenderingBackendProxy):
+        * WebProcess/WebPage/WebPage.h:
+        Move RemoteRenderingBackendProxy from WebChromeClient to WebPage, so that
+        other non-WebCore clients can use it without having to think about WebChromeClient.
+
 2020-11-14  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed, suppressing GCC compilation warnings.

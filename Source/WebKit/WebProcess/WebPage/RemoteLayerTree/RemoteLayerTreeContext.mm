@@ -188,4 +188,9 @@ void RemoteLayerTreeContext::animationDidEnd(WebCore::GraphicsLayer::PlatformLay
         it->value->animationEnded(key);
 }
 
+RemoteRenderingBackendProxy& RemoteLayerTreeContext::ensureRemoteRenderingBackendProxy()
+{
+    return m_webPage.ensureRemoteRenderingBackendProxy();
+}
+
 } // namespace WebKit

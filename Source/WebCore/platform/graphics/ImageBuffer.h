@@ -83,6 +83,13 @@ public:
     virtual size_t memoryCost() const = 0;
     virtual size_t externalMemoryCost() const = 0;
 
+    virtual bool isInUse() const = 0;
+    virtual void releaseGraphicsContext() = 0;
+    virtual VolatilityState setVolatile(bool) = 0;
+    virtual void releaseBufferToPool() = 0;
+
+    virtual std::unique_ptr<ThreadSafeImageBufferFlusher> createFlusher() = 0;
+
     virtual RefPtr<NativeImage> copyNativeImage(BackingStoreCopy = CopyBackingStore) const = 0;
     virtual RefPtr<Image> copyImage(BackingStoreCopy = CopyBackingStore, PreserveResolution = PreserveResolution::No) const = 0;
 

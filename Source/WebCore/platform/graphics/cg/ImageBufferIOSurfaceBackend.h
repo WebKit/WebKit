@@ -63,6 +63,11 @@ public:
     void putImageData(AlphaPremultiplication inputFormat, const ImageData&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat) override;
     IOSurface* surface();
 
+    bool isInUse() const override;
+    void releaseGraphicsContext() override;
+    VolatilityState setVolatile(bool) override;
+    void releaseBufferToPool() override;
+
     static constexpr bool isOriginAtUpperLeftCorner = true;
     static constexpr bool isAccelerated = true;
 
@@ -72,6 +77,8 @@ protected:
 
     std::unique_ptr<IOSurface> m_surface;
     mutable bool m_requiresDrawAfterPutImageData { false };
+
+    mutable bool m_needsSetupContext { false };
 };
 
 } // namespace WebCore

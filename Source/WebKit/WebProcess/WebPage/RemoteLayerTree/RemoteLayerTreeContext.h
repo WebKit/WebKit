@@ -37,6 +37,7 @@ namespace WebKit {
 
 class GraphicsLayerCARemote;
 class PlatformCALayerRemote;
+class RemoteRenderingBackendProxy;
 class WebPage;
 
 // FIXME: This class doesn't do much now. Roll into RemoteLayerTreeDrawingArea?
@@ -77,6 +78,8 @@ public:
     bool nextRenderingUpdateRequiresSynchronousImageDecoding() const { return m_nextRenderingUpdateRequiresSynchronousImageDecoding; }
 
     void adoptLayersFromContext(RemoteLayerTreeContext&);
+
+    RemoteRenderingBackendProxy& ensureRemoteRenderingBackendProxy();
     
 #if PLATFORM(IOS_FAMILY)
     bool canShowWhileLocked() const;

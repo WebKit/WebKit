@@ -106,7 +106,13 @@ ImageBufferIOSurfaceBackend::ImageBufferIOSurfaceBackend(const FloatSize& logica
 
 GraphicsContext& ImageBufferIOSurfaceBackend::context() const
 {
-    return m_surface->ensureGraphicsContext();
+
+    GraphicsContext& context = m_surface->ensureGraphicsContext();
+    if (m_needsSetupContext) {
+        m_needsSetupContext = false;
+        setupContext();
+    }
+    return context;
 }
 
 void ImageBufferIOSurfaceBackend::flushContext()
@@ -182,6 +188,27 @@ IOSurface* ImageBufferIOSurfaceBackend::surface()
 {
     flushContext();
     return m_surface.get();
+}
+
+bool ImageBufferIOSurfaceBackend::isInUse() const
+{
+    return m_surface->isInUse();
+}
+
+void ImageBufferIOSurfaceBackend::releaseGraphicsContext()
+{
+    m_needsSetupContext = true;
+    return m_surface->releaseGraphicsContext();
+}
+
+VolatilityState ImageBufferIOSurfaceBackend::setVolatile(bool isVolatile)
+{
+    return m_surface->setVolatile(isVolatile);
+}
+
+void ImageBufferIOSurfaceBackend::releaseBufferToPool()
+{
+    IOSurface::moveToPool(WTFMove(m_surface));
 }
 
 } // namespace WebCore

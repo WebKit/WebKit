@@ -57,6 +57,7 @@
 #include "PluginProxy.h"
 #include "PluginView.h"
 #include "PrintInfo.h"
+#include "RemoteRenderingBackendProxy.h"
 #include "RemoteWebInspectorUI.h"
 #include "RemoteWebInspectorUIMessages.h"
 #include "SessionState.h"
@@ -7038,6 +7039,15 @@ void WebPage::notifyPageOfAppBoundBehavior()
 {
     if (!m_navigationHasOccured && !m_limitsNavigationsToAppBoundDomains)
         send(Messages::WebPageProxy::SetHasExecutedAppBoundBehaviorBeforeNavigation());
+}
+#endif
+
+#if ENABLE(GPU_PROCESS)
+RemoteRenderingBackendProxy& WebPage::ensureRemoteRenderingBackendProxy()
+{
+    if (!m_remoteRenderingBackendProxy)
+        m_remoteRenderingBackendProxy = RemoteRenderingBackendProxy::create();
+    return *m_remoteRenderingBackendProxy;
 }
 #endif
 

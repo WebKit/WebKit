@@ -903,19 +903,13 @@ RefPtr<DisplayRefreshMonitor> WebChromeClient::createDisplayRefreshMonitor(Platf
 
 #if ENABLE(GPU_PROCESS)
 
-RemoteRenderingBackendProxy& WebChromeClient::ensureRemoteRenderingBackendProxy() const
-{
-    if (!m_remoteRenderingBackendProxy)
-        m_remoteRenderingBackendProxy = RemoteRenderingBackendProxy::create();
-    return *m_remoteRenderingBackendProxy;
-}
 
 RefPtr<ImageBuffer> WebChromeClient::createImageBuffer(const FloatSize& size, RenderingMode renderingMode, RenderingPurpose purpose, float resolutionScale, ColorSpace colorSpace, PixelFormat pixelFormat) const
 {
     if (!WebProcess::singleton().shouldUseRemoteRenderingFor(purpose))
         return nullptr;
 
-    return ensureRemoteRenderingBackendProxy().createImageBuffer(size, renderingMode, resolutionScale, colorSpace, pixelFormat);
+    return m_page.ensureRemoteRenderingBackendProxy().createImageBuffer(size, renderingMode, resolutionScale, colorSpace, pixelFormat);
 }
 
 #endif // ENABLE(GPU_PROCESS)
