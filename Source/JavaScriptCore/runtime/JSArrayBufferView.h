@@ -195,6 +195,7 @@ public:
     inline Optional<unsigned> byteOffsetConcurrently();
 
     unsigned length() const { return m_length; }
+    unsigned byteLength() const;
 
     DECLARE_EXPORT_INFO;
     

@@ -233,6 +233,7 @@ static const constexpr size_t ElementSizeData[] = {
 #define FACTORY(type) sizeof(typename type ## Adaptor::Type),
     FOR_EACH_TYPED_ARRAY_TYPE_EXCLUDING_DATA_VIEW(FACTORY)
 #undef FACTORY
+    1, // DataViewType
 };
 
 #define FACTORY(type) static_assert(std::is_final<JS ## type ## Array>::value, "");
@@ -241,8 +242,14 @@ FOR_EACH_TYPED_ARRAY_TYPE_EXCLUDING_DATA_VIEW(FACTORY)
 
 static inline size_t elementSize(JSType type)
 {
-    ASSERT(type >= Int8ArrayType && type <= Float64ArrayType);
+    ASSERT(type >= Int8ArrayType && type <= DataViewType);
+    static_assert(Float64ArrayType + 1 == DataViewType);
     return ElementSizeData[type - Int8ArrayType];
+}
+
+unsigned JSArrayBufferView::byteLength() const
+{
+    return length() * elementSize(type());
 }
 
 ArrayBuffer* JSArrayBufferView::slowDownAndWasteMemory()
@@ -269,7 +276,7 @@ ArrayBuffer* JSArrayBufferView::slowDownAndWasteMemory()
     Structure* structure = this->structure(vm);
 
     RefPtr<ArrayBuffer> buffer;
-    unsigned byteLength = m_length * elementSize(type());
+    unsigned byteLength = this->byteLength();
 
     switch (m_mode) {
     case FastTypedArray: {

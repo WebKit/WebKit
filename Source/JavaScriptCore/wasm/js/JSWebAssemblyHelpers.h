@@ -84,7 +84,7 @@ ALWAYS_INLINE std::pair<const uint8_t*, size_t> getWasmBufferFromValue(JSGlobalO
     }
 
     uint8_t* base = arrayBufferView ? static_cast<uint8_t*>(arrayBufferView->vector()) : static_cast<uint8_t*>(arrayBuffer->impl()->data());
-    size_t byteSize = arrayBufferView ? arrayBufferView->length() : arrayBuffer->impl()->byteLength();
+    size_t byteSize = arrayBufferView ? arrayBufferView->byteLength() : arrayBuffer->impl()->byteLength();
     return { base, byteSize };
 }
 
