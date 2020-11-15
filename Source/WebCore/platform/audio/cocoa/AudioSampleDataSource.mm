@@ -207,20 +207,18 @@ static inline int64_t computeOffsetDelay(double sampleRate, uint64_t lastPushedS
     return 0;
 }
 
-bool AudioSampleDataSource::pullSamplesInternal(AudioBufferList& buffer, size_t& sampleCount, uint64_t timeStamp, double /*hostTime*/, PullMode mode)
+bool AudioSampleDataSource::pullSamplesInternal(AudioBufferList& buffer, size_t sampleCount, uint64_t timeStamp, double /*hostTime*/, PullMode mode)
 {
     size_t byteCount = sampleCount * m_outputDescription->bytesPerFrame();
 
     ASSERT(buffer.mNumberBuffers == m_ringBuffer->channelCount());
     if (buffer.mNumberBuffers != m_ringBuffer->channelCount()) {
         AudioSampleBufferList::zeroABL(buffer, byteCount);
-        sampleCount = 0;
         return false;
     }
 
     if (!m_ringBuffer || m_muted || m_inputSampleOffset == MediaTime::invalidTime()) {
         AudioSampleBufferList::zeroABL(buffer, byteCount);
-        sampleCount = 0;
         return false;
     }
 
@@ -232,7 +230,6 @@ bool AudioSampleDataSource::pullSamplesInternal(AudioBufferList& buffer, size_t&
         uint64_t buffered = endFrame - startFrame;
         if (buffered < sampleCount * 2 || (m_endFrameWhenNotEnoughData && m_endFrameWhenNotEnoughData == endFrame)) {
             AudioSampleBufferList::zeroABL(buffer, byteCount);
-            sampleCount = 0;
             return false;
         }
 

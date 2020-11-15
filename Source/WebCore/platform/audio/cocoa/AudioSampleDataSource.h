@@ -83,7 +83,7 @@ private:
     AudioSampleDataSource(size_t, LoggerHelper&);
 
     OSStatus setupConverter();
-    bool pullSamplesInternal(AudioBufferList&, size_t&, uint64_t, double, PullMode);
+    bool pullSamplesInternal(AudioBufferList&, size_t, uint64_t, double, PullMode);
 
     void pushSamplesInternal(const AudioBufferList&, const MediaTime&, size_t frameCount);
 
