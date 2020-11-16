@@ -1,3 +1,12 @@
+2020-11-16  Truitt Savell  <tsavell@apple.com>
+
+        Modify expectations for webgpu/whlsl/dont-crash-parsing-enum.html
+        https://bugs.webkit.org/show_bug.cgi?id=215247
+
+        unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2020-11-16  Alex Christensen  <achristensen@webkit.org>
 
         FileReaderLoader::convertToDataURL should use application/octet-stream if MIME type is empty
