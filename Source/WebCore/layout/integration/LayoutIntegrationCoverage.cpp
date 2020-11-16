@@ -574,6 +574,11 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderObject& child, Incl
     if (is<RenderLineBreak>(child))
         return reasons;
 
+    if (child.isFieldset()) {
+        // Fieldsets don't follow the standard CSS box model. They require special handling.
+        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonSupportedChild, reasons, includeReasons)
+    }
+
 #if ALLOW_IMAGES || ALLOW_ALL_REPLACED
     if (is<RenderReplaced>(child)) {
         auto& replaced = downcast<RenderReplaced>(child);
