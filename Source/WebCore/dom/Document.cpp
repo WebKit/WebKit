@@ -5542,20 +5542,18 @@ void Document::registerForCaptionPreferencesChangedCallbacks(HTMLMediaElement& e
     if (page())
         page()->group().captionPreferences().setInterestedInCaptionPreferenceChanges();
 
-    m_captionPreferencesChangedElements.add(element);
+    m_captionPreferencesChangedElements.add(&element);
 }
 
 void Document::unregisterForCaptionPreferencesChangedCallbacks(HTMLMediaElement& element)
 {
-    m_captionPreferencesChangedElements.remove(element);
+    m_captionPreferencesChangedElements.remove(&element);
 }
 
 void Document::captionPreferencesChanged()
 {
-    ASSERT(!m_captionPreferencesChangedElements.hasNullReferences());
-    m_captionPreferencesChangedElements.forEach([](HTMLMediaElement& element) {
-        element.captionPreferencesChanged();
-    });
+    for (auto* element : m_captionPreferencesChangedElements)
+        element->captionPreferencesChanged();
 }
 
 void Document::setMediaElementShowingTextTrack(const HTMLMediaElement& element)
