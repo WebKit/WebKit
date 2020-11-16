@@ -2257,3 +2257,6 @@ webkit.org/b/217994 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-a
 
 # Mojave doesn't support COLR fonts.
 webkit.org/b/218346 [ Mojave ] fast/text/canvas-color-fonts [ Skip ]
+
+# rdar://rdar://71039166
+[ Mojave ] http/tests/canvas/color-fonts [ Skip ]
