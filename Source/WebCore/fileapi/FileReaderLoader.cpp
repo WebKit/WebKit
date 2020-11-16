@@ -346,7 +346,10 @@ void FileReaderLoader::convertToDataURL()
         return;
     }
 
-    builder.append(m_dataType);
+    if (m_dataType.isEmpty())
+        builder.append("application/octet-stream");
+    else
+        builder.append(m_dataType);
     builder.appendLiteral(";base64,");
 
     Vector<char> out;

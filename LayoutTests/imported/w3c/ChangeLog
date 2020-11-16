@@ -1,3 +1,12 @@
+2020-11-16  Alex Christensen  <achristensen@webkit.org>
+
+        FileReaderLoader::convertToDataURL should use application/octet-stream if MIME type is empty
+        https://bugs.webkit.org/show_bug.cgi?id=218993
+
+        Reviewed by Geoffrey Garen.
+
+        * web-platform-tests/FileAPI/reading-data-section/filereader_readAsDataURL-expected.txt:
+
 2020-11-16  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Import latest wpt/wasm tests

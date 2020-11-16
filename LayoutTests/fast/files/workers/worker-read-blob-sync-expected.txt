@@ -27,8 +27,8 @@ result size: 5
 result: First
 Received exception undefined: TypeError
 Test reading a blob containing single text as data URL
-result size: 21
-result: data:;base64,Rmlyc3Q=
+result size: 45
+result: data:application/octet-stream;base64,Rmlyc3Q=
 Received exception undefined: TypeError
 Test reading a blob containing single text as data URL (optional content type provided)
 result size: 29

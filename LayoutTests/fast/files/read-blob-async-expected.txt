@@ -64,8 +64,8 @@ Received loadstart event
 readyState: 1
 Received load event
 readyState: 2
-result size: 21
-result: data:;base64,Rmlyc3Q=
+result size: 45
+result: data:application/octet-stream;base64,Rmlyc3Q=
 Received loadend event
 Test reading a blob containing single text as data URL (optional content type provided)
 readyState: 0
