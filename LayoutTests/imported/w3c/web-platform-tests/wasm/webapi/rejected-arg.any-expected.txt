@@ -1,0 +1,4 @@
+
+FAIL compileStreaming WebAssembly[method] is not a function. (In 'WebAssembly[method](promise)', 'WebAssembly[method]' is undefined)
+FAIL instantiateStreaming WebAssembly[method] is not a function. (In 'WebAssembly[method](promise)', 'WebAssembly[method]' is undefined)
+

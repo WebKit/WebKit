@@ -6,7 +6,7 @@ PASS Calling
 PASS Order of evaluation
 PASS Invalid descriptor argument
 PASS Invalid type argument
-PASS i64 with default
+FAIL i64 with default WebAssembly.Global.prototype.value does not work with i64 type
 PASS Default value for type i32
 PASS Explicit value undefined for type i32
 PASS Explicit value null for type i32
@@ -14,8 +14,11 @@ PASS Explicit value true for type i32
 PASS Explicit value false for type i32
 PASS Explicit value 2 for type i32
 PASS Explicit value "3" for type i32
-PASS Explicit value object with toString for type i32
-PASS Explicit value object with valueOf for type i32
+PASS Explicit value object with toString returning string for type i32
+PASS Explicit value object with valueOf returning string for type i32
+PASS Explicit value object with toString returning number for type i32
+PASS Explicit value object with valueOf returning number for type i32
+PASS BigInt value for type i32
 PASS Default value for type f32
 PASS Explicit value undefined for type f32
 PASS Explicit value null for type f32
@@ -23,8 +26,11 @@ PASS Explicit value true for type f32
 PASS Explicit value false for type f32
 PASS Explicit value 2 for type f32
 PASS Explicit value "3" for type f32
-PASS Explicit value object with toString for type f32
-PASS Explicit value object with valueOf for type f32
+PASS Explicit value object with toString returning string for type f32
+PASS Explicit value object with valueOf returning string for type f32
+PASS Explicit value object with toString returning number for type f32
+PASS Explicit value object with valueOf returning number for type f32
+PASS BigInt value for type f32
 PASS Default value for type f64
 PASS Explicit value undefined for type f64
 PASS Explicit value null for type f64
@@ -32,7 +38,24 @@ PASS Explicit value true for type f64
 PASS Explicit value false for type f64
 PASS Explicit value 2 for type f64
 PASS Explicit value "3" for type f64
-PASS Explicit value object with toString for type f64
-PASS Explicit value object with valueOf for type f64
+PASS Explicit value object with toString returning string for type f64
+PASS Explicit value object with valueOf returning string for type f64
+PASS Explicit value object with toString returning number for type f64
+PASS Explicit value object with valueOf returning number for type f64
+PASS BigInt value for type f64
+FAIL Explicit value undefined for type i64 WebAssembly.Global.prototype.value does not work with i64 type
+FAIL Explicit value true for type i64 WebAssembly.Global does not accept i64 initial value
+FAIL Explicit value false for type i64 WebAssembly.Global does not accept i64 initial value
+FAIL Explicit value "3" for type i64 WebAssembly.Global does not accept i64 initial value
+FAIL Explicit value bigint "123" for type i64 WebAssembly.Global does not accept i64 initial value
+FAIL Explicit value object with toString returning string for type i64 WebAssembly.Global does not accept i64 initial value
+FAIL Explicit value object with valueOf returning string for type i64 WebAssembly.Global does not accept i64 initial value
+FAIL Explicit value object with toString returning bigint for type i64 WebAssembly.Global does not accept i64 initial value
+FAIL Explicit value object with valueOf returning bigint for type i64 WebAssembly.Global does not accept i64 initial value
+PASS Pass non-bigint as i64 Global value: null
+PASS Pass non-bigint as i64 Global value: 666
+PASS Pass non-bigint as i64 Global value: object "5"
+PASS Pass non-bigint as i64 Global value: object "[object Object]"
+PASS Pass non-bigint as i64 Global value: symbol "Symbol()"
 PASS Stray argument
 

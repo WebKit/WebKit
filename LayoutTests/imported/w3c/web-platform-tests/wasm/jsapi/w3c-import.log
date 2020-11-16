@@ -21,4 +21,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/instanceTestFactory.js
 /LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/interface.any.js
 /LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/proto-from-ctor-realm.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/prototypes.any.js
 /LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/wasm-module-builder.js

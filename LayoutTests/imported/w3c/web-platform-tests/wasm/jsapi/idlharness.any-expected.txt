@@ -1,5 +1,6 @@
 
-PASS wasm-js-api interfaces.
+PASS idl_test setup
+PASS idl_test validation
 PASS WebAssembly namespace: extended attributes
 PASS WebAssembly namespace: property descriptor
 PASS WebAssembly namespace: [[Extensible]] is true
@@ -18,14 +19,14 @@ PASS Module interface: existence and properties of interface prototype object's 
 PASS Module interface: operation exports(Module)
 PASS Module interface: operation imports(Module)
 PASS Module interface: operation customSections(Module, DOMString)
-FAIL Module must be primary interface of mod assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: mod"
-FAIL Stringification of mod assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: mod"
-FAIL Module interface: mod must inherit property "exports(Module)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: mod"
-FAIL Module interface: calling exports(Module) on mod with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: mod"
-FAIL Module interface: mod must inherit property "imports(Module)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: mod"
-FAIL Module interface: calling imports(Module) on mod with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: mod"
-FAIL Module interface: mod must inherit property "customSections(Module, DOMString)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: mod"
-FAIL Module interface: calling customSections(Module, DOMString) on mod with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: mod"
+PASS Module must be primary interface of [object WebAssembly.Module]
+PASS Stringification of [object WebAssembly.Module]
+PASS Module interface: [object WebAssembly.Module] must inherit property "exports(Module)" with the proper type
+PASS Module interface: calling exports(Module) on [object WebAssembly.Module] with too few arguments must throw TypeError
+PASS Module interface: [object WebAssembly.Module] must inherit property "imports(Module)" with the proper type
+PASS Module interface: calling imports(Module) on [object WebAssembly.Module] with too few arguments must throw TypeError
+PASS Module interface: [object WebAssembly.Module] must inherit property "customSections(Module, DOMString)" with the proper type
+PASS Module interface: calling customSections(Module, DOMString) on [object WebAssembly.Module] with too few arguments must throw TypeError
 PASS Instance interface: existence and properties of interface object
 PASS Instance interface object length
 PASS Instance interface object name
@@ -33,9 +34,9 @@ PASS Instance interface: existence and properties of interface prototype object
 PASS Instance interface: existence and properties of interface prototype object's "constructor" property
 PASS Instance interface: existence and properties of interface prototype object's @@unscopables property
 PASS Instance interface: attribute exports
-FAIL Instance must be primary interface of instance assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: instance"
-FAIL Stringification of instance assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: instance"
-FAIL Instance interface: instance must inherit property "exports" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: instance"
+PASS Instance must be primary interface of [object WebAssembly.Instance]
+PASS Stringification of [object WebAssembly.Instance]
+PASS Instance interface: [object WebAssembly.Instance] must inherit property "exports" with the proper type
 PASS Memory interface: existence and properties of interface object
 PASS Memory interface object length
 PASS Memory interface object name
@@ -44,11 +45,11 @@ PASS Memory interface: existence and properties of interface prototype object's 
 PASS Memory interface: existence and properties of interface prototype object's @@unscopables property
 PASS Memory interface: operation grow(unsigned long)
 PASS Memory interface: attribute buffer
-PASS Memory must be primary interface of memory
-PASS Stringification of memory
-PASS Memory interface: memory must inherit property "grow(unsigned long)" with the proper type
-PASS Memory interface: calling grow(unsigned long) on memory with too few arguments must throw TypeError
-PASS Memory interface: memory must inherit property "buffer" with the proper type
+PASS Memory must be primary interface of [object WebAssembly.Memory]
+PASS Stringification of [object WebAssembly.Memory]
+PASS Memory interface: [object WebAssembly.Memory] must inherit property "grow(unsigned long)" with the proper type
+PASS Memory interface: calling grow(unsigned long) on [object WebAssembly.Memory] with too few arguments must throw TypeError
+PASS Memory interface: [object WebAssembly.Memory] must inherit property "buffer" with the proper type
 PASS Table interface: existence and properties of interface object
 PASS Table interface object length
 PASS Table interface object name

@@ -1,0 +1,12 @@
+
+FAIL WebAssembly.Module cloning via the Notifications API's data member: basic case assert_throws_dom: function "() => {
+    new Notification("Bob: Hi", { data: createEmptyWasmModule() });
+  }" did not throw
+FAIL WebAssembly.Module cloning via the Notifications API's data member: is interleaved correctly assert_throws_dom: function "() => {
+    new Notification("Bob: Hi", { data: [
+      { get x() { getter1Called = true; return 5; } },
+      createEmptyWasmModule(),
+      { get x() { getter2Called = true; return 5; } }
+    ]});
+  }" did not throw
+

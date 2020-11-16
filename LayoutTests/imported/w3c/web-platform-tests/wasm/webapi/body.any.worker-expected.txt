@@ -1,0 +1,6 @@
+
+FAIL compileStreaming after consumption WebAssembly[method] is not a function. (In 'WebAssembly[method](argument)', 'WebAssembly[method]' is undefined)
+FAIL compileStreaming before consumption WebAssembly[method] is not a function. (In 'WebAssembly[method](argument)', 'WebAssembly[method]' is undefined)
+FAIL instantiateStreaming after consumption WebAssembly[method] is not a function. (In 'WebAssembly[method](argument)', 'WebAssembly[method]' is undefined)
+FAIL instantiateStreaming before consumption WebAssembly[method] is not a function. (In 'WebAssembly[method](argument)', 'WebAssembly[method]' is undefined)
+

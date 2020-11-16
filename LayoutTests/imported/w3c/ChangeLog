@@ -1,3 +1,314 @@
+2020-11-16  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Import latest wpt/wasm tests
+        https://bugs.webkit.org/show_bug.cgi?id=218953
+
+        Reviewed by Saam Barati.
+
+        This patch just imports and rebaselines wpt/wasm tests.
+
+        * resources/import-expectations.json:
+        * web-platform-tests/wasm/META.yml: Added.
+        * web-platform-tests/wasm/compile_worker.js: Added.
+        (onmessage):
+        * web-platform-tests/wasm/create_multiple_memory.worker-expected.txt: Added.
+        * web-platform-tests/wasm/create_multiple_memory.worker.html: Added.
+        * web-platform-tests/wasm/create_multiple_memory.worker.js: Added.
+        (test):
+        * web-platform-tests/wasm/incrementer.wasm: Added.
+        * web-platform-tests/wasm/jsapi/bad-imports.js:
+        (test_bad_imports.value_type):
+        (test_bad_imports):
+        * web-platform-tests/wasm/jsapi/constructor/instantiate-bad-imports.any-expected.txt:
+        * web-platform-tests/wasm/jsapi/constructor/instantiate-bad-imports.any.worker-expected.txt:
+        * web-platform-tests/wasm/jsapi/constructor/instantiate.any-expected.txt:
+        * web-platform-tests/wasm/jsapi/constructor/instantiate.any.worker-expected.txt:
+        * web-platform-tests/wasm/jsapi/constructor/toStringTag.any-expected.txt: Added.
+        * web-platform-tests/wasm/jsapi/constructor/toStringTag.any.html: Added.
+        * web-platform-tests/wasm/jsapi/constructor/toStringTag.any.js: Added.
+        (test):
+        (test.t.t.add_cleanup):
+        * web-platform-tests/wasm/jsapi/constructor/toStringTag.any.worker-expected.txt: Added.
+        * web-platform-tests/wasm/jsapi/constructor/toStringTag.any.worker.html: Added.
+        * web-platform-tests/wasm/jsapi/constructor/w3c-import.log:
+        * web-platform-tests/wasm/jsapi/functions/entry-different-function-realm-expected.txt: Added.
+        * web-platform-tests/wasm/jsapi/functions/entry-different-function-realm.html: Added.
+        * web-platform-tests/wasm/jsapi/functions/entry-expected.txt: Added.
+        * web-platform-tests/wasm/jsapi/functions/entry.html: Added.
+        * web-platform-tests/wasm/jsapi/functions/helper.js: Added.
+        (call_later):
+        * web-platform-tests/wasm/jsapi/functions/incumbent-expected.txt: Added.
+        * web-platform-tests/wasm/jsapi/functions/incumbent.html: Added.
+        * web-platform-tests/wasm/jsapi/functions/resources/README.md: Added.
+        * web-platform-tests/wasm/jsapi/functions/resources/current/current.html: Added.
+        * web-platform-tests/wasm/jsapi/functions/resources/current/resources/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/memory/w3c-import.log.
+        * web-platform-tests/wasm/jsapi/functions/resources/current/resources/window-to-open.html: Added.
+        * web-platform-tests/wasm/jsapi/functions/resources/current/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/memory/w3c-import.log.
+        * web-platform-tests/wasm/jsapi/functions/resources/entry-incumbent.html: Added.
+        * web-platform-tests/wasm/jsapi/functions/resources/function/function.html: Added.
+        * web-platform-tests/wasm/jsapi/functions/resources/function/resources/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/memory/w3c-import.log.
+        * web-platform-tests/wasm/jsapi/functions/resources/function/resources/window-to-open.html: Added.
+        * web-platform-tests/wasm/jsapi/functions/resources/function/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/memory/w3c-import.log.
+        * web-platform-tests/wasm/jsapi/functions/resources/incumbent-incumbent.html: Added.
+        * web-platform-tests/wasm/jsapi/functions/resources/relevant/relevant.html: Added.
+        * web-platform-tests/wasm/jsapi/functions/resources/relevant/resources/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/memory/w3c-import.log.
+        * web-platform-tests/wasm/jsapi/functions/resources/relevant/resources/window-to-open.html: Added.
+        * web-platform-tests/wasm/jsapi/functions/resources/relevant/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/memory/w3c-import.log.
+        * web-platform-tests/wasm/jsapi/functions/resources/resources/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/memory/w3c-import.log.
+        * web-platform-tests/wasm/jsapi/functions/resources/resources/window-to-open.html: Added.
+        * web-platform-tests/wasm/jsapi/functions/resources/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/memory/w3c-import.log.
+        * web-platform-tests/wasm/jsapi/functions/resources/window-to-open.html: Added.
+        * web-platform-tests/wasm/jsapi/functions/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/memory/w3c-import.log.
+        * web-platform-tests/wasm/jsapi/global/constructor.any-expected.txt:
+        * web-platform-tests/wasm/jsapi/global/constructor.any.js:
+        (test):
+        (string_appeared_here.toString):
+        (string_appeared_here.valueOf):
+        (string_appeared_here.test):
+        (toString):
+        (valueOf):
+        (name.format_value):
+        (const.invalidBigint.of.invalidBigints.test):
+        * web-platform-tests/wasm/jsapi/global/constructor.any.worker-expected.txt:
+        * web-platform-tests/wasm/jsapi/global/value-get-set.any-expected.txt:
+        * web-platform-tests/wasm/jsapi/global/value-get-set.any.js:
+        (string_appeared_here.name.of.immutableOptions.test):
+        (string_appeared_here.name.of.mutableOptions.test):
+        (test):
+        * web-platform-tests/wasm/jsapi/global/value-get-set.any.worker-expected.txt:
+        * web-platform-tests/wasm/jsapi/idlharness.any-expected.txt:
+        * web-platform-tests/wasm/jsapi/idlharness.any.js:
+        (async idl_array):
+        (promise_test.async const): Deleted.
+        (promise_test): Deleted.
+        * web-platform-tests/wasm/jsapi/idlharness.any.worker-expected.txt:
+        * web-platform-tests/wasm/jsapi/instance/constructor-bad-imports.any-expected.txt:
+        * web-platform-tests/wasm/jsapi/instance/constructor-bad-imports.any.worker-expected.txt:
+        * web-platform-tests/wasm/jsapi/instance/constructor.any-expected.txt:
+        * web-platform-tests/wasm/jsapi/instance/constructor.any.worker-expected.txt:
+        * web-platform-tests/wasm/jsapi/instanceTestFactory.js:
+        (const.imports.string_appeared_here.string_appeared_here):
+        * web-platform-tests/wasm/jsapi/memory/assertions.js: Added.
+        (assert_ArrayBuffer):
+        * web-platform-tests/wasm/jsapi/memory/constructor-shared.tentative.any-expected.txt: Added.
+        * web-platform-tests/wasm/jsapi/memory/constructor-shared.tentative.any.html: Added.
+        * web-platform-tests/wasm/jsapi/memory/constructor-shared.tentative.any.js: Added.
+        (test):
+        (test.t.new.WebAssembly.Memory.get maximum):
+        (test.t.new.WebAssembly.Memory.get initial):
+        (test.t.new.WebAssembly.Memory.get shared):
+        * web-platform-tests/wasm/jsapi/memory/constructor-shared.tentative.any.worker-expected.txt: Added.
+        * web-platform-tests/wasm/jsapi/memory/constructor-shared.tentative.any.worker.html: Added.
+        * web-platform-tests/wasm/jsapi/memory/constructor-types.tentative.any-expected.txt: Added.
+        * web-platform-tests/wasm/jsapi/memory/constructor-types.tentative.any.html: Added.
+        * web-platform-tests/wasm/jsapi/memory/constructor-types.tentative.any.js: Added.
+        (test):
+        * web-platform-tests/wasm/jsapi/memory/constructor-types.tentative.any.worker-expected.txt: Added.
+        * web-platform-tests/wasm/jsapi/memory/constructor-types.tentative.any.worker.html: Added.
+        * web-platform-tests/wasm/jsapi/memory/constructor.any-expected.txt:
+        * web-platform-tests/wasm/jsapi/memory/constructor.any.js:
+        (test.get assert_array_equals):
+        (test):
+        (assert_Memory): Deleted.
+        (test.t.get assert_array_equals): Deleted.
+        * web-platform-tests/wasm/jsapi/memory/constructor.any.worker-expected.txt:
+        * web-platform-tests/wasm/jsapi/memory/grow.any.js:
+        (assert_ArrayBuffer): Deleted.
+        * web-platform-tests/wasm/jsapi/memory/w3c-import.log:
+        * web-platform-tests/wasm/jsapi/prototypes.any-expected.txt: Added.
+        * web-platform-tests/wasm/jsapi/prototypes.any.html: Added.
+        * web-platform-tests/wasm/jsapi/prototypes.any.js: Added.
+        (setup):
+        (test):
+        * web-platform-tests/wasm/jsapi/prototypes.any.worker-expected.txt: Added.
+        * web-platform-tests/wasm/jsapi/prototypes.any.worker.html: Added.
+        * web-platform-tests/wasm/jsapi/table/assertions.js:
+        * web-platform-tests/wasm/jsapi/table/constructor-types.tentative.any-expected.txt: Added.
+        * web-platform-tests/wasm/jsapi/table/constructor-types.tentative.any.html: Added.
+        * web-platform-tests/wasm/jsapi/table/constructor-types.tentative.any.js: Added.
+        (test):
+        * web-platform-tests/wasm/jsapi/table/constructor-types.tentative.any.worker-expected.txt: Added.
+        * web-platform-tests/wasm/jsapi/table/constructor-types.tentative.any.worker.html: Added.
+        * web-platform-tests/wasm/jsapi/table/constructor.any.js:
+        (assert_Table): Deleted.
+        * web-platform-tests/wasm/jsapi/table/w3c-import.log:
+        * web-platform-tests/wasm/jsapi/w3c-import.log:
+        * web-platform-tests/wasm/jsapi/wasm-module-builder.js:
+        (WasmModuleBuilder.prototype.addTable):
+        (WasmModuleBuilder.prototype.toBuffer):
+        (wasmF32Const):
+        (wasmF64Const):
+        * web-platform-tests/wasm/resources/load_wasm.js: Added.
+        (createWasmModule):
+        * web-platform-tests/wasm/resources/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/memory/w3c-import.log.
+        * web-platform-tests/wasm/serialization/arraybuffer/transfer.window-expected.txt: Added.
+        * web-platform-tests/wasm/serialization/arraybuffer/transfer.window.html: Added.
+        * web-platform-tests/wasm/serialization/arraybuffer/transfer.window.js: Added.
+        (test):
+        * web-platform-tests/wasm/serialization/arraybuffer/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/memory/w3c-import.log.
+        * web-platform-tests/wasm/serialization/module/broadcastchannel-success-and-failure-expected.txt: Added.
+        * web-platform-tests/wasm/serialization/module/broadcastchannel-success-and-failure.html: Added.
+        * web-platform-tests/wasm/serialization/module/broadcastchannel-success-expected.txt: Added.
+        * web-platform-tests/wasm/serialization/module/broadcastchannel-success.html: Added.
+        * web-platform-tests/wasm/serialization/module/identity-not-preserved-expected.txt: Added.
+        * web-platform-tests/wasm/serialization/module/identity-not-preserved.html: Added.
+        * web-platform-tests/wasm/serialization/module/incrementer.wasm: Added.
+        * web-platform-tests/wasm/serialization/module/nested-worker-success.any.js: Added.
+        * web-platform-tests/wasm/serialization/module/nested-worker-success.any.worker-expected.txt: Added.
+        * web-platform-tests/wasm/serialization/module/nested-worker-success.any.worker.html: Added.
+        * web-platform-tests/wasm/serialization/module/no-transferring-expected.txt: Added.
+        * web-platform-tests/wasm/serialization/module/no-transferring.html: Added.
+        * web-platform-tests/wasm/serialization/module/resources/blank.html: Added.
+        * web-platform-tests/wasm/serialization/module/resources/broadcastchannel-iframe.html: Added.
+        * web-platform-tests/wasm/serialization/module/resources/broadcastchannel-sharedworker.js: Added.
+        (channel.onmessageerror):
+        * web-platform-tests/wasm/serialization/module/resources/broadcastchannel-worker.js: Added.
+        (channel.onmessage):
+        * web-platform-tests/wasm/serialization/module/resources/create-empty-wasm-module.js: Added.
+        (createEmptyWasmModule):
+        * web-platform-tests/wasm/serialization/module/resources/echo-iframe.html: Added.
+        * web-platform-tests/wasm/serialization/module/resources/echo-worker.js: Added.
+        (self.onmessage):
+        * web-platform-tests/wasm/serialization/module/resources/incrementer-iframe-domain.sub.html: Added.
+        * web-platform-tests/wasm/serialization/module/resources/incrementer-iframe.html: Added.
+        * web-platform-tests/wasm/serialization/module/resources/incrementer-popup.html: Added.
+        * web-platform-tests/wasm/serialization/module/resources/incrementer-worker-with-channel.js: Added.
+        (self.onmessage):
+        * web-platform-tests/wasm/serialization/module/resources/incrementer-worker.js: Added.
+        * web-platform-tests/wasm/serialization/module/resources/incrementer.wasm: Added.
+        * web-platform-tests/wasm/serialization/module/resources/nested-iframe-1.html: Added.
+        * web-platform-tests/wasm/serialization/module/resources/nested-iframe-2.html: Added.
+        * web-platform-tests/wasm/serialization/module/resources/nested-iframe-3.html: Added.
+        * web-platform-tests/wasm/serialization/module/resources/nested-iframe-4-incrementer.html: Added.
+        * web-platform-tests/wasm/serialization/module/resources/serviceworker-failure.js: Added.
+        (self.onmessage.e.else):
+        * web-platform-tests/wasm/serialization/module/resources/sharedworker-failure.js: Added.
+        * web-platform-tests/wasm/serialization/module/resources/test-incrementer.js: Added.
+        (createWasmModule):
+        (testModule):
+        (self.testSharingViaIncrementerScript):
+        (self.setupDestinationIncrementer):
+        * web-platform-tests/wasm/serialization/module/resources/w3c-import.log: Added.
+        * web-platform-tests/wasm/serialization/module/serialization-via-history-expected.txt: Added.
+        * web-platform-tests/wasm/serialization/module/serialization-via-history.html: Added.
+        * web-platform-tests/wasm/serialization/module/serialization-via-idb.any-expected.txt: Added.
+        * web-platform-tests/wasm/serialization/module/serialization-via-idb.any.html: Added.
+        * web-platform-tests/wasm/serialization/module/serialization-via-idb.any.js: Added.
+        (createEmptyWasmModule):
+        (async_test.t.openReq.onupgradeneeded.e.store.put.property.get x):
+        (async_test.t.openReq.onupgradeneeded.e.store.put.createEmptyWasmModule.get x):
+        (async_test.t.openReq.onupgradeneeded.e.store.put.createEmptyWasmModule):
+        * web-platform-tests/wasm/serialization/module/serialization-via-idb.any.worker-expected.txt: Added.
+        * web-platform-tests/wasm/serialization/module/serialization-via-idb.any.worker.html: Added.
+        * web-platform-tests/wasm/serialization/module/serialization-via-notifications-api.any-expected.txt: Added.
+        * web-platform-tests/wasm/serialization/module/serialization-via-notifications-api.any.html: Added.
+        * web-platform-tests/wasm/serialization/module/serialization-via-notifications-api.any.js: Added.
+        (createEmptyWasmModule):
+        (test):
+        * web-platform-tests/wasm/serialization/module/serialization-via-notifications-api.any.worker-expected.txt: Added.
+        * web-platform-tests/wasm/serialization/module/serialization-via-notifications-api.any.worker.html: Added.
+        * web-platform-tests/wasm/serialization/module/w3c-import.log: Added.
+        * web-platform-tests/wasm/serialization/module/window-domain-success.sub-expected.txt: Added.
+        * web-platform-tests/wasm/serialization/module/window-domain-success.sub.html: Added.
+        * web-platform-tests/wasm/serialization/module/window-messagechannel-success-expected.txt: Added.
+        * web-platform-tests/wasm/serialization/module/window-messagechannel-success.html: Added.
+        * web-platform-tests/wasm/serialization/module/window-serviceworker-failure.https-expected.txt: Added.
+        * web-platform-tests/wasm/serialization/module/window-serviceworker-failure.https.html: Added.
+        * web-platform-tests/wasm/serialization/module/window-sharedworker-failure-expected.txt: Added.
+        * web-platform-tests/wasm/serialization/module/window-sharedworker-failure.html: Added.
+        * web-platform-tests/wasm/serialization/module/window-similar-but-cross-origin-success.sub-expected.txt: Added.
+        * web-platform-tests/wasm/serialization/module/window-similar-but-cross-origin-success.sub.html: Added.
+        * web-platform-tests/wasm/serialization/module/window-simple-success-expected.txt: Added.
+        * web-platform-tests/wasm/serialization/module/window-simple-success.html: Added.
+        * web-platform-tests/wasm/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/memory/w3c-import.log.
+        * web-platform-tests/wasm/webapi/abort.any-expected.txt: Added.
+        * web-platform-tests/wasm/webapi/abort.any.html: Added.
+        * web-platform-tests/wasm/webapi/abort.any.js: Added.
+        (const.method.of.methods.promise_test.async t):
+        (const.method.of.methods.return.promise_rejects_dom):
+        * web-platform-tests/wasm/webapi/abort.any.worker-expected.txt: Added.
+        * web-platform-tests/wasm/webapi/abort.any.worker.html: Added.
+        * web-platform-tests/wasm/webapi/body.any-expected.txt: Added.
+        * web-platform-tests/wasm/webapi/body.any.html: Added.
+        * web-platform-tests/wasm/webapi/body.any.js: Added.
+        (string_appeared_here.WebAssembly.method):
+        (string_appeared_here.return.promise_rejects_js):
+        * web-platform-tests/wasm/webapi/body.any.worker-expected.txt: Added.
+        * web-platform-tests/wasm/webapi/body.any.worker.html: Added.
+        * web-platform-tests/wasm/webapi/contenttype.any-expected.txt: Added.
+        * web-platform-tests/wasm/webapi/contenttype.any.html: Added.
+        * web-platform-tests/wasm/webapi/contenttype.any.js: Added.
+        (const.contenttype.of.validContentTypes.promise_test.async t):
+        * web-platform-tests/wasm/webapi/contenttype.any.worker-expected.txt: Added.
+        * web-platform-tests/wasm/webapi/contenttype.any.worker.html: Added.
+        * web-platform-tests/wasm/webapi/empty-body.any-expected.txt: Added.
+        * web-platform-tests/wasm/webapi/empty-body.any.html: Added.
+        * web-platform-tests/wasm/webapi/empty-body.any.js: Added.
+        (string_appeared_here.name.of.invalidArguments.WebAssembly.method):
+        * web-platform-tests/wasm/webapi/empty-body.any.worker-expected.txt: Added.
+        * web-platform-tests/wasm/webapi/empty-body.any.worker.html: Added.
+        * web-platform-tests/wasm/webapi/historical.any-expected.txt: Added.
+        * web-platform-tests/wasm/webapi/historical.any.html: Added.
+        * web-platform-tests/wasm/webapi/historical.any.js: Added.
+        (promise_test.async t.):
+        (promise_test.async t):
+        * web-platform-tests/wasm/webapi/historical.any.worker-expected.txt: Added.
+        * web-platform-tests/wasm/webapi/historical.any.worker.html: Added.
+        * web-platform-tests/wasm/webapi/idlharness.any-expected.txt: Added.
+        * web-platform-tests/wasm/webapi/idlharness.any.html: Added.
+        * web-platform-tests/wasm/webapi/idlharness.any.js: Added.
+        * web-platform-tests/wasm/webapi/idlharness.any.worker-expected.txt: Added.
+        * web-platform-tests/wasm/webapi/idlharness.any.worker.html: Added.
+        * web-platform-tests/wasm/webapi/instantiateStreaming-bad-imports.any-expected.txt: Added.
+        * web-platform-tests/wasm/webapi/instantiateStreaming-bad-imports.any.html: Added.
+        * web-platform-tests/wasm/webapi/instantiateStreaming-bad-imports.any.js: Added.
+        (test_bad_imports):
+        * web-platform-tests/wasm/webapi/instantiateStreaming-bad-imports.any.worker-expected.txt: Added.
+        * web-platform-tests/wasm/webapi/instantiateStreaming-bad-imports.any.worker.html: Added.
+        * web-platform-tests/wasm/webapi/instantiateStreaming.any-expected.txt: Added.
+        * web-platform-tests/wasm/webapi/instantiateStreaming.any.html: Added.
+        * web-platform-tests/wasm/webapi/instantiateStreaming.any.js: Added.
+        (setup):
+        (fn.of.instanceTestFactory.promise_test.async const):
+        (fn.of.instanceTestFactory.promise_test):
+        (promise_test.async const):
+        (promise_test.const.imports.get module.return.get global):
+        (promise_test.const.imports.get module):
+        (promise_test):
+        * web-platform-tests/wasm/webapi/instantiateStreaming.any.worker-expected.txt: Added.
+        * web-platform-tests/wasm/webapi/instantiateStreaming.any.worker.html: Added.
+        * web-platform-tests/wasm/webapi/invalid-args.any-expected.txt: Added.
+        * web-platform-tests/wasm/webapi/invalid-args.any.html: Added.
+        * web-platform-tests/wasm/webapi/invalid-args.any.js: Added.
+        (string_appeared_here.name.format_value):
+        * web-platform-tests/wasm/webapi/invalid-args.any.worker-expected.txt: Added.
+        * web-platform-tests/wasm/webapi/invalid-args.any.worker.html: Added.
+        * web-platform-tests/wasm/webapi/invalid-code.any-expected.txt: Added.
+        * web-platform-tests/wasm/webapi/invalid-code.any.html: Added.
+        * web-platform-tests/wasm/webapi/invalid-code.any.js: Added.
+        (setup):
+        * web-platform-tests/wasm/webapi/invalid-code.any.worker-expected.txt: Added.
+        * web-platform-tests/wasm/webapi/invalid-code.any.worker.html: Added.
+        * web-platform-tests/wasm/webapi/origin.sub.any-expected.txt: Added.
+        * web-platform-tests/wasm/webapi/origin.sub.any.html: Added.
+        * web-platform-tests/wasm/webapi/origin.sub.any.js: Added.
+        * web-platform-tests/wasm/webapi/origin.sub.any.worker-expected.txt: Added.
+        * web-platform-tests/wasm/webapi/origin.sub.any.worker.html: Added.
+        * web-platform-tests/wasm/webapi/rejected-arg.any-expected.txt: Added.
+        * web-platform-tests/wasm/webapi/rejected-arg.any.html: Added.
+        * web-platform-tests/wasm/webapi/rejected-arg.any.js: Added.
+        (string_appeared_here.WebAssembly.method):
+        * web-platform-tests/wasm/webapi/rejected-arg.any.worker-expected.txt: Added.
+        * web-platform-tests/wasm/webapi/rejected-arg.any.worker.html: Added.
+        * web-platform-tests/wasm/webapi/status.any-expected.txt: Added.
+        * web-platform-tests/wasm/webapi/status.any.html: Added.
+        * web-platform-tests/wasm/webapi/status.any.js: Added.
+        * web-platform-tests/wasm/webapi/status.any.worker-expected.txt: Added.
+        * web-platform-tests/wasm/webapi/status.any.worker.html: Added.
+        * web-platform-tests/wasm/webapi/status.py: Added.
+        (main):
+        * web-platform-tests/wasm/webapi/w3c-import.log: Added.
+
 2020-11-16  Chris Dumez  <cdumez@apple.com>
 
         WebAudio tests may give slightly different outputs on different platforms

@@ -417,7 +417,7 @@
     "web-platform-tests/vibration": "skip", 
     "web-platform-tests/visual-viewport": "import", 
     "web-platform-tests/wai-aria": "skip", 
-    "web-platform-tests/wasm": "skip", 
+    "web-platform-tests/wasm": "import", 
     "web-platform-tests/wasm/jsapi": "import", 
     "web-platform-tests/web-animations": "import", 
     "web-platform-tests/web-nfc": "skip", 

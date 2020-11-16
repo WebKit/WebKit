@@ -15,6 +15,7 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/table/assertions.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/table/constructor-types.tentative.any.js
 /LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/table/constructor.any.js
 /LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/table/get-set.any.js
 /LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/table/grow-reftypes.tentative.any.js

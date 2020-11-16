@@ -16,6 +16,22 @@ PASS Mutable i32 (true)
 PASS Mutable i32 (one)
 PASS Mutable i32 (string)
 PASS Mutable i32 (true on prototype)
+FAIL Immutable i64 (missing) WebAssembly.Global.prototype.value does not work with i64 type
+FAIL Immutable i64 with ToNumber side-effects (missing) WebAssembly.Global.prototype.value does not work with i64 type
+FAIL Immutable i64 (undefined) WebAssembly.Global.prototype.value does not work with i64 type
+FAIL Immutable i64 with ToNumber side-effects (undefined) WebAssembly.Global.prototype.value does not work with i64 type
+FAIL Immutable i64 (null) WebAssembly.Global.prototype.value does not work with i64 type
+FAIL Immutable i64 with ToNumber side-effects (null) WebAssembly.Global.prototype.value does not work with i64 type
+FAIL Immutable i64 (false) WebAssembly.Global.prototype.value does not work with i64 type
+FAIL Immutable i64 with ToNumber side-effects (false) WebAssembly.Global.prototype.value does not work with i64 type
+FAIL Immutable i64 (empty string) WebAssembly.Global.prototype.value does not work with i64 type
+FAIL Immutable i64 with ToNumber side-effects (empty string) WebAssembly.Global.prototype.value does not work with i64 type
+FAIL Immutable i64 (zero) WebAssembly.Global.prototype.value does not work with i64 type
+FAIL Immutable i64 with ToNumber side-effects (zero) WebAssembly.Global.prototype.value does not work with i64 type
+FAIL Mutable i64 (true) WebAssembly.Global.prototype.value does not work with i64 type
+FAIL Mutable i64 (one) WebAssembly.Global.prototype.value does not work with i64 type
+FAIL Mutable i64 (string) WebAssembly.Global.prototype.value does not work with i64 type
+FAIL Mutable i64 (true on prototype) WebAssembly.Global.prototype.value does not work with i64 type
 PASS Immutable f32 (missing)
 PASS Immutable f32 with ToNumber side-effects (missing)
 PASS Immutable f32 (undefined)
@@ -48,8 +64,7 @@ PASS Mutable f64 (true)
 PASS Mutable f64 (one)
 PASS Mutable f64 (string)
 PASS Mutable f64 (true on prototype)
-PASS i64 with default
-PASS i64 with ToNumber side-effects
+FAIL i64 mutability WebAssembly.Global.prototype.value does not work with i64 type
 PASS Calling setter without argument
 PASS Stray argument
 

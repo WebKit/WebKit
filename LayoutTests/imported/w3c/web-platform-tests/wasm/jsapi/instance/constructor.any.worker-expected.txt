@@ -11,5 +11,16 @@ FAIL getter order for imports object assert_array_equals: expected property 1 to
 PASS imports
 FAIL No imports assert_array_equals: matching export keys expected property 2 to be "table" but got "global" (expected array ["fn", "fn2", "table", "global", "global2", "memory"] got ["fn", "fn2", "global", "global2", "memory", "table"])
 FAIL exports and imports assert_false: fn: writable expected false got true
+FAIL i64 exports and imports imported global module:global cannot be an i64 (evaluating 'new WebAssembly.Instance(module, ...args)')
+FAIL import with i32-returning function assert_false: fn2: writable expected false got true
+FAIL import with function that takes and returns i32 assert_false: fn2: writable expected false got true
+FAIL import with i64-returning function assert_false: fn2: writable expected false got true
+FAIL import with function that takes and returns i64 assert_false: fn2: writable expected false got true
+FAIL import with i32-taking function assert_false: fn: writable expected false got true
+FAIL import with i64-taking function assert_false: fn: writable expected false got true
+FAIL export i64-returning function assert_false: fn: writable expected false got true
+FAIL i32 mutable WebAssembly.Global import assert_false: fn: writable expected false got true
+FAIL i64 mutable WebAssembly.Global import WebAssembly.Global does not accept i64 initial value
+FAIL Multiple i64 arguments assert_false: fn: writable expected false got true
 PASS stray argument
 

@@ -1,0 +1,3 @@
+
+PASS WebAssembly#CreateMultipleMemories.
+

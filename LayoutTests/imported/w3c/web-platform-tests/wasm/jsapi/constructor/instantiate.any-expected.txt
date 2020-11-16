@@ -17,6 +17,28 @@ FAIL No imports: BufferSource argument assert_array_equals: matching export keys
 FAIL No imports: Module argument assert_array_equals: matching export keys expected property 2 to be "table" but got "global" (expected array ["fn", "fn2", "table", "global", "global2", "memory"] got ["fn", "fn2", "global", "global2", "memory", "table"])
 FAIL exports and imports: BufferSource argument assert_false: fn: writable expected false got true
 FAIL exports and imports: Module argument assert_false: fn: writable expected false got true
+FAIL i64 exports and imports: BufferSource argument promise_test: Unhandled rejection with value: object "LinkError: imported global module:global cannot be an i64"
+FAIL i64 exports and imports: Module argument promise_test: Unhandled rejection with value: object "LinkError: imported global module:global cannot be an i64"
+FAIL import with i32-returning function: BufferSource argument assert_false: fn2: writable expected false got true
+FAIL import with i32-returning function: Module argument assert_false: fn2: writable expected false got true
+FAIL import with function that takes and returns i32: BufferSource argument assert_false: fn2: writable expected false got true
+FAIL import with function that takes and returns i32: Module argument assert_false: fn2: writable expected false got true
+FAIL import with i64-returning function: BufferSource argument assert_false: fn2: writable expected false got true
+FAIL import with i64-returning function: Module argument assert_false: fn2: writable expected false got true
+FAIL import with function that takes and returns i64: BufferSource argument assert_false: fn2: writable expected false got true
+FAIL import with function that takes and returns i64: Module argument assert_false: fn2: writable expected false got true
+FAIL import with i32-taking function: BufferSource argument assert_false: fn: writable expected false got true
+FAIL import with i32-taking function: Module argument assert_false: fn: writable expected false got true
+FAIL import with i64-taking function: BufferSource argument assert_false: fn: writable expected false got true
+FAIL import with i64-taking function: Module argument assert_false: fn: writable expected false got true
+FAIL export i64-returning function: BufferSource argument assert_false: fn: writable expected false got true
+FAIL export i64-returning function: Module argument assert_false: fn: writable expected false got true
+FAIL i32 mutable WebAssembly.Global import: BufferSource argument assert_false: fn: writable expected false got true
+FAIL i32 mutable WebAssembly.Global import: Module argument assert_false: fn: writable expected false got true
+FAIL i64 mutable WebAssembly.Global import: BufferSource argument WebAssembly.Global does not accept i64 initial value
+FAIL i64 mutable WebAssembly.Global import: Module argument WebAssembly.Global does not accept i64 initial value
+FAIL Multiple i64 arguments: BufferSource argument assert_false: fn: writable expected false got true
+FAIL Multiple i64 arguments: Module argument assert_false: fn: writable expected false got true
 PASS stray argument: BufferSource argument
 PASS stray argument: Module argument
 PASS Synchronous options handling: Buffer argument

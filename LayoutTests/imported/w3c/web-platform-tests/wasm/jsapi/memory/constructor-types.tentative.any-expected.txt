@@ -1,0 +1,5 @@
+
+FAIL Initializing with both initial and minimum assert_throws_js: function "() => new WebAssembly.Memory(argument)" did not throw
+FAIL Zero minimum Expect an integer argument in the range: [0, 2^32 - 1]
+FAIL Non-zero minimum Expect an integer argument in the range: [0, 2^32 - 1]
+

@@ -1,0 +1,18 @@
+
+FAIL Response with status 0: compileStreaming WebAssembly[method] is not a function. (In 'WebAssembly[method](response)', 'WebAssembly[method]' is undefined)
+FAIL Response with status 300: compileStreaming WebAssembly[method] is not a function. (In 'WebAssembly[method](response)', 'WebAssembly[method]' is undefined)
+FAIL Response with status 400: compileStreaming WebAssembly[method] is not a function. (In 'WebAssembly[method](response)', 'WebAssembly[method]' is undefined)
+FAIL Response with status 404: compileStreaming WebAssembly[method] is not a function. (In 'WebAssembly[method](response)', 'WebAssembly[method]' is undefined)
+FAIL Response with status 500: compileStreaming WebAssembly[method] is not a function. (In 'WebAssembly[method](response)', 'WebAssembly[method]' is undefined)
+FAIL Response with status 600: compileStreaming WebAssembly[method] is not a function. (In 'WebAssembly[method](response)', 'WebAssembly[method]' is undefined)
+FAIL Response with status 700: compileStreaming WebAssembly[method] is not a function. (In 'WebAssembly[method](response)', 'WebAssembly[method]' is undefined)
+FAIL Response with status 999: compileStreaming WebAssembly[method] is not a function. (In 'WebAssembly[method](response)', 'WebAssembly[method]' is undefined)
+FAIL Response with status 0: instantiateStreaming WebAssembly[method] is not a function. (In 'WebAssembly[method](response)', 'WebAssembly[method]' is undefined)
+FAIL Response with status 300: instantiateStreaming WebAssembly[method] is not a function. (In 'WebAssembly[method](response)', 'WebAssembly[method]' is undefined)
+FAIL Response with status 400: instantiateStreaming WebAssembly[method] is not a function. (In 'WebAssembly[method](response)', 'WebAssembly[method]' is undefined)
+FAIL Response with status 404: instantiateStreaming WebAssembly[method] is not a function. (In 'WebAssembly[method](response)', 'WebAssembly[method]' is undefined)
+FAIL Response with status 500: instantiateStreaming WebAssembly[method] is not a function. (In 'WebAssembly[method](response)', 'WebAssembly[method]' is undefined)
+FAIL Response with status 600: instantiateStreaming WebAssembly[method] is not a function. (In 'WebAssembly[method](response)', 'WebAssembly[method]' is undefined)
+FAIL Response with status 700: instantiateStreaming WebAssembly[method] is not a function. (In 'WebAssembly[method](response)', 'WebAssembly[method]' is undefined)
+FAIL Response with status 999: instantiateStreaming WebAssembly[method] is not a function. (In 'WebAssembly[method](response)', 'WebAssembly[method]' is undefined)
+

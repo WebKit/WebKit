@@ -1,0 +1,4 @@
+
+FAIL Invalid code: compileStreaming WebAssembly[method] is not a function. (In 'WebAssembly[method](response)', 'WebAssembly[method]' is undefined)
+FAIL Invalid code: instantiateStreaming WebAssembly[method] is not a function. (In 'WebAssembly[method](response)', 'WebAssembly[method]' is undefined)
+

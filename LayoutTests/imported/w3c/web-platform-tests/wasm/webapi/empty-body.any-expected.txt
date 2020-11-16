@@ -1,0 +1,10 @@
+
+FAIL compileStreaming: no body WebAssembly[method] is not a function. (In 'WebAssembly[method](argument)', 'WebAssembly[method]' is undefined)
+FAIL compileStreaming: no body in a promise WebAssembly[method] is not a function. (In 'WebAssembly[method](argument)', 'WebAssembly[method]' is undefined)
+FAIL compileStreaming: empty body WebAssembly[method] is not a function. (In 'WebAssembly[method](argument)', 'WebAssembly[method]' is undefined)
+FAIL compileStreaming: empty body in a promise WebAssembly[method] is not a function. (In 'WebAssembly[method](argument)', 'WebAssembly[method]' is undefined)
+FAIL instantiateStreaming: no body WebAssembly[method] is not a function. (In 'WebAssembly[method](argument)', 'WebAssembly[method]' is undefined)
+FAIL instantiateStreaming: no body in a promise WebAssembly[method] is not a function. (In 'WebAssembly[method](argument)', 'WebAssembly[method]' is undefined)
+FAIL instantiateStreaming: empty body WebAssembly[method] is not a function. (In 'WebAssembly[method](argument)', 'WebAssembly[method]' is undefined)
+FAIL instantiateStreaming: empty body in a promise WebAssembly[method] is not a function. (In 'WebAssembly[method](argument)', 'WebAssembly[method]' is undefined)
+

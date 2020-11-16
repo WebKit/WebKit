@@ -14,7 +14,10 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/memory/assertions.js
 /LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/memory/buffer.any.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/memory/constructor-shared.tentative.any.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/memory/constructor-types.tentative.any.js
 /LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/memory/constructor.any.js
 /LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/memory/grow.any.js
 /LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/memory/toString.any.js
