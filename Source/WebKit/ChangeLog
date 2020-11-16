@@ -1,3 +1,18 @@
+2020-11-16  Trevor Stevenson  <trevor_s@apple.com>
+
+        Add didReceiveResponseForResource to WKWebProcessPlugInLoadDelegate
+        https://bugs.webkit.org/show_bug.cgi?id=218925
+
+        Reviewed by Alex Christensen.
+
+        Expose the callback for didReceiveResponseForResource in WKWebProcessPlugInLoadDelegate
+        for use in the injected bundle.
+
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInLoadDelegate.h:
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.mm:
+        (didReceiveResponseForResource):
+        (setUpResourceLoadClient):
+
 2020-11-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: do not focus the main frame when switching to a window

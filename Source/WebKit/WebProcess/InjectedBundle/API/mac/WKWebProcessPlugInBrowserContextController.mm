@@ -294,6 +294,15 @@ static void didInitiateLoadForResource(WKBundlePageRef, WKBundleFrameRef frame, 
     }
 }
 
+static void didReceiveResponseForResource(WKBundlePageRef, WKBundleFrameRef frame, uint64_t resourceIdentifier, WKURLResponseRef response, const void* clientInfo)
+{
+    auto pluginContextController = (__bridge WKWebProcessPlugInBrowserContextController *)clientInfo;
+    auto loadDelegate = pluginContextController->_loadDelegate.get();
+
+    if ([loadDelegate respondsToSelector:@selector(webProcessPlugInBrowserContextController:frame:didReceiveResponse:forResource:)])
+        [loadDelegate webProcessPlugInBrowserContextController:pluginContextController frame:wrapper(*WebKit::toImpl(frame)) didReceiveResponse:WebKit::toImpl(response)->resourceResponse().nsURLResponse() forResource:resourceIdentifier];
+}
+
 static void didFinishLoadForResource(WKBundlePageRef, WKBundleFrameRef frame, uint64_t resourceIdentifier, const void* clientInfo)
 {
     auto pluginContextController = (__bridge WKWebProcessPlugInBrowserContextController *)clientInfo;
@@ -323,6 +332,7 @@ static void setUpResourceLoadClient(WKWebProcessPlugInBrowserContextController *
     client.base.clientInfo = (__bridge void*) contextController;
     client.willSendRequestForFrame = willSendRequestForFrame;
     client.didInitiateLoadForResource = didInitiateLoadForResource;
+    client.didReceiveResponseForResource = didReceiveResponseForResource;
     client.didFinishLoadForResource = didFinishLoadForResource;
     client.didFailLoadForResource = didFailLoadForResource;
 
