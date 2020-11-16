@@ -46,6 +46,11 @@
 
 #include <wpe/wpe-egl.h>
 
+#ifndef EGL_EXT_platform_base
+#define EGL_EXT_platform_base 1
+typedef EGLDisplay (EGLAPIENTRYP PFNEGLGETPLATFORMDISPLAYEXTPROC) (EGLenum platform, void *native_display, const EGLint *attrib_list);
+#endif
+
 namespace WebCore {
 
 std::unique_ptr<PlatformDisplayLibWPE> PlatformDisplayLibWPE::create()
@@ -70,7 +75,28 @@ bool PlatformDisplayLibWPE::initialize(int hostFd)
 {
     m_backend = wpe_renderer_backend_egl_create(hostFd);
 
-    m_eglDisplay = eglGetDisplay(wpe_renderer_backend_egl_get_native_display(m_backend));
+    EGLNativeDisplayType eglNativeDisplay = wpe_renderer_backend_egl_get_native_display(m_backend);
+
+#if WPE_CHECK_VERSION(1, 1, 0)
+    uint32_t eglPlatform = wpe_renderer_backend_egl_get_platform(m_backend);
+    if (eglPlatform) {
+        using GetPlatformDisplayType = PFNEGLGETPLATFORMDISPLAYEXTPROC;
+        GetPlatformDisplayType getPlatformDisplay =
+            [] {
+                const char* extensions = eglQueryString(nullptr, EGL_EXTENSIONS);
+                if (GLContext::isExtensionSupported(extensions, "EGL_EXT_platform_base")
+                    || GLContext::isExtensionSupported(extensions, "EGL_KHR_platform_base"))
+                    return reinterpret_cast<GetPlatformDisplayType>(eglGetProcAddress("eglGetPlatformDisplay"));
+                return GetPlatformDisplayType(nullptr);
+            }();
+
+        if (getPlatformDisplay)
+            m_eglDisplay = getPlatformDisplay(eglPlatform, eglNativeDisplay, nullptr);
+    }
+#endif
+
+    if (m_eglDisplay == EGL_NO_DISPLAY)
+        m_eglDisplay = eglGetDisplay(eglNativeDisplay);
     if (m_eglDisplay == EGL_NO_DISPLAY) {
         WTFLogAlways("PlatformDisplayLibWPE: could not create the EGL display: %s.", GLContextEGL::lastErrorString());
         return false;
