@@ -1,3 +1,19 @@
+2020-11-16  Chris Dumez  <cdumez@apple.com>
+
+        Fix several leaks of CGContext in API tests
+        https://bugs.webkit.org/show_bug.cgi?id=218988
+
+        Reviewed by Wenson Hsieh.
+
+        Make sure we adopt the value returned by CGBitmapContextCreate().
+
+        * TestWebKitAPI/Tests/WebKitCocoa/GPUProcess.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebViewSnapshot.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitLegacy/ios/SnapshotViaRenderInContext.mm:
+        (TestWebKitAPI::TEST):
+
 2020-11-15  Youenn Fablet  <youenn@apple.com>
 
         Add a WebRTC SFrame transform
