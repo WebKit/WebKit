@@ -31,6 +31,8 @@
 #include "config.h"
 #include "GridPosition.h"
 
+#include <wtf/text/TextStream.h>
+
 namespace WebCore {
 
 Optional<int> GridPosition::gMaxPositionForTesting;

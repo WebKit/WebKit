@@ -32,6 +32,8 @@
 
 namespace WebCore {
 
+class RenderStyle;
+
 namespace Layout {
 class Box;
 class BoxGeometry;
@@ -46,6 +48,7 @@ namespace Display {
 class Box;
 class BoxDecorationData;
 class BoxModelBox;
+class Style;
 
 enum class RootBackgroundPropagation : uint8_t {
     None,

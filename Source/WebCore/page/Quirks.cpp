@@ -43,6 +43,7 @@
 #include "LayoutUnit.h"
 #include "NamedNodeMap.h"
 #include "NetworkStorageSession.h"
+#include "PlatformMouseEvent.h"
 #include "ResourceLoadObserver.h"
 #include "RuntimeEnabledFeatures.h"
 #include "SVGPathElement.h"

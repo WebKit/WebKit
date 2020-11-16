@@ -1,3 +1,15 @@
+2020-11-16  Don Olmstead  <don.olmstead@sony.com>
+
+        Non-unified build fixes, mid November 2020 edition
+        https://bugs.webkit.org/show_bug.cgi?id=218911
+
+        Unreviewed build fix.
+
+        * UIProcess/SpeechRecognitionServer.cpp:
+        (WebKit::SpeechRecognitionServer::start):
+        (WebKit::SpeechRecognitionServer::requestPermissionForRequest):
+        (WebKit::SpeechRecognitionServer::sendUpdate):
+
 2020-11-16  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] The WebContent sandbox does not apply for open source builds
