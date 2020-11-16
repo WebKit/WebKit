@@ -75,7 +75,6 @@ private:
     void resolveChildFrameWithNodeHandle(WebCore::PageIdentifier, Optional<WebCore::FrameIdentifier>, const String& nodeHandle, CompletionHandler<void(Optional<String>, Optional<WebCore::FrameIdentifier>)>&&);
     void resolveChildFrameWithName(WebCore::PageIdentifier, Optional<WebCore::FrameIdentifier>, const String& name, CompletionHandler<void(Optional<String>, Optional<WebCore::FrameIdentifier>)>&&);
     void resolveParentFrame(WebCore::PageIdentifier, Optional<WebCore::FrameIdentifier>, CompletionHandler<void(Optional<String>, Optional<WebCore::FrameIdentifier>)>&&);
-    void focusFrame(WebCore::PageIdentifier, Optional<WebCore::FrameIdentifier>);
     void computeElementLayout(WebCore::PageIdentifier, Optional<WebCore::FrameIdentifier>, String nodeHandle, bool scrollIntoViewIfNeeded, CoordinateSystem, CompletionHandler<void(Optional<String>, WebCore::IntRect, Optional<WebCore::IntPoint>, bool)>&&);
     void selectOptionElement(WebCore::PageIdentifier, Optional<WebCore::FrameIdentifier>, String nodeHandle, CompletionHandler<void(Optional<String>)>&&);
     void setFilesForInputFileUpload(WebCore::PageIdentifier, Optional<WebCore::FrameIdentifier>, String nodeHandle, Vector<String>&& filenames, CompletionHandler<void(Optional<String>)>&&);

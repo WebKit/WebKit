@@ -564,31 +564,6 @@ void WebAutomationSessionProxy::resolveParentFrame(WebCore::PageIdentifier pageI
     completionHandler(WTF::nullopt, parentFrame->frameID());
 }
 
-void WebAutomationSessionProxy::focusFrame(WebCore::PageIdentifier pageID, Optional<WebCore::FrameIdentifier> frameID)
-{
-    WebPage* page = WebProcess::singleton().webPage(pageID);
-    if (!page)
-        return;
-
-    auto* frame = frameID ? WebProcess::singleton().webFrame(*frameID) : &page->mainWebFrame();
-    if (!frame)
-        return;
-
-    WebCore::Frame* coreFrame = frame->coreFrame();
-    if (!coreFrame)
-        return;
-
-    WebCore::Document* coreDocument = coreFrame->document();
-    if (!coreDocument)
-        return;
-
-    WebCore::DOMWindow* coreDOMWindow = coreDocument->domWindow();
-    if (!coreDOMWindow)
-        return;
-
-    coreDOMWindow->focus(true);
-}
-
 static WebCore::Element* containerElementForElement(WebCore::Element& element)
 {
     // §13. Element State.

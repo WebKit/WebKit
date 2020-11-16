@@ -1,3 +1,21 @@
+2020-11-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebDriver: do not focus the main frame when switching to a window
+        https://bugs.webkit.org/show_bug.cgi?id=218383
+
+        Reviewed by Brian Burg.
+
+        The spec doesn't say we should focus the main frame. This is confusing WPT test
+        infrastructure/testdriver/actions/crossOrigin.sub.html that first focuses an input in an iframe and then it send
+        keyboard events to the window (after switching to the window again even when it's already the current one, that
+        causes the iframe focus to be lost).
+
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::switchToBrowsingContext):
+        * WebProcess/Automation/WebAutomationSessionProxy.cpp:
+        * WebProcess/Automation/WebAutomationSessionProxy.h:
+        * WebProcess/Automation/WebAutomationSessionProxy.messages.in:
+
 2020-11-16  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         Final refactor for WebGL implementation to use only GraphicsContextGL
