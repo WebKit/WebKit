@@ -21,7 +21,6 @@
 
 #if USE(LIBWEBRTC)
 
-#include "GStreamerAudioStreamDescription.h"
 #include "GStreamerCommon.h"
 #include "RealtimeOutgoingAudioSource.h"
 
@@ -49,8 +48,8 @@ private:
     void pullAudioData();
 
     GUniquePtr<GstAudioConverter> m_sampleConverter;
-    std::unique_ptr<GStreamerAudioStreamDescription> m_inputStreamDescription;
-    std::unique_ptr<GStreamerAudioStreamDescription> m_outputStreamDescription;
+    GstAudioInfo m_inputStreamDescription;
+    GstAudioInfo m_outputStreamDescription;
 
     Lock m_adapterMutex;
     GRefPtr<GstAdapter> m_adapter;

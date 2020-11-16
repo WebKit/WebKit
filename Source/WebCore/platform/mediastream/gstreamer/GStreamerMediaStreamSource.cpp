@@ -40,7 +40,7 @@
 using namespace WebCore;
 
 static void webkitMediaStreamSrcPushVideoSample(WebKitMediaStreamSrc*, GstSample*);
-static void webkitMediaStreamSrcPushAudioSample(WebKitMediaStreamSrc*, GstSample*);
+static void webkitMediaStreamSrcPushAudioSample(WebKitMediaStreamSrc*, const GRefPtr<GstSample>&);
 static void webkitMediaStreamSrcTrackEnded(WebKitMediaStreamSrc*, MediaStreamTrackPrivate&);
 static void webkitMediaStreamSrcRemoveTrackByType(WebKitMediaStreamSrc*, RealtimeMediaSource::Type);
 
@@ -591,10 +591,10 @@ static void webkitMediaStreamSrcPushVideoSample(WebKitMediaStreamSrc* self, GstS
         self->priv->videoSrc->pushSample(sample);
 }
 
-static void webkitMediaStreamSrcPushAudioSample(WebKitMediaStreamSrc* self, GstSample* sample)
+static void webkitMediaStreamSrcPushAudioSample(WebKitMediaStreamSrc* self, const GRefPtr<GstSample>& sample)
 {
     if (self->priv->audioSrc)
-        self->priv->audioSrc->pushSample(sample);
+        self->priv->audioSrc->pushSample(sample.get());
 }
 
 static void webkitMediaStreamSrcTrackEnded(WebKitMediaStreamSrc* self, MediaStreamTrackPrivate& track)

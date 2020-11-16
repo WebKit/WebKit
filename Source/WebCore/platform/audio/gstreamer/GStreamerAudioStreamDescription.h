@@ -30,13 +30,19 @@ namespace WebCore {
 
 class GStreamerAudioStreamDescription final: public AudioStreamDescription {
 public:
-    GStreamerAudioStreamDescription(GstAudioInfo info)
+    GStreamerAudioStreamDescription(GstAudioInfo&& info)
+        : m_info(WTFMove(info))
+        , m_caps(adoptGRef(gst_audio_info_to_caps(&m_info)))
+    {
+    }
+
+    GStreamerAudioStreamDescription(const GstAudioInfo& info)
         : m_info(info)
         , m_caps(adoptGRef(gst_audio_info_to_caps(&m_info)))
     {
     }
 
-    GStreamerAudioStreamDescription(GstAudioInfo *info)
+    GStreamerAudioStreamDescription(GstAudioInfo* info)
         : m_info(*info)
         , m_caps(adoptGRef(gst_audio_info_to_caps(&m_info)))
     {
@@ -93,8 +99,8 @@ public:
     bool operator==(const GStreamerAudioStreamDescription& other) { return gst_audio_info_is_equal(&m_info, &other.m_info); }
     bool operator!=(const GStreamerAudioStreamDescription& other) { return !operator == (other); }
 
-    GstCaps* caps() { return m_caps.get(); }
-    GstAudioInfo* getInfo() { return &m_info; }
+    const GRefPtr<GstCaps>& caps() const { return m_caps; }
+    const GstAudioInfo& getInfo() const { return m_info; }
 
 private:
     GstAudioInfo m_info;

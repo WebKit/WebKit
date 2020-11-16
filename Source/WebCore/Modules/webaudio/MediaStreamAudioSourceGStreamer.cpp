@@ -52,7 +52,7 @@ void MediaStreamAudioSource::consumeAudio(AudioBus& bus, size_t numberOfFrames)
         return;
     }
 
-    auto mediaTime = MediaTime((m_numberOfFrames * G_USEC_PER_SEC) / m_currentSettings.sampleRate(), G_USEC_PER_SEC);
+    MediaTime mediaTime((m_numberOfFrames * G_USEC_PER_SEC) / m_currentSettings.sampleRate(), G_USEC_PER_SEC);
     m_numberOfFrames += numberOfFrames;
 
     GstAudioInfo info;
@@ -64,10 +64,9 @@ void MediaStreamAudioSource::consumeAudio(AudioBus& bus, size_t numberOfFrames)
     auto buffer = adoptGRef(gst_buffer_new_allocate(nullptr, size, nullptr));
     copyBusData(bus, buffer.get(), muted());
     auto sample = adoptGRef(gst_sample_new(buffer.get(), caps.get(), nullptr, nullptr));
-    m_audioBuffer = makeUnique<GStreamerAudioData>(WTFMove(sample), info);
-
-    GStreamerAudioStreamDescription description(info);
-    audioSamplesAvailable(mediaTime, *m_audioBuffer, description, numberOfFrames);
+    GStreamerAudioData audioBuffer(WTFMove(sample), info);
+    GStreamerAudioStreamDescription description(&info);
+    audioSamplesAvailable(mediaTime, audioBuffer, description, numberOfFrames);
 }
 
 } // namespace WebCore

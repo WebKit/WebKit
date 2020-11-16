@@ -124,13 +124,13 @@ GstFlowReturn GStreamerAudioCaptureSource::newSampleCallback(GstElement* sink, G
     auto sample = adoptGRef(gst_app_sink_pull_sample(GST_APP_SINK(sink)));
 
     // FIXME - figure out a way to avoid copying (on write) the data.
-    GstBuffer* buf = gst_sample_get_buffer(sample.get());
-    auto frames(std::unique_ptr<GStreamerAudioData>(new GStreamerAudioData(WTFMove(sample))));
-    auto streamDesc(std::unique_ptr<GStreamerAudioStreamDescription>(new GStreamerAudioStreamDescription(frames->getAudioInfo())));
+    auto* buffer = gst_sample_get_buffer(sample.get());
+    GStreamerAudioData frames(WTFMove(sample));
+    GStreamerAudioStreamDescription description(frames.getAudioInfo());
 
     source->audioSamplesAvailable(
-        MediaTime(GST_TIME_AS_USECONDS(GST_BUFFER_PTS(buf)), G_USEC_PER_SEC),
-        *frames, *streamDesc, gst_buffer_get_size(buf) / frames->getAudioInfo().bpf);
+        MediaTime(GST_TIME_AS_USECONDS(GST_BUFFER_PTS(buffer)), G_USEC_PER_SEC),
+        frames, description, gst_buffer_get_size(buffer) / description.getInfo().bpf);
 
     return GST_FLOW_OK;
 }

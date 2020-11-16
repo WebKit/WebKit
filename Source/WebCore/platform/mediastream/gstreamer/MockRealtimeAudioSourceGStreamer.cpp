@@ -81,13 +81,13 @@ void MockRealtimeAudioSourceGStreamer::render(Seconds delta)
         uint32_t bipBopCount = std::min(frameCount, bipBopRemain);
 
         ASSERT(m_streamFormat);
-        GstAudioInfo* info = m_streamFormat->getInfo();
+        const auto& info = m_streamFormat->getInfo();
         GRefPtr<GstBuffer> buffer = adoptGRef(gst_buffer_new_allocate(nullptr, bipBopCount * m_streamFormat->bytesPerFrame(), nullptr));
         {
             GstMappedBuffer map(buffer.get(), GST_MAP_WRITE);
 
             if (muted())
-                gst_audio_format_fill_silence(info->finfo, map.data(), map.size());
+                gst_audio_format_fill_silence(info.finfo, map.data(), map.size());
             else {
                 memcpy(map.data(), &m_bipBopBuffer[bipBopStart], sizeof(float) * bipBopCount);
                 addHum(s_HumVolume, s_HumFrequency, sampleRate(), m_samplesRendered, reinterpret_cast<float*>(map.data()), bipBopCount);
@@ -98,11 +98,11 @@ void MockRealtimeAudioSourceGStreamer::render(Seconds delta)
         totalFrameCount -= bipBopCount;
         frameCount = std::min(totalFrameCount, m_maximiumFrameCount);
 
-        GRefPtr<GstCaps> caps = adoptGRef(gst_audio_info_to_caps(info));
+        auto caps = adoptGRef(gst_audio_info_to_caps(&info));
         auto sample = adoptGRef(gst_sample_new(buffer.get(), caps.get(), nullptr, nullptr));
-        auto data(std::unique_ptr<GStreamerAudioData>(new GStreamerAudioData(WTFMove(sample), *info)));
-        auto mediaTime = MediaTime((m_samplesRendered * G_USEC_PER_SEC) / sampleRate(), G_USEC_PER_SEC);
-        audioSamplesAvailable(mediaTime, *data.get(), *m_streamFormat, bipBopCount);
+        GStreamerAudioData data(WTFMove(sample), info);
+        MediaTime mediaTime((m_samplesRendered * G_USEC_PER_SEC) / sampleRate(), G_USEC_PER_SEC);
+        audioSamplesAvailable(mediaTime, data, *m_streamFormat, bipBopCount);
     }
 }
 
