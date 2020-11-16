@@ -1,3 +1,15 @@
+2020-11-16  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] The WebContent sandbox does not apply for open source builds
+        https://bugs.webkit.org/show_bug.cgi?id=218982
+
+        Reviewed by Alexey Proskuryakov.
+
+        The WebContent sandbox does not apply for open source builds on macOS, since it has enabled message filtering,
+        which requires a private entitlement.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2020-11-16  Megan Gardner  <megan_gardner@apple.com>
 
         Add menu support for app highlights for books

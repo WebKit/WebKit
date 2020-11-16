@@ -112,7 +112,7 @@
     ;; OpenCL
     (allow iokit-open
         (iokit-connection "IOAccelerator")
-#if __MAC_OS_X_VERSION_MIN_REQUIRED > 110000
+#if HAVE(SANDBOX_MESSAGE_FILTERING)
         (with telemetry-backtrace)
         (apply-message-filter
             (allow
@@ -127,7 +127,7 @@
     )
     (allow iokit-open
         (iokit-registry-entry-class "IOAccelerationUserClient")
-#if __MAC_OS_X_VERSION_MIN_REQUIRED > 110000
+#if HAVE(SANDBOX_MESSAGE_FILTERING)
         (with telemetry-backtrace)
         (apply-message-filter
             (allow (with telemetry)
@@ -140,7 +140,7 @@
     )
     (allow iokit-open
         (iokit-registry-entry-class "IOSurfaceRootUserClient")
-#if __MAC_OS_X_VERSION_MIN_REQUIRED > 110000
+#if HAVE(SANDBOX_MESSAGE_FILTERING)
         (with telemetry-backtrace)
         (apply-message-filter
             (allow
@@ -155,7 +155,7 @@
     )
     (allow iokit-open
         (iokit-registry-entry-class "IOSurfaceSendRight")
-#if __MAC_OS_X_VERSION_MIN_REQUIRED > 110000
+#if HAVE(SANDBOX_MESSAGE_FILTERING)
         (with telemetry-backtrace)
         (apply-message-filter
             (allow (with telemetry)
@@ -174,7 +174,7 @@
     ;; H.264 Acceleration
     (allow iokit-open
         (iokit-registry-entry-class "AppleIntelMEUserClient")
-#if __MAC_OS_X_VERSION_MIN_REQUIRED > 110000
+#if HAVE(SANDBOX_MESSAGE_FILTERING)
         (with telemetry-backtrace)
         (apply-message-filter
             (allow
@@ -189,7 +189,7 @@
     )
     (allow iokit-open
         (iokit-registry-entry-class "AppleSNBFBUserClient")
-#if __MAC_OS_X_VERSION_MIN_REQUIRED > 110000
+#if HAVE(SANDBOX_MESSAGE_FILTERING)
         (with telemetry-backtrace)
         (apply-message-filter
             (allow
@@ -205,7 +205,7 @@
     ;; QuartzCore
     (allow iokit-open
         (iokit-registry-entry-class "AGPMClient")
-#if __MAC_OS_X_VERSION_MIN_REQUIRED > 110000
+#if HAVE(SANDBOX_MESSAGE_FILTERING)
         (with telemetry-backtrace)
         (apply-message-filter
             (allow (with telemetry)
@@ -218,7 +218,7 @@
     )
     (allow iokit-open
         (iokit-registry-entry-class "AppleGraphicsControlClient")
-#if __MAC_OS_X_VERSION_MIN_REQUIRED > 110000
+#if HAVE(SANDBOX_MESSAGE_FILTERING)
         (with telemetry-backtrace)
         (apply-message-filter
             (allow
@@ -233,7 +233,7 @@
     )
     (allow iokit-open
         (iokit-registry-entry-class "AppleGraphicsPolicyClient")
-#if __MAC_OS_X_VERSION_MIN_REQUIRED > 110000
+#if HAVE(SANDBOX_MESSAGE_FILTERING)
         (with telemetry-backtrace)
         (apply-message-filter
             (allow (with telemetry)
@@ -247,7 +247,7 @@
     ;; OpenGL
     (allow iokit-open
         (iokit-registry-entry-class "AppleMGPUPowerControlClient")
-#if __MAC_OS_X_VERSION_MIN_REQUIRED > 110000
+#if HAVE(SANDBOX_MESSAGE_FILTERING)
         (with telemetry-backtrace)
         (apply-message-filter
             (allow (with telemetry)
@@ -816,7 +816,7 @@
 
 (allow iokit-open
     (iokit-user-client-class "AppleUpstreamUserClient")
-#if __MAC_OS_X_VERSION_MIN_REQUIRED > 110000
+#if HAVE(SANDBOX_MESSAGE_FILTERING)
     (with telemetry-backtrace)
     (apply-message-filter
         (allow (with telemetry)
@@ -830,7 +830,7 @@
 
 (allow iokit-open
     (iokit-user-client-class "RootDomainUserClient") ;; Needed by WebCore::PerformanceMonitor
-#if __MAC_OS_X_VERSION_MIN_REQUIRED > 110000
+#if HAVE(SANDBOX_MESSAGE_FILTERING)
     (with telemetry-backtrace)
     (apply-message-filter
         (allow (with telemetry)
@@ -844,7 +844,7 @@
 
 (allow iokit-open
     (iokit-user-client-class "AudioAUUC") ;; <rdar://problem/10427451> && <rdar://problem/10808817>
-#if __MAC_OS_X_VERSION_MIN_REQUIRED > 110000
+#if HAVE(SANDBOX_MESSAGE_FILTERING)
     (with telemetry-backtrace)
     (apply-message-filter
         (allow (with telemetry)
@@ -858,7 +858,7 @@
 
 (allow iokit-open
     (iokit-user-client-class "IOAudioControlUserClient")
-#if __MAC_OS_X_VERSION_MIN_REQUIRED > 110000
+#if HAVE(SANDBOX_MESSAGE_FILTERING)
     (with telemetry-backtrace)
     (apply-message-filter
         (allow (with telemetry)
@@ -872,7 +872,7 @@
 
 (allow iokit-open
     (iokit-user-client-class "IOAudioEngineUserClient")
-#if __MAC_OS_X_VERSION_MIN_REQUIRED > 110000
+#if HAVE(SANDBOX_MESSAGE_FILTERING)
     (with telemetry-backtrace)
     (apply-message-filter
         (allow (with telemetry)
@@ -1168,7 +1168,7 @@
     (allow iokit-open
         ;; QuickTimeUSBVDCDigitizer
         (iokit-user-client-class "IOUSBDeviceUserClientV2")
-#if __MAC_OS_X_VERSION_MIN_REQUIRED > 110000
+#if HAVE(SANDBOX_MESSAGE_FILTERING)
         (with telemetry-backtrace)
         (apply-message-filter
             (allow (with telemetry)
@@ -1181,7 +1181,7 @@
     )
     (allow iokit-open
         (iokit-user-client-class "IOUSBInterfaceUserClientV2")
-#if __MAC_OS_X_VERSION_MIN_REQUIRED > 110000
+#if HAVE(SANDBOX_MESSAGE_FILTERING)
         (with telemetry-backtrace)
         (apply-message-filter
             (allow (with telemetry)
@@ -1428,6 +1428,7 @@
 #include <WebKitAdditions/WebContentSandboxAdditionsMac.sb>
 #endif
 
+#if HAVE(SANDBOX_MESSAGE_FILTERING)
 (when (defined? 'mach-bootstrap)
     (allow mach-bootstrap
         (apply-message-filter
@@ -1550,3 +1551,4 @@
         )
     )
 )
+#endif // HAVE(SANDBOX_MESSAGE_FILTERING)

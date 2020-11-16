@@ -770,3 +770,7 @@
 #if PLATFORM(IOS) || PLATFORM(MACCATALYST) || PLATFORM(MAC)
 #define HAVE_AVCAPTUREDEVICE 1
 #endif
+
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED > 110000 && defined __has_include && __has_include(<CoreFoundation/CFPriv.h>)
+#define HAVE_SANDBOX_MESSAGE_FILTERING 1
+#endif
