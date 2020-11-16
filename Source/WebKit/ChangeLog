@@ -1,3 +1,23 @@
+2020-11-16  John Wilander  <wilander@apple.com>
+
+        NetworkDataTaskCocoa::applyCookiePolicyForThirdPartyCNAMECloaking() redacts the cookie name in log output on customer builds
+        https://bugs.webkit.org/show_bug.cgi?id=218997
+        <rdar://problem/71460604>
+
+        Unreviewed minor change to logging.
+
+        NetworkDataTaskCocoa::applyCookiePolicyForThirdPartyCNAMECloaking() redacts the
+        cookie name in log output on customer builds. This patch changes the format
+        specifier from %s to %{public}s.
+
+        Note that this logging is just for ITP Debug Mode which is off by default, logs
+        in-memory only, and is disabled again on browser quit.
+
+        No new tests. This just changes log output on customer builds.
+
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTaskCocoa::applyCookiePolicyForThirdPartyCNAMECloaking):
+
 2020-11-16  Chris Dumez  <cdumez@apple.com>
 
         [GPUProcess] Update GPUProcess process assertion based on active WebProcesses
