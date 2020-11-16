@@ -102,7 +102,7 @@ END;
     {
         global $platform_group_options;
         $id = intval($platform_row['platform_id']);
-        $platform_group_id = $platform_row['platform_group'];
+        $platform_group_id = array_get($platform_row, 'platform_group');
         $content = <<< END
 <form method="POST"><input type="hidden" name="id" value="$id">
 <select name="group">

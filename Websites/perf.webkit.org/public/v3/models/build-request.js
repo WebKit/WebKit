@@ -87,8 +87,45 @@ class BuildRequest extends DataModelObject {
 
     buildId() { return this._buildId; }
     createdAt() { return this._createdAt; }
+    async findBuildRequestWithSameRoots()
+    {
+        if (!this.isBuild())
+            return null;
+        let scheduledBuildRequest = null;
+        let runningBuildRequest = null;
+        // Set ignoreCache = true as latest status of test groups is expected.
+        const allTestGroupsInTask = await TestGroup.fetchForTask(this.analysisTaskId(), true);
+        for (const group of allTestGroupsInTask) {
+            if (group.id() == this.testGroupId())
+                continue;
+            if (group.isHidden())
+                continue;
+            for (const buildRequest of group.buildRequests()) {
+                if (!buildRequest.isBuild())
+                    continue;
+                if (!this.platform().isInSameGroupAs(buildRequest.platform()))
+                    continue;
+                if (!buildRequest.commitSet().equalsIgnoringRoot(this.commitSet()))
+                    continue;
+                if (!buildRequest.commitSet().areAllRootsAvailable())
+                    continue;
+                if (buildRequest.hasCompleted())
+                    return buildRequest;
+                if (buildRequest.isScheduled()
+                    && (!scheduledBuildRequest || buildRequest.createdAt() < scheduledBuildRequest.createdAt())) {
+                    scheduledBuildRequest = buildRequest;
+                }
+                if (buildRequest.status() == 'running'
+                    && (!runningBuildRequest || buildRequest.createdAt() < runningBuildRequest.createdAt())) {
+                    runningBuildRequest = buildRequest;
+                }
+            }
+        }
+        return runningBuildRequest || scheduledBuildRequest;
+    }
 
-    static formatTimeInterval(intervalInMillionSeconds) {
+    static formatTimeInterval(intervalInMillionSeconds)
+    {
         let intervalInSeconds = intervalInMillionSeconds / 1000;
         const units = [
             {unit: 'week', length: 7 * 24 * 3600},

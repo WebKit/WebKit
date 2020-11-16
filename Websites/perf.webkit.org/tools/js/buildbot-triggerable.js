@@ -77,42 +77,56 @@ class BuildbotTriggerable {
             })});
     }
 
-    syncOnce()
+    async syncOnce()
     {
-        let syncerList = this._syncers;
-        let buildReqeustsByGroup = new Map;
-
         this._logger.log(`Fetching build requests for ${this._name}...`);
-        let validRequests;
-        return BuildRequest.fetchForTriggerable(this._name).then((buildRequests) => {
-            validRequests = this._validateRequests(buildRequests);
-            buildReqeustsByGroup = BuildbotTriggerable._testGroupMapForBuildRequests(buildRequests);
-            return this._pullBuildbotOnAllSyncers(buildReqeustsByGroup);
-        }).then((updates) => {
-            this._logger.log('Scheduling builds');
-            const promistList = [];
-            const testGroupList = Array.from(buildReqeustsByGroup.values()).sort(function (a, b) { return a.groupOrder - b.groupOrder; });
-            for (const group of testGroupList) {
-                const nextRequest = this._nextRequestInGroup(group, updates);
-                if (!validRequests.has(nextRequest))
-                    continue;
-                const promise = this._scheduleRequestIfSlaveIsAvailable(nextRequest, group.requests,
-                    nextRequest.isBuild() ? group.buildSyncer : group.testSyncer,
-                    nextRequest.isBuild() ? group.buildSlaveName : group.testSlaveName);
-                if (promise)
-                    promistList.push(promise);
+
+        const buildRequests = await BuildRequest.fetchForTriggerable(this._name);
+        const validRequests = this._validateRequests(buildRequests);
+        const buildReqeustsByGroup = BuildbotTriggerable._testGroupMapForBuildRequests(buildRequests);
+        let updates = await this._pullBuildbotOnAllSyncers(buildReqeustsByGroup);
+        let rootReuseUpdates = {}
+        this._logger.log('Scheduling builds');
+        const promiseList = [];
+        const testGroupList = Array.from(buildReqeustsByGroup.values()).sort(function (a, b) { return a.groupOrder - b.groupOrder; });
+
+        await Promise.all(testGroupList.map((group) => [group, this._nextRequestInGroup(group, updates)])
+            .filter(([group, request]) => validRequests.has(request))
+            .map(([group, request]) => this._scheduleRequest(group, request, rootReuseUpdates)));
+
+        // Pull all buildbots for the second time since the previous step may have scheduled more builds
+        updates = await this._pullBuildbotOnAllSyncers(buildReqeustsByGroup);
+
+        // rootReuseUpdates will be overridden by status fetched from buildbot.
+        updates = {
+            ...rootReuseUpdates,
+            ...updates
+        };
+        return await this._remote.postJSONWithStatus(`/api/build-requests/${this._name}`, {
+            'slaveName': this._slaveInfo.name,
+            'slavePassword': this._slaveInfo.password,
+            'buildRequestUpdates': updates});
+    }
+
+    async _scheduleRequest(testGroup, buildRequest, updates)
+    {
+        const buildRequestForRootReuse = await buildRequest.findBuildRequestWithSameRoots();
+        if (buildRequestForRootReuse) {
+            if (!buildRequestForRootReuse.hasCompleted()) {
+                this._logger.log(`Found build request ${buildRequestForRootReuse.id()} is building the same root, will wait until it finishes.`);
+                return;
             }
-            return Promise.all(promistList);
-        }).then(() => {
-            // Pull all buildbots for the second time since the previous step may have scheduled more builds.
-            return this._pullBuildbotOnAllSyncers(buildReqeustsByGroup);
-        }).then((updates) => {
-            // FIXME: Add a new API that just updates the requests.
-            return this._remote.postJSONWithStatus(`/api/build-requests/${this._name}`, {
-                'slaveName': this._slaveInfo.name,
-                'slavePassword': this._slaveInfo.password,
-                'buildRequestUpdates': updates});
-        });
+
+            this._logger.log(`Will reuse existing root built from ${buildRequestForRootReuse.id()} for ${buildRequest.id()}`);
+            updates[buildRequest.id()] = {status: 'completed', url: buildRequestForRootReuse.statusUrl(),
+                statusDescription: buildRequestForRootReuse.statusDescription(),
+                buildRequestForRootReuse: buildRequestForRootReuse.id()};
+            return;
+        }
+
+        return await this._scheduleRequestIfSlaveIsAvailable(buildRequest, testGroup.requests,
+            buildRequest.isBuild() ? testGroup.buildSyncer : testGroup.testSyncer,
+            buildRequest.isBuild() ? testGroup.buildSlaveName : testGroup.testSlaveName);
     }
 
     _validateRequests(buildRequests)

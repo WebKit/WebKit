@@ -24,6 +24,13 @@ class Platform extends LabeledObject {
         return map ? map[name] : null;
     }
 
+    isInSameGroupAs(other)
+    {
+        if (!this.group() && !other.group())
+            return this == other;
+        return this.group() == other.group();
+    }
+
     hasTest(test)
     {
         if (!this._containingTests) {

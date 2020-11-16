@@ -64,7 +64,7 @@ if ($db) {
 <?php
 
         foreach ($test_name_resolver->tests() as $test) {
-            if ($test['test_parent'] != $selected_parent['test_id'])
+            if ($selected_parent && $test['test_parent'] != $selected_parent['test_id'])
                 continue;
 
             $test_id = $test['test_id'];

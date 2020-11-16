@@ -1,3 +1,38 @@
+2020-10-30  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Performance dashboard should avoid building same configuration under one analysis task.
+        https://bugs.webkit.org/show_bug.cgi?id=218413
+
+        Reviewed by Ryosuke Niwa.
+
+        Add logic in syncing script to reuse already built roots from same build request under current analysis task.
+        If there is another same build request scheduled/running, will defer scheduling current build request.
+
+        * public/admin/platforms.php: Fixed newer version of PHP warns on accessing invalid key in an array.
+        * public/admin/tests.php: Added a null check against $selected_parent.
+        * public/api/build-requests.php: Extended this API to allow reusing roots from existing build request.
+        * public/v3/models/build-request.js:
+        (BuildRequest.prototype.async findBuildRequestWithSameRoots): Find build type build request with same commit set
+        which can/will be reused under current analysis task.
+        * public/v3/models/commit-set.js:
+        (CommitSet.prototype.equalsIgnoringRoot): Added a helper function which checks commit set equality ignoring the root.
+        (CommitSet.prototype.equals): Use '_equalsOptionallyIgnoringRoot' as underlying implementation.
+        (CommitSet.prototype._equalsOptionallyIgnoringRoot): Implementation for both equals and equalsIngnoringRoot.
+        * server-tests/api-build-requests-tests.js: Added unit tests.
+        * server-tests/resources/mock-data.js: Added new mock data for new unit tests.
+        (MockData.addMockConfiguration):
+        (MockData.addMockData):
+        (MockData.set addMockBuildRequestsWithRoots):
+        (MockData.set addTwoMockTestGroupWithOwnedCommits):
+        (MockData.mockTestSyncConfigWithPatchAcceptingBuilder):
+        * server-tests/tools-buildbot-triggerable-tests.js: Added unit tests.
+        * tools/js/buildbot-triggerable.js:
+        (BuildbotTriggerable.prototype.async syncOnce):
+        (BuildbotTriggerable.prototype.async _scheduleRequest): A helper function to reuse the roots if there are built
+        roots available for same build type build request. If there is another build scheduled for same build request,
+        will defer scheduling the build request.
+        * unit-tests/build-request-tests.js: Add unit tests.
+
 2020-10-27  Dewei Zhu  <dewei_zhu@apple.com>
 
         Refactor 'platforms' table to contain group information.
