@@ -1,3 +1,11 @@
+2020-11-16  Sam Weinig  <weinig@apple.com>
+
+        Remove and re-add fast/forms/selection-direction.html without CRs
+        https://bugs.webkit.org/show_bug.cgi?id=218966
+
+        * fast/forms/selection-direction.html: 
+        Re add test back without the CRs.
+
 2020-11-16  Chris Dumez  <cdumez@apple.com>
 
         WebAudio tests may give slightly different outputs on different platforms
