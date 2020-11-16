@@ -1,6 +1,18 @@
 {
     "workers":     [
                     { "name": "bot279", "platform": "mac-bigsur"},
+                    { "name": "bot600", "platform": "mac-bigsur"},
+                    { "name": "bot614", "platform": "mac-bigsur"},
+                    { "name": "bot684", "platform": "mac-bigsur"},
+                    { "name": "bot685", "platform": "mac-bigsur"},
+                    { "name": "bot1020", "platform": "mac-bigsur"},
+                    { "name": "bot1021", "platform": "mac-bigsur"},
+                    { "name": "bot1022", "platform": "mac-bigsur"},
+                    { "name": "bot1023", "platform": "mac-bigsur"},
+                    { "name": "bot1024", "platform": "mac-bigsur"},
+                    { "name": "bot1025", "platform": "mac-bigsur"},
+                    { "name": "bot1026", "platform": "mac-bigsur"},
+                    { "name": "bot1027", "platform": "mac-bigsur"},
 
                     { "name": "bot121", "platform": "mac-catalina" },
                     { "name": "bot157", "platform": "mac-catalina" },
@@ -109,7 +121,33 @@
     "builders":   [
                     { "name": "Apple-BigSur-Release-Build", "factory": "BuildFactory", "builddir": "bigsur-release",
                       "platform": "mac-bigsur", "configuration": "release", "architectures": ["x86_64", "arm64"],
-                      "workernames": ["bot279"]
+                      "triggers": ["bigsur-release-tests-wk1", "bigsur-release-tests-wk2"],
+                      "workernames": ["bot279", "bot600", "bot614"]
+                    },
+                    { "name": "Apple-BigSur-Release-WK1-Tests", "factory": "TestWebKit1AllButJSCFactory", "builddir": "bigsur-release-tests-wk1",
+                      "platform": "mac-bigsur", "configuration": "release", "architectures": ["x86_64"],
+                      "additionalArguments": ["--no-retry-failures"],
+                      "workernames": ["bot1020", "bot1021"]
+                    },
+                    { "name": "Apple-BigSur-Release-WK2-Tests", "factory": "TestAllButJSCFactory", "builddir": "bigsur-release-tests-wk2",
+                      "platform": "mac-bigsur", "configuration": "release", "architectures": ["x86_64"],
+                      "additionalArguments": ["--no-retry-failures"],
+                      "workernames": ["bot1022", "bot1023"]
+                    },
+                    { "name": "Apple-BigSur-Debug-Build", "factory": "BuildFactory", "builddir": "bigsur-debug",
+                      "platform": "mac-bigsur", "configuration": "debug", "architectures": ["x86_64", "arm64"],
+                      "triggers": ["bigsur-debug-tests-wk1", "bigsur-debug-tests-wk2"],
+                      "workernames": ["bot684", "bot685"]
+                    },
+                    { "name": "Apple-BigSur-Debug-WK1-Tests", "factory": "TestWebKit1AllButJSCFactory", "builddir": "bigsur-debug-tests-wk1",
+                      "platform": "mac-bigsur", "configuration": "debug", "architectures": ["x86_64"],
+                      "additionalArguments": ["--no-retry-failures"],
+                      "workernames": ["bot1024", "bot1025"]
+                    },
+                    { "name": "Apple-BigSur-Debug-WK2-Tests", "factory": "TestAllButJSCFactory", "builddir": "bigsur-debug-tests-wk2",
+                      "platform": "mac-bigsur", "configuration": "debug", "architectures": ["x86_64"],
+                      "additionalArguments": ["--no-retry-failures"],
+                      "workernames": ["bot1026", "bot1027"]
                     },
                     { "name": "Apple-Catalina-Debug-Build", "factory": "BuildFactory", "builddir": "catalina-debug",
                       "platform": "mac-catalina", "configuration": "debug", "architectures": ["x86_64"],
@@ -487,7 +525,19 @@
                                        "WPE-Linux-64-bit-Release-Build", "WPE-Linux-64-bit-Debug-Build"]
                     },
                     { "type": "PlatformSpecificScheduler", "platform": "mac-bigsur", "branch": "trunk", "treeStableTimer": 45.0,
-                      "builderNames": ["Apple-BigSur-Release-Build"]
+                      "builderNames": ["Apple-BigSur-Release-Build", "Apple-BigSur-Debug-Build"]
+                    },
+                    { "type": "Triggerable", "name": "bigsur-release-tests-wk1",
+                      "builderNames": ["Apple-BigSur-Release-WK1-Tests"]
+                    },
+                    { "type": "Triggerable", "name": "bigsur-release-tests-wk2",
+                      "builderNames": ["Apple-BigSur-Release-WK2-Tests"]
+                    },
+                    { "type": "Triggerable", "name": "bigsur-debug-tests-wk1",
+                      "builderNames": ["Apple-BigSur-Debug-WK1-Tests"]
+                    },
+                    { "type": "Triggerable", "name": "bigsur-debug-tests-wk2",
+                      "builderNames": ["Apple-BigSur-Debug-WK2-Tests"]
                     },
                     { "type": "PlatformSpecificScheduler", "platform": "mac-catalina", "branch": "trunk", "treeStableTimer": 45.0,
                       "builderNames": ["Apple-Catalina-Release-Build", "Apple-Catalina-Debug-Build", "Apple-Catalina-LLINT-CLoop-BuildAndTest"]
