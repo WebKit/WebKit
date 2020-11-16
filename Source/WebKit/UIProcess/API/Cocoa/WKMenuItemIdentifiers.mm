@@ -37,6 +37,9 @@ NSString * const _WKMenuItemIdentifierGoBack = @"WKMenuItemIdentifierGoBack";
 NSString * const _WKMenuItemIdentifierGoForward = @"WKMenuItemIdentifierGoForward";
 NSString * const _WKMenuItemIdentifierInspectElement = @"WKMenuItemIdentifierInspectElement";
 NSString * const _WKMenuItemIdentifierLookUp = @"WKMenuItemIdentifierLookUp";
+NSString * const _WKMenuItemIdentifierAddHighlightToCurrentGroup = @"WKMenuItemIdentifierAddHighlightToCurrentGroup";
+NSString * const _WKMenuItemIdentifierAddHighlightToNewGroup = @"WKMenuItemIdentifierAddHighlightToNewGroup";
+
 NSString * const _WKMenuItemIdentifierOpenFrameInNewWindow = @"WKMenuItemIdentifierOpenFrameInNewWindow";
 NSString * const _WKMenuItemIdentifierOpenImageInNewWindow = @"WKMenuItemIdentifierOpenImageInNewWindow";
 NSString * const _WKMenuItemIdentifierOpenLink = @"WKMenuItemIdentifierOpenLink";

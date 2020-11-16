@@ -605,6 +605,9 @@ static Optional<NSInteger> toTag(WebCore::ContextMenuAction action)
         return WebMenuItemTagDictationAlternative;
     case ContextMenuItemTagToggleVideoFullscreen:
         return WebMenuItemTagToggleVideoFullscreen;
+    case ContextMenuItemTagAddHighlightToCurrentGroup:
+    case ContextMenuItemTagAddHighlightToNewGroup:
+        return WTF::nullopt;
     case ContextMenuItemTagShareMenu:
         return WebMenuItemTagShareMenu;
     case ContextMenuItemTagToggleVideoEnhancedFullscreen:

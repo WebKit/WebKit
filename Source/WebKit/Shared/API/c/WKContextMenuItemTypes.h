@@ -56,6 +56,8 @@ enum {
     kWKContextMenuItemTagSearchInSpotlight,
     kWKContextMenuItemTagSearchWeb,
     kWKContextMenuItemTagLookUpInDictionary,
+    kWKContextMenuItemTagAddHighlightToCurrentGroup,
+    kWKContextMenuItemTagAddHighlightToNewGroup,
     kWKContextMenuItemTagOpenWithDefaultApplication,
     kWKContextMenuItemTagPDFActualSize,
     kWKContextMenuItemTagPDFZoomIn,

@@ -58,6 +58,16 @@ String copyImageUnknownFileLabel()
     return WEB_UI_STRING("unknown", "Unknown filename");
 }
 
+String contextMenuItemTagAddHighlightToCurrentGroup()
+{
+    return localizedNSString(@"Add Highlight To Current Group");
+}
+
+String contextMenuItemTagAddHighlightToNewGroup()
+{
+    return localizedNSString(@"Add Highlight To New Group");
+}
+
 #if ENABLE(CONTEXT_MENUS)
 String contextMenuItemTagSearchInSpotlight()
 {

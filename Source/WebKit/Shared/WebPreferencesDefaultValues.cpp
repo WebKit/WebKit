@@ -122,6 +122,19 @@ bool defaultAsyncOverflowScrollingEnabled()
     return defaultAsyncFrameAndOverflowScrollingEnabled();
 }
 
+bool defaultAppHighlightsEnabled()
+{
+#if HAVE(SYSTEM_FEATURE_FLAGS)
+    return isFeatureFlagEnabled("app_highlights");
+#endif
+
+#if ENABLE(APP_HIGHLIGHTS)
+    return true;
+#endif
+    
+    return false;
+}
+
 #if ENABLE(GPU_PROCESS)
 
 bool defaultUseGPUProcessForCanvasRenderingEnabled()

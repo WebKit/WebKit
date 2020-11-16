@@ -461,6 +461,12 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuAction action, co
         frame->editor().command("MakeTextWritingDirectionRightToLeft").execute();
         break;
 #if PLATFORM(COCOA)
+    case ContextMenuItemTagAddHighlightToCurrentGroup:
+        // FIXME: Add Highlight Logic
+        break;
+    case ContextMenuItemTagAddHighlightToNewGroup:
+        // FIXME: Add Highlight Logic
+        break;
     case ContextMenuItemTagSearchInSpotlight:
         m_client.searchWithSpotlight();
         break;
@@ -796,6 +802,8 @@ void ContextMenuController::populate()
 #if PLATFORM(COCOA)
     ContextMenuItem SearchSpotlightItem(ActionType, ContextMenuItemTagSearchInSpotlight, 
         contextMenuItemTagSearchInSpotlight());
+    ContextMenuItem AddHighlightItem(ActionType, ContextMenuItemTagAddHighlightToCurrentGroup, contextMenuItemTagAddHighlightToCurrentGroup());
+    ContextMenuItem AddHighlightToNewGroupItem(ActionType, ContextMenuItemTagAddHighlightToNewGroup, contextMenuItemTagAddHighlightToNewGroup());
 #endif
 #if !PLATFORM(GTK)
     ContextMenuItem SearchWebItem(ActionType, ContextMenuItemTagSearchWeb, contextMenuItemTagSearchWeb());
@@ -919,6 +927,14 @@ void ContextMenuController::populate()
                 appendItem(CopyItem, m_contextMenu.get());
 #if PLATFORM(COCOA)
                 appendItem(*separatorItem(), m_contextMenu.get());
+                
+                if (auto* page = frame->page()) {
+                    if (page->settings().appHighlightsEnabled()) {
+                        appendItem(AddHighlightToNewGroupItem, m_contextMenu.get());
+                        appendItem(AddHighlightItem, m_contextMenu.get());
+                        appendItem(*separatorItem(), m_contextMenu.get());
+                    }
+                }
 
                 appendItem(ShareMenuItem, m_contextMenu.get());
                 appendItem(*separatorItem(), m_contextMenu.get());
@@ -1276,6 +1292,12 @@ void ContextMenuController::checkOrEnableIfNeeded(ContextMenuItem& item) const
             shouldCheck = frame->editor().isContinuousSpellCheckingEnabled();
             break;
 #if PLATFORM(COCOA)
+        case ContextMenuItemTagAddHighlightToCurrentGroup:
+            shouldEnable = frame->selection().isRange();
+            break;
+        case ContextMenuItemTagAddHighlightToNewGroup:
+            shouldEnable = frame->selection().isRange();
+            break;
         case ContextMenuItemTagSubstitutionsMenu:
         case ContextMenuItemTagTransformationsMenu:
             break;

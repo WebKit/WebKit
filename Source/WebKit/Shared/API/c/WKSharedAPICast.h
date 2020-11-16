@@ -504,6 +504,10 @@ inline WKContextMenuItemTag toAPI(WebCore::ContextMenuAction action)
     case WebCore::ContextMenuItemTagMediaMute:
         return kWKContextMenuItemTagMediaMute;
 #if PLATFORM(COCOA)
+    case WebCore::ContextMenuItemTagAddHighlightToCurrentGroup:
+        return kWKContextMenuItemTagAddHighlightToCurrentGroup;
+    case WebCore::ContextMenuItemTagAddHighlightToNewGroup:
+        return kWKContextMenuItemTagAddHighlightToNewGroup;
     case WebCore::ContextMenuItemTagCorrectSpellingAutomatically:
         return kWKContextMenuItemTagCorrectSpellingAutomatically;
     case WebCore::ContextMenuItemTagSubstitutionsMenu:
@@ -698,6 +702,10 @@ inline WebCore::ContextMenuAction toImpl(WKContextMenuItemTag tag)
     case kWKContextMenuItemTagMediaMute:
         return WebCore::ContextMenuItemTagMediaMute;
 #if PLATFORM(COCOA)
+    case kWKContextMenuItemTagAddHighlightToCurrentGroup:
+        return WebCore::ContextMenuItemTagAddHighlightToCurrentGroup;
+    case kWKContextMenuItemTagAddHighlightToNewGroup:
+        return WebCore::ContextMenuItemTagAddHighlightToNewGroup;
     case kWKContextMenuItemTagCorrectSpellingAutomatically:
         return WebCore::ContextMenuItemTagCorrectSpellingAutomatically;
     case kWKContextMenuItemTagSubstitutionsMenu:
