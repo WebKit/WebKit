@@ -107,7 +107,7 @@ private:
 
     struct LineContext;
     
-    bool hasOrthogonalFlow(const RenderBox& child) const;
+    bool mainAxisIsChildInlineAxis(const RenderBox&) const;
     bool isColumnFlow() const;
     bool isLeftToRightFlow() const;
     bool isMultiline() const;
@@ -146,8 +146,8 @@ private:
     LayoutUnit computeInnerFlexBaseSizeForChild(RenderBox& child, LayoutUnit mainAxisBorderAndPadding, bool relayoutChildren);
     void adjustAlignmentForChild(RenderBox& child, LayoutUnit);
     ItemPosition alignmentForChild(const RenderBox& child) const;
-    bool mainAxisLengthIsDefinite(const RenderBox& child, const Length& flexBasis) const;
-    bool crossAxisLengthIsDefinite(const RenderBox& child, const Length& flexBasis) const;
+    bool childMainSizeIsDefinite(const RenderBox&, const Length& flexBasis) const;
+    bool childCrossSizeIsDefinite(const RenderBox&, const Length& flexBasis) const;
     bool needToStretchChildLogicalHeight(const RenderBox& child) const;
     bool childHasIntrinsicMainAxisSize(const RenderBox& child) const;
     Overflow mainAxisOverflowForChild(const RenderBox& child) const;
@@ -178,7 +178,7 @@ private:
     void freezeViolations(Vector<FlexItem*>&, LayoutUnit& availableFreeSpace, double& totalFlexGrow, double& totalFlexShrink, double& totalWeightedFlexShrink);
     
     void resetAutoMarginsAndLogicalTopInCrossAxis(RenderBox& child);
-    void setOverrideMainAxisContentSizeForChild(RenderBox& child, LayoutUnit childPreferredSize);
+    void setOverridingMainSizeForChild(RenderBox&, LayoutUnit);
     void prepareChildForPositionedLayout(RenderBox& child);
     void layoutAndPlaceChildren(LayoutUnit& crossAxisOffset, Vector<FlexItem>&, LayoutUnit availableFreeSpace, bool relayoutChildren, Vector<LineContext>&, LayoutUnit gapBetweenItems);
     void layoutColumnReverse(const Vector<FlexItem>&, LayoutUnit crossAxisOffset, LayoutUnit availableFreeSpace);
