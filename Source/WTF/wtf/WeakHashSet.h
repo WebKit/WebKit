@@ -139,7 +139,11 @@ public:
 
     void forEach(const Function<void(T&)>& callback)
     {
-        for (auto& item : map(m_set, [](auto& item) { return makeWeakPtr(item->template get<T>()); })) {
+        auto items = map(m_set, [](const Ref<WeakPtrImpl<Counter>>& item) {
+            auto* pointer = static_cast<T*>(item->template get<T>());
+            return makeWeakPtr(pointer);
+        });
+        for (auto& item : items) {
             if (item && m_set.contains(*item.m_impl))
                 callback(*item);
         }
