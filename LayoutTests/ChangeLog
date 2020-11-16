@@ -1,3 +1,32 @@
+2020-11-16  Chris Dumez  <cdumez@apple.com>
+
+        WebAudio tests may give slightly different outputs on different platforms
+        https://bugs.webkit.org/show_bug.cgi?id=218929
+
+        Reviewed by Geoffrey Garen.
+
+        WebAudio tests may give slightly different outputs on different platforms, causing what looks like flakiness.
+        This is due to the "(contains X different values)" because X may differ from one platform to another
+        (usually +/- 1).
+
+        * resources/testharnessreport.js:
+        (self.testRunner.add_completion_callback):
+        Strip the "(contains X different values)" strings from output lines.
+
+        * webaudio/AudioNode/tail-connections-expected.txt:
+        * webaudio/AudioNode/tail-processing-expected.txt:
+        * webaudio/BiquadFilter/biquad-829349-expected.txt:
+        * webaudio/BiquadFilter/tail-time-allpass-expected.txt:
+        * webaudio/BiquadFilter/tail-time-bandpass-expected.txt:
+        * webaudio/BiquadFilter/tail-time-highpass-expected.txt:
+        * webaudio/BiquadFilter/tail-time-highshelf-expected.txt:
+        * webaudio/BiquadFilter/tail-time-lowpass-expected.txt:
+        * webaudio/BiquadFilter/tail-time-lowshelf-expected.txt:
+        * webaudio/BiquadFilter/tail-time-notch-expected.txt:
+        * webaudio/BiquadFilter/tail-time-peaking-expected.txt:
+        * webaudio/IIRFilter/iir-tail-time-expected.txt:
+        Rebaseline tests accordingly.
+
 2020-11-16  Youenn Fablet  <youenn@apple.com>
 
         TextEncoderStreamEncoder should not be exposed

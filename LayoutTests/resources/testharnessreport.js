@@ -77,7 +77,7 @@ if (self.testRunner) {
             resultStr += "Harness Error (" + convertResult(harness_status.status) + "), message = " + harness_status.message + "\n\n";
 
         // Truncate decimal values from output in webaudio tests to avoid test flakiness due to floating point precision issues.
-        const shouldTruncateDecimalValues = document.URL.indexOf('/webaudio') >= 0;
+        const isWebAudioTest = document.URL.indexOf('/webaudio') >= 0;
 
         for (var i = 0; i < tests.length; i++) {
             var message = sanitize(tests[i].message);
@@ -90,11 +90,12 @@ if (self.testRunner) {
             }
  
             let testName = tests[i].name;
-            if (shouldTruncateDecimalValues) {
+            if (isWebAudioTest) {
                   testName = testName.replace(/\[[0-9.,\-e]*[0-9]\.[0-9]{7,}[0-9.,\-e]*\]/, "[expected array]");
                   testName = testName.replace(/[0-9]\.[0-9]{7,}/g, (match, offset, string) => {
                       return parseFloat(match).toFixed(6);
                   });
+                  testName = testName.replace(/ \(contains [0-9]+ different values\)./, ".");
             }
 
             resultStr += convertResult(tests[i].status) + " " + sanitize(testName) + " " + message + "\n";

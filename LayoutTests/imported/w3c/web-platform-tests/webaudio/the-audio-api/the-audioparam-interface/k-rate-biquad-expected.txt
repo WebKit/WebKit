@@ -17,7 +17,7 @@ PASS   All k-rate params: a-rate node:frequency.setValueAtTime(350,0) did not th
 PASS   All k-rate params: a-rate node:frequency.linearRampToValueAtTime(0,1) did not throw an exception.
 PASS   All k-rate params: Output of k-rate BiquadFilterNode is identical to the array [expected array].
 PASS   All k-rate params: Output of a-rate BiquadFilterNode is identical to the array [expected array].
-PASS   All k-rate params: Difference between a-rate and k-rate BiquadFilterNode is not constantly 0 (contains 7999 different values).
+PASS   All k-rate params: Difference between a-rate and k-rate BiquadFilterNode is not constantly 0.
 PASS < [Biquad k-rate AudioParams (all)] All assertions passed. (total 11 assertions)
 PASS > [Biquad k-rate Q]
 PASS   k-rate Q: Setting Q.automationRate to "k-rate" is equal to k-rate.
@@ -27,7 +27,7 @@ PASS   k-rate Q: a-rate node:Q.setValueAtTime(1,0) did not throw an exception.
 PASS   k-rate Q: a-rate node:Q.linearRampToValueAtTime(10,1) did not throw an exception.
 PASS   k-rate Q: Output of k-rate BiquadFilterNode is identical to the array [expected array].
 PASS   k-rate Q: Output of a-rate BiquadFilterNode is identical to the array [expected array].
-PASS   k-rate Q: Difference between a-rate and k-rate BiquadFilterNode is not constantly 0 (contains 7999 different values).
+PASS   k-rate Q: Difference between a-rate and k-rate BiquadFilterNode is not constantly 0.
 PASS < [Biquad k-rate Q] All assertions passed. (total 8 assertions)
 PASS > [Biquad k-rate detune]
 PASS   k-rate detune: Setting detune.automationRate to "k-rate" is equal to k-rate.
@@ -37,7 +37,7 @@ PASS   k-rate detune: a-rate node:detune.setValueAtTime(0,0) did not throw an ex
 PASS   k-rate detune: a-rate node:detune.linearRampToValueAtTime(1200,1) did not throw an exception.
 PASS   k-rate detune: Output of k-rate BiquadFilterNode is identical to the array [expected array].
 PASS   k-rate detune: Output of a-rate BiquadFilterNode is identical to the array [expected array].
-PASS   k-rate detune: Difference between a-rate and k-rate BiquadFilterNode is not constantly 0 (contains 7999 different values).
+PASS   k-rate detune: Difference between a-rate and k-rate BiquadFilterNode is not constantly 0.
 PASS < [Biquad k-rate detune] All assertions passed. (total 8 assertions)
 PASS > [Biquad k-rate frequency]
 PASS   k-rate frequency: Setting frequency.automationRate to "k-rate" is equal to k-rate.
@@ -47,7 +47,7 @@ PASS   k-rate frequency: a-rate node:frequency.setValueAtTime(350,0) did not thr
 PASS   k-rate frequency: a-rate node:frequency.linearRampToValueAtTime(0,1) did not throw an exception.
 PASS   k-rate frequency: Output of k-rate BiquadFilterNode is identical to the array [expected array].
 PASS   k-rate frequency: Output of a-rate BiquadFilterNode is identical to the array [expected array].
-PASS   k-rate frequency: Difference between a-rate and k-rate BiquadFilterNode is not constantly 0 (contains 7999 different values).
+PASS   k-rate frequency: Difference between a-rate and k-rate BiquadFilterNode is not constantly 0.
 PASS < [Biquad k-rate frequency] All assertions passed. (total 8 assertions)
 PASS > [Biquad k-rate gain]
 PASS   k-rate gain: Setting gain.automationRate to "k-rate" is equal to k-rate.
@@ -57,7 +57,7 @@ PASS   k-rate gain: a-rate node:gain.setValueAtTime(10,0) did not throw an excep
 PASS   k-rate gain: a-rate node:gain.linearRampToValueAtTime(0,1) did not throw an exception.
 PASS   k-rate gain: Output of k-rate BiquadFilterNode is identical to the array [expected array].
 PASS   k-rate gain: Output of a-rate BiquadFilterNode is identical to the array [expected array].
-PASS   k-rate gain: Difference between a-rate and k-rate BiquadFilterNode is not constantly 0 (contains 7999 different values).
+PASS   k-rate gain: Difference between a-rate and k-rate BiquadFilterNode is not constantly 0.
 PASS < [Biquad k-rate gain] All assertions passed. (total 8 assertions)
 PASS # AUDIT TASK RUNNER FINISHED: 5 tasks ran successfully.
 

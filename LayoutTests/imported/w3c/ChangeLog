@@ -1,3 +1,30 @@
+2020-11-16  Chris Dumez  <cdumez@apple.com>
+
+        WebAudio tests may give slightly different outputs on different platforms
+        https://bugs.webkit.org/show_bug.cgi?id=218929
+
+        Reviewed by Geoffrey Garen.
+
+        Rebaseline WPT tests now that their output has changed.
+
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-audiobuffersource-connections-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-audioworklet-connections.https-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-biquad-connection-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-biquad-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-constant-source-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-delay-connections-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-delay-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-gain-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-oscillator-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-panner-connections-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-panner-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-stereo-panner-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/convolver-cascade-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/convolver-response-4-chan-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-delaynode-interface/maxdelay-rounding-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-oscillatornode-interface/detune-limiting-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/automation-changes-expected.txt:
+
 2020-11-15  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Wasm should get byte length from source typed array

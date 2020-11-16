@@ -11,7 +11,7 @@ PASS   Osc(freq: 1, detune: 18514.189453) output equals [0,0,0,0,0,0,0,0,0,0,0,0
 PASS < [detune limits] All assertions passed. (total 4 assertions)
 PASS > [detune automation] Oscillator output with detune automation should be zero above Nyquist
 PASS   Frame where detuned oscillator reaches Nyquist is equal to 5.
-PASS   osc[0:4] is not constantly 0 (contains 4 different values).
+PASS   osc[0:4] is not constantly 0.
 PASS   osc[5:] contains only the constant 0.
 PASS < [detune automation] All assertions passed. (total 3 assertions)
 PASS # AUDIT TASK RUNNER FINISHED: 2 tasks ran successfully.

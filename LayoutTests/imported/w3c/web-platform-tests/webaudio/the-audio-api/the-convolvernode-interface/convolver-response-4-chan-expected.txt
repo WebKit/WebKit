@@ -35,7 +35,7 @@ PASS   5.1: Channel 0 equals [expected array] with an element-wise tolerance of 
 PASS   5.1: Channel 1 equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.000002,"relativeThreshold":0}.
 PASS < [5.1-channel input] All assertions passed. (total 2 assertions)
 PASS > [delayed buffer set] Delayed set of 4-channel response
-PASS   Output with delayed setting of convolver buffer is not constantly 0 (contains 767 different values).
+PASS   Output with delayed setting of convolver buffer is not constantly 0.
 PASS < [delayed buffer set] All assertions passed. (total 1 assertions)
 PASS > [count 1, 2-channel in] 2->1 downmix because channel count is 1
 PASS   Convolver count 1, stereo in: output 0 is identical to the array [expected array].

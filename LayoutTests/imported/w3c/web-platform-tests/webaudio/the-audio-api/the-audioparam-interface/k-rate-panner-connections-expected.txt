@@ -8,8 +8,8 @@ PASS Executing "Listener y"
 PASS Executing "Listener z"
 PASS Audit report
 PASS > [Panner x] k-rate input
-PASS   Panner: positionX: Expected output channel 0 is not constantly 0.017871 (contains 512 different values).
-PASS   positionX: Expected output channel 1 is not constantly 0.036486 (contains 512 different values).
+PASS   Panner: positionX: Expected output channel 0 is not constantly 0.017871.
+PASS   positionX: Expected output channel 1 is not constantly 0.036486.
 PASS   Panner: positionX: Channel 0 output[0, 127] contains only the constant 0.017871.
 PASS   Panner: positionX: Channel 0 output[128, 255] contains only the constant 0.012888.
 PASS   Panner: positionX: Channel 0 output[256, 383] contains only the constant 0.007589.
@@ -24,8 +24,8 @@ PASS   Panner: positionX: Actual output channel 0 equals [expected array] with a
 PASS   Panner: positionX: Actual output channel 1 equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
 PASS < [Panner x] All assertions passed. (total 14 assertions)
 PASS > [Panner y] k-rate input
-PASS   Panner: positionY: Expected output channel 0 is not constantly 0.039904 (contains 512 different values).
-PASS   positionY: Expected output channel 1 is not constantly 0.081468 (contains 512 different values).
+PASS   Panner: positionY: Expected output channel 0 is not constantly 0.039904.
+PASS   positionY: Expected output channel 1 is not constantly 0.081468.
 PASS   Panner: positionY: Channel 0 output[0, 127] contains only the constant 0.039904.
 PASS   Panner: positionY: Channel 0 output[128, 255] contains only the constant 0.030710.
 PASS   Panner: positionY: Channel 0 output[256, 383] contains only the constant 0.020952.
@@ -40,8 +40,8 @@ PASS   Panner: positionY: Actual output channel 0 equals [expected array] with a
 PASS   Panner: positionY: Actual output channel 1 equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
 PASS < [Panner y] All assertions passed. (total 14 assertions)
 PASS > [Panner z] k-rate input
-PASS   Panner: positionZ: Expected output channel 0 is not constantly 0.014136 (contains 512 different values).
-PASS   positionZ: Expected output channel 1 is not constantly 0.054120 (contains 512 different values).
+PASS   Panner: positionZ: Expected output channel 0 is not constantly 0.014136.
+PASS   positionZ: Expected output channel 1 is not constantly 0.054120.
 PASS   Panner: positionZ: Channel 0 output[0, 127] contains only the constant 0.014136.
 PASS   Panner: positionZ: Channel 0 output[128, 255] contains only the constant 0.018441.
 PASS   Panner: positionZ: Channel 0 output[256, 383] contains only the constant 0.015520.

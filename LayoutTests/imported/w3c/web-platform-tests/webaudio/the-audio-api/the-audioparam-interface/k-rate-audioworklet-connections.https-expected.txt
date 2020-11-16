@@ -7,7 +7,7 @@ PASS > [Create Test Worklet]
 PASS   Construction of AudioWorklet resolved correctly.
 PASS < [Create Test Worklet] All assertions passed. (total 1 assertions)
 PASS > [AudioWorklet k-rate AudioParam]
-PASS   output is not constantly 0 (contains 384 different values).
+PASS   output is not constantly 0.
 PASS    k-rate output [0: 127] contains only the constant 0.
 PASS    k-rate output [128: 255] contains only the constant 2.5.
 PASS    k-rate output [256: 383] contains only the constant 5.
