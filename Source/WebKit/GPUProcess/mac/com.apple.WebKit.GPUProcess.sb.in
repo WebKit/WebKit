@@ -680,7 +680,10 @@
 #endif
        ;; ObjC map_images needs to send logging data to syslog. <rdar://problem/39778918>
        (literal "/private/var/run/syslog")
-       (remote tcp))
+#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 101500
+       (remote tcp)
+#endif
+)
 
 ;; CFNetwork
 (allow file-read-data (path "/private/var/db/nsurlstoraged/dafsaData.bin"))

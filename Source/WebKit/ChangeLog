@@ -1,3 +1,19 @@
+2020-11-16  Brent Fulgham  <bfulgham@apple.com>
+
+        [macOS] Remove remote tcp capability from WebContent Sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=218999
+        <rdar://problem/70355789>
+
+        Reviewed by Per Arne Vollan.
+
+        Since we have moved all network activity (aside from some syslog use) out of the WebContent
+        process, we do not need the ability to open remote tcp connections. We should deny this
+        capability from our non-Network sandboxes.
+
+        * GPUProcess/mac/com.apple.WebKit.GPUProcess.sb.in:
+        * WebAuthnProcess/mac/com.apple.WebKit.WebAuthnProcess.sb.in:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2020-11-16  Devin Rousso  <drousso@apple.com>
 
         Ignore deprecation warnings for the uniform types C API
