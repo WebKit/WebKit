@@ -1828,7 +1828,7 @@ private:
 #endif
 
 #if ENABLE(VIDEO)
-    WeakHashSet<HTMLMediaElement> m_captionPreferencesChangedElements;
+    HashSet<HTMLMediaElement*> m_captionPreferencesChangedElements;
     WeakPtr<HTMLMediaElement> m_mediaElementShowingTextTrack;
 #endif
 
