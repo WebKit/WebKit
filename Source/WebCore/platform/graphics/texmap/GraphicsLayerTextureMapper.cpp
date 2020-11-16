@@ -434,6 +434,7 @@ void GraphicsLayerTextureMapper::commitLayerChanges()
             m_backdropLayer = nullptr;
 
         m_layer.setBackdropLayer(m_backdropLayer.get());
+        m_layer.setBackdropFiltersRect(m_backdropFiltersRect);
     }
 
     if (m_changeMask & PositionChange)
