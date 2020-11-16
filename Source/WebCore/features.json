@@ -62,6 +62,15 @@
         "category": "css"
     },
     {
+        "name": "CSS Aspect ratio property",
+        "status": {
+            "status": "In Development"
+        },
+        "url": "https://drafts.csswg.org/css-sizing-4/#aspect-ratio",
+        "keywords": ["css", "css-sizing", "aspect-ratio"],
+        "category": "css"
+    },
+    {
         "name": "CSS Color Level 4",
         "status": {
             "status": "Supported",

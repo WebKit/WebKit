@@ -4480,6 +4480,7 @@
                 "status": "experimental"
             },
             "specification": {
+                "category": "css-sizing",
                 "url": "https://drafts.csswg.org/css-sizing-4/#aspect-ratio"
             }
         },
@@ -7185,6 +7186,11 @@
             "shortname": "CSS Shapes",
             "longname": "CSS Shapes Module",
             "url": "https://www.w3.org/TR/css-shapes/"
+        },
+        "css-sizing": {
+            "shortname": "CSS Box Sizing",
+            "longname": "CSS Box Sizing Module Level 4",
+            "url": "https://drafts.csswg.org/css-sizing-4/"
         },
         "css-speech": {
             "shortname": "CSS Speech",
