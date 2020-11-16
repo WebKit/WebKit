@@ -1,0 +1,9 @@
+2020-11-16  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] Update rr
+        https://bugs.webkit.org/show_bug.cgi?id=218973
+
+        Reviewed by Žan Doberšek.
+
+        * elements/sdk/rr.bst: Update for new git repository location and bump to version 5.4.x.
+
