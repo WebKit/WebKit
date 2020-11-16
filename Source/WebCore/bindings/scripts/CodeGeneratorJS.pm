@@ -4753,17 +4753,29 @@ sub GenerateImplementation
         my $getter = GetAttributeGetterName($interface, $className, $attribute);
         my $setter = IsReadonly($attribute) ? "nullptr" : GetAttributeSetterName($interface, $className, $attribute);
         my $jscAttributes = GetJSCAttributesForAttribute($interface, $attribute);
+        my $isPrivateAndPublic = $attribute->extendedAttributes->{PublicIdentifier} && $attribute->extendedAttributes->{PrivateIdentifier};
 
         my $conditionalString = $codeGenerator->GenerateConditionalString($attribute);
         push(@implContent, "#if ${conditionalString}\n") if $conditionalString;
-        push(@implContent, "    if (${runtimeEnableConditionalString})\n");
+        push(@implContent, "    if (${runtimeEnableConditionalString})");
+        push(@implContent, " {") if $isPrivateAndPublic;
+        push(@implContent, "\n");
         assert("CustomGetterSetter is not allowed for DOMAttribute. DOMAttributeGetterSetter must be used.") if IsAcceleratedDOMAttribute($interface, $attribute);
-        push(@implContent, "        putDirectCustomAccessor(vm, static_cast<JSVMClientData*>(vm.clientData)->builtinNames()." . $attributeName . "PublicName(), CustomGetterSetter::create(vm, $getter, $setter), attributesForStructure($jscAttributes));\n");
+
+        if ($attribute->extendedAttributes->{PublicIdentifier} || !$attribute->extendedAttributes->{PrivateIdentifier}) {
+            push(@implContent, "        putDirectCustomAccessor(vm, static_cast<JSVMClientData*>(vm.clientData)->builtinNames()." . $attributeName . "PublicName(), CustomGetterSetter::create(vm, $getter, $setter), attributesForStructure($jscAttributes));\n");
+        }
+        if ($attribute->extendedAttributes->{PrivateIdentifier}) {
+            push(@implContent, "        putDirectCustomAccessor(vm, static_cast<JSVMClientData*>(vm.clientData)->builtinNames()." . $attributeName . "PrivateName(), CustomGetterSetter::create(vm, $getter, $setter), attributesForStructure($jscAttributes));\n");
+        }
+
+        push(@implContent, "    }\n") if $isPrivateAndPublic;
         push(@implContent, "#endif\n") if $conditionalString;
     }
 
     # Support PrivateIdentifier attributes on instances.
     foreach my $attribute (@{$interface->attributes}) {
+        next if NeedsRuntimeCheck($interface, $attribute);
         next unless $attribute->extendedAttributes->{PrivateIdentifier};
         next unless AttributeShouldBeOnInstance($interface, $attribute);
 

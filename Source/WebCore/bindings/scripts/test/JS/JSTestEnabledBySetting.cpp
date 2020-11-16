@@ -60,6 +60,10 @@ static JSC_DECLARE_HOST_FUNCTION(jsTestEnabledBySettingPrototypeFunction_enabled
 static JSC_DECLARE_CUSTOM_GETTER(jsTestEnabledBySettingConstructor);
 static JSC_DECLARE_CUSTOM_GETTER(jsTestEnabledBySetting_TestSubObjEnabledBySettingConstructor);
 static JSC_DECLARE_CUSTOM_SETTER(setJSTestEnabledBySetting_TestSubObjEnabledBySettingConstructor);
+static JSC_DECLARE_CUSTOM_GETTER(jsTestEnabledBySetting_TestSubObjEnabledBySettingPrivateConstructor);
+static JSC_DECLARE_CUSTOM_SETTER(setJSTestEnabledBySetting_TestSubObjEnabledBySettingPrivateConstructor);
+static JSC_DECLARE_CUSTOM_GETTER(jsTestEnabledBySetting_TestSubObjEnabledBySettingPrivatePublicConstructor);
+static JSC_DECLARE_CUSTOM_SETTER(setJSTestEnabledBySetting_TestSubObjEnabledBySettingPrivatePublicConstructor);
 #if ENABLE(TEST_FEATURE)
 static JSC_DECLARE_CUSTOM_GETTER(jsTestEnabledBySetting_enabledBySettingAttribute);
 static JSC_DECLARE_CUSTOM_SETTER(setJSTestEnabledBySetting_enabledBySettingAttribute);
@@ -105,6 +109,20 @@ STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestEnabledBySettingPrototype, JSTestEnabl
 
 using JSTestEnabledBySettingDOMConstructor = JSDOMConstructorNotConstructable<JSTestEnabledBySetting>;
 
+/* Hash table */
+
+static const struct CompactHashIndex JSTestEnabledBySettingTableIndex[2] = {
+    { -1, -1 },
+    { -1, -1 },
+};
+
+
+static const HashTableValue JSTestEnabledBySettingTableValues[] =
+{
+    { 0, 0, NoIntrinsic, { 0, 0 } }
+};
+
+static const HashTable JSTestEnabledBySettingTable = { 0, 1, false, JSTestEnabledBySetting::info(), JSTestEnabledBySettingTableValues, JSTestEnabledBySettingTableIndex };
 /* Hash table for constructor */
 
 static const HashTableValue JSTestEnabledBySettingConstructorTableValues[] =
@@ -213,7 +231,7 @@ void JSTestEnabledBySettingPrototype::finishCreation(VM& vm)
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
-const ClassInfo JSTestEnabledBySetting::s_info = { "TestEnabledBySetting", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestEnabledBySetting) };
+const ClassInfo JSTestEnabledBySetting::s_info = { "TestEnabledBySetting", &Base::s_info, &JSTestEnabledBySettingTable, nullptr, CREATE_METHOD_TABLE(JSTestEnabledBySetting) };
 
 JSTestEnabledBySetting::JSTestEnabledBySetting(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestEnabledBySetting>&& impl)
     : JSDOMWrapper<TestEnabledBySetting>(structure, globalObject, WTFMove(impl))
@@ -229,6 +247,12 @@ void JSTestEnabledBySetting::finishCreation(VM& vm)
 
     if (downcast<Document>(jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext())->settings().testSettingEnabled())
         putDirectCustomAccessor(vm, static_cast<JSVMClientData*>(vm.clientData)->builtinNames().TestSubObjEnabledBySettingPublicName(), CustomGetterSetter::create(vm, jsTestEnabledBySetting_TestSubObjEnabledBySettingConstructor, setJSTestEnabledBySetting_TestSubObjEnabledBySettingConstructor), attributesForStructure(static_cast<unsigned>(JSC::PropertyAttribute::DontEnum)));
+    if (downcast<Document>(jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext())->settings().testSettingEnabled())
+        putDirectCustomAccessor(vm, static_cast<JSVMClientData*>(vm.clientData)->builtinNames().TestSubObjEnabledBySettingPrivatePrivateName(), CustomGetterSetter::create(vm, jsTestEnabledBySetting_TestSubObjEnabledBySettingPrivateConstructor, setJSTestEnabledBySetting_TestSubObjEnabledBySettingPrivateConstructor), attributesForStructure(static_cast<unsigned>(JSC::PropertyAttribute::DontEnum)));
+    if (downcast<Document>(jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext())->settings().testSettingEnabled()) {
+        putDirectCustomAccessor(vm, static_cast<JSVMClientData*>(vm.clientData)->builtinNames().TestSubObjEnabledBySettingPrivatePublicPublicName(), CustomGetterSetter::create(vm, jsTestEnabledBySetting_TestSubObjEnabledBySettingPrivatePublicConstructor, setJSTestEnabledBySetting_TestSubObjEnabledBySettingPrivatePublicConstructor), attributesForStructure(static_cast<unsigned>(JSC::PropertyAttribute::DontEnum)));
+        putDirectCustomAccessor(vm, static_cast<JSVMClientData*>(vm.clientData)->builtinNames().TestSubObjEnabledBySettingPrivatePublicPrivateName(), CustomGetterSetter::create(vm, jsTestEnabledBySetting_TestSubObjEnabledBySettingPrivatePublicConstructor, setJSTestEnabledBySetting_TestSubObjEnabledBySettingPrivatePublicConstructor), attributesForStructure(static_cast<unsigned>(JSC::PropertyAttribute::DontEnum)));
+    }
 }
 
 JSObject* JSTestEnabledBySetting::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
@@ -293,6 +317,52 @@ static inline bool setJSTestEnabledBySetting_TestSubObjEnabledBySettingConstruct
 JSC_DEFINE_CUSTOM_SETTER(setJSTestEnabledBySetting_TestSubObjEnabledBySettingConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestEnabledBySetting>::set<setJSTestEnabledBySetting_TestSubObjEnabledBySettingConstructorSetter>(*lexicalGlobalObject, thisValue, encodedValue, "TestSubObjEnabledBySetting");
+}
+
+static inline JSValue jsTestEnabledBySetting_TestSubObjEnabledBySettingPrivateConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestEnabledBySetting& thisObject)
+{
+    UNUSED_PARAM(lexicalGlobalObject);
+    return JSTestSubObj::getConstructor(JSC::getVM(&lexicalGlobalObject), thisObject.globalObject());
+}
+
+JSC_DEFINE_CUSTOM_GETTER(jsTestEnabledBySetting_TestSubObjEnabledBySettingPrivateConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
+{
+    return IDLAttribute<JSTestEnabledBySetting>::get<jsTestEnabledBySetting_TestSubObjEnabledBySettingPrivateConstructorGetter>(*lexicalGlobalObject, thisValue, "TestSubObjEnabledBySettingPrivate");
+}
+
+static inline bool setJSTestEnabledBySetting_TestSubObjEnabledBySettingPrivateConstructorSetter(JSGlobalObject& lexicalGlobalObject, JSTestEnabledBySetting& thisObject, JSValue value)
+{
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    // Shadowing a built-in constructor.
+    return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("TestSubObjEnabledBySettingPrivate"), strlen("TestSubObjEnabledBySettingPrivate")), value);
+}
+
+JSC_DEFINE_CUSTOM_SETTER(setJSTestEnabledBySetting_TestSubObjEnabledBySettingPrivateConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
+{
+    return IDLAttribute<JSTestEnabledBySetting>::set<setJSTestEnabledBySetting_TestSubObjEnabledBySettingPrivateConstructorSetter>(*lexicalGlobalObject, thisValue, encodedValue, "TestSubObjEnabledBySettingPrivate");
+}
+
+static inline JSValue jsTestEnabledBySetting_TestSubObjEnabledBySettingPrivatePublicConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestEnabledBySetting& thisObject)
+{
+    UNUSED_PARAM(lexicalGlobalObject);
+    return JSTestSubObj::getConstructor(JSC::getVM(&lexicalGlobalObject), thisObject.globalObject());
+}
+
+JSC_DEFINE_CUSTOM_GETTER(jsTestEnabledBySetting_TestSubObjEnabledBySettingPrivatePublicConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
+{
+    return IDLAttribute<JSTestEnabledBySetting>::get<jsTestEnabledBySetting_TestSubObjEnabledBySettingPrivatePublicConstructorGetter>(*lexicalGlobalObject, thisValue, "TestSubObjEnabledBySettingPrivatePublic");
+}
+
+static inline bool setJSTestEnabledBySetting_TestSubObjEnabledBySettingPrivatePublicConstructorSetter(JSGlobalObject& lexicalGlobalObject, JSTestEnabledBySetting& thisObject, JSValue value)
+{
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    // Shadowing a built-in constructor.
+    return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("TestSubObjEnabledBySettingPrivatePublic"), strlen("TestSubObjEnabledBySettingPrivatePublic")), value);
+}
+
+JSC_DEFINE_CUSTOM_SETTER(setJSTestEnabledBySetting_TestSubObjEnabledBySettingPrivatePublicConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
+{
+    return IDLAttribute<JSTestEnabledBySetting>::set<setJSTestEnabledBySetting_TestSubObjEnabledBySettingPrivatePublicConstructorSetter>(*lexicalGlobalObject, thisValue, encodedValue, "TestSubObjEnabledBySettingPrivatePublic");
 }
 
 #if ENABLE(TEST_FEATURE)

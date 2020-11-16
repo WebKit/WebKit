@@ -27,6 +27,8 @@
     Exposed=Window
 ] interface TestEnabledBySetting {
     [EnabledBySetting=TestSetting] attribute TestSubObjConstructor TestSubObjEnabledBySetting;
+    [EnabledBySetting=TestSetting, PrivateIdentifier] attribute TestSubObjConstructor TestSubObjEnabledBySettingPrivate;
+    [EnabledBySetting=TestSetting, PrivateIdentifier, PublicIdentifier] attribute TestSubObjConstructor TestSubObjEnabledBySettingPrivatePublic;
 
     // [EnabledBySetting] attributes and operations.
     [Conditional=TEST_FEATURE, EnabledBySetting=TestSetting] attribute DOMString enabledBySettingAttribute;
