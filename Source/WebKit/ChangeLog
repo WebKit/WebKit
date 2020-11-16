@@ -1,3 +1,23 @@
+2020-11-16  Zan Dobersek  <zdobersek@igalia.com>
+
+        [CoordinatedGraphics] Adjust client resizing, render-scope notifying in ThreadedCompositor::renderLayerTree()
+        https://bugs.webkit.org/show_bug.cgi?id=218701
+
+        Reviewed by Carlos Garcia Campos.
+
+        Rework the client operations in ThreadedCompositor::renderLayerTree() so
+        that client resizing is done before the will-render client notification
+        is dispatched. This ensures everything in the will-render-to-did-render
+        scope is done for a well-specified size from the client's point of view.
+
+        Similar to this change, the GL viewport update is split from the client
+        resize operation and moved into the aforementioned rendering scope. This
+        change is mostly cosmetic, but it's done to neatly package all the GL
+        operations into that scope.
+
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.cpp:
+        (WebKit::ThreadedCompositor::renderLayerTree):
+
 2020-11-15  Tim Horton  <timothy_horton@apple.com>
 
         Initial implementation of DOM rendering via the GPU process

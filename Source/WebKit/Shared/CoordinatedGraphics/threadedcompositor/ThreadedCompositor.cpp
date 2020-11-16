@@ -176,8 +176,6 @@ void ThreadedCompositor::renderLayerTree()
     if (!m_context || !m_context->makeContextCurrent())
         return;
 
-    m_client.willRenderFrame();
-
     // Retrieve the scene attributes in a thread-safe manner.
     WebCore::IntSize viewportSize;
     WebCore::IntPoint scrollPosition;
@@ -204,14 +202,22 @@ void ThreadedCompositor::renderLayerTree()
         m_attributes.needsResize = false;
     }
 
-    if (needsResize) {
-        m_client.resize(viewportSize);
-        glViewport(0, 0, viewportSize.width(), viewportSize.height());
-    }
-
     TransformationMatrix viewportTransform;
     viewportTransform.scale(scaleFactor);
     viewportTransform.translate(-scrollPosition.x(), -scrollPosition.y());
+
+    // Resize the client, if necessary, before the will-render-frame call is dispatched.
+    // GL viewport is updated separately, if necessary. This establishes sequencing where
+    // everything inside the will-render and did-render scope is done for a constant-sized scene,
+    // and similarly all GL operations are done inside that specific scope.
+
+    if (needsResize)
+        m_client.resize(viewportSize);
+
+    m_client.willRenderFrame();
+
+    if (needsResize)
+        glViewport(0, 0, viewportSize.width(), viewportSize.height());
 
     glClearColor(0, 0, 0, 0);
     glClear(GL_COLOR_BUFFER_BIT);
