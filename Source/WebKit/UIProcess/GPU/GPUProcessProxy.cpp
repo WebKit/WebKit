@@ -281,7 +281,11 @@ void GPUProcessProxy::updateProcessAssertion()
         }
         return;
     }
-    m_activityFromWebProcesses = nullptr;
+
+    // Use std::exchange() instead of a simple nullptr assignment to avoid re-entering this
+    // function during the destructor of the ProcessThrottler activity, before setting
+    // m_activityFromWebProcesses.
+    std::exchange(m_activityFromWebProcesses, nullptr);
 }
 
 static inline GPUProcessSessionParameters gpuProcessSessionParameters(const WebsiteDataStore& store)

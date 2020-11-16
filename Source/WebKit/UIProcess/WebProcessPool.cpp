@@ -1715,6 +1715,10 @@ void WebProcessPool::updateProcessAssertions()
     WebsiteDataStore::forEachWebsiteDataStore([] (WebsiteDataStore& dataStore) {
         dataStore.networkProcess().updateProcessAssertion();
     });
+#if ENABLE(GPU_PROCESS)
+    if (auto* gpuProcess = GPUProcessProxy::singletonIfCreated())
+        gpuProcess->updateProcessAssertion();
+#endif
 #if ENABLE(SERVICE_WORKER)
     // Check on next run loop since the web process proxy tokens are probably being updated.
     callOnMainRunLoop([] {

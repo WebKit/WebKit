@@ -1,3 +1,19 @@
+2020-11-16  Chris Dumez  <cdumez@apple.com>
+
+        [GPUProcess] Update GPUProcess process assertion based on active WebProcesses
+        https://bugs.webkit.org/show_bug.cgi?id=219002
+
+        Reviewed by Simon Fraser.
+
+        Update GPUProcess process assertion based on active WebProcesses, similarly to what
+        we do for the network process. Previously, we would never release the GPUProcess
+        process assertion and it would time out after 30 seconds in the background.
+
+        * UIProcess/GPU/GPUProcessProxy.cpp:
+        (WebKit::GPUProcessProxy::updateProcessAssertion):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::updateProcessAssertions):
+
 2020-11-16  Brent Fulgham  <bfulgham@apple.com>
 
         [macOS] Remove remote tcp capability from WebContent Sandbox
