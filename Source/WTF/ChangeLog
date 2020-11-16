@@ -1,3 +1,15 @@
+2020-11-16  Zan Dobersek  <zdobersek@igalia.com>
+
+        Re-disable async overflow scrolling for USE(NICOSIA)
+        https://bugs.webkit.org/show_bug.cgi?id=218974
+
+        Async overflow scrolling was accidentally enabled for ports using the
+        Nicosia platform layering infrastructure during the preference migration
+        done in r267775. This patch again disables it until it can be properly
+        supported.
+
+        * Scripts/Preferences/WebPreferencesInternal.yaml:
+
 2020-11-14  Don Olmstead  <don.olmstead@sony.com>
 
         [clang-tidy] Run modernize-use-override through JSC
