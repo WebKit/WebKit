@@ -264,10 +264,22 @@ TextStream& operator<<(TextStream& stream, const AXCoreObject& object)
     TextStream::GroupScope groupScope(stream);
     stream << "objectID " << object.objectID();
     stream.dumpProperty("identifierAttribute", object.identifierAttribute());
-    stream.dumpProperty("roleValue", object.roleValue());
-    stream.dumpProperty("address", &object);
+    auto role = object.roleValue();
+    stream.dumpProperty("roleValue", role);
 
+    auto* objectWithInterestingHTML = role == AccessibilityRole::Button ? // Add here other roles of interest.
+        &object : nullptr;
     auto* parent = object.parentObject();
+    if (role == AccessibilityRole::StaticText && parent)
+        objectWithInterestingHTML = parent;
+    if (objectWithInterestingHTML) {
+        if (auto* element = objectWithInterestingHTML->element())
+            stream.dumpProperty("outerHTML", element->outerHTML());
+    }
+
+    stream.dumpProperty("address", &object);
+    stream.dumpProperty("wrapper", object.wrapper());
+
     stream.dumpProperty("parentObject", parent ? parent->objectID() : 0);
 #if PLATFORM(COCOA)
     stream.dumpProperty("remoteParentObject", object.remoteParentObject());
