@@ -1,3 +1,13 @@
+2020-11-15  Sam Weinig  <weinig@apple.com>
+
+        Remove and re-add fast/forms/selection-direction.html without CRs
+        https://bugs.webkit.org/show_bug.cgi?id=218966
+
+        Reviewed by Darin Adler.
+
+        * fast/forms/selection-direction.html: Removed.
+        Temporarily remove test. Will add back without CRs in next commit.
+
 2020-11-15  Youenn Fablet  <youenn@apple.com>
 
         Add a WebRTC SFrame transform
