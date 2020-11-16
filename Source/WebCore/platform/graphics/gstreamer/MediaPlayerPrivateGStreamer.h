@@ -93,7 +93,7 @@ namespace WebCore {
 class BitmapTextureGL;
 class GLContext;
 class GraphicsContext;
-class GraphicsContextGLOpenGL;
+class GraphicsContextGL;
 class IntSize;
 class IntRect;
 class VideoTextureCopierGStreamer;
@@ -215,7 +215,7 @@ public:
 #endif
 
 #if USE(GSTREAMER_GL)
-    bool copyVideoTextureToPlatformTexture(GraphicsContextGLOpenGL*, PlatformGLObject, GCGLenum, GCGLint, GCGLenum, GCGLenum, GCGLenum, bool, bool) override;
+    bool copyVideoTextureToPlatformTexture(GraphicsContextGL*, PlatformGLObject, GCGLenum, GCGLint, GCGLenum, GCGLenum, GCGLenum, bool, bool) override;
     RefPtr<NativeImage> nativeImageForCurrentTime() override;
 #endif
 

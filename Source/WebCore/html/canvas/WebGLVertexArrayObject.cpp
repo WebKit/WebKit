@@ -58,7 +58,7 @@ WebGLVertexArrayObject::WebGLVertexArrayObject(WebGLRenderingContextBase& contex
     setObject(this->context()->graphicsContextGL()->createVertexArray());
 }
 
-void WebGLVertexArrayObject::deleteObjectImpl(const AbstractLocker& locker, GraphicsContextGLOpenGL* context3d, PlatformGLObject object)
+void WebGLVertexArrayObject::deleteObjectImpl(const AbstractLocker& locker, GraphicsContextGL* context3d, PlatformGLObject object)
 {
     switch (m_type) {
     case Type::Default:

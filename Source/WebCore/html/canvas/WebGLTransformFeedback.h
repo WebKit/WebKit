@@ -75,7 +75,7 @@ public:
 private:
     WebGLTransformFeedback(WebGL2RenderingContext&);
 
-    void deleteObjectImpl(const WTF::AbstractLocker&, GraphicsContextGLOpenGL*, PlatformGLObject) override;
+    void deleteObjectImpl(const WTF::AbstractLocker&, GraphicsContextGL*, PlatformGLObject) override;
     
     bool m_active { false };
     bool m_paused { false };

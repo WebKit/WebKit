@@ -44,7 +44,7 @@ public:
     void removeObject(WebGLSharedObject&);
 
     bool hasAContext() const;
-    GraphicsContextGLOpenGL& getAGraphicsContextGL();
+    GraphicsContextGL& getAGraphicsContextGL();
     Lock& objectGraphLockForAContext();
 
     void loseContextGroup(WebGLRenderingContextBase::LostContextMode);

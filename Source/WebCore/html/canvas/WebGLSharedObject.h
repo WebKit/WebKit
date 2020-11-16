@@ -36,7 +36,7 @@ class Lock;
 
 namespace WebCore {
 
-class GraphicsContextGLOpenGL;
+class GraphicsContextGL;
 class WebGLContextGroup;
 class WebGLRenderingContextBase;
 
@@ -66,7 +66,7 @@ protected:
 
     bool hasGroupOrContext() const override;
 
-    GraphicsContextGLOpenGL* getAGraphicsContextGL() const override;
+    GraphicsContextGL* getAGraphicsContextGL() const override;
 
 private:
     WebGLContextGroup* m_contextGroup;

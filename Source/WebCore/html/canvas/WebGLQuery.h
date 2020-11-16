@@ -49,7 +49,7 @@ public:
 
 private:
     explicit WebGLQuery(WebGLRenderingContextBase&);
-    void deleteObjectImpl(const WTF::AbstractLocker&, GraphicsContextGLOpenGL*, PlatformGLObject) override;
+    void deleteObjectImpl(const WTF::AbstractLocker&, GraphicsContextGL*, PlatformGLObject) override;
 
     bool m_isResultAvailable { false };
     GCGLenum m_target { 0 };

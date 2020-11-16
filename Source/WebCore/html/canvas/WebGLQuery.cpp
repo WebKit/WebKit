@@ -54,7 +54,7 @@ WebGLQuery::WebGLQuery(WebGLRenderingContextBase& ctx)
     setObject(ctx.graphicsContextGL()->createQuery());
 }
 
-void WebGLQuery::deleteObjectImpl(const AbstractLocker&, GraphicsContextGLOpenGL* context3d, PlatformGLObject object)
+void WebGLQuery::deleteObjectImpl(const AbstractLocker&, GraphicsContextGL* context3d, PlatformGLObject object)
 {
     context3d->deleteQuery(object);
 }

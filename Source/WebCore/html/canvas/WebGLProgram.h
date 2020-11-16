@@ -93,9 +93,9 @@ public:
 private:
     WebGLProgram(WebGLRenderingContextBase&);
 
-    void deleteObjectImpl(const WTF::AbstractLocker&, GraphicsContextGLOpenGL*, PlatformGLObject) override;
+    void deleteObjectImpl(const WTF::AbstractLocker&, GraphicsContextGL*, PlatformGLObject) override;
 
-    void cacheActiveAttribLocations(GraphicsContextGLOpenGL*);
+    void cacheActiveAttribLocations(GraphicsContextGL*);
     void cacheInfoIfNeeded();
 
     Vector<GCGLint> m_activeAttribLocations;

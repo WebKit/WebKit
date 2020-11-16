@@ -28,7 +28,7 @@
 
 #if ENABLE(WEBGL)
 
-#include "GraphicsContextGLOpenGL.h"
+#include "GraphicsContextGL.h"
 #include "WebGLRenderingContextBase.h"
 #include "WebGLSharedObject.h"
 
@@ -49,7 +49,7 @@ bool WebGLContextGroup::hasAContext() const
     return !m_contexts.isEmpty();
 }
 
-GraphicsContextGLOpenGL& WebGLContextGroup::getAGraphicsContextGL()
+GraphicsContextGL& WebGLContextGroup::getAGraphicsContextGL()
 {
     ASSERT(!m_contexts.isEmpty());
     return *(*m_contexts.begin())->graphicsContextGL();

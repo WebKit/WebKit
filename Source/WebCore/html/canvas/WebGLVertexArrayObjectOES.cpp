@@ -59,7 +59,7 @@ WebGLVertexArrayObjectOES::~WebGLVertexArrayObjectOES()
     runDestructor();
 }
 
-void WebGLVertexArrayObjectOES::deleteObjectImpl(const WTF::AbstractLocker& locker, GraphicsContextGLOpenGL* context3d, PlatformGLObject object)
+void WebGLVertexArrayObjectOES::deleteObjectImpl(const WTF::AbstractLocker& locker, GraphicsContextGL* context3d, PlatformGLObject object)
 {
     switch (m_type) {
     case Type::Default:

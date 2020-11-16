@@ -95,7 +95,7 @@ void WebGLDrawBuffers::drawBuffersWEBGL(const Vector<GCGLenum>& buffers)
 // static
 bool WebGLDrawBuffers::satisfiesWebGLRequirements(WebGLRenderingContextBase& webglContext)
 {
-    GraphicsContextGLOpenGL* context = webglContext.graphicsContextGL();
+    GraphicsContextGL* context = webglContext.graphicsContextGL();
 
     // This is called after we make sure GL_EXT_draw_buffers is supported.
     GCGLint maxDrawBuffers = 0;

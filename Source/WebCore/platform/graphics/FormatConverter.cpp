@@ -1719,7 +1719,7 @@ ALWAYS_INLINE_EXCEPT_MSVC void FormatConverter::convert()
     }
 
     // Only textures uploaded from DOM elements or ImageData can allow DstFormat != SrcFormat.
-    const bool srcFormatComesFromDOMElementOrImageData = GraphicsContextGLOpenGL::srcFormatComesFromDOMElementOrImageData(SrcFormat);
+    const bool srcFormatComesFromDOMElementOrImageData = GraphicsContextGL::srcFormatComesFromDOMElementOrImageData(SrcFormat);
     if (!srcFormatComesFromDOMElementOrImageData && SrcFormat != DstFormat) {
         ASSERT_NOT_REACHED();
         return;
@@ -1733,7 +1733,7 @@ ALWAYS_INLINE_EXCEPT_MSVC void FormatConverter::convert()
         ASSERT_NOT_REACHED();
         return;
     }
-    if ((!GraphicsContextGLOpenGL::hasAlpha(SrcFormat) || !GraphicsContextGLOpenGL::hasColor(SrcFormat) || !GraphicsContextGLOpenGL::hasColor(DstFormat)) && alphaOp != GraphicsContextGL::AlphaOp::DoNothing) {
+    if ((!GraphicsContextGL::hasAlpha(SrcFormat) || !GraphicsContextGL::hasColor(SrcFormat) || !GraphicsContextGL::hasColor(DstFormat)) && alphaOp != GraphicsContextGL::AlphaOp::DoNothing) {
         ASSERT_NOT_REACHED();
         return;
     }

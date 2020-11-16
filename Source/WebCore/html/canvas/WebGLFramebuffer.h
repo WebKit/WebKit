@@ -62,9 +62,9 @@ public:
         virtual bool isValid() const = 0;
         virtual bool isInitialized() const = 0;
         virtual void setInitialized() = 0;
-        virtual void onDetached(const WTF::AbstractLocker&, GraphicsContextGLOpenGL*) = 0;
-        virtual void attach(GraphicsContextGLOpenGL*, GCGLenum target, GCGLenum attachment) = 0;
-        virtual void unattach(GraphicsContextGLOpenGL*, GCGLenum target, GCGLenum attachment) = 0;
+        virtual void onDetached(const WTF::AbstractLocker&, GraphicsContextGL*) = 0;
+        virtual void attach(GraphicsContextGL*, GCGLenum target, GCGLenum attachment) = 0;
+        virtual void unattach(GraphicsContextGL*, GCGLenum target, GCGLenum attachment) = 0;
         virtual void addMembersToOpaqueRoots(const WTF::AbstractLocker&, JSC::SlotVisitor&) = 0;
 
     protected:
@@ -94,7 +94,7 @@ public:
     // Return false if the framebuffer is incomplete; otherwise initialize
     // the buffers if they haven't been initialized and
     // needToInitializeAttachments is true.
-    bool onAccess(GraphicsContextGLOpenGL*, const char** reason);
+    bool onAccess(GraphicsContextGL*, const char** reason);
 
     // Software version of glCheckFramebufferStatus(), except that when
     // FRAMEBUFFER_COMPLETE is returned, it is still possible for
@@ -119,13 +119,13 @@ public:
 private:
     WebGLFramebuffer(WebGLRenderingContextBase&);
 
-    void deleteObjectImpl(const WTF::AbstractLocker&, GraphicsContextGLOpenGL*, PlatformGLObject) override;
+    void deleteObjectImpl(const WTF::AbstractLocker&, GraphicsContextGL*, PlatformGLObject) override;
 
     WebGLAttachment* getAttachment(GCGLenum) const;
 
 #if !USE(ANGLE)
     // Return false if framebuffer is incomplete.
-    bool initializeAttachments(GraphicsContextGLOpenGL*, const char** reason);
+    bool initializeAttachments(GraphicsContextGL*, const char** reason);
 #endif
 
     // Check if the framebuffer is currently bound to the given target.

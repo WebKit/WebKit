@@ -58,7 +58,7 @@ WebGLShader::~WebGLShader()
     runDestructor();
 }
 
-void WebGLShader::deleteObjectImpl(const AbstractLocker&, GraphicsContextGLOpenGL* context3d, PlatformGLObject object)
+void WebGLShader::deleteObjectImpl(const AbstractLocker&, GraphicsContextGL* context3d, PlatformGLObject object)
 {
     context3d->deleteShader(object);
 }

@@ -58,7 +58,7 @@ void WebGLObject::runDestructor()
     }
 }
 
-void WebGLObject::deleteObject(const AbstractLocker& locker, GraphicsContextGLOpenGL* context3d)
+void WebGLObject::deleteObject(const AbstractLocker& locker, GraphicsContextGL* context3d)
 {
     m_deleted = true;
     if (!m_object)
@@ -92,7 +92,7 @@ void WebGLObject::detach()
     m_attachmentCount = 0; // Make sure OpenGL resource is deleted.
 }
 
-void WebGLObject::onDetached(const AbstractLocker& locker, GraphicsContextGLOpenGL* context3d)
+void WebGLObject::onDetached(const AbstractLocker& locker, GraphicsContextGL* context3d)
 {
     if (m_attachmentCount)
         --m_attachmentCount;

@@ -39,6 +39,10 @@
 #include <wtf/Locker.h>
 #include <wtf/NeverDestroyed.h>
 
+#if !USE(ANGLE)
+#include "GraphicsContextGLOpenGL.h"
+#endif
+
 namespace WebCore {
 
 HashMap<WebGLProgram*, WebGLRenderingContextBase*>& WebGLProgram::instances(const LockHolder&)
@@ -95,7 +99,7 @@ void WebGLProgram::contextDestroyed()
     ContextDestructionObserver::contextDestroyed();
 }
 
-void WebGLProgram::deleteObjectImpl(const AbstractLocker& locker, GraphicsContextGLOpenGL* context3d, PlatformGLObject obj)
+void WebGLProgram::deleteObjectImpl(const AbstractLocker& locker, GraphicsContextGL* context3d, PlatformGLObject obj)
 {
     context3d->deleteProgram(obj);
     if (m_vertexShader) {
@@ -208,7 +212,7 @@ void WebGLProgram::addMembersToOpaqueRoots(const AbstractLocker&, JSC::SlotVisit
     visitor.addOpaqueRoot(m_fragmentShader.get());
 }
 
-void WebGLProgram::cacheActiveAttribLocations(GraphicsContextGLOpenGL* context3d)
+void WebGLProgram::cacheActiveAttribLocations(GraphicsContextGL* context3d)
 {
     m_activeAttribLocations.clear();
 
@@ -217,7 +221,11 @@ void WebGLProgram::cacheActiveAttribLocations(GraphicsContextGLOpenGL* context3d
     m_activeAttribLocations.resize(static_cast<size_t>(numAttribs));
     for (int i = 0; i < numAttribs; ++i) {
         GraphicsContextGL::ActiveInfo info;
-        context3d->getActiveAttribImpl(object(), i, info);
+#if USE(ANGLE)
+        context3d->getActiveAttrib(object(), i, info);
+#else
+        static_cast<GraphicsContextGLOpenGL*>(context3d)->getActiveAttribImpl(object(), i, info);
+#endif
         m_activeAttribLocations[i] = context3d->getAttribLocation(object(), info.name);
     }
 }
@@ -230,7 +238,7 @@ void WebGLProgram::cacheInfoIfNeeded()
     if (!object())
         return;
 
-    GraphicsContextGLOpenGL* context = getAGraphicsContextGL();
+    GraphicsContextGL* context = getAGraphicsContextGL();
     if (!context)
         return;
     GCGLint linkStatus = 0;

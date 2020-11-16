@@ -2943,14 +2943,6 @@ GCGLuint GraphicsContextGLOpenGL::getUniformBlockIndex(PlatformGLObject program,
     return 0;
 }
 
-void GraphicsContextGLOpenGL::getActiveUniformBlockiv(PlatformGLObject program, GCGLuint uniformBlockIndex, GCGLenum pname, GCGLint* params)
-{
-    UNUSED_PARAM(program);
-    UNUSED_PARAM(uniformBlockIndex);
-    UNUSED_PARAM(pname);
-    UNUSED_PARAM(params);
-}
-
 String GraphicsContextGLOpenGL::getActiveUniformBlockName(PlatformGLObject program, GCGLuint uniformBlockIndex)
 {
     UNUSED_PARAM(program);
@@ -2973,10 +2965,6 @@ void GraphicsContextGLOpenGL::getActiveUniforms(PlatformGLObject, const Vector<G
 GCGLuint GraphicsContextGLOpenGL::getUniformBlockIndex(PlatformGLObject, const String&)
 {
     return 0;
-}
-
-void GraphicsContextGLOpenGL::getActiveUniformBlockiv(PlatformGLObject, GCGLuint, GCGLenum, GCGLint*)
-{
 }
 
 String GraphicsContextGLOpenGL::getActiveUniformBlockName(PlatformGLObject, GCGLuint)

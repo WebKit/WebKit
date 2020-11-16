@@ -27,7 +27,7 @@
 
 #if ENABLE(WEBGL)
 
-#include "GraphicsContextGLOpenGL.h"
+#include "GraphicsContextGL.h"
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 

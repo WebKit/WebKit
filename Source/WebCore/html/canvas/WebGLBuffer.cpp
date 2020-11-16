@@ -56,7 +56,7 @@ WebGLBuffer::~WebGLBuffer()
     runDestructor();
 }
 
-void WebGLBuffer::deleteObjectImpl(const AbstractLocker&, GraphicsContextGLOpenGL* context3d, PlatformGLObject object)
+void WebGLBuffer::deleteObjectImpl(const AbstractLocker&, GraphicsContextGL* context3d, PlatformGLObject object)
 {
     context3d->deleteBuffer(object);
 }

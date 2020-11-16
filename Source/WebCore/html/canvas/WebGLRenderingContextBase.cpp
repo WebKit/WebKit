@@ -51,6 +51,7 @@
 #include "FrameView.h"
 #include "GraphicsContext.h"
 #include "GraphicsContextGLImageExtractor.h"
+#include "GraphicsContextGLOpenGL.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLVideoElement.h"
@@ -617,7 +618,7 @@ private:
     bool m_didApply { false };
 };
 
-static bool isHighPerformanceContext(const RefPtr<GraphicsContextGLOpenGL>& context)
+static bool isHighPerformanceContext(const RefPtr<GraphicsContextGL>& context)
 {
     return context->powerPreferenceUsedForCreation() == WebGLPowerPreference::HighPerformance;
 }
@@ -753,7 +754,7 @@ WebGLRenderingContextBase::WebGLRenderingContextBase(CanvasBase& canvas, WebGLCo
         m_checkForContextLossHandlingTimer.startOneShot(checkContextLossHandlingDelay);
 }
 
-WebGLRenderingContextBase::WebGLRenderingContextBase(CanvasBase& canvas, Ref<GraphicsContextGLOpenGL>&& context, WebGLContextAttributes attributes)
+WebGLRenderingContextBase::WebGLRenderingContextBase(CanvasBase& canvas, Ref<GraphicsContextGL>&& context, WebGLContextAttributes attributes)
     : GPUBasedCanvasRenderingContext(canvas)
     , m_context(WTFMove(context))
     , m_restoreTimer(canvas.scriptExecutionContext(), *this, &WebGLRenderingContextBase::maybeRestoreContext)
@@ -1786,7 +1787,7 @@ void WebGLRenderingContextBase::compressedTexImage2D(GCGLenum target, GCGLint le
     if (!validateNPOTTextureLevel(width, height, level, "compressedTexImage2D"))
         return;
     m_context->moveErrorsToSyntheticErrorList();
-    m_context->compressedTexImage2D(target, level, internalformat, width, height,
+    static_cast<GraphicsContextGLOpenGL*>(m_context.get())->compressedTexImage2D(target, level, internalformat, width, height,
         border, data.byteLength(), data.baseAddress());
     if (m_context->moveErrorsToSyntheticErrorList()) {
         // The compressedTexImage2D function failed. Tell the WebGLTexture it doesn't have the data for this level.
@@ -1829,7 +1830,7 @@ void WebGLRenderingContextBase::compressedTexSubImage2D(GCGLenum target, GCGLint
     if (!validateCompressedTexSubDimensions("compressedTexSubImage2D", target, level, xoffset, yoffset, width, height, format, tex.get()))
         return;
 
-    graphicsContextGL()->compressedTexSubImage2D(target, level, xoffset, yoffset, width, height, format, data.byteLength(), data.baseAddress());
+    static_cast<GraphicsContextGLOpenGL*>(graphicsContextGL())->compressedTexSubImage2D(target, level, xoffset, yoffset, width, height, format, data.byteLength(), data.baseAddress());
     tex->setCompressed();
 #endif
 }
@@ -3205,7 +3206,7 @@ WebGLAny WebGLRenderingContextBase::getProgramParameter(WebGLProgram& program, G
 #if USE(ANGLE)
         m_context->getProgramiv(program.object(), pname, &value);
 #else
-        m_context->getNonBuiltInActiveSymbolCount(program.object(), pname, &value);
+        static_cast<GraphicsContextGLOpenGL*>(m_context.get())->getNonBuiltInActiveSymbolCount(program.object(), pname, &value);
 #endif // USE(ANGLE)
         return value;
     default:
@@ -3549,9 +3550,11 @@ WebGLAny WebGLRenderingContextBase::getUniform(WebGLProgram& program, const WebG
     switch (baseType) {
     case GraphicsContextGL::FLOAT: {
         GCGLfloat value[16] = {0};
+#if !USE(ANGLE)
         if (m_isRobustnessEXTSupported)
             m_context->getExtensions().getnUniformfvEXT(program.object(), location, 16 * sizeof(GCGLfloat), value);
         else
+#endif
             m_context->getUniformfv(program.object(), location, value);
         if (length == 1)
             return value[0];
@@ -3559,9 +3562,11 @@ WebGLAny WebGLRenderingContextBase::getUniform(WebGLProgram& program, const WebG
     }
     case GraphicsContextGL::INT: {
         GCGLint value[4] = {0};
+#if !USE(ANGLE)
         if (m_isRobustnessEXTSupported)
             m_context->getExtensions().getnUniformivEXT(program.object(), location, 4 * sizeof(GCGLint), value);
         else
+#endif
             m_context->getUniformiv(program.object(), location, value);
         if (length == 1)
             return value[0];
@@ -3576,9 +3581,11 @@ WebGLAny WebGLRenderingContextBase::getUniform(WebGLProgram& program, const WebG
     }
     case GraphicsContextGL::BOOL: {
         GCGLint value[4] = {0};
+#if !USE(ANGLE)
         if (m_isRobustnessEXTSupported)
             m_context->getExtensions().getnUniformivEXT(program.object(), location, 4 * sizeof(GCGLint), value);
         else
+#endif
             m_context->getUniformiv(program.object(), location, value);
         if (length > 1) {
             Vector<bool> vector(length);
@@ -3619,7 +3626,7 @@ RefPtr<WebGLUniformLocation> WebGLRenderingContextBase::getUniformLocation(WebGL
 #if USE(ANGLE)
     m_context->getProgramiv(program.object(), GraphicsContextGL::ACTIVE_UNIFORMS, &activeUniforms);
 #else
-    m_context->getNonBuiltInActiveSymbolCount(program.object(), GraphicsContextGL::ACTIVE_UNIFORMS, &activeUniforms);
+    static_cast<GraphicsContextGLOpenGL*>(m_context.get())->getNonBuiltInActiveSymbolCount(program.object(), GraphicsContextGL::ACTIVE_UNIFORMS, &activeUniforms);
 #endif
     for (GCGLint i = 0; i < activeUniforms; i++) {
         GraphicsContextGL::ActiveInfo info;
@@ -3893,8 +3900,8 @@ bool WebGLRenderingContextBase::linkProgramWithoutInvalidatingAttribLocations(We
     }
 
 #if !USE(ANGLE)
-    if (!m_context->precisionsMatch(objectOrZero(vertexShader.get()), objectOrZero(fragmentShader.get()))
-        || !m_context->checkVaryingsPacking(objectOrZero(vertexShader.get()), objectOrZero(fragmentShader.get()))) {
+    if (!static_cast<GraphicsContextGLOpenGL*>(m_context.get())->precisionsMatch(objectOrZero(vertexShader.get()), objectOrZero(fragmentShader.get()))
+        || !static_cast<GraphicsContextGLOpenGL*>(m_context.get())->checkVaryingsPacking(objectOrZero(vertexShader.get()), objectOrZero(fragmentShader.get()))) {
         program->setLinkStatus(false);
         return false;
     }
@@ -4257,7 +4264,7 @@ void WebGLRenderingContextBase::readPixels(GCGLint x, GCGLint y, GCGLsizei width
     }
 
 #define INTERNAL_FORMAT_CHECK(typeMacro, pixelTypeMacro) \
-    if (type != GraphicsContextGLOpenGL::typeMacro || pixels.getType() != JSC::pixelTypeMacro) { \
+    if (type != GraphicsContextGL::typeMacro || pixels.getType() != JSC::pixelTypeMacro) { \
         synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "readPixels", "type does not match internal format"); \
         return; \
     } \
@@ -4268,7 +4275,7 @@ void WebGLRenderingContextBase::readPixels(GCGLint x, GCGLint y, GCGLsizei width
     CHECK_COMPONENT_COUNT
 
 #define INTERNAL_FORMAT_INTEGER_CHECK(typeMacro, pixelTypeMacro) \
-    if (type != GraphicsContextGLOpenGL::typeMacro || pixels.getType() != JSC::pixelTypeMacro) { \
+    if (type != GraphicsContextGL::typeMacro || pixels.getType() != JSC::pixelTypeMacro) { \
         synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "readPixels", "type does not match internal format"); \
         return; \
     } \
@@ -4278,13 +4285,13 @@ void WebGLRenderingContextBase::readPixels(GCGLint x, GCGLint y, GCGLsizei width
     } \
     CHECK_COMPONENT_COUNT
 
-#define CASE_PACKED_INTERNAL_FORMAT_CHECK(internalFormatMacro, formatMacro, type0Macro, pixelType0Macro, type1Macro, pixelType1Macro) case GraphicsContextGLOpenGL::internalFormatMacro: \
-    if (!(type == GraphicsContextGLOpenGL::type0Macro && pixels.getType() == JSC::pixelType0Macro) \
-        && !(type == GraphicsContextGLOpenGL::type1Macro && pixels.getType() == JSC::pixelType1Macro)) { \
+#define CASE_PACKED_INTERNAL_FORMAT_CHECK(internalFormatMacro, formatMacro, type0Macro, pixelType0Macro, type1Macro, pixelType1Macro) case GraphicsContextGL::internalFormatMacro: \
+    if (!(type == GraphicsContextGL::type0Macro && pixels.getType() == JSC::pixelType0Macro) \
+        && !(type == GraphicsContextGL::type1Macro && pixels.getType() == JSC::pixelType1Macro)) { \
         synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "readPixels", "type does not match internal format"); \
         return; \
     } \
-    if (format != GraphicsContextGLOpenGL::formatMacro) { \
+    if (format != GraphicsContextGL::formatMacro) { \
         synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "readPixels", "Invalid format"); \
         return; \
     } \
@@ -4699,7 +4706,7 @@ ExceptionOr<void> WebGLRenderingContextBase::texImageSourceHelper(TexImageFuncti
                 // The UNSIGNED_INT_10F_11F_11F_REV type pack/unpack isn't implemented.
                 type = GraphicsContextGL::FLOAT;
             }
-            if (!m_context->extractImageData(pixels.get(), GraphicsContextGLOpenGL::DataFormat::RGBA8, adjustedSourceImageRect, depth, unpackImageHeight, format, type, m_unpackFlipY, m_unpackPremultiplyAlpha, data)) {
+            if (!m_context->extractImageData(pixels.get(), GraphicsContextGL::DataFormat::RGBA8, adjustedSourceImageRect, depth, unpackImageHeight, format, type, m_unpackFlipY, m_unpackPremultiplyAlpha, data)) {
                 synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "texImage2D", "bad image data");
                 return { };
             }
@@ -5013,7 +5020,7 @@ void WebGLRenderingContextBase::texImage2DBase(GCGLenum target, GCGLint level, G
     ASSERT(tex);
     ASSERT(validateNPOTTextureLevel(width, height, level, "texImage2D"));
     if (!pixels) {
-        if (!m_context->texImage2DResourceSafe(target, level, internalFormat, width, height, border, format, type, m_unpackAlignment))
+        if (!static_cast<GraphicsContextGLOpenGL*>(m_context.get())->texImage2DResourceSafe(target, level, internalFormat, width, height, border, format, type, m_unpackAlignment))
             return;
     } else {
         ASSERT(validateSettableTexInternalFormat("texImage2D", internalFormat));
@@ -5485,8 +5492,8 @@ bool WebGLRenderingContextBase::validateTexFuncFormatAndType(const char* functio
     UNUSED_PARAM(internalFormat);
 #else
     // Verify that the combination of internalformat, format, and type is supported.
-#define INTERNAL_FORMAT_CASE(internalFormatMacro, formatMacro, type0, type1, type2, type3, type4) case GraphicsContextGLOpenGL::internalFormatMacro: \
-    if (format != GraphicsContextGLOpenGL::formatMacro) { \
+#define INTERNAL_FORMAT_CASE(internalFormatMacro, formatMacro, type0, type1, type2, type3, type4) case GraphicsContextGL::internalFormatMacro: \
+    if (format != GraphicsContextGL::formatMacro) { \
         synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, functionName, "invalid format for internalformat"); \
         return false; \
     } \
@@ -5625,7 +5632,7 @@ void WebGLRenderingContextBase::copyTexImage2D(GCGLenum target, GCGLint level, G
     GCGLint clippedX, clippedY;
     GCGLsizei clippedWidth, clippedHeight;
     if (clip2D(x, y, width, height, getBoundReadFramebufferWidth(), getBoundReadFramebufferHeight(), &clippedX, &clippedY, &clippedWidth, &clippedHeight)) {
-        m_context->texImage2DResourceSafe(target, level, internalFormat, width, height, border,
+        static_cast<GraphicsContextGLOpenGL*>(m_context.get())->texImage2DResourceSafe(target, level, internalFormat, width, height, border,
             internalFormat, GraphicsContextGL::UNSIGNED_BYTE, m_unpackAlignment);
         if (clippedWidth > 0 && clippedHeight > 0) {
             m_context->copyTexSubImage2D(target, level, clippedX - x, clippedY - y,
@@ -6406,8 +6413,8 @@ void WebGLRenderingContextBase::createFallbackBlackTextures1x1()
 
 bool WebGLRenderingContextBase::isTexInternalFormatColorBufferCombinationValid(GCGLenum texInternalFormat, GCGLenum colorBufferFormat)
 {
-    auto need = GraphicsContextGLOpenGL::getChannelBitsByFormat(texInternalFormat);
-    auto have = GraphicsContextGLOpenGL::getChannelBitsByFormat(colorBufferFormat);
+    auto need = GraphicsContextGL::getChannelBitsByFormat(texInternalFormat);
+    auto have = GraphicsContextGL::getChannelBitsByFormat(colorBufferFormat);
     return (need & have) == need;
 }
 
@@ -7484,7 +7491,7 @@ void WebGLRenderingContextBase::maybeRestoreContext()
     if (!hostWindow)
         return;
 
-    RefPtr<GraphicsContextGLOpenGL> context(GraphicsContextGLOpenGL::create(m_attributes, hostWindow));
+    RefPtr<GraphicsContextGL> context(GraphicsContextGLOpenGL::create(m_attributes, hostWindow));
     if (!context) {
         if (m_contextLostMode == RealLostContext)
             m_restoreTimer.startOneShot(secondsBetweenRestoreAttempts);
@@ -7760,7 +7767,7 @@ void WebGLRenderingContextBase::drawElementsInstanced(GCGLenum mode, GCGLsizei c
 
 #if USE(OPENGL) && ENABLE(WEBGL2)
     if (isWebGL2())
-        m_context->primitiveRestartIndex(getRestartIndex(type));
+        static_cast<GraphicsContextGLOpenGL*>(m_context.get())->primitiveRestartIndex(getRestartIndex(type));
 #endif
 
     m_context->drawElementsInstanced(mode, count, type, static_cast<GCGLintptr>(offset), primcount);

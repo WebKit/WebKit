@@ -919,7 +919,7 @@ public:
     void addClient(Client& client) { m_clients.add(&client); }
     void removeClient(Client& client) { m_clients.remove(&client); }
 
-    // ========== WebGL 1 entry points.
+    // WebGL functions in format generate-gpup-webgl understands.
 
     virtual void activeTexture(GCGLenum texture) = 0;
     virtual void attachShader(PlatformGLObject program, PlatformGLObject shader) = 0;
@@ -1099,28 +1099,18 @@ public:
 
     virtual void viewport(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height) = 0;
 
-    virtual void bufferData(GCGLenum target, GCGLsizeiptr size, GCGLenum usage) = 0;
-    virtual void bufferData(GCGLenum target, GCGLsizeiptr size, const void* data, GCGLenum usage) = 0;
-    virtual void bufferSubData(GCGLenum target, GCGLintptr offset, GCGLsizeiptr size, const void* data) = 0;
+    virtual void bufferData(GCGLenum target, GCGLsizeiptr, GCGLenum usage) = 0;
+    virtual void bufferData(GCGLenum target, GCGLsizeiptr, const GCGLvoid* data, GCGLenum usage) = 0;
+    virtual void bufferSubData(GCGLenum target, GCGLintptr offset, GCGLsizeiptr, const GCGLvoid* data) = 0;
 
-    virtual void compressedTexImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLsizei imageSize, const void* data) = 0;
-    virtual void compressedTexSubImage2D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLsizei imageSize, const void* data) = 0;
+    virtual void readPixels(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLvoid* data) = 0;
 
-    virtual void readPixels(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, void* data) = 0;
-
-    virtual bool texImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, const void* pixels) = 0;
-    virtual void texSubImage2D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, const void* pixels) = 0;
+    virtual bool texImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, const GCGLvoid* pixels) = 0;
+    virtual void texSubImage2D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, const GCGLvoid* pixels) = 0;
 
     virtual void drawArraysInstanced(GCGLenum mode, GCGLint first, GCGLsizei count, GCGLsizei primcount) = 0;
     virtual void drawElementsInstanced(GCGLenum mode, GCGLsizei count, GCGLenum type, GCGLintptr offset, GCGLsizei primcount) = 0;
     virtual void vertexAttribDivisor(GCGLuint index, GCGLuint divisor) = 0;
-
-    GraphicsContextGLAttributes contextAttributes() const { return m_attrs; }
-    void setContextAttributes(const GraphicsContextGLAttributes& attrs) { m_attrs = attrs; }
-    // Concession to Canvas captureStream, which needs to dynamically set
-    // preserveDrawingBuffer to true in order to avoid implicit clears.
-    // Implementations generally do not support toggling this bit arbitrarily.
-    virtual void enablePreserveDrawingBuffer();
 
     // VertexArrayOject calls
     virtual PlatformGLObject createVertexArray() = 0;
@@ -1128,24 +1118,10 @@ public:
     virtual GCGLboolean isVertexArray(PlatformGLObject) = 0;
     virtual void bindVertexArray(PlatformGLObject) = 0;
 
-#if USE(OPENGL) && ENABLE(WEBGL2)
-    virtual void primitiveRestartIndex(GCGLuint) = 0;
-#endif
-
-    // Support for extensions. Returns a non-null object, though not
-    // all methods it contains may necessarily be supported on the
-    // current hardware. Must call ExtensionsGL::supports() to
-    // determine this.
-    virtual ExtensionsGL& getExtensions() = 0;
-
     // ========== WebGL 2 entry points.
 
-    virtual void bufferData(GCGLenum target, const void* data, GCGLenum usage, GCGLuint srcOffset, GCGLuint length) = 0;
-    virtual void bufferSubData(GCGLenum target, GCGLintptr dstByteOffset, const void* srcData, GCGLuint srcOffset, GCGLuint length) = 0;
-
     virtual void copyBufferSubData(GCGLenum readTarget, GCGLenum writeTarget, GCGLintptr readOffset, GCGLintptr writeOffset, GCGLsizeiptr size) = 0;
-    virtual void getBufferSubData(GCGLenum target, GCGLintptr srcByteOffset, const void* dstData, GCGLuint dstOffset, GCGLuint length) = 0;
-    virtual void* mapBufferRange(GCGLenum target, GCGLintptr offset, GCGLsizeiptr length, GCGLbitfield access) = 0;
+    virtual GCGLvoid* mapBufferRange(GCGLenum target, GCGLintptr offset, GCGLsizeiptr length, GCGLbitfield access) = 0;
     virtual GCGLboolean unmapBuffer(GCGLenum target) = 0;
 
     virtual void blitFramebuffer(GCGLint srcX0, GCGLint srcY0, GCGLint srcX1, GCGLint srcY1, GCGLint dstX0, GCGLint dstY0, GCGLint dstX1, GCGLint dstY1, GCGLbitfield mask, GCGLenum filter) = 0;
@@ -1243,18 +1219,8 @@ public:
 
     virtual GCGLuint getUniformBlockIndex(PlatformGLObject program, const String& uniformBlockName) = 0;
     // getActiveUniformBlockParameter
-    virtual void getActiveUniformBlockiv(PlatformGLObject program, GCGLuint uniformBlockIndex, GCGLenum pname, GCGLint* params) = 0;
     virtual String getActiveUniformBlockName(PlatformGLObject program, GCGLuint uniformBlockIndex) = 0;
     virtual void uniformBlockBinding(PlatformGLObject program, GCGLuint uniformBlockIndex, GCGLuint uniformBlockBinding) = 0;
-
-    // texSubImage2D with pixel pack buffer, and srcData+offset, are
-    // supported only via ANGLE_robust_client_memory.
-
-    virtual void compressedTexImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLsizei imageSize, GCGLintptr offset) = 0;
-    virtual void compressedTexImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, const void* srcData, GCGLuint srcOffset, GCGLuint srcLengthOverride) = 0;
-
-    virtual void compressedTexSubImage2D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLsizei imageSize, GCGLintptr offset) = 0;
-    virtual void compressedTexSubImage2D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLsizei width, GCGLsizei height, GCGLenum format, const void* srcData, GCGLuint srcOffset, GCGLuint srcLengthOverride) = 0;
 
     virtual void uniform1fv(GCGLint location, const GCGLfloat* data, GCGLuint srcOffset, GCGLuint srcLength) = 0;
     virtual void uniform2fv(GCGLint location, const GCGLfloat* data, GCGLuint srcOffset, GCGLuint srcLength) = 0;
@@ -1270,10 +1236,24 @@ public:
     virtual void uniformMatrix3fv(GCGLint location, GCGLboolean transpose, const GCGLfloat* data, GCGLuint srcOffset, GCGLuint srcLength) = 0;
     virtual void uniformMatrix4fv(GCGLint location, GCGLboolean transpose, const GCGLfloat* data, GCGLuint srcOffset, GCGLuint srcLength) = 0;
 
-    virtual void readPixels(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLintptr offset) = 0;
-    virtual void readPixels(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, const void* dstData, GCGLuint dstOffset) = 0;
+    // Other functions.
 
-    // ========== Non-WebGL based entry points.
+    GraphicsContextGLAttributes contextAttributes() const { return m_attrs; }
+    void setContextAttributes(const GraphicsContextGLAttributes& attrs) { m_attrs = attrs; }
+
+    // FIXME: The calling site should be fixed, this breaks the WebGL spec
+    // wrt preserveDrawingBuffer == false behavior.
+    // Concession to Canvas captureStream, which needs to dynamically set
+    // preserveDrawingBuffer to true in order to avoid implicit clears.
+    // Implementations generally do not support toggling this bit arbitrarily.
+    virtual void enablePreserveDrawingBuffer();
+
+    // Support for extensions. Returns a non-null object, though not
+    // all methods it contains may necessarily be supported on the
+    // current hardware. Must call ExtensionsGL::supports() to
+    // determine this.
+    virtual ExtensionsGL& getExtensions() = 0;
+    virtual void reshape(int width, int height) = 0;
 
     virtual void setContextVisibility(bool) = 0;
 
@@ -1291,21 +1271,43 @@ public:
     // getError in the order they were added.
     virtual void synthesizeGLError(GCGLenum error) = 0;
 
+    // Read real OpenGL errors, and move them to the synthetic
+    // error list. Return true if at least one error is moved.
+    virtual bool moveErrorsToSyntheticErrorList() = 0;
+
     virtual void setFailNextGPUStatusCheck() = 0;
 
     virtual void prepareForDisplay() = 0;
+
+    // FIXME: should be removed, caller should keep track of changed state.
+    virtual void markContextChanged() = 0;
+
+    // FIXME: these should be removed, caller is interested in buffer clear status and
+    // should track that in a variable that the caller holds. Caller should receive
+    // the value from reshape() and didComposite().
+    virtual bool layerComposited() const = 0;
+    virtual void setBuffersToAutoClear(GCGLbitfield) = 0;
+    virtual GCGLbitfield getBuffersToAutoClear() const = 0;
+
+    // FIXME: these should be removed, they're part of drawing buffer and
+    // display buffer abstractions that the caller should hold separate to
+    // the context.
+    virtual void paintRenderingResultsToCanvas(ImageBuffer*) = 0;
+    virtual RefPtr<ImageData> paintRenderingResultsToImageData() = 0;
+    virtual bool paintCompositedResultsToCanvas(ImageBuffer*) = 0;
+
+    // FIXME: this should be removed. The layer should be marked composited by
+    // preparing for display, so that canvas image buffer and the layer agree
+    // on the content.
+    virtual void markLayerComposited() = 0;
+
+    virtual void simulateContextChanged() = 0;
 
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
     // Returns interface for CV interaction if the functionality is present.
     virtual GraphicsContextGLCV* asCV() = 0;
 #endif
 
-#if !USE(ANGLE)
-    // Helper to texImage2D with pixel==0 case: pixels are initialized to 0.
-    // Return true if no GL error is synthesized.
-    // By default, alignment is 4, the OpenGL default setting.
-    virtual bool texImage2DResourceSafe(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, GCGLint alignment = 4) =  0;
-#endif
 
     IntSize getInternalFramebufferSize() const { return IntSize(m_currentWidth, m_currentHeight); }
 
@@ -1334,10 +1336,6 @@ public:
     //   INVALID_VALUE if width/height is negative or overflow happens.
     //   INVALID_ENUM if format/type is illegal.
     static GCGLenum computeImageSizeInBytes(GCGLenum format, GCGLenum type, GCGLsizei width, GCGLsizei height, GCGLsizei depth, const PixelStoreParams&, unsigned* imageSizeInBytes, unsigned* paddingInBytes, unsigned* skipSizeInBytes);
-
-#if !USE(ANGLE)
-    static bool possibleFormatAndTypeForInternalFormat(GCGLenum internalFormat, GCGLenum& format, GCGLenum& type);
-#endif // !USE(ANGLE)
 
     // Extracts the contents of the given ImageData into the passed Vector,
     // packing the pixel data according to the given format and type,

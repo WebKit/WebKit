@@ -61,7 +61,7 @@ WTF::Lock& WebGLContextObject::objectGraphLockForContext()
     return m_context->objectGraphLock();
 }
 
-GraphicsContextGLOpenGL* WebGLContextObject::getAGraphicsContextGL() const
+GraphicsContextGL* WebGLContextObject::getAGraphicsContextGL() const
 {
     return m_context ? m_context->graphicsContextGL() : nullptr;
 }

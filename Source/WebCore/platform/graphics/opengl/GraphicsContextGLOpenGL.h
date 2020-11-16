@@ -129,7 +129,10 @@ public:
     void compileShaderDirect(PlatformGLObject);
 
 #if !USE(ANGLE)
-    bool texImage2DResourceSafe(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, GCGLint alignment = 4) final;
+    // Helper to texImage2D with pixel==0 case: pixels are initialized to 0.
+    // Return true if no GL error is synthesized.
+    // By default, alignment is 4, the OpenGL default setting.
+    bool texImage2DResourceSafe(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, GCGLint alignment = 4);
 #endif
 
     bool isGLES2Compliant() const final;
@@ -163,8 +166,10 @@ public:
     void colorMask(GCGLboolean red, GCGLboolean green, GCGLboolean blue, GCGLboolean alpha) final;
     void compileShader(PlatformGLObject) final;
 
-    void compressedTexImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLsizei imageSize, const void* data) final;
-    void compressedTexSubImage2D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLsizei imageSize, const void* data) final;
+#if !USE(ANGLE)
+    void compressedTexImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLsizei imageSize, const void* data);
+    void compressedTexSubImage2D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLsizei imageSize, const void* data);
+#endif
     void copyTexImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLint border) final;
     void copyTexSubImage2D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height) final;
     void cullFace(GCGLenum mode) final;
@@ -293,7 +298,7 @@ public:
 
     void viewport(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height) final;
 
-    void reshape(int width, int height);
+    void reshape(int width, int height) final;
 
     void drawArraysInstanced(GCGLenum mode, GCGLint first, GCGLsizei count, GCGLsizei primcount) final;
     void drawElementsInstanced(GCGLenum mode, GCGLsizei count, GCGLenum type, GCGLintptr offset, GCGLsizei primcount) final;
@@ -307,11 +312,13 @@ public:
 
     // ========== WebGL2 entry points.
 
-    void bufferData(GCGLenum target, const void* data, GCGLenum usage, GCGLuint srcOffset, GCGLuint length) final;
-    void bufferSubData(GCGLenum target, GCGLintptr dstByteOffset, const void* srcData, GCGLuint srcOffset, GCGLuint length) final;
-
+#if !USE(ANGLE)
+    void bufferData(GCGLenum target, const void* data, GCGLenum usage, GCGLuint srcOffset, GCGLuint length);
+    void bufferSubData(GCGLenum target, GCGLintptr dstByteOffset, const void* srcData, GCGLuint srcOffset, GCGLuint length);
+    void getBufferSubData(GCGLenum target, GCGLintptr srcByteOffset, const void* dstData, GCGLuint dstOffset, GCGLuint length);
+#endif
     void copyBufferSubData(GCGLenum readTarget, GCGLenum writeTarget, GCGLintptr readOffset, GCGLintptr writeOffset, GCGLsizeiptr size) final;
-    void getBufferSubData(GCGLenum target, GCGLintptr srcByteOffset, const void* dstData, GCGLuint dstOffset, GCGLuint length) final;
+
     void* mapBufferRange(GCGLenum target, GCGLintptr offset, GCGLsizeiptr length, GCGLbitfield access) final;
     GCGLboolean unmapBuffer(GCGLenum target) final;
 
@@ -407,15 +414,16 @@ public:
 
     GCGLuint getUniformBlockIndex(PlatformGLObject program, const String& uniformBlockName) final;
     // getActiveUniformBlockParameter
-    void getActiveUniformBlockiv(PlatformGLObject program, GCGLuint uniformBlockIndex, GCGLenum pname, GCGLint* params) final;
     String getActiveUniformBlockName(PlatformGLObject program, GCGLuint uniformBlockIndex) final;
     void uniformBlockBinding(PlatformGLObject program, GCGLuint uniformBlockIndex, GCGLuint uniformBlockBinding) final;
 
-    void compressedTexImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLsizei imageSize, GCGLintptr offset) final;
-    void compressedTexImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, const void* srcData, GCGLuint srcOffset, GCGLuint srcLengthOverride) final;
+#if !USE(ANGLE)
+    void compressedTexImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLsizei imageSize, GCGLintptr offset);
+    void compressedTexImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, const void* srcData, GCGLuint srcOffset, GCGLuint srcLengthOverride);
 
-    void compressedTexSubImage2D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLsizei imageSize, GCGLintptr offset) final;
-    void compressedTexSubImage2D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLsizei width, GCGLsizei height, GCGLenum format, const void* srcData, GCGLuint srcOffset, GCGLuint srcLengthOverride) final;
+    void compressedTexSubImage2D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLsizei imageSize, GCGLintptr offset);
+    void compressedTexSubImage2D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLsizei width, GCGLsizei height, GCGLenum format, const void* srcData, GCGLuint srcOffset, GCGLuint srcLengthOverride);
+#endif
 
     void uniform1fv(GCGLint location, const GCGLfloat* data, GCGLuint srcOffset, GCGLuint srcLength) final;
     void uniform2fv(GCGLint location, const GCGLfloat* data, GCGLuint srcOffset, GCGLuint srcLength) final;
@@ -431,16 +439,18 @@ public:
     void uniformMatrix3fv(GCGLint location, GCGLboolean transpose, const GCGLfloat* data, GCGLuint srcOffset, GCGLuint srcLength) final;
     void uniformMatrix4fv(GCGLint location, GCGLboolean transpose, const GCGLfloat* data, GCGLuint srcOffset, GCGLuint srcLength) final;
 
-    void readPixels(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLintptr offset) final;
-    void readPixels(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, const void* dstData, GCGLuint dstOffset) final;
+#if !USE(ANGLE)
+    void readPixels(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLintptr offset);
+    void readPixels(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, const void* dstData, GCGLuint dstOffset);
+#endif
 
     // Helper methods.
 
     void paintToCanvas(const unsigned char* imagePixels, const IntSize& imageSize, const IntSize& canvasSize, GraphicsContext&);
 
-    void markContextChanged();
-    void markLayerComposited();
-    bool layerComposited() const;
+    void markContextChanged() final;
+    void markLayerComposited() final;
+    bool layerComposited() const final;
     void forceContextLost();
     void recycleContext();
 
@@ -448,19 +458,19 @@ public:
     // reset method is present to keep calling code simpler, so it
     // doesn't have to know which buffers were allocated.
     void resetBuffersToAutoClear();
-    void setBuffersToAutoClear(GCGLbitfield);
-    GCGLbitfield getBuffersToAutoClear() const;
+    void setBuffersToAutoClear(GCGLbitfield) final;
+    GCGLbitfield getBuffersToAutoClear() const final;
     void enablePreserveDrawingBuffer() final;
 
     void dispatchContextChangedNotification();
-    void simulateContextChanged();
+    void simulateContextChanged() final;
 
-    void paintRenderingResultsToCanvas(ImageBuffer*);
-    RefPtr<ImageData> paintRenderingResultsToImageData();
-    bool paintCompositedResultsToCanvas(ImageBuffer*);
+    void paintRenderingResultsToCanvas(ImageBuffer*) final;
+    RefPtr<ImageData> paintRenderingResultsToImageData() final;
+    bool paintCompositedResultsToCanvas(ImageBuffer*) final;
 
 #if USE(OPENGL) && ENABLE(WEBGL2)
-    void primitiveRestartIndex(GCGLuint) final;
+    void primitiveRestartIndex(GCGLuint);
 #endif
 
 #if PLATFORM(COCOA) && PLATFORM(MAC)
@@ -487,10 +497,7 @@ public:
     void deleteTexture(PlatformGLObject) final;
 
     void synthesizeGLError(GCGLenum error) final;
-
-    // Read real OpenGL errors, and move them to the synthetic
-    // error list. Return true if at least one error is moved.
-    bool moveErrorsToSyntheticErrorList();
+    bool moveErrorsToSyntheticErrorList() final;
 
     // Support for extensions. Returns a non-null object, though not
     // all methods it contains may necessarily be supported on the
@@ -512,6 +519,10 @@ public:
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
     GraphicsContextGLCV* asCV() final;
 #endif
+
+#if !USE(ANGLE)
+    static bool possibleFormatAndTypeForInternalFormat(GCGLenum internalFormat, GCGLenum& format, GCGLenum& type);
+#endif // !USE(ANGLE)
 
 private:
     GraphicsContextGLOpenGL(GraphicsContextGLAttributes, HostWindow*, Destination = Destination::Offscreen, GraphicsContextGLOpenGL* sharedContext = nullptr);

@@ -30,7 +30,7 @@
 #include "ActivityStateChangeObserver.h"
 #include "ExceptionOr.h"
 #include "GPUBasedCanvasRenderingContext.h"
-#include "GraphicsContextGLOpenGL.h"
+#include "GraphicsContextGL.h"
 #include "ImageBuffer.h"
 #include "SuspendableTimer.h"
 #include "Timer.h"
@@ -124,7 +124,7 @@ using WebGLCanvas = WTF::Variant<RefPtr<HTMLCanvasElement>, RefPtr<OffscreenCanv
 using WebGLCanvas = WTF::Variant<RefPtr<HTMLCanvasElement>>;
 #endif
 
-class WebGLRenderingContextBase : public GraphicsContextGLOpenGL::Client, public GPUBasedCanvasRenderingContext, private ActivityStateChangeObserver {
+class WebGLRenderingContextBase : public GraphicsContextGL::Client, public GPUBasedCanvasRenderingContext, private ActivityStateChangeObserver {
     WTF_MAKE_ISO_ALLOCATED(WebGLRenderingContextBase);
 public:
     static std::unique_ptr<WebGLRenderingContextBase> create(CanvasBase&, WebGLContextAttributes&, const String&);
@@ -377,7 +377,7 @@ public:
     void loseContextImpl(LostContextMode);
     WEBCORE_EXPORT void simulateContextChanged();
 
-    GraphicsContextGLOpenGL* graphicsContextGL() const { return m_context.get(); }
+    GraphicsContextGL* graphicsContextGL() const { return m_context.get(); }
     WebGLContextGroup* contextGroup() const { return m_contextGroup.get(); }
     PlatformLayer* platformLayer() const override;
 
@@ -427,7 +427,7 @@ public:
 
 protected:
     WebGLRenderingContextBase(CanvasBase&, WebGLContextAttributes);
-    WebGLRenderingContextBase(CanvasBase&, Ref<GraphicsContextGLOpenGL>&&, WebGLContextAttributes);
+    WebGLRenderingContextBase(CanvasBase&, Ref<GraphicsContextGL>&&, WebGLContextAttributes);
 
     friend class EXTTextureCompressionRGTC;
     friend class WebGLDrawBuffers;
@@ -527,7 +527,7 @@ protected:
     bool needsPreparationForDisplay() const final { return true; }
     void prepareForDisplay() final;
 
-    RefPtr<GraphicsContextGLOpenGL> m_context;
+    RefPtr<GraphicsContextGL> m_context;
     RefPtr<WebGLContextGroup> m_contextGroup;
     Lock m_objectGraphLock;
 

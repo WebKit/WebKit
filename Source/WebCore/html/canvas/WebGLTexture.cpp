@@ -95,7 +95,7 @@ void WebGLTexture::setTarget(GCGLenum target, GCGLint maxLevel)
 #endif // USE(ANGLE)
 }
 
-void WebGLTexture::deleteObjectImpl(const AbstractLocker&, GraphicsContextGLOpenGL* context3d, PlatformGLObject object)
+void WebGLTexture::deleteObjectImpl(const AbstractLocker&, GraphicsContextGL* context3d, PlatformGLObject object)
 {
     context3d->deleteTexture(object);
 }

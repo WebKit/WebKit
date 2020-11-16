@@ -77,7 +77,7 @@ bool WebGLSharedObject::hasGroupOrContext() const
     return m_contextGroup && m_contextGroup->hasAContext();
 }
 
-GraphicsContextGLOpenGL* WebGLSharedObject::getAGraphicsContextGL() const
+GraphicsContextGL* WebGLSharedObject::getAGraphicsContextGL() const
 {
     return m_contextGroup ? &m_contextGroup->getAGraphicsContextGL() : nullptr;
 }

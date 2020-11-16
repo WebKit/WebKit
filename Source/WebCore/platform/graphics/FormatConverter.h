@@ -29,7 +29,7 @@
 
 #if ENABLE(GRAPHICS_CONTEXT_GL)
 
-#include "GraphicsContextGLOpenGL.h"
+#include "GraphicsContextGL.h"
 #include "IntRect.h"
 #include <wtf/StdLibExtras.h>
 #include <wtf/UniqueArray.h>

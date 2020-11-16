@@ -37,7 +37,7 @@ public:
     explicit WebGLDepthTexture(WebGLRenderingContextBase&);
     virtual ~WebGLDepthTexture();
 
-    static bool supported(GraphicsContextGLOpenGL&);
+    static bool supported(GraphicsContextGL&);
 
     ExtensionName getName() const override;
 };

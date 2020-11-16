@@ -148,21 +148,6 @@ void ExtensionsGLANGLE::initializeAvailableExtensions()
     m_initializedAvailableExtensions = true;
 }
 
-void ExtensionsGLANGLE::readnPixelsEXT(int, int, GCGLsizei, GCGLsizei, GCGLenum, GCGLenum, GCGLsizei, void *)
-{
-    m_context->synthesizeGLError(GL_INVALID_OPERATION);
-}
-
-void ExtensionsGLANGLE::getnUniformfvEXT(GCGLuint, int, GCGLsizei, float *)
-{
-    m_context->synthesizeGLError(GL_INVALID_OPERATION);
-}
-
-void ExtensionsGLANGLE::getnUniformivEXT(GCGLuint, int, GCGLsizei, int *)
-{
-    m_context->synthesizeGLError(GL_INVALID_OPERATION);
-}
-
 void ExtensionsGLANGLE::blitFramebuffer(long srcX0, long srcY0, long srcX1, long srcY1, long dstX0, long dstY0, long dstX1, long dstY1, unsigned long mask, unsigned long filter)
 {
     // FIXME: consider adding support for APPLE_framebuffer_multisample.
@@ -462,6 +447,8 @@ void ExtensionsGLANGLE::compressedTexImage2DRobustANGLE(GCGLenum target, int lev
         return;
 
     gl::CompressedTexImage2DRobustANGLE(target, level, internalformat, width, height, border, imageSize, bufSize, data);
+    m_context->m_state.textureSeedCount.add(m_context->m_state.currentBoundTexture());
+
 }
 
 void ExtensionsGLANGLE::compressedTexSubImage2DRobustANGLE(GCGLenum target, int level, int xoffset, int yoffset, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLsizei imageSize, GCGLsizei bufSize, const void* data)
@@ -470,6 +457,7 @@ void ExtensionsGLANGLE::compressedTexSubImage2DRobustANGLE(GCGLenum target, int 
         return;
 
     gl::CompressedTexSubImage2DRobustANGLE(target, level, xoffset, yoffset, width, height, format, imageSize, bufSize, data);
+    m_context->m_state.textureSeedCount.add(m_context->m_state.currentBoundTexture());
 }
 
 void ExtensionsGLANGLE::compressedTexImage3DRobustANGLE(GCGLenum target, int level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLsizei depth, int border, GCGLsizei imageSize, GCGLsizei bufSize, const void* data)
