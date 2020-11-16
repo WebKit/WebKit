@@ -1,3 +1,26 @@
+2020-11-16  Devin Rousso  <drousso@apple.com>
+
+        [iPad] nhl.com cannot select new video to play while video is playing with desktop UA
+        https://bugs.webkit.org/show_bug.cgi?id=218868
+        <rdar://problem/67823088>
+
+        Reviewed by Antoine Quint.
+
+        The desktop "version" of this site uses custom media controls that don't work well on iOS
+        because they rely on mouse events (which is why it was quirked in r255592). The mobile
+        "version" uses the default/native media controls, so there is no issue.
+
+        Currently, when tapping on another video with a desktop UA, the site uses its touch event
+        handlers for mouse events. These handlers call `Event.prototype.preventDefault` if the event
+        is not a touch event, meaning that `"click"` is not fired. This prevents new videos from
+        being played.
+
+        Rather than limit the quirk based on some DOM state (which is fragile if the site changes),
+        just have the entire site default to a mobile UA.
+
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::desktopClassBrowsingRecommendedForRequest):
+
 2020-11-16  Zan Dobersek  <zdobersek@igalia.com>
 
         [CoordinatedGraphics] Adjust client resizing, render-scope notifying in ThreadedCompositor::renderLayerTree()

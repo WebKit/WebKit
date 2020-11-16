@@ -1418,6 +1418,9 @@ static RecommendDesktopClassBrowsingForRequest desktopClassBrowsingRecommendedFo
             return RecommendDesktopClassBrowsingForRequest::No;
     }
 
+    if (equalLettersIgnoringASCIICase(host, "nhl.com") || host.endsWithIgnoringASCIICase(".nhl.com"))
+        return RecommendDesktopClassBrowsingForRequest::No;
+
     // FIXME: Remove this quirk when <rdar://problem/59480381> is complete.
     if (equalLettersIgnoringASCIICase(host, "fidelity.com") || host.endsWithIgnoringASCIICase(".fidelity.com"))
         return RecommendDesktopClassBrowsingForRequest::No;
