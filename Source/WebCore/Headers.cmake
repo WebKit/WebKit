@@ -636,6 +636,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     html/HTMLMenuItemElement.h
     html/HTMLMetaElement.h
     html/HTMLModElement.h
+    html/HTMLModelElement.h
     html/HTMLOListElement.h
     html/HTMLObjectElement.h
     html/HTMLOptGroupElement.h

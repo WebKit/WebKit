@@ -844,6 +844,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/html/HTMLMetaElement.idl \
     $(WebCore)/html/HTMLMeterElement.idl \
     $(WebCore)/html/HTMLModElement.idl \
+    $(WebCore)/html/HTMLModelElement.idl \
     $(WebCore)/html/HTMLOListElement.idl \
     $(WebCore)/html/HTMLObjectElement.idl \
     $(WebCore)/html/HTMLOptGroupElement.idl \

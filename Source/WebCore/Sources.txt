@@ -1187,6 +1187,7 @@ html/HTMLMenuItemElement.cpp
 html/HTMLMetaElement.cpp
 html/HTMLMeterElement.cpp
 html/HTMLModElement.cpp
+html/HTMLModelElement.cpp
 html/HTMLNameCollection.cpp
 html/HTMLOListElement.cpp
 html/HTMLObjectElement.cpp
@@ -3050,6 +3051,7 @@ JSHTMLMenuItemElement.cpp
 JSHTMLMetaElement.cpp
 JSHTMLMeterElement.cpp
 JSHTMLModElement.cpp
+JSHTMLModelElement.cpp
 JSHTMLOListElement.cpp
 JSHTMLObjectElement.cpp
 JSHTMLOptGroupElement.cpp

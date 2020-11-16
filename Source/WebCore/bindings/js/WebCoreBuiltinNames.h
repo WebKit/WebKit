@@ -136,6 +136,7 @@ namespace WebCore {
     macro(HTMLDialogElement) \
     macro(HTMLDataListElement) \
     macro(HTMLMenuItemElement) \
+    macro(HTMLModelElement) \
     macro(HTMLKeygenElement) \
     macro(HTMLSlotElement) \
     macro(Headers) \

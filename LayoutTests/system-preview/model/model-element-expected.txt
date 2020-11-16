@@ -1,0 +1,4 @@
+
+PASS HTMLModelElement is exposed on Window.
+PASS document.createElement('model') returns an HTMLModelElement object.
+

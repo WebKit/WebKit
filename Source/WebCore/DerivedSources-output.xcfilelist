@@ -1031,6 +1031,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLMeterElement.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLMeterElement.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLModElement.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLModElement.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLModelElement.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLModelElement.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLOListElement.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLOListElement.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLObjectElement.cpp

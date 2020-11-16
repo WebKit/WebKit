@@ -564,6 +564,20 @@ MediaSessionEnabled:
     WebCore:
       default: false
 
+ModelElementEnabled:
+  type: bool
+  humanReadableName: "HTML <model> element"
+  humanReadableDescription: "HTML <model> element"
+  condition: ENABLE(MODEL_ELEMENT)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      "ENABLE(EXPERIMENTAL_FEATURES)" : true
+      default: false
+    WebCore:
+      default: false
+
 ModernUnprefixedWebAudioEnabled:
   type: bool
   humanReadableName: "Modern WebAudio API"

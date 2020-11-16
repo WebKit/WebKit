@@ -969,6 +969,7 @@ set(WebCore_NON_SVG_IDL_FILES
     html/HTMLMetaElement.idl
     html/HTMLMeterElement.idl
     html/HTMLModElement.idl
+    html/HTMLModelElement.idl
     html/HTMLOListElement.idl
     html/HTMLObjectElement.idl
     html/HTMLOptGroupElement.idl

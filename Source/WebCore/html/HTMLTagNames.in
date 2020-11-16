@@ -87,6 +87,7 @@ menu
 menuitem interfaceName=HTMLMenuItemElement, runtimeEnabled=menuItemElement
 meta
 meter interfaceName=HTMLMeterElement
+model interfaceName=HTMLModelElement, conditional=MODEL_ELEMENT, settingsConditional=modelElementEnabled
 nav interfaceName=HTMLElement
 nobr interfaceName=HTMLElement
 noembed interfaceName=HTMLElement

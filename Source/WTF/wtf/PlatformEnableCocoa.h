@@ -348,6 +348,10 @@
 #define ENABLE_META_VIEWPORT 1
 #endif
 
+#if !defined(ENABLE_MODEL_ELEMENT)
+#define ENABLE_MODEL_ELEMENT 1
+#endif
+
 // FIXME: We almost certainly do not need this monospace font exception for watchOS and tvOS.
 #if !defined(ENABLE_MONOSPACE_FONT_EXCEPTION) && ((PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101500) || PLATFORM(WATCHOS) || PLATFORM(APPLETV))
 #define ENABLE_MONOSPACE_FONT_EXCEPTION 1
