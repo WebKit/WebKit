@@ -1234,7 +1234,7 @@ bool RenderElement::repaintAfterLayoutIfNeeded(const RenderLayerModelObject* rep
     // two rectangles (but typically only one).
     const RenderStyle& outlineStyle = outlineStyleForRepaint();
     LayoutUnit outlineWidth { outlineStyle.outlineSize() };
-    LayoutBoxExtent insetShadowExtent = style().getBoxShadowInsetExtent();
+    auto insetShadowExtent = style().boxShadowInsetExtent();
     LayoutUnit width = absoluteValue(newOutlineBox.width() - oldOutlineBox.width());
     if (width) {
         LayoutUnit shadowLeft;
