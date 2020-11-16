@@ -61,6 +61,7 @@ enum class ImageType {
 
 static ImageType cocoaTypeToImageType(const String& cocoaType)
 {
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 #if PLATFORM(MAC)
     if (cocoaType == String(legacyTIFFPasteboardType()))
         return ImageType::TIFF;
@@ -77,6 +78,7 @@ static ImageType cocoaTypeToImageType(const String& cocoaType)
         return ImageType::JPEG;
     if (cocoaType == String(kUTTypeGIF))
         return ImageType::GIF;
+ALLOW_DEPRECATED_DECLARATIONS_END
     return ImageType::Invalid;
 }
 
@@ -164,7 +166,9 @@ Pasteboard::FileContentState Pasteboard::fileContentState()
             if (cocoaType == String(legacyURLPasteboardType()))
                 return true;
 #endif
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             return cocoaType == String(kUTTypeURL);
+ALLOW_DEPRECATED_DECLARATIONS_END
         });
         mayContainFilePaths = indexOfURL != notFound && !platformStrategies()->pasteboardStrategy()->containsStringSafeForDOMToReadForType(cocoaTypes[indexOfURL], m_pasteboardName);
     }

@@ -528,10 +528,12 @@ static NSStringCompareOptions stringCompareOptions(_WKFindOptions findOptions)
     if (action != WebKit::SheetAction::Copy)
         return;
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     NSDictionary *representations = @{
         (NSString *)kUTTypeUTF8PlainText : (NSString *)_positionInformation.url.string(),
         (NSString *)kUTTypeURL : (NSURL *)_positionInformation.url,
     };
+ALLOW_DEPRECATED_DECLARATIONS_END
 
     [UIPasteboard generalPasteboard].items = @[ representations ];
 }

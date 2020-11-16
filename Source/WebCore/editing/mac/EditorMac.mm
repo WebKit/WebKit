@@ -181,8 +181,10 @@ RefPtr<SharedBuffer> Editor::dataSelectionForPasteboard(const String& pasteboard
     if (!canCopy())
         return nullptr;
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if (pasteboardType == WebArchivePboardType || pasteboardType == String(kUTTypeWebArchive))
         return selectionInWebArchiveFormat();
+ALLOW_DEPRECATED_DECLARATIONS_END
 
     if (pasteboardType == String(legacyRTFDPasteboardType()))
         return dataInRTFDFormat(attributedString(*adjustedSelectionRange()).string.get());

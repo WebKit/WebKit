@@ -58,6 +58,7 @@ static HashMap<String, HashSet<String>>& extensionsForMIMETypeMap()
 
         auto allUTIs = adoptCF(_UTCopyDeclaredTypeIdentifiers());
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         for (NSString *uti in (__bridge NSArray<NSString *> *)allUTIs.get()) {
             auto type = adoptCF(UTTypeCopyPreferredTagWithClass((__bridge CFStringRef)uti, kUTTagClassMIMEType));
             if (!type)
@@ -67,6 +68,7 @@ static HashMap<String, HashSet<String>>& extensionsForMIMETypeMap()
                 continue;
             addExtensions(type.get(), (__bridge NSArray<NSString *> *)extensions.get());
         }
+ALLOW_DEPRECATED_DECLARATIONS_END
 
         return map;
     }());

@@ -54,14 +54,17 @@ uint8_t verifyImageBufferIsBigEnough(const void* buffer, size_t bufferSize)
 
 CFStringRef jpegUTI()
 {
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 #if PLATFORM(IOS_FAMILY) || PLATFORM(WIN)
     static const CFStringRef kUTTypeJPEG = CFSTR("public.jpeg");
 #endif
     return kUTTypeJPEG;
+ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 RetainPtr<CFStringRef> utiFromImageBufferMIMEType(const String& mimeType)
 {
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     // FIXME: Why doesn't iOS use the CoreServices version?
 #if PLATFORM(MAC)
     return UTIFromMIMEType(mimeType).createCFString();
@@ -83,6 +86,7 @@ RetainPtr<CFStringRef> utiFromImageBufferMIMEType(const String& mimeType)
     ASSERT_NOT_REACHED();
     return kUTTypePNG;
 #endif
+ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 bool encodeImage(CGImageRef image, CFStringRef uti, Optional<double> quality, CFMutableDataRef data)

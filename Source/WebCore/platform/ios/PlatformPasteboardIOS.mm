@@ -109,6 +109,7 @@ static bool shouldTreatAtLeastOneTypeAsFile(NSArray<NSString *> *platformTypes)
 static const char *safeTypeForDOMToReadAndWriteForPlatformType(const String& platformType, PlatformPasteboard::IncludeImageTypes includeImageTypes)
 {
     auto cfType = platformType.createCFString();
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if (UTTypeConformsTo(cfType.get(), kUTTypePlainText))
         return "text/plain"_s;
 
@@ -121,6 +122,7 @@ static const char *safeTypeForDOMToReadAndWriteForPlatformType(const String& pla
 
     if (includeImageTypes == PlatformPasteboard::IncludeImageTypes::Yes && UTTypeConformsTo(cfType.get(), kUTTypePNG))
         return "image/png"_s;
+ALLOW_DEPRECATED_DECLARATIONS_END
 
     return nullptr;
 }
@@ -139,8 +141,10 @@ static Vector<String> webSafeTypes(NSArray<NSString *> *platformTypes, PlatformP
 
         if (auto* coercedType = safeTypeForDOMToReadAndWriteForPlatformType(type, includeImageTypes)) {
             auto domTypeAsString = String::fromUTF8(coercedType);
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             if (domTypeAsString == "text/uri-list"_s && ([platformTypes containsObject:(__bridge NSString *)kUTTypeFileURL] || shouldAvoidExposingURLType()))
                 continue;
+ALLOW_DEPRECATED_DECLARATIONS_END
 
             domPasteboardTypes.add(WTFMove(domTypeAsString));
         }
@@ -218,6 +222,7 @@ Optional<PasteboardItemInfo> PlatformPasteboard::informationForItemAtIndex(size_
     for (NSString *typeIdentifier in registeredTypeIdentifiers) {
         info.platformTypesByFidelity.uncheckedAppend(typeIdentifier);
         CFStringRef cfTypeIdentifier = (CFStringRef)typeIdentifier;
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         if (!UTTypeIsDeclared(cfTypeIdentifier))
             continue;
 
@@ -232,12 +237,15 @@ Optional<PasteboardItemInfo> PlatformPasteboard::informationForItemAtIndex(size_
 
         if (UTTypeConformsTo(cfTypeIdentifier, kUTTypeFlatRTFD))
             continue;
+ALLOW_DEPRECATED_DECLARATIONS_END
 
         info.isNonTextType = true;
     }
 
     info.webSafeTypesByFidelity = webSafeTypes(registeredTypeIdentifiers, IncludeImageTypes::Yes, [&] {
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         return shouldTreatAtLeastOneTypeAsFile(registeredTypeIdentifiers) && !Pasteboard::canExposeURLToDOMWhenPasteboardContainsFiles(readString(index, kUTTypeURL));
+ALLOW_DEPRECATED_DECLARATIONS_END
     });
 
     return info;
@@ -265,10 +273,12 @@ String PlatformPasteboard::stringForType(const String& type) const
 {
     auto result = readString(0, type);
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if (pasteboardMayContainFilePaths(m_pasteboard.get()) && type == String { kUTTypeURL }) {
         if (!Pasteboard::canExposeURLToDOMWhenPasteboardContainsFiles(result))
             result = { };
     }
+ALLOW_DEPRECATED_DECLARATIONS_END
 
     return result;
 }
@@ -322,6 +332,7 @@ int64_t PlatformPasteboard::changeCount() const
 
 String PlatformPasteboard::platformPasteboardTypeForSafeTypeForDOMToReadAndWrite(const String& domType, IncludeImageTypes includeImageTypes)
 {
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if (domType == "text/plain")
         return kUTTypePlainText;
 
@@ -333,6 +344,7 @@ String PlatformPasteboard::platformPasteboardTypeForSafeTypeForDOMToReadAndWrite
 
     if (includeImageTypes == IncludeImageTypes::Yes && domType == "image/png")
         return kUTTypePNG;
+ALLOW_DEPRECATED_DECLARATIONS_END
 
     return { };
 }
@@ -396,15 +408,19 @@ static void addRepresentationsForPlainText(WebItemProviderRegistrationInfoList *
     if (URL(platformURL).isValid())
         [itemsToRegister addRepresentingObject:platformURL];
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [itemsToRegister addData:[(NSString *)plainText dataUsingEncoding:NSUTF8StringEncoding] forType:(NSString *)kUTTypeUTF8PlainText];
+ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 bool PlatformPasteboard::allowReadingURLAtIndex(const URL& url, int index) const
 {
     NSItemProvider *itemProvider = (NSUInteger)index < [m_pasteboard itemProviders].count ? [[m_pasteboard itemProviders] objectAtIndex:index] : nil;
     for (NSString *type in itemProvider.registeredTypeIdentifiers) {
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         if (UTTypeConformsTo((CFStringRef)type, kUTTypeURL))
             return true;
+ALLOW_DEPRECATED_DECLARATIONS_END
     }
 
     return url.isValid();
@@ -425,7 +441,9 @@ void PlatformPasteboard::write(const PasteboardWebContent& content)
     if (content.dataInWebArchiveFormat) {
         auto webArchiveData = content.dataInWebArchiveFormat->createNSData();
 #if PLATFORM(MACCATALYST)
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         NSString *webArchiveType = (__bridge NSString *)kUTTypeWebArchive;
+ALLOW_DEPRECATED_DECLARATIONS_END
 #else
         // FIXME: We should additionally register "com.apple.webarchive" once <rdar://problem/46830277> is fixed.
         NSString *webArchiveType = WebArchivePboardType;
@@ -438,6 +456,7 @@ void PlatformPasteboard::write(const PasteboardWebContent& content)
             [representationsToRegister addRepresentingObject:attributedString];
     }
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if (content.dataInRTFDFormat)
         [representationsToRegister addData:content.dataInRTFDFormat->createNSData().get() forType:(NSString *)kUTTypeFlatRTFD];
 
@@ -448,6 +467,7 @@ void PlatformPasteboard::write(const PasteboardWebContent& content)
         NSData *htmlAsData = [(NSString *)content.dataInHTMLFormat dataUsingEncoding:NSUTF8StringEncoding];
         [representationsToRegister addData:htmlAsData forType:(NSString *)kUTTypeHTML];
     }
+ALLOW_DEPRECATED_DECLARATIONS_END
 
     if (!content.dataInStringFormat.isEmpty())
         addRepresentationsForPlainText(representationsToRegister.get(), content.dataInStringFormat);
@@ -502,10 +522,12 @@ void PlatformPasteboard::write(const String& pasteboardType, const String& text)
     NSString *pasteboardTypeAsNSString = pasteboardType;
     if (!text.isEmpty() && pasteboardTypeAsNSString.length) {
         auto pasteboardTypeAsCFString = (CFStringRef)pasteboardTypeAsNSString;
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         if (UTTypeConformsTo(pasteboardTypeAsCFString, kUTTypeURL) || UTTypeConformsTo(pasteboardTypeAsCFString, kUTTypeText))
             addRepresentationsForPlainText(representationsToRegister.get(), text);
         else
             [representationsToRegister addData:[pasteboardTypeAsNSString dataUsingEncoding:NSUTF8StringEncoding] forType:pasteboardType];
+ALLOW_DEPRECATED_DECLARATIONS_END
     }
 
     registerItemToPasteboard(representationsToRegister.get(), m_pasteboard.get());
@@ -569,7 +591,9 @@ Vector<String> PlatformPasteboard::typesSafeForDOMToReadAndWrite(const String& o
 
     auto webSafePasteboardTypes = webSafeTypes([m_pasteboard pasteboardTypes], IncludeImageTypes::No, [&] {
         BOOL ableToDetermineProtocolOfPasteboardURL = ![m_pasteboard isKindOfClass:[WebItemProviderPasteboard class]];
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         return ableToDetermineProtocolOfPasteboardURL && stringForType(kUTTypeURL).isEmpty();
+ALLOW_DEPRECATED_DECLARATIONS_END
     });
 
     for (auto& type : webSafePasteboardTypes)
@@ -610,12 +634,14 @@ static RetainPtr<WebItemProviderRegistrationInfoList> createItemProviderRegistra
 
             NSString *nsStringValue = WTF::get<String>(value);
             auto cfType = cocoaType.createCFString();
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             if (UTTypeConformsTo(cfType.get(), kUTTypeURL))
                 [representationsToRegister addRepresentingObject:[NSURL URLWithString:nsStringValue]];
             else if (UTTypeConformsTo(cfType.get(), kUTTypePlainText))
                 [representationsToRegister addRepresentingObject:nsStringValue];
             else
                 [representationsToRegister addData:[nsStringValue dataUsingEncoding:NSUTF8StringEncoding] forType:(NSString *)cocoaType];
+ALLOW_DEPRECATED_DECLARATIONS_END
             return;
         }
 
@@ -709,6 +735,7 @@ RefPtr<SharedBuffer> PlatformPasteboard::readBuffer(size_t index, const String& 
 
 String PlatformPasteboard::readString(size_t index, const String& type) const
 {
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if (type == String(kUTTypeURL)) {
         String title;
         return [(NSURL *)readURL(index, title) absoluteString];
@@ -736,6 +763,7 @@ String PlatformPasteboard::readString(size_t index, const String& type) const
         if ([value isKindOfClass:[NSAttributedString class]])
             return [(NSAttributedString *)value string];
     }
+ALLOW_DEPRECATED_DECLARATIONS_END
 
     return String();
 }
@@ -745,7 +773,9 @@ URL PlatformPasteboard::readURL(size_t index, String& title) const
     if ((NSInteger)index < 0 || (NSInteger)index >= [m_pasteboard numberOfItems])
         return { };
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     id value = [m_pasteboard valuesForPasteboardType:(__bridge NSString *)kUTTypeURL inItemSet:[NSIndexSet indexSetWithIndex:index]].firstObject;
+ALLOW_DEPRECATED_DECLARATIONS_END
     if (!value)
         return { };
 
@@ -783,10 +813,12 @@ bool PlatformPasteboard::containsURLStringSuitableForLoading()
 {
     Vector<String> types;
     getTypes(types);
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if (!types.contains(String(kUTTypeURL)))
         return false;
 
     auto urlString = stringForType(kUTTypeURL);
+ALLOW_DEPRECATED_DECLARATIONS_END
     if (urlString.isEmpty()) {
         // On iOS, we don't get access to the contents of NSItemProviders until we perform the drag operation.
         // Thus, we consider DragData to contain an URL if it contains the `public.url` UTI type. Later down the

@@ -47,7 +47,9 @@ namespace WebCore {
 static inline String rtfPasteboardType()
 {
 #if PLATFORM(IOS_FAMILY)
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     return String(kUTTypeRTF);
+ALLOW_DEPRECATED_DECLARATIONS_END
 #else
     return String(legacyRTFPasteboardType());
 #endif
@@ -56,7 +58,9 @@ static inline String rtfPasteboardType()
 static inline String rtfdPasteboardType()
 {
 #if PLATFORM(IOS_FAMILY)
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     return String(kUTTypeFlatRTFD);
+ALLOW_DEPRECATED_DECLARATIONS_END
 #else
     return String(legacyRTFDPasteboardType());
 #endif
@@ -65,7 +69,9 @@ static inline String rtfdPasteboardType()
 static inline String stringPasteboardType()
 {
 #if PLATFORM(IOS_FAMILY)
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     return String(kUTTypeText);
+ALLOW_DEPRECATED_DECLARATIONS_END
 #else
     return String(legacyStringPasteboardType());
 #endif
@@ -74,7 +80,9 @@ static inline String stringPasteboardType()
 static inline String urlPasteboardType()
 {
 #if PLATFORM(IOS_FAMILY)
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     return String(kUTTypeURL);
+ALLOW_DEPRECATED_DECLARATIONS_END
 #else
     return String(legacyURLPasteboardType());
 #endif
@@ -83,7 +91,9 @@ static inline String urlPasteboardType()
 static inline String htmlPasteboardType()
 {
 #if PLATFORM(IOS_FAMILY)
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     return String(kUTTypeHTML);
+ALLOW_DEPRECATED_DECLARATIONS_END
 #else
     return String(legacyHTMLPasteboardType());
 #endif
@@ -101,7 +111,9 @@ static inline String colorPasteboardType()
 static inline String pdfPasteboardType()
 {
 #if PLATFORM(IOS_FAMILY)
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     return String(kUTTypePDF);
+ALLOW_DEPRECATED_DECLARATIONS_END
 #else
     return String(legacyPDFPasteboardType());
 #endif
@@ -110,7 +122,9 @@ static inline String pdfPasteboardType()
 static inline String tiffPasteboardType()
 {
 #if PLATFORM(IOS_FAMILY)
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     return String(kUTTypeTIFF);
+ALLOW_DEPRECATED_DECLARATIONS_END
 #else
     return String(legacyTIFFPasteboardType());
 #endif
@@ -235,6 +249,7 @@ bool DragData::containsCompatibleContent(DraggingPurpose purpose) const
 
     Vector<String> types;
     platformStrategies()->pasteboardStrategy()->getTypes(types, m_pasteboardName);
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     return types.contains(String(WebArchivePboardType))
         || types.contains(htmlPasteboardType())
         || types.contains(String(kUTTypeWebArchive))
@@ -252,6 +267,7 @@ bool DragData::containsCompatibleContent(DraggingPurpose purpose) const
         || types.contains(colorPasteboardType())
         || types.contains(String(kUTTypeJPEG))
         || types.contains(String(kUTTypePNG));
+ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 bool DragData::containsPromise() const

@@ -311,7 +311,9 @@ void adjustMIMETypeIfNecessary(CFURLResponseRef cfResponse, bool isMainResourceL
                 if (!result) {
                     // If the Gatekeeper-based map doesn't have a MIME type, we'll try to figure out what it should be by
                     // looking up the file extension in the UTI maps.
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
                     RetainPtr<CFStringRef> uti = adoptCF(UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, extension.get(), 0));
+ALLOW_DEPRECATED_DECLARATIONS_END
                     String MIMEType = MIMETypeFromUTITree(uti.get());
                     if (!MIMEType.isEmpty())
                         result = MIMEType.createCFString();

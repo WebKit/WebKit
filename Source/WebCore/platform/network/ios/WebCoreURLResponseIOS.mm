@@ -87,7 +87,9 @@ void adjustMIMETypeIfNecessary(CFURLResponseRef cfResponse, bool isMainResourceL
             if ([(NSURL *)url isFileURL]) {
                 RetainPtr<CFStringRef> extension = adoptCF(CFURLCopyPathExtension(url));
                 if (extension) {
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
                     RetainPtr<CFStringRef> uti = adoptCF(UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, extension.get(), nullptr));
+ALLOW_DEPRECATED_DECLARATIONS_END
                     String MIMEType = MIMETypeFromUTITree(uti.get());
                     if (!MIMEType.isEmpty())
                         quickLookMIMEType = MIMEType.createCFString();

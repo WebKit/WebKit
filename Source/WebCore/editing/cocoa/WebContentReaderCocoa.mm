@@ -217,12 +217,14 @@ static bool shouldReplaceRichContentWithAttachments()
 
 static String mimeTypeFromContentType(const String& contentType)
 {
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if (contentType == String(kUTTypeVCard)) {
         // CoreServices erroneously reports that "public.vcard" maps to "text/directory", rather
         // than either "text/vcard" or "text/x-vcard". Work around this by special casing the
         // "public.vcard" UTI type. See <rdar://problem/49478229> for more detail.
         return "text/vcard"_s;
     }
+ALLOW_DEPRECATED_DECLARATIONS_END
     return isDeclaredUTI(contentType) ? MIMETypeFromUTI(contentType) : contentType;
 }
 
@@ -713,6 +715,7 @@ static Ref<HTMLElement> attachmentForFilePath(Frame& frame, const String& path, 
     bool isDirectory = FileSystem::fileIsDirectory(path, FileSystem::ShouldFollowSymbolicLinks::Yes);
     String contentType = typeForAttachmentElement(explicitContentType);
     if (contentType.isEmpty()) {
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         if (isDirectory)
             contentType = kUTTypeDirectory;
         else {
@@ -720,6 +723,7 @@ static Ref<HTMLElement> attachmentForFilePath(Frame& frame, const String& path, 
             if (contentType.isEmpty())
                 contentType = kUTTypeData;
         }
+ALLOW_DEPRECATED_DECLARATIONS_END
     }
 
     Optional<uint64_t> fileSizeForDisplay;

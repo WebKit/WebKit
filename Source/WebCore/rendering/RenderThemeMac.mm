@@ -2592,8 +2592,10 @@ static RefPtr<Icon> iconForAttachment(const RenderAttachment& attachment)
     
     if (!attachmentType.isEmpty()) {
         if (equalIgnoringASCIICase(attachmentType, "multipart/x-folder") || equalIgnoringASCIICase(attachmentType, "application/vnd.apple.folder")) {
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             if (auto icon = Icon::createIconForUTI(kUTTypeFolder))
                 return icon;
+ALLOW_DEPRECATED_DECLARATIONS_END
         } else {
             String UTI;
             if (isDeclaredUTI(attachmentType))

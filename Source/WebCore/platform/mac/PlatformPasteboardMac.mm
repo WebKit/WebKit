@@ -44,8 +44,10 @@ namespace WebCore {
 static bool canWritePasteboardType(const String& type)
 {
     auto cfString = type.createCFString();
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if (UTTypeIsDeclared(cfString.get()) || UTTypeIsDynamic(cfString.get()))
         return true;
+ALLOW_DEPRECATED_DECLARATIONS_END
 
     return [(__bridge NSString *)cfString.get() lengthOfBytesUsingEncoding:NSString.defaultCStringEncoding];
 }
@@ -129,10 +131,12 @@ static Vector<String> urlStringsFromPasteboard(NSPasteboard *pasteboard)
     urlStrings.reserveInitialCapacity(items.count);
     if (items.count > 1) {
         for (NSPasteboardItem *item in items) {
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             if (id propertyList = [item propertyListForType:(__bridge NSString *)kUTTypeURL]) {
                 if (auto urlFromItem = adoptNS([[NSURL alloc] initWithPasteboardPropertyList:propertyList ofType:(__bridge NSString *)kUTTypeURL]))
                     urlStrings.uncheckedAppend([urlFromItem absoluteString]);
             }
+ALLOW_DEPRECATED_DECLARATIONS_END
         }
     } else if (NSURL *urlFromPasteboard = [NSURL URLFromPasteboard:pasteboard])
         urlStrings.uncheckedAppend(urlFromPasteboard.absoluteString);
@@ -149,6 +153,7 @@ static Vector<String> urlStringsFromPasteboard(NSPasteboard *pasteboard)
 
 static String typeIdentifierForPasteboardType(const String& pasteboardType)
 {
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if (UTTypeIsDeclared(pasteboardType.createCFString().get()))
         return pasteboardType;
 
@@ -160,6 +165,7 @@ static String typeIdentifierForPasteboardType(const String& pasteboardType)
 
     if (pasteboardType == String(legacyURLPasteboardType()))
         return kUTTypeURL;
+ALLOW_DEPRECATED_DECLARATIONS_END
 
     return { };
 }
@@ -167,8 +173,10 @@ static String typeIdentifierForPasteboardType(const String& pasteboardType)
 Vector<String> PlatformPasteboard::allStringsForType(const String& pasteboardType) const
 {
     auto typeIdentifier = typeIdentifierForPasteboardType(pasteboardType);
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if (typeIdentifier == String(kUTTypeURL))
         return urlStringsFromPasteboard(m_pasteboard.get());
+ALLOW_DEPRECATED_DECLARATIONS_END
 
     NSArray<NSPasteboardItem *> *items = [m_pasteboard pasteboardItems];
     Vector<String> strings;
@@ -192,9 +200,11 @@ static const char* safeTypeForDOMToReadAndWriteForPlatformType(const String& pla
     if (platformType == String(legacyURLPasteboardType()))
         return "text/uri-list"_s;
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if (platformType == String(legacyHTMLPasteboardType()) || platformType == String(WebArchivePboardType) || platformType == String(kUTTypeWebArchive)
         || platformType == String(legacyRTFDPasteboardType()) || platformType == String(legacyRTFPasteboardType()))
         return "text/html"_s;
+ALLOW_DEPRECATED_DECLARATIONS_END
 
     return nullptr;
 }
@@ -382,6 +392,7 @@ int64_t PlatformPasteboard::setStringForType(const String& string, const String&
                 return 0;
         }
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         if ([[m_pasteboard.get() types] containsObject:(NSString *)kUTTypeURL]) {
             didWriteData = [m_pasteboard.get() setString:[url absoluteString] forType:(NSString *)kUTTypeURL];
             if (!didWriteData)
@@ -393,6 +404,7 @@ int64_t PlatformPasteboard::setStringForType(const String& string, const String&
             if (!didWriteData)
                 return 0;
         }
+ALLOW_DEPRECATED_DECLARATIONS_END
 
     } else {
         didWriteData = [m_pasteboard.get() setString:string forType:pasteboardType];

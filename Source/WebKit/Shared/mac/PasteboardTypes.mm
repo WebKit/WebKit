@@ -46,8 +46,10 @@ static inline NSArray *retain(NSArray *array)
     
 NSArray* PasteboardTypes::forEditing()
 {
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN 
     static NSArray *types = retain(@[WebArchivePboardType, (__bridge NSString *)kUTTypeWebArchive, WebCore::legacyHTMLPasteboardType(), WebCore::legacyFilenamesPasteboardType(), WebCore::legacyTIFFPasteboardType(), WebCore::legacyPDFPasteboardType(),
         WebCore::legacyURLPasteboardType(), WebCore::legacyRTFDPasteboardType(), WebCore::legacyRTFPasteboardType(), WebCore::legacyStringPasteboardType(), WebCore::legacyColorPasteboardType(), (__bridge NSString *)kUTTypePNG]);
+ALLOW_DEPRECATED_DECLARATIONS_END
     return types;
 }
 
@@ -71,7 +73,9 @@ NSArray* PasteboardTypes::forImagesWithArchive()
 
 NSArray* PasteboardTypes::forSelection()
 {
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN 
     static NSArray *types = retain(@[WebArchivePboardType, (__bridge NSString *)kUTTypeWebArchive, WebCore::legacyRTFDPasteboardType(), WebCore::legacyRTFPasteboardType(), WebCore::legacyStringPasteboardType()]);
+ALLOW_DEPRECATED_DECLARATIONS_END
     return types;
 }
     

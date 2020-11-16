@@ -43,7 +43,9 @@ String MIMETypeForImageType(const String& uti)
 
 String preferredExtensionForImageType(const String& uti)
 {
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     return adoptCF(UTTypeCopyPreferredTagWithClass(uti.createCFString().get(), kUTTagClassFilenameExtension)).get();
+ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 } // namespace WebCore

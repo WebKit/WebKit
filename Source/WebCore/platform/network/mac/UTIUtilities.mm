@@ -39,13 +39,16 @@ namespace WebCore {
 
 String MIMETypeFromUTI(const String& uti)
 {
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     return adoptCF(UTTypeCopyPreferredTagWithClass(uti.createCFString().get(), kUTTagClassMIMEType)).get();
+ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 String MIMETypeFromUTITree(const String& uti)
 {
     auto utiCF = uti.createCFString();
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     // Check if this UTI has a MIME type.
     RetainPtr<CFStringRef> mimeType = adoptCF(UTTypeCopyPreferredTagWithClass(utiCF.get(), kUTTagClassMIMEType));
     if (mimeType)
@@ -56,6 +59,7 @@ String MIMETypeFromUTITree(const String& uti)
     if (!decl)
         return emptyString();
     CFTypeRef value = CFDictionaryGetValue(decl.get(), kUTTypeConformsToKey);
+ALLOW_DEPRECATED_DECLARATIONS_END
     if (!value)
         return emptyString();
     CFTypeID typeID = CFGetTypeID(value);
@@ -112,7 +116,9 @@ struct UTIFromMIMETypeCachePolicy : TinyLRUCachePolicy<String, String> {
 public:
     static String createValueForKey(const String& mimeType)
     {
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         auto type = adoptCF(UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, mimeType.createCFString().get(), 0));
+ALLOW_DEPRECATED_DECLARATIONS_END
         if (type)
             return type.get();
         return UTIFromUnknownMIMEType(mimeType);
@@ -133,12 +139,16 @@ String UTIFromMIMEType(const String& mimeType)
 
 bool isDeclaredUTI(const String& UTI)
 {
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     return UTTypeIsDeclared(UTI.createCFString().get());
+ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 String UTIFromTag(const String& tagClass, const String& tag, const String& conformingToUTI)
 {
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     auto u = adoptCF(UTTypeCreatePreferredIdentifierForTag(tagClass.createCFString().get(), tag.createCFString().get(), conformingToUTI.createCFString().get()));
+ALLOW_DEPRECATED_DECLARATIONS_END
     return String(u.get());
 }
 

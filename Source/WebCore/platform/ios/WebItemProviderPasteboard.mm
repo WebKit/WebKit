@@ -52,8 +52,10 @@ using WebCore::PasteboardCustomData;
 static BOOL typeConformsToTypes(NSString *type, NSArray *conformsToTypes)
 {
     for (NSString *conformsToType in conformsToTypes) {
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         if (UTTypeConformsTo((__bridge CFStringRef)type, (__bridge CFStringRef)conformsToType))
             return YES;
+ALLOW_DEPRECATED_DECLARATIONS_END
     }
     return NO;
 }
@@ -63,8 +65,10 @@ static BOOL typeConformsToTypes(NSString *type, NSArray *conformsToTypes)
 - (BOOL)web_containsFileURLAndFileUploadContent
 {
     for (NSString *identifier in self.registeredTypeIdentifiers) {
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         if (UTTypeConformsTo((__bridge CFStringRef)identifier, kUTTypeFileURL))
             return self.web_fileUploadContentTypes.count;
+ALLOW_DEPRECATED_DECLARATIONS_END
     }
     return NO;
 }
@@ -73,8 +77,10 @@ static BOOL typeConformsToTypes(NSString *type, NSArray *conformsToTypes)
 {
     auto types = adoptNS([NSMutableArray new]);
     for (NSString *identifier in self.registeredTypeIdentifiers) {
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         if (UTTypeConformsTo((__bridge CFStringRef)identifier, kUTTypeURL))
             continue;
+ALLOW_DEPRECATED_DECLARATIONS_END
 
         if ([identifier isEqualToString:@"com.apple.mapkit.map-item"]) {
             // This type conforms to "public.content", yet the corresponding data is only a serialization of MKMapItem and isn't suitable for file uploads.
@@ -543,8 +549,10 @@ static UIPreferredPresentationStyle uiPreferredPresentationStyle(WebPreferredPre
 
     WebItemProviderLoadResult *loadResult = _loadResults[index].get();
     for (NSString *loadedType in loadResult.loadedTypeIdentifiers) {
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         if (!UTTypeConformsTo((CFStringRef)loadedType, (CFStringRef)typeIdentifier))
             continue;
+ALLOW_DEPRECATED_DECLARATIONS_END
 
         // We've already loaded data relevant for this UTI type onto disk, so there's no need to ask the NSItemProvider for the same data again.
         if (NSData *result = [NSData dataWithContentsOfURL:[loadResult fileURLForType:loadedType] options:NSDataReadingMappedIfSafe error:nil])
@@ -593,11 +601,13 @@ static Class classForTypeIdentifier(NSString *typeIdentifier, NSString *&outType
 
     // If we were unable to load any object, check if the given type identifier is still something
     // WebKit knows how to handle.
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if ([typeIdentifier isEqualToString:(NSString *)kUTTypeHTML]) {
         // Load kUTTypeHTML as a plain text HTML string.
         outTypeIdentifierToLoad = (NSString *)kUTTypePlainText;
         return [NSString class];
     }
+ALLOW_DEPRECATED_DECLARATIONS_END
 
     return nil;
 }
@@ -702,7 +712,9 @@ static NSURL *linkTemporaryItemProviderFilesToDropStagingDirectory(NSURL *url, N
         return nil;
 
     NSURL *destination = nil;
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     BOOL isFolder = UTTypeConformsTo((CFStringRef)typeIdentifier, kUTTypeFolder);
+ALLOW_DEPRECATED_DECLARATIONS_END
     NSFileManager *fileManager = [NSFileManager defaultManager];
 
     if (!suggestedName)
@@ -717,6 +729,7 @@ static NSURL *linkTemporaryItemProviderFilesToDropStagingDirectory(NSURL *url, N
 
 - (NSArray<NSString *> *)typeIdentifiersToLoad:(NSItemProvider *)itemProvider
 {
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     auto typesToLoad = adoptNS([[NSMutableOrderedSet alloc] init]);
     NSString *highestFidelitySupportedType = nil;
     NSString *highestFidelityContentType = nil;
@@ -758,6 +771,7 @@ static NSURL *linkTemporaryItemProviderFilesToDropStagingDirectory(NSURL *url, N
             || UTTypeConformsTo((__bridge CFStringRef)registeredTypeIdentifier, kUTTypePlainText))
             [typesToLoad addObject:registeredTypeIdentifier];
     }
+ALLOW_DEPRECATED_DECLARATIONS_END
 
     return [typesToLoad array];
 }

@@ -83,7 +83,10 @@ RetainPtr<CFDataRef> BitmapImage::tiffRepresentation(const Vector<Ref<NativeImag
         return nullptr;
 
     RetainPtr<CFMutableDataRef> data = adoptCF(CFDataCreateMutable(0, 0));
+
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     RetainPtr<CGImageDestinationRef> destination = adoptCF(CGImageDestinationCreateWithData(data.get(), kUTTypeTIFF, nativeImages.size(), 0));
+ALLOW_DEPRECATED_DECLARATIONS_END
 
     if (!destination)
         return nullptr;

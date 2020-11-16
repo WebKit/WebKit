@@ -136,7 +136,10 @@ void Pasteboard::write(const PasteboardWebContent& content)
         types.append(WebSmartPastePboardType);
     if (content.dataInWebArchiveFormat) {
         types.append(WebArchivePboardType);
+
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         types.append(kUTTypeWebArchive);
+ALLOW_DEPRECATED_DECLARATIONS_END
     }
     if (content.dataInRTFDFormat)
         types.append(String(legacyRTFDPasteboardType()));
@@ -161,7 +164,10 @@ void Pasteboard::write(const PasteboardWebContent& content)
         m_changeCount = platformStrategies()->pasteboardStrategy()->setBufferForType(nullptr, WebSmartPastePboardType, m_pasteboardName);
     if (content.dataInWebArchiveFormat) {
         m_changeCount = platformStrategies()->pasteboardStrategy()->setBufferForType(content.dataInWebArchiveFormat.get(), WebArchivePboardType, m_pasteboardName);
+
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         m_changeCount = platformStrategies()->pasteboardStrategy()->setBufferForType(content.dataInWebArchiveFormat.get(), kUTTypeWebArchive, m_pasteboardName);
+ALLOW_DEPRECATED_DECLARATIONS_END
     }
     if (content.dataInRTFDFormat)
         m_changeCount = platformStrategies()->pasteboardStrategy()->setBufferForType(content.dataInRTFDFormat.get(), legacyRTFDPasteboardType(), m_pasteboardName);
@@ -272,14 +278,20 @@ void Pasteboard::write(const PasteboardImage& pasteboardImage)
     auto types = writableTypesForImage();
     if (pasteboardImage.dataInWebArchiveFormat) {
         types.append(WebArchivePboardType);
+
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         types.append(kUTTypeWebArchive);
+ALLOW_DEPRECATED_DECLARATIONS_END
     }
 
     m_changeCount = writeURLForTypes(types, m_pasteboardName, pasteboardImage.url);
     m_changeCount = platformStrategies()->pasteboardStrategy()->setBufferForType(SharedBuffer::create(imageData).ptr(), legacyTIFFPasteboardType(), m_pasteboardName);
     if (auto archiveData = pasteboardImage.dataInWebArchiveFormat) {
         m_changeCount = platformStrategies()->pasteboardStrategy()->setBufferForType(archiveData.get(), WebArchivePboardType, m_pasteboardName);
+
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         m_changeCount = platformStrategies()->pasteboardStrategy()->setBufferForType(archiveData.get(), kUTTypeWebArchive, m_pasteboardName);
+ALLOW_DEPRECATED_DECLARATIONS_END
     }
     if (!pasteboardImage.dataInHTMLFormat.isEmpty())
         m_changeCount = platformStrategies()->pasteboardStrategy()->setStringForType(pasteboardImage.dataInHTMLFormat, legacyHTMLPasteboardType(), m_pasteboardName);
@@ -429,12 +441,14 @@ void Pasteboard::read(PasteboardWebContentReader& reader, WebContentReadingPolic
         }
     }
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if (types.contains(String(kUTTypeWebArchive))) {
         if (auto buffer = readBufferAtPreferredItemIndex(kUTTypeWebArchive, itemIndex, strategy, m_pasteboardName)) {
             if (m_changeCount != changeCount() || reader.readWebArchive(*buffer))
                 return;
         }
     }
+ALLOW_DEPRECATED_DECLARATIONS_END
 
     if (policy == WebContentReadingPolicy::AnyType && types.contains(String(legacyFilesPromisePasteboardType()))) {
         if (m_changeCount != changeCount() || reader.readFilePaths(m_promisedFilePaths))
@@ -519,19 +533,23 @@ void Pasteboard::read(PasteboardWebContentReader& reader, WebContentReadingPolic
         }
     }
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if (types.contains(String(kUTTypePNG))) {
         if (auto buffer = readBufferAtPreferredItemIndex(kUTTypePNG, itemIndex, strategy, m_pasteboardName)) {
             if (m_changeCount != changeCount() || reader.readImage(buffer.releaseNonNull(), "image/png"_s))
                 return;
         }
     }
+ALLOW_DEPRECATED_DECLARATIONS_END
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if (types.contains(String(kUTTypeJPEG))) {
         if (auto buffer = readBufferAtPreferredItemIndex(kUTTypeJPEG, itemIndex, strategy, m_pasteboardName)) {
             if (m_changeCount != changeCount() || reader.readImage(buffer.releaseNonNull(), "image/jpeg"_s))
                 return;
         }
     }
+ALLOW_DEPRECATED_DECLARATIONS_END
 
     if (types.contains(String(legacyURLPasteboardType()))) {
         URL url = strategy.url(m_pasteboardName);
@@ -546,11 +564,13 @@ void Pasteboard::read(PasteboardWebContentReader& reader, WebContentReadingPolic
             return;
     }
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if (types.contains(String(kUTTypeUTF8PlainText))) {
         String string = strategy.stringForType(kUTTypeUTF8PlainText, m_pasteboardName);
         if (m_changeCount != changeCount() || (!string.isNull() && reader.readPlainText(string)))
             return;
     }
+ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 bool Pasteboard::hasData()
@@ -573,8 +593,10 @@ static String cocoaTypeFromHTMLClipboardType(const String& type)
 
     auto utiType = UTIFromMIMEType(type);
     if (!utiType.isEmpty()) {
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         if (auto pbType = adoptCF(UTTypeCopyPreferredTagWithClass(utiType.createCFString().get(), kUTTagClassNSPboardType)))
             return pbType.get();
+ALLOW_DEPRECATED_DECLARATIONS_END
     }
 
     // No mapping, just pass the whole string though
@@ -613,10 +635,12 @@ Vector<String> Pasteboard::readPlatformValuesAsStrings(const String& domType, in
 
 static String utiTypeFromCocoaType(const String& type)
 {
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if (RetainPtr<CFStringRef> utiType = adoptCF(UTTypeCreatePreferredIdentifierForTag(kUTTagClassNSPboardType, type.createCFString().get(), 0))) {
         if (RetainPtr<CFStringRef> mimeType = adoptCF(UTTypeCopyPreferredTagWithClass(utiType.get(), kUTTagClassMIMEType)))
             return String(mimeType.get());
     }
+ALLOW_DEPRECATED_DECLARATIONS_END
     return String();
 }
 
@@ -650,6 +674,7 @@ void Pasteboard::writeString(const String& type, const String& data)
     const String& cocoaType = cocoaTypeFromHTMLClipboardType(type);
     String cocoaData = data;
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if (cocoaType == String(legacyURLPasteboardType()) || cocoaType == String(kUTTypeFileURL)) {
         NSURL *url = [NSURL URLWithString:cocoaData];
         if ([url isFileURL])
@@ -662,6 +687,7 @@ void Pasteboard::writeString(const String& type, const String& data)
 
         return;
     }
+ALLOW_DEPRECATED_DECLARATIONS_END
 
     if (!cocoaType.isEmpty()) {
         // everything else we know of goes on the pboard as a string

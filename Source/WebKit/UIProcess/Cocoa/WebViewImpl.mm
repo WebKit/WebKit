@@ -4356,7 +4356,9 @@ void WebViewImpl::setPromisedDataForImage(WebCore::Image* image, NSString *filen
 
     if (archiveBuffer) {
         auto nsData = archiveBuffer->createNSData();
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         [pasteboard setData:nsData.get() forType:(__bridge NSString *)kUTTypeWebArchive];
+ALLOW_DEPRECATED_DECLARATIONS_END
         [pasteboard setData:nsData.get() forType:PasteboardTypes::WebArchivePboardType];
     }
 

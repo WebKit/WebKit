@@ -74,8 +74,10 @@ String PlatformPasteboard::urlStringSuitableForLoading(String& title)
 
 #if PLATFORM(IOS_FAMILY)
     UNUSED_PARAM(title);
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     String urlPasteboardType = kUTTypeURL;
     String stringPasteboardType = kUTTypeText;
+ALLOW_DEPRECATED_DECLARATIONS_END
 #else
     String urlPasteboardType = legacyURLPasteboardType();
     String stringPasteboardType = legacyStringPasteboardType();

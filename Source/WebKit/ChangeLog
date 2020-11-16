@@ -1,3 +1,42 @@
+2020-11-16  Devin Rousso  <drousso@apple.com>
+
+        Ignore deprecation warnings for the uniform types C API
+        https://bugs.webkit.org/show_bug.cgi?id=218989
+
+        Reviewed by Tim Horton.
+
+        These should eventually be replaced with the ObjC API `UniformTypeIdentifiers.framework`.
+        See <https://developer.apple.com/documentation/uniformtypeidentifiers>.
+
+        * Shared/ios/WebIconUtilities.mm:
+        (WebKit::iconForFile):
+        * Shared/mac/PasteboardTypes.mm:
+        (WebKit::PasteboardTypes::forEditing):
+        (WebKit::PasteboardTypes::forSelection):
+        * UIProcess/API/Cocoa/APIAttachmentCocoa.mm:
+        (API::isDeclaredOrDynamicTypeIdentifier):
+        (API::Attachment::mimeType const):
+        (API::Attachment::utiType const):
+        (API::Attachment::setFileWrapperAndUpdateContentType):
+        * UIProcess/Automation/cocoa/WebAutomationSessionCocoa.mm:
+        (WebKit::WebAutomationSession::platformGetBase64EncodedPNGData):
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::setPromisedDataForImage):
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView _commonInitializationWithProcessPool:configuration:]):
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView supportedPasteboardTypesForCurrentSelection]):
+        * UIProcess/ios/WKPDFView.mm:
+        (-[WKPDFView actionSheetAssistant:performAction:]):
+        * UIProcess/ios/forms/WKFileUploadPanel.mm:
+        (-[WKFileUploadPanel currentAvailableActionTitles]):
+        (-[WKFileUploadPanel contextMenuInteraction:configurationForMenuAtLocation:]):
+        (-[WKFileUploadPanel showFilePickerMenu]):
+        (-[WKFileUploadPanel showDocumentPickerMenu]):
+        (-[WKFileUploadPanel _uploadItemFromMediaInfo:successBlock:failureBlock:]):
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (WebKit::WebContextMenuProxyMac::setupServicesMenu):
+
 2020-11-16  Don Olmstead  <don.olmstead@sony.com>
 
         Non-unified build fixes, mid November 2020 edition

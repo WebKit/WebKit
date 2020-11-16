@@ -48,7 +48,9 @@ static WTF::String mimeTypeInferredFromFileExtension(const API::Attachment& atta
 
 static BOOL isDeclaredOrDynamicTypeIdentifier(NSString *type)
 {
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     return UTTypeIsDeclared((__bridge CFStringRef)type) || UTTypeIsDynamic((__bridge CFStringRef)type);
+ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 NSFileWrapper *Attachment::fileWrapper() const
@@ -73,7 +75,9 @@ WTF::String Attachment::mimeType() const
     if (!isDeclaredOrDynamicTypeIdentifier(contentType))
         return contentType;
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     return adoptCF(UTTypeCopyPreferredTagWithClass((__bridge CFStringRef)contentType, kUTTagClassMIMEType)).get();
+ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 WTF::String Attachment::utiType() const
@@ -84,7 +88,9 @@ WTF::String Attachment::utiType() const
     if (isDeclaredOrDynamicTypeIdentifier(contentType))
         return contentType;
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     return adoptCF(UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, (__bridge CFStringRef)contentType, nullptr)).get();
+ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 WTF::String Attachment::fileName() const
@@ -100,6 +106,7 @@ WTF::String Attachment::fileName() const
 void Attachment::setFileWrapperAndUpdateContentType(NSFileWrapper *fileWrapper, NSString *contentType)
 {
     if (!contentType.length) {
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         if (fileWrapper.directory)
             contentType = (NSString *)kUTTypeDirectory;
         else if (fileWrapper.regularFile) {
@@ -108,6 +115,7 @@ void Attachment::setFileWrapperAndUpdateContentType(NSFileWrapper *fileWrapper, 
             if (!contentType.length)
                 contentType = (NSString *)kUTTypeData;
         }
+ALLOW_DEPRECATED_DECLARATIONS_END
     }
 
     setContentType(contentType);

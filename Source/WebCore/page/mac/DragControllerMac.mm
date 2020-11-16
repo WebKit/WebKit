@@ -117,6 +117,7 @@ DragOperation DragController::platformGenericDragOperation()
 void DragController::updateSupportedTypeIdentifiersForDragHandlingMethod(DragHandlingMethod dragHandlingMethod, const DragData& dragData) const
 {
     Vector<String> supportedTypes;
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     switch (dragHandlingMethod) {
     case DragHandlingMethod::PageLoad:
         supportedTypes.append(kUTTypeURL);
@@ -143,6 +144,7 @@ void DragController::updateSupportedTypeIdentifiersForDragHandlingMethod(DragHan
             supportedTypes.append(type);
         break;
     }
+ALLOW_DEPRECATED_DECLARATIONS_END
     platformStrategies()->pasteboardStrategy()->updateSupportedTypeIdentifiers(supportedTypes, dragData.pasteboardName());
 }
 

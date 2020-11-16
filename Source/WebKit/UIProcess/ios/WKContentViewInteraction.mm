@@ -3013,7 +3013,9 @@ static bool elementTypeRequiresAccessoryView(WebKit::InputType type)
     static NSMutableArray *plainTextTypes = nil;
     if (!plainTextTypes) {
         plainTextTypes = [[NSMutableArray alloc] init];
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         [plainTextTypes addObject:(id)kUTTypeURL];
+ALLOW_DEPRECATED_DECLARATIONS_END
         [plainTextTypes addObjectsFromArray:UIPasteboardTypeListString];
 
         richTypes = [[NSMutableArray alloc] init];
