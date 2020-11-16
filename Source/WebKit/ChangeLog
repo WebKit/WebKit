@@ -1,3 +1,15 @@
+2020-11-13  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK][WPE] Build broken in stable 2.30.x releases with ENABLE_VIDEO=OFF
+        https://bugs.webkit.org/show_bug.cgi?id=218921
+
+        Reviewed by Carlos Garcia Campos.
+
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::overrideBoolPreferenceForTestRunner): Use ENABLE(VIDEO)
+        guard to prevent usage of function which does not get compiled in when video support
+        disabled
+
 2020-10-23  Adrian Perez de Castro  <aperez@igalia.com>
 
         Unreviewed. Update OptionsWPE.cmake and NEWS for the 2.30.2 release

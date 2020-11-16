@@ -29,6 +29,7 @@
 
 #include "AudioContext.h"
 #include "DefaultAudioDestinationNode.h"
+#include "Document.h"
 #include "JSDOMPromiseDeferred.h"
 #include <wtf/IsoMallocInlines.h>
 
