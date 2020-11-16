@@ -106,11 +106,13 @@ private:
         static void decodebinPadAddedCallback(ImageDecoderGStreamer::InnerDecoder*, GstPad*);
         void handleMessage(GstMessage*);
         void preparePipeline();
+        int selectStream(GstStream*);
         void connectDecoderPad(GstPad*);
 
         ImageDecoderGStreamer& m_decoder;
         GRefPtr<GstElement> m_pipeline;
         GRefPtr<GInputStream> m_memoryStream;
+        GRefPtr<GstElement> m_decodebin;
         RunLoop& m_runLoop;
     };
 
