@@ -750,15 +750,15 @@ Position Position::upstream(EditingBoundaryCrossingRule rule) const
             }
 
             unsigned textOffset = currentPosition.offsetInLeafNode();
-            for (auto run = firstTextRun; run; run.traverseNextTextRunInTextOrder()) {
-                if (textOffset <= run->end()) {
-                    if (textOffset > run->start())
-                        return currentPosition;
-                    continue;
-                }
-
-                if (textOffset == run->end() + 1 && run->isLastTextRunOnLine() && !run->isLastTextRun())
+            for (auto run = firstTextRun; run;) {
+                if (textOffset > run->start() && textOffset <= run->end())
                     return currentPosition;
+
+                auto nextRun = run.nextTextRunInTextOrder();
+                if (textOffset == run->end() + 1 && nextRun && run.line() != nextRun.line())
+                    return currentPosition;
+
+                run = nextRun;
             }
         }
     }
@@ -853,18 +853,18 @@ Position Position::downstream(EditingBoundaryCrossingRule rule) const
             }
 
             unsigned textOffset = currentPosition.offsetInLeafNode();
-            for (auto run = firstTextRun; run; run.traverseNextTextRunInTextOrder()) {
+            for (auto run = firstTextRun; run;) {
                 if (!run->length() && textOffset == run->start())
                     return currentPosition;
 
-                if (textOffset < run->end()) {
-                    if (textOffset >= run->start())
-                        return currentPosition;
-                    continue;
-                }
-
-                if (textOffset == run->end() && run->isLastTextRunOnLine() && !run->isLastTextRun())
+                if (textOffset >= run->start() && textOffset < run->end())
                     return currentPosition;
+
+                auto nextRun = run.nextTextRunInTextOrder();
+                if (textOffset == run->end() && nextRun && run.line() != nextRun.line())
+                    return currentPosition;
+
+                run = nextRun;
             }
         }
     }

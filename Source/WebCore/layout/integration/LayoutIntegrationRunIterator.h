@@ -111,9 +111,6 @@ public:
     bool isSelectable(unsigned start, unsigned end) const;
     LayoutRect selectionRect(unsigned start, unsigned end) const;
 
-    bool isLastTextRunOnLine() const;
-    bool isLastTextRun() const;
-
     InlineTextBox* legacyInlineBox() const { return downcast<InlineTextBox>(PathRun::legacyInlineBox()); }
 };
 
@@ -340,20 +337,6 @@ inline LayoutRect PathTextRun::selectionRect(unsigned start, unsigned end) const
 {
     return WTF::switchOn(m_pathVariant, [&](auto& path) {
         return path.selectionRect(start, end);
-    });
-}
-
-inline bool PathTextRun::isLastTextRunOnLine() const
-{
-    return WTF::switchOn(m_pathVariant, [](auto& path) {
-        return path.isLastTextRunOnLine();
-    });
-}
-
-inline bool PathTextRun::isLastTextRun() const
-{
-    return WTF::switchOn(m_pathVariant, [](auto& path) {
-        return path.isLastTextRun();
     });
 }
 

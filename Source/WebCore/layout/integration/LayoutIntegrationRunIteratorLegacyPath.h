@@ -27,6 +27,7 @@
 
 #include "InlineTextBox.h"
 #include "RenderText.h"
+#include <wtf/RefCountedArray.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -65,13 +66,6 @@ public:
     bool isSelectable(unsigned start, unsigned end) const { return inlineTextBox()->isSelected(start, end); }
     LayoutRect selectionRect(unsigned start, unsigned end) const { return inlineTextBox()->localSelectionRect(start, end); }
 
-    bool isLastTextRunOnLine() const
-    {
-        auto* next = nextInlineTextBoxInTextOrder();
-        return !next || &inlineTextBox()->root() != &next->root();
-    }
-    bool isLastTextRun() const { return !nextInlineTextBoxInTextOrder(); };
-
     const RenderObject& renderer() const
     {
         return m_inlineBox->renderer();
@@ -108,7 +102,7 @@ private:
     const InlineTextBox* nextInlineTextBoxInTextOrder() const;
 
     const InlineBox* m_inlineBox;
-    Vector<const InlineTextBox*> m_sortedInlineTextBoxes;
+    RefCountedArray<const InlineTextBox*> m_sortedInlineTextBoxes;
     size_t m_sortedInlineTextBoxIndex { 0 };
 };
 

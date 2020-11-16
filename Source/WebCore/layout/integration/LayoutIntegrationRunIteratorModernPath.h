@@ -129,25 +129,6 @@ public:
         return snappedSelectionRect(selectionRect, logicalRight, selectionTop, selectionHeight, isHorizontal());
     }
 
-    bool isLastTextRunOnLine() const
-    {
-        if (isLastTextRun())
-            return true;
-
-        auto& next = runs()[m_runIndex + 1];
-        return run().lineIndex() != next.lineIndex();
-    }
-
-    bool isLastTextRun() const
-    {
-        ASSERT(!atEnd());
-        ASSERT(run().textContent());
-
-        if (m_runIndex + 1 == runs().size())
-            return true;
-        return &run().layoutBox() != &runs()[m_runIndex + 1].layoutBox();
-    };
-
     const RenderObject& renderer() const
     {
         return m_inlineContent->rendererForLayoutBox(run().layoutBox());

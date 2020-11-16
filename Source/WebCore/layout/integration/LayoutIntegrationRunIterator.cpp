@@ -42,12 +42,7 @@ RunIterator::RunIterator(PathRun::PathVariant&& pathVariant)
 
 bool RunIterator::operator==(const RunIterator& other) const
 {
-    if (m_run.m_pathVariant.index() != other.m_run.m_pathVariant.index())
-        return false;
-
-    return WTF::switchOn(m_run.m_pathVariant, [&](const auto& path) {
-        return path == WTF::get<std::decay_t<decltype(path)>>(other.m_run.m_pathVariant);
-    });
+    return m_run.m_pathVariant == other.m_run.m_pathVariant;
 }
 
 bool RunIterator::atEnd() const
