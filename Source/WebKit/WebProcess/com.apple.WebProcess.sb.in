@@ -171,8 +171,8 @@
     (allow iokit-open
         (iokit-registry-entry-class "IOFramebufferSharedUserClient"))
 #endif
-    ;; H.264 Acceleration
 #if __MAC_OS_X_VERSION_MIN_REQUIRED < 101500
+    ;; H.264 Acceleration
     (allow iokit-open
         (iokit-registry-entry-class "AppleIntelMEUserClient")
 #if HAVE(SANDBOX_MESSAGE_FILTERING)
@@ -188,7 +188,6 @@
         )
 #endif
     )
-#endif
     (allow iokit-open
         (iokit-registry-entry-class "AppleSNBFBUserClient")
 #if HAVE(SANDBOX_MESSAGE_FILTERING)
@@ -204,6 +203,7 @@
         )
 #endif
     )
+#endif
     ;; QuartzCore
     (allow iokit-open
         (iokit-registry-entry-class "AGPMClient")

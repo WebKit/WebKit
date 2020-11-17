@@ -117,12 +117,12 @@
     ;; CoreVideo CVCGDisplayLink
     (allow iokit-open
         (iokit-registry-entry-class "IOFramebufferSharedUserClient"))
+#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101500
     ;; H.264 Acceleration
     (allow iokit-open
-#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101500
         (iokit-registry-entry-class "AppleIntelMEUserClient")
-#endif
         (iokit-registry-entry-class "AppleSNBFBUserClient"))
+#endif
     ;; QuartzCore
     (allow iokit-open
         (iokit-registry-entry-class "AGPMClient")
