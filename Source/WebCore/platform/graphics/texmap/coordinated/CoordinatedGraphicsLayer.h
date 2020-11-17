@@ -71,6 +71,7 @@ public:
     void addChildBelow(Ref<GraphicsLayer>&&, GraphicsLayer*) override;
     bool replaceChild(GraphicsLayer*, Ref<GraphicsLayer>&&) override;
     void removeFromParent() override;
+    void setScrollingNodeID(ScrollingNodeID) override;
     void setPosition(const FloatPoint&) override;
     void syncPosition(const FloatPoint&) override;
     void setAnchorPoint(const FloatPoint3D&) override;
