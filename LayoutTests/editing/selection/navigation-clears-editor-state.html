@@ -51,11 +51,12 @@ async function runTest()
     let resolved = 0;
     for (let frame of frames) {
         frame.src = "resources/select-iframe-focusin-document-crash-frame.html";
-        frame.onload = () => {
+        frame.onload = async () => {
             ++resolved;
             if (resolved !== count)
                 return;
             let before = internals.numberOfLiveDocuments();
+            await wait(0);
             GCController.collect();
             let after = internals.numberOfLiveDocuments();
             let delta = before - after;

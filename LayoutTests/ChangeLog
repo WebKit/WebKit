@@ -1,3 +1,17 @@
+2020-11-17  Lauro Moura  <lmoura@igalia.com>
+
+        REGRESSION(r269227) [GTK] editing/selection/navigation-clears-editor-state.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=219019
+
+        Reviewed by Chris Dumez.
+
+        Apply a similar fix to what was done in
+        requestidlecallback/requestidlecallback-document-gc.html in the
+        original revision, giving the timers a spin to allow the released
+        documents to be collected.
+
+        * editing/selection/navigation-clears-editor-state.html:
+
 2020-11-17  Rob Buis  <rbuis@igalia.com>
 
         Null check anchorNode of endingSelection start
