@@ -1205,11 +1205,6 @@ bool WebAnimation::isRunningAccelerated() const
     return is<KeyframeEffect>(m_effect) && downcast<KeyframeEffect>(*m_effect).isRunningAccelerated();
 }
 
-bool WebAnimation::isCompletelyAccelerated() const
-{
-    return is<KeyframeEffect>(m_effect) && downcast<KeyframeEffect>(*m_effect).isCompletelyAccelerated();
-}
-
 bool WebAnimation::needsTick() const
 {
     return pending() || playState() == PlayState::Running || m_hasScheduledEventsDuringTick;
@@ -1453,8 +1448,6 @@ ExceptionOr<void> WebAnimation::commitStyles()
 
 Seconds WebAnimation::timeToNextTick() const
 {
-    ASSERT(effect());
-
     if (pending())
         return 0_s;
 
@@ -1463,39 +1456,8 @@ Seconds WebAnimation::timeToNextTick() const
     if (playState() != PlayState::Running || !playbackRate)
         return Seconds::infinity();
 
-    auto& effect = *this->effect();
-    auto timing = effect.getBasicTiming();
-    switch (timing.phase) {
-    case AnimationEffectPhase::Before:
-        // The animation is in its "before" phase, in this case we can wait until it enters its "active" phase.
-        return (effect.delay() - timing.localTime.value()) / playbackRate;
-    case AnimationEffectPhase::Active:
-        if (isCompletelyAccelerated() && isRunningAccelerated()) {
-            // Fully-accelerated running CSS Animations need to trigger "animationiteration" events, in this case we must wait until the next iteration.
-            if (isCSSAnimation()) {
-                if (auto iterationProgress = effect.getComputedTiming().simpleIterationProgress)
-                    return effect.iterationDuration() * (1 - *iterationProgress);
-            }
-            // Fully-accelerated running animations in the "active" phase can wait until they ended.
-            return (effect.endTime() - timing.localTime.value()) / playbackRate;
-        }
-        if (auto iterationProgress = effect.getComputedTiming().simpleIterationProgress) {
-            // In case we're in a range that uses a steps() timing function, we can compute the time until the next step starts.
-            if (auto progressUntilNextStep = effect.progressUntilNextStep(*iterationProgress))
-                return effect.iterationDuration() * *progressUntilNextStep / playbackRate;
-        }
-        // Other animations in the "active" phase will need to update their animated value at the immediate next opportunity.
-        return 0_s;
-    case AnimationEffectPhase::After:
-        // The animation is in its after phase, which means it will no longer update its value, so it doens't need a tick.
-        return Seconds::infinity();
-    case AnimationEffectPhase::Idle:
-        ASSERT_NOT_REACHED();
-        return Seconds::infinity();
-    }
-
-    ASSERT_NOT_REACHED();
-    return Seconds::infinity();
+    ASSERT(effect());
+    return effect()->timeToNextTick() / playbackRate;
 }
 
 } // namespace WebCore

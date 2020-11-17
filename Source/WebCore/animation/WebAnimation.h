@@ -128,7 +128,6 @@ public:
     void willChangeRenderer();
 
     bool isRunningAccelerated() const;
-    bool isCompletelyAccelerated() const;
     bool isRelevant() const { return m_isRelevant; }
     void updateRelevance();
     void effectTimingDidChange();

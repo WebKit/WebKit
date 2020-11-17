@@ -146,7 +146,6 @@ public:
 
     // FIXME: These ignore the fact that some timing functions can prevent acceleration.
     bool isAboutToRunAccelerated() const { return m_acceleratedPropertiesState != AcceleratedProperties::None && m_lastRecordedAcceleratedAction != AcceleratedAction::Stop; }
-    bool isCompletelyAccelerated() const { return m_acceleratedPropertiesState == AcceleratedProperties::All; }
 
     bool filterFunctionListsMatch() const override { return m_filterFunctionListsMatch; }
     bool transformFunctionListsMatch() const override { return m_transformFunctionListsMatch; }
@@ -187,6 +186,7 @@ private:
     ExceptionOr<void> processKeyframes(JSC::JSGlobalObject&, JSC::Strong<JSC::JSObject>&&);
     void addPendingAcceleratedAction(AcceleratedAction);
     bool canBeAccelerated() const;
+    bool isCompletelyAccelerated() const { return m_acceleratedPropertiesState == AcceleratedProperties::All; }
     void updateAcceleratedActions();
     void setAnimatedPropertiesInStyle(RenderStyle&, double);
     TimingFunction* timingFunctionForKeyframeAtIndex(size_t) const;
@@ -200,6 +200,7 @@ private:
     void computeCSSTransitionBlendingKeyframes(const RenderStyle* oldStyle, const RenderStyle& newStyle);
     void computeAcceleratedPropertiesState();
     void setBlendingKeyframes(KeyframeList&);
+    Seconds timeToNextTick() const final;
     Optional<double> progressUntilNextStep(double) const final;
     void checkForMatchingTransformFunctionLists();
     void checkForMatchingFilterFunctionLists();

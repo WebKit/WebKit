@@ -102,10 +102,12 @@ public:
 
     void updateStaticTimingProperties();
 
-    virtual Optional<double> progressUntilNextStep(double) const;
+    virtual Seconds timeToNextTick() const { return Seconds::infinity(); }
 
 protected:
     explicit AnimationEffect();
+
+    virtual Optional<double> progressUntilNextStep(double) const;
 
 private:
     enum class ComputedDirection : uint8_t { Forwards, Reverse };

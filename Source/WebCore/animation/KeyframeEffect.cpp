@@ -1972,4 +1972,40 @@ Optional<double> KeyframeEffect::progressUntilNextStep(double iterationProgress)
     return WTF::nullopt;
 }
 
+Seconds KeyframeEffect::timeToNextTick() const
+{
+    auto timing = getBasicTiming();
+    switch (timing.phase) {
+    case AnimationEffectPhase::Before:
+        // The effect is in its "before" phase, in this case we can wait until it enters its "active" phase.
+        return delay() - *timing.localTime;
+    case AnimationEffectPhase::Active:
+        if (isCompletelyAccelerated() && isRunningAccelerated()) {
+            // Fully-accelerated running CSS Animations need to trigger "animationiteration" events, in this case we must wait until the next iteration.
+            if (is<CSSAnimation>(animation())) {
+                if (auto iterationProgress = getComputedTiming().simpleIterationProgress)
+                    return iterationDuration() * (1 - *iterationProgress);
+            }
+            // Fully-accelerated running effects in the "active" phase can wait until they ended.
+            return endTime() - *timing.localTime;
+        }
+        if (auto iterationProgress = getComputedTiming().simpleIterationProgress) {
+            // In case we're in a range that uses a steps() timing function, we can compute the time until the next step starts.
+            if (auto progressUntilNextStep = this->progressUntilNextStep(*iterationProgress))
+                return iterationDuration() * *progressUntilNextStep;
+        }
+        // Other effects in the "active" phase will need to update their animated value at the immediate next opportunity.
+        return 0_s;
+    case AnimationEffectPhase::After:
+        // The effect is in its after phase, which means it will no longer update its value, so it doens't need a tick.
+        return Seconds::infinity();
+    case AnimationEffectPhase::Idle:
+        ASSERT_NOT_REACHED();
+        return Seconds::infinity();
+    }
+
+    ASSERT_NOT_REACHED();
+    return Seconds::infinity();
+}
+
 } // namespace WebCore
