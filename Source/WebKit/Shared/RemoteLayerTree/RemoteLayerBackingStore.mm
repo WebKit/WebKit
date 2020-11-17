@@ -251,7 +251,7 @@ bool RemoteLayerBackingStore::display()
 
     if (!m_dirtyRegion.contains(layerBounds)) {
         ASSERT(m_backBuffer.imageBuffer);
-        context.drawImageBuffer(*m_backBuffer.imageBuffer, { 0, 0 });
+        context.drawImageBuffer(*m_backBuffer.imageBuffer, { 0, 0 }, { WebCore::CompositeOperator::Copy });
     }
 
     if (m_paintingRects.size() == 1) {

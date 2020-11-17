@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    .container {
+        border: 1px solid black; /* Needed to disable simple color layer compositing. */
+        height: 200px;
+        width: 200px;
+        transform: translateZ(0);
+        background-color: rgba(0, 255, 0, 0.2);
+    }
+    
+    #test {
+        margin: 5px;
+        height: 5px;
+        width: 5px;
+        background-color: red;
+    }
+  </style>
+  <script src="../../resources/ui-helper.js"></script>
+  <script>
+    async function doTest() {
+        for (var i = 0; i < 5; i++) {
+            document.getElementById('test').style.backgroundColor = 'red';
+            await UIHelper.renderingUpdate();
+            document.getElementById('test').style.backgroundColor = 'transparent';
+            await UIHelper.renderingUpdate();
+        }
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+    window.addEventListener('load', doTest);
+  </script>
+</head>
+<body>
+    <p>Test for repaint in a transparent composited layer. The two squares below should be identical, green @ 20% alpha.</p>
+    <div class="container">
+        <div id="test"></div>
+    </div>
+    <div class="container">
+    </div>
+</body>
+</html>
