@@ -1,3 +1,21 @@
+2020-11-17  Chris Dumez  <cdumez@apple.com>
+
+        [macOS] Stop using RunLoopType=_WebKit starting in Big Sur
+        https://bugs.webkit.org/show_bug.cgi?id=219052
+        <rdar://problem/61742969>
+
+        Reviewed by Geoffrey Garen.
+
+        Stop using RunLoopType=_WebKit starting in Big Sur. This was a temporary hack so that our WebProcesses would get the right
+        scheduling priority. Starting with Big Sur, the right way to do this is to use _ProcessType=App and restore the RunLoopType
+        to be NSRunLoop.
+
+        After this change, I have verified that the WebContent's main thread still runs at UserInteractive QoS. App Nap is also
+        still working as expected.
+
+        * Configurations/WebContentService.xcconfig:
+        * WebProcess/EntryPoint/Cocoa/XPCService/WebContentService/Info-OSX.plist:
+
 2020-11-17  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Issue sandbox extension to trust service if Media in the GPU process is not enabled

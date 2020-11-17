@@ -46,6 +46,8 @@
 		<string>Application</string>
 		<key>RunLoopType</key>
 		<string>${RUNLOOP_TYPE}</string>
+                <key>_ProcessType</key>
+                <string>App</string>
 		<key>_MultipleInstances</key>
 		<true/>
 		<key>_HighBitsASLR</key>
