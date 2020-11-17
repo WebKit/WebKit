@@ -202,7 +202,7 @@ public:
         return API::InspectorConfiguration::create();
     }
 
-    virtual void decidePolicyForSpeechRecognitionPermissionRequest(WebKit::WebPageProxy&, API::SecurityOrigin&, CompletionHandler<void(bool)>&& completionHandler) { completionHandler(false); }
+    virtual void decidePolicyForSpeechRecognitionPermissionRequest(WebKit::WebPageProxy& page, API::SecurityOrigin& origin, CompletionHandler<void(bool)>&& completionHandler) { page.requestSpeechRecognitionPermissionByDefaultAction(origin.securityOrigin(), WTFMove(completionHandler)); }
 };
 
 } // namespace API

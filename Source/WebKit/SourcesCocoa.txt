@@ -387,7 +387,6 @@ UIProcess/Cocoa/UIDelegate.mm
 UIProcess/Cocoa/UIRemoteObjectRegistry.cpp
 UIProcess/Cocoa/UserMediaCaptureManagerProxy.cpp
 UIProcess/Cocoa/UserMediaPermissionRequestManagerProxy.mm
-UIProcess/Cocoa/UserMediaPermissionRequestProxy.mm
 UIProcess/Cocoa/VideoFullscreenManagerProxy.mm
 UIProcess/Cocoa/WebPageProxyCocoa.mm
 UIProcess/Cocoa/WebPasteboardProxyCocoa.mm

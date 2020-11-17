@@ -3468,7 +3468,6 @@
 		4118DC1B21E6D11A00DE04C7 /* WebsiteDataStoreClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebsiteDataStoreClient.h; sourceTree = "<group>"; };
 		411A8DD920DDB6050060D34F /* WKMockMediaDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKMockMediaDevice.h; sourceTree = "<group>"; };
 		411A8DDA20DDB6050060D34F /* WKMockMediaDevice.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKMockMediaDevice.cpp; sourceTree = "<group>"; };
-		411A9A9A251DE93E00807D7E /* UserMediaPermissionRequestProxy.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = UserMediaPermissionRequestProxy.mm; sourceTree = "<group>"; };
 		411B22621E371244004F7363 /* LibWebRTCNetwork.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LibWebRTCNetwork.h; path = Network/webrtc/LibWebRTCNetwork.h; sourceTree = "<group>"; };
 		41287D4B225C05C4009A3E26 /* WebSocketTaskCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebSocketTaskCocoa.mm; sourceTree = "<group>"; };
 		41287D4C225C05C5009A3E26 /* WebSocketTaskCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSocketTaskCocoa.h; sourceTree = "<group>"; };
@@ -6526,7 +6525,6 @@
 				463236862314833F00A48FA7 /* UIRemoteObjectRegistry.cpp */,
 				463236852314833F00A48FA7 /* UIRemoteObjectRegistry.h */,
 				070259BE2522841C00153405 /* UserMediaPermissionRequestManagerProxy.mm */,
-				411A9A9A251DE93E00807D7E /* UserMediaPermissionRequestProxy.mm */,
 				52D5A1AA1C57494E00DE34A3 /* VideoFullscreenManagerProxy.h */,
 				52D5A1AB1C57494E00DE34A3 /* VideoFullscreenManagerProxy.messages.in */,
 				52D5A1AC1C57494E00DE34A3 /* VideoFullscreenManagerProxy.mm */,

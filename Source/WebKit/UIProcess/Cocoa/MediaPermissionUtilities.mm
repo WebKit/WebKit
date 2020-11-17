@@ -28,9 +28,14 @@
 
 #import "SandboxUtilities.h"
 #import "TCCSPI.h"
+#import "WKWebViewInternal.h"
+#import "WebPageProxy.h"
+#import <WebCore/LocalizedStrings.h>
+#import <WebCore/SecurityOrigin.h>
 #import <mutex>
 #import <wtf/BlockPtr.h>
 #import <wtf/SoftLinking.h>
+#import <wtf/URLHelpers.h>
 #import <wtf/spi/darwin/SandboxSPI.h>
 
 #if HAVE(SPEECHRECOGNIZER)
@@ -109,6 +114,95 @@ bool checkUsageDescriptionStringForType(MediaPermissionType type)
 bool checkUsageDescriptionStringForSpeechRecognition()
 {
     return dynamic_objc_cast<NSString>(NSBundle.mainBundle.infoDictionary[@"NSSpeechRecognitionUsageDescription"]).length > 0;
+}
+
+static NSString* visibleDomain(const String& host)
+{
+    auto domain = WTF::URLHelpers::userVisibleURL(host.utf8());
+    return startsWithLettersIgnoringASCIICase(domain, "www.") ? domain.substring(4) : domain;
+}
+
+static NSString *alertMessageText(MediaPermissionReason reason, OptionSet<MediaPermissionType> types, const WebCore::SecurityOrigin& origin)
+{
+    if (origin.protocol() != "http" && origin.protocol() != "https")
+        return nil;
+
+    switch (reason) {
+    case MediaPermissionReason::UserMedia:
+        if (types.contains(MediaPermissionType::Audio) && types.contains(MediaPermissionType::Video))
+            return [NSString stringWithFormat:WEB_UI_NSSTRING(@"Allow “%@” to use your camera and microphone?", @"Message for user media prompt"), visibleDomain(origin.host())];
+        if (types.contains(MediaPermissionType::Audio))
+            return [NSString stringWithFormat:WEB_UI_NSSTRING(@"Allow “%@” to use your microphone?", @"Message for user microphone access prompt"), visibleDomain(origin.host())];
+        if (types.contains(MediaPermissionType::Audio))
+            return [NSString stringWithFormat:WEB_UI_NSSTRING(@"Allow “%@” to use your camera?", @"Message for user camera access prompt"), visibleDomain(origin.host())];
+        return nil;
+    case MediaPermissionReason::SpeechRecognition:
+        return [NSString stringWithFormat:WEB_UI_NSSTRING(@"Allow “%@” to capture your audio and use it for speech recognition?", @"Message for spechrecognition prompt"), visibleDomain(origin.host())];
+    }
+}
+
+static NSString *allowButtonText(MediaPermissionReason reason)
+{
+    switch (reason) {
+    case MediaPermissionReason::UserMedia:
+        return WEB_UI_STRING_KEY(@"Allow", "Allow (usermedia)", @"Allow button title in user media prompt");
+    case MediaPermissionReason::SpeechRecognition:
+        return WEB_UI_STRING_KEY(@"Allow", "Allow (speechrecognition)", @"Allow button title in speech recognition prompt");
+    }
+}
+
+static NSString *doNotAllowButtonText(MediaPermissionReason reason)
+{
+    switch (reason) {
+    case MediaPermissionReason::UserMedia:
+        return WEB_UI_STRING_KEY(@"Don’t Allow", "Don’t Allow (usermedia)", @"Disallow button title in user media prompt");
+    case MediaPermissionReason::SpeechRecognition:
+        return WEB_UI_STRING_KEY(@"Don’t Allow", "Don’t Allow (speechrecognition)", @"Disallow button title in speech recognition prompt");
+    }
+}
+
+void alertForPermission(WebPageProxy& page, MediaPermissionReason reason, OptionSet<MediaPermissionType> types, const WebCore::SecurityOrigin& origin, CompletionHandler<void(bool)>&& completionHandler)
+{
+    auto *webView = fromWebPageProxy(page);
+    if (!webView) {
+        completionHandler(false);
+        return;
+    }
+    
+    auto *alertTitle = alertMessageText(reason, types, origin);
+    if (!alertTitle) {
+        completionHandler(false);
+        return;
+    }
+
+    auto *allowButtonString = allowButtonText(reason);
+    auto *doNotAllowButtonString = doNotAllowButtonText(reason);
+    auto completionBlock = makeBlockPtr(WTFMove(completionHandler));
+
+#if PLATFORM(MAC)
+    auto alert = adoptNS([NSAlert new]);
+    [alert setMessageText:alertTitle];
+    [alert addButtonWithTitle:doNotAllowButtonString];
+    [alert addButtonWithTitle:allowButtonString];
+    [alert beginSheetModalForWindow:webView.window completionHandler:[completionBlock](NSModalResponse returnCode) {
+        auto shouldAllow = returnCode == NSAlertSecondButtonReturn;
+        completionBlock(shouldAllow);
+    }];
+#else
+    UIAlertController* alert = [UIAlertController alertControllerWithTitle:alertTitle message:nil preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction* allowAction = [UIAlertAction actionWithTitle:allowButtonString style:UIAlertActionStyleDefault handler:[completionBlock](UIAlertAction *action) {
+        completionBlock(true);
+    }];
+
+    UIAlertAction* doNotAllowAction = [UIAlertAction actionWithTitle:doNotAllowButtonString style:UIAlertActionStyleCancel handler:[completionBlock](UIAlertAction *action) {
+        completionBlock(false);
+    }];
+
+    [alert addAction:doNotAllowAction];
+    [alert addAction:allowAction];
+
+    [[UIViewController _viewControllerForFullScreenPresentationFromView:webView] presentViewController:alert animated:YES completion:nil];
+#endif
 }
 
 #if HAVE(AVCAPTUREDEVICE)

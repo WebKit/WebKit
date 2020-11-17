@@ -41,6 +41,8 @@ public:
     ~SpeechRecognitionPermissionManager();
     void request(const WebCore::ClientOrigin&, CompletionHandler<void(SpeechRecognitionPermissionDecision)>&&);
 
+    void decideByDefaultAction(const WebCore::SecurityOrigin&, CompletionHandler<void(bool)>&&);
+
 private:
     void startNextRequest();
     void startProcessingRequest();

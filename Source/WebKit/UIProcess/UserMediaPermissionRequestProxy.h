@@ -86,10 +86,8 @@ public:
 
 #if ENABLE(MEDIA_STREAM)
     bool isUserGesturePriviledged() const { return m_request.isUserGesturePriviledged; }
-    void doDefaultAction();
-#else
-    NO_RETURN_DUE_TO_ASSERT void doDefaultAction();
 #endif
+    void doDefaultAction();
 
 private:
     UserMediaPermissionRequestProxy(UserMediaPermissionRequestManagerProxy&, uint64_t userMediaID, WebCore::FrameIdentifier mainFrameID, WebCore::FrameIdentifier, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin, Vector<WebCore::CaptureDevice>&& audioDevices, Vector<WebCore::CaptureDevice>&& videoDevices, WebCore::MediaStreamRequest&&);

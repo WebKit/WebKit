@@ -1821,6 +1821,7 @@ public:
     size_t suspendMediaPlaybackCounter() { return m_suspendMediaPlaybackCounter; }
 
     void requestSpeechRecognitionPermission(const WebCore::ClientOrigin&, CompletionHandler<void(SpeechRecognitionPermissionDecision)>&&);
+    void requestSpeechRecognitionPermissionByDefaultAction(const WebCore::SecurityOrigin&, CompletionHandler<void(bool)>&&);
 
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, Ref<API::PageConfiguration>&&);

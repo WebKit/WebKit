@@ -1336,12 +1336,12 @@ void UIDelegate::UIClient::decidePolicyForSpeechRecognitionPermissionRequest(Web
 {
     auto delegate = (id <WKUIDelegatePrivate>)m_uiDelegate.m_delegate.get();
     if (!delegate) {
-        completionHandler(false);
+        page.requestSpeechRecognitionPermissionByDefaultAction(origin.securityOrigin(), WTFMove(completionHandler));
         return;
     }
 
     if (![delegate respondsToSelector:@selector(_webView:requestSpeechRecognitionPermissionForOrigin:decisionHandler:)]) {
-        completionHandler(false);
+        page.requestSpeechRecognitionPermissionByDefaultAction(origin.securityOrigin(), WTFMove(completionHandler));
         return;
     }
 

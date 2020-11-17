@@ -20,6 +20,7 @@
 #include "config.h"
 #include "UserMediaPermissionRequestProxy.h"
 
+#include "MediaPermissionUtilities.h"
 #include "UserMediaPermissionRequestManagerProxy.h"
 #include <WebCore/CaptureDeviceManager.h>
 #include <WebCore/RealtimeMediaSourceCenter.h>
@@ -95,13 +96,6 @@ void UserMediaPermissionRequestProxy::deny(UserMediaAccessDenialReason reason)
     invalidate();
 }
 
-#if !PLATFORM(COCOA)
-void UserMediaPermissionRequestProxy::doDefaultAction()
-{
-    deny();
-}
-#endif
-
 void UserMediaPermissionRequestProxy::invalidate()
 {
     m_manager = nullptr;
@@ -141,6 +135,37 @@ String convertEnumerationToString(UserMediaPermissionRequestProxy::UserMediaAcce
     static_assert(static_cast<size_t>(UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::OtherFailure) == 6, "UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::OtherFailure is not 6 as expected");
     ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values));
     return values[static_cast<size_t>(enumerationValue)];
+}
+
+void UserMediaPermissionRequestProxy::doDefaultAction()
+{
+#if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)
+    ASSERT(m_manager);
+    if (!m_manager) {
+        deny(UserMediaAccessDenialReason::PermissionDenied);
+        return;
+    }
+
+    if (requiresDisplayCapture()) {
+        // FIXME: Implement getDisplayMedia prompt, for now deny.
+        deny(UserMediaAccessDenialReason::PermissionDenied);
+        return;
+    }
+
+    OptionSet<MediaPermissionType> requestedTypes;
+    if (requiresAudioCapture())
+        requestedTypes.add(MediaPermissionType::Audio);
+    if (requiresVideoCapture())
+        requestedTypes.add(MediaPermissionType::Video);
+    alertForPermission(m_manager->page(), MediaPermissionReason::UserMedia, requestedTypes, topLevelDocumentSecurityOrigin(), [this, protectedThis = makeRef(*this)](bool granted) {
+        if (!granted)
+            deny(UserMediaAccessDenialReason::PermissionDenied);
+        else
+            allow();
+    });
+# else
+    deny();
+#endif
 }
 
 } // namespace WebKit

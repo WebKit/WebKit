@@ -219,5 +219,17 @@ void SpeechRecognitionPermissionManager::requestUserPermission()
     m_page.uiClient().decidePolicyForSpeechRecognitionPermissionRequest(m_page, API::SecurityOrigin::create(topOrigin.get()).get(), WTFMove(decisionHandler));
 }
 
+
+
+void SpeechRecognitionPermissionManager::decideByDefaultAction(const WebCore::SecurityOrigin& origin, CompletionHandler<void(bool)>&& completionHandler)
+{
+#if PLATFORM(COCOA)
+    OptionSet<MediaPermissionType> type = MediaPermissionType::Audio;
+    alertForPermission(m_page, MediaPermissionReason::SpeechRecognition, type, origin, WTFMove(completionHandler));
+#else
+    completionHandler(false);
+#endif
+}
+
 } // namespace WebKit
 

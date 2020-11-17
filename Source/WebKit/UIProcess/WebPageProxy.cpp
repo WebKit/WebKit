@@ -10248,6 +10248,16 @@ void WebPageProxy::requestSpeechRecognitionPermission(const WebCore::ClientOrigi
     m_speechRecognitionPermissionManager->request(clientOrigin, WTFMove(completionHandler));
 }
 
+void WebPageProxy::requestSpeechRecognitionPermissionByDefaultAction(const WebCore::SecurityOrigin& origin, CompletionHandler<void(bool)>&& completionHandler)
+{
+    if (!m_speechRecognitionPermissionManager) {
+        completionHandler(false);
+        return;
+    }
+
+    m_speechRecognitionPermissionManager->decideByDefaultAction(origin, WTFMove(completionHandler));
+}
+
 } // namespace WebKit
 
 #undef RELEASE_LOG_IF_ALLOWED

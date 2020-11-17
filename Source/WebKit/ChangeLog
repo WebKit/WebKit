@@ -1,3 +1,38 @@
+2020-11-17  Sihui Liu  <sihui_liu@apple.com>
+
+        Add a default action for SpeechRecognition permission request
+        https://bugs.webkit.org/show_bug.cgi?id=219021
+
+        Reviewed by Youenn Fablet.
+
+        When there is no delegate or selector for deciding user permission on speech recognition, force an alert and let 
+        user decide. This is currently what we do for UserMedia permission request, and it makes testing easier. 
+
+        * SourcesCocoa.txt:
+        * UIProcess/API/APIUIClient.h:
+        (API::UIClient::decidePolicyForSpeechRecognitionPermissionRequest):
+        * UIProcess/Cocoa/MediaPermissionUtilities.mm:
+        (WebKit::visibleDomain):
+        (WebKit::alertMessageText):
+        (WebKit::allowButtonText):
+        (WebKit::doNotAllowButtonText):
+        (WebKit::alertForPermission):
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::UIClient::decidePolicyForSpeechRecognitionPermissionRequest):
+        * UIProcess/Cocoa/UserMediaPermissionRequestProxy.mm: Removed. Moved alert code to MediaPermissionUtilities so 
+        it can be shared between UserMedia and SpeechRecognition.
+        * UIProcess/MediaPermissionUtilities.h:
+        * UIProcess/SpeechRecognitionPermissionManager.cpp:
+        (WebKit::SpeechRecognitionPermissionManager::decideByDefaultAction):
+        * UIProcess/SpeechRecognitionPermissionManager.h:
+        * UIProcess/UserMediaPermissionRequestProxy.cpp:
+        (WebKit::UserMediaPermissionRequestProxy::doDefaultAction):
+        * UIProcess/UserMediaPermissionRequestProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::requestSpeechRecognitionPermissionByDefaultAction):
+        * UIProcess/WebPageProxy.h:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2020-11-17  Saagar Jha  <saagar@saagarjha.com>
 
         Check com.apple.private.webkit.use-xpc-endpoint only on internal builds

@@ -142,6 +142,15 @@
 /* Disallow button title in user media prompt */
 "Don’t Allow (usermedia)" = "Don’t Allow";
 
+/* Message for speech recognition prompt */
+"Allow “%@” to capture your audio and use it for speech recognition?" = "Allow “%@” to capture your audio and use it for speech recognition?";
+
+/* Allow button title in speech recognition prompt */
+"Allow (speechrecognition)" = "Allow";
+
+/* Disallow button title in speech recognition prompt */
+"Don’t Allow (speechrecognition)" = "Don’t Allow";
+
 /* WKErrorUnknown description */
 "An unknown error occurred" = "An unknown error occurred";
 

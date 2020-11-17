@@ -28,11 +28,17 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/Vector.h>
 
+namespace WebCore {
+class SecurityOrigin;
+}
+
 namespace WebKit {
 
-enum class MediaPermissionType {
-    Audio,
-    Video
+class WebPageProxy;
+
+enum class MediaPermissionType : uint8_t {
+    Audio = 1 << 0,
+    Video = 1 << 1
 };
 
 enum class MediaPermissionResult {
@@ -41,10 +47,17 @@ enum class MediaPermissionResult {
     Unknown
 };
 
+enum class MediaPermissionReason {
+    UserMedia,
+    SpeechRecognition,
+};
+
 #if PLATFORM(COCOA)
 bool checkSandboxRequirementForType(MediaPermissionType);
 bool checkUsageDescriptionStringForType(MediaPermissionType);
 bool checkUsageDescriptionStringForSpeechRecognition();
+
+void alertForPermission(WebPageProxy&, MediaPermissionReason, OptionSet<MediaPermissionType>, const WebCore::SecurityOrigin&, CompletionHandler<void(bool)>&&);
 #endif
 
 #if HAVE(AVCAPTUREDEVICE)
@@ -58,4 +71,3 @@ MediaPermissionResult checkSpeechRecognitionServiceAccess();
 #endif
 
 } // namespace WebKit
-
