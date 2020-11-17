@@ -184,9 +184,6 @@ public:
         return InlineFlowBox::logicalBottomLayoutOverflow(lineBottom());
     }
 
-    Node* getLogicalStartBoxWithNode(InlineBox*&) const;
-    Node* getLogicalEndBoxWithNode(InlineBox*&) const;
-
     virtual bool isTrailingFloatsRootInlineBox() const { return false; }
 
 #if ENABLE(TREE_DEBUGGING)

@@ -145,6 +145,22 @@ RunIterator& RunIterator::traversePreviousOnLineIgnoringLineBreak()
     return *this;
 }
 
+RunIterator& RunIterator::traverseNextOnLineInLogicalOrder()
+{
+    WTF::switchOn(m_run.m_pathVariant, [](auto& path) {
+        path.traverseNextOnLineInLogicalOrder();
+    });
+    return *this;
+}
+
+RunIterator& RunIterator::traversePreviousOnLineInLogicalOrder()
+{
+    WTF::switchOn(m_run.m_pathVariant, [](auto& path) {
+        path.traversePreviousOnLineInLogicalOrder();
+    });
+    return *this;
+}
+
 TextRunIterator firstTextRunFor(const RenderText& text)
 {
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
@@ -158,10 +174,12 @@ TextRunIterator firstTextRunFor(const RenderText& text)
 TextRunIterator firstTextRunInTextOrderFor(const RenderText& text)
 {
     if (text.firstTextBox() && text.containsReversedText()) {
-        Vector<const InlineTextBox*> sortedTextBoxes;
+        Vector<const InlineBox*> sortedTextBoxes;
         for (auto* textBox = text.firstTextBox(); textBox; textBox = textBox->nextTextBox())
             sortedTextBoxes.append(textBox);
-        std::sort(sortedTextBoxes.begin(), sortedTextBoxes.end(), InlineTextBox::compareByStart);
+        std::sort(sortedTextBoxes.begin(), sortedTextBoxes.end(), [](auto* a, auto* b) {
+            return InlineTextBox::compareByStart(downcast<InlineTextBox>(a), downcast<InlineTextBox>(b));
+        });
         auto* first = sortedTextBoxes[0];
         return { RunIteratorLegacyPath { first, WTFMove(sortedTextBoxes), 0 } };
     }

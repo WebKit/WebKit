@@ -107,29 +107,16 @@ public:
         return { *m_inlineContent, line().firstRunIndex() + runCount - 1 };
     }
 
-    RunIteratorModernPath logicalStartRunWithNode() const
+    RunIteratorModernPath logicalStartRun() const
     {
-        auto startIndex = line().firstRunIndex();
-        auto endIndex = startIndex + line().runCount();
-        for (auto runIndex = startIndex; runIndex < endIndex; ++runIndex) {
-            auto& renderer = m_inlineContent->rendererForLayoutBox(m_inlineContent->runs[runIndex].layoutBox());
-            if (renderer.node())
-                return { *m_inlineContent, runIndex };
-        }
-        return { *m_inlineContent };
+        return firstRun();
     }
 
-    RunIteratorModernPath logicalEndRunWithNode() const
+    RunIteratorModernPath logicalEndRun() const
     {
-        auto startIndex = line().firstRunIndex();
-        auto endIndex = startIndex + line().runCount();
-        for (auto runIndex = endIndex; runIndex-- > startIndex;) {
-            auto& renderer = m_inlineContent->rendererForLayoutBox(m_inlineContent->runs[runIndex].layoutBox());
-            if (renderer.node())
-                return { *m_inlineContent, runIndex };
-        }
-        return { *m_inlineContent };
+        return lastRun();
     }
+
 
 private:
     const InlineContent::Lines& lines() const { return m_inlineContent->lines; }

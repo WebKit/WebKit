@@ -106,10 +106,14 @@ public:
 
     RunIterator firstRun() const;
     RunIterator lastRun() const;
-    RunIterator logicalStartRunWithNode() const;
-    RunIterator logicalEndRunWithNode() const;
+
     RunIterator closestRunForPoint(const IntPoint& pointInContents, bool editableOnly);
     RunIterator closestRunForLogicalLeftPosition(int position, bool editableOnly = false);
+
+    RunIterator logicalStartRun() const;
+    RunIterator logicalEndRun() const;
+    RunIterator logicalStartRunWithNode() const;
+    RunIterator logicalEndRunWithNode() const;
 
 private:
     PathLine m_line;

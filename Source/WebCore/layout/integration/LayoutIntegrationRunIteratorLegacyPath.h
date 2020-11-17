@@ -27,6 +27,7 @@
 
 #include "InlineTextBox.h"
 #include "RenderText.h"
+#include "RootInlineBox.h"
 #include <wtf/RefCountedArray.h>
 #include <wtf/Vector.h>
 
@@ -35,11 +36,21 @@ namespace LayoutIntegration {
 
 class RunIteratorLegacyPath {
 public:
-    RunIteratorLegacyPath(const InlineBox* inlineBox, Vector<const InlineTextBox*>&& sortedInlineTextBoxes = { }, size_t sortedInlineTextBoxIndex = 0)
+    RunIteratorLegacyPath(const InlineBox* inlineBox, Vector<const InlineBox*>&& sortedInlineBoxes = { }, size_t sortedInlineBoxIndex = 0)
         : m_inlineBox(inlineBox)
-        , m_sortedInlineTextBoxes(WTFMove(sortedInlineTextBoxes))
-        , m_sortedInlineTextBoxIndex(sortedInlineTextBoxIndex)
+        , m_logicalOrderCache(WTFMove(sortedInlineBoxes))
+        , m_logicalOrderCacheIndex(sortedInlineBoxIndex)
     { }
+
+    enum class LogicalOrder { Start, End };
+    RunIteratorLegacyPath(const RootInlineBox& root, LogicalOrder order)
+        : m_logicalOrderCache(inlineBoxesInLogicalOrder(root))
+    {
+        if (!m_logicalOrderCache.isEmpty()) {
+            m_logicalOrderCacheIndex = order == LogicalOrder::Start ? 0 : m_logicalOrderCache.size() - 1;
+            m_inlineBox = m_logicalOrderCache[m_logicalOrderCacheIndex];
+        }
+    }
 
     bool isText() const { return m_inlineBox->isInlineTextBox(); }
 
@@ -74,9 +85,12 @@ public:
     void traverseNextTextRun() { m_inlineBox = inlineTextBox()->nextTextBox(); }
     void traverseNextTextRunInTextOrder()
     {
-        m_inlineBox = nextInlineTextBoxInTextOrder();
-        if (!m_sortedInlineTextBoxes.isEmpty())
-            ++m_sortedInlineTextBoxIndex;
+        if (!m_logicalOrderCache.isEmpty()) {
+            traverseNextInlineBoxInCacheOrder();
+            ASSERT(!m_inlineBox || is<InlineTextBox>(m_inlineBox));
+            return;
+        }
+        traverseNextTextRun();
     }
 
     void traverseNextOnLine()
@@ -89,6 +103,18 @@ public:
         m_inlineBox = m_inlineBox->previousLeafOnLine();
     }
 
+    void traverseNextOnLineInLogicalOrder()
+    {
+        initializeLogicalOrderCacheForLine();
+        traverseNextInlineBoxInCacheOrder();
+    }
+
+    void traversePreviousOnLineInLogicalOrder()
+    {
+        initializeLogicalOrderCacheForLine();
+        traversePreviousInlineBoxInCacheOrder();
+    }
+
     bool operator==(const RunIteratorLegacyPath& other) const { return m_inlineBox == other.m_inlineBox; }
 
     bool atEnd() const { return !m_inlineBox; }
@@ -99,21 +125,49 @@ public:
 
 private:
     const InlineTextBox* inlineTextBox() const { return downcast<InlineTextBox>(m_inlineBox); }
-    const InlineTextBox* nextInlineTextBoxInTextOrder() const;
 
-    const InlineBox* m_inlineBox;
-    RefCountedArray<const InlineTextBox*> m_sortedInlineTextBoxes;
-    size_t m_sortedInlineTextBoxIndex { 0 };
+    static Vector<const InlineBox*> inlineBoxesInLogicalOrder(const RootInlineBox& root)
+    {
+        Vector<InlineBox*> inlineBoxes;
+        root.collectLeafBoxesInLogicalOrder(inlineBoxes);
+        return reinterpret_cast<Vector<const InlineBox*>&>(inlineBoxes);
+    }
+    void initializeLogicalOrderCacheForLine()
+    {
+        if (!m_inlineBox || !m_logicalOrderCache.isEmpty())
+            return;
+        m_logicalOrderCache = inlineBoxesInLogicalOrder(m_inlineBox->root());
+        for (m_logicalOrderCacheIndex = 0; m_logicalOrderCacheIndex < m_logicalOrderCache.size(); ++m_logicalOrderCacheIndex) {
+            if (m_logicalOrderCache[m_logicalOrderCacheIndex] == m_inlineBox)
+                return;
+        }
+        ASSERT_NOT_REACHED();
+    }
+
+    void traverseNextInlineBoxInCacheOrder();
+    void traversePreviousInlineBoxInCacheOrder();
+
+    const InlineBox* m_inlineBox { nullptr };
+    RefCountedArray<const InlineBox*> m_logicalOrderCache;
+    size_t m_logicalOrderCacheIndex { 0 };
 };
 
-inline const InlineTextBox* RunIteratorLegacyPath::nextInlineTextBoxInTextOrder() const
+
+inline void RunIteratorLegacyPath::traverseNextInlineBoxInCacheOrder()
 {
-    if (!m_sortedInlineTextBoxes.isEmpty()) {
-        if (m_sortedInlineTextBoxIndex + 1 < m_sortedInlineTextBoxes.size())
-            return m_sortedInlineTextBoxes[m_sortedInlineTextBoxIndex + 1];
-        return nullptr;
+    ASSERT(!m_logicalOrderCache.isEmpty());
+    ++m_logicalOrderCacheIndex;
+    m_inlineBox = m_logicalOrderCacheIndex < m_logicalOrderCache.size() ? m_logicalOrderCache[m_logicalOrderCacheIndex] : nullptr;
+}
+
+inline void RunIteratorLegacyPath::traversePreviousInlineBoxInCacheOrder()
+{
+    ASSERT(!m_logicalOrderCache.isEmpty());
+    if (!m_logicalOrderCacheIndex) {
+        m_inlineBox = nullptr;
+        return;
     }
-    return inlineTextBox()->nextTextBox();
+    m_inlineBox = m_logicalOrderCache[--m_logicalOrderCacheIndex];
 }
 
 }

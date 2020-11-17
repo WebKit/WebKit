@@ -90,18 +90,36 @@ RunIterator LineIterator::lastRun() const
     });
 }
 
-RunIterator LineIterator::logicalStartRunWithNode() const
+RunIterator LineIterator::logicalStartRun() const
 {
     return WTF::switchOn(m_line.m_pathVariant, [](auto& path) -> RunIterator {
-        return { path.logicalStartRunWithNode() };
+        return { path.logicalStartRun() };
     });
+}
+
+RunIterator LineIterator::logicalEndRun() const
+{
+    return WTF::switchOn(m_line.m_pathVariant, [](auto& path) -> RunIterator {
+        return { path.logicalEndRun() };
+    });
+}
+
+RunIterator LineIterator::logicalStartRunWithNode() const
+{
+    for (auto run = logicalStartRun(); run; run.traverseNextOnLineInLogicalOrder()) {
+        if (run->renderer().node())
+            return run;
+    }
+    return { };
 }
 
 RunIterator LineIterator::logicalEndRunWithNode() const
 {
-    return WTF::switchOn(m_line.m_pathVariant, [](auto& path) -> RunIterator {
-        return { path.logicalEndRunWithNode() };
-    });
+    for (auto run = logicalEndRun(); run; run.traversePreviousOnLineInLogicalOrder()) {
+        if (run->renderer().node())
+            return run;
+    }
+    return { };
 }
 
 LineIterator firstLineFor(const RenderBlockFlow& flow)

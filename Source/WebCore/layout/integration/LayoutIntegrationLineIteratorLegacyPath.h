@@ -86,22 +86,18 @@ public:
         return { m_rootInlineBox->lastLeafDescendant() };
     }
 
-    RunIteratorLegacyPath logicalStartRunWithNode() const
+
+    RunIteratorLegacyPath logicalStartRun() const
     {
-        InlineBox* box = nullptr;
-        m_rootInlineBox->getLogicalStartBoxWithNode(box);
-        return { box };
+        return { *m_rootInlineBox, RunIteratorLegacyPath::LogicalOrder::Start };
     }
 
-    RunIteratorLegacyPath logicalEndRunWithNode() const
+    RunIteratorLegacyPath logicalEndRun() const
     {
-        InlineBox* box = nullptr;
-        m_rootInlineBox->getLogicalEndBoxWithNode(box);
-        return { box };
+        return { *m_rootInlineBox, RunIteratorLegacyPath::LogicalOrder::End };
     }
 
 private:
-
     const RootInlineBox* m_rootInlineBox;
 };
 

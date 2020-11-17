@@ -141,6 +141,8 @@ public:
     RunIterator& traversePreviousOnLine();
     RunIterator& traverseNextOnLineIgnoringLineBreak();
     RunIterator& traversePreviousOnLineIgnoringLineBreak();
+    RunIterator& traverseNextOnLineInLogicalOrder();
+    RunIterator& traversePreviousOnLineInLogicalOrder();
 
     LineIterator line() const;
 
@@ -171,6 +173,8 @@ private:
     RunIterator& traversePreviousOnLine() = delete;
     RunIterator& traverseNextOnLineIgnoringLineBreak() = delete;
     RunIterator& traversePreviousOnLineIgnoringLineBreak() = delete;
+    RunIterator& traverseNextOnLineInLogicalOrder() = delete;
+    RunIterator& traversePreviousOnLineInLogicalOrder() = delete;
 
     const PathTextRun& get() const { return downcast<PathTextRun>(m_run); }
 };

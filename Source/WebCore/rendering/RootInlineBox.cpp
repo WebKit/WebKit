@@ -1023,34 +1023,6 @@ bool RootInlineBox::includesRootLineBoxFontOrLeading() const
     return renderer().style().lineBoxContain().containsAny({ LineBoxContain::Block, LineBoxContain::Inline, LineBoxContain::Font });
 }
 
-Node* RootInlineBox::getLogicalStartBoxWithNode(InlineBox*& startBox) const
-{
-    Vector<InlineBox*> leafBoxesInLogicalOrder;
-    collectLeafBoxesInLogicalOrder(leafBoxesInLogicalOrder);
-    for (size_t i = 0; i < leafBoxesInLogicalOrder.size(); ++i) {
-        if (leafBoxesInLogicalOrder[i]->renderer().node()) {
-            startBox = leafBoxesInLogicalOrder[i];
-            return startBox->renderer().node();
-        }
-    }
-    startBox = nullptr;
-    return nullptr;
-}
-    
-Node* RootInlineBox::getLogicalEndBoxWithNode(InlineBox*& endBox) const
-{
-    Vector<InlineBox*> leafBoxesInLogicalOrder;
-    collectLeafBoxesInLogicalOrder(leafBoxesInLogicalOrder);
-    for (size_t i = leafBoxesInLogicalOrder.size(); i > 0; --i) { 
-        if (leafBoxesInLogicalOrder[i - 1]->renderer().node()) {
-            endBox = leafBoxesInLogicalOrder[i - 1];
-            return endBox->renderer().node();
-        }
-    }
-    endBox = nullptr;
-    return nullptr;
-}
-
 #if ENABLE(TREE_DEBUGGING)
 
 void RootInlineBox::outputLineBox(WTF::TextStream& stream, bool mark, int depth) const
