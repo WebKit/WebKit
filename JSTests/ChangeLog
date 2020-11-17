@@ -1,3 +1,14 @@
+2020-11-17  Sergey Rubanov  <chi187@gmail.com>
+
+        Add support for the Wasm i32 sign-extension-ops proposal
+        https://bugs.webkit.org/show_bug.cgi?id=210302
+
+        Reviewed by Yusuke Suzuki.
+
+        * wasm/spec-tests/i32.wast.js:
+        * wasm/spec-tests/i64.wast.js:
+        * wasm/wasm.json:
+
 2020-11-17  Xan López  <xan@igalia.com>
 
         [JSC] Add support for static public class fields

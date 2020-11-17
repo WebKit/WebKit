@@ -29,9 +29,9 @@
 #   comparisons are in-order, so "if (a < b)" is written as
 #   "bilt a, b, ...".
 #
-# - "b" = byte, "h" = 16-bit word, "i" = 32-bit word, "p" = pointer.
-#   For 32-bit, "i" and "p" are interchangeable except when an op supports one
-#   but not the other.
+# - "b" = byte, "h" = 16-bit word, "i" = 32-bit word, "q" = 64-bit word,
+#   "f" = float, "d" = double, "p" = pointer. For 32-bit, "i" and "p" are
+#   interchangeable except when an op supports one but not the other.
 #
 # - In general, valid operands for macro invocations and instructions are
 #   registers (eg "t0"), addresses (eg "4[t0]"), base-index addresses

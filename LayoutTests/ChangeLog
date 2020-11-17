@@ -1,3 +1,12 @@
+2020-11-17  Sergey Rubanov  <chi187@gmail.com>
+
+        Add support for the Wasm i32 sign-extension-ops proposal
+        https://bugs.webkit.org/show_bug.cgi?id=210302
+
+        Reviewed by Yusuke Suzuki.
+
+        * workers/wasm-references/test.js:
+
 2020-11-17  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS][FCR] Add new look for checkboxes

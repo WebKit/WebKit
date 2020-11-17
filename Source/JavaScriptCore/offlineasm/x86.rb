@@ -1412,6 +1412,18 @@ class Instruction
             end
         when "zxi2q"
             $asm.puts "mov#{x86Suffix(:int)} #{orderOperands(operands[0].x86Operand(:int), operands[1].x86Operand(:int))}"
+        when "sxb2i"
+            if !isIntelSyntax
+                $asm.puts "movsbl #{operands[0].x86Operand(:byte)}, #{operands[1].x86Operand(:int)}"
+            else
+                $asm.puts "movsx #{orderOperands(operands[0].x86Operand(:byte), operands[1].x86Operand(:int))}"
+            end
+        when "sxh2i"
+            if !isIntelSyntax
+                $asm.puts "movswl #{operands[0].x86Operand(:half)}, #{operands[1].x86Operand(:int)}"
+            else
+                $asm.puts "movsx #{orderOperands(operands[0].x86Operand(:half), operands[1].x86Operand(:int))}"
+            end
         when "nop"
             $asm.puts "nop"
         when "bieq"

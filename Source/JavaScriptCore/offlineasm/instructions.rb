@@ -141,6 +141,8 @@ MACRO_INSTRUCTIONS =
      "move",
      "sxi2q",
      "zxi2q",
+     "sxb2i",
+     "sxh2i",
      "nop",
      "bieq",
      "bineq",

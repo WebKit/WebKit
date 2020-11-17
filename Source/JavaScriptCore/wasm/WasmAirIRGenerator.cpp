@@ -3857,6 +3857,20 @@ template<> auto AirIRGenerator::addOp<OpType::I64ExtendSI32>(ExpressionType arg0
     return { };
 }
 
+template<> auto AirIRGenerator::addOp<OpType::I32Extend8S>(ExpressionType arg0, ExpressionType& result) -> PartialResult
+{
+    result = g32();
+    append(SignExtend8To32, arg0, result);
+    return { };
+}
+
+template<> auto AirIRGenerator::addOp<OpType::I32Extend16S>(ExpressionType arg0, ExpressionType& result) -> PartialResult
+{
+    result = g32();
+    append(SignExtend16To32, arg0, result);
+    return { };
+}
+
 template<> auto AirIRGenerator::addOp<OpType::I32GtS>(ExpressionType arg0, ExpressionType arg1, ExpressionType& result) -> PartialResult
 {
     result = g32();

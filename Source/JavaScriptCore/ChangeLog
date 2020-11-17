@@ -1,3 +1,21 @@
+2020-11-17  Sergey Rubanov  <chi187@gmail.com>
+
+        Add support for the Wasm i32 sign-extension-ops proposal
+        https://bugs.webkit.org/show_bug.cgi?id=210302
+
+        Reviewed by Yusuke Suzuki.
+
+        * llint/LowLevelInterpreter.asm:
+        * llint/WebAssembly.asm:
+        * offlineasm/arm64.rb:
+        * offlineasm/cloop.rb:
+        * offlineasm/instructions.rb:
+        * offlineasm/x86.rb:
+        * wasm/WasmAirIRGenerator.cpp:
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I32Extend8S>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I32Extend16S>):
+        * wasm/wasm.json:
+
 2020-11-17  Xan López  <xan@igalia.com>
 
         [JSC] Add support for static public class fields

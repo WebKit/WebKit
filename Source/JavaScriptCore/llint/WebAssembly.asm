@@ -2042,6 +2042,18 @@ wasmOp(i64_extend_u_i32, WasmI64ExtendUI32, macro(ctx)
     returnq(ctx, t1)
 end)
 
+wasmOp(i32_extend8_s, WasmI32Extend8S, macro(ctx)
+    mloadi(ctx, m_operand, t0)
+    sxb2i t0, t1
+    returnq(ctx, t1)
+end)
+
+wasmOp(i32_extend16_s, WasmI32Extend16S, macro(ctx)
+    mloadi(ctx, m_operand, t0)
+    sxh2i t0, t1
+    returnq(ctx, t1)
+end)
+
 wasmOp(f32_convert_s_i32, WasmF32ConvertSI32, macro(ctx)
     mloadi(ctx, m_operand, t0)
     ci2fs t0, ft0

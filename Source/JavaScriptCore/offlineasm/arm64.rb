@@ -887,6 +887,10 @@ class Instruction
             emitARM64("uxtw", operands, [:word, :ptr])
         when "zxi2q"
             emitARM64("uxtw", operands, [:word, :quad])
+        when "sxb2i"
+            emitARM64("sxtb", operands, [:word, :word])
+        when "sxh2i"
+            emitARM64("sxth", operands, [:word, :word])
         when "nop"
             $asm.puts "nop"
         when "bieq", "bbeq"
