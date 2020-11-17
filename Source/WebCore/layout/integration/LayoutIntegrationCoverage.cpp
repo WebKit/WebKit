@@ -579,6 +579,21 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderObject& child, Incl
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonSupportedChild, reasons, includeReasons)
     }
 
+#if ALLOW_IMAGES || ALLOW_ALL_REPLACED || ALLOW_INLINE_BLOCK
+    auto isSupportedStyle = [] (const auto& style) {
+        if (style.verticalAlign() == VerticalAlign::Sub || style.verticalAlign() == VerticalAlign::Super)
+            return false;
+        auto& width = style.width();
+        auto& height = style.height();
+        if (width.isPercent() || height.isPercent())
+            return false;
+        if (width.isAuto() && (style.minWidth().isPercent() || style.maxWidth().isPercent()))
+            return false;
+        if (height.isAuto() && (style.minHeight().isPercent() || style.maxHeight().isPercent()))
+            return false;
+        return true;
+    };
+#endif
 #if ALLOW_IMAGES || ALLOW_ALL_REPLACED
     if (is<RenderReplaced>(child)) {
         auto& replaced = downcast<RenderReplaced>(child);
@@ -588,11 +603,7 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderObject& child, Incl
         if (replaced.isSVGRoot())
             SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonSupportedChild, reasons, includeReasons);
 
-        auto& style = replaced.style();
-        if (style.width().isPercent() || style.height().isPercent())
-            SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonSupportedChild, reasons, includeReasons);
-
-        if (style.verticalAlign() == VerticalAlign::Sub || style.verticalAlign() == VerticalAlign::Super)
+        if (!isSupportedStyle(replaced.style()))
             SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonSupportedChild, reasons, includeReasons);
 
         if (is<RenderImage>(replaced)) {
@@ -619,12 +630,10 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderObject& child, Incl
             SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonSupportedChild, reasons, includeReasons);
 
         auto& style = block.style();
-        if (block.style().display() != DisplayType::InlineBlock)
+        if (!isSupportedStyle(style))
             SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonSupportedChild, reasons, includeReasons)
-        if (style.verticalAlign() == VerticalAlign::Sub || style.verticalAlign() == VerticalAlign::Super)
-            SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonSupportedChild, reasons, includeReasons);
-        if (style.width().isPercent() || style.height().isPercent())
-            SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonSupportedChild, reasons, includeReasons);
+        if (style.display() != DisplayType::InlineBlock)
+            SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonSupportedChild, reasons, includeReasons)
 
         return reasons;
     }
