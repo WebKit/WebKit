@@ -15,13 +15,13 @@
     const configuration = [
         {
             href: "http://localhost:8000" + path + "?stepTwo",
-            adcampaignid: "3",
-            addestination: "http://localhost:8000"
+            attributionsourceid: "3",
+            attributeon: "http://localhost:8000"
         },
         {
             href: "http://127.0.0.1:8000" + path + "?stepThree",
-            adcampaignid: "4",
-            addestination: "http://127.0.0.1:8000"
+            attributionsourceid: "4",
+            attributeon: "http://127.0.0.1:8000"
         }
     ];
 
@@ -30,8 +30,8 @@
     function configureLink(index) {
         let linkElement = document.getElementById("targetLink");
         linkElement.setAttribute("href", configuration[index].href);
-        linkElement.setAttribute("adcampaignid", configuration[index].adcampaignid);
-        linkElement.setAttribute("addestination", configuration[index].addestination);
+        linkElement.setAttribute("attributionsourceid", configuration[index].attributionsourceid);
+        linkElement.setAttribute("attributeon", configuration[index].attributeon);
     }
 
     function activateElement(elementID) {

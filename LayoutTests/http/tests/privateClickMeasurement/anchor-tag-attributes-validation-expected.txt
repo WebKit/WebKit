@@ -1,14 +1,14 @@
-CONSOLE MESSAGE: adcampaignid must have a non-negative value less than or equal to 63 for Private Click Measurement.
-CONSOLE MESSAGE: adcampaignid must have a non-negative value less than or equal to 63 for Private Click Measurement.
-CONSOLE MESSAGE: adcampaignid can not be converted to a non-negative integer which is required for Private Click Measurement.
-CONSOLE MESSAGE: adcampaignid can not be converted to a non-negative integer which is required for Private Click Measurement.
-CONSOLE MESSAGE: adcampaignid can not be converted to a non-negative integer which is required for Private Click Measurement.
-CONSOLE MESSAGE: addestination could not be converted to a valid HTTP-family URL.
-CONSOLE MESSAGE: addestination could not be converted to a valid HTTP-family URL.
-CONSOLE MESSAGE: addestination could not be converted to a valid HTTP-family URL.
-CONSOLE MESSAGE: Both adcampaignid and addestination need to be set for Private Click Measurement to work.
-CONSOLE MESSAGE: Both adcampaignid and addestination need to be set for Private Click Measurement to work.
-CONSOLE MESSAGE: addestination can not be the same site as the current website.
+CONSOLE MESSAGE: attributionsourceid must have a non-negative value less than or equal to 63 for Private Click Measurement.
+CONSOLE MESSAGE: attributionsourceid must have a non-negative value less than or equal to 63 for Private Click Measurement.
+CONSOLE MESSAGE: attributionsourceid can not be converted to a non-negative integer which is required for Private Click Measurement.
+CONSOLE MESSAGE: attributionsourceid can not be converted to a non-negative integer which is required for Private Click Measurement.
+CONSOLE MESSAGE: attributionsourceid can not be converted to a non-negative integer which is required for Private Click Measurement.
+CONSOLE MESSAGE: attributeon could not be converted to a valid HTTP-family URL.
+CONSOLE MESSAGE: attributeon could not be converted to a valid HTTP-family URL.
+CONSOLE MESSAGE: attributeon could not be converted to a valid HTTP-family URL.
+CONSOLE MESSAGE: Both attributionsourceid and attributeon need to be set for Private Click Measurement to work.
+CONSOLE MESSAGE: Both attributionsourceid and attributeon need to be set for Private Click Measurement to work.
+CONSOLE MESSAGE: attributeon can not be the same site as the current website.
 Test for validity of private click measurement attributes on anchor tags.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

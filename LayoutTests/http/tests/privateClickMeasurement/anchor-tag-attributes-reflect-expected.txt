@@ -3,8 +3,8 @@ Test for the new private click measurement attributes on anchor tags.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS anchorTag.adcampaignid is "40"
-PASS anchorTag.addestination is "destination.example"
+PASS anchorTag.attributionsourceid is "40"
+PASS anchorTag.attributeon is "destination.example"
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -5,13 +5,13 @@
     <script src="/js-test-resources/js-test.js"></script>
 </head>
 <body>
-<a id="testTag" href="http://localhost:8000" adcampaignid="40" addestination="destination.example"></a>
+<a id="testTag" href="http://localhost:8000" attributionsourceid="40" attributeon="destination.example"></a>
 <script>
     description("Test for the new private click measurement attributes on anchor tags.");
 
     const anchorTag = document.getElementById("testTag");
-    shouldBeEqualToString("anchorTag.adcampaignid", "40");
-    shouldBeEqualToString("anchorTag.addestination", "destination.example");
+    shouldBeEqualToString("anchorTag.attributionsourceid", "40");
+    shouldBeEqualToString("anchorTag.attributeon", "destination.example");
 </script>
 </body>
 </html>

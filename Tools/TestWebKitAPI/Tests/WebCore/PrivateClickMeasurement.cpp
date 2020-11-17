@@ -50,7 +50,7 @@ TEST(PrivateClickMeasurement, ValidMinValues)
     
     ASSERT_EQ(attributionURL.string(), "https://webkit.org/.well-known/private-click-measurement/");
 
-    ASSERT_EQ(attribution.json()->toJSONString(), "{\"content-type\":\"click\",\"content-site\":\"webkit.org\",\"content-id\":0,\"conversion-site\":\"example.com\",\"conversion-data\":0,\"report-version\":1}");
+    ASSERT_EQ(attribution.json()->toJSONString(), "{\"source-engagement-type\":\"click\",\"source-site\":\"webkit.org\",\"source-id\":0,\"attributed-on-site\":\"example.com\",\"trigger-data\":0,\"report-version\":1}");
 }
 
 TEST(PrivateClickMeasurement, ValidMidValues)
@@ -62,7 +62,7 @@ TEST(PrivateClickMeasurement, ValidMidValues)
     
     ASSERT_EQ(attributionURL.string(), "https://webkit.org/.well-known/private-click-measurement/");
 
-    ASSERT_EQ(attribution.json()->toJSONString(), "{\"content-type\":\"click\",\"content-site\":\"webkit.org\",\"content-id\":12,\"conversion-site\":\"example.com\",\"conversion-data\":44,\"report-version\":1}");
+    ASSERT_EQ(attribution.json()->toJSONString(), "{\"source-engagement-type\":\"click\",\"source-site\":\"webkit.org\",\"source-id\":12,\"attributed-on-site\":\"example.com\",\"trigger-data\":44,\"report-version\":1}");
 }
 
 TEST(PrivateClickMeasurement, ValidMaxValues)
@@ -74,7 +74,7 @@ TEST(PrivateClickMeasurement, ValidMaxValues)
     
     ASSERT_EQ(attributionURL.string(), "https://webkit.org/.well-known/private-click-measurement/");
 
-    ASSERT_EQ(attribution.json()->toJSONString(), "{\"content-type\":\"click\",\"content-site\":\"webkit.org\",\"content-id\":63,\"conversion-site\":\"example.com\",\"conversion-data\":63,\"report-version\":1}");
+    ASSERT_EQ(attribution.json()->toJSONString(), "{\"source-engagement-type\":\"click\",\"source-site\":\"webkit.org\",\"source-id\":63,\"attributed-on-site\":\"example.com\",\"trigger-data\":63,\"report-version\":1}");
 }
 
 TEST(PrivateClickMeasurement, EarliestTimeToSendAttributionMinimumDelay)

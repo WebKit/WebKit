@@ -1,3 +1,20 @@
+2020-11-16  John Wilander  <wilander@apple.com>
+
+        PCM: Change attribute and JSON key names according to the W3C conversation
+        https://bugs.webkit.org/show_bug.cgi?id=218967
+
+        Reviewed by Brent Fulgham.
+
+        We've discussed extensively with Google and others on naming for the link
+        attributes and JSON key names in these issues:
+        https://github.com/privacycg/private-click-measurement/issues/30
+        https://github.com/privacycg/private-click-measurement/issues/56
+
+        This patch changes PCM accordingly.
+
+        * TestWebKitAPI/Tests/WebCore/PrivateClickMeasurement.cpp:
+        (TestWebKitAPI::TEST):
+
 2020-11-16  Matt Lewis  <jlewis3@apple.com>
 
         Bring up Big Sur Builders and Testers

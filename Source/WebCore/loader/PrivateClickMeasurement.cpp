@@ -170,11 +170,11 @@ Ref<JSON::Object> PrivateClickMeasurement::json() const
     if (!m_conversion)
         return reportDetails;
 
-    reportDetails->setString("content-type"_s, "click"_s);
-    reportDetails->setString("content-site"_s, m_source.registrableDomain.string());
-    reportDetails->setInteger("content-id"_s, m_campaign.id);
-    reportDetails->setString("conversion-site"_s, m_destination.registrableDomain.string());
-    reportDetails->setInteger("conversion-data"_s, m_conversion->data);
+    reportDetails->setString("source-engagement-type"_s, "click"_s);
+    reportDetails->setString("source-site"_s, m_source.registrableDomain.string());
+    reportDetails->setInteger("source-id"_s, m_campaign.id);
+    reportDetails->setString("attributed-on-site"_s, m_destination.registrableDomain.string());
+    reportDetails->setInteger("trigger-data"_s, m_conversion->data);
     reportDetails->setInteger("report-version"_s, 1);
     return reportDetails;
 }
