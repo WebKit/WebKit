@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef MediaSourcePrivateAVFObjC_h
-#define MediaSourcePrivateAVFObjC_h
+#pragma once
 
 #if ENABLE(MEDIA_SOURCE) && USE(AVFOUNDATION)
 
@@ -149,5 +148,3 @@ private:
 }
 
 #endif // ENABLE(MEDIA_SOURCE) && USE(AVFOUNDATION)
-
-#endif

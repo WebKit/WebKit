@@ -1083,15 +1083,15 @@ ExceptionOr<Ref<SourceBufferPrivate>> MediaSource::createSourceBufferPrivate(con
 
     RefPtr<SourceBufferPrivate> sourceBufferPrivate;
     switch (m_private->addSourceBuffer(type, sourceBufferPrivate)) {
-    case MediaSourcePrivate::Ok:
+    case MediaSourcePrivate::AddStatus::Ok:
         return sourceBufferPrivate.releaseNonNull();
-    case MediaSourcePrivate::NotSupported:
+    case MediaSourcePrivate::AddStatus::NotSupported:
         // 2.2 https://dvcs.w3.org/hg/html-media/raw-file/default/media-source/media-source.html#widl-MediaSource-addSourceBuffer-SourceBuffer-DOMString-type
         // Step 2: If type contains a MIME type ... that is not supported with the types
         // specified for the other SourceBuffer objects in sourceBuffers, then throw
         // a NotSupportedError exception and abort these steps.
         return Exception { NotSupportedError };
-    case MediaSourcePrivate::ReachedIdLimit:
+    case MediaSourcePrivate::AddStatus::ReachedIdLimit:
         // 2.2 https://dvcs.w3.org/hg/html-media/raw-file/default/media-source/media-source.html#widl-MediaSource-addSourceBuffer-SourceBuffer-DOMString-type
         // Step 3: If the user agent can't handle any more SourceBuffer objects then throw
         // a QuotaExceededError exception and abort these steps.

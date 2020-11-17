@@ -142,7 +142,7 @@ public:
     bool hasAudio() const final { return m_hasAudio; }
     void load(const String &url) override;
 #if ENABLE(MEDIA_SOURCE)
-    void load(const String& url, MediaSourcePrivateClient*) override;
+    void load(const URL&, const ContentType&, MediaSourcePrivateClient*) override;
 #endif
 #if ENABLE(MEDIA_STREAM)
     void load(MediaStreamPrivate&) override;

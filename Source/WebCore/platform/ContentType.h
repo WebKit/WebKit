@@ -47,7 +47,7 @@ public:
     const String& raw() const { return m_type; }
     bool isEmpty() const { return m_type.isEmpty(); }
 
-    String toJSONString() const;
+    WEBCORE_EXPORT String toJSONString() const;
 
     template<class Encoder>
     void encode(Encoder& encoder) const

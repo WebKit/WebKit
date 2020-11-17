@@ -174,12 +174,13 @@ MESSAGE_RECEIVERS = \
 	WebProcess/GPU/webrtc/LibWebRTCCodecs \
 	WebProcess/GPU/webrtc/SampleBufferDisplayLayer \
 	WebProcess/GPU/media/MediaPlayerPrivateRemote \
-	WebProcess/GPU/media/RemoteCDMInstanceSession \
-	WebProcess/GPU/media/RemoteLegacyCDMSession \
-	WebProcess/GPU/media/ios/RemoteMediaSessionHelper \
 	WebProcess/GPU/media/RemoteAudioDestinationProxy \
 	WebProcess/GPU/media/RemoteAudioSession \
 	WebProcess/GPU/media/RemoteAudioSourceProviderManager \
+	WebProcess/GPU/media/RemoteCDMInstanceSession \
+	WebProcess/GPU/media/RemoteLegacyCDMSession \
+	WebProcess/GPU/media/SourceBufferPrivateRemote \
+	WebProcess/GPU/media/ios/RemoteMediaSessionHelper \
 	WebProcess/WebStorage/StorageAreaMap \
 	WebProcess/UserContent/WebUserContentController \
 	WebProcess/Inspector/WebInspectorInterruptDispatcher \
@@ -240,13 +241,15 @@ MESSAGE_RECEIVERS = \
 	GPUProcess/media/RemoteCDMInstanceSessionProxy \
 	GPUProcess/media/RemoteCDMProxy \
 	GPUProcess/media/ios/RemoteMediaSessionHelperProxy \
-	GPUProcess/media/RemoteMediaPlayerProxy \
+	GPUProcess/media/RemoteAudioDestinationManager \
 	GPUProcess/media/RemoteCDMFactoryProxy \
-	GPUProcess/media/RemoteMediaResourceManager \
 	GPUProcess/media/RemoteCDMInstanceProxy \
 	GPUProcess/media/RemoteLegacyCDMProxy \
 	GPUProcess/media/RemoteMediaPlayerManagerProxy \
-	GPUProcess/media/RemoteAudioDestinationManager \
+	GPUProcess/media/RemoteMediaPlayerProxy \
+	GPUProcess/media/RemoteMediaResourceManager \
+	GPUProcess/media/RemoteMediaSourceProxy \
+	GPUProcess/media/RemoteSourceBufferProxy \
 	WebAuthnProcess/WebAuthnConnectionToWebProcess \
 	WebAuthnProcess/WebAuthnProcess \
 #

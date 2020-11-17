@@ -84,11 +84,11 @@ MediaSourcePrivate::AddStatus MediaSourcePrivateAVFObjC::addSourceBuffer(const C
     parameters.isMediaSource = true;
     parameters.type = contentType;
     if (MediaPlayerPrivateMediaSourceAVFObjC::supportsTypeAndCodecs(parameters) == MediaPlayer::SupportsType::IsNotSupported)
-        return NotSupported;
+        return AddStatus::NotSupported;
 
     auto parser = SourceBufferParser::create(contentType);
     if (!parser)
-        return NotSupported;
+        return AddStatus::NotSupported;
 
     auto newSourceBuffer = SourceBufferPrivateAVFObjC::create(this, parser.releaseNonNull());
 #if ENABLE(ENCRYPTED_MEDIA)
@@ -97,7 +97,7 @@ MediaSourcePrivate::AddStatus MediaSourcePrivateAVFObjC::addSourceBuffer(const C
     outPrivate = newSourceBuffer.copyRef();
     m_sourceBuffers.append(WTFMove(newSourceBuffer));
 
-    return Ok;
+    return AddStatus::Ok;
 }
 
 void MediaSourcePrivateAVFObjC::removeSourceBuffer(SourceBufferPrivate* buffer)

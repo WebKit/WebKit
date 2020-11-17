@@ -1,3 +1,104 @@
+2020-11-17  Peng Liu  <peng.liu6@apple.com>
+
+        [Media In GPU Process][MSE] Add infrastructure needed to run MediaPlayerPrivateMediaSourceAVFObjC in the GPU process
+        https://bugs.webkit.org/show_bug.cgi?id=218912
+
+        Reviewed by Eric Carlson.
+
+        Add MediaSourcePrivateRemote/RemoteMediaSourceProxy and SourceBufferPrivateRemote/RemoteSourceBufferProxy,
+        and setup IPC connections for them.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * GPUProcess/GPUProcessSessionParameters.h:
+        * GPUProcess/media/RemoteLegacyCDMFactoryProxy.cpp:
+        * GPUProcess/media/RemoteMediaPlayerProxy.cpp:
+        (WebKit::RemoteMediaPlayerProxy::loadMediaSource):
+        * GPUProcess/media/RemoteMediaPlayerProxy.h:
+        * GPUProcess/media/RemoteMediaPlayerProxy.messages.in:
+        * GPUProcess/media/RemoteMediaSourceProxy.cpp: Added.
+        (WebKit::RemoteMediaSourceProxy::RemoteMediaSourceProxy):
+        (WebKit::RemoteMediaSourceProxy::~RemoteMediaSourceProxy):
+        (WebKit::RemoteMediaSourceProxy::setPrivateAndOpen):
+        (WebKit::RemoteMediaSourceProxy::duration const):
+        (WebKit::RemoteMediaSourceProxy::buffered const):
+        (WebKit::RemoteMediaSourceProxy::seekToTime):
+        (WebKit::RemoteMediaSourceProxy::monitorSourceBuffers):
+        (WebKit::RemoteMediaSourceProxy::setLogIdentifier):
+        (WebKit::RemoteMediaSourceProxy::failedToCreateRenderer):
+        (WebKit::RemoteMediaSourceProxy::addSourceBuffer):
+        * GPUProcess/media/RemoteMediaSourceProxy.h: Added.
+        * GPUProcess/media/RemoteMediaSourceProxy.messages.in: Added.
+        * GPUProcess/media/RemoteSourceBufferIdentifier.h: Added.
+        * GPUProcess/media/RemoteSourceBufferProxy.cpp: Added.
+        (WebKit::RemoteSourceBufferProxy::create):
+        (WebKit::RemoteSourceBufferProxy::RemoteSourceBufferProxy):
+        (WebKit::RemoteSourceBufferProxy::~RemoteSourceBufferProxy):
+        (WebKit::RemoteSourceBufferProxy::sourceBufferPrivateDidReceiveInitializationSegment):
+        (WebKit::RemoteSourceBufferProxy::sourceBufferPrivateDidReceiveSample):
+        (WebKit::RemoteSourceBufferProxy::sourceBufferPrivateHasAudio const):
+        (WebKit::RemoteSourceBufferProxy::sourceBufferPrivateHasVideo const):
+        (WebKit::RemoteSourceBufferProxy::sourceBufferPrivateReenqueSamples):
+        (WebKit::RemoteSourceBufferProxy::sourceBufferPrivateDidBecomeReadyForMoreSamples):
+        (WebKit::RemoteSourceBufferProxy::sourceBufferPrivateFastSeekTimeForMediaTime):
+        (WebKit::RemoteSourceBufferProxy::sourceBufferPrivateAppendComplete):
+        (WebKit::RemoteSourceBufferProxy::sourceBufferPrivateDidReceiveRenderingError):
+        (WebKit::RemoteSourceBufferProxy::append):
+        * GPUProcess/media/RemoteSourceBufferProxy.h: Added.
+        * GPUProcess/media/RemoteSourceBufferProxy.messages.in: Added.
+        * GPUProcess/webrtc/RemoteSampleBufferDisplayLayerManager.cpp:
+        * Scripts/webkit/messages.py:
+        * Sources.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        (WebKit::MediaPlayerPrivateRemote::load):
+        (WebKit::MediaPlayerPrivateRemote::MediaPlayerPrivateRemote::load): Deleted.
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.h:
+        * WebProcess/GPU/media/MediaSourcePrivateRemote.cpp: Added.
+        (WebKit::MediaSourcePrivateRemote::create):
+        (WebKit::MediaSourcePrivateRemote::MediaSourcePrivateRemote):
+        (WebKit::MediaSourcePrivateRemote::~MediaSourcePrivateRemote):
+        (WebKit::MediaSourcePrivateRemote::addSourceBuffer):
+        (WebKit::MediaSourcePrivateRemote::durationChanged):
+        (WebKit::MediaSourcePrivateRemote::markEndOfStream):
+        (WebKit::MediaSourcePrivateRemote::unmarkEndOfStream):
+        (WebKit::MediaSourcePrivateRemote::readyState const):
+        (WebKit::MediaSourcePrivateRemote::setReadyState):
+        (WebKit::MediaSourcePrivateRemote::waitForSeekCompleted):
+        (WebKit::MediaSourcePrivateRemote::seekCompleted):
+        (WebKit::MediaSourcePrivateRemote::logChannel const):
+        * WebProcess/GPU/media/MediaSourcePrivateRemote.h: Added.
+        * WebProcess/GPU/media/RemoteCDMConfiguration.h:
+        * WebProcess/GPU/media/RemoteCDMInstanceConfiguration.h:
+        * WebProcess/GPU/media/RemoteMediaPlayerManager.h:
+        * WebProcess/GPU/media/RemoteMediaSourceIdentifier.h: Added.
+        * WebProcess/GPU/media/SourceBufferPrivateRemote.cpp: Added.
+        (WebKit::SourceBufferPrivateRemote::create):
+        (WebKit::SourceBufferPrivateRemote::SourceBufferPrivateRemote):
+        (WebKit::SourceBufferPrivateRemote::~SourceBufferPrivateRemote):
+        (WebKit::SourceBufferPrivateRemote::setClient):
+        (WebKit::SourceBufferPrivateRemote::append):
+        (WebKit::SourceBufferPrivateRemote::abort):
+        (WebKit::SourceBufferPrivateRemote::resetParserState):
+        (WebKit::SourceBufferPrivateRemote::removedFromMediaSource):
+        (WebKit::SourceBufferPrivateRemote::readyState const):
+        (WebKit::SourceBufferPrivateRemote::setReadyState):
+        (WebKit::SourceBufferPrivateRemote::flush):
+        (WebKit::SourceBufferPrivateRemote::enqueueSample):
+        (WebKit::SourceBufferPrivateRemote::isReadyForMoreSamples):
+        (WebKit::SourceBufferPrivateRemote::setActive):
+        (WebKit::SourceBufferPrivateRemote::notifyClientWhenReadyForMoreSamples):
+        (WebKit::SourceBufferPrivateRemote::canSetMinimumUpcomingPresentationTime const):
+        (WebKit::SourceBufferPrivateRemote::setMinimumUpcomingPresentationTime):
+        (WebKit::SourceBufferPrivateRemote::clearMinimumUpcomingPresentationTime):
+        (WebKit::SourceBufferPrivateRemote::canSwitchToType):
+        (WebKit::SourceBufferPrivateRemote::sourceBufferPrivateAppendComplete):
+        (WebKit::SourceBufferPrivateRemote::logChannel const):
+        * WebProcess/GPU/media/SourceBufferPrivateRemote.h: Added.
+        * WebProcess/GPU/media/SourceBufferPrivateRemote.messages.in: Added.
+
 2020-11-17  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Perform AX TCC check in the UI process

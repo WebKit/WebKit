@@ -52,6 +52,11 @@
 #include "RemoteCDMInstanceProxy.h"
 #endif
 
+#if ENABLE(MEDIA_SOURCE)
+#include "RemoteMediaSourceIdentifier.h"
+#include "RemoteMediaSourceProxy.h"
+#endif
+
 #if PLATFORM(COCOA)
 #include "SharedRingBufferStorage.h"
 #endif
@@ -109,6 +114,9 @@ public:
     void prepareForRendering();
 
     void load(URL&&, Optional<SandboxExtension::Handle>&&, const WebCore::ContentType&, const String&, CompletionHandler<void(RemoteMediaPlayerConfiguration&&)>&&);
+#if ENABLE(MEDIA_SOURCE)
+    void loadMediaSource(URL&&, const WebCore::ContentType&, RemoteMediaSourceIdentifier);
+#endif
     void cancelLoad();
 
     void prepareToPlay();
@@ -300,6 +308,9 @@ private:
     RemoteMediaPlayerState m_cachedState;
     RemoteMediaPlayerProxyConfiguration m_configuration;
     CompletionHandler<void(Optional<MediaTime>)> m_performTaskAtMediaTimeCompletionHandler;
+#if ENABLE(MEDIA_SOURCE)
+    RefPtr<RemoteMediaSourceProxy> m_mediaSourceProxy;
+#endif
 
     WebCore::LayoutRect m_videoContentBoxRect;
     float m_videoContentScale { 1.0 };

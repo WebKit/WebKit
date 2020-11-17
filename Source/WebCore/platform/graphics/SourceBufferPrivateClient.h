@@ -73,11 +73,28 @@ public:
 
     virtual MediaTime sourceBufferPrivateFastSeekTimeForMediaTime(const MediaTime&, const MediaTime&, const MediaTime&) = 0;
 
-    enum AppendResult { AppendSucceeded, ReadStreamFailed, ParsingFailed };
+    enum class AppendResult : uint8_t {
+        AppendSucceeded,
+        ReadStreamFailed,
+        ParsingFailed
+    };
     virtual void sourceBufferPrivateAppendComplete(AppendResult) = 0;
     virtual void sourceBufferPrivateDidReceiveRenderingError(int errorCode) = 0;
 };
 
-}
+} // namespace WebCore
+
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::SourceBufferPrivateClient::AppendResult> {
+    using values = EnumValues<
+        WebCore::SourceBufferPrivateClient::AppendResult,
+        WebCore::SourceBufferPrivateClient::AppendResult::AppendSucceeded,
+        WebCore::SourceBufferPrivateClient::AppendResult::ReadStreamFailed,
+        WebCore::SourceBufferPrivateClient::AppendResult::ParsingFailed
+    >;
+};
+
+} // namespace WTF
 
 #endif // ENABLE(MEDIA_SOURCE)

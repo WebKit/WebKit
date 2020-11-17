@@ -28,7 +28,6 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "SandboxExtension.h"
-#include <WebCore/ContentType.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {

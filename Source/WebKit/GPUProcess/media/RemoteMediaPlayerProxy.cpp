@@ -131,6 +131,14 @@ void RemoteMediaPlayerProxy::load(URL&& url, Optional<SandboxExtension::Handle>&
     completionHandler(WTFMove(configuration));
 }
 
+#if ENABLE(MEDIA_SOURCE)
+void RemoteMediaPlayerProxy::loadMediaSource(URL&& url, const WebCore::ContentType& contentType, RemoteMediaSourceIdentifier mediaSourceIdentifier)
+{
+    m_mediaSourceProxy = adoptRef(*new RemoteMediaSourceProxy(mediaSourceIdentifier, m_manager.gpuConnectionToWebProcess()));
+    m_player->load(url, contentType, m_mediaSourceProxy.get());
+}
+#endif
+
 void RemoteMediaPlayerProxy::cancelLoad()
 {
     m_updateCachedStateMessageTimer.stop();

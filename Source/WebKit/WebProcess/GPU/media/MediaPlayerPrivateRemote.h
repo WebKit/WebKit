@@ -43,6 +43,10 @@
 #include <wtf/MediaTime.h>
 #include <wtf/WeakPtr.h>
 
+#if ENABLE(MEDIA_SOURCE)
+#include "MediaSourcePrivateRemote.h"
+#endif
+
 namespace WTF {
 class MachSendRight;
 }
@@ -87,6 +91,8 @@ public:
     WebCore::MediaPlayerIdentifier itentifier() const { return m_id; }
     IPC::Connection& connection() const { return m_manager.gpuProcessConnection().connection(); }
     WebCore::MediaPlayer* player() const { return m_player; }
+
+    WebCore::MediaPlayer::ReadyState readyState() const final { return m_cachedState.readyState; }
 
     void networkStateChanged(RemoteMediaPlayerState&&);
     void readyStateChanged(RemoteMediaPlayerState&&);
@@ -154,6 +160,11 @@ public:
     void getRawCookies(const URL&, WebCore::MediaPlayerClient::GetRawCookiesCallback&&) const;
 #endif
 
+#if !RELEASE_LOG_DISABLED
+    const void* mediaPlayerLogIdentifier() { return logIdentifier(); }
+    const Logger& mediaPlayerLogger() { return logger(); }
+#endif
+
 private:
 
 #if !RELEASE_LOG_DISABLED
@@ -170,7 +181,7 @@ private:
     void prepareForPlayback(bool privateMode, WebCore::MediaPlayer::Preload, bool preservesPitch, bool prepare) final;
 
 #if ENABLE(MEDIA_SOURCE)
-    void load(const String&, WebCore::MediaSourcePrivateClient*) final;
+    void load(const URL&, const WebCore::ContentType&, WebCore::MediaSourcePrivateClient*) final;
 #endif
 #if ENABLE(MEDIA_STREAM)
     void load(WebCore::MediaStreamPrivate&) final;
@@ -250,7 +261,6 @@ private:
     double minFastReverseRate() const final;
 
     WebCore::MediaPlayer::NetworkState networkState() const final { return m_cachedState.networkState; }
-    WebCore::MediaPlayer::ReadyState readyState() const final { return m_cachedState.readyState; }
 
     MediaTime maxMediaTimeSeekable() const final;
     MediaTime minMediaTimeSeekable() const final;
@@ -382,6 +392,10 @@ private:
 
 #if ENABLE(WEB_AUDIO) && PLATFORM(COCOA)
     RefPtr<RemoteAudioSourceProvider> m_audioSourceProvider;
+#endif
+
+#if ENABLE(MEDIA_SOURCE)
+    RefPtr<MediaSourcePrivateRemote> m_mediaSourcePrivate;
 #endif
 
     HashMap<RemoteMediaResourceIdentifier, RefPtr<WebCore::PlatformMediaResource>> m_mediaResources;

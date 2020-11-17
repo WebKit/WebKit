@@ -30,6 +30,7 @@
 
 #include "Decoder.h"
 #include "GPUConnectionToWebProcess.h"
+#include "GPUProcess.h"
 #include "RemoteSampleBufferDisplayLayer.h"
 #include "RemoteSampleBufferDisplayLayerManagerMessages.h"
 #include "RemoteSampleBufferDisplayLayerMessages.h"

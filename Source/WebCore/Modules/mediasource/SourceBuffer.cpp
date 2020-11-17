@@ -632,7 +632,7 @@ void SourceBuffer::appendBufferTimerFired()
 
     // 1. Loop Top: If the input buffer is empty, then jump to the need more data step below.
     if (!m_pendingAppendData.size()) {
-        sourceBufferPrivateAppendComplete(AppendSucceeded);
+        sourceBufferPrivateAppendComplete(AppendResult::AppendSucceeded);
         return;
     }
 
@@ -658,7 +658,7 @@ void SourceBuffer::sourceBufferPrivateAppendComplete(AppendResult result)
 
     // 2. If the input buffer contains bytes that violate the SourceBuffer byte stream format specification,
     // then run the append error algorithm with the decode error parameter set to true and abort this algorithm.
-    if (result == ParsingFailed) {
+    if (result == AppendResult::ParsingFailed) {
         ERROR_LOG(LOGIDENTIFIER, "ParsingFailed");
         appendError(true);
         return;
@@ -671,7 +671,7 @@ void SourceBuffer::sourceBufferPrivateAppendComplete(AppendResult result)
 
     // NOTE: return to Section 3.5.5
     // 2.If the segment parser loop algorithm in the previous step was aborted, then abort this algorithm.
-    if (result != AppendSucceeded)
+    if (result != AppendResult::AppendSucceeded)
         return;
 
     // 3. Set the updating attribute to false.

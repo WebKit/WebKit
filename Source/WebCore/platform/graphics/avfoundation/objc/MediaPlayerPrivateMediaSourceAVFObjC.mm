@@ -266,7 +266,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::load(const String&)
     m_player->networkStateChanged();
 }
 
-void MediaPlayerPrivateMediaSourceAVFObjC::load(const String&, MediaSourcePrivateClient* client)
+void MediaPlayerPrivateMediaSourceAVFObjC::load(const URL&, const ContentType&, MediaSourcePrivateClient* client)
 {
     ALWAYS_LOG(LOGIDENTIFIER);
 

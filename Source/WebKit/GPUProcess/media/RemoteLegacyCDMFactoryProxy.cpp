@@ -136,7 +136,6 @@ RemoteLegacyCDMSessionProxy* RemoteLegacyCDMFactoryProxy::getSession(const Remot
     return nullptr;
 }
 
-
 }
 
 #endif

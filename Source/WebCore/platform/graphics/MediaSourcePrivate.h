@@ -27,8 +27,8 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef MediaSourcePrivate_h
-#define MediaSourcePrivate_h
+
+#pragma once
 
 #if ENABLE(MEDIA_SOURCE)
 
@@ -49,7 +49,11 @@ public:
     MediaSourcePrivate() = default;
     virtual ~MediaSourcePrivate() = default;
 
-    enum AddStatus { Ok, NotSupported, ReachedIdLimit };
+    enum class AddStatus : uint8_t {
+        Ok,
+        NotSupported,
+        ReachedIdLimit
+    };
     virtual AddStatus addSourceBuffer(const ContentType&, RefPtr<SourceBufferPrivate>&) = 0;
     virtual void durationChanged() = 0;
     enum EndOfStreamStatus { EosNoError, EosNetworkError, EosDecodeError };
@@ -88,7 +92,15 @@ struct LogArgument<WebCore::MediaSourcePrivate::EndOfStreamStatus> {
     }
 };
 
+template<> struct EnumTraits<WebCore::MediaSourcePrivate::AddStatus> {
+    using values = EnumValues<
+        WebCore::MediaSourcePrivate::AddStatus,
+        WebCore::MediaSourcePrivate::AddStatus::Ok,
+        WebCore::MediaSourcePrivate::AddStatus::NotSupported,
+        WebCore::MediaSourcePrivate::AddStatus::ReachedIdLimit
+    >;
+};
+
 } // namespace WTF
 
-#endif
 #endif

@@ -148,6 +148,7 @@ public:
     const Vector<ContentType>& mediaContentTypesRequiringHardwareSupport() const;
     bool shouldCheckHardwareSupport() const;
 
+#if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger.get(); }
     const char* logClassName() const override { return "MediaPlayerPrivateMediaSourceAVFObjC"; }
     const void* logIdentifier() const final { return reinterpret_cast<const void*>(m_logIdentifier); }
@@ -155,6 +156,7 @@ public:
 
     const void* mediaPlayerLogIdentifier() { return logIdentifier(); }
     const Logger& mediaPlayerLogger() { return logger(); }
+#endif
 
     enum SeekState {
         Seeking,
@@ -165,7 +167,7 @@ public:
 private:
     // MediaPlayerPrivateInterface
     void load(const String& url) override;
-    void load(const String& url, MediaSourcePrivateClient*) override;
+    void load(const URL&, const ContentType&, MediaSourcePrivateClient*) override;
 #if ENABLE(MEDIA_STREAM)
     void load(MediaStreamPrivate&) override;
 #endif

@@ -35,6 +35,8 @@ $(PROJECT_DIR)/GPUProcess/media/RemoteLegacyCDMSessionProxy.messages.in
 $(PROJECT_DIR)/GPUProcess/media/RemoteMediaPlayerManagerProxy.messages.in
 $(PROJECT_DIR)/GPUProcess/media/RemoteMediaPlayerProxy.messages.in
 $(PROJECT_DIR)/GPUProcess/media/RemoteMediaResourceManager.messages.in
+$(PROJECT_DIR)/GPUProcess/media/RemoteMediaSourceProxy.messages.in
+$(PROJECT_DIR)/GPUProcess/media/RemoteSourceBufferProxy.messages.in
 $(PROJECT_DIR)/GPUProcess/media/ios/RemoteMediaSessionHelperProxy.messages.in
 $(PROJECT_DIR)/GPUProcess/webrtc/LibWebRTCCodecsProxy.messages.in
 $(PROJECT_DIR)/GPUProcess/webrtc/RemoteAudioMediaStreamTrackRenderer.messages.in
@@ -95,8 +97,8 @@ $(PROJECT_DIR)/UIProcess/Downloads/DownloadProxy.messages.in
 $(PROJECT_DIR)/UIProcess/DrawingAreaProxy.messages.in
 $(PROJECT_DIR)/UIProcess/GPU/GPUProcessProxy.messages.in
 $(PROJECT_DIR)/UIProcess/Inspector/RemoteWebInspectorProxy.messages.in
-$(PROJECT_DIR)/UIProcess/Inspector/WebInspectorUIExtensionControllerProxy.messages.in
 $(PROJECT_DIR)/UIProcess/Inspector/WebInspectorProxy.messages.in
+$(PROJECT_DIR)/UIProcess/Inspector/WebInspectorUIExtensionControllerProxy.messages.in
 $(PROJECT_DIR)/UIProcess/Media/AudioSessionRoutingArbitratorProxy.messages.in
 $(PROJECT_DIR)/UIProcess/Network/CustomProtocols/LegacyCustomProtocolManagerProxy.messages.in
 $(PROJECT_DIR)/UIProcess/Network/NetworkProcessProxy.messages.in
@@ -136,6 +138,7 @@ $(PROJECT_DIR)/WebProcess/GPU/media/RemoteAudioSession.messages.in
 $(PROJECT_DIR)/WebProcess/GPU/media/RemoteAudioSourceProviderManager.messages.in
 $(PROJECT_DIR)/WebProcess/GPU/media/RemoteCDMInstanceSession.messages.in
 $(PROJECT_DIR)/WebProcess/GPU/media/RemoteLegacyCDMSession.messages.in
+$(PROJECT_DIR)/WebProcess/GPU/media/SourceBufferPrivateRemote.messages.in
 $(PROJECT_DIR)/WebProcess/GPU/media/ios/RemoteMediaSessionHelper.messages.in
 $(PROJECT_DIR)/WebProcess/GPU/webrtc/LibWebRTCCodecs.messages.in
 $(PROJECT_DIR)/WebProcess/GPU/webrtc/LibWebRTCRemoteCodecs.messages.in
@@ -143,9 +146,9 @@ $(PROJECT_DIR)/WebProcess/GPU/webrtc/SampleBufferDisplayLayer.messages.in
 $(PROJECT_DIR)/WebProcess/Geolocation/WebGeolocationManager.messages.in
 $(PROJECT_DIR)/WebProcess/Inspector/RemoteWebInspectorUI.messages.in
 $(PROJECT_DIR)/WebProcess/Inspector/WebInspector.messages.in
-$(PROJECT_DIR)/WebProcess/Inspector/WebInspectorUIExtensionController.messages.in
 $(PROJECT_DIR)/WebProcess/Inspector/WebInspectorInterruptDispatcher.messages.in
 $(PROJECT_DIR)/WebProcess/Inspector/WebInspectorUI.messages.in
+$(PROJECT_DIR)/WebProcess/Inspector/WebInspectorUIExtensionController.messages.in
 $(PROJECT_DIR)/WebProcess/Network/NetworkProcessConnection.messages.in
 $(PROJECT_DIR)/WebProcess/Network/WebResourceLoader.messages.in
 $(PROJECT_DIR)/WebProcess/Network/WebSocketChannel.messages.in

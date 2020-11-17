@@ -43,7 +43,7 @@ public:
     virtual void load(const URL& url, const ContentType&, const String&) { load(url.string()); }
 
 #if ENABLE(MEDIA_SOURCE)
-    virtual void load(const String& url, MediaSourcePrivateClient*) = 0;
+    virtual void load(const URL&, const ContentType&, MediaSourcePrivateClient*) = 0;
 #endif
 #if ENABLE(MEDIA_STREAM)
     virtual void load(MediaStreamPrivate&) = 0;

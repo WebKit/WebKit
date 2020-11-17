@@ -403,7 +403,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::load(const String&)
 }
 
 #if ENABLE(MEDIA_SOURCE)
-void MediaPlayerPrivateMediaStreamAVFObjC::load(const String&, MediaSourcePrivateClient*)
+void MediaPlayerPrivateMediaStreamAVFObjC::load(const URL&, const ContentType&, MediaSourcePrivateClient*)
 {
     // This media engine only supports MediaStream URLs.
     scheduleDeferredTask([this] {

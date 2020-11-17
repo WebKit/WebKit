@@ -139,9 +139,9 @@ void MockSourceBufferPrivate::setClient(SourceBufferPrivateClient* client)
 void MockSourceBufferPrivate::append(Vector<unsigned char>&& data)
 {
     m_inputBuffer.appendVector(data);
-    SourceBufferPrivateClient::AppendResult result = SourceBufferPrivateClient::AppendSucceeded;
+    SourceBufferPrivateClient::AppendResult result = SourceBufferPrivateClient::AppendResult::AppendSucceeded;
 
-    while (m_inputBuffer.size() && result == SourceBufferPrivateClient::AppendSucceeded) {
+    while (m_inputBuffer.size() && result == SourceBufferPrivateClient::AppendResult::AppendSucceeded) {
         auto buffer = ArrayBuffer::create(m_inputBuffer.data(), m_inputBuffer.size());
         size_t boxLength = MockBox::peekLength(buffer.ptr());
         if (boxLength > buffer->byteLength())
@@ -155,7 +155,7 @@ void MockSourceBufferPrivate::append(Vector<unsigned char>&& data)
             MockSampleBox sampleBox = MockSampleBox(buffer.ptr());
             didReceiveSample(sampleBox);
         } else
-            result = SourceBufferPrivateClient::ParsingFailed;
+            result = SourceBufferPrivateClient::AppendResult::ParsingFailed;
 
         m_inputBuffer.remove(0, boxLength);
     }

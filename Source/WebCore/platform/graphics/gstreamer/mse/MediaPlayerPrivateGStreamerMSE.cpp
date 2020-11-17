@@ -138,10 +138,10 @@ void MediaPlayerPrivateGStreamerMSE::load(const String& urlString)
     MediaPlayerPrivateGStreamer::load(urlString);
 }
 
-void MediaPlayerPrivateGStreamerMSE::load(const String& url, MediaSourcePrivateClient* mediaSource)
+void MediaPlayerPrivateGStreamerMSE::load(const URL& url, const ContentType&, MediaSourcePrivateClient* mediaSource)
 {
     m_mediaSource = mediaSource;
-    load(makeString("mediasource", url));
+    load(makeString("mediasource", url.string()));
 }
 
 void MediaPlayerPrivateGStreamerMSE::pause()

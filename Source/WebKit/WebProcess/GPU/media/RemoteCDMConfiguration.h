@@ -27,7 +27,6 @@
 
 #if ENABLE(GPU_PROCESS) && ENABLE(ENCRYPTED_MEDIA)
 
-#include <WebCore/ContentType.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {

@@ -71,6 +71,10 @@
 #include <WebCore/LegacyCDM.h>
 #endif
 
+#if ENABLE(MEDIA_SOURCE)
+#include "RemoteMediaSourceIdentifier.h"
+#endif
+
 namespace WebCore {
 #if !RELEASE_LOG_DISABLED
 extern WTFLogChannel LogMedia;
@@ -148,7 +152,7 @@ void MediaPlayerPrivateRemote::prepareForPlayback(bool privateMode, MediaPlayer:
     }, m_id);
 }
 
-void MediaPlayerPrivateRemote::MediaPlayerPrivateRemote::load(const URL& url, const ContentType& contentType, const String& keySystem)
+void MediaPlayerPrivateRemote::load(const URL& url, const ContentType& contentType, const String& keySystem)
 {
     Optional<SandboxExtension::Handle> sandboxExtensionHandle;
     if (url.isLocalFile()) {
@@ -624,8 +628,16 @@ void MediaPlayerPrivateRemote::remoteVideoTrackConfigurationChanged(TrackPrivate
 }
 
 #if ENABLE(MEDIA_SOURCE)
-void MediaPlayerPrivateRemote::load(const String&, MediaSourcePrivateClient*)
+void MediaPlayerPrivateRemote::load(const URL& url, const ContentType& contentType, MediaSourcePrivateClient* client)
 {
+    if (m_remoteEngineIdentifier == MediaPlayerEnums::MediaEngineIdentifier::AVFoundationMSE) {
+        auto identifier = RemoteMediaSourceIdentifier::generate();
+        connection().send(Messages::RemoteMediaPlayerProxy::LoadMediaSource(url, contentType, identifier), m_id);
+        m_mediaSourcePrivate = MediaSourcePrivateRemote::create(m_manager.gpuProcessConnection(), identifier, m_manager.typeCache(m_remoteEngineIdentifier), *this, client);
+
+        return;
+    }
+
     callOnMainThread([weakThis = makeWeakPtr(*this), this] {
         if (!weakThis)
             return;

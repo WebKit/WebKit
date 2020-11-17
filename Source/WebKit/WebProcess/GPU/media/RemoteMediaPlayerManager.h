@@ -66,6 +66,8 @@ public:
 
     WebCore::MediaPlayerIdentifier findRemotePlayerId(const WebCore::MediaPlayerPrivateInterface*);
 
+    RemoteMediaPlayerMIMETypeCache& typeCache(WebCore::MediaPlayerEnums::MediaEngineIdentifier);
+
 private:
     std::unique_ptr<WebCore::MediaPlayerPrivateInterface> createRemoteMediaPlayer(WebCore::MediaPlayer*, WebCore::MediaPlayerEnums::MediaEngineIdentifier);
 
@@ -82,8 +84,6 @@ private:
     HashSet<RefPtr<WebCore::SecurityOrigin>> originsInMediaCache(WebCore::MediaPlayerEnums::MediaEngineIdentifier, const String&);
     void clearMediaCache(WebCore::MediaPlayerEnums::MediaEngineIdentifier, const String&, WallTime modifiedSince);
     void clearMediaCacheForOrigins(WebCore::MediaPlayerEnums::MediaEngineIdentifier, const String&, const HashSet<RefPtr<WebCore::SecurityOrigin>>&);
-
-    RemoteMediaPlayerMIMETypeCache& typeCache(WebCore::MediaPlayerEnums::MediaEngineIdentifier);
 
     HashMap<WebCore::MediaPlayerIdentifier, WeakPtr<MediaPlayerPrivateRemote>> m_players;
     WebProcess& m_process;

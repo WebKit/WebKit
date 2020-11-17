@@ -194,12 +194,12 @@ void SourceBufferPrivateGStreamer::didReceiveSample(MediaSample& sample)
 
 void SourceBufferPrivateGStreamer::didReceiveAllPendingSamples()
 {
-    m_sourceBufferPrivateClient->sourceBufferPrivateAppendComplete(SourceBufferPrivateClient::AppendSucceeded);
+    m_sourceBufferPrivateClient->sourceBufferPrivateAppendComplete(SourceBufferPrivateClient::AppendResult::AppendSucceeded);
 }
 
 void SourceBufferPrivateGStreamer::appendParsingFailed()
 {
-    m_sourceBufferPrivateClient->sourceBufferPrivateAppendComplete(SourceBufferPrivateClient::ParsingFailed);
+    m_sourceBufferPrivateClient->sourceBufferPrivateAppendComplete(SourceBufferPrivateClient::AppendResult::ParsingFailed);
 }
 
 #if !RELEASE_LOG_DISABLED

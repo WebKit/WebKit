@@ -1223,6 +1223,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/MediaPlayerEnums.h
     platform/graphics/MediaPlayerIdentifier.h
     platform/graphics/MediaPlayerPrivate.h
+    platform/graphics/MediaSourcePrivate.h
+    platform/graphics/MediaSourcePrivateClient.h
     platform/graphics/MediaUsageInfo.h
     platform/graphics/NativeImage.h
     platform/graphics/NativeImageReference.h
@@ -1244,6 +1246,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/RenderingResourceIdentifier.h
     platform/graphics/RenderingMode.h
     platform/graphics/RoundedRect.h
+    platform/graphics/SourceBufferPrivate.h
+    platform/graphics/SourceBufferPrivateClient.h
     platform/graphics/StringTruncator.h
     platform/graphics/TabSize.h
     platform/graphics/TextRun.h

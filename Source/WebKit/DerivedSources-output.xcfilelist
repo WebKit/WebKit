@@ -215,6 +215,9 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteMediaSessionHelperMessagesRep
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteMediaSessionHelperProxyMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteMediaSessionHelperProxyMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteMediaSessionHelperProxyMessagesReplies.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteMediaSourceProxyMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteMediaSourceProxyMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteMediaSourceProxyMessagesReplies.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteObjectRegistryMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteObjectRegistryMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteObjectRegistryMessagesReplies.h
@@ -233,6 +236,9 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteSampleBufferDisplayLayerMessa
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteScrollingCoordinatorMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteScrollingCoordinatorMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteScrollingCoordinatorMessagesReplies.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteSourceBufferProxyMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteSourceBufferProxyMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteSourceBufferProxyMessagesReplies.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteWebInspectorProxyMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteWebInspectorProxyMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteWebInspectorProxyMessagesReplies.h
@@ -251,6 +257,9 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/ServiceWorkerFetchTaskMessagesRepli
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/SmartMagnificationControllerMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/SmartMagnificationControllerMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/SmartMagnificationControllerMessagesReplies.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/SourceBufferPrivateRemoteMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/SourceBufferPrivateRemoteMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/SourceBufferPrivateRemoteMessagesReplies.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/SpeechRecognitionServerMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/SpeechRecognitionServerMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/SpeechRecognitionServerMessagesReplies.h
@@ -348,9 +357,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebIDBConnectionToServerMessagesRep
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebIDBServerMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebIDBServerMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebIDBServerMessagesReplies.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebInspectorUIExtensionControllerMessageReceiver.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebInspectorUIExtensionControllerMessages.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebInspectorUIExtensionControllerMessagesReplies.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebInspectorInterruptDispatcherMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebInspectorInterruptDispatcherMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebInspectorInterruptDispatcherMessagesReplies.h
@@ -360,6 +366,9 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebInspectorMessagesReplies.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebInspectorProxyMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebInspectorProxyMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebInspectorProxyMessagesReplies.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebInspectorUIExtensionControllerMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebInspectorUIExtensionControllerMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebInspectorUIExtensionControllerMessagesReplies.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebInspectorUIMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebInspectorUIMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebInspectorUIMessagesReplies.h

@@ -107,7 +107,7 @@ MediaSourcePrivate::AddStatus PlaybackPipeline::addSourceBuffer(RefPtr<SourceBuf
 
     if (priv->allTracksConfigured) {
         GST_ERROR_OBJECT(m_webKitMediaSrc.get(), "Adding new source buffers after first data not supported yet");
-        return MediaSourcePrivate::NotSupported;
+        return MediaSourcePrivate::AddStatus::NotSupported;
     }
 
     GST_DEBUG_OBJECT(m_webKitMediaSrc.get(), "State %d", int(GST_STATE(m_webKitMediaSrc.get())));
@@ -140,7 +140,7 @@ MediaSourcePrivate::AddStatus PlaybackPipeline::addSourceBuffer(RefPtr<SourceBuf
     gst_bin_add(GST_BIN(m_webKitMediaSrc.get()), stream->appsrc);
     gst_element_sync_state_with_parent(stream->appsrc);
 
-    return MediaSourcePrivate::Ok;
+    return MediaSourcePrivate::AddStatus::Ok;
 }
 
 void PlaybackPipeline::removeSourceBuffer(RefPtr<SourceBufferPrivateGStreamer> sourceBufferPrivate)

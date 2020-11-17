@@ -42,7 +42,6 @@
 #import "MediaSample.h"
 #import "MediaSampleAVFObjC.h"
 #import "MediaSourcePrivateAVFObjC.h"
-#import "NotImplemented.h"
 #import "SharedBuffer.h"
 #import "SourceBufferParserAVFObjC.h"
 #import "SourceBufferPrivateClient.h"
@@ -586,7 +585,7 @@ void SourceBufferPrivateAVFObjC::appendCompleted()
         m_mediaSource->player()->setLoadingProgresssed(true);
 
     if (m_client)
-        m_client->sourceBufferPrivateAppendComplete(m_parsingSucceeded ? SourceBufferPrivateClient::AppendSucceeded : SourceBufferPrivateClient::ParsingFailed);
+        m_client->sourceBufferPrivateAppendComplete(m_parsingSucceeded ? SourceBufferPrivateClient::AppendResult::AppendSucceeded : SourceBufferPrivateClient::AppendResult::ParsingFailed);
 }
 
 void SourceBufferPrivateAVFObjC::abort()
