@@ -1,3 +1,23 @@
+2020-11-17  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Stop leaking an XPC transaction in our XPC services
+        https://bugs.webkit.org/show_bug.cgi?id=219036
+
+        Reviewed by Geoffrey Garen.
+
+        Stop leaking an XPC transaction in our XPC services on iOS. We were doing this to control the lifetime of our child services
+        ourselves. However, this is not needed on iOS because the UIProcess takes RunningBoard process assertions on behalf of its
+        child processes.
+
+        I have verified that our child processes do not exit/jetsam early. I have verified that our child processes are in the
+        correct jetsam band (IDLE/0 when background and FG/10 when foreground). I have also verified that the main thread of these
+        processes runs at UserInitiated QoS before and after this change.
+
+        * Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceEntryPoint.h:
+        (WebKit::XPCServiceInitializer):
+        * Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceEntryPoint.mm:
+        (WebKit::XPCServiceExit):
+
 2020-11-17  Peng Liu  <peng.liu6@apple.com>
 
         [Media In GPU Process][MSE] Add infrastructure needed to run MediaPlayerPrivateMediaSourceAVFObjC in the GPU process

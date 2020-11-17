@@ -144,10 +144,14 @@ void XPCServiceExit(OSObjectPtr<xpc_object_t>&& priorityBoostMessage)
 {
     // Make sure to destroy the priority boost message to avoid leaking a transaction.
     priorityBoostMessage = nullptr;
+
     // Balances the xpc_transaction_begin() in XPCServiceInitializer.
+#if PLATFORM(MAC)
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     xpc_transaction_end();
 ALLOW_DEPRECATED_DECLARATIONS_END
+#endif
+
     xpc_transaction_exit_clean();
 }
 

@@ -91,10 +91,13 @@ void XPCServiceInitializer(OSObjectPtr<xpc_connection_t> connection, xpc_object_
     XPCServiceInitializerDelegateType delegate(WTFMove(connection), initializerMessage);
 
     // We don't want XPC to be in charge of whether the process should be terminated or not,
-    // so ensure that we have an outstanding transaction here.
+    // so ensure that we have an outstanding transaction here. This is not needed on iOS because
+    // the UIProcess takes process assertions on behalf of its child processes.
+#if PLATFORM(MAC)
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     xpc_transaction_begin();
 ALLOW_DEPRECATED_DECLARATIONS_END
+#endif
 
     InitializeWebKit2();
 
