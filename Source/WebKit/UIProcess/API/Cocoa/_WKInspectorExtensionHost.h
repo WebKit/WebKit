@@ -30,7 +30,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class _WKInspectorExtension;
 
-@protocol _WKInspectorExtensionHost
+@protocol _WKInspectorExtensionHost <NSObject>
 @optional
 
 /**
