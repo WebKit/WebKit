@@ -125,12 +125,12 @@
                       "workernames": ["bot279", "bot600", "bot614"]
                     },
                     { "name": "Apple-BigSur-Release-WK1-Tests", "factory": "TestWebKit1AllButJSCFactory", "builddir": "bigsur-release-tests-wk1",
-                      "platform": "mac-bigsur", "configuration": "release", "architectures": ["x86_64"],
+                      "platform": "mac-bigsur", "configuration": "release", "architectures": ["x86_64", "arm64"],
                       "additionalArguments": ["--no-retry-failures"],
                       "workernames": ["bot1020", "bot1021"]
                     },
                     { "name": "Apple-BigSur-Release-WK2-Tests", "factory": "TestAllButJSCFactory", "builddir": "bigsur-release-tests-wk2",
-                      "platform": "mac-bigsur", "configuration": "release", "architectures": ["x86_64"],
+                      "platform": "mac-bigsur", "configuration": "release", "architectures": ["x86_64", "arm64"],
                       "additionalArguments": ["--no-retry-failures"],
                       "workernames": ["bot1022", "bot1023"]
                     },
@@ -140,12 +140,12 @@
                       "workernames": ["bot684", "bot685"]
                     },
                     { "name": "Apple-BigSur-Debug-WK1-Tests", "factory": "TestWebKit1AllButJSCFactory", "builddir": "bigsur-debug-tests-wk1",
-                      "platform": "mac-bigsur", "configuration": "debug", "architectures": ["x86_64"],
+                      "platform": "mac-bigsur", "configuration": "debug", "architectures": ["x86_64", "arm64"],
                       "additionalArguments": ["--no-retry-failures"],
                       "workernames": ["bot1024", "bot1025"]
                     },
                     { "name": "Apple-BigSur-Debug-WK2-Tests", "factory": "TestAllButJSCFactory", "builddir": "bigsur-debug-tests-wk2",
-                      "platform": "mac-bigsur", "configuration": "debug", "architectures": ["x86_64"],
+                      "platform": "mac-bigsur", "configuration": "debug", "architectures": ["x86_64", "arm64"],
                       "additionalArguments": ["--no-retry-failures"],
                       "workernames": ["bot1026", "bot1027"]
                     },
