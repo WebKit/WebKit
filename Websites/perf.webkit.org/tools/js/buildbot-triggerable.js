@@ -176,9 +176,15 @@ class BuildbotTriggerable {
                     const request = BuildRequest.findById(entry.buildRequestId());
                     if (!request)
                         continue;
-                    associatedRequests.add(request);
 
                     const info = buildReqeustsByGroup.get(request.testGroupId());
+                    if (!info) {
+                        assert(request.hasFinished());
+                        continue;
+                    }
+
+                    associatedRequests.add(request);
+
                     if (request.isBuild()) {
                         assert(!info.buildSyncer || info.buildSyncer == syncer);
                         if (entry.slaveName()) {

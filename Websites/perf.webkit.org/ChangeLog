@@ -1,3 +1,19 @@
+2020-11-16  Dewei Zhu  <dewei_zhu@apple.com>
+
+        BuildbotTriggerable should not process a completed build request from a completed test group.
+        https://bugs.webkit.org/show_bug.cgi?id=219016
+
+        Reviewed by Ryosuke Niwa.
+
+        BuildBotTriggerable._pullBuildbotOnAllSyncers relies on buildReqeustsByGroup to contain all build requests found by
+        BuildRequest.findById. However, since re-use root change is landed, above assumption is no longer valid. BuildRequest.all()
+        may includes build requests under same analysis task. Thus, `_pullBuildbotOnAllSyncers` will fail due to 'info' is undefined.
+
+        * server-tests/tools-buildbot-triggerable-tests.js: Added a unit test.
+        * tools/js/buildbot-triggerable.js:
+        (BuildbotTriggerable.prototype._pullBuildbotOnAllSyncers): Added logic to stop processing the build request if it's not
+        from incomplete build requests under a triggerable.
+
 2020-10-30  Dewei Zhu  <dewei_zhu@apple.com>
 
         Performance dashboard should avoid building same configuration under one analysis task.

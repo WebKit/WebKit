@@ -947,6 +947,85 @@ describe('BuildbotTriggerable', function () {
             });
         });
 
+        it('should skip updating a completed build request whose test group has completed and not listed in a triggerable', async () => {
+            await MockData.addMockBuildRequestsWithRoots(TestServer.database(), ['completed', 'completed', 'completed', 'completed', 'pending', 'pending', 'pending', 'pending']);
+            await Manifest.fetch();
+            const config = MockData.mockTestSyncConfigWithPatchAcceptingBuilder();
+            const logger = new MockLogger;
+            const slaveInfo = {name: 'sync-slave', password: 'password'};
+            const triggerable = new BuildbotTriggerable(config, TestServer.remoteAPI(), MockRemoteAPI, slaveInfo, logger);
+            const syncPromise = triggerable.initSyncers().then(() => triggerable.syncOnce());
+            assertRequestAndResolve(MockRemoteAPI.requests[0], 'GET', MockData.buildbotBuildersURL(), MockData.mockBuildbotBuilders());
+            MockRemoteAPI.reset();
+            await MockRemoteAPI.waitForRequest();
+
+            assert.equal(BuildRequest.all().length, 4);
+            let buildRequest = BuildRequest.findById(900);
+            assert.equal(buildRequest.status(), 'pending');
+            assert.equal(buildRequest.statusUrl(), null);
+
+            assert.equal(MockRemoteAPI.requests.length, 3);
+            assert.equal(MockRemoteAPI.requests[0].method, 'GET');
+            assert.equal(MockRemoteAPI.requests[0].url, MockData.pendingBuildsUrl('some tester'));
+            MockRemoteAPI.requests[0].resolve({});
+            assert.equal(MockRemoteAPI.requests[1].method, 'GET');
+            assert.equal(MockRemoteAPI.requests[1].url, MockData.pendingBuildsUrl('some-builder-1'));
+            MockRemoteAPI.requests[1].resolve({});
+            assert.equal(MockRemoteAPI.requests[2].method, 'GET');
+            assert.equal(MockRemoteAPI.requests[2].url, MockData.pendingBuildsUrl('some builder 2'));
+            MockRemoteAPI.requests[2].resolve({});
+            MockRemoteAPI.reset();
+            await MockRemoteAPI.waitForRequest();
+
+            assert.equal(MockRemoteAPI.requests.length, 3);
+            assert.equal(MockRemoteAPI.requests[0].method, 'GET');
+            assert.equal(MockRemoteAPI.requests[0].url, MockData.recentBuildsUrl('some tester', 2));
+            MockRemoteAPI.requests[0].resolve({});
+            assert.equal(MockRemoteAPI.requests[1].method, 'GET');
+            assert.equal(MockRemoteAPI.requests[1].url, MockData.recentBuildsUrl('some-builder-1', 2));
+            MockRemoteAPI.requests[1].resolve({'builds': [MockData.finishedBuildData({buildRequestId: 801}), MockData.finishedBuildData({buildRequestId: 800})]});
+            assert.equal(MockRemoteAPI.requests[2].method, 'GET');
+            assert.equal(MockRemoteAPI.requests[2].url, MockData.recentBuildsUrl('some builder 2', 2));
+            MockRemoteAPI.requests[2].resolve({});
+            MockRemoteAPI.reset();
+            await MockRemoteAPI.waitForRequest();
+
+            assert.equal(MockRemoteAPI.requests.length, 3);
+            assert.equal(MockRemoteAPI.requests[0].method, 'GET');
+            assert.equal(MockRemoteAPI.requests[0].url, MockData.pendingBuildsUrl('some tester'));
+            MockRemoteAPI.requests[0].resolve({});
+            assert.equal(MockRemoteAPI.requests[1].method, 'GET');
+            assert.equal(MockRemoteAPI.requests[1].url, MockData.pendingBuildsUrl('some-builder-1'));
+            MockRemoteAPI.requests[1].resolve({});
+            assert.equal(MockRemoteAPI.requests[2].method, 'GET');
+            assert.equal(MockRemoteAPI.requests[2].url, MockData.pendingBuildsUrl('some builder 2'));
+            MockRemoteAPI.requests[2].resolve({});
+            MockRemoteAPI.reset();
+            await MockRemoteAPI.waitForRequest();
+
+            assert.equal(MockRemoteAPI.requests.length, 3);
+            assert.equal(MockRemoteAPI.requests[0].method, 'GET');
+            assert.equal(MockRemoteAPI.requests[0].url, MockData.recentBuildsUrl('some tester', 2));
+            MockRemoteAPI.requests[0].resolve({});
+            assert.equal(MockRemoteAPI.requests[1].method, 'GET');
+            assert.equal(MockRemoteAPI.requests[1].url, MockData.recentBuildsUrl('some-builder-1', 2));
+            MockRemoteAPI.requests[1].resolve({'builds': [MockData.finishedBuildData({buildRequestId: 801}), MockData.finishedBuildData({buildRequestId: 800})]});
+            assert.equal(MockRemoteAPI.requests[2].method, 'GET');
+            assert.equal(MockRemoteAPI.requests[2].url, MockData.recentBuildsUrl('some builder 2', 2));
+            MockRemoteAPI.requests[2].resolve({});
+            MockRemoteAPI.reset();
+
+            await syncPromise;
+            await BuildRequest.fetchForTriggerable(MockData.mockTestSyncConfigWithPatchAcceptingBuilder().triggerableName);
+            assert.equal(BuildRequest.all().length, 8);
+            buildRequest = BuildRequest.findById(800);
+            let anotherBuildRequest = BuildRequest.findById(900);
+            assert.equal(buildRequest.status(), 'completed');
+            assert.equal(anotherBuildRequest.status(), 'completed');
+            assert.equal(buildRequest.statusUrl(), 'http://build.webkit.org/buids/1');
+            assert.equal(anotherBuildRequest.statusUrl(), 'http://build.webkit.org/buids/1');
+        });
+
         it('should reuse the roots from a completed build request with the same commit set', async () => {
             await MockData.addMockBuildRequestsWithRoots(TestServer.database());
             await Manifest.fetch();
