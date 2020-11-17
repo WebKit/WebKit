@@ -399,14 +399,14 @@ RegionOverlay* DebugPageOverlays::regionOverlayForPage(Page& page, RegionType re
     return it->value.at(indexOf(regionType)).get();
 }
 
-void DebugPageOverlays::updateOverlayRegionVisibility(Page& page, DebugOverlayRegions visibleRegions)
+void DebugPageOverlays::updateOverlayRegionVisibility(Page& page, OptionSet<DebugOverlayRegions> visibleRegions)
 {
-    if (visibleRegions & NonFastScrollableRegion)
+    if (visibleRegions.contains(DebugOverlayRegions::NonFastScrollableRegion))
         showRegionOverlay(page, RegionType::NonFastScrollableRegion);
     else
         hideRegionOverlay(page, RegionType::NonFastScrollableRegion);
 
-    if (visibleRegions & WheelEventHandlerRegion)
+    if (visibleRegions.contains(DebugOverlayRegions::WheelEventHandlerRegion))
         showRegionOverlay(page, RegionType::WheelEventHandlers);
     else
         hideRegionOverlay(page, RegionType::WheelEventHandlers);
@@ -414,7 +414,7 @@ void DebugPageOverlays::updateOverlayRegionVisibility(Page& page, DebugOverlayRe
 
 void DebugPageOverlays::settingsChanged(Page& page)
 {
-    DebugOverlayRegions activeOverlayRegions = page.settings().visibleDebugOverlayRegions();
+    auto activeOverlayRegions = OptionSet<DebugOverlayRegions>::fromRaw(page.settings().visibleDebugOverlayRegions());
     if (!activeOverlayRegions && !hasOverlays(page))
         return;
 

@@ -122,7 +122,7 @@ void WebSWContextManagerConnection::updatePreferencesStore(const WebPreferencesS
 {
     WebPage::updatePreferencesGenerated(store);
 
-    m_storageBlockingPolicy = static_cast<SecurityOrigin::StorageBlockingPolicy>(store.getUInt32ValueForKey(WebPreferencesKey::storageBlockingPolicyKey()));
+    m_storageBlockingPolicy = static_cast<StorageBlockingPolicy>(store.getUInt32ValueForKey(WebPreferencesKey::storageBlockingPolicyKey()));
     setShouldUseShortTimeout(store.getBoolValueForKey(WebPreferencesKey::shouldUseServiceWorkerShortTimeoutKey()));
 }
 

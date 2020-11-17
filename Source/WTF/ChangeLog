@@ -1,3 +1,14 @@
+2020-11-16  Sam Weinig  <weinig@apple.com>
+
+        Standardize enums that are used by Settings in preperation for autogeneration
+        https://bugs.webkit.org/show_bug.cgi?id=218960
+
+        Reviewed by Tim Horton.
+
+        Update enum uses in default WebPreferences values for renames and scoped syntax use.
+
+        * Scripts/Preferences/WebPreferences.yaml:
+
 2020-11-16  Antoine Quint  <graouts@webkit.org>
 
         Add an experimental <model> element

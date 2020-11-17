@@ -51,7 +51,7 @@ function selectLastWord(container) {
 }
 
 if (window.internals)
-   internals.settings.setEditingBehavior('win');
+   internals.settings.setEditingBehavior('windows');
 
 testSingleToggle("unlink", 'hello <b>world</b>', selectAll, 'hello <b>world</b>');
 testSingleToggle("unlink", '<a href="http://webkit.org/"><u>hello world</u></a>', selectAll, '<u>hello world</u>');

@@ -29,6 +29,7 @@
 #pragma once
 
 #include "SecurityOriginData.h"
+#include "StorageBlockingPolicy.h"
 #include <wtf/EnumTraits.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -41,12 +42,6 @@ public:
         AlwaysDeny = 0,
         AlwaysAllow,
         Ask
-    };
-
-    enum StorageBlockingPolicy {
-        AllowAllStorage = 0,
-        BlockThirdPartyStorage,
-        BlockAllStorage
     };
 
     WEBCORE_EXPORT static Ref<SecurityOrigin> create(const URL&);
@@ -243,7 +238,7 @@ private:
     bool m_universalAccess { false };
     bool m_domainWasSetInDOM { false };
     bool m_canLoadLocalResources { false };
-    StorageBlockingPolicy m_storageBlockingPolicy { AllowAllStorage };
+    StorageBlockingPolicy m_storageBlockingPolicy { StorageBlockingPolicy::AllowAll };
     bool m_enforcesFilePathSeparation { false };
     bool m_needsStorageAccessFromFileURLsQuirk { false };
     bool m_isPotentiallyTrustworthy { false };
@@ -308,17 +303,3 @@ template<class Decoder> inline RefPtr<SecurityOrigin> SecurityOrigin::decode(Dec
 }
 
 } // namespace WebCore
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::SecurityOrigin::StorageBlockingPolicy> {
-    using values = EnumValues<
-        WebCore::SecurityOrigin::StorageBlockingPolicy,
-        WebCore::SecurityOrigin::StorageBlockingPolicy::AllowAllStorage,
-        WebCore::SecurityOrigin::StorageBlockingPolicy::BlockThirdPartyStorage,
-        WebCore::SecurityOrigin::StorageBlockingPolicy::BlockAllStorage
-    >;
-};
-
-
-} // namespace WTF

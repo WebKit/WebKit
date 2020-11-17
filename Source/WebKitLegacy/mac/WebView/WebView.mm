@@ -755,19 +755,19 @@ static WebPageVisibilityState kit(WebCore::VisibilityState visibilityState)
     return WebPageVisibilityStateVisible;
 }
 
-static WebCore::SecurityOrigin::StorageBlockingPolicy core(WebStorageBlockingPolicy storageBlockingPolicy)
+static WebCore::StorageBlockingPolicy core(WebStorageBlockingPolicy storageBlockingPolicy)
 {
     switch (storageBlockingPolicy) {
     case WebAllowAllStorage:
-        return WebCore::SecurityOrigin::AllowAllStorage;
+        return WebCore::StorageBlockingPolicy::AllowAll;
     case WebBlockThirdPartyStorage:
-        return WebCore::SecurityOrigin::BlockThirdPartyStorage;
+        return WebCore::StorageBlockingPolicy::BlockThirdParty;
     case WebBlockAllStorage:
-        return WebCore::SecurityOrigin::BlockAllStorage;
+        return WebCore::StorageBlockingPolicy::BlockAll;
     default:
         // If an invalid value was set (as can be done via NSUserDefaults), fall back to
-        // the default value, WebCore::SecurityOrigin::AllowAllStorage.
-        return WebCore::SecurityOrigin::AllowAllStorage;
+        // the default value, WebCore::StorageBlockingPolicy::AllowAll.
+        return WebCore::StorageBlockingPolicy::AllowAll;
     }
 }
 

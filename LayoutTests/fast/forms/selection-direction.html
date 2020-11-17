@@ -91,7 +91,7 @@ function runTestFor(platform) {
 
 if (window.internals) {
     runTestFor('Mac');
-    runTestFor('Win');
+    runTestFor('Windows');
     runTestFor('Unix');
 } else
     runTestFor(navigator.platform.indexOf('Mac') >= 0 ? 'Mac' : 'Win');

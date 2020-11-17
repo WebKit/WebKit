@@ -53,7 +53,7 @@ Ref<WebPreferences> WebPreferences::createWithLegacyDefaults(const String& ident
     preferences->registerDefaultBoolValueForKey(WebPreferencesKey::javaEnabledKey(), true);
     preferences->registerDefaultBoolValueForKey(WebPreferencesKey::javaEnabledForLocalFilesKey(), true);
     preferences->registerDefaultBoolValueForKey(WebPreferencesKey::pluginsEnabledKey(), true);
-    preferences->registerDefaultUInt32ValueForKey(WebPreferencesKey::storageBlockingPolicyKey(), WebCore::SecurityOrigin::AllowAllStorage);
+    preferences->registerDefaultUInt32ValueForKey(WebPreferencesKey::storageBlockingPolicyKey(), static_cast<uint32_t>(WebCore::StorageBlockingPolicy::AllowAll));
     return preferences;
 }
 

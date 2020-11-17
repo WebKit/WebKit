@@ -14,7 +14,7 @@ description('Tests to ensure MakeTextWritingDirection* modifies the direction of
 if (!window.testRunner)
     testFailed('This test requires testRunner');
 if (window.internals)
-    internals.settings.setEditingBehavior('win');
+    internals.settings.setEditingBehavior('windows');
 
 var testContainer = document.createElement("div");
 testContainer.contentEditable = true;

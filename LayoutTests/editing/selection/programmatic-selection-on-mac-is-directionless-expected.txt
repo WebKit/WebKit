@@ -100,7 +100,7 @@ PASS right by line in text-input, after undoing forwardDelete
 PASS right by line in text-input, after undoing cut
 PASS right by line in text-input, after undoing bold
 PASS right by line in text-input, after undoing insertText
-win:
+windows:
 PASS left by character in regular-div
 PASS left by character in regular-div, after undoing delete
 PASS left by character in regular-div, after undoing forwardDelete

@@ -358,7 +358,7 @@ bool WKPreferencesGetCookieEnabled(WKPreferencesRef preferencesRef)
 
 void WKPreferencesSetEditableLinkBehavior(WKPreferencesRef preferencesRef, WKEditableLinkBehavior wkBehavior)
 {
-    toImpl(preferencesRef)->setEditableLinkBehavior(toEditableLinkBehavior(wkBehavior));
+    toImpl(preferencesRef)->setEditableLinkBehavior(static_cast<uint32_t>(toEditableLinkBehavior(wkBehavior)));
 }
 
 WKEditableLinkBehavior WKPreferencesGetEditableLinkBehavior(WKPreferencesRef preferencesRef)
@@ -998,12 +998,12 @@ bool WKPreferencesGetRequestAnimationFrameEnabled(WKPreferencesRef preferencesRe
 
 void WKPreferencesSetStorageBlockingPolicy(WKPreferencesRef preferencesRef, WKStorageBlockingPolicy policy)
 {
-    toImpl(preferencesRef)->setStorageBlockingPolicy(toStorageBlockingPolicy(policy));
+    toImpl(preferencesRef)->setStorageBlockingPolicy(static_cast<uint32_t>(toStorageBlockingPolicy(policy)));
 }
 
 WKStorageBlockingPolicy WKPreferencesGetStorageBlockingPolicy(WKPreferencesRef preferencesRef)
 {
-    return toAPI(static_cast<WebCore::SecurityOrigin::StorageBlockingPolicy>(toImpl(preferencesRef)->storageBlockingPolicy()));
+    return toAPI(static_cast<WebCore::StorageBlockingPolicy>(toImpl(preferencesRef)->storageBlockingPolicy()));
 }
 
 void WKPreferencesSetDiagnosticLoggingEnabled(WKPreferencesRef preferencesRef, bool enabled)

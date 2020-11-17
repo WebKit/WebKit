@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include "FontRenderingMode.h"
 #include "FontSelectionAlgorithm.h"
 #include "FontTaggedSettings.h"
 #include "TextFlags.h"

@@ -1383,21 +1383,20 @@ bool EventHandler::useHandCursor(Node* node, bool isOverLink, bool shiftKey)
     // If the link is editable, then we need to check the settings to see whether or not the link should be followed
     if (editable) {
         switch (m_frame.settings().editableLinkBehavior()) {
-        default:
-        case EditableLinkDefaultBehavior:
-        case EditableLinkAlwaysLive:
+        case EditableLinkBehavior::Default:
+        case EditableLinkBehavior::AlwaysLive:
             editableLinkEnabled = true;
             break;
 
-        case EditableLinkNeverLive:
+        case EditableLinkBehavior::NeverLive:
             editableLinkEnabled = false;
             break;
 
-        case EditableLinkLiveWhenNotFocused:
+        case EditableLinkBehavior::LiveWhenNotFocused:
             editableLinkEnabled = nodeIsNotBeingEdited(*node, m_frame) || shiftKey;
             break;
 
-        case EditableLinkOnlyLiveWithShiftKey:
+        case EditableLinkBehavior::OnlyLiveWithShiftKey:
             editableLinkEnabled = shiftKey;
             break;
         }

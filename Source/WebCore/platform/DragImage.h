@@ -26,6 +26,7 @@
 #pragma once
 
 #include "FloatSize.h"
+#include "FontRenderingMode.h"
 #include "ImageOrientation.h"
 #include "IntSize.h"
 #include "Path.h"

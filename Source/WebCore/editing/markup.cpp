@@ -180,7 +180,7 @@ std::unique_ptr<Page> createPageForSanitizingWebContent()
     auto page = makeUnique<Page>(WTFMove(pageConfiguration));
     page->settings().setMediaEnabled(false);
     page->settings().setScriptEnabled(false);
-    page->settings().setParserScriptingFlagPolicy(SettingsBase::ParserScriptingFlagPolicy::Enabled);
+    page->settings().setHTMLParserScriptingFlagPolicy(HTMLParserScriptingFlagPolicy::Enabled);
     page->settings().setPluginsEnabled(false);
     page->settings().setAcceleratedCompositingEnabled(false);
 

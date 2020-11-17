@@ -50,7 +50,7 @@ function doStep(step, location) {
         if (!expect(location == 'test-win', 'navigation to test-win'))
             return;
 
-        internals.settings.setEditingBehavior('win');
+        internals.settings.setEditingBehavior('windows');
         testBackspaceNavigatesBack();
 
         break;

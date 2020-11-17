@@ -69,7 +69,7 @@ Some other text.
 | "
 "
 
-After clicking on the first element (win):
+After clicking on the first element (windows):
 | "
 "
 | <div>
@@ -86,7 +86,7 @@ Some other text.
 | "
 "
 
-After shift clicking on the second element (win):
+After shift clicking on the second element (windows):
 | "
 "
 | <div>
@@ -103,7 +103,7 @@ Some other text.
 | "
 "
 
-After clicking on the second element (win):
+After clicking on the second element (windows):
 | "
 "
 | <div>
@@ -120,7 +120,7 @@ Some other text.
 | "
 "
 
-After shift clicking on the first element (win):
+After shift clicking on the first element (windows):
 | "
 "
 | <div>

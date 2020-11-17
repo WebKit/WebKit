@@ -31,5 +31,5 @@ If this test succeeds, you can see "วั" (U+0E27,U+0E31) and a string "succee
 
 วั
 Succeeded for mac
-Succeeded for win
+Succeeded for windows
 Succeeded for unix

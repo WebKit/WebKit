@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2020 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -35,11 +35,11 @@ namespace WebCore {
 // behaviors with individual function calls on EditorClient (smart copy and paste and
 // selecting the space after a double click) that could be combined with this if
 // if possible in the future.
-enum EditingBehaviorType {
-    EditingMacBehavior,
-    EditingWindowsBehavior,
-    EditingUnixBehavior,
-    EditingIOSBehavior
+enum class EditingBehaviorType : uint8_t {
+    Mac,
+    Windows,
+    Unix,
+    Ios
 };
 
 } // WebCore namespace

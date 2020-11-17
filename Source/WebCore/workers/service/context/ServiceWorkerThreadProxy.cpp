@@ -52,7 +52,7 @@ static URL topOriginURL(const SecurityOrigin& origin)
     return URL { URL { }, origin.toRawString() };
 }
 
-static inline UniqueRef<Page> createPageForServiceWorker(PageConfiguration&& configuration, const ServiceWorkerContextData& data, SecurityOrigin::StorageBlockingPolicy storageBlockingPolicy)
+static inline UniqueRef<Page> createPageForServiceWorker(PageConfiguration&& configuration, const ServiceWorkerContextData& data, StorageBlockingPolicy storageBlockingPolicy)
 {
     auto page = makeUniqueRef<Page>(WTFMove(configuration));
 
@@ -94,7 +94,7 @@ static HashSet<ServiceWorkerThreadProxy*>& allServiceWorkerThreadProxies()
     return set;
 }
 
-ServiceWorkerThreadProxy::ServiceWorkerThreadProxy(PageConfiguration&& pageConfiguration, const ServiceWorkerContextData& data, String&& userAgent, CacheStorageProvider& cacheStorageProvider, SecurityOrigin::StorageBlockingPolicy storageBlockingPolicy)
+ServiceWorkerThreadProxy::ServiceWorkerThreadProxy(PageConfiguration&& pageConfiguration, const ServiceWorkerContextData& data, String&& userAgent, CacheStorageProvider& cacheStorageProvider, StorageBlockingPolicy storageBlockingPolicy)
     : m_page(createPageForServiceWorker(WTFMove(pageConfiguration), data, storageBlockingPolicy))
     , m_document(*m_page->mainFrame().document())
     , m_serviceWorkerThread(ServiceWorkerThread::create(data, WTFMove(userAgent), *this, *this, idbConnectionProxy(m_document), m_document->socketProvider()))

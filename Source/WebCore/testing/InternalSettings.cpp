@@ -39,7 +39,6 @@
 #include "PlatformMediaSessionManager.h"
 #include "RenderTheme.h"
 #include "RuntimeEnabledFeatures.h"
-#include "Settings.h"
 #include "Supplementable.h"
 #include <wtf/Language.h>
 
@@ -50,9 +49,9 @@
 namespace WebCore {
 
 InternalSettings::Backup::Backup(Settings& settings)
-    : m_originalEditingBehavior(settings.editingBehaviorType())
-    , m_minimumDOMTimerInterval(settings.minimumDOMTimerInterval())
+    : m_minimumDOMTimerInterval(settings.minimumDOMTimerInterval())
     , m_originalTimeWithoutMouseMovementBeforeHidingControls(settings.timeWithoutMouseMovementBeforeHidingControls())
+    , m_originalEditingBehavior(settings.editingBehaviorType())
     , m_storageBlockingPolicy(settings.storageBlockingPolicy())
     , m_userInterfaceDirectionPolicy(settings.userInterfaceDirectionPolicy())
     , m_systemLayoutDirection(settings.systemLayoutDirection())
@@ -108,9 +107,9 @@ void InternalSettings::Backup::restoreTo(Settings& settings)
         settings.setPictographFontFamily(pictographFont.value, static_cast<UScriptCode>(pictographFont.key));
     m_pictographFontFamilies.clear();
 
-    settings.setEditingBehaviorType(m_originalEditingBehavior);
     settings.setMinimumDOMTimerInterval(m_minimumDOMTimerInterval);
     settings.setTimeWithoutMouseMovementBeforeHidingControls(m_originalTimeWithoutMouseMovementBeforeHidingControls);
+    settings.setEditingBehaviorType(m_originalEditingBehavior);
     settings.setStorageBlockingPolicy(m_storageBlockingPolicy);
     settings.setUserInterfaceDirectionPolicy(m_userInterfaceDirectionPolicy);
     settings.setSystemLayoutDirection(m_systemLayoutDirection);
@@ -304,24 +303,11 @@ ExceptionOr<void> InternalSettings::setTextAutosizingWindowSizeOverride(int widt
     return { };
 }
 
-ExceptionOr<void> InternalSettings::setEditingBehavior(EditingBehavior editingBehavior)
+ExceptionOr<void> InternalSettings::setEditingBehavior(EditingBehaviorType editingBehaviorType)
 {
     if (!m_page)
         return Exception { InvalidAccessError };
-    switch (editingBehavior) {
-    case EditingBehavior::Win:
-        settings().setEditingBehaviorType(EditingWindowsBehavior);
-        break;
-    case EditingBehavior::Mac:
-        settings().setEditingBehaviorType(EditingMacBehavior);
-        break;
-    case EditingBehavior::Unix:
-        settings().setEditingBehaviorType(EditingUnixBehavior);
-        break;
-    case EditingBehavior::Ios:
-        settings().setEditingBehaviorType(EditingIOSBehavior);
-        break;
-    }
+    settings().setEditingBehaviorType(editingBehaviorType);
     return { };
 }
 
@@ -329,17 +315,7 @@ ExceptionOr<void> InternalSettings::setStorageBlockingPolicy(StorageBlockingPoli
 {
     if (!m_page)
         return Exception { InvalidAccessError };
-    switch (policy) {
-    case StorageBlockingPolicy::AllowAll:
-        settings().setStorageBlockingPolicy(SecurityOrigin::AllowAllStorage);
-        break;
-    case StorageBlockingPolicy::BlockThirdParty:
-        settings().setStorageBlockingPolicy(SecurityOrigin::BlockThirdPartyStorage);
-        break;
-    case StorageBlockingPolicy::BlockAll:
-        settings().setStorageBlockingPolicy(SecurityOrigin::BlockAllStorage);
-        break;
-    }
+    settings().setStorageBlockingPolicy(policy);
     return { };
 }
 
@@ -347,20 +323,7 @@ ExceptionOr<void> InternalSettings::setPDFImageCachingPolicy(PDFImageCachingPoli
 {
     if (!m_page)
         return Exception { InvalidAccessError };
-    switch (policy) {
-    case PDFImageCachingPolicy::Enabled:
-        settings().setPdfImageCachingPolicy(PDFImageCachingDisabled);
-        break;
-    case PDFImageCachingPolicy::BelowMemoryLimit:
-        settings().setPdfImageCachingPolicy(PDFImageCachingBelowMemoryLimit);
-        break;
-    case PDFImageCachingPolicy::Disabled:
-        settings().setPdfImageCachingPolicy(PDFImageCachingDisabled);
-        break;
-    case PDFImageCachingPolicy::ClipBoundsOnly:
-        settings().setPdfImageCachingPolicy(PDFImageCachingClipBoundsOnly);
-        break;
-    }
+    settings().setPdfImageCachingPolicy(policy);
     return { };
 }
 

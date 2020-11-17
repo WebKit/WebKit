@@ -31,11 +31,11 @@
 #include "Document.h"
 #include "FetchIdentifier.h"
 #include "Page.h"
-#include "SecurityOrigin.h"
 #include "ServiceWorkerDebuggable.h"
 #include "ServiceWorkerIdentifier.h"
 #include "ServiceWorkerInspectorProxy.h"
 #include "ServiceWorkerThread.h"
+#include "StorageBlockingPolicy.h"
 #include "WorkerDebuggerProxy.h"
 #include "WorkerLoaderProxy.h"
 #include <wtf/HashMap.h>
@@ -80,7 +80,7 @@ public:
     void fireActivateEvent();
 
 private:
-    WEBCORE_EXPORT ServiceWorkerThreadProxy(PageConfiguration&&, const ServiceWorkerContextData&, String&& userAgent, CacheStorageProvider&, SecurityOrigin::StorageBlockingPolicy);
+    WEBCORE_EXPORT ServiceWorkerThreadProxy(PageConfiguration&&, const ServiceWorkerContextData&, String&& userAgent, CacheStorageProvider&, StorageBlockingPolicy);
 
     WEBCORE_EXPORT static void networkStateChanged(bool isOnLine);
 

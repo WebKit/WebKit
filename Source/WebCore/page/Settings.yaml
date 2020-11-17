@@ -94,7 +94,7 @@ DataDetectorTypes:
   condition: ENABLE(DATA_DETECTION)
   defaultValue:
     WebCore:
-      default:
+      default: DataDetectorTypes::None
 
 DefaultVideoPosterURL:
   comment: >-
@@ -125,18 +125,18 @@ EditableLinkBehavior:
   refinedType: EditableLinkBehavior
   defaultValue:
     WebCore:
-      default: EditableLinkDefaultBehavior
+      default: EditableLinkBehavior::Default
 
 EditingBehaviorType:
   type: uint32_t
   refinedType: EditingBehaviorType
   defaultValue:
     WebCore:
-      PLATFORM(IOS_FAMILY): EditingIOSBehavior
-      OS(DARWIN): EditingMacBehavior
-      OS(WINDOWS): EditingWindowsBehavior
-      OS(UNIX): EditingUnixBehavior
-      default: EditingMacBehavior
+      PLATFORM(IOS_FAMILY): EditingBehaviorType::Ios
+      OS(DARWIN): EditingBehaviorType::Mac
+      OS(WINDOWS): EditingBehaviorType::Windows
+      OS(UNIX): EditingBehaviorType::Unix
+      default: EditingBehaviorType::Mac
 
 FixedBackgroundsPaintRelativeToDocument:
   type: bool
@@ -227,6 +227,13 @@ GeolocationFloorLevelEnabled:
   defaultValue:
     WebCore:
       default: true
+
+HTMLParserScriptingFlagPolicy:
+  type: uint32_t
+  refinedType: HTMLParserScriptingFlagPolicy
+  defaultValue:
+    WebCore:
+      default: HTMLParserScriptingFlagPolicy::OnlyIfScriptIsEnabled
 
 IdempotentModeAutosizingOnlyHonorsPercentages:
   type: bool
@@ -389,13 +396,6 @@ NeedsDeferKeyDownAndKeyPressTimersUntilNextEditingCommandQuirk:
     WebCore:
       default: false
 
-ParserScriptingFlagPolicy:
-  type: uint32_t
-  refinedType: ParserScriptingFlagPolicy
-  defaultValue:
-    WebCore:
-      default: ParserScriptingFlagPolicy::OnlyIfScriptIsEnabled
-
 PaymentRequestEnabled:
   type: bool
   condition: ENABLE(PAYMENT_REQUEST)
@@ -408,7 +408,8 @@ PDFImageCachingPolicy:
   refinedType: PDFImageCachingPolicy
   defaultValue:
     WebCore:
-      default: PDFImageCachingDefault
+      PLATFORM(IOS_FAMILY): PDFImageCachingPolicy::BelowMemoryLimit
+      default: PDFImageCachingPolicy::Enabled
 
 PreferMIMETypeForImages:
   type: bool
@@ -489,11 +490,11 @@ StorageAccessAPIPerPageScopeEnabled:
 
 StorageBlockingPolicy:
   type: uint32_t
-  refinedType: SecurityOrigin::StorageBlockingPolicy
+  refinedType: StorageBlockingPolicy
   webcoreOnChange: storageBlockingPolicyChanged
   defaultValue:
     WebCore:
-      default: SecurityOrigin::AllowAllStorage
+      default: StorageBlockingPolicy::AllowAll
 
 SystemLayoutDirection:
   type: uint32_t
@@ -523,7 +524,7 @@ TextDirectionSubmenuInclusionBehavior:
   refinedType: TextDirectionSubmenuInclusionBehavior
   defaultValue:
     WebCore:
-      default: TextDirectionSubmenuAutomaticallyIncluded
+      default: TextDirectionSubmenuInclusionBehavior::AutomaticallyIncluded
 
 TimeWithoutMouseMovementBeforeHidingControls:
   type: double

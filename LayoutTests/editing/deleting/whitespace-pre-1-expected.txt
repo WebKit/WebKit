@@ -46,12 +46,12 @@ after undo on mac:
 There should be three paragraphs in this editable region.
 The first one should be empty."
 
-on win:
+on windows:
 | "<#selection-caret>
 There should be three paragraphs in this editable region.
 The first one should be empty."
 
-after undo on win:
+after undo on windows:
 | "<#selection-anchor>You should not see this paragraph unless the command has been undone.<#selection-focus>
 There should be three paragraphs in this editable region.
 The first one should be empty."

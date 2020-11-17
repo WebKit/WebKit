@@ -94,7 +94,7 @@ private:
     void updateCachedImageIfNeeded(GraphicsContext&, const FloatRect& dstRect, const FloatRect& srcRect);
     bool cacheParametersMatch(GraphicsContext&, const FloatRect& dstRect, const FloatRect& srcRect) const;
 
-    PDFImageCachingPolicy m_pdfImageCachingPolicy { PDFImageCachingDefault };
+    PDFImageCachingPolicy m_pdfImageCachingPolicy { PDFImageCachingPolicy::Default };
 
 #if USE(PDFKIT_FOR_PDFDOCUMENTIMAGE)
     RetainPtr<PDFDocument> m_document;

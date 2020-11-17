@@ -1126,8 +1126,8 @@ void ContextMenuController::populate()
             createAndAppendWritingDirectionSubMenu(WritingDirectionMenuItem);
             appendItem(WritingDirectionMenuItem, m_contextMenu.get());
             if (Page* page = frame->page()) {
-                bool includeTextDirectionSubmenu = page->settings().textDirectionSubmenuInclusionBehavior() == TextDirectionSubmenuAlwaysIncluded
-                    || (page->settings().textDirectionSubmenuInclusionBehavior() == TextDirectionSubmenuAutomaticallyIncluded && frame->editor().hasBidiSelection());
+                bool includeTextDirectionSubmenu = page->settings().textDirectionSubmenuInclusionBehavior() == TextDirectionSubmenuInclusionBehavior::AlwaysIncluded
+                    || (page->settings().textDirectionSubmenuInclusionBehavior() == TextDirectionSubmenuInclusionBehavior::AutomaticallyIncluded && frame->editor().hasBidiSelection());
                 if (includeTextDirectionSubmenu) {
                     ContextMenuItem TextDirectionMenuItem(SubmenuType, ContextMenuItemTagTextDirectionMenu, contextMenuItemTagTextDirectionMenu());
                     createAndAppendTextDirectionSubMenu(TextDirectionMenuItem);

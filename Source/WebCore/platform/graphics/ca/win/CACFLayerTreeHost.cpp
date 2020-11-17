@@ -37,11 +37,12 @@
 #include "Logging.h"
 #include "PlatformCALayerWin.h"
 #include "PlatformLayer.h"
+#include "Settings.h"
 #include "TiledBacking.h"
 #include "WKCACFViewLayerTreeHost.h"
 #include "WebCoreInstanceHandle.h"
-#include <limits.h>
 #include <QuartzCore/CABase.h>
+#include <limits.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/UniqueArray.h>
 #include <wtf/win/GDIObject.h>

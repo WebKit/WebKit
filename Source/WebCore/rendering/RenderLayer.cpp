@@ -7062,7 +7062,8 @@ bool RenderLayer::invalidateEventRegion(EventRegionInvalidationReason reason)
         auto& view = renderer().view();
         LOG_WITH_STREAM(EventRegions, stream << " calling setNeedsEventRegionUpdateForNonCompositedFrame on " << view);
         view.setNeedsEventRegionUpdateForNonCompositedFrame();
-        if (renderer().settings().visibleDebugOverlayRegions() & (TouchActionRegion | EditableElementRegion | WheelEventHandlerRegion))
+        auto visibleDebugOverlayRegions = OptionSet<DebugOverlayRegions>::fromRaw(renderer().settings().visibleDebugOverlayRegions());
+        if (visibleDebugOverlayRegions.containsAny({ DebugOverlayRegions::TouchActionRegion, DebugOverlayRegions::EditableElementRegion, DebugOverlayRegions::WheelEventHandlerRegion }))
             view.setNeedsRepaintHackAfterCompositingLayerUpdateForDebugOverlaysOnly();
         view.compositor().scheduleCompositingLayerUpdate();
     }

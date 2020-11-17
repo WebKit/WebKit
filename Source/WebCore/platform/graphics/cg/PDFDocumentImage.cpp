@@ -201,7 +201,7 @@ void PDFDocumentImage::decodedSizeChanged(size_t newCachedBytes)
 void PDFDocumentImage::updateCachedImageIfNeeded(GraphicsContext& context, const FloatRect& dstRect, const FloatRect& srcRect)
 {
     // Clipped option is for testing only. Force re-caching the PDF with each draw.
-    bool forceUpdateCachedImage = m_pdfImageCachingPolicy == PDFImageCachingClipBoundsOnly || !m_cachedImageBuffer;
+    bool forceUpdateCachedImage = m_pdfImageCachingPolicy == PDFImageCachingPolicy::ClipBoundsOnly || !m_cachedImageBuffer;
     if (!forceUpdateCachedImage && cacheParametersMatch(context, dstRect, srcRect)) {
         // Adjust the view-port rectangles if no re-caching will happen.
         m_cachedImageRect.move(FloatSize(dstRect.location() - m_cachedDestinationRect.location()));
@@ -210,17 +210,17 @@ void PDFDocumentImage::updateCachedImageIfNeeded(GraphicsContext& context, const
     }
 
     switch (m_pdfImageCachingPolicy) {
-    case PDFImageCachingDisabled:
+    case PDFImageCachingPolicy::Disabled:
         return;
-    case PDFImageCachingBelowMemoryLimit:
+    case PDFImageCachingPolicy::BelowMemoryLimit:
         // Keep the memory used by the cached image below some threshold, otherwise WebKit process
         // will jetsam if it exceeds its memory limit. Only a rectangle from the PDF may be cached.
         m_cachedImageRect = cachedImageRect(context, dstRect);
         break;
-    case PDFImageCachingClipBoundsOnly:
+    case PDFImageCachingPolicy::ClipBoundsOnly:
         m_cachedImageRect = intersection(context.clipBounds(), dstRect);
         break;
-    case PDFImageCachingEnabled:
+    case PDFImageCachingPolicy::Enabled:
         m_cachedImageRect = dstRect;
         break;
     }
@@ -228,7 +228,7 @@ void PDFDocumentImage::updateCachedImageIfNeeded(GraphicsContext& context, const
     FloatSize cachedImageSize = FloatRect(enclosingIntRect(m_cachedImageRect)).size();
 
     // Cache the PDF image only if the size of the new image won't exceed the cache threshold.
-    if (m_pdfImageCachingPolicy == PDFImageCachingBelowMemoryLimit) {
+    if (m_pdfImageCachingPolicy == PDFImageCachingPolicy::BelowMemoryLimit) {
         IntSize scaledSize = ImageBuffer::compatibleBufferSize(cachedImageSize, context);
         if (s_allDecodedDataSize + scaledSize.unclampedArea() * 4 - m_cachedBytes > s_maxDecodedDataSize) {
             destroyDecodedData();

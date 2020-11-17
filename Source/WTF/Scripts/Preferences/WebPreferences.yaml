@@ -706,7 +706,7 @@ EditableLinkBehavior:
     WebKitLegacy:
       default: WebKitEditableLinkDefaultBehavior
     WebKit:
-      default: WebCore::EditableLinkNeverLive
+      default: WebCore::EditableLinkBehavior::NeverLive
 
 EnableInheritURIQueryComponent:
   type: bool
@@ -2173,7 +2173,7 @@ StorageBlockingPolicy:
     WebKitLegacy:
       default: WebAllowAllStorage
     WebKit:
-      default: WebCore::SecurityOrigin::BlockThirdPartyStorage
+      default: WebCore::StorageBlockingPolicy::BlockThirdParty
 
 SubresourceIntegrityEnabled:
   type: bool

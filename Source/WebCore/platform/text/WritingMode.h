@@ -31,17 +31,10 @@
 
 #pragma once
 
+#include "TextDirection.h"
 #include <array>
-#include <wtf/EnumTraits.h>
 
 namespace WebCore {
-
-enum class TextDirection : bool { LTR, RTL };
-
-inline bool isLeftToRightDirection(TextDirection direction)
-{
-    return direction == TextDirection::LTR;
-}
 
 enum class WritingMode : uint8_t {
     TopToBottom = 0, // horizontal-tb
@@ -50,67 +43,68 @@ enum class WritingMode : uint8_t {
     RightToLeft = 3, // vertical-rl
 };
 
-#define MAKE_TEXT_FLOW(writingMode, direction)  (static_cast<unsigned>(writingMode) << 1 | static_cast<unsigned>(direction))
+constexpr unsigned makeTextFlowInitalizer(WritingMode writingMode, TextDirection direction)
+{
+    return static_cast<unsigned>(writingMode) << 1 | static_cast<unsigned>(direction);
+}
 
 // Define the text flow in terms of the writing mode and the text direction. The first
 // part is the line growing direction and the second part is the block growing direction.
 enum TextFlow {
-    InlineEastBlockSouth = MAKE_TEXT_FLOW(WritingMode::TopToBottom, TextDirection::LTR),
-    InlineWestBlockSouth = MAKE_TEXT_FLOW(WritingMode::TopToBottom, TextDirection::RTL),
-    InlineEastBlockNorth = MAKE_TEXT_FLOW(WritingMode::BottomToTop, TextDirection::LTR),
-    InlineWestBlockNorth = MAKE_TEXT_FLOW(WritingMode::BottomToTop, TextDirection::RTL),
-    InlineSouthBlockEast = MAKE_TEXT_FLOW(WritingMode::LeftToRight, TextDirection::LTR),
-    InlineSouthBlockWest = MAKE_TEXT_FLOW(WritingMode::LeftToRight, TextDirection::RTL),
-    InlineNorthBlockEast = MAKE_TEXT_FLOW(WritingMode::RightToLeft, TextDirection::LTR),
-    InlineNorthBlockWest = MAKE_TEXT_FLOW(WritingMode::RightToLeft, TextDirection::RTL)
+    InlineEastBlockSouth = makeTextFlowInitalizer(WritingMode::TopToBottom, TextDirection::LTR),
+    InlineWestBlockSouth = makeTextFlowInitalizer(WritingMode::TopToBottom, TextDirection::RTL),
+    InlineEastBlockNorth = makeTextFlowInitalizer(WritingMode::BottomToTop, TextDirection::LTR),
+    InlineWestBlockNorth = makeTextFlowInitalizer(WritingMode::BottomToTop, TextDirection::RTL),
+    InlineSouthBlockEast = makeTextFlowInitalizer(WritingMode::LeftToRight, TextDirection::LTR),
+    InlineSouthBlockWest = makeTextFlowInitalizer(WritingMode::LeftToRight, TextDirection::RTL),
+    InlineNorthBlockEast = makeTextFlowInitalizer(WritingMode::RightToLeft, TextDirection::LTR),
+    InlineNorthBlockWest = makeTextFlowInitalizer(WritingMode::RightToLeft, TextDirection::RTL)
 };
 
-inline TextFlow makeTextFlow(WritingMode writingMode, TextDirection direction)
+constexpr inline TextFlow makeTextFlow(WritingMode writingMode, TextDirection direction)
 {
-    return static_cast<TextFlow>(MAKE_TEXT_FLOW(writingMode, direction));
+    return static_cast<TextFlow>(makeTextFlowInitalizer(writingMode, direction));
 }
 
-#undef MAKE_TEXT_FLOW
+constexpr unsigned TextFlowReversedMask = 1;
+constexpr unsigned TextFlowFlippedMask = 2;
+constexpr unsigned TextFlowVerticalMask = 4;
 
-const unsigned TextFlowReversedMask = 1;
-const unsigned TextFlowFlippedMask = 2;
-const unsigned TextFlowVerticalMask = 4;
-
-inline bool isReversedTextFlow(TextFlow textflow)
+constexpr inline bool isReversedTextFlow(TextFlow textflow)
 {
     return textflow & TextFlowReversedMask;
 }
 
-inline bool isFlippedTextFlow(TextFlow textflow)
+constexpr inline bool isFlippedTextFlow(TextFlow textflow)
 {
     return textflow & TextFlowFlippedMask;
 }
 
-inline bool isVerticalTextFlow(TextFlow textflow)
+constexpr inline bool isVerticalTextFlow(TextFlow textflow)
 {
     return textflow & TextFlowVerticalMask;
 }
 
 // Lines have vertical orientation; modes vertical-lr or vertical-rl.
-inline bool isVerticalWritingMode(WritingMode writingMode)
+constexpr inline bool isVerticalWritingMode(WritingMode writingMode)
 {
     return isVerticalTextFlow(makeTextFlow(writingMode, TextDirection::LTR));
 }
 
 // Block progression increases in the opposite direction to normal; modes vertical-rl or horizontal-bt.
-inline bool isFlippedWritingMode(WritingMode writingMode)
+constexpr inline bool isFlippedWritingMode(WritingMode writingMode)
 {
     return isFlippedTextFlow(makeTextFlow(writingMode, TextDirection::LTR));
 }
 
 // Lines have horizontal orientation; modes horizontal-tb or horizontal-bt.
-inline bool isHorizontalWritingMode(WritingMode writingMode)
+constexpr inline bool isHorizontalWritingMode(WritingMode writingMode)
 {
     return !isVerticalWritingMode(writingMode);
 }
 
 // Bottom of the line occurs earlier in the block; modes vertical-lr or horizontal-bt.
-inline bool isFlippedLinesWritingMode(WritingMode writingMode)
+constexpr inline bool isFlippedLinesWritingMode(WritingMode writingMode)
 {
     return isVerticalWritingMode(writingMode) != isFlippedWritingMode(writingMode);
 }
@@ -131,25 +125,25 @@ enum class BoxSide : uint8_t {
 
 constexpr std::array<BoxSide, 4> allBoxSides = { BoxSide::Top, BoxSide::Right, BoxSide::Bottom, BoxSide::Left };
 
-inline bool isHorizontalPhysicalSide(BoxSide physicalSide)
+constexpr inline bool isHorizontalPhysicalSide(BoxSide physicalSide)
 {
     return physicalSide == BoxSide::Left || physicalSide == BoxSide::Right;
 }
 
-inline BoxSide mirrorPhysicalSide(BoxSide physicalSide)
+constexpr inline BoxSide mirrorPhysicalSide(BoxSide physicalSide)
 {
     // top <-> bottom and left <-> right conversion
     return static_cast<BoxSide>((static_cast<int>(physicalSide) + 2) % 4);
 }
 
-inline BoxSide rotatePhysicalSide(BoxSide physicalSide)
+constexpr inline BoxSide rotatePhysicalSide(BoxSide physicalSide)
 {
     // top <-> left and right <-> bottom conversion
     bool horizontalSide = isHorizontalPhysicalSide(physicalSide);
     return static_cast<BoxSide>((static_cast<int>(physicalSide) + (horizontalSide ? 1 : 3)) % 4);
 }
 
-inline BoxSide mapLogicalSideToPhysicalSide(TextFlow textflow, LogicalBoxSide logicalSide)
+constexpr inline BoxSide mapLogicalSideToPhysicalSide(TextFlow textflow, LogicalBoxSide logicalSide)
 {
     BoxSide physicalSide = static_cast<BoxSide>(logicalSide);
     bool horizontalSide = isHorizontalPhysicalSide(physicalSide);
@@ -163,7 +157,7 @@ inline BoxSide mapLogicalSideToPhysicalSide(TextFlow textflow, LogicalBoxSide lo
     return physicalSide;
 }
 
-inline BoxSide mapLogicalSideToPhysicalSide(WritingMode writingMode, LogicalBoxSide logicalSide)
+constexpr inline BoxSide mapLogicalSideToPhysicalSide(WritingMode writingMode, LogicalBoxSide logicalSide)
 {
     // Set the direction such that side is mirrored if isFlippedWritingMode() is true
     TextDirection direction = isFlippedWritingMode(writingMode) ? TextDirection::RTL : TextDirection::LTR;

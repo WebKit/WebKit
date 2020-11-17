@@ -28,73 +28,36 @@
 
 #include "ClipboardAccessPolicy.h"
 #include "ContentType.h"
-#include "EditingBehaviorTypes.h"
-#include "IntSize.h"
-#include "SecurityOrigin.h"
+#include "EditableLinkBehavior.h"
+#include "EditingBehaviorType.h"
+#include "FontLoadTimingOverride.h"
+#include "FontRenderingMode.h"
+#include "ForcedAccessibilityValue.h"
+#include "FrameFlattening.h"
+#include "HTMLParserScriptingFlagPolicy.h"
+#include "PDFImageCachingPolicy.h"
+#include "StorageBlockingPolicy.h"
 #include "StorageMap.h"
-#include "TextFlags.h"
+#include "TextDirection.h"
+#include "TextDirectionSubmenuInclusionBehavior.h"
 #include "Timer.h"
-#include "WritingMode.h"
+#include "UserInterfaceDirectionPolicy.h"
 #include <JavaScriptCore/RuntimeFlags.h>
 #include <unicode/uscript.h>
-#include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
+#include <wtf/Seconds.h>
 #include <wtf/URL.h>
+#include <wtf/Vector.h>
 #include <wtf/text/AtomString.h>
-#include <wtf/text/AtomStringHash.h>
+
+#if ENABLE(DATA_DETECTION)
+#include "DataDetectorTypes.h"
+#endif
 
 namespace WebCore {
 
 class FontGenericFamilies;
 class Page;
-
-enum class DataDetectorTypes : uint32_t;
-
-enum EditableLinkBehavior {
-    EditableLinkDefaultBehavior,
-    EditableLinkAlwaysLive,
-    EditableLinkOnlyLiveWithShiftKey,
-    EditableLinkLiveWhenNotFocused,
-    EditableLinkNeverLive
-};
-
-enum TextDirectionSubmenuInclusionBehavior {
-    TextDirectionSubmenuNeverIncluded,
-    TextDirectionSubmenuAutomaticallyIncluded,
-    TextDirectionSubmenuAlwaysIncluded
-};
-
-enum DebugOverlayRegionFlags {
-    NonFastScrollableRegion = 1 << 0,
-    WheelEventHandlerRegion = 1 << 1,
-    TouchActionRegion = 1 << 2,
-    EditableElementRegion = 1 << 3,
-};
-
-enum class UserInterfaceDirectionPolicy {
-    Content,
-    System
-};
-
-enum PDFImageCachingPolicy {
-    PDFImageCachingEnabled,
-    PDFImageCachingBelowMemoryLimit,
-    PDFImageCachingDisabled,
-    PDFImageCachingClipBoundsOnly,
-#if PLATFORM(IOS_FAMILY)
-    PDFImageCachingDefault = PDFImageCachingBelowMemoryLimit
-#else
-    PDFImageCachingDefault = PDFImageCachingEnabled
-#endif
-};
-
-enum class FrameFlattening {
-    Disabled,
-    EnabledForNonFullScreenIFrames,
-    FullyEnabled
-};
-
-typedef unsigned DebugOverlayRegions;
 
 class SettingsBase {
     WTF_MAKE_NONCOPYABLE(SettingsBase); WTF_MAKE_FAST_ALLOCATED;
@@ -102,10 +65,6 @@ public:
     ~SettingsBase();
 
     void pageDestroyed() { m_page = nullptr; }
-
-    enum class FontLoadTimingOverride : uint8_t { None, Block, Swap, Failure };
-    enum class ParserScriptingFlagPolicy : uint8_t { OnlyIfScriptIsEnabled, Enabled };
-    enum class ForcedAccessibilityValue : uint8_t { System, On, Off };
 
 #if ENABLE(MEDIA_SOURCE)
     WEBCORE_EXPORT static bool platformDefaultMediaSourceEnabled();

@@ -188,6 +188,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     accessibility/AccessibilityObjectInterface.h
     accessibility/AccessibilityRenderObject.h
     accessibility/AccessibilityScrollView.h
+    accessibility/ForcedAccessibilityValue.h
 
     accessibility/isolatedtree/AXIsolatedObject.h
     accessibility/isolatedtree/AXIsolatedTree.h
@@ -353,6 +354,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     css/DeprecatedCSSOMRect.h
     css/DeprecatedCSSOMValue.h
     css/DeprecatedCSSOMValueList.h
+    css/FontLoadTimingOverride.h
     css/LengthFunctions.h
     css/MediaList.h
     css/MediaQueryEvaluator.h
@@ -526,9 +528,10 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     editing/DictationContext.h
     editing/DictionaryPopupInfo.h
     editing/EditAction.h
+    editing/EditableLinkBehavior.h
     editing/Editing.h
     editing/EditingBehavior.h
-    editing/EditingBehaviorTypes.h
+    editing/EditingBehaviorType.h
     editing/EditingBoundary.h
     editing/EditingStyle.h
     editing/Editor.h
@@ -694,6 +697,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     html/parser/ParsingUtilities.h
     html/parser/HTMLParserIdioms.h
+    html/parser/HTMLParserScriptingFlagPolicy.h
 
     html/track/AudioTrack.h
     html/track/TextTrack.h
@@ -832,6 +836,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/DOMWindowExtension.h
     page/DOMWindowProperty.h
     page/DatabaseProvider.h
+    page/DebugOverlayRegions.h
     page/DebugPageOverlays.h
     page/DeprecatedGlobalSettings.h
     page/DeviceClient.h
@@ -849,6 +854,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/FocusDirection.h
     page/Frame.h
     page/FrameDestructionObserver.h
+    page/FrameFlattening.h
     page/FrameIdentifier.h
     page/FrameSnapshotting.h
     page/FrameTree.h
@@ -861,6 +867,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/MediaProducer.h
     page/MemoryRelease.h
     page/NavigatorIsLoggedIn.h
+    page/PDFImageCachingPolicy.h
     page/Page.h
     page/PageConfiguration.h
     page/PageConsoleClient.h
@@ -897,12 +904,15 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/SocketProvider.h
     page/SpeechRecognitionProvider.h
     page/SpeechSynthesisClient.h
+    page/StorageBlockingPolicy.h
     page/SuspendableTimer.h
+    page/TextDirectionSubmenuInclusionBehavior.h
     page/TextIndicator.h
     page/UserContentController.h
     page/UserContentProvider.h
     page/UserContentTypes.h
     page/UserContentURLPattern.h
+    page/UserInterfaceDirectionPolicy.h
     page/UserMessageHandler.h
     page/UserMessageHandlerDescriptor.h
     page/UserMessageHandlersNamespace.h
@@ -1382,11 +1392,13 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/sql/SQLiteTransaction.h
 
     platform/text/BidiContext.h
+    platform/text/FontRenderingMode.h
     platform/text/StringWithDirection.h
     platform/text/TextBoundaries.h
     platform/text/TextCheckerClient.h
     platform/text/TextChecking.h
     platform/text/TextCodec.h
+    platform/text/TextDirection.h
     platform/text/TextEncoding.h
     platform/text/TextEncodingRegistry.h
     platform/text/TextFlags.h

@@ -207,18 +207,18 @@ WebCore::EditableLinkBehavior core(WebKitEditableLinkBehavior editableLinkBehavi
     using namespace WebCore;
     switch (editableLinkBehavior) {
         case WebKitEditableLinkDefaultBehavior:
-            return EditableLinkDefaultBehavior;
+            return EditableLinkBehavior::Default;
         case WebKitEditableLinkAlwaysLive:
-            return EditableLinkAlwaysLive;
+            return EditableLinkBehavior::AlwaysLive;
         case WebKitEditableLinkOnlyLiveWithShiftKey:
-            return EditableLinkOnlyLiveWithShiftKey;
+            return EditableLinkBehavior::OnlyLiveWithShiftKey;
         case WebKitEditableLinkLiveWhenNotFocused:
-            return EditableLinkLiveWhenNotFocused;
+            return EditableLinkBehavior::LiveWhenNotFocused;
         case WebKitEditableLinkNeverLive:
-            return EditableLinkNeverLive;
+            return EditableLinkBehavior::NeverLive;
     }
     ASSERT_NOT_REACHED();
-    return EditableLinkDefaultBehavior;
+    return EditableLinkBehavior::Default;
 }
 
 WebCore::TextDirectionSubmenuInclusionBehavior core(WebTextDirectionSubmenuInclusionBehavior behavior)
@@ -226,14 +226,14 @@ WebCore::TextDirectionSubmenuInclusionBehavior core(WebTextDirectionSubmenuInclu
     using namespace WebCore;
     switch (behavior) {
         case WebTextDirectionSubmenuNeverIncluded:
-            return TextDirectionSubmenuNeverIncluded;
+            return TextDirectionSubmenuInclusionBehavior::NeverIncluded;
         case WebTextDirectionSubmenuAutomaticallyIncluded:
-            return TextDirectionSubmenuAutomaticallyIncluded;
+            return TextDirectionSubmenuInclusionBehavior::AutomaticallyIncluded;
         case WebTextDirectionSubmenuAlwaysIncluded:
-            return TextDirectionSubmenuAlwaysIncluded;
+            return TextDirectionSubmenuInclusionBehavior::AlwaysIncluded;
     }
     ASSERT_NOT_REACHED();
-    return TextDirectionSubmenuNeverIncluded;
+    return TextDirectionSubmenuInclusionBehavior::NeverIncluded;
 }
 
 #if PLATFORM(IOS_FAMILY)

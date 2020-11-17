@@ -39,6 +39,7 @@
 #include "DOMRect.h"
 #include "DOMRectList.h"
 #include "DatabaseProvider.h"
+#include "DebugOverlayRegions.h"
 #include "DebugPageOverlays.h"
 #include "DiagnosticLoggingClient.h"
 #include "DiagnosticLoggingKeys.h"
@@ -944,7 +945,7 @@ void Page::setEditableRegionEnabled(bool enabled)
 
 bool Page::shouldBuildEditableRegion() const
 {
-    return m_isEditableRegionEnabled || m_settings->visibleDebugOverlayRegions() & EditableElementRegion;
+    return m_isEditableRegionEnabled || OptionSet<DebugOverlayRegions>::fromRaw(m_settings->visibleDebugOverlayRegions()).contains(DebugOverlayRegions::EditableElementRegion);
 }
 
 #endif

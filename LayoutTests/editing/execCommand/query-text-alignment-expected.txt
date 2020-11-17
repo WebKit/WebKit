@@ -35,7 +35,7 @@ PASS queryCommand('format') returns "center" when selecting first position of "<
 PASS queryCommand('format') returns "left" when selecting first position of "<div align="left">hello</div>"
 PASS queryCommand('format') returns "right" when selecting first position of "<div align="right">hello</div>"
 
-Tests for win
+Tests for windows
 PASS queryCommand('format') returns "left" when selecting middle of "<p>hello</p><p>world</p>"
 PASS queryCommand('format') returns "" when selecting middle of "<p align="right">hello</p><p>world</p>"
 PASS queryCommand('format') returns "left" when selecting middle of "<p>hello</p><p align="left">world</p>"

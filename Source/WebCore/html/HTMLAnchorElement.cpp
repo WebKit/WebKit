@@ -214,28 +214,23 @@ void HTMLAnchorElement::defaultEventHandler(Event& event)
 void HTMLAnchorElement::setActive(bool down, bool pause)
 {
     if (hasEditableStyle()) {
-        EditableLinkBehavior editableLinkBehavior = document().settings().editableLinkBehavior();
-            
-        switch (editableLinkBehavior) {
-            default:
-            case EditableLinkDefaultBehavior:
-            case EditableLinkAlwaysLive:
-                break;
+        switch (document().settings().editableLinkBehavior()) {
+        case EditableLinkBehavior::Default:
+        case EditableLinkBehavior::AlwaysLive:
+            break;
 
-            case EditableLinkNeverLive:
+        // Don't set the link to be active if the current selection is in the same editable block as
+        // this link
+        case EditableLinkBehavior::LiveWhenNotFocused:
+            if (down && document().frame() && document().frame()->selection().selection().rootEditableElement() == rootEditableElement())
                 return;
+            break;
+        
+        case EditableLinkBehavior::NeverLive:
+        case EditableLinkBehavior::OnlyLiveWithShiftKey:
+            return;
 
-            // Don't set the link to be active if the current selection is in the same editable block as
-            // this link
-            case EditableLinkLiveWhenNotFocused:
-                if (down && document().frame() && document().frame()->selection().selection().rootEditableElement() == rootEditableElement())
-                    return;
-                break;
-            
-            case EditableLinkOnlyLiveWithShiftKey:
-                return;
         }
-
     }
     
     HTMLElement::setActive(down, pause);
@@ -550,19 +545,19 @@ bool HTMLAnchorElement::treatLinkAsLiveForEventType(EventType eventType) const
         return true;
 
     switch (document().settings().editableLinkBehavior()) {
-    case EditableLinkDefaultBehavior:
-    case EditableLinkAlwaysLive:
+    case EditableLinkBehavior::Default:
+    case EditableLinkBehavior::AlwaysLive:
         return true;
 
-    case EditableLinkNeverLive:
+    case EditableLinkBehavior::NeverLive:
         return false;
 
     // If the selection prior to clicking on this link resided in the same editable block as this link,
     // and the shift key isn't pressed, we don't want to follow the link.
-    case EditableLinkLiveWhenNotFocused:
+    case EditableLinkBehavior::LiveWhenNotFocused:
         return eventType == MouseEventWithShiftKey || (eventType == MouseEventWithoutShiftKey && rootEditableElementForSelectionOnMouseDown() != rootEditableElement());
 
-    case EditableLinkOnlyLiveWithShiftKey:
+    case EditableLinkBehavior::OnlyLiveWithShiftKey:
         return eventType == MouseEventWithShiftKey;
     }
 

@@ -24,11 +24,11 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-enum EditingBehavior { "mac", "win", "unix", "ios" };
+enum EditingBehaviorType { "mac", "windows", "unix", "ios" };
 enum FontLoadTimingOverride { "None", "Block", "Swap", "Failure" };
 enum ForcedAccessibilityValue { "system", "on", "off" };
 enum FrameFlatteningValue { "Disabled", "EnabledForNonFullScreenIFrames", "FullyEnabled" };
-enum PDFImageCachingPolicy { "enabled", "belowMemoryLimit", "disabled", "clipBoundsOnly" };
+enum PDFImageCachingPolicy { "Enabled", "BelowMemoryLimit", "Disabled", "ClipBoundsOnly" };
 enum StorageBlockingPolicy { "AllowAll", "BlockThirdParty", "BlockAll" };
 enum SystemLayoutDirection { "LTR", "RTL" };
 enum TrackKind { "Subtitles", "Captions", "TextDescriptions" };
@@ -52,7 +52,7 @@ enum UserInterfaceDirectionPolicy { "Content", "System" };
     [MayThrowException] undefined setTextAutosizingWindowSizeOverride(long width, long height);
     [MayThrowException] undefined setTimeWithoutMouseMovementBeforeHidingControls(unrestricted double intervalInSeconds);
     [MayThrowException] undefined setMinimumTimerInterval(unrestricted double intervalInSeconds);
-    [MayThrowException] undefined setEditingBehavior(EditingBehavior behavior);
+    [MayThrowException] undefined setEditingBehavior(EditingBehaviorType behavior);
     [MayThrowException] undefined setStorageBlockingPolicy(StorageBlockingPolicy policy);
     [MayThrowException] undefined setPDFImageCachingPolicy(PDFImageCachingPolicy policy);
     [MayThrowException] undefined setFrameFlattening(FrameFlatteningValue frameFlattening);

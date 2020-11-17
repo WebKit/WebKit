@@ -1,3 +1,36 @@
+2020-11-16  Sam Weinig  <weinig@apple.com>
+
+        Standardize enums that are used by Settings in preperation for autogeneration
+        https://bugs.webkit.org/show_bug.cgi?id=218960
+
+        Reviewed by Tim Horton.
+
+        Update enum uses for renames and scoped syntax use.
+
+        * UIProcess/API/C/WKAPICast.h:
+        (WebKit::toAPI):
+        (WebKit::toEditableLinkBehavior):
+        (WebKit::toStorageBlockingPolicy):
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetEditableLinkBehavior):
+        (WKPreferencesSetStorageBlockingPolicy):
+        (WKPreferencesGetStorageBlockingPolicy):
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (toStorageBlockingPolicy):
+        (toAPI):
+        (-[WKPreferences _storageBlockingPolicy]):
+        (-[WKPreferences _setStorageBlockingPolicy:]):
+        (toEditableLinkBehavior):
+        (-[WKPreferences _setEditableLinkBehavior:]):
+        * UIProcess/WebPreferences.cpp:
+        (WebKit::WebPreferences::createWithLegacyDefaults):
+        * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+        (WebKit::WebSWContextManagerConnection::updatePreferencesStore):
+        * WebProcess/Storage/WebSWContextManagerConnection.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+        (WebKit::WebPage::detectDataInAllFrames):
+
 2020-11-16  John Wilander  <wilander@apple.com>
 
         NetworkDataTaskCocoa::applyCookiePolicyForThirdPartyCNAMECloaking() redacts the cookie name in log output on customer builds

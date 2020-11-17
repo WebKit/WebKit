@@ -27,6 +27,7 @@
 #include "AdjustViewSizeOrNot.h"
 #include "Color.h"
 #include "ContainerNode.h"
+#include "FrameFlattening.h"
 #include "FrameViewLayoutContext.h"
 #include "GraphicsContext.h"
 #include "LayoutMilestone.h"
@@ -79,8 +80,6 @@ namespace Display {
 class View;
 }
 #endif
-
-enum class FrameFlattening;
 
 Pagination::Mode paginationModeForRenderStyle(const RenderStyle&);
 

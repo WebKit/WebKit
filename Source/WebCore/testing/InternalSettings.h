@@ -26,22 +26,14 @@
 
 #pragma once
 
-// FIXME (121927): This include should not be needed.
-#include <wtf/text/AtomStringHash.h>
-
-#include "EditingBehaviorTypes.h"
 #include "ExceptionOr.h"
 #include "FontGenericFamilies.h"
-#include "IntSize.h"
 #include "InternalSettingsGenerated.h"
-#include "SecurityOrigin.h"
 #include "Settings.h"
-#include "WritingMode.h"
 
 namespace WebCore {
 
 class Page;
-class Settings;
 
 class InternalSettings : public InternalSettingsGenerated {
 public:
@@ -64,13 +56,13 @@ public:
     ExceptionOr<void> setMinimumTimerInterval(double intervalInSeconds);
     ExceptionOr<void> setTimeWithoutMouseMovementBeforeHidingControls(double intervalInSeconds);
 
-    enum class EditingBehavior : uint8_t { Mac, Win, Unix, Ios };
-    ExceptionOr<void> setEditingBehavior(EditingBehavior);
+    using EditingBehaviorType = WebCore::EditingBehaviorType;
+    ExceptionOr<void> setEditingBehavior(EditingBehaviorType);
     
-    enum class PDFImageCachingPolicy : uint8_t { Enabled, BelowMemoryLimit, Disabled, ClipBoundsOnly };
+    using PDFImageCachingPolicy = WebCore::PDFImageCachingPolicy;
     ExceptionOr<void> setPDFImageCachingPolicy(PDFImageCachingPolicy);
 
-    enum class StorageBlockingPolicy : uint8_t { AllowAll, BlockThirdParty, BlockAll };
+    using StorageBlockingPolicy = WebCore::StorageBlockingPolicy;
     ExceptionOr<void> setStorageBlockingPolicy(StorageBlockingPolicy);
     
     using UserInterfaceDirectionPolicy = WebCore::UserInterfaceDirectionPolicy;
@@ -79,13 +71,13 @@ public:
     using SystemLayoutDirection = TextDirection;
     ExceptionOr<void> setSystemLayoutDirection(SystemLayoutDirection);
 
-    using FontLoadTimingOverride = Settings::FontLoadTimingOverride;
+    using FontLoadTimingOverride = WebCore::FontLoadTimingOverride;
     ExceptionOr<void> setFontLoadTimingOverride(FontLoadTimingOverride);
 
     using FrameFlatteningValue = FrameFlattening;
     ExceptionOr<void> setFrameFlattening(FrameFlatteningValue);
 
-    using ForcedAccessibilityValue = Settings::ForcedAccessibilityValue;
+    using ForcedAccessibilityValue = WebCore::ForcedAccessibilityValue;
     ForcedAccessibilityValue forcedColorsAreInvertedAccessibilityValue() const;
     void setForcedColorsAreInvertedAccessibilityValue(ForcedAccessibilityValue);
     ForcedAccessibilityValue forcedDisplayIsMonochromeAccessibilityValue() const;
@@ -148,18 +140,18 @@ private:
         ScriptFontFamilyMap m_cursiveFontFamilies;
         ScriptFontFamilyMap m_fantasyFontFamilies;
         ScriptFontFamilyMap m_pictographFontFamilies;
-        EditingBehaviorType m_originalEditingBehavior;
         Seconds m_minimumDOMTimerInterval;
         Seconds m_originalTimeWithoutMouseMovementBeforeHidingControls;
-        SecurityOrigin::StorageBlockingPolicy m_storageBlockingPolicy;
-        UserInterfaceDirectionPolicy m_userInterfaceDirectionPolicy;
+        WebCore::EditingBehaviorType m_originalEditingBehavior;
+        WebCore::StorageBlockingPolicy m_storageBlockingPolicy;
+        WebCore::UserInterfaceDirectionPolicy m_userInterfaceDirectionPolicy;
         TextDirection m_systemLayoutDirection;
         WebCore::PDFImageCachingPolicy m_pdfImageCachingPolicy;
-        Settings::ForcedAccessibilityValue m_forcedColorsAreInvertedAccessibilityValue;
-        Settings::ForcedAccessibilityValue m_forcedDisplayIsMonochromeAccessibilityValue;
-        Settings::ForcedAccessibilityValue m_forcedPrefersReducedMotionAccessibilityValue;
-        Settings::FontLoadTimingOverride m_fontLoadTimingOverride;
-        FrameFlattening m_frameFlattening;
+        WebCore::ForcedAccessibilityValue m_forcedColorsAreInvertedAccessibilityValue;
+        WebCore::ForcedAccessibilityValue m_forcedDisplayIsMonochromeAccessibilityValue;
+        WebCore::ForcedAccessibilityValue m_forcedPrefersReducedMotionAccessibilityValue;
+        WebCore::FontLoadTimingOverride m_fontLoadTimingOverride;
+        WebCore::FrameFlattening m_frameFlattening;
 
         // RuntimeEnabledFeatures
         bool m_webGL2Enabled;

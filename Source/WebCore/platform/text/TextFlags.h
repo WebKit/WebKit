@@ -44,13 +44,6 @@ enum class FontSmoothingMode : uint8_t {
     SubpixelAntialiased
 };
 
-// This setting is used to provide ways of switching between multiple rendering modes that may have different
-// metrics. It is used to switch between CG and GDI text on Windows.
-enum class FontRenderingMode : uint8_t {
-    Normal,
-    Alternate
-};
-
 enum class FontOrientation : uint8_t {
     Horizontal,
     Vertical
@@ -644,14 +637,6 @@ template<> struct EnumTraits<WebCore::FontSmoothingMode> {
     WebCore::FontSmoothingMode::Antialiased,
     WebCore::FontSmoothingMode::SubpixelAntialiased,
     WebCore::FontSmoothingMode::AutoSmoothing
-    >;
-};
-
-template<> struct EnumTraits<WebCore::FontRenderingMode> {
-    using values = EnumValues<
-    WebCore::FontRenderingMode,
-    WebCore::FontRenderingMode::Normal,
-    WebCore::FontRenderingMode::Alternate
     >;
 };
 

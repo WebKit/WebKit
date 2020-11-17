@@ -7508,7 +7508,7 @@ void Document::applyQuickLookSandbox()
     ASSERT(responseURL.protocolIs(QLPreviewProtocol));
 
     auto securityOrigin = SecurityOrigin::createNonLocalWithAllowedFilePath(responseURL, documentURL.fileSystemPath());
-    securityOrigin->setStorageBlockingPolicy(SecurityOrigin::BlockAllStorage);
+    securityOrigin->setStorageBlockingPolicy(StorageBlockingPolicy::BlockAll);
     setSecurityOriginPolicy(SecurityOriginPolicy::create(WTFMove(securityOrigin)));
 
     static NeverDestroyed<String> quickLookCSP = makeString("default-src ", QLPreviewProtocol, ": 'unsafe-inline'; base-uri 'none'; sandbox allow-same-origin allow-scripts");

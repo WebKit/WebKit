@@ -3319,8 +3319,8 @@ void RenderLayerBacking::paintDebugOverlays(const GraphicsLayer* graphicsLayer, 
     auto contentOffset = roundedIntSize(graphicsLayer->offsetFromRenderer());
     context.translate(contentOffset);
 
-    auto visibleDebugOverlayRegions = renderer().settings().visibleDebugOverlayRegions();
-    if (visibleDebugOverlayRegions & (TouchActionRegion | WheelEventHandlerRegion)) {
+    auto visibleDebugOverlayRegions = OptionSet<DebugOverlayRegions>::fromRaw(renderer().settings().visibleDebugOverlayRegions());
+    if (visibleDebugOverlayRegions.containsAny({ DebugOverlayRegions::TouchActionRegion, DebugOverlayRegions::WheelEventHandlerRegion })) {
         constexpr auto regionColor = Color::blue.colorWithAlphaByte(50);
         context.setFillColor(regionColor);
         for (auto rect : eventRegion.region().rects())
@@ -3328,7 +3328,7 @@ void RenderLayerBacking::paintDebugOverlays(const GraphicsLayer* graphicsLayer, 
     }
 
 #if ENABLE(TOUCH_ACTION_REGIONS)
-    if (visibleDebugOverlayRegions & TouchActionRegion) {
+    if (visibleDebugOverlayRegions.contains(DebugOverlayRegions::TouchActionRegion)) {
         const TouchAction touchActionList[] = {
             TouchAction::None,
             TouchAction::Manipulation,
@@ -3354,7 +3354,7 @@ void RenderLayerBacking::paintDebugOverlays(const GraphicsLayer* graphicsLayer, 
 #endif
 
 #if ENABLE(WHEEL_EVENT_REGIONS)
-    if (visibleDebugOverlayRegions & WheelEventHandlerRegion) {
+    if (visibleDebugOverlayRegions.contains(DebugOverlayRegions::WheelEventHandlerRegion)) {
         for (auto type : { EventListenerRegionType::Wheel, EventListenerRegionType::NonPassiveWheel }) {
             auto fillPattern = patternForEventListenerRegionType(type, graphicsLayer->offsetFromRenderer(), context);
             context.setFillPattern(fillPattern.releaseNonNull());
@@ -3367,7 +3367,7 @@ void RenderLayerBacking::paintDebugOverlays(const GraphicsLayer* graphicsLayer, 
 #endif
 
 #if ENABLE(EDITABLE_REGION)
-    if (visibleDebugOverlayRegions & EditableElementRegion) {
+    if (visibleDebugOverlayRegions.contains(DebugOverlayRegions::EditableElementRegion)) {
         context.setFillColor(SRGBA<uint8_t> { 128, 0, 128, 50 });
         for (auto rect : eventRegion.rectsForEditableElements())
             context.fillRect(rect);
@@ -3414,7 +3414,8 @@ void RenderLayerBacking::paintContents(const GraphicsLayer* graphicsLayer, Graph
 
         paintIntoLayer(graphicsLayer, context, dirtyRect, behavior);
 
-        if (renderer().settings().visibleDebugOverlayRegions() & (TouchActionRegion | EditableElementRegion | WheelEventHandlerRegion))
+        auto visibleDebugOverlayRegions = OptionSet<DebugOverlayRegions>::fromRaw(renderer().settings().visibleDebugOverlayRegions());
+        if (visibleDebugOverlayRegions.containsAny({ DebugOverlayRegions::TouchActionRegion, DebugOverlayRegions::EditableElementRegion, DebugOverlayRegions::WheelEventHandlerRegion }))
             paintDebugOverlays(graphicsLayer, context);
 
     } else if (graphicsLayer == layerForHorizontalScrollbar()) {

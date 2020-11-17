@@ -55,7 +55,7 @@ PASS selectionDirection was "backward" after extending selection backward by cha
 PASS selectionDirection was "backward" after focusing on another element
 PASS selectionDirection was "backward" after hiding the element
 
-input on Win
+input on Windows
 PASS selectionDirection was "forward" after focusing and setting selection by setSelectionRange(1, 2)
 PASS selectionDirection was "forward" after focusing on another element
 PASS selectionDirection was "forward" after hiding the element
@@ -81,7 +81,7 @@ PASS selectionDirection was "backward" after extending selection backward by cha
 PASS selectionDirection was "backward" after focusing on another element
 PASS selectionDirection was "backward" after hiding the element
 
-textarea on Win
+textarea on Windows
 PASS selectionDirection was "forward" after focusing and setting selection by setSelectionRange(1, 2)
 PASS selectionDirection was "forward" after focusing on another element
 PASS selectionDirection was "forward" after hiding the element

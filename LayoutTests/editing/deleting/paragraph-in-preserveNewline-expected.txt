@@ -52,12 +52,12 @@ after undo on mac:
 |   "<#selection-anchor>foo<#selection-focus>
 bar"
 
-on win:
+on windows:
 | <pre>
 |   "<#selection-caret>
 bar"
 
-after undo on win:
+after undo on windows:
 | <pre>
 |   "<#selection-anchor>foo<#selection-focus>
 bar"

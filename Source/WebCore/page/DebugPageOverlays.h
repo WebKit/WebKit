@@ -25,9 +25,10 @@
 
 #pragma once
 
+#include "DebugOverlayRegions.h"
 #include "Frame.h"
-#include "Settings.h"
 #include <wtf/HashMap.h>
+#include <wtf/OptionSet.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -43,7 +44,7 @@ public:
         WheelEventHandlers,
         NonFastScrollableRegion,
     };
-    static const unsigned NumberOfRegionTypes = NonFastScrollableRegion + 1;
+    static constexpr unsigned NumberOfRegionTypes = static_cast<unsigned>(RegionType::NonFastScrollableRegion) + 1;
 
     static void didLayout(Frame&);
     static void didChangeEventHandlers(Frame&);
@@ -66,7 +67,7 @@ private:
         return m_pageRegionOverlays.contains(&page);
     }
     
-    void updateOverlayRegionVisibility(Page&, DebugOverlayRegions);
+    void updateOverlayRegionVisibility(Page&, OptionSet<DebugOverlayRegions>);
 
     RegionOverlay* regionOverlayForPage(Page&, RegionType) const;
     RegionOverlay& ensureRegionOverlayForPage(Page&, RegionType);

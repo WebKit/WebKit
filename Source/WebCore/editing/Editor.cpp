@@ -280,7 +280,7 @@ VisibleSelection Editor::selectionForCommand(Event* event)
 // Function considers Mac editing behavior a fallback when Page or Settings is not available.
 EditingBehavior Editor::behavior() const
 {
-    return EditingBehavior(m_document.settings().editingBehaviorType());
+    return m_document.editingBehavior();
 }
 
 EditorClient* Editor::client() const
