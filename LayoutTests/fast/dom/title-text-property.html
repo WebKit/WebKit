@@ -25,13 +25,6 @@ function runTests() {
 
     debugOutput('New title is: \'' + titleElem.text + '\'');
 }
-
-function test() {
-    t = document.getElementsByTagName('title').item(0);
-    alert(t.text);
-    t.text = 'new title';
-    alert(t.text);
-}
 </script>
 </head>
 <body onload='runTests();'>
