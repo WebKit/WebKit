@@ -45,8 +45,6 @@ class IRCCommandTest(unittest.TestCase):
         whois = Whois()
         self.assertEqual("tom: Usage: whois SEARCH_STRING",
                           whois.execute("tom", [], None, None))
-        self.assertEqual('tom: Adam Barth is "Adam Barth" <abarth@webkit.org> (:abarth) (r). Why do you ask?',
-                          whois.execute("tom", ["Adam", "Barth"], None, None))
         self.assertEqual("tom: Sorry, I don't know any contributors matching 'unknown@example.com'.",
                           whois.execute("tom", ["unknown@example.com"], None, None))
         self.assertEqual('tom: tonyg@chromium.org is "Tony Gentilcore" <tonyg@chromium.org> (:tonyg-cr). Why do you ask?',

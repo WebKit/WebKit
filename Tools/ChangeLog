@@ -1,3 +1,14 @@
+2020-11-16  Ling Ho  <lingho@apple.com>
+
+        Updated contributors.json to remove inactive committers and reviewers.
+        Removed irc user "Adam Barth" from IRCCommand in webkitpy unittest. 
+        https://bugs.webkit.org/show_bug.cgi?id=219006
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/webkitpy/tool/bot/irc_command_unittest.py:
+        (IRCCommandTest.test_whois):
+
 2020-11-16  John Wilander  <wilander@apple.com>
 
         PCM: Change attribute and JSON key names according to the W3C conversation
