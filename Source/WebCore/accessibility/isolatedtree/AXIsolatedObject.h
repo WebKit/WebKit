@@ -647,6 +647,9 @@ private:
 
     void updateBackingStore() override;
 
+    String innerHTML() const override;
+    String outerHTML() const override;
+
     AXIsolatedTreeID m_treeID;
     RefPtr<AXIsolatedTree> m_cachedTree;
     AXID m_parentID { InvalidAXID };

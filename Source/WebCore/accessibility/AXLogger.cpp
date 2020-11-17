@@ -27,6 +27,8 @@
  */
 
 #include "config.h"
+
+#if !LOG_DISABLED
 #include "AXLogger.h"
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
@@ -57,11 +59,7 @@ AXLogger::~AXLogger()
 
 void AXLogger::log(const String& message)
 {
-#if !LOG_DISABLED
     LOG(Accessibility, "%s", message.utf8().data());
-#else
-    UNUSED_PARAM(message);
-#endif
 }
 
 void AXLogger::log(RefPtr<AXCoreObject> object)
@@ -272,10 +270,8 @@ TextStream& operator<<(TextStream& stream, const AXCoreObject& object)
     auto* parent = object.parentObject();
     if (role == AccessibilityRole::StaticText && parent)
         objectWithInterestingHTML = parent;
-    if (objectWithInterestingHTML) {
-        if (auto* element = objectWithInterestingHTML->element())
-            stream.dumpProperty("outerHTML", element->outerHTML());
-    }
+    if (objectWithInterestingHTML)
+        stream.dumpProperty("outerHTML", objectWithInterestingHTML->outerHTML());
 
     stream.dumpProperty("address", &object);
     stream.dumpProperty("wrapper", object.wrapper());
@@ -314,3 +310,5 @@ TextStream& operator<<(TextStream& stream, AXObjectCache& axObjectCache)
 }
 
 } // namespace WebCore
+
+#endif // !LOG_DISABLED

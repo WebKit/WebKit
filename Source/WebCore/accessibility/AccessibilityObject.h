@@ -783,6 +783,9 @@ protected:
     bool allowsTextRanges() const;
     unsigned getLengthForTextRange() const;
 
+    String innerHTML() const override;
+    String outerHTML() const override;
+
 private:
     Optional<SimpleRange> rangeOfStringClosestToRangeInDirection(const SimpleRange&, AccessibilitySearchDirection, const Vector<String>&) const;
     Optional<SimpleRange> selectionRange() const;

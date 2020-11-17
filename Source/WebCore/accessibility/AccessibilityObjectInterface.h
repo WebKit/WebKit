@@ -1489,6 +1489,9 @@ public:
     virtual String documentEncoding() const = 0;
     virtual AccessibilityChildrenVector documentLinks() = 0;
 
+    virtual String innerHTML() const = 0;
+    virtual String outerHTML() const = 0;
+
 private:
     // Detaches this object from the objects it references and it is referenced by.
     virtual void detachRemoteParts(AccessibilityDetachmentType) = 0;

@@ -3580,6 +3580,18 @@ void AccessibilityObject::setIsIgnoredFromParentDataForChild(AXCoreObject* child
     child->setIsIgnoredFromParentData(result);
 }
 
+String AccessibilityObject::innerHTML() const
+{
+    auto* element = this->element();
+    return element ? element->innerHTML() : String();
+}
+
+String AccessibilityObject::outerHTML() const
+{
+    auto* element = this->element();
+    return element ? element->outerHTML() : String();
+}
+
 namespace Accessibility {
 
 #if !PLATFORM(MAC)

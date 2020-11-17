@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if !LOG_DISABLED
+
 #include "AXObjectCache.h"
 #include "AccessibilityObjectInterface.h"
 
@@ -48,12 +50,14 @@ private:
     String m_methodName;
 };
 
-#if LOG_DISABLED
-#define AXTRACE(methodName) (void)0
-#define AXLOG(x) (void)0
-#else
 #define AXTRACE(methodName) AXLogger axLogger(methodName)
 #define AXLOG(x) AXLogger::log(x)
-#endif // LOG_DISABLED
 
 } // namespace WebCore
+
+#else
+
+#define AXTRACE(methodName) (void)0
+#define AXLOG(x) (void)0
+
+#endif // !LOG_DISABLED
