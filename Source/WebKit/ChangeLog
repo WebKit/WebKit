@@ -1,5 +1,13 @@
 2020-11-17  Tim Horton  <timothy_horton@apple.com>
 
+        Preemptive build fix for https://bugs.webkit.org/show_bug.cgi?id=219024
+
+        * UIProcess/ios/forms/WKAirPlayRoutePicker.mm:
+        (SOFT_LINK_CLASS):
+        (-[WKAirPlayRoutePicker show:fromRect:]):
+
+2020-11-17  Tim Horton  <timothy_horton@apple.com>
+
         REGRESSION (r269824): YouTube media control bar sometimes flickers
         https://bugs.webkit.org/show_bug.cgi?id=219017
         <rdar://problem/71454799>
