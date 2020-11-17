@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+
+function runTest()
+{
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    getSelection().setBaseAndExtent(span, 0, span, 2);
+    document.execCommand("delete", false);
+    document.write("Test passes if no crashes with asan.")
+}
+
+</script>
+</head>
+<body onload="runTest()">
+<li contenteditable="">
+    <basefont>
+    <progress contenteditable="false">
+        <span id="span">content</span>
+    </progress>
+</li>
+</body>
+</html>
