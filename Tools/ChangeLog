@@ -1,3 +1,23 @@
+2020-11-17  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitcorepy] Support mocking request network calls.
+        https://bugs.webkit.org/show_bug.cgi?id=218927
+        <rdar://problem/71389720>
+
+        Rubber-stamped by Aakash Jain.
+
+        * Scripts/libraries/webkitcorepy/webkitcorepy/__init__.py: Bump version.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/mocks/__init__.py:
+        * Scripts/libraries/webkitcorepy/webkitcorepy/mocks/requests.py: Moved to requests_.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/mocks/requests_.py: Copied from Tools/Scripts/libraries/webkitcorepy/webkitcorepy/mocks/requests.py.
+        (Response): Object mimicking the structure of Requests's response object, useful for mocking.
+        (Requests): Context manager which will intercept http and https requests to a specific host.
+        (Requests.__exit__):
+        * Scripts/libraries/webkitcorepy/webkitcorepy/tests/mocks/requests_unittest.py: Added.
+        (MockRequests):
+        (MockRequests.test_basic):
+        (MockRequests.test_fallback):
+
 2020-11-17  Aakash Jain  <aakash_jain@apple.com>
 
         [build.webkit.org] Update ExtractTestResults step for new buildbot (follow-up fix)

@@ -24,4 +24,4 @@ from webkitcorepy.mocks.context_stack import ContextStack
 from webkitcorepy.mocks.time_ import Time
 from webkitcorepy.mocks.subprocess import ProcessCompletion, Subprocess
 
-from webkitcorepy.mocks.requests import Response
+from webkitcorepy.mocks.requests_ import Response, Requests
