@@ -1,3 +1,12 @@
+2020-11-17  Antoine Quint  <graouts@webkit.org>
+
+        Make <model> disabled by default everywhere
+        https://bugs.webkit.org/show_bug.cgi?id=219027
+
+        Reviewed by Devin Rousso.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
 2020-11-16  Sam Weinig  <weinig@apple.com>
 
         Standardize enums that are used by Settings in preperation for autogeneration

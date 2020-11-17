@@ -573,7 +573,6 @@ ModelElementEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      "ENABLE(EXPERIMENTAL_FEATURES)" : true
       default: false
     WebCore:
       default: false
