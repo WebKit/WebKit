@@ -1,3 +1,25 @@
+2020-11-17  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS][FCR] Add new look for checkboxes
+        https://bugs.webkit.org/show_bug.cgi?id=218808
+        <rdar://problem/71286037>
+
+        Reviewed by Wenson Hsieh.
+
+        Added tests to verify the stylability of native checkboxes and to verify
+        that different checkbox states are painted with a different appearance.
+
+        * fast/forms/ios/form-control-refresh/checkbox/border-expected-mismatch.html: Added.
+        * fast/forms/ios/form-control-refresh/checkbox/border.html: Added.
+        * fast/forms/ios/form-control-refresh/checkbox/checked-appearance-expected-mismatch.html: Added.
+        * fast/forms/ios/form-control-refresh/checkbox/checked-appearance.html: Added.
+        * fast/forms/ios/form-control-refresh/checkbox/ignored-properties-expected.html: Added.
+        * fast/forms/ios/form-control-refresh/checkbox/ignored-properties.html: Added.
+        * fast/forms/ios/form-control-refresh/checkbox/indeterminate-appearance-expected-mismatch.html: Added.
+        * fast/forms/ios/form-control-refresh/checkbox/indeterminate-appearance.html: Added.
+        * fast/forms/ios/form-control-refresh/checkbox/width-height-expected-mismatch.html: Added.
+        * fast/forms/ios/form-control-refresh/checkbox/width-height.html: Added.
+
 2020-11-17  Lauro Moura  <lmoura@igalia.com>
 
         REGRESSION(r269227) [GTK] editing/selection/navigation-clears-editor-state.html is flaky

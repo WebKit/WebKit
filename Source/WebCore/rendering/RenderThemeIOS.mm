@@ -66,6 +66,7 @@
 #import "RenderStyle.h"
 #import "RenderView.h"
 #import "RuntimeEnabledFeatures.h"
+#import "Settings.h"
 #import "UTIUtilities.h"
 #import "UserAgentScripts.h"
 #import "UserAgentStyleSheets.h"
@@ -374,6 +375,11 @@ static void drawJoinedLines(CGContextRef context, const Vector<CGPoint>& points,
 
 bool RenderThemeIOS::paintCheckboxDecorations(const RenderObject& box, const PaintInfo& paintInfo, const IntRect& rect)
 {
+#if ENABLE(IOS_FORM_CONTROL_REFRESH)
+    if (box.settings().iOSFormControlRefreshEnabled())
+        return true;
+#endif
+
     bool checked = isChecked(box);
     bool indeterminate = isIndeterminate(box);
     CGContextRef cgContext = paintInfo.context().platformContext();
@@ -1963,6 +1969,72 @@ void RenderThemeIOS::paintSystemPreviewBadge(Image& image, const PaintInfo& pain
     CGContextRestoreGState(ctx);
 }
 #endif
+
+#if ENABLE(IOS_FORM_CONTROL_REFRESH)
+
+// Colors
+constexpr auto controlColor = SRGBA<uint8_t> { 0, 122, 255 };
+constexpr auto controlBackgroundColor = SRGBA<uint8_t> { 238, 238, 238 };
+
+bool RenderThemeIOS::paintCheckbox(const RenderObject& box, const PaintInfo& paintInfo, const IntRect& rect)
+{
+    if (!box.settings().iOSFormControlRefreshEnabled())
+        return true;
+
+    auto& context = paintInfo.context();
+    GraphicsContextStateSaver stateSaver { context };
+
+    constexpr auto checkboxHeight = 16.0f;
+    constexpr auto checkboxCornerRadius = 5.0f;
+
+    FloatRoundedRect checkboxRect(rect, FloatRoundedRect::Radii(checkboxCornerRadius * rect.height() / checkboxHeight));
+
+    auto checked = isChecked(box);
+    auto indeterminate = isIndeterminate(box);
+    if (checked || indeterminate) {
+        context.fillRoundedRect(checkboxRect, controlColor);
+
+        Path path;
+        if (checked) {
+            path.moveTo({ 28.174f, 68.652f });
+            path.addBezierCurveTo({ 31.006f, 68.652f }, { 33.154f, 67.578f }, { 34.668f, 65.332f });
+            path.addLineTo({ 70.02f, 11.28f });
+            path.addBezierCurveTo({ 71.094f, 9.62f }, { 71.582f, 8.107f }, { 71.582f, 6.642f });
+            path.addBezierCurveTo({ 71.582f, 2.784f }, { 68.652f, 0.001f }, { 64.697f, 0.001f });
+            path.addBezierCurveTo({ 62.012f, 0.001f }, { 60.352f, 0.978f }, { 58.691f, 3.565f });
+            path.addLineTo({ 28.027f, 52.1f });
+            path.addLineTo({ 12.354f, 32.52f });
+            path.addBezierCurveTo({ 10.84f, 30.664f }, { 9.18f, 29.834f }, { 6.884f, 29.834f });
+            path.addBezierCurveTo({ 2.882f, 29.834f }, { 0.0f, 32.666f }, { 0.0f, 36.572f });
+            path.addBezierCurveTo({ 0.0f, 38.282f }, { 0.537f, 39.795f }, { 2.002f, 41.504f });
+            path.addLineTo({ 21.826f, 65.625f });
+            path.addBezierCurveTo({ 23.536f, 67.675f }, { 25.536f, 68.652f }, { 28.174f, 68.652f });
+
+            const FloatSize checkmarkSize(72.0f, 69.0f);
+            float scale = (0.65f * rect.width()) / checkmarkSize.width();
+
+            AffineTransform transform;
+            transform.translate(rect.center() - (checkmarkSize * scale * 0.5f));
+            transform.scale(scale);
+            path.transform(transform);
+        } else {
+            const FloatSize indeterminateBarRoundingRadii(1.25f, 1.25f);
+            constexpr float indeterminateBarPadding = 2.5f;
+            float height = 0.12f * rect.height();
+
+            FloatRect indeterminateBarRect(rect.x() + indeterminateBarPadding, rect.center().y() - height / 2.0f, rect.width() - indeterminateBarPadding * 2, height);
+            path.addRoundedRect(indeterminateBarRect, indeterminateBarRoundingRadii);
+        }
+
+        context.setFillColor(Color::white);
+        context.fillPath(path);
+    } else
+        context.fillRoundedRect(checkboxRect, controlBackgroundColor);
+
+    return false;
+}
+
+#endif // ENABLE(IOS_FORM_CONTROL_REFRESH)
 
 } // namespace WebCore
 

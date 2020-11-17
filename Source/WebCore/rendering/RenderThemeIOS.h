@@ -110,6 +110,10 @@ private:
     void adjustSearchFieldStyle(RenderStyle&, const Element*) const override;
     bool paintSearchFieldDecorations(const RenderObject&, const PaintInfo&, const IntRect&) override;
 
+#if ENABLE(IOS_FORM_CONTROL_REFRESH)
+    bool paintCheckbox(const RenderObject&, const PaintInfo&, const IntRect&) override;
+#endif
+
     bool supportsFocusRing(const RenderStyle&) const final;
 
     Color platformActiveSelectionBackgroundColor(OptionSet<StyleColor::Options>) const override;

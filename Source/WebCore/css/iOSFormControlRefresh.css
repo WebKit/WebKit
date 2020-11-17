@@ -23,4 +23,10 @@
  */
 
 #if defined(ENABLE_IOS_FORM_CONTROL_REFRESH) && ENABLE_IOS_FORM_CONTROL_REFRESH
+
+input[type="checkbox"] {
+    border: initial;
+    box-sizing: border-box;
+}
+
 #endif
