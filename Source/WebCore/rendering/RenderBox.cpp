@@ -48,6 +48,7 @@
 #include "HitTestResult.h"
 #include "InlineElementBox.h"
 #include "InlineRunAndOffset.h"
+#include "LayoutIntegrationLineIterator.h"
 #include "LayoutIntegrationLineLayout.h"
 #include "Page.h"
 #include "PaintInfo.h"
