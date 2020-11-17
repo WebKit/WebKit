@@ -49,6 +49,14 @@
 #import <JavaScriptCore/RemoteInspectorConstants.h>
 #endif
 
+#if PLATFORM(MAC)
+#import <wtf/SoftLinking.h>
+
+SOFT_LINK_PRIVATE_FRAMEWORK(TCC)
+SOFT_LINK(TCC, TCCAccessCheckAuditToken, Boolean, (CFStringRef service, audit_token_t auditToken, CFDictionaryRef options), (service, auditToken, options))
+SOFT_LINK_CONSTANT(TCC, kTCCServiceAccessibility, CFStringRef)
+#endif
+
 namespace WebKit {
 
 static const Seconds unexpectedActivityDuration = 10_s;
@@ -257,5 +265,13 @@ Vector<String> WebProcessProxy::platformOverrideLanguages() const
     static const NeverDestroyed<Vector<String>> overrideLanguages = makeVector<String>([[NSUserDefaults standardUserDefaults] valueForKey:@"AppleLanguages"]);
     return overrideLanguages;
 }
+
+#if PLATFORM(MAC)
+void WebProcessProxy::isAXAuthenticated(audit_token_t auditToken, CompletionHandler<void(bool)>&& completionHandler)
+{
+    auto authenticated = TCCAccessCheckAuditToken(getkTCCServiceAccessibility(), auditToken, nullptr);
+    completionHandler(authenticated);
+}
+#endif
 
 }

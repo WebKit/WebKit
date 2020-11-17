@@ -156,4 +156,10 @@ WTF_EXTERN_C_END
 
 #endif // USE(APPLE_INTERNAL_SDK)
 
+WTF_EXTERN_C_BEGIN
+
+typedef Boolean (*AXAuditTokenIsAuthenticatedCallback)(audit_token_t);
+
+WTF_EXTERN_C_END
+
 #define kAXClientTypeWebKitTesting 999999

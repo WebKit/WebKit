@@ -1,3 +1,15 @@
+2020-11-17  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Perform AX TCC check in the UI process
+        https://bugs.webkit.org/show_bug.cgi?id=218870
+        <rdar://problem/71339830>
+
+        Reviewed by Brent Fulgham.
+
+        Add typedef for TCC authentication callback.
+
+        * pal/spi/mac/HIServicesSPI.h:
+
 2020-11-17  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         Build fails on internal simulator builds due to missing enum kCVPixelFormatType_AGX_420YpCbCr8BiPlanarVideoRange

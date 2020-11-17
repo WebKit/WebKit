@@ -151,6 +151,11 @@ SOFT_LINK_CLASS(CoreServices, _LSDOpenService)
 #define RELEASE_LOG_IF_ALLOWED(channel, fmt, ...) RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), channel, "%p - [sessionID=%" PRIu64 "] WebProcess::" fmt, this, RELEASE_LOG_SESSION_ID, ##__VA_ARGS__)
 #define RELEASE_LOG_ERROR_IF_ALLOWED(channel, fmt, ...) RELEASE_LOG_ERROR_IF(isAlwaysOnLoggingAllowed(), channel, "%p - [sessionID=%" PRIu64 "] WebProcess::" fmt, this, RELEASE_LOG_SESSION_ID, ##__VA_ARGS__)
 
+#if PLATFORM(MAC)
+SOFT_LINK_FRAMEWORK_IN_UMBRELLA(ApplicationServices, HIServices)
+SOFT_LINK_FUNCTION_MAY_FAIL_FOR_SOURCE(WebKit, HIServices, _AXSetAuditTokenIsAuthenticatedCallback, void, (AXAuditTokenIsAuthenticatedCallback callback), (callback))
+#endif
+
 namespace WebKit {
 using namespace WebCore;
 
@@ -171,6 +176,16 @@ static id NSApplicationAccessibilityFocusedUIElement(NSApplication*, SEL)
         return 0;
 
     return [page->accessibilityRemoteObject() accessibilityFocusedUIElement];
+}
+#endif
+
+
+#if PLATFORM(MAC)
+static Boolean isAXAuthenticatedCallback(audit_token_t auditToken)
+{
+    bool authenticated = false;
+    WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebProcessProxy::IsAXAuthenticated(auditToken), Messages::WebProcessProxy::IsAXAuthenticated::Reply(authenticated), 0);
+    return authenticated;
 }
 #endif
 
@@ -361,6 +376,11 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     updateProcessName();
     
     SystemSoundManager::singleton().setSystemSoundDelegate(makeUnique<WebSystemSoundDelegate>());
+
+#if PLATFORM(MAC)
+    if (canLoad_HIServices__AXSetAuditTokenIsAuthenticatedCallback())
+        softLink_HIServices__AXSetAuditTokenIsAuthenticatedCallback(isAXAuthenticatedCallback);
+#endif
 }
 
 void WebProcess::platformSetWebsiteDataStoreParameters(WebProcessDataStoreParameters&& parameters)

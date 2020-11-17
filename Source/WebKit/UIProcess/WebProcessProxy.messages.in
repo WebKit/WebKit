@@ -88,4 +88,8 @@ messages -> WebProcessProxy LegacyReceiver {
     DestroySpeechRecognitionServer(WebCore::PageIdentifier identifier)
 
     SystemBeep()
+    
+#if PLATFORM(MAC)
+    IsAXAuthenticated(audit_token_t auditToken) -> (bool authenticated) Synchronous
+#endif
 }

@@ -1,3 +1,25 @@
+2020-11-17  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Perform AX TCC check in the UI process
+        https://bugs.webkit.org/show_bug.cgi?id=218870
+        <rdar://problem/71339830>
+
+        Reviewed by Brent Fulgham.
+
+        On behalf of the WebContent process, perform AX TCC check in the UI process on macOS.
+        This is in preparation of blocking tccd in the WebContent process.
+
+        No new tests. It has been manually tested that the WebContent process is allowing VoiceOver
+        to perform AX requests with this patch.
+
+        * UIProcess/Cocoa/WebProcessProxyCocoa.mm:
+        (WebKit::WebProcessProxy::isAXAuthenticated):
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebProcessProxy.messages.in:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::isAXAuthenticatedCallback):
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
 2020-11-17  Brian Burg  <bburg@apple.com>
 
         [Cocoa] _WKInspectorExtensionHost should conform to NSObject protocol

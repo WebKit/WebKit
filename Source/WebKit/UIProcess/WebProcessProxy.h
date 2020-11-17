@@ -508,6 +508,10 @@ private:
 
     void systemBeep();
     
+#if PLATFORM(MAC)
+    void isAXAuthenticated(audit_token_t, CompletionHandler<void(bool)>&&);
+#endif
+
     enum class IsWeak { No, Yes };
     template<typename T> class WeakOrStrongPtr {
     public:
