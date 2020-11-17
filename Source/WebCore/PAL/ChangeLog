@@ -1,3 +1,29 @@
+2020-11-16  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Textures Fail to Render in WebGL from HLS Stream on iPhone 12 [iOS 14.2]
+        https://bugs.webkit.org/show_bug.cgi?id=218637
+        <rdar://problem/71102126>
+
+        Reviewed by Eric Carlson.
+
+        Patch by Jer Noble.
+
+        Treat internal compressed YUV pixel formats
+        kCVPixelFormatType_AGX_420YpCbCr8BiPlanarVideoRange and
+        kCVPixelFormatType_AGX_420YpCbCr8BiPlanarFullRange as
+        kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange and
+        kCVPixelFormatType_420YpCbCr8BiPlanarFullRange when
+        using the OpenGL shader to convert video IOSurface to a WebGL
+        texture.
+
+        Fixes cases where the decoder outputs the compressed formats.
+
+        No new tests, adding more comprehensive test content suite is tracked
+        in another bug.
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/spi/cf/CoreVideoSPI.h: Added.
+
 2020-11-11  Eric Carlson  <eric.carlson@apple.com>
 
         USB microphone not recognized iOS Safari

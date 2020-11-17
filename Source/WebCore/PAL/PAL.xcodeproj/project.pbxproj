@@ -381,6 +381,7 @@
 		C138EA1A2436447200656DF1 /* CoreServicesSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CoreServicesSPI.h; sourceTree = "<group>"; };
 		C15CBB3223F34A1200300CC7 /* NSUserDefaultsSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NSUserDefaultsSPI.h; sourceTree = "<group>"; };
 		C2147A4A1EFD0AA600056FA5 /* CopyPALHeaders.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = CopyPALHeaders.xcconfig; sourceTree = "<group>"; };
+		CD17B268255F1625008430F9 /* CoreVideoSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CoreVideoSPI.h; sourceTree = "<group>"; };
 		CD6122CA2559B6AC00FC657A /* OutputContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OutputContext.h; sourceTree = "<group>"; };
 		CD6122CB2559B6AC00FC657A /* OutputContext.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = OutputContext.mm; sourceTree = "<group>"; };
 		CD6122CE2559B8F200FC657A /* OutputDevice.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OutputDevice.h; sourceTree = "<group>"; };
@@ -443,6 +444,7 @@
 				0C2DA06A1F33CA8400DBC317 /* CFUtilitiesSPI.h */,
 				0C2DA06B1F33CA8400DBC317 /* CoreAudioSPI.h */,
 				0C2DA06C1F33CA8400DBC317 /* CoreMediaSPI.h */,
+				CD17B268255F1625008430F9 /* CoreVideoSPI.h */,
 			);
 			path = cf;
 			sourceTree = "<group>";

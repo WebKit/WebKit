@@ -30,6 +30,7 @@
 
 #include "FourCC.h"
 #include "Logging.h"
+#include <pal/spi/cf/CoreVideoSPI.h>
 #include <pal/spi/cocoa/IOSurfaceSPI.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdMap.h>
@@ -146,6 +147,7 @@ static PixelRange pixelRangeFromPixelFormat(OSType pixelFormat)
     case kCVPixelFormatType_420YpCbCr10BiPlanarVideoRange:
     case kCVPixelFormatType_422YpCbCr10BiPlanarVideoRange:
     case kCVPixelFormatType_444YpCbCr10BiPlanarVideoRange:
+    case kCVPixelFormatType_AGX_420YpCbCr8BiPlanarVideoRange:
         return PixelRange::Video;
     case kCVPixelFormatType_420YpCbCr8PlanarFullRange:
     case kCVPixelFormatType_420YpCbCr8BiPlanarFullRange:
@@ -154,6 +156,7 @@ static PixelRange pixelRangeFromPixelFormat(OSType pixelFormat)
     case kCVPixelFormatType_420YpCbCr10BiPlanarFullRange:
     case kCVPixelFormatType_422YpCbCr10BiPlanarFullRange:
     case kCVPixelFormatType_444YpCbCr10BiPlanarFullRange:
+    case kCVPixelFormatType_AGX_420YpCbCr8BiPlanarFullRange:
         return PixelRange::Full;
     default:
         return PixelRange::Unknown;
@@ -578,7 +581,10 @@ bool GraphicsContextGLCVANGLE::copyPixelBufferToTexture(CVPixelBufferRef image, 
 {
     // FIXME: This currently only supports '420v' and '420f' pixel formats. Investigate supporting more pixel formats.
     OSType pixelFormat = CVPixelBufferGetPixelFormatType(image);
-    if (pixelFormat != kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange && pixelFormat != kCVPixelFormatType_420YpCbCr8BiPlanarFullRange) {
+    if (pixelFormat != kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange
+        && pixelFormat != kCVPixelFormatType_420YpCbCr8BiPlanarFullRange
+        && pixelFormat != kCVPixelFormatType_AGX_420YpCbCr8BiPlanarVideoRange
+        && pixelFormat != kCVPixelFormatType_AGX_420YpCbCr8BiPlanarFullRange) {
         LOG(WebGL, "GraphicsContextGLCVANGLE::copyVideoTextureToPlatformTexture(%p) - Asked to copy an unsupported pixel format ('%s').", this, FourCC(pixelFormat).toString().utf8().data());
         return false;
     }
