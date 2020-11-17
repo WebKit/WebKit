@@ -1,3 +1,15 @@
+2020-11-17  Rob Buis  <rbuis@igalia.com>
+
+        Check whether destination still can be selected
+        https://bugs.webkit.org/show_bug.cgi?id=218491
+
+        Reviewed by Ryosuke Niwa.
+
+        Add testcase.
+
+        * editing/deleting/delete-selection-crash-expected.txt: Added.
+        * editing/deleting/delete-selection-crash.html: Added.
+
 2020-11-16  Sam Weinig  <weinig@apple.com>
 
         Standardize enums that are used by Settings in preparation for autogeneration
