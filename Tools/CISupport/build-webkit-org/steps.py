@@ -1193,7 +1193,8 @@ class TransferToS3(master.MasterShellCommand):
 class ExtractTestResults(master.MasterShellCommand):
     name = 'extract-test-results'
     descriptionDone = ['Extracted test results']
-    renderables = ['resultDirectory', 'zipFile']
+    if USE_BUILDBOT_VERSION2:
+        renderables = ['resultDirectory', 'zipFile']
 
     def __init__(self, **kwargs):
         kwargs['command'] = ""
