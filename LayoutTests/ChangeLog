@@ -1,3 +1,59 @@
+2020-11-17  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r269895. rdar://problem/71490402
+
+    REGRESSION (r269824): YouTube media control bar sometimes flickers
+    https://bugs.webkit.org/show_bug.cgi?id=219017
+    <rdar://problem/71454799>
+    
+    Reviewed by Simon Fraser.
+    
+    Source/WebKit:
+    
+    Test: compositing/repaint/transparent-layer-repaint.html
+    
+    * Shared/RemoteLayerTree/RemoteLayerBackingStore.mm:
+    (WebKit::RemoteLayerBackingStore::display):
+    I accidentally lost the Copy composite operator in r269824, causing
+    the repaint copy-forward to blend instead of just copying.
+    This wreaks havoc on layers with contents with colors that have 0 < alpha < 1,
+    because every repaint means the colors intensify.
+    
+    LayoutTests:
+    
+    * compositing/repaint/transparent-layer-repaint-expected.html: Added.
+    * compositing/repaint/transparent-layer-repaint.html: Added.
+    Add a test that:
+        - repaints a backingstoreful compositing layer
+        - more than once
+        - in a small enough area that we use partial repaint
+        - with partially-transparent pixels
+    
+    And then ensures that the background of that layer (the non-repainted part)
+    remains the color that it should.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@269895 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-11-17  Tim Horton  <timothy_horton@apple.com>
+
+            REGRESSION (r269824): YouTube media control bar sometimes flickers
+            https://bugs.webkit.org/show_bug.cgi?id=219017
+            <rdar://problem/71454799>
+
+            Reviewed by Simon Fraser.
+
+            * compositing/repaint/transparent-layer-repaint-expected.html: Added.
+            * compositing/repaint/transparent-layer-repaint.html: Added.
+            Add a test that:
+                - repaints a backingstoreful compositing layer
+                - more than once
+                - in a small enough area that we use partial repaint
+                - with partially-transparent pixels
+
+            And then ensures that the background of that layer (the non-repainted part)
+            remains the color that it should.
+
 2020-11-16  Youenn Fablet  <youenn@apple.com>
 
         TextEncoderStreamEncoder should not be exposed
