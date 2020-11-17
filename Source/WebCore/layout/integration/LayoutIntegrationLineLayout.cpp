@@ -132,7 +132,7 @@ void LineLayout::updateLayoutBoxDimensions(const RenderBox& replacedOrInlineBloc
     replacedBoxGeometry.setHorizontalScrollbarHeight(replacedOrInlineBlock.horizontalScrollbarHeight());
 
     auto baseline = replacedOrInlineBlock.baselinePosition(AlphabeticBaseline, false /* firstLine */, HorizontalLine, PositionOnContainingLine);
-    replacedBox.setBaseline(baseline);
+    replacedBox.setBaseline(roundToInt(baseline));
 }
 
 void LineLayout::updateStyle(const RenderBoxModelObject& renderer)

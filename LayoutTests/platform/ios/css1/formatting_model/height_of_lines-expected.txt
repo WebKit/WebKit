@@ -119,7 +119,7 @@ layer at (0,0) size 800x2285
                 RenderText {#text} at (510,183) size 28x17
                   text run at (510,183) width 28: " and "
                 RenderImage {IMG} at (552,198) size 131x130 [border: (10px solid #000000)]
-                RenderText {#text} at (697,183) size 758x258
+                RenderText {#text} at (697,183) size 758x257
                   text run at (697,183) width 8: ". "
                   text run at (704,183) width 39: "This is"
                   text run at (0,344) width 721: "additional text to make sure that there is enough room left below the image so that this line does not hit the image that is text-top"

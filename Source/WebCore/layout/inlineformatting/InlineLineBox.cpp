@@ -57,6 +57,18 @@ void LineBox::InlineLevelBox::setLayoutBounds(const LayoutBounds& layoutBounds)
     m_layoutBounds = { InlineLayoutUnit(roundToInt(layoutBounds.ascent)), InlineLayoutUnit(roundToInt(layoutBounds.descent)) };
 }
 
+void LineBox::InlineLevelBox::setLogicalTop(InlineLayoutUnit logicalTop)
+{
+    // FIXME: Remove legacy rounding.
+    m_logicalRect.setTop(roundToInt(logicalTop));
+}
+
+void LineBox::InlineLevelBox::setLogicalHeight(InlineLayoutUnit logicalHeight)
+{
+    // FIXME: Remove legacy rounding.
+    m_logicalRect.setHeight(roundToInt(logicalHeight));
+}
+
 bool LineBox::InlineLevelBox::hasLineBoxRelativeAlignment() const
 {
     auto verticalAlignment = layoutBox().style().verticalAlign();

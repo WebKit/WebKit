@@ -111,9 +111,9 @@ public:
         InlineLayoutUnit logicalWidth() const { return m_logicalRect.width(); }
         InlineLayoutUnit logicalHeight() const { return m_logicalRect.height(); }
 
-        void setLogicalTop(InlineLayoutUnit logicalTop) { m_logicalRect.setTop(logicalTop); }
         void setLogicalWidth(InlineLayoutUnit logicalWidth) { m_logicalRect.setWidth(logicalWidth); }
-        void setLogicalHeight(InlineLayoutUnit logicalHeight) { m_logicalRect.setHeight(logicalHeight); }
+        void setLogicalHeight(InlineLayoutUnit);
+        void setLogicalTop(InlineLayoutUnit);
         void setBaseline(InlineLayoutUnit);
         void setDescent(InlineLayoutUnit);
         void setLayoutBounds(const LayoutBounds&);

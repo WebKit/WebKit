@@ -68,7 +68,7 @@ layer at (0,0) size 785x2299
         RenderText {#text} at (510,183) size 28x17
           text run at (510,183) width 28: " and "
         RenderImage {IMG} at (552,198) size 131x130 [border: (10px solid #000000)]
-        RenderText {#text} at (697,183) size 769x258
+        RenderText {#text} at (697,183) size 769x257
           text run at (697,183) width 8: ". "
           text run at (704,183) width 39: "This is"
           text run at (0,344) width 769: "additional text to make sure that there is enough room left below the image so that this line does not hit the image that is text-top aligned."
@@ -118,7 +118,7 @@ layer at (0,0) size 785x2299
                 RenderText {#text} at (596,183) size 25x17
                   text run at (596,183) width 25: " and"
                 RenderImage {IMG} at (15,218) size 130x130 [border: (10px solid #000000)]
-                RenderText {#text} at (160,203) size 747x238
+                RenderText {#text} at (160,203) size 747x237
                   text run at (160,203) width 7: ". "
                   text run at (167,203) width 580: "This is additional text to make sure that there is enough room left below the image so that this line does"
                   text run at (0,364) width 231: "not hit the image that is text-top aligned. "
