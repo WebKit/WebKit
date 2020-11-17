@@ -186,7 +186,7 @@ RegisterID* ThisNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst
 
 static RegisterID* emitHomeObjectForCallee(BytecodeGenerator& generator)
 {
-    if ((generator.isDerivedClassContext() || generator.isDerivedConstructorContext()) && generator.parseMode() != SourceParseMode::InstanceFieldInitializerMode) {
+    if ((generator.isDerivedClassContext() || generator.isDerivedConstructorContext()) && generator.parseMode() != SourceParseMode::ClassFieldInitializerMode) {
         RegisterID* derivedConstructor = generator.emitLoadDerivedConstructorFromArrowFunctionLexicalEnvironment();
         return generator.emitGetById(generator.newTemporary(), derivedConstructor, generator.propertyNames().builtinNames().homeObjectPrivateName());
     }
@@ -577,7 +577,7 @@ void PropertyListNode::emitDeclarePrivateFieldNames(BytecodeGenerator& generator
     }
 }
 
-RegisterID* PropertyListNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dstOrConstructor, RegisterID* prototype, Vector<JSTextPosition>* instanceFieldLocations)
+RegisterID* PropertyListNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dstOrConstructor, RegisterID* prototype, Vector<JSTextPosition>* instanceFieldLocations, Vector<JSTextPosition>* staticFieldLocations)
 {
     PropertyListNode* p = this;
     RegisterID* dst = nullptr;
@@ -592,6 +592,12 @@ RegisterID* PropertyListNode::emitBytecode(BytecodeGenerator& generator, Registe
         if (p->isInstanceClassField()) {
             ASSERT(instanceFieldLocations);
             instanceFieldLocations->append(p->position());
+            continue;
+        }
+
+        if (p->isStaticClassField()) {
+            ASSERT(staticFieldLocations);
+            staticFieldLocations->append(p->position());
             continue;
         }
 
@@ -649,6 +655,12 @@ RegisterID* PropertyListNode::emitBytecode(BytecodeGenerator& generator, Registe
                 ASSERT(instanceFieldLocations);
                 ASSERT(node->m_type & PropertyNode::Constant);
                 instanceFieldLocations->append(p->position());
+                continue;
+            }
+
+            if (p->isStaticClassField()) {
+                ASSERT(staticFieldLocations);
+                staticFieldLocations->append(p->position());
                 continue;
             }
 
@@ -744,7 +756,7 @@ RegisterID* PropertyListNode::emitBytecode(BytecodeGenerator& generator, Registe
 
 void PropertyListNode::emitPutConstantProperty(BytecodeGenerator& generator, RegisterID* newObj, PropertyNode& node)
 {
-    // Private fields are handled in the synthetic instanceFieldInitializer function, not here.
+    // Private fields are handled in a synthetic classFieldInitializer function, not here.
     ASSERT(!(node.type() & PropertyNode::Private));
 
     if (PropertyNode::isUnderscoreProtoSetter(generator.vm(), node)) {
@@ -800,18 +812,25 @@ void PropertyListNode::emitPutConstantProperty(BytecodeGenerator& generator, Reg
 void PropertyListNode::emitSaveComputedFieldName(BytecodeGenerator& generator, PropertyNode& node)
 {
     ASSERT(node.isComputedClassField());
-    RefPtr<RegisterID> propertyExpr;
 
     // The 'name' refers to a synthetic private name in the class scope, where the property key is saved for later use.
     const Identifier& description = *node.name();
     Variable var = generator.variable(description);
     ASSERT(!var.local());
 
-    propertyExpr = generator.emitNode(node.m_expression);
-    RegisterID* propertyName = generator.emitToPropertyKey(generator.newTemporary(), propertyExpr.get());
+    RefPtr<RegisterID> propertyExpr = generator.emitNode(node.m_expression);
+    RefPtr<RegisterID> propertyName = generator.emitToPropertyKey(generator.newTemporary(), propertyExpr.get());
+
+    if (node.isStaticClassField()) {
+        Ref<Label> validPropertyNameLabel = generator.newLabel();
+        RefPtr<RegisterID> prototypeString = generator.emitLoad(nullptr, JSValue(generator.addStringConstant(generator.propertyNames().prototype)));
+        generator.emitJumpIfFalse(generator.emitBinaryOp<OpStricteq>(generator.newTemporary(), prototypeString.get(), propertyName.get(), OperandTypes(ResultType::stringType(), ResultType::stringType())), validPropertyNameLabel.get());
+        generator.emitThrowTypeError("Cannot declare a static field named 'prototype'");
+        generator.emitLabel(validPropertyNameLabel.get());
+    }
 
     RefPtr<RegisterID> scope = generator.emitResolveScope(nullptr, var);
-    generator.emitPutToScope(scope.get(), var, propertyName, ThrowIfNotFound, InitializationMode::ConstInitialization);
+    generator.emitPutToScope(scope.get(), var, propertyName.get(), ThrowIfNotFound, InitializationMode::ConstInitialization);
 }
 
 // ------------------------------ BracketAccessorNode --------------------------------
@@ -4946,13 +4965,14 @@ RegisterID* ClassExprNode::emitBytecode(BytecodeGenerator& generator, RegisterID
     RefPtr<RegisterID> prototypeNameRegister = generator.emitLoad(nullptr, propertyNames.prototype);
     generator.emitCallDefineProperty(constructor.get(), prototypeNameRegister.get(), prototype.get(), nullptr, nullptr, 0, m_position);
 
+    Vector<JSTextPosition> staticFieldLocations;
     if (m_classElements) {
         m_classElements->emitDeclarePrivateFieldNames(generator, generator.scopeRegister());
 
         Vector<JSTextPosition> instanceFieldLocations;
-        generator.emitDefineClassElements(m_classElements, constructor.get(), prototype.get(), instanceFieldLocations);
+        generator.emitDefineClassElements(m_classElements, constructor.get(), prototype.get(), instanceFieldLocations, staticFieldLocations);
         if (!instanceFieldLocations.isEmpty()) {
-            RefPtr<RegisterID> instanceFieldInitializer = generator.emitNewInstanceFieldInitializerFunction(generator.newTemporary(), WTFMove(instanceFieldLocations), m_classHeritage);
+            RefPtr<RegisterID> instanceFieldInitializer = generator.emitNewClassFieldInitializerFunction(generator.newTemporary(), WTFMove(instanceFieldLocations), m_classHeritage);
 
             // FIXME: Skip this if the initializer function isn't going to need a home object (no eval or super properties)
             // https://bugs.webkit.org/show_bug.cgi?id=196867
@@ -4962,15 +4982,26 @@ RegisterID* ClassExprNode::emitBytecode(BytecodeGenerator& generator, RegisterID
         }
     }
 
-    if (m_needsLexicalScope) {
-        if (!m_name.isNull()) {
-            Variable classNameVar = generator.variable(m_name);
-            RELEASE_ASSERT(classNameVar.isResolved());
-            RefPtr<RegisterID> scope = generator.emitResolveScope(nullptr, classNameVar);
-            generator.emitPutToScope(scope.get(), classNameVar, constructor.get(), ThrowIfNotFound, InitializationMode::Initialization);
-        }
-        generator.popLexicalScope(this);
+    if (m_needsLexicalScope && !m_name.isNull()) {
+        Variable classNameVar = generator.variable(m_name);
+        RELEASE_ASSERT(classNameVar.isResolved());
+        RefPtr<RegisterID> scope = generator.emitResolveScope(nullptr, classNameVar);
+        generator.emitPutToScope(scope.get(), classNameVar, constructor.get(), ThrowIfNotFound, InitializationMode::Initialization);
     }
+
+    if (!staticFieldLocations.isEmpty()) {
+        RefPtr<RegisterID> staticFieldInitializer = generator.emitNewClassFieldInitializerFunction(generator.newTemporary(), WTFMove(staticFieldLocations), m_classHeritage);
+        // FIXME: Skip this if the initializer function isn't going to need a home object (no eval or super properties)
+        // https://bugs.webkit.org/show_bug.cgi?id=196867
+        emitPutHomeObject(generator, staticFieldInitializer.get(), constructor.get());
+
+        CallArguments args(generator, nullptr);
+        generator.move(args.thisRegister(), constructor.get());
+        generator.emitCall(generator.newTemporary(), staticFieldInitializer.get(), NoExpectedFunction, args, position(), position(), position(), DebuggableCall::No);
+    }
+
+    if (m_needsLexicalScope)
+        generator.popLexicalScope(this);
 
     return generator.move(generator.finalDestination(dst, constructor.get()), constructor.get());
 }

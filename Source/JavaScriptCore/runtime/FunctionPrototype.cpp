@@ -110,7 +110,7 @@ JSC_DEFINE_HOST_FUNCTION(functionProtoFuncToString, (JSGlobalObject* globalObjec
             break;
 
         case SourceParseMode::ArrowFunctionMode:
-        case SourceParseMode::InstanceFieldInitializerMode:
+        case SourceParseMode::ClassFieldInitializerMode:
             functionHeader = "";
             break;
 

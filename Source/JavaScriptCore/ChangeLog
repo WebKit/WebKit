@@ -1,3 +1,53 @@
+2020-11-17  Xan López  <xan@igalia.com>
+
+        [JSC] Add support for static public class fields
+        https://bugs.webkit.org/show_bug.cgi?id=194095
+
+        Reviewed by Yusuke Suzuki.
+
+        Add support for static public class fields. We can reuse most of
+        the existing machinery available for instance fields. Like
+        instance fields, static fields are initialized with a synthetic
+        function. This is done to allow us to trivially follow the scoping
+        rules in the spec. As it happens with instance fields this could
+        be inlined in a future patch.
+
+        A lot of small changes in many files are just a matter of doing
+        s/instance/class/ for variables related to class fields, which
+        before were assuming there are only instance fields implemented.
+
+        * bytecode/UnlinkedFunctionExecutable.cpp:
+        (JSC::generateUnlinkedFunctionCodeBlock): do s/instanceField/classField/.
+        * bytecode/UnlinkedFunctionExecutable.h: ditto.
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitNewClassFieldInitializerFunction): ditto.
+        * bytecompiler/BytecodeGenerator.h: ditto, plus add a parameter
+        for static field locations in emitDefineClassElements.
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::PropertyListNode::emitBytecode): save static fields
+        locations when going through the property list.
+        (JSC::PropertyListNode::emitSaveComputedFieldName): consider
+        static fields here too.
+        (JSC::ClassExprNode::emitBytecode): call the initializer for
+        static fields as the very last action of the class creation.
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createDefineField): field nodes can be static
+        too now.
+        * parser/NodeConstructors.h:
+        (JSC::DefineFieldNode::DefineFieldNode): ditto.
+        * parser/Nodes.h: ditto.
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseInner): s/instanceField/classField/
+        (JSC::Parser<LexerType>::parseClass): consider static fields.
+        (JSC::Parser<LexerType>::parseInstanceFieldInitializerSourceElements):
+        s/instanceField/classField/, and consider static fields.
+        * parser/Parser.h:
+        (JSC::Parser<LexerType>::parse): s/instanceField/classField/
+        (JSC::parse): ditto.
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::setFunctionName): s/instanceField/classField/
+        * runtime/OptionsList.h: add option to enable/disable static public fields.
+
 2020-11-15  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Wasm should get byte length from source typed array

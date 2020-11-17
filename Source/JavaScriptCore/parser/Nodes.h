@@ -738,6 +738,7 @@ namespace JSC {
         bool isInstanceClassProperty() const { return static_cast<ClassElementTag>(m_classElementTag) == ClassElementTag::Instance; }
         bool isClassField() const { return isClassProperty() && !needsSuperBinding(); }
         bool isInstanceClassField() const { return isInstanceClassProperty() && !needsSuperBinding(); }
+        bool isStaticClassField() const { return isStaticClassProperty() && !needsSuperBinding(); }
         bool isOverriddenByDuplicate() const { return m_isOverriddenByDuplicate; }
         bool isPrivate() const { return m_type & Private; }
         bool hasComputedName() const { return m_expression; }
@@ -782,16 +783,21 @@ namespace JSC {
         }
         bool hasInstanceFields() const;
 
+        bool isStaticClassField() const
+        {
+            return m_node->isStaticClassField();
+        }
+
         static bool shouldCreateLexicalScopeForClass(PropertyListNode*);
 
-        RegisterID* emitBytecode(BytecodeGenerator&, RegisterID*, RegisterID*, Vector<JSTextPosition>*);
+        RegisterID* emitBytecode(BytecodeGenerator&, RegisterID*, RegisterID*, Vector<JSTextPosition>*, Vector<JSTextPosition>*);
 
         void emitDeclarePrivateFieldNames(BytecodeGenerator&, RegisterID* scope);
 
     private:
         RegisterID* emitBytecode(BytecodeGenerator& generator, RegisterID* dst = nullptr) final
         {
-            return emitBytecode(generator, dst, nullptr, nullptr);
+            return emitBytecode(generator, dst, nullptr, nullptr, nullptr);
         }
         void emitPutConstantProperty(BytecodeGenerator&, RegisterID*, PropertyNode&);
         void emitSaveComputedFieldName(BytecodeGenerator&, PropertyNode&);

@@ -209,7 +209,7 @@ Parser<LexerType>::~Parser()
 }
 
 template <typename LexerType>
-Expected<typename Parser<LexerType>::ParseInnerResult, String> Parser<LexerType>::parseInner(const Identifier& calleeName, SourceParseMode parseMode, ParsingContext parsingContext, Optional<int> functionConstructorParametersEndPosition, const Vector<JSTextPosition>* instanceFieldLocations)
+Expected<typename Parser<LexerType>::ParseInnerResult, String> Parser<LexerType>::parseInner(const Identifier& calleeName, SourceParseMode parseMode, ParsingContext parsingContext, Optional<int> functionConstructorParametersEndPosition, const Vector<JSTextPosition>* classFieldLocations)
 {
     ASTBuilder context(const_cast<VM&>(m_vm), m_parserArena, const_cast<SourceCode*>(m_source));
     ScopeRef scope = currentScope();
@@ -222,7 +222,7 @@ Expected<typename Parser<LexerType>::ParseInnerResult, String> Parser<LexerType>
         ParserFunctionInfo<ASTBuilder> functionInfo;
         if (isGeneratorOrAsyncFunctionBodyParseMode(parseMode))
             parameters = createGeneratorParameters(context, functionInfo.parameterCount);
-        else if (parseMode == SourceParseMode::InstanceFieldInitializerMode)
+        else if (parseMode == SourceParseMode::ClassFieldInitializerMode)
             parameters = context.createFormalParameterList();
         else
             parameters = parseFunctionParameters(context, parseMode, functionInfo);
@@ -256,9 +256,9 @@ Expected<typename Parser<LexerType>::ParseInnerResult, String> Parser<LexerType>
             sourceElements = parseAsyncGeneratorFunctionSourceElements(context, parseMode, isArrowFunctionBodyExpression, CheckForStrictMode);
         else if (parsingContext == ParsingContext::FunctionConstructor)
             sourceElements = parseSingleFunction(context, functionConstructorParametersEndPosition);
-        else if (parseMode == SourceParseMode::InstanceFieldInitializerMode) {
-            ASSERT(instanceFieldLocations && !instanceFieldLocations->isEmpty());
-            sourceElements = parseInstanceFieldInitializerSourceElements(context, *instanceFieldLocations);
+        else if (parseMode == SourceParseMode::ClassFieldInitializerMode) {
+            ASSERT(classFieldLocations && !classFieldLocations->isEmpty());
+            sourceElements = parseClassFieldInitializerSourceElements(context, *classFieldLocations);
         } else
             sourceElements = parseSourceElements(context, CheckForStrictMode);
     }
@@ -2178,7 +2178,7 @@ static const char* stringArticleForFunctionMode(SourceParseMode mode)
     case SourceParseMode::ProgramMode:
     case SourceParseMode::ModuleAnalyzeMode:
     case SourceParseMode::ModuleEvaluateMode:
-    case SourceParseMode::InstanceFieldInitializerMode:
+    case SourceParseMode::ClassFieldInitializerMode:
         RELEASE_ASSERT_NOT_REACHED();
         return "";
     }
@@ -2220,7 +2220,7 @@ static const char* stringForFunctionMode(SourceParseMode mode)
     case SourceParseMode::ProgramMode:
     case SourceParseMode::ModuleAnalyzeMode:
     case SourceParseMode::ModuleEvaluateMode:
-    case SourceParseMode::InstanceFieldInitializerMode:
+    case SourceParseMode::ClassFieldInitializerMode:
         RELEASE_ASSERT_NOT_REACHED();
         return "";
     }
@@ -2838,6 +2838,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseClassDeclarat
 }
 
 static constexpr ASCIILiteral instanceComputedNamePrefix { "instanceComputedName"_s };
+static constexpr ASCIILiteral staticComputedNamePrefix { "staticComputedName"_s };
 
 template <typename LexerType>
 template <class TreeBuilder> TreeClassExpression Parser<LexerType>::parseClass(TreeBuilder& context, FunctionNameRequirements requirements, ParserClassInfo<TreeBuilder>& info)
@@ -2881,7 +2882,8 @@ template <class TreeBuilder> TreeClassExpression Parser<LexerType>::parseClass(T
     TreeExpression constructor = 0;
     TreePropertyList classElements = 0;
     TreePropertyList classElementsTail = 0;
-    unsigned numComputedFields = 0;
+    unsigned nextInstanceComputedFieldID = 0;
+    unsigned nextStaticComputedFieldID = 0;
     while (!match(CLOSEBRACE)) {
         if (match(SEMICOLON)) {
             next();
@@ -2990,15 +2992,20 @@ parseMethod:
             type = static_cast<PropertyNode::Type>(type | (isGetter ? PropertyNode::Getter : PropertyNode::Setter));
             property = parseGetterSetter(context, type, methodStart, ConstructorKind::None, tag);
             failIfFalse(property, "Cannot parse this method");
-        } else if (Options::usePublicClassFields() && !match(OPENPAREN) && tag == ClassElementTag::Instance && parseMode == SourceParseMode::MethodMode) {
+        } else if (Options::usePublicClassFields() && !match(OPENPAREN) && (tag == ClassElementTag::Instance || Options::usePublicStaticClassFields()) && parseMode == SourceParseMode::MethodMode) {
             ASSERT(!isGetter && !isSetter);
             if (ident) {
                 semanticFailIfTrue(*ident == propertyNames.constructor, "Cannot declare class field named 'constructor'");
                 semanticFailIfTrue(*ident == propertyNames.constructorPrivateField, "Cannot declare private class field named '#constructor'");
+                if (tag == ClassElementTag::Static)
+                    semanticFailIfTrue(*ident == propertyNames.prototype, "Cannot declare a static field named 'prototype'");
             }
 
             if (computedPropertyName) {
-                ident = &m_parserArena.identifierArena().makePrivateIdentifier(m_vm, instanceComputedNamePrefix, numComputedFields++);
+                if (tag == ClassElementTag::Instance)
+                    ident = &m_parserArena.identifierArena().makePrivateIdentifier(m_vm, instanceComputedNamePrefix, nextInstanceComputedFieldID++);
+                else
+                    ident = &m_parserArena.identifierArena().makePrivateIdentifier(m_vm, staticComputedNamePrefix, nextStaticComputedFieldID++);
                 DeclarationResultMask declarationResult = classScope->declareLexicalVariable(ident, true);
                 ASSERT_UNUSED(declarationResult, declarationResult == DeclarationResult::Valid);
                 classScope->useVariable(ident, false);
@@ -3065,13 +3072,19 @@ parseMethod:
 }
 
 template <typename LexerType>
-template <class TreeBuilder> TreeSourceElements Parser<LexerType>::parseInstanceFieldInitializerSourceElements(TreeBuilder& context, const Vector<JSTextPosition>& instanceFieldLocations)
+template <class TreeBuilder> TreeSourceElements Parser<LexerType>::parseClassFieldInitializerSourceElements(TreeBuilder& context, const Vector<JSTextPosition>& classFieldLocations)
 {
     TreeSourceElements sourceElements = context.createSourceElements();
     currentScope()->setIsClassScope();
 
     unsigned numComputedFields = 0;
-    for (auto location : instanceFieldLocations) {
+    for (auto location : classFieldLocations) {
+        // This loop will either parse only static fields or only
+        // instance fields, but never a mix; we could make it slightly
+        // smarter about parsing given that fact, but it's probably
+        // not worth the hassle, so begin each iteration without
+        // knowing which kind the next field will be.
+        bool isStaticField = false;
         // We don't need to worry about hasLineTerminatorBeforeToken
         // on class fields, so we set this value to false.
         LexerState lexerState { location.offset, static_cast<unsigned>(location.lineStartOffset), static_cast<unsigned>(location.line), static_cast<unsigned>(location.line), false };
@@ -3080,41 +3093,56 @@ template <class TreeBuilder> TreeSourceElements Parser<LexerType>::parseInstance
         JSTokenLocation fieldLocation = tokenLocation();
         const Identifier* ident = nullptr;
         DefineFieldNode::Type type = DefineFieldNode::Type::Name;
-        switch (m_token.m_type) {
-        case PRIVATENAME:
-            type = DefineFieldNode::Type::PrivateName;
-            FALLTHROUGH;
-        case STRING:
-        case IDENT:
-        namedKeyword:
-            ident = m_token.m_data.ident;
-            ASSERT(ident);
+
+        if (match(RESERVED_IF_STRICT) && *m_token.m_data.ident == m_vm.propertyNames->staticKeyword) {
+            auto* staticIdentifier = m_token.m_data.ident;
+            ASSERT(staticIdentifier);
             next();
-            break;
-        case BIGINT:
-            ident = &m_parserArena.identifierArena().makeBigIntDecimalIdentifier(const_cast<VM&>(m_vm), *m_token.m_data.bigIntString, m_token.m_data.radix);
-            ASSERT(ident);
-            next();
-            break;
-        case DOUBLE:
-        case INTEGER:
-            ident = &m_parserArena.identifierArena().makeNumericIdentifier(const_cast<VM&>(m_vm), m_token.m_data.doubleValue);
-            ASSERT(ident);
-            next();
-            break;
-        case OPENBRACKET: {
-            next();
-            TreeExpression computedPropertyName = parseAssignmentExpression(context);
-            failIfFalse(computedPropertyName, "Cannot parse computed property name");
-            handleProductionOrFail(CLOSEBRACKET, "]", "end", "computed property name");
-            ident = &m_parserArena.identifierArena().makePrivateIdentifier(m_vm, instanceComputedNamePrefix, numComputedFields++);
-            type = DefineFieldNode::Type::ComputedName;
-            break;
+            if (match(SEMICOLON) || match (EQUAL) || match(CLOSEBRACE) || m_lexer->hasLineTerminatorBeforeToken())
+                ident = staticIdentifier;
+            else
+                isStaticField = true;
         }
-        default:
-            if (m_token.m_type & KeywordTokenFlag)
-                goto namedKeyword;
-            failDueToUnexpectedToken();
+
+        if (!ident) {
+            switch (m_token.m_type) {
+            case PRIVATENAME:
+                type = DefineFieldNode::Type::PrivateName;
+                FALLTHROUGH;
+            case STRING:
+            case IDENT:
+            namedKeyword:
+                ident = m_token.m_data.ident;
+                ASSERT(ident);
+                next();
+                break;
+            case BIGINT:
+                ident = &m_parserArena.identifierArena().makeBigIntDecimalIdentifier(const_cast<VM&>(m_vm), *m_token.m_data.bigIntString, m_token.m_data.radix);
+                ASSERT(ident);
+                next();
+                break;
+            case DOUBLE:
+            case INTEGER:
+                ident = &m_parserArena.identifierArena().makeNumericIdentifier(const_cast<VM&>(m_vm), m_token.m_data.doubleValue);
+                ASSERT(ident);
+                next();
+                break;
+            case OPENBRACKET: {
+                next();
+                TreeExpression computedPropertyName = parseAssignmentExpression(context);
+                failIfFalse(computedPropertyName, "Cannot parse computed property name");
+                handleProductionOrFail(CLOSEBRACKET, "]", "end", "computed property name");
+                ident = &m_parserArena.identifierArena().makePrivateIdentifier(m_vm,
+                    isStaticField ? staticComputedNamePrefix : instanceComputedNamePrefix,
+                    numComputedFields++);
+                type = DefineFieldNode::Type::ComputedName;
+                break;
+            }
+            default:
+                if (m_token.m_type & KeywordTokenFlag)
+                    goto namedKeyword;
+                failDueToUnexpectedToken();
+            }
         }
 
         // Only valid class fields are handled in this function.

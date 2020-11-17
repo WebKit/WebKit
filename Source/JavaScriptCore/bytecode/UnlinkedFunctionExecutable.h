@@ -209,23 +209,23 @@ public:
         String m_sourceURLDirective;
         String m_sourceMappingURLDirective;
         Vector<CompactTDZEnvironmentMap::Handle> m_parentScopeTDZVariables;
-        Vector<JSTextPosition> m_instanceFieldLocations;
+        Vector<JSTextPosition> m_classFieldLocations;
     };
 
     NeedsClassFieldInitializer needsClassFieldInitializer() const { return static_cast<NeedsClassFieldInitializer>(m_needsClassFieldInitializer); }
 
-    Vector<JSTextPosition>* instanceFieldLocations() const
+    Vector<JSTextPosition>* classFieldLocations() const
     {
         if (m_rareData)
-            return &m_rareData->m_instanceFieldLocations;
+            return &m_rareData->m_classFieldLocations;
         return nullptr;
     }
 
-    void setInstanceFieldLocations(Vector<JSTextPosition>&& instanceFieldLocations)
+    void setClassFieldLocations(Vector<JSTextPosition>&& classFieldLocations)
     {
-        if (instanceFieldLocations.isEmpty())
+        if (classFieldLocations.isEmpty())
             return;
-        ensureRareData().m_instanceFieldLocations = WTFMove(instanceFieldLocations);
+        ensureRareData().m_classFieldLocations = WTFMove(classFieldLocations);
     }
 
 private:

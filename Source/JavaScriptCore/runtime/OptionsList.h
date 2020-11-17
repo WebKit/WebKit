@@ -525,6 +525,7 @@ JS_EXPORT_PRIVATE bool canUseJITCage();
     v(Double, allowHoistingLICMProbability, 0.5, Normal, nullptr) \
     v(Bool, exposeCustomSettersOnGlobalObjectForTesting, false, Normal, nullptr) \
     v(Bool, useJITCage, canUseJITCage(), Normal, nullptr) \
+    v(Bool, usePublicStaticClassFields, false, Normal, "If true, the parser will understand public static data fields inside classes.") \
 
 enum OptionEquivalence {
     SameOption,
