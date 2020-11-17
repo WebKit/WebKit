@@ -147,7 +147,9 @@ static PixelRange pixelRangeFromPixelFormat(OSType pixelFormat)
     case kCVPixelFormatType_420YpCbCr10BiPlanarVideoRange:
     case kCVPixelFormatType_422YpCbCr10BiPlanarVideoRange:
     case kCVPixelFormatType_444YpCbCr10BiPlanarVideoRange:
+#if HAVE(CV_AGX_420_PIXEL_FORMAT_TYPES)
     case kCVPixelFormatType_AGX_420YpCbCr8BiPlanarVideoRange:
+#endif
         return PixelRange::Video;
     case kCVPixelFormatType_420YpCbCr8PlanarFullRange:
     case kCVPixelFormatType_420YpCbCr8BiPlanarFullRange:
@@ -156,7 +158,9 @@ static PixelRange pixelRangeFromPixelFormat(OSType pixelFormat)
     case kCVPixelFormatType_420YpCbCr10BiPlanarFullRange:
     case kCVPixelFormatType_422YpCbCr10BiPlanarFullRange:
     case kCVPixelFormatType_444YpCbCr10BiPlanarFullRange:
+#if HAVE(CV_AGX_420_PIXEL_FORMAT_TYPES)
     case kCVPixelFormatType_AGX_420YpCbCr8BiPlanarFullRange:
+#endif
         return PixelRange::Full;
     default:
         return PixelRange::Unknown;
@@ -583,8 +587,11 @@ bool GraphicsContextGLCVANGLE::copyPixelBufferToTexture(CVPixelBufferRef image, 
     OSType pixelFormat = CVPixelBufferGetPixelFormatType(image);
     if (pixelFormat != kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange
         && pixelFormat != kCVPixelFormatType_420YpCbCr8BiPlanarFullRange
+#if HAVE(CV_AGX_420_PIXEL_FORMAT_TYPES)
         && pixelFormat != kCVPixelFormatType_AGX_420YpCbCr8BiPlanarVideoRange
-        && pixelFormat != kCVPixelFormatType_AGX_420YpCbCr8BiPlanarFullRange) {
+        && pixelFormat != kCVPixelFormatType_AGX_420YpCbCr8BiPlanarFullRange
+#endif
+        ) {
         LOG(WebGL, "GraphicsContextGLCVANGLE::copyVideoTextureToPlatformTexture(%p) - Asked to copy an unsupported pixel format ('%s').", this, FourCC(pixelFormat).toString().utf8().data());
         return false;
     }

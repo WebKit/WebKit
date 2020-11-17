@@ -774,3 +774,7 @@
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED > 110000 && defined __has_include && __has_include(<CoreFoundation/CFPriv.h>)
 #define HAVE_SANDBOX_MESSAGE_FILTERING 1
 #endif
+
+#if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000)
+#define HAVE_CV_AGX_420_PIXEL_FORMAT_TYPES 1
+#endif

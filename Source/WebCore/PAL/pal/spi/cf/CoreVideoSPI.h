@@ -30,8 +30,12 @@
 #if USE(APPLE_INTERNAL_SDK)
 #include <CoreVideo/CVPixelBufferPrivate.h>
 #else
+
+#if HAVE(CV_AGX_420_PIXEL_FORMAT_TYPES)
 enum {
     kCVPixelFormatType_AGX_420YpCbCr8BiPlanarVideoRange = '&8v0',
     kCVPixelFormatType_AGX_420YpCbCr8BiPlanarFullRange = '&8f0',
 };
+#endif
+
 #endif
