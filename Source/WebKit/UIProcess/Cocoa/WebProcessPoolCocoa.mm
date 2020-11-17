@@ -267,7 +267,8 @@ static const Vector<ASCIILiteral>& diagnosticServices()
 #if PLATFORM(IOS_FAMILY)
         "com.apple.osanalytics.osanalyticshelper"_s
 #else
-        "com.apple.analyticsd"_s
+        "com.apple.analyticsd"_s,
+        "com.apple.powerlog.plxpclogger.xpc"_s
 #endif
     });
     return services;

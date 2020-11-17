@@ -920,7 +920,6 @@
     (global-name "com.apple.coreservices.launchservicesd")
     (global-name "com.apple.iconservices")
     (global-name "com.apple.iconservices.store")
-    (global-name "com.apple.powerlog.plxpclogger.xpc")
     (global-name "com.apple.tccd.system")
     (global-name "com.apple.trustd.agent")
 )
@@ -1229,6 +1228,7 @@
             "com.apple.diagnosticd"
             "com.apple.iconservices"
             "com.apple.iconservices.store"
+            "com.apple.powerlog.plxpclogger.xpc"
             "com.apple.tccd"
             "com.apple.BluetoothServices"
 

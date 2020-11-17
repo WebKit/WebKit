@@ -1,3 +1,17 @@
+2020-11-16  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Create sandbox extension for the power log service on internal installs
+        https://bugs.webkit.org/show_bug.cgi?id=218984
+        <rdar://problem/58488936>
+
+        Reviewed by Brent Fulgham.
+
+        Create a sandbox extension for the WebContent process for the power log service on macOS internal installs.
+
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::diagnosticServices):
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2020-11-16  Sam Weinig  <weinig@apple.com>
 
         Standardize enums that are used by Settings in preperation for autogeneration
