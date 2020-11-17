@@ -56,12 +56,13 @@ void XPCEndpointClient::setEndpoint(xpc_endpoint_t endpoint)
             auto connection = xpc_dictionary_get_remote_connection(message);
             if (!connection)
                 return;
-
+#if USE(APPLE_INTERNAL_SDK)
             auto pid = xpc_connection_get_pid(connection);
             if (pid != getpid() && !WTF::hasEntitlement(connection, "com.apple.private.webkit.use-xpc-endpoint")) {
                 WTFLogAlways("Audit token does not have required entitlement com.apple.private.webkit.use-xpc-endpoint");
                 return;
             }
+#endif
             handleEvent(message);
         });
 

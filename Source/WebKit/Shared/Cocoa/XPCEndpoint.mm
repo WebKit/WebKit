@@ -49,6 +49,7 @@ XPCEndpoint::XPCEndpoint()
 
         if (type == XPC_TYPE_CONNECTION) {
             OSObjectPtr<xpc_connection_t> connection = message;
+#if USE(APPLE_INTERNAL_SDK)
             auto pid = xpc_connection_get_pid(connection.get());
 
             if (pid != getpid() && !WTF::hasEntitlement(connection.get(), "com.apple.private.webkit.use-xpc-endpoint")) {
@@ -67,6 +68,7 @@ XPCEndpoint::XPCEndpoint()
                 return;
 #endif
             }
+#endif // USE(APPLE_INTERNAL_SDK)
             xpc_connection_set_target_queue(connection.get(), dispatch_get_main_queue());
             xpc_connection_set_event_handler(connection.get(), ^(xpc_object_t event) {
                 handleEvent(connection.get(), event);
