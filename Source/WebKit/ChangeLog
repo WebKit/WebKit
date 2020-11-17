@@ -1,3 +1,17 @@
+2020-11-17  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Issue sandbox extension to trust service if Media in the GPU process is not enabled
+        https://bugs.webkit.org/show_bug.cgi?id=218986
+        <rdar://problem/71439885>
+
+        Reviewed by Brent Fulgham.
+
+        Since Media is using the trust service, issue a sandbox extension to the WebContent process if Media in the GPU process is not enabled.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::mediaRelatedMachServices):
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2020-11-17  Sihui Liu  <sihui_liu@apple.com>
 
         Add a default action for SpeechRecognition permission request
