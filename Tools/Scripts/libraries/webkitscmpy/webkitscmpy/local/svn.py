@@ -311,7 +311,7 @@ class Svn(Scm):
                 raise ValueError('Cannot define both tag and revision')
             revision = Commit._parse_revision(revision, do_assert=True)
             branch = self._branch_for(revision)
-            info = self.info(cached=True, branch=branch, revision=revision)
+            info = self.info(cached=True, revision=revision)
 
         else:
             if branch and tag:
