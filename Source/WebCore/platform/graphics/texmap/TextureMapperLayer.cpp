@@ -24,6 +24,7 @@
 #include "GraphicsLayerTextureMapper.h"
 #include "Region.h"
 #include <wtf/MathExtras.h>
+#include <wtf/SetForScope.h>
 
 namespace WebCore {
 
@@ -151,7 +152,7 @@ static Color blendWithOpacity(const Color& color, float opacity)
     return color.colorWithAlphaMultipliedBy(opacity);
 }
 
-void TextureMapperLayer::paintSelf(const TextureMapperPaintOptions& options)
+void TextureMapperLayer::paintSelf(TextureMapperPaintOptions& options)
 {
     if (!m_state.visible || !m_state.contentsVisible)
         return;
@@ -218,7 +219,7 @@ void TextureMapperLayer::sortByZOrder(Vector<TextureMapperLayer* >& array)
         });
 }
 
-void TextureMapperLayer::paintSelfAndChildren(const TextureMapperPaintOptions& options)
+void TextureMapperLayer::paintSelfAndChildren(TextureMapperPaintOptions& options)
 {
     if (m_state.backdropLayer && m_state.backdropLayer == options.backdropLayer)
         return;
@@ -294,12 +295,12 @@ bool TextureMapperLayer::isVisible() const
     return true;
 }
 
-void TextureMapperLayer::paintSelfAndChildrenWithReplica(const TextureMapperPaintOptions& options)
+void TextureMapperLayer::paintSelfAndChildrenWithReplica(TextureMapperPaintOptions& options)
 {
     if (m_state.replicaLayer) {
-        TextureMapperPaintOptions replicaOptions(options);
-        replicaOptions.transform.multiply(replicaTransform());
-        paintSelfAndChildren(replicaOptions);
+        SetForScope<TransformationMatrix> scopedTransform(options.transform, options.transform);
+        options.transform.multiply(replicaTransform());
+        paintSelfAndChildren(options);
     }
 
     paintSelfAndChildren(options);
@@ -367,7 +368,7 @@ void TextureMapperLayer::computeOverlapRegions(ComputeOverlapRegionData& data, c
     }
 }
 
-void TextureMapperLayer::paintUsingOverlapRegions(const TextureMapperPaintOptions& options)
+void TextureMapperLayer::paintUsingOverlapRegions(TextureMapperPaintOptions& options)
 {
     Region overlapRegion;
     Region nonOverlapRegion;
@@ -421,7 +422,7 @@ void TextureMapperLayer::paintUsingOverlapRegions(const TextureMapperPaintOption
     }
 }
 
-void TextureMapperLayer::applyMask(const TextureMapperPaintOptions& options)
+void TextureMapperLayer::applyMask(TextureMapperPaintOptions& options)
 {
     options.textureMapper.setMaskMode(true);
     paintSelf(options);
@@ -432,10 +433,9 @@ void TextureMapperLayer::paintIntoSurface(TextureMapperPaintOptions& options)
 {
     options.textureMapper.bindSurface(options.surface.get());
     if (m_isBackdrop) {
-        TextureMapperPaintOptions paintOptions(options);
-        paintOptions.transform = TransformationMatrix();
-        paintOptions.backdropLayer = this;
-        rootLayer().paintSelfAndChildren(paintOptions);
+        SetForScope<TransformationMatrix> scopedTransform(options.transform, TransformationMatrix());
+        SetForScope<TextureMapperLayer*> scopedBackdropLayer(options.backdropLayer, this);
+        rootLayer().paintSelfAndChildren(options);
     } else
         paintSelfAndChildren(options);
     if (m_state.maskLayer)
@@ -444,7 +444,7 @@ void TextureMapperLayer::paintIntoSurface(TextureMapperPaintOptions& options)
     options.textureMapper.bindSurface(options.surface.get());
 }
 
-static void commitSurface(const TextureMapperPaintOptions& options, BitmapTexture& surface, const IntRect& rect, float opacity)
+static void commitSurface(TextureMapperPaintOptions& options, BitmapTexture& surface, const IntRect& rect, float opacity)
 {
     IntRect targetRect(rect);
     targetRect.move(options.offset);
@@ -452,39 +452,43 @@ static void commitSurface(const TextureMapperPaintOptions& options, BitmapTextur
     options.textureMapper.drawTexture(surface, targetRect, { }, opacity);
 }
 
-void TextureMapperLayer::paintWithIntermediateSurface(const TextureMapperPaintOptions& options, const IntRect& rect)
+void TextureMapperLayer::paintWithIntermediateSurface(TextureMapperPaintOptions& options, const IntRect& rect)
 {
-    TextureMapperPaintOptions paintOptions(options);
-    paintOptions.surface = options.textureMapper.acquireTextureFromPool(rect.size(), BitmapTexture::SupportsAlpha);
-    paintOptions.offset = -toIntSize(rect.location());
-    paintOptions.opacity = 1;
-    if (m_state.replicaLayer) {
-        paintOptions.transform.multiply(replicaTransform());
-        paintIntoSurface(paintOptions);
-        paintOptions.transform = options.transform;
-        if (m_state.replicaLayer->m_state.maskLayer)
-            m_state.replicaLayer->m_state.maskLayer->applyMask(paintOptions);
+    auto surface = options.textureMapper.acquireTextureFromPool(rect.size(), BitmapTexture::SupportsAlpha);
+    {
+        SetForScope<RefPtr<BitmapTexture>> scopedSurface(options.surface, surface);
+        SetForScope<IntSize> scopedOffset(options.offset, -toIntSize(rect.location()));
+        SetForScope<float> scopedOpacity(options.opacity, 1);
+        if (m_state.replicaLayer) {
+            {
+                SetForScope<TransformationMatrix> scopedTransform(options.transform, options.transform);
+                options.transform.multiply(replicaTransform());
+                paintIntoSurface(options);
+            }
+            if (m_state.replicaLayer->m_state.maskLayer)
+                m_state.replicaLayer->m_state.maskLayer->applyMask(options);
+        }
+
+        paintIntoSurface(options);
+        surface = options.surface;
     }
 
-    paintIntoSurface(paintOptions);
-
-    commitSurface(options, *paintOptions.surface, rect, options.opacity);
+    commitSurface(options, *surface, rect, options.opacity);
 }
 
-void TextureMapperLayer::paintRecursive(const TextureMapperPaintOptions& options)
+void TextureMapperLayer::paintRecursive(TextureMapperPaintOptions& options)
 {
     if (!isVisible())
         return;
 
-    TextureMapperPaintOptions paintOptions(options);
-    paintOptions.opacity *= m_currentOpacity;
+    SetForScope<float> scopedOpacity(options.opacity, options.opacity * m_currentOpacity);
 
     if (!shouldBlend()) {
-        paintSelfAndChildrenWithReplica(paintOptions);
+        paintSelfAndChildrenWithReplica(options);
         return;
     }
 
-    paintUsingOverlapRegions(paintOptions);
+    paintUsingOverlapRegions(options);
 }
 
 #if !USE(COORDINATED_GRAPHICS)

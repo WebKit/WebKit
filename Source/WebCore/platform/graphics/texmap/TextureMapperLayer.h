@@ -136,14 +136,14 @@ private:
     };
     void computeOverlapRegions(ComputeOverlapRegionData&, const TransformationMatrix&, bool includesReplica = true);
 
-    void paintRecursive(const TextureMapperPaintOptions&);
-    void paintUsingOverlapRegions(const TextureMapperPaintOptions&);
+    void paintRecursive(TextureMapperPaintOptions&);
+    void paintUsingOverlapRegions(TextureMapperPaintOptions&);
     void paintIntoSurface(TextureMapperPaintOptions&);
-    void paintWithIntermediateSurface(const TextureMapperPaintOptions&, const IntRect&);
-    void paintSelf(const TextureMapperPaintOptions&);
-    void paintSelfAndChildren(const TextureMapperPaintOptions&);
-    void paintSelfAndChildrenWithReplica(const TextureMapperPaintOptions&);
-    void applyMask(const TextureMapperPaintOptions&);
+    void paintWithIntermediateSurface(TextureMapperPaintOptions&, const IntRect&);
+    void paintSelf(TextureMapperPaintOptions&);
+    void paintSelfAndChildren(TextureMapperPaintOptions&);
+    void paintSelfAndChildrenWithReplica(TextureMapperPaintOptions&);
+    void applyMask(TextureMapperPaintOptions&);
 
     bool isVisible() const;
 
