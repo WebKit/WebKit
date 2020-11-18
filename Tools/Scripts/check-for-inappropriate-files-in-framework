@@ -28,10 +28,21 @@ project_name = ENV['PRODUCT_NAME'] or throw "Unable to find PRODUCT_NAME in the 
 is_shallow_bundle = (ENV['SHALLOW_BUNDLE'] || "NO").upcase == "YES"
 
 $INAPPROPRIATE_FILES = {
-  "JavaScriptCore"  => { "Resources" => ["*.txt", "*.in", "*.idl", "*.h"] },
-  "WebCore"         => { "Resources" => ["*.txt", "*.in", "*.idl", "*.h"] },
-  "WebKitLegacy"    => { "Resources" => ["*.txt", "*.in", "*.idl", "*.h"] },
-  "WebKit"          => { "Resources" => ["*.txt", "*.in", "*.idl", "*.h"] },
+  "JavaScriptCore" => {
+    "Headers" => ["*.tmp"],
+    "Resources" => ["*.txt", "*.in", "*.idl", "*.h"],
+  },
+  "WebCore" => {
+    "Resources" => ["*.txt", "*.in", "*.idl", "*.h"],
+  },
+  "WebKitLegacy" => {
+    "Headers" => ["*.tmp"],
+    "Resources" => ["*.txt", "*.in", "*.idl", "*.h"],
+  },
+  "WebKit" => {
+    "Headers" => ["*.tmp"],
+    "Resources" => ["*.txt", "*.in", "*.idl", "*.h"],
+  },
 }
 
 Dir.chdir base_directory

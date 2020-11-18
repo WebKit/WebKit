@@ -1,3 +1,19 @@
+2020-11-18  Keith Rollin  <krollin@apple.com>
+
+        Extend check-for-inappropriate-files-in-framework to check for .tmp files
+        https://bugs.webkit.org/show_bug.cgi?id=219064
+        <rdar://problem/71519010>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Some *.tmp files that were generated from post-processing header files
+        were appearing in *.framework/Headers directories. The problem doesn't
+        seem to be occurring any more, but update
+        check-for-inappropriate-files-in-framework to catch it if it does
+        again.
+
+        * Scripts/check-for-inappropriate-files-in-framework:
+
 2020-11-18  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitpy] Respect --result-report-flavor on device ports
