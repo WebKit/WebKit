@@ -239,8 +239,9 @@ DisplayList::ItemBufferHandle RemoteRenderingBackendProxy::createItemBuffer(size
     }
 
     static constexpr size_t defaultSharedItemBufferSize = 1 << 16;
+    static_assert(defaultSharedItemBufferSize > SharedDisplayListHandle::headerSize());
 
-    auto sharedMemory = SharedMemory::allocate(std::max(defaultSharedItemBufferSize, capacity + SharedDisplayListHandle::reservedCapacityAtStart));
+    auto sharedMemory = SharedMemory::allocate(std::max(defaultSharedItemBufferSize, capacity + SharedDisplayListHandle::headerSize()));
     if (!sharedMemory)
         return { };
 

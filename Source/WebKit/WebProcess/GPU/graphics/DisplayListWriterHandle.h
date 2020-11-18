@@ -49,7 +49,7 @@ public:
 private:
     DisplayListWriterHandle(WebCore::DisplayList::ItemBufferIdentifier identifier, Ref<SharedMemory>&& sharedMemory)
         : SharedDisplayListHandle(identifier, WTFMove(sharedMemory))
-        , m_writableOffset(SharedDisplayListHandle::reservedCapacityAtStart)
+        , m_writableOffset(SharedDisplayListHandle::headerSize())
     {
     }
 

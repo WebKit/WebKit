@@ -68,15 +68,15 @@ DisplayList::ItemBufferHandle DisplayListWriterHandle::createHandle() const
 
 bool DisplayListWriterHandle::resetWritableOffsetIfPossible()
 {
-    if (m_writableOffset <= SharedDisplayListHandle::reservedCapacityAtStart) {
-        RELEASE_ASSERT(m_writableOffset == SharedDisplayListHandle::reservedCapacityAtStart);
+    if (m_writableOffset <= SharedDisplayListHandle::headerSize()) {
+        RELEASE_ASSERT(m_writableOffset == SharedDisplayListHandle::headerSize());
         return true;
     }
 
     if (unreadBytes())
         return false;
 
-    m_writableOffset = SharedDisplayListHandle::reservedCapacityAtStart;
+    m_writableOffset = SharedDisplayListHandle::headerSize();
     return true;
 }
 

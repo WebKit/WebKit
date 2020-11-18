@@ -37,7 +37,10 @@ class SharedDisplayListHandle : public RefCounted<SharedDisplayListHandle> {
 public:
     virtual ~SharedDisplayListHandle() = default;
 
-    static constexpr auto reservedCapacityAtStart = 2 * sizeof(uint64_t);
+    static constexpr size_t headerSize()
+    {
+        return roundUpToMultipleOf<sizeof(std::max_align_t)>(sizeof(DisplayListSharedMemoryHeader));
+    }
 
     SharedMemory& sharedMemory() { return m_sharedMemory.get(); }
     const SharedMemory& sharedMemory() const { return m_sharedMemory.get(); }

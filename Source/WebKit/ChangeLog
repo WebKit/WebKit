@@ -1,3 +1,33 @@
+2020-11-18  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Clean up some code in SharedDisplayListHandle
+        https://bugs.webkit.org/show_bug.cgi?id=219089
+
+        Reviewed by Geoff Garen.
+
+        Currently, `reservedCapacityAtStart` is defined as a constant 16 bytes, which is enough to encompass the
+        contents of the header structure in a shared display list handle (i.e. an 8-byte atomic for the lock, and
+        another 8 bytes for the unread count).
+
+        Instead of hard-coding this, we could simply make this a constexpr function that returns the size of
+        `DisplayListSharedMemoryHeader` (rounded up to ensure alignment of all display list item data).
+
+        No change in behavior.
+
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::wakeUpAndApplyDisplayList):
+        (WebKit::RemoteRenderingBackend::didCreateSharedDisplayListHandle):
+        * Shared/SharedDisplayListHandle.h:
+        (WebKit::SharedDisplayListHandle::headerSize):
+        * WebProcess/GPU/graphics/DisplayListWriterHandle.cpp:
+        (WebKit::DisplayListWriterHandle::resetWritableOffsetIfPossible):
+        * WebProcess/GPU/graphics/DisplayListWriterHandle.h:
+        (WebKit::DisplayListWriterHandle::DisplayListWriterHandle):
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp:
+        (WebKit::RemoteRenderingBackendProxy::createItemBuffer):
+
+        Also add a static assert that the size of a newly allocated buffer is larger than the reserved header capacity.
+
 2020-11-18  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Fix message filter sandbox violation

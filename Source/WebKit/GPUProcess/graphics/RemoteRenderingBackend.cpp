@@ -198,7 +198,7 @@ void RemoteRenderingBackend::wakeUpAndApplyDisplayList(DisplayList::ItemBufferId
         }
         // Otherwise, continue reading the next display list item buffer from the start.
         m_nextItemBufferToRead = { };
-        applyDisplayListsFromHandle(*imageBuffer, *nextHandle, SharedDisplayListHandle::reservedCapacityAtStart);
+        applyDisplayListsFromHandle(*imageBuffer, *nextHandle, SharedDisplayListHandle::headerSize());
     }
 }
 
@@ -243,7 +243,7 @@ void RemoteRenderingBackend::didCreateSharedDisplayListHandle(DisplayList::ItemB
 
     if (m_nextItemBufferToRead == identifier) {
         m_nextItemBufferToRead = { };
-        wakeUpAndApplyDisplayList(identifier, SharedDisplayListHandle::reservedCapacityAtStart, destinationBufferIdentifier);
+        wakeUpAndApplyDisplayList(identifier, SharedDisplayListHandle::headerSize(), destinationBufferIdentifier);
     }
 }
 
