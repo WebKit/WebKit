@@ -32,6 +32,7 @@
 
 #include "ArrayBuffer.h"
 #include "JSArrayBuffer.h"
+#include "ObjectConstructor.h"
 
 namespace JSC {
 
@@ -72,17 +73,34 @@ JSWebAssemblyMemory::JSWebAssemblyMemory(VM& vm, Structure* structure)
 {
 }
 
-JSArrayBuffer* JSWebAssemblyMemory::buffer(VM& vm, JSGlobalObject* globalObject)
+JSArrayBuffer* JSWebAssemblyMemory::buffer(JSGlobalObject* globalObject)
 {
-    if (m_bufferWrapper)
-        return m_bufferWrapper.get();
+    VM& vm = globalObject->vm();
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
 
-    // We can't use a ref here since it doesn't have a copy constructor...
-    Ref<Wasm::Memory> protectedMemory = m_memory.get();
-    auto destructor = createSharedTask<void(void*)>([protectedMemory = WTFMove(protectedMemory)] (void*) { });
-    m_buffer = ArrayBuffer::createFromBytes(memory().memory(), memory().size(), WTFMove(destructor));
+    auto* wrapper = m_bufferWrapper.get();
+    if (wrapper) {
+        if (m_memory->sharingMode() == Wasm::MemorySharingMode::Default)
+            return wrapper;
+
+        ASSERT(m_memory->sharingMode() == Wasm::MemorySharingMode::Shared);
+        // If SharedArrayBuffer's underlying memory is not grown, we continue using cached wrapper.
+        if (wrapper->impl()->byteLength() == memory().size())
+            return wrapper;
+    }
+
+    Ref<Wasm::MemoryHandle> protectedHandle = m_memory->handle();
+    auto destructor = createSharedTask<void(void*)>([protectedHandle = WTFMove(protectedHandle)] (void*) { });
+    m_buffer = ArrayBuffer::createFromBytes(m_memory->memory(), m_memory->size(), WTFMove(destructor));
     m_buffer->makeWasmMemory();
-    m_bufferWrapper.set(vm, this, JSArrayBuffer::create(vm, globalObject->arrayBufferStructure(ArrayBufferSharingMode::Default), m_buffer.get()));
+    if (m_memory->sharingMode() == Wasm::MemorySharingMode::Shared)
+        m_buffer->makeShared();
+    auto* arrayBuffer = JSArrayBuffer::create(vm, globalObject->arrayBufferStructure(m_buffer->sharingMode()), m_buffer.get());
+    if (m_memory->sharingMode() == Wasm::MemorySharingMode::Shared) {
+        objectConstructorFreeze(globalObject, arrayBuffer);
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
+    m_bufferWrapper.set(vm, this, arrayBuffer);
     RELEASE_ASSERT(m_bufferWrapper);
     return m_bufferWrapper.get();
 }
@@ -117,7 +135,8 @@ void JSWebAssemblyMemory::growSuccessCallback(VM& vm, Wasm::PageCount oldPageCou
 {
     // We need to clear out the old array buffer because it might now be pointing to stale memory.
     if (m_buffer) {
-        m_buffer->detach(vm);
+        if (m_memory->sharingMode() == Wasm::MemorySharingMode::Default)
+            m_buffer->detach(vm);
         m_buffer = nullptr;
         m_bufferWrapper.clear();
     }

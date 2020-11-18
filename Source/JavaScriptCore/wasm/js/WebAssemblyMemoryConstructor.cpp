@@ -56,8 +56,6 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyMemory, (JSGlobalObject* globalOb
 {
     VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    if (callFrame->argumentCount() != 1)
-        return JSValue::encode(throwException(globalObject, throwScope, createTypeError(globalObject, "WebAssembly.Memory expects exactly one argument"_s)));
 
     JSObject* memoryDescriptor;
     {
@@ -102,10 +100,23 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyMemory, (JSGlobalObject* globalOb
         }
     }
 
+    Wasm::MemorySharingMode sharingMode = Wasm::MemorySharingMode::Default;
+    JSValue sharedValue = memoryDescriptor->get(globalObject, Identifier::fromString(vm, "shared"));
+    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+    bool shared = sharedValue.toBoolean(globalObject);
+    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+    if (shared) {
+        if (!maximumPageCount)
+            return throwVMTypeError(globalObject, throwScope, "'maximum' page count must be defined if 'shared' is true"_s);
+        if (!Options::useSharedArrayBuffer())
+            return throwVMTypeError(globalObject, throwScope, "Shared WebAssembly.Memory and SharedArrayBuffer are not enabled"_s);
+        sharingMode = Wasm::MemorySharingMode::Shared;
+    }
+
     auto* jsMemory = JSWebAssemblyMemory::tryCreate(globalObject, vm, globalObject->webAssemblyMemoryStructure());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
 
-    RefPtr<Wasm::Memory> memory = Wasm::Memory::tryCreate(initialPageCount, maximumPageCount,
+    RefPtr<Wasm::Memory> memory = Wasm::Memory::tryCreate(initialPageCount, maximumPageCount, sharingMode,
         [&vm] (Wasm::Memory::NotifyPressure) { vm.heap.collectAsync(CollectionScope::Full); },
         [&vm] (Wasm::Memory::SyncTryToReclaim) { vm.heap.collectSync(CollectionScope::Full); },
         [&vm, jsMemory] (Wasm::Memory::GrowSuccess, Wasm::PageCount oldPageCount, Wasm::PageCount newPageCount) { jsMemory->growSuccessCallback(vm, oldPageCount, newPageCount); });

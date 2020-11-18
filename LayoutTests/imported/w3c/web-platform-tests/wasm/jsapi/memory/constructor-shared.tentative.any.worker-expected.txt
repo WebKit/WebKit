@@ -1,5 +1,5 @@
 
-FAIL Shared memory without maximum assert_throws_js: function "() => new WebAssembly.Memory({ "initial": 10, "shared": true })" did not throw
-FAIL Order of evaluation for descriptor (with shared) assert_array_equals: lengths differ, expected array ["initial", "initial valueOf", "maximum", "maximum valueOf", "shared"] length 5, got ["initial", "initial valueOf", "maximum", "maximum valueOf"] length 4
-FAIL Shared memory assert_equals: undefined: constructor expected true but got false
+PASS Shared memory without maximum
+PASS Order of evaluation for descriptor (with shared)
+PASS Shared memory
 

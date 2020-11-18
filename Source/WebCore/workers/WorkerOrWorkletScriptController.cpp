@@ -50,17 +50,17 @@ namespace WebCore {
 
 using namespace JSC;
 
-WorkerOrWorkletScriptController::WorkerOrWorkletScriptController(Ref<VM>&& vm, WorkerOrWorkletGlobalScope* globalScope)
+WorkerOrWorkletScriptController::WorkerOrWorkletScriptController(WorkerThreadType type, Ref<VM>&& vm, WorkerOrWorkletGlobalScope* globalScope)
     : m_vm(WTFMove(vm))
     , m_globalScope(globalScope)
     , m_globalScopeWrapper(*m_vm)
 {
     m_vm->heap.acquireAccess(); // It's not clear that we have good discipline for heap access, so turn it on permanently.
-    JSVMClientData::initNormalWorld(m_vm.get());
+    JSVMClientData::initNormalWorld(m_vm.get(), type);
 }
 
-WorkerOrWorkletScriptController::WorkerOrWorkletScriptController(WorkerOrWorkletGlobalScope* globalScope)
-    : WorkerOrWorkletScriptController(JSC::VM::create(), globalScope)
+WorkerOrWorkletScriptController::WorkerOrWorkletScriptController(WorkerThreadType type, WorkerOrWorkletGlobalScope* globalScope)
+    : WorkerOrWorkletScriptController(type, JSC::VM::create(), globalScope)
 {
 }
 

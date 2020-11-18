@@ -1,3 +1,105 @@
+2020-11-18  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, relanding r269940
+        https://bugs.webkit.org/show_bug.cgi?id=219076
+
+        ARM64E clang optimizer is broken and optimizing forever if Wasm::MemoryHandle::memory() is inlined.
+        Putting NEVER_INLINE onto this function for now (unfortunate).
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * llint/LLIntPCRanges.h:
+        (JSC::LLInt::isWasmLLIntPC):
+        * llint/LowLevelInterpreter.asm:
+        * llint/WebAssembly.asm:
+        * runtime/JSArrayBuffer.h:
+        (JSC::JSArrayBuffer::toWrappedAllowShared):
+        * runtime/JSArrayBufferView.h:
+        * runtime/JSArrayBufferViewInlines.h:
+        (JSC::JSArrayBufferView::toWrappedAllowShared):
+        * runtime/JSGenericTypedArrayView.h:
+        (JSC::JSGenericTypedArrayView<Adaptor>::toWrappedAllowShared):
+        * runtime/Options.cpp:
+        (JSC::overrideDefaults):
+        (JSC::Options::initialize):
+        * wasm/WasmAirIRGenerator.cpp:
+        (JSC::Wasm::AirIRGenerator::AirIRGenerator):
+        (JSC::Wasm::AirIRGenerator::restoreWebAssemblyGlobalState):
+        (JSC::Wasm::AirIRGenerator::addCurrentMemory):
+        (JSC::Wasm::AirIRGenerator::emitCheckAndPreparePointer):
+        (JSC::Wasm::AirIRGenerator::addCall):
+        (JSC::Wasm::AirIRGenerator::addCallIndirect):
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::B3IRGenerator):
+        (JSC::Wasm::B3IRGenerator::restoreWebAssemblyGlobalState):
+        (JSC::Wasm::B3IRGenerator::addCurrentMemory):
+        (JSC::Wasm::B3IRGenerator::emitCheckAndPreparePointer):
+        (JSC::Wasm::B3IRGenerator::addCall):
+        (JSC::Wasm::B3IRGenerator::addCallIndirect):
+        * wasm/WasmBinding.cpp:
+        (JSC::Wasm::wasmToWasm):
+        * wasm/WasmFaultSignalHandler.cpp:
+        (JSC::Wasm::trapHandler):
+        (JSC::Wasm::enableFastMemory):
+        (JSC::Wasm::prepareFastMemory):
+        * wasm/WasmInstance.h:
+        (JSC::Wasm::Instance::cachedMemory const):
+        (JSC::Wasm::Instance::cachedBoundsCheckingSize const):
+        (JSC::Wasm::Instance::updateCachedMemory):
+        (JSC::Wasm::Instance::offsetOfCachedBoundsCheckingSize):
+        (JSC::Wasm::Instance::cachedMemorySize const): Deleted.
+        (JSC::Wasm::Instance::offsetOfCachedMemorySize): Deleted.
+        * wasm/WasmMemory.cpp:
+        (JSC::Wasm::MemoryHandle::MemoryHandle):
+        (JSC::Wasm::MemoryHandle::~MemoryHandle):
+        (JSC::Wasm::MemoryHandle::memory const):
+        (JSC::Wasm::Memory::Memory):
+        (JSC::Wasm::Memory::create):
+        (JSC::Wasm::Memory::tryCreate):
+        (JSC::Wasm::Memory::addressIsInGrowableOrFastMemory):
+        (JSC::Wasm::Memory::growShared):
+        (JSC::Wasm::Memory::grow):
+        (JSC::Wasm::Memory::dump const):
+        (JSC::Wasm::Memory::~Memory): Deleted.
+        (JSC::Wasm::Memory::addressIsInActiveFastMemory): Deleted.
+        * wasm/WasmMemory.h:
+        (JSC::Wasm::Memory::addressIsInGrowableOrFastMemory):
+        (JSC::Wasm::Memory::operator bool const): Deleted.
+        (JSC::Wasm::Memory::memory const): Deleted.
+        (JSC::Wasm::Memory::size const): Deleted.
+        (JSC::Wasm::Memory::sizeInPages const): Deleted.
+        (JSC::Wasm::Memory::initial const): Deleted.
+        (JSC::Wasm::Memory::maximum const): Deleted.
+        (JSC::Wasm::Memory::mode const): Deleted.
+        (JSC::Wasm::Memory::check): Deleted.
+        (JSC::Wasm::Memory::offsetOfMemory): Deleted.
+        (JSC::Wasm::Memory::offsetOfSize): Deleted.
+        (JSC::Wasm::Memory::addressIsInActiveFastMemory): Deleted.
+        * wasm/WasmMemoryInformation.cpp:
+        (JSC::Wasm::PinnedRegisterInfo::get):
+        (JSC::Wasm::PinnedRegisterInfo::PinnedRegisterInfo):
+        * wasm/WasmMemoryInformation.h:
+        (JSC::Wasm::PinnedRegisterInfo::toSave const):
+        * wasm/WasmMemoryMode.cpp:
+        (JSC::Wasm::makeString):
+        * wasm/WasmMemoryMode.h:
+        * wasm/js/JSToWasm.cpp:
+        (JSC::Wasm::createJSToWasmWrapper):
+        * wasm/js/JSWebAssemblyInstance.cpp:
+        (JSC::JSWebAssemblyInstance::tryCreate):
+        * wasm/js/JSWebAssemblyMemory.cpp:
+        (JSC::JSWebAssemblyMemory::buffer):
+        (JSC::JSWebAssemblyMemory::growSuccessCallback):
+        * wasm/js/JSWebAssemblyMemory.h:
+        * wasm/js/WebAssemblyFunction.cpp:
+        (JSC::WebAssemblyFunction::jsCallEntrypointSlow):
+        * wasm/js/WebAssemblyMemoryConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * wasm/js/WebAssemblyMemoryPrototype.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * wasm/js/WebAssemblyModuleRecord.cpp:
+        (JSC::WebAssemblyModuleRecord::evaluate):
+
 2020-11-18  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r269940.

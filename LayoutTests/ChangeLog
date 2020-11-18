@@ -1,3 +1,25 @@
+2020-11-18  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, relanding r269940
+        https://bugs.webkit.org/show_bug.cgi?id=219076
+
+        * js/dom/resources/webassembly-memory-normal-fail-worker.js: Added.
+        * js/dom/resources/webassembly-memory-shared-worker.js: Added.
+        (onmessage):
+        * js/dom/webassembly-memory-normal-fail-expected.txt: Added.
+        * js/dom/webassembly-memory-normal-fail.html: Added.
+        * js/dom/webassembly-memory-shared-basic-expected.txt: Added.
+        * js/dom/webassembly-memory-shared-basic.html: Added.
+        * js/dom/webassembly-memory-shared-fail-expected.txt: Added.
+        * js/dom/webassembly-memory-shared-fail.html: Added.
+        * platform/win/TestExpectations:
+        * storage/indexeddb/resources/shared-memory-structured-clone.js: Added.
+        (prepareDatabase):
+        (async startTests):
+        (testSharedWebAssemblyMemory):
+        * storage/indexeddb/shared-memory-structured-clone-expected.txt: Added.
+        * storage/indexeddb/shared-memory-structured-clone.html: Added.
+
 2020-11-18  Simon Fraser  <simon.fraser@apple.com>
 
         Propagate wheel event handling back to the scrolling thread

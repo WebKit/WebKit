@@ -1,0 +1,16 @@
+Test sending shared WebAssembly.Memory via postMessage to a worker.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS view[0] is 42
+PASS message.data is "DONE"
+PASS view[0] is 43
+PASS view[1] is 42
+PASS view[2] is 44
+PASS buffer.byteLength is 65536
+PASS memory.buffer.byteLength is 131072
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

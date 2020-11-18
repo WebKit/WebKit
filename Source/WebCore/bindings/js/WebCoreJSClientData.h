@@ -24,6 +24,7 @@
 #include "DOMWrapperWorld.h"
 #include "WebCoreBuiltinNames.h"
 #include "WebCoreJSBuiltins.h"
+#include "WorkerThreadType.h"
 #include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
 
@@ -40,7 +41,7 @@ public:
 
     virtual ~JSVMClientData();
     
-    WEBCORE_EXPORT static void initNormalWorld(JSC::VM*);
+    WEBCORE_EXPORT static void initNormalWorld(JSC::VM*, WorkerThreadType);
 
     DOMWrapperWorld& normalWorld() { return *m_normalWorld; }
 

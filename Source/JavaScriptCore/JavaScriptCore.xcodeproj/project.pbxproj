@@ -1574,7 +1574,7 @@
 		AD00659E1ECAC812000CA926 /* WasmLimits.h in Headers */ = {isa = PBXBuildFile; fileRef = AD00659D1ECAC7FE000CA926 /* WasmLimits.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		AD2FCBE31DB58DAD00B3E736 /* JSWebAssemblyCompileError.h in Headers */ = {isa = PBXBuildFile; fileRef = AD2FCBA71DB58DA400B3E736 /* JSWebAssemblyCompileError.h */; };
 		AD2FCBE51DB58DAD00B3E736 /* JSWebAssemblyInstance.h in Headers */ = {isa = PBXBuildFile; fileRef = AD2FCBA91DB58DA400B3E736 /* JSWebAssemblyInstance.h */; };
-		AD2FCBE71DB58DAD00B3E736 /* JSWebAssemblyMemory.h in Headers */ = {isa = PBXBuildFile; fileRef = AD2FCBAB1DB58DA400B3E736 /* JSWebAssemblyMemory.h */; };
+		AD2FCBE71DB58DAD00B3E736 /* JSWebAssemblyMemory.h in Headers */ = {isa = PBXBuildFile; fileRef = AD2FCBAB1DB58DA400B3E736 /* JSWebAssemblyMemory.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		AD2FCBE91DB58DAD00B3E736 /* JSWebAssemblyRuntimeError.h in Headers */ = {isa = PBXBuildFile; fileRef = AD2FCBAD1DB58DA400B3E736 /* JSWebAssemblyRuntimeError.h */; };
 		AD2FCBEB1DB58DAD00B3E736 /* JSWebAssemblyTable.h in Headers */ = {isa = PBXBuildFile; fileRef = AD2FCBAF1DB58DA400B3E736 /* JSWebAssemblyTable.h */; };
 		AD2FCBED1DB58DAD00B3E736 /* WebAssemblyCompileErrorConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = AD2FCBB11DB58DA400B3E736 /* WebAssemblyCompileErrorConstructor.h */; };

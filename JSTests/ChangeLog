@@ -1,3 +1,17 @@
+2020-11-18  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, relanding r269940
+        https://bugs.webkit.org/show_bug.cgi?id=219076
+
+        * wasm/function-tests/trap-load-shared.js: Added.
+        (wasmFrameCountFromError):
+        * wasm/function-tests/trap-store-shared.js: Added.
+        * wasm/js-api/test_memory.js:
+        (binaryShouldNotParse):
+        * wasm/stress/shared-memory-errors.js: Added.
+        (assert.throws):
+        * wasm/stress/shared-wasm-memory-buffer.js: Added.
+
 2020-11-18  Xan Lopez  <xan@igalia.com>
 
         [JSC] Import V8 private instance fields tests

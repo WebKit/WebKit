@@ -6999,6 +6999,7 @@ sub IsAnnotatedType
     return 1 if $type->extendedAttributes->{LegacyNullToEmptyString};
     return 1 if $type->extendedAttributes->{AtomString};
     return 1 if $type->extendedAttributes->{RequiresExistingAtomString};
+    return 1 if $type->extendedAttributes->{AllowShared};
 }
 
 sub GetAnnotatedIDLType
@@ -7010,6 +7011,7 @@ sub GetAnnotatedIDLType
     return "IDLLegacyNullToEmptyStringAdaptor" if $type->extendedAttributes->{LegacyNullToEmptyString};
     return "IDLAtomStringAdaptor" if $type->extendedAttributes->{AtomString};
     return "IDLRequiresExistingAtomStringAdaptor" if $type->extendedAttributes->{RequiresExistingAtomString};
+    return "IDLAllowSharedAdaptor" if $type->extendedAttributes->{AllowShared};
 }
 
 sub GetBaseIDLType

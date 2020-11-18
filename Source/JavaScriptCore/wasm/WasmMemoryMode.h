@@ -40,6 +40,13 @@ enum class MemoryMode : uint8_t {
 static constexpr size_t NumberOfMemoryModes = 2;
 JS_EXPORT_PRIVATE const char* makeString(MemoryMode);
 
+enum class MemorySharingMode : uint8_t {
+    Default,
+    Shared,
+};
+
+JS_EXPORT_PRIVATE const char* makeString(MemorySharingMode);
+
 } } // namespace JSC::Wasm
 
 #endif // ENABLE(WEBASSEMBLY)

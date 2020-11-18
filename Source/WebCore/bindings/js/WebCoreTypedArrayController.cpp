@@ -34,7 +34,10 @@
 
 namespace WebCore {
 
-WebCoreTypedArrayController::WebCoreTypedArrayController() = default;
+WebCoreTypedArrayController::WebCoreTypedArrayController(bool allowAtomicsWait)
+    : m_allowAtomicsWait(allowAtomicsWait)
+{
+}
 
 WebCoreTypedArrayController::~WebCoreTypedArrayController() = default;
 
@@ -50,7 +53,7 @@ void WebCoreTypedArrayController::registerWrapper(JSC::JSGlobalObject* globalObj
 
 bool WebCoreTypedArrayController::isAtomicsWaitAllowedOnCurrentThread()
 {
-    return !isMainThread();
+    return m_allowAtomicsWait;
 }
 
 bool WebCoreTypedArrayController::JSArrayBufferOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, JSC::SlotVisitor& visitor, const char** reason)

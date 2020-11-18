@@ -27,6 +27,7 @@
 
 #include "EventTarget.h"
 #include "ScriptExecutionContext.h"
+#include "WorkerThreadType.h"
 
 namespace WebCore {
 
@@ -67,7 +68,7 @@ public:
     virtual void resume() { }
 
 protected:
-    WorkerOrWorkletGlobalScope(Ref<JSC::VM>&&, WorkerOrWorkletThread*);
+    WorkerOrWorkletGlobalScope(WorkerThreadType, Ref<JSC::VM>&&, WorkerOrWorkletThread*);
 
     // ScriptExecutionContext.
     bool isJSExecutionForbidden() const final;
