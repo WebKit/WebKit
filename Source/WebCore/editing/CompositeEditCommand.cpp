@@ -1400,6 +1400,8 @@ void CompositeEditCommand::moveParagraphs(const VisiblePosition& startOfParagrap
     if (destination.isNull() || startOfParagraphToMove == destination)
         return;
 
+    ASSERT((startOfParagraphToMove.isNull() && endOfParagraphToMove.isNull()) || !endOfParagraphToMove.isNull());
+
     Optional<uint64_t> startIndex;
     Optional<uint64_t> endIndex;
     bool originalIsDirectional = endingSelection().isDirectional();

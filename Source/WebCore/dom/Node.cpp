@@ -1327,7 +1327,7 @@ void Node::removedFromAncestor(RemovalType removalType, ContainerNode& oldParent
 bool Node::isRootEditableElement() const
 {
     return hasEditableStyle() && isElementNode() && (!parentNode() || !parentNode()->hasEditableStyle()
-        || !parentNode()->isElementNode() || hasTagName(bodyTag));
+        || !parentNode()->isElementNode() || document().body() == this);
 }
 
 Element* Node::rootEditableElement() const
@@ -1336,7 +1336,7 @@ Element* Node::rootEditableElement() const
     for (Node* node = const_cast<Node*>(this); node && node->hasEditableStyle(); node = node->parentNode()) {
         if (is<Element>(*node))
             result = downcast<Element>(node);
-        if (is<HTMLBodyElement>(*node))
+        if (document().body() == node)
             break;
     }
     return result;

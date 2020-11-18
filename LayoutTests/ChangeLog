@@ -1,3 +1,13 @@
+2020-11-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Release assertion failure in Optional<WebCore::SimpleRange>::operator* via CompositeEditCommand::moveParagraphs
+        https://bugs.webkit.org/show_bug.cgi?id=218494
+
+        Reviewed by Ryosuke Niwa.
+
+        * editing/inserting/insert-list-with-body-child-crash-expected.txt: Added.
+        * editing/inserting/insert-list-with-body-child-crash.html: Added.
+
 2020-11-17  Lauro Moura  <lmoura@igalia.com>
 
         [GLIB] Update webaudio baselines after r269853
