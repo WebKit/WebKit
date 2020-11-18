@@ -1,3 +1,9 @@
+2020-11-18  Chris Dumez  <cdumez@apple.com>
+
+        Unskip a few WebAudio tests that are no longer failing on Rosetta since r269853.
+
+        * platform/mac/TestExpectationsRosetta:
+
 2020-11-18  Truitt Savell  <tsavell@apple.com>
 
         REGRESSION (r269774): [ Mac WK2 ] fast/lists/001.html and fast/lists/001-vertical.html are flaky crashing
