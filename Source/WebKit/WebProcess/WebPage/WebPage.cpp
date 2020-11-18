@@ -1048,18 +1048,6 @@ void WebPage::initializeInjectedBundleFullScreenClient(WKBundlePageFullScreenCli
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
 
-constexpr int smallPluginDimensionThreshold = 5;
-
-static bool pluginIsSmall(WebCore::HTMLPlugInElement& pluginElement)
-{
-    auto* renderer = pluginElement.renderer();
-    if (!is<RenderEmbeddedObject>(*renderer))
-        return false;
-
-    auto& box = downcast<RenderBox>(*renderer);
-    return box.contentWidth() <= smallPluginDimensionThreshold && box.contentHeight() <= smallPluginDimensionThreshold;
-}
-
 RefPtr<Plugin> WebPage::createPlugin(WebFrame* frame, HTMLPlugInElement* pluginElement, const Plugin::Parameters& parameters, String& newMIMEType)
 {
     String frameURLString = frame->coreFrame()->loader().documentLoader()->responseURL().string();
@@ -1098,12 +1086,6 @@ RefPtr<Plugin> WebPage::createPlugin(WebFrame* frame, HTMLPlugInElement* pluginE
 
     if (!pluginProcessToken)
         return nullptr;
-
-    if (m_page->settings().blockingOfSmallPluginsEnabled() && pluginIsSmall(*pluginElement)) {
-        RELEASE_LOG_IF_ALLOWED(Plugins, "createPlugin: Blocking a plugin because it is too small");
-        pluginElement->setReplacement(RenderEmbeddedObject::PluginTooSmall, pluginTooSmallText());
-        return nullptr;
-    }
 
     return PluginProxy::create(pluginProcessToken);
 }

@@ -1,3 +1,14 @@
+2020-11-18  Darin Adler  <darin@apple.com>
+
+        Remove advanced plug-in feature: small plug-in blocking
+        https://bugs.webkit.org/show_bug.cgi?id=219101
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::pluginIsSmall): Deleted.
+        (WebKit::WebPage::createPlugin): Removed code that blocks small plug-ins.
+
 2020-11-18  Simon Fraser  <simon.fraser@apple.com>
 
         Propagate wheel event handling back to the scrolling thread

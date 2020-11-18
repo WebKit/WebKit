@@ -121,19 +121,6 @@ AsyncOverflowScrollingEnabled:
     WebCore:
       default: false
 
-# FIXME: This is not relevent for WebKitLegacy, so should be excluded from WebKitLegacy entirely.
-BlockingOfSmallPluginsEnabled:
-  type: bool
-  humanReadableName: "Block small plugins"
-  humanReadableDescription: "Stop plugins smaller than a certain threshold from loading."
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: true
-    WebCore:
-      default: true
-
 CSSLogicalEnabled:
   type: bool
   humanReadableName: "CSS Logical Properties and Values"
