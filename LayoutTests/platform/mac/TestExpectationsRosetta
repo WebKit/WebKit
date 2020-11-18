@@ -33,12 +33,6 @@
 # rdar://68957822 (REGRESSION: [ BigSur wk2 rosetta ] compositing/contents-scale/hidpi-compositing-layer-positioned-on-scaled-context.html is a flaky failure)
 [ BigSur+ ] compositing/contents-scale/hidpi-compositing-layer-positioned-on-scaled-context.html  [ Pass Failure ]
 
-# rdar://69347249
-imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/realtime-conv.html [ Failure ]
-webaudio/Analyser/realtimeanalyser-byte-data.html [ Failure ]
-webaudio/Analyser/realtimeanalyser-freq-data.html [ Failure ]
-webaudio/Oscillator/no-dezippering.html [ Failure ]
-
 webkit.org/b/218725 inspector/debugger/tail-deleted-frames/tail-deleted-frames-intermediate-frames.html [ Pass Timeout ]
 
 webkit.org/b/217621 media/video-buffering-allowed.html [ Pass Timeout ]
