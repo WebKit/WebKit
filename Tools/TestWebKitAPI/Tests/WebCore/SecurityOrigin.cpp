@@ -159,8 +159,15 @@ TEST_F(SecurityOriginTest, IsPotentiallyTrustworthy)
     EXPECT_TRUE(SecurityOrigin::createFromString("http://127.0.0.2")->isPotentiallyTrustworthy());
     EXPECT_TRUE(SecurityOrigin::createFromString("http://127.0.1.1")->isPotentiallyTrustworthy());
     EXPECT_TRUE(SecurityOrigin::createFromString("http://127.1.1.1")->isPotentiallyTrustworthy());
+    EXPECT_TRUE(SecurityOrigin::createFromString("http://localhost:8000")->isPotentiallyTrustworthy());
     EXPECT_TRUE(SecurityOrigin::createFromString("http://localhost")->isPotentiallyTrustworthy());
     EXPECT_TRUE(SecurityOrigin::createFromString("http://loCALhoST")->isPotentiallyTrustworthy());
+    EXPECT_TRUE(SecurityOrigin::createFromString("http://foo.localhost")->isPotentiallyTrustworthy());
+    EXPECT_TRUE(SecurityOrigin::createFromString("http://Foo.loCaLhOsT")->isPotentiallyTrustworthy());
+    EXPECT_TRUE(SecurityOrigin::createFromString("http://foo.localhost:8000")->isPotentiallyTrustworthy());
+    EXPECT_TRUE(SecurityOrigin::createFromString("http://foo.bar.localhost:8000")->isPotentiallyTrustworthy());
+    EXPECT_FALSE(SecurityOrigin::createFromString("http://localhost.com")->isPotentiallyTrustworthy());
+    EXPECT_FALSE(SecurityOrigin::createFromString("http://foo.localhost.com")->isPotentiallyTrustworthy());
     EXPECT_TRUE(SecurityOrigin::createFromString("http://[::1]")->isPotentiallyTrustworthy());
 #if PLATFORM(COCOA)
     EXPECT_TRUE(SecurityOrigin::createFromString("applewebdata:a")->isPotentiallyTrustworthy());

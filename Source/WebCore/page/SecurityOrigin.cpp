@@ -605,7 +605,7 @@ bool SecurityOrigin::isLocalHostOrLoopbackIPAddress(StringView host)
         return true;
 
     // FIXME: Ensure that localhost resolves to the loopback address.
-    if (equalLettersIgnoringASCIICase(host, "localhost"))
+    if (equalLettersIgnoringASCIICase(host, "localhost") || host.endsWithIgnoringASCIICase(".localhost"))
         return true;
 
     return false;
