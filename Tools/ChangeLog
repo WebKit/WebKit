@@ -1,3 +1,33 @@
+2020-11-18  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [FlatPak] update-webkitgtk-libs fails after a clean build
+        https://bugs.webkit.org/show_bug.cgi?id=218724
+
+        Reviewed by Philippe Normand.
+
+        The issue was caused because when adding a new flatpak repository
+        via the method FlatpakRepos.add() that repository is not added to
+        the internal list of available repositories inside the object FlatpakRepos.
+        So then the check on setup_builddir() added in r268542 failed because
+        the internal list of repositories on the object FlatpakRepos() was
+        empty on the first run (after a clean build).
+        To fix this we ensure to re-generate the internal list of flatpak
+        repositories any time that a new reporistory is added by calling
+        FlatpakRepos.update() after FlatpakRepos.add()
+
+        On top of that fix, we add another fix to make the code more robust.
+        Now it allows the generation of toolchains to fail without causing
+        a fatal error. Also a new check is added in order to retry to generate
+        the toolchains in the next run if is detected that they were not
+        correctly generated.
+
+        * flatpak/flatpakutils.py:
+        (FlatpakRepos.add):
+        (WebkitFlatpak.load_from_args):
+        (WebkitFlatpak.main):
+        (WebkitFlatpak.check_toolchains_generated):
+        (WebkitFlatpak.pack_toolchain):
+
 2020-11-17  Diego Pino Garcia  <dpino@igalia.com>
 
         [buildbot] Add buildAndTest bot for WebKitGTK (GTK4)

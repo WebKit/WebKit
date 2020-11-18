@@ -263,31 +263,34 @@ class FlatpakRepos(FlatpakObject):
         self.packages = FlatpakPackages(self)
 
     def add(self, repo, override=True):
-        same_name = None
-        for name, tmprepo in self.repos.items():
-            if repo.url == tmprepo.url:
-                return tmprepo
-            elif repo.name == name:
-                same_name = tmprepo
+        try:
+            same_name = None
+            for name, tmprepo in self.repos.items():
+                if repo.url == tmprepo.url:
+                    return tmprepo
+                elif repo.name == name:
+                    same_name = tmprepo
 
-        if same_name:
-            if override:
-                self.flatpak("remote-modify", repo.name, "--url=" + repo.url)
-                same_name.url = repo.url
+            if same_name:
+                if override:
+                    self.flatpak("remote-modify", repo.name, "--url=" + repo.url)
+                    same_name.url = repo.url
 
-                return same_name
+                    return same_name
+                else:
+                    return None
             else:
-                return None
-        else:
-            args = ["remote-add", repo.name, "--if-not-exists"]
-            if repo.repo_file:
-                args.extend(["--from", repo.repo_file.name])
-            else:
-                args.extend(["--no-gpg-verify", repo.url])
-            self.flatpak(*args, comment="Adding repo %s" % repo.name)
+                args = ["remote-add", repo.name, "--if-not-exists"]
+                if repo.repo_file:
+                    args.extend(["--from", repo.repo_file.name])
+                else:
+                    args.extend(["--no-gpg-verify", repo.url])
+                self.flatpak(*args, comment="Adding repo %s" % repo.name)
 
-        repo.repos = self
-        return repo
+            repo.repos = self
+            return repo
+        finally:
+            self.update()
 
 
 class FlatpakRepo(FlatpakObject):
@@ -441,7 +444,7 @@ class WebkitFlatpak:
         distributed_build_options = parser.add_argument_group("Distributed building")
         distributed_build_options.add_argument("--use-icecream", dest="use_icecream", help="Use the distributed icecream (icecc) compiler.", action="store_true")
         distributed_build_options.add_argument("-r", "--regenerate-toolchains", dest="regenerate_toolchains", action="store_true",
-                             help="Regenerate IceCC distribuable toolchain archives")
+                                               help="Regenerate IceCC distributable toolchain archives")
         distributed_build_options.add_argument("-t", "--sccache-token", dest="sccache_token",
                                                help="sccache authentication token")
         distributed_build_options.add_argument("-s", "--sccache-scheduler", dest="sccache_scheduler",
@@ -871,7 +874,7 @@ class WebkitFlatpak:
             repo = self.sdk_repo
             version_before_update = repo.version("org.webkit.Sdk")
             repo.flatpak("update", comment="Updating Flatpak %s environment" % self.build_type)
-            regenerate_toolchains = repo.version("org.webkit.Sdk") != version_before_update
+            regenerate_toolchains = (repo.version("org.webkit.Sdk") != version_before_update) or not self.check_toolchains_generated()
 
             for package in self._get_packages():
                 if package.name.startswith("org.webkit") and repo.is_app_installed(package.name) \
@@ -889,10 +892,14 @@ class WebkitFlatpak:
 
         result = self.setup_dev_env()
         if regenerate_toolchains:
+            Console.message("Updating icecc distributable toolchain archives")
             self.icc_version = {}
             toolchains = self.pack_toolchain(("gcc", "g++"), {"/usr/bin/c++": "/usr/bin/g++"})
             toolchains.extend(self.pack_toolchain(("clang", "clang++"), {"/usr/bin/clang++": "/usr/bin/clang++"}))
-            self.save_config(toolchains)
+            if len(toolchains) > 1:
+                self.save_config(toolchains)
+            else:
+                Console.error_message("Error generating icecc distributable toolchain archives")
 
         return result
 
@@ -931,11 +938,25 @@ class WebkitFlatpak:
             toml.dump(sccache_config, config)
             Console.message("Created %s sccache config file. It will automatically be used when building WebKit", self.sccache_config_file)
 
+    def check_toolchains_generated(self):
+        found_toolchains = 0
+        if os.path.isfile(self.config_file):
+            with open(self.config_file, 'r') as config_fd:
+                config = json.load(config_fd)
+                if 'icecc_version' in config:
+                    for compiler in config['icecc_version']:
+                        if os.path.isfile(config['icecc_version'][compiler]):
+                            found_toolchains += 1
+        return found_toolchains > 1
+
     def pack_toolchain(self, compilers, path_mapping):
         with tempfile.NamedTemporaryFile() as tmpfile:
             command = ['icecc', '--build-native']
             command.extend(["/usr/bin/%s" % compiler for compiler in compilers])
-            self.run_in_sandbox(*command, stdout=tmpfile, cwd=self.source_root, skip_icc=True)
+            retcode = self.run_in_sandbox(*command, stdout=tmpfile, cwd=self.source_root, skip_icc=True)
+            if retcode != 0:
+                Console.error_message('Flatpak command "%s" failed with return code %s', " ".join(command), retcode)
+                return []
             tmpfile.flush()
             tmpfile.seek(0)
             icc_version_filename, = re.findall(br'.*creating (.*)', tmpfile.read())
