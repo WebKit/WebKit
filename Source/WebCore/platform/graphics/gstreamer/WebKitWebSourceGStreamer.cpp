@@ -133,6 +133,10 @@ struct WebKitWebSrcPrivate {
         // and the player HTTP referrer string.
         WebCore::MediaPlayer* player;
 
+        // MediaPlayer referrer cached value. The corresponding method has to be called from the
+        // main thread, so the value needs to be cached before use in non-main thread.
+        String referrer;
+
         // Properties used for GStreamer data-flow in create().
         bool isFlushing { false };
         Condition responseCondition; // Must be signaled after any updates on HTTP requests, and when flushing.
@@ -641,7 +645,7 @@ static void webKitWebSrcMakeRequest(WebKitWebSrc* src, DataMutex<WebKitWebSrcPri
     request.setAllowCookies(true);
     request.setFirstPartyForCookies(url);
 
-    request.setHTTPReferrer(members->player->referrer());
+    request.setHTTPReferrer(members->referrer);
 
     if (priv->httpMethod.get())
         request.setHTTPMethod(priv->httpMethod.get());
@@ -929,11 +933,12 @@ static void webKitWebSrcUriHandlerInit(gpointer gIface, gpointer)
     iface->set_uri = webKitWebSrcSetUri;
 }
 
-void webKitWebSrcSetMediaPlayer(WebKitWebSrc* src, WebCore::MediaPlayer* player)
+void webKitWebSrcSetMediaPlayer(WebKitWebSrc* src, WebCore::MediaPlayer* player, const String& referrer)
 {
     ASSERT(player);
     DataMutex<WebKitWebSrcPrivate::StreamingMembers>::LockedWrapper members(src->priv->dataMutex);
     members->player = player;
+    members->referrer = referrer;
 }
 
 bool webKitSrcPassedCORSAccessCheck(WebKitWebSrc* src)

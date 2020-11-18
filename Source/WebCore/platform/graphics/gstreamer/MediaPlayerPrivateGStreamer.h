@@ -332,6 +332,7 @@ protected:
 
     Ref<MainThreadNotifier<MainThreadNotification>> m_notifier;
     MediaPlayer* m_player;
+    String m_referrer;
     mutable MediaTime m_cachedPosition;
     mutable MediaTime m_cachedDuration;
     bool m_canFallBackToLastFinishedSeekPosition { false };

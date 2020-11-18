@@ -22,6 +22,7 @@
 
 #include <gst/base/gstpushsrc.h>
 #include <gst/gst.h>
+#include <wtf/Forward.h>
 
 namespace WebCore {
 class MediaPlayer;
@@ -52,7 +53,7 @@ struct WebKitWebSrcClass {
 };
 
 GType webkit_web_src_get_type(void);
-void webKitWebSrcSetMediaPlayer(WebKitWebSrc*, WebCore::MediaPlayer*);
+void webKitWebSrcSetMediaPlayer(WebKitWebSrc*, WebCore::MediaPlayer*, const WTF::String&);
 bool webKitSrcPassedCORSAccessCheck(WebKitWebSrc*);
 bool webKitSrcWouldTaintOrigin(WebKitWebSrc*, const WebCore::SecurityOrigin&);
 
