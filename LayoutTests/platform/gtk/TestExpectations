@@ -1542,8 +1542,6 @@ webkit.org/b/53959 fast/dom/Window/window-resize.html [ Failure Timeout Pass ]
 
 webkit.org/b/153771 animations/resume-after-page-cache.html [ Failure Pass ]
 
-webkit.org/b/153943 webaudio/convolution-mono-mono.html [ Failure Pass ]
-
 webkit.org/b/218320 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-destinationnode-interface/destination.html [ Failure ]
 
 webkit.org/b/156436 fast/harness/sample-fail-mismatch-reftest.html [ ImageOnlyFailure Pass ]

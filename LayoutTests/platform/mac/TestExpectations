@@ -2207,7 +2207,6 @@ webkit.org/b/216492 imported/w3c/web-platform-tests/selection/extend-00.html [ S
 [ arm64 ] webaudio/Analyser/realtimeanalyser-byte-data.html [ Failure ]
 [ arm64 ] webaudio/Analyser/realtimeanalyser-freq-data.html [ Failure ]
 [ arm64 ] webaudio/Oscillator/no-dezippering.html [ Failure ]
-[ arm64 ] webaudio/convolution-mono-mono.html [ Failure ]
 
 webkit.org/b/217118 [ Release ] imported/w3c/web-platform-tests/user-timing/measure-l3.any.worker.html [ Pass Failure ]
 

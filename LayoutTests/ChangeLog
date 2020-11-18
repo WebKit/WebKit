@@ -1,5 +1,23 @@
 2020-11-18  Chris Dumez  <cdumez@apple.com>
 
+        Drop outdated webaudio/convolution-mono-mono.html test
+        https://bugs.webkit.org/show_bug.cgi?id=219107
+
+        Reviewed by Geoffrey Garen.
+
+        Drop outdated webaudio/convolution-mono-mono.html test.
+
+        An updated version is already present at:
+        imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/convolution-mono-mono.html
+
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/mac/TestExpectationsRosetta:
+        * webaudio/convolution-mono-mono-expected.txt: Removed.
+        * webaudio/convolution-mono-mono.html: Removed.
+
+2020-11-18  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, unskip several webaudio tests on Apple Silicon.
 
         Those tests are no longer failing or flaky on this platform.
