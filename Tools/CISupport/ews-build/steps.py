@@ -399,7 +399,7 @@ class BugzillaMixin(object):
     def fetch_data_from_url_with_authentication(self, url):
         response = None
         try:
-            response = requests.get(url, params={'Bugzilla_api_key': self.get_bugzilla_api_key()})
+            response = requests.get(url, timeout=60, params={'Bugzilla_api_key': self.get_bugzilla_api_key()})
             if response.status_code != 200:
                 self._addToLog('stdio', 'Accessed {url} with unexpected status code {status_code}.\n'.format(url=url, status_code=response.status_code))
                 return None
@@ -412,7 +412,7 @@ class BugzillaMixin(object):
     def fetch_data_from_url(self, url):
         response = None
         try:
-            response = requests.get(url)
+            response = requests.get(url, timeout=60)
         except Exception as e:
             if response:
                 self._addToLog('stdio', 'Failed to access {url} with status code {status_code}.\n'.format(url=url, status_code=response.status_code))
@@ -739,7 +739,7 @@ class ValidateCommiterAndReviewer(buildstep.BuildStep):
 
     def load_contributors_from_trac(self):
         try:
-            response = requests.get(self.url)
+            response = requests.get(self.url, timeout=60)
             if response.status_code != 200:
                 self._addToLog('stdio', 'Failed to access {} with status code: {}\n'.format(self.url, response.status_code))
                 return {}
@@ -3053,7 +3053,7 @@ class CheckPatchStatusOnEWSQueues(buildstep.BuildStep, BugzillaMixin):
     def get_patch_status(self, patch_id, queue):
         url = '{}status/{}'.format(EWS_URL, patch_id)
         try:
-            response = requests.get(url)
+            response = requests.get(url, timeout=60)
             if response.status_code != 200:
                 self._addToLog('stdio', 'Failed to access {} with status code: {}\n'.format(url, response.status_code))
                 return -1
