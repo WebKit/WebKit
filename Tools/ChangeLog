@@ -1,3 +1,22 @@
+2020-11-17  Diego Pino Garcia  <dpino@igalia.com>
+
+        [buildbot] Add buildAndTest bot for WebKitGTK (GTK4)
+        https://bugs.webkit.org/show_bug.cgi?id=213016
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Add a new post-commit bot to test WebKitGTK using GTK4 library.
+
+        The bot builds WebKitGTK and runs the following test suites: layout-test, api-test
+        and webdriver-test.
+
+        * CISupport/build-webkit-org/config.json:
+        * CISupport/build-webkit-org/factories.py:
+        (BuildAndTestAllButJSCFactory):
+        (BuildAndTestAllButJSCFactory.getProduct):
+        (BuildAndTestAllButJSCFactory.__init__):
+        * CISupport/build-webkit-org/steps_unittest.py:
+
 2020-11-17  Matt Lewis  <jlewis3@apple.com>
 
         Big Sur testers fail to find proper archives due to architecture keys.

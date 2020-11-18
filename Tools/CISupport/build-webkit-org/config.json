@@ -101,6 +101,7 @@
                     { "name": "gtk-linux-bot-15", "platform": "gtk" },
                     { "name": "gtk-linux-bot-16", "platform": "gtk" },
                     { "name": "gtk-linux-bot-17", "platform": "gtk" },
+                    { "name": "gtk-linux-bot-18", "platform": "gtk" },
 
                     { "name": "jsconly-linux-igalia-bot-1", "platform": "jsc-only" },
                     { "name": "jsconly-linux-igalia-bot-2", "platform": "jsc-only" },
@@ -406,6 +407,11 @@
                       "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
                       "additionalArguments": ["--no-bubblewrap-sandbox"],
                       "workernames": ["gtk-linux-bot-17"]
+                    },
+                    {
+                      "name": "GTK-Linux-64-bit-Release-GTK4-Tests", "factory": "BuildAndTestAllButJSCFactory", "builddir": "gtk-linux-64-release-gtk4",
+                      "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
+                      "workernames": ["gtk-linux-bot-18"]
                     },
                     {
                       "name": "WinCairo-64-bit-WKL-Release-Build", "factory": "BuildFactory", "builddir": "wincairo-wkl-release",

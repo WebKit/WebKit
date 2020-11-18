@@ -583,6 +583,7 @@ expected_build_steps = {
     'GTK-Linux-64-bit-Release-Wayland-Tests': ['configure-build', 'svn', 'kill-old-processes', 'delete-WebKitBuild-directory', 'delete-stale-build-files', 'jhbuild', 'download-built-product', 'extract-built-product', 'layout-test', 'webkitpy-test', 'webkitperl-test', 'bindings-generation-tests', 'builtins-generator-tests', 'dashboard-tests', 'archive-test-results', 'upload', 'extract-test-results', 'API-tests', 'webdriver-test'],
     'GTK-Linux-64-bit-Release-Ubuntu-LTS-Build': ['configure-build', 'svn', 'kill-old-processes', 'delete-WebKitBuild-directory', 'delete-stale-build-files', 'compile-webkit'],
     'GTK-Linux-64-bit-Release-Debian-Stable-Build': ['configure-build', 'svn', 'kill-old-processes', 'delete-WebKitBuild-directory', 'delete-stale-build-files', 'compile-webkit'],
+    'GTK-Linux-64-bit-Release-GTK4-Tests': ['configure-build', 'svn', 'kill-old-processes', 'delete-WebKitBuild-directory', 'delete-stale-build-files', 'jhbuild', 'compile-webkit', 'layout-test', 'webkitpy-test', 'webkitperl-test', 'bindings-generation-tests', 'builtins-generator-tests', 'dashboard-tests', 'archive-test-results', 'upload', 'extract-test-results', 'API-tests', 'webdriver-test'],
 
     'PlayStation-Debug-Build': ['configure-build', 'svn', 'kill-old-processes', 'delete-WebKitBuild-directory', 'delete-stale-build-files', 'compile-webkit'],
     'PlayStation-Release-Build': ['configure-build', 'svn', 'kill-old-processes', 'delete-WebKitBuild-directory', 'delete-stale-build-files', 'compile-webkit'],
