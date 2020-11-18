@@ -1,5 +1,15 @@
 2020-11-17  Lauro Moura  <lmoura@igalia.com>
 
+        [GLIB] Update webaudio baselines after r269853
+
+        Unreviewed test gardening.
+
+        * platform/glib/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-panner-connections-expected.txt: Removed.
+        * platform/glib/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-panner-expected.txt: Removed.
+        * platform/glib/webaudio/BiquadFilter/tail-time-peaking-expected.txt:
+
+2020-11-17  Lauro Moura  <lmoura@igalia.com>
+
         Gardening webrtc/audio-sframe.html flaky crashes
 
         Unreviewed test gardening.
