@@ -1,3 +1,15 @@
+2020-11-17  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        [CMake] generate_offset_extractor.rb missing build dependency for llint/WebAssembly.asm
+        https://bugs.webkit.org/show_bug.cgi?id=219043
+
+        Reviewed by Don Olmstead.
+
+        generate_offset_extractor.rb is missing a build dependency for llint/WebAssembly.asm. If
+        WebAssembly.asm is modified, generate_offset_extracter.rb needs to be run again.
+
+        * CMakeLists.txt:
+
 2020-11-17  Saam Barati  <sbarati@apple.com>
 
         Add more info to the RELEASE_ASSERT inside Parser::parseInner
