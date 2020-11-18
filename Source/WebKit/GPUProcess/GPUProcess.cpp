@@ -163,6 +163,7 @@ void GPUProcess::prepareToSuspend(bool isSuspensionImminent, CompletionHandler<v
     RELEASE_LOG(ProcessSuspension, "%p - GPUProcess::prepareToSuspend(), isSuspensionImminent: %d", this, isSuspensionImminent);
 
     lowMemoryHandler(Critical::Yes);
+    completionHandler();
 }
 
 void GPUProcess::processDidResume()
