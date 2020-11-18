@@ -1,3 +1,21 @@
+2020-11-18  Antoine Quint  <graouts@webkit.org>
+
+        Tests for the <model> element should be in a dedicated top-level directory
+        https://bugs.webkit.org/show_bug.cgi?id=219077
+
+        Reviewed by Dean Jackson.
+
+        Move the tests for the <model> element from system-preview/model to the top-level model-element directory.
+        Tests under this directory run only on macOS and iOS following where the ENABLE_MODEL_ELEMENT is defined.
+
+        * TestExpectations:
+        * model-element/model-element-expected.txt: Renamed from LayoutTests/system-preview/model/model-element-expected.txt.
+        * model-element/model-element-source-expected.txt: Renamed from LayoutTests/system-preview/model/model-element-source-expected.txt.
+        * model-element/model-element-source.html: Renamed from LayoutTests/system-preview/model/model-element-source.html.
+        * model-element/model-element.html: Renamed from LayoutTests/system-preview/model/model-element.html.
+        * platform/ios/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2020-11-18  Chris Dumez  <cdumez@apple.com>
 
         Unskip a few WebAudio tests that are no longer failing on Rosetta since r269853.

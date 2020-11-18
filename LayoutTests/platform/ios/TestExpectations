@@ -14,7 +14,9 @@ editing/deleting/ios [ Pass ]
 editing/input/cocoa [ Pass ]
 http/tests/quicklook [ Pass ]
 media/ios [ Pass ]
+model-element [ Pass ]
 quicklook [ Pass ]
+system-preview [ Pass ]
 swipe [ Pass ]
 http/tests/swipe [ Pass ]
 
@@ -3082,8 +3084,6 @@ http/tests/cookies/same-site [ Pass ]
 
 # FIXME: Mark as Pass once <rdar://problem/47165939> is fixed.
 http/tests/cookies/only-accept-first-party-cookies.html [ Skip ]
-
-system-preview [ Pass ]
 
 editing/selection/character-granularity-rect.html [ Pass ]
 
