@@ -1,3 +1,12 @@
+2020-11-18  Truitt Savell  <tsavell@apple.com>
+
+        REGRESSION (r269774): [ Mac WK2 ] fast/lists/001.html and fast/lists/001-vertical.html are flaky crashing
+        https://bugs.webkit.org/show_bug.cgi?id=218995
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2020-11-18  Antoine Quint  <graouts@webkit.org>
 
         [Web Animations] Ensure we don't schedule animation udpates when there are no styles to update

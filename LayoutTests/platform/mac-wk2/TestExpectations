@@ -1280,3 +1280,6 @@ webkit.org/b/218341 inspector/dom-debugger/attribute-modified-style.html [ Pass 
 [ Mojave ] fast/layoutformattingcontext/table-with-margin-content-simple.html [ ImageOnlyFailure ]
 
 webkit.org/b/218875 webrtc/captureCanvas-webrtc-software-h264-baseline.html [ Pass Failure ]
+
+webkit.org/b/218995 fast/lists/001.html [ Skip ]
+webkit.org/b/218995 fast/lists/001-vertical.html [ Skip ]
