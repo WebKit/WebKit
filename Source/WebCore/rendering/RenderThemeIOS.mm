@@ -473,6 +473,11 @@ void RenderThemeIOS::adjustRadioStyle(RenderStyle& style, const Element*) const
 
 bool RenderThemeIOS::paintRadioDecorations(const RenderObject& box, const PaintInfo& paintInfo, const IntRect& rect)
 {
+#if ENABLE(IOS_FORM_CONTROL_REFRESH)
+    if (box.settings().iOSFormControlRefreshEnabled())
+        return true;
+#endif
+
     GraphicsContextStateSaver stateSaver(paintInfo.context());
     CGContextRef cgContext = paintInfo.context().platformContext();
 
@@ -2030,6 +2035,36 @@ bool RenderThemeIOS::paintCheckbox(const RenderObject& box, const PaintInfo& pai
         context.fillPath(path);
     } else
         context.fillRoundedRect(checkboxRect, controlBackgroundColor);
+
+    return false;
+}
+
+bool RenderThemeIOS::paintRadio(const RenderObject& box, const PaintInfo& paintInfo, const IntRect& rect)
+{
+    if (!box.settings().iOSFormControlRefreshEnabled())
+        return true;
+
+    auto& context = paintInfo.context();
+    GraphicsContextStateSaver stateSaver(context);
+
+    if (isChecked(box)) {
+        context.setFillColor(controlColor);
+        context.fillEllipse(rect);
+
+        // The inner circle is 6 / 14 the size of the surrounding circle,
+        // leaving 8 / 14 around it. (8 / 14) / 2 = 2 / 7.
+        constexpr float innerInverseRatio = 2 / 7.0f;
+
+        FloatRect innerCircleRect(rect);
+        innerCircleRect.inflateX(-innerCircleRect.width() * innerInverseRatio);
+        innerCircleRect.inflateY(-innerCircleRect.height() * innerInverseRatio);
+
+        context.setFillColor(Color::white);
+        context.fillEllipse(innerCircleRect);
+    } else {
+        context.setFillColor(controlBackgroundColor);
+        context.fillEllipse(rect);
+    }
 
     return false;
 }

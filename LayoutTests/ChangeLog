@@ -1,3 +1,25 @@
+2020-11-18  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS][FCR] Add new look for radio buttons
+        https://bugs.webkit.org/show_bug.cgi?id=219046
+        <rdar://problem/71498263>
+
+        Reviewed by Wenson Hsieh.
+
+        Added tests to verify the stylability of native radio buttons and to
+        verify that different states are painted with a different appearance.
+
+        * fast/forms/ios/form-control-refresh/radio/border-expected-mismatch.html: Added.
+        * fast/forms/ios/form-control-refresh/radio/border.html: Added.
+        * fast/forms/ios/form-control-refresh/radio/checked-appearance-expected-mismatch.html: Added.
+        * fast/forms/ios/form-control-refresh/radio/checked-appearance.html: Added.
+        * fast/forms/ios/form-control-refresh/radio/disabled-appearance-expected-mismatch.html: Added.
+        * fast/forms/ios/form-control-refresh/radio/disabled-appearance.html: Added.
+        * fast/forms/ios/form-control-refresh/radio/ignored-properties-expected.html: Added.
+        * fast/forms/ios/form-control-refresh/radio/ignored-properties.html: Added.
+        * fast/forms/ios/form-control-refresh/radio/width-height-expected-mismatch.html: Added.
+        * fast/forms/ios/form-control-refresh/radio/width-height.html: Added.
+
 2020-11-18  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, relanding r269940

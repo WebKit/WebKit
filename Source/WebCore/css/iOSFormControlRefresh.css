@@ -24,7 +24,7 @@
 
 #if defined(ENABLE_IOS_FORM_CONTROL_REFRESH) && ENABLE_IOS_FORM_CONTROL_REFRESH
 
-input[type="checkbox"] {
+input:matches([type="checkbox"], [type="radio"]) {
     border: initial;
     box-sizing: border-box;
 }

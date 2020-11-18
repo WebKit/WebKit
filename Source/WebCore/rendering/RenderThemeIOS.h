@@ -112,6 +112,7 @@ private:
 
 #if ENABLE(IOS_FORM_CONTROL_REFRESH)
     bool paintCheckbox(const RenderObject&, const PaintInfo&, const IntRect&) override;
+    bool paintRadio(const RenderObject&, const PaintInfo&, const IntRect&) override;
 #endif
 
     bool supportsFocusRing(const RenderStyle&) const final;
