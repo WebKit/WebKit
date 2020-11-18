@@ -1,5 +1,18 @@
 2020-11-18  Antoine Quint  <graouts@webkit.org>
 
+        [Web Animations] Ensure we don't schedule animation udpates when there are no styles to update
+        https://bugs.webkit.org/show_bug.cgi?id=219071
+
+        Reviewed by Simon Fraser.
+
+        Add a test that creates animations with various empty keyframes parameters to check that we don't
+        schedule animation update for them.
+
+        * webanimations/scheduling-of-animation-without-keyframes-expected.txt: Added.
+        * webanimations/scheduling-of-animation-without-keyframes.html: Added.
+
+2020-11-18  Antoine Quint  <graouts@webkit.org>
+
         Support <source> as a child of <model> to specify the current source
         https://bugs.webkit.org/show_bug.cgi?id=219080
 

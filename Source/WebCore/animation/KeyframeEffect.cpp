@@ -1979,14 +1979,18 @@ Seconds KeyframeEffect::timeToNextTick() const
     case AnimationEffectPhase::Before:
         // The effect is in its "before" phase, in this case we can wait until it enters its "active" phase.
         return delay() - *timing.localTime;
-    case AnimationEffectPhase::Active:
-        if (isCompletelyAccelerated() && isRunningAccelerated()) {
-            // Fully-accelerated running CSS Animations need to trigger "animationiteration" events, in this case we must wait until the next iteration.
+    case AnimationEffectPhase::Active: {
+        auto doesNotAffectStyles = m_blendingKeyframes.isEmpty() || m_blendingKeyframes.properties().isEmpty();
+        auto completelyAcceleratedAndRunning = isCompletelyAccelerated() && isRunningAccelerated();
+        if (doesNotAffectStyles || completelyAcceleratedAndRunning) {
+            // In the case of fully accelerated running effects and effects that don't actually target any CSS property,
+            // we do not have a need to invalidate styles.
             if (is<CSSAnimation>(animation())) {
+                // However, CSS Animations need to trigger "animationiteration" events, in this case we must wait until the next iteration.
                 if (auto iterationProgress = getComputedTiming().simpleIterationProgress)
                     return iterationDuration() * (1 - *iterationProgress);
             }
-            // Fully-accelerated running effects in the "active" phase can wait until they ended.
+            // Other running effects in the "active" phase can wait until they end.
             return endTime() - *timing.localTime;
         }
         if (auto iterationProgress = getComputedTiming().simpleIterationProgress) {
@@ -1996,6 +2000,7 @@ Seconds KeyframeEffect::timeToNextTick() const
         }
         // Other effects in the "active" phase will need to update their animated value at the immediate next opportunity.
         return 0_s;
+    }
     case AnimationEffectPhase::After:
         // The effect is in its after phase, which means it will no longer update its value, so it doens't need a tick.
         return Seconds::infinity();
