@@ -1,7 +1,5 @@
 Blocked access to external URL http://nonexistent.localhost/
-CONSOLE MESSAGE: Refused to display 'http://localhost:8800/html/semantics/embedded-content/resources/not-embeddable.html' in a frame because it set 'X-Frame-Options' to 'deny'.
 Blocked access to external URL http://nonexistent.localhost/
-CONSOLE MESSAGE: Refused to display 'http://localhost:8800/html/semantics/embedded-content/resources/not-embeddable.html' in a frame because it set 'X-Frame-Options' to 'deny'.
 
 
 PASS new iframe: nonexistent host
