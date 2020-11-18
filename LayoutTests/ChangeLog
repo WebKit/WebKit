@@ -1,3 +1,11 @@
+2020-11-18  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, unskip several webaudio tests on Apple Silicon.
+
+        Those tests are no longer failing or flaky on this platform.
+
+        * platform/mac/TestExpectations:
+
 2020-11-18  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS][FCR] Add new look for radio buttons

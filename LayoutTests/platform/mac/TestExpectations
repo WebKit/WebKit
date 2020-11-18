@@ -2203,21 +2203,9 @@ webkit.org/b/216492 imported/w3c/web-platform-tests/selection/extend-00.html [ S
 [ BigSur+ ] http/tests/media/hls/hls-hdr-switch.html [ Pass ]
 
 # rdar://69347249
-[ arm64 ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-biquad-connection.html [ Failure ]
-[ arm64 ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-delay-connections.html [ Failure ]
-[ arm64 ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/biquad-getFrequencyResponse.html [ Failure ]
-[ arm64 ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/convolver-response-4-chan.html [ Failure ]
 [ arm64 ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/realtime-conv.html [ Failure ]
-[ arm64 ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/automation-changes.html [ Failure ]
 [ arm64 ] webaudio/Analyser/realtimeanalyser-byte-data.html [ Failure ]
 [ arm64 ] webaudio/Analyser/realtimeanalyser-freq-data.html [ Failure ]
-[ arm64 ] webaudio/BiquadFilter/tail-time-allpass.html [ Failure ]
-[ arm64 ] webaudio/BiquadFilter/tail-time-bandpass.html [ Failure ]
-[ arm64 ] webaudio/BiquadFilter/tail-time-highpass.html [ Failure ]
-[ arm64 ] webaudio/BiquadFilter/tail-time-highshelf.html [ Failure ]
-[ arm64 ] webaudio/BiquadFilter/tail-time-lowpass.html [ Failure ]
-[ arm64 ] webaudio/BiquadFilter/tail-time-peaking.html [ Failure ]
-[ arm64 ] webaudio/IIRFilter/iir-tail-time.html [ Failure ]
 [ arm64 ] webaudio/Oscillator/no-dezippering.html [ Failure ]
 [ arm64 ] webaudio/convolution-mono-mono.html [ Failure ]
 
