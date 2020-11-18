@@ -8,6 +8,8 @@ flags:
   Intl.DateTimeFormat-dayPeriod: useIntlDateTimeFormatDayPeriod
   SharedArrayBuffer: useSharedArrayBuffer
   Atomics: useSharedArrayBuffer
+  Array.prototype.at: useAtMethod
+  TypedArray.prototype.at: useAtMethod
 skip:
   features:
     - Atomics.waitAsync
@@ -26,12 +28,7 @@ skip:
     - top-level-await
     - Intl.ListFormat
 
-    # remove once it's been renamed in test262
-    - Array.prototype.item
-    - TypedArray.prototype.item
-
-    # remove once it's no longer in test262
-    - String.prototype.item
+    - String.prototype.at
   paths:
     - test/built-ins/DataView/prototype/getBigInt64
     - test/built-ins/DataView/prototype/getBigUint64

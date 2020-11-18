@@ -1,4 +1,5 @@
 // Copyright (C) 2016 the V8 project authors. All rights reserved.
+// Copyright (C) 2020 Apple Inc. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 esid: sec-integer-indexed-exotic-objects-getownproperty-p
@@ -30,7 +31,7 @@ testWithTypedArrayConstructors(function(TA) {
   assert.sameValue(descriptor0.enumerable, true);
   assert.sameValue(descriptor0.writable, true);
 
-  assert.sameValue(descriptor1.value, 42);
+  assert.sameValue(descriptor1.value, 43);
   assert.sameValue(descriptor1.configurable, true);
   assert.sameValue(descriptor1.enumerable, true);
   assert.sameValue(descriptor1.writable, true);

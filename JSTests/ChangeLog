@@ -1,3 +1,16 @@
+2020-11-18  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Update test262 (2020.11.18)
+        https://bugs.webkit.org/show_bug.cgi?id=219109
+
+        Reviewed by Yusuke Suzuki.
+
+        * test262/config.yaml:
+        * test262/expectations.yaml:
+        * test262/latest-changes-summary.txt:
+        * test262/test/:
+        * test262/test262-Revision.txt:
+
 2020-11-18  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, relanding r269940

@@ -823,6 +823,9 @@ test/built-ins/RegExp/prototype/exec/u-lastindex-adv.js:
 test/built-ins/RegExp/quantifier-integer-limit.js:
   default: 'SyntaxError: Invalid regular expression: number too large in {} quantifier'
   strict mode: 'SyntaxError: Invalid regular expression: number too large in {} quantifier'
+test/built-ins/TypedArray/prototype/at/prop-desc.js:
+  default: 'Test262Error: descriptor should be writable'
+  strict mode: 'Test262Error: descriptor should be writable'
 test/built-ins/TypedArray/prototype/includes/detached-buffer-tointeger.js:
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
@@ -892,9 +895,6 @@ test/built-ins/TypedArrayConstructors/ctors/typedarray-arg/same-ctor-buffer-ctor
 test/built-ins/TypedArrayConstructors/ctors/typedarray-arg/same-ctor-buffer-ctor-value-not-obj-throws.js:
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
-test/built-ins/TypedArrayConstructors/internals/GetOwnProperty/index-prop-desc.js:
-  default: 'Test262Error: Expected SameValue(«43», «42») to be true (Testing with Float64Array.)'
-  strict mode: 'Test262Error: Expected SameValue(«43», «42») to be true (Testing with Float64Array.)'
 test/built-ins/TypedArrayConstructors/internals/Set/key-is-minus-zero.js:
   default: 'Test262Error: Reflect.set(sample, "-0", 1) must return false Expected SameValue(«true», «false») to be true (Testing with Float64Array.)'
   strict mode: 'Test262Error: Reflect.set(sample, "-0", 1) must return false Expected SameValue(«true», «false») to be true (Testing with Float64Array.)'
