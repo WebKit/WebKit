@@ -1,5 +1,22 @@
 2020-11-17  Chris Dumez  <cdumez@apple.com>
 
+        Make sure ProcessThrottler is always holding a ProcessAssertion for its child process
+        https://bugs.webkit.org/show_bug.cgi?id=219053
+
+        Reviewed by Geoff Garen.
+
+        Make sure ProcessThrottler is always holding a ProcessAssertion for its child process. Previously, when changing the assertion
+        type (e.g. when going from background to foreground) we would release the previous assertion and then take the new one.
+
+        RunningBoard developers recommend that we wait until the new ProcessAssertion is taken before we release the previous one to
+        avoid churn. It is also important we always hold a ProcessAssertion at all times for the child process because the child process
+        may exit otherwise.
+
+        * UIProcess/ProcessThrottler.cpp:
+        (WebKit::ProcessThrottler::setAssertionType):
+
+2020-11-17  Chris Dumez  <cdumez@apple.com>
+
         [macOS] Stop using RunLoopType=_WebKit starting in Big Sur
         https://bugs.webkit.org/show_bug.cgi?id=219052
         <rdar://problem/61742969>

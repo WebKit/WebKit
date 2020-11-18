@@ -127,6 +127,10 @@ void ProcessThrottler::setAssertionType(ProcessAssertionType newType)
         return;
 
     PROCESSTHROTTLER_RELEASE_LOG("setAssertionType: Updating process assertion type to %u (foregroundActivities: %u, backgroundActivities: %u)", newType, m_foregroundActivities.size(), m_backgroundActivities.size());
+
+    // Keep the previous assertion around until after the new one has been created so that we always hold
+    // a process assertion for the process.
+    auto previousAssertion = std::exchange(m_assertion, nullptr);
     if (m_shouldTakeUIBackgroundAssertion) {
         auto assertion = makeUnique<ProcessAndUIAssertion>(m_processIdentifier, assertionName(newType), newType);
         assertion->setUIAssertionExpirationHandler([this] {
