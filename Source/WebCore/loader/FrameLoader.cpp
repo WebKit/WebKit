@@ -3234,8 +3234,6 @@ bool FrameLoader::shouldClose()
     Page* page = m_frame.page();
     if (!page)
         return true;
-    if (!page->chrome().canRunBeforeUnloadConfirmPanel())
-        return true;
 
     // Store all references to each subframe in advance since beforeunload's event handler may modify frame
     Vector<Ref<Frame>, 16> targetFrames;
@@ -3365,7 +3363,7 @@ bool FrameLoader::dispatchBeforeUnloadEvent(Chrome& chrome, FrameLoader* frameLo
     if (!beforeUnloadEvent->defaultPrevented())
         document->defaultEventHandler(beforeUnloadEvent.get());
 
-    if (!shouldAskForNavigationConfirmation(*document, beforeUnloadEvent))
+    if (!chrome.canRunBeforeUnloadConfirmPanel() || !shouldAskForNavigationConfirmation(*document, beforeUnloadEvent))
         return true;
 
     // If the navigating FrameLoader has already shown a beforeunload confirmation panel for the current navigation attempt,

@@ -313,3 +313,54 @@ TEST(WebKit, SlowBeforeUnloadHandlerSingleClosePageCall)
 }
 
 #endif
+
+static bool wasBeforeUnloadEventHandlerCalled = false;
+
+@interface UIDelegateWithoutRunBeforeUnload : NSObject <WKUIDelegate>
+@end
+
+@implementation UIDelegateWithoutRunBeforeUnload
+
+- (void)webViewDidClose:(WKWebView *)webView
+{
+    [webView _close];
+}
+
+@end
+
+@interface BeforeUnloadMessageHandler : NSObject <WKScriptMessageHandler>
+@end
+
+@implementation BeforeUnloadMessageHandler
+- (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
+{
+    NSString *scriptMessage = [message body];
+    EXPECT_WK_STREQ(@"beforeunload called", scriptMessage);
+    wasBeforeUnloadEventHandlerCalled = true;
+}
+@end
+
+TEST(WebKit, BeforeUnloadEventWithoutRunBeforeUnloadConfirmPanelUIDelegate)
+{
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto messageHandler = adoptNS([[BeforeUnloadMessageHandler alloc] init]);
+    [[webViewConfiguration userContentController] addScriptMessageHandler:messageHandler.get() name:@"testHandler"];
+
+    auto uiDelegate = adoptNS([[UIDelegateWithoutRunBeforeUnload alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    [webView setUIDelegate:uiDelegate.get()];
+
+    [webView synchronouslyLoadTestPageNamed:@"beforeunload"];
+
+    TestWebKitAPI::Util::spinRunLoop(10);
+
+    [webView _tryClose];
+
+    // The beforeunload event handler should get called even if the client application does not
+    // have a UIDelegate that can show the before unload prompt.
+    TestWebKitAPI::Util::run(&wasBeforeUnloadEventHandlerCalled);
+
+    // The view should get closed.
+    while (![webView _isClosed])
+        TestWebKitAPI::Util::sleep(0.1);
+}

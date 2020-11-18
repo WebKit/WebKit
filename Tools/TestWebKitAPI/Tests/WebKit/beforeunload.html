@@ -3,6 +3,8 @@
 <head>
 <script>
 onbeforeunload = (ev) => {
+    if (window.webkit && webkit.messageHandlers.testHandler)
+        webkit.messageHandlers.testHandler.postMessage("beforeunload called");
     ev.preventDefault();
     return "foo";
 }
