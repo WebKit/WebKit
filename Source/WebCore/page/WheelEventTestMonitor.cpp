@@ -170,6 +170,7 @@ TextStream& operator<<(TextStream& ts, WheelEventTestMonitor::DeferReason reason
     switch (reason) {
     case WheelEventTestMonitor::HandlingWheelEvent: ts << "handling wheel event"; break;
     case WheelEventTestMonitor::HandlingWheelEventOnMainThread: ts << "handling wheel event on main thread"; break;
+    case WheelEventTestMonitor::ReportDOMEventHandling: ts << "report DOM event handling"; break;
     case WheelEventTestMonitor::RubberbandInProgress: ts << "rubberbanding"; break;
     case WheelEventTestMonitor::ScrollSnapInProgress: ts << "scroll-snapping"; break;
     case WheelEventTestMonitor::ScrollingThreadSyncNeeded: ts << "scrolling thread sync needed"; break;

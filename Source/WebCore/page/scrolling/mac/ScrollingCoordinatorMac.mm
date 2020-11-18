@@ -73,7 +73,7 @@ void ScrollingCoordinatorMac::pageDestroyed()
     });
 }
 
-bool ScrollingCoordinatorMac::handleWheelEvent(FrameView&, const PlatformWheelEvent& wheelEvent, ScrollingNodeID targetNode)
+bool ScrollingCoordinatorMac::performDefaultWheelEventHandling(const PlatformWheelEvent& wheelEvent, ScrollingNodeID targetNode)
 {
     ASSERT(isMainThread());
     ASSERT(m_page);
@@ -83,14 +83,34 @@ bool ScrollingCoordinatorMac::handleWheelEvent(FrameView&, const PlatformWheelEv
 
     LOG_WITH_STREAM(Scrolling, stream << "ScrollingCoordinatorMac::handleWheelEvent - sending event to scrolling thread");
     
-    // FIXME: Over on the scrolling thread, we'll hit-test the layers and possibly send the event to a node
-    // which we've already discounted on the main thread. This needs to target a specific node.
-
     RefPtr<ThreadedScrollingTree> threadedScrollingTree = downcast<ThreadedScrollingTree>(scrollingTree());
     ScrollingThread::dispatch([threadedScrollingTree, wheelEvent, targetNode] {
         threadedScrollingTree->handleWheelEventAfterMainThread(wheelEvent, targetNode);
     });
     return true;
+}
+
+static uint64_t nextDeferIdentifier()
+{
+    static uint64_t deferIdentifier;
+    return ++deferIdentifier;
+}
+
+void ScrollingCoordinatorMac::wheelEventWasProcessedByMainThread(const PlatformWheelEvent& wheelEvent, OptionSet<EventHandling> defaultHandling)
+{
+    uint64_t deferIdentifier = 0;
+    if (m_page && m_page->isMonitoringWheelEvents()) {
+        deferIdentifier = nextDeferIdentifier();
+        m_page->wheelEventTestMonitor()->deferForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(deferIdentifier), WheelEventTestMonitor::ReportDOMEventHandling);
+    }
+
+    RefPtr<ThreadedScrollingTree> threadedScrollingTree = downcast<ThreadedScrollingTree>(scrollingTree());
+    ScrollingThread::dispatch([threadedScrollingTree, wheelEvent, defaultHandling, deferIdentifier] {
+        threadedScrollingTree->wheelEventWasProcessedByMainThread(wheelEvent, defaultHandling);
+
+        if (threadedScrollingTree->isMonitoringWheelEvents())
+            threadedScrollingTree->removeWheelEventTestCompletionDeferralForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(deferIdentifier), WheelEventTestMonitor::ReportDOMEventHandling);
+    });
 }
 
 void ScrollingCoordinatorMac::scheduleTreeStateCommit()

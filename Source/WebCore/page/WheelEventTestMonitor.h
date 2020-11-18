@@ -50,11 +50,12 @@ public:
     enum DeferReason {
         HandlingWheelEvent              = 1 << 0,
         HandlingWheelEventOnMainThread  = 1 << 1,
-        RubberbandInProgress            = 1 << 2,
-        ScrollSnapInProgress            = 1 << 3,
-        ScrollingThreadSyncNeeded       = 1 << 4,
-        ContentScrollInProgress         = 1 << 5,
-        RequestedScrollPosition         = 1 << 6,
+        ReportDOMEventHandling          = 1 << 2,
+        RubberbandInProgress            = 1 << 3,
+        ScrollSnapInProgress            = 1 << 4,
+        ScrollingThreadSyncNeeded       = 1 << 5,
+        ContentScrollInProgress         = 1 << 6,
+        RequestedScrollPosition         = 1 << 7,
     };
     typedef const void* ScrollableAreaIdentifier;
 

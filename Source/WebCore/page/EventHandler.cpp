@@ -2792,6 +2792,10 @@ bool EventHandler::processWheelEventForScrolling(const PlatformWheelEvent& event
     return didHandleEvent;
 }
 
+void EventHandler::wheelEventWasProcessedByMainThread(const PlatformWheelEvent&, OptionSet<EventHandling>)
+{
+}
+
 bool EventHandler::platformCompletePlatformWidgetWheelEvent(const PlatformWheelEvent&, const Widget&, const WeakPtr<ScrollableArea>&)
 {
     return true;
@@ -2863,6 +2867,14 @@ bool EventHandler::completeWidgetWheelEvent(const PlatformWheelEvent& event, con
 
 bool EventHandler::handleWheelEvent(const PlatformWheelEvent& event, OptionSet<WheelEventProcessingSteps> processingSteps)
 {
+    OptionSet<EventHandling> handling;
+    bool handled = handleWheelEventInternal(event, processingSteps, handling);
+    wheelEventWasProcessedByMainThread(event, handling);
+    return handled;
+}
+
+bool EventHandler::handleWheelEventInternal(const PlatformWheelEvent& event, OptionSet<WheelEventProcessingSteps> processingSteps, OptionSet<EventHandling>& handling)
+{
     auto* document = m_frame.document();
     if (!document)
         return false;
@@ -2924,7 +2936,8 @@ bool EventHandler::handleWheelEvent(const PlatformWheelEvent& event, OptionSet<W
             }
         }
 
-        if (!element->dispatchWheelEvent(event)) {
+        auto isCancelable = processingSteps.contains(WheelEventProcessingSteps::MainThreadForBlockingDOMEventDispatch) ? Event::IsCancelable::Yes : Event::IsCancelable::No;
+        if (!element->dispatchWheelEvent(event, handling, isCancelable)) {
             m_isHandlingWheelEvent = false;
             if (scrollableArea && scrollableArea->scrollShouldClearLatchedState()) {
                 // Web developer is controlling scrolling, so don't attempt to latch.
@@ -2954,6 +2967,7 @@ bool EventHandler::handleWheelEvent(const PlatformWheelEvent& event, OptionSet<W
         handledEvent = processWheelEventForScrolling(event, scrollableArea);
         processWheelEventForScrollSnap(event, scrollableArea);
     }
+
     return handledEvent;
 }
 

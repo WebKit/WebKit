@@ -48,7 +48,7 @@ public:
 
     ScrollingTreeLatchingController();
 
-    void receivedWheelEvent(const PlatformWheelEvent&, bool allowLatching);
+    void receivedWheelEvent(const PlatformWheelEvent&, OptionSet<WheelEventProcessingSteps>, bool allowLatching);
 
     Optional<ScrollingNodeAndProcessingSteps> latchingDataForEvent(const PlatformWheelEvent&, bool allowLatching) const;
     void nodeDidHandleEvent(ScrollingNodeID, OptionSet<WheelEventProcessingSteps>, const PlatformWheelEvent&, bool allowLatching);

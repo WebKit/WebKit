@@ -5128,7 +5128,7 @@ bool FrameView::wheelEvent(const PlatformWheelEvent& wheelEvent)
 #if ENABLE(ASYNC_SCROLLING)
     if (auto scrollingCoordinator = this->scrollingCoordinator()) {
         if (scrollingCoordinator->coordinatesScrollingForFrameView(*this))
-            return scrollingCoordinator->handleWheelEvent(*this, wheelEvent, scrollingNodeID());
+            return scrollingCoordinator->performDefaultWheelEventHandling(wheelEvent, scrollingNodeID());
     }
 #endif
 

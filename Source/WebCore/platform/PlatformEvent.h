@@ -30,6 +30,12 @@
 
 namespace WebCore {
 
+enum class EventHandling : uint8_t {
+    DispatchedToDOM     = 1 << 0,
+    DefaultPrevented    = 1 << 1,
+    DefaultHandled      = 1 << 2,
+};
+
 class PlatformEvent {
 public:
     enum Type : uint8_t {

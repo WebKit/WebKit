@@ -1,3 +1,17 @@
+2020-11-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Propagate wheel event handling back to the scrolling thread
+        https://bugs.webkit.org/show_bug.cgi?id=219050
+
+        Reviewed by Chris Dumez.
+        
+        For now, use MainThreadForBlockingDOMEventDispatch for the default steps (used by non-macOS platforms).
+
+        * UIProcess/RemoteLayerTree/RemoteScrollingCoordinatorProxy.cpp:
+        (WebKit::RemoteScrollingCoordinatorProxy::handleWheelEvent):
+        * WebProcess/WebPage/EventDispatcher.cpp:
+        (WebKit::EventDispatcher::wheelEvent):
+
 2020-11-18  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Clean up some code in SharedDisplayListHandle

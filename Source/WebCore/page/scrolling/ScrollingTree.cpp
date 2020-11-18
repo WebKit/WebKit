@@ -74,8 +74,6 @@ OptionSet<WheelEventProcessingSteps> ScrollingTree::determineWheelEventProcessin
         return latchedNodeAndSteps->processingSteps;
     }
 
-    m_latchingController.receivedWheelEvent(wheelEvent, m_allowLatching);
-
     auto processingSteps = [&]() -> OptionSet<WheelEventProcessingSteps> {
         if (!m_rootNode)
             return { WheelEventProcessingSteps::ScrollingThread };
@@ -93,19 +91,21 @@ OptionSet<WheelEventProcessingSteps> ScrollingTree::determineWheelEventProcessin
             LOG_WITH_STREAM(Scrolling, stream << "\nScrollingTree::determineWheelEventProcessing: wheelEvent " << wheelEvent << " mapped to content point " << position << ", in non-fast region " << isSynchronousDispatchRegion);
 
             if (isSynchronousDispatchRegion)
-                return { WheelEventProcessingSteps::MainThreadForScrolling, WheelEventProcessingSteps::MainThreadForDOMEventDispatch };
+                return { WheelEventProcessingSteps::MainThreadForScrolling, WheelEventProcessingSteps::MainThreadForBlockingDOMEventDispatch };
         }
 
 #if ENABLE(WHEEL_EVENT_REGIONS)
         auto eventListenerTypes = eventListenerRegionTypesForPoint(position);
         if (eventListenerTypes.contains(EventListenerRegionType::NonPassiveWheel))
-            return { WheelEventProcessingSteps::MainThreadForScrolling, WheelEventProcessingSteps::MainThreadForDOMEventDispatch };
+            return { WheelEventProcessingSteps::MainThreadForScrolling, WheelEventProcessingSteps::MainThreadForBlockingDOMEventDispatch };
 
         if (eventListenerTypes.contains(EventListenerRegionType::Wheel))
-            return { WheelEventProcessingSteps::ScrollingThread, WheelEventProcessingSteps::MainThreadForDOMEventDispatch };
+            return { WheelEventProcessingSteps::ScrollingThread, WheelEventProcessingSteps::MainThreadForNonBlockingDOMEventDispatch };
 #endif
         return { WheelEventProcessingSteps::ScrollingThread };
     }();
+
+    m_latchingController.receivedWheelEvent(wheelEvent, processingSteps, m_allowLatching);
 
     LOG_WITH_STREAM(Scrolling, stream << "ScrollingTree::determineWheelEventProcessing: processingSteps " << processingSteps);
 
@@ -121,7 +121,7 @@ WheelEventHandlingResult ScrollingTree::handleWheelEvent(const PlatformWheelEven
     if (isMonitoringWheelEvents())
         receivedWheelEvent(wheelEvent);
 
-    m_latchingController.receivedWheelEvent(wheelEvent, m_allowLatching);
+    m_latchingController.receivedWheelEvent(wheelEvent, processingSteps, m_allowLatching);
 
     auto result = [&] {
         if (!m_rootNode)
@@ -163,7 +163,8 @@ WheelEventHandlingResult ScrollingTree::handleWheelEvent(const PlatformWheelEven
         return handleWheelEventWithNode(wheelEvent, processingSteps, node.get());
     }();
 
-    result.steps.add(processingSteps & WheelEventProcessingSteps::MainThreadForDOMEventDispatch);
+    static constexpr OptionSet<WheelEventProcessingSteps> mainThreadSteps = { WheelEventProcessingSteps::MainThreadForNonBlockingDOMEventDispatch, WheelEventProcessingSteps::MainThreadForBlockingDOMEventDispatch };
+    result.steps.add(processingSteps & mainThreadSteps);
     return result;
 }
 

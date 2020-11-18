@@ -107,7 +107,7 @@ bool EventHandler::wheelEvent(WebEvent *event)
 
     CurrentEventScope scope(event);
 
-    bool eventWasHandled = handleWheelEvent(PlatformEventFactory::createPlatformWheelEvent(event), { WheelEventProcessingSteps::MainThreadForScrolling, WheelEventProcessingSteps::MainThreadForDOMEventDispatch });
+    bool eventWasHandled = handleWheelEvent(PlatformEventFactory::createPlatformWheelEvent(event), { WheelEventProcessingSteps::MainThreadForScrolling, WheelEventProcessingSteps::MainThreadForBlockingDOMEventDispatch });
     event.wasHandled = eventWasHandled;
     return eventWasHandled;
 }

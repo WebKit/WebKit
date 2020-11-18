@@ -41,7 +41,7 @@ static const Seconds resetLatchedStateTimeout { 100_ms };
 
 ScrollingTreeLatchingController::ScrollingTreeLatchingController() = default;
 
-void ScrollingTreeLatchingController::receivedWheelEvent(const PlatformWheelEvent& wheelEvent, bool allowLatching)
+void ScrollingTreeLatchingController::receivedWheelEvent(const PlatformWheelEvent& wheelEvent, OptionSet<WheelEventProcessingSteps>, bool allowLatching)
 {
     if (!allowLatching)
         return;

@@ -193,7 +193,8 @@ void PointerLockController::dispatchLockedWheelEvent(const PlatformWheelEvent& e
     if (!m_element || !m_element->document().frame())
         return;
 
-    m_element->dispatchWheelEvent(event);
+    OptionSet<EventHandling> defaultHandling;
+    m_element->dispatchWheelEvent(event, defaultHandling);
 }
 
 void PointerLockController::clearElement()

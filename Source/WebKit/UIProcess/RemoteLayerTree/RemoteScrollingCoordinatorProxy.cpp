@@ -180,7 +180,7 @@ bool RemoteScrollingCoordinatorProxy::handleWheelEvent(const PlatformWheelEvent&
         return false;
 
     auto processingSteps = m_scrollingTree->determineWheelEventProcessing(wheelEvent);
-    if (processingSteps.containsAny({ WheelEventProcessingSteps::MainThreadForScrolling, WheelEventProcessingSteps::MainThreadForDOMEventDispatch }))
+    if (processingSteps.containsAny({ WheelEventProcessingSteps::MainThreadForScrolling, WheelEventProcessingSteps::MainThreadForNonBlockingDOMEventDispatch, WheelEventProcessingSteps::MainThreadForBlockingDOMEventDispatch }))
         return false;
 
     if (m_scrollingTree->willWheelEventStartSwipeGesture(wheelEvent))

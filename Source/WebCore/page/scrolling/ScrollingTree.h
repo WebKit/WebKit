@@ -59,7 +59,7 @@ using PlatformDisplayID = uint32_t;
 struct WheelEventHandlingResult {
     OptionSet<WheelEventProcessingSteps> steps;
     bool wasHandled { false };
-    bool needsMainThreadProcessing() const { return steps.containsAny({ WheelEventProcessingSteps::MainThreadForScrolling, WheelEventProcessingSteps::MainThreadForDOMEventDispatch }); }
+    bool needsMainThreadProcessing() const { return steps.containsAny({ WheelEventProcessingSteps::MainThreadForScrolling, WheelEventProcessingSteps::MainThreadForNonBlockingDOMEventDispatch, WheelEventProcessingSteps::MainThreadForBlockingDOMEventDispatch }); }
 
     static WheelEventHandlingResult handled(OptionSet<WheelEventProcessingSteps> steps = { })
     {

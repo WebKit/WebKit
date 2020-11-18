@@ -37,9 +37,10 @@ class TextStream;
 namespace WebCore {
 
 enum class WheelEventProcessingSteps : uint8_t {
-    ScrollingThread                 = 1 << 0,
-    MainThreadForScrolling          = 1 << 1,
-    MainThreadForDOMEventDispatch   = 1 << 2,
+    ScrollingThread                             = 1 << 0,
+    MainThreadForScrolling                      = 1 << 1,
+    MainThreadForNonBlockingDOMEventDispatch    = 1 << 2,
+    MainThreadForBlockingDOMEventDispatch       = 1 << 3,
 };
 
 // The ScrollByPixelWheelEvent is a fine-grained event that specifies the precise number of pixels to scroll.
@@ -265,5 +266,6 @@ inline FloatPoint PlatformWheelEvent::swipeVelocity() const
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const PlatformWheelEvent&);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, WheelEventProcessingSteps);
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, EventHandling);
 
 } // namespace WebCore

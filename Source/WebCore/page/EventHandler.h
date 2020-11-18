@@ -208,8 +208,11 @@ public:
     bool handleMouseMoveEvent(const PlatformMouseEvent&, HitTestResult* = nullptr, bool onlyUpdateScrollbars = false);
     WEBCORE_EXPORT bool handleMouseReleaseEvent(const PlatformMouseEvent&);
     bool handleMouseForceEvent(const PlatformMouseEvent&);
+
     WEBCORE_EXPORT bool handleWheelEvent(const PlatformWheelEvent&, OptionSet<WheelEventProcessingSteps>);
     void defaultWheelEventHandler(Node*, WheelEvent&);
+    void wheelEventWasProcessedByMainThread(const PlatformWheelEvent&, OptionSet<EventHandling>);
+
     bool handlePasteGlobalSelection(const PlatformMouseEvent&);
 
 #if ENABLE(IOS_TOUCH_EVENTS) || ENABLE(IOS_GESTURE_EVENTS)
@@ -452,6 +455,7 @@ private:
 
     bool passMouseDownEventToWidget(Widget*);
 
+    bool handleWheelEventInternal(const PlatformWheelEvent&, OptionSet<WheelEventProcessingSteps>, OptionSet<EventHandling>&);
     bool passWheelEventToWidget(const PlatformWheelEvent&, Widget&, OptionSet<WheelEventProcessingSteps>);
     void determineWheelEventTarget(const PlatformWheelEvent&, RefPtr<Element>& eventTarget, WeakPtr<ScrollableArea>&, bool& isOverWidget);
     void recordWheelEventForDeltaFilter(const PlatformWheelEvent&);

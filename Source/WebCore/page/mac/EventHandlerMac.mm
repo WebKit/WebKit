@@ -63,6 +63,7 @@
 #import "ScrollLatchingController.h"
 #import "ScrollableArea.h"
 #import "Scrollbar.h"
+#import "ScrollingCoordinator.h"
 #import "Settings.h"
 #import "ShadowRoot.h"
 #import "SimpleRange.h"
@@ -146,7 +147,7 @@ bool EventHandler::wheelEvent(NSEvent *event)
         return false;
 
     CurrentEventScope scope(event, nil);
-    return handleWheelEvent(PlatformEventFactory::createPlatformWheelEvent(event, page->chrome().platformPageClient()), { WheelEventProcessingSteps::MainThreadForScrolling, WheelEventProcessingSteps::MainThreadForDOMEventDispatch });
+    return handleWheelEvent(PlatformEventFactory::createPlatformWheelEvent(event, page->chrome().platformPageClient()), { WheelEventProcessingSteps::MainThreadForScrolling, WheelEventProcessingSteps::MainThreadForBlockingDOMEventDispatch });
 }
 
 bool EventHandler::keyEvent(NSEvent *event)
@@ -950,6 +951,26 @@ bool EventHandler::processWheelEventForScrolling(const PlatformWheelEvent& wheel
     bool didHandleEvent = view->wheelEvent(wheelEvent);
     m_isHandlingWheelEvent = false;
     return didHandleEvent;
+}
+
+void EventHandler::wheelEventWasProcessedByMainThread(const PlatformWheelEvent& wheelEvent, OptionSet<EventHandling> eventHandling)
+{
+#if ENABLE(ASYNC_SCROLLING)
+    if (!m_frame.page())
+        return;
+
+    FrameView* view = m_frame.view();
+    if (!view)
+        return;
+
+    if (auto scrollingCoordinator = m_frame.page()->scrollingCoordinator()) {
+        if (scrollingCoordinator->coordinatesScrollingForFrameView(*view))
+            scrollingCoordinator->wheelEventWasProcessedByMainThread(wheelEvent, eventHandling);
+    }
+#else
+    UNUSED_PARAM(wheelEvent);
+    UNUSED_PARAM(eventHandling);
+#endif
 }
 
 bool EventHandler::platformCompletePlatformWidgetWheelEvent(const PlatformWheelEvent& wheelEvent, const Widget& widget, const WeakPtr<ScrollableArea>& scrollableArea)

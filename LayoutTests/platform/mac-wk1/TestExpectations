@@ -492,6 +492,9 @@ webkit.org/b/188708 inspector/dom-debugger/event-breakpoint-with-navigation.html
 fast/scrolling/scroll-animator-overlay-scrollbars-clicked.html [ Skip ]
 fast/scrolling/scroll-animator-overlay-scrollbars-hovered.html [ Skip ]
 
+# Tests that require async scrolling
+fast/events/wheel/wheel-event-in-passive-region-non-cancelable.html [ Skip ]
+
 # WK1 main frame scrollbars are native widgets whose size is unaffected by webkit-scrollbar.
 fast/visual-viewport/viewport-dimensions-exclude-custom-scrollbars.html [ Skip ]
 

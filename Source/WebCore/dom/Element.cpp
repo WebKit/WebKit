@@ -420,9 +420,9 @@ bool Element::dispatchMouseEvent(const PlatformMouseEvent& platformEvent, const 
     return didNotSwallowEvent;
 }
 
-bool Element::dispatchWheelEvent(const PlatformWheelEvent& platformEvent)
+bool Element::dispatchWheelEvent(const PlatformWheelEvent& platformEvent, OptionSet<EventHandling>& processing, Event::IsCancelable isCancelable)
 {
-    auto event = WheelEvent::create(platformEvent, document().windowProxy());
+    auto event = WheelEvent::create(platformEvent, document().windowProxy(), isCancelable);
 
     // Events with no deltas are important because they convey platform information about scroll gestures
     // and momentum beginning or ending. However, those events should not be sent to the DOM since some
@@ -430,12 +430,21 @@ bool Element::dispatchWheelEvent(const PlatformWheelEvent& platformEvent)
     // event handler, and our platform code will correctly handle the phase changes. Calling stopPropagation()
     // will prevent the event from being sent to the DOM, but will still call the default event handler.
     // FIXME: Move this logic into WheelEvent::create.
-    if (!platformEvent.deltaX() && !platformEvent.deltaY())
+    if (platformEvent.delta().isZero())
         event->stopPropagation();
+    else
+        processing.add(EventHandling::DispatchedToDOM);
 
     dispatchEvent(event);
     
     LOG_WITH_STREAM(Scrolling, stream << "Element " << *this << " dispatchWheelEvent: defaultPrevented " << event->defaultPrevented() << " defaultHandled " << event->defaultHandled());
+    
+    if (event->defaultPrevented())
+        processing.add(EventHandling::DefaultPrevented);
+
+    if (event->defaultHandled())
+        processing.add(EventHandling::DefaultHandled);
+
     return !event->defaultPrevented() && !event->defaultHandled();
 }
 

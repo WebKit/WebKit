@@ -1,3 +1,15 @@
+2020-11-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Propagate wheel event handling back to the scrolling thread
+        https://bugs.webkit.org/show_bug.cgi?id=219050
+
+        Reviewed by Chris Dumez.
+
+        Use MainThreadForBlockingDOMEventDispatch.
+
+        * WebView.cpp:
+        (WebView::mouseWheel):
+
 2020-11-11  Sam Weinig  <weinig@apple.com>
 
         Remove unused ExperimentalNotificationsEnabled setting
