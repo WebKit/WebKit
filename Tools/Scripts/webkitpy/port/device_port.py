@@ -271,5 +271,6 @@ class DevicePort(DarwinPort):
             architecture=configuration.architecture,
             style=style,
             model=model,
+            flavor=self.get_option('result_report_flavor'),
             sdk=host.build_version if host else None,
         )

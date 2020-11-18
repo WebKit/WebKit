@@ -1,3 +1,14 @@
+2020-11-18  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitpy] Respect --result-report-flavor on device ports
+        https://bugs.webkit.org/show_bug.cgi?id=219112
+        <rdar://problem/71553965>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/webkitpy/port/device_port.py:
+        (DevicePort.configuration_for_upload): Add flavor to the configuration, if flag passed.
+
 2020-11-18  Matt Lewis  <jlewis3@apple.com>
 
         Big Sur testers failing to download build products
