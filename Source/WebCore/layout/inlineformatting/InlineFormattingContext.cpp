@@ -438,7 +438,7 @@ InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuil
             if (lineRun.isText() || lineRun.isLineBreak())
                 formattingState.addLineRun({ lineIndex, lineRun.layoutBox(), lineBox.logicalRectForTextRun(lineRun), lineRun.expansion(), lineRun.textContent() });
             else if (lineRun.isBox())
-                formattingState.addLineRun({ lineIndex, lineRun.layoutBox(), lineBox.logicalRectForInlineLevelBox(lineRun.layoutBox()), lineRun.expansion(), { } });
+                formattingState.addLineRun({ lineIndex, lineRun.layoutBox(), lineBox.logicalMarginRectForInlineLevelBox(lineRun.layoutBox()), lineRun.expansion(), { } });
         }
     };
     constructLineRuns();
@@ -455,7 +455,7 @@ InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuil
             auto& boxGeometry = formattingState.boxGeometry(layoutBox);
             // Inline box coordinates are relative to the line box.
             // Let's convert top/left relative to the formatting context root.
-            auto logicalRect = lineBox.logicalRectForInlineLevelBox(layoutBox);
+            auto logicalRect = lineBox.logicalMarginRectForInlineLevelBox(layoutBox);
             // Inline box height includes the margin box. Let's account for that.
             auto borderBoxLogicalTopLeft = lineLogicalRect.topLeft();
             borderBoxLogicalTopLeft.move(logicalRect.left(), logicalRect.top() + boxGeometry.marginBefore());

@@ -110,7 +110,7 @@ InlineRect LineBox::logicalRectForTextRun(const Line::Run& run) const
     return { runlogicalTop, m_horizontalAlignmentOffset.valueOr(InlineLayoutUnit { }) + run.logicalLeft(), run.logicalWidth(), logicalHeight };
 }
 
-InlineRect LineBox::logicalRectForInlineLevelBox(const Box& layoutBox) const
+InlineRect LineBox::logicalMarginRectForInlineLevelBox(const Box& layoutBox) const
 {
     auto* inlineBox = &inlineLevelBoxForLayoutBox(layoutBox);
     if (inlineBox->hasLineBoxRelativeAlignment())

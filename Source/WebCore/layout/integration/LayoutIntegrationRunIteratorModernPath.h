@@ -117,8 +117,8 @@ public:
         auto logicalWidth = logicalRight - logicalLeft;
 
         // FIXME: These should share implementation with the line iterator.
-        auto selectionTop = LayoutUnit::fromFloatRound(line().enclosingContentRect().y());
-        auto selectionHeight = LayoutUnit::fromFloatRound(line().enclosingContentRect().height());
+        auto selectionTop = LayoutUnit::fromFloatRound(line().enclosingContentTop());
+        auto selectionHeight = LayoutUnit::fromFloatRound(line().enclosingContentBottom() - line().enclosingContentTop());
 
         LayoutRect selectionRect { logicalLeft, selectionTop, logicalWidth, selectionHeight };
 

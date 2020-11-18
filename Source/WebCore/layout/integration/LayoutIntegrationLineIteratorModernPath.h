@@ -49,8 +49,8 @@ public:
     LineIteratorModernPath& operator=(const LineIteratorModernPath&) = default;
     LineIteratorModernPath& operator=(LineIteratorModernPath&&) = default;
 
-    LayoutUnit top() const { return LayoutUnit::fromFloatRound(line().enclosingContentRect().y()); }
-    LayoutUnit bottom() const { return LayoutUnit::fromFloatRound(line().enclosingContentRect().maxY()); }
+    LayoutUnit top() const { return LayoutUnit::fromFloatRound(line().enclosingContentTop()); }
+    LayoutUnit bottom() const { return LayoutUnit::fromFloatRound(line().enclosingContentBottom()); }
     LayoutUnit lineBoxTop() const { return LayoutUnit::fromFloatRound(line().rect().y()); }
     LayoutUnit lineBoxBottom() const { return LayoutUnit::fromFloatRound(line().rect().maxY()); }
 

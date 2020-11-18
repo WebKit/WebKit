@@ -317,25 +317,34 @@ void InlineContentBuilder::createDisplayLines(const Layout::InlineFormattingStat
             lineInkOverflowRect.unite(runs[runIndex++].inkOverflow());
         auto runCount = runIndex - firstRunIndex;
         auto lineRect = FloatRect { line.logicalRect() };
-        auto enclosingContentRect = [&] {
+        auto enclosingTopAndBottom = [&] {
             // Let's (vertically)enclose all the inline level boxes.
             // This mostly matches 'lineRect', unless line-height triggers line box overflow (not to be confused with ink or scroll overflow).
-            auto enclosingRect = FloatRect { lineRect.location(), lineBoxLogicalSize };
+            auto enclosingTop = Optional<float> { };
+            auto enclosingBottom = Optional<float> { };
             auto& lineBox = lineBoxes[lineIndex];
             for (auto& inlineLevelBox : lineBox.inlineLevelBoxList()) {
-                auto inlineLevelBoxLogicalRect = lineBox.logicalRectForInlineLevelBox(inlineLevelBox->layoutBox());
-                // inlineLevelBoxLogicalRect is relative to the line.
-                inlineLevelBoxLogicalRect.moveBy(lineRect.location());
-                enclosingRect.setY(std::min(enclosingRect.y(), inlineLevelBoxLogicalRect.top()));
-                enclosingRect.shiftMaxYEdgeTo(std::max(enclosingRect.maxY(), inlineLevelBoxLogicalRect.bottom()));
+                auto& layoutBox = inlineLevelBox->layoutBox();
+                auto inlineLevelBoxLogicalRect = lineBox.logicalMarginRectForInlineLevelBox(layoutBox);
+                // inlineLevelBoxLogicalRect encloses the margin box, but we need border box for the display line.
+                auto& geometry = m_layoutState.geometryForBox(layoutBox);
+                inlineLevelBoxLogicalRect.expandVertically(-std::max(0_lu, geometry.marginBefore() + geometry.marginAfter()));
+                inlineLevelBoxLogicalRect.moveVertically(std::max(0_lu, geometry.marginBefore()));
+
+                enclosingTop = std::min(enclosingTop.valueOr(inlineLevelBoxLogicalRect.top()), inlineLevelBoxLogicalRect.top());
+                enclosingBottom = std::max(enclosingBottom.valueOr(inlineLevelBoxLogicalRect.bottom()), inlineLevelBoxLogicalRect.bottom());
             }
-            return enclosingRect;
+            // There's always at least one inline level box, the root inline box.
+            ASSERT(enclosingBottom && enclosingTop);
+            // inline boxes are relative to the line, let's make them relative to the root's content box.
+            return Line::EnclosingTopAndBottom { lineRect.y() + *enclosingTop, lineRect.y() + *enclosingBottom };
         }();
         if (lineLevelVisualAdjustmentsForRuns[lineIndex].needsIntegralPosition) {
             lineRect.setY(roundToInt(lineRect.y()));
-            enclosingContentRect.setY(roundToInt(enclosingContentRect.y()));
+            enclosingTopAndBottom.top = roundToInt(enclosingTopAndBottom.top);
+            enclosingTopAndBottom.bottom = roundToInt(enclosingTopAndBottom.bottom);
         }
-        inlineContent.lines.append({ firstRunIndex, runCount, lineRect, lineBoxLogicalSize.width(), enclosingContentRect, scrollableOverflowRect, lineInkOverflowRect, line.baseline(), line.horizontalAlignmentOffset() });
+        inlineContent.lines.append({ firstRunIndex, runCount, lineRect, lineBoxLogicalSize.width(), enclosingTopAndBottom, scrollableOverflowRect, lineInkOverflowRect, line.baseline(), line.horizontalAlignmentOffset() });
     }
 }
 

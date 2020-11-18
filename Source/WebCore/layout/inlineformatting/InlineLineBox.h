@@ -141,7 +141,7 @@ public:
     const InlineLevelBox& inlineLevelBoxForLayoutBox(const Box& layoutBox) const { return *m_inlineLevelBoxRectMap.get(&layoutBox); }
 
     InlineRect logicalRectForTextRun(const Line::Run&) const;
-    InlineRect logicalRectForInlineLevelBox(const Box&) const;
+    InlineRect logicalMarginRectForInlineLevelBox(const Box&) const;
 
     auto inlineLevelBoxList() const { return m_inlineLevelBoxRectMap.values(); }
     bool containsInlineLevelBox(const Box& layoutBox) const { return m_inlineLevelBoxRectMap.contains(&layoutBox); }
