@@ -124,6 +124,8 @@ public:
         return sourceProvider->getRange(token.m_location.startOffset, token.m_location.endOffset);
     }
 
+    size_t codeLength() { return m_codeEnd - m_codeStart; }
+
 private:
     void record8(int);
     void append8(const T*, size_t);
