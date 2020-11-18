@@ -820,8 +820,24 @@ class RunPerlTests(TestWithFailureCount):
     descriptionDone = ["perl-tests"]
     command = ["perl", "./Tools/Scripts/test-webkitperl"]
     failedTestsFormatString = "%d perl test%s failed"
+    test_summary_re = re.compile(r'^Failed \d+/\d+ test programs\. (?P<count>\d+)/\d+ subtests failed\.')  # e.g.: Failed 2/19 test programs. 5/363 subtests failed.
+
+    def start(self):
+        if USE_BUILDBOT_VERSION2:
+            self.log_observer = ParseByLineLogObserver(self.parseOutputLine)
+            self.addLogObserver('stdio', self.log_observer)
+            self.failedTestCount = 0
+        return shell.Test.start(self)
+
+    def parseOutputLine(self, line):
+        match = self.test_summary_re.match(line)
+        if match:
+            self.failedTestCount = int(match.group('count'))
 
     def countFailures(self, cmd):
+        if USE_BUILDBOT_VERSION2:
+            return self.failedTestCount
+
         logText = cmd.logs['stdio'].getText()
         # We're looking for the line that looks like this: Failed 2/19 test programs. 5/363 subtests failed.
         regex = re.compile(r'^Failed \d+/\d+ test programs\. (?P<count>\d+)/\d+ subtests failed\.')

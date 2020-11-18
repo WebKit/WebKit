@@ -1,5 +1,18 @@
 2020-11-18  Aakash Jain  <aakash_jain@apple.com>
 
+        [build.webkit.org] Update RunPerlTests step for new buildbot
+        https://bugs.webkit.org/show_bug.cgi?id=219083
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/build-webkit-org/steps.py:
+        (RunPerlTests):
+        (RunPerlTests.start): Initialized log observer.
+        (RunPerlTests.parseOutputLine): Parse each log line as they come.
+        (RunPerlTests.countFailures): Updated to return failedTestCount.
+
+2020-11-18  Aakash Jain  <aakash_jain@apple.com>
+
         [build.webkit.org] Update RunPythonTests step for new buildbot
         https://bugs.webkit.org/show_bug.cgi?id=219082
 
