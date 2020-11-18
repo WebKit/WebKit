@@ -186,8 +186,8 @@ void RenderTreeBuilder::Block::attachIgnoringContinuation(RenderBlock& parent, R
 #endif
                 ) {
                 // Insert the child into the anonymous block box instead of here.
-                if (child->isInline() || beforeChild->parent()->firstChild() != beforeChild)
-                    m_builder.attach(*beforeChild->parent(), WTFMove(child), beforeChild);
+                if (child->isInline() || beforeChildAnonymousContainer->firstChild() != beforeChild)
+                    m_builder.attach(*beforeChildAnonymousContainer, WTFMove(child), beforeChild);
                 else
                     m_builder.attach(parent, WTFMove(child), beforeChild->parent());
                 return;
