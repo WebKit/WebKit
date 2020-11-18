@@ -869,6 +869,8 @@ webkit.org/b/218787 webrtc/concurrentVideoPlayback.html [ Timeout ]
 webkit.org/b/218787 webrtc/ice-candidate-sdpMLineIndex.html [ Timeout ]
 webkit.org/b/218787 webrtc/webrtc-transform.html [ Failure ]
 
+webkit.org/b/219066 webrtc/audio-sframe.html [ Failure Crash ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WebRTC-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
