@@ -1,3 +1,16 @@
+2020-11-18  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r269940.
+        https://bugs.webkit.org/show_bug.cgi?id=219076
+
+        caused seemingly-infinite build time regression
+
+        Reverted changeset:
+
+        "[JSC] Implement WebAssembly.Memory with shared"
+        https://bugs.webkit.org/show_bug.cgi?id=218693
+        https://trac.webkit.org/changeset/269940
+
 2020-11-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Release assertion failure in Optional<WebCore::SimpleRange>::operator* via CompositeEditCommand::moveParagraphs

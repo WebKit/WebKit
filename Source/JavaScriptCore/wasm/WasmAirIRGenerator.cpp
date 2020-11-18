@@ -680,7 +680,7 @@ private:
     Vector<TypedTmp> m_locals;
     Vector<UnlinkedWasmToWasmCall>& m_unlinkedWasmToWasmCalls; // List each call site and the function index whose address it should be patched with.
     GPRReg m_memoryBaseGPR { InvalidGPRReg };
-    GPRReg m_boundsCheckingSizeGPR { InvalidGPRReg };
+    GPRReg m_memorySizeGPR { InvalidGPRReg };
     GPRReg m_wasmContextInstanceGPR { InvalidGPRReg };
     bool m_makesCalls { false };
 
@@ -772,8 +772,8 @@ AirIRGenerator::AirIRGenerator(const ModuleInformation& info, B3::Procedure& pro
         m_code.pinRegister(m_wasmContextInstanceGPR);
 
     if (mode != MemoryMode::Signaling) {
-        m_boundsCheckingSizeGPR = pinnedRegs.boundsCheckingSizeRegister;
-        m_code.pinRegister(m_boundsCheckingSizeGPR);
+        m_memorySizeGPR = pinnedRegs.sizeRegister;
+        m_code.pinRegister(m_memorySizeGPR);
     }
 
     m_code.setNumEntrypoints(1);
@@ -918,7 +918,7 @@ void AirIRGenerator::restoreWebAssemblyGlobalState(RestoreCachedStackLimit resto
         const PinnedRegisterInfo* pinnedRegs = &PinnedRegisterInfo::get();
         RegisterSet clobbers;
         clobbers.set(pinnedRegs->baseMemoryPointer);
-        clobbers.set(pinnedRegs->boundsCheckingSizeRegister);
+        clobbers.set(pinnedRegs->sizeRegister);
         if (!isARM64())
             clobbers.set(RegisterSet::macroScratchRegisters());
 
@@ -933,12 +933,12 @@ void AirIRGenerator::restoreWebAssemblyGlobalState(RestoreCachedStackLimit resto
         patchpoint->setGenerator([pinnedRegs] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
             GPRReg baseMemory = pinnedRegs->baseMemoryPointer;
-            GPRReg scratchOrBoundsCheckingSize = Gigacage::isEnabled(Gigacage::Primitive) ? params.gpScratch(0) : pinnedRegs->boundsCheckingSizeRegister;
+            GPRReg scratchOrSize = Gigacage::isEnabled(Gigacage::Primitive) ? params.gpScratch(0) : pinnedRegs->sizeRegister;
 
-            jit.loadPtr(CCallHelpers::Address(params[0].gpr(), Instance::offsetOfCachedBoundsCheckingSize()), pinnedRegs->boundsCheckingSizeRegister);
+            jit.loadPtr(CCallHelpers::Address(params[0].gpr(), Instance::offsetOfCachedMemorySize()), pinnedRegs->sizeRegister);
             jit.loadPtr(CCallHelpers::Address(params[0].gpr(), Instance::offsetOfCachedMemory()), baseMemory);
 
-            jit.cageConditionally(Gigacage::Primitive, baseMemory, pinnedRegs->boundsCheckingSizeRegister, scratchOrBoundsCheckingSize);
+            jit.cageConditionally(Gigacage::Primitive, baseMemory, pinnedRegs->sizeRegister, scratchOrSize);
         });
 
         emitPatchpoint(block, patchpoint, Tmp(), instance);
@@ -1168,12 +1168,8 @@ auto AirIRGenerator::addCurrentMemory(ExpressionType& result) -> PartialResult
     auto temp1 = g64();
     auto temp2 = g64();
 
-    RELEASE_ASSERT(Arg::isValidAddrForm(Instance::offsetOfMemory(), B3::Width64));
-    RELEASE_ASSERT(Arg::isValidAddrForm(Memory::offsetOfHandle(), B3::Width64));
-    RELEASE_ASSERT(Arg::isValidAddrForm(MemoryHandle::offsetOfSize(), B3::Width64));
-    append(Move, Arg::addr(instanceValue(), Instance::offsetOfMemory()), temp1);
-    append(Move, Arg::addr(temp1, Memory::offsetOfHandle()), temp1);
-    append(Move, Arg::addr(temp1, MemoryHandle::offsetOfSize()), temp1);
+    RELEASE_ASSERT(Arg::isValidAddrForm(Instance::offsetOfCachedMemorySize(), B3::Width64));
+    append(Move, Arg::addr(instanceValue(), Instance::offsetOfCachedMemorySize()), temp1);
     constexpr uint32_t shiftValue = 16;
     static_assert(PageCount::pageSize == 1ull << shiftValue, "This must hold for the code below to be correct.");
     append(Move, Arg::imm(16), temp2);
@@ -1367,16 +1363,15 @@ inline AirIRGenerator::ExpressionType AirIRGenerator::emitCheckAndPreparePointer
 
     switch (m_mode) {
     case MemoryMode::BoundsChecking: {
-        // In bound checking mode, while shared wasm memory partially relies on signal handler too, we need to perform bound checking
-        // to ensure that no memory access exceeds the current memory size.
-        ASSERT(m_boundsCheckingSizeGPR);
+        // We're not using signal handling at all, we must therefore check that no memory access exceeds the current memory size.
+        ASSERT(m_memorySizeGPR);
         ASSERT(sizeOfOperation + offset > offset);
         auto temp = g64();
         append(Move, Arg::bigImm(static_cast<uint64_t>(sizeOfOperation) + offset - 1), temp);
         append(Add64, result, temp);
 
         emitCheck([&] {
-            return Inst(Branch64, nullptr, Arg::relCond(MacroAssembler::AboveOrEqual), temp, Tmp(m_boundsCheckingSizeGPR));
+            return Inst(Branch64, nullptr, Arg::relCond(MacroAssembler::AboveOrEqual), temp, Tmp(m_memorySizeGPR));
         }, [=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
             this->emitThrowException(jit, ExceptionType::OutOfBoundsMemoryAccess);
         });
@@ -2159,7 +2154,7 @@ auto AirIRGenerator::addCall(uint32_t functionIndex, const Signature& signature,
         auto* patchpoint = emitCallPatchpoint(m_currentBlock, signature, results, args);
         // We need to clobber the size register since the LLInt always bounds checks
         if (m_mode == MemoryMode::Signaling)
-            patchpoint->clobberLate(RegisterSet { PinnedRegisterInfo::get().boundsCheckingSizeRegister });
+            patchpoint->clobberLate(RegisterSet { PinnedRegisterInfo::get().sizeRegister });
         patchpoint->setGenerator([unlinkedWasmToWasmCalls, functionIndex] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
             CCallHelpers::Call call = jit.threadSafePatchableNearCall();
@@ -2283,13 +2278,13 @@ auto AirIRGenerator::addCallIndirect(unsigned tableIndex, const Signature& signa
             jit.storeWasmContextInstance(newContextInstance);
             // FIXME: We should support more than one memory size register
             //   see: https://bugs.webkit.org/show_bug.cgi?id=162952
-            ASSERT(pinnedRegs.boundsCheckingSizeRegister != newContextInstance);
-            GPRReg scratchOrBoundsCheckingSize = Gigacage::isEnabled(Gigacage::Primitive) ? params.gpScratch(0) : pinnedRegs.boundsCheckingSizeRegister;
+            ASSERT(pinnedRegs.sizeRegister != newContextInstance);
+            GPRReg scratchOrSize = Gigacage::isEnabled(Gigacage::Primitive) ? params.gpScratch(0) : pinnedRegs.sizeRegister;
 
-            jit.loadPtr(CCallHelpers::Address(newContextInstance, Instance::offsetOfCachedBoundsCheckingSize()), pinnedRegs.boundsCheckingSizeRegister); // Bound checking size.
+            jit.loadPtr(CCallHelpers::Address(newContextInstance, Instance::offsetOfCachedMemorySize()), pinnedRegs.sizeRegister); // Memory size.
             jit.loadPtr(CCallHelpers::Address(newContextInstance, Instance::offsetOfCachedMemory()), baseMemory); // Memory::void*.
 
-            jit.cageConditionally(Gigacage::Primitive, baseMemory, pinnedRegs.boundsCheckingSizeRegister, scratchOrBoundsCheckingSize);
+            jit.cageConditionally(Gigacage::Primitive, baseMemory, pinnedRegs.sizeRegister, scratchOrSize);
         });
 
         emitPatchpoint(doContextSwitch, patchpoint, Tmp(), newContextInstance, instanceValue());

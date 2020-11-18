@@ -39,7 +39,7 @@
 namespace JSC { namespace Wasm {
 
 struct PinnedSizeRegisterInfo {
-    GPRReg boundsCheckingSizeRegister;
+    GPRReg sizeRegister;
     unsigned sizeOffset;
 };
 
@@ -56,11 +56,11 @@ public:
         if (wasmContextInstancePointer != InvalidGPRReg)
             result.set(wasmContextInstancePointer);
         if (mode != MemoryMode::Signaling)
-            result.set(boundsCheckingSizeRegister);
+            result.set(sizeRegister);
         return result;
     }
 
-    GPRReg boundsCheckingSizeRegister;
+    GPRReg sizeRegister;
     GPRReg baseMemoryPointer;
     GPRReg wasmContextInstancePointer;
 };

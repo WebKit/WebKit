@@ -124,7 +124,7 @@ function binaryShouldNotParse(builder) {
 
 {
     assert.throws(() => new WebAssembly.Memory(20), TypeError, "WebAssembly.Memory expects its first argument to be an object"); 
-    new WebAssembly.Memory({initial:1}, {});
+    assert.throws(() => new WebAssembly.Memory({}, {}), TypeError,  "WebAssembly.Memory expects exactly one argument");
 }
 
 function test(f) {

@@ -41,7 +41,6 @@ typedef const struct OpaqueJSValue* JSValueRef;
 #if ENABLE(WEBASSEMBLY)
 namespace JSC { namespace Wasm {
 class Module;
-class MemoryHandle;
 } }
 #endif
 
@@ -62,7 +61,6 @@ enum class SerializationContext { Default, WorkerPostMessage, WindowPostMessage 
 using ArrayBufferContentsArray = Vector<JSC::ArrayBufferContents>;
 #if ENABLE(WEBASSEMBLY)
 using WasmModuleArray = Vector<RefPtr<JSC::Wasm::Module>>;
-using WasmMemoryHandleArray = Vector<RefPtr<JSC::Wasm::MemoryHandle>>;
 #endif
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(SerializedScriptValue);
@@ -124,7 +122,6 @@ private:
 #endif
 #if ENABLE(WEBASSEMBLY)
         , std::unique_ptr<WasmModuleArray> = nullptr
-        , std::unique_ptr<WasmMemoryHandleArray> = nullptr
 #endif
         );
 
@@ -139,7 +136,6 @@ private:
 #endif
 #if ENABLE(WEBASSEMBLY)
     std::unique_ptr<WasmModuleArray> m_wasmModulesArray;
-    std::unique_ptr<WasmMemoryHandleArray> m_wasmMemoryHandlesArray;
 #endif
     Vector<String> m_blobURLs;
     size_t m_memoryCost { 0 };

@@ -1576,7 +1576,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     workers/WorkerScriptLoader.h
     workers/WorkerScriptLoaderClient.h
     workers/WorkerThread.h
-    workers/WorkerThreadType.h
     workers/WorkerType.h
 
     workers/service/SWClientConnection.h

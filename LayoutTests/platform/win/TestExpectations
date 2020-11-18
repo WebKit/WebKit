@@ -4600,9 +4600,3 @@ webkit.org/b/218040 svg/clip-path/clip-path-invalid.svg [ Pass Crash ]
 # Windows doesn't support color fonts.
 webkit.org/b/218346 fast/text/canvas-color-fonts [ Pass ImageOnlyFailure ]
 webkit.org/b/218346 http/tests/canvas/color-fonts [ Pass ImageOnlyFailure ]
-
-# WebAssembly is not enabled
-js/dom/webassembly-memory-shared-basic.html [ Skip ]
-js/dom/webassembly-memory-normal-fail.html [ Skip ]
-js/dom/webassembly-memory-shared-fail.html [ Skip ]
-storage/indexeddb/shared-memory-structured-clone.html [ Skip ]

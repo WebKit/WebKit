@@ -690,7 +690,7 @@
 #endif
 
 #if ENABLE(WEBASSEMBLY) && HAVE(MACHINE_CONTEXT)
-#define ENABLE_WEBASSEMBLY_SIGNALING_MEMORY 1
+#define ENABLE_WEBASSEMBLY_FAST_MEMORY 1
 #endif
 
 /* Counts uses of write barriers using sampling counters. Be sure to also

@@ -2467,12 +2467,7 @@ macro wasmScope()
     # but we don't want to interfere with the LLInt opcodes
     include WebAssembly
 end
-
-global _wasmLLIntPCRangeStart
-_wasmLLIntPCRangeStart:
 wasmScope()
-global _wasmLLIntPCRangeEnd
-_wasmLLIntPCRangeEnd:
 
 else
 

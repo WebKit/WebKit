@@ -88,7 +88,7 @@ JSC::VM& commonVMSlow()
 
     vm.setGlobalConstRedeclarationShouldThrow(globalConstRedeclarationShouldThrow());
 
-    JSVMClientData::initNormalWorld(&vm, WorkerThreadType::Main);
+    JSVMClientData::initNormalWorld(&vm);
 
     return vm;
 }

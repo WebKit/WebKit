@@ -287,8 +287,6 @@ public:
 
     // This is the default DOM unwrapping. It calls toUnsharedNativeTypedView().
     static RefPtr<typename Adaptor::ViewType> toWrapped(VM&, JSValue);
-    // [AllowShared] annotation allows accepting TypedArray originated from SharedArrayBuffer.
-    static RefPtr<typename Adaptor::ViewType> toWrappedAllowShared(VM&, JSValue);
     
 private:
     friend struct TypedArrayClassInfos;
@@ -393,12 +391,5 @@ RefPtr<typename Adaptor::ViewType> JSGenericTypedArrayView<Adaptor>::toWrapped(V
 {
     return JSC::toUnsharedNativeTypedView<Adaptor>(vm, value);
 }
-
-template<typename Adaptor>
-RefPtr<typename Adaptor::ViewType> JSGenericTypedArrayView<Adaptor>::toWrappedAllowShared(VM& vm, JSValue value)
-{
-    return JSC::toPossiblySharedNativeTypedView<Adaptor>(vm, value);
-}
-
 
 } // namespace JSC

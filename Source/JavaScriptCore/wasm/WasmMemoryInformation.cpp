@@ -42,19 +42,19 @@ const PinnedRegisterInfo& PinnedRegisterInfo::get()
         if (!Context::useFastTLS())
             ++numberOfPinnedRegisters;
         GPRReg baseMemoryPointer = GPRInfo::regCS3;
-        GPRReg boundsCheckingSizeRegister = GPRInfo::regCS4;
+        GPRReg sizeRegister = GPRInfo::regCS4;
         GPRReg wasmContextInstancePointer = InvalidGPRReg;
         if (!Context::useFastTLS())
             wasmContextInstancePointer = GPRInfo::regCS0;
 
-        staticPinnedRegisterInfo.construct(boundsCheckingSizeRegister, baseMemoryPointer, wasmContextInstancePointer);
+        staticPinnedRegisterInfo.construct(sizeRegister, baseMemoryPointer, wasmContextInstancePointer);
     });
 
     return staticPinnedRegisterInfo.get();
 }
 
-PinnedRegisterInfo::PinnedRegisterInfo(GPRReg boundsCheckingSizeRegister, GPRReg baseMemoryPointer, GPRReg wasmContextInstancePointer)
-    : boundsCheckingSizeRegister(boundsCheckingSizeRegister)
+PinnedRegisterInfo::PinnedRegisterInfo(GPRReg sizeRegister, GPRReg baseMemoryPointer, GPRReg wasmContextInstancePointer)
+    : sizeRegister(sizeRegister)
     , baseMemoryPointer(baseMemoryPointer)
     , wasmContextInstancePointer(wasmContextInstancePointer)
 {

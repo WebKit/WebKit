@@ -136,7 +136,7 @@ void JSVMClientData::getAllWorlds(Vector<Ref<DOMWrapperWorld>>& worlds)
     }
 }
 
-void JSVMClientData::initNormalWorld(VM* vm, WorkerThreadType type)
+void JSVMClientData::initNormalWorld(VM* vm)
 {
     JSVMClientData* clientData = new JSVMClientData(*vm);
     vm->clientData = clientData; // ~VM deletes this pointer.
@@ -144,7 +144,7 @@ void JSVMClientData::initNormalWorld(VM* vm, WorkerThreadType type)
     vm->heap.addMarkingConstraint(makeUnique<DOMGCOutputConstraint>(*vm, *clientData));
 
     clientData->m_normalWorld = DOMWrapperWorld::create(*vm, DOMWrapperWorld::Type::Normal);
-    vm->m_typedArrayController = adoptRef(new WebCoreTypedArrayController(type == WorkerThreadType::DedicatedWorker || type == WorkerThreadType::Worklet));
+    vm->m_typedArrayController = adoptRef(new WebCoreTypedArrayController());
 }
 
 } // namespace WebCore

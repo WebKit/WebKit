@@ -27,7 +27,7 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "JSObject.h"
+#include "JSDestructibleObject.h"
 #include "WasmMemory.h"
 #include <wtf/Ref.h>
 #include <wtf/RefPtr.h>
@@ -49,16 +49,16 @@ public:
         return vm.webAssemblyMemorySpace<mode>();
     }
 
-    JS_EXPORT_PRIVATE static JSWebAssemblyMemory* tryCreate(JSGlobalObject*, VM&, Structure*);
+    static JSWebAssemblyMemory* tryCreate(JSGlobalObject*, VM&, Structure*);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     DECLARE_EXPORT_INFO;
 
-    JS_EXPORT_PRIVATE void adopt(Ref<Wasm::Memory>&&);
+    void adopt(Ref<Wasm::Memory>&&);
     Wasm::Memory& memory() { return m_memory.get(); }
-    JSArrayBuffer* buffer(JSGlobalObject*);
+    JSArrayBuffer* buffer(VM& vm, JSGlobalObject*);
     Wasm::PageCount grow(VM&, JSGlobalObject*, uint32_t delta);
-    JS_EXPORT_PRIVATE void growSuccessCallback(VM&, Wasm::PageCount oldPageCount, Wasm::PageCount newPageCount);
+    void growSuccessCallback(VM&, Wasm::PageCount oldPageCount, Wasm::PageCount newPageCount);
 
 private:
     JSWebAssemblyMemory(VM&, Structure*);

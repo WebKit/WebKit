@@ -93,7 +93,7 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyMemoryProtoFuncBuffer, (JSGlobalObject* glob
 
     JSWebAssemblyMemory* memory = getMemory(globalObject, vm, callFrame->thisValue()); 
     RETURN_IF_EXCEPTION(throwScope, { });
-    RELEASE_AND_RETURN(throwScope, JSValue::encode(memory->buffer(globalObject)));
+    return JSValue::encode(memory->buffer(globalObject->vm(), globalObject));
 }
 
 WebAssemblyMemoryPrototype* WebAssemblyMemoryPrototype::create(VM& vm, JSGlobalObject*, Structure* structure)

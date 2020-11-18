@@ -36,7 +36,7 @@ namespace WebCore {
 
 class WebCoreTypedArrayController : public JSC::TypedArrayController {
 public:
-    WebCoreTypedArrayController(bool allowAtomicsWait);
+    WebCoreTypedArrayController();
     virtual ~WebCoreTypedArrayController();
     
     JSC::JSArrayBuffer* toJS(JSC::JSGlobalObject*, JSC::JSGlobalObject*, JSC::ArrayBuffer*) override;
@@ -53,7 +53,6 @@ private:
     };
 
     JSArrayBufferOwner m_owner;
-    bool m_allowAtomicsWait;
 };
 
 } // namespace WebCore
