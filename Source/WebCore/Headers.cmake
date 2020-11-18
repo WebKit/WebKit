@@ -104,6 +104,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/mediastream/UserMediaController.h
     Modules/mediastream/UserMediaRequest.h
 
+    Modules/model-element/HTMLModelElement.h
+
     Modules/notifications/Notification.h
     Modules/notifications/NotificationClient.h
     Modules/notifications/NotificationController.h
@@ -639,7 +641,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     html/HTMLMenuItemElement.h
     html/HTMLMetaElement.h
     html/HTMLModElement.h
-    html/HTMLModelElement.h
     html/HTMLOListElement.h
     html/HTMLObjectElement.h
     html/HTMLOptGroupElement.h

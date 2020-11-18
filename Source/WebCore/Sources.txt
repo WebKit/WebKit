@@ -176,6 +176,7 @@ Modules/mediastream/libwebrtc/LibWebRTCCertificateGenerator.cpp
 Modules/mediastream/libwebrtc/LibWebRTCRtpReceiverTransformBackend.cpp
 Modules/mediastream/libwebrtc/LibWebRTCRtpSenderTransformBackend.cpp
 Modules/mediastream/libwebrtc/LibWebRTCRtpTransformBackend.cpp
+Modules/model-element/HTMLModelElement.cpp
 Modules/notifications/Notification.cpp
 Modules/notifications/NotificationController.cpp
 Modules/paymentrequest/MerchantValidationEvent.cpp
@@ -1187,7 +1188,6 @@ html/HTMLMenuItemElement.cpp
 html/HTMLMetaElement.cpp
 html/HTMLMeterElement.cpp
 html/HTMLModElement.cpp
-html/HTMLModelElement.cpp
 html/HTMLNameCollection.cpp
 html/HTMLOListElement.cpp
 html/HTMLObjectElement.cpp

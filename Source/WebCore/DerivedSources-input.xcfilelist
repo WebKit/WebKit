@@ -250,6 +250,7 @@ $(PROJECT_DIR)/Modules/mediastream/RTCSessionDescriptionInit.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCSignalingState.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCStatsReport.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCTrackEvent.idl
+$(PROJECT_DIR)/Modules/model-element/HTMLModelElement.idl
 $(PROJECT_DIR)/Modules/notifications/Notification.idl
 $(PROJECT_DIR)/Modules/notifications/NotificationPermission.idl
 $(PROJECT_DIR)/Modules/notifications/NotificationPermissionCallback.idl
@@ -898,7 +899,6 @@ $(PROJECT_DIR)/html/HTMLMenuItemElement.idl
 $(PROJECT_DIR)/html/HTMLMetaElement.idl
 $(PROJECT_DIR)/html/HTMLMeterElement.idl
 $(PROJECT_DIR)/html/HTMLModElement.idl
-$(PROJECT_DIR)/html/HTMLModelElement.idl
 $(PROJECT_DIR)/html/HTMLOListElement.idl
 $(PROJECT_DIR)/html/HTMLObjectElement.idl
 $(PROJECT_DIR)/html/HTMLOptGroupElement.idl

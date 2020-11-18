@@ -28,6 +28,7 @@
 
 #if ENABLE(MODEL_ELEMENT)
 
+#include "ElementChildIterator.h"
 #include "HTMLNames.h"
 #include "HTMLSourceElement.h"
 #include <wtf/IsoMallocInlines.h>
@@ -60,7 +61,7 @@ void HTMLModelElement::sourcesChanged()
 
     for (auto& element : childrenOfType<HTMLSourceElement>(*this)) {
         // FIXME: for now we use the first valid URL without looking at the mime-type.
-        auto url = element.getNonEmptyURLAttribute(srcAttr);
+        auto url = element.getNonEmptyURLAttribute(HTMLNames::srcAttr);
         if (url.isValid()) {
             setSourceURL(url);
             return;

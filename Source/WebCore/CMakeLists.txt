@@ -48,6 +48,7 @@ set(WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/Modules/mediasource"
     "${WEBCORE_DIR}/Modules/mediastream"
     "${WEBCORE_DIR}/Modules/mediastream/libwebrtc"
+    "${WEBCORE_DIR}/Modules/model-element"
     "${WEBCORE_DIR}/Modules/navigatorcontentutils"
     "${WEBCORE_DIR}/Modules/notifications"
     "${WEBCORE_DIR}/Modules/paymentrequest"
@@ -198,6 +199,7 @@ set(WebCore_IDL_INCLUDES
     Modules/mediacapabilities
     Modules/mediarecorder
     Modules/mediastream
+    Modules/model-element
     Modules/notifications
     Modules/paymentrequest
     Modules/quota
@@ -416,6 +418,8 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/mediastream/RTCSignalingState.idl
     Modules/mediastream/RTCStatsReport.idl
     Modules/mediastream/RTCTrackEvent.idl
+
+    Modules/model-element/HTMLModelElement.idl
 
     Modules/notifications/Notification.idl
     Modules/notifications/NotificationPermission.idl
@@ -969,7 +973,6 @@ set(WebCore_NON_SVG_IDL_FILES
     html/HTMLMetaElement.idl
     html/HTMLMeterElement.idl
     html/HTMLModElement.idl
-    html/HTMLModelElement.idl
     html/HTMLOListElement.idl
     html/HTMLObjectElement.idl
     html/HTMLOptGroupElement.idl

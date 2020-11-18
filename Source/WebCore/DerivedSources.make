@@ -274,6 +274,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/mediastream/RTCSignalingState.idl \
     $(WebCore)/Modules/mediastream/RTCStatsReport.idl \
     $(WebCore)/Modules/mediastream/RTCTrackEvent.idl \
+    $(WebCore)/Modules/model-element/HTMLModelElement.idl \
     $(WebCore)/Modules/notifications/Notification.idl \
     $(WebCore)/Modules/notifications/NotificationPermission.idl \
     $(WebCore)/Modules/notifications/NotificationPermissionCallback.idl \
@@ -844,7 +845,6 @@ JS_BINDING_IDLS := \
     $(WebCore)/html/HTMLMetaElement.idl \
     $(WebCore)/html/HTMLMeterElement.idl \
     $(WebCore)/html/HTMLModElement.idl \
-    $(WebCore)/html/HTMLModelElement.idl \
     $(WebCore)/html/HTMLOListElement.idl \
     $(WebCore)/html/HTMLObjectElement.idl \
     $(WebCore)/html/HTMLOptGroupElement.idl \
