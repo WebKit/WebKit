@@ -1,3 +1,0 @@
-
-FAIL showNotification resolves after icon fetch undefined is not an object (evaluating 'Notification.requestPermission().then')
-
