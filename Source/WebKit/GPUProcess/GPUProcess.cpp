@@ -155,6 +155,9 @@ void GPUProcess::initializeGPUProcess(GPUProcessCreationParameters&& parameters)
     send(Messages::GPUProcessProxy::DidCreateContextForVisibilityPropagation(m_contextForVisibilityPropagation->contextID()));
 #endif
 
+    // Match the QoS of the UIProcess since the GPU process is doing rendering on its behalf.
+    WTF::Thread::setCurrentThreadIsUserInteractive(0);
+
     WebCore::setPresentingApplicationPID(parameters.parentPID);
 }
 

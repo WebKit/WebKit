@@ -36,6 +36,8 @@
 		<true/>
 		<key>RunLoopType</key>
 		<string>NSRunLoop</string>
+                <key>_ProcessType</key>
+                <string>App</string>
 		<key>_MultipleInstances</key>
 		<true/>
 	</dict>

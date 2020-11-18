@@ -1,3 +1,27 @@
+2020-11-18  Chris Dumez  <cdumez@apple.com>
+
+        [GPUProcess] Main thread of the GPUProcess should have same priority as main thread of the WebContent
+        https://bugs.webkit.org/show_bug.cgi?id=219057
+
+        Reviewed by Simon Fraser.
+
+        Main thread of the GPUProcess should have same priority as main thread of the WebContent since it
+        is doing rendering on its behalf.
+
+        For now, this means that on macOS, the main threads of the GPU and WebContent processes with both
+        get UserInteractive QoS. On iOS, they will both still get UserInitiated QoS until our RunningBoard
+        foreground process assertion get fixed to get the right priority (<rdar://problem/71499731>).
+
+        * GPUProcess/EntryPoint/Cocoa/XPCService/GPUService/Info-OSX.plist:
+        Use _ProcessType=App, similarly as what we do for the WebContent process. If we don't do
+        this, the process is an adaptive daemon and its QoS can never be higher than UserInitiated.
+        We need its priority to go to UserInteractive to match the WebContent process.
+
+        * GPUProcess/GPUProcess.cpp:
+        (WebKit::GPUProcess::initializeGPUProcess):
+        Request UserInteractive QoS for the main thread of the GPUProcess, similarly to what we do
+        for the main thread of the WebContent process already in WebProcess::InitializeWebProcess().
+
 2020-11-18  Sam Weinig  <weinig@apple.com>
 
         Address additional feedback from https://bugs.webkit.org/show_bug.cgi?id=218960
