@@ -307,11 +307,8 @@ WebGLAny WebGLRenderingContext::getFramebufferAttachmentParameter(GCGLenum targe
             return makeRefPtr(reinterpret_cast<WebGLTexture&>(*object));
         case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_TEXTURE_LEVEL:
         case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_TEXTURE_CUBE_MAP_FACE:
-        case ExtensionsGL::FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING_EXT: {
-            GCGLint value = 0;
-            m_context->getFramebufferAttachmentParameteriv(target, attachment, pname, &value);
-            return value;
-        }
+        case ExtensionsGL::FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING_EXT:
+            return m_context->getFramebufferAttachmentParameteri(target, attachment, pname);
         default:
             synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getFramebufferAttachmentParameter", "invalid parameter name for texture attachment");
             return nullptr;
@@ -347,9 +344,9 @@ GCGLint WebGLRenderingContext::getMaxDrawBuffers()
     if (!supportsDrawBuffers())
         return 0;
     if (!m_maxDrawBuffers)
-        m_context->getIntegerv(ExtensionsGL::MAX_DRAW_BUFFERS_EXT, &m_maxDrawBuffers);
+        m_maxDrawBuffers = m_context->getInteger(ExtensionsGL::MAX_DRAW_BUFFERS_EXT);
     if (!m_maxColorAttachments)
-        m_context->getIntegerv(ExtensionsGL::MAX_COLOR_ATTACHMENTS_EXT, &m_maxColorAttachments);
+        m_maxColorAttachments = m_context->getInteger(ExtensionsGL::MAX_COLOR_ATTACHMENTS_EXT);
     // WEBGL_draw_buffers requires MAX_COLOR_ATTACHMENTS >= MAX_DRAW_BUFFERS.
     return std::min(m_maxDrawBuffers, m_maxColorAttachments);
 }
@@ -359,7 +356,7 @@ GCGLint WebGLRenderingContext::getMaxColorAttachments()
     if (!supportsDrawBuffers())
         return 0;
     if (!m_maxColorAttachments)
-        m_context->getIntegerv(ExtensionsGL::MAX_COLOR_ATTACHMENTS_EXT, &m_maxColorAttachments);
+        m_maxColorAttachments = m_context->getInteger(ExtensionsGL::MAX_COLOR_ATTACHMENTS_EXT);
     return m_maxColorAttachments;
 }
 

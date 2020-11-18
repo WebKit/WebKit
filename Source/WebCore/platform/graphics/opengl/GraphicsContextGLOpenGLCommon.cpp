@@ -1717,81 +1717,75 @@ void GraphicsContextGLOpenGL::bindVertexArray(PlatformGLObject array)
 #endif
 }
 
-void GraphicsContextGLOpenGL::getBooleanv(GCGLenum pname, GCGLboolean* value)
+void GraphicsContextGLOpenGL::getBooleanv(GCGLenum pname, GCGLSpan<GCGLboolean> value)
 {
     if (!makeContextCurrent())
         return;
 
-    ::glGetBooleanv(pname, value);
+    ::glGetBooleanv(pname, value.data);
 }
 
-void GraphicsContextGLOpenGL::getBufferParameteriv(GCGLenum target, GCGLenum pname, GCGLint* value)
+GCGLint GraphicsContextGLOpenGL::getBufferParameteri(GCGLenum target, GCGLenum pname)
+{
+    GCGLint value = 0;
+    if (!makeContextCurrent())
+        return value;
+
+    ::glGetBufferParameteriv(target, pname, &value);
+    return value;
+}
+
+void GraphicsContextGLOpenGL::getFloatv(GCGLenum pname, GCGLSpan<GCGLfloat> value)
 {
     if (!makeContextCurrent())
         return;
 
-    ::glGetBufferParameteriv(target, pname, value);
+    ::glGetFloatv(pname, value.data);
 }
 
-void GraphicsContextGLOpenGL::getFloatv(GCGLenum pname, GCGLfloat* value)
-{
-    if (!makeContextCurrent())
-        return;
-
-    ::glGetFloatv(pname, value);
-}
-
-void GraphicsContextGLOpenGL::getIntegeri_v(GCGLenum pname, GCGLuint index, GCGLint* value)
-{
-    UNUSED_PARAM(pname);
-    UNUSED_PARAM(index);
-    if (!makeContextCurrent())
-        return;
-
-    *value = 0;
-    // FIXME 141178: Before enabling this we must first switch over to using gl3.h and creating and initialing the WebGL2 context using OpenGL ES 3.0.
-    // ::glGetIntegeri_v(pname, index, value);
-}
-
-void GraphicsContextGLOpenGL::getInteger64v(GCGLenum pname, GCGLint64* value)
+GCGLint64 GraphicsContextGLOpenGL::getInteger64(GCGLenum pname)
 {
     UNUSED_PARAM(pname);
     if (!makeContextCurrent())
-        return;
+        return 0;
 
-    *value = 0;
+    GCGLint64 value = 0;
     // FIXME 141178: Before enabling this we must first switch over to using gl3.h and creating and initialing the WebGL2 context using OpenGL ES 3.0.
     // ::glGetInteger64v(pname, value);
+    return value;
 }
 
-void GraphicsContextGLOpenGL::getInteger64i_v(GCGLenum pname, GCGLuint index, GCGLint64* value)
+GCGLint64 GraphicsContextGLOpenGL::getInteger64i(GCGLenum pname, GCGLuint index)
 {
     UNUSED_PARAM(pname);
     UNUSED_PARAM(index);
     if (!makeContextCurrent())
-        return;
+        return 0;
 
-    *value = 0;
+    GCGLint64 value = 0;
     // FIXME 141178: Before enabling this we must first switch over to using gl3.h and creating and initialing the WebGL2 context using OpenGL ES 3.0.
     // ::glGetInteger64i_v(pname, index, value);
+    return value;
 }
 
-void GraphicsContextGLOpenGL::getFramebufferAttachmentParameteriv(GCGLenum target, GCGLenum attachment, GCGLenum pname, GCGLint* value)
+GCGLint GraphicsContextGLOpenGL::getFramebufferAttachmentParameteri(GCGLenum target, GCGLenum attachment, GCGLenum pname)
 {
+    GCGLint value = 0;
     if (!makeContextCurrent())
-        return;
-
+        return 0;
     if (attachment == DEPTH_STENCIL_ATTACHMENT)
         attachment = DEPTH_ATTACHMENT; // Or STENCIL_ATTACHMENT, either works.
-    ::glGetFramebufferAttachmentParameterivEXT(target, attachment, pname, value);
+    ::glGetFramebufferAttachmentParameterivEXT(target, attachment, pname, &value);
+    return value;
 }
 
-void GraphicsContextGLOpenGL::getProgramiv(PlatformGLObject program, GCGLenum pname, GCGLint* value)
+GCGLint GraphicsContextGLOpenGL::getProgrami(PlatformGLObject program, GCGLenum pname)
 {
     if (!makeContextCurrent())
-        return;
-
-    ::glGetProgramiv(program, pname, value);
+        return 0;
+    GCGLint value = 0;
+    ::glGetProgramiv(program, pname, &value);
+    return value;
 }
 
 void GraphicsContextGLOpenGL::getNonBuiltInActiveSymbolCount(PlatformGLObject program, GCGLenum pname, GCGLint* value)
@@ -1899,20 +1893,21 @@ String GraphicsContextGLOpenGL::getProgramInfoLog(PlatformGLObject program)
     return getUnmangledInfoLog(shaders, count, String(info.data(), size));
 }
 
-void GraphicsContextGLOpenGL::getRenderbufferParameteriv(GCGLenum target, GCGLenum pname, GCGLint* value)
+GCGLint GraphicsContextGLOpenGL::getRenderbufferParameteri(GCGLenum target, GCGLenum pname)
 {
+    GCGLint value = 0;
     if (!makeContextCurrent())
-        return;
-
-    ::glGetRenderbufferParameterivEXT(target, pname, value);
+        return value;
+    ::glGetRenderbufferParameterivEXT(target, pname, &value);
+    return value;
 }
 
-void GraphicsContextGLOpenGL::getShaderiv(PlatformGLObject shader, GCGLenum pname, GCGLint* value)
+GCGLint GraphicsContextGLOpenGL::getShaderi(PlatformGLObject shader, GCGLenum pname)
 {
     ASSERT(shader);
-
+    GCGLint value = 0;
     if (!makeContextCurrent())
-        return;
+        return value;
 
 
     const auto& result = m_shaderSourceMap.find(shader);
@@ -1920,28 +1915,23 @@ void GraphicsContextGLOpenGL::getShaderiv(PlatformGLObject shader, GCGLenum pnam
     switch (pname) {
     case DELETE_STATUS:
     case SHADER_TYPE:
-        ::glGetShaderiv(shader, pname, value);
+        ::glGetShaderiv(shader, pname, &value);
         break;
     case COMPILE_STATUS:
-        if (result == m_shaderSourceMap.end()) {
-            *value = static_cast<int>(false);
-            return;
-        }
-        *value = static_cast<int>(result->value.isValid);
+        if (result != m_shaderSourceMap.end())
+            value = static_cast<int>(result->value.isValid);
         break;
     case INFO_LOG_LENGTH:
-        if (result == m_shaderSourceMap.end()) {
-            *value = 0;
-            return;
-        }
-        *value = getShaderInfoLog(shader).length();
+        if (result != m_shaderSourceMap.end())
+            value = getShaderInfoLog(shader).length();
         break;
     case SHADER_SOURCE_LENGTH:
-        *value = getShaderSource(shader).length();
+        value = getShaderSource(shader).length();
         break;
     default:
         synthesizeGLError(INVALID_ENUM);
     }
+    return value;
 }
 
 String GraphicsContextGLOpenGL::getShaderInfoLog(PlatformGLObject shader)
@@ -1986,39 +1976,41 @@ String GraphicsContextGLOpenGL::getShaderSource(PlatformGLObject shader)
     return result->value.source;
 }
 
-void GraphicsContextGLOpenGL::getTexParameterfv(GCGLenum target, GCGLenum pname, GCGLfloat* value)
+GCGLfloat GraphicsContextGLOpenGL::getTexParameterf(GCGLenum target, GCGLenum pname)
+{
+    GCGLfloat value = 0.f;
+    if (!makeContextCurrent())
+        return value;
+    ::glGetTexParameterfv(target, pname, &value);
+    return value;
+}
+
+GCGLint GraphicsContextGLOpenGL::getTexParameteri(GCGLenum target, GCGLenum pname)
+{
+    GCGLint value = 0;
+    if (!makeContextCurrent())
+        return value;
+    ::glGetTexParameteriv(target, pname, &value);
+    return value;
+}
+
+void GraphicsContextGLOpenGL::getUniformfv(PlatformGLObject program, GCGLint location, GCGLSpan<GCGLfloat> value)
 {
     if (!makeContextCurrent())
         return;
 
-    ::glGetTexParameterfv(target, pname, value);
+    ::glGetUniformfv(program, location, value.data);
 }
 
-void GraphicsContextGLOpenGL::getTexParameteriv(GCGLenum target, GCGLenum pname, GCGLint* value)
+void GraphicsContextGLOpenGL::getUniformiv(PlatformGLObject program, GCGLint location, GCGLSpan<GCGLint> value)
 {
     if (!makeContextCurrent())
         return;
 
-    ::glGetTexParameteriv(target, pname, value);
+    ::glGetUniformiv(program, location, value.data);
 }
 
-void GraphicsContextGLOpenGL::getUniformfv(PlatformGLObject program, GCGLint location, GCGLfloat* value)
-{
-    if (!makeContextCurrent())
-        return;
-
-    ::glGetUniformfv(program, location, value);
-}
-
-void GraphicsContextGLOpenGL::getUniformiv(PlatformGLObject program, GCGLint location, GCGLint* value)
-{
-    if (!makeContextCurrent())
-        return;
-
-    ::glGetUniformiv(program, location, value);
-}
-
-void GraphicsContextGLOpenGL::getUniformuiv(PlatformGLObject program, GCGLint location, GCGLuint* value)
+void GraphicsContextGLOpenGL::getUniformuiv(PlatformGLObject program, GCGLint location, GCGLSpan<GCGLuint> value)
 {
     UNUSED_PARAM(program);
     UNUSED_PARAM(location);
@@ -2037,20 +2029,20 @@ GCGLint GraphicsContextGLOpenGL::getUniformLocation(PlatformGLObject program, co
     return ::glGetUniformLocation(program, mappedName.utf8().data());
 }
 
-void GraphicsContextGLOpenGL::getVertexAttribfv(GCGLuint index, GCGLenum pname, GCGLfloat* value)
+void GraphicsContextGLOpenGL::getVertexAttribfv(GCGLuint index, GCGLenum pname, GCGLSpan<GCGLfloat> value)
 {
     if (!makeContextCurrent())
         return;
 
-    ::glGetVertexAttribfv(index, pname, value);
+    ::glGetVertexAttribfv(index, pname, value.data);
 }
 
-void GraphicsContextGLOpenGL::getVertexAttribiv(GCGLuint index, GCGLenum pname, GCGLint* value)
+void GraphicsContextGLOpenGL::getVertexAttribiv(GCGLuint index, GCGLenum pname, GCGLSpan<GCGLint> value)
 {
     if (!makeContextCurrent())
         return;
 
-    ::glGetVertexAttribiv(index, pname, value);
+    ::glGetVertexAttribiv(index, pname, value.data);
 }
 
 GCGLsizeiptr GraphicsContextGLOpenGL::getVertexAttribOffset(GCGLuint index, GCGLenum pname)
@@ -3143,6 +3135,13 @@ void GraphicsContextGLOpenGL::readPixels(GCGLint x, GCGLint y, GCGLsizei width, 
     UNUSED_PARAM(dstOffset);
 }
 
+void GraphicsContextGLOpenGL::getActiveUniformBlockiv(GCGLuint program, GCGLuint uniformBlockIndex, GCGLenum pname, GCGLSpan<GCGLint> params)
+{
+    UNUSED_PARAM(program);
+    UNUSED_PARAM(uniformBlockIndex);
+    UNUSED_PARAM(pname);
+    UNUSED_PARAM(params);
+}
 
 }
 

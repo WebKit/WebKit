@@ -69,21 +69,6 @@ public:
     bool requiresRestrictedMaximumTextureSize() override { return m_requiresRestrictedMaximumTextureSize; }
 
     // GL_ANGLE_robust_client_memory
-    void getBooleanvRobustANGLE(GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLboolean *data) override;
-    void getBufferParameterivRobustANGLE(GCGLenum target, GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLint *params) override;
-    void getFloatvRobustANGLE(GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLfloat *data) override;
-    void getFramebufferAttachmentParameterivRobustANGLE(GCGLenum target, GCGLenum attachment, GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLint *params) override;
-    void getIntegervRobustANGLE(GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLint *data) override;
-    void getProgramivRobustANGLE(GCGLuint program, GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLint *params) override;
-    void getRenderbufferParameterivRobustANGLE(GCGLenum target, GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLint *params) override;
-    void getShaderivRobustANGLE(GCGLuint shader, GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLint *params) override;
-    void getTexParameterfvRobustANGLE(GCGLenum target, GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLfloat *params) override;
-    void getTexParameterivRobustANGLE(GCGLenum target, GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLint *params) override;
-    void getUniformfvRobustANGLE(GCGLuint program, int location, GCGLsizei bufSize, GCGLsizei *length, GCGLfloat *params) override;
-    void getUniformivRobustANGLE(GCGLuint program, int location, GCGLsizei bufSize, GCGLsizei *length, GCGLint *params) override;
-    void getVertexAttribfvRobustANGLE(GCGLuint index, GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLfloat *params) override;
-    void getVertexAttribivRobustANGLE(GCGLuint index, GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLint *params) override;
-    void getVertexAttribPointervRobustANGLE(GCGLuint index, GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, void **pointer) override;
     void readPixelsRobustANGLE(int x, int y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLsizei bufSize, GCGLsizei *length, GCGLsizei *columns, GCGLsizei *rows, void *pixels) override;
     void texImage2DRobustANGLE(GCGLenum target, int level, int internalformat, GCGLsizei width, GCGLsizei height, int border, GCGLenum format, GCGLenum type, GCGLsizei bufSize, const void *pixels) override;
     void texParameterfvRobustANGLE(GCGLenum target, GCGLenum pname, GCGLsizei bufSize, const GCGLfloat *params) override;
@@ -99,14 +84,10 @@ public:
     void getQueryivRobustANGLE(GCGLenum target, GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLint *params) override;
     void getQueryObjectuivRobustANGLE(GCGLuint id, GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLuint *params) override;
     void getBufferPointervRobustANGLE(GCGLenum target, GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, void **params) override;
-    void getIntegeri_vRobustANGLE(GCGLenum target, GCGLuint index, GCGLsizei bufSize, GCGLsizei *length, int *data) override;
     void getInternalformativRobustANGLE(GCGLenum target, GCGLenum internalformat, GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLint *params) override;
     void getVertexAttribIivRobustANGLE(GCGLuint index, GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLint *params) override;
     void getVertexAttribIuivRobustANGLE(GCGLuint index, GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLuint *params) override;
     void getUniformuivRobustANGLE(GCGLuint program, int location, GCGLsizei bufSize, GCGLsizei *length, GCGLuint *params) override;
-    void getActiveUniformBlockivRobustANGLE(GCGLuint program, GCGLuint uniformBlockIndex, GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLint *params) override;
-    void getInteger64vRobustANGLE(GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLint64 *data) override;
-    void getInteger64i_vRobustANGLE(GCGLenum target, GCGLuint index, GCGLsizei bufSize, GCGLsizei *length, GCGLint64 *data) override;
     void getBufferParameteri64vRobustANGLE(GCGLenum target, GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLint64 *params) override;
     void samplerParameterivRobustANGLE(GCGLuint sampler, GCGLenum pname, GCGLsizei bufSize, const GCGLint *param) override;
     void samplerParameterfvRobustANGLE(GCGLuint sampler, GCGLenum pname, GCGLsizei bufSize, const GCGLfloat *param) override;

@@ -619,14 +619,14 @@ bool WebGLFramebuffer::initializeAttachments(GraphicsContextGL* g3d, const char*
         g3d->colorMask(true, true, true, true);
     }
     if (initDepth) {
-        g3d->getFloatv(GraphicsContextGL::DEPTH_CLEAR_VALUE, &depthClearValue);
-        g3d->getBooleanv(GraphicsContextGL::DEPTH_WRITEMASK, &depthMask);
+        depthClearValue = g3d->getFloat(GraphicsContextGL::DEPTH_CLEAR_VALUE);
+        depthMask = g3d->getBoolean(GraphicsContextGL::DEPTH_WRITEMASK);
         g3d->clearDepth(1.0f);
         g3d->depthMask(true);
     }
     if (initStencil) {
-        g3d->getIntegerv(GraphicsContextGL::STENCIL_CLEAR_VALUE, &stencilClearValue);
-        g3d->getIntegerv(GraphicsContextGL::STENCIL_WRITEMASK, reinterpret_cast<GCGLint*>(&stencilMask));
+        stencilClearValue = g3d->getInteger(GraphicsContextGL::STENCIL_CLEAR_VALUE);
+        stencilMask = g3d->getInteger(GraphicsContextGL::STENCIL_WRITEMASK);
         g3d->clearStencil(0);
         g3d->stencilMask(0xffffffff);
     }

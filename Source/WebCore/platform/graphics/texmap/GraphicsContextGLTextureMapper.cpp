@@ -289,8 +289,7 @@ GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes att
         // From version 3.2 on we use the OpenGL Core profile, and we need a VAO for rendering.
         // A VAO could be created and bound by each component using GL rendering (TextureMapper, WebGL, etc). This is
         // a simpler solution: the first GraphicsContextGLOpenGL created on a GLContext will create and bind a VAO for that context.
-        GCGLint currentVAO = 0;
-        getIntegerv(GraphicsContextGLOpenGL::VERTEX_ARRAY_BINDING, &currentVAO);
+        GCGLint currentVAO = getInteger(GraphicsContextGLOpenGL::VERTEX_ARRAY_BINDING);
         if (!currentVAO) {
             m_vao = createVertexArray();
             bindVertexArray(m_vao);
@@ -311,18 +310,19 @@ GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes att
     ShBuiltInResources ANGLEResources;
     sh::InitBuiltInResources(&ANGLEResources);
 
-    getIntegerv(GraphicsContextGLOpenGL::MAX_VERTEX_ATTRIBS, &ANGLEResources.MaxVertexAttribs);
-    getIntegerv(GraphicsContextGLOpenGL::MAX_VERTEX_UNIFORM_VECTORS, &ANGLEResources.MaxVertexUniformVectors);
-    getIntegerv(GraphicsContextGLOpenGL::MAX_VARYING_VECTORS, &ANGLEResources.MaxVaryingVectors);
-    getIntegerv(GraphicsContextGLOpenGL::MAX_VERTEX_TEXTURE_IMAGE_UNITS, &ANGLEResources.MaxVertexTextureImageUnits);
-    getIntegerv(GraphicsContextGLOpenGL::MAX_COMBINED_TEXTURE_IMAGE_UNITS, &ANGLEResources.MaxCombinedTextureImageUnits);
-    getIntegerv(GraphicsContextGLOpenGL::MAX_TEXTURE_IMAGE_UNITS, &ANGLEResources.MaxTextureImageUnits);
-    getIntegerv(GraphicsContextGLOpenGL::MAX_FRAGMENT_UNIFORM_VECTORS, &ANGLEResources.MaxFragmentUniformVectors);
+    ANGLEResources.MaxVertexAttribs = getInteger(GraphicsContextGLOpenGL::MAX_VERTEX_ATTRIBS);
+    ANGLEResources.MaxVertexUniformVectors = getInteger(GraphicsContextGLOpenGL::MAX_VERTEX_UNIFORM_VECTORS);
+    ANGLEResources.MaxVaryingVectors = getInteger(GraphicsContextGLOpenGL::MAX_VARYING_VECTORS);
+    ANGLEResources.MaxVertexTextureImageUnits = getInteger(GraphicsContextGLOpenGL::MAX_VERTEX_TEXTURE_IMAGE_UNITS);
+    ANGLEResources.MaxCombinedTextureImageUnits = getInteger(GraphicsContextGLOpenGL::MAX_COMBINED_TEXTURE_IMAGE_UNITS);
+    ANGLEResources.MaxTextureImageUnits = getInteger(GraphicsContextGLOpenGL::MAX_TEXTURE_IMAGE_UNITS);
+    ANGLEResources.MaxFragmentUniformVectors = getInteger(GraphicsContextGLOpenGL::MAX_FRAGMENT_UNIFORM_VECTORS);
 
     // Always set to 1 for OpenGL ES.
     ANGLEResources.MaxDrawBuffers = 1;
 
-    GCGLint range[2], precision;
+    GCGLint range[2] { };
+    GCGLint precision = 0;
     getShaderPrecisionFormat(GraphicsContextGLOpenGL::FRAGMENT_SHADER, GraphicsContextGLOpenGL::HIGH_FLOAT, range, &precision);
     ANGLEResources.FragmentPrecisionHigh = (range[0] || range[1] || precision);
 

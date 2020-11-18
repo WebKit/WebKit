@@ -159,9 +159,9 @@ void WebGL2RenderingContext::initializeNewContext()
     m_unpackSkipRows = 0;
     m_unpackSkipImages = 0;
 
-    m_context->getIntegerv(GraphicsContextGL::MAX_3D_TEXTURE_SIZE, &m_max3DTextureSize);
+    m_max3DTextureSize = m_context->getInteger(GraphicsContextGL::MAX_3D_TEXTURE_SIZE);
     m_max3DTextureLevel = WebGLTexture::computeLevelCount(m_max3DTextureSize, m_max3DTextureSize);
-    m_context->getIntegerv(GraphicsContextGL::MAX_ARRAY_TEXTURE_LAYERS, &m_maxArrayTextureLayers);
+    m_maxArrayTextureLayers = m_context->getInteger(GraphicsContextGL::MAX_ARRAY_TEXTURE_LAYERS);
 
     WebGLRenderingContextBase::initializeNewContext();
 
@@ -208,9 +208,7 @@ void WebGL2RenderingContext::restoreUnpackParameters()
 
 long long WebGL2RenderingContext::getInt64Parameter(GCGLenum pname)
 {
-    GCGLint64 value = 0;
-    m_context->getInteger64v(pname, &value);
-    return value;
+    return m_context->getInteger64(pname);
 }
 
 void WebGL2RenderingContext::initializeVertexArrayObjects()
@@ -1055,23 +1053,14 @@ WebGLAny WebGL2RenderingContext::getTexParameter(GCGLenum target, GCGLenum pname
         FALLTHROUGH;
     case GraphicsContextGL::TEXTURE_IMMUTABLE_LEVELS:
         FALLTHROUGH;
-    case GraphicsContextGL::TEXTURE_WRAP_R: {
-        GCGLint value = 0;
-        m_context->getTexParameteriv(target, pname, &value);
-        return value;
-    }
-    case GraphicsContextGL::TEXTURE_IMMUTABLE_FORMAT: {
-        GCGLint value = 0;
-        m_context->getTexParameteriv(target, pname, &value);
-        return static_cast<bool>(value);
-    }
+    case GraphicsContextGL::TEXTURE_WRAP_R:
+        return m_context->getTexParameteri(target, pname);
+    case GraphicsContextGL::TEXTURE_IMMUTABLE_FORMAT:
+        return static_cast<bool>(m_context->getTexParameteri(target, pname));
     case GraphicsContextGL::TEXTURE_MIN_LOD:
         FALLTHROUGH;
-    case GraphicsContextGL::TEXTURE_MAX_LOD: {
-        GCGLfloat value = 0;
-        m_context->getTexParameterfv(target, pname, &value);
-        return value;
-    }
+    case GraphicsContextGL::TEXTURE_MAX_LOD:
+        return m_context->getTexParameterf(target, pname);
     default:
         return WebGLRenderingContextBase::getTexParameter(target, pname);
     }
@@ -2445,11 +2434,8 @@ WebGLAny WebGL2RenderingContext::getIndexedParameter(GCGLenum target, GCGLuint i
     case GraphicsContextGL::TRANSFORM_FEEDBACK_BUFFER_SIZE:
     case GraphicsContextGL::TRANSFORM_FEEDBACK_BUFFER_START:
     case GraphicsContextGL::UNIFORM_BUFFER_SIZE:
-    case GraphicsContextGL::UNIFORM_BUFFER_START: {
-        GCGLint64 value = 0;
-        m_context->getInteger64i_v(target, index, &value);
-        return value;
-    }
+    case GraphicsContextGL::UNIFORM_BUFFER_START:
+        return m_context->getInteger64i(target, index);
     case GraphicsContextGL::UNIFORM_BUFFER_BINDING:
         if (index >= m_boundIndexedUniformBuffers.size()) {
             synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "getIndexedParameter", "index out of range");
@@ -2524,24 +2510,20 @@ WebGLAny WebGL2RenderingContext::getActiveUniformBlockParameter(WebGLProgram& pr
 #if USE(ANGLE)
     if (isContextLostOrPending() || !validateWebGLProgramOrShader("getActiveUniformBlockParameter", &program))
         return nullptr;
-    GCGLint result = 0;
     switch (pname) {
     case GraphicsContextGL::UNIFORM_BLOCK_BINDING:
     case GraphicsContextGL::UNIFORM_BLOCK_DATA_SIZE:
     case GraphicsContextGL::UNIFORM_BLOCK_ACTIVE_UNIFORMS:
-        m_context->getExtensions().getActiveUniformBlockivRobustANGLE(program.object(), uniformBlockIndex, pname, sizeof(result), nullptr, &result);
-        return static_cast<GCGLuint>(result);
+        return static_cast<GCGLuint>(m_context->getActiveUniformBlocki(program.object(), uniformBlockIndex, pname));
     case GraphicsContextGL::UNIFORM_BLOCK_ACTIVE_UNIFORM_INDICES: {
-        GCGLint size = 0;
-        m_context->getExtensions().getActiveUniformBlockivRobustANGLE(program.object(), uniformBlockIndex, GraphicsContextGL::UNIFORM_BLOCK_ACTIVE_UNIFORMS, sizeof(size), nullptr, &size);
+        GCGLint size = m_context->getActiveUniformBlocki(program.object(), uniformBlockIndex, GraphicsContextGL::UNIFORM_BLOCK_ACTIVE_UNIFORMS);
         Vector<GCGLint> params(size, 0);
-        m_context->getExtensions().getActiveUniformBlockivRobustANGLE(program.object(), uniformBlockIndex, pname, sizeof(params[0]) * params.size(), nullptr, params.data());
+        m_context->getActiveUniformBlockiv(program.object(), uniformBlockIndex, pname, params);
         return params.map([](auto x) { return static_cast<GCGLuint>(x); });
     }
     case GraphicsContextGL::UNIFORM_BLOCK_REFERENCED_BY_VERTEX_SHADER:
     case GraphicsContextGL::UNIFORM_BLOCK_REFERENCED_BY_FRAGMENT_SHADER:
-        m_context->getExtensions().getActiveUniformBlockivRobustANGLE(program.object(), uniformBlockIndex, pname, sizeof(result), nullptr, &result);
-        return static_cast<bool>(result);
+        return static_cast<bool>(m_context->getActiveUniformBlocki(program.object(), uniformBlockIndex, pname));
     default:
         synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getActiveUniformBlockParameter", "invalid parameter name");
         return nullptr;
@@ -2772,9 +2754,7 @@ WebGLAny WebGL2RenderingContext::getFramebufferAttachmentParameter(GCGLenum targ
             synthesizeGLError(GraphicsContextGL::INVALID_ENUM, functionName, "invalid attachment");
             return nullptr;
         }
-        GCGLint value = 0;
-        m_context->getFramebufferAttachmentParameteriv(target, attachment, pname, &value);
-        return value;
+        return m_context->getFramebufferAttachmentParameteri(target, attachment, pname);
     }
     if (!validateNonDefaultFramebufferAttachment(functionName, attachment))
         return nullptr;
@@ -2796,11 +2776,8 @@ WebGLAny WebGL2RenderingContext::getFramebufferAttachmentParameter(GCGLenum targ
     case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_ALPHA_SIZE:
     case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_DEPTH_SIZE:
     case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_STENCIL_SIZE:
-    case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_COMPONENT_TYPE: {
-        GCGLint value = 0;
-        m_context->getFramebufferAttachmentParameteriv(target, attachment, pname, &value);
-        return value;
-    }
+    case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_COMPONENT_TYPE:
+        return m_context->getFramebufferAttachmentParameteri(target, attachment, pname);
     }
 
     if (object->isTexture()) {
@@ -2811,11 +2788,8 @@ WebGLAny WebGL2RenderingContext::getFramebufferAttachmentParameter(GCGLenum targ
             return makeRefPtr(reinterpret_cast<WebGLTexture&>(*object));
         case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_TEXTURE_LEVEL:
         case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_TEXTURE_CUBE_MAP_FACE:
-        case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING: {
-            GCGLint value = 0;
-            m_context->getFramebufferAttachmentParameteriv(target, attachment, pname, &value);
-            return value;
-        }
+        case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING:
+            return m_context->getFramebufferAttachmentParameteri(target, attachment, pname);
         default:
             synthesizeGLError(GraphicsContextGL::INVALID_ENUM, functionName, "invalid parameter name for texture attachment");
             return nullptr;
@@ -2897,7 +2871,7 @@ bool WebGL2RenderingContext::validateNonDefaultFramebufferAttachment(const char*
 GCGLint WebGL2RenderingContext::getMaxDrawBuffers()
 {
     if (!m_maxDrawBuffers)
-        m_context->getIntegerv(GraphicsContextGL::MAX_DRAW_BUFFERS, &m_maxDrawBuffers);
+        m_maxDrawBuffers = m_context->getInteger(GraphicsContextGL::MAX_DRAW_BUFFERS);
     return m_maxDrawBuffers;
 }
 
@@ -2905,7 +2879,7 @@ GCGLint WebGL2RenderingContext::getMaxColorAttachments()
 {
     // DrawBuffers requires MAX_COLOR_ATTACHMENTS == MAX_DRAW_BUFFERS
     if (!m_maxColorAttachments)
-        m_context->getIntegerv(GraphicsContextGL::MAX_DRAW_BUFFERS, &m_maxColorAttachments);
+        m_maxColorAttachments = m_context->getInteger(GraphicsContextGL::MAX_DRAW_BUFFERS);
     return m_maxColorAttachments;
 }
 

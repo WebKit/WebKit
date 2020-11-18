@@ -306,21 +306,6 @@ public:
     virtual void vertexAttribDivisor(GCGLuint index, GCGLuint divisor) = 0;
 
     // GL_ANGLE_robust_client_memory
-    virtual void getBooleanvRobustANGLE(GCGLenum pname, GCGLsizei bufSize, GCGLsizei* length, GCGLboolean* data) = 0;
-    virtual void getBufferParameterivRobustANGLE(GCGLenum target, GCGLenum pname, GCGLsizei bufSize, GCGLsizei* length, GCGLint* params) = 0;
-    virtual void getFloatvRobustANGLE(GCGLenum pname, GCGLsizei bufSize, GCGLsizei* length, GCGLfloat* data) = 0;
-    virtual void getFramebufferAttachmentParameterivRobustANGLE(GCGLenum target, GCGLenum attachment, GCGLenum pname, GCGLsizei bufSize, GCGLsizei* length, GCGLint* params) = 0;
-    virtual void getIntegervRobustANGLE(GCGLenum pname, GCGLsizei bufSize, GCGLsizei* length, GCGLint* data) = 0;
-    virtual void getProgramivRobustANGLE(GCGLuint program, GCGLenum pname, GCGLsizei bufSize, GCGLsizei* length, GCGLint* params) = 0;
-    virtual void getRenderbufferParameterivRobustANGLE(GCGLenum target, GCGLenum pname, GCGLsizei bufSize, GCGLsizei* length, GCGLint* params) = 0;
-    virtual void getShaderivRobustANGLE(GCGLuint shader, GCGLenum pname, GCGLsizei bufSize, GCGLsizei* length, GCGLint* params) = 0;
-    virtual void getTexParameterfvRobustANGLE(GCGLenum target, GCGLenum pname, GCGLsizei bufSize, GCGLsizei* length, GCGLfloat* params) = 0;
-    virtual void getTexParameterivRobustANGLE(GCGLenum target, GCGLenum pname, GCGLsizei bufSize, GCGLsizei* length, GCGLint* params) = 0;
-    virtual void getUniformfvRobustANGLE(GCGLuint program, GCGLint location, GCGLsizei bufSize, GCGLsizei* length, GCGLfloat* params) = 0;
-    virtual void getUniformivRobustANGLE(GCGLuint program, GCGLint location, GCGLsizei bufSize, GCGLsizei* length, GCGLint* params) = 0;
-    virtual void getVertexAttribfvRobustANGLE(GCGLuint index, GCGLenum pname, GCGLsizei bufSize, GCGLsizei* length, GCGLfloat* params) = 0;
-    virtual void getVertexAttribivRobustANGLE(GCGLuint index, GCGLenum pname, GCGLsizei bufSize, GCGLsizei* length, GCGLint* params) = 0;
-    virtual void getVertexAttribPointervRobustANGLE(GCGLuint index, GCGLenum pname, GCGLsizei bufSize, GCGLsizei* length, GCGLvoid** pointer) = 0;
     virtual void readPixelsRobustANGLE(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLsizei bufSize, GCGLsizei* length, GCGLsizei* columns, GCGLsizei* rows, GCGLvoid* pixels) = 0;
     virtual void texImage2DRobustANGLE(GCGLenum target, GCGLint level, GCGLint internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, GCGLsizei bufSize, const GCGLvoid* pixels) = 0;
     virtual void texParameterfvRobustANGLE(GCGLenum target, GCGLenum pname, GCGLsizei bufSize, const GCGLfloat* params) = 0;
@@ -336,14 +321,10 @@ public:
     virtual void getQueryivRobustANGLE(GCGLenum target, GCGLenum pname, GCGLsizei bufSize, GCGLsizei* length, GCGLint* params) = 0;
     virtual void getQueryObjectuivRobustANGLE(GCGLuint id, GCGLenum pname, GCGLsizei bufSize, GCGLsizei* length, GCGLuint* params) = 0;
     virtual void getBufferPointervRobustANGLE(GCGLenum target, GCGLenum pname, GCGLsizei bufSize, GCGLsizei* length, GCGLvoid** params) = 0;
-    virtual void getIntegeri_vRobustANGLE(GCGLenum target, GCGLuint index, GCGLsizei bufSize, GCGLsizei* length, GCGLint* data) = 0; // NOLINT
     virtual void getInternalformativRobustANGLE(GCGLenum target, GCGLenum internalformat, GCGLenum pname, GCGLsizei bufSize, GCGLsizei* length, GCGLint* params) = 0;
     virtual void getVertexAttribIivRobustANGLE(GCGLuint index, GCGLenum pname, GCGLsizei bufSize, GCGLsizei* length, GCGLint* params) = 0;
     virtual void getVertexAttribIuivRobustANGLE(GCGLuint index, GCGLenum pname, GCGLsizei bufSize, GCGLsizei* length, GCGLuint* params) = 0;
     virtual void getUniformuivRobustANGLE(GCGLuint program, GCGLint location, GCGLsizei bufSize, GCGLsizei* length, GCGLuint* params) = 0;
-    virtual void getActiveUniformBlockivRobustANGLE(GCGLuint program, GCGLuint uniformBlockIndex, GCGLenum pname, GCGLsizei bufSize, GCGLsizei* length, GCGLint* params) = 0;
-    virtual void getInteger64vRobustANGLE(GCGLenum pname, GCGLsizei bufSize, GCGLsizei* length, GCGLint64* data) = 0;
-    virtual void getInteger64i_vRobustANGLE(GCGLenum target, GCGLuint index, GCGLsizei bufSize, GCGLsizei* length, GCGLint64* data) = 0; // NOLINT
     virtual void getBufferParameteri64vRobustANGLE(GCGLenum target, GCGLenum pname, GCGLsizei bufSize, GCGLsizei* length, GCGLint64* params) = 0;
     virtual void samplerParameterivRobustANGLE(GCGLuint sampler, GCGLenum pname, GCGLsizei bufSize, const GCGLint* param) = 0;
     virtual void samplerParameterfvRobustANGLE(GCGLuint sampler, GCGLenum pname, GCGLsizei bufSize, const GCGLfloat* param) = 0;

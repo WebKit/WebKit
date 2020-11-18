@@ -197,35 +197,34 @@ public:
     bool getActiveUniformImpl(PlatformGLObject program, GCGLuint index, ActiveInfo&);
     void getAttachedShaders(PlatformGLObject program, GCGLsizei maxCount, GCGLsizei* count, PlatformGLObject* shaders) final;
     GCGLint getAttribLocation(PlatformGLObject, const String& name) final;
-    void getBooleanv(GCGLenum pname, GCGLboolean* value) final;
-    void getBufferParameteriv(GCGLenum target, GCGLenum pname, GCGLint* value) final;
+    void getBooleanv(GCGLenum pname, GCGLSpan<GCGLboolean> value) final;
+    GCGLint getBufferParameteri(GCGLenum target, GCGLenum pname) final;
     GCGLenum getError() final;
-    void getFloatv(GCGLenum pname, GCGLfloat* value) final;
-    void getFramebufferAttachmentParameteriv(GCGLenum target, GCGLenum attachment, GCGLenum pname, GCGLint* value) final;
-    void getIntegerv(GCGLenum pname, GCGLint* value) final;
-    void getIntegeri_v(GCGLenum pname, GCGLuint index, GCGLint* value) final;
-    void getInteger64v(GCGLenum pname, GCGLint64* value) final;
-    void getInteger64i_v(GCGLenum pname, GCGLuint index, GCGLint64* value) final;
-    void getProgramiv(PlatformGLObject program, GCGLenum pname, GCGLint* value) final;
+    void getFloatv(GCGLenum pname, GCGLSpan<GCGLfloat> value) final;
+    GCGLint getFramebufferAttachmentParameteri(GCGLenum target, GCGLenum attachment, GCGLenum pname) final;
+    void getIntegerv(GCGLenum pname, GCGLSpan<GCGLint> value) final;
+    GCGLint64 getInteger64(GCGLenum pname) final;
+    GCGLint64 getInteger64i(GCGLenum pname, GCGLuint index) final;
+    GCGLint getProgrami(PlatformGLObject program, GCGLenum pname) final;
 #if !USE(ANGLE)
     void getNonBuiltInActiveSymbolCount(PlatformGLObject program, GCGLenum pname, GCGLint* value);
 #endif // !USE(ANGLE)
     String getProgramInfoLog(PlatformGLObject) final;
     String getUnmangledInfoLog(PlatformGLObject[2], GCGLsizei, const String&);
-    void getRenderbufferParameteriv(GCGLenum target, GCGLenum pname, GCGLint* value) final;
-    void getShaderiv(PlatformGLObject, GCGLenum pname, GCGLint* value) final;
+    GCGLint getRenderbufferParameteri(GCGLenum target, GCGLenum pname) final;
+    GCGLint getShaderi(PlatformGLObject, GCGLenum pname) final;
     String getShaderInfoLog(PlatformGLObject) final;
-    void getShaderPrecisionFormat(GCGLenum shaderType, GCGLenum precisionType, GCGLint* range, GCGLint* precision) final;
+    void getShaderPrecisionFormat(GCGLenum shaderType, GCGLenum precisionType, GCGLSpan<GCGLint, 2> range, GCGLint* precision) final;
     String getShaderSource(PlatformGLObject) final;
     String getString(GCGLenum name) final;
-    void getTexParameterfv(GCGLenum target, GCGLenum pname, GCGLfloat* value) final;
-    void getTexParameteriv(GCGLenum target, GCGLenum pname, GCGLint* value) final;
-    void getUniformfv(PlatformGLObject program, GCGLint location, GCGLfloat* value) final;
-    void getUniformiv(PlatformGLObject program, GCGLint location, GCGLint* value) final;
-    void getUniformuiv(PlatformGLObject program, GCGLint location, GCGLuint* value) final;
+    GCGLfloat getTexParameterf(GCGLenum target, GCGLenum pname) final;
+    GCGLint getTexParameteri(GCGLenum target, GCGLenum pname) final;
+    void getUniformfv(PlatformGLObject program, GCGLint location, GCGLSpan<GCGLfloat> value) final;
+    void getUniformiv(PlatformGLObject program, GCGLint location, GCGLSpan<GCGLint> value) final;
+    void getUniformuiv(PlatformGLObject program, GCGLint location, GCGLSpan<GCGLuint> value) final;
     GCGLint getUniformLocation(PlatformGLObject, const String& name) final;
-    void getVertexAttribfv(GCGLuint index, GCGLenum pname, GCGLfloat* value) final;
-    void getVertexAttribiv(GCGLuint index, GCGLenum pname, GCGLint* value) final;
+    void getVertexAttribfv(GCGLuint index, GCGLenum pname, GCGLSpan<GCGLfloat> value) final;
+    void getVertexAttribiv(GCGLuint index, GCGLenum pname, GCGLSpan<GCGLint> value) final;
     GCGLsizeiptr getVertexAttribOffset(GCGLuint index, GCGLenum pname) final;
 
     void hint(GCGLenum target, GCGLenum mode) final;
@@ -438,6 +437,7 @@ public:
     void uniformMatrix2fv(GCGLint location, GCGLboolean transpose, const GCGLfloat* data, GCGLuint srcOffset, GCGLuint srcLength) final;
     void uniformMatrix3fv(GCGLint location, GCGLboolean transpose, const GCGLfloat* data, GCGLuint srcOffset, GCGLuint srcLength) final;
     void uniformMatrix4fv(GCGLint location, GCGLboolean transpose, const GCGLfloat* data, GCGLuint srcOffset, GCGLuint srcLength) final;
+    void getActiveUniformBlockiv(GCGLuint program, GCGLuint uniformBlockIndex, GCGLenum pname, GCGLSpan<GCGLint> params) final;
 
 #if !USE(ANGLE)
     void readPixels(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLintptr offset);

@@ -113,8 +113,7 @@ String ExtensionsGLANGLE::getTranslatedShaderSourceANGLE(PlatformGLObject shader
     if (!m_context->makeContextCurrent())
         return String();
 
-    int sourceLength = 0;
-    m_context->getShaderiv(shader, GL_TRANSLATED_SHADER_SOURCE_LENGTH_ANGLE, &sourceLength);
+    int sourceLength = m_context->getShaderi(shader, GL_TRANSLATED_SHADER_SOURCE_LENGTH_ANGLE);
     if (!sourceLength)
         return emptyString();
     Vector<GLchar> name(sourceLength); // GL_TRANSLATED_SHADER_SOURCE_LENGTH_ANGLE includes null termination.
@@ -279,126 +278,6 @@ GCGLenum ExtensionsGLANGLE::adjustWebGL1TextureInternalFormat(GCGLenum internalf
 }
 
 // GL_ANGLE_robust_client_memory
-void ExtensionsGLANGLE::getBooleanvRobustANGLE(GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLboolean *data)
-{
-    if (!m_context->makeContextCurrent())
-        return;
-
-    gl::GetBooleanvRobustANGLE(pname, bufSize, length, data);
-}
-
-void ExtensionsGLANGLE::getBufferParameterivRobustANGLE(GCGLenum target, GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLint *params)
-{
-    if (!m_context->makeContextCurrent())
-        return;
-
-    gl::GetBufferParameterivRobustANGLE(target, pname, bufSize, length, params);
-}
-
-void ExtensionsGLANGLE::getFloatvRobustANGLE(GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLfloat *data)
-{
-    if (!m_context->makeContextCurrent())
-        return;
-
-    gl::GetFloatvRobustANGLE(pname, bufSize, length, data);
-}
-
-void ExtensionsGLANGLE::getFramebufferAttachmentParameterivRobustANGLE(GCGLenum target, GCGLenum attachment, GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLint *params)
-{
-    if (!m_context->makeContextCurrent())
-        return;
-
-    gl::GetFramebufferAttachmentParameterivRobustANGLE(target, attachment, pname, bufSize, length, params);
-}
-
-void ExtensionsGLANGLE::getIntegervRobustANGLE(GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLint *data)
-{
-    if (!m_context->makeContextCurrent())
-        return;
-
-    gl::GetIntegervRobustANGLE(pname, bufSize, length, data);
-}
-
-void ExtensionsGLANGLE::getProgramivRobustANGLE(GCGLuint program, GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLint *params)
-{
-    if (!m_context->makeContextCurrent())
-        return;
-
-    gl::GetProgramivRobustANGLE(program, pname, bufSize, length, params);
-}
-
-void ExtensionsGLANGLE::getRenderbufferParameterivRobustANGLE(GCGLenum target, GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLint *params)
-{
-    if (!m_context->makeContextCurrent())
-        return;
-
-    gl::GetRenderbufferParameterivRobustANGLE(target, pname, bufSize, length, params);
-}
-
-void ExtensionsGLANGLE::getShaderivRobustANGLE(GCGLuint shader, GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLint *params)
-{
-    if (!m_context->makeContextCurrent())
-        return;
-
-    gl::GetShaderivRobustANGLE(shader, pname, bufSize, length, params);
-}
-
-void ExtensionsGLANGLE::getTexParameterfvRobustANGLE(GCGLenum target, GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLfloat *params)
-{
-    if (!m_context->makeContextCurrent())
-        return;
-
-    gl::GetTexParameterfvRobustANGLE(target, pname, bufSize, length, params);
-}
-
-void ExtensionsGLANGLE::getTexParameterivRobustANGLE(GCGLenum target, GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLint *params)
-{
-    if (!m_context->makeContextCurrent())
-        return;
-
-    gl::GetTexParameterivRobustANGLE(target, pname, bufSize, length, params);
-}
-
-void ExtensionsGLANGLE::getUniformfvRobustANGLE(GCGLuint program, int location, GCGLsizei bufSize, GCGLsizei *length, GCGLfloat *params)
-{
-    if (!m_context->makeContextCurrent())
-        return;
-
-    gl::GetUniformfvRobustANGLE(program, location, bufSize, length, params);
-}
-
-void ExtensionsGLANGLE::getUniformivRobustANGLE(GCGLuint program, int location, GCGLsizei bufSize, GCGLsizei *length, GCGLint *params)
-{
-    if (!m_context->makeContextCurrent())
-        return;
-
-    gl::GetUniformivRobustANGLE(program, location, bufSize, length, params);
-}
-
-void ExtensionsGLANGLE::getVertexAttribfvRobustANGLE(GCGLuint index, GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLfloat *params)
-{
-    if (!m_context->makeContextCurrent())
-        return;
-
-    gl::GetVertexAttribfvRobustANGLE(index, pname, bufSize, length, params);
-}
-
-void ExtensionsGLANGLE::getVertexAttribivRobustANGLE(GCGLuint index, GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLint *params)
-{
-    if (!m_context->makeContextCurrent())
-        return;
-
-    gl::GetVertexAttribivRobustANGLE(index, pname, bufSize, length, params);
-}
-
-void ExtensionsGLANGLE::getVertexAttribPointervRobustANGLE(GCGLuint index, GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, void **pointer)
-{
-    if (!m_context->makeContextCurrent())
-        return;
-
-    gl::GetVertexAttribPointervRobustANGLE(index, pname, bufSize, length, pointer);
-}
-
 void ExtensionsGLANGLE::readPixelsRobustANGLE(int x, int y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLsizei bufSize, GCGLsizei *length, GCGLsizei *columns, GCGLsizei *rows, void *pixels)
 {
     if (!m_context->makeContextCurrent())
@@ -517,14 +396,6 @@ void ExtensionsGLANGLE::getBufferPointervRobustANGLE(GCGLenum target, GCGLenum p
     gl::GetBufferPointervRobustANGLE(target, pname, bufSize, length, params);
 }
 
-void ExtensionsGLANGLE::getIntegeri_vRobustANGLE(GCGLenum target, GCGLuint index, GCGLsizei bufSize, GCGLsizei *length, GCGLint *data)
-{
-    if (!m_context->makeContextCurrent())
-        return;
-
-    gl::GetIntegeri_vRobustANGLE(target, index, bufSize, length, data);
-}
-
 void ExtensionsGLANGLE::getInternalformativRobustANGLE(GCGLenum target, GCGLenum internalformat, GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLint *params)
 {
     if (!m_context->makeContextCurrent())
@@ -555,30 +426,6 @@ void ExtensionsGLANGLE::getUniformuivRobustANGLE(GCGLuint program, int location,
         return;
 
     gl::GetUniformuivRobustANGLE(program, location, bufSize, length, params);
-}
-
-void ExtensionsGLANGLE::getActiveUniformBlockivRobustANGLE(GCGLuint program, GCGLuint uniformBlockIndex, GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLint *params)
-{
-    if (!m_context->makeContextCurrent())
-        return;
-
-    gl::GetActiveUniformBlockivRobustANGLE(program, uniformBlockIndex, pname, bufSize, length, params);
-}
-
-void ExtensionsGLANGLE::getInteger64vRobustANGLE(GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLint64 *data)
-{
-    if (!m_context->makeContextCurrent())
-        return;
-
-    gl::GetInteger64vRobustANGLE(pname, bufSize, length, reinterpret_cast<GLint64*>(data));
-}
-
-void ExtensionsGLANGLE::getInteger64i_vRobustANGLE(GCGLenum target, GCGLuint index, GCGLsizei bufSize, GCGLsizei *length, GCGLint64 *data)
-{
-    if (!m_context->makeContextCurrent())
-        return;
-
-    gl::GetInteger64i_vRobustANGLE(target, index, bufSize, length, reinterpret_cast<GLint64*>(data));
 }
 
 void ExtensionsGLANGLE::getBufferParameteri64vRobustANGLE(GCGLenum target, GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLint64 *params)

@@ -330,55 +330,36 @@ void GraphicsContextGLOpenGL::renderbufferStorage(GCGLenum target, GCGLenum inte
     gl::RenderbufferStorage(target, internalformat, width, height);
 }
 
-void GraphicsContextGLOpenGL::getIntegerv(GCGLenum pname, GCGLint* value)
+void GraphicsContextGLOpenGL::getIntegerv(GCGLenum pname, GCGLSpan<GCGLint> value)
 {
     if (!makeContextCurrent())
         return;
+    gl::GetIntegervRobustANGLE(pname, value.bufSize, nullptr, value.data);
 
     switch (pname) {
-    case MAX_TEXTURE_SIZE:
-        gl::GetIntegerv(MAX_TEXTURE_SIZE, value);
-        if (getExtensions().requiresRestrictedMaximumTextureSize())
-            *value = std::min(4096, *value);
-        break;
-    case MAX_CUBE_MAP_TEXTURE_SIZE:
-        gl::GetIntegerv(MAX_CUBE_MAP_TEXTURE_SIZE, value);
-        if (getExtensions().requiresRestrictedMaximumTextureSize())
-            *value = std::min(1024, *value);
-        break;
 #if PLATFORM(MAC)
     // Some older hardware advertises a larger maximum than they
     // can actually handle. Rather than detecting such devices, simply
     // clamp the maximum to 8192, which is big enough for a 5K display.
     case MAX_RENDERBUFFER_SIZE:
-        gl::GetIntegerv(MAX_RENDERBUFFER_SIZE, value);
         *value = std::min(8192, *value);
         break;
     case MAX_VIEWPORT_DIMS:
-        gl::GetIntegerv(MAX_VIEWPORT_DIMS, value);
         value[0] = std::min(8192, value[0]);
         value[1] = std::min(8192, value[1]);
         break;
 #endif
     default:
-        gl::GetIntegerv(pname, value);
+        break;
     }
 }
 
-void GraphicsContextGLOpenGL::getIntegeri_v(GCGLenum pname, GCGLuint index, GCGLint* value)
+void GraphicsContextGLOpenGL::getShaderPrecisionFormat(GCGLenum shaderType, GCGLenum precisionType, GCGLSpan<GCGLint, 2> range, GCGLint* precision)
 {
     if (!makeContextCurrent())
         return;
 
-    gl::GetIntegeri_v(pname, index, value);
-}
-
-void GraphicsContextGLOpenGL::getShaderPrecisionFormat(GCGLenum shaderType, GCGLenum precisionType, GCGLint* range, GCGLint* precision)
-{
-    if (!makeContextCurrent())
-        return;
-
-    gl::GetShaderPrecisionFormat(shaderType, precisionType, range, precision);
+    gl::GetShaderPrecisionFormat(shaderType, precisionType, range.data, precision);
 }
 
 bool GraphicsContextGLOpenGL::texImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, const void* pixels)
@@ -1211,7 +1192,6 @@ bool GraphicsContextGLOpenGL::getActiveUniformImpl(PlatformGLObject program, GCG
 
     GLint maxUniformSize = 0;
     gl::GetProgramiv(program, GL_ACTIVE_UNIFORM_MAX_LENGTH, &maxUniformSize);
-
     Vector<GLchar> name(maxUniformSize); // GL_ACTIVE_UNIFORM_MAX_LENGTH includes null termination.
     GLsizei nameLength = 0;
     GLint size = 0;
@@ -1818,64 +1798,67 @@ void GraphicsContextGLOpenGL::bindVertexArray(PlatformGLObject array)
     gl::BindVertexArray(array);
 }
 
-void GraphicsContextGLOpenGL::getBooleanv(GCGLenum pname, GCGLboolean* value)
+void GraphicsContextGLOpenGL::getBooleanv(GCGLenum pname, GCGLSpan<GCGLboolean> value)
 {
     if (!makeContextCurrent())
         return;
 
-    gl::GetBooleanv(pname, value);
+    gl::GetBooleanvRobustANGLE(pname, value.bufSize, nullptr, value.data);
 }
 
-void GraphicsContextGLOpenGL::getBufferParameteriv(GCGLenum target, GCGLenum pname, GCGLint* value)
+GCGLint GraphicsContextGLOpenGL::getBufferParameteri(GCGLenum target, GCGLenum pname)
 {
+    GCGLint value = 0;
     if (!makeContextCurrent())
-        return;
-
-    gl::GetBufferParameteriv(target, pname, value);
+        return value;
+    gl::GetBufferParameterivRobustANGLE(target, pname, 1, nullptr, &value);
+    return value;
 }
 
-void GraphicsContextGLOpenGL::getFloatv(GCGLenum pname, GCGLfloat* value)
+void GraphicsContextGLOpenGL::getFloatv(GCGLenum pname, GCGLSpan<GCGLfloat> value)
 {
     if (!makeContextCurrent())
         return;
 
-    gl::GetFloatv(pname, value);
+    gl::GetFloatvRobustANGLE(pname, value.bufSize, nullptr, value.data);
 }
     
-void GraphicsContextGLOpenGL::getInteger64v(GCGLenum pname, GCGLint64* value)
+GCGLint64 GraphicsContextGLOpenGL::getInteger64(GCGLenum pname)
 {
+    GCGLint64 value = 0;
     if (!makeContextCurrent())
-        return;
-
-    *value = 0;
-    gl::GetInteger64v(pname, value);
+        return value;
+    gl::GetInteger64vRobustANGLE(pname, 1, nullptr, &value);
+    return value;
 }
 
-void GraphicsContextGLOpenGL::getInteger64i_v(GCGLenum pname, GCGLuint index, GCGLint64* value)
+GCGLint64 GraphicsContextGLOpenGL::getInteger64i(GCGLenum pname, GCGLuint index)
 {
+    GCGLint64 value = 0;
     if (!makeContextCurrent())
-        return;
-
-    *value = 0;
-    gl::GetInteger64i_v(pname, index, value);
+        return value;
+    gl::GetInteger64i_vRobustANGLE(pname, index, 1, nullptr, &value);
+    return value;
 }
 
-void GraphicsContextGLOpenGL::getFramebufferAttachmentParameteriv(GCGLenum target, GCGLenum attachment, GCGLenum pname, GCGLint* value)
+GCGLint GraphicsContextGLOpenGL::getFramebufferAttachmentParameteri(GCGLenum target, GCGLenum attachment, GCGLenum pname)
 {
+    GCGLint value = 0;
     if (!makeContextCurrent())
-        return;
-
+        return value;
     if (attachment == DEPTH_STENCIL_ATTACHMENT)
         attachment = DEPTH_ATTACHMENT; // Or STENCIL_ATTACHMENT, either works.
-    gl::GetFramebufferAttachmentParameteriv(target, attachment, pname, value);
+    gl::GetFramebufferAttachmentParameterivRobustANGLE(target, attachment, pname, 1, nullptr, &value);
+    return value;
 }
 
-void GraphicsContextGLOpenGL::getProgramiv(PlatformGLObject program, GCGLenum pname, GCGLint* value)
+GCGLint GraphicsContextGLOpenGL::getProgrami(PlatformGLObject program, GCGLenum pname)
 {
+    GCGLint value = 0;
     if (!makeContextCurrent())
-        return;
-
-    gl::GetProgramiv(program, pname, value);
+        return value;
+    gl::GetProgramivRobustANGLE(program, pname, 1, nullptr, &value);
+    return value;
 }
 
 String GraphicsContextGLOpenGL::getUnmangledInfoLog(PlatformGLObject shaders[2], GCGLsizei count, const String& log)
@@ -1921,22 +1904,23 @@ String GraphicsContextGLOpenGL::getProgramInfoLog(PlatformGLObject program)
     return getUnmangledInfoLog(shaders, count, String(info.data(), size));
 }
 
-void GraphicsContextGLOpenGL::getRenderbufferParameteriv(GCGLenum target, GCGLenum pname, GCGLint* value)
+GCGLint GraphicsContextGLOpenGL::getRenderbufferParameteri(GCGLenum target, GCGLenum pname)
 {
+    GCGLint value = 0;
     if (!makeContextCurrent())
-        return;
-
-    gl::GetRenderbufferParameteriv(target, pname, value);
+        return value;
+    gl::GetRenderbufferParameterivRobustANGLE(target, pname, 1, nullptr, &value);
+    return value;
 }
 
-void GraphicsContextGLOpenGL::getShaderiv(PlatformGLObject shader, GCGLenum pname, GCGLint* value)
+GCGLint GraphicsContextGLOpenGL::getShaderi(PlatformGLObject shader, GCGLenum pname)
 {
     ASSERT(shader);
-
+    GCGLint value = 0;
     if (!makeContextCurrent())
-        return;
-
-    gl::GetShaderiv(shader, pname, value);
+        return value;
+    gl::GetShaderivRobustANGLE(shader, pname, 1, nullptr, &value);
+    return value;
 }
 
 String GraphicsContextGLOpenGL::getShaderInfoLog(PlatformGLObject shader)
@@ -1964,44 +1948,49 @@ String GraphicsContextGLOpenGL::getShaderSource(PlatformGLObject)
     return emptyString();
 }
 
-void GraphicsContextGLOpenGL::getTexParameterfv(GCGLenum target, GCGLenum pname, GCGLfloat* value)
+GCGLfloat GraphicsContextGLOpenGL::getTexParameterf(GCGLenum target, GCGLenum pname)
 {
+    GCGLfloat value = 0.f;
     if (!makeContextCurrent())
-        return;
-
-    gl::GetTexParameterfv(target, pname, value);
+        return value;
+    gl::GetTexParameterfvRobustANGLE(target, pname, 1, nullptr, &value);
+    return value;
 }
 
-void GraphicsContextGLOpenGL::getTexParameteriv(GCGLenum target, GCGLenum pname, GCGLint* value)
+GCGLint GraphicsContextGLOpenGL::getTexParameteri(GCGLenum target, GCGLenum pname)
 {
+    GCGLint value = 0;
     if (!makeContextCurrent())
-        return;
-
-    gl::GetTexParameteriv(target, pname, value);
+        return value;
+    gl::GetTexParameterivRobustANGLE(target, pname, 1, nullptr, &value);
+    return value;
 }
 
-void GraphicsContextGLOpenGL::getUniformfv(PlatformGLObject program, GCGLint location, GCGLfloat* value)
+void GraphicsContextGLOpenGL::getUniformfv(PlatformGLObject program, GCGLint location, GCGLSpan<GCGLfloat> value)
 {
     if (!makeContextCurrent())
         return;
-
-    gl::GetUniformfv(program, location, value);
+    // FIXME: Bug in ANGLE bufSize validation for uniforms. See https://bugs.webkit.org/show_bug.cgi?id=219069.
+    auto bufSize = value.bufSize * sizeof(*value);
+    gl::GetUniformfvRobustANGLE(program, location, bufSize, nullptr, value.data);
 }
 
-void GraphicsContextGLOpenGL::getUniformiv(PlatformGLObject program, GCGLint location, GCGLint* value)
+void GraphicsContextGLOpenGL::getUniformiv(PlatformGLObject program, GCGLint location, GCGLSpan<GCGLint> value)
 {
     if (!makeContextCurrent())
         return;
-
-    gl::GetUniformiv(program, location, value);
+    // FIXME: Bug in ANGLE bufSize validation for uniforms. See https://bugs.webkit.org/show_bug.cgi?id=219069.
+    auto bufSize = value.bufSize * sizeof(*value);
+    gl::GetUniformivRobustANGLE(program, location, bufSize, nullptr, value.data);
 }
 
-void GraphicsContextGLOpenGL::getUniformuiv(PlatformGLObject program, GCGLint location, GCGLuint* value)
+void GraphicsContextGLOpenGL::getUniformuiv(PlatformGLObject program, GCGLint location, GCGLSpan<GCGLuint> value)
 {
     if (!makeContextCurrent())
         return;
-
-    gl::GetUniformuiv(program, location, value);
+    // FIXME: Bug in ANGLE bufSize validation for uniforms. See https://bugs.webkit.org/show_bug.cgi?id=219069.
+    auto bufSize = value.bufSize * sizeof(*value);
+    gl::GetUniformuivRobustANGLE(program, location, bufSize, nullptr, value.data);
 }
 
 GCGLint GraphicsContextGLOpenGL::getUniformLocation(PlatformGLObject program, const String& name)
@@ -2014,20 +2003,20 @@ GCGLint GraphicsContextGLOpenGL::getUniformLocation(PlatformGLObject program, co
     return gl::GetUniformLocation(program, name.utf8().data());
 }
 
-void GraphicsContextGLOpenGL::getVertexAttribfv(GCGLuint index, GCGLenum pname, GCGLfloat* value)
+void GraphicsContextGLOpenGL::getVertexAttribfv(GCGLuint index, GCGLenum pname, GCGLSpan<GCGLfloat> value)
 {
     if (!makeContextCurrent())
         return;
 
-    gl::GetVertexAttribfv(index, pname, value);
+    gl::GetVertexAttribfvRobustANGLE(index, pname, value.bufSize, nullptr, value.data);
 }
 
-void GraphicsContextGLOpenGL::getVertexAttribiv(GCGLuint index, GCGLenum pname, GCGLint* value)
+void GraphicsContextGLOpenGL::getVertexAttribiv(GCGLuint index, GCGLenum pname, GCGLSpan<GCGLint> value)
 {
     if (!makeContextCurrent())
         return;
 
-    gl::GetVertexAttribiv(index, pname, value);
+    gl::GetVertexAttribivRobustANGLE(index, pname, value.bufSize, nullptr, value.data);
 }
 
 GCGLsizeiptr GraphicsContextGLOpenGL::getVertexAttribOffset(GCGLuint index, GCGLenum pname)
@@ -2036,7 +2025,7 @@ GCGLsizeiptr GraphicsContextGLOpenGL::getVertexAttribOffset(GCGLuint index, GCGL
         return 0;
 
     GLvoid* pointer = 0;
-    gl::GetVertexAttribPointerv(index, pname, &pointer);
+    gl::GetVertexAttribPointervRobustANGLE(index, pname, 1, nullptr, &pointer);
     return static_cast<GCGLsizeiptr>(reinterpret_cast<intptr_t>(pointer));
 }
 
@@ -2952,6 +2941,14 @@ void GraphicsContextGLOpenGL::uniformMatrix4fv(GCGLint location, GCGLboolean tra
 
     gl::UniformMatrix4fv(location, srcLength, transpose, data + srcOffset);
 }
+
+void GraphicsContextGLOpenGL::getActiveUniformBlockiv(GCGLuint program, GCGLuint uniformBlockIndex, GCGLenum pname, GCGLSpan<GCGLint> params)
+{
+    if (!makeContextCurrent())
+        return;
+    gl::GetActiveUniformBlockivRobustANGLE(program, uniformBlockIndex, pname, params.bufSize, nullptr, params.data);
+}
+
 
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
 GraphicsContextGLCV* GraphicsContextGLOpenGL::asCV()

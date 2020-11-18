@@ -216,8 +216,7 @@ void WebGLProgram::cacheActiveAttribLocations(GraphicsContextGL* context3d)
 {
     m_activeAttribLocations.clear();
 
-    GCGLint numAttribs = 0;
-    context3d->getProgramiv(object(), GraphicsContextGL::ACTIVE_ATTRIBUTES, &numAttribs);
+    GCGLint numAttribs = context3d->getProgrami(object(), GraphicsContextGL::ACTIVE_ATTRIBUTES);
     m_activeAttribLocations.resize(static_cast<size_t>(numAttribs));
     for (int i = 0; i < numAttribs; ++i) {
         GraphicsContextGL::ActiveInfo info;
@@ -241,8 +240,7 @@ void WebGLProgram::cacheInfoIfNeeded()
     GraphicsContextGL* context = getAGraphicsContextGL();
     if (!context)
         return;
-    GCGLint linkStatus = 0;
-    context->getProgramiv(object(), GraphicsContextGL::LINK_STATUS, &linkStatus);
+    GCGLint linkStatus = context->getProgrami(object(), GraphicsContextGL::LINK_STATUS);
     m_linkStatus = linkStatus;
     if (m_linkStatus) {
         cacheActiveAttribLocations(context);

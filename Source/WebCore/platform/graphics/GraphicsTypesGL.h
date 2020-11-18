@@ -20,12 +20,14 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #pragma once
 
+#include <limits>
 #include <wtf/Forward.h>
+#include <wtf/Vector.h>
 
 // GCGL types match the corresponding GL types as defined in OpenGL ES 2.0
 // header file gl2.h from khronos.org.
@@ -55,3 +57,51 @@ typedef GCGLuint PlatformGLObject;
 #if !PLATFORM(COCOA)
 typedef unsigned GLuint;
 #endif
+
+template<typename T, size_t Extent = std::numeric_limits<size_t>::max()>
+struct GCGLSpan;
+template<typename T, size_t Extent>
+struct GCGLSpan {
+    explicit GCGLSpan(T* array)
+        : data(array)
+    { }
+    GCGLSpan(T (&array)[Extent])
+        : data(array)
+    { }
+    T& operator[](size_t i) { RELEASE_ASSERT(data && i < bufSize); return data[i]; }
+    T& operator*() { RELEASE_ASSERT(data && bufSize); return *data; }
+    T* data;
+    constexpr static size_t bufSize = Extent;
+};
+
+template<typename T>
+struct GCGLSpan<T, std::numeric_limits<size_t>::max()> {
+    GCGLSpan(T* array, size_t bufSize_)
+        : data(array)
+        , bufSize(bufSize_)
+    { }
+    template<size_t Sz> GCGLSpan(T (&array)[Sz])
+        : data(array)
+        , bufSize(Sz)
+    { }
+    GCGLSpan(WTF::Vector<T>& array)
+        : data(array.data())
+        , bufSize(array.size())
+    { }
+    T& operator[](size_t i) { RELEASE_ASSERT(data && i < bufSize); return data[i]; }
+    T& operator*() { RELEASE_ASSERT(data && bufSize); return *data; }
+    T* data;
+    const size_t bufSize;
+};
+
+template<typename T, size_t N>
+GCGLSpan(T (&)[N]) -> GCGLSpan<T, N>;
+
+template<typename T>
+GCGLSpan(WTF::Vector<T>&) -> GCGLSpan<T>;
+
+template<typename T>
+GCGLSpan<T> makeGCGLSpan(T* data, size_t count)
+{
+    return GCGLSpan<T> { data, count };
+}

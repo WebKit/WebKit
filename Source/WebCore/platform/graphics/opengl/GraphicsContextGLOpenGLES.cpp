@@ -196,23 +196,23 @@ void GraphicsContextGLOpenGL::renderbufferStorage(GCGLenum target, GCGLenum inte
     ::glRenderbufferStorage(target, internalformat, width, height);
 }
 
-void GraphicsContextGLOpenGL::getIntegerv(GCGLenum pname, GCGLint* value)
+void GraphicsContextGLOpenGL::getIntegerv(GCGLenum pname, GCGLSpan<GCGLint> value)
 {
     if (!makeContextCurrent())
         return;
 
-    ::glGetIntegerv(pname, value);
+    ::glGetIntegerv(pname, value.data);
 }
 
-void GraphicsContextGLOpenGL::getShaderPrecisionFormat(GCGLenum shaderType, GCGLenum precisionType, GCGLint* range, GCGLint* precision)
+void GraphicsContextGLOpenGL::getShaderPrecisionFormat(GCGLenum shaderType, GCGLenum precisionType, GCGLSpan<GCGLint, 2> range, GCGLint* precision)
 {
-    ASSERT(range);
+    ASSERT(range.data);
     ASSERT(precision);
 
     if (!makeContextCurrent())
         return;
 
-    ::glGetShaderPrecisionFormat(shaderType, precisionType, range, precision);
+    ::glGetShaderPrecisionFormat(shaderType, precisionType, range.data, precision);
 }
 
 bool GraphicsContextGLOpenGL::texImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, const void* pixels)
@@ -330,18 +330,19 @@ GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes att
     ShBuiltInResources ANGLEResources;
     ShInitBuiltInResources(&ANGLEResources);
     
-    getIntegerv(GraphicsContextGLOpenGL::MAX_VERTEX_ATTRIBS, &ANGLEResources.MaxVertexAttribs);
-    getIntegerv(GraphicsContextGLOpenGL::MAX_VERTEX_UNIFORM_VECTORS, &ANGLEResources.MaxVertexUniformVectors);
-    getIntegerv(GraphicsContextGLOpenGL::MAX_VARYING_VECTORS, &ANGLEResources.MaxVaryingVectors);
-    getIntegerv(GraphicsContextGLOpenGL::MAX_VERTEX_TEXTURE_IMAGE_UNITS, &ANGLEResources.MaxVertexTextureImageUnits);
-    getIntegerv(GraphicsContextGLOpenGL::MAX_COMBINED_TEXTURE_IMAGE_UNITS, &ANGLEResources.MaxCombinedTextureImageUnits);
-    getIntegerv(GraphicsContextGLOpenGL::MAX_TEXTURE_IMAGE_UNITS, &ANGLEResources.MaxTextureImageUnits);
-    getIntegerv(GraphicsContextGLOpenGL::MAX_FRAGMENT_UNIFORM_VECTORS, &ANGLEResources.MaxFragmentUniformVectors);
+    ::glGetIntegerv(GraphicsContextGLOpenGL::MAX_VERTEX_ATTRIBS, &ANGLEResources.MaxVertexAttribs);
+    ::glGetIntegerv(GraphicsContextGLOpenGL::MAX_VERTEX_UNIFORM_VECTORS, &ANGLEResources.MaxVertexUniformVectors);
+    ::glGetIntegerv(GraphicsContextGLOpenGL::MAX_VARYING_VECTORS, &ANGLEResources.MaxVaryingVectors);
+    ::glGetIntegerv(GraphicsContextGLOpenGL::MAX_VERTEX_TEXTURE_IMAGE_UNITS, &ANGLEResources.MaxVertexTextureImageUnits);
+    ::glGetIntegerv(GraphicsContextGLOpenGL::MAX_COMBINED_TEXTURE_IMAGE_UNITS, &ANGLEResources.MaxCombinedTextureImageUnits);
+    ::glGetIntegerv(GraphicsContextGLOpenGL::MAX_TEXTURE_IMAGE_UNITS, &ANGLEResources.MaxTextureImageUnits);
+    ::glGetIntegerv(GraphicsContextGLOpenGL::MAX_FRAGMENT_UNIFORM_VECTORS, &ANGLEResources.MaxFragmentUniformVectors);
     
     // Always set to 1 for OpenGL ES.
     ANGLEResources.MaxDrawBuffers = 1;
     
-    GCGLint range[2], precision;
+    GCGLint range[2] { };
+    GCGLint precision = 0;
     getShaderPrecisionFormat(GraphicsContextGLOpenGL::FRAGMENT_SHADER, GraphicsContextGLOpenGL::HIGH_FLOAT, range, &precision);
     ANGLEResources.FragmentPrecisionHigh = (range[0] || range[1] || precision);
     

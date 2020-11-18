@@ -986,51 +986,50 @@ public:
 
     virtual GCGLint getAttribLocation(PlatformGLObject, const String& name) = 0;
 
-    virtual void getBufferParameteriv(GCGLenum target, GCGLenum pname, GCGLint* value) = 0;
+    virtual GCGLint getBufferParameteri(GCGLenum target, GCGLenum pname) = 0;
 
     // getParameter
     virtual String getString(GCGLenum name) = 0;
-    virtual void getFloatv(GCGLenum pname, GCGLfloat* value) = 0;
-    virtual void getIntegerv(GCGLenum pname, GCGLint* value) = 0;
-    virtual void getIntegeri_v(GCGLenum pname, GCGLuint index, GCGLint* value) = 0;
-    virtual void getInteger64v(GCGLenum pname, GCGLint64* value) = 0;
-    virtual void getInteger64i_v(GCGLenum pname, GCGLuint index, GCGLint64* value) = 0;
-    virtual void getProgramiv(PlatformGLObject program, GCGLenum pname, GCGLint* value) = 0;
-    virtual void getBooleanv(GCGLenum pname, GCGLboolean* value) = 0;
+    virtual void getFloatv(GCGLenum pname, GCGLSpan<GCGLfloat> value) = 0;
+    virtual void getIntegerv(GCGLenum pname, GCGLSpan<GCGLint> value) = 0;
+    virtual GCGLint64 getInteger64(GCGLenum pname) = 0;
+    virtual GCGLint64 getInteger64i(GCGLenum pname, GCGLuint index) = 0;
+    virtual GCGLint getProgrami(PlatformGLObject program, GCGLenum pname) = 0;
+    virtual void getBooleanv(GCGLenum pname, GCGLSpan<GCGLboolean> value) = 0;
 
     virtual GCGLenum getError() = 0;
 
     // getFramebufferAttachmentParameter
-    virtual void getFramebufferAttachmentParameteriv(GCGLenum target, GCGLenum attachment, GCGLenum pname, GCGLint* value) = 0;
+    virtual GCGLint getFramebufferAttachmentParameteri(GCGLenum target, GCGLenum attachment, GCGLenum pname) = 0;
 
     // getProgramParameter
     virtual String getProgramInfoLog(PlatformGLObject) = 0;
 
     // getRenderbufferParameter
-    virtual void getRenderbufferParameteriv(GCGLenum target, GCGLenum pname, GCGLint* value) = 0;
+    virtual GCGLint getRenderbufferParameteri(GCGLenum target, GCGLenum pname) = 0;
 
     // getShaderParameter
-    virtual void getShaderiv(PlatformGLObject, GCGLenum pname, GCGLint* value) = 0;
+    virtual GCGLint getShaderi(PlatformGLObject, GCGLenum pname) = 0;
 
     virtual String getShaderInfoLog(PlatformGLObject) = 0;
-    virtual void getShaderPrecisionFormat(GCGLenum shaderType, GCGLenum precisionType, GCGLint* range, GCGLint* precision) = 0;
+    virtual void getShaderPrecisionFormat(GCGLenum shaderType, GCGLenum precisionType, GCGLSpan<GCGLint, 2> range, GCGLint* precision) = 0;
 
     virtual String getShaderSource(PlatformGLObject) = 0;
 
     // getTexParameter
-    virtual void getTexParameterfv(GCGLenum target, GCGLenum pname, GCGLfloat* value) = 0;
-    virtual void getTexParameteriv(GCGLenum target, GCGLenum pname, GCGLint* value) = 0;
+    virtual GCGLfloat getTexParameterf(GCGLenum target, GCGLenum pname) = 0;
+    virtual GCGLint getTexParameteri(GCGLenum target, GCGLenum pname) = 0;
 
     // getUniform
-    virtual void getUniformfv(PlatformGLObject program, GCGLint location, GCGLfloat* value) = 0;
-    virtual void getUniformiv(PlatformGLObject program, GCGLint location, GCGLint* value) = 0;
-    virtual void getUniformuiv(PlatformGLObject program, GCGLint location, GCGLuint* value) = 0;
+    virtual void getUniformfv(PlatformGLObject program, GCGLint location, GCGLSpan<GCGLfloat> value) = 0;
+    virtual void getUniformiv(PlatformGLObject program, GCGLint location, GCGLSpan<GCGLint> value) = 0;
+    virtual void getUniformuiv(PlatformGLObject program, GCGLint location, GCGLSpan<GCGLuint> value) = 0;
 
     virtual GCGLint getUniformLocation(PlatformGLObject, const String& name) = 0;
 
     // getVertexAttrib
-    virtual void getVertexAttribfv(GCGLuint index, GCGLenum pname, GCGLfloat* value) = 0;
-    virtual void getVertexAttribiv(GCGLuint index, GCGLenum pname, GCGLint* value) = 0;
+    virtual void getVertexAttribfv(GCGLuint index, GCGLenum pname, GCGLSpan<GCGLfloat> value) = 0;
+    virtual void getVertexAttribiv(GCGLuint index, GCGLenum pname, GCGLSpan<GCGLint> value) = 0;
 
     virtual GCGLsizeiptr getVertexAttribOffset(GCGLuint index, GCGLenum pname) = 0;
 
@@ -1236,7 +1235,13 @@ public:
     virtual void uniformMatrix3fv(GCGLint location, GCGLboolean transpose, const GCGLfloat* data, GCGLuint srcOffset, GCGLuint srcLength) = 0;
     virtual void uniformMatrix4fv(GCGLint location, GCGLboolean transpose, const GCGLfloat* data, GCGLuint srcOffset, GCGLuint srcLength) = 0;
 
+    virtual void getActiveUniformBlockiv(GCGLuint program, GCGLuint uniformBlockIndex, GCGLenum pname, GCGLSpan<GCGLint> params) = 0;
+
     // Other functions.
+    GCGLfloat getFloat(GCGLenum pname);
+    GCGLboolean getBoolean(GCGLenum pname);
+    GCGLint getInteger(GCGLenum pname);
+    GCGLint getActiveUniformBlocki(GCGLuint program, GCGLuint uniformBlockIndex, GCGLenum pname);
 
     GraphicsContextGLAttributes contextAttributes() const { return m_attrs; }
     void setContextAttributes(const GraphicsContextGLAttributes& attrs) { m_attrs = attrs; }
@@ -1366,6 +1371,35 @@ private:
     GraphicsContextGLAttributes m_attrs;
     Destination m_destination;
 };
+
+inline GCGLfloat GraphicsContextGL::getFloat(GCGLenum pname)
+{
+    GCGLfloat value[1] { };
+    getFloatv(pname, value);
+    return value[0];
+}
+
+inline GCGLboolean GraphicsContextGL::getBoolean(GCGLenum pname)
+{
+    GCGLboolean value[1] { };
+    getBooleanv(pname, value);
+    return value[0];
+}
+
+inline GCGLint GraphicsContextGL::getInteger(GCGLenum pname)
+{
+    GCGLint value[1] { };
+    getIntegerv(pname, value);
+    return value[0];
+}
+
+inline GCGLint GraphicsContextGL::getActiveUniformBlocki(GCGLuint program, GCGLuint uniformBlockIndex, GCGLenum pname)
+{
+    GCGLint value[1] { };
+    getActiveUniformBlockiv(program, uniformBlockIndex, pname, value);
+    return value[0];
+}
+
 
 } // namespace WebCore
 

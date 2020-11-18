@@ -471,8 +471,7 @@ bool GraphicsContextGLCVANGLE::initializeUVContextObjects()
 
     m_context->compileShaderDirect(vertexShader);
 
-    GCGLint status = 0;
-    m_context->getShaderiv(vertexShader, GraphicsContextGL::COMPILE_STATUS, &status);
+    GCGLint status = m_context->getShaderi(vertexShader, GraphicsContextGL::COMPILE_STATUS);
     if (!status) {
         LOG(WebGL, "GraphicsContextGLCVANGLE::initializeUVContextObjects(%p) - Vertex shader failed to compile.", this);
         m_context->deleteShader(vertexShader);
@@ -487,7 +486,7 @@ bool GraphicsContextGLCVANGLE::initializeUVContextObjects()
 
     m_context->compileShaderDirect(fragmentShader);
 
-    m_context->getShaderiv(fragmentShader, GraphicsContextGL::COMPILE_STATUS, &status);
+    status = m_context->getShaderi(fragmentShader, GraphicsContextGL::COMPILE_STATUS);
     if (!status) {
         LOG(WebGL, "GraphicsContextGLCVANGLE::initializeUVContextObjects(%p) - Fragment shader failed to compile.", this);
         m_context->deleteShader(vertexShader);
@@ -500,7 +499,7 @@ bool GraphicsContextGLCVANGLE::initializeUVContextObjects()
     m_context->attachShader(m_yuvProgram, fragmentShader);
     m_context->linkProgram(m_yuvProgram);
 
-    m_context->getProgramiv(m_yuvProgram, GraphicsContextGL::LINK_STATUS, &status);
+    status = m_context->getProgrami(m_yuvProgram, GraphicsContextGL::LINK_STATUS);
     if (!status) {
         LOG(WebGL, "GraphicsContextGLCVANGLE::initializeUVContextObjects(%p) - Program failed to link.", this);
         m_context->deleteShader(vertexShader);
