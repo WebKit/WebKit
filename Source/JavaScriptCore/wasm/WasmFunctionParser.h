@@ -838,8 +838,8 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         WASM_PARSER_FAIL_IF(!m_info.memory, "grow_memory is only valid if a memory is defined or imported");
 
         uint8_t reserved;
-        WASM_PARSER_FAIL_IF(!parseVarUInt1(reserved), "can't parse reserved varUint1 for grow_memory");
-        WASM_PARSER_FAIL_IF(reserved != 0, "reserved varUint1 for grow_memory must be zero");
+        WASM_PARSER_FAIL_IF(!parseUInt8(reserved), "can't parse reserved byte for grow_memory");
+        WASM_PARSER_FAIL_IF(reserved != 0, "reserved byte for grow_memory must be zero");
 
         TypedExpression delta;
         WASM_TRY_POP_EXPRESSION_STACK_INTO(delta, "expect an i32 argument to grow_memory on the stack");
@@ -856,8 +856,8 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         WASM_PARSER_FAIL_IF(!m_info.memory, "current_memory is only valid if a memory is defined or imported");
 
         uint8_t reserved;
-        WASM_PARSER_FAIL_IF(!parseVarUInt1(reserved), "can't parse reserved varUint1 for current_memory");
-        WASM_PARSER_FAIL_IF(reserved != 0, "reserved varUint1 for current_memory must be zero");
+        WASM_PARSER_FAIL_IF(!parseUInt8(reserved), "can't parse reserved byte for current_memory");
+        WASM_PARSER_FAIL_IF(reserved != 0, "reserved byte for current_memory must be zero");
 
         ExpressionType result;
         WASM_TRY_ADD_TO_CONTEXT(addCurrentMemory(result));
@@ -1007,7 +1007,8 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
     case GrowMemory:
     case CurrentMemory: {
         uint8_t reserved;
-        WASM_PARSER_FAIL_IF(!parseVarUInt1(reserved), "can't parse reserved varUint1 for grow_memory/current_memory");
+        WASM_PARSER_FAIL_IF(!parseUInt8(reserved), "can't parse reserved byte for grow_memory/current_memory");
+        WASM_PARSER_FAIL_IF(reserved != 0, "reserved byte for grow_memory/current_memory must be zero");
         return { };
     }
 

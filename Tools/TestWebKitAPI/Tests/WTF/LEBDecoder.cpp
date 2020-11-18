@@ -25,20 +25,33 @@
 
 #include "config.h"
 
+#include <string>
 #include <wtf/LEBDecoder.h>
 #include <wtf/Vector.h>
 
 namespace TestWebKitAPI {
 
+static std::string toString(const Vector<uint8_t>& vector)
+{
+    std::stringstream out;
+    out << std::hex;
+    out << "{ ";
+    for (uint8_t v : vector)
+        out << "0x" << std::setfill('0') << std::setw(2) << static_cast<unsigned>(v) << ", ";
+    out << "}";
+    return out.str();
+}
+
 static void testUInt32LEBDecode(std::initializer_list<uint8_t> data, size_t startOffset, bool expectedStatus, uint32_t expectedResult, size_t expectedOffset)
 {
     Vector<uint8_t> vector(data);
+    auto string = toString(vector);
     uint32_t result;
     bool status = WTF::LEBDecoder::decodeUInt32(vector.data(), vector.size(), startOffset, result);
-    EXPECT_EQ(expectedStatus, status);
+    EXPECT_EQ(expectedStatus, status) << string;
     if (expectedStatus) {
-        EXPECT_EQ(expectedResult, result);
-        EXPECT_EQ(expectedOffset, startOffset);
+        EXPECT_EQ(expectedResult, result) << string;
+        EXPECT_EQ(expectedOffset, startOffset) << string;
     }
 }
 
@@ -51,7 +64,8 @@ TEST(WTF, LEBDecoderUInt32)
     testUInt32LEBDecode({ 0x89, 0x12 }, 0, true, 0x909lu, 2lu);
     testUInt32LEBDecode({ 0xf3, 0x85, 0x02 }, 0, true, 0x82f3lu, 3lu);
     testUInt32LEBDecode({ 0xf3, 0x85, 0xff, 0x74 }, 0, true, 0xe9fc2f3lu, 4lu);
-    testUInt32LEBDecode({ 0xf3, 0x85, 0xff, 0xf4, 0x7f }, 0, true, 0xfe9fc2f3lu, 5lu);
+    testUInt32LEBDecode({ 0xf3, 0x85, 0xff, 0xf4, 0x0f }, 0, true, 0xfe9fc2f3lu, 5lu);
+    testUInt32LEBDecode({ 0xff, 0xff, 0xff, 0xff, 0x0f }, 0, true, 0xfffffffflu, 5lu);
     // Test with extra trailing numbers
     testUInt32LEBDecode({ 0x07, 0x80 }, 0, true, 0x7lu, 1lu);
     testUInt32LEBDecode({ 0x07, 0x75 }, 0, true, 0x7lu, 1lu);
@@ -75,17 +89,21 @@ TEST(WTF, LEBDecoderUInt32)
     testUInt32LEBDecode({ 0x80, 0x80, 0xab, 0x8a, 0x9a, 0xa3, 0xff }, 0, false, 0x0lu, 0lu);
     // Test decode off end of array
     testUInt32LEBDecode({ 0x80, 0x80, 0xab, 0x8a, 0x9a, 0xa3, 0xff }, 2, false, 0x0lu, 0lu);
+    // Test decode overflow
+    testUInt32LEBDecode({ 0xf3, 0x85, 0xff, 0xf4, 0x1f }, 0, false, 0x0lu, 0lu);
+    testUInt32LEBDecode({ 0xff, 0xff, 0xff, 0xff, 0x10 }, 0, false, 0x0lu, 0lu);
 }
 
 static void testUInt64LEBDecode(std::initializer_list<uint8_t> data, size_t startOffset, bool expectedStatus, uint64_t expectedResult, size_t expectedOffset)
 {
     Vector<uint8_t> vector(data);
+    auto string = toString(vector);
     uint64_t result;
     bool status = WTF::LEBDecoder::decodeUInt64(vector.data(), vector.size(), startOffset, result);
-    EXPECT_EQ(expectedStatus, status);
+    EXPECT_EQ(expectedStatus, status) << string;
     if (expectedStatus) {
-        EXPECT_EQ(expectedResult, result);
-        EXPECT_EQ(expectedOffset, startOffset);
+        EXPECT_EQ(expectedResult, result) << string;
+        EXPECT_EQ(expectedOffset, startOffset) << string;
     }
 }
 
@@ -104,7 +122,8 @@ TEST(WTF, LEBDecoderUInt64)
     testUInt64LEBDecode({ 0xf3, 0x85, 0xff, 0xf4, 0xff, 0xcb, 0xba, 0x0f }, 0, true, 0x1eea5ffe9fc2f3lu, 8lu);
     testUInt64LEBDecode({ 0xf3, 0x85, 0xff, 0xf4, 0xff, 0xcb, 0xba, 0x8f, 0x69 }, 0, true, 0x691eea5ffe9fc2f3lu, 9lu);
     testUInt64LEBDecode({ 0xf3, 0x85, 0xff, 0xf4, 0xff, 0xcb, 0xba, 0x8f, 0xe9, 0x01 }, 0, true, 0xe91eea5ffe9fc2f3lu, 10lu);
-    testUInt64LEBDecode({ 0xf3, 0x85, 0xff, 0xf4, 0xff, 0xcb, 0xba, 0x8f, 0xe9, 0x70 }, 0, true, 0x691eea5ffe9fc2f3lu, 10lu);
+    testUInt64LEBDecode({ 0xf3, 0x85, 0xff, 0xf4, 0xff, 0xcb, 0xba, 0x8f, 0xe9, 0x00 }, 0, true, 0x691eea5ffe9fc2f3lu, 10lu);
+    testUInt64LEBDecode({ 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x01 }, 0, true, 0xfffffffffffffffflu, 10lu);
     // Test with extra trailing numbers
     testUInt64LEBDecode({ 0x07, 0x80 }, 0, true, 0x7lu, 1lu);
     testUInt64LEBDecode({ 0x07, 0x75 }, 0, true, 0x7lu, 1lu);
@@ -135,17 +154,20 @@ TEST(WTF, LEBDecoderUInt64)
     testUInt64LEBDecode({ 0x80, 0x80, 0xab, 0x8a, 0x9a, 0xa3, 0xff }, 2, false, 0x0lu, 0lu);
     testUInt64LEBDecode({ 0x80, 0x80, 0xab, 0x8a, 0x9a, 0xa3, 0xff }, 2, false, 0x0lu, 0lu);
     testUInt64LEBDecode({ 0x92, 0xf3, 0x85, 0xff, 0xf4, 0xff, 0xcb, 0xba, 0x8f }, 1, false, 0x0lu, 0lu);
+    // Test decode overflow
+    testUInt64LEBDecode({ 0xf3, 0x85, 0xff, 0xf4, 0xff, 0xcb, 0xba, 0x8f, 0xe9, 0x02 }, 0, false, 0x0lu, 0lu);
 }
 
 static void testInt32LEBDecode(std::initializer_list<uint8_t> data, size_t startOffset, bool expectedStatus, int32_t expectedResult, size_t expectedOffset)
 {
     Vector<uint8_t> vector(data);
+    auto string = toString(vector);
     int32_t result;
     bool status = WTF::LEBDecoder::decodeInt32(vector.data(), vector.size(), startOffset, result);
-    EXPECT_EQ(expectedStatus, status);
+    EXPECT_EQ(expectedStatus, status) << string;
     if (expectedStatus) {
-        EXPECT_EQ(expectedResult, result);
-        EXPECT_EQ(expectedOffset, startOffset);
+        EXPECT_EQ(expectedResult, result) << string;
+        EXPECT_EQ(expectedOffset, startOffset) << string;
     }
 }
 
@@ -159,6 +181,9 @@ TEST(WTF, LEBDecoderInt32)
     testInt32LEBDecode({ 0xf3, 0x85, 0x02 }, 0, true, 0x82f3, 3lu);
     testInt32LEBDecode({ 0xf3, 0x85, 0xff, 0x74 }, 0, true, 0xfe9fc2f3, 4lu);
     testInt32LEBDecode({ 0xf3, 0x85, 0xff, 0xf4, 0x7f }, 0, true, 0xfe9fc2f3, 5lu);
+    testInt32LEBDecode({ 0xff, 0xff, 0xff, 0xff, 0x07 }, 0, true, INT32_MAX, 5lu);
+    testInt32LEBDecode({ 0xff, 0xff, 0xff, 0xff, 0x7f }, 0, true, -1, 5lu);
+    testInt32LEBDecode({ 0xff, 0xff, 0xff, 0xff, 0x7b }, 0, true, -1073741825, 5lu);
     // Test with extra trailing numbers
     testInt32LEBDecode({ 0x07, 0x80 }, 0, true, 0x7, 1lu);
     testInt32LEBDecode({ 0x07, 0x75 }, 0, true, 0x7, 1lu);
@@ -182,17 +207,21 @@ TEST(WTF, LEBDecoderInt32)
     testInt32LEBDecode({ 0x80, 0x80, 0xab, 0x8a, 0x9a, 0xa3, 0xff }, 0, false, 0x0, 0lu);
     // Test decode off end of array
     testInt32LEBDecode({ 0x80, 0x80, 0xab, 0x8a, 0x9a, 0xa3, 0xff }, 2, false, 0x0, 0lu);
+    // Test decode overflow
+    testInt32LEBDecode({ 0xff, 0xff, 0xff, 0xff, 0x08 }, 0, false, 0, 0lu);
+    testInt32LEBDecode({ 0xff, 0xff, 0xff, 0xff, 0x77 }, 0, false, 0, 0lu);
 }
 
 static void testInt64LEBDecode(std::initializer_list<uint8_t> data, size_t startOffset, bool expectedStatus, int64_t expectedResult, size_t expectedOffset)
 {
     Vector<uint8_t> vector(data);
+    auto string = toString(vector);
     int64_t result;
     bool status = WTF::LEBDecoder::decodeInt64(vector.data(), vector.size(), startOffset, result);
-    EXPECT_EQ(expectedStatus, status);
+    EXPECT_EQ(expectedStatus, status) << string;
     if (expectedStatus) {
-        EXPECT_EQ(expectedResult, result);
-        EXPECT_EQ(expectedOffset, startOffset);
+        EXPECT_EQ(expectedResult, result) << string;
+        EXPECT_EQ(expectedOffset, startOffset) << string;
     }
 }
 
@@ -210,8 +239,12 @@ TEST(WTF, LEBDecoderInt64)
     testInt64LEBDecode({ 0xf3, 0x85, 0xff, 0xf4, 0x8f, 0x1a }, 0, true, 0xd0fe9fc2f3, 6lu);
     testInt64LEBDecode({ 0xf3, 0x85, 0xff, 0xf4, 0x8f, 0x9a, 0x80, 0x2a }, 0, true, 0x5400d0fe9fc2f3, 8lu);
     testInt64LEBDecode({ 0xf3, 0x85, 0xff, 0xf4, 0x8f, 0x9a, 0x80, 0xaa, 0x41 }, 0, true, 0xc15400d0fe9fc2f3, 9lu);
-    testInt64LEBDecode({ 0xf3, 0x85, 0xff, 0xf4, 0x8f, 0x9a, 0x80, 0xaa, 0xc1, 0x01 }, 0, true, 0xc15400d0fe9fc2f3, 10lu);
-    testInt64LEBDecode({ 0xf3, 0x85, 0xff, 0xf4, 0x8f, 0x9a, 0x80, 0xaa, 0xc1, 0x62 }, 0, true, 0x415400d0fe9fc2f3, 10lu);
+    testInt64LEBDecode({ 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x3f, }, 0, true, INT64_MAX >> 1, 9lu);
+    testInt64LEBDecode({ 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x7f, }, 0, true, -1, 9lu);
+    testInt64LEBDecode({ 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x00 }, 0, true, INT64_MAX, 10lu);
+    testInt64LEBDecode({ 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x7f }, 0, true, -1, 10lu);
+    testInt64LEBDecode({ 0xf3, 0x85, 0xff, 0xf4, 0x8f, 0x9a, 0x80, 0xaa, 0xc1, 0x7f }, 0, true, 0xc15400d0fe9fc2f3, 10lu);
+    testInt64LEBDecode({ 0xf3, 0x85, 0xff, 0xf4, 0x8f, 0x9a, 0x80, 0xaa, 0xc1, 0x00 }, 0, true, 0x415400d0fe9fc2f3, 10lu);
     // Test with extra trailing numbers
     testInt64LEBDecode({ 0x07, 0x80 }, 0, true, 0x7, 1lu);
     testInt64LEBDecode({ 0x07, 0x75 }, 0, true, 0x7, 1lu);
@@ -233,8 +266,12 @@ TEST(WTF, LEBDecoderInt64)
     testInt64LEBDecode({ 0x80, 0x80, 0x80, 0x80, 0x80, 0x80 }, 0, false, 0x0, 0lu);
     testInt64LEBDecode({ 0x80, 0x80, 0xab, 0x8a, 0x9a, 0xa3, 0xff }, 1, false, 0x0, 0lu);
     testInt64LEBDecode({ 0x80, 0x80, 0xab, 0x8a, 0x9a, 0xa3, 0xff }, 0, false, 0x0, 0lu);
+    testInt64LEBDecode({ 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x00 }, 0, false, 0lu, 0lu);
     // Test decode off end of array
     testInt64LEBDecode({ 0x80, 0x80, 0xab, 0x8a, 0x9a, 0xa3, 0xff }, 2, false, 0x0, 0lu);
+    // Test decode overflow
+    testInt64LEBDecode({ 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x01 }, 0, false, 0, 0lu);
+    testInt64LEBDecode({ 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x7e }, 0, false, 0, 0lu);
 }
 
 

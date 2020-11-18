@@ -1,3 +1,20 @@
+2020-11-17  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Improve Wasm binary test coverage
+        https://bugs.webkit.org/show_bug.cgi?id=204843
+
+        Reviewed by Darin Adler.
+
+        We add more tests for LEBDecoder. In particular, the added tests focus on the case which overflow bits.
+
+        * TestWebKitAPI/Tests/WTF/LEBDecoder.cpp:
+        (TestWebKitAPI::toString):
+        (TestWebKitAPI::testUInt32LEBDecode):
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::testUInt64LEBDecode):
+        (TestWebKitAPI::testInt32LEBDecode):
+        (TestWebKitAPI::testInt64LEBDecode):
+
 2020-11-18  Aakash Jain  <aakash_jain@apple.com>
 
         [ews] Add timeout to network requests

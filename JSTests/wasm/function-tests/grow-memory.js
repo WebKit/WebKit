@@ -66,7 +66,7 @@ function binaryShouldNotParse(builder, msg = "") {
             .End()
         .End();
 
-    binaryShouldNotParse(builder, "reserved varUint1 for grow_memory must be zero");
+    binaryShouldNotParse(builder, "reserved byte for grow_memory must be zero");
 }
 
 {
@@ -83,7 +83,7 @@ function binaryShouldNotParse(builder, msg = "") {
             .End()
         .End();
 
-    binaryShouldNotParse(builder, "reserved varUint1 for current_memory must be zero");
+    binaryShouldNotParse(builder, "reserved byte for current_memory must be zero");
 }
 
 {
@@ -95,12 +95,12 @@ function binaryShouldNotParse(builder, msg = "") {
         .Code()
             .Function({ret: "void", params: []})
                 .I32Const(25)
-                .CurrentMemory(0xffffff00)
+                .CurrentMemory(0xff)
                 .Drop()
             .End()
         .End();
 
-    binaryShouldNotParse(builder, "can't parse reserved varUint1 for current_memory");
+    binaryShouldNotParse(builder, "reserved byte for current_memory must be zero");
 }
 
 {
@@ -112,12 +112,12 @@ function binaryShouldNotParse(builder, msg = "") {
         .Code()
             .Function({ret: "void", params: []})
                 .I32Const(25)
-                .GrowMemory(0xffffff00)
+                .GrowMemory(0xff)
                 .Drop()
             .End()
         .End();
 
-    binaryShouldNotParse(builder, "can't parse reserved varUint1 for grow_memory");
+    binaryShouldNotParse(builder, "reserved byte for grow_memory must be zero");
 }
 
 {

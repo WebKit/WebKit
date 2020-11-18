@@ -1,3 +1,16 @@
+2020-11-17  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Improve Wasm binary test coverage
+        https://bugs.webkit.org/show_bug.cgi?id=204843
+
+        Reviewed by Darin Adler.
+
+        * wasm/function-tests/grow-memory.js:
+        (binaryShouldNotParse):
+        * wasm/spec-tests/binary-leb128.wast.js:
+        * wasm/spec-tests/binary.wast.js:
+        * wasm/wasm.json:
+
 2020-11-18  Ross Kirsling  <ross.kirsling@sony.com>
 
         Update test262 (2020.11.18)

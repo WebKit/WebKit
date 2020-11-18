@@ -1,3 +1,32 @@
+2020-11-17  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Improve Wasm binary test coverage
+        https://bugs.webkit.org/show_bug.cgi?id=204843
+
+        Reviewed by Darin Adler.
+
+        LEBDecoder should have more strict validation. One thing is that, we should reject pattern that includes ignored bits.
+        For example, in uint32_t, we can represent UINT32_MAX in 5 bytes like this.
+
+            0xff, 0xff, 0xff, 0xff, 0x0f
+            0b1111111_1111111_1111111_1111111_1111
+
+        Leading bytes has 0x80 trailing marker. And they includes each 7 bit slice. And the last byte includes 0b1111 part.
+        But we can also make it in the following form
+
+            0xff, 0xff, 0xff, 0xff, 0xff
+            0b1111111_1111111_1111111_1111111_1111
+
+        In the above case, the last byte's upper 4 bits are ignored in the result, and this is wrong in LEB128 encoding.
+        We should reject this input since the last byte includes overflown bits.
+        This patch adds this validation to WTF.
+
+        * wtf/LEBDecoder.h:
+        (WTF::LEBDecoder::maxByteLength):
+        (WTF::LEBDecoder::lastByteMask):
+        (WTF::LEBDecoder::decodeUInt):
+        (WTF::LEBDecoder::decodeInt):
+
 2020-11-18  Darin Adler  <darin@apple.com>
 
         Remove advanced plug-in feature: small plug-in blocking

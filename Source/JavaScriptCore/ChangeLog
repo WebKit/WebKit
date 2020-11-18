@@ -1,3 +1,25 @@
+2020-11-17  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Improve Wasm binary test coverage
+        https://bugs.webkit.org/show_bug.cgi?id=204843
+
+        Reviewed by Darin Adler.
+
+        This patch fixes some of bugs in wasm parser so that we validate malformed wasm modules more strictly.
+
+        1. current_memory / grow_memory should have uint8 flag, not varuint32 flag.
+        2. global section should have uint8 mutability information, not varuint32.
+        3. memory section should have varuint32 memory count.
+
+        * wasm/WasmFunctionParser.h:
+        (JSC::Wasm::FunctionParser<Context>::parseExpression):
+        (JSC::Wasm::FunctionParser<Context>::parseUnreachableExpression):
+        * wasm/WasmSectionParser.cpp:
+        (JSC::Wasm::SectionParser::parseResizableLimits):
+        (JSC::Wasm::SectionParser::parseMemory):
+        (JSC::Wasm::SectionParser::parseGlobalType):
+        * wasm/wasm.json:
+
 2020-11-18  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, relanding r269940

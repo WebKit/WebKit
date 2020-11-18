@@ -20,6 +20,9 @@
 #include "config.h"
 #include "HexNumber.h"
 
+#include <wtf/PrintStream.h>
+#include <wtf/text/StringView.h>
+
 namespace WTF {
 
 namespace Internal {
@@ -41,6 +44,11 @@ std::pair<LChar*, unsigned> appendHex(LChar* buffer, unsigned bufferSize, std::u
     return { start, end - start };
 }
 
+}
+
+void printInternal(PrintStream& out, HexNumberBuffer buffer)
+{
+    out.print(StringView(buffer.characters(), buffer.length));
 }
 
 } // namespace WTF

@@ -34,6 +34,7 @@
 #include "WasmNameSectionParser.h"
 #include "WasmOps.h"
 #include "WasmSignatureInlines.h"
+#include <wtf/HexNumber.h>
 #include <wtf/Optional.h>
 
 namespace JSC { namespace Wasm {
@@ -181,7 +182,8 @@ auto SectionParser::parseResizableLimits(uint32_t& initial, Optional<uint32_t>& 
     ASSERT(!maximum);
 
     uint8_t flags;
-    WASM_PARSER_FAIL_IF(!parseVarUInt1(flags), "can't parse resizable limits flags");
+    WASM_PARSER_FAIL_IF(!parseUInt8(flags), "can't parse resizable limits flags");
+    WASM_PARSER_FAIL_IF(flags != 0x0 && flags != 0x1, "resizable limits flag should be 0x00 or 0x01 but 0x", hex(flags, 2, Lowercase));
     WASM_PARSER_FAIL_IF(!parseVarUInt32(initial), "can't parse resizable limits initial page count");
 
     if (flags) {
@@ -263,8 +265,8 @@ auto SectionParser::parseMemoryHelper(bool isImport) -> PartialResult
 
 auto SectionParser::parseMemory() -> PartialResult
 {
-    uint8_t count;
-    WASM_PARSER_FAIL_IF(!parseVarUInt1(count), "can't parse Memory section's count");
+    uint32_t count;
+    WASM_PARSER_FAIL_IF(!parseVarUInt32(count), "can't parse Memory section's count");
 
     if (!count)
         return { };
@@ -506,7 +508,8 @@ auto SectionParser::parseGlobalType(GlobalInformation& global) -> PartialResult
 {
     uint8_t mutability;
     WASM_PARSER_FAIL_IF(!parseValueType(global.type), "can't get Global's value type");
-    WASM_PARSER_FAIL_IF(!parseVarUInt1(mutability), "can't get Global type's mutability");
+    WASM_PARSER_FAIL_IF(!parseUInt8(mutability), "can't get Global type's mutability");
+    WASM_PARSER_FAIL_IF(mutability != 0x0 && mutability != 0x1, "invalid Global's mutability: 0x", hex(mutability, 2, Lowercase));
     global.mutability = static_cast<GlobalInformation::Mutability>(mutability);
     return { };
 }

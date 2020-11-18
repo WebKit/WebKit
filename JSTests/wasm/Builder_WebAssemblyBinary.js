@@ -38,7 +38,7 @@ const putResizableLimits = (bin, initial, maximum) => {
         assert.truthy(typeof maximum === "undefined", "We expect 'maximum' to be an integer if it's defined");
     }
 
-    put(bin, "varuint1", hasMaximum);
+    put(bin, "uint8", hasMaximum);
     put(bin, "varuint32", initial);
     if (hasMaximum)
         put(bin, "varuint32", maximum);
@@ -55,7 +55,7 @@ const valueType = WASM.description.type.i32.type
 
 const putGlobalType = (bin, global) => {
     put(bin, valueType, WASM.typeValue[global.type]);
-    put(bin, "varuint1", global.mutability);
+    put(bin, "uint8", global.mutability);
 };
 
 const putOp = (bin, op) => {
