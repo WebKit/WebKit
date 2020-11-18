@@ -44,6 +44,10 @@ class StyleSheetContents;
 class RenderStyle;
 template<typename> struct SRGBA;
 
+namespace CSSPropertyParserHelpers {
+struct FontRaw;
+}
+
 namespace Style {
 class BuilderState;
 }
@@ -91,6 +95,8 @@ public:
     static Color parseSystemColor(StringView);
     static Optional<SRGBA<uint8_t>> parseNamedColor(StringView);
     static Optional<SRGBA<uint8_t>> parseHexColor(StringView);
+
+    static Optional<CSSPropertyParserHelpers::FontRaw> parseFontWorkerSafe(const String&, CSSParserMode = HTMLStandardMode);
 
 private:
     ParseResult parseValue(MutableStyleProperties&, CSSPropertyID, const String&, bool important);

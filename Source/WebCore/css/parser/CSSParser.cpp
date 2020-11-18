@@ -138,6 +138,15 @@ Optional<SRGBA<uint8_t>> CSSParser::parseHexColor(StringView string)
     return CSSParserFastPaths::parseHexColor(string);
 }
 
+Optional<CSSPropertyParserHelpers::FontRaw> CSSParser::parseFontWorkerSafe(const String& string, CSSParserMode cssParserMode)
+{
+    CSSTokenizer tokenizer(string);
+    CSSParserTokenRange range(tokenizer.tokenRange());
+    range.consumeWhitespace();
+
+    return CSSPropertyParserHelpers::consumeFontWorkerSafe(range, cssParserMode);
+}
+
 RefPtr<CSSValue> CSSParser::parseSingleValue(CSSPropertyID propertyID, const String& string, const CSSParserContext& context)
 {
     if (string.isEmpty())

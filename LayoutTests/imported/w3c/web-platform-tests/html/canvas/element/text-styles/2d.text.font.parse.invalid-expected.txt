@@ -1,5 +1,5 @@
 2d.text.font.parse.invalid
 Actual output:
 
-FAIL Canvas test: 2d.text.font.parse.invalid assert_equals: ctx.font === '20px serif' (got 13px sans-serif[string], expected 20px serif[string]) expected "20px serif" but got "13px sans-serif"
+PASS Canvas test: 2d.text.font.parse.invalid
 

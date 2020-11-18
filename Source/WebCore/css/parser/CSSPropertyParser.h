@@ -23,6 +23,7 @@
 #pragma once
 
 #include "CSSParserTokenRange.h"
+#include "CSSPropertyParserHelpers.h"
 #include "StyleRule.h"
 #include <wtf/text/StringView.h>
 

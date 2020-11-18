@@ -37,6 +37,8 @@
 #include "CSSValuePool.h"
 #include "Length.h" // For ValueRange
 #include <wtf/OptionSet.h>
+#include <wtf/Variant.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -55,28 +57,41 @@ CSSParserTokenRange consumeFunction(CSSParserTokenRange&);
 enum class UnitlessQuirk { Allow, Forbid };
 enum class AllowXResolutionUnit { Allow, Forbid };
 
-struct Angle {
+struct AngleRaw {
     CSSUnitType type;
     double value;
 };
 
+struct LengthRaw {
+    CSSUnitType type;
+    double value;
+};
+
+using LengthOrPercentRaw = WTF::Variant<LengthRaw, double>;
+
 RefPtr<CSSPrimitiveValue> consumeInteger(CSSParserTokenRange&, double minimumValue = -std::numeric_limits<double>::max());
 RefPtr<CSSPrimitiveValue> consumePositiveInteger(CSSParserTokenRange&);
-bool consumeNumberRaw(CSSParserTokenRange&, double& result);
+bool consumeNumberRaw(CSSParserTokenRange&, double& result, ValueRange = ValueRangeAll);
 RefPtr<CSSPrimitiveValue> consumeNumber(CSSParserTokenRange&, ValueRange);
+Optional<double> consumeFontWeightNumberRaw(CSSParserTokenRange&);
 RefPtr<CSSPrimitiveValue> consumeFontWeightNumber(CSSParserTokenRange&);
+Optional<LengthRaw> consumeLengthRaw(CSSParserTokenRange&, CSSParserMode, ValueRange, UnitlessQuirk = UnitlessQuirk::Forbid);
 RefPtr<CSSPrimitiveValue> consumeLength(CSSParserTokenRange&, CSSParserMode, ValueRange, UnitlessQuirk = UnitlessQuirk::Forbid);
 Optional<double> consumePercentRaw(CSSParserTokenRange&, ValueRange = ValueRangeAll);
 RefPtr<CSSPrimitiveValue> consumePercent(CSSParserTokenRange&, ValueRange);
+Optional<LengthOrPercentRaw> consumeLengthOrPercentRaw(CSSParserTokenRange&, CSSParserMode, ValueRange, UnitlessQuirk = UnitlessQuirk::Forbid);
 RefPtr<CSSPrimitiveValue> consumeLengthOrPercent(CSSParserTokenRange&, CSSParserMode, ValueRange, UnitlessQuirk = UnitlessQuirk::Forbid);
-Optional<Angle> consumeAngleRaw(CSSParserTokenRange&, CSSParserMode, UnitlessQuirk);
+Optional<AngleRaw> consumeAngleRaw(CSSParserTokenRange&, CSSParserMode, UnitlessQuirk = UnitlessQuirk::Forbid);
 RefPtr<CSSPrimitiveValue> consumeAngle(CSSParserTokenRange&, CSSParserMode, UnitlessQuirk = UnitlessQuirk::Forbid);
 RefPtr<CSSPrimitiveValue> consumeTime(CSSParserTokenRange&, CSSParserMode, ValueRange, UnitlessQuirk = UnitlessQuirk::Forbid);
 RefPtr<CSSPrimitiveValue> consumeResolution(CSSParserTokenRange&, AllowXResolutionUnit = AllowXResolutionUnit::Forbid);
 
+Optional<CSSValueID> consumeIdentRaw(CSSParserTokenRange&);
 RefPtr<CSSPrimitiveValue> consumeIdent(CSSParserTokenRange&);
+Optional<CSSValueID> consumeIdentRangeRaw(CSSParserTokenRange&, CSSValueID lower, CSSValueID upper);
 RefPtr<CSSPrimitiveValue> consumeIdentRange(CSSParserTokenRange&, CSSValueID lower, CSSValueID upper);
 template<CSSValueID, CSSValueID...> inline bool identMatches(CSSValueID id);
+template<CSSValueID... allowedIdents> Optional<CSSValueID> consumeIdentRaw(CSSParserTokenRange&);
 template<CSSValueID... allowedIdents> RefPtr<CSSPrimitiveValue> consumeIdent(CSSParserTokenRange&);
 
 RefPtr<CSSPrimitiveValue> consumeCustomIdent(CSSParserTokenRange&);
@@ -115,12 +130,53 @@ enum class AllowedFilterFunctions {
 RefPtr<CSSValue> consumeFilter(CSSParserTokenRange&, const CSSParserContext&, AllowedFilterFunctions);
 RefPtr<CSSShadowValue> consumeSingleShadow(CSSParserTokenRange&, CSSParserMode, bool allowInset, bool allowSpread);
 
+struct FontStyleRaw {
+    CSSValueID style;
+    Optional<AngleRaw> angle;
+};
+using FontWeightRaw = WTF::Variant<CSSValueID, double>;
+using FontSizeRaw = WTF::Variant<CSSValueID, CSSPropertyParserHelpers::LengthOrPercentRaw>;
+using LineHeightRaw = WTF::Variant<CSSValueID, double, CSSPropertyParserHelpers::LengthOrPercentRaw>;
+using FontFamilyRaw = WTF::Variant<CSSValueID, String>;
+
+struct FontRaw {
+    Optional<FontStyleRaw> style;
+    Optional<CSSValueID> variantCaps;
+    Optional<FontWeightRaw> weight;
+    Optional<CSSValueID> stretch;
+    FontSizeRaw size;
+    Optional<LineHeightRaw> lineHeight;
+    WTF::Vector<FontFamilyRaw> family;
+};
+
+Optional<CSSValueID> consumeFontVariantCSS21Raw(CSSParserTokenRange&);
+Optional<CSSValueID> consumeFontWeightKeywordValueRaw(CSSParserTokenRange&);
+Optional<FontWeightRaw> consumeFontWeightRaw(CSSParserTokenRange&);
+Optional<CSSValueID> consumeFontStretchKeywordValueRaw(CSSParserTokenRange&);
+Optional<CSSValueID> consumeFontStyleKeywordValueRaw(CSSParserTokenRange&);
+Optional<FontStyleRaw> consumeFontStyleRaw(CSSParserTokenRange&, CSSParserMode);
+String concatenateFamilyName(CSSParserTokenRange&);
+String consumeFamilyNameRaw(CSSParserTokenRange&);
+Optional<CSSValueID> consumeGenericFamilyRaw(CSSParserTokenRange&);
+Optional<WTF::Vector<FontFamilyRaw>> consumeFontFamilyRaw(CSSParserTokenRange&);
+Optional<FontSizeRaw> consumeFontSizeRaw(CSSParserTokenRange&, CSSParserMode, UnitlessQuirk = UnitlessQuirk::Forbid);
+Optional<LineHeightRaw> consumeLineHeightRaw(CSSParserTokenRange&, CSSParserMode);
+Optional<FontRaw> consumeFontWorkerSafe(CSSParserTokenRange&, CSSParserMode);
+const AtomString& genericFontFamilyFromValueID(CSSValueID);
+
 // Template implementations are at the bottom of the file for readability.
 
 template<typename... emptyBaseCase> inline bool identMatches(CSSValueID) { return false; }
 template<CSSValueID head, CSSValueID... tail> inline bool identMatches(CSSValueID id)
 {
     return id == head || identMatches<tail...>(id);
+}
+
+template<CSSValueID... names> Optional<CSSValueID> consumeIdentRaw(CSSParserTokenRange& range)
+{
+    if (range.peek().type() != IdentToken || !identMatches<names...>(range.peek().id()))
+        return WTF::nullopt;
+    return range.consumeIncludingWhitespace().id();
 }
 
 template<CSSValueID... names> RefPtr<CSSPrimitiveValue> consumeIdent(CSSParserTokenRange& range)

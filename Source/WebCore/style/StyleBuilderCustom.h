@@ -31,6 +31,7 @@
 #include "CSSFontValue.h"
 #include "CSSGradientValue.h"
 #include "CSSGridTemplateAreasValue.h"
+#include "CSSPropertyParserHelpers.h"
 #include "CSSRegisteredCustomProperty.h"
 #include "CSSShadowValue.h"
 #include "Counter.h"
@@ -1012,40 +1013,11 @@ inline void BuilderCustom::applyValueFontFamily(BuilderState& builderState, CSSV
             // If the family name was resolved by the CSS parser from a system font ID, then it is generic.
             isGenericFamily = fontFamily.fromSystemFontID;
         } else {
-            switch (contentValue.valueID()) {
-            case CSSValueWebkitBody:
+            if (contentValue.valueID() == CSSValueWebkitBody)
                 family = builderState.document().settings().standardFontFamily();
-                break;
-            case CSSValueSerif:
-                family = serifFamily;
+            else {
                 isGenericFamily = true;
-                break;
-            case CSSValueSansSerif:
-                family = sansSerifFamily;
-                isGenericFamily = true;
-                break;
-            case CSSValueCursive:
-                family = cursiveFamily;
-                isGenericFamily = true;
-                break;
-            case CSSValueFantasy:
-                family = fantasyFamily;
-                isGenericFamily = true;
-                break;
-            case CSSValueMonospace:
-                family = monospaceFamily;
-                isGenericFamily = true;
-                break;
-            case CSSValueWebkitPictograph:
-                family = pictographFamily;
-                isGenericFamily = true;
-                break;
-            case CSSValueSystemUi:
-                family = systemUiFamily;
-                isGenericFamily = true;
-                break;
-            default:
-                break;
+                family = CSSPropertyParserHelpers::genericFontFamilyFromValueID(contentValue.valueID());
             }
         }
 

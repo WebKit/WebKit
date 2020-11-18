@@ -36,16 +36,21 @@
 #include "CSSFontSelector.h"
 #include "CSSParser.h"
 #include "CSSPropertyNames.h"
+#include "CSSPropertyParserHelpers.h"
 #include "Gradient.h"
 #include "ImageBuffer.h"
 #include "ImageData.h"
 #include "InspectorInstrumentation.h"
+#include "NodeRenderStyle.h"
 #include "Path2D.h"
 #include "RenderTheme.h"
 #include "ResourceLoadObserver.h"
 #include "RuntimeEnabledFeatures.h"
+#include "Settings.h"
 #include "StyleBuilder.h"
+#include "StyleFontSizeFunctions.h"
 #include "StyleProperties.h"
+#include "StyleResolveForFontRaw.h"
 #include "TextMetrics.h"
 #include "TextRun.h"
 #include <wtf/CheckedArithmetic.h>
@@ -134,16 +139,10 @@ void CanvasRenderingContext2D::setFont(const String& newFont)
     if (newFont == state().unparsedFont && state().font.realized())
         return;
 
-    auto parsedStyle = MutableStyleProperties::create();
-    CSSParser::parseValue(parsedStyle, CSSPropertyFont, newFont, true, strictToCSSParserMode(!m_usesCSSCompatibilityParseMode));
-    if (parsedStyle->isEmpty())
-        return;
-
-    String fontValue = parsedStyle->getPropertyValue(CSSPropertyFont);
-
     // According to http://lists.w3.org/Archives/Public/public-html/2009Jul/0947.html,
-    // the "inherit" and "initial" values must be ignored.
-    if (fontValue == "inherit" || fontValue == "initial")
+    // the "inherit" and "initial" values must be ignored. parseFontWorkerSafe() ignores these.
+    auto fontRaw = CSSParser::parseFontWorkerSafe(newFont, strictToCSSParserMode(!m_usesCSSCompatibilityParseMode));
+    if (!fontRaw)
         return;
 
     // The parse succeeded.
@@ -153,38 +152,20 @@ void CanvasRenderingContext2D::setFont(const String& newFont)
 
     // Map the <canvas> font into the text style. If the font uses keywords like larger/smaller, these will work
     // relative to the canvas.
-    auto newStyle = RenderStyle::createPtr();
-
     Document& document = canvas().document();
     document.updateStyleIfNeeded();
 
+    FontCascadeDescription fontDescription;
     if (auto* computedStyle = canvas().computedStyle())
-        newStyle->setFontDescription(FontCascadeDescription { computedStyle->fontDescription() });
+        fontDescription = FontCascadeDescription { computedStyle->fontDescription() };
     else {
-        FontCascadeDescription defaultFontDescription;
-        defaultFontDescription.setOneFamily(DefaultFontFamily);
-        defaultFontDescription.setSpecifiedSize(DefaultFontSize);
-        defaultFontDescription.setComputedSize(DefaultFontSize);
-
-        newStyle->setFontDescription(WTFMove(defaultFontDescription));
+        fontDescription.setOneFamily(DefaultFontFamily);
+        fontDescription.setSpecifiedSize(DefaultFontSize);
+        fontDescription.setComputedSize(DefaultFontSize);
     }
 
-    newStyle->fontCascade().update(&document.fontSelector());
-
-    // Now map the font property longhands into the style.
-
-    Style::MatchResult matchResult;
-    auto parentStyle = RenderStyle::clone(*newStyle);
-    Style::Builder styleBuilder(*newStyle, { document, parentStyle }, matchResult, { });
-
-    styleBuilder.applyPropertyValue(CSSPropertyFontFamily, parsedStyle->getPropertyCSSValue(CSSPropertyFontFamily).get());
-    styleBuilder.applyPropertyValue(CSSPropertyFontStyle, parsedStyle->getPropertyCSSValue(CSSPropertyFontStyle).get());
-    styleBuilder.applyPropertyValue(CSSPropertyFontVariantCaps, parsedStyle->getPropertyCSSValue(CSSPropertyFontVariantCaps).get());
-    styleBuilder.applyPropertyValue(CSSPropertyFontWeight, parsedStyle->getPropertyCSSValue(CSSPropertyFontWeight).get());
-    styleBuilder.applyPropertyValue(CSSPropertyFontSize, parsedStyle->getPropertyCSSValue(CSSPropertyFontSize).get());
-    styleBuilder.applyPropertyValue(CSSPropertyLineHeight, parsedStyle->getPropertyCSSValue(CSSPropertyLineHeight).get());
-
-    modifiableState().font.initialize(document.fontSelector(), *newStyle);
+    if (auto fontStyle = Style::resolveForFontRaw(*fontRaw, WTFMove(fontDescription), document))
+        modifiableState().font.initialize(document.fontSelector(), *fontStyle);
 }
 
 static CanvasTextAlign toCanvasTextAlign(TextAlign textAlign)

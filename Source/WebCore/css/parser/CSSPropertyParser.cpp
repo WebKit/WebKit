@@ -54,7 +54,6 @@
 #include "CSSParserIdioms.h"
 #include "CSSPendingSubstitutionValue.h"
 #include "CSSPrimitiveValueMappings.h"
-#include "CSSPropertyParserHelpers.h"
 #include "CSSReflectValue.h"
 #include "CSSShadowValue.h"
 #include "CSSTimingFunctionValue.h"
@@ -864,16 +863,16 @@ static RefPtr<CSSPrimitiveValue> consumeFontVariantCSS21(CSSParserTokenRange& ra
     return consumeIdent<CSSValueNormal, CSSValueSmallCaps>(range);
 }
 
-static RefPtr<CSSPrimitiveValue> consumeFontWeightKeywordValue(CSSParserTokenRange& range)
-{
-    return consumeIdent<CSSValueNormal, CSSValueBold, CSSValueBolder, CSSValueLighter>(range);
-}
-
 static RefPtr<CSSPrimitiveValue> consumeFontWeight(CSSParserTokenRange& range)
 {
-    if (auto result = consumeFontWeightKeywordValue(range))
-        return result;
-    return consumeFontWeightNumber(range);
+    if (auto result = consumeFontWeightRaw(range)) {
+        return switchOn(*result, [] (CSSValueID valueID) {
+            return CSSValuePool::singleton().createIdentifierValue(valueID);
+        }, [] (double weightNumber) {
+            return CSSValuePool::singleton().createValue(weightNumber, CSSUnitType::CSS_NUMBER);
+        });
+    }
+    return nullptr;
 }
 
 static RefPtr<CSSPrimitiveValue> consumeFontWeightAbsoluteKeywordValue(CSSParserTokenRange& range)
@@ -910,7 +909,9 @@ static RefPtr<CSSPrimitiveValue> consumeFontWeightAbsolute(CSSParserTokenRange& 
 
 static RefPtr<CSSPrimitiveValue> consumeFontStretchKeywordValue(CSSParserTokenRange& range)
 {
-    return consumeIdent<CSSValueUltraCondensed, CSSValueExtraCondensed, CSSValueCondensed, CSSValueSemiCondensed, CSSValueNormal, CSSValueSemiExpanded, CSSValueExpanded, CSSValueExtraExpanded, CSSValueUltraExpanded>(range);
+    if (auto valueID = consumeFontStretchKeywordValueRaw(range))
+        return CSSValuePool::singleton().createIdentifierValue(*valueID);
+    return nullptr;
 }
 
 #if ENABLE(VARIATION_FONTS)
@@ -965,26 +966,16 @@ static bool fontStyleIsWithinRange(float oblique)
 
 static RefPtr<CSSFontStyleValue> consumeFontStyle(CSSParserTokenRange& range, CSSParserMode cssParserMode)
 {
-    auto result = consumeFontStyleKeywordValue(range);
-    if (!result)
-        return nullptr;
-
-    auto valueID = result->valueID();
-    if (valueID == CSSValueNormal || valueID == CSSValueItalic)
-        return CSSFontStyleValue::create(CSSValuePool::singleton().createIdentifierValue(valueID));
-    ASSERT(result->valueID() == CSSValueOblique);
+    if (auto result = consumeFontStyleRaw(range, cssParserMode)) {
 #if ENABLE(VARIATION_FONTS)
-    if (!range.atEnd()) {
-        if (auto angle = consumeAngle(range, cssParserMode)) {
-            if (fontStyleIsWithinRange(angle->value<float>(CSSUnitType::CSS_DEG)))
-                return CSSFontStyleValue::create(CSSValuePool::singleton().createIdentifierValue(CSSValueOblique), WTFMove(angle));
-            return nullptr;
+        if (result->style == CSSValueOblique && result->angle) {
+            return CSSFontStyleValue::create(CSSValuePool::singleton().createIdentifierValue(CSSValueOblique),
+                CSSValuePool::singleton().createValue(result->angle->value, result->angle->type));
         }
-    }
-#else
-    UNUSED_PARAM(cssParserMode);
 #endif
-    return CSSFontStyleValue::create(CSSValuePool::singleton().createIdentifierValue(CSSValueOblique));
+        return CSSFontStyleValue::create(CSSValuePool::singleton().createIdentifierValue(result->style));
+    }
+    return nullptr;
 }
 
 #if ENABLE(VARIATION_FONTS)
@@ -1018,30 +1009,9 @@ static RefPtr<CSSFontStyleRangeValue> consumeFontStyleRange(CSSParserTokenRange&
 }
 #endif
 
-static String concatenateFamilyName(CSSParserTokenRange& range)
-{
-    StringBuilder builder;
-    bool addedSpace = false;
-    const CSSParserToken& firstToken = range.peek();
-    while (range.peek().type() == IdentToken) {
-        if (!builder.isEmpty()) {
-            builder.append(' ');
-            addedSpace = true;
-        }
-        builder.append(range.consumeIncludingWhitespace().value());
-    }
-    if (!addedSpace && isCSSWideKeyword(firstToken.id()))
-        return String();
-    return builder.toString();
-}
-
 static RefPtr<CSSValue> consumeFamilyName(CSSParserTokenRange& range)
 {
-    if (range.peek().type() == StringToken)
-        return CSSValuePool::singleton().createFontFamilyValue(range.consumeIncludingWhitespace().value().toString());
-    if (range.peek().type() != IdentToken)
-        return nullptr;
-    String familyName = concatenateFamilyName(range);
+    auto familyName = consumeFamilyNameRaw(range);
     if (familyName.isNull())
         return nullptr;
     return CSSValuePool::singleton().createFontFamilyValue(familyName);

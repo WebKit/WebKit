@@ -130,18 +130,48 @@ public:
 
     Optional<double> consumePercentRaw()
     {
-        if (!m_calcValue || m_calcValue->category() != CalculationCategory::Percent)
+        if (!m_calcValue)
+            return WTF::nullopt;
+        auto category = m_calcValue->category();
+        if (category != CalculationCategory::Percent)
             return WTF::nullopt;
         m_sourceRange = m_range;
         return m_calcValue->doubleValue();
     }
 
-    Optional<Angle> consumeAngleRaw()
+    Optional<AngleRaw> consumeAngleRaw()
     {
         if (!m_calcValue || m_calcValue->category() != CalculationCategory::Angle)
             return WTF::nullopt;
         m_sourceRange = m_range;
         return { { m_calcValue->primitiveType(), m_calcValue->doubleValue() } };
+    }
+
+    Optional<LengthRaw> consumeLengthRaw()
+    {
+        if (!m_calcValue || m_calcValue->category() != CalculationCategory::Length)
+            return WTF::nullopt;
+        m_sourceRange = m_range;
+        return { { m_calcValue->primitiveType(), m_calcValue->doubleValue() } };
+    }
+
+    Optional<LengthOrPercentRaw> consumeLengthOrPercentRaw()
+    {
+        if (!m_calcValue)
+            return WTF::nullopt;
+
+        switch (m_calcValue->category()) {
+        case CalculationCategory::Length:
+            m_sourceRange = m_range;
+            return { LengthRaw({ m_calcValue->primitiveType(), m_calcValue->doubleValue() }) };
+        case CalculationCategory::Percent:
+        case CalculationCategory::PercentLength:
+        case CalculationCategory::PercentNumber:
+            m_sourceRange = m_range;
+            return { { m_calcValue->doubleValue() } };
+        default:
+            return WTF::nullopt;
+        }
     }
 
 private:
@@ -177,10 +207,12 @@ RefPtr<CSSPrimitiveValue> consumePositiveInteger(CSSParserTokenRange& range)
     return consumeInteger(range, 1);
 }
 
-bool consumeNumberRaw(CSSParserTokenRange& range, double& result)
+bool consumeNumberRaw(CSSParserTokenRange& range, double& result, ValueRange valueRange)
 {
     const CSSParserToken& token = range.peek();
     if (token.type() == NumberToken) {
+        if (valueRange == ValueRangeNonNegative && token.numericValue() < 0)
+            return false;
         result = range.consumeIncludingWhitespace().numericValue();
         return true;
     }
@@ -188,7 +220,7 @@ bool consumeNumberRaw(CSSParserTokenRange& range, double& result)
     if (token.type() != FunctionToken)
         return false;
 
-    CalcParser calcParser(range, CalculationCategory::Number, ValueRangeAll);
+    CalcParser calcParser(range, CalculationCategory::Number, valueRange);
     return calcParser.consumeNumberRaw(result);
 }
 
@@ -196,21 +228,18 @@ bool consumeNumberRaw(CSSParserTokenRange& range, double& result)
 RefPtr<CSSPrimitiveValue> consumeNumber(CSSParserTokenRange& range, ValueRange valueRange)
 {
     const CSSParserToken& token = range.peek();
-    if (token.type() == NumberToken) {
-        if (valueRange == ValueRangeNonNegative && token.numericValue() < 0)
-            return nullptr;
-        return CSSValuePool::singleton().createValue(range.consumeIncludingWhitespace().numericValue(), token.unitType());
-    }
-
-    if (token.type() != FunctionToken)
+    if (token.type() == FunctionToken) {
+        CalcParser calcParser(range, CalculationCategory::Number, valueRange);
+        if (const auto* calcValue = calcParser.value()) {
+            if (calcValue->category() == CalculationCategory::Number)
+                return calcParser.consumeValue();
+        }
         return nullptr;
-
-    CalcParser calcParser(range, CalculationCategory::Number, valueRange);
-    if (const CSSCalcValue* calcValue = calcParser.value()) {
-        if (calcValue->category() != CalculationCategory::Number)
-            return nullptr;
-        return calcParser.consumeValue();
     }
+
+    double number;
+    if (consumeNumberRaw(range, number, valueRange))
+        return CSSValuePool::singleton().createValue(number, token.unitType());
 
     return nullptr;
 }
@@ -222,7 +251,7 @@ static inline bool divisibleBy100(double value)
 }
 #endif
 
-RefPtr<CSSPrimitiveValue> consumeFontWeightNumber(CSSParserTokenRange& range)
+Optional<double> consumeFontWeightNumberRaw(CSSParserTokenRange& range)
 {
     // Values less than or equal to 0 or greater than or equal to 1000 are parse errors.
     auto& token = range.peek();
@@ -230,11 +259,15 @@ RefPtr<CSSPrimitiveValue> consumeFontWeightNumber(CSSParserTokenRange& range)
 #if !ENABLE(VARIATION_FONTS)
         && token.numericValueType() == IntegerValueType && divisibleBy100(token.numericValue())
 #endif
-    )
-        return consumeNumber(range, ValueRangeAll);
+    ) {
+        double result;
+        if (consumeNumberRaw(range, result))
+            return result;
+        return WTF::nullopt;
+    }
 
     if (token.type() != FunctionToken)
-        return nullptr;
+        return WTF::nullopt;
 
     // "[For calc()], the used value resulting from an expression must be clamped to the range allowed in the target context."
     CalcParser calcParser(range, CalculationCategory::Number, ValueRangeAll);
@@ -245,9 +278,16 @@ RefPtr<CSSPrimitiveValue> consumeFontWeightNumber(CSSParserTokenRange& range)
 #endif
     ) {
         result = std::min(std::max(result, std::nextafter(0., 1.)), std::nextafter(1000., 0.));
-        return CSSValuePool::singleton().createValue(result, CSSUnitType::CSS_NUMBER);
+        return result;
     }
 
+    return WTF::nullopt;
+}
+
+RefPtr<CSSPrimitiveValue> consumeFontWeightNumber(CSSParserTokenRange& range)
+{
+    if (auto result = consumeFontWeightNumberRaw(range))
+        return CSSValuePool::singleton().createValue(*result, CSSUnitType::CSS_NUMBER);
     return nullptr;
 }
 
@@ -259,14 +299,14 @@ inline bool shouldAcceptUnitlessValue(double value, CSSParserMode cssParserMode,
         || (cssParserMode == HTMLQuirksMode && unitless == UnitlessQuirk::Allow);
 }
 
-RefPtr<CSSPrimitiveValue> consumeLength(CSSParserTokenRange& range, CSSParserMode cssParserMode, ValueRange valueRange, UnitlessQuirk unitless)
+Optional<LengthRaw> consumeLengthRaw(CSSParserTokenRange& range, CSSParserMode cssParserMode, ValueRange valueRange, UnitlessQuirk unitless)
 {
     const CSSParserToken& token = range.peek();
     if (token.type() == DimensionToken) {
         switch (token.unitType()) {
         case CSSUnitType::CSS_QUIRKY_EMS:
             if (cssParserMode != UASheetMode)
-                return nullptr;
+                return WTF::nullopt;
             FALLTHROUGH;
         case CSSUnitType::CSS_EMS:
         case CSSUnitType::CSS_REMS:
@@ -287,28 +327,39 @@ RefPtr<CSSPrimitiveValue> consumeLength(CSSParserTokenRange& range, CSSParserMod
         case CSSUnitType::CSS_Q:
             break;
         default:
-            return nullptr;
+            return WTF::nullopt;
         }
         if ((valueRange == ValueRangeNonNegative && token.numericValue() < 0) || std::isinf(token.numericValue()))
-            return nullptr;
-        return CSSValuePool::singleton().createValue(range.consumeIncludingWhitespace().numericValue(), token.unitType());
+            return WTF::nullopt;
+        return { { token.unitType(), range.consumeIncludingWhitespace().numericValue() } };
     }
     if (token.type() == NumberToken) {
         if (!shouldAcceptUnitlessValue(token.numericValue(), cssParserMode, unitless)
             || (valueRange == ValueRangeNonNegative && token.numericValue() < 0))
-            return nullptr;
+            return WTF::nullopt;
         if (std::isinf(token.numericValue()))
-            return nullptr;
-        CSSUnitType unitType = CSSUnitType::CSS_PX;
-        return CSSValuePool::singleton().createValue(range.consumeIncludingWhitespace().numericValue(), unitType);
+            return WTF::nullopt;
+        return { { CSSUnitType::CSS_PX, range.consumeIncludingWhitespace().numericValue() } };
     }
 
     if (token.type() != FunctionToken)
-        return nullptr;
+        return WTF::nullopt;
 
     CalcParser calcParser(range, CalculationCategory::Length, valueRange);
-    if (calcParser.value() && calcParser.value()->category() == CalculationCategory::Length)
-        return calcParser.consumeValue();
+    return calcParser.consumeLengthRaw();
+}
+
+RefPtr<CSSPrimitiveValue> consumeLength(CSSParserTokenRange& range, CSSParserMode cssParserMode, ValueRange valueRange, UnitlessQuirk unitless)
+{
+    const CSSParserToken& token = range.peek();
+    if (token.type() == FunctionToken) {
+        CalcParser calcParser(range, CalculationCategory::Length, valueRange);
+        if (calcParser.value() && calcParser.value()->category() == CalculationCategory::Length)
+            return calcParser.consumeValue();
+    }
+
+    if (auto result = consumeLengthRaw(range, cssParserMode, valueRange, unitless))
+        return CSSValuePool::singleton().createValue(result->value, result->type);
 
     return nullptr;
 }
@@ -333,7 +384,7 @@ RefPtr<CSSPrimitiveValue> consumePercent(CSSParserTokenRange& range, ValueRange 
 {
     const CSSParserToken& token = range.peek();
     if (token.type() == FunctionToken) {
-        CalcParser calcParser(range, CalculationCategory::Angle, valueRange);
+        CalcParser calcParser(range, CalculationCategory::Percent, valueRange);
         if (const CSSCalcValue* calculation = calcParser.value()) {
             if (calculation->category() == CalculationCategory::Percent)
                 return calcParser.consumeValue();
@@ -361,26 +412,54 @@ static bool canConsumeCalcValue(CalculationCategory category, CSSParserMode cssP
     return false;
 }
 
-RefPtr<CSSPrimitiveValue> consumeLengthOrPercent(CSSParserTokenRange& range, CSSParserMode cssParserMode, ValueRange valueRange, UnitlessQuirk unitless)
+Optional<LengthOrPercentRaw> consumeLengthOrPercentRaw(CSSParserTokenRange& range, CSSParserMode cssParserMode, ValueRange valueRange, UnitlessQuirk unitless)
 {
     const CSSParserToken& token = range.peek();
-    if (token.type() == DimensionToken || token.type() == NumberToken)
-        return consumeLength(range, cssParserMode, valueRange, unitless);
-    if (token.type() == PercentageToken)
-        return consumePercent(range, valueRange);
+    if (token.type() == DimensionToken || token.type() == NumberToken) {
+        if (auto result = consumeLengthRaw(range, cssParserMode, valueRange, unitless))
+            return { *result };
+        return WTF::nullopt;
+    }
+    if (token.type() == PercentageToken) {
+        if (auto result = consumePercentRaw(range, valueRange))
+            return { *result };
+        return WTF::nullopt;
+    }
 
     if (token.type() != FunctionToken)
-        return nullptr;
+        return WTF::nullopt;
 
     CalcParser calcParser(range, CalculationCategory::Length, valueRange);
     if (const CSSCalcValue* calculation = calcParser.value()) {
         if (canConsumeCalcValue(calculation->category(), cssParserMode))
-            return calcParser.consumeValue();
+            return calcParser.consumeLengthOrPercentRaw();
+    }
+    return WTF::nullopt;
+}
+
+RefPtr<CSSPrimitiveValue> consumeLengthOrPercent(CSSParserTokenRange& range, CSSParserMode cssParserMode, ValueRange valueRange, UnitlessQuirk unitless)
+{
+    const CSSParserToken& token = range.peek();
+    if (token.type() == FunctionToken) {
+        CalcParser calcParser(range, CalculationCategory::Length, valueRange);
+        if (const CSSCalcValue* calculation = calcParser.value()) {
+            if (canConsumeCalcValue(calculation->category(), cssParserMode))
+                return calcParser.consumeValue();
+        }
+        return nullptr;
+    }
+
+    if (auto result = consumeLengthOrPercentRaw(range, cssParserMode, valueRange, unitless)) {
+        return switchOn(*result, [] (LengthRaw length) {
+            return CSSValuePool::singleton().createValue(length.value, length.type);
+        }, [] (double percentage) {
+            return CSSValuePool::singleton().createValue(percentage, CSSUnitType::CSS_PERCENTAGE);
+        });
     }
     return nullptr;
 }
 
-Optional<Angle> consumeAngleRaw(CSSParserTokenRange& range, CSSParserMode cssParserMode, UnitlessQuirk unitless)
+Optional<AngleRaw> consumeAngleRaw(CSSParserTokenRange& range, CSSParserMode cssParserMode, UnitlessQuirk unitless)
 {
     const CSSParserToken& token = range.peek();
     if (token.type() == DimensionToken) {
@@ -502,11 +581,25 @@ RefPtr<CSSPrimitiveValue> consumeResolution(CSSParserTokenRange& range, AllowXRe
     return nullptr;
 }
 
-RefPtr<CSSPrimitiveValue> consumeIdent(CSSParserTokenRange& range)
+Optional<CSSValueID> consumeIdentRaw(CSSParserTokenRange& range)
 {
     if (range.peek().type() != IdentToken)
-        return nullptr;
-    return CSSValuePool::singleton().createIdentifierValue(range.consumeIncludingWhitespace().id());
+        return WTF::nullopt;
+    return range.consumeIncludingWhitespace().id();
+}
+
+RefPtr<CSSPrimitiveValue> consumeIdent(CSSParserTokenRange& range)
+{
+    if (auto result = consumeIdentRaw(range))
+        return CSSValuePool::singleton().createIdentifierValue(*result);
+    return nullptr;
+}
+
+Optional<CSSValueID> consumeIdentRangeRaw(CSSParserTokenRange& range, CSSValueID lower, CSSValueID upper)
+{
+    if (range.peek().id() < lower || range.peek().id() > upper)
+        return WTF::nullopt;
+    return consumeIdentRaw(range);
 }
 
 RefPtr<CSSPrimitiveValue> consumeIdentRange(CSSParserTokenRange& range, CSSValueID lower, CSSValueID upper)
@@ -1816,6 +1909,225 @@ RefPtr<CSSValue> consumeImage(CSSParserTokenRange& range, CSSParserContext conte
     }
 
     return nullptr;
+}
+
+Optional<CSSValueID> consumeFontVariantCSS21Raw(CSSParserTokenRange& range)
+{
+    return consumeIdentRaw<CSSValueNormal, CSSValueSmallCaps>(range);
+}
+
+Optional<CSSValueID> consumeFontWeightKeywordValueRaw(CSSParserTokenRange& range)
+{
+    return consumeIdentRaw<CSSValueNormal, CSSValueBold, CSSValueBolder, CSSValueLighter>(range);
+}
+
+Optional<FontWeightRaw> consumeFontWeightRaw(CSSParserTokenRange& range)
+{
+    if (auto result = consumeFontWeightKeywordValueRaw(range))
+        return { *result };
+    if (auto result = consumeFontWeightNumberRaw(range))
+        return { *result };
+    return WTF::nullopt;
+}
+
+Optional<CSSValueID> consumeFontStretchKeywordValueRaw(CSSParserTokenRange& range)
+{
+    return consumeIdentRaw<CSSValueUltraCondensed, CSSValueExtraCondensed, CSSValueCondensed, CSSValueSemiCondensed, CSSValueNormal, CSSValueSemiExpanded, CSSValueExpanded, CSSValueExtraExpanded, CSSValueUltraExpanded>(range);
+}
+
+Optional<CSSValueID> consumeFontStyleKeywordValueRaw(CSSParserTokenRange& range)
+{
+    return consumeIdentRaw<CSSValueNormal, CSSValueItalic, CSSValueOblique>(range);
+}
+
+Optional<FontStyleRaw> consumeFontStyleRaw(CSSParserTokenRange& range, CSSParserMode cssParserMode)
+{
+    auto result = consumeFontStyleKeywordValueRaw(range);
+    if (!result)
+        return WTF::nullopt;
+
+    auto ident = *result;
+    if (ident == CSSValueNormal || ident == CSSValueItalic)
+        return { { ident, WTF::nullopt } };
+    ASSERT(ident == CSSValueOblique);
+#if ENABLE(VARIATION_FONTS)
+    if (!range.atEnd()) {
+        if (auto angle = consumeAngleRaw(range, cssParserMode)) {
+            auto angleInDegrees = CSSPrimitiveValue::computeDegrees(angle->type, angle->value);
+            if (fontStyleIsWithinRange(angleInDegrees))
+                return { { CSSValueOblique, WTFMove(angle) } };
+            return WTF::nullopt;
+        }
+    }
+#else
+    UNUSED_PARAM(cssParserMode);
+#endif
+    return { { CSSValueOblique, WTF::nullopt } };
+}
+
+String concatenateFamilyName(CSSParserTokenRange& range)
+{
+    StringBuilder builder;
+    bool addedSpace = false;
+    const CSSParserToken& firstToken = range.peek();
+    while (range.peek().type() == IdentToken) {
+        if (!builder.isEmpty()) {
+            builder.append(' ');
+            addedSpace = true;
+        }
+        builder.append(range.consumeIncludingWhitespace().value());
+    }
+    if (!addedSpace && isCSSWideKeyword(firstToken.id()))
+        return String();
+    return builder.toString();
+}
+
+String consumeFamilyNameRaw(CSSParserTokenRange& range)
+{
+    if (range.peek().type() == StringToken)
+        return range.consumeIncludingWhitespace().value().toString();
+    if (range.peek().type() != IdentToken)
+        return String();
+    return concatenateFamilyName(range);
+}
+
+Optional<CSSValueID> consumeGenericFamilyRaw(CSSParserTokenRange& range)
+{
+    return consumeIdentRangeRaw(range, CSSValueSerif, CSSValueWebkitBody);
+}
+
+Optional<WTF::Vector<FontFamilyRaw>> consumeFontFamilyRaw(CSSParserTokenRange& range)
+{
+    WTF::Vector<FontFamilyRaw> list;
+    do {
+        if (auto ident = consumeGenericFamilyRaw(range))
+            list.append({ *ident });
+        else {
+            auto familyName = consumeFamilyNameRaw(range);
+            if (familyName.isNull())
+                return WTF::nullopt;
+            list.append({ familyName });
+        }
+    } while (consumeCommaIncludingWhitespace(range));
+    return list;
+}
+
+Optional<FontSizeRaw> consumeFontSizeRaw(CSSParserTokenRange& range, CSSParserMode cssParserMode, UnitlessQuirk unitless)
+{
+    if (range.peek().id() >= CSSValueXxSmall && range.peek().id() <= CSSValueLarger) {
+        if (auto ident = consumeIdentRaw(range))
+            return { *ident };
+        return WTF::nullopt;
+    }
+
+    if (auto result = consumeLengthOrPercentRaw(range, cssParserMode, ValueRangeNonNegative, unitless))
+        return { *result };
+
+    return WTF::nullopt;
+}
+
+Optional<LineHeightRaw> consumeLineHeightRaw(CSSParserTokenRange& range, CSSParserMode cssParserMode)
+{
+    if (range.peek().id() == CSSValueNormal) {
+        if (auto ident = consumeIdentRaw(range))
+            return { *ident };
+        return WTF::nullopt;
+    }
+
+    double number;
+    if (consumeNumberRaw(range, number, ValueRangeNonNegative))
+        return { number };
+
+    if (auto lengthOrPercent = consumeLengthOrPercentRaw(range, cssParserMode, ValueRangeNonNegative))
+        return { *lengthOrPercent };
+
+    return WTF::nullopt;
+}
+
+Optional<FontRaw> consumeFontWorkerSafe(CSSParserTokenRange& range, CSSParserMode cssParserMode)
+{
+    // Let's check if there is an inherit or initial somewhere in the shorthand.
+    CSSParserTokenRange rangeCopy = range;
+    while (!rangeCopy.atEnd()) {
+        CSSValueID id = rangeCopy.consumeIncludingWhitespace().id();
+        if (id == CSSValueInherit || id == CSSValueInitial)
+            return WTF::nullopt;
+    }
+
+    FontRaw result;
+
+    while (!range.atEnd()) {
+        CSSValueID id = range.peek().id();
+        if (!result.style) {
+            if ((result.style = consumeFontStyleRaw(range, cssParserMode)))
+                continue;
+        }
+        if (!result.variantCaps && (id == CSSValueNormal || id == CSSValueSmallCaps)) {
+            // Font variant in the shorthand is particular, it only accepts normal or small-caps.
+            // See https://drafts.csswg.org/css-fonts/#propdef-font
+            if ((result.variantCaps = consumeFontVariantCSS21Raw(range)))
+                continue;
+        }
+        if (!result.weight) {
+            if ((result.weight = consumeFontWeightRaw(range)))
+                continue;
+        }
+        if (!result.stretch) {
+            if ((result.stretch = consumeFontStretchKeywordValueRaw(range)))
+                continue;
+        }
+        break;
+    }
+
+    if (range.atEnd())
+        return WTF::nullopt;
+
+    // Now a font size _must_ come.
+    if (auto size = consumeFontSizeRaw(range, cssParserMode))
+        result.size = *size;
+    else
+        return WTF::nullopt;
+
+    if (range.atEnd())
+        return WTF::nullopt;
+
+    if (consumeSlashIncludingWhitespace(range)) {
+        if (!(result.lineHeight = consumeLineHeightRaw(range, cssParserMode)))
+            return WTF::nullopt;
+    }
+
+    // Font family must come now.
+    if (auto family = consumeFontFamilyRaw(range))
+        result.family = *family;
+    else
+        return WTF::nullopt;
+
+    if (!range.atEnd())
+        return WTF::nullopt;
+
+    return result;
+}
+
+const AtomString& genericFontFamilyFromValueID(CSSValueID ident)
+{
+    switch (ident) {
+    case CSSValueSerif:
+        return serifFamily.get();
+    case CSSValueSansSerif:
+        return sansSerifFamily.get();
+    case CSSValueCursive:
+        return cursiveFamily.get();
+    case CSSValueFantasy:
+        return fantasyFamily.get();
+    case CSSValueMonospace:
+        return monospaceFamily.get();
+    case CSSValueWebkitPictograph:
+        return pictographFamily.get();
+    case CSSValueSystemUi:
+        return systemUiFamily.get();
+    default:
+        return emptyAtom();
+    }
 }
 
 } // namespace CSSPropertyParserHelpers
