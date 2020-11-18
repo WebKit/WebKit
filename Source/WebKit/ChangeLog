@@ -1,3 +1,24 @@
+2020-11-18  Chris Dumez  <cdumez@apple.com>
+
+        Drop redundant code that tries to bump the QoS of the WebContent main thread of UserInteractive when handling a sync IPC
+        https://bugs.webkit.org/show_bug.cgi?id=219110
+
+        Reviewed by Alex Christensen.
+
+        Drop redundant code that tries to bump the QoS of the WebContent main thread of UserInteractive when
+        handling a sync IPC. Nowadays, we always run the main thread of the WebContent at UserInteractive QoS
+        (see WTF::Thread::setCurrentThreadIsUserInteractive() call in WebProcess::initializeWebProcess()) so
+        there is no need to boost the QoS during a sync IPC.
+
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::processIncomingMessage):
+        * Platform/IPC/Connection.h:
+        (IPC::Connection::setShouldBoostMainThreadOnSyncMessage): Deleted.
+        * Platform/IPC/Decoder.h:
+        (IPC::Decoder::setQOSClassOverride): Deleted.
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeConnection):
+
 2020-11-18  Darin Adler  <darin@apple.com>
 
         Remove advanced plug-in feature: small plug-in blocking

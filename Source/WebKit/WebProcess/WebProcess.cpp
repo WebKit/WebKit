@@ -312,10 +312,6 @@ void WebProcess::initializeConnection(IPC::Connection* connection)
     connection->setShouldExitOnSyncMessageSendFailure(true);
 #endif
 
-#if HAVE(QOS_CLASSES)
-    connection->setShouldBoostMainThreadOnSyncMessage(true);
-#endif
-
     m_eventDispatcher->initializeConnection(connection);
 #if PLATFORM(IOS_FAMILY)
     m_viewUpdateDispatcher->initializeConnection(connection);

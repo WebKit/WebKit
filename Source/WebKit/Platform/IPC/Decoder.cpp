@@ -94,11 +94,6 @@ Decoder::~Decoder()
         fastFree(const_cast<uint8_t*>(m_buffer));
 
     // FIXME: We need to dispose of the mach ports in cases of failure.
-
-#if HAVE(QOS_CLASSES)
-    if (m_qosClassOverride)
-        pthread_override_qos_class_end_np(m_qosClassOverride);
-#endif
 }
 
 bool Decoder::isSyncMessage() const

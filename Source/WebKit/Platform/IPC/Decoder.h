@@ -67,10 +67,6 @@ public:
     void setImportanceAssertion(std::unique_ptr<ImportanceAssertion>);
 #endif
 
-#if HAVE(QOS_CLASSES)
-    void setQOSClassOverride(pthread_override_t override) { m_qosClassOverride = override; }
-#endif
-
     static std::unique_ptr<Decoder> unwrapForTesting(Decoder&);
 
     const uint8_t* buffer() const { return m_buffer; }
@@ -207,10 +203,6 @@ private:
 
 #if PLATFORM(MAC)
     std::unique_ptr<ImportanceAssertion> m_importanceAssertion;
-#endif
-
-#if HAVE(QOS_CLASSES)
-    pthread_override_t m_qosClassOverride { nullptr };
 #endif
 };
 

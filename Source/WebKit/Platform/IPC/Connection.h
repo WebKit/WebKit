@@ -282,10 +282,6 @@ public:
 
     bool isValid() const { return m_isValid; }
 
-#if HAVE(QOS_CLASSES)
-    void setShouldBoostMainThreadOnSyncMessage(bool b) { m_shouldBoostMainThreadOnSyncMessage = b; }
-#endif
-
     uint64_t installIncomingSyncMessageCallback(WTF::Function<void()>&&);
     void uninstallIncomingSyncMessageCallback(uint64_t);
     bool hasIncomingSyncMessage();
@@ -435,7 +431,6 @@ private:
 
 #if HAVE(QOS_CLASSES)
     pthread_t m_mainThread { 0 };
-    bool m_shouldBoostMainThreadOnSyncMessage { false };
 #endif
 
 #if USE(UNIX_DOMAIN_SOCKETS)
