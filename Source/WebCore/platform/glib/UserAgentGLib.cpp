@@ -117,7 +117,7 @@ static String buildUserAgentString(const UserAgentQuirks& quirks)
     // Version/X is mandatory *before* Safari/X to be a valid Safari UA. See
     // https://bugs.webkit.org/show_bug.cgi?id=133403 for details.
     } else
-        uaString.appendLiteral("Version/13.0 ");
+        uaString.appendLiteral("Version/14.0 ");
 
     if (chassisType() == WTF::ChassisType::Mobile)
         uaString.appendLiteral("Mobile ");
