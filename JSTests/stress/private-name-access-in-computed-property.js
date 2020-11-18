@@ -1,4 +1,4 @@
-//@ requireOptions("--usePublicClassFields=1", "--usePrivateClassFields=1")
+//@ requireOptions("--usePrivateClassFields=1")
 
 let assert = {
     throws: (expectedError, functor) => {

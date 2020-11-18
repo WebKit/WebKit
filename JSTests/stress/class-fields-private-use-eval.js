@@ -1,4 +1,4 @@
-//@ requireOptions("--usePrivateClassFields=1", "--usePublicClassFields=1")
+//@ requireOptions("--usePrivateClassFields=1")
 
 function assert(a, message) {
     if (!a)

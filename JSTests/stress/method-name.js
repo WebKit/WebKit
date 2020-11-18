@@ -1,5 +1,3 @@
-//@ requireOptions("--usePublicClassFields=1")
-
 function testSyntax(script) {
     try {
         eval(script);

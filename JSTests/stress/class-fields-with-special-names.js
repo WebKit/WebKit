@@ -1,5 +1,3 @@
-//@ requireOptions("--usePublicClassFields=true")
-
 function assertEquals(e, a) {
     if (a !== e)
         throw new Error("Expected: " + e + " but got: " + a);

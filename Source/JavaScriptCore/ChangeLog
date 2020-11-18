@@ -1,3 +1,20 @@
+2020-11-17  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Enable static public class fields
+        https://bugs.webkit.org/show_bug.cgi?id=219058
+
+        Reviewed by Saam Barati.
+
+        Let's flip the runtime flag (usePublicStaticClassFields). And we drop usePublicClassFields flag since it is already shipped.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::FunctionCallValueNode::emitBytecode):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseClass):
+        * runtime/OptionsList.h:
+
 2020-11-17  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         [CMake] generate_offset_extractor.rb missing build dependency for llint/WebAssembly.asm

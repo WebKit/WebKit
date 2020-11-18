@@ -1,5 +1,3 @@
-//@ runBytecodeCache("--usePublicClassFields=true")
-
 function assert(a, e) {
     if (a !== e)
         throw new Erro("Expected: " + e + " but got: " + a);

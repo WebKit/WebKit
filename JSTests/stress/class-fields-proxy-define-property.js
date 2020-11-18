@@ -1,4 +1,3 @@
-//@ requireOptions("--usePublicClassFields=1")
 //@ defaultNoEagerRun
 
 function assert(a, e, m) {

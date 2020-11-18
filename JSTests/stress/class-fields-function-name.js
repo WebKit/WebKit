@@ -1,5 +1,3 @@
-//@ requireOptions("--usePublicClassFields=true")
-
 function assert(a, message) {
     if (!a)
         throw new Error(message);

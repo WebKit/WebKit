@@ -1,4 +1,3 @@
-//@ requireOptions("--usePublicClassFields=true")
 //@ if isFTLEnabled then runFTLNoCJIT else skip end
 
 let ftlTrue = $vm.ftlTrue;

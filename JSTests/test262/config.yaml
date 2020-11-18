@@ -3,7 +3,6 @@
 flags:
   WeakRef: useWeakRefs
   FinalizationRegistry: useWeakRefs
-  class-fields-public: usePublicClassFields
   class-fields-private: usePrivateClassFields
   class-static-fields-public: usePublicStaticClassFields
   Intl.DateTimeFormat-dayPeriod: useIntlDateTimeFormatDayPeriod
