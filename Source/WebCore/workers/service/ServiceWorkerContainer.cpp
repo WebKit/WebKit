@@ -110,7 +110,7 @@ auto ServiceWorkerContainer::ready() -> ReadyPromise&
         ensureSWClientConnection().whenRegistrationReady(context.topOrigin().data(), context.url(), [this, protectedThis = makeRef(*this)](auto&& registrationData) mutable {
             queueTaskKeepingObjectAlive(*this, TaskSource::DOMManipulation, [this, registrationData = WTFMove(registrationData)]() mutable {
                 auto* context = scriptExecutionContext();
-                if (!context)
+                if (!context || !m_readyPromise)
                     return;
                 auto registration = ServiceWorkerRegistration::getOrCreate(*context, *this, WTFMove(registrationData));
                 m_readyPromise->resolve(WTFMove(registration));
