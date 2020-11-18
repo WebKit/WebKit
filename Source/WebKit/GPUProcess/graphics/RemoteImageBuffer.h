@@ -87,7 +87,7 @@ private:
         if (item.is<WebCore::DisplayList::FlushContext>()) {
             BaseConcreteImageBuffer::flushContext();
             auto identifier = item.get<WebCore::DisplayList::FlushContext>().identifier();
-            m_remoteRenderingBackend.flushDisplayListWasCommitted(identifier, m_renderingResourceIdentifier);
+            m_remoteRenderingBackend.didFlush(identifier, m_renderingResourceIdentifier);
             return true;
         }
 

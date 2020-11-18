@@ -118,10 +118,10 @@ bool RemoteRenderingBackendProxy::waitForImageBufferBackendWasCreated()
     return connection->waitForAndDispatchImmediately<Messages::RemoteRenderingBackendProxy::ImageBufferBackendWasCreated>(m_renderingBackendIdentifier, 1_s, IPC::WaitForOption::InterruptWaitingIfSyncMessageArrives);
 }
 
-bool RemoteRenderingBackendProxy::waitForFlushDisplayListWasCommitted()
+bool RemoteRenderingBackendProxy::waitForDidFlush()
 {
     Ref<IPC::Connection> connection = WebProcess::singleton().ensureGPUProcessConnection().connection();
-    return connection->waitForAndDispatchImmediately<Messages::RemoteRenderingBackendProxy::FlushDisplayListWasCommitted>(m_renderingBackendIdentifier, 1_s, IPC::WaitForOption::InterruptWaitingIfSyncMessageArrives);
+    return connection->waitForAndDispatchImmediately<Messages::RemoteRenderingBackendProxy::DidFlush>(m_renderingBackendIdentifier, 1_s, IPC::WaitForOption::InterruptWaitingIfSyncMessageArrives);
 }
 
 RefPtr<ImageBuffer> RemoteRenderingBackendProxy::createImageBuffer(const FloatSize& size, RenderingMode renderingMode, float resolutionScale, ColorSpace colorSpace, PixelFormat pixelFormat)
@@ -195,16 +195,16 @@ void RemoteRenderingBackendProxy::imageBufferBackendWasCreated(const FloatSize& 
         downcast<UnacceleratedRemoteImageBufferProxy>(*imageBuffer).createBackend(logicalSize, backendSize, resolutionScale, colorSpace, pixelFormat, WTFMove(handle));
 }
 
-void RemoteRenderingBackendProxy::flushDisplayListWasCommitted(DisplayList::FlushIdentifier flushIdentifier, RenderingResourceIdentifier renderingResourceIdentifier)
+void RemoteRenderingBackendProxy::didFlush(DisplayList::FlushIdentifier flushIdentifier, RenderingResourceIdentifier renderingResourceIdentifier)
 {
     auto imageBuffer = m_remoteResourceCacheProxy.cachedImageBuffer(renderingResourceIdentifier);
     if (!imageBuffer)
         return;
 
     if (imageBuffer->isAccelerated())
-        downcast<AcceleratedRemoteImageBufferProxy>(*imageBuffer).commitFlushDisplayList(flushIdentifier);
+        downcast<AcceleratedRemoteImageBufferProxy>(*imageBuffer).didFlush(flushIdentifier);
     else
-        downcast<UnacceleratedRemoteImageBufferProxy>(*imageBuffer).commitFlushDisplayList(flushIdentifier);
+        downcast<UnacceleratedRemoteImageBufferProxy>(*imageBuffer).didFlush(flushIdentifier);
 }
 
 void RemoteRenderingBackendProxy::updateReusableHandles()

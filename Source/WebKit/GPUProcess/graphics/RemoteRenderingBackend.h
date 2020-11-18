@@ -71,7 +71,7 @@ public:
 
     // Messages to be sent.
     void imageBufferBackendWasCreated(const WebCore::FloatSize& logicalSize, const WebCore::IntSize& backendSize, float resolutionScale, WebCore::ColorSpace, WebCore::PixelFormat, ImageBufferBackendHandle, WebCore::RenderingResourceIdentifier);
-    void flushDisplayListWasCommitted(WebCore::DisplayList::FlushIdentifier, WebCore::RenderingResourceIdentifier);
+    void didFlush(WebCore::DisplayList::FlushIdentifier, WebCore::RenderingResourceIdentifier);
 
     void setNextItemBufferToRead(WebCore::DisplayList::ItemBufferIdentifier);
 

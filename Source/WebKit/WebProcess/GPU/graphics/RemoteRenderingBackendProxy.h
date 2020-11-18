@@ -82,7 +82,7 @@ public:
     void releaseRemoteResource(WebCore::RenderingResourceIdentifier);
 
     bool waitForImageBufferBackendWasCreated();
-    bool waitForFlushDisplayListWasCommitted();
+    bool waitForDidFlush();
 
 private:
     RemoteRenderingBackendProxy();
@@ -96,7 +96,7 @@ private:
 
     // Messages to be received.
     void imageBufferBackendWasCreated(const WebCore::FloatSize& logicalSize, const WebCore::IntSize& backendSize, float resolutionScale, WebCore::ColorSpace, WebCore::PixelFormat, ImageBufferBackendHandle, WebCore::RenderingResourceIdentifier);
-    void flushDisplayListWasCommitted(WebCore::DisplayList::FlushIdentifier, WebCore::RenderingResourceIdentifier);
+    void didFlush(WebCore::DisplayList::FlushIdentifier, WebCore::RenderingResourceIdentifier);
 
     RemoteResourceCacheProxy m_remoteResourceCacheProxy { *this };
     HashMap<WebCore::DisplayList::ItemBufferIdentifier, RefPtr<DisplayListWriterHandle>> m_sharedDisplayListHandles;

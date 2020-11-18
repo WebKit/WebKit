@@ -313,12 +313,12 @@ bool RemoteLayerBackingStore::display()
     m_dirtyRegion = WebCore::Region();
     m_paintingRects.clear();
 
-    m_frontBufferFlusher = m_frontBuffer.imageBuffer->createFlusher();
-
     m_layer->owner()->platformCALayerLayerDidDisplay(m_layer);
 
     // FIXME: This method has a weird name. This is "submit work".
     m_frontBuffer.imageBuffer->flushDrawingContextAndCommit();
+
+    m_frontBufferFlusher = m_frontBuffer.imageBuffer->createFlusher();
 
     return true;
 }

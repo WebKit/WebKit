@@ -34,28 +34,14 @@
 #include <WebCore/DisplayListImageBuffer.h>
 #include <WebCore/DisplayListItems.h>
 #include <WebCore/DisplayListRecorder.h>
+#include <wtf/Condition.h>
+#include <wtf/Lock.h>
 #include <wtf/SystemTracing.h>
 
 namespace WebKit {
 
 class RemoteRenderingBackend;
-
-class ThreadSafeRemoteImageBufferFlusher : public WebCore::ThreadSafeImageBufferFlusher {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    ThreadSafeRemoteImageBufferFlusher(WebCore::ImageBuffer& imageBuffer)
-    {
-        // FIXME: We shouldn't synchronously wait on the flush until flush() is called, but have to invent
-        // a thread-safe way to wait on the incoming message.
-        imageBuffer.flushDrawingContext();
-    }
-
-    void flush() override
-    {
-    }
-
-private:
-};
+template<typename BackendType> class ThreadSafeRemoteImageBufferFlusher;
 
 template<typename BackendType>
 class RemoteImageBufferProxy : public WebCore::DisplayList::ImageBuffer<BackendType>, public WebCore::DisplayList::Recorder::Delegate, public WebCore::DisplayList::ItemBufferWritingClient {
@@ -90,9 +76,11 @@ public:
         m_backend = BackendType::create(logicalSize, backendSize, resolutionScale, colorSpace, pixelFormat, WTFMove(handle));
     }
 
-    void commitFlushDisplayList(WebCore::DisplayList::FlushIdentifier flushIdentifier)
+    void didFlush(WebCore::DisplayList::FlushIdentifier flushIdentifier)
     {
+        auto locker = holdLock(m_receivedFlushIdentifierLock);
         m_receivedFlushIdentifier = flushIdentifier;
+        m_receivedFlushIdentifierChangedCondition.notifyAll();
     }
 
     const WebCore::FloatSize& size() const { return m_size; }
@@ -107,7 +95,23 @@ public:
         return m_backend->createImageBufferBackendHandle();
     }
 
+    WebCore::DisplayList::FlushIdentifier lastSentFlushIdentifier() const { return m_sentFlushIdentifier; }
+
+    void waitForDidFlushOnSecondaryThread(WebCore::DisplayList::FlushIdentifier targetFlushIdentifier)
+    {
+        ASSERT(!isMainThread());
+        auto locker = holdLock(m_receivedFlushIdentifierLock);
+        m_receivedFlushIdentifierChangedCondition.wait(m_receivedFlushIdentifierLock, [&] {
+            return m_receivedFlushIdentifier == targetFlushIdentifier;
+        });
+
+        // Nothing should have sent more drawing commands to the GPU process
+        // while waiting for this ImageBuffer to be flushed.
+        ASSERT(m_sentFlushIdentifier == targetFlushIdentifier);
+    }
+
 protected:
+    friend class RemoteRenderingBackend;
     RemoteImageBufferProxy(const WebCore::FloatSize& size, WebCore::RenderingMode renderingMode, float resolutionScale, WebCore::ColorSpace colorSpace, WebCore::PixelFormat pixelFormat, RemoteRenderingBackendProxy& remoteRenderingBackendProxy)
         : BaseDisplayListImageBuffer(size, this)
         , m_remoteRenderingBackendProxy(makeWeakPtr(remoteRenderingBackendProxy))
@@ -124,17 +128,17 @@ protected:
         m_drawingContext.displayList().setTracksDrawingItemExtents(false);
     }
 
-    bool isPendingFlush() const { return m_sentFlushIdentifier != m_receivedFlushIdentifier; }
+    bool hasPendingFlush() const { return m_sentFlushIdentifier != m_receivedFlushIdentifier; }
 
-    void timeoutWaitForFlushDisplayListWasCommitted()
+    void waitForDidFlushWithTimeout()
     {
         if (!m_remoteRenderingBackendProxy)
             return;
 
         // Wait for our DisplayList to be flushed but do not hang.
         static constexpr unsigned maxWaitingFlush = 3;
-        for (unsigned numWaitingFlush = 0; numWaitingFlush < maxWaitingFlush && isPendingFlush(); ++numWaitingFlush)
-            m_remoteRenderingBackendProxy->waitForFlushDisplayListWasCommitted();
+        for (unsigned numWaitingFlush = 0; numWaitingFlush < maxWaitingFlush && hasPendingFlush(); ++numWaitingFlush)
+            m_remoteRenderingBackendProxy->waitForDidFlush();
     }
 
     BackendType* ensureBackendCreated() const override
@@ -181,7 +185,7 @@ protected:
     {
         TraceScope tracingScope(FlushRemoteImageBufferStart, FlushRemoteImageBufferEnd);
         flushDrawingContextAndCommit();
-        timeoutWaitForFlushDisplayListWasCommitted();
+        waitForDidFlushWithTimeout();
     }
 
     void flushDrawingContextAndCommit() override
@@ -337,10 +341,12 @@ protected:
 
     std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher> createFlusher() override
     {
-        return WTF::makeUnique<ThreadSafeRemoteImageBufferFlusher>(*this);
+        return WTF::makeUnique<ThreadSafeRemoteImageBufferFlusher<BackendType>>(*this);
     }
 
     WebCore::DisplayList::FlushIdentifier m_sentFlushIdentifier;
+    Lock m_receivedFlushIdentifierLock;
+    Condition m_receivedFlushIdentifierChangedCondition;
     WebCore::DisplayList::FlushIdentifier m_receivedFlushIdentifier;
     WeakPtr<RemoteRenderingBackendProxy> m_remoteRenderingBackendProxy;
     size_t m_itemCountInCurrentDisplayList { 0 };
@@ -349,6 +355,26 @@ protected:
     float m_resolutionScale;
     WebCore::ColorSpace m_colorSpace;
     WebCore::PixelFormat m_pixelFormat;
+};
+
+template<typename BackendType>
+class ThreadSafeRemoteImageBufferFlusher final : public WebCore::ThreadSafeImageBufferFlusher {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    ThreadSafeRemoteImageBufferFlusher(RemoteImageBufferProxy<BackendType>& imageBuffer)
+        : m_imageBuffer(imageBuffer)
+        , m_targetFlushIdentifier(imageBuffer.lastSentFlushIdentifier())
+    {
+    }
+
+    void flush() final
+    {
+        m_imageBuffer->waitForDidFlushOnSecondaryThread(m_targetFlushIdentifier);
+    }
+
+private:
+    Ref<RemoteImageBufferProxy<BackendType>> m_imageBuffer;
+    WebCore::DisplayList::FlushIdentifier m_targetFlushIdentifier;
 };
 
 } // namespace WebKit

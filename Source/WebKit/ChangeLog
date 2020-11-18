@@ -1,3 +1,52 @@
+2020-11-17  Tim Horton  <timothy_horton@apple.com>
+
+        GPU-process-hosted RemoteLayerBackingStore should flush off the main thread
+        https://bugs.webkit.org/show_bug.cgi?id=219063
+
+        Reviewed by Simon Fraser.
+
+        * GPUProcess/graphics/RemoteRenderingBackend.h:
+        * Shared/RemoteLayerTree/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::display):
+        Construct the ImageBuffer flusher /after/ submitting the final DisplayList,
+        so that it takes the correct flush identifier.
+
+        * GPUProcess/graphics/RemoteImageBuffer.h:
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::didFlush):
+        (WebKit::RemoteRenderingBackend::flushDisplayListWasCommitted): Deleted.
+        * WebProcess/GPU/graphics/RemoteImageBufferProxy.h:
+        (WebKit::RemoteImageBufferProxy::didFlush):
+        (WebKit::RemoteImageBufferProxy::lastSentFlushIdentifier const):
+        (WebKit::RemoteImageBufferProxy::waitForDidFlushOnSecondaryThread):
+        (WebKit::RemoteImageBufferProxy::hasPendingFlush const):
+        (WebKit::RemoteImageBufferProxy::waitForDidFlushWithTimeout):
+        (WebKit::ThreadSafeRemoteImageBufferFlusher::ThreadSafeRemoteImageBufferFlusher):
+        (WebKit::RemoteImageBufferProxy::commitFlushDisplayList): Deleted.
+        (WebKit::RemoteImageBufferProxy::isPendingFlush const): Deleted.
+        (WebKit::RemoteImageBufferProxy::timeoutWaitForFlushDisplayListWasCommitted): Deleted.
+        Some renames:
+
+        Rename flushDisplayListWasCommitted to didFlush; this is the back-message from
+        GPU process to Web Content process that a FlushContext display list item was completed successfully.
+        Rename isPendingFlush to hasPendingFlush, for grammar.
+        Rename timeoutWaitForFlushDisplayListWasCommitted to waitForDidFlushWithTimeout, for similar reasons.
+        Rename waitForFlushDisplayListWasCommitted to waitForDidFlush.
+        Rename commitFlushDisplayList to didFlush.
+
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp:
+        (WebKit::RemoteRenderingBackendProxy::waitForDidFlush):
+        (WebKit::RemoteRenderingBackendProxy::didFlush):
+        (WebKit::RemoteRenderingBackendProxy::waitForFlushDisplayListWasCommitted): Deleted.
+        (WebKit::RemoteRenderingBackendProxy::flushDisplayListWasCommitted): Deleted.
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.h:
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.messages.in:
+        Reimplement ThreadSafeRemoteImageBufferFlusher such that it waits
+        (on the RemoteLayerTreeDrawingArea CommitQueue, in the only current use of it)
+        for the correct flush reply to come in before continuing. This is analogous
+        to what we do for in-process buffers, where we call CGContextFlush()
+        in the flusher.
+
 2020-11-17  Chris Dumez  <cdumez@apple.com>
 
         [iOS] ASSERTION FAILED: Completion handler should always be called under WebKit::GPUProcess::didReceiveMessage
