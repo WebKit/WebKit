@@ -439,7 +439,10 @@ static bool isSafeCrossOriginResponseHeader(HTTPHeaderName name)
 
 void ResourceResponseBase::sanitizeHTTPHeaderFieldsAccordingToTainting()
 {
-    switch (m_tainting) {
+    // FIXME: we don't really need to construct a Tainting here, this is just a workaround
+    // for a GCC 10 bug (see https://gcc.gnu.org/bugzilla/show_bug.cgi?id=97634), that will
+    // be removed once the bug is fixed.
+    switch (Tainting(m_tainting)) {
     case ResourceResponse::Tainting::Basic:
         return;
     case ResourceResponse::Tainting::Cors: {
