@@ -734,8 +734,13 @@ class RunAPITests(TestWithFailureCount):
 
 
 class RunPythonTests(TestWithFailureCount):
+    test_summary_re = re.compile(r'^FAILED \((?P<counts>[^)]+)\)')  # e.g.: FAILED (failures=2, errors=1)
 
     def start(self):
+        if USE_BUILDBOT_VERSION2:
+            self.log_observer = ParseByLineLogObserver(self.parseOutputLine)
+            self.addLogObserver('stdio', self.log_observer)
+            self.failedTestCount = 0
         platform = self.getProperty('platform')
         # Python tests are flaky on the GTK builders, running them serially
         # helps and does not significantly prolong the cycle time.
@@ -747,7 +752,15 @@ class RunPythonTests(TestWithFailureCount):
             self.setCommand(self.command + ['--child-processes', '1'])
         return shell.Test.start(self)
 
+    def parseOutputLine(self, line):
+        match = self.test_summary_re.match(line)
+        if match:
+            self.failedTestCount = sum(int(component.split('=')[1]) for component in match.group('counts').split(', '))
+
     def countFailures(self, cmd):
+        if USE_BUILDBOT_VERSION2:
+            return self.failedTestCount
+
         logText = cmd.logs['stdio'].getText()
         # We're looking for the line that looks like this: FAILED (failures=2, errors=1)
         regex = re.compile(r'^FAILED \((?P<counts>[^)]+)\)')
