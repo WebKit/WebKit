@@ -27,10 +27,6 @@
 
 namespace WebCore {
 
-enum class ForcedAccessibilityValue : uint8_t {
-    System,
-    On,
-    Off
-};
+enum class ForcedAccessibilityValue : uint8_t { System, On, Off };
 
 }

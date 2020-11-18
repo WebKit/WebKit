@@ -32,11 +32,12 @@ enum class PDFImageCachingPolicy : uint8_t {
     BelowMemoryLimit,
     Disabled,
     ClipBoundsOnly,
-#if PLATFORM(IOS_FAMILY)
-    Default = BelowMemoryLimit
-#else
-    Default = Enabled
-#endif
 };
+
+#if PLATFORM(IOS_FAMILY)
+constexpr PDFImageCachingPolicy defaultPDFImageCachingPolicy = PDFImageCachingPolicy::BelowMemoryLimit;
+#else
+constexpr PDFImageCachingPolicy defaultPDFImageCachingPolicy = PDFImageCachingPolicy::Enabled;
+#endif
 
 }

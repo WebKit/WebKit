@@ -51,7 +51,7 @@
 #include <wtf/text/AtomString.h>
 
 #if ENABLE(DATA_DETECTION)
-#include "DataDetectorTypes.h"
+#include "DataDetectorType.h"
 #endif
 
 namespace WebCore {

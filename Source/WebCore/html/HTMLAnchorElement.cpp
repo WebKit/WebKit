@@ -219,8 +219,7 @@ void HTMLAnchorElement::setActive(bool down, bool pause)
         case EditableLinkBehavior::AlwaysLive:
             break;
 
-        // Don't set the link to be active if the current selection is in the same editable block as
-        // this link
+        // Don't set the link to be active if the current selection is in the same editable block as this link.
         case EditableLinkBehavior::LiveWhenNotFocused:
             if (down && document().frame() && document().frame()->selection().selection().rootEditableElement() == rootEditableElement())
                 return;

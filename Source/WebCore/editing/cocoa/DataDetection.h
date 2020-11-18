@@ -27,7 +27,7 @@
 
 #if ENABLE(DATA_DETECTION)
 
-#import "DataDetectorTypes.h"
+#import "DataDetectorType.h"
 #import "FloatRect.h"
 #import "SimpleRange.h"
 #import <wtf/OptionSet.h>
@@ -52,7 +52,7 @@ public:
 #if PLATFORM(MAC)
     WEBCORE_EXPORT static Optional<DetectedItem> detectItemAroundHitTestResult(const HitTestResult&);
 #endif
-    WEBCORE_EXPORT static NSArray *detectContentInRange(const SimpleRange&, OptionSet<DataDetectorTypes>, NSDictionary *context);
+    WEBCORE_EXPORT static NSArray *detectContentInRange(const SimpleRange&, OptionSet<DataDetectorType>, NSDictionary *context);
     WEBCORE_EXPORT static void removeDataDetectedLinksInDocument(Document&);
 #if PLATFORM(IOS_FAMILY)
     WEBCORE_EXPORT static bool canBePresentedByDataDetectors(const URL&);

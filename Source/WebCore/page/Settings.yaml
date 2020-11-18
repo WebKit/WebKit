@@ -90,11 +90,11 @@ CrossOriginCheckInGetMatchedCSSRulesDisabled:
 
 DataDetectorTypes:
   type: uint32_t
-  refinedType: DataDetectorTypes
+  refinedType: DataDetectorType
   condition: ENABLE(DATA_DETECTION)
   defaultValue:
     WebCore:
-      default: DataDetectorTypes::None
+      default: DataDetectorType::None
 
 DefaultVideoPosterURL:
   comment: >-
@@ -132,7 +132,7 @@ EditingBehaviorType:
   refinedType: EditingBehaviorType
   defaultValue:
     WebCore:
-      PLATFORM(IOS_FAMILY): EditingBehaviorType::Ios
+      PLATFORM(IOS_FAMILY): EditingBehaviorType::iOS
       OS(DARWIN): EditingBehaviorType::Mac
       OS(WINDOWS): EditingBehaviorType::Windows
       OS(UNIX): EditingBehaviorType::Unix

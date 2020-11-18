@@ -9923,7 +9923,7 @@ void WebPageProxy::simulateDeviceOrientationChange(double alpha, double beta, do
 
 #if ENABLE(DATA_DETECTION)
 
-void WebPageProxy::detectDataInAllFrames(WebCore::DataDetectorTypes types, CompletionHandler<void(const DataDetectionResult&)>&& completionHandler)
+void WebPageProxy::detectDataInAllFrames(WebCore::DataDetectorType types, CompletionHandler<void(const DataDetectionResult&)>&& completionHandler)
 {
     if (!hasRunningProcess()) {
         completionHandler({ });

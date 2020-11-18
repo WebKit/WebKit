@@ -218,24 +218,24 @@ static BOOL resultIsURL(DDResultRef result)
     return [urlTypes containsObject:(NSString *)softLink_DataDetectorsCore_DDResultGetType(result)];
 }
 
-static NSString *constructURLStringForResult(DDResultRef currentResult, NSString *resultIdentifier, NSDate *referenceDate, NSTimeZone *referenceTimeZone, OptionSet<DataDetectorTypes> detectionTypes)
+static NSString *constructURLStringForResult(DDResultRef currentResult, NSString *resultIdentifier, NSDate *referenceDate, NSTimeZone *referenceTimeZone, OptionSet<DataDetectorType> detectionTypes)
 {
     if (!softLink_DataDetectorsCore_DDResultHasProperties(currentResult, DDResultPropertyPassiveDisplay))
         return nil;
 
-    auto phoneTypes = detectionTypes.contains(DataDetectorTypes::PhoneNumber) ? DDURLifierPhoneNumberDetectionRegular : DDURLifierPhoneNumberDetectionNone;
+    auto phoneTypes = detectionTypes.contains(DataDetectorType::PhoneNumber) ? DDURLifierPhoneNumberDetectionRegular : DDURLifierPhoneNumberDetectionNone;
     auto category = softLink_DataDetectorsCore_DDResultGetCategory(currentResult);
     auto type = softLink_DataDetectorsCore_DDResultGetType(currentResult);
 
-    if ((detectionTypes.contains(DataDetectorTypes::Address) && DDResultCategoryAddress == category)
-        || (detectionTypes.contains(DataDetectorTypes::TrackingNumber) && CFEqual(get_DataDetectorsCore_DDBinderTrackingNumberKey(), type))
-        || (detectionTypes.contains(DataDetectorTypes::FlightNumber) && CFEqual(get_DataDetectorsCore_DDBinderFlightInformationKey(), type))
-        || (detectionTypes.contains(DataDetectorTypes::LookupSuggestion) && CFEqual(get_DataDetectorsCore_DDBinderParsecSourceKey(), type))
-        || (detectionTypes.contains(DataDetectorTypes::PhoneNumber) && DDResultCategoryPhoneNumber == category)
-        || (detectionTypes.contains(DataDetectorTypes::Link) && resultIsURL(currentResult))) {
+    if ((detectionTypes.contains(DataDetectorType::Address) && DDResultCategoryAddress == category)
+        || (detectionTypes.contains(DataDetectorType::TrackingNumber) && CFEqual(get_DataDetectorsCore_DDBinderTrackingNumberKey(), type))
+        || (detectionTypes.contains(DataDetectorType::FlightNumber) && CFEqual(get_DataDetectorsCore_DDBinderFlightInformationKey(), type))
+        || (detectionTypes.contains(DataDetectorType::LookupSuggestion) && CFEqual(get_DataDetectorsCore_DDBinderParsecSourceKey(), type))
+        || (detectionTypes.contains(DataDetectorType::PhoneNumber) && DDResultCategoryPhoneNumber == category)
+        || (detectionTypes.contains(DataDetectorType::Link) && resultIsURL(currentResult))) {
         return softLink_DataDetectorsCore_DDURLStringForResult(currentResult, resultIdentifier, phoneTypes, referenceDate, referenceTimeZone);
     }
-    if (detectionTypes.contains(DataDetectorTypes::CalendarEvent) && DDResultCategoryCalendarEvent == category) {
+    if (detectionTypes.contains(DataDetectorType::CalendarEvent) && DDResultCategoryCalendarEvent == category) {
         if (!softLink_DataDetectorsCore_DDResultIsPastDate(currentResult, (CFDateRef)referenceDate, (CFTimeZoneRef)referenceTimeZone))
             return softLink_DataDetectorsCore_DDURLStringForResult(currentResult, resultIdentifier, phoneTypes, referenceDate, referenceTimeZone);
     }
@@ -433,13 +433,13 @@ void DataDetection::removeDataDetectedLinksInDocument(Document& document)
         removeResultLinksFromAnchor(anchor.get());
 }
 
-NSArray *DataDetection::detectContentInRange(const SimpleRange& contextRange, OptionSet<DataDetectorTypes> types, NSDictionary *context)
+NSArray *DataDetection::detectContentInRange(const SimpleRange& contextRange, OptionSet<DataDetectorType> types, NSDictionary *context)
 {
     auto scanner = adoptCF(softLink_DataDetectorsCore_DDScannerCreate(DDScannerTypeStandard, 0, nullptr));
     auto scanQuery = adoptCF(softLink_DataDetectorsCore_DDScanQueryCreate(NULL));
     buildQuery(scanQuery.get(), contextRange);
     
-    if (types.contains(DataDetectorTypes::LookupSuggestion))
+    if (types.contains(DataDetectorType::LookupSuggestion))
         softLink_DataDetectorsCore_DDScannerEnableOptionalSource(scanner.get(), DDScannerSourceSpotlight, true);
 
     // FIXME: we should add a timeout to this call to make sure it doesn't take too much time.
@@ -632,7 +632,7 @@ NSArray *DataDetection::detectContentInRange(const SimpleRange& contextRange, Op
 
 #else
 
-NSArray *DataDetection::detectContentInRange(const SimpleRange&, OptionSet<DataDetectorTypes>, NSDictionary *)
+NSArray *DataDetection::detectContentInRange(const SimpleRange&, OptionSet<DataDetectorType>, NSDictionary *)
 {
     return nil;
 }

@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-enum class DataDetectorTypes : uint8_t {
+enum class DataDetectorType : uint8_t {
     None = 0,
     PhoneNumber = 1 << 0,
     Link = 1 << 1,
@@ -46,17 +46,17 @@ enum class DataDetectorTypes : uint8_t {
 
 namespace WTF {
 
-template<> struct EnumTraits<WebCore::DataDetectorTypes> {
+template<> struct EnumTraits<WebCore::DataDetectorType> {
     using values = EnumValues<
-        WebCore::DataDetectorTypes,
-        WebCore::DataDetectorTypes::None,
-        WebCore::DataDetectorTypes::PhoneNumber,
-        WebCore::DataDetectorTypes::Link,
-        WebCore::DataDetectorTypes::Address,
-        WebCore::DataDetectorTypes::CalendarEvent,
-        WebCore::DataDetectorTypes::TrackingNumber,
-        WebCore::DataDetectorTypes::FlightNumber,
-        WebCore::DataDetectorTypes::LookupSuggestion
+        WebCore::DataDetectorType,
+        WebCore::DataDetectorType::None,
+        WebCore::DataDetectorType::PhoneNumber,
+        WebCore::DataDetectorType::Link,
+        WebCore::DataDetectorType::Address,
+        WebCore::DataDetectorType::CalendarEvent,
+        WebCore::DataDetectorType::TrackingNumber,
+        WebCore::DataDetectorType::FlightNumber,
+        WebCore::DataDetectorType::LookupSuggestion
     >;
 };
 

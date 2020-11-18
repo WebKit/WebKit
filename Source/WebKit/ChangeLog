@@ -1,3 +1,20 @@
+2020-11-18  Sam Weinig  <weinig@apple.com>
+
+        Address additional feedback from https://bugs.webkit.org/show_bug.cgi?id=218960
+        https://bugs.webkit.org/show_bug.cgi?id=219044
+
+        Reviewed by Alex Christensen.
+
+        * Shared/API/Cocoa/WKDataDetectorTypesInternal.h:
+        (fromWKDataDetectorTypes):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::detectDataInAllFrames):
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+        (WebKit::WebPage::detectDataInAllFrames):
+        Update for rename of WebCore::DataDetectionTypes to WebCore::DataDetectionType.
+
 2020-11-17  Tim Horton  <timothy_horton@apple.com>
 
         GPU-process-hosted RemoteLayerBackingStore should flush off the main thread

@@ -39,7 +39,7 @@ enum class EditingBehaviorType : uint8_t {
     Mac,
     Windows,
     Unix,
-    Ios
+    iOS,
 };
 
 } // WebCore namespace
