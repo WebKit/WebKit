@@ -1,0 +1,22 @@
+Test structured clone permutations in IndexedDB with shared memories.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
+store = db.createObjectStore('storeName')
+This index is not used, but evaluating key path on each put() call will exercise (de)serialization:
+store.createIndex('indexName', 'dummyKeyPath')
+
+Running tests...
+Test shared WebAssembly.Memory
+transaction = db.transaction('storeName', 'readwrite')
+store = transaction.objectStore('storeName')
+PASS store.put(memory, 'key') threw exception DataCloneError: The object can not be cloned..
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

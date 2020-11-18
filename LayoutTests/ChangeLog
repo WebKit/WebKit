@@ -1,3 +1,27 @@
+2020-11-16  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Implement WebAssembly.Memory with shared
+        https://bugs.webkit.org/show_bug.cgi?id=218693
+
+        Reviewed by Saam Barati.
+
+        * js/dom/resources/webassembly-memory-normal-fail-worker.js: Added.
+        * js/dom/resources/webassembly-memory-shared-worker.js: Added.
+        (onmessage):
+        * js/dom/webassembly-memory-normal-fail-expected.txt: Added.
+        * js/dom/webassembly-memory-normal-fail.html: Added.
+        * js/dom/webassembly-memory-shared-basic-expected.txt: Added.
+        * js/dom/webassembly-memory-shared-basic.html: Added.
+        * js/dom/webassembly-memory-shared-fail-expected.txt: Added.
+        * js/dom/webassembly-memory-shared-fail.html: Added.
+        * platform/win/TestExpectations:
+        * storage/indexeddb/resources/shared-memory-structured-clone.js: Added.
+        (prepareDatabase):
+        (async startTests):
+        (testSharedWebAssemblyMemory):
+        * storage/indexeddb/shared-memory-structured-clone-expected.txt: Added.
+        * storage/indexeddb/shared-memory-structured-clone.html: Added.
+
 2020-11-17  Sergey Rubanov  <chi187@gmail.com>
 
         Add support for the Wasm i32 sign-extension-ops proposal

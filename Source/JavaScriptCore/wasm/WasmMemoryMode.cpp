@@ -42,6 +42,16 @@ const char* makeString(MemoryMode mode)
     return "";
 }
 
+const char* makeString(MemorySharingMode sharingMode)
+{
+    switch (sharingMode) {
+    case MemorySharingMode::Default: return "Default";
+    case MemorySharingMode::Shared: return "Shared";
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+    return "";
+}
+
 } } // namespace JSC::Wasm
 
 #endif // ENABLE(WEBASSEMBLY)

@@ -17,5 +17,5 @@ PASS Out-of-range argument: 68719476736
 PASS Out-of-range argument: "0x100000000"
 PASS Out-of-range argument: object "[object Object]"
 PASS Stray argument
-FAIL Growing shared memory does not detach old buffer assert_equals: Buffer before growing: constructor expected true but got false
+PASS Growing shared memory does not detach old buffer
 

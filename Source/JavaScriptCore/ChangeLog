@@ -1,3 +1,126 @@
+2020-11-16  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Implement WebAssembly.Memory with shared
+        https://bugs.webkit.org/show_bug.cgi?id=218693
+
+        Reviewed by Saam Barati.
+
+        This patch implements shared WebAssembly.Memory. This can be shared between workers like SharedArrayBuffer.
+        The most interesting thing of shared WebAssembly.Memory is that it is growable. The memory can be grown in
+        one thread, and immediately, it should be accessible in the other threads.
+
+        To achieve that, shared WebAssembly.Memory leverages signaling even if bounds-checking is mainly used.
+        If the fast memory is enabled, we just use it so that mprotect can make memory grown easily. But if fast memory
+        is disabled, we allocates requested VA region and perform bounds-checking with this VA. Since WebAssembly.Memory
+        always requires "maximum" size of memory, we can first allocate VA and map active part of memory first. And
+        when growing, we perform mprotect to the rest of the memory. Since this VA is not 4GB, we still need to perform
+        bounds-checking, but we perform bounds-checking with VA size instead of active memory size. As a result, even if
+        shared WebAssembly.Memory is grown, we do not need to update (1) pointer and (2) bounds-checking size.
+        The shared bounds-checking WebAssembly.Memory is something like below.
+
+        <================================================ maximum ============================><------------ other memory, protected by bounds-checking --...
+        <======= active ==========><===================== not active yet =====================>
+        ^                               [ if we access this, fault handler will detect it]    ^
+        pointer                                                                               bounds checking size
+
+        These "growable bound-checking memory" is now managed by wasm memory-manager. And fault handler is used even if fast memory is disabled.
+        And fault handler also accepts signals from Wasm LLInt code since both bounds-checkings + signalings are required to confine memory access even in
+        Wasm LLInt. This patch also renamed memory-size and size-register to bounds-checking-size and bounds-checking-size-register since this is no longer
+        a size of memory.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * llint/LLIntPCRanges.h:
+        (JSC::LLInt::isWasmLLIntPC):
+        * llint/LowLevelInterpreter.asm:
+        * llint/WebAssembly.asm:
+        * runtime/JSArrayBuffer.h:
+        (JSC::JSArrayBuffer::toWrappedAllowShared):
+        * runtime/JSArrayBufferView.h:
+        * runtime/JSArrayBufferViewInlines.h:
+        (JSC::JSArrayBufferView::toWrappedAllowShared):
+        * runtime/JSGenericTypedArrayView.h:
+        (JSC::JSGenericTypedArrayView<Adaptor>::toWrappedAllowShared):
+        * runtime/Options.cpp:
+        (JSC::overrideDefaults):
+        (JSC::Options::initialize):
+        * wasm/WasmAirIRGenerator.cpp:
+        (JSC::Wasm::AirIRGenerator::AirIRGenerator):
+        (JSC::Wasm::AirIRGenerator::restoreWebAssemblyGlobalState):
+        (JSC::Wasm::AirIRGenerator::addCurrentMemory):
+        (JSC::Wasm::AirIRGenerator::emitCheckAndPreparePointer):
+        (JSC::Wasm::AirIRGenerator::addCall):
+        (JSC::Wasm::AirIRGenerator::addCallIndirect):
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::B3IRGenerator):
+        (JSC::Wasm::B3IRGenerator::restoreWebAssemblyGlobalState):
+        (JSC::Wasm::B3IRGenerator::addCurrentMemory):
+        (JSC::Wasm::B3IRGenerator::emitCheckAndPreparePointer):
+        (JSC::Wasm::B3IRGenerator::addCall):
+        (JSC::Wasm::B3IRGenerator::addCallIndirect):
+        * wasm/WasmBinding.cpp:
+        (JSC::Wasm::wasmToWasm):
+        * wasm/WasmFaultSignalHandler.cpp:
+        (JSC::Wasm::trapHandler):
+        (JSC::Wasm::enableFastMemory):
+        (JSC::Wasm::prepareFastMemory):
+        * wasm/WasmInstance.h:
+        (JSC::Wasm::Instance::cachedMemory const):
+        (JSC::Wasm::Instance::cachedBoundsCheckingSize const):
+        (JSC::Wasm::Instance::updateCachedMemory):
+        (JSC::Wasm::Instance::offsetOfCachedBoundsCheckingSize):
+        (JSC::Wasm::Instance::cachedMemorySize const): Deleted.
+        (JSC::Wasm::Instance::offsetOfCachedMemorySize): Deleted.
+        * wasm/WasmMemory.cpp:
+        (JSC::Wasm::MemoryHandle::MemoryHandle):
+        (JSC::Wasm::MemoryHandle::~MemoryHandle):
+        (JSC::Wasm::Memory::Memory):
+        (JSC::Wasm::Memory::create):
+        (JSC::Wasm::Memory::tryCreate):
+        (JSC::Wasm::Memory::addressIsInGrowableOrFastMemory):
+        (JSC::Wasm::Memory::growShared):
+        (JSC::Wasm::Memory::grow):
+        (JSC::Wasm::Memory::dump const):
+        (JSC::Wasm::Memory::~Memory): Deleted.
+        (JSC::Wasm::Memory::addressIsInActiveFastMemory): Deleted.
+        * wasm/WasmMemory.h:
+        (JSC::Wasm::Memory::addressIsInGrowableOrFastMemory):
+        (JSC::Wasm::Memory::operator bool const): Deleted.
+        (JSC::Wasm::Memory::memory const): Deleted.
+        (JSC::Wasm::Memory::size const): Deleted.
+        (JSC::Wasm::Memory::sizeInPages const): Deleted.
+        (JSC::Wasm::Memory::initial const): Deleted.
+        (JSC::Wasm::Memory::maximum const): Deleted.
+        (JSC::Wasm::Memory::mode const): Deleted.
+        (JSC::Wasm::Memory::check): Deleted.
+        (JSC::Wasm::Memory::offsetOfMemory): Deleted.
+        (JSC::Wasm::Memory::offsetOfSize): Deleted.
+        (JSC::Wasm::Memory::addressIsInActiveFastMemory): Deleted.
+        * wasm/WasmMemoryInformation.cpp:
+        (JSC::Wasm::PinnedRegisterInfo::get):
+        (JSC::Wasm::PinnedRegisterInfo::PinnedRegisterInfo):
+        * wasm/WasmMemoryInformation.h:
+        (JSC::Wasm::PinnedRegisterInfo::toSave const):
+        * wasm/WasmMemoryMode.cpp:
+        (JSC::Wasm::makeString):
+        * wasm/WasmMemoryMode.h:
+        * wasm/js/JSToWasm.cpp:
+        (JSC::Wasm::createJSToWasmWrapper):
+        * wasm/js/JSWebAssemblyInstance.cpp:
+        (JSC::JSWebAssemblyInstance::tryCreate):
+        * wasm/js/JSWebAssemblyMemory.cpp:
+        (JSC::JSWebAssemblyMemory::buffer):
+        (JSC::JSWebAssemblyMemory::growSuccessCallback):
+        * wasm/js/JSWebAssemblyMemory.h:
+        * wasm/js/WebAssemblyFunction.cpp:
+        (JSC::WebAssemblyFunction::jsCallEntrypointSlow):
+        * wasm/js/WebAssemblyMemoryConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * wasm/js/WebAssemblyMemoryPrototype.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * wasm/js/WebAssemblyModuleRecord.cpp:
+        (JSC::WebAssemblyModuleRecord::evaluate):
+
 2020-11-17  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Enable static public class fields

@@ -1602,6 +1602,7 @@ static JSC_DECLARE_HOST_FUNCTION(jsTestObjPrototypeFunction_trailing_dash_hyphen
 static JSC_DECLARE_HOST_FUNCTION(jsTestObjPrototypeFunction_leading_underscore_function);
 static JSC_DECLARE_HOST_FUNCTION(jsTestObjPrototypeFunction_double_leading_underscore_function);
 static JSC_DECLARE_HOST_FUNCTION(jsTestObjPrototypeFunction_trailing_underscore_function_);
+static JSC_DECLARE_HOST_FUNCTION(jsTestObjPrototypeFunction_encodeInto);
 static JSC_DECLARE_HOST_FUNCTION(jsTestObjPrototypeFunction_toString);
 
 // Attributes
@@ -2333,6 +2334,7 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
     { "leading_underscore_function", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestObjPrototypeFunction_leading_underscore_function), (intptr_t) (0) } },
     { "_double_leading_underscore_function", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestObjPrototypeFunction_double_leading_underscore_function), (intptr_t) (0) } },
     { "trailing_underscore_function_", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestObjPrototypeFunction_trailing_underscore_function_), (intptr_t) (0) } },
+    { "encodeInto", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestObjPrototypeFunction_encodeInto), (intptr_t) (1) } },
     { "toString", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestObjPrototypeFunction_toString), (intptr_t) (0) } },
 #if ENABLE(Condition1)
     { "CONDITIONAL_CONST", JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::ConstantInteger, NoIntrinsic, { (long long)(0) } },
@@ -9495,6 +9497,26 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunction_trailing_underscore
 JSC_DEFINE_HOST_FUNCTION(jsTestObjPrototypeFunction_trailing_underscore_function_, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
     return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunction_trailing_underscore_function_Body>(*lexicalGlobalObject, *callFrame, "trailing_underscore_function_");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunction_encodeIntoBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestObj>::ClassParameter castedThis)
+{
+    auto& vm = JSC::getVM(lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(callFrame);
+    auto& impl = castedThis->wrapped();
+    if (UNLIKELY(callFrame->argumentCount() < 1))
+        return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
+    EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
+    auto destination = convert<IDLAllowSharedAdaptor<IDLUint8Array>>(*lexicalGlobalObject, argument0.value(), [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwArgumentTypeError(lexicalGlobalObject, scope, 0, "destination", "TestObject", "encodeInto", "Uint8Array"); });
+    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLBoolean>(impl.encodeInto(destination.releaseNonNull()))));
+}
+
+JSC_DEFINE_HOST_FUNCTION(jsTestObjPrototypeFunction_encodeInto, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
+{
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunction_encodeIntoBody>(*lexicalGlobalObject, *callFrame, "encodeInto");
 }
 
 static inline JSC::EncodedJSValue jsTestObjPrototypeFunction_toStringBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestObj>::ClassParameter castedThis)

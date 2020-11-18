@@ -204,6 +204,7 @@ public:
     static ptrdiff_t offsetOfMode() { return OBJECT_OFFSETOF(JSArrayBufferView, m_mode); }
     
     static RefPtr<ArrayBufferView> toWrapped(VM&, JSValue);
+    static RefPtr<ArrayBufferView> toWrappedAllowShared(VM&, JSValue);
 
 private:
     enum Requester { Mutator, ConcurrentThread };

@@ -24,8 +24,7 @@
             "contextsAllowed": ["type"],
             "standard": {
                 "url": "https://heycam.github.io/webidl/#AllowShared"
-            },
-            "unsupported": true
+            }
         },
         "AppleCopyright": {
             "contextsAllowed": ["interface", "attribute", "operation"]

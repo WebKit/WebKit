@@ -1,3 +1,19 @@
+2020-11-16  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Implement WebAssembly.Memory with shared
+        https://bugs.webkit.org/show_bug.cgi?id=218693
+
+        Reviewed by Saam Barati.
+
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/integration-with-the-javascript-agent-formalism/requires-success.any.worker-expected.txt:
+        * web-platform-tests/wasm/jsapi/memory/constructor-shared.tentative.any-expected.txt:
+        * web-platform-tests/wasm/jsapi/memory/constructor-shared.tentative.any.worker-expected.txt:
+        * web-platform-tests/wasm/jsapi/memory/constructor.any-expected.txt:
+        * web-platform-tests/wasm/jsapi/memory/constructor.any.worker-expected.txt:
+        * web-platform-tests/wasm/jsapi/memory/grow.any-expected.txt:
+        * web-platform-tests/wasm/jsapi/memory/grow.any.worker-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audiobuffer-interface/audiobuffer-copy-channel-expected.txt:
+
 2020-11-16  Alex Christensen  <achristensen@webkit.org>
 
         FileReaderLoader::convertToDataURL should use application/octet-stream if MIME type is empty

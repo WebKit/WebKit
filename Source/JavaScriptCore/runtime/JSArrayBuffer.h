@@ -55,6 +55,7 @@ public:
     
     // This is the default DOM unwrapping. It calls toUnsharedArrayBuffer().
     static ArrayBuffer* toWrapped(VM&, JSValue);
+    static ArrayBuffer* toWrappedAllowShared(VM&, JSValue);
     
 private:
     JSArrayBuffer(VM&, Structure*, RefPtr<ArrayBuffer>&&);
@@ -84,6 +85,11 @@ inline ArrayBuffer* toUnsharedArrayBuffer(VM& vm, JSValue value)
 inline ArrayBuffer* JSArrayBuffer::toWrapped(VM& vm, JSValue value)
 {
     return toUnsharedArrayBuffer(vm, value);
+}
+
+inline ArrayBuffer* JSArrayBuffer::toWrappedAllowShared(VM& vm, JSValue value)
+{
+    return toPossiblySharedArrayBuffer(vm, value);
 }
 
 } // namespace JSC

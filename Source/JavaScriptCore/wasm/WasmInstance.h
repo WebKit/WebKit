@@ -77,8 +77,8 @@ public:
     Table* table(unsigned);
     void setTable(unsigned, Ref<Table>&&);
 
-    void* cachedMemory() const { return m_cachedMemory.getMayBeNull(cachedMemorySize()); }
-    size_t cachedMemorySize() const { return m_cachedMemorySize; }
+    void* cachedMemory() const { return m_cachedMemory.getMayBeNull(cachedBoundsCheckingSize()); }
+    size_t cachedBoundsCheckingSize() const { return m_cachedBoundsCheckingSize; }
 
     void setMemory(Ref<Memory>&& memory)
     {
@@ -89,8 +89,8 @@ public:
     void updateCachedMemory()
     {
         if (m_memory != nullptr) {
-            m_cachedMemory = CagedPtr<Gigacage::Primitive, void, tagCagedPtr>(memory()->memory(), memory()->size());
-            m_cachedMemorySize = memory()->size();
+            m_cachedMemory = CagedPtr<Gigacage::Primitive, void, tagCagedPtr>(memory()->memory(), memory()->boundsCheckingSize());
+            m_cachedBoundsCheckingSize = memory()->boundsCheckingSize();
         }
     }
 
@@ -146,7 +146,7 @@ public:
     static ptrdiff_t offsetOfMemory() { return OBJECT_OFFSETOF(Instance, m_memory); }
     static ptrdiff_t offsetOfGlobals() { return OBJECT_OFFSETOF(Instance, m_globals); }
     static ptrdiff_t offsetOfCachedMemory() { return OBJECT_OFFSETOF(Instance, m_cachedMemory); }
-    static ptrdiff_t offsetOfCachedMemorySize() { return OBJECT_OFFSETOF(Instance, m_cachedMemorySize); }
+    static ptrdiff_t offsetOfCachedBoundsCheckingSize() { return OBJECT_OFFSETOF(Instance, m_cachedBoundsCheckingSize); }
     static ptrdiff_t offsetOfPointerToTopEntryFrame() { return OBJECT_OFFSETOF(Instance, m_pointerToTopEntryFrame); }
 
     static ptrdiff_t offsetOfPointerToActualStackLimit() { return OBJECT_OFFSETOF(Instance, m_pointerToActualStackLimit); }
@@ -201,7 +201,7 @@ private:
     void* m_owner { nullptr }; // In a JS embedding, this is a JSWebAssemblyInstance*.
     Context* m_context { nullptr };
     CagedPtr<Gigacage::Primitive, void, tagCagedPtr> m_cachedMemory;
-    size_t m_cachedMemorySize { 0 };
+    size_t m_cachedBoundsCheckingSize { 0 };
     Ref<Module> m_module;
     RefPtr<CodeBlock> m_codeBlock;
     RefPtr<Memory> m_memory;

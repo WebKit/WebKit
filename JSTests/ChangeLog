@@ -1,3 +1,19 @@
+2020-11-16  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Implement WebAssembly.Memory with shared
+        https://bugs.webkit.org/show_bug.cgi?id=218693
+
+        Reviewed by Saam Barati.
+
+        * wasm/function-tests/trap-load-shared.js: Added.
+        (wasmFrameCountFromError):
+        * wasm/function-tests/trap-store-shared.js: Added.
+        * wasm/js-api/test_memory.js:
+        (binaryShouldNotParse):
+        * wasm/stress/shared-memory-errors.js: Added.
+        (assert.throws):
+        * wasm/stress/shared-wasm-memory-buffer.js: Added.
+
 2020-11-17  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Enable static public class fields

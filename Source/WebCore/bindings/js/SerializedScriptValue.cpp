@@ -75,6 +75,7 @@
 #include <JavaScriptCore/JSSet.h>
 #include <JavaScriptCore/JSSetIterator.h>
 #include <JavaScriptCore/JSTypedArrays.h>
+#include <JavaScriptCore/JSWebAssemblyMemory.h>
 #include <JavaScriptCore/JSWebAssemblyModule.h>
 #include <JavaScriptCore/ObjectConstructor.h>
 #include <JavaScriptCore/PropertyNameArray.h>
@@ -182,6 +183,9 @@ enum SerializationTag {
 #endif
     BigIntTag = 47,
     BigIntObjectTag = 48,
+#if ENABLE(WEBASSEMBLY)
+    WasmMemoryTag = 49,
+#endif
     ErrorTag = 255
 };
 
@@ -357,7 +361,6 @@ static const unsigned StringDataIs8BitFlag = 0x80000000;
  *    | MessagePortReferenceTag <value:uint32_t>
  *    | ArrayBuffer
  *    | ArrayBufferViewTag ArrayBufferViewSubtag <byteOffset:uint32_t> <byteLength:uint32_t> (ArrayBuffer | ObjectReference)
- *    | ArrayBufferTransferTag <value:uint32_t>
  *    | CryptoKeyTag <wrappedKeyLength:uint32_t> <factor:byte{wrappedKeyLength}>
  *    | DOMPoint
  *    | DOMRect
@@ -367,6 +370,7 @@ static const unsigned StringDataIs8BitFlag = 0x80000000;
  *    | RTCCertificateTag
  *    | ImageBitmapTag <originClean:uint8_t> <logicalWidth:int32_t> <logicalHeight:int32_t> <resolutionScale:double> <byteLength:uint32_t>(<imageByteData:uint8_t>)
  *    | OffscreenCanvasTransferTag <value:uint32_t>
+ *    | WasmMemoryTag <value:uint32_t>
  *
  * Inside certificate, data is serialized in this format as per spec:
  *
@@ -419,6 +423,8 @@ static const unsigned StringDataIs8BitFlag = 0x80000000;
  *
  * ArrayBuffer :-
  *    ArrayBufferTag <length:uint32_t> <contents:byte{length}>
+ *    ArrayBufferTransferTag <value:uint32_t>
+ *    SharedArrayBufferTag <value:uint32_t>
  *
  * CryptoKeyHMAC :-
  *    <keySize:uint32_t> <keyData:byte{keySize}> CryptoAlgorithmIdentifierTag // Algorithm tag inner hash function.
@@ -576,6 +582,7 @@ public:
 #endif
 #if ENABLE(WEBASSEMBLY)
             WasmModuleArray& wasmModules,
+            WasmMemoryHandleArray& wasmMemoryHandles,
 #endif
         Vector<String>& blobURLs, Vector<uint8_t>& out, SerializationContext context, ArrayBufferContentsArray& sharedBuffers)
     {
@@ -585,6 +592,7 @@ public:
 #endif
 #if ENABLE(WEBASSEMBLY)
             wasmModules,
+            wasmMemoryHandles,
 #endif
             blobURLs, out, context, sharedBuffers);
         return serializer.serialize(value);
@@ -615,6 +623,7 @@ private:
 #endif
 #if ENABLE(WEBASSEMBLY)
             WasmModuleArray& wasmModules,
+            WasmMemoryHandleArray& wasmMemoryHandles,
 #endif
         Vector<String>& blobURLs, Vector<uint8_t>& out, SerializationContext context, ArrayBufferContentsArray& sharedBuffers)
         : CloneBase(lexicalGlobalObject)
@@ -625,6 +634,7 @@ private:
         , m_sharedBuffers(sharedBuffers)
 #if ENABLE(WEBASSEMBLY)
         , m_wasmModules(wasmModules)
+        , m_wasmMemoryHandles(wasmMemoryHandles)
 #endif
     {
         write(CurrentVersion);
@@ -1230,6 +1240,7 @@ private:
                 Vector<RefPtr<JSC::ArrayBuffer>> dummyArrayBuffers;
 #if ENABLE(WEBASSEMBLY)
                 WasmModuleArray dummyModules;
+                WasmMemoryHandleArray dummyMemoryHandles;
 #endif
                 ArrayBufferContentsArray dummySharedBuffers;
                 CloneSerializer rawKeySerializer(m_lexicalGlobalObject, dummyMessagePorts, dummyArrayBuffers, { },
@@ -1238,6 +1249,7 @@ private:
 #endif
 #if ENABLE(WEBASSEMBLY)
                     dummyModules,
+                    dummyMemoryHandles,
 #endif
                     dummyBlobURLs, serializedKey, SerializationContext::Default, dummySharedBuffers);
                 rawKeySerializer.write(key);
@@ -1271,6 +1283,21 @@ private:
                 uint32_t index = m_wasmModules.size(); 
                 m_wasmModules.append(makeRef(module->module()));
                 write(WasmModuleTag);
+                write(index);
+                return true;
+            }
+            if (JSWebAssemblyMemory* memory = jsDynamicCast<JSWebAssemblyMemory*>(vm, obj)) {
+                if (memory->memory().sharingMode() != JSC::Wasm::MemorySharingMode::Shared) {
+                    code = SerializationReturnCode::DataCloneError;
+                    return true;
+                }
+                if (m_context != SerializationContext::WorkerPostMessage) {
+                    code = SerializationReturnCode::DataCloneError;
+                    return true;
+                }
+                uint32_t index = m_wasmMemoryHandles.size();
+                m_wasmMemoryHandles.append(makeRef(memory->memory().handle()));
+                write(WasmMemoryTag);
                 write(index);
                 return true;
             }
@@ -1658,6 +1685,7 @@ private:
     ArrayBufferContentsArray& m_sharedBuffers;
 #if ENABLE(WEBASSEMBLY)
     WasmModuleArray& m_wasmModules;
+    WasmMemoryHandleArray& m_wasmMemoryHandles;
 #endif
 };
 
@@ -1937,6 +1965,7 @@ public:
         , ArrayBufferContentsArray* arrayBufferContentsArray, const Vector<uint8_t>& buffer, const Vector<String>& blobURLs, const Vector<String> blobFilePaths, ArrayBufferContentsArray* sharedBuffers
 #if ENABLE(WEBASSEMBLY)
         , WasmModuleArray* wasmModules
+        , WasmMemoryHandleArray* wasmMemoryHandles
 #endif
         )
     {
@@ -1948,6 +1977,7 @@ public:
 #endif
 #if ENABLE(WEBASSEMBLY)
             , wasmModules
+            , wasmMemoryHandles
 #endif
             );
         if (!deserializer.isValid())
@@ -2001,6 +2031,7 @@ private:
 #endif
 #if ENABLE(WEBASSEMBLY)
         , WasmModuleArray* wasmModules = nullptr
+        , WasmMemoryHandleArray* wasmMemoryHandles = nullptr
 #endif
         )
         : CloneBase(lexicalGlobalObject)
@@ -2021,6 +2052,7 @@ private:
 #endif
 #if ENABLE(WEBASSEMBLY)
         , m_wasmModules(wasmModules)
+        , m_wasmMemoryHandles(wasmMemoryHandles)
 #endif
     {
         if (!read(m_version))
@@ -2033,6 +2065,7 @@ private:
 #endif
 #if ENABLE(WEBASSEMBLY)
         , WasmModuleArray* wasmModules
+        , WasmMemoryHandleArray* wasmMemoryHandles
 #endif
         )
         : CloneBase(lexicalGlobalObject)
@@ -2056,6 +2089,7 @@ private:
 #endif
 #if ENABLE(WEBASSEMBLY)
         , m_wasmModules(wasmModules)
+        , m_wasmMemoryHandles(wasmMemoryHandles)
 #endif
     {
         if (!read(m_version))
@@ -3299,6 +3333,33 @@ private:
             m_gcBuffer.appendWithCrashOnOverflow(result);
             return result;
         }
+        case WasmMemoryTag: {
+            uint32_t index;
+            bool indexSuccessfullyRead = read(index);
+            if (!indexSuccessfullyRead || !m_wasmMemoryHandles || index >= m_wasmMemoryHandles->size()) {
+                fail();
+                return JSValue();
+            }
+            RefPtr<Wasm::MemoryHandle> handle = m_wasmMemoryHandles->at(index);
+            if (!handle) {
+                fail();
+                return JSValue();
+            }
+            auto& vm = m_lexicalGlobalObject->vm();
+            auto scope = DECLARE_THROW_SCOPE(vm);
+            JSWebAssemblyMemory* result = JSC::JSWebAssemblyMemory::tryCreate(m_lexicalGlobalObject, vm, m_globalObject->webAssemblyMemoryStructure());
+            // Since we are cloning a JSWebAssemblyMemory, it's impossible for that
+            // module to not have been a valid module. Therefore, createStub should
+            // not trow.
+            scope.releaseAssertNoException();
+            Ref<Wasm::Memory> memory = Wasm::Memory::create(handle.releaseNonNull(),
+                [&vm] (Wasm::Memory::NotifyPressure) { vm.heap.collectAsync(CollectionScope::Full); },
+                [&vm] (Wasm::Memory::SyncTryToReclaim) { vm.heap.collectSync(CollectionScope::Full); },
+                [&vm, result] (Wasm::Memory::GrowSuccess, Wasm::PageCount oldPageCount, Wasm::PageCount newPageCount) { result->growSuccessCallback(vm, oldPageCount, newPageCount); });
+            result->adopt(WTFMove(memory));
+            m_gcBuffer.appendWithCrashOnOverflow(result);
+            return result;
+        }
 #endif
         case ArrayBufferTag: {
             RefPtr<ArrayBuffer> arrayBuffer;
@@ -3439,6 +3500,7 @@ private:
 #endif
 #if ENABLE(WEBASSEMBLY)
     WasmModuleArray* m_wasmModules;
+    WasmMemoryHandleArray* m_wasmMemoryHandles;
 #endif
 
     String blobFilePathForBlobURL(const String& blobURL)
@@ -3661,6 +3723,7 @@ SerializedScriptValue::SerializedScriptValue(Vector<uint8_t>&& buffer, const Vec
 #endif
 #if ENABLE(WEBASSEMBLY)
         , std::unique_ptr<WasmModuleArray> wasmModulesArray
+        , std::unique_ptr<WasmMemoryHandleArray> wasmMemoryHandlesArray
 #endif
         )
     : m_data(WTFMove(buffer))
@@ -3672,6 +3735,7 @@ SerializedScriptValue::SerializedScriptValue(Vector<uint8_t>&& buffer, const Vec
 #endif
 #if ENABLE(WEBASSEMBLY)
     , m_wasmModulesArray(WTFMove(wasmModulesArray))
+    , m_wasmMemoryHandlesArray(WTFMove(wasmMemoryHandlesArray))
 #endif
 {
     // Since this SerializedScriptValue is meant to be passed between threads, its String data members
@@ -3710,6 +3774,10 @@ size_t SerializedScriptValue::computeMemoryCost() const
 
 #if ENABLE(WEBASSEMBLY)
     // We are not supporting WebAssembly Module memory estimation yet.
+    if (m_wasmMemoryHandlesArray) {
+        for (auto& content : *m_wasmMemoryHandlesArray)
+            cost += content->size();
+    }
 #endif
 
     for (auto& urls : m_blobURLs)
@@ -3800,6 +3868,7 @@ RefPtr<SerializedScriptValue> SerializedScriptValue::create(JSGlobalObject& lexi
     Vector<RefPtr<JSC::ArrayBuffer>> dummyArrayBuffers;
 #if ENABLE(WEBASSEMBLY)
     WasmModuleArray dummyModules;
+    WasmMemoryHandleArray dummyMemoryHandles;
 #endif
     ArrayBufferContentsArray dummySharedBuffers;
     auto code = CloneSerializer::serialize(&lexicalGlobalObject, value, dummyMessagePorts, dummyArrayBuffers, dummyImageBitmaps,
@@ -3808,11 +3877,13 @@ RefPtr<SerializedScriptValue> SerializedScriptValue::create(JSGlobalObject& lexi
 #endif
 #if ENABLE(WEBASSEMBLY)
         dummyModules,
+        dummyMemoryHandles,
 #endif
         blobURLs, buffer, SerializationContext::Default, dummySharedBuffers);
 
 #if ENABLE(WEBASSEMBLY)
     ASSERT_WITH_MESSAGE(dummyModules.isEmpty(), "Wasm::Module serialization is only allowed in the postMessage context");
+    ASSERT_WITH_MESSAGE(dummyMemoryHandles.isEmpty(), "Wasm::Memory serialization is only allowed in the postMessage context");
 #endif
 
     if (throwExceptions == SerializationErrorMode::Throwing)
@@ -3859,7 +3930,7 @@ ExceptionOr<Ref<SerializedScriptValue>> SerializedScriptValue::create(JSGlobalOb
 #endif
     for (auto& transferable : transferList) {
         if (auto arrayBuffer = toPossiblySharedArrayBuffer(vm, transferable.get())) {
-            if (arrayBuffer->isDetached())
+            if (arrayBuffer->isDetached() || arrayBuffer->isShared())
                 return Exception { DataCloneError };
             if (arrayBuffer->isLocked()) {
                 auto scope = DECLARE_THROW_SCOPE(vm);
@@ -3904,6 +3975,7 @@ ExceptionOr<Ref<SerializedScriptValue>> SerializedScriptValue::create(JSGlobalOb
     Vector<String> blobURLs;
 #if ENABLE(WEBASSEMBLY)
     WasmModuleArray wasmModules;
+    WasmMemoryHandleArray wasmMemoryHandles;
 #endif
     std::unique_ptr<ArrayBufferContentsArray> sharedBuffers = makeUnique<ArrayBufferContentsArray>();
     auto code = CloneSerializer::serialize(&lexicalGlobalObject, value, messagePorts, arrayBuffers, imageBitmaps,
@@ -3911,7 +3983,8 @@ ExceptionOr<Ref<SerializedScriptValue>> SerializedScriptValue::create(JSGlobalOb
         offscreenCanvases,
 #endif
 #if ENABLE(WEBASSEMBLY)
-        wasmModules, 
+        wasmModules,
+        wasmMemoryHandles,
 #endif
         blobURLs, buffer, context, *sharedBuffers);
 
@@ -3936,6 +4009,7 @@ ExceptionOr<Ref<SerializedScriptValue>> SerializedScriptValue::create(JSGlobalOb
 #endif
 #if ENABLE(WEBASSEMBLY)
                 , makeUnique<WasmModuleArray>(wasmModules)
+                , context == SerializationContext::WorkerPostMessage ? makeUnique<WasmMemoryHandleArray>(wasmMemoryHandles) : nullptr
 #endif
                 ));
 }
@@ -3993,6 +4067,7 @@ JSValue SerializedScriptValue::deserialize(JSGlobalObject& lexicalGlobalObject, 
         , m_arrayBufferContentsArray.get(), m_data, blobURLs, blobFilePaths, m_sharedBufferContentsArray.get()
 #if ENABLE(WEBASSEMBLY)
         , m_wasmModulesArray.get()
+        , m_wasmMemoryHandlesArray.get()
 #endif
         );
     if (throwExceptions == SerializationErrorMode::Throwing)

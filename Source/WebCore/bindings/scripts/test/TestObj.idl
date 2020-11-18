@@ -467,6 +467,8 @@ enum TestConfidence { "high", "kinda-low" };
     undefined _leading_underscore_function(); // NOTE: WebIDL removes the leading underscore so this is interpreted as "leading_underscore_function"
     undefined __double_leading_underscore_function(); // NOTE: WebIDL removes the leading underscore so this is interpreted as "_double_leading_underscore_function"
     undefined trailing_underscore_function_();
+
+    boolean encodeInto([AllowShared] Uint8Array destination);
 };
 
 // The following comments should not generate any code.

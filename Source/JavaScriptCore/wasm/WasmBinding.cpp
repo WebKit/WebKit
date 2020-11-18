@@ -49,9 +49,9 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToWasm(unsi
     GPRReg baseMemory = pinnedRegs.baseMemoryPointer;
     ASSERT(baseMemory != GPRReg::InvalidGPRReg);
     ASSERT(baseMemory != scratch);
-    ASSERT(pinnedRegs.sizeRegister != baseMemory);
-    ASSERT(pinnedRegs.sizeRegister != scratch);
-    GPRReg sizeRegAsScratch = pinnedRegs.sizeRegister;
+    ASSERT(pinnedRegs.boundsCheckingSizeRegister != baseMemory);
+    ASSERT(pinnedRegs.boundsCheckingSizeRegister != scratch);
+    GPRReg sizeRegAsScratch = pinnedRegs.boundsCheckingSizeRegister;
     ASSERT(sizeRegAsScratch != GPRReg::InvalidGPRReg);
 
     // B3's call codegen ensures that the JSCell is a WebAssemblyFunction.
@@ -68,11 +68,11 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToWasm(unsi
     // FIXME the following code assumes that all Wasm::Instance have the same pinned registers. https://bugs.webkit.org/show_bug.cgi?id=162952
     // Set up the callee's baseMemory register as well as the memory size registers.
     {
-        GPRReg scratchOrSize = !Gigacage::isEnabled(Gigacage::Primitive) ? pinnedRegs.sizeRegister : wasmCallingConvention().prologueScratchGPRs[1];
+        GPRReg scratchOrBoundsCheckingSize = !Gigacage::isEnabled(Gigacage::Primitive) ? pinnedRegs.boundsCheckingSizeRegister : wasmCallingConvention().prologueScratchGPRs[1];
 
-        jit.loadPtr(JIT::Address(baseMemory, Wasm::Instance::offsetOfCachedMemorySize()), pinnedRegs.sizeRegister); // Memory size.
+        jit.loadPtr(JIT::Address(baseMemory, Wasm::Instance::offsetOfCachedBoundsCheckingSize()), pinnedRegs.boundsCheckingSizeRegister); // Bound checking size.
         jit.loadPtr(JIT::Address(baseMemory, Wasm::Instance::offsetOfCachedMemory()), baseMemory); // Wasm::Memory::TaggedArrayStoragePtr<void> (void*).
-        jit.cageConditionally(Gigacage::Primitive, baseMemory, pinnedRegs.sizeRegister, scratchOrSize);
+        jit.cageConditionally(Gigacage::Primitive, baseMemory, pinnedRegs.boundsCheckingSizeRegister, scratchOrBoundsCheckingSize);
     }
 
     // Tail call into the callee WebAssembly function.

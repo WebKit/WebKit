@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include "WorkerThreadType.h"
 #include <JavaScriptCore/Debugger.h>
 #include <JavaScriptCore/JSRunLoopTimer.h>
 #include <wtf/Forward.h>
@@ -51,8 +52,8 @@ class WorkerOrWorkletScriptController {
     WTF_MAKE_NONCOPYABLE(WorkerOrWorkletScriptController);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    WorkerOrWorkletScriptController(Ref<JSC::VM>&&, WorkerOrWorkletGlobalScope*);
-    explicit WorkerOrWorkletScriptController(WorkerOrWorkletGlobalScope*);
+    WorkerOrWorkletScriptController(WorkerThreadType, Ref<JSC::VM>&&, WorkerOrWorkletGlobalScope*);
+    explicit WorkerOrWorkletScriptController(WorkerThreadType, WorkerOrWorkletGlobalScope*);
     ~WorkerOrWorkletScriptController();
 
     void releaseHeapAccess();

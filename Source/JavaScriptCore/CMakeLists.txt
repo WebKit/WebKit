@@ -1089,6 +1089,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     wasm/WasmTierUpCount.h
 
     wasm/js/JSWebAssembly.h
+    wasm/js/JSWebAssemblyMemory.h
     wasm/js/JSWebAssemblyModule.h
 
 

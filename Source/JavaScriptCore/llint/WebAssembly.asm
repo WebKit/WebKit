@@ -45,7 +45,7 @@ const NumberOfWasmArguments = NumberOfWasmArgumentGPRs + NumberOfWasmArgumentFPR
 # These must match the definition in WasmMemoryInformation.cpp
 const wasmInstance = csr0
 const memoryBase = csr3
-const memorySize = csr4
+const boundsCheckingSize = csr4
 
 # This must match the definition in LowLevelInterpreter.asm
 if X86_64
@@ -187,7 +187,7 @@ end
 # Wasm specific helpers
 
 macro preserveCalleeSavesUsedByWasm()
-    # NOTE: We intentionally don't save memoryBase and memorySize here. See the comment
+    # NOTE: We intentionally don't save memoryBase and boundsCheckingSize here. See the comment
     # in restoreCalleeSavesUsedByWasm() below for why.
     subp CalleeSaveSpaceStackAligned, sp
     if ARM64 or ARM64E
@@ -201,7 +201,7 @@ macro preserveCalleeSavesUsedByWasm()
 end
 
 macro restoreCalleeSavesUsedByWasm()
-    # NOTE: We intentionally don't restore memoryBase and memorySize here. These are saved
+    # NOTE: We intentionally don't restore memoryBase and boundsCheckingSize here. These are saved
     # and restored when entering Wasm by the JSToWasm wrapper and changes to them are meant
     # to be observable within the same Wasm module.
     if ARM64 or ARM64E
@@ -240,8 +240,8 @@ end
 
 macro reloadMemoryRegistersFromInstance(instance, scratch1, scratch2)
     loadp Wasm::Instance::m_cachedMemory[instance], memoryBase
-    loadi Wasm::Instance::m_cachedMemorySize[instance], memorySize
-    cagedPrimitive(memoryBase, memorySize, scratch1, scratch2)
+    loadi Wasm::Instance::m_cachedBoundsCheckingSize[instance], boundsCheckingSize
+    cagedPrimitive(memoryBase, boundsCheckingSize, scratch1, scratch2)
 end
 
 macro throwException(exception)
@@ -856,7 +856,9 @@ wasmOp(call_indirect_no_tls, WasmCallIndirectNoTls, macro(ctx)
 end)
 
 wasmOp(current_memory, WasmCurrentMemory, macro(ctx)
-    loadp Wasm::Instance::m_cachedMemorySize[wasmInstance], t0
+    loadp Wasm::Instance::m_memory[wasmInstance], t0
+    loadp Wasm::Memory::m_handle[t0], t0
+    loadp Wasm::MemoryHandle::m_size[t0], t0
     urshiftq 16, t0
     returnq(ctx, t0)
 end)
@@ -874,7 +876,7 @@ end)
 # uses offset as scratch and returns result on pointer
 macro emitCheckAndPreparePointer(ctx, pointer, offset, size)
     leap size - 1[pointer, offset], t5
-    bpb t5, memorySize, .continuation
+    bpb t5, boundsCheckingSize, .continuation
     throwException(OutOfBoundsMemoryAccess)
 .continuation:
     addp memoryBase, pointer

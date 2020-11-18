@@ -22,5 +22,5 @@ PASS Proxy descriptor
 PASS Order of evaluation for descriptor
 PASS Zero initial
 PASS Non-zero initial
-FAIL Stray argument WebAssembly.Memory expects exactly one argument
+PASS Stray argument
 

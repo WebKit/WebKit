@@ -129,4 +129,12 @@ inline RefPtr<ArrayBufferView> JSArrayBufferView::toWrapped(VM& vm, JSValue valu
     return nullptr;
 }
 
+inline RefPtr<ArrayBufferView> JSArrayBufferView::toWrappedAllowShared(VM& vm, JSValue value)
+{
+    if (JSArrayBufferView* view = jsDynamicCast<JSArrayBufferView*>(vm, value))
+        return view->possiblySharedImpl();
+    return nullptr;
+}
+
+
 } // namespace JSC

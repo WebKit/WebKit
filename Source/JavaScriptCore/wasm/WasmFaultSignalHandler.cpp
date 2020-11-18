@@ -52,7 +52,7 @@ static constexpr bool verbose = false;
 
 static bool fastHandlerInstalled { false };
 
-#if ENABLE(WEBASSEMBLY_FAST_MEMORY)
+#if ENABLE(WEBASSEMBLY_SIGNALING_MEMORY)
 
 static SignalAction trapHandler(Signal, SigInfo& sigInfo, PlatformRegisters& context)
 {
@@ -63,36 +63,47 @@ static SignalAction trapHandler(Signal, SigInfo& sigInfo, PlatformRegisters& con
     dataLogLnIf(WasmFaultSignalHandlerInternal::verbose, "starting handler for fault at: ", RawPointer(faultingInstruction));
 
     dataLogLnIf(WasmFaultSignalHandlerInternal::verbose, "JIT memory start: ", RawPointer(startOfFixedExecutableMemoryPool()), " end: ", RawPointer(endOfFixedExecutableMemoryPool()));
-    // First we need to make sure we are in JIT code before we can aquire any locks. Otherwise,
+    dataLogLnIf(WasmFaultSignalHandlerInternal::verbose, "WasmLLInt memory start: ", RawPointer(untagCodePtr<void*, CFunctionPtrTag>(LLInt::wasmLLIntPCRangeStart)), " end: ", RawPointer(untagCodePtr<void*, CFunctionPtrTag>(LLInt::wasmLLIntPCRangeEnd)));
+    // First we need to make sure we are in JIT code or Wasm LLInt code before we can aquire any locks. Otherwise,
     // we might have crashed in code that is already holding one of the locks we want to aquire.
     assertIsNotTagged(faultingInstruction);
-    if (isJITPC(faultingInstruction)) {
-        bool faultedInActiveFastMemory = false;
+    if (isJITPC(faultingInstruction) || LLInt::isWasmLLIntPC(faultingInstruction)) {
+        bool faultedInActiveGrowableMemory = false;
         {
             void* faultingAddress = sigInfo.faultingAddress;
             dataLogLnIf(WasmFaultSignalHandlerInternal::verbose, "checking faulting address: ", RawPointer(faultingAddress), " is in an active fast memory");
-            faultedInActiveFastMemory = Wasm::Memory::addressIsInActiveFastMemory(faultingAddress);
+            faultedInActiveGrowableMemory = Wasm::Memory::addressIsInGrowableOrFastMemory(faultingAddress);
         }
-        if (faultedInActiveFastMemory) {
+        if (faultedInActiveGrowableMemory) {
             dataLogLnIf(WasmFaultSignalHandlerInternal::verbose, "found active fast memory for faulting address");
-            auto& calleeRegistry = CalleeRegistry::singleton();
-            auto locker = holdLock(calleeRegistry.getLock());
-            for (auto* callee : calleeRegistry.allCallees(locker)) {
-                auto [start, end] = callee->range();
-                dataLogLnIf(WasmFaultSignalHandlerInternal::verbose, "function start: ", RawPointer(start), " end: ", RawPointer(end));
-                if (start <= faultingInstruction && faultingInstruction < end) {
-                    dataLogLnIf(WasmFaultSignalHandlerInternal::verbose, "found match");
-                    MachineContext::argumentPointer<1>(context) = reinterpret_cast<void*>(static_cast<uintptr_t>(Wasm::Context::useFastTLS()));
-                    MachineContext::setInstructionPointer(context, LLInt::getCodePtr<CFunctionPtrTag>(wasm_throw_from_fault_handler_trampoline));
-                    return SignalAction::Handled;
+
+            auto didFaultInWasm = [](void* faultingInstruction) {
+                if (LLInt::isWasmLLIntPC(faultingInstruction))
+                    return true;
+                auto& calleeRegistry = CalleeRegistry::singleton();
+                auto locker = holdLock(calleeRegistry.getLock());
+                for (auto* callee : calleeRegistry.allCallees(locker)) {
+                    auto [start, end] = callee->range();
+                    dataLogLnIf(WasmFaultSignalHandlerInternal::verbose, "function start: ", RawPointer(start), " end: ", RawPointer(end));
+                    if (start <= faultingInstruction && faultingInstruction < end) {
+                        dataLogLnIf(WasmFaultSignalHandlerInternal::verbose, "found match");
+                        return true;
+                    }
                 }
+                return false;
+            };
+
+            if (didFaultInWasm(faultingInstruction)) {
+                MachineContext::argumentPointer<1>(context) = reinterpret_cast<void*>(static_cast<uintptr_t>(Wasm::Context::useFastTLS()));
+                MachineContext::setInstructionPointer(context, LLInt::getCodePtr<CFunctionPtrTag>(wasm_throw_from_fault_handler_trampoline));
+                return SignalAction::Handled;
             }
         }
     }
     return SignalAction::NotHandled;
 }
 
-#endif // ENABLE(WEBASSEMBLY_FAST_MEMORY)
+#endif // ENABLE(WEBASSEMBLY_SIGNALING_MEMORY)
 
 bool fastMemoryEnabled()
 {
@@ -101,13 +112,13 @@ bool fastMemoryEnabled()
 
 void enableFastMemory()
 {
-#if ENABLE(WEBASSEMBLY_FAST_MEMORY)
+#if ENABLE(WEBASSEMBLY_SIGNALING_MEMORY)
     static std::once_flag once;
     std::call_once(once, [] {
         if (!Wasm::isSupported())
             return;
 
-        if (!Options::useWebAssemblyFastMemory())
+        if (!Options::useWebAssemblyFastMemory() && !Options::useSharedArrayBuffer())
             return;
 
         activateSignalHandlersFor(Signal::AccessFault);
@@ -119,20 +130,20 @@ void enableFastMemory()
 
 void prepareFastMemory()
 {
-#if ENABLE(WEBASSEMBLY_FAST_MEMORY)
+#if ENABLE(WEBASSEMBLY_SIGNALING_MEMORY)
     static std::once_flag once;
     std::call_once(once, [] {
         if (!Wasm::isSupported())
             return;
 
-        if (!Options::useWebAssemblyFastMemory())
+        if (!Options::useWebAssemblyFastMemory() && !Options::useSharedArrayBuffer())
             return;
 
         addSignalHandler(Signal::AccessFault, [] (Signal signal, SigInfo& sigInfo, PlatformRegisters& ucontext) {
             return trapHandler(signal, sigInfo, ucontext);
         });
     });
-#endif // ENABLE(WEBASSEMBLY_FAST_MEMORY)
+#endif // ENABLE(WEBASSEMBLY_SIGNALING_MEMORY)
 }
     
 } } // namespace JSC::Wasm

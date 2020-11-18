@@ -566,8 +566,9 @@ JSValue WebAssemblyModuleRecord::evaluate(JSGlobalObject* globalObject)
     };
 
     auto forEachSegment = [&] (auto fn) {
-        uint8_t* memory = reinterpret_cast<uint8_t*>(m_instance->instance().cachedMemory());
-        uint64_t sizeInBytes = m_instance->instance().cachedMemorySize();
+        auto wasmMemory = m_instance->instance().memory();
+        uint8_t* memory = reinterpret_cast<uint8_t*>(wasmMemory->memory());
+        uint64_t sizeInBytes = wasmMemory->size();
 
         for (const Wasm::Segment::Ptr& segment : data) {
             uint32_t offset = segment->offset.isGlobalImport()

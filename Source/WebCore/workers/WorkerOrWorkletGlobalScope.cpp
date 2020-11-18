@@ -37,8 +37,8 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(WorkerOrWorkletGlobalScope);
 
-WorkerOrWorkletGlobalScope::WorkerOrWorkletGlobalScope(Ref<JSC::VM>&& vm, WorkerOrWorkletThread* thread)
-    : m_script(makeUnique<WorkerOrWorkletScriptController>(WTFMove(vm), this))
+WorkerOrWorkletGlobalScope::WorkerOrWorkletGlobalScope(WorkerThreadType type, Ref<JSC::VM>&& vm, WorkerOrWorkletThread* thread)
+    : m_script(makeUnique<WorkerOrWorkletScriptController>(type, WTFMove(vm), this))
     , m_thread(thread)
     , m_inspectorController(makeUnique<WorkerInspectorController>(*this))
 {
