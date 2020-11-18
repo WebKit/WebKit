@@ -28,7 +28,10 @@
 
 #if ENABLE(MODEL_ELEMENT)
 
+#include "HTMLNames.h"
+#include "HTMLSourceElement.h"
 #include <wtf/IsoMallocInlines.h>
+#include <wtf/URL.h>
 
 namespace WebCore {
 
@@ -46,6 +49,37 @@ HTMLModelElement::~HTMLModelElement()
 Ref<HTMLModelElement> HTMLModelElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(*new HTMLModelElement(tagName, document));
+}
+
+void HTMLModelElement::sourcesChanged()
+{
+    if (!document().hasBrowsingContext()) {
+        setSourceURL(URL());
+        return;
+    }
+
+    for (auto& element : childrenOfType<HTMLSourceElement>(*this)) {
+        // FIXME: for now we use the first valid URL without looking at the mime-type.
+        auto url = element.getNonEmptyURLAttribute(srcAttr);
+        if (url.isValid()) {
+            setSourceURL(url);
+            return;
+        }
+    }
+
+    setSourceURL(URL());
+}
+
+void HTMLModelElement::setSourceURL(const URL& url)
+{
+    // FIXME: actually do something with that URL now.
+    m_sourceURL = url;
+}
+
+void HTMLModelElement::didMoveToNewDocument(Document& oldDocument, Document& newDocument)
+{
+    HTMLElement::didMoveToNewDocument(oldDocument, newDocument);
+    sourcesChanged();
 }
 
 }

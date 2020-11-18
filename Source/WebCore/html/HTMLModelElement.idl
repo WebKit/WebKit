@@ -28,4 +28,5 @@
     EnabledBySetting=ModelElement,
     Exposed=Window,
 ] interface HTMLModelElement : HTMLElement {
+    [URL] readonly attribute USVString currentSrc;
 };

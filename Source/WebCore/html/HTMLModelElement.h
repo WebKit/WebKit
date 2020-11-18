@@ -37,8 +37,17 @@ public:
     static Ref<HTMLModelElement> create(const QualifiedName&, Document&);
     virtual ~HTMLModelElement();
 
+    void sourcesChanged();
+    const URL& currentSrc() const { return m_sourceURL; }
+
 private:
     HTMLModelElement(const QualifiedName&, Document&);
+
+    void didMoveToNewDocument(Document& oldDocument, Document& newDocument) final;
+
+    void setSourceURL(const URL&);
+
+    URL m_sourceURL;
 };
 
 } // namespace WebCore
