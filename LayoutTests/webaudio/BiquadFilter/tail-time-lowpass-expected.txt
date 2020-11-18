@@ -8,7 +8,7 @@ PASS Executing "huge tail"
 PASS Executing "ginormous tail"
 PASS Audit report
 PASS > [lpf-complex-roots] complex roots
-PASS   LPF complex roots: Biquad({"type":"lowpass","Q":40,"frequency":4096}): Actual Tail Frame 2304 is greater than or equal to 2080.
+PASS   LPF complex roots: Biquad({"type":"lowpass","Q":40,"frequency":4096}).
 PASS   LPF complex roots: Biquad({"type":"lowpass","Q":40,"frequency":4096}): output[0:127] is not constantly 0.
 PASS   LPF complex roots: Biquad({"type":"lowpass","Q":40,"frequency":4096}): output[128:255] is not constantly 0.
 PASS   LPF complex roots: Biquad({"type":"lowpass","Q":40,"frequency":4096}): output[256:383] is not constantly 0.
@@ -29,7 +29,7 @@ PASS   LPF complex roots: Biquad({"type":"lowpass","Q":40,"frequency":4096}): ou
 PASS   LPF complex roots: Biquad({"type":"lowpass","Q":40,"frequency":4096}): output[2432:] equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
 PASS < [lpf-complex-roots] All assertions passed. (total 19 assertions)
 PASS > [lpf-real-distinct-roots] real distinct roots
-PASS   LPF real distinct roots: Biquad({"type":"lowpass","Q":-50,"frequency":2048}): Actual Tail Frame 1920 is greater than or equal to 1700.
+PASS   LPF real distinct roots: Biquad({"type":"lowpass","Q":-50,"frequency":2048}).
 PASS   LPF real distinct roots: Biquad({"type":"lowpass","Q":-50,"frequency":2048}): output[0:127] is not constantly 0.
 PASS   LPF real distinct roots: Biquad({"type":"lowpass","Q":-50,"frequency":2048}): output[128:255] is not constantly 0.
 PASS   LPF real distinct roots: Biquad({"type":"lowpass","Q":-50,"frequency":2048}): output[256:383] is not constantly 0.
@@ -47,17 +47,17 @@ PASS   LPF real distinct roots: Biquad({"type":"lowpass","Q":-50,"frequency":204
 PASS   LPF real distinct roots: Biquad({"type":"lowpass","Q":-50,"frequency":2048}): output[2048:] equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
 PASS < [lpf-real-distinct-roots] All assertions passed. (total 16 assertions)
 PASS > [lpf-repeated-root] repeated real root
-PASS   LPF repeated roots (approximately): Biquad({"type":"lowpass","Q":-6.020600,"frequency":4096}): Actual Tail Frame 11 is greater than or equal to 3.
+PASS   LPF repeated roots (approximately): Biquad({"type":"lowpass","Q":-6.020600,"frequency":4096}).
 PASS   LPF repeated roots (approximately): Biquad({"type":"lowpass","Q":-6.020600,"frequency":4096}): output[0:127] is not constantly 0.
 PASS   LPF repeated roots (approximately): Biquad({"type":"lowpass","Q":-6.020600,"frequency":4096}): output[384:] equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
 PASS < [lpf-repeated-root] All assertions passed. (total 3 assertions)
 PASS > [lpf-real-roots-2] complex roots
-PASS   LPF repeated roots 2: Biquad({"type":"lowpass","Q":-100,"frequency":4096}): Actual Tail Frame 256 is greater than or equal to 0.
+PASS   LPF repeated roots 2: Biquad({"type":"lowpass","Q":-100,"frequency":4096}).
 PASS   LPF repeated roots 2: Biquad({"type":"lowpass","Q":-100,"frequency":4096}): output[0:127] is not constantly 0.
 PASS   LPF repeated roots 2: Biquad({"type":"lowpass","Q":-100,"frequency":4096}): output[384:] equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
 PASS < [lpf-real-roots-2] All assertions passed. (total 3 assertions)
 PASS > [huge tail]
-PASS   LPF repeated roots (approximately): Biquad({"type":"lowpass","Q":100,"frequency":100}): Actual Tail Frame 90240 is greater than or equal to 90000.
+PASS   LPF repeated roots (approximately): Biquad({"type":"lowpass","Q":100,"frequency":100}).
 PASS   LPF repeated roots (approximately): Biquad({"type":"lowpass","Q":100,"frequency":100}): output[0:127] is not constantly 0.
 PASS   LPF repeated roots (approximately): Biquad({"type":"lowpass","Q":100,"frequency":100}): output[128:255] is not constantly 0.
 PASS   LPF repeated roots (approximately): Biquad({"type":"lowpass","Q":100,"frequency":100}): output[256:383] is not constantly 0.
@@ -765,7 +765,7 @@ PASS   LPF repeated roots (approximately): Biquad({"type":"lowpass","Q":100,"fre
 PASS   LPF repeated roots (approximately): Biquad({"type":"lowpass","Q":100,"frequency":100}): output[90368:] equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
 PASS < [huge tail] All assertions passed. (total 706 assertions)
 PASS > [ginormous tail]
-PASS   LPF repeated roots (approximately): Biquad({"type":"lowpass","Q":500,"frequency":100}): Actual Tail Frame 750 is greater than or equal to 749.
+PASS   LPF repeated roots (approximately): Biquad({"type":"lowpass","Q":500,"frequency":100}).
 PASS   LPF repeated roots (approximately): Biquad({"type":"lowpass","Q":500,"frequency":100}): output[0:127] is not constantly 0.
 PASS   LPF repeated roots (approximately): Biquad({"type":"lowpass","Q":500,"frequency":100}): output[128:255] is not constantly 0.
 PASS   LPF repeated roots (approximately): Biquad({"type":"lowpass","Q":500,"frequency":100}): output[256:383] is not constantly 0.

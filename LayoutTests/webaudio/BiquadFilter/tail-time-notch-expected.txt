@@ -5,7 +5,7 @@ PASS Executing "notch-real-distinct-roots"
 PASS Executing "notch-repeated-roots"
 PASS Audit report
 PASS > [notch-complex-roots] complex roots
-PASS   Notch complex roots: Biquad({"type":"notch","Q":200,"frequency":4096}): Actual Tail Frame 2176 is greater than or equal to 2039.
+PASS   Notch complex roots: Biquad({"type":"notch","Q":200,"frequency":4096}).
 PASS   Notch complex roots: Biquad({"type":"notch","Q":200,"frequency":4096}): output[0:127] is not constantly 0.
 PASS   Notch complex roots: Biquad({"type":"notch","Q":200,"frequency":4096}): output[128:255] is not constantly 0.
 PASS   Notch complex roots: Biquad({"type":"notch","Q":200,"frequency":4096}): output[256:383] is not constantly 0.
@@ -25,7 +25,7 @@ PASS   Notch complex roots: Biquad({"type":"notch","Q":200,"frequency":4096}): o
 PASS   Notch complex roots: Biquad({"type":"notch","Q":200,"frequency":4096}): output[2304:] equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
 PASS < [notch-complex-roots] All assertions passed. (total 18 assertions)
 PASS > [notch-real-distinct-roots] real distinct roots
-PASS   Notch real distinct roots: Biquad({"type":"notch","Q":0.001,"frequency":4096}): Actual Tail Frame 2688 is greater than or equal to 2437.
+PASS   Notch real distinct roots: Biquad({"type":"notch","Q":0.001,"frequency":4096}).
 PASS   Notch real distinct roots: Biquad({"type":"notch","Q":0.001,"frequency":4096}): output[0:127] is not constantly 0.
 PASS   Notch real distinct roots: Biquad({"type":"notch","Q":0.001,"frequency":4096}): output[128:255] is not constantly 0.
 PASS   Notch real distinct roots: Biquad({"type":"notch","Q":0.001,"frequency":4096}): output[256:383] is not constantly 0.
@@ -49,7 +49,7 @@ PASS   Notch real distinct roots: Biquad({"type":"notch","Q":0.001,"frequency":4
 PASS   Notch real distinct roots: Biquad({"type":"notch","Q":0.001,"frequency":4096}): output[2816:] equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
 PASS < [notch-real-distinct-roots] All assertions passed. (total 22 assertions)
 PASS > [notch-repeated-roots] repeated real root
-PASS   Notch repeated roots: Biquad({"type":"notch","Q":0.5,"frequency":4096}): Actual Tail Frame 5 is greater than or equal to 3.
+PASS   Notch repeated roots: Biquad({"type":"notch","Q":0.5,"frequency":4096}).
 PASS   Notch repeated roots: Biquad({"type":"notch","Q":0.5,"frequency":4096}): output[0:127] is not constantly 0.
 PASS   Notch repeated roots: Biquad({"type":"notch","Q":0.5,"frequency":4096}): output[384:] equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
 PASS < [notch-repeated-roots] All assertions passed. (total 3 assertions)

@@ -96,6 +96,8 @@ if (self.testRunner) {
                       return parseFloat(match).toFixed(6);
                   });
                   testName = testName.replace(/ \(contains [0-9]+ different values\)./, ".");
+                  testName = testName.replace(/ \(contains 1 different value\)./, ".");
+                  testName = testName.replace(/: Actual Tail Frame [0-9]+ is greater than or equal to [0-9]+./, ".");
             }
 
             resultStr += convertResult(tests[i].status) + " " + sanitize(testName) + " " + message + "\n";

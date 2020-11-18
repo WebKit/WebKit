@@ -1,3 +1,27 @@
+2020-11-18  Chris Dumez  <cdumez@apple.com>
+
+        [Rosetta] webaudio/BiquadFilter/tail-time-*.html tests are flaky
+        https://bugs.webkit.org/show_bug.cgi?id=219096
+
+        Reviewed by Geoffrey Garen.
+
+        * platform/mac/TestExpectationsRosetta:
+        Unskip tests as they should no longer be flaky.
+
+        * resources/testharnessreport.js:
+        (self.testRunner.add_completion_callback):
+        Strip some text from tests output that tends to cause flakiness.
+
+        * webaudio/BiquadFilter/tail-time-allpass-expected.txt:
+        * webaudio/BiquadFilter/tail-time-bandpass-expected.txt:
+        * webaudio/BiquadFilter/tail-time-highpass-expected.txt:
+        * webaudio/BiquadFilter/tail-time-highshelf-expected.txt:
+        * webaudio/BiquadFilter/tail-time-lowpass-expected.txt:
+        * webaudio/BiquadFilter/tail-time-lowshelf-expected.txt:
+        * webaudio/BiquadFilter/tail-time-notch-expected.txt:
+        * webaudio/BiquadFilter/tail-time-peaking-expected.txt:
+        Rebaseline WPT tests now that their output has been simplified.
+
 2020-11-18  Antoine Quint  <graouts@webkit.org>
 
         Tests for the <model> element should be in a dedicated top-level directory
