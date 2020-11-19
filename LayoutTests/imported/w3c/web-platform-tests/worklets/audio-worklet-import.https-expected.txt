@@ -10,7 +10,7 @@ PASS Importing a non-existent script rejects the given promise with an AbortErro
 PASS Importing an invalid URL should reject the given promise with a SyntaxError.
 PASS Importing a blob URL should resolve the given promise.
 PASS Importing a file:// URL should reject the given promise.
-FAIL Importing a data URL should resolve the given promise. promise_test: Unhandled rejection with value: object "AbortError: Failed to fetch module, error: Cross origin requests are only supported for HTTP."
+PASS Importing a data URL should resolve the given promise.
 PASS Importing about:blank should reject the given promise.
 PASS Importing a cross origin resource with the Access-Control-Allow-Origin header should resolve the given promise
 PASS Importing a cross origin resource without the Access-Control-Allow-Origin header should reject the given promise
