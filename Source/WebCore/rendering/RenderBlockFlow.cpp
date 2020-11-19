@@ -3687,7 +3687,7 @@ void RenderBlockFlow::ensureLineBoxes()
         complexLineLayout.layoutLineBoxes(relayoutChildren, repaintLogicalTop, repaintLogicalBottom);
 
     updateLogicalHeight();
-    ASSERT(didNeedLayout || logicalHeight() == oldHeight);
+    ASSERT(didNeedLayout || ceilf(logicalHeight()) == ceilf(oldHeight));
 
     if (!didNeedLayout)
         clearNeedsLayout();
