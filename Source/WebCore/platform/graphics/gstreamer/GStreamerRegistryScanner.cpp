@@ -176,7 +176,7 @@ GStreamerRegistryScanner::GStreamerRegistryScanner(bool isMediaSource)
 {
     GST_DEBUG_CATEGORY_INIT(webkit_media_gst_registry_scanner_debug, "webkitregistryscanner", 0, "WebKit GStreamer registry scanner");
 
-    ElementFactories factories(ElementFactories::Type::All);
+    ElementFactories factories(OptionSet<ElementFactories::Type>::fromRaw(static_cast<unsigned>(ElementFactories::Type::All)));
     initializeDecoders(factories);
     initializeEncoders(factories);
 
