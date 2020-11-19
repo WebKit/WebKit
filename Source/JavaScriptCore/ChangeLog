@@ -1,3 +1,16 @@
+2020-11-19  Saam Barati  <sbarati@apple.com>
+
+        Use os_thread_self_restrict_rwx_is_supported instead of pthread_jit_write_protect_supported_np on Apple Internal SDK builds
+        https://bugs.webkit.org/show_bug.cgi?id=219099
+        <rdar://problem/71547048>
+
+        Reviewed by Mark Lam.
+
+        * assembler/FastJITPermissions.h:
+        (useFastJITPermissions):
+        (threadSelfRestrictRWXToRW):
+        (threadSelfRestrictRWXToRX):
+
 2020-11-19  Xan López  <xan@igalia.com>
 
         [JSC] Add support for static private class fields

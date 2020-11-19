@@ -29,7 +29,7 @@
 
 #include <wtf/Platform.h>
 
-#if HAVE(PTHREAD_JIT_PERMISSIONS_API)
+#if USE(PTHREAD_JIT_PERMISSIONS_API)
 #include <pthread.h>
 #elif USE(APPLE_INTERNAL_SDK)
 #include <os/thread_self_restrict.h> 
@@ -39,7 +39,7 @@ static ALWAYS_INLINE bool useFastJITPermissions()
 {
 #if CPU(ARM64E)
     return true;
-#elif HAVE(PTHREAD_JIT_PERMISSIONS_API) 
+#elif USE(PTHREAD_JIT_PERMISSIONS_API) 
     return !!pthread_jit_write_protect_supported_np();
 #elif USE(APPLE_INTERNAL_SDK)
     return !!os_thread_self_restrict_rwx_is_supported();
@@ -52,7 +52,7 @@ static ALWAYS_INLINE void threadSelfRestrictRWXToRW()
 {
     ASSERT(useFastJITPermissions());
 
-#if HAVE(PTHREAD_JIT_PERMISSIONS_API) 
+#if USE(PTHREAD_JIT_PERMISSIONS_API) 
     pthread_jit_write_protect_np(false);
 #elif USE(APPLE_INTERNAL_SDK)
     os_thread_self_restrict_rwx_to_rw();
@@ -67,7 +67,7 @@ static ALWAYS_INLINE void threadSelfRestrictRWXToRX()
 {
     ASSERT(useFastJITPermissions());
 
-#if HAVE(PTHREAD_JIT_PERMISSIONS_API) 
+#if USE(PTHREAD_JIT_PERMISSIONS_API) 
     pthread_jit_write_protect_np(true);
 #elif USE(APPLE_INTERNAL_SDK)
     os_thread_self_restrict_rwx_to_rx();
