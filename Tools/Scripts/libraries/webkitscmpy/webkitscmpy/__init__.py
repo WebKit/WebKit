@@ -46,9 +46,12 @@ except ImportError:
         "Please install webkitcorepy with `pip install webkitcorepy --extra-index-url <package index URL>`"
     )
 
-version = Version(0, 3, 2)
+version = Version(0, 4, 0)
 
 AutoInstall.register(Package('dateutil', Version(2, 8, 1), pypi_name='python-dateutil'))
+AutoInstall.register(Package('fasteners', Version(0, 15, 0)))
+AutoInstall.register(Package('monotonic', Version(1, 5)))
+AutoInstall.register(Package('xmltodict', Version(0, 12, 0)))
 
 from webkitscmpy.contributor import Contributor
 from webkitscmpy.commit import Commit

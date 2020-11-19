@@ -1,3 +1,56 @@
+2020-11-19  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitscmpy] Support remote Subversion repository
+        https://bugs.webkit.org/show_bug.cgi?id=218827
+        <rdar://problem/71304485>
+
+        Rubber-stamped by Aakash Jain.
+
+        It is possible to interact with a Subversion repository without the svn command. This is useful
+        for services hosted in environments where installing binaries is burdensome, or in cases where
+        tools are running without a checkout.
+
+        * Scripts/libraries/webkitcorepy/webkitcorepy/__init__.py: Bump version, add dependencies.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/mocks/__init__.py:
+        * Scripts/libraries/webkitscmpy/webkitscmpy/mocks/remote: Added.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/mocks/remote/__init__.py: Added.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/mocks/remote/svn.py: Added.
+        (Svn): Interact with a remote Subversion repository without using the svn command.
+        (Svn.is_webserver): Check if the provided url matches the pattern for a Subversion server.
+        (Svn.__init__):
+        (Svn.is_svn):
+        (Svn._latest): Return the latest revision.
+        (Svn.info): Return the bits of the `svn info` command that are used in code.
+        (Svn.default_branch):
+        (Svn.list):
+        (Svn.branches): List all branches.
+        (Svn.tags): List all tags.
+        (Svn._cache_path): Return path to json cache.
+        (Svn._cache_lock): Filesystem lock used to prevent contention over the json cache, this
+        is particularly important during testing.
+        (Svn._cache_revisions): Cache the identifier/revision mapping.
+        (Svn._branch_for): Given a commit, determine which branch that commit is on.
+        (Svn._commit_count): Determine the amount of commits on a branch since branching.
+        (Svn.commit): Return a commit object given a revision, branch, identifier or tag.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/remote: Added.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/remote/__init__.py: Added.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/remote/scm.py: Added.
+        (Scm):
+        (Scm.from_url): Given a URL, attempt to determine what kind of remote API is available.
+        (Scm.__init__):
+        * Scripts/libraries/webkitscmpy/webkitscmpy/mocks/remote/svn.py: Added.
+        (Svn): Mock requests needed to interact with a remote Subversion repository.
+        (Svn.latest): Return the most recent commit on any branch.
+        (Svn.branches): Return branches at some revision.
+        (Svn.tags): Return tags at some revision.
+        (Svn.range): Give a start and end revision, along with a tag or branch,
+        return all commits in that range.
+        (Svn.request): Handle a small subset of requests to a Subversion server.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/svn_unittest.py:
+        (TestLocalSvn): Moved from TestSvn.
+        (TestRemoteSvn): Added.
+        (TestSvn): Moved to TestLocalSvn.
+
 2020-11-19  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Issue sandbox extension to Web Inspector service

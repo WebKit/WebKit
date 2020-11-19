@@ -27,10 +27,10 @@ import unittest
 
 from datetime import datetime
 from webkitcorepy import OutputCapture
-from webkitscmpy import local, mocks
+from webkitscmpy import local, mocks, remote
 
 
-class TestSvn(unittest.TestCase):
+class TestLocalSvn(unittest.TestCase):
     path = '/mock/repository'
 
     def test_detection(self):
@@ -217,3 +217,87 @@ class TestSvn(unittest.TestCase):
 
             self.assertEqual(9, repository.checkout('tag-1').revision)
             self.assertEqual(9, repository.commit().revision)
+
+
+class TestRemoteSvn(unittest.TestCase):
+    remote = 'https://svn.webkit.org/repository/webkit'
+
+    def test_detection(self):
+        self.assertEqual(remote.Svn.is_webserver('https://svn.webkit.org/repository/webkit'), True)
+        self.assertEqual(remote.Svn.is_webserver('http://svn.webkit.org/repository/webkit'), True)
+        self.assertEqual(remote.Svn.is_webserver('https://github.com/WebKit/webkit'), False)
+
+    def test_branches(self):
+        with mocks.remote.Svn():
+            self.assertEqual(
+                remote.Svn(self.remote).branches,
+                ['trunk', 'branch-a', 'branch-b'],
+            )
+
+    def test_tags(self):
+        with mocks.remote.Svn():
+            self.assertEqual(
+                remote.Svn(self.remote).tags,
+                ['tag-1', 'tag-2'],
+            )
+
+    def test_scm_type(self):
+        self.assertTrue(remote.Svn(self.remote).is_svn)
+        self.assertFalse(remote.Svn(self.remote).is_git)
+
+    def test_info(self):
+        with mocks.remote.Svn():
+            self.assertDictEqual({
+                'Last Changed Author': 'jbedard@apple.com',
+                'Last Changed Date': '2020-10-02 11:58:20',
+                'Last Changed Rev': '6',
+                'Revision': 10,
+            }, remote.Svn(self.remote).info())
+
+    def test_commit_revision(self):
+        with mocks.remote.Svn():
+            self.assertEqual('1@trunk', str(remote.Svn(self.remote).commit(revision=1)))
+            self.assertEqual('2@trunk', str(remote.Svn(self.remote).commit(revision=2)))
+            self.assertEqual('2.1@branch-a', str(remote.Svn(self.remote).commit(revision=3)))
+            self.assertEqual('3@trunk', str(remote.Svn(self.remote).commit(revision=4)))
+            self.assertEqual('2.2@branch-b', str(remote.Svn(self.remote).commit(revision=5)))
+            self.assertEqual('4@trunk', str(remote.Svn(self.remote).commit(revision=6)))
+            self.assertEqual('2.2@branch-a', str(remote.Svn(self.remote).commit(revision=7)))
+            self.assertEqual('2.3@branch-b', str(remote.Svn(self.remote).commit(revision=8)))
+
+            # Out-of-bounds commit
+            with self.assertRaises(remote.Svn.Exception):
+                self.assertEqual(None, remote.Svn(self.remote).commit(revision=11))
+
+    def test_commit_from_branch(self):
+        with mocks.remote.Svn():
+            self.assertEqual('4@trunk', str(remote.Svn(self.remote).commit(branch='trunk')))
+            self.assertEqual('2.2@branch-a', str(remote.Svn(self.remote).commit(branch='branch-a')))
+            self.assertEqual('2.3@branch-b', str(remote.Svn(self.remote).commit(branch='branch-b')))
+
+    def test_identifier(self):
+        with mocks.remote.Svn():
+            self.assertEqual(1, remote.Svn(self.remote).commit(identifier='1@trunk').revision)
+            self.assertEqual(2, remote.Svn(self.remote).commit(identifier='2@trunk').revision)
+            self.assertEqual(3, remote.Svn(self.remote).commit(identifier='2.1@branch-a').revision)
+            self.assertEqual(4, remote.Svn(self.remote).commit(identifier='3@trunk').revision)
+            self.assertEqual(5, remote.Svn(self.remote).commit(identifier='2.2@branch-b').revision)
+            self.assertEqual(6, remote.Svn(self.remote).commit(identifier='4@trunk').revision)
+            self.assertEqual(7, remote.Svn(self.remote).commit(identifier='2.2@branch-a').revision)
+            self.assertEqual(8, remote.Svn(self.remote).commit(identifier='2.3@branch-b').revision)
+
+    def test_non_cannonical_identifiers(self):
+        with mocks.remote.Svn():
+            self.assertEqual('2@trunk', str(remote.Svn(self.remote).commit(identifier='0@branch-a')))
+            self.assertEqual('1@trunk', str(remote.Svn(self.remote).commit(identifier='-1@branch-a')))
+
+            self.assertEqual('2@trunk', str(remote.Svn(self.remote).commit(identifier='0@branch-b')))
+            self.assertEqual('1@trunk', str(remote.Svn(self.remote).commit(identifier='-1@branch-b')))
+
+    def test_tag(self):
+        with mocks.remote.Svn():
+            self.assertEqual(9, remote.Svn(self.remote).commit(tag='tag-1').revision)
+
+    def test_tag_previous(self):
+        with mocks.remote.Svn():
+            self.assertEqual(7, remote.Svn(self.remote).commit(identifier='2.2@tags/tag-1').revision)
