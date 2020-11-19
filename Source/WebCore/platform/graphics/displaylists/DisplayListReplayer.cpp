@@ -48,8 +48,6 @@ Replayer::~Replayer() = default;
 template<class T>
 inline static Optional<StopReplayReason> applyImageBufferItem(GraphicsContext& context, const ImageBufferHashMap& imageBuffers, ItemHandle item)
 {
-    if (!item.is<T>())
-        return WTF::nullopt;
     auto& imageBufferItem = item.get<T>();
     if (auto* imageBuffer = imageBuffers.get(imageBufferItem.imageBufferIdentifier())) {
         imageBufferItem.apply(context, *imageBuffer);
@@ -61,8 +59,6 @@ inline static Optional<StopReplayReason> applyImageBufferItem(GraphicsContext& c
 template<class T>
 inline static Optional<StopReplayReason> applyNativeImageItem(GraphicsContext& context, const NativeImageHashMap& nativeImages, ItemHandle item)
 {
-    if (!item.is<T>())
-        return WTF::nullopt;
     auto& nativeImageItem = item.get<T>();
     if (auto* image = nativeImages.get(nativeImageItem.imageIdentifier())) {
         nativeImageItem.apply(context, *image);
@@ -76,17 +72,17 @@ Optional<StopReplayReason> Replayer::applyItem(ItemHandle item)
     if (m_delegate && m_delegate->apply(item, m_context))
         return WTF::nullopt;
 
-    if (auto reasonForStopping = applyImageBufferItem<DrawImageBuffer>(m_context, m_imageBuffers, item))
-        return reasonForStopping;
+    if (item.is<DrawImageBuffer>())
+        return applyImageBufferItem<DrawImageBuffer>(m_context, m_imageBuffers, item);
 
-    if (auto reasonForStopping = applyImageBufferItem<ClipToImageBuffer>(m_context, m_imageBuffers, item))
-        return reasonForStopping;
+    if (item.is<ClipToImageBuffer>())
+        return applyImageBufferItem<ClipToImageBuffer>(m_context, m_imageBuffers, item);
 
-    if (auto reasonForStopping = applyNativeImageItem<DrawNativeImage>(m_context, m_nativeImages, item))
-        return reasonForStopping;
+    if (item.is<DrawNativeImage>())
+        return applyNativeImageItem<DrawNativeImage>(m_context, m_nativeImages, item);
 
-    if (auto reasonForStopping = applyNativeImageItem<DrawPattern>(m_context, m_nativeImages, item))
-        return reasonForStopping;
+    if (item.is<DrawPattern>())
+        return applyNativeImageItem<DrawPattern>(m_context, m_nativeImages, item);
 
     item.apply(m_context);
     return WTF::nullopt;
