@@ -1,3 +1,20 @@
+2020-11-18  Dmitry Bezhetskov  <dbezhetskov@igalia.com>
+
+        [WASM-References] Remove subtyping rule for externref and funcref
+        https://bugs.webkit.org/show_bug.cgi?id=218885
+
+        Reviewed by Yusuke Suzuki.
+
+        Make funcref is not a subtype of externref.
+        The spec: https://webassembly.github.io/reference-types/core/
+        The PR for removing subtype from the spec:
+        https://github.com/WebAssembly/reference-types/pull/87.
+
+        * wasm/references/func_ref.js:
+        (assert.eq.instance.exports.fix.fun):
+        (assert.eq.instance.exports.fix):
+        * wasm/references/validation.js:
+
 2020-11-18  Ross Kirsling  <ross.kirsling@sony.com>
 
         [JSC] Reinstate String#at

@@ -298,7 +298,7 @@ auto SectionParser::parseGlobal() -> PartialResult
             global.initializationType = GlobalInformation::FromRefFunc;
         else
             global.initializationType = GlobalInformation::FromExpression;
-        WASM_PARSER_FAIL_IF(!isSubtype(typeForInitOpcode, global.type), "Global init_expr opcode of type ", typeForInitOpcode, " doesn't match global's type ", global.type);
+        WASM_PARSER_FAIL_IF(typeForInitOpcode != global.type, "Global init_expr opcode of type ", typeForInitOpcode, " doesn't match global's type ", global.type);
 
         m_info->globals.uncheckedAppend(WTFMove(global));
     }

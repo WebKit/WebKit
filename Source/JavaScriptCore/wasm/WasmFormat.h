@@ -78,13 +78,6 @@ inline bool isValueType(Type type)
     return false;
 }
 
-inline bool isSubtype(Type sub, Type parent)
-{
-    if (sub == parent)
-        return true;
-    return sub == Funcref && parent == Externref;
-}
-
 inline bool isRefType(Type type)
 {
     return type == Externref || type == Funcref;

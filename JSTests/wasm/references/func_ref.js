@@ -75,27 +75,20 @@ function makeFuncrefIdent() {
           .Type().End()
           .Function().End()
           .Export()
-              .Function("h")
               .Function("i")
-              .Function("get_h")
+              .Function("get_i")
               .Function("fix")
               .Function("get_not_exported")
               .Function("local_read")
           .End()
           .Code()
-            .Function("h", { params: ["funcref"], ret: "externref" }, ["externref"])
-              .GetLocal(0)
-              .SetLocal(1)
-              .GetLocal(1)
-            .End()
-
             .Function("i", { params: ["funcref"], ret: "funcref" }, ["funcref"])
               .GetLocal(0)
               .SetLocal(1)
               .GetLocal(1)
             .End()
 
-            .Function("get_h", { params: [], ret: "funcref" }, ["funcref"])
+            .Function("get_i", { params: [], ret: "funcref" }, ["funcref"])
               .I32Const(0)
               .RefFunc(0)
               .SetLocal(0)
@@ -111,11 +104,11 @@ function makeFuncrefIdent() {
             .End()
 
             .Function("fix", { params: [], ret: "funcref" }, [])
-              .RefFunc(3)
+              .RefFunc(2)
             .End()
 
             .Function("get_not_exported", { params: [], ret: "funcref" }, [])
-              .RefFunc(5)
+              .RefFunc(4)
             .End()
 
             .Function("ret_42", { params: [], ret: "i32" }, [])
@@ -134,27 +127,44 @@ function makeFuncrefIdent() {
     fullGC();
 
     assert.eq(instance.exports.local_read(), 1)
-    assert.eq(instance.exports.h(null), null)
-
-    assert.throws(() => instance.exports.h(fun), Error, "Funcref must be an exported wasm function (evaluating 'func(...args)')")
-    assert.eq(instance.exports.h(myfun), myfun)
-    assert.throws(() => instance.exports.h(5), Error, "Funcref must be an exported wasm function (evaluating 'func(...args)')")
-    assert.throws(() => instance.exports.h(undefined), Error, "Funcref must be an exported wasm function (evaluating 'func(...args)')")
 
     assert.eq(instance.exports.i(null), null)
     assert.eq(instance.exports.i(myfun), myfun)
     assert.throws(() => instance.exports.i(fun), Error, "Funcref must be an exported wasm function (evaluating 'func(...args)')")
     assert.throws(() => instance.exports.i(5), Error, "Funcref must be an exported wasm function (evaluating 'func(...args)')")
 
-    assert.throws(() => instance.exports.get_h()(fun), Error, "Funcref must be an exported wasm function (evaluating 'func(...args)')")
-    assert.eq(instance.exports.get_h()(null), null)
-    assert.eq(instance.exports.get_h()(myfun), myfun)
-    assert.throws(() => instance.exports.get_h()(5), Error, "Funcref must be an exported wasm function (evaluating 'func(...args)')")
+    assert.throws(() => instance.exports.get_i()(fun), Error, "Funcref must be an exported wasm function (evaluating 'func(...args)')")
+    assert.eq(instance.exports.get_i()(null), null)
+    assert.eq(instance.exports.get_i()(myfun), myfun)
+    assert.throws(() => instance.exports.get_i()(5), Error, "Funcref must be an exported wasm function (evaluating 'func(...args)')")
 
     assert.eq(instance.exports.get_not_exported()(), 42)
 
     assert.eq(instance.exports.fix()(), instance.exports.fix());
     assert.eq(instance.exports.fix(), instance.exports.fix);
+}
+
+// Casting the Funcref to Externref is forbidden.
+
+{
+    function fun() { return 41; }
+
+    const builder = (new Builder())
+          .Type().End()
+          .Function().End()
+          .Export()
+              .Function("h")
+          .End()
+          .Code()
+            .Function("h", { params: ["funcref"], ret: "externref" }, ["externref"])
+              .GetLocal(0)
+              .SetLocal(1)
+              .GetLocal(1)
+            .End()
+          .End();
+
+    const bin = builder.WebAssembly().get();
+    assert.throws(() => new WebAssembly.Module(bin), WebAssembly.CompileError, "WebAssembly.Module doesn't validate: set_local to type Funcref expected Externref, in function at index 0 (evaluating 'new WebAssembly.Module(bin)')");
 }
 
 // Globals
@@ -246,7 +256,7 @@ assert.throws(() => new WebAssembly.Module((new Builder())
     .Function("h", { params: ["externref"], ret: "funcref" })
       .GetLocal(0)
     .End()
-  .End().WebAssembly().get()), Error, "WebAssembly.Module doesn't validate: control flow returns with unexpected type. Externref is not a subtype of Funcref, in function at index 0 (evaluating 'new WebAssembly.Module')");
+  .End().WebAssembly().get()), Error, "WebAssembly.Module doesn't validate: control flow returns with unexpected type. Externref is not a Funcref, in function at index 0 (evaluating 'new WebAssembly.Module')");
 
 assert.throws(() => new WebAssembly.Module((new Builder())
   .Type().End()

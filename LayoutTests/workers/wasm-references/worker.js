@@ -173,10 +173,10 @@ onmessage = function({ data: module }) {
     WebAssembly.instantiate(module).then(($1) => {
         try {
             assert.eq($1.exports.tbl_size(), 20)
-            assert.eq($1.exports.tbl_grow(5), 20)
+            assert.eq($1.exports.tbl_grow("hi", 5), 20)
             assert.eq($1.exports.tbl_size(), 25)
             assert.eq($1.exports.tbl.get(0), null)
-            assert.eq($1.exports.tbl.get(24), $1.exports.tbl_size)
+            assert.eq($1.exports.tbl.get(24), "hi")
 
             for (let i=0; i<1000; ++i) {
                 $1.exports.tbl_fill(1,"hi",3)

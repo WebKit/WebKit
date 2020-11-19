@@ -19,7 +19,7 @@ import Builder from '../Builder.js';
     const bin = builder.WebAssembly();
     bin.trim();
 
-    assert.throws(() => new WebAssembly.Module(bin.get()), WebAssembly.CompileError, "WebAssembly.Module doesn't validate: ref.is_null to type I32 expected Externref, in function at index 0 (evaluating 'new WebAssembly.Module(bin.get())')");
+    assert.throws(() => new WebAssembly.Module(bin.get()), WebAssembly.CompileError, "WebAssembly.Module doesn't validate: ref.is_null to type I32 expected a reference type, in function at index 0 (evaluating 'new WebAssembly.Module(bin.get())')");
 }
 
 {
@@ -90,7 +90,7 @@ import Builder from '../Builder.js';
     const bin = builder.WebAssembly();
     bin.trim();
 
-    assert.throws(() => new WebAssembly.Module(bin.get()), WebAssembly.CompileError, "WebAssembly.Module doesn't validate: control flow returns with unexpected type. Externref is not a subtype of Funcref, in function at index 0 (evaluating 'new WebAssembly.Module(bin.get())')");
+    assert.throws(() => new WebAssembly.Module(bin.get()), WebAssembly.CompileError, "WebAssembly.Module doesn't validate: control flow returns with unexpected type. Externref is not a Funcref, in function at index 0 (evaluating 'new WebAssembly.Module(bin.get())')");
 }
 
 {

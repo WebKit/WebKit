@@ -256,10 +256,11 @@ void WebAssemblyModuleRecord::link(JSGlobalObject* globalObject, JSValue, JSObje
                         RELEASE_ASSERT_NOT_REACHED();
                     }
                 } else {
+                    const auto globalType = moduleInformation.globals[import.kindIndex].type;
                     // ii. If the global_type of i is i64 or Type(v) is not Number, throw a WebAssembly.LinkError.
-                    if (moduleInformation.globals[import.kindIndex].type == Wasm::I64)
+                    if (globalType == Wasm::I64)
                         return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "imported global", "cannot be an i64")));
-                    if (!isSubtype(moduleInformation.globals[import.kindIndex].type, Wasm::Externref) && !value.isNumber())
+                    if (!isRefType(globalType) && !value.isNumber())
                         return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "imported global", "must be a number")));
 
                     // iii. Append ToWebAssemblyValue(v) to imports.

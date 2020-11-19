@@ -62,7 +62,7 @@ Instance::Instance(Context* context, Ref<Module>&& module, EntryFrame** pointerT
         if (global.bindingMode == Wasm::GlobalInformation::BindingMode::Portable) {
             // This is kept alive by JSWebAssemblyInstance -> JSWebAssemblyGlobal -> binding.
             m_globalsToBinding.set(i);
-        } else if (isSubtype(global.type, Externref)) {
+        } else if (isRefType(global.type)) {
             // This is kept alive by JSWebAssemblyInstance -> binding.
             m_globalsToMark.set(i);
         }

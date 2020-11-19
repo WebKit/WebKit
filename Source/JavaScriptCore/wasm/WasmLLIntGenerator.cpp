@@ -826,13 +826,13 @@ auto LLIntGenerator::setGlobal(uint32_t index, ExpressionType value) -> PartialR
     Type type = global.type;
     switch (global.bindingMode) {
     case Wasm::GlobalInformation::BindingMode::EmbeddedInInstance:
-        if (isSubtype(type, Externref))
+        if (isRefType(type))
             WasmSetGlobalRef::emit(this, index, value);
         else
             WasmSetGlobal::emit(this, index, value);
         break;
     case Wasm::GlobalInformation::BindingMode::Portable:
-        if (isSubtype(type, Externref))
+        if (isRefType(type))
             WasmSetGlobalRefPortableBinding::emit(this, index, value);
         else
             WasmSetGlobalPortableBinding::emit(this, index, value);

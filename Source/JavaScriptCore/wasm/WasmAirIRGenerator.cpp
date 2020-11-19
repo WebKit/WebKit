@@ -1102,7 +1102,7 @@ auto AirIRGenerator::addTableSize(unsigned tableIndex, ExpressionType& result) -
 auto AirIRGenerator::addTableGrow(unsigned tableIndex, ExpressionType fill, ExpressionType delta, ExpressionType& result) -> PartialResult
 {
     ASSERT(fill.tmp());
-    ASSERT(isSubtype(fill.type(), m_info.tables[tableIndex].wasmType()));
+    ASSERT(fill.type() == m_info.tables[tableIndex].wasmType());
     ASSERT(delta.tmp());
     ASSERT(delta.type() == Type::I32);
     result = tmpForType(Type::I32);
@@ -1115,7 +1115,7 @@ auto AirIRGenerator::addTableGrow(unsigned tableIndex, ExpressionType fill, Expr
 auto AirIRGenerator::addTableFill(unsigned tableIndex, ExpressionType offset, ExpressionType fill, ExpressionType count) -> PartialResult
 {
     ASSERT(fill.tmp());
-    ASSERT(isSubtype(fill.type(), m_info.tables[tableIndex].wasmType()));
+    ASSERT(fill.type() == m_info.tables[tableIndex].wasmType());
     ASSERT(offset.tmp());
     ASSERT(offset.type() == Type::I32);
     ASSERT(count.tmp());
@@ -1251,7 +1251,7 @@ auto AirIRGenerator::setGlobal(uint32_t index, ExpressionType value) -> PartialR
             append(Add64, temp2, temp, temp);
             append(moveOpForValueType(type), value, Arg::addr(temp));
         }
-        if (isSubtype(type, Externref))
+        if (isRefType(type))
             emitWriteBarrierForJSWrapper();
         break;
     case Wasm::GlobalInformation::BindingMode::Portable:
@@ -1266,7 +1266,7 @@ auto AirIRGenerator::setGlobal(uint32_t index, ExpressionType value) -> PartialR
         }
         append(moveOpForValueType(type), value, Arg::addr(temp));
         // We emit a write-barrier onto JSWebAssemblyGlobal, not JSWebAssemblyInstance.
-        if (isSubtype(type, Externref)) {
+        if (isRefType(type)) {
             auto cell = g64();
             auto vm = g64();
             auto cellState = g32();
@@ -2330,7 +2330,7 @@ auto AirIRGenerator::addCallIndirect(unsigned tableIndex, const Signature& signa
 
 void AirIRGenerator::unify(const ExpressionType dst, const ExpressionType source)
 {
-    ASSERT(isSubtype(source.type(), dst.type()));
+    ASSERT(source.type() == dst.type());
     append(moveOpForValueType(dst.type()), source, dst);
 }
 
