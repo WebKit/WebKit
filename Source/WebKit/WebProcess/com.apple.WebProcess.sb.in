@@ -954,7 +954,6 @@
     (global-name "com.apple.SystemConfiguration.configd")
     (global-name "com.apple.assertiond.processassertionconnection")
     (global-name "com.apple.audio.SystemSoundServer-OSX")
-    (global-name "com.apple.audio.audiohald")
     (global-name "com.apple.fonts")
     (global-name "com.apple.PowerManagement.control")
 )
@@ -1235,7 +1234,7 @@
             "com.apple.BluetoothServices"
 
             ;;; FIXME(207716): The following should be removed when the GPU process is complete
-            "com.apple.audio.AudioComponentRegistrar" "com.apple.coremedia.endpoint.xpc" "com.apple.coremedia.endpointstream.xpc"
+            "com.apple.audio.AudioComponentRegistrar" "com.apple.audio.audiohald" "com.apple.coremedia.endpoint.xpc" "com.apple.coremedia.endpointstream.xpc"
             "com.apple.coremedia.endpointplaybacksession.xpc" "com.apple.coremedia.endpointremotecontrolsession.xpc" "com.apple.coremedia.routediscoverer.xpc"
             "com.apple.coremedia.routingcontext.xpc" "com.apple.coremedia.volumecontroller.xpc" "com.apple.lskdd" "com.apple.mediaremoted.xpc" "com.apple.trustd.agent"
             ;;; FIXME(207716): End services to remove.
