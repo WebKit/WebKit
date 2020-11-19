@@ -1,0 +1,6 @@
+
+FAIL InputEvent constructor without InputEventInit. assert_false: .isComposing expected false got undefined
+FAIL InputEvent construtor with InputEventInit where data is null assert_true: .isComposing expected true got undefined
+PASS InputEvent construtor with InputEventInit where data is empty string
+PASS InputEvent construtor with InputEventInit where data is non empty string
+

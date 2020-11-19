@@ -1,0 +1,9 @@
+Test Description: Tests that the mouseup event is prevented.
+Click the back mouse button
+Click the back mouse forward
+
+
+Harness Error (TIMEOUT), message = null
+
+NOTRUN Tests that the mouseup is preventable.
+

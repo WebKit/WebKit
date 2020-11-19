@@ -1,0 +1,16 @@
+CONSOLE MESSAGE: ReferenceError: Can't find variable: action
+Description: Verifies that wheel events are captured and sent
+
+Instructions:
+
+Place your mouse pointer over the top box
+Scroll the mouse wheel to change the box color
+Move the mouse pointer to the second box
+Scroll the mouse wheel again to change this box's color
+Test Passes if the box turns green and the word 'PASS' appears below
+
+
+Harness Error (FAIL), message = ReferenceError: Can't find variable: action
+
+NOTRUN wheel event test
+

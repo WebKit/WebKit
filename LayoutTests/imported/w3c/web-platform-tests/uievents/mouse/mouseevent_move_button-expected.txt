@@ -1,0 +1,11 @@
+Mouse Events
+
+Test Description: This test checks if mouse events set button property correctly
+Put your mouse over the green rectangle
+Press a non-primary button and hold it
+Drag mouse to blue rectangle
+Release mouse button
+
+
+PASS mouse events fired without button state
+

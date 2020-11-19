@@ -410,7 +410,7 @@
     "web-platform-tests/touch-events": "import", 
     "web-platform-tests/trusted-types": "skip", 
     "web-platform-tests/typedarrays": "skip", 
-    "web-platform-tests/uievents": "skip", 
+    "web-platform-tests/uievents": "import", 
     "web-platform-tests/upgrade-insecure-requests": "skip", 
     "web-platform-tests/url": "import", 
     "web-platform-tests/user-timing": "import", 

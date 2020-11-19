@@ -1,0 +1,6 @@
+
+PASS Call initUIEvent without parameters
+PASS Call initMouseEvent without parameters
+PASS Call initKeyboardEvent without parameters
+PASS Call initCompositionEvent without parameters
+

@@ -1,0 +1,4 @@
+
+PASS Checkbox state is unchanged before the synthetic click event is dispatched
+PASS Test Description: MouseEvent: Default action is performed when a synthetic click event is dispatched on a checkbox element
+

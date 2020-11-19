@@ -1,0 +1,7 @@
+Clicking with primary vs non-primary buttons
+
+Double-click on the green box with a non-primary button. When using mouse any button other than the left button is non-primary. If a "PASS" result appears, the test passes; otherwise, it fails.
+
+
+FAIL auxclick event sequence received. assert_unreached: document should not receive click for non-primary buttons. Reached unreachable code
+

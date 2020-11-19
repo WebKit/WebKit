@@ -1,0 +1,3 @@
+
+PASS synthetic click event is a MouseEvent
+
