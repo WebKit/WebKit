@@ -197,6 +197,9 @@ unsigned WebSocketChannel::bufferedAmount() const
 
 void WebSocketChannel::close(int code, const String& reason)
 {
+    // An attempt to send closing handshake may fail, which will get the channel closed and dereferenced.
+    auto protectedThis = makeRef(*this);
+
     m_isClosing = true;
     if (m_client)
         m_client->didStartClosingHandshake();
@@ -211,6 +214,9 @@ void WebSocketChannel::close(int code, const String& reason)
 
 void WebSocketChannel::fail(const String& reason)
 {
+    // The client can close the channel, potentially removing the last reference.
+    auto protectedThis = makeRef(*this);
+
     logErrorMessage(reason);
     if (m_client)
         m_client->didReceiveMessageError();
@@ -327,6 +333,9 @@ void WebSocketChannel::didClose(unsigned short code, String&& reason)
     m_inspector.didReceiveWebSocketFrame(m_document.get(), closingFrame);
     m_inspector.didCloseWebSocket(m_document.get());
 
+    // An attempt to send closing handshake may fail, which will get the channel closed and dereferenced.
+    auto protectedThis = makeRef(*this);
+
     bool receivedClosingHandshake = code != WebCore::WebSocketChannel::CloseEventCodeAbnormalClosure;
     if (receivedClosingHandshake)
         m_client->didStartClosingHandshake();
@@ -375,6 +384,7 @@ void WebSocketChannel::suspend()
 
 void WebSocketChannel::resume()
 {
+    auto protectedThis = makeRef(*this);
     m_isSuspended = false;
     while (!m_isSuspended && !m_pendingTasks.isEmpty())
         m_pendingTasks.takeFirst()();

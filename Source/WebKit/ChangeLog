@@ -1,3 +1,18 @@
+2020-11-19  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Protect WebSocketChannel before calling client methods
+        https://bugs.webkit.org/show_bug.cgi?id=216791
+
+        Reviewed by Youenn Fablet.
+
+        Ensure we keep a reference to the WebSocketChannel before calling client methods that might close the channel.
+
+        * WebProcess/Network/WebSocketChannel.cpp:
+        (WebKit::WebSocketChannel::close):
+        (WebKit::WebSocketChannel::fail):
+        (WebKit::WebSocketChannel::didClose):
+        (WebKit::WebSocketChannel::resume):
+
 2020-11-18  Megan Gardner  <megan_gardner@apple.com>
 
         Menu Bar support for app highlights in book.
