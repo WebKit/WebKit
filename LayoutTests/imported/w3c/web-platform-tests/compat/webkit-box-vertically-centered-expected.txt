@@ -1,0 +1,4 @@
+text
+
+PASS Child in vertically centered webkit-box is centered
+
