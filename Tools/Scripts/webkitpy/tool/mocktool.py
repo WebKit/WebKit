@@ -32,7 +32,6 @@ import threading
 from webkitpy.common.host_mock import MockHost
 from webkitpy.common.net.buildbot.buildbot_mock import MockBuildBot
 from webkitpy.common.net.ewsserver_mock import MockEWSServer
-from webkitpy.common.net.irc.irc_mock import MockIRC
 
 # FIXME: Old-style "Ports" need to die and be replaced by modern layout_tests.port which needs to move to common.
 from webkitpy.common.config.ports_mock import MockPort
@@ -68,8 +67,6 @@ class MockTool(MockHost):
         self._deprecated_port = MockPort()
         self.ews_server = MockEWSServer()
 
-        self._irc = None
-        self.irc_password = "MOCK irc password"
         self.wakeup_event = threading.Event()
 
     def deprecated_port(self):
@@ -77,10 +74,3 @@ class MockTool(MockHost):
 
     def path(self):
         return "echo"
-
-    def ensure_irc_connected(self, delegate):
-        if not self._irc:
-            self._irc = MockIRC()
-
-    def irc(self):
-        return self._irc

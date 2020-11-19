@@ -1,3 +1,41 @@
+2020-11-18  Alexey Proskuryakov  <ap@apple.com>
+
+        Remove IRC bots from webkitpy
+        https://bugs.webkit.org/show_bug.cgi?id=219111
+
+        Reviewed by Jonathan Bedard and Aakash Jain.
+
+        We haven't been running any IRC bots for a while, this is dead code.
+
+        * Scripts/webkitpy/common/net/irc: Removed.
+        * Scripts/webkitpy/thirdparty/irc: Removed.
+        * Scripts/webkitpy/tool/bot/irc_command.py: Removed.
+        * Scripts/webkitpy/tool/bot/irc_command_unittest.py: Removed.
+        * Scripts/webkitpy/tool/bot/ircbot.py: Removed.
+        * Scripts/webkitpy/tool/bot/ircbot_unittest.py: Removed.
+        * Scripts/webkitpy/tool/bot/sheriff.py: Removed.
+        * Scripts/webkitpy/tool/bot/sheriff_unittest.py: Removed.
+        * Scripts/webkitpy/tool/commands/__init__.py:
+        * Scripts/webkitpy/tool/commands/newcommitbot.py: Removed.
+        * Scripts/webkitpy/tool/commands/newcommitbot_unittest.py: Removed.
+        * Scripts/webkitpy/tool/commands/perfalizer.py: Removed.
+        * Scripts/webkitpy/tool/commands/perfalizer_unittest.py: Removed.
+        * Scripts/webkitpy/tool/commands/sheriffbot.py: Removed.
+        * Scripts/webkitpy/tool/commands/sheriffbot_unittest.py: Removed.
+        * Scripts/webkitpy/tool/main.py:
+        (WebKitPatch):
+        (WebKitPatch.__init__):
+        (WebKitPatch.path):
+        (WebKitPatch.command_completed):
+        (WebKitPatch.handle_global_options):
+        (WebKitPatch.ensure_irc_connected): Deleted.
+        (WebKitPatch.irc): Deleted.
+        * Scripts/webkitpy/tool/mocktool.py:
+        (MockTool.__init__):
+        (MockTool.path):
+        (MockTool.ensure_irc_connected): Deleted.
+        (MockTool.irc): Deleted.
+
 2020-11-18  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Concurrent display lists] Add a way for display lists to partially replay
