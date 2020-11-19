@@ -1559,7 +1559,7 @@ template<typename U> inline void performFunctionOnMainThread(U&& lambda)
     if (isMainThread())
         return lambda();
 
-    callOnMainThread([&lambda] {
+    callOnMainThreadAndWait([&lambda] {
         lambda();
     });
 }
