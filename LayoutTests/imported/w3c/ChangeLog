@@ -1,5 +1,51 @@
 2020-11-18  Chris Dumez  <cdumez@apple.com>
 
+        Resync web-platform-tests/FileAPI tests from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=219125
+
+        Reviewed by Sam Weinig.
+
+        Resync web-platform-tests/FileAPI tests from upstream dd35c2b21b76772123f7.
+
+        * web-platform-tests/FileAPI/file/File-constructor-expected.txt:
+        * web-platform-tests/FileAPI/file/File-constructor.html:
+        * web-platform-tests/FileAPI/file/resources/echo-content-escaped.py: Added.
+        (escape_byte):
+        (main):
+        * web-platform-tests/FileAPI/file/resources/w3c-import.log: Added.
+        * web-platform-tests/FileAPI/file/send-file-form-controls.tentative-expected.txt: Added.
+        * web-platform-tests/FileAPI/file/send-file-form-controls.tentative.html: Added.
+        * web-platform-tests/FileAPI/file/send-file-form-punctuation.tentative-expected.txt: Added.
+        * web-platform-tests/FileAPI/file/send-file-form-punctuation.tentative.html: Added.
+        * web-platform-tests/FileAPI/file/send-file-form-utf-8.html:
+        * web-platform-tests/FileAPI/file/send-file-form-windows-1252.tentative.html:
+        * web-platform-tests/FileAPI/file/send-file-form-x-user-defined.tentative.html:
+        * web-platform-tests/FileAPI/file/send-file-formdata-controls.tentative-expected.txt: Added.
+        * web-platform-tests/FileAPI/file/send-file-formdata-controls.tentative.html: Added.
+        * web-platform-tests/FileAPI/file/send-file-formdata-expected.txt: Added.
+        * web-platform-tests/FileAPI/file/send-file-formdata-punctuation.tentative-expected.txt: Added.
+        * web-platform-tests/FileAPI/file/send-file-formdata-punctuation.tentative.html: Added.
+        * web-platform-tests/FileAPI/file/send-file-formdata-utf-8-expected.txt: Added.
+        * web-platform-tests/FileAPI/file/send-file-formdata-utf-8.html: Added.
+        * web-platform-tests/FileAPI/file/send-file-formdata.html: Added.
+        * web-platform-tests/FileAPI/file/w3c-import.log:
+        * web-platform-tests/FileAPI/fileReader-expected.txt:
+        * web-platform-tests/FileAPI/fileReader.html:
+        * web-platform-tests/FileAPI/support/send-file-form-helper.js:
+        (escapeString):
+        (const.formPostFileUploadTest):
+        * web-platform-tests/FileAPI/support/send-file-formdata-helper.js: Added.
+        (const.formDataPostFileUploadTest):
+        * web-platform-tests/FileAPI/support/w3c-import.log:
+        * web-platform-tests/FileAPI/url/url-charset.window-expected.txt: Added.
+        * web-platform-tests/FileAPI/url/url-charset.window.html: Added.
+        * web-platform-tests/FileAPI/url/url-charset.window.js: Added.
+        (async_test.t.t.add_cleanup):
+        (async_test.t.win.onload.t.step_func_done):
+        * web-platform-tests/FileAPI/url/w3c-import.log:
+
+2020-11-18  Chris Dumez  <cdumez@apple.com>
+
         Import web-platform-tests/compat tests from usptream
         https://bugs.webkit.org/show_bug.cgi?id=219126
 

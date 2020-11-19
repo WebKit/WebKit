@@ -2686,6 +2686,8 @@ fast/forms/range/range-remove-on-drag.html [ Skip ]
 # FileAPI
 webkit.org/b/172099 imported/w3c/web-platform-tests/FileAPI/url/url_xmlhttprequest_img.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/FileAPI/url/sandboxed-iframe.html [ Failure ]
+# Test output contains WebKitFormBoundary lines with randomly generated text.
+imported/w3c/web-platform-tests/FileAPI/file/send-file-formdata-controls.tentative.html [ Failure ]
 
 # Secure Contexts tests that timeout
 imported/w3c/web-platform-tests/secure-contexts/basic-dedicated-worker.html [ Skip ]

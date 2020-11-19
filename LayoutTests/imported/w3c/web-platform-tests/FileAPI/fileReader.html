@@ -35,7 +35,6 @@
                 assert_equals(fileReader.readyState, FileReader.DONE);
                 t_abort.done();
             });
-            fileReader.onerror = this.unreached_func("onerror should not be called when abort is called");
             fileReader.abort();
             fileReader.onabort = this.unreached_func("abort event should fire sync")
         });
@@ -61,31 +60,6 @@
                 assert_equals(fileReader.readyState, 2);
                 assert_equals(fileReader.readyState, FileReader.DONE);
                 t_event.done();
-            });
-        });
-
-        var t_abort_during_progress = async_test("FileReader States -- abort during progress");
-        t_abort_during_progress.step(function() {
-            var fileReader = new FileReader();
-
-            var blob = new Blob([1]);
-            fileReader.readAsArrayBuffer(blob);
-
-            var onprogressCalled = false;
-            fileReader.onprogress = this.step_func(function(e) {
-                onprogressCalled = true;
-                fileReader.abort();
-            });
-
-            fileReader.onabort = this.step_func(function(e) {
-                assert_unreached("onabort should not be called if abort is called during final onprogress");
-            });
-
-            fileReader.onloadend = this.step_func(function(e) {
-                assert_true(onprogressCalled, "onprogress should be called before onloadend");
-                setTimeout(function() {
-                    t_abort_during_progress.done();
-                }, 0);
             });
         });
     </script>

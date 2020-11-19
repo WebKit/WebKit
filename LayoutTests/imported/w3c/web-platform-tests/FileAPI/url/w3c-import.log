@@ -18,6 +18,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/FileAPI/url/multi-global-origin-serialization.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/FileAPI/url/sandboxed-iframe.html
 /LayoutTests/imported/w3c/web-platform-tests/FileAPI/url/unicode-origin.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/FileAPI/url/url-charset.window.js
 /LayoutTests/imported/w3c/web-platform-tests/FileAPI/url/url-format.any.js
 /LayoutTests/imported/w3c/web-platform-tests/FileAPI/url/url-in-tags-revoke.window.js
 /LayoutTests/imported/w3c/web-platform-tests/FileAPI/url/url-in-tags.window.js

@@ -23,7 +23,7 @@ PASS Invalid bits argument: 0
 PASS Invalid bits argument: null
 PASS Bits argument: object that throws
 PASS Using fileName
-FAIL Using special character in fileName assert_equals: expected "dummy:foo" but got "dummy/foo"
+PASS No replacement when using special character in fileName
 PASS Using null fileName
 PASS Using number fileName
 PASS Using empty string fileName
