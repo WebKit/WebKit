@@ -837,6 +837,10 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     [self setUpScribbleInteraction];
 #endif
 
+#if ENABLE(APP_HIGHLIGHTS)
+    [self setupAppHighlightMenus];
+#endif
+
     _twoFingerSingleTapGestureRecognizer = adoptNS([[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(_twoFingerSingleTapGestureRecognized:)]);
     [_twoFingerSingleTapGestureRecognizer setAllowableMovement:60];
     [_twoFingerSingleTapGestureRecognizer _setAllowableSeparation:150];
@@ -3325,6 +3329,11 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
     if (action == @selector(_deleteByWord) || action == @selector(_deleteForwardByWord) || action == @selector(_deleteForwardAndNotify:) || action == @selector(_deleteToEndOfParagraph) || action == @selector(_deleteToStartOfLine)
         || action == @selector(_transpose))
         return editorState.isContentEditable;
+
+#if ENABLE(APP_HIGHLIGHTS)
+    if (action == @selector(createHighlightInCurrentGroupWithRange:) || action == @selector(createHighlightInNewGroupWithRange:))
+        return editorState.selectionIsRange && !editorState.isContentEditable;
+#endif
 
     return [_webView canPerformAction:action withSender:sender];
 }
@@ -8592,6 +8601,28 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
     NSPoint locationInViewCoordinates = [gestureRecognizer locationInView:self];
     _page->performDictionaryLookupAtLocation(WebCore::FloatPoint(locationInViewCoordinates));
 }
+#endif
+
+#if ENABLE(APP_HIGHLIGHTS)
+- (void)setupAppHighlightMenus
+{
+    if (_page->preferences().appHighlightsEnabled()) {
+        auto addHighlightCurrentGroupItem = adoptNS([[UIMenuItem alloc] initWithTitle:WebCore::contextMenuItemTagAddHighlightToCurrentGroup() action:@selector(createHighlightInCurrentGroupWithRange:)]);
+        auto addHighlightNewGroupItem = adoptNS([[UIMenuItem alloc] initWithTitle:WebCore::contextMenuItemTagAddHighlightToNewGroup() action:@selector(createHighlightInNewGroupWithRange:)]);
+        [[UIMenuController sharedMenuController] setMenuItems:@[ addHighlightCurrentGroupItem.get(), addHighlightNewGroupItem.get() ]];
+    }
+}
+
+- (void)createHighlightInCurrentGroupWithRange:(id)sender
+{
+    // FIXME: Add Highlight logic.
+}
+
+- (void)createHighlightInNewGroupWithRange:(id)sender
+{
+    // FIXME: Add Highlight logic.
+}
+
 #endif
 
 - (void)setContinuousSpellCheckingEnabled:(BOOL)enabled
