@@ -3809,7 +3809,6 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             return zoomAdjustedPixelValueForLength(style.scrollMarginRight(), style);
         case CSSPropertyScrollMarginLeft:
             return zoomAdjustedPixelValueForLength(style.scrollMarginLeft(), style);
-#if ENABLE(CSS_SCROLL_SNAP)
         case CSSPropertyScrollPadding:
             return getCSSPropertyValuesFor4SidesShorthand(scrollPaddingShorthand());
         case CSSPropertyScrollPaddingBottom:
@@ -3820,6 +3819,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             return zoomAdjustedPixelValueForLength(style.scrollPaddingRight(), style);
         case CSSPropertyScrollPaddingLeft:
             return zoomAdjustedPixelValueForLength(style.scrollPaddingLeft(), style);
+#if ENABLE(CSS_SCROLL_SNAP)
         case CSSPropertyScrollSnapType:
             return valueForScrollSnapType(style.scrollSnapType());
         case CSSPropertyScrollSnapAlign:

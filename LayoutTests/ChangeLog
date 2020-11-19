@@ -1,3 +1,13 @@
+2020-11-19  Martin Robinson  <mrobinson@webkit.org>
+
+        Make scroll-padding independent of scroll-snap and have it affect scrollIntoView
+        https://bugs.webkit.org/show_bug.cgi?id=219073
+
+        Reviewed by Simon Fraser.
+
+        * TestExpectations: Mark some tests as passing.
+        * platform/mac-wk1/TestExpectations: Mark one test as failing due to WebKit1 scrollbars.
+
 2020-11-17  Sergio Villar Senin  <svillar@igalia.com>
 
         Nullptr crash in RenderObject::parent

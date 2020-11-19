@@ -59,9 +59,6 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
 #endif
     , grid(StyleGridData::create())
     , gridItem(StyleGridItemData::create())
-#if ENABLE(CSS_SCROLL_SNAP)
-    , scrollSnapPort(StyleScrollSnapPort::create())
-#endif
     , willChange(RenderStyle::initialWillChange())
     , mask(FillLayer::create(FillLayerType::Mask))
     , maskBoxImage(NinePieceImage::Type::Mask)
@@ -138,8 +135,9 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
     , grid(o.grid)
     , gridItem(o.gridItem)
     , scrollMargin(o.scrollMargin)
+    , scrollPadding(o.scrollPadding)
 #if ENABLE(CSS_SCROLL_SNAP)
-    , scrollSnapPort(o.scrollSnapPort)
+    , scrollSnapType(o.scrollSnapType)
     , scrollSnapAlign(o.scrollSnapAlign)
 #endif
     , content(o.content ? o.content->clone() : nullptr)
@@ -241,8 +239,9 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && grid == o.grid
         && gridItem == o.gridItem
         && scrollMargin == o.scrollMargin
+        && scrollPadding == o.scrollPadding
 #if ENABLE(CSS_SCROLL_SNAP)
-        && scrollSnapPort == o.scrollSnapPort
+        && scrollSnapType == o.scrollSnapType
         && scrollSnapAlign == o.scrollSnapAlign
 #endif
         && contentDataEquivalent(o)

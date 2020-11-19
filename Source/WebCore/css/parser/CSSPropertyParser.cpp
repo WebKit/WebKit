@@ -4134,12 +4134,12 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
     case CSSPropertyScrollMarginRight:
     case CSSPropertyScrollMarginTop:
         return consumeLength(m_range, m_context.mode, ValueRangeAll);
-#if ENABLE(CSS_SCROLL_SNAP)
     case CSSPropertyScrollPaddingBottom:
     case CSSPropertyScrollPaddingLeft:
     case CSSPropertyScrollPaddingRight:
     case CSSPropertyScrollPaddingTop:
         return consumeLengthOrPercent(m_range, m_context.mode, ValueRangeAll);
+#if ENABLE(CSS_SCROLL_SNAP)
     case CSSPropertyScrollSnapAlign:
         return consumeScrollSnapAlign(m_range);
     case CSSPropertyScrollSnapType:
@@ -5816,10 +5816,8 @@ bool CSSPropertyParser::parseShorthand(CSSPropertyID property, bool important)
         return consume2ValueShorthand(paddingInlineShorthand(), important);
     case CSSPropertyScrollMargin:
         return consume4ValueShorthand(scrollMarginShorthand(), important);
-#if ENABLE(CSS_SCROLL_SNAP)
     case CSSPropertyScrollPadding:
         return consume4ValueShorthand(scrollPaddingShorthand(), important);
-#endif
     case CSSPropertyWebkitTextEmphasis:
         return consumeShorthandGreedily(webkitTextEmphasisShorthand(), important);
     case CSSPropertyOutline:

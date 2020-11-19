@@ -2439,31 +2439,9 @@ void RenderStyle::setScrollMarginRight(Length&& length)
     SET_VAR(m_rareNonInheritedData, scrollMargin.right(), WTFMove(length));
 }
 
-#if ENABLE(CSS_SCROLL_SNAP)
-
-ScrollSnapType RenderStyle::initialScrollSnapType()
-{
-    return { };
-}
-
-ScrollSnapAlign RenderStyle::initialScrollSnapAlign()
-{
-    return { };
-}
-
-const StyleScrollSnapPort& RenderStyle::scrollSnapPort() const
-{
-    return *m_rareNonInheritedData->scrollSnapPort;
-}
-
-const ScrollSnapType& RenderStyle::scrollSnapType() const
-{
-    return m_rareNonInheritedData->scrollSnapPort->type;
-}
-
 const LengthBox& RenderStyle::scrollPadding() const
 {
-    return m_rareNonInheritedData->scrollSnapPort->scrollPadding;
+    return m_rareNonInheritedData->scrollPadding;
 }
 
 const Length& RenderStyle::scrollPaddingTop() const
@@ -2486,34 +2464,50 @@ const Length& RenderStyle::scrollPaddingRight() const
     return scrollPadding().right();
 }
 
+void RenderStyle::setScrollPaddingTop(Length&& length)
+{
+    SET_VAR(m_rareNonInheritedData, scrollPadding.top(), WTFMove(length));
+}
+
+void RenderStyle::setScrollPaddingBottom(Length&& length)
+{
+    SET_VAR(m_rareNonInheritedData, scrollPadding.bottom(), WTFMove(length));
+}
+
+void RenderStyle::setScrollPaddingLeft(Length&& length)
+{
+    SET_VAR(m_rareNonInheritedData, scrollPadding.left(), WTFMove(length));
+}
+
+void RenderStyle::setScrollPaddingRight(Length&& length)
+{
+    SET_VAR(m_rareNonInheritedData, scrollPadding.right(), WTFMove(length));
+}
+#if ENABLE(CSS_SCROLL_SNAP)
+
+ScrollSnapType RenderStyle::initialScrollSnapType()
+{
+    return { };
+}
+
+ScrollSnapAlign RenderStyle::initialScrollSnapAlign()
+{
+    return { };
+}
+
+const ScrollSnapType RenderStyle::scrollSnapType() const
+{
+    return m_rareNonInheritedData->scrollSnapType;
+}
+
 const ScrollSnapAlign& RenderStyle::scrollSnapAlign() const
 {
     return m_rareNonInheritedData->scrollSnapAlign;
 }
 
-void RenderStyle::setScrollSnapType(const ScrollSnapType& type)
+void RenderStyle::setScrollSnapType(const ScrollSnapType type)
 {
-    SET_NESTED_VAR(m_rareNonInheritedData, scrollSnapPort, type, type);
-}
-
-void RenderStyle::setScrollPaddingTop(Length&& length)
-{
-    SET_NESTED_VAR(m_rareNonInheritedData, scrollSnapPort, scrollPadding.top(), WTFMove(length));
-}
-
-void RenderStyle::setScrollPaddingBottom(Length&& length)
-{
-    SET_NESTED_VAR(m_rareNonInheritedData, scrollSnapPort, scrollPadding.bottom(), WTFMove(length));
-}
-
-void RenderStyle::setScrollPaddingLeft(Length&& length)
-{
-    SET_NESTED_VAR(m_rareNonInheritedData, scrollSnapPort, scrollPadding.left(), WTFMove(length));
-}
-
-void RenderStyle::setScrollPaddingRight(Length&& length)
-{
-    SET_NESTED_VAR(m_rareNonInheritedData, scrollSnapPort, scrollPadding.right(), WTFMove(length));
+    SET_VAR(m_rareNonInheritedData, scrollSnapType, type);
 }
 
 void RenderStyle::setScrollSnapAlign(const ScrollSnapAlign& alignment)

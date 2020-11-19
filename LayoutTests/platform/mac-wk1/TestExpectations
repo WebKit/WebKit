@@ -445,6 +445,9 @@ storage/indexeddb/modern/exceed-open-file-limit.html
 imported/w3c/web-platform-tests/cookies/secure/set-from-wss.https.sub.html [ Failure ]
 imported/w3c/web-platform-tests/cookies/secure/set-from-ws.sub.html [ Failure ]
 
+# WebKit1 frames use native scrollbars causing this reference test to fail.
+imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-padding-001.html [ ImageOnlyFailure ]
+
 ### END OF (2) Failures without bug reports
 ########################################
 

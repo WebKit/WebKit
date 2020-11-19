@@ -122,7 +122,7 @@ void RenderLayerModelObject::styleWillChange(StyleDifference diff, const RenderS
 #if ENABLE(CSS_SCROLL_SNAP)
 static bool scrollSnapContainerRequiresUpdateForStyleUpdate(const RenderStyle& oldStyle, const RenderStyle& newStyle)
 {
-    return oldStyle.scrollSnapPort() != newStyle.scrollSnapPort();
+    return oldStyle.scrollPadding() != newStyle.scrollPadding() || oldStyle.scrollSnapType() != newStyle.scrollSnapType();
 }
 #endif
 

@@ -598,6 +598,20 @@ static bool canCreateStackingContext(const RenderLayer& layer)
         || (renderer.style().willChange() && renderer.style().willChange()->canCreateStackingContext());
 }
 
+static void expandScrollRectToVisibleTargetRectToIncludeScrollPadding(RenderBox* renderBox, const LayoutRect& viewRect, LayoutRect& targetRect)
+{
+    if (!renderBox)
+        return;
+    // scroll-padding applies to the scroll container, but expand the rectangle that we want to expose in order
+    // simulate padding the scroll container. This rectangle is passed up the tree of scrolling elements to
+    // ensure that the padding on this scroll container is maintained.
+    const auto& scrollPadding = renderBox->style().scrollPadding();
+    LayoutBoxExtent scrollPaddingExtents(
+        valueForLength(scrollPadding.top(), viewRect.height()), valueForLength(scrollPadding.right(), viewRect.width()),
+        valueForLength(scrollPadding.bottom(), viewRect.height()), valueForLength(scrollPadding.left(), viewRect.width()));
+    targetRect.expand(scrollPaddingExtents);
+}
+
 bool RenderLayer::shouldBeNormalFlowOnly() const
 {
     if (canCreateStackingContext(*this))
@@ -2810,7 +2824,13 @@ void RenderLayer::scrollRectToVisible(const LayoutRect& absoluteRect, bool insid
     LayoutRect newRect = absoluteRect;
     FrameView& frameView = renderer().view().frameView();
     auto* parentLayer = enclosingContainingBlockLayer(*this, CrossFrameBoundaries::No);
-    bool autoscrollNotInProgress = !renderer().frame().eventHandler().autoscrollInProgress();
+
+    auto shouldUseAnimatedScroll = [this](Element* element, ScrollBehavior behavior)
+    {
+        bool useAnimatedScrolling = !renderer().frame().eventHandler().autoscrollInProgress()
+            && element && useSmoothScrolling(behavior, element);
+        return useAnimatedScrolling ? AnimatedScroll::Yes : AnimatedScroll::No;
+    };
 
     if (allowsCurrentScroll()) {
         // Don't scroll to reveal an overflow layer that is restricted by the -webkit-line-clamp property.
@@ -2829,14 +2849,13 @@ void RenderLayer::scrollRectToVisible(const LayoutRect& absoluteRect, bool insid
             localExposeRect.moveBy(LayoutPoint(-verticalScrollbarWidth(), 0));
         }
         LayoutRect layerBounds(0_lu, 0_lu, box->clientWidth(), box->clientHeight());
+        expandScrollRectToVisibleTargetRectToIncludeScrollPadding(box, layerBounds, localExposeRect);
         LayoutRect revealRect = getRectToExpose(layerBounds, localExposeRect, insideFixed, options.alignX, options.alignY);
 
         ScrollOffset clampedScrollOffset = clampScrollOffset(scrollOffset() + toIntSize(roundedIntRect(revealRect).location()));
         if (clampedScrollOffset != scrollOffset() || currentScrollBehaviorStatus() != ScrollBehaviorStatus::NotInAnimation) {
             ScrollOffset oldScrollOffset = scrollOffset();
-            AnimatedScroll animated = AnimatedScroll::No;
-            if (autoscrollNotInProgress && useSmoothScrolling(options.behavior, box->element()))
-                animated = AnimatedScroll::Yes;
+            auto animated = shouldUseAnimatedScroll(box->element(), options.behavior);
             setScrollPosition(scrollPositionFromOffset(clampedScrollOffset), ScrollType::Programmatic, ScrollClamping::Clamped, animated);
             IntSize scrollOffsetDifference = clampedScrollOffset - oldScrollOffset;
             localExposeRect.move(-scrollOffsetDifference);
@@ -2856,18 +2875,19 @@ void RenderLayer::scrollRectToVisible(const LayoutRect& absoluteRect, bool insid
                 ScriptDisallowedScope::InMainThread scriptDisallowedScope;
 
                 LayoutRect viewRect = frameView.visibleContentRect(LegacyIOSDocumentVisibleRect);
-                LayoutRect exposeRect = getRectToExpose(viewRect, absoluteRect, insideFixed, options.alignX, options.alignY);
+
+                auto* element = ownerElement->contentDocument() ? ownerElement->contentDocument()->documentElement() : nullptr;
+                RenderBox* renderer = element ? element->renderBox() : nullptr;
+                expandScrollRectToVisibleTargetRectToIncludeScrollPadding(renderer, viewRect, newRect);
+
+                LayoutRect exposeRect = getRectToExpose(viewRect, newRect, insideFixed, options.alignX, options.alignY);
 
                 IntPoint scrollPosition(roundedIntPoint(exposeRect.location()));
                 // Adjust offsets if they're outside of the allowable range.
                 scrollPosition = scrollPosition.constrainedBetween(IntPoint(), IntPoint(frameView.contentsSize()));
                 // FIXME: Should we use contentDocument()->scrollingElement()?
                 // See https://bugs.webkit.org/show_bug.cgi?id=205059
-                AnimatedScroll animated = AnimatedScroll::No;
-                if (autoscrollNotInProgress
-                    && ownerElement->contentDocument()
-                    && useSmoothScrolling(options.behavior, ownerElement->contentDocument()->documentElement()))
-                    animated = AnimatedScroll::Yes;
+                auto animated = shouldUseAnimatedScroll(element, options.behavior);
                 frameView.setScrollPosition(scrollPosition, ScrollClamping::Clamped, animated);
 
                 if (options.shouldAllowCrossOriginScrolling == ShouldAllowCrossOriginScrolling::Yes || frameView.safeToPropagateScrollToParent()) {
@@ -2904,15 +2924,17 @@ void RenderLayer::scrollRectToVisible(const LayoutRect& absoluteRect, bool insid
             LayoutRect targetRect = absoluteRect;
             targetRect.move(0, frameView.headerHeight());
 
+            auto* element = frameView.frame().document() ? frameView.frame().document()->documentElement() : nullptr;
+            RenderBox* renderer = element ? element->renderBox() : nullptr;
+            expandScrollRectToVisibleTargetRectToIncludeScrollPadding(renderer, viewRect, targetRect);
+
             LayoutRect revealRect = getRectToExpose(viewRect, targetRect, insideFixed, options.alignX, options.alignY);
             // Avoid scrolling to the rounded value of revealRect.location() if we don't actually need to scroll
             if (revealRect != viewRect) {
                 ScrollOffset clampedScrollPosition = roundedIntPoint(revealRect.location()).constrainedBetween(minScrollPosition, maxScrollPosition);
                 // FIXME: Should we use document()->scrollingElement()?
                 // See https://bugs.webkit.org/show_bug.cgi?id=205059
-                AnimatedScroll animated = AnimatedScroll::No;
-                if (autoscrollNotInProgress && useSmoothScrolling(options.behavior, renderer().document().documentElement()))
-                    animated = AnimatedScroll::Yes;
+                auto animated = shouldUseAnimatedScroll(element, options.behavior);
                 frameView.setScrollPosition(clampedScrollPosition, ScrollClamping::Clamped, animated);
             }
 

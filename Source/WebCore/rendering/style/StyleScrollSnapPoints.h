@@ -47,26 +47,6 @@ inline bool operator==(const ScrollSnapType& a, const ScrollSnapType& b)
 
 inline bool operator!=(const ScrollSnapType& a, const ScrollSnapType& b) { return !(a == b); }
 
-class StyleScrollSnapPort : public RefCounted<StyleScrollSnapPort> {
-public:
-    static Ref<StyleScrollSnapPort> create() { return adoptRef(*new StyleScrollSnapPort); }
-    Ref<StyleScrollSnapPort> copy() const;
-
-    ScrollSnapType type;
-    LengthBox scrollPadding { 0, 0, 0, 0 };
-
-private:
-    StyleScrollSnapPort();
-    StyleScrollSnapPort(const StyleScrollSnapPort&);
-};
-
-inline bool operator==(const StyleScrollSnapPort& a, const StyleScrollSnapPort& b)
-{
-    return a.type == b.type && a.scrollPadding == b.scrollPadding;
-}
-
-inline bool operator!=(const StyleScrollSnapPort& a, const StyleScrollSnapPort& b) { return !(a == b); }
-
 struct ScrollSnapAlign {
     ScrollSnapAxisAlignType x { ScrollSnapAxisAlignType::None };
     ScrollSnapAxisAlignType y { ScrollSnapAxisAlignType::None };

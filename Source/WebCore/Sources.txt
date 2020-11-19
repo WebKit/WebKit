@@ -2323,7 +2323,6 @@ rendering/style/StyleMultiColData.cpp
 rendering/style/StyleMultiImage.cpp
 rendering/style/StyleRareInheritedData.cpp
 rendering/style/StyleRareNonInheritedData.cpp
-rendering/style/StyleScrollSnapPoints.cpp
 rendering/style/StyleSelfAlignmentData.cpp
 rendering/style/StyleSurroundData.cpp
 rendering/style/StyleTransformData.cpp

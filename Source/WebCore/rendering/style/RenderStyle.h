@@ -117,7 +117,6 @@ class ShadowData;
 class StyleImage;
 class StyleInheritedData;
 class StyleScrollSnapArea;
-class StyleScrollSnapPort;
 class TransformationMatrix;
 
 struct ScrollSnapAlign;
@@ -725,18 +724,15 @@ public:
     const Length& scrollMarginLeft() const;
     const Length& scrollMarginRight() const;
 
-#if ENABLE(CSS_SCROLL_SNAP)
-    bool hasSnapPosition() const;
-
-    // Scroll snap port style.
-    const StyleScrollSnapPort& scrollSnapPort() const;
-    const ScrollSnapType& scrollSnapType() const;
     const LengthBox& scrollPadding() const;
     const Length& scrollPaddingTop() const;
     const Length& scrollPaddingBottom() const;
     const Length& scrollPaddingLeft() const;
     const Length& scrollPaddingRight() const;
 
+#if ENABLE(CSS_SCROLL_SNAP)
+    bool hasSnapPosition() const;
+    const ScrollSnapType scrollSnapType() const;
     const ScrollSnapAlign& scrollSnapAlign() const;
 #endif
 
@@ -1270,13 +1266,13 @@ public:
     void setScrollMarginLeft(Length&&);
     void setScrollMarginRight(Length&&);
 
-#if ENABLE(CSS_SCROLL_SNAP)
-    void setScrollSnapType(const ScrollSnapType&);
     void setScrollPaddingTop(Length&&);
     void setScrollPaddingBottom(Length&&);
     void setScrollPaddingLeft(Length&&);
     void setScrollPaddingRight(Length&&);
 
+#if ENABLE(CSS_SCROLL_SNAP)
+    void setScrollSnapType(const ScrollSnapType);
     void setScrollSnapAlign(const ScrollSnapAlign&);
 #endif
 
@@ -1676,11 +1672,11 @@ public:
     static TouchAction initialTouchActions() { return TouchAction::Auto; }
 
     static Length initialScrollMargin() { return Length(Fixed); }
+    static Length initialScrollPadding() { return Length(Fixed); }
 
 #if ENABLE(CSS_SCROLL_SNAP)
     static ScrollSnapType initialScrollSnapType();
     static ScrollSnapAlign initialScrollSnapAlign();
-    static Length initialScrollPadding() { return Length(Fixed); }
 #endif
 
 #if ENABLE(CSS_TRAILING_WORD)
