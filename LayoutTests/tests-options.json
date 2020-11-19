@@ -1433,6 +1433,9 @@
     "imported/w3c/web-platform-tests/fetch/redirect-navigate/preserve-fragment.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/geolocation-API/getCurrentPosition_IDL.https.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/persisted-user-state-restoration/resume-timer-on-history-back.html": [
         "slow"
     ],

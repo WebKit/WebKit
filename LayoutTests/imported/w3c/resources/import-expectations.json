@@ -210,7 +210,7 @@
     "web-platform-tests/fullscreen": "skip", 
     "web-platform-tests/gamepad": "skip", 
     "web-platform-tests/generic-sensor": "skip", 
-    "web-platform-tests/geolocation-API": "skip", 
+    "web-platform-tests/geolocation-API": "import", 
     "web-platform-tests/gyroscope": "skip", 
     "web-platform-tests/hr-time": "import", 
     "web-platform-tests/html": "import", 

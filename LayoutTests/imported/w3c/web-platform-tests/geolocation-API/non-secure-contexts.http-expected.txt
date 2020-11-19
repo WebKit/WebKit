@@ -1,0 +1,14 @@
+CONSOLE MESSAGE: [blocked] Access to geolocation was blocked over insecure connection to http://localhost:8800.
+
+CONSOLE MESSAGE: [blocked] Access to geolocation was blocked over insecure connection to http://localhost:8800.
+
+CONSOLE MESSAGE: [blocked] Access to geolocation was blocked over insecure connection to http://localhost:8800.
+
+CONSOLE MESSAGE: [blocked] Access to geolocation was blocked over insecure connection to http://localhost:8800.
+
+
+PASS When in a non-secure context, getCurrentPosition()'s errorCallback is asynchronously called.
+PASS When in a non-secure context, watchPosition()'s errorCallback is asynchronously called.
+PASS When in a non-secure context, the getCurrentPosition() errorCallBack gets a GeolocationPositionError with the correct error code.
+PASS When in a non-secure context, the watchPosition() errorCallBack gets a GeolocationPositionError with the correct error code.
+
