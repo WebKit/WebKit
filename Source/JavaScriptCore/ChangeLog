@@ -1,3 +1,16 @@
+2020-11-19  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [JSC] Build failed due to unknown values in LLIntDesiredOffsets.h
+        https://bugs.webkit.org/show_bug.cgi?id=219158
+
+        Reviewed by Don Olmstead.
+
+        CMake uses the contents of the variables OFFLINE_ASM and GENERATOR as part of the
+        dependencies that cause LLIntDesiredOffsets.h to be regenerated, so add to them
+        those files missing from the lists.
+
+        * CMakeLists.txt: Update OFFLINE_ASM and GENERATOR lists.
+
 2020-11-18  Dmitry Bezhetskov  <dbezhetskov@igalia.com>
 
         [WASM-References] Remove subtyping rule for externref and funcref
