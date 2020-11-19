@@ -551,6 +551,9 @@ void Options::recomputeDependentOptions()
 
         FOR_EACH_JSC_EXPERIMENTAL_OPTION(DISABLE_TIERS);
     }
+
+    if (Options::usePrivateStaticClassFields())
+        Options::usePrivateClassFields() = true;
 }
 
 inline void* Options::addressOfOption(Options::ID id)

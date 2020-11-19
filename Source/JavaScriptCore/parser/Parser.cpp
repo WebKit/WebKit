@@ -2971,7 +2971,8 @@ parseMethod:
             ASSERT(Options::usePrivateClassFields());
             JSToken token = m_token;
             ident = m_token.m_data.ident;
-            failIfTrue(tag == ClassElementTag::Static, "Static class element cannot be private");
+            if (!Options::usePrivateStaticClassFields())
+                failIfTrue(tag == ClassElementTag::Static, "Static class element cannot be private");
             failIfTrue(isGetter || isSetter, "Cannot parse class method with private name");
             ASSERT(ident);
             next();

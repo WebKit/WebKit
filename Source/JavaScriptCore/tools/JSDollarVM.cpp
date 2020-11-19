@@ -1869,6 +1869,7 @@ static JSC_DECLARE_HOST_FUNCTION(functionIsMemoryLimited);
 static JSC_DECLARE_HOST_FUNCTION(functionUseJIT);
 static JSC_DECLARE_HOST_FUNCTION(functionIsGigacageEnabled);
 static JSC_DECLARE_HOST_FUNCTION(functionToUncacheableDictionary);
+static JSC_DECLARE_HOST_FUNCTION(functionIsPrivateSymbol);
 
 const ClassInfo JSDollarVM::s_info = { "DollarVM", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSDollarVM) };
 
@@ -3377,6 +3378,16 @@ JSC_DEFINE_HOST_FUNCTION(functionToUncacheableDictionary, (JSGlobalObject* globa
     return JSValue::encode(object);
 }
 
+JSC_DEFINE_HOST_FUNCTION(functionIsPrivateSymbol, (JSGlobalObject*, CallFrame* callFrame))
+{
+    DollarVMAssertScope assertScope;
+
+    if (!(callFrame->argument(0).isSymbol()))
+        return JSValue::encode(jsBoolean(false));
+
+    return JSValue::encode(jsBoolean(asSymbol(callFrame->argument(0))->uid().isPrivate()));
+}
+
 constexpr unsigned jsDollarVMPropertyAttributes = PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum | PropertyAttribute::DontDelete;
 
 void JSDollarVM::finishCreation(VM& vm)
@@ -3526,6 +3537,8 @@ void JSDollarVM::finishCreation(VM& vm)
     addFunction(vm, "isGigacageEnabled", functionIsGigacageEnabled, 0);
 
     addFunction(vm, "toUncacheableDictionary", functionToUncacheableDictionary, 1);
+
+    addFunction(vm, "isPrivateSymbol", functionIsPrivateSymbol, 1);
 
     m_objectDoingSideEffectPutWithoutCorrectSlotStatusStructure.set(vm, this, ObjectDoingSideEffectPutWithoutCorrectSlotStatus::createStructure(vm, globalObject, jsNull()));
 }

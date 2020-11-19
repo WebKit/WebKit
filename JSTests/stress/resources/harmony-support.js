@@ -194,3 +194,18 @@ function assertThrows(code, type_opt, cause_opt) {
       typeof type_opt == 'function' ? type_opt : 'any exception';
   fail(expected, 'no exception', 'expected thrown exception');
 }
+
+/**
+ * Runs code() and asserts that it does not throws an exception.
+ */
+function assertDoesNotThrow(code, name_opt) {
+  try {
+    if (typeof code == 'function') {
+      code();
+    } else {
+      eval(code);
+    }
+  } catch (e) {
+    fail("no exception", "threw an exception: " + (e.message || e));
+  }
+}

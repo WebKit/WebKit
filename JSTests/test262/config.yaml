@@ -5,6 +5,7 @@ flags:
   FinalizationRegistry: useWeakRefs
   class-fields-private: usePrivateClassFields
   class-static-fields-public: usePublicStaticClassFields
+  class-static-fields-private: usePrivateStaticClassFields
   Intl.DateTimeFormat-dayPeriod: useIntlDateTimeFormatDayPeriod
   SharedArrayBuffer: useSharedArrayBuffer
   Atomics: useSharedArrayBuffer
@@ -20,7 +21,6 @@ skip:
 
     - arbitrary-module-namespace-names
     - class-methods-private
-    - class-static-fields-private
     - class-static-methods-private
     - cleanupSome
     - host-gc-required

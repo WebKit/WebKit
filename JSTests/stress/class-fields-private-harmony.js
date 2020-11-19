@@ -361,8 +361,6 @@ load("./resources/harmony-support.js");
   assertThrows(() => new C, TypeError);
 }
 
-/*
-FIXME: we don't have %SymbolIsPrivate()
 {
   let symbol = Symbol();
 
@@ -375,8 +373,8 @@ FIXME: we don't have %SymbolIsPrivate()
 
   var p = new Proxy(new C, {
     get: function(target, name) {
-      if (typeof(arg) === 'symbol') {
-        assertFalse(%SymbolIsPrivate(name));
+      if (typeof(name) === 'symbol') {
+        assertFalse($vm.isPrivateSymbol(name));
       }
       return target[name];
     }
@@ -386,7 +384,6 @@ FIXME: we don't have %SymbolIsPrivate()
   assertThrows(() => p.setA(1), TypeError);
   assertEquals(1, p[symbol]);
 }
-*/
 
 {
   class C {

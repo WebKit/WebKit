@@ -1,3 +1,22 @@
+2020-11-19  Xan López  <xan@igalia.com>
+
+        [JSC] Add support for static private class fields
+        https://bugs.webkit.org/show_bug.cgi?id=214297
+
+        Reviewed by Yusuke Suzuki.
+
+        Static private fields come trivially now that both private and
+        static (public) fields are implemented.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseClass): accept static private fields if the runtime option allows it.
+        * runtime/Options.cpp:
+        (JSC::Options::recomputeDependentOptions): usePrivateStaticClassFields depends on usePrivateClassFields.
+        * runtime/OptionsList.h: add runtime option to enable static private fields.
+        * tools/JSDollarVM.cpp: add a method to check for private symbols in the stress tests.
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::JSDollarVM::finishCreation):
+
 2020-11-19  Adrian Perez de Castro  <aperez@igalia.com>
 
         [JSC] Build failed due to unknown values in LLIntDesiredOffsets.h
