@@ -1,0 +1,9 @@
+Steps:
+
+Move your mouse over the blue <div> element, later over the green one, later over the yellow one.
+Move the mouse from the yellow element to the green one, later to the blue one, and later over this paragraph.
+
+Harness Error (TIMEOUT), message = null
+
+NOTRUN Mouseover/out events
+
