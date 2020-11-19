@@ -128,8 +128,12 @@ void LineLayout::updateLayoutBoxDimensions(const RenderBox& replacedOrInlineBloc
     replacedBox.setContentSizeForIntegration({ replacedOrInlineBlock.contentWidth(), replacedOrInlineBlock.contentHeight() });
 
     auto& replacedBoxGeometry = m_layoutState.ensureGeometryForBox(replacedBox);
-    replacedBoxGeometry.setVerticalScrollbarWidth(replacedOrInlineBlock.verticalScrollbarWidth());
-    replacedBoxGeometry.setHorizontalScrollbarHeight(replacedOrInlineBlock.horizontalScrollbarHeight());
+    // Scrollbars are placed "between" the border and the padding box and they never stretch the border box. They may shrink the padding box though.
+    auto horizontalSpaceReservedForScrollbar = std::min(replacedOrInlineBlock.width() - replacedOrInlineBlock.paddingBoxWidth(), LayoutUnit(replacedOrInlineBlock.verticalScrollbarWidth()));
+    replacedBoxGeometry.setVerticalScrollbarWidth(horizontalSpaceReservedForScrollbar);
+
+    auto verticalSpaceReservedForScrollbar = std::min(replacedOrInlineBlock.height() - replacedOrInlineBlock.paddingBoxHeight(), LayoutUnit(replacedOrInlineBlock.horizontalScrollbarHeight()));
+    replacedBoxGeometry.setHorizontalScrollbarHeight(verticalSpaceReservedForScrollbar);
 
     auto baseline = replacedOrInlineBlock.baselinePosition(AlphabeticBaseline, false /* firstLine */, HorizontalLine, PositionOnContainingLine);
     replacedBox.setBaseline(roundToInt(baseline));
