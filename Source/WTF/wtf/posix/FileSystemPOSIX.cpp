@@ -435,7 +435,7 @@ bool moveFile(const String& oldPath, const String& newPath)
 bool getVolumeFreeSpace(const String& path, uint64_t& freeSpace)
 {
     struct statvfs fileSystemStat;
-    if (statvfs(fileSystemRepresentation(path).data(), &fileSystemStat)) {
+    if (!statvfs(fileSystemRepresentation(path).data(), &fileSystemStat)) {
         freeSpace = fileSystemStat.f_bavail * fileSystemStat.f_frsize;
         return true;
     }
