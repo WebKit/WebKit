@@ -243,7 +243,7 @@ class Git(Scm):
 
         if not identifier:
             identifier = self._commit_count(hash if branch == default_branch else '{}..{}'.format(default_branch, hash))
-        branch_point = None if branch == default_branch else self._commit_count(hash)
+        branch_point = None if branch == default_branch else self._commit_count(hash) - identifier
         if branch_point and parsed_branch_point and branch_point != parsed_branch_point:
             raise ValueError("Provided 'branch_point' does not match branch point of specified branch")
 

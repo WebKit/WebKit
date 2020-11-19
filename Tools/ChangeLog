@@ -1,3 +1,16 @@
+2020-11-18  Jonathan Bedard  <jbedard@apple.com>
+
+        [webitscmpy] Branch point incorrect for Git checkouts
+        https://bugs.webkit.org/show_bug.cgi?id=219132
+        <rdar://problem/71561569>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/git.py:
+        (Git.commit): Banca-point is the distance from the primordial commit minus the distance from
+        the default branch.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/mocks/local/git.py:
+
 2020-11-18  Alexey Proskuryakov  <ap@apple.com>
 
         Remove IRC bots from webkitpy

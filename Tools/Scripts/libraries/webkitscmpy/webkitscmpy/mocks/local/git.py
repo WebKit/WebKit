@@ -351,7 +351,7 @@ nothing to commit, working tree clean
         match = self.find(something)
         if '..' in something or not match.branch_point:
             return match.identifier
-        return match.branch_point
+        return match.branch_point + match.identifier
 
     def branches_on(self, hash):
         result = set()
