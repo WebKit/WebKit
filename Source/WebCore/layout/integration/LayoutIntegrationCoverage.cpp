@@ -712,6 +712,10 @@ OptionSet<AvoidanceReason> canUseForLineLayoutWithReason(const RenderBlockFlow& 
     // This currently covers <blockflow>#text</blockflow>, <blockflow>#text<br></blockflow> and mutiple (sibling) RenderText cases.
     // The <blockflow><inline>#text</inline></blockflow> case is also popular and should be relatively easy to cover.
     for (const auto* child = flow.firstChild(); child; child = child->nextSibling()) {
+        if (!is<RenderText>(*child) && flow.containsFloats()) {
+            // Non-text content may stretch the line and we don't yet have support for dynamic float avoiding (as the line grows).
+            SET_REASON_AND_RETURN_IF_NEEDED(FlowHasUnsupportedFloat, reasons, includeReasons);
+        }
         auto childReasons = canUseForChild(*child, includeReasons);
         if (childReasons)
             ADD_REASONS_AND_RETURN_IF_NEEDED(childReasons, reasons, includeReasons);
