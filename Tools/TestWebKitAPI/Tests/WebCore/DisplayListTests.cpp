@@ -121,7 +121,7 @@ TEST(DisplayListTests, AppendItems)
             break;
         }
 #endif
-        case ItemType::MetaCommandSwitchTo:
+        case ItemType::MetaCommandSwitchToItemBuffer:
             break;
         default: {
             observedUnexpectedItem = true;

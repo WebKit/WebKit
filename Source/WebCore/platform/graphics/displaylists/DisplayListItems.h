@@ -2233,13 +2233,13 @@ private:
 
 // FIXME: This should be refactored so that the command to "switch to the next item buffer"
 // is not itself a drawing item.
-class MetaCommandSwitchTo {
+class MetaCommandSwitchToItemBuffer {
 public:
-    static constexpr ItemType itemType = ItemType::MetaCommandSwitchTo;
+    static constexpr ItemType itemType = ItemType::MetaCommandSwitchToItemBuffer;
     static constexpr bool isInlineItem = true;
     static constexpr bool isDrawingItem = false;
 
-    MetaCommandSwitchTo(ItemBufferIdentifier identifier)
+    MetaCommandSwitchToItemBuffer(ItemBufferIdentifier identifier)
         : m_identifier(identifier)
     {
     }
@@ -2307,7 +2307,7 @@ template<> struct EnumTraits<WebCore::DisplayList::ItemType> {
     WebCore::DisplayList::ItemType::FillPath,
     WebCore::DisplayList::ItemType::FillEllipse,
     WebCore::DisplayList::ItemType::FlushContext,
-    WebCore::DisplayList::ItemType::MetaCommandSwitchTo,
+    WebCore::DisplayList::ItemType::MetaCommandSwitchToItemBuffer,
     WebCore::DisplayList::ItemType::PutImageData,
     WebCore::DisplayList::ItemType::PaintFrameForMedia,
     WebCore::DisplayList::ItemType::StrokeRect,

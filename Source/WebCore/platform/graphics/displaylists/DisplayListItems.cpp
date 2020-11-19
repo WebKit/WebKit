@@ -1002,7 +1002,7 @@ static TextStream& operator<<(TextStream& ts, const FlushContext& item)
     return ts;
 }
 
-static TextStream& operator<<(TextStream& ts, const MetaCommandSwitchTo& item)
+static TextStream& operator<<(TextStream& ts, const MetaCommandSwitchToItemBuffer& item)
 {
     ts.dumpProperty("identifier", item.identifier());
     return ts;
@@ -1057,7 +1057,7 @@ static TextStream& operator<<(TextStream& ts, ItemType type)
     case ItemType::FillPath: ts << "fill-path"; break;
     case ItemType::FillEllipse: ts << "fill-ellipse"; break;
     case ItemType::FlushContext: ts << "flush-context"; break;
-    case ItemType::MetaCommandSwitchTo: ts << "meta-command-switch-to"; break;
+    case ItemType::MetaCommandSwitchToItemBuffer: ts << "meta-command-switch-to-item-buffer"; break;
     case ItemType::PutImageData: ts << "put-image-data"; break;
     case ItemType::PaintFrameForMedia: ts << "paint-frame-for-media"; break;
     case ItemType::StrokeRect: ts << "stroke-rect"; break;
@@ -1213,8 +1213,8 @@ TextStream& operator<<(TextStream& ts, ItemHandle item)
     case ItemType::FlushContext:
         ts << item.get<FlushContext>();
         break;
-    case ItemType::MetaCommandSwitchTo:
-        ts << item.get<MetaCommandSwitchTo>();
+    case ItemType::MetaCommandSwitchToItemBuffer:
+        ts << item.get<MetaCommandSwitchToItemBuffer>();
         break;
     case ItemType::PutImageData:
         ts << item.get<PutImageData>();

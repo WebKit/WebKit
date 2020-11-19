@@ -92,8 +92,8 @@ private:
             return true;
         }
 
-        if (item.is<WebCore::DisplayList::MetaCommandSwitchTo>()) {
-            auto nextBufferIdentifier = item.get<WebCore::DisplayList::MetaCommandSwitchTo>().identifier();
+        if (item.is<WebCore::DisplayList::MetaCommandSwitchToItemBuffer>()) {
+            auto nextBufferIdentifier = item.get<WebCore::DisplayList::MetaCommandSwitchToItemBuffer>().identifier();
             m_remoteRenderingBackend.setNextItemBufferToRead(nextBufferIdentifier);
             return true;
         }
