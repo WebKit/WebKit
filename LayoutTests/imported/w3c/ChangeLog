@@ -1,3 +1,31 @@
+2020-11-19  Chris Lord  <clord@igalia.com>
+
+        Update WPT OffscreenCanvas text tests
+        https://bugs.webkit.org/show_bug.cgi?id=219151
+
+        Reviewed by Noam Rosenthal.
+
+        Sync WPT OffscreenCanvas text tests with c12517985bca8a3fafd1d3f4.
+
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.draw.align.end.ltr.html:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.draw.align.end.ltr.worker.js:
+        (t.step):
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.draw.align.end.rtl.html:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.draw.align.end.rtl.worker.js:
+        (t.step):
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.draw.align.start.ltr.html:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.draw.align.start.ltr.worker.js:
+        (t.step):
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.draw.align.start.rtl.html:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.draw.align.start.rtl.worker.js:
+        (t.step):
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.drawing.style.textRendering.settings.html: Added.
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.drawing.style.textRendering.settings.worker.html: Added.
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.drawing.style.textRendering.settings.worker.js: Added.
+        (t_fail.t.step_func):
+        (t.step):
+        * web-platform-tests/html/canvas/offscreen/text/w3c-import.log:
+
 2020-11-18  Chris Dumez  <cdumez@apple.com>
 
         Import web-platform-tests/worklets tests from usptream

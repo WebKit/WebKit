@@ -105,6 +105,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.drawing.style.spacing.measure.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.drawing.style.spacing.measure.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.drawing.style.spacing.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.drawing.style.textRendering.settings.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.drawing.style.textRendering.settings.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.font.default.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.font.default.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.font.parse.basic.html
