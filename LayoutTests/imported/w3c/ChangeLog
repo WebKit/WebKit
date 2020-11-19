@@ -1,3 +1,15 @@
+2020-11-19  Darin Adler  <darin@apple.com>
+
+        Remove extra copy of html5lib left over from an earlier Web Platform Tests import
+        https://bugs.webkit.org/show_bug.cgi?id=219170
+
+        Reviewed by Youenn Fablet.
+
+        The new location is imported/w3c/web-platform-tests/tools/third_party/html5lib and
+        we already have another copy of the library there.
+
+        * web-platform-tests/tools/html5lib: Removed.
+
 2020-11-19  Chris Dumez  <cdumez@apple.com>
 
         Unable to fetch an audio worklet module using a data URL
