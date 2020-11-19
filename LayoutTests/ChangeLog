@@ -1,3 +1,16 @@
+2020-11-19  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GLIB] Unreviewed test gardening. Move common GTK and WPE failures to GLIB.
+
+        * platform/glib/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/gtk/accessibility/svg-bounds-expected.txt: Removed.
+        * platform/gtk/fast/shrink-wrap/rect-shrink-wrap-expected.txt: Removed.
+        * platform/wpe/TestExpectations:
+        * platform/wpe/imported/w3c/web-platform-tests/dom/events/EventTarget-dispatchEvent-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/fetch/api/request/request-keepalive-quota-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/resource-timing/resource-timing-level1.sub-expected.txt: Removed.
+
 2020-11-18  Chris Dumez  <cdumez@apple.com>
 
         Import web-platform-tests/worklets tests from usptream
