@@ -73,7 +73,6 @@ public:
     virtual bool prefersPreparationForDisplay() { return false; }
     virtual void flushDrawingContext() { }
     virtual void flushDrawingContextAndCommit() { }
-    virtual void submitDisplayList(const DisplayList::DisplayList&) { }
 
     virtual AffineTransform baseTransform() const = 0;
     virtual IntSize logicalSize() const = 0;

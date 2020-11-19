@@ -148,7 +148,10 @@ void RemoteRenderingBackend::applyDisplayListsFromHandle(ImageBuffer& destinatio
             return;
         }
 
-        destination.submitDisplayList(*displayList);
+        if (destination.isAccelerated())
+            static_cast<AcceleratedRemoteImageBuffer&>(destination).submitDisplayList(*displayList);
+        else
+            static_cast<UnacceleratedRemoteImageBuffer&>(destination).submitDisplayList(*displayList);
 
         CheckedSize checkedOffset = offset;
         checkedOffset += sizeToRead;

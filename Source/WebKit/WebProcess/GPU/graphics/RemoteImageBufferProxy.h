@@ -34,6 +34,7 @@
 #include <WebCore/DisplayListImageBuffer.h>
 #include <WebCore/DisplayListItems.h>
 #include <WebCore/DisplayListRecorder.h>
+#include <WebCore/DisplayListReplayer.h>
 #include <wtf/Condition.h>
 #include <wtf/Lock.h>
 #include <wtf/SystemTracing.h>
@@ -204,7 +205,7 @@ protected:
         displayList.clear();
     }
 
-    void submitDisplayList(const WebCore::DisplayList::DisplayList& displayList) override
+    void submitDisplayList(const WebCore::DisplayList::DisplayList& displayList)
     {
         if (!m_remoteRenderingBackendProxy || displayList.isEmpty())
             return;

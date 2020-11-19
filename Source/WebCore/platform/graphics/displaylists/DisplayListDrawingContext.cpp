@@ -60,7 +60,7 @@ void DrawingContext::replayDisplayList(GraphicsContext& destContext)
 
     Replayer replayer(destContext, m_displayList);
     if (m_tracksDisplayListReplay)
-        m_replayedDisplayList = replayer.replay({ }, m_tracksDisplayListReplay);
+        m_replayedDisplayList = replayer.replay({ }, m_tracksDisplayListReplay).trackedDisplayList;
     else
         replayer.replay();
     m_displayList.clear();

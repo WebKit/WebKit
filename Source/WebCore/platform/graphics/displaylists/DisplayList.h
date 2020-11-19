@@ -117,7 +117,21 @@ public:
         bool operator==(const iterator& other) { return &m_displayList == &other.m_displayList && m_cursor == other.m_cursor; }
         bool operator!=(const iterator& other) { return !(*this == other); }
         void operator++() { advance(); }
-        std::pair<ItemHandle, Optional<FloatRect>> operator*() const { return { ItemHandle { m_currentBufferForItem }, m_currentExtent }; }
+
+        struct Value {
+            ItemHandle item;
+            Optional<FloatRect> extent;
+            size_t itemSizeInBuffer { 0 };
+        };
+
+        Value operator*() const
+        {
+            return {
+                ItemHandle { m_currentBufferForItem },
+                m_currentExtent,
+                m_currentItemSizeInBuffer
+            };
+        }
 
     private:
         static constexpr size_t sizeOfFixedBufferForCurrentItem = 256;

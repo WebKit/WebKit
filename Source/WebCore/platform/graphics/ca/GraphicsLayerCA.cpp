@@ -1691,7 +1691,7 @@ void GraphicsLayerCA::platformCALayerPaintContents(PlatformCALayer*, GraphicsCon
         DisplayList::Replayer replayer(context, *m_displayList);
         
         if (UNLIKELY(isTrackingDisplayListReplay())) {
-            auto replayList = replayer.replay(clip, isTrackingDisplayListReplay());
+            auto replayList = replayer.replay(clip, isTrackingDisplayListReplay()).trackedDisplayList;
             layerDisplayListMap().add(this, std::pair<FloatRect, std::unique_ptr<DisplayList::DisplayList>>(clip, WTFMove(replayList)));
         } else
             replayer.replay(clip);

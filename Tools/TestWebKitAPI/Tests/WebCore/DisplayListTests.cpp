@@ -78,7 +78,7 @@ TEST(DisplayListTests, AppendItems)
     EXPECT_FALSE(list.isEmpty());
 
     bool observedUnexpectedItem = false;
-    for (auto [handle, extent] : list) {
+    for (auto [handle, extent, size] : list) {
         switch (handle.type()) {
         case ItemType::SetStrokeThickness: {
             EXPECT_FALSE(handle.isDrawingItem());
@@ -147,7 +147,7 @@ TEST(DisplayListTests, AppendItems)
 
     list.append<FillRectWithColor>(FloatRect { 0, 0, 100, 100 }, Color::black);
 
-    for (auto [handle, extent] : list) {
+    for (auto [handle, extent, size] : list) {
         EXPECT_EQ(handle.type(), ItemType::FillRectWithColor);
         EXPECT_TRUE(handle.is<FillRectWithColor>());
 
@@ -223,7 +223,7 @@ TEST(DisplayListTests, ItemBufferClient)
     shallowCopy.setItemBufferClient(&reader);
 
     Vector<ItemType> itemTypes;
-    for (auto [handle, extent] : shallowCopy)
+    for (auto [handle, extent, size] : shallowCopy)
         itemTypes.append(handle.type());
 
     EXPECT_FALSE(shallowCopy.isEmpty());

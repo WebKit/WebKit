@@ -38,6 +38,18 @@ class ImageData;
 
 namespace DisplayList {
 
+enum class StopReplayReason : uint8_t {
+    ReplayedAllItems,
+    MissingCachedResource,
+    DecodingFailure // FIXME: Propagate decoding errors to display list replay clients through this enum as well.
+};
+
+struct ReplayResult {
+    std::unique_ptr<DisplayList> trackedDisplayList;
+    size_t numberOfBytesRead { 0 };
+    StopReplayReason reasonForStopping { StopReplayReason::ReplayedAllItems };
+};
+
 class Replayer {
     WTF_MAKE_NONCOPYABLE(Replayer);
 public:
@@ -45,7 +57,7 @@ public:
     WEBCORE_EXPORT Replayer(GraphicsContext&, const DisplayList&, const ImageBufferHashMap* = nullptr, const NativeImageHashMap* = nullptr, Delegate* = nullptr);
     WEBCORE_EXPORT ~Replayer();
 
-    WEBCORE_EXPORT std::unique_ptr<DisplayList> replay(const FloatRect& initialClip = { }, bool trackReplayList = false);
+    WEBCORE_EXPORT ReplayResult replay(const FloatRect& initialClip = { }, bool trackReplayList = false);
 
     class Delegate {
     public:
@@ -54,8 +66,8 @@ public:
     };
     
 private:
-    void applyItem(ItemHandle);
-    
+    Optional<StopReplayReason> applyItem(ItemHandle);
+
     GraphicsContext& m_context;
     const DisplayList& m_displayList;
     const ImageBufferHashMap& m_imageBuffers;

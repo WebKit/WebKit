@@ -65,17 +65,18 @@ public:
             context().restore();
     }
 
-private:
-    void submitDisplayList(const WebCore::DisplayList::DisplayList& displayList) override
+    WebCore::DisplayList::ReplayResult submitDisplayList(const WebCore::DisplayList::DisplayList& displayList)
     {
-        if (!displayList.isEmpty()) {
-            const auto& imageBuffers = m_remoteRenderingBackend.remoteResourceCache().imageBuffers();
-            const auto& nativeImages = m_remoteRenderingBackend.remoteResourceCache().nativeImages();
-            WebCore::DisplayList::Replayer replayer { BaseConcreteImageBuffer::context(), displayList, &imageBuffers, &nativeImages, this };
-            replayer.replay();
-        }
+        if (displayList.isEmpty())
+            return { };
+
+        const auto& imageBuffers = m_remoteRenderingBackend.remoteResourceCache().imageBuffers();
+        const auto& nativeImages = m_remoteRenderingBackend.remoteResourceCache().nativeImages();
+        WebCore::DisplayList::Replayer replayer { BaseConcreteImageBuffer::context(), displayList, &imageBuffers, &nativeImages, this };
+        return replayer.replay();
     }
 
+private:
     bool apply(WebCore::DisplayList::ItemHandle item, WebCore::GraphicsContext& context) override
     {
         if (item.is<WebCore::DisplayList::PutImageData>()) {
