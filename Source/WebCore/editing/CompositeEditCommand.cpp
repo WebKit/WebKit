@@ -53,6 +53,7 @@
 #include "InsertNodeBeforeCommand.h"
 #include "InsertParagraphSeparatorCommand.h"
 #include "InsertTextCommand.h"
+#include "LayoutIntegrationRunIterator.h"
 #include "MergeIdenticalElementsCommand.h"
 #include "NodeTraversal.h"
 #include "RemoveNodeCommand.h"
@@ -981,20 +982,8 @@ void CompositeEditCommand::deleteInsignificantText(Text& textNode, unsigned star
     if (!textRenderer)
         return;
 
-    Vector<InlineTextBox*> sortedTextBoxes;
-    size_t sortedTextBoxesPosition = 0;
-   
-    textRenderer->ensureLineBoxes();
-    for (InlineTextBox* textBox = textRenderer->firstTextBox(); textBox; textBox = textBox->nextTextBox())
-        sortedTextBoxes.append(textBox);
-    
-    // If there is mixed directionality text, the boxes can be out of order,
-    // (like Arabic with embedded LTR), so sort them first. 
-    if (textRenderer->containsReversedText())    
-        std::sort(sortedTextBoxes.begin(), sortedTextBoxes.end(), InlineTextBox::compareByStart);
-    InlineTextBox* box = sortedTextBoxes.isEmpty() ? 0 : sortedTextBoxes[sortedTextBoxesPosition];
-
-    if (!box) {
+    auto run = LayoutIntegration::firstTextRunInTextOrderFor(*textRenderer);
+    if (!run) {
         // whole text node is empty
         removeNode(textNode);
         return;    
@@ -1005,18 +994,18 @@ void CompositeEditCommand::deleteInsignificantText(Text& textNode, unsigned star
         return;
 
     unsigned removed = 0;
-    InlineTextBox* prevBox = nullptr;
+    LayoutIntegration::TextRunIterator previousRun;
     String str;
 
     // This loop structure works to process all gaps preceding a box,
     // and also will look at the gap after the last box.
-    while (prevBox || box) {
-        unsigned gapStart = prevBox ? prevBox->start() + prevBox->len() : 0;
+    while (previousRun || run) {
+        unsigned gapStart = previousRun ? previousRun->end() : 0;
         if (end < gapStart)
             // No more chance for any intersections
             break;
 
-        unsigned gapEnd = box ? box->start() : length;
+        unsigned gapEnd = run ? run->start() : length;
         bool indicesIntersect = start <= gapEnd && end >= gapStart;
         int gapLen = gapEnd - gapStart;
         if (indicesIntersect && gapLen > 0) {
@@ -1029,13 +1018,9 @@ void CompositeEditCommand::deleteInsignificantText(Text& textNode, unsigned star
             removed += gapLen;
         }
         
-        prevBox = box;
-        if (box) {
-            if (++sortedTextBoxesPosition < sortedTextBoxes.size())
-                box = sortedTextBoxes[sortedTextBoxesPosition];
-            else
-                box = nullptr;
-        }
+        previousRun = run;
+        if (run)
+            run.traverseNextTextRunInTextOrder();
     }
 
     if (!str.isNull()) {
