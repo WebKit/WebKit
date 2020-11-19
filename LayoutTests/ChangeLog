@@ -1,3 +1,16 @@
+2020-11-19  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r270009.
+        https://bugs.webkit.org/show_bug.cgi?id=219162
+
+        Added two broken tests on ios
+
+        Reverted changeset:
+
+        "Import web-platform-tests/compat tests from usptream"
+        https://bugs.webkit.org/show_bug.cgi?id=219126
+        https://trac.webkit.org/changeset/270009
+
 2020-11-19  Martin Robinson  <mrobinson@webkit.org>
 
         Make scroll-padding independent of scroll-snap and have it affect scrollIntoView

@@ -59,7 +59,6 @@
         "web-platform-tests/acid/acid3/svg.xml",
         "web-platform-tests/beacon/fetch-keepalive-navigate.iFrame.html",
         "web-platform-tests/beacon/navigate.iFrame.sub.html",
-        "web-platform-tests/compat/webkit-box-fixed-position-child.html",
         "web-platform-tests/content-security-policy/README.html",
         "web-platform-tests/content-security-policy/embedded-enforcement/support/executor.html",
         "web-platform-tests/content-security-policy/form-action/support/post-message-to-opener.sub.html",
