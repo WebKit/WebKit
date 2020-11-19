@@ -22,6 +22,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/WebIDL/ecmascript-binding/global-immutable-prototype.any.js
 /LayoutTests/imported/w3c/web-platform-tests/WebIDL/ecmascript-binding/has-instance.html
 /LayoutTests/imported/w3c/web-platform-tests/WebIDL/ecmascript-binding/interface-object.html
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/ecmascript-binding/interface-prototype-constructor-set-receiver.html
 /LayoutTests/imported/w3c/web-platform-tests/WebIDL/ecmascript-binding/interface-prototype-object.html
 /LayoutTests/imported/w3c/web-platform-tests/WebIDL/ecmascript-binding/iterator-invalidation-foreach.html
 /LayoutTests/imported/w3c/web-platform-tests/WebIDL/ecmascript-binding/iterator-prototype-object.html

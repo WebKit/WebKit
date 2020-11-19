@@ -1,5 +1,28 @@
 2020-11-18  Chris Dumez  <cdumez@apple.com>
 
+        Resync web-platform-tests/WebIDL tests from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=219120
+
+        Reviewed by Alex Christensen.
+
+        Resync web-platform-tests/WebIDL tests from upstream dd35c2b21b76772123f.
+
+        * web-platform-tests/WebIDL/ecmascript-binding/es-exceptions/DOMException-custom-bindings.any-expected.txt:
+        * web-platform-tests/WebIDL/ecmascript-binding/es-exceptions/DOMException-custom-bindings.any.js:
+        (test):
+        * web-platform-tests/WebIDL/ecmascript-binding/es-exceptions/DOMException-custom-bindings.any.worker-expected.txt:
+        * web-platform-tests/WebIDL/ecmascript-binding/legacy-callback-interface-object.html:
+        * web-platform-tests/WebIDL/ecmascript-binding/w3c-import.log:
+        * web-platform-tests/WebIDL/idlharness.any-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/WebIDL/idlharness-expected.txt.
+        * web-platform-tests/WebIDL/idlharness.any.html: Added.
+        * web-platform-tests/WebIDL/idlharness.any.js: Added.
+        * web-platform-tests/WebIDL/idlharness.any.worker-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebIDL/idlharness-expected.txt.
+        * web-platform-tests/WebIDL/idlharness.any.worker.html: Added.
+        * web-platform-tests/WebIDL/idlharness.html: Removed.
+        * web-platform-tests/WebIDL/w3c-import.log:
+
+2020-11-18  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, drop manual test in web-platform-tests/notifications.
 
         * web-platform-tests/notifications/shownotification-resolve-manual.https-expected.txt: Removed.

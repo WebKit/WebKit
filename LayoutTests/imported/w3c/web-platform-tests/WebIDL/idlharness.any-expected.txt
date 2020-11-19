@@ -1,5 +1,6 @@
 
-PASS Test driver
+PASS idl_test setup
+PASS idl_test validation
 PASS DOMException interface: existence and properties of interface object
 PASS DOMException interface object length
 PASS DOMException interface object name
