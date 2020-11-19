@@ -51,13 +51,6 @@ enum PositionMoveType {
 
 struct InlineRunAndOffset;
 
-struct InlineBoxAndOffset {
-    InlineBoxAndOffset(InlineRunAndOffset);
-
-    InlineBox* box { nullptr };
-    int offset { 0 };
-};
-
 class Position {
 public:
     enum AnchorType {
@@ -178,9 +171,6 @@ public:
 
     InlineRunAndOffset inlineRunAndOffset(Affinity) const;
     InlineRunAndOffset inlineRunAndOffset(Affinity, TextDirection primaryDirection) const;
-
-    InlineBoxAndOffset inlineBoxAndOffset(Affinity) const;
-    InlineBoxAndOffset inlineBoxAndOffset(Affinity, TextDirection primaryDirection) const;
 
     TextDirection primaryDirection() const;
 

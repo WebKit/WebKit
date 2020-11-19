@@ -103,12 +103,6 @@ static Node* previousRenderedEditable(Node* node)
     return nullptr;
 }
 
-InlineBoxAndOffset::InlineBoxAndOffset(InlineRunAndOffset runAndOffset)
-    : box(runAndOffset.run ? runAndOffset.run->legacyInlineBox() : nullptr)
-    , offset(runAndOffset.offset)
-{
-}
-
 Position::Position(Node* anchorNode, unsigned offset, LegacyEditingPositionFlag)
     : m_anchorNode(anchorNode)
     , m_offset(offset)
@@ -1367,18 +1361,6 @@ InlineRunAndOffset Position::inlineRunAndOffset(Affinity affinity, TextDirection
     }
 
     return { run, caretOffset };
-}
-
-InlineBoxAndOffset Position::inlineBoxAndOffset(Affinity affinity) const
-{
-    return inlineBoxAndOffset(affinity, primaryDirection());
-}
-
-InlineBoxAndOffset Position::inlineBoxAndOffset(Affinity affinity, TextDirection primaryDirection) const
-{
-    ensureLineBoxes();
-
-    return { inlineRunAndOffset(affinity, primaryDirection) };
 }
 
 void Position::ensureLineBoxes() const

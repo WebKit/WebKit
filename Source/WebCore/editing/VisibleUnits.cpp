@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,7 +32,8 @@
 #include "HTMLElement.h"
 #include "HTMLNames.h"
 #include "InlineRunAndOffset.h"
-#include "InlineTextBox.h"
+#include "LayoutIntegrationLineIterator.h"
+#include "LayoutIntegrationRunIterator.h"
 #include "NodeTraversal.h"
 #include "Range.h"
 #include "RenderBlockFlow.h"
@@ -78,7 +79,7 @@ static Node* nextLeafWithSameEditability(Node* node, EditableType editableType)
 }
 
 // FIXME: consolidate with code in previousLinePosition.
-static Position previousRootInlineBoxCandidatePosition(Node* node, const VisiblePosition& visiblePosition, EditableType editableType)
+static Position previousLineCandidatePosition(Node* node, const VisiblePosition& visiblePosition, EditableType editableType)
 {
     auto* highestRoot = highestEditableRoot(visiblePosition.deepEquivalent(), editableType);
     Node* previousNode = previousLeafWithSameEditability(node, editableType);
@@ -101,7 +102,7 @@ static Position previousRootInlineBoxCandidatePosition(Node* node, const Visible
     return Position();
 }
 
-static Position nextRootInlineBoxCandidatePosition(Node* node, const VisiblePosition& visiblePosition, EditableType editableType)
+static Position nextLineCandidatePosition(Node* node, const VisiblePosition& visiblePosition, EditableType editableType)
 {
     auto* highestRoot = highestEditableRoot(visiblePosition.deepEquivalent(), editableType);
     Node* nextNode = nextLeafWithSameEditability(node, editableType);
@@ -123,212 +124,164 @@ static Position nextRootInlineBoxCandidatePosition(Node* node, const VisiblePosi
     return Position();
 }
 
-class CachedLogicallyOrderedLeafBoxes {
-public:
-    CachedLogicallyOrderedLeafBoxes();
-
-    const InlineBox* previousTextOrLineBreakBox(const RootInlineBox*, const InlineBox*);
-    const InlineBox* nextTextOrLineBreakBox(const RootInlineBox*, const InlineBox*);
-
-    size_t size() const { return m_leafBoxes.size(); }
-    const InlineBox* firstBox() const { return m_leafBoxes[0]; }
-
-private:
-    const Vector<InlineBox*>& collectBoxes(const RootInlineBox*);
-    int boxIndexInLeaves(const InlineBox*) const;
-
-    const RootInlineBox* m_rootInlineBox { nullptr };
-    Vector<InlineBox*> m_leafBoxes;
-};
-
-CachedLogicallyOrderedLeafBoxes::CachedLogicallyOrderedLeafBoxes()
+static bool isTextOrLineBreakRun(LayoutIntegration::RunIterator run)
 {
+    return run && (run->isText() || run->renderer().isBR());
 }
 
-const InlineBox* CachedLogicallyOrderedLeafBoxes::previousTextOrLineBreakBox(const RootInlineBox* root, const InlineBox* box)
+static LayoutIntegration::RunIterator previousTextOrLineBreakRun(LayoutIntegration::RunIterator run)
 {
-    if (!root)
-        return nullptr;
-
-    collectBoxes(root);
-
-    // If box is null, root is box's previous RootInlineBox, and previousBox is the last logical box in root.
-    int boxIndex = m_leafBoxes.size() - 1;
-    if (box)
-        boxIndex = boxIndexInLeaves(box) - 1;
-
-    for (int i = boxIndex; i >= 0; --i) {
-        InlineBox* box = m_leafBoxes[i];
-        if (box->isInlineTextBox() || box->renderer().isBR())
-            return box;
+    while (run) {
+        run.traversePreviousOnLineInLogicalOrder();
+        if (isTextOrLineBreakRun(run))
+            return run;
     }
-
-    return nullptr;
+    return { };
 }
 
-const InlineBox* CachedLogicallyOrderedLeafBoxes::nextTextOrLineBreakBox(const RootInlineBox* root, const InlineBox* box)
+static LayoutIntegration::RunIterator nextTextOrLineBreakRun(LayoutIntegration::RunIterator run)
 {
-    if (!root)
-        return nullptr;
-
-    collectBoxes(root);
-
-    // If box is null, root is box's next RootInlineBox, and nextBox is the first logical box in root.
-    // Otherwise, root is box's RootInlineBox, and nextBox is the next logical box in the same line.
-    size_t nextBoxIndex = 0;
-    if (box)
-        nextBoxIndex = boxIndexInLeaves(box) + 1;
-
-    for (size_t i = nextBoxIndex; i < m_leafBoxes.size(); ++i) {
-        InlineBox* box = m_leafBoxes[i];
-        if (box->isInlineTextBox() || box->renderer().isBR())
-            return box;
+    while (run) {
+        run.traverseNextOnLineInLogicalOrder();
+        if (isTextOrLineBreakRun(run))
+            return run;
     }
-
-    return nullptr;
+    return { };
 }
 
-const Vector<InlineBox*>& CachedLogicallyOrderedLeafBoxes::collectBoxes(const RootInlineBox* root)
+static LayoutIntegration::RunIterator startTextOrLineBreakRun(LayoutIntegration::LineIterator line)
 {
-    if (m_rootInlineBox != root) {
-        m_rootInlineBox = root;
-        m_leafBoxes.clear();
-        root->collectLeafBoxesInLogicalOrder(m_leafBoxes);
+    auto run = line.logicalStartRun();
+    if (isTextOrLineBreakRun(run))
+        return run;
+    return nextTextOrLineBreakRun(run);
+}
+
+static LayoutIntegration::RunIterator endTextOrLineBreakRun(LayoutIntegration::LineIterator line)
+{
+    auto run = line.logicalEndRun();
+    if (isTextOrLineBreakRun(run))
+        return run;
+    return previousTextOrLineBreakRun(run);
+}
+
+static const LayoutIntegration::RunIterator logicallyPreviousRun(const VisiblePosition& visiblePosition, LayoutIntegration::RunIterator startRun, bool& previousBoxInDifferentLine)
+{
+    if (auto previousRun = previousTextOrLineBreakRun(startRun))
+        return previousRun;
+
+    if (auto previousLine = startRun.line().previous()) {
+        // FIXME: Why isn't previousBoxInDifferentLine set here?
+        if (auto previousRun = endTextOrLineBreakRun(previousLine))
+            return previousRun;
     }
-    return m_leafBoxes;
-}
-
-int CachedLogicallyOrderedLeafBoxes::boxIndexInLeaves(const InlineBox* box) const
-{
-    for (size_t i = 0; i < m_leafBoxes.size(); ++i) {
-        if (box == m_leafBoxes[i])
-            return i;
-    }
-    return 0;
-}
-
-static const InlineBox* logicallyPreviousBox(const VisiblePosition& visiblePosition, const InlineBox* textBox,
-    bool& previousBoxInDifferentLine, CachedLogicallyOrderedLeafBoxes& leafBoxes)
-{
-    const InlineBox* startBox = textBox;
-
-    const InlineBox* previousBox = leafBoxes.previousTextOrLineBreakBox(&startBox->root(), textBox);
-    if (previousBox)
-        return previousBox;
-
-    previousBox = leafBoxes.previousTextOrLineBreakBox(startBox->root().prevRootBox(), 0);
-    if (previousBox)
-        return previousBox;
 
     while (1) {
-        Node* startNode = startBox->renderer().nonPseudoNode();
+        auto* startNode = startRun->renderer().nonPseudoNode();
         if (!startNode)
             break;
 
-        Position position = previousRootInlineBoxCandidatePosition(startNode, visiblePosition, ContentIsEditable);
+        Position position = previousLineCandidatePosition(startNode, visiblePosition, ContentIsEditable);
         if (position.isNull())
             break;
 
         RenderedPosition renderedPosition(position, Affinity::Downstream);
-        RootInlineBox* previousRoot = renderedPosition.rootBox();
-        if (!previousRoot)
+        auto previousLine = renderedPosition.line();
+        if (!previousLine)
             break;
 
-        previousBox = leafBoxes.previousTextOrLineBreakBox(previousRoot, &startBox->root() == previousRoot ? startBox : nullptr);
-        if (previousBox) {
-            previousBoxInDifferentLine = true;
-            return previousBox;
+        if (previousLine != startRun.line()) {
+            if (auto previousRun = endTextOrLineBreakRun(previousLine)) {
+                previousBoxInDifferentLine = true;
+                return previousRun;
+            }
         }
 
-        if (!leafBoxes.size())
-            break;
-        startBox = leafBoxes.firstBox();
+        startRun = previousLine.logicalStartRun();
     }
-    return 0;
+    return { };
 }
 
 
-static const InlineBox* logicallyNextBox(const VisiblePosition& visiblePosition, const InlineBox* textBox,
-    bool& nextBoxInDifferentLine, CachedLogicallyOrderedLeafBoxes& leafBoxes)
+static const LayoutIntegration::RunIterator logicallyNextRun(const VisiblePosition& visiblePosition, LayoutIntegration::RunIterator startRun, bool& nextBoxInDifferentLine)
 {
-    const InlineBox* startBox = textBox;
+    if (auto nextRun = nextTextOrLineBreakRun(startRun))
+        return nextRun;
 
-    const InlineBox* nextBox = leafBoxes.nextTextOrLineBreakBox(&startBox->root(), textBox);
-    if (nextBox)
-        return nextBox;
-
-    nextBox = leafBoxes.nextTextOrLineBreakBox(startBox->root().nextRootBox(), 0);
-    if (nextBox)
-        return nextBox;
+    if (auto nextLine = startRun.line().next()) {
+        // FIXME: Why isn't previousBoxInDifferentLine set here?
+        if (auto nextRun = startTextOrLineBreakRun(nextLine))
+            return nextRun;
+    }
 
     while (1) {
-        Node* startNode = startBox->renderer().nonPseudoNode();
+        auto* startNode = startRun->renderer().nonPseudoNode();
         if (!startNode)
             break;
 
-        Position position = nextRootInlineBoxCandidatePosition(startNode, visiblePosition, ContentIsEditable);
+        Position position = nextLineCandidatePosition(startNode, visiblePosition, ContentIsEditable);
         if (position.isNull())
             break;
 
         RenderedPosition renderedPosition(position, Affinity::Downstream);
-        RootInlineBox* nextRoot = renderedPosition.rootBox();
-        if (!nextRoot)
+        auto nextLine = renderedPosition.line();
+        if (!nextLine)
             break;
 
-        nextBox = leafBoxes.nextTextOrLineBreakBox(nextRoot, &startBox->root() == nextRoot ? startBox : nullptr);
-        if (nextBox) {
-            nextBoxInDifferentLine = true;
-            return nextBox;
+        if (nextLine != startRun.line()) {
+            if (auto nextRun = startTextOrLineBreakRun(nextLine)) {
+                nextBoxInDifferentLine = true;
+                return nextRun;
+            }
         }
 
-        if (!leafBoxes.size())
-            break;
-        startBox = leafBoxes.firstBox();
+        startRun = nextLine.logicalEndRun();
     }
-    return 0;
+    return { };
 }
 
-static UBreakIterator* wordBreakIteratorForMinOffsetBoundary(const VisiblePosition& visiblePosition, const InlineTextBox* textBox,
-    int& previousBoxLength, bool& previousBoxInDifferentLine, Vector<UChar, 1024>& string, CachedLogicallyOrderedLeafBoxes& leafBoxes)
+static UBreakIterator* wordBreakIteratorForMinOffsetBoundary(const VisiblePosition& visiblePosition, LayoutIntegration::TextRunIterator textRun,
+    unsigned& previousRunLength, bool& previousRunInDifferentLine, Vector<UChar, 1024>& string)
 {
-    previousBoxInDifferentLine = false;
+    previousRunInDifferentLine = false;
 
-    const InlineBox* previousBox = logicallyPreviousBox(visiblePosition, textBox, previousBoxInDifferentLine, leafBoxes);
-    while (previousBox && !is<InlineTextBox>(previousBox)) {
-        ASSERT(previousBox->renderer().isBR());
-        previousBoxInDifferentLine = true;
-        previousBox = logicallyPreviousBox(visiblePosition, previousBox, previousBoxInDifferentLine, leafBoxes);
+    auto previousRun = logicallyPreviousRun(visiblePosition, textRun, previousRunInDifferentLine);
+    while (previousRun && !previousRun->isText()) {
+        ASSERT(previousRun->renderer().isBR());
+        previousRunInDifferentLine = true;
+        previousRun = logicallyPreviousRun(visiblePosition, previousRun, previousRunInDifferentLine);
     }
 
     string.clear();
 
-    if (is<InlineTextBox>(previousBox)) {
-        const auto& previousTextBox = downcast<InlineTextBox>(*previousBox);
-        previousBoxLength = previousTextBox.len();
-        append(string, StringView(previousTextBox.renderer().text()).substring(previousTextBox.start(), previousBoxLength));
+    if (previousRun) {
+        auto& previousTextRun = downcast<LayoutIntegration::TextRunIterator>(previousRun);
+        previousRunLength = previousTextRun->length();
+        append(string, previousTextRun->text());
     }
-    append(string, StringView(textBox->renderer().text()).substring(textBox->start(), textBox->len()));
+    append(string, textRun->text());
 
     return wordBreakIterator(StringView(string.data(), string.size()));
 }
 
-static UBreakIterator* wordBreakIteratorForMaxOffsetBoundary(const VisiblePosition& visiblePosition, const InlineTextBox* textBox,
-    bool& nextBoxInDifferentLine, Vector<UChar, 1024>& string, CachedLogicallyOrderedLeafBoxes& leafBoxes)
+static UBreakIterator* wordBreakIteratorForMaxOffsetBoundary(const VisiblePosition& visiblePosition, LayoutIntegration::TextRunIterator textRun,
+    bool& nextRunInDifferentLine, Vector<UChar, 1024>& string)
 {
-    nextBoxInDifferentLine = false;
+    nextRunInDifferentLine = false;
 
-    const InlineBox* nextBox = logicallyNextBox(visiblePosition, textBox, nextBoxInDifferentLine, leafBoxes);
-    while (nextBox && !is<InlineTextBox>(nextBox)) {
-        ASSERT(nextBox->renderer().isBR());
-        nextBoxInDifferentLine = true;
-        nextBox = logicallyNextBox(visiblePosition, nextBox, nextBoxInDifferentLine, leafBoxes);
+    auto nextRun = logicallyNextRun(visiblePosition, textRun, nextRunInDifferentLine);
+    while (nextRun && !nextRun->isText()) {
+        ASSERT(nextRun->renderer().isBR());
+        nextRunInDifferentLine = true;
+        nextRun = logicallyNextRun(visiblePosition, nextRun, nextRunInDifferentLine);
     }
 
     string.clear();
-    append(string, StringView(textBox->renderer().text()).substring(textBox->start(), textBox->len()));
-    if (is<InlineTextBox>(nextBox)) {
-        const auto& nextTextBox = downcast<InlineTextBox>(*nextBox);
-        append(string, StringView(nextTextBox.renderer().text()).substring(nextTextBox.start(), nextTextBox.len()));
+    append(string, textRun->text());
+
+    if (nextRun) {
+        auto& nextTextRun = downcast<LayoutIntegration::TextRunIterator>(nextRun);
+        append(string, nextTextRun->text());
     }
 
     return wordBreakIterator(StringView(string.data(), string.size()));
@@ -360,12 +313,11 @@ static VisiblePosition visualWordPosition(const VisiblePosition& visiblePosition
         return VisiblePosition();
 
     TextDirection blockDirection = directionOfEnclosingBlock(visiblePosition.deepEquivalent());
-    InlineBox* previouslyVisitedBox = nullptr;
+    LayoutIntegration::RunIterator previouslyVisitedRun;
     VisiblePosition current = visiblePosition;
     Optional<VisiblePosition> previousPosition;
     UBreakIterator* iter = nullptr;
 
-    CachedLogicallyOrderedLeafBoxes leafBoxes;
     Vector<UChar, 1024> string;
 
     while (1) {
@@ -376,50 +328,50 @@ static VisiblePosition visualWordPosition(const VisiblePosition& visiblePosition
         if (previousPosition && adjacentCharacterPosition == previousPosition.value())
             return VisiblePosition();
     
-        // FIXME: Why force the use of upstream affinity here instead of VisiblePosition::inlineBoxAndOffset, which will get affinity from adjacentCharacterPosition?
-        auto [box, offsetInBox] = adjacentCharacterPosition.deepEquivalent().inlineBoxAndOffset(Affinity::Upstream);
+        // FIXME: Why force the use of upstream affinity here instead of VisiblePosition::inlineRunAndOffset, which will get affinity from adjacentCharacterPosition?
+        auto [run, offsetInRun] = adjacentCharacterPosition.deepEquivalent().inlineRunAndOffset(Affinity::Upstream);
     
-        if (!box)
+        if (!run)
             break;
-        if (!is<InlineTextBox>(*box)) {
+        if (!run->isText()) {
             current = adjacentCharacterPosition;
             continue;
         }
 
-        InlineTextBox& textBox = downcast<InlineTextBox>(*box);
-        int previousBoxLength = 0;
-        bool previousBoxInDifferentLine = false;
-        bool nextBoxInDifferentLine = false;
-        bool movingIntoNewBox = previouslyVisitedBox != box;
+        auto& textRun = downcast<LayoutIntegration::TextRunIterator>(run);
+        unsigned previousRunLength = 0;
+        bool previousRunInDifferentLine = false;
+        bool nextRunInDifferentLine = false;
+        bool movingIntoNewRun = previouslyVisitedRun != run;
 
-        if (offsetInBox == box->caretMinOffset())
-            iter = wordBreakIteratorForMinOffsetBoundary(adjacentCharacterPosition, &textBox, previousBoxLength, previousBoxInDifferentLine, string, leafBoxes);
-        else if (offsetInBox == box->caretMaxOffset())
-            iter = wordBreakIteratorForMaxOffsetBoundary(adjacentCharacterPosition, &textBox, nextBoxInDifferentLine, string, leafBoxes);
-        else if (movingIntoNewBox) {
-            iter = wordBreakIterator(StringView(textBox.renderer().text()).substring(textBox.start(), textBox.len()));
-            previouslyVisitedBox = box;
+        if (offsetInRun == textRun->minimumCaretOffset())
+            iter = wordBreakIteratorForMinOffsetBoundary(adjacentCharacterPosition, textRun, previousRunLength, previousRunInDifferentLine, string);
+        else if (offsetInRun == textRun->maximumCaretOffset())
+            iter = wordBreakIteratorForMaxOffsetBoundary(adjacentCharacterPosition, textRun, nextRunInDifferentLine, string);
+        else if (movingIntoNewRun) {
+            iter = wordBreakIterator(textRun->text());
+            previouslyVisitedRun = run;
         }
 
         if (!iter)
             break;
 
         ubrk_first(iter);
-        int offsetInIterator = offsetInBox - textBox.start() + previousBoxLength;
+        int offsetInIterator = offsetInRun - textRun->start() + previousRunLength;
 
         bool isWordBreak;
-        bool boxHasSameDirectionalityAsBlock = box->direction() == blockDirection;
-        bool movingBackward = (direction == MoveLeft && box->direction() == TextDirection::LTR) || (direction == MoveRight && box->direction() == TextDirection::RTL);
+        bool boxHasSameDirectionalityAsBlock = run->direction() == blockDirection;
+        bool movingBackward = (direction == MoveLeft && run->direction() == TextDirection::LTR) || (direction == MoveRight && run->direction() == TextDirection::RTL);
         if ((skipsSpaceWhenMovingRight && boxHasSameDirectionalityAsBlock)
             || (!skipsSpaceWhenMovingRight && movingBackward)) {
-            bool logicalStartInRenderer = offsetInBox == static_cast<int>(textBox.start()) && previousBoxInDifferentLine;
+            bool logicalStartInRenderer = offsetInRun == textRun->start() && previousRunInDifferentLine;
             isWordBreak = isLogicalStartOfWord(iter, offsetInIterator, logicalStartInRenderer);
-            if (isWordBreak && offsetInBox == box->caretMaxOffset() && nextBoxInDifferentLine)
+            if (isWordBreak && offsetInRun == run->maximumCaretOffset() && nextRunInDifferentLine)
                 isWordBreak = false;
         } else {
-            bool logicalEndInRenderer = offsetInBox == static_cast<int>(textBox.start() + textBox.len()) && nextBoxInDifferentLine;
+            bool logicalEndInRenderer = offsetInRun == textRun->end() && nextRunInDifferentLine;
             isWordBreak = islogicalEndOfWord(iter, offsetInIterator, logicalEndInRenderer);
-            if (isWordBreak && offsetInBox == box->caretMinOffset() && previousBoxInDifferentLine)
+            if (isWordBreak && offsetInRun == run->minimumCaretOffset() && previousRunInDifferentLine)
                 isWordBreak = false;
         }      
 
@@ -1024,7 +976,7 @@ VisiblePosition previousLinePosition(const VisiblePosition& visiblePosition, int
     }
 
     if (!line) {
-        Position position = previousRootInlineBoxCandidatePosition(node, visiblePosition, editableType);
+        Position position = previousLineCandidatePosition(node, visiblePosition, editableType);
         if (position.isNotNull()) {
             RenderedPosition renderedPosition(position);
             line = renderedPosition.line();
@@ -1077,7 +1029,7 @@ VisiblePosition nextLinePosition(const VisiblePosition& visiblePosition, int lin
         // FIXME: We need do the same in previousLinePosition.
         Node* child = node->traverseToChildAt(p.deprecatedEditingOffset());
         node = child ? child : node->lastDescendant();
-        Position position = nextRootInlineBoxCandidatePosition(node, visiblePosition, editableType);
+        Position position = nextLineCandidatePosition(node, visiblePosition, editableType);
         if (position.isNotNull()) {
             RenderedPosition renderedPosition(position);
             line = renderedPosition.line();
