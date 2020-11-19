@@ -3119,6 +3119,30 @@
     "imported/w3c/web-platform-tests/workers/semantics/multiple-workers/007.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/worklets/animation-worklet-csp.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/worklets/animation-worklet-referrer.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/worklets/audio-worklet-csp.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/worklets/audio-worklet-referrer.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/worklets/layout-worklet-csp.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/worklets/layout-worklet-referrer.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/worklets/paint-worklet-csp.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/worklets/paint-worklet-referrer.https.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/xhr/overridemimetype-blob.html": [
         "slow"
     ],

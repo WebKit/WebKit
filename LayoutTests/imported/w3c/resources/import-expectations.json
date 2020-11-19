@@ -437,7 +437,7 @@
     "web-platform-tests/webvtt": "skip", 
     "web-platform-tests/webxr": "import", 
     "web-platform-tests/workers": "import", 
-    "web-platform-tests/worklets": "skip", 
+    "web-platform-tests/worklets": "import", 
     "web-platform-tests/x-frame-options": "skip", 
     "web-platform-tests/xhr": "import", 
     "web-platform/test/html/infrastructure": "import"

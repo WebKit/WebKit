@@ -1,0 +1,5 @@
+
+PASS addModule() on a controlled document should be intercepted by a service worker.
+PASS addModule() on a non-controlled document should not be intercepted by a service worker even if the script is under the service worker scope.
+PASS Static import should be intercepted by a service worker.
+

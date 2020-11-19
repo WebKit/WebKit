@@ -1,0 +1,60 @@
+CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'get_worklet(worklet_type).addModule')
+CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'get_worklet(worklet_type).addModule')
+CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'get_worklet(worklet_type).addModule')
+CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'get_worklet(worklet_type).addModule')
+CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'get_worklet(worklet_type).addModule')
+CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'get_worklet(worklet_type).addModule')
+CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'get_worklet(worklet_type).addModule')
+CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'get_worklet(worklet_type).addModule')
+CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'get_worklet(worklet_type).addModule')
+CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'get_worklet(worklet_type).addModule')
+CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'get_worklet(worklet_type).addModule')
+CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'get_worklet(worklet_type).addModule')
+CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'get_worklet(worklet_type).addModule')
+CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'get_worklet(worklet_type).addModule')
+CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'get_worklet(worklet_type).addModule')
+CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'worker-src'.
+
+CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'get_worklet(worklet_type).addModule')
+CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'worker-src'.
+
+CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'get_worklet(worklet_type).addModule')
+CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'worker-src'.
+
+CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'get_worklet(worklet_type).addModule')
+CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'worker-src'.
+
+CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'get_worklet(worklet_type).addModule')
+CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'worker-src'.
+
+CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'get_worklet(worklet_type).addModule')
+CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'get_worklet(worklet_type).addModule')
+CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'get_worklet(worklet_type).addModule')
+CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'get_worklet(worklet_type).addModule')
+CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'get_worklet(worklet_type).addModule')
+
+FAIL A remote-origin worklet should be blocked by the script-src 'self' directive. assert_equals: expected (string) "REJECTED" but got (object) object "[object Object]"
+FAIL A same-origin worklet importing a remote-origin script should be blocked by the script-src 'self' directive. assert_equals: expected (string) "REJECTED" but got (object) object "[object Object]"
+FAIL A remote-origin worklet importing a remote-origin script should be blocked by the script-src 'self' directive. assert_equals: expected (string) "REJECTED" but got (object) object "[object Object]"
+FAIL A remote-origin-redirected worklet should be blocked by the script-src 'self' directive. assert_equals: expected (string) "REJECTED" but got (object) object "[object Object]"
+FAIL A same-origin worklet importing a remote-origin-redirected script should be blocked by the script-src 'self' directive. assert_equals: expected (string) "REJECTED" but got (object) object "[object Object]"
+FAIL A remote-origin worklet should not be blocked because the script-src directive specifying the origin allows it. assert_equals: expected (string) "RESOLVED" but got (object) object "[object Object]"
+FAIL A same-origin worklet importing a remote-origin script should not be blocked because the script-src directive specifying the origin allows it. assert_equals: expected (string) "RESOLVED" but got (object) object "[object Object]"
+FAIL A remote-origin worklet importing a remote-origin script should not be blocked because the script-src directive specifying the origin allows it. assert_equals: expected (string) "RESOLVED" but got (object) object "[object Object]"
+FAIL A remote-origin-redirected worklet should not be blocked because the script-src directive specifying the origin allows it. assert_equals: expected (string) "RESOLVED" but got (object) object "[object Object]"
+FAIL A same-origin worklet importing a remote-origin-redirected script should not be blocked because the script-src directive specifying the origin allows it. assert_equals: expected (string) "RESOLVED" but got (object) object "[object Object]"
+FAIL A remote-origin worklet should not be blocked because the script-src * directive allows it. assert_equals: expected (string) "RESOLVED" but got (object) object "[object Object]"
+FAIL A same-origin worklet importing a remote-origin script should not be blocked because the script-src * directive allows it. assert_equals: expected (string) "RESOLVED" but got (object) object "[object Object]"
+FAIL A remote-origin worklet importing a remote-origin script should not be blocked because the script-src * directive allows it. assert_equals: expected (string) "RESOLVED" but got (object) object "[object Object]"
+FAIL A remote-origin-redirected worklet should not be blocked because the script-src * directive allows it. assert_equals: expected (string) "RESOLVED" but got (object) object "[object Object]"
+FAIL A same-origin worklet importing a remote-origin-redirected script should not be blocked because the script-src * directive allows it. assert_equals: expected (string) "RESOLVED" but got (object) object "[object Object]"
+FAIL A remote-origin worklet should not be blocked by the worker-src directive because worklets obey the script-src directive. assert_equals: expected (string) "RESOLVED" but got (object) object "[object Object]"
+FAIL A same-origin worklet importing a remote-origin script should not be blocked by the worker-src directive because worklets obey the script-src directive. assert_equals: expected (string) "RESOLVED" but got (object) object "[object Object]"
+FAIL A remote-origin worklet importing a remote-origin script should not be blocked by the worker-src directive because worklets obey the script-src directive. assert_equals: expected (string) "RESOLVED" but got (object) object "[object Object]"
+FAIL A remote-origin-redirected worklet should not be blocked by the worker-src directive because worklets obey the script-src directive. assert_equals: expected (string) "RESOLVED" but got (object) object "[object Object]"
+FAIL A same-origin worklet importing a remote-origin-redirected script should not be blocked by the worker-src directive because worklets obey the script-src directive. assert_equals: expected (string) "RESOLVED" but got (object) object "[object Object]"
+FAIL An insecure-origin worklet should be blocked because of mixed contents. assert_equals: expected (string) "REJECTED" but got (object) object "[object Object]"
+FAIL An insecure-origin-redirected worklet should be blocked because of mixed contents. assert_equals: expected (string) "REJECTED" but got (object) object "[object Object]"
+FAIL A same-origin worklet importing an insecure-origin script should be blocked because of mixed contents. assert_equals: expected (string) "REJECTED" but got (object) object "[object Object]"
+FAIL A same-origin worklet importing an insecure-origin-redirected script should be blocked because of mixed contents. assert_equals: expected (string) "REJECTED" but got (object) object "[object Object]"
+

@@ -1,0 +1,40 @@
+CONSOLE MESSAGE: Error: Script error.
+CONSOLE MESSAGE: Error: Script error.
+CONSOLE MESSAGE: Error: Script error.
+CONSOLE MESSAGE: Error: Script error.
+CONSOLE MESSAGE: Error: Script error.
+CONSOLE MESSAGE: Error: Script error.
+CONSOLE MESSAGE: Error: Script error.
+CONSOLE MESSAGE: Error: Script error.
+CONSOLE MESSAGE: Error: Script error.
+CONSOLE MESSAGE: Error: Script error.
+CONSOLE MESSAGE: Error: Script error.
+CONSOLE MESSAGE: Error: Script error.
+CONSOLE MESSAGE: Error: Script error.
+CONSOLE MESSAGE: Error: Script error.
+CONSOLE MESSAGE: Error: Script error.
+CONSOLE MESSAGE: Error: Script error.
+CONSOLE MESSAGE: Error: Script error.
+CONSOLE MESSAGE: Error: Script error.
+CONSOLE MESSAGE: Error: Script error.
+CONSOLE MESSAGE: Error: Script error.
+
+PASS Importing a script resolves the given promise.
+PASS Importing scripts resolves all the given promises.
+PASS Importing nested scripts resolves the given promise
+PASS Importing cyclic scripts resolves the given promise
+PASS Importing a script which throws should still resolve the given promise.
+FAIL Importing a non-existent script rejects the given promise with an AbortError. assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL Importing an invalid URL should reject the given promise with a SyntaxError. assert_unreached: Should have rejected: undefined Reached unreachable code
+PASS Importing a blob URL should resolve the given promise.
+FAIL Importing a file:// URL should reject the given promise. assert_unreached: Should have rejected: undefined Reached unreachable code
+PASS Importing a data URL should resolve the given promise.
+FAIL Importing about:blank should reject the given promise. assert_unreached: Should have rejected: undefined Reached unreachable code
+PASS Importing a cross origin resource with the Access-Control-Allow-Origin header should resolve the given promise
+FAIL Importing a cross origin resource without the Access-Control-Allow-Origin header should reject the given promise assert_unreached: Should have rejected: undefined Reached unreachable code
+PASS Importing a cross-origin-redirected resource with the Access-Control-Allow-Origin header should resolve the given promise
+FAIL Importing a cross-origin-redirected resource without the Access-Control-Allow-Origin header should reject the given promise assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL Importing a script that has a syntax error should reject the given promise. assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL Importing a nested script that has a syntax error should reject the given promise. assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL Importing a script that imports an invalid identifier should reject the given promise. assert_unreached: Should have rejected: undefined Reached unreachable code
+
