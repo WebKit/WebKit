@@ -1,3 +1,13 @@
+2020-11-19  Alexey Proskuryakov  <ap@apple.com>
+
+        Make block-spammers autoinstall requests
+        https://bugs.webkit.org/show_bug.cgi?id=219137
+
+        Reviewed by Jonathan Bedard.
+
+        * Scripts/block-spammers: Move the webkitpy import first, making autoinstaller
+        is available for subsequent imports.
+
 2020-11-18  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Rename MetaCommandSwitchTo to MetaCommandSwitchToItemBuffer

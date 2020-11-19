@@ -26,13 +26,15 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+# A webkitpy import needs to go first for autoinstaller to work with subsequent imports.
+from webkitpy.common.net.credentials import Credentials
+
 import argparse
 import atexit
 import logging
 import requests
 import os
 from dateutil.parser import parse
-from webkitpy.common.net.credentials import Credentials
 
 _log = logging.getLogger(os.path.basename(__file__))
 logging.basicConfig(level=logging.INFO, format='%(message)s')
