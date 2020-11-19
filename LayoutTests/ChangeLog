@@ -1,3 +1,16 @@
+2020-11-17  Sergio Villar Senin  <svillar@igalia.com>
+
+        Nullptr crash in RenderObject::parent
+        https://bugs.webkit.org/show_bug.cgi?id=218484
+        <rdar://problem/70985057>
+
+        Reviewed by Ryosuke Niwa.
+
+        Added new test case.
+
+        * fast/editing/insert-list-in-orphaned-list-item-crash-expected.txt: Added.
+        * fast/editing/insert-list-in-orphaned-list-item-crash.html: Added.
+
 2020-11-19  Diego Pino Garcia  <dpino@igalia.com>
 
         [GLIB] Unreviewed test gardening. Move common GTK and WPE failures to GLIB.

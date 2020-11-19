@@ -56,6 +56,10 @@ RefPtr<HTMLElement> InsertListCommand::insertList(Document& document, Type type)
 
 HTMLElement* InsertListCommand::fixOrphanedListChild(Node& node)
 {
+    auto parentNode = makeRefPtr(node.parentNode());
+    if (parentNode && !parentNode->hasRichlyEditableStyle())
+        return nullptr;
+
     auto listElement = HTMLUListElement::create(document());
     insertNodeBefore(listElement.copyRef(), node);
     if (!listElement->hasEditableStyle())
@@ -210,7 +214,7 @@ void InsertListCommand::doApplyForSingleParagraph(bool forceCreateList, const HT
     Node* listChildNode = enclosingListChild(selectionNode);
     bool switchListType = false;
     if (listChildNode) {
-        // Remove the list chlild.
+        // Remove the list child.
         RefPtr<HTMLElement> listNode = enclosingList(listChildNode);
         if (!listNode) {
             RefPtr<HTMLElement> listElement = fixOrphanedListChild(*listChildNode);
