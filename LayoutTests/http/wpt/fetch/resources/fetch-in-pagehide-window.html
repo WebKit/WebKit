@@ -12,7 +12,7 @@ var id = self.token();
 <body>
 <script>
 onpagehide = function() {
-    const testUrl = RESOURCES_DIR + "content-type.py?cmd=put&id=" + id;
+    const testUrl = RESOURCES_DIR + "content-type-and-body.py?cmd=put&id=" + id;
     fetch(testUrl, { method : 'POST', headers : [["Content-Type", "text/plain;charset=UTF-8"]], body: 'test', keepalive : location.hash === "#keepalive" });    
 }
 </script>

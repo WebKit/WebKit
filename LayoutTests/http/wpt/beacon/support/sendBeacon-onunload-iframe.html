@@ -9,7 +9,7 @@ const RESOURCES_DIR = "/beacon/resources/";
 var id = self.token();
 
 function unload() {
-    var testUrl = RESOURCES_DIR + "content-type.py?cmd=put&id=" + id;
+    var testUrl = RESOURCES_DIR + "content-type-and-body.py?cmd=put&id=" + id;
     navigator.sendBeacon(testUrl, "test");
 }
 </script>

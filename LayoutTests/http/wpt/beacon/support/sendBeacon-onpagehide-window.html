@@ -12,7 +12,7 @@ var id = self.token();
 <body>
 <script>
 onpagehide = function() {
-    const testUrl = RESOURCES_DIR + "content-type.py?cmd=put&id=" + id;
+    const testUrl = RESOURCES_DIR + "content-type-and-body.py?cmd=put&id=" + id;
     navigator.sendBeacon(testUrl, "test");    
 }
 </script>

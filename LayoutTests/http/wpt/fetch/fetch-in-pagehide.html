@@ -14,7 +14,7 @@ const RESOURCES_DIR = "/beacon/resources/";
 
 function checkUrl(id)
 {
-    return RESOURCES_DIR + "content-type.py?cmd=get&id=" + id;
+    return RESOURCES_DIR + "content-type-and-body.py?cmd=get&id=" + id;
 }
 
 promise_test(async (test) => {
@@ -31,7 +31,7 @@ promise_test(async (test) => {
     const response = await fetch(checkUrl(id));
     assert_equals(response.status, 200);
     const result = await response.text();
-    assert_equals(result, "text/plain;charset=UTF-8", "Correct content-type header result");
+    assert_equals(result, "text/plain;charset=UTF-8: test", "Correct content-type header result");
 }, "Test that fetch sent from pagehide event handler is properly received with keepalive");
 
 promise_test(async (test) => {

@@ -1,3 +1,19 @@
+2020-11-19  Chris Dumez  <cdumez@apple.com>
+
+        Resync web-platform-tests/beacon tests from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=219123
+
+        Reviewed by Sam Weinig.
+
+        Resync web-platform-tests/beacon tests from upstream dd35c2b21b76772123f7.
+
+        * web-platform-tests/beacon/headers/header-content-type-and-body-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/beacon/headers/header-content-type-expected.txt.
+        * web-platform-tests/beacon/headers/header-content-type-and-body.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/beacon/headers/header-content-type.html.
+        * web-platform-tests/beacon/headers/w3c-import.log:
+        * web-platform-tests/beacon/resources/content-type-and-body.py: Renamed from LayoutTests/imported/w3c/web-platform-tests/beacon/resources/content-type.py.
+        (main):
+        * web-platform-tests/beacon/resources/w3c-import.log:
+
 2020-11-19  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r270009.

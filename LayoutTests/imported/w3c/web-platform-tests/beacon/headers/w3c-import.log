@@ -14,7 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/beacon/headers/header-content-type.html
+/LayoutTests/imported/w3c/web-platform-tests/beacon/headers/header-content-type-and-body.html
 /LayoutTests/imported/w3c/web-platform-tests/beacon/headers/header-referrer-no-referrer-when-downgrade.https.html
 /LayoutTests/imported/w3c/web-platform-tests/beacon/headers/header-referrer-no-referrer.html
 /LayoutTests/imported/w3c/web-platform-tests/beacon/headers/header-referrer-origin-when-cross-origin.html
