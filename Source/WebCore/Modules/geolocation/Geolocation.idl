@@ -31,11 +31,11 @@
     Exposed=Window
 ] interface Geolocation {
     undefined getCurrentPosition(PositionCallback successCallback,
-                            optional PositionErrorCallback errorCallback,
+                            optional PositionErrorCallback? errorCallback,
                             optional PositionOptions options);
 
     long watchPosition(PositionCallback successCallback,
-                       optional PositionErrorCallback errorCallback,
+                       optional PositionErrorCallback? errorCallback,
                        optional PositionOptions options);
 
     undefined clearWatch(long watchId);

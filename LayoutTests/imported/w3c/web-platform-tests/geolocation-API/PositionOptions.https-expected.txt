@@ -1,5 +1,5 @@
 
-FAIL Call getCurrentPosition with wrong type for enableHighAccuracy. No exception expected. assert_unreached: An exception was thrown unexpectedly: Argument 2 ('errorCallback') to Geolocation.getCurrentPosition must be a function Reached unreachable code
-FAIL Call watchPosition with wrong type for enableHighAccuracy. No exception expected. assert_unreached: An exception was thrown unexpectedly: Argument 2 ('errorCallback') to Geolocation.watchPosition must be a function Reached unreachable code
+PASS Call getCurrentPosition with wrong type for enableHighAccuracy. No exception expected.
+PASS Call watchPosition with wrong type for enableHighAccuracy. No exception expected.
 FAIL PositionOptions tests promise_test: Unhandled rejection with value: object "Error: unimplemented"
 
