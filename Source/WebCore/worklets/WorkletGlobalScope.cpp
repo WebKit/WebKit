@@ -198,7 +198,7 @@ void WorkletGlobalScope::notifyFinished()
     auto completedJob = m_scriptFetchJobs.takeFirst();
 
     if (m_scriptLoader->failed()) {
-        didCompleteScriptFetchJob(WTFMove(completedJob), Exception { NetworkError, makeString("Failed to fetch module, error: ", m_scriptLoader->error().localizedDescription()) });
+        didCompleteScriptFetchJob(WTFMove(completedJob), Exception { AbortError, makeString("Failed to fetch module, error: ", m_scriptLoader->error().localizedDescription()) });
         return;
     }
 

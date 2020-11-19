@@ -16,7 +16,7 @@ promise_test(() => {
 
 promise_test((t) => {
     const context = new OfflineAudioContext(2, 100, 44100);
-    return promise_rejects_dom(t, "NetworkError", context.audioWorklet.addModule("https://{{hosts[alt][]}}:{{ports[https][0]}}/WebKit/webaudio/resources/dummy-worklet.py"));
+    return promise_rejects_dom(t, "AbortError", context.audioWorklet.addModule("https://{{hosts[alt][]}}:{{ports[https][0]}}/WebKit/webaudio/resources/dummy-worklet.py"));
 }, "cross origin fails without CORS headers");
 
 promise_test((t) => {
