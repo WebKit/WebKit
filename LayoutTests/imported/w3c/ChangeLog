@@ -1,5 +1,38 @@
 2020-11-18  Chris Dumez  <cdumez@apple.com>
 
+        Import web-platform-tests/entries-api tests from usptream
+        https://bugs.webkit.org/show_bug.cgi?id=219127
+
+        Reviewed by Sam Weinig.
+
+        Import web-platform-tests/entries-api tests from usptream dd35c2b21b76772123f76a1.
+
+        * resources/import-expectations.json:
+        * web-platform-tests/entries-api/META.yml: Added.
+        * web-platform-tests/entries-api/README.md: Added.
+        * web-platform-tests/entries-api/idlharness.window-expected.txt: Added.
+        * web-platform-tests/entries-api/idlharness.window.html: Added.
+        * web-platform-tests/entries-api/idlharness.window.js: Added.
+        * web-platform-tests/entries-api/support.js: Added.
+        (entry_test):
+        (getEntriesAsPromise):
+        * web-platform-tests/entries-api/support/a/b/c/3.txt: Added.
+        * web-platform-tests/entries-api/support/a/b/c/d/1.txt: Added.
+        * web-platform-tests/entries-api/support/a/b/c/d/2.txt: Added.
+        * web-platform-tests/entries-api/support/a/b/c/d/w3c-import.log: Added.
+        * web-platform-tests/entries-api/support/a/b/c/w3c-import.log: Added.
+        * web-platform-tests/entries-api/support/upload.txt: Added.
+        * web-platform-tests/entries-api/support/upload/file.txt: Added.
+        * web-platform-tests/entries-api/support/upload/subdir/1.txt: Added.
+        * web-platform-tests/entries-api/support/upload/subdir/2.txt: Added.
+        * web-platform-tests/entries-api/support/upload/subdir/3.txt: Added.
+        * web-platform-tests/entries-api/support/upload/subdir/w3c-import.log: Added.
+        * web-platform-tests/entries-api/support/upload/w3c-import.log: Added.
+        * web-platform-tests/entries-api/support/w3c-import.log: Added.
+        * web-platform-tests/entries-api/w3c-import.log: Added.
+
+2020-11-18  Chris Dumez  <cdumez@apple.com>
+
         Resync web-platform-tests/WebIDL tests from upstream
         https://bugs.webkit.org/show_bug.cgi?id=219120
 

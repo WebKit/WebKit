@@ -1,0 +1,69 @@
+
+PASS idl_test setup
+PASS idl_test validation
+PASS Partial interface File: original interface defined
+PASS Partial interface File: member names are unique
+PASS Partial interface HTMLInputElement: original interface defined
+PASS Partial interface HTMLInputElement: member names are unique
+PASS Partial interface DataTransferItem: original interface defined
+PASS Partial interface DataTransferItem: member names are unique
+PASS Partial interface HTMLInputElement[2]: member names are unique
+PASS HTMLElement includes GlobalEventHandlers: member names are unique
+PASS HTMLElement includes DocumentAndElementEventHandlers: member names are unique
+PASS HTMLElement includes ElementContentEditable: member names are unique
+PASS HTMLElement includes HTMLOrSVGElement: member names are unique
+PASS Element includes ParentNode: member names are unique
+PASS Element includes NonDocumentTypeChildNode: member names are unique
+PASS Element includes ChildNode: member names are unique
+PASS Element includes Slottable: member names are unique
+PASS FileSystemEntry interface: existence and properties of interface object
+PASS FileSystemEntry interface object length
+PASS FileSystemEntry interface object name
+PASS FileSystemEntry interface: existence and properties of interface prototype object
+PASS FileSystemEntry interface: existence and properties of interface prototype object's "constructor" property
+PASS FileSystemEntry interface: existence and properties of interface prototype object's @@unscopables property
+PASS FileSystemEntry interface: attribute isFile
+PASS FileSystemEntry interface: attribute isDirectory
+PASS FileSystemEntry interface: attribute name
+PASS FileSystemEntry interface: attribute fullPath
+PASS FileSystemEntry interface: attribute filesystem
+PASS FileSystemEntry interface: operation getParent(optional FileSystemEntryCallback, optional ErrorCallback)
+PASS FileSystemDirectoryEntry interface: existence and properties of interface object
+PASS FileSystemDirectoryEntry interface object length
+PASS FileSystemDirectoryEntry interface object name
+PASS FileSystemDirectoryEntry interface: existence and properties of interface prototype object
+PASS FileSystemDirectoryEntry interface: existence and properties of interface prototype object's "constructor" property
+PASS FileSystemDirectoryEntry interface: existence and properties of interface prototype object's @@unscopables property
+PASS FileSystemDirectoryEntry interface: operation createReader()
+PASS FileSystemDirectoryEntry interface: operation getFile(optional USVString?, optional FileSystemFlags, optional FileSystemEntryCallback, optional ErrorCallback)
+PASS FileSystemDirectoryEntry interface: operation getDirectory(optional USVString?, optional FileSystemFlags, optional FileSystemEntryCallback, optional ErrorCallback)
+PASS FileSystemDirectoryReader interface: existence and properties of interface object
+PASS FileSystemDirectoryReader interface object length
+PASS FileSystemDirectoryReader interface object name
+PASS FileSystemDirectoryReader interface: existence and properties of interface prototype object
+PASS FileSystemDirectoryReader interface: existence and properties of interface prototype object's "constructor" property
+PASS FileSystemDirectoryReader interface: existence and properties of interface prototype object's @@unscopables property
+PASS FileSystemDirectoryReader interface: operation readEntries(FileSystemEntriesCallback, optional ErrorCallback)
+PASS FileSystemFileEntry interface: existence and properties of interface object
+PASS FileSystemFileEntry interface object length
+PASS FileSystemFileEntry interface object name
+PASS FileSystemFileEntry interface: existence and properties of interface prototype object
+PASS FileSystemFileEntry interface: existence and properties of interface prototype object's "constructor" property
+PASS FileSystemFileEntry interface: existence and properties of interface prototype object's @@unscopables property
+PASS FileSystemFileEntry interface: operation file(FileCallback, optional ErrorCallback)
+PASS FileSystem interface: existence and properties of interface object
+PASS FileSystem interface object length
+PASS FileSystem interface object name
+PASS FileSystem interface: existence and properties of interface prototype object
+PASS FileSystem interface: existence and properties of interface prototype object's "constructor" property
+PASS FileSystem interface: existence and properties of interface prototype object's @@unscopables property
+PASS FileSystem interface: attribute name
+PASS FileSystem interface: attribute root
+PASS File interface: attribute webkitRelativePath
+PASS File interface: new File([], "example.txt") must inherit property "webkitRelativePath" with the proper type
+PASS HTMLInputElement interface: attribute webkitdirectory
+PASS HTMLInputElement interface: attribute webkitEntries
+PASS HTMLInputElement interface: document.createElement("input") must inherit property "webkitdirectory" with the proper type
+PASS HTMLInputElement interface: document.createElement("input") must inherit property "webkitEntries" with the proper type
+PASS DataTransferItem interface: operation webkitGetAsEntry()
+
