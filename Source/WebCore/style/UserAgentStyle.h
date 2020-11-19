@@ -55,7 +55,7 @@ public:
     static StyleSheetContents* colorInputStyleSheet;
 #endif
 #if ENABLE(IOS_FORM_CONTROL_REFRESH)
-    static StyleSheetContents* iOSFormControlRefreshStyleSheet;
+    static StyleSheetContents* formControlsIOSStyleSheet;
 #endif
 
     static StyleSheetContents* mediaQueryStyleSheet;

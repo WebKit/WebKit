@@ -1498,9 +1498,9 @@ ColorData.cpp : $(WebCore)/platform/ColorData.gperf $(WebCore)/make-hash-tools.p
 
 USER_AGENT_STYLE_SHEETS = \
     $(WebCore)/css/dialog.css \
+    $(WebCore)/css/formControlsIOS.css \
     $(WebCore)/css/fullscreen.css \
     $(WebCore)/css/html.css \
-    $(WebCore)/css/iOSFormControlRefresh.css \
     $(WebCore)/css/mathml.css \
     $(WebCore)/css/mediaControls.css \
     $(WebCore)/css/plugIns.css \

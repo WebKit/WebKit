@@ -85,7 +85,7 @@ StyleSheetContents* UserAgentStyle::dataListStyleSheet;
 StyleSheetContents* UserAgentStyle::colorInputStyleSheet;
 #endif
 #if ENABLE(IOS_FORM_CONTROL_REFRESH)
-StyleSheetContents* UserAgentStyle::iOSFormControlRefreshStyleSheet;
+StyleSheetContents* UserAgentStyle::formControlsIOSStyleSheet;
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -300,9 +300,9 @@ void UserAgentStyle::ensureDefaultStyleSheetsForElement(const Element& element)
 #endif // ENABLE(FULLSCREEN_API)
 
 #if ENABLE(IOS_FORM_CONTROL_REFRESH)
-    if (!iOSFormControlRefreshStyleSheet && element.document().settings().iOSFormControlRefreshEnabled()) {
-        iOSFormControlRefreshStyleSheet = parseUASheet(iOSFormControlRefreshUserAgentStyleSheet, sizeof(iOSFormControlRefreshUserAgentStyleSheet));
-        addToDefaultStyle(*iOSFormControlRefreshStyleSheet);
+    if (!formControlsIOSStyleSheet && element.document().settings().iOSFormControlRefreshEnabled()) {
+        formControlsIOSStyleSheet = parseUASheet(formControlsIOSUserAgentStyleSheet, sizeof(formControlsIOSUserAgentStyleSheet));
+        addToDefaultStyle(*formControlsIOSStyleSheet);
     }
 #endif
 
