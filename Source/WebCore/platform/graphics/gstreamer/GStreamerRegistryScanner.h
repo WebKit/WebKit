@@ -27,6 +27,7 @@
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/OptionSet.h>
 #include <wtf/text/AtomString.h>
 #include <wtf/text/AtomStringHash.h>
 #include <wtf/text/StringHash.h>
@@ -44,61 +45,77 @@ public:
         Encoding
     };
 
-    const HashSet<String, ASCIICaseInsensitiveHash>& mimeTypeSet(Configuration);
-    bool isContainerTypeSupported(Configuration, String containerType) const;
+    const HashSet<String, ASCIICaseInsensitiveHash>& mimeTypeSet(Configuration) const;
+    bool isContainerTypeSupported(Configuration, const String& containerType) const;
 
     struct RegistryLookupResult {
-        bool isSupported;
-        bool isUsingHardware;
+        bool isSupported { false };
+        bool isUsingHardware { false };
 
         operator bool() const { return isSupported; }
     };
     RegistryLookupResult isDecodingSupported(MediaConfiguration& mediaConfiguration) const { return isConfigurationSupported(Configuration::Decoding, mediaConfiguration); };
     RegistryLookupResult isEncodingSupported(MediaConfiguration& mediaConfiguration) const { return isConfigurationSupported(Configuration::Encoding, mediaConfiguration); }
 
-    bool isCodecSupported(Configuration, String codec, bool usingHardware = false) const;
+    bool isCodecSupported(Configuration, const String& codec, bool usingHardware = false) const;
     MediaPlayerEnums::SupportsType isContentTypeSupported(Configuration, const ContentType&, const Vector<ContentType>& contentTypesRequiringHardwareSupport) const;
     bool areAllCodecsSupported(Configuration, const Vector<String>& codecs, bool shouldCheckForHardwareUse = false) const;
 
 protected:
     GStreamerRegistryScanner(bool isMediaSource = false);
-    ~GStreamerRegistryScanner();
+    ~GStreamerRegistryScanner() = default;
 
-    void initializeDecoders();
-    void initializeEncoders();
+    struct ElementFactories {
+        enum class Type {
+            AudioParser  = 1 << 0,
+            AudioDecoder = 1 << 1,
+            VideoParser  = 1 << 2,
+            VideoDecoder = 1 << 3,
+            Demuxer      = 1 << 4,
+            AudioEncoder = 1 << 5,
+            VideoEncoder = 1 << 6,
+            Muxer        = 1 << 7,
+            All          = (1 << 8) - 1
+        };
 
-    RegistryLookupResult isConfigurationSupported(Configuration, MediaConfiguration&) const;
+        explicit ElementFactories(OptionSet<Type>);
+        ~ElementFactories();
 
-    enum ElementType {
-        AudioDecoder = 0,
-        VideoDecoder,
-        Demuxer
+        static const char* elementFactoryTypeToString(Type);
+        GList* factory(Type) const;
+
+        enum class CheckHardwareClassifier { No, Yes };
+        RegistryLookupResult hasElementForMediaType(Type, const char* capsString, CheckHardwareClassifier = CheckHardwareClassifier::No, Optional<Vector<String>> disallowedList = WTF::nullopt) const;
+
+        GList* audioDecoderFactories { nullptr };
+        GList* audioParserFactories { nullptr };
+        GList* videoDecoderFactories { nullptr };
+        GList* videoParserFactories { nullptr };
+        GList* demuxerFactories { nullptr };
+        GList* audioEncoderFactories { nullptr };
+        GList* videoEncoderFactories { nullptr };
+        GList* muxerFactories { nullptr };
     };
 
+    void initializeDecoders(const ElementFactories&);
+    void initializeEncoders(const ElementFactories&);
+
+    RegistryLookupResult isConfigurationSupported(Configuration, const MediaConfiguration&) const;
+
     struct GstCapsWebKitMapping {
-        ElementType elementType;
+        ElementFactories::Type elementType;
         const char* capsString;
         Vector<AtomString> webkitMimeTypes;
         Vector<AtomString> webkitCodecPatterns;
     };
-    void fillMimeTypeSetFromCapsMapping(Vector<GstCapsWebKitMapping>&);
-
-    RegistryLookupResult hasElementForMediaType(GList* elementFactories, const char* capsString, bool shouldCheckHardwareClassifier = false, Optional<Vector<String>> blackList = WTF::nullopt) const;
+    void fillMimeTypeSetFromCapsMapping(const ElementFactories&, const Vector<GstCapsWebKitMapping>&);
 
     bool isAVC1CodecSupported(Configuration, const String& codec, bool shouldCheckForHardwareUse) const;
 
 private:
     const char* configurationNameForLogging(Configuration) const;
 
-    bool m_isMediaSource;
-    GList* m_audioDecoderFactories;
-    GList* m_audioParserFactories;
-    GList* m_videoDecoderFactories;
-    GList* m_videoParserFactories;
-    GList* m_demuxerFactories;
-    GList* m_audioEncoderFactories;
-    GList* m_videoEncoderFactories;
-    GList* m_muxerFactories;
+    bool m_isMediaSource { false };
     HashSet<String, ASCIICaseInsensitiveHash> m_decoderMimeTypeSet;
     HashMap<AtomString, bool> m_decoderCodecMap;
     HashSet<String, ASCIICaseInsensitiveHash> m_encoderMimeTypeSet;
