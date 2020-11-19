@@ -3220,16 +3220,20 @@ sub GenerateHeader
     push(@headerContent, "};\n\n");
 
     if (ShouldGenerateWrapperOwnerCode($hasParent, $interface)) {
-        if ($interfaceName ne "Node" && $codeGenerator->InheritsInterface($interface, "Node")) {
-            $headerIncludes{"JSNode.h"} = 1;
-            push(@headerContent, "class ${exportMacro}JS${interfaceName}Owner : public JSNodeOwner {\n");
-        } else {
+        my $overrideDecl = "final";
+        if ($interfaceName eq "Node") {
             push(@headerContent, "class ${exportMacro}JS${interfaceName}Owner : public JSC::WeakHandleOwner {\n");
+            $overrideDecl = "override";
+        } elsif ($codeGenerator->InheritsInterface($interface, "Node")) {
+            $headerIncludes{"JSNode.h"} = 1;
+            push(@headerContent, "class ${exportMacro}JS${interfaceName}Owner final : public JSNodeOwner {\n");
+        } else {
+            push(@headerContent, "class ${exportMacro}JS${interfaceName}Owner final : public JSC::WeakHandleOwner {\n");
         }
         $headerIncludes{"<wtf/NeverDestroyed.h>"} = 1;
         push(@headerContent, "public:\n");
-        push(@headerContent, "    virtual bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::SlotVisitor&, const char**);\n");
-        push(@headerContent, "    virtual void finalize(JSC::Handle<JSC::Unknown>, void* context);\n");
+        push(@headerContent, "    bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::SlotVisitor&, const char**) ${overrideDecl};\n");
+        push(@headerContent, "    void finalize(JSC::Handle<JSC::Unknown>, void* context) ${overrideDecl};\n");
         push(@headerContent, "};\n");
         push(@headerContent, "\n");
         push(@headerContent, "inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld&, $implType*)\n");
