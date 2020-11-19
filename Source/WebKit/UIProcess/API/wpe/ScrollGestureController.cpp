@@ -118,7 +118,6 @@ bool ScrollGestureController::handleEvent(const struct wpe_input_touch_event_raw
 #endif
             m_offset.x = m_offset.y = 0;
             m_phase = WebWheelEvent::Phase::PhaseEnded;
-            return true;
         }
         return false;
     default:

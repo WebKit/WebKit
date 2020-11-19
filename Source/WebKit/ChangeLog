@@ -1,3 +1,19 @@
+2020-11-19  Joshua Watt  <JPEW.hacker@gmail.com>
+
+        [WPE] Prevent elements getting stuck in a pressed state when scrolling on a touchscreen
+        https://bugs.webkit.org/show_bug.cgi?id=218903
+
+        Reviewed by Adrian Perez de Castro.
+
+        Stops the scroll gesture controller from eating touch up events and
+        preventing them from propagating to the page when the controller is
+        handling a scroll event. If the scroll logic prevents the events from
+        propagating to the page, elements on the page (e.g. buttons) can get
+        stuck in a pressed state when the user lifts their finger.
+
+        * UIProcess/API/wpe/ScrollGestureController.cpp:
+        (WebKit::ScrollGestureController::handleEvent):
+
 2020-11-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Protect WebSocketChannel before calling client methods
