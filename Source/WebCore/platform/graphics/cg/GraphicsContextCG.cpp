@@ -365,6 +365,8 @@ void GraphicsContext::drawPlatformImage(const PlatformImagePtr& image, const Flo
     adjustedDestRect = roundToDevicePixels(adjustedDestRect);
 #endif
 
+    auto oldCompositeOperator = compositeOperation();
+    auto oldBlendMode = blendModeOperation();
     setPlatformCompositeOperation(options.compositeOperator(), options.blendMode());
 
     // ImageOrientation expects the origin to be at (0, 0)
@@ -392,6 +394,7 @@ void GraphicsContext::drawPlatformImage(const PlatformImagePtr& image, const Flo
 #if PLATFORM(IOS_FAMILY)
         CGContextSetShouldAntialias(context, wasAntialiased);
 #endif
+        setPlatformCompositeOperation(oldCompositeOperator, oldBlendMode);
     }
 
     LOG_WITH_STREAM(Images, stream << "GraphicsContext::drawNativeImage " << image.get() << " size " << imageSize << " into " << destRect << " took " << (MonotonicTime::now() - startTime).milliseconds() << "ms");
