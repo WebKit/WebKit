@@ -49,3 +49,21 @@ for (const TA of [Int8Array, Uint8Array, Uint8ClampedArray, Int16Array, Uint16Ar
   shouldBe(ta.at(null), ta[0]);
   shouldBe(ta.at({ valueOf: () => -1 }), ta[ta.length - 1]);
 }
+
+shouldBe(String.prototype.at.length, 1);  
+shouldThrowTypeError(() => String.prototype.at.call(undefined));  
+shouldThrowTypeError(() => String.prototype.at.call(null)); 
+
+const string = 'abc'; 
+// intentionally go one too far to ensure that we get undefined instead of wrapping 
+for (let i = 0; i <= string.length; i++) {  
+  shouldBe(string.at(i), string[i]);  
+  shouldBe(string.at(-i - 1), string[string.length - i - 1]); 
+} 
+shouldBe(string.at(), string[0]); 
+shouldBe(string.at(null), string[0]); 
+shouldBe(string.at({ valueOf: () => -1 }), string[string.length - 1]);  
+
+const emojiPseudoString = { toString: () => '😅' };  
+shouldBe(String.prototype.at.call(emojiPseudoString, 0), '\u{d83d}'); 
+shouldBe(String.prototype.at.call(emojiPseudoString, -1), '\u{de05}');

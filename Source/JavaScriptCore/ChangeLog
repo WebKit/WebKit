@@ -1,3 +1,18 @@
+2020-11-18  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [JSC] Reinstate String#at
+        https://bugs.webkit.org/show_bug.cgi?id=219124
+
+        Reviewed by Yusuke Suzuki.
+
+        At this week's TC39 meeting, consensus was achieved on renaming item() *and* keeping it for strings too.
+        Accordingly, this patch reinstates String.prototype.at behind the existing useAtMethod runtime option.
+
+        * builtins/StringPrototype.js:
+        (at):
+        * runtime/StringPrototype.cpp:
+        (JSC::StringPrototype::finishCreation):
+
 2020-11-17  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Improve Wasm binary test coverage

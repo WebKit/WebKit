@@ -823,6 +823,9 @@ test/built-ins/RegExp/prototype/exec/u-lastindex-adv.js:
 test/built-ins/RegExp/quantifier-integer-limit.js:
   default: 'SyntaxError: Invalid regular expression: number too large in {} quantifier'
   strict mode: 'SyntaxError: Invalid regular expression: number too large in {} quantifier'
+test/built-ins/String/prototype/at/prop-desc.js:
+  default: 'Test262Error: descriptor should be writable'
+  strict mode: 'Test262Error: descriptor should be writable'
 test/built-ins/TypedArray/prototype/at/prop-desc.js:
   default: 'Test262Error: descriptor should be writable'
   strict mode: 'Test262Error: descriptor should be writable'
