@@ -79,6 +79,7 @@
 #endif
 
 #if PLATFORM(MAC)
+#import "WebInspectorPreferenceObserver.h"
 #import <QuartzCore/CARemoteLayerServer.h>
 #import <pal/spi/mac/NSApplicationSPI.h>
 #else
@@ -177,6 +178,10 @@ void WebProcessPool::platformInitialize()
             [adoptNS([[objc_getClass("MobileGestaltHelperProxy") alloc] init]) proxyRebuildCache];
         });
     }
+#endif
+
+#if PLATFORM(MAC)
+    [WKWebInspectorPreferenceObserver sharedInstance];
 #endif
 }
 

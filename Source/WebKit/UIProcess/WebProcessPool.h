@@ -64,6 +64,9 @@ OBJC_CLASS NSObject;
 OBJC_CLASS NSSet;
 OBJC_CLASS NSString;
 OBJC_CLASS WKPreferenceObserver;
+#if PLATFORM(MAC)
+OBJC_CLASS WKWebInspectorPreferenceObserver;
+#endif
 #endif
 
 #if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
@@ -647,6 +650,7 @@ private:
     RetainPtr<NSObject> m_scrollerStyleNotificationObserver;
 #endif
     RetainPtr<NSObject> m_deactivationObserver;
+    RetainPtr<WKWebInspectorPreferenceObserver> m_webInspectorPreferenceObserver;
 
     std::unique_ptr<HighPerformanceGraphicsUsageSampler> m_highPerformanceGraphicsUsageSampler;
     std::unique_ptr<PerActivityStateCPUUsageSampler> m_perActivityStateCPUUsageSampler;

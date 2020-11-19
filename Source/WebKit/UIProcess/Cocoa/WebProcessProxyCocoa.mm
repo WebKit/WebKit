@@ -210,8 +210,13 @@ void WebProcessProxy::releaseHighPerformanceGPU()
 #if ENABLE(REMOTE_INSPECTOR)
 void WebProcessProxy::enableRemoteInspectorIfNeeded()
 {
+#if PLATFORM(IOS_FAMILY)
     if (!CFPreferencesGetAppIntegerValue(WIRRemoteInspectorEnabledKey, WIRRemoteInspectorDomainName, nullptr))
         return;
+#else
+    if (!CFPreferencesGetAppIntegerValue(CFSTR("ShowDevelopMenu"), CFSTR("com.apple.Safari.SandboxBroker"), nullptr))
+        return;
+#endif
     SandboxExtension::Handle handle;
     auto auditToken = connection() ? connection()->getAuditToken() : WTF::nullopt;
     if (SandboxExtension::createHandleForMachLookup("com.apple.webinspector"_s, auditToken, handle))

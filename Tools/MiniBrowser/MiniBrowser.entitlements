@@ -24,6 +24,10 @@
 	</array>
 	<key>com.apple.security.device.camera</key>
 	<true/>
+	<key>com.apple.security.temporary-exception.shared-preference.read-only</key>
+	<array>
+		<string>com.apple.Safari.SandboxBroker</string>
+	</array>
 	<key>com.apple.security.device.microphone</key>
 	<true/>
 </dict>

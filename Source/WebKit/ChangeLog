@@ -1,5 +1,29 @@
 2020-11-19  Per Arne Vollan  <pvollan@apple.com>
 
+        [macOS] Issue sandbox extension to Web Inspector service
+        https://bugs.webkit.org/show_bug.cgi?id=219041
+        <rdar://problem/71495287>
+
+        Reviewed by Brent Fulgham.
+
+        In preparation of blocking this service in the WebContent process, a sandbox extension should be issued if Safari's Develop menu is enabled.
+        This extension will also be dynamically issued to all WebContent processes, if the Develop menu preference changes, by observing this
+        preference.
+
+        * UIProcess/Cocoa/WebInspectorPreferenceObserver.h: Added.
+        * UIProcess/Cocoa/WebInspectorPreferenceObserver.mm: Added.
+        (+[WKWebInspectorPreferenceObserver sharedInstance]):
+        (-[WKWebInspectorPreferenceObserver init]):
+        (-[WKWebInspectorPreferenceObserver observeValueForKeyPath:ofObject:change:context:]):
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitialize):
+        * UIProcess/Cocoa/WebProcessProxyCocoa.mm:
+        (WebKit::WebProcessProxy::enableRemoteInspectorIfNeeded):
+        * UIProcess/WebProcessPool.h:
+        * WebKit.xcodeproj/project.pbxproj:
+
+2020-11-19  Per Arne Vollan  <pvollan@apple.com>
+
         [macOS] Issue sandbox extension to audio service if Media in the GPU process is not enabled
         https://bugs.webkit.org/show_bug.cgi?id=219051
         <rdar://problem/71500898>
