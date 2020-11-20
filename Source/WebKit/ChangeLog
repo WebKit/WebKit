@@ -1,3 +1,10 @@
+2020-11-20  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK build warning fix
+
+        * UIProcess/Inspector/glib/RemoteInspectorClient.cpp: Mark configurationForRemoteInspector
+        as override of corresponding parent class method declaration.
+
 2020-11-19  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         REGRESSION (r259151): The "Convert Text to Traditional Chinese" services menu action is broken
