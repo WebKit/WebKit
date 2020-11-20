@@ -213,9 +213,9 @@ WI.CanvasSidebarPanel = class CanvasSidebarPanel extends WI.NavigationSidebarPan
         this.recording = null;
     }
 
-    shown()
+    attached()
     {
-        super.shown();
+        super.attached();
 
         this.contentBrowser.addEventListener(WI.ContentBrowser.Event.CurrentRepresentedObjectsDidChange, this.updateRepresentedObjects, this);
         this.updateRepresentedObjects();
@@ -233,11 +233,11 @@ WI.CanvasSidebarPanel = class CanvasSidebarPanel extends WI.NavigationSidebarPan
         }
     }
 
-    hidden()
+    detached()
     {
         this.contentBrowser.removeEventListener(WI.ContentBrowser.Event.CurrentRepresentedObjectsDidChange, this.updateRepresentedObjects, this);
 
-        super.hidden();
+        super.detached();
     }
 
     canShowRepresentedObject(representedObject)

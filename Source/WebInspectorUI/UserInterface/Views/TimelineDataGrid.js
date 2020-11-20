@@ -103,16 +103,11 @@ WI.TimelineDataGrid = class TimelineDataGrid extends WI.DataGrid
         this._hidePopover();
     }
 
-    shown()
+    detached()
     {
-        // May be overridden by subclasses. If so, they should call the superclass.
-    }
-
-    hidden()
-    {
-        // May be overridden by subclasses. If so, they should call the superclass.
-
         this._hidePopover();
+
+        super.detached();
     }
 
     callFramePopoverAnchorElement()

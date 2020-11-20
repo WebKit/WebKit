@@ -139,9 +139,9 @@ WI.HeapSnapshotClusterContentView = class HeapSnapshotClusterContentView extends
         return components.concat(currentContentView.selectionPathComponents);
     }
 
-    shown()
+    attached()
     {
-        super.shown();
+        super.attached();
 
         if (this._shownInitialContent)
             return;

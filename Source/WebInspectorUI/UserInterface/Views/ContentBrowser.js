@@ -231,17 +231,12 @@ WI.ContentBrowser = class ContentBrowser extends WI.View
         this._findBanner.show();
     }
 
-    shown()
+    attached()
     {
+        super.attached();
+
         this._updateContentViewSelectionPathNavigationItem(this.currentContentView);
         this.updateHierarchicalPathForCurrentContentView();
-
-        this._contentViewContainer.shown();
-    }
-
-    hidden()
-    {
-        this._contentViewContainer.hidden();
     }
 
     // Global ContentBrowser KeyboardShortcut handlers

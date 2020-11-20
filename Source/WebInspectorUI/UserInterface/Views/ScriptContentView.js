@@ -114,20 +114,6 @@ WI.ScriptContentView = class ScriptContentView extends WI.ContentView
         this._textEditor.revealPosition(position, textRangeToSelect, forceUnformatted);
     }
 
-    shown()
-    {
-        super.shown();
-
-        this._textEditor.shown();
-    }
-
-    hidden()
-    {
-        super.hidden();
-
-        this._textEditor.hidden();
-    }
-
     closed()
     {
         super.closed();

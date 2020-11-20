@@ -194,9 +194,9 @@ WI.AuditTestGroupContentView = class AuditTestGroupContentView extends WI.AuditT
             this.showFilteredPlaceholder();
     }
 
-    shown()
+    attached()
     {
-        super.shown();
+        super.attached();
 
         if (this.representedObject instanceof WI.AuditTestGroup) {
             this.representedObject.addEventListener(WI.AuditTestBase.Event.Progress, this._handleTestGroupProgress, this);
@@ -213,7 +213,7 @@ WI.AuditTestGroupContentView = class AuditTestGroupContentView extends WI.AuditT
             this._addTest(subobject);
     }
 
-    hidden()
+    detached()
     {
         if (this.representedObject instanceof WI.AuditTestGroup) {
             this.representedObject.removeEventListener(WI.AuditTestBase.Event.Progress, this._handleTestGroupProgress, this);
@@ -225,12 +225,10 @@ WI.AuditTestGroupContentView = class AuditTestGroupContentView extends WI.AuditT
             }
         }
 
-        for (let view of this._viewForSubobject.values())
-            view.hidden();
         this.contentView.removeAllSubviews();
         this._viewForSubobject.clear();
 
-        super.hidden();
+        super.detached();
     }
 
     applyFilter(levels)
@@ -317,7 +315,6 @@ WI.AuditTestGroupContentView = class AuditTestGroupContentView extends WI.AuditT
 
         let view = WI.ContentView.contentViewForRepresentedObject(test);
         this.contentView.addSubview(view);
-        view.shown();
 
         this._viewForSubobject.set(test, view);
     }
@@ -355,7 +352,6 @@ WI.AuditTestGroupContentView = class AuditTestGroupContentView extends WI.AuditT
         let view = this._viewForSubobject.get(test);
         console.assert(view);
 
-        view.hidden();
         this.contentView.removeSubview(view);
 
         this._updateClassList();

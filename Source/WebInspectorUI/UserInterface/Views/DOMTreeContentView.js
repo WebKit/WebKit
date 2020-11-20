@@ -140,26 +140,6 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
         this.element.classList.toggle("show-gutter", this._breakpointGutterEnabled);
     }
 
-    shown()
-    {
-        super.shown();
-
-        this._domTreeOutline.setVisible(true, WI.isConsoleFocused());
-
-        if (!this._domTreeOutline.rootDOMNode)
-            return;
-
-        this._restoreBreakpointsAfterUpdate();
-    }
-
-    hidden()
-    {
-        super.hidden();
-
-        WI.domManager.hideDOMNodeHighlight();
-        this._domTreeOutline.setVisible(false);
-    }
-
     closed()
     {
         super.closed();
@@ -396,6 +376,10 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
     {
         super.attached();
 
+        this._domTreeOutline.setVisible(true, WI.isConsoleFocused());
+        if (this._domTreeOutline.rootDOMNode)
+            this._restoreBreakpointsAfterUpdate();
+
         WI.layerTreeManager.updateCompositingBordersVisibleFromPageIfNeeded();
 
         WI.layerTreeManager.addEventListener(WI.LayerTreeManager.Event.CompositingBordersVisibleChanged, this._handleCompositingBordersVisibleChanged, this);
@@ -407,6 +391,9 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
 
     detached()
     {
+        WI.domManager.hideDOMNodeHighlight();
+        this._domTreeOutline.setVisible(false);
+
         WI.layerTreeManager.removeEventListener(WI.LayerTreeManager.Event.ShowPaintRectsChanged, this._handleShowPaintRectsChanged, this);
         WI.layerTreeManager.removeEventListener(WI.LayerTreeManager.Event.CompositingBordersVisibleChanged, this._handleCompositingBordersVisibleChanged, this);
 

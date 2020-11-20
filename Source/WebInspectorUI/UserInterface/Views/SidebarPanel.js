@@ -114,21 +114,18 @@ WI.SidebarPanel = class SidebarPanel extends WI.View
         return false;
     }
 
-    shown()
+    attached()
     {
+        super.attached();
+
         this.scrollElement.scrollTop = this._savedScrollPosition;
-
-        // FIXME: remove once <https://webkit.org/b/150741> is fixed.
-        this.updateLayoutIfNeeded();
-
-        // Implemented by subclasses.
     }
 
-    hidden()
+    detached()
     {
         this._savedScrollPosition = this.scrollElement.scrollTop;
 
-        // Implemented by subclasses.
+        super.detached();
     }
 
     // Protected

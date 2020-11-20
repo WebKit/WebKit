@@ -122,12 +122,12 @@ WI.ResourceHeadersContentView = class ResourceHeadersContentView extends WI.Cont
         }
     }
 
-    hidden()
+    detached()
     {
-        super.hidden();
-
         if (this._popover)
             this._popover.dismiss();
+
+        super.detached();
     }
 
     closed()

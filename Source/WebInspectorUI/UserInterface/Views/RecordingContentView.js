@@ -119,9 +119,9 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
         this.dispatchEventToListeners(WI.ContentView.Event.SupplementalRepresentedObjectsDidChange);
     }
 
-    shown()
+    attached()
     {
-        super.shown();
+        super.attached();
 
         let isCanvas2D = this.representedObject.type === WI.Recording.Type.Canvas2D;
         let isCanvasBitmapRenderer = this.representedObject.type === WI.Recording.Type.CanvasBitmapRenderer;
@@ -134,11 +134,11 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
         }
     }
 
-    hidden()
+    detached()
     {
-        super.hidden();
-
         this._generateContentThrottler.cancel();
+
+        super.detached();
     }
 
     // Protected

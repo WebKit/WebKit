@@ -111,8 +111,7 @@ WI.ContentViewContainer = class ContentViewContainer extends WI.View
 
         // Don't do anything if we would have added an identical back/forward list entry.
         if (provisionalEntry.isEqual(currentEntry)) {
-            const shouldCallShown = false;
-            currentEntry.prepareToShow(shouldCallShown);
+            currentEntry.prepareToShow();
             return currentEntry.contentView;
         }
 
@@ -158,14 +157,9 @@ WI.ContentViewContainer = class ContentViewContainer extends WI.View
         var currentEntry = this.currentBackForwardEntry;
         console.assert(currentEntry);
 
-        var isNewContentView = !previousEntry || !currentEntry.contentView.visible;
-        if (isNewContentView) {
-            // Hide the currently visible content view.
-            if (previousEntry)
-                this._hideEntry(previousEntry);
-            this._showEntry(currentEntry, true);
-        } else
-            this._showEntry(currentEntry, false);
+        if (previousEntry && !currentEntry.contentView.isAttached)
+            this._hideEntry(previousEntry);
+        this._showEntry(currentEntry);
 
         this.dispatchEventToListeners(WI.ContentViewContainer.Event.CurrentContentViewDidChange);
     }
@@ -211,7 +205,7 @@ WI.ContentViewContainer = class ContentViewContainer extends WI.View
 
         // Re-show the current entry, because its content view instance was replaced.
         if (currentlyShowing) {
-            this._showEntry(this.currentBackForwardEntry, true);
+            this._showEntry(this.currentBackForwardEntry);
             this.dispatchEventToListeners(WI.ContentViewContainer.Event.CurrentContentViewDidChange);
         }
     }
@@ -269,7 +263,7 @@ WI.ContentViewContainer = class ContentViewContainer extends WI.View
         console.assert(currentEntry || (!currentEntry && this._currentIndex === -1));
 
         if (currentEntry && currentEntry.contentView !== visibleContentView || backForwardListDidChange) {
-            this._showEntry(currentEntry, true);
+            this._showEntry(currentEntry);
             this.dispatchEventToListeners(WI.ContentViewContainer.Event.CurrentContentViewDidChange);
         }
     }
@@ -327,22 +321,22 @@ WI.ContentViewContainer = class ContentViewContainer extends WI.View
         this.showBackForwardEntryForIndex(this._currentIndex + 1);
     }
 
-    shown()
+    attached()
     {
-        var currentEntry = this.currentBackForwardEntry;
-        if (!currentEntry)
-            return;
+        super.attached();
 
-        this._showEntry(currentEntry, true);
+        var currentEntry = this.currentBackForwardEntry;
+        if (currentEntry)
+            this._showEntry(currentEntry);
     }
 
-    hidden()
+    detached()
     {
         var currentEntry = this.currentBackForwardEntry;
-        if (!currentEntry)
-            return;
+        if (currentEntry)
+            this._hideEntry(currentEntry);
 
-        this._hideEntry(currentEntry);
+        super.detached();
     }
 
     // Private
@@ -416,7 +410,7 @@ WI.ContentViewContainer = class ContentViewContainer extends WI.View
             return;
         }
 
-        console.assert(!contentView.visible);
+        console.assert(!contentView.isAttached);
 
         if (!contentView._parentContainer)
             return;
@@ -438,7 +432,7 @@ WI.ContentViewContainer = class ContentViewContainer extends WI.View
             WI.ContentView.closedContentViewForRepresentedObject(contentView.representedObject);
     }
 
-    _showEntry(entry, shouldCallShown)
+    _showEntry(entry)
     {
         console.assert(entry instanceof WI.BackForwardEntry);
 
@@ -453,7 +447,7 @@ WI.ContentViewContainer = class ContentViewContainer extends WI.View
         if (!this.subviews.includes(entry.contentView))
             this.addSubview(entry.contentView);
 
-        entry.prepareToShow(shouldCallShown);
+        entry.prepareToShow();
     }
 
     _hideEntry(entry)

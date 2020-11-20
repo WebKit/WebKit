@@ -36,20 +36,18 @@ WI.LayerTreeDetailsSidebarPanel = class LayerTreeDetailsSidebarPanel extends WI.
 
     // DetailsSidebarPanel Overrides.
 
-    shown()
+    attached()
     {
+        super.attached();
+
         WI.layerTreeManager.addEventListener(WI.LayerTreeManager.Event.LayerTreeDidChange, this._layerTreeDidChange, this);
-
-        console.assert(this.parentSidebar);
-
-        super.shown();
     }
 
-    hidden()
+    detached()
     {
         WI.layerTreeManager.removeEventListener(WI.LayerTreeManager.Event.LayerTreeDidChange, this._layerTreeDidChange, this);
 
-        super.hidden();
+        super.detached();
     }
 
     // DOMDetailsSidebarPanel Overrides

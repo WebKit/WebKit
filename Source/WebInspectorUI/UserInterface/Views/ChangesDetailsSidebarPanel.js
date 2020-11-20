@@ -40,16 +40,6 @@ WI.ChangesDetailsSidebarPanel = class ChangesDetailsSidebarPanel extends WI.DOMD
         return nodeToInspect.nodeType() === Node.ELEMENT_NODE;
     }
 
-    shown()
-    {
-        // `shown` may get called before initialLayout when Elements tab is opened.
-        // When Changes panel is selected, `shown` is called and this time it's after initialLayout.
-        if (this.didInitialLayout)
-            this.needsLayout();
-
-        super.shown();
-    }
-
     attached()
     {
         super.attached();

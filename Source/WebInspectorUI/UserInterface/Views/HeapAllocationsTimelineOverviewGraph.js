@@ -50,7 +50,9 @@ WI.HeapAllocationsTimelineOverviewGraph = class HeapAllocationsTimelineOverviewG
 
     layout()
     {
-        if (!this.visible)
+        super.layout();
+
+        if (this.hidden)
             return;
 
         this.element.removeChildren();

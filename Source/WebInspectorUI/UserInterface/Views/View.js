@@ -126,10 +126,10 @@ WI.View = class View extends WI.Object
             return;
         }
 
+        view._didMoveToParent(null);
+
         this._subviews.splice(index, 1);
         view.element.remove();
-
-        view._didMoveToParent(null);
     }
 
     removeAllSubviews()

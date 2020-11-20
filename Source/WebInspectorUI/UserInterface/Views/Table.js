@@ -575,13 +575,15 @@ WI.Table = class Table extends WI.View
         }
     }
 
-    restoreScrollPosition()
+    // Protected
+
+    attached()
     {
+        super.attached();
+
         if (this._cachedScrollTop && !this._scrollContainerElement.scrollTop)
             this._scrollContainerElement.scrollTop = this._cachedScrollTop;
     }
-
-    // Protected
 
     initialLayout()
     {

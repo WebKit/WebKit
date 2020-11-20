@@ -121,19 +121,16 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
 
     detached()
     {
+        if (this._nameTextField?.editing)
+            this._nameTextField.element.blur();
+        else if (this._valueTextField?.editing)
+            this._valueTextField.element.blur();
+
         if (this._nameTextField)
             this._nameTextField.detached();
 
         if (this._valueTextField)
             this._valueTextField.detached();
-    }
-
-    hidden()
-    {
-        if (this._nameTextField && this._nameTextField.editing)
-            this._nameTextField.element.blur();
-        else if (this._valueTextField && this._valueTextField.editing)
-            this._valueTextField.element.blur();
     }
 
     remove(replacement = null)

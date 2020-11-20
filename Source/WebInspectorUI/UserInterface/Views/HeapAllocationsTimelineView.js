@@ -128,7 +128,6 @@ WI.HeapAllocationsTimelineView = class HeapAllocationsTimelineView extends WI.Ti
         this._heapSnapshotDiff = null;
         this._cancelSelectComparisonHeapSnapshots();
 
-        this._contentViewContainer.hidden();
         this.removeSubview(this._contentViewContainer);
         this.addSubview(this._dataGrid);
 
@@ -144,7 +143,6 @@ WI.HeapAllocationsTimelineView = class HeapAllocationsTimelineView extends WI.Ti
             this._snapshotListScrollTop = this._dataGrid.scrollContainer.scrollTop;
             this.removeSubview(this._dataGrid);
             this.addSubview(this._contentViewContainer);
-            this._contentViewContainer.shown();
         }
 
         this._showingSnapshotList = false;
@@ -172,7 +170,6 @@ WI.HeapAllocationsTimelineView = class HeapAllocationsTimelineView extends WI.Ti
         if (this._showingSnapshotList) {
             this.removeSubview(this._dataGrid);
             this.addSubview(this._contentViewContainer);
-            this._contentViewContainer.shown();
         }
 
         this._showingSnapshotList = false;
@@ -228,26 +225,6 @@ WI.HeapAllocationsTimelineView = class HeapAllocationsTimelineView extends WI.Ti
             this.showHeapSnapshotTimelineRecord(record);
         else
             this.showHeapSnapshotList();
-    }
-
-    shown()
-    {
-        super.shown();
-
-        this._dataGrid.shown();
-
-        if (!this._showingSnapshotList)
-            this._contentViewContainer.shown();
-    }
-
-    hidden()
-    {
-        super.hidden();
-
-        this._dataGrid.hidden();
-
-        if (!this._showingSnapshotList)
-            this._contentViewContainer.hidden();
     }
 
     closed()

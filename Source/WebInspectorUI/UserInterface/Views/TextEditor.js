@@ -76,11 +76,6 @@ WI.TextEditor = class TextEditor extends WI.View
 
     // Public
 
-    get visible()
-    {
-        return this._visible;
-    }
-
     get string()
     {
         return this._codeMirror.getValue();
@@ -488,7 +483,7 @@ WI.TextEditor = class TextEditor extends WI.View
         if (!(position instanceof WI.SourceCodePosition))
             return;
 
-        if (!this._visible || this._initialStringNotSet || this._deferReveal) {
+        if (!this.isAttached || this._initialStringNotSet || this._deferReveal) {
             // If we can't get a line handle or are not visible then we wait to do the reveal.
             this._positionToReveal = position;
             this._textRangeToSelect = textRangeToSelect;
@@ -550,9 +545,9 @@ WI.TextEditor = class TextEditor extends WI.View
         this._codeMirror.operation(revealAndHighlightLine.bind(this));
     }
 
-    shown()
+    attached()
     {
-        this._visible = true;
+        super.attached();
 
         // Refresh since our size might have changed.
         this._codeMirror.refresh();
@@ -561,11 +556,6 @@ WI.TextEditor = class TextEditor extends WI.View
         // This needs to be done as a separate operation from the refresh
         // so that the scrollInfo coordinates are correct.
         this._revealPendingPositionIfPossible();
-    }
-
-    hidden()
-    {
-        this._visible = false;
     }
 
     setBreakpointInfoForLineAndColumn(lineNumber, columnNumber, breakpointInfo)
@@ -809,13 +799,9 @@ WI.TextEditor = class TextEditor extends WI.View
 
     layout()
     {
-        // FIXME: <https://webkit.org/b/146256> Web Inspector: Nested ContentBrowsers / ContentViewContainers cause too many ContentView updates
-        // Ideally we would not get an updateLayout call if we are not visible. We should restructure ContentView
-        // show/hide restoration to reduce duplicated work and solve this in the process.
+        super.layout();
 
-        // FIXME: visible check can be removed once <https://webkit.org/b/150741> is fixed.
-        if (this._visible)
-            this._codeMirror.refresh();
+        this._codeMirror.refresh();
     }
 
     _format(formatted)
@@ -1090,7 +1076,7 @@ WI.TextEditor = class TextEditor extends WI.View
             return;
 
         // Don't try to reveal unless we are visible.
-        if (!this._visible)
+        if (!this.isAttached)
             return;
 
         this.revealPosition(this._positionToReveal, this._textRangeToSelect, this._forceUnformatted);

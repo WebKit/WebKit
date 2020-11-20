@@ -90,18 +90,18 @@ WI.HeapSnapshotContentView = class HeapSnapshotContentView extends WI.ContentVie
         return [];
     }
 
-    shown()
+    attached()
     {
-        super.shown();
+        super.attached();
 
         this._heapSnapshotDataGridTree.shown();
     }
 
-    hidden()
+    detached()
     {
-        super.hidden();
-
         this._heapSnapshotDataGridTree.hidden();
+
+        super.detached();
     }
 
     get scrollableElements()

@@ -77,9 +77,9 @@ WI.ResourceClusterContentView = class ResourceClusterContentView extends WI.Clus
         return components.concat(currentContentView.selectionPathComponents);
     }
 
-    shown()
+    attached()
     {
-        super.shown();
+        super.attached();
 
         if (this._shownInitialContent)
             return;

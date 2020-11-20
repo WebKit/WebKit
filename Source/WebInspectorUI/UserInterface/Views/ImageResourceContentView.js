@@ -99,20 +99,20 @@ WI.ImageResourceContentView = class ImageResourceContentView extends WI.Resource
 
     // Protected
 
-    shown()
+    attached()
     {
-        super.shown();
+        super.attached();
 
         this._updateImageGrid();
 
         WI.settings.showImageGrid.addEventListener(WI.Setting.Event.Changed, this._updateImageGrid, this);
     }
 
-    hidden()
+    detached()
     {
         WI.settings.showImageGrid.removeEventListener(WI.Setting.Event.Changed, this._updateImageGrid, this);
 
-        super.hidden();
+        super.detached();
     }
 
     // DropZoneView delegate

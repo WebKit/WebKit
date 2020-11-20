@@ -72,9 +72,9 @@ WI.SearchTabContentView = class SearchTabContentView extends WI.ContentBrowserTa
         return WI.SearchTabContentView.Type;
     }
 
-    shown()
+    attached()
     {
-        super.shown();
+        super.attached();
 
         // Perform on a delay because the field might not be visible yet.
         setTimeout(this.focusSearchField.bind(this));

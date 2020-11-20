@@ -96,9 +96,9 @@ WI.ElementsTabContentView = class ElementsTabContentView extends WI.ContentBrows
         cookie.nodeToSelect = undefined;
     }
 
-    shown()
+    attached()
     {
-        super.shown();
+        super.attached();
 
         if (!this.contentBrowser.currentContentView)
             this._showDOMTreeContentView();

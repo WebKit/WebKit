@@ -125,9 +125,9 @@ WI.TabContentView = class TabContentView extends WI.ContentView
         return false;
     }
 
-    shown()
+    attached()
     {
-        super.shown();
+        super.attached();
 
         if (this._shouldRestoreStateWhenShown)
             this.restoreStateFromCookie(WI.StateRestorationType.Delayed);
@@ -135,7 +135,7 @@ WI.TabContentView = class TabContentView extends WI.ContentView
 
     restoreStateFromCookie(restorationType)
     {
-        if (!this.visible) {
+        if (!this.isAttached) {
             this._shouldRestoreStateWhenShown = true;
             return;
         }

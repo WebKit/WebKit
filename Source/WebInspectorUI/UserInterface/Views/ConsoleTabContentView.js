@@ -28,6 +28,8 @@ WI.ConsoleTabContentView = class ConsoleTabContentView extends WI.ContentBrowser
     constructor()
     {
         super(ConsoleTabContentView.tabInfo(), {disableBackForward: true});
+
+        this._wasShowingSplitConsole = false;
     }
 
     static tabInfo()
@@ -46,11 +48,13 @@ WI.ConsoleTabContentView = class ConsoleTabContentView extends WI.ContentBrowser
         return WI.ConsoleTabContentView.Type;
     }
 
-    shown()
+    attached()
     {
-        super.shown();
+        super.attached();
 
-        WI.hideSplitConsole();
+        this._wasShowingSplitConsole = WI.isShowingSplitConsole();
+        if (this._wasShowingSplitConsole)
+            WI.hideSplitConsole();
 
         this.contentBrowser.showContentView(WI.consoleContentView);
         WI.consoleContentView.dispatchEventToListeners(WI.ContentView.Event.NavigationItemsDidChange);
@@ -58,6 +62,14 @@ WI.ConsoleTabContentView = class ConsoleTabContentView extends WI.ContentBrowser
         WI.consoleContentView.prompt.focus();
 
         console.assert(this.contentBrowser.currentContentView === WI.consoleContentView);
+    }
+
+    detached()
+    {
+        super.detached();
+
+        if (this._wasShowingSplitConsole)
+            WI.showSplitConsole();
     }
 
     showRepresentedObject(representedObject, cookie)

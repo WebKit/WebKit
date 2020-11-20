@@ -124,9 +124,9 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
         return WI.mainTarget;
     }
 
-    shown()
+    attached()
     {
-        super.shown();
+        super.attached();
 
         if (WI.settings.showJavaScriptTypeInformation.value) {
             if (this._typeTokenAnnotator)
@@ -149,10 +149,8 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
         }
     }
 
-    hidden()
+    detached()
     {
-        super.hidden();
-
         this.tokenTrackingController.removeHighlightedRange();
 
         this._dismissPopover();
@@ -163,6 +161,8 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
             this._typeTokenAnnotator.pause();
         if (this._basicBlockAnnotator)
             this._basicBlockAnnotator.pause();
+
+        super.detached();
     }
 
     close()
@@ -2142,7 +2142,7 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
             return;
 
         if (shouldActivate) {
-            console.assert(this.visible, "Annotators should not be enabled if the TextEditor is not visible");
+            console.assert(this.isAttached, "Annotators should not be enabled if the TextEditor is not visible");
 
             this._typeTokenAnnotator.reset();
 
@@ -2166,7 +2166,7 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
             return;
 
         if (shouldActivate) {
-            console.assert(this.visible, "Annotators should not be enabled if the TextEditor is not visible");
+            console.assert(this.isAttached, "Annotators should not be enabled if the TextEditor is not visible");
 
             console.assert(!this._basicBlockAnnotator.isActive());
             this._basicBlockAnnotator.reset();

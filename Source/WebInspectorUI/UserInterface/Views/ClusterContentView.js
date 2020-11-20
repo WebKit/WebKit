@@ -66,20 +66,6 @@ WI.ClusterContentView = class ClusterContentView extends WI.ContentView
         return true;
     }
 
-    shown()
-    {
-        super.shown();
-
-        this._contentViewContainer.shown();
-    }
-
-    hidden()
-    {
-        super.hidden();
-
-        this._contentViewContainer.hidden();
-    }
-
     closed()
     {
         super.closed();

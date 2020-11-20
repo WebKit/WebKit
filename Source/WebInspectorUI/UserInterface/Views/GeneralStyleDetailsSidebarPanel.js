@@ -47,7 +47,7 @@ WI.GeneralStyleDetailsSidebarPanel = class GeneralStyleDetailsSidebarPanel exten
     {
         let minimumWidth = Math.max(super.minimumWidth, this._panel.minimumWidth || 0);
 
-        if (this.exclusive) {
+        if (this._forcedPseudoClassContainer && this.exclusive) {
             let pseudoClassMinimumWidth = 0;
             for (let child of this._forcedPseudoClassContainer.children)
                 pseudoClassMinimumWidth += child.offsetWidth;
@@ -62,17 +62,9 @@ WI.GeneralStyleDetailsSidebarPanel = class GeneralStyleDetailsSidebarPanel exten
         return nodeToInspect.nodeType() === Node.ELEMENT_NODE;
     }
 
-    hidden()
+    attached()
     {
-        super.hidden();
-
-        if (this._panel)
-            this._panel.hidden();
-    }
-
-    shown()
-    {
-        super.shown();
+        super.attached();
 
         if (!this._panel)
             return;
@@ -80,7 +72,6 @@ WI.GeneralStyleDetailsSidebarPanel = class GeneralStyleDetailsSidebarPanel exten
         console.assert(this.visible, `Shown panel ${this._identifier} must be visible.`);
 
         this._updateNoForcedPseudoClassesScrollOffset();
-        this._panel.shown();
         this._panel.markAsNeedsRefresh(this.domNode);
     }
 
@@ -246,8 +237,6 @@ WI.GeneralStyleDetailsSidebarPanel = class GeneralStyleDetailsSidebarPanel exten
         this.contentView.element.classList.toggle("has-filter-bar", hasFilter);
         if (this._filterBar)
             this.contentView.element.classList.toggle(WI.GeneralStyleDetailsSidebarPanel.FilterInProgressClassName, hasFilter && this._filterBar.hasActiveFilters());
-
-        this._panel.shown();
     }
 
     _handleNodeChanged(event)

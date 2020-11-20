@@ -1,3 +1,377 @@
+2020-11-20  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: drop `shown`/`hidden` in favor of `attached`/`detached`
+        https://bugs.webkit.org/show_bug.cgi?id=218678
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/View.js:
+        (WI.View.prototype.removeSubview):
+        Ensure that `detached` is called before the node is removed from the DOM so that any state
+        currently held in the DOM can be recorded (e.g. scroll position).
+
+        * UserInterface/Views/ContentBrowserTabContentView.js:
+        (WI.ContentBrowserTabContentView.prototype.attached):
+        (WI.ContentBrowserTabContentView.prototype.showNavigationSidebarPanel):
+        (WI.ContentBrowserTabContentView.prototype.showDetailsSidebarPanels):
+        (WI.ContentBrowserTabContentView.prototype._navigationSidebarCollapsedStateDidChange):
+        (WI.ContentBrowserTabContentView.prototype._detailsSidebarCollapsedStateDidChange):
+        (WI.ContentBrowserTabContentView.prototype._detailsSidebarPanelSelected):
+        (WI.ContentBrowserTabContentView.prototype.shown): Deleted.
+        (WI.ContentBrowserTabContentView.prototype.hidden): Deleted.
+        * UserInterface/Views/SingleSidebar.js:
+        (WI.SingleSidebar.prototype.willSetSelectedSidebarPanel):
+        (WI.SingleSidebar.prototype.didSetSelectedSidebarPanel):
+        (WI.SingleSidebar.prototype.didSetCollapsed):
+        Ensure that any state modifications happen before adding/removing the selected sidebar panel
+        to/from the DOM so that it (and the previously selected sidebar panel) doesn't re-`layout`
+        multiple times.
+
+        * UserInterface/Views/ConsoleDrawer.js:
+        (WI.ConsoleDrawer.prototype.set collapsed):
+        (WI.ConsoleDrawer.prototype.attached): Added.
+        (WI.ConsoleDrawer.prototype.shown): Deleted.
+        Add special logic in `collapsed` since this is never removed from the DOM.
+
+        * UserInterface/Views/ConsoleTabContentView.js:
+        (WI.ConsoleTabContentView):
+        (WI.ConsoleTabContentView.prototype.attached): Added.
+        (WI.ConsoleTabContentView.prototype.detached): Added.
+        (WI.ConsoleTabContentView.prototype.shown): Deleted.
+        Remember whether the split console was expanded before the Console Tab is shown and restore
+        that state after the Console Tab is hidden.
+
+        * UserInterface/Views/TimelineOverview.js:
+        (WI.TimelineOverview.prototype.get height):
+        (WI.TimelineOverview.prototype.attached):
+        (WI.TimelineOverview.prototype.detached):
+        (WI.TimelineOverview.prototype.recordWasFiltered):
+        (WI.TimelineOverview.prototype.selectRecord):
+        (WI.TimelineOverview.prototype.updateLayoutIfNeeded):
+        (WI.TimelineOverview.prototype.layout):
+        (WI.TimelineOverview.prototype._instrumentAdded):
+        (WI.TimelineOverview.prototype._timelineRulerMouseClicked):
+        (WI.TimelineOverview.prototype._viewModeDidChange):
+        (WI.TimelineOverview.prototype.get visible): Deleted.
+        (WI.TimelineOverview.prototype.shown): Deleted.
+        (WI.TimelineOverview.prototype.hidden): Deleted.
+        * UserInterface/Views/TimelineOverviewGraph.js:
+        (WI.TimelineOverviewGraph):
+        (WI.TimelineOverviewGraph.prototype.get hidden):
+        (WI.TimelineOverviewGraph.prototype.set hidden):
+        (WI.TimelineOverviewGraph.prototype.needsLayout):
+        (WI.TimelineOverviewGraph.prototype.get visible): Deleted.
+        (WI.TimelineOverviewGraph.prototype.shown): Deleted.
+        (WI.TimelineOverviewGraph.prototype.hidden): Deleted.
+        * UserInterface/Views/CPUTimelineOverviewGraph.js:
+        (WI.CPUTimelineOverviewGraph.prototype.layout):
+        * UserInterface/Views/HeapAllocationsTimelineOverviewGraph.js:
+        (WI.HeapAllocationsTimelineOverviewGraph.prototype.layout):
+        * UserInterface/Views/LayoutTimelineOverviewGraph.js:
+        (WI.LayoutTimelineOverviewGraph.prototype.layout):
+        * UserInterface/Views/MediaTimelineOverviewGraph.js:
+        (WI.MediaTimelineOverviewGraph.prototype.layout):
+        * UserInterface/Views/MemoryTimelineOverviewGraph.js:
+        (WI.MemoryTimelineOverviewGraph.prototype.layout):
+        * UserInterface/Views/NetworkTimelineOverviewGraph.js:
+        (WI.NetworkTimelineOverviewGraph.prototype.layout):
+        * UserInterface/Views/RenderingFrameTimelineOverviewGraph.js:
+        (WI.RenderingFrameTimelineOverviewGraph.prototype.layout):
+        * UserInterface/Views/ScriptTimelineOverviewGraph.js:
+        (WI.ScriptTimelineOverviewGraph.prototype.layout):
+        * UserInterface/Views/TimelineView.js:
+        (WI.TimelineView.prototype.needsLayout): Deleted.
+        Add a special `hidden` instead of the previously inherited `visible` so that the existing
+        logic for editing timeline instruments stays (mostly) the same.
+
+        * UserInterface/Views/ApplicationCacheFrameContentView.js:
+        (WI.ApplicationCacheFrameContentView):
+        (WI.ApplicationCacheFrameContentView.prototype.attached):
+        (WI.ApplicationCacheFrameContentView.prototype.detached):
+        (WI.ApplicationCacheFrameContentView.prototype.layout):
+        (WI.ApplicationCacheFrameContentView.prototype.updateStatus):
+        (WI.ApplicationCacheFrameContentView.prototype.shown): Deleted.
+        (WI.ApplicationCacheFrameContentView.prototype.closed): Deleted.
+        (WI.ApplicationCacheFrameContentView.prototype._maybeUpdate): Deleted.
+        (WI.ApplicationCacheFrameContentView.prototype._markDirty): Deleted.
+        (WI.ApplicationCacheFrameContentView.prototype._updateStatus): Deleted.
+        (WI.ApplicationCacheFrameContentView.prototype._update): Deleted.
+        No need to maintain a separate "dirty" flag based on visibility since `attached`/`detached`
+        are called whenever the view is added/removed to/from the DOM.
+
+        * UserInterface/Debug/DebugContentView.js:
+        (WI.DebugContentView.prototype.attached): Added.
+        (WI.DebugContentView.prototype.detached): Added.
+        (WI.DebugContentView.prototype.shown): Deleted.
+        (WI.DebugContentView.prototype.hidden): Deleted.
+        * UserInterface/Views/AnimationDetailsSidebarPanel.js:
+        (WI.AnimationDetailsSidebarPanel.prototype.attached): Added.
+        (WI.AnimationDetailsSidebarPanel.prototype.shown): Deleted.
+        * UserInterface/Views/AuditTabContentView.js:
+        (WI.AuditTabContentView.prototype.attached): Added.
+        (WI.AuditTabContentView.prototype.detached): Added.
+        (WI.AuditTabContentView.prototype.shown): Deleted.
+        (WI.AuditTabContentView.prototype.hidden): Deleted.
+        * UserInterface/Views/AuditTestContentView.js:
+        (WI.AuditTestContentView.prototype.attached): Added.
+        (WI.AuditTestContentView.prototype.detached): Added.
+        (WI.AuditTestContentView.prototype.shown): Deleted.
+        (WI.AuditTestContentView.prototype.hidden): Deleted.
+        * UserInterface/Views/CPUTimelineView.js:
+        (WI.CPUTimelineView.prototype.attached): Added.
+        (WI.CPUTimelineView.prototype.shown): Deleted.
+        * UserInterface/Views/CanvasSidebarPanel.js:
+        (WI.CanvasSidebarPanel.prototype.attached): Added.
+        (WI.CanvasSidebarPanel.prototype.detached): Added.
+        (WI.CanvasSidebarPanel.prototype.shown): Deleted.
+        (WI.CanvasSidebarPanel.prototype.hidden): Deleted.
+        * UserInterface/Views/DOMTreeContentView.js:
+        (WI.DOMTreeContentView.prototype.attached):
+        (WI.DOMTreeContentView.prototype.detached):
+        (WI.DOMTreeContentView.prototype.shown): Deleted.
+        (WI.DOMTreeContentView.prototype.hidden): Deleted.
+        * UserInterface/Views/ElementsTabContentView.js:
+        (WI.ElementsTabContentView.prototype.attached):
+        (WI.ElementsTabContentView.prototype.shown): Deleted.
+        * UserInterface/Views/FontResourceContentView.js:
+        (WI.FontResourceContentView.prototype.attached):
+        (WI.FontResourceContentView.prototype.detached):
+        (WI.FontResourceContentView.prototype.shown): Deleted.
+        (WI.FontResourceContentView.prototype.hidden): Deleted.
+        * UserInterface/Views/HeapSnapshotClusterContentView.js:
+        (WI.HeapSnapshotClusterContentView.prototype.attached): Added.
+        (WI.HeapSnapshotClusterContentView.prototype.shown): Deleted.
+        * UserInterface/Views/HeapSnapshotContentView.js:
+        (WI.HeapSnapshotContentView.prototype.attached): Added.
+        (WI.HeapSnapshotContentView.prototype.detached): Added.
+        (WI.HeapSnapshotContentView.prototype.shown): Deleted.
+        (WI.HeapSnapshotContentView.prototype.hidden): Deleted.
+        * UserInterface/Views/ImageResourceContentView.js:
+        (WI.ImageResourceContentView.prototype.attached): Added.
+        (WI.ImageResourceContentView.prototype.detached): Added.
+        (WI.ImageResourceContentView.prototype.shown): Deleted.
+        (WI.ImageResourceContentView.prototype.hidden): Deleted.
+        * UserInterface/Views/LayerTreeDetailsSidebarPanel.js:
+        (WI.LayerTreeDetailsSidebarPanel.prototype.attached):
+        (WI.LayerTreeDetailsSidebarPanel.prototype.detached): Added.
+        (WI.LayerTreeDetailsSidebarPanel.prototype.shown): Deleted.
+        (WI.LayerTreeDetailsSidebarPanel.prototype.hidden): Deleted.
+        * UserInterface/Views/Layers3DContentView.js:
+        (WI.Layers3DContentView.prototype.attached): Added.
+        (WI.Layers3DContentView.prototype.detached): Added.
+        (WI.Layers3DContentView.prototype.shown): Deleted.
+        (WI.Layers3DContentView.prototype.hidden): Deleted.
+        * UserInterface/Views/LayersTabContentView.js:
+        (WI.LayersTabContentView.prototype.attached): Added.
+        (WI.LayersTabContentView.prototype.shown): Deleted.
+        * UserInterface/Views/LayoutTimelineView.js:
+        (WI.LayoutTimelineView.prototype.attached): Added.
+        (WI.LayoutTimelineView.prototype.detached): Added.
+        (WI.LayoutTimelineView.prototype.shown): Deleted.
+        (WI.LayoutTimelineView.prototype.hidden): Deleted.
+        * UserInterface/Views/LogContentView.js:
+        (WI.LogContentView.prototype.attached): Added.
+        (WI.LogContentView.prototype.showCustomFindBanner):
+        (WI.LogContentView.prototype.get supportsSave):
+        (WI.LogContentView.prototype.shown): Deleted.
+        * UserInterface/Views/MemoryTimelineView.js:
+        (WI.MemoryTimelineView.prototype.attached): Added.
+        (WI.MemoryTimelineView.prototype.shown): Deleted.
+        * UserInterface/Views/NavigationSidebarPanel.js:
+        (WI.NavigationSidebarPanel.prototype.attached): Added.
+        (WI.NavigationSidebarPanel.prototype.shown): Deleted.
+        * UserInterface/Views/NetworkDetailView.js:
+        (WI.NetworkDetailView.prototype.attached): Added.
+        (WI.NetworkDetailView.prototype.shown): Deleted.
+        (WI.NetworkDetailView.prototype.hidden): Deleted.
+        * UserInterface/Views/NetworkResourceDetailView.js:
+        (WI.NetworkResourceDetailView.prototype.attached): Added.
+        (WI.NetworkResourceDetailView.prototype.shown): Deleted.
+        * UserInterface/Views/OverviewTimelineView.js:
+        (WI.OverviewTimelineView.prototype.attached): Added.
+        (WI.OverviewTimelineView.prototype.shown): Deleted.
+        * UserInterface/Views/RecordingContentView.js:
+        (WI.RecordingContentView.prototype.attached): Added.
+        (WI.RecordingContentView.prototype.detached): Added.
+        (WI.RecordingContentView.prototype.shown): Deleted.
+        (WI.RecordingContentView.prototype.hidden): Deleted.
+        * UserInterface/Views/ResourceClusterContentView.js:
+        (WI.ResourceClusterContentView.prototype.attached): Added.
+        (WI.ResourceClusterContentView.prototype.shown): Deleted.
+        * UserInterface/Views/ResourceHeadersContentView.js:
+        (WI.ResourceHeadersContentView.prototype.detached): Added.
+        (WI.ResourceHeadersContentView.prototype.hidden): Deleted.
+        * UserInterface/Views/SearchTabContentView.js:
+        (WI.SearchTabContentView.prototype.attached): Added.
+        (WI.SearchTabContentView.prototype.shown): Deleted.
+        * UserInterface/Views/ShaderProgramContentView.js:
+        (WI.ShaderProgramContentView.prototype.attached): Added.
+        (WI.ShaderProgramContentView.prototype.shown): Deleted.
+        (WI.ShaderProgramContentView.prototype.hidden): Deleted.
+        * UserInterface/Views/SidebarPanel.js:
+        (WI.SidebarPanel.prototype.attached): Added.
+        (WI.SidebarPanel.prototype.detached): Added.
+        (WI.SidebarPanel.prototype.shown): Deleted.
+        (WI.SidebarPanel.prototype.hidden): Deleted.
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WI.SourceCodeTextEditor.prototype.attached): Added.
+        (WI.SourceCodeTextEditor.prototype.detached): Added.
+        (WI.SourceCodeTextEditor.prototype._setTypeTokenAnnotatorEnabledState):
+        (WI.SourceCodeTextEditor.prototype.set _basicBlockAnnotatorEnabled):
+        (WI.SourceCodeTextEditor.prototype.shown): Deleted.
+        (WI.SourceCodeTextEditor.prototype.hidden): Deleted.
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationEditor.js:
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.detached):
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.hidden): Deleted.
+        * UserInterface/Views/SpreadsheetStyleProperty.js:
+        (WI.SpreadsheetStyleProperty.prototype.detached):
+        (WI.SpreadsheetStyleProperty.prototype.hidden): Deleted.
+        * UserInterface/Views/StyleDetailsPanel.js:
+        (WI.StyleDetailsPanel):
+        (WI.StyleDetailsPanel.prototype.attached):
+        (WI.StyleDetailsPanel.prototype.markAsNeedsRefresh):
+        (WI.StyleDetailsPanel.prototype.nodeStylesRefreshed):
+        (WI.StyleDetailsPanel.prototype._nodeStylesNeedsRefreshed):
+        (WI.StyleDetailsPanel.prototype.shown): Deleted.
+        (WI.StyleDetailsPanel.prototype.hidden): Deleted.
+        * UserInterface/Views/TabContentView.js:
+        (WI.TabContentView.prototype.attached): Added.
+        (WI.TabContentView.prototype.restoreStateFromCookie):
+        (WI.TabContentView.prototype.shown): Deleted.
+        * UserInterface/Views/Table.js:
+        (WI.Table.prototype.attached): Added.
+        (WI.Table.prototype.restoreScrollPosition): Deleted.
+        * UserInterface/Views/TextEditor.js:
+        (WI.TextEditor.prototype.attached): Added.
+        (WI.TextEditor.prototype.layout):
+        (WI.TextEditor.prototype._revealPendingPositionIfPossible):
+        (WI.TextEditor.prototype.get visible): Deleted.
+        (WI.TextEditor.prototype.shown): Deleted.
+        (WI.TextEditor.prototype.hidden): Deleted.
+        * UserInterface/Views/TimelineDataGrid.js:
+        (WI.TimelineDataGrid.prototype.detached): Added.
+        (WI.TimelineDataGrid.prototype.shown): Deleted.
+        (WI.TimelineDataGrid.prototype.hidden): Deleted.
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        (WI.TimelineRecordingContentView.prototype.attached): Added.
+        (WI.TimelineRecordingContentView.prototype.detached): Added.
+        (WI.TimelineRecordingContentView.prototype.initialLayout): Added.
+        (WI.TimelineRecordingContentView.prototype._contentViewSelectionPathComponentDidChange):
+        (WI.TimelineRecordingContentView.prototype._update):
+        (WI.TimelineRecordingContentView.prototype._handleTimelineViewRecordSelected):
+        (WI.TimelineRecordingContentView.prototype._handleTimelineViewScannerShow):
+        (WI.TimelineRecordingContentView.prototype._handleTimelineViewScannerHide):
+        (WI.TimelineRecordingContentView.prototype._handleTimelineViewNeedsEntireSelectedRange):
+        (WI.TimelineRecordingContentView.prototype.shown): Deleted.
+        (WI.TimelineRecordingContentView.prototype.hidden): Deleted.
+        * UserInterface/Views/TimelineTabContentView.js:
+        (WI.TimelineTabContentView.prototype.attached): Added.
+        (WI.TimelineTabContentView.prototype.detached): Added.
+        (WI.TimelineTabContentView.prototype._inspectorVisibilityChanged):
+        (WI.TimelineTabContentView.prototype.shown): Deleted.
+        (WI.TimelineTabContentView.prototype.hidden): Deleted.
+        * UserInterface/Views/WebSocketContentView.js:
+        (WI.WebSocketContentView.prototype.attached): Added.
+        (WI.WebSocketContentView.prototype.detached): Added.
+        (WI.WebSocketContentView.prototype.shown): Deleted.
+        (WI.WebSocketContentView.prototype.hidden): Deleted.
+        * UserInterface/Controllers/JavaScriptLogViewController.js:
+        (WI.JavaScriptLogViewController.prototype._appendConsoleMessageView):
+        Move logic inside `shown`/`hidden` to `attached`/`detached`.
+        Use `isAttached` instead of `visible`.
+
+        * UserInterface/Models/BackForwardEntry.js:
+        (WI.BackForwardEntry.prototype.prepareToShow):
+        (WI.BackForwardEntry.prototype.prepareToHide):
+        * UserInterface/Views/AuditTestGroupContentView.js:
+        (WI.AuditTestGroupContentView.prototype.attached): Added.
+        (WI.AuditTestGroupContentView.prototype.detached): Added.
+        (WI.AuditTestGroupContentView.prototype._addTest):
+        (WI.AuditTestGroupContentView.prototype._handleTestGroupTestRemoved):
+        (WI.AuditTestGroupContentView.prototype.shown): Deleted.
+        (WI.AuditTestGroupContentView.prototype.hidden): Deleted.
+        * UserInterface/Views/ChangesDetailsSidebarPanel.js:
+        (WI.ChangesDetailsSidebarPanel.prototype.shown): Deleted.
+        * UserInterface/Views/ClusterContentView.js:
+        (WI.ClusterContentView.prototype.shown): Deleted.
+        (WI.ClusterContentView.prototype.hidden): Deleted.
+        * UserInterface/Views/CollectionContentView.js:
+        (WI.CollectionContentView.prototype.addContentViewForItem):
+        (WI.CollectionContentView.prototype.removeContentViewForItem):
+        (WI.CollectionContentView.prototype.shown): Deleted.
+        (WI.CollectionContentView.prototype.hidden): Deleted.
+        * UserInterface/Views/ComputedStyleSection.js:
+        (WI.ComputedStyleSection.prototype.hidden): Deleted.
+        * UserInterface/Views/ContentBrowser.js:
+        (WI.ContentBrowser.prototype.attached): Added.
+        (WI.ContentBrowser.prototype.shown): Deleted.
+        (WI.ContentBrowser.prototype.hidden): Deleted.
+        * UserInterface/Views/ContentView.js:
+        (WI.ContentView.prototype.get visible): Deleted.
+        (WI.ContentView.prototype.set visible): Deleted.
+        (WI.ContentView.prototype.shown): Deleted.
+        (WI.ContentView.prototype.hidden): Deleted.
+        * UserInterface/Views/ContentViewContainer.js:
+        (WI.ContentViewContainer.prototype.showContentView):
+        (WI.ContentViewContainer.prototype.showBackForwardEntryForIndex):
+        (WI.ContentViewContainer.prototype.replaceContentView):
+        (WI.ContentViewContainer.prototype.closeContentView):
+        (WI.ContentViewContainer.prototype.attached): Added.
+        (WI.ContentViewContainer.prototype.detached): Added.
+        (WI.ContentViewContainer.prototype._disassociateFromContentView):
+        (WI.ContentViewContainer.prototype._showEntry):
+        (WI.ContentViewContainer.prototype.shown): Deleted.
+        (WI.ContentViewContainer.prototype.hidden): Deleted.
+        * UserInterface/Views/GeneralStyleDetailsSidebarPanel.js:
+        (WI.GeneralStyleDetailsSidebarPanel.prototype.get minimumWidth):
+        (WI.GeneralStyleDetailsSidebarPanel.prototype.attached): Added.
+        (WI.GeneralStyleDetailsSidebarPanel.prototype._showPanel):
+        (WI.GeneralStyleDetailsSidebarPanel.prototype.hidden): Deleted.
+        (WI.GeneralStyleDetailsSidebarPanel.prototype.shown): Deleted.
+        * UserInterface/Views/HeapAllocationsTimelineView.js:
+        (WI.HeapAllocationsTimelineView.prototype.showHeapSnapshotList):
+        (WI.HeapAllocationsTimelineView.prototype.showHeapSnapshotTimelineRecord):
+        (WI.HeapAllocationsTimelineView.prototype.showHeapSnapshotDiff):
+        (WI.HeapAllocationsTimelineView.prototype.shown): Deleted.
+        (WI.HeapAllocationsTimelineView.prototype.hidden): Deleted.
+        * UserInterface/Views/MediaTimelineView.js:
+        (WI.MediaTimelineView.prototype.shown): Deleted.
+        (WI.MediaTimelineView.prototype.hidden): Deleted.
+        * UserInterface/Views/NetworkTabContentView.js:
+        (WI.NetworkTabContentView.prototype.shown): Deleted.
+        (WI.NetworkTabContentView.prototype.hidden): Deleted.
+        * UserInterface/Views/NetworkTableContentView.js:
+        (WI.NetworkTableContentView.prototype.detached): Added.
+        (WI.NetworkTableContentView.prototype._hideDetailView):
+        (WI.NetworkTableContentView.prototype._showDetailView):
+        (WI.NetworkTableContentView.prototype.shown): Deleted.
+        (WI.NetworkTableContentView.prototype.hidden): Deleted.
+        * UserInterface/Views/NetworkTimelineView.js:
+        (WI.NetworkTimelineView.prototype.shown): Deleted.
+        (WI.NetworkTimelineView.prototype.hidden): Deleted.
+        * UserInterface/Views/RenderingFrameTimelineView.js:
+        (WI.RenderingFrameTimelineView.prototype.shown): Deleted.
+        (WI.RenderingFrameTimelineView.prototype.hidden): Deleted.
+        * UserInterface/Views/ScriptContentView.js:
+        (WI.ScriptContentView.prototype.shown): Deleted.
+        (WI.ScriptContentView.prototype.hidden): Deleted.
+        * UserInterface/Views/ScriptDetailsTimelineView.js:
+        (WI.ScriptDetailsTimelineView.prototype.shown): Deleted.
+        (WI.ScriptDetailsTimelineView.prototype.hidden): Deleted.
+        * UserInterface/Views/Sidebar.js:
+        (WI.Sidebar.prototype.set collapsed):
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationSection.js:
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype.hidden): Deleted.
+        * UserInterface/Views/SpreadsheetRulesStyleDetailsPanel.js:
+        (WI.SpreadsheetRulesStyleDetailsPanel.prototype.hidden): Deleted.
+        * UserInterface/Views/TextContentView.js:
+        (WI.TextContentView.prototype.shown): Deleted.
+        (WI.TextContentView.prototype.hidden): Deleted.
+        * UserInterface/Views/TextResourceContentView.js:
+        (WI.TextResourceContentView.prototype.shown): Deleted.
+        (WI.TextResourceContentView.prototype.hidden): Deleted.
+        Remove `shown`/`hidden` calls since that state is propagated to subviews by `WI.View` logic.
+
 2020-11-12  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Uncaught Exception: TypeError: undefined is not an object (evaluating 'target.DOMAgent.hideHighlight')

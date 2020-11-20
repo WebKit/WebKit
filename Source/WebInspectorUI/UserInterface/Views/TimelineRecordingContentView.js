@@ -212,31 +212,30 @@ WI.TimelineRecordingContentView = class TimelineRecordingContentView extends WI.
         return this._timelineContentBrowser.currentContentView;
     }
 
-    shown()
+    attached()
     {
-        super.shown();
-
-        this._timelineOverview.shown();
-        this._timelineContentBrowser.shown();
+        super.attached();
 
         this._clearTimelineNavigationItem.enabled = !this._recording.readonly && !isNaN(this._recording.startTime);
         this._exportButtonNavigationItem.enabled = this._recording.canExport();
-
-        this._currentContentViewDidChange();
 
         if (!this._updating && WI.timelineManager.activeRecording === this._recording && WI.timelineManager.isCapturing())
             this._startUpdatingCurrentTime(this._currentTime);
     }
 
-    hidden()
+    detached()
     {
-        super.hidden();
-
-        this._timelineOverview.hidden();
-        this._timelineContentBrowser.hidden();
-
         if (this._updating)
             this._stopUpdatingCurrentTime();
+
+        super.detached();
+    }
+
+    initialLayout()
+    {
+        super.initialLayout();
+
+        this._currentContentViewDidChange();
     }
 
     closed()
@@ -377,7 +376,7 @@ WI.TimelineRecordingContentView = class TimelineRecordingContentView extends WI.
 
     _contentViewSelectionPathComponentDidChange(event)
     {
-        if (!this.visible)
+        if (!this.isAttached)
             return;
 
         if (event.target !== this._timelineContentBrowser.currentContentView)
@@ -456,7 +455,7 @@ WI.TimelineRecordingContentView = class TimelineRecordingContentView extends WI.
         // Only stop updating if the current time is greater than the end time, or the end time is NaN.
         // The recording end time will be NaN if no records were added.
         if (!this._updating && (currentTime >= endTime || isNaN(endTime))) {
-            if (this.visible)
+            if (this.isAttached)
                 this._lastUpdateTimestamp = NaN;
             return;
         }
@@ -915,7 +914,7 @@ WI.TimelineRecordingContentView = class TimelineRecordingContentView extends WI.
 
     _handleTimelineViewRecordSelected(event)
     {
-        if (!this.visible)
+        if (!this.isAttached)
             return;
 
         let {record} = event.data;
@@ -948,7 +947,7 @@ WI.TimelineRecordingContentView = class TimelineRecordingContentView extends WI.
 
     _handleTimelineViewScannerShow(event)
     {
-        if (!this.visible)
+        if (!this.isAttached)
             return;
 
         let {time} = event.data;
@@ -957,7 +956,7 @@ WI.TimelineRecordingContentView = class TimelineRecordingContentView extends WI.
 
     _handleTimelineViewScannerHide(event)
     {
-        if (!this.visible)
+        if (!this.isAttached)
             return;
 
         this._timelineOverview.hideScanner();
@@ -965,7 +964,7 @@ WI.TimelineRecordingContentView = class TimelineRecordingContentView extends WI.
 
     _handleTimelineViewNeedsEntireSelectedRange(event)
     {
-        if (!this.visible)
+        if (!this.isAttached)
             return;
 
         this._timelineOverview.timelineRuler.selectEntireRange();

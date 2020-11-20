@@ -126,14 +126,7 @@ WI.Sidebar = class Sidebar extends WI.View
         this._collapsed = flag || false;
         this.element.classList.toggle(WI.Sidebar.CollapsedStyleClassName);
 
-        if (this._selectedSidebarPanel) {
-            if (this._selectedSidebarPanel.visible)
-                this._selectedSidebarPanel.shown();
-            else
-                this._selectedSidebarPanel.hidden();
-        }
-
-        this.didSetCollapsed(flag);
+        this.didSetCollapsed();
 
         this.dispatchEventToListeners(WI.Sidebar.Event.CollapsedStateDidChange);
     }

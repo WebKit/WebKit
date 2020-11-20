@@ -471,11 +471,14 @@ WI.NavigationSidebarPanel = class NavigationSidebarPanel extends WI.SidebarPanel
         treeElement.hidden = true;
     }
 
-    shown()
+    attached()
     {
-        super.shown();
+        super.attached();
 
         this._updateContentOverflowShadowVisibilityDebouncer.force();
+
+        if (this._contentBrowser && !this._contentBrowser.currentContentView)
+            this.showDefaultContentView();
     }
 
     // Protected

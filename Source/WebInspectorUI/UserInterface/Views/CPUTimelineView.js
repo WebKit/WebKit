@@ -82,12 +82,11 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
 
     // Public
 
-    shown()
+    attached()
     {
-        super.shown();
+        super.attached();
 
-        if (this._timelineRuler)
-            this._timelineRuler.updateLayout(WI.View.LayoutReason.Resize);
+        this._timelineRuler?.needsLayout(WI.View.LayoutReason.Resize);
     }
 
     closed()

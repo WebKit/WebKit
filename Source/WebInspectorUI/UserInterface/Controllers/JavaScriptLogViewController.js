@@ -279,7 +279,7 @@ WI.JavaScriptLogViewController = class JavaScriptLogViewController extends WI.Ob
         if (messageView.message && messageView.message.source !== WI.ConsoleMessage.MessageSource.JS)
             this._lastCommitted = "";
 
-        if (WI.consoleContentView.visible)
+        if (WI.consoleContentView.isAttached)
             this.renderPendingMessagesSoon();
 
         if (!WI.isShowingConsoleTab() && messageView.message && messageView.message.shouldRevealConsole)

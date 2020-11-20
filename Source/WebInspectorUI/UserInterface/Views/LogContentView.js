@@ -179,9 +179,9 @@ WI.LogContentView = class LogContentView extends WI.ContentView
         return true;
     }
 
-    shown()
+    attached()
     {
-        super.shown();
+        super.attached();
 
         this._logViewController.renderPendingMessages();
     }
@@ -255,7 +255,7 @@ WI.LogContentView = class LogContentView extends WI.ContentView
 
     showCustomFindBanner()
     {
-        if (!this.visible)
+        if (!this.isAttached)
             return;
 
         this._findBanner.focus();
@@ -263,7 +263,7 @@ WI.LogContentView = class LogContentView extends WI.ContentView
 
     get supportsSave()
     {
-        if (!this.visible)
+        if (!this.isAttached)
             return false;
 
         if (WI.isShowingSplitConsole())

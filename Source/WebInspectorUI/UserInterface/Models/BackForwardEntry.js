@@ -73,24 +73,18 @@ WI.BackForwardEntry = class BackForwardEntry
         this._tombstone = tombstone;
     }
 
-    prepareToShow(shouldCallShown)
+    prepareToShow()
     {
         console.assert(!this._tombstone, "Should not be calling shown on a tombstone");
 
         this._restoreFromCookie();
 
-        this.contentView.visible = true;
-        if (shouldCallShown)
-            this.contentView.shown();
         this.contentView.needsLayout();
     }
 
     prepareToHide()
     {
         console.assert(!this._tombstone, "Should not be calling hidden on a tombstone");
-
-        this.contentView.visible = false;
-        this.contentView.hidden();
 
         this._saveScrollPositions();
 

@@ -65,9 +65,9 @@ WI.LayersTabContentView = class LayersTabContentView extends WI.ContentBrowserTa
         this._layers3DContentView.selectLayerForNode(node);
     }
 
-    shown()
+    attached()
     {
-        super.shown();
+        super.attached();
 
         this.contentBrowser.showContentView(this._layers3DContentView);
     }

@@ -78,7 +78,9 @@ WI.MediaTimelineOverviewGraph = class MediaTimelineOverviewGraph extends WI.Time
 
     layout()
     {
-        if (!this.visible)
+        super.layout();
+
+        if (this.hidden)
             return;
 
         let secondsPerPixel = this.timelineOverview.secondsPerPixel;

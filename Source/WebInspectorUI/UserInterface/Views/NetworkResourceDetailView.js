@@ -43,12 +43,12 @@ WI.NetworkResourceDetailView = class NetworkResourceDetailView extends WI.Networ
 
     // Public
 
-    shown()
+    attached()
     {
+        super.attached();
+
         if (this._contentBrowser && this._contentViewCookie && "lineNumber" in this._contentViewCookie && "columnNumber" in this._contentViewCookie)
             this._contentBrowser.navigationBar.selectedNavigationItem = this.detailNavigationItemForIdentifier("preview");
-
-        super.shown();
     }
 
     // ResourceHeadersContentView delegate

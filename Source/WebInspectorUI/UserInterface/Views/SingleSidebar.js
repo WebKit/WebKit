@@ -100,20 +100,16 @@ WI.SingleSidebar = class SingleSidebar extends WI.Sidebar
     willSetSelectedSidebarPanel(sidebarPanel)
     {
         if (this.selectedSidebarPanel) {
-            this.selectedSidebarPanel.hidden();
-            this.selectedSidebarPanel.selected = false;
             this.removeSubview(this.selectedSidebarPanel);
+            this.selectedSidebarPanel.selected = false;
         }
     }
 
     didSetSelectedSidebarPanel(sidebarPanel)
     {
         if (this.selectedSidebarPanel) {
-            this.addSubview(this.selectedSidebarPanel);
             this.selectedSidebarPanel.selected = true;
-            if (!this.collapsed) {
-                this.selectedSidebarPanel.shown();
-            }
+            this.addSubview(this.selectedSidebarPanel);
         }
 
         if (this._navigationBar)
@@ -122,6 +118,16 @@ WI.SingleSidebar = class SingleSidebar extends WI.Sidebar
 
     didSetCollapsed(flag)
     {
+        if (this.selectedSidebarPanel) {
+            if (this.collapsed) {
+                if (this.selectedSidebarPanel.isAttached)
+                    this.removeSubview(this.selectedSidebarPanel);
+            } else {
+                if (!this.selectedSidebarPanel.isAttached)
+                    this.addSubview(this.selectedSidebarPanel);
+            }
+        }
+
         if (!flag && this._navigationBar)
             this._navigationBar.needsLayout();
     }

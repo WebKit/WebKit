@@ -271,25 +271,11 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         return {customSaveHandler: () => { this._exportHAR(); }};
     }
 
-    shown()
-    {
-        super.shown();
-
-        if (this._detailView)
-            this._detailView.shown();
-
-        if (this._table)
-            this._table.restoreScrollPosition();
-    }
-
-    hidden()
+    detached()
     {
         this._hidePopover();
 
-        if (this._detailView)
-            this._detailView.hidden();
-
-        super.hidden();
+        super.detached();
     }
 
     closed()
@@ -1552,8 +1538,6 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         this._table.scrollContainer.style.removeProperty("width");
 
         this.removeSubview(this._detailView);
-
-        this._detailView.hidden();
         this._detailView = null;
 
         this._table.updateLayout(WI.View.LayoutReason.Resize);
@@ -1578,16 +1562,13 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
             this._detailViewMap.set(object, this._detailView);
         }
 
-        if (oldDetailView) {
-            oldDetailView.hidden();
+        if (oldDetailView)
             this.replaceSubview(oldDetailView, this._detailView);
-        } else
+        else
             this.addSubview(this._detailView);
 
         if (this._showingRepresentedObjectCookie)
             this._detailView.willShowWithCookie(this._showingRepresentedObjectCookie);
-
-        this._detailView.shown();
 
         this.element.classList.add("showing-detail");
         this._table.scrollContainer.style.width = this._nameColumn.width + "px";

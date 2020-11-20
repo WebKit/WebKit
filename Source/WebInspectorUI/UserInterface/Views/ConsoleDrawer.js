@@ -73,10 +73,10 @@ WI.ConsoleDrawer = class ConsoleDrawer extends WI.ContentBrowser
 
         this.element.classList.toggle("hidden", this._collapsed);
 
-        if (this._collapsed)
-            this.hidden();
-        else
-            this.shown();
+        // Manually call `attached`/`detached` because we never expect to actually remove this node
+        // from the DOM, meaning that the `WI.ContentViewContainer` would not show/hide entries in
+        // the back/forward list, which is what adds/removes subviews from the DOM.
+        this._didMoveToParent(this._collapsed ? null : WI.View.rootView());
 
         this.dispatchEventToListeners(WI.ConsoleDrawer.Event.CollapsedStateChanged);
     }
@@ -86,14 +86,14 @@ WI.ConsoleDrawer = class ConsoleDrawer extends WI.ContentBrowser
         return this.element.offsetHeight;
     }
 
-    shown()
+    // Protected
+
+    attached()
     {
-        super.shown();
+        super.attached();
 
         this._restoreDrawerHeight();
     }
-
-    // Protected
 
     sizeDidChange()
     {

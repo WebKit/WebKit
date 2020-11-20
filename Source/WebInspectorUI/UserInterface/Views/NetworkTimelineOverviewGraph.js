@@ -68,7 +68,9 @@ WI.NetworkTimelineOverviewGraph = class NetworkTimelineOverviewGraph extends WI.
 
     layout()
     {
-        if (!this.visible)
+        super.layout();
+
+        if (this.hidden)
             return;
 
         let secondsPerPixel = this.timelineOverview.secondsPerPixel;

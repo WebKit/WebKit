@@ -346,16 +346,6 @@ WI.ContentView = class ContentView extends WI.View
         return this._parentContainer;
     }
 
-    get visible()
-    {
-        return this._visible;
-    }
-
-    set visible(flag)
-    {
-        this._visible = flag;
-    }
-
     get scrollableElements()
     {
         // Implemented by subclasses.
@@ -389,16 +379,6 @@ WI.ContentView = class ContentView extends WI.View
     {
         // Implemented by subclasses.
         return WI.dockedConfigurationSupportsSplitContentBrowser();
-    }
-
-    shown()
-    {
-        // Implemented by subclasses.
-    }
-
-    hidden()
-    {
-        // Implemented by subclasses.
     }
 
     closed()

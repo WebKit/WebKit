@@ -40,7 +40,7 @@ WI.TimelineOverviewGraph = class TimelineOverviewGraph extends WI.View
         this._selectedRecordBar = null;
         this._scheduledSelectedRecordLayoutUpdateIdentifier = undefined;
         this._selected = false;
-        this._visible = true;
+        this._hidden = false;
     }
 
     // Public
@@ -156,9 +156,22 @@ WI.TimelineOverviewGraph = class TimelineOverviewGraph extends WI.View
 
     get secondsPerPixel() { return this._timelineOverview.secondsPerPixel; }
 
-    get visible()
+    get hidden()
     {
-        return this._visible;
+        return this._hidden;
+    }
+
+    set hidden(hidden)
+    {
+        if (!xor(hidden, this._hidden))
+            return;
+
+        this._hidden = hidden;
+
+        this.element.classList.toggle("hidden", this._hidden);
+
+        if (!this._hidden)
+            this.updateLayout();
     }
 
     get selectedRecord()
@@ -218,25 +231,6 @@ WI.TimelineOverviewGraph = class TimelineOverviewGraph extends WI.View
         this.element.classList.toggle("selected", this._selected);
     }
 
-    shown()
-    {
-        if (this._visible)
-            return;
-
-        this._visible = true;
-        this.element.classList.toggle("hidden", !this._visible);
-        this.updateLayout();
-    }
-
-    hidden()
-    {
-        if (!this._visible)
-            return;
-
-        this._visible = false;
-        this.element.classList.toggle("hidden", !this._visible);
-    }
-
     reset()
     {
         // Implemented by sub-classes if needed.
@@ -250,7 +244,7 @@ WI.TimelineOverviewGraph = class TimelineOverviewGraph extends WI.View
     needsLayout()
     {
         // FIXME: needsLayout can be removed once <https://webkit.org/b/150741> is fixed.
-        if (!this._visible)
+        if (this._hidden)
             return;
 
         super.needsLayout();

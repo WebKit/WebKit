@@ -45,8 +45,10 @@ WI.NetworkDetailView = class NetworkDetailView extends WI.View
 
     get representedObject() { return this._representedObject; }
 
-    shown()
+    attached()
     {
+        super.attached();
+
         if (!this._contentBrowser)
             return;
 
@@ -56,13 +58,6 @@ WI.NetworkDetailView = class NetworkDetailView extends WI.View
             this._contentBrowser.showContentView(this._contentBrowser.currentContentView, this._contentViewCookie);
             this._contentViewCookie = null;
         }
-
-        this._contentBrowser.shown();
-    }
-
-    hidden()
-    {
-        this._contentBrowser.hidden();
     }
 
     dispose()

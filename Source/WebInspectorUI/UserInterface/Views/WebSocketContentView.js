@@ -87,17 +87,21 @@ WI.WebSocketContentView = class WebSocketContentView extends WI.ContentView
 
     // Public
 
-    shown()
+    attached()
     {
+        super.attached();
+
         this._updateFramesDebouncer.force();
         this._resource.addEventListener(WI.WebSocketResource.Event.FrameAdded, this._updateFramesSoon, this);
         this._resource.addEventListener(WI.WebSocketResource.Event.ReadyStateChanged, this._updateFramesSoon, this);
     }
 
-    hidden()
+    detached()
     {
         this._resource.removeEventListener(WI.WebSocketResource.Event.FrameAdded, this._updateFramesSoon, this);
         this._resource.removeEventListener(WI.WebSocketResource.Event.ReadyStateChanged, this._updateFramesSoon, this);
+
+        super.detached();
     }
 
     // Private

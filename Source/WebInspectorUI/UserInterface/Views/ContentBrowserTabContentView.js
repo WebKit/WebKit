@@ -92,28 +92,13 @@ WI.ContentBrowserTabContentView = class ContentBrowserTabContentView extends WI.
         return this._contentBrowser;
     }
 
-    shown()
+    attached()
     {
-        if (this.navigationSidebarPanel) {
-            if (!this.navigationSidebarPanel.contentBrowser)
-                this.navigationSidebarPanel.contentBrowser = this._contentBrowser;
-        }
+        // Ensure that the relationship is established before attempting to restore cookies.
+        if (this.navigationSidebarPanel && !this.navigationSidebarPanel.contentBrowser)
+            this.navigationSidebarPanel.contentBrowser = this._contentBrowser;
 
-        super.shown();
-
-        this._contentBrowser.shown();
-
-        if (this.navigationSidebarPanel) {
-            if (!this._contentBrowser.currentContentView)
-                this.navigationSidebarPanel.showDefaultContentView();
-        }
-    }
-
-    hidden()
-    {
-        super.hidden();
-
-        this._contentBrowser.hidden();
+        super.attached();
     }
 
     closed()
@@ -141,7 +126,7 @@ WI.ContentBrowserTabContentView = class ContentBrowserTabContentView extends WI.
 
     showNavigationSidebarPanel()
     {
-        if (!this.visible)
+        if (!this.isAttached)
             return;
 
         if (!this.navigationSidebarPanel)
@@ -155,12 +140,12 @@ WI.ContentBrowserTabContentView = class ContentBrowserTabContentView extends WI.
         if (shouldShowSidebar) {
             if (!this.navigationSidebarPanel.parentSidebar)
                 WI.navigationSidebar.addSidebarPanel(this.navigationSidebarPanel);
-            WI.navigationSidebar.selectedSidebarPanel = this.navigationSidebarPanel;
             WI.navigationSidebar.collapsed = this.navigationSidebarCollapsedSetting.value;
+            WI.navigationSidebar.selectedSidebarPanel = this.navigationSidebarPanel;
         } else {
-            WI.navigationSidebar.collapsed = true;
             if (this.navigationSidebarPanel.parentSidebar)
                 WI.navigationSidebar.removeSidebarPanel(this.navigationSidebarPanel);
+            WI.navigationSidebar.collapsed = true;
         }
 
         this._ignoreNavigationSidebarPanelCollapsedEvent = false;
@@ -170,7 +155,7 @@ WI.ContentBrowserTabContentView = class ContentBrowserTabContentView extends WI.
 
     showDetailsSidebarPanels()
     {
-        if (!this.visible)
+        if (!this.isAttached)
             return;
 
         var currentRepresentedObjects = this._contentBrowser.currentRepresentedObjects;
@@ -207,15 +192,15 @@ WI.ContentBrowserTabContentView = class ContentBrowserTabContentView extends WI.
             }
         }
 
-        if (sidebarPanelToSelect)
-            WI.detailsSidebar.selectedSidebarPanel = sidebarPanelToSelect;
-        else if (!WI.detailsSidebar.selectedSidebarPanel && WI.detailsSidebar.sidebarPanels.length)
-            WI.detailsSidebar.selectedSidebarPanel = WI.detailsSidebar.sidebarPanels[0];
-
         if (!WI.detailsSidebar.sidebarPanels.length)
             WI.detailsSidebar.collapsed = true;
         else if (wasSidebarEmpty)
             WI.detailsSidebar.collapsed = this.detailsSidebarCollapsedSetting.value;
+
+        if (sidebarPanelToSelect)
+            WI.detailsSidebar.selectedSidebarPanel = sidebarPanelToSelect;
+        else if (!WI.detailsSidebar.selectedSidebarPanel && WI.detailsSidebar.sidebarPanels.length)
+            WI.detailsSidebar.selectedSidebarPanel = WI.detailsSidebar.sidebarPanels[0];
 
         this._ignoreDetailsSidebarPanelCollapsedEvent = false;
         this._ignoreDetailsSidebarPanelSelectedEvent = false;
@@ -256,7 +241,7 @@ WI.ContentBrowserTabContentView = class ContentBrowserTabContentView extends WI.
 
     _navigationSidebarCollapsedStateDidChange(event)
     {
-        if (!this.visible)
+        if (!this.isAttached)
             return;
 
         this._showNavigationSidebarItem.activated = !WI.navigationSidebar.collapsed;
@@ -269,7 +254,7 @@ WI.ContentBrowserTabContentView = class ContentBrowserTabContentView extends WI.
 
     _detailsSidebarCollapsedStateDidChange(event)
     {
-        if (!this.visible)
+        if (!this.isAttached)
             return;
 
         this._showDetailsSidebarItem.activated = !WI.detailsSidebar.collapsed;
@@ -283,7 +268,7 @@ WI.ContentBrowserTabContentView = class ContentBrowserTabContentView extends WI.
 
     _detailsSidebarPanelSelected(event)
     {
-        if (!this.visible)
+        if (!this.isAttached)
             return;
 
         this._showDetailsSidebarItem.activated = !WI.detailsSidebar.collapsed;

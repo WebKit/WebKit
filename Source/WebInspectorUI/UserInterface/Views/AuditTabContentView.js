@@ -73,18 +73,18 @@ WI.AuditTabContentView = class AuditTabContentView extends WI.ContentBrowserTabC
             || representedObject instanceof WI.AuditTestGroupResult;
     }
 
-    shown()
+    attached()
     {
-        super.shown();
+        super.attached();
 
         this._startStopShortcut.disabled = false;
     }
 
-    hidden()
+    detached()
     {
         this._startStopShortcut.disabled = true;
 
-        super.hidden();
+        super.detached();
     }
 
     // DropZoneView delegate

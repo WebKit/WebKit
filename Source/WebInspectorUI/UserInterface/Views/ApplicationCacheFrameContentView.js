@@ -38,27 +38,28 @@ WI.ApplicationCacheFrameContentView = class ApplicationCacheFrameContentView ext
         this._emptyView = WI.createMessageTextView(WI.UIString("No Application Cache information available"), false);
         this._emptyView.classList.add("hidden");
         this.element.appendChild(this._emptyView);
-
-        this._markDirty();
-
-        var status = representedObject.status;
-        this.updateStatus(status);
-
-        WI.applicationCacheManager.addEventListener(WI.ApplicationCacheManager.Event.FrameManifestStatusChanged, this._updateStatus, this);
     }
 
-    shown()
+    attached()
     {
-        super.shown();
+        super.attached();
 
-        this._maybeUpdate();
+        WI.applicationCacheManager.addEventListener(WI.ApplicationCacheManager.Event.FrameManifestStatusChanged, this._handleFrameManifestStatusChanged, this);
+        this.updateStatus(this.representedObject.status);
     }
 
-    closed()
+    detached()
     {
-        WI.applicationCacheManager.removeEventListener(WI.ApplicationCacheManager.Event.FrameManifestStatusChanged, this._updateStatus, this);
+        WI.applicationCacheManager.removeEventListener(WI.ApplicationCacheManager.Event.FrameManifestStatusChanged, this._handleFrameManifestStatusChanged, this);
 
-        super.closed();
+        super.detached();
+    }
+
+    layout()
+    {
+        super.layout();
+
+        this.updateStatus();
     }
 
     saveToCookie(cookie)
@@ -75,21 +76,7 @@ WI.ApplicationCacheFrameContentView = class ApplicationCacheFrameContentView ext
         return [this._dataGrid.scrollContainer];
     }
 
-    _maybeUpdate()
-    {
-        if (!this.visible || !this._viewDirty)
-            return;
-
-        this._update();
-        this._viewDirty = false;
-    }
-
-    _markDirty()
-    {
-        this._viewDirty = true;
-    }
-
-    _updateStatus(event)
+    _handleFrameManifestStatusChanged(event)
     {
         var frameManifest = event.data.frameManifest;
         if (frameManifest !== this.representedObject)
@@ -105,15 +92,8 @@ WI.ApplicationCacheFrameContentView = class ApplicationCacheFrameContentView ext
         var oldStatus = this._status;
         this._status = status;
 
-        if (this.visible && this._status === WI.ApplicationCacheManager.Status.Idle && (oldStatus === WI.ApplicationCacheManager.Status.UpdateReady || !this._resources))
-            this._markDirty();
-
-        this._maybeUpdate();
-    }
-
-    _update()
-    {
-        WI.applicationCacheManager.requestApplicationCache(this._frame, this._updateCallback.bind(this));
+        if (this._status === WI.ApplicationCacheManager.Status.Idle && (oldStatus === WI.ApplicationCacheManager.Status.UpdateReady || !this._resources))
+            WI.applicationCacheManager.requestApplicationCache(this._frame, this._updateCallback.bind(this));
     }
 
     _updateCallback(applicationCache)

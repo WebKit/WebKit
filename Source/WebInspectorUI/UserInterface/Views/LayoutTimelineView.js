@@ -127,22 +127,18 @@ WI.LayoutTimelineView = class LayoutTimelineView extends WI.TimelineView
         return pathComponents;
     }
 
-    shown()
+    attached()
     {
-        super.shown();
+        super.attached();
 
         this._updateHighlight();
-
-        this._dataGrid.shown();
     }
 
-    hidden()
+    detached()
     {
         this._hideHighlightIfNeeded();
 
-        this._dataGrid.hidden();
-
-        super.hidden();
+        super.detached();
     }
 
     closed()

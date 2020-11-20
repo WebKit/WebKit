@@ -231,12 +231,6 @@ WI.ComputedStyleSection = class ComputedStyleSection extends WI.View
             propertyView.detached();
     }
 
-    hidden()
-    {
-        for (let propertyView of this._propertyViews)
-            propertyView.hidden();
-    }
-
     applyFilter(filterText)
     {
         this._filterText = filterText;

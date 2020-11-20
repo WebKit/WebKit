@@ -115,20 +115,6 @@ WI.RenderingFrameTimelineView = class RenderingFrameTimelineView extends WI.Time
 
     get showsLiveRecordingData() { return false; }
 
-    shown()
-    {
-        super.shown();
-
-        this._dataGrid.shown();
-    }
-
-    hidden()
-    {
-        this._dataGrid.hidden();
-
-        super.hidden();
-    }
-
     closed()
     {
         this.representedObject.removeEventListener(WI.Timeline.Event.RecordAdded, this._renderingFrameTimelineRecordAdded, this);

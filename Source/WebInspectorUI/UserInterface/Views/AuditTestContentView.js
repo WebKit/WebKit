@@ -258,9 +258,9 @@ WI.AuditTestContentView = class AuditTestContentView extends WI.ContentView
         this._updateExportNavigationItems();
     }
 
-    shown()
+    attached()
     {
-        super.shown();
+        super.attached();
 
         if (this.representedObject instanceof WI.AuditTestBase) {
             this.representedObject.addEventListener(WI.AuditTestBase.Event.Completed, this._handleTestChanged, this);
@@ -275,7 +275,7 @@ WI.AuditTestContentView = class AuditTestContentView extends WI.ContentView
         }
     }
 
-    hidden()
+    detached()
     {
         if (this.representedObject instanceof WI.AuditTestBase) {
             this.representedObject.removeEventListener(WI.AuditTestBase.Event.Completed, this._handleTestChanged, this);
@@ -289,7 +289,7 @@ WI.AuditTestContentView = class AuditTestContentView extends WI.ContentView
             WI.auditManager.removeEventListener(WI.AuditManager.Event.EditingChanged, this._handleEditingChanged, this);
         }
 
-        super.hidden();
+        super.detached();
     }
 
     handleResultChanged(event)

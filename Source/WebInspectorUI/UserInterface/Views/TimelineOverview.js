@@ -346,37 +346,32 @@ WI.TimelineOverview = class TimelineOverview extends WI.View
     {
         let height = 0;
         for (let overviewGraph of this._overviewGraphsByTypeMap.values()) {
-            if (overviewGraph.visible)
+            if (!overviewGraph.hidden)
                 height += overviewGraph.height;
         }
         return height;
     }
 
-    get visible()
+    attached()
     {
-        return this._visible;
-    }
-
-    shown()
-    {
-        this._visible = true;
+        super.attached();
 
         for (let [type, overviewGraph] of this._overviewGraphsByTypeMap) {
             if (this._canShowTimelineType(type))
-                overviewGraph.shown();
+                overviewGraph.hidden = false;
         }
 
-        this.updateLayout(WI.View.LayoutReason.Resize);
+        this.needsLayout(WI.View.LayoutReason.Resize);
     }
 
-    hidden()
+    detached()
     {
-        this._visible = false;
-
         for (let overviewGraph of this._overviewGraphsByTypeMap.values())
-            overviewGraph.hidden();
+            overviewGraph.hidden = true;
 
         this.hideScanner();
+
+        super.detached();
     }
 
     closed()
@@ -410,7 +405,7 @@ WI.TimelineOverview = class TimelineOverview extends WI.View
         if (!overviewGraph)
             return;
 
-        console.assert(overviewGraph.visible, "Record filtered in hidden overview graph", record);
+        console.assert(!overviewGraph.hidden, "Record filtered in hidden overview graph", record);
 
         overviewGraph.recordWasFiltered(record, filtered);
     }
@@ -422,7 +417,7 @@ WI.TimelineOverview = class TimelineOverview extends WI.View
         if (!overviewGraph)
             return;
 
-        console.assert(overviewGraph.visible, "Record selected in hidden overview graph", record);
+        console.assert(!overviewGraph.hidden, "Record selected in hidden overview graph", record);
 
         overviewGraph.selectedRecord = record;
     }
@@ -447,7 +442,7 @@ WI.TimelineOverview = class TimelineOverview extends WI.View
         this._timelineRuler.updateLayoutIfNeeded(layoutReason);
 
         for (let overviewGraph of this._overviewGraphsByTypeMap.values()) {
-            if (overviewGraph.visible)
+            if (!overviewGraph.hidden)
                 overviewGraph.updateLayoutIfNeeded(layoutReason);
         }
     }
@@ -510,7 +505,7 @@ WI.TimelineOverview = class TimelineOverview extends WI.View
         }
 
         for (let overviewGraph of this._overviewGraphsByTypeMap.values()) {
-            if (!overviewGraph.visible)
+            if (overviewGraph.hidden)
                 continue;
 
             overviewGraph.zeroTime = startTime;
@@ -670,7 +665,7 @@ WI.TimelineOverview = class TimelineOverview extends WI.View
         treeElement.element.style.height = overviewGraph.height + "px";
 
         if (!this._canShowTimelineType(timeline.type)) {
-            overviewGraph.hidden();
+            overviewGraph.hidden = true;
             treeElement.hidden = true;
         }
 
@@ -723,7 +718,7 @@ WI.TimelineOverview = class TimelineOverview extends WI.View
             return;
 
         for (let overviewGraph of this._overviewGraphsByTypeMap.values()) {
-            if (!overviewGraph.visible)
+            if (overviewGraph.hidden)
                 continue;
 
             let graphRect = overviewGraph.element.getBoundingClientRect();
@@ -851,11 +846,9 @@ WI.TimelineOverview = class TimelineOverview extends WI.View
             let treeElement = this._treeElementsByTypeMap.get(type);
             console.assert(treeElement, "Missing tree element for timeline type", type);
 
-            treeElement.hidden = !this._canShowTimelineType(type);
-            if (treeElement.hidden)
-                overviewGraph.hidden();
-            else
-                overviewGraph.shown();
+            let hidden = !this._canShowTimelineType(type);
+            treeElement.hidden = hidden;
+            overviewGraph.hidden = hidden;
         }
 
         this.element.classList.toggle("frames", isRenderingFramesMode);

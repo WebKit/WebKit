@@ -97,11 +97,11 @@ WI.OverviewTimelineView = class OverviewTimelineView extends WI.TimelineView
         this._timelineRuler.secondsPerPixel = x;
     }
 
-    shown()
+    attached()
     {
-        super.shown();
+        super.attached();
 
-        this._timelineRuler.updateLayout(WI.View.LayoutReason.Resize);
+        this._timelineRuler.needsLayout(WI.View.LayoutReason.Resize);
     }
 
     closed()

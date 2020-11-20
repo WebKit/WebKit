@@ -317,9 +317,9 @@ WI.TimelineTabContentView = class TimelineTabContentView extends WI.ContentBrows
         return WI.TimelineTabContentView.Type;
     }
 
-    shown()
+    attached()
     {
-        super.shown();
+        super.attached();
 
         this._toggleRecordingShortcut.disabled = false;
         this._toggleNewRecordingShortcut.disabled = false;
@@ -328,14 +328,14 @@ WI.TimelineTabContentView = class TimelineTabContentView extends WI.ContentBrows
             WI.timelineManager.autoCaptureOnPageLoad = true;
     }
 
-    hidden()
+    detached()
     {
-        super.hidden();
-
         this._toggleRecordingShortcut.disabled = true;
         this._toggleNewRecordingShortcut.disabled = true;
 
         WI.timelineManager.autoCaptureOnPageLoad = false;
+
+        super.detached();
     }
 
     closed()
@@ -505,7 +505,7 @@ WI.TimelineTabContentView = class TimelineTabContentView extends WI.ContentBrows
 
     _inspectorVisibilityChanged(event)
     {
-        WI.timelineManager.autoCaptureOnPageLoad = !!this.visible && !!WI.visible;
+        WI.timelineManager.autoCaptureOnPageLoad = !!this.isAttached && !!WI.visible;
     }
 
     _globalModifierKeysDidChange(event)

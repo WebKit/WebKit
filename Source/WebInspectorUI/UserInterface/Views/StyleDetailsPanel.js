@@ -36,7 +36,6 @@ WI.StyleDetailsPanel = class StyleDetailsPanel extends WI.View
         this._navigationInfo = {identifier, label};
 
         this._nodeStyles = null;
-        this._visible = false;
     }
 
     // Public
@@ -57,24 +56,11 @@ WI.StyleDetailsPanel = class StyleDetailsPanel extends WI.View
         return false;
     }
 
-    shown()
+    attached()
     {
-        if (this._visible)
-            return;
-
-        this._visible = true;
+        super.attached();
 
         this._refreshNodeStyles();
-
-        // FIXME: remove once <https://webkit.org/b/150741> is fixed.
-        this.updateLayoutIfNeeded();
-    }
-
-    hidden()
-    {
-        this._visible = false;
-
-        this.cancelLayout();
     }
 
     markAsNeedsRefresh(domNode)
@@ -103,7 +89,7 @@ WI.StyleDetailsPanel = class StyleDetailsPanel extends WI.View
             this._forceSignificantChange = true;
         }
 
-        if (this._visible)
+        if (this.isAttached)
             this._refreshNodeStyles();
     }
 
@@ -116,7 +102,7 @@ WI.StyleDetailsPanel = class StyleDetailsPanel extends WI.View
 
     nodeStylesRefreshed(event)
     {
-        if (this._visible)
+        if (this.isAttached)
             this._refreshPreservingScrollPosition(event.data.significantChange);
     }
 
@@ -163,7 +149,7 @@ WI.StyleDetailsPanel = class StyleDetailsPanel extends WI.View
 
     _nodeStylesNeedsRefreshed(event)
     {
-        if (this._visible)
+        if (this.isAttached)
             this._refreshNodeStyles();
     }
 };

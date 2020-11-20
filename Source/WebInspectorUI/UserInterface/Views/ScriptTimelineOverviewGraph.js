@@ -52,7 +52,9 @@ WI.ScriptTimelineOverviewGraph = class ScriptTimelineOverviewGraph extends WI.Ti
 
     layout()
     {
-        if (!this.visible)
+        super.layout();
+
+        if (this.hidden)
             return;
 
         let secondsPerPixel = this.timelineOverview.secondsPerPixel;

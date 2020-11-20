@@ -121,11 +121,11 @@ WI.MemoryTimelineView = class MemoryTimelineView extends WI.TimelineView
 
     // Public
 
-    shown()
+    attached()
     {
-        super.shown();
+        super.attached();
 
-        this._timelineRuler.updateLayout(WI.View.LayoutReason.Resize);
+        this._timelineRuler.needsLayout(WI.View.LayoutReason.Resize);
     }
 
     closed()

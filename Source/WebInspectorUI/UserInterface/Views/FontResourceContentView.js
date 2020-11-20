@@ -75,22 +75,22 @@ WI.FontResourceContentView = class FontResourceContentView extends WI.ResourceCo
         }
     }
 
-    shown()
+    attached()
     {
-        super.shown();
+        super.attached();
 
         // Add the style element since it is removed when hidden.
         if (this._styleElement)
             document.head.appendChild(this._styleElement);
     }
 
-    hidden()
+    detached()
     {
         // Remove the style element so it will not stick around when this content view is destroyed.
         if (this._styleElement)
             this._styleElement.remove();
 
-        super.hidden();
+        super.detached();
     }
 
     closed()
@@ -175,7 +175,7 @@ WI.FontResourceContentView = class FontResourceContentView extends WI.ResourceCo
         this._styleElement.textContent = `@font-face { font-family: "${uniqueFontName}"; src: url(${this._fontObjectURL}) ${format}; }`;
 
         // The style element will be added when shown later if we are not visible now.
-        if (this.visible)
+        if (this.isAttached)
             document.head.appendChild(this._styleElement);
 
         this._previewElement = document.createElement("div");
