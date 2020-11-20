@@ -213,6 +213,7 @@ private:
     RefPtr<Nicosia::AnimatedBackingStoreClient> m_animatedBackingStoreClient;
 #endif
     bool m_isBackdrop { false };
+    bool m_isReplica { false };
 
     struct {
         TransformationMatrix localTransform;
