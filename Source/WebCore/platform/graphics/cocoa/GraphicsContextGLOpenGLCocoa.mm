@@ -39,6 +39,7 @@
 #import "WebGLLayer.h"
 #import <CoreGraphics/CGBitmapContext.h>
 #import <wtf/BlockObjCExceptions.h>
+#import <wtf/darwin/WeakLinking.h>
 #import <wtf/text/CString.h>
 
 #if PLATFORM(MAC)
@@ -49,6 +50,8 @@
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
 #include "GraphicsContextGLCV.h"
 #endif
+
+WTF_WEAK_LINK_FORCE_IMPORT(EGL_Initialize);
 
 namespace WebCore {
 
@@ -122,9 +125,19 @@ static bool needsEAGLOnMac()
 }
 #endif
 
+static bool isANGLEAvailable()
+{
+    return !!EGL_Initialize;
+}
 
 RefPtr<GraphicsContextGLOpenGL> GraphicsContextGLOpenGL::create(GraphicsContextGLAttributes attrs, HostWindow* hostWindow, GraphicsContextGL::Destination destination)
 {
+    // If ANGLE is not loaded, we can fail immediately.
+    if (!isANGLEAvailable()) {
+        LOG(WebGL, "ANGLE shared library was not loaded. Can't make GraphicsContextGL.");
+        return nullptr;
+    }
+
     // This implementation doesn't currently support rendering directly to the HostWindow.
     if (destination == Destination::DirectlyToHostWindow)
         return nullptr;
