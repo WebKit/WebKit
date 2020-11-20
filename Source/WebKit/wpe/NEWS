@@ -1,4 +1,17 @@
 =================
+WPE WebKit 2.30.3
+=================
+
+What's new in WPE WebKit 2.30.3?
+
+  - Add new JavaScriptCore build option USE_64KB_PAGE_BLOCK.
+  - Update Outlook User-Agent quirk.
+  - Fix rendering of CSS backdrop filters with rounded borders.
+  - Fix <iframe> scrolling when asynchronous scrolling is in use.
+  - Fix the build with video support disabled.
+  - Fix several crashes and rendering issues.
+
+=================
 WPE WebKit 2.30.2
 =================
 
