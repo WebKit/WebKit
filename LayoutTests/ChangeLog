@@ -1,3 +1,17 @@
+2020-11-20  Lauro Moura  <lmoura@igalia.com>
+
+        canvas: drawImage should not raise IndexSizeError on empty sources
+        https://bugs.webkit.org/show_bug.cgi?id=219068
+
+        Reviewed by Noam Rosenthal.
+
+        Update baselines and tests with new drawImage behavior of not raising IndexSizeError on empty src rects.
+
+        * http/wpt/2dcontext/imagebitmap/drawImage-ImageBitmap-expected.txt: Updated with new drawImage behavior
+        * http/wpt/2dcontext/imagebitmap/drawImage-ImageBitmap.html:  Updated with new drawImage behavior
+        * platform/glib/imported/w3c/web-platform-tests/html/canvas/offscreen/drawing-images-to-the-canvas/2d.drawImage.zerosource-expected.txt: Renamed from LayoutTests/platform/wpe/imported/w3c/web-platform-tests/html/canvas/offscreen/drawing-images-to-the-canvas/2d.drawImage.zerosource-expected.txt.
+        * platform/gtk/imported/w3c/web-platform-tests/html/canvas/offscreen/drawing-images-to-the-canvas/2d.drawImage.zerosource-expected.txt: Removed.
+
 2020-11-20  Truitt Savell  <tsavell@apple.com>
 
         http/tests/security/contentSecurityPolicy/1.1/plugintypes-affects-child.html is flaky failing

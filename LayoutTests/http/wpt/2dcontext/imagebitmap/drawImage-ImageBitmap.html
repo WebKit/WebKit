@@ -134,11 +134,12 @@
             return createImageBitmap(img);
         }).then(function(imageBitmap) {
             let [canvas, ctx] = create9x9CanvasWith2dContext();
-            assert_throws_dom("IndexSizeError", function () {
-                ctx.drawImage(imageBitmap, 0, 0, 0, 0, 0, 0, 9, 9);
-            }, "drawImage with an empty source rectangle should fail.");
+            ctx.drawImage(imageBitmap, 0, 0, 0, 0, 0, 0, 9, 9);
+            _assertPixel(canvas, 0,0, 0,0,0,0, "8,8", "0,0,0,0");
+            _assertPixel(canvas, 4,4, 0,0,0,0, "8,8", "0,0,0,0");
+            _assertPixel(canvas, 8,8, 0,0,0,0, "8,8", "0,0,0,0");
         });
-    }, "drawImage throws with IndexSizeError if the source rectangle of the ImageBitmap is empty");
+    }, "drawImage does not draw if the source rectangle of the ImageBitmap is empty");
 })();
 </script>
 </body>

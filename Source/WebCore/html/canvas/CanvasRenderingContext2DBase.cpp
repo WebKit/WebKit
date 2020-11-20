@@ -1665,8 +1665,8 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(ImageBitmap& imageBitm
     if (!imageBitmap.width() || !imageBitmap.height())
         return Exception { InvalidStateError };
 
-    if (!srcRect.width() || !srcRect.height())
-        return Exception { IndexSizeError };
+    if (srcRect.isEmpty())
+        return { };
 
     FloatRect srcBitmapRect = FloatRect(FloatPoint(), FloatSize(imageBitmap.width(), imageBitmap.height()));
 
