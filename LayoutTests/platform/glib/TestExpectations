@@ -356,6 +356,7 @@ webkit.org/b/218931 fast/events/wheel/wheel-event-listeners-on-body-made-passive
 webkit.org/b/218931 fast/events/wheel/wheel-event-listeners-on-document-made-passive.html [ Timeout ]
 webkit.org/b/218931 fast/events/wheel/wheel-event-listeners-on-window-left-active.html [ Timeout ]
 webkit.org/b/218931 fast/events/wheel/wheel-event-listeners-on-window-made-passive.html [ Timeout ]
+webkit.org/b/218931 fast/events/wheel/wheel-event-in-passive-region-non-cancelable.html [ Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Events-related bugs

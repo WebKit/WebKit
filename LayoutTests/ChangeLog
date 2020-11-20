@@ -1,3 +1,32 @@
+2020-11-20  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK][WPE] Rebaseline and gardening
+
+        Unreviewed test gardening.
+
+        The meter and progress tests had to be rebaselined and split after
+        r270044.
+
+        * platform/glib/TestExpectations: Add missing entries.
+        * platform/glib/fast/dom/HTMLProgressElement/progress-element-expected.txt:
+        * platform/glib/webaudio/BiquadFilter/tail-time-peaking-expected.txt:
+        Removed. Uneeded after r269972.
+        * platform/glib/webaudio/audioworklet-addModule-failure-expected.txt:
+        Rebaseline after r270033.
+        * platform/gtk/fast/dom/HTMLMeterElement/meter-element-expected.txt: Copied from LayoutTests/platform/glib/fast/dom/HTMLMeterElement/meter-element-expected.txt.
+        * platform/gtk/fast/dom/HTMLMeterElement/meter-styles-changing-pseudo-expected.txt: Copied from LayoutTests/platform/glib/fast/dom/HTMLMeterElement/meter-styles-changing-pseudo-expected.txt.
+        * platform/gtk/fast/dom/HTMLMeterElement/meter-styles-expected.txt: Copied from LayoutTests/platform/glib/fast/dom/HTMLMeterElement/meter-styles-expected.txt.
+        * platform/gtk/fast/dom/HTMLProgressElement/progress-bar-value-pseudo-element-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-csstext-expected.txt:
+        Rebaselined after r270023.
+        * platform/glib/TestExpectations: Remove entry after test removal.
+        * platform/wpe/fast/dom/HTMLMeterElement/meter-element-expected.txt: Renamed from LayoutTests/platform/glib/fast/dom/HTMLMeterElement/meter-element-expected.txt.
+        * platform/wpe/fast/dom/HTMLMeterElement/meter-styles-changing-pseudo-expected.txt: Renamed from LayoutTests/platform/glib/fast/dom/HTMLMeterElement/meter-styles-changing-pseudo-expected.txt.
+        * platform/wpe/fast/dom/HTMLMeterElement/meter-styles-expected.txt: Renamed from LayoutTests/platform/glib/fast/dom/HTMLMeterElement/meter-styles-expected.txt.
+        * platform/wpe/fast/dom/HTMLProgressElement/progress-bar-value-pseudo-element-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-csstext-expected.txt:
+        Rebaselined after r270023.
+
 2020-11-20  Truitt Savell  <tsavell@apple.com>
 
         Revert r270124. Made the test worse.

@@ -756,8 +756,6 @@ webkit.org/b/181534 perf/show-hide-table-rows.html [ Pass Failure ]
 
 webkit.org/b/187593 http/tests/cache/disk-cache/disk-cache-cancel.html [ Failure Pass ]
 
-webkit.org/b/215950 imported/w3c/web-platform-tests/notifications/shownotification-resolve-manual.https.html [ Timeout Pass ]
-
 webkit.org/b/187594 imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_createIndex7-event_order.htm [ Failure Pass ]
 
 webkit.org/b/187590 imported/w3c/web-platform-tests/web-animations/timing-model/timelines/document-timelines.html [ Failure Pass ]
