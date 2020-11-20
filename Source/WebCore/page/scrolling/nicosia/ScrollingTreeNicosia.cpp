@@ -30,6 +30,8 @@
 
 #if ENABLE(ASYNC_SCROLLING) && USE(NICOSIA)
 
+#include "AsyncScrollingCoordinator.h"
+#include "NicosiaPlatformLayer.h"
 #include "ScrollingTreeFixedNode.h"
 #include "ScrollingTreeFrameHostingNode.h"
 #include "ScrollingTreeFrameScrollingNodeNicosia.h"
@@ -71,6 +73,68 @@ Ref<ScrollingTreeNode> ScrollingTreeNicosia::createScrollingTreeNode(ScrollingNo
     }
 
     RELEASE_ASSERT_NOT_REACHED();
+}
+
+using Nicosia::CompositionLayer;
+
+static void collectDescendantLayersAtPoint(Vector<RefPtr<CompositionLayer>>& layersAtPoint, RefPtr<CompositionLayer> parent, const FloatPoint& point)
+{
+    bool childExistsAtPoint = false;
+
+    parent->accessPending([&](const CompositionLayer::LayerState& state) {
+        for (auto child : state.children) {
+            bool containsPoint = false;
+            FloatPoint transformedPoint;
+            child->accessPending([&](const CompositionLayer::LayerState& childState) {
+                if (!childState.transform.isInvertible())
+                    return;
+                float originX = childState.anchorPoint.x() * childState.size.width();
+                float originY = childState.anchorPoint.y() * childState.size.height();
+                auto transform = *(TransformationMatrix()
+                    .translate3d(originX + childState.position.x(), originY + childState.position.y(), childState.anchorPoint.z())
+                    .multiply(childState.transform)
+                    .translate3d(-originX, -originY, -childState.anchorPoint.z()).inverse());
+                auto childPoint = transform.projectPoint(point);
+                if (FloatRect(FloatPoint(), childState.size).contains(childPoint)) {
+                    containsPoint = true;
+                    transformedPoint.set(childPoint.x(), childPoint.y());
+                }
+            });
+            if (containsPoint) {
+                childExistsAtPoint = true;
+                collectDescendantLayersAtPoint(layersAtPoint, child, transformedPoint);
+            }
+        }
+    });
+
+    if (!childExistsAtPoint)
+        layersAtPoint.append(parent);
+}
+
+RefPtr<ScrollingTreeNode> ScrollingTreeNicosia::scrollingNodeForPoint(FloatPoint point)
+{
+    auto* rootScrollingNode = rootNode();
+    if (!rootScrollingNode)
+        return nullptr;
+
+    LayerTreeHitTestLocker layerLocker(m_scrollingCoordinator.get());
+
+    auto rootContentsLayer = static_cast<ScrollingTreeFrameScrollingNodeNicosia*>(rootScrollingNode)->rootContentsLayer();
+    Vector<RefPtr<CompositionLayer>> layersAtPoint;
+    collectDescendantLayersAtPoint(layersAtPoint, rootContentsLayer, point);
+
+    ScrollingTreeNode* returnNode = nullptr;
+    for (auto layer : WTF::makeReversedRange(layersAtPoint)) {
+        layer->accessCommitted([&](const CompositionLayer::LayerState& state) {
+            auto* scrollingNode = nodeForID(state.scrollingNodeID);
+            if (is<ScrollingTreeScrollingNode>(scrollingNode))
+                returnNode = scrollingNode;
+        });
+        if (returnNode)
+            break;
+    }
+
+    return returnNode ? returnNode : rootScrollingNode;
 }
 
 } // namespace WebCore

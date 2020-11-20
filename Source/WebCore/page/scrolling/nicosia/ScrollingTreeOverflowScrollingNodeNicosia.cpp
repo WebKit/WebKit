@@ -56,6 +56,23 @@ ScrollingTreeOverflowScrollingNodeNicosia::ScrollingTreeOverflowScrollingNodeNic
 
 ScrollingTreeOverflowScrollingNodeNicosia::~ScrollingTreeOverflowScrollingNodeNicosia() = default;
 
+void ScrollingTreeOverflowScrollingNodeNicosia::commitStateBeforeChildren(const ScrollingStateNode& stateNode)
+{
+    ScrollingTreeScrollingNode::commitStateBeforeChildren(stateNode);
+
+    const auto& scrollingStateNode = downcast<ScrollingStateOverflowScrollingNode>(stateNode);
+    if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::ScrolledContentsLayer)) {
+        auto* scrollLayer = static_cast<Nicosia::PlatformLayer*>(scrolledContentsLayer());
+        ASSERT(scrollLayer);
+        auto& compositionLayer = downcast<Nicosia::CompositionLayer>(*scrollLayer);
+        auto updateScope = compositionLayer.createUpdateScope();
+        compositionLayer.updateState([nodeID = scrollingNodeID()](Nicosia::CompositionLayer::LayerState& state) {
+            state.scrollingNodeID = nodeID;
+            state.delta.scrollingNodeChanged = true;
+        });
+    }
+}
+
 void ScrollingTreeOverflowScrollingNodeNicosia::commitStateAfterChildren(const ScrollingStateNode& stateNode)
 {
     ScrollingTreeOverflowScrollingNode::commitStateAfterChildren(stateNode);

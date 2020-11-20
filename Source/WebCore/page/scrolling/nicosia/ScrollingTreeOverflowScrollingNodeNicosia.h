@@ -44,6 +44,7 @@ public:
 private:
     ScrollingTreeOverflowScrollingNodeNicosia(ScrollingTree&, ScrollingNodeID);
 
+    void commitStateBeforeChildren(const ScrollingStateNode&) override;
     void commitStateAfterChildren(const ScrollingStateNode&) override;
 
     FloatPoint adjustedScrollPosition(const FloatPoint&, ScrollClamping) const override;
