@@ -1,3 +1,23 @@
+2020-11-20  Simon Fraser  <simon.fraser@apple.com>
+
+        Rename some wheel-event handling functions for clarity
+        https://bugs.webkit.org/show_bug.cgi?id=219211
+
+        Reviewed by Tim Horton.
+        
+        There are too many functions called wheelEvent() or handleWheelEvent(), making it hard
+        to know which phase of handling they apply to. So rename some to handleWheelEventForScrolling(),
+        which applies to the "default handling" phase after DOM event dispatch.
+        
+        In addition, make ScrollableArea's handleWheelEventForScrolling() virtual and have FrameView
+        override it (a future patch will also add an override in RenderLayer).
+        
+        Rename ScrollingCoordinator::performDefaultWheelEventHandling() to use handleWheelEventForScrolling()
+        for clarity.
+
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::handleWheelEvent):
+
 2020-11-20  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed fix for my build fix.

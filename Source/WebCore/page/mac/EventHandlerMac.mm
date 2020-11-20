@@ -871,7 +871,7 @@ void EventHandler::determineWheelEventTarget(const PlatformWheelEvent& wheelEven
             scrollableArea = makeWeakPtr(static_cast<ScrollableArea&>(*view));
     }
 
-    LOG_WITH_STREAM(ScrollLatching, stream << "EventHandler::determineWheelEventTarget() - event" << wheelEvent << " found scrollableArea " << ValueOrNull(scrollableArea.get()) << ", latching state is " << page->scrollLatchingController());
+    LOG_WITH_STREAM(ScrollLatching, stream << "EventHandler::determineWheelEventTarget() - event " << wheelEvent << " found scrollableArea " << ValueOrNull(scrollableArea.get()) << ", latching state is " << page->scrollLatchingController());
 
     if (scrollableArea && page->isMonitoringWheelEvents())
         scrollableArea->scrollAnimator().setWheelEventTestMonitor(page->wheelEventTestMonitor());
@@ -939,7 +939,7 @@ bool EventHandler::processWheelEventForScrolling(const PlatformWheelEvent& wheel
 
         LOG_WITH_STREAM(ScrollLatching, stream << " sending to view " << *view);
 
-        bool didHandleWheelEvent = view->wheelEvent(wheelEvent);
+        bool didHandleWheelEvent = view->handleWheelEventForScrolling(wheelEvent);
         // If the platform widget is handling the event, we always want to return false.
         if (view->platformWidget())
             didHandleWheelEvent = false;
@@ -948,7 +948,7 @@ bool EventHandler::processWheelEventForScrolling(const PlatformWheelEvent& wheel
         return didHandleWheelEvent;
     }
     
-    bool didHandleEvent = view->wheelEvent(wheelEvent);
+    bool didHandleEvent = view->handleWheelEventForScrolling(wheelEvent);
     m_isHandlingWheelEvent = false;
     return didHandleEvent;
 }

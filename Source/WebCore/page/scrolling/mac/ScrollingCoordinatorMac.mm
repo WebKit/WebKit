@@ -73,7 +73,7 @@ void ScrollingCoordinatorMac::pageDestroyed()
     });
 }
 
-bool ScrollingCoordinatorMac::performDefaultWheelEventHandling(const PlatformWheelEvent& wheelEvent, ScrollingNodeID targetNode)
+bool ScrollingCoordinatorMac::handleWheelEventForScrolling(const PlatformWheelEvent& wheelEvent, ScrollingNodeID targetNodeID)
 {
     ASSERT(isMainThread());
     ASSERT(m_page);
@@ -81,11 +81,11 @@ bool ScrollingCoordinatorMac::performDefaultWheelEventHandling(const PlatformWhe
     if (scrollingTree()->willWheelEventStartSwipeGesture(wheelEvent))
         return false;
 
-    LOG_WITH_STREAM(Scrolling, stream << "ScrollingCoordinatorMac::handleWheelEvent - sending event to scrolling thread");
+    LOG_WITH_STREAM(Scrolling, stream << "ScrollingCoordinatorMac::handleWheelEventForScrolling - sending event to scrolling thread, node " << targetNodeID);
     
     RefPtr<ThreadedScrollingTree> threadedScrollingTree = downcast<ThreadedScrollingTree>(scrollingTree());
-    ScrollingThread::dispatch([threadedScrollingTree, wheelEvent, targetNode] {
-        threadedScrollingTree->handleWheelEventAfterMainThread(wheelEvent, targetNode);
+    ScrollingThread::dispatch([threadedScrollingTree, wheelEvent, targetNodeID] {
+        threadedScrollingTree->handleWheelEventAfterMainThread(wheelEvent, targetNodeID);
     });
     return true;
 }

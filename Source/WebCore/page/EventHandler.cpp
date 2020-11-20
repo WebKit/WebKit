@@ -346,7 +346,7 @@ static bool handleWheelEventInAppropriateEnclosingBox(Node* startNode, const Whe
             bool scrollingWasHandled;
             if (platformEvent) {
                 auto copiedEvent = platformEvent->copyWithDeltasAndVelocity(filteredPlatformDelta.width(), filteredPlatformDelta.height(), filteredVelocity);
-                scrollingWasHandled = boxLayer->handleWheelEvent(copiedEvent);
+                scrollingWasHandled = boxLayer->handleWheelEventForScrolling(copiedEvent);
             } else
                 scrollingWasHandled = didScrollInScrollableArea(*boxLayer, wheelEvent);
 
@@ -2787,7 +2787,7 @@ bool EventHandler::processWheelEventForScrolling(const PlatformWheelEvent& event
     // We do another check on the frame view because the event handler can run JS which results in the frame getting destroyed.
     FrameView* view = m_frame.view();
     
-    bool didHandleEvent = view ? view->wheelEvent(event) : false;
+    bool didHandleEvent = view ? view->handleWheelEventForScrolling(event) : false;
     m_isHandlingWheelEvent = false;
     return didHandleEvent;
 }
@@ -3025,7 +3025,7 @@ void EventHandler::defaultWheelEventHandler(Node* startNode, WheelEvent& wheelEv
         auto platformEvent = wheelEvent.underlyingPlatformEvent();
         if (platformEvent) {
             auto copiedEvent = platformEvent->copyWithDeltasAndVelocity(filteredPlatformDelta.width(), filteredPlatformDelta.height(), filteredVelocity);
-            if (latchedScroller->handleWheelEvent(copiedEvent))
+            if (latchedScroller->handleWheelEventForScrolling(copiedEvent))
                 wheelEvent.setDefaultHandled();
             return;
         }
