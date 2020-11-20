@@ -75,8 +75,8 @@ bool LineBox::InlineLevelBox::hasLineBoxRelativeAlignment() const
     return verticalAlignment == VerticalAlign::Top || verticalAlignment == VerticalAlign::Bottom;
 }
 
-LineBox::LineBox(InlineLayoutUnit contentLogicalWidth, IsLineConsideredEmpty isLineConsideredEmpty)
-    : m_logicalSize(contentLogicalWidth, { })
+LineBox::LineBox(const InlineLayoutPoint& logicalTopleft, InlineLayoutUnit contentLogicalWidth, IsLineConsideredEmpty isLineConsideredEmpty)
+    : m_logicalRect(logicalTopleft, InlineLayoutSize { contentLogicalWidth, { } })
     , m_isConsideredEmpty(isLineConsideredEmpty == IsLineConsideredEmpty::Yes)
 {
 }

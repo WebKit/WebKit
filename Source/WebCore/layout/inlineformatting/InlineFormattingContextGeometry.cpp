@@ -157,7 +157,7 @@ LineBox LineBoxBuilder::build(const LineBuilder::LineContent& lineContent)
     auto lineLogicalWidth = lineContent.lineLogicalWidth;
     auto contentLogicalWidth = lineContent.lineContentLogicalWidth;
     auto isLineConsideredEmpty = lineContent.isLineConsideredEmpty ? LineBox::IsLineConsideredEmpty::Yes : LineBox::IsLineConsideredEmpty::No;
-    auto lineBox = LineBox { contentLogicalWidth, isLineConsideredEmpty };
+    auto lineBox = LineBox { lineContent.logicalTopLeft, contentLogicalWidth, isLineConsideredEmpty };
 
     if (auto horizontalAlignmentOffset = Layout::horizontalAlignmentOffset(runs, rootBox().style().textAlign(), lineLogicalWidth, contentLogicalWidth, lineContent.isLastLineWithInlineContent))
         lineBox.setHorizontalAlignmentOffset(*horizontalAlignmentOffset);
@@ -530,7 +530,7 @@ LineBox InlineFormattingContext::Geometry::lineBoxForLineContent(const LineBuild
 
 InlineRect InlineFormattingContext::Geometry::computedLineLogicalRect(const LineBox& lineBox, const LineBuilder::LineContent& lineContent) const
 {
-    return { lineContent.logicalTopLeft, lineContent.lineLogicalWidth, lineBox.logicalHeight() };
+    return { lineBox.logicalTopLeft(), lineContent.lineLogicalWidth, lineBox.logicalHeight() };
 }
 
 InlineLayoutUnit InlineFormattingContext::Geometry::logicalTopForNextLine(const LineBuilder::LineContent& lineContent, InlineLayoutUnit previousLineLogicalBottom, const FloatingContext& floatingContext) const

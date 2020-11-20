@@ -129,11 +129,12 @@ public:
     };
 
     enum class IsLineConsideredEmpty { No, Yes };
-    LineBox(InlineLayoutUnit logicalWidth, IsLineConsideredEmpty);
+    LineBox(const InlineLayoutPoint& logicalTopLeft, InlineLayoutUnit logicalWidth, IsLineConsideredEmpty);
 
-    InlineLayoutUnit logicalWidth() const { return m_logicalSize.width(); }
-    InlineLayoutUnit logicalHeight() const { return m_logicalSize.height(); }
-    InlineLayoutSize logicalSize() const { return m_logicalSize; }
+    InlineLayoutUnit logicalWidth() const { return logicalSize().width(); }
+    InlineLayoutUnit logicalHeight() const { return logicalSize().height(); }
+    InlineLayoutPoint logicalTopLeft() const { return m_logicalRect.topLeft(); }
+    InlineLayoutSize logicalSize() const { return m_logicalRect.size(); }
 
     Optional<InlineLayoutUnit> horizontalAlignmentOffset() const { return m_horizontalAlignmentOffset; }
     bool isConsideredEmpty() const { return m_isConsideredEmpty; }
@@ -155,7 +156,7 @@ public:
 private:
     friend class LineBoxBuilder;
 
-    void setLogicalHeight(InlineLayoutUnit logicalHeight) { m_logicalSize.setHeight(logicalHeight); }
+    void setLogicalHeight(InlineLayoutUnit logicalHeight) { m_logicalRect.setHeight(logicalHeight); }
     void setHorizontalAlignmentOffset(InlineLayoutUnit horizontalAlignmentOffset) { m_horizontalAlignmentOffset = horizontalAlignmentOffset; }
 
     void addRootInlineBox(std::unique_ptr<InlineLevelBox>&&);
@@ -166,7 +167,7 @@ private:
     InlineLevelBox& inlineLevelBoxForLayoutBox(const Box& layoutBox) { return *m_inlineLevelBoxRectMap.get(&layoutBox); }
 
 private:
-    InlineLayoutSize m_logicalSize;
+    InlineRect m_logicalRect;
     Optional<InlineLayoutUnit> m_horizontalAlignmentOffset;
     bool m_isConsideredEmpty { true };
 
