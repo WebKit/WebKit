@@ -140,7 +140,7 @@ static bool urlRequiresMacintoshPlatform(const URL& url)
     // Microsoft Outlook Web App forces users with WebKitGTK's standard user
     // agent to use the light version. Earlier versions even block users from
     // accessing the calendar.
-    if (domain == "outlook.live.com"
+    if (domain == "outlook.office.com"
         || domain == "mail.ntu.edu.tw"
         || domain == "exchange.tu-berlin.de")
         return true;
