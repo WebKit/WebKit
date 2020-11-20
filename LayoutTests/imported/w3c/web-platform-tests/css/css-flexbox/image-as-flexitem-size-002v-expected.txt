@@ -8,9 +8,7 @@
 PASS .flexbox > img 1
 PASS .flexbox > img 2
 PASS .flexbox > img 3
-FAIL .flexbox > img 4 assert_equals:
-<img src="support/solidblue.png" style="flex: 0 0 30px" data-expected-width="30" data-expected-height="30">
-width expected 30 but got 16
+PASS .flexbox > img 4
 PASS .flexbox > img 5
 PASS .flexbox > img 6
 PASS .flexbox > img 7
