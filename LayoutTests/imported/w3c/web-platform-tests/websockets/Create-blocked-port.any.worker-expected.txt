@@ -60,6 +60,8 @@ FAIL WebSocket blocked port test 995 The operation is insecure.
 FAIL WebSocket blocked port test 2049 The operation is insecure.
 FAIL WebSocket blocked port test 3659 The operation is insecure.
 FAIL WebSocket blocked port test 4045 The operation is insecure.
+FAIL WebSocket blocked port test 5060 The operation is insecure.
+FAIL WebSocket blocked port test 5061 The operation is insecure.
 FAIL WebSocket blocked port test 6000 The operation is insecure.
 FAIL WebSocket blocked port test 6665 The operation is insecure.
 FAIL WebSocket blocked port test 6666 The operation is insecure.
