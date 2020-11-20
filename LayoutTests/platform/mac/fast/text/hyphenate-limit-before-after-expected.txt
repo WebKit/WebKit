@@ -32,8 +32,7 @@ layer at (0,0) size 800x600
           text run at (3,3) width 52: "There is"
           text run at (3,21) width 72: "remarkable"
           text run at (3,39) width 61: "evidence."
-      RenderText {#text} at (726,47) size 4x18
-        text run at (726,47) width 4: " "
+      RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (8,102) size 126x42 [border: (3px solid #000000)]
         RenderText {#text} at (3,3) size 107x36
           text run at (3,3) width 107: "There is remark" + hyphen string "-"

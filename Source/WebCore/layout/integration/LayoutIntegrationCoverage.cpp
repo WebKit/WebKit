@@ -45,7 +45,7 @@
 
 #define ALLOW_IMAGES 1
 #define ALLOW_ALL_REPLACED 1
-#define ALLOW_INLINE_BLOCK 0
+#define ALLOW_INLINE_BLOCK 1
 
 #ifndef NDEBUG
 #define SET_REASON_AND_RETURN_IF_NEEDED(reason, reasons, includeReasons) { \
