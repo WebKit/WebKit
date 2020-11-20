@@ -362,7 +362,7 @@ static const char* fragmentTemplateCommon =
         vec4 sampleColorAtRadius(float radius, vec2 texCoord)
         {
             vec2 coord = texCoord + radius * u_blurRadius;
-            return SamplerFunction(s_sampler, coord) * float(coord.x > 0. && coord.y > 0. && coord.x < 1. && coord.y < 1.);
+            return SamplerFunction(s_sampler, coord);
         }
 
         float sampleAlphaAtRadius(float radius, vec2 texCoord)

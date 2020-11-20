@@ -1,3 +1,24 @@
+2020-11-16  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [TextureMapper] The edges of blur backdrop-filter look gradient tranparent
+        https://bugs.webkit.org/show_bug.cgi?id=218645
+        <rdar://problem/71356999>
+
+        Reviewed by Carlos Garcia Campos.
+
+        The blur backdrop-filter needs a larger input image than an output
+        image. However, it's not easy to get a larger input image in the
+        edges of the windows. Cocoa port is doing extrapolation by
+        duplicating edges pixels of the input image which has the same
+        size with the output image (Bug 146215). Take the same approach.
+
+        * platform/graphics/texmap/TextureMapperLayer.cpp:
+        (WebCore::TextureMapperLayer::computeOverlapRegions): Don't
+        inflate the local bounding rect by the outsets for backdrop
+        layers.
+        * platform/graphics/texmap/TextureMapperShaderProgram.cpp:
+        (sampleColorAtRadius): Don't clamp 'coord'.
+
 2020-11-13  Miguel Gomez  <magomez@igalia.com>
 
         [GTK][WPE] CSS backdrop overlay corners are not rounded on results.webkit.org
