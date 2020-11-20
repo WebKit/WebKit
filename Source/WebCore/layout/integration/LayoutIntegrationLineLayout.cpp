@@ -449,7 +449,7 @@ bool LineLayout::hitTest(const HitTestRequest& request, HitTestResult& result, c
     auto& inlineContent = *m_inlineContent;
 
     // FIXME: This should do something efficient to find the run range.
-    for (auto& run : inlineContent.runs) {
+    for (auto& run : WTF::makeReversedRange(inlineContent.runs)) {
         auto runRect = Layout::toLayoutRect(run.rect());
         runRect.moveBy(accumulatedOffset);
 
