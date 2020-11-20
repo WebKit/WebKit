@@ -28,32 +28,34 @@
 #if ENABLE(WEB_RTC)
 
 #include "JSDOMPromiseDeferred.h"
-#include "RTCRtpTransform.h"
 
 namespace WebCore {
 
 class CryptoKey;
 class RTCRtpSFrameTransformer;
+class RTCRtpTransformBackend;
 
-class RTCRtpSFrameTransform final : public RTCRtpTransform {
+class RTCRtpSFrameTransform : public RefCounted<RTCRtpSFrameTransform> {
 public:
     static Ref<RTCRtpSFrameTransform> create() { return adoptRef(*new RTCRtpSFrameTransform); }
     ~RTCRtpSFrameTransform();
 
     void setEncryptionKey(CryptoKey&, Optional<uint64_t>, DOMPromiseDeferred<void>&&);
 
+    bool isAttached() const { return m_isAttached; }
+    void initializeBackendForReceiver(RTCRtpTransformBackend&);
+    void initializeBackendForSender(RTCRtpTransformBackend&);
+    void willClearBackend(RTCRtpTransformBackend&);
+
     WEBCORE_EXPORT uint64_t counterForTesting() const;
 
 private:
     RTCRtpSFrameTransform();
 
-    void initializeBackendForReceiver(RTCRtpTransformBackend&) final;
-    void initializeBackendForSender(RTCRtpTransformBackend&) final;
-    void willClearBackend(RTCRtpTransformBackend&) final;
-
     enum class Side { Sender, Receiver };
     void initializeTransformer(RTCRtpTransformBackend&, Side);
 
+    bool m_isAttached { false };
     Ref<RTCRtpSFrameTransformer> m_transformer;
 };
 

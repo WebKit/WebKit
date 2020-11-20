@@ -205,6 +205,8 @@ $(PROJECT_DIR)/Modules/mediastream/RTCDataChannel.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCDataChannelEvent.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCDegradationPreference.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCDtxStatus.idl
+$(PROJECT_DIR)/Modules/mediastream/RTCEncodedAudioFrame.idl
+$(PROJECT_DIR)/Modules/mediastream/RTCEncodedVideoFrame.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCIceCandidate.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCIceCandidateInit.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCIceCandidateType.idl
@@ -238,6 +240,10 @@ $(PROJECT_DIR)/Modules/mediastream/RTCRtpReceiver+Transform.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCRtpReceiver.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCRtpRtxParameters.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCRtpSFrameTransform.idl
+$(PROJECT_DIR)/Modules/mediastream/RTCRtpScriptTransform.idl
+$(PROJECT_DIR)/Modules/mediastream/RTCRtpScriptTransformProvider.idl
+$(PROJECT_DIR)/Modules/mediastream/RTCRtpScriptTransformer.idl
+$(PROJECT_DIR)/Modules/mediastream/RTCRtpScriptTransformerConstructor.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCRtpSendParameters.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCRtpSender+Transform.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCRtpSender.idl
@@ -340,6 +346,7 @@ $(PROJECT_DIR)/Modules/streams/WritableStreamDefaultController.js
 $(PROJECT_DIR)/Modules/streams/WritableStreamDefaultWriter.idl
 $(PROJECT_DIR)/Modules/streams/WritableStreamDefaultWriter.js
 $(PROJECT_DIR)/Modules/streams/WritableStreamInternals.js
+$(PROJECT_DIR)/Modules/streams/WritableStreamSink.idl
 $(PROJECT_DIR)/Modules/webaudio/AnalyserNode.idl
 $(PROJECT_DIR)/Modules/webaudio/AnalyserOptions.idl
 $(PROJECT_DIR)/Modules/webaudio/AudioBuffer.idl

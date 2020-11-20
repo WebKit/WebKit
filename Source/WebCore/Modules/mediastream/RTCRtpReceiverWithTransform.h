@@ -36,8 +36,8 @@ class RTCRtpTransform;
 
 class RTCRtpReceiverWithTransform {
 public:
-    static RTCRtpTransform* transform(RTCRtpReceiver& receiver) { return receiver.transform(); }
-    static ExceptionOr<void> setTransform(RTCRtpReceiver& receiver, RefPtr<RTCRtpTransform>&& transform) { return receiver.setTransform(WTFMove(transform)); }
+    static Optional<RTCRtpTransform::Internal> transform(RTCRtpReceiver& receiver) { return receiver.transform(); }
+    static ExceptionOr<void> setTransform(RTCRtpReceiver& receiver, Optional<RTCRtpTransform::Internal>&& transform) { return receiver.setTransform(RTCRtpTransform::from(WTFMove(transform))); }
 };
 
 } // namespace WebCore

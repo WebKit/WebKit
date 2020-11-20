@@ -1,3 +1,25 @@
+2020-11-20  Youenn Fablet  <youenn@apple.com>
+
+        Add support for RTCRtpScriptTransform
+        https://bugs.webkit.org/show_bug.cgi?id=219148
+
+        Reviewed by Eric Carlson.
+
+        * http/wpt/webrtc/routines.js: Added.
+        (createConnections):
+        * http/wpt/webrtc/script-transform.js: Added.
+        (MockRTCRtpTransformer):
+        (MockRTCRtpTransformer.prototype.start):
+        (MockRTCRtpTransformer.prototype.process):
+        * http/wpt/webrtc/sframe-transform-expected.txt: Added.
+        * http/wpt/webrtc/sframe-transform.html: Added.
+        * http/wpt/webrtc/webrtc-transform-expected.txt: Renamed from LayoutTests/webrtc/webrtc-transform-expected.txt.
+        * http/wpt/webrtc/webrtc-transform.html: Renamed from LayoutTests/webrtc/webrtc-transform.html.
+        * platform/glib/TestExpectations:
+        * webrtc/script-transform.js: Added.
+        (MockRTCRtpTransformer):
+        (MockRTCRtpTransformer.prototype.start):
+
 2020-11-20  Philippe Normand  <pnormand@igalia.com>
 
         [MSE] Infinite loop in sample eviction when duration is NaN

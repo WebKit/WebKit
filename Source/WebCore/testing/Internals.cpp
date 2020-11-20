@@ -138,7 +138,6 @@
 #include "MockLibWebRTCPeerConnection.h"
 #include "MockPageOverlay.h"
 #include "MockPageOverlayClient.h"
-#include "MockRTCRtpTransform.h"
 #include "NavigatorBeacon.h"
 #include "NavigatorMediaDevices.h"
 #include "NetworkLoadInformation.h"
@@ -1575,11 +1574,6 @@ void Internals::setWebRTCVP9VTBSupport(bool value)
         page->libWebRTCProvider().clearFactory();
     }
 #endif
-}
-
-Ref<MockRTCRtpTransform> Internals::createMockRTCRtpTransform()
-{
-    return MockRTCRtpTransform::create();
 }
 
 uint64_t Internals::sframeCounter(const RTCRtpSFrameTransform& transform)

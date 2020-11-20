@@ -110,24 +110,38 @@ void WorkerMessagingProxy::postMessageToWorkerObject(MessageWithMessagePorts&& m
     });
 }
 
+void WorkerMessagingProxy::postTaskToWorkerObject(Function<void(Worker&)>&& function)
+{
+    m_scriptExecutionContext->postTask([this, function = WTFMove(function)](auto&) mutable {
+        auto* workerObject = this->workerObject();
+        if (!workerObject || askedToTerminate())
+            return;
+        function(*workerObject);
+    });
+}
+
 void WorkerMessagingProxy::postMessageToWorkerGlobalScope(MessageWithMessagePorts&& message)
 {
-    if (m_askedToTerminate)
-        return;
-
-    ScriptExecutionContext::Task task([message = WTFMove(message)] (ScriptExecutionContext& scriptContext) mutable {
+    postTaskToWorkerGlobalScope([message = WTFMove(message)](auto& scriptContext) mutable {
         ASSERT_WITH_SECURITY_IMPLICATION(scriptContext.isWorkerGlobalScope());
         auto& context = static_cast<DedicatedWorkerGlobalScope&>(scriptContext);
         auto ports = MessagePort::entanglePorts(scriptContext, WTFMove(message.transferredPorts));
         context.dispatchEvent(MessageEvent::create(WTFMove(ports), message.message.releaseNonNull()));
         context.thread().workerObjectProxy().confirmMessageFromWorkerObject(context.hasPendingActivity());
     });
+}
 
-    if (m_workerThread) {
-        ++m_unconfirmedMessageCount;
-        m_workerThread->runLoop().postTask(WTFMove(task));
-    } else
+void WorkerMessagingProxy::postTaskToWorkerGlobalScope(Function<void(ScriptExecutionContext&)>&& task)
+{
+    if (m_askedToTerminate)
+        return;
+
+    if (!m_workerThread) {
         m_queuedEarlyTasks.append(makeUnique<ScriptExecutionContext::Task>(WTFMove(task)));
+        return;
+    }
+    ++m_unconfirmedMessageCount;
+    m_workerThread->runLoop().postTask(WTFMove(task));
 }
 
 void WorkerMessagingProxy::suspendForBackForwardCache()

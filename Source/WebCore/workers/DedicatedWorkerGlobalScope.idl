@@ -48,3 +48,5 @@
 };
 
 [Conditional=OFFSCREEN_CANVAS, EnabledAtRuntime=OffscreenCanvas] DedicatedWorkerGlobalScope includes AnimationFrameProvider;
+// FIXME: Enable this based on WebRTCInsertableStreams setting.
+[Conditional=WEB_RTC] DedicatedWorkerGlobalScope includes RTCRtpScriptTransformProvider;

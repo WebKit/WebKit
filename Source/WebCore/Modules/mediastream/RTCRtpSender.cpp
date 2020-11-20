@@ -193,8 +193,10 @@ Optional<RTCRtpTransceiverDirection> RTCRtpSender::currentTransceiverDirection()
     return senderTransceiver->currentDirection();
 }
 
-ExceptionOr<void> RTCRtpSender::setTransform(RefPtr<RTCRtpTransform>&& transform)
+ExceptionOr<void> RTCRtpSender::setTransform(Optional<RTCRtpTransform>&& transform)
 {
+    if (transform && m_transform && *transform == *m_transform)
+        return { };
     if (transform && transform->isAttached())
         return Exception { InvalidStateError, "transform is already in use"_s };
 
@@ -205,6 +207,13 @@ ExceptionOr<void> RTCRtpSender::setTransform(RefPtr<RTCRtpTransform>&& transform
         m_transform->attachToSender(*this);
 
     return { };
+}
+
+Optional<RTCRtpTransform::Internal> RTCRtpSender::transform()
+{
+    if (!m_transform)
+        return { };
+    return m_transform->internalTransform();
 }
 
 } // namespace WebCore

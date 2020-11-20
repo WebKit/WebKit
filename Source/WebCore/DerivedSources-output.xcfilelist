@@ -1649,6 +1649,10 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCDegradationPreference.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCDegradationPreference.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCDtxStatus.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCDtxStatus.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCEncodedAudioFrame.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCEncodedAudioFrame.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCEncodedVideoFrame.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCEncodedVideoFrame.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCIceCandidate.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCIceCandidate.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCIceCandidateInit.cpp
@@ -1711,6 +1715,14 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCRtpRtxParameters.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCRtpRtxParameters.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCRtpSFrameTransform.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCRtpSFrameTransform.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCRtpScriptTransform.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCRtpScriptTransform.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCRtpScriptTransformProvider.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCRtpScriptTransformProvider.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCRtpScriptTransformer.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCRtpScriptTransformer.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCRtpScriptTransformerConstructor.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCRtpScriptTransformerConstructor.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCRtpSendParameters.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCRtpSendParameters.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCRtpSender+Transform.cpp
@@ -2573,6 +2585,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWritableStreamDefaultController.c
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWritableStreamDefaultController.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWritableStreamDefaultWriter.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWritableStreamDefaultWriter.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWritableStreamSink.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWritableStreamSink.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSXMLDocument.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSXMLDocument.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSXMLHttpRequest.cpp

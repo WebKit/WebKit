@@ -89,6 +89,22 @@ void ReadableStreamDefaultController::error(const Exception& exception)
     invokeReadableStreamDefaultControllerFunction(globalObject(), privateName, arguments);
 }
 
+bool ReadableStreamDefaultController::enqueue(JSC::JSValue value)
+{
+    JSC::JSGlobalObject& lexicalGlobalObject = this->globalObject();
+    auto& vm = lexicalGlobalObject.vm();
+    JSC::JSLockHolder lock(vm);
+
+    JSC::MarkedArgumentBuffer arguments;
+    arguments.append(&jsController());
+    arguments.append(value);
+
+    auto* clientData = static_cast<JSVMClientData*>(lexicalGlobalObject.vm().clientData);
+    auto& privateName = clientData->builtinFunctions().readableStreamInternalsBuiltins().readableStreamDefaultControllerEnqueuePrivateName();
+
+    return invokeReadableStreamDefaultControllerFunction(globalObject(), privateName, arguments);
+}
+
 bool ReadableStreamDefaultController::enqueue(RefPtr<JSC::ArrayBuffer>&& buffer)
 {
     if (!buffer) {
@@ -109,14 +125,7 @@ bool ReadableStreamDefaultController::enqueue(RefPtr<JSC::ArrayBuffer>&& buffer)
         return false;
     }
 
-    JSC::MarkedArgumentBuffer arguments;
-    arguments.append(&jsController());
-    arguments.append(value);
-
-    auto* clientData = static_cast<JSVMClientData*>(lexicalGlobalObject.vm().clientData);
-    auto& privateName = clientData->builtinFunctions().readableStreamInternalsBuiltins().readableStreamDefaultControllerEnqueuePrivateName();
-
-    return invokeReadableStreamDefaultControllerFunction(globalObject(), privateName, arguments);
+    return enqueue(value);
 }
 
 } // namespace WebCore

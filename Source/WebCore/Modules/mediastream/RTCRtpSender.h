@@ -82,8 +82,8 @@ public:
     RTCDTMFSender* dtmf();
     Optional<RTCRtpTransceiverDirection> currentTransceiverDirection() const;
 
-    RTCRtpTransform* transform() { return m_transform.get(); }
-    ExceptionOr<void> setTransform(RefPtr<RTCRtpTransform>&&);
+    Optional<RTCRtpTransform::Internal> transform();
+    ExceptionOr<void> setTransform(Optional<RTCRtpTransform>&&);
 
 private:
     RTCRtpSender(RTCPeerConnection&, String&& trackKind, Vector<String>&& mediaStreamIds, std::unique_ptr<RTCRtpSenderBackend>&&);
@@ -95,7 +95,7 @@ private:
     std::unique_ptr<RTCRtpSenderBackend> m_backend;
     WeakPtr<RTCPeerConnection> m_connection;
     RefPtr<RTCDTMFSender> m_dtmfSender;
-    RefPtr<RTCRtpTransform> m_transform;
+    Optional<RTCRtpTransform> m_transform;
 };
 
 } // namespace WebCore

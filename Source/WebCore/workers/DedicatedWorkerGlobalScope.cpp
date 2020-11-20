@@ -35,7 +35,10 @@
 #include "ContentSecurityPolicyResponseHeaders.h"
 #include "DOMWindow.h"
 #include "DedicatedWorkerThread.h"
+#include "JSRTCRtpScriptTransformer.h"
+#include "JSRTCRtpScriptTransformerConstructor.h"
 #include "MessageEvent.h"
+#include "RTCRtpScriptTransformer.h"
 #include "RequestAnimationFrameCallback.h"
 #include "SecurityOrigin.h"
 #if ENABLE(OFFSCREEN_CANVAS)
@@ -110,6 +113,74 @@ void DedicatedWorkerGlobalScope::cancelAnimationFrame(CallbackId callbackId)
     if (m_workerAnimationController)
         m_workerAnimationController->cancelAnimationFrame(callbackId);
 }
+#endif
+
+#if ENABLE(WEB_RTC)
+ExceptionOr<void> DedicatedWorkerGlobalScope::registerRTCRtpScriptTransformer(String&& name, Ref<JSRTCRtpScriptTransformerConstructor>&& transformerConstructor)
+{
+    ASSERT(!isMainThread());
+
+    if (name.isEmpty())
+        return Exception { NotSupportedError, "Name cannot be the empty string"_s };
+
+    if (m_rtcRtpTransformerConstructorMap.contains(name))
+        return Exception { NotSupportedError, "A transformer was already registered with this name"_s };
+
+    JSC::JSObject* jsConstructor = transformerConstructor->callbackData()->callback();
+    auto* globalObject = jsConstructor->globalObject();
+    auto& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (!jsConstructor->isConstructor(vm))
+        return Exception { TypeError, "Class definitition passed to registerRTCRtpScriptTransformer() is not a constructor"_s };
+
+    auto prototype = jsConstructor->getPrototype(vm, globalObject);
+    RETURN_IF_EXCEPTION(scope, Exception { ExistingExceptionError });
+
+    if (!prototype.isObject())
+        return Exception { TypeError, "Class definitition passed to registerRTCRtpScriptTransformer() has invalid prototype"_s };
+
+    m_rtcRtpTransformerConstructorMap.add(name, WTFMove(transformerConstructor));
+
+    thread().workerObjectProxy().postTaskToWorkerObject([name = name.isolatedCopy()](auto& worker) mutable {
+        worker.addRTCRtpScriptTransformer(WTFMove(name));
+    });
+
+    return { };
+}
+
+RefPtr<RTCRtpScriptTransformer> DedicatedWorkerGlobalScope::createRTCRtpScriptTransformer(String&& name, TransferredMessagePort port)
+{
+    auto constructor = m_rtcRtpTransformerConstructorMap.get(name);
+    ASSERT(constructor);
+    if (!constructor)
+        return nullptr;
+
+    auto* jsConstructor = constructor->callbackData()->callback();
+    auto* globalObject = constructor->callbackData()->globalObject();
+    auto& vm = globalObject->vm();
+    auto scope = DECLARE_CATCH_SCOPE(vm);
+    JSC::JSLockHolder lock { globalObject };
+
+    m_pendingRTCTransfomerMessagePort = MessagePort::entangle(*this, WTFMove(port));
+
+    JSC::MarkedArgumentBuffer args;
+    auto* object = JSC::construct(globalObject, jsConstructor, args, "Failed to construct RTCRtpScriptTransformer");
+    ASSERT(!!scope.exception() == !object);
+
+    if (scope.exception()) {
+        scope.clearException();
+        return nullptr;
+    }
+    RETURN_IF_EXCEPTION(scope, nullptr);
+
+    auto& jsTransformer = *JSC::jsCast<JSRTCRtpScriptTransformer*>(object);
+    auto& transformer = jsTransformer.wrapped();
+    transformer.setCallback(makeUnique<JSCallbackDataStrong>(&jsTransformer, globalObject));
+
+    return &transformer;
+}
+
 #endif
 
 } // namespace WebCore

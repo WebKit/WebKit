@@ -32,14 +32,19 @@
 
 #include "MessageWithMessagePorts.h"
 #include "WorkerReportingProxy.h"
+
 #include <memory>
+#include <wtf/Function.h>
 
 namespace WebCore {
+
+class Worker;
 
 // A proxy to talk to the worker object.
 class WorkerObjectProxy : public WorkerReportingProxy {
 public:
     virtual void postMessageToWorkerObject(MessageWithMessagePorts&&) = 0;
+    virtual void postTaskToWorkerObject(Function<void(Worker&)>&&) { };
 
     virtual void confirmMessageFromWorkerObject(bool hasPendingActivity) = 0;
     virtual void reportPendingActivity(bool hasPendingActivity) = 0;

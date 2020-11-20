@@ -1,0 +1,33 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <script src="/resources/testharness.js"></script>
+        <script src="/resources/testharnessreport.js"></script>
+    </head>
+    <body>
+        <script>
+
+promise_test(async (test) => {
+    const pc = new RTCPeerConnection();
+    const senderTransform = new RTCRtpSFrameTransform();
+    const receiverTransform = new RTCRtpSFrameTransform();
+    const sender1 = pc.addTransceiver('audio').sender;
+    const sender2 = pc.addTransceiver('video').sender;
+    const receiver1 = pc.getReceivers()[0];
+    const receiver2 = pc.getReceivers()[1];
+
+    sender1.transform = senderTransform;
+    receiver1.transform = receiverTransform;
+    assert_throws_dom("InvalidStateError", () => sender2.transform = senderTransform);
+    assert_throws_dom("InvalidStateError", () => receiver2.transform = receiverTransform);
+
+    sender1.transform = senderTransform;
+    receiver1.transform = receiverTransform;
+
+    sender1.transform = null;
+    receiver1.transform = null;
+}, "Cannot reuse attached transforms");
+        </script>
+    </body>
+</html>

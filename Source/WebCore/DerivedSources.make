@@ -231,6 +231,8 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/mediastream/RTCDataChannelEvent.idl \
     $(WebCore)/Modules/mediastream/RTCDegradationPreference.idl \
     $(WebCore)/Modules/mediastream/RTCDtxStatus.idl \
+    $(WebCore)/Modules/mediastream/RTCEncodedAudioFrame.idl \
+    $(WebCore)/Modules/mediastream/RTCEncodedVideoFrame.idl \
     $(WebCore)/Modules/mediastream/RTCIceCandidate.idl \
     $(WebCore)/Modules/mediastream/RTCIceCandidateInit.idl \
     $(WebCore)/Modules/mediastream/RTCIceCandidateType.idl \
@@ -265,10 +267,13 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/mediastream/RTCRtpSender.idl \
     $(WebCore)/Modules/mediastream/RTCRtpSender+Transform.idl \
     $(WebCore)/Modules/mediastream/RTCRtpSFrameTransform.idl \
+    $(WebCore)/Modules/mediastream/RTCRtpScriptTransform.idl \
+    $(WebCore)/Modules/mediastream/RTCRtpScriptTransformProvider.idl \
+    $(WebCore)/Modules/mediastream/RTCRtpScriptTransformer.idl \
+    $(WebCore)/Modules/mediastream/RTCRtpScriptTransformerConstructor.idl \
     $(WebCore)/Modules/mediastream/RTCRtpSynchronizationSource.idl \
     $(WebCore)/Modules/mediastream/RTCRtpTransceiver.idl \
     $(WebCore)/Modules/mediastream/RTCRtpTransceiverDirection.idl \
-    $(WebCore)/Modules/mediastream/RTCRtpTransform.idl \
     $(WebCore)/Modules/mediastream/RTCSdpType.idl \
     $(WebCore)/Modules/mediastream/RTCSessionDescription.idl \
     $(WebCore)/Modules/mediastream/RTCSessionDescriptionInit.idl \
@@ -344,6 +349,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/streams/WritableStream.idl \
     $(WebCore)/Modules/streams/WritableStreamDefaultController.idl \
     $(WebCore)/Modules/streams/WritableStreamDefaultWriter.idl \
+    $(WebCore)/Modules/streams/WritableStreamSink.idl \
     $(WebCore)/Modules/webaudio/AnalyserNode.idl \
     $(WebCore)/Modules/webaudio/AnalyserOptions.idl \
     $(WebCore)/Modules/webaudio/AudioBuffer.idl \
@@ -1232,7 +1238,6 @@ JS_BINDING_IDLS := \
     $(WebCore)/testing/MockPaymentContactFields.idl \
     $(WebCore)/testing/MockPaymentCoordinator.idl \
     $(WebCore)/testing/MockPaymentError.idl \
-    $(WebCore)/testing/MockRTCRtpTransform.idl \
     $(WebCore)/testing/MockWebAuthenticationConfiguration.idl \
     $(WebCore)/testing/ServiceWorkerInternals.idl \
     $(WebCore)/testing/TypeConversions.idl \

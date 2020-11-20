@@ -27,18 +27,22 @@
 
 #if ENABLE(WEB_RTC)
 
+#include "RTCRtpSFrameTransform.h"
+#include "RTCRtpScriptTransform.h"
 #include "RTCRtpTransformBackend.h"
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
 class RTCRtpReceiver;
 class RTCRtpSender;
 
-class WEBCORE_EXPORT RTCRtpTransform : public RefCounted<RTCRtpTransform> {
+class RTCRtpTransform  {
 public:
-    virtual ~RTCRtpTransform();
+    using Internal = Variant<RefPtr<RTCRtpSFrameTransform>, RefPtr<RTCRtpScriptTransform>>;
+    static Optional<RTCRtpTransform> from(Optional<Internal>&&);
+
+    explicit RTCRtpTransform(Internal&&);
+    ~RTCRtpTransform();
 
     bool isAttached() const;
     void attachToReceiver(RTCRtpReceiver&);
@@ -46,30 +50,21 @@ public:
     void detachFromReceiver(RTCRtpReceiver&);
     void detachFromSender(RTCRtpSender&);
 
-private:
-    virtual void initializeBackendForSender(RTCRtpTransformBackend&);
-    virtual void initializeBackendForReceiver(RTCRtpTransformBackend&);
-    virtual void willClearBackend(RTCRtpTransformBackend&);
+    Internal internalTransform() { return m_transform; }
 
-protected:
+    friend bool operator==(const RTCRtpTransform&, const RTCRtpTransform&);
+
+private:
+    void clearBackend();
+
     RefPtr<RTCRtpTransformBackend> m_backend;
+    Internal m_transform;
 };
 
-inline bool RTCRtpTransform::isAttached() const
+bool operator==(const RTCRtpTransform&, const RTCRtpTransform&);
+inline bool operator!=(const RTCRtpTransform& a, const RTCRtpTransform& b)
 {
-    return !!m_backend;
-}
-
-inline void RTCRtpTransform::initializeBackendForSender(RTCRtpTransformBackend&)
-{
-}
-
-inline void RTCRtpTransform::initializeBackendForReceiver(RTCRtpTransformBackend&)
-{
-}
-
-inline void RTCRtpTransform::willClearBackend(RTCRtpTransformBackend&)
-{
+    return !(a == b);
 }
 
 } // namespace WebCore

@@ -29,6 +29,7 @@
 namespace WebCore {
 
 class RTCRtpTransformableFrame {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~RTCRtpTransformableFrame() = default;
 

@@ -31,6 +31,7 @@
 #include "CryptoKeyRaw.h"
 #include "Logging.h"
 #include "RTCRtpSFrameTransformer.h"
+#include "RTCRtpTransformBackend.h"
 #include "RTCRtpTransformableFrame.h"
 
 namespace WebCore {
@@ -68,11 +69,12 @@ uint64_t RTCRtpSFrameTransform::counterForTesting() const
 
 void RTCRtpSFrameTransform::initializeTransformer(RTCRtpTransformBackend& backend, Side side)
 {
+    m_isAttached = true;
     m_transformer->setIsSending(side == Side::Sender);
     m_transformer->setIsProcessingAudio(backend.mediaType() == RTCRtpTransformBackend::MediaType::Audio);
 
     backend.setTransformableFrameCallback([transformer = m_transformer, backend = makeRef(backend)](auto&& frame) {
-        auto chunk = frame.data();
+        auto chunk = frame->data();
         auto result = transformer->transform(chunk.data, chunk.size);
 
         if (result.hasException()) {
@@ -80,9 +82,9 @@ void RTCRtpSFrameTransform::initializeTransformer(RTCRtpTransformBackend& backen
             return;
         }
 
-        frame.setData({ result.returnValue().data(), result.returnValue().size() });
+        frame->setData({ result.returnValue().data(), result.returnValue().size() });
 
-        backend->processTransformedFrame(WTFMove(frame));
+        backend->processTransformedFrame(WTFMove(frame.get()));
     });
 }
 
@@ -100,6 +102,7 @@ void RTCRtpSFrameTransform::initializeBackendForSender(RTCRtpTransformBackend& b
 void RTCRtpSFrameTransform::willClearBackend(RTCRtpTransformBackend& backend)
 {
     backend.clearTransformableFrameCallback();
+    m_isAttached = false;
 }
 
 } // namespace WebCore

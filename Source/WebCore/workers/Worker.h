@@ -45,6 +45,8 @@ class JSValue;
 
 namespace WebCore {
 
+class RTCRtpScriptTransform;
+class RTCRtpScriptTransformer;
 class ScriptExecutionContext;
 class WorkerGlobalScopeProxy;
 class WorkerScriptLoader;
@@ -69,6 +71,13 @@ public:
     ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
 
     void dispatchEvent(Event&) final;
+
+#if ENABLE(WEB_RTC)
+    void addRTCRtpScriptTransformer(String&&);
+    bool hasRTCRtpScriptTransformer(const String& name) { return m_transformers.contains(name); }
+    void createRTCRtpScriptTransformer(const String&, TransferredMessagePort, RTCRtpScriptTransform&);
+    void postTaskToWorkerGlobalScope(Function<void(ScriptExecutionContext&)>&&);
+#endif
 
 private:
     explicit Worker(ScriptExecutionContext&, JSC::RuntimeFlags, const Options&);
@@ -100,6 +109,9 @@ private:
     JSC::RuntimeFlags m_runtimeFlags;
     Deque<RefPtr<Event>> m_pendingEvents;
     bool m_wasTerminated { false };
+#if ENABLE(WEB_RTC)
+    HashSet<String> m_transformers;
+#endif
 };
 
 } // namespace WebCore

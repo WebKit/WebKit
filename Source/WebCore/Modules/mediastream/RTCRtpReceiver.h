@@ -67,8 +67,8 @@ public:
     RTCRtpReceiverBackend* backend() { return m_backend.get(); }
     void getStats(Ref<DeferredPromise>&&);
 
-    RTCRtpTransform* transform() { return m_transform.get(); }
-    ExceptionOr<void> setTransform(RefPtr<RTCRtpTransform>&&);
+    Optional<RTCRtpTransform::Internal> transform();
+    ExceptionOr<void> setTransform(Optional<RTCRtpTransform>&&);
 
 private:
     RTCRtpReceiver(PeerConnectionBackend&, Ref<MediaStreamTrack>&&, std::unique_ptr<RTCRtpReceiverBackend>&&);
@@ -76,7 +76,7 @@ private:
     Ref<MediaStreamTrack> m_track;
     std::unique_ptr<RTCRtpReceiverBackend> m_backend;
     WeakPtr<PeerConnectionBackend> m_connection;
-    RefPtr<RTCRtpTransform> m_transform;
+    Optional<RTCRtpTransform> m_transform;
 };
 
 } // namespace WebCore

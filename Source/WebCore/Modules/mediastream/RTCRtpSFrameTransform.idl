@@ -28,8 +28,9 @@
     EnabledBySetting=WebRTCInsertableStreams,
     ExportMacro=WEBCORE_EXPORT,
     Exposed=Window,
+    ImplementationLacksVTable,
     JSGenerateToNativeObject,
-] interface RTCRtpSFrameTransform : RTCRtpTransform {
+] interface RTCRtpSFrameTransform {
     constructor();
 
     Promise<undefined> setEncryptionKey(CryptoKey key, optional unsigned long long keyID);

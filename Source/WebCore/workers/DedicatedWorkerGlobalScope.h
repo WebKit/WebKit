@@ -31,6 +31,7 @@
 
 #pragma once
 
+#include "MessagePort.h"
 #include "PostMessageOptions.h"
 #include "WorkerGlobalScope.h"
 
@@ -44,7 +45,8 @@ namespace WebCore {
 
 class ContentSecurityPolicyResponseHeaders;
 class DedicatedWorkerThread;
-class MessagePort;
+class JSRTCRtpScriptTransformerConstructor;
+class RTCRtpScriptTransformer;
 class RequestAnimationFrameCallback;
 class SerializedScriptValue;
 
@@ -53,6 +55,8 @@ class WorkerAnimationController;
 
 using CallbackId = int;
 #endif
+
+using TransferredMessagePort = std::pair<WebCore::MessagePortIdentifier, WebCore::MessagePortIdentifier>;
 
 class DedicatedWorkerGlobalScope final : public WorkerGlobalScope {
     WTF_MAKE_ISO_ALLOCATED(DedicatedWorkerGlobalScope);
@@ -71,6 +75,12 @@ public:
     void cancelAnimationFrame(CallbackId);
 #endif
 
+#if ENABLE(WEB_RTC)
+    RefPtr<RTCRtpScriptTransformer> createRTCRtpScriptTransformer(String&&, TransferredMessagePort);
+    ExceptionOr<void> registerRTCRtpScriptTransformer(String&&, Ref<JSRTCRtpScriptTransformerConstructor>&&);
+    RefPtr<MessagePort> takePendingRTCTransfomerMessagePort() { return WTFMove(m_pendingRTCTransfomerMessagePort); }
+#endif
+
 private:
     using Base = WorkerGlobalScope;
 
@@ -84,6 +94,10 @@ private:
 
 #if ENABLE(OFFSCREEN_CANVAS)
     RefPtr<WorkerAnimationController> m_workerAnimationController;
+#endif
+#if ENABLE(WEB_RTC)
+    HashMap<String, RefPtr<JSRTCRtpScriptTransformerConstructor>> m_rtcRtpTransformerConstructorMap;
+    RefPtr<MessagePort> m_pendingRTCTransfomerMessagePort;
 #endif
 };
 

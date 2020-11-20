@@ -81,8 +81,10 @@ Optional<RTCRtpCapabilities> RTCRtpReceiver::getCapabilities(ScriptExecutionCont
     return PeerConnectionBackend::receiverCapabilities(context, kind);
 }
 
-ExceptionOr<void> RTCRtpReceiver::setTransform(RefPtr<RTCRtpTransform>&& transform)
+ExceptionOr<void> RTCRtpReceiver::setTransform(Optional<RTCRtpTransform>&& transform)
 {
+    if (transform && m_transform && *transform == *m_transform)
+        return { };
     if (transform && transform->isAttached())
         return Exception { InvalidStateError, "transform is already in use"_s };
 
@@ -93,6 +95,13 @@ ExceptionOr<void> RTCRtpReceiver::setTransform(RefPtr<RTCRtpTransform>&& transfo
         m_transform->attachToReceiver(*this);
 
     return { };
+}
+
+Optional<RTCRtpTransform::Internal> RTCRtpReceiver::transform()
+{
+    if (!m_transform)
+        return { };
+    return m_transform->internalTransform();
 }
 
 } // namespace WebCore

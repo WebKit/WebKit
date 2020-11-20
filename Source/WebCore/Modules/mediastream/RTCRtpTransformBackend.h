@@ -36,7 +36,7 @@ class RTCRtpTransformBackend : public ThreadSafeRefCounted<RTCRtpTransformBacken
 public:
     virtual ~RTCRtpTransformBackend() = default;
 
-    using Callback = Function<void(RTCRtpTransformableFrame&&)>;
+    using Callback = Function<void(UniqueRef<RTCRtpTransformableFrame>&&)>;
     virtual void setTransformableFrameCallback(Callback&&) = 0;
     virtual void clearTransformableFrameCallback() = 0;
     virtual void processTransformedFrame(RTCRtpTransformableFrame&&) = 0;
