@@ -1,3 +1,9 @@
+2020-11-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.30.3 release
+
+        * Source/cmake/OptionsGTK.cmake: Bump version numbers.
+
 2020-11-09  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         Enable llint asm on aarch64 when USE(64KB_PAGE_BLOCK) is enabled

@@ -1,4 +1,18 @@
 ================
+WebKitGTK 2.30.3
+================
+
+What's new in WebKitGTK 2.30.3?
+
+  - Add new build option USE(64KB_PAGE_BLOCK).
+  - Fix backdrop filters with rounded borders.
+  - Fix scrolling iframes when async scrolling is enabled.
+  - Allow applications to handle drag and drop on the web view again.
+  - Update Outlook user agent quirk.
+  - Fix the build with video support disabled.
+  - Fix several crashes and rendering issues.
+
+================
 WebKitGTK 2.30.2
 ================
 
