@@ -80,6 +80,7 @@ void BitmapTextureGL::didReset()
 
     m_shouldClear = true;
     m_colorConvertFlags = TextureMapperGL::NoFlag;
+    m_filterInfo = FilterInfo();
     if (m_textureSize == contentSize())
         return;
 

@@ -1,3 +1,15 @@
+2020-11-13  Miguel Gomez  <magomez@igalia.com>
+
+        [GTK][WPE] FilterInfo must cleared when reusing BitmapTextureGL
+        https://bugs.webkit.org/show_bug.cgi?id=218854
+
+        Reviewed by Carlos Garcia Campos.
+
+        Clear the FilterInfo attribute when reusing a BitmapTextureGL.
+
+        * platform/graphics/texmap/BitmapTextureGL.cpp:
+        (WebCore::BitmapTextureGL::didReset):
+
 2020-10-30  Miguel Gomez  <magomez@igalia.com>
 
         [GTK] Direct composited images may not be rendered after a window resize
