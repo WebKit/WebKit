@@ -68,6 +68,7 @@ static const char* vertexTemplateLT320Vars =
         varying vec2 v_texCoord;
         varying vec2 v_transformedTexCoord;
         varying float v_antialias;
+        varying vec4 v_nonProjectedPosition;
     );
 
 #if !USE(OPENGL_ES)
@@ -78,6 +79,7 @@ static const char* vertexTemplateGE320Vars =
         out vec2 v_texCoord;
         out vec2 v_transformedTexCoord;
         out float v_antialias;
+        out vec4 v_nonProjectedPosition;
     );
 #endif
 
@@ -133,7 +135,8 @@ static const char* vertexTemplateCommon =
             v_texCoord = position;
             vec4 clampedPosition = clamp(vec4(position, 0., 1.), 0., 1.);
             v_transformedTexCoord = (u_textureSpaceMatrix * clampedPosition).xy;
-            gl_Position = u_projectionMatrix * u_modelViewMatrix * vec4(position, 0., 1.);
+            v_nonProjectedPosition = u_modelViewMatrix * vec4(position, 0., 1.);
+            gl_Position = u_projectionMatrix * v_nonProjectedPosition;
         }
     );
 
@@ -168,6 +171,16 @@ static const char* vertexTemplateCommon =
         GLSL_DIRECTIVE(define SamplerExternalOESType sampler2D) \
     GLSL_DIRECTIVE(endif)
 
+// The max number of stacked rounded rectangle clips allowed is 10, which is also the
+// max number of transforms that we can get. We need 3 components for each rounded
+// rectangle so we need 30 components to receive the 10 rectangles.
+//
+// Keep this is sync with the values defined in ClipStack.h
+#define ROUNDED_RECT_CONSTANTS                       \
+    GLSL_DIRECTIVE(define ROUNDED_RECT_MAX_RECTS 10) \
+    GLSL_DIRECTIVE(define ROUNDED_RECT_ARRAY_SIZE 30) \
+    GLSL_DIRECTIVE(define ROUNDED_RECT_INVERSE_TRANSFORM_ARRAY_SIZE 10)
+
 // Common header for all versions. We define the matrices variables here to keep the precision
 // directives scope: the first one applies to the matrices variables and the next one to the
 // rest of them. The precision is only used in GLES.
@@ -175,6 +188,7 @@ static const char* fragmentTemplateHeaderCommon =
     RECT_TEXTURE_DIRECTIVE
     ANTIALIASING_TEX_COORD_DIRECTIVE
     BLUR_CONSTANTS
+    ROUNDED_RECT_CONSTANTS
     OES_EGL_IMAGE_EXTERNAL_DIRECTIVE
 #if USE(OPENGL_ES)
     TEXTURE_SPACE_MATRIX_PRECISION_DIRECTIVE
@@ -199,6 +213,7 @@ static const char* fragmentTemplateLT320Vars =
         varying float v_antialias;
         varying vec2 v_texCoord;
         varying vec2 v_transformedTexCoord;
+        varying vec4 v_nonProjectedPosition;
     );
 
 #if !USE(OPENGL_ES)
@@ -208,6 +223,7 @@ static const char* fragmentTemplateGE320Vars =
         in float v_antialias;
         in vec2 v_texCoord;
         in vec2 v_transformedTexCoord;
+        in vec4 v_nonProjectedPosition;
     );
 #endif
 
@@ -226,6 +242,9 @@ static const char* fragmentTemplateCommon =
         uniform vec2 u_shadowOffset;
         uniform vec4 u_color;
         uniform float u_gaussianKernel[GAUSSIAN_KERNEL_HALF_WIDTH];
+        uniform int u_roundedRectNumber;
+        uniform vec4 u_roundedRect[ROUNDED_RECT_ARRAY_SIZE];
+        uniform mat4 u_roundedRectInverseTransformMatrix[ROUNDED_RECT_INVERSE_TRANSFORM_ARRAY_SIZE];
 
         void noop(inout vec4 dummyParameter) { }
         void noop(inout vec4 dummyParameter, vec2 texCoord) { }
@@ -390,6 +409,70 @@ static const char* fragmentTemplateCommon =
 
         void applySolidColor(inout vec4 color) { color *= u_color; }
 
+        float ellipsisDist(vec2 p, vec2 radius)
+        {
+            if (radius == vec2(0, 0))
+                return 0.0;
+
+            vec2 p0 = p / radius;
+            vec2 p1 = 2.0 * p0 / radius;
+
+            return (dot(p0, p0) - 1.0) / length (p1);
+        }
+
+        float ellipsisCoverage(vec2 point, vec2 center, vec2 radius)
+        {
+            float d = ellipsisDist(point - center, radius);
+            return clamp(0.5 - d, 0.0, 1.0);
+        }
+
+        float roundedRectCoverage(vec2 p, int index)
+        {
+            vec4 bounds = vec4(u_roundedRect[index].xy, u_roundedRect[index].xy + u_roundedRect[index].zw);
+
+            if (p.x < bounds.x || p.y < bounds.y || p.x >= bounds.z || p.y >= bounds.w)
+                return 0.0;
+
+            vec2 topLeftRadii = u_roundedRect[index + 1].xy;
+            vec2 topRightRadii = u_roundedRect[index + 1].zw;
+            vec2 bottomLeftRadii = u_roundedRect[index + 2].xy;
+            vec2 bottomRightRadii = u_roundedRect[index + 2].zw;
+
+            vec2 topLeftCenter = bounds.xy + topLeftRadii;
+            vec2 topRightCenter = bounds.zy + (topRightRadii * vec2(-1, 1));
+            vec2 bottomLeftCenter = bounds.xw + (bottomLeftRadii * vec2(1, -1));
+            vec2 bottomRightCenter = bounds.zw + (bottomRightRadii * vec2(-1, -1));
+
+            if (p.x < topLeftCenter.x && p.y < topLeftCenter.y)
+                return ellipsisCoverage(p, topLeftCenter, topLeftRadii);
+
+            if (p.x > topRightCenter.x && p.y < topRightCenter.y)
+                return ellipsisCoverage(p, topRightCenter, topRightRadii);
+
+            if (p.x < bottomLeftCenter.x && p.y > bottomLeftCenter.y)
+                return ellipsisCoverage(p, bottomLeftCenter, bottomLeftRadii);
+
+            if (p.x > bottomRightCenter.x && p.y > bottomRightCenter.y)
+                return ellipsisCoverage(p, bottomRightCenter, bottomRightRadii);
+
+            return 1.0;
+        }
+
+        void applyRoundedRectClip(inout vec4 color)
+        {
+            // This works by checking whether the fragment position, once the transform is applied,
+            // is inside the defined rounded rectangle or not.
+            //
+            // We can't use gl_fragCoord for the fragment position because thats the projected point
+            // and the projection screws the Z component. We need the real 3D position that comes from
+            // the nonProjectedPosition variable.
+            int nRects = min(ROUNDED_RECT_MAX_RECTS, u_roundedRectNumber);
+            for (int rectIndex = 0; rectIndex < nRects; rectIndex++) {
+                vec4 fragCoord = u_roundedRectInverseTransformMatrix[rectIndex] * v_nonProjectedPosition;
+                color *= roundedRectCoverage(fragCoord.xy, rectIndex * 3);
+            }
+        }
+
         void main(void)
         {
             vec4 color = vec4(1., 1., 1., 1.);
@@ -415,6 +498,7 @@ static const char* fragmentTemplateCommon =
             applyAlphaBlurIfNeeded(color, texCoord);
             applyContentTextureIfNeeded(color, texCoord);
             applyTextureExternalOESIfNeeded(color, texCoord);
+            applyRoundedRectClipIfNeeded(color);
             gl_FragColor = color;
         }
     );
@@ -448,6 +532,7 @@ Ref<TextureMapperShaderProgram> TextureMapperShaderProgram::create(TextureMapper
     SET_APPLIER_FROM_OPTIONS(ContentTexture);
     SET_APPLIER_FROM_OPTIONS(ManualRepeat);
     SET_APPLIER_FROM_OPTIONS(TextureExternalOES);
+    SET_APPLIER_FROM_OPTIONS(RoundedRectClip);
 
     StringBuilder vertexShaderBuilder;
 

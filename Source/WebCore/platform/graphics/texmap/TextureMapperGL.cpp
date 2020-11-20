@@ -29,6 +29,7 @@
 #include "ExtensionsGL.h"
 #include "FilterOperations.h"
 #include "FloatQuad.h"
+#include "FloatRoundedRect.h"
 #include "GLContext.h"
 #include "GraphicsContext.h"
 #include "Image.h"
@@ -442,6 +443,15 @@ static TransformationMatrix colorSpaceMatrixForFlags(TextureMapperGL::Flags flag
     return matrix;
 }
 
+static void prepareRoundedRectClip(TextureMapperShaderProgram& program, const float* rects, const float* transforms, int nRects)
+{
+    glUseProgram(program.programID());
+
+    glUniform1i(program.roundedRectNumberLocation(), nRects);
+    glUniform4fv(program.roundedRectLocation(), 3 * nRects, rects);
+    glUniformMatrix4fv(program.roundedRectInverseTransformMatrixLocation(), nRects, false, transforms);
+}
+
 void TextureMapperGL::drawTexture(const BitmapTexture& texture, const FloatRect& targetRect, const TransformationMatrix& matrix, float opacity, unsigned exposedEdges)
 {
     if (!texture.isValid())
@@ -489,10 +499,18 @@ void TextureMapperGL::drawTexture(GLuint texture, Flags flags, const IntSize& te
     if (useAntialiasing || opacity < 1)
         flags |= ShouldBlend;
 
+    if (clipStack().isRoundedRectClipEnabled()) {
+        options |= TextureMapperShaderProgram::RoundedRectClip;
+        flags |= ShouldBlend;
+    }
+
     Ref<TextureMapperShaderProgram> program = data().getShaderProgram(options);
 
     if (filter)
         prepareFilterProgram(program.get(), *filter.get(), data().filterInfo->pass, textureSize, filterContentTextureID);
+
+    if (clipStack().isRoundedRectClipEnabled())
+        prepareRoundedRectClip(program.get(), clipStack().roundedRectComponents(), clipStack().roundedRectInverseTransformComponents(), clipStack().roundedRectCount());
 
     drawTexturedQuadWithProgram(program.get(), texture, flags, textureSize, targetRect, modelViewMatrix, opacity);
 }
@@ -552,10 +570,18 @@ void TextureMapperGL::drawTexturePlanarYUV(const std::array<GLuint, 3>& textures
     if (useAntialiasing || opacity < 1)
         flags |= ShouldBlend;
 
+    if (clipStack().isRoundedRectClipEnabled()) {
+        options |= TextureMapperShaderProgram::RoundedRectClip;
+        flags |= ShouldBlend;
+    }
+
     Ref<TextureMapperShaderProgram> program = data().getShaderProgram(options);
 
     if (filter)
         prepareFilterProgram(program.get(), *filter.get(), data().filterInfo->pass, textureSize, filterContentTextureID);
+
+    if (clipStack().isRoundedRectClipEnabled())
+        prepareRoundedRectClip(program.get(), clipStack().roundedRectComponents(), clipStack().roundedRectInverseTransformComponents(), clipStack().roundedRectCount());
 
     Vector<std::pair<GLuint, GLuint> > texturesAndSamplers = {
         { textures[0], program->samplerYLocation() },
@@ -602,10 +628,18 @@ void TextureMapperGL::drawTextureSemiPlanarYUV(const std::array<GLuint, 2>& text
     if (useAntialiasing || opacity < 1)
         flags |= ShouldBlend;
 
+    if (clipStack().isRoundedRectClipEnabled()) {
+        options |= TextureMapperShaderProgram::RoundedRectClip;
+        flags |= ShouldBlend;
+    }
+
     Ref<TextureMapperShaderProgram> program = data().getShaderProgram(options);
 
     if (filter)
         prepareFilterProgram(program.get(), *filter.get(), data().filterInfo->pass, textureSize, filterContentTextureID);
+
+    if (clipStack().isRoundedRectClipEnabled())
+        prepareRoundedRectClip(program.get(), clipStack().roundedRectComponents(), clipStack().roundedRectInverseTransformComponents(), clipStack().roundedRectCount());
 
     Vector<std::pair<GLuint, GLuint> > texturesAndSamplers = {
         { textures[0], program->samplerYLocation() },
@@ -650,10 +684,18 @@ void TextureMapperGL::drawTexturePackedYUV(GLuint texture, const std::array<GLfl
     if (useAntialiasing || opacity < 1)
         flags |= ShouldBlend;
 
+    if (clipStack().isRoundedRectClipEnabled()) {
+        options |= TextureMapperShaderProgram::RoundedRectClip;
+        flags |= ShouldBlend;
+    }
+
     Ref<TextureMapperShaderProgram> program = data().getShaderProgram(options);
 
     if (filter)
         prepareFilterProgram(program.get(), *filter.get(), data().filterInfo->pass, textureSize, filterContentTextureID);
+
+    if (clipStack().isRoundedRectClipEnabled())
+        prepareRoundedRectClip(program.get(), clipStack().roundedRectComponents(), clipStack().roundedRectInverseTransformComponents(), clipStack().roundedRectCount());
 
     Vector<std::pair<GLuint, GLuint> > texturesAndSamplers = {
         { texture, program->samplerLocation() }
@@ -673,8 +715,16 @@ void TextureMapperGL::drawSolidColor(const FloatRect& rect, const Transformation
         flags |= ShouldAntialias | (isBlendingAllowed ? ShouldBlend : 0);
     }
 
+    if (clipStack().isRoundedRectClipEnabled()) {
+        options |= TextureMapperShaderProgram::RoundedRectClip;
+        flags |= ShouldBlend;
+    }
+
     Ref<TextureMapperShaderProgram> program = data().getShaderProgram(options);
     glUseProgram(program->programID());
+
+    if (clipStack().isRoundedRectClipEnabled())
+        prepareRoundedRectClip(program.get(), clipStack().roundedRectComponents(), clipStack().roundedRectInverseTransformComponents(), clipStack().roundedRectCount());
 
     auto [r, g, b, a] = premultiplied(color.toSRGBALossy<float>());
     glUniform4f(program->colorLocation(), r, g, b, a);
@@ -884,10 +934,41 @@ bool TextureMapperGL::beginScissorClip(const TransformationMatrix& modelViewMatr
     return true;
 }
 
-void TextureMapperGL::beginClip(const TransformationMatrix& modelViewMatrix, const FloatRect& targetRect)
+bool TextureMapperGL::beginRoundedRectClip(const TransformationMatrix& modelViewMatrix, const FloatRoundedRect& targetRect)
+{
+    // This is implemented by telling the fragment shader to check whether each pixel is inside the rounded rectangle
+    // before painting it.
+    //
+    // Inside the shader, the math to check whether a point is inside the rounded rectangle requires the rectangle to
+    // be aligned to the X and Y axis, which is not guaranteed if the transformation matrix includes rotations. In order
+    // to avoid this, instead of applying the transformation to the rounded rectangle, we calculate the inverse
+    // of the transformation and apply it to the pixels before checking whether they are inside the rounded rectangle.
+    // This works fine as long as the transformation matrix is invertible.
+    //
+    // There is a limit to the number of rounded rectangle clippings that can be done, that happens because the GLSL
+    // arrays must have a predefined size. The limit is defined inside ClipStack, and that's why we need to call
+    // clipStack().isRoundedRectClipAllowed() before trying to add a new clip.
+
+    if (!targetRect.isRounded() || !targetRect.isRenderable() || targetRect.isEmpty() || !modelViewMatrix.isInvertible() || !clipStack().isRoundedRectClipAllowed())
+        return false;
+
+    FloatQuad quad = modelViewMatrix.projectQuad(targetRect.rect());
+    IntRect rect = quad.enclosingBoundingBox();
+
+    clipStack().addRoundedRect(targetRect, modelViewMatrix.inverse().value());
+    clipStack().intersect(rect);
+    clipStack().applyIfNeeded();
+
+    return true;
+}
+
+void TextureMapperGL::beginClip(const TransformationMatrix& modelViewMatrix, const FloatRoundedRect& targetRect)
 {
     clipStack().push();
-    if (beginScissorClip(modelViewMatrix, targetRect))
+    if (beginRoundedRectClip(modelViewMatrix, targetRect))
+        return;
+
+    if (beginScissorClip(modelViewMatrix, targetRect.rect()))
         return;
 
     data().initializeStencil();
@@ -902,7 +983,7 @@ void TextureMapperGL::beginClip(const TransformationMatrix& modelViewMatrix, con
     glVertexAttribPointer(program->vertexLocation(), 2, GL_FLOAT, false, 0, 0);
 
     TransformationMatrix matrix(modelViewMatrix);
-    matrix.multiply(TransformationMatrix::rectToRect(FloatRect(0, 0, 1, 1), targetRect));
+    matrix.multiply(TransformationMatrix::rectToRect(FloatRect(0, 0, 1, 1), targetRect.rect()));
 
     static const TransformationMatrix fullProjectionMatrix = TransformationMatrix::rectToRect(FloatRect(0, 0, 1, 1), FloatRect(-1, -1, 2, 2));
 

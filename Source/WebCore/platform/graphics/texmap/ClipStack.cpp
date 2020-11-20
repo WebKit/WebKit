@@ -62,6 +62,37 @@ void ClipStack::setStencilIndex(int stencilIndex)
     clipStateDirty = true;
 }
 
+void ClipStack::addRoundedRect(const FloatRoundedRect& roundedRect, const TransformationMatrix& matrix)
+{
+    if (clipState.roundedRectCount >= s_roundedRectMaxClips)
+        return;
+
+    // Ensure that the vectors holding the components have the required size.
+    m_roundedRectComponents.grow(s_roundedRectComponentsArraySize);
+    m_roundedRectInverseTransformComponents.grow(s_roundedRectInverseTransformComponentsArraySize);
+
+    // Copy the RoundedRect components to the appropriate position in the array.
+    int basePosition = clipState.roundedRectCount * s_roundedRectComponentsPerRect;
+    m_roundedRectComponents[basePosition] = roundedRect.rect().x();
+    m_roundedRectComponents[basePosition + 1] = roundedRect.rect().y();
+    m_roundedRectComponents[basePosition + 2] = roundedRect.rect().width();
+    m_roundedRectComponents[basePosition + 3] = roundedRect.rect().height();
+    m_roundedRectComponents[basePosition + 4] = roundedRect.radii().topLeft().width();
+    m_roundedRectComponents[basePosition + 5] = roundedRect.radii().topLeft().height();
+    m_roundedRectComponents[basePosition + 6] = roundedRect.radii().topRight().width();
+    m_roundedRectComponents[basePosition + 7] = roundedRect.radii().topRight().height();
+    m_roundedRectComponents[basePosition + 8] = roundedRect.radii().bottomLeft().width();
+    m_roundedRectComponents[basePosition + 9] = roundedRect.radii().bottomLeft().height();
+    m_roundedRectComponents[basePosition + 10] = roundedRect.radii().bottomRight().width();
+    m_roundedRectComponents[basePosition + 11] = roundedRect.radii().bottomRight().height();
+
+    // Copy the TransformationMatrix components to the appropriate position in the array.
+    basePosition = clipState.roundedRectCount * s_roundedRectInverseTransformComponentsPerRect;
+    memcpy(m_roundedRectInverseTransformComponents.data() + basePosition, matrix.toColumnMajorFloatArray().data(), s_roundedRectInverseTransformComponentsPerRect * sizeof(float));
+
+    clipState.roundedRectCount++;
+}
+
 void ClipStack::apply()
 {
     if (clipState.scissorBox.isEmpty())

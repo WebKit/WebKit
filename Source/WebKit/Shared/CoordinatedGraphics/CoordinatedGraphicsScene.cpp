@@ -71,7 +71,7 @@ void CoordinatedGraphicsScene::paintToCurrentGLContext(const TransformationMatri
     currentRootLayer->setTextureMapper(m_textureMapper.get());
     bool sceneHasRunningAnimations = currentRootLayer->applyAnimationsRecursively(MonotonicTime::now());
     m_textureMapper->beginPainting(PaintFlags);
-    m_textureMapper->beginClip(TransformationMatrix(), clipRect);
+    m_textureMapper->beginClip(TransformationMatrix(), FloatRoundedRect(clipRect));
 
     if (currentRootLayer->transform() != matrix)
         currentRootLayer->setTransform(matrix);

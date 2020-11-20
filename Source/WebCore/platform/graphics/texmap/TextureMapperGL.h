@@ -75,7 +75,7 @@ public:
 
     void bindSurface(BitmapTexture* surface) override;
     BitmapTexture* currentSurface();
-    void beginClip(const TransformationMatrix&, const FloatRect&) override;
+    void beginClip(const TransformationMatrix&, const FloatRoundedRect&) override;
     void beginPainting(PaintFlags = 0) override;
     void endPainting() override;
     void endClip() override;
@@ -98,6 +98,7 @@ private:
     void drawEdgeTriangles(TextureMapperShaderProgram&);
 
     bool beginScissorClip(const TransformationMatrix&, const FloatRect&);
+    bool beginRoundedRectClip(const TransformationMatrix&, const FloatRoundedRect&);
     void bindDefaultSurface();
     ClipStack& clipStack();
     inline TextureMapperGLData& data() { return *m_data; }
