@@ -92,6 +92,7 @@ public:
     ExceptionOr<void> setWebGPUEnabled(bool);
     ExceptionOr<void> setFetchAPIKeepAliveEnabled(bool);
     ExceptionOr<void> setCustomPasteboardDataEnabled(bool);
+    ExceptionOr<void> setWebRTCPlatformCodecsInGPUProcessEnabled(bool);
 
     // DeprecatedGlobalSettings.
     ExceptionOr<void> setShouldManageAudioSessionCategory(bool);

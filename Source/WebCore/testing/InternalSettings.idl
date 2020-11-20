@@ -68,6 +68,7 @@ enum UserInterfaceDirectionPolicy { "Content", "System" };
     [MayThrowException] undefined setWebGPUEnabled(boolean enabled);
     [MayThrowException] undefined setFetchAPIKeepAliveEnabled(boolean enabled);
     [MayThrowException] undefined setCustomPasteboardDataEnabled(boolean enabled);
+    [MayThrowException] undefined setWebRTCPlatformCodecsInGPUProcessEnabled(boolean enabled);
 
     // DeprecatedGlobalSettings.
     [MayThrowException] undefined setShouldManageAudioSessionCategory(boolean should);

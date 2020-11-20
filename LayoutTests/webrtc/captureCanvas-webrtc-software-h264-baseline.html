@@ -10,9 +10,12 @@
         <script src="routines.js"></script>
         <script src="captureCanvas-webrtc-software-h264.js"></script>
         <script>
+if (window.internals) {
+    internals.setH264HardwareEncoderAllowed(false);
+    internals.settings.setWebRTCPlatformCodecsInGPUProcessEnabled(false);
+}
+
 promise_test((test) => {
-    if (window.internals)
-        internals.setH264HardwareEncoderAllowed(false);
     return doTest(test, (sdp) => setH264BaselineCodec(sdp));
 }, "captureStream with webrtc - h264 baseline");
         </script>
