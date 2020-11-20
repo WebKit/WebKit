@@ -75,6 +75,8 @@ struct WheelEventHandlingResult {
     }
 };
 
+enum class EventTargeting : uint8_t { NodeOnly, Propagate };
+
 class ScrollingTree : public ThreadSafeRefCounted<ScrollingTree> {
 friend class ScrollingTreeLatchingController;
 public:
@@ -233,7 +235,7 @@ public:
     Vector<ScrollUpdate> takePendingScrollUpdates();
 
 protected:
-    WheelEventHandlingResult handleWheelEventWithNode(const PlatformWheelEvent&, OptionSet<WheelEventProcessingSteps>, ScrollingTreeNode*);
+    WheelEventHandlingResult handleWheelEventWithNode(const PlatformWheelEvent&, OptionSet<WheelEventProcessingSteps>, ScrollingTreeNode*, EventTargeting = EventTargeting::Propagate);
 
     FloatPoint mainFrameScrollPosition() const;
     void setMainFrameScrollPosition(FloatPoint);

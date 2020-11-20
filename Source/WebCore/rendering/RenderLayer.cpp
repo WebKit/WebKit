@@ -3165,6 +3165,21 @@ ScrollingNodeID RenderLayer::scrollingNodeID() const
     return backing()->scrollingNodeIDForRole(ScrollCoordinationRole::Scrolling);
 }
 
+bool RenderLayer::handleWheelEventForScrolling(const PlatformWheelEvent& wheelEvent)
+{
+    if (!isScrollableOrRubberbandable())
+        return false;
+
+#if ENABLE(ASYNC_SCROLLING)
+    if (usesAsyncScrolling() && scrollingNodeID()) {
+        if (auto* scrollingCoordinator = page().scrollingCoordinator())
+            return scrollingCoordinator->handleWheelEventForScrolling(wheelEvent, scrollingNodeID());
+    }
+#endif
+
+    return ScrollableArea::handleWheelEventForScrolling(wheelEvent);
+}
+
 IntRect RenderLayer::visibleContentRectInternal(VisibleContentRectIncludesScrollbars scrollbarInclusion, VisibleContentRectBehavior) const
 {
     IntSize scrollbarSpace;

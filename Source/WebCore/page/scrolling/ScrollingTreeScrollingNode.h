@@ -28,11 +28,9 @@
 #if ENABLE(ASYNC_SCROLLING)
 
 #include "IntRect.h"
-#include "RectEdges.h"
 #include "ScrollSnapOffsetsInfo.h"
-#include "ScrollTypes.h"
 #include "ScrollableArea.h"
-#include "ScrollingCoordinator.h"
+#include "ScrollingTree.h"
 #include "ScrollingTreeNode.h"
 
 namespace WebCore {
@@ -55,8 +53,8 @@ public:
     void commitStateAfterChildren(const ScrollingStateNode&) override;
     void didCompleteCommitForNode() final;
 
-    virtual bool canHandleWheelEvent(const PlatformWheelEvent&) const;
-    virtual WheelEventHandlingResult handleWheelEvent(const PlatformWheelEvent&);
+    virtual bool canHandleWheelEvent(const PlatformWheelEvent&, EventTargeting) const;
+    virtual WheelEventHandlingResult handleWheelEvent(const PlatformWheelEvent&, EventTargeting = EventTargeting::Propagate);
 
     FloatPoint currentScrollPosition() const { return m_currentScrollPosition; }
     FloatPoint currentScrollOffset() const { return ScrollableArea::scrollOffsetFromPosition(m_currentScrollPosition, toFloatSize(m_scrollOrigin)); }

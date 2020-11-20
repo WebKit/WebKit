@@ -51,7 +51,7 @@ protected:
     void commitStateBeforeChildren(const ScrollingStateNode&) override;
     void commitStateAfterChildren(const ScrollingStateNode&) override;
 
-    WheelEventHandlingResult handleWheelEvent(const PlatformWheelEvent&) override;
+    WheelEventHandlingResult handleWheelEvent(const PlatformWheelEvent&, EventTargeting) override;
 
     WEBCORE_EXPORT void repositionRelatedLayers() override;
 

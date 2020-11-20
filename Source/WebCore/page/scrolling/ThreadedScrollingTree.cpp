@@ -66,13 +66,13 @@ WheelEventHandlingResult ThreadedScrollingTree::handleWheelEvent(const PlatformW
 
 bool ThreadedScrollingTree::handleWheelEventAfterMainThread(const PlatformWheelEvent& wheelEvent, ScrollingNodeID targetNodeID)
 {
-    LOG_WITH_STREAM(Scrolling, stream << "ThreadedScrollingTree::handleWheelEventAfterMainThread " << wheelEvent);
+    LOG_WITH_STREAM(Scrolling, stream << "ThreadedScrollingTree::handleWheelEventAfterMainThread " << wheelEvent << " node " << targetNodeID);
 
     LockHolder locker(m_treeMutex);
 
     SetForScope<bool> disallowLatchingScope(m_allowLatching, false);
     RefPtr<ScrollingTreeNode> targetNode = nodeForID(targetNodeID);
-    auto result = handleWheelEventWithNode(wheelEvent, { }, targetNode.get());
+    auto result = handleWheelEventWithNode(wheelEvent, { }, targetNode.get(), EventTargeting::NodeOnly);
     return result.wasHandled;
 }
 

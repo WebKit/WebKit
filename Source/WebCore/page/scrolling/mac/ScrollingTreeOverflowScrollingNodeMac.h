@@ -53,7 +53,7 @@ protected:
     void repositionScrollingLayers() override;
     void repositionRelatedLayers() override;
 
-    WheelEventHandlingResult handleWheelEvent(const PlatformWheelEvent&) override;
+    WheelEventHandlingResult handleWheelEvent(const PlatformWheelEvent&, EventTargeting) override;
 
 private:
     void willBeDestroyed() final;

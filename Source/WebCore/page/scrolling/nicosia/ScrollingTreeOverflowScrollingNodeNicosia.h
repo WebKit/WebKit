@@ -57,7 +57,7 @@ private:
     void ensureScrollAnimationSmooth();
 #endif
 
-    WheelEventHandlingResult handleWheelEvent(const PlatformWheelEvent&) override;
+    WheelEventHandlingResult handleWheelEvent(const PlatformWheelEvent&, EventTargeting) override;
 
     void stopScrollAnimations() override;
 

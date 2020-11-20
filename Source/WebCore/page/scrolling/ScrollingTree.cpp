@@ -168,12 +168,12 @@ WheelEventHandlingResult ScrollingTree::handleWheelEvent(const PlatformWheelEven
     return result;
 }
 
-WheelEventHandlingResult ScrollingTree::handleWheelEventWithNode(const PlatformWheelEvent& wheelEvent, OptionSet<WheelEventProcessingSteps> processingSteps, ScrollingTreeNode* node)
+WheelEventHandlingResult ScrollingTree::handleWheelEventWithNode(const PlatformWheelEvent& wheelEvent, OptionSet<WheelEventProcessingSteps> processingSteps, ScrollingTreeNode* node, EventTargeting eventTargeting)
 {
     while (node) {
         if (is<ScrollingTreeScrollingNode>(*node)) {
             auto& scrollingNode = downcast<ScrollingTreeScrollingNode>(*node);
-            auto result = scrollingNode.handleWheelEvent(wheelEvent);
+            auto result = scrollingNode.handleWheelEvent(wheelEvent, eventTargeting);
 
             if (result.wasHandled) {
                 m_latchingController.nodeDidHandleEvent(scrollingNode.scrollingNodeID(), processingSteps, wheelEvent, m_allowLatching);
@@ -181,7 +181,7 @@ WheelEventHandlingResult ScrollingTree::handleWheelEventWithNode(const PlatformW
                 return result;
             }
 
-            if (result.needsMainThreadProcessing())
+            if (result.needsMainThreadProcessing() || eventTargeting != EventTargeting::Propagate)
                 return result;
         }
 

@@ -256,6 +256,8 @@ bool ScrollController::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
                 shouldStretch = true;
             }
         }
+
+        LOG_WITH_STREAM(Scrolling, stream << "ScrollController::handleWheelEvent() - deltaX " << deltaX << " deltaY " << deltaY << " pinned " << m_client.pinnedInDirection(FloatSize(deltaX, deltaY)) << " shouldStretch " << shouldStretch);
     }
 
     bool handled = true;

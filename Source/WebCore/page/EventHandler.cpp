@@ -2941,7 +2941,8 @@ bool EventHandler::handleWheelEventInternal(const PlatformWheelEvent& event, Opt
             m_isHandlingWheelEvent = false;
             if (scrollableArea && scrollableArea->scrollShouldClearLatchedState()) {
                 // Web developer is controlling scrolling, so don't attempt to latch.
-                clearLatchedState();
+                if (handling.containsAll({ EventHandling::DispatchedToDOM, EventHandling::DefaultPrevented }))
+                    clearLatchedState();
                 scrollableArea->setScrollShouldClearLatchedState(false);
             }
 

@@ -1,5 +1,39 @@
 2020-11-20  Simon Fraser  <simon.fraser@apple.com>
 
+        Dispatch main-thread overflow scrolls to the scrolling thread as we do for page scrolls
+        https://bugs.webkit.org/show_bug.cgi?id=219213
+
+        Reviewed by Tim Horton.
+        
+        Unify the behavior of overflow scrolling and page scrolling for synchronous scrolls.
+        
+        Somewhat surprisingly, synchronous page scrolls move layers via a dispatch to the scrolling thread in
+        FrameView::handleWheelEventForScrolling(), but overflow scrolls just did main thread compositing updates
+        to set the new layer positions.
+
+        A future patch will require that the "began" event for a synchronous scroll gets back to the scrolling thread,
+        so unify these code paths to have overflow scrolls also leverage handleWheelEventAfterMainThread(), via
+        RenderLayer::handleWheelEventForScrolling().
+
+        There's some fallout from this. ThreadedScrollingTree::handleWheelEventAfterMainThread() calls into handleWheelEventWithNode(),
+        but in this special case that codepath needs to know that we're in a special "post main thread" mode that should
+            1. Behave as if the node is latched, i.e. don't propagate to parent nodes,
+               and target the node if if it's scrolled to a the min or max to allow rubberbanding
+            2. Scroll even if the node has synchronous scrolling reasons
+        This mode is represented by the EventTargeting value.
+
+        Finally, EventHandler::handleWheelEventInternal() should only clear latching state if the content has called preventDefault()
+        on the event.
+
+        * UIProcess/RemoteLayerTree/mac/ScrollingTreeFrameScrollingNodeRemoteMac.cpp:
+        (WebKit::ScrollingTreeFrameScrollingNodeRemoteMac::handleWheelEvent):
+        * UIProcess/RemoteLayerTree/mac/ScrollingTreeFrameScrollingNodeRemoteMac.h:
+        * UIProcess/RemoteLayerTree/mac/ScrollingTreeOverflowScrollingNodeRemoteMac.cpp:
+        (WebKit::ScrollingTreeOverflowScrollingNodeRemoteMac::handleWheelEvent):
+        * UIProcess/RemoteLayerTree/mac/ScrollingTreeOverflowScrollingNodeRemoteMac.h:
+
+2020-11-20  Simon Fraser  <simon.fraser@apple.com>
+
         Rename some wheel-event handling functions for clarity
         https://bugs.webkit.org/show_bug.cgi?id=219211
 

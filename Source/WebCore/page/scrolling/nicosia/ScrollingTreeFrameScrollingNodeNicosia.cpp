@@ -158,9 +158,9 @@ void ScrollingTreeFrameScrollingNodeNicosia::ensureScrollAnimationSmooth()
 }
 #endif
 
-WheelEventHandlingResult ScrollingTreeFrameScrollingNodeNicosia::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
+WheelEventHandlingResult ScrollingTreeFrameScrollingNodeNicosia::handleWheelEvent(const PlatformWheelEvent& wheelEvent, EventTargeting eventTargeting)
 {
-    if (!canHandleWheelEvent(wheelEvent))
+    if (!canHandleWheelEvent(wheelEvent, eventTargeting))
         return WheelEventHandlingResult::unhandled();
 
 #if ENABLE(KINETIC_SCROLLING)

@@ -117,9 +117,9 @@ void ScrollingTreeFrameScrollingNodeMac::commitStateAfterChildren(const Scrollin
         updateMainFramePinAndRubberbandState();
 }
 
-WheelEventHandlingResult ScrollingTreeFrameScrollingNodeMac::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
+WheelEventHandlingResult ScrollingTreeFrameScrollingNodeMac::handleWheelEvent(const PlatformWheelEvent& wheelEvent, EventTargeting eventTargeting)
 {
-    if (!canHandleWheelEvent(wheelEvent))
+    if (!canHandleWheelEvent(wheelEvent, eventTargeting))
         return WheelEventHandlingResult::unhandled();
 
     bool handled = m_delegate.handleWheelEvent(wheelEvent);

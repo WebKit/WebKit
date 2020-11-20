@@ -120,6 +120,7 @@ void ScrollLatchingController::updateAndFetchLatchingStateForFrame(Frame& frame,
                 state.scrollableArea = scrollableArea;
             state.isOverWidget = isOverWidget;
 
+            LOG_WITH_STREAM(ScrollLatching, stream << "ScrollLatchingController::updateAndFetchLatchingStateForFrame() - pushing state for Frame " << &frame << " element " << state.wheelEventElement.get() << " scrollableArea " << state.scrollableArea);
             m_frameStateStack.append(WTFMove(state));
             return;
         }
@@ -143,6 +144,8 @@ void ScrollLatchingController::updateAndFetchLatchingStateForFrame(Frame& frame,
             latchedElement = state.wheelEventElement.get();
             scrollableArea = state.scrollableArea;
             isOverWidget = state.isOverWidget;
+
+            LOG_WITH_STREAM(ScrollLatching, stream << "ScrollLatchingController::updateAndFetchLatchingStateForFrame() - using state for Frame " << &frame << " element " << latchedElement.get() << " scrollableArea " << scrollableArea);
         }
     }
 }
