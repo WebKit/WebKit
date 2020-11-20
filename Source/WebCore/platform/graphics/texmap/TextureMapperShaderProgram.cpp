@@ -225,17 +225,6 @@ static const char* fragmentTemplateGE320Vars =
         in vec2 v_transformedTexCoord;
         in vec4 v_nonProjectedPosition;
     );
-#else
-// min(genIType) isn't supported for GLSL ES < 3.0.
-static const char* fragmentTemplateES =
-    STRINGIFY(
-        int min(int x, int y)
-        {
-            if (x < y)
-                return x;
-            return y;
-        }
-    );
 #endif
 
 static const char* fragmentTemplateCommon =
@@ -477,7 +466,10 @@ static const char* fragmentTemplateCommon =
             // We can't use gl_fragCoord for the fragment position because thats the projected point
             // and the projection screws the Z component. We need the real 3D position that comes from
             // the nonProjectedPosition variable.
-            int nRects = min(ROUNDED_RECT_MAX_RECTS, u_roundedRectNumber);
+            int nRects = u_roundedRectNumber;
+            if (nRects > ROUNDED_RECT_MAX_RECTS)
+                nRects = ROUNDED_RECT_MAX_RECTS;
+
             for (int rectIndex = 0; rectIndex < nRects; rectIndex++) {
                 vec4 fragCoord = u_roundedRectInverseTransformMatrix[rectIndex] * v_nonProjectedPosition;
                 color *= roundedRectCoverage(fragCoord.xy, rectIndex * 3);
@@ -587,7 +579,6 @@ Ref<TextureMapperShaderProgram> TextureMapperShaderProgram::create(TextureMapper
     // Append the appropriate input/output variable definitions.
 #if USE(OPENGL_ES)
     fragmentShaderBuilder.append(fragmentTemplateLT320Vars);
-    fragmentShaderBuilder.append(fragmentTemplateES);
 #else
     if (glVersion >= 320)
         fragmentShaderBuilder.append(fragmentTemplateGE320Vars);
