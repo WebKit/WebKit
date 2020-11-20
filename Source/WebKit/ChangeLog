@@ -1,3 +1,25 @@
+2020-11-19  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r259151): The "Convert Text to Traditional Chinese" services menu action is broken
+        https://bugs.webkit.org/show_bug.cgi?id=219190
+        <rdar://problem/71438389>
+
+        Reviewed by Tim Horton.
+
+        Some system services, such as "Convert Text to (Traditional|Simplified) Chinese", use `-[NSServicesMenuRequestor
+        readSelectionFromPasteboard:]` to insert the contents of the given pasteboard into the current selection. After
+        the changes in r259151, this requires the UI process to explicitly grant access to the contents of the given
+        pasteboard, on behalf of the web content process.
+
+        Fix the bug by adding the missing call to `grantAccessToCurrentPasteboardData`. This is only called from API in
+        the UI process, so it cannot be abused by a compromised web content process to grab the contents of
+        `NSPasteboard`.
+
+        Test: PasteHTML.ReadSelectionFromPasteboard
+
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::readSelectionFromPasteboard):
+
 2020-11-19  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [TextureMapper] Remove m_textureMapper from TextureMapperLayer
