@@ -1,0 +1,3 @@
+
+FAIL Testing fontBoundingBox for OffscreenCanvas Can't find variable: FontFace
+

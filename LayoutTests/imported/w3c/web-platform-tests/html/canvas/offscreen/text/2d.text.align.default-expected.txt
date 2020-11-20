@@ -1,5 +1,5 @@
 2d.text.align.default
 
 
-FAIL OffscreenCanvas test: 2d.text.align.default assert_equals: ctx.textAlign === 'start' (got [undefined], expected start[string]) expected (string) "start" but got (undefined) undefined
+PASS OffscreenCanvas test: 2d.text.align.default
 

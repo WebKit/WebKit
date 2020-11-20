@@ -3,5 +3,5 @@
 fillText handles maxWidth correctly
 
 
-FAIL fillText handles maxWidth correctly ctx.fillText is not a function. (In 'ctx.fillText('fail fail fail fail fail', -100, 35, 90)', 'ctx.fillText' is undefined)
+PASS fillText handles maxWidth correctly
 

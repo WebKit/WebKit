@@ -2252,4 +2252,408 @@ Ref<Path2D> CanvasRenderingContext2DBase::getPath() const
     return Path2D::create(m_path);
 }
 
+String CanvasRenderingContext2DBase::font() const
+{
+    if (!state().font.realized())
+        return DefaultFont;
+
+    StringBuilder serializedFont;
+    const auto& fontDescription = state().font.fontDescription();
+
+    if (fontDescription.italic())
+        serializedFont.appendLiteral("italic ");
+    if (fontDescription.variantCaps() == FontVariantCaps::Small)
+        serializedFont.appendLiteral("small-caps ");
+
+    serializedFont.appendNumber(fontDescription.computedPixelSize());
+    serializedFont.appendLiteral("px");
+
+    for (unsigned i = 0; i < fontDescription.familyCount(); ++i) {
+        if (i)
+            serializedFont.append(',');
+
+        // FIXME: We should append family directly to serializedFont rather than building a temporary string.
+        String family = fontDescription.familyAt(i);
+        if (family.startsWith("-webkit-"))
+            family = family.substring(8);
+        if (family.contains(' '))
+            family = makeString('"', family, '"');
+
+        serializedFont.append(' ', family);
+    }
+
+    return serializedFont.toString();
+}
+
+static CanvasTextAlign toCanvasTextAlign(TextAlign textAlign)
+{
+    switch (textAlign) {
+    case StartTextAlign:
+        return CanvasTextAlign::Start;
+    case EndTextAlign:
+        return CanvasTextAlign::End;
+    case LeftTextAlign:
+        return CanvasTextAlign::Left;
+    case RightTextAlign:
+        return CanvasTextAlign::Right;
+    case CenterTextAlign:
+        return CanvasTextAlign::Center;
+    }
+
+    ASSERT_NOT_REACHED();
+    return CanvasTextAlign::Start;
+}
+
+static TextAlign fromCanvasTextAlign(CanvasTextAlign canvasTextAlign)
+{
+    switch (canvasTextAlign) {
+    case CanvasTextAlign::Start:
+        return StartTextAlign;
+    case CanvasTextAlign::End:
+        return EndTextAlign;
+    case CanvasTextAlign::Left:
+        return LeftTextAlign;
+    case CanvasTextAlign::Right:
+        return RightTextAlign;
+    case CanvasTextAlign::Center:
+        return CenterTextAlign;
+    }
+
+    ASSERT_NOT_REACHED();
+    return StartTextAlign;
+}
+
+CanvasTextAlign CanvasRenderingContext2DBase::textAlign() const
+{
+    return toCanvasTextAlign(state().textAlign);
+}
+
+void CanvasRenderingContext2DBase::setTextAlign(CanvasTextAlign canvasTextAlign)
+{
+    auto textAlign = fromCanvasTextAlign(canvasTextAlign);
+    if (state().textAlign == textAlign)
+        return;
+    realizeSaves();
+    modifiableState().textAlign = textAlign;
+}
+
+static CanvasTextBaseline toCanvasTextBaseline(TextBaseline textBaseline)
+{
+    switch (textBaseline) {
+    case TopTextBaseline:
+        return CanvasTextBaseline::Top;
+    case HangingTextBaseline:
+        return CanvasTextBaseline::Hanging;
+    case MiddleTextBaseline:
+        return CanvasTextBaseline::Middle;
+    case AlphabeticTextBaseline:
+        return CanvasTextBaseline::Alphabetic;
+    case IdeographicTextBaseline:
+        return CanvasTextBaseline::Ideographic;
+    case BottomTextBaseline:
+        return CanvasTextBaseline::Bottom;
+    }
+
+    ASSERT_NOT_REACHED();
+    return CanvasTextBaseline::Top;
+}
+
+static TextBaseline fromCanvasTextBaseline(CanvasTextBaseline canvasTextBaseline)
+{
+    switch (canvasTextBaseline) {
+    case CanvasTextBaseline::Top:
+        return TopTextBaseline;
+    case CanvasTextBaseline::Hanging:
+        return HangingTextBaseline;
+    case CanvasTextBaseline::Middle:
+        return MiddleTextBaseline;
+    case CanvasTextBaseline::Alphabetic:
+        return AlphabeticTextBaseline;
+    case CanvasTextBaseline::Ideographic:
+        return IdeographicTextBaseline;
+    case CanvasTextBaseline::Bottom:
+        return BottomTextBaseline;
+    }
+
+    ASSERT_NOT_REACHED();
+    return TopTextBaseline;
+}
+
+CanvasTextBaseline CanvasRenderingContext2DBase::textBaseline() const
+{
+    return toCanvasTextBaseline(state().textBaseline);
+}
+
+void CanvasRenderingContext2DBase::setTextBaseline(CanvasTextBaseline canvasTextBaseline)
+{
+    auto textBaseline = fromCanvasTextBaseline(canvasTextBaseline);
+    if (state().textBaseline == textBaseline)
+        return;
+    realizeSaves();
+    modifiableState().textBaseline = textBaseline;
+}
+
+void CanvasRenderingContext2DBase::setDirection(Direction direction)
+{
+    if (state().direction == direction)
+        return;
+
+    realizeSaves();
+    modifiableState().direction = direction;
+}
+
+bool CanvasRenderingContext2DBase::canDrawTextWithParams(float x, float y, bool fill, Optional<float> maxWidth)
+{
+    auto* c = drawingContext();
+    if (!c)
+        return false;
+    if (!this->fontProxy()->realized())
+        return false;
+    if (!state().hasInvertibleTransform)
+        return false;
+    if (!std::isfinite(x) | !std::isfinite(y))
+        return false;
+    if (maxWidth && (!std::isfinite(maxWidth.value()) || maxWidth.value() <= 0))
+        return false;
+
+    // If gradient size is zero, nothing would be painted.
+    auto gradient = c->strokeGradient();
+    if (!fill && gradient && gradient->isZeroSize())
+        return false;
+
+    gradient = c->fillGradient();
+    if (fill && gradient && gradient->isZeroSize())
+        return false;
+
+    return true;
+}
+
+void CanvasRenderingContext2DBase::normalizeSpaces(String& text)
+{
+    size_t i = text.find(isSpaceThatNeedsReplacing);
+    if (i == notFound)
+        return;
+
+    unsigned textLength = text.length();
+    Vector<UChar> charVector(textLength);
+    StringView(text).getCharactersWithUpconvert(charVector.data());
+
+    charVector[i++] = ' ';
+
+    for (; i < textLength; ++i) {
+        if (isSpaceThatNeedsReplacing(charVector[i]))
+            charVector[i] = ' ';
+    }
+    text = String::adopt(WTFMove(charVector));
+}
+
+void CanvasRenderingContext2DBase::drawText(const String& text, float x, float y, bool fill, Optional<float> maxWidth)
+{
+    if (!canDrawTextWithParams(x, y, fill, maxWidth))
+        return;
+
+    String normalizedText = text;
+    normalizeSpaces(normalizedText);
+
+    auto direction = (state().direction == Direction::Rtl) ? TextDirection::RTL : TextDirection::LTR;
+    TextRun textRun(normalizedText, 0, 0, AllowRightExpansion, direction, false, true);
+
+    drawTextUnchecked(textRun, x, y, fill, maxWidth);
+}
+
+void CanvasRenderingContext2DBase::drawTextUnchecked(const TextRun& textRun, float x, float y, bool fill, Optional<float> maxWidth)
+{
+    auto* c = drawingContext();
+    auto& fontProxy = *this->fontProxy();
+    const auto& fontMetrics = fontProxy.fontMetrics();
+
+    // FIXME: Need to turn off font smoothing.
+
+    float fontWidth = fontProxy.width(textRun);
+    bool useMaxWidth = maxWidth && maxWidth.value() < fontWidth;
+    float width = useMaxWidth ? maxWidth.value() : fontWidth;
+    FloatPoint location(x, y);
+    location += textOffset(width, textRun.direction());
+
+    // The slop built in to this mask rect matches the heuristic used in FontCGWin.cpp for GDI text.
+    FloatRect textRect = FloatRect(location.x() - fontMetrics.height() / 2, location.y() - fontMetrics.ascent() - fontMetrics.lineGap(),
+        width + fontMetrics.height(), fontMetrics.lineSpacing());
+    if (!fill)
+        inflateStrokeRect(textRect);
+
+#if USE(CG)
+    const CanvasStyle& drawStyle = fill ? state().fillStyle : state().strokeStyle;
+    if (drawStyle.canvasGradient() || drawStyle.canvasPattern()) {
+        IntRect maskRect = enclosingIntRect(textRect);
+
+        // If we have a shadow, we need to draw it before the mask operation.
+        // Follow a procedure similar to paintTextWithShadows in TextPainter.
+
+        if (shouldDrawShadows()) {
+            GraphicsContextStateSaver stateSaver(*c);
+
+            FloatSize offset(0, 2 * maskRect.height());
+
+            FloatSize shadowOffset;
+            float shadowRadius;
+            Color shadowColor;
+            c->getShadow(shadowOffset, shadowRadius, shadowColor);
+
+            FloatRect shadowRect(maskRect);
+            shadowRect.inflate(shadowRadius * 1.4);
+            shadowRect.move(shadowOffset * -1);
+            c->clip(shadowRect);
+
+            shadowOffset += offset;
+
+            c->setLegacyShadow(shadowOffset, shadowRadius, shadowColor);
+
+            if (fill)
+                c->setFillColor(Color::black);
+            else
+                c->setStrokeColor(Color::black);
+
+            fontProxy.drawBidiText(*c, textRun, location + offset, FontCascade::UseFallbackIfFontNotReady);
+        }
+
+        GraphicsContextStateSaver stateSaver(*c);
+
+        auto paintMaskImage = [&] (GraphicsContext& maskImageContext) {
+            if (fill)
+                maskImageContext.setFillColor(Color::black);
+            else {
+                maskImageContext.setStrokeColor(Color::black);
+                maskImageContext.setStrokeThickness(c->strokeThickness());
+            }
+
+            maskImageContext.setTextDrawingMode(fill ? TextDrawingMode::Fill : TextDrawingMode::Stroke);
+
+            if (useMaxWidth) {
+                maskImageContext.translate(location - maskRect.location());
+                // We draw when fontWidth is 0 so compositing operations (eg, a "copy" op) still work.
+                maskImageContext.scale(FloatSize((fontWidth > 0 ? (width / fontWidth) : 0), 1));
+                fontProxy.drawBidiText(maskImageContext, textRun, FloatPoint(0, 0), FontCascade::UseFallbackIfFontNotReady);
+            } else {
+                maskImageContext.translate(-maskRect.location());
+                fontProxy.drawBidiText(maskImageContext, textRun, location, FontCascade::UseFallbackIfFontNotReady);
+            }
+        };
+
+        if (c->clipToDrawingCommands(maskRect, ColorSpace::SRGB, WTFMove(paintMaskImage)) == GraphicsContext::ClipToDrawingCommandsResult::FailedToCreateImageBuffer)
+            return;
+
+        drawStyle.applyFillColor(*c);
+        c->fillRect(maskRect);
+        return;
+    }
+#endif
+
+    c->setTextDrawingMode(fill ? TextDrawingMode::Fill : TextDrawingMode::Stroke);
+
+    GraphicsContextStateSaver stateSaver(*c);
+    if (useMaxWidth) {
+        c->translate(location);
+        // We draw when fontWidth is 0 so compositing operations (eg, a "copy" op) still work.
+        c->scale(FloatSize((fontWidth > 0 ? (width / fontWidth) : 0), 1));
+        location = FloatPoint();
+    }
+
+    if (isFullCanvasCompositeMode(state().globalComposite)) {
+        beginCompositeLayer();
+        fontProxy.drawBidiText(*c, textRun, location, FontCascade::UseFallbackIfFontNotReady);
+        endCompositeLayer();
+        didDrawEntireCanvas();
+    } else if (state().globalComposite == CompositeOperator::Copy) {
+        clearCanvas();
+        fontProxy.drawBidiText(*c, textRun, location, FontCascade::UseFallbackIfFontNotReady);
+        didDrawEntireCanvas();
+    } else {
+        fontProxy.drawBidiText(*c, textRun, location, FontCascade::UseFallbackIfFontNotReady);
+        didDraw(textRect);
+    }
+}
+
+Ref<TextMetrics> CanvasRenderingContext2DBase::measureTextInternal(const String& text)
+{
+    String normalizedText = text;
+    normalizeSpaces(normalizedText);
+
+    auto direction = (state().direction == Direction::Rtl) ? TextDirection::RTL : TextDirection::LTR;
+    TextRun textRun(normalizedText, 0, 0, AllowRightExpansion, direction, false, true);
+
+    return measureTextInternal(textRun);
+}
+
+Ref<TextMetrics> CanvasRenderingContext2DBase::measureTextInternal(const TextRun& textRun)
+{
+    Ref<TextMetrics> metrics = TextMetrics::create();
+
+    auto& font = *fontProxy();
+    auto& fontMetrics = font.fontMetrics();
+
+    GlyphOverflow glyphOverflow;
+    glyphOverflow.computeBounds = true;
+    float fontWidth = font.width(textRun, &glyphOverflow);
+    metrics->setWidth(fontWidth);
+
+    FloatPoint offset = textOffset(fontWidth, textRun.direction());
+
+    metrics->setActualBoundingBoxAscent(glyphOverflow.top - offset.y());
+    metrics->setActualBoundingBoxDescent(glyphOverflow.bottom + offset.y());
+    metrics->setFontBoundingBoxAscent(fontMetrics.ascent() - offset.y());
+    metrics->setFontBoundingBoxDescent(fontMetrics.descent() + offset.y());
+    metrics->setEmHeightAscent(fontMetrics.ascent() - offset.y());
+    metrics->setEmHeightDescent(fontMetrics.descent() + offset.y());
+    metrics->setHangingBaseline(fontMetrics.ascent() - offset.y());
+    metrics->setAlphabeticBaseline(-offset.y());
+    metrics->setIdeographicBaseline(-fontMetrics.descent() - offset.y());
+
+    metrics->setActualBoundingBoxLeft(glyphOverflow.left - offset.x());
+    metrics->setActualBoundingBoxRight(fontWidth + glyphOverflow.right + offset.x());
+
+    return metrics;
+}
+
+FloatPoint CanvasRenderingContext2DBase::textOffset(float width, TextDirection direction)
+{
+    auto& fontMetrics = fontProxy()->fontMetrics();
+    FloatPoint offset;
+
+    switch (state().textBaseline) {
+    case TopTextBaseline:
+    case HangingTextBaseline:
+        offset.setY(fontMetrics.ascent());
+        break;
+    case BottomTextBaseline:
+    case IdeographicTextBaseline:
+        offset.setY(-fontMetrics.descent());
+        break;
+    case MiddleTextBaseline:
+        offset.setY(fontMetrics.height() / 2 - fontMetrics.descent());
+        break;
+    case AlphabeticTextBaseline:
+    default:
+        break;
+    }
+
+    bool isRTL = direction == TextDirection::RTL;
+    auto align = state().textAlign;
+    if (align == StartTextAlign)
+        align = isRTL ? RightTextAlign : LeftTextAlign;
+    else if (align == EndTextAlign)
+        align = isRTL ? LeftTextAlign : RightTextAlign;
+
+    switch (align) {
+    case CenterTextAlign:
+        offset.setX(-width / 2);
+        break;
+    case RightTextAlign:
+        offset.setX(-width);
+        break;
+    default:
+        break;
+    }
+    return offset;
+}
+
 } // namespace WebCore

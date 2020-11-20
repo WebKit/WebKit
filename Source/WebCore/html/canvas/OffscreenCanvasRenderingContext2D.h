@@ -44,6 +44,15 @@ public:
     OffscreenCanvas& canvas() const { return downcast<OffscreenCanvas>(canvasBase()); }
 
     void commit();
+
+    void setFont(const String&);
+    CanvasDirection direction() const;
+    void fillText(const String& text, float x, float y, Optional<float> maxWidth = WTF::nullopt);
+    void strokeText(const String& text, float x, float y, Optional<float> maxWidth = WTF::nullopt);
+    Ref<TextMetrics> measureText(const String& text);
+
+private:
+    const FontProxy* fontProxy() final;
 };
 
 } // namespace WebCore

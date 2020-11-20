@@ -219,7 +219,16 @@ public:
     bool usesDisplayListDrawing() const { return m_usesDisplayListDrawing; };
     void setUsesDisplayListDrawing(bool flag) { m_usesDisplayListDrawing = flag; };
 
+    String font() const;
+
+    CanvasTextAlign textAlign() const;
+    void setTextAlign(CanvasTextAlign);
+
+    CanvasTextBaseline textBaseline() const;
+    void setTextBaseline(CanvasTextBaseline);
+
     using Direction = CanvasDirection;
+    void setDirection(Direction);
 
     class FontProxy : public FontSelectorClient {
     public:
@@ -370,6 +379,19 @@ protected:
     bool isAccelerated() const override;
 
     bool hasInvertibleTransform() const override { return state().hasInvertibleTransform; }
+
+    // The relationship between FontCascade and CanvasRenderingContext2D::FontProxy must hold certain invariants.
+    // Therefore, all font operations must pass through the proxy.
+    virtual const FontProxy* fontProxy() { return nullptr; }
+
+    static void normalizeSpaces(String&);
+    bool canDrawTextWithParams(float x, float y, bool fill, Optional<float> maxWidth = WTF::nullopt);
+    void drawText(const String& text, float x, float y, bool fill, Optional<float> maxWidth = WTF::nullopt);
+    void drawTextUnchecked(const TextRun&, float x, float y, bool fill, Optional<float> maxWidth = WTF::nullopt);
+    Ref<TextMetrics> measureTextInternal(const String& text);
+    Ref<TextMetrics> measureTextInternal(const TextRun&);
+
+    FloatPoint textOffset(float width, TextDirection);
 
     static const unsigned MaxSaveCount = 1024 * 16;
     Vector<State, 1> m_stateStack;

@@ -35,6 +35,13 @@
 
 #if ENABLE(OFFSCREEN_CANVAS)
 
+#include "CSSFontSelector.h"
+#include "CSSParser.h"
+#include "CSSPropertyParserHelpers.h"
+#include "Document.h"
+#include "RenderStyle.h"
+#include "StyleResolveForFontRaw.h"
+#include "TextMetrics.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -51,6 +58,78 @@ OffscreenCanvasRenderingContext2D::~OffscreenCanvasRenderingContext2D() = defaul
 void OffscreenCanvasRenderingContext2D::commit()
 {
     downcast<OffscreenCanvas>(canvasBase()).commitToPlaceholderCanvas();
+}
+
+void OffscreenCanvasRenderingContext2D::setFont(const String& newFont)
+{
+    auto& context = *canvasBase().scriptExecutionContext();
+    if (!is<Document>(context))
+        return;
+
+    if (newFont.isEmpty())
+        return;
+
+    if (newFont == state().unparsedFont && state().font.realized())
+        return;
+
+    // According to http://lists.w3.org/Archives/Public/public-html/2009Jul/0947.html,
+    // the "inherit" and "initial" values must be ignored. parseFontWorkerSafe() ignores these.
+    auto fontRaw = CSSParser::parseFontWorkerSafe(newFont, strictToCSSParserMode(!m_usesCSSCompatibilityParseMode));
+    if (!fontRaw)
+        return;
+
+    // The parse succeeded.
+    String newFontSafeCopy(newFont); // Create a string copy since newFont can be deleted inside realizeSaves.
+    realizeSaves();
+    modifiableState().unparsedFont = newFontSafeCopy;
+
+    // Map the <canvas> font into the text style. If the font uses keywords like larger/smaller, these will work
+    // relative to the default font.
+    FontCascadeDescription fontDescription;
+    fontDescription.setOneFamily(DefaultFontFamily);
+    fontDescription.setSpecifiedSize(DefaultFontSize);
+    fontDescription.setComputedSize(DefaultFontSize);
+
+    auto& document = downcast<Document>(context);
+    auto fontStyle = Style::resolveForFontRaw(*fontRaw, WTFMove(fontDescription), document);
+
+    if (fontStyle)
+        modifiableState().font.initialize(document.fontSelector(), *fontStyle);
+}
+
+CanvasDirection OffscreenCanvasRenderingContext2D::direction() const
+{
+    // FIXME: What should we do about inherit here?
+    switch (state().direction) {
+    case Direction::Inherit:
+    case Direction::Ltr:
+        return Direction::Ltr;
+    case Direction::Rtl:
+        return Direction::Rtl;
+    }
+    ASSERT_NOT_REACHED();
+    return Direction::Ltr;
+}
+
+auto OffscreenCanvasRenderingContext2D::fontProxy() -> const FontProxy* {
+    if (!state().font.realized())
+        setFont(state().unparsedFont);
+    return &state().font;
+}
+
+void OffscreenCanvasRenderingContext2D::fillText(const String& text, float x, float y, Optional<float> maxWidth)
+{
+    drawText(text, x, y, true, maxWidth);
+}
+
+void OffscreenCanvasRenderingContext2D::strokeText(const String& text, float x, float y, Optional<float> maxWidth)
+{
+    drawText(text, x, y, false, maxWidth);
+}
+
+Ref<TextMetrics> OffscreenCanvasRenderingContext2D::measureText(const String& text)
+{
+    return measureTextInternal(text);
 }
 
 } // namespace WebCore

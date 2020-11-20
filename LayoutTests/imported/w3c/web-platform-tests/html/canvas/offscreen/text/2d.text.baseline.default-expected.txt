@@ -1,5 +1,5 @@
 2d.text.baseline.default
 
 
-FAIL OffscreenCanvas test: 2d.text.baseline.default assert_equals: ctx.textBaseline === 'alphabetic' (got [undefined], expected alphabetic[string]) expected (string) "alphabetic" but got (undefined) undefined
+PASS OffscreenCanvas test: 2d.text.baseline.default
 

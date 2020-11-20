@@ -1,5 +1,5 @@
 2d.text.baseline.invalid
 
 
-FAIL OffscreenCanvas test: 2d.text.baseline.invalid assert_equals: ctx.textBaseline === 'top' (got bogus[string], expected top[string]) expected "top" but got "bogus"
+PASS OffscreenCanvas test: 2d.text.baseline.invalid
 

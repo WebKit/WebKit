@@ -1,3 +1,14 @@
+2020-11-20  Chris Lord  <clord@igalia.com>
+
+        Enable font functions on OffscreenCanvas for main-thread
+        https://bugs.webkit.org/show_bug.cgi?id=219088
+
+        Reviewed by Simon Fraser.
+
+        Enable running OffscreenCanvas text tests.
+
+        * platform/glib/TestExpectations:
+
 2020-11-20  Youenn Fablet  <youenn@apple.com>
 
         Add support for RTCPeerConnection.onicecandidateerror event

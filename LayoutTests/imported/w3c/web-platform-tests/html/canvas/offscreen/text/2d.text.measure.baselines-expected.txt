@@ -1,0 +1,7 @@
+2d.text.measure.baselines
+
+Testing baselines for OffscreenCanvas
+
+
+FAIL Testing baselines for OffscreenCanvas ctx.measureText('A').getBaselines is not a function. (In 'ctx.measureText('A').getBaselines()', 'ctx.measureText('A').getBaselines' is undefined)
+

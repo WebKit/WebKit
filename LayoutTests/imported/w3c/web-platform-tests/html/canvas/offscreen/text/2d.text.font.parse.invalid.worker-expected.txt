@@ -1,3 +1,3 @@
 
-FAIL 2d assert_equals: ctx.font === '20px serif' (got bogus[string], expected 20px serif[string]) expected "20px serif" but got "bogus"
+FAIL 2d assert_equals: ctx.font === '20px serif' (got 10px sans-serif[string], expected 20px serif[string]) expected "20px serif" but got "10px sans-serif"
 
