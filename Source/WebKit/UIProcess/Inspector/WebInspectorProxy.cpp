@@ -143,7 +143,6 @@ void WebInspectorProxy::connect()
 
     createFrontendPage();
 
-    m_inspectedPage->launchInitialProcessIfNecessary();
     m_inspectedPage->send(Messages::WebInspectorInterruptDispatcher::NotifyNeedDebuggerBreak(), 0);
     m_inspectedPage->send(Messages::WebInspector::Show());
 }
@@ -419,6 +418,9 @@ void WebInspectorProxy::createFrontendPage()
         return;
 
     trackInspectorPage(m_inspectorPage, m_inspectedPage);
+
+    // Make sure the inspected page has a running WebProcess so we can inspect it.
+    m_inspectedPage->launchInitialProcessIfNecessary();
 
     m_inspectorPage->process().addMessageReceiver(Messages::WebInspectorProxy::messageReceiverName(), m_inspectedPage->identifier(), *this);
     m_inspectorPage->process().assumeReadAccessToBaseURL(*m_inspectorPage, WebInspectorProxy::inspectorBaseURL());

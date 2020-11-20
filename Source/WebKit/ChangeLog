@@ -1,3 +1,28 @@
+2020-11-19  Chris Dumez  <cdumez@apple.com>
+
+        Web Inspector: Unable to Show JavaScript Console in empty tab in Safari Technology Preview
+        https://bugs.webkit.org/show_bug.cgi?id=211590
+        <rdar://problem/63000159>
+
+        Reviewed by Simon Fraser.
+
+        We used to launch the initial process for the inspected page from inside
+        WebInspectorProxy::connect(). I thought this was a good bottleneck to
+        make sure the inspected page has a process to inspect.
+
+        However, while WebInspectorProxy::connect() gets called by functions by
+        WebInspectorProxy::show(), it does not get called by
+        WebInspectorProxy::showConsole() for example.
+
+        To address this, I have moved the code that launches the inspected page's
+        initial process from WebInspectorProxy::connect() to
+        WebInspectorProxy::createFrontendPage(). This seems like a much better
+        bottleneck.
+
+        * UIProcess/Inspector/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::connect):
+        (WebKit::WebInspectorProxy::createFrontendPage):
+
 2020-11-19  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Issue sandbox extension to Web Inspector service
