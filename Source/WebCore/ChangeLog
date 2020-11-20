@@ -1,3 +1,19 @@
+2020-11-08  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [GraphicsLayerTextureMapper] reflection masks aren't applied
+        https://bugs.webkit.org/show_bug.cgi?id=218429
+
+        Reviewed by Don Olmstead.
+
+        The backing store of the mask layer of replica layers aren't
+        updated at all since r178111.
+
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.cpp:
+        (WebCore::GraphicsLayerTextureMapper::updateBackingStoreIncludingSubLayers):
+        Use updateBackingStoreIncludingSubLayers for the replica layer to
+        update backing stores recursively instead of updating only one
+        layer by using updateBackingStoreIfNeeded.
+
 2020-11-03  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [TextureMapper] Crashed in TextureMapperLayer::paintUsingOverlapRegions

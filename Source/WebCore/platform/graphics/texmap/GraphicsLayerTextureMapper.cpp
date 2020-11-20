@@ -498,7 +498,7 @@ void GraphicsLayerTextureMapper::updateBackingStoreIncludingSubLayers()
     if (maskLayer())
         downcast<GraphicsLayerTextureMapper>(*maskLayer()).updateBackingStoreIfNeeded();
     if (replicaLayer())
-        downcast<GraphicsLayerTextureMapper>(*replicaLayer()).updateBackingStoreIfNeeded();
+        downcast<GraphicsLayerTextureMapper>(*replicaLayer()).updateBackingStoreIncludingSubLayers();
     for (auto& child : children())
         downcast<GraphicsLayerTextureMapper>(child.get()).updateBackingStoreIncludingSubLayers();
 }
