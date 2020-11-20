@@ -225,6 +225,17 @@ static const char* fragmentTemplateGE320Vars =
         in vec2 v_transformedTexCoord;
         in vec4 v_nonProjectedPosition;
     );
+#else
+// min(genIType) isn't supported for GLSL ES < 3.0.
+static const char* fragmentTemplateES =
+    STRINGIFY(
+        int min(int x, int y)
+        {
+            if (x < y)
+                return x;
+            return y;
+        }
+    );
 #endif
 
 static const char* fragmentTemplateCommon =
@@ -576,6 +587,7 @@ Ref<TextureMapperShaderProgram> TextureMapperShaderProgram::create(TextureMapper
     // Append the appropriate input/output variable definitions.
 #if USE(OPENGL_ES)
     fragmentShaderBuilder.append(fragmentTemplateLT320Vars);
+    fragmentShaderBuilder.append(fragmentTemplateES);
 #else
     if (glVersion >= 320)
         fragmentShaderBuilder.append(fragmentTemplateGE320Vars);
