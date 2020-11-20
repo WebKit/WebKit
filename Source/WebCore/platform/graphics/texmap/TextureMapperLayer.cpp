@@ -40,6 +40,7 @@ public:
     float opacity { 1 };
     IntSize offset;
     TextureMapperLayer* backdropLayer { nullptr };
+    bool preserves3D { false };
 };
 
 TextureMapperLayer::TextureMapperLayer() = default;
@@ -223,8 +224,26 @@ void TextureMapperLayer::paintSelfAndChildren(TextureMapperPaintOptions& options
     if (m_state.backdropLayer && m_state.backdropLayer == options.backdropLayer)
         return;
 
-    if (m_state.preserves3D)
-        options.textureMapper.beginPreserves3D();
+    struct Preserves3DScope {
+        Preserves3DScope(TextureMapperPaintOptions& passedOptions, bool passedEnable)
+            : options(passedOptions)
+            , enable(passedEnable)
+        {
+            if (enable) {
+                options.preserves3D = true;
+                options.textureMapper.beginPreserves3D();
+            }
+        }
+        ~Preserves3DScope()
+        {
+            if (enable) {
+                options.preserves3D = false;
+                options.textureMapper.endPreserves3D();
+            }
+        }
+        TextureMapperPaintOptions& options;
+        bool enable;
+    } scopedPreserves3D(options, m_state.preserves3D && !options.preserves3D);
 
     if (m_state.backdropLayer && !options.backdropLayer) {
         TransformationMatrix clipTransform;
@@ -238,11 +257,8 @@ void TextureMapperLayer::paintSelfAndChildren(TextureMapperPaintOptions& options
 
     paintSelf(options);
 
-    if (m_children.isEmpty()) {
-        if (m_state.preserves3D)
-            options.textureMapper.endPreserves3D();
+    if (m_children.isEmpty())
         return;
-    }
 
     bool shouldClip = m_state.masksToBounds && !m_state.preserves3D;
     if (shouldClip) {
@@ -266,8 +282,6 @@ void TextureMapperLayer::paintSelfAndChildren(TextureMapperPaintOptions& options
 
     if (shouldClip)
         options.textureMapper.endClip();
-    if (m_state.preserves3D)
-        options.textureMapper.endPreserves3D();
 }
 
 bool TextureMapperLayer::shouldBlend() const
