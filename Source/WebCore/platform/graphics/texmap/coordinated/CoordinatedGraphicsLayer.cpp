@@ -540,6 +540,7 @@ bool CoordinatedGraphicsLayer::setBackdropFilters(const FilterOperations& filter
             return false;
     } else
         clearBackdropFilters();
+
     didChangeBackdropFilters();
 
     return canCompositeFilters;
@@ -964,6 +965,9 @@ void CoordinatedGraphicsLayer::flushCompositingStateForThisLayerOnly()
                     m_backdropLayer->setSize(m_backdropFiltersRect.rect().size());
                     m_backdropLayer->setPosition(m_backdropFiltersRect.rect().location());
                 }
+
+                if (localDelta.backdropFiltersRectChanged)
+                    state.backdropFiltersRect = m_backdropFiltersRect;
 
                 if (localDelta.animationsChanged)
                     state.animations = m_animations;

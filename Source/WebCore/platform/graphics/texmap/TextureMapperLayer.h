@@ -59,6 +59,7 @@ public:
     void setMaskLayer(TextureMapperLayer*);
     void setReplicaLayer(TextureMapperLayer*);
     void setBackdropLayer(TextureMapperLayer*);
+    void setBackdropFiltersRect(const FloatRoundedRect&);
     void setPosition(const FloatPoint&);
     void setBoundsOrigin(const FloatPoint&);
     void setSize(const FloatSize&);
@@ -177,6 +178,7 @@ private:
         WeakPtr<TextureMapperLayer> maskLayer;
         WeakPtr<TextureMapperLayer> replicaLayer;
         WeakPtr<TextureMapperLayer> backdropLayer;
+        FloatRoundedRect backdropFiltersRect;
         Color solidColor;
         FilterOperations filters;
         Color debugBorderColor;

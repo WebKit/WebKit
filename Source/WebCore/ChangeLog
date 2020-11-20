@@ -1,3 +1,25 @@
+2020-11-13  Miguel Gomez  <magomez@igalia.com>
+
+        [GTK][WPE] CSS backdrop overlay corners are not rounded on results.webkit.org
+        https://bugs.webkit.org/show_bug.cgi?id=215445
+
+        Reviewed by Carlos Garcia Campos.
+
+        Pass the backdropFiltersRect from CoordinatedGraphicsLayer through Nicosia to TextureMapperLayer. The
+        latter will use this value to clip when painting the backdrop layer.
+
+        Based on a patch created by Carlos Garcia Campos  <cgarcia@igalia.com>.
+
+        * platform/graphics/nicosia/NicosiaPlatformLayer.h:
+        (Nicosia::CompositionLayer::flushState):
+        * platform/graphics/texmap/TextureMapperLayer.cpp:
+        (WebCore::TextureMapperLayer::paintSelfAndChildren):
+        (WebCore::TextureMapperLayer::setBackdropFiltersRect):
+        * platform/graphics/texmap/TextureMapperLayer.h:
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::setBackdropFilters):
+        (WebCore::CoordinatedGraphicsLayer::flushCompositingStateForThisLayerOnly):
+
 2020-11-09  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [TextureMapper] backdrop-filter should use the identity transform to render the root layer
