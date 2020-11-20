@@ -65,7 +65,6 @@ platform/adwaita/ThemeAdwaita.cpp
 
 platform/generic/ScrollAnimatorGeneric.cpp
 
-platform/graphics/ANGLEWebKitBridge.cpp
 platform/graphics/GLContext.cpp
 platform/graphics/PlatformDisplay.cpp
 
