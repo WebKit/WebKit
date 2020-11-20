@@ -26,6 +26,7 @@
 #include "config.h"
 #include "JSRemoteInspectorServer.h"
 
+#if ENABLE(REMOTE_INSPECTOR)
 #include "RemoteInspectorServer.h"
 
 uint16_t JSRemoteInspectorServerStart(const char* address, uint16_t port)
@@ -36,3 +37,4 @@ uint16_t JSRemoteInspectorServerStart(const char* address, uint16_t port)
 
     return server.getPort().valueOr(0);
 }
+#endif // ENABLE(REMOTE_INSPECTOR)

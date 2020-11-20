@@ -1704,11 +1704,13 @@ void WebProcessPool::reportWebContentCPUTime(Seconds cpuTime, uint64_t activityS
 #endif
 }
 
+#if ENABLE(SERVICE_WORKER)
 WeakHashSet<WebProcessProxy>& WebProcessPool::serviceWorkerProcesses()
 {
     static NeverDestroyed<WeakHashSet<WebProcessProxy>> processes;
     return processes;
 }
+#endif
 
 void WebProcessPool::updateProcessAssertions()
 {
