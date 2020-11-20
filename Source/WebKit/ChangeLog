@@ -1,5 +1,13 @@
 2020-11-20  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Unreviewed fix for my build fix.
+
+        * UIProcess/ios/WKActionSheetAssistant.mm:
+        (-[WKActionSheetAssistant _appendAppLinkOpenActionsForURL:actions:elementInfo:]):
+        You have to spell DEPRECATED correctly for this to work.
+
+2020-11-20  Ryan Haddad  <ryanhaddad@apple.com>
+
         Unreviewed, fix the build with recent SDKs.
 
         * UIProcess/ios/WKActionSheetAssistant.mm:

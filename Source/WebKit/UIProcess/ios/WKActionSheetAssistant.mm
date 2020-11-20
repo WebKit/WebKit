@@ -510,7 +510,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     NSString *externalApplicationName = appLink.targetApplicationProxy.localizedName;
-ALLOW_DEPRECARED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
     if (!externalApplicationName)
         return YES;
 
