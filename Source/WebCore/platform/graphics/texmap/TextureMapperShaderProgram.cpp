@@ -393,7 +393,7 @@ static const char* fragmentTemplateCommon =
             color *= total;
         }
 
-        vec4 sourceOver(vec4 src, vec4 dst) { return src + dst * (1. - dst.a); }
+        vec4 sourceOver(vec4 src, vec4 dst) { return src + dst * (1. - src.a); }
 
         void applyContentTexture(inout vec4 color, vec2 texCoord)
         {
