@@ -1,3 +1,18 @@
+2020-11-20  Chris Dumez  <cdumez@apple.com>
+
+        AudioWorkletProcessor::process() may get called on non-audio worklet thread and crash
+        https://bugs.webkit.org/show_bug.cgi?id=219209
+
+        Reviewed by Geoffrey Garen.
+
+        Add layout test coverage.
+
+        * http/wpt/webaudio/the-audio-api/the-audioworklet-interface/context-already-rendering-expected.txt: Added.
+        * http/wpt/webaudio/the-audio-api/the-audioworklet-interface/context-already-rendering.html: Added.
+        * http/wpt/webaudio/the-audio-api/the-audioworklet-interface/processors/basic-processor.js: Added.
+        (BasicProcessor.prototype.process):
+        (BasicProcessor):
+
 2020-11-20  Lauro Moura  <lmoura@igalia.com>
 
         canvas: drawImage should not raise IndexSizeError on empty sources

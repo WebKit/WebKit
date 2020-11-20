@@ -317,6 +317,7 @@ private:
     void clear();
 
     void scheduleNodeDeletion();
+    void workletIsReady();
 
     // When source nodes begin playing, the BaseAudioContext keeps them alive inside m_referencedSourceNodes.
     // When the nodes stop playing, they get added to m_finishedSourceNodes. After each rendering quantum,

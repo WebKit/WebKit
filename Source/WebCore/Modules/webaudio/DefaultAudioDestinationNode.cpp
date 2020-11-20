@@ -75,6 +75,7 @@ void DefaultAudioDestinationNode::uninitialize()
         return;
 
     ALWAYS_LOG(LOGIDENTIFIER);
+    m_wasDestinationStarted = false;
     m_destination->stop();
     m_destination = nullptr;
     m_numberOfInputChannels = 0;
@@ -128,6 +129,7 @@ void DefaultAudioDestinationNode::startRendering(CompletionHandler<void(Optional
         completionHandler(success ? WTF::nullopt : makeOptional(Exception { InvalidStateError, "Failed to start the audio device"_s }));
     };
 
+    m_wasDestinationStarted = true;
     m_destination->start(dispatchToRenderThreadFunction(), WTFMove(innerCompletionHandler));
 }
 
@@ -140,6 +142,7 @@ void DefaultAudioDestinationNode::resume(CompletionHandler<void(Optional<Excepti
         });
         return;
     }
+    m_wasDestinationStarted = true;
     m_destination->start(dispatchToRenderThreadFunction(), [completionHandler = WTFMove(completionHandler)](bool success) mutable {
         completionHandler(success ? WTF::nullopt : makeOptional(Exception { InvalidStateError, "Failed to start the audio device"_s }));
     });
@@ -155,9 +158,19 @@ void DefaultAudioDestinationNode::suspend(CompletionHandler<void(Optional<Except
         return;
     }
 
+    m_wasDestinationStarted = false;
     m_destination->stop([completionHandler = WTFMove(completionHandler)](bool success) mutable {
         completionHandler(success ? WTF::nullopt : makeOptional(Exception { InvalidStateError, "Failed to stop the audio device"_s }));
     });
+}
+
+void DefaultAudioDestinationNode::restartRendering()
+{
+    if (!m_wasDestinationStarted)
+        return;
+
+    m_destination->stop();
+    m_destination->start(dispatchToRenderThreadFunction());
 }
 
 void DefaultAudioDestinationNode::close(CompletionHandler<void()>&& completionHandler)
@@ -191,9 +204,11 @@ ExceptionOr<void> DefaultAudioDestinationNode::setChannelCount(unsigned channelC
 
     if (this->channelCount() != oldChannelCount && isInitialized()) {
         // Re-create destination.
-        m_destination->stop();
+        if (m_wasDestinationStarted)
+            m_destination->stop();
         createDestination();
-        m_destination->start(dispatchToRenderThreadFunction());
+        if (m_wasDestinationStarted)
+            m_destination->start(dispatchToRenderThreadFunction());
     }
 
     return { };

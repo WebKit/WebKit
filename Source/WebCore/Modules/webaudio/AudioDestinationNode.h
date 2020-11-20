@@ -59,6 +59,7 @@ public:
     virtual void resume(CompletionHandler<void(Optional<Exception>&&)>&& completionHandler) { completionHandler(WTF::nullopt); }
     virtual void suspend(CompletionHandler<void(Optional<Exception>&&)>&& completionHandler) { completionHandler(WTF::nullopt); }
     virtual void close(CompletionHandler<void()>&& completionHandler) { completionHandler(); }
+    virtual void restartRendering() { }
 
     virtual bool isPlaying() { return false; }
     void isPlayingDidChange() override;

@@ -1040,7 +1040,10 @@ PeriodicWave& BaseAudioContext::periodicWave(OscillatorType type)
 void BaseAudioContext::addAudioParamDescriptors(const String& processorName, Vector<AudioParamDescriptor>&& descriptors)
 {
     ASSERT(!m_parameterDescriptorMap.contains(processorName));
+    bool wasEmpty = m_parameterDescriptorMap.isEmpty();
     m_parameterDescriptorMap.add(processorName, WTFMove(descriptors));
+    if (wasEmpty)
+        workletIsReady();
 }
 
 void BaseAudioContext::sourceNodeWillBeginPlayback(AudioNode& node)
@@ -1053,6 +1056,16 @@ void BaseAudioContext::sourceNodeDidFinishPlayback(AudioNode& node)
     ASSERT(isAudioThread());
 
     m_finishedSourceNodes.append(&node);
+}
+
+void BaseAudioContext::workletIsReady()
+{
+    ASSERT(isMainThread());
+
+    // If we're already rendering when the worklet becomes ready, we need to restart
+    // rendering in order to switch to the audio worklet thread.
+    if (m_destinationNode)
+        m_destinationNode->restartRendering();
 }
 
 #if !RELEASE_LOG_DISABLED

@@ -59,11 +59,13 @@ private:
     void enableInput(const String& inputDeviceId) final;
     void resume(CompletionHandler<void(Optional<Exception>&&)>&&) final;
     void suspend(CompletionHandler<void(Optional<Exception>&&)>&&) final;
+    void restartRendering() final;
     void close(CompletionHandler<void()>&&) final;
     unsigned maxChannelCount() const final;
     bool isPlaying() final;
 
     RefPtr<AudioDestination> m_destination;
+    bool m_wasDestinationStarted { false };
     String m_inputDeviceId;
     unsigned m_numberOfInputChannels { 0 };
 };
