@@ -1118,12 +1118,12 @@ void RenderTheme::paintSliderTicks(const RenderObject& o, const PaintInfo& paint
 
 #endif
 
-Seconds RenderTheme::animationRepeatIntervalForProgressBar(RenderProgress&) const
+Seconds RenderTheme::animationRepeatIntervalForProgressBar(const RenderProgress&) const
 {
     return 0_s;
 }
 
-Seconds RenderTheme::animationDurationForProgressBar(RenderProgress&) const
+Seconds RenderTheme::animationDurationForProgressBar(const RenderProgress&) const
 {
     return 0_s;
 }

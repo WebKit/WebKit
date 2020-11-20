@@ -67,6 +67,14 @@ public:
         {
         }
 
+        explicit Radii(float uniformRadiusWidth, float uniformRadiusHeight)
+            : m_topLeft(uniformRadiusWidth, uniformRadiusHeight)
+            , m_topRight(uniformRadiusWidth, uniformRadiusHeight)
+            , m_bottomLeft(uniformRadiusWidth, uniformRadiusHeight)
+            , m_bottomRight(uniformRadiusWidth, uniformRadiusHeight)
+        {
+        }
+
         void setTopLeft(const FloatSize& size) { m_topLeft = size; }
         void setTopRight(const FloatSize& size) { m_topRight = size; }
         void setBottomLeft(const FloatSize& size) { m_bottomLeft = size; }

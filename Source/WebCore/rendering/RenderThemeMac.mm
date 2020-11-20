@@ -115,7 +115,7 @@
 @property (getter=isCenteredLook) BOOL centeredLook;
 @end
 
-static const Seconds progressAnimationFrameRate = 33_ms; // 30 fps
+constexpr Seconds progressAnimationRepeatInterval = 33_ms; // 30 fps
 
 @interface WebCoreRenderThemeNotificationObserver : NSObject
 @end
@@ -1344,9 +1344,9 @@ int RenderThemeMac::minimumProgressBarHeight(const RenderStyle& style) const
     return sizeForSystemFont(style, progressBarSizes()).height();
 }
 
-Seconds RenderThemeMac::animationRepeatIntervalForProgressBar(RenderProgress&) const
+Seconds RenderThemeMac::animationRepeatIntervalForProgressBar(const RenderProgress&) const
 {
-    return progressAnimationFrameRate;
+    return progressAnimationRepeatInterval;
 }
 
 void RenderThemeMac::adjustProgressBarStyle(RenderStyle&, const Element*) const

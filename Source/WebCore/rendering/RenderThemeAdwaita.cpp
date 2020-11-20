@@ -302,12 +302,12 @@ bool RenderThemeAdwaita::paintMenuListButtonDecorations(const RenderBox& renderO
     return paintMenuList(renderObject, paintInfo, rect);
 }
 
-Seconds RenderThemeAdwaita::animationRepeatIntervalForProgressBar(RenderProgress&) const
+Seconds RenderThemeAdwaita::animationRepeatIntervalForProgressBar(const RenderProgress&) const
 {
     return progressAnimationFrameRate;
 }
 
-Seconds RenderThemeAdwaita::animationDurationForProgressBar(RenderProgress&) const
+Seconds RenderThemeAdwaita::animationDurationForProgressBar(const RenderProgress&) const
 {
     return progressAnimationFrameRate * progressAnimationFrameCount;
 }

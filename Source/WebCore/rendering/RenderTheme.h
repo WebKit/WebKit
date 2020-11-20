@@ -187,9 +187,9 @@ public:
     virtual ScrollbarControlSize scrollbarControlSizeForPart(ControlPart) { return ScrollbarControlSize::Regular; }
 
     // Returns the repeat interval of the animation for the progress bar.
-    virtual Seconds animationRepeatIntervalForProgressBar(RenderProgress&) const;
+    virtual Seconds animationRepeatIntervalForProgressBar(const RenderProgress&) const;
     // Returns the duration of the animation for the progress bar.
-    virtual Seconds animationDurationForProgressBar(RenderProgress&) const;
+    virtual Seconds animationDurationForProgressBar(const RenderProgress&) const;
     virtual IntRect progressBarRectForBounds(const RenderObject&, const IntRect&) const;
 
 #if ENABLE(VIDEO)

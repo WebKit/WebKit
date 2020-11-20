@@ -907,6 +907,11 @@ bool RenderThemeIOS::paintSliderThumbDecorations(const RenderObject& box, const 
 
 bool RenderThemeIOS::paintProgressBar(const RenderObject& renderer, const PaintInfo& paintInfo, const IntRect& rect)
 {
+#if ENABLE(IOS_FORM_CONTROL_REFRESH)
+    if (renderer.settings().iOSFormControlRefreshEnabled())
+        return paintProgressBarFCR(renderer, paintInfo, rect);
+#endif
+
     if (!is<RenderProgress>(renderer))
         return true;
 
@@ -2065,6 +2070,70 @@ bool RenderThemeIOS::paintRadio(const RenderObject& box, const PaintInfo& paintI
         context.setFillColor(controlBackgroundColor);
         context.fillEllipse(rect);
     }
+
+    return false;
+}
+
+// Animate the indeterminate progress bar at 30 fps. This value was chosen to
+// ensure a smooth animation, while trying to reduce the number of times the
+// progress bar is repainted.
+constexpr Seconds progressAnimationRepeatInterval = 33_ms;
+
+Seconds RenderThemeIOS::animationRepeatIntervalForProgressBar(const RenderProgress&) const
+{
+    return progressAnimationRepeatInterval;
+}
+
+bool RenderThemeIOS::paintProgressBarFCR(const RenderObject& renderer, const PaintInfo& paintInfo, const IntRect& rect)
+{
+    if (!is<RenderProgress>(renderer))
+        return true;
+    auto& renderProgress = downcast<RenderProgress>(renderer);
+
+    auto& context = paintInfo.context();
+    GraphicsContextStateSaver stateSaver(context);
+
+    constexpr auto barHeight = 4.0f;
+    FloatRoundedRect::Radii barCornerRadii(2.5f, 1.5f);
+
+    if (rect.height() < barHeight) {
+        // The rect is smaller than the standard progress bar. We clip to the
+        // element's rect to avoid leaking pixels outside the repaint rect.
+        context.clip(rect);
+    }
+
+    float barTop = rect.y() + (rect.height() - barHeight) / 2.0f;
+
+    FloatRect trackRect(rect.x(), barTop, rect.width(), barHeight);
+    FloatRoundedRect roundedTrackRect(trackRect, barCornerRadii);
+    context.fillRoundedRect(roundedTrackRect, controlBackgroundColor);
+
+    float barWidth;
+    float barLeft = rect.x();
+
+    if (renderProgress.isDeterminate()) {
+        barWidth = clampTo<float>(renderProgress.position(), 0.0f, 1.0f) * trackRect.width();
+
+        if (!renderProgress.style().isLeftToRightDirection())
+            barLeft = trackRect.maxX() - barWidth;
+    } else {
+        barWidth = 0.25f * trackRect.width();
+
+        Seconds elapsed = MonotonicTime::now() - renderProgress.animationStartTime();
+        float position = fmodf(elapsed.value(), 1.0f);
+        float offset = position * (trackRect.width() + barWidth);
+
+        bool reverseDirection = static_cast<int>(elapsed.value()) % 2;
+        if (reverseDirection)
+            barLeft = trackRect.maxX() - offset;
+        else
+            barLeft -= barWidth - offset;
+
+        context.clipRoundedRect(roundedTrackRect);
+    }
+
+    FloatRect barRect(barLeft, barTop, barWidth, barHeight);
+    context.fillRoundedRect(FloatRoundedRect(barRect, barCornerRadii), controlColor);
 
     return false;
 }
