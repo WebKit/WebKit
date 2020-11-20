@@ -167,7 +167,7 @@ LayoutRect RenderLineBreak::localCaretRect(const InlineRunAndOffset& runAndOffse
         return LayoutRect();
 
     auto line = runAndOffset.run.line();
-    return line->containingBlock().computeCaretRect(line->selectionRect(), line->logicalLeft(), caretWidth, caretRectMode);
+    return line->containingBlock().computeCaretRect(line->selectionRect(), line->contentLogicalLeft(), caretWidth, caretRectMode);
 }
 
 IntRect RenderLineBreak::linesBoundingBox() const
@@ -214,7 +214,7 @@ void RenderLineBreak::collectSelectionRects(Vector<SelectionRect>& rects, unsign
     const RootInlineBox& rootBox = box->root();
 
     auto line = LayoutIntegration::LineIterator(&rootBox);
-    LayoutRect rect = rootBox.blockFlow().computeCaretRect(line->selectionRect(), line->logicalLeft(), 0);
+    LayoutRect rect = rootBox.blockFlow().computeCaretRect(line->selectionRect(), line->contentLogicalLeft(), 0);
 
     if (rootBox.isFirstAfterPageBreak()) {
         if (box->isHorizontal())

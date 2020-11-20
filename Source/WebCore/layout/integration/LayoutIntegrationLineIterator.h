@@ -61,8 +61,8 @@ public:
     LayoutRect selectionRect() const;
 
     float y() const;
-    float logicalLeft() const;
-    float logicalRight() const;
+    float contentLogicalLeft() const;
+    float contentLogicalRight() const;
     float logicalHeight() const;
 
     int blockDirectionPointInLine() const;
@@ -180,7 +180,7 @@ inline LayoutUnit PathLine::lineBoxBottom() const
 
 inline LayoutRect PathLine::selectionRect() const
 {
-    return { LayoutPoint { logicalLeft(), selectionTop() }, LayoutPoint { logicalRight(), selectionBottom() } };
+    return { LayoutPoint { contentLogicalLeft(), selectionTop() }, LayoutPoint { contentLogicalRight(), selectionBottom() } };
 }
 
 inline float PathLine::y() const
@@ -190,17 +190,17 @@ inline float PathLine::y() const
     });
 }
 
-inline float PathLine::logicalLeft() const
+inline float PathLine::contentLogicalLeft() const
 {
     return WTF::switchOn(m_pathVariant, [](const auto& path) {
-        return path.logicalLeft();
+        return path.contentLogicalLeft();
     });
 }
 
-inline float PathLine::logicalRight() const
+inline float PathLine::contentLogicalRight() const
 {
     return WTF::switchOn(m_pathVariant, [](const auto& path) {
-        return path.logicalRight();
+        return path.contentLogicalRight();
     });
 }
 

@@ -660,7 +660,7 @@ FloatRect VisiblePosition::absoluteSelectionBoundsForLine() const
         return { };
 
     auto line = run.line();
-    auto localRect = FloatRect { FloatPoint { line->logicalLeft(), line->selectionTop() }, FloatPoint { line->logicalRight(), line->selectionBottom() } };
+    auto localRect = FloatRect { FloatPoint { line->contentLogicalLeft(), line->selectionTop() }, FloatPoint { line->contentLogicalRight(), line->selectionBottom() } };
     if (!line->isHorizontal())
         localRect = localRect.transposedRect();
 
