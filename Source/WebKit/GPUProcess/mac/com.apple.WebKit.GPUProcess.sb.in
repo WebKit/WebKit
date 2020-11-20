@@ -117,12 +117,13 @@
     ;; CoreVideo CVCGDisplayLink
     (allow iokit-open
         (iokit-registry-entry-class "IOFramebufferSharedUserClient"))
-#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101500
-    ;; H.264 Acceleration
+
+    ;; These are needed for Encrypted Media on some hardware (MacMini8,1 for example)
     (allow iokit-open
         (iokit-registry-entry-class "AppleIntelMEUserClient")
-        (iokit-registry-entry-class "AppleSNBFBUserClient"))
-#endif
+        (iokit-registry-entry-class "AppleSNBFBUserClient")
+    )
+
     ;; QuartzCore
     (allow iokit-open
         (iokit-registry-entry-class "AGPMClient")
