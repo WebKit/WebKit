@@ -1,3 +1,21 @@
+2020-11-17  Chris Lord  <clord@igalia.com>
+
+        REGRESSION(r269579) [WPE] Many tests with scrolling flaky after this revision
+        https://bugs.webkit.org/show_bug.cgi?id=218859
+
+        Reviewed by Simon Fraser.
+
+        Set scrolling node ID correctly on CoordinatedGraphicsLayer.
+
+        * page/scrolling/nicosia/ScrollingTreeFrameScrollingNodeNicosia.cpp:
+        (WebCore::ScrollingTreeFrameScrollingNodeNicosia::commitStateBeforeChildren):
+        * page/scrolling/nicosia/ScrollingTreeOverflowScrollingNodeNicosia.cpp:
+        * page/scrolling/nicosia/ScrollingTreeOverflowScrollingNodeNicosia.h:
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::setScrollingNodeID):
+        (WebCore::CoordinatedGraphicsLayer::flushCompositingStateForThisLayerOnly):
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.h:
+
 2020-11-09  Chris Lord  <clord@igalia.com>
 
         [GTK][WPE] Scrolling with mouse wheel doesn't work on iframes with async scrolling enabled
