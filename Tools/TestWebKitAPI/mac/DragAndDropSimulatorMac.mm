@@ -100,8 +100,8 @@ static NSImage *defaultExternalDragImage()
     bool _doneWaitingForDrop;
 }
 
-@synthesize currentDragOperation=_currentDragOperation;
-@synthesize initialDragImageLocationInView=_initialDragImageLocationInView;
+@synthesize currentDragOperation = _currentDragOperation;
+@synthesize initialDragImageLocationInView = _initialDragImageLocationInView;
 
 - (instancetype)initWithWebViewFrame:(CGRect)frame
 {

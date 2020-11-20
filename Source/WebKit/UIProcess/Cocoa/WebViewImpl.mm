@@ -523,7 +523,7 @@ static void* keyValueObservingContext = &keyValueObservingContext;
 
 @implementation WKTextListTouchBarViewController
 
-@synthesize currentListType=_currentListType;
+@synthesize currentListType = _currentListType;
 
 static const CGFloat listControlSegmentWidth = 67;
 #if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER) && ENABLE(FULLSCREEN_API)
@@ -637,10 +637,10 @@ static const NSUInteger orderedListSegment = 2;
 
 @implementation WKTextTouchBarItemController
 
-@synthesize textIsBold=_textIsBold;
-@synthesize textIsItalic=_textIsItalic;
-@synthesize textIsUnderlined=_textIsUnderlined;
-@synthesize currentTextAlignment=_currentTextAlignment;
+@synthesize textIsBold = _textIsBold;
+@synthesize textIsItalic = _textIsItalic;
+@synthesize textIsUnderlined = _textIsUnderlined;
+@synthesize currentTextAlignment = _currentTextAlignment;
 
 - (instancetype)initWithWebViewImpl:(WebKit::WebViewImpl*)webViewImpl
 {

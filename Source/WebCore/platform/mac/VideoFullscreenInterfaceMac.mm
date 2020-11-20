@@ -75,7 +75,7 @@ using WebCore::PlaybackSessionModel;
 
 @implementation WebVideoViewContainer
 
-@synthesize videoViewContainerDelegate=_videoViewContainerDelegate;
+@synthesize videoViewContainerDelegate = _videoViewContainerDelegate;
 
 - (void)resizeWithOldSuperviewSize:(NSSize)oldBoundsSize
 {
@@ -134,9 +134,9 @@ enum class PIPState {
 
 @implementation WebVideoFullscreenInterfaceMacObjC
 
-@synthesize playing=_playing;
-@synthesize videoDimensions=_videoDimensions;
-@synthesize exitingToStandardFullscreen=_exitingToStandardFullscreen;
+@synthesize playing = _playing;
+@synthesize videoDimensions = _videoDimensions;
+@synthesize exitingToStandardFullscreen = _exitingToStandardFullscreen;
 
 - (instancetype)initWithVideoFullscreenInterfaceMac:(WebCore::VideoFullscreenInterfaceMac*)videoFullscreenInterfaceMac
 {

@@ -161,8 +161,8 @@ static const uint32_t nonLinearizedPDFSentinel = std::numeric_limits<uint32_t>::
 
 @implementation WKPDFPluginAccessibilityObject
 
-@synthesize parent=_parent;
-@synthesize pdfPlugin=_pdfPlugin;
+@synthesize parent = _parent;
+@synthesize pdfPlugin = _pdfPlugin;
 
 - (id)initWithPDFPlugin:(WebKit::PDFPlugin *)plugin
 {
@@ -359,7 +359,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 @implementation WKPDFPluginScrollbarLayer
 
-@synthesize pdfPlugin=_pdfPlugin;
+@synthesize pdfPlugin = _pdfPlugin;
 
 - (id)initWithPDFPlugin:(WebKit::PDFPlugin *)plugin
 {
@@ -393,7 +393,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 @implementation WKPDFLayerControllerDelegate
 
-@synthesize pdfPlugin=_pdfPlugin;
+@synthesize pdfPlugin = _pdfPlugin;
 
 - (id)initWithPDFPlugin:(WebKit::PDFPlugin *)plugin
 {

@@ -32,7 +32,7 @@
 
 @implementation CustomBundleObject
 
-@synthesize somePayload=_somePayload;
+@synthesize somePayload = _somePayload;
 
 - (id)initWithValue:(long)value
 {

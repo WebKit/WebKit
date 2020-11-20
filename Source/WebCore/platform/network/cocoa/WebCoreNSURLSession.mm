@@ -731,18 +731,18 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
 }
 
 #pragma mark - NSURLSession API
-@synthesize session=_session;
-@synthesize taskIdentifier=_taskIdentifier;
-@synthesize originalRequest=_originalRequest;
-@synthesize currentRequest=_currentRequest;
-@synthesize countOfBytesReceived=_countOfBytesReceived;
-@synthesize countOfBytesSent=_countOfBytesSent;
-@synthesize countOfBytesExpectedToSend=_countOfBytesExpectedToSend;
-@synthesize countOfBytesExpectedToReceive=_countOfBytesExpectedToReceive;
-@synthesize state=_state;
-@synthesize error=_error;
-@synthesize taskDescription=_taskDescription;
-@synthesize priority=_priority;
+@synthesize session = _session;
+@synthesize taskIdentifier = _taskIdentifier;
+@synthesize originalRequest = _originalRequest;
+@synthesize currentRequest = _currentRequest;
+@synthesize countOfBytesReceived = _countOfBytesReceived;
+@synthesize countOfBytesSent = _countOfBytesSent;
+@synthesize countOfBytesExpectedToSend = _countOfBytesExpectedToSend;
+@synthesize countOfBytesExpectedToReceive = _countOfBytesExpectedToReceive;
+@synthesize state = _state;
+@synthesize error = _error;
+@synthesize taskDescription = _taskDescription;
+@synthesize priority = _priority;
 
 - (NSURLResponse *)response
 {

@@ -101,8 +101,8 @@ static NSRect convertRectToScreen(NSWindow *window, NSRect rect)
     [super dealloc];
 }
 
-@synthesize initialFrame=_initialFrame;
-@synthesize finalFrame=_finalFrame;
+@synthesize initialFrame = _initialFrame;
+@synthesize finalFrame = _finalFrame;
 
 - (void)windowDidLoad
 {

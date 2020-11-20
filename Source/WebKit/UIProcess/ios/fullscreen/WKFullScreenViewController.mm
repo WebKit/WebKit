@@ -122,8 +122,8 @@ private:
     CGFloat _nonZeroStatusBarHeight;
 }
 
-@synthesize prefersStatusBarHidden=_prefersStatusBarHidden;
-@synthesize prefersHomeIndicatorAutoHidden=_prefersHomeIndicatorAutoHidden;
+@synthesize prefersStatusBarHidden = _prefersStatusBarHidden;
+@synthesize prefersHomeIndicatorAutoHidden = _prefersHomeIndicatorAutoHidden;
 
 #pragma mark - External Interface
 

@@ -57,15 +57,15 @@ uint8_t tagID2[] = { 0x02 };
     RetainPtr<NSData> _tagID;
 }
 
-@synthesize technology=_technology;
-@synthesize AppData=_AppData;
-@synthesize UID=_UID;
-@synthesize ndefAvailability=_ndefAvailability;
-@synthesize ndefMessageSize=_ndefMessageSize;
-@synthesize ndefContainerSize=_ndefContainerSize;
-@synthesize tagA=_tagA;
-@synthesize tagB=_tagB;
-@synthesize tagF=_tagF;
+@synthesize technology = _technology;
+@synthesize AppData = _AppData;
+@synthesize UID = _UID;
+@synthesize ndefAvailability = _ndefAvailability;
+@synthesize ndefMessageSize = _ndefMessageSize;
+@synthesize ndefContainerSize = _ndefContainerSize;
+@synthesize tagA = _tagA;
+@synthesize tagB = _tagB;
+@synthesize tagF = _tagF;
 
 - (NFTagType)type
 {

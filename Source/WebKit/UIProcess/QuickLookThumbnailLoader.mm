@@ -143,7 +143,7 @@
     return YES;
 }
 
-@synthesize executing=_executing;
+@synthesize executing = _executing;
 
 - (BOOL)isExecuting
 {
@@ -163,7 +163,7 @@
     }
 }
 
-@synthesize finished=_finished;
+@synthesize finished = _finished;
 
 - (BOOL)isFinished
 {

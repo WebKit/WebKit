@@ -52,7 +52,7 @@
 
 @implementation DumpRenderTreeFilePromiseReceiver
 
-@synthesize draggingSource=_draggingSource;
+@synthesize draggingSource = _draggingSource;
 
 - (instancetype)initWithPromisedUTIs:(NSArray<NSString *> *)promisedUTIs
 {

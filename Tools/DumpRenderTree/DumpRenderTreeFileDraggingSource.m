@@ -32,7 +32,7 @@
 
 @implementation DumpRenderTreeFileDraggingSource
 
-@synthesize promisedFileURLs=_promisedFileURLs;
+@synthesize promisedFileURLs = _promisedFileURLs;
 
 - (instancetype)initWithPromisedFileURLs:(NSArray<NSURL *> *)promisedFileURLs
 {

@@ -59,9 +59,9 @@ static TestFontOptions *sharedFontOptionsForTesting()
     BOOL _hasMultipleFonts;
 }
 
-@synthesize hasShadow=_hasShadow;
-@synthesize shadowBlurRadius=_shadowBlurRadius;
-@synthesize hasMultipleFonts=_hasMultipleFonts;
+@synthesize hasShadow = _hasShadow;
+@synthesize shadowBlurRadius = _shadowBlurRadius;
+@synthesize hasMultipleFonts = _hasMultipleFonts;
 
 + (instancetype)sharedInstance
 {

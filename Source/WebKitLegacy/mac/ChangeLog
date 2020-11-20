@@ -1,3 +1,19 @@
+2020-11-19  Hoa Dinh  <dvh@apple.com>
+
+        Code formatting: change instances of "@synthesize a=b" to "@synthesize a = b".
+        https://bugs.webkit.org/show_bug.cgi?id=219094
+
+        Reviewed by Wenson Hsieh.
+
+        There was a mix of "@synthesize a=b" and "@synthesize a = b" in the codebase.
+        Most of the instances are "@synthesize a = b", with spaces around the equal sign.
+        With https://bugs.webkit.org/show_bug.cgi?id=219092, we're changing the behavior of
+        the code style checker to require spaces around the equal sign.
+        The change replace all the instances of "@synthesize a=b" with "@synthesize a = b".
+
+        * WebView/WebFullScreenController.mm:
+        * WebView/WebView.mm:
+
 2020-11-16  Sam Weinig  <weinig@apple.com>
 
         Standardize enums that are used by Settings in preperation for autogeneration

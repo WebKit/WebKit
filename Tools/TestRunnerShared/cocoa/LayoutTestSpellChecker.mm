@@ -169,7 +169,7 @@ static NSTextCheckingType nsTextCheckingType(JSStringRef jsType)
 
 @implementation LayoutTestSpellChecker
 
-@synthesize spellCheckerLoggingEnabled=_spellCheckerLoggingEnabled;
+@synthesize spellCheckerLoggingEnabled = _spellCheckerLoggingEnabled;
 
 + (instancetype)checker
 {

@@ -33,7 +33,7 @@
 
 @implementation WebGPULayer
 
-@synthesize swapChain=_swapChain;
+@synthesize swapChain = _swapChain;
 
 - (id)init
 {

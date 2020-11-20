@@ -276,7 +276,7 @@ NSArray *convertToNSArray(const WebCore::AXCoreObject::AccessibilityChildrenVect
 
 @implementation WebAccessibilityObjectWrapperBase
 
-@synthesize identifier=_identifier;
+@synthesize identifier = _identifier;
 
 - (id)initWithAccessibilityObject:(AXCoreObject*)axObject
 {

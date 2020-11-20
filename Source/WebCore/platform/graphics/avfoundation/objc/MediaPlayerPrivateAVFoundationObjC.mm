@@ -3643,7 +3643,7 @@ NSArray* playerKVOProperties()
 
 @implementation WebCoreAVFPullDelegate
 
-@synthesize semaphore=m_semaphore;
+@synthesize semaphore = m_semaphore;
 
 - (void)outputMediaDataWillChange:(AVPlayerItemVideoOutput *)output
 {

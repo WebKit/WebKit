@@ -76,7 +76,7 @@ static const CGFloat swipeOverlayShadowWidth = 81;
 @end
 
 @implementation WKSwipeCancellationTracker
-@synthesize isCancelled=_isCancelled;
+@synthesize isCancelled = _isCancelled;
 @end
 
 namespace WebKit {

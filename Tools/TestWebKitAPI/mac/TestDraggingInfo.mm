@@ -50,10 +50,10 @@
     return self;
 }
 
-@synthesize draggingSourceOperationMask=_draggingSourceOperationMask;
-@synthesize draggingLocation=_draggingLocation;
-@synthesize draggingFormation=_draggingFormation;
-@synthesize numberOfValidItemsForDrop=_numberOfValidItemsForDrop;
+@synthesize draggingSourceOperationMask = _draggingSourceOperationMask;
+@synthesize draggingLocation = _draggingLocation;
+@synthesize draggingFormation = _draggingFormation;
+@synthesize numberOfValidItemsForDrop = _numberOfValidItemsForDrop;
 
 - (NSArray<NSFilePromiseReceiver *> *)filePromiseReceivers
 {
@@ -128,10 +128,10 @@
 
 // The following methods are not currently used by WebKit.
 
-@synthesize draggedImageLocation=_draggedImageLocation;
-@synthesize draggingSequenceNumber=_draggingSequenceNumber;
-@synthesize animatesToDestination=_animatesToDestination;
-@synthesize springLoadingHighlight=_springLoadingHighlight;
+@synthesize draggedImageLocation = _draggedImageLocation;
+@synthesize draggingSequenceNumber = _draggingSequenceNumber;
+@synthesize animatesToDestination = _animatesToDestination;
+@synthesize springLoadingHighlight = _springLoadingHighlight;
 
 - (NSWindow *)draggingDestinationWindow
 {

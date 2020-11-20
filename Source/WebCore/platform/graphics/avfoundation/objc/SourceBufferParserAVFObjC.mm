@@ -77,7 +77,7 @@
     return self;
 }
 
-@synthesize parent=_parent;
+@synthesize parent = _parent;
 
 - (void)dealloc
 {

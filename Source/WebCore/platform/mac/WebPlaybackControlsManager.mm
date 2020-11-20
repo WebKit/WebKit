@@ -45,11 +45,11 @@ using WebCore::PlaybackSessionInterfaceMac;
 
 @implementation WebPlaybackControlsManager
 
-@synthesize seekToTime=_seekToTime;
-@synthesize hasEnabledAudio=_hasEnabledAudio;
-@synthesize hasEnabledVideo=_hasEnabledVideo;
-@synthesize rate=_rate;
-@synthesize canTogglePlayback=_canTogglePlayback;
+@synthesize seekToTime = _seekToTime;
+@synthesize hasEnabledAudio = _hasEnabledAudio;
+@synthesize hasEnabledVideo = _hasEnabledVideo;
+@synthesize rate = _rate;
+@synthesize canTogglePlayback = _canTogglePlayback;
 @synthesize allowsPictureInPicturePlayback;
 @synthesize pictureInPictureActive;
 @synthesize canTogglePictureInPicture;

@@ -170,8 +170,8 @@ static void makeResponderFirstResponderIfDescendantOfView(NSWindow *window, NSRe
 #pragma mark -
 #pragma mark Accessors
 
-@synthesize initialFrame=_initialFrame;
-@synthesize finalFrame=_finalFrame;
+@synthesize initialFrame = _initialFrame;
+@synthesize finalFrame = _finalFrame;
 
 - (BOOL)isFullScreen
 {

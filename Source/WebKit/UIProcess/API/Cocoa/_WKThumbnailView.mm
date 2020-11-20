@@ -60,7 +60,7 @@
     RetainPtr<NSColor> _overrideBackgroundColor;
 }
 
-@synthesize _waitingForSnapshot=_waitingForSnapshot;
+@synthesize _waitingForSnapshot = _waitingForSnapshot;
 
 - (instancetype)initWithFrame:(NSRect)frame
 {

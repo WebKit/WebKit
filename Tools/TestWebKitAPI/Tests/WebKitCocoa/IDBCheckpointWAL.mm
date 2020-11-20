@@ -44,8 +44,8 @@
 
 @implementation IDBCheckpointWALMessageHandler
 
-@synthesize receivedScriptMessage=_receivedScriptMessage;
-@synthesize lastScriptMessage=_lastScriptMessage;
+@synthesize receivedScriptMessage = _receivedScriptMessage;
+@synthesize lastScriptMessage = _lastScriptMessage;
 
 - (void)dealloc
 {

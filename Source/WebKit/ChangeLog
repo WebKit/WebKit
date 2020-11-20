@@ -1,3 +1,27 @@
+2020-11-19  Hoa Dinh  <dvh@apple.com>
+
+        Code formatting: change instances of "@synthesize a=b" to "@synthesize a = b".
+        https://bugs.webkit.org/show_bug.cgi?id=219094
+
+        Reviewed by Wenson Hsieh.
+
+        There was a mix of "@synthesize a=b" and "@synthesize a = b" in the codebase.
+        Most of the instances are "@synthesize a = b", with spaces around the equal sign.
+        With https://bugs.webkit.org/show_bug.cgi?id=219092, we're changing the behavior of
+        the code style checker to require spaces around the equal sign.
+        The change replace all the instances of "@synthesize a=b" with "@synthesize a = b".
+
+        * NetworkProcess/CustomProtocols/Cocoa/LegacyCustomProtocolManagerCocoa.mm:
+        * UIProcess/API/Cocoa/WKPreviewActionItem.mm:
+        * UIProcess/API/Cocoa/_WKThumbnailView.mm:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        * UIProcess/QuickLookThumbnailLoader.mm:
+        * UIProcess/WebAuthentication/Mock/MockNfcService.mm:
+        * UIProcess/ios/fullscreen/WKFullScreenViewController.mm:
+        * UIProcess/mac/ViewGestureControllerMac.mm:
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+
 2020-11-19  Brent Fulgham  <bfulgham@apple.com>
 
         Unreviewed rollout of r269890 and r269911 due to EME issues on Mac Mini.
