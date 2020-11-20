@@ -105,15 +105,16 @@ class MacPort(DarwinPort):
             while temp_version != self.CURRENT_VERSION:
                 versions_to_fallback.append(Version.from_iterable(temp_version))
                 if temp_version < self.CURRENT_VERSION:
-                    if temp_version.minor < self.LAST_MACOSX.minor:
-                        temp_version.minor += 1
+                    if temp_version.major == self.LAST_MACOSX.major:
+                        if temp_version.minor < self.LAST_MACOSX.minor:
+                            temp_version.minor += 1
+                        else:
+                            temp_version = Version(11, 0)
                     else:
-                        temp_version = Version(11, 0)
+                        temp_version = Version(temp_version.major + 1)
                 else:
-                    if temp_version.minor > 0:
-                        temp_version.minor -= 1
-                    else:
-                        temp_version = Version(self.LAST_MACOSX.major, self.LAST_MACOSX.minor)
+                    temp_version = Version(temp_version.major - 1)
+
         wk_string = 'wk1'
         if self.get_option('webkit_test_runner'):
             wk_string = 'wk2'
