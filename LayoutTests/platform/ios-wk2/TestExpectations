@@ -1130,8 +1130,10 @@ imported/w3c/web-platform-tests/uievents/click/dblclick_event_mouse.html [ Skip 
 imported/w3c/web-platform-tests/uievents/mouse/layout_change_should_fire_mouseover.html [ Skip ]
 imported/w3c/web-platform-tests/uievents/mouse/mouseevent_move_button.html [ Skip ]
 imported/w3c/web-platform-tests/uievents/order-of-events/focus-events/focus.html [ Skip ]
+imported/w3c/web-platform-tests/uievents/order-of-events/mouse-events/mouseover-out.html [ Skip ]
 
 imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/unhandled-promise-rejections/promise-rejection-events-onerror.html [ Pass Failure ]
+imported/w3c/web-platform-tests/uievents/click/click_events_on_input.html [ Pass Failure ]
 
 # rdar://problem/26477855
 http/tests/xmlhttprequest/logout.html [ Failure ]
