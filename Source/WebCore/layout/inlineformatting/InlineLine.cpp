@@ -56,9 +56,8 @@ Line::~Line()
 {
 }
 
-void Line::initialize(InlineLayoutUnit horizontalConstraint)
+void Line::initialize()
 {
-    m_horizontalConstraint = horizontalConstraint;
     m_contentLogicalWidth = { };
     m_runs.clear();
     m_trailingSoftHyphenWidth = { };
@@ -67,13 +66,13 @@ void Line::initialize(InlineLayoutUnit horizontalConstraint)
     m_isConsideredEmptyBeforeTrimmableTrailingContent = { };
 }
 
-void Line::removeCollapsibleContent()
+void Line::removeCollapsibleContent(InlineLayoutUnit extraHorizontalSpace)
 {
     removeTrailingTrimmableContent();
-    visuallyCollapsePreWrapOverflowContent();
+    visuallyCollapsePreWrapOverflowContent(extraHorizontalSpace);
 }
 
-void Line::applyRunExpansion()
+void Line::applyRunExpansion(InlineLayoutUnit extraHorizontalSpace)
 {
     ASSERT(formattingContext().root().style().textAlign() == TextAlignMode::Justify);
     // Text is justified according to the method specified by the text-justify property,
@@ -97,10 +96,10 @@ void Line::applyRunExpansion()
         lastRunWithContent->setExpansionBehavior(leadingExpansion | ForbidRightExpansion);
     }
     // Anything to distribute?
-    if (!expansionOpportunityCount || !availableWidth())
+    if (!expansionOpportunityCount || !extraHorizontalSpace)
         return;
     // Distribute the extra space.
-    auto expansionToDistribute = availableWidth() / expansionOpportunityCount;
+    auto expansionToDistribute = extraHorizontalSpace / expansionOpportunityCount;
     auto accumulatedExpansion = InlineLayoutUnit { };
     for (auto& run : m_runs) {
         // Expand and move runs by the accumulated expansion.
@@ -116,7 +115,6 @@ void Line::applyRunExpansion()
     }
     // Content grows as runs expand.
     m_contentLogicalWidth += accumulatedExpansion;
-    ASSERT(m_contentLogicalWidth == m_horizontalConstraint);
 }
 
 void Line::removeTrailingTrimmableContent()
@@ -133,7 +131,7 @@ void Line::removeTrailingTrimmableContent()
                 || textAlign == TextAlignMode::End;
             }();
 
-        if (m_runs.last().isLineBreak() && availableWidth() >= 0 && !isTextAlignRight) {
+        if (m_runs.last().isLineBreak() && !isTextAlignRight) {
             m_trimmableTrailingContent.reset();
             return;
         }
@@ -155,13 +153,13 @@ void Line::removeTrailingTrimmableContent()
     }
 }
 
-void Line::visuallyCollapsePreWrapOverflowContent()
+void Line::visuallyCollapsePreWrapOverflowContent(InlineLayoutUnit extraHorizontalSpace)
 {
     ASSERT(m_trimmableTrailingContent.isEmpty());
     // If white-space is set to pre-wrap, the UA must
     // ...
     // It may also visually collapse the character advance widths of any that would otherwise overflow.
-    auto overflowWidth = -availableWidth();
+    auto overflowWidth = -extraHorizontalSpace;
     if (overflowWidth <= 0)
         return;
     // Let's just find the trailing pre-wrap whitespace content for now (e.g check if there are multiple trailing runs with
@@ -200,13 +198,6 @@ void Line::moveLogicalLeft(InlineLayoutUnit delta)
         return;
     ASSERT(delta > 0);
     m_lineLogicalLeft += delta;
-    m_horizontalConstraint -= delta;
-}
-
-void Line::moveLogicalRight(InlineLayoutUnit delta)
-{
-    ASSERT(delta > 0);
-    m_horizontalConstraint -= delta;
 }
 
 void Line::append(const InlineItem& inlineItem, InlineLayoutUnit logicalWidth)

@@ -262,19 +262,19 @@ LineBuilder::LineBuilder(const InlineFormattingContext& inlineFormattingContext,
 {
 }
 
-LineBuilder::LineContent LineBuilder::layoutInlineContent(const InlineItemRange& needsLayoutRange, size_t partialLeadingContentLength, const InlineRect& lineLogicalConstraints, bool isFirstLine)
+LineBuilder::LineContent LineBuilder::layoutInlineContent(const InlineItemRange& needsLayoutRange, size_t partialLeadingContentLength, const InlineRect& initialConstraintsForLine, bool isFirstLine)
 {
-    auto usedConstraints = constraintsForLine(lineLogicalConstraints, isFirstLine);
+    auto usedConstraints = constraintsForLine(initialConstraintsForLine, isFirstLine);
     initialize(usedConstraints);
 
     auto committedContent = placeInlineContent(needsLayoutRange, partialLeadingContentLength);
     auto committedRange = close(needsLayoutRange, committedContent);
 
-    auto lineLogicalTopLeft = InlineLayoutPoint { usedConstraints.logicalLeft, lineLogicalConstraints.top() };
+    auto lineLogicalTopLeft = InlineLayoutPoint { usedConstraints.logicalLeft, initialConstraintsForLine.top() };
     auto isLastLine = isLastLineWithInlineContent(committedRange, needsLayoutRange.end, committedContent.partialTrailingContentLength);
     return LineContent { committedRange, committedContent.partialTrailingContentLength, m_floats, m_contentIsConstrainedByFloat
         , lineLogicalTopLeft
-        , m_line.horizontalConstraint()
+        , m_horizontalSpaceForLine
         , m_line.contentLogicalWidth()
         , m_line.isConsideredEmpty()
         , isLastLine
@@ -295,8 +295,9 @@ void LineBuilder::initialize(const UsedConstraints& lineConstraints)
     m_partialLeadingTextItem = { };
     m_wrapOpportunityList.clear();
 
-    m_line.initialize(lineConstraints.availableLogicalWidth);
+    m_line.initialize();
     m_contentIsConstrainedByFloat = lineConstraints.isConstrainedByFloat;
+    m_horizontalSpaceForLine = lineConstraints.logicalWidth; 
 }
 
 LineBuilder::CommittedContent LineBuilder::placeInlineContent(const InlineItemRange& needsLayoutRange, size_t partialLeadingContentLength)
@@ -311,7 +312,7 @@ LineBuilder::CommittedContent LineBuilder::placeInlineContent(const InlineItemRa
         // 2. Apply floats and shrink the available horizontal space e.g. <span>intru_<div style="float: left"></div>sive_float</span>.
         // 3. Check if the content fits the line and commit the content accordingly (full, partial or not commit at all).
         // 4. Return if we are at the end of the line either by not being able to fit more content or because of an explicit line break.
-        nextContentForLine(lineCandidate, currentItemIndex, needsLayoutRange, partialLeadingContentLength, m_line.availableWidth() + m_line.trimmableTrailingWidth(), m_line.contentLogicalWidth());
+        nextContentForLine(lineCandidate, currentItemIndex, needsLayoutRange, partialLeadingContentLength, availableWidth() + m_line.trimmableTrailingWidth(), m_line.contentLogicalWidth());
         // Now check if we can put this content on the current line.
         auto result = handleFloatsAndInlineContent(inlineContentBreaker, needsLayoutRange, lineCandidate);
         committedInlineItemCount = result.committedCount.isRevert ? result.committedCount.value : committedInlineItemCount + result.committedCount.value;
@@ -354,11 +355,11 @@ LineBuilder::InlineItemRange LineBuilder::close(const InlineItemRange& needsLayo
         // Line is empty, we only managed to place float boxes.
         return lineRange;
     }
-    m_line.removeCollapsibleContent();
+    m_line.removeCollapsibleContent(availableWidth());
     auto horizontalAlignment = root().style().textAlign();
     auto runsExpandHorizontally = horizontalAlignment == TextAlignMode::Justify && !isLastLineWithInlineContent(lineRange, needsLayoutRange.end, committedContent.partialTrailingContentLength);
     if (runsExpandHorizontally)
-        m_line.applyRunExpansion();
+        m_line.applyRunExpansion(availableWidth());
     auto lineEndsWithHyphen = false;
     if (!m_line.isConsideredEmpty()) {
         ASSERT(!m_line.runs().isEmpty());
@@ -571,10 +572,12 @@ void LineBuilder::commitFloats(const LineCandidate& lineCandidate, CommitIntrusi
         }
     }
     if (leftIntrusiveFloatsWidth || rightIntrusiveFloatsWidth) {
-        if (leftIntrusiveFloatsWidth)
+        if (leftIntrusiveFloatsWidth) {
             m_line.moveLogicalLeft(leftIntrusiveFloatsWidth);
+            m_horizontalSpaceForLine -= leftIntrusiveFloatsWidth;
+        }
         if (rightIntrusiveFloatsWidth)
-            m_line.moveLogicalRight(rightIntrusiveFloatsWidth);
+            m_horizontalSpaceForLine -= rightIntrusiveFloatsWidth;
     }
 }
 
@@ -596,7 +599,7 @@ LineBuilder::Result LineBuilder::handleFloatsAndInlineContent(InlineContentBreak
 
     auto& floatContent = lineCandidate.floatContent;
     // Check if this new content fits.
-    auto availableWidth = m_line.availableWidth() - floatContent.intrusiveWidth();
+    auto availableWidth = this->availableWidth() - floatContent.intrusiveWidth();
     auto isLineConsideredEmpty = m_line.isConsideredEmpty() && !m_contentIsConstrainedByFloat;
     auto lineStatus = InlineContentBreaker::LineStatus { availableWidth, m_line.trimmableTrailingWidth(), m_line.trailingSoftHyphenWidth(), m_line.isTrailingRunFullyTrimmable(), isLineConsideredEmpty };
     auto result = inlineContentBreaker.processInlineContent(continuousInlineContent, lineStatus);
@@ -685,7 +688,7 @@ size_t LineBuilder::rebuildLine(const InlineItemRange& layoutRange, const Inline
     ASSERT(!m_wrapOpportunityList.isEmpty());
     // We might already have added intrusive floats. They shrink the avilable horizontal space for the line.
     // Let's just reuse what the line has at this point.
-    m_line.initialize(m_line.horizontalConstraint());
+    m_line.initialize();
     auto currentItemIndex = layoutRange.start;
     if (m_partialLeadingTextItem) {
         m_line.append(*m_partialLeadingTextItem, inlineItemWidth(*m_partialLeadingTextItem, { }));
@@ -713,7 +716,7 @@ size_t LineBuilder::rebuildLineForTrailingSoftHyphen(const InlineItemRange& layo
         auto committedCount = rebuildLine(layoutRange, softWrapOpportunityItem);
         auto trailingSoftHyphenWidth = m_line.trailingSoftHyphenWidth();
         // Check if the trailing hyphen now fits the line (or we don't need hyhen anymore).
-        if (!trailingSoftHyphenWidth || trailingSoftHyphenWidth <= m_line.availableWidth()) {
+        if (!trailingSoftHyphenWidth || trailingSoftHyphenWidth <= availableWidth()) {
             if (trailingSoftHyphenWidth)
                 m_line.addTrailingHyphen(*trailingSoftHyphenWidth);
             return committedCount;

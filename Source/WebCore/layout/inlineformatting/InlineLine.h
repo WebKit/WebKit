@@ -42,7 +42,7 @@ public:
     Line(const InlineFormattingContext&);
     ~Line();
 
-    void initialize(InlineLayoutUnit horizontalConstraint);
+    void initialize();
 
     void append(const InlineItem&, InlineLayoutUnit logicalWidth);
 
@@ -52,9 +52,7 @@ public:
     // <span style="padding: 10px"></span> is not considered empty. 
     bool isConsideredEmpty() const { return m_isConsideredEmpty; }
 
-    InlineLayoutUnit horizontalConstraint() const { return m_horizontalConstraint; }
     InlineLayoutUnit contentLogicalWidth() const { return m_contentLogicalWidth; }
-    InlineLayoutUnit availableWidth() const { return horizontalConstraint() - contentLogicalWidth(); }
 
     InlineLayoutUnit trimmableTrailingWidth() const { return m_trimmableTrailingContent.width(); }
     bool isTrailingRunFullyTrimmable() const { return m_trimmableTrailingContent.isTrailingRunFullyTrimmable(); }
@@ -63,10 +61,9 @@ public:
     void addTrailingHyphen(InlineLayoutUnit hyphenLogicalWidth);
 
     void moveLogicalLeft(InlineLayoutUnit);
-    void moveLogicalRight(InlineLayoutUnit);
 
-    void removeCollapsibleContent();
-    void applyRunExpansion();
+    void removeCollapsibleContent(InlineLayoutUnit extraHorizontalSpace);
+    void applyRunExpansion(InlineLayoutUnit extraHorizontalSpace);
 
     struct Run {
         bool isText() const { return m_type == InlineItem::Type::Text; }
@@ -150,7 +147,7 @@ private:
     void appendWordBreakOpportunity(const InlineItem&);
 
     void removeTrailingTrimmableContent();
-    void visuallyCollapsePreWrapOverflowContent();
+    void visuallyCollapsePreWrapOverflowContent(InlineLayoutUnit extraHorizontalSpace);
 
     bool isRunConsideredEmpty(const Run&) const;
     const InlineFormattingContext& formattingContext() const;
@@ -182,7 +179,6 @@ private:
     RunList m_runs;
     TrimmableTrailingContent m_trimmableTrailingContent;
     InlineLayoutUnit m_lineLogicalLeft { 0 };
-    InlineLayoutUnit m_horizontalConstraint { 0 };
     InlineLayoutUnit m_contentLogicalWidth { 0 };
     Optional<InlineLayoutUnit> m_trailingSoftHyphenWidth { 0 };
     bool m_isConsideredEmpty { true };

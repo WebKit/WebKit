@@ -64,7 +64,7 @@ public:
         bool isLastLineWithInlineContent { true };
         const Line::RunList& runs;
     };
-    LineContent layoutInlineContent(const InlineItemRange&, size_t partialLeadingContentLength, const InlineRect& initialLineConstraints, bool isFirstLine);
+    LineContent layoutInlineContent(const InlineItemRange&, size_t partialLeadingContentLength, const InlineRect& initialConstraintsForLine, bool isFirstLine);
 
     struct IntrinsicContent {
         InlineItemRange inlineItemRange;
@@ -88,7 +88,7 @@ private:
     enum class CommitIntrusiveFloatsOnly { No, Yes };
     struct UsedConstraints {
         InlineLayoutUnit logicalLeft { 0 };
-        InlineLayoutUnit availableLogicalWidth { 0 };
+        InlineLayoutUnit logicalWidth { 0 };
         bool isConstrainedByFloat { false };
     };
     UsedConstraints constraintsForLine(const InlineRect& initialLineConstraints, bool isFirstLine);
@@ -107,6 +107,7 @@ private:
 
     InlineLayoutUnit inlineItemWidth(const InlineItem&, InlineLayoutUnit contentLogicalLeft) const;
     bool isLastLineWithInlineContent(const InlineItemRange& lineRange, size_t lastInlineItemIndex, bool hasPartialTrailingContent) const;
+    InlineLayoutUnit availableWidth() const { return m_horizontalSpaceForLine - m_line.contentLogicalWidth(); }
 
     const InlineFormattingContext& formattingContext() const { return m_inlineFormattingContext; }
     const ContainerBox& root() const { return m_formattingContextRoot; }
@@ -116,6 +117,7 @@ private:
     const FloatingContext& m_floatingContext;
     const ContainerBox& m_formattingContextRoot;
     Line m_line;
+    InlineLayoutUnit m_horizontalSpaceForLine { 0 };
     const InlineItems& m_inlineItems;
     LineContent::FloatList m_floats;
     Optional<InlineTextItem> m_partialLeadingTextItem;
