@@ -49,10 +49,10 @@ namespace WTF {
 // Use 64 KiB for any unknown CPUs to be conservative.
 #if OS(DARWIN) || PLATFORM(PLAYSTATION)
 constexpr size_t CeilingOnPageSize = 16 * KB;
+#elif USE(64KB_PAGE_BLOCK) || CPU(PPC) || CPU(PPC64) || CPU(PPC64LE) || CPU(UNKNOWN)
+constexpr size_t CeilingOnPageSize = 64 * KB;
 #elif OS(WINDOWS) || CPU(MIPS) || CPU(MIPS64) || CPU(X86) || CPU(X86_64) || CPU(ARM) || CPU(ARM64)
 constexpr size_t CeilingOnPageSize = 4 * KB;
-#elif CPU(UNKNOWN) || CPU(PPC) || CPU(PPC64) || CPU(PPC64LE)
-constexpr size_t CeilingOnPageSize = 64 * KB;
 #else
 #error Must set CeilingOnPageSize in PageBlock.h when adding a new CPU architecture!
 #endif
