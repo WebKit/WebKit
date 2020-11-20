@@ -317,7 +317,7 @@ static void resolveOverlaps(Region& newRegion, Region& overlapRegion, Region& no
     nonOverlapRegion.unite(newRegion);
 }
 
-void TextureMapperLayer::computeOverlapRegions(Region& overlapRegion, Region& nonOverlapRegion, ResolveSelfOverlapMode mode)
+void TextureMapperLayer::computeOverlapRegions(const TextureMapperPaintOptions& options, Region& overlapRegion, Region& nonOverlapRegion, ResolveSelfOverlapMode mode)
 {
     if (!m_state.visible || !m_state.contentsVisible)
         return;
@@ -336,13 +336,17 @@ void TextureMapperLayer::computeOverlapRegions(Region& overlapRegion, Region& no
         boundingRect.unite(unfilteredTargetRect);
     }
 
+    TransformationMatrix transform;
+    transform.multiply(options.transform);
+    transform.multiply(m_layerTransforms.combined);
+
     TransformationMatrix replicaMatrix;
     if (m_state.replicaLayer) {
         replicaMatrix = replicaTransform();
         boundingRect.unite(replicaMatrix.mapRect(boundingRect));
     }
 
-    boundingRect = m_layerTransforms.combined.mapRect(boundingRect);
+    boundingRect = transform.mapRect(boundingRect);
 
     // Count all masks and filters as overlap layers.
     if (hasFilters() || m_state.maskLayer || (m_state.replicaLayer && m_state.replicaLayer->m_state.maskLayer)) {
@@ -357,7 +361,7 @@ void TextureMapperLayer::computeOverlapRegions(Region& overlapRegion, Region& no
 
     if (!m_state.masksToBounds) {
         for (auto* child : m_children)
-            child->computeOverlapRegions(newOverlapRegion, newNonOverlapRegion, ResolveSelfOverlapIfNeeded);
+            child->computeOverlapRegions(options, newOverlapRegion, newNonOverlapRegion, ResolveSelfOverlapIfNeeded);
     }
 
     if (m_state.replicaLayer) {
@@ -379,7 +383,7 @@ void TextureMapperLayer::paintUsingOverlapRegions(const TextureMapperPaintOption
 {
     Region overlapRegion;
     Region nonOverlapRegion;
-    computeOverlapRegions(overlapRegion, nonOverlapRegion, ResolveSelfOverlapAlways);
+    computeOverlapRegions(options, overlapRegion, nonOverlapRegion, ResolveSelfOverlapAlways);
     if (overlapRegion.isEmpty()) {
         paintSelfAndChildrenWithReplica(options);
         return;
@@ -452,26 +456,24 @@ void TextureMapperLayer::paintIntoSurface(TextureMapperPaintOptions& options)
 
 static void commitSurface(const TextureMapperPaintOptions& options, BitmapTexture& surface, const IntRect& rect, float opacity)
 {
+    IntRect targetRect(rect);
+    targetRect.move(options.offset);
     options.textureMapper.bindSurface(options.surface.get());
-    TransformationMatrix targetTransform;
-    targetTransform.translate(options.offset.width(), options.offset.height());
-    targetTransform.multiply(options.transform);
-    options.textureMapper.drawTexture(surface, rect, targetTransform, opacity);
+    options.textureMapper.drawTexture(surface, targetRect, { }, opacity);
 }
 
 void TextureMapperLayer::paintWithIntermediateSurface(const TextureMapperPaintOptions& options, const IntRect& rect)
 {
     TextureMapperPaintOptions paintOptions(options);
     paintOptions.surface = options.textureMapper.acquireTextureFromPool(rect.size(), BitmapTexture::SupportsAlpha);
-    paintOptions.offset = -IntSize(rect.x(), rect.y());
+    paintOptions.offset = -toIntSize(rect.location());
     paintOptions.opacity = 1;
-    paintOptions.transform = TransformationMatrix();
     if (m_state.replicaLayer) {
         paintOptions.isReplica = true;
-        paintOptions.transform = replicaTransform();
+        paintOptions.transform.multiply(replicaTransform());
         paintIntoSurface(paintOptions);
         paintOptions.isReplica = false;
-        paintOptions.transform = TransformationMatrix();
+        paintOptions.transform = options.transform;
         if (m_state.replicaLayer->m_state.maskLayer)
             m_state.replicaLayer->m_state.maskLayer->applyMask(paintOptions);
     }

@@ -1,3 +1,27 @@
+2020-10-30  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [TextureMapper] Replica layers don't blend correctly because computeOverlapRegions doesn't take TextureMapperPaintOptions::transform into account
+        https://bugs.webkit.org/show_bug.cgi?id=218307
+
+        Reviewed by Don Olmstead.
+
+        Blending in replica layers didn't work as expected because
+        computeOverlapRegions didn't take the transform of
+        TextureMapperPaintOptions into account. Rendering replica layers
+        are achieved by using the transform.
+
+        TextureMapperLayer::paintWithIntermediateSurface also should take
+        the transform. commitSurface no longer needs to transform by it.
+
+        Test: compositing/reflections/opacity-in-reflection.html
+
+        * platform/graphics/texmap/TextureMapperLayer.cpp:
+        (WebCore::TextureMapperLayer::computeOverlapRegions):
+        (WebCore::TextureMapperLayer::paintUsingOverlapRegions):
+        (WebCore::commitSurface):
+        (WebCore::TextureMapperLayer::paintWithIntermediateSurface):
+        * platform/graphics/texmap/TextureMapperLayer.h:
+
 2020-10-28  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         TextureMapperLayer::paintWithIntermediateSurface: Reduce BitmapTextures by unifying replicaSurface and mainSurface

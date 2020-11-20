@@ -127,7 +127,7 @@ private:
         ResolveSelfOverlapAlways = 0,
         ResolveSelfOverlapIfNeeded
     };
-    void computeOverlapRegions(Region& overlapRegion, Region& nonOverlapRegion, ResolveSelfOverlapMode);
+    void computeOverlapRegions(const TextureMapperPaintOptions&, Region& overlapRegion, Region& nonOverlapRegion, ResolveSelfOverlapMode);
 
     void paintRecursive(const TextureMapperPaintOptions&);
     void paintUsingOverlapRegions(const TextureMapperPaintOptions&);
