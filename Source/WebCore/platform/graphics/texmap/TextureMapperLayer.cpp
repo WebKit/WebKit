@@ -133,12 +133,11 @@ void TextureMapperLayer::computeTransformsRecursive()
 #endif
 }
 
-void TextureMapperLayer::paint()
+void TextureMapperLayer::paint(TextureMapper& textureMapper)
 {
     computeTransformsRecursive();
 
-    ASSERT(m_textureMapper);
-    TextureMapperPaintOptions options(*m_textureMapper);
+    TextureMapperPaintOptions options(textureMapper);
     options.textureMapper.bindSurface(0);
 
     paintRecursive(options);

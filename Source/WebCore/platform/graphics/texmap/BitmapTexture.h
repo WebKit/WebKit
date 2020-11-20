@@ -60,7 +60,7 @@ public:
 
     virtual IntSize size() const = 0;
     virtual void updateContents(Image*, const IntRect&, const IntPoint& offset) = 0;
-    virtual void updateContents(TextureMapper&, GraphicsLayer*, const IntRect& target, const IntPoint& offset, float scale = 1);
+    void updateContents(GraphicsLayer*, const IntRect& target, const IntPoint& offset, float scale = 1);
     virtual void updateContents(const void*, const IntRect& target, const IntPoint& offset, int bytesPerLine) = 0;
     virtual bool isValid() const = 0;
     inline Flags flags() const { return m_flags; }

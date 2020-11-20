@@ -87,7 +87,7 @@ public:
     void flushCompositingState(const FloatRect&) override;
     void flushCompositingStateForThisLayerOnly() override;
 
-    void updateBackingStoreIncludingSubLayers();
+    void updateBackingStoreIncludingSubLayers(TextureMapper&);
 
     TextureMapperLayer& layer() { return m_layer; }
 
@@ -104,7 +104,7 @@ private:
 
     void commitLayerChanges();
     void updateDebugBorderAndRepaintCount();
-    void updateBackingStoreIfNeeded();
+    void updateBackingStoreIfNeeded(TextureMapper&);
     void prepareBackingStoreIfNeeded();
     bool shouldHaveBackingStore() const;
 

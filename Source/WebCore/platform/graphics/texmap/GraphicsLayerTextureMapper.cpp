@@ -507,9 +507,6 @@ void GraphicsLayerTextureMapper::commitLayerChanges()
 
 void GraphicsLayerTextureMapper::flushCompositingState(const FloatRect& rect)
 {
-    if (!m_layer.textureMapper())
-        return;
-
     flushCompositingStateForThisLayerOnly();
 
     auto now = MonotonicTime::now();
@@ -526,27 +523,20 @@ void GraphicsLayerTextureMapper::flushCompositingState(const FloatRect& rect)
         child->flushCompositingState(rect);
 }
 
-void GraphicsLayerTextureMapper::updateBackingStoreIncludingSubLayers()
+void GraphicsLayerTextureMapper::updateBackingStoreIncludingSubLayers(TextureMapper& textureMapper)
 {
-    if (!m_layer.textureMapper())
-        return;
-
-    updateBackingStoreIfNeeded();
+    updateBackingStoreIfNeeded(textureMapper);
 
     if (maskLayer())
-        downcast<GraphicsLayerTextureMapper>(*maskLayer()).updateBackingStoreIfNeeded();
+        downcast<GraphicsLayerTextureMapper>(*maskLayer()).updateBackingStoreIfNeeded(textureMapper);
     if (replicaLayer())
-        downcast<GraphicsLayerTextureMapper>(*replicaLayer()).updateBackingStoreIncludingSubLayers();
+        downcast<GraphicsLayerTextureMapper>(*replicaLayer()).updateBackingStoreIncludingSubLayers(textureMapper);
     for (auto& child : children())
-        downcast<GraphicsLayerTextureMapper>(child.get()).updateBackingStoreIncludingSubLayers();
+        downcast<GraphicsLayerTextureMapper>(child.get()).updateBackingStoreIncludingSubLayers(textureMapper);
 }
 
-void GraphicsLayerTextureMapper::updateBackingStoreIfNeeded()
+void GraphicsLayerTextureMapper::updateBackingStoreIfNeeded(TextureMapper& textureMapper)
 {
-    TextureMapper* textureMapper = m_layer.textureMapper();
-    if (!textureMapper)
-        return;
-
     if (!shouldHaveBackingStore()) {
         ASSERT(!m_backingStore);
         return;
@@ -562,7 +552,7 @@ void GraphicsLayerTextureMapper::updateBackingStoreIfNeeded()
     m_backingStore->updateContentsScale(pageScaleFactor() * deviceScaleFactor());
 
     dirtyRect.scale(pageScaleFactor() * deviceScaleFactor());
-    m_backingStore->updateContents(*textureMapper, this, m_size, dirtyRect);
+    m_backingStore->updateContents(textureMapper, this, m_size, dirtyRect);
 
     m_needsDisplay = false;
     m_needsDisplayRect = IntRect();

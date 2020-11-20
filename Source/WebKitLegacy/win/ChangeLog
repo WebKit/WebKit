@@ -1,3 +1,15 @@
+2020-11-19  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [TextureMapper] Remove m_textureMapper from TextureMapperLayer
+        https://bugs.webkit.org/show_bug.cgi?id=219191
+
+        Reviewed by Carlos Garcia Campos.
+
+        * WebCoreSupport/AcceleratedCompositingContext.cpp:
+        (AcceleratedCompositingContext::initialize):
+        (AcceleratedCompositingContext::compositeLayersToContext):
+        (AcceleratedCompositingContext::flushPendingLayerChanges):
+
 2020-11-18  Simon Fraser  <simon.fraser@apple.com>
 
         Propagate wheel event handling back to the scrolling thread

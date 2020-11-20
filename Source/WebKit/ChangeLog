@@ -1,3 +1,18 @@
+2020-11-19  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [TextureMapper] Remove m_textureMapper from TextureMapperLayer
+        https://bugs.webkit.org/show_bug.cgi?id=219191
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsScene.cpp:
+        (WebKit::CoordinatedGraphicsScene::paintToCurrentGLContext):
+        (WebKit::CoordinatedGraphicsScene::ensureRootLayer):
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeHostTextureMapper.cpp:
+        (WebKit::LayerTreeHost::compositeLayersToContext):
+        (WebKit::LayerTreeHost::flushPendingLayerChanges):
+        (WebKit::LayerTreeHost::LayerTreeHost):
+
 2020-11-19  Hoa Dinh  <dvh@apple.com>
 
         Code formatting: change instances of "@synthesize a=b" to "@synthesize a = b".

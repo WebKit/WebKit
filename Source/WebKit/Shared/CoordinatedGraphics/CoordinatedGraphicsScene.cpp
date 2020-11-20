@@ -68,7 +68,6 @@ void CoordinatedGraphicsScene::paintToCurrentGLContext(const TransformationMatri
     if (!currentRootLayer)
         return;
 
-    currentRootLayer->setTextureMapper(m_textureMapper.get());
     bool sceneHasRunningAnimations = currentRootLayer->applyAnimationsRecursively(MonotonicTime::now());
     m_textureMapper->beginPainting(PaintFlags);
     m_textureMapper->beginClip(TransformationMatrix(), FloatRoundedRect(clipRect));
@@ -76,7 +75,7 @@ void CoordinatedGraphicsScene::paintToCurrentGLContext(const TransformationMatri
     if (currentRootLayer->transform() != matrix)
         currentRootLayer->setTransform(matrix);
 
-    currentRootLayer->paint();
+    currentRootLayer->paint(*m_textureMapper);
     m_fpsCounter.updateFPSAndDisplay(*m_textureMapper, clipRect.location(), matrix);
     m_textureMapper->endClip();
     m_textureMapper->endPainting();
@@ -422,9 +421,6 @@ void CoordinatedGraphicsScene::ensureRootLayer()
 
     // The root layer should not have zero size, or it would be optimized out.
     m_rootLayer->setSize(FloatSize(1.0, 1.0));
-
-    ASSERT(m_textureMapper);
-    m_rootLayer->setTextureMapper(m_textureMapper.get());
 }
 
 void CoordinatedGraphicsScene::purgeGLResources()

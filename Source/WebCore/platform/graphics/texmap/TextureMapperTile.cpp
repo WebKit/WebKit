@@ -64,7 +64,7 @@ void TextureMapperTile::updateContents(TextureMapper& textureMapper, GraphicsLay
         m_texture->reset(targetRect.size(), BitmapTexture::SupportsAlpha);
     }
 
-    m_texture->updateContents(textureMapper, sourceLayer, targetRect, sourceOffset, scale);
+    m_texture->updateContents(sourceLayer, targetRect, sourceOffset, scale);
 }
 
 void TextureMapperTile::paint(TextureMapper& textureMapper, const TransformationMatrix& transform, float opacity, const unsigned exposedEdges)
