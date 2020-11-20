@@ -508,7 +508,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     }];
     [defaultActions addObject:openInDefaultBrowserAction];
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     NSString *externalApplicationName = appLink.targetApplicationProxy.localizedName;
+ALLOW_DEPRECARED_DECLARATIONS_END
     if (!externalApplicationName)
         return YES;
 
