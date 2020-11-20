@@ -1,3 +1,29 @@
+2020-11-19  Geoffrey Garen  <ggaren@apple.com>
+
+        [Mac] LayoutTest fast/mediacapturefromelement/CanvasCaptureMediaStream-webgl-events.html is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=175592
+
+        Reviewed by Eric Carlson.
+
+        There were two bugs here: (1) This test was flaky; (2) WebKit's canvas
+        capture implementation was flaky. Debugging them together was a lot of
+        fun!
+
+        * fast/mediacapturefromelement/CanvasCaptureMediaStream-webgl-events-expected.txt:
+        Reflect the fact that the test draws earlier now.
+
+        * fast/mediacapturefromelement/CanvasCaptureMediaStream-webgl-events.html:
+
+        Fixed (1): Define our WebGL shader before running the script that
+        references it. Otherwise, we might try to run the shader before the
+        HTML parser has parsed it.
+
+        Improved detection of (2): Draw to the canvas immediately instead of
+        waiting for an async event. This should more precisely test whether
+        the very first canvas frame gets captured or not.
+
+        * platform/mac/TestExpectations: Unmark test as flaky.
+
 2020-11-19  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, some more iOS gardening after r270037.

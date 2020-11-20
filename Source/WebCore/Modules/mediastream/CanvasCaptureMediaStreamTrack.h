@@ -78,7 +78,7 @@ private:
         bool m_shouldEmitFrame { true };
         Optional<double> m_frameRequestRate;
         Timer m_requestFrameTimer;
-        Timer m_canvasChangedTimer;
+        Timer m_captureCanvasTimer;
         Optional<RealtimeMediaSourceSettings> m_currentSettings;
         HTMLCanvasElement* m_canvas;
         RefPtr<Image> m_currentImage;

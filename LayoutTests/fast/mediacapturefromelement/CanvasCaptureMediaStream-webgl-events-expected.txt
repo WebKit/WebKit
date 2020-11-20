@@ -8,8 +8,8 @@ PASS Got a stream from canvas.
 PASS stream.getVideoTracks().length is 1
 PASS track.readyState is "live"
 PASS Plugged stream to video tag.
-PASS Video play callback succeeded.
 PASS Drawing to canvas.
+PASS Video play callback succeeded.
 PASS Video canplaythrough callback succeeded.
 PASS successfullyParsed is true
 

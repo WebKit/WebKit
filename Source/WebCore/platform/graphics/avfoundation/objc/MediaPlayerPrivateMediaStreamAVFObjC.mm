@@ -422,8 +422,9 @@ void MediaPlayerPrivateMediaStreamAVFObjC::load(MediaStreamPrivate& stream)
     m_mediaStreamPrivate->addObserver(*this);
     m_ended = !m_mediaStreamPrivate->active();
 
+    updateTracks();
+
     scheduleDeferredTask([this] {
-        updateTracks();
         setNetworkState(MediaPlayer::NetworkState::Idle);
         updateReadyState();
     });
@@ -822,51 +823,44 @@ void updateTracksOfType(HashMap<String, RefT>& trackMap, RealtimeMediaSource::Ty
 
 void MediaPlayerPrivateMediaStreamAVFObjC::checkSelectedVideoTrack()
 {
-    if (m_pendingSelectedTrackCheck)
-        return;
+    auto oldVideoTrack = m_activeVideoTrack;
+    bool hideVideoLayer = true;
 
-    m_pendingSelectedTrackCheck = true;
-    scheduleDeferredTask([this] {
-        auto oldVideoTrack = m_activeVideoTrack;
-        bool hideVideoLayer = true;
-
-        m_activeVideoTrack = nullptr;
-        if (auto* activeVideoTrack = this->activeVideoTrack()) {
-            for (const auto& track : m_videoTrackMap.values()) {
-                if (&track->streamTrack() == activeVideoTrack) {
-                    m_activeVideoTrack = track.ptr();
-                    if (track->selected())
-                        hideVideoLayer = false;
-                    break;
-                }
+    m_activeVideoTrack = nullptr;
+    if (auto* activeVideoTrack = this->activeVideoTrack()) {
+        for (const auto& track : m_videoTrackMap.values()) {
+            if (&track->streamTrack() == activeVideoTrack) {
+                m_activeVideoTrack = track.ptr();
+                if (track->selected())
+                    hideVideoLayer = false;
+                break;
             }
         }
+    }
 
-        if (oldVideoTrack != m_activeVideoTrack) {
-            m_imagePainter.reset();
-            if (m_displayMode == None)
-                m_waitingForFirstImage = true;
-        }
-        ensureLayers();
-        if (m_sampleBufferDisplayLayer) {
-            if (!m_activeVideoTrack)
-                m_sampleBufferDisplayLayer->clearEnqueuedSamples();
-            m_sampleBufferDisplayLayer->updateDisplayMode(hideVideoLayer || m_displayMode < PausedImage, hideRootLayer());
-        }
+    if (oldVideoTrack != m_activeVideoTrack) {
+        m_imagePainter.reset();
+        if (m_displayMode == None)
+            m_waitingForFirstImage = true;
+    }
+    ensureLayers();
+    if (m_sampleBufferDisplayLayer) {
+        if (!m_activeVideoTrack)
+            m_sampleBufferDisplayLayer->clearEnqueuedSamples();
+        m_sampleBufferDisplayLayer->updateDisplayMode(hideVideoLayer || m_displayMode < PausedImage, hideRootLayer());
+    }
 
-        m_pendingSelectedTrackCheck = false;
-        updateDisplayMode();
+    updateDisplayMode();
 
-        if (oldVideoTrack != m_activeVideoTrack) {
-            if (oldVideoTrack)
-                oldVideoTrack->streamTrack().source().removeVideoSampleObserver(*this);
-            if (m_activeVideoTrack) {
-                if (m_sampleBufferDisplayLayer && m_activeVideoTrack->streamTrack().source().isCaptureSource())
-                    m_sampleBufferDisplayLayer->setRenderPolicy(SampleBufferDisplayLayer::RenderPolicy::Immediately);
-                m_activeVideoTrack->streamTrack().source().addVideoSampleObserver(*this);
-            }
+    if (oldVideoTrack != m_activeVideoTrack) {
+        if (oldVideoTrack)
+            oldVideoTrack->streamTrack().source().removeVideoSampleObserver(*this);
+        if (m_activeVideoTrack) {
+            if (m_sampleBufferDisplayLayer && m_activeVideoTrack->streamTrack().source().isCaptureSource())
+                m_sampleBufferDisplayLayer->setRenderPolicy(SampleBufferDisplayLayer::RenderPolicy::Immediately);
+            m_activeVideoTrack->streamTrack().source().addVideoSampleObserver(*this);
         }
-    });
+    }
 }
 
 void MediaPlayerPrivateMediaStreamAVFObjC::updateTracks()

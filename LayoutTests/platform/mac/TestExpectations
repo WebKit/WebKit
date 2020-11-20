@@ -1291,8 +1291,6 @@ webkit.org/b/175193 fast/images/async-image-body-background-image.html [ Pass Ti
 # This test is specific to Core Text.
 fast/text/font-lookup-dot-prefix-case-sensitive.html [ Pass ]
 
-webkit.org/b/175592 fast/mediacapturefromelement/CanvasCaptureMediaStream-webgl-events.html [ Pass Timeout ]
-
 webkit.org/b/175700 media/video-controls-rendering.html [ Pass Failure ]
 
 webkit.org/b/173010 [ Debug ] js/slow-stress/Int32Array-alloc-huge.html [ Pass Timeout ]
