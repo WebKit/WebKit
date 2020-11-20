@@ -3560,12 +3560,7 @@ JSStereoPannerNode.cpp
 JSStereoPannerOptions.cpp
 JSStaticRange.cpp
 JSStorage.cpp
-JSStorageErrorCallback.cpp
 JSStorageEvent.cpp
-JSStorageInfo.cpp
-JSStorageQuota.cpp
-JSStorageQuotaCallback.cpp
-JSStorageUsageCallback.cpp
 JSStringCallback.cpp
 JSStyleMedia.cpp
 JSStylePropertyMap.cpp

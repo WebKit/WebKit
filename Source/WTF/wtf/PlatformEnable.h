@@ -426,10 +426,6 @@
 #define ENABLE_POINTER_LOCK 1
 #endif
 
-#if !defined(ENABLE_QUOTA)
-#define ENABLE_QUOTA 0
-#endif
-
 #if !defined(ENABLE_REMOTE_INSPECTOR)
 #define ENABLE_REMOTE_INSPECTOR 0
 #endif

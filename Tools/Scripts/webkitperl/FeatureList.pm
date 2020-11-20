@@ -455,9 +455,6 @@ my @features = (
     { option => "public-suffix-list", desc => "Toggle public suffix list support",
       define => "ENABLE_PUBLIC_SUFFIX_LIST", value => \$publicSuffixListSupport },
 
-    { option => "quota", desc => "Toggle Quota support",
-      define => "ENABLE_QUOTA", value => \$quotaSupport },
-
     { option => "remote-inspector", desc => "Toggle remote inspector support",
       define => "ENABLE_REMOTE_INSPECTOR", value => \$remoteInspectorSupport },
 

@@ -311,14 +311,6 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/pictureinpicture/HTMLVideoElement+PictureInPicture.idl \
     $(WebCore)/Modules/pictureinpicture/PictureInPictureWindow.idl \
     $(WebCore)/Modules/plugins/QuickTimePluginReplacement.idl \
-    $(WebCore)/Modules/quota/DOMWindow+Quota.idl \
-    $(WebCore)/Modules/quota/Navigator+StorageQuota.idl \
-    $(WebCore)/Modules/quota/StorageErrorCallback.idl \
-    $(WebCore)/Modules/quota/StorageInfo.idl \
-    $(WebCore)/Modules/quota/StorageQuota.idl \
-    $(WebCore)/Modules/quota/StorageQuotaCallback.idl \
-    $(WebCore)/Modules/quota/StorageUsageCallback.idl \
-    $(WebCore)/Modules/quota/WorkerNavigator+StorageQuota.idl \
     $(WebCore)/Modules/remoteplayback/HTMLMediaElement+RemotePlayback.idl \
     $(WebCore)/Modules/remoteplayback/RemotePlayback.idl \
     $(WebCore)/Modules/remoteplayback/RemotePlaybackAvailabilityCallback.idl \

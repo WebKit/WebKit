@@ -54,7 +54,6 @@ set(WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/Modules/paymentrequest"
     "${WEBCORE_DIR}/Modules/pictureinpicture"
     "${WEBCORE_DIR}/Modules/plugins"
-    "${WEBCORE_DIR}/Modules/quota"
     "${WEBCORE_DIR}/Modules/remoteplayback"
     "${WEBCORE_DIR}/Modules/speech"
     "${WEBCORE_DIR}/Modules/streams"
@@ -202,7 +201,6 @@ set(WebCore_IDL_INCLUDES
     Modules/model-element
     Modules/notifications
     Modules/paymentrequest
-    Modules/quota
     Modules/speech
     Modules/streams
     Modules/webaudio
@@ -1617,28 +1615,6 @@ list(APPEND WebCore_IDL_FILES
     html/canvas/WebGLUniformLocation.idl
     html/canvas/WebGLVertexArrayObject.idl
     html/canvas/WebGLVertexArrayObjectOES.idl
-)
-
-if (ENABLE_QUOTA)
-    list(APPEND WebCore_SOURCES
-        Modules/quota/DOMWindowQuota.cpp
-        Modules/quota/NavigatorStorageQuota.cpp
-        Modules/quota/StorageErrorCallback.cpp
-        Modules/quota/StorageInfo.cpp
-        Modules/quota/StorageQuota.cpp
-        Modules/quota/WorkerNavigatorStorageQuota.cpp
-    )
-endif ()
-
-list(APPEND WebCore_IDL_FILES
-    Modules/quota/DOMWindow+Quota.idl
-    Modules/quota/Navigator+StorageQuota.idl
-    Modules/quota/StorageErrorCallback.idl
-    Modules/quota/StorageInfo.idl
-    Modules/quota/StorageQuota.idl
-    Modules/quota/StorageQuotaCallback.idl
-    Modules/quota/StorageUsageCallback.idl
-    Modules/quota/WorkerNavigator+StorageQuota.idl
 )
 
 if (ENABLE_GRAPHICS_CONTEXT_GL)

@@ -1,3 +1,19 @@
+2020-11-20  Don Olmstead  <don.olmstead@sony.com>
+
+        Remove quota module
+        https://bugs.webkit.org/show_bug.cgi?id=219206
+
+        Reviewed by Anders Carlsson.
+
+        Remove the ability to set ENABLE_QUOTA. The Storage Quota API is deprecated and no
+        WebKit port is enabling it.
+
+        * Source/cmake/OptionsFTW.cmake:
+        * Source/cmake/OptionsWin.cmake:
+        * Source/cmake/WebKitFeatures.cmake:
+        * Source/cmake/tools/vsprops/FeatureDefines.props:
+        * Source/cmake/tools/vsprops/FeatureDefinesCairo.props:
+
 2020-11-09  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         Enable llint asm on aarch64 when USE(64KB_PAGE_BLOCK) is enabled

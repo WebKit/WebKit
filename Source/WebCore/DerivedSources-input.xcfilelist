@@ -290,14 +290,6 @@ $(PROJECT_DIR)/Modules/pictureinpicture/PictureInPictureWindow.idl
 $(PROJECT_DIR)/Modules/plugins/QuickTimePluginReplacement.css
 $(PROJECT_DIR)/Modules/plugins/QuickTimePluginReplacement.idl
 $(PROJECT_DIR)/Modules/plugins/QuickTimePluginReplacement.js
-$(PROJECT_DIR)/Modules/quota/DOMWindow+Quota.idl
-$(PROJECT_DIR)/Modules/quota/Navigator+StorageQuota.idl
-$(PROJECT_DIR)/Modules/quota/StorageErrorCallback.idl
-$(PROJECT_DIR)/Modules/quota/StorageInfo.idl
-$(PROJECT_DIR)/Modules/quota/StorageQuota.idl
-$(PROJECT_DIR)/Modules/quota/StorageQuotaCallback.idl
-$(PROJECT_DIR)/Modules/quota/StorageUsageCallback.idl
-$(PROJECT_DIR)/Modules/quota/WorkerNavigator+StorageQuota.idl
 $(PROJECT_DIR)/Modules/remoteplayback/HTMLMediaElement+RemotePlayback.idl
 $(PROJECT_DIR)/Modules/remoteplayback/RemotePlayback.idl
 $(PROJECT_DIR)/Modules/remoteplayback/RemotePlaybackAvailabilityCallback.idl
