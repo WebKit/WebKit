@@ -75,8 +75,8 @@ public:
     void sessionEnded(WebXRSession&);
 
     // For testing purpouses only.
-    void registerSimulatedXRDeviceForTesting(PlatformXR::Device&);
-    void unregisterSimulatedXRDeviceForTesting(PlatformXR::Device&);
+    WEBCORE_EXPORT void registerSimulatedXRDeviceForTesting(PlatformXR::Device&);
+    WEBCORE_EXPORT void unregisterSimulatedXRDeviceForTesting(PlatformXR::Device&);
 
 protected:
     // EventTarget

@@ -326,3 +326,7 @@
 #define USE_PTHREAD_JIT_PERMISSIONS_API 1
 #endif
 #endif
+
+#if PLATFORM(COCOA)
+#define USE_OPENXR 0
+#endif

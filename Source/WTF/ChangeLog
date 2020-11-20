@@ -1,3 +1,13 @@
+2020-11-19  Ada Chan  <adachan@apple.com>
+
+        Turn on ENABLE_WEBXR for Cocoa
+        https://bugs.webkit.org/show_bug.cgi?id=219171
+
+        Reviewed by Tim Horton.
+
+        * wtf/PlatformEnableCocoa.h:
+        * wtf/PlatformUse.h:
+
 2020-11-19  Saam Barati  <sbarati@apple.com>
 
         Use os_thread_self_restrict_rwx_is_supported instead of pthread_jit_write_protect_supported_np on Apple Internal SDK builds

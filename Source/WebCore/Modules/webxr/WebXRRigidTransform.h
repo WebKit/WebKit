@@ -38,11 +38,11 @@ struct DOMPointInit;
 class DOMPointReadOnly;
 
 class WebXRRigidTransform : public RefCounted<WebXRRigidTransform> {
-    WTF_MAKE_ISO_ALLOCATED(WebXRRigidTransform);
+    WTF_MAKE_ISO_ALLOCATED_EXPORT(WebXRRigidTransform, WEBCORE_EXPORT);
 public:
     static Ref<WebXRRigidTransform> create();
-    static ExceptionOr<Ref<WebXRRigidTransform>> create(const DOMPointInit&, const DOMPointInit&);
-    ~WebXRRigidTransform();
+    WEBCORE_EXPORT static ExceptionOr<Ref<WebXRRigidTransform>> create(const DOMPointInit&, const DOMPointInit&);
+    WEBCORE_EXPORT ~WebXRRigidTransform();
 
     const DOMPointReadOnly& position() const;
     const DOMPointReadOnly& orientation() const;

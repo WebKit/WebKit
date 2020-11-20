@@ -47,8 +47,8 @@ class ScriptExecutionContext;
 // context thread.
 class ActiveDOMCallback : public ContextDestructionObserver {
 public:
-    ActiveDOMCallback(ScriptExecutionContext*);
-    virtual ~ActiveDOMCallback();
+    WEBCORE_EXPORT ActiveDOMCallback(ScriptExecutionContext*);
+    WEBCORE_EXPORT virtual ~ActiveDOMCallback();
 
     WEBCORE_EXPORT bool canInvokeCallback() const;
 

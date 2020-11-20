@@ -20,23 +20,19 @@
 #include "config.h"
 #include "PlatformXROpenXR.h"
 
-#if ENABLE(WEBXR)
+#if ENABLE(WEBXR) && USE(OPENXR)
 
 #include "Logging.h"
-#if USE_OPENXR
 #include <openxr/openxr_platform.h>
 #include <wtf/Optional.h>
 #include <wtf/Scope.h>
 #include <wtf/text/StringConcatenateNumbers.h>
 #include <wtf/text/WTFString.h>
-#endif // USE_OPENXR
 #include <wtf/NeverDestroyed.h>
 
 using namespace WebCore;
 
 namespace PlatformXR {
-
-#if USE_OPENXR
 
 template<typename T, XrStructureType StructureType>
 T createStructure()
@@ -63,30 +59,23 @@ String resultToString(XrResult value, XrInstance instance)
         return __VA_ARGS__;                                                                         \
     }                                                                                               \
 
-#endif // USE_OPENXR
-
 struct Instance::Impl {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     Impl();
     ~Impl();
 
-#if USE_OPENXR
     XrInstance xrInstance() const { return m_instance; }
     WorkQueue& queue() const { return m_workQueue; }
-#endif
 
 private:
-#if USE_OPENXR
     void enumerateApiLayerProperties() const;
     bool checkInstanceExtensionProperties() const;
 
     XrInstance m_instance { XR_NULL_HANDLE };
     Ref<WorkQueue> m_workQueue;
-#endif // USE_OPENXR
 };
 
-#if USE_OPENXR
 void Instance::Impl::enumerateApiLayerProperties() const
 {
     ASSERT(&RunLoop::current() == &m_workQueue->runLoop());
@@ -155,14 +144,10 @@ bool Instance::Impl::checkInstanceExtensionProperties() const
 
     return true;
 }
-#endif // USE_OPENXR
 
 Instance::Impl::Impl()
-#if USE_OPENXR
     : m_workQueue(WorkQueue::create("OpenXR queue"))
-#endif
 {
-#if USE_OPENXR
     m_workQueue->dispatch([this]() {
         LOG(XR, "OpenXR: initializing\n");
 
@@ -193,17 +178,14 @@ Instance::Impl::Impl()
         m_instance = instance;
         LOG(XR, "xrCreateInstance(): using instance %p\n", m_instance);
     });
-#endif // USE_OPENXR
 }
 
 Instance::Impl::~Impl()
 {
-#if USE_OPENXR
     m_workQueue->dispatch([this] {
         if (m_instance != XR_NULL_HANDLE)
             xrDestroyInstance(m_instance);
     });
-#endif
 }
 
 Instance& Instance::singleton()
@@ -224,7 +206,6 @@ Instance::Instance()
 
 void Instance::enumerateImmersiveXRDevices(CompletionHandler<void(const DeviceList& devices)>&& callback)
 {
-#if USE_OPENXR
     m_impl->queue().dispatch([this, callback = WTFMove(callback)]() mutable {
         auto callbackOnExit = makeScopeExit([&]() {
             callOnMainThread([callback = WTFMove(callback)]() mutable {
@@ -253,11 +234,8 @@ void Instance::enumerateImmersiveXRDevices(CompletionHandler<void(const DeviceLi
             }));
         });
     });
-
-#endif // USE_OPENXR
 }
 
-#if USE_OPENXR
 OpenXRDevice::OpenXRDevice(XrSystemId id, XrInstance instance, WorkQueue& queue, CompletionHandler<void()>&& callback)
     : m_systemId(id)
     , m_instance(instance)
@@ -399,8 +377,6 @@ WebCore::IntSize OpenXRDevice::recommendedResolution(SessionMode mode)
     return Device::recommendedResolution(mode);
 }
 
-#endif // USE_OPENXR
-
 } // namespace PlatformXR
 
-#endif // ENABLE(WEBXR)
+#endif // ENABLE(WEBXR) && USE(OPENXR)

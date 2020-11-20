@@ -19,12 +19,11 @@
 
 #pragma once
 
-#if ENABLE(WEBXR)
+#if ENABLE(WEBXR) && USE(OPENXR)
 #include "PlatformXR.h"
 
 #include <wtf/HashMap.h>
 
-#if USE_OPENXR
 #include <openxr/openxr.h>
 #include <wtf/WorkQueue.h>
 
@@ -69,5 +68,4 @@ private:
 
 } // namespace PlatformXR
 
-#endif // USE_OPENXR
-#endif // ENABLE(WEBXR)
+#endif // ENABLE(WEBXR) && USE(OPENXR)

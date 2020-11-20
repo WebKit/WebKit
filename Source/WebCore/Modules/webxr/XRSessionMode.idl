@@ -25,7 +25,8 @@
 
 [
     EnabledAtRuntime=WebXR,
-    Conditional=WEBXR
+    Conditional=WEBXR,
+    ExportMacro=WEBCORE_EXPORT
 ] enum XRSessionMode {
     "inline",
     "immersive-vr",

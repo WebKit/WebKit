@@ -587,6 +587,7 @@ platform/text/ios/TextEncodingRegistryIOS.mm
 platform/text/mac/TextBoundaries.mm
 platform/text/mac/TextCheckingMac.mm
 platform/text/mac/TextEncodingRegistryMac.mm
+platform/xr/cocoa/PlatformXRCocoa.cpp
 rendering/RenderThemeCocoa.mm
 rendering/RenderThemeIOS.mm
 rendering/RenderThemeMac.mm

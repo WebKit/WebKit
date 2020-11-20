@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Igalia S.L. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,12 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    EnabledAtRuntime=WebXR,
-    Conditional=WEBXR,
-    ExportMacro=WEBCORE_EXPORT
-] enum XREye {
-    "none",
-    "left",
-    "right"
-};
+#include "config.h"
+#include "PlatformXRCocoa.h"
+
+#if ENABLE(WEBXR) && PLATFORM(COCOA)
+
+#include <WebKitAdditions/PlatformXRAdditions.cpp>
+
+#endif
