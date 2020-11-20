@@ -1,3 +1,22 @@
+2020-10-28  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        TextureMapperLayer::paintWithIntermediateSurface: Reduce BitmapTextures by unifying replicaSurface and mainSurface
+        https://bugs.webkit.org/show_bug.cgi?id=217943
+
+        Reviewed by Don Olmstead.
+
+        TextureMapperLayer::paintWithIntermediateSurface was using two
+        BitmapTextures for the main layer and replica layer. But, a single
+        BitmapTexture suffices. Create a BitmapTexture and render both
+        layers onto it.
+
+        No new tests, no behavior changes.
+
+        * platform/graphics/texmap/TextureMapperLayer.cpp:
+        (WebCore::TextureMapperLayer::paintIntoSurface):
+        (WebCore::TextureMapperLayer::paintWithIntermediateSurface):
+        * platform/graphics/texmap/TextureMapperLayer.h:
+
 2020-10-27  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [TextureMapper][GTK] Test compositing/clipping/border-radius-stacking-context-clip.html is failing

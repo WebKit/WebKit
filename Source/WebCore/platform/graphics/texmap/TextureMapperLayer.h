@@ -131,7 +131,7 @@ private:
 
     void paintRecursive(const TextureMapperPaintOptions&);
     void paintUsingOverlapRegions(const TextureMapperPaintOptions&);
-    RefPtr<BitmapTexture> paintIntoSurface(const TextureMapperPaintOptions&, const IntSize&);
+    void paintIntoSurface(TextureMapperPaintOptions&);
     void paintWithIntermediateSurface(const TextureMapperPaintOptions&, const IntRect&);
     void paintSelf(const TextureMapperPaintOptions&);
     void paintSelfAndChildren(const TextureMapperPaintOptions&);
