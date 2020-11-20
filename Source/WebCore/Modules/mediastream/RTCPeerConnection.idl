@@ -113,7 +113,7 @@ typedef (object or DOMString) AlgorithmIdentifier;
     attribute EventHandler oniceconnectionstatechange;
     attribute EventHandler onicegatheringstatechange;
     attribute EventHandler onconnectionstatechange;
-    // FIXME 169644: missing onfingerprintfailure and onicecandidateerror
+    attribute EventHandler onicecandidateerror;
 
     // 4.11 Certificate management
     [CallWith=GlobalObject] static Promise<RTCCertificate> generateCertificate(AlgorithmIdentifier keygenAlgorithm);

@@ -1,3 +1,13 @@
+2020-11-20  Youenn Fablet  <youenn@apple.com>
+
+        Add support for RTCPeerConnection.onicecandidateerror event
+        https://bugs.webkit.org/show_bug.cgi?id=169644
+
+        Reviewed by Alex Christensen.
+
+        * webrtc/rtcpeerconnection-error-messages-expected.txt:
+        * webrtc/stun-server-filtering.html:
+
 2020-11-19  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][Integration] Enable inline-block

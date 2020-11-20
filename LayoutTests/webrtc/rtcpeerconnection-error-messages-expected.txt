@@ -15,7 +15,7 @@ TypeError: Can only call RTCPeerConnection.setConfiguration on instances of RTCP
 TypeError: Can only call RTCPeerConnection.close on instances of RTCPeerConnection
 TypeError: The RTCPeerConnection.onnegotiationneeded getter can only be used on instances of RTCPeerConnection
 TypeError: The RTCPeerConnection.onicecandidate getter can only be used on instances of RTCPeerConnection
-[object RTCPeerConnection] has no property named onicecandidateerror
+TypeError: The RTCPeerConnection.onicecandidateerror getter can only be used on instances of RTCPeerConnection
 TypeError: The RTCPeerConnection.onsignalingstatechange getter can only be used on instances of RTCPeerConnection
 TypeError: The RTCPeerConnection.oniceconnectionstatechange getter can only be used on instances of RTCPeerConnection
 TypeError: The RTCPeerConnection.onicegatheringstatechange getter can only be used on instances of RTCPeerConnection

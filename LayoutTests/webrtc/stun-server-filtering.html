@@ -2,19 +2,29 @@
 <script src='../resources/testharness.js'></script>
 <script src='../resources/testharnessreport.js'></script>
 <script>
-test((test) => {
+promise_test(async (test) => {
     let pc = new RTCPeerConnection({iceServers:[{urls:['stun:foo.com', 'stun:blabla.local']}]});
+    let promise = new Promise(resolve => pc.onicecandidateerror = resolve);
     let configuration = pc.getConfiguration();
 
     assert_equals(configuration.iceServers[0].urls.length, 1);
     assert_equals(configuration.iceServers[0].urls[0], 'stun:foo.com');
+
+    const event = await promise;
+    assert_equals(event.url, 'stun:blabla.local');
+    assert_equals(event.errorCode, 701);
 }, "RTCPeerConnection and local STUN server");
 
-test((test) => {
+promise_test(async (test) => {
     let pc = new RTCPeerConnection({iceServers:[{username: 'test', credential: 'test', urls:['turn:foo.com', 'turn:blabla.local']}]});
+    let promise = new Promise(resolve => pc.onicecandidateerror = resolve);
     let configuration = pc.getConfiguration();
 
     assert_equals(configuration.iceServers[0].urls.length, 1);
     assert_equals(configuration.iceServers[0].urls[0], 'turn:foo.com');
+
+    const event = await promise;
+    assert_equals(event.url, 'turn:blabla.local');
+    assert_equals(event.errorCode, 701);
 }, "RTCPeerConnection and local TURN server");
 </script>

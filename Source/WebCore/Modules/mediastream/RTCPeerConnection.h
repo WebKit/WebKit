@@ -222,6 +222,8 @@ private:
     void chainOperation(Ref<DeferredPromise>&&, Function<void(Ref<DeferredPromise>&&)>&&);
     friend class RTCRtpSender;
 
+    ExceptionOr<Vector<MediaEndpointConfiguration::IceServerInfo>> iceServersFromConfiguration(RTCConfiguration& newConfiguration, const RTCConfiguration* existingConfiguration, bool isLocalDescriptionSet);
+
     bool m_isStopped { false };
     RTCSignalingState m_signalingState { RTCSignalingState::Stable };
     RTCIceGatheringState m_iceGatheringState { RTCIceGatheringState::New };
