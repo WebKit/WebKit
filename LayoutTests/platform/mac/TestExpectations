@@ -2248,3 +2248,5 @@ webkit.org/b/218346 [ Mojave ] fast/text/canvas-color-fonts [ Skip ]
 [ Mojave ] http/tests/canvas/color-fonts [ Skip ]
 
 webkit.org/b/219066 [ Mojave Catalina ] webrtc/audio-sframe.html [ Pass Crash ]
+
+webkit.org/b/219212 http/tests/security/contentSecurityPolicy/1.1/plugintypes-affects-child.html [ DumpJSConsoleLogInStdErr ]
