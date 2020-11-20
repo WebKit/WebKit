@@ -1,5 +1,16 @@
 2020-11-19  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, skip some of the tests imported in r270037 on iOS because they are timing out.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/uievents/click/auxclick_event-expected.txt: Removed.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/uievents/click/click_event_target_child_parent-expected.txt: Removed.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/uievents/click/click_event_target_siblings-expected.txt: Removed.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/uievents/mouse/layout_change_should_fire_mouseover-expected.txt: Removed.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/uievents/order-of-events/focus-events/focus-expected.txt: Removed.
+
+2020-11-19  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, land iOS baselines after r270037.
 
         * platform/ios-wk2/TestExpectations:

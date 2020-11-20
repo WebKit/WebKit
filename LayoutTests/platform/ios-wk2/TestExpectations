@@ -1123,8 +1123,13 @@ webkit.org/b/161359 imported/w3c/web-platform-tests/html/browsers/browsing-the-w
 webkit.org/b/161631 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/scroll-to-id-top.html [ Pass Failure ]
 
 # Newly imported WPT tests that are timing out on iOS.
+imported/w3c/web-platform-tests/uievents/click/auxclick_event.html [ Skip ]
+imported/w3c/web-platform-tests/uievents/click/click_event_target_child_parent.html [ Skip ]
+imported/w3c/web-platform-tests/uievents/click/click_event_target_siblings.html [ Skip ]
 imported/w3c/web-platform-tests/uievents/click/dblclick_event_mouse.html [ Skip ]
+imported/w3c/web-platform-tests/uievents/mouse/layout_change_should_fire_mouseover.html [ Skip ]
 imported/w3c/web-platform-tests/uievents/mouse/mouseevent_move_button.html [ Skip ]
+imported/w3c/web-platform-tests/uievents/order-of-events/focus-events/focus.html [ Skip ]
 
 imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/unhandled-promise-rejections/promise-rejection-events-onerror.html [ Pass Failure ]
 
