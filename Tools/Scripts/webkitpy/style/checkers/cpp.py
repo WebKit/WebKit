@@ -2201,10 +2201,11 @@ def check_spacing(file_extension, clean_lines, line_number, file_state, error):
     # Objective-C @synthesize lines.
     is_objective_c_synthesize = search(r'^@synthesize', line)
     if is_objective_c_synthesize:
-        # "prop=_varName" not "prop = _varName"
-        if search(r'(\s+=|=\s+)', line):
+        # "prop = _varName" not "prop=_varName"
+        # We skip the check in case @synthesize is used without equal.
+        if search(r'=', line) and not search(r'\s+=\s+', line):
             error(line_number, 'whitespace/property', 4,
-                  'Should not have spaces around = in property synthesis.')
+                  'Should have spaces around = in property synthesis.')
 
     # Don't try to do spacing checks for operator methods
     line = sub(r'operator(==|!=|<|<<|<=|>=|>>|>|\+=|-=|\*=|/=|%=|&=|\|=|^=|<<=|>>=|/)\(', 'operator\(', line)
