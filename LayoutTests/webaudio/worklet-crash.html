@@ -1,0 +1,19 @@
+<!DOCTYPE html><!-- webkit-test-runner [ jscOptions=--collectContinuously=true ] -->
+<html>
+<body>
+This test passes if it does not crash.
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+new AudioContext().createBiquadFilter().context.audioWorklet.addModule('').then(() => {
+    testRunner.notifyDone();
+}, (e) => {
+    console.log(e);
+    testRunner.notifyDone();
+});
+</script>
+</body>
+</html>
