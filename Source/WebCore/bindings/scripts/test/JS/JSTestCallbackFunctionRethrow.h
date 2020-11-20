@@ -34,9 +34,9 @@ public:
         return adoptRef(*new JSTestCallbackFunctionRethrow(callback, globalObject));
     }
 
-    virtual ScriptExecutionContext* scriptExecutionContext() const { return ContextDestructionObserver::scriptExecutionContext(); }
+    ScriptExecutionContext* scriptExecutionContext() const { return ContextDestructionObserver::scriptExecutionContext(); }
 
-    virtual ~JSTestCallbackFunctionRethrow();
+    ~JSTestCallbackFunctionRethrow() final;
     JSCallbackDataStrong* callbackData() { return m_data; }
 
     // Functions

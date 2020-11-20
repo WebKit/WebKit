@@ -38,9 +38,9 @@ public:
         return adoptRef(*new JSTestCallbackInterface(callback, globalObject));
     }
 
-    virtual ScriptExecutionContext* scriptExecutionContext() const { return ContextDestructionObserver::scriptExecutionContext(); }
+    ScriptExecutionContext* scriptExecutionContext() const { return ContextDestructionObserver::scriptExecutionContext(); }
 
-    virtual ~JSTestCallbackInterface();
+    ~JSTestCallbackInterface() final;
     JSCallbackDataStrong* callbackData() { return m_data; }
     static JSC::JSValue getConstructor(JSC::VM&, const JSC::JSGlobalObject*);
 

@@ -6477,9 +6477,9 @@ sub GenerateCallbackHeaderContent
     push(@$contentRef, "        return adoptRef(*new ${className}(callback, globalObject));\n");
     push(@$contentRef, "    }\n\n");
 
-    push(@$contentRef, "    virtual ScriptExecutionContext* scriptExecutionContext() const { return ContextDestructionObserver::scriptExecutionContext(); }\n\n");
+    push(@$contentRef, "    ScriptExecutionContext* scriptExecutionContext() const { return ContextDestructionObserver::scriptExecutionContext(); }\n\n");
 
-    push(@$contentRef, "    virtual ~$className();\n");
+    push(@$contentRef, "    ~$className() final;\n");
 
     push(@$contentRef, "    ${callbackDataType}* callbackData() { return m_data; }\n");
 

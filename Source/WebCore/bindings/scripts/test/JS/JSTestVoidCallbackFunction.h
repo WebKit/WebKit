@@ -36,9 +36,9 @@ public:
         return adoptRef(*new JSTestVoidCallbackFunction(callback, globalObject));
     }
 
-    virtual ScriptExecutionContext* scriptExecutionContext() const { return ContextDestructionObserver::scriptExecutionContext(); }
+    ScriptExecutionContext* scriptExecutionContext() const { return ContextDestructionObserver::scriptExecutionContext(); }
 
-    virtual ~JSTestVoidCallbackFunction();
+    ~JSTestVoidCallbackFunction() final;
     JSCallbackDataStrong* callbackData() { return m_data; }
 
     // Functions
