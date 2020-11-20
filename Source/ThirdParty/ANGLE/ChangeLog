@@ -1,3 +1,16 @@
+2020-11-19  Dean Jackson  <dino@apple.com>
+
+        Add schemes for ANGLE to Xcode project
+        https://bugs.webkit.org/show_bug.cgi?id=217546
+        rdar://69062082
+
+        Reviewed by Alex Christensen.
+
+        * Configurations/Base.xcconfig: Update paths for built frameworks.
+        * ANGLE.xcodeproj/xcshareddata/xcschemes/ANGLE (dynamic).xcscheme: Added.
+        * ANGLE.xcodeproj/xcshareddata/xcschemes/ANGLE (static).xcscheme: Added.
+        * ANGLE.xcodeproj/xcshareddata/xcschemes/ANGLE.xcscheme: Added.
+
 2020-11-04  David Kilzer  <ddkilzer@apple.com>
 
         WebKit should remove unused debug variant support
