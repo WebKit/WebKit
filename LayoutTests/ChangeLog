@@ -1,3 +1,12 @@
+2020-11-20  Truitt Savell  <tsavell@apple.com>
+
+        Revert r270124. Made the test worse.
+        https://bugs.webkit.org/show_bug.cgi?id=219212
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2020-11-20  James Darpinian  <jdarpinian@chromium.org>
 
         Update ANGLE 2020-11-12
