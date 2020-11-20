@@ -11,10 +11,10 @@
 
 #import "common/platform.h"
 
-#if (defined(ANGLE_PLATFORM_IOS) && !defined(ANGLE_PLATFORM_MACCATALYST)) || (defined(ANGLE_PLATFORM_MACCATALYST) && defined(ANGLE_CPU_ARM64))
+#if defined(ANGLE_ENABLE_EAGL)
 
-#include "libANGLE/Device.h"
-#include "libANGLE/renderer/DeviceImpl.h"
+#    include "libANGLE/Device.h"
+#    include "libANGLE/renderer/DeviceImpl.h"
 
 namespace rx
 {
@@ -34,6 +34,6 @@ class DeviceEAGL : public DeviceImpl
 
 }  // namespace rx
 
-#endif  // (defined(ANGLE_PLATFORM_IOS) && !defined(ANGLE_PLATFORM_MACCATALYST)) || (defined(ANGLE_PLATFORM_MACCATALYST) && defined(ANGLE_CPU_ARM64))
+#endif  // defined(ANGLE_ENABLE_EAGL)
 
 #endif  // LIBANGLE_RENDERER_GL_EAGL_DEVICEEAGL_H_

@@ -21,9 +21,14 @@ using namespace angle;
 
 namespace js = rapidjson;
 
+// This file is included in both angle_unittests and test_utils_unittest_helper. This variable is
+// defined separately in each test target's main file.
+extern bool gVerbose;
+
 namespace
 {
 constexpr char kTestHelperExecutable[] = "test_utils_unittest_helper";
+constexpr int kFlakyRetries            = 3;
 
 class TestSuiteTest : public testing::Test
 {
@@ -36,6 +41,65 @@ class TestSuiteTest : public testing::Test
         }
     }
 
+    bool runTestSuite(const std::vector<std::string> &extraArgs,
+                      TestResults *actualResults,
+                      bool validateStderr)
+    {
+        std::string executablePath = GetExecutableDirectory();
+        EXPECT_NE(executablePath, "");
+        executablePath += std::string("/") + kTestHelperExecutable + GetExecutableExtension();
+
+        constexpr uint32_t kMaxTempDirLen = 100;
+        char tempDirName[kMaxTempDirLen * 2];
+
+        if (!GetTempDir(tempDirName, kMaxTempDirLen))
+        {
+            return false;
+        }
+
+        std::stringstream tempFNameStream;
+        tempFNameStream << tempDirName << GetPathSeparator() << "test_temp_" << rand() << ".json";
+        mTempFileName = tempFNameStream.str();
+
+        std::string resultsFileName = "--results-file=" + mTempFileName;
+
+        std::vector<const char *> args = {
+            executablePath.c_str(), kRunTestSuite,      "--gtest_also_run_disabled_tests",
+            "--bot-mode",           "--test-timeout=5", resultsFileName.c_str()};
+
+        for (const std::string &arg : extraArgs)
+        {
+            args.push_back(arg.c_str());
+        }
+
+        if (gVerbose)
+        {
+            printf("Test arguments:\n");
+            for (const char *arg : args)
+            {
+                printf("%s ", arg);
+            }
+            printf("\n");
+        }
+
+        ProcessHandle process(args, true, true);
+        EXPECT_TRUE(process->started());
+        EXPECT_TRUE(process->finish());
+        EXPECT_TRUE(process->finished());
+
+        if (validateStderr)
+        {
+            EXPECT_EQ(process->getStderr(), "");
+        }
+
+        if (gVerbose)
+        {
+            printf("stdout:\n%s\n", process->getStdout().c_str());
+        }
+
+        return GetTestResultsFromFile(mTempFileName.c_str(), actualResults);
+    }
+
     std::string mTempFileName;
 };
 
@@ -43,44 +107,52 @@ class TestSuiteTest : public testing::Test
 // Verifies that Pass, Fail, Crash and Timeout are all handled correctly.
 TEST_F(TestSuiteTest, RunMockTests)
 {
-    std::string executablePath = GetExecutableDirectory();
-    EXPECT_NE(executablePath, "");
-    executablePath += std::string("/") + kTestHelperExecutable + GetExecutableExtension();
-
-    constexpr uint32_t kMaxTempDirLen = 100;
-    char tempFileName[kMaxTempDirLen * 2];
-    ASSERT_TRUE(GetTempDir(tempFileName, kMaxTempDirLen));
-
-    std::stringstream tempFNameStream;
-    tempFNameStream << tempFileName << "/test_temp_" << rand() << ".json";
-    mTempFileName = tempFNameStream.str();
-
-    std::string resultsFileName = "--results-file=" + mTempFileName;
-
-    std::vector<const char *> args = {executablePath.c_str(),
-                                      kRunTestSuite,
-                                      "--gtest_filter=MockTestSuiteTest.DISABLED_*",
-                                      "--gtest_also_run_disabled_tests",
-                                      "--bot-mode",
-                                      "--test-timeout=10",
-                                      resultsFileName.c_str()};
-
-    ProcessHandle process(args, true, true);
-    EXPECT_TRUE(process->started());
-    EXPECT_TRUE(process->finish());
-    EXPECT_TRUE(process->finished());
-    EXPECT_EQ(process->getStderr(), "");
+    std::vector<std::string> extraArgs = {"--gtest_filter=MockTestSuiteTest.DISABLED_*"};
 
     TestResults actual;
-    ASSERT_TRUE(GetTestResultsFromFile(mTempFileName.c_str(), &actual));
-    EXPECT_TRUE(DeleteFile(mTempFileName.c_str()));
-    mTempFileName.clear();
+    ASSERT_TRUE(runTestSuite(extraArgs, &actual, true));
 
     std::map<TestIdentifier, TestResult> expectedResults = {
         {{"MockTestSuiteTest", "DISABLED_Pass"}, {TestResultType::Pass, 0.0}},
         {{"MockTestSuiteTest", "DISABLED_Fail"}, {TestResultType::Fail, 0.0}},
         {{"MockTestSuiteTest", "DISABLED_Timeout"}, {TestResultType::Timeout, 0.0}},
-        // {{"MockTestSuiteTest", "DISABLED_Crash"}, {TestResultType::Crash, 0.0}},
+    };
+
+    EXPECT_EQ(expectedResults, actual.results);
+}
+
+// Verifies the flaky retry feature works as expected.
+TEST_F(TestSuiteTest, RunFlakyTests)
+{
+    std::vector<std::string> extraArgs = {"--gtest_filter=MockFlakyTestSuiteTest.DISABLED_Flaky",
+                                          "--flaky-retries=" + std::to_string(kFlakyRetries)};
+
+    TestResults actual;
+    ASSERT_TRUE(runTestSuite(extraArgs, &actual, true));
+
+    std::map<TestIdentifier, TestResult> expectedResults = {
+        {{"MockFlakyTestSuiteTest", "DISABLED_Flaky"},
+         {TestResultType::Pass, 0.0, kFlakyRetries - 1}}};
+
+    EXPECT_EQ(expectedResults, actual.results);
+}
+
+// Verifies that crashes are handled even without the crash handler.
+TEST_F(TestSuiteTest, RunCrashingTests)
+{
+    std::vector<std::string> extraArgs = {
+        "--gtest_filter=MockTestSuiteTest.DISABLED_Pass:MockTestSuiteTest.DISABLED_Fail:"
+        "MockCrashTestSuiteTest.DISABLED_*",
+        "--disable-crash-handler"};
+
+    TestResults actual;
+    ASSERT_TRUE(runTestSuite(extraArgs, &actual, false));
+
+    std::map<TestIdentifier, TestResult> expectedResults = {
+        {{"MockTestSuiteTest", "DISABLED_Pass"}, {TestResultType::Pass, 0.0}},
+        {{"MockTestSuiteTest", "DISABLED_Fail"}, {TestResultType::Fail, 0.0}},
+        {{"MockCrashTestSuiteTest", "DISABLED_Crash"}, {TestResultType::Crash, 0.0}},
+        {{"MockCrashTestSuiteTest", "DISABLED_PassAfterCrash"}, {TestResultType::Pass, 0.0}},
     };
 
     EXPECT_EQ(expectedResults, actual.results);
@@ -101,12 +173,55 @@ TEST(MockTestSuiteTest, DISABLED_Fail)
 // Trigger a test timeout.
 TEST(MockTestSuiteTest, DISABLED_Timeout)
 {
-    angle::Sleep(30000);
+    angle::Sleep(20000);
+}
+
+// Trigger a flaky test failure.
+TEST(MockFlakyTestSuiteTest, DISABLED_Flaky)
+{
+    constexpr uint32_t kMaxTempDirLen = 100;
+    char tempDirName[kMaxTempDirLen * 2];
+    ASSERT_TRUE(GetTempDir(tempDirName, kMaxTempDirLen));
+
+    std::stringstream tempFNameStream;
+    tempFNameStream << tempDirName << GetPathSeparator() << "flaky_temp.txt";
+    std::string tempFileName = tempFNameStream.str();
+
+    int fails = 0;
+    {
+        FILE *fp = fopen(tempFileName.c_str(), "r");
+        if (fp)
+        {
+            ASSERT_EQ(fscanf(fp, "%d", &fails), 1);
+            fclose(fp);
+        }
+    }
+
+    if (fails >= kFlakyRetries - 1)
+    {
+        angle::DeleteFile(tempFileName.c_str());
+    }
+    else
+    {
+        EXPECT_TRUE(false);
+
+        FILE *fp = fopen(tempFileName.c_str(), "w");
+        ASSERT_NE(fp, nullptr);
+
+        fprintf(fp, "%d", fails + 1);
+        fclose(fp);
+    }
 }
 
 // Trigger a test crash.
-// TEST(MockTestSuiteTest, DISABLED_Crash)
-// {
-//     ANGLE_CRASH();
-// }
+TEST(MockCrashTestSuiteTest, DISABLED_Crash)
+{
+    ANGLE_CRASH();
+}
+
+// This test runs after the crash test.
+TEST(MockCrashTestSuiteTest, DISABLED_PassAfterCrash)
+{
+    EXPECT_TRUE(true);
+}
 }  // namespace

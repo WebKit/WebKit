@@ -271,7 +271,7 @@ size_t Debug::getMessages(GLuint count,
 
         if (lengths != nullptr)
         {
-            lengths[messageCount] = static_cast<GLsizei>(m.message.length());
+            lengths[messageCount] = static_cast<GLsizei>(m.message.length()) + 1;
         }
 
         mMessages.pop_front();
@@ -284,7 +284,7 @@ size_t Debug::getMessages(GLuint count,
 
 size_t Debug::getNextMessageLength() const
 {
-    return mMessages.empty() ? 0 : mMessages.front().message.length();
+    return mMessages.empty() ? 0 : mMessages.front().message.length() + 1;
 }
 
 size_t Debug::getMessageCount() const
@@ -336,6 +336,34 @@ void Debug::popGroup()
 size_t Debug::getGroupStackDepth() const
 {
     return mGroups.size();
+}
+
+void Debug::insertPerfWarning(GLenum severity, const char *message, uint32_t *repeatCount) const
+{
+    bool repeatLast;
+
+    {
+        constexpr uint32_t kMaxRepeat = 4;
+        std::lock_guard<std::mutex> lock(GetDebugMutex());
+
+        if (*repeatCount >= kMaxRepeat)
+        {
+            return;
+        }
+
+        ++*repeatCount;
+        repeatLast = (*repeatCount == kMaxRepeat);
+    }
+
+    std::string msg = message;
+    if (repeatLast)
+    {
+        msg += " (this message will no longer repeat)";
+    }
+
+    // Release the lock before we call insertMessage. It will re-acquire the lock.
+    insertMessage(GL_DEBUG_SOURCE_API, GL_DEBUG_TYPE_PERFORMANCE, 0, severity, std::move(msg),
+                  gl::LOG_INFO);
 }
 
 bool Debug::isMessageEnabled(GLenum source, GLenum type, GLuint id, GLenum severity) const

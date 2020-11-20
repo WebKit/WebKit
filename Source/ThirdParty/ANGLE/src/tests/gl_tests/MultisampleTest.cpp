@@ -58,10 +58,25 @@ class MultisampleTest : public ANGLETestWithParam<MultisampleTestParams>
         ANGLE_SKIP_TEST_IF(IsNexus5X() || IsNexus6P());
 
         // Find a config that uses RGBA8 and allows 4x multisampling.
-        const EGLint configAttributes[] = {
-            EGL_RED_SIZE,       8, EGL_GREEN_SIZE, 8,  EGL_BLUE_SIZE,    8,
-            EGL_ALPHA_SIZE,     8, EGL_DEPTH_SIZE, 24, EGL_STENCIL_SIZE, 8,
-            EGL_SAMPLE_BUFFERS, 1, EGL_SAMPLES,    4,  EGL_NONE};
+        const EGLint configAttributes[] = {EGL_SURFACE_TYPE,
+                                           EGL_WINDOW_BIT,
+                                           EGL_RED_SIZE,
+                                           8,
+                                           EGL_GREEN_SIZE,
+                                           8,
+                                           EGL_BLUE_SIZE,
+                                           8,
+                                           EGL_ALPHA_SIZE,
+                                           8,
+                                           EGL_DEPTH_SIZE,
+                                           24,
+                                           EGL_STENCIL_SIZE,
+                                           8,
+                                           EGL_SAMPLE_BUFFERS,
+                                           1,
+                                           EGL_SAMPLES,
+                                           4,
+                                           EGL_NONE};
 
         EGLint configCount;
         EGLConfig multisampledConfig;
@@ -375,6 +390,51 @@ TEST_P(MultisampleTest, ContentPresevedAfterInterruption)
     }
 }
 
+// Test that alpha to coverage is enabled works properly along with early fragment test.
+TEST_P(MultisampleTest, AlphaToSampleCoverage)
+{
+    ANGLE_SKIP_TEST_IF(!mMultisampledConfigExists);
+    // http://anglebug.com/5087
+    ANGLE_SKIP_TEST_IF(IsMetal());
+
+    constexpr char kFS[] =
+        "precision highp float;\n"
+        "void main()\n"
+        "{\n"
+        "    gl_FragColor = vec4(1.0, 0.0, 0.0, 0.0);\n"
+        "}\n";
+    ANGLE_GL_PROGRAM(transparentRedProgram, essl1_shaders::vs::Simple(), kFS);
+    glUseProgram(transparentRedProgram);
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LESS);
+    glClearDepthf(1.0f);
+    glClearColor(0.0f, 1.0f, 0.0f, 1.0f);  // clear to green
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    // This should pass depth test, but because of the alpha to coverage enabled, and alpha is 0,
+    // the fragment should be discarded. If early fragment test is disabled, no depth will be
+    // written. depth buffer should be 1.0.
+    glEnable(GL_SAMPLE_ALPHA_TO_COVERAGE);
+    // There was a bug in ANGLE that we are checking sampler coverage enabled or not instead of
+    // alpha to sample coverage enabled or not. This is specically try to trick ANGLE so that it
+    // will enable early fragment test. When early fragment test is accidentally enabled, then the
+    // depth test will occur before fragment shader, and depth buffer maybe written with value
+    // (0.0+1.0)/2.0=0.5.
+    glEnable(GL_SAMPLE_COVERAGE);
+    drawQuad(transparentRedProgram, essl1_shaders::PositionAttrib(), 0.0f);
+
+    // Now draw with blue color but to test against 0.0f. This should fail depth test
+    glDisable(GL_SAMPLE_ALPHA_TO_COVERAGE);
+    glDisable(GL_SAMPLE_COVERAGE);
+    glDepthFunc(GL_GREATER);
+    ANGLE_GL_PROGRAM(blueProgram, essl1_shaders::vs::Simple(), essl1_shaders::fs::Blue());
+    // Zd = 0.5f means (0.5+1.0)/2.0=0.75. Depends on early fragment on or off this will pass or
+    // fail depth test.
+    drawQuad(blueProgram, essl1_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_COLOR_EQ(1, 1, GLColor::green);
+
+    ASSERT_GL_NO_ERROR();
+}
+
 // Test that resolve from multisample default framebuffer works.
 TEST_P(MultisampleTestES3, ResolveToFBO)
 {
@@ -449,5 +509,6 @@ ANGLE_INSTANTIATE_TEST_COMBINE_1(MultisampleTestES3,
                                  WithNoFixture(ES3_OPENGLES()),
                                  WithNoFixture(ES31_OPENGLES()),
                                  WithNoFixture(ES3_VULKAN()),
-                                 WithNoFixture(ES31_VULKAN()));
+                                 WithNoFixture(ES31_VULKAN()),
+                                 WithNoFixture(ES3_METAL()));
 }  // anonymous namespace

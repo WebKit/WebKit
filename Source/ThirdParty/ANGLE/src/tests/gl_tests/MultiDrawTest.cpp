@@ -467,6 +467,10 @@ TEST_P(MultiDrawTest, CanCompile)
 TEST_P(MultiDrawTest, MultiDrawArrays)
 {
     ANGLE_SKIP_TEST_IF(!requestExtensions());
+
+    // http://anglebug.com/5265
+    ANGLE_SKIP_TEST_IF(IsInstancedTest() && IsOSX() && IsIntelUHD630Mobile() && IsDesktopOpenGL());
+
     SetupBuffers();
     SetupProgram();
     DoDrawArrays();

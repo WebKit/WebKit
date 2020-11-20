@@ -167,6 +167,25 @@ as the GLES driver for your application.
     $ out/Release/capture_replay_sample
     ```
 
+### Starting capture at an arbitrary frame
+In some scenarios, you don't know which frame you want to start on. You'll only know when target
+content is being rendered.  For that we've added a trigger that can allow starting the capture at
+any time.
+
+To use it, set the following environment variable, in addition to all the setup steps above. Set
+the trigger value equal to the number of frames you'd like to capture.
+```
+adb shell setprop debug.angle.capture.trigger 20
+```
+When this value is set, `ANGLE_CAPTURE_FRAME_START` and `ANGLE_CAPTURE_FRAME_END` will be ignored.
+
+While your content is rendering, wait until you arrive at the scene you'd like to capture. Then
+set the value back to zero:
+```
+adb shell setprop debug.angle.capture.trigger 0
+```
+ANGLE will detect this change and start recording the requested number of frames.
+
 ## Testing
 
 ### Regression Testing Architecture
@@ -185,5 +204,24 @@ replay run stage of multiple tests together.
 
 ![A test batch as a job unit](img/JobUnit.png)
 
-[link_to_python_script]:https://chromium.googlesource.com/angle/angle/+/refs/heads/master/src/tests/capture_replay_tests.py
+### Running tests
+From the command line, navigate to the ANGLE root folder [angle][angle_folder] then run the
+command below:
+```
+python3 src/tests/capture_replay_tests.py --use-goma --gtest_filter=*/ES2_Vulkan --keep-temp-files --output-to-file --batch-count=8
+```
+
+* `--use-goma` to turn on/off building with goma
+* `--gtest_filter` to run only specific tests
+* `--keep-temp-files` to keep the trace files
+* `--output-to-file` to write the log to results.txt at
+ [src/tests/capture_replay_tests][capture_replay_test_folder] folder.
+* `--batch-count` to set the number of tests in a batch. More tests in a batch means that
+the tests will finish faster, but also means a lower level of granularity.
+All command line arguments can be found at the top of the [python script][link_to_python_script].
+
+[angle_folder]: ../
+[capture_replay_test_folder]: ../src/tests/capture_replay_tests/
+[link_to_python_script]: ../src/tests/capture_replay_tests.py
+
 

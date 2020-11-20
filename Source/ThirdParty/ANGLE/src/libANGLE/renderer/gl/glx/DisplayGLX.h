@@ -15,6 +15,7 @@
 
 #include "common/Optional.h"
 #include "libANGLE/renderer/gl/DisplayGL.h"
+#include "libANGLE/renderer/gl/RendererGL.h"
 #include "libANGLE/renderer/gl/glx/FunctionsGLX.h"
 
 namespace rx
@@ -34,7 +35,8 @@ class DisplayGLX : public DisplayGL
     egl::Error initialize(egl::Display *display) override;
     void terminate() override;
 
-    egl::Error makeCurrent(egl::Surface *drawSurface,
+    egl::Error makeCurrent(egl::Display *display,
+                           egl::Surface *drawSurface,
                            egl::Surface *readSurface,
                            gl::Context *context) override;
 
@@ -97,6 +99,8 @@ class DisplayGLX : public DisplayGL
 
     void populateFeatureList(angle::FeatureList *features) override;
 
+    RendererGL *getRenderer() const { return mRenderer.get(); }
+
   private:
     egl::Error initializeContext(glx::FBConfig config,
                                  const egl::AttributeMap &eglAttributes,
@@ -125,7 +129,7 @@ class DisplayGLX : public DisplayGL
     glx::Context mSharedContext;
     std::unordered_map<std::thread::id, glx::Context> mCurrentContexts;
     // A pbuffer the context is current on during ANGLE initialization
-    glx::Pbuffer mDummyPbuffer;
+    glx::Pbuffer mInitPbuffer;
 
     std::vector<glx::Pbuffer> mWorkerPbufferPool;
 
@@ -136,6 +140,7 @@ class DisplayGLX : public DisplayGL
     bool mHasARBCreateContextProfile;
     bool mHasARBCreateContextRobustness;
     bool mHasEXTCreateContextES2Profile;
+    bool mHasNVRobustnessVideoMemoryPurge;
 
     enum class SwapControl
     {

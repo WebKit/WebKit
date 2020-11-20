@@ -126,10 +126,11 @@ class StateManagerGL final : angle::NonCopyable
     void setClearDepth(float clearDepth);
     void setClearStencil(GLint clearStencil);
 
-    void setPixelUnpackState(const gl::PixelUnpackState &unpack);
-    void setPixelUnpackBuffer(const gl::Buffer *pixelBuffer);
-    void setPixelPackState(const gl::PixelPackState &pack);
-    void setPixelPackBuffer(const gl::Buffer *pixelBuffer);
+    angle::Result setPixelUnpackState(const gl::Context *context,
+                                      const gl::PixelUnpackState &unpack);
+    angle::Result setPixelUnpackBuffer(const gl::Context *context, const gl::Buffer *pixelBuffer);
+    angle::Result setPixelPackState(const gl::Context *context, const gl::PixelPackState &pack);
+    angle::Result setPixelPackBuffer(const gl::Context *context, const gl::Buffer *pixelBuffer);
 
     void setFramebufferSRGBEnabled(const gl::Context *context, bool enabled);
     void setFramebufferSRGBEnabledForFramebuffer(const gl::Context *context,

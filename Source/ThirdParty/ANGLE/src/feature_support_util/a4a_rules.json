@@ -9,7 +9,7 @@
          "UseANGLE":true,
          "Applications":[
             {
-               "AppName":"com.chromium.angle"
+               "AppName":"org.chromium.angle"
             }
          ],
          "Devices":[

@@ -7,10 +7,10 @@
 
 #include "entry_points_wgl.h"
 
+#include "common/angle_version.h"
 #include "common/debug.h"
 #include "common/event_tracer.h"
 #include "common/utilities.h"
-#include "common/version.h"
 #include "libANGLE/Context.h"
 #include "libANGLE/Display.h"
 #include "libANGLE/EGLSync.h"
@@ -265,10 +265,10 @@ BOOL GL_APIENTRY wglMakeCurrent(HDC hDc, HGLRC newContext)
 
     if (previousDraw != surface || previousRead != surface || previousContext != context)
     {
-        ANGLE_EGL_TRY_RETURN(
-            thread,
-            display->makeCurrent(thread, surface, surface, const_cast<gl::Context *>(context)),
-            "wglMakeCurrent", GetContextIfValid(display, context), EGL_FALSE);
+        ANGLE_EGL_TRY_RETURN(thread,
+                             display->makeCurrent(previousContext, surface, surface,
+                                                  const_cast<gl::Context *>(context)),
+                             "wglMakeCurrent", GetContextIfValid(display, context), EGL_FALSE);
 
         SetContextCurrent(thread, const_cast<gl::Context *>(context));
     }

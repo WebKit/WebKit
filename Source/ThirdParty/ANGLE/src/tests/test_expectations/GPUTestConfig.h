@@ -65,6 +65,10 @@ struct GPUTestConfig
         kConditionPixel2OrXL,
         kConditionNVIDIAQuadroP400,
         kConditionSwiftShader,
+        kConditionPreRotation,
+        kConditionPreRotation90,
+        kConditionPreRotation180,
+        kConditionPreRotation270,
 
         kNumberOfConditions,
     };
@@ -72,7 +76,7 @@ struct GPUTestConfig
     using ConditionArray = angle::BitSet<GPUTestConfig::kNumberOfConditions>;
 
     GPUTestConfig();
-    GPUTestConfig(const API &api);
+    GPUTestConfig(const API &api, uint32_t preRotation);
 
     const GPUTestConfig::ConditionArray &getConditions() const;
 

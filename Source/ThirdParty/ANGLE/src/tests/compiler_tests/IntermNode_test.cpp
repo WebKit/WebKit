@@ -42,7 +42,7 @@ class IntermNodeTest : public testing::Test
         ImmutableString symbolName(symbolNameOut.str());
         ++mUniqueIndex;
 
-        // We're using a dummy symbol table here, don't need to assign proper symbol ids to these
+        // We're using a mock symbol table here, don't need to assign proper symbol ids to these
         // nodes.
         TSymbolTable symbolTable;
         TType *variableType = new TType(type);
@@ -62,7 +62,7 @@ class IntermNodeTest : public testing::Test
 
     TFunction *createTestFunction(const TType &returnType, const TIntermSequence &args)
     {
-        // We're using a dummy symbol table similarly as for creating symbol nodes.
+        // We're using a mock symbol table similarly as for creating symbol nodes.
         const ImmutableString name("testFunc");
         TSymbolTable symbolTable;
         TFunction *func = new TFunction(&symbolTable, name, SymbolType::UserDefined,
@@ -141,7 +141,7 @@ TEST_F(IntermNodeTest, DeepCopySymbolNode)
 {
     const TType *type = StaticType::Get<EbtInt, EbpHigh, EvqTemporary, 1, 1>();
 
-    // We're using a dummy symbol table here, don't need to assign proper symbol ids to these nodes.
+    // We're using a mock symbol table here, don't need to assign proper symbol ids to these nodes.
     TSymbolTable symbolTable;
 
     TVariable *variable =

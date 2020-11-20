@@ -13,9 +13,9 @@
 #include "common/Optional.h"
 #include "common/PackedEnums.h"
 #include "common/angleutils.h"
+#include "common/entry_points_enum_autogen.h"
 #include "common/mathutil.h"
 #include "libANGLE/Display.h"
-#include "libANGLE/entry_points_enum_autogen.h"
 
 namespace gl
 {
@@ -95,11 +95,12 @@ constexpr ANGLE_INLINE ReturnType GetDefaultReturnValue()
 #    define ANGLE_CAPTURE(...)
 #endif  // ANGLE_CAPTURE_ENABLED
 
-#define FUNC_EVENT(format, ...) EVENT(__FUNCTION__, format, __VA_ARGS__)
+#define FUNC_EVENT(format, ...) \
+    EVENT(nullptr, gl::EntryPoint::Begin, __FUNCTION__, format, __VA_ARGS__)
 
 inline int CID(const Context *context)
 {
-    return context != nullptr ? static_cast<int>(context->id()) : 0;
+    return context == nullptr ? 0 : static_cast<int>(context->id().value);
 }
 }  // namespace gl
 

@@ -347,9 +347,11 @@ TEST_P(ProgramInterfaceTestES31, GetProgramInterface)
 // Tests the resource property query for uniform can be done correctly.
 TEST_P(ProgramInterfaceTestES31, GetUniformProperties)
 {
-    // TODO(jiajia.qin@intel.com): Don't skip this test once atomic counter is supported on d3d
-    // backend. http://anglebug.com/1729
-    ANGLE_SKIP_TEST_IF(IsD3D11());
+    // Check atomic support.
+    GLint numSupported;
+    glGetIntegerv(GL_MAX_VERTEX_ATOMIC_COUNTERS, &numSupported);
+    EXPECT_GL_NO_ERROR();
+    ANGLE_SKIP_TEST_IF(numSupported < 1);
 
     constexpr char kVS[] =
         "#version 310 es\n"
@@ -540,9 +542,13 @@ TEST_P(ProgramInterfaceTestES31, GetUniformBlockProperties)
 // Tests atomic counter buffer qeury works correctly.
 TEST_P(ProgramInterfaceTestES31, QueryAtomicCounteBuffer)
 {
-    // TODO(jiajia.qin@intel.com): Don't skip this test once atomic counter is supported on d3d
-    // backend. http://anglebug.com/1729
-    ANGLE_SKIP_TEST_IF(IsD3D11());
+    // Check atomic support.
+    GLint numSupportedInVertex;
+    GLint numSupportedInFragment;
+    glGetIntegerv(GL_MAX_VERTEX_ATOMIC_COUNTERS, &numSupportedInVertex);
+    glGetIntegerv(GL_MAX_FRAGMENT_ATOMIC_COUNTERS, &numSupportedInFragment);
+    EXPECT_GL_NO_ERROR();
+    ANGLE_SKIP_TEST_IF(numSupportedInVertex < 1 || numSupportedInFragment < 1);
 
     constexpr char kVS[] =
         "#version 310 es\n"

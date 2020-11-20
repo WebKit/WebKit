@@ -18,6 +18,7 @@
 #include "libANGLE/renderer/Format.h"
 #include "libANGLE/renderer/copyvertex.h"
 #include "libANGLE/renderer/d3d/formatutilsD3D.h"
+#include "libANGLE/renderer/d3d_format.h"
 #include "libANGLE/renderer/renderer_utils.h"
 
 namespace rx
@@ -27,41 +28,6 @@ class Renderer9;
 
 namespace d3d9
 {
-
-struct D3DFormat
-{
-    D3DFormat();
-    D3DFormat(GLuint pixelBytes,
-              GLuint blockWidth,
-              GLuint blockHeight,
-              GLuint redBits,
-              GLuint greenBits,
-              GLuint blueBits,
-              GLuint alphaBits,
-              GLuint luminanceBits,
-              GLuint depthBits,
-              GLuint stencilBits,
-              angle::FormatID formatID);
-
-    const angle::Format &info() const { return angle::Format::Get(formatID); }
-
-    GLuint pixelBytes;
-    GLuint blockWidth;
-    GLuint blockHeight;
-
-    GLuint redBits;
-    GLuint greenBits;
-    GLuint blueBits;
-    GLuint alphaBits;
-    GLuint luminanceBits;
-
-    GLuint depthBits;
-    GLuint stencilBits;
-
-    angle::FormatID formatID;
-};
-
-const D3DFormat &GetD3DFormatInfo(D3DFORMAT format);
 
 struct VertexFormat
 {

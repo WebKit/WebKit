@@ -28,8 +28,19 @@ class CompilerTestEnvironment : public testing::Environment
     }
 };
 
+// This variable is also defined in test_utils_unittest_helper.
+bool gVerbose = false;
+
 int main(int argc, char **argv)
 {
+    for (int argIndex = 1; argIndex < argc; ++argIndex)
+    {
+        if (strcmp(argv[argIndex], "-v") == 0 || strcmp(argv[argIndex], "--verbose") == 0)
+        {
+            gVerbose = true;
+        }
+    }
+
     angle::TestSuite testSuite(&argc, argv);
     testing::AddGlobalTestEnvironment(new CompilerTestEnvironment());
     return testSuite.run();

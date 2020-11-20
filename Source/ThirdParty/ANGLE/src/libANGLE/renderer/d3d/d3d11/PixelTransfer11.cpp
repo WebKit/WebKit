@@ -89,7 +89,7 @@ angle::Result PixelTransfer11::loadResources(const gl::Context *context)
     ANGLE_TRY(mRenderer->allocateResource(context11, depthStencilDesc, &mCopyDepthStencilState));
 
     D3D11_BUFFER_DESC constantBufferDesc   = {};
-    constantBufferDesc.ByteWidth           = roundUp<UINT>(sizeof(CopyShaderParams), 32u);
+    constantBufferDesc.ByteWidth           = roundUpPow2<UINT>(sizeof(CopyShaderParams), 32u);
     constantBufferDesc.Usage               = D3D11_USAGE_DYNAMIC;
     constantBufferDesc.BindFlags           = D3D11_BIND_CONSTANT_BUFFER;
     constantBufferDesc.CPUAccessFlags      = D3D11_CPU_ACCESS_WRITE;

@@ -382,6 +382,9 @@ void main()
 // then starting rendering will fail, but dispatching compute can succeed.
 TEST_P(LinkAndRelinkTestES31, RelinkProgramSucceedsFromRenderingToCompute)
 {
+    // http://anglebug.com/5072
+    ANGLE_SKIP_TEST_IF(IsIntel() && IsLinux() && IsOpenGL());
+
     constexpr char kVS[] = "void main() {}";
     constexpr char kFS[] = "void main() {}";
 

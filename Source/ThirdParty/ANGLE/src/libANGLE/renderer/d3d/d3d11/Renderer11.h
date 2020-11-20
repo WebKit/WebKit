@@ -72,44 +72,6 @@ enum
     MAX_FRAGMENT_UNIFORM_VECTORS_D3D11 = 1024
 };
 
-// Possible reasons RendererD3D initialize can fail
-enum D3D11InitError
-{
-    // The renderer loaded successfully
-    D3D11_INIT_SUCCESS = 0,
-    // Failed to load the ANGLE & D3D compiler libraries
-    D3D11_INIT_COMPILER_ERROR,
-    // Failed to load a necessary DLL (non-compiler)
-    D3D11_INIT_MISSING_DEP,
-    // CreateDevice returned E_INVALIDARG
-    D3D11_INIT_CREATEDEVICE_INVALIDARG,
-    // CreateDevice failed with an error other than invalid arg
-    D3D11_INIT_CREATEDEVICE_ERROR,
-    // DXGI 1.2 required but not found
-    D3D11_INIT_INCOMPATIBLE_DXGI,
-    // Other initialization error
-    D3D11_INIT_OTHER_ERROR,
-    // CreateDevice returned E_FAIL
-    D3D11_INIT_CREATEDEVICE_FAIL,
-    // CreateDevice returned E_NOTIMPL
-    D3D11_INIT_CREATEDEVICE_NOTIMPL,
-    // CreateDevice returned E_OUTOFMEMORY
-    D3D11_INIT_CREATEDEVICE_OUTOFMEMORY,
-    // CreateDevice returned DXGI_ERROR_INVALID_CALL
-    D3D11_INIT_CREATEDEVICE_INVALIDCALL,
-    // CreateDevice returned DXGI_ERROR_SDK_COMPONENT_MISSING
-    D3D11_INIT_CREATEDEVICE_COMPONENTMISSING,
-    // CreateDevice returned DXGI_ERROR_WAS_STILL_DRAWING
-    D3D11_INIT_CREATEDEVICE_WASSTILLDRAWING,
-    // CreateDevice returned DXGI_ERROR_NOT_CURRENTLY_AVAILABLE
-    D3D11_INIT_CREATEDEVICE_NOTAVAILABLE,
-    // CreateDevice returned DXGI_ERROR_DEVICE_HUNG
-    D3D11_INIT_CREATEDEVICE_DEVICEHUNG,
-    // CreateDevice returned NULL
-    D3D11_INIT_CREATEDEVICE_NULL,
-    NUM_D3D11_INIT_ERRORS
-};
-
 class Renderer11 : public RendererD3D
 {
   public:
@@ -512,6 +474,8 @@ class Renderer11 : public RendererD3D
     angle::Result getIncompleteTexture(const gl::Context *context,
                                        gl::TextureType type,
                                        gl::Texture **textureOut) override;
+
+    void setGlobalDebugAnnotator() override;
 
   private:
     void generateCaps(gl::Caps *outCaps,

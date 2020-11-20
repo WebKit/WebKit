@@ -262,6 +262,15 @@ egl::Error WindowSurfaceGLX::getMscRate(EGLint *numerator, EGLint *denominator)
     {
         return egl::EglBadSurface() << "glXGetMscRateOML failed.";
     }
+    if (mGLXDisplay->getRenderer()->getFeatures().clampMscRate.enabled)
+    {
+        // Clamp any refresh rate under 2Hz to 30Hz
+        if (*numerator < *denominator * 2)
+        {
+            *numerator   = 30;
+            *denominator = 1;
+        }
+    }
     return egl::NoError();
 }
 

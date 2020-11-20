@@ -13,7 +13,7 @@
 #include <android/native_window.h>
 #include <vulkan/vulkan.h>
 
-#include "common/version.h"
+#include "common/angle_version.h"
 #include "libANGLE/renderer/vulkan/RendererVk.h"
 #include "libANGLE/renderer/vulkan/android/HardwareBufferImageSiblingVkAndroid.h"
 #include "libANGLE/renderer/vulkan/android/WindowSurfaceVkAndroid.h"
@@ -51,15 +51,24 @@ egl::ConfigSet DisplayVkAndroid::generateConfigs()
 {
     // TODO (Issue 4062): Add conditional support for GL_RGB10_A2 and GL_RGBA16F when the
     // Android Vulkan loader adds conditional support for them.
-    constexpr GLenum kColorFormats[] = {GL_RGBA8, GL_RGB8, GL_RGB565};
-    return egl_vk::GenerateConfigs(kColorFormats, egl_vk::kConfigDepthStencilFormats, this);
+    const std::array<GLenum, 3> kColorFormats = {GL_RGBA8, GL_RGB8, GL_RGB565};
+
+    std::vector<GLenum> depthStencilFormats(
+        egl_vk::kConfigDepthStencilFormats,
+        egl_vk::kConfigDepthStencilFormats + ArraySize(egl_vk::kConfigDepthStencilFormats));
+
+    if (getCaps().stencil8)
+    {
+        depthStencilFormats.push_back(GL_STENCIL_INDEX8);
+    }
+    return egl_vk::GenerateConfigs(kColorFormats.data(), kColorFormats.size(),
+                                   depthStencilFormats.data(), depthStencilFormats.size(), this);
 }
 
-bool DisplayVkAndroid::checkConfigSupport(egl::Config *config)
+void DisplayVkAndroid::checkConfigSupport(egl::Config *config)
 {
     // TODO(geofflang): Test for native support and modify the config accordingly.
     // anglebug.com/2692
-    return true;
 }
 
 egl::Error DisplayVkAndroid::validateImageClientBuffer(const gl::Context *context,

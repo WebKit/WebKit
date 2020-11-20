@@ -82,7 +82,7 @@ TIntermNode *ElseBlockRewriter::rewriteIfElse(TIntermIfElse *ifElse)
         TIntermBlock *negatedElse = nullptr;
         // crbug.com/346463
         // D3D generates error messages claiming a function has no return value, when rewriting
-        // an if-else clause that returns something non-void in a function. By appending dummy
+        // an if-else clause that returns something non-void in a function. By appending mock
         // returns (that are unreachable) we can silence this compile error.
         if (mFunctionType && mFunctionType->getBasicType() != EbtVoid)
         {

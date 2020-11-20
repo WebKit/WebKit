@@ -67,6 +67,7 @@ class SampleApplication
     bool mRunning;
 
     Timer mTimer;
+    uint32_t mFrameCount;
     GLWindowBase *mGLWindow;
     EGLWindow *mEGLWindow;
     OSWindow *mOSWindow;

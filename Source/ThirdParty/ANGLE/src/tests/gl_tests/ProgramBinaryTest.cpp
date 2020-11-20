@@ -747,6 +747,80 @@ TEST_P(ProgramBinaryES3Test, BinaryWithLargeUniformCount)
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::magenta);
 }
 
+// Test that sampler texelFetch references are saved and loaded correctly
+TEST_P(ProgramBinaryTest, SRGBDecodeWithSamplerAndTexelFetchTest)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_sRGB_decode") ||
+                       getClientMajorVersion() < 3);
+
+    // These OpenGL drivers appear not to respect the texelFetch exception
+    // http://anglebug.com/4991
+    ANGLE_SKIP_TEST_IF(IsOpenGL() && IsIntel() && IsWindows());
+    ANGLE_SKIP_TEST_IF(IsOpenGL() && IsAMD() && IsWindows());
+    ANGLE_SKIP_TEST_IF(IsOpenGL() && (IsNVIDIA() || IsARM64()) && IsOSX());
+    ANGLE_SKIP_TEST_IF(IsOpenGLES() && (IsNexus5X() || IsNexus6P()));
+
+    constexpr char kVS[] =
+        "#version 300 es\n"
+        "precision highp float;\n"
+        "in vec4 position;\n"
+        "\n"
+        "void main()\n"
+        "{\n"
+        "   gl_Position = vec4(position.xy, 0.0, 1.0);\n"
+        "}\n";
+
+    constexpr char kFS[] =
+        "#version 300 es\n"
+        "precision highp float;\n"
+        "uniform sampler2D tex;\n"
+        "in vec2 texcoord;\n"
+        "out vec4 out_color;\n"
+        "\n"
+        "void main()\n"
+        "{\n"
+        "   out_color = texelFetch(tex, ivec2(0, 0), 0);\n"
+        "}\n";
+
+    GLProgram program;
+    program.makeRaster(kVS, kFS);
+    ASSERT_NE(0u, program.get());
+
+    GLuint reloadedProgram = glCreateProgram();
+    saveAndLoadProgram(program.get(), reloadedProgram);
+
+    GLint textureLocation = glGetUniformLocation(reloadedProgram, "tex");
+    ASSERT_NE(-1, textureLocation);
+
+    GLColor linearColor(64, 127, 191, 255);
+    GLColor srgbColor(13, 54, 133, 255);
+
+    GLTexture tex;
+    glBindTexture(GL_TEXTURE_2D, tex.get());
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_SRGB8_ALPHA8, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 &linearColor);
+    ASSERT_GL_NO_ERROR();
+
+    GLSampler sampler;
+    glBindSampler(0, sampler.get());
+    glSamplerParameteri(sampler.get(), GL_TEXTURE_SRGB_DECODE_EXT, GL_DECODE_EXT);
+
+    glUseProgram(reloadedProgram);
+    glUniform1i(textureLocation, 0);
+
+    glDisable(GL_DEPTH_TEST);
+    drawQuad(reloadedProgram, "position", 0.5f);
+
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, srgbColor, 1.0);
+
+    glSamplerParameteri(sampler.get(), GL_TEXTURE_SRGB_DECODE_EXT, GL_SKIP_DECODE_EXT);
+    drawQuad(reloadedProgram, "position", 0.5f);
+
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, srgbColor, 1.0);
+
+    glDeleteProgram(reloadedProgram);
+}
+
 ANGLE_INSTANTIATE_TEST_ES3(ProgramBinaryES3Test);
 
 class ProgramBinaryES31Test : public ANGLETest

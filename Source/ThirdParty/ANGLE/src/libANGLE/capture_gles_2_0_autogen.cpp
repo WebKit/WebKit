@@ -53,10 +53,21 @@ CallCapture CaptureBindAttribLocation(const State &glState,
     paramBuffer.addValueParam("programPacked", ParamType::TShaderProgramID, programPacked);
     paramBuffer.addValueParam("index", ParamType::TGLuint, index);
 
-    ParamCapture nameParam("name", ParamType::TGLcharConstPointer);
-    InitParamValue(ParamType::TGLcharConstPointer, name, &nameParam.value);
-    CaptureBindAttribLocation_name(glState, isCallValid, programPacked, index, name, &nameParam);
-    paramBuffer.addParam(std::move(nameParam));
+    if (isCallValid)
+    {
+        ParamCapture nameParam("name", ParamType::TGLcharConstPointer);
+        InitParamValue(ParamType::TGLcharConstPointer, name, &nameParam.value);
+        CaptureBindAttribLocation_name(glState, isCallValid, programPacked, index, name,
+                                       &nameParam);
+        paramBuffer.addParam(std::move(nameParam));
+    }
+    else
+    {
+        ParamCapture nameParam("name", ParamType::TGLcharConstPointer);
+        InitParamValue(ParamType::TGLcharConstPointer, static_cast<const GLchar *>(nullptr),
+                       &nameParam.value);
+        paramBuffer.addParam(std::move(nameParam));
+    }
 
     return CallCapture(gl::EntryPoint::BindAttribLocation, std::move(paramBuffer));
 }
@@ -197,10 +208,21 @@ CallCapture CaptureBufferData(const State &glState,
     paramBuffer.addValueParam("targetPacked", ParamType::TBufferBinding, targetPacked);
     paramBuffer.addValueParam("size", ParamType::TGLsizeiptr, size);
 
-    ParamCapture dataParam("data", ParamType::TvoidConstPointer);
-    InitParamValue(ParamType::TvoidConstPointer, data, &dataParam.value);
-    CaptureBufferData_data(glState, isCallValid, targetPacked, size, data, usagePacked, &dataParam);
-    paramBuffer.addParam(std::move(dataParam));
+    if (isCallValid)
+    {
+        ParamCapture dataParam("data", ParamType::TvoidConstPointer);
+        InitParamValue(ParamType::TvoidConstPointer, data, &dataParam.value);
+        CaptureBufferData_data(glState, isCallValid, targetPacked, size, data, usagePacked,
+                               &dataParam);
+        paramBuffer.addParam(std::move(dataParam));
+    }
+    else
+    {
+        ParamCapture dataParam("data", ParamType::TvoidConstPointer);
+        InitParamValue(ParamType::TvoidConstPointer, static_cast<const void *>(nullptr),
+                       &dataParam.value);
+        paramBuffer.addParam(std::move(dataParam));
+    }
 
     paramBuffer.addValueParam("usagePacked", ParamType::TBufferUsage, usagePacked);
 
@@ -220,10 +242,21 @@ CallCapture CaptureBufferSubData(const State &glState,
     paramBuffer.addValueParam("offset", ParamType::TGLintptr, offset);
     paramBuffer.addValueParam("size", ParamType::TGLsizeiptr, size);
 
-    ParamCapture dataParam("data", ParamType::TvoidConstPointer);
-    InitParamValue(ParamType::TvoidConstPointer, data, &dataParam.value);
-    CaptureBufferSubData_data(glState, isCallValid, targetPacked, offset, size, data, &dataParam);
-    paramBuffer.addParam(std::move(dataParam));
+    if (isCallValid)
+    {
+        ParamCapture dataParam("data", ParamType::TvoidConstPointer);
+        InitParamValue(ParamType::TvoidConstPointer, data, &dataParam.value);
+        CaptureBufferSubData_data(glState, isCallValid, targetPacked, offset, size, data,
+                                  &dataParam);
+        paramBuffer.addParam(std::move(dataParam));
+    }
+    else
+    {
+        ParamCapture dataParam("data", ParamType::TvoidConstPointer);
+        InitParamValue(ParamType::TvoidConstPointer, static_cast<const void *>(nullptr),
+                       &dataParam.value);
+        paramBuffer.addParam(std::move(dataParam));
+    }
 
     return CallCapture(gl::EntryPoint::BufferSubData, std::move(paramBuffer));
 }
@@ -338,11 +371,21 @@ CallCapture CaptureCompressedTexImage2D(const State &glState,
     paramBuffer.addValueParam("border", ParamType::TGLint, border);
     paramBuffer.addValueParam("imageSize", ParamType::TGLsizei, imageSize);
 
-    ParamCapture dataParam("data", ParamType::TvoidConstPointer);
-    InitParamValue(ParamType::TvoidConstPointer, data, &dataParam.value);
-    CaptureCompressedTexImage2D_data(glState, isCallValid, targetPacked, level, internalformat,
-                                     width, height, border, imageSize, data, &dataParam);
-    paramBuffer.addParam(std::move(dataParam));
+    if (isCallValid)
+    {
+        ParamCapture dataParam("data", ParamType::TvoidConstPointer);
+        InitParamValue(ParamType::TvoidConstPointer, data, &dataParam.value);
+        CaptureCompressedTexImage2D_data(glState, isCallValid, targetPacked, level, internalformat,
+                                         width, height, border, imageSize, data, &dataParam);
+        paramBuffer.addParam(std::move(dataParam));
+    }
+    else
+    {
+        ParamCapture dataParam("data", ParamType::TvoidConstPointer);
+        InitParamValue(ParamType::TvoidConstPointer, static_cast<const void *>(nullptr),
+                       &dataParam.value);
+        paramBuffer.addParam(std::move(dataParam));
+    }
 
     return CallCapture(gl::EntryPoint::CompressedTexImage2D, std::move(paramBuffer));
 }
@@ -370,11 +413,22 @@ CallCapture CaptureCompressedTexSubImage2D(const State &glState,
     paramBuffer.addEnumParam("format", GLenumGroup::PixelFormat, ParamType::TGLenum, format);
     paramBuffer.addValueParam("imageSize", ParamType::TGLsizei, imageSize);
 
-    ParamCapture dataParam("data", ParamType::TvoidConstPointer);
-    InitParamValue(ParamType::TvoidConstPointer, data, &dataParam.value);
-    CaptureCompressedTexSubImage2D_data(glState, isCallValid, targetPacked, level, xoffset, yoffset,
-                                        width, height, format, imageSize, data, &dataParam);
-    paramBuffer.addParam(std::move(dataParam));
+    if (isCallValid)
+    {
+        ParamCapture dataParam("data", ParamType::TvoidConstPointer);
+        InitParamValue(ParamType::TvoidConstPointer, data, &dataParam.value);
+        CaptureCompressedTexSubImage2D_data(glState, isCallValid, targetPacked, level, xoffset,
+                                            yoffset, width, height, format, imageSize, data,
+                                            &dataParam);
+        paramBuffer.addParam(std::move(dataParam));
+    }
+    else
+    {
+        ParamCapture dataParam("data", ParamType::TvoidConstPointer);
+        InitParamValue(ParamType::TvoidConstPointer, static_cast<const void *>(nullptr),
+                       &dataParam.value);
+        paramBuffer.addParam(std::move(dataParam));
+    }
 
     return CallCapture(gl::EntryPoint::CompressedTexSubImage2D, std::move(paramBuffer));
 }
@@ -475,10 +529,21 @@ CallCapture CaptureDeleteBuffers(const State &glState,
 
     paramBuffer.addValueParam("n", ParamType::TGLsizei, n);
 
-    ParamCapture buffersPackedParam("buffersPacked", ParamType::TBufferIDConstPointer);
-    InitParamValue(ParamType::TBufferIDConstPointer, buffersPacked, &buffersPackedParam.value);
-    CaptureDeleteBuffers_buffersPacked(glState, isCallValid, n, buffersPacked, &buffersPackedParam);
-    paramBuffer.addParam(std::move(buffersPackedParam));
+    if (isCallValid)
+    {
+        ParamCapture buffersPackedParam("buffersPacked", ParamType::TBufferIDConstPointer);
+        InitParamValue(ParamType::TBufferIDConstPointer, buffersPacked, &buffersPackedParam.value);
+        CaptureDeleteBuffers_buffersPacked(glState, isCallValid, n, buffersPacked,
+                                           &buffersPackedParam);
+        paramBuffer.addParam(std::move(buffersPackedParam));
+    }
+    else
+    {
+        ParamCapture buffersPackedParam("buffersPacked", ParamType::TBufferIDConstPointer);
+        InitParamValue(ParamType::TBufferIDConstPointer, static_cast<const BufferID *>(nullptr),
+                       &buffersPackedParam.value);
+        paramBuffer.addParam(std::move(buffersPackedParam));
+    }
 
     return CallCapture(gl::EntryPoint::DeleteBuffers, std::move(paramBuffer));
 }
@@ -492,13 +557,24 @@ CallCapture CaptureDeleteFramebuffers(const State &glState,
 
     paramBuffer.addValueParam("n", ParamType::TGLsizei, n);
 
-    ParamCapture framebuffersPackedParam("framebuffersPacked",
-                                         ParamType::TFramebufferIDConstPointer);
-    InitParamValue(ParamType::TFramebufferIDConstPointer, framebuffersPacked,
-                   &framebuffersPackedParam.value);
-    CaptureDeleteFramebuffers_framebuffersPacked(glState, isCallValid, n, framebuffersPacked,
-                                                 &framebuffersPackedParam);
-    paramBuffer.addParam(std::move(framebuffersPackedParam));
+    if (isCallValid)
+    {
+        ParamCapture framebuffersPackedParam("framebuffersPacked",
+                                             ParamType::TFramebufferIDConstPointer);
+        InitParamValue(ParamType::TFramebufferIDConstPointer, framebuffersPacked,
+                       &framebuffersPackedParam.value);
+        CaptureDeleteFramebuffers_framebuffersPacked(glState, isCallValid, n, framebuffersPacked,
+                                                     &framebuffersPackedParam);
+        paramBuffer.addParam(std::move(framebuffersPackedParam));
+    }
+    else
+    {
+        ParamCapture framebuffersPackedParam("framebuffersPacked",
+                                             ParamType::TFramebufferIDConstPointer);
+        InitParamValue(ParamType::TFramebufferIDConstPointer,
+                       static_cast<const FramebufferID *>(nullptr), &framebuffersPackedParam.value);
+        paramBuffer.addParam(std::move(framebuffersPackedParam));
+    }
 
     return CallCapture(gl::EntryPoint::DeleteFramebuffers, std::move(paramBuffer));
 }
@@ -523,13 +599,25 @@ CallCapture CaptureDeleteRenderbuffers(const State &glState,
 
     paramBuffer.addValueParam("n", ParamType::TGLsizei, n);
 
-    ParamCapture renderbuffersPackedParam("renderbuffersPacked",
-                                          ParamType::TRenderbufferIDConstPointer);
-    InitParamValue(ParamType::TRenderbufferIDConstPointer, renderbuffersPacked,
-                   &renderbuffersPackedParam.value);
-    CaptureDeleteRenderbuffers_renderbuffersPacked(glState, isCallValid, n, renderbuffersPacked,
-                                                   &renderbuffersPackedParam);
-    paramBuffer.addParam(std::move(renderbuffersPackedParam));
+    if (isCallValid)
+    {
+        ParamCapture renderbuffersPackedParam("renderbuffersPacked",
+                                              ParamType::TRenderbufferIDConstPointer);
+        InitParamValue(ParamType::TRenderbufferIDConstPointer, renderbuffersPacked,
+                       &renderbuffersPackedParam.value);
+        CaptureDeleteRenderbuffers_renderbuffersPacked(glState, isCallValid, n, renderbuffersPacked,
+                                                       &renderbuffersPackedParam);
+        paramBuffer.addParam(std::move(renderbuffersPackedParam));
+    }
+    else
+    {
+        ParamCapture renderbuffersPackedParam("renderbuffersPacked",
+                                              ParamType::TRenderbufferIDConstPointer);
+        InitParamValue(ParamType::TRenderbufferIDConstPointer,
+                       static_cast<const RenderbufferID *>(nullptr),
+                       &renderbuffersPackedParam.value);
+        paramBuffer.addParam(std::move(renderbuffersPackedParam));
+    }
 
     return CallCapture(gl::EntryPoint::DeleteRenderbuffers, std::move(paramBuffer));
 }
@@ -554,11 +642,22 @@ CallCapture CaptureDeleteTextures(const State &glState,
 
     paramBuffer.addValueParam("n", ParamType::TGLsizei, n);
 
-    ParamCapture texturesPackedParam("texturesPacked", ParamType::TTextureIDConstPointer);
-    InitParamValue(ParamType::TTextureIDConstPointer, texturesPacked, &texturesPackedParam.value);
-    CaptureDeleteTextures_texturesPacked(glState, isCallValid, n, texturesPacked,
-                                         &texturesPackedParam);
-    paramBuffer.addParam(std::move(texturesPackedParam));
+    if (isCallValid)
+    {
+        ParamCapture texturesPackedParam("texturesPacked", ParamType::TTextureIDConstPointer);
+        InitParamValue(ParamType::TTextureIDConstPointer, texturesPacked,
+                       &texturesPackedParam.value);
+        CaptureDeleteTextures_texturesPacked(glState, isCallValid, n, texturesPacked,
+                                             &texturesPackedParam);
+        paramBuffer.addParam(std::move(texturesPackedParam));
+    }
+    else
+    {
+        ParamCapture texturesPackedParam("texturesPacked", ParamType::TTextureIDConstPointer);
+        InitParamValue(ParamType::TTextureIDConstPointer, static_cast<const TextureID *>(nullptr),
+                       &texturesPackedParam.value);
+        paramBuffer.addParam(std::move(texturesPackedParam));
+    }
 
     return CallCapture(gl::EntryPoint::DeleteTextures, std::move(paramBuffer));
 }
@@ -650,11 +749,21 @@ CallCapture CaptureDrawElements(const State &glState,
     paramBuffer.addValueParam("count", ParamType::TGLsizei, count);
     paramBuffer.addValueParam("typePacked", ParamType::TDrawElementsType, typePacked);
 
-    ParamCapture indicesParam("indices", ParamType::TvoidConstPointer);
-    InitParamValue(ParamType::TvoidConstPointer, indices, &indicesParam.value);
-    CaptureDrawElements_indices(glState, isCallValid, modePacked, count, typePacked, indices,
-                                &indicesParam);
-    paramBuffer.addParam(std::move(indicesParam));
+    if (isCallValid)
+    {
+        ParamCapture indicesParam("indices", ParamType::TvoidConstPointer);
+        InitParamValue(ParamType::TvoidConstPointer, indices, &indicesParam.value);
+        CaptureDrawElements_indices(glState, isCallValid, modePacked, count, typePacked, indices,
+                                    &indicesParam);
+        paramBuffer.addParam(std::move(indicesParam));
+    }
+    else
+    {
+        ParamCapture indicesParam("indices", ParamType::TvoidConstPointer);
+        InitParamValue(ParamType::TvoidConstPointer, static_cast<const void *>(nullptr),
+                       &indicesParam.value);
+        paramBuffer.addParam(std::move(indicesParam));
+    }
 
     return CallCapture(gl::EntryPoint::DrawElements, std::move(paramBuffer));
 }
@@ -748,10 +857,21 @@ CallCapture CaptureGenBuffers(const State &glState,
 
     paramBuffer.addValueParam("n", ParamType::TGLsizei, n);
 
-    ParamCapture buffersPackedParam("buffersPacked", ParamType::TBufferIDPointer);
-    InitParamValue(ParamType::TBufferIDPointer, buffersPacked, &buffersPackedParam.value);
-    CaptureGenBuffers_buffersPacked(glState, isCallValid, n, buffersPacked, &buffersPackedParam);
-    paramBuffer.addParam(std::move(buffersPackedParam));
+    if (isCallValid)
+    {
+        ParamCapture buffersPackedParam("buffersPacked", ParamType::TBufferIDPointer);
+        InitParamValue(ParamType::TBufferIDPointer, buffersPacked, &buffersPackedParam.value);
+        CaptureGenBuffers_buffersPacked(glState, isCallValid, n, buffersPacked,
+                                        &buffersPackedParam);
+        paramBuffer.addParam(std::move(buffersPackedParam));
+    }
+    else
+    {
+        ParamCapture buffersPackedParam("buffersPacked", ParamType::TBufferIDPointer);
+        InitParamValue(ParamType::TBufferIDPointer, static_cast<BufferID *>(nullptr),
+                       &buffersPackedParam.value);
+        paramBuffer.addParam(std::move(buffersPackedParam));
+    }
 
     return CallCapture(gl::EntryPoint::GenBuffers, std::move(paramBuffer));
 }
@@ -765,12 +885,24 @@ CallCapture CaptureGenFramebuffers(const State &glState,
 
     paramBuffer.addValueParam("n", ParamType::TGLsizei, n);
 
-    ParamCapture framebuffersPackedParam("framebuffersPacked", ParamType::TFramebufferIDPointer);
-    InitParamValue(ParamType::TFramebufferIDPointer, framebuffersPacked,
-                   &framebuffersPackedParam.value);
-    CaptureGenFramebuffers_framebuffersPacked(glState, isCallValid, n, framebuffersPacked,
-                                              &framebuffersPackedParam);
-    paramBuffer.addParam(std::move(framebuffersPackedParam));
+    if (isCallValid)
+    {
+        ParamCapture framebuffersPackedParam("framebuffersPacked",
+                                             ParamType::TFramebufferIDPointer);
+        InitParamValue(ParamType::TFramebufferIDPointer, framebuffersPacked,
+                       &framebuffersPackedParam.value);
+        CaptureGenFramebuffers_framebuffersPacked(glState, isCallValid, n, framebuffersPacked,
+                                                  &framebuffersPackedParam);
+        paramBuffer.addParam(std::move(framebuffersPackedParam));
+    }
+    else
+    {
+        ParamCapture framebuffersPackedParam("framebuffersPacked",
+                                             ParamType::TFramebufferIDPointer);
+        InitParamValue(ParamType::TFramebufferIDPointer, static_cast<FramebufferID *>(nullptr),
+                       &framebuffersPackedParam.value);
+        paramBuffer.addParam(std::move(framebuffersPackedParam));
+    }
 
     return CallCapture(gl::EntryPoint::GenFramebuffers, std::move(paramBuffer));
 }
@@ -784,12 +916,24 @@ CallCapture CaptureGenRenderbuffers(const State &glState,
 
     paramBuffer.addValueParam("n", ParamType::TGLsizei, n);
 
-    ParamCapture renderbuffersPackedParam("renderbuffersPacked", ParamType::TRenderbufferIDPointer);
-    InitParamValue(ParamType::TRenderbufferIDPointer, renderbuffersPacked,
-                   &renderbuffersPackedParam.value);
-    CaptureGenRenderbuffers_renderbuffersPacked(glState, isCallValid, n, renderbuffersPacked,
-                                                &renderbuffersPackedParam);
-    paramBuffer.addParam(std::move(renderbuffersPackedParam));
+    if (isCallValid)
+    {
+        ParamCapture renderbuffersPackedParam("renderbuffersPacked",
+                                              ParamType::TRenderbufferIDPointer);
+        InitParamValue(ParamType::TRenderbufferIDPointer, renderbuffersPacked,
+                       &renderbuffersPackedParam.value);
+        CaptureGenRenderbuffers_renderbuffersPacked(glState, isCallValid, n, renderbuffersPacked,
+                                                    &renderbuffersPackedParam);
+        paramBuffer.addParam(std::move(renderbuffersPackedParam));
+    }
+    else
+    {
+        ParamCapture renderbuffersPackedParam("renderbuffersPacked",
+                                              ParamType::TRenderbufferIDPointer);
+        InitParamValue(ParamType::TRenderbufferIDPointer, static_cast<RenderbufferID *>(nullptr),
+                       &renderbuffersPackedParam.value);
+        paramBuffer.addParam(std::move(renderbuffersPackedParam));
+    }
 
     return CallCapture(gl::EntryPoint::GenRenderbuffers, std::move(paramBuffer));
 }
@@ -803,11 +947,21 @@ CallCapture CaptureGenTextures(const State &glState,
 
     paramBuffer.addValueParam("n", ParamType::TGLsizei, n);
 
-    ParamCapture texturesPackedParam("texturesPacked", ParamType::TTextureIDPointer);
-    InitParamValue(ParamType::TTextureIDPointer, texturesPacked, &texturesPackedParam.value);
-    CaptureGenTextures_texturesPacked(glState, isCallValid, n, texturesPacked,
-                                      &texturesPackedParam);
-    paramBuffer.addParam(std::move(texturesPackedParam));
+    if (isCallValid)
+    {
+        ParamCapture texturesPackedParam("texturesPacked", ParamType::TTextureIDPointer);
+        InitParamValue(ParamType::TTextureIDPointer, texturesPacked, &texturesPackedParam.value);
+        CaptureGenTextures_texturesPacked(glState, isCallValid, n, texturesPacked,
+                                          &texturesPackedParam);
+        paramBuffer.addParam(std::move(texturesPackedParam));
+    }
+    else
+    {
+        ParamCapture texturesPackedParam("texturesPacked", ParamType::TTextureIDPointer);
+        InitParamValue(ParamType::TTextureIDPointer, static_cast<TextureID *>(nullptr),
+                       &texturesPackedParam.value);
+        paramBuffer.addParam(std::move(texturesPackedParam));
+    }
 
     return CallCapture(gl::EntryPoint::GenTextures, std::move(paramBuffer));
 }
@@ -837,29 +991,66 @@ CallCapture CaptureGetActiveAttrib(const State &glState,
     paramBuffer.addValueParam("index", ParamType::TGLuint, index);
     paramBuffer.addValueParam("bufSize", ParamType::TGLsizei, bufSize);
 
-    ParamCapture lengthParam("length", ParamType::TGLsizeiPointer);
-    InitParamValue(ParamType::TGLsizeiPointer, length, &lengthParam.value);
-    CaptureGetActiveAttrib_length(glState, isCallValid, programPacked, index, bufSize, length, size,
-                                  type, name, &lengthParam);
-    paramBuffer.addParam(std::move(lengthParam));
+    if (isCallValid)
+    {
+        ParamCapture lengthParam("length", ParamType::TGLsizeiPointer);
+        InitParamValue(ParamType::TGLsizeiPointer, length, &lengthParam.value);
+        CaptureGetActiveAttrib_length(glState, isCallValid, programPacked, index, bufSize, length,
+                                      size, type, name, &lengthParam);
+        paramBuffer.addParam(std::move(lengthParam));
+    }
+    else
+    {
+        ParamCapture lengthParam("length", ParamType::TGLsizeiPointer);
+        InitParamValue(ParamType::TGLsizeiPointer, static_cast<GLsizei *>(nullptr),
+                       &lengthParam.value);
+        paramBuffer.addParam(std::move(lengthParam));
+    }
 
-    ParamCapture sizeParam("size", ParamType::TGLintPointer);
-    InitParamValue(ParamType::TGLintPointer, size, &sizeParam.value);
-    CaptureGetActiveAttrib_size(glState, isCallValid, programPacked, index, bufSize, length, size,
-                                type, name, &sizeParam);
-    paramBuffer.addParam(std::move(sizeParam));
+    if (isCallValid)
+    {
+        ParamCapture sizeParam("size", ParamType::TGLintPointer);
+        InitParamValue(ParamType::TGLintPointer, size, &sizeParam.value);
+        CaptureGetActiveAttrib_size(glState, isCallValid, programPacked, index, bufSize, length,
+                                    size, type, name, &sizeParam);
+        paramBuffer.addParam(std::move(sizeParam));
+    }
+    else
+    {
+        ParamCapture sizeParam("size", ParamType::TGLintPointer);
+        InitParamValue(ParamType::TGLintPointer, static_cast<GLint *>(nullptr), &sizeParam.value);
+        paramBuffer.addParam(std::move(sizeParam));
+    }
 
-    ParamCapture typeParam("type", ParamType::TGLenumPointer);
-    InitParamValue(ParamType::TGLenumPointer, type, &typeParam.value);
-    CaptureGetActiveAttrib_type(glState, isCallValid, programPacked, index, bufSize, length, size,
-                                type, name, &typeParam);
-    paramBuffer.addParam(std::move(typeParam));
+    if (isCallValid)
+    {
+        ParamCapture typeParam("type", ParamType::TGLenumPointer);
+        InitParamValue(ParamType::TGLenumPointer, type, &typeParam.value);
+        CaptureGetActiveAttrib_type(glState, isCallValid, programPacked, index, bufSize, length,
+                                    size, type, name, &typeParam);
+        paramBuffer.addParam(std::move(typeParam));
+    }
+    else
+    {
+        ParamCapture typeParam("type", ParamType::TGLenumPointer);
+        InitParamValue(ParamType::TGLenumPointer, static_cast<GLenum *>(nullptr), &typeParam.value);
+        paramBuffer.addParam(std::move(typeParam));
+    }
 
-    ParamCapture nameParam("name", ParamType::TGLcharPointer);
-    InitParamValue(ParamType::TGLcharPointer, name, &nameParam.value);
-    CaptureGetActiveAttrib_name(glState, isCallValid, programPacked, index, bufSize, length, size,
-                                type, name, &nameParam);
-    paramBuffer.addParam(std::move(nameParam));
+    if (isCallValid)
+    {
+        ParamCapture nameParam("name", ParamType::TGLcharPointer);
+        InitParamValue(ParamType::TGLcharPointer, name, &nameParam.value);
+        CaptureGetActiveAttrib_name(glState, isCallValid, programPacked, index, bufSize, length,
+                                    size, type, name, &nameParam);
+        paramBuffer.addParam(std::move(nameParam));
+    }
+    else
+    {
+        ParamCapture nameParam("name", ParamType::TGLcharPointer);
+        InitParamValue(ParamType::TGLcharPointer, static_cast<GLchar *>(nullptr), &nameParam.value);
+        paramBuffer.addParam(std::move(nameParam));
+    }
 
     return CallCapture(gl::EntryPoint::GetActiveAttrib, std::move(paramBuffer));
 }
@@ -880,29 +1071,66 @@ CallCapture CaptureGetActiveUniform(const State &glState,
     paramBuffer.addValueParam("index", ParamType::TGLuint, index);
     paramBuffer.addValueParam("bufSize", ParamType::TGLsizei, bufSize);
 
-    ParamCapture lengthParam("length", ParamType::TGLsizeiPointer);
-    InitParamValue(ParamType::TGLsizeiPointer, length, &lengthParam.value);
-    CaptureGetActiveUniform_length(glState, isCallValid, programPacked, index, bufSize, length,
-                                   size, type, name, &lengthParam);
-    paramBuffer.addParam(std::move(lengthParam));
+    if (isCallValid)
+    {
+        ParamCapture lengthParam("length", ParamType::TGLsizeiPointer);
+        InitParamValue(ParamType::TGLsizeiPointer, length, &lengthParam.value);
+        CaptureGetActiveUniform_length(glState, isCallValid, programPacked, index, bufSize, length,
+                                       size, type, name, &lengthParam);
+        paramBuffer.addParam(std::move(lengthParam));
+    }
+    else
+    {
+        ParamCapture lengthParam("length", ParamType::TGLsizeiPointer);
+        InitParamValue(ParamType::TGLsizeiPointer, static_cast<GLsizei *>(nullptr),
+                       &lengthParam.value);
+        paramBuffer.addParam(std::move(lengthParam));
+    }
 
-    ParamCapture sizeParam("size", ParamType::TGLintPointer);
-    InitParamValue(ParamType::TGLintPointer, size, &sizeParam.value);
-    CaptureGetActiveUniform_size(glState, isCallValid, programPacked, index, bufSize, length, size,
-                                 type, name, &sizeParam);
-    paramBuffer.addParam(std::move(sizeParam));
+    if (isCallValid)
+    {
+        ParamCapture sizeParam("size", ParamType::TGLintPointer);
+        InitParamValue(ParamType::TGLintPointer, size, &sizeParam.value);
+        CaptureGetActiveUniform_size(glState, isCallValid, programPacked, index, bufSize, length,
+                                     size, type, name, &sizeParam);
+        paramBuffer.addParam(std::move(sizeParam));
+    }
+    else
+    {
+        ParamCapture sizeParam("size", ParamType::TGLintPointer);
+        InitParamValue(ParamType::TGLintPointer, static_cast<GLint *>(nullptr), &sizeParam.value);
+        paramBuffer.addParam(std::move(sizeParam));
+    }
 
-    ParamCapture typeParam("type", ParamType::TGLenumPointer);
-    InitParamValue(ParamType::TGLenumPointer, type, &typeParam.value);
-    CaptureGetActiveUniform_type(glState, isCallValid, programPacked, index, bufSize, length, size,
-                                 type, name, &typeParam);
-    paramBuffer.addParam(std::move(typeParam));
+    if (isCallValid)
+    {
+        ParamCapture typeParam("type", ParamType::TGLenumPointer);
+        InitParamValue(ParamType::TGLenumPointer, type, &typeParam.value);
+        CaptureGetActiveUniform_type(glState, isCallValid, programPacked, index, bufSize, length,
+                                     size, type, name, &typeParam);
+        paramBuffer.addParam(std::move(typeParam));
+    }
+    else
+    {
+        ParamCapture typeParam("type", ParamType::TGLenumPointer);
+        InitParamValue(ParamType::TGLenumPointer, static_cast<GLenum *>(nullptr), &typeParam.value);
+        paramBuffer.addParam(std::move(typeParam));
+    }
 
-    ParamCapture nameParam("name", ParamType::TGLcharPointer);
-    InitParamValue(ParamType::TGLcharPointer, name, &nameParam.value);
-    CaptureGetActiveUniform_name(glState, isCallValid, programPacked, index, bufSize, length, size,
-                                 type, name, &nameParam);
-    paramBuffer.addParam(std::move(nameParam));
+    if (isCallValid)
+    {
+        ParamCapture nameParam("name", ParamType::TGLcharPointer);
+        InitParamValue(ParamType::TGLcharPointer, name, &nameParam.value);
+        CaptureGetActiveUniform_name(glState, isCallValid, programPacked, index, bufSize, length,
+                                     size, type, name, &nameParam);
+        paramBuffer.addParam(std::move(nameParam));
+    }
+    else
+    {
+        ParamCapture nameParam("name", ParamType::TGLcharPointer);
+        InitParamValue(ParamType::TGLcharPointer, static_cast<GLchar *>(nullptr), &nameParam.value);
+        paramBuffer.addParam(std::move(nameParam));
+    }
 
     return CallCapture(gl::EntryPoint::GetActiveUniform, std::move(paramBuffer));
 }
@@ -919,17 +1147,38 @@ CallCapture CaptureGetAttachedShaders(const State &glState,
     paramBuffer.addValueParam("programPacked", ParamType::TShaderProgramID, programPacked);
     paramBuffer.addValueParam("maxCount", ParamType::TGLsizei, maxCount);
 
-    ParamCapture countParam("count", ParamType::TGLsizeiPointer);
-    InitParamValue(ParamType::TGLsizeiPointer, count, &countParam.value);
-    CaptureGetAttachedShaders_count(glState, isCallValid, programPacked, maxCount, count,
-                                    shadersPacked, &countParam);
-    paramBuffer.addParam(std::move(countParam));
+    if (isCallValid)
+    {
+        ParamCapture countParam("count", ParamType::TGLsizeiPointer);
+        InitParamValue(ParamType::TGLsizeiPointer, count, &countParam.value);
+        CaptureGetAttachedShaders_count(glState, isCallValid, programPacked, maxCount, count,
+                                        shadersPacked, &countParam);
+        paramBuffer.addParam(std::move(countParam));
+    }
+    else
+    {
+        ParamCapture countParam("count", ParamType::TGLsizeiPointer);
+        InitParamValue(ParamType::TGLsizeiPointer, static_cast<GLsizei *>(nullptr),
+                       &countParam.value);
+        paramBuffer.addParam(std::move(countParam));
+    }
 
-    ParamCapture shadersPackedParam("shadersPacked", ParamType::TShaderProgramIDPointer);
-    InitParamValue(ParamType::TShaderProgramIDPointer, shadersPacked, &shadersPackedParam.value);
-    CaptureGetAttachedShaders_shadersPacked(glState, isCallValid, programPacked, maxCount, count,
-                                            shadersPacked, &shadersPackedParam);
-    paramBuffer.addParam(std::move(shadersPackedParam));
+    if (isCallValid)
+    {
+        ParamCapture shadersPackedParam("shadersPacked", ParamType::TShaderProgramIDPointer);
+        InitParamValue(ParamType::TShaderProgramIDPointer, shadersPacked,
+                       &shadersPackedParam.value);
+        CaptureGetAttachedShaders_shadersPacked(glState, isCallValid, programPacked, maxCount,
+                                                count, shadersPacked, &shadersPackedParam);
+        paramBuffer.addParam(std::move(shadersPackedParam));
+    }
+    else
+    {
+        ParamCapture shadersPackedParam("shadersPacked", ParamType::TShaderProgramIDPointer);
+        InitParamValue(ParamType::TShaderProgramIDPointer, static_cast<ShaderProgramID *>(nullptr),
+                       &shadersPackedParam.value);
+        paramBuffer.addParam(std::move(shadersPackedParam));
+    }
 
     return CallCapture(gl::EntryPoint::GetAttachedShaders, std::move(paramBuffer));
 }
@@ -944,10 +1193,20 @@ CallCapture CaptureGetAttribLocation(const State &glState,
 
     paramBuffer.addValueParam("programPacked", ParamType::TShaderProgramID, programPacked);
 
-    ParamCapture nameParam("name", ParamType::TGLcharConstPointer);
-    InitParamValue(ParamType::TGLcharConstPointer, name, &nameParam.value);
-    CaptureGetAttribLocation_name(glState, isCallValid, programPacked, name, &nameParam);
-    paramBuffer.addParam(std::move(nameParam));
+    if (isCallValid)
+    {
+        ParamCapture nameParam("name", ParamType::TGLcharConstPointer);
+        InitParamValue(ParamType::TGLcharConstPointer, name, &nameParam.value);
+        CaptureGetAttribLocation_name(glState, isCallValid, programPacked, name, &nameParam);
+        paramBuffer.addParam(std::move(nameParam));
+    }
+    else
+    {
+        ParamCapture nameParam("name", ParamType::TGLcharConstPointer);
+        InitParamValue(ParamType::TGLcharConstPointer, static_cast<const GLchar *>(nullptr),
+                       &nameParam.value);
+        paramBuffer.addParam(std::move(nameParam));
+    }
 
     ParamCapture returnValueCapture("returnValue", ParamType::TGLint);
     InitParamValue(ParamType::TGLint, returnValue, &returnValueCapture.value);
@@ -965,10 +1224,20 @@ CallCapture CaptureGetBooleanv(const State &glState,
 
     paramBuffer.addEnumParam("pname", GLenumGroup::GetPName, ParamType::TGLenum, pname);
 
-    ParamCapture dataParam("data", ParamType::TGLbooleanPointer);
-    InitParamValue(ParamType::TGLbooleanPointer, data, &dataParam.value);
-    CaptureGetBooleanv_data(glState, isCallValid, pname, data, &dataParam);
-    paramBuffer.addParam(std::move(dataParam));
+    if (isCallValid)
+    {
+        ParamCapture dataParam("data", ParamType::TGLbooleanPointer);
+        InitParamValue(ParamType::TGLbooleanPointer, data, &dataParam.value);
+        CaptureGetBooleanv_data(glState, isCallValid, pname, data, &dataParam);
+        paramBuffer.addParam(std::move(dataParam));
+    }
+    else
+    {
+        ParamCapture dataParam("data", ParamType::TGLbooleanPointer);
+        InitParamValue(ParamType::TGLbooleanPointer, static_cast<GLboolean *>(nullptr),
+                       &dataParam.value);
+        paramBuffer.addParam(std::move(dataParam));
+    }
 
     return CallCapture(gl::EntryPoint::GetBooleanv, std::move(paramBuffer));
 }
@@ -984,11 +1253,20 @@ CallCapture CaptureGetBufferParameteriv(const State &glState,
     paramBuffer.addValueParam("targetPacked", ParamType::TBufferBinding, targetPacked);
     paramBuffer.addEnumParam("pname", GLenumGroup::DefaultGroup, ParamType::TGLenum, pname);
 
-    ParamCapture paramsParam("params", ParamType::TGLintPointer);
-    InitParamValue(ParamType::TGLintPointer, params, &paramsParam.value);
-    CaptureGetBufferParameteriv_params(glState, isCallValid, targetPacked, pname, params,
-                                       &paramsParam);
-    paramBuffer.addParam(std::move(paramsParam));
+    if (isCallValid)
+    {
+        ParamCapture paramsParam("params", ParamType::TGLintPointer);
+        InitParamValue(ParamType::TGLintPointer, params, &paramsParam.value);
+        CaptureGetBufferParameteriv_params(glState, isCallValid, targetPacked, pname, params,
+                                           &paramsParam);
+        paramBuffer.addParam(std::move(paramsParam));
+    }
+    else
+    {
+        ParamCapture paramsParam("params", ParamType::TGLintPointer);
+        InitParamValue(ParamType::TGLintPointer, static_cast<GLint *>(nullptr), &paramsParam.value);
+        paramBuffer.addParam(std::move(paramsParam));
+    }
 
     return CallCapture(gl::EntryPoint::GetBufferParameteriv, std::move(paramBuffer));
 }
@@ -1010,10 +1288,20 @@ CallCapture CaptureGetFloatv(const State &glState, bool isCallValid, GLenum pnam
 
     paramBuffer.addEnumParam("pname", GLenumGroup::GetPName, ParamType::TGLenum, pname);
 
-    ParamCapture dataParam("data", ParamType::TGLfloatPointer);
-    InitParamValue(ParamType::TGLfloatPointer, data, &dataParam.value);
-    CaptureGetFloatv_data(glState, isCallValid, pname, data, &dataParam);
-    paramBuffer.addParam(std::move(dataParam));
+    if (isCallValid)
+    {
+        ParamCapture dataParam("data", ParamType::TGLfloatPointer);
+        InitParamValue(ParamType::TGLfloatPointer, data, &dataParam.value);
+        CaptureGetFloatv_data(glState, isCallValid, pname, data, &dataParam);
+        paramBuffer.addParam(std::move(dataParam));
+    }
+    else
+    {
+        ParamCapture dataParam("data", ParamType::TGLfloatPointer);
+        InitParamValue(ParamType::TGLfloatPointer, static_cast<GLfloat *>(nullptr),
+                       &dataParam.value);
+        paramBuffer.addParam(std::move(dataParam));
+    }
 
     return CallCapture(gl::EntryPoint::GetFloatv, std::move(paramBuffer));
 }
@@ -1033,11 +1321,20 @@ CallCapture CaptureGetFramebufferAttachmentParameteriv(const State &glState,
     paramBuffer.addEnumParam("pname", GLenumGroup::FramebufferAttachmentParameterName,
                              ParamType::TGLenum, pname);
 
-    ParamCapture paramsParam("params", ParamType::TGLintPointer);
-    InitParamValue(ParamType::TGLintPointer, params, &paramsParam.value);
-    CaptureGetFramebufferAttachmentParameteriv_params(glState, isCallValid, target, attachment,
-                                                      pname, params, &paramsParam);
-    paramBuffer.addParam(std::move(paramsParam));
+    if (isCallValid)
+    {
+        ParamCapture paramsParam("params", ParamType::TGLintPointer);
+        InitParamValue(ParamType::TGLintPointer, params, &paramsParam.value);
+        CaptureGetFramebufferAttachmentParameteriv_params(glState, isCallValid, target, attachment,
+                                                          pname, params, &paramsParam);
+        paramBuffer.addParam(std::move(paramsParam));
+    }
+    else
+    {
+        ParamCapture paramsParam("params", ParamType::TGLintPointer);
+        InitParamValue(ParamType::TGLintPointer, static_cast<GLint *>(nullptr), &paramsParam.value);
+        paramBuffer.addParam(std::move(paramsParam));
+    }
 
     return CallCapture(gl::EntryPoint::GetFramebufferAttachmentParameteriv, std::move(paramBuffer));
 }
@@ -1048,10 +1345,19 @@ CallCapture CaptureGetIntegerv(const State &glState, bool isCallValid, GLenum pn
 
     paramBuffer.addEnumParam("pname", GLenumGroup::GetPName, ParamType::TGLenum, pname);
 
-    ParamCapture dataParam("data", ParamType::TGLintPointer);
-    InitParamValue(ParamType::TGLintPointer, data, &dataParam.value);
-    CaptureGetIntegerv_data(glState, isCallValid, pname, data, &dataParam);
-    paramBuffer.addParam(std::move(dataParam));
+    if (isCallValid)
+    {
+        ParamCapture dataParam("data", ParamType::TGLintPointer);
+        InitParamValue(ParamType::TGLintPointer, data, &dataParam.value);
+        CaptureGetIntegerv_data(glState, isCallValid, pname, data, &dataParam);
+        paramBuffer.addParam(std::move(dataParam));
+    }
+    else
+    {
+        ParamCapture dataParam("data", ParamType::TGLintPointer);
+        InitParamValue(ParamType::TGLintPointer, static_cast<GLint *>(nullptr), &dataParam.value);
+        paramBuffer.addParam(std::move(dataParam));
+    }
 
     return CallCapture(gl::EntryPoint::GetIntegerv, std::move(paramBuffer));
 }
@@ -1068,17 +1374,37 @@ CallCapture CaptureGetProgramInfoLog(const State &glState,
     paramBuffer.addValueParam("programPacked", ParamType::TShaderProgramID, programPacked);
     paramBuffer.addValueParam("bufSize", ParamType::TGLsizei, bufSize);
 
-    ParamCapture lengthParam("length", ParamType::TGLsizeiPointer);
-    InitParamValue(ParamType::TGLsizeiPointer, length, &lengthParam.value);
-    CaptureGetProgramInfoLog_length(glState, isCallValid, programPacked, bufSize, length, infoLog,
-                                    &lengthParam);
-    paramBuffer.addParam(std::move(lengthParam));
+    if (isCallValid)
+    {
+        ParamCapture lengthParam("length", ParamType::TGLsizeiPointer);
+        InitParamValue(ParamType::TGLsizeiPointer, length, &lengthParam.value);
+        CaptureGetProgramInfoLog_length(glState, isCallValid, programPacked, bufSize, length,
+                                        infoLog, &lengthParam);
+        paramBuffer.addParam(std::move(lengthParam));
+    }
+    else
+    {
+        ParamCapture lengthParam("length", ParamType::TGLsizeiPointer);
+        InitParamValue(ParamType::TGLsizeiPointer, static_cast<GLsizei *>(nullptr),
+                       &lengthParam.value);
+        paramBuffer.addParam(std::move(lengthParam));
+    }
 
-    ParamCapture infoLogParam("infoLog", ParamType::TGLcharPointer);
-    InitParamValue(ParamType::TGLcharPointer, infoLog, &infoLogParam.value);
-    CaptureGetProgramInfoLog_infoLog(glState, isCallValid, programPacked, bufSize, length, infoLog,
-                                     &infoLogParam);
-    paramBuffer.addParam(std::move(infoLogParam));
+    if (isCallValid)
+    {
+        ParamCapture infoLogParam("infoLog", ParamType::TGLcharPointer);
+        InitParamValue(ParamType::TGLcharPointer, infoLog, &infoLogParam.value);
+        CaptureGetProgramInfoLog_infoLog(glState, isCallValid, programPacked, bufSize, length,
+                                         infoLog, &infoLogParam);
+        paramBuffer.addParam(std::move(infoLogParam));
+    }
+    else
+    {
+        ParamCapture infoLogParam("infoLog", ParamType::TGLcharPointer);
+        InitParamValue(ParamType::TGLcharPointer, static_cast<GLchar *>(nullptr),
+                       &infoLogParam.value);
+        paramBuffer.addParam(std::move(infoLogParam));
+    }
 
     return CallCapture(gl::EntryPoint::GetProgramInfoLog, std::move(paramBuffer));
 }
@@ -1094,10 +1420,20 @@ CallCapture CaptureGetProgramiv(const State &glState,
     paramBuffer.addValueParam("programPacked", ParamType::TShaderProgramID, programPacked);
     paramBuffer.addEnumParam("pname", GLenumGroup::ProgramPropertyARB, ParamType::TGLenum, pname);
 
-    ParamCapture paramsParam("params", ParamType::TGLintPointer);
-    InitParamValue(ParamType::TGLintPointer, params, &paramsParam.value);
-    CaptureGetProgramiv_params(glState, isCallValid, programPacked, pname, params, &paramsParam);
-    paramBuffer.addParam(std::move(paramsParam));
+    if (isCallValid)
+    {
+        ParamCapture paramsParam("params", ParamType::TGLintPointer);
+        InitParamValue(ParamType::TGLintPointer, params, &paramsParam.value);
+        CaptureGetProgramiv_params(glState, isCallValid, programPacked, pname, params,
+                                   &paramsParam);
+        paramBuffer.addParam(std::move(paramsParam));
+    }
+    else
+    {
+        ParamCapture paramsParam("params", ParamType::TGLintPointer);
+        InitParamValue(ParamType::TGLintPointer, static_cast<GLint *>(nullptr), &paramsParam.value);
+        paramBuffer.addParam(std::move(paramsParam));
+    }
 
     return CallCapture(gl::EntryPoint::GetProgramiv, std::move(paramBuffer));
 }
@@ -1114,11 +1450,20 @@ CallCapture CaptureGetRenderbufferParameteriv(const State &glState,
     paramBuffer.addEnumParam("pname", GLenumGroup::RenderbufferParameterName, ParamType::TGLenum,
                              pname);
 
-    ParamCapture paramsParam("params", ParamType::TGLintPointer);
-    InitParamValue(ParamType::TGLintPointer, params, &paramsParam.value);
-    CaptureGetRenderbufferParameteriv_params(glState, isCallValid, target, pname, params,
-                                             &paramsParam);
-    paramBuffer.addParam(std::move(paramsParam));
+    if (isCallValid)
+    {
+        ParamCapture paramsParam("params", ParamType::TGLintPointer);
+        InitParamValue(ParamType::TGLintPointer, params, &paramsParam.value);
+        CaptureGetRenderbufferParameteriv_params(glState, isCallValid, target, pname, params,
+                                                 &paramsParam);
+        paramBuffer.addParam(std::move(paramsParam));
+    }
+    else
+    {
+        ParamCapture paramsParam("params", ParamType::TGLintPointer);
+        InitParamValue(ParamType::TGLintPointer, static_cast<GLint *>(nullptr), &paramsParam.value);
+        paramBuffer.addParam(std::move(paramsParam));
+    }
 
     return CallCapture(gl::EntryPoint::GetRenderbufferParameteriv, std::move(paramBuffer));
 }
@@ -1135,17 +1480,37 @@ CallCapture CaptureGetShaderInfoLog(const State &glState,
     paramBuffer.addValueParam("shaderPacked", ParamType::TShaderProgramID, shaderPacked);
     paramBuffer.addValueParam("bufSize", ParamType::TGLsizei, bufSize);
 
-    ParamCapture lengthParam("length", ParamType::TGLsizeiPointer);
-    InitParamValue(ParamType::TGLsizeiPointer, length, &lengthParam.value);
-    CaptureGetShaderInfoLog_length(glState, isCallValid, shaderPacked, bufSize, length, infoLog,
-                                   &lengthParam);
-    paramBuffer.addParam(std::move(lengthParam));
+    if (isCallValid)
+    {
+        ParamCapture lengthParam("length", ParamType::TGLsizeiPointer);
+        InitParamValue(ParamType::TGLsizeiPointer, length, &lengthParam.value);
+        CaptureGetShaderInfoLog_length(glState, isCallValid, shaderPacked, bufSize, length, infoLog,
+                                       &lengthParam);
+        paramBuffer.addParam(std::move(lengthParam));
+    }
+    else
+    {
+        ParamCapture lengthParam("length", ParamType::TGLsizeiPointer);
+        InitParamValue(ParamType::TGLsizeiPointer, static_cast<GLsizei *>(nullptr),
+                       &lengthParam.value);
+        paramBuffer.addParam(std::move(lengthParam));
+    }
 
-    ParamCapture infoLogParam("infoLog", ParamType::TGLcharPointer);
-    InitParamValue(ParamType::TGLcharPointer, infoLog, &infoLogParam.value);
-    CaptureGetShaderInfoLog_infoLog(glState, isCallValid, shaderPacked, bufSize, length, infoLog,
-                                    &infoLogParam);
-    paramBuffer.addParam(std::move(infoLogParam));
+    if (isCallValid)
+    {
+        ParamCapture infoLogParam("infoLog", ParamType::TGLcharPointer);
+        InitParamValue(ParamType::TGLcharPointer, infoLog, &infoLogParam.value);
+        CaptureGetShaderInfoLog_infoLog(glState, isCallValid, shaderPacked, bufSize, length,
+                                        infoLog, &infoLogParam);
+        paramBuffer.addParam(std::move(infoLogParam));
+    }
+    else
+    {
+        ParamCapture infoLogParam("infoLog", ParamType::TGLcharPointer);
+        InitParamValue(ParamType::TGLcharPointer, static_cast<GLchar *>(nullptr),
+                       &infoLogParam.value);
+        paramBuffer.addParam(std::move(infoLogParam));
+    }
 
     return CallCapture(gl::EntryPoint::GetShaderInfoLog, std::move(paramBuffer));
 }
@@ -1163,17 +1528,36 @@ CallCapture CaptureGetShaderPrecisionFormat(const State &glState,
     paramBuffer.addEnumParam("precisiontype", GLenumGroup::PrecisionType, ParamType::TGLenum,
                              precisiontype);
 
-    ParamCapture rangeParam("range", ParamType::TGLintPointer);
-    InitParamValue(ParamType::TGLintPointer, range, &rangeParam.value);
-    CaptureGetShaderPrecisionFormat_range(glState, isCallValid, shadertype, precisiontype, range,
-                                          precision, &rangeParam);
-    paramBuffer.addParam(std::move(rangeParam));
+    if (isCallValid)
+    {
+        ParamCapture rangeParam("range", ParamType::TGLintPointer);
+        InitParamValue(ParamType::TGLintPointer, range, &rangeParam.value);
+        CaptureGetShaderPrecisionFormat_range(glState, isCallValid, shadertype, precisiontype,
+                                              range, precision, &rangeParam);
+        paramBuffer.addParam(std::move(rangeParam));
+    }
+    else
+    {
+        ParamCapture rangeParam("range", ParamType::TGLintPointer);
+        InitParamValue(ParamType::TGLintPointer, static_cast<GLint *>(nullptr), &rangeParam.value);
+        paramBuffer.addParam(std::move(rangeParam));
+    }
 
-    ParamCapture precisionParam("precision", ParamType::TGLintPointer);
-    InitParamValue(ParamType::TGLintPointer, precision, &precisionParam.value);
-    CaptureGetShaderPrecisionFormat_precision(glState, isCallValid, shadertype, precisiontype,
-                                              range, precision, &precisionParam);
-    paramBuffer.addParam(std::move(precisionParam));
+    if (isCallValid)
+    {
+        ParamCapture precisionParam("precision", ParamType::TGLintPointer);
+        InitParamValue(ParamType::TGLintPointer, precision, &precisionParam.value);
+        CaptureGetShaderPrecisionFormat_precision(glState, isCallValid, shadertype, precisiontype,
+                                                  range, precision, &precisionParam);
+        paramBuffer.addParam(std::move(precisionParam));
+    }
+    else
+    {
+        ParamCapture precisionParam("precision", ParamType::TGLintPointer);
+        InitParamValue(ParamType::TGLintPointer, static_cast<GLint *>(nullptr),
+                       &precisionParam.value);
+        paramBuffer.addParam(std::move(precisionParam));
+    }
 
     return CallCapture(gl::EntryPoint::GetShaderPrecisionFormat, std::move(paramBuffer));
 }
@@ -1190,17 +1574,37 @@ CallCapture CaptureGetShaderSource(const State &glState,
     paramBuffer.addValueParam("shaderPacked", ParamType::TShaderProgramID, shaderPacked);
     paramBuffer.addValueParam("bufSize", ParamType::TGLsizei, bufSize);
 
-    ParamCapture lengthParam("length", ParamType::TGLsizeiPointer);
-    InitParamValue(ParamType::TGLsizeiPointer, length, &lengthParam.value);
-    CaptureGetShaderSource_length(glState, isCallValid, shaderPacked, bufSize, length, source,
-                                  &lengthParam);
-    paramBuffer.addParam(std::move(lengthParam));
+    if (isCallValid)
+    {
+        ParamCapture lengthParam("length", ParamType::TGLsizeiPointer);
+        InitParamValue(ParamType::TGLsizeiPointer, length, &lengthParam.value);
+        CaptureGetShaderSource_length(glState, isCallValid, shaderPacked, bufSize, length, source,
+                                      &lengthParam);
+        paramBuffer.addParam(std::move(lengthParam));
+    }
+    else
+    {
+        ParamCapture lengthParam("length", ParamType::TGLsizeiPointer);
+        InitParamValue(ParamType::TGLsizeiPointer, static_cast<GLsizei *>(nullptr),
+                       &lengthParam.value);
+        paramBuffer.addParam(std::move(lengthParam));
+    }
 
-    ParamCapture sourceParam("source", ParamType::TGLcharPointer);
-    InitParamValue(ParamType::TGLcharPointer, source, &sourceParam.value);
-    CaptureGetShaderSource_source(glState, isCallValid, shaderPacked, bufSize, length, source,
-                                  &sourceParam);
-    paramBuffer.addParam(std::move(sourceParam));
+    if (isCallValid)
+    {
+        ParamCapture sourceParam("source", ParamType::TGLcharPointer);
+        InitParamValue(ParamType::TGLcharPointer, source, &sourceParam.value);
+        CaptureGetShaderSource_source(glState, isCallValid, shaderPacked, bufSize, length, source,
+                                      &sourceParam);
+        paramBuffer.addParam(std::move(sourceParam));
+    }
+    else
+    {
+        ParamCapture sourceParam("source", ParamType::TGLcharPointer);
+        InitParamValue(ParamType::TGLcharPointer, static_cast<GLchar *>(nullptr),
+                       &sourceParam.value);
+        paramBuffer.addParam(std::move(sourceParam));
+    }
 
     return CallCapture(gl::EntryPoint::GetShaderSource, std::move(paramBuffer));
 }
@@ -1216,10 +1620,19 @@ CallCapture CaptureGetShaderiv(const State &glState,
     paramBuffer.addValueParam("shaderPacked", ParamType::TShaderProgramID, shaderPacked);
     paramBuffer.addEnumParam("pname", GLenumGroup::ShaderParameterName, ParamType::TGLenum, pname);
 
-    ParamCapture paramsParam("params", ParamType::TGLintPointer);
-    InitParamValue(ParamType::TGLintPointer, params, &paramsParam.value);
-    CaptureGetShaderiv_params(glState, isCallValid, shaderPacked, pname, params, &paramsParam);
-    paramBuffer.addParam(std::move(paramsParam));
+    if (isCallValid)
+    {
+        ParamCapture paramsParam("params", ParamType::TGLintPointer);
+        InitParamValue(ParamType::TGLintPointer, params, &paramsParam.value);
+        CaptureGetShaderiv_params(glState, isCallValid, shaderPacked, pname, params, &paramsParam);
+        paramBuffer.addParam(std::move(paramsParam));
+    }
+    else
+    {
+        ParamCapture paramsParam("params", ParamType::TGLintPointer);
+        InitParamValue(ParamType::TGLintPointer, static_cast<GLint *>(nullptr), &paramsParam.value);
+        paramBuffer.addParam(std::move(paramsParam));
+    }
 
     return CallCapture(gl::EntryPoint::GetShaderiv, std::move(paramBuffer));
 }
@@ -1251,11 +1664,21 @@ CallCapture CaptureGetTexParameterfv(const State &glState,
     paramBuffer.addValueParam("targetPacked", ParamType::TTextureType, targetPacked);
     paramBuffer.addEnumParam("pname", GLenumGroup::GetTextureParameter, ParamType::TGLenum, pname);
 
-    ParamCapture paramsParam("params", ParamType::TGLfloatPointer);
-    InitParamValue(ParamType::TGLfloatPointer, params, &paramsParam.value);
-    CaptureGetTexParameterfv_params(glState, isCallValid, targetPacked, pname, params,
-                                    &paramsParam);
-    paramBuffer.addParam(std::move(paramsParam));
+    if (isCallValid)
+    {
+        ParamCapture paramsParam("params", ParamType::TGLfloatPointer);
+        InitParamValue(ParamType::TGLfloatPointer, params, &paramsParam.value);
+        CaptureGetTexParameterfv_params(glState, isCallValid, targetPacked, pname, params,
+                                        &paramsParam);
+        paramBuffer.addParam(std::move(paramsParam));
+    }
+    else
+    {
+        ParamCapture paramsParam("params", ParamType::TGLfloatPointer);
+        InitParamValue(ParamType::TGLfloatPointer, static_cast<GLfloat *>(nullptr),
+                       &paramsParam.value);
+        paramBuffer.addParam(std::move(paramsParam));
+    }
 
     return CallCapture(gl::EntryPoint::GetTexParameterfv, std::move(paramBuffer));
 }
@@ -1271,11 +1694,20 @@ CallCapture CaptureGetTexParameteriv(const State &glState,
     paramBuffer.addValueParam("targetPacked", ParamType::TTextureType, targetPacked);
     paramBuffer.addEnumParam("pname", GLenumGroup::GetTextureParameter, ParamType::TGLenum, pname);
 
-    ParamCapture paramsParam("params", ParamType::TGLintPointer);
-    InitParamValue(ParamType::TGLintPointer, params, &paramsParam.value);
-    CaptureGetTexParameteriv_params(glState, isCallValid, targetPacked, pname, params,
-                                    &paramsParam);
-    paramBuffer.addParam(std::move(paramsParam));
+    if (isCallValid)
+    {
+        ParamCapture paramsParam("params", ParamType::TGLintPointer);
+        InitParamValue(ParamType::TGLintPointer, params, &paramsParam.value);
+        CaptureGetTexParameteriv_params(glState, isCallValid, targetPacked, pname, params,
+                                        &paramsParam);
+        paramBuffer.addParam(std::move(paramsParam));
+    }
+    else
+    {
+        ParamCapture paramsParam("params", ParamType::TGLintPointer);
+        InitParamValue(ParamType::TGLintPointer, static_cast<GLint *>(nullptr), &paramsParam.value);
+        paramBuffer.addParam(std::move(paramsParam));
+    }
 
     return CallCapture(gl::EntryPoint::GetTexParameteriv, std::move(paramBuffer));
 }
@@ -1290,10 +1722,20 @@ CallCapture CaptureGetUniformLocation(const State &glState,
 
     paramBuffer.addValueParam("programPacked", ParamType::TShaderProgramID, programPacked);
 
-    ParamCapture nameParam("name", ParamType::TGLcharConstPointer);
-    InitParamValue(ParamType::TGLcharConstPointer, name, &nameParam.value);
-    CaptureGetUniformLocation_name(glState, isCallValid, programPacked, name, &nameParam);
-    paramBuffer.addParam(std::move(nameParam));
+    if (isCallValid)
+    {
+        ParamCapture nameParam("name", ParamType::TGLcharConstPointer);
+        InitParamValue(ParamType::TGLcharConstPointer, name, &nameParam.value);
+        CaptureGetUniformLocation_name(glState, isCallValid, programPacked, name, &nameParam);
+        paramBuffer.addParam(std::move(nameParam));
+    }
+    else
+    {
+        ParamCapture nameParam("name", ParamType::TGLcharConstPointer);
+        InitParamValue(ParamType::TGLcharConstPointer, static_cast<const GLchar *>(nullptr),
+                       &nameParam.value);
+        paramBuffer.addParam(std::move(nameParam));
+    }
 
     ParamCapture returnValueCapture("returnValue", ParamType::TGLint);
     InitParamValue(ParamType::TGLint, returnValue, &returnValueCapture.value);
@@ -1313,11 +1755,21 @@ CallCapture CaptureGetUniformfv(const State &glState,
     paramBuffer.addValueParam("programPacked", ParamType::TShaderProgramID, programPacked);
     paramBuffer.addValueParam("locationPacked", ParamType::TUniformLocation, locationPacked);
 
-    ParamCapture paramsParam("params", ParamType::TGLfloatPointer);
-    InitParamValue(ParamType::TGLfloatPointer, params, &paramsParam.value);
-    CaptureGetUniformfv_params(glState, isCallValid, programPacked, locationPacked, params,
-                               &paramsParam);
-    paramBuffer.addParam(std::move(paramsParam));
+    if (isCallValid)
+    {
+        ParamCapture paramsParam("params", ParamType::TGLfloatPointer);
+        InitParamValue(ParamType::TGLfloatPointer, params, &paramsParam.value);
+        CaptureGetUniformfv_params(glState, isCallValid, programPacked, locationPacked, params,
+                                   &paramsParam);
+        paramBuffer.addParam(std::move(paramsParam));
+    }
+    else
+    {
+        ParamCapture paramsParam("params", ParamType::TGLfloatPointer);
+        InitParamValue(ParamType::TGLfloatPointer, static_cast<GLfloat *>(nullptr),
+                       &paramsParam.value);
+        paramBuffer.addParam(std::move(paramsParam));
+    }
 
     return CallCapture(gl::EntryPoint::GetUniformfv, std::move(paramBuffer));
 }
@@ -1333,11 +1785,20 @@ CallCapture CaptureGetUniformiv(const State &glState,
     paramBuffer.addValueParam("programPacked", ParamType::TShaderProgramID, programPacked);
     paramBuffer.addValueParam("locationPacked", ParamType::TUniformLocation, locationPacked);
 
-    ParamCapture paramsParam("params", ParamType::TGLintPointer);
-    InitParamValue(ParamType::TGLintPointer, params, &paramsParam.value);
-    CaptureGetUniformiv_params(glState, isCallValid, programPacked, locationPacked, params,
-                               &paramsParam);
-    paramBuffer.addParam(std::move(paramsParam));
+    if (isCallValid)
+    {
+        ParamCapture paramsParam("params", ParamType::TGLintPointer);
+        InitParamValue(ParamType::TGLintPointer, params, &paramsParam.value);
+        CaptureGetUniformiv_params(glState, isCallValid, programPacked, locationPacked, params,
+                                   &paramsParam);
+        paramBuffer.addParam(std::move(paramsParam));
+    }
+    else
+    {
+        ParamCapture paramsParam("params", ParamType::TGLintPointer);
+        InitParamValue(ParamType::TGLintPointer, static_cast<GLint *>(nullptr), &paramsParam.value);
+        paramBuffer.addParam(std::move(paramsParam));
+    }
 
     return CallCapture(gl::EntryPoint::GetUniformiv, std::move(paramBuffer));
 }
@@ -1353,11 +1814,21 @@ CallCapture CaptureGetVertexAttribPointerv(const State &glState,
     paramBuffer.addValueParam("index", ParamType::TGLuint, index);
     paramBuffer.addEnumParam("pname", GLenumGroup::DefaultGroup, ParamType::TGLenum, pname);
 
-    ParamCapture pointerParam("pointer", ParamType::TvoidPointerPointer);
-    InitParamValue(ParamType::TvoidPointerPointer, pointer, &pointerParam.value);
-    CaptureGetVertexAttribPointerv_pointer(glState, isCallValid, index, pname, pointer,
-                                           &pointerParam);
-    paramBuffer.addParam(std::move(pointerParam));
+    if (isCallValid)
+    {
+        ParamCapture pointerParam("pointer", ParamType::TvoidPointerPointer);
+        InitParamValue(ParamType::TvoidPointerPointer, pointer, &pointerParam.value);
+        CaptureGetVertexAttribPointerv_pointer(glState, isCallValid, index, pname, pointer,
+                                               &pointerParam);
+        paramBuffer.addParam(std::move(pointerParam));
+    }
+    else
+    {
+        ParamCapture pointerParam("pointer", ParamType::TvoidPointerPointer);
+        InitParamValue(ParamType::TvoidPointerPointer, static_cast<void **>(nullptr),
+                       &pointerParam.value);
+        paramBuffer.addParam(std::move(pointerParam));
+    }
 
     return CallCapture(gl::EntryPoint::GetVertexAttribPointerv, std::move(paramBuffer));
 }
@@ -1373,10 +1844,20 @@ CallCapture CaptureGetVertexAttribfv(const State &glState,
     paramBuffer.addValueParam("index", ParamType::TGLuint, index);
     paramBuffer.addEnumParam("pname", GLenumGroup::DefaultGroup, ParamType::TGLenum, pname);
 
-    ParamCapture paramsParam("params", ParamType::TGLfloatPointer);
-    InitParamValue(ParamType::TGLfloatPointer, params, &paramsParam.value);
-    CaptureGetVertexAttribfv_params(glState, isCallValid, index, pname, params, &paramsParam);
-    paramBuffer.addParam(std::move(paramsParam));
+    if (isCallValid)
+    {
+        ParamCapture paramsParam("params", ParamType::TGLfloatPointer);
+        InitParamValue(ParamType::TGLfloatPointer, params, &paramsParam.value);
+        CaptureGetVertexAttribfv_params(glState, isCallValid, index, pname, params, &paramsParam);
+        paramBuffer.addParam(std::move(paramsParam));
+    }
+    else
+    {
+        ParamCapture paramsParam("params", ParamType::TGLfloatPointer);
+        InitParamValue(ParamType::TGLfloatPointer, static_cast<GLfloat *>(nullptr),
+                       &paramsParam.value);
+        paramBuffer.addParam(std::move(paramsParam));
+    }
 
     return CallCapture(gl::EntryPoint::GetVertexAttribfv, std::move(paramBuffer));
 }
@@ -1392,10 +1873,19 @@ CallCapture CaptureGetVertexAttribiv(const State &glState,
     paramBuffer.addValueParam("index", ParamType::TGLuint, index);
     paramBuffer.addEnumParam("pname", GLenumGroup::DefaultGroup, ParamType::TGLenum, pname);
 
-    ParamCapture paramsParam("params", ParamType::TGLintPointer);
-    InitParamValue(ParamType::TGLintPointer, params, &paramsParam.value);
-    CaptureGetVertexAttribiv_params(glState, isCallValid, index, pname, params, &paramsParam);
-    paramBuffer.addParam(std::move(paramsParam));
+    if (isCallValid)
+    {
+        ParamCapture paramsParam("params", ParamType::TGLintPointer);
+        InitParamValue(ParamType::TGLintPointer, params, &paramsParam.value);
+        CaptureGetVertexAttribiv_params(glState, isCallValid, index, pname, params, &paramsParam);
+        paramBuffer.addParam(std::move(paramsParam));
+    }
+    else
+    {
+        ParamCapture paramsParam("params", ParamType::TGLintPointer);
+        InitParamValue(ParamType::TGLintPointer, static_cast<GLint *>(nullptr), &paramsParam.value);
+        paramBuffer.addParam(std::move(paramsParam));
+    }
 
     return CallCapture(gl::EntryPoint::GetVertexAttribiv, std::move(paramBuffer));
 }
@@ -1584,11 +2074,20 @@ CallCapture CaptureReadPixels(const State &glState,
     paramBuffer.addEnumParam("format", GLenumGroup::PixelFormat, ParamType::TGLenum, format);
     paramBuffer.addEnumParam("type", GLenumGroup::PixelType, ParamType::TGLenum, type);
 
-    ParamCapture pixelsParam("pixels", ParamType::TvoidPointer);
-    InitParamValue(ParamType::TvoidPointer, pixels, &pixelsParam.value);
-    CaptureReadPixels_pixels(glState, isCallValid, x, y, width, height, format, type, pixels,
-                             &pixelsParam);
-    paramBuffer.addParam(std::move(pixelsParam));
+    if (isCallValid)
+    {
+        ParamCapture pixelsParam("pixels", ParamType::TvoidPointer);
+        InitParamValue(ParamType::TvoidPointer, pixels, &pixelsParam.value);
+        CaptureReadPixels_pixels(glState, isCallValid, x, y, width, height, format, type, pixels,
+                                 &pixelsParam);
+        paramBuffer.addParam(std::move(pixelsParam));
+    }
+    else
+    {
+        ParamCapture pixelsParam("pixels", ParamType::TvoidPointer);
+        InitParamValue(ParamType::TvoidPointer, static_cast<void *>(nullptr), &pixelsParam.value);
+        paramBuffer.addParam(std::move(pixelsParam));
+    }
 
     return CallCapture(gl::EntryPoint::ReadPixels, std::move(paramBuffer));
 }
@@ -1660,21 +2159,41 @@ CallCapture CaptureShaderBinary(const State &glState,
 
     paramBuffer.addValueParam("count", ParamType::TGLsizei, count);
 
-    ParamCapture shadersPackedParam("shadersPacked", ParamType::TShaderProgramIDConstPointer);
-    InitParamValue(ParamType::TShaderProgramIDConstPointer, shadersPacked,
-                   &shadersPackedParam.value);
-    CaptureShaderBinary_shadersPacked(glState, isCallValid, count, shadersPacked, binaryformat,
-                                      binary, length, &shadersPackedParam);
-    paramBuffer.addParam(std::move(shadersPackedParam));
+    if (isCallValid)
+    {
+        ParamCapture shadersPackedParam("shadersPacked", ParamType::TShaderProgramIDConstPointer);
+        InitParamValue(ParamType::TShaderProgramIDConstPointer, shadersPacked,
+                       &shadersPackedParam.value);
+        CaptureShaderBinary_shadersPacked(glState, isCallValid, count, shadersPacked, binaryformat,
+                                          binary, length, &shadersPackedParam);
+        paramBuffer.addParam(std::move(shadersPackedParam));
+    }
+    else
+    {
+        ParamCapture shadersPackedParam("shadersPacked", ParamType::TShaderProgramIDConstPointer);
+        InitParamValue(ParamType::TShaderProgramIDConstPointer,
+                       static_cast<const ShaderProgramID *>(nullptr), &shadersPackedParam.value);
+        paramBuffer.addParam(std::move(shadersPackedParam));
+    }
 
     paramBuffer.addEnumParam("binaryformat", GLenumGroup::DefaultGroup, ParamType::TGLenum,
                              binaryformat);
 
-    ParamCapture binaryParam("binary", ParamType::TvoidConstPointer);
-    InitParamValue(ParamType::TvoidConstPointer, binary, &binaryParam.value);
-    CaptureShaderBinary_binary(glState, isCallValid, count, shadersPacked, binaryformat, binary,
-                               length, &binaryParam);
-    paramBuffer.addParam(std::move(binaryParam));
+    if (isCallValid)
+    {
+        ParamCapture binaryParam("binary", ParamType::TvoidConstPointer);
+        InitParamValue(ParamType::TvoidConstPointer, binary, &binaryParam.value);
+        CaptureShaderBinary_binary(glState, isCallValid, count, shadersPacked, binaryformat, binary,
+                                   length, &binaryParam);
+        paramBuffer.addParam(std::move(binaryParam));
+    }
+    else
+    {
+        ParamCapture binaryParam("binary", ParamType::TvoidConstPointer);
+        InitParamValue(ParamType::TvoidConstPointer, static_cast<const void *>(nullptr),
+                       &binaryParam.value);
+        paramBuffer.addParam(std::move(binaryParam));
+    }
 
     paramBuffer.addValueParam("length", ParamType::TGLsizei, length);
 
@@ -1693,17 +2212,37 @@ CallCapture CaptureShaderSource(const State &glState,
     paramBuffer.addValueParam("shaderPacked", ParamType::TShaderProgramID, shaderPacked);
     paramBuffer.addValueParam("count", ParamType::TGLsizei, count);
 
-    ParamCapture stringParam("string", ParamType::TGLcharConstPointerPointer);
-    InitParamValue(ParamType::TGLcharConstPointerPointer, string, &stringParam.value);
-    CaptureShaderSource_string(glState, isCallValid, shaderPacked, count, string, length,
-                               &stringParam);
-    paramBuffer.addParam(std::move(stringParam));
+    if (isCallValid)
+    {
+        ParamCapture stringParam("string", ParamType::TGLcharConstPointerPointer);
+        InitParamValue(ParamType::TGLcharConstPointerPointer, string, &stringParam.value);
+        CaptureShaderSource_string(glState, isCallValid, shaderPacked, count, string, length,
+                                   &stringParam);
+        paramBuffer.addParam(std::move(stringParam));
+    }
+    else
+    {
+        ParamCapture stringParam("string", ParamType::TGLcharConstPointerPointer);
+        InitParamValue(ParamType::TGLcharConstPointerPointer,
+                       static_cast<const GLchar *const *>(nullptr), &stringParam.value);
+        paramBuffer.addParam(std::move(stringParam));
+    }
 
-    ParamCapture lengthParam("length", ParamType::TGLintConstPointer);
-    InitParamValue(ParamType::TGLintConstPointer, length, &lengthParam.value);
-    CaptureShaderSource_length(glState, isCallValid, shaderPacked, count, string, length,
-                               &lengthParam);
-    paramBuffer.addParam(std::move(lengthParam));
+    if (isCallValid)
+    {
+        ParamCapture lengthParam("length", ParamType::TGLintConstPointer);
+        InitParamValue(ParamType::TGLintConstPointer, length, &lengthParam.value);
+        CaptureShaderSource_length(glState, isCallValid, shaderPacked, count, string, length,
+                                   &lengthParam);
+        paramBuffer.addParam(std::move(lengthParam));
+    }
+    else
+    {
+        ParamCapture lengthParam("length", ParamType::TGLintConstPointer);
+        InitParamValue(ParamType::TGLintConstPointer, static_cast<const GLint *>(nullptr),
+                       &lengthParam.value);
+        paramBuffer.addParam(std::move(lengthParam));
+    }
 
     return CallCapture(gl::EntryPoint::ShaderSource, std::move(paramBuffer));
 }
@@ -1817,11 +2356,21 @@ CallCapture CaptureTexImage2D(const State &glState,
     paramBuffer.addEnumParam("format", GLenumGroup::PixelFormat, ParamType::TGLenum, format);
     paramBuffer.addEnumParam("type", GLenumGroup::PixelType, ParamType::TGLenum, type);
 
-    ParamCapture pixelsParam("pixels", ParamType::TvoidConstPointer);
-    InitParamValue(ParamType::TvoidConstPointer, pixels, &pixelsParam.value);
-    CaptureTexImage2D_pixels(glState, isCallValid, targetPacked, level, internalformat, width,
-                             height, border, format, type, pixels, &pixelsParam);
-    paramBuffer.addParam(std::move(pixelsParam));
+    if (isCallValid)
+    {
+        ParamCapture pixelsParam("pixels", ParamType::TvoidConstPointer);
+        InitParamValue(ParamType::TvoidConstPointer, pixels, &pixelsParam.value);
+        CaptureTexImage2D_pixels(glState, isCallValid, targetPacked, level, internalformat, width,
+                                 height, border, format, type, pixels, &pixelsParam);
+        paramBuffer.addParam(std::move(pixelsParam));
+    }
+    else
+    {
+        ParamCapture pixelsParam("pixels", ParamType::TvoidConstPointer);
+        InitParamValue(ParamType::TvoidConstPointer, static_cast<const void *>(nullptr),
+                       &pixelsParam.value);
+        paramBuffer.addParam(std::move(pixelsParam));
+    }
 
     return CallCapture(gl::EntryPoint::TexImage2D, std::move(paramBuffer));
 }
@@ -1852,10 +2401,21 @@ CallCapture CaptureTexParameterfv(const State &glState,
     paramBuffer.addValueParam("targetPacked", ParamType::TTextureType, targetPacked);
     paramBuffer.addEnumParam("pname", GLenumGroup::TextureParameterName, ParamType::TGLenum, pname);
 
-    ParamCapture paramsParam("params", ParamType::TGLfloatConstPointer);
-    InitParamValue(ParamType::TGLfloatConstPointer, params, &paramsParam.value);
-    CaptureTexParameterfv_params(glState, isCallValid, targetPacked, pname, params, &paramsParam);
-    paramBuffer.addParam(std::move(paramsParam));
+    if (isCallValid)
+    {
+        ParamCapture paramsParam("params", ParamType::TGLfloatConstPointer);
+        InitParamValue(ParamType::TGLfloatConstPointer, params, &paramsParam.value);
+        CaptureTexParameterfv_params(glState, isCallValid, targetPacked, pname, params,
+                                     &paramsParam);
+        paramBuffer.addParam(std::move(paramsParam));
+    }
+    else
+    {
+        ParamCapture paramsParam("params", ParamType::TGLfloatConstPointer);
+        InitParamValue(ParamType::TGLfloatConstPointer, static_cast<const GLfloat *>(nullptr),
+                       &paramsParam.value);
+        paramBuffer.addParam(std::move(paramsParam));
+    }
 
     return CallCapture(gl::EntryPoint::TexParameterfv, std::move(paramBuffer));
 }
@@ -1886,10 +2446,21 @@ CallCapture CaptureTexParameteriv(const State &glState,
     paramBuffer.addValueParam("targetPacked", ParamType::TTextureType, targetPacked);
     paramBuffer.addEnumParam("pname", GLenumGroup::TextureParameterName, ParamType::TGLenum, pname);
 
-    ParamCapture paramsParam("params", ParamType::TGLintConstPointer);
-    InitParamValue(ParamType::TGLintConstPointer, params, &paramsParam.value);
-    CaptureTexParameteriv_params(glState, isCallValid, targetPacked, pname, params, &paramsParam);
-    paramBuffer.addParam(std::move(paramsParam));
+    if (isCallValid)
+    {
+        ParamCapture paramsParam("params", ParamType::TGLintConstPointer);
+        InitParamValue(ParamType::TGLintConstPointer, params, &paramsParam.value);
+        CaptureTexParameteriv_params(glState, isCallValid, targetPacked, pname, params,
+                                     &paramsParam);
+        paramBuffer.addParam(std::move(paramsParam));
+    }
+    else
+    {
+        ParamCapture paramsParam("params", ParamType::TGLintConstPointer);
+        InitParamValue(ParamType::TGLintConstPointer, static_cast<const GLint *>(nullptr),
+                       &paramsParam.value);
+        paramBuffer.addParam(std::move(paramsParam));
+    }
 
     return CallCapture(gl::EntryPoint::TexParameteriv, std::move(paramBuffer));
 }
@@ -1917,11 +2488,21 @@ CallCapture CaptureTexSubImage2D(const State &glState,
     paramBuffer.addEnumParam("format", GLenumGroup::PixelFormat, ParamType::TGLenum, format);
     paramBuffer.addEnumParam("type", GLenumGroup::PixelType, ParamType::TGLenum, type);
 
-    ParamCapture pixelsParam("pixels", ParamType::TvoidConstPointer);
-    InitParamValue(ParamType::TvoidConstPointer, pixels, &pixelsParam.value);
-    CaptureTexSubImage2D_pixels(glState, isCallValid, targetPacked, level, xoffset, yoffset, width,
-                                height, format, type, pixels, &pixelsParam);
-    paramBuffer.addParam(std::move(pixelsParam));
+    if (isCallValid)
+    {
+        ParamCapture pixelsParam("pixels", ParamType::TvoidConstPointer);
+        InitParamValue(ParamType::TvoidConstPointer, pixels, &pixelsParam.value);
+        CaptureTexSubImage2D_pixels(glState, isCallValid, targetPacked, level, xoffset, yoffset,
+                                    width, height, format, type, pixels, &pixelsParam);
+        paramBuffer.addParam(std::move(pixelsParam));
+    }
+    else
+    {
+        ParamCapture pixelsParam("pixels", ParamType::TvoidConstPointer);
+        InitParamValue(ParamType::TvoidConstPointer, static_cast<const void *>(nullptr),
+                       &pixelsParam.value);
+        paramBuffer.addParam(std::move(pixelsParam));
+    }
 
     return CallCapture(gl::EntryPoint::TexSubImage2D, std::move(paramBuffer));
 }
@@ -1950,10 +2531,20 @@ CallCapture CaptureUniform1fv(const State &glState,
     paramBuffer.addValueParam("locationPacked", ParamType::TUniformLocation, locationPacked);
     paramBuffer.addValueParam("count", ParamType::TGLsizei, count);
 
-    ParamCapture valueParam("value", ParamType::TGLfloatConstPointer);
-    InitParamValue(ParamType::TGLfloatConstPointer, value, &valueParam.value);
-    CaptureUniform1fv_value(glState, isCallValid, locationPacked, count, value, &valueParam);
-    paramBuffer.addParam(std::move(valueParam));
+    if (isCallValid)
+    {
+        ParamCapture valueParam("value", ParamType::TGLfloatConstPointer);
+        InitParamValue(ParamType::TGLfloatConstPointer, value, &valueParam.value);
+        CaptureUniform1fv_value(glState, isCallValid, locationPacked, count, value, &valueParam);
+        paramBuffer.addParam(std::move(valueParam));
+    }
+    else
+    {
+        ParamCapture valueParam("value", ParamType::TGLfloatConstPointer);
+        InitParamValue(ParamType::TGLfloatConstPointer, static_cast<const GLfloat *>(nullptr),
+                       &valueParam.value);
+        paramBuffer.addParam(std::move(valueParam));
+    }
 
     return CallCapture(gl::EntryPoint::Uniform1fv, std::move(paramBuffer));
 }
@@ -1982,10 +2573,20 @@ CallCapture CaptureUniform1iv(const State &glState,
     paramBuffer.addValueParam("locationPacked", ParamType::TUniformLocation, locationPacked);
     paramBuffer.addValueParam("count", ParamType::TGLsizei, count);
 
-    ParamCapture valueParam("value", ParamType::TGLintConstPointer);
-    InitParamValue(ParamType::TGLintConstPointer, value, &valueParam.value);
-    CaptureUniform1iv_value(glState, isCallValid, locationPacked, count, value, &valueParam);
-    paramBuffer.addParam(std::move(valueParam));
+    if (isCallValid)
+    {
+        ParamCapture valueParam("value", ParamType::TGLintConstPointer);
+        InitParamValue(ParamType::TGLintConstPointer, value, &valueParam.value);
+        CaptureUniform1iv_value(glState, isCallValid, locationPacked, count, value, &valueParam);
+        paramBuffer.addParam(std::move(valueParam));
+    }
+    else
+    {
+        ParamCapture valueParam("value", ParamType::TGLintConstPointer);
+        InitParamValue(ParamType::TGLintConstPointer, static_cast<const GLint *>(nullptr),
+                       &valueParam.value);
+        paramBuffer.addParam(std::move(valueParam));
+    }
 
     return CallCapture(gl::EntryPoint::Uniform1iv, std::move(paramBuffer));
 }
@@ -2016,10 +2617,20 @@ CallCapture CaptureUniform2fv(const State &glState,
     paramBuffer.addValueParam("locationPacked", ParamType::TUniformLocation, locationPacked);
     paramBuffer.addValueParam("count", ParamType::TGLsizei, count);
 
-    ParamCapture valueParam("value", ParamType::TGLfloatConstPointer);
-    InitParamValue(ParamType::TGLfloatConstPointer, value, &valueParam.value);
-    CaptureUniform2fv_value(glState, isCallValid, locationPacked, count, value, &valueParam);
-    paramBuffer.addParam(std::move(valueParam));
+    if (isCallValid)
+    {
+        ParamCapture valueParam("value", ParamType::TGLfloatConstPointer);
+        InitParamValue(ParamType::TGLfloatConstPointer, value, &valueParam.value);
+        CaptureUniform2fv_value(glState, isCallValid, locationPacked, count, value, &valueParam);
+        paramBuffer.addParam(std::move(valueParam));
+    }
+    else
+    {
+        ParamCapture valueParam("value", ParamType::TGLfloatConstPointer);
+        InitParamValue(ParamType::TGLfloatConstPointer, static_cast<const GLfloat *>(nullptr),
+                       &valueParam.value);
+        paramBuffer.addParam(std::move(valueParam));
+    }
 
     return CallCapture(gl::EntryPoint::Uniform2fv, std::move(paramBuffer));
 }
@@ -2050,10 +2661,20 @@ CallCapture CaptureUniform2iv(const State &glState,
     paramBuffer.addValueParam("locationPacked", ParamType::TUniformLocation, locationPacked);
     paramBuffer.addValueParam("count", ParamType::TGLsizei, count);
 
-    ParamCapture valueParam("value", ParamType::TGLintConstPointer);
-    InitParamValue(ParamType::TGLintConstPointer, value, &valueParam.value);
-    CaptureUniform2iv_value(glState, isCallValid, locationPacked, count, value, &valueParam);
-    paramBuffer.addParam(std::move(valueParam));
+    if (isCallValid)
+    {
+        ParamCapture valueParam("value", ParamType::TGLintConstPointer);
+        InitParamValue(ParamType::TGLintConstPointer, value, &valueParam.value);
+        CaptureUniform2iv_value(glState, isCallValid, locationPacked, count, value, &valueParam);
+        paramBuffer.addParam(std::move(valueParam));
+    }
+    else
+    {
+        ParamCapture valueParam("value", ParamType::TGLintConstPointer);
+        InitParamValue(ParamType::TGLintConstPointer, static_cast<const GLint *>(nullptr),
+                       &valueParam.value);
+        paramBuffer.addParam(std::move(valueParam));
+    }
 
     return CallCapture(gl::EntryPoint::Uniform2iv, std::move(paramBuffer));
 }
@@ -2086,10 +2707,20 @@ CallCapture CaptureUniform3fv(const State &glState,
     paramBuffer.addValueParam("locationPacked", ParamType::TUniformLocation, locationPacked);
     paramBuffer.addValueParam("count", ParamType::TGLsizei, count);
 
-    ParamCapture valueParam("value", ParamType::TGLfloatConstPointer);
-    InitParamValue(ParamType::TGLfloatConstPointer, value, &valueParam.value);
-    CaptureUniform3fv_value(glState, isCallValid, locationPacked, count, value, &valueParam);
-    paramBuffer.addParam(std::move(valueParam));
+    if (isCallValid)
+    {
+        ParamCapture valueParam("value", ParamType::TGLfloatConstPointer);
+        InitParamValue(ParamType::TGLfloatConstPointer, value, &valueParam.value);
+        CaptureUniform3fv_value(glState, isCallValid, locationPacked, count, value, &valueParam);
+        paramBuffer.addParam(std::move(valueParam));
+    }
+    else
+    {
+        ParamCapture valueParam("value", ParamType::TGLfloatConstPointer);
+        InitParamValue(ParamType::TGLfloatConstPointer, static_cast<const GLfloat *>(nullptr),
+                       &valueParam.value);
+        paramBuffer.addParam(std::move(valueParam));
+    }
 
     return CallCapture(gl::EntryPoint::Uniform3fv, std::move(paramBuffer));
 }
@@ -2122,10 +2753,20 @@ CallCapture CaptureUniform3iv(const State &glState,
     paramBuffer.addValueParam("locationPacked", ParamType::TUniformLocation, locationPacked);
     paramBuffer.addValueParam("count", ParamType::TGLsizei, count);
 
-    ParamCapture valueParam("value", ParamType::TGLintConstPointer);
-    InitParamValue(ParamType::TGLintConstPointer, value, &valueParam.value);
-    CaptureUniform3iv_value(glState, isCallValid, locationPacked, count, value, &valueParam);
-    paramBuffer.addParam(std::move(valueParam));
+    if (isCallValid)
+    {
+        ParamCapture valueParam("value", ParamType::TGLintConstPointer);
+        InitParamValue(ParamType::TGLintConstPointer, value, &valueParam.value);
+        CaptureUniform3iv_value(glState, isCallValid, locationPacked, count, value, &valueParam);
+        paramBuffer.addParam(std::move(valueParam));
+    }
+    else
+    {
+        ParamCapture valueParam("value", ParamType::TGLintConstPointer);
+        InitParamValue(ParamType::TGLintConstPointer, static_cast<const GLint *>(nullptr),
+                       &valueParam.value);
+        paramBuffer.addParam(std::move(valueParam));
+    }
 
     return CallCapture(gl::EntryPoint::Uniform3iv, std::move(paramBuffer));
 }
@@ -2160,10 +2801,20 @@ CallCapture CaptureUniform4fv(const State &glState,
     paramBuffer.addValueParam("locationPacked", ParamType::TUniformLocation, locationPacked);
     paramBuffer.addValueParam("count", ParamType::TGLsizei, count);
 
-    ParamCapture valueParam("value", ParamType::TGLfloatConstPointer);
-    InitParamValue(ParamType::TGLfloatConstPointer, value, &valueParam.value);
-    CaptureUniform4fv_value(glState, isCallValid, locationPacked, count, value, &valueParam);
-    paramBuffer.addParam(std::move(valueParam));
+    if (isCallValid)
+    {
+        ParamCapture valueParam("value", ParamType::TGLfloatConstPointer);
+        InitParamValue(ParamType::TGLfloatConstPointer, value, &valueParam.value);
+        CaptureUniform4fv_value(glState, isCallValid, locationPacked, count, value, &valueParam);
+        paramBuffer.addParam(std::move(valueParam));
+    }
+    else
+    {
+        ParamCapture valueParam("value", ParamType::TGLfloatConstPointer);
+        InitParamValue(ParamType::TGLfloatConstPointer, static_cast<const GLfloat *>(nullptr),
+                       &valueParam.value);
+        paramBuffer.addParam(std::move(valueParam));
+    }
 
     return CallCapture(gl::EntryPoint::Uniform4fv, std::move(paramBuffer));
 }
@@ -2198,10 +2849,20 @@ CallCapture CaptureUniform4iv(const State &glState,
     paramBuffer.addValueParam("locationPacked", ParamType::TUniformLocation, locationPacked);
     paramBuffer.addValueParam("count", ParamType::TGLsizei, count);
 
-    ParamCapture valueParam("value", ParamType::TGLintConstPointer);
-    InitParamValue(ParamType::TGLintConstPointer, value, &valueParam.value);
-    CaptureUniform4iv_value(glState, isCallValid, locationPacked, count, value, &valueParam);
-    paramBuffer.addParam(std::move(valueParam));
+    if (isCallValid)
+    {
+        ParamCapture valueParam("value", ParamType::TGLintConstPointer);
+        InitParamValue(ParamType::TGLintConstPointer, value, &valueParam.value);
+        CaptureUniform4iv_value(glState, isCallValid, locationPacked, count, value, &valueParam);
+        paramBuffer.addParam(std::move(valueParam));
+    }
+    else
+    {
+        ParamCapture valueParam("value", ParamType::TGLintConstPointer);
+        InitParamValue(ParamType::TGLintConstPointer, static_cast<const GLint *>(nullptr),
+                       &valueParam.value);
+        paramBuffer.addParam(std::move(valueParam));
+    }
 
     return CallCapture(gl::EntryPoint::Uniform4iv, std::move(paramBuffer));
 }
@@ -2219,11 +2880,21 @@ CallCapture CaptureUniformMatrix2fv(const State &glState,
     paramBuffer.addValueParam("count", ParamType::TGLsizei, count);
     paramBuffer.addValueParam("transpose", ParamType::TGLboolean, transpose);
 
-    ParamCapture valueParam("value", ParamType::TGLfloatConstPointer);
-    InitParamValue(ParamType::TGLfloatConstPointer, value, &valueParam.value);
-    CaptureUniformMatrix2fv_value(glState, isCallValid, locationPacked, count, transpose, value,
-                                  &valueParam);
-    paramBuffer.addParam(std::move(valueParam));
+    if (isCallValid)
+    {
+        ParamCapture valueParam("value", ParamType::TGLfloatConstPointer);
+        InitParamValue(ParamType::TGLfloatConstPointer, value, &valueParam.value);
+        CaptureUniformMatrix2fv_value(glState, isCallValid, locationPacked, count, transpose, value,
+                                      &valueParam);
+        paramBuffer.addParam(std::move(valueParam));
+    }
+    else
+    {
+        ParamCapture valueParam("value", ParamType::TGLfloatConstPointer);
+        InitParamValue(ParamType::TGLfloatConstPointer, static_cast<const GLfloat *>(nullptr),
+                       &valueParam.value);
+        paramBuffer.addParam(std::move(valueParam));
+    }
 
     return CallCapture(gl::EntryPoint::UniformMatrix2fv, std::move(paramBuffer));
 }
@@ -2241,11 +2912,21 @@ CallCapture CaptureUniformMatrix3fv(const State &glState,
     paramBuffer.addValueParam("count", ParamType::TGLsizei, count);
     paramBuffer.addValueParam("transpose", ParamType::TGLboolean, transpose);
 
-    ParamCapture valueParam("value", ParamType::TGLfloatConstPointer);
-    InitParamValue(ParamType::TGLfloatConstPointer, value, &valueParam.value);
-    CaptureUniformMatrix3fv_value(glState, isCallValid, locationPacked, count, transpose, value,
-                                  &valueParam);
-    paramBuffer.addParam(std::move(valueParam));
+    if (isCallValid)
+    {
+        ParamCapture valueParam("value", ParamType::TGLfloatConstPointer);
+        InitParamValue(ParamType::TGLfloatConstPointer, value, &valueParam.value);
+        CaptureUniformMatrix3fv_value(glState, isCallValid, locationPacked, count, transpose, value,
+                                      &valueParam);
+        paramBuffer.addParam(std::move(valueParam));
+    }
+    else
+    {
+        ParamCapture valueParam("value", ParamType::TGLfloatConstPointer);
+        InitParamValue(ParamType::TGLfloatConstPointer, static_cast<const GLfloat *>(nullptr),
+                       &valueParam.value);
+        paramBuffer.addParam(std::move(valueParam));
+    }
 
     return CallCapture(gl::EntryPoint::UniformMatrix3fv, std::move(paramBuffer));
 }
@@ -2263,11 +2944,21 @@ CallCapture CaptureUniformMatrix4fv(const State &glState,
     paramBuffer.addValueParam("count", ParamType::TGLsizei, count);
     paramBuffer.addValueParam("transpose", ParamType::TGLboolean, transpose);
 
-    ParamCapture valueParam("value", ParamType::TGLfloatConstPointer);
-    InitParamValue(ParamType::TGLfloatConstPointer, value, &valueParam.value);
-    CaptureUniformMatrix4fv_value(glState, isCallValid, locationPacked, count, transpose, value,
-                                  &valueParam);
-    paramBuffer.addParam(std::move(valueParam));
+    if (isCallValid)
+    {
+        ParamCapture valueParam("value", ParamType::TGLfloatConstPointer);
+        InitParamValue(ParamType::TGLfloatConstPointer, value, &valueParam.value);
+        CaptureUniformMatrix4fv_value(glState, isCallValid, locationPacked, count, transpose, value,
+                                      &valueParam);
+        paramBuffer.addParam(std::move(valueParam));
+    }
+    else
+    {
+        ParamCapture valueParam("value", ParamType::TGLfloatConstPointer);
+        InitParamValue(ParamType::TGLfloatConstPointer, static_cast<const GLfloat *>(nullptr),
+                       &valueParam.value);
+        paramBuffer.addParam(std::move(valueParam));
+    }
 
     return CallCapture(gl::EntryPoint::UniformMatrix4fv, std::move(paramBuffer));
 }
@@ -2311,10 +3002,20 @@ CallCapture CaptureVertexAttrib1fv(const State &glState,
 
     paramBuffer.addValueParam("index", ParamType::TGLuint, index);
 
-    ParamCapture vParam("v", ParamType::TGLfloatConstPointer);
-    InitParamValue(ParamType::TGLfloatConstPointer, v, &vParam.value);
-    CaptureVertexAttrib1fv_v(glState, isCallValid, index, v, &vParam);
-    paramBuffer.addParam(std::move(vParam));
+    if (isCallValid)
+    {
+        ParamCapture vParam("v", ParamType::TGLfloatConstPointer);
+        InitParamValue(ParamType::TGLfloatConstPointer, v, &vParam.value);
+        CaptureVertexAttrib1fv_v(glState, isCallValid, index, v, &vParam);
+        paramBuffer.addParam(std::move(vParam));
+    }
+    else
+    {
+        ParamCapture vParam("v", ParamType::TGLfloatConstPointer);
+        InitParamValue(ParamType::TGLfloatConstPointer, static_cast<const GLfloat *>(nullptr),
+                       &vParam.value);
+        paramBuffer.addParam(std::move(vParam));
+    }
 
     return CallCapture(gl::EntryPoint::VertexAttrib1fv, std::move(paramBuffer));
 }
@@ -2343,10 +3044,20 @@ CallCapture CaptureVertexAttrib2fv(const State &glState,
 
     paramBuffer.addValueParam("index", ParamType::TGLuint, index);
 
-    ParamCapture vParam("v", ParamType::TGLfloatConstPointer);
-    InitParamValue(ParamType::TGLfloatConstPointer, v, &vParam.value);
-    CaptureVertexAttrib2fv_v(glState, isCallValid, index, v, &vParam);
-    paramBuffer.addParam(std::move(vParam));
+    if (isCallValid)
+    {
+        ParamCapture vParam("v", ParamType::TGLfloatConstPointer);
+        InitParamValue(ParamType::TGLfloatConstPointer, v, &vParam.value);
+        CaptureVertexAttrib2fv_v(glState, isCallValid, index, v, &vParam);
+        paramBuffer.addParam(std::move(vParam));
+    }
+    else
+    {
+        ParamCapture vParam("v", ParamType::TGLfloatConstPointer);
+        InitParamValue(ParamType::TGLfloatConstPointer, static_cast<const GLfloat *>(nullptr),
+                       &vParam.value);
+        paramBuffer.addParam(std::move(vParam));
+    }
 
     return CallCapture(gl::EntryPoint::VertexAttrib2fv, std::move(paramBuffer));
 }
@@ -2377,10 +3088,20 @@ CallCapture CaptureVertexAttrib3fv(const State &glState,
 
     paramBuffer.addValueParam("index", ParamType::TGLuint, index);
 
-    ParamCapture vParam("v", ParamType::TGLfloatConstPointer);
-    InitParamValue(ParamType::TGLfloatConstPointer, v, &vParam.value);
-    CaptureVertexAttrib3fv_v(glState, isCallValid, index, v, &vParam);
-    paramBuffer.addParam(std::move(vParam));
+    if (isCallValid)
+    {
+        ParamCapture vParam("v", ParamType::TGLfloatConstPointer);
+        InitParamValue(ParamType::TGLfloatConstPointer, v, &vParam.value);
+        CaptureVertexAttrib3fv_v(glState, isCallValid, index, v, &vParam);
+        paramBuffer.addParam(std::move(vParam));
+    }
+    else
+    {
+        ParamCapture vParam("v", ParamType::TGLfloatConstPointer);
+        InitParamValue(ParamType::TGLfloatConstPointer, static_cast<const GLfloat *>(nullptr),
+                       &vParam.value);
+        paramBuffer.addParam(std::move(vParam));
+    }
 
     return CallCapture(gl::EntryPoint::VertexAttrib3fv, std::move(paramBuffer));
 }
@@ -2413,10 +3134,20 @@ CallCapture CaptureVertexAttrib4fv(const State &glState,
 
     paramBuffer.addValueParam("index", ParamType::TGLuint, index);
 
-    ParamCapture vParam("v", ParamType::TGLfloatConstPointer);
-    InitParamValue(ParamType::TGLfloatConstPointer, v, &vParam.value);
-    CaptureVertexAttrib4fv_v(glState, isCallValid, index, v, &vParam);
-    paramBuffer.addParam(std::move(vParam));
+    if (isCallValid)
+    {
+        ParamCapture vParam("v", ParamType::TGLfloatConstPointer);
+        InitParamValue(ParamType::TGLfloatConstPointer, v, &vParam.value);
+        CaptureVertexAttrib4fv_v(glState, isCallValid, index, v, &vParam);
+        paramBuffer.addParam(std::move(vParam));
+    }
+    else
+    {
+        ParamCapture vParam("v", ParamType::TGLfloatConstPointer);
+        InitParamValue(ParamType::TGLfloatConstPointer, static_cast<const GLfloat *>(nullptr),
+                       &vParam.value);
+        paramBuffer.addParam(std::move(vParam));
+    }
 
     return CallCapture(gl::EntryPoint::VertexAttrib4fv, std::move(paramBuffer));
 }
@@ -2438,11 +3169,21 @@ CallCapture CaptureVertexAttribPointer(const State &glState,
     paramBuffer.addValueParam("normalized", ParamType::TGLboolean, normalized);
     paramBuffer.addValueParam("stride", ParamType::TGLsizei, stride);
 
-    ParamCapture pointerParam("pointer", ParamType::TvoidConstPointer);
-    InitParamValue(ParamType::TvoidConstPointer, pointer, &pointerParam.value);
-    CaptureVertexAttribPointer_pointer(glState, isCallValid, index, size, typePacked, normalized,
-                                       stride, pointer, &pointerParam);
-    paramBuffer.addParam(std::move(pointerParam));
+    if (isCallValid)
+    {
+        ParamCapture pointerParam("pointer", ParamType::TvoidConstPointer);
+        InitParamValue(ParamType::TvoidConstPointer, pointer, &pointerParam.value);
+        CaptureVertexAttribPointer_pointer(glState, isCallValid, index, size, typePacked,
+                                           normalized, stride, pointer, &pointerParam);
+        paramBuffer.addParam(std::move(pointerParam));
+    }
+    else
+    {
+        ParamCapture pointerParam("pointer", ParamType::TvoidConstPointer);
+        InitParamValue(ParamType::TvoidConstPointer, static_cast<const void *>(nullptr),
+                       &pointerParam.value);
+        paramBuffer.addParam(std::move(pointerParam));
+    }
 
     return CallCapture(gl::EntryPoint::VertexAttribPointer, std::move(paramBuffer));
 }

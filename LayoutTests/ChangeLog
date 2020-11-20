@@ -1,3 +1,12 @@
+2020-11-20  James Darpinian  <jdarpinian@chromium.org>
+
+        Update ANGLE 2020-11-12
+        https://bugs.webkit.org/show_bug.cgi?id=218877
+
+        Reviewed by Kenneth Russell.
+
+        * webgl/2.0.0/conformance2/textures/misc/tex-mipmap-levels-expected.txt: Test fixed.
+
 2020-11-20  Chris Dumez  <cdumez@apple.com>
 
         AudioWorkletProcessor::process() may get called on non-audio worklet thread and crash

@@ -89,11 +89,6 @@ std::string UniformsParams::story() const
 
     strstr << RenderTestParams::story();
 
-    if (eglParameters.deviceType == EGL_PLATFORM_ANGLE_DEVICE_TYPE_NULL_ANGLE)
-    {
-        strstr << "_null";
-    }
-
     if (dataType == DataType::VEC4)
     {
         strstr << "_" << (numVertexUniforms + numFragmentUniforms) << "_vec4";

@@ -219,6 +219,57 @@ inline void CopyTo32FVertexData(const uint8_t *input, size_t stride, size_t coun
     }
 }
 
+template <size_t inputComponentCount, size_t outputComponentCount>
+void Copy32FTo16FVertexData(const uint8_t *input, size_t stride, size_t count, uint8_t *output)
+{
+    const unsigned short kZero = gl::float32ToFloat16(0.0f);
+    const unsigned short kOne  = gl::float32ToFloat16(1.0f);
+
+    for (size_t i = 0; i < count; i++)
+    {
+        const float *offsetInput = reinterpret_cast<const float *>(input + (stride * i));
+        unsigned short *offsetOutput =
+            reinterpret_cast<unsigned short *>(output) + i * outputComponentCount;
+
+        for (size_t j = 0; j < inputComponentCount; j++)
+        {
+            offsetOutput[j] = gl::float32ToFloat16(offsetInput[j]);
+        }
+
+        for (size_t j = inputComponentCount; j < outputComponentCount; j++)
+        {
+            offsetOutput[j] = (j == 3) ? kOne : kZero;
+        }
+    }
+}
+
+inline void CopyXYZ32FToXYZ9E5(const uint8_t *input, size_t stride, size_t count, uint8_t *output)
+{
+    for (size_t i = 0; i < count; i++)
+    {
+        const float *offsetInput   = reinterpret_cast<const float *>(input + (stride * i));
+        unsigned int *offsetOutput = reinterpret_cast<unsigned int *>(output) + i;
+
+        *offsetOutput = gl::convertRGBFloatsTo999E5(offsetInput[0], offsetInput[1], offsetInput[2]);
+    }
+}
+
+inline void CopyXYZ32FToX11Y11B10F(const uint8_t *input,
+                                   size_t stride,
+                                   size_t count,
+                                   uint8_t *output)
+{
+    for (size_t i = 0; i < count; i++)
+    {
+        const float *offsetInput   = reinterpret_cast<const float *>(input + (stride * i));
+        unsigned int *offsetOutput = reinterpret_cast<unsigned int *>(output) + i;
+
+        *offsetOutput = gl::float32ToFloat11(offsetInput[0]) << 0 |
+                        gl::float32ToFloat11(offsetInput[1]) << 11 |
+                        gl::float32ToFloat10(offsetInput[2]) << 22;
+    }
+}
+
 namespace priv
 {
 

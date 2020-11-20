@@ -35,6 +35,12 @@ class BufferImpl : public angle::Subject
     ~BufferImpl() override {}
     virtual void destroy(const gl::Context *context) {}
 
+    virtual angle::Result setDataWithUsageFlags(const gl::Context *context,
+                                                gl::BufferBinding target,
+                                                const void *data,
+                                                size_t size,
+                                                gl::BufferUsage usage,
+                                                GLbitfield flags);
     virtual angle::Result setData(const gl::Context *context,
                                   gl::BufferBinding target,
                                   const void *data,

@@ -52,10 +52,10 @@ layout(set = 0, binding = 0, DST_FORMAT) uniform coherent image2D dst[DST_COUNT]
 layout(set = 0, binding = 1) uniform sampler2D src;
 
 layout(push_constant) uniform PushConstants {
-    // Number of levels to generate mipmaps for.
-    uint levelCount;
     // Inverse extents of src image for uv calculation.
     vec2 invSrcExtent;
+    // Number of levels to generate mipmaps for.
+    uint levelCount;
 } params;
 
 #define A_GPU

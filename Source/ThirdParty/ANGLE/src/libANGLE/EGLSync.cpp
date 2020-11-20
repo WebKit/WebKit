@@ -12,19 +12,34 @@
 
 #include "common/utilities.h"
 #include "libANGLE/renderer/EGLImplFactory.h"
+#include "libANGLE/renderer/EGLReusableSync.h"
 #include "libANGLE/renderer/EGLSyncImpl.h"
 
 namespace egl
 {
 
 Sync::Sync(rx::EGLImplFactory *factory, EGLenum type, const AttributeMap &attribs)
-    : mFence(factory->createSync(attribs)),
-      mLabel(nullptr),
+    : mLabel(nullptr),
       mType(type),
       mCondition(EGL_SYNC_PRIOR_COMMANDS_COMPLETE_KHR),
       mNativeFenceFD(
           attribs.getAsInt(EGL_SYNC_NATIVE_FENCE_FD_ANDROID, EGL_NO_NATIVE_FENCE_FD_ANDROID))
 {
+    switch (type)
+    {
+        case EGL_SYNC_FENCE:
+        case EGL_SYNC_NATIVE_FENCE_ANDROID:
+            mFence = std::unique_ptr<rx::EGLSyncImpl>(factory->createSync(attribs));
+            break;
+
+        case EGL_SYNC_REUSABLE_KHR:
+            mFence = std::unique_ptr<rx::EGLSyncImpl>(new rx::ReusableSync(attribs));
+            break;
+
+        default:
+            UNREACHABLE();
+    }
+
     // Per extension spec: Signaling Condition.
     // "If the EGL_SYNC_NATIVE_FENCE_FD_ANDROID attribute is not
     // EGL_NO_NATIVE_FENCE_FD_ANDROID then the EGL_SYNC_CONDITION_KHR attribute
@@ -73,6 +88,11 @@ Error Sync::clientWait(const Display *display,
 Error Sync::serverWait(const Display *display, const gl::Context *context, EGLint flags)
 {
     return mFence->serverWait(display, context, flags);
+}
+
+Error Sync::signal(const Display *display, const gl::Context *context, EGLint mode)
+{
+    return mFence->signal(display, context, mode);
 }
 
 Error Sync::getStatus(const Display *display, EGLint *outStatus) const

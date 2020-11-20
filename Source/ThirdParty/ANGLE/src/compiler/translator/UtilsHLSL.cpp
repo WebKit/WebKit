@@ -1009,7 +1009,7 @@ TString StructNameString(const TStructure &structure)
 TString QualifiedStructNameString(const TStructure &structure,
                                   bool useHLSLRowMajorPacking,
                                   bool useStd140Packing,
-                                  bool forcePackingEnd)
+                                  bool forcePadding)
 {
     if (structure.symbolType() == SymbolType::Empty)
     {
@@ -1031,9 +1031,9 @@ TString QualifiedStructNameString(const TStructure &structure,
         prefix += "rm_";
     }
 
-    if (forcePackingEnd)
+    if (forcePadding)
     {
-        prefix += "pe_";
+        prefix += "fp_";
     }
 
     return prefix + StructNameString(structure);
@@ -1063,6 +1063,8 @@ const char *InterpolationString(TQualifier qualifier)
             return "nointerpolation";
         case EvqCentroidOut:
             return "centroid";
+        case EvqSampleIn:
+            return "sample";
         default:
             UNREACHABLE();
     }
@@ -1083,6 +1085,8 @@ const char *QualifierString(TQualifier qualifier)
             return "inout";
         case EvqConstReadOnly:
             return "const";
+        case EvqSampleOut:
+            return "sample";
         default:
             UNREACHABLE();
     }

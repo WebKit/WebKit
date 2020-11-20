@@ -71,8 +71,8 @@
                      GLsizei bufSize, void *data);                                                 \
     void samplerParameterIiv(SamplerID samplerPacked, GLenum pname, const GLint *param);           \
     void samplerParameterIuiv(SamplerID samplerPacked, GLenum pname, const GLuint *param);         \
-    void texBuffer(GLenum target, GLenum internalformat, BufferID bufferPacked);                   \
-    void texBufferRange(GLenum target, GLenum internalformat, BufferID bufferPacked,               \
+    void texBuffer(TextureType targetPacked, GLenum internalformat, BufferID bufferPacked);        \
+    void texBufferRange(TextureType targetPacked, GLenum internalformat, BufferID bufferPacked,    \
                         GLintptr offset, GLsizeiptr size);                                         \
     void texParameterIiv(TextureType targetPacked, GLenum pname, const GLint *params);             \
     void texParameterIuiv(TextureType targetPacked, GLenum pname, const GLuint *params);           \

@@ -43,7 +43,8 @@ class DisplayGL : public DisplayImpl
 
     ShareGroupImpl *createShareGroup() override;
 
-    egl::Error makeCurrent(egl::Surface *drawSurface,
+    egl::Error makeCurrent(egl::Display *display,
+                           egl::Surface *drawSurface,
                            egl::Surface *readSurface,
                            gl::Context *context) override;
 

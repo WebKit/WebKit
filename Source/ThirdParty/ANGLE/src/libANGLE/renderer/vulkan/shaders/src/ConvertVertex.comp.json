@@ -18,6 +18,7 @@
         [ "SnormToFloat", "-Od" ],
         [ "UnormToFloat", "-Od" ],
         [ "FixedToFloat", "-Od" ],
-        [ "FloatToFloat", "-Od" ]
+        [ "FloatToFloat", "-Od" ],
+        [ "FloatToHalf", "-Od" ]
     ]
 }

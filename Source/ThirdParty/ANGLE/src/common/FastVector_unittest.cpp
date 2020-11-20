@@ -233,4 +233,133 @@ TEST(FastVector, NonCopyable)
     EXPECT_EQ(1u, copy.size());
     EXPECT_EQ(3, copy[0].x);
 }
+
+// Basic functionality for FastUnorderedMap
+TEST(FastUnorderedMap, BasicUsage)
+{
+    FastUnorderedMap<int, bool, 3> testMap;
+    EXPECT_TRUE(testMap.empty());
+    EXPECT_EQ(testMap.size(), 0u);
+
+    testMap.insert(5, true);
+    EXPECT_TRUE(testMap.contains(5));
+    EXPECT_EQ(testMap.size(), 1u);
+
+    bool value = false;
+    EXPECT_TRUE(testMap.get(5, &value));
+    EXPECT_TRUE(value);
+    EXPECT_FALSE(testMap.get(6, &value));
+
+    EXPECT_FALSE(testMap.empty());
+    testMap.clear();
+    EXPECT_TRUE(testMap.empty());
+    EXPECT_EQ(testMap.size(), 0u);
+
+    for (int i = 0; i < 10; ++i)
+    {
+        testMap.insert(i, false);
+    }
+
+    EXPECT_FALSE(testMap.empty());
+    EXPECT_EQ(testMap.size(), 10u);
+
+    for (int i = 0; i < 10; ++i)
+    {
+        EXPECT_TRUE(testMap.contains(i));
+        EXPECT_TRUE(testMap.get(i, &value));
+        EXPECT_FALSE(value);
+    }
+}
+
+// Basic functionality for FastUnorderedSet
+TEST(FastUnorderedSet, BasicUsage)
+{
+    FastUnorderedSet<int, 3> testMap;
+    EXPECT_TRUE(testMap.empty());
+
+    testMap.insert(5);
+    EXPECT_TRUE(testMap.contains(5));
+    EXPECT_FALSE(testMap.contains(6));
+    EXPECT_FALSE(testMap.empty());
+
+    testMap.clear();
+    EXPECT_TRUE(testMap.empty());
+
+    for (int i = 0; i < 10; ++i)
+    {
+        testMap.insert(i);
+    }
+
+    for (int i = 0; i < 10; ++i)
+    {
+        EXPECT_TRUE(testMap.contains(i));
+    }
+}
+
+// Basic functionality for FastIntegerSet
+TEST(FastIntegerSet, BasicUsage)
+{
+    FastIntegerSet testMap;
+    EXPECT_TRUE(testMap.empty());
+
+    testMap.insert(5);
+    EXPECT_TRUE(testMap.contains(5));
+    EXPECT_FALSE(testMap.contains(6));
+    EXPECT_FALSE(testMap.empty());
+
+    testMap.clear();
+    EXPECT_TRUE(testMap.empty());
+
+    for (int i = 0; i < 10; ++i)
+    {
+        testMap.insert(i);
+    }
+
+    for (int i = 0; i < 10; ++i)
+    {
+        EXPECT_TRUE(testMap.contains(i));
+    }
+}
+
+// Basic functionality for FastIntegerMap
+TEST(FastIntegerMap, BasicUsage)
+{
+    using KeyValuePair             = std::pair<int, std::string>;
+    std::set<KeyValuePair> entries = {KeyValuePair(17, "testing"), KeyValuePair(63, "fast"),
+                                      KeyValuePair(97, "integer"), KeyValuePair(256, "map")};
+
+    FastIntegerMap<std::string> testMap;
+    EXPECT_TRUE(testMap.empty());
+
+    std::string str;
+    testMap.insert(entries.begin()->first, entries.begin()->second);
+    EXPECT_TRUE(testMap.contains(entries.begin()->first));
+    EXPECT_FALSE(testMap.contains(entries.rbegin()->first));
+    EXPECT_FALSE(testMap.empty());
+    EXPECT_EQ(testMap.size(), 1u);
+    EXPECT_TRUE(testMap.get(entries.begin()->first, &str));
+    EXPECT_EQ(entries.begin()->second, str);
+    EXPECT_FALSE(testMap.get(1, &str));
+
+    testMap.clear();
+    EXPECT_TRUE(testMap.empty());
+    EXPECT_EQ(testMap.size(), 0u);
+
+    for (KeyValuePair entry : entries)
+    {
+        testMap.insert(entry.first, entry.second);
+    }
+    EXPECT_EQ(testMap.size(), 4u);
+
+    for (KeyValuePair entry : entries)
+    {
+        std::string str;
+        EXPECT_TRUE(testMap.get(entry.first, &str));
+        EXPECT_EQ(entry.second, str);
+    }
+
+    testMap.clear();
+    EXPECT_TRUE(testMap.empty());
+    EXPECT_EQ(testMap.size(), 0u);
+}
 }  // namespace angle

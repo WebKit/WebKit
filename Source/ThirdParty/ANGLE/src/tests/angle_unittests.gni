@@ -65,6 +65,7 @@ angle_unittests_sources = [
   "compiler_tests/EXT_blend_func_extended_test.cpp",
   "compiler_tests/EXT_frag_depth_test.cpp",
   "compiler_tests/EXT_shader_texture_lod_test.cpp",
+  "compiler_tests/EXT_shadow_samplers_test.cpp",
   "compiler_tests/EmulateGLBaseVertexBaseInstance_test.cpp",
   "compiler_tests/EmulateGLDrawID_test.cpp",
   "compiler_tests/EmulateGLFragColorBroadcast_test.cpp",

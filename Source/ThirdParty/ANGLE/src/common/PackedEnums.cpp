@@ -42,6 +42,8 @@ TextureType TextureTargetToType(TextureTarget target)
             return TextureType::_3D;
         case TextureTarget::VideoImage:
             return TextureType::VideoImage;
+        case TextureTarget::Buffer:
+            return TextureType::Buffer;
         case TextureTarget::InvalidEnum:
             return TextureType::InvalidEnum;
         default:
@@ -77,6 +79,8 @@ TextureTarget NonCubeTextureTypeToTarget(TextureType type)
             return TextureTarget::CubeMapArray;
         case TextureType::VideoImage:
             return TextureTarget::VideoImage;
+        case TextureType::Buffer:
+            return TextureTarget::Buffer;
         default:
             UNREACHABLE();
             return TextureTarget::InvalidEnum;
@@ -163,6 +167,11 @@ TextureType SamplerTypeToTextureType(GLenum samplerType)
         case GL_UNSIGNED_INT_SAMPLER_2D_MULTISAMPLE_ARRAY:
             return TextureType::_2DMultisampleArray;
 
+        case GL_SAMPLER_BUFFER:
+        case GL_INT_SAMPLER_BUFFER:
+        case GL_UNSIGNED_INT_SAMPLER_BUFFER:
+            return TextureType::Buffer;
+
         case GL_SAMPLER_2D_RECT_ANGLE:
             return TextureType::Rectangle;
 
@@ -194,6 +203,19 @@ bool IsArrayTextureType(TextureType type)
         case TextureType::_2DArray:
         case TextureType::_2DMultisampleArray:
         case TextureType::CubeMapArray:
+            return true;
+        default:
+            return false;
+    }
+}
+
+bool IsStaticBufferUsage(BufferUsage useage)
+{
+    switch (useage)
+    {
+        case BufferUsage::StaticCopy:
+        case BufferUsage::StaticDraw:
+        case BufferUsage::StaticRead:
             return true;
         default:
             return false;
@@ -377,11 +399,14 @@ std::ostream &operator<<(std::ostream &os, VertexAttribType value)
         case VertexAttribType::HalfFloat:
             os << "GL_HALF_FLOAT";
             break;
+        case VertexAttribType::HalfFloatOES:
+            os << "GL_HALF_FLOAT_OES";
+            break;
         case VertexAttribType::Int:
             os << "GL_INT";
             break;
         case VertexAttribType::Int2101010:
-            os << "GL_INT_10_10_10_2";
+            os << "GL_INT_2_10_10_10_REV";
             break;
         case VertexAttribType::Int1010102:
             os << "GL_INT_10_10_10_2_OES";

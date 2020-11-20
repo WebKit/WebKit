@@ -312,8 +312,8 @@ class RobustResourceInitTestES31 : public RobustResourceInitTest
 // it only works on the implemented renderers
 TEST_P(RobustResourceInitTest, ExpectedRendererSupport)
 {
-    bool shouldHaveSupport =
-        IsD3D11() || IsD3D11_FL93() || IsD3D9() || IsOpenGL() || IsOpenGLES() || IsVulkan();
+    bool shouldHaveSupport = IsD3D11() || IsD3D11_FL93() || IsD3D9() || IsOpenGL() ||
+                             IsOpenGLES() || IsVulkan() || IsMetal();
     EXPECT_EQ(shouldHaveSupport, hasGLExtension());
     EXPECT_EQ(shouldHaveSupport, hasEGLExtension());
     EXPECT_EQ(shouldHaveSupport, hasRobustSurfaceInit());
@@ -331,6 +331,30 @@ TEST_P(RobustResourceInitTest, Queries)
 
         EXPECT_GL_TRUE(glIsEnabled(GL_ROBUST_RESOURCE_INITIALIZATION_ANGLE));
         EXPECT_GL_NO_ERROR();
+
+        GLTexture texture;
+        glBindTexture(GL_TEXTURE_2D, texture);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 2, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+
+        // Can't verify the init state after glTexImage2D, the implementation is free to initialize
+        // any time before the resource is read.
+
+        {
+            // Force to uninitialized
+            glTexParameteri(GL_TEXTURE_2D, GL_RESOURCE_INITIALIZED_ANGLE, GL_FALSE);
+
+            GLint initState = 0;
+            glGetTexParameteriv(GL_TEXTURE_2D, GL_RESOURCE_INITIALIZED_ANGLE, &initState);
+            EXPECT_GL_FALSE(initState);
+        }
+        {
+            // Force to initialized
+            glTexParameteri(GL_TEXTURE_2D, GL_RESOURCE_INITIALIZED_ANGLE, GL_TRUE);
+
+            GLint initState = 0;
+            glGetTexParameteriv(GL_TEXTURE_2D, GL_RESOURCE_INITIALIZED_ANGLE, &initState);
+            EXPECT_GL_TRUE(initState);
+        }
     }
     else
     {
@@ -384,6 +408,11 @@ TEST_P(RobustResourceInitTest, BufferData)
     glReadPixels(0, 0, getWindowWidth(), getWindowHeight(), GL_RGBA, GL_UNSIGNED_BYTE,
                  actual.data());
     EXPECT_EQ(expected, actual);
+
+    GLint initState = 0;
+    glBindBuffer(GL_ARRAY_BUFFER, buffer);
+    glGetBufferParameteriv(GL_ARRAY_BUFFER, GL_RESOURCE_INITIALIZED_ANGLE, &initState);
+    EXPECT_GL_TRUE(initState);
 }
 
 // Regression test for passing a zero size init buffer with the extension.
@@ -973,6 +1002,11 @@ TEST_P(RobustResourceInitTest, Texture)
     glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
     checkFramebufferNonZeroPixels(0, 0, 0, 0, GLColor::black);
+
+    GLint initState = 0;
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glGetTexParameteriv(GL_TEXTURE_2D, GL_RESOURCE_INITIALIZED_ANGLE, &initState);
+    EXPECT_GL_TRUE(initState);
 }
 
 // Test that uploading texture data with an unpack state set correctly initializes the texture and
@@ -1039,6 +1073,20 @@ void RobustResourceInitTestES3::testIntegerTextureInit(const char *samplerType,
 
     // Blit from the texture to the framebuffer.
     drawQuad(program, "position", 0.5f);
+
+    // Verify both textures have been initialized
+    {
+        GLint initState = 0;
+        glBindTexture(GL_TEXTURE_2D, framebufferTexture);
+        glGetTexParameteriv(GL_TEXTURE_2D, GL_RESOURCE_INITIALIZED_ANGLE, &initState);
+        EXPECT_GL_TRUE(initState);
+    }
+    {
+        GLint initState = 0;
+        glBindTexture(GL_TEXTURE_2D, texture);
+        glGetTexParameteriv(GL_TEXTURE_2D, GL_RESOURCE_INITIALIZED_ANGLE, &initState);
+        EXPECT_GL_TRUE(initState);
+    }
 
     std::array<PixelT, kWidth * kHeight * 4> data;
     glReadPixels(0, 0, kWidth, kHeight, GL_RGBA_INTEGER, type, data.data());
@@ -1669,16 +1717,14 @@ void RobustResourceInitTest::copyTexSubImage2DCustomFBOTest(int offsetX, int off
 // Test CopyTexSubImage2D clipped to size of custom FBO, zero x/y source offset.
 TEST_P(RobustResourceInitTest, CopyTexSubImage2DCustomFBOZeroOffsets)
 {
-    // TODO(anglebug.com/4507): pass this test on the Metal backend.
-    ANGLE_SKIP_TEST_IF(IsMetal());
+    ANGLE_SKIP_TEST_IF(!hasGLExtension());
     copyTexSubImage2DCustomFBOTest(0, 0);
 }
 
 // Test CopyTexSubImage2D clipped to size of custom FBO, negative x/y source offset.
 TEST_P(RobustResourceInitTest, CopyTexSubImage2DCustomFBONegativeOffsets)
 {
-    // TODO(anglebug.com/4507): pass this test on the Metal backend.
-    ANGLE_SKIP_TEST_IF(IsMetal());
+    ANGLE_SKIP_TEST_IF(!hasGLExtension());
     copyTexSubImage2DCustomFBOTest(-8, -8);
 }
 
@@ -1782,6 +1828,10 @@ TEST_P(RobustResourceInitTestES3, CompressedSubImage)
     ANGLE_SKIP_TEST_IF(!hasGLExtension());
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_compression_dxt1"));
 
+    // http://anglebug.com/4929
+    // Metal doesn't support robust resource init with compressed textures yet.
+    ANGLE_SKIP_TEST_IF(IsMetal());
+
     constexpr int width     = 8;
     constexpr int height    = 8;
     constexpr int subX0     = 0;
@@ -1883,6 +1933,10 @@ TEST_P(RobustResourceInitTest, ClearWithScissor)
     EXPECT_GL_NO_ERROR();
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
     EXPECT_PIXEL_COLOR_EQ(kSize - 1, 0, GLColor::transparentBlack);
+
+    GLint initState = 0;
+    glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RESOURCE_INITIALIZED_ANGLE, &initState);
+    EXPECT_GL_TRUE(initState);
 }
 
 // Tests that surfaces are initialized when they are created
@@ -1908,21 +1962,33 @@ TEST_P(RobustResourceInitTest, SurfaceInitializedAfterSwap)
         GLColor::red,
         GLColor::yellow,
     }};
+
+    if (swapBehaviour != EGL_BUFFER_PRESERVED)
+    {
+        checkFramebufferNonZeroPixels(0, 0, 0, 0, GLColor::black);
+    }
+
+    glEnable(GL_SCISSOR_TEST);
+    glScissor(0, 0, 1, 1);
+
     for (size_t i = 0; i < clearColors.size(); i++)
     {
         if (swapBehaviour == EGL_BUFFER_PRESERVED && i > 0)
         {
             EXPECT_PIXEL_COLOR_EQ(0, 0, clearColors[i - 1]);
         }
-        else
-        {
-            checkFramebufferNonZeroPixels(0, 0, 0, 0, GLColor::black);
-        }
 
         angle::Vector4 clearColor = clearColors[i].toNormalizedVector();
         glClearColor(clearColor[0], clearColor[1], clearColor[2], clearColor[3]);
         glClear(GL_COLOR_BUFFER_BIT);
         EXPECT_GL_NO_ERROR();
+
+        if (swapBehaviour != EGL_BUFFER_PRESERVED)
+        {
+            // Only scissored area (0, 0, 1, 1) has clear color.
+            // The rest should be robust initialized.
+            checkFramebufferNonZeroPixels(0, 0, 1, 1, clearColors[i]);
+        }
 
         swapBuffers();
     }
@@ -2094,8 +2160,7 @@ TEST_P(RobustResourceInitTestES3, InitializeMultisampledDepthRenderbufferAfterCo
 // Corner case for robust resource init: CopyTexImage to a cube map.
 TEST_P(RobustResourceInitTest, CopyTexImageToOffsetCubeMap)
 {
-    // http://anglebug.com/4549
-    ANGLE_SKIP_TEST_IF(IsMetal());
+    ANGLE_SKIP_TEST_IF(!hasGLExtension());
 
     constexpr GLuint kSize = 2;
 
@@ -2141,6 +2206,95 @@ TEST_P(RobustResourceInitTest, CopyTexImageToOffsetCubeMap)
     EXPECT_PIXEL_COLOR_EQ(1, 0, GLColor::transparentBlack);
     EXPECT_PIXEL_COLOR_EQ(0, 1, GLColor::transparentBlack);
     EXPECT_PIXEL_COLOR_EQ(1, 1, GLColor::red);
+}
+
+// Test that blit between two depth/stencil buffers after glClearBufferfi works.  The blit is done
+// once expecting robust resource init value, then clear is called with the same value as the robust
+// init, and blit is done again.  This triggers an optimization in the Vulkan backend where the
+// second clear is no-oped.
+TEST_P(RobustResourceInitTestES3, BlitDepthStencilAfterClearBuffer)
+{
+    // http://anglebug.com/5301
+    ANGLE_SKIP_TEST_IF(IsAndroid() && IsOpenGLES());
+
+    // http://anglebug.com/5300
+    ANGLE_SKIP_TEST_IF(IsD3D11());
+
+    // http://anglebug.com/4919
+    ANGLE_SKIP_TEST_IF(IsIntel() && IsMetal());
+
+    constexpr GLsizei kSize = 16;
+
+    GLFramebuffer readFbo, drawFbo;
+    GLRenderbuffer readDepthStencil, drawDepthStencil;
+
+    // Create destination framebuffer.
+    glBindRenderbuffer(GL_RENDERBUFFER, drawDepthStencil);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, kSize, kSize);
+    glBindFramebuffer(GL_FRAMEBUFFER, drawFbo);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER,
+                              drawDepthStencil);
+    ASSERT_GL_NO_ERROR();
+
+    // Create source framebuffer
+    glBindRenderbuffer(GL_RENDERBUFFER, readDepthStencil);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, kSize, kSize);
+    glBindFramebuffer(GL_FRAMEBUFFER, readFbo);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER,
+                              readDepthStencil);
+    ASSERT_GL_NO_ERROR();
+
+    // Blit once with the robust resource init clear.
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, drawFbo);
+    glBlitFramebuffer(0, 0, kSize, kSize, 0, 0, kSize, kSize,
+                      GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT, GL_NEAREST);
+    ASSERT_GL_NO_ERROR();
+
+    // Verify that the blit was successful.
+    GLRenderbuffer color;
+    glBindRenderbuffer(GL_RENDERBUFFER, color);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, kSize, kSize);
+    glFramebufferRenderbuffer(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, color);
+    ASSERT_GL_NO_ERROR();
+
+    ANGLE_GL_PROGRAM(drawRed, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
+
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LESS);
+
+    glEnable(GL_STENCIL_TEST);
+    glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+    glStencilFunc(GL_EQUAL, 0, 0xFF);
+
+    drawQuad(drawRed, essl1_shaders::PositionAttrib(), 0.95f, 1.0f, true);
+    ASSERT_GL_NO_ERROR();
+
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, drawFbo);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+    EXPECT_PIXEL_COLOR_EQ(kSize - 1, 0, GLColor::red);
+    EXPECT_PIXEL_COLOR_EQ(0, kSize - 1, GLColor::red);
+    EXPECT_PIXEL_COLOR_EQ(kSize - 1, kSize - 1, GLColor::red);
+
+    // Clear to the same value as robust init, and blit again.
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, readFbo);
+    glClearBufferfi(GL_DEPTH_STENCIL, 0, 1.0f, 0);
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, readFbo);
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, drawFbo);
+    glClearBufferfi(GL_DEPTH_STENCIL, 0, 0.5f, 0x3C);
+    glBlitFramebuffer(0, 0, kSize, kSize, 0, 0, kSize, kSize,
+                      GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT, GL_NEAREST);
+    ASSERT_GL_NO_ERROR();
+
+    // Verify that the blit was successful.
+    ANGLE_GL_PROGRAM(drawGreen, essl1_shaders::vs::Simple(), essl1_shaders::fs::Green());
+    drawQuad(drawGreen, essl1_shaders::PositionAttrib(), 0.95f, 1.0f, true);
+    ASSERT_GL_NO_ERROR();
+
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, drawFbo);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+    EXPECT_PIXEL_COLOR_EQ(kSize - 1, 0, GLColor::green);
+    EXPECT_PIXEL_COLOR_EQ(0, kSize - 1, GLColor::green);
+    EXPECT_PIXEL_COLOR_EQ(kSize - 1, kSize - 1, GLColor::green);
 }
 
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(RobustResourceInitTest,

@@ -35,11 +35,10 @@ egl::ConfigSet DisplayVkFuchsia::generateConfigs()
     return egl_vk::GenerateConfigs(kColorFormats, egl_vk::kConfigDepthStencilFormats, this);
 }
 
-bool DisplayVkFuchsia::checkConfigSupport(egl::Config *config)
+void DisplayVkFuchsia::checkConfigSupport(egl::Config *config)
 {
     // TODO(geofflang): Test for native support and modify the config accordingly.
     // anglebug.com/2692
-    return true;
 }
 
 const char *DisplayVkFuchsia::getWSIExtension() const

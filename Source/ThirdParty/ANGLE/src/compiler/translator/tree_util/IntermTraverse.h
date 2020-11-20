@@ -301,7 +301,7 @@ class TLValueTrackingTraverser : public TIntermTraverser
                              bool inVisit,
                              bool postVisit,
                              TSymbolTable *symbolTable);
-    virtual ~TLValueTrackingTraverser() {}
+    ~TLValueTrackingTraverser() override {}
 
     void traverseBinary(TIntermBinary *node) final;
     void traverseUnary(TIntermUnary *node) final;

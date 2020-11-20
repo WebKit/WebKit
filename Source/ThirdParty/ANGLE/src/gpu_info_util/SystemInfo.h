@@ -41,7 +41,7 @@ struct GPUDeviceInfo
     std::string driverVersion;
     std::string driverDate;
 
-    // Only available on Android
+    // Only available via GetSystemInfoVulkan currently.
     VersionInfo detailedDriverVersion;
 };
 
@@ -85,6 +85,9 @@ struct SystemInfo
 // be filled with partial information.
 bool GetSystemInfo(SystemInfo *info);
 
+// Vulkan-specific info collection.
+bool GetSystemInfoVulkan(SystemInfo *info);
+
 // Known PCI vendor IDs
 constexpr VendorID kVendorID_AMD      = 0x1002;
 constexpr VendorID kVendorID_ARM      = 0x13B5;
@@ -95,6 +98,7 @@ constexpr VendorID kVendorID_Intel    = 0x8086;
 constexpr VendorID kVendorID_NVIDIA   = 0x10DE;
 constexpr VendorID kVendorID_Qualcomm = 0x5143;
 constexpr VendorID kVendorID_VMWare   = 0x15ad;
+constexpr VendorID kVendorID_Apple    = 0x106B;
 
 // Known non-PCI (i.e. Khronos-registered) vendor IDs
 constexpr VendorID kVendorID_Vivante     = 0x10001;
@@ -102,8 +106,9 @@ constexpr VendorID kVendorID_VeriSilicon = 0x10002;
 constexpr VendorID kVendorID_Kazan       = 0x10003;
 
 // Known device IDs
-constexpr DeviceID kDeviceID_Swiftshader = 0xC0DE;
-constexpr DeviceID kDeviceID_Adreno540   = 0x5040001;
+constexpr DeviceID kDeviceID_Swiftshader  = 0xC0DE;
+constexpr DeviceID kDeviceID_Adreno540    = 0x5040001;
+constexpr DeviceID kDeviceID_UHD630Mobile = 0x3E9B;
 
 // Predicates on vendor IDs
 bool IsAMD(VendorID vendorId);
@@ -119,6 +124,7 @@ bool IsSwiftshader(VendorID vendorId);
 bool IsVeriSilicon(VendorID vendorId);
 bool IsVMWare(VendorID vendorId);
 bool IsVivante(VendorID vendorId);
+bool IsApple(VendorID vendorId);
 
 // Use a heuristic to attempt to find the GPU used for 3D graphics. Sets activeGPUIndex,
 // isOptimus, and isAMDSwitchable.
@@ -136,6 +142,9 @@ uint64_t GetGpuIDFromDisplayID(uint32_t displayID);
 
 // Helper to get the active GPU ID from an OpenGL display mask.
 uint64_t GetGpuIDFromOpenGLDisplayMask(uint32_t displayMask);
+
+// Get VendorID from metal device's registry ID
+VendorID GetVendorIDFromMetalDeviceRegistryID(uint64_t registryID);
 #endif
 
 }  // namespace angle

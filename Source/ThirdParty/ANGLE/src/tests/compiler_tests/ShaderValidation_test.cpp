@@ -5164,6 +5164,26 @@ TEST_F(VertexShaderValidationTest, LocationConflictsOnStructElement)
     }
 }
 
+// Test that declaring inputs of a vertex shader with a location larger than GL_MAX_VERTEX_ATTRIBS
+// causes a compile error.
+TEST_F(VertexShaderValidationTest, AttributeLocationOutOfRange)
+{
+    // Assumes 1000 >= GL_MAX_VERTEX_ATTRIBS.
+    // Current OpenGL and Direct3D implementations support up to 32.
+
+    const std::string &shaderString =
+        "#version 300 es\n"
+        "layout (location = 1000) in float i_value;\n"
+        "void main()\n"
+        "{\n"
+        "}\n";
+
+    if (compile(shaderString))
+    {
+        FAIL() << "Shader compilation succeeded, expecting failure:\n" << mInfoLog;
+    }
+}
+
 // Test that a block can follow the final case in a switch statement.
 // GLSL ES 3.00.5 section 6 and the grammar suggest that an empty block is a statement.
 TEST_F(FragmentShaderValidationTest, SwitchFinalCaseHasEmptyBlock)

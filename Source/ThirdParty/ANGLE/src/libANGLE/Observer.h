@@ -51,6 +51,9 @@ enum class SubjectMessage
     // gl::VertexArray, into gl::Context. Used to track validation.
     SubjectMapped,
     SubjectUnmapped,
+
+    // Indicates an external change to the default framebuffer.
+    SurfaceChanged,
 };
 
 // The observing class inherits from this interface class.

@@ -1933,6 +1933,25 @@ static bool ValidateBindBufferCommon(const Context *context,
             }
             break;
         }
+        case BufferBinding::Texture:
+        {
+            if (!context->getExtensions().textureBufferAny())
+            {
+                context->validationError(GL_INVALID_ENUM, kTextureBufferExtensionNotAvailable);
+                return false;
+            }
+            if (index != 0)
+            {
+                context->validationError(GL_INVALID_VALUE, kIndexExceedsMaxUniformBufferBindings);
+                return false;
+            }
+            if (buffer.value != 0 && (offset % caps.textureBufferOffsetAlignment) != 0)
+            {
+                context->validationError(GL_INVALID_VALUE, kTextureBufferOffsetAlignment);
+                return false;
+            }
+            break;
+        }
         default:
             context->validationError(GL_INVALID_ENUM, kEnumNotSupported);
             return false;
@@ -4648,9 +4667,12 @@ bool ValidateGetTexLevelParameterfvANGLE(const Context *context,
                                          GLenum pname,
                                          const GLfloat *params)
 {
-    if (!context->getExtensions().textureMultisample)
+    if (!context->getExtensions().textureMultisample &&
+        !context->getExtensions().getTexLevelParameterANGLE)
     {
-        context->validationError(GL_INVALID_OPERATION, kMultisampleTextureExtensionOrES31Required);
+        context->validationError(
+            GL_INVALID_OPERATION,
+            kMultisampleTextureExtensionOrGetTexLevelParameterExtensionOrES31Required);
         return false;
     }
 
@@ -4663,9 +4685,12 @@ bool ValidateGetTexLevelParameterivANGLE(const Context *context,
                                          GLenum pname,
                                          const GLint *params)
 {
-    if (!context->getExtensions().textureMultisample)
+    if (!context->getExtensions().textureMultisample &&
+        !context->getExtensions().getTexLevelParameterANGLE)
     {
-        context->validationError(GL_INVALID_OPERATION, kMultisampleTextureExtensionOrES31Required);
+        context->validationError(
+            GL_INVALID_OPERATION,
+            kMultisampleTextureExtensionOrGetTexLevelParameterExtensionOrES31Required);
         return false;
     }
 

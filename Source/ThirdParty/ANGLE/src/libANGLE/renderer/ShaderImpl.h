@@ -48,7 +48,7 @@ class WaitableCompileEvent : public angle::WaitableEvent
 class ShaderImpl : angle::NonCopyable
 {
   public:
-    ShaderImpl(const gl::ShaderState &data) : mData(data) {}
+    ShaderImpl(const gl::ShaderState &state) : mState(state) {}
     virtual ~ShaderImpl() {}
 
     virtual void destroy() {}
@@ -59,7 +59,7 @@ class ShaderImpl : angle::NonCopyable
 
     virtual std::string getDebugInfo() const = 0;
 
-    const gl::ShaderState &getData() const { return mData; }
+    const gl::ShaderState &getState() const { return mState; }
 
   protected:
     std::shared_ptr<WaitableCompileEvent> compileImpl(const gl::Context *context,
@@ -67,7 +67,7 @@ class ShaderImpl : angle::NonCopyable
                                                       const std::string &source,
                                                       ShCompileOptions compileOptions);
 
-    const gl::ShaderState &mData;
+    const gl::ShaderState &mState;
 };
 
 }  // namespace rx

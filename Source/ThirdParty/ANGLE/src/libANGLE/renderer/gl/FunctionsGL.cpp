@@ -60,12 +60,12 @@ static std::vector<std::string> GetIndexedExtensions(PFNGLGETINTEGERVPROC getInt
 }
 
 #if defined(ANGLE_ENABLE_OPENGL_NULL)
-static GLenum INTERNAL_GL_APIENTRY DummyCheckFramebufferStatus(GLenum)
+static GLenum INTERNAL_GL_APIENTRY StubCheckFramebufferStatus(GLenum)
 {
     return GL_FRAMEBUFFER_COMPLETE;
 }
 
-static void INTERNAL_GL_APIENTRY DummyGetProgramiv(GLuint program, GLenum pname, GLint *params)
+static void INTERNAL_GL_APIENTRY StubGetProgramiv(GLuint program, GLenum pname, GLint *params)
 {
     switch (pname)
     {
@@ -80,7 +80,7 @@ static void INTERNAL_GL_APIENTRY DummyGetProgramiv(GLuint program, GLenum pname,
     }
 }
 
-static void INTERNAL_GL_APIENTRY DummyGetShaderiv(GLuint program, GLenum pname, GLint *params)
+static void INTERNAL_GL_APIENTRY StubGetShaderiv(GLuint program, GLenum pname, GLint *params)
 {
     switch (pname)
     {
@@ -187,7 +187,7 @@ void FunctionsGL::initialize(const egl::AttributeMap &displayAttributes)
     if (deviceType == EGL_PLATFORM_ANGLE_DEVICE_TYPE_NULL_ANGLE)
     {
         initProcsSharedExtensionsNULL(extensionSet);
-        initializeDummyFunctionsForNULLDriver(extensionSet);
+        initializeStubFunctionsForNULLDriver(extensionSet);
     }
     else
 #endif  // defined(ANGLE_ENABLE_OPENGL_NULL)
@@ -232,7 +232,7 @@ bool FunctionsGL::hasGLESExtension(const std::string &ext) const
 }
 
 #if defined(ANGLE_ENABLE_OPENGL_NULL)
-void FunctionsGL::initializeDummyFunctionsForNULLDriver(const std::set<std::string> &extensionSet)
+void FunctionsGL::initializeStubFunctionsForNULLDriver(const std::set<std::string> &extensionSet)
 {
     // This is a quick hack to get the NULL driver working, but we might want to implement a true
     // NULL/stub driver that never calls into the OS. See Chromium's implementation in
@@ -245,9 +245,9 @@ void FunctionsGL::initializeDummyFunctionsForNULLDriver(const std::set<std::stri
     ASSIGN("glGetIntegerv", getIntegerv);
     ASSIGN("glGetIntegeri_v", getIntegeri_v);
 
-    getProgramiv           = &DummyGetProgramiv;
-    getShaderiv            = &DummyGetShaderiv;
-    checkFramebufferStatus = &DummyCheckFramebufferStatus;
+    getProgramiv           = &StubGetProgramiv;
+    getShaderiv            = &StubGetShaderiv;
+    checkFramebufferStatus = &StubCheckFramebufferStatus;
 
     if (isAtLeastGLES(gl::Version(3, 0)) || isAtLeastGL(gl::Version(4, 2)) ||
         extensionSet.count("GL_ARB_internalformat_query") > 0)

@@ -9,6 +9,8 @@
 #include "libANGLE/Compiler.h"
 
 #include "common/debug.h"
+#include "libANGLE/Context.h"
+#include "libANGLE/Display.h"
 #include "libANGLE/State.h"
 #include "libANGLE/renderer/CompilerImpl.h"
 #include "libANGLE/renderer/GLImplFactory.h"
@@ -56,7 +58,7 @@ ShShaderSpec SelectShaderSpec(GLint majorVersion,
 
 }  // anonymous namespace
 
-Compiler::Compiler(rx::GLImplFactory *implFactory, const State &state)
+Compiler::Compiler(rx::GLImplFactory *implFactory, const State &state, egl::Display *display)
     : mImplementation(implFactory->createCompiler()),
       mSpec(SelectShaderSpec(state.getClientMajorVersion(),
                              state.getClientMinorVersion(),
@@ -72,11 +74,14 @@ Compiler::Compiler(rx::GLImplFactory *implFactory, const State &state)
     const gl::Caps &caps             = state.getCaps();
     const gl::Extensions &extensions = state.getExtensions();
 
-    if (gActiveCompilers == 0)
     {
-        sh::Initialize();
+        std::lock_guard<std::mutex> lock(display->getDisplayGlobalMutex());
+        if (gActiveCompilers == 0)
+        {
+            sh::Initialize();
+        }
+        ++gActiveCompilers;
     }
-    ++gActiveCompilers;
 
     sh::InitBuiltInResources(&mResources);
     mResources.MaxVertexAttribs             = caps.maxVertexAttributes;
@@ -105,7 +110,9 @@ Compiler::Compiler(rx::GLImplFactory *implFactory, const State &state)
     mResources.ANGLE_multi_draw                = extensions.multiDraw;
     mResources.ANGLE_base_vertex_base_instance = extensions.baseVertexBaseInstance;
     mResources.APPLE_clip_distance             = extensions.clipDistanceAPPLE;
-
+    // OES_shader_multisample_interpolation
+    mResources.OES_shader_multisample_interpolation = extensions.multisampleInterpolationOES;
+    mResources.OES_shader_image_atomic              = extensions.shaderImageAtomicOES;
     // TODO: use shader precision caps to determine if high precision is supported?
     mResources.FragmentPrecisionHigh = 1;
     mResources.EXT_frag_depth        = extensions.fragDepth;
@@ -117,8 +124,9 @@ Compiler::Compiler(rx::GLImplFactory *implFactory, const State &state)
     mResources.OVR_multiview2 = extensions.multiview2;
     mResources.MaxViewsOVR    = extensions.maxViews;
 
-    // EXT_multisampled_render_to_texture
-    mResources.EXT_multisampled_render_to_texture = extensions.multisampledRenderToTexture;
+    // EXT_multisampled_render_to_texture and EXT_multisampled_render_to_texture2
+    mResources.EXT_multisampled_render_to_texture  = extensions.multisampledRenderToTexture;
+    mResources.EXT_multisampled_render_to_texture2 = extensions.multisampledRenderToTexture2;
 
     // WEBGL_video_texture
     mResources.WEBGL_video_texture = extensions.webglVideoTexture;
@@ -126,6 +134,13 @@ Compiler::Compiler(rx::GLImplFactory *implFactory, const State &state)
     // OES_texture_cube_map_array
     mResources.OES_texture_cube_map_array = extensions.textureCubeMapArrayOES;
     mResources.EXT_texture_cube_map_array = extensions.textureCubeMapArrayEXT;
+
+    // EXT_shadow_samplers
+    mResources.EXT_shadow_samplers = extensions.shadowSamplersEXT;
+
+    // OES_texture_buffer
+    mResources.OES_texture_buffer = extensions.textureBufferOES;
+    mResources.EXT_texture_buffer = extensions.textureBufferEXT;
 
     // GLSL ES 3.0 constants
     mResources.MaxVertexOutputVectors  = caps.maxVertexOutputComponents / 4;
@@ -207,8 +222,11 @@ Compiler::Compiler(rx::GLImplFactory *implFactory, const State &state)
     mResources.SubPixelBits = static_cast<int>(caps.subPixelBits);
 }
 
-Compiler::~Compiler()
+Compiler::~Compiler() = default;
+
+void Compiler::onDestroy(const Context *context)
 {
+    std::lock_guard<std::mutex> lock(context->getDisplay()->getDisplayGlobalMutex());
     for (auto &pool : mPools)
     {
         for (ShCompilerInstance &instance : pool)

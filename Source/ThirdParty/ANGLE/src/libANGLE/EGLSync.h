@@ -47,6 +47,7 @@ class Sync final : public angle::RefCountObject<Display, angle::Result>, public 
                      EGLTime timeout,
                      EGLint *outResult);
     Error serverWait(const Display *display, const gl::Context *context, EGLint flags);
+    Error signal(const Display *display, const gl::Context *context, EGLint mode);
     Error getStatus(const Display *display, EGLint *outStatus) const;
 
     Error dupNativeFenceFD(const Display *display, EGLint *result) const;

@@ -195,11 +195,11 @@ bool ValidateSamplerParameterIuiv(const Context *context,
                                   GLenum pname,
                                   const GLuint *param);
 bool ValidateTexBuffer(const Context *context,
-                       GLenum target,
+                       TextureType targetPacked,
                        GLenum internalformat,
                        BufferID bufferPacked);
 bool ValidateTexBufferRange(const Context *context,
-                            GLenum target,
+                            TextureType targetPacked,
                             GLenum internalformat,
                             BufferID bufferPacked,
                             GLintptr offset,

@@ -83,6 +83,9 @@ class SRGBTextureTest : public ANGLETest
     GLint mTextureLocation = -1;
 };
 
+class SRGBTextureTestES3 : public SRGBTextureTest
+{};
+
 // GenerateMipmaps should generate INVALID_OPERATION in ES 2.0 / WebGL 1.0 with EXT_sRGB.
 // https://bugs.chromium.org/p/chromium/issues/detail?id=769989
 TEST_P(SRGBTextureTest, SRGBValidation)
@@ -160,13 +163,10 @@ TEST_P(SRGBTextureTest, SRGBAValidation)
 }
 
 // Test that sized SRGBA formats allow generating mipmaps
-TEST_P(SRGBTextureTest, SRGBASizedValidation)
+TEST_P(SRGBTextureTestES3, SRGBASizedValidation)
 {
     // TODO(fjhenigman): Figure out why this fails on Ozone Intel.
     ANGLE_SKIP_TEST_IF(IsOzone() && IsIntel() && IsOpenGLES());
-
-    // ES3 required for sized SRGB textures
-    ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3);
 
     GLTexture tex;
     glBindTexture(GL_TEXTURE_2D, tex);
@@ -304,14 +304,115 @@ TEST_P(SRGBTextureTest, SRGBOverrideTextureParameter)
     EXPECT_PIXEL_COLOR_NEAR(0, 0, srgbColor, 1.0);
 }
 
+// Test that all supported formats can be overridden
+TEST_P(SRGBTextureTestES3, SRGBOverrideFormats)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_sRGB_override"));
+
+    constexpr GLenum possibleFormats[] = {GL_RGB8,
+                                          GL_RGBA8,
+                                          GL_COMPRESSED_RGB8_ETC2,
+                                          GL_COMPRESSED_RGBA8_ETC2_EAC,
+                                          GL_COMPRESSED_RGB8_PUNCHTHROUGH_ALPHA1_ETC2,
+                                          GL_COMPRESSED_RGBA_ASTC_4x4,
+                                          GL_COMPRESSED_RGBA_ASTC_5x4,
+                                          GL_COMPRESSED_RGBA_ASTC_5x5,
+                                          GL_COMPRESSED_RGBA_ASTC_6x5,
+                                          GL_COMPRESSED_RGBA_ASTC_6x6,
+                                          GL_COMPRESSED_RGBA_ASTC_8x5,
+                                          GL_COMPRESSED_RGBA_ASTC_8x6,
+                                          GL_COMPRESSED_RGBA_ASTC_8x8,
+                                          GL_COMPRESSED_RGBA_ASTC_10x5,
+                                          GL_COMPRESSED_RGBA_ASTC_10x6,
+                                          GL_COMPRESSED_RGBA_ASTC_10x8,
+                                          GL_COMPRESSED_RGBA_ASTC_10x10,
+                                          GL_COMPRESSED_RGBA_ASTC_12x10,
+                                          GL_COMPRESSED_RGBA_ASTC_12x12,
+                                          GL_COMPRESSED_RGB_S3TC_DXT1_EXT,
+                                          GL_COMPRESSED_RGBA_S3TC_DXT1_EXT,
+                                          GL_COMPRESSED_RGBA_S3TC_DXT3_EXT,
+                                          GL_COMPRESSED_RGBA_S3TC_DXT5_EXT,
+                                          GL_R8,
+                                          GL_RG8,
+                                          GL_COMPRESSED_RGBA_BPTC_UNORM_EXT};
+
+    for (GLenum format : possibleFormats)
+    {
+        GLTexture tex;
+        glBindTexture(GL_TEXTURE_2D, tex.get());
+        glTexStorage2D(GL_TEXTURE_2D, 1, format, 1, 1);
+        GLenum error = glGetError();
+        if (error == GL_INVALID_ENUM)
+        {
+            // Format is not supported, we don't require the sRGB counterpart to be supported either
+            continue;
+        }
+        else
+        {
+            ASSERT_EQ(static_cast<GLenum>(GL_NO_ERROR), error);
+        }
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_FORMAT_SRGB_OVERRIDE_EXT, GL_NONE);
+        ASSERT_GL_NO_ERROR();
+
+        glUseProgram(mProgram);
+        glUniform1i(mTextureLocation, 0);
+
+        glDisable(GL_DEPTH_TEST);
+        drawQuad(mProgram, "position", 0.5f);
+        ASSERT_GL_NO_ERROR();
+        // Discard result, we are only checking that we don't try to reinterpret to an unsupported
+        // format
+    }
+}
+
+// Test interaction between sRGB_override and sampler objects
+TEST_P(SRGBTextureTestES3, SRGBOverrideTextureParameterWithSampler)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_sRGB_override"));
+
+    GLColor linearColor = kLinearColor;
+    GLColor srgbColor   = kNonlinearColor;
+
+    GLenum internalFormat = getClientMajorVersion() >= 3 ? GL_RGBA8 : GL_RGBA;
+
+    GLTexture tex;
+    glBindTexture(GL_TEXTURE_2D, tex.get());
+    glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 &linearColor);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_FORMAT_SRGB_OVERRIDE_EXT, GL_NONE);
+    ASSERT_GL_NO_ERROR();
+
+    GLSampler sampler;
+    glBindSampler(0, sampler.get());
+
+    glUseProgram(mProgram);
+    glUniform1i(mTextureLocation, 0);
+
+    glDisable(GL_DEPTH_TEST);
+    drawQuad(mProgram, "position", 0.5f);
+
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, linearColor, 1.0);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_FORMAT_SRGB_OVERRIDE_EXT, GL_SRGB);
+    drawQuad(mProgram, "position", 0.5f);
+
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, srgbColor, 1.0);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_FORMAT_SRGB_OVERRIDE_EXT, GL_NONE);
+    drawQuad(mProgram, "position", 0.5f);
+
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, linearColor, 1.0);
+}
+
 // Test that SRGB override is a noop when used on a nonlinear texture format
 // EXT_texture_format_sRGB_override spec says:
 // "If the internal format is not one of the above formats, then
 // the value of TEXTURE_FORMAT_SRGB_OVERRIDE_EXT is ignored."
-TEST_P(SRGBTextureTest, SRGBOverrideTextureParameterNoop)
+TEST_P(SRGBTextureTestES3, SRGBOverrideTextureParameterNoop)
 {
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_sRGB_override"));
-    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_sRGB") || getClientMajorVersion() < 3);
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_sRGB"));
 
     GLColor linearColor = kLinearColor;
     GLColor srgbColor   = kNonlinearColor;
@@ -338,10 +439,9 @@ TEST_P(SRGBTextureTest, SRGBOverrideTextureParameterNoop)
 }
 
 // Test basic functionality of SRGB decode using the sampler parameter
-TEST_P(SRGBTextureTest, SRGBDecodeSamplerParameter)
+TEST_P(SRGBTextureTestES3, SRGBDecodeSamplerParameter)
 {
-    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_sRGB_decode") ||
-                       getClientMajorVersion() < 3);
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_sRGB_decode"));
 
     GLColor linearColor = kLinearColor;
     GLColor srgbColor   = kNonlinearColor;
@@ -370,12 +470,111 @@ TEST_P(SRGBTextureTest, SRGBDecodeSamplerParameter)
     EXPECT_PIXEL_COLOR_NEAR(0, 0, linearColor, 1.0);
 }
 
-// Test that mipmaps are generated correctly for sRGB textures
-TEST_P(SRGBTextureTest, GenerateMipmaps)
+// Toggle between GL_DECODE_EXT and GL_SKIP_DECODE_EXT of sampler parameter
+// GL_TEXTURE_SRGB_DECODE_EXT
+TEST_P(SRGBTextureTestES3, SRGBDecodeSamplerParameterToggle)
 {
-    ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3);
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_sRGB_decode"));
 
+    GLColor linearColor = kLinearColor;
+    GLColor srgbColor   = kNonlinearColor;
+
+    GLTexture tex;
+    glBindTexture(GL_TEXTURE_2D, tex.get());
+    glTexImage2D(GL_TEXTURE_2D, 0, getSRGBA8TextureInternalFormat(), 1, 1, 0,
+                 getSRGBA8TextureFormat(), GL_UNSIGNED_BYTE, &linearColor);
+    ASSERT_GL_NO_ERROR();
+
+    GLSampler sampler;
+    glBindSampler(0, sampler.get());
+
+    glUseProgram(mProgram);
+    glUniform1i(mTextureLocation, 0);
+    glDisable(GL_DEPTH_TEST);
+
+    for (int i = 0; i < 4; i++)
+    {
+        // Toggle betwee decode and skip decode and verify pixel value
+        GLint decode                  = ((i & 1) == 0) ? GL_DECODE_EXT : GL_SKIP_DECODE_EXT;
+        angle::GLColor &expectedColor = ((i & 1) == 0) ? srgbColor : linearColor;
+
+        glSamplerParameteri(sampler.get(), GL_TEXTURE_SRGB_DECODE_EXT, decode);
+        drawQuad(mProgram, "position", 0.5f);
+        EXPECT_PIXEL_COLOR_NEAR(0, 0, expectedColor, 1.0);
+    }
+}
+
+// Test that sampler state overrides texture state for srgb decode
+TEST_P(SRGBTextureTestES3, SRGBDecodeTextureAndSamplerParameter)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_sRGB_decode"));
+
+    GLColor linearColor = kLinearColor;
+    GLColor srgbColor   = kNonlinearColor;
+
+    GLTexture tex;
+    glBindTexture(GL_TEXTURE_2D, tex.get());
+    glTexImage2D(GL_TEXTURE_2D, 0, getSRGBA8TextureInternalFormat(), 1, 1, 0,
+                 getSRGBA8TextureFormat(), GL_UNSIGNED_BYTE, &linearColor);
+
+    ASSERT_GL_NO_ERROR();
+
+    GLSampler sampler;
+    glBindSampler(0, sampler.get());
+
+    glUseProgram(mProgram);
+    glUniform1i(mTextureLocation, 0);
+
+    glDisable(GL_DEPTH_TEST);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SRGB_DECODE_EXT, GL_SKIP_DECODE_EXT);
+    glSamplerParameteri(sampler.get(), GL_TEXTURE_SRGB_DECODE_EXT, GL_DECODE_EXT);
+    drawQuad(mProgram, "position", 0.5f);
+
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, srgbColor, 1.0);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SRGB_DECODE_EXT, GL_DECODE_EXT);
+    glSamplerParameteri(sampler.get(), GL_TEXTURE_SRGB_DECODE_EXT, GL_SKIP_DECODE_EXT);
+    drawQuad(mProgram, "position", 0.5f);
+
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, linearColor, 1.0);
+}
+
+// Test that srgb decode state takes priority over srgb override state
+TEST_P(SRGBTextureTestES3, SRGBDecodeOverridePriority)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_sRGB_decode"));
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_sRGB_override"));
+
+    GLColor linearColor = kLinearColor;
+
+    GLenum internalFormat = getClientMajorVersion() >= 3 ? GL_RGBA8 : GL_RGBA;
+
+    GLTexture tex;
+    glBindTexture(GL_TEXTURE_2D, tex.get());
+    glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 &linearColor);
+    ASSERT_GL_NO_ERROR();
+
+    glUseProgram(mProgram);
+    glUniform1i(mTextureLocation, 0);
+
+    glDisable(GL_DEPTH_TEST);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_FORMAT_SRGB_OVERRIDE_EXT, GL_SRGB);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SRGB_DECODE_EXT, GL_SKIP_DECODE_EXT);
+    drawQuad(mProgram, "position", 0.5f);
+
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, linearColor, 1.0);
+}
+
+// Test that mipmaps are generated correctly for sRGB textures
+TEST_P(SRGBTextureTestES3, GenerateMipmaps)
+{
     ANGLE_SKIP_TEST_IF(IsOpenGL() && ((IsIntel() && IsOSX()) || IsAMD()));
+
+    // http://anglebug.com/5108
+    ANGLE_SKIP_TEST_IF(IsMetal());
 
     auto createAndReadBackTexture = [this](GLenum internalFormat, const GLColor &color) {
         constexpr GLsizei width  = 128;
@@ -432,5 +631,6 @@ TEST_P(SRGBTextureTest, GenerateMipmaps)
 // Use this to select which configurations (e.g. which renderer, which GLES major version) these
 // tests should be run against.
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(SRGBTextureTest);
+ANGLE_INSTANTIATE_TEST_ES3(SRGBTextureTestES3);
 
 }  // namespace angle

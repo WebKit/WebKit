@@ -2322,11 +2322,29 @@ GLboolean INTERNAL_GL_APIENTRY glTestFenceNVNULL(GLuint fence)
 
 void INTERNAL_GL_APIENTRY glTexBufferNULL(GLenum target, GLenum internalformat, GLuint buffer) {}
 
+void INTERNAL_GL_APIENTRY glTexBufferEXTNULL(GLenum target, GLenum internalformat, GLuint buffer) {}
+
+void INTERNAL_GL_APIENTRY glTexBufferOESNULL(GLenum target, GLenum internalformat, GLuint buffer) {}
+
 void INTERNAL_GL_APIENTRY glTexBufferRangeNULL(GLenum target,
                                                GLenum internalformat,
                                                GLuint buffer,
                                                GLintptr offset,
                                                GLsizeiptr size)
+{}
+
+void INTERNAL_GL_APIENTRY glTexBufferRangeEXTNULL(GLenum target,
+                                                  GLenum internalformat,
+                                                  GLuint buffer,
+                                                  GLintptr offset,
+                                                  GLsizeiptr size)
+{}
+
+void INTERNAL_GL_APIENTRY glTexBufferRangeOESNULL(GLenum target,
+                                                  GLenum internalformat,
+                                                  GLuint buffer,
+                                                  GLintptr offset,
+                                                  GLsizeiptr size)
 {}
 
 void INTERNAL_GL_APIENTRY glTexImage1DNULL(GLenum target,

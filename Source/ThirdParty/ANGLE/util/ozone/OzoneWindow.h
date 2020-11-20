@@ -19,7 +19,6 @@ class OzoneWindow : public OSWindow
     OzoneWindow();
     ~OzoneWindow() override;
 
-    bool initialize(const std::string &name, int width, int height) override;
     void disableErrorMessageDialog() override;
     void destroy() override;
 
@@ -38,6 +37,8 @@ class OzoneWindow : public OSWindow
     void signalTestEvent() override;
 
   private:
+    bool initializeImpl(const std::string &name, int width, int height) override;
+
     struct Native
     {
         int32_t x;

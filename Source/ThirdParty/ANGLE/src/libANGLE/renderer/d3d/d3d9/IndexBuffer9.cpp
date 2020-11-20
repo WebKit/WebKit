@@ -123,12 +123,12 @@ angle::Result IndexBuffer9::discard(const gl::Context *context)
 {
     ASSERT(mIndexBuffer);
 
-    void *dummy;
+    void *mock;
     HRESULT result;
 
     Context9 *context9 = GetImplAs<Context9>(context);
 
-    result = mIndexBuffer->Lock(0, 1, &dummy, D3DLOCK_DISCARD);
+    result = mIndexBuffer->Lock(0, 1, &mock, D3DLOCK_DISCARD);
     ANGLE_TRY_HR(context9, result, "Failed to lock internal index buffer");
 
     result = mIndexBuffer->Unlock();

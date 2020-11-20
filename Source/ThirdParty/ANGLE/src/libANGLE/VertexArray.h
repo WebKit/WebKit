@@ -71,6 +71,15 @@ class VertexArrayState final : angle::NonCopyable
     // Get all the attributes in an AttributesMask that are using the given binding.
     AttributesMask getBindingToAttributesMask(GLuint bindingIndex) const;
 
+    ComponentTypeMask getVertexAttributesTypeMask() const { return mVertexAttributesTypeMask; }
+
+    AttributesMask getClientMemoryAttribsMask() const { return mClientMemoryAttribsMask; }
+
+    gl::AttributesMask getNullPointerClientMemoryAttribsMask() const
+    {
+        return mNullPointerClientMemoryAttribsMask;
+    }
+
   private:
     friend class VertexArray;
     std::string mLabel;
@@ -246,6 +255,10 @@ class VertexArray final : public angle::ObserverInterface,
     {
         return mState.mCachedEnabledMappedArrayBuffers.any();
     }
+
+    const VertexArrayState &getState() const { return mState; }
+
+    bool isBufferAccessValidationEnabled() const { return mBufferAccessValidationEnabled; }
 
     // Observer implementation
     void onSubjectStateChange(angle::SubjectIndex index, angle::SubjectMessage message) override;

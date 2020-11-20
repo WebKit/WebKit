@@ -81,6 +81,17 @@ struct ShaderInterfaceVariableInfo
     uint32_t xfbBuffer = kInvalid;
     uint32_t xfbOffset = kInvalid;
     uint32_t xfbStride = kInvalid;
+    // Indicates that the precision needs to be modified in the generated SPIR-V
+    // to support only transferring medium precision data when there's a precision
+    // mismatch between the shaders. For example, either the VS casts highp->mediump
+    // or the FS casts mediump->highp.
+    bool useRelaxedPrecision = false;
+    // Indicate if varying is input or output
+    bool varyingIsOutput = false;
+    // For vertex attributes, this is the number of components / locations.  These are used by the
+    // vertex attribute aliasing transformation only.
+    uint8_t attributeComponentCount = 0;
+    uint8_t attributeLocationCount  = 0;
 };
 
 // TODO: http://anglebug.com/4524: Need a different hash key than a string, since
@@ -98,7 +109,15 @@ std::string GetMappedSamplerNameOld(const std::string &originalName);
 std::string GlslangGetMappedSamplerName(const std::string &originalName);
 std::string GetXfbBufferName(const uint32_t bufferIndex);
 
-void GlslangAssignLocations(GlslangSourceOptions &options,
+// NOTE: options.emulateTransformFeedback is ignored in this case. It is assumed to be always true.
+void GlslangGenTransformFeedbackEmulationOutputs(
+    const GlslangSourceOptions &options,
+    const gl::ProgramState &programState,
+    GlslangProgramInterfaceInfo *programInterfaceInfo,
+    std::string *vertexShader,
+    ShaderInterfaceVariableInfoMap *variableInfoMapOut);
+
+void GlslangAssignLocations(const GlslangSourceOptions &options,
                             const gl::ProgramExecutable &programExecutable,
                             const gl::ShaderType shaderType,
                             GlslangProgramInterfaceInfo *programInterfaceInfo,
@@ -108,7 +127,7 @@ void GlslangAssignLocations(GlslangSourceOptions &options,
 // buffers, xfb, etc).  For some variables, these values are instead output to the variableInfoMap
 // to be set during a SPIR-V transformation.  This is a transitory step towards moving all variables
 // to this map, at which point GlslangGetShaderSpirvCode will also be called by this function.
-void GlslangGetShaderSource(GlslangSourceOptions &options,
+void GlslangGetShaderSource(const GlslangSourceOptions &options,
                             const gl::ProgramState &programState,
                             const gl::ProgramLinkedResources &resources,
                             GlslangProgramInterfaceInfo *programInterfaceInfo,
@@ -127,8 +146,12 @@ angle::Result GlslangGetShaderSpirvCode(const GlslangErrorCallback &callback,
                                         const gl::ShaderBitSet &linkedShaderStages,
                                         const gl::Caps &glCaps,
                                         const gl::ShaderMap<std::string> &shaderSources,
-                                        const ShaderMapInterfaceVariableInfoMap &variableInfoMap,
                                         gl::ShaderMap<SpirvBlob> *spirvBlobsOut);
+
+angle::Result GlslangCompileShaderOneOff(const GlslangErrorCallback &callback,
+                                         gl::ShaderType shaderType,
+                                         const std::string &shaderSource,
+                                         SpirvBlob *spirvBlobOut);
 
 }  // namespace rx
 

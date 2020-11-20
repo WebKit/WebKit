@@ -33,6 +33,9 @@ class Traverser : public TIntermTraverser
     Traverser(TIntermBinary *flipXY, TIntermTyped *fragRotation, TSymbolTable *symbolTable);
     bool visitUnary(Visit visit, TIntermUnary *node) override;
 
+    bool visitUnaryWithRotation(Visit visit, TIntermUnary *node);
+    bool visitUnaryWithoutRotation(Visit visit, TIntermUnary *node);
+
     TIntermBinary *mFlipXY      = nullptr;
     TIntermTyped *mFragRotation = nullptr;
 };
@@ -57,6 +60,15 @@ bool Traverser::Apply(TCompiler *compiler,
 }
 
 bool Traverser::visitUnary(Visit visit, TIntermUnary *node)
+{
+    if (mFragRotation)
+    {
+        return visitUnaryWithRotation(visit, node);
+    }
+    return visitUnaryWithoutRotation(visit, node);
+}
+
+bool Traverser::visitUnaryWithRotation(Visit visit, TIntermUnary *node)
 {
     // Decide if the node represents a call to dFdx() or dFdy()
     if ((node->getOp() != EOpDFdx) && (node->getOp() != EOpDFdy))
@@ -136,6 +148,32 @@ bool Traverser::visitUnary(Visit visit, TIntermUnary *node)
 
     // Replace the old dFdx() or dFdy() node with the new node that contains the corrected value
     queueReplacement(correctedResult, OriginalNode::IS_DROPPED);
+
+    return true;
+}
+
+bool Traverser::visitUnaryWithoutRotation(Visit visit, TIntermUnary *node)
+{
+    // Decide if the node represents a call to dFdy()
+    if (node->getOp() != EOpDFdy)
+    {
+        return true;
+    }
+
+    // Copy the dFdy node so we can replace it with the corrected value
+    TIntermUnary *newDfdy = node->deepCopy()->getAsUnaryNode();
+
+    size_t objectSize    = node->getType().getObjectSize();
+    TOperator multiplyOp = (objectSize == 1) ? EOpMul : EOpVectorTimesScalar;
+
+    TIntermBinary *flipY =
+        new TIntermBinary(EOpIndexDirect, mFlipXY->deepCopy(), CreateIndexNode(1));
+    // Correct dFdy()'s value:
+    // (dFdy() * mFlipXY.y)
+    TIntermBinary *correctedDfdy = new TIntermBinary(multiplyOp, newDfdy, flipY);
+
+    // Replace the old dFdy node with the new node that contains the corrected value
+    queueReplacement(correctedDfdy, OriginalNode::IS_DROPPED);
 
     return true;
 }

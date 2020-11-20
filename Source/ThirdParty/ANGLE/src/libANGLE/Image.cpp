@@ -193,9 +193,9 @@ bool ExternalImageSibling::isTextureable(const gl::Context *context) const
     return mImplementation->isTexturable(context);
 }
 
-void ExternalImageSibling::onAttach(const gl::Context *context) {}
+void ExternalImageSibling::onAttach(const gl::Context *context, rx::Serial framebufferSerial) {}
 
-void ExternalImageSibling::onDetach(const gl::Context *context) {}
+void ExternalImageSibling::onDetach(const gl::Context *context, rx::Serial framebufferSerial) {}
 
 GLuint ExternalImageSibling::getId() const
 {

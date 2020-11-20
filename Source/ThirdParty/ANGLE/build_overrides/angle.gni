@@ -9,6 +9,7 @@ angle_root = "//"
 angle_has_build = true
 
 # Overrides for ANGLE's dependencies
+angle_abseil_cpp_dir = "//third_party/abseil-cpp"
 angle_glslang_dir = "//third_party/glslang/src"
 angle_googletest_dir = "//third_party/googletest/src"
 angle_jsoncpp_dir = "//third_party/jsoncpp"

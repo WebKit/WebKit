@@ -452,43 +452,43 @@ static const flex_int16_t yy_accept[938] = {
     193, 180, 181, 182, 193, 35,  193, 172, 29,  183, 184, 185, 2,   177, 178, 179, 193, 193, 193,
     27,  175, 193, 193, 193,
 
-    193, 193, 53,  54,  55,  193, 193, 193, 193, 193, 193, 193, 193, 193, 193, 193, 121, 193, 193,
+    193, 193, 53,  54,  55,  193, 193, 193, 193, 193, 193, 193, 193, 193, 193, 193, 128, 193, 193,
     193, 193, 193, 193, 193, 193, 169, 193, 193, 193, 193, 193, 193, 193, 193, 193, 193, 193, 155,
-    193, 193, 192, 59,  60,  61,  193, 193, 15,  193, 193, 193, 126, 193, 193, 9,   193, 193, 124,
-    193, 193, 193, 170, 165, 127, 193, 193, 193, 193, 193, 193, 161, 193, 193, 193, 193, 193, 93,
+    193, 193, 192, 59,  60,  61,  193, 193, 15,  193, 193, 193, 132, 193, 193, 9,   193, 193, 130,
+    193, 193, 193, 170, 165, 133, 193, 193, 193, 193, 193, 193, 161, 193, 193, 193, 193, 193, 96,
     41,  44,  46,  45,  42,  48,  47,  49,  43,  193, 193, 193, 193, 176, 152, 193, 193, 163, 193,
-    193, 193, 37,  122, 28,
+    193, 193, 37,  125, 28,
 
-    189, 23,  164, 92,  193, 174, 18,  193, 193, 193, 193, 193, 193, 193, 193, 193, 193, 193, 193,
-    193, 193, 193, 193, 20,  36,  193, 193, 193, 193, 193, 193, 128, 98,  104, 193, 193, 193, 193,
-    193, 95,  97,  3,   193, 193, 193, 193, 119, 193, 193, 193, 193, 193, 193, 193, 157, 193, 193,
-    193, 193, 193, 8,   193, 193, 10,  193, 193, 193, 193, 193, 193, 21,  115, 12,  166, 129, 99,
-    106, 193, 193, 193, 193, 193, 193, 193, 193, 193, 193, 193, 193, 193, 162, 193, 193, 193, 113,
-    120, 116, 193, 193, 193,
+    189, 23,  164, 95,  193, 174, 18,  193, 193, 193, 193, 193, 193, 193, 193, 193, 193, 193, 193,
+    193, 193, 193, 193, 20,  36,  193, 193, 193, 193, 193, 193, 134, 101, 107, 193, 193, 193, 193,
+    193, 98,  100, 3,   193, 193, 193, 193, 126, 193, 193, 193, 193, 193, 193, 193, 157, 193, 193,
+    193, 193, 193, 8,   193, 193, 10,  193, 193, 193, 193, 193, 193, 21,  121, 12,  166, 135, 102,
+    109, 193, 193, 193, 193, 193, 193, 193, 193, 193, 193, 193, 193, 193, 162, 193, 193, 193, 119,
+    127, 122, 193, 193, 193,
 
-    193, 193, 193, 193, 193, 158, 130, 100, 105, 193, 193, 173, 193, 117, 193, 193, 193, 193, 6,
-    193, 193, 193, 193, 193, 193, 193, 193, 193, 109, 167, 1,   193, 193, 193, 193, 193, 193, 191,
-    193, 125, 5,   186, 62,  65,  193, 193, 193, 193, 193, 193, 193, 193, 193, 193, 193, 193, 193,
-    193, 114, 193, 193, 193, 193, 193, 193, 107, 193, 193, 193, 193, 193, 193, 143, 70,  71,  193,
-    193, 193, 193, 193, 193, 193, 193, 193, 193, 193, 193, 193, 193, 193, 123, 193, 193, 193, 108,
-    145, 75,  76,  193, 193,
+    193, 193, 193, 193, 193, 158, 136, 103, 108, 193, 193, 173, 193, 123, 193, 193, 193, 193, 6,
+    193, 193, 193, 193, 193, 193, 193, 193, 193, 112, 167, 1,   193, 193, 193, 193, 193, 193, 191,
+    193, 131, 5,   186, 62,  65,  193, 193, 193, 193, 193, 193, 193, 193, 193, 193, 193, 193, 193,
+    193, 120, 193, 193, 193, 193, 193, 193, 110, 193, 193, 193, 193, 193, 193, 146, 70,  71,  193,
+    193, 193, 193, 193, 193, 193, 193, 193, 193, 193, 193, 193, 193, 193, 129, 193, 193, 193, 111,
+    148, 75,  76,  193, 193,
 
-    193, 193, 118, 193, 193, 193, 193, 193, 193, 193, 193, 138, 193, 193, 193, 193, 193, 193, 193,
+    193, 193, 124, 193, 193, 193, 193, 193, 193, 193, 193, 116, 193, 193, 193, 193, 193, 193, 193,
     193, 193, 193, 193, 193, 69,  193, 193, 193, 193, 63,  193, 193, 193, 193, 193, 193, 193, 193,
-    193, 193, 193, 193, 193, 193, 193, 193, 139, 193, 131, 193, 101, 193, 193, 193, 193, 74,  193,
-    193, 72,  193, 193, 193, 193, 193, 193, 193, 193, 193, 193, 193, 193, 193, 193, 193, 193, 140,
-    193, 193, 193, 79,  193, 193, 77,  193, 193, 132, 102, 193, 193, 134, 193, 135, 193, 193, 193,
+    193, 193, 193, 193, 193, 193, 193, 193, 117, 193, 137, 193, 104, 193, 193, 193, 193, 74,  193,
+    193, 72,  193, 193, 193, 193, 193, 193, 193, 193, 193, 193, 193, 193, 193, 193, 193, 193, 118,
+    193, 193, 193, 79,  193, 193, 77,  193, 193, 138, 105, 193, 193, 140, 193, 141, 193, 193, 193,
     193, 193, 193, 193, 193,
 
-    24,  193, 193, 193, 193, 67,  193, 66,  149, 193, 193, 193, 193, 133, 103, 193, 193, 193, 193,
-    193, 193, 193, 193, 193, 193, 193, 193, 110, 193, 193, 193, 147, 150, 193, 193, 141, 193, 68,
-    193, 193, 193, 193, 193, 193, 193, 193, 193, 193, 193, 148, 151, 193, 193, 193, 111, 193, 193,
-    144, 73,  193, 193, 193, 193, 187, 193, 193, 193, 80,  193, 193, 193, 193, 112, 146, 78,  193,
+    24,  193, 193, 193, 193, 67,  193, 66,  88,  193, 193, 193, 193, 139, 106, 193, 193, 193, 193,
+    193, 193, 193, 193, 193, 193, 193, 193, 113, 193, 193, 193, 150, 91,  193, 193, 144, 193, 68,
+    193, 193, 193, 193, 193, 193, 193, 193, 193, 193, 193, 151, 93,  193, 193, 193, 114, 193, 193,
+    147, 73,  193, 193, 193, 193, 187, 193, 193, 193, 80,  193, 193, 193, 193, 115, 149, 78,  193,
     193, 193, 193, 193, 193, 193, 193, 193, 193, 193, 84,  193, 87,  193, 193, 193, 193, 193, 193,
-    193, 193, 193, 85,  89,
+    193, 193, 193, 85,  90,
 
-    193, 193, 193, 193, 193, 81,  193, 91,  86,  90,  94,  193, 136, 137, 96,  193, 193, 193, 193,
-    64,  193, 193, 193, 188, 193, 193, 142, 82,  193, 193, 193, 193, 88,  193, 193, 83,  0};
+    193, 193, 193, 193, 193, 81,  193, 94,  86,  92,  97,  193, 142, 143, 99,  193, 193, 193, 193,
+    64,  193, 193, 193, 188, 193, 193, 145, 82,  193, 193, 193, 193, 89,  193, 193, 83,  0};
 
 static const YY_CHAR yy_ec[256] = {
     0,  1,  1,  1,  1,  1,  1,  1,  1,  2,  3,  2,  2,  2,  1,  1,  1,  1,  1,  1,  1,
@@ -935,6 +935,9 @@ static int ES3_reserved_ES3_extension(TParseContext *context, TExtension extensi
 static int ES3_reserved_ES3_extension_ES3_1_keyword(TParseContext *context,
                                                     TExtension extension,
                                                     int token);
+static int ES3_reserved_ES3_extension_ES3_2_keyword(TParseContext *context,
+                                                    TExtension extension,
+                                                    int token);
 static int ES3_1_reserved_ES3_1_extension_ES3_2_keyword(TParseContext *context,
                                                         TExtension extension,
                                                         int token);
@@ -943,6 +946,11 @@ static int ES3_1_reserved_ES3_1_extension_ES3_2_keyword_2(TParseContext *context
                                                           TExtension extension2,
                                                           int token1,
                                                           int token2);
+static int ES3_and_3_1_reserved_ES3_1_extension_ES3_2_keyword_2(TParseContext *context,
+                                                                TExtension extension1,
+                                                                TExtension extension2,
+                                                                int token1,
+                                                                int token2);
 static int WEBGL_video_texture_extension(TParseContext *context, int token);
 static int uint_constant(TParseContext *context);
 static int int_constant(TParseContext *context);
@@ -1555,7 +1563,11 @@ YY_DECL
                     }
                     YY_BREAK
                 case 80:
-                    YY_RULE_SETUP { return ES2_reserved_ES3_keyword(context, SAMPLER2DSHADOW); }
+                    YY_RULE_SETUP
+                    {
+                        return ES2_reserved_ES2_extension_ES3_keyword(
+                            context, TExtension::EXT_shadow_samplers, SAMPLER2DSHADOW);
+                    }
                     YY_BREAK
                 case 81:
                     YY_RULE_SETUP { return ES3_keyword(context, SAMPLERCUBESHADOW); }
@@ -1606,13 +1618,21 @@ YY_DECL
                 case 88:
                     YY_RULE_SETUP
                     {
+                        return ES3_and_3_1_reserved_ES3_1_extension_ES3_2_keyword_2(
+                            context, TExtension::OES_texture_buffer, TExtension::EXT_texture_buffer,
+                            SAMPLERBUFFER, SAMPLERBUFFER);
+                    }
+                    YY_BREAK
+                case 89:
+                    YY_RULE_SETUP
+                    {
                         return ES3_1_reserved_ES3_1_extension_ES3_2_keyword_2(
                             context, TExtension::OES_texture_cube_map_array,
                             TExtension::EXT_texture_cube_map_array, SAMPLERCUBEARRAYSHADOWOES,
                             SAMPLERCUBEARRAYSHADOWEXT);
                     }
                     YY_BREAK
-                case 89:
+                case 90:
                     YY_RULE_SETUP
                     {
                         return ES3_1_reserved_ES3_1_extension_ES3_2_keyword_2(
@@ -1621,7 +1641,15 @@ YY_DECL
                             ISAMPLERCUBEARRAYEXT);
                     }
                     YY_BREAK
-                case 90:
+                case 91:
+                    YY_RULE_SETUP
+                    {
+                        return ES3_and_3_1_reserved_ES3_1_extension_ES3_2_keyword_2(
+                            context, TExtension::OES_texture_buffer, TExtension::EXT_texture_buffer,
+                            ISAMPLERBUFFER, ISAMPLERBUFFER);
+                    }
+                    YY_BREAK
+                case 92:
                     YY_RULE_SETUP
                     {
                         return ES3_1_reserved_ES3_1_extension_ES3_2_keyword_2(
@@ -1630,71 +1658,79 @@ YY_DECL
                             USAMPLERCUBEARRAYEXT);
                     }
                     YY_BREAK
-                case 91:
+                case 93:
+                    YY_RULE_SETUP
+                    {
+                        return ES3_and_3_1_reserved_ES3_1_extension_ES3_2_keyword_2(
+                            context, TExtension::OES_texture_buffer, TExtension::EXT_texture_buffer,
+                            USAMPLERBUFFER, USAMPLERBUFFER);
+                    }
+                    YY_BREAK
+                case 94:
                     YY_RULE_SETUP
                     {
                         return WEBGL_video_texture_extension(context, SAMPLERVIDEOWEBGL);
                     }
                     YY_BREAK
-                case 92:
+                case 95:
                     YY_RULE_SETUP { return STRUCT; }
                     YY_BREAK
-                case 93:
+                case 96:
                     YY_RULE_SETUP { return ES3_keyword(context, LAYOUT); }
                     YY_BREAK
-                case 94:
+                case 97:
                     YY_RULE_SETUP
                     {
                         return ES3_extension(context, TExtension::EXT_YUV_target,
                                              YUVCSCSTANDARDEXT);
                     }
                     YY_BREAK
-                case 95:
-                    YY_RULE_SETUP { return yuvcscstandardext_constant(context); }
-                    YY_BREAK
-                case 96:
-                    YY_RULE_SETUP { return yuvcscstandardext_constant(context); }
-                    YY_BREAK
-                case 97:
-                    YY_RULE_SETUP { return yuvcscstandardext_constant(context); }
-                    YY_BREAK
                 case 98:
-                    YY_RULE_SETUP { return ES3_reserved_ES3_1_keyword(context, IMAGE2D); }
+                    YY_RULE_SETUP { return yuvcscstandardext_constant(context); }
                     YY_BREAK
                 case 99:
-                    YY_RULE_SETUP { return ES3_reserved_ES3_1_keyword(context, IIMAGE2D); }
+                    YY_RULE_SETUP { return yuvcscstandardext_constant(context); }
                     YY_BREAK
                 case 100:
-                    YY_RULE_SETUP { return ES3_reserved_ES3_1_keyword(context, UIMAGE2D); }
+                    YY_RULE_SETUP { return yuvcscstandardext_constant(context); }
                     YY_BREAK
                 case 101:
-                    YY_RULE_SETUP { return ES3_reserved_ES3_1_keyword(context, IMAGE2DARRAY); }
+                    YY_RULE_SETUP { return ES3_reserved_ES3_1_keyword(context, IMAGE2D); }
                     YY_BREAK
                 case 102:
-                    YY_RULE_SETUP { return ES3_reserved_ES3_1_keyword(context, IIMAGE2DARRAY); }
+                    YY_RULE_SETUP { return ES3_reserved_ES3_1_keyword(context, IIMAGE2D); }
                     YY_BREAK
                 case 103:
-                    YY_RULE_SETUP { return ES3_reserved_ES3_1_keyword(context, UIMAGE2DARRAY); }
+                    YY_RULE_SETUP { return ES3_reserved_ES3_1_keyword(context, UIMAGE2D); }
                     YY_BREAK
                 case 104:
-                    YY_RULE_SETUP { return ES3_reserved_ES3_1_keyword(context, IMAGE3D); }
+                    YY_RULE_SETUP { return ES3_reserved_ES3_1_keyword(context, IMAGE2DARRAY); }
                     YY_BREAK
                 case 105:
-                    YY_RULE_SETUP { return ES3_reserved_ES3_1_keyword(context, UIMAGE3D); }
+                    YY_RULE_SETUP { return ES3_reserved_ES3_1_keyword(context, IIMAGE2DARRAY); }
                     YY_BREAK
                 case 106:
-                    YY_RULE_SETUP { return ES3_reserved_ES3_1_keyword(context, IIMAGE3D); }
+                    YY_RULE_SETUP { return ES3_reserved_ES3_1_keyword(context, UIMAGE2DARRAY); }
                     YY_BREAK
                 case 107:
-                    YY_RULE_SETUP { return ES3_reserved_ES3_1_keyword(context, IIMAGECUBE); }
+                    YY_RULE_SETUP { return ES3_reserved_ES3_1_keyword(context, IMAGE3D); }
                     YY_BREAK
                 case 108:
-                    YY_RULE_SETUP { return ES3_reserved_ES3_1_keyword(context, UIMAGECUBE); }
+                    YY_RULE_SETUP { return ES3_reserved_ES3_1_keyword(context, UIMAGE3D); }
                     YY_BREAK
                 case 109:
-                    YY_RULE_SETUP { return ES3_reserved_ES3_1_keyword(context, IMAGECUBE); }
+                    YY_RULE_SETUP { return ES3_reserved_ES3_1_keyword(context, IIMAGE3D); }
                     YY_BREAK
                 case 110:
+                    YY_RULE_SETUP { return ES3_reserved_ES3_1_keyword(context, IIMAGECUBE); }
+                    YY_BREAK
+                case 111:
+                    YY_RULE_SETUP { return ES3_reserved_ES3_1_keyword(context, UIMAGECUBE); }
+                    YY_BREAK
+                case 112:
+                    YY_RULE_SETUP { return ES3_reserved_ES3_1_keyword(context, IMAGECUBE); }
+                    YY_BREAK
+                case 113:
                     YY_RULE_SETUP
                     {
                         return ES3_1_reserved_ES3_1_extension_ES3_2_keyword_2(
@@ -1703,7 +1739,7 @@ YY_DECL
                             IMAGECUBEARRAYEXT);
                     }
                     YY_BREAK
-                case 111:
+                case 114:
                     YY_RULE_SETUP
                     {
                         return ES3_1_reserved_ES3_1_extension_ES3_2_keyword_2(
@@ -1712,7 +1748,7 @@ YY_DECL
                             IIMAGECUBEARRAYEXT);
                     }
                     YY_BREAK
-                case 112:
+                case 115:
                     YY_RULE_SETUP
                     {
                         return ES3_1_reserved_ES3_1_extension_ES3_2_keyword_2(
@@ -1721,25 +1757,56 @@ YY_DECL
                             UIMAGECUBEARRAYEXT);
                     }
                     YY_BREAK
-                case 113:
-                    YY_RULE_SETUP { return ES3_reserved_ES3_1_keyword(context, READONLY); }
-                    YY_BREAK
-                case 114:
-                    YY_RULE_SETUP { return ES3_reserved_ES3_1_keyword(context, WRITEONLY); }
-                    YY_BREAK
-                case 115:
-                    YY_RULE_SETUP { return ES3_reserved_ES3_1_keyword(context, COHERENT); }
-                    YY_BREAK
                 case 116:
-                    YY_RULE_SETUP { return ES3_reserved_ES3_1_keyword(context, RESTRICT); }
+                    YY_RULE_SETUP
+                    {
+                        return ES3_and_3_1_reserved_ES3_1_extension_ES3_2_keyword_2(
+                            context, TExtension::OES_texture_buffer, TExtension::EXT_texture_buffer,
+                            IMAGEBUFFER, IMAGEBUFFER);
+                    }
                     YY_BREAK
                 case 117:
-                    YY_RULE_SETUP { return ES2_reserved_ES3_1_keyword(context, VOLATILE); }
+                    YY_RULE_SETUP
+                    {
+                        return ES3_and_3_1_reserved_ES3_1_extension_ES3_2_keyword_2(
+                            context, TExtension::OES_texture_buffer, TExtension::EXT_texture_buffer,
+                            IIMAGEBUFFER, IIMAGEBUFFER);
+                    }
                     YY_BREAK
                 case 118:
-                    YY_RULE_SETUP { return ES3_reserved_ES3_1_keyword(context, ATOMICUINT); }
+                    YY_RULE_SETUP
+                    {
+                        return ES3_and_3_1_reserved_ES3_1_extension_ES3_2_keyword_2(
+                            context, TExtension::OES_texture_buffer, TExtension::EXT_texture_buffer,
+                            UIMAGEBUFFER, UIMAGEBUFFER);
+                    }
                     YY_BREAK
                 case 119:
+                    YY_RULE_SETUP { return ES3_reserved_ES3_1_keyword(context, READONLY); }
+                    YY_BREAK
+                case 120:
+                    YY_RULE_SETUP { return ES3_reserved_ES3_1_keyword(context, WRITEONLY); }
+                    YY_BREAK
+                case 121:
+                    YY_RULE_SETUP { return ES3_reserved_ES3_1_keyword(context, COHERENT); }
+                    YY_BREAK
+                case 122:
+                    YY_RULE_SETUP { return ES3_reserved_ES3_1_keyword(context, RESTRICT); }
+                    YY_BREAK
+                case 123:
+                    YY_RULE_SETUP { return ES2_reserved_ES3_1_keyword(context, VOLATILE); }
+                    YY_BREAK
+                case 124:
+                    YY_RULE_SETUP { return ES3_reserved_ES3_1_keyword(context, ATOMICUINT); }
+                    YY_BREAK
+                case 125:
+                    YY_RULE_SETUP
+                    {
+                        return ES3_reserved_ES3_extension_ES3_2_keyword(
+                            context, TExtension::OES_shader_multisample_interpolation, SAMPLE);
+                    }
+                    YY_BREAK
+                case 126:
                     YY_RULE_SETUP
                     {
                         return ES3_1_reserved_ES3_1_extension_ES3_2_keyword(
@@ -1747,13 +1814,6 @@ YY_DECL
                     }
                     YY_BREAK
                 /* Reserved keywords for GLSL ES 3.00 that are not reserved for GLSL ES 1.00 */
-                case 120:
-                case 121:
-                case 122:
-                case 123:
-                case 124:
-                case 125:
-                case 126:
                 case 127:
                 case 128:
                 case 129:
@@ -3479,6 +3539,28 @@ int ES3_reserved_ES3_extension_ES3_1_keyword(TParseContext *context,
     return check_type(yyscanner);
 }
 
+int ES3_reserved_ES3_extension_ES3_2_keyword(TParseContext *context,
+                                             TExtension extension,
+                                             int token)
+{
+    struct yyguts_t *yyg = (struct yyguts_t *)context->getScanner();
+    yyscan_t yyscanner   = (yyscan_t)context->getScanner();
+
+    // A keyword in GLSL ES 3.00 with enabled extension or in GLSL ES 3.20
+    if (is_extension_enabled_or_is_core(context, 300, extension, 320))
+    {
+        return token;
+    }
+
+    if (context->getShaderVersion() == 300 || context->getShaderVersion() == 310)
+    {
+        return reserved_word(yyscanner);
+    }
+
+    yylval->lex.string = AllocatePoolCharArray(yytext, yyleng);
+    return check_type(yyscanner);
+}
+
 static int ES3_1_reserved_ES3_1_extension_ES3_2_keyword(TParseContext *context,
                                                         TExtension extension,
                                                         int token)
@@ -3523,6 +3605,35 @@ static int ES3_1_reserved_ES3_1_extension_ES3_2_keyword_2(TParseContext *context
 
     // A reserved word in GLSL ES 3.10
     if (context->getShaderVersion() == 310)
+    {
+        return reserved_word(yyscanner);
+    }
+
+    yylval->lex.string = AllocatePoolCharArray(yytext, yyleng);
+    return check_type(yyscanner);
+}
+
+static int ES3_and_3_1_reserved_ES3_1_extension_ES3_2_keyword_2(TParseContext *context,
+                                                                TExtension extension1,
+                                                                TExtension extension2,
+                                                                int token1,
+                                                                int token2)
+{
+    struct yyguts_t *yyg = (struct yyguts_t *)context->getScanner();
+    yyscan_t yyscanner   = (yyscan_t)context->getScanner();
+
+    // A keyword in GLSL ES 3.20 or GLSL ES 3.10 with enabled extension.
+    if (is_extension_enabled_or_is_core(context, 310, extension1, 320))
+    {
+        return token1;
+    }
+    else if (is_extension_enabled_or_is_core(context, 310, extension2, 320))
+    {
+        return token2;
+    }
+
+    // A reserved word in GLSL ES 3.00 and 3.10
+    if (context->getShaderVersion() >= 300)
     {
         return reserved_word(yyscanner);
     }

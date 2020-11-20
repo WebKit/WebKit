@@ -260,7 +260,7 @@ TEST(MatrixUtilsTest, Mat4Construction)
 // Tests rotation matrices.
 TEST(MatrixUtilsTest, Mat4Rotate)
 {
-    // Sanity check.
+    // Confidence check.
     float elementsExpected[] = {
         1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
         0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f,
@@ -758,7 +758,7 @@ TEST(MatrixUtilsTest, Mat4Translate)
 TEST(MatrixUtilsTest, Mat4Scale)
 {
 
-    // Sanity check.
+    // Confidence check.
     float elementsExpected[] = {
         1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
         0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f,

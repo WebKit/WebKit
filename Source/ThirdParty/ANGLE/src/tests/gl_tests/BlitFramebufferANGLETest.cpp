@@ -14,7 +14,7 @@ class BlitFramebufferANGLETest : public ANGLETest
   protected:
     BlitFramebufferANGLETest()
     {
-        setWindowWidth(32);
+        setWindowWidth(64);
         setWindowHeight(32);
         setConfigRedBits(8);
         setConfigGreenBits(8);
@@ -410,9 +410,9 @@ TEST_P(BlitFramebufferANGLETest, BlitColorToDefault)
     glBindFramebuffer(GL_FRAMEBUFFER, mOriginalFBO);
 
     EXPECT_PIXEL_COLOR_EQ(getWindowWidth() / 4, getWindowHeight() / 4, GLColor::red);
-    EXPECT_PIXEL_COLOR_EQ(3 * getWindowWidth() / 4, getWindowHeight() / 4, GLColor::green);
-    EXPECT_PIXEL_COLOR_EQ(3 * getWindowWidth() / 4, 3 * getWindowHeight() / 4, GLColor::red);
     EXPECT_PIXEL_COLOR_EQ(getWindowWidth() / 4, 3 * getWindowHeight() / 4, GLColor::green);
+    EXPECT_PIXEL_COLOR_EQ(3 * getWindowWidth() / 4, getWindowHeight() / 4, GLColor::blue);
+    EXPECT_PIXEL_COLOR_EQ(3 * getWindowWidth() / 4, 3 * getWindowHeight() / 4, GLColor::yellow);
 }
 
 // Draw to system framebuffer, blit whole-buffer color to user-created framebuffer.
@@ -441,10 +441,10 @@ TEST_P(BlitFramebufferANGLETest, ReverseColorBlit)
 
     glBindFramebuffer(GL_FRAMEBUFFER, mUserFBO);
 
-    EXPECT_PIXEL_EQ(getWindowWidth() / 4, getWindowHeight() / 4, 255, 0, 0, 255);
-    EXPECT_PIXEL_EQ(3 * getWindowWidth() / 4, getWindowHeight() / 4, 0, 255, 0, 255);
-    EXPECT_PIXEL_EQ(3 * getWindowWidth() / 4, 3 * getWindowHeight() / 4, 255, 0, 0, 255);
-    EXPECT_PIXEL_EQ(getWindowWidth() / 4, 3 * getWindowHeight() / 4, 0, 255, 0, 255);
+    EXPECT_PIXEL_COLOR_EQ(getWindowWidth() / 4, getWindowHeight() / 4, GLColor::red);
+    EXPECT_PIXEL_COLOR_EQ(getWindowWidth() / 4, 3 * getWindowHeight() / 4, GLColor::green);
+    EXPECT_PIXEL_COLOR_EQ(3 * getWindowWidth() / 4, getWindowHeight() / 4, GLColor::blue);
+    EXPECT_PIXEL_COLOR_EQ(3 * getWindowWidth() / 4, 3 * getWindowHeight() / 4, GLColor::yellow);
 }
 
 // blit from user-created FBO to system framebuffer, with the scissor test enabled.
@@ -478,10 +478,10 @@ TEST_P(BlitFramebufferANGLETest, ScissoredBlit)
 
     glBindFramebuffer(GL_FRAMEBUFFER, mOriginalFBO);
 
-    EXPECT_PIXEL_EQ(getWindowWidth() / 4, getWindowHeight() / 4, 255, 255, 255, 255);
-    EXPECT_PIXEL_EQ(3 * getWindowWidth() / 4, getWindowHeight() / 4, 0, 255, 0, 255);
-    EXPECT_PIXEL_EQ(3 * getWindowWidth() / 4, 3 * getWindowHeight() / 4, 255, 0, 0, 255);
-    EXPECT_PIXEL_EQ(getWindowWidth() / 4, 3 * getWindowHeight() / 4, 255, 255, 255, 255);
+    EXPECT_PIXEL_COLOR_EQ(getWindowWidth() / 4, getWindowHeight() / 4, GLColor::white);
+    EXPECT_PIXEL_COLOR_EQ(getWindowWidth() / 4, 3 * getWindowHeight() / 4, GLColor::white);
+    EXPECT_PIXEL_COLOR_EQ(3 * getWindowWidth() / 4, getWindowHeight() / 4, GLColor::blue);
+    EXPECT_PIXEL_COLOR_EQ(3 * getWindowWidth() / 4, 3 * getWindowHeight() / 4, GLColor::yellow);
 }
 
 // blit from system FBO to user-created framebuffer, with the scissor test enabled.
@@ -515,10 +515,10 @@ TEST_P(BlitFramebufferANGLETest, ReverseScissoredBlit)
 
     glBindFramebuffer(GL_FRAMEBUFFER, mUserFBO);
 
-    EXPECT_PIXEL_EQ(getWindowWidth() / 4, getWindowHeight() / 4, 255, 255, 255, 255);
-    EXPECT_PIXEL_EQ(3 * getWindowWidth() / 4, getWindowHeight() / 4, 0, 255, 0, 255);
-    EXPECT_PIXEL_EQ(3 * getWindowWidth() / 4, 3 * getWindowHeight() / 4, 255, 0, 0, 255);
-    EXPECT_PIXEL_EQ(getWindowWidth() / 4, 3 * getWindowHeight() / 4, 255, 255, 255, 255);
+    EXPECT_PIXEL_COLOR_EQ(getWindowWidth() / 4, getWindowHeight() / 4, GLColor::white);
+    EXPECT_PIXEL_COLOR_EQ(getWindowWidth() / 4, 3 * getWindowHeight() / 4, GLColor::white);
+    EXPECT_PIXEL_COLOR_EQ(3 * getWindowWidth() / 4, getWindowHeight() / 4, GLColor::blue);
+    EXPECT_PIXEL_COLOR_EQ(3 * getWindowWidth() / 4, 3 * getWindowHeight() / 4, GLColor::yellow);
 }
 
 // blit from user-created FBO to system framebuffer, using region larger than buffer.
@@ -548,10 +548,10 @@ TEST_P(BlitFramebufferANGLETest, OversizedBlit)
 
     glBindFramebuffer(GL_FRAMEBUFFER, mOriginalFBO);
 
-    EXPECT_PIXEL_EQ(getWindowWidth() / 4, getWindowHeight() / 4, 255, 0, 0, 255);
-    EXPECT_PIXEL_EQ(3 * getWindowWidth() / 4, getWindowHeight() / 4, 0, 255, 0, 255);
-    EXPECT_PIXEL_EQ(3 * getWindowWidth() / 4, 3 * getWindowHeight() / 4, 255, 0, 0, 255);
-    EXPECT_PIXEL_EQ(getWindowWidth() / 4, 3 * getWindowHeight() / 4, 0, 255, 0, 255);
+    EXPECT_PIXEL_COLOR_EQ(getWindowWidth() / 4, getWindowHeight() / 4, GLColor::red);
+    EXPECT_PIXEL_COLOR_EQ(getWindowWidth() / 4, 3 * getWindowHeight() / 4, GLColor::green);
+    EXPECT_PIXEL_COLOR_EQ(3 * getWindowWidth() / 4, getWindowHeight() / 4, GLColor::blue);
+    EXPECT_PIXEL_COLOR_EQ(3 * getWindowWidth() / 4, 3 * getWindowHeight() / 4, GLColor::yellow);
 }
 
 // blit from system FBO to user-created framebuffer, using region larger than buffer.
@@ -580,10 +580,10 @@ TEST_P(BlitFramebufferANGLETest, ReverseOversizedBlit)
 
     glBindFramebuffer(GL_FRAMEBUFFER, mUserFBO);
 
-    EXPECT_PIXEL_EQ(getWindowWidth() / 4, getWindowHeight() / 4, 255, 0, 0, 255);
-    EXPECT_PIXEL_EQ(3 * getWindowWidth() / 4, getWindowHeight() / 4, 0, 255, 0, 255);
-    EXPECT_PIXEL_EQ(3 * getWindowWidth() / 4, 3 * getWindowHeight() / 4, 255, 0, 0, 255);
-    EXPECT_PIXEL_EQ(getWindowWidth() / 4, 3 * getWindowHeight() / 4, 0, 255, 0, 255);
+    EXPECT_PIXEL_COLOR_EQ(getWindowWidth() / 4, getWindowHeight() / 4, GLColor::red);
+    EXPECT_PIXEL_COLOR_EQ(getWindowWidth() / 4, 3 * getWindowHeight() / 4, GLColor::green);
+    EXPECT_PIXEL_COLOR_EQ(3 * getWindowWidth() / 4, getWindowHeight() / 4, GLColor::blue);
+    EXPECT_PIXEL_COLOR_EQ(3 * getWindowWidth() / 4, 3 * getWindowHeight() / 4, GLColor::yellow);
 }
 
 // blit from user-created FBO to system framebuffer, with depth buffer.
@@ -634,9 +634,9 @@ TEST_P(BlitFramebufferANGLETest, BlitWithDepthUserToDefault)
     glDisable(GL_DEPTH_TEST);
 
     EXPECT_PIXEL_COLOR_EQ(getWindowWidth() / 4, getWindowHeight() / 4, GLColor::red);
+    EXPECT_PIXEL_COLOR_EQ(getWindowWidth() / 4, 3 * getWindowHeight() / 4, GLColor::blue);
     EXPECT_PIXEL_COLOR_EQ(3 * getWindowWidth() / 4, getWindowHeight() / 4, GLColor::red);
     EXPECT_PIXEL_COLOR_EQ(3 * getWindowWidth() / 4, 3 * getWindowHeight() / 4, GLColor::blue);
-    EXPECT_PIXEL_COLOR_EQ(getWindowWidth() / 4, 3 * getWindowHeight() / 4, GLColor::blue);
 }
 
 // blit from system FBO to user-created framebuffer, with depth buffer.
@@ -686,10 +686,10 @@ TEST_P(BlitFramebufferANGLETest, BlitWithDepthDefaultToUser)
 
     glDisable(GL_DEPTH_TEST);
 
-    EXPECT_PIXEL_EQ(getWindowWidth() / 4, getWindowHeight() / 4, 255, 0, 0, 255);
-    EXPECT_PIXEL_EQ(3 * getWindowWidth() / 4, getWindowHeight() / 4, 255, 0, 0, 255);
-    EXPECT_PIXEL_EQ(3 * getWindowWidth() / 4, 3 * getWindowHeight() / 4, 0, 0, 255, 255);
-    EXPECT_PIXEL_EQ(getWindowWidth() / 4, 3 * getWindowHeight() / 4, 0, 0, 255, 255);
+    EXPECT_PIXEL_COLOR_EQ(getWindowWidth() / 4, getWindowHeight() / 4, GLColor::red);
+    EXPECT_PIXEL_COLOR_EQ(getWindowWidth() / 4, 3 * getWindowHeight() / 4, GLColor::blue);
+    EXPECT_PIXEL_COLOR_EQ(3 * getWindowWidth() / 4, getWindowHeight() / 4, GLColor::red);
+    EXPECT_PIXEL_COLOR_EQ(3 * getWindowWidth() / 4, 3 * getWindowHeight() / 4, GLColor::blue);
 }
 
 // blit from one region of the system fbo to another-- this should fail.
@@ -755,9 +755,9 @@ TEST_P(BlitFramebufferANGLETest, BlitPartialColor)
     glBindFramebuffer(GL_FRAMEBUFFER, mOriginalFBO);
 
     EXPECT_PIXEL_COLOR_EQ(getWindowWidth() / 4, getWindowHeight() / 4, GLColor::white);
+    EXPECT_PIXEL_COLOR_EQ(getWindowWidth() / 4, 3 * getWindowHeight() / 4, GLColor::red);
     EXPECT_PIXEL_COLOR_EQ(3 * getWindowWidth() / 4, getWindowHeight() / 4, GLColor::white);
     EXPECT_PIXEL_COLOR_EQ(3 * getWindowWidth() / 4, 3 * getWindowHeight() / 4, GLColor::white);
-    EXPECT_PIXEL_COLOR_EQ(getWindowWidth() / 4, 3 * getWindowHeight() / 4, GLColor::red);
 }
 
 TEST_P(BlitFramebufferANGLETest, BlitDifferentSizes)
@@ -785,7 +785,7 @@ TEST_P(BlitFramebufferANGLETest, BlitDifferentSizes)
 
     glBindFramebuffer(GL_FRAMEBUFFER, mSmallFBO);
 
-    EXPECT_PIXEL_EQ(getWindowWidth() / 4, getWindowHeight() / 4, 255, 0, 0, 255);
+    EXPECT_PIXEL_COLOR_EQ(getWindowWidth() / 4, getWindowHeight() / 4, GLColor::red);
 
     EXPECT_GL_NO_ERROR();
 }
@@ -834,6 +834,9 @@ TEST_P(BlitFramebufferANGLETest, BlitStencil)
     // http://anglebug.com/2205
     ANGLE_SKIP_TEST_IF(IsIntel() && IsD3D9());
 
+    // http://anglebug.com/4919
+    ANGLE_SKIP_TEST_IF(IsIntel() && IsMetal());
+
     glBindFramebuffer(GL_FRAMEBUFFER, mUserFBO);
 
     glClearColor(0.0, 1.0, 0.0, 1.0);
@@ -870,10 +873,10 @@ TEST_P(BlitFramebufferANGLETest, BlitStencil)
 
     glBindFramebuffer(GL_FRAMEBUFFER, mOriginalFBO);
 
-    EXPECT_PIXEL_EQ(getWindowWidth() / 4, getWindowHeight() / 4, 255, 0, 0, 255);
-    EXPECT_PIXEL_EQ(3 * getWindowWidth() / 4, getWindowHeight() / 4, 255, 0, 0, 255);
-    EXPECT_PIXEL_EQ(3 * getWindowWidth() / 4, 3 * getWindowHeight() / 4, 0, 255, 0, 255);
-    EXPECT_PIXEL_EQ(getWindowWidth() / 4, 3 * getWindowHeight() / 4, 0, 255, 0, 255);
+    EXPECT_PIXEL_COLOR_EQ(getWindowWidth() / 4, getWindowHeight() / 4, GLColor::red);
+    EXPECT_PIXEL_COLOR_EQ(getWindowWidth() / 4, 3 * getWindowHeight() / 4, GLColor::green);
+    EXPECT_PIXEL_COLOR_EQ(3 * getWindowWidth() / 4, getWindowHeight() / 4, GLColor::red);
+    EXPECT_PIXEL_COLOR_EQ(3 * getWindowWidth() / 4, 3 * getWindowHeight() / 4, GLColor::green);
 
     glStencilFunc(GL_EQUAL, 0x1, 0xFF);  // only pass if stencil buffer at pixel reads 0x1
 
@@ -882,10 +885,10 @@ TEST_P(BlitFramebufferANGLETest, BlitStencil)
 
     glDisable(GL_STENCIL_TEST);
 
-    EXPECT_PIXEL_EQ(getWindowWidth() / 4, getWindowHeight() / 4, 0, 0, 255, 255);
-    EXPECT_PIXEL_EQ(3 * getWindowWidth() / 4, getWindowHeight() / 4, 0, 0, 255, 255);
-    EXPECT_PIXEL_EQ(3 * getWindowWidth() / 4, 3 * getWindowHeight() / 4, 0, 255, 0, 255);
-    EXPECT_PIXEL_EQ(getWindowWidth() / 4, 3 * getWindowHeight() / 4, 0, 255, 0, 255);
+    EXPECT_PIXEL_COLOR_EQ(getWindowWidth() / 4, getWindowHeight() / 4, GLColor::blue);
+    EXPECT_PIXEL_COLOR_EQ(getWindowWidth() / 4, 3 * getWindowHeight() / 4, GLColor::green);
+    EXPECT_PIXEL_COLOR_EQ(3 * getWindowWidth() / 4, getWindowHeight() / 4, GLColor::blue);
+    EXPECT_PIXEL_COLOR_EQ(3 * getWindowWidth() / 4, 3 * getWindowHeight() / 4, GLColor::green);
 }
 
 // make sure that attempting to blit a partial depth buffer issues an error
@@ -943,19 +946,19 @@ TEST_P(BlitFramebufferANGLETest, BlitMRT)
 
     glBindFramebuffer(GL_FRAMEBUFFER, mMRTFBO);
 
-    EXPECT_PIXEL_EQ(getWindowWidth() / 4, getWindowHeight() / 4, 255, 0, 0, 255);
-    EXPECT_PIXEL_EQ(3 * getWindowWidth() / 4, getWindowHeight() / 4, 0, 255, 0, 255);
-    EXPECT_PIXEL_EQ(3 * getWindowWidth() / 4, 3 * getWindowHeight() / 4, 255, 0, 0, 255);
-    EXPECT_PIXEL_EQ(getWindowWidth() / 4, 3 * getWindowHeight() / 4, 0, 255, 0, 255);
+    EXPECT_PIXEL_COLOR_EQ(getWindowWidth() / 4, getWindowHeight() / 4, GLColor::red);
+    EXPECT_PIXEL_COLOR_EQ(getWindowWidth() / 4, 3 * getWindowHeight() / 4, GLColor::green);
+    EXPECT_PIXEL_COLOR_EQ(3 * getWindowWidth() / 4, getWindowHeight() / 4, GLColor::blue);
+    EXPECT_PIXEL_COLOR_EQ(3 * getWindowWidth() / 4, 3 * getWindowHeight() / 4, GLColor::yellow);
 
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1_EXT, GL_TEXTURE_2D, 0, 0);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mMRTColorBuffer0,
                            0);
 
-    EXPECT_PIXEL_EQ(getWindowWidth() / 4, getWindowHeight() / 4, 255, 0, 0, 255);
-    EXPECT_PIXEL_EQ(3 * getWindowWidth() / 4, getWindowHeight() / 4, 0, 255, 0, 255);
-    EXPECT_PIXEL_EQ(3 * getWindowWidth() / 4, 3 * getWindowHeight() / 4, 255, 0, 0, 255);
-    EXPECT_PIXEL_EQ(getWindowWidth() / 4, 3 * getWindowHeight() / 4, 0, 255, 0, 255);
+    EXPECT_PIXEL_COLOR_EQ(getWindowWidth() / 4, getWindowHeight() / 4, GLColor::red);
+    EXPECT_PIXEL_COLOR_EQ(getWindowWidth() / 4, 3 * getWindowHeight() / 4, GLColor::green);
+    EXPECT_PIXEL_COLOR_EQ(3 * getWindowWidth() / 4, getWindowHeight() / 4, GLColor::blue);
+    EXPECT_PIXEL_COLOR_EQ(3 * getWindowWidth() / 4, 3 * getWindowHeight() / 4, GLColor::yellow);
 
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mMRTColorBuffer0,
                            0);
@@ -1222,6 +1225,77 @@ TEST_P(BlitFramebufferTest, MultisampleDepth)
     ASSERT_GL_NO_ERROR();
 }
 
+// Blit multisample stencil buffer to default framebuffer without prerotaion.
+TEST_P(BlitFramebufferTest, BlitMultisampleStencilToDefault)
+{
+    // http://anglebug.com/3496
+    ANGLE_SKIP_TEST_IF(IsOpenGL() && IsIntel() && IsOSX());
+
+    // http://anglebug.com/5106
+    ANGLE_SKIP_TEST_IF(IsMetal() && IsIntel() && IsOSX());
+
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+    GLRenderbuffer colorbuf;
+    glBindRenderbuffer(GL_RENDERBUFFER, colorbuf.get());
+    glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4, GL_RGBA8, 128, 128);
+
+    GLRenderbuffer depthstencilbuf;
+    glBindRenderbuffer(GL_RENDERBUFFER, depthstencilbuf.get());
+    glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4, GL_DEPTH24_STENCIL8, 128, 128);
+
+    GLFramebuffer framebuffer;
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer.get());
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, colorbuf);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER,
+                              depthstencilbuf);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER,
+                              depthstencilbuf);
+    glCheckFramebufferStatus(GL_FRAMEBUFFER);
+
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+    glFlush();
+
+    // Replace stencil to 1.
+    ANGLE_GL_PROGRAM(drawRed, essl3_shaders::vs::Simple(), essl3_shaders::fs::Red());
+    glEnable(GL_STENCIL_TEST);
+    glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
+    glStencilFunc(GL_ALWAYS, 1, 255);
+    drawQuad(drawRed.get(), essl3_shaders::PositionAttrib(), 0.8f);
+
+    // Blit multisample stencil buffer to default frambuffer.
+    GLenum attachments1[] = {GL_COLOR_ATTACHMENT0};
+    glInvalidateFramebuffer(GL_FRAMEBUFFER, 1, attachments1);
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+    glBlitFramebuffer(0, 0, 128, 128, 0, 0, 128, 128, GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT,
+                      GL_NEAREST);
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
+
+    // Disable stencil and draw full_screen green color.
+    ANGLE_GL_PROGRAM(drawGreen, essl3_shaders::vs::Simple(), essl3_shaders::fs::Green());
+    glDisable(GL_STENCIL_TEST);
+    drawQuad(drawGreen.get(), essl3_shaders::PositionAttrib(), 0.5f);
+
+    // Draw blue color if the stencil is equal to 1.
+    // If the blit finished successfully, the stencil test should all pass.
+    ANGLE_GL_PROGRAM(drawBlue, essl3_shaders::vs::Simple(), essl3_shaders::fs::Blue());
+    glEnable(GL_STENCIL_TEST);
+    glStencilFunc(GL_EQUAL, 1, 255);
+    drawQuad(drawBlue.get(), essl3_shaders::PositionAttrib(), 0.2f);
+
+    // Check the result, especially the boundaries.
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
+    EXPECT_PIXEL_COLOR_EQ(127, 0, GLColor::blue);
+    EXPECT_PIXEL_COLOR_EQ(50, 0, GLColor::blue);
+    EXPECT_PIXEL_COLOR_EQ(127, 1, GLColor::blue);
+    EXPECT_PIXEL_COLOR_EQ(0, 127, GLColor::blue);
+    EXPECT_PIXEL_COLOR_EQ(127, 127, GLColor::blue);
+    EXPECT_PIXEL_COLOR_EQ(64, 64, GLColor::blue);
+
+    ASSERT_GL_NO_ERROR();
+}
+
 // Tests clearing a multisampled depth buffer.
 TEST_P(BlitFramebufferTest, MultisampleDepthClear)
 {
@@ -1288,6 +1362,9 @@ TEST_P(BlitFramebufferTest, MultisampleStencil)
 {
     // Incorrect rendering results seen on AMD Windows OpenGL. http://anglebug.com/2486
     ANGLE_SKIP_TEST_IF(IsAMD() && IsOpenGL() && IsWindows());
+
+    // http://anglebug.com/5106
+    ANGLE_SKIP_TEST_IF(IsMetal() && IsIntel() && IsOSX());
 
     GLRenderbuffer renderbuf;
     glBindRenderbuffer(GL_RENDERBUFFER, renderbuf.get());
@@ -1446,6 +1523,306 @@ TEST_P(BlitFramebufferTest, ScissoredMultisampleStencil)
     ASSERT_GL_NO_ERROR();
 }
 
+// Test blitting from a texture with non-zero base.  The blit is non-stretching and between
+// identical formats so that the path that uses vkCmdBlitImage is taken.
+TEST_P(BlitFramebufferTest, NonZeroBaseSource)
+{
+    // http://anglebug.com/5001
+    ANGLE_SKIP_TEST_IF(IsOpenGL() && IsIntel() && IsOSX());
+
+    ANGLE_GL_PROGRAM(drawRed, essl3_shaders::vs::Simple(), essl3_shaders::fs::Red());
+
+    // Create a framebuffer for source data.  It usea a non-zero base.
+    GLTexture srcColor;
+    glBindTexture(GL_TEXTURE_2D, srcColor);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 256, 256, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    glTexImage2D(GL_TEXTURE_2D, 1, GL_RGBA8, 256, 256, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 1);
+
+    GLFramebuffer srcFramebuffer;
+    glBindFramebuffer(GL_FRAMEBUFFER, srcFramebuffer);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, srcColor, 1);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    // fill the color buffer with red.
+    drawQuad(drawRed.get(), essl3_shaders::PositionAttrib(), 0.5f);
+
+    // Create a framebuffer for blit destination.
+    GLTexture dstColor;
+    glBindTexture(GL_TEXTURE_2D, dstColor);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 256, 256, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+
+    GLFramebuffer dstFramebuffer;
+    glBindFramebuffer(GL_FRAMEBUFFER, dstFramebuffer);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, dstColor, 0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    // Blit.  Note: no stretching is done so that vkCmdBlitImage can be used.
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, srcFramebuffer);
+    glBlitFramebuffer(0, 0, 256, 256, 0, 0, 256, 256, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, dstFramebuffer);
+
+    ASSERT_GL_NO_ERROR();
+
+    // Make sure the blit is done.
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+
+    ASSERT_GL_NO_ERROR();
+}
+
+// Test blitting to a texture with non-zero base.  The blit is non-stretching and between
+// identical formats so that the path that uses vkCmdBlitImage is taken.
+TEST_P(BlitFramebufferTest, NonZeroBaseDestination)
+{
+    ANGLE_GL_PROGRAM(drawRed, essl3_shaders::vs::Simple(), essl3_shaders::fs::Red());
+
+    // Create a framebuffer for source data.  It usea a non-zero base.
+    GLTexture srcColor;
+    glBindTexture(GL_TEXTURE_2D, srcColor);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 256, 256, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+
+    GLFramebuffer srcFramebuffer;
+    glBindFramebuffer(GL_FRAMEBUFFER, srcFramebuffer);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, srcColor, 0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    // fill the color buffer with red.
+    drawQuad(drawRed.get(), essl3_shaders::PositionAttrib(), 0.5f);
+
+    // Create a framebuffer for blit destination.
+    GLTexture dstColor;
+    glBindTexture(GL_TEXTURE_2D, dstColor);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 256, 256, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    glTexImage2D(GL_TEXTURE_2D, 1, GL_RGBA8, 256, 256, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 1);
+
+    GLFramebuffer dstFramebuffer;
+    glBindFramebuffer(GL_FRAMEBUFFER, dstFramebuffer);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, dstColor, 1);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    // Blit.  Note: no stretching is done so that vkCmdBlitImage can be used.
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, srcFramebuffer);
+    glBlitFramebuffer(0, 0, 256, 256, 0, 0, 256, 256, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, dstFramebuffer);
+
+    ASSERT_GL_NO_ERROR();
+
+    // Make sure the blit is done.
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+
+    ASSERT_GL_NO_ERROR();
+}
+
+// Test blitting from a stencil buffer with non-zero base.
+TEST_P(BlitFramebufferTest, NonZeroBaseSourceStencil)
+{
+    // http://anglebug.com/5001
+    ANGLE_SKIP_TEST_IF(IsOpenGL() && IsIntel() && IsOSX());
+
+    // http://anglebug.com/5106
+    ANGLE_SKIP_TEST_IF(IsMetal() && IsIntel() && IsOSX());
+
+    ANGLE_GL_PROGRAM(drawRed, essl3_shaders::vs::Simple(), essl3_shaders::fs::Red());
+
+    // Create a framebuffer with an attachment that has non-zero base
+    GLTexture stencilTexture;
+    glBindTexture(GL_TEXTURE_2D, stencilTexture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, 256, 256, 0, GL_DEPTH_STENCIL,
+                 GL_UNSIGNED_INT_24_8, nullptr);
+    glTexImage2D(GL_TEXTURE_2D, 1, GL_DEPTH24_STENCIL8, 256, 256, 0, GL_DEPTH_STENCIL,
+                 GL_UNSIGNED_INT_24_8, nullptr);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 1);
+
+    GLFramebuffer srcFramebuffer;
+    glBindFramebuffer(GL_FRAMEBUFFER, srcFramebuffer);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_TEXTURE_2D, stencilTexture, 1);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    // fill the stencil buffer with 0x1
+    glStencilFunc(GL_ALWAYS, 0x1, 0xFF);
+    glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
+    glEnable(GL_STENCIL_TEST);
+    drawQuad(drawRed.get(), essl3_shaders::PositionAttrib(), 0.5f);
+
+    // Create a framebuffer with an attachment that has non-zero base
+    GLTexture colorTexture;
+    glBindTexture(GL_TEXTURE_2D, colorTexture);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, 256, 256);
+
+    GLRenderbuffer renderbuf;
+    glBindRenderbuffer(GL_RENDERBUFFER, renderbuf);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, 256, 256);
+
+    GLFramebuffer dstFramebuffer;
+    glBindFramebuffer(GL_FRAMEBUFFER, dstFramebuffer);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorTexture, 0);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, renderbuf);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    // Blit stencil.
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, srcFramebuffer);
+    glBlitFramebuffer(0, 0, 256, 256, 0, 0, 256, 256, GL_STENCIL_BUFFER_BIT, GL_NEAREST);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, dstFramebuffer);
+
+    ASSERT_GL_NO_ERROR();
+
+    // Clear to green
+    glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+
+    // Draw red if the stencil is 0x1, which should be true after the blit.
+    glStencilFunc(GL_EQUAL, 0x1, 0xFF);
+    drawQuad(drawRed.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+
+    ASSERT_GL_NO_ERROR();
+}
+
+// Test blitting to a stencil buffer with non-zero base.
+TEST_P(BlitFramebufferTest, NonZeroBaseDestinationStencil)
+{
+    // http://anglebug.com/5001
+    ANGLE_SKIP_TEST_IF(IsOpenGL() && IsIntel() && IsOSX());
+    // http://anglebug.com/5106
+    ANGLE_SKIP_TEST_IF(IsMetal() && (IsAMD() || IsIntel()));
+    // http://anglebug.com/5003
+    ANGLE_SKIP_TEST_IF(IsOpenGL() && IsIntel() && IsWindows());
+
+    ANGLE_GL_PROGRAM(drawRed, essl3_shaders::vs::Simple(), essl3_shaders::fs::Red());
+
+    // Create a framebuffer for source data.
+    GLRenderbuffer renderbuf;
+    glBindRenderbuffer(GL_RENDERBUFFER, renderbuf);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, 256, 256);
+
+    GLFramebuffer srcFramebuffer;
+    glBindFramebuffer(GL_FRAMEBUFFER, srcFramebuffer);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, renderbuf);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    // fill the stencil buffer with 0x1
+    glStencilFunc(GL_ALWAYS, 0x1, 0xFF);
+    glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
+    glEnable(GL_STENCIL_TEST);
+    drawQuad(drawRed.get(), essl3_shaders::PositionAttrib(), 0.5f);
+
+    // Create a framebuffer with an attachment that has non-zero base
+    GLTexture colorTexture;
+    glBindTexture(GL_TEXTURE_2D, colorTexture);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, 256, 256);
+
+    GLTexture stencilTexture;
+    glBindTexture(GL_TEXTURE_2D, stencilTexture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, 256, 256, 0, GL_DEPTH_STENCIL,
+                 GL_UNSIGNED_INT_24_8, nullptr);
+    glTexImage2D(GL_TEXTURE_2D, 1, GL_DEPTH24_STENCIL8, 256, 256, 0, GL_DEPTH_STENCIL,
+                 GL_UNSIGNED_INT_24_8, nullptr);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 1);
+
+    GLFramebuffer dstFramebuffer;
+    glBindFramebuffer(GL_FRAMEBUFFER, dstFramebuffer);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorTexture, 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_TEXTURE_2D, stencilTexture, 1);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    // Blit stencil.
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, srcFramebuffer);
+    glBlitFramebuffer(0, 0, 256, 256, 0, 0, 256, 256, GL_STENCIL_BUFFER_BIT, GL_NEAREST);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, dstFramebuffer);
+
+    ASSERT_GL_NO_ERROR();
+
+    // Clear to green
+    glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+
+    // Draw red if the stencil is 0x1, which should be true after the blit.
+    glStencilFunc(GL_EQUAL, 0x1, 0xFF);
+    drawQuad(drawRed.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+
+    ASSERT_GL_NO_ERROR();
+}
+
+// Test blitting to a stencil buffer with non-zero base.  Exercises the compute path in the Vulkan
+// backend if stencil export is not supported.  The blit is not 1-to-1 for this path to be taken.
+TEST_P(BlitFramebufferTest, NonZeroBaseDestinationStencilStretch)
+{
+    // http://anglebug.com/5000
+    ANGLE_SKIP_TEST_IF(IsOpenGL() && IsIntel() && IsWindows());
+
+    // http://anglebug.com/5001
+    ANGLE_SKIP_TEST_IF(IsOpenGL() && IsIntel() && IsOSX());
+
+    // http://anglebug.com/5106
+    ANGLE_SKIP_TEST_IF(IsMetal() && (IsAMD() || IsIntel()));
+
+    ANGLE_GL_PROGRAM(drawRed, essl3_shaders::vs::Simple(), essl3_shaders::fs::Red());
+
+    // Create a framebuffer for source data.
+    GLRenderbuffer renderbuf;
+    glBindRenderbuffer(GL_RENDERBUFFER, renderbuf);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, 256, 256);
+
+    GLFramebuffer srcFramebuffer;
+    glBindFramebuffer(GL_FRAMEBUFFER, srcFramebuffer);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, renderbuf);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    // fill the stencil buffer with 0x1
+    glStencilFunc(GL_ALWAYS, 0x1, 0xFF);
+    glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
+    glEnable(GL_STENCIL_TEST);
+    drawQuad(drawRed.get(), essl3_shaders::PositionAttrib(), 0.5f);
+
+    // Create a framebuffer with an attachment that has non-zero base
+    GLTexture colorTexture;
+    glBindTexture(GL_TEXTURE_2D, colorTexture);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, 256, 256);
+
+    GLTexture stencilTexture;
+    glBindTexture(GL_TEXTURE_2D, stencilTexture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, 256, 256, 0, GL_DEPTH_STENCIL,
+                 GL_UNSIGNED_INT_24_8, nullptr);
+    glTexImage2D(GL_TEXTURE_2D, 1, GL_DEPTH24_STENCIL8, 256, 256, 0, GL_DEPTH_STENCIL,
+                 GL_UNSIGNED_INT_24_8, nullptr);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 1);
+
+    GLFramebuffer dstFramebuffer;
+    glBindFramebuffer(GL_FRAMEBUFFER, dstFramebuffer);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorTexture, 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_TEXTURE_2D, stencilTexture, 1);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    // Blit stencil.  Note: stretch is intentional so vkCmdBlitImage cannot be used in the Vulkan
+    // backend.
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, srcFramebuffer);
+    glBlitFramebuffer(0, 0, 256, 256, -256, -256, 512, 512, GL_STENCIL_BUFFER_BIT, GL_NEAREST);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, dstFramebuffer);
+
+    ASSERT_GL_NO_ERROR();
+
+    // Clear to green
+    glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+
+    // Draw red if the stencil is 0x1, which should be true after the blit.
+    glStencilFunc(GL_EQUAL, 0x1, 0xFF);
+    drawQuad(drawRed.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+
+    ASSERT_GL_NO_ERROR();
+}
+
 // Blit an SRGB framebuffer and scale it.
 TEST_P(BlitFramebufferTest, BlitSRGBToRGBAndScale)
 {
@@ -1477,9 +1854,9 @@ TEST_P(BlitFramebufferTest, BlitSRGBToRGBAndScale)
     glBindFramebuffer(GL_FRAMEBUFFER, targetFBO);
 
     EXPECT_PIXEL_COLOR_EQ(kWidth / 4, kHeight / 4, GLColor::red);
-    EXPECT_PIXEL_COLOR_EQ(3 * kWidth / 4, kHeight / 4, GLColor::green);
-    EXPECT_PIXEL_COLOR_EQ(3 * kWidth / 4, 3 * kHeight / 4, GLColor::red);
     EXPECT_PIXEL_COLOR_EQ(kWidth / 4, 3 * kHeight / 4, GLColor::green);
+    EXPECT_PIXEL_COLOR_EQ(3 * kWidth / 4, kHeight / 4, GLColor::blue);
+    EXPECT_PIXEL_COLOR_EQ(3 * kWidth / 4, 3 * kHeight / 4, GLColor::yellow);
 
     glBindFramebuffer(GL_READ_FRAMEBUFFER, sourceFBO);
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, targetFBO);
@@ -1495,15 +1872,18 @@ TEST_P(BlitFramebufferTest, BlitSRGBToRGBAndScale)
 
     glBindFramebuffer(GL_FRAMEBUFFER, targetFBO);
 
-    EXPECT_PIXEL_COLOR_EQ(kWidth / 4, kHeight / 4, GLColor::green);
+    EXPECT_PIXEL_COLOR_EQ(kWidth / 4, kHeight / 4, GLColor::blue);
+    EXPECT_PIXEL_COLOR_EQ(kWidth / 4, 3 * kHeight / 4, GLColor::yellow);
     EXPECT_PIXEL_COLOR_EQ(3 * kWidth / 4, kHeight / 4, GLColor::red);
     EXPECT_PIXEL_COLOR_EQ(3 * kWidth / 4, 3 * kHeight / 4, GLColor::green);
-    EXPECT_PIXEL_COLOR_EQ(kWidth / 4, 3 * kHeight / 4, GLColor::red);
 }
 
 // Blit stencil, with scissor and scale it.
 TEST_P(BlitFramebufferTest, BlitStencilScissoredScaled)
 {
+    // http://anglebug.com/5106
+    ANGLE_SKIP_TEST_IF(IsMetal() && IsIntel() && IsOSX());
+
     constexpr GLint kSize = 256;
 
     // Create the destination framebuffer.
@@ -1688,10 +2068,10 @@ TEST_P(BlitFramebufferTest, PartialBlitSRGBToRGB)
 
     glBindFramebuffer(GL_FRAMEBUFFER, targetFBO);
 
-    EXPECT_PIXEL_COLOR_EQ(kWidth / 4, kHeight / 4, GLColor::red);
-    EXPECT_PIXEL_COLOR_EQ(3 * kWidth / 4, kHeight / 4, GLColor::red);
-    EXPECT_PIXEL_COLOR_EQ(3 * kWidth / 4, 3 * kHeight / 4, GLColor::red);
-    EXPECT_PIXEL_COLOR_EQ(kWidth / 4, 3 * kHeight / 4, GLColor::red);
+    EXPECT_PIXEL_COLOR_EQ(kWidth / 4, kHeight / 4, GLColor::yellow);
+    EXPECT_PIXEL_COLOR_EQ(kWidth / 4, 3 * kHeight / 4, GLColor::yellow);
+    EXPECT_PIXEL_COLOR_EQ(3 * kWidth / 4, kHeight / 4, GLColor::yellow);
+    EXPECT_PIXEL_COLOR_EQ(3 * kWidth / 4, 3 * kHeight / 4, GLColor::yellow);
 
     glBindFramebuffer(GL_READ_FRAMEBUFFER, sourceFBO);
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, targetFBO);
@@ -1707,10 +2087,10 @@ TEST_P(BlitFramebufferTest, PartialBlitSRGBToRGB)
 
     glBindFramebuffer(GL_FRAMEBUFFER, targetFBO);
 
-    EXPECT_PIXEL_COLOR_EQ(kWidth / 4, kHeight / 4, GLColor::green);
-    EXPECT_PIXEL_COLOR_EQ(3 * kWidth / 4, kHeight / 4, GLColor::green);
-    EXPECT_PIXEL_COLOR_EQ(3 * kWidth / 4, 3 * kHeight / 4, GLColor::green);
-    EXPECT_PIXEL_COLOR_EQ(kWidth / 4, 3 * kHeight / 4, GLColor::green);
+    EXPECT_PIXEL_COLOR_EQ(kWidth / 4, kHeight / 4, GLColor::blue);
+    EXPECT_PIXEL_COLOR_EQ(kWidth / 4, 3 * kHeight / 4, GLColor::blue);
+    EXPECT_PIXEL_COLOR_EQ(3 * kWidth / 4, kHeight / 4, GLColor::blue);
+    EXPECT_PIXEL_COLOR_EQ(3 * kWidth / 4, 3 * kHeight / 4, GLColor::blue);
 }
 
 // Blit an SRGB framebuffer with an oversized source area (parts outside the source area should be
@@ -1746,16 +2126,16 @@ TEST_P(BlitFramebufferTest, BlitSRGBToRGBOversizedSourceArea)
 
     // Source FBO colors can be found in the middle of the target FBO.
     EXPECT_PIXEL_COLOR_EQ(7 * kWidth / 16, 7 * kHeight / 16, GLColor::red);
-    EXPECT_PIXEL_COLOR_EQ(9 * kWidth / 16, 7 * kHeight / 16, GLColor::green);
-    EXPECT_PIXEL_COLOR_EQ(9 * kWidth / 16, 9 * kHeight / 16, GLColor::red);
     EXPECT_PIXEL_COLOR_EQ(7 * kWidth / 16, 9 * kHeight / 16, GLColor::green);
+    EXPECT_PIXEL_COLOR_EQ(9 * kWidth / 16, 7 * kHeight / 16, GLColor::blue);
+    EXPECT_PIXEL_COLOR_EQ(9 * kWidth / 16, 9 * kHeight / 16, GLColor::yellow);
 
     // Clear color should remain around the edges of the target FBO (WebGL 2.0 spec explicitly
     // requires this and ANGLE is expected to follow that).
     EXPECT_PIXEL_COLOR_EQ(kWidth / 4, kHeight / 4, GLColor::blue);
+    EXPECT_PIXEL_COLOR_EQ(kWidth / 4, 3 * kHeight / 4, GLColor::blue);
     EXPECT_PIXEL_COLOR_EQ(3 * kWidth / 4, kHeight / 4, GLColor::blue);
     EXPECT_PIXEL_COLOR_EQ(3 * kWidth / 4, 3 * kHeight / 4, GLColor::blue);
-    EXPECT_PIXEL_COLOR_EQ(kWidth / 4, 3 * kHeight / 4, GLColor::blue);
 }
 
 // Blit an SRGB framebuffer with an oversized dest area (even though the result is clipped, it
@@ -1788,6 +2168,18 @@ TEST_P(BlitFramebufferTest, BlitSRGBToRGBOversizedDestArea)
 
     glBindFramebuffer(GL_FRAMEBUFFER, targetFBO);
 
+    // Expected result:
+    //
+    //     +-------+-------+
+    //     |       |       |
+    //     |   R   |   B   |
+    //     |       |       |
+    //     +-------+-------+
+    //     |       |       |
+    //     |   G   |   Y   |
+    //     |       |       |
+    //     +-------+-------+
+    //
     EXPECT_PIXEL_COLOR_EQ(1, 1, GLColor::red);
     EXPECT_PIXEL_COLOR_EQ(kWidth / 4, kHeight / 4, GLColor::red);
     EXPECT_PIXEL_COLOR_EQ(kWidth / 2 - 1, kHeight / 2 - 1, GLColor::red);
@@ -1796,13 +2188,13 @@ TEST_P(BlitFramebufferTest, BlitSRGBToRGBOversizedDestArea)
     EXPECT_PIXEL_COLOR_EQ(kWidth / 4, 3 * kHeight / 4, GLColor::green);
     EXPECT_PIXEL_COLOR_EQ(kWidth / 2 - 1, kHeight / 2 + 1, GLColor::green);
 
-    EXPECT_PIXEL_COLOR_EQ(kWidth - 1, 1, GLColor::green);
-    EXPECT_PIXEL_COLOR_EQ(3 * kWidth / 4, kHeight / 4, GLColor::green);
-    EXPECT_PIXEL_COLOR_EQ(kWidth / 2 + 1, kHeight / 2 - 1, GLColor::green);
+    EXPECT_PIXEL_COLOR_EQ(kWidth - 1, 1, GLColor::blue);
+    EXPECT_PIXEL_COLOR_EQ(3 * kWidth / 4, kHeight / 4, GLColor::blue);
+    EXPECT_PIXEL_COLOR_EQ(kWidth / 2 + 1, kHeight / 2 - 1, GLColor::blue);
 
-    EXPECT_PIXEL_COLOR_EQ(kWidth - 1, kHeight - 1, GLColor::red);
-    EXPECT_PIXEL_COLOR_EQ(3 * kWidth / 4, 3 * kHeight / 4, GLColor::red);
-    EXPECT_PIXEL_COLOR_EQ(kWidth / 2 + 1, kHeight / 2 + 1, GLColor::red);
+    EXPECT_PIXEL_COLOR_EQ(kWidth - 1, kHeight - 1, GLColor::yellow);
+    EXPECT_PIXEL_COLOR_EQ(3 * kWidth / 4, 3 * kHeight / 4, GLColor::yellow);
+    EXPECT_PIXEL_COLOR_EQ(kWidth / 2 + 1, kHeight / 2 + 1, GLColor::yellow);
 
     // Dest is oversized in the negative direction
     glBindFramebuffer(GL_READ_FRAMEBUFFER, sourceFBO);
@@ -1815,20 +2207,44 @@ TEST_P(BlitFramebufferTest, BlitSRGBToRGBOversizedDestArea)
 
     glBindFramebuffer(GL_FRAMEBUFFER, targetFBO);
 
-    EXPECT_PIXEL_COLOR_EQ(1, 1, GLColor::red);
-    EXPECT_PIXEL_COLOR_EQ(kWidth / 2 - 1, kHeight / 2 - 1, GLColor::red);
+    // Expected result:
+    //
+    //     Width / 4
+    //         |
+    //         V
+    //     +---+-----------+
+    //     | R |     B     |
+    //     +---+-----------+ <- Height / 4
+    //     |   |           |
+    //     |   |           |
+    //     | G |     Y     |
+    //     |   |           |
+    //     |   |           |
+    //     +---+-----------+
+    //
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+    EXPECT_PIXEL_COLOR_EQ(0, kHeight / 4 - 1, GLColor::red);
+    EXPECT_PIXEL_COLOR_EQ(kWidth / 4 - 1, 0, GLColor::red);
+    EXPECT_PIXEL_COLOR_EQ(kWidth / 4 - 1, kHeight / 4 - 1, GLColor::red);
+    EXPECT_PIXEL_COLOR_EQ(kWidth / 8, kHeight / 8, GLColor::red);
 
-    EXPECT_PIXEL_COLOR_EQ(1, kWidth - 1, GLColor::green);
-    EXPECT_PIXEL_COLOR_EQ(kWidth / 4, 3 * kHeight / 4, GLColor::red);
-    EXPECT_PIXEL_COLOR_EQ(kWidth / 2 - 1, kHeight / 2 + 1, GLColor::red);
+    EXPECT_PIXEL_COLOR_EQ(0, kHeight / 4 + 1, GLColor::green);
+    EXPECT_PIXEL_COLOR_EQ(0, kHeight - 1, GLColor::green);
+    EXPECT_PIXEL_COLOR_EQ(kWidth / 4 - 1, kHeight / 4 + 1, GLColor::green);
+    EXPECT_PIXEL_COLOR_EQ(kWidth / 4 - 1, kHeight - 1, GLColor::green);
+    EXPECT_PIXEL_COLOR_EQ(kWidth / 8, kHeight / 2, GLColor::green);
 
-    EXPECT_PIXEL_COLOR_EQ(kWidth - 1, 1, GLColor::green);
-    EXPECT_PIXEL_COLOR_EQ(3 * kWidth / 4, kHeight / 4, GLColor::red);
-    EXPECT_PIXEL_COLOR_EQ(kWidth / 2 + 1, kHeight / 2 - 1, GLColor::red);
+    EXPECT_PIXEL_COLOR_EQ(kWidth / 4 + 1, 0, GLColor::blue);
+    EXPECT_PIXEL_COLOR_EQ(kWidth / 4 + 1, kHeight / 4 - 1, GLColor::blue);
+    EXPECT_PIXEL_COLOR_EQ(kWidth - 1, 0, GLColor::blue);
+    EXPECT_PIXEL_COLOR_EQ(kWidth - 1, kHeight / 4 - 1, GLColor::blue);
+    EXPECT_PIXEL_COLOR_EQ(kWidth / 2, kHeight / 8, GLColor::blue);
 
-    EXPECT_PIXEL_COLOR_EQ(kWidth - 1, kHeight - 1, GLColor::red);
-    EXPECT_PIXEL_COLOR_EQ(3 * kWidth / 4, 3 * kHeight / 4, GLColor::red);
-    EXPECT_PIXEL_COLOR_EQ(kWidth / 2 + 1, kHeight / 2 + 1, GLColor::red);
+    EXPECT_PIXEL_COLOR_EQ(kWidth / 4 + 1, kHeight / 4 + 1, GLColor::yellow);
+    EXPECT_PIXEL_COLOR_EQ(kWidth / 4 + 1, kHeight - 1, GLColor::yellow);
+    EXPECT_PIXEL_COLOR_EQ(kWidth - 1, kHeight / 4 + 1, GLColor::yellow);
+    EXPECT_PIXEL_COLOR_EQ(kWidth - 1, kHeight - 1, GLColor::yellow);
+    EXPECT_PIXEL_COLOR_EQ(kWidth / 2, kHeight / 2, GLColor::yellow);
 
     // Dest is oversized in the positive direction
     glBindFramebuffer(GL_READ_FRAMEBUFFER, sourceFBO);
@@ -1841,20 +2257,44 @@ TEST_P(BlitFramebufferTest, BlitSRGBToRGBOversizedDestArea)
 
     glBindFramebuffer(GL_FRAMEBUFFER, targetFBO);
 
-    EXPECT_PIXEL_COLOR_EQ(1, 1, GLColor::red);
-    EXPECT_PIXEL_COLOR_EQ(kWidth / 4, kHeight / 4, GLColor::red);
-    EXPECT_PIXEL_COLOR_EQ(kWidth / 2 - 1, kHeight / 2 - 1, GLColor::red);
+    // Expected result:
+    //
+    //           3 * Width / 4
+    //                 |
+    //                 V
+    //     +-----------+---+
+    //     |           |   |
+    //     |           |   |
+    //     |     R     | B |
+    //     |           |   |
+    //     |           |   |
+    //     +-----------+---+ <- 3 * Height / 4
+    //     |     G     | Y |
+    //     +-----------+---+
+    //
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+    EXPECT_PIXEL_COLOR_EQ(0, 3 * kHeight / 4 - 1, GLColor::red);
+    EXPECT_PIXEL_COLOR_EQ(3 * kWidth / 4 - 1, 0, GLColor::red);
+    EXPECT_PIXEL_COLOR_EQ(3 * kWidth / 4 - 1, 3 * kHeight / 4 - 1, GLColor::red);
+    EXPECT_PIXEL_COLOR_EQ(kWidth / 2, kHeight / 2, GLColor::red);
 
-    EXPECT_PIXEL_COLOR_EQ(1, kWidth - 1, GLColor::green);
-    EXPECT_PIXEL_COLOR_EQ(kWidth / 4, 3 * kHeight / 4, GLColor::green);
-    EXPECT_PIXEL_COLOR_EQ(kWidth / 2 - 1, kHeight / 2 + 1, GLColor::red);
+    EXPECT_PIXEL_COLOR_EQ(0, 3 * kHeight / 4 + 1, GLColor::green);
+    EXPECT_PIXEL_COLOR_EQ(0, kHeight - 1, GLColor::green);
+    EXPECT_PIXEL_COLOR_EQ(3 * kWidth / 4 - 1, 3 * kHeight / 4 + 1, GLColor::green);
+    EXPECT_PIXEL_COLOR_EQ(3 * kWidth / 4 - 1, kHeight - 1, GLColor::green);
+    EXPECT_PIXEL_COLOR_EQ(kWidth / 2, 7 * kHeight / 8, GLColor::green);
 
-    EXPECT_PIXEL_COLOR_EQ(kWidth - 1, 1, GLColor::green);
-    EXPECT_PIXEL_COLOR_EQ(3 * kWidth / 4, kHeight / 4, GLColor::green);
-    EXPECT_PIXEL_COLOR_EQ(kWidth / 2 + 1, kHeight / 2 - 1, GLColor::red);
+    EXPECT_PIXEL_COLOR_EQ(3 * kWidth / 4 + 1, 0, GLColor::blue);
+    EXPECT_PIXEL_COLOR_EQ(3 * kWidth / 4 + 1, 3 * kHeight / 4 - 1, GLColor::blue);
+    EXPECT_PIXEL_COLOR_EQ(kWidth - 1, 0, GLColor::blue);
+    EXPECT_PIXEL_COLOR_EQ(kWidth - 1, 3 * kHeight / 4 - 1, GLColor::blue);
+    EXPECT_PIXEL_COLOR_EQ(7 * kWidth / 8, kHeight / 2, GLColor::blue);
 
-    EXPECT_PIXEL_COLOR_EQ(kWidth - 1, kHeight - 1, GLColor::red);
-    EXPECT_PIXEL_COLOR_EQ(kWidth / 2 + 1, kHeight / 2 + 1, GLColor::red);
+    EXPECT_PIXEL_COLOR_EQ(3 * kWidth / 4 + 1, 3 * kHeight / 4 + 1, GLColor::yellow);
+    EXPECT_PIXEL_COLOR_EQ(3 * kWidth / 4 + 1, kHeight - 1, GLColor::yellow);
+    EXPECT_PIXEL_COLOR_EQ(kWidth - 1, 3 * kHeight / 4 + 1, GLColor::yellow);
+    EXPECT_PIXEL_COLOR_EQ(kWidth - 1, kHeight - 1, GLColor::yellow);
+    EXPECT_PIXEL_COLOR_EQ(7 * kWidth / 8, 7 * kHeight / 8, GLColor::yellow);
 }
 
 // Test blitFramebuffer size overflow checks. WebGL 2.0 spec section 5.41. We do validation for
@@ -2006,6 +2446,11 @@ ANGLE_INSTANTIATE_TEST(BlitFramebufferANGLETest,
                        ES2_OPENGL(),
                        ES3_OPENGL(),
                        ES2_VULKAN(),
-                       ES3_VULKAN());
+                       ES3_VULKAN(),
+                       WithEmulatedPrerotation(ES3_VULKAN(), 90),
+                       WithEmulatedPrerotation(ES3_VULKAN(), 180),
+                       WithEmulatedPrerotation(ES3_VULKAN(), 270),
+                       ES2_METAL(),
+                       WithNoShaderStencilOutput(ES2_METAL()));
 
-ANGLE_INSTANTIATE_TEST_ES3(BlitFramebufferTest);
+ANGLE_INSTANTIATE_TEST_ES3_AND(BlitFramebufferTest, WithNoShaderStencilOutput(ES3_METAL()));

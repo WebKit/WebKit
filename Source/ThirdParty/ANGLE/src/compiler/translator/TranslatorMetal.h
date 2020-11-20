@@ -37,6 +37,7 @@ class TranslatorMetal : public TranslatorVulkan
 
     ANGLE_NO_DISCARD bool insertSampleMaskWritingLogic(TIntermBlock *root,
                                                        const TVariable *driverUniforms);
+    ANGLE_NO_DISCARD bool insertRasterizerDiscardLogic(TIntermBlock *root);
 };
 
 }  // namespace sh

@@ -98,8 +98,8 @@ class ExternalImageSibling : public ImageSibling
                       const gl::ImageIndex &imageIndex) const override;
     bool isTextureable(const gl::Context *context) const;
 
-    void onAttach(const gl::Context *context) override;
-    void onDetach(const gl::Context *context) override;
+    void onAttach(const gl::Context *context, rx::Serial framebufferSerial) override;
+    void onDetach(const gl::Context *context, rx::Serial framebufferSerial) override;
     GLuint getId() const override;
 
     gl::InitState initState(const gl::ImageIndex &imageIndex) const override;

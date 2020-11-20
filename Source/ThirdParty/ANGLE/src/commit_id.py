@@ -12,11 +12,17 @@ import os
 
 usage = """\
 Usage: commit_id.py check                - check if git is present
+       commit_id.py position             - print commit position
        commit_id.py gen <file_to_write>  - generate commit.h"""
 
 
 def grab_output(command, cwd):
-    return sp.Popen(command, stdout=sp.PIPE, shell=True, cwd=cwd).communicate()[0].strip()
+    return sp.Popen(
+        command, stdout=sp.PIPE, shell=True, cwd=cwd).communicate()[0].strip().decode('utf-8')
+
+
+def get_commit_position(cwd):
+    return grab_output('git rev-list HEAD --count', cwd)
 
 
 if len(sys.argv) < 2:
@@ -35,6 +41,12 @@ if operation == 'check':
     else:
         print("0")
     sys.exit(0)
+elif operation == 'position':
+    if git_dir_exists:
+        print(get_commit_position(cwd))
+    else:
+        print("0")
+    sys.exit(0)
 
 if len(sys.argv) < 3 or operation != 'gen':
     sys.exit(usage)
@@ -43,12 +55,14 @@ output_file = sys.argv[2]
 commit_id_size = 12
 commit_id = 'unknown hash'
 commit_date = 'unknown date'
+commit_position = '0'
 enable_binary_loading = False
 
 if git_dir_exists:
     try:
         commit_id = grab_output('git rev-parse --short=%d HEAD' % commit_id_size, cwd)
         commit_date = grab_output('git show -s --format=%ci HEAD', cwd)
+        commit_position = get_commit_position(cwd)
         enable_binary_loading = True
     except:
         pass
@@ -58,6 +72,7 @@ hfile = open(output_file, 'w')
 hfile.write('#define ANGLE_COMMIT_HASH "%s"\n' % commit_id)
 hfile.write('#define ANGLE_COMMIT_HASH_SIZE %d\n' % commit_id_size)
 hfile.write('#define ANGLE_COMMIT_DATE "%s"\n' % commit_date)
+hfile.write('#define ANGLE_COMMIT_POSITION %s\n' % commit_position)
 
 if not enable_binary_loading:
     hfile.write('#define ANGLE_DISABLE_PROGRAM_BINARY_LOAD\n')

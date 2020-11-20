@@ -13,8 +13,11 @@
 #include <string.h>
 
 #define LIST_EXTENSIONS(OP)                         \
-    OP(ARB_texture_rectangle)                       \
+    OP(ANGLE_base_vertex_base_instance)             \
+    OP(ANGLE_multi_draw)                            \
     OP(ANGLE_texture_multisample)                   \
+    OP(APPLE_clip_distance)                         \
+    OP(ARB_texture_rectangle)                       \
     OP(ARM_shader_framebuffer_fetch)                \
     OP(EXT_blend_func_extended)                     \
     OP(EXT_draw_buffers)                            \
@@ -22,25 +25,27 @@
     OP(EXT_geometry_shader)                         \
     OP(EXT_gpu_shader5)                             \
     OP(EXT_shader_framebuffer_fetch)                \
-    OP(EXT_shader_texture_lod)                      \
-    OP(EXT_YUV_target)                              \
     OP(EXT_shader_non_constant_global_initializers) \
-    OP(NV_shader_noperspective_interpolation)       \
+    OP(EXT_shader_texture_lod)                      \
+    OP(EXT_shadow_samplers)                         \
+    OP(EXT_texture_buffer)                          \
+    OP(EXT_texture_cube_map_array)                  \
+    OP(EXT_YUV_target)                              \
     OP(NV_EGL_stream_consumer_external)             \
     OP(NV_shader_framebuffer_fetch)                 \
+    OP(NV_shader_noperspective_interpolation)       \
     OP(OES_EGL_image_external)                      \
     OP(OES_EGL_image_external_essl3)                \
+    OP(OES_shader_multisample_interpolation)        \
+    OP(OES_shader_image_atomic)                     \
     OP(OES_standard_derivatives)                    \
-    OP(OES_texture_storage_multisample_2d_array)    \
     OP(OES_texture_3D)                              \
+    OP(OES_texture_buffer)                          \
+    OP(OES_texture_cube_map_array)                  \
+    OP(OES_texture_storage_multisample_2d_array)    \
     OP(OVR_multiview)                               \
     OP(OVR_multiview2)                              \
-    OP(ANGLE_multi_draw)                            \
-    OP(ANGLE_base_vertex_base_instance)             \
-    OP(WEBGL_video_texture)                         \
-    OP(APPLE_clip_distance)                         \
-    OP(OES_texture_cube_map_array)                  \
-    OP(EXT_texture_cube_map_array)
+    OP(WEBGL_video_texture)
 
 namespace sh
 {

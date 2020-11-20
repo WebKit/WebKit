@@ -11,9 +11,14 @@
 #include "util/test_utils.h"
 
 #include "common/angleutils.h"
+#include "common/system_utils.h"
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <unistd.h>
+#include <iostream>
 
 #if !defined(ANGLE_PLATFORM_ANDROID) && !defined(ANGLE_PLATFORM_FUCHSIA)
 #    if defined(ANGLE_PLATFORM_APPLE)
@@ -28,6 +33,7 @@
 #        include <cxxabi.h>
 #        include <dlfcn.h>
 #        include <execinfo.h>
+#        include <libgen.h>
 #        include <signal.h>
 #        include <string.h>
 #    endif  // defined(ANGLE_PLATFORM_APPLE)
@@ -102,6 +108,9 @@ static void Handler(int sig)
 
 #    elif defined(ANGLE_PLATFORM_POSIX)
 
+// Can control this at a higher level if required.
+#        define ANGLE_HAS_ADDR2LINE
+
 void PrintStackBacktrace()
 {
     printf("Backtrace:\n");
@@ -112,6 +121,86 @@ void PrintStackBacktrace()
 
     for (int i = 0; i < count; i++)
     {
+#        if defined(ANGLE_HAS_ADDR2LINE)
+        std::string module(symbols[i], strchr(symbols[i], '('));
+
+        // We need an absolute path to get to the executable and all of the various shared objects,
+        // but the caller may have used a relative path to launch the executable, so build one up if
+        // we don't see a leading '/'.
+        if (module.at(0) != GetPathSeparator())
+        {
+            const Optional<std::string> &cwd = angle::GetCWD();
+            if (!cwd.valid())
+            {
+                std::cout << "Error getting CWD for Vulkan layers init." << std::endl;
+            }
+            else
+            {
+                std::string absolutePath = cwd.value();
+                size_t lastPathSepLoc    = module.find_last_of(GetPathSeparator());
+                std::string relativePath = module.substr(0, lastPathSepLoc);
+
+                // Remove "." from the relativePath path
+                // For example: ./out/LinuxDebug/angle_perftests
+                size_t pos = relativePath.find('.');
+                if (pos != std::string::npos)
+                {
+                    // If found then erase it from string
+                    relativePath.erase(pos, 1);
+                }
+
+                // Remove the overlapping relative path from the CWD so we can build the full
+                // absolute path.
+                // For example:
+                // absolutePath = /home/timvp/code/angle/out/LinuxDebug
+                // relativePath = /out/LinuxDebug
+                pos = absolutePath.find(relativePath);
+                if (pos != std::string::npos)
+                {
+                    // If found then erase it from string
+                    absolutePath.erase(pos, relativePath.length());
+                }
+                module = absolutePath + GetPathSeparator() + module;
+            }
+        }
+
+        std::string substring(strchr(symbols[i], '+') + 1, strchr(symbols[i], ')'));
+
+        pid_t pid = fork();
+        if (pid < 0)
+        {
+            std::cout << "Error: Failed to fork()";
+        }
+        else if (pid > 0)
+        {
+            int status;
+            waitpid(pid, &status, 0);
+            // Ignore the status, since we aren't going to handle it anyway.
+        }
+        else
+        {
+            // Child process executes addr2line
+            const std::vector<const char *> &commandLineArgs = {
+                "/usr/bin/addr2line",  // execv requires an absolute path to find addr2line
+                "-s",
+                "-p",
+                "-f",
+                "-C",
+                "-e",
+                module.c_str(),
+                substring.c_str()};
+            // Taken from test_utils_posix.cpp::PosixProcess
+            std::vector<char *> argv;
+            for (const char *arg : commandLineArgs)
+            {
+                argv.push_back(const_cast<char *>(arg));
+            }
+            argv.push_back(nullptr);
+            execv(argv[0], argv.data());
+            std::cout << "Error: Child process returned from exevc()";
+            _exit(EXIT_FAILURE);  // exec never returns
+        }
+#        else
         Dl_info info;
         if (dladdr(stack[i], &info) && info.dli_sname)
         {
@@ -130,6 +219,7 @@ void PrintStackBacktrace()
             }
         }
         printf("    %s\n", symbols[i]);
+#        endif  // defined(ANGLE_HAS_ADDR2LINE)
     }
 }
 

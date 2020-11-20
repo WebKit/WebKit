@@ -48,6 +48,8 @@ struct SurfaceState final : private angle::NonCopyable
     SurfaceState(const egl::Config *configIn, const AttributeMap &attributesIn);
     ~SurfaceState();
 
+    bool isRobustResourceInitEnabled() const;
+
     EGLLabelKHR label;
     const egl::Config *config;
     AttributeMap attributes;
@@ -143,8 +145,8 @@ class Surface : public LabeledObject, public gl::FramebufferAttachmentObject
                       GLenum binding,
                       const gl::ImageIndex &imageIndex) const override;
 
-    void onAttach(const gl::Context *context) override {}
-    void onDetach(const gl::Context *context) override {}
+    void onAttach(const gl::Context *context, rx::Serial framebufferSerial) override {}
+    void onDetach(const gl::Context *context, rx::Serial framebufferSerial) override {}
     GLuint getId() const override;
 
     bool flexibleSurfaceCompatibilityRequested() const

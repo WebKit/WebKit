@@ -53,7 +53,8 @@ VendorID GetVendorID(const FunctionsGL *functions)
         return VENDOR_ID_NVIDIA;
     }
     else if (nativeVendorString.find("ATI") != std::string::npos ||
-             nativeVendorString.find("AMD") != std::string::npos)
+             nativeVendorString.find("AMD") != std::string::npos ||
+             nativeVendorString.find("Radeon") != std::string::npos)
     {
         return VENDOR_ID_AMD;
     }
@@ -1357,17 +1358,15 @@ void GenerateCaps(const FunctionsGL *functions,
 
 #if defined(ANGLE_PLATFORM_MACOS) || defined(ANGLE_PLATFORM_MACCATALYST)
     angle::SystemInfo info;
-    if (angle::GetSystemInfo(&info))
+    if (angle::GetSystemInfo(&info) && !info.needsEAGLOnMac)
     {
-        if (!info.needsEAGLOnMac)
+        VendorID vendor = GetVendorID(functions);
+        if ((IsAMD(vendor) || IsIntel(vendor)) && *maxSupportedESVersion >= gl::Version(3, 0))
         {
-            VendorID vendor = GetVendorID(functions);
-            if ((IsAMD(vendor) || IsIntel(vendor)) && *maxSupportedESVersion >= gl::Version(3, 0))
-            {
-                // Apple Intel/AMD drivers do not correctly use the TEXTURE_SRGB_DECODE property of sampler
-                // states.  Disable this extension when we would advertise any ES version that has samplers.
-                extensions->textureSRGBDecode = false;
-            }
+            // Apple Intel/AMD drivers do not correctly use the TEXTURE_SRGB_DECODE property of
+            // sampler states.  Disable this extension when we would advertise any ES version
+            // that has samplers.
+            extensions->textureSRGBDecode = false;
         }
     }
 #endif
@@ -1556,6 +1555,10 @@ void GenerateCaps(const FunctionsGL *functions,
                                 functions->hasGLExtension("GL_ARB_gpu_shader5") ||
                                 functions->hasGLESExtension("GL_EXT_gpu_shader5");
 
+    extensions->shadowSamplersEXT = functions->isAtLeastGL(gl::Version(2, 0)) ||
+                                    functions->isAtLeastGLES(gl::Version(3, 0)) ||
+                                    functions->hasGLESExtension("GL_EXT_shadow_samplers");
+
     // GL_APPLE_clip_distance
     extensions->clipDistanceAPPLE = functions->isAtLeastGL(gl::Version(3, 0));
     if (extensions->clipDistanceAPPLE)
@@ -1566,12 +1569,44 @@ void GenerateCaps(const FunctionsGL *functions,
     {
         caps->maxClipDistances = 0;
     }
+
+    // GL_OES_texture_buffer
+    if (functions->isAtLeastGL(gl::Version(4, 3)) || functions->isAtLeastGLES(gl::Version(3, 2)) ||
+        functions->hasGLESExtension("GL_OES_texture_buffer") ||
+        functions->hasGLESExtension("GL_EXT_texture_buffer") ||
+        functions->hasGLExtension("GL_ARB_texture_buffer_object"))
+    {
+        caps->maxTextureBufferSize = QuerySingleGLInt(functions, GL_MAX_TEXTURE_BUFFER_SIZE);
+        caps->textureBufferOffsetAlignment =
+            QuerySingleGLInt(functions, GL_TEXTURE_BUFFER_OFFSET_ALIGNMENT);
+        extensions->textureBufferOES = true;
+        extensions->textureBufferEXT = true;
+    }
+    else
+    {
+        // Can't support ES3.2 without texture buffer objects
+        LimitVersion(maxSupportedESVersion, gl::Version(3, 1));
+    }
 }
 
 void InitializeFeatures(const FunctionsGL *functions, angle::FeaturesGL *features)
 {
-    VendorID vendor = GetVendorID(functions);
-    uint32_t device = GetDeviceID(functions);
+    angle::VendorID vendor;
+    angle::DeviceID device;
+
+    angle::SystemInfo systemInfo;
+    bool isGetSystemInfoSuccess = angle::GetSystemInfo(&systemInfo);
+    if (isGetSystemInfoSuccess)
+    {
+        vendor = systemInfo.gpus[systemInfo.activeGPUIndex].vendorId;
+        device = systemInfo.gpus[systemInfo.activeGPUIndex].deviceId;
+    }
+    else
+    {
+        vendor = GetVendorID(functions);
+        device = GetDeviceID(functions);
+    }
+
     bool isAMD      = IsAMD(vendor);
     bool isIntel    = IsIntel(vendor);
     bool isNvidia   = IsNvidia(vendor);
@@ -1680,8 +1715,9 @@ void InitializeFeatures(const FunctionsGL *functions, angle::FeaturesGL *feature
     // TODO(jie.a.chen@intel.com): Clean up the bugs.
     // anglebug.com/3031
     // crbug.com/922936
-    ANGLE_FEATURE_CONDITION(features, disableWorkerContexts,
-                            (IsWindows() && (isIntel || isAMD)) || (IsLinux() && isNvidia) || IsIOS());
+    ANGLE_FEATURE_CONDITION(
+        features, disableWorkerContexts,
+        (IsWindows() && (isIntel || isAMD)) || (IsLinux() && isNvidia) || IsIOS());
 
     bool limitMaxTextureSize = isIntel && IsLinux() && GetLinuxOSVersion() < OSVersion(5, 0, 0);
     ANGLE_FEATURE_CONDITION(features, limitMaxTextureSizeTo4096,
@@ -1785,13 +1821,12 @@ void InitializeFeatures(const FunctionsGL *functions, angle::FeaturesGL *feature
     bool isDualGPUMacWithNVIDIA = false;
     if (IsApple() && functions->standard == STANDARD_GL_DESKTOP)
     {
-        angle::SystemInfo info;
-        if (angle::GetSystemInfo(&info))
+        if (isGetSystemInfoSuccess)
         {
             // The full system information must be queried to see whether it's a dual-GPU
             // NVIDIA MacBook Pro since it's likely that the integrated GPU will be active
             // when these features are initialized.
-            isDualGPUMacWithNVIDIA = info.isMacSwitchable && info.hasNVIDIAGPU();
+            isDualGPUMacWithNVIDIA = systemInfo.isMacSwitchable && systemInfo.hasNVIDIAGPU();
         }
     }
     ANGLE_FEATURE_CONDITION(features, disableGPUSwitchingSupport, isDualGPUMacWithNVIDIA);
@@ -1811,6 +1846,22 @@ void InitializeFeatures(const FunctionsGL *functions, angle::FeaturesGL *feature
     // workaround's being restricted to existing desktop GPUs.
     ANGLE_FEATURE_CONDITION(features, emulatePackSkipRowsAndPackSkipPixels,
                             IsApple() && (isAMD || isIntel || isNvidia));
+
+    // http://crbug.com/1042393
+    // XWayland defaults to a 1hz refresh rate when the "surface is not visible", which sometimes
+    // causes issues in Chrome. To get around this, default to a 30Hz refresh rate if we see bogus
+    // from the driver.
+    ANGLE_FEATURE_CONDITION(features, clampMscRate, IsLinux() && IsWayland());
+
+    ANGLE_FEATURE_CONDITION(features, bindTransformFeedbackBufferBeforeBindBufferRange, IsApple());
+
+    // http://crbug.com/1137851
+    // Speculative fix for now, leave disabled so users can enable it via flags.
+    ANGLE_FEATURE_CONDITION(features, disableSyncControlSupport, false);
+
+    ANGLE_FEATURE_CONDITION(features, keepBufferShadowCopy, !CanMapBufferForRead(functions));
+
+    ANGLE_FEATURE_CONDITION(features, setZeroLevelBeforeGenerateMipmap, IsApple());
 }
 
 void InitializeFrontendFeatures(const FunctionsGL *functions, angle::FrontendFeatures *features)
@@ -1934,6 +1985,8 @@ GLenum GetTextureBindingQuery(gl::TextureType textureType)
             return GL_TEXTURE_BINDING_CUBE_MAP;
         case gl::TextureType::CubeMapArray:
             return GL_TEXTURE_BINDING_CUBE_MAP_ARRAY_OES;
+        case gl::TextureType::Buffer:
+            return GL_TEXTURE_BINDING_BUFFER;
         default:
             UNREACHABLE();
             return 0;

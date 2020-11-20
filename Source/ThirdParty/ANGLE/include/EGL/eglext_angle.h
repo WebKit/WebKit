@@ -94,6 +94,8 @@
 #ifndef EGL_ANGLE_platform_angle_vulkan
 #define EGL_ANGLE_platform_angle_vulkan 1
 #define EGL_PLATFORM_ANGLE_TYPE_VULKAN_ANGLE 0x3450
+#define EGL_PLATFORM_VULKAN_DISPLAY_MODE_SIMPLE_ANGLE 0x34A4
+#define EGL_PLATFORM_VULKAN_DISPLAY_MODE_HEADLESS_ANGLE 0x34A5
 #endif /* EGL_ANGLE_platform_angle_vulkan */
 
 #ifndef EGL_ANGLE_platform_angle_metal
@@ -328,6 +330,11 @@ EGLAPI EGLBoolean EGLAPIENTRY eglSwapBuffersWithFrameTokenANGLE(EGLDisplay dpy, 
 #define EGL_ANGLE_device_eagl 1
 #define EGL_EAGL_CONTEXT_ANGLE 0x348C
 #endif
+
+#ifndef EGL_ANGLE_display_semaphore_share_group
+#define EGL_ANGLE_display_semaphore_share_group 1
+#define EGL_DISPLAY_SEMAPHORE_SHARE_GROUP_ANGLE 0x348D
+#endif /* EGL_ANGLE_display_semaphore_share_group */
 
 // clang-format on
 

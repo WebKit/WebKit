@@ -150,6 +150,10 @@
 2631 MAC OPENGL : dEQP-GLES2.functional.shaders.operator.sequence.side_effects.affect_* = FAIL
 3317 MAC OPENGL : dEQP-GLES2.functional.shaders.linkage.varying_4 = FAIL
 
+5136 MAC OPENGL : dEQP-GLES2.functional.fbo.completeness.renderable.texture.color0.stencil_index8 = FAIL
+5136 MAC OPENGL : dEQP-GLES2.functional.fbo.completeness.renderable.texture.stencil.stencil_index8 = FAIL
+5136 MAC OPENGL : dEQP-GLES2.functional.fbo.completeness.renderable.texture.depth.stencil_index8 = FAIL
+
 // MAC OPENGL INTEL specific
 2137 MAC OPENGL INTEL : dEQP-GLES2.functional.color_clear.complex_rgb = FAIL
 2137 MAC OPENGL INTEL : dEQP-GLES2.functional.color_clear.complex_rgba = FAIL
@@ -215,6 +219,13 @@
 2137 MAC OPENGL AMD : dEQP-GLES2.functional.clipping.point.wide_point_clip = FAIL
 3317 MAC OPENGL AMD : dEQP-GLES2.functional.clipping.point.wide_point_clip_viewport_center = FAIL
 3317 MAC OPENGL AMD : dEQP-GLES2.functional.clipping.point.wide_point_clip_viewport_corner = FAIL
+
+5172 MAC OPENGL AMD : dEQP-GLES2.functional.draw.draw_elements.indices.user_ptr.index_byte = FAIL
+5172 MAC OPENGL AMD : dEQP-GLES2.functional.dither.* = FAIL
+5172 MAC OPENGL AMD : dEQP-GLES2.functional.draw.random.* = FAIL
+5172 MAC OPENGL AMD : dEQP-GLES2.functional.fragment_ops.depth_stencil.stencil_depth_funcs.stencil* = FAIL
+5172 MAC OPENGL AMD : dEQP-GLES2.functional.shaders.fragdata.* = FAIL
+5172 MAC OPENGL AMD : dEQP-GLES2.functional.fragment_ops.blend.equation_src_func_dst_func.* = FAIL
 
 // Android GLES backend only failures
 1488 GLES ANDROID : dEQP-GLES2.functional.shaders.return.conditional_return_always_vertex = FAIL
@@ -416,9 +427,6 @@
 // Fails on 431.02 NVIDIA driver
 3748 VULKAN WIN NVIDIA : dEQP-GLES2.functional.fbo.render.repeated_clear.* = FAIL
 
-// Vertex attribute aliasing generates invalid SPIRV
-4249 VULKAN : dEQP-GLES2.functional.attribute_location.bind* = SKIP
-
 // Fails on Metal, some of filtering tests fail when MSAA is off and pass when MSAA is on. Some
 // tests are opposite. The filtering tests mostly fail on a few pixels.
 4235 METAL AMD : dEQP-GLES2.functional.shaders.texture_functions.vertex.texturecubelod = FAIL
@@ -485,13 +493,27 @@
 4235 METAL AMD : dEQP-GLES2.functional.clipping.point.wide_point_clip_viewport_corner = FAIL
 4235 METAL AMD : dEQP-GLES2.functional.polygon_offset.default_render_with_units = FAIL
 4235 METAL AMD : dEQP-GLES2.functional.polygon_offset.fixed16_render_with_units = FAIL
+4996 METAL AMD : dEQP-GLES2.functional.shaders.indexing.tmp_array.*_const_* = FAIL
+5206 METAL AMD : dEQP-GLES2.functional.fbo.completeness.renderable.texture.color0.rgb_half_float_oes = FAIL
+5206 METAL AMD : dEQP-GLES2.functional.fbo.completeness.renderable.texture.color0.rgba_half_float_oes = FAIL
 
 // Line loop emulation bug, suspected to be caused by wrong segment order
 4853 METAL AMD : dEQP-GLES2.functional.draw.draw_arrays.line_loop.multiple_attributes = FAIL
 
-// Vertex attribute aliasing generates invalid SPIRV
-4249 METAL : dEQP-GLES2.functional.attribute_location.bind_aliasing.* = SKIP
-
 // Globally disable Metal testing on Intel & NVIDIA for now
 4235 METAL INTEL : dEQP-GLES2.* = SKIP
 4235 METAL NVIDIA : dEQP-GLES2.* = SKIP
+
+4944 VULKAN ANDROID : dEQP-GLES2.functional.fbo.render.recreate_colorbuffer.rebind_rbo_rgba4 = FAIL
+4944 VULKAN ANDROID : dEQP-GLES2.functional.fbo.render.recreate_colorbuffer.rebind_rbo_rgba4_stencil_index8 = FAIL
+4944 VULKAN ANDROID : dEQP-GLES2.functional.fbo.render.recreate_colorbuffer.no_rebind_rbo_rgba4 = FAIL
+4944 VULKAN ANDROID : dEQP-GLES2.functional.fbo.render.recreate_colorbuffer.no_rebind_rbo_rgba4_stencil_index8 = FAIL
+4944 VULKAN ANDROID : dEQP-GLES2.functional.fbo.render.recreate_depthbuffer.rebind_rbo_rgba4_depth_component16 = FAIL
+4944 VULKAN ANDROID : dEQP-GLES2.functional.fbo.render.recreate_depthbuffer.no_rebind_rbo_rgba4_depth_component16 = FAIL
+4944 VULKAN ANDROID : dEQP-GLES2.functional.fbo.render.recreate_stencilbuffer.rebind_rbo_rgba4_stencil_index8 = FAIL
+4944 VULKAN ANDROID : dEQP-GLES2.functional.fbo.render.recreate_stencilbuffer.no_rebind_rbo_rgba4_stencil_index8 = FAIL
+
+// Fails on N5X for unknown test ordering reasons.
+5169 NEXUS5X GLES : dEQP-GLES2.functional.fbo.render.texsubimage.after_render_tex2d_rgba = FAIL
+5169 NEXUS5X GLES : dEQP-GLES2.functional.fbo.render.texsubimage.between_render_tex2d_rgb = FAIL
+5169 NEXUS5X GLES : dEQP-GLES2.functional.fbo.render.texsubimage.between_render_tex2d_rgba = FAIL

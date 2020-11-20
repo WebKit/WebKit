@@ -4,7 +4,7 @@ Name
 
 Name Strings
 
-    GL_ANGLE_robust_resource_intialization
+    GL_ANGLE_robust_resource_initialization
 
 Contributors
 
@@ -59,6 +59,14 @@ New Tokens
 
         ROBUST_RESOURCE_INITIALIZATION_ANGLE    0x93A7
 
+    Accepted by the <pname> parameter of GetTexParameteriv,
+    GetTexParameterfv, GetTexLevelParameteriv, GetTexLevelParameterfv,
+    GetRenderbufferParameteriv, GetBufferParameteriv and
+    GetBufferParameteri64v:
+
+        RESOURCE_INITIALIZED_ANGLE           0x969F
+
+
 Additions to Chapter 6 of the OpenGL ES 3.1 Specification (Buffer
 Objects)
 
@@ -69,6 +77,12 @@ Objects)
     the contents of the buffer object's data store are set to zero.
     Otherwise, the contents of the buffer object's data store are
     undefined.
+
+    Add to Table 6.2: Buffer object parameters and their values:
+
+    Name                        Type     Initial Value  Legal Values
+    ----                        ----     -------------  ------------
+    RESOURCE_INITIALIZED_ANGLE  boolean  TRUE           TRUE, FALSE
 
 Additions to Chapter 8 of the OpenGL ES 3.1 Specification (Textures and
 Samplers)
@@ -107,6 +121,17 @@ Samplers)
     as for a call to the appropriate TexSubImage* call for <target>.
     Otherwise, the contents of texels are undefined.
 
+    Add to Table 8.20: Texture parameters and their values:
+
+    Name                        Type     Legal Values
+    ----                        ----     ------------
+    RESOURCE_INITIALIZED_ANGLE  boolean  TRUE, FALSE
+
+    Add to the end of section 8.10.3 "Texture Level Parameter Queries":
+
+    Queries of pname RESOURCE_INITIALIZED_ANGLE return the initialization
+    state of the image.
+
 Additions to Chapter 9 of the OpenGL ES 3.1 Specification (Framebuffers
 and Framebuffer Objects)
 
@@ -119,6 +144,11 @@ and Framebuffer Objects)
     store are initialized as though a zero value was written to each
     channel of each sample; otherwise, the contents of the data store
     are undefined.
+
+    Add to the end of section 9.2.6 "Renderbuffer Object Queries":
+
+    If pname is RESOURCE_INITIALIZED_ANGLE then params will contain the
+    initialization state of the renderbuffer currently bound to target.
 
 Interactions with EGL_ANGLE_create_context_robust_resource_initialization
 
@@ -133,6 +163,40 @@ Interactions with EGL_ANGLE_create_context_robust_resource_initialization
     query will return GL_TRUE as described above in section 2.6.1.1.
     Otherwise queries will return GL_FALSE.
 
+New State
+
+    (add to Table 20.4: Buffer Object State)
+
+                                                                          Initial
+    Get Value                            Type   Get Command                Value   Description                  Sec.
+    ----------------------               ----   -------------------        ------  ---------------------------  ------
+    RESOURCE_INITIALIZED_ANGLE            B     GetBufferParameteriv       TRUE    Buffer data has been         6.6
+                                                                                   initialized
+
+    (add to Table 20.9: Textures (state per texture object))
+
+                                                                          Initial
+    Get Value                            Type   Get Command                Value   Description                  Sec.
+    ----------------------               ----   -------------------        ------  ---------------------------  ------
+    RESOURCE_INITIALIZED_ANGLE            B     GetTexParameteriv          TRUE    All specified images have    8.10.2
+                                                                                   been initialized
+
+    (add to Table 20.10 Textures (state per texture image))
+
+                                                                          Initial
+    Get Value                            Type   Get Command                Value   Description                  Sec.
+    ----------------------               ----   -------------------        ------  ---------------------------  ------
+    RESOURCE_INITIALIZED_ANGLE            B     GetTexLevelParameteriv     TRUE    Image data has been          8.10.3
+                                                                                   initialized
+
+    (add to Table 20.16: Renderbuffer (state per renderbuffer object))
+
+                                                                          Initial
+    Get Value                            Type   Get Command                Value   Description                  Sec.
+    ----------------------               ----   -------------------        ------  ---------------------------  ------
+    RESOURCE_INITIALIZED_ANGLE            B     GetRenderbufferParameteriv TRUE    Renderbuffer data has been   9.2.6
+                                                                                   initialized
+
 Issues
 
     None
@@ -142,3 +206,4 @@ Revision History
     Version 1, 2015/01/07 - first draft.
     Version 2, 2017/03/07 - fixed EGL naming and added IsEnabled.
     Version 3, 2017/09/19 - name cleanup.
+    Version 4, 2020/10/12 - Add RESOURCE_INITIALIZED_ANGLE queries.

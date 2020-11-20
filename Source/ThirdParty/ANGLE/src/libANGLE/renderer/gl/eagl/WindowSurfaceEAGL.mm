@@ -8,7 +8,7 @@
 
 #import "common/platform.h"
 
-#if (defined(ANGLE_PLATFORM_IOS) && !defined(ANGLE_PLATFORM_MACCATALYST)) || (defined(ANGLE_PLATFORM_MACCATALYST) && defined(ANGLE_CPU_ARM64))
+#if defined(ANGLE_ENABLE_EAGL)
 
 #    import "libANGLE/renderer/gl/eagl/WindowSurfaceEAGL.h"
 
@@ -18,19 +18,20 @@
 #    import "libANGLE/renderer/gl/RendererGL.h"
 #    import "libANGLE/renderer/gl/StateManagerGL.h"
 #    import "libANGLE/renderer/gl/eagl/DisplayEAGL.h"
-#    import "libANGLE/renderer/gl/eagl/EAGLFunctions.h"
+#    import "libANGLE/renderer/gl/eagl/FunctionsEAGL.h"
 
 #    import <QuartzCore/QuartzCore.h>
 
-#if defined(ANGLE_PLATFORM_MACCATALYST) && defined(ANGLE_CPU_ARM64)
+#    if defined(ANGLE_PLATFORM_MACCATALYST) && defined(ANGLE_CPU_ARM64)
 
-// TODO(dino): Necessary because CAEAGLLayer is not in the public QuartzCore headers in this configuration.
+// TODO(dino): Necessary because CAEAGLLayer is not in the public QuartzCore headers in this
+// configuration.
 // TODO(dino): Check that this won't cause an application using ANGLE directly to be flagged
 // for non-public API use on Apple's App Store.
 @interface CAEAGLLayer : CALayer
 @end
 
-#endif
+#    endif
 
 @interface WebSwapLayerEAGL : CAEAGLLayer {
     EAGLContextObj mDisplayContext;
@@ -127,7 +128,7 @@ WindowSurfaceEAGL::WindowSurfaceEAGL(const egl::SurfaceState &state,
     : SurfaceGL(state),
       mSwapLayer(nil),
       mCurrentSwapId(0),
-      mLayer(reinterpret_cast<CALayer *>(layer)),
+      mLayer((__bridge CALayer *)layer),
       mContext(context),
       mFunctions(renderer->getFunctions()),
       mStateManager(renderer->getStateManager()),
@@ -149,7 +150,6 @@ WindowSurfaceEAGL::~WindowSurfaceEAGL()
     if (mSwapLayer != nil)
     {
         [mSwapLayer removeFromSuperlayer];
-        [mSwapLayer release];
         mSwapLayer = nil;
     }
 
@@ -314,4 +314,4 @@ FramebufferImpl *WindowSurfaceEAGL::createDefaultFramebuffer(const gl::Context *
 
 }  // namespace rx
 
-#endif  // (defined(ANGLE_PLATFORM_IOS) && !defined(ANGLE_PLATFORM_MACCATALYST)) || (defined(ANGLE_PLATFORM_MACCATALYST) && defined(ANGLE_CPU_ARM64))
+#endif  // defined(ANGLE_ENABLE_EAGL)

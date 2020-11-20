@@ -18,10 +18,10 @@ On all platforms:
 On Windows:
 
  * ***IMPORTANT: Set `DEPOT_TOOLS_WIN_TOOLCHAIN=0` in your environment if you are not a Googler.***
- * [Visual Studio Community 2019](https://visualstudio.microsoft.com/vs/)
- * [Windows 10 Standalone SDK version 10.0.17134 exactly](https://developer.microsoft.com/en-us/windows/downloads/windows-10-sdk).
-   * You should install it through Visual Studio Installer if available.
-   * Comes with additional features that aid development, such as the Debug runtime for D3D11. Required for the D3D Compiler DLL.
+ * Install [Visual Studio Community 2019](https://visualstudio.microsoft.com/vs/)
+ * Install the [Windows 10 SDK, latest version](https://developer.microsoft.com/en-us/windows/downloads/windows-10-sdk).
+   * You can install it through Visual Studio Installer if available.
+   * Required for GN-generated Visual Studio projects, the Debug runtime for D3D11, and the D3D Compiler DLL.
  * (optional) See the [Chromium Windows build instructions](https://chromium.googlesource.com/chromium/src/+/master/docs/windows_build_instructions.md) for more info.
 
 On Linux:
@@ -79,7 +79,25 @@ Ninja automatically calls GN to regenerate the build files on any configuration 
 
 Ensure `depot_tools` is in your path as it provides ninja.
 
-### Building with Visual Studio
+### Building with Goma (Google employees only)
+
+In addition, Google employees should use goma, a distributed compilation
+system. Detailed information is available internally but the relevant gn arg
+is:
+
+```
+use_goma = true
+```
+
+To get any benefit from goma it is important to pass a large -j value to
+ninja. A good default is 10*numCores to 20*numCores. If you run autoninja then
+it will automatically pass an appropriate -j value to ninja for goma or not.
+
+```
+$ autoninja -C out\Debug
+```
+
+### Building and Debugging with Visual Studio
 
 To generate the Visual Studio solution in `out/Debug/angle-debug.sln`:
 ```

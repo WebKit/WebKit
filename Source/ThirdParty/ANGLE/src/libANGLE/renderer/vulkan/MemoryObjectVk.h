@@ -41,7 +41,9 @@ class MemoryObjectVk : public MemoryObjectImpl
                               GLenum internalFormat,
                               const gl::Extents &size,
                               GLuint64 offset,
-                              vk::ImageHelper *image);
+                              vk::ImageHelper *image,
+                              GLbitfield createFlags,
+                              GLbitfield usageFlags);
 
   private:
     static constexpr int kInvalidFd = -1;

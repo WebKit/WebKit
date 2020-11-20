@@ -824,6 +824,10 @@ TEST_P(GLSLTest_ES3, GLVertexIDIntegerTextureDrawArrays)
 {
     // http://anglebug.com/4092
     ANGLE_SKIP_TEST_IF(isSwiftshader());
+    // http://anglebug.com/5232
+    ANGLE_SKIP_TEST_IF(IsMetal());
+    // TODO(crbug.com/1132295): Failing on ARM-based Apple DTKs.
+    ANGLE_SKIP_TEST_IF(IsOSX() && IsARM64() && IsDesktopOpenGL());
     // Have to set a large point size because the window size is much larger than the texture
     constexpr char kVS[] = R"(#version 300 es
 flat out highp int vVertexID;
@@ -1559,6 +1563,9 @@ TEST_P(GLSLTest, MaxVaryingVec3AndOneFloat)
 // Only fails on D3D9 because of packing limitations.
 TEST_P(GLSLTest, MaxVaryingVec3ArrayAndOneFloatArray)
 {
+    // TODO(crbug.com/1132295): Failing on Apple DTK.
+    ANGLE_SKIP_TEST_IF(IsOSX() && IsARM64() && IsMetal());
+
     GLint maxVaryings = 0;
     glGetIntegerv(GL_MAX_VARYING_VECTORS, &maxVaryings);
 
@@ -1593,6 +1600,9 @@ TEST_P(GLSLTest, MaxVaryingVec2Arrays)
     // TODO(geofflang): Find out why this doesn't compile on Apple AMD OpenGL drivers
     // (http://anglebug.com/1291)
     ANGLE_SKIP_TEST_IF(IsOSX() && IsAMD() && IsOpenGL());
+
+    // TODO(crbug.com/1132295): Failing on Apple DTK.
+    ANGLE_SKIP_TEST_IF(IsOSX() && IsARM64() && IsMetal());
 
     GLint maxVaryings = 0;
     glGetIntegerv(GL_MAX_VARYING_VECTORS, &maxVaryings);
@@ -2101,6 +2111,9 @@ void main()
 // can actually be used.
 TEST_P(GLSLTest, VerifyMaxVertexUniformVectors)
 {
+    // Times out on D3D11 on test infra. http://anglebug.com/5076
+    ANGLE_SKIP_TEST_IF(IsD3D11() && IsIntel());
+
     // crbug.com/680631
     ANGLE_SKIP_TEST_IF(IsOzone() && IsIntel());
 
@@ -2117,6 +2130,9 @@ TEST_P(GLSLTest, VerifyMaxVertexUniformVectors)
 TEST_P(GLSLTest, VerifyMaxVertexUniformVectorsWithSamplers)
 {
     ANGLE_SKIP_TEST_IF(IsOpenGL() || IsOpenGLES());
+
+    // Times out on D3D11 on test infra. http://anglebug.com/5076
+    ANGLE_SKIP_TEST_IF(IsD3D11() && IsIntel());
 
     int maxUniforms = 10000;
     glGetIntegerv(GL_MAX_VERTEX_UNIFORM_VECTORS, &maxUniforms);
@@ -2385,7 +2401,7 @@ TEST_P(GLSLTest_ES3, LargeNumberOfFloat4Parameters)
 {
     std::stringstream vertexShaderStream;
     // Note: SPIR-V doesn't allow more than 255 parameters to a function.
-    const unsigned int paramCount = IsVulkan() ? 255u : 1024u;
+    const unsigned int paramCount = (IsVulkan() || IsMetal()) ? 255u : 1024u;
 
     vertexShaderStream << "#version 300 es\n"
                           "precision highp float;\n"
@@ -2605,6 +2621,9 @@ TEST_P(GLSLTest, RenderTrisWithPointCoord)
 // Convers a bug with the integer pow statement workaround.
 TEST_P(GLSLTest, NestedPowStatements)
 {
+    // https://crbug.com/1127866 - possible NVIDIA driver issue
+    ANGLE_SKIP_TEST_IF(IsNVIDIA() && IsVulkan() && IsWindows());
+
     constexpr char kFS[] =
         "precision mediump float;\n"
         "float func(float v)\n"
@@ -2663,6 +2682,9 @@ TEST_P(GLSLTest_ES3, AtanVec2)
 // Convers a bug with the unary minus operator on signed integer workaround.
 TEST_P(GLSLTest_ES3, UnaryMinusOperatorSignedInt)
 {
+    // http://anglebug.com/5242
+    ANGLE_SKIP_TEST_IF(IsMetal() && IsIntel());
+
     constexpr char kVS[] =
         "#version 300 es\n"
         "in highp vec4 position;\n"
@@ -2710,6 +2732,9 @@ TEST_P(GLSLTest_ES3, UnaryMinusOperatorSignedInt)
 // Convers a bug with the unary minus operator on unsigned integer workaround.
 TEST_P(GLSLTest_ES3, UnaryMinusOperatorUnsignedInt)
 {
+    // http://anglebug.com/5242
+    ANGLE_SKIP_TEST_IF(IsMetal() && IsIntel());
+
     constexpr char kVS[] =
         "#version 300 es\n"
         "in highp vec4 position;\n"
@@ -2792,6 +2817,120 @@ void main(void)
 })";
 
     ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), kFS);
+}
+
+// Test that using a varying matrix array is supported.
+TEST_P(GLSLTest, VaryingMatrixArray)
+{
+    constexpr char kVS[] =
+        "uniform vec2 u_a1;\n"
+        "uniform vec2 u_a2;\n"
+        "attribute vec4 a_position;\n"
+        "varying mat2 v_mat[2];\n"
+        "void main() {\n"
+        "    v_mat[0] = mat2(u_a1, u_a2);\n"
+        "    v_mat[1] = mat2(1.0 - u_a2, 1.0 - u_a1);\n"
+        "    gl_Position = a_position;\n"
+        "}";
+
+    constexpr char kFS[] =
+        "precision mediump float;\n"
+        "varying mat2 v_mat[2];\n"
+        "void main(void)\n"
+        "{\n"
+        "    gl_FragColor = vec4(v_mat[0][0].x, v_mat[0][0].y, v_mat[1][0].x, 1.0);\n"
+        "}";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+
+    GLint oneIndex = glGetUniformLocation(program, "u_a1");
+    ASSERT_NE(-1, oneIndex);
+    GLint twoIndex = glGetUniformLocation(program, "u_a2");
+    ASSERT_NE(-1, twoIndex);
+    glUseProgram(program);
+    glUniform2f(oneIndex, 1, 0.5f);
+    glUniform2f(twoIndex, 0.25f, 0.125f);
+
+    drawQuad(program, "a_position", 0.5f);
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(255, 127, 255 - 63, 255), 1.0);
+}
+
+// Test that using a centroid varying matrix array is supported.
+TEST_P(GLSLTest_ES3, CentroidVaryingMatrixArray)
+{
+    constexpr char kVS[] =
+        "#version 300 es\n"
+        "uniform vec2 u_a1;\n"
+        "uniform vec2 u_a2;\n"
+        "in vec4 a_position;\n"
+        "centroid out mat3x2 v_mat[2];\n"
+        "void main() {\n"
+        "    v_mat[0] = mat3x2(u_a1, u_a2, vec2(0.0));\n"
+        "    v_mat[1] = mat3x2(vec2(0.0), 1.0 - u_a2, 1.0 - u_a1);\n"
+        "    gl_Position = a_position;\n"
+        "}";
+
+    constexpr char kFS[] =
+        "#version 300 es\n"
+        "precision mediump float;\n"
+        "centroid in mat3x2 v_mat[2];\n"
+        "layout(location = 0) out vec4 out_color;\n"
+        "void main(void)\n"
+        "{\n"
+        "    out_color = vec4(v_mat[0][0].x, v_mat[0][0].y, v_mat[1][1].x, 1.0);\n"
+        "}";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+
+    GLint oneIndex = glGetUniformLocation(program, "u_a1");
+    ASSERT_NE(-1, oneIndex);
+    GLint twoIndex = glGetUniformLocation(program, "u_a2");
+    ASSERT_NE(-1, twoIndex);
+    glUseProgram(program);
+    glUniform2f(oneIndex, 1, 0.5f);
+    glUniform2f(twoIndex, 0.25f, 0.125f);
+
+    drawQuad(program, "a_position", 0.5f);
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(255, 127, 255 - 63, 255), 1.0);
+}
+
+// Test that using a flat varying matrix array is supported.
+TEST_P(GLSLTest_ES3, FlatVaryingMatrixArray)
+{
+    constexpr char kVS[] =
+        "#version 300 es\n"
+        "uniform vec2 u_a1;\n"
+        "uniform vec2 u_a2;\n"
+        "in vec4 a_position;\n"
+        "flat out mat2 v_mat[2];\n"
+        "void main() {\n"
+        "    v_mat[0] = mat2(u_a1, u_a2);\n"
+        "    v_mat[1] = mat2(u_a2, u_a1);\n"
+        "    gl_Position = a_position;\n"
+        "}";
+
+    constexpr char kFS[] =
+        "#version 300 es\n"
+        "precision mediump float;\n"
+        "flat in mat2 v_mat[2];\n"
+        "layout(location = 0) out vec4 out_color;\n"
+        "void main(void)\n"
+        "{\n"
+        "    out_color = vec4(v_mat[0][0].x, v_mat[0][0].y, v_mat[1][0].x, 1.0);\n"
+        "}";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+
+    GLint oneIndex = glGetUniformLocation(program, "u_a1");
+    ASSERT_NE(-1, oneIndex);
+    GLint twoIndex = glGetUniformLocation(program, "u_a2");
+    ASSERT_NE(-1, twoIndex);
+    glUseProgram(program);
+    glUniform2f(oneIndex, 1, 0.5f);
+    glUniform2f(twoIndex, 0.25f, 0.125f);
+
+    drawQuad(program, "a_position", 0.5f);
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(255, 127, 63, 255), 1.0);
 }
 
 // Test that literal infinity can be written out from the shader translator.
@@ -2958,6 +3097,12 @@ class WebGLGLSLTest : public GLSLTest
 {
   protected:
     WebGLGLSLTest() { setWebGLCompatibilityEnabled(true); }
+};
+
+class WebGL2GLSLTest : public GLSLTest
+{
+  protected:
+    WebGL2GLSLTest() { setWebGLCompatibilityEnabled(true); }
 };
 
 TEST_P(WebGLGLSLTest, MaxVaryingVec4PlusFragCoord)
@@ -3415,6 +3560,89 @@ TEST_P(GLSLTest_ES31, ArraysOfArraysSampler)
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
+// Test that arrays of arrays of images work as expected.
+TEST_P(GLSLTest_ES31, ArraysOfArraysImage)
+{
+    // http://anglebug.com/5072
+    ANGLE_SKIP_TEST_IF(IsIntel() && IsLinux() && IsOpenGL());
+
+    // anglebug.com/2703 - QC doesn't support arrays of image as parameters,
+    // so image array of array handling is disabled
+    ANGLE_SKIP_TEST_IF(IsAndroid() && IsVulkan());
+
+    // Fails on D3D due to mistranslation.
+    ANGLE_SKIP_TEST_IF(IsD3D());
+
+    // Fails on Android on GLES.
+    ANGLE_SKIP_TEST_IF(IsAndroid() && IsOpenGLES());
+
+    GLint maxTextures, maxComputeImageUniforms;
+    glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &maxTextures);
+    glGetIntegerv(GL_MAX_COMPUTE_IMAGE_UNIFORMS, &maxComputeImageUniforms);
+    ANGLE_SKIP_TEST_IF(maxTextures < 1 * 2 * 3);
+    ANGLE_SKIP_TEST_IF(maxComputeImageUniforms < 1 * 2 * 3);
+
+    constexpr char kComputeShader[] = R"(#version 310 es
+        layout(local_size_x = 1, local_size_y = 1, local_size_z = 1) in;
+        layout(binding = 0, r32ui) uniform highp readonly uimage2D image[1][2][3];
+        layout(binding = 1, std430) buffer Output {
+            uint image_value;
+        } outbuf;
+
+        void main(void)
+        {
+            outbuf.image_value = uint(0.0);
+            outbuf.image_value += imageLoad(image[0][0][0], ivec2(0, 0)).x;
+            outbuf.image_value += imageLoad(image[0][0][1], ivec2(0, 0)).x;
+            outbuf.image_value += imageLoad(image[0][0][2], ivec2(0, 0)).x;
+            outbuf.image_value += imageLoad(image[0][1][0], ivec2(0, 0)).x;
+            outbuf.image_value += imageLoad(image[0][1][1], ivec2(0, 0)).x;
+            outbuf.image_value += imageLoad(image[0][1][2], ivec2(0, 0)).x;
+        })";
+    ANGLE_GL_COMPUTE_PROGRAM(program, kComputeShader);
+    EXPECT_GL_NO_ERROR();
+
+    glUseProgram(program);
+
+    GLuint outputInitData[1] = {10};
+    GLBuffer outputBuffer;
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, outputBuffer);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(outputInitData), outputInitData, GL_STATIC_DRAW);
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, outputBuffer);
+    EXPECT_GL_NO_ERROR();
+
+    GLuint imageData = 200u;
+    GLTexture images[1][2][3];
+    for (int i = 0; i < 1; i++)
+    {
+        for (int j = 0; j < 2; j++)
+        {
+            for (int k = 0; k < 3; k++)
+            {
+                glBindTexture(GL_TEXTURE_2D, images[i][j][k]);
+                glTexStorage2D(GL_TEXTURE_2D, 1, GL_R32UI, 1, 1);
+                glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 1, 1, GL_RED_INTEGER, GL_UNSIGNED_INT,
+                                &imageData);
+                glBindImageTexture(i * 6 + j * 3 + k, images[i][j][k], 0, GL_FALSE, 0, GL_READ_ONLY,
+                                   GL_R32UI);
+                EXPECT_GL_NO_ERROR();
+            }
+        }
+    }
+
+    glDispatchCompute(1, 1, 1);
+    EXPECT_GL_NO_ERROR();
+
+    glMemoryBarrier(GL_BUFFER_UPDATE_BARRIER_BIT);
+
+    // read back
+    const GLuint *ptr = reinterpret_cast<const GLuint *>(
+        glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, sizeof(outputInitData), GL_MAP_READ_BIT));
+    memcpy(outputInitData, ptr, sizeof(outputInitData));
+    EXPECT_EQ(outputInitData[0], imageData * 1 * 2 * 3);
+    glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+}
+
 // Test that structs containing arrays of samplers work as expected.
 TEST_P(GLSLTest_ES31, StructArraySampler)
 {
@@ -3552,7 +3780,7 @@ TEST_P(GLSLTest_ES31, ArrayStructArrayArraySampler)
         {
             for (int k = 0; k < 2; k++)
             {
-                for (size_t l = 0; l < 2; l++)
+                for (int l = 0; l < 2; l++)
                 {
                     // First generate the texture
                     int textureUnit = l + 2 * (k + 2 * (j + 2 * i));
@@ -3642,7 +3870,7 @@ TEST_P(GLSLTest_ES31, ComplexStructArraySampler)
                 GLTexture *array   = arrays[k];
                 size_t arrayLength = arrayLengths[k];
                 size_t arrayOffset = arrayOffsets[k];
-                for (size_t l = 0; l < arrayLength; l++)
+                for (int l = 0; l < static_cast<int>(arrayLength); l++)
                 {
                     // First generate the texture
                     int textureUnit = arrayOffset + l + totalArrayLength * (j + 3 * i);
@@ -4248,7 +4476,7 @@ TEST_P(GLSLTest_ES3, ConstantStatementAsLoopInit)
 }
 
 // Test that uninitialized local variables are initialized to 0.
-TEST_P(GLSLTest_ES3, InitUninitializedLocals)
+TEST_P(WebGL2GLSLTest, InitUninitializedLocals)
 {
     // Test skipped on Android GLES because local variable initialization is disabled.
     // http://anglebug.com/2046
@@ -4279,13 +4507,18 @@ TEST_P(GLSLTest_ES3, InitUninitializedLocals)
         "}\n";
 
     ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+
+    // [WebGL 1.0]
+    // DrawArrays or drawElements will generate an INVALID_OPERATION error
+    // if a vertex attribute is enabled as an array via enableVertexAttribArray
+    // but no buffer is bound to that attribute.
+    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f, 1.0f, true);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
 // Test that uninitialized structs containing arrays of structs are initialized to 0. This
 // specifically tests with two different struct variables declared in the same block.
-TEST_P(GLSLTest, InitUninitializedStructContainingArrays)
+TEST_P(WebGL2GLSLTest, InitUninitializedStructContainingArrays)
 {
     // Test skipped on Android GLES because local variable initialization is disabled.
     // http://anglebug.com/2046
@@ -4316,7 +4549,7 @@ TEST_P(GLSLTest, InitUninitializedStructContainingArrays)
         "}\n";
 
     ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), kFS);
-    drawQuad(program.get(), essl1_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program.get(), essl1_shaders::PositionAttrib(), 0.5f, 1.0f, true);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
@@ -4369,7 +4602,7 @@ TEST_P(GLSLTest, StructureNameMatchingTest)
 }
 
 // Test that an uninitialized nameless struct inside a for loop init statement works.
-TEST_P(GLSLTest_ES3, UninitializedNamelessStructInForInitStatement)
+TEST_P(WebGL2GLSLTest, UninitializedNamelessStructInForInitStatement)
 {
     // Test skipped on Android GLES because local variable initialization is disabled.
     // http://anglebug.com/2046
@@ -4388,7 +4621,7 @@ TEST_P(GLSLTest_ES3, UninitializedNamelessStructInForInitStatement)
         "}\n";
 
     ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f, 1.0f, true);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
@@ -4750,7 +4983,7 @@ TEST_P(GLSLTest_ES3, VaryingStructNotDeclaredInVertexShader)
 }
 
 // Test that a varying struct that's not initialized in the vertex shader links successfully.
-TEST_P(GLSLTest_ES3, VaryingStructNotInitializedInVertexShader)
+TEST_P(WebGL2GLSLTest, VaryingStructNotInitializedInVertexShader)
 {
     // GLSL ES allows the vertex shader to declare but not initialize a varying (with a
     // specification that the varying values are undefined in the fragment stage).  See section 9.1
@@ -5185,6 +5418,9 @@ TEST_P(GLSLTest, NestedStructsWithSamplersAsFunctionArg)
     // Shader failed to compile on Nexus devices. http://anglebug.com/2114
     ANGLE_SKIP_TEST_IF((IsNexus5X() || IsNexus6P()) && IsAdreno() && IsOpenGLES());
 
+    // TODO(crbug.com/1132295): Failing on Apple DTK.
+    ANGLE_SKIP_TEST_IF(IsOSX() && IsARM64() && IsDesktopOpenGL());
+
     const char kFragmentShader[] = R"(precision mediump float;
 struct S { sampler2D samplerMember; };
 struct T { S nest; };
@@ -5288,6 +5524,9 @@ TEST_P(GLSLTest, NestedCompoundStructsWithSamplersAsFunctionArg)
     // Shader failed to compile on Nexus devices. http://anglebug.com/2114
     ANGLE_SKIP_TEST_IF((IsNexus5X() || IsNexus6P()) && IsAdreno() && IsOpenGLES());
 
+    // TODO(crbug.com/1132295): Failing on Apple DTK.
+    ANGLE_SKIP_TEST_IF(IsOSX() && IsARM64() && IsDesktopOpenGL());
+
     const char kFragmentShader[] = R"(precision mediump float;
 struct S { sampler2D samplerMember; bool b; };
 struct T { S nest; bool b; };
@@ -5352,6 +5591,9 @@ TEST_P(GLSLTest, MoreNestedCompoundStructsWithSamplersAsFunctionArg)
 {
     // Shader failed to compile on Nexus devices. http://anglebug.com/2114
     ANGLE_SKIP_TEST_IF((IsNexus5X() || IsNexus6P()) && IsAdreno() && IsOpenGLES());
+
+    // TODO(crbug.com/1132295): Failing on Apple DTK.
+    ANGLE_SKIP_TEST_IF(IsOSX() && IsARM64() && IsDesktopOpenGL());
 
     const char kFragmentShader[] = R"(precision mediump float;
 struct S { bool b; sampler2D samplerMember; };
@@ -5918,6 +6160,220 @@ void main()
 
     ANGLE_GL_PROGRAM(program, kVS, kFS);
     drawQuad(program.get(), "inputAttribute", 0.5f);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+}
+
+// Test mismatched precision in varying is handled correctly.
+TEST_P(GLSLTest_ES3, MismatchPrecisionFloat)
+{
+    constexpr char kVS[] = R"(#version 300 es
+in vec4 position;
+uniform highp float inVal;
+out highp float myVarying;
+
+void main()
+{
+    myVarying = inVal;
+    gl_Position = position;
+})";
+
+    constexpr char kFS[] = R"(#version 300 es
+precision highp float;
+out vec4 my_FragColor;
+in mediump float myVarying;
+
+void main()
+{
+    my_FragColor = vec4(1, 0, 0, 1);
+    if (myVarying > 1.0)
+    {
+        my_FragColor = vec4(0, 1, 0, 1);
+    }
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+
+    glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+
+    glUseProgram(program.get());
+    GLint positionLocation              = glGetAttribLocation(program.get(), "position");
+    std::array<Vector3, 6> quadVertices = GetQuadVertices();
+    for (Vector3 &vertex : quadVertices)
+    {
+        vertex.z() = 0.5f;
+    }
+    glVertexAttribPointer(positionLocation, 3, GL_FLOAT, GL_FALSE, 0, quadVertices.data());
+    glEnableVertexAttribArray(positionLocation);
+
+    GLint inValLoc = glGetUniformLocation(program, "inVal");
+    ASSERT_NE(-1, inValLoc);
+    glUniform1f(inValLoc, static_cast<GLfloat>(1.003));
+
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+}
+
+// Test mismatched precision in varying is handled correctly.
+TEST_P(GLSLTest_ES3, MismatchPrecisionlowpFloat)
+{
+    // Note: SPIRV only has relaxed precision so both lowp and mediump turn into "relaxed
+    // precision", thus this is the same test as MismatchPrecisionFloat but including it for
+    // completeness in case something changes.
+    constexpr char kVS[] = R"(#version 300 es
+in vec4 position;
+uniform highp float inVal;
+out highp float myVarying;
+
+void main()
+{
+    myVarying = inVal;
+    gl_Position = position;
+})";
+
+    constexpr char kFS[] = R"(#version 300 es
+precision highp float;
+out vec4 my_FragColor;
+in lowp float myVarying;
+
+void main()
+{
+    my_FragColor = vec4(1, 0, 0, 1);
+    if (myVarying > 1.0)
+    {
+        my_FragColor = vec4(0, 1, 0, 1);
+    }
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+
+    glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+
+    glUseProgram(program.get());
+    GLint positionLocation              = glGetAttribLocation(program.get(), "position");
+    std::array<Vector3, 6> quadVertices = GetQuadVertices();
+    for (Vector3 &vertex : quadVertices)
+    {
+        vertex.z() = 0.5f;
+    }
+    glVertexAttribPointer(positionLocation, 3, GL_FLOAT, GL_FALSE, 0, quadVertices.data());
+    glEnableVertexAttribArray(positionLocation);
+
+    GLint inValLoc = glGetUniformLocation(program, "inVal");
+    ASSERT_NE(-1, inValLoc);
+    glUniform1f(inValLoc, static_cast<GLfloat>(1.003));
+
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+}
+
+// Test mismatched precision in varying is handled correctly.
+TEST_P(GLSLTest_ES3, MismatchPrecisionVec2UnusedVarying)
+{
+    constexpr char kVS[] = R"(#version 300 es
+in vec2 position;
+uniform highp float inVal;
+out highp float myVarying;
+out highp vec2 texCoord;
+
+void main()
+{
+    myVarying = inVal;
+    gl_Position = vec4(position, 0, 1);
+    texCoord = position * 0.5 + vec2(0.5);
+})";
+
+    constexpr char kFS[] = R"(#version 300 es
+precision highp float;
+out vec4 my_FragColor;
+in mediump float myVarying;
+in mediump vec2 texCoord;
+
+void main()
+{
+    my_FragColor = vec4(1, 0, 0, 1);
+    if (myVarying > 1.0)
+    {
+        my_FragColor = vec4(0, 1, 0, 1);
+    }
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+
+    glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+
+    glUseProgram(program.get());
+    GLint positionLocation              = glGetAttribLocation(program.get(), "position");
+    std::array<Vector3, 6> quadVertices = GetQuadVertices();
+    for (Vector3 &vertex : quadVertices)
+    {
+        vertex.z() = 0.5f;
+    }
+    glVertexAttribPointer(positionLocation, 3, GL_FLOAT, GL_FALSE, 0, quadVertices.data());
+    glEnableVertexAttribArray(positionLocation);
+
+    GLint inValLoc = glGetUniformLocation(program, "inVal");
+    ASSERT_NE(-1, inValLoc);
+    glUniform1f(inValLoc, static_cast<GLfloat>(1.003));
+
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+}
+
+// Test mismatched precision in varying is handled correctly.
+TEST_P(GLSLTest_ES3, MismatchPrecisionMedToHigh)
+{
+    constexpr char kVS[] = R"(#version 300 es
+in vec2 position;
+uniform highp float inVal;
+out mediump float myVarying;
+
+void main()
+{
+    myVarying = inVal;
+    gl_Position = vec4(position, 0, 1);
+})";
+
+    constexpr char kFS[] = R"(#version 300 es
+precision highp float;
+out vec4 my_FragColor;
+in highp float myVarying;
+
+void main()
+{
+    my_FragColor = vec4(1, 0, 0, 1);
+    if (myVarying > 1.0)
+    {
+        my_FragColor = vec4(0, 1, 0, 1);
+    }
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+
+    glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+
+    glUseProgram(program.get());
+    GLint positionLocation              = glGetAttribLocation(program.get(), "position");
+    std::array<Vector3, 6> quadVertices = GetQuadVertices();
+    for (Vector3 &vertex : quadVertices)
+    {
+        vertex.z() = 0.5f;
+    }
+    glVertexAttribPointer(positionLocation, 3, GL_FLOAT, GL_FALSE, 0, quadVertices.data());
+    glEnableVertexAttribArray(positionLocation);
+
+    GLint inValLoc = glGetUniformLocation(program, "inVal");
+    ASSERT_NE(-1, inValLoc);
+    glUniform1f(inValLoc, static_cast<GLfloat>(1.003));
+
+    glDrawArrays(GL_TRIANGLES, 0, 6);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
@@ -7861,6 +8317,9 @@ void main() {
 // be empty in the presence of other resources.
 TEST_P(GLSLTest_ES31, MixOfAllResources)
 {
+    // http://anglebug.com/5072
+    ANGLE_SKIP_TEST_IF(IsIntel() && IsLinux() && IsOpenGL());
+
     constexpr char kComputeShader[] = R"(#version 310 es
 layout(local_size_x = 1, local_size_y = 1, local_size_z = 1) in;
 layout(binding = 1, std430) buffer Output {
@@ -8236,6 +8695,65 @@ void main() {
     GLuint program = CompileProgram(kVS, kFS);
     EXPECT_NE(0u, program);
 }
+
+// Verify that precision match validation of uniforms is performed only if they are statically used
+TEST_P(GLSLTest_ES31, UniformPrecisionMatchValidation)
+{
+    // Nvidia driver bug: http://anglebug.com/5240
+    ANGLE_SKIP_TEST_IF(IsOpenGL() && IsWindows() && IsNVIDIA());
+
+    constexpr char kVSUnused[] = R"(#version 300 es
+precision highp float;
+uniform highp vec4 positionIn;
+
+void main()
+{
+    gl_Position = vec4(1, 0, 0, 1);
+})";
+
+    constexpr char kVSStaticUse[] = R"(#version 300 es
+precision highp float;
+uniform highp vec4 positionIn;
+
+void main()
+{
+    gl_Position = positionIn;
+})";
+
+    constexpr char kFSUnused[] = R"(#version 300 es
+precision highp float;
+uniform highp vec4 positionIn;
+out vec4 my_FragColor;
+
+void main()
+{
+    my_FragColor = vec4(1, 0, 0, 1);
+})";
+
+    constexpr char kFSStaticUse[] = R"(#version 300 es
+precision highp float;
+uniform mediump vec4 positionIn;
+out vec4 my_FragColor;
+
+void main()
+{
+    my_FragColor = vec4(1, 0, 0, positionIn.z);
+})";
+
+    GLuint program = 0;
+
+    program = CompileProgram(kVSUnused, kFSUnused);
+    EXPECT_NE(0u, program);
+
+    program = CompileProgram(kVSUnused, kFSStaticUse);
+    EXPECT_NE(0u, program);
+
+    program = CompileProgram(kVSStaticUse, kFSUnused);
+    EXPECT_NE(0u, program);
+
+    program = CompileProgram(kVSStaticUse, kFSStaticUse);
+    EXPECT_EQ(0u, program);
+}
 }  // anonymous namespace
 
 // Use this to select which configurations (e.g. which renderer, which GLES major version) these
@@ -8249,5 +8767,7 @@ ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(GLSLTestNoValidation);
 ANGLE_INSTANTIATE_TEST_ES3(GLSLTest_ES3);
 
 ANGLE_INSTANTIATE_TEST_ES2(WebGLGLSLTest);
+
+ANGLE_INSTANTIATE_TEST_ES3(WebGL2GLSLTest);
 
 ANGLE_INSTANTIATE_TEST_ES31(GLSLTest_ES31);

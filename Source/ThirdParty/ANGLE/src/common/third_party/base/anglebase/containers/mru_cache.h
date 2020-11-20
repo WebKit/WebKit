@@ -262,7 +262,7 @@ class HashingMRUCache : public MRUCacheBase<KeyType, PayloadType, HashType, MRUC
   public:
     // See MRUCacheBase, noting the possibility of using NO_AUTO_EVICT.
     explicit HashingMRUCache(typename ParentType::size_type max_size) : ParentType(max_size) {}
-    virtual ~HashingMRUCache() {}
+    virtual ~HashingMRUCache() override {}
 
   private:
     DISALLOW_COPY_AND_ASSIGN(HashingMRUCache);

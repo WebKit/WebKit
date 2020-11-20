@@ -51,7 +51,7 @@
 1662 WIN : dEQP-EGL.functional.native_color_mapping.native_window.other_clear = SKIP
 1662 WIN : dEQP-EGL.functional.native_color_mapping.native_window.other_render = SKIP
 
-// Intentionally causes TDRs that eventually blacklist the application
+// Intentionally causes TDRs that eventually blocklist the application
 2319 : dEQP-EGL.functional.robustness.reset_context.shaders.infinite_loop.* = SKIP
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -192,19 +192,16 @@
 2330 : dEQP-EGL.functional.robustness.reset_context.fixed_function_pipeline.reset_status.index_buffer_out_of_bounds = SKIP
 2330 : dEQP-EGL.functional.robustness.reset_context.fixed_function_pipeline.reset_status.vertex_buffer_out_of_bounds = SKIP
 
-// Tests were being hidden by flakiness (anglebug.com/3271)
-3325 : dEQP-EGL.functional.fence_sync.* = SKIP
-3325 : dEQP-EGL.functional.reusable_sync.* = SKIP
-
 // Nexus 5x
 2546 NEXUS5X : dEQP-EGL.functional.query_context.get_current_context.* = SKIP
 2546 NEXUS5X : dEQP-EGL.functional.query_context.get_current_display.* = SKIP
 2546 NEXUS5X : dEQP-EGL.functional.query_context.get_current_surface.r* = FAIL
 2546 NEXUS5X : dEQP-EGL.functional.query_context.query_context.* = SKIP
 
-// SwANGLE bots
-4495 WIN SWIFTSHADER : dEQP-EGL.functional.sharing.gles2.multithread.random_egl_server_sync.shaders.compile.9 = SKIP
-
 // EGL images with the GL back-ends are not supported
 4606 OPENGL : dEQP-EGL.functional.image.api.create_image_gles2_* = FAIL
 4606 GLES : dEQP-EGL.functional.image.api.create_image_gles2_* = FAIL
+
+// Very slow on Vulkan Linux
+5170 VULKAN LINUX : dEQP-EGL.functional.swap_buffers_with_damage.resize_after_swap.* = SKIP
+5170 VULKAN LINUX : dEQP-EGL.functional.swap_buffers_with_damage.resize_before_swap.* = SKIP

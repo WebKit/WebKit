@@ -1,3 +1,12 @@
+2020-11-20  James Darpinian  <jdarpinian@chromium.org>
+
+        Update ANGLE 2020-11-12
+        https://bugs.webkit.org/show_bug.cgi?id=218877
+
+        Reviewed by Kenneth Russell.
+
+        * Excessively large list of upstream changes omitted.
+
 2020-11-19  James Darpinian  <jdarpinian@chromium.org>
 
         Improve update-angle script and move to Tools/Scripts

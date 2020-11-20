@@ -2132,6 +2132,16 @@
                 <enum name="EGL_D3D_TEXTURE_2D_SHARE_HANDLE_ANGLE"/>
             </require>
         </extension>
+        <extension name="EGL_ANGLE_display_semaphore_share_group" supported="egl">
+            <require>
+                <enum name="EGL_DISPLAY_SEMAPHORE_SHARE_GROUP_ANGLE"/>
+            </require>
+        </extension>
+        <extension name="EGL_ANGLE_display_texture_share_group" supported="egl">
+            <require>
+                <enum name="EGL_DISPLAY_TEXTURE_SHARE_GROUP_ANGLE"/>
+            </require>
+        </extension>
         <extension name="EGL_ANGLE_device_d3d" supported="egl">
             <require>
                 <enum name="EGL_D3D9_DEVICE_ANGLE"/>

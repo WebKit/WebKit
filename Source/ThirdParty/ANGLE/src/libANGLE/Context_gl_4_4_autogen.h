@@ -21,7 +21,6 @@
     void bindTextures(GLuint first, GLsizei count, const GLuint *textures);                   \
     void bindVertexBuffers(GLuint first, GLsizei count, const BufferID *buffersPacked,        \
                            const GLintptr *offsets, const GLsizei *strides);                  \
-    void bufferStorage(GLenum target, GLsizeiptr size, const void *data, GLbitfield flags);   \
     void clearTexImage(TextureID texturePacked, GLint level, GLenum format, GLenum type,      \
                        const void *data);                                                     \
     void clearTexSubImage(TextureID texturePacked, GLint level, GLint xoffset, GLint yoffset, \

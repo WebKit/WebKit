@@ -212,6 +212,23 @@ void QueryTexLevelParameterBase(const Texture *texture,
             *params =
                 CastFromStateValue<ParamType>(pname, texture->getLevelMemorySize(target, level));
             break;
+        case GL_RESOURCE_INITIALIZED_ANGLE:
+            *params = CastFromGLintStateValue<ParamType>(
+                pname, texture->initState(ImageIndex::MakeFromTarget(target, level)) ==
+                           InitState::Initialized);
+            break;
+        case GL_TEXTURE_BUFFER_DATA_STORE_BINDING:
+            *params = CastFromStateValue<ParamType>(
+                pname, static_cast<GLint>(texture->getBuffer().id().value));
+            break;
+        case GL_TEXTURE_BUFFER_OFFSET:
+            *params = CastFromStateValue<ParamType>(
+                pname, static_cast<GLint>(texture->getBuffer().getOffset()));
+            break;
+        case GL_TEXTURE_BUFFER_SIZE:
+            *params = CastFromStateValue<ParamType>(
+                pname, static_cast<GLint>(texture->getBuffer().getSize()));
+            break;
         default:
             UNREACHABLE();
             break;
@@ -344,6 +361,10 @@ void QueryTexParameterBase(const Context *context,
             *params =
                 CastFromGLintStateValue<ParamType>(pname, GL_IMAGE_FORMAT_COMPATIBILITY_BY_SIZE);
             break;
+        case GL_RESOURCE_INITIALIZED_ANGLE:
+            *params = CastFromGLintStateValue<ParamType>(
+                pname, texture->initState() == InitState::Initialized);
+            break;
         default:
             UNREACHABLE();
             break;
@@ -449,6 +470,10 @@ void SetTexParameterBase(Context *context, Texture *texture, GLenum pname, const
             break;
         case GL_TEXTURE_BORDER_COLOR:
             texture->setBorderColor(context, ConvertToColor<isPureInteger>(params));
+            break;
+        case GL_RESOURCE_INITIALIZED_ANGLE:
+            texture->setInitState(ConvertToBool(params[0]) ? InitState::Initialized
+                                                           : InitState::MayNeedInit);
             break;
         default:
             UNREACHABLE();
@@ -639,6 +664,16 @@ void QueryBufferParameterBase(const Buffer *buffer, GLenum pname, ParamType *par
             break;
         case GL_MEMORY_SIZE_ANGLE:
             *params = CastFromStateValue<ParamType>(pname, buffer->getMemorySize());
+            break;
+        case GL_BUFFER_IMMUTABLE_STORAGE_EXT:
+            *params = CastFromStateValue<ParamType>(pname, buffer->isImmutable());
+            break;
+        case GL_BUFFER_STORAGE_FLAGS_EXT:
+            *params = CastFromGLintStateValue<ParamType>(pname, buffer->getStorageExtUsageFlags());
+            break;
+        case GL_RESOURCE_INITIALIZED_ANGLE:
+            *params = CastFromStateValue<ParamType>(
+                pname, ConvertToGLBoolean(buffer->initState() == InitState::Initialized));
             break;
         default:
             UNREACHABLE();
@@ -1360,7 +1395,7 @@ void QueryRenderbufferiv(const Context *context,
             *params = renderbuffer->getStencilSize();
             break;
         case GL_RENDERBUFFER_SAMPLES_ANGLE:
-            *params = renderbuffer->getSamples();
+            *params = renderbuffer->getState().getSamples();
             break;
         case GL_MEMORY_SIZE_ANGLE:
             *params = renderbuffer->getMemorySize();
@@ -1370,6 +1405,9 @@ void QueryRenderbufferiv(const Context *context,
             break;
         case GL_IMPLEMENTATION_COLOR_READ_TYPE:
             *params = static_cast<GLint>(renderbuffer->getImplementationColorReadType(context));
+            break;
+        case GL_RESOURCE_INITIALIZED_ANGLE:
+            *params = (renderbuffer->initState(ImageIndex()) == InitState::Initialized);
             break;
         default:
             UNREACHABLE();
@@ -3541,6 +3579,7 @@ bool GetQueryParameterInfo(const State &glState,
         case GL_MAX_TRANSFORM_FEEDBACK_SEPARATE_COMPONENTS:
         case GL_UNPACK_IMAGE_HEIGHT:
         case GL_UNPACK_SKIP_IMAGES:
+        case GL_FRAGMENT_INTERPOLATION_OFFSET_BITS_OES:
         {
             *type      = GL_INT;
             *numParams = 1;
@@ -3569,6 +3608,8 @@ bool GetQueryParameterInfo(const State &glState,
         }
 
         case GL_MAX_TEXTURE_LOD_BIAS:
+        case GL_MIN_FRAGMENT_INTERPOLATION_OFFSET_OES:
+        case GL_MAX_FRAGMENT_INTERPOLATION_OFFSET_OES:
         {
             *type      = GL_FLOAT;
             *numParams = 1;
@@ -3607,6 +3648,20 @@ bool GetQueryParameterInfo(const State &glState,
         switch (pname)
         {
             case GL_TEXTURE_BINDING_CUBE_MAP_ARRAY:
+                *type      = GL_INT;
+                *numParams = 1;
+                return true;
+        }
+    }
+
+    if (extensions.textureBufferAny())
+    {
+        switch (pname)
+        {
+            case GL_TEXTURE_BUFFER_BINDING:
+            case GL_TEXTURE_BINDING_BUFFER:
+            case GL_TEXTURE_BUFFER_OFFSET_ALIGNMENT:
+            case GL_MAX_TEXTURE_BUFFER_SIZE:
                 *type      = GL_INT;
                 *numParams = 1;
                 return true;
@@ -3677,7 +3732,12 @@ bool GetQueryParameterInfo(const State &glState,
             *numParams = 1;
             return true;
         case GL_SAMPLE_MASK:
+        case GL_SAMPLE_SHADING:
             *type      = GL_BOOL;
+            *numParams = 1;
+            return true;
+        case GL_MIN_SAMPLE_SHADING_VALUE:
+            *type      = GL_FLOAT;
             *numParams = 1;
             return true;
     }

@@ -77,6 +77,11 @@ enum Token
     kConfigPixel2,
     // GPU devices
     kConfigNVIDIAQuadroP400,
+    // PreRotation
+    kConfigPreRotation,
+    kConfigPreRotation90,
+    kConfigPreRotation180,
+    kConfigPreRotation270,
     // expectation
     kExpectationPass,
     kExpectationFail,
@@ -167,6 +172,10 @@ constexpr TokenInfo kTokenData[kNumberOfTokens] = {
     {"nexus5x", GPUTestConfig::kConditionNexus5X},
     {"pixel2orxl", GPUTestConfig::kConditionPixel2OrXL},
     {"quadrop400", GPUTestConfig::kConditionNVIDIAQuadroP400},
+    {"prerotation", GPUTestConfig::kConditionPreRotation},
+    {"prerotation90", GPUTestConfig::kConditionPreRotation90},
+    {"prerotation180", GPUTestConfig::kConditionPreRotation180},
+    {"prerotation270", GPUTestConfig::kConditionPreRotation270},
     {"pass", GPUTestConfig::kConditionNone, GPUTestExpectationsParser::kGpuTestPass},
     {"fail", GPUTestConfig::kConditionNone, GPUTestExpectationsParser::kGpuTestFail},
     {"flaky", GPUTestConfig::kConditionNone, GPUTestExpectationsParser::kGpuTestFlaky},
@@ -293,7 +302,7 @@ const char *GetConditionName(uint32_t condition)
 
 GPUTestExpectationsParser::GPUTestExpectationsParser()
 {
-    // Some sanity check.
+    // Some initial checks.
     ASSERT((static_cast<unsigned int>(kNumberOfTokens)) ==
            (sizeof(kTokenData) / sizeof(kTokenData[0])));
     ASSERT((static_cast<unsigned int>(kNumberOfErrors)) ==
@@ -438,6 +447,10 @@ bool GPUTestExpectationsParser::parseLine(const GPUTestConfig &config,
             case kConfigNexus5X:
             case kConfigPixel2:
             case kConfigNVIDIAQuadroP400:
+            case kConfigPreRotation:
+            case kConfigPreRotation90:
+            case kConfigPreRotation180:
+            case kConfigPreRotation270:
                 // MODIFIERS, check each condition and add accordingly.
                 if (stage != kLineParserConfigs && stage != kLineParserBugID)
                 {

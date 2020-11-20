@@ -1,5 +1,5 @@
 //
-// Copyright 2020 Apple, Inc. All rights reserved.
+// Copyright 2020 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -10,9 +10,9 @@
 
 #if defined(ANGLE_PLATFORM_APPLE)
 
-#    import "gpu_info_util/SystemInfo_internal.h"
-#    import <dispatch/dispatch.h>
 #    import <Foundation/Foundation.h>
+#    import <dispatch/dispatch.h>
+#    import "gpu_info_util/SystemInfo_internal.h"
 
 namespace angle
 {
@@ -21,9 +21,9 @@ bool GetSystemInfo(SystemInfo *info)
 {
 #if defined(ANGLE_PLATFORM_MACOS) || defined(ANGLE_PLATFORM_MACCATALYST)
     return GetSystemInfo_mac(info);
-#else
+#    else
     return GetSystemInfo_ios(info);
-#endif
+#    endif
 }
 
 }  // namespace angle

@@ -34,6 +34,7 @@ reflect the reality of the situation.  The expected format for every line in the
     NEXUS5X PIXEL2ORXL
     QUADROP400
     SWIFTSHADER
+    PREROTATION PREROTATION90 PREROTATION180 PREROTATION270
 
 `TEST_NAME` can be a specific test name, or set of test names using `'*'` as wildcard anywhere in
 the name.  Examples:
@@ -50,3 +51,9 @@ the name.  Examples:
 
     // Failing test in Nvidia's OpenGL implementation on windows:
     1665 WIN NVIDIA OPENGL : dEQP-GLES31.functional.draw_indirect.negative.command_offset_not_in_buffer_unsigned32_wrap = FAIL
+
+    // Failing when emulated pre-rotation is enabled, no matter which angle:
+    1234 PREROTATION : dEQP-GLES3.*blit* = FAIL
+
+    // Failing when emulated pre-rotation is enabled with 270 degree angle:
+    1234 PREROTATION270 : dEQP-GLES3.*blit* = FAIL

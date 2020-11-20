@@ -27,7 +27,11 @@ enum SubjectIndexes : angle::SubjectIndex
 };
 
 ProgramPipelineState::ProgramPipelineState()
-    : mLabel(), mActiveShaderProgram(nullptr), mValid(false), mExecutable(new ProgramExecutable())
+    : mLabel(),
+      mActiveShaderProgram(nullptr),
+      mValid(false),
+      mExecutable(new ProgramExecutable()),
+      mIsLinked(false)
 {
     for (const ShaderType shaderType : gl::AllShaderTypes())
     {
@@ -213,7 +217,7 @@ void ProgramPipeline::useProgramStages(const Context *context,
     updateLinkedShaderStages();
     updateExecutable();
 
-    mDirtyBits.set(DIRTY_BIT_PROGRAM_STAGE);
+    mState.mIsLinked = false;
 }
 
 void ProgramPipeline::updateLinkedShaderStages()
@@ -263,6 +267,75 @@ void ProgramPipeline::updateTransformFeedbackMembers()
         vertexExecutable.mLinkedTransformFeedbackVaryings;
 }
 
+void ProgramPipeline::updateShaderStorageBlocks()
+{
+    mState.mExecutable->mComputeShaderStorageBlocks.clear();
+    mState.mExecutable->mGraphicsShaderStorageBlocks.clear();
+
+    // Only copy the storage blocks from each Program in the PPO once, since each Program could
+    // contain multiple shader stages.
+    ShaderBitSet handledStages;
+
+    for (const gl::ShaderType shaderType : kAllGraphicsShaderTypes)
+    {
+        const Program *shaderProgram = getShaderProgram(shaderType);
+        if (shaderProgram && !handledStages.test(shaderType))
+        {
+            // Only add each Program's blocks once.
+            handledStages |= shaderProgram->getExecutable().getLinkedShaderStages();
+
+            for (const InterfaceBlock &block :
+                 shaderProgram->getExecutable().getShaderStorageBlocks())
+            {
+                mState.mExecutable->mGraphicsShaderStorageBlocks.emplace_back(block);
+            }
+        }
+    }
+
+    const Program *computeProgram = getShaderProgram(ShaderType::Compute);
+    if (computeProgram)
+    {
+        for (const InterfaceBlock &block : computeProgram->getExecutable().getShaderStorageBlocks())
+        {
+            mState.mExecutable->mComputeShaderStorageBlocks.emplace_back(block);
+        }
+    }
+}
+
+void ProgramPipeline::updateImageBindings()
+{
+    mState.mExecutable->mComputeImageBindings.clear();
+    mState.mExecutable->mGraphicsImageBindings.clear();
+
+    // Only copy the storage blocks from each Program in the PPO once, since each Program could
+    // contain multiple shader stages.
+    ShaderBitSet handledStages;
+
+    for (const gl::ShaderType shaderType : kAllGraphicsShaderTypes)
+    {
+        const Program *shaderProgram = getShaderProgram(shaderType);
+        if (shaderProgram && !handledStages.test(shaderType))
+        {
+            // Only add each Program's blocks once.
+            handledStages |= shaderProgram->getExecutable().getLinkedShaderStages();
+
+            for (const ImageBinding &imageBinding : shaderProgram->getState().getImageBindings())
+            {
+                mState.mExecutable->mGraphicsImageBindings.emplace_back(imageBinding);
+            }
+        }
+    }
+
+    const Program *computeProgram = getShaderProgram(ShaderType::Compute);
+    if (computeProgram)
+    {
+        for (const ImageBinding &imageBinding : computeProgram->getState().getImageBindings())
+        {
+            mState.mExecutable->mComputeImageBindings.emplace_back(imageBinding);
+        }
+    }
+}
+
 void ProgramPipeline::updateHasBooleans()
 {
     // Need to check all of the shader stages, not just linked, so we handle Compute correctly.
@@ -277,7 +350,7 @@ void ProgramPipeline::updateHasBooleans()
             {
                 mState.mExecutable->mPipelineHasGraphicsUniformBuffers = true;
             }
-            if (executable.hasStorageBuffers())
+            if (executable.hasGraphicsStorageBuffers())
             {
                 mState.mExecutable->mPipelineHasGraphicsStorageBuffers = true;
             }
@@ -293,7 +366,7 @@ void ProgramPipeline::updateHasBooleans()
             {
                 mState.mExecutable->mPipelineHasGraphicsTextures = true;
             }
-            if (executable.hasImages())
+            if (executable.hasGraphicsImages())
             {
                 mState.mExecutable->mPipelineHasGraphicsImages = true;
             }
@@ -309,7 +382,7 @@ void ProgramPipeline::updateHasBooleans()
         {
             mState.mExecutable->mPipelineHasComputeUniformBuffers = true;
         }
-        if (executable.hasStorageBuffers())
+        if (executable.hasComputeStorageBuffers())
         {
             mState.mExecutable->mPipelineHasComputeStorageBuffers = true;
         }
@@ -325,7 +398,7 @@ void ProgramPipeline::updateHasBooleans()
         {
             mState.mExecutable->mPipelineHasComputeTextures = true;
         }
-        if (executable.hasImages())
+        if (executable.hasComputeImages())
         {
             mState.mExecutable->mPipelineHasComputeImages = true;
         }
@@ -339,9 +412,13 @@ void ProgramPipeline::updateExecutable()
     // Vertex Shader ProgramExecutable properties
     updateExecutableAttributes();
     updateTransformFeedbackMembers();
+    updateShaderStorageBlocks();
+    updateImageBindings();
 
     // All Shader ProgramExecutable properties
     mState.updateExecutableTextures();
+
+    // Must be last, since it queries things updated by earlier functions
     updateHasBooleans();
 }
 
@@ -467,6 +544,13 @@ ProgramMergedVaryings ProgramPipeline::getMergedVaryings() const
 // The code gets compiled into binaries.
 angle::Result ProgramPipeline::link(const Context *context)
 {
+    if (mState.mIsLinked)
+    {
+        return angle::Result::Continue;
+    }
+
+    ProgramMergedVaryings mergedVaryings;
+
     if (!getExecutable().isCompute())
     {
         InfoLog &infoLog = mState.mExecutable->getInfoLog();
@@ -502,7 +586,7 @@ angle::Result ProgramPipeline::link(const Context *context)
             static_cast<GLuint>(context->getState().getCaps().maxVaryingVectors);
         VaryingPacking varyingPacking(maxVaryingVectors, packMode);
 
-        const ProgramMergedVaryings &mergedVaryings = getMergedVaryings();
+        mergedVaryings = getMergedVaryings();
         for (ShaderType shaderType : getExecutable().getLinkedShaderStages())
         {
             Program *program = mState.mPrograms[shaderType];
@@ -513,7 +597,9 @@ angle::Result ProgramPipeline::link(const Context *context)
         }
     }
 
-    ANGLE_TRY(getImplementation()->link(context));
+    ANGLE_TRY(getImplementation()->link(context, mergedVaryings));
+
+    mState.mIsLinked = true;
 
     return angle::Result::Continue;
 }
@@ -622,34 +708,13 @@ bool ProgramPipeline::validateSamplers(InfoLog *infoLog, const Caps &caps)
     return true;
 }
 
-angle::Result ProgramPipeline::syncState(const Context *context)
-{
-    if (mDirtyBits.any())
-    {
-        mDirtyBits.reset();
-
-        // If there's a Program bound, we still want to link the PPO so we don't
-        // lose the dirty bit, but, we don't want to signal any errors if it fails
-        // since the failure would be unrelated to drawing with the Program.
-        bool goodResult = link(context) == angle::Result::Continue;
-        if (!context->getState().getProgram())
-        {
-            ANGLE_CHECK(const_cast<Context *>(context), goodResult, "Program pipeline link failed",
-                        GL_INVALID_OPERATION);
-        }
-    }
-
-    return angle::Result::Continue;
-}
-
 void ProgramPipeline::onSubjectStateChange(angle::SubjectIndex index, angle::SubjectMessage message)
 {
     switch (message)
     {
         case angle::SubjectMessage::SubjectChanged:
-            setDirtyBit(ProgramPipeline::DirtyBitType::DIRTY_BIT_PROGRAM_STAGE);
+            mState.mIsLinked = false;
             mState.updateExecutableTextures();
-            onStateChange(angle::SubjectMessage::DirtyBitsFlagged);
             break;
         default:
             UNREACHABLE();

@@ -57,9 +57,9 @@ class LineLoopTest : public ANGLETest
             {
                 const GLubyte *pixel = &pixels[0] + ((y * getWindowWidth() + x) * 4);
 
-                EXPECT_EQ(pixel[0], 0);
-                EXPECT_EQ(pixel[1], pixel[2]);
-                ASSERT_EQ(pixel[3], 255);
+                EXPECT_EQ(pixel[0], 0) << "Failed at " << x << ", " << y << std::endl;
+                EXPECT_EQ(pixel[1], pixel[2]) << "Failed at " << x << ", " << y << std::endl;
+                ASSERT_EQ(pixel[3], 255) << "Failed at " << x << ", " << y << std::endl;
             }
         }
     }
@@ -202,6 +202,166 @@ TEST_P(LineLoopTest, DISABLED_DrawArraysWithLargeCount)
     EXPECT_GL_NO_ERROR();
 }
 
+class LineLoopPrimitiveRestartTest : public ANGLETest
+{
+  protected:
+    LineLoopPrimitiveRestartTest()
+    {
+        setWindowWidth(64);
+        setWindowHeight(64);
+        setConfigRedBits(8);
+        setConfigGreenBits(8);
+        setConfigBlueBits(8);
+        setConfigAlphaBits(8);
+    }
+};
+
+TEST_P(LineLoopPrimitiveRestartTest, LineLoopWithPrimitiveRestart)
+{
+    constexpr char kVS[] = R"(#version 300 es
+in vec2 a_position;
+// x,y = offset, z = scale
+in vec3 a_transform;
+
+invariant gl_Position;
+void main()
+{
+    vec2 v_position = a_transform.z * a_position + a_transform.xy;
+    gl_Position = vec4(v_position, 0.0, 1.0);
+})";
+
+    constexpr char kFS[] = R"(#version 300 es
+precision highp float;
+layout (location=0) out vec4 fragColor;
+void main()
+{
+    fragColor = vec4(1.0, 0.0, 0.0, 1.0);
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glBindAttribLocation(program, 0, "a_position");
+    glBindAttribLocation(program, 1, "a_transform");
+    glLinkProgram(program);
+    glUseProgram(program);
+    ASSERT_GL_NO_ERROR();
+
+    // clang-format off
+    constexpr GLfloat vertices[] = {
+        0.1, 0.1, -0.1, 0.1, -0.1, -0.1, 0.1, -0.1,
+        0.1, 0.1, -0.1, 0.1, -0.1, -0.1, 0.1, -0.1,
+        0.1, 0.1, -0.1, 0.1, -0.1, -0.1, 0.1, -0.1,
+        0.1, 0.1, -0.1, 0.1, -0.1, -0.1, 0.1, -0.1,
+    };
+
+    constexpr GLfloat transform[] = {
+        // first loop transform
+        0, 0, 9,
+        0, 0, 9,
+        0, 0, 9,
+        0, 0, 9,
+        // second loop transform
+        0.2, 0.1, 2,
+        0.2, 0.1, 2,
+        0.2, 0.1, 2,
+        0.2, 0.1, 2,
+        // third loop transform
+        0.5, -0.2, 3,
+        0.5, -0.2, 3,
+        0.5, -0.2, 3,
+        0.5, -0.2, 3,
+        // forth loop transform
+        -0.8, -0.5, 1,
+        -0.8, -0.5, 1,
+        -0.8, -0.5, 1,
+        -0.8, -0.5, 1,
+    };
+
+    constexpr GLushort lineloopAsStripIndices[] = {
+        // first strip
+        0, 1, 2, 3, 0,
+        // second strip
+        4, 5, 6, 7, 4,
+        // third strip
+        8, 9, 10, 11, 8,
+        // forth strip
+        12, 13, 14, 15, 12 };
+
+    constexpr GLushort lineloopWithRestartIndices[] = {
+        // first loop
+        0, 1, 2, 3, 0xffff,
+        // second loop
+        4, 5, 6, 7, 0xffff,
+        // third loop
+        8, 9, 10, 11, 0xffff,
+        // forth loop
+        12, 13, 14, 15,
+    };
+    // clang-format on
+
+    std::vector<GLColor> expectedPixels(getWindowWidth() * getWindowHeight());
+    std::vector<GLColor> renderedPixels(getWindowWidth() * getWindowHeight());
+
+    // Draw in non-primitive restart way
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    glEnableVertexAttribArray(0);
+    glEnableVertexAttribArray(1);
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+    for (int loop = 0; loop < 4; ++loop)
+    {
+        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, vertices + 8 * loop);
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, transform + 12 * loop);
+
+        glDrawElements(GL_LINE_STRIP, 5, GL_UNSIGNED_SHORT, lineloopAsStripIndices);
+    }
+
+    glReadPixels(0, 0, getWindowWidth(), getWindowHeight(), GL_RGBA, GL_UNSIGNED_BYTE,
+                 expectedPixels.data());
+    ASSERT_GL_NO_ERROR();
+
+    // Draw line loop with primitive restart:
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    GLBuffer vertexBuffer[2];
+    GLBuffer indexBuffer;
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(lineloopWithRestartIndices),
+                 lineloopWithRestartIndices, GL_STATIC_DRAW);
+
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer[0]);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
+
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer[1]);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(transform), transform, GL_STATIC_DRAW);
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+    glEnable(GL_PRIMITIVE_RESTART_FIXED_INDEX);
+
+    glClear(GL_COLOR_BUFFER_BIT);
+    glDrawElements(GL_LINE_LOOP, ArraySize(lineloopWithRestartIndices), GL_UNSIGNED_SHORT, 0);
+
+    glReadPixels(0, 0, getWindowWidth(), getWindowHeight(), GL_RGBA, GL_UNSIGNED_BYTE,
+                 renderedPixels.data());
+
+    for (int y = 0; y < getWindowHeight(); ++y)
+    {
+        for (int x = 0; x < getWindowWidth(); ++x)
+        {
+            int idx = y * getWindowWidth() + x;
+            EXPECT_EQ(expectedPixels[idx], renderedPixels[idx])
+                << "Expected pixel at " << x << ", " << y << " to be " << expectedPixels[idx]
+                << std::endl;
+        }
+    }
+}
+
 class LineLoopIndirectTest : public LineLoopTest
 {
   protected:
@@ -317,5 +477,12 @@ TEST_P(LineLoopIndirectTest, UShortIndexIndirectBuffer)
 // Use this to select which configurations (e.g. which renderer, which GLES major version) these
 // tests should be run against.
 ANGLE_INSTANTIATE_TEST_ES2(LineLoopTest);
+
+ANGLE_INSTANTIATE_TEST_ES3_AND(
+    LineLoopPrimitiveRestartTest,
+    WithMetalForcedBufferGPUStorage(ES3_METAL()),
+    WithMetalMemoryBarrierAndCheapRenderPass(ES3_METAL(),
+                                             /* hasBarrier */ false,
+                                             /* cheapRenderPass */ false));
 
 ANGLE_INSTANTIATE_TEST_ES31(LineLoopIndirectTest);

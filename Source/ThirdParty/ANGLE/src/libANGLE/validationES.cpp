@@ -467,6 +467,11 @@ bool ValidateVertexShaderAttributeTypeMatch(const Context *context)
     const Program *program = context->getActiveLinkedProgram();
     const VertexArray *vao = context->getState().getVertexArray();
 
+    if (!program)
+    {
+        return false;
+    }
+
     unsigned long stateCurrentValuesTypeBits = glState.getCurrentValuesTypeMask().to_ulong();
     unsigned long vaoAttribTypeBits          = vao->getAttributesTypeMask().to_ulong();
     unsigned long vaoAttribEnabledMask       = vao->getAttributesMask().to_ulong();
@@ -475,10 +480,10 @@ bool ValidateVertexShaderAttributeTypeMatch(const Context *context)
     vaoAttribTypeBits = (vaoAttribEnabledMask & vaoAttribTypeBits);
     vaoAttribTypeBits |= (~vaoAttribEnabledMask & stateCurrentValuesTypeBits);
 
-    return program &&
-           ValidateComponentTypeMasks(
-               program->getExecutable().getAttributesTypeMask().to_ulong(), vaoAttribTypeBits,
-               program->getExecutable().getAttributesMask().to_ulong(), 0xFFFF);
+    const ProgramExecutable &executable = program->getExecutable();
+    return ValidateComponentTypeMasks(executable.getAttributesTypeMask().to_ulong(),
+                                      vaoAttribTypeBits, executable.getAttributesMask().to_ulong(),
+                                      0xFFFF);
 }
 
 bool IsCompatibleDrawModeWithGeometryShader(PrimitiveMode drawMode,
@@ -532,6 +537,64 @@ unsigned int GetSamplerParameterCount(GLenum pname)
     return pname == GL_TEXTURE_BORDER_COLOR ? 4 : 1;
 }
 
+ANGLE_INLINE const char *ValidateProgramDrawStates(const State &state,
+                                                   const Extensions &extensions,
+                                                   Program *program)
+{
+    if (extensions.multiview || extensions.multiview2)
+    {
+        const int programNumViews     = program->usesMultiview() ? program->getNumViews() : 1;
+        Framebuffer *framebuffer      = state.getDrawFramebuffer();
+        const int framebufferNumViews = framebuffer->getNumViews();
+
+        if (framebufferNumViews != programNumViews)
+        {
+            return gl::err::kMultiviewMismatch;
+        }
+
+        if (state.isTransformFeedbackActiveUnpaused() && framebufferNumViews > 1)
+        {
+            return gl::err::kMultiviewTransformFeedback;
+        }
+
+        if (extensions.disjointTimerQuery && framebufferNumViews > 1 &&
+            state.isQueryActive(QueryType::TimeElapsed))
+        {
+            return gl::err::kMultiviewTimerQuery;
+        }
+    }
+
+    // Uniform buffer validation
+    for (unsigned int uniformBlockIndex = 0;
+         uniformBlockIndex < program->getActiveUniformBlockCount(); uniformBlockIndex++)
+    {
+        const InterfaceBlock &uniformBlock = program->getUniformBlockByIndex(uniformBlockIndex);
+        GLuint blockBinding                = program->getUniformBlockBinding(uniformBlockIndex);
+        const OffsetBindingPointer<Buffer> &uniformBuffer =
+            state.getIndexedUniformBuffer(blockBinding);
+
+        if (uniformBuffer.get() == nullptr)
+        {
+            // undefined behaviour
+            return gl::err::kUniformBufferUnbound;
+        }
+
+        size_t uniformBufferSize = GetBoundBufferAvailableSize(uniformBuffer);
+        if (uniformBufferSize < uniformBlock.dataSize)
+        {
+            // undefined behaviour
+            return gl::err::kUniformBufferTooSmall;
+        }
+
+        if (extensions.webglCompatibility &&
+            uniformBuffer->isBoundForTransformFeedbackAndOtherUse())
+        {
+            return gl::err::kUniformBufferBoundForTransformFeedback;
+        }
+    }
+
+    return nullptr;
+}
 }  // anonymous namespace
 
 void SetRobustLengthParam(const GLsizei *length, GLsizei value)
@@ -575,6 +638,10 @@ bool ValidTextureTarget(const Context *context, TextureType type)
 
         case TextureType::VideoImage:
             return context->getExtensions().webglVideoTexture;
+
+        case TextureType::Buffer:
+            return (context->getClientVersion() >= Version(3, 2) ||
+                    context->getExtensions().textureBufferAny());
 
         default:
             return false;
@@ -814,6 +881,9 @@ bool ValidTexLevelDestinationTarget(const Context *context, TextureType type)
             return context->getExtensions().textureRectangle;
         case TextureType::_2DMultisampleArray:
             return context->getExtensions().textureStorageMultisample2DArrayOES;
+        case TextureType::Buffer:
+            return (context->getClientVersion() >= Version(3, 2) ||
+                    context->getExtensions().textureBufferAny());
         default:
             return false;
     }
@@ -863,6 +933,7 @@ bool ValidMipLevel(const Context *context, TextureType type, GLint level)
         case TextureType::External:
         case TextureType::Rectangle:
         case TextureType::VideoImage:
+        case TextureType::Buffer:
             return level == 0;
 
         case TextureType::_3D:
@@ -909,10 +980,9 @@ bool ValidImageSizeParameters(const Context *context,
     return true;
 }
 
-bool ValidCompressedDimension(GLsizei size, GLuint blockSize, bool smallerThanBlockSizeAllowed)
+bool ValidCompressedDimension(GLsizei size, GLuint blockSize, GLint level)
 {
-    return (smallerThanBlockSizeAllowed && (size > 0) && (blockSize % size == 0)) ||
-           (size % blockSize == 0);
+    return (level > 0) || (size % blockSize == 0);
 }
 
 bool ValidCompressedImageSize(const Context *context,
@@ -935,17 +1005,9 @@ bool ValidCompressedImageSize(const Context *context,
 
     if (CompressedTextureFormatRequiresExactSize(internalFormat))
     {
-        // The ANGLE extensions allow specifying compressed textures with sizes smaller than the
-        // block size for level 0 but WebGL disallows this.
-        bool smallerThanBlockSizeAllowed =
-            level > 0 || !context->getExtensions().webglCompatibility;
-
-        if (!ValidCompressedDimension(width, formatInfo.compressedBlockWidth,
-                                      smallerThanBlockSizeAllowed) ||
-            !ValidCompressedDimension(height, formatInfo.compressedBlockHeight,
-                                      smallerThanBlockSizeAllowed) ||
-            !ValidCompressedDimension(depth, formatInfo.compressedBlockDepth,
-                                      smallerThanBlockSizeAllowed))
+        if (!ValidCompressedDimension(width, formatInfo.compressedBlockWidth, level) ||
+            !ValidCompressedDimension(height, formatInfo.compressedBlockHeight, level) ||
+            !ValidCompressedDimension(depth, formatInfo.compressedBlockDepth, level))
         {
             return false;
         }
@@ -1414,7 +1476,7 @@ bool ValidateBlitFramebufferParameters(const Context *context,
     }
 
     // Not allow blitting to MS buffers, therefore if renderToTextureSamples exist,
-    // consider it MS. needResourceSamples = false
+    // consider it MS. checkReadBufferResourceSamples = false
     if (!ValidateFramebufferNotMultisampled(context, drawFramebuffer, false))
     {
         return false;
@@ -1497,7 +1559,7 @@ bool ValidateBlitFramebufferParameters(const Context *context,
                         return false;
                     }
 
-                    if (readColorBuffer->getSamples() > 0 &&
+                    if (readColorBuffer->getResourceSamples() > 0 &&
                         (!Format::EquivalentForBlit(readFormat, drawFormat) || !sameBounds))
                     {
                         context->validationError(GL_INVALID_OPERATION,
@@ -1551,7 +1613,7 @@ bool ValidateBlitFramebufferParameters(const Context *context,
                     return false;
                 }
 
-                if (readBuffer->getSamples() > 0 && !sameBounds)
+                if (readBuffer->getResourceSamples() > 0 && !sameBounds)
                 {
                     context->validationError(GL_INVALID_OPERATION, kBlitMultisampledBoundsMismatch);
                     return false;
@@ -2396,6 +2458,17 @@ bool ValidateStateQuery(const Context *context,
                 return false;
             }
             break;
+        case GL_TEXTURE_BUFFER_BINDING:
+        case GL_TEXTURE_BINDING_BUFFER:
+        case GL_TEXTURE_BUFFER_OFFSET_ALIGNMENT:
+        case GL_MAX_TEXTURE_BUFFER_SIZE:
+            if (context->getClientVersion() < Version(3, 2) &&
+                !context->getExtensions().textureBufferAny())
+            {
+                context->validationError(GL_INVALID_ENUM, kTextureBufferExtensionNotAvailable);
+                return false;
+            }
+            break;
 
         case GL_IMPLEMENTATION_COLOR_READ_TYPE:
         case GL_IMPLEMENTATION_COLOR_READ_FORMAT:
@@ -2541,6 +2614,564 @@ bool ValidateRobustStateQuery(const Context *context,
     return true;
 }
 
+bool ValidateCopyImageSubDataTarget(const Context *context, GLuint name, GLenum target)
+{
+    // From EXT_copy_image: INVALID_ENUM is generated if either <srcTarget> or <dstTarget> is not
+    // RENDERBUFFER or a valid non - proxy texture target, is TEXTURE_BUFFER, or is one of the
+    // cubemap face selectors described in table 3.17, or if the target does not match the type of
+    // the object. INVALID_VALUE is generated if either <srcName> or <dstName> does not correspond
+    // to a valid renderbuffer or texture object according to the corresponding target parameter.
+    switch (target)
+    {
+        case GL_RENDERBUFFER:
+        {
+            RenderbufferID renderbuffer = FromGL<RenderbufferID>(name);
+            if (!context->isRenderbuffer(renderbuffer))
+            {
+                context->validationError(GL_INVALID_VALUE, kInvalidRenderbufferName);
+                return false;
+            }
+            break;
+        }
+        case GL_TEXTURE_2D:
+        case GL_TEXTURE_3D:
+        case GL_TEXTURE_2D_ARRAY:
+        case GL_TEXTURE_CUBE_MAP:
+        case GL_TEXTURE_CUBE_MAP_ARRAY_EXT:
+        {
+            TextureID texture = FromGL<TextureID>(name);
+            if (!context->isTexture(texture))
+            {
+                context->validationError(GL_INVALID_VALUE, kInvalidTextureName);
+                return false;
+            }
+
+            Texture *textureObject = context->getTexture(texture);
+            if (textureObject && textureObject->getType() != FromGL<TextureType>(target))
+            {
+                context->validationError(GL_INVALID_VALUE, err::kTextureTypeMismatch);
+                return false;
+            }
+            break;
+        }
+        default:
+            context->validationError(GL_INVALID_ENUM, kInvalidTarget);
+            return false;
+    }
+
+    return true;
+}
+
+bool ValidateCopyImageSubDataTargetRegion(const Context *context,
+                                          GLuint name,
+                                          GLenum target,
+                                          GLint level,
+                                          GLint offsetX,
+                                          GLint offsetY,
+                                          GLint offsetZ,
+                                          GLsizei width,
+                                          GLsizei height,
+                                          GLsizei *samples)
+{
+    // INVALID_VALUE is generated if the dimensions of the either subregion exceeds the boundaries
+    // of the corresponding image object.
+    if (offsetX < 0 || offsetY < 0 || offsetZ < 0)
+    {
+        context->validationError(GL_INVALID_VALUE, kNegativeOffset);
+        return false;
+    }
+
+    if (target == GL_RENDERBUFFER)
+    {
+        // For renderbuffers, this value must be zero. INVALID_VALUE is generated if the specified
+        // level is not a valid level for the image.
+        if (level != 0)
+        {
+            context->validationError(GL_INVALID_VALUE, kInvalidMipLevel);
+            return false;
+        }
+
+        // INVALID_VALUE is generated if the dimensions of the either subregion exceeds the
+        // boundaries of the corresponding image object
+        Renderbuffer *buffer = context->getRenderbuffer(FromGL<RenderbufferID>(name));
+        if ((buffer->getWidth() - offsetX < width) || (buffer->getHeight() - offsetY < height))
+        {
+            context->validationError(GL_INVALID_VALUE, kSourceTextureTooSmall);
+            return false;
+        }
+    }
+    else
+    {
+        // INVALID_VALUE is generated if the specified level is not a valid level for the image
+        if (!ValidMipLevel(context, FromGL<TextureType>(target), level))
+        {
+            context->validationError(GL_INVALID_VALUE, kInvalidMipLevel);
+            return false;
+        }
+
+        Texture *texture = context->getTexture(FromGL<TextureID>(name));
+
+        // INVALID_OPERATION is generated if either object is a texture and the texture is not
+        // complete
+        // This will handle the texture completeness check. Note that this is missing
+        // completeness validation that ignores format-based compleness rules.
+        if (!texture->isSamplerComplete(context, nullptr))
+        {
+            context->validationError(GL_INVALID_OPERATION, kNotTextureComplete);
+            return false;
+        }
+
+        GLenum textureTargetToUse = target;
+        if (target == GL_TEXTURE_CUBE_MAP)
+        {
+            // Use GL_TEXTURE_CUBE_MAP_POSITIVE_X to properly gather the textureWidth/textureHeight
+            textureTargetToUse = GL_TEXTURE_CUBE_MAP_POSITIVE_X;
+        }
+
+        const GLsizei textureWidth = static_cast<GLsizei>(
+            texture->getWidth(FromGL<TextureTarget>(textureTargetToUse), level));
+        const GLsizei textureHeight = static_cast<GLsizei>(
+            texture->getHeight(FromGL<TextureTarget>(textureTargetToUse), level));
+
+        // INVALID_VALUE is generated if the dimensions of the either subregion exceeds the
+        // boundaries of the corresponding image object
+        if ((textureWidth - offsetX < width) || (textureHeight - offsetY < height))
+        {
+            context->validationError(GL_INVALID_VALUE, kSourceTextureTooSmall);
+            return false;
+        }
+
+        *samples = texture->getSamples(FromGL<TextureTarget>(textureTargetToUse), level);
+        *samples = (*samples == 0) ? 1 : *samples;
+    }
+
+    return true;
+}
+
+bool ValidateCompressedRegion(const Context *context,
+                              const InternalFormat &formatInfo,
+                              GLsizei width,
+                              GLsizei height)
+{
+    if (formatInfo.compressed)
+    {
+        // INVALID_VALUE is generated if the image format is compressed and the dimensions of the
+        // subregion fail to meet the alignment constraints of the format.
+        if ((width % formatInfo.compressedBlockWidth != 0) ||
+            (height % formatInfo.compressedBlockHeight != 0))
+        {
+            context->validationError(GL_INVALID_VALUE, kInvalidCompressedRegionSize);
+            return false;
+        }
+    }
+
+    return true;
+}
+
+const InternalFormat &GetTargetFormatInfo(const Context *context,
+                                          GLuint name,
+                                          GLenum target,
+                                          GLint level)
+{
+    static const InternalFormat defaultInternalFormat;
+
+    switch (target)
+    {
+        case GL_RENDERBUFFER:
+        {
+            Renderbuffer *buffer = context->getRenderbuffer(FromGL<RenderbufferID>(name));
+            return *buffer->getFormat().info;
+            break;
+        }
+        case GL_TEXTURE_2D:
+        case GL_TEXTURE_3D:
+        case GL_TEXTURE_2D_ARRAY:
+        case GL_TEXTURE_CUBE_MAP:
+        case GL_TEXTURE_CUBE_MAP_ARRAY_EXT:
+        {
+            Texture *texture          = context->getTexture(FromGL<TextureID>(name));
+            GLenum textureTargetToUse = target;
+
+            if (target == GL_TEXTURE_CUBE_MAP)
+            {
+                // Use GL_TEXTURE_CUBE_MAP_POSITIVE_X to properly gather the
+                // textureWidth/textureHeight
+                textureTargetToUse = GL_TEXTURE_CUBE_MAP_POSITIVE_X;
+            }
+            return *texture->getFormat(FromGL<TextureTarget>(textureTargetToUse), level).info;
+        }
+        default:
+            context->validationError(GL_INVALID_ENUM, kInvalidTarget);
+            return defaultInternalFormat;
+    }
+}
+
+bool ValidateCopyMixedFormatCompatible(GLenum uncompressedFormat, GLenum compressedFormat)
+{
+    // Validates mixed format compatibility (uncompressed and compressed) from Table 4.X.1 of the
+    // EXT_copy_image spec.
+    switch (compressedFormat)
+    {
+        case GL_COMPRESSED_RGBA_S3TC_DXT3_EXT:
+        case GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT3_EXT:
+        case GL_COMPRESSED_RGBA_S3TC_DXT5_EXT:
+        case GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT:
+        case GL_COMPRESSED_RED_GREEN_RGTC2_EXT:
+        case GL_COMPRESSED_SIGNED_RED_GREEN_RGTC2_EXT:
+        case GL_COMPRESSED_RGBA_BPTC_UNORM_EXT:
+        case GL_COMPRESSED_SRGB_ALPHA_BPTC_UNORM_EXT:
+        case GL_COMPRESSED_RGB_BPTC_SIGNED_FLOAT_EXT:
+        case GL_COMPRESSED_RGB_BPTC_UNSIGNED_FLOAT_EXT:
+        case GL_COMPRESSED_RGBA8_ETC2_EAC:
+        case GL_COMPRESSED_SRGB8_ALPHA8_ETC2_EAC:
+        case GL_COMPRESSED_RG11_EAC:
+        case GL_COMPRESSED_SIGNED_RG11_EAC:
+        case GL_COMPRESSED_RGBA_ASTC_4x4_KHR:
+        case GL_COMPRESSED_RGBA_ASTC_5x4_KHR:
+        case GL_COMPRESSED_RGBA_ASTC_5x5_KHR:
+        case GL_COMPRESSED_RGBA_ASTC_6x5_KHR:
+        case GL_COMPRESSED_RGBA_ASTC_6x6_KHR:
+        case GL_COMPRESSED_RGBA_ASTC_8x5_KHR:
+        case GL_COMPRESSED_RGBA_ASTC_8x6_KHR:
+        case GL_COMPRESSED_RGBA_ASTC_8x8_KHR:
+        case GL_COMPRESSED_RGBA_ASTC_10x5_KHR:
+        case GL_COMPRESSED_RGBA_ASTC_10x6_KHR:
+        case GL_COMPRESSED_RGBA_ASTC_10x8_KHR:
+        case GL_COMPRESSED_RGBA_ASTC_10x10_KHR:
+        case GL_COMPRESSED_RGBA_ASTC_12x10_KHR:
+        case GL_COMPRESSED_RGBA_ASTC_12x12_KHR:
+        case GL_COMPRESSED_SRGB8_ALPHA8_ASTC_4x4_KHR:
+        case GL_COMPRESSED_SRGB8_ALPHA8_ASTC_5x4_KHR:
+        case GL_COMPRESSED_SRGB8_ALPHA8_ASTC_5x5_KHR:
+        case GL_COMPRESSED_SRGB8_ALPHA8_ASTC_6x5_KHR:
+        case GL_COMPRESSED_SRGB8_ALPHA8_ASTC_6x6_KHR:
+        case GL_COMPRESSED_SRGB8_ALPHA8_ASTC_8x5_KHR:
+        case GL_COMPRESSED_SRGB8_ALPHA8_ASTC_8x6_KHR:
+        case GL_COMPRESSED_SRGB8_ALPHA8_ASTC_8x8_KHR:
+        case GL_COMPRESSED_SRGB8_ALPHA8_ASTC_10x5_KHR:
+        case GL_COMPRESSED_SRGB8_ALPHA8_ASTC_10x6_KHR:
+        case GL_COMPRESSED_SRGB8_ALPHA8_ASTC_10x8_KHR:
+        case GL_COMPRESSED_SRGB8_ALPHA8_ASTC_10x10_KHR:
+        case GL_COMPRESSED_SRGB8_ALPHA8_ASTC_12x10_KHR:
+        case GL_COMPRESSED_SRGB8_ALPHA8_ASTC_12x12_KHR:
+        case GL_COMPRESSED_RGBA_ASTC_3x3x3_OES:
+        case GL_COMPRESSED_RGBA_ASTC_4x3x3_OES:
+        case GL_COMPRESSED_RGBA_ASTC_4x4x3_OES:
+        case GL_COMPRESSED_RGBA_ASTC_4x4x4_OES:
+        case GL_COMPRESSED_RGBA_ASTC_5x4x4_OES:
+        case GL_COMPRESSED_RGBA_ASTC_5x5x4_OES:
+        case GL_COMPRESSED_RGBA_ASTC_5x5x5_OES:
+        case GL_COMPRESSED_RGBA_ASTC_6x5x5_OES:
+        case GL_COMPRESSED_RGBA_ASTC_6x6x5_OES:
+        case GL_COMPRESSED_RGBA_ASTC_6x6x6_OES:
+        case GL_COMPRESSED_SRGB8_ALPHA8_ASTC_3x3x3_OES:
+        case GL_COMPRESSED_SRGB8_ALPHA8_ASTC_4x3x3_OES:
+        case GL_COMPRESSED_SRGB8_ALPHA8_ASTC_4x4x3_OES:
+        case GL_COMPRESSED_SRGB8_ALPHA8_ASTC_4x4x4_OES:
+        case GL_COMPRESSED_SRGB8_ALPHA8_ASTC_5x4x4_OES:
+        case GL_COMPRESSED_SRGB8_ALPHA8_ASTC_5x5x4_OES:
+        case GL_COMPRESSED_SRGB8_ALPHA8_ASTC_5x5x5_OES:
+        case GL_COMPRESSED_SRGB8_ALPHA8_ASTC_6x5x5_OES:
+        case GL_COMPRESSED_SRGB8_ALPHA8_ASTC_6x6x5_OES:
+        case GL_COMPRESSED_SRGB8_ALPHA8_ASTC_6x6x6_OES:
+        {
+            switch (uncompressedFormat)
+            {
+                case GL_RGBA32UI:
+                case GL_RGBA32I:
+                case GL_RGBA32F:
+                    return true;
+                default:
+                    return false;
+            }
+            break;
+        }
+        case GL_COMPRESSED_RGB_S3TC_DXT1_EXT:
+        case GL_COMPRESSED_SRGB_S3TC_DXT1_EXT:
+        case GL_COMPRESSED_RGBA_S3TC_DXT1_EXT:
+        case GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT1_EXT:
+        case GL_COMPRESSED_RED_RGTC1_EXT:
+        case GL_COMPRESSED_SIGNED_RED_RGTC1_EXT:
+        case GL_COMPRESSED_RGB8_ETC2:
+        case GL_COMPRESSED_SRGB8_ETC2:
+        case GL_COMPRESSED_R11_EAC:
+        case GL_COMPRESSED_SIGNED_R11_EAC:
+        case GL_COMPRESSED_RGB8_PUNCHTHROUGH_ALPHA1_ETC2:
+        case GL_COMPRESSED_SRGB8_PUNCHTHROUGH_ALPHA1_ETC2:
+        {
+            switch (uncompressedFormat)
+            {
+                case GL_RGBA16UI:
+                case GL_RGBA16I:
+                case GL_RGBA16F:
+                case GL_RG32UI:
+                case GL_RG32I:
+                case GL_RG32F:
+                    return true;
+                default:
+                    return false;
+            }
+            break;
+        }
+        default:
+            break;
+    }
+
+    return false;
+}
+
+bool ValidateCopyCompressedFormatCompatible(const InternalFormat &srcFormatInfo,
+                                            const InternalFormat &dstFormatInfo)
+{
+    // Validates compressed format compatibility from Table 4.X.2 of the EXT_copy_image spec.
+
+    ASSERT(srcFormatInfo.internalFormat != dstFormatInfo.internalFormat);
+
+    const GLenum srcFormat = srcFormatInfo.internalFormat;
+    const GLenum dstFormat = dstFormatInfo.internalFormat;
+
+    switch (srcFormat)
+    {
+        case GL_COMPRESSED_RED_RGTC1_EXT:
+            return (dstFormat == GL_COMPRESSED_SIGNED_RED_RGTC1_EXT);
+        case GL_COMPRESSED_SIGNED_RED_RGTC1_EXT:
+            return (dstFormat == GL_COMPRESSED_RED_RGTC1_EXT);
+        case GL_COMPRESSED_RED_GREEN_RGTC2_EXT:
+            return (dstFormat == GL_COMPRESSED_SIGNED_RED_GREEN_RGTC2_EXT);
+        case GL_COMPRESSED_SIGNED_RED_GREEN_RGTC2_EXT:
+            return (dstFormat == GL_COMPRESSED_RED_GREEN_RGTC2_EXT);
+        case GL_COMPRESSED_RGB_BPTC_SIGNED_FLOAT_EXT:
+            return (dstFormat == GL_COMPRESSED_RGB_BPTC_UNSIGNED_FLOAT_EXT);
+        case GL_COMPRESSED_RGB_BPTC_UNSIGNED_FLOAT_EXT:
+            return (dstFormat == GL_COMPRESSED_RGB_BPTC_SIGNED_FLOAT_EXT);
+        case GL_COMPRESSED_R11_EAC:
+            return (dstFormat == GL_COMPRESSED_SIGNED_R11_EAC);
+        case GL_COMPRESSED_SIGNED_R11_EAC:
+            return (dstFormat == GL_COMPRESSED_R11_EAC);
+        case GL_COMPRESSED_RG11_EAC:
+            return (dstFormat == GL_COMPRESSED_SIGNED_RG11_EAC);
+        case GL_COMPRESSED_SIGNED_RG11_EAC:
+            return (dstFormat == GL_COMPRESSED_RG11_EAC);
+        default:
+            break;
+    }
+
+    // Since they can't be the same format and are both compressed formats, one must be linear and
+    // the other nonlinear.
+    if (srcFormatInfo.colorEncoding == dstFormatInfo.colorEncoding)
+    {
+        return false;
+    }
+
+    const GLenum linearFormat = (srcFormatInfo.colorEncoding == GL_LINEAR) ? srcFormat : dstFormat;
+    const GLenum nonLinearFormat =
+        (srcFormatInfo.colorEncoding != GL_LINEAR) ? srcFormat : dstFormat;
+
+    switch (linearFormat)
+    {
+        case GL_COMPRESSED_RGBA_BPTC_UNORM_EXT:
+            return (nonLinearFormat == GL_COMPRESSED_SRGB_ALPHA_BPTC_UNORM_EXT);
+        case GL_COMPRESSED_RGB_S3TC_DXT1_EXT:
+            return (nonLinearFormat == GL_COMPRESSED_SRGB_S3TC_DXT1_EXT);
+        case GL_COMPRESSED_RGBA_S3TC_DXT1_EXT:
+            return (nonLinearFormat == GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT1_EXT);
+        case GL_COMPRESSED_RGBA_S3TC_DXT3_EXT:
+            return (nonLinearFormat == GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT3_EXT);
+        case GL_COMPRESSED_RGBA_S3TC_DXT5_EXT:
+            return (nonLinearFormat == GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT);
+        case GL_COMPRESSED_RGB8_ETC2:
+            return (nonLinearFormat == GL_COMPRESSED_SRGB8_ETC2);
+        case GL_COMPRESSED_RGB8_PUNCHTHROUGH_ALPHA1_ETC2:
+            return (nonLinearFormat == GL_COMPRESSED_SRGB8_PUNCHTHROUGH_ALPHA1_ETC2);
+        case GL_COMPRESSED_RGBA8_ETC2_EAC:
+            return (nonLinearFormat == GL_COMPRESSED_SRGB8_ALPHA8_ETC2_EAC);
+        case GL_COMPRESSED_RGBA_ASTC_4x4_KHR:
+            return (nonLinearFormat == GL_COMPRESSED_SRGB8_ALPHA8_ASTC_4x4_KHR);
+        case GL_COMPRESSED_RGBA_ASTC_5x4_KHR:
+            return (nonLinearFormat == GL_COMPRESSED_SRGB8_ALPHA8_ASTC_5x4_KHR);
+        case GL_COMPRESSED_RGBA_ASTC_5x5_KHR:
+            return (nonLinearFormat == GL_COMPRESSED_SRGB8_ALPHA8_ASTC_5x5_KHR);
+        case GL_COMPRESSED_RGBA_ASTC_6x5_KHR:
+            return (nonLinearFormat == GL_COMPRESSED_SRGB8_ALPHA8_ASTC_6x5_KHR);
+        case GL_COMPRESSED_RGBA_ASTC_6x6_KHR:
+            return (nonLinearFormat == GL_COMPRESSED_SRGB8_ALPHA8_ASTC_6x6_KHR);
+        case GL_COMPRESSED_RGBA_ASTC_8x5_KHR:
+            return (nonLinearFormat == GL_COMPRESSED_SRGB8_ALPHA8_ASTC_8x5_KHR);
+        case GL_COMPRESSED_RGBA_ASTC_8x6_KHR:
+            return (nonLinearFormat == GL_COMPRESSED_SRGB8_ALPHA8_ASTC_8x6_KHR);
+        case GL_COMPRESSED_RGBA_ASTC_8x8_KHR:
+            return (nonLinearFormat == GL_COMPRESSED_SRGB8_ALPHA8_ASTC_8x8_KHR);
+        case GL_COMPRESSED_RGBA_ASTC_10x5_KHR:
+            return (nonLinearFormat == GL_COMPRESSED_SRGB8_ALPHA8_ASTC_10x5_KHR);
+        case GL_COMPRESSED_RGBA_ASTC_10x6_KHR:
+            return (nonLinearFormat == GL_COMPRESSED_SRGB8_ALPHA8_ASTC_10x6_KHR);
+        case GL_COMPRESSED_RGBA_ASTC_10x8_KHR:
+            return (nonLinearFormat == GL_COMPRESSED_SRGB8_ALPHA8_ASTC_10x8_KHR);
+        case GL_COMPRESSED_RGBA_ASTC_10x10_KHR:
+            return (nonLinearFormat == GL_COMPRESSED_SRGB8_ALPHA8_ASTC_10x10_KHR);
+        case GL_COMPRESSED_RGBA_ASTC_12x10_KHR:
+            return (nonLinearFormat == GL_COMPRESSED_SRGB8_ALPHA8_ASTC_12x10_KHR);
+        case GL_COMPRESSED_RGBA_ASTC_12x12_KHR:
+            return (nonLinearFormat == GL_COMPRESSED_SRGB8_ALPHA8_ASTC_12x12_KHR);
+        case GL_COMPRESSED_RGBA_ASTC_3x3x3_OES:
+            return (nonLinearFormat == GL_COMPRESSED_SRGB8_ALPHA8_ASTC_3x3x3_OES);
+        case GL_COMPRESSED_RGBA_ASTC_4x3x3_OES:
+            return (nonLinearFormat == GL_COMPRESSED_SRGB8_ALPHA8_ASTC_4x3x3_OES);
+        case GL_COMPRESSED_RGBA_ASTC_4x4x3_OES:
+            return (nonLinearFormat == GL_COMPRESSED_SRGB8_ALPHA8_ASTC_4x4x3_OES);
+        case GL_COMPRESSED_RGBA_ASTC_4x4x4_OES:
+            return (nonLinearFormat == GL_COMPRESSED_SRGB8_ALPHA8_ASTC_4x4x4_OES);
+        case GL_COMPRESSED_RGBA_ASTC_5x4x4_OES:
+            return (nonLinearFormat == GL_COMPRESSED_SRGB8_ALPHA8_ASTC_5x4x4_OES);
+        case GL_COMPRESSED_RGBA_ASTC_5x5x4_OES:
+            return (nonLinearFormat == GL_COMPRESSED_SRGB8_ALPHA8_ASTC_5x5x4_OES);
+        case GL_COMPRESSED_RGBA_ASTC_5x5x5_OES:
+            return (nonLinearFormat == GL_COMPRESSED_SRGB8_ALPHA8_ASTC_5x5x5_OES);
+        case GL_COMPRESSED_RGBA_ASTC_6x5x5_OES:
+            return (nonLinearFormat == GL_COMPRESSED_SRGB8_ALPHA8_ASTC_6x5x5_OES);
+        case GL_COMPRESSED_RGBA_ASTC_6x6x5_OES:
+            return (nonLinearFormat == GL_COMPRESSED_SRGB8_ALPHA8_ASTC_6x6x5_OES);
+        case GL_COMPRESSED_RGBA_ASTC_6x6x6_OES:
+            return (nonLinearFormat == GL_COMPRESSED_SRGB8_ALPHA8_ASTC_6x6x6_OES);
+        default:
+            break;
+    }
+
+    return false;
+}
+
+bool ValidateCopyFormatCompatible(const InternalFormat &srcFormatInfo,
+                                  const InternalFormat &dstFormatInfo)
+{
+    // Matching source and destination formats are compatible.
+    if (srcFormatInfo.internalFormat == dstFormatInfo.internalFormat)
+    {
+        return true;
+    }
+
+    if (srcFormatInfo.compressed != dstFormatInfo.compressed)
+    {
+        GLenum uncompressedFormat = (!srcFormatInfo.compressed) ? srcFormatInfo.internalFormat
+                                                                : dstFormatInfo.internalFormat;
+        GLenum compressedFormat = (srcFormatInfo.compressed) ? srcFormatInfo.internalFormat
+                                                             : dstFormatInfo.internalFormat;
+
+        return ValidateCopyMixedFormatCompatible(uncompressedFormat, compressedFormat);
+    }
+
+    if (!srcFormatInfo.compressed)
+    {
+        // Source and destination are uncompressed formats.
+        return (srcFormatInfo.pixelBytes == dstFormatInfo.pixelBytes);
+    }
+
+    return ValidateCopyCompressedFormatCompatible(srcFormatInfo, dstFormatInfo);
+}
+
+bool ValidateCopyImageSubDataBase(const Context *context,
+                                  GLuint srcName,
+                                  GLenum srcTarget,
+                                  GLint srcLevel,
+                                  GLint srcX,
+                                  GLint srcY,
+                                  GLint srcZ,
+                                  GLuint dstName,
+                                  GLenum dstTarget,
+                                  GLint dstLevel,
+                                  GLint dstX,
+                                  GLint dstY,
+                                  GLint dstZ,
+                                  GLsizei srcWidth,
+                                  GLsizei srcHeight,
+                                  GLsizei srcDepth)
+{
+    // INVALID_VALUE is generated if the dimensions of the either subregion exceeds the boundaries
+    // of the corresponding image object
+    if ((srcWidth < 0) || (srcHeight < 0) || (srcDepth < 0))
+    {
+        context->validationError(GL_INVALID_VALUE, kNegativeSize);
+        return false;
+    }
+
+    if (!ValidateCopyImageSubDataTarget(context, srcName, srcTarget))
+    {
+        return false;
+    }
+    if (!ValidateCopyImageSubDataTarget(context, dstName, dstTarget))
+    {
+        return false;
+    }
+
+    const InternalFormat &srcFormatInfo =
+        GetTargetFormatInfo(context, srcName, srcTarget, srcLevel);
+    const InternalFormat &dstFormatInfo =
+        GetTargetFormatInfo(context, dstName, dstTarget, dstLevel);
+    GLsizei dstWidth   = srcWidth;
+    GLsizei dstHeight  = srcHeight;
+    GLsizei srcSamples = 1;
+    GLsizei dstSamples = 1;
+
+    if (!ValidateCopyImageSubDataTargetRegion(context, srcName, srcTarget, srcLevel, srcX, srcY,
+                                              srcZ, srcWidth, srcHeight, &srcSamples))
+    {
+        return false;
+    }
+
+    // When copying from a compressed image to an uncompressed image the image texel dimensions
+    // written to the uncompressed image will be source extent divided by the compressed texel block
+    // dimensions.
+    if ((srcFormatInfo.compressed) && (!dstFormatInfo.compressed))
+    {
+        ASSERT(srcFormatInfo.compressedBlockWidth != 0);
+        ASSERT(srcFormatInfo.compressedBlockHeight != 0);
+
+        dstWidth /= srcFormatInfo.compressedBlockWidth;
+        dstHeight /= srcFormatInfo.compressedBlockHeight;
+    }
+    // When copying from an uncompressed image to a compressed image the image texel dimensions
+    // written to the compressed image will be the source extent multiplied by the compressed texel
+    // block dimensions.
+    else if ((!srcFormatInfo.compressed) && (dstFormatInfo.compressed))
+    {
+        dstWidth *= dstFormatInfo.compressedBlockWidth;
+        dstHeight *= dstFormatInfo.compressedBlockHeight;
+    }
+
+    if (!ValidateCopyImageSubDataTargetRegion(context, dstName, dstTarget, dstLevel, dstX, dstY,
+                                              dstZ, dstWidth, dstHeight, &dstSamples))
+    {
+        return false;
+    }
+
+    if (!ValidateCompressedRegion(context, srcFormatInfo, srcWidth, srcHeight))
+    {
+        return false;
+    }
+
+    if (!ValidateCompressedRegion(context, dstFormatInfo, dstWidth, dstHeight))
+    {
+        return false;
+    }
+
+    // From EXT_copy_image: INVALID_OPERATION is generated if the source and destination formats
+    // are not compatible, if one image is compressed and the other is uncompressed and the block
+    // size of compressed image is not equal to the texel size of the compressed image.
+    if (!ValidateCopyFormatCompatible(srcFormatInfo, dstFormatInfo))
+    {
+        context->validationError(GL_INVALID_OPERATION, kIncompatibleTextures);
+        return false;
+    }
+
+    // INVALID_OPERATION is generated if the source and destination number of samples do not match
+    if (srcSamples != dstSamples)
+    {
+        context->validationError(GL_INVALID_OPERATION, kSamplesOutOfRange);
+        return false;
+    }
+
+    return true;
+}
+
 bool ValidateCopyTexImageParametersBase(const Context *context,
                                         TextureTarget target,
                                         GLint level,
@@ -2596,8 +3227,8 @@ bool ValidateCopyTexImageParametersBase(const Context *context,
         return false;
     }
 
-    // needResourceSamples = true. Treat renderToTexture textures as single sample since they will
-    // be resolved before copying
+    // checkReadBufferResourceSamples = true. Treat renderToTexture textures as single sample since
+    // they will be resolved before copying.
     if (!readFramebuffer->isDefault() &&
         !ValidateFramebufferNotMultisampled(context, readFramebuffer, true))
     {
@@ -2736,65 +3367,6 @@ bool ValidateCopyTexImageParametersBase(const Context *context,
     }
 
     return true;
-}
-
-const char *ValidateProgramDrawStates(const State &state,
-                                      const Extensions &extensions,
-                                      Program *program)
-{
-    if (extensions.multiview || extensions.multiview2)
-    {
-        const int programNumViews     = program->usesMultiview() ? program->getNumViews() : 1;
-        Framebuffer *framebuffer      = state.getDrawFramebuffer();
-        const int framebufferNumViews = framebuffer->getNumViews();
-
-        if (framebufferNumViews != programNumViews)
-        {
-            return gl::err::kMultiviewMismatch;
-        }
-
-        if (state.isTransformFeedbackActiveUnpaused() && framebufferNumViews > 1)
-        {
-            return gl::err::kMultiviewTransformFeedback;
-        }
-
-        if (extensions.disjointTimerQuery && framebufferNumViews > 1 &&
-            state.isQueryActive(QueryType::TimeElapsed))
-        {
-            return gl::err::kMultiviewTimerQuery;
-        }
-    }
-
-    // Uniform buffer validation
-    for (unsigned int uniformBlockIndex = 0;
-         uniformBlockIndex < program->getActiveUniformBlockCount(); uniformBlockIndex++)
-    {
-        const InterfaceBlock &uniformBlock = program->getUniformBlockByIndex(uniformBlockIndex);
-        GLuint blockBinding                = program->getUniformBlockBinding(uniformBlockIndex);
-        const OffsetBindingPointer<Buffer> &uniformBuffer =
-            state.getIndexedUniformBuffer(blockBinding);
-
-        if (uniformBuffer.get() == nullptr)
-        {
-            // undefined behaviour
-            return gl::err::kUniformBufferUnbound;
-        }
-
-        size_t uniformBufferSize = GetBoundBufferAvailableSize(uniformBuffer);
-        if (uniformBufferSize < uniformBlock.dataSize)
-        {
-            // undefined behaviour
-            return gl::err::kUniformBufferTooSmall;
-        }
-
-        if (extensions.webglCompatibility &&
-            uniformBuffer->isBoundForTransformFeedbackAndOtherUse())
-        {
-            return gl::err::kUniformBufferBoundForTransformFeedback;
-        }
-    }
-
-    return nullptr;
 }
 
 const char *ValidateProgramPipelineDrawStates(const State &state,
@@ -2987,6 +3559,18 @@ const char *ValidateDrawStates(const Context *context)
             {
                 return errorMsg;
             }
+
+            bool goodResult = programPipeline->link(context) == angle::Result::Continue;
+
+            //  If there is no active program for the vertex or fragment shader stages, the results
+            //  of vertex and fragment shader execution will respectively be undefined. However,
+            //  this is not an error, so ANGLE only signals PPO link failures if both VS and FS
+            //  stages are present.
+            const ProgramExecutable &executable = programPipeline->getExecutable();
+            if (!goodResult && executable.hasVertexAndFragmentShader())
+            {
+                return err::kProgramPipelineLinkFailed;
+            }
         }
 
         // Do some additional WebGL-specific validation
@@ -3005,7 +3589,7 @@ const char *ValidateDrawStates(const Context *context)
             }
 
             // Detect rendering feedback loops for WebGL.
-            if (framebuffer->hasRenderingFeedbackLoop())
+            if (framebuffer->formsRenderingFeedbackLoopWith(context))
             {
                 return kFeedbackLoop;
             }
@@ -3541,7 +4125,7 @@ bool ValidateDiscardFramebufferBase(const Context *context,
                     if (!defaultFramebuffer)
                     {
                         context->validationError(GL_INVALID_ENUM,
-                                                 kDefaultFramebufferInvalidAttachment);
+                                                 kDefaultFramebufferAttachmentOnUserFBO);
                         return false;
                     }
                     break;
@@ -3959,11 +4543,35 @@ bool ValidateMapBufferRangeBase(const Context *context,
     }
 
     // Check for invalid bits in the mask
-    GLbitfield allAccessBits = GL_MAP_READ_BIT | GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_RANGE_BIT |
-                               GL_MAP_INVALIDATE_BUFFER_BIT | GL_MAP_FLUSH_EXPLICIT_BIT |
-                               GL_MAP_UNSYNCHRONIZED_BIT;
+    constexpr GLbitfield kAllAccessBits =
+        GL_MAP_READ_BIT | GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_RANGE_BIT |
+        GL_MAP_INVALIDATE_BUFFER_BIT | GL_MAP_FLUSH_EXPLICIT_BIT | GL_MAP_UNSYNCHRONIZED_BIT;
 
-    if (access & ~(allAccessBits))
+    if (buffer->isImmutable())
+    {
+        // GL_EXT_buffer_storage's additions to glMapBufferRange
+        constexpr GLbitfield kBufferStorageAccessBits =
+            kAllAccessBits | GL_MAP_PERSISTENT_BIT_EXT | GL_MAP_COHERENT_BIT_EXT;
+
+        if ((access & ~kBufferStorageAccessBits) != 0)
+        {
+            context->validationError(GL_INVALID_VALUE, kInvalidAccessBits);
+            return false;
+        }
+
+        // It is invalid if any of bufferStorageMatchedAccessBits bits are included in access,
+        // but the same bits are not included in the buffer's storage flags
+        constexpr GLbitfield kBufferStorageMatchedAccessBits = GL_MAP_READ_BIT | GL_MAP_WRITE_BIT |
+                                                               GL_MAP_PERSISTENT_BIT_EXT |
+                                                               GL_MAP_COHERENT_BIT_EXT;
+        GLbitfield accessFlags = access & kBufferStorageMatchedAccessBits;
+        if ((accessFlags & buffer->getStorageExtUsageFlags()) != accessFlags)
+        {
+            context->validationError(GL_INVALID_OPERATION, kInvalidAccessBits);
+            return false;
+        }
+    }
+    else if ((access & ~kAllAccessBits) != 0)
     {
         context->validationError(GL_INVALID_VALUE, kInvalidAccessBits);
         return false;
@@ -5262,6 +5870,15 @@ bool ValidateGetBufferParameterBase(const Context *context,
             }
             break;
 
+        case GL_RESOURCE_INITIALIZED_ANGLE:
+            if (!context->getExtensions().robustResourceInitialization)
+            {
+                context->validationError(GL_INVALID_ENUM,
+                                         kRobustResourceInitializationExtensionRequired);
+                return false;
+            }
+            break;
+
         default:
             context->validationError(GL_INVALID_ENUM, kEnumNotSupported);
             return false;
@@ -5333,6 +5950,15 @@ bool ValidateGetRenderbufferParameterivBase(const Context *context,
             if (!context->getExtensions().getImageANGLE)
             {
                 context->validationError(GL_INVALID_ENUM, kGetImageExtensionNotEnabled);
+                return false;
+            }
+            break;
+
+        case GL_RESOURCE_INITIALIZED_ANGLE:
+            if (!context->getExtensions().robustResourceInitialization)
+            {
+                context->validationError(GL_INVALID_ENUM,
+                                         kRobustResourceInitializationExtensionRequired);
                 return false;
             }
             break;
@@ -5487,11 +6113,18 @@ bool ValidateGetTexParameterBase(const Context *context,
         case GL_TEXTURE_MAX_LEVEL:
         case GL_TEXTURE_MIN_LOD:
         case GL_TEXTURE_MAX_LOD:
-        case GL_TEXTURE_COMPARE_MODE:
-        case GL_TEXTURE_COMPARE_FUNC:
             if (context->getClientMajorVersion() < 3)
             {
                 context->validationError(GL_INVALID_ENUM, kEnumRequiresGLES30);
+                return false;
+            }
+            break;
+
+        case GL_TEXTURE_COMPARE_MODE:
+        case GL_TEXTURE_COMPARE_FUNC:
+            if (context->getClientMajorVersion() < 3 && !context->getExtensions().shadowSamplersEXT)
+            {
+                context->validationError(GL_INVALID_ENUM, kEnumNotSupported);
                 return false;
             }
             break;
@@ -5553,6 +6186,15 @@ bool ValidateGetTexParameterBase(const Context *context,
             if (!context->getExtensions().getImageANGLE)
             {
                 context->validationError(GL_INVALID_ENUM, kGetImageExtensionNotEnabled);
+                return false;
+            }
+            break;
+
+        case GL_RESOURCE_INITIALIZED_ANGLE:
+            if (!context->getExtensions().robustResourceInitialization)
+            {
+                context->validationError(GL_INVALID_ENUM,
+                                         kRobustResourceInitializationExtensionRequired);
                 return false;
             }
             break;
@@ -6250,6 +6892,16 @@ bool ValidateTexParameterBase(const Context *context,
             }
             break;
 
+        case GL_RESOURCE_INITIALIZED_ANGLE:
+            if (!context->getExtensions().robustResourceInitialization)
+            {
+                context->validationError(GL_INVALID_ENUM,
+                                         kRobustResourceInitializationExtensionRequired);
+                return false;
+            }
+
+            break;
+
         default:
             context->validationError(GL_INVALID_ENUM, kEnumNotSupported);
             return false;
@@ -6632,10 +7284,11 @@ bool ValidateGetInternalFormativBase(const Context *context,
 
 bool ValidateFramebufferNotMultisampled(const Context *context,
                                         const Framebuffer *framebuffer,
-                                        bool needResourceSamples)
+                                        bool checkReadBufferResourceSamples)
 {
-    int samples = needResourceSamples ? framebuffer->getResourceSamples(context)
-                                      : framebuffer->getSamples(context);
+    int samples = checkReadBufferResourceSamples
+                      ? framebuffer->getReadBufferResourceSamples(context)
+                      : framebuffer->getSamples(context);
     if (samples != 0)
     {
         context->validationError(GL_INVALID_OPERATION, kInvalidMultisampledFramebufferOperation);
@@ -6772,7 +7425,6 @@ bool ValidateGetTexLevelParameterBase(const Context *context,
         case GL_TEXTURE_BLUE_TYPE:
         case GL_TEXTURE_ALPHA_TYPE:
         case GL_TEXTURE_DEPTH_TYPE:
-            break;
         case GL_TEXTURE_RED_SIZE:
         case GL_TEXTURE_GREEN_SIZE:
         case GL_TEXTURE_BLUE_SIZE:
@@ -6780,17 +7432,35 @@ bool ValidateGetTexLevelParameterBase(const Context *context,
         case GL_TEXTURE_DEPTH_SIZE:
         case GL_TEXTURE_STENCIL_SIZE:
         case GL_TEXTURE_SHARED_SIZE:
-            break;
         case GL_TEXTURE_INTERNAL_FORMAT:
         case GL_TEXTURE_WIDTH:
         case GL_TEXTURE_HEIGHT:
         case GL_TEXTURE_DEPTH:
-            break;
         case GL_TEXTURE_SAMPLES:
         case GL_TEXTURE_FIXED_SAMPLE_LOCATIONS:
-            break;
         case GL_TEXTURE_COMPRESSED:
             break;
+
+        case GL_RESOURCE_INITIALIZED_ANGLE:
+            if (!context->getExtensions().robustResourceInitialization)
+            {
+                context->validationError(GL_INVALID_ENUM,
+                                         kRobustResourceInitializationExtensionRequired);
+                return false;
+            }
+            break;
+
+        case GL_TEXTURE_BUFFER_DATA_STORE_BINDING:
+        case GL_TEXTURE_BUFFER_OFFSET:
+        case GL_TEXTURE_BUFFER_SIZE:
+            if (context->getClientVersion() < Version(3, 2) &&
+                !context->getExtensions().textureBufferAny())
+            {
+                context->validationError(GL_INVALID_ENUM, kTextureBufferExtensionNotAvailable);
+                return false;
+            }
+            break;
+
         default:
             context->validationError(GL_INVALID_ENUM, kInvalidPname);
             return false;

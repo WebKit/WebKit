@@ -60,7 +60,7 @@ class GlobalSettings
         Settings.Global.putString(contentResolver,
                 context.getString(R.string.global_settings_angle_debug_package), "");
 
-        // Skip angle_whitelist; not updatable via Developer Options
+        // Skip angle_allowlist; not updatable via Developer Options
     }
 
     Boolean getAllUseAngle()
@@ -108,11 +108,11 @@ class GlobalSettings
                 showAngleInUseDialog ? 1 : 0);
     }
 
-    static void updateAngleWhitelist(Context context, String packageNames)
+    static void updateAngleAllowlist(Context context, String packageNames)
     {
         ContentResolver contentResolver = context.getContentResolver();
         Settings.Global.putString(contentResolver,
-                context.getString(R.string.global_settings_angle_whitelist), packageNames);
+                context.getString(R.string.global_settings_angle_allowlist), packageNames);
     }
 
     void updatePkg(String pkgName, String driver)

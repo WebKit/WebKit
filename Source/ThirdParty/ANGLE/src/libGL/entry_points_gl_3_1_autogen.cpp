@@ -34,9 +34,9 @@ void GL_APIENTRY CopyBufferSubData(GLenum readTarget,
                                    GLsizeiptr size)
 {
     Context *context = GetValidGlobalContext();
-    EVENT("glCopyBufferSubData",
-          "context = %d, GLenum readTarget = %s, GLenum writeTarget = %s, GLintptr readOffset = "
-          "%llu, GLintptr writeOffset = %llu, GLsizeiptr size = %llu",
+    EVENT(context, gl::EntryPoint::CopyBufferSubData, "glCopyBufferSubData",
+          "context = %d, readTarget = %s, writeTarget = %s, readOffset = %llu, writeOffset = %llu, "
+          "size = %llu",
           CID(context), GLenumToString(GLenumGroup::CopyBufferSubDataTarget, readTarget),
           GLenumToString(GLenumGroup::CopyBufferSubDataTarget, writeTarget),
           static_cast<unsigned long long>(readOffset), static_cast<unsigned long long>(writeOffset),
@@ -58,16 +58,18 @@ void GL_APIENTRY CopyBufferSubData(GLenum readTarget,
         ANGLE_CAPTURE(CopyBufferSubData, isCallValid, context, readTargetPacked, writeTargetPacked,
                       readOffset, writeOffset, size);
     }
+    else
+    {
+        GenerateContextLostErrorOnCurrentGlobalContext();
+    }
 }
 
 void GL_APIENTRY DrawArraysInstanced(GLenum mode, GLint first, GLsizei count, GLsizei instancecount)
 {
     Context *context = GetValidGlobalContext();
-    EVENT("glDrawArraysInstanced",
-          "context = %d, GLenum mode = %s, GLint first = %d, GLsizei count = %d, GLsizei "
-          "instancecount = %d",
-          CID(context), GLenumToString(GLenumGroup::PrimitiveType, mode), first, count,
-          instancecount);
+    EVENT(context, gl::EntryPoint::DrawArraysInstanced, "glDrawArraysInstanced",
+          "context = %d, mode = %s, first = %d, count = %d, instancecount = %d", CID(context),
+          GLenumToString(GLenumGroup::PrimitiveType, mode), first, count, instancecount);
 
     if (context)
     {
@@ -83,6 +85,10 @@ void GL_APIENTRY DrawArraysInstanced(GLenum mode, GLint first, GLsizei count, GL
         ANGLE_CAPTURE(DrawArraysInstanced, isCallValid, context, modePacked, first, count,
                       instancecount);
     }
+    else
+    {
+        GenerateContextLostErrorOnCurrentGlobalContext();
+    }
 }
 
 void GL_APIENTRY DrawElementsInstanced(GLenum mode,
@@ -92,9 +98,9 @@ void GL_APIENTRY DrawElementsInstanced(GLenum mode,
                                        GLsizei instancecount)
 {
     Context *context = GetValidGlobalContext();
-    EVENT("glDrawElementsInstanced",
-          "context = %d, GLenum mode = %s, GLsizei count = %d, GLenum type = %s, const void "
-          "*indices = 0x%016" PRIxPTR ", GLsizei instancecount = %d",
+    EVENT(context, gl::EntryPoint::DrawElementsInstanced, "glDrawElementsInstanced",
+          "context = %d, mode = %s, count = %d, type = %s, indices = 0x%016" PRIxPTR
+          ", instancecount = %d",
           CID(context), GLenumToString(GLenumGroup::PrimitiveType, mode), count,
           GLenumToString(GLenumGroup::DrawElementsType, type), (uintptr_t)indices, instancecount);
 
@@ -113,6 +119,10 @@ void GL_APIENTRY DrawElementsInstanced(GLenum mode,
         ANGLE_CAPTURE(DrawElementsInstanced, isCallValid, context, modePacked, count, typePacked,
                       indices, instancecount);
     }
+    else
+    {
+        GenerateContextLostErrorOnCurrentGlobalContext();
+    }
 }
 
 void GL_APIENTRY GetActiveUniformBlockName(GLuint program,
@@ -122,11 +132,12 @@ void GL_APIENTRY GetActiveUniformBlockName(GLuint program,
                                            GLchar *uniformBlockName)
 {
     Context *context = GetValidGlobalContext();
-    EVENT("glGetActiveUniformBlockName",
-          "context = %d, GLuint program = %u, GLuint uniformBlockIndex = %u, GLsizei bufSize = %d, "
-          "GLsizei *length = 0x%016" PRIxPTR ", GLchar *uniformBlockName = 0x%016" PRIxPTR "",
-          CID(context), program, uniformBlockIndex, bufSize, (uintptr_t)length,
-          (uintptr_t)uniformBlockName);
+    EVENT(
+        context, gl::EntryPoint::GetActiveUniformBlockName, "glGetActiveUniformBlockName",
+        "context = %d, program = %u, uniformBlockIndex = %u, bufSize = %d, length = 0x%016" PRIxPTR
+        ", uniformBlockName = 0x%016" PRIxPTR "",
+        CID(context), program, uniformBlockIndex, bufSize, (uintptr_t)length,
+        (uintptr_t)uniformBlockName);
 
     if (context)
     {
@@ -144,6 +155,10 @@ void GL_APIENTRY GetActiveUniformBlockName(GLuint program,
         ANGLE_CAPTURE(GetActiveUniformBlockName, isCallValid, context, programPacked,
                       uniformBlockIndex, bufSize, length, uniformBlockName);
     }
+    else
+    {
+        GenerateContextLostErrorOnCurrentGlobalContext();
+    }
 }
 
 void GL_APIENTRY GetActiveUniformBlockiv(GLuint program,
@@ -152,9 +167,9 @@ void GL_APIENTRY GetActiveUniformBlockiv(GLuint program,
                                          GLint *params)
 {
     Context *context = GetValidGlobalContext();
-    EVENT("glGetActiveUniformBlockiv",
-          "context = %d, GLuint program = %u, GLuint uniformBlockIndex = %u, GLenum pname = %s, "
-          "GLint *params = 0x%016" PRIxPTR "",
+    EVENT(context, gl::EntryPoint::GetActiveUniformBlockiv, "glGetActiveUniformBlockiv",
+          "context = %d, program = %u, uniformBlockIndex = %u, pname = %s, params = 0x%016" PRIxPTR
+          "",
           CID(context), program, uniformBlockIndex,
           GLenumToString(GLenumGroup::UniformBlockPName, pname), (uintptr_t)params);
 
@@ -172,6 +187,10 @@ void GL_APIENTRY GetActiveUniformBlockiv(GLuint program,
         ANGLE_CAPTURE(GetActiveUniformBlockiv, isCallValid, context, programPacked,
                       uniformBlockIndex, pname, params);
     }
+    else
+    {
+        GenerateContextLostErrorOnCurrentGlobalContext();
+    }
 }
 
 void GL_APIENTRY GetActiveUniformName(GLuint program,
@@ -181,9 +200,9 @@ void GL_APIENTRY GetActiveUniformName(GLuint program,
                                       GLchar *uniformName)
 {
     Context *context = GetValidGlobalContext();
-    EVENT("glGetActiveUniformName",
-          "context = %d, GLuint program = %u, GLuint uniformIndex = %u, GLsizei bufSize = %d, "
-          "GLsizei *length = 0x%016" PRIxPTR ", GLchar *uniformName = 0x%016" PRIxPTR "",
+    EVENT(context, gl::EntryPoint::GetActiveUniformName, "glGetActiveUniformName",
+          "context = %d, program = %u, uniformIndex = %u, bufSize = %d, length = 0x%016" PRIxPTR
+          ", uniformName = 0x%016" PRIxPTR "",
           CID(context), program, uniformIndex, bufSize, (uintptr_t)length, (uintptr_t)uniformName);
 
     if (context)
@@ -201,6 +220,10 @@ void GL_APIENTRY GetActiveUniformName(GLuint program,
         ANGLE_CAPTURE(GetActiveUniformName, isCallValid, context, programPacked, uniformIndex,
                       bufSize, length, uniformName);
     }
+    else
+    {
+        GenerateContextLostErrorOnCurrentGlobalContext();
+    }
 }
 
 void GL_APIENTRY GetActiveUniformsiv(GLuint program,
@@ -210,10 +233,9 @@ void GL_APIENTRY GetActiveUniformsiv(GLuint program,
                                      GLint *params)
 {
     Context *context = GetValidGlobalContext();
-    EVENT("glGetActiveUniformsiv",
-          "context = %d, GLuint program = %u, GLsizei uniformCount = %d, const GLuint "
-          "*uniformIndices = 0x%016" PRIxPTR ", GLenum pname = %s, GLint *params = 0x%016" PRIxPTR
-          "",
+    EVENT(context, gl::EntryPoint::GetActiveUniformsiv, "glGetActiveUniformsiv",
+          "context = %d, program = %u, uniformCount = %d, uniformIndices = 0x%016" PRIxPTR
+          ", pname = %s, params = 0x%016" PRIxPTR "",
           CID(context), program, uniformCount, (uintptr_t)uniformIndices,
           GLenumToString(GLenumGroup::UniformPName, pname), (uintptr_t)params);
 
@@ -232,14 +254,18 @@ void GL_APIENTRY GetActiveUniformsiv(GLuint program,
         ANGLE_CAPTURE(GetActiveUniformsiv, isCallValid, context, programPacked, uniformCount,
                       uniformIndices, pname, params);
     }
+    else
+    {
+        GenerateContextLostErrorOnCurrentGlobalContext();
+    }
 }
 
 GLuint GL_APIENTRY GetUniformBlockIndex(GLuint program, const GLchar *uniformBlockName)
 {
     Context *context = GetValidGlobalContext();
-    EVENT("glGetUniformBlockIndex",
-          "context = %d, GLuint program = %u, const GLchar *uniformBlockName = 0x%016" PRIxPTR "",
-          CID(context), program, (uintptr_t)uniformBlockName);
+    EVENT(context, gl::EntryPoint::GetUniformBlockIndex, "glGetUniformBlockIndex",
+          "context = %d, program = %u, uniformBlockName = 0x%016" PRIxPTR "", CID(context), program,
+          (uintptr_t)uniformBlockName);
 
     GLuint returnValue;
     if (context)
@@ -261,6 +287,7 @@ GLuint GL_APIENTRY GetUniformBlockIndex(GLuint program, const GLchar *uniformBlo
     }
     else
     {
+        GenerateContextLostErrorOnCurrentGlobalContext();
         returnValue = GetDefaultReturnValue<EntryPoint::GetUniformBlockIndex, GLuint>();
     }
     return returnValue;
@@ -272,9 +299,9 @@ void GL_APIENTRY GetUniformIndices(GLuint program,
                                    GLuint *uniformIndices)
 {
     Context *context = GetValidGlobalContext();
-    EVENT("glGetUniformIndices",
-          "context = %d, GLuint program = %u, GLsizei uniformCount = %d, const GLchar "
-          "*const*uniformNames = 0x%016" PRIxPTR ", GLuint *uniformIndices = 0x%016" PRIxPTR "",
+    EVENT(context, gl::EntryPoint::GetUniformIndices, "glGetUniformIndices",
+          "context = %d, program = %u, uniformCount = %d, uniformNames = 0x%016" PRIxPTR
+          ", uniformIndices = 0x%016" PRIxPTR "",
           CID(context), program, uniformCount, (uintptr_t)uniformNames, (uintptr_t)uniformIndices);
 
     if (context)
@@ -291,12 +318,17 @@ void GL_APIENTRY GetUniformIndices(GLuint program,
         ANGLE_CAPTURE(GetUniformIndices, isCallValid, context, programPacked, uniformCount,
                       uniformNames, uniformIndices);
     }
+    else
+    {
+        GenerateContextLostErrorOnCurrentGlobalContext();
+    }
 }
 
 void GL_APIENTRY PrimitiveRestartIndex(GLuint index)
 {
     Context *context = GetValidGlobalContext();
-    EVENT("glPrimitiveRestartIndex", "context = %d, GLuint index = %u", CID(context), index);
+    EVENT(context, gl::EntryPoint::PrimitiveRestartIndex, "glPrimitiveRestartIndex",
+          "context = %d, index = %u", CID(context), index);
 
     if (context)
     {
@@ -309,27 +341,36 @@ void GL_APIENTRY PrimitiveRestartIndex(GLuint index)
         }
         ANGLE_CAPTURE(PrimitiveRestartIndex, isCallValid, context, index);
     }
+    else
+    {
+        GenerateContextLostErrorOnCurrentGlobalContext();
+    }
 }
 
 void GL_APIENTRY TexBuffer(GLenum target, GLenum internalformat, GLuint buffer)
 {
     Context *context = GetValidGlobalContext();
-    EVENT("glTexBuffer",
-          "context = %d, GLenum target = %s, GLenum internalformat = %s, GLuint buffer = %u",
-          CID(context), GLenumToString(GLenumGroup::TextureTarget, target),
+    EVENT(context, gl::EntryPoint::TexBuffer, "glTexBuffer",
+          "context = %d, target = %s, internalformat = %s, buffer = %u", CID(context),
+          GLenumToString(GLenumGroup::TextureTarget, target),
           GLenumToString(GLenumGroup::InternalFormat, internalformat), buffer);
 
     if (context)
     {
+        TextureType targetPacked                              = FromGL<TextureType>(target);
         BufferID bufferPacked                                 = FromGL<BufferID>(buffer);
         std::unique_lock<angle::GlobalMutex> shareContextLock = GetShareGroupLock(context);
         bool isCallValid                                      = (context->skipValidation() ||
-                            ValidateTexBuffer(context, target, internalformat, bufferPacked));
+                            ValidateTexBuffer(context, targetPacked, internalformat, bufferPacked));
         if (isCallValid)
         {
-            context->texBuffer(target, internalformat, bufferPacked);
+            context->texBuffer(targetPacked, internalformat, bufferPacked);
         }
-        ANGLE_CAPTURE(TexBuffer, isCallValid, context, target, internalformat, bufferPacked);
+        ANGLE_CAPTURE(TexBuffer, isCallValid, context, targetPacked, internalformat, bufferPacked);
+    }
+    else
+    {
+        GenerateContextLostErrorOnCurrentGlobalContext();
     }
 }
 
@@ -338,9 +379,8 @@ void GL_APIENTRY UniformBlockBinding(GLuint program,
                                      GLuint uniformBlockBinding)
 {
     Context *context = GetValidGlobalContext();
-    EVENT("glUniformBlockBinding",
-          "context = %d, GLuint program = %u, GLuint uniformBlockIndex = %u, GLuint "
-          "uniformBlockBinding = %u",
+    EVENT(context, gl::EntryPoint::UniformBlockBinding, "glUniformBlockBinding",
+          "context = %d, program = %u, uniformBlockIndex = %u, uniformBlockBinding = %u",
           CID(context), program, uniformBlockIndex, uniformBlockBinding);
 
     if (context)
@@ -356,6 +396,10 @@ void GL_APIENTRY UniformBlockBinding(GLuint program,
         }
         ANGLE_CAPTURE(UniformBlockBinding, isCallValid, context, programPacked, uniformBlockIndex,
                       uniformBlockBinding);
+    }
+    else
+    {
+        GenerateContextLostErrorOnCurrentGlobalContext();
     }
 }
 }  // namespace gl

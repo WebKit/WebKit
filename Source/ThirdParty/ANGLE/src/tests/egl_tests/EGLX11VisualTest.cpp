@@ -76,8 +76,9 @@ TEST_P(EGLX11VisualHintTest, InvalidVisualID)
     static const int gInvalidVisualId = -1;
     auto attributes                   = getDisplayAttributes(gInvalidVisualId);
 
-    EGLDisplay display =
-        eglGetPlatformDisplayEXT(EGL_PLATFORM_ANGLE_ANGLE, EGL_DEFAULT_DISPLAY, attributes.data());
+    EGLDisplay display = eglGetPlatformDisplayEXT(
+        EGL_PLATFORM_ANGLE_ANGLE, reinterpret_cast<_XDisplay *>(EGL_DEFAULT_DISPLAY),
+        attributes.data());
     ASSERT_TRUE(display != EGL_NO_DISPLAY);
 
     ASSERT_TRUE(EGL_FALSE == eglInitialize(display, nullptr, nullptr));
@@ -100,9 +101,10 @@ TEST_P(EGLX11VisualHintTest, ValidVisualIDAndClear)
     ASSERT_NE(0, XGetWindowAttributes(mDisplay, xWindow, &windowAttributes));
     int visualId = windowAttributes.visual->visualid;
 
-    auto attributes = getDisplayAttributes(visualId);
-    EGLDisplay display =
-        eglGetPlatformDisplayEXT(EGL_PLATFORM_ANGLE_ANGLE, EGL_DEFAULT_DISPLAY, attributes.data());
+    auto attributes    = getDisplayAttributes(visualId);
+    EGLDisplay display = eglGetPlatformDisplayEXT(
+        EGL_PLATFORM_ANGLE_ANGLE, reinterpret_cast<_XDisplay *>(EGL_DEFAULT_DISPLAY),
+        attributes.data());
     ASSERT_NE(EGL_NO_DISPLAY, display);
 
     ASSERT_TRUE(EGL_TRUE == eglInitialize(display, nullptr, nullptr));
@@ -174,9 +176,10 @@ TEST_P(EGLX11VisualHintTest, InvalidWindowVisualID)
         OSWindow::Delete(&osWindow);
     }
 
-    auto attributes = getDisplayAttributes(visualId);
-    EGLDisplay display =
-        eglGetPlatformDisplayEXT(EGL_PLATFORM_ANGLE_ANGLE, EGL_DEFAULT_DISPLAY, attributes.data());
+    auto attributes    = getDisplayAttributes(visualId);
+    EGLDisplay display = eglGetPlatformDisplayEXT(
+        EGL_PLATFORM_ANGLE_ANGLE, reinterpret_cast<_XDisplay *>(EGL_DEFAULT_DISPLAY),
+        attributes.data());
     ASSERT_NE(EGL_NO_DISPLAY, display);
 
     ASSERT_TRUE(EGL_TRUE == eglInitialize(display, nullptr, nullptr));

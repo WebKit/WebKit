@@ -75,27 +75,40 @@ angle::Result TransformFeedbackGL::bindIndexedBuffer(
     size_t index,
     const gl::OffsetBindingPointer<gl::Buffer> &binding)
 {
+    const angle::FeaturesGL &features = GetFeaturesGL(context);
+
     // Directly bind buffer (not through the StateManager methods) because the buffer bindings are
     // tracked per transform feedback object
     mStateManager->bindTransformFeedback(GL_TRANSFORM_FEEDBACK, mTransformFeedbackID);
     if (binding.get() != nullptr)
     {
         const BufferGL *bufferGL = GetImplAs<BufferGL>(binding.get());
+
+        if (features.bindTransformFeedbackBufferBeforeBindBufferRange.enabled)
+        {
+            // Generic binding will be overwritten by the bindRange/bindBase below.
+            ANGLE_GL_TRY(context, mFunctions->bindBuffer(GL_TRANSFORM_FEEDBACK_BUFFER,
+                                                         bufferGL->getBufferID()));
+        }
+
         if (binding.getSize() != 0)
         {
-            mFunctions->bindBufferRange(GL_TRANSFORM_FEEDBACK_BUFFER, static_cast<GLuint>(index),
-                                        bufferGL->getBufferID(), binding.getOffset(),
-                                        binding.getSize());
+            ANGLE_GL_TRY(context,
+                         mFunctions->bindBufferRange(
+                             GL_TRANSFORM_FEEDBACK_BUFFER, static_cast<GLuint>(index),
+                             bufferGL->getBufferID(), binding.getOffset(), binding.getSize()));
         }
         else
         {
-            mFunctions->bindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, static_cast<GLuint>(index),
-                                       bufferGL->getBufferID());
+            ANGLE_GL_TRY(context, mFunctions->bindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER,
+                                                             static_cast<GLuint>(index),
+                                                             bufferGL->getBufferID()));
         }
     }
     else
     {
-        mFunctions->bindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, static_cast<GLuint>(index), 0);
+        ANGLE_GL_TRY(context, mFunctions->bindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER,
+                                                         static_cast<GLuint>(index), 0));
     }
     return angle::Result::Continue;
 }

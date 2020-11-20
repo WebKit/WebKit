@@ -232,9 +232,24 @@ TEST_P(TextureUploadFormatTest, All)
             case GL_RG:
                 expected = {refVals[0], refVals[1], 0, 255};
                 break;
-            case GL_RED:
             case GL_DEPTH_COMPONENT:
             case GL_DEPTH_STENCIL:
+                // Metal back-end requires swizzle feature to return (depth, 0, 0, 1) from sampling
+                // a depth texture.
+                // http://anglebug.com/5243
+                if (IsMetal() && !IsMetalTextureSwizzleAvailable())
+                {
+                    // If texture swizzle is not supported, we should only compare the first
+                    // component.
+                    expected = {refVals[0], actual[1], actual[2], actual[3]};
+                }
+                else
+                {
+
+                    expected = {refVals[0], 0, 0, 255};
+                }
+                break;
+            case GL_RED:
                 expected = {refVals[0], 0, 0, 255};
                 break;
 

@@ -87,6 +87,8 @@ class Overlay : angle::NonCopyable
 
     rx::OverlayImpl *getImplementation() const { return mImplementation.get(); }
 
+    bool isEnabled() const { return mImplementation != nullptr; }
+
   private:
     template <typename Widget, WidgetType Type>
     Widget *getWidgetAs(WidgetId id) const
@@ -105,25 +107,27 @@ class Overlay : angle::NonCopyable
     std::unique_ptr<rx::OverlayImpl> mImplementation;
 };
 
-class DummyOverlay
+class MockOverlay
 {
   public:
-    DummyOverlay(rx::GLImplFactory *implFactory);
-    ~DummyOverlay();
+    MockOverlay(rx::GLImplFactory *implFactory);
+    ~MockOverlay();
 
     angle::Result init(const Context *context) { return angle::Result::Continue; }
     void destroy(const Context *context) {}
 
     void onSwap() const {}
 
-    const overlay::Dummy *getTextWidget(WidgetId id) const { return &mDummy; }
-    const overlay::Dummy *getCountWidget(WidgetId id) const { return &mDummy; }
-    const overlay::Dummy *getPerSecondWidget(WidgetId id) const { return &mDummy; }
-    const overlay::Dummy *getRunningGraphWidget(WidgetId id) const { return &mDummy; }
-    const overlay::Dummy *getRunningHistogramWidget(WidgetId id) const { return &mDummy; }
+    const overlay::Mock *getTextWidget(WidgetId id) const { return &mMock; }
+    const overlay::Mock *getCountWidget(WidgetId id) const { return &mMock; }
+    const overlay::Mock *getPerSecondWidget(WidgetId id) const { return &mMock; }
+    const overlay::Mock *getRunningGraphWidget(WidgetId id) const { return &mMock; }
+    const overlay::Mock *getRunningHistogramWidget(WidgetId id) const { return &mMock; }
+
+    bool isEnabled() const { return false; }
 
   private:
-    overlay::Dummy mDummy;
+    overlay::Mock mMock;
 };
 
 #if ANGLE_ENABLE_OVERLAY
@@ -134,12 +138,12 @@ using RunningGraphWidget     = overlay::RunningGraph;
 using RunningHistogramWidget = overlay::RunningHistogram;
 using TextWidget             = overlay::Text;
 #else   // !ANGLE_ENABLE_OVERLAY
-using OverlayType            = DummyOverlay;
-using CountWidget            = const overlay::Dummy;
-using PerSecondWidget        = const overlay::Dummy;
-using RunningGraphWidget     = const overlay::Dummy;
-using RunningHistogramWidget = const overlay::Dummy;
-using TextWidget             = const overlay::Dummy;
+using OverlayType            = MockOverlay;
+using CountWidget            = const overlay::Mock;
+using PerSecondWidget        = const overlay::Mock;
+using RunningGraphWidget     = const overlay::Mock;
+using RunningHistogramWidget = const overlay::Mock;
+using TextWidget             = const overlay::Mock;
 #endif  // ANGLE_ENABLE_OVERLAY
 
 }  // namespace gl

@@ -163,6 +163,10 @@
 // GLX_EXT_swap_control
 #    define GLX_SWAP_INTERVAL_EXT 0x20F1
 #    define GLX_MAX_SWAP_INTERVAL_EXT 0x20F2
+
+// GLX_NV_robustness_video_memory_purge
+#    define GLX_GENERATE_RESET_ON_VIDEO_MEMORY_PURGE_NV 0x20F7
+
 #endif  // !defined(ANGLE_SKIP_GLX_DEFINES)
 
 // GLX typedefs depend on the X headers

@@ -189,6 +189,8 @@ class BlitGL : angle::NonCopyable
                                  GLenum destComponentType,
                                  BlitProgram **program);
 
+    bool mResourcesInitialized = false;
+
     // SourceType, SourceComponentType, DestComponentType
     using BlitProgramType = std::tuple<gl::TextureType, GLenum, GLenum>;
     std::map<BlitProgramType, BlitProgram> mBlitPrograms;

@@ -622,7 +622,7 @@ OSXWindow::~OSXWindow()
     destroy();
 }
 
-bool OSXWindow::initialize(const std::string &name, int width, int height)
+bool OSXWindow::initializeImpl(const std::string &name, int width, int height)
 {
     if (!InitializeAppKit())
     {

@@ -31,12 +31,19 @@ class FunctionsGL;
 class RendererGL;
 class StateManagerGL;
 
+enum class RobustnessVideoMemoryPurgeStatus
+{
+    NOT_REQUESTED = 0,
+    REQUESTED     = 1,
+};
+
 class ContextGL : public ContextImpl
 {
   public:
     ContextGL(const gl::State &state,
               gl::ErrorSet *errorSet,
-              const std::shared_ptr<RendererGL> &renderer);
+              const std::shared_ptr<RendererGL> &renderer,
+              RobustnessVideoMemoryPurgeStatus robustnessVideoMemoryPurgeStatus);
     ~ContextGL() override;
 
     angle::Result initialize() override;
@@ -284,6 +291,8 @@ class ContextGL : public ContextImpl
 
   protected:
     std::shared_ptr<RendererGL> mRenderer;
+
+    RobustnessVideoMemoryPurgeStatus mRobustnessVideoMemoryPurgeStatus;
 };
 
 }  // namespace rx

@@ -13,6 +13,7 @@
 #include <cassert>
 
 #include "common/debug.h"
+#include "libANGLE/renderer/metal/mtl_occlusion_query_pool.h"
 #include "libANGLE/renderer/metal/mtl_resources.h"
 
 // Use to compare the new values with the values already set in the command encoder:
@@ -34,33 +35,38 @@ namespace mtl
 namespace
 {
 
-#define ANGLE_MTL_CMD_X(PROC)     \
-    PROC(Invalid)                 \
-    PROC(SetRenderPipelineState)  \
-    PROC(SetTriangleFillMode)     \
-    PROC(SetFrontFacingWinding)   \
-    PROC(SetCullMode)             \
-    PROC(SetDepthStencilState)    \
-    PROC(SetDepthBias)            \
-    PROC(SetStencilRefVals)       \
-    PROC(SetViewport)             \
-    PROC(SetScissorRect)          \
-    PROC(SetBlendColor)           \
-    PROC(SetVertexBuffer)         \
-    PROC(SetVertexBufferOffset)   \
-    PROC(SetVertexBytes)          \
-    PROC(SetVertexSamplerState)   \
-    PROC(SetVertexTexture)        \
-    PROC(SetFragmentBuffer)       \
-    PROC(SetFragmentBufferOffset) \
-    PROC(SetFragmentBytes)        \
-    PROC(SetFragmentSamplerState) \
-    PROC(SetFragmentTexture)      \
-    PROC(Draw)                    \
-    PROC(DrawInstanced)           \
-    PROC(DrawIndexed)             \
-    PROC(DrawIndexedInstanced)    \
-    PROC(DrawIndexedInstancedBaseVertex)
+#define ANGLE_MTL_CMD_X(PROC)            \
+    PROC(Invalid)                        \
+    PROC(SetRenderPipelineState)         \
+    PROC(SetTriangleFillMode)            \
+    PROC(SetFrontFacingWinding)          \
+    PROC(SetCullMode)                    \
+    PROC(SetDepthStencilState)           \
+    PROC(SetDepthBias)                   \
+    PROC(SetStencilRefVals)              \
+    PROC(SetViewport)                    \
+    PROC(SetScissorRect)                 \
+    PROC(SetBlendColor)                  \
+    PROC(SetVertexBuffer)                \
+    PROC(SetVertexBufferOffset)          \
+    PROC(SetVertexBytes)                 \
+    PROC(SetVertexSamplerState)          \
+    PROC(SetVertexTexture)               \
+    PROC(SetFragmentBuffer)              \
+    PROC(SetFragmentBufferOffset)        \
+    PROC(SetFragmentBytes)               \
+    PROC(SetFragmentSamplerState)        \
+    PROC(SetFragmentTexture)             \
+    PROC(Draw)                           \
+    PROC(DrawInstanced)                  \
+    PROC(DrawIndexed)                    \
+    PROC(DrawIndexedInstanced)           \
+    PROC(DrawIndexedInstancedBaseVertex) \
+    PROC(SetVisibilityResultMode)        \
+    PROC(UseResource)                    \
+    PROC(MemoryBarrierWithResource)      \
+    PROC(PushDebugGroup)                 \
+    PROC(PopDebugGroup)
 
 #define ANGLE_MTL_TYPE_DECL(CMD) CMD,
 
@@ -315,11 +321,81 @@ void DrawIndexedInstancedBaseVertexCmd(id<MTLRenderCommandEncoder> encoder,
     [indexBuffer ANGLE_MTL_RELEASE];
 }
 
+void SetVisibilityResultModeCmd(id<MTLRenderCommandEncoder> encoder,
+                                IntermediateCommandStream *stream)
+{
+    MTLVisibilityResultMode mode = stream->fetch<MTLVisibilityResultMode>();
+    size_t offset                = stream->fetch<size_t>();
+    [encoder setVisibilityResultMode:mode offset:offset];
+}
+
+void UseResourceCmd(id<MTLRenderCommandEncoder> encoder, IntermediateCommandStream *stream)
+{
+    id<MTLResource> resource = stream->fetch<id<MTLResource>>();
+    MTLResourceUsage usage   = stream->fetch<MTLResourceUsage>();
+    mtl::RenderStages stages = stream->fetch<mtl::RenderStages>();
+    ANGLE_UNUSED_VARIABLE(stages);
+#if defined(__IPHONE_13_0) || defined(__MAC_10_15)
+    if (ANGLE_APPLE_AVAILABLE_XCI(10.15, 13.0, 13.0))
+    {
+        [encoder useResource:resource usage:usage stages:stages];
+    }
+    else
+#endif
+    {
+        [encoder useResource:resource usage:usage];
+    }
+    [resource ANGLE_MTL_RELEASE];
+}
+
+void MemoryBarrierWithResourceCmd(id<MTLRenderCommandEncoder> encoder,
+                                  IntermediateCommandStream *stream)
+{
+    id<MTLResource> resource = stream->fetch<id<MTLResource>>();
+    mtl::RenderStages after  = stream->fetch<mtl::RenderStages>();
+    mtl::RenderStages before = stream->fetch<mtl::RenderStages>();
+    ANGLE_UNUSED_VARIABLE(after);
+    ANGLE_UNUSED_VARIABLE(before);
+#if defined(__MAC_10_14) && (TARGET_OS_OSX || TARGET_OS_MACCATALYST)
+    if (ANGLE_APPLE_AVAILABLE_XC(10.14, 13.0))
+    {
+        [encoder memoryBarrierWithResources:&resource
+                                      count:1
+                                afterStages:after
+                               beforeStages:before];
+    }
+#endif
+    [resource ANGLE_MTL_RELEASE];
+}
+
+void PushDebugGroupCmd(id<MTLRenderCommandEncoder> encoder, IntermediateCommandStream *stream)
+{
+    NSString *label = stream->fetch<NSString *>();
+    [encoder pushDebugGroup:label];
+    [label ANGLE_MTL_RELEASE];
+}
+
+void PopDebugGroupCmd(id<MTLRenderCommandEncoder> encoder, IntermediateCommandStream *stream)
+{
+    [encoder popDebugGroup];
+}
+
 // Command encoder mapping
 #define ANGLE_MTL_CMD_MAP(CMD) CMD##Cmd,
 
 using CommandEncoderFunc = void (*)(id<MTLRenderCommandEncoder>, IntermediateCommandStream *);
 constexpr CommandEncoderFunc gCommandEncoders[] = {ANGLE_MTL_CMD_X(ANGLE_MTL_CMD_MAP)};
+
+NSString *cppLabelToObjC(const std::string &marker)
+{
+    NSString *label = [NSString stringWithUTF8String:marker.c_str()];
+    if (!label)
+    {
+        // This can happen if the string is not a valid ascii string.
+        label = @"Invalid ASCII string";
+    }
+    return label;
+}
 
 }
 
@@ -532,6 +608,11 @@ void CommandBuffer::setWriteDependency(const ResourceRef &resource)
 
 void CommandBuffer::setReadDependency(const ResourceRef &resource)
 {
+    setReadDependency(resource.get());
+}
+
+void CommandBuffer::setReadDependency(Resource *resource)
+{
     if (!resource)
     {
         return;
@@ -558,7 +639,65 @@ void CommandBuffer::restart()
     mQueueSerial = serial;
     mCommitted   = false;
 
+    for (std::string &marker : mDebugGroups)
+    {
+        pushDebugGroupImpl(marker);
+    }
+
     ASSERT(metalCmdBuffer);
+}
+
+void CommandBuffer::queueEventSignal(const mtl::SharedEventRef &event, uint64_t value)
+{
+    std::lock_guard<std::mutex> lg(mLock);
+
+    ASSERT(readyImpl());
+
+    if (mActiveCommandEncoder && mActiveCommandEncoder->getType() == CommandEncoder::RENDER)
+    {
+        // We cannot set event when there is an active render pass, defer the setting until the
+        // pass end.
+        mPendingSignalEvents.push_back({event, value});
+    }
+    else
+    {
+        setEventImpl(event, value);
+    }
+}
+
+void CommandBuffer::serverWaitEvent(const mtl::SharedEventRef &event, uint64_t value)
+{
+    std::lock_guard<std::mutex> lg(mLock);
+    ASSERT(readyImpl());
+
+    waitEventImpl(event, value);
+}
+
+void CommandBuffer::pushDebugGroup(const std::string &marker)
+{
+    mDebugGroups.push_back(marker);
+
+    std::lock_guard<std::mutex> lg(mLock);
+
+    if (readyImpl())
+    {
+        pushDebugGroupImpl(marker);
+    }
+}
+
+void CommandBuffer::popDebugGroup()
+{
+    if (!mDebugGroups.empty())
+    {
+        mDebugGroups.pop_back();
+    }
+
+    std::lock_guard<std::mutex> lg(mLock);
+
+    if (readyImpl())
+    {
+        return;
+    }
 }
 
 /** private use only */
@@ -577,6 +716,9 @@ void CommandBuffer::invalidateActiveCommandEncoder(CommandEncoder *encoder)
     if (mActiveCommandEncoder == encoder)
     {
         mActiveCommandEncoder = nullptr;
+
+        // No active command encoder, we can safely encode event signalling now.
+        setPendingEvents();
     }
 }
 
@@ -607,6 +749,9 @@ void CommandBuffer::commitImpl()
     // End the current encoder
     forceEndingCurrentEncoder();
 
+    // Encoding any pending event's signalling.
+    setPendingEvents();
+
     // Notify command queue
     mCmdQueue.onCommandBufferCommitted(get(), mQueueSerial);
 
@@ -623,6 +768,70 @@ void CommandBuffer::forceEndingCurrentEncoder()
         mActiveCommandEncoder->endEncoding();
         mActiveCommandEncoder = nullptr;
     }
+}
+
+void CommandBuffer::setPendingEvents()
+{
+    for (const std::pair<mtl::SharedEventRef, uint64_t> &eventEntry : mPendingSignalEvents)
+    {
+        setEventImpl(eventEntry.first, eventEntry.second);
+    }
+    mPendingSignalEvents.clear();
+}
+
+void CommandBuffer::setEventImpl(const mtl::SharedEventRef &event, uint64_t value)
+{
+#if ANGLE_MTL_EVENT_AVAILABLE
+    ASSERT(!mActiveCommandEncoder || mActiveCommandEncoder->getType() != CommandEncoder::RENDER);
+    // For non-render command encoder, we can safely end it, so that we can encode a signal
+    // event.
+    forceEndingCurrentEncoder();
+
+    [get() encodeSignalEvent:event value:value];
+#else
+    UNIMPLEMENTED();
+    UNREACHABLE();
+#endif  // #if ANGLE_MTL_EVENT_AVAILABLE
+}
+
+void CommandBuffer::waitEventImpl(const mtl::SharedEventRef &event, uint64_t value)
+{
+#if ANGLE_MTL_EVENT_AVAILABLE
+    ASSERT(!mActiveCommandEncoder || mActiveCommandEncoder->getType() != CommandEncoder::RENDER);
+
+    forceEndingCurrentEncoder();
+
+    // Encoding any pending event's signalling.
+    setPendingEvents();
+
+    [get() encodeWaitForEvent:event value:value];
+#else
+    UNIMPLEMENTED();
+    UNREACHABLE();
+#endif  // #if ANGLE_MTL_EVENT_AVAILABLE
+}
+
+void CommandBuffer::pushDebugGroupImpl(const std::string &marker)
+{
+    ANGLE_MTL_OBJC_SCOPE
+    {
+        NSString *label = cppLabelToObjC(marker);
+        [get() pushDebugGroup:label];
+
+        if (mActiveCommandEncoder)
+        {
+            mActiveCommandEncoder->pushDebugGroup(label);
+        }
+    }
+}
+
+void CommandBuffer::popDebugGroupImpl()
+{
+    if (mActiveCommandEncoder)
+    {
+        mActiveCommandEncoder->popDebugGroup();
+    }
+    [get() popDebugGroup];
 }
 
 // CommandEncoder implementation
@@ -666,6 +875,18 @@ CommandEncoder &CommandEncoder::markResourceBeingWrittenByGPU(const TextureRef &
 {
     cmdBuffer().setWriteDependency(texture);
     return *this;
+}
+
+void CommandEncoder::pushDebugGroup(NSString *label)
+{
+    // Default implementation
+    [get() pushDebugGroup:label];
+}
+
+void CommandEncoder::popDebugGroup()
+{
+    // Default implementation
+    [get() popDebugGroup];
 }
 
 // RenderCommandEncoderShaderStates implementation
@@ -733,8 +954,9 @@ void RenderCommandEncoderStates::reset()
 }
 
 // RenderCommandEncoder implemtation
-RenderCommandEncoder::RenderCommandEncoder(CommandBuffer *cmdBuffer)
-    : CommandEncoder(cmdBuffer, RENDER)
+RenderCommandEncoder::RenderCommandEncoder(CommandBuffer *cmdBuffer,
+                                           const OcclusionQueryPool &queryPool)
+    : CommandEncoder(cmdBuffer, RENDER), mOcclusionQueryPool(queryPool)
 {
     ANGLE_MTL_OBJC_SCOPE
     {
@@ -837,6 +1059,17 @@ void RenderCommandEncoder::endEncoding()
         mRenderPassDesc.stencilAttachment.storeAction;
     finalizeLoadStoreAction(objCRenderPassDesc.stencilAttachment);
 
+    // Set visibility result buffer
+    if (mOcclusionQueryPool.getNumRenderPassAllocatedQueries())
+    {
+        objCRenderPassDesc.visibilityResultBuffer =
+            mOcclusionQueryPool.getRenderPassVisibilityPoolBuffer()->get();
+    }
+    else
+    {
+        objCRenderPassDesc.visibilityResultBuffer = nil;
+    }
+
     // Encode the actual encoder
     encodeMetalEncoder();
 
@@ -855,7 +1088,7 @@ inline void RenderCommandEncoder::initAttachmentWriteDependencyAndScissorRect(
     {
         cmdBuffer().setWriteDependency(texture);
 
-        uint32_t mipLevel = attachment.level;
+        const MipmapNativeLevel &mipLevel = attachment.level;
 
         mRenderPassMaxScissorRect.width =
             std::min<NSUInteger>(mRenderPassMaxScissorRect.width, texture->width(mipLevel));
@@ -878,6 +1111,11 @@ void RenderCommandEncoder::encodeMetalEncoder()
 
         // Verify that it was created successfully
         ASSERT(metalCmdEncoder);
+
+        if (mLabel)
+        {
+            metalCmdEncoder.label = mLabel;
+        }
 
         while (mCommands.good())
         {
@@ -909,6 +1147,8 @@ RenderCommandEncoder &RenderCommandEncoder::restart(const RenderPassDesc &desc)
         reset();
         return *this;
     }
+
+    mLabel.reset();
 
     mRenderPassDesc           = desc;
     mRecording                = true;
@@ -1380,6 +1620,69 @@ RenderCommandEncoder &RenderCommandEncoder::drawIndexedInstancedBaseVertex(
     return *this;
 }
 
+RenderCommandEncoder &RenderCommandEncoder::setVisibilityResultMode(MTLVisibilityResultMode mode,
+                                                                    size_t offset)
+{
+    if (mStateCache.visibilityResultMode == mode &&
+        mStateCache.visibilityResultBufferOffset == offset)
+    {
+        return *this;
+    }
+    mStateCache.visibilityResultMode         = mode;
+    mStateCache.visibilityResultBufferOffset = offset;
+
+    mCommands.push(CmdType::SetVisibilityResultMode).push(mode).push(offset);
+    return *this;
+}
+
+RenderCommandEncoder &RenderCommandEncoder::useResource(const BufferRef &resource,
+                                                        MTLResourceUsage usage,
+                                                        mtl::RenderStages states)
+{
+    if (!resource)
+    {
+        return *this;
+    }
+
+    cmdBuffer().setReadDependency(resource);
+
+    mCommands.push(CmdType::UseResource)
+        .push([resource->get() ANGLE_MTL_RETAIN])
+        .push(usage)
+        .push(states);
+
+    return *this;
+}
+
+RenderCommandEncoder &RenderCommandEncoder::memoryBarrierWithResource(const BufferRef &resource,
+                                                                      mtl::RenderStages after,
+                                                                      mtl::RenderStages before)
+{
+    if (!resource)
+    {
+        return *this;
+    }
+
+    cmdBuffer().setWriteDependency(resource);
+
+    mCommands.push(CmdType::MemoryBarrierWithResource)
+        .push([resource->get() ANGLE_MTL_RETAIN])
+        .push(after)
+        .push(before);
+
+    return *this;
+}
+
+void RenderCommandEncoder::pushDebugGroup(NSString *label)
+{
+    // Defer the insertion until endEncoding()
+    mCommands.push(CmdType::PushDebugGroup).push([label ANGLE_MTL_RETAIN]);
+}
+void RenderCommandEncoder::popDebugGroup()
+{
+    mCommands.push(CmdType::PopDebugGroup);
+}
+
 RenderCommandEncoder &RenderCommandEncoder::setColorStoreAction(MTLStoreAction action,
                                                                 uint32_t colorAttachmentIndex)
 {
@@ -1430,6 +1733,13 @@ RenderCommandEncoder &RenderCommandEncoder::setStencilStoreAction(MTLStoreAction
     return *this;
 }
 
+RenderCommandEncoder &RenderCommandEncoder::setStoreAction(MTLStoreAction action)
+{
+    setColorStoreAction(action);
+    setDepthStencilStoreAction(action, action);
+    return *this;
+}
+
 RenderCommandEncoder &RenderCommandEncoder::setColorLoadAction(MTLLoadAction action,
                                                                const MTLClearColor &clearValue,
                                                                uint32_t colorAttachmentIndex)
@@ -1468,6 +1778,11 @@ RenderCommandEncoder &RenderCommandEncoder::setStencilLoadAction(MTLLoadAction a
     return *this;
 }
 
+void RenderCommandEncoder::setLabel(NSString *label)
+{
+    mLabel.retainAssign(label);
+}
+
 // BlitCommandEncoder
 BlitCommandEncoder::BlitCommandEncoder(CommandBuffer *cmdBuffer) : CommandEncoder(cmdBuffer, BLIT)
 {}
@@ -1500,6 +1815,29 @@ BlitCommandEncoder &BlitCommandEncoder::restart()
     }
 }
 
+BlitCommandEncoder &BlitCommandEncoder::copyBuffer(const BufferRef &src,
+                                                   size_t srcOffset,
+                                                   const BufferRef &dst,
+                                                   size_t dstOffset,
+                                                   size_t size)
+{
+    if (!src || !dst)
+    {
+        return *this;
+    }
+
+    cmdBuffer().setReadDependency(src);
+    cmdBuffer().setWriteDependency(dst);
+
+    [get() copyFromBuffer:src->get()
+             sourceOffset:srcOffset
+                 toBuffer:dst->get()
+        destinationOffset:dstOffset
+                     size:size];
+
+    return *this;
+}
+
 BlitCommandEncoder &BlitCommandEncoder::copyBufferToTexture(const BufferRef &src,
                                                             size_t srcOffset,
                                                             size_t srcBytesPerRow,
@@ -1507,7 +1845,7 @@ BlitCommandEncoder &BlitCommandEncoder::copyBufferToTexture(const BufferRef &src
                                                             MTLSize srcSize,
                                                             const TextureRef &dst,
                                                             uint32_t dstSlice,
-                                                            uint32_t dstLevel,
+                                                            MipmapNativeLevel dstLevel,
                                                             MTLOrigin dstOrigin,
                                                             MTLBlitOption blitOption)
 {
@@ -1526,22 +1864,55 @@ BlitCommandEncoder &BlitCommandEncoder::copyBufferToTexture(const BufferRef &src
                  sourceSize:srcSize
                   toTexture:dst->get()
            destinationSlice:dstSlice
-           destinationLevel:dstLevel
+           destinationLevel:dstLevel.get()
           destinationOrigin:dstOrigin
                     options:blitOption];
 
     return *this;
 }
 
+BlitCommandEncoder &BlitCommandEncoder::copyTextureToBuffer(const TextureRef &src,
+                                                            uint32_t srcSlice,
+                                                            MipmapNativeLevel srcLevel,
+                                                            MTLOrigin srcOrigin,
+                                                            MTLSize srcSize,
+                                                            const BufferRef &dst,
+                                                            size_t dstOffset,
+                                                            size_t dstBytesPerRow,
+                                                            size_t dstBytesPerImage,
+                                                            MTLBlitOption blitOption)
+{
+
+    if (!src || !dst)
+    {
+        return *this;
+    }
+
+    cmdBuffer().setReadDependency(src);
+    cmdBuffer().setWriteDependency(dst);
+
+    [get() copyFromTexture:src->get()
+                     sourceSlice:srcSlice
+                     sourceLevel:srcLevel.get()
+                    sourceOrigin:srcOrigin
+                      sourceSize:srcSize
+                        toBuffer:dst->get()
+               destinationOffset:dstOffset
+          destinationBytesPerRow:dstBytesPerRow
+        destinationBytesPerImage:dstBytesPerImage
+                         options:blitOption];
+
+    return *this;
+}
+
 BlitCommandEncoder &BlitCommandEncoder::copyTexture(const TextureRef &src,
-                                                    uint32_t srcSlice,
-                                                    uint32_t srcLevel,
-                                                    MTLOrigin srcOrigin,
-                                                    MTLSize srcSize,
+                                                    uint32_t srcStartSlice,
+                                                    MipmapNativeLevel srcStartLevel,
                                                     const TextureRef &dst,
-                                                    uint32_t dstSlice,
-                                                    uint32_t dstLevel,
-                                                    MTLOrigin dstOrigin)
+                                                    uint32_t dstStartSlice,
+                                                    MipmapNativeLevel dstStartLevel,
+                                                    uint32_t sliceCount,
+                                                    uint32_t levelCount)
 {
     if (!src || !dst)
     {
@@ -1550,16 +1921,44 @@ BlitCommandEncoder &BlitCommandEncoder::copyTexture(const TextureRef &src,
 
     cmdBuffer().setReadDependency(src);
     cmdBuffer().setWriteDependency(dst);
-    [get() copyFromTexture:src->get()
-               sourceSlice:srcSlice
-               sourceLevel:srcLevel
-              sourceOrigin:srcOrigin
-                sourceSize:srcSize
-                 toTexture:dst->get()
-          destinationSlice:dstSlice
-          destinationLevel:dstLevel
-         destinationOrigin:dstOrigin];
 
+    MTLOrigin origin = MTLOriginMake(0, 0, 0);
+    for (uint32_t slice = 0; slice < sliceCount; ++slice)
+    {
+        uint32_t srcSlice = srcStartSlice + slice;
+        uint32_t dstSlice = dstStartSlice + slice;
+        for (uint32_t level = 0; level < levelCount; ++level)
+        {
+            MipmapNativeLevel srcLevel = srcStartLevel + level;
+            MipmapNativeLevel dstLevel = dstStartLevel + level;
+            MTLSize srcSize =
+                MTLSizeMake(src->width(srcLevel), src->height(srcLevel), src->depth(srcLevel));
+
+            [get() copyFromTexture:src->get()
+                       sourceSlice:srcSlice
+                       sourceLevel:srcLevel.get()
+                      sourceOrigin:origin
+                        sourceSize:srcSize
+                         toTexture:dst->get()
+                  destinationSlice:dstSlice
+                  destinationLevel:dstLevel.get()
+                 destinationOrigin:origin];
+        }
+    }
+
+    return *this;
+}
+
+BlitCommandEncoder &BlitCommandEncoder::fillBuffer(const BufferRef &buffer,
+                                                   NSRange range,
+                                                   uint8_t value)
+{
+    if (!buffer)
+    {
+        return *this;
+    }
+
+    [get() fillBuffer:buffer->get() range:range value:value];
     return *this;
 }
 
@@ -1575,7 +1974,22 @@ BlitCommandEncoder &BlitCommandEncoder::generateMipmapsForTexture(const TextureR
 
     return *this;
 }
-BlitCommandEncoder &BlitCommandEncoder::synchronizeResource(const TextureRef &texture)
+BlitCommandEncoder &BlitCommandEncoder::synchronizeResource(Buffer *buffer)
+{
+    if (!buffer)
+    {
+        return *this;
+    }
+
+#if TARGET_OS_OSX || TARGET_OS_MACCATALYST
+    // Only MacOS has separated storage for resource on CPU and GPU and needs explicit
+    // synchronization
+    cmdBuffer().setReadDependency(buffer);
+    [get() synchronizeResource:buffer->get()];
+#endif
+    return *this;
+}
+BlitCommandEncoder &BlitCommandEncoder::synchronizeResource(Texture *texture)
 {
     if (!texture)
     {

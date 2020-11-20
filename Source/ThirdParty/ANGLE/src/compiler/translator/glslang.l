@@ -107,8 +107,10 @@ static int ES3_extension(TParseContext *context, TExtension extension, int token
 static int ES3_reserved_ES3_1_extension_ES3_2_keyword(TParseContext *context, TExtension extension, int token);
 static int ES3_reserved_ES3_extension(TParseContext *context, TExtension extension, int token);
 static int ES3_reserved_ES3_extension_ES3_1_keyword(TParseContext *context, TExtension extension, int token);
+static int ES3_reserved_ES3_extension_ES3_2_keyword(TParseContext *context, TExtension extension, int token);
 static int ES3_1_reserved_ES3_1_extension_ES3_2_keyword(TParseContext *context, TExtension extension, int token);
 static int ES3_1_reserved_ES3_1_extension_ES3_2_keyword_2(TParseContext *context, TExtension extension1, TExtension extension2, int token1, int token2);
+static int ES3_and_3_1_reserved_ES3_1_extension_ES3_2_keyword_2(TParseContext *context, TExtension extension1, TExtension extension2, int token1, int token2);
 static int WEBGL_video_texture_extension(TParseContext *context, int token);
 static int uint_constant(TParseContext *context);
 static int int_constant(TParseContext *context);
@@ -225,7 +227,7 @@ O           [0-7]
 "usamplerCube"         { return ES3_keyword(context, USAMPLERCUBE); }
 "usampler2DArray"      { return ES3_keyword(context, USAMPLER2DARRAY); }
 "usampler2DMS"         { return ES3_reserved_ES3_extension_ES3_1_keyword(context, TExtension::ANGLE_texture_multisample, USAMPLER2DMS); }
-"sampler2DShadow"      { return ES2_reserved_ES3_keyword(context, SAMPLER2DSHADOW); }
+"sampler2DShadow"      { return ES2_reserved_ES2_extension_ES3_keyword(context, TExtension::EXT_shadow_samplers, SAMPLER2DSHADOW); }
 "samplerCubeShadow"    { return ES3_keyword(context, SAMPLERCUBESHADOW); }
 "sampler2DArrayShadow" { return ES3_keyword(context, SAMPLER2DARRAYSHADOW); }
 "__samplerExternal2DY2YEXT"   { return ES3_extension(context, TExtension::EXT_YUV_target, SAMPLEREXTERNAL2DY2YEXT); }
@@ -233,9 +235,12 @@ O           [0-7]
 "isampler2DMSArray"    { return ES3_reserved_ES3_1_extension_ES3_2_keyword(context, TExtension::OES_texture_storage_multisample_2d_array, ISAMPLER2DMSARRAY); }
 "usampler2DMSArray"    { return ES3_reserved_ES3_1_extension_ES3_2_keyword(context, TExtension::OES_texture_storage_multisample_2d_array, USAMPLER2DMSARRAY); }
 "samplerCubeArray"     { return ES3_1_reserved_ES3_1_extension_ES3_2_keyword_2(context, TExtension::OES_texture_cube_map_array, TExtension::EXT_texture_cube_map_array, SAMPLERCUBEARRAYOES, SAMPLERCUBEARRAYEXT); }
+"samplerBuffer"        { return ES3_and_3_1_reserved_ES3_1_extension_ES3_2_keyword_2(context, TExtension::OES_texture_buffer, TExtension::EXT_texture_buffer, SAMPLERBUFFER, SAMPLERBUFFER); }
 "samplerCubeArrayShadow"    { return ES3_1_reserved_ES3_1_extension_ES3_2_keyword_2(context, TExtension::OES_texture_cube_map_array, TExtension::EXT_texture_cube_map_array, SAMPLERCUBEARRAYSHADOWOES, SAMPLERCUBEARRAYSHADOWEXT); }
 "isamplerCubeArray"    { return ES3_1_reserved_ES3_1_extension_ES3_2_keyword_2(context, TExtension::OES_texture_cube_map_array, TExtension::EXT_texture_cube_map_array, ISAMPLERCUBEARRAYOES, ISAMPLERCUBEARRAYEXT); }
+"isamplerBuffer"       { return ES3_and_3_1_reserved_ES3_1_extension_ES3_2_keyword_2(context, TExtension::OES_texture_buffer, TExtension::EXT_texture_buffer, ISAMPLERBUFFER, ISAMPLERBUFFER); }
 "usamplerCubeArray"    { return ES3_1_reserved_ES3_1_extension_ES3_2_keyword_2(context, TExtension::OES_texture_cube_map_array, TExtension::EXT_texture_cube_map_array, USAMPLERCUBEARRAYOES, USAMPLERCUBEARRAYEXT); }
+"usamplerBuffer"       { return ES3_and_3_1_reserved_ES3_1_extension_ES3_2_keyword_2(context, TExtension::OES_texture_buffer, TExtension::EXT_texture_buffer, USAMPLERBUFFER, USAMPLERBUFFER); }
 "samplerVideoWEBGL"    { return WEBGL_video_texture_extension(context, SAMPLERVIDEOWEBGL); }
 "struct"       { return STRUCT; }
 
@@ -261,19 +266,21 @@ O           [0-7]
 "imageCubeArray"    { return ES3_1_reserved_ES3_1_extension_ES3_2_keyword_2(context, TExtension::OES_texture_cube_map_array, TExtension::EXT_texture_cube_map_array, IMAGECUBEARRAYOES, IMAGECUBEARRAYEXT); }
 "iimageCubeArray"    { return ES3_1_reserved_ES3_1_extension_ES3_2_keyword_2(context, TExtension::OES_texture_cube_map_array, TExtension::EXT_texture_cube_map_array, IIMAGECUBEARRAYOES, IIMAGECUBEARRAYEXT); }
 "uimageCubeArray"    { return ES3_1_reserved_ES3_1_extension_ES3_2_keyword_2(context, TExtension::OES_texture_cube_map_array, TExtension::EXT_texture_cube_map_array, UIMAGECUBEARRAYOES, UIMAGECUBEARRAYEXT); }
+"imageBuffer"     { return ES3_and_3_1_reserved_ES3_1_extension_ES3_2_keyword_2(context, TExtension::OES_texture_buffer, TExtension::EXT_texture_buffer, IMAGEBUFFER, IMAGEBUFFER); }
+"iimageBuffer"    { return ES3_and_3_1_reserved_ES3_1_extension_ES3_2_keyword_2(context, TExtension::OES_texture_buffer, TExtension::EXT_texture_buffer, IIMAGEBUFFER, IIMAGEBUFFER); }
+"uimageBuffer"    { return ES3_and_3_1_reserved_ES3_1_extension_ES3_2_keyword_2(context, TExtension::OES_texture_buffer, TExtension::EXT_texture_buffer, UIMAGEBUFFER, UIMAGEBUFFER); }
 "readonly" { return ES3_reserved_ES3_1_keyword(context, READONLY); }
 "writeonly" { return ES3_reserved_ES3_1_keyword(context, WRITEONLY); }
 "coherent" { return ES3_reserved_ES3_1_keyword(context, COHERENT); }
 "restrict" { return ES3_reserved_ES3_1_keyword(context, RESTRICT); }
 "volatile" { return ES2_reserved_ES3_1_keyword(context, VOLATILE); }
 "atomic_uint" { return ES3_reserved_ES3_1_keyword(context, ATOMICUINT); }
-
+"sample" { return ES3_reserved_ES3_extension_ES3_2_keyword(context, TExtension::OES_shader_multisample_interpolation, SAMPLE); }
 "precise" { return ES3_1_reserved_ES3_1_extension_ES3_2_keyword(context, TExtension::EXT_gpu_shader5, PRECISE); }
 
     /* Reserved keywords for GLSL ES 3.00 that are not reserved for GLSL ES 1.00 */
 "resource"          |
 "patch"             |
-"sample"            |
 "subroutine"        |
 "common"            |
 "partition"         |
@@ -290,9 +297,6 @@ O           [0-7]
 "image2DShadow"     |
 "image1DArrayShadow" |
 "image2DArrayShadow" |
-"imageBuffer"       |
-"iimageBuffer"      |
-"uimageBuffer"      |
 
 "sampler1DArray"    |
 "sampler1DArrayShadow" |
@@ -301,10 +305,7 @@ O           [0-7]
 "usampler1D"        |
 "usampler1DArray"   |
 "isampler2DRect"    |
-"usampler2DRect"    |
-"samplerBuffer"     |
-"isamplerBuffer"    |
-"usamplerBuffer"    {
+"usampler2DRect"    {
     if (context->getShaderVersion() < 300) {
         yylval->lex.string = AllocatePoolCharArray(yytext, yyleng);
         return check_type(yyscanner);
@@ -698,6 +699,26 @@ int ES3_reserved_ES3_extension_ES3_1_keyword(TParseContext *context, TExtension 
     return check_type(yyscanner);
 }
 
+int ES3_reserved_ES3_extension_ES3_2_keyword(TParseContext *context, TExtension extension, int token)
+{
+    struct yyguts_t* yyg = (struct yyguts_t*) context->getScanner();
+    yyscan_t yyscanner = (yyscan_t) context->getScanner();
+
+    // A keyword in GLSL ES 3.00 with enabled extension or in GLSL ES 3.20
+    if (is_extension_enabled_or_is_core(context, 300, extension, 320))
+    {
+        return token;
+    }
+
+    if(context->getShaderVersion() == 300 ||context->getShaderVersion() == 310)
+    {
+        return reserved_word(yyscanner);
+    }
+
+    yylval->lex.string = AllocatePoolCharArray(yytext, yyleng);
+    return check_type(yyscanner);
+}
+
 static int ES3_1_reserved_ES3_1_extension_ES3_2_keyword(TParseContext *context, TExtension extension, int token)
 {
     struct yyguts_t* yyg = (struct yyguts_t*) context->getScanner();
@@ -736,6 +757,31 @@ static int ES3_1_reserved_ES3_1_extension_ES3_2_keyword_2(TParseContext *context
 
     // A reserved word in GLSL ES 3.10
     if (context->getShaderVersion() == 310)
+    {
+        return reserved_word(yyscanner);
+    }
+
+    yylval->lex.string = AllocatePoolCharArray(yytext, yyleng);
+    return check_type(yyscanner); 
+}
+
+static int ES3_and_3_1_reserved_ES3_1_extension_ES3_2_keyword_2(TParseContext *context, TExtension extension1, TExtension extension2, int token1, int token2)
+{
+   struct yyguts_t* yyg = (struct yyguts_t*) context->getScanner();
+    yyscan_t yyscanner = (yyscan_t) context->getScanner();
+
+    // A keyword in GLSL ES 3.20 or GLSL ES 3.10 with enabled extension.
+    if (is_extension_enabled_or_is_core(context, 310, extension1, 320))
+    {
+        return token1;
+    }
+    else if (is_extension_enabled_or_is_core(context, 310, extension2, 320))
+    {
+        return token2;
+    }
+
+    // A reserved word in GLSL ES 3.00 and 3.10
+    if (context->getShaderVersion() >= 300)
     {
         return reserved_word(yyscanner);
     }

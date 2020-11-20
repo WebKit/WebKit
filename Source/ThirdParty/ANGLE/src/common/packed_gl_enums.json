@@ -22,6 +22,7 @@
         "PixelPack": "GL_PIXEL_PACK_BUFFER",
         "PixelUnpack": "GL_PIXEL_UNPACK_BUFFER",
         "ShaderStorage": "GL_SHADER_STORAGE_BUFFER",
+        "Texture": "GL_TEXTURE_BUFFER",
         "TransformFeedback": "GL_TRANSFORM_FEEDBACK_BUFFER",
         "Uniform": "GL_UNIFORM_BUFFER"
     },
@@ -62,7 +63,8 @@
         "NoError": "GL_NO_ERROR",
         "GuiltyContextReset": "GL_GUILTY_CONTEXT_RESET",
         "InnocentContextReset": "GL_INNOCENT_CONTEXT_RESET",
-        "UnknownContextReset": "GL_UNKNOWN_CONTEXT_RESET"
+        "UnknownContextReset": "GL_UNKNOWN_CONTEXT_RESET",
+        "PurgedContextResetNV": "GL_PURGED_CONTEXT_RESET_NV"
     },
     "HintSetting":
     {
@@ -189,7 +191,8 @@
         "Rectangle": "GL_TEXTURE_RECTANGLE_ANGLE",
         "CubeMap": "GL_TEXTURE_CUBE_MAP",
         "CubeMapArray": "GL_TEXTURE_CUBE_MAP_ARRAY",
-        "VideoImage": "GL_TEXTURE_VIDEO_IMAGE_WEBGL"
+        "VideoImage": "GL_TEXTURE_VIDEO_IMAGE_WEBGL",
+        "Buffer": "GL_TEXTURE_BUFFER"
     },
     "TextureTarget":
     {
@@ -207,7 +210,8 @@
         "CubeMapPositiveZ": "GL_TEXTURE_CUBE_MAP_POSITIVE_Z",
         "CubeMapNegativeZ": "GL_TEXTURE_CUBE_MAP_NEGATIVE_Z",
         "CubeMapArray": "GL_TEXTURE_CUBE_MAP_ARRAY",
-        "VideoImage": "GL_TEXTURE_VIDEO_IMAGE_WEBGL"
+        "VideoImage": "GL_TEXTURE_VIDEO_IMAGE_WEBGL",
+        "Buffer": "GL_TEXTURE_BUFFER"
     },
     "VertexArrayType":
     {

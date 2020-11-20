@@ -86,7 +86,13 @@ TEST_P(TimerQueriesTest, ProcAddresses)
 // Tests the time elapsed query
 TEST_P(TimerQueriesTest, TimeElapsed)
 {
+    // TODO(crbug.com/1132295): Failing on Apple DTK.
+    ANGLE_SKIP_TEST_IF(IsOSX() && IsARM64() && IsDesktopOpenGL());
+
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_disjoint_timer_query"));
+
+    // http://anglebug.com/5154
+    ANGLE_SKIP_TEST_IF(IsOSX() && IsOpenGL());
 
     GLint queryTimeElapsedBits = 0;
     glGetQueryivEXT(GL_TIME_ELAPSED_EXT, GL_QUERY_COUNTER_BITS_EXT, &queryTimeElapsedBits);
@@ -275,6 +281,9 @@ TEST_P(TimerQueriesTest, TimeElapsedMulticontextTest)
     // http://anglebug.com/1541
     ANGLE_SKIP_TEST_IF(IsAMD() && IsOpenGL());
 
+    // TODO(crbug.com/1132295): Failing on Apple DTK.
+    ANGLE_SKIP_TEST_IF(IsOSX() && IsARM64() && IsDesktopOpenGL());
+
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_disjoint_timer_query"));
 
     // Test skipped because the Vulkan backend doesn't account for (and remove) time spent in other
@@ -406,7 +415,9 @@ TEST_P(TimerQueriesTest, TimeElapsedMulticontextTest)
     EXPECT_LT(0ul, result2);
     EXPECT_LT(result1, 1000000000ul);
     EXPECT_LT(result2, 1000000000ul);
-    EXPECT_LT(result1, result2);
+
+    // This check can never really be non-flaky. http://anglebug.com/5178
+    // EXPECT_LT(result1, result2);
 }
 
 // Tests GPU timestamp functionality

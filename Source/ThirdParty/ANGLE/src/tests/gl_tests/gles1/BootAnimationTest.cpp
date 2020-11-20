@@ -221,6 +221,9 @@ class BootAnimationTest : public ANGLETest
 
 TEST_P(BootAnimationTest, DefaultBootAnimation)
 {
+    // http://anglebug.com/5085
+    ANGLE_SKIP_TEST_IF(IsWindows() && IsNVIDIA() && IsVulkan());
+
     constexpr uint64_t kMaxIterationCount = 8;  // number of times we shift the shine textures
     constexpr int kStartingShinePosition  = kMaskBoundaryLeft - kShineWidth;
     constexpr int kEndingShinePosition    = kMaskBoundaryLeft;

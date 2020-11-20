@@ -29,7 +29,7 @@ Registry at
     <!-- SECTION: WGL type definitions. Does not include base Windows types. -->
 
     <types>
-            <!-- Dummy placeholders for Windows types -->
+                  <!-- Dummy placeholders for Windows types -->
         <type name="BOOL"/>
         <type name="CHAR"/>
         <type name="DWORD"/>

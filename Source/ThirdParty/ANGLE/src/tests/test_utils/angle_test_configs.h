@@ -227,11 +227,56 @@ inline PlatformParameters WithEmulateCopyTexImage2DFromRenderbuffers(
     return p;
 }
 
+inline PlatformParameters WithNoShaderStencilOutput(const PlatformParameters &params)
+{
+    PlatformParameters re                       = params;
+    re.eglParameters.shaderStencilOutputFeature = EGL_FALSE;
+    return re;
+}
+
+inline PlatformParameters WithNoGenMultipleMipsPerPass(const PlatformParameters &params)
+{
+    PlatformParameters re                          = params;
+    re.eglParameters.genMultipleMipsPerPassFeature = EGL_FALSE;
+    return re;
+}
+
+inline PlatformParameters WithMetalMemoryBarrierAndCheapRenderPass(const PlatformParameters &params,
+                                                                   bool hasBarrier,
+                                                                   bool cheapRenderPass)
+{
+    PlatformParameters re                            = params;
+    re.eglParameters.hasExplicitMemBarrierFeatureMtl = hasBarrier ? EGL_TRUE : EGL_FALSE;
+    re.eglParameters.hasCheapRenderPassFeatureMtl    = cheapRenderPass ? EGL_TRUE : EGL_FALSE;
+    return re;
+}
+
+inline PlatformParameters WithMetalForcedBufferGPUStorage(const PlatformParameters &params)
+{
+    PlatformParameters re                            = params;
+    re.eglParameters.forceBufferGPUStorageFeatureMtl = EGL_TRUE;
+    return re;
+}
+
 inline PlatformParameters WithRobustness(const PlatformParameters &params)
 {
     PlatformParameters withRobustness       = params;
     withRobustness.eglParameters.robustness = EGL_TRUE;
     return withRobustness;
+}
+
+inline PlatformParameters WithEmulatedPrerotation(const PlatformParameters &params, EGLint rotation)
+{
+    PlatformParameters prerotation                = params;
+    prerotation.eglParameters.emulatedPrerotation = rotation;
+    return prerotation;
+}
+
+inline PlatformParameters WithAsyncCommandQueueFeatureVulkan(const PlatformParameters &params)
+{
+    PlatformParameters withAsyncCommandQueue                           = params;
+    withAsyncCommandQueue.eglParameters.asyncCommandQueueFeatureVulkan = EGL_TRUE;
+    return withAsyncCommandQueue;
 }
 }  // namespace angle
 

@@ -124,13 +124,18 @@
 #            define ANGLE_PLATFORM_IOS_SIMULATOR 1
 #        endif
 #        if TARGET_OS_MACCATALYST
-#            define ANGLE_PLATFORM_MACCATALYST
+#            define ANGLE_PLATFORM_MACCATALYST 1
 #        endif
 #    endif
 #    // This might be useful globally. At the moment it is used
 #    // to differentiate MacCatalyst on Intel and Apple Silicon.
 #    if defined(__arm64__) || defined(__aarch64__)
-#        define ANGLE_CPU_ARM64
+#        define ANGLE_CPU_ARM64 1
+#    endif
+// EAGL should be enabled on iOS, but not Mac Catalyst unless it is running on Apple Silicon.
+#    if (defined(ANGLE_PLATFORM_IOS) && !defined(ANGLE_PLATFORM_MACCATALYST)) || \
+        (defined(ANGLE_PLATFORM_MACCATALYST) && defined(ANGLE_CPU_ARM64))
+#        define ANGLE_ENABLE_EAGL
 #    endif
 #endif
 

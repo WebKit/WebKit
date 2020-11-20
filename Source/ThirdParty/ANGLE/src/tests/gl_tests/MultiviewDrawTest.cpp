@@ -1225,7 +1225,7 @@ TEST_P(MultiviewRenderTest, DivisorOrderOfOperation)
 
     ANGLE_GL_PROGRAM(program, VS.c_str(), FS.c_str());
 
-    constexpr char kDummyVS[] =
+    constexpr char kStubVS[] =
         "#version 300 es\n"
         "layout(location = 0) in vec2 vPosition;\n"
         "layout(location = 1) in float offsetX;\n"
@@ -1234,7 +1234,7 @@ TEST_P(MultiviewRenderTest, DivisorOrderOfOperation)
         "       gl_Position = vec4(vPosition, 0.0, 1.0);\n"
         "}\n";
 
-    constexpr char kDummyFS[] =
+    constexpr char kStubFS[] =
         "#version 300 es\n"
         "precision mediump float;\n"
         "out vec4 col;\n"
@@ -1243,7 +1243,7 @@ TEST_P(MultiviewRenderTest, DivisorOrderOfOperation)
         "    col = vec4(0,0,0,1);\n"
         "}\n";
 
-    ANGLE_GL_PROGRAM(dummyProgram, kDummyVS, kDummyFS);
+    ANGLE_GL_PROGRAM(stubProgram, kStubVS, kStubFS);
 
     GLBuffer xOffsetVBO;
     glBindBuffer(GL_ARRAY_BUFFER, xOffsetVBO);
@@ -1280,7 +1280,7 @@ TEST_P(MultiviewRenderTest, DivisorOrderOfOperation)
     // Clear the buffers, propagate divisor to the driver, bind the vao and keep it active.
     // It is necessary to call draw, so that the divisor is propagated and to guarantee that dirty
     // bits are cleared.
-    glUseProgram(dummyProgram);
+    glUseProgram(stubProgram);
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glBindVertexArray(vao[0]);
@@ -1303,7 +1303,7 @@ TEST_P(MultiviewRenderTest, DivisorOrderOfOperation)
     // Clear the buffers and propagate divisor to the driver.
     // We keep the vao active and propagate the divisor to guarantee that there are no unresolved
     // dirty bits when useProgram is called.
-    glUseProgram(dummyProgram);
+    glUseProgram(stubProgram);
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glVertexAttribDivisor(1, 1);
@@ -1322,7 +1322,7 @@ TEST_P(MultiviewRenderTest, DivisorOrderOfOperation)
     EXPECT_EQ(GLColor::green, GetViewColor(0, 0, 1));
 
     // We go through similar steps as before.
-    glUseProgram(dummyProgram);
+    glUseProgram(stubProgram);
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glVertexAttribDivisor(1, 1);

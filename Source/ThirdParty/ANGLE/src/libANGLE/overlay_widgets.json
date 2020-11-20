@@ -30,6 +30,7 @@
     "widgets": [
         {
             "name": "FPS",
+            "comment": "Frames per second (Count/Second).",
             "type": "PerSecond",
             "color": [127, 191, 255, 255],
             "coords": [10, 10],
@@ -38,6 +39,7 @@
         },
         {
             "name": "VulkanLastValidationMessage",
+            "comment": "Last validation error (Text).",
             "type": "Text",
             "color": [255, 0, 0, 255],
             "coords": [10, -10],
@@ -46,6 +48,7 @@
         },
         {
             "name": "VulkanValidationMessageCount",
+            "comment": "Number of validation errors and warnings (Count).",
             "type": "Count",
             "color": [255, 0, 0, 255],
             "coords": [10, "VulkanLastValidationMessage.top.adjacent"],
@@ -54,6 +57,7 @@
         },
         {
             "name": "VulkanRenderPassCount",
+            "comment": "Number of RenderPasses in a frame (Count).",
             "type": "RunningGraph(60)",
             "color": [75, 200, 0, 200],
             "coords": [10, 100],
@@ -67,7 +71,24 @@
             }
         },
         {
+            "name": "VulkanRenderPassBufferCount",
+            "comment": "Number of buffers used in RenderPasses (Count).",
+            "type": "RunningHistogram(100)",
+            "color": [255, 200, 75, 200],
+            "coords": [-50, 100],
+            "bar_width": 6,
+            "height": 100,
+            "description": {
+                "color": [255, 200, 75, 255],
+                "coords": ["VulkanRenderPassBufferCount.left.align",
+                           "VulkanRenderPassBufferCount.top.adjacent"],
+                "font": "small",
+                "length": 40
+            }
+        },
+        {
             "name": "VulkanSecondaryCommandBufferPoolWaste",
+            "comment": "Secondary Command Buffer pool memory waste (Bytes).",
             "type": "RunningHistogram(50)",
             "color": [255, 200, 75, 200],
             "coords": [-50, 100],
@@ -77,6 +98,37 @@
                 "color": [255, 200, 75, 255],
                 "coords": ["VulkanSecondaryCommandBufferPoolWaste.left.align",
                            "VulkanSecondaryCommandBufferPoolWaste.top.adjacent"],
+                "font": "small",
+                "length": 40
+            }
+        },
+        {
+            "name": "VulkanWriteDescriptorSetCount",
+            "comment": "Number of Descriptor Set writes in a frame (Count).",
+            "type": "RunningGraph(60)",
+            "color": [75, 200, 0, 200],
+            "coords": [10, 220],
+            "bar_width": 5,
+            "height": 100,
+            "description": {
+                "color": [75, 200, 0, 255],
+                "coords": ["VulkanWriteDescriptorSetCount.left.align", "VulkanWriteDescriptorSetCount.top.adjacent"],
+                "font": "small",
+                "length": 40
+            }
+        },
+        {
+            "name": "VulkanDescriptorSetAllocations",
+            "comment": "Descriptor Set Allocations.",
+            "type": "RunningGraph(60)",
+            "color": [255, 0, 75, 200],
+            "coords": [-50, 250],
+            "bar_width": 6,
+            "height": 100,
+            "description": {
+                "color": [255, 0, 75, 255],
+                "coords": ["VulkanDescriptorSetAllocations.left.align",
+                           "VulkanDescriptorSetAllocations.top.adjacent"],
                 "font": "small",
                 "length": 40
             }

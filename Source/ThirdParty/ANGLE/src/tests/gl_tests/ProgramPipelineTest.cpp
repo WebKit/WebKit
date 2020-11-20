@@ -60,9 +60,9 @@ class ProgramPipelineTest31 : public ProgramPipelineTest
     }
 
     void bindProgramPipeline(const GLchar *vertString, const GLchar *fragString);
-    void drawQuad(const std::string &positionAttribName,
-                  const GLfloat positionAttribZ,
-                  const GLfloat positionAttribXYScale);
+    void drawQuadWithPPO(const std::string &positionAttribName,
+                         const GLfloat positionAttribZ,
+                         const GLfloat positionAttribXYScale);
 
     GLuint mVertProg;
     GLuint mFragProg;
@@ -180,9 +180,9 @@ GLuint createShaderProgram(GLenum type, const GLchar *shaderString)
     return program;
 }
 
-void ProgramPipelineTest31::drawQuad(const std::string &positionAttribName,
-                                     const GLfloat positionAttribZ,
-                                     const GLfloat positionAttribXYScale)
+void ProgramPipelineTest31::drawQuadWithPPO(const std::string &positionAttribName,
+                                            const GLfloat positionAttribZ,
+                                            const GLfloat positionAttribXYScale)
 {
     glUseProgram(0);
 
@@ -233,7 +233,7 @@ TEST_P(ProgramPipelineTest31, UseProgramStages)
     glBindProgramPipeline(pipeline);
     EXPECT_GL_NO_ERROR();
 
-    ProgramPipelineTest31::drawQuad("a_position", 0.5f, 1.0f);
+    drawQuadWithPPO("a_position", 0.5f, 1.0f);
     ASSERT_GL_NO_ERROR();
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
 }
@@ -250,7 +250,7 @@ TEST_P(ProgramPipelineTest31, UseCreateShaderProgramv)
 
     bindProgramPipeline(vertString, fragString);
 
-    ProgramPipelineTest31::drawQuad("a_position", 0.5f, 1.0f);
+    drawQuadWithPPO("a_position", 0.5f, 1.0f);
     ASSERT_GL_NO_ERROR();
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
 }
@@ -283,14 +283,14 @@ void main()
     glActiveShaderProgram(mPipeline, mFragProg);
     glUniform1f(location, 1.0);
 
-    ProgramPipelineTest31::drawQuad("a_position", 0.5f, 1.0f);
+    drawQuadWithPPO("a_position", 0.5f, 1.0f);
     ASSERT_GL_NO_ERROR();
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::yellow);
 
     glClearColor(0.0, 0.0, 0.0, 0.0);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    ProgramPipelineTest31::drawQuad("a_position", 0.5f, 1.0f);
+    drawQuadWithPPO("a_position", 0.5f, 1.0f);
     ASSERT_GL_NO_ERROR();
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::yellow);
 
@@ -305,7 +305,7 @@ void main()
     glActiveShaderProgram(mPipeline, mFragProg);
     glUniform1f(location, 0.0);
 
-    ProgramPipelineTest31::drawQuad("a_position", 0.5f, 1.0f);
+    drawQuadWithPPO("a_position", 0.5f, 1.0f);
     ASSERT_GL_NO_ERROR();
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
 
@@ -332,7 +332,7 @@ void main()
 
     bindProgramPipeline(vertString, fragString);
 
-    ProgramPipelineTest31::drawQuad("a_position", 0.5f, 1.0f);
+    drawQuadWithPPO("a_position", 0.5f, 1.0f);
     ASSERT_GL_NO_ERROR();
 
     int w = getWindowWidth() - 2;
@@ -380,7 +380,7 @@ void main()
 
     bindProgramPipeline(vertString, fragString);
 
-    ProgramPipelineTest31::drawQuad("a_position", 0.5f, 1.0f);
+    drawQuadWithPPO("a_position", 0.5f, 1.0f);
     ASSERT_GL_NO_ERROR();
 
     int w = getWindowWidth() - 2;
@@ -433,7 +433,7 @@ TEST_P(ProgramPipelineTest31, DetachAndModifyShader)
     EXPECT_GL_NO_ERROR();
 
     // Draw once to ensure this worked fine
-    ProgramPipelineTest31::drawQuad("a_position", 0.5f, 1.0f);
+    drawQuadWithPPO("a_position", 0.5f, 1.0f);
     ASSERT_GL_NO_ERROR();
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 
@@ -455,7 +455,7 @@ void main()
     // Link and draw with the program again, which should be fine since the shader was detached
     glLinkProgram(mFragProg);
 
-    ProgramPipelineTest31::drawQuad("a_position", 0.5f, 1.0f);
+    drawQuadWithPPO("a_position", 0.5f, 1.0f);
     ASSERT_GL_NO_ERROR();
 }
 
@@ -515,7 +515,7 @@ void main()
 
     // Create a pipeline that uses the bad combination.  This should fail to link the pipeline.
     bindProgramPipeline(vertString, fragString);
-    ProgramPipelineTest31::drawQuad("a_position", 0.5f, 1.0f);
+    drawQuadWithPPO("a_position", 0.5f, 1.0f);
     ASSERT_GL_ERROR(GL_INVALID_OPERATION);
 
     // Update the fragment shader to correctly use 2D texture
@@ -532,8 +532,47 @@ void main()
 
     // Bind the pipeline again, which should succeed.
     bindProgramPipeline(vertString, fragString2);
-    ProgramPipelineTest31::drawQuad("a_position", 0.5f, 1.0f);
+    drawQuadWithPPO("a_position", 0.5f, 1.0f);
     ASSERT_GL_NO_ERROR();
+}
+
+// Tests that we receive a PPO link validation error when attempting to draw with the bad PPO
+TEST_P(ProgramPipelineTest31, VerifyPpoLinkErrorSignalledCorrectly)
+{
+    // Create pipeline that should fail link
+    // Bind program
+    // Draw
+    // Unbind program
+    // Draw  <<--- expect a link validation error here
+
+    // Only the Vulkan backend supports PPOs
+    ANGLE_SKIP_TEST_IF(!IsVulkan());
+
+    // Create two separable program objects from a
+    // single source string respectively (vertSrc and fragSrc)
+    const GLchar *vertString = essl31_shaders::vs::Simple();
+    const GLchar *fragString = essl31_shaders::fs::Red();
+    // Create a fragment shader that takes a color input
+    // This should cause the PPO link to fail, since the varyings don't match (no output from VS).
+    const GLchar *fragStringBad = R"(#version 310 es
+precision highp float;
+layout(location = 0) in vec4 colorIn;
+out vec4 my_FragColor;
+void main()
+{
+    my_FragColor = colorIn;
+})";
+    bindProgramPipeline(vertString, fragStringBad);
+
+    ANGLE_GL_PROGRAM(program, vertString, fragString);
+    drawQuad(program.get(), essl1_shaders::PositionAttrib(), 0.0f, 1.0f, true);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+
+    // Draw with the PPO, which should generate an error due to the link failure.
+    glUseProgram(0);
+    ASSERT_GL_NO_ERROR();
+    drawQuadWithPPO(essl1_shaders::PositionAttrib(), 0.5f, 1.0f);
+    ASSERT_GL_ERROR(GL_INVALID_OPERATION);
 }
 
 ANGLE_INSTANTIATE_TEST_ES3_AND_ES31(ProgramPipelineTest);

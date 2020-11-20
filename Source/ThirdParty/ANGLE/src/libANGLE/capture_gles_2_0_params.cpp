@@ -548,7 +548,8 @@ void CaptureGetUniformfv_params(const State &glState,
                                 GLfloat *params,
                                 ParamCapture *paramCapture)
 {
-    UNIMPLEMENTED();
+    // the value returned cannot have size larger than a mat4 of floats
+    paramCapture->readBufferSizeBytes = 64;
 }
 
 void CaptureGetUniformiv_params(const State &glState,
@@ -558,7 +559,8 @@ void CaptureGetUniformiv_params(const State &glState,
                                 GLint *params,
                                 ParamCapture *paramCapture)
 {
-    UNIMPLEMENTED();
+    // the value returned cannot have size larger than a mat4 of ints
+    paramCapture->readBufferSizeBytes = 64;
 }
 
 void CaptureGetVertexAttribPointerv_pointer(const State &glState,
@@ -604,6 +606,12 @@ void CaptureReadPixels_pixels(const State &glState,
                               void *pixels,
                               ParamCapture *paramCapture)
 {
+    if (glState.getTargetBuffer(gl::BufferBinding::PixelPack))
+    {
+        // If a pixel pack buffer is bound, this is an offset, not a pointer
+        paramCapture->value.voidPointerVal = pixels;
+        return;
+    }
     // Use a conservative upper bound instead of an exact size to be simple.
     static constexpr GLsizei kMaxPixelSize = 32;
     paramCapture->readBufferSizeBytes      = kMaxPixelSize * width * height;
@@ -662,10 +670,7 @@ void CaptureShaderSource_length(const State &glState,
     if (!length)
         return;
 
-    for (GLsizei index = 0; index < count; ++index)
-    {
-        CaptureMemory(&length[index], sizeof(GLint), paramCapture);
-    }
+    CaptureMemory(length, count * sizeof(GLint), paramCapture);
 }
 
 void CaptureTexImage2D_pixels(const State &glState,

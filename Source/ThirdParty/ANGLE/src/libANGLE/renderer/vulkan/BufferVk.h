@@ -48,6 +48,12 @@ class BufferVk : public BufferImpl
     ~BufferVk() override;
     void destroy(const gl::Context *context) override;
 
+    angle::Result setDataWithUsageFlags(const gl::Context *context,
+                                        gl::BufferBinding target,
+                                        const void *data,
+                                        size_t size,
+                                        gl::BufferUsage usage,
+                                        GLbitfield flags) override;
     angle::Result setData(const gl::Context *context,
                           gl::BufferBinding target,
                           const void *data,
@@ -148,6 +154,12 @@ class BufferVk : public BufferImpl
                                    const uint8_t *data,
                                    size_t size,
                                    size_t offset);
+    angle::Result setDataWithMemoryType(const gl::Context *context,
+                                        gl::BufferBinding target,
+                                        const void *data,
+                                        size_t size,
+                                        VkMemoryPropertyFlags memoryPropertyFlags,
+                                        bool persistentMapRequired);
     angle::Result setDataImpl(ContextVk *contextVk,
                               const uint8_t *data,
                               size_t size,

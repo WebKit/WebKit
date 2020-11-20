@@ -4,6 +4,7 @@
 #
 # This file houses the build configuration for the ANGLE Vulkan back-end.
 
+import("//build/config/dcheck_always_on.gni")
 import("//build_overrides/swiftshader.gni")
 import("../../../../gni/angle.gni")
 
@@ -26,6 +27,8 @@ _vulkan_backend_sources = [
   "CompilerVk.h",
   "ContextVk.cpp",
   "ContextVk.h",
+  "DebugAnnotatorVk.cpp",
+  "DebugAnnotatorVk.h",
   "DeviceVk.cpp",
   "DeviceVk.h",
   "DisplayVk.cpp",
@@ -98,6 +101,15 @@ _vulkan_backend_sources = [
   "vk_wrapper.h",
 ]
 
+if (is_linux) {
+  _vulkan_backend_sources += [
+    "display/DisplayVkSimple.cpp",
+    "display/DisplayVkSimple.h",
+    "display/WindowSurfaceVkSimple.cpp",
+    "display/WindowSurfaceVkSimple.h",
+  ]
+}
+
 if (is_android) {
   _vulkan_backend_sources += [
     "android/DisplayVkAndroid.cpp",
@@ -167,6 +179,9 @@ config("angle_vulkan_backend_config") {
   if (angle_enable_vulkan_gpu_trace_events) {
     defines += [ "ANGLE_ENABLE_VULKAN_GPU_TRACE_EVENTS=1" ]
   }
+  if (angle_enable_vulkan_validation_layers) {
+    defines += [ "ANGLE_ENABLE_VULKAN_VALIDATION_LAYERS" ]
+  }
 }
 
 angle_source_set("angle_vk_mem_alloc_wrapper") {
@@ -174,6 +189,7 @@ angle_source_set("angle_vk_mem_alloc_wrapper") {
     "$angle_root/src/common/vulkan:angle_vulkan_headers",
     "$angle_vulkan_memory_allocator_dir",
   ]
+  configs += [ "$angle_root:angle_no_cfi_unrelated_cast" ]
   sources = [
     "vk_mem_alloc_wrapper.cpp",
     "vk_mem_alloc_wrapper.h",
@@ -183,6 +199,8 @@ angle_source_set("angle_vk_mem_alloc_wrapper") {
     cflags_cc = [
       "-Wno-extra-semi-stmt",
       "-Wno-missing-field-initializers",
+      "-Wno-suggest-destructor-override",
+      "-Wno-suggest-override",
     ]
   }
 }
@@ -192,11 +210,16 @@ angle_source_set("angle_vulkan_backend") {
   libs = []
   deps = [
     ":angle_vk_mem_alloc_wrapper",
+    "$angle_root:angle_abseil",
     "$angle_root:angle_compression",
     "$angle_root:angle_gpu_info_util",
     "$angle_root:angle_image_util",
-    "$angle_spirv_tools_dir:spvtools_val",
   ]
+
+  if (dcheck_always_on || is_debug) {
+    deps += [ "$angle_spirv_tools_dir:spvtools_val" ]
+  }
+
   public_deps = [
     "$angle_root:angle_glslang_wrapper",
     "$angle_root:libANGLE_headers",

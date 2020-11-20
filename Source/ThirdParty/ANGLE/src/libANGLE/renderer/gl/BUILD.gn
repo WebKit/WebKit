@@ -1,0 +1,251 @@
+# Copyright 2020 The ANGLE Project Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+#
+# This file houses the build configuration for the ANGLE GL back-ends.
+
+import("../../../../gni/angle.gni")
+
+if (angle_has_build && ozone_platform_gbm) {
+  import("//build/config/linux/pkg_config.gni")
+}
+
+assert(angle_enable_gl)
+
+declare_args() {
+  angle_enable_gl_null = true
+}
+
+_gl_backend_sources = [
+  "BlitGL.cpp",
+  "BlitGL.h",
+  "BufferGL.cpp",
+  "BufferGL.h",
+  "ClearMultiviewGL.cpp",
+  "ClearMultiviewGL.h",
+  "CompilerGL.cpp",
+  "CompilerGL.h",
+  "ContextGL.cpp",
+  "ContextGL.h",
+  "DispatchTableGL_autogen.cpp",
+  "DispatchTableGL_autogen.h",
+  "DisplayGL.cpp",
+  "DisplayGL.h",
+  "FenceNVGL.cpp",
+  "FenceNVGL.h",
+  "FramebufferGL.cpp",
+  "FramebufferGL.h",
+  "FunctionsGL.cpp",
+  "FunctionsGL.h",
+  "ImageGL.cpp",
+  "ImageGL.h",
+  "MemoryObjectGL.cpp",
+  "MemoryObjectGL.h",
+  "ProgramGL.cpp",
+  "ProgramGL.h",
+  "ProgramPipelineGL.cpp",
+  "ProgramPipelineGL.h",
+  "QueryGL.cpp",
+  "QueryGL.h",
+  "RenderbufferGL.cpp",
+  "RenderbufferGL.h",
+  "RendererGL.cpp",
+  "RendererGL.h",
+  "SamplerGL.cpp",
+  "SamplerGL.h",
+  "SemaphoreGL.cpp",
+  "SemaphoreGL.h",
+  "ShaderGL.cpp",
+  "ShaderGL.h",
+  "StateManagerGL.cpp",
+  "StateManagerGL.h",
+  "SurfaceGL.cpp",
+  "SurfaceGL.h",
+  "SyncGL.cpp",
+  "SyncGL.h",
+  "TextureGL.cpp",
+  "TextureGL.h",
+  "TransformFeedbackGL.cpp",
+  "TransformFeedbackGL.h",
+  "VertexArrayGL.cpp",
+  "VertexArrayGL.h",
+  "formatutilsgl.cpp",
+  "formatutilsgl.h",
+  "functionsgl_enums.h",
+  "functionsgl_typedefs.h",
+  "renderergl_utils.cpp",
+  "renderergl_utils.h",
+]
+
+if (is_win) {
+  _gl_backend_sources += [
+    "../../../third_party/khronos/GL/wglext.h",
+    "wgl/ContextWGL.cpp",
+    "wgl/ContextWGL.h",
+    "wgl/D3DTextureSurfaceWGL.cpp",
+    "wgl/D3DTextureSurfaceWGL.h",
+    "wgl/DXGISwapChainWindowSurfaceWGL.cpp",
+    "wgl/DXGISwapChainWindowSurfaceWGL.h",
+    "wgl/DisplayWGL.cpp",
+    "wgl/DisplayWGL.h",
+    "wgl/FunctionsWGL.cpp",
+    "wgl/FunctionsWGL.h",
+    "wgl/PbufferSurfaceWGL.cpp",
+    "wgl/PbufferSurfaceWGL.h",
+    "wgl/RendererWGL.cpp",
+    "wgl/RendererWGL.h",
+    "wgl/SurfaceWGL.h",
+    "wgl/WindowSurfaceWGL.cpp",
+    "wgl/WindowSurfaceWGL.h",
+    "wgl/functionswgl_typedefs.h",
+    "wgl/wgl_utils.cpp",
+    "wgl/wgl_utils.h",
+  ]
+}
+
+if (angle_use_x11) {
+  _gl_backend_sources += [
+    "glx/DisplayGLX.cpp",
+    "glx/DisplayGLX.h",
+    "glx/FunctionsGLX.cpp",
+    "glx/FunctionsGLX.h",
+    "glx/PbufferSurfaceGLX.cpp",
+    "glx/PbufferSurfaceGLX.h",
+    "glx/PixmapSurfaceGLX.cpp",
+    "glx/PixmapSurfaceGLX.h",
+    "glx/RendererGLX.cpp",
+    "glx/RendererGLX.h",
+    "glx/SurfaceGLX.h",
+    "glx/WindowSurfaceGLX.cpp",
+    "glx/WindowSurfaceGLX.h",
+    "glx/functionsglx_typedefs.h",
+    "glx/glx_utils.cpp",
+    "glx/glx_utils.h",
+    "glx/platform_glx.h",
+  ]
+}
+
+if (is_android || is_linux || is_chromeos) {
+  _gl_backend_sources += [
+    "egl/ContextEGL.cpp",
+    "egl/ContextEGL.h",
+    "egl/DisplayEGL.cpp",
+    "egl/DisplayEGL.h",
+    "egl/DmaBufImageSiblingEGL.cpp",
+    "egl/DmaBufImageSiblingEGL.h",
+    "egl/ExternalImageSiblingEGL.h",
+    "egl/FunctionsEGL.cpp",
+    "egl/FunctionsEGL.h",
+    "egl/FunctionsEGLDL.cpp",
+    "egl/FunctionsEGLDL.h",
+    "egl/ImageEGL.cpp",
+    "egl/ImageEGL.h",
+    "egl/PbufferSurfaceEGL.cpp",
+    "egl/PbufferSurfaceEGL.h",
+    "egl/RendererEGL.cpp",
+    "egl/RendererEGL.h",
+    "egl/SurfaceEGL.cpp",
+    "egl/SurfaceEGL.h",
+    "egl/SyncEGL.cpp",
+    "egl/SyncEGL.h",
+    "egl/WindowSurfaceEGL.cpp",
+    "egl/WindowSurfaceEGL.h",
+    "egl/egl_utils.cpp",
+    "egl/egl_utils.h",
+    "egl/functionsegl_typedefs.h",
+  ]
+}
+
+if (ozone_platform_gbm) {
+  _gl_backend_sources += [
+    "egl/gbm/DisplayGbm.cpp",
+    "egl/gbm/DisplayGbm.h",
+    "egl/gbm/SurfaceGbm.cpp",
+    "egl/gbm/SurfaceGbm.h",
+  ]
+
+  pkg_config("libdrm") {
+    packages = [ "libdrm" ]
+  }
+}
+
+if (is_android) {
+  _gl_backend_sources += [
+    "egl/android/DisplayAndroid.cpp",
+    "egl/android/DisplayAndroid.h",
+    "egl/android/NativeBufferImageSiblingAndroid.cpp",
+    "egl/android/NativeBufferImageSiblingAndroid.h",
+  ]
+}
+
+if (is_mac) {
+  _gl_backend_sources += [
+    "cgl/ContextCGL.cpp",
+    "cgl/ContextCGL.h",
+    "cgl/DeviceCGL.cpp",
+    "cgl/DeviceCGL.h",
+    "cgl/DisplayCGL.h",
+    "cgl/DisplayCGL.mm",
+    "cgl/IOSurfaceSurfaceCGL.cpp",
+    "cgl/IOSurfaceSurfaceCGL.h",
+    "cgl/PbufferSurfaceCGL.cpp",
+    "cgl/PbufferSurfaceCGL.h",
+    "cgl/RendererCGL.cpp",
+    "cgl/RendererCGL.h",
+    "cgl/WindowSurfaceCGL.h",
+    "cgl/WindowSurfaceCGL.mm",
+  ]
+}
+
+if (angle_enable_gl_null) {
+  _gl_backend_sources += [
+    "null_functions.cpp",
+    "null_functions.h",
+  ]
+}
+
+config("angle_gl_backend_config") {
+  defines = [ "ANGLE_ENABLE_OPENGL" ]
+  if (angle_enable_gl_null) {
+    defines += [ "ANGLE_ENABLE_OPENGL_NULL" ]
+  }
+  include_dirs = [ "../../../third_party/khronos" ]
+}
+
+angle_source_set("angle_gl_backend") {
+  sources = _gl_backend_sources
+
+  public_configs = [ ":angle_gl_backend_config" ]
+  public_deps = [ "$angle_root:libANGLE_headers" ]
+  defines = []
+
+  deps = [
+    "$angle_root:angle_gpu_info_util",
+    "$angle_root:angle_image_util",
+  ]
+
+  if (is_win) {
+    deps += [ "$angle_root:angle_d3d_format_tables" ]
+  }
+
+  if (angle_use_x11) {
+    libs = [
+      "X11",
+      "Xi",
+      "Xext",
+    ]
+  }
+  if (is_mac) {
+    frameworks = [
+      "Cocoa.framework",
+      "IOSurface.framework",
+      "OpenGL.framework",
+      "QuartzCore.framework",
+    ]
+  }
+  if (ozone_platform_gbm) {
+    configs += [ ":libdrm" ]
+    defines += [ "ANGLE_USE_GBM" ]
+    deps += [ "//third_party/minigbm" ]
+  }
+}

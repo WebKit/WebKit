@@ -235,7 +235,7 @@ class SubjectBindingPointer : protected BindingPointer<SubjectT>, public angle::
     SubjectBindingPointer(angle::ObserverInterface *observer, angle::SubjectIndex index)
         : ObserverBindingBase(observer, index)
     {}
-    ~SubjectBindingPointer() {}
+    ~SubjectBindingPointer() override {}
     SubjectBindingPointer(const SubjectBindingPointer &other) = default;
     SubjectBindingPointer &operator=(const SubjectBindingPointer &other) = default;
 

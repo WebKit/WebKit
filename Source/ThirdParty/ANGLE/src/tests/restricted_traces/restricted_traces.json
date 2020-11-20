@@ -1,0 +1,30 @@
+{
+  "description": [
+    "Copyright 2020 The ANGLE Project Authors. All rights reserved.",
+    "Use of this source code is governed by a BSD-style license that can be",
+    "found in the LICENSE file.",
+    "",
+    "restricted_traces.json: List of restricted trace tests in ANGLE."
+  ],
+  "traces": [
+    "angry_birds_2_1500",
+    "arena_of_valor",
+    "brawl_stars",
+    "candy_crush_500",
+    "clash_of_clans",
+    "cod_mobile",
+    "dragon_ball_legends",
+    "egypt_1500",
+    "fate_grand_order",
+    "free_fire",
+    "kartrider_rush",
+    "manhattan_10",
+    "marvel_contest_of_champions",
+    "mobile_legends",
+    "nba2k20_800",
+    "pubg_mobile_lite",
+    "temple_run_300",
+    "trex_200",
+    "world_of_tanks_blitz"
+  ]
+}

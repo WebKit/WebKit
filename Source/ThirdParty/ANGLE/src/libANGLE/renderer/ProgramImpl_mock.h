@@ -32,7 +32,11 @@ class MockProgramImpl : public rx::ProgramImpl
     MOCK_METHOD3(link,
                  std::unique_ptr<LinkEvent>(const gl::Context *,
                                             const gl::ProgramLinkedResources &,
-                                            gl::InfoLog &));
+                                            gl::InfoLog &))
+    std::unique_ptr<LinkEvent> link(const gl::Context *gmock_a0,
+                                    const gl::ProgramLinkedResources &gmock_a1,
+                                    gl::InfoLog &gmock_a2,
+                                    const gl::ProgramMergedVaryings &mergedVaryings);
     MOCK_METHOD2(validate, GLboolean(const gl::Caps &, gl::InfoLog *));
 
     MOCK_METHOD3(setUniform1fv, void(GLint, GLsizei, const GLfloat *));

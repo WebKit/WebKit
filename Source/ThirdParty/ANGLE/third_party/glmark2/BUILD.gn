@@ -111,7 +111,7 @@ source_set("glmark2_headers") {
     "src/src/texture.h",
   ]
 
-  if (is_linux) {
+  if (is_linux || is_chromeos) {
     sources += [ "src/src/gl-state-glx.h" ]
   }
   if (is_win) {
@@ -346,7 +346,7 @@ template("glmark2_exe") {
         "src/src/native-state-win32.h",
       ]
     }
-    if (is_linux) {
+    if (is_linux || is_chromeos) {
       defines += [ "GLMARK2_USE_X11" ]
       sources += [
         "src/src/native-state-x11.cpp",
@@ -370,13 +370,13 @@ glmark2_exe("glmark2_angle") {
     "GLMARK2_USE_EGL",
   ]
 
-  if (is_linux && !is_component_build) {
+  if ((is_linux || is_chromeos) && !is_component_build) {
     # Set rpath to find shared libs in a non-component build.
     public_configs = [ "//build/config/gcc:rpath_for_built_shared_libraries" ]
   }
 }
 
-if (is_linux) {
+if (is_linux || is_chromeos) {
   glmark2_exe("glmark2_glx") {
     sources = [
       "src/src/gl-state-glx.cpp",

@@ -6,6 +6,9 @@
 
 config("rapidjson_config") {
   include_dirs = [ "src/include" ]
+
+  # Enable std::string functionality.
+  defines = [ "RAPIDJSON_HAS_STDSTRING" ]
 }
 
 source_set("rapidjson") {

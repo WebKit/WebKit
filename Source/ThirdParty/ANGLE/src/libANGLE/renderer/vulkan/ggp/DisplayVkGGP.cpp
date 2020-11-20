@@ -35,10 +35,7 @@ egl::ConfigSet DisplayVkGGP::generateConfigs()
     return egl_vk::GenerateConfigs(kColorFormats, egl_vk::kConfigDepthStencilFormats, this);
 }
 
-bool DisplayVkGGP::checkConfigSupport(egl::Config *config)
-{
-    return true;
-}
+void DisplayVkGGP::checkConfigSupport(egl::Config *config) {}
 
 const char *DisplayVkGGP::getWSIExtension() const
 {

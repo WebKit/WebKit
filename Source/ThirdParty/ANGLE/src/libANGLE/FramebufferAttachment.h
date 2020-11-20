@@ -15,6 +15,7 @@
 #include "libANGLE/Error.h"
 #include "libANGLE/ImageIndex.h"
 #include "libANGLE/Observer.h"
+#include "libANGLE/angletypes.h"
 #include "libANGLE/formatutils.h"
 #include "libANGLE/renderer/FramebufferAttachmentObjectImpl.h"
 
@@ -43,12 +44,6 @@ class FramebufferAttachmentObject;
 class Renderbuffer;
 class Texture;
 
-enum class InitState
-{
-    MayNeedInit,
-    Initialized,
-};
-
 // FramebufferAttachment implements a GL framebuffer attachment.
 // Attachments are "light" containers, which store pointers to ref-counted GL objects.
 // We support GL texture (2D/3D/Cube/2D array) and renderbuffer object attachments.
@@ -64,14 +59,15 @@ class FramebufferAttachment final
                           GLenum type,
                           GLenum binding,
                           const ImageIndex &textureIndex,
-                          FramebufferAttachmentObject *resource);
+                          FramebufferAttachmentObject *resource,
+                          rx::Serial framebufferSerial);
 
     FramebufferAttachment(FramebufferAttachment &&other);
     FramebufferAttachment &operator=(FramebufferAttachment &&other);
 
     ~FramebufferAttachment();
 
-    void detach(const Context *context);
+    void detach(const Context *context, rx::Serial framebufferSerial);
     void attach(const Context *context,
                 GLenum type,
                 GLenum binding,
@@ -80,7 +76,8 @@ class FramebufferAttachment final
                 GLsizei numViews,
                 GLuint baseViewIndex,
                 bool isMultiview,
-                GLsizei samples);
+                GLsizei samples,
+                rx::Serial framebufferSerial);
 
     // Helper methods
     GLuint getRedSize() const;
@@ -91,8 +88,6 @@ class FramebufferAttachment final
     GLuint getStencilSize() const;
     GLenum getComponentType() const;
     GLenum getColorEncoding() const;
-
-    bool isBoundAsSamplerOrImage(ContextID contextID) const;
 
     bool isTextureWithId(TextureID textureId) const
     {
@@ -208,9 +203,9 @@ class FramebufferAttachmentObject : public angle::Subject, public angle::Observe
                               GLenum binding,
                               const ImageIndex &imageIndex) const                          = 0;
 
-    virtual void onAttach(const Context *context) = 0;
-    virtual void onDetach(const Context *context) = 0;
-    virtual GLuint getId() const                  = 0;
+    virtual void onAttach(const Context *context, rx::Serial framebufferSerial) = 0;
+    virtual void onDetach(const Context *context, rx::Serial framebufferSerial) = 0;
+    virtual GLuint getId() const                                                = 0;
 
     // These are used for robust resource initialization.
     virtual InitState initState(const ImageIndex &imageIndex) const              = 0;

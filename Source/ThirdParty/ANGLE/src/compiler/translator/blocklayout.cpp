@@ -125,9 +125,9 @@ void TraverseArrayOfArraysVariable(const ShaderVariable &variable,
         }
         else
         {
-            if (gl::IsSamplerType(variable.type))
+            if (gl::IsSamplerType(variable.type) || gl::IsImageType(variable.type))
             {
-                visitor->visitSampler(elementVar);
+                visitor->visitSamplerOrImage(elementVar);
             }
             else
             {
@@ -228,12 +228,12 @@ void BlockLayoutEncoder::align(size_t baseAlignment)
     mCurrentOffset = rx::roundUp<size_t>(mCurrentOffset, baseAlignment);
 }
 
-// DummyBlockEncoder implementation.
-void DummyBlockEncoder::getBlockLayoutInfo(GLenum type,
-                                           const std::vector<unsigned int> &arraySizes,
-                                           bool isRowMajorMatrix,
-                                           int *arrayStrideOut,
-                                           int *matrixStrideOut)
+// StubBlockEncoder implementation.
+void StubBlockEncoder::getBlockLayoutInfo(GLenum type,
+                                          const std::vector<unsigned int> &arraySizes,
+                                          bool isRowMajorMatrix,
+                                          int *arrayStrideOut,
+                                          int *matrixStrideOut)
 {
     *arrayStrideOut  = 0;
     *matrixStrideOut = 0;
@@ -455,24 +455,24 @@ std::string VariableNameVisitor::collapseMappedNameStack() const
     return CollapseNameStack(mMappedNameStack);
 }
 
-void VariableNameVisitor::visitSampler(const sh::ShaderVariable &sampler)
+void VariableNameVisitor::visitSamplerOrImage(const sh::ShaderVariable &variable)
 {
-    if (!sampler.hasParentArrayIndex())
+    if (!variable.hasParentArrayIndex())
     {
-        mNameStack.push_back(sampler.name);
-        mMappedNameStack.push_back(sampler.mappedName);
+        mNameStack.push_back(variable.name);
+        mMappedNameStack.push_back(variable.mappedName);
     }
 
     std::string name       = collapseNameStack();
     std::string mappedName = collapseMappedNameStack();
 
-    if (!sampler.hasParentArrayIndex())
+    if (!variable.hasParentArrayIndex())
     {
         mNameStack.pop_back();
         mMappedNameStack.pop_back();
     }
 
-    visitNamedSampler(sampler, name, mappedName, mArraySizeStack);
+    visitNamedSamplerOrImage(variable, name, mappedName, mArraySizeStack);
 }
 
 void VariableNameVisitor::visitVariable(const ShaderVariable &variable, bool isRowMajor)
@@ -610,9 +610,9 @@ void TraverseShaderVariable(const ShaderVariable &variable,
     {
         TraverseArrayOfArraysVariable(variable, 0u, isRowMajor, visitor);
     }
-    else if (gl::IsSamplerType(variable.type))
+    else if (gl::IsSamplerType(variable.type) || gl::IsImageType(variable.type))
     {
-        visitor->visitSampler(variable);
+        visitor->visitSamplerOrImage(variable);
     }
     else
     {

@@ -60,7 +60,7 @@ def _CheckCommitMessageFormatting(input_api, output_api):
     def _CheckTabInCommit(lines):
         return all([line.find("\t") == -1 for line in lines])
 
-    whitelist_strings = ['Revert "', 'Roll ', 'Reland ']
+    allowlist_strings = ['Revert "', 'Roll ', 'Reland ', 'Re-land ']
     summary_linelength_warning_lower_limit = 65
     summary_linelength_warning_upper_limit = 70
     description_linelength_limit = 72
@@ -79,13 +79,13 @@ def _CheckCommitMessageFormatting(input_api, output_api):
             commit_msg_line_numbers[commit_msg_lines[i]] = i + 1
         _PopBlankLines(commit_msg_lines, True)
         _PopBlankLines(commit_msg_lines, False)
-        whitelisted = False
+        allowlisted = False
         if len(commit_msg_lines) > 0:
-            for whitelist_string in whitelist_strings:
-                if commit_msg_lines[0].startswith(whitelist_string):
-                    whitelisted = True
+            for allowlist_string in allowlist_strings:
+                if commit_msg_lines[0].startswith(allowlist_string):
+                    allowlisted = True
                     break
-        if whitelisted:
+        if allowlisted:
             continue
 
         if not _CheckTabInCommit(commit_msg_lines):
@@ -252,7 +252,7 @@ def _CheckNewHeaderWithoutGnChange(input_api, output_api):
   """
 
     def headers(f):
-        return input_api.FilterSourceFile(f, white_list=(r'.+%s' % _HEADER_EXTENSIONS,))
+        return input_api.FilterSourceFile(f, files_to_check=(r'.+%s' % _HEADER_EXTENSIONS,))
 
     new_headers = []
     for f in input_api.AffectedSourceFiles(headers):
@@ -261,7 +261,7 @@ def _CheckNewHeaderWithoutGnChange(input_api, output_api):
         new_headers.append(f.LocalPath())
 
     def gn_files(f):
-        return input_api.FilterSourceFile(f, white_list=(r'.+\.gn',))
+        return input_api.FilterSourceFile(f, files_to_check=(r'.+\.gn',))
 
     all_gn_changed_contents = ''
     for f in input_api.AffectedSourceFiles(gn_files):
@@ -325,7 +325,7 @@ def _CheckTabsInSourceFiles(input_api, output_api):
 
     def implementation_and_headers(f):
         return input_api.FilterSourceFile(
-            f, white_list=(r'.+%s' % _IMPLEMENTATION_AND_HEADER_EXTENSIONS,))
+            f, files_to_check=(r'.+%s' % _IMPLEMENTATION_AND_HEADER_EXTENSIONS,))
 
     files_with_tabs = []
     for f in input_api.AffectedSourceFiles(implementation_and_headers):
@@ -357,7 +357,7 @@ def _CheckNonAsciiInSourceFiles(input_api, output_api):
 
     def implementation_and_headers(f):
         return input_api.FilterSourceFile(
-            f, white_list=(r'.+%s' % _IMPLEMENTATION_AND_HEADER_EXTENSIONS,))
+            f, files_to_check=(r'.+%s' % _IMPLEMENTATION_AND_HEADER_EXTENSIONS,))
 
     files_with_non_ascii = []
     for f in input_api.AffectedSourceFiles(implementation_and_headers):

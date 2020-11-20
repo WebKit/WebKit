@@ -147,14 +147,13 @@ TEST_P(EGLMakeCurrentPerfTest, Run)
 
 #if !defined(ANGLE_PLATFORM_ANDROID)
 ANGLE_INSTANTIATE_TEST(EGLMakeCurrentPerfTest,
-                       angle::ES2_D3D9(),
                        angle::ES2_D3D11(),
                        angle::ES2_METAL(),
                        angle::ES2_OPENGL(),
                        angle::ES2_OPENGLES(),
                        angle::ES2_VULKAN());
 #else
-ANGLE_INSTANTIATE_TEST(EGLMakeCurrentPerfTest, angle::ES2_D3D9(), angle::ES2_D3D11());
+ANGLE_INSTANTIATE_TEST(EGLMakeCurrentPerfTest, angle::ES2_D3D11());
 #endif
 
 }  // namespace

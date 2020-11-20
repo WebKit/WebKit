@@ -98,6 +98,8 @@ class TransformFeedbackVk : public TransformFeedbackImpl
                             VkDescriptorBufferInfo *pBufferInfo,
                             VkDescriptorSet descSet) const;
 
+    void initializeXFBBuffersDesc(ContextVk *contextVk, size_t xfbBufferCount);
+
     // This member variable is set when glBindTransformFeedbackBuffers/glBeginTransformFeedback
     // is called and unset in dirty bit handler for transform feedback state change. If this
     // value is true, vertex shader will record transform feedback varyings from the beginning

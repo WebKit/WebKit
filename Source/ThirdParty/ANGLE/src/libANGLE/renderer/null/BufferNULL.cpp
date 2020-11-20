@@ -30,6 +30,24 @@ BufferNULL::~BufferNULL()
     ASSERT(memoryReleaseResult);
 }
 
+angle::Result BufferNULL::setDataWithUsageFlags(const gl::Context *context,
+                                                gl::BufferBinding target,
+                                                const void *data,
+                                                size_t size,
+                                                gl::BufferUsage usage,
+                                                GLbitfield flags)
+{
+    ANGLE_CHECK_GL_ALLOC(GetImplAs<ContextNULL>(context),
+                         mAllocationTracker->updateMemoryAllocation(mData.size(), size));
+
+    mData.resize(size, 0);
+    if (size > 0 && data != nullptr)
+    {
+        memcpy(mData.data(), data, size);
+    }
+    return angle::Result::Continue;
+}
+
 angle::Result BufferNULL::setData(const gl::Context *context,
                                   gl::BufferBinding target,
                                   const void *data,

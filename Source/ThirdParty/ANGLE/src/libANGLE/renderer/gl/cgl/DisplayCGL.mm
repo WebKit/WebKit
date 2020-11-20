@@ -17,6 +17,7 @@
 #    include <dlfcn.h>
 
 #    include "common/debug.h"
+#    include "common/gl/cgl/FunctionsCGL.h"
 #    include "gpu_info_util/SystemInfo.h"
 #    include "libANGLE/Display.h"
 #    include "libANGLE/Error.h"
@@ -27,8 +28,6 @@
 #    include "libANGLE/renderer/gl/cgl/RendererCGL.h"
 #    include "libANGLE/renderer/gl/cgl/WindowSurfaceCGL.h"
 #    include "platform/PlatformMethods.h"
-
-#    include "libANGLE/renderer/gl/cgl/CGLFunctions.h"
 
 namespace
 {
@@ -112,6 +111,23 @@ static void SetGPUByRegistryID(CGLContextObj contextObj,
 
 }  // anonymous namespace
 
+EnsureCGLContextIsCurrent::EnsureCGLContextIsCurrent(CGLContextObj context)
+    : mOldContext(CGLGetCurrentContext()), mResetContext(mOldContext != context)
+{
+    if (mResetContext)
+    {
+        CGLSetCurrentContext(context);
+    }
+}
+
+EnsureCGLContextIsCurrent::~EnsureCGLContextIsCurrent()
+{
+    if (mResetContext)
+    {
+        CGLSetCurrentContext(mOldContext);
+    }
+}
+
 class FunctionsGLCGL : public FunctionsGL
 {
   public:
@@ -147,10 +163,9 @@ egl::Error DisplayCGL::initialize(egl::Display *display)
     mEGLDisplay = display;
 
     angle::SystemInfo info;
-    if (!angle::GetSystemInfo(&info))
-    {
-        return egl::EglNotInitialized() << "Unable to query ANGLE's SystemInfo.";
-    }
+    // It's legal for GetSystemInfo to return false and thereby
+    // contain incomplete information.
+    (void)angle::GetSystemInfo(&info);
 
     // This code implements the effect of the
     // disableGPUSwitchingSupport workaround in FeaturesGL.
@@ -213,7 +228,8 @@ egl::Error DisplayCGL::initialize(egl::Display *display)
     }
 
     auto &attributes = display->getAttributeMap();
-    mDeviceContextIsVolatile = attributes.get(EGL_PLATFORM_ANGLE_DEVICE_CONTEXT_VOLATILE_CGL_ANGLE, GL_FALSE);
+    mDeviceContextIsVolatile =
+        attributes.get(EGL_PLATFORM_ANGLE_DEVICE_CONTEXT_VOLATILE_CGL_ANGLE, GL_FALSE);
 
     return DisplayGL::initialize(display);
 }
@@ -245,9 +261,13 @@ void DisplayCGL::terminate()
 
 egl::Error DisplayCGL::prepareForCall()
 {
-    ASSERT(mContext);
+    if (!mContext)
+    {
+        return egl::EglNotInitialized() << "Context not allocated.";
+    }
     auto threadId = std::this_thread::get_id();
-    if (mDeviceContextIsVolatile || mThreadsWithCurrentContext.find(threadId) == mThreadsWithCurrentContext.end())
+    if (mDeviceContextIsVolatile ||
+        mThreadsWithCurrentContext.find(threadId) == mThreadsWithCurrentContext.end())
     {
         if (CGLSetCurrentContext(mContext) != kCGLNoError)
         {
@@ -273,12 +293,13 @@ egl::Error DisplayCGL::releaseThread()
     return egl::NoError();
 }
 
-egl::Error DisplayCGL::makeCurrent(egl::Surface *drawSurface,
+egl::Error DisplayCGL::makeCurrent(egl::Display *display,
+                                   egl::Surface *drawSurface,
                                    egl::Surface *readSurface,
                                    gl::Context *context)
 {
     checkDiscreteGPUStatus();
-    return DisplayGL::makeCurrent(drawSurface, readSurface, context);
+    return DisplayGL::makeCurrent(display, drawSurface, readSurface, context);
 }
 
 SurfaceImpl *DisplayCGL::createWindowSurface(const egl::SurfaceState &state,
@@ -419,7 +440,7 @@ egl::Error DisplayCGL::restoreLostDevice(const egl::Display *display)
 
 bool DisplayCGL::isValidNativeWindow(EGLNativeWindowType window) const
 {
-    NSObject *layer = reinterpret_cast<NSObject *>(window);
+    NSObject *layer = (__bridge NSObject *)window;
     return [layer isKindOfClass:[CALayer class]];
 }
 
@@ -460,8 +481,9 @@ void DisplayCGL::generateExtensions(egl::DisplayExtensions *outExtensions) const
     outExtensions->surfacelessContext    = true;
     outExtensions->deviceQuery           = true;
 
-    // Contexts are virtualized so textures can be shared globally
-    outExtensions->displayTextureShareGroup = true;
+    // Contexts are virtualized so textures and semaphores can be shared globally
+    outExtensions->displayTextureShareGroup   = true;
+    outExtensions->displaySemaphoreShareGroup = true;
 
     if (mSupportsGPUSwitching)
     {

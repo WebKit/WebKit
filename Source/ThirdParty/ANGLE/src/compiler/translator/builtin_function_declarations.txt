@@ -462,6 +462,9 @@ GROUP BEGIN TextureFirstVersionsFSExt {"shader_type": "FRAGMENT"}
     vec4 texture2DProjLodEXT(sampler2D, vec3, float);
     vec4 texture2DProjLodEXT(sampler2D, vec4, float);
     vec4 textureCubeLodEXT(samplerCube, vec3, float);
+  DEFAULT METADATA {"essl_level": "ESSL1_BUILTINS", "op": "CallBuiltInFunction", "essl_extension": "EXT_shadow_samplers"}
+    float shadow2DEXT(sampler2DShadow, vec3);
+    float shadow2DProjEXT(sampler2DShadow, vec4);
   DEFAULT METADATA {"essl_level": "ESSL1_BUILTINS", "op": "CallBuiltInFunction", "essl_extension": "OES_texture_3D"}
     vec4 texture3D(sampler3D, vec3);
     vec4 texture3DProj(sampler3D, vec4);
@@ -665,6 +668,15 @@ GROUP BEGIN OES_cube_map_array
     gvec4 textureGather(gsamplerCubeArray, vec4, int);
     vec4 textureGather(samplerCubeArrayShadow, vec4, float);
 GROUP END OES_cube_map_array
+
+// These functions are part of OES/EXT_texture_buffer.
+// There's no way to mark alternative extensions for builtins, so these are marked with none.
+// TODO(anglebug.com/4589)
+GROUP BEGIN OES_texture_buffer
+  DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "op": "CallBuiltInFunction"}
+    int textureSize(gsamplerBuffer);
+    gvec4 texelFetch(gsamplerBuffer, int);
+GROUP END OES_texture_buffer
 
 GROUP BEGIN TexelFetchMS
   DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "glsl_level": "GLSL1_5_BUILTINS", "op": "CallBuiltInFunction"}
@@ -958,8 +970,21 @@ GROUP BEGIN DerivativesFS {"shader_type": "FRAGMENT"}
     genType fwidthCoarse(genType);
 GROUP END DerivativesFS
 
-GROUP BEGIN InterpolationFS {"shader_type": "FRAGMENT"}
-  DEFAULT METADATA {"glsl_level": "GLSL4_BUILTINS", "op": "CallBuiltInFunction"}
+GROUP BEGIN InterpolationFS {"queryFunction": true, "shader_type": "FRAGMENT"}
+  DEFAULT METADATA {"essl_level": "ESSL3_2_BUILTINS","glsl_level": "GLSL4_BUILTINS", "op": "CallBuiltInFunction"}
+    float interpolateAtCentroid(float);
+    vec2 interpolateAtCentroid(vec2);
+    vec3 interpolateAtCentroid(vec3);
+    vec4 interpolateAtCentroid(vec4);
+    float interpolateAtSample(float, int);
+    vec2 interpolateAtSample(vec2, int);
+    vec3 interpolateAtSample(vec3, int);
+    vec4 interpolateAtSample(vec4, int);
+    float interpolateAtOffset(float, vec2);
+    vec2 interpolateAtOffset(vec2, vec2);
+    vec3 interpolateAtOffset(vec3, vec2);
+    vec4 interpolateAtOffset(vec4, vec2);
+  DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "op": "CallBuiltInFunction", "essl_extension": "OES_shader_multisample_interpolation", "suffix": "Ext"}
     float interpolateAtCentroid(float);
     vec2 interpolateAtCentroid(vec2);
     vec3 interpolateAtCentroid(vec3);
@@ -1023,7 +1048,13 @@ GROUP BEGIN Image {"queryFunction": true}
       // There's no way to mark alternative extensions for builtins, so these are marked with none.
       // TODO(anglebug.com/4589)
       DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "op": "CallBuiltInFunction"}
-        gvec4 imageStore(gimageCubeArray, ivec3, gvec4);
+        void imageStore(gimageCubeArray, ivec3, gvec4);
+
+      // These functions are part of OES/EXT_texture_buffer.
+      // There's no way to mark alternative extensions for builtins, so these are marked with none.
+      // TODO(anglebug.com/4589)
+      DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "op": "CallBuiltInFunction"}
+        void imageStore(gimageBuffer, int, gvec4);
 
       DEFAULT METADATA {"glsl_level": "GLSL4_2_BUILTINS", "op": "CallBuiltInFunction"}
         void imageStore(writeonly IMAGE_PARAMS, gvec4);
@@ -1041,6 +1072,12 @@ GROUP BEGIN Image {"queryFunction": true}
       DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "op": "CallBuiltInFunction"}
         gvec4 imageLoad(gimageCubeArray, ivec3);
 
+      // These functions are part of OES/EXT_texture_buffer.
+      // There's no way to mark alternative extensions for builtins, so these are marked with none.
+      // TODO(anglebug.com/4589)
+      DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "op": "CallBuiltInFunction"}
+        gvec4 imageLoad(gimageBuffer, int);
+
       DEFAULT METADATA {"glsl_level": "GLSL4_2_BUILTINS", "op": "CallBuiltInFunction"}
         gvec4 imageLoad(readonly IMAGE_PARAMS);
     GROUP END Load
@@ -1055,6 +1092,12 @@ GROUP BEGIN Image {"queryFunction": true}
   // TODO(anglebug.com/4589)
   DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "op": "CallBuiltInFunction"}
     ivec3 imageSize(gimageCubeArray);
+
+    // These functions are part of OES/EXT_texture_buffer.
+  // There's no way to mark alternative extensions for builtins, so these are marked with none.
+  // TODO(anglebug.com/4589)
+  DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "op": "CallBuiltInFunction"}
+    int imageSize(gimageBuffer);
 
   DEFAULT METADATA {"glsl_level": "GLSL4_3_BUILTINS", "op": "CallBuiltInFunction"}
     int imageSize(readonly writeonly gimage1D);
@@ -1071,26 +1114,46 @@ GROUP BEGIN Image {"queryFunction": true}
   DEFAULT METADATA {"glsl_level": "GLSL4_5_BUILTINS", "op": "CallBuiltInFunction"}
     int imageSamples(readonly writeonly gimage2DMS);
     int imageSamples(readonly writeonly gimage2DMSArray);
-  DEFAULT METADATA {"glsl_level": "GLSL4_2_BUILTINS", "op": "CallBuiltInFunction"}
-    uint imageAtomicAdd(IMAGE_PARAMS, uint);
-    int imageAtomicAdd(IMAGE_PARAMS, int);
-    uint imageAtomicMin(IMAGE_PARAMS, uint);
-    int imageAtomicMin(IMAGE_PARAMS, int);
-    uint imageAtomicMax(IMAGE_PARAMS, uint);
-    int imageAtomicMax(IMAGE_PARAMS, int);
-    uint imageAtomicAnd(IMAGE_PARAMS, uint);
-    int imageAtomicAnd(IMAGE_PARAMS, int);
-    uint imageAtomicOr(IMAGE_PARAMS, uint);
-    int imageAtomicOr(IMAGE_PARAMS, int);
-    uint imageAtomicXor(IMAGE_PARAMS, uint);
-    int imageAtomicXor(IMAGE_PARAMS, int);
-    uint imageAtomicExchange(IMAGE_PARAMS, uint);
-    int imageAtomicExchange(IMAGE_PARAMS, int);
-  DEFAULT METADATA {"glsl_level": "GLSL4_5_BUILTINS", "op": "CallBuiltInFunction"}
-    int imageAtomicExchange(IMAGE_PARAMS, float);
-  DEFAULT METADATA {"glsl_level": "GLSL4_2_BUILTINS", "op": "CallBuiltInFunction"}
-    uint imageAtomicCompSwap(IMAGE_PARAMS, uint, uint);
-    int imageAtomicCompSwap(IMAGE_PARAMS, int, int);
+  GROUP BEGIN Atomic {"queryFunction": true}
+      DEFAULT METADATA {"glsl_level": "GLSL4_2_BUILTINS", "op": "CallBuiltInFunction"}
+        uint imageAtomicAdd(IMAGE_PARAMS, uint);
+        int imageAtomicAdd(IMAGE_PARAMS, int);
+        uint imageAtomicMin(IMAGE_PARAMS, uint);
+        int imageAtomicMin(IMAGE_PARAMS, int);
+        uint imageAtomicMax(IMAGE_PARAMS, uint);
+        int imageAtomicMax(IMAGE_PARAMS, int);
+        uint imageAtomicAnd(IMAGE_PARAMS, uint);
+        int imageAtomicAnd(IMAGE_PARAMS, int);
+        uint imageAtomicOr(IMAGE_PARAMS, uint);
+        int imageAtomicOr(IMAGE_PARAMS, int);
+        uint imageAtomicXor(IMAGE_PARAMS, uint);
+        int imageAtomicXor(IMAGE_PARAMS, int);
+        uint imageAtomicExchange(IMAGE_PARAMS, uint);
+        int imageAtomicExchange(IMAGE_PARAMS, int);
+      DEFAULT METADATA {"glsl_level": "GLSL4_5_BUILTINS", "op": "CallBuiltInFunction"}
+        int imageAtomicExchange(IMAGE_PARAMS, float);
+      DEFAULT METADATA {"glsl_level": "GLSL4_2_BUILTINS", "op": "CallBuiltInFunction"}
+        uint imageAtomicCompSwap(IMAGE_PARAMS, uint, uint);
+        int imageAtomicCompSwap(IMAGE_PARAMS, int, int);
+      DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "op": "CallBuiltInFunction", "essl_extension": "OES_shader_image_atomic", "suffix": "Ext"}
+        uint imageAtomicAdd(readonly writeonly IMAGE_PARAMS, uint);
+        int imageAtomicAdd(readonly writeonly IMAGE_PARAMS, int);
+        uint imageAtomicMin(readonly writeonly IMAGE_PARAMS, uint);
+        int imageAtomicMin(readonly writeonly IMAGE_PARAMS, int);
+        uint imageAtomicMax(readonly writeonly IMAGE_PARAMS, uint);
+        int imageAtomicMax(readonly writeonly IMAGE_PARAMS, int);
+        uint imageAtomicAnd(readonly writeonly IMAGE_PARAMS, uint);
+        int imageAtomicAnd(readonly writeonly IMAGE_PARAMS, int);
+        uint imageAtomicOr(readonly writeonly IMAGE_PARAMS, uint);
+        int imageAtomicOr(readonly writeonly IMAGE_PARAMS, int);
+        uint imageAtomicXor(readonly writeonly IMAGE_PARAMS, uint);
+        int imageAtomicXor(readonly writeonly IMAGE_PARAMS, int);
+        uint imageAtomicExchange(readonly writeonly IMAGE_PARAMS, uint);
+        int imageAtomicExchange(readonly writeonly IMAGE_PARAMS, int);
+        int imageAtomicExchange(readonly writeonly IMAGE_PARAMS, float);
+        uint imageAtomicCompSwap(readonly writeonly IMAGE_PARAMS, uint, uint);
+        int imageAtomicCompSwap(readonly writeonly IMAGE_PARAMS, int, int);
+  GROUP END Atomic
 GROUP END Image
 
 GROUP BEGIN Noise

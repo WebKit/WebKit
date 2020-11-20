@@ -21,7 +21,6 @@ class Win32Window : public OSWindow
     Win32Window();
     ~Win32Window() override;
 
-    bool initialize(const std::string &name, int width, int height) override;
     void destroy() override;
     void disableErrorMessageDialog() override;
 
@@ -44,6 +43,7 @@ class Win32Window : public OSWindow
     void signalTestEvent() override;
 
   private:
+    bool initializeImpl(const std::string &name, int width, int height) override;
     static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
     std::string mParentClassName;

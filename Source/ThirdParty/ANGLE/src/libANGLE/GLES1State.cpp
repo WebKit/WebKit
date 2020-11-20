@@ -51,6 +51,8 @@ ClipPlaneParameters::ClipPlaneParameters(bool enabled, const angle::Vector4 &equ
 
 ClipPlaneParameters::ClipPlaneParameters(const ClipPlaneParameters &other) = default;
 
+ClipPlaneParameters &ClipPlaneParameters::operator=(const ClipPlaneParameters &other) = default;
+
 GLES1State::GLES1State()
     : mGLState(nullptr),
       mVertexArrayEnabled(false),

@@ -88,14 +88,14 @@ adb install out/Debug/apks/AngleLibraries.apk
 ```
 You can verify installation by looking for the package name:
 ```
-$ adb shell pm path com.chromium.angle
-package:/data/app/com.chromium.angle-HpkUceNFjoLYKPbIVxFWLQ==/base.apk
+$ adb shell pm path org.chromium.angle
+package:/data/app/org.chromium.angle-HpkUceNFjoLYKPbIVxFWLQ==/base.apk
 ```
 ## Selecting ANGLE as the OpenGL ES driver
 
 For debuggable applications or root users, you can tell the platform to load ANGLE libraries from the installed package.
 ```
-adb shell settings put global angle_debug_package com.chromium.angle
+adb shell settings put global angle_debug_package org.chromium.angle
 ```
 Remember that ANGLE can only be used by applications launched by the Java runtime.
 
@@ -134,7 +134,7 @@ Check to see that ANGLE was loaded by your application:
 ```
 $ adb logcat -d | grep ANGLE
 V GraphicsEnvironment: ANGLE developer option for <package name>: angle
-I GraphicsEnvironment: ANGLE package enabled: com.chromium.angle
+I GraphicsEnvironment: ANGLE package enabled: org.chromium.angle
 I ANGLE   : Version (2.1.0.f87fac56d22f), Renderer (Vulkan 1.1.87(Adreno (TM) 615 (0x06010501)))
 ```
 ## Clean up

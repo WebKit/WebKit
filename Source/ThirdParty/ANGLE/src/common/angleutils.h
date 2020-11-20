@@ -11,12 +11,17 @@
 
 #include "common/platform.h"
 
+#if defined(ANGLE_USE_ABSEIL)
+#    include "absl/container/flat_hash_map.h"
+#endif  // defined(ANGLE_USE_ABSEIL)
+
 #include <climits>
 #include <cstdarg>
 #include <cstddef>
 #include <set>
 #include <sstream>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 // A helper class to disallow copy and assignment operators
@@ -26,6 +31,14 @@ namespace angle
 #if defined(ANGLE_ENABLE_D3D9) || defined(ANGLE_ENABLE_D3D11)
 using Microsoft::WRL::ComPtr;
 #endif  // defined(ANGLE_ENABLE_D3D9) || defined(ANGLE_ENABLE_D3D11)
+
+#if defined(ANGLE_USE_ABSEIL)
+template <typename Key, typename T>
+using HashMap = absl::flat_hash_map<Key, T>;
+#else
+template <typename Key, typename T>
+using HashMap = std::unordered_map<Key, T>;
+#endif  // defined(ANGLE_USE_ABSEIL)
 
 class NonCopyable
 {
@@ -205,7 +218,7 @@ inline bool IsLittleEndian()
 #define GL_BGRA8_SRGB_ANGLEX 0x6AC0
 #define GL_BGR10_A2_ANGLEX 0x6AF9
 
-// These are dummy formats used to fit typeless D3D textures that can be bound to EGL pbuffers into
+// These are fake formats used to fit typeless D3D textures that can be bound to EGL pbuffers into
 // the format system (for extension EGL_ANGLE_d3d_texture_client_buffer):
 #define GL_RGBA8_TYPELESS_ANGLEX 0x6AC1
 #define GL_RGBA8_TYPELESS_SRGB_ANGLEX 0x6AC2
@@ -261,7 +274,7 @@ inline bool IsLittleEndian()
 // EXT_texture_type_2_10_10_10_REV
 #define GL_RGB10_UNORM_ANGLEX 0x6AEE
 
-// These are dummy formats for OES_vertex_type_10_10_10_2
+// These are fake formats for OES_vertex_type_10_10_10_2
 #define GL_A2_RGB10_UNORM_ANGLEX 0x6AEF
 #define GL_A2_RGB10_SNORM_ANGLEX 0x6AF0
 #define GL_A2_RGB10_USCALED_ANGLEX 0x6AF1

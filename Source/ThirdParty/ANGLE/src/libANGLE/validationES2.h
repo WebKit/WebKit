@@ -174,6 +174,14 @@ bool ValidateES2TexImageParametersBase(const Context *context,
                                        GLsizei imageSize,
                                        const void *pixels);
 
+// Validation of TexStorage*2DEXT
+bool ValidateES2TexStorageParametersBase(const Context *context,
+                                         TextureType target,
+                                         GLsizei levels,
+                                         GLenum internalformat,
+                                         GLsizei width,
+                                         GLsizei height);
+
 }  // namespace gl
 
 #endif  // LIBANGLE_VALIDATION_ES2_H_

@@ -403,6 +403,15 @@ Process *LaunchProcess(const std::vector<const char *> &args,
 bool GetTempDir(char *tempDirOut, uint32_t maxDirNameLen)
 {
     DWORD pathLen = ::GetTempPathA(maxDirNameLen, tempDirOut);
+    // Strip last path character if present.
+    if (pathLen > 0)
+    {
+        size_t lastChar = strlen(tempDirOut) - 1;
+        if (tempDirOut[lastChar] == '\\')
+        {
+            tempDirOut[lastChar] = 0;
+        }
+    }
     return (pathLen < MAX_PATH && pathLen > 0);
 }
 

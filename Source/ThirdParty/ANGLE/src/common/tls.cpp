@@ -157,10 +157,3 @@ void *GetTLSValue(TLSIndex index)
     return pthread_getspecific(index);
 #endif
 }
-
-void SetUseAndroidOpenGLTlsSlot(bool platformTypeVulkan)
-{
-#if defined(ANGLE_PLATFORM_ANDROID)
-    gUseAndroidOpenGLTlsSlot = platformTypeVulkan;
-#endif
-}

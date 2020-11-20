@@ -28,6 +28,7 @@ enum InterpolationType
 {
     INTERPOLATION_SMOOTH,
     INTERPOLATION_CENTROID,
+    INTERPOLATION_SAMPLE,
     INTERPOLATION_FLAT,
     INTERPOLATION_NOPERSPECTIVE
 };
@@ -199,6 +200,9 @@ struct ShaderVariable
     bool isSameVaryingAtLinkTime(const ShaderVariable &other, int shaderVersion) const;
     // Deprecated version of isSameVaryingAtLinkTime, which assumes ESSL1.
     bool isSameVaryingAtLinkTime(const ShaderVariable &other) const;
+
+    // If the variable is a sampler that has ever been statically used with texelFetch
+    bool texelFetchStaticUse;
 
   protected:
     bool isSameVariableAtLinkTime(const ShaderVariable &other,

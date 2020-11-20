@@ -390,7 +390,7 @@ void Shader::resolveCompile()
     if (!mCompilingState->compileEvent->getResult())
     {
         mInfoLog += sh::GetInfoLog(compilerHandle);
-        WARN() << std::endl << mInfoLog;
+        INFO() << std::endl << mInfoLog;
         mState.mCompileStatus = CompileStatus::NOT_COMPILED;
         return;
     }

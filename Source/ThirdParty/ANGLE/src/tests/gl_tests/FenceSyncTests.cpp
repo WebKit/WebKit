@@ -5,6 +5,7 @@
 //
 
 #include "test_utils/ANGLETest.h"
+#include "test_utils/gl_raii.h"
 
 using namespace angle;
 
@@ -25,11 +26,14 @@ class FenceNVTest : public ANGLETest
 
 class FenceSyncTest : public ANGLETest
 {
+  public:
+    static constexpr uint32_t kSize = 1024;
+
   protected:
     FenceSyncTest()
     {
-        setWindowWidth(128);
-        setWindowHeight(128);
+        setWindowWidth(kSize);
+        setWindowHeight(kSize);
         setConfigRedBits(8);
         setConfigGreenBits(8);
         setConfigBlueBits(8);
@@ -256,6 +260,78 @@ TEST_P(FenceSyncTest, BasicOperations)
         glClear(GL_COLOR_BUFFER_BIT);
         glClientWaitSync(sync, GL_SYNC_FLUSH_COMMANDS_BIT, GL_TIMEOUT_IGNORED);
         EXPECT_GL_NO_ERROR();
+    }
+}
+
+// Test that multiple fences and draws can be issued
+TEST_P(FenceSyncTest, MultipleFenceDraw)
+{
+    constexpr int kNumIterations = 10;
+    constexpr int kNumDraws      = 5;
+
+    // Create a texture/FBO to draw to
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture.get());
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, kSize, kSize);
+    ASSERT_GL_NO_ERROR();
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    ANGLE_GL_PROGRAM(greenProgram, essl1_shaders::vs::Simple(), essl1_shaders::fs::Green());
+    ANGLE_GL_PROGRAM(redProgram, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
+
+    bool drawGreen = true;
+    for (int numIterations = 0; numIterations < kNumIterations; ++numIterations)
+    {
+        glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+        ASSERT_GL_NO_ERROR();
+
+        for (int i = 0; i < kNumDraws; ++i)
+        {
+            GLsync sync = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
+            ASSERT_GL_NO_ERROR();
+            // Force the fence to be created
+            glFlush();
+
+            drawGreen      = !drawGreen;
+            GLuint program = 0;
+            if (drawGreen)
+            {
+                program = greenProgram.get();
+            }
+            else
+            {
+                program = redProgram.get();
+            }
+            drawQuad(program, std::string(essl1_shaders::PositionAttrib()), 0.0f);
+            ASSERT_GL_NO_ERROR();
+
+            glWaitSync(sync, 0, GL_TIMEOUT_IGNORED);
+            EXPECT_GL_NO_ERROR();
+            glDeleteSync(sync);
+            ASSERT_GL_NO_ERROR();
+        }
+
+        // Blit to the default FBO
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo);
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+        glBlitFramebuffer(0, 0, kSize, kSize, 0, 0, kSize, kSize, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+        ASSERT_GL_NO_ERROR();
+        swapBuffers();
+
+        glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+        GLColor color;
+        if (drawGreen)
+        {
+            color = GLColor::green;
+        }
+        else
+        {
+            color = GLColor::red;
+        }
+        EXPECT_PIXEL_RECT_EQ(0, 0, kSize, kSize, color);
     }
 }
 

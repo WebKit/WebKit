@@ -159,26 +159,25 @@ void main()
     // Compile a shader so it puts something in the cache
     if (programBinaryAvailable())
     {
-        GLuint program = CompileProgram(kVertexShaderSrc, kFragmentShaderSrc);
-        ASSERT_NE(0u, program);
+        ANGLE_GL_PROGRAM(program, kVertexShaderSrc, kFragmentShaderSrc);
         EXPECT_EQ(CacheOpResult::SetSuccess, gLastCacheOpResult);
         gLastCacheOpResult = CacheOpResult::ValueNotSet;
 
         // Compile the same shader again, so it would try to retrieve it from the cache
-        program = CompileProgram(kVertexShaderSrc, kFragmentShaderSrc);
-        ASSERT_NE(0u, program);
+        program.makeRaster(kVertexShaderSrc, kFragmentShaderSrc);
+        ASSERT_TRUE(program.valid());
         EXPECT_EQ(CacheOpResult::GetSuccess, gLastCacheOpResult);
         gLastCacheOpResult = CacheOpResult::ValueNotSet;
 
         // Compile another shader, which should create a new entry
-        program = CompileProgram(kVertexShaderSrc2, kFragmentShaderSrc2);
-        ASSERT_NE(0u, program);
+        program.makeRaster(kVertexShaderSrc2, kFragmentShaderSrc2);
+        ASSERT_TRUE(program.valid());
         EXPECT_EQ(CacheOpResult::SetSuccess, gLastCacheOpResult);
         gLastCacheOpResult = CacheOpResult::ValueNotSet;
 
         // Compile the first shader again, which should still reside in the cache
-        program = CompileProgram(kVertexShaderSrc, kFragmentShaderSrc);
-        ASSERT_NE(0u, program);
+        program.makeRaster(kVertexShaderSrc, kFragmentShaderSrc);
+        ASSERT_TRUE(program.valid());
         EXPECT_EQ(CacheOpResult::GetSuccess, gLastCacheOpResult);
         gLastCacheOpResult = CacheOpResult::ValueNotSet;
     }

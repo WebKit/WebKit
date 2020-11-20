@@ -122,6 +122,10 @@ class InstancingTest : public ANGLETest
         // Unknown problem.  FL9_3 is not officially supported anyway.
         ANGLE_SKIP_TEST_IF(IsD3D11_FL93() && geometry == Quad && draw == NonIndexed);
 
+        // http://anglebug.com/5271
+        ANGLE_SKIP_TEST_IF(IsOSX() && IsIntelUHD630Mobile() && IsDesktopOpenGL() &&
+                           draw == NonIndexed && offset != 0);
+
         // The window is divided into kMaxDrawn slices of size kDrawSize.
         // The slice drawn into is determined by the instance datum.
         // The instance data array selects all the slices in order.
@@ -491,23 +495,31 @@ attribute vec2 a_position;
 // x,y = offset, z = scale
 attribute vec3 a_transform;
 
+attribute vec4 a_color;
+
+varying vec4 v_color;
+
 invariant gl_Position;
 void main()
 {
     vec2 v_position = a_transform.z * a_position + a_transform.xy;
     gl_Position = vec4(v_position, 0.0, 1.0);
+
+    v_color = a_color;
 })";
 
     constexpr char kFS[] = R"(
 precision highp float;
+varying vec4 v_color;
 void main()
 {
-    gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+    gl_FragColor = v_color;
 })";
 
     ANGLE_GL_PROGRAM(program, kVS, kFS);
     glBindAttribLocation(program, 0, "a_position");
     glBindAttribLocation(program, 1, "a_transform");
+    glBindAttribLocation(program, 2, "a_color");
     glLinkProgram(program);
     glUseProgram(program);
     ASSERT_GL_NO_ERROR();
@@ -520,13 +532,18 @@ void main()
         0, 0, 9, 0.2, 0.1, 2, 0.5, -0.2, 3, -0.8, -0.5, 1, -0.4, 0.4, 6,
     };
 
-    constexpr GLushort lineloopAsStripIndices[] = {0, 1, 2, 3, 0};
-
     constexpr GLsizei instances = ArraySize(transform) / 3;
+
+    const GLfloat colors[instances * 3] = {
+        1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1, 1, 1, 0,
+    };
+
+    constexpr GLushort lineloopAsStripIndices[] = {0, 1, 2, 3, 0};
 
     std::vector<GLColor> expectedPixels(getWindowWidth() * getWindowHeight());
 
     // Draw in non-instanced way
+    glClearColor(0, 0, 0, 1);
     glClear(GL_COLOR_BUFFER_BIT);
 
     glEnableVertexAttribArray(0);
@@ -541,6 +558,7 @@ void main()
     for (size_t i = 0; i < instances; ++i)
     {
         glVertexAttrib3fv(1, transform + 3 * i);
+        glVertexAttrib3fv(2, colors + 3 * i);
 
         glDrawElements(GL_LINE_STRIP, ArraySize(lineloopAsStripIndices), GL_UNSIGNED_SHORT,
                        lineloopAsStripIndices);
@@ -553,7 +571,7 @@ void main()
     // Draw in instanced way:
     glClear(GL_COLOR_BUFFER_BIT);
 
-    GLBuffer vertexBuffer[2];
+    GLBuffer vertexBuffer[3];
     GLBuffer indexBuffer;
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
@@ -571,6 +589,12 @@ void main()
     glEnableVertexAttribArray(1);
     glVertexAttribDivisorANGLE(1, 1);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer[2]);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(colors), colors, GL_STATIC_DRAW);
+    glEnableVertexAttribArray(2);
+    glVertexAttribDivisorANGLE(2, 1);
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
     glDrawArraysInstancedANGLE(GL_LINE_LOOP, 0, ArraySize(vertices) / 2, instances);
 

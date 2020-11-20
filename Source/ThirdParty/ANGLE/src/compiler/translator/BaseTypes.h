@@ -976,14 +976,17 @@ enum TQualifier
     EvqFlat,           // Incomplete qualifier
     EvqNoPerspective,  // Incomplete qualifier
     EvqCentroid,       // Incomplete qualifier
+    EvqSample,
     EvqSmoothOut,
     EvqFlatOut,
     EvqNoPerspectiveOut,
     EvqCentroidOut,  // Implies smooth
+    EvqSampleOut,
     EvqSmoothIn,
     EvqFlatIn,
     EvqNoPerspectiveIn,
     EvqCentroidIn,  // Implies smooth
+    EvqSampleIn,
 
     // GLSL ES 3.1 compute shader special variables
     EvqShared,
@@ -1041,6 +1044,7 @@ inline bool IsShaderIn(TQualifier qualifier)
         case EvqFlatIn:
         case EvqNoPerspectiveIn:
         case EvqCentroidIn:
+        case EvqSampleIn:
             return true;
         default:
             return false;
@@ -1059,6 +1063,7 @@ inline bool IsShaderOut(TQualifier qualifier)
         case EvqFlatOut:
         case EvqNoPerspectiveOut:
         case EvqCentroidOut:
+        case EvqSampleOut:
             return true;
         default:
             return false;
@@ -1332,6 +1337,9 @@ inline const char *getQualifierString(TQualifier q)
     case EvqPerVertexIn:            return "gl_in";
     case EvqPrecise:                return "precise";
     case EvqClipDistance:           return "ClipDistance";
+    case EvqSample:                 return "sample";
+    case EvqSampleIn:               return "sample in";
+    case EvqSampleOut:              return "sample out";
     default: UNREACHABLE();         return "unknown qualifier";
     }
     // clang-format on

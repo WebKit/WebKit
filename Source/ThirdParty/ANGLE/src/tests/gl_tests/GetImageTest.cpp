@@ -17,6 +17,9 @@ namespace
 constexpr uint32_t kSize        = 32;
 constexpr char kExtensionName[] = "GL_ANGLE_get_image";
 constexpr uint32_t kSmallSize   = 2;
+constexpr uint8_t kUNormZero    = 0x00;
+constexpr uint8_t kUNormHalf    = 0x7F;
+constexpr uint8_t kUNormFull    = 0xFF;
 
 class GetImageTest : public ANGLETest
 {
@@ -37,6 +40,16 @@ class GetImageTestNoExtensions : public ANGLETest
   public:
     GetImageTestNoExtensions() { setExtensionsEnabled(false); }
 };
+
+GLTexture InitTextureWithFormatAndSize(GLenum format, uint32_t size, void *pixelData)
+{
+    GLTexture tex;
+    glBindTexture(GL_TEXTURE_2D, tex);
+    glTexImage2D(GL_TEXTURE_2D, 0, format, size, size, 0, format, GL_UNSIGNED_BYTE, pixelData);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    return tex;
+}
 
 GLTexture InitTextureWithSize(uint32_t size, void *pixelData)
 {
@@ -290,6 +303,111 @@ TEST_P(GetImageTestNoExtensions, EntryPointsInactive)
     // Verify calling GetRenderbufferImage produces an error.
     glGetRenderbufferImageANGLE(GL_RENDERBUFFER, GL_RGBA, GL_UNSIGNED_BYTE, buffer.data());
     EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+}
+
+// Test LUMINANCE_ALPHA (non-renderable) format with GetTexImage
+TEST_P(GetImageTest, GetTexImageLuminanceAlpha)
+{
+    // Verify the extension is enabled.
+    ASSERT_TRUE(IsGLExtensionEnabled(kExtensionName));
+
+    constexpr GLColorRG kMediumLumAlpha = GLColorRG(kUNormHalf, kUNormHalf);
+    std::vector<GLColorRG> expectedData = {kMediumLumAlpha, kMediumLumAlpha, kMediumLumAlpha,
+                                           kMediumLumAlpha};
+
+    glViewport(0, 0, kSmallSize, kSmallSize);
+
+    // Set up a simple LUMINANCE_ALPHA texture
+    GLTexture tex =
+        InitTextureWithFormatAndSize(GL_LUMINANCE_ALPHA, kSmallSize, expectedData.data());
+
+    // Draw once with simple texture.
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Texture2D(), essl1_shaders::fs::Texture2D());
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5, 1.0f, true);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor(kUNormHalf, kUNormHalf, kUNormHalf, kUNormHalf));
+    ASSERT_GL_NO_ERROR();
+
+    // Pack pixels tightly.
+    glPixelStorei(GL_PACK_ALIGNMENT, 1);
+
+    // Verify GetImage.
+    std::vector<GLColorRG> actualData(kSmallSize * kSmallSize);
+    glGetTexImageANGLE(GL_TEXTURE_2D, 0, GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE, actualData.data());
+    EXPECT_GL_NO_ERROR();
+    for (uint32_t i = 0; i < kSmallSize * kSmallSize; ++i)
+    {
+        EXPECT_EQ(expectedData[i].R, actualData[i].R);
+        EXPECT_EQ(expectedData[i].G, actualData[i].G);
+    }
+}
+
+// Test LUMINANCE (non-renderable) format with GetTexImage
+TEST_P(GetImageTest, GetTexImageLuminance)
+{
+    // Verify the extension is enabled.
+    ASSERT_TRUE(IsGLExtensionEnabled(kExtensionName));
+
+    constexpr GLColorR kMediumLuminance = GLColorR(kUNormHalf);
+    std::vector<GLColorR> expectedData  = {kMediumLuminance, kMediumLuminance, kMediumLuminance,
+                                          kMediumLuminance};
+
+    glViewport(0, 0, kSmallSize, kSmallSize);
+
+    // Set up a simple LUMINANCE texture
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+    GLTexture tex = InitTextureWithFormatAndSize(GL_LUMINANCE, kSmallSize, expectedData.data());
+
+    // Draw once with simple texture.
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Texture2D(), essl1_shaders::fs::Texture2D());
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5, 1.0f, true);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor(kUNormHalf, kUNormHalf, kUNormHalf, kUNormFull));
+    ASSERT_GL_NO_ERROR();
+
+    // Pack pixels tightly.
+    glPixelStorei(GL_PACK_ALIGNMENT, 1);
+
+    // Verify GetImage.
+    std::vector<GLColorR> actualData(kSmallSize * kSmallSize);
+    glGetTexImageANGLE(GL_TEXTURE_2D, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, actualData.data());
+    EXPECT_GL_NO_ERROR();
+    for (uint32_t i = 0; i < kSmallSize * kSmallSize; ++i)
+    {
+        EXPECT_EQ(expectedData[i].R, actualData[i].R);
+    }
+}
+
+// Test ALPHA (non-renderable) format with GetTexImage
+TEST_P(GetImageTest, GetTexImageAlpha)
+{
+    // Verify the extension is enabled.
+    ASSERT_TRUE(IsGLExtensionEnabled(kExtensionName));
+
+    constexpr GLColorR kMediumAlpha    = GLColorR(kUNormHalf);
+    std::vector<GLColorR> expectedData = {kMediumAlpha, kMediumAlpha, kMediumAlpha, kMediumAlpha};
+
+    glViewport(0, 0, kSmallSize, kSmallSize);
+
+    // Set up a simple ALPHA texture
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+    GLTexture tex = InitTextureWithFormatAndSize(GL_ALPHA, kSmallSize, expectedData.data());
+
+    // Draw once with simple texture
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Texture2D(), essl1_shaders::fs::Texture2D());
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5, 1.0f, true);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor(kUNormZero, kUNormZero, kUNormZero, kUNormHalf));
+    ASSERT_GL_NO_ERROR();
+
+    // Pack pixels tightly.
+    glPixelStorei(GL_PACK_ALIGNMENT, 1);
+
+    // Verify we get back the correct pixels from GetTexImage
+    std::vector<GLColorR> actualData(kSmallSize * kSmallSize);
+    glGetTexImageANGLE(GL_TEXTURE_2D, 0, GL_ALPHA, GL_UNSIGNED_BYTE, actualData.data());
+    EXPECT_GL_NO_ERROR();
+    for (uint32_t i = 0; i < kSmallSize * kSmallSize; ++i)
+    {
+        EXPECT_EQ(expectedData[i].R, actualData[i].R);
+    }
 }
 
 ANGLE_INSTANTIATE_TEST(GetImageTest, ES2_VULKAN(), ES3_VULKAN());

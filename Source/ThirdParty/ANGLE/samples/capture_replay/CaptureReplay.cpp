@@ -30,7 +30,13 @@ class CaptureReplaySample : public SampleApplication
 {
   public:
     CaptureReplaySample(int argc, char **argv)
-        : SampleApplication("CaptureReplaySample", argc, argv, 3, 0)
+        : SampleApplication("CaptureReplaySample",
+                            argc,
+                            argv,
+                            3,
+                            0,
+                            kReplayDrawSurfaceWidth,
+                            kReplayDrawSurfaceHeight)
     {}
 
     bool initialize() override
@@ -45,8 +51,6 @@ class CaptureReplaySample : public SampleApplication
         }
         SetBinaryDataDir(ANGLE_CAPTURE_REPLAY_SAMPLE_DATA_DIR);
         SetupContextReplay();
-
-        eglSwapInterval(getDisplay(), 1);
         return true;
     }
 

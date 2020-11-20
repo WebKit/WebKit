@@ -8,7 +8,7 @@
 
 #import "common/platform.h"
 
-#if (defined(ANGLE_PLATFORM_IOS) && !defined(ANGLE_PLATFORM_MACCATALYST)) || (defined(ANGLE_PLATFORM_MACCATALYST) && defined(ANGLE_CPU_ARM64))
+#if defined(ANGLE_ENABLE_EAGL)
 
 #    import "libANGLE/renderer/gl/eagl/DisplayEAGL.h"
 
@@ -17,6 +17,7 @@
 #    import "libANGLE/Display.h"
 #    import "libANGLE/renderer/gl/eagl/ContextEAGL.h"
 #    import "libANGLE/renderer/gl/eagl/DeviceEAGL.h"
+#    import "libANGLE/renderer/gl/eagl/FunctionsEAGL.h"
 #    import "libANGLE/renderer/gl/eagl/IOSurfaceSurfaceEAGL.h"
 #    import "libANGLE/renderer/gl/eagl/PbufferSurfaceEAGL.h"
 #    import "libANGLE/renderer/gl/eagl/RendererEAGL.h"
@@ -25,8 +26,6 @@
 #    import <Foundation/Foundation.h>
 #    import <QuartzCore/QuartzCore.h>
 #    import <dlfcn.h>
-
-#    import "libANGLE/renderer/gl/eagl/EAGLFunctions.h"
 
 namespace
 {
@@ -65,10 +64,9 @@ egl::Error DisplayEAGL::initialize(egl::Display *display)
     mEGLDisplay = display;
 
     angle::SystemInfo info;
-    if (!angle::GetSystemInfo(&info))
-    {
-        return egl::EglNotInitialized() << "Unable to query ANGLE's SystemInfo.";
-    }
+    // It's legal for GetSystemInfo to return false and thereby
+    // contain incomplete information.
+    (void)angle::GetSystemInfo(&info);
 
     mContext = [allocEAGLContextInstance() initWithAPI:kEAGLRenderingAPIOpenGLES3];
     if (mContext == nullptr)
@@ -76,7 +74,8 @@ egl::Error DisplayEAGL::initialize(egl::Display *display)
         return egl::EglNotInitialized() << "Could not create the EAGL context.";
     }
 
-    if (![getEAGLContextClass() setCurrentContext:mContext]) {
+    if (![getEAGLContextClass() setCurrentContext:mContext])
+    {
         return egl::EglNotInitialized() << "Could set the EAGL context current.";
     }
     mThreadsWithContextCurrent.insert(std::this_thread::get_id());
@@ -100,7 +99,8 @@ egl::Error DisplayEAGL::initialize(egl::Display *display)
     }
 
     auto &attributes = display->getAttributeMap();
-    mDeviceContextIsVolatile = attributes.get(EGL_PLATFORM_ANGLE_DEVICE_CONTEXT_VOLATILE_EAGL_ANGLE, GL_FALSE);
+    mDeviceContextIsVolatile =
+        attributes.get(EGL_PLATFORM_ANGLE_DEVICE_CONTEXT_VOLATILE_EAGL_ANGLE, GL_FALSE);
 
     return DisplayGL::initialize(display);
 }
@@ -113,7 +113,6 @@ void DisplayEAGL::terminate()
     if (mContext != nullptr)
     {
         [getEAGLContextClass() setCurrentContext:nil];
-        [mContext release];
         mContext = nullptr;
         mThreadsWithContextCurrent.clear();
     }
@@ -122,7 +121,8 @@ void DisplayEAGL::terminate()
 egl::Error DisplayEAGL::prepareForCall()
 {
     auto threadId = std::this_thread::get_id();
-    if (mDeviceContextIsVolatile || mThreadsWithContextCurrent.find(threadId) == mThreadsWithContextCurrent.end())
+    if (mDeviceContextIsVolatile ||
+        mThreadsWithContextCurrent.find(threadId) == mThreadsWithContextCurrent.end())
     {
         if (![getEAGLContextClass() setCurrentContext:mContext])
         {
@@ -275,7 +275,7 @@ egl::Error DisplayEAGL::restoreLostDevice(const egl::Display *display)
 
 bool DisplayEAGL::isValidNativeWindow(EGLNativeWindowType window) const
 {
-    NSObject *layer = reinterpret_cast<NSObject *>(window);
+    NSObject *layer = (__bridge NSObject *)window;
     return [layer isKindOfClass:[CALayer class]];
 }
 
@@ -311,8 +311,9 @@ void DisplayEAGL::generateExtensions(egl::DisplayExtensions *outExtensions) cons
     outExtensions->surfacelessContext    = true;
     outExtensions->deviceQuery           = true;
 
-    // Contexts are virtualized so textures can be shared globally
-    outExtensions->displayTextureShareGroup = true;
+    // Contexts are virtualized so textures ans semaphores can be shared globally
+    outExtensions->displayTextureShareGroup   = true;
+    outExtensions->displaySemaphoreShareGroup = true;
 
     outExtensions->powerPreference = false;
 
@@ -366,7 +367,6 @@ WorkerContextEAGL::WorkerContextEAGL(EAGLContextObj context) : mContext(context)
 WorkerContextEAGL::~WorkerContextEAGL()
 {
     [getEAGLContextClass() setCurrentContext:nil];
-    [mContext release];
     mContext = nullptr;
 }
 
@@ -409,4 +409,4 @@ void DisplayEAGL::populateFeatureList(angle::FeatureList *features)
 }
 }
 
-#endif  // (defined(ANGLE_PLATFORM_IOS) && !defined(ANGLE_PLATFORM_MACCATALYST)) || (defined(ANGLE_PLATFORM_MACCATALYST) && defined(ANGLE_CPU_ARM64))
+#endif  // defined(ANGLE_ENABLE_EAGL)

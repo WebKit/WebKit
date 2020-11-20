@@ -25,6 +25,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
 import android.util.Log;
+
 import androidx.preference.PreferenceManager;
 
 import org.json.JSONArray;
@@ -57,10 +58,10 @@ public class Receiver extends BroadcastReceiver
             String jsonStr      = loadRules(context);
             String packageNames = parsePackageNames(jsonStr);
 
-            // Update the ANGLE whitelist
+            // Update the ANGLE allowlist
             if (packageNames != null)
             {
-                GlobalSettings.updateAngleWhitelist(context, packageNames);
+                GlobalSettings.updateAngleAllowlist(context, packageNames);
             }
 
             updateDeveloperOptionsWatcher(context);

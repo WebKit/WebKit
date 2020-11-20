@@ -283,6 +283,9 @@ TEST_P(BuiltinVariableFragDepthClampingFloatRBOTest, Above0)
 // Test that gl_FragDepth is clamped below 1
 TEST_P(BuiltinVariableFragDepthClampingFloatRBOTest, Below1)
 {
+    // TODO(crbug.com/1132295): Failing on Apple DTK.
+    ANGLE_SKIP_TEST_IF(IsOSX() && IsARM64() && IsDesktopOpenGL());
+
     CheckDepthWritten(1.0f, 42.0f);
 }
 

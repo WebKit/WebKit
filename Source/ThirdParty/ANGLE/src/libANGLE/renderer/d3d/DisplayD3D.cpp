@@ -22,14 +22,6 @@
 #include "libANGLE/renderer/d3d/SurfaceD3D.h"
 #include "libANGLE/renderer/d3d/SwapChainD3D.h"
 
-#if defined(ANGLE_ENABLE_D3D9)
-#    include "libANGLE/renderer/d3d/d3d9/Renderer9.h"
-#endif  // ANGLE_ENABLE_D3D9
-
-#if defined(ANGLE_ENABLE_D3D11)
-#    include "libANGLE/renderer/d3d/d3d11/Renderer11.h"
-#endif  // ANGLE_ENABLE_D3D11
-
 #if !defined(ANGLE_DEFAULT_D3D11)
 // Enables use of the Direct3D 11 API for a default display, when available
 #    define ANGLE_DEFAULT_D3D11 1
@@ -38,13 +30,7 @@
 namespace rx
 {
 
-typedef RendererD3D *(*CreateRendererD3DFunction)(egl::Display *);
-
-template <typename RendererType>
-static RendererD3D *CreateTypedRendererD3D(egl::Display *display)
-{
-    return new RendererType(display);
-}
+using CreateRendererD3DFunction = RendererD3D *(*)(egl::Display *);
 
 egl::Error CreateRendererD3D(egl::Display *display, RendererD3D **outRenderer)
 {
@@ -75,28 +61,28 @@ egl::Error CreateRendererD3D(egl::Display *display, RendererD3D **outRenderer)
 #    if defined(ANGLE_ENABLE_D3D11)
         if (addD3D11)
         {
-            rendererCreationFunctions.push_back(CreateTypedRendererD3D<Renderer11>);
+            rendererCreationFunctions.push_back(CreateRenderer11);
         }
 #    endif
 
 #    if defined(ANGLE_ENABLE_D3D9)
         if (addD3D9)
         {
-            rendererCreationFunctions.push_back(CreateTypedRendererD3D<Renderer9>);
+            rendererCreationFunctions.push_back(CreateRenderer9);
         }
 #    endif
 #else
 #    if defined(ANGLE_ENABLE_D3D9)
         if (addD3D9)
         {
-            rendererCreationFunctions.push_back(CreateTypedRendererD3D<Renderer9>);
+            rendererCreationFunctions.push_back(CreateRenderer9);
         }
 #    endif
 
 #    if defined(ANGLE_ENABLE_D3D11)
         if (addD3D11)
         {
-            rendererCreationFunctions.push_back(CreateTypedRendererD3D<Renderer11>);
+            rendererCreationFunctions.push_back(CreateRenderer11);
         }
 #    endif
 #endif
@@ -109,17 +95,17 @@ egl::Error CreateRendererD3D(egl::Display *display, RendererD3D **outRenderer)
             // the definition of ANGLE_DEFAULT_D3D11
 #if ANGLE_DEFAULT_D3D11
 #    if defined(ANGLE_ENABLE_D3D11)
-            rendererCreationFunctions.push_back(CreateTypedRendererD3D<Renderer11>);
+            rendererCreationFunctions.push_back(CreateRenderer11);
 #    endif
 #    if defined(ANGLE_ENABLE_D3D9)
-            rendererCreationFunctions.push_back(CreateTypedRendererD3D<Renderer9>);
+            rendererCreationFunctions.push_back(CreateRenderer9);
 #    endif
 #else
 #    if defined(ANGLE_ENABLE_D3D9)
-            rendererCreationFunctions.push_back(CreateTypedRendererD3D<Renderer9>);
+            rendererCreationFunctions.push_back(CreateRenderer9);
 #    endif
 #    if defined(ANGLE_ENABLE_D3D11)
-            rendererCreationFunctions.push_back(CreateTypedRendererD3D<Renderer11>);
+            rendererCreationFunctions.push_back(CreateRenderer11);
 #    endif
 #endif
         }
@@ -129,7 +115,7 @@ egl::Error CreateRendererD3D(egl::Display *display, RendererD3D **outRenderer)
 #if defined(ANGLE_ENABLE_D3D11)
         if (display->getDevice()->getType() == EGL_D3D11_DEVICE_ANGLE)
         {
-            rendererCreationFunctions.push_back(CreateTypedRendererD3D<Renderer11>);
+            rendererCreationFunctions.push_back(CreateRenderer11);
         }
 #endif
     }
@@ -254,10 +240,15 @@ ShareGroupImpl *DisplayD3D::createShareGroup()
     return new ShareGroupD3D();
 }
 
-egl::Error DisplayD3D::makeCurrent(egl::Surface *drawSurface,
+egl::Error DisplayD3D::makeCurrent(egl::Display *display,
+                                   egl::Surface *drawSurface,
                                    egl::Surface *readSurface,
                                    gl::Context *context)
 {
+    // Ensure the appropriate global DebugAnnotator is used
+    ASSERT(mRenderer != nullptr);
+    mRenderer->setGlobalDebugAnnotator();
+
     return egl::NoError();
 }
 

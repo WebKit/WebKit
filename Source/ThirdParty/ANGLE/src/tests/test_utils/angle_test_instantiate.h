@@ -28,6 +28,9 @@ bool IsWindows();
 bool IsWindows7();
 bool IsFuchsia();
 
+// CPU architectures
+bool IsARM64();
+
 // Android devices
 bool IsNexus5X();
 bool IsNexus6P();
@@ -40,13 +43,14 @@ bool IsNVIDIAShield();
 // GPU vendors.
 bool IsIntel();
 bool IsAMD();
-bool IsNVIDIA();
 bool IsARM();
-bool IsARM64();
+bool IsNVIDIA();
 
 // GPU devices.
 bool IsSwiftshaderDevice();
+bool IsIntelUHD630Mobile();
 
+// Compiler configs.
 inline bool IsASan()
 {
 #if defined(ANGLE_WITH_ASAN)
@@ -54,6 +58,15 @@ inline bool IsASan()
 #else
     return false;
 #endif  // defined(ANGLE_WITH_ASAN)
+}
+
+inline bool IsTSan()
+{
+#if defined(THREAD_SANITIZER)
+    return true;
+#else
+    return false;
+#endif  // defined(THREAD_SANITIZER)
 }
 
 bool IsPlatformAvailable(const PlatformParameters &param);
@@ -120,18 +133,21 @@ struct CombinedPrintToStringParamName
     INSTANTIATE_TEST_SUITE_P(, testName, testing::ValuesIn(::angle::FilterTestParams(valuesin)), \
                              testing::PrintToStringParamName())
 
-#define ANGLE_ALL_TEST_PLATFORMS_ES1 \
-    ES1_D3D11(), ES1_OPENGL(), ES1_OPENGLES(), ES1_VULKAN(), ES1_VULKAN_SWIFTSHADER()
+#define ANGLE_ALL_TEST_PLATFORMS_ES1                                                   \
+    ES1_D3D11(), ES1_OPENGL(), ES1_OPENGLES(), ES1_VULKAN(), ES1_VULKAN_SWIFTSHADER(), \
+        WithAsyncCommandQueueFeatureVulkan(ES1_VULKAN())
 
 #define ANGLE_ALL_TEST_PLATFORMS_ES2                                                               \
     ES2_D3D9(), ES2_D3D11(), ES2_OPENGL(), ES2_OPENGLES(), ES2_VULKAN(), ES2_VULKAN_SWIFTSHADER(), \
-        ES2_METAL()
+        ES2_METAL(), WithAsyncCommandQueueFeatureVulkan(ES2_VULKAN())
 
-#define ANGLE_ALL_TEST_PLATFORMS_ES3 \
-    ES3_D3D11(), ES3_OPENGL(), ES3_OPENGLES(), ES3_VULKAN(), ES3_VULKAN_SWIFTSHADER()
+#define ANGLE_ALL_TEST_PLATFORMS_ES3                                                   \
+    ES3_D3D11(), ES3_OPENGL(), ES3_OPENGLES(), ES3_VULKAN(), ES3_VULKAN_SWIFTSHADER(), \
+        ES3_METAL(), WithAsyncCommandQueueFeatureVulkan(ES3_VULKAN())
 
-#define ANGLE_ALL_TEST_PLATFORMS_ES31 \
-    ES31_D3D11(), ES31_OPENGL(), ES31_OPENGLES(), ES31_VULKAN(), ES31_VULKAN_SWIFTSHADER()
+#define ANGLE_ALL_TEST_PLATFORMS_ES31                                                       \
+    ES31_D3D11(), ES31_OPENGL(), ES31_OPENGLES(), ES31_VULKAN(), ES31_VULKAN_SWIFTSHADER(), \
+        WithAsyncCommandQueueFeatureVulkan(ES31_VULKAN())
 
 #define ANGLE_ALL_TEST_PLATFORMS_NULL ES2_NULL(), ES3_NULL(), ES31_NULL()
 
@@ -153,9 +169,9 @@ struct CombinedPrintToStringParamName
     INSTANTIATE_TEST_SUITE_P(, testName, ANGLE_INSTANTIATE_TEST_PLATFORMS(testName), \
                              testing::PrintToStringParamName())
 
-#define ANGLE_INSTANTIATE_TEST_ES3_AND(testName, extra)                                  \
-    const PlatformParameters testName##params[] = {ANGLE_ALL_TEST_PLATFORMS_ES3, extra}; \
-    INSTANTIATE_TEST_SUITE_P(, testName, ANGLE_INSTANTIATE_TEST_PLATFORMS(testName),     \
+#define ANGLE_INSTANTIATE_TEST_ES3_AND(testName, ...)                                          \
+    const PlatformParameters testName##params[] = {ANGLE_ALL_TEST_PLATFORMS_ES3, __VA_ARGS__}; \
+    INSTANTIATE_TEST_SUITE_P(, testName, ANGLE_INSTANTIATE_TEST_PLATFORMS(testName),           \
                              testing::PrintToStringParamName())
 
 // Instantiate the test once for each GLES31 platform
@@ -164,9 +180,9 @@ struct CombinedPrintToStringParamName
     INSTANTIATE_TEST_SUITE_P(, testName, ANGLE_INSTANTIATE_TEST_PLATFORMS(testName), \
                              testing::PrintToStringParamName())
 
-#define ANGLE_INSTANTIATE_TEST_ES31_AND(testName, extra)                                  \
-    const PlatformParameters testName##params[] = {ANGLE_ALL_TEST_PLATFORMS_ES31, extra}; \
-    INSTANTIATE_TEST_SUITE_P(, testName, ANGLE_INSTANTIATE_TEST_PLATFORMS(testName),      \
+#define ANGLE_INSTANTIATE_TEST_ES31_AND(testName, ...)                                          \
+    const PlatformParameters testName##params[] = {ANGLE_ALL_TEST_PLATFORMS_ES31, __VA_ARGS__}; \
+    INSTANTIATE_TEST_SUITE_P(, testName, ANGLE_INSTANTIATE_TEST_PLATFORMS(testName),            \
                              testing::PrintToStringParamName())
 
 // Multiple ES Version macros
@@ -176,10 +192,10 @@ struct CombinedPrintToStringParamName
     INSTANTIATE_TEST_SUITE_P(, testName, ANGLE_INSTANTIATE_TEST_PLATFORMS(testName), \
                              testing::PrintToStringParamName())
 
-#define ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(testName, extra)                          \
-    const PlatformParameters testName##params[] = {ANGLE_ALL_TEST_PLATFORMS_ES2,         \
-                                                   ANGLE_ALL_TEST_PLATFORMS_ES3, extra}; \
-    INSTANTIATE_TEST_SUITE_P(, testName, ANGLE_INSTANTIATE_TEST_PLATFORMS(testName),     \
+#define ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(testName, ...)                                  \
+    const PlatformParameters testName##params[] = {ANGLE_ALL_TEST_PLATFORMS_ES2,               \
+                                                   ANGLE_ALL_TEST_PLATFORMS_ES3, __VA_ARGS__}; \
+    INSTANTIATE_TEST_SUITE_P(, testName, ANGLE_INSTANTIATE_TEST_PLATFORMS(testName),           \
                              testing::PrintToStringParamName())
 
 #define ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND_ES31(testName)                        \
@@ -200,6 +216,12 @@ struct CombinedPrintToStringParamName
     const PlatformParameters testName##params[] = {ANGLE_ALL_TEST_PLATFORMS_ES3,     \
                                                    ANGLE_ALL_TEST_PLATFORMS_ES31};   \
     INSTANTIATE_TEST_SUITE_P(, testName, ANGLE_INSTANTIATE_TEST_PLATFORMS(testName), \
+                             testing::PrintToStringParamName())
+
+#define ANGLE_INSTANTIATE_TEST_ES3_AND_ES31_AND(testName, ...)                                  \
+    const PlatformParameters testName##params[] = {ANGLE_ALL_TEST_PLATFORMS_ES3,                \
+                                                   ANGLE_ALL_TEST_PLATFORMS_ES31, __VA_ARGS__}; \
+    INSTANTIATE_TEST_SUITE_P(, testName, ANGLE_INSTANTIATE_TEST_PLATFORMS(testName),            \
                              testing::PrintToStringParamName())
 
 // Instantiate the test for a combination of N parameters and the
@@ -225,8 +247,8 @@ struct CombinedPrintToStringParamName
                                               combine1, combine2, combine3, combine4, combine5),  \
                              print)
 
-// Checks if a config is expected to be supported by checking a system-based white list.
-bool IsConfigWhitelisted(const SystemInfo &systemInfo, const PlatformParameters &param);
+// Checks if a config is expected to be supported by checking a system-based allow list.
+bool IsConfigAllowlisted(const SystemInfo &systemInfo, const PlatformParameters &param);
 
 // Determines if a config is supported by trying to initialize it. Does
 // not require SystemInfo.
@@ -244,10 +266,10 @@ std::vector<std::string> GetAvailableTestPlatformNames();
 void SetSelectedConfig(const char *selectedConfig);
 bool IsConfigSelected();
 
-// Use a separate isolated process per test config. This works around
-// driver flakiness when using multiple APIs/windows/etc in the same
-// process.
-extern bool gSeparateProcessPerConfig;
+// Check whether texture swizzle is natively supported on Metal device.
+bool IsMetalTextureSwizzleAvailable();
+
+extern bool gEnableANGLEPerTestCaptureLabel;
 
 // For use with ANGLE_INSTANTIATE_TEST_ARRAY
 template <typename ParamsT>
@@ -299,6 +321,20 @@ std::vector<ParamT> CombineWithValues(const std::vector<ParamT> &in,
                                       ParamT combine(const ParamT &, ModifierT))
 {
     return CombineWithValues(in, std::begin(modifiers), std::end(modifiers), combine);
+}
+
+template <typename ParamT, typename FilterFunc>
+std::vector<ParamT> FilterWithFunc(const std::vector<ParamT> &in, FilterFunc filter)
+{
+    std::vector<ParamT> out;
+    for (const ParamT &param : in)
+    {
+        if (filter(param))
+        {
+            out.push_back(param);
+        }
+    }
+    return out;
 }
 }  // namespace angle
 

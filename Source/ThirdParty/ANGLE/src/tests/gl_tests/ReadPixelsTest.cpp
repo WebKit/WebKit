@@ -11,6 +11,7 @@
 
 #include <array>
 
+#include "test_utils/gl_raii.h"
 #include "util/random_utils.h"
 
 using namespace angle;
@@ -61,10 +62,199 @@ TEST_P(ReadPixelsTest, OutOfBounds)
     }
 }
 
-class ReadPixelsPBOTest : public ReadPixelsTest
+class ReadPixelsPBONVTest : public ReadPixelsTest
 {
   protected:
-    ReadPixelsPBOTest() : mPBO(0), mTexture(0), mFBO(0) {}
+    ReadPixelsPBONVTest() : mPBO(0), mTexture(0), mFBO(0) {}
+
+    void testSetUp() override
+    {
+        glGenBuffers(1, &mPBO);
+        glGenFramebuffers(1, &mFBO);
+
+        Reset(4 * getWindowWidth() * getWindowHeight(), 4, 4);
+    }
+
+    virtual void Reset(GLuint bufferSize, GLuint fboWidth, GLuint fboHeight)
+    {
+        ANGLE_SKIP_TEST_IF(!hasPBOExts());
+
+        glBindBuffer(GL_PIXEL_PACK_BUFFER, mPBO);
+        glBufferData(GL_PIXEL_PACK_BUFFER, bufferSize, nullptr, GL_STATIC_DRAW);
+        glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
+
+        glDeleteTextures(1, &mTexture);
+        glGenTextures(1, &mTexture);
+        glBindTexture(GL_TEXTURE_2D, mTexture);
+        glTexStorage2DEXT(GL_TEXTURE_2D, 1, GL_RGBA8, fboWidth, fboHeight);
+        mFBOWidth  = fboWidth;
+        mFBOHeight = fboHeight;
+
+        glBindFramebuffer(GL_FRAMEBUFFER, mFBO);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mTexture, 0);
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+        ASSERT_GL_NO_ERROR();
+    }
+
+    void testTearDown() override
+    {
+        glDeleteBuffers(1, &mPBO);
+        glDeleteTextures(1, &mTexture);
+        glDeleteFramebuffers(1, &mFBO);
+    }
+
+    bool hasPBOExts() const
+    {
+        return IsGLExtensionEnabled("GL_NV_pixel_buffer_object") &&
+               IsGLExtensionEnabled("GL_EXT_texture_storage");
+    }
+
+    GLuint mPBO       = 0;
+    GLuint mTexture   = 0;
+    GLuint mFBO       = 0;
+    GLuint mFBOWidth  = 0;
+    GLuint mFBOHeight = 0;
+};
+
+// Test basic usage of PBOs.
+TEST_P(ReadPixelsPBONVTest, Basic)
+{
+    ANGLE_SKIP_TEST_IF(!hasPBOExts() || !IsGLExtensionEnabled("GL_EXT_map_buffer_range") ||
+                       !IsGLExtensionEnabled("GL_OES_mapbuffer"));
+
+    // http://anglebug.com/5022
+    ANGLE_SKIP_TEST_IF(IsWindows() && IsDesktopOpenGL());
+
+    glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    // Clear last pixel to green
+    glScissor(15, 15, 1, 1);
+    glEnable(GL_SCISSOR_TEST);
+    glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    EXPECT_GL_NO_ERROR();
+
+    glBindBuffer(GL_PIXEL_PACK_BUFFER, mPBO);
+    glReadPixels(0, 0, 16, 16, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+
+    void *mappedPtr    = glMapBufferRangeEXT(GL_PIXEL_PACK_BUFFER, 0, 32, GL_MAP_READ_BIT);
+    GLColor *dataColor = static_cast<GLColor *>(mappedPtr);
+    EXPECT_GL_NO_ERROR();
+
+    EXPECT_EQ(GLColor::red, dataColor[0]);
+    EXPECT_EQ(GLColor::red, dataColor[16 * 16 - 2]);
+    EXPECT_EQ(GLColor::green, dataColor[16 * 16 - 1]);
+
+    glUnmapBufferOES(GL_PIXEL_PACK_BUFFER);
+    EXPECT_GL_NO_ERROR();
+}
+
+// Test that calling SubData preserves PBO data.
+TEST_P(ReadPixelsPBONVTest, SubDataPreservesContents)
+{
+    ANGLE_SKIP_TEST_IF(!hasPBOExts() || !IsGLExtensionEnabled("GL_EXT_map_buffer_range") ||
+                       !IsGLExtensionEnabled("GL_OES_mapbuffer"));
+
+    // anglebug.com/2185
+    ANGLE_SKIP_TEST_IF(IsOSX() && IsNVIDIA() && IsDesktopOpenGL());
+
+    glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    EXPECT_GL_NO_ERROR();
+
+    glBindBuffer(GL_PIXEL_PACK_BUFFER, mPBO);
+    glReadPixels(0, 0, 16, 16, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+
+    unsigned char data[4] = {1, 2, 3, 4};
+
+    glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
+    glBindBuffer(GL_ARRAY_BUFFER, mPBO);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, 4, data);
+
+    void *mappedPtr    = glMapBufferRangeEXT(GL_ARRAY_BUFFER, 0, 32, GL_MAP_READ_BIT);
+    GLColor *dataColor = static_cast<GLColor *>(mappedPtr);
+    EXPECT_GL_NO_ERROR();
+
+    EXPECT_EQ(GLColor(1, 2, 3, 4), dataColor[0]);
+    EXPECT_EQ(GLColor::red, dataColor[1]);
+
+    glUnmapBufferOES(GL_ARRAY_BUFFER);
+    EXPECT_GL_NO_ERROR();
+}
+
+// Test that calling ReadPixels with GL_DYNAMIC_DRAW buffer works
+TEST_P(ReadPixelsPBONVTest, DynamicPBO)
+{
+    ANGLE_SKIP_TEST_IF(!hasPBOExts() || !IsGLExtensionEnabled("GL_EXT_map_buffer_range") ||
+                       !IsGLExtensionEnabled("GL_OES_mapbuffer"));
+
+    // anglebug.com/2185
+    ANGLE_SKIP_TEST_IF(IsOSX() && IsNVIDIA() && IsDesktopOpenGL());
+
+    glBindBuffer(GL_PIXEL_PACK_BUFFER, mPBO);
+    glBufferData(GL_PIXEL_PACK_BUFFER, 4 * getWindowWidth() * getWindowHeight(), nullptr,
+                 GL_DYNAMIC_DRAW);
+
+    glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    EXPECT_GL_NO_ERROR();
+
+    glReadPixels(0, 0, 16, 16, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+
+    unsigned char data[4] = {1, 2, 3, 4};
+
+    glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
+    glBindBuffer(GL_ARRAY_BUFFER, mPBO);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, 4, data);
+
+    void *mappedPtr    = glMapBufferRangeEXT(GL_ARRAY_BUFFER, 0, 32, GL_MAP_READ_BIT);
+    GLColor *dataColor = static_cast<GLColor *>(mappedPtr);
+    EXPECT_GL_NO_ERROR();
+
+    EXPECT_EQ(GLColor(1, 2, 3, 4), dataColor[0]);
+    EXPECT_EQ(GLColor::red, dataColor[1]);
+
+    glUnmapBufferOES(GL_ARRAY_BUFFER);
+    EXPECT_GL_NO_ERROR();
+}
+
+TEST_P(ReadPixelsPBONVTest, ReadFromFBO)
+{
+    ANGLE_SKIP_TEST_IF(!hasPBOExts() || !IsGLExtensionEnabled("GL_EXT_map_buffer_range") ||
+                       !IsGLExtensionEnabled("GL_OES_mapbuffer"));
+
+    glBindFramebuffer(GL_FRAMEBUFFER, mFBO);
+    glViewport(0, 0, mFBOWidth, mFBOHeight);
+    glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    // Clear last pixel to green
+    glScissor(mFBOWidth - 1, mFBOHeight - 1, 1, 1);
+    glEnable(GL_SCISSOR_TEST);
+    glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    EXPECT_GL_NO_ERROR();
+
+    glBindBuffer(GL_PIXEL_PACK_BUFFER, mPBO);
+    glReadPixels(0, 0, mFBOWidth, mFBOHeight, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+
+    void *mappedPtr =
+        glMapBufferRangeEXT(GL_PIXEL_PACK_BUFFER, 0, 4 * mFBOWidth * mFBOHeight, GL_MAP_READ_BIT);
+    GLColor *dataColor = static_cast<GLColor *>(mappedPtr);
+    EXPECT_GL_NO_ERROR();
+
+    EXPECT_EQ(GLColor::red, dataColor[0]);
+    EXPECT_EQ(GLColor::red, dataColor[mFBOWidth * mFBOHeight - 2]);
+    EXPECT_EQ(GLColor::green, dataColor[mFBOWidth * mFBOHeight - 1]);
+
+    glUnmapBufferOES(GL_PIXEL_PACK_BUFFER);
+    EXPECT_GL_NO_ERROR();
+}
+
+class ReadPixelsPBOTest : public ReadPixelsPBONVTest
+{
+  protected:
+    ReadPixelsPBOTest() : ReadPixelsPBONVTest() {}
 
     void testSetUp() override
     {
@@ -74,7 +264,7 @@ class ReadPixelsPBOTest : public ReadPixelsTest
         Reset(4 * getWindowWidth() * getWindowHeight(), 4, 1);
     }
 
-    void Reset(GLuint bufferSize, GLuint fboWidth, GLuint fboHeight)
+    void Reset(GLuint bufferSize, GLuint fboWidth, GLuint fboHeight) override
     {
         glBindBuffer(GL_PIXEL_PACK_BUFFER, mPBO);
         glBufferData(GL_PIXEL_PACK_BUFFER, bufferSize, nullptr, GL_STATIC_DRAW);
@@ -91,17 +281,6 @@ class ReadPixelsPBOTest : public ReadPixelsTest
 
         ASSERT_GL_NO_ERROR();
     }
-
-    void testTearDown() override
-    {
-        glDeleteBuffers(1, &mPBO);
-        glDeleteTextures(1, &mTexture);
-        glDeleteFramebuffers(1, &mFBO);
-    }
-
-    GLuint mPBO     = 0;
-    GLuint mTexture = 0;
-    GLuint mFBO     = 0;
 };
 
 // Test basic usage of PBOs.
@@ -616,12 +795,18 @@ TEST_P(ReadPixelsTextureTest, MipAttachment3DPBO)
 // Test 3D attachment readback, non-zero layer.
 TEST_P(ReadPixelsTextureTest, LayerAttachment3DPBO)
 {
+    // http://anglebug.com/5267
+    ANGLE_SKIP_TEST_IF(IsOSX() && IsIntelUHD630Mobile() && IsDesktopOpenGL());
+
     testPBORead(GL_TEXTURE_3D, 1, 0, 1);
 }
 
 // Test 3D attachment readback, non-zero mip and layer.
 TEST_P(ReadPixelsTextureTest, MipLayerAttachment3DPBO)
 {
+    // http://anglebug.com/5267
+    ANGLE_SKIP_TEST_IF(IsOSX() && IsIntelUHD630Mobile() && IsDesktopOpenGL());
+
     testPBORead(GL_TEXTURE_3D, 2, 1, 1);
 }
 
@@ -640,12 +825,18 @@ TEST_P(ReadPixelsTextureTest, MipAttachment2DArrayPBO)
 // Test 3D attachment readback, non-zero layer.
 TEST_P(ReadPixelsTextureTest, LayerAttachment2DArrayPBO)
 {
+    // http://anglebug.com/5267
+    ANGLE_SKIP_TEST_IF(IsOSX() && IsIntelUHD630Mobile() && IsDesktopOpenGL());
+
     testPBORead(GL_TEXTURE_2D_ARRAY, 1, 0, 1);
 }
 
 // Test 3D attachment readback, non-zero mip and layer.
 TEST_P(ReadPixelsTextureTest, MipLayerAttachment2DArrayPBO)
 {
+    // http://anglebug.com/5267
+    ANGLE_SKIP_TEST_IF(IsOSX() && IsIntelUHD630Mobile() && IsDesktopOpenGL());
+
     testPBORead(GL_TEXTURE_2D_ARRAY, 2, 1, 1);
 }
 
@@ -696,6 +887,7 @@ TEST_P(ReadPixelsErrorTest, ReadBufferIsNone)
 // Use this to select which configurations (e.g. which renderer, which GLES major version) these
 // tests should be run against.
 ANGLE_INSTANTIATE_TEST_ES2(ReadPixelsTest);
+ANGLE_INSTANTIATE_TEST_ES2(ReadPixelsPBONVTest);
 ANGLE_INSTANTIATE_TEST_ES3(ReadPixelsPBOTest);
 ANGLE_INSTANTIATE_TEST_ES3(ReadPixelsPBODrawTest);
 ANGLE_INSTANTIATE_TEST_ES3(ReadPixelsMultisampleTest);

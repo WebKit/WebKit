@@ -39,7 +39,7 @@ class AliasingBreaker : public TIntermTraverser
     AliasingBreaker() : TIntermTraverser(true, false, true) {}
 
   protected:
-    bool visitBinary(Visit visit, TIntermBinary *binary)
+    bool visitBinary(Visit visit, TIntermBinary *binary) override
     {
         if (visit != PreVisit)
         {
@@ -78,7 +78,7 @@ class AliasingBreaker : public TIntermTraverser
         return true;
     }
 
-    bool visitLoop(Visit visit, TIntermLoop *loop)
+    bool visitLoop(Visit visit, TIntermLoop *loop) override
     {
         if (visit == PreVisit)
         {

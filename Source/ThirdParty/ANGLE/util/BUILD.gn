@@ -40,6 +40,14 @@ if (is_win) {
   }
 }
 
+if (is_linux) {
+  _util_sources += [
+    "display/DisplayPixmap.cpp",
+    "display/DisplayWindow.cpp",
+    "display/DisplayWindow.h",
+  ]
+}
+
 if (angle_use_x11) {
   _util_sources += [
     "x11/X11Pixmap.cpp",
@@ -56,7 +64,12 @@ if (is_fuchsia) {
     "fuchsia/ScenicWindow.cpp",
     "fuchsia/ScenicWindow.h",
   ]
-} else if (use_ozone) {
+} else if (use_ozone && !angle_use_x11 && !angle_use_vulkan_display) {
+  # Use X11 impl by default otherwise switch to fake Ozone impl that does not
+  # seem to do anything real.
+  # TODO(msisov): probably, we need to have a proper support for different
+  # Ozone backends, and be able to switch between them for proper tests.
+  # For example, Wayland, X11, etc.
   _util_sources += [
     "ozone/OzonePixmap.cpp",
     "ozone/OzoneWindow.cpp",
@@ -135,7 +148,7 @@ angle_source_set("angle_util_loader") {
 config("angle_util_config") {
   # Force users to include "util/header.h" instead of just "header.h".
   include_dirs = [ ".." ]
-  if (is_linux && angle_use_x11) {
+  if ((is_linux || is_chromeos) && angle_use_x11) {
     libs = [ "X11" ]
   }
 }
@@ -164,7 +177,7 @@ foreach(is_shared_library,
     ]
     libs = []
 
-    if (is_linux) {
+    if (is_linux || is_chromeos) {
       libs += [
         "rt",
         "dl",
@@ -179,8 +192,6 @@ foreach(is_shared_library,
     }
 
     if (is_android) {
-      # To prevent linux sources filtering on android
-      set_sources_assignment_filter([])
       libs += [
         "android",
         "log",

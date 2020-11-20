@@ -72,7 +72,8 @@ ProgramExecutable::ProgramExecutable(const ProgramExecutable &other)
       mUniformBlocks(other.mUniformBlocks),
       mAtomicCounterBuffers(other.mAtomicCounterBuffers),
       mImageUniformRange(other.mImageUniformRange),
-      mShaderStorageBlocks(other.mShaderStorageBlocks),
+      mComputeShaderStorageBlocks(other.mComputeShaderStorageBlocks),
+      mGraphicsShaderStorageBlocks(other.mGraphicsShaderStorageBlocks),
       mPipelineHasGraphicsUniformBuffers(other.mPipelineHasGraphicsUniformBuffers),
       mPipelineHasComputeUniformBuffers(other.mPipelineHasComputeUniformBuffers),
       mPipelineHasGraphicsStorageBuffers(other.mPipelineHasGraphicsStorageBuffers),
@@ -111,12 +112,14 @@ void ProgramExecutable::reset()
     mLinkedTransformFeedbackVaryings.clear();
     mUniforms.clear();
     mUniformBlocks.clear();
-    mShaderStorageBlocks.clear();
+    mComputeShaderStorageBlocks.clear();
+    mGraphicsShaderStorageBlocks.clear();
     mAtomicCounterBuffers.clear();
     mOutputVariables.clear();
     mOutputLocations.clear();
     mSamplerBindings.clear();
-    mImageBindings.clear();
+    mComputeImageBindings.clear();
+    mGraphicsImageBindings.clear();
 
     mPipelineHasGraphicsUniformBuffers       = false;
     mPipelineHasComputeUniformBuffers        = false;
@@ -136,8 +139,8 @@ void ProgramExecutable::load(gl::BinaryInputStream *stream)
                   "Too many vertex attribs for mask: All bits of mAttributesTypeMask types and "
                   "mask fit into 32 bits each");
     mAttributesTypeMask        = gl::ComponentTypeMask(stream->readInt<uint32_t>());
-    mAttributesMask            = stream->readInt<gl::AttributesMask>();
-    mActiveAttribLocationsMask = stream->readInt<gl::AttributesMask>();
+    mAttributesMask            = gl::AttributesMask(stream->readInt<uint32_t>());
+    mActiveAttribLocationsMask = gl::AttributesMask(stream->readInt<uint32_t>());
     mMaxActiveAttribLocation   = stream->readInt<unsigned int>();
 
     mLinkedGraphicsShaderStages = ShaderBitSet(stream->readInt<uint8_t>());
@@ -160,25 +163,25 @@ void ProgramExecutable::save(gl::BinaryOutputStream *stream) const
 {
     static_assert(MAX_VERTEX_ATTRIBS * 2 <= sizeof(uint32_t) * 8,
                   "All bits of mAttributesTypeMask types and mask fit into 32 bits each");
-    stream->writeInt(static_cast<int>(mAttributesTypeMask.to_ulong()));
-    stream->writeInt(static_cast<int>(mAttributesMask.to_ulong()));
-    stream->writeInt(mActiveAttribLocationsMask.to_ulong());
+    stream->writeInt(static_cast<uint32_t>(mAttributesTypeMask.to_ulong()));
+    stream->writeInt(static_cast<uint32_t>(mAttributesMask.to_ulong()));
+    stream->writeInt(static_cast<uint32_t>(mActiveAttribLocationsMask.to_ulong()));
     stream->writeInt(mMaxActiveAttribLocation);
 
     stream->writeInt(mLinkedGraphicsShaderStages.bits());
     stream->writeInt(mLinkedComputeShaderStages.bits());
-    stream->writeInt(static_cast<bool>(mIsCompute));
+    stream->writeBool(mIsCompute);
 
-    stream->writeInt(static_cast<bool>(mPipelineHasGraphicsUniformBuffers));
-    stream->writeInt(static_cast<bool>(mPipelineHasComputeUniformBuffers));
-    stream->writeInt(static_cast<bool>(mPipelineHasGraphicsStorageBuffers));
-    stream->writeInt(static_cast<bool>(mPipelineHasComputeStorageBuffers));
-    stream->writeInt(static_cast<bool>(mPipelineHasGraphicsAtomicCounterBuffers));
-    stream->writeInt(static_cast<bool>(mPipelineHasComputeAtomicCounterBuffers));
-    stream->writeInt(static_cast<bool>(mPipelineHasGraphicsDefaultUniforms));
-    stream->writeInt(static_cast<bool>(mPipelineHasComputeDefaultUniforms));
-    stream->writeInt(static_cast<bool>(mPipelineHasGraphicsTextures));
-    stream->writeInt(static_cast<bool>(mPipelineHasComputeTextures));
+    stream->writeBool(mPipelineHasGraphicsUniformBuffers);
+    stream->writeBool(mPipelineHasComputeUniformBuffers);
+    stream->writeBool(mPipelineHasGraphicsStorageBuffers);
+    stream->writeBool(mPipelineHasComputeStorageBuffers);
+    stream->writeBool(mPipelineHasGraphicsAtomicCounterBuffers);
+    stream->writeBool(mPipelineHasComputeAtomicCounterBuffers);
+    stream->writeBool(mPipelineHasGraphicsDefaultUniforms);
+    stream->writeBool(mPipelineHasComputeDefaultUniforms);
+    stream->writeBool(mPipelineHasGraphicsTextures);
+    stream->writeBool(mPipelineHasComputeTextures);
 }
 
 int ProgramExecutable::getInfoLogLength() const
@@ -233,8 +236,17 @@ bool ProgramExecutable::hasUniformBuffers() const
 
 bool ProgramExecutable::hasStorageBuffers() const
 {
-    return !getShaderStorageBlocks().empty() ||
-           (isCompute() ? mPipelineHasComputeStorageBuffers : mPipelineHasGraphicsStorageBuffers);
+    return (isCompute() ? hasComputeStorageBuffers() : hasGraphicsStorageBuffers());
+}
+
+bool ProgramExecutable::hasGraphicsStorageBuffers() const
+{
+    return !mGraphicsShaderStorageBlocks.empty() || mPipelineHasGraphicsStorageBuffers;
+}
+
+bool ProgramExecutable::hasComputeStorageBuffers() const
+{
+    return !mComputeShaderStorageBlocks.empty() || mPipelineHasComputeStorageBuffers;
 }
 
 bool ProgramExecutable::hasAtomicCounterBuffers() const
@@ -246,8 +258,17 @@ bool ProgramExecutable::hasAtomicCounterBuffers() const
 
 bool ProgramExecutable::hasImages() const
 {
-    return !getImageBindings().empty() ||
-           (isCompute() ? mPipelineHasComputeImages : mPipelineHasGraphicsImages);
+    return (isCompute() ? hasComputeImages() : hasGraphicsImages());
+}
+
+bool ProgramExecutable::hasGraphicsImages() const
+{
+    return !mGraphicsImageBindings.empty() || mPipelineHasGraphicsImages;
+}
+
+bool ProgramExecutable::hasComputeImages() const
+{
+    return !mComputeImageBindings.empty() || mPipelineHasComputeImages;
 }
 
 GLuint ProgramExecutable::getUniformIndexFromImageIndex(GLuint imageIndex) const
@@ -292,9 +313,11 @@ void ProgramExecutable::updateActiveSamplers(const ProgramState &programState)
 
 void ProgramExecutable::updateActiveImages(const ProgramExecutable &executable)
 {
-    for (uint32_t imageIndex = 0; imageIndex < mImageBindings.size(); ++imageIndex)
+    const std::vector<ImageBinding> *imageBindings = getImageBindings();
+    for (uint32_t imageIndex = 0; imageIndex < imageBindings->size(); ++imageIndex)
     {
-        const gl::ImageBinding &imageBinding = mImageBindings[imageIndex];
+        const gl::ImageBinding &imageBinding = imageBindings->at(imageIndex);
+
         uint32_t uniformIndex = executable.getUniformIndexFromImageIndex(imageIndex);
         const gl::LinkedUniform &imageUniform = executable.getUniforms()[uniformIndex];
         const ShaderBitSet shaderBits         = imageUniform.activeShaders();

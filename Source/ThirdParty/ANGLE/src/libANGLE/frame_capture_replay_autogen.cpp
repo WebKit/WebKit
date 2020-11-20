@@ -238,6 +238,15 @@ void FrameCapture::ReplayCall(gl::Context *context,
                     params.getParam("data", ParamType::TvoidConstPointer, 2)),
                 params.getParam("usagePacked", ParamType::TBufferUsage, 3).value.BufferUsageVal);
             break;
+        case gl::EntryPoint::BufferStorage:
+            context->bufferStorage(
+                params.getParam("targetPacked", ParamType::TBufferBinding, 0)
+                    .value.BufferBindingVal,
+                params.getParam("size", ParamType::TGLsizeiptr, 1).value.GLsizeiptrVal,
+                replayContext->getAsConstPointer<const void *>(
+                    params.getParam("data", ParamType::TvoidConstPointer, 2)),
+                params.getParam("flags", ParamType::TGLbitfield, 3).value.GLbitfieldVal);
+            break;
         case gl::EntryPoint::BufferSubData:
             context->bufferSubData(
                 params.getParam("targetPacked", ParamType::TBufferBinding, 0)
@@ -2493,6 +2502,14 @@ void FrameCapture::ReplayCall(gl::Context *context,
                 params.getParam("width", ParamType::TGLsizei, 3).value.GLsizeiVal,
                 params.getParam("height", ParamType::TGLsizei, 4).value.GLsizeiVal);
             break;
+        case gl::EntryPoint::RenderbufferStorageMultisampleEXT:
+            context->renderbufferStorageMultisampleEXT(
+                params.getParam("target", ParamType::TGLenum, 0).value.GLenumVal,
+                params.getParam("samples", ParamType::TGLsizei, 1).value.GLsizeiVal,
+                params.getParam("internalformat", ParamType::TGLenum, 2).value.GLenumVal,
+                params.getParam("width", ParamType::TGLsizei, 3).value.GLsizeiVal,
+                params.getParam("height", ParamType::TGLsizei, 4).value.GLsizeiVal);
+            break;
         case gl::EntryPoint::ResumeTransformFeedback:
             context->resumeTransformFeedback();
             break;
@@ -2646,13 +2663,13 @@ void FrameCapture::ReplayCall(gl::Context *context,
             break;
         case gl::EntryPoint::TexBuffer:
             context->texBuffer(
-                params.getParam("target", ParamType::TGLenum, 0).value.GLenumVal,
+                params.getParam("targetPacked", ParamType::TTextureType, 0).value.TextureTypeVal,
                 params.getParam("internalformat", ParamType::TGLenum, 1).value.GLenumVal,
                 params.getParam("bufferPacked", ParamType::TBufferID, 2).value.BufferIDVal);
             break;
         case gl::EntryPoint::TexBufferRange:
             context->texBufferRange(
-                params.getParam("target", ParamType::TGLenum, 0).value.GLenumVal,
+                params.getParam("targetPacked", ParamType::TTextureType, 0).value.TextureTypeVal,
                 params.getParam("internalformat", ParamType::TGLenum, 1).value.GLenumVal,
                 params.getParam("bufferPacked", ParamType::TBufferID, 2).value.BufferIDVal,
                 params.getParam("offset", ParamType::TGLintptr, 3).value.GLintptrVal,

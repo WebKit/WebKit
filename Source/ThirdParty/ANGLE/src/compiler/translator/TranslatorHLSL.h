@@ -46,6 +46,7 @@ class TranslatorHLSL : public TCompiler
     unsigned int mReadonlyImage2DRegisterIndex;
     unsigned int mImage2DRegisterIndex;
     std::set<std::string> mUsedImage2DFunctionNames;
+    std::map<int, const TInterfaceBlock *> mUniformBlocksTranslatedToStructuredBuffers;
 };
 
 }  // namespace sh

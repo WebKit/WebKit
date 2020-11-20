@@ -60,7 +60,7 @@ AndroidWindow::AndroidWindow() {}
 
 AndroidWindow::~AndroidWindow() {}
 
-bool AndroidWindow::initialize(const std::string &name, int width, int height)
+bool AndroidWindow::initializeImpl(const std::string &name, int width, int height)
 {
     return resize(width, height);
 }
@@ -73,7 +73,7 @@ void AndroidWindow::resetNativeWindow() {}
 EGLNativeWindowType AndroidWindow::getNativeWindow() const
 {
     // Return the entire Activity Surface for now
-    // sApp->window is valid only after sInitWindowDone, which is true after initialize()
+    // sApp->window is valid only after sInitWindowDone, which is true after initializeImpl()
     return sApp->window;
 }
 
@@ -180,7 +180,7 @@ void android_main(struct android_app *app)
 
     // Message loop, polling for events indefinitely (due to -1 timeout)
     // Must be here in order to handle APP_CMD_INIT_WINDOW event,
-    // which occurs after AndroidWindow::initialize(), but before AndroidWindow::messageLoop
+    // which occurs after AndroidWindow::initializeImpl(), but before AndroidWindow::messageLoop
     while (ALooper_pollAll(-1, nullptr, &events, reinterpret_cast<void **>(&source)) >= 0)
     {
         if (source != nullptr)

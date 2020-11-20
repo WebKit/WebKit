@@ -6,9 +6,22 @@
 #
 # Generates a roll CL within the ANGLE repository of AOSP.
 
+# exit when any command fails
+set -e
+
+# Change the working directory to the ANGLE root directory
+cd "${0%/*}/.."
+
+# Check out depot_tools locally and add it to the path
+DEPOT_TOOLS_DIR=_depot_tools
+rm -rf ${DEPOT_TOOLS_DIR}
+git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git ${DEPOT_TOOLS_DIR}
+export PATH=`pwd`/${DEPOT_TOOLS_DIR}:$PATH
+
 GN_OUTPUT_DIRECTORY=out/Android
 
 deps=(
+    "third_party/abseil-cpp"
     "third_party/spirv-tools/src"
     "third_party/glslang/src"
     "third_party/spirv-headers/src"
@@ -44,7 +57,7 @@ abis=(
     "x64"
 )
 
-rm -r ${GN_OUTPUT_DIRECTORY}
+rm -rf ${GN_OUTPUT_DIRECTORY}
 for abi in ${abis[@]}; do
     # generate gn build files and convert them to blueprints
     gn_args=(
@@ -74,6 +87,14 @@ for abi in ${abis[@]}; do
         "angle_enable_essl = true" # TODO(geofflang): Disable ESSL once Andrid no longer requires it. anglebug.com/4444
         "angle_enable_glsl = true" # TODO(geofflang): Disable ESSL once Andrid no longer requires it. anglebug.com/4444
         "angle_enable_hlsl = false"
+
+        "angle_enable_commit_id = false"
+
+        # Disable histogram/protobuf support
+        "angle_has_histograms = false"
+
+        # Disable _LIBCPP_ABI_UNSTABLE, since it breaks std::string
+        "libcxx_abi_unstable = false"
     )
 
     gn gen ${GN_OUTPUT_DIRECTORY} --args="${gn_args[*]}"
@@ -86,7 +107,7 @@ python scripts/generate_android_bp.py \
     ${GN_OUTPUT_DIRECTORY}/desc.x86.json \
     ${GN_OUTPUT_DIRECTORY}/desc.x64.json > Android.bp
 
-rm -r ${GN_OUTPUT_DIRECTORY}
+rm -rf ${GN_OUTPUT_DIRECTORY}
 git add Android.bp
 
 # Delete the .git files in each dep so that it can be added to this repo. Some deps like jsoncpp
@@ -98,6 +119,7 @@ done
 extra_removal_files=(
    # Some third_party deps have OWNERS files which contains users that have not logged into
    # the Android gerrit. Repo cannot upload with these files present.
+   "third_party/abseil-cpp/OWNERS"
    "third_party/jsoncpp/OWNERS"
    "third_party/vulkan_memory_allocator/OWNERS"
    "third_party/zlib/OWNERS"
@@ -108,11 +130,12 @@ extra_removal_files=(
 )
 
 for removal_file in ${extra_removal_files[@]}; do
-   rm $removal_file
+   rm -f $removal_file
 done
 
 for dep in ${deps[@]} ${add_only_deps[@]}; do
    git add -f $dep
 done
 
-git commit --amend --no-edit
+# Done with depot_tools
+rm -rf $DEPOT_TOOLS_DIR

@@ -102,6 +102,8 @@ const char *GetCommandString(CommandID id)
             return "InsertDebugUtilsLabel";
         case CommandID::MemoryBarrier:
             return "MemoryBarrier";
+        case CommandID::NextSubpass:
+            return "NextSubpass";
         case CommandID::PipelineBarrier:
             return "PipelineBarrier";
         case CommandID::PushConstants:
@@ -114,6 +116,8 @@ const char *GetCommandString(CommandID id)
             return "ResolveImage";
         case CommandID::SetEvent:
             return "SetEvent";
+        case CommandID::SetScissor:
+            return "SetScissor";
         case CommandID::WaitEvents:
             return "WaitEvents";
         case CommandID::WriteTimestamp:
@@ -483,6 +487,13 @@ void SecondaryCommandBuffer::executeCommands(VkCommandBuffer cmdBuffer)
                                          1, &params->memoryBarrier, 0, nullptr, 0, nullptr);
                     break;
                 }
+                case CommandID::NextSubpass:
+                {
+                    const NextSubpassParams *params =
+                        getParamPtr<NextSubpassParams>(currentCommand);
+                    vkCmdNextSubpass(cmdBuffer, params->subpassContents);
+                    break;
+                }
                 case CommandID::PipelineBarrier:
                 {
                     const PipelineBarrierParams *params =
@@ -538,6 +549,12 @@ void SecondaryCommandBuffer::executeCommands(VkCommandBuffer cmdBuffer)
                 {
                     const SetEventParams *params = getParamPtr<SetEventParams>(currentCommand);
                     vkCmdSetEvent(cmdBuffer, params->event, params->stageMask);
+                    break;
+                }
+                case CommandID::SetScissor:
+                {
+                    const SetScissorParams *params = getParamPtr<SetScissorParams>(currentCommand);
+                    vkCmdSetScissor(cmdBuffer, 0, 1, &params->scissor);
                     break;
                 }
                 case CommandID::WaitEvents:

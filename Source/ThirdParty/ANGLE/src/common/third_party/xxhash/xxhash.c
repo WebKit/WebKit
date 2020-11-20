@@ -222,7 +222,7 @@ static int XXH_isLittleEndian(void)
     const union { U32 u; BYTE c[4]; } one = { 1 };   /* don't use static : performance detrimental  */
     return one.c[0];
 }
-#   define XXH_CPU_LITTLE_ENDIAN   XXH_isLittleEndian()
+#   define XXH_CPU_LITTLE_ENDIAN   (XXH_isLittleEndian())
 #endif
 
 

@@ -639,6 +639,9 @@
     }
   },
   "GL_STENCIL_INDEX8": {
+    "S8_UINT": {
+      "GL_UNSIGNED_BYTE": "LoadToNative<GLubyte, 1>"
+    },
     "NONE": {
       "GL_UNSIGNED_BYTE": "UnimplementedLoadFunction"
     }

@@ -18,8 +18,11 @@ class DebugAnnotator9 : public angle::LoggingAnnotator
 {
   public:
     DebugAnnotator9() {}
-    void beginEvent(const char *eventName, const char *eventMessage) override;
-    void endEvent(const char *eventName) override;
+    void beginEvent(gl::Context *context,
+                    gl::EntryPoint entryPoint,
+                    const char *eventName,
+                    const char *eventMessage) override;
+    void endEvent(gl::Context *context, const char *eventName, gl::EntryPoint entryPoint) override;
     void setMarker(const char *markerName) override;
     bool getStatus() override;
 

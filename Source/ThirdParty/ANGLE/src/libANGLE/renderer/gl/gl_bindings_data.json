@@ -832,5 +832,17 @@
     [
         "ImportSemaphoreWin32HandleEXT",
         "ImportSemaphoreWin32NameEXT"
+    ],
+
+    "GL_OES_texture_buffer":
+    [
+        "TexBufferOES",
+        "TexBufferRangeOES"
+    ],
+
+    "GL_EXT_texture_buffer":
+    [
+        "TexBufferEXT",
+        "TexBufferRangeEXT"
     ]
 }

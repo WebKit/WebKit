@@ -27,7 +27,7 @@ class DisplayVkAndroid : public DisplayVk
                                        EGLNativeWindowType window) override;
 
     egl::ConfigSet generateConfigs() override;
-    bool checkConfigSupport(egl::Config *config) override;
+    void checkConfigSupport(egl::Config *config) override;
 
     egl::Error validateImageClientBuffer(const gl::Context *context,
                                          EGLenum target,

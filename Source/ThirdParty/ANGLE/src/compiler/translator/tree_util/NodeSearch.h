@@ -36,7 +36,7 @@ class NodeSearchTraverser : public TIntermTraverser
 class FindDiscard : public NodeSearchTraverser<FindDiscard>
 {
   public:
-    virtual bool visitBranch(Visit visit, TIntermBranch *node)
+    bool visitBranch(Visit visit, TIntermBranch *node) override
     {
         switch (node->getFlowOp())
         {

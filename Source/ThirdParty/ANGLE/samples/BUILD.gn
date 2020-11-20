@@ -57,6 +57,7 @@ template("angle_sample") {
     forward_variables_from(invoker,
                            [
                              "cflags",
+                             "data",
                              "defines",
                              "deps",
                              "sources",
@@ -64,6 +65,10 @@ template("angle_sample") {
     deps += [ ":sample_util" ]
     if (defined(invoker.data)) {
       deps += [ ":${target_name}_data" ]
+    }
+
+    if (defined(invoker.configs)) {
+      configs += invoker.configs
     }
 
     if (defined(invoker.suppressed_configs)) {
@@ -194,6 +199,7 @@ if (angle_build_capture_replay_sample) {
         ]
 
     deps = [ "$angle_root:angle_compression" ]
+    data = [ "capture_replay/angle_capture_context${_contextid}.angledata.gz" ]
 
     _data_path = rebase_path("capture_replay", root_out_dir)
     defines = [
@@ -203,6 +209,7 @@ if (angle_build_capture_replay_sample) {
     ]
 
     suppressed_configs = [ "$angle_root:constructor_and_destructor_warnings" ]
+    configs = []
 
     # Disable optimization to avoid optimizing huge files.
     if (!is_debug) {

@@ -19,9 +19,12 @@ DebugAnnotator11::DebugAnnotator11() {}
 
 DebugAnnotator11::~DebugAnnotator11() {}
 
-void DebugAnnotator11::beginEvent(const char *eventName, const char *eventMessage)
+void DebugAnnotator11::beginEvent(gl::Context *context,
+                                  gl::EntryPoint entryPoint,
+                                  const char *eventName,
+                                  const char *eventMessage)
 {
-    angle::LoggingAnnotator::beginEvent(eventName, eventMessage);
+    angle::LoggingAnnotator::beginEvent(context, entryPoint, eventName, eventMessage);
     if (loggingEnabledForThisThread())
     {
         std::mbstate_t state = std::mbstate_t();
@@ -30,9 +33,11 @@ void DebugAnnotator11::beginEvent(const char *eventName, const char *eventMessag
     }
 }
 
-void DebugAnnotator11::endEvent(const char *eventName)
+void DebugAnnotator11::endEvent(gl::Context *context,
+                                const char *eventName,
+                                gl::EntryPoint entryPoint)
 {
-    angle::LoggingAnnotator::endEvent(eventName);
+    angle::LoggingAnnotator::endEvent(context, eventName, entryPoint);
     if (loggingEnabledForThisThread())
     {
         mUserDefinedAnnotation->EndEvent();

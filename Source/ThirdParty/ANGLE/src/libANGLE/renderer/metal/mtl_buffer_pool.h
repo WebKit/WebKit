@@ -12,6 +12,8 @@
 
 #include "libANGLE/renderer/metal/mtl_resources.h"
 
+#include <deque>
+
 namespace rx
 {
 
@@ -19,6 +21,20 @@ class ContextMtl;
 
 namespace mtl
 {
+
+enum class BufferPoolMemPolicy
+{
+    // Always allocate buffer in shared memory, useful for dynamic small buffer.
+    // This translates to MTLResourceStorageModeShared.
+    AlwaysSharedMem,
+    // Always allocate buffer in GPU dedicated memory. Note: a CPU side copy is also allocated so
+    // that buffer can still be mapped on CPU side.
+    // This translates to MTLResourceStorageModeManaged on macOS or MTLResourceStorageModeShared on
+    // iOS.
+    AlwaysGPUMem,
+    // Auto allocate buffer in shared memory if it is small. GPU otherwise.
+    Auto,
+};
 
 // A buffer pool is conceptually an infinitely long buffer. Each time you write to the buffer,
 // you will always write to a previously unused portion. After a series of writes, you must flush
@@ -34,16 +50,24 @@ namespace mtl
 class BufferPool
 {
   public:
-    // alwaysAllocNewBuffer=true will always allocate new buffer or reuse free buffer on allocate(),
-    // regardless of whether current buffer still has unused portion or not.
-    BufferPool(bool alwaysAllocNewBuffer = false);
+    BufferPool();
+    // - alwaysAllocNewBuffer=true will always allocate new buffer or reuse free buffer on
+    // allocate(), regardless of whether current buffer still has unused portion or not.
+    // - memPolicy: indicate the allocated buffers should be in shared memory or not.
+    // See BufferPoolMemPolicy.
+    BufferPool(bool alwaysAllocNewBuffer);
+    BufferPool(bool alwaysAllocNewBuffer, BufferPoolMemPolicy memPolicy);
     ~BufferPool();
 
     // Init is called after the buffer creation so that the alignment can be specified later.
-    void initialize(ContextMtl *contextMtl,
-                    size_t initialSize,
-                    size_t alignment,
-                    size_t maxBuffers = 0);
+    void initialize(Context *context, size_t initialSize, size_t alignment, size_t maxBuffers);
+    // Calling this without initialize() will have same effect as calling initialize().
+    // If called after initialize(), the old pending buffers will be flushed and might be re-used if
+    // their size are big enough for the requested initialSize parameter.
+    angle::Result reset(ContextMtl *contextMtl,
+                        size_t initialSize,
+                        size_t alignment,
+                        size_t maxBuffers);
 
     // This call will allocate a new region at the end of the buffer. It internally may trigger
     // a new buffer to be created (which is returned in the optional parameter
@@ -56,7 +80,7 @@ class BufferPool
                            size_t *offsetOut           = nullptr,
                            bool *newBufferAllocatedOut = nullptr);
 
-    // After a sequence of writes, call commit to ensure the data is visible to the device.
+    // After a sequence of CPU writes, call commit to ensure the data is visible to the device.
     angle::Result commit(ContextMtl *contextMtl);
 
     // This releases all the buffers that have been allocated since this was last called.
@@ -68,28 +92,42 @@ class BufferPool
     const BufferRef &getCurrentBuffer() { return mBuffer; }
 
     size_t getAlignment() { return mAlignment; }
-    void updateAlignment(ContextMtl *contextMtl, size_t alignment);
+    void updateAlignment(Context *context, size_t alignment);
+
+    size_t getMaxBuffers() const { return mMaxBuffers; }
 
     // Set whether allocate() will always allocate new buffer or attempting to append to previous
     // buffer or not. Default is false.
     void setAlwaysAllocateNewBuffer(bool e) { mAlwaysAllocateNewBuffer = e; }
 
+    void setMemoryPolicy(BufferPoolMemPolicy policy) { mMemPolicy = policy; }
+
+    // Set all subsequent allocated buffers should always use shared memory
+    void setAlwaysUseSharedMem() { setMemoryPolicy(BufferPoolMemPolicy::AlwaysSharedMem); }
+
+    // Set all subsequent allocated buffers should always use GPU memory
+    void setAlwaysUseGPUMem() { setMemoryPolicy(BufferPoolMemPolicy::AlwaysGPUMem); }
+
   private:
+    bool shouldAllocateInSharedMem(ContextMtl *contextMtl) const;
     void reset();
     angle::Result allocateNewBuffer(ContextMtl *contextMtl);
-    void destroyBufferList(ContextMtl *contextMtl, std::vector<BufferRef> *buffers);
+    void destroyBufferList(ContextMtl *contextMtl, std::deque<BufferRef> *buffers);
+    angle::Result finalizePendingBuffer(ContextMtl *contextMtl);
 
     size_t mInitialSize;
     BufferRef mBuffer;
     uint32_t mNextAllocationOffset;
+    uint32_t mLastFlushOffset;
     size_t mSize;
     size_t mAlignment;
 
-    std::vector<BufferRef> mInFlightBuffers;
-    std::vector<BufferRef> mBufferFreeList;
+    std::deque<BufferRef> mInFlightBuffers;
+    std::deque<BufferRef> mBufferFreeList;
 
     size_t mBuffersAllocated;
     size_t mMaxBuffers;
+    BufferPoolMemPolicy mMemPolicy;
     bool mAlwaysAllocateNewBuffer;
 };
 

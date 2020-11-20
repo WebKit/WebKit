@@ -23,7 +23,7 @@ std::shared_ptr<WaitableCompileEvent> ShaderNULL::compile(const gl::Context *con
                                                           gl::ShCompilerInstance *compilerInstance,
                                                           ShCompileOptions options)
 {
-    return compileImpl(context, compilerInstance, mData.getSource(), options);
+    return compileImpl(context, compilerInstance, mState.getSource(), options);
 }
 
 std::string ShaderNULL::getDebugInfo() const

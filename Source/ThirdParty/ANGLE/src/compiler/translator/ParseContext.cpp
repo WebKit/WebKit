@@ -128,6 +128,26 @@ bool IsBufferOrSharedVariable(TIntermTyped *var)
     return false;
 }
 
+TIntermTyped *FindLValueBase(TIntermTyped *node)
+{
+    do
+    {
+        const TIntermBinary *binary = node->getAsBinaryNode();
+        if (binary == nullptr)
+        {
+            return node;
+        }
+
+        TOperator op = binary->getOp();
+        if (op != EOpIndexDirect && op != EOpIndexIndirect)
+        {
+            return static_cast<TIntermTyped *>(nullptr);
+        }
+
+        node = binary->getLeft();
+    } while (true);
+}
+
 }  // namespace
 
 // This tracks each binding point's current default offset for inheritance of subsequent
@@ -210,6 +230,7 @@ TParseContext::TParseContext(TSymbolTable &symt,
       mMaxCombinedTextureImageUnits(resources.MaxCombinedTextureImageUnits),
       mMaxUniformLocations(resources.MaxUniformLocations),
       mMaxUniformBufferBindings(resources.MaxUniformBufferBindings),
+      mMaxVertexAttribs(resources.MaxVertexAttribs),
       mMaxAtomicCounterBindings(resources.MaxAtomicCounterBindings),
       mMaxShaderStorageBufferBindings(resources.MaxShaderStorageBufferBindings),
       mDeclaringFunction(false),
@@ -533,6 +554,7 @@ bool TParseContext::checkCanBeLValue(const TSourceLoc &line, const char *op, TIn
         case EvqNoPerspectiveIn:
         case EvqSmoothIn:
         case EvqCentroidIn:
+        case EvqSampleIn:
             message = "can't modify an input";
             break;
         case EvqUniform:
@@ -1541,6 +1563,18 @@ void TParseContext::nonEmptyDeclarationErrorCheck(const TPublicType &publicType,
         }
     }
 
+    if (mShaderVersion >= 300 && publicType.qualifier == EvqVertexIn)
+    {
+        // Valid vertex input declarations can't be unsized arrays since they can't be initialized.
+        // But invalid shaders may still reach here with an unsized array declaration.
+        TType type(publicType);
+        if (!type.isUnsizedArray())
+        {
+            checkAttributeLocationInRange(identifierLocation, type.getLocationCount(),
+                                          publicType.layoutQualifier);
+        }
+    }
+
     // check for layout qualifier issues
     const TLayoutQualifier layoutQualifier = publicType.layoutQualifier;
 
@@ -1788,9 +1822,30 @@ void TParseContext::checkUniformLocationInRange(const TSourceLoc &location,
                                                 const TLayoutQualifier &layoutQualifier)
 {
     int loc = layoutQualifier.location;
-    if (loc >= 0 && loc + objectLocationCount > mMaxUniformLocations)
+    if (loc >= 0)  // Shader-specified location
     {
-        error(location, "Uniform location out of range", "location");
+        if (loc >= mMaxUniformLocations || objectLocationCount > mMaxUniformLocations ||
+            static_cast<unsigned int>(loc) + static_cast<unsigned int>(objectLocationCount) >
+                static_cast<unsigned int>(mMaxUniformLocations))
+        {
+            error(location, "Uniform location out of range", "location");
+        }
+    }
+}
+
+void TParseContext::checkAttributeLocationInRange(const TSourceLoc &location,
+                                                  int objectLocationCount,
+                                                  const TLayoutQualifier &layoutQualifier)
+{
+    int loc = layoutQualifier.location;
+    if (loc >= 0)  // Shader-specified location
+    {
+        if (loc >= mMaxVertexAttribs || objectLocationCount > mMaxVertexAttribs ||
+            static_cast<unsigned int>(loc) + static_cast<unsigned int>(objectLocationCount) >
+                static_cast<unsigned int>(mMaxVertexAttribs))
+        {
+            error(location, "Attribute location out of range", "location");
+        }
     }
 }
 
@@ -5949,6 +6004,41 @@ void TParseContext::checkSingleTextureOffset(const TSourceLoc &line,
     }
 }
 
+void TParseContext::checkInterpolationFS(TIntermAggregate *functionCall)
+{
+    const TFunction *func = functionCall->getFunction();
+    if (!BuiltInGroup::isInterpolationFS(func))
+    {
+        return;
+    }
+
+    TIntermTyped *arg0 = nullptr;
+
+    if (functionCall->getAsAggregate())
+    {
+        const TIntermSequence *argp = functionCall->getSequence();
+        if (argp->size() > 0)
+            arg0 = (*argp)[0]->getAsTyped();
+    }
+    else
+    {
+        assert(functionCall->getAsUnaryNode());
+        arg0 = functionCall->getAsUnaryNode()->getOperand();
+    }
+
+    // Make sure the first argument is an interpolant, or an array element of an interpolant
+    if (!IsVaryingIn(arg0->getType().getQualifier()))
+    {
+        // It might still be an array element.
+        const TIntermTyped *base = FindLValueBase(arg0);
+
+        if (base == nullptr || (!IsVaryingIn(base->getType().getQualifier())))
+            error(arg0->getLine(),
+                  "first argument must be an interpolant, or interpolant-array element",
+                  func->name());
+    }
+}
+
 void TParseContext::checkAtomicMemoryBuiltinFunctions(TIntermAggregate *functionCall)
 {
     const TFunction *func = functionCall->getFunction();
@@ -6012,6 +6102,21 @@ void TParseContext::checkImageMemoryAccessForBuiltinFunctions(TIntermAggregate *
             {
                 error(imageNode->getLine(),
                       "'imageLoad' cannot be used with images qualified as 'writeonly'",
+                      GetImageArgumentToken(imageNode));
+            }
+        }
+        else if (BuiltInGroup::isImageAtomic(func))
+        {
+            if (memoryQualifier.readonly)
+            {
+                error(imageNode->getLine(),
+                      "'imageAtomic' cannot be used with images qualified as 'readonly'",
+                      GetImageArgumentToken(imageNode));
+            }
+            if (memoryQualifier.writeonly)
+            {
+                error(imageNode->getLine(),
+                      "'imageAtomic' cannot be used with images qualified as 'writeonly'",
                       GetImageArgumentToken(imageNode));
             }
         }
@@ -6214,6 +6319,7 @@ TIntermTyped *TParseContext::addNonConstructorFunctionCall(TFunctionLookup *fnCa
             callNode->setLine(loc);
             checkTextureOffset(callNode);
             checkTextureGather(callNode);
+            checkInterpolationFS(callNode);
             checkImageMemoryAccessForBuiltinFunctions(callNode);
             functionCallRValueLValueErrorCheck(fnCandidate, callNode);
             return callNode;
@@ -6224,7 +6330,7 @@ TIntermTyped *TParseContext::addNonConstructorFunctionCall(TFunctionLookup *fnCa
         }
     }
 
-    // Error message was already written. Put on a dummy node for error recovery.
+    // Error message was already written. Put on an unused node for error recovery.
     return CreateZeroNode(TType(EbtFloat, EbpMedium, EvqConst));
 }
 

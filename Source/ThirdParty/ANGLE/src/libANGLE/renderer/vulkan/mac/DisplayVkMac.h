@@ -31,7 +31,7 @@ class DisplayVkMac : public DisplayVk
                                                const egl::AttributeMap &attribs) override;
 
     egl::ConfigSet generateConfigs() override;
-    bool checkConfigSupport(egl::Config *config) override;
+    void checkConfigSupport(egl::Config *config) override;
 
     void generateExtensions(egl::DisplayExtensions *outExtensions) const override;
 

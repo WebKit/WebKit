@@ -227,4 +227,275 @@ TEST(BlendStateExt, BlendFactors)
     ASSERT_EQ(blendStateExt.getDstAlphaIndexed(1), static_cast<GLenum>(GL_ONE));
 }
 
+// Test clip rectangle
+TEST(Rectangle, Clip)
+{
+    const gl::Rectangle source(0, 0, 100, 200);
+    const gl::Rectangle clip1(0, 0, 50, 100);
+    gl::Rectangle result;
+
+    ASSERT_TRUE(gl::ClipRectangle(source, clip1, &result));
+    ASSERT_EQ(result.x, 0);
+    ASSERT_EQ(result.y, 0);
+    ASSERT_EQ(result.width, 50);
+    ASSERT_EQ(result.height, 100);
+
+    gl::Rectangle clip2(10, 20, 30, 40);
+
+    ASSERT_TRUE(gl::ClipRectangle(source, clip2, &result));
+    ASSERT_EQ(result.x, 10);
+    ASSERT_EQ(result.y, 20);
+    ASSERT_EQ(result.width, 30);
+    ASSERT_EQ(result.height, 40);
+
+    gl::Rectangle clip3(-20, -30, 10000, 400000);
+
+    ASSERT_TRUE(gl::ClipRectangle(source, clip3, &result));
+    ASSERT_EQ(result.x, 0);
+    ASSERT_EQ(result.y, 0);
+    ASSERT_EQ(result.width, 100);
+    ASSERT_EQ(result.height, 200);
+
+    gl::Rectangle clip4(50, 100, -20, -30);
+
+    ASSERT_TRUE(gl::ClipRectangle(source, clip4, &result));
+    ASSERT_EQ(result.x, 30);
+    ASSERT_EQ(result.y, 70);
+    ASSERT_EQ(result.width, 20);
+    ASSERT_EQ(result.height, 30);
+
+    // Non-overlapping rectangles
+    gl::Rectangle clip5(-100, 0, 99, 200);
+    ASSERT_FALSE(gl::ClipRectangle(source, clip5, nullptr));
+
+    gl::Rectangle clip6(0, -100, 100, 99);
+    ASSERT_FALSE(gl::ClipRectangle(source, clip6, nullptr));
+
+    gl::Rectangle clip7(101, 0, 99, 200);
+    ASSERT_FALSE(gl::ClipRectangle(source, clip7, nullptr));
+
+    gl::Rectangle clip8(0, 201, 100, 99);
+    ASSERT_FALSE(gl::ClipRectangle(source, clip8, nullptr));
+
+    // Zero-width/height rectangles
+    gl::Rectangle clip9(50, 0, 0, 200);
+    ASSERT_FALSE(gl::ClipRectangle(source, clip9, nullptr));
+    ASSERT_FALSE(gl::ClipRectangle(clip9, source, nullptr));
+
+    gl::Rectangle clip10(0, 100, 100, 0);
+    ASSERT_FALSE(gl::ClipRectangle(source, clip10, nullptr));
+    ASSERT_FALSE(gl::ClipRectangle(clip10, source, nullptr));
+}
+
+// Test combine rectangles
+TEST(Rectangle, Combine)
+{
+    const gl::Rectangle rect1(0, 0, 100, 200);
+    const gl::Rectangle rect2(0, 0, 50, 100);
+    gl::Rectangle result;
+
+    gl::GetEnclosingRectangle(rect1, rect2, &result);
+    ASSERT_EQ(result.x0(), 0);
+    ASSERT_EQ(result.y0(), 0);
+    ASSERT_EQ(result.x1(), 100);
+    ASSERT_EQ(result.y1(), 200);
+
+    const gl::Rectangle rect3(50, 100, 100, 200);
+
+    gl::GetEnclosingRectangle(rect1, rect3, &result);
+    ASSERT_EQ(result.x0(), 0);
+    ASSERT_EQ(result.y0(), 0);
+    ASSERT_EQ(result.x1(), 150);
+    ASSERT_EQ(result.y1(), 300);
+
+    const gl::Rectangle rect4(-20, -30, 100, 200);
+
+    gl::GetEnclosingRectangle(rect1, rect4, &result);
+    ASSERT_EQ(result.x0(), -20);
+    ASSERT_EQ(result.y0(), -30);
+    ASSERT_EQ(result.x1(), 100);
+    ASSERT_EQ(result.y1(), 200);
+
+    const gl::Rectangle rect5(10, -30, 100, 200);
+
+    gl::GetEnclosingRectangle(rect1, rect5, &result);
+    ASSERT_EQ(result.x0(), 0);
+    ASSERT_EQ(result.y0(), -30);
+    ASSERT_EQ(result.x1(), 110);
+    ASSERT_EQ(result.y1(), 200);
+}
+
+// Test extend rectangles
+TEST(Rectangle, Extend)
+{
+    const gl::Rectangle source(0, 0, 100, 200);
+    const gl::Rectangle extend1(0, 0, 50, 100);
+    gl::Rectangle result;
+
+    //  +------+       +------+
+    //  |   |  |       |      |
+    //  +---+  |  -->  |      |
+    //  |      |       |      |
+    //  +------+       +------+
+    //
+    gl::ExtendRectangle(source, extend1, &result);
+    ASSERT_EQ(result.x0(), 0);
+    ASSERT_EQ(result.y0(), 0);
+    ASSERT_EQ(result.x1(), 100);
+    ASSERT_EQ(result.y1(), 200);
+
+    //  +------+           +------+
+    //  |S     |           |      |
+    //  |   +--+---+  -->  |      |
+    //  |   |  |   |       |      |
+    //  +---+--+   +       +------+
+    //      |      |
+    //      +------+
+    //
+    const gl::Rectangle extend2(50, 100, 100, 200);
+
+    gl::ExtendRectangle(source, extend2, &result);
+    ASSERT_EQ(result.x0(), 0);
+    ASSERT_EQ(result.y0(), 0);
+    ASSERT_EQ(result.x1(), 100);
+    ASSERT_EQ(result.y1(), 200);
+
+    //    +------+           +------+
+    //    |S     |           |      |
+    //  +-+------+---+  -->  |      |
+    //  | |      |   |       |      |
+    //  | +------+   +       |      |
+    //  |            |       |      |
+    //  +------------+       +------+
+    //
+    const gl::Rectangle extend3(-10, 100, 200, 200);
+
+    gl::ExtendRectangle(source, extend3, &result);
+    ASSERT_EQ(result.x0(), 0);
+    ASSERT_EQ(result.y0(), 0);
+    ASSERT_EQ(result.x1(), 100);
+    ASSERT_EQ(result.y1(), 300);
+
+    //    +------+           +------+
+    //    |S     |           |      |
+    //    |      |      -->  |      |
+    //    |      |           |      |
+    //  +-+------+---+       |      |
+    //  |            |       |      |
+    //  +------------+       +------+
+    //
+    for (int offsetLeft = 10; offsetLeft >= 0; offsetLeft -= 10)
+    {
+        for (int offsetRight = 10; offsetRight >= 0; offsetRight -= 10)
+        {
+            const gl::Rectangle extend4(-offsetLeft, 200, 100 + offsetLeft + offsetRight, 100);
+
+            gl::ExtendRectangle(source, extend4, &result);
+            ASSERT_EQ(result.x0(), 0) << offsetLeft << " " << offsetRight;
+            ASSERT_EQ(result.y0(), 0) << offsetLeft << " " << offsetRight;
+            ASSERT_EQ(result.x1(), 100) << offsetLeft << " " << offsetRight;
+            ASSERT_EQ(result.y1(), 300) << offsetLeft << " " << offsetRight;
+        }
+    }
+
+    // Similar to extend4, but with the second rectangle on the top, left and right.
+    for (int offsetLeft = 10; offsetLeft >= 0; offsetLeft -= 10)
+    {
+        for (int offsetRight = 10; offsetRight >= 0; offsetRight -= 10)
+        {
+            const gl::Rectangle extend4(-offsetLeft, -100, 100 + offsetLeft + offsetRight, 100);
+
+            gl::ExtendRectangle(source, extend4, &result);
+            ASSERT_EQ(result.x0(), 0) << offsetLeft << " " << offsetRight;
+            ASSERT_EQ(result.y0(), -100) << offsetLeft << " " << offsetRight;
+            ASSERT_EQ(result.x1(), 100) << offsetLeft << " " << offsetRight;
+            ASSERT_EQ(result.y1(), 200) << offsetLeft << " " << offsetRight;
+        }
+    }
+    for (int offsetTop = 10; offsetTop >= 0; offsetTop -= 10)
+    {
+        for (int offsetBottom = 10; offsetBottom >= 0; offsetBottom -= 10)
+        {
+            const gl::Rectangle extend4(-50, -offsetTop, 50, 200 + offsetTop + offsetBottom);
+
+            gl::ExtendRectangle(source, extend4, &result);
+            ASSERT_EQ(result.x0(), -50) << offsetTop << " " << offsetBottom;
+            ASSERT_EQ(result.y0(), 0) << offsetTop << " " << offsetBottom;
+            ASSERT_EQ(result.x1(), 100) << offsetTop << " " << offsetBottom;
+            ASSERT_EQ(result.y1(), 200) << offsetTop << " " << offsetBottom;
+        }
+    }
+    for (int offsetTop = 10; offsetTop >= 0; offsetTop -= 10)
+    {
+        for (int offsetBottom = 10; offsetBottom >= 0; offsetBottom -= 10)
+        {
+            const gl::Rectangle extend4(100, -offsetTop, 50, 200 + offsetTop + offsetBottom);
+
+            gl::ExtendRectangle(source, extend4, &result);
+            ASSERT_EQ(result.x0(), 0) << offsetTop << " " << offsetBottom;
+            ASSERT_EQ(result.y0(), 0) << offsetTop << " " << offsetBottom;
+            ASSERT_EQ(result.x1(), 150) << offsetTop << " " << offsetBottom;
+            ASSERT_EQ(result.y1(), 200) << offsetTop << " " << offsetBottom;
+        }
+    }
+
+    //    +------+           +------+
+    //    |S     |           |      |
+    //    |      |      -->  |      |
+    //    |      |           |      |
+    //    +------+           +------+
+    //  +------------+
+    //  |            |
+    //  +------------+
+    //
+    const gl::Rectangle extend5(-10, 201, 120, 100);
+
+    gl::ExtendRectangle(source, extend5, &result);
+    ASSERT_EQ(result.x0(), 0);
+    ASSERT_EQ(result.y0(), 0);
+    ASSERT_EQ(result.x1(), 100);
+    ASSERT_EQ(result.y1(), 200);
+
+    // Similar to extend5, but with the second rectangle on the top, left and right.
+    const gl::Rectangle extend6(-10, -101, 120, 100);
+
+    gl::ExtendRectangle(source, extend6, &result);
+    ASSERT_EQ(result.x0(), 0);
+    ASSERT_EQ(result.y0(), 0);
+    ASSERT_EQ(result.x1(), 100);
+    ASSERT_EQ(result.y1(), 200);
+
+    const gl::Rectangle extend7(-101, -10, 100, 220);
+
+    gl::ExtendRectangle(source, extend7, &result);
+    ASSERT_EQ(result.x0(), 0);
+    ASSERT_EQ(result.y0(), 0);
+    ASSERT_EQ(result.x1(), 100);
+    ASSERT_EQ(result.y1(), 200);
+
+    const gl::Rectangle extend8(101, -10, 100, 220);
+
+    gl::ExtendRectangle(source, extend8, &result);
+    ASSERT_EQ(result.x0(), 0);
+    ASSERT_EQ(result.y0(), 0);
+    ASSERT_EQ(result.x1(), 100);
+    ASSERT_EQ(result.y1(), 200);
+
+    //  +-------------+       +-------------+
+    //  |   +------+  |       |             |
+    //  |   |S     |  |       |             |
+    //  |   |      |  |  -->  |             |
+    //  |   |      |  |       |             |
+    //  |   +------+  |       |             |
+    //  +-------------+       +-------------+
+    //
+    const gl::Rectangle extend9(-100, -100, 300, 400);
+
+    gl::ExtendRectangle(source, extend9, &result);
+    ASSERT_EQ(result.x0(), -100);
+    ASSERT_EQ(result.y0(), -100);
+    ASSERT_EQ(result.x1(), 200);
+    ASSERT_EQ(result.y1(), 300);
+}
+
 }  // namespace angle

@@ -35,10 +35,12 @@ struct IOSurfaceFormatInfo
 };
 
 // clang-format off
-constexpr std::array<IOSurfaceFormatInfo, 7> kIOSurfaceFormats = {{
+constexpr std::array<IOSurfaceFormatInfo, 9> kIOSurfaceFormats = {{
     {GL_RED,      GL_UNSIGNED_BYTE,                1, GL_R8       },
+    {GL_RED,      GL_UNSIGNED_SHORT,               2, GL_R16_EXT  },
     {GL_R16UI,    GL_UNSIGNED_SHORT,               2, GL_R16UI    },
     {GL_RG,       GL_UNSIGNED_BYTE,                2, GL_RG8      },
+    {GL_RG,       GL_UNSIGNED_SHORT,               4, GL_RG16_EXT },
     {GL_RGB,      GL_UNSIGNED_BYTE,                4, GL_BGRA8_EXT},
     {GL_BGRA_EXT, GL_UNSIGNED_BYTE,                4, GL_BGRA8_EXT},
     {GL_RGB10_A2, GL_UNSIGNED_INT_2_10_10_10_REV,  4, GL_BGR10_A2_ANGLEX },
@@ -63,8 +65,9 @@ int FindIOSurfaceFormatIndex(GLenum internalFormat, GLenum type)
 
 IOSurfaceSurfaceVkMac::IOSurfaceSurfaceVkMac(const egl::SurfaceState &state,
                                              EGLClientBuffer buffer,
-                                             const egl::AttributeMap &attribs)
-    : OffscreenSurfaceVk(state), mIOSurface(nullptr), mPlane(0), mFormatIndex(-1)
+                                             const egl::AttributeMap &attribs,
+                                             RendererVk *renderer)
+    : OffscreenSurfaceVk(state, renderer), mIOSurface(nullptr), mPlane(0), mFormatIndex(-1)
 {
     // Keep reference to the IOSurface so it doesn't get deleted while the pbuffer exists.
     mIOSurface = reinterpret_cast<IOSurfaceRef>(buffer);
@@ -114,8 +117,9 @@ angle::Result IOSurfaceSurfaceVkMac::initializeImpl(DisplayVk *displayVk)
     ANGLE_TRY(mColorAttachment.initializeWithExternalMemory(
         displayVk, mWidth, mHeight,
         renderer->getFormat(kIOSurfaceFormats[mFormatIndex].nativeSizedInternalFormat), samples,
-        IOSurfaceGetBaseAddressOfPlane(mIOSurface, mPlane)));
-    mColorRenderTarget.init(&mColorAttachment.image, &mColorAttachment.imageViews, 0, 0);
+        IOSurfaceGetBaseAddressOfPlane(mIOSurface, mPlane), mState.isRobustResourceInitEnabled()));
+    mColorRenderTarget.init(&mColorAttachment.image, &mColorAttachment.imageViews, nullptr, nullptr,
+                            gl::LevelIndex(0), 0, RenderTargetTransience::Default);
 
     return angle::Result::Continue;
 }

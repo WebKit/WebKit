@@ -64,9 +64,14 @@ class SurfaceMtl : public SurfaceImpl
     EGLint isPostSubBufferSupported() const override;
     EGLint getSwapBehavior() const override;
 
+    angle::Result initializeContents(const gl::Context *context,
+                                     const gl::ImageIndex &imageIndex) override;
+
     const mtl::TextureRef &getColorTexture() { return mColorTexture; }
     const mtl::Format &getColorFormat() const { return mColorFormat; }
     int getSamples() const { return mSamples; }
+
+    bool hasRobustResourceInit() const { return mRobustResourceInit; }
 
     angle::Result getAttachmentRenderTarget(const gl::Context *context,
                                             GLenum binding,
@@ -92,6 +97,8 @@ class SurfaceMtl : public SurfaceImpl
     // Auto resolve MS texture at the end of render pass or requires a separate blitting pass?
     bool mAutoResolveMSColorTexture = false;
 
+    bool mRobustResourceInit = false;
+
     mtl::Format mColorFormat;
     mtl::Format mDepthFormat;
     mtl::Format mStencilFormat;
@@ -99,6 +106,7 @@ class SurfaceMtl : public SurfaceImpl
     int mSamples = 0;
 
     RenderTargetMtl mColorRenderTarget;
+    RenderTargetMtl mColorManualResolveRenderTarget;
     RenderTargetMtl mDepthRenderTarget;
     RenderTargetMtl mStencilRenderTarget;
 };
@@ -123,6 +131,9 @@ class WindowSurfaceMtl : public SurfaceMtl
     void setSwapInterval(EGLint interval) override;
     EGLint getSwapBehavior() const override;
 
+    angle::Result initializeContents(const gl::Context *context,
+                                     const gl::ImageIndex &imageIndex) override;
+
     // width and height can change with client window resizing
     EGLint getWidth() const override;
     EGLint getHeight() const override;
@@ -133,7 +144,8 @@ class WindowSurfaceMtl : public SurfaceMtl
                                             GLsizei samples,
                                             FramebufferAttachmentRenderTarget **rtOut) override;
 
-    angle::Result ensureCurrentDrawableObtained(const gl::Context *context);
+    angle::Result ensureCurrentDrawableObtained(const gl::Context *context,
+                                                bool *newDrawableOut /** nullable */);
 
     // Ensure the the texture returned from getColorTexture() is ready for glReadPixels(). This
     // implicitly calls ensureCurrentDrawableObtained().
@@ -156,6 +168,79 @@ class WindowSurfaceMtl : public SurfaceMtl
     // event. We don't use mMetalLayer.drawableSize directly since it might be changed internally by
     // metal runtime.
     CGSize mCurrentKnownDrawableSize;
+};
+
+// Offscreen surface, base class of PBuffer, IOSurface.
+class OffscreenSurfaceMtl : public SurfaceMtl
+{
+  public:
+    OffscreenSurfaceMtl(DisplayMtl *display,
+                        const egl::SurfaceState &state,
+                        const egl::AttributeMap &attribs);
+    ~OffscreenSurfaceMtl() override;
+
+    void destroy(const egl::Display *display) override;
+
+    egl::Error swap(const gl::Context *context) override;
+
+    egl::Error bindTexImage(const gl::Context *context,
+                            gl::Texture *texture,
+                            EGLint buffer) override;
+    egl::Error releaseTexImage(const gl::Context *context, EGLint buffer) override;
+
+    angle::Result getAttachmentRenderTarget(const gl::Context *context,
+                                            GLenum binding,
+                                            const gl::ImageIndex &imageIndex,
+                                            GLsizei samples,
+                                            FramebufferAttachmentRenderTarget **rtOut) override;
+
+  protected:
+    angle::Result ensureTexturesSizeCorrect(const gl::Context *context);
+
+    gl::Extents mSize;
+};
+
+// PBuffer surface
+class PBufferSurfaceMtl : public OffscreenSurfaceMtl
+{
+  public:
+    PBufferSurfaceMtl(DisplayMtl *display,
+                      const egl::SurfaceState &state,
+                      const egl::AttributeMap &attribs);
+
+    void setFixedWidth(EGLint width) override;
+    void setFixedHeight(EGLint height) override;
+};
+
+// Offscreen created from IOSurface
+class IOSurfaceSurfaceMtl : public OffscreenSurfaceMtl
+{
+  public:
+    IOSurfaceSurfaceMtl(DisplayMtl *display,
+                        const egl::SurfaceState &state,
+                        EGLClientBuffer buffer,
+                        const egl::AttributeMap &attribs);
+    ~IOSurfaceSurfaceMtl() override;
+
+    egl::Error bindTexImage(const gl::Context *context,
+                            gl::Texture *texture,
+                            EGLint buffer) override;
+    egl::Error releaseTexImage(const gl::Context *context, EGLint buffer) override;
+
+    angle::Result getAttachmentRenderTarget(const gl::Context *context,
+                                            GLenum binding,
+                                            const gl::ImageIndex &imageIndex,
+                                            GLsizei samples,
+                                            FramebufferAttachmentRenderTarget **rtOut) override;
+
+    static bool ValidateAttributes(EGLClientBuffer buffer, const egl::AttributeMap &attribs);
+
+  private:
+    angle::Result ensureColorTextureCreated(const gl::Context *context);
+
+    IOSurfaceRef mIOSurface;
+    NSUInteger mIOSurfacePlane;
+    int mIOSurfaceFormatIdx;
 };
 
 }  // namespace rx

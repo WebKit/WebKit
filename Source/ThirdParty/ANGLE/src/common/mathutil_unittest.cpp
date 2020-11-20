@@ -211,12 +211,21 @@ TEST(MathUtilTest, CountLeadingZeros)
     EXPECT_EQ(32u, CountLeadingZeros(0));
 }
 
-// Some basic tests. Tests that rounding up zero produces zero.
+// Some basic tests. Pow2 roundUp test and test that rounding up zero produces zero.
+TEST(MathUtilTest, Pow2RoundUp)
+{
+    EXPECT_EQ(0u, rx::roundUpPow2(0u, 4u));
+    EXPECT_EQ(4u, rx::roundUpPow2(1u, 4u));
+    EXPECT_EQ(4u, rx::roundUpPow2(4u, 4u));
+}
+
+// Non-pow2 test.
 TEST(MathUtilTest, BasicRoundUp)
 {
-    EXPECT_EQ(0u, rx::roundUp(0u, 4u));
-    EXPECT_EQ(4u, rx::roundUp(1u, 4u));
-    EXPECT_EQ(4u, rx::roundUp(4u, 4u));
+    EXPECT_EQ(0u, rx::roundUp(0u, 5u));
+    EXPECT_EQ(5u, rx::roundUp(1u, 5u));
+    EXPECT_EQ(5u, rx::roundUp(4u, 5u));
+    EXPECT_EQ(5u, rx::roundUp(5u, 5u));
 }
 
 // Test that rounding up zero produces zero for checked ints.

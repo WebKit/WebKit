@@ -165,6 +165,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
         resources.MaxDualSourceDrawBuffers        = 1;
         resources.EXT_gpu_shader5                 = 1;
         resources.MaxClipDistances                = 1;
+        resources.EXT_shadow_samplers             = 1;
 
         if (!translator->Init(resources))
         {

@@ -152,15 +152,13 @@ TEST_P(EGLContextSharingTest, DisplayShareGroupObjectSharing)
     ASSERT_EGL_SUCCESS();
 
     // Create a texture and buffer in ctx 0
-    GLuint textureFromCtx0 = 0;
-    glGenTextures(1, &textureFromCtx0);
+    GLTexture textureFromCtx0;
     glBindTexture(GL_TEXTURE_2D, textureFromCtx0);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
     glBindTexture(GL_TEXTURE_2D, 0);
     ASSERT_GL_TRUE(glIsTexture(textureFromCtx0));
 
-    GLuint bufferFromCtx0 = 0;
-    glGenBuffers(1, &bufferFromCtx0);
+    GLBuffer bufferFromCtx0;
     glBindBuffer(GL_ARRAY_BUFFER, bufferFromCtx0);
     glBufferData(GL_ARRAY_BUFFER, 1, nullptr, GL_STATIC_DRAW);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -178,8 +176,7 @@ TEST_P(EGLContextSharingTest, DisplayShareGroupObjectSharing)
     ASSERT_GL_NO_ERROR();
 
     // Call readpixels on the texture to verify that the backend has proper support
-    GLuint fbo = 0;
-    glGenFramebuffers(1, &fbo);
+    GLFramebuffer fbo;
     glBindFramebuffer(GL_FRAMEBUFFER, fbo);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureFromCtx0, 0);
 
@@ -187,19 +184,9 @@ TEST_P(EGLContextSharingTest, DisplayShareGroupObjectSharing)
     glReadPixels(0, 0, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, pixel);
     ASSERT_GL_NO_ERROR();
 
-    glDeleteFramebuffers(1, &fbo);
-
-    glDeleteTextures(1, &textureFromCtx0);
-    ASSERT_GL_NO_ERROR();
-    ASSERT_GL_FALSE(glIsTexture(textureFromCtx0));
-
     // Switch back to context 0 and delete the buffer
     ASSERT_EGL_TRUE(eglMakeCurrent(display, surface, surface, mContexts[0]));
     ASSERT_EGL_SUCCESS();
-
-    ASSERT_GL_TRUE(glIsBuffer(bufferFromCtx0));
-    glDeleteBuffers(1, &bufferFromCtx0);
-    ASSERT_GL_NO_ERROR();
 }
 
 // Tests that shared textures using EGL_ANGLE_display_texture_share_group are released when the last
@@ -226,8 +213,7 @@ TEST_P(EGLContextSharingTest, DisplayShareGroupReleasedWithLastContext)
 
     // Create a texture and buffer in ctx 0
     ASSERT_EGL_TRUE(eglMakeCurrent(display, surface, surface, mContexts[0]));
-    GLuint textureFromCtx0 = 0;
-    glGenTextures(1, &textureFromCtx0);
+    GLTexture textureFromCtx0;
     glBindTexture(GL_TEXTURE_2D, textureFromCtx0);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
     glBindTexture(GL_TEXTURE_2D, 0);
@@ -584,6 +570,7 @@ ANGLE_INSTANTIATE_TEST(EGLContextSharingTest,
                        ES2_D3D9(),
                        ES2_D3D11(),
                        ES3_D3D11(),
+                       ES2_METAL(),
                        ES2_OPENGL(),
                        ES3_OPENGL(),
                        ES2_VULKAN(),

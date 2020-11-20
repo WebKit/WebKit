@@ -33,7 +33,7 @@ struct D3DUniform;
 class ShaderD3D : public ShaderImpl
 {
   public:
-    ShaderD3D(const gl::ShaderState &data,
+    ShaderD3D(const gl::ShaderState &state,
               const angle::FeaturesD3D &features,
               const gl::Extensions &extensions);
     ~ShaderD3D() override;

@@ -31,29 +31,25 @@ static constexpr gl::BufferBinding SourceBufferOperationTarget = gl::BufferBindi
 // supported GL versions and doesn't affect any current state when it changes.
 static constexpr gl::BufferBinding DestBufferOperationTarget = gl::BufferBinding::Array;
 
-BufferGL::BufferGL(const gl::BufferState &state,
-                   const FunctionsGL *functions,
-                   StateManagerGL *stateManager)
+BufferGL::BufferGL(const gl::BufferState &state, GLuint buffer)
     : BufferImpl(state),
       mIsMapped(false),
       mMapOffset(0),
       mMapSize(0),
-      mShadowBufferData(!CanMapBufferForRead(functions)),
       mShadowCopy(),
       mBufferSize(0),
-      mFunctions(functions),
-      mStateManager(stateManager),
-      mBufferID(0)
-{
-    ASSERT(mFunctions);
-    ASSERT(mStateManager);
-
-    mFunctions->genBuffers(1, &mBufferID);
-}
+      mBufferID(buffer)
+{}
 
 BufferGL::~BufferGL()
 {
-    mStateManager->deleteBuffer(mBufferID);
+    ASSERT(mBufferID == 0);
+}
+
+void BufferGL::destroy(const gl::Context *context)
+{
+    StateManagerGL *stateManager = GetStateManagerGL(context);
+    stateManager->deleteBuffer(mBufferID);
     mBufferID = 0;
 }
 
@@ -63,12 +59,18 @@ angle::Result BufferGL::setData(const gl::Context *context,
                                 size_t size,
                                 gl::BufferUsage usage)
 {
-    mStateManager->bindBuffer(DestBufferOperationTarget, mBufferID);
-    mFunctions->bufferData(gl::ToGLenum(DestBufferOperationTarget), size, data, ToGLenum(usage));
+    ContextGL *contextGL              = GetImplAs<ContextGL>(context);
+    const FunctionsGL *functions      = GetFunctionsGL(context);
+    StateManagerGL *stateManager      = GetStateManagerGL(context);
+    const angle::FeaturesGL &features = GetFeaturesGL(context);
 
-    if (mShadowBufferData)
+    stateManager->bindBuffer(DestBufferOperationTarget, mBufferID);
+    ANGLE_GL_TRY(context, functions->bufferData(gl::ToGLenum(DestBufferOperationTarget), size, data,
+                                                ToGLenum(usage)));
+
+    if (features.keepBufferShadowCopy.enabled)
     {
-        ANGLE_CHECK_GL_ALLOC(GetImplAs<ContextGL>(context), mShadowCopy.resize(size));
+        ANGLE_CHECK_GL_ALLOC(contextGL, mShadowCopy.resize(size));
 
         if (size > 0 && data != nullptr)
         {
@@ -87,10 +89,15 @@ angle::Result BufferGL::setSubData(const gl::Context *context,
                                    size_t size,
                                    size_t offset)
 {
-    mStateManager->bindBuffer(DestBufferOperationTarget, mBufferID);
-    mFunctions->bufferSubData(gl::ToGLenum(DestBufferOperationTarget), offset, size, data);
+    const FunctionsGL *functions      = GetFunctionsGL(context);
+    StateManagerGL *stateManager      = GetStateManagerGL(context);
+    const angle::FeaturesGL &features = GetFeaturesGL(context);
 
-    if (mShadowBufferData && size > 0)
+    stateManager->bindBuffer(DestBufferOperationTarget, mBufferID);
+    ANGLE_GL_TRY(context, functions->bufferSubData(gl::ToGLenum(DestBufferOperationTarget), offset,
+                                                   size, data));
+
+    if (features.keepBufferShadowCopy.enabled && size > 0)
     {
         memcpy(mShadowCopy.data() + offset, data, size);
     }
@@ -104,18 +111,22 @@ angle::Result BufferGL::copySubData(const gl::Context *context,
                                     GLintptr destOffset,
                                     GLsizeiptr size)
 {
+    const FunctionsGL *functions      = GetFunctionsGL(context);
+    StateManagerGL *stateManager      = GetStateManagerGL(context);
+    const angle::FeaturesGL &features = GetFeaturesGL(context);
+
     BufferGL *sourceGL = GetAs<BufferGL>(source);
 
-    mStateManager->bindBuffer(DestBufferOperationTarget, mBufferID);
-    mStateManager->bindBuffer(SourceBufferOperationTarget, sourceGL->getBufferID());
+    stateManager->bindBuffer(DestBufferOperationTarget, mBufferID);
+    stateManager->bindBuffer(SourceBufferOperationTarget, sourceGL->getBufferID());
 
-    mFunctions->copyBufferSubData(gl::ToGLenum(SourceBufferOperationTarget),
-                                  gl::ToGLenum(DestBufferOperationTarget), sourceOffset, destOffset,
-                                  size);
+    ANGLE_GL_TRY(context, functions->copyBufferSubData(gl::ToGLenum(SourceBufferOperationTarget),
+                                                       gl::ToGLenum(DestBufferOperationTarget),
+                                                       sourceOffset, destOffset, size));
 
-    if (mShadowBufferData && size > 0)
+    if (features.keepBufferShadowCopy.enabled && size > 0)
     {
-        ASSERT(sourceGL->mShadowBufferData);
+        ASSERT(sourceGL->mShadowCopy.size() >= static_cast<size_t>(sourceOffset + size));
         memcpy(mShadowCopy.data() + destOffset, sourceGL->mShadowCopy.data() + sourceOffset, size);
     }
 
@@ -124,21 +135,27 @@ angle::Result BufferGL::copySubData(const gl::Context *context,
 
 angle::Result BufferGL::map(const gl::Context *context, GLenum access, void **mapPtr)
 {
-    if (mShadowBufferData)
+    const FunctionsGL *functions      = GetFunctionsGL(context);
+    StateManagerGL *stateManager      = GetStateManagerGL(context);
+    const angle::FeaturesGL &features = GetFeaturesGL(context);
+
+    if (features.keepBufferShadowCopy.enabled)
     {
         *mapPtr = mShadowCopy.data();
     }
-    else if (mFunctions->mapBuffer)
+    else if (functions->mapBuffer)
     {
-        mStateManager->bindBuffer(DestBufferOperationTarget, mBufferID);
-        *mapPtr = mFunctions->mapBuffer(gl::ToGLenum(DestBufferOperationTarget), access);
+        stateManager->bindBuffer(DestBufferOperationTarget, mBufferID);
+        *mapPtr = ANGLE_GL_TRY(
+            context, functions->mapBuffer(gl::ToGLenum(DestBufferOperationTarget), access));
     }
     else
     {
-        ASSERT(mFunctions->mapBufferRange && access == GL_WRITE_ONLY_OES);
-        mStateManager->bindBuffer(DestBufferOperationTarget, mBufferID);
-        *mapPtr = mFunctions->mapBufferRange(gl::ToGLenum(DestBufferOperationTarget), 0,
-                                             mBufferSize, GL_MAP_WRITE_BIT);
+        ASSERT(functions->mapBufferRange && access == GL_WRITE_ONLY_OES);
+        stateManager->bindBuffer(DestBufferOperationTarget, mBufferID);
+        *mapPtr =
+            ANGLE_GL_TRY(context, functions->mapBufferRange(gl::ToGLenum(DestBufferOperationTarget),
+                                                            0, mBufferSize, GL_MAP_WRITE_BIT));
     }
 
     mIsMapped  = true;
@@ -154,15 +171,20 @@ angle::Result BufferGL::mapRange(const gl::Context *context,
                                  GLbitfield access,
                                  void **mapPtr)
 {
-    if (mShadowBufferData)
+    const FunctionsGL *functions      = GetFunctionsGL(context);
+    StateManagerGL *stateManager      = GetStateManagerGL(context);
+    const angle::FeaturesGL &features = GetFeaturesGL(context);
+
+    if (features.keepBufferShadowCopy.enabled)
     {
         *mapPtr = mShadowCopy.data() + offset;
     }
     else
     {
-        mStateManager->bindBuffer(DestBufferOperationTarget, mBufferID);
-        *mapPtr = mFunctions->mapBufferRange(gl::ToGLenum(DestBufferOperationTarget), offset,
-                                             length, access);
+        stateManager->bindBuffer(DestBufferOperationTarget, mBufferID);
+        *mapPtr =
+            ANGLE_GL_TRY(context, functions->mapBufferRange(gl::ToGLenum(DestBufferOperationTarget),
+                                                            offset, length, access));
     }
 
     mIsMapped  = true;
@@ -174,20 +196,26 @@ angle::Result BufferGL::mapRange(const gl::Context *context,
 
 angle::Result BufferGL::unmap(const gl::Context *context, GLboolean *result)
 {
+    const FunctionsGL *functions      = GetFunctionsGL(context);
+    StateManagerGL *stateManager      = GetStateManagerGL(context);
+    const angle::FeaturesGL &features = GetFeaturesGL(context);
+
     ASSERT(result);
     ASSERT(mIsMapped);
 
-    if (mShadowBufferData)
+    if (features.keepBufferShadowCopy.enabled)
     {
-        mStateManager->bindBuffer(DestBufferOperationTarget, mBufferID);
-        mFunctions->bufferSubData(gl::ToGLenum(DestBufferOperationTarget), mMapOffset, mMapSize,
-                                  mShadowCopy.data() + mMapOffset);
+        stateManager->bindBuffer(DestBufferOperationTarget, mBufferID);
+        ANGLE_GL_TRY(context,
+                     functions->bufferSubData(gl::ToGLenum(DestBufferOperationTarget), mMapOffset,
+                                              mMapSize, mShadowCopy.data() + mMapOffset));
         *result = GL_TRUE;
     }
     else
     {
-        mStateManager->bindBuffer(DestBufferOperationTarget, mBufferID);
-        *result = mFunctions->unmapBuffer(gl::ToGLenum(DestBufferOperationTarget));
+        stateManager->bindBuffer(DestBufferOperationTarget, mBufferID);
+        *result =
+            ANGLE_GL_TRY(context, functions->unmapBuffer(gl::ToGLenum(DestBufferOperationTarget)));
     }
 
     mIsMapped = false;
@@ -201,25 +229,29 @@ angle::Result BufferGL::getIndexRange(const gl::Context *context,
                                       bool primitiveRestartEnabled,
                                       gl::IndexRange *outRange)
 {
+    const FunctionsGL *functions      = GetFunctionsGL(context);
+    StateManagerGL *stateManager      = GetStateManagerGL(context);
+    const angle::FeaturesGL &features = GetFeaturesGL(context);
+
     ASSERT(!mIsMapped);
 
-    if (mShadowBufferData)
+    if (features.keepBufferShadowCopy.enabled)
     {
         *outRange = gl::ComputeIndexRange(type, mShadowCopy.data() + offset, count,
                                           primitiveRestartEnabled);
     }
     else
     {
-        mStateManager->bindBuffer(DestBufferOperationTarget, mBufferID);
+        stateManager->bindBuffer(DestBufferOperationTarget, mBufferID);
 
         const GLuint typeBytes = gl::GetDrawElementsTypeSize(type);
         const uint8_t *bufferData =
-            MapBufferRangeWithFallback(mFunctions, gl::ToGLenum(DestBufferOperationTarget), offset,
+            MapBufferRangeWithFallback(functions, gl::ToGLenum(DestBufferOperationTarget), offset,
                                        count * typeBytes, GL_MAP_READ_BIT);
         if (bufferData)
         {
             *outRange = gl::ComputeIndexRange(type, bufferData, count, primitiveRestartEnabled);
-            mFunctions->unmapBuffer(gl::ToGLenum(DestBufferOperationTarget));
+            ANGLE_GL_TRY(context, functions->unmapBuffer(gl::ToGLenum(DestBufferOperationTarget)));
         }
         else
         {

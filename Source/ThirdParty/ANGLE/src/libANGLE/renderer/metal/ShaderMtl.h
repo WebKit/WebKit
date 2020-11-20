@@ -19,7 +19,7 @@ namespace rx
 class ShaderMtl : public ShaderImpl
 {
   public:
-    ShaderMtl(const gl::ShaderState &data);
+    ShaderMtl(const gl::ShaderState &state);
     ~ShaderMtl() override;
 
     std::shared_ptr<WaitableCompileEvent> compile(const gl::Context *context,

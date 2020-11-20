@@ -16,6 +16,7 @@
 
 // Disable ANGLE-specific warnings that pop up in fuchsia headers.
 ANGLE_DISABLE_DESTRUCTOR_OVERRIDE_WARNING
+ANGLE_DISABLE_SUGGEST_OVERRIDE_WARNINGS
 
 #include <fuchsia/ui/policy/cpp/fidl.h>
 #include <fuchsia/ui/scenic/cpp/fidl.h>
@@ -27,6 +28,7 @@ ANGLE_DISABLE_DESTRUCTOR_OVERRIDE_WARNING
 #include <zircon/types.h>
 #include <string>
 
+ANGLE_REENABLE_SUGGEST_OVERRIDE_WARNINGS
 ANGLE_REENABLE_DESTRUCTOR_OVERRIDE_WARNING
 
 struct FuchsiaEGLWindowDeleter
@@ -41,7 +43,6 @@ class ANGLE_UTIL_EXPORT ScenicWindow : public OSWindow
     ~ScenicWindow() override;
 
     // OSWindow:
-    bool initialize(const std::string &name, int width, int height) override;
     void disableErrorMessageDialog() override;
     void destroy() override;
     void resetNativeWindow() override;
@@ -69,6 +70,7 @@ class ANGLE_UTIL_EXPORT ScenicWindow : public OSWindow
     void onViewProperties(const fuchsia::ui::gfx::ViewProperties &properties);
 
   private:
+    bool initializeImpl(const std::string &name, int width, int height) override;
     void updateViewSize();
 
     // ScenicWindow async loop.

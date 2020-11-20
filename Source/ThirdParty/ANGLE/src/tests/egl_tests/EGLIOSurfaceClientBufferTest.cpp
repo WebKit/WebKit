@@ -71,23 +71,62 @@ class ScopedIOSurfaceRef : angle::NonCopyable
     IOSurfaceRef mSurface = nullptr;
 };
 
-ScopedIOSurfaceRef CreateSinglePlaneIOSurface(int width,
-                                              int height,
-                                              int32_t format,
-                                              int bytesPerElement)
+struct IOSurfacePlaneInfo
 {
+    int width;
+    int height;
+    int bytesPerElement;
+};
+
+ScopedIOSurfaceRef CreateIOSurface(int32_t format, const std::vector<IOSurfacePlaneInfo> &planes)
+{
+    EXPECT_GT(planes.size(), 0u);
+
     CFMutableDictionaryRef dict = CFDictionaryCreateMutable(
         kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
-    AddIntegerValue(dict, kIOSurfaceWidth, width);
-    AddIntegerValue(dict, kIOSurfaceHeight, height);
+    AddIntegerValue(dict, kIOSurfaceWidth, planes[0].width);
+    AddIntegerValue(dict, kIOSurfaceHeight, planes[0].height);
     AddIntegerValue(dict, kIOSurfacePixelFormat, format);
-    AddIntegerValue(dict, kIOSurfaceBytesPerElement, bytesPerElement);
+
+    if (planes.size() > 1)
+    {
+        CFMutableArrayRef planesInfo =
+            CFArrayCreateMutable(kCFAllocatorDefault, planes.size(), &kCFTypeArrayCallBacks);
+        for (const IOSurfacePlaneInfo &plane : planes)
+        {
+            CFMutableDictionaryRef planeInfo =
+                CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks,
+                                          &kCFTypeDictionaryValueCallBacks);
+            AddIntegerValue(planeInfo, kIOSurfacePlaneWidth, plane.width);
+            AddIntegerValue(planeInfo, kIOSurfacePlaneHeight, plane.height);
+            AddIntegerValue(planeInfo, kIOSurfacePlaneBytesPerElement, plane.bytesPerElement);
+
+            CFArrayAppendValue(planesInfo, planeInfo);
+            CFRelease(planeInfo);
+        }
+
+        CFDictionaryAddValue(dict, kIOSurfacePlaneInfo, planesInfo);
+        CFRelease(planesInfo);
+    }
+    else
+    {
+        AddIntegerValue(dict, kIOSurfaceBytesPerElement, planes[0].bytesPerElement);
+    }
 
     IOSurfaceRef ioSurface = IOSurfaceCreate(dict);
     EXPECT_NE(nullptr, ioSurface);
     CFRelease(dict);
 
     return ScopedIOSurfaceRef(ioSurface);
+}
+
+ScopedIOSurfaceRef CreateSinglePlaneIOSurface(int width,
+                                              int height,
+                                              int32_t format,
+                                              int bytesPerElement)
+{
+    std::vector<IOSurfacePlaneInfo> planes{{width, height, bytesPerElement}};
+    return CreateIOSurface(format, planes);
 }
 
 }  // anonymous namespace
@@ -173,16 +212,22 @@ class IOSurfaceClientBufferTest : public ANGLETest
     }
 
     void doClearTest(const ScopedIOSurfaceRef &ioSurface,
+                     EGLint width,
+                     EGLint height,
+                     EGLint plane,
                      GLenum internalFormat,
                      GLenum type,
                      const GLColor &data)
     {
         std::array<uint8_t, 4> dataArray{data.R, data.G, data.B, data.A};
-        doClearTest(ioSurface, internalFormat, type, dataArray);
+        doClearTest(ioSurface, width, height, plane, internalFormat, type, dataArray);
     }
 
     template <typename T, size_t dataSize>
     void doClearTest(const ScopedIOSurfaceRef &ioSurface,
+                     EGLint width,
+                     EGLint height,
+                     EGLint plane,
                      GLenum internalFormat,
                      GLenum type,
                      const std::array<T, dataSize> &data)
@@ -190,7 +235,8 @@ class IOSurfaceClientBufferTest : public ANGLETest
         // Bind the IOSurface to a texture and clear it.
         EGLSurface pbuffer;
         GLTexture texture;
-        bindIOSurfaceToTexture(ioSurface, 1, 1, 0, internalFormat, type, &pbuffer, &texture);
+        bindIOSurfaceToTexture(ioSurface, width, height, plane, internalFormat, type, &pbuffer,
+                               &texture);
 
         GLFramebuffer fbo;
         glBindFramebuffer(GL_FRAMEBUFFER, fbo);
@@ -198,7 +244,7 @@ class IOSurfaceClientBufferTest : public ANGLETest
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, getGLTextureTarget(), texture,
                                0);
         EXPECT_GL_NO_ERROR();
-        EXPECT_GLENUM_EQ(glCheckFramebufferStatus(GL_FRAMEBUFFER), GL_FRAMEBUFFER_COMPLETE);
+        ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
         EXPECT_GL_NO_ERROR();
 
         glClearColor(1.0f / 255.0f, 2.0f / 255.0f, 3.0f / 255.0f, 4.0f / 255.0f);
@@ -211,9 +257,13 @@ class IOSurfaceClientBufferTest : public ANGLETest
         EXPECT_EGL_TRUE(result);
         EXPECT_EGL_SUCCESS();
 
+        // IOSurface client buffer's rendering doesn't automatically finish after
+        // eglReleaseTexImage(). Need to explicitly call glFinish().
+        glFinish();
+
         IOSurfaceLock(ioSurface.get(), kIOSurfaceLockReadOnly, nullptr);
         std::array<T, dataSize> iosurfaceData;
-        memcpy(iosurfaceData.data(), IOSurfaceGetBaseAddress(ioSurface.get()),
+        memcpy(iosurfaceData.data(), IOSurfaceGetBaseAddressOfPlane(ioSurface.get(), plane),
                sizeof(T) * data.size());
         IOSurfaceUnlock(ioSurface.get(), kIOSurfaceLockReadOnly, nullptr);
 
@@ -232,6 +282,9 @@ class IOSurfaceClientBufferTest : public ANGLETest
         A = 8,
     };
     void doSampleTest(const ScopedIOSurfaceRef &ioSurface,
+                      EGLint width,
+                      EGLint height,
+                      EGLint plane,
                       GLenum internalFormat,
                       GLenum type,
                       void *data,
@@ -240,7 +293,7 @@ class IOSurfaceClientBufferTest : public ANGLETest
     {
         // Write the data to the IOSurface
         IOSurfaceLock(ioSurface.get(), 0, nullptr);
-        memcpy(IOSurfaceGetBaseAddress(ioSurface.get()), data, dataSize);
+        memcpy(IOSurfaceGetBaseAddressOfPlane(ioSurface.get(), plane), data, dataSize);
         IOSurfaceUnlock(ioSurface.get(), 0, nullptr);
 
         GLTexture texture;
@@ -250,8 +303,18 @@ class IOSurfaceClientBufferTest : public ANGLETest
 
         // Bind the IOSurface to a texture and clear it.
         EGLSurface pbuffer;
-        bindIOSurfaceToTexture(ioSurface, 1, 1, 0, internalFormat, type, &pbuffer, &texture);
+        bindIOSurfaceToTexture(ioSurface, width, height, plane, internalFormat, type, &pbuffer,
+                               &texture);
 
+        doSampleTestWithTexture(texture, mask);
+
+        EGLBoolean result = eglDestroySurface(mDisplay, pbuffer);
+        EXPECT_EGL_TRUE(result);
+        EXPECT_EGL_SUCCESS();
+    }
+
+    void doSampleTestWithTexture(const GLTexture &texture, int mask)
+    {
         constexpr char kVS[] =
             "attribute vec4 position;\n"
             "void main()\n"
@@ -294,6 +357,11 @@ class IOSurfaceClientBufferTest : public ANGLETest
 
     void doBlitTest(bool ioSurfaceIsSource, int width, int height)
     {
+        if (!hasBlitExt())
+        {
+            return;
+        }
+
         // Create IOSurface and bind it to a texture.
         ScopedIOSurfaceRef ioSurface = CreateSinglePlaneIOSurface(width, height, 'BGRA', 4);
         EGLSurface pbuffer;
@@ -307,7 +375,7 @@ class IOSurfaceClientBufferTest : public ANGLETest
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, getGLTextureTarget(), texture,
                                0);
         EXPECT_GL_NO_ERROR();
-        EXPECT_GLENUM_EQ(glCheckFramebufferStatus(GL_FRAMEBUFFER), GL_FRAMEBUFFER_COMPLETE);
+        ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
         EXPECT_GL_NO_ERROR();
 
         // Create another framebuffer with a regular renderbuffer.
@@ -321,7 +389,7 @@ class IOSurfaceClientBufferTest : public ANGLETest
         EXPECT_GL_NO_ERROR();
         glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rbo);
         EXPECT_GL_NO_ERROR();
-        EXPECT_GLENUM_EQ(glCheckFramebufferStatus(GL_FRAMEBUFFER), GL_FRAMEBUFFER_COMPLETE);
+        ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
         EXPECT_GL_NO_ERROR();
 
         glBindRenderbuffer(GL_RENDERBUFFER, 0);
@@ -361,6 +429,10 @@ class IOSurfaceClientBufferTest : public ANGLETest
     }
 
     bool hasIOSurfaceExt() const { return IsEGLDisplayExtensionEnabled(mDisplay, kIOSurfaceExt); }
+    bool hasBlitExt() const
+    {
+        return IsEGLDisplayExtensionEnabled(mDisplay, "ANGLE_framebuffer_blit");
+    }
 
     EGLConfig mConfig;
     EGLDisplay mDisplay;
@@ -371,10 +443,13 @@ TEST_P(IOSurfaceClientBufferTest, RenderToBGRA8888IOSurface)
 {
     ANGLE_SKIP_TEST_IF(!hasIOSurfaceExt());
 
+    // TODO(http://anglebug.com/4369)
+    ANGLE_SKIP_TEST_IF(isSwiftshader());
+
     ScopedIOSurfaceRef ioSurface = CreateSinglePlaneIOSurface(1, 1, 'BGRA', 4);
 
     GLColor color(3, 2, 1, 4);
-    doClearTest(ioSurface, GL_BGRA_EXT, GL_UNSIGNED_BYTE, color);
+    doClearTest(ioSurface, 1, 1, 0, GL_BGRA_EXT, GL_UNSIGNED_BYTE, color);
 }
 
 // Test reading from BGRA8888 IOSurfaces
@@ -388,7 +463,8 @@ TEST_P(IOSurfaceClientBufferTest, ReadFromBGRA8888IOSurface)
     ScopedIOSurfaceRef ioSurface = CreateSinglePlaneIOSurface(1, 1, 'BGRA', 4);
 
     GLColor color(3, 2, 1, 4);
-    doSampleTest(ioSurface, GL_BGRA_EXT, GL_UNSIGNED_BYTE, &color, sizeof(color), R | G | B | A);
+    doSampleTest(ioSurface, 1, 1, 0, GL_BGRA_EXT, GL_UNSIGNED_BYTE, &color, sizeof(color),
+                 R | G | B | A);
 }
 
 // Test using BGRX8888 IOSurfaces for rendering
@@ -402,7 +478,7 @@ TEST_P(IOSurfaceClientBufferTest, RenderToBGRX8888IOSurface)
     ScopedIOSurfaceRef ioSurface = CreateSinglePlaneIOSurface(1, 1, 'BGRA', 4);
 
     GLColor color(3, 2, 1, 255);
-    doClearTest(ioSurface, GL_RGB, GL_UNSIGNED_BYTE, color);
+    doClearTest(ioSurface, 1, 1, 0, GL_RGB, GL_UNSIGNED_BYTE, color);
 }
 
 // Test reading from BGRX8888 IOSurfaces
@@ -413,7 +489,7 @@ TEST_P(IOSurfaceClientBufferTest, ReadFromBGRX8888IOSurface)
     ScopedIOSurfaceRef ioSurface = CreateSinglePlaneIOSurface(1, 1, 'BGRA', 4);
 
     GLColor color(3, 2, 1, 4);
-    doSampleTest(ioSurface, GL_RGB, GL_UNSIGNED_BYTE, &color, sizeof(color), R | G | B);
+    doSampleTest(ioSurface, 1, 1, 0, GL_RGB, GL_UNSIGNED_BYTE, &color, sizeof(color), R | G | B);
 }
 
 // Test using RG88 IOSurfaces for rendering
@@ -421,10 +497,13 @@ TEST_P(IOSurfaceClientBufferTest, RenderToRG88IOSurface)
 {
     ANGLE_SKIP_TEST_IF(!hasIOSurfaceExt());
 
+    // TODO(http://anglebug.com/4369)
+    ANGLE_SKIP_TEST_IF(isSwiftshader());
+
     ScopedIOSurfaceRef ioSurface = CreateSinglePlaneIOSurface(1, 1, '2C08', 2);
 
     std::array<uint8_t, 2> color{1, 2};
-    doClearTest(ioSurface, GL_RG, GL_UNSIGNED_BYTE, color);
+    doClearTest(ioSurface, 1, 1, 0, GL_RG, GL_UNSIGNED_BYTE, color);
 }
 
 // Test reading from RG88 IOSurfaces
@@ -435,7 +514,7 @@ TEST_P(IOSurfaceClientBufferTest, ReadFromRG88IOSurface)
     ScopedIOSurfaceRef ioSurface = CreateSinglePlaneIOSurface(1, 1, '2C08', 2);
 
     uint8_t color[2] = {1, 2};
-    doSampleTest(ioSurface, GL_RG, GL_UNSIGNED_BYTE, &color, sizeof(color), R | G);
+    doSampleTest(ioSurface, 1, 1, 0, GL_RG, GL_UNSIGNED_BYTE, &color, sizeof(color), R | G);
 }
 
 // Test using R8 IOSurfaces for rendering
@@ -443,10 +522,13 @@ TEST_P(IOSurfaceClientBufferTest, RenderToR8IOSurface)
 {
     ANGLE_SKIP_TEST_IF(!hasIOSurfaceExt());
 
+    // TODO(http://anglebug.com/4369)
+    ANGLE_SKIP_TEST_IF(isSwiftshader());
+
     ScopedIOSurfaceRef ioSurface = CreateSinglePlaneIOSurface(1, 1, 'L008', 1);
 
     std::array<uint8_t, 1> color{1};
-    doClearTest(ioSurface, GL_RED, GL_UNSIGNED_BYTE, color);
+    doClearTest(ioSurface, 1, 1, 0, GL_RED, GL_UNSIGNED_BYTE, color);
 }
 
 // Test reading from R8 IOSurfaces
@@ -457,13 +539,16 @@ TEST_P(IOSurfaceClientBufferTest, ReadFromR8IOSurface)
     ScopedIOSurfaceRef ioSurface = CreateSinglePlaneIOSurface(1, 1, 'L008', 1);
 
     uint8_t color = 1;
-    doSampleTest(ioSurface, GL_RED, GL_UNSIGNED_BYTE, &color, sizeof(color), R);
+    doSampleTest(ioSurface, 1, 1, 0, GL_RED, GL_UNSIGNED_BYTE, &color, sizeof(color), R);
 }
 
 // Test using R16 IOSurfaces for rendering
 TEST_P(IOSurfaceClientBufferTest, RenderToR16IOSurface)
 {
     ANGLE_SKIP_TEST_IF(!hasIOSurfaceExt());
+
+    // This test only works on ES3 since it requires an integer texture.
+    ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3);
 
     // TODO(http://anglebug.com/4369)
     ANGLE_SKIP_TEST_IF(isSwiftshader());
@@ -473,7 +558,7 @@ TEST_P(IOSurfaceClientBufferTest, RenderToR16IOSurface)
     ScopedIOSurfaceRef ioSurface = CreateSinglePlaneIOSurface(1, 1, 'L016', 2);
 
     std::array<uint16_t, 1> color{257};
-    doClearTest(ioSurface, GL_R16UI, GL_UNSIGNED_SHORT, color);
+    doClearTest(ioSurface, 1, 1, 0, GL_R16UI, GL_UNSIGNED_SHORT, color);
 }
 // TODO(cwallez@chromium.org): test reading from R16? It returns 0 maybe because samplerRect is
 // only for floating textures?
@@ -489,7 +574,7 @@ TEST_P(IOSurfaceClientBufferTest, RenderToBGRA1010102IOSurface)
     ScopedIOSurfaceRef ioSurface = CreateSinglePlaneIOSurface(1, 1, 'l10r', 4);
 
     std::array<uint32_t, 1> color{(0 << 30) | (1 << 22) | (2 << 12) | (3 << 2)};
-    doClearTest(ioSurface, GL_RGB10_A2, GL_UNSIGNED_INT_2_10_10_10_REV, color);
+    doClearTest(ioSurface, 1, 1, 0, GL_RGB10_A2, GL_UNSIGNED_INT_2_10_10_10_REV, color);
 }
 
 // Test reading from BGRA_1010102 IOSurfaces
@@ -500,7 +585,8 @@ TEST_P(IOSurfaceClientBufferTest, ReadFromBGRA1010102IOSurface)
     ScopedIOSurfaceRef ioSurface = CreateSinglePlaneIOSurface(1, 1, 'l10r', 4);
 
     uint32_t color = (3 << 30) | (1 << 22) | (2 << 12) | (3 << 2);
-    doSampleTest(ioSurface, GL_RGB10_A2, GL_UNSIGNED_INT_2_10_10_10_REV, &color, sizeof(color),
+    doSampleTest(ioSurface, 1, 1, 0, GL_RGB10_A2, GL_UNSIGNED_INT_2_10_10_10_REV, &color,
+                 sizeof(color),
                  R | G | B);  // Don't test alpha, unorm '4' can't be represented with 2 bits.
 }
 
@@ -517,11 +603,11 @@ TEST_P(IOSurfaceClientBufferTest, RenderToRGBA16FIOSurface)
     std::array<GLushort, 4> color{
         gl::float32ToFloat16(1.0f / 255.0f), gl::float32ToFloat16(2.0f / 255.0f),
         gl::float32ToFloat16(3.0f / 255.0f), gl::float32ToFloat16(4.0f / 255.0f)};
-    doClearTest(ioSurface, GL_RGBA, GL_HALF_FLOAT, color);
+    doClearTest(ioSurface, 1, 1, 0, GL_RGBA, GL_HALF_FLOAT, color);
 }
 
 // Test reading from RGBA_16F IOSurfaces
-TEST_P(IOSurfaceClientBufferTest, ReadFromToRGBA16FIOSurfaceIOSurface)
+TEST_P(IOSurfaceClientBufferTest, ReadFromToRGBA16FIOSurface)
 {
     ANGLE_SKIP_TEST_IF(!hasIOSurfaceExt());
 
@@ -533,11 +619,105 @@ TEST_P(IOSurfaceClientBufferTest, ReadFromToRGBA16FIOSurfaceIOSurface)
     std::array<GLushort, 4> color{
         gl::float32ToFloat16(1.0f / 255.0f), gl::float32ToFloat16(2.0f / 255.0f),
         gl::float32ToFloat16(3.0f / 255.0f), gl::float32ToFloat16(4.0f / 255.0f)};
-    doSampleTest(ioSurface, GL_RGBA, GL_HALF_FLOAT, color.data(), sizeof(GLushort) * 4,
+    doSampleTest(ioSurface, 1, 1, 0, GL_RGBA, GL_HALF_FLOAT, color.data(), sizeof(GLushort) * 4,
                  R | G | B | A);
 }
 
-// TODO(cwallez@chromium.org): Test using RGBA half float IOSurfaces ('RGhA')
+// Test using YUV420 IOSurfaces for rendering
+TEST_P(IOSurfaceClientBufferTest, RenderToYUV420IOSurface)
+{
+    ANGLE_SKIP_TEST_IF(!hasIOSurfaceExt());
+
+    // TODO(http://anglebug.com/4369)
+    ANGLE_SKIP_TEST_IF(isSwiftshader());
+
+    std::vector<IOSurfacePlaneInfo> planes{{2, 2, 1}, {1, 1, 2}};
+    ScopedIOSurfaceRef ioSurface = CreateIOSurface('420v', planes);
+
+    {
+        std::array<GLubyte, 1> colors{1};
+        doClearTest(ioSurface, planes[0].width, planes[0].height, 0, GL_RED, GL_UNSIGNED_BYTE,
+                    colors);
+    }
+
+    {
+        std::array<GLubyte, 2> colors{1, 2};
+        doClearTest(ioSurface, planes[1].width, planes[1].height, 1, GL_RG, GL_UNSIGNED_BYTE,
+                    colors);
+    }
+}
+
+// Test reading from YUV420 IOSurfaces
+TEST_P(IOSurfaceClientBufferTest, ReadFromToYUV420IOSurface)
+{
+    ANGLE_SKIP_TEST_IF(!hasIOSurfaceExt());
+
+    // TODO(http://anglebug.com/4369)
+    ANGLE_SKIP_TEST_IF(isSwiftshader());
+
+    std::vector<IOSurfacePlaneInfo> planes{{2, 2, 1}, {1, 1, 2}};
+    ScopedIOSurfaceRef ioSurface = CreateIOSurface('420v', planes);
+
+    {
+        std::array<GLubyte, 1> colors{1};
+        doSampleTest(ioSurface, planes[0].width, planes[0].height, 0, GL_RED, GL_UNSIGNED_BYTE,
+                     colors.data(), sizeof(GLubyte) * colors.size(), R);
+    }
+
+    {
+        std::array<GLubyte, 2> colors{1, 2};
+        doSampleTest(ioSurface, planes[1].width, planes[1].height, 1, GL_RG, GL_UNSIGNED_BYTE,
+                     colors.data(), sizeof(GLubyte) * colors.size(), R | G);
+    }
+}
+
+// Test using P010 IOSurfaces for rendering
+TEST_P(IOSurfaceClientBufferTest, RenderToP010IOSurface)
+{
+    ANGLE_SKIP_TEST_IF(!hasIOSurfaceExt());
+
+    // TODO(http://anglebug.com/4369)
+    ANGLE_SKIP_TEST_IF(isSwiftshader());
+
+    std::vector<IOSurfacePlaneInfo> planes{{2, 2, 2}, {1, 1, 4}};
+    ScopedIOSurfaceRef ioSurface = CreateIOSurface('x420', planes);
+
+    {
+        std::array<GLushort, 1> colors{257};
+        doClearTest(ioSurface, planes[0].width, planes[0].height, 0, GL_RED, GL_UNSIGNED_SHORT,
+                    colors);
+    }
+
+    {
+        std::array<GLushort, 2> colors{257, 514};
+        doClearTest(ioSurface, planes[1].width, planes[1].height, 1, GL_RG, GL_UNSIGNED_SHORT,
+                    colors);
+    }
+}
+
+// Test reading from P010 IOSurfaces
+TEST_P(IOSurfaceClientBufferTest, ReadFromToP010IOSurface)
+{
+    ANGLE_SKIP_TEST_IF(!hasIOSurfaceExt());
+
+    // TODO(http://anglebug.com/4369)
+    ANGLE_SKIP_TEST_IF(isSwiftshader());
+
+    std::vector<IOSurfacePlaneInfo> planes{{2, 2, 2}, {1, 1, 4}};
+    ScopedIOSurfaceRef ioSurface = CreateIOSurface('x420', planes);
+
+    {
+        std::array<GLushort, 1> colors{257};
+        doSampleTest(ioSurface, planes[0].width, planes[0].height, 0, GL_RED, GL_UNSIGNED_SHORT,
+                     colors.data(), sizeof(GLushort) * colors.size(), R);
+    }
+
+    {
+        std::array<GLushort, 2> colors{257, 514};
+        doSampleTest(ioSurface, planes[1].width, planes[1].height, 1, GL_RG, GL_UNSIGNED_SHORT,
+                     colors.data(), sizeof(GLushort) * colors.size(), R | G);
+    }
+}
 
 // Test blitting from IOSurface
 TEST_P(IOSurfaceClientBufferTest, BlitFromIOSurface)
@@ -553,6 +733,35 @@ TEST_P(IOSurfaceClientBufferTest, BlitToIOSurface)
     ANGLE_SKIP_TEST_IF(!hasIOSurfaceExt());
 
     doBlitTest(false, 2, 2);
+}
+
+// Test using glCopyTexSubImage to copy to BGRX8888 IOSurfaces works.
+TEST_P(IOSurfaceClientBufferTest, CopySubImageToBGRX8888IOSurface)
+{
+    ANGLE_SKIP_TEST_IF(!hasIOSurfaceExt());
+
+    ScopedIOSurfaceRef ioSurface = CreateSinglePlaneIOSurface(1, 1, 'BGRA', 4);
+
+    GLTexture texture;
+    glBindTexture(getGLTextureTarget(), texture);
+    glTexParameteri(getGLTextureTarget(), GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(getGLTextureTarget(), GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    // Bind the IOSurface to a texture and clear it.
+    EGLSurface pbuffer;
+    bindIOSurfaceToTexture(ioSurface, 1, 1, 0, GL_RGB, GL_UNSIGNED_BYTE, &pbuffer, &texture);
+
+    // 1. Clear default framebuffer with desired color.
+    GLColor color(1, 2, 3, 4);
+    glClearColor(color.R / 255.f, color.G / 255.f, color.B / 255.f, color.A / 255.f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // 2. Copy color from default framebuffer to iosurface's bound texture.
+    glCopyTexSubImage2D(getGLTextureTarget(), 0, 0, 0, 0, 0, 1, 1);
+    EXPECT_GL_NO_ERROR();
+
+    // 3. Do texture sampling verification.
+    doSampleTestWithTexture(texture, R | G | B);
 }
 
 // Test the validation errors for missing attributes for eglCreatePbufferFromClientBuffer with
@@ -990,4 +1199,5 @@ ANGLE_INSTANTIATE_TEST(IOSurfaceClientBufferTest,
                        ES2_OPENGL(),
                        ES3_OPENGL(),
                        ES2_VULKAN_SWIFTSHADER(),
-                       ES3_VULKAN_SWIFTSHADER());
+                       ES3_VULKAN_SWIFTSHADER(),
+                       ES2_METAL());

@@ -80,6 +80,7 @@ EXPORTS
     eglClientWaitSyncKHR                        @86
     eglGetSyncAttribKHR                         @87
     eglWaitSyncKHR                              @88
+    eglSignalSyncKHR                            @89
 
     ; 1.5 entry points
     eglCreateSync                               @38

@@ -36,7 +36,9 @@ class GPUTestConfigTest : public ANGLETest
         EXPECT_EQ(IsRelease(), config.getConditions()[GPUTestConfig::kConditionRelease]);
     }
 
-    void validateConfigAPI(const GPUTestConfig &config, const GPUTestConfig::API &api)
+    void validateConfigAPI(const GPUTestConfig &config,
+                           const GPUTestConfig::API &api,
+                           uint32_t preRotation)
     {
         bool D3D9      = false;
         bool D3D11     = false;
@@ -74,6 +76,34 @@ class GPUTestConfigTest : public ANGLETest
         EXPECT_EQ(GLES, config.getConditions()[GPUTestConfig::kConditionGLES]);
         EXPECT_EQ(Vulkan, config.getConditions()[GPUTestConfig::kConditionVulkan]);
         EXPECT_EQ(Metal, config.getConditions()[GPUTestConfig::kConditionMetal]);
+
+        switch (preRotation)
+        {
+            case 90:
+                EXPECT_TRUE(config.getConditions()[GPUTestConfig::kConditionPreRotation]);
+                EXPECT_TRUE(config.getConditions()[GPUTestConfig::kConditionPreRotation90]);
+                EXPECT_FALSE(config.getConditions()[GPUTestConfig::kConditionPreRotation180]);
+                EXPECT_FALSE(config.getConditions()[GPUTestConfig::kConditionPreRotation270]);
+                break;
+            case 180:
+                EXPECT_TRUE(config.getConditions()[GPUTestConfig::kConditionPreRotation]);
+                EXPECT_FALSE(config.getConditions()[GPUTestConfig::kConditionPreRotation90]);
+                EXPECT_TRUE(config.getConditions()[GPUTestConfig::kConditionPreRotation180]);
+                EXPECT_FALSE(config.getConditions()[GPUTestConfig::kConditionPreRotation270]);
+                break;
+            case 270:
+                EXPECT_TRUE(config.getConditions()[GPUTestConfig::kConditionPreRotation]);
+                EXPECT_FALSE(config.getConditions()[GPUTestConfig::kConditionPreRotation90]);
+                EXPECT_FALSE(config.getConditions()[GPUTestConfig::kConditionPreRotation180]);
+                EXPECT_TRUE(config.getConditions()[GPUTestConfig::kConditionPreRotation270]);
+                break;
+            default:
+                EXPECT_FALSE(config.getConditions()[GPUTestConfig::kConditionPreRotation]);
+                EXPECT_FALSE(config.getConditions()[GPUTestConfig::kConditionPreRotation90]);
+                EXPECT_FALSE(config.getConditions()[GPUTestConfig::kConditionPreRotation180]);
+                EXPECT_FALSE(config.getConditions()[GPUTestConfig::kConditionPreRotation270]);
+                break;
+        }
     }
 };
 
@@ -89,38 +119,56 @@ TEST_P(GPUTestConfigTest, GPUTestConfigConditions)
 // condition flags are set correctly.
 TEST_P(GPUTestConfigTest, GPUTestConfigConditions_D3D9)
 {
-    GPUTestConfig config(GPUTestConfig::kAPID3D9);
-    validateConfigAPI(config, GPUTestConfig::kAPID3D9);
+    GPUTestConfig config(GPUTestConfig::kAPID3D9, 0);
+    validateConfigAPI(config, GPUTestConfig::kAPID3D9, 0);
 }
 
 TEST_P(GPUTestConfigTest, GPUTestConfigConditions_D3D11)
 {
-    GPUTestConfig config(GPUTestConfig::kAPID3D11);
-    validateConfigAPI(config, GPUTestConfig::kAPID3D11);
+    GPUTestConfig config(GPUTestConfig::kAPID3D11, 0);
+    validateConfigAPI(config, GPUTestConfig::kAPID3D11, 0);
 }
 
 TEST_P(GPUTestConfigTest, GPUTestConfigConditions_Metal)
 {
-    GPUTestConfig config(GPUTestConfig::kAPIMetal);
-    validateConfigAPI(config, GPUTestConfig::kAPIMetal);
+    GPUTestConfig config(GPUTestConfig::kAPIMetal, 0);
+    validateConfigAPI(config, GPUTestConfig::kAPIMetal, 0);
 }
 
 TEST_P(GPUTestConfigTest, GPUTestConfigConditions_GLDesktop)
 {
-    GPUTestConfig config(GPUTestConfig::kAPIGLDesktop);
-    validateConfigAPI(config, GPUTestConfig::kAPIGLDesktop);
+    GPUTestConfig config(GPUTestConfig::kAPIGLDesktop, 0);
+    validateConfigAPI(config, GPUTestConfig::kAPIGLDesktop, 0);
 }
 
 TEST_P(GPUTestConfigTest, GPUTestConfigConditions_GLES)
 {
-    GPUTestConfig config(GPUTestConfig::kAPIGLES);
-    validateConfigAPI(config, GPUTestConfig::kAPIGLES);
+    GPUTestConfig config(GPUTestConfig::kAPIGLES, 0);
+    validateConfigAPI(config, GPUTestConfig::kAPIGLES, 0);
 }
 
 TEST_P(GPUTestConfigTest, GPUTestConfigConditions_Vulkan)
 {
-    GPUTestConfig config(GPUTestConfig::kAPIVulkan);
-    validateConfigAPI(config, GPUTestConfig::kAPIVulkan);
+    GPUTestConfig config(GPUTestConfig::kAPIVulkan, 0);
+    validateConfigAPI(config, GPUTestConfig::kAPIVulkan, 0);
+}
+
+TEST_P(GPUTestConfigTest, GPUTestConfigConditions_Vulkan_PreRotation90)
+{
+    GPUTestConfig config(GPUTestConfig::kAPIVulkan, 90);
+    validateConfigAPI(config, GPUTestConfig::kAPIVulkan, 90);
+}
+
+TEST_P(GPUTestConfigTest, GPUTestConfigConditions_Vulkan_PreRotation180)
+{
+    GPUTestConfig config(GPUTestConfig::kAPIVulkan, 180);
+    validateConfigAPI(config, GPUTestConfig::kAPIVulkan, 180);
+}
+
+TEST_P(GPUTestConfigTest, GPUTestConfigConditions_Vulkan_PreRotation270)
+{
+    GPUTestConfig config(GPUTestConfig::kAPIVulkan, 270);
+    validateConfigAPI(config, GPUTestConfig::kAPIVulkan, 270);
 }
 
 // Use this to select which configurations (e.g. which renderer, which GLES major version) these

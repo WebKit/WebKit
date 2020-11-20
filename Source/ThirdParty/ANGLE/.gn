@@ -19,7 +19,7 @@ buildconfig = "//build/config/BUILDCONFIG.gn"
 # "gn check" or "gn gen --check".
 check_targets = [ "*" ]
 
-# These are the list of GN files that run exec_script. This whitelist exists
+# These are the list of GN files that run exec_script. This allowlist exists
 # to force additional review for new uses of exec_script, which is strongly
 # discouraged except for gypi_to_gn calls.
 exec_script_whitelist = angle_dotfile_settings.exec_script_whitelist +
@@ -33,8 +33,10 @@ exec_script_whitelist = angle_dotfile_settings.exec_script_whitelist +
                         ]
 
 default_args = {
-  use_custom_libcxx = false
   clang_use_chrome_plugins = true
   build_angle_deqp_tests = true
   use_sysroot = true
+
+  # Saves on importing extra dependencies and ANGLE doesn't use JS.
+  enable_js_protobuf = false
 }

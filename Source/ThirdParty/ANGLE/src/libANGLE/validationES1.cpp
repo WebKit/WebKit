@@ -146,6 +146,13 @@ bool ValidateBuiltinVertexAttributeCommon(const Context *context,
         case VertexAttribType::Fixed:
         case VertexAttribType::Float:
             break;
+        case VertexAttribType::UnsignedByte:
+            if (arrayType != ClientVertexArrayType::Color)
+            {
+                context->validationError(GL_INVALID_ENUM, kInvalidVertexPointerType);
+                return false;
+            }
+            break;
         default:
             context->validationError(GL_INVALID_ENUM, kInvalidVertexPointerType);
             return false;
@@ -290,9 +297,9 @@ bool ValidateMaterialQuery(const Context *context, GLenum face, MaterialParamete
         return false;
     }
 
-    GLfloat dummyParams[4] = {0.0f, 0.0f, 0.0f, 0.0f};
+    GLfloat validateParams[4] = {0.0f, 0.0f, 0.0f, 0.0f};
 
-    return ValidateMaterialCommon(context, face, pname, dummyParams);
+    return ValidateMaterialCommon(context, face, pname, validateParams);
 }
 
 bool ValidateMaterialSingleComponent(const Context *context,
@@ -545,15 +552,15 @@ bool ValidateGetTexEnvCommon(const Context *context,
                              TextureEnvTarget target,
                              TextureEnvParameter pname)
 {
-    GLfloat dummy[4] = {};
+    GLfloat validateParams[4] = {};
     switch (pname)
     {
         case TextureEnvParameter::Mode:
-            ConvertPackedEnum(TextureEnvMode::Add, dummy);
+            ConvertPackedEnum(TextureEnvMode::Add, validateParams);
             break;
         case TextureEnvParameter::CombineRgb:
         case TextureEnvParameter::CombineAlpha:
-            ConvertPackedEnum(TextureCombine::Add, dummy);
+            ConvertPackedEnum(TextureCombine::Add, validateParams);
             break;
         case TextureEnvParameter::Src0Rgb:
         case TextureEnvParameter::Src1Rgb:
@@ -561,7 +568,7 @@ bool ValidateGetTexEnvCommon(const Context *context,
         case TextureEnvParameter::Src0Alpha:
         case TextureEnvParameter::Src1Alpha:
         case TextureEnvParameter::Src2Alpha:
-            ConvertPackedEnum(TextureSrc::Constant, dummy);
+            ConvertPackedEnum(TextureSrc::Constant, validateParams);
             break;
         case TextureEnvParameter::Op0Rgb:
         case TextureEnvParameter::Op1Rgb:
@@ -569,18 +576,18 @@ bool ValidateGetTexEnvCommon(const Context *context,
         case TextureEnvParameter::Op0Alpha:
         case TextureEnvParameter::Op1Alpha:
         case TextureEnvParameter::Op2Alpha:
-            ConvertPackedEnum(TextureOp::SrcAlpha, dummy);
+            ConvertPackedEnum(TextureOp::SrcAlpha, validateParams);
             break;
         case TextureEnvParameter::RgbScale:
         case TextureEnvParameter::AlphaScale:
         case TextureEnvParameter::PointCoordReplace:
-            dummy[0] = 1.0f;
+            validateParams[0] = 1.0f;
             break;
         default:
             break;
     }
 
-    return ValidateTexEnvCommon(context, target, pname, dummy);
+    return ValidateTexEnvCommon(context, target, pname, validateParams);
 }
 
 bool ValidatePointParameterCommon(const Context *context,
@@ -858,8 +865,8 @@ bool ValidateGetLightfv(const Context *context,
                         LightParameter pname,
                         const GLfloat *params)
 {
-    GLfloat dummyParams[4] = {0.0f, 0.0f, 0.0f, 0.0f};
-    return ValidateLightCommon(context, light, pname, dummyParams);
+    GLfloat validateParams[4] = {0.0f, 0.0f, 0.0f, 0.0f};
+    return ValidateLightCommon(context, light, pname, validateParams);
 }
 
 bool ValidateGetLightxv(const Context *context,
@@ -867,8 +874,8 @@ bool ValidateGetLightxv(const Context *context,
                         LightParameter pname,
                         const GLfixed *params)
 {
-    GLfloat dummyParams[4] = {0.0f, 0.0f, 0.0f, 0.0f};
-    return ValidateLightCommon(context, light, pname, dummyParams);
+    GLfloat validateParams[4] = {0.0f, 0.0f, 0.0f, 0.0f};
+    return ValidateLightCommon(context, light, pname, validateParams);
 }
 
 bool ValidateGetMaterialfv(const Context *context,
