@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>mock-media-source</title>
+    <script src="mock-media-source.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    var source;
+    var sourceBuffer;
+    var initSegment;
+    var exception;
+
+    function bufferedRanges() {
+        var bufferedRanges = '[ ';
+        var timeRanges = sourceBuffer.buffered;
+        for (var i = 0 ; i < timeRanges.length ; i++) {
+            if (i)
+                bufferedRanges += ', ';
+            bufferedRanges += timeRanges.start(i) + '...' + timeRanges.end(i);
+        }
+        bufferedRanges += ' ]';
+        return bufferedRanges;
+    }
+
+    async function appendPtsRange(firstPts, lastPts) {
+        var resultException = null;
+        for (var pts = firstPts; pts <= lastPts; pts++) {
+            try {
+                consoleWrite('Appending PTS='+pts);
+                sourceBuffer.appendBuffer(makeASample(pts, pts, 1, 1, 1, SAMPLE_FLAG.SYNC, 1));
+                await waitFor(sourceBuffer, 'updateend');
+            } catch (e) {
+                resultException = e;
+                sourceBuffer.abort();
+                break;
+            }
+        }
+        return resultException;
+    }
+
+    if (window.internals)
+        internals.initializeMockMediaSource();
+
+    window.addEventListener('load', async() => {
+        findMediaElement();
+        source = new MediaSource();
+
+        const videoSource = document.createElement('source');
+        videoSource.type = 'video/mock; codecs=mock';
+        videoSource.src = URL.createObjectURL(source);
+        video.appendChild(videoSource);
+
+        await waitFor(source, 'sourceopen');
+        sourceBuffer = source.addSourceBuffer("video/mock; codecs=mock");
+        initSegment = makeAInit(-1, [makeATrack(1, 'mock', TRACK_KIND.VIDEO)]);
+        sourceBuffer.appendBuffer(initSegment);
+        await waitFor(sourceBuffer, 'updateend');
+
+        testExpected('isNaN(source.duration)', true, '==');
+
+        // This should allow bufering up to 177 (empirically tested).
+        internals.settings.setMaximumSourceBufferSize(3000);
+
+        exception = await appendPtsRange(120, 176);
+
+        video.currentTime = 175;
+        testExpected('video.currentTime', 175, '==');
+
+        testExpected('bufferedRanges()', '[ 120...132, 162...177 ]', '==');
+
+        video.currentTime = 115;
+        testExpected('video.currentTime', 115, '==');
+        await appendPtsRange(109, 119);
+        testExpected('bufferedRanges()', '[ 109...132, 162...177 ]', '==');
+        endTest();
+     });
+    </script>
+</head>
+<body>
+    This tests rewind seeks in a live stream. The sample eviction algorithm should attempt to remove
+    some samples without going into an infinite loop.
+    <video></video>
+</body>
+</html>

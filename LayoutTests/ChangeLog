@@ -1,3 +1,17 @@
+2020-11-20  Philippe Normand  <pnormand@igalia.com>
+
+        [MSE] Infinite loop in sample eviction when duration is NaN
+        https://bugs.webkit.org/show_bug.cgi?id=218228
+
+        Reviewed by Darin Adler.
+
+        * media/media-source/live-rewind-seek-and-evict-expected.txt: Renamed from LayoutTests/platform/glib/media/media-source/media-source-append-before-last-range-no-quota-exceeded-expected.txt.
+        * media/media-source/live-rewind-seek-and-evict.html: Added.
+        * media/media-source/media-source-append-before-last-range-no-quota-exceeded-expected.txt:
+        * media/media-source/mock-media-source.js:
+        (makeAInit):
+        * platform/mac/media/media-source/media-source-append-before-last-range-no-quota-exceeded-expected.txt: Copied from LayoutTests/media/media-source/media-source-append-before-last-range-no-quota-exceeded-expected.txt.
+
 2020-11-20  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [TextureMapper] Hidden surface removal issue for nested transform-style:perserve-3d in Snow Stack demo

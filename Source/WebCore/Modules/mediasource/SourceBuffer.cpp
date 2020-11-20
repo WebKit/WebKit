@@ -996,6 +996,11 @@ void SourceBuffer::evictCodedFrames(size_t newDataSize)
     MediaTime minimumRangeStart = currentTime + thirtySeconds;
 
     rangeEnd = m_source->duration();
+    if (!rangeEnd.isFinite()) {
+        rangeEnd = buffered.maximumBufferedTime();
+        DEBUG_LOG(LOGIDENTIFIER, "MediaSource duration is not a finite value, using maximum buffered time: ", rangeEnd);
+    }
+
     rangeStart = rangeEnd - thirtySeconds;
     while (rangeStart > minimumRangeStart) {
 

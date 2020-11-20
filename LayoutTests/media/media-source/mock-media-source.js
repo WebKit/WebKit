@@ -75,11 +75,13 @@ function makeAInit(duration, tracks) {
     var array = new Uint8Array(buffer);
     array.set(stringToArray('init'));
 
-    var view = new DataView(buffer);
-    var timeScale = 1000;
-    view.setUint32(4, byteLength, true);
-    view.setInt32(8, duration * timeScale, true);
-    view.setInt32(12, timeScale, true);
+    if (!isNaN(duration)) {
+        var view = new DataView(buffer);
+        var timeScale = 1000;
+        view.setUint32(4, byteLength, true);
+        view.setInt32(8, duration * timeScale, true);
+        view.setInt32(12, timeScale, true);
+    }
 
     var offset = 16;
     tracks.forEach(function(track){

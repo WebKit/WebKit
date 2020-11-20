@@ -96,6 +96,7 @@ public:
     bool isPositiveInfinite() const { return m_timeFlags & PositiveInfinite; }
     bool isNegativeInfinite() const { return m_timeFlags & NegativeInfinite; }
     bool isIndefinite() const { return m_timeFlags & Indefinite; }
+    bool isFinite() const { return !isInvalid() && !isIndefinite() && !isPositiveInfinite() && !isNegativeInfinite(); }
     bool hasDoubleValue() const { return m_timeFlags & DoubleValue; }
     uint8_t timeFlags() const { return m_timeFlags; }
 
