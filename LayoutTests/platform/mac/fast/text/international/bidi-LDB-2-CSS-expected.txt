@@ -398,7 +398,7 @@ layer at (0,0) size 800x565
               text run at (162,1) width 28 RTL: "\x{5D6}\x{5D7}\x{5D8}"
         RenderText {#text} at (641,82) size 5x18
           text run at (641,82) width 5: " "
-        RenderBR {BR} at (0,0) size 0x0
+        RenderBR {BR} at (645,82) size 1x18
         RenderBlock {DIV} at (3,188) size 198x46 [border: (1px solid #008000)]
           RenderTable {TABLE} at (4,4) size 190x19
             RenderTableSection {TBODY} at (0,0) size 190x19

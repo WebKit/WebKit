@@ -24,8 +24,7 @@ layer at (0,0) size 800x600
       RenderText {#text} at (575,21) size 5x19
         text run at (575,21) width 5: " "
       RenderTextControl {INPUT} at (581,22) size 138x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
-      RenderText {#text} at (720,21) size 5x19
-        text run at (720,21) width 5: " "
+      RenderText {#text} at (0,0) size 0x0
       RenderTextControl {INPUT} at (2,47) size 138x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
       RenderText {#text} at (0,0) size 0x0
 layer at (17,33) size 124x14
