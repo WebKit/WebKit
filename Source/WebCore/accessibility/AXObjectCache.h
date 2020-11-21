@@ -145,6 +145,7 @@ public:
     ~AXObjectCache();
 
     WEBCORE_EXPORT AXCoreObject* focusedUIElementForPage(const Page*);
+    static AXCoreObject* focusedObjectForPage(const Page*);
 
     // Returns the root object for the entire document.
     WEBCORE_EXPORT AXCoreObject* rootObject();
@@ -431,7 +432,6 @@ private:
     AccessibilityObject* rootWebArea();
 
     static AccessibilityObject* focusedImageMapUIElement(HTMLAreaElement*);
-    static AXCoreObject* focusedObject(Document&);
 
     AXID getAXID(AccessibilityObject*);
 

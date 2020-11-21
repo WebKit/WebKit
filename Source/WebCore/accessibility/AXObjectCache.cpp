@@ -369,17 +369,29 @@ AccessibilityObject* AXObjectCache::focusedImageMapUIElement(HTMLAreaElement* ar
     return nullptr;
 }
 
-AXCoreObject* AXObjectCache::focusedObject(Document& document)
+AXCoreObject* AXObjectCache::focusedObjectForPage(const Page* page)
 {
-    Element* focusedElement = document.focusedElement();
+    ASSERT(isMainThread());
+
+    if (!gAccessibilityEnabled)
+        return nullptr;
+
+    // get the focused node in the page
+    Document* document = page->focusController().focusedOrMainFrame().document();
+    if (!document)
+        return nullptr;
+
+    document->updateStyleIfNeeded();
+
+    Element* focusedElement = document->focusedElement();
     if (is<HTMLAreaElement>(focusedElement))
         return focusedImageMapUIElement(downcast<HTMLAreaElement>(focusedElement));
 
-    auto* axObjectCache = document.axObjectCache();
+    auto* axObjectCache = document->axObjectCache();
     if (!axObjectCache)
         return nullptr;
 
-    AXCoreObject* focus = axObjectCache->getOrCreate(focusedElement ? focusedElement : static_cast<Node*>(&document));
+    AXCoreObject* focus = axObjectCache->getOrCreate(focusedElement ? focusedElement : static_cast<Node*>(document));
     if (!focus)
         return nullptr;
 
@@ -421,24 +433,12 @@ void AXObjectCache::setIsolatedTreeFocusedObject(Node* focusedNode)
 
 AXCoreObject* AXObjectCache::focusedUIElementForPage(const Page* page)
 {
-    ASSERT(isMainThread());
-    if (!gAccessibilityEnabled)
-        return nullptr;
-
-    // get the focused node in the page
-    Document* focusedDocument = page->focusController().focusedOrMainFrame().document();
-    if (!focusedDocument)
-        return nullptr;
-
-    // Call this before isolated or non-isolated cases so the document is up to do.
-    focusedDocument->updateStyleIfNeeded();
-    
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     if (isIsolatedTreeEnabled())
         return isolatedTreeFocusedObject();
 #endif
 
-    return focusedObject(*focusedDocument);
+    return focusedObjectForPage(page);
 }
 
 AccessibilityObject* AXObjectCache::get(Widget* widget)
@@ -3179,7 +3179,7 @@ Ref<AXIsolatedTree> AXObjectCache::generateIsolatedTree(PageIdentifier pageID, D
     if (axRoot)
         tree->generateSubtree(*axRoot, nullptr, true);
 
-    auto* axFocus = axObjectCache->focusedObject(document);
+    auto* axFocus = axObjectCache->focusedObjectForPage(document.page());
     if (axFocus)
         tree->setFocusedNodeID(axFocus->objectID());
 

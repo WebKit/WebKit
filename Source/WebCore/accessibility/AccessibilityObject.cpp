@@ -2544,12 +2544,12 @@ AXObjectCache* AccessibilityObject::axObjectCache() const
     auto* document = this->document();
     return document ? document->axObjectCache() : nullptr;
 }
-    
+
 AXCoreObject* AccessibilityObject::focusedUIElement() const
 {
     auto* page = this->page();
     auto* axObjectCache = this->axObjectCache();
-    return page && axObjectCache ? axObjectCache->focusedUIElementForPage(page) : nullptr;
+    return page && axObjectCache ? axObjectCache->focusedObjectForPage(page) : nullptr;
 }
     
 AccessibilitySortDirection AccessibilityObject::sortDirection() const
