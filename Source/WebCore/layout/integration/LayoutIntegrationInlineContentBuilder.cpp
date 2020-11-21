@@ -186,8 +186,9 @@ InlineContentBuilder::LineLevelVisualAdjustmentsForRunsList InlineContentBuilder
         lineLevelVisualAdjustmentsForRuns[lineIndex].needsIntegralPosition = lineNeedsLegacyIntegralVerticalPosition();
         if (shouldCheckHorizontalOverflowForContentReplacement) {
             auto& line = lines[lineIndex];
-            auto overflowWidth = lineOverflowWidth(m_blockFlow, line.logicalWidth(), line.lineBoxLogicalSize().width());
-            lineLevelVisualAdjustmentsForRuns[lineIndex].needsTrailingContentReplacement = overflowWidth > line.logicalWidth();
+            auto& lineLogicalRect = line.logicalRect();
+            auto overflowWidth = lineOverflowWidth(m_blockFlow, lineLogicalRect.width(), line.lineBoxLogicalSize().width());
+            lineLevelVisualAdjustmentsForRuns[lineIndex].needsTrailingContentReplacement = overflowWidth > lineLogicalRect.width();
         }
     }
     return lineLevelVisualAdjustmentsForRuns;
@@ -212,13 +213,13 @@ void InlineContentBuilder::createDisplayLineRuns(const Layout::InlineFormattingS
     auto createDisplayBoxRun = [&](auto& lineRun) {
         auto& layoutBox = lineRun.layoutBox();
         auto lineIndex = lineRun.lineIndex();
-        auto& line = lines[lineIndex];
+        auto& lineLogicalRect = lines[lineIndex].logicalRect();
         // Inline boxes are relative to the line box while final Runs need to be relative to the parent Box
         // FIXME: Shouldn't we just leave them be relative to the line box?
         auto runRect = FloatRect { lineRun.logicalRect() };
         // Line runs are margin box based, let's convert them to border box.
         auto& geometry = m_layoutState.geometryForBox(layoutBox);
-        runRect.moveBy({ line.logicalLeft() + std::max(geometry.marginStart(), 0_lu), line.logicalTop() + geometry.marginBefore() });
+        runRect.moveBy({ lineLogicalRect.left() + std::max(geometry.marginStart(), 0_lu), lineLogicalRect.top() + geometry.marginBefore() });
         runRect.setSize({ geometry.borderBoxWidth(), geometry.borderBoxHeight() });
         if (lineLevelVisualAdjustmentsForRuns[lineIndex].needsIntegralPosition)
             runRect.setY(roundToInt(runRect.y()));
@@ -231,11 +232,11 @@ void InlineContentBuilder::createDisplayLineRuns(const Layout::InlineFormattingS
         RELEASE_ASSERT(startOffset < endOffset);
         auto& layoutBox = lineRun.layoutBox();
         auto lineIndex = lineRun.lineIndex();
-        auto& line = lines[lineIndex];
+        auto& lineLogicalRect = lines[lineIndex].logicalRect();
         auto runRect = FloatRect { lineRun.logicalRect() };
         // Inline boxes are relative to the line box while final Runs need to be relative to the parent Box
         // FIXME: Shouldn't we just leave them be relative to the line box?
-        runRect.moveBy({ line.logicalLeft(), line.logicalTop() });
+        runRect.moveBy({ lineLogicalRect.left(), lineLogicalRect.top() });
         if (lineLevelVisualAdjustmentsForRuns[lineIndex].needsIntegralPosition)
             runRect.setY(roundToInt(runRect.y()));
 
@@ -252,14 +253,13 @@ void InlineContentBuilder::createDisplayLineRuns(const Layout::InlineFormattingS
                     return emptyString();
                 }
                 auto runLogicalRect = lineRun.logicalRect();
-                auto lineLogicalRight = line.logicalRight();
                 auto ellipsisWidth = style.fontCascade().width(WebCore::TextRun { &horizontalEllipsis });
-                if (runLogicalRect.right() + ellipsisWidth > lineLogicalRight) {
+                if (runLogicalRect.right() + ellipsisWidth > lineLogicalRect.right()) {
                     // The next run with ellipsis would surely overflow. So let's just add it to this run even if
                     // it makes the run wider than it originally was.
                     hasAdjustedTrailingLineList[lineIndex] = true;
                     float resultWidth = 0;
-                    auto maxWidth = line.logicalWidth() - runLogicalRect.left();
+                    auto maxWidth = lineLogicalRect.width() - runLogicalRect.left();
                     return StringTruncator::rightTruncate(originalContent, maxWidth, style.fontCascade(), resultWidth, true);
                 }
             }
@@ -307,16 +307,17 @@ void InlineContentBuilder::createDisplayLines(const Layout::InlineFormattingStat
     size_t runIndex = 0;
     for (size_t lineIndex = 0; lineIndex < lines.size(); ++lineIndex) {
         auto& line = lines[lineIndex];
+        auto& lineLogicalRect = line.logicalRect();
         auto lineBoxLogicalSize = line.lineBoxLogicalSize();
         // FIXME: This is where the logical to physical translate should happen.
-        auto scrollableOverflowRect = FloatRect { line.logicalLeft(), line.logicalTop(), lineOverflowWidth(m_blockFlow, line.logicalWidth(), lineBoxLogicalSize.width()), line.logicalHeight() };
+        auto scrollableOverflowRect = FloatRect { lineLogicalRect.left(), lineLogicalRect.top(), lineOverflowWidth(m_blockFlow, lineLogicalRect.width(), lineBoxLogicalSize.width()), lineLogicalRect.height() };
 
         auto firstRunIndex = runIndex;
         auto lineInkOverflowRect = scrollableOverflowRect;
         while (runIndex < runs.size() && runs[runIndex].lineIndex() == lineIndex)
             lineInkOverflowRect.unite(runs[runIndex++].inkOverflow());
         auto runCount = runIndex - firstRunIndex;
-        auto lineRect = FloatRect { line.logicalRect() };
+        auto lineRect = FloatRect { lineLogicalRect };
         auto enclosingTopAndBottom = [&] {
             // Let's (vertically)enclose all the inline level boxes.
             // This mostly matches 'lineRect', unless line-height triggers line box overflow (not to be confused with ink or scroll overflow).

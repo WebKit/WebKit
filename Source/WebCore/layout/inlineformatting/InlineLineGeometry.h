@@ -37,15 +37,6 @@ class InlineLineGeometry {
 public:
     InlineLineGeometry(const InlineRect& lineLogicalRect, const InlineLayoutSize& lineBoxLogicalSize, InlineLayoutUnit aligmentBaseline, InlineLayoutUnit contentLogicalLeftOffset, InlineLayoutUnit contentLogicalWidth);
 
-    InlineLayoutUnit logicalLeft() const { return logicalRect().left(); };
-    InlineLayoutUnit logicalRight() const { return logicalRect().right(); };
-
-    InlineLayoutUnit logicalTop() const { return logicalRect().top(); };
-    InlineLayoutUnit logicalBottom() const { return logicalRect().bottom(); };
-
-    InlineLayoutUnit logicalWidth() const { return logicalRect().width(); };
-    InlineLayoutUnit logicalHeight() const { return logicalRect().height(); };
-
     const InlineRect& logicalRect() const { return m_logicalRect; }
     const InlineLayoutSize& lineBoxLogicalSize() const { return m_lineBoxLogicalSize; }
 

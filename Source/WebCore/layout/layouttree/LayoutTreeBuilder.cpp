@@ -394,7 +394,8 @@ void showInlineTreeAndRuns(TextStream& stream, const LayoutState& layoutState, c
         };
         addSpacing();
         auto& line = lines[lineIndex];
-        stream << "line at (" << line.logicalLeft() << "," << line.logicalTop() << ") size (" << line.logicalWidth() << "x" << line.logicalHeight() << ") baseline (" << line.baseline() << ")";
+        auto& lineLogicalRect = line.logicalRect();
+        stream << "line at (" << lineLogicalRect.left() << "," << lineLogicalRect.top() << ") size (" << lineLogicalRect.width() << "x" << lineLogicalRect.height() << ") baseline (" << line.baseline() << ")";
         stream.nextLine();
 
         addSpacing();
