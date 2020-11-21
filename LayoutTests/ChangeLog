@@ -1,3 +1,17 @@
+2020-11-20  Chris Dumez  <cdumez@apple.com>
+
+        (r267253) [ Mac ] webaudio/AudioParam/audioparam-processing.html is flaky failing
+        https://bugs.webkit.org/show_bug.cgi?id=219228
+        <rdar://problem/71643007>
+
+        Reviewed by Geoffrey Garen.
+
+        The test was running subtests in parallel using Promise.all(), causing the output
+        lines to sometimes be out of order. We now enforce the ordering of the subtests
+        to make sure that the output is consistent.
+
+        * webaudio/AudioParam/audioparam-processing.html:
+
 2020-11-20  Alex Christensen  <achristensen@webkit.org>
 
         Silence ApplicationCache related errors when running http/tests/inspector/network/x-frame-options.html
