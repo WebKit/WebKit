@@ -170,6 +170,17 @@ void DateTimeEditBuilder::visitLiteral(const String& text)
     static MainThreadNeverDestroyed<const AtomString> textPseudoId("-webkit-datetime-edit-text", AtomString::ConstructFromLiteral);
     auto element = HTMLDivElement::create(m_editElement.document());
     element->setPseudo(textPseudoId);
+
+    // If the literal begins/ends with a space, the gap between two fields will appear
+    // exaggerated due to the presence of a 1px padding around each field. This can
+    // make spaces appear up to 2px larger between fields. This padding is necessary to
+    // prevent selected fields from appearing squished. To fix, pull fields closer
+    // together by applying a negative margin.
+    if (text.startsWith(' '))
+        element->setInlineStyleProperty(CSSPropertyMarginInlineStart, -1, CSSUnitType::CSS_PX);
+    if (text.endsWith(' '))
+        element->setInlineStyleProperty(CSSPropertyMarginInlineEnd, -1, CSSUnitType::CSS_PX);
+
     element->appendChild(Text::create(m_editElement.document(), text));
     m_editElement.fieldsWrapperElement().appendChild(element);
 }
