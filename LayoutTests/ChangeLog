@@ -1,3 +1,12 @@
+2020-11-20  Alex Christensen  <achristensen@webkit.org>
+
+        Silence ApplicationCache related errors when running http/tests/inspector/network/x-frame-options.html
+        https://bugs.webkit.org/show_bug.cgi?id=218830
+
+        * http/tests/inspector/network/x-frame-options.html:
+        This makes the test output deterministic, even after trying to message a frame that has been destroyed.
+        The actual fix was the revision referred to in the bugzilla, but this was needed to make the test not print out mostly-unrelated errors.
+
 2020-11-20  Kate Cheney  <katherine_cheney@apple.com>
 
         PCM: Persist pending ad clicks and attributions so they can survive browser restart

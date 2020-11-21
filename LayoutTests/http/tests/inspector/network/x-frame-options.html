@@ -19,6 +19,7 @@ function test()
         async test() {
             const option = "DENY";
             InspectorTest.evaluateInPage(`createIFrame("${option}")`);
+            WI.reportInternalError = (e) => { };
 
             let event = await WI.Resource.awaitEvent(WI.Resource.Event.ResponseReceived);
 
@@ -33,6 +34,7 @@ function test()
         async test() {
             const option = "SAMEORIGIN";
             InspectorTest.evaluateInPage(`createIFrame("${option}")`);
+            WI.reportInternalError = (e) => { };
 
             let event = await WI.Resource.awaitEvent(WI.Resource.Event.ResponseReceived);
 
