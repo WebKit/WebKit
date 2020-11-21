@@ -117,13 +117,15 @@ public:
     virtual void clearAppBoundSession() { }
 #endif
     void storePrivateClickMeasurement(WebCore::PrivateClickMeasurement&&);
-    void handlePrivateClickMeasurementConversion(WebCore::PrivateClickMeasurement::Conversion&&, const URL& requestURL, const WebCore::ResourceRequest& redirectRequest);
+    void handlePrivateClickMeasurementConversion(WebCore::PrivateClickMeasurement::AttributionTriggerData&&, const URL& requestURL, const WebCore::ResourceRequest& redirectRequest);
     void dumpPrivateClickMeasurement(CompletionHandler<void(String)>&&);
     void clearPrivateClickMeasurement();
     void clearPrivateClickMeasurementForRegistrableDomain(WebCore::RegistrableDomain&&);
     void setPrivateClickMeasurementOverrideTimerForTesting(bool value);
+    void markAttributedPrivateClickMeasurementsAsExpiredForTesting(CompletionHandler<void()>&&);
     void setPrivateClickMeasurementConversionURLForTesting(URL&&);
     void markPrivateClickMeasurementsAsExpiredForTesting();
+    void firePrivateClickMeasurementTimerImmediately();
 
     void addKeptAliveLoad(Ref<NetworkResourceLoader>&&);
     void removeKeptAliveLoad(NetworkResourceLoader&);

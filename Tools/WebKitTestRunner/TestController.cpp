@@ -3592,6 +3592,20 @@ void TestController::setPrivateClickMeasurementOverrideTimerForTesting(bool valu
     runUntil(callbackContext.done, noTimeout);
 }
 
+void TestController::markAttributedPrivateClickMeasurementsAsExpiredForTesting()
+{
+    PrivateClickMeasurementVoidCallbackContext callbackContext(*this);
+    WKPageMarkAttributedPrivateClickMeasurementsAsExpiredForTesting(m_mainWebView->page(), privateClickMeasurementVoidCallback, &callbackContext);
+    runUntil(callbackContext.done, noTimeout);
+}
+
+void TestController::simulateResourceLoadStatisticsSessionRestart()
+{
+    PrivateClickMeasurementVoidCallbackContext callbackContext(*this);
+    WKPageSimulateResourceLoadStatisticsSessionRestart(m_mainWebView->page(), privateClickMeasurementVoidCallback, &callbackContext);
+    runUntil(callbackContext.done, noTimeout);
+}
+
 void TestController::setPrivateClickMeasurementConversionURLForTesting(WKURLRef url)
 {
     PrivateClickMeasurementVoidCallbackContext callbackContext(*this);

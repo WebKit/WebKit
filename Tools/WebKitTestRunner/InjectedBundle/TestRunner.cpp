@@ -2015,6 +2015,16 @@ void TestRunner::setPrivateClickMeasurementOverrideTimerForTesting(bool value)
     postSynchronousPageMessage("SetPrivateClickMeasurementOverrideTimerForTesting", value);
 }
 
+void TestRunner::markAttributedPrivateClickMeasurementsAsExpiredForTesting()
+{
+    postSynchronousPageMessage("MarkAttributedPrivateClickMeasurementsAsExpiredForTesting");
+}
+
+void TestRunner::simulateResourceLoadStatisticsSessionRestart()
+{
+    postSynchronousPageMessage("SimulateResourceLoadStatisticsSessionRestart");
+}
+
 void TestRunner::setPrivateClickMeasurementConversionURLForTesting(JSStringRef urlString)
 {
     postSynchronousPageMessage("SetPrivateClickMeasurementConversionURLForTesting",

@@ -1,0 +1,5 @@
+Tests that an expired ad click does not get converted on session start.
+
+
+
+No stored Private Click Measurement data.

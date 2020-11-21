@@ -1,3 +1,44 @@
+2020-11-20  Kate Cheney  <katherine_cheney@apple.com>
+
+        PCM: Persist pending ad clicks and attributions so they can survive browser restart
+        https://bugs.webkit.org/show_bug.cgi?id=219134
+        <rdar://problem/70470129>
+
+        Reviewed by John Wilander.
+        
+        Added layout test coverage. Removed 'Conversion request sent:'
+        category in the toString() method because it will always be false.
+        Sent conversions are purged from the database, so it is not a useful
+        piece of information to report. Updated naming based on standards
+        coversations.
+
+        * http/tests/privateClickMeasurement/attribution-conversion-through-cross-site-image-redirect-expected.txt:
+        * http/tests/privateClickMeasurement/attribution-conversion-through-cross-site-image-redirect.html:
+        * http/tests/privateClickMeasurement/attribution-conversion-through-image-redirect-in-new-window-expected.txt:
+        * http/tests/privateClickMeasurement/attribution-conversion-through-image-redirect-in-new-window.html:
+        * http/tests/privateClickMeasurement/attribution-conversion-through-image-redirect-with-priority-expected.txt:
+        * http/tests/privateClickMeasurement/attribution-conversion-through-image-redirect-with-priority.html:
+        * http/tests/privateClickMeasurement/attribution-conversion-through-image-redirect-without-priority-expected.txt:
+        * http/tests/privateClickMeasurement/attribution-conversion-through-image-redirect-without-priority.html:
+        * http/tests/privateClickMeasurement/conversion-disabled-in-ephemeral-session-expected.txt:
+        * http/tests/privateClickMeasurement/expired-ad-click-gets-removed-on-session-start-expected.txt: Added.
+        * http/tests/privateClickMeasurement/expired-ad-click-gets-removed-on-session-start.html: Copied from LayoutTests/http/tests/privateClickMeasurement/second-conversion-with-higher-priority.html.
+        * http/tests/privateClickMeasurement/expired-attribution-report-gets-sent-on-session-start-expected.txt: Added.
+        * http/tests/privateClickMeasurement/expired-attribution-report-gets-sent-on-session-start.html: Copied from LayoutTests/http/tests/privateClickMeasurement/send-attribution-conversion-request.html.
+        * http/tests/privateClickMeasurement/resources/conversionReport.php:
+        * http/tests/privateClickMeasurement/resources/getConversionData.php:
+        * http/tests/privateClickMeasurement/second-attribution-converted-with-higher-priority-expected.txt:
+        * http/tests/privateClickMeasurement/second-attribution-converted-with-higher-priority.html:
+        * http/tests/privateClickMeasurement/second-attribution-converted-with-lower-priority-expected.txt:
+        * http/tests/privateClickMeasurement/second-attribution-converted-with-lower-priority.html:
+        * http/tests/privateClickMeasurement/second-conversion-with-higher-priority-expected.txt:
+        * http/tests/privateClickMeasurement/second-conversion-with-higher-priority.html:
+        * http/tests/privateClickMeasurement/second-conversion-with-lower-priority-expected.txt:
+        * http/tests/privateClickMeasurement/second-conversion-with-lower-priority.html:
+        * http/tests/privateClickMeasurement/send-attribution-conversion-request-expected.txt:
+        * http/tests/privateClickMeasurement/send-attribution-conversion-request.html:
+        * http/tests/privateClickMeasurement/store-private-click-measurement-expected.txt:
+
 2020-11-20  Lauro Moura  <lmoura@igalia.com>
 
         [GTK][WPE] Rebaseline and gardening

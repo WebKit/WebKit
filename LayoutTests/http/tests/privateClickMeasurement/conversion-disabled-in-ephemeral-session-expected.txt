@@ -5,11 +5,11 @@ Tests that stored attributions cannot be converted in an ephemeral session.
 --------
 Frame: '<!--frame1-->'
 --------
-Conversion not received - timed out.
+Attribution not received - timed out.
 
-Unconverted Private Click Measurements:
+Unattributed Private Click Measurements:
 WebCore::PrivateClickMeasurement 1
-Source: 127.0.0.1
-Destination: localhost
-Campaign ID: 3
-No conversion data.
+Source site: 127.0.0.1
+Attribute on site: localhost
+Source ID: 3
+No attribution trigger data.

@@ -1,4 +1,4 @@
-Tests sending of private click measurement requests after a conversion. Also tests that cookies are not sent in those requests and cookies are not accepted in the responses.
+Tests sending of private click measurement requests after an attribution. Also tests that cookies are not sent in those requests and cookies are not accepted in the responses.
 
 
 
@@ -10,11 +10,11 @@ Cookies are: cookieSetAsFirstParty = 1
 --------
 Frame: '<!--frame2-->'
 --------
-Conversion received.
+Attribution received.
 HTTP_HOST: 127.0.0.1:8000
 Content type: application/json
 REQUEST_URI: /privateClickMeasurement/resources/conversionReport.php
-No cookies in conversion request.
+No cookies in attribution request.
 Request body:
 {"source-engagement-type":"click","source-site":"127.0.0.1","source-id":3,"attributed-on-site":"localhost","trigger-data":12,"report-version":1}
 

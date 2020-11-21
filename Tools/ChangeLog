@@ -1,3 +1,28 @@
+2020-11-20  Kate Cheney  <katherine_cheney@apple.com>
+
+        PCM: Persist pending ad clicks and attributions so they can survive browser restart
+        https://bugs.webkit.org/show_bug.cgi?id=219134
+        <rdar://problem/70470129>
+
+        Reviewed by John Wilander.
+
+        Add support for testing of expired ad-clicks and attributions.
+        Update names after Private Click Measurement standards discussions.
+
+        * TestWebKitAPI/Tests/WebCore/PrivateClickMeasurement.cpp:
+        (TestWebKitAPI::TEST):
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::markAttributedPrivateClickMeasurementsAsExpiredForTesting):
+        (WTR::TestRunner::simulateResourceLoadStatisticsSessionRestart):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::markAttributedPrivateClickMeasurementsAsExpiredForTesting):
+        (WTR::TestController::simulateResourceLoadStatisticsSessionRestart):
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+
 2020-11-20  Geoffrey Garen  <ggaren@apple.com>
 
         Use a Version 1 CFRunLoopSource for faster task dispatch

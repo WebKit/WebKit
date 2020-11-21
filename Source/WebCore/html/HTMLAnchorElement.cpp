@@ -400,9 +400,9 @@ bool HTMLAnchorElement::isSystemPreviewLink()
 
 Optional<PrivateClickMeasurement> HTMLAnchorElement::parsePrivateClickMeasurement() const
 {
-    using Campaign = PrivateClickMeasurement::Campaign;
-    using Source = PrivateClickMeasurement::Source;
-    using Destination = PrivateClickMeasurement::Destination;
+    using SourceID = PrivateClickMeasurement::SourceID;
+    using SourceSite = PrivateClickMeasurement::SourceSite;
+    using AttributeOnSite = PrivateClickMeasurement::AttributeOnSite;
 
     auto* page = document().page();
     if (!page || page->sessionID().isEphemeral()
@@ -450,7 +450,7 @@ Optional<PrivateClickMeasurement> HTMLAnchorElement::parsePrivateClickMeasuremen
         return WTF::nullopt;
     }
 
-    return PrivateClickMeasurement { Campaign(attributionSourceID.value()), Source(documentRegistrableDomain), Destination(attributeOnURL) };
+    return PrivateClickMeasurement { SourceID(attributionSourceID.value()), SourceSite(documentRegistrableDomain), AttributeOnSite(attributeOnURL) };
 }
 
 void HTMLAnchorElement::handleClick(Event& event)

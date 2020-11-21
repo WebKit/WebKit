@@ -37,6 +37,7 @@
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/NetworkStorageSession.h>
 #include <WebCore/PageIdentifier.h>
+#include <WebCore/PrivateClickMeasurement.h>
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/ResourceLoadObserver.h>
 #include <wtf/CompletionHandler.h>
@@ -65,6 +66,7 @@ class NetworkSession;
 class ResourceLoadStatisticsStore;
 class WebFrameProxy;
 class WebProcessProxy;
+enum class PrivateClickMeasurementAttributionType : bool;
 enum class ShouldGrandfatherStatistics : bool;
 enum class ShouldIncludeLocalhost : bool { No, Yes };
 enum class EnableResourceLoadStatisticsDebugMode : bool { No, Yes };
@@ -303,6 +305,19 @@ struct ThirdPartyData {
     
     bool isEphemeral() const { return m_isEphemeral == WebCore::ResourceLoadStatistics::IsEphemeral::Yes; };
     void insertExpiredStatisticForTesting(const RegistrableDomain&, bool hadUserInteraction, bool isScheduledForAllButCookieDataRemoval, bool isPrevalent, CompletionHandler<void()>&&);
+
+    // Private Click Measurement.
+    void insertPrivateClickMeasurement(WebCore::PrivateClickMeasurement&&, PrivateClickMeasurementAttributionType);
+    void markAllUnattributedPrivateClickMeasurementAsExpiredForTesting();
+    void attributePrivateClickMeasurement(const WebCore::PrivateClickMeasurement::SourceSite&, const WebCore::PrivateClickMeasurement::AttributeOnSite&, WebCore::PrivateClickMeasurement::AttributionTriggerData&&, CompletionHandler<void(Optional<Seconds>)>&&);
+    void allAttributedPrivateClickMeasurement(CompletionHandler<void(Vector<WebCore::PrivateClickMeasurement>&&)>&&);
+    void clearPrivateClickMeasurement();
+    void clearPrivateClickMeasurementForRegistrableDomain(const WebCore::RegistrableDomain&);
+    void clearExpiredPrivateClickMeasurement();
+    void privateClickMeasurementToString(CompletionHandler<void(String)>&&);
+    void clearSentAttributions(Vector<WebCore::PrivateClickMeasurement>&&);
+    void updateTimerLastFired();
+    void markAttributedPrivateClickMeasurementsAsExpiredForTesting(CompletionHandler<void()>&&);
 
 private:
     explicit WebResourceLoadStatisticsStore(NetworkSession&, const String&, ShouldIncludeLocalhost, WebCore::ResourceLoadStatistics::IsEphemeral);

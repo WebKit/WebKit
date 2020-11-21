@@ -1475,6 +1475,200 @@ void WebResourceLoadStatisticsStore::insertExpiredStatisticForTesting(const Regi
     });
 }
 
+void WebResourceLoadStatisticsStore::updateTimerLastFired()
+{
+    ASSERT(RunLoop::isMain());
+
+    if (isEphemeral())
+        return;
+
+    postTask([this]() mutable {
+        if (!m_statisticsStore)
+            return;
+
+        m_statisticsStore->updateTimerLastFired();
+    });
+}
+
+void WebResourceLoadStatisticsStore::insertPrivateClickMeasurement(PrivateClickMeasurement&& attribution, PrivateClickMeasurementAttributionType attributionType)
+{
+    ASSERT(RunLoop::isMain());
+
+    if (isEphemeral())
+        return;
+
+    postTask([this, attribution = WTFMove(attribution), attributionType]() mutable {
+        if (!m_statisticsStore)
+            return;
+
+        m_statisticsStore->insertPrivateClickMeasurement(WTFMove(attribution), attributionType);
+    });
+}
+
+void WebResourceLoadStatisticsStore::markAllUnattributedPrivateClickMeasurementAsExpiredForTesting()
+{
+    ASSERT(RunLoop::isMain());
+
+    if (isEphemeral())
+        return;
+
+    postTask([this]() {
+        if (!m_statisticsStore)
+            return;
+
+        m_statisticsStore->markAllUnattributedPrivateClickMeasurementAsExpiredForTesting();
+    });
+}
+
+void WebResourceLoadStatisticsStore::attributePrivateClickMeasurement(const PrivateClickMeasurement::SourceSite& sourceSite, const PrivateClickMeasurement::AttributeOnSite& attributeOnSite, PrivateClickMeasurement::AttributionTriggerData&& attributionTriggerData, CompletionHandler<void(Optional<Seconds>)>&& completionHandler)
+{
+    ASSERT(RunLoop::isMain());
+
+    if (isEphemeral()) {
+        completionHandler({ });
+        return;
+    }
+
+    postTask([this, sourceSite, attributeOnSite, attributionTriggerData = WTFMove(attributionTriggerData), completionHandler = WTFMove(completionHandler)]() mutable {
+        if (!m_statisticsStore) {
+            postTaskReply([completionHandler = WTFMove(completionHandler)]() mutable {
+                completionHandler(WTF::nullopt);
+            });
+            return;
+        }
+
+        auto seconds = m_statisticsStore->attributePrivateClickMeasurement(sourceSite, attributeOnSite, WTFMove(attributionTriggerData));
+        postTaskReply([seconds, completionHandler = WTFMove(completionHandler)]() mutable {
+            completionHandler(seconds);
+        });
+    });
+}
+
+void WebResourceLoadStatisticsStore::allAttributedPrivateClickMeasurement(CompletionHandler<void(Vector<PrivateClickMeasurement>&&)>&& completionHandler)
+{
+    ASSERT(RunLoop::isMain());
+
+    if (isEphemeral()) {
+        completionHandler({ });
+        return;
+    }
+
+    postTask([this, completionHandler = WTFMove(completionHandler)]() mutable {
+        if (!m_statisticsStore) {
+            postTaskReply([completionHandler = WTFMove(completionHandler)]() mutable {
+                completionHandler({ });
+            });
+            return;
+        }
+
+        auto convertedAttributions = m_statisticsStore->allAttributedPrivateClickMeasurement();
+        postTaskReply([convertedAttributions = WTFMove(convertedAttributions), completionHandler = WTFMove(completionHandler)]() mutable {
+            completionHandler(WTFMove(convertedAttributions));
+        });
+    });
+}
+
+void WebResourceLoadStatisticsStore::clearPrivateClickMeasurement()
+{
+    ASSERT(RunLoop::isMain());
+
+    if (isEphemeral())
+        return;
+
+    postTask([this]() {
+        if (!m_statisticsStore)
+            return;
+
+        m_statisticsStore->clearPrivateClickMeasurement(WTF::nullopt);
+    });
+}
+    
+void WebResourceLoadStatisticsStore::clearPrivateClickMeasurementForRegistrableDomain(const RegistrableDomain& domain)
+{
+    ASSERT(RunLoop::isMain());
+
+    if (isEphemeral())
+        return;
+
+    postTask([this, domain = domain.isolatedCopy()]() mutable {
+        if (!m_statisticsStore)
+            return;
+
+        m_statisticsStore->clearPrivateClickMeasurement(domain);
+    });
+}
+
+void WebResourceLoadStatisticsStore::clearExpiredPrivateClickMeasurement()
+{
+    ASSERT(RunLoop::isMain());
+
+    if (isEphemeral())
+        return;
+
+    postTask([this]() {
+        if (!m_statisticsStore)
+            return;
+
+        m_statisticsStore->clearExpiredPrivateClickMeasurement();
+    });
+}
+
+void WebResourceLoadStatisticsStore::privateClickMeasurementToString(CompletionHandler<void(String)>&& completionHandler)
+{
+    ASSERT(RunLoop::isMain());
+
+    if (isEphemeral()) {
+        completionHandler("\nNo stored Private Click Measurement data.\n"_s);
+        return;
+    }
+
+    postTask([this, completionHandler = WTFMove(completionHandler)]() mutable {
+        if (!m_statisticsStore) {
+            postTaskReply([completionHandler = WTFMove(completionHandler)]() mutable {
+                completionHandler({ });
+            });
+            return;
+        }
+
+        auto result = m_statisticsStore->privateClickMeasurementToString();
+        postTaskReply([result, completionHandler = WTFMove(completionHandler)]() mutable {
+            completionHandler(result);
+        });
+    });
+}
+
+void WebResourceLoadStatisticsStore::clearSentAttributions(Vector<WebCore::PrivateClickMeasurement>&& attributionsToClear)
+{
+    ASSERT(RunLoop::isMain());
+
+    if (isEphemeral())
+        return;
+
+    postTask([this, attributionsToClear = WTFMove(attributionsToClear)]() mutable {
+        if (!m_statisticsStore)
+            return;
+
+        m_statisticsStore->clearSentAttributions(WTFMove(attributionsToClear));
+    });
+}
+
+void WebResourceLoadStatisticsStore::markAttributedPrivateClickMeasurementsAsExpiredForTesting(CompletionHandler<void()>&& completionHandler)
+{
+    ASSERT(RunLoop::isMain());
+
+    if (isEphemeral()) {
+        completionHandler();
+        return;
+    }
+
+    postTask([this, completionHandler = WTFMove(completionHandler)]() mutable {
+        if (m_statisticsStore)
+            m_statisticsStore->markAttributedPrivateClickMeasurementsAsExpiredForTesting();
+
+        postTaskReply(WTFMove(completionHandler));
+    });
+}
+
 } // namespace WebKit
 
 #endif

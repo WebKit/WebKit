@@ -40,53 +40,48 @@
 
 namespace WebKit {
 
+enum class PrivateClickMeasurementAttributionType : bool { Unattributed, Attributed };
+
 class PrivateClickMeasurementManager : public CanMakeWeakPtr<PrivateClickMeasurementManager> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
 
     using RegistrableDomain = WebCore::RegistrableDomain;
     using PrivateClickMeasurement = WebCore::PrivateClickMeasurement;
-    using Source = WebCore::PrivateClickMeasurement::Source;
-    using Destination = WebCore::PrivateClickMeasurement::Destination;
-    using Conversion = WebCore::PrivateClickMeasurement::Conversion;
+    using SourceSite = WebCore::PrivateClickMeasurement::SourceSite;
+    using AttributeOnSite = WebCore::PrivateClickMeasurement::AttributeOnSite;
+    using AttributionTriggerData = WebCore::PrivateClickMeasurement::AttributionTriggerData;
 
-    explicit PrivateClickMeasurementManager(NetworkProcess& networkProcess, PAL::SessionID sessionID)
-        : m_firePendingConversionRequestsTimer(*this, &PrivateClickMeasurementManager::firePendingConversionRequests)
-        , m_pingLoadFunction([](NetworkResourceLoadParameters&& params, CompletionHandler<void(const WebCore::ResourceError&, const WebCore::ResourceResponse&)>&& completionHandler) {
-            UNUSED_PARAM(params);
-            completionHandler(WebCore::ResourceError(), WebCore::ResourceResponse());
-        })
-        , m_networkProcess(networkProcess)
-        , m_sessionID(sessionID)
-    {
-    }
+    explicit PrivateClickMeasurementManager(NetworkSession&, NetworkProcess&, PAL::SessionID);
 
-    void storeUnconverted(PrivateClickMeasurement&&);
-    void handleConversion(Conversion&&, const URL& requestURL, const WebCore::ResourceRequest& redirectRequest);
+    void storeUnattributed(PrivateClickMeasurement&&);
+    void handleAttribution(AttributionTriggerData&&, const URL& requestURL, const WebCore::ResourceRequest& redirectRequest);
     void clear();
     void clearForRegistrableDomain(const RegistrableDomain&);
     void toString(CompletionHandler<void(String)>&&) const;
     void setPingLoadFunction(Function<void(NetworkResourceLoadParameters&&, CompletionHandler<void(const WebCore::ResourceError&, const WebCore::ResourceResponse&)>&&)>&& pingLoadFunction) { m_pingLoadFunction = WTFMove(pingLoadFunction); }
     void setOverrideTimerForTesting(bool value) { m_isRunningTest = value; }
     void setConversionURLForTesting(URL&&);
-    void markAllUnconvertedAsExpiredForTesting();
+    void markAllUnattributedAsExpiredForTesting();
+    void markAttributedPrivateClickMeasurementsAsExpiredForTesting(CompletionHandler<void()>&&);
+    void startTimer(Seconds);
 
 private:
-    void startTimer(Seconds);
-    void convert(const Source&, const Destination&, Conversion&&);
+    void clearSentAttributions(Vector<PrivateClickMeasurement>&&);
+    void attribute(const SourceSite&, const AttributeOnSite&, AttributionTriggerData&&);
     void fireConversionRequest(const PrivateClickMeasurement&);
-    void firePendingConversionRequests();
+    void firePendingAttributionRequests();
     void clearExpired();
     bool debugModeEnabled() const;
+    void updateTimerLastFired();
 
-    HashMap<std::pair<Source, Destination>, PrivateClickMeasurement> m_unconvertedPrivateClickMeasurementMap;
-    HashMap<std::pair<Source, Destination>, PrivateClickMeasurement> m_convertedPrivateClickMeasurementMap;
-    WebCore::Timer m_firePendingConversionRequestsTimer;
-    Function<void(NetworkResourceLoadParameters&&, CompletionHandler<void(const WebCore::ResourceError&, const WebCore::ResourceResponse&)>&&)> m_pingLoadFunction;
+    WebCore::Timer m_firePendingAttributionRequestsTimer;
     bool m_isRunningTest { false };
-    Optional<URL> m_conversionBaseURLForTesting;
+    Optional<URL> m_attributionBaseURLForTesting;
+    WeakPtr<NetworkSession> m_networkSession;
     Ref<NetworkProcess> m_networkProcess;
     PAL::SessionID m_sessionID;
+    Function<void(NetworkResourceLoadParameters&&, CompletionHandler<void(const WebCore::ResourceError&, const WebCore::ResourceResponse&)>&&)> m_pingLoadFunction;
 };
     
 } // namespace WebKit

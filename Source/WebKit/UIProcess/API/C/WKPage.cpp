@@ -2891,6 +2891,20 @@ void WKPageSetPrivateClickMeasurementOverrideTimerForTesting(WKPageRef page, boo
     });
 }
 
+void WKPageMarkAttributedPrivateClickMeasurementsAsExpiredForTesting(WKPageRef page, WKPageMarkAttributedPrivateClickMeasurementsAsExpiredForTestingFunction callback, void* callbackContext)
+{
+    toImpl(page)->markAttributedPrivateClickMeasurementsAsExpiredForTesting([callbackContext, callback] () {
+        callback(callbackContext);
+    });
+}
+
+void WKPageSimulateResourceLoadStatisticsSessionRestart(WKPageRef page, WKPageSimulateResourceLoadStatisticsSessionRestartFunction callback, void* callbackContext)
+{
+    toImpl(page)->simulateResourceLoadStatisticsSessionRestart([callbackContext, callback] () {
+        callback(callbackContext);
+    });
+}
+
 void WKPageSetPrivateClickMeasurementConversionURLForTesting(WKPageRef page, WKURLRef URLRef, WKPageSetPrivateClickMeasurementConversionURLForTestingFunction callback, void* callbackContext)
 {
     toImpl(page)->setPrivateClickMeasurementConversionURLForTesting(URL(URL(), toWTFString(URLRef)), [callbackContext, callback] () {

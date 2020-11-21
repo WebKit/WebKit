@@ -1,3 +1,148 @@
+2020-11-20  Kate Cheney  <katherine_cheney@apple.com>
+
+        PCM: Persist pending ad clicks and attributions so they can survive browser restart
+        https://bugs.webkit.org/show_bug.cgi?id=219134
+        <rdar://problem/70470129>
+
+        Reviewed by John Wilander.
+
+        This patch migrates Private Click Measurement to use SQLite,
+        which is beneficial because it requires less in-memory storage and
+        persists PCM data across browser sessions. It also updates naming
+        to match naming agreed upon in standards bodies:
+
+        - source -> sourceSite
+        - campaign/campaignID -> sourceID
+        - destination -> attributeOnSite
+        - conversion/conversionValue -> attributionTriggerData
+        - unconverted -> unattributed
+        - convert(ed) -> attribute(d)
+
+        This adds 3 SQLite tables: one for clicks that haven't been
+        attributed, one for attributions that haven't been sent, and one to
+        store the last time the reports were sent to make sure reports get
+        sent as soon as possible if needed after a browser restart.
+
+        Behavior is identical to existing PCM implementation with the addition
+        of persistence. Existing PCM tests confirm no regressions.
+
+        Reviewed by John Wilander.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        (WebKit::createTableQueries):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::ResourceLoadStatisticsDatabaseStore):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::createUniqueIndices):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::createSchema):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::destroyStatements):
+        New queries to interact with PCM data.
+
+        (WebKit::ResourceLoadStatisticsDatabaseStore::updateTimerLastFired):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::timerLastFired):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::updatePrivateClickMeasurementAttributionTimes):
+        Set earliestTimeToSend to be the original value minus the time passed since the last timer fire
+        for each entry. If the result is less than 0, set to 0 so the report gets sent immediately.
+
+        (WebKit::ResourceLoadStatisticsDatabaseStore::buildPrivateClickMeasurementFromDatabase):
+        Creates a PCM object from data in the database.
+
+        (WebKit::ResourceLoadStatisticsDatabaseStore::findPrivateClickMeasurement):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::insertPrivateClickMeasurement):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::markAllUnattributedPrivateClickMeasurementAsExpiredForTesting):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::removeUnattributed):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::attributePrivateClickMeasurement):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::allAttributedPrivateClickMeasurement):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::clearPrivateClickMeasurement):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::clearExpiredPrivateClickMeasurement):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::attributionToString):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::privateClickMeasurementToString):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::clearSentAttributions):
+        These functions use database queries to implement PCM functionality with exactly the same
+        behavior as the in-memory PCM implementation.
+
+        (WebKit::ResourceLoadStatisticsDatabaseStore::markAttributedPrivateClickMeasurementsAsExpiredForTesting):
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.h:
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.h:
+        * NetworkProcess/Classifier/ResourceLoadStatisticsStore.h:
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::updateTimerLastFired):
+        (WebKit::WebResourceLoadStatisticsStore::insertPrivateClickMeasurement):
+        (WebKit::WebResourceLoadStatisticsStore::markAllUnattributedPrivateClickMeasurementAsExpiredForTesting):
+        (WebKit::WebResourceLoadStatisticsStore::attributePrivateClickMeasurement):
+        (WebKit::WebResourceLoadStatisticsStore::allAttributedPrivateClickMeasurement):
+        (WebKit::WebResourceLoadStatisticsStore::clearPrivateClickMeasurement):
+        (WebKit::WebResourceLoadStatisticsStore::clearPrivateClickMeasurementForRegistrableDomain):
+        (WebKit::WebResourceLoadStatisticsStore::clearExpiredPrivateClickMeasurement):
+        (WebKit::WebResourceLoadStatisticsStore::privateClickMeasurementToString):
+        (WebKit::WebResourceLoadStatisticsStore::clearSentAttributions):
+        (WebKit::WebResourceLoadStatisticsStore::markAttributedPrivateClickMeasurementsAsExpiredForTesting):
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.h:
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::firePrivateClickMeasurementTimerImmediately):
+        (WebKit::NetworkProcess::simulateResourceLoadStatisticsSessionRestart):
+        (WebKit::NetworkProcess::markAttributedPrivateClickMeasurementsAsExpiredForTesting):
+        Test functions to help simulate a browser restart after PCM data has expired during
+        a session close. This is the only behavior change from the existing PCM implementation.
+
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::willSendRedirectedRequest):
+        (WebKit::NetworkResourceLoader::continueWillSendRedirectedRequest):
+        * NetworkProcess/NetworkResourceLoader.h:
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::NetworkSession):
+        (WebKit::NetworkSession::firePrivateClickMeasurementTimerImmediately):
+        (WebKit::NetworkSession::storePrivateClickMeasurement):
+        (WebKit::NetworkSession::handlePrivateClickMeasurementConversion):
+        (WebKit::NetworkSession::markAttributedPrivateClickMeasurementsAsExpiredForTesting):
+        (WebKit::NetworkSession::markPrivateClickMeasurementsAsExpiredForTesting):
+        * NetworkProcess/NetworkSession.h:
+
+        * NetworkProcess/PrivateClickMeasurementManager.cpp:
+        (WebKit::PrivateClickMeasurementManager::PrivateClickMeasurementManager):
+        Move constructor to cpp file to call startTimer(5_s) which will kick
+        off sending any reports that have expired in the database. We should
+        wait 5 seconds so we are sure ITP is up and running.
+
+        (WebKit::PrivateClickMeasurementManager::storeUnattributed):
+        (WebKit::PrivateClickMeasurementManager::handleAttribution):
+        (WebKit::PrivateClickMeasurementManager::startTimer):
+        (WebKit::PrivateClickMeasurementManager::attribute):
+        (WebKit::PrivateClickMeasurementManager::fireConversionRequest):
+        (WebKit::PrivateClickMeasurementManager::clearSentAttributions):
+        (WebKit::PrivateClickMeasurementManager::updateTimerLastFired):
+        (WebKit::PrivateClickMeasurementManager::firePendingAttributionRequests):
+        (WebKit::PrivateClickMeasurementManager::clear):
+        (WebKit::PrivateClickMeasurementManager::clearForRegistrableDomain):
+        (WebKit::PrivateClickMeasurementManager::clearExpired):
+        (WebKit::PrivateClickMeasurementManager::toString const):
+        (WebKit::PrivateClickMeasurementManager::setConversionURLForTesting):
+        (WebKit::PrivateClickMeasurementManager::markAllUnattributedAsExpiredForTesting):
+        (WebKit::PrivateClickMeasurementManager::markAttributedPrivateClickMeasurementsAsExpiredForTesting):
+        (WebKit::PrivateClickMeasurementManager::storeUnconverted): Deleted.
+        (WebKit::PrivateClickMeasurementManager::handleConversion): Deleted.
+        (WebKit::PrivateClickMeasurementManager::convert): Deleted.
+        (WebKit::PrivateClickMeasurementManager::firePendingConversionRequests): Deleted.
+        (WebKit::PrivateClickMeasurementManager::markAllUnconvertedAsExpiredForTesting): Deleted.
+        Implementation moved to ResourceLoadStatisticsDatabaseStore.
+
+        * NetworkProcess/PrivateClickMeasurementManager.h:
+        (WebKit::PrivateClickMeasurementManager::PrivateClickMeasurementManager): Deleted.
+        Moved to cpp file.
+
+        (WebKit::PrivateClickMeasurementManager::m_sessionID): Deleted.
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageMarkAttributedPrivateClickMeasurementsAsExpiredForTesting):
+        (WKPageSimulateResourceLoadStatisticsSessionRestart):
+        * UIProcess/API/C/WKPagePrivate.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didCommitLoadForFrame):
+        (WebKit::WebPageProxy::markAttributedPrivateClickMeasurementsAsExpiredForTesting):
+        (WebKit::WebPageProxy::simulateResourceLoadStatisticsSessionRestart):
+        * UIProcess/WebPageProxy.h:
+        Testing support.
+
 2020-11-20  Simon Fraser  <simon.fraser@apple.com>
 
         Dispatch main-thread overflow scrolls to the scrolling thread as we do for page scrolls

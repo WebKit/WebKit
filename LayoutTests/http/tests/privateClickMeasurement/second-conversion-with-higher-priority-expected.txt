@@ -1,12 +1,11 @@
-Tests that the attribution is updated if it gets a second conversion with higher priority.
+Tests that the attribution is updated if it gets a second attribution with higher priority.
 
 
-Converted Private Click Measurements:
+Attributed Private Click Measurements:
 WebCore::PrivateClickMeasurement 1
-Source: 127.0.0.1
-Destination: localhost
-Campaign ID: 3
-Conversion data: 12
-Conversion priority: 4
-Conversion earliest time to send: Within 24-48 hours
-Conversion request sent: false
+Source site: 127.0.0.1
+Attribute on site: localhost
+Source ID: 3
+Attribution trigger data: 12
+Attribution priority: 4
+Attribution earliest time to send: Within 24-48 hours

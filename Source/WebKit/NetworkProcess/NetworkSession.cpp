@@ -90,7 +90,7 @@ NetworkSession::NetworkSession(NetworkProcess& networkProcess, const NetworkSess
     , m_firstPartyWebsiteDataRemovalMode(parameters.resourceLoadStatisticsParameters.firstPartyWebsiteDataRemovalMode)
     , m_standaloneApplicationDomain(parameters.resourceLoadStatisticsParameters.standaloneApplicationDomain)
 #endif
-    , m_privateClickMeasurement(makeUniqueRef<PrivateClickMeasurementManager>(networkProcess, parameters.sessionID))
+    , m_privateClickMeasurement(makeUniqueRef<PrivateClickMeasurementManager>(*this, networkProcess, parameters.sessionID))
     , m_testSpeedMultiplier(parameters.testSpeedMultiplier)
     , m_allowsServerPreconnect(parameters.allowsServerPreconnect)
 {
@@ -186,6 +186,11 @@ void NetworkSession::setResourceLoadStatisticsEnabled(bool enable)
     if (!m_resourceLoadStatisticsManualPrevalentResource.isEmpty())
         m_resourceLoadStatistics->setPrevalentResourceForDebugMode(m_resourceLoadStatisticsManualPrevalentResource, [] { });
     forwardResourceLoadStatisticsSettings();
+}
+
+void NetworkSession::firePrivateClickMeasurementTimerImmediately()
+{
+    m_privateClickMeasurement->startTimer(0_s);
 }
 
 void NetworkSession::recreateResourceLoadStatisticStore(CompletionHandler<void()>&& completionHandler)
@@ -305,12 +310,12 @@ void NetworkSession::resetCNAMEDomainData()
 
 void NetworkSession::storePrivateClickMeasurement(WebCore::PrivateClickMeasurement&& privateClickMeasurement)
 {
-    m_privateClickMeasurement->storeUnconverted(WTFMove(privateClickMeasurement));
+    m_privateClickMeasurement->storeUnattributed(WTFMove(privateClickMeasurement));
 }
 
-void NetworkSession::handlePrivateClickMeasurementConversion(PrivateClickMeasurement::Conversion&& conversion, const URL& requestURL, const WebCore::ResourceRequest& redirectRequest)
+void NetworkSession::handlePrivateClickMeasurementConversion(PrivateClickMeasurement::AttributionTriggerData&& attributionTriggerData, const URL& requestURL, const WebCore::ResourceRequest& redirectRequest)
 {
-    m_privateClickMeasurement->handleConversion(WTFMove(conversion), requestURL, redirectRequest);
+    m_privateClickMeasurement->handleAttribution(WTFMove(attributionTriggerData), requestURL, redirectRequest);
 }
 
 void NetworkSession::dumpPrivateClickMeasurement(CompletionHandler<void(String)>&& completionHandler)
@@ -333,6 +338,11 @@ void NetworkSession::setPrivateClickMeasurementOverrideTimerForTesting(bool valu
     m_privateClickMeasurement->setOverrideTimerForTesting(value);
 }
 
+void NetworkSession::markAttributedPrivateClickMeasurementsAsExpiredForTesting(CompletionHandler<void()>&& completionHandler)
+{
+    m_privateClickMeasurement->markAttributedPrivateClickMeasurementsAsExpiredForTesting(WTFMove(completionHandler));
+}
+
 void NetworkSession::setPrivateClickMeasurementConversionURLForTesting(URL&& url)
 {
     m_privateClickMeasurement->setConversionURLForTesting(WTFMove(url));
@@ -340,7 +350,7 @@ void NetworkSession::setPrivateClickMeasurementConversionURLForTesting(URL&& url
 
 void NetworkSession::markPrivateClickMeasurementsAsExpiredForTesting()
 {
-    m_privateClickMeasurement->markAllUnconvertedAsExpiredForTesting();
+    m_privateClickMeasurement->markAllUnattributedAsExpiredForTesting();
 }
 
 void NetworkSession::addKeptAliveLoad(Ref<NetworkResourceLoader>&& loader)

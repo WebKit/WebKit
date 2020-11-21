@@ -42,14 +42,29 @@
 namespace WebKit {
 using namespace WebCore;
 
-using Source = PrivateClickMeasurement::Source;
-using Destination = PrivateClickMeasurement::Destination;
-using DestinationMap = HashMap<Destination, PrivateClickMeasurement>;
-using Conversion = PrivateClickMeasurement::Conversion;
+using SourceSite = PrivateClickMeasurement::SourceSite;
+using AttributeOnSite = PrivateClickMeasurement::AttributeOnSite;
+using AttributionTriggerData = PrivateClickMeasurement::AttributionTriggerData;
 
 constexpr Seconds debugModeSecondsUntilSend { 60_s };
 
-void PrivateClickMeasurementManager::storeUnconverted(PrivateClickMeasurement&& attribution)
+PrivateClickMeasurementManager::PrivateClickMeasurementManager(NetworkSession& networkSession, NetworkProcess& networkProcess, PAL::SessionID sessionID)
+    : m_firePendingAttributionRequestsTimer(*this, &PrivateClickMeasurementManager::firePendingAttributionRequests)
+    , m_networkSession(makeWeakPtr(networkSession))
+    , m_networkProcess(networkProcess)
+    , m_sessionID(sessionID)
+    , m_pingLoadFunction([](NetworkResourceLoadParameters&& params, CompletionHandler<void(const WebCore::ResourceError&, const WebCore::ResourceResponse&)>&& completionHandler) {
+        UNUSED_PARAM(params);
+        completionHandler(WebCore::ResourceError(), WebCore::ResourceResponse());
+    })
+{
+    // We should send any pending attributions on session-start in case their
+    // send delay has expired while the session was closed. Waiting 5 seconds accounts for the
+    // delay in database startup.
+    startTimer(5_s);
+}
+
+void PrivateClickMeasurementManager::storeUnattributed(PrivateClickMeasurement&& attribution)
 {
     clearExpired();
 
@@ -58,10 +73,11 @@ void PrivateClickMeasurementManager::storeUnconverted(PrivateClickMeasurement&& 
         m_networkProcess->broadcastConsoleMessage(m_sessionID, MessageSource::PrivateClickMeasurement, MessageLevel::Error, "[Private Click Measurement] Storing an ad click."_s);
     }
 
-    m_unconvertedPrivateClickMeasurementMap.set(std::make_pair(attribution.source(), attribution.destination()), WTFMove(attribution));
+    if (auto* resourceLoadStatistics = m_networkSession->resourceLoadStatistics())
+        resourceLoadStatistics->insertPrivateClickMeasurement(WTFMove(attribution), PrivateClickMeasurementAttributionType::Unattributed);
 }
 
-void PrivateClickMeasurementManager::handleConversion(Conversion&& conversion, const URL& requestURL, const WebCore::ResourceRequest& redirectRequest)
+void PrivateClickMeasurementManager::handleAttribution(AttributionTriggerData&& attributionTriggerData, const URL& requestURL, const WebCore::ResourceRequest& redirectRequest)
 {
     if (m_sessionID.isEphemeral())
         return;
@@ -71,112 +87,55 @@ void PrivateClickMeasurementManager::handleConversion(Conversion&& conversion, c
 
     if (!redirectDomain.matches(requestURL)) {
         if (UNLIKELY(debugModeEnabled())) {
-            RELEASE_LOG_INFO(PrivateClickMeasurement, "Conversion was not accepted because the HTTP redirect was not same-site.");
-            m_networkProcess->broadcastConsoleMessage(m_sessionID, MessageSource::PrivateClickMeasurement, MessageLevel::Error, "[Private Click Measurement] Conversion was not accepted because the HTTP redirect was not same-site."_s);
+            RELEASE_LOG_INFO(PrivateClickMeasurement, "Attribution was not accepted because the HTTP redirect was not same-site.");
+            m_networkProcess->broadcastConsoleMessage(m_sessionID, MessageSource::PrivateClickMeasurement, MessageLevel::Error, "[Private Click Measurement] Attribution was not accepted because the HTTP redirect was not same-site."_s);
         }
         return;
     }
 
     if (redirectDomain.matches(firstPartyURL)) {
         if (UNLIKELY(debugModeEnabled())) {
-            RELEASE_LOG_INFO(PrivateClickMeasurement, "Conversion was not accepted because it was requested in an HTTP redirect that is same-site as the first-party.");
-            m_networkProcess->broadcastConsoleMessage(m_sessionID, MessageSource::PrivateClickMeasurement, MessageLevel::Error, "[Private Click Measurement] Conversion was not accepted because it was requested in an HTTP redirect that is same-site as the first-party."_s);
+            RELEASE_LOG_INFO(PrivateClickMeasurement, "Attribution was not accepted because it was requested in an HTTP redirect that is same-site as the first-party.");
+            m_networkProcess->broadcastConsoleMessage(m_sessionID, MessageSource::PrivateClickMeasurement, MessageLevel::Error, "[Private Click Measurement] Attribution was not accepted because it was requested in an HTTP redirect that is same-site as the first-party."_s);
         }
         return;
     }
 
-    convert(PrivateClickMeasurement::Source { WTFMove(redirectDomain) }, PrivateClickMeasurement::Destination { firstPartyURL }, WTFMove(conversion));
+    attribute(SourceSite { WTFMove(redirectDomain) }, AttributeOnSite { firstPartyURL }, WTFMove(attributionTriggerData));
 }
 
 void PrivateClickMeasurementManager::startTimer(Seconds seconds)
 {
-    m_firePendingConversionRequestsTimer.startOneShot(m_isRunningTest ? 0_s : seconds);
+    m_firePendingAttributionRequestsTimer.startOneShot(m_isRunningTest ? 0_s : seconds);
 }
 
-void PrivateClickMeasurementManager::convert(const Source& source, const Destination& destination, Conversion&& conversion)
+void PrivateClickMeasurementManager::attribute(const SourceSite& sourceSite, const AttributeOnSite& attributeOnSite, AttributionTriggerData&& attributionTriggerData)
 {
-    clearExpired();
+    if (auto* resourceLoadStatistics = m_networkSession->resourceLoadStatistics()) {
+        resourceLoadStatistics->attributePrivateClickMeasurement(sourceSite, attributeOnSite, WTFMove(attributionTriggerData), [this] (auto optionalSecondsUntilSend) {
+            if (optionalSecondsUntilSend) {
+                auto secondsUntilSend = *optionalSecondsUntilSend;
+                if (m_firePendingAttributionRequestsTimer.isActive() && m_firePendingAttributionRequestsTimer.nextFireInterval() < secondsUntilSend)
+                    return;
 
-    if (!conversion.isValid()) {
-        if (UNLIKELY(debugModeEnabled())) {
-            RELEASE_LOG_INFO(PrivateClickMeasurement, "Got an invalid conversion.");
-            m_networkProcess->broadcastConsoleMessage(m_sessionID, MessageSource::PrivateClickMeasurement, MessageLevel::Error, "[Private Click Measurement] Got an invalid conversion."_s);
-        }
-        return;
-    }
-
-    auto conversionData = conversion.data;
-    auto conversionPriority = conversion.priority;
-
-    if (UNLIKELY(debugModeEnabled())) {
-        RELEASE_LOG_INFO(PrivateClickMeasurement, "Got a conversion with conversion data: %{public}u and priority: %{public}u.", conversionData, conversionPriority);
-        m_networkProcess->broadcastConsoleMessage(m_sessionID, MessageSource::PrivateClickMeasurement, MessageLevel::Info, makeString("[Private Click Measurement] Got a conversion with conversion data: '"_s, conversionData, "' and priority: '"_s, conversionPriority, "'."_s));
-    }
-
-    auto secondsUntilSend = Seconds::infinity();
-
-    auto pair = std::make_pair(source, destination);
-    auto previouslyUnconvertedAttribution = m_unconvertedPrivateClickMeasurementMap.take(pair);
-    auto previouslyConvertedAttributionIter = m_convertedPrivateClickMeasurementMap.find(pair);
-
-    if (!previouslyUnconvertedAttribution.isEmpty()) {
-        // Always convert the pending attribution and remove it from the unconverted map.
-        if (auto optionalSecondsUntilSend = previouslyUnconvertedAttribution.convertAndGetEarliestTimeToSend(WTFMove(conversion))) {
-            secondsUntilSend = *optionalSecondsUntilSend;
-            ASSERT(secondsUntilSend != Seconds::infinity());
-
-            if (UNLIKELY(debugModeEnabled())) {
-                RELEASE_LOG_INFO(PrivateClickMeasurement, "Converted a stored ad click with conversion data: %{public}u and priority: %{public}u.", conversionData, conversionPriority);
-                m_networkProcess->broadcastConsoleMessage(m_sessionID, MessageSource::PrivateClickMeasurement, MessageLevel::Info, makeString("[Private Click Measurement] Converted a stored ad click with conversion data: '"_s, conversionData, "' and priority: '"_s, conversionPriority, "'."_s));
+                if (UNLIKELY(debugModeEnabled())) {
+                    RELEASE_LOG_INFO(PrivateClickMeasurement, "Setting timer for firing attribution requests to the debug mode timeout of %{public}f seconds where the regular timeout would have been %{public}f seconds.", debugModeSecondsUntilSend.seconds(), secondsUntilSend.seconds());
+                    m_networkProcess->broadcastConsoleMessage(m_sessionID, MessageSource::PrivateClickMeasurement, MessageLevel::Info, makeString("[Private Click Measurement] Setting timer for firing attribution requests to the debug mode timeout of "_s, debugModeSecondsUntilSend.seconds(), " seconds where the regular timeout would have been "_s, secondsUntilSend.seconds(), " seconds."_s));
+                        secondsUntilSend = debugModeSecondsUntilSend;
+                }
+                startTimer(secondsUntilSend);
             }
-        }
-
-        if (previouslyConvertedAttributionIter == m_convertedPrivateClickMeasurementMap.end())
-            m_convertedPrivateClickMeasurementMap.add(pair, WTFMove(previouslyUnconvertedAttribution));
-        else if (previouslyUnconvertedAttribution.hasHigherPriorityThan(previouslyConvertedAttributionIter->value)) {
-            // If the newly converted attribution has higher priority, replace the old one.
-            m_convertedPrivateClickMeasurementMap.set(pair, WTFMove(previouslyUnconvertedAttribution));
-
-            if (UNLIKELY(debugModeEnabled())) {
-                RELEASE_LOG_INFO(PrivateClickMeasurement, "Replaced a previously converted ad click with a new one with conversion data: %{public}u and priority: %{public}u because it had higher priority.", conversionData, conversionPriority);
-                m_networkProcess->broadcastConsoleMessage(m_sessionID, MessageSource::PrivateClickMeasurement, MessageLevel::Info, makeString("[Private Click Measurement] Replaced a previously converted ad click with a new one with conversion data: '"_s, conversionData, "' and priority: '"_s, conversionPriority, "' because it had higher priority."_s));
-            }
-        }
-    } else if (previouslyConvertedAttributionIter != m_convertedPrivateClickMeasurementMap.end()) {
-        // If we have no newly converted attribution, re-convert the old one to respect the new priority.
-        if (auto optionalSecondsUntilSend = previouslyConvertedAttributionIter->value.convertAndGetEarliestTimeToSend(WTFMove(conversion))) {
-            secondsUntilSend = *optionalSecondsUntilSend;
-            ASSERT(secondsUntilSend != Seconds::infinity());
-
-            if (UNLIKELY(debugModeEnabled())) {
-                RELEASE_LOG_INFO(PrivateClickMeasurement, "Re-converted an ad click with a new one with conversion data: %{public}u and priority: %{public}u because it had higher priority.", conversionData, conversionPriority);
-                m_networkProcess->broadcastConsoleMessage(m_sessionID, MessageSource::PrivateClickMeasurement, MessageLevel::Info, makeString("[Private Click Measurement] Re-converted an ad click with a new one with conversion data: '"_s, conversionData, "' and priority: '"_s, conversionPriority, "'' because it had higher priority."_s));
-            }
-        }
+        });
     }
-
-    if (secondsUntilSend == Seconds::infinity())
-        return;
-    
-    if (m_firePendingConversionRequestsTimer.isActive() && m_firePendingConversionRequestsTimer.nextFireInterval() < secondsUntilSend)
-        return;
-
-    if (UNLIKELY(debugModeEnabled())) {
-        RELEASE_LOG_INFO(PrivateClickMeasurement, "Setting timer for firing conversion requests to the debug mode timeout of %{public}f seconds where the regular timeout would have been %{public}f seconds.", debugModeSecondsUntilSend.seconds(), secondsUntilSend.seconds());
-        m_networkProcess->broadcastConsoleMessage(m_sessionID, MessageSource::PrivateClickMeasurement, MessageLevel::Info, makeString("[Private Click Measurement] Setting timer for firing conversion requests to the debug mode timeout of "_s, debugModeSecondsUntilSend.seconds(), " seconds where the regular timeout would have been "_s, secondsUntilSend.seconds(), " seconds."_s));
-        secondsUntilSend = debugModeSecondsUntilSend;
-    }
-
-    startTimer(secondsUntilSend);
 }
 
 void PrivateClickMeasurementManager::fireConversionRequest(const PrivateClickMeasurement& attribution)
 {
-    auto conversionURL = m_conversionBaseURLForTesting ? *m_conversionBaseURLForTesting : attribution.reportURL();
-    if (conversionURL.isEmpty() || !conversionURL.isValid())
+    auto attributionURL = m_attributionBaseURLForTesting ? *m_attributionBaseURLForTesting : attribution.reportURL();
+    if (attributionURL.isEmpty() || !attributionURL.isValid())
         return;
 
-    ResourceRequest request { WTFMove(conversionURL) };
+    ResourceRequest request { WTFMove(attributionURL) };
     
     request.setHTTPMethod("POST"_s);
     request.setHTTPHeaderField(HTTPHeaderName::CacheControl, WebCore::HTTPHeaderValues::maxAge0());
@@ -200,8 +159,8 @@ void PrivateClickMeasurementManager::fireConversionRequest(const PrivateClickMea
     loadParameters.shouldRestrictHTTPResponseAccess = false;
 
     if (UNLIKELY(debugModeEnabled())) {
-        RELEASE_LOG_INFO(PrivateClickMeasurement, "About to fire an attribution request for a conversion.");
-        m_networkProcess->broadcastConsoleMessage(m_sessionID, MessageSource::PrivateClickMeasurement, MessageLevel::Error, "[Private Click Measurement] About to fire an attribution request for a conversion."_s);
+        RELEASE_LOG_INFO(PrivateClickMeasurement, "About to fire an attribution request.");
+        m_networkProcess->broadcastConsoleMessage(m_sessionID, MessageSource::PrivateClickMeasurement, MessageLevel::Error, "[Private Click Measurement] About to fire an attribution request."_s);
     }
 
     m_pingLoadFunction(WTFMove(loadParameters), [weakThis = makeWeakPtr(*this)](const WebCore::ResourceError& error, const WebCore::ResourceResponse& response) {
@@ -221,116 +180,106 @@ void PrivateClickMeasurementManager::fireConversionRequest(const PrivateClickMea
     });
 }
 
-void PrivateClickMeasurementManager::firePendingConversionRequests()
+void PrivateClickMeasurementManager::clearSentAttributions(Vector<PrivateClickMeasurement>&& sentConversions)
 {
-    auto nextTimeToFire = Seconds::infinity();
-    for (auto& attribution : m_convertedPrivateClickMeasurementMap.values()) {
-        if (attribution.wasConversionSent()) {
-            ASSERT_NOT_REACHED();
-            continue;
-        }
-        auto earliestTimeToSend = attribution.earliestTimeToSend();
-        if (!earliestTimeToSend) {
-            ASSERT_NOT_REACHED();
-            continue;
-        }
+    if (auto* resourceLoadStatistics = m_networkSession->resourceLoadStatistics())
+        resourceLoadStatistics->clearSentAttributions(WTFMove(sentConversions));
+}
 
-        auto now = WallTime::now();
-        if (*earliestTimeToSend <= now || m_isRunningTest || debugModeEnabled()) {
-            fireConversionRequest(attribution);
-            attribution.markConversionAsSent();
-            continue;
+void PrivateClickMeasurementManager::updateTimerLastFired()
+{
+    if (auto* resourceLoadStatistics = m_networkSession->resourceLoadStatistics())
+        resourceLoadStatistics->updateTimerLastFired();
+}
+
+void PrivateClickMeasurementManager::firePendingAttributionRequests()
+{
+    auto* resourceLoadStatistics = m_networkSession->resourceLoadStatistics();
+    if (!resourceLoadStatistics)
+        return;
+
+    resourceLoadStatistics->allAttributedPrivateClickMeasurement([this] (auto&& attributions) {
+        auto nextTimeToFire = Seconds::infinity();
+        Vector<PrivateClickMeasurement> sentAttributions;
+        
+        for (auto& attribution : attributions) {
+            auto earliestTimeToSend = attribution.earliestTimeToSend();
+            if (!earliestTimeToSend) {
+                ASSERT_NOT_REACHED();
+                continue;
+            }
+
+            auto now = WallTime::now();
+            if (*earliestTimeToSend <= now || m_isRunningTest || debugModeEnabled()) {
+                fireConversionRequest(attribution);
+                sentAttributions.append(WTFMove(attribution));
+                continue;
+            }
+
+            auto seconds = *earliestTimeToSend - now;
+            nextTimeToFire = std::min(nextTimeToFire, seconds);
         }
+        
+        clearSentAttributions(WTFMove(sentAttributions));
+        updateTimerLastFired();
 
-        auto seconds = *earliestTimeToSend - now;
-        nextTimeToFire = std::min(nextTimeToFire, seconds);
-    }
-
-    m_convertedPrivateClickMeasurementMap.removeIf([](auto& keyAndValue) {
-        return keyAndValue.value.wasConversionSent();
+        if (nextTimeToFire < Seconds::infinity())
+            startTimer(nextTimeToFire);
     });
-
-    if (nextTimeToFire < Seconds::infinity())
-        startTimer(nextTimeToFire);
 }
 
 void PrivateClickMeasurementManager::clear()
 {
-    m_firePendingConversionRequestsTimer.stop();
-    m_unconvertedPrivateClickMeasurementMap.clear();
-    m_convertedPrivateClickMeasurementMap.clear();
+    m_firePendingAttributionRequestsTimer.stop();
+
+    if (auto* resourceLoadStatistics = m_networkSession->resourceLoadStatistics())
+        resourceLoadStatistics->clearPrivateClickMeasurement();
 }
 
 void PrivateClickMeasurementManager::clearForRegistrableDomain(const RegistrableDomain& domain)
 {
-    m_unconvertedPrivateClickMeasurementMap.removeIf([&domain](auto& keyAndValue) {
-        return keyAndValue.key.first.registrableDomain == domain || keyAndValue.key.second.registrableDomain == domain;
-    });
-
-    m_convertedPrivateClickMeasurementMap.removeIf([&domain](auto& keyAndValue) {
-        return keyAndValue.key.first.registrableDomain == domain || keyAndValue.key.second.registrableDomain == domain;
-    });
+    if (auto* resourceLoadStatistics = m_networkSession->resourceLoadStatistics())
+        resourceLoadStatistics->clearPrivateClickMeasurementForRegistrableDomain(domain);
 }
 
 void PrivateClickMeasurementManager::clearExpired()
 {
-    m_unconvertedPrivateClickMeasurementMap.removeIf([](auto& keyAndValue) {
-        return keyAndValue.value.hasExpired();
-    });
+    if (auto* resourceLoadStatistics = m_networkSession->resourceLoadStatistics())
+        resourceLoadStatistics->clearExpiredPrivateClickMeasurement();
 }
 
 void PrivateClickMeasurementManager::toString(CompletionHandler<void(String)>&& completionHandler) const
 {
-    if (m_unconvertedPrivateClickMeasurementMap.isEmpty() && m_convertedPrivateClickMeasurementMap.isEmpty())
-        return completionHandler("\nNo stored Private Click Measurement data.\n"_s);
-
-    unsigned unconvertedAttributionNumber = 0;
-    StringBuilder builder;
-    for (auto& attribution : m_unconvertedPrivateClickMeasurementMap.values()) {
-        if (!unconvertedAttributionNumber)
-            builder.appendLiteral("Unconverted Private Click Measurements:\n");
-        else
-            builder.append('\n');
-        builder.appendLiteral("WebCore::PrivateClickMeasurement ");
-        builder.appendNumber(++unconvertedAttributionNumber);
-        builder.append('\n');
-        builder.append(attribution.toString());
-}
-
-    unsigned convertedAttributionNumber = 0;
-    for (auto& attribution : m_convertedPrivateClickMeasurementMap.values()) {
-        if (unconvertedAttributionNumber)
-            builder.append('\n');
-        if (!convertedAttributionNumber)
-            builder.appendLiteral("Converted Private Click Measurements:\n");
-        else
-            builder.append('\n');
-        builder.appendLiteral("WebCore::PrivateClickMeasurement ");
-        builder.appendNumber(++convertedAttributionNumber + unconvertedAttributionNumber);
-        builder.append('\n');
-        builder.append(attribution.toString());
-    }
-
-    completionHandler(builder.toString());
+    if (auto* resourceLoadStatistics = m_networkSession->resourceLoadStatistics())
+        resourceLoadStatistics->privateClickMeasurementToString(WTFMove(completionHandler));
 }
 
 void PrivateClickMeasurementManager::setConversionURLForTesting(URL&& testURL)
 {
     if (testURL.isEmpty())
-        m_conversionBaseURLForTesting = { };
+        m_attributionBaseURLForTesting = { };
     else
-        m_conversionBaseURLForTesting = WTFMove(testURL);
+        m_attributionBaseURLForTesting = WTFMove(testURL);
 }
 
-void PrivateClickMeasurementManager::markAllUnconvertedAsExpiredForTesting()
+void PrivateClickMeasurementManager::markAllUnattributedAsExpiredForTesting()
 {
-    for (auto& attribution : m_unconvertedPrivateClickMeasurementMap.values())
-        attribution.markAsExpired();
+    if (auto* resourceLoadStatistics = m_networkSession->resourceLoadStatistics())
+        resourceLoadStatistics->markAllUnattributedPrivateClickMeasurementAsExpiredForTesting();
 }
 
 bool PrivateClickMeasurementManager::debugModeEnabled() const
 {
     return RuntimeEnabledFeatures::sharedFeatures().privateClickMeasurementDebugModeEnabled() && !m_sessionID.isEphemeral();
+}
+
+void PrivateClickMeasurementManager::markAttributedPrivateClickMeasurementsAsExpiredForTesting(CompletionHandler<void()>&& completionHandler)
+{
+    if (auto* resourceLoadStatistics = m_networkSession->resourceLoadStatistics()) {
+        resourceLoadStatistics->markAttributedPrivateClickMeasurementsAsExpiredForTesting(WTFMove(completionHandler));
+        return;
+    }
+    completionHandler();
 }
 
 } // namespace WebKit

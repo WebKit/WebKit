@@ -15,14 +15,14 @@ foreach ($httpHeaders as $name => $value) {
             $outputURL = substr($value, 0, $positionOfNonce);
         fwrite($conversionFile, "$name: $outputURL\n");
     } else if ($name === "HTTP_COOKIE") {
-        fwrite($conversionFile, "Cookies in conversion request: $value\n");
+        fwrite($conversionFile, "Cookies in attribution request: $value\n");
         $cookiesFound = true;
     } else if ($name === "CONTENT_TYPE") {
         fwrite($conversionFile, "Content type: $value\n");
     }
 }
 if (!$cookiesFound) {
-    fwrite($conversionFile, "No cookies in conversion request.\n");
+    fwrite($conversionFile, "No cookies in attribution request.\n");
 }
 
 $requestBody = file_get_contents('php://input');

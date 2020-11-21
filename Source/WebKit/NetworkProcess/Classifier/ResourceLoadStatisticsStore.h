@@ -202,6 +202,18 @@ public:
     virtual void clearOperatingDates() = 0;
     virtual bool hasStatisticsExpired(WallTime mostRecentUserInteractionTime, OperatingDatesWindow) const = 0;
     virtual void insertExpiredStatisticForTesting(const RegistrableDomain&, bool hasUserInteraction, bool isScheduledForAllButCookieDataRemoval, bool) = 0;
+    
+    // Private Click Measurement.
+    virtual void insertPrivateClickMeasurement(WebCore::PrivateClickMeasurement&&, PrivateClickMeasurementAttributionType) = 0;
+    virtual void markAllUnattributedPrivateClickMeasurementAsExpiredForTesting() = 0;
+    virtual Optional<Seconds> attributePrivateClickMeasurement(const WebCore::PrivateClickMeasurement::SourceSite&, const WebCore::PrivateClickMeasurement::AttributeOnSite&, WebCore::PrivateClickMeasurement::AttributionTriggerData&&) = 0;
+    virtual Vector<WebCore::PrivateClickMeasurement> allAttributedPrivateClickMeasurement() = 0;
+    virtual void clearPrivateClickMeasurement(Optional<RegistrableDomain>) = 0;
+    virtual void clearExpiredPrivateClickMeasurement() = 0;
+    virtual String privateClickMeasurementToString() = 0;
+    virtual void clearSentAttributions(Vector<WebCore::PrivateClickMeasurement>&&) = 0;
+    virtual void markAttributedPrivateClickMeasurementsAsExpiredForTesting() = 0;
+    virtual void updateTimerLastFired() = 0;
 
 protected:
     static unsigned computeImportance(const WebCore::ResourceLoadStatistics&);

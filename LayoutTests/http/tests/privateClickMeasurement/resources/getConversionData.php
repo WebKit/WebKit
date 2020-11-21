@@ -27,7 +27,7 @@ while ($noTimeout || $timeoutMsecs > 0) {
 echo "<html><body>\n";
 
 if ($conversionFileFound) {
-    echo "Conversion received.";
+    echo "Attribution received.";
     $conversionFile = fopen($conversionFilePath, 'r');
     while ($line = fgets($conversionFile)) {
         echo "<br>";
@@ -37,7 +37,7 @@ if ($conversionFileFound) {
     fclose($conversionFile);
     unlink($conversionFilePath);
 } else {
-    echo "Conversion not received - timed out.<br>";
+    echo "Attribution not received - timed out.<br>";
 }
 
 if (isset($_GET['endTest'])) {

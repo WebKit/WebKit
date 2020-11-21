@@ -37,21 +37,25 @@
 namespace WebCore {
 
 static const char privateClickMeasurementPathPrefix[] = "/.well-known/private-click-measurement/";
-const size_t privateClickMeasurementConversionDataPathSegmentSize = 2;
+const size_t privateClickMeasurementAttributionTriggerDataPathSegmentSize = 2;
 const size_t privateClickMeasurementPriorityPathSegmentSize = 2;
-const Seconds maxAge { 24_h * 7 };
+
+const Seconds PrivateClickMeasurement::maxAge()
+{
+    return 24_h * 7;
+};
 
 bool PrivateClickMeasurement::isValid() const
 {
-    return m_conversion
-        && m_conversion.value().isValid()
-        && m_campaign.isValid()
-        && !m_source.registrableDomain.isEmpty()
-        && !m_destination.registrableDomain.isEmpty()
+    return m_attributionTriggerData
+        && m_attributionTriggerData.value().isValid()
+        && m_sourceID.isValid()
+        && !m_sourceSite.registrableDomain.isEmpty()
+        && !m_attributeOnSite.registrableDomain.isEmpty()
         && m_earliestTimeToSend;
 }
 
-Expected<PrivateClickMeasurement::Conversion, String> PrivateClickMeasurement::parseConversionRequest(const URL& redirectURL)
+Expected<PrivateClickMeasurement::AttributionTriggerData, String> PrivateClickMeasurement::parseAttributionRequest(const URL& redirectURL)
 {
     if (!redirectURL.protocolIs("https") || redirectURL.hasCredentials() || redirectURL.hasQuery() || redirectURL.hasFragmentIdentifier()) {
         if (UNLIKELY(debugModeEnabled())) {
@@ -71,9 +75,9 @@ Expected<PrivateClickMeasurement::Conversion, String> PrivateClickMeasurement::p
     }
 
     auto prefixLength = sizeof(privateClickMeasurementPathPrefix) - 1;
-    if (path.length() == prefixLength + privateClickMeasurementConversionDataPathSegmentSize) {
-        auto conversionDataUInt64 = path.substring(prefixLength, privateClickMeasurementConversionDataPathSegmentSize).toUInt64Strict();
-        if (!conversionDataUInt64 || *conversionDataUInt64 > MaxEntropy) {
+    if (path.length() == prefixLength + privateClickMeasurementAttributionTriggerDataPathSegmentSize) {
+        auto attributionTriggerDataUInt64 = path.substring(prefixLength, privateClickMeasurementAttributionTriggerDataPathSegmentSize).toUInt64Strict();
+        if (!attributionTriggerDataUInt64 || *attributionTriggerDataUInt64 > MaxEntropy) {
             if (UNLIKELY(debugModeEnabled())) {
                 RELEASE_LOG_INFO(PrivateClickMeasurement, "Conversion was not accepted because the conversion data could not be parsed or was higher than the allowed maximum of %{public}u.", MaxEntropy);
                 return makeUnexpected(makeString("[Private Click Measurement] Conversion was not accepted because the conversion data could not be parsed or was higher than the allowed maximum of "_s, MaxEntropy, "."_s));
@@ -81,12 +85,12 @@ Expected<PrivateClickMeasurement::Conversion, String> PrivateClickMeasurement::p
             return makeUnexpected(nullString());
         }
 
-        return Conversion { static_cast<uint32_t>(*conversionDataUInt64), Priority { 0 } };
+        return AttributionTriggerData { static_cast<uint32_t>(*attributionTriggerDataUInt64), Priority { 0 } };
     }
     
-    if (path.length() == prefixLength + privateClickMeasurementConversionDataPathSegmentSize + 1 + privateClickMeasurementPriorityPathSegmentSize) {
-        auto conversionDataUInt64 = path.substring(prefixLength, privateClickMeasurementConversionDataPathSegmentSize).toUInt64Strict();
-        if (!conversionDataUInt64 || *conversionDataUInt64 > MaxEntropy) {
+    if (path.length() == prefixLength + privateClickMeasurementAttributionTriggerDataPathSegmentSize + 1 + privateClickMeasurementPriorityPathSegmentSize) {
+        auto attributionTriggerDataUInt64 = path.substring(prefixLength, privateClickMeasurementAttributionTriggerDataPathSegmentSize).toUInt64Strict();
+        if (!attributionTriggerDataUInt64 || *attributionTriggerDataUInt64 > MaxEntropy) {
             if (UNLIKELY(debugModeEnabled())) {
                 RELEASE_LOG_INFO(PrivateClickMeasurement, "Conversion was not accepted because the conversion data could not be parsed or was higher than the allowed maximum of %{public}u.", MaxEntropy);
                 return makeUnexpected(makeString("[Private Click Measurement] Conversion was not accepted because the conversion data could not be parsed or was higher than the allowed maximum of "_s, MaxEntropy, "."_s));
@@ -94,8 +98,8 @@ Expected<PrivateClickMeasurement::Conversion, String> PrivateClickMeasurement::p
             return makeUnexpected(nullString());
         }
 
-        auto conversionPriorityUInt64 = path.substring(prefixLength + privateClickMeasurementConversionDataPathSegmentSize + 1, privateClickMeasurementPriorityPathSegmentSize).toUInt64Strict();
-        if (!conversionPriorityUInt64 || *conversionPriorityUInt64 > MaxEntropy) {
+        auto attributionPriorityUInt64 = path.substring(prefixLength + privateClickMeasurementAttributionTriggerDataPathSegmentSize + 1, privateClickMeasurementPriorityPathSegmentSize).toUInt64Strict();
+        if (!attributionPriorityUInt64 || *attributionPriorityUInt64 > MaxEntropy) {
             if (UNLIKELY(debugModeEnabled())) {
                 RELEASE_LOG_INFO(PrivateClickMeasurement, "Conversion was not accepted because the priority could not be parsed or was higher than the allowed maximum of %{public}u.", MaxEntropy);
                 return makeUnexpected(makeString("[Private Click Measurement] Conversion was not accepted because the priority could not be parsed or was higher than the allowed maximum of "_s, MaxEntropy, "."_s));
@@ -103,7 +107,7 @@ Expected<PrivateClickMeasurement::Conversion, String> PrivateClickMeasurement::p
             return makeUnexpected(nullString());
         }
 
-        return Conversion { static_cast<uint32_t>(*conversionDataUInt64), Priority { static_cast<uint32_t>(*conversionPriorityUInt64) } };
+        return AttributionTriggerData { static_cast<uint32_t>(*attributionTriggerDataUInt64), Priority { static_cast<uint32_t>(*attributionPriorityUInt64) } };
     }
 
     if (UNLIKELY(debugModeEnabled())) {
@@ -113,12 +117,12 @@ Expected<PrivateClickMeasurement::Conversion, String> PrivateClickMeasurement::p
     return makeUnexpected(nullString());
 }
 
-Optional<Seconds> PrivateClickMeasurement::convertAndGetEarliestTimeToSend(Conversion&& conversion)
+Optional<Seconds> PrivateClickMeasurement::attributeAndGetEarliestTimeToSend(AttributionTriggerData&& attributionTriggerData)
 {
-    if (!conversion.isValid() || (m_conversion && m_conversion->priority >= conversion.priority))
+    if (!attributionTriggerData.isValid() || (m_attributionTriggerData && m_attributionTriggerData->priority >= attributionTriggerData.priority))
         return { };
 
-    m_conversion = WTFMove(conversion);
+    m_attributionTriggerData = WTFMove(attributionTriggerData);
     // 24-48 hour delay before sending. This helps privacy since the conversion and the attribution
     // requests are detached and the time of the attribution does not reveal the time of the conversion.
     auto seconds = 24_h + Seconds(randomNumber() * (24_h).value());
@@ -126,25 +130,15 @@ Optional<Seconds> PrivateClickMeasurement::convertAndGetEarliestTimeToSend(Conve
     return seconds;
 }
 
-void PrivateClickMeasurement::markAsExpired()
-{
-    m_timeOfAdClick = { };
-}
-
-bool PrivateClickMeasurement::hasExpired() const
-{
-    return WallTime::now() > m_timeOfAdClick + maxAge;
-}
-
 bool PrivateClickMeasurement::hasHigherPriorityThan(const PrivateClickMeasurement& other) const
 {
-    if (!other.m_conversion)
+    if (!other.m_attributionTriggerData)
         return true;
     
-    if (!m_conversion)
+    if (!m_attributionTriggerData)
         return false;
 
-    return m_conversion->priority > other.m_conversion->priority;
+    return m_attributionTriggerData->priority > other.m_attributionTriggerData->priority;
 }
 
 URL PrivateClickMeasurement::reportURL() const
@@ -154,7 +148,7 @@ URL PrivateClickMeasurement::reportURL() const
 
     StringBuilder builder;
     builder.appendLiteral("https://");
-    builder.append(m_source.registrableDomain.string());
+    builder.append(m_sourceSite.registrableDomain.string());
     builder.appendLiteral(privateClickMeasurementPathPrefix);
 
     URL url { URL(), builder.toString() };
@@ -167,58 +161,16 @@ URL PrivateClickMeasurement::reportURL() const
 Ref<JSON::Object> PrivateClickMeasurement::json() const
 {
     auto reportDetails = JSON::Object::create();
-    if (!m_conversion)
+    if (!m_attributionTriggerData)
         return reportDetails;
 
     reportDetails->setString("source-engagement-type"_s, "click"_s);
-    reportDetails->setString("source-site"_s, m_source.registrableDomain.string());
-    reportDetails->setInteger("source-id"_s, m_campaign.id);
-    reportDetails->setString("attributed-on-site"_s, m_destination.registrableDomain.string());
-    reportDetails->setInteger("trigger-data"_s, m_conversion->data);
+    reportDetails->setString("source-site"_s, m_sourceSite.registrableDomain.string());
+    reportDetails->setInteger("source-id"_s, m_sourceID.id);
+    reportDetails->setString("attributed-on-site"_s, m_attributeOnSite.registrableDomain.string());
+    reportDetails->setInteger("trigger-data"_s, m_attributionTriggerData->data);
     reportDetails->setInteger("report-version"_s, 1);
     return reportDetails;
-}
-
-void PrivateClickMeasurement::markConversionAsSent()
-{
-    ASSERT(m_conversion);
-    if (m_conversion)
-        m_conversion->wasSent = Conversion::WasSent::Yes;
-}
-
-bool PrivateClickMeasurement::wasConversionSent() const
-{
-    return m_conversion && m_conversion->wasSent == Conversion::WasSent::Yes;
-}
-
-String PrivateClickMeasurement::toString() const
-{
-    StringBuilder builder;
-    builder.appendLiteral("Source: ");
-    builder.append(m_source.registrableDomain.string());
-    builder.appendLiteral("\nDestination: ");
-    builder.append(m_destination.registrableDomain.string());
-    builder.appendLiteral("\nCampaign ID: ");
-    builder.appendNumber(m_campaign.id);
-    if (m_conversion) {
-        builder.appendLiteral("\nConversion data: ");
-        builder.appendNumber(m_conversion.value().data);
-        builder.appendLiteral("\nConversion priority: ");
-        builder.appendNumber(m_conversion.value().priority);
-        builder.appendLiteral("\nConversion earliest time to send: ");
-        if (!m_earliestTimeToSend)
-            builder.appendLiteral("Not set");
-        else {
-            auto secondsUntilSend = *m_earliestTimeToSend - WallTime::now();
-            builder.append((secondsUntilSend >= 24_h && secondsUntilSend <= 48_h) ? "Within 24-48 hours" : "Outside 24-48 hours");
-        }
-        builder.appendLiteral("\nConversion request sent: ");
-        builder.append((wasConversionSent() ? "true" : "false"));
-    } else
-        builder.appendLiteral("\nNo conversion data.");
-    builder.append('\n');
-
-    return builder.toString();
 }
 
 bool PrivateClickMeasurement::debugModeEnabled()

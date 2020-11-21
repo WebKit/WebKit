@@ -53,6 +53,13 @@ static constexpr size_t numberOfStatistics = 7;
 static constexpr std::array<unsigned, numberOfBucketsPerStatistic> bucketSizes {{ 1, 3, 10, 50, 100 }};
 
 class ResourceLoadStatisticsMemoryStore;
+class PrivateClickMeasurementManager;
+
+using AttributedPrivateClickMeasurement = WebCore::PrivateClickMeasurement;
+using UnattributedPrivateClickMeasurement = WebCore::PrivateClickMeasurement;
+using SourceSite = WebCore::PrivateClickMeasurement::SourceSite;
+using AttributeOnSite = WebCore::PrivateClickMeasurement::AttributeOnSite;
+using AttributionTriggerData = WebCore::PrivateClickMeasurement::AttributionTriggerData;
 
 // This is always constructed / used / destroyed on the WebResourceLoadStatisticsStore's statistics queue.
 class ResourceLoadStatisticsDatabaseStore final : public ResourceLoadStatisticsStore {
@@ -123,6 +130,19 @@ public:
     Optional<Vector<String>> checkForMissingTablesInSchema();
     void insertExpiredStatisticForTesting(const RegistrableDomain&, bool hasUserInteraction, bool isScheduledForAllButCookieDataRemoval, bool isPrevalent) override;
     void interrupt();
+
+    // Private Click Measurement.
+    void insertPrivateClickMeasurement(WebCore::PrivateClickMeasurement&&, PrivateClickMeasurementAttributionType) override;
+    void markAllUnattributedPrivateClickMeasurementAsExpiredForTesting() override;
+    Optional<Seconds> attributePrivateClickMeasurement(const WebCore::PrivateClickMeasurement::SourceSite&, const WebCore::PrivateClickMeasurement::AttributeOnSite&, WebCore::PrivateClickMeasurement::AttributionTriggerData&&) override;
+    Vector<WebCore::PrivateClickMeasurement> allAttributedPrivateClickMeasurement() override;
+    void clearPrivateClickMeasurement(Optional<RegistrableDomain>) override;
+    void clearExpiredPrivateClickMeasurement() override;
+    String privateClickMeasurementToString() override;
+    void clearSentAttributions(Vector<WebCore::PrivateClickMeasurement>&&) override;
+    void updateTimerLastFired() override;
+    void markAttributedPrivateClickMeasurementsAsExpiredForTesting() override;
+    void updatePrivateClickMeasurementAttributionTimes();
 
 private:
     void includeTodayAsOperatingDateIfNecessary() override;
@@ -213,6 +233,12 @@ private:
     String ensureAndMakeDomainList(const HashSet<RegistrableDomain>&);
     Optional<WallTime> mostRecentUserInteractionTime(const DomainData&);
     
+    void removeUnattributed(WebCore::PrivateClickMeasurement&);
+    WebCore::PrivateClickMeasurement buildPrivateClickMeasurementFromDatabase(WebCore::SQLiteStatement*, PrivateClickMeasurementAttributionType);
+    String attributionToString(WebCore::SQLiteStatement*, PrivateClickMeasurementAttributionType);
+    std::pair<Optional<UnattributedPrivateClickMeasurement>, Optional<AttributedPrivateClickMeasurement>> findPrivateClickMeasurement(const WebCore::PrivateClickMeasurement::SourceSite&, const WebCore::PrivateClickMeasurement::AttributeOnSite&);
+    WallTime timerLastFired();
+
     const String m_storageDirectoryPath;
     mutable WebCore::SQLiteDatabase m_database;
     mutable std::unique_ptr<WebCore::SQLiteStatement> m_observedDomainCountStatement;
@@ -252,6 +278,21 @@ private:
     mutable std::unique_ptr<WebCore::SQLiteStatement> m_uniqueRedirectExistsStatement;
     mutable std::unique_ptr<WebCore::SQLiteStatement> m_observedDomainsExistsStatement;
     mutable std::unique_ptr<WebCore::SQLiteStatement> m_removeAllDataStatement;
+    std::unique_ptr<WebCore::SQLiteStatement> m_insertUnattributedPrivateClickMeasurementStatement;
+    std::unique_ptr<WebCore::SQLiteStatement> m_insertAttributedPrivateClickMeasurementStatement;
+    std::unique_ptr<WebCore::SQLiteStatement> m_setUnattributedPrivateClickMeasurementAsExpiredStatement;
+    std::unique_ptr<WebCore::SQLiteStatement> m_clearUnattributedPrivateClickMeasurementStatement;
+    std::unique_ptr<WebCore::SQLiteStatement> m_clearAttributedPrivateClickMeasurementStatement;
+    std::unique_ptr<WebCore::SQLiteStatement> m_clearExpiredPrivateClickMeasurementStatement;
+    std::unique_ptr<WebCore::SQLiteStatement> m_allUnattributedPrivateClickMeasurementAttributionsStatement;
+    std::unique_ptr<WebCore::SQLiteStatement> m_allAttributedPrivateClickMeasurementStatement;
+    std::unique_ptr<WebCore::SQLiteStatement> m_findUnattributedStatement;
+    std::unique_ptr<WebCore::SQLiteStatement> m_findAttributedStatement;
+    std::unique_ptr<WebCore::SQLiteStatement> m_updateTimerLastFiredStatement;
+    std::unique_ptr<WebCore::SQLiteStatement> m_timerLastFiredStatement;
+    std::unique_ptr<WebCore::SQLiteStatement> m_updateAttributionsEarliestTimeToSendStatement;
+    std::unique_ptr<WebCore::SQLiteStatement> m_removeUnattributedStatement;
+    
     PAL::SessionID m_sessionID;
     bool m_isNewResourceLoadStatisticsDatabaseFile { false };
     unsigned m_operatingDatesSize { 0 };

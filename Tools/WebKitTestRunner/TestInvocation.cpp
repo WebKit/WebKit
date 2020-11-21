@@ -1329,6 +1329,16 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         return nullptr;
     }
     
+    if (WKStringIsEqualToUTF8CString(messageName, "MarkAttributedPrivateClickMeasurementsAsExpiredForTesting")) {
+        TestController::singleton().markAttributedPrivateClickMeasurementsAsExpiredForTesting();
+        return nullptr;
+    }
+    
+    if (WKStringIsEqualToUTF8CString(messageName, "SimulateResourceLoadStatisticsSessionRestart")) {
+        TestController::singleton().simulateResourceLoadStatisticsSessionRestart();
+        return nullptr;
+    }
+    
     if (WKStringIsEqualToUTF8CString(messageName, "SetPrivateClickMeasurementConversionURLForTesting")) {
         ASSERT(WKGetTypeID(messageBody) == WKURLGetTypeID());
         TestController::singleton().setPrivateClickMeasurementConversionURLForTesting(static_cast<WKURLRef>(messageBody));

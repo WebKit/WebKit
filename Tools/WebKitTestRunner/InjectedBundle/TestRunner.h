@@ -514,6 +514,8 @@ public:
     void setPrivateClickMeasurementOverrideTimerForTesting(bool value);
     void setPrivateClickMeasurementConversionURLForTesting(JSStringRef);
     void markPrivateClickMeasurementsAsExpiredForTesting();
+    void markAttributedPrivateClickMeasurementsAsExpiredForTesting();
+    void simulateResourceLoadStatisticsSessionRestart();
 
     void setIsSpeechRecognitionPermissionGranted(bool);
 

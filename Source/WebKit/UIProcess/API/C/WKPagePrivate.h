@@ -175,6 +175,10 @@ typedef void (*WKPageClearPrivateClickMeasurementFunction)(void* functionContext
 WK_EXPORT void WKPageClearPrivateClickMeasurement(WKPageRef, WKPageClearPrivateClickMeasurementFunction, void* callbackContext);
 typedef void (*WKPageSetPrivateClickMeasurementOverrideTimerForTestingFunction)(void* functionContext);
 WK_EXPORT void WKPageSetPrivateClickMeasurementOverrideTimerForTesting(WKPageRef page, bool value, WKPageSetPrivateClickMeasurementOverrideTimerForTestingFunction callback, void* callbackContext);
+typedef void (*WKPageMarkAttributedPrivateClickMeasurementsAsExpiredForTestingFunction)(void* functionContext);
+WK_EXPORT void WKPageMarkAttributedPrivateClickMeasurementsAsExpiredForTesting(WKPageRef page, WKPageMarkAttributedPrivateClickMeasurementsAsExpiredForTestingFunction callback, void* callbackContext);
+typedef void (*WKPageSimulateResourceLoadStatisticsSessionRestartFunction)(void* functionContext);
+WK_EXPORT void WKPageSimulateResourceLoadStatisticsSessionRestart(WKPageRef page, WKPageSimulateResourceLoadStatisticsSessionRestartFunction callback, void* callbackContext);
 typedef void (*WKPageSetPrivateClickMeasurementConversionURLForTestingFunction)(void* functionContext);
 WK_EXPORT void WKPageSetPrivateClickMeasurementConversionURLForTesting(WKPageRef page, WKURLRef urlString, WKPageSetPrivateClickMeasurementConversionURLForTestingFunction callback, void* callbackContext);
 typedef void (*WKPageMarkPrivateClickMeasurementsAsExpiredForTestingFunction)(void* functionContext);

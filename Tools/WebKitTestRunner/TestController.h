@@ -344,6 +344,8 @@ public:
     void clearPrivateClickMeasurement();
     void clearPrivateClickMeasurementsThroughWebsiteDataRemoval();
     void setPrivateClickMeasurementOverrideTimerForTesting(bool value);
+    void markAttributedPrivateClickMeasurementsAsExpiredForTesting();
+    void simulateResourceLoadStatisticsSessionRestart();
     void setPrivateClickMeasurementConversionURLForTesting(WKURLRef);
     void markPrivateClickMeasurementsAsExpiredForTesting();
 
