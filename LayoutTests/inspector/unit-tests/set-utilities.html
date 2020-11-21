@@ -106,10 +106,10 @@ function test()
 
             let set = new Set;
             set.add(key);
-            InspectorTest.expectTrue(set.take(key), "Set can take `key`.");
+            InspectorTest.expectEqual(set.take(key), key, "Set can take `key`.");
             InspectorTest.expectFalse(set.has(key), "Set no longer has `key`.");
-            InspectorTest.expectFalse(set.take(key), "Set can NOT take `key`.");
-            InspectorTest.expectFalse(set.take("DNE"), "Set can NOT take `DNE`, as it does NOT exist.");
+            InspectorTest.expectEqual(set.take(key), undefined, "Set can NOT take `key`.");
+            InspectorTest.expectEqual(set.take("DNE"), undefined, "Set can NOT take `DNE`, as it does NOT exist.");
         }
     });
 

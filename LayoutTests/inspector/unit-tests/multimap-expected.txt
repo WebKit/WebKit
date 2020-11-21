@@ -57,6 +57,35 @@ PASS: Nothing was removed for key "badger".
 PASS: Values were removed for key "opossum".
 [["raccoon","opossum"]]
 
+-- Running test case: Multimap.prototype.take.SingleKeyAndValue
+[[0,1],[2,3],[2,4]]
+1
+PASS: The key 0 and the value 1 were taken.
+PASS: Only one key should remain.
+[[2,3],[2,4]]
+undefined
+PASS: Nothing should have been taken.
+PASS: Only one key should remain.
+[[2,3],[2,4]]
+3
+PASS: The key 2 and the value 3 were taken.
+PASS: Only one key should remain.
+[[2,4]]
+4
+PASS: The key 2 and the value 4 were taken.
+PASS: No more keys should remain.
+[]
+
+-- Running test case: Multimap.prototype.take.AllValuesForKey
+[["opossum","badger"],["opossum","raccoon"],["raccoon","opossum"]]
+PASS: Nothing was removed for key "badger".
+[["opossum","badger"],["opossum","raccoon"],["raccoon","opossum"]]
+PASS: Only one key should remain.
+PASS: Two values from the key "opossum" should be taken.
+PASS: Result should include "badger".
+PASS: Result should include "raccoon".
+[["raccoon","opossum"]]
+
 -- Running test case: Multimap.prototype.clear
 [["one","two"],["one","five"],["three","four"],["three","six"]]
 []

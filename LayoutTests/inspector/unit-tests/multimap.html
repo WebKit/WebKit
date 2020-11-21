@@ -165,6 +165,72 @@ function test()
     });
 
     suite.addTestCase({
+        name: "Multimap.prototype.take.SingleKeyAndValue",
+        test() {
+            let multimap = new Multimap;
+            let result;
+
+            multimap.add(0, 1);
+            multimap.add(2, 3);
+            multimap.add(2, 4);
+
+            InspectorTest.log(multimap);
+
+            result = multimap.take(0, 1);
+            InspectorTest.log(result);
+            InspectorTest.expectEqual(result, 1, "The key 0 and the value 1 were taken.");
+            InspectorTest.expectEqual(multimap.size, 1, "Only one key should remain.");
+
+            InspectorTest.log(multimap);
+
+            result = multimap.take(5, 1);
+            InspectorTest.log(result);
+            InspectorTest.expectEqual(result, undefined, "Nothing should have been taken.");
+            InspectorTest.expectEqual(multimap.size, 1, "Only one key should remain.");
+
+            InspectorTest.log(multimap);
+
+            result = multimap.take(2, 3)
+            InspectorTest.log(result);
+            InspectorTest.expectEqual(result, 3, "The key 2 and the value 3 were taken.");
+            InspectorTest.expectEqual(multimap.size, 1, "Only one key should remain.");
+
+            InspectorTest.log(multimap);
+
+            result = multimap.take(2, 4)
+            InspectorTest.log(result);
+            InspectorTest.expectEqual(result, 4, "The key 2 and the value 4 were taken.");
+            InspectorTest.expectEqual(multimap.size, 0, "No more keys should remain.");
+
+            InspectorTest.log(multimap);
+        },
+    });
+
+    suite.addTestCase({
+        name: "Multimap.prototype.take.AllValuesForKey",
+        test() {
+            let multimap = new Multimap;
+
+            multimap.add("opossum", "badger");
+            multimap.add("opossum", "raccoon");
+            multimap.add("raccoon", "opossum");
+
+            InspectorTest.log(multimap);
+            InspectorTest.expectFalse(multimap.take("badger"), `Nothing was removed for key "badger".`);
+
+            InspectorTest.log(multimap);
+
+            let result = multimap.take("opossum");
+            InspectorTest.expectEqual(multimap.size, 1, `Only one key should remain.`);
+            InspectorTest.expectEqual(result.size, 2, `Two values from the key "opossum" should be taken.`);
+            InspectorTest.expectThat(result.has("badger"), `Result should include "badger".`);
+            InspectorTest.expectThat(result.has("raccoon"), `Result should include "raccoon".`);
+
+            InspectorTest.log(multimap);
+        },
+    });
+
+    suite.addTestCase({
         name: "Multimap.prototype.clear",
         test() {
             let multimap = new Multimap;

@@ -1,3 +1,15 @@
+2020-11-21  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: implement Multimap.prototype.take()
+        https://bugs.webkit.org/show_bug.cgi?id=219231
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Base/Multimap.js:
+        (Multimap.prototype.take):
+        * UserInterface/Base/Utilities.js:
+        (value):
+
 2020-11-20  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: drop `shown`/`hidden` in favor of `attached`/`detached`

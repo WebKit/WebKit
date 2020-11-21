@@ -1,3 +1,14 @@
+2020-11-21  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: implement Multimap.prototype.take()
+        https://bugs.webkit.org/show_bug.cgi?id=219231
+
+        Reviewed by Devin Rousso.
+
+        * inspector/unit-tests/multimap-expected.txt:
+        * inspector/unit-tests/multimap.html:
+        * inspector/unit-tests/set-utilities.html:
+
 2020-11-21  Aditya Keerthi  <akeerthi@apple.com>
 
         Space between minute and meridiem fields in time inputs is too large

@@ -178,10 +178,12 @@ Object.defineProperty(Set.prototype, "take",
 {
     value(key)
     {
-        let exists = this.has(key);
-        if (exists)
+        if (this.has(key)) {
             this.delete(key);
-        return exists;
+            return key;
+        }
+
+        return undefined;
     }
 });
 

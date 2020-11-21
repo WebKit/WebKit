@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -81,6 +81,22 @@ class Multimap
             this._map.delete(key);
 
         return deleted;
+    }
+
+    take(key, value)
+    {
+        // Allow an entire key to be removed by not passing a value.
+        if (arguments.length === 1)
+            return this._map.take(key);
+
+        let valueSet = this._map.get(key);
+        if (!valueSet)
+            return undefined;
+
+        let result = valueSet.take(value);
+        if (!valueSet.size)
+            this._map.delete(key);
+        return result;
     }
 
     clear()
