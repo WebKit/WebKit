@@ -40,7 +40,7 @@ public:
         float top { 0 };
         float bottom { 0 };
     };
-    Line(size_t firstRunIndex, size_t runCount, const FloatRect& lineRect, float lineBoxWidth, EnclosingTopAndBottom enclosingTopAndBottom, const FloatRect& scrollableOverflow, const FloatRect& inkOverflow, float baseline, float horizontalAlignmentOffset)
+    Line(size_t firstRunIndex, size_t runCount, const FloatRect& lineRect, float lineBoxWidth, EnclosingTopAndBottom enclosingTopAndBottom, const FloatRect& scrollableOverflow, const FloatRect& inkOverflow, float baseline, float contentLeftOffset, float contentWidth)
         : m_firstRunIndex(firstRunIndex)
         , m_runCount(runCount)
         , m_lineRect(lineRect)
@@ -49,7 +49,8 @@ public:
         , m_scrollableOverflow(scrollableOverflow)
         , m_inkOverflow(inkOverflow)
         , m_baseline(baseline)
-        , m_horizontalAlignmentOffset(horizontalAlignmentOffset)
+        , m_contentLeftOffset(contentLeftOffset)
+        , m_contentWidth(contentWidth)
     {
     }
 
@@ -62,7 +63,8 @@ public:
     const FloatRect& scrollableOverflow() const { return m_scrollableOverflow; }
     const FloatRect& inkOverflow() const { return m_inkOverflow; }
     float baseline() const { return m_baseline; }
-    float horizontalAlignmentOffset() const { return m_horizontalAlignmentOffset; }
+    float contentLeftOffset() const { return m_contentLeftOffset; }
+    float contentWidth() const { return m_contentWidth; }
 
 private:
     size_t m_firstRunIndex { 0 };
@@ -77,7 +79,8 @@ private:
     FloatRect m_scrollableOverflow;
     FloatRect m_inkOverflow;
     float m_baseline { 0 };
-    float m_horizontalAlignmentOffset { 0 };
+    float m_contentLeftOffset { 0 };
+    float m_contentWidth { 0 };
 };
 
 }

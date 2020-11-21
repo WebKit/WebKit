@@ -59,7 +59,7 @@ public:
         bool hasIntrusiveFloat { false };
         InlineLayoutPoint logicalTopLeft;
         InlineLayoutUnit lineLogicalWidth;
-        InlineLayoutUnit lineContentLogicalWidth;
+        InlineLayoutUnit contentLogicalWidth;
         bool isLineConsideredEmpty { true };
         bool isLastLineWithInlineContent { true };
         const Line::RunList& runs;

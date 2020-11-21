@@ -415,7 +415,7 @@ void LineLayout::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         auto expansion = run.expansion();
         // TextRun expects the xPos to be adjusted with the aligment offset (e.g. when the line is center aligned
         // and the run starts at 100px, due to the horizontal aligment, the xpos is supposed to be at 0px).
-        auto xPos = rect.x() - (line.rect().x() + line.horizontalAlignmentOffset());
+        auto xPos = rect.x() - (line.rect().x() + line.contentLeftOffset());
         WebCore::TextRun textRun { textContent.renderedContent(), xPos, expansion.horizontalExpansion, expansion.behavior };
         textRun.setTabSize(!style.collapseWhiteSpace(), style.tabSize());
         FloatPoint textOrigin { rect.x() + paintOffset.x(), roundToDevicePixel(baseline, deviceScaleFactor) };

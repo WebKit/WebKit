@@ -155,7 +155,7 @@ LineBox LineBoxBuilder::build(const LineBuilder::LineContent& lineContent)
 {
     auto& runs = lineContent.runs;
     auto lineLogicalWidth = lineContent.lineLogicalWidth;
-    auto contentLogicalWidth = lineContent.lineContentLogicalWidth;
+    auto contentLogicalWidth = lineContent.contentLogicalWidth;
     auto isLineConsideredEmpty = lineContent.isLineConsideredEmpty ? LineBox::IsLineConsideredEmpty::Yes : LineBox::IsLineConsideredEmpty::No;
     auto lineBox = LineBox { lineContent.logicalTopLeft, contentLogicalWidth, isLineConsideredEmpty };
 

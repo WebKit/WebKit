@@ -221,7 +221,7 @@ private:
         auto& style = run().style();
         auto expansion = run().expansion();
         auto rect = this->rect();
-        auto xPos = rect.x() - (line().rect().x() + line().horizontalAlignmentOffset());
+        auto xPos = rect.x() - (line().rect().x() + line().contentLeftOffset());
 
         auto textForRun = [&] {
             if (hyphenMode == HyphenMode::Ignore || !hasHyphen())
