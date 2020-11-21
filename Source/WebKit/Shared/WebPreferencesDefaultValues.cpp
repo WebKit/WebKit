@@ -60,6 +60,12 @@ bool defaultPassiveWheelListenersAsDefaultOnDocument()
     return result;
 }
 
+bool defaultWheelEventGesturesBecomeNonBlocking()
+{
+    static bool result = linkedOnOrAfter(WebCore::SDKVersion::FirstThatAllowsWheelEventGesturesToBecomeNonBlocking);
+    return result;
+}
+
 #endif
 
 #if PLATFORM(MAC) || PLATFORM(IOS_FAMILY)

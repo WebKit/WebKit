@@ -1,3 +1,17 @@
+2020-11-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Add an Experimental Features for wheel event gestures becoming non-blocking
+        https://bugs.webkit.org/show_bug.cgi?id=219236
+
+        Reviewed by Sam Weinig.
+
+        Add a feature flag for the behavior that is being added via webkit.org/b/218764,
+        which is that only the first wheel event in a gesture is cancelable.
+
+        * Shared/WebPreferencesDefaultValues.cpp:
+        (WebKit::defaultWheelEventGesturesBecomeNonBlocking):
+        * Shared/WebPreferencesDefaultValues.h:
+
 2020-11-21  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Implement SPI for AuthenticationServices.Framework

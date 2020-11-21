@@ -1096,6 +1096,20 @@ WebXREnabled:
     WebKit:
       default: WebKit::defaultWebXREnabled()
 
+WheelEventGesturesBecomeNonBlocking:
+  type: bool
+  humanReadableName: "Wheel Event gestures become non-blocking"
+  humanReadableDescription: "preventDefault() is only allowed on the first wheel event in a gesture"
+  defaultValue:
+    WebKitLegacy:
+      "PLATFORM(MAC)": WebKit::defaultWheelEventGesturesBecomeNonBlocking()
+      default: true
+    WebKit:
+      "PLATFORM(MAC)": WebKit::defaultWheelEventGesturesBecomeNonBlocking()
+      default: true
+    WebCore:
+      default: true
+
 WritableStreamAPIEnabled:
   type: bool
   humanReadableName: "WritableStream API"

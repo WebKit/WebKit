@@ -291,6 +291,12 @@ bool defaultPassiveWheelListenersAsDefaultOnDocument()
     return result;
 }
 
+bool defaultWheelEventGesturesBecomeNonBlocking()
+{
+    static bool result = linkedOnOrAfter(WebCore::SDKVersion::FirstThatAllowsWheelEventGesturesToBecomeNonBlocking);
+    return result;
+}
+
 #endif
 
 } // namespace WebKit

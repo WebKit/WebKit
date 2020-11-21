@@ -72,6 +72,7 @@ enum class SDKVersion : uint32_t {
     FirstWithDropToNavigateDisallowedByDefault = DYLD_MACOSX_VERSION_10_13,
     FirstWithExpiredOnlyReloadBehavior = DYLD_MACOSX_VERSION_10_13,
     FirstThatDefaultsToPassiveWheelListenersOnDocument = DYLD_MACOSX_VERSION_11_3,
+    FirstThatAllowsWheelEventGesturesToBecomeNonBlocking = DYLD_MACOSX_VERSION_11_3,
     FirstWithWebIconDatabaseWarning = DYLD_MACOSX_VERSION_10_13,
     FirstWithMainThreadReleaseAssertionInWebPageProxy = DYLD_MACOSX_VERSION_10_14,
     FirstWithoutUnconditionalUniversalSandboxExtension = DYLD_MACOSX_VERSION_10_15,

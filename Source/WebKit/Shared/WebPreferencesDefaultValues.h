@@ -49,6 +49,7 @@ bool defaultTextAutosizingUsesIdempotentMode();
 
 #if PLATFORM(MAC)
 bool defaultPassiveWheelListenersAsDefaultOnDocument();
+bool defaultWheelEventGesturesBecomeNonBlocking();
 #endif
 
 #if PLATFORM(MAC) || PLATFORM(IOS_FAMILY)

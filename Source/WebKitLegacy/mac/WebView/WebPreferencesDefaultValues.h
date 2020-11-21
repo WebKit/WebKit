@@ -84,6 +84,7 @@ bool defaultShouldConvertInvalidURLsToBlank();
 
 #if PLATFORM(MAC)
 bool defaultPassiveWheelListenersAsDefaultOnDocument();
+bool defaultWheelEventGesturesBecomeNonBlocking();
 #endif
 
 } // namespace WebKit
