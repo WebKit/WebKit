@@ -1,3 +1,17 @@
+2020-11-20  Dewei Zhu  <dewei_zhu@apple.com>
+
+        'run-analysis' script should schedule retries for A/B tests even after chart analysis failure.
+        https://bugs.webkit.org/show_bug.cgi?id=219116
+
+        Reviewed by Ryosuke Niwa.
+
+        Anlyzing charts and schedule retries for A/B tests on run-analysis script are independent task.
+        It should not skip scheduling retries even when chart analysis part fails.
+
+        * tools/run-analysis.js:
+        (async analysisLoop): Change the logic so that chart analysis failure will not stop scheduling retries.
+        Fix a typo for 'notificationRemoteAPI'.
+
 2020-11-18  Dewei Zhu  <dewei_zhu@apple.com>
 
         Fix a bug that platform groups cannot be updated on 'admin/platform'.
