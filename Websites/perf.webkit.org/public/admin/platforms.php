@@ -59,9 +59,8 @@ function merge_platforms($platform_to_merge, $destination_platform) {
 if ($db) {
     if ($action == 'update') {
         if (update_field('platforms', 'platform', 'name')
-            || update_boolean_field('platforms', 'platform', 'hidden')
-            || update_field('platforms', 'platform', 'hidden')
-            || update_field('platforms', 'platform', 'group'))
+            || update_field('platforms', 'platform', 'group')
+            || update_boolean_field('platforms', 'platform', 'hidden'))
             regenerate_manifest();
         else
             notice('Invalid parameters.');

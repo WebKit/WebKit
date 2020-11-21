@@ -1,3 +1,18 @@
+2020-11-18  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Fix a bug that platform groups cannot be updated on 'admin/platform'.
+        https://bugs.webkit.org/show_bug.cgi?id=219118
+
+        Reviewed by Ryosuke Niwa.
+
+        Admins should be able to update platform group on 'admin/platform'.
+        Update the assertion on BuildbotTriggerable._pullBuildbotOnAllSyncers so that when there is no
+        corresponding entry in buildRequestByGroup, the test group for the request should be finished.
+
+        * public/admin/platforms.php:
+        * tools/js/buildbot-triggerable.js: Updated the assert statement.
+        (BuildbotTriggerable.prototype._pullBuildbotOnAllSyncers):
+
 2020-11-16  Dewei Zhu  <dewei_zhu@apple.com>
 
         BuildbotTriggerable should not process a completed build request from a completed test group.

@@ -179,7 +179,7 @@ class BuildbotTriggerable {
 
                     const info = buildReqeustsByGroup.get(request.testGroupId());
                     if (!info) {
-                        assert(request.hasFinished());
+                        assert(request.testGroup().hasFinished());
                         continue;
                     }
 
