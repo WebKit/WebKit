@@ -35,10 +35,16 @@
 
 namespace WebCore {
 enum class ClientDataType : bool;
+
+class AuthenticatorResponse;
+
+struct ExceptionData;
 }
 
 namespace WebKit {
 class AuthenticatorManager;
+
+struct WebAuthenticationRequestData;
 }
 
 namespace API {
@@ -47,25 +53,35 @@ class WebAuthenticationPanelClient;
 
 class WebAuthenticationPanel final : public ObjectImpl<Object::Type::WebAuthenticationPanel>, public CanMakeWeakPtr<WebAuthenticationPanel> {
 public:
-    using TransportSet = HashSet<WebCore::AuthenticatorTransport, WTF::IntHash<WebCore::AuthenticatorTransport>, WTF::StrongEnumHashTraits<WebCore::AuthenticatorTransport>>;
+    using Response = Variant<Ref<WebCore::AuthenticatorResponse>, WebCore::ExceptionData>;
+    using Callback = CompletionHandler<void(Response&&)>;
 
-    static Ref<WebAuthenticationPanel> create(const WebKit::AuthenticatorManager&, const WTF::String& rpId, const TransportSet&, WebCore::ClientDataType);
+    WebAuthenticationPanel();
     ~WebAuthenticationPanel();
 
-    WTF::String rpId() const { return m_rpId; }
-    const Vector<WebCore::AuthenticatorTransport>& transports() const { return m_transports; }
-    WebCore::ClientDataType clientDataType() const { return m_clientDataType; }
+    void handleRequest(WebKit::WebAuthenticationRequestData&&, Callback&&);
     void cancel() const;
 
     const WebAuthenticationPanelClient& client() const { return m_client.get(); }
     void setClient(UniqueRef<WebAuthenticationPanelClient>&&);
 
+    // FIXME: <rdar://problem/71509848> Remove the following deprecated methods.
+    using TransportSet = HashSet<WebCore::AuthenticatorTransport, WTF::IntHash<WebCore::AuthenticatorTransport>, WTF::StrongEnumHashTraits<WebCore::AuthenticatorTransport>>;
+    static Ref<WebAuthenticationPanel> create(const WebKit::AuthenticatorManager&, const WTF::String& rpId, const TransportSet&, WebCore::ClientDataType);
+    WTF::String rpId() const { return m_rpId; }
+    const Vector<WebCore::AuthenticatorTransport>& transports() const { return m_transports; }
+    WebCore::ClientDataType clientDataType() const { return m_clientDataType; }
+
 private:
+    // FIXME: <rdar://problem/71509848> Remove the following deprecated method.
     WebAuthenticationPanel(const WebKit::AuthenticatorManager&, const WTF::String& rpId, const TransportSet&, WebCore::ClientDataType);
 
-    WeakPtr<WebKit::AuthenticatorManager> m_manager;
-    WTF::String m_rpId;
+    std::unique_ptr<WebKit::AuthenticatorManager> m_manager; // FIXME: <rdar://problem/71509848> Change to UniqueRef.
     UniqueRef<WebAuthenticationPanelClient> m_client;
+
+    // FIXME: <rdar://problem/71509848> Remove the following deprecated fields.
+    WeakPtr<WebKit::AuthenticatorManager> m_weakManager;
+    WTF::String m_rpId;
     Vector<WebCore::AuthenticatorTransport> m_transports;
     WebCore::ClientDataType m_clientDataType;
 };

@@ -1133,6 +1133,38 @@
 		577FF7822346E81C004EDFB9 /* APIWebAuthenticationPanelClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 577FF7812346E81C004EDFB9 /* APIWebAuthenticationPanelClient.h */; };
 		577FF7852346ECAA004EDFB9 /* WebAuthenticationPanelClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 577FF7832346ECAA004EDFB9 /* WebAuthenticationPanelClient.h */; };
 		578DC2982155A0020074E815 /* LocalAuthenticationSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 578DC2972155A0010074E815 /* LocalAuthenticationSoftLink.h */; };
+		5790A6532565DED30077C5A7 /* _WKWebAuthenticationPanelForTesting.h in Headers */ = {isa = PBXBuildFile; fileRef = 5790A6512565DE6A0077C5A7 /* _WKWebAuthenticationPanelForTesting.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		5790A656256799DA0077C5A7 /* _WKPublicKeyCredentialEntity.h in Headers */ = {isa = PBXBuildFile; fileRef = 5790A654256799DA0077C5A7 /* _WKPublicKeyCredentialEntity.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		5790A657256799DA0077C5A7 /* _WKPublicKeyCredentialEntity.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5790A655256799DA0077C5A7 /* _WKPublicKeyCredentialEntity.mm */; };
+		5790A65A25679B260077C5A7 /* _WKPublicKeyCredentialRelyingPartyEntity.h in Headers */ = {isa = PBXBuildFile; fileRef = 5790A65825679B260077C5A7 /* _WKPublicKeyCredentialRelyingPartyEntity.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		5790A65B25679B260077C5A7 /* _WKPublicKeyCredentialRelyingPartyEntity.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5790A65925679B260077C5A7 /* _WKPublicKeyCredentialRelyingPartyEntity.mm */; };
+		5790A65E25679C110077C5A7 /* _WKPublicKeyCredentialUserEntity.h in Headers */ = {isa = PBXBuildFile; fileRef = 5790A65C25679C110077C5A7 /* _WKPublicKeyCredentialUserEntity.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		5790A65F25679C110077C5A7 /* _WKPublicKeyCredentialUserEntity.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5790A65D25679C110077C5A7 /* _WKPublicKeyCredentialUserEntity.mm */; };
+		5790A66225679C860077C5A7 /* _WKPublicKeyCredentialParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 5790A66025679C860077C5A7 /* _WKPublicKeyCredentialParameters.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		5790A66325679C860077C5A7 /* _WKPublicKeyCredentialParameters.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5790A66125679C860077C5A7 /* _WKPublicKeyCredentialParameters.mm */; };
+		5790A66625679CEA0077C5A7 /* _WKAuthenticatorSelectionCriteria.h in Headers */ = {isa = PBXBuildFile; fileRef = 5790A66425679CEA0077C5A7 /* _WKAuthenticatorSelectionCriteria.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		5790A66725679CEA0077C5A7 /* _WKAuthenticatorSelectionCriteria.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5790A66525679CEA0077C5A7 /* _WKAuthenticatorSelectionCriteria.mm */; };
+		5790A66925679E000077C5A7 /* _WKUserVerificationRequirement.h in Headers */ = {isa = PBXBuildFile; fileRef = 5790A66825679E000077C5A7 /* _WKUserVerificationRequirement.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		5790A66C25679EB70077C5A7 /* _WKPublicKeyCredentialDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 5790A66A25679EB70077C5A7 /* _WKPublicKeyCredentialDescriptor.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		5790A66D25679EB70077C5A7 /* _WKPublicKeyCredentialDescriptor.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5790A66B25679EB70077C5A7 /* _WKPublicKeyCredentialDescriptor.mm */; };
+		5790A67025679F1A0077C5A7 /* _WKAuthenticationExtensionsClientInputs.h in Headers */ = {isa = PBXBuildFile; fileRef = 5790A66E25679F1A0077C5A7 /* _WKAuthenticationExtensionsClientInputs.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		5790A67125679F1A0077C5A7 /* _WKAuthenticationExtensionsClientInputs.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5790A66F25679F1A0077C5A7 /* _WKAuthenticationExtensionsClientInputs.mm */; };
+		5790A67425679F740077C5A7 /* _WKPublicKeyCredentialCreationOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 5790A67225679F740077C5A7 /* _WKPublicKeyCredentialCreationOptions.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		5790A67525679F740077C5A7 /* _WKPublicKeyCredentialCreationOptions.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5790A67325679F740077C5A7 /* _WKPublicKeyCredentialCreationOptions.mm */; };
+		5790A6782567A0CD0077C5A7 /* _WKPublicKeyCredentialRequestOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 5790A6762567A0CD0077C5A7 /* _WKPublicKeyCredentialRequestOptions.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		5790A6792567A0CD0077C5A7 /* _WKPublicKeyCredentialRequestOptions.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5790A6772567A0CD0077C5A7 /* _WKPublicKeyCredentialRequestOptions.mm */; };
+		5790A67C2567A13E0077C5A7 /* _WKAuthenticationExtensionsClientOutputs.h in Headers */ = {isa = PBXBuildFile; fileRef = 5790A67A2567A13E0077C5A7 /* _WKAuthenticationExtensionsClientOutputs.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		5790A67D2567A13E0077C5A7 /* _WKAuthenticationExtensionsClientOutputs.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5790A67B2567A13E0077C5A7 /* _WKAuthenticationExtensionsClientOutputs.mm */; };
+		5790A6802567A1AC0077C5A7 /* _WKAuthenticatorResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 5790A67E2567A1AC0077C5A7 /* _WKAuthenticatorResponse.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		5790A6812567A1AC0077C5A7 /* _WKAuthenticatorResponse.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5790A67F2567A1AC0077C5A7 /* _WKAuthenticatorResponse.mm */; };
+		5790A6842567A21E0077C5A7 /* _WKAuthenticatorAttestationResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 5790A6822567A21E0077C5A7 /* _WKAuthenticatorAttestationResponse.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		5790A6852567A21E0077C5A7 /* _WKAuthenticatorAttestationResponse.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5790A6832567A21E0077C5A7 /* _WKAuthenticatorAttestationResponse.mm */; };
+		5790A6882567A28A0077C5A7 /* _WKAuthenticatorAssertionResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 5790A6862567A28A0077C5A7 /* _WKAuthenticatorAssertionResponse.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		5790A6892567A28A0077C5A7 /* _WKAuthenticatorAssertionResponse.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5790A6872567A28A0077C5A7 /* _WKAuthenticatorAssertionResponse.mm */; };
+		5790A68B2567A4CC0077C5A7 /* _WKAuthenticatorResponseInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 5790A68A2567A4CC0077C5A7 /* _WKAuthenticatorResponseInternal.h */; };
+		5790A68D2567B4490077C5A7 /* _WKAuthenticatorAttestationResponseInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 5790A68C2567B4490077C5A7 /* _WKAuthenticatorAttestationResponseInternal.h */; };
+		5790A68F2567B4CF0077C5A7 /* _WKAuthenticatorAssertionResponseInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 5790A68E2567B4CF0077C5A7 /* _WKAuthenticatorAssertionResponseInternal.h */; };
+		5790A6912567B5E00077C5A7 /* _WKAuthenticationExtensionsClientOutputsInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 5790A6902567B5E00077C5A7 /* _WKAuthenticationExtensionsClientOutputsInternal.h */; };
 		579F1BF623C80DB600C7D4B4 /* _WKWebAuthenticationAssertionResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 579F1BF423C80DB600C7D4B4 /* _WKWebAuthenticationAssertionResponse.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		579F1BF923C80EC600C7D4B4 /* _WKWebAuthenticationAssertionResponseInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 579F1BF823C80EC600C7D4B4 /* _WKWebAuthenticationAssertionResponseInternal.h */; };
 		579F1BFC23C811CF00C7D4B4 /* APIWebAuthenticationAssertionResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 579F1BFA23C811CF00C7D4B4 /* APIWebAuthenticationAssertionResponse.h */; };
@@ -4013,6 +4045,38 @@
 		577FF7832346ECAA004EDFB9 /* WebAuthenticationPanelClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebAuthenticationPanelClient.h; sourceTree = "<group>"; };
 		577FF7842346ECAA004EDFB9 /* WebAuthenticationPanelClient.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebAuthenticationPanelClient.mm; sourceTree = "<group>"; };
 		578DC2972155A0010074E815 /* LocalAuthenticationSoftLink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LocalAuthenticationSoftLink.h; sourceTree = "<group>"; };
+		5790A6512565DE6A0077C5A7 /* _WKWebAuthenticationPanelForTesting.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKWebAuthenticationPanelForTesting.h; sourceTree = "<group>"; };
+		5790A654256799DA0077C5A7 /* _WKPublicKeyCredentialEntity.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKPublicKeyCredentialEntity.h; sourceTree = "<group>"; };
+		5790A655256799DA0077C5A7 /* _WKPublicKeyCredentialEntity.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKPublicKeyCredentialEntity.mm; sourceTree = "<group>"; };
+		5790A65825679B260077C5A7 /* _WKPublicKeyCredentialRelyingPartyEntity.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKPublicKeyCredentialRelyingPartyEntity.h; sourceTree = "<group>"; };
+		5790A65925679B260077C5A7 /* _WKPublicKeyCredentialRelyingPartyEntity.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKPublicKeyCredentialRelyingPartyEntity.mm; sourceTree = "<group>"; };
+		5790A65C25679C110077C5A7 /* _WKPublicKeyCredentialUserEntity.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKPublicKeyCredentialUserEntity.h; sourceTree = "<group>"; };
+		5790A65D25679C110077C5A7 /* _WKPublicKeyCredentialUserEntity.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKPublicKeyCredentialUserEntity.mm; sourceTree = "<group>"; };
+		5790A66025679C860077C5A7 /* _WKPublicKeyCredentialParameters.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKPublicKeyCredentialParameters.h; sourceTree = "<group>"; };
+		5790A66125679C860077C5A7 /* _WKPublicKeyCredentialParameters.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKPublicKeyCredentialParameters.mm; sourceTree = "<group>"; };
+		5790A66425679CEA0077C5A7 /* _WKAuthenticatorSelectionCriteria.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKAuthenticatorSelectionCriteria.h; sourceTree = "<group>"; };
+		5790A66525679CEA0077C5A7 /* _WKAuthenticatorSelectionCriteria.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKAuthenticatorSelectionCriteria.mm; sourceTree = "<group>"; };
+		5790A66825679E000077C5A7 /* _WKUserVerificationRequirement.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKUserVerificationRequirement.h; sourceTree = "<group>"; };
+		5790A66A25679EB70077C5A7 /* _WKPublicKeyCredentialDescriptor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKPublicKeyCredentialDescriptor.h; sourceTree = "<group>"; };
+		5790A66B25679EB70077C5A7 /* _WKPublicKeyCredentialDescriptor.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKPublicKeyCredentialDescriptor.mm; sourceTree = "<group>"; };
+		5790A66E25679F1A0077C5A7 /* _WKAuthenticationExtensionsClientInputs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKAuthenticationExtensionsClientInputs.h; sourceTree = "<group>"; };
+		5790A66F25679F1A0077C5A7 /* _WKAuthenticationExtensionsClientInputs.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKAuthenticationExtensionsClientInputs.mm; sourceTree = "<group>"; };
+		5790A67225679F740077C5A7 /* _WKPublicKeyCredentialCreationOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKPublicKeyCredentialCreationOptions.h; sourceTree = "<group>"; };
+		5790A67325679F740077C5A7 /* _WKPublicKeyCredentialCreationOptions.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKPublicKeyCredentialCreationOptions.mm; sourceTree = "<group>"; };
+		5790A6762567A0CD0077C5A7 /* _WKPublicKeyCredentialRequestOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKPublicKeyCredentialRequestOptions.h; sourceTree = "<group>"; };
+		5790A6772567A0CD0077C5A7 /* _WKPublicKeyCredentialRequestOptions.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKPublicKeyCredentialRequestOptions.mm; sourceTree = "<group>"; };
+		5790A67A2567A13E0077C5A7 /* _WKAuthenticationExtensionsClientOutputs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKAuthenticationExtensionsClientOutputs.h; sourceTree = "<group>"; };
+		5790A67B2567A13E0077C5A7 /* _WKAuthenticationExtensionsClientOutputs.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKAuthenticationExtensionsClientOutputs.mm; sourceTree = "<group>"; };
+		5790A67E2567A1AC0077C5A7 /* _WKAuthenticatorResponse.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKAuthenticatorResponse.h; sourceTree = "<group>"; };
+		5790A67F2567A1AC0077C5A7 /* _WKAuthenticatorResponse.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKAuthenticatorResponse.mm; sourceTree = "<group>"; };
+		5790A6822567A21E0077C5A7 /* _WKAuthenticatorAttestationResponse.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKAuthenticatorAttestationResponse.h; sourceTree = "<group>"; };
+		5790A6832567A21E0077C5A7 /* _WKAuthenticatorAttestationResponse.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKAuthenticatorAttestationResponse.mm; sourceTree = "<group>"; };
+		5790A6862567A28A0077C5A7 /* _WKAuthenticatorAssertionResponse.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKAuthenticatorAssertionResponse.h; sourceTree = "<group>"; };
+		5790A6872567A28A0077C5A7 /* _WKAuthenticatorAssertionResponse.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKAuthenticatorAssertionResponse.mm; sourceTree = "<group>"; };
+		5790A68A2567A4CC0077C5A7 /* _WKAuthenticatorResponseInternal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKAuthenticatorResponseInternal.h; sourceTree = "<group>"; };
+		5790A68C2567B4490077C5A7 /* _WKAuthenticatorAttestationResponseInternal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKAuthenticatorAttestationResponseInternal.h; sourceTree = "<group>"; };
+		5790A68E2567B4CF0077C5A7 /* _WKAuthenticatorAssertionResponseInternal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKAuthenticatorAssertionResponseInternal.h; sourceTree = "<group>"; };
+		5790A6902567B5E00077C5A7 /* _WKAuthenticationExtensionsClientOutputsInternal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKAuthenticationExtensionsClientOutputsInternal.h; sourceTree = "<group>"; };
 		579F1BF423C80DB600C7D4B4 /* _WKWebAuthenticationAssertionResponse.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKWebAuthenticationAssertionResponse.h; sourceTree = "<group>"; };
 		579F1BF523C80DB600C7D4B4 /* _WKWebAuthenticationAssertionResponse.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKWebAuthenticationAssertionResponse.mm; sourceTree = "<group>"; };
 		579F1BF823C80EC600C7D4B4 /* _WKWebAuthenticationAssertionResponseInternal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKWebAuthenticationAssertionResponseInternal.h; sourceTree = "<group>"; };
@@ -7373,6 +7437,22 @@
 				F44291911FA59107002CC93E /* _WKAttachment.h */,
 				F44291931FA59311002CC93E /* _WKAttachment.mm */,
 				F44291951FA5942A002CC93E /* _WKAttachmentInternal.h */,
+				5790A66E25679F1A0077C5A7 /* _WKAuthenticationExtensionsClientInputs.h */,
+				5790A66F25679F1A0077C5A7 /* _WKAuthenticationExtensionsClientInputs.mm */,
+				5790A67A2567A13E0077C5A7 /* _WKAuthenticationExtensionsClientOutputs.h */,
+				5790A67B2567A13E0077C5A7 /* _WKAuthenticationExtensionsClientOutputs.mm */,
+				5790A6902567B5E00077C5A7 /* _WKAuthenticationExtensionsClientOutputsInternal.h */,
+				5790A6862567A28A0077C5A7 /* _WKAuthenticatorAssertionResponse.h */,
+				5790A6872567A28A0077C5A7 /* _WKAuthenticatorAssertionResponse.mm */,
+				5790A68E2567B4CF0077C5A7 /* _WKAuthenticatorAssertionResponseInternal.h */,
+				5790A6822567A21E0077C5A7 /* _WKAuthenticatorAttestationResponse.h */,
+				5790A6832567A21E0077C5A7 /* _WKAuthenticatorAttestationResponse.mm */,
+				5790A68C2567B4490077C5A7 /* _WKAuthenticatorAttestationResponseInternal.h */,
+				5790A67E2567A1AC0077C5A7 /* _WKAuthenticatorResponse.h */,
+				5790A67F2567A1AC0077C5A7 /* _WKAuthenticatorResponse.mm */,
+				5790A68A2567A4CC0077C5A7 /* _WKAuthenticatorResponseInternal.h */,
+				5790A66425679CEA0077C5A7 /* _WKAuthenticatorSelectionCriteria.h */,
+				5790A66525679CEA0077C5A7 /* _WKAuthenticatorSelectionCriteria.mm */,
 				99E714C11C1249E600665B3A /* _WKAutomationDelegate.h */,
 				990D28A71C6404B000986977 /* _WKAutomationSession.h */,
 				990D28AD1C65190400986977 /* _WKAutomationSession.mm */,
@@ -7445,6 +7525,20 @@
 				1A43E828188F3CDC009E4D30 /* _WKProcessPoolConfiguration.h */,
 				1A43E827188F3CDC009E4D30 /* _WKProcessPoolConfiguration.mm */,
 				7C89D2D61A6C6BE6003A5FDE /* _WKProcessPoolConfigurationInternal.h */,
+				5790A67225679F740077C5A7 /* _WKPublicKeyCredentialCreationOptions.h */,
+				5790A67325679F740077C5A7 /* _WKPublicKeyCredentialCreationOptions.mm */,
+				5790A66A25679EB70077C5A7 /* _WKPublicKeyCredentialDescriptor.h */,
+				5790A66B25679EB70077C5A7 /* _WKPublicKeyCredentialDescriptor.mm */,
+				5790A654256799DA0077C5A7 /* _WKPublicKeyCredentialEntity.h */,
+				5790A655256799DA0077C5A7 /* _WKPublicKeyCredentialEntity.mm */,
+				5790A66025679C860077C5A7 /* _WKPublicKeyCredentialParameters.h */,
+				5790A66125679C860077C5A7 /* _WKPublicKeyCredentialParameters.mm */,
+				5790A65825679B260077C5A7 /* _WKPublicKeyCredentialRelyingPartyEntity.h */,
+				5790A65925679B260077C5A7 /* _WKPublicKeyCredentialRelyingPartyEntity.mm */,
+				5790A6762567A0CD0077C5A7 /* _WKPublicKeyCredentialRequestOptions.h */,
+				5790A6772567A0CD0077C5A7 /* _WKPublicKeyCredentialRequestOptions.mm */,
+				5790A65C25679C110077C5A7 /* _WKPublicKeyCredentialUserEntity.h */,
+				5790A65D25679C110077C5A7 /* _WKPublicKeyCredentialUserEntity.mm */,
 				A55BA80C1BA12BE1007CD33D /* _WKRemoteWebInspectorViewController.h */,
 				A55BA80D1BA12BE1007CD33D /* _WKRemoteWebInspectorViewController.mm */,
 				990E1E082384A88B004602DF /* _WKRemoteWebInspectorViewControllerPrivate.h */,
@@ -7493,6 +7587,7 @@
 				2D87861B1BDB54BF00D02ABB /* _WKUserStyleSheet.h */,
 				2D87861C1BDB54BF00D02ABB /* _WKUserStyleSheet.mm */,
 				2D87861F1BDB57F500D02ABB /* _WKUserStyleSheetInternal.h */,
+				5790A66825679E000077C5A7 /* _WKUserVerificationRequirement.h */,
 				1A81B37F18BD66AD0007FDAC /* _WKVisitedLinkStore.h */,
 				1A81B37E18BD66AD0007FDAC /* _WKVisitedLinkStore.mm */,
 				1A81B38418BD673A0007FDAC /* _WKVisitedLinkStoreInternal.h */,
@@ -7501,6 +7596,7 @@
 				579F1BF823C80EC600C7D4B4 /* _WKWebAuthenticationAssertionResponseInternal.h */,
 				574728CF23456E98001700AF /* _WKWebAuthenticationPanel.h */,
 				574728D023456E98001700AF /* _WKWebAuthenticationPanel.mm */,
+				5790A6512565DE6A0077C5A7 /* _WKWebAuthenticationPanelForTesting.h */,
 				574728D3234570AE001700AF /* _WKWebAuthenticationPanelInternal.h */,
 				1AE286761C7E76510069AC4F /* _WKWebsiteDataSize.h */,
 				1AE286751C7E76510069AC4F /* _WKWebsiteDataSize.mm */,
@@ -10847,6 +10943,16 @@
 				63108F991F9671F700A0DB84 /* _WKApplicationManifestInternal.h in Headers */,
 				F44291921FA591C9002CC93E /* _WKAttachment.h in Headers */,
 				F44291961FA5942A002CC93E /* _WKAttachmentInternal.h in Headers */,
+				5790A67025679F1A0077C5A7 /* _WKAuthenticationExtensionsClientInputs.h in Headers */,
+				5790A67C2567A13E0077C5A7 /* _WKAuthenticationExtensionsClientOutputs.h in Headers */,
+				5790A6912567B5E00077C5A7 /* _WKAuthenticationExtensionsClientOutputsInternal.h in Headers */,
+				5790A6882567A28A0077C5A7 /* _WKAuthenticatorAssertionResponse.h in Headers */,
+				5790A68F2567B4CF0077C5A7 /* _WKAuthenticatorAssertionResponseInternal.h in Headers */,
+				5790A6842567A21E0077C5A7 /* _WKAuthenticatorAttestationResponse.h in Headers */,
+				5790A68D2567B4490077C5A7 /* _WKAuthenticatorAttestationResponseInternal.h in Headers */,
+				5790A6802567A1AC0077C5A7 /* _WKAuthenticatorResponse.h in Headers */,
+				5790A68B2567A4CC0077C5A7 /* _WKAuthenticatorResponseInternal.h in Headers */,
+				5790A66625679CEA0077C5A7 /* _WKAuthenticatorSelectionCriteria.h in Headers */,
 				99E714C51C124A0400665B3A /* _WKAutomationDelegate.h in Headers */,
 				990D28AB1C6420C600986977 /* _WKAutomationSession.h in Headers */,
 				99788ACB1F421DDA00C08000 /* _WKAutomationSessionConfiguration.h in Headers */,
@@ -10903,6 +11009,13 @@
 				9323611E1B015DA800FA9232 /* _WKOverlayScrollbarStyle.h in Headers */,
 				1A43E82A188F3CDC009E4D30 /* _WKProcessPoolConfiguration.h in Headers */,
 				7C89D2D71A6C6BE6003A5FDE /* _WKProcessPoolConfigurationInternal.h in Headers */,
+				5790A67425679F740077C5A7 /* _WKPublicKeyCredentialCreationOptions.h in Headers */,
+				5790A66C25679EB70077C5A7 /* _WKPublicKeyCredentialDescriptor.h in Headers */,
+				5790A656256799DA0077C5A7 /* _WKPublicKeyCredentialEntity.h in Headers */,
+				5790A66225679C860077C5A7 /* _WKPublicKeyCredentialParameters.h in Headers */,
+				5790A6782567A0CD0077C5A7 /* _WKPublicKeyCredentialRequestOptions.h in Headers */,
+				5790A65A25679B260077C5A7 /* _WKPublicKeyCredentialRelyingPartyEntity.h in Headers */,
+				5790A65E25679C110077C5A7 /* _WKPublicKeyCredentialUserEntity.h in Headers */,
 				1A9E328D182165A900F5D04C /* _WKRemoteObjectInterface.h in Headers */,
 				1AABFE3A1829C1ED005B070E /* _WKRemoteObjectInterfaceInternal.h in Headers */,
 				1A9E32891821636900F5D04C /* _WKRemoteObjectRegistry.h in Headers */,
@@ -10943,11 +11056,13 @@
 				7CB365AD1D31DC10007158CA /* _WKUserInitiatedActionInternal.h in Headers */,
 				2D87861D1BDB54BF00D02ABB /* _WKUserStyleSheet.h in Headers */,
 				2D8786201BDB57F500D02ABB /* _WKUserStyleSheetInternal.h in Headers */,
+				5790A66925679E000077C5A7 /* _WKUserVerificationRequirement.h in Headers */,
 				1A81B38118BD66AD0007FDAC /* _WKVisitedLinkStore.h in Headers */,
 				1A81B38518BD673A0007FDAC /* _WKVisitedLinkStoreInternal.h in Headers */,
 				579F1BF623C80DB600C7D4B4 /* _WKWebAuthenticationAssertionResponse.h in Headers */,
 				579F1BF923C80EC600C7D4B4 /* _WKWebAuthenticationAssertionResponseInternal.h in Headers */,
 				574728D123456E98001700AF /* _WKWebAuthenticationPanel.h in Headers */,
+				5790A6532565DED30077C5A7 /* _WKWebAuthenticationPanelForTesting.h in Headers */,
 				574728D4234570AE001700AF /* _WKWebAuthenticationPanelInternal.h in Headers */,
 				1AE286781C7E76510069AC4F /* _WKWebsiteDataSize.h in Headers */,
 				1AE286801C7F92C00069AC4F /* _WKWebsiteDataSizeInternal.h in Headers */,
@@ -13080,7 +13195,20 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5790A67125679F1A0077C5A7 /* _WKAuthenticationExtensionsClientInputs.mm in Sources */,
+				5790A67D2567A13E0077C5A7 /* _WKAuthenticationExtensionsClientOutputs.mm in Sources */,
+				5790A6892567A28A0077C5A7 /* _WKAuthenticatorAssertionResponse.mm in Sources */,
+				5790A6852567A21E0077C5A7 /* _WKAuthenticatorAttestationResponse.mm in Sources */,
+				5790A6812567A1AC0077C5A7 /* _WKAuthenticatorResponse.mm in Sources */,
+				5790A66725679CEA0077C5A7 /* _WKAuthenticatorSelectionCriteria.mm in Sources */,
 				5CBD595C2280EDF4002B22AA /* _WKCustomHeaderFields.mm in Sources */,
+				5790A67525679F740077C5A7 /* _WKPublicKeyCredentialCreationOptions.mm in Sources */,
+				5790A66D25679EB70077C5A7 /* _WKPublicKeyCredentialDescriptor.mm in Sources */,
+				5790A657256799DA0077C5A7 /* _WKPublicKeyCredentialEntity.mm in Sources */,
+				5790A66325679C860077C5A7 /* _WKPublicKeyCredentialParameters.mm in Sources */,
+				5790A6792567A0CD0077C5A7 /* _WKPublicKeyCredentialRequestOptions.mm in Sources */,
+				5790A65B25679B260077C5A7 /* _WKPublicKeyCredentialRelyingPartyEntity.mm in Sources */,
+				5790A65F25679C110077C5A7 /* _WKPublicKeyCredentialUserEntity.mm in Sources */,
 				49FBEFFD239B011D00BD032F /* _WKResourceLoadStatisticsFirstParty.mm in Sources */,
 				49FBEFFF239B012F00BD032F /* _WKResourceLoadStatisticsThirdParty.mm in Sources */,
 				99E7189A21F79D9E0055E975 /* _WKTouchEventGenerator.mm in Sources */,

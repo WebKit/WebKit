@@ -33,11 +33,25 @@
 #import "TestWKWebView.h"
 #import "WKWebViewConfigurationExtras.h"
 #import <LocalAuthentication/LocalAuthentication.h>
+#import <WebCore/PublicKeyCredentialCreationOptions.h>
+#import <WebCore/PublicKeyCredentialRequestOptions.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKUIDelegatePrivate.h>
+#import <WebKit/_WKAuthenticationExtensionsClientInputs.h>
+#import <WebKit/_WKAuthenticationExtensionsClientOutputs.h>
+#import <WebKit/_WKAuthenticatorAssertionResponse.h>
+#import <WebKit/_WKAuthenticatorAttestationResponse.h>
+#import <WebKit/_WKAuthenticatorSelectionCriteria.h>
 #import <WebKit/_WKExperimentalFeature.h>
+#import <WebKit/_WKPublicKeyCredentialCreationOptions.h>
+#import <WebKit/_WKPublicKeyCredentialDescriptor.h>
+#import <WebKit/_WKPublicKeyCredentialParameters.h>
+#import <WebKit/_WKPublicKeyCredentialRequestOptions.h>
+#import <WebKit/_WKPublicKeyCredentialRelyingPartyEntity.h>
+#import <WebKit/_WKPublicKeyCredentialUserEntity.h>
 #import <WebKit/_WKWebAuthenticationAssertionResponse.h>
 #import <WebKit/_WKWebAuthenticationPanel.h>
+#import <WebKit/_WKWebAuthenticationPanelForTesting.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/RandomNumber.h>
 #import <wtf/spi/cocoa/SecuritySPI.h>
@@ -237,6 +251,7 @@ static String webAuthenticationPanelSelectedCredentialName;
 @end
 
 namespace TestWebKitAPI {
+using namespace WebCore;
 
 namespace {
 
@@ -1431,6 +1446,358 @@ TEST(WebAuthenticationPanel, LAGetAssertionMultipleOrder)
 #endif // PLATFORM(MAC)
 
 #endif // USE(APPLE_INTERNAL_SDK) || PLATFORM(IOS)
+
+TEST(WebAuthenticationPanel, PublicKeyCredentialCreationOptionsMinimun)
+{
+    uint8_t identifier[] = { 0x01, 0x02, 0x03, 0x04 };
+    NSData *nsIdentifier = [NSData dataWithBytes:identifier length:sizeof(identifier)];
+    auto parameters = adoptNS([[_WKPublicKeyCredentialParameters alloc] initWithAlgorithm:@-7]);
+
+    auto rp = adoptNS([[_WKPublicKeyCredentialRelyingPartyEntity alloc] initWithName:@"example.com"]);
+    auto user = adoptNS([[_WKPublicKeyCredentialUserEntity alloc] initWithName:@"jappleseed@example.com" identifier:nsIdentifier displayName:@"J Appleseed"]);
+    NSArray<_WKPublicKeyCredentialParameters *> *publicKeyCredentialParamaters = @[ parameters.get() ];
+
+    auto options = adoptNS([[_WKPublicKeyCredentialCreationOptions alloc] initWithRelyingParty:rp.get() user:user.get() publicKeyCredentialParamaters:publicKeyCredentialParamaters]);
+    auto result = [_WKWebAuthenticationPanel convertToCoreCreationOptionsWithOptions:options.get()];
+
+    EXPECT_WK_STREQ(result.rp.name, "example.com");
+    EXPECT_TRUE(result.rp.icon.isNull());
+    EXPECT_TRUE(result.rp.id.isNull());
+
+    EXPECT_WK_STREQ(result.user.name, "jappleseed@example.com");
+    EXPECT_TRUE(result.user.icon.isNull());
+    EXPECT_EQ(result.user.idVector.size(), sizeof(identifier));
+    EXPECT_EQ(memcmp(result.user.idVector.data(), identifier, sizeof(identifier)), 0);
+    EXPECT_WK_STREQ(result.user.displayName, "J Appleseed");
+
+    EXPECT_EQ(result.pubKeyCredParams.size(), 1lu);
+    EXPECT_EQ(result.pubKeyCredParams[0].type, WebCore::PublicKeyCredentialType::PublicKey);
+    EXPECT_EQ(result.pubKeyCredParams[0].alg, -7);
+
+    EXPECT_EQ(result.timeout, WTF::nullopt);
+    EXPECT_EQ(result.excludeCredentials.size(), 0lu);
+    EXPECT_EQ(result.authenticatorSelection, WTF::nullopt);
+    EXPECT_EQ(result.attestation, AttestationConveyancePreference::None);
+    EXPECT_TRUE(result.extensions->appid.isNull());
+    EXPECT_EQ(result.extensions->googleLegacyAppidSupport, false);
+}
+
+TEST(WebAuthenticationPanel, PublicKeyCredentialCreationOptionsMaximumDefault)
+{
+    uint8_t identifier[] = { 0x01, 0x02, 0x03, 0x04 };
+    NSData *nsIdentifier = [NSData dataWithBytes:identifier length:sizeof(identifier)];
+    auto parameters1 = adoptNS([[_WKPublicKeyCredentialParameters alloc] initWithAlgorithm:@-7]);
+    auto parameters2 = adoptNS([[_WKPublicKeyCredentialParameters alloc] initWithAlgorithm:@-257]);
+    auto descriptor = adoptNS([[_WKPublicKeyCredentialDescriptor alloc] initWithIdentifier:nsIdentifier]);
+
+    auto rp = adoptNS([[_WKPublicKeyCredentialRelyingPartyEntity alloc] initWithName:@"example.com"]);
+    auto user = adoptNS([[_WKPublicKeyCredentialUserEntity alloc] initWithName:@"jappleseed@example.com" identifier:nsIdentifier displayName:@"J Appleseed"]);
+    NSArray<_WKPublicKeyCredentialParameters *> *publicKeyCredentialParamaters = @[ parameters1.get(), parameters2.get() ];
+    auto authenticatorSelection = adoptNS([[_WKAuthenticatorSelectionCriteria alloc] init]);
+    auto extensions = adoptNS([[_WKAuthenticationExtensionsClientInputs alloc] init]);
+
+    auto options = adoptNS([[_WKPublicKeyCredentialCreationOptions alloc] initWithRelyingParty:rp.get() user:user.get() publicKeyCredentialParamaters:publicKeyCredentialParamaters]);
+    [options setTimeout:@120];
+    [options setExcludeCredentials:@[ descriptor.get() ]];
+    [options setAuthenticatorSelection:authenticatorSelection.get()];
+    [options setExtensions:extensions.get()];
+
+    auto result = [_WKWebAuthenticationPanel convertToCoreCreationOptionsWithOptions:options.get()];
+
+    EXPECT_WK_STREQ(result.rp.name, "example.com");
+    EXPECT_TRUE(result.rp.icon.isNull());
+    EXPECT_TRUE(result.rp.id.isNull());
+
+    EXPECT_WK_STREQ(result.user.name, "jappleseed@example.com");
+    EXPECT_TRUE(result.user.icon.isNull());
+    EXPECT_EQ(result.user.idVector.size(), sizeof(identifier));
+    EXPECT_EQ(memcmp(result.user.idVector.data(), identifier, sizeof(identifier)), 0);
+    EXPECT_WK_STREQ(result.user.displayName, "J Appleseed");
+
+    EXPECT_EQ(result.pubKeyCredParams.size(), 2lu);
+    EXPECT_EQ(result.pubKeyCredParams[0].type, WebCore::PublicKeyCredentialType::PublicKey);
+    EXPECT_EQ(result.pubKeyCredParams[0].alg, -7);
+    EXPECT_EQ(result.pubKeyCredParams[1].type, WebCore::PublicKeyCredentialType::PublicKey);
+    EXPECT_EQ(result.pubKeyCredParams[1].alg, -257);
+
+    EXPECT_EQ(result.timeout, 120u);
+
+    EXPECT_EQ(result.excludeCredentials.size(), 1lu);
+    EXPECT_EQ(result.excludeCredentials[0].type, WebCore::PublicKeyCredentialType::PublicKey);
+    EXPECT_EQ(result.excludeCredentials[0].idVector.size(), sizeof(identifier));
+    EXPECT_EQ(memcmp(result.excludeCredentials[0].idVector.data(), identifier, sizeof(identifier)), 0);
+
+    EXPECT_EQ(result.authenticatorSelection->authenticatorAttachment, WTF::nullopt);
+    EXPECT_EQ(result.authenticatorSelection->requireResidentKey, false);
+    EXPECT_EQ(result.authenticatorSelection->userVerification, UserVerificationRequirement::Preferred);
+
+    EXPECT_EQ(result.attestation, AttestationConveyancePreference::None);
+    EXPECT_TRUE(result.extensions->appid.isNull());
+}
+
+TEST(WebAuthenticationPanel, PublicKeyCredentialCreationOptionsMaximum1)
+{
+    uint8_t identifier[] = { 0x01, 0x02, 0x03, 0x04 };
+    NSData *nsIdentifier = [NSData dataWithBytes:identifier length:sizeof(identifier)];
+    auto parameters1 = adoptNS([[_WKPublicKeyCredentialParameters alloc] initWithAlgorithm:@-7]);
+    auto parameters2 = adoptNS([[_WKPublicKeyCredentialParameters alloc] initWithAlgorithm:@-257]);
+
+    auto rp = adoptNS([[_WKPublicKeyCredentialRelyingPartyEntity alloc] initWithName:@"example.com"]);
+    [rp setIcon:@"https//www.example.com/icon.jpg"];
+    [rp setIdentifier:@"example.com"];
+
+    auto user = adoptNS([[_WKPublicKeyCredentialUserEntity alloc] initWithName:@"jappleseed@example.com" identifier:nsIdentifier displayName:@"J Appleseed"]);
+    [user setIcon:@"https//www.example.com/icon.jpg"];
+
+    NSArray<_WKPublicKeyCredentialParameters *> *publicKeyCredentialParamaters = @[ parameters1.get(), parameters2.get() ];
+
+    auto options = adoptNS([[_WKPublicKeyCredentialCreationOptions alloc] initWithRelyingParty:rp.get() user:user.get() publicKeyCredentialParamaters:publicKeyCredentialParamaters]);
+    [options setTimeout:@120];
+
+    auto usb = adoptNS([NSNumber numberWithInt:_WKWebAuthenticationTransportUSB]);
+    auto nfc = adoptNS([NSNumber numberWithInt:_WKWebAuthenticationTransportNFC]);
+    auto internal = adoptNS([NSNumber numberWithInt:_WKWebAuthenticationTransportInternal]);
+    auto credential = adoptNS([[_WKPublicKeyCredentialDescriptor alloc] initWithIdentifier:nsIdentifier]);
+    [credential setTransports:@[ usb.get(), nfc.get(), internal.get() ]];
+    [options setExcludeCredentials:@[ credential.get(), credential.get() ]];
+
+    auto authenticatorSelection = adoptNS([[_WKAuthenticatorSelectionCriteria alloc] init]);
+    [authenticatorSelection setAuthenticatorAttachment:_WKAuthenticatorAttachmentPlatform];
+    [authenticatorSelection setRequireResidentKey:YES];
+    [authenticatorSelection setUserVerification:_WKUserVerificationRequirementRequired];
+    [options setAuthenticatorSelection:authenticatorSelection.get()];
+
+    [options setAttestation:_WKAttestationConveyancePreferenceDirect];
+
+    auto result = [_WKWebAuthenticationPanel convertToCoreCreationOptionsWithOptions:options.get()];
+
+    EXPECT_WK_STREQ(result.rp.name, "example.com");
+    EXPECT_WK_STREQ(result.rp.icon, @"https//www.example.com/icon.jpg");
+    EXPECT_WK_STREQ(result.rp.id, "example.com");
+
+    EXPECT_WK_STREQ(result.user.name, "jappleseed@example.com");
+    EXPECT_WK_STREQ(result.user.icon, @"https//www.example.com/icon.jpg");
+    EXPECT_EQ(result.user.idVector.size(), sizeof(identifier));
+    EXPECT_EQ(memcmp(result.user.idVector.data(), identifier, sizeof(identifier)), 0);
+    EXPECT_WK_STREQ(result.user.displayName, "J Appleseed");
+
+    EXPECT_EQ(result.pubKeyCredParams.size(), 2lu);
+    EXPECT_EQ(result.pubKeyCredParams[0].type, WebCore::PublicKeyCredentialType::PublicKey);
+    EXPECT_EQ(result.pubKeyCredParams[0].alg, -7);
+    EXPECT_EQ(result.pubKeyCredParams[1].type, WebCore::PublicKeyCredentialType::PublicKey);
+    EXPECT_EQ(result.pubKeyCredParams[1].alg, -257);
+
+    EXPECT_EQ(result.timeout, 120u);
+
+    EXPECT_EQ(result.excludeCredentials.size(), 2lu);
+    EXPECT_EQ(result.excludeCredentials[0].type, WebCore::PublicKeyCredentialType::PublicKey);
+    EXPECT_EQ(result.excludeCredentials[0].idVector.size(), sizeof(identifier));
+    EXPECT_EQ(memcmp(result.excludeCredentials[0].idVector.data(), identifier, sizeof(identifier)), 0);
+    EXPECT_EQ(result.excludeCredentials[0].transports.size(), 3lu);
+    EXPECT_EQ(result.excludeCredentials[0].transports[0], AuthenticatorTransport::Usb);
+    EXPECT_EQ(result.excludeCredentials[0].transports[1], AuthenticatorTransport::Nfc);
+    EXPECT_EQ(result.excludeCredentials[0].transports[2], AuthenticatorTransport::Internal);
+
+    EXPECT_EQ(result.authenticatorSelection->authenticatorAttachment, PublicKeyCredentialCreationOptions::AuthenticatorAttachment::Platform);
+    EXPECT_EQ(result.authenticatorSelection->requireResidentKey, true);
+    EXPECT_EQ(result.authenticatorSelection->userVerification, UserVerificationRequirement::Required);
+
+    EXPECT_EQ(result.attestation, AttestationConveyancePreference::Direct);
+}
+
+TEST(WebAuthenticationPanel, PublicKeyCredentialCreationOptionsMaximum2)
+{
+    uint8_t identifier[] = { 0x01, 0x02, 0x03, 0x04 };
+    NSData *nsIdentifier = [NSData dataWithBytes:identifier length:sizeof(identifier)];
+    auto parameters1 = adoptNS([[_WKPublicKeyCredentialParameters alloc] initWithAlgorithm:@-7]);
+    auto parameters2 = adoptNS([[_WKPublicKeyCredentialParameters alloc] initWithAlgorithm:@-257]);
+
+    auto rp = adoptNS([[_WKPublicKeyCredentialRelyingPartyEntity alloc] initWithName:@"example.com"]);
+    [rp setIcon:@"https//www.example.com/icon.jpg"];
+    [rp setIdentifier:@"example.com"];
+
+    auto user = adoptNS([[_WKPublicKeyCredentialUserEntity alloc] initWithName:@"jappleseed@example.com" identifier:nsIdentifier displayName:@"J Appleseed"]);
+    [user setIcon:@"https//www.example.com/icon.jpg"];
+
+    NSArray<_WKPublicKeyCredentialParameters *> *publicKeyCredentialParamaters = @[ parameters1.get(), parameters2.get() ];
+
+    auto options = adoptNS([[_WKPublicKeyCredentialCreationOptions alloc] initWithRelyingParty:rp.get() user:user.get() publicKeyCredentialParamaters:publicKeyCredentialParamaters]);
+    [options setTimeout:@120];
+
+    auto usb = adoptNS([NSNumber numberWithInt:_WKWebAuthenticationTransportUSB]);
+    auto nfc = adoptNS([NSNumber numberWithInt:_WKWebAuthenticationTransportNFC]);
+    auto internal = adoptNS([NSNumber numberWithInt:_WKWebAuthenticationTransportInternal]);
+    auto credential = adoptNS([[_WKPublicKeyCredentialDescriptor alloc] initWithIdentifier:nsIdentifier]);
+    [credential setTransports:@[ usb.get(), nfc.get(), internal.get() ]];
+    [options setExcludeCredentials:@[ credential.get(), credential.get() ]];
+
+    auto authenticatorSelection = adoptNS([[_WKAuthenticatorSelectionCriteria alloc] init]);
+    [authenticatorSelection setAuthenticatorAttachment:_WKAuthenticatorAttachmentCrossPlatform]; //
+    [authenticatorSelection setRequireResidentKey:YES];
+    [authenticatorSelection setUserVerification:_WKUserVerificationRequirementDiscouraged]; //
+    [options setAuthenticatorSelection:authenticatorSelection.get()];
+
+    [options setAttestation:_WKAttestationConveyancePreferenceIndirect]; //
+
+    auto result = [_WKWebAuthenticationPanel convertToCoreCreationOptionsWithOptions:options.get()];
+
+    EXPECT_WK_STREQ(result.rp.name, "example.com");
+    EXPECT_WK_STREQ(result.rp.icon, @"https//www.example.com/icon.jpg");
+    EXPECT_WK_STREQ(result.rp.id, "example.com");
+
+    EXPECT_WK_STREQ(result.user.name, "jappleseed@example.com");
+    EXPECT_WK_STREQ(result.user.icon, @"https//www.example.com/icon.jpg");
+    EXPECT_EQ(result.user.idVector.size(), sizeof(identifier));
+    EXPECT_EQ(memcmp(result.user.idVector.data(), identifier, sizeof(identifier)), 0);
+    EXPECT_WK_STREQ(result.user.displayName, "J Appleseed");
+
+    EXPECT_EQ(result.pubKeyCredParams.size(), 2lu);
+    EXPECT_EQ(result.pubKeyCredParams[0].type, WebCore::PublicKeyCredentialType::PublicKey);
+    EXPECT_EQ(result.pubKeyCredParams[0].alg, -7);
+    EXPECT_EQ(result.pubKeyCredParams[1].type, WebCore::PublicKeyCredentialType::PublicKey);
+    EXPECT_EQ(result.pubKeyCredParams[1].alg, -257);
+
+    EXPECT_EQ(result.timeout, 120u);
+
+    EXPECT_EQ(result.excludeCredentials.size(), 2lu);
+    EXPECT_EQ(result.excludeCredentials[0].type, WebCore::PublicKeyCredentialType::PublicKey);
+    EXPECT_EQ(result.excludeCredentials[0].idVector.size(), sizeof(identifier));
+    EXPECT_EQ(memcmp(result.excludeCredentials[0].idVector.data(), identifier, sizeof(identifier)), 0);
+    EXPECT_EQ(result.excludeCredentials[0].transports.size(), 3lu);
+    EXPECT_EQ(result.excludeCredentials[0].transports[0], AuthenticatorTransport::Usb);
+    EXPECT_EQ(result.excludeCredentials[0].transports[1], AuthenticatorTransport::Nfc);
+    EXPECT_EQ(result.excludeCredentials[0].transports[2], AuthenticatorTransport::Internal);
+
+    EXPECT_EQ(result.authenticatorSelection->authenticatorAttachment, PublicKeyCredentialCreationOptions::AuthenticatorAttachment::CrossPlatform);
+    EXPECT_EQ(result.authenticatorSelection->requireResidentKey, true);
+    EXPECT_EQ(result.authenticatorSelection->userVerification, UserVerificationRequirement::Discouraged);
+
+    EXPECT_EQ(result.attestation, AttestationConveyancePreference::Indirect);
+}
+
+TEST(WebAuthenticationPanel, MakeCredentialSPITimeout)
+{
+    reset();
+
+    uint8_t identifier[] = { 0x01, 0x02, 0x03, 0x04 };
+    uint8_t hash[] = { 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04 };
+    NSData *nsIdentifier = [NSData dataWithBytes:identifier length:sizeof(identifier)];
+    NSData *nsHash = [NSData dataWithBytes:hash length:sizeof(hash)];
+    auto parameters = adoptNS([[_WKPublicKeyCredentialParameters alloc] initWithAlgorithm:@-7]);
+
+    auto rp = adoptNS([[_WKPublicKeyCredentialRelyingPartyEntity alloc] initWithName:@"example.com"]);
+    auto user = adoptNS([[_WKPublicKeyCredentialUserEntity alloc] initWithName:@"jappleseed@example.com" identifier:nsIdentifier displayName:@"J Appleseed"]);
+    NSArray<_WKPublicKeyCredentialParameters *> *publicKeyCredentialParamaters = @[ parameters.get() ];
+    auto options = adoptNS([[_WKPublicKeyCredentialCreationOptions alloc] initWithRelyingParty:rp.get() user:user.get() publicKeyCredentialParamaters:publicKeyCredentialParamaters]);
+    [options setTimeout:@120];
+
+    auto panel = adoptNS([[_WKWebAuthenticationPanel alloc] init]);
+    [panel makeCredentialWithHash:nsHash options:options.get() completionHandler:^(_WKAuthenticatorAttestationResponse *response, NSError *error) {
+        webAuthenticationPanelRan = true;
+
+        EXPECT_NULL(response);
+        EXPECT_EQ(error.domain, WKErrorDomain);
+        EXPECT_EQ(error.code, WKErrorUnknown);
+    }];
+    Util::run(&webAuthenticationPanelRan);
+}
+
+TEST(WebAuthenticationPanel, PublicKeyCredentialRequestOptionsMinimun)
+{
+    auto options = adoptNS([[_WKPublicKeyCredentialRequestOptions alloc] init]);
+    auto result = [_WKWebAuthenticationPanel convertToCoreRequestOptionsWithOptions:options.get()];
+
+    EXPECT_EQ(result.timeout, WTF::nullopt);
+    EXPECT_TRUE(result.rpId.isNull());
+    EXPECT_EQ(result.allowCredentials.size(), 0lu);
+    EXPECT_EQ(result.userVerification, UserVerificationRequirement::Preferred);
+    EXPECT_TRUE(result.extensions->appid.isNull());
+    EXPECT_EQ(result.extensions->googleLegacyAppidSupport, false);
+}
+
+TEST(WebAuthenticationPanel, PublicKeyCredentialRequestOptionsMaximumDefault)
+{
+    uint8_t identifier[] = { 0x01, 0x02, 0x03, 0x04 };
+    NSData *nsIdentifier = [NSData dataWithBytes:identifier length:sizeof(identifier)];
+    auto descriptor = adoptNS([[_WKPublicKeyCredentialDescriptor alloc] initWithIdentifier:nsIdentifier]);
+    auto extensions = adoptNS([[_WKAuthenticationExtensionsClientInputs alloc] init]);
+
+    auto options = adoptNS([[_WKPublicKeyCredentialRequestOptions alloc] init]);
+    [options setTimeout:@120];
+    [options setAllowCredentials:@[ descriptor.get() ]];
+    [options setExtensions:extensions.get()];
+
+    auto result = [_WKWebAuthenticationPanel convertToCoreRequestOptionsWithOptions:options.get()];
+
+    EXPECT_EQ(result.timeout, 120u);
+
+    EXPECT_EQ(result.allowCredentials.size(), 1lu);
+    EXPECT_EQ(result.allowCredentials[0].type, WebCore::PublicKeyCredentialType::PublicKey);
+    EXPECT_EQ(result.allowCredentials[0].idVector.size(), sizeof(identifier));
+    EXPECT_EQ(memcmp(result.allowCredentials[0].idVector.data(), identifier, sizeof(identifier)), 0);
+
+    EXPECT_EQ(result.userVerification, UserVerificationRequirement::Preferred);
+    EXPECT_TRUE(result.extensions->appid.isNull());
+}
+
+TEST(WebAuthenticationPanel, PublicKeyCredentialRequestOptionsMaximum)
+{
+    uint8_t identifier[] = { 0x01, 0x02, 0x03, 0x04 };
+    NSData *nsIdentifier = [NSData dataWithBytes:identifier length:sizeof(identifier)];
+
+    auto options = adoptNS([[_WKPublicKeyCredentialRequestOptions alloc] init]);
+    [options setTimeout:@120];
+
+    auto usb = adoptNS([NSNumber numberWithInt:_WKWebAuthenticationTransportUSB]);
+    auto nfc = adoptNS([NSNumber numberWithInt:_WKWebAuthenticationTransportNFC]);
+    auto internal = adoptNS([NSNumber numberWithInt:_WKWebAuthenticationTransportInternal]);
+    auto credential = adoptNS([[_WKPublicKeyCredentialDescriptor alloc] initWithIdentifier:nsIdentifier]);
+    [credential setTransports:@[ usb.get(), nfc.get(), internal.get() ]];
+    [options setAllowCredentials:@[ credential.get(), credential.get() ]];
+
+    [options setUserVerification:_WKUserVerificationRequirementRequired];
+
+    auto extensions = adoptNS([[_WKAuthenticationExtensionsClientInputs alloc] init]);
+    [extensions setAppid:@"https//www.example.com/fido"];
+    [options setExtensions:extensions.get()];
+
+    auto result = [_WKWebAuthenticationPanel convertToCoreRequestOptionsWithOptions:options.get()];
+
+    EXPECT_EQ(result.timeout, 120u);
+
+    EXPECT_EQ(result.allowCredentials.size(), 2lu);
+    EXPECT_EQ(result.allowCredentials[0].type, WebCore::PublicKeyCredentialType::PublicKey);
+    EXPECT_EQ(result.allowCredentials[0].idVector.size(), sizeof(identifier));
+    EXPECT_EQ(memcmp(result.allowCredentials[0].idVector.data(), identifier, sizeof(identifier)), 0);
+    EXPECT_EQ(result.allowCredentials[0].transports.size(), 3lu);
+    EXPECT_EQ(result.allowCredentials[0].transports[0], AuthenticatorTransport::Usb);
+    EXPECT_EQ(result.allowCredentials[0].transports[1], AuthenticatorTransport::Nfc);
+    EXPECT_EQ(result.allowCredentials[0].transports[2], AuthenticatorTransport::Internal);
+
+    EXPECT_EQ(result.userVerification, UserVerificationRequirement::Required);
+    EXPECT_WK_STREQ(result.extensions->appid, "https//www.example.com/fido");
+}
+
+TEST(WebAuthenticationPanel, GetAssertionSPITimeout)
+{
+    reset();
+
+    uint8_t hash[] = { 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04 };
+    NSData *nsHash = [NSData dataWithBytes:hash length:sizeof(hash)];
+
+    auto options = adoptNS([[_WKPublicKeyCredentialRequestOptions alloc] init]);
+    [options setTimeout:@120];
+
+    auto panel = adoptNS([[_WKWebAuthenticationPanel alloc] init]);
+    [panel getAssertionWithHash:nsHash options:options.get() completionHandler:^(_WKAuthenticatorAssertionResponse *response, NSError *error) {
+        webAuthenticationPanelRan = true;
+
+        EXPECT_NULL(response);
+        EXPECT_EQ(error.domain, WKErrorDomain);
+        EXPECT_EQ(error.code, WKErrorUnknown);
+    }];
+    Util::run(&webAuthenticationPanelRan);
+}
 
 } // namespace TestWebKitAPI
 

@@ -28,7 +28,10 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class LAContext;
+@class _WKAuthenticatorAttestationResponse;
+@class _WKAuthenticatorAssertionResponse;
+@class _WKPublicKeyCredentialCreationOptions;
+@class _WKPublicKeyCredentialRequestOptions;
 @class _WKWebAuthenticationAssertionResponse;
 @class _WKWebAuthenticationPanel;
 
@@ -75,6 +78,7 @@ typedef NS_ENUM(NSInteger, _WKWebAuthenticationSource) {
     _WKWebAuthenticationSourceExternal,
 } WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
+// FIXME: <rdar://problem/71509141> Optimize the delegate for the AuthenticationService.framework.
 @protocol _WKWebAuthenticationPanelDelegate <NSObject>
 
 @optional
@@ -91,13 +95,22 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 @interface _WKWebAuthenticationPanel : NSObject
 
 @property (nullable, nonatomic, weak) id <_WKWebAuthenticationPanelDelegate> delegate;
+
++ (void)clearAllLocalAuthenticatorCredentials;
++ (BOOL)isUserVerifyingPlatformAuthenticatorAvailable;
+
+- (instancetype)init;
+
+// FIXME: <rdar://problem/71509394> Adds ClientDataJSON.
+// FIXME: <rdar://problem/71509485> Adds detailed NSError.
+- (void)makeCredentialWithHash:(NSData *)hash options:(_WKPublicKeyCredentialCreationOptions *)options completionHandler:(void (^)(_WKAuthenticatorAttestationResponse *, NSError *))handler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)getAssertionWithHash:(NSData *)hash options:(_WKPublicKeyCredentialRequestOptions *)options completionHandler:(void (^)(_WKAuthenticatorAssertionResponse *, NSError *))handler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)cancel;
+
+// FIXME: <rdar://problem/71509848> Deprecate the following properties.
 @property (nonatomic, readonly, copy) NSString *relyingPartyID;
 @property (nonatomic, readonly, copy) NSSet *transports;
 @property (nonatomic, readonly) _WKWebAuthenticationType type;
-
-+ (void)clearAllLocalAuthenticatorCredentials;
-
-- (void)cancel;
 
 @end
 

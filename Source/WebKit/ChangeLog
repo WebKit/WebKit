@@ -1,3 +1,70 @@
+2020-11-21  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Implement SPI for AuthenticationServices.Framework
+        https://bugs.webkit.org/show_bug.cgi?id=218893
+        <rdar://problem/71364731>
+
+        Reviewed by Alex Christensen.
+
+        This patch implements the SPI for AuthenticationServices.Framework, which is more or less a direct
+        translation of the WebAuthn Web IDLs and a thin wrapper on top of functionalities of the WebAuthn
+        process.
+
+        It deprecates the existing _WKWebAuthenticationPanel SPI which is for Safari to show UI only. This
+        patch does not just repurpose the SPI but also modifies some of the implementations. The most noticeable one
+        is the change of ownerships. Prior to this change, AuthenticatorManager owns the APIWebAuthenticationPanel.
+        Now, it's the opposite way.
+
+        Since there will be a period of time that the deprecated implementation will coexist with the new implementation,
+        this path also marks things that are meant to deprecate in the future to reduce confusions.
+
+        * UIProcess/API/APIWebAuthenticationPanel.cpp:
+        (API::WebAuthenticationPanel::WebAuthenticationPanel):
+        (API::WebAuthenticationPanel::handleRequest):
+        (API::WebAuthenticationPanel::cancel const):
+        * UIProcess/API/APIWebAuthenticationPanel.h:
+        Implements the plumbing for the new SPI and owns the AuthenticatorManager now.
+
+        * UIProcess/API/Cocoa/_WKWebAuthenticationPanel.h:
+        * UIProcess/API/Cocoa/_WKWebAuthenticationPanel.mm:
+        (-[_WKAuthenticationExtensionsClientOutputs initWithAppid:]):
+        (-[_WKAuthenticatorResponse initWithRawId:extensions:]):
+        (-[_WKAuthenticatorAssertionResponse initWithRawId:extensions:authenticatorData:signature:userHandle:]):
+        (-[_WKAuthenticatorAttestationResponse initWithRawId:extensions:attestationObject:]):
+        (-[_WKAuthenticatorSelectionCriteria init]):
+        (-[_WKPublicKeyCredentialCreationOptions initWithRp:user:pubKeyCredParams:]):
+        (-[_WKPublicKeyCredentialDescriptor initWithType:identifier:]):
+        (-[_WKPublicKeyCredentialEntity initWithName:]):
+        (-[_WKPublicKeyCredentialParameters initWithType:alg:]):
+        (-[_WKPublicKeyCredentialRequestOptions init]):
+        (-[_WKPublicKeyCredentialRpEntity initWithName:]):
+        (-[_WKPublicKeyCredentialUserEntity initWithName:identifier:displayName:]):
+        (-[_WKWebAuthenticationPanel init]):
+        (vectorFromNSData):
+        (encodeEntity):
+        (publicKeyCredentialRpEntity):
+        (publicKeyCredentialUserEntity):
+        (publicKeyCredentialParameters):
+        (authenticatorTransport):
+        (authenticatorTransports):
+        (publicKeyCredentialDescriptors):
+        (authenticatorAttachment):
+        (userVerification):
+        (authenticatorSelectionCriteria):
+        (attestationConveyancePreference):
+        (authenticationExtensionsClientInputs):
+        (+[_WKWebAuthenticationPanel convertToCoreCreationOptionsWithOptions:]):
+        (wkAuthenticatorAttestationResponse):
+        (-[_WKWebAuthenticationPanel makeCredentialWithHash:options:completionHandler:]):
+        (+[_WKWebAuthenticationPanel convertToCoreRequestOptionsWithOptions:]):
+        (wkAuthenticatorAssertionResponse):
+        (-[_WKWebAuthenticationPanel getAssertionWithHash:options:completionHandler:]):
+        (+[_WKWebAuthenticationPanel isUserVerifyingPlatformAuthenticatorAvailable]):
+        Implements the SPI.
+
+        * UIProcess/WebAuthentication/WebAuthenticationRequestData.h:
+        Marks things as to deprecate.
+
 2020-11-20  Kate Cheney  <katherine_cheney@apple.com>
 
         PCM: Persist pending ad clicks and attributions so they can survive browser restart

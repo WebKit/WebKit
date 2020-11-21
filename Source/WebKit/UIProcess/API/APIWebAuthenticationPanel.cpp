@@ -41,10 +41,16 @@ Ref<WebAuthenticationPanel> WebAuthenticationPanel::create(const AuthenticatorMa
     return adoptRef(*new WebAuthenticationPanel(manager, rpId, transports, type));
 }
 
+WebAuthenticationPanel::WebAuthenticationPanel()
+    : m_manager(makeUnique<AuthenticatorManager>())
+    , m_client(makeUniqueRef<WebAuthenticationPanelClient>())
+{
+}
+
 WebAuthenticationPanel::WebAuthenticationPanel(const AuthenticatorManager& manager, const WTF::String& rpId, const TransportSet& transports, ClientDataType type)
-    : m_manager(makeWeakPtr(manager))
+    : m_client(makeUniqueRef<WebAuthenticationPanelClient>())
+    , m_weakManager(makeWeakPtr(manager))
     , m_rpId(rpId)
-    , m_client(WTF::makeUniqueRef<WebAuthenticationPanelClient>())
     , m_clientDataType(type)
 {
     m_transports = Vector<AuthenticatorTransport>();
@@ -59,10 +65,16 @@ WebAuthenticationPanel::WebAuthenticationPanel(const AuthenticatorManager& manag
 
 WebAuthenticationPanel::~WebAuthenticationPanel() = default;
 
+void WebAuthenticationPanel::handleRequest(WebAuthenticationRequestData&& request, Callback&& callback)
+{
+    ASSERT(m_manager);
+    m_manager->handleRequest(WTFMove(request), WTFMove(callback));
+}
+
 void WebAuthenticationPanel::cancel() const
 {
-    if (m_manager)
-        m_manager->cancelRequest(*this);
+    if (m_weakManager)
+        m_weakManager->cancelRequest(*this);
 }
 
 void WebAuthenticationPanel::setClient(UniqueRef<WebAuthenticationPanelClient>&& client)
