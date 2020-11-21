@@ -78,8 +78,8 @@ static inline bool isAtSoftWrapOpportunity(const InlineFormattingContext& inline
     // e.g. [container start][prior_continuous_content][container end] (<span>prior_continuous_content</span>)
     // An incoming <img> box would enable us to commit the "<span>prior_continuous_content</span>" content
     // but an incoming text content would not necessarily.
-    ASSERT(current.isText() || current.isBox());
-    ASSERT(next.isText() || next.isBox());
+    ASSERT(current.isText() || current.isBox() || current.isFloat());
+    ASSERT(next.isText() || next.isBox() || next.isFloat());
     if (current.isText() && next.isText()) {
         auto& currentInlineTextItem = downcast<InlineTextItem>(current);
         auto& nextInlineTextItem = downcast<InlineTextItem>(next);
@@ -101,6 +101,13 @@ static inline bool isAtSoftWrapOpportunity(const InlineFormattingContext& inline
         // [text][text] : is a continuous content.
         // [text-][text] : after [hyphen] position is a soft wrap opportunity.
         return endsWithSoftWrapOpportunity(currentInlineTextItem, nextInlineTextItem);
+    }
+    if (current.isFloat() || next.isFloat()) {
+        // While floats are not part of the inline content and they are not supposed to introduce soft wrap opportunities,
+        // e.g. [text][float box][float box][text][float box][text] is essentially just [text][text][text]
+        // figuring out whether a float (or set of floats) should stay on the line or not (and handle potentially out of order inline items)
+        // brings in unnecessary complexity.
+        return true;
     }
     if (current.isBox() || next.isBox()) {
         auto isImageContent = current.layoutBox().isImage() || next.layoutBox().isImage();
@@ -515,21 +522,20 @@ size_t LineBuilder::nextWrapOpportunity(size_t startIndex, const LineBuilder::In
             // We always stop at explicit wrapping opportunities e.g. <br>. The wrap position is after the opportunity position.
             return ++index;
         }
-        if (inlineItem.isFloat()) {
-            // Floats are not part of the inline content. We ignore them as far as wrap opportunities are concerned.
-            // [text][float box][text] is essentially just [text][text]
-            continue;
-        }
         if (inlineItem.isInlineBoxStart() || inlineItem.isInlineBoxEnd()) {
             // There's no wrapping opportunity between <span>text, <span></span> or </span>text. 
             continue;
         }
-        ASSERT(inlineItem.isText() || inlineItem.isBox());
+        ASSERT(inlineItem.isText() || inlineItem.isBox() || inlineItem.isFloat());
         if (!previousInlineItemIndex) {
             previousInlineItemIndex = index;
             continue;
         }
-        if (isAtSoftWrapOpportunity(m_inlineFormattingContext, m_inlineItems[*previousInlineItemIndex], m_inlineItems[index])) {
+        auto& previousItem = m_inlineItems[*previousInlineItemIndex];
+        auto& currentItem = m_inlineItems[index];
+        if (isAtSoftWrapOpportunity(m_inlineFormattingContext, previousItem, currentItem)) {
+            if (!previousItem.isText() || !currentItem.isText())
+                return index;
             // There's a soft wrap opportunity between 'previousInlineItemIndex' and 'index'.
             // Now forward-find from the start position to see where we can actually wrap.
             // [ex-][ample] vs. [ex-][container start][container end][ample]
