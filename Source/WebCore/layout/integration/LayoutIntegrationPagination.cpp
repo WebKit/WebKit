@@ -114,7 +114,7 @@ static void updateMinimumPageHeight(RenderBlockFlow& flow, const InlineContent& 
     auto widows = style.hasAutoWidows() ? 1 : std::max<int>(style.widows(), 1);
     auto orphans = style.hasAutoOrphans() ? 1 : std::max<int>(style.orphans(), 1);
     auto minimumLineCount = std::min<unsigned>(std::max(widows, orphans), lineCount);
-    flow.updateMinimumPageHeight(0, LayoutUnit(inlineContent.lines[minimumLineCount - 1].rect().maxY()));
+    flow.updateMinimumPageHeight(0, LayoutUnit(inlineContent.lines[minimumLineCount - 1].lineBoxBottom()));
 }
 
 static Ref<InlineContent> makeAdjustedContent(const InlineContent& inlineContent, Vector<float> adjustments)
@@ -129,7 +129,7 @@ static Ref<InlineContent> makeAdjustedContent(const InlineContent& inlineContent
         return Line {
             line.firstRunIndex(),
             line.runCount(),
-            moveVertically(line.rect(), offset),
+            moveVertically({ FloatPoint { line.lineBoxLeft(), line.lineBoxTop() }, FloatPoint { line.lineBoxRight(), line.lineBoxBottom() } }, offset),
             { line.enclosingContentTop() + offset, line.enclosingContentBottom() + offset },
             moveVertically(line.scrollableOverflow(), offset),
             moveVertically(line.inkOverflow(), offset),

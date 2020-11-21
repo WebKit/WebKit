@@ -51,18 +51,18 @@ public:
 
     LayoutUnit top() const { return LayoutUnit::fromFloatRound(line().enclosingContentTop()); }
     LayoutUnit bottom() const { return LayoutUnit::fromFloatRound(line().enclosingContentBottom()); }
-    LayoutUnit lineBoxTop() const { return LayoutUnit::fromFloatRound(line().rect().y()); }
-    LayoutUnit lineBoxBottom() const { return LayoutUnit::fromFloatRound(line().rect().maxY()); }
+    LayoutUnit lineBoxTop() const { return LayoutUnit::fromFloatRound(line().lineBoxTop()); }
+    LayoutUnit lineBoxBottom() const { return LayoutUnit::fromFloatRound(line().lineBoxBottom()); }
 
     // FIXME: What should these really be?
     LayoutUnit selectionTop() const { return top(); }
     LayoutUnit selectionTopForHitTesting() const { return top(); }
     LayoutUnit selectionBottom() const { return bottom(); }
 
-    float contentLogicalLeft() const { return line().rect().x() + line().contentLeftOffset(); }
+    float contentLogicalLeft() const { return line().lineBoxLeft() + line().contentLeftOffset(); }
     float contentLogicalRight() const { return contentLogicalLeft() + line().contentWidth(); }
     float y() const { return lineBoxTop(); }
-    float logicalHeight() const { return line().rect().height(); }
+    float logicalHeight() const { return lineBoxBottom() - lineBoxTop(); }
     bool isHorizontal() const { return true; }
 
     const RenderBlockFlow& containingBlock() const { return m_inlineContent->containingBlock(); }

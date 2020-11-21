@@ -232,7 +232,7 @@ LayoutUnit LineLayout::contentLogicalHeight() const
         return { };
 
     auto& lines = m_inlineContent->lines;
-    return LayoutUnit { lines.last().rect().maxY() - lines.first().rect().y() + m_inlineContent->clearGapAfterLastLine };
+    return LayoutUnit { lines.last().lineBoxBottom() - lines.first().lineBoxTop() + m_inlineContent->clearGapAfterLastLine };
 }
 
 size_t LineLayout::lineCount() const
@@ -253,7 +253,7 @@ LayoutUnit LineLayout::firstLineBaseline() const
     }
 
     auto& firstLine = m_inlineContent->lines.first();
-    return LayoutUnit { firstLine.rect().y() + firstLine.baseline() };
+    return LayoutUnit { firstLine.lineBoxTop() + firstLine.baseline() };
 }
 
 LayoutUnit LineLayout::lastLineBaseline() const
@@ -264,7 +264,7 @@ LayoutUnit LineLayout::lastLineBaseline() const
     }
 
     auto& lastLine = m_inlineContent->lines.last();
-    return LayoutUnit { lastLine.rect().y() + lastLine.baseline() };
+    return LayoutUnit { lastLine.lineBoxTop() + lastLine.baseline() };
 }
 
 void LineLayout::adjustForPagination()
@@ -276,7 +276,7 @@ void LineLayout::adjustForPagination()
     }
 
     auto& lines = paginedInlineContent->lines;
-    m_paginatedHeight = LayoutUnit { lines.last().rect().maxY() - lines.first().rect().y() };
+    m_paginatedHeight = LayoutUnit { lines.last().lineBoxBottom() - lines.first().lineBoxTop() };
 
     m_inlineContent = WTFMove(paginedInlineContent);
 }
@@ -411,11 +411,11 @@ void LineLayout::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         }
 
         auto& line = inlineContent.lineForRun(run);
-        auto baseline = paintOffset.y() + line.rect().y() + line.baseline();
+        auto baseline = paintOffset.y() + line.lineBoxTop() + line.baseline();
         auto expansion = run.expansion();
         // TextRun expects the xPos to be adjusted with the aligment offset (e.g. when the line is center aligned
         // and the run starts at 100px, due to the horizontal aligment, the xpos is supposed to be at 0px).
-        auto xPos = rect.x() - (line.rect().x() + line.contentLeftOffset());
+        auto xPos = rect.x() - (line.lineBoxLeft() + line.contentLeftOffset());
         WebCore::TextRun textRun { textContent.renderedContent(), xPos, expansion.horizontalExpansion, expansion.behavior };
         textRun.setTabSize(!style.collapseWhiteSpace(), style.tabSize());
         FloatPoint textOrigin { rect.x() + paintOffset.x(), roundToDevicePixel(baseline, deviceScaleFactor) };
