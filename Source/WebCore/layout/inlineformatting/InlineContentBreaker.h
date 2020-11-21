@@ -79,14 +79,13 @@ public:
     // see https://drafts.csswg.org/css-text-3/#line-break-details
     struct ContinuousContent {
         InlineLayoutUnit logicalWidth() const { return m_logicalWidth; }
-        InlineLayoutUnit logicalLeft() const { return m_logicalLeft; }
         InlineLayoutUnit collapsibleLogicalWidth() const { return m_collapsibleLogicalWidth; }
         InlineLayoutUnit nonCollapsibleLogicalWidth() const { return logicalWidth() - collapsibleLogicalWidth(); }
         bool hasTrailingCollapsibleContent() const { return !!collapsibleLogicalWidth(); }
         bool isFullyCollapsible() const { return logicalWidth() == collapsibleLogicalWidth(); }
 
         void append(const InlineItem&, InlineLayoutUnit logicalWidth, Optional<InlineLayoutUnit> collapsibleWidth);
-        void reset(InlineLayoutUnit contentLogicalLeft);
+        void reset();
 
         struct Run {
             Run(const InlineItem&, InlineLayoutUnit logicalWidth);
@@ -101,12 +100,12 @@ public:
 
     private:
         RunList m_runs;
-        InlineLayoutUnit m_logicalLeft { 0 };
         InlineLayoutUnit m_logicalWidth { 0 };
         InlineLayoutUnit m_collapsibleLogicalWidth { 0 };
     };
 
     struct LineStatus {
+        InlineLayoutUnit contentLogicalRight { 0 };
         InlineLayoutUnit availableWidth { 0 };
         InlineLayoutUnit collapsibleWidth { 0 };
         Optional<InlineLayoutUnit> trailingSoftHyphenWidth;

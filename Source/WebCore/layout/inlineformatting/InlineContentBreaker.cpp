@@ -274,7 +274,7 @@ Optional<TrailingTextContent> InlineContentBreaker::processOverflowingTextConten
             // <span style="word-break: keep-all">textcontentwithnobreak</span><span>textcontentwithyesbreak</span>
             // When the first span computes longer than the available space, by the time we get to the second span, the adjusted available space becomes negative.
             auto adjustedAvailableWidth = std::max<InlineLayoutUnit>(0, lineStatus.availableWidth - accumulatedRunWidth);
-            if (auto partialRun = tryBreakingTextRun(run, continuousContent.logicalLeft() + accumulatedRunWidth, adjustedAvailableWidth)) {
+            if (auto partialRun = tryBreakingTextRun(run, lineStatus.contentLogicalRight + accumulatedRunWidth, adjustedAvailableWidth)) {
                 if (partialRun->length)
                     return TrailingTextContent { index, false, partialRun };
                 // When the content is wrapped at the run boundary, the trailing run is the previous run.
@@ -296,7 +296,7 @@ Optional<TrailingTextContent> InlineContentBreaker::processOverflowingTextConten
         accumulatedRunWidth -= run.logicalWidth;
         if (isBreakableRun(run)) {
             ASSERT(run.inlineItem.isText());
-            if (auto partialRun = tryBreakingTextRun(run, continuousContent.logicalLeft() + accumulatedRunWidth, maxInlineLayoutUnit())) {
+            if (auto partialRun = tryBreakingTextRun(run, lineStatus.contentLogicalRight + accumulatedRunWidth, maxInlineLayoutUnit())) {
                 // We know this run fits, so if wrapping is allowed on the run, it should return a non-empty left-side.
                 ASSERT(partialRun->length);
                 return TrailingTextContent { index, false, partialRun };
@@ -412,9 +412,8 @@ void InlineContentBreaker::ContinuousContent::append(const InlineItem& inlineIte
     ASSERT(m_collapsibleLogicalWidth <= m_logicalWidth);
 }
 
-void InlineContentBreaker::ContinuousContent::reset(InlineLayoutUnit contentLogicalLeft)
+void InlineContentBreaker::ContinuousContent::reset()
 {
-    m_logicalLeft = contentLogicalLeft;
     m_logicalWidth = { };
     m_collapsibleLogicalWidth = { };
     m_runs.clear();

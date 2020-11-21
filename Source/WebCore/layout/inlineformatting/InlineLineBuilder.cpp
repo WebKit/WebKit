@@ -124,7 +124,7 @@ static inline bool isAtSoftWrapOpportunity(const InlineFormattingContext& inline
 struct LineCandidate {
     LineCandidate(bool ignoreTrailingLetterSpacing);
 
-    void reset(InlineLayoutUnit contentLogicalLeft);
+    void reset();
 
     struct InlineContent {
         InlineContent(bool ignoreTrailingLetterSpacing);
@@ -136,7 +136,7 @@ struct LineCandidate {
         void appendInlineItem(const InlineItem&, InlineLayoutUnit logicalWidth);
         void appendTrailingLineBreak(const InlineItem& lineBreakItem) { m_trailingLineBreak = &lineBreakItem; }
         void appendtrailingWordBreakOpportunity(const InlineItem& wordBreakItem) { m_trailingWordBreakOpportunity = &wordBreakItem; }
-        void reset(InlineLayoutUnit contentLogicalLeft);
+        void reset();
 
     private:
         bool m_ignoreTrailingLetterSpacing { false };
@@ -202,9 +202,9 @@ inline void LineCandidate::InlineContent::appendInlineItem(const InlineItem& inl
     m_continuousContent.append(inlineItem, logicalWidth, collapsibleWidth());
 }
 
-inline void LineCandidate::InlineContent::reset(InlineLayoutUnit contentLogicalLeft)
+inline void LineCandidate::InlineContent::reset()
 {
-    m_continuousContent.reset(contentLogicalLeft);
+    m_continuousContent.reset();
     m_trailingLineBreak = { };
     m_trailingWordBreakOpportunity = { };
 }
@@ -222,10 +222,10 @@ inline void LineCandidate::FloatContent::reset()
     m_intrusiveWidth = { };
 }
 
-inline void LineCandidate::reset(InlineLayoutUnit contentLogicalLeft)
+inline void LineCandidate::reset()
 {
     floatContent.reset();
-    inlineContent.reset(contentLogicalLeft);
+    inlineContent.reset();
 }
 
 InlineLayoutUnit LineBuilder::inlineItemWidth(const InlineItem& inlineItem, InlineLayoutUnit contentLogicalLeft) const
@@ -454,7 +454,7 @@ LineBuilder::UsedConstraints LineBuilder::constraintsForLine(const InlineRect& l
 void LineBuilder::nextContentForLine(LineCandidate& lineCandidate, size_t currentInlineItemIndex, const InlineItemRange& layoutRange, size_t partialLeadingContentLength, InlineLayoutUnit availableLineWidth, InlineLayoutUnit currentLogicalRight)
 {
     ASSERT(currentInlineItemIndex < layoutRange.end);
-    lineCandidate.reset(currentLogicalRight);
+    lineCandidate.reset();
     // 1. Simply add any overflow content from the previous line to the candidate content. It's always a text content.
     // 2. Find the next soft wrap position or explicit line break.
     // 3. Collect floats between the inline content.
@@ -607,7 +607,7 @@ LineBuilder::Result LineBuilder::handleFloatsAndInlineContent(InlineContentBreak
     // Check if this new content fits.
     auto availableWidth = this->availableWidth() - floatContent.intrusiveWidth();
     auto isLineConsideredEmpty = m_line.isConsideredEmpty() && !m_contentIsConstrainedByFloat;
-    auto lineStatus = InlineContentBreaker::LineStatus { availableWidth, m_line.trimmableTrailingWidth(), m_line.trailingSoftHyphenWidth(), m_line.isTrailingRunFullyTrimmable(), isLineConsideredEmpty };
+    auto lineStatus = InlineContentBreaker::LineStatus { m_line.contentLogicalWidth(), availableWidth, m_line.trimmableTrailingWidth(), m_line.trailingSoftHyphenWidth(), m_line.isTrailingRunFullyTrimmable(), isLineConsideredEmpty };
     auto result = inlineContentBreaker.processInlineContent(continuousInlineContent, lineStatus);
     if (result.lastWrapOpportunityItem)
         m_wrapOpportunityList.append(result.lastWrapOpportunityItem);
