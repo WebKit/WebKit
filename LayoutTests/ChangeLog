@@ -1,5 +1,19 @@
 2020-11-20  Chris Dumez  <cdumez@apple.com>
 
+        Poor resampling quality when using AudioContext sampleRate parameter
+        https://bugs.webkit.org/show_bug.cgi?id=219201
+
+        Reviewed by Geoff Garen.
+
+        Add layout test coverage that would hit assertions in debug.
+
+        * webaudio/audiocontext-large-samplerate-expected.txt: Added.
+        * webaudio/audiocontext-large-samplerate.html: Added.
+        * webaudio/audiocontext-low-samplerate-expected.txt: Added.
+        * webaudio/audiocontext-low-samplerate.html: Added.
+
+2020-11-20  Chris Dumez  <cdumez@apple.com>
+
         (r267253) [ Mac ] webaudio/AudioParam/audioparam-processing.html is flaky failing
         https://bugs.webkit.org/show_bug.cgi?id=219228
         <rdar://problem/71643007>

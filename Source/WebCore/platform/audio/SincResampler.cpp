@@ -115,6 +115,11 @@ constexpr unsigned defaultRequestFrames { 512 };
 constexpr unsigned kernelSize { 32 };
 constexpr unsigned numberOfKernelOffsets { 32 };
 
+static size_t calculateChunkSize(unsigned blockSize, double scaleFactor)
+{
+    return blockSize / scaleFactor;
+}
+
 SincResampler::SincResampler(double scaleFactor, Optional<unsigned> requestFrames)
     : m_scaleFactor(scaleFactor)
     , m_kernelStorage(kernelSize * (numberOfKernelOffsets + 1))
@@ -137,6 +142,7 @@ void SincResampler::updateRegions(bool isSecondLoad)
     m_r3 = m_r0 + m_requestFrames - kernelSize;
     m_r4 = m_r0 + m_requestFrames - kernelSize / 2;
     m_blockSize = m_r4 - m_r2;
+    m_chunkSize = calculateChunkSize(m_blockSize, m_scaleFactor);
 
     // m_r1 at the beginning of the buffer.
     ASSERT(m_r1 == m_inputBuffer.data());
@@ -187,10 +193,10 @@ void SincResampler::initializeKernel()
     }
 }
 
-void SincResampler::consumeSource(float* buffer, unsigned numberOfSourceFrames)
+void SincResampler::consumeSource(float* buffer, unsigned numberOfSourceFrames, const Function<void(AudioBus* bus, size_t framesToProcess)>& provideInput)
 {
-    ASSERT(m_sourceProvider);
-    if (!m_sourceProvider)
+    ASSERT(provideInput);
+    if (!provideInput)
         return;
 
     // Wrap the provided buffer by an AudioBus for use by the source provider.
@@ -200,14 +206,14 @@ void SincResampler::consumeSource(float* buffer, unsigned numberOfSourceFrames)
     // FIXME: Find a way to make the following const-correct:
     m_internalBus->setChannelMemory(0, buffer, numberOfSourceFrames);
     
-    m_sourceProvider->provideInput(m_internalBus.get(), numberOfSourceFrames);
+    provideInput(m_internalBus.get(), numberOfSourceFrames);
 }
 
 namespace {
 
-// BufferSourceProvider is an AudioSourceProvider wrapping an in-memory buffer.
+// BufferSourceProvider is an audio source provider wrapping an in-memory buffer.
 
-class BufferSourceProvider : public AudioSourceProvider {
+class BufferSourceProvider {
 public:
     explicit BufferSourceProvider(const float* source, size_t numberOfSourceFrames)
         : m_source(source)
@@ -216,7 +222,7 @@ public:
     }
     
     // Consumes samples from the in-memory buffer.
-    void provideInput(AudioBus* bus, size_t framesToProcess) override
+    void provideInput(AudioBus* bus, size_t framesToProcess)
     {
         ASSERT(m_source && bus);
         if (!m_source || !bus)
@@ -253,27 +259,27 @@ void SincResampler::process(const float* source, float* destination, unsigned nu
     
     while (remaining) {
         unsigned framesThisTime = std::min(remaining, m_requestFrames);
-        process(&sourceProvider, destination, framesThisTime);
+        process(destination, framesThisTime, [&sourceProvider](AudioBus* bus, size_t framesToProcess) {
+            sourceProvider.provideInput(bus, framesToProcess);
+        });
         
         destination += framesThisTime;
         remaining -= framesThisTime;
     }
 }
 
-void SincResampler::process(AudioSourceProvider* sourceProvider, float* destination, size_t framesToProcess)
+void SincResampler::process(float* destination, size_t framesToProcess, const Function<void(AudioBus* bus, size_t framesToProcess)>& provideInput)
 {
-    ASSERT(sourceProvider);
-    if (!sourceProvider)
+    ASSERT(provideInput);
+    if (!provideInput)
         return;
-    
-    m_sourceProvider = sourceProvider;
 
     unsigned numberOfDestinationFrames = framesToProcess;
 
     // Step (1)
     // Prime the input buffer at the start of the input stream.
     if (!m_isBufferPrimed) {
-        consumeSource(m_r0, m_requestFrames);
+        consumeSource(m_r0, m_requestFrames, provideInput);
         m_isBufferPrimed = true;
     }
     
@@ -521,7 +527,7 @@ void SincResampler::process(AudioSourceProvider* sourceProvider, float* destinat
 
         // Step (5)
         // Refresh the buffer with more input.
-        consumeSource(m_r0, m_requestFrames);
+        consumeSource(m_r0, m_requestFrames, provideInput);
     }
 }
 
