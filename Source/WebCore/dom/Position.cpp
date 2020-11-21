@@ -1363,19 +1363,6 @@ InlineRunAndOffset Position::inlineRunAndOffset(Affinity affinity, TextDirection
     return { run, caretOffset };
 }
 
-void Position::ensureLineBoxes() const
-{
-    auto node = deprecatedNode();
-    if (!node)
-        return;
-    auto renderer = node->renderer();
-    if (!renderer)
-        return;
-    auto* parent = renderer->parent();
-    if (is<RenderBlockFlow>(parent))
-        downcast<RenderBlockFlow>(*parent).ensureLineBoxes();
-}
-
 TextDirection Position::primaryDirection() const
 {
     if (!m_anchorNode || !m_anchorNode->renderer())

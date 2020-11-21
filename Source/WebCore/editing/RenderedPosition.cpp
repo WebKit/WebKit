@@ -85,9 +85,6 @@ RenderedPosition::RenderedPosition(const Position& position, Affinity affinity)
     if (position.isNull())
         return;
 
-    // FIXME: Remove.
-    position.ensureLineBoxes();
-
     auto runAndOffset = position.inlineRunAndOffset(affinity);
     m_run = runAndOffset.run;
     m_offset = runAndOffset.offset;

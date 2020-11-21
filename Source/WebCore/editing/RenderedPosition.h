@@ -51,8 +51,6 @@ public:
     bool isNull() const { return !m_renderer; }
     LayoutIntegration::LineIterator line() const { return m_run ? m_run.line() : LayoutIntegration::LineIterator(); }
 
-    RootInlineBox* rootBox() { return m_run ? &m_run->legacyInlineBox()->root() : nullptr; }
-
     unsigned char bidiLevelOnLeft() const;
     unsigned char bidiLevelOnRight() const;
     RenderedPosition leftBoundaryOfBidiRun(unsigned char bidiLevelOfRun);
