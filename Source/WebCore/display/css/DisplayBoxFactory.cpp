@@ -135,7 +135,7 @@ std::unique_ptr<Box> BoxFactory::displayBoxForLayoutBox(const Layout::Box& layou
 std::unique_ptr<Box> BoxFactory::displayBoxForTextRun(const Layout::LineRun& run, const Layout::InlineLineGeometry& lineGeometry, LayoutSize offsetFromRoot) const
 {
     ASSERT(run.text());
-    auto lineRect = lineGeometry.logicalRect();
+    auto lineRect = lineGeometry.lineBoxLogicalRect();
     auto lineLayoutRect = LayoutRect { lineRect.left(), lineRect.top(), lineRect.width(), lineRect.height() };
 
     auto runRect = LayoutRect { run.logicalLeft(), run.logicalTop(), run.logicalWidth(), run.logicalHeight() };

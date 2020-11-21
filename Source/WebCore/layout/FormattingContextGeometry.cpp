@@ -197,8 +197,8 @@ LayoutUnit FormattingContext::Geometry::contentHeightForFormattingContextRoot(co
         auto& lines = inlineFormattingState.lines();
         // Even empty containers generate one line.
         ASSERT(!lines.isEmpty());
-        top = lines.first().logicalRect().top();
-        bottom = lines.last().logicalRect().bottom() + inlineFormattingState.clearGapAfterLastLine();
+        top = lines.first().lineBoxLogicalRect().top();
+        bottom = lines.last().lineBoxLogicalRect().bottom() + inlineFormattingState.clearGapAfterLastLine();
     } else if (formattingContextRoot.establishesFlexFormattingContext()) {
         auto& lines = layoutState.establishedFlexFormattingState(formattingContextRoot).lines();
         ASSERT(!lines.isEmpty());

@@ -35,29 +35,26 @@ namespace Layout {
 class InlineLineGeometry {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    InlineLineGeometry(const InlineRect& lineLogicalRect, const InlineLayoutSize& lineBoxLogicalSize, InlineLayoutUnit aligmentBaseline, InlineLayoutUnit contentLogicalLeftOffset, InlineLayoutUnit contentLogicalWidth);
+    InlineLineGeometry(const InlineRect& lineBoxLogicalRect, InlineLayoutUnit aligmentBaseline, InlineLayoutUnit contentLogicalLeftOffset, InlineLayoutUnit contentLogicalWidth);
 
-    const InlineRect& logicalRect() const { return m_logicalRect; }
-    const InlineLayoutSize& lineBoxLogicalSize() const { return m_lineBoxLogicalSize; }
+    const InlineRect& lineBoxLogicalRect() const { return m_lineBoxLogicalRect; }
 
     InlineLayoutUnit baseline() const { return m_aligmentBaseline; }
 
     InlineLayoutUnit contentLogicalLeftOffset() const { return m_contentLogicalLeftOffset; }
     InlineLayoutUnit contentLogicalWidth() const { return m_contentLogicalWidth; }
 
-    void moveVertically(InlineLayoutUnit offset) { m_logicalRect.moveVertically(offset); }
+    void moveVertically(InlineLayoutUnit offset) { m_lineBoxLogicalRect.moveVertically(offset); }
 
 private:
-    InlineRect m_logicalRect;
-    InlineLayoutSize m_lineBoxLogicalSize;
+    InlineRect m_lineBoxLogicalRect;
     InlineLayoutUnit m_aligmentBaseline { 0 };
     InlineLayoutUnit m_contentLogicalLeftOffset { 0 };
     InlineLayoutUnit m_contentLogicalWidth { 0 };
 };
 
-inline InlineLineGeometry::InlineLineGeometry(const InlineRect& lineLogicalRect, const InlineLayoutSize& lineBoxLogicalSize, InlineLayoutUnit aligmentBaseline, InlineLayoutUnit contentLogicalLeftOffset, InlineLayoutUnit contentLogicalWidth)
-    : m_logicalRect(lineLogicalRect)
-    , m_lineBoxLogicalSize(lineBoxLogicalSize)
+inline InlineLineGeometry::InlineLineGeometry(const InlineRect& lineBoxLogicalRect, InlineLayoutUnit aligmentBaseline, InlineLayoutUnit contentLogicalLeftOffset, InlineLayoutUnit contentLogicalWidth)
+    : m_lineBoxLogicalRect(lineBoxLogicalRect)
     , m_aligmentBaseline(aligmentBaseline)
     , m_contentLogicalLeftOffset(contentLogicalLeftOffset)
     , m_contentLogicalWidth(contentLogicalWidth)

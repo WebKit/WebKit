@@ -40,11 +40,10 @@ public:
         float top { 0 };
         float bottom { 0 };
     };
-    Line(size_t firstRunIndex, size_t runCount, const FloatRect& lineRect, float lineBoxWidth, EnclosingTopAndBottom enclosingTopAndBottom, const FloatRect& scrollableOverflow, const FloatRect& inkOverflow, float baseline, float contentLeftOffset, float contentWidth)
+    Line(size_t firstRunIndex, size_t runCount, const FloatRect& lineBoxRect, EnclosingTopAndBottom enclosingTopAndBottom, const FloatRect& scrollableOverflow, const FloatRect& inkOverflow, float baseline, float contentLeftOffset, float contentWidth)
         : m_firstRunIndex(firstRunIndex)
         , m_runCount(runCount)
-        , m_lineRect(lineRect)
-        , m_lineBoxWidth(lineBoxWidth)
+        , m_lineBoxRect(lineBoxRect)
         , m_enclosingTopAndBottom(enclosingTopAndBottom)
         , m_scrollableOverflow(scrollableOverflow)
         , m_inkOverflow(inkOverflow)
@@ -56,8 +55,7 @@ public:
 
     size_t firstRunIndex() const { return m_firstRunIndex; }
     size_t runCount() const { return m_runCount; }
-    const FloatRect& rect() const { return m_lineRect; }
-    float lineBoxWidth() const { return m_lineBoxWidth; }
+    const FloatRect& rect() const { return m_lineBoxRect; }
     float enclosingContentTop() const { return m_enclosingTopAndBottom.top; }
     float enclosingContentBottom() const { return m_enclosingTopAndBottom.bottom; }
     const FloatRect& scrollableOverflow() const { return m_scrollableOverflow; }
@@ -69,12 +67,10 @@ public:
 private:
     size_t m_firstRunIndex { 0 };
     size_t m_runCount { 0 };
-    // Line is always as tall as the line box is. However they may differ in width.
-    // While line box encloses all the inline level boxes on the line horizontally, the line itself may be shorter (and trigger horizontal overflow).
+    // This is line box geometry (see https://www.w3.org/TR/css-inline-3/#line-box).
+    FloatRect m_lineBoxRect;
     // Enclosing top and bottom includes all inline level boxes (border box) vertically. In certain cases (see line-height property)
     // the line (and the line box) is not as tall as the inline level boxes on the line.
-    FloatRect m_lineRect;
-    float m_lineBoxWidth { 0 };
     EnclosingTopAndBottom m_enclosingTopAndBottom;
     FloatRect m_scrollableOverflow;
     FloatRect m_inkOverflow;

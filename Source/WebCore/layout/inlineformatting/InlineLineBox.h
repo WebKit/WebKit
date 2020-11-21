@@ -131,10 +131,11 @@ public:
     enum class IsLineConsideredEmpty { No, Yes };
     LineBox(const InlineLayoutPoint& logicalTopLeft, InlineLayoutUnit logicalWidth, IsLineConsideredEmpty);
 
+    const InlineRect& logicalRect() const { return m_logicalRect; }
     InlineLayoutUnit logicalWidth() const { return logicalSize().width(); }
     InlineLayoutUnit logicalHeight() const { return logicalSize().height(); }
-    InlineLayoutPoint logicalTopLeft() const { return m_logicalRect.topLeft(); }
-    InlineLayoutSize logicalSize() const { return m_logicalRect.size(); }
+    InlineLayoutPoint logicalTopLeft() const { return logicalRect().topLeft(); }
+    InlineLayoutSize logicalSize() const { return logicalRect().size(); }
 
     Optional<InlineLayoutUnit> horizontalAlignmentOffset() const { return m_horizontalAlignmentOffset; }
     bool isConsideredEmpty() const { return m_isConsideredEmpty; }

@@ -67,7 +67,6 @@ private:
     class Geometry : public FormattingContext::Geometry {
     public:
         LineBox lineBoxForLineContent(const LineBuilder::LineContent&);
-        InlineRect computedLineLogicalRect(const LineBox&, const LineBuilder::LineContent&) const;
         InlineLayoutUnit logicalTopForNextLine(const LineBuilder::LineContent&, InlineLayoutUnit previousLineLogicalBottom, const FloatingContext&) const;
 
         ContentHeightAndMargin inlineBlockContentHeightAndMargin(const Box&, const HorizontalConstraints&, const OverriddenVerticalValues&) const;

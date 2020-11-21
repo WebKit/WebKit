@@ -410,7 +410,7 @@ InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuil
 
     formattingState.addLineBox(geometry.lineBoxForLineContent(lineContent));
     const auto& lineBox = formattingState.lineBoxes().last();
-    auto lineLogicalRect = geometry.computedLineLogicalRect(lineBox, lineContent);
+    auto& lineBoxLogicalRect = lineBox.logicalRect();
 
     auto updateFloatGeometry = [&] {
         if (lineContent.floats.isEmpty())
@@ -421,8 +421,8 @@ InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuil
             auto& floatBox = floatCandidate.item->layoutBox();
             auto& boxGeometry = formattingState.boxGeometry(floatBox);
             // Set static position first.
-            auto verticalStaticPosition = floatCandidate.isIntrusive ? lineLogicalRect.top() : lineLogicalRect.bottom();
-            boxGeometry.setLogicalTopLeft({ lineLogicalRect.left(), verticalStaticPosition });
+            auto verticalStaticPosition = floatCandidate.isIntrusive ? lineBoxLogicalRect.top() : lineBoxLogicalRect.bottom();
+            boxGeometry.setLogicalTopLeft({ lineBoxLogicalRect.left(), verticalStaticPosition });
             // Float it.
             boxGeometry.setLogicalTopLeft(floatingContext.positionForFloat(floatBox, horizontalConstraints));
             floatingContext.append(floatBox);
@@ -457,7 +457,7 @@ InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuil
             // Let's convert top/left relative to the formatting context root.
             auto logicalRect = lineBox.logicalMarginRectForInlineLevelBox(layoutBox);
             // Inline box height includes the margin box. Let's account for that.
-            auto borderBoxLogicalTopLeft = lineLogicalRect.topLeft();
+            auto borderBoxLogicalTopLeft = lineBoxLogicalRect.topLeft();
             borderBoxLogicalTopLeft.move(logicalRect.left(), logicalRect.top() + boxGeometry.marginBefore());
 
             if (layoutBox.isInFlowPositioned())
@@ -493,11 +493,11 @@ InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuil
     updateBoxGeometry();
 
     auto constructLineGeometry = [&] {
-        formattingState.addLine({ lineLogicalRect, lineBox.logicalSize(), lineBox.alignmentBaseline(), lineBox.horizontalAlignmentOffset().valueOr(InlineLayoutUnit { }), lineContent.contentLogicalWidth });
+        formattingState.addLine({ lineBoxLogicalRect, lineBox.alignmentBaseline(), lineBox.horizontalAlignmentOffset().valueOr(InlineLayoutUnit { }), lineContent.contentLogicalWidth });
     };
     constructLineGeometry();
 
-    return lineLogicalRect;
+    return lineBoxLogicalRect;
 }
 
 void InlineFormattingContext::invalidateFormattingState(const InvalidationState&)
