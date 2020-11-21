@@ -58,6 +58,8 @@ public:
 
     FloatRect rect() const;
 
+    float logicalTop() const { return isHorizontal() ? rect().y() : rect().x(); }
+    float logicalBottom() const { return isHorizontal() ? rect().maxY() : rect().maxX(); }
     float logicalLeft() const { return isHorizontal() ? rect().x() : rect().y(); }
     float logicalRight() const { return isHorizontal() ? rect().maxX() : rect().maxY(); }
     float logicalWidth() const { return isHorizontal() ? rect().width() : rect().height(); }

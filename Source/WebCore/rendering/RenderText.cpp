@@ -326,41 +326,31 @@ Vector<IntRect> RenderText::absoluteRectsForRange(unsigned start, unsigned end, 
 // Full annotations are added in this class.
 void RenderText::collectSelectionRects(Vector<SelectionRect>& rects, unsigned start, unsigned end)
 {
-    // FIXME: Work around signed/unsigned issues. This function takes unsigneds, and is often passed UINT_MAX
-    // to mean "all the way to the end". InlineTextBox coordinates are unsigneds, so changing this 
-    // function to take ints causes various internal mismatches. But selectionRect takes ints, and 
-    // passing UINT_MAX to it causes trouble. Ideally we'd change selectionRect to take unsigneds, but 
-    // that would cause many ripple effects, so for now we'll just clamp our unsigned parameters to INT_MAX.
-    ASSERT(end == std::numeric_limits<unsigned>::max() || end <= std::numeric_limits<int>::max());
-    ASSERT(start <= std::numeric_limits<int>::max());
-    start = std::min(start, static_cast<unsigned>(std::numeric_limits<int>::max()));
-    end = std::min(end, static_cast<unsigned>(std::numeric_limits<int>::max()));
-
-    for (InlineTextBox* box = firstTextBox(); box; box = box->nextTextBox()) {
+    for (auto run = LayoutIntegration::firstTextRunFor(*this); run; run = run.traverseNextTextRun()) {
         LayoutRect rect;
-        if (start <= box->start() && box->end() <= end)
-            rect = box->localSelectionRect(start, end);
+        if (start <= run->start() && run->end() <= end)
+            rect = run->selectionRect(start, end);
         else {
-            unsigned realEnd = std::min(box->end(), end);
-            rect = box->localSelectionRect(start, realEnd);
+            unsigned realEnd = std::min(run->end(), end);
+            rect = run->selectionRect(start, realEnd);
             if (rect.isEmpty())
                 continue;
         }
 
-        if (box->root().isFirstAfterPageBreak()) {
-            if (box->isHorizontal())
-                rect.shiftYEdgeTo(box->root().lineBoxTop());
+        if (run.line()->legacyRootInlineBox() && run.line()->legacyRootInlineBox()->isFirstAfterPageBreak()) {
+            if (run->isHorizontal())
+                rect.shiftYEdgeTo(run.line()->lineBoxTop());
             else
-                rect.shiftXEdgeTo(box->root().lineBoxTop());
+                rect.shiftXEdgeTo(run.line()->lineBoxTop());
         }
 
         RenderBlock* containingBlock = this->containingBlock();
         // Map rect, extended left to leftOffset, and right to rightOffset, through transforms to get minX and maxX.
         LogicalSelectionOffsetCaches cache(*containingBlock);
-        LayoutUnit leftOffset = containingBlock->logicalLeftSelectionOffset(*containingBlock, LayoutUnit(box->logicalTop()), cache);
-        LayoutUnit rightOffset = containingBlock->logicalRightSelectionOffset(*containingBlock, LayoutUnit(box->logicalTop()), cache);
+        LayoutUnit leftOffset = containingBlock->logicalLeftSelectionOffset(*containingBlock, LayoutUnit(run->logicalTop()), cache);
+        LayoutUnit rightOffset = containingBlock->logicalRightSelectionOffset(*containingBlock, LayoutUnit(run->logicalTop()), cache);
         LayoutRect extentsRect = rect;
-        if (box->isHorizontal()) {
+        if (run->isHorizontal()) {
             extentsRect.setX(leftOffset);
             extentsRect.setWidth(rightOffset - leftOffset);
         } else {
@@ -368,19 +358,19 @@ void RenderText::collectSelectionRects(Vector<SelectionRect>& rects, unsigned st
             extentsRect.setHeight(rightOffset - leftOffset);
         }
         extentsRect = localToAbsoluteQuad(FloatRect(extentsRect)).enclosingBoundingBox();
-        if (!box->isHorizontal())
+        if (!run->isHorizontal())
             extentsRect = extentsRect.transposedRect();
-        bool isFirstOnLine = !box->previousOnLineExists();
-        bool isLastOnLine = !box->nextOnLineExists();
+        bool isFirstOnLine = !run.previousOnLine();
+        bool isLastOnLine = !run.nextOnLine();
         if (containingBlock->isRubyBase() || containingBlock->isRubyText())
             isLastOnLine = !containingBlock->containingBlock()->inlineBoxWrapper()->nextOnLineExists();
 
-        bool containsStart = box->start() <= start && box->end() >= start;
-        bool containsEnd = box->start() <= end && box->end() >= end;
+        bool containsStart = run->start() <= start && run->end() >= start;
+        bool containsEnd = run->start() <= end && run->end() >= end;
 
         bool isFixed = false;
         IntRect absRect = localToAbsoluteQuad(FloatRect(rect), UseTransforms, &isFixed).enclosingBoundingBox();
-        bool boxIsHorizontal = !box->isSVGInlineTextBox() ? box->isHorizontal() : !style().isVerticalWritingMode();
+        bool boxIsHorizontal = !is<SVGInlineTextBox>(run->legacyInlineBox()) ? run->isHorizontal() : !style().isVerticalWritingMode();
         // If the containing block is an inline element, we want to check the inlineBoxWrapper orientation
         // to determine the orientation of the block. In this case we also use the inlineBoxWrapper to
         // determine if the element is the last on the line.
@@ -391,7 +381,7 @@ void RenderText::collectSelectionRects(Vector<SelectionRect>& rects, unsigned st
             }
         }
 
-        rects.append(SelectionRect(absRect, box->direction(), extentsRect.x(), extentsRect.maxX(), extentsRect.maxY(), 0, box->isLineBreak(), isFirstOnLine, isLastOnLine, containsStart, containsEnd, boxIsHorizontal, isFixed, containingBlock->isRubyText(), view().pageNumberForBlockProgressionOffset(absRect.x())));
+        rects.append(SelectionRect(absRect, run->direction(), extentsRect.x(), extentsRect.maxX(), extentsRect.maxY(), 0, run->isLineBreak(), isFirstOnLine, isLastOnLine, containsStart, containsEnd, boxIsHorizontal, isFixed, containingBlock->isRubyText(), view().pageNumberForBlockProgressionOffset(absRect.x())));
     }
 }
 #endif

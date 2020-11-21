@@ -55,6 +55,7 @@ public:
     LayoutUnit selectionTop() const;
     LayoutUnit selectionTopForHitTesting() const;
     LayoutUnit selectionBottom() const;
+    LayoutUnit selectionHeight() const;
     LayoutUnit lineBoxTop() const;
     LayoutUnit lineBoxBottom() const;
 
@@ -162,6 +163,11 @@ inline LayoutUnit PathLine::selectionBottom() const
     return WTF::switchOn(m_pathVariant, [](const auto& path) {
         return path.selectionBottom();
     });
+}
+
+inline LayoutUnit PathLine::selectionHeight() const
+{
+    return selectionBottom() - selectionTop();
 }
 
 inline LayoutUnit PathLine::lineBoxTop() const
