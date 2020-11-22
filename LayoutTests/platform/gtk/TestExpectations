@@ -652,9 +652,6 @@ webkit.org/b/131546 media/track/track-in-band-mode.html [ Skip ]
 # DataCue.value not enabled
 Bug(GTK) http/tests/media/track-in-band-hls-metadata.html [ Skip ]
 
-# Missing WebSpeech implementation
-webkit.org/b/136224 fast/speechsynthesis [ Skip ]
-
 # Skip the perf/ tests in debug builds
 Bug(GTK) [ Debug ] perf [ Skip ]
 

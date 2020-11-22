@@ -691,7 +691,7 @@ webkit.org/b/213131 fast/files [ Skip ]
 webkit.org/b/213131 fast/forms [ Skip ]
 webkit.org/b/213131 fast/media [ Skip ]
 webkit.org/b/213131 fast/repaint [ Skip ]
-webkit.org/b/213131 fast/speechsynthesis [ Skip ]
+
 Bug(WPE) fast/text/woff2-totalsfntsize.html [ Pass ]
 Bug(WPE) fast/text/woff2.html [ Pass ]
 
