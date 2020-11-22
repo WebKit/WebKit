@@ -1,3 +1,15 @@
+2020-11-22  Rob Buis  <rbuis@igalia.com>
+
+        Fix getIndexedParameter indexing crash
+        https://bugs.webkit.org/show_bug.cgi?id=218601
+
+        Reviewed by Ryosuke Niwa.
+
+        Add testcase.
+
+        * fast/canvas/webgl/getIndexedParameter-crash-expected.txt: Added.
+        * fast/canvas/webgl/getIndexedParameter-crash.html: Added.
+
 2020-11-21  Sihui Liu  <sihui_liu@apple.com>
 
         Implement audio capture for SpeechRecognition on macOS

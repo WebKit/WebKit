@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: WebGL: INVALID_VALUE: getIndexedParameter: index out of range
+PASS WebGL call did not crash.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
