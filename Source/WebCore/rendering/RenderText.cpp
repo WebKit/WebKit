@@ -1332,11 +1332,6 @@ UChar RenderText::previousCharacter() const
     return previousString[previousString.length() - 1];
 }
 
-LayoutUnit RenderText::topOfFirstText() const
-{
-    return firstTextBox()->root().lineTop();
-}
-
 String applyTextTransform(const RenderStyle& style, const String& text, UChar previousCharacter)
 {
     switch (style.textTransform()) {

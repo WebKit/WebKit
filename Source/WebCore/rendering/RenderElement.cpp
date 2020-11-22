@@ -43,6 +43,8 @@
 #include "HTMLHtmlElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLNames.h"
+#include "LayoutIntegrationLineIterator.h"
+#include "LayoutIntegrationRunIterator.h"
 #include "LengthFunctions.h"
 #include "Logging.h"
 #include "Page.h"
@@ -1569,13 +1571,15 @@ bool RenderElement::getLeadingCorner(FloatPoint& point, bool& insideFixed) const
             return true;
         }
 
-        if (p->node() && p->node() == element() && is<RenderText>(*o) && !downcast<RenderText>(*o).firstTextBox()) {
+        if (p->node() && p->node() == element() && is<RenderText>(*o) && !LayoutIntegration::firstTextRunFor(downcast<RenderText>(*o))) {
             // do nothing - skip unrendered whitespace that is a child or next sibling of the anchor
         } else if (is<RenderText>(*o) || o->isReplaced()) {
             point = FloatPoint();
-            if (is<RenderText>(*o) && downcast<RenderText>(*o).firstTextBox())
-                point.move(downcast<RenderText>(*o).linesBoundingBox().x(), downcast<RenderText>(*o).topOfFirstText());
-            else if (is<RenderBox>(*o))
+            if (is<RenderText>(*o)) {
+                auto& textRenderer = downcast<RenderText>(*o);
+                if (auto run = LayoutIntegration::firstTextRunFor(textRenderer))
+                    point.move(textRenderer.linesBoundingBox().x(), run.line()->top());
+            } else if (is<RenderBox>(*o))
                 point.moveBy(downcast<RenderBox>(*o).location());
             point = o->container()->localToAbsolute(point, UseTransforms, &insideFixed);
             return true;
