@@ -265,6 +265,7 @@ void ScrollingTree::commitTreeState(std::unique_ptr<ScrollingStateTree>&& scroll
             || rootNode->hasChangedProperty(ScrollingStateNode::Property::EventTrackingRegion)
             || rootNode->hasChangedProperty(ScrollingStateNode::Property::ScrolledContentsLayer)
             || rootNode->hasChangedProperty(ScrollingStateNode::Property::AsyncFrameOrOverflowScrollingEnabled)
+            || rootNode->hasChangedProperty(ScrollingStateNode::Property::WheelEventGesturesBecomeNonBlocking)
             || rootNode->hasChangedProperty(ScrollingStateNode::Property::IsMonitoringWheelEvents))) {
         LockHolder lock(m_treeStateMutex);
 
@@ -276,6 +277,9 @@ void ScrollingTree::commitTreeState(std::unique_ptr<ScrollingStateTree>&& scroll
 
         if (rootStateNodeChanged || rootNode->hasChangedProperty(ScrollingStateNode::Property::AsyncFrameOrOverflowScrollingEnabled))
             m_asyncFrameOrOverflowScrollingEnabled = scrollingStateTree->rootStateNode()->asyncFrameOrOverflowScrollingEnabled();
+
+        if (rootStateNodeChanged || rootNode->hasChangedProperty(ScrollingStateNode::Property::WheelEventGesturesBecomeNonBlocking))
+            m_wheelEventGesturesBecomeNonBlocking = scrollingStateTree->rootStateNode()->wheelEventGesturesBecomeNonBlocking();
 
         if (rootStateNodeChanged || rootNode->hasChangedProperty(ScrollingStateNode::Property::IsMonitoringWheelEvents))
             m_isMonitoringWheelEvents = scrollingStateTree->rootStateNode()->isMonitoringWheelEvents();
@@ -464,11 +468,6 @@ Optional<ScrollingNodeID> ScrollingTree::latchedNodeID() const
 void ScrollingTree::clearLatchedNode()
 {
     m_latchingController.clearLatchedNode();
-}
-
-void ScrollingTree::setAsyncFrameOrOverflowScrollingEnabled(bool enabled)
-{
-    m_asyncFrameOrOverflowScrollingEnabled = enabled;
 }
 
 FloatPoint ScrollingTree::mainFrameScrollPosition() const

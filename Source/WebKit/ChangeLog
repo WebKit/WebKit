@@ -1,5 +1,18 @@
 2020-11-21  Simon Fraser  <simon.fraser@apple.com>
 
+        Propagate the 'wheelEventGesturesBecomeNonBlocking' setting to the ScrollingTree
+        https://bugs.webkit.org/show_bug.cgi?id=219241
+
+        Reviewed by Tim Horton.
+
+        Propagate the 'wheelEventGesturesBecomeNonBlocking' setting to the ScrollingTree
+        via the ScrollingStateFrameScrollingNode, as we do for other settings.
+
+        * Shared/RemoteLayerTree/RemoteScrollingCoordinatorTransaction.cpp:
+        (ArgumentCoder<ScrollingStateFrameScrollingNode>::encode):
+
+2020-11-21  Simon Fraser  <simon.fraser@apple.com>
+
         Add an Experimental Features for wheel event gestures becoming non-blocking
         https://bugs.webkit.org/show_bug.cgi?id=219236
 

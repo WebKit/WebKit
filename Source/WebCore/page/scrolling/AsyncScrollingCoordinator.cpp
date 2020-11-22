@@ -675,6 +675,7 @@ void AsyncScrollingCoordinator::setFrameScrollingNodeState(ScrollingNodeID nodeI
     frameScrollingNode.setTopContentInset(frameView.topContentInset());
     frameScrollingNode.setLayoutViewport(frameView.layoutViewportRect());
     frameScrollingNode.setAsyncFrameOrOverflowScrollingEnabled(asyncFrameOrOverflowScrollingEnabled());
+    frameScrollingNode.setWheelEventGesturesBecomeNonBlocking(wheelEventGesturesBecomeNonBlocking());
 
     frameScrollingNode.setMinLayoutViewportOrigin(frameView.minStableLayoutViewportOrigin());
     frameScrollingNode.setMaxLayoutViewportOrigin(frameView.maxStableLayoutViewportOrigin());
@@ -856,6 +857,12 @@ bool AsyncScrollingCoordinator::asyncFrameOrOverflowScrollingEnabled() const
 {
     auto& settings = m_page->mainFrame().settings();
     return settings.asyncFrameScrollingEnabled() || settings.asyncOverflowScrollingEnabled();
+}
+
+bool AsyncScrollingCoordinator::wheelEventGesturesBecomeNonBlocking() const
+{
+    auto& settings = m_page->mainFrame().settings();
+    return settings.wheelEventGesturesBecomeNonBlocking();
 }
 
 ScrollingNodeID AsyncScrollingCoordinator::scrollableContainerNodeID(const RenderObject& renderer) const

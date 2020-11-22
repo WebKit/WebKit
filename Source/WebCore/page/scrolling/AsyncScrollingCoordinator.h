@@ -97,6 +97,7 @@ private:
     bool hasVisibleSlowRepaintViewportConstrainedObjects(const FrameView&) const override { return false; }
     
     bool asyncFrameOrOverflowScrollingEnabled() const;
+    bool wheelEventGesturesBecomeNonBlocking() const;
 
     WEBCORE_EXPORT ScrollingNodeID scrollableContainerNodeID(const RenderObject&) const override;
 

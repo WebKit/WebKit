@@ -59,6 +59,7 @@ ScrollingStateFrameScrollingNode::ScrollingStateFrameScrollingNode(const Scrolli
     , m_fixedElementsLayoutRelativeToFrame(stateNode.fixedElementsLayoutRelativeToFrame())
     , m_visualViewportIsSmallerThanLayoutViewport(stateNode.visualViewportIsSmallerThanLayoutViewport())
     , m_asyncFrameOrOverflowScrollingEnabled(stateNode.asyncFrameOrOverflowScrollingEnabled())
+    , m_wheelEventGesturesBecomeNonBlocking(stateNode.wheelEventGesturesBecomeNonBlocking())
 {
     if (hasChangedProperty(Property::RootContentsLayer))
         setRootContentsLayer(stateNode.rootContentsLayer().toRepresentation(adoptiveTree.preferredLayerRepresentation()));
@@ -104,6 +105,7 @@ OptionSet<ScrollingStateNode::Property> ScrollingStateFrameScrollingNode::applic
         Property::FixedElementsLayoutRelativeToFrame,
         Property::VisualViewportIsSmallerThanLayoutViewport,
         Property::AsyncFrameOrOverflowScrollingEnabled,
+        Property::WheelEventGesturesBecomeNonBlocking,
         Property::LayoutViewport,
         Property::MinLayoutViewportOrigin,
         Property::MaxLayoutViewportOrigin,
@@ -285,6 +287,15 @@ void ScrollingStateFrameScrollingNode::setAsyncFrameOrOverflowScrollingEnabled(b
     
     m_asyncFrameOrOverflowScrollingEnabled = enabled;
     setPropertyChanged(Property::AsyncFrameOrOverflowScrollingEnabled);
+}
+
+void ScrollingStateFrameScrollingNode::setWheelEventGesturesBecomeNonBlocking(bool enabled)
+{
+    if (enabled == m_wheelEventGesturesBecomeNonBlocking)
+        return;
+    
+    m_wheelEventGesturesBecomeNonBlocking = enabled;
+    setPropertyChanged(Property::WheelEventGesturesBecomeNonBlocking);
 }
 
 void ScrollingStateFrameScrollingNode::dumpProperties(TextStream& ts, ScrollingStateTreeAsTextBehavior behavior) const
