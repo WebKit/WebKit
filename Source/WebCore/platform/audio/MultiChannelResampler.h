@@ -59,7 +59,6 @@ private:
 
     class ChannelProvider;
     std::unique_ptr<ChannelProvider> m_channelProvider;
-    size_t m_outputFramesReady { 0 };
 };
 
 } // namespace WebCore

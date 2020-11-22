@@ -33,34 +33,30 @@
 #include "MultiChannelResampler.h"
 
 #include "AudioBus.h"
-#include "AudioUtilities.h"
 
 namespace WebCore {
 
 // ChannelProvider provides a single channel of audio data (one channel at a time) for each channel
 // of data provided to us in a multi-channel provider.
-class MultiChannelResampler::ChannelProvider {
+class MultiChannelResampler::ChannelProvider : public AudioSourceProvider {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit ChannelProvider(unsigned numberOfChannels)
-        : m_multiChannelBus(AudioBus::create(numberOfChannels, AudioUtilities::renderQuantumSize))
+        : m_numberOfChannels(numberOfChannels)
     {
     }
 
     void setProvider(AudioSourceProvider* multiChannelProvider)
     {
+        m_currentChannel = 0;
+        m_framesToProcess = 0;
         m_multiChannelProvider = multiChannelProvider;
     }
 
     // provideInput() will be called once for each channel, starting with the first channel.
     // Each time it's called, it will provide the next channel of data.
-    void provideInputForChannel(AudioBus* bus, size_t framesToProcess, unsigned channelIndex)
+    void provideInput(AudioBus* bus, size_t framesToProcess) override
     {
-        ASSERT(channelIndex < m_multiChannelBus->numberOfChannels());
-        ASSERT(framesToProcess <= AudioUtilities::renderQuantumSize);
-        if (framesToProcess > AudioUtilities::renderQuantumSize)
-            return;
-
         bool isBusGood = bus && bus->numberOfChannels() == 1;
         ASSERT(isBusGood);
         if (!isBusGood)
@@ -68,24 +64,31 @@ public:
 
         // Get the data from the multi-channel provider when the first channel asks for it.
         // For subsequent channels, we can just dish out the channel data from that (stored in m_multiChannelBus).
-        if (!channelIndex) {
+        if (!m_currentChannel) {
             m_framesToProcess = framesToProcess;
+            m_multiChannelBus = AudioBus::create(m_numberOfChannels, framesToProcess);
             m_multiChannelProvider->provideInput(m_multiChannelBus.get(), framesToProcess);
         }
 
         // All channels must ask for the same amount. This should always be the case, but let's just make sure.
-        bool isGood = framesToProcess == m_framesToProcess;
+        bool isGood = m_multiChannelBus.get() && framesToProcess == m_framesToProcess;
         ASSERT(isGood);
         if (!isGood)
             return;
 
         // Copy the channel data from what we received from m_multiChannelProvider.
-        memcpy(bus->channel(0)->mutableData(), m_multiChannelBus->channel(channelIndex)->data(), sizeof(float) * framesToProcess);
+        ASSERT(m_currentChannel <= m_numberOfChannels);
+        if (m_currentChannel < m_numberOfChannels) {
+            memcpy(bus->channel(0)->mutableData(), m_multiChannelBus->channel(m_currentChannel)->data(), sizeof(float) * framesToProcess);
+            ++m_currentChannel;
+        }
     }
 
 private:
     AudioSourceProvider* m_multiChannelProvider { nullptr };
     RefPtr<AudioBus> m_multiChannelBus;
+    unsigned m_numberOfChannels { 0 };
+    unsigned m_currentChannel { 0 };
     size_t m_framesToProcess { 0 }; // Used to verify that all channels ask for the same amount.
 };
 
@@ -109,25 +112,14 @@ void MultiChannelResampler::process(AudioSourceProvider* provider, AudioBus* des
     // channelProvider wraps the original multi-channel provider and dishes out one channel at a time.
     m_channelProvider->setProvider(provider);
 
-    // We need to ensure that SincResampler only calls provideInput() once for each channel or it will confuse the logic
-    // inside ChannelProvider. To ensure this, we chunk the number of requested frames into SincResampler::chunkSize()
-    // sized chunks. SincResampler guarantees it will only call provideInput() once once we resample this way.
-    m_outputFramesReady = 0;
-    while (m_outputFramesReady < framesToProcess) {
-        size_t chunkSize = m_kernels[0]->chunkSize();
-        size_t framesThisTime = std::min(framesToProcess - m_outputFramesReady, chunkSize);
-
-        for (unsigned channelIndex = 0; channelIndex < m_numberOfChannels; ++channelIndex) {
-            ASSERT(chunkSize == m_kernels[channelIndex]->chunkSize());
-            bool wasProvideInputCalled = false;
-            m_kernels[channelIndex]->process(destination->channel(channelIndex)->mutableData() + m_outputFramesReady, framesThisTime, [this, channelIndex, &wasProvideInputCalled](AudioBus* bus, size_t framesToProcess) {
-                ASSERT_WITH_MESSAGE(!wasProvideInputCalled, "provideInputForChannel should only be called once");
-                wasProvideInputCalled = true;
-                m_channelProvider->provideInputForChannel(bus, framesToProcess, channelIndex);
-            });
-        }
-
-        m_outputFramesReady += framesThisTime;
+    for (unsigned channelIndex = 0; channelIndex < m_numberOfChannels; ++channelIndex) {
+        // Depending on the sample-rate scale factor, and the internal buffering used in a SincResampler
+        // kernel, this call to process() will only sometimes call provideInput() on the channelProvider.
+        // However, if it calls provideInput() for the first channel, then it will call it for the remaining
+        // channels, since they all buffer in the same way and are processing the same number of frames.
+        m_kernels[channelIndex]->process(m_channelProvider.get(),
+                                         destination->channel(channelIndex)->mutableData(),
+                                         framesToProcess);
     }
 
     m_channelProvider->setProvider(nullptr);
