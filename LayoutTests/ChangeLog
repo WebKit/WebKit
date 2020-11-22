@@ -1,3 +1,11 @@
+2020-11-22  Lauro Moura  <lmoura@igalia.com>
+
+        [GStreamer] Gardening webspeech related crash
+
+        Unreviewed test gardening.
+
+        * platform/glib/TestExpectations:
+
 2020-11-22  Rob Buis  <rbuis@igalia.com>
 
         Fix getIndexedParameter indexing crash

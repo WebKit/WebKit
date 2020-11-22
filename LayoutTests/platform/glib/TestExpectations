@@ -444,6 +444,8 @@ webkit.org/b/218653 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-p
 
 webkit.org/b/218580 fast/mediastream/captureStream/canvas2d.html [ Failure Timeout ]
 
+webkit.org/b/219243 fast/storage/serialized-script-value.html [ Pass Crash ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of GStreamer-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
