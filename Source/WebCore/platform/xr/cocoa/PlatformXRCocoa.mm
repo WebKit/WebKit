@@ -23,11 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "PlatformXRCocoa.h"
+#import "config.h"
+#import "PlatformXRCocoa.h"
 
 #if ENABLE(WEBXR) && PLATFORM(COCOA)
 
-#include <WebKitAdditions/PlatformXRAdditions.cpp>
+#import <WebKitAdditions/PlatformXRAdditions.mm>
 
 #endif
