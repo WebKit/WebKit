@@ -8174,6 +8174,13 @@ void WebPageProxy::enumerateMediaDevicesForFrame(FrameIdentifier frameID, const 
 #endif
 }
 
+void WebPageProxy::syncIfMockDevicesEnabledChanged()
+{
+#if ENABLE(MEDIA_STREAM)
+    userMediaPermissionRequestManager().syncWithWebCorePrefs();
+#endif
+}
+
 void WebPageProxy::beginMonitoringCaptureDevices()
 {
 #if ENABLE(MEDIA_STREAM)

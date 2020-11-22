@@ -179,6 +179,8 @@ storage/indexeddb/IDBObject-leak.html [ Skip ]
 fast/forms/call-text-did-change-in-text-field-when-typing.html [ Skip ]
 http/tests/in-app-browser-privacy/ [ Skip ]
 fast/speechrecognition/permission-error.html [ Skip ]
+fast/speechrecognition/start-recognition-then-stop.html [ Skip ]
+fast/speechrecognition/start-second-recognition.html [ Skip ]
 
 # Only partial support on Cocoa platforms.
 imported/w3c/web-platform-tests/speech-api/ [ Skip ]

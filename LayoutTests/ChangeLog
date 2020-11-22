@@ -1,3 +1,19 @@
+2020-11-21  Sihui Liu  <sihui_liu@apple.com>
+
+        Implement audio capture for SpeechRecognition on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=218855
+        <rdar://problem/71331001>
+
+        Reviewed by Youenn Fablet.
+
+        * TestExpectations:
+        * fast/speechrecognition/start-recognition-in-removed-iframe.html: mark test as async to avoid flakiness.
+        * fast/speechrecognition/start-recognition-then-stop-expected.txt: Added.
+        * fast/speechrecognition/start-recognition-then-stop.html: Added.
+        * fast/speechrecognition/start-second-recognition-expected.txt: Added.
+        * fast/speechrecognition/start-second-recognition.html: Added.
+        * platform/wk2/TestExpectations:
+
 2020-11-21  Chris Dumez  <cdumez@apple.com>
 
         Poor resampling quality when using AudioContext sampleRate parameter

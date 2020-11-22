@@ -205,6 +205,9 @@ Modules/speech/SpeechRecognitionRequest.cpp
 Modules/speech/SpeechRecognitionResult.cpp
 Modules/speech/SpeechRecognitionResultList.cpp
 Modules/speech/SpeechRecognitionUpdate.cpp
+Modules/speech/SpeechRecognitionCaptureSource.cpp
+Modules/speech/SpeechRecognitionCaptureSourceImpl.cpp
+Modules/speech/SpeechRecognizer.cpp
 Modules/speech/DOMWindowSpeechSynthesis.cpp
 Modules/speech/SpeechSynthesis.cpp
 Modules/speech/SpeechSynthesisEvent.cpp

@@ -34,6 +34,7 @@
 #include "MediaRecorderPrivate.h"
 #include "MediaRecorderPrivateOptions.h"
 #include "MediaStreamTrackPrivate.h"
+#include "MediaUtilities.h"
 #include "VideoSampleBufferCompressor.h"
 #include "WebAudioBufferList.h"
 #include <AVFoundation/AVAssetWriter.h>
@@ -441,40 +442,6 @@ void MediaRecorderPrivateWriter::appendVideoSampleBuffer(MediaSample& sample)
     sampleTime = CMTimeAdd(sampleTime, m_currentVideoDuration);
     if (auto bufferWithCurrentTime = copySampleBufferWithCurrentTimeStamp(sample.platformSample().sample.cmSampleBuffer, sampleTime))
         m_videoCompressor->addSampleBuffer(bufferWithCurrentTime.get());
-}
-
-static inline RetainPtr<CMFormatDescriptionRef> createAudioFormatDescription(const AudioStreamDescription& description)
-{
-    auto basicDescription = WTF::get<const AudioStreamBasicDescription*>(description.platformDescription().description);
-    CMFormatDescriptionRef format = nullptr;
-    auto error = CMAudioFormatDescriptionCreate(kCFAllocatorDefault, basicDescription, 0, NULL, 0, NULL, NULL, &format);
-    if (error) {
-        RELEASE_LOG_ERROR(MediaStream, "MediaRecorderPrivateWriter CMAudioFormatDescriptionCreate failed with %d", error);
-        return nullptr;
-    }
-    return adoptCF(format);
-}
-
-static inline RetainPtr<CMSampleBufferRef> createAudioSampleBuffer(const PlatformAudioData& data, const AudioStreamDescription& description, CMTime time, size_t sampleCount)
-{
-    auto format = createAudioFormatDescription(description);
-    if (!format)
-        return nullptr;
-
-    CMSampleBufferRef sampleBuffer = nullptr;
-    auto error = CMAudioSampleBufferCreateWithPacketDescriptions(kCFAllocatorDefault, NULL, false, NULL, NULL, format.get(), sampleCount, time, NULL, &sampleBuffer);
-    if (error) {
-        RELEASE_LOG_ERROR(MediaStream, "MediaRecorderPrivateWriter createAudioSampleBufferWithPacketDescriptions failed with %d", error);
-        return nullptr;
-    }
-    auto buffer = adoptCF(sampleBuffer);
-
-    error = CMSampleBufferSetDataBufferFromAudioBufferList(buffer.get(), kCFAllocatorDefault, kCFAllocatorDefault, 0, downcast<WebAudioBufferList>(data).list());
-    if (error) {
-        RELEASE_LOG_ERROR(MediaStream, "MediaRecorderPrivateWriter CMSampleBufferSetDataBufferFromAudioBufferList failed with %d", error);
-        return nullptr;
-    }
-    return buffer;
 }
 
 void MediaRecorderPrivateWriter::appendAudioSampleBuffer(const PlatformAudioData& data, const AudioStreamDescription& description, const WTF::MediaTime&, size_t sampleCount)

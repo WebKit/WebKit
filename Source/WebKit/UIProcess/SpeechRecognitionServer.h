@@ -31,6 +31,7 @@
 #include <WebCore/SpeechRecognitionError.h>
 #include <WebCore/SpeechRecognitionRequest.h>
 #include <WebCore/SpeechRecognitionResultData.h>
+#include <WebCore/SpeechRecognizer.h>
 #include <wtf/Deque.h>
 
 namespace WebCore {
@@ -58,10 +59,9 @@ public:
 
 private:
     void requestPermissionForRequest(WebCore::SpeechRecognitionRequest&);
-    void handleRequest(WebCore::SpeechRecognitionRequest&);
-    void stopRequest(WebCore::SpeechRecognitionRequest&);
-    void abortRequest(WebCore::SpeechRecognitionRequest&);
+    void handleRequest(WebCore::SpeechRecognitionConnectionClientIdentifier);
     void sendUpdate(WebCore::SpeechRecognitionConnectionClientIdentifier, WebCore::SpeechRecognitionUpdateType, Optional<WebCore::SpeechRecognitionError> = WTF::nullopt, Optional<Vector<WebCore::SpeechRecognitionResultData>> = WTF::nullopt);
+    void sendUpdate(const WebCore::SpeechRecognitionUpdate&);
 
     // IPC::MessageReceiver.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
@@ -72,9 +72,9 @@ private:
 
     Ref<IPC::Connection> m_connection;
     SpeechRecognitionServerIdentifier m_identifier;
-    HashMap<WebCore::SpeechRecognitionConnectionClientIdentifier, std::unique_ptr<WebCore::SpeechRecognitionRequest>> m_pendingRequests;
-    HashMap<WebCore::SpeechRecognitionConnectionClientIdentifier, std::unique_ptr<WebCore::SpeechRecognitionRequest>> m_ongoingRequests;
+    HashMap<WebCore::SpeechRecognitionConnectionClientIdentifier, std::unique_ptr<WebCore::SpeechRecognitionRequest>> m_requests;
     SpeechRecognitionPermissionChecker m_permissionChecker;
+    std::unique_ptr<WebCore::SpeechRecognizer> m_recognizer;
 };
 
 } // namespace WebKit

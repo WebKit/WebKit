@@ -804,4 +804,6 @@ http/tests/websocket/tests/hybi/closed-port-delay.html [ Pass ]
 # WebKit2 only.
 js/throw-large-string-oom.html [ Pass ]
 fast/speechrecognition/permission-error.html [ Pass ]
+fast/speechrecognition/start-recognition-then-stop.html [ Pass ]
+fast/speechrecognition/start-second-recognition.html [ Pass ]
 fullscreen/full-screen-enter-while-exiting.html [ Pass ]
