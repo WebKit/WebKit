@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<script src="../resources/js-test.js"></script>
+<body>
+<script>
+description("Tests that we do not crash when using a very large sample rate");
+jsTestIsAsync = true;
+
+context = new AudioContext({ sampleRate: 384000 });
+shouldBe("context.sampleRate", "384000");
+
+node = new ConstantSourceNode(context, { offset: 0.5 });
+node.connect(context.destination);
+node.start();
+
+setTimeout(() => {
+    shouldBeEqualToString("context.state", "running");
+    finishJSTest();
+}, 100);
+</script>
+</body>
+</html>

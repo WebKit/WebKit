@@ -41,7 +41,7 @@ class MultiChannelResampler final {
     WTF_MAKE_FAST_ALLOCATED;
 public:   
     // requestFrames constrols the size of the buffer in frames when AudioSourceProvider::provideInput() is called.
-    explicit MultiChannelResampler(double scaleFactor, unsigned numberOfChannels, Optional<unsigned> requestFrames = WTF::nullopt);
+    explicit MultiChannelResampler(double scaleFactor, unsigned numberOfChannels, unsigned requestFrames = SincResampler::defaultRequestFrames);
     ~MultiChannelResampler();
 
     // Process given AudioSourceProvider for streaming applications.
@@ -59,6 +59,7 @@ private:
 
     class ChannelProvider;
     std::unique_ptr<ChannelProvider> m_channelProvider;
+    size_t m_outputFramesReady { 0 };
 };
 
 } // namespace WebCore

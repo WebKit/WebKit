@@ -41,19 +41,23 @@ namespace WebCore {
 class SincResampler final {
     WTF_MAKE_FAST_ALLOCATED;
 public:
+    static constexpr unsigned defaultRequestFrames { 512 };
+
     // scaleFactor == sourceSampleRate / destinationSampleRate
     // requestFrames controls the size in frames of the buffer requested by each provideInput() call.
-    SincResampler(double scaleFactor, Optional<unsigned> requestFrames = WTF::nullopt);
+    SincResampler(double scaleFactor, unsigned requestFrames = defaultRequestFrames);
     
+    size_t chunkSize() const { return m_chunkSize; }
+
     // Processes numberOfSourceFrames from source to produce numberOfSourceFrames / scaleFactor frames in destination.
     void process(const float* source, float* destination, unsigned numberOfSourceFrames);
 
-    // Process with input source callback function for streaming applications.
-    void process(AudioSourceProvider*, float* destination, size_t framesToProcess);
+    // Process with provideInput callback function for streaming applications.
+    void process(float* destination, size_t framesToProcess, const Function<void(AudioBus* bus, size_t framesToProcess)>& provideInput);
 
 protected:
     void initializeKernel();
-    void consumeSource(float* buffer, unsigned numberOfSourceFrames);
+    void consumeSource(float* buffer, unsigned numberOfSourceFrames, const Function<void(AudioBus* bus, size_t framesToProcess)>& provideInput);
     void updateRegions(bool isSecondLoad);
     
     double m_scaleFactor;
@@ -72,6 +76,8 @@ protected:
     // The number of source frames processed per pass.
     unsigned m_blockSize { 0 };
 
+    size_t m_chunkSize { 0 };
+
     // Source is copied into this buffer for each processing pass.
     AudioFloatArray m_inputBuffer;
 
@@ -85,9 +91,6 @@ protected:
 
     const float* m_source { nullptr };
     unsigned m_sourceFramesAvailable { 0 };
-    
-    // m_sourceProvider is used to provide the audio input stream to the resampler.
-    AudioSourceProvider* m_sourceProvider { nullptr };
 
     // The buffer is primed once at the very beginning of processing.
     bool m_isBufferPrimed { false };
