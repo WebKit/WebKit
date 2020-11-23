@@ -2633,6 +2633,12 @@ webkit.org/b/212744 compositing/repaint/compositing-toggle-in-overflow-scroll-re
 
 webkit.org/b/218111 compositing/clipping/border-radius-async-overflow-stacking.html [ ImageOnlyFailure ]
 
+webkit.org/b/219248 imported/w3c/web-platform-tests/uievents/mouse/mouseevent_move_button.html [ Failure ]
+
+webkit.org/b/219250 http/tests/navigation/page-cache-requestAnimationFrame.html [ Failure Pass ]
+
+webkit.org/b/219251 fast/canvas/webgl/getIndexedParameter-crash.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
 #////////////////////////////////////////////////////////////////////////////////////////

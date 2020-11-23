@@ -1150,6 +1150,9 @@ imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/reset-al
 
 imported/w3c/web-platform-tests/mathml/presentation-markup/menclose/legacy-menclose-radical-notation.html [ Pass ]
 
+# Failed since added in r270045.
+webkit.org/b/219247 imported/w3c/web-platform-tests/compat/webkit-box-clamp-bottom-border.html [ ImageOnlyFailure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WPT-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////

@@ -373,9 +373,9 @@ PASS OffscreenCanvasRenderingContext2D interface: operation isPointInPath(unrest
 PASS OffscreenCanvasRenderingContext2D interface: operation isPointInPath(Path2D, unrestricted double, unrestricted double, optional CanvasFillRule)
 PASS OffscreenCanvasRenderingContext2D interface: operation isPointInStroke(unrestricted double, unrestricted double)
 PASS OffscreenCanvasRenderingContext2D interface: operation isPointInStroke(Path2D, unrestricted double, unrestricted double)
-FAIL OffscreenCanvasRenderingContext2D interface: operation fillText(DOMString, unrestricted double, unrestricted double, optional unrestricted double) assert_own_property: interface prototype object missing non-static operation expected property "fillText" missing
-FAIL OffscreenCanvasRenderingContext2D interface: operation strokeText(DOMString, unrestricted double, unrestricted double, optional unrestricted double) assert_own_property: interface prototype object missing non-static operation expected property "strokeText" missing
-FAIL OffscreenCanvasRenderingContext2D interface: operation measureText(DOMString) assert_own_property: interface prototype object missing non-static operation expected property "measureText" missing
+PASS OffscreenCanvasRenderingContext2D interface: operation fillText(DOMString, unrestricted double, unrestricted double, optional unrestricted double)
+PASS OffscreenCanvasRenderingContext2D interface: operation strokeText(DOMString, unrestricted double, unrestricted double, optional unrestricted double)
+PASS OffscreenCanvasRenderingContext2D interface: operation measureText(DOMString)
 PASS OffscreenCanvasRenderingContext2D interface: operation drawImage(CanvasImageSource, unrestricted double, unrestricted double)
 PASS OffscreenCanvasRenderingContext2D interface: operation drawImage(CanvasImageSource, unrestricted double, unrestricted double, unrestricted double, unrestricted double)
 PASS OffscreenCanvasRenderingContext2D interface: operation drawImage(CanvasImageSource, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double)
@@ -391,10 +391,10 @@ PASS OffscreenCanvasRenderingContext2D interface: attribute miterLimit
 PASS OffscreenCanvasRenderingContext2D interface: operation setLineDash(sequence<unrestricted double>)
 PASS OffscreenCanvasRenderingContext2D interface: operation getLineDash()
 PASS OffscreenCanvasRenderingContext2D interface: attribute lineDashOffset
-FAIL OffscreenCanvasRenderingContext2D interface: attribute font assert_true: The prototype object must have a property "font" expected true got false
-FAIL OffscreenCanvasRenderingContext2D interface: attribute textAlign assert_true: The prototype object must have a property "textAlign" expected true got false
-FAIL OffscreenCanvasRenderingContext2D interface: attribute textBaseline assert_true: The prototype object must have a property "textBaseline" expected true got false
-FAIL OffscreenCanvasRenderingContext2D interface: attribute direction assert_true: The prototype object must have a property "direction" expected true got false
+PASS OffscreenCanvasRenderingContext2D interface: attribute font
+PASS OffscreenCanvasRenderingContext2D interface: attribute textAlign
+PASS OffscreenCanvasRenderingContext2D interface: attribute textBaseline
+PASS OffscreenCanvasRenderingContext2D interface: attribute direction
 PASS OffscreenCanvasRenderingContext2D interface: operation closePath()
 PASS OffscreenCanvasRenderingContext2D interface: operation moveTo(unrestricted double, unrestricted double)
 PASS OffscreenCanvasRenderingContext2D interface: operation lineTo(unrestricted double, unrestricted double)

@@ -1,3 +1,13 @@
+2020-11-22  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GLIB][GTK] Unreviewed test gardening. Updated expectations and baselines after 270164.
+
+        * platform/glib/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/gtk/editing/selection/simple-line-layout-caret-is-gone-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt: Updated after r270103.
+        * platform/gtk/imported/w3c/web-platform-tests/html/dom/idlharness.worker-expected.txt: Updated after r270103.
+
 2020-11-22  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed GLib gardening
