@@ -51,6 +51,11 @@ namespace WebCore {
 
 namespace CSSPropertyParserHelpers {
 
+static inline bool isCSSWideKeyword(CSSValueID id)
+{
+    return id == CSSValueInitial || id == CSSValueInherit || id == CSSValueUnset || id == CSSValueRevert || id == CSSValueDefault;
+}
+
 bool consumeCommaIncludingWhitespace(CSSParserTokenRange& range)
 {
     CSSParserToken value = range.peek();
@@ -1953,8 +1958,7 @@ Optional<FontStyleRaw> consumeFontStyleRaw(CSSParserTokenRange& range, CSSParser
 #if ENABLE(VARIATION_FONTS)
     if (!range.atEnd()) {
         if (auto angle = consumeAngleRaw(range, cssParserMode)) {
-            auto angleInDegrees = CSSPrimitiveValue::computeDegrees(angle->type, angle->value);
-            if (fontStyleIsWithinRange(angleInDegrees))
+            if (isFontStyleAngleInRange(CSSPrimitiveValue::computeDegrees(angle->type, angle->value)))
                 return { { CSSValueOblique, WTFMove(angle) } };
             return WTF::nullopt;
         }

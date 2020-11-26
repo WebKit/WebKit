@@ -67,7 +67,7 @@ struct LengthRaw {
     double value;
 };
 
-using LengthOrPercentRaw = WTF::Variant<LengthRaw, double>;
+using LengthOrPercentRaw = Variant<LengthRaw, double>;
 
 RefPtr<CSSPrimitiveValue> consumeInteger(CSSParserTokenRange&, double minimumValue = -std::numeric_limits<double>::max());
 RefPtr<CSSPrimitiveValue> consumePositiveInteger(CSSParserTokenRange&);
@@ -134,10 +134,10 @@ struct FontStyleRaw {
     CSSValueID style;
     Optional<AngleRaw> angle;
 };
-using FontWeightRaw = WTF::Variant<CSSValueID, double>;
-using FontSizeRaw = WTF::Variant<CSSValueID, CSSPropertyParserHelpers::LengthOrPercentRaw>;
-using LineHeightRaw = WTF::Variant<CSSValueID, double, CSSPropertyParserHelpers::LengthOrPercentRaw>;
-using FontFamilyRaw = WTF::Variant<CSSValueID, String>;
+using FontWeightRaw = Variant<CSSValueID, double>;
+using FontSizeRaw = Variant<CSSValueID, CSSPropertyParserHelpers::LengthOrPercentRaw>;
+using LineHeightRaw = Variant<CSSValueID, double, CSSPropertyParserHelpers::LengthOrPercentRaw>;
+using FontFamilyRaw = Variant<CSSValueID, String>;
 
 struct FontRaw {
     Optional<FontStyleRaw> style;
@@ -146,7 +146,7 @@ struct FontRaw {
     Optional<CSSValueID> stretch;
     FontSizeRaw size;
     Optional<LineHeightRaw> lineHeight;
-    WTF::Vector<FontFamilyRaw> family;
+    Vector<FontFamilyRaw> family;
 };
 
 Optional<CSSValueID> consumeFontVariantCSS21Raw(CSSParserTokenRange&);
@@ -158,13 +158,15 @@ Optional<FontStyleRaw> consumeFontStyleRaw(CSSParserTokenRange&, CSSParserMode);
 String concatenateFamilyName(CSSParserTokenRange&);
 String consumeFamilyNameRaw(CSSParserTokenRange&);
 Optional<CSSValueID> consumeGenericFamilyRaw(CSSParserTokenRange&);
-Optional<WTF::Vector<FontFamilyRaw>> consumeFontFamilyRaw(CSSParserTokenRange&);
+Optional<Vector<FontFamilyRaw>> consumeFontFamilyRaw(CSSParserTokenRange&);
 Optional<FontSizeRaw> consumeFontSizeRaw(CSSParserTokenRange&, CSSParserMode, UnitlessQuirk = UnitlessQuirk::Forbid);
 Optional<LineHeightRaw> consumeLineHeightRaw(CSSParserTokenRange&, CSSParserMode);
 Optional<FontRaw> consumeFontWorkerSafe(CSSParserTokenRange&, CSSParserMode);
 const AtomString& genericFontFamilyFromValueID(CSSValueID);
 
-// Template implementations are at the bottom of the file for readability.
+bool isFontStyleAngleInRange(double angleInDegrees);
+
+// Template and inline implementations are at the bottom of the file for readability.
 
 template<typename... emptyBaseCase> inline bool identMatches(CSSValueID) { return false; }
 template<CSSValueID head, CSSValueID... tail> inline bool identMatches(CSSValueID id)
@@ -186,9 +188,9 @@ template<CSSValueID... names> RefPtr<CSSPrimitiveValue> consumeIdent(CSSParserTo
     return CSSValuePool::singleton().createIdentifierValue(range.consumeIncludingWhitespace().id());
 }
 
-static inline bool isCSSWideKeyword(const CSSValueID& id)
+inline bool isFontStyleAngleInRange(double angleInDegrees)
 {
-    return id == CSSValueInitial || id == CSSValueInherit || id == CSSValueUnset || id == CSSValueRevert || id == CSSValueDefault;
+    return angleInDegrees > -90 && angleInDegrees < 90;
 }
 
 } // namespace CSSPropertyParserHelpers
