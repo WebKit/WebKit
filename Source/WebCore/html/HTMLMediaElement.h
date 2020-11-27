@@ -1134,6 +1134,7 @@ private:
     friend class TrackDisplayUpdateScope;
 
     RefPtr<Blob> m_blob;
+    URL m_blobURLForReading;
     MediaProvider m_mediaProvider;
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)

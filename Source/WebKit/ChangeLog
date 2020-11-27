@@ -1,3 +1,16 @@
+2020-11-26  Youenn Fablet  <youenn@apple.com>
+
+        https://collab-project.github.io/videojs-record/demo/video-only.html is not working
+        https://bugs.webkit.org/show_bug.cgi?id=219258
+        <rdar://problem/69759808>
+
+        Reviewed by Eric Carlson.
+
+        Fixed a potential null pointer crash in case load is aborted by WebCore at creation time.
+
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        (WebKit::MediaPlayerPrivateRemote::requestResource):
+
 2020-11-26  Yoshiaki Jitsukawa  <yoshiaki.jitsukawa@sony.com>
 
         [PlayStation] Enable ResourceLoadStatistics

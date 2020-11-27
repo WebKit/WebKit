@@ -1,0 +1,4 @@
+
+
+PASS Setting srcObject to MediaStream and then Blob
+

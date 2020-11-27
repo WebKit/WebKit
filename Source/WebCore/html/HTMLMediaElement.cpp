@@ -33,6 +33,7 @@
 #include "Attribute.h"
 #include "AudioTrackList.h"
 #include "Blob.h"
+#include "BlobURL.h"
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
 #include "Chrome.h"
@@ -105,6 +106,7 @@
 #include "SleepDisabler.h"
 #include "TextTrackCueList.h"
 #include "TextTrackList.h"
+#include "ThreadableBlobRegistry.h"
 #include "TimeRanges.h"
 #include "UserContentController.h"
 #include "UserGestureIndicator.h"
@@ -574,6 +576,9 @@ HTMLMediaElement::~HTMLMediaElement()
 
     m_mediaSession = nullptr;
     schedulePlaybackControlsManagerUpdate();
+
+    if (!m_blobURLForReading.isEmpty())
+        ThreadableBlobRegistry::unregisterBlobURL(m_blobURLForReading);
 }
 
 RefPtr<HTMLMediaElement> HTMLMediaElement::bestMediaElementForShowingPlaybackControlsManager(MediaElementSession::PlaybackControlsPurpose purpose)
@@ -996,6 +1001,14 @@ void HTMLMediaElement::setSrcObject(MediaProvider&& mediaProvider)
     // value, and then invoke the element’s media element load algorithm.
     INFO_LOG(LOGIDENTIFIER);
     m_mediaProvider = WTFMove(mediaProvider);
+#if ENABLE(MEDIA_STREAM)
+    m_mediaStreamSrcObject = nullptr;
+#endif
+#if ENABLE(MEDIA_SOURCE)
+    m_mediaSource = nullptr;
+#endif
+    m_blob = nullptr;
+
     prepareForLoad();
 }
 
@@ -1477,7 +1490,12 @@ void HTMLMediaElement::loadResource(const URL& initialURL, ContentType& contentT
     if (!loadAttempted && m_blob) {
         loadAttempted = true;
         ALWAYS_LOG(LOGIDENTIFIER, "loading generic blob");
-        if (!m_player->load(m_blob->url(), contentType, keySystem))
+        if (!m_blobURLForReading.isEmpty())
+            ThreadableBlobRegistry::unregisterBlobURL(m_blobURLForReading);
+        m_blobURLForReading = BlobURL::createPublicURL(&document().securityOrigin());
+        ThreadableBlobRegistry::registerBlobURL(&document().securityOrigin(), m_blobURLForReading, m_blob->url());
+
+        if (!m_player->load(m_blobURLForReading, contentType, keySystem))
             mediaLoadingFailed(MediaPlayer::NetworkState::FormatError);
     }
 

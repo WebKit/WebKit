@@ -1,3 +1,14 @@
+2020-11-26  Youenn Fablet  <youenn@apple.com>
+
+        https://collab-project.github.io/videojs-record/demo/video-only.html is not working
+        https://bugs.webkit.org/show_bug.cgi?id=219258
+        <rdar://problem/69759808>
+
+        Reviewed by Eric Carlson.
+
+        * http/wpt/mediarecorder/set-srcObject-MediaStream-Blob-expected.txt: Added.
+        * http/wpt/mediarecorder/set-srcObject-MediaStream-Blob.html: Added.
+
 2020-11-22  Diego Pino Garcia  <dpino@igalia.com>
 
         [GLIB][GTK] Unreviewed test gardening. Updated expectations and baselines after 270164.

@@ -35,6 +35,7 @@
 #include "RemoteLegacyCDMSession.h"
 #include "RemoteMediaPlayerManagerProxyMessages.h"
 #include "RemoteMediaPlayerProxyMessages.h"
+#include "RemoteMediaResourceManagerMessages.h"
 #include "SandboxExtension.h"
 #include "VideoLayerRemote.h"
 #include "WebCoreArgumentCoders.h"
@@ -1142,6 +1143,12 @@ void MediaPlayerPrivateRemote::requestResource(RemoteMediaResourceIdentifier rem
     ASSERT(!m_mediaResources.contains(remoteMediaResourceIdentifier));
     auto resource = m_mediaResourceLoader->requestResource(WTFMove(request), options);
 
+    if (!resource) {
+        completionHandler();
+        // FIXME: Get the error from MediaResourceLoader::requestResource.
+        connection().send(Messages::RemoteMediaResourceManager::LoadFailed(remoteMediaResourceIdentifier, { ResourceError::Type::Cancellation }), 0);
+        return;
+    }
     // PlatformMediaResource owns the PlatformMediaResourceClient
     resource->setClient(makeUnique<RemoteMediaResourceProxy>(connection(), *resource, remoteMediaResourceIdentifier));
     m_mediaResources.add(remoteMediaResourceIdentifier, WTFMove(resource));

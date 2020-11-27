@@ -244,7 +244,7 @@ void WebCoreAVFResourceLoader::startLoading()
     request.setPriority(ResourceLoadPriority::Low);
 
     if (auto* loader = m_parent->player()->cachedResourceLoader()) {
-        m_resourceMediaLoader = CachedResourceMediaLoader::create(*this, *loader, WTFMove(request));
+        m_resourceMediaLoader = CachedResourceMediaLoader::create(*this, *loader, ResourceRequest(request));
         if (m_resourceMediaLoader)
             return;
     }
