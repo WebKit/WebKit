@@ -1,3 +1,16 @@
+2020-11-26  Aakash Jain  <aakash_jain@apple.com>
+
+        [build.webkit.org] Update Run32bitJSCTests step for new buildbot
+        https://bugs.webkit.org/show_bug.cgi?id=219085
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/build-webkit-org/steps.py:
+        (Run32bitJSCTests):
+        (Run32bitJSCTests.start): Initialized log observer.
+        (Run32bitJSCTests.parseOutputLine): Parse each log line as they come.
+        (Run32bitJSCTests.countFailures): Updated to return failedTestCount.
+
 2020-11-26  Frederic Wang  <fwang@igalia.com>
 
         [GTK] Allow WebKitTestServer to run non-loopback addresses for API tests

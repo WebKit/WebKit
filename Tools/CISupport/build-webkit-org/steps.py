@@ -911,6 +911,7 @@ class Run32bitJSCTests(TestWithFailureCount):
     ]
     failedTestsFormatString = "%d regression%s found."
     logfiles = {"json": jsonFileName}
+    test_summary_re = re.compile(r'\s*(?P<count>\d+) failures? found.')  # e.g.: 2 failures found.
 
     def __init__(self, *args, **kwargs):
         kwargs['logEnviron'] = False
@@ -919,11 +920,22 @@ class Run32bitJSCTests(TestWithFailureCount):
     def start(self):
         if USE_BUILDBOT_VERSION2:
             self.workerEnvironment[RESULTS_SERVER_API_KEY] = os.getenv(RESULTS_SERVER_API_KEY)
+            self.log_observer = ParseByLineLogObserver(self.parseOutputLine)
+            self.addLogObserver('stdio', self.log_observer)
+            self.failedTestCount = 0
         else:
             self.slaveEnvironment[RESULTS_SERVER_API_KEY] = os.getenv(RESULTS_SERVER_API_KEY)
         return shell.Test.start(self)
 
+    def parseOutputLine(self, line):
+        match = self.test_summary_re.match(line)
+        if match:
+            self.failedTestCount = int(match.group('count'))
+
     def countFailures(self, cmd):
+        if USE_BUILDBOT_VERSION2:
+            return self.failedTestCount
+
         logText = cmd.logs['stdio'].getText()
         # We're looking for the line that looks like this: 0 failures found.
         regex = re.compile(r'\s*(?P<count>\d+) failures? found.')
