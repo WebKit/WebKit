@@ -9107,7 +9107,7 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 #if PLATFORM(WATCHOS)
     if ([_presentedFullScreenInputViewController isKindOfClass:[WKTimePickerViewController class]])
         [(WKTimePickerViewController *)_presentedFullScreenInputViewController.get() setHour:hour minute:minute];
-#elif PLATFORM(IOS_FAMILY)
+#else
     if ([_inputPeripheral isKindOfClass:[WKDateTimeInputControl class]])
         [(WKDateTimeInputControl *)_inputPeripheral.get() setTimePickerHour:hour minute:minute];
 #endif
@@ -9115,19 +9115,15 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 
 - (double)timePickerValueHour
 {
-#if PLATFORM(IOS_FAMILY)
     if ([_inputPeripheral isKindOfClass:[WKDateTimeInputControl class]])
         return [(WKDateTimeInputControl *)_inputPeripheral.get() timePickerValueHour];
-#endif
     return -1;
 }
 
 - (double)timePickerValueMinute
 {
-#if PLATFORM(IOS_FAMILY)
     if ([_inputPeripheral isKindOfClass:[WKDateTimeInputControl class]])
         return [(WKDateTimeInputControl *)_inputPeripheral.get() timePickerValueMinute];
-#endif
     return -1;
 }
 

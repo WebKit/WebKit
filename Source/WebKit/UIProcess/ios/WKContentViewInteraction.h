@@ -438,9 +438,7 @@ struct WKAutoCorrectionData {
 #if ENABLE(DRAG_SUPPORT)
     , UIDragInteractionDelegate, UIDropInteractionDelegate
 #endif
-#if PLATFORM(IOS_FAMILY)
     , WKTouchActionGestureRecognizerDelegate
-#endif
 >
 
 @property (nonatomic, readonly) CGPoint lastInteractionLocation;
