@@ -145,7 +145,6 @@ public:
     ~AXObjectCache();
 
     WEBCORE_EXPORT AXCoreObject* focusedUIElementForPage(const Page*);
-    static AXCoreObject* focusedObjectForPage(const Page*);
 
     // Returns the root object for the entire document.
     WEBCORE_EXPORT AXCoreObject* rootObject();
@@ -202,6 +201,8 @@ public:
     WEBCORE_EXPORT static void enableAccessibility();
     WEBCORE_EXPORT static void disableAccessibility();
 
+    static AXCoreObject* focusedObjectForPage(const Page*);
+
     // Enhanced user interface accessibility can be toggled by the assistive technology.
     WEBCORE_EXPORT static void setEnhancedUserInterfaceAccessibility(bool flag);
     
@@ -209,6 +210,7 @@ public:
     static bool accessibilityEnabled() { return gAccessibilityEnabled; }
     static bool accessibilityEnhancedUserInterfaceEnabled() { return gAccessibilityEnhancedUserInterfaceEnabled; }
 #else
+    static AXCoreObject* focusedObjectForPage(const Page*) { return nullptr; }
     static void enableAccessibility() { }
     static void disableAccessibility() { }
     static void setEnhancedUserInterfaceAccessibility(bool) { }
