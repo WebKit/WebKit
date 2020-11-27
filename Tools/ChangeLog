@@ -1,3 +1,30 @@
+2020-11-26  Frederic Wang  <fwang@igalia.com>
+
+        [GTK] Allow WebKitTestServer to run non-loopback addresses for API tests
+        https://bugs.webkit.org/show_bug.cgi?id=219257
+
+        GTK API tests currently assumes that loopback IP addresses can be treated as mixed content
+        in order to test WEBKIT_INSECURE_CONTENT_RUN and WEBKIT_INSECURE_CONTENT_DISPLAYED APIs.
+        After bug 218623, this will no longer be true so this patch adds an option to
+        WebKitTestServer so that it can run a server listening to "localhost" instead. This approach
+        will work until bug 171934 is fixed, but we might add a way to launch a server listening to
+        non-localhost addresses (bug 219198) or review the whole mixed content handling in the
+        future (bug 140625). This patch also tweaks a bit WebKitTestServer options, so they use a
+        bitset instead.
+
+        Reviewed by Michael Catanzaro.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestSSL.cpp:
+        (beforeAll): Add a ServerNonLoopback bit to the HTTPS server used by the tests, so that
+        insecure content APIs will still work after bug 218623. Also remove explicit options for the
+        HTTP server since it just uses the default (no bits set).
+        * TestWebKitAPI/glib/WebKitGLib/WebKitTestServer.cpp:
+        (WebKitTestServer::WebKitTestServer): Use the new bitset syntax. Starts a server listening to
+        "localhost" if the ServerNonLoopback bit is set.
+        * TestWebKitAPI/glib/WebKitGLib/WebKitTestServer.h: Make the enum a list of bit positions
+        and the parameter a bitset of options. Add the new ServerNonLoopback option and remove
+        ServerHTTP, which corresponds to the default value (no bits set).
+
 2020-11-26  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         [WPE][GTK] Use Internet Explorer quirk for Google Docs

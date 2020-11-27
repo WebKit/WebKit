@@ -554,10 +554,12 @@ static void httpServerCallback(SoupServer* server, SoupMessage* message, const c
 
 void beforeAll()
 {
-    kHttpsServer = new WebKitTestServer(WebKitTestServer::ServerHTTPS);
+    // FIXME(https://webkit.org/b/219198): This should really be a non-localhost domain but
+    // relying on a non-loopback IP address is enough until bug 171934 is fixed.
+    kHttpsServer = new WebKitTestServer(WebKitTestServer::ServerHTTPS | WebKitTestServer::ServerNonLoopback);
     kHttpsServer->run(httpsServerCallback);
 
-    kHttpServer = new WebKitTestServer(WebKitTestServer::ServerHTTP);
+    kHttpServer = new WebKitTestServer();
     kHttpServer->run(httpServerCallback);
 
     SSLTest::add("WebKitWebView", "ssl", testSSL);
