@@ -76,9 +76,11 @@ LineLayout* LineLayout::containing(RenderObject& renderer)
     if (renderer.isReplica() || renderer.isRenderScrollbarPart())
         return nullptr;
     
-    if (auto* parent = renderer.parent()) {
+    for (auto* parent = renderer.parent(); parent; parent = parent->parent()) {
         if (is<RenderBlockFlow>(*parent))
             return downcast<RenderBlockFlow>(*parent).modernLineLayout();
+        if (!is<RenderInline>(*parent))
+            return nullptr;
     }
 
     return nullptr;
@@ -348,6 +350,22 @@ LineIterator LineLayout::lastLine() const
     return { LineIteratorModernPath(*m_inlineContent, m_inlineContent->lines.isEmpty() ? 0 : m_inlineContent->lines.size() - 1) };
 }
 
+LayoutRect LineLayout::enclosingBorderBoxRectFor(const RenderInline& renderInline) const
+{
+    if (!m_inlineContent)
+        return { };
+
+    auto& layoutBox = m_boxTree.layoutBoxForRenderer(renderInline);
+
+    LayoutRect rect;
+    for (auto& inlineBox : m_inlineContent->inlineBoxes) {
+        if (&inlineBox.layoutBox() == &layoutBox)
+            rect.uniteIfNonZero(LayoutRect(inlineBox.rect()));
+    }
+
+    return rect;
+}
+
 const RenderObject& LineLayout::rendererForLayoutBox(const Layout::Box& layoutBox) const
 {
     return m_boxTree.rendererForLayoutBox(layoutBox);
@@ -428,12 +446,10 @@ void LineLayout::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         textPainter.paint(textRun, rect, textOrigin);
 
         if (!style.textDecorationsInEffect().isEmpty()) {
-            // FIXME: Use correct RenderText.
-            if (auto* textRenderer = childrenOfType<RenderText>(flow()).first()) {
-                auto painter = TextDecorationPainter { paintInfo.context(), style.textDecorationsInEffect(), *textRenderer, false, style.fontCascade() };
-                painter.setWidth(rect.width());
-                painter.paintTextDecoration(textRun, textOrigin, rect.location() + paintOffset);
-            }
+            auto& textRenderer = downcast<RenderText>(m_boxTree.rendererForLayoutBox(run.layoutBox()));
+            auto painter = TextDecorationPainter { paintInfo.context(), style.textDecorationsInEffect(), textRenderer, false, style.fontCascade() };
+            painter.setWidth(rect.width());
+            painter.paintTextDecoration(textRun, textOrigin, rect.location() + paintOffset);
         }
     }
 }

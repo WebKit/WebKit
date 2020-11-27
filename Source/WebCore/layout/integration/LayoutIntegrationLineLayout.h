@@ -88,6 +88,8 @@ public:
     LineIterator firstLine() const;
     LineIterator lastLine() const;
 
+    LayoutRect enclosingBorderBoxRectFor(const RenderInline&) const;
+
     const RenderObject& rendererForLayoutBox(const Layout::Box&) const;
     const RenderBlockFlow& flow() const { return m_boxTree.flow(); }
 

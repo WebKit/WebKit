@@ -50,11 +50,32 @@ struct InlineContent : public RefCounted<InlineContent> {
     static Ref<InlineContent> create(const LineLayout& lineLayout) { return adoptRef(*new InlineContent(lineLayout)); }
     ~InlineContent();
 
+    class InlineBox {
+    public:
+        InlineBox(const Layout::Box& layoutBox, size_t lineIndex, const FloatRect& rect)
+            : m_layoutBox(makeWeakPtr(layoutBox))
+            , m_lineIndex(lineIndex)
+            , m_rect(rect)
+        {
+        }
+        const Layout::Box& layoutBox() const { return *m_layoutBox; }
+
+        size_t lineIndex() const { return m_lineIndex; }
+        const FloatRect& rect() const { return m_rect; }
+
+    private:
+        WeakPtr<const Layout::Box> m_layoutBox;
+        size_t m_lineIndex;
+        FloatRect m_rect;
+    };
+
     using Runs = Vector<Run, 4>;
     using Lines = Vector<Line, 4>;
 
     Runs runs;
     Lines lines;
+    Vector<InlineBox> inlineBoxes;
+
     float clearGapAfterLastLine { 0 };
 
     const Line& lineForRun(const Run& run) const { return lines[run.lineIndex()]; }
@@ -75,6 +96,7 @@ inline void InlineContent::shrinkToFit()
 {
     runs.shrinkToFit();
     lines.shrinkToFit();
+    inlineBoxes.shrinkToFit();
 }
 
 }

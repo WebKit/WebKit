@@ -30,6 +30,7 @@
 #include "HitTestResult.h"
 #include "InlineElementBox.h"
 #include "InlineTextBox.h"
+#include "LayoutIntegrationLineLayout.h"
 #include "RenderBlock.h"
 #include "RenderChildIterator.h"
 #include "RenderFragmentedFlow.h"
@@ -193,6 +194,13 @@ void RenderInline::styleDidChange(StyleDifference diff, const RenderStyle* oldSt
         }
         setRenderInlineAlwaysCreatesLineBoxes(alwaysCreateLineBoxes);
     }
+
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+    if (diff >= StyleDifference::Repaint) {
+        if (auto* lineLayout = LayoutIntegration::LineLayout::containing(*this))
+            lineLayout->updateStyle(*this);
+    }
+#endif
 }
 
 void RenderInline::updateAlwaysCreateLineBoxes(bool fullLayout)
@@ -602,6 +610,9 @@ private:
 
 IntRect RenderInline::linesBoundingBox() const
 {
+    if (auto* layout = LayoutIntegration::LineLayout::containing(*this))
+        return enclosingIntRect(layout->enclosingBorderBoxRectFor(*this));
+
     if (!alwaysCreateLineBoxes()) {
         ASSERT(!firstLineBox());
         FloatRect floatResult;

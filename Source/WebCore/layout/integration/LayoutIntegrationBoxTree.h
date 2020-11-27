@@ -58,6 +58,7 @@ public:
 
 private:
     void buildTree();
+    void appendChild(std::unique_ptr<Layout::Box>, RenderObject&);
 
     RenderBlockFlow& m_flow;
     Layout::InitialContainingBlock m_root;

@@ -3606,7 +3606,8 @@ void RenderBlockFlow::layoutModernLines(bool relayoutChildren, LayoutUnit& repai
 
     auto& layoutFormattingContextLineLayout = *this->modernLineLayout();
 
-    for (auto& renderer : childrenOfType<RenderObject>(*this)) {
+    for (auto walker = InlineWalker(*this); !walker.atEnd(); walker.advance()) {
+        auto& renderer = *walker.current();
         if (relayoutChildren)
             renderer.setNeedsLayout(MarkOnlyThis);
         if (!renderer.needsLayout() && !needsUpdateReplacedDimensions)

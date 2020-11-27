@@ -28,10 +28,12 @@
 
 #include "DocumentMarkerController.h"
 #include "HTMLTextFormControlElement.h"
+#include "InlineIterator.h"
 #include "Logging.h"
 #include "RenderBlockFlow.h"
 #include "RenderChildIterator.h"
 #include "RenderImage.h"
+#include "RenderInline.h"
 #include "RenderLineBreak.h"
 #include "RenderMultiColumnFlow.h"
 #include "RenderTextControl.h"
@@ -46,6 +48,7 @@
 #define ALLOW_IMAGES 1
 #define ALLOW_ALL_REPLACED 1
 #define ALLOW_INLINE_BLOCK 1
+#define ALLOW_INLINES 0
 
 #ifndef NDEBUG
 #define SET_REASON_AND_RETURN_IF_NEEDED(reason, reasons, includeReasons) { \
@@ -637,6 +640,28 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderObject& child, Incl
     }
 #endif
 
+#if ALLOW_INLINES
+    if (is<RenderInline>(child)) {
+        auto& renderInline = downcast<RenderInline>(child);
+        if (renderInline.isRubyInline() || renderInline.isQuote() || renderInline.isSVGInline())
+            SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonSupportedChild, reasons, includeReasons);
+
+        auto& style = renderInline.style();
+        if (!isSupportedStyle(style))
+            SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonSupportedChild, reasons, includeReasons)
+        if (style.hasBorder())
+            SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonSupportedChild, reasons, includeReasons);
+        if (style.hasBackground())
+            SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonSupportedChild, reasons, includeReasons);
+        if (renderInline.marginLeft() < 0 || renderInline.marginRight() < 0 || renderInline.marginTop() < 0 || renderInline.marginBottom() < 0)
+            SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonSupportedChild, reasons, includeReasons);
+        if (renderInline.paddingLeft() < 0 || renderInline.paddingRight() < 0 || renderInline.paddingTop() < 0 || renderInline.paddingBottom() < 0)
+            SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonSupportedChild, reasons, includeReasons);
+
+        return reasons;
+    }
+#endif
+
     SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonSupportedChild, reasons, includeReasons);
     return reasons;
 }
@@ -711,12 +736,13 @@ OptionSet<AvoidanceReason> canUseForLineLayoutWithReason(const RenderBlockFlow& 
         SET_REASON_AND_RETURN_IF_NEEDED(FlowParentIsTextAreaWithWrapping, reasons, includeReasons);
     // This currently covers <blockflow>#text</blockflow>, <blockflow>#text<br></blockflow> and mutiple (sibling) RenderText cases.
     // The <blockflow><inline>#text</inline></blockflow> case is also popular and should be relatively easy to cover.
-    for (const auto* child = flow.firstChild(); child; child = child->nextSibling()) {
-        if (!is<RenderText>(*child) && flow.containsFloats()) {
+    for (auto walker = InlineWalker(const_cast<RenderBlockFlow&>(flow)); !walker.atEnd(); walker.advance()) {
+        auto& child = *walker.current();
+        if (!is<RenderText>(child) && flow.containsFloats()) {
             // Non-text content may stretch the line and we don't yet have support for dynamic float avoiding (as the line grows).
             SET_REASON_AND_RETURN_IF_NEEDED(FlowHasUnsupportedFloat, reasons, includeReasons);
         }
-        auto childReasons = canUseForChild(*child, includeReasons);
+        auto childReasons = canUseForChild(child, includeReasons);
         if (childReasons)
             ADD_REASONS_AND_RETURN_IF_NEEDED(childReasons, reasons, includeReasons);
     }
