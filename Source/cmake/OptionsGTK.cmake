@@ -246,10 +246,6 @@ if (USE_LIBSECRET)
     endif ()
 endif ()
 
-if (USE_GTK4)
-    set(ENABLE_INTROSPECTION OFF)
-endif ()
-
 if (ENABLE_INTROSPECTION)
     find_package(GObjectIntrospection)
     if (NOT INTROSPECTION_FOUND)
