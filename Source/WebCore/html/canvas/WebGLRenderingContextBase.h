@@ -1005,12 +1005,13 @@ protected:
 
     // Helper function to validate input parameters for uniform functions.
     bool validateUniformLocation(const char* functionName, const WebGLUniformLocation*);
-    bool validateUniformParameters(const char* functionName, const WebGLUniformLocation*, const Float32List&, GCGLsizei requiredMinSize, GCGLuint srcOffset, GCGLuint srcLength);
-    bool validateUniformParameters(const char* functionName, const WebGLUniformLocation*, const Int32List&, GCGLsizei requiredMinSize, GCGLuint srcOffset, GCGLuint srcLength);
-    bool validateUniformParameters(const char* functionName, const WebGLUniformLocation*, const Uint32List&, GCGLsizei requiredMinSize, GCGLuint srcOffset, GCGLuint srcLength);
-    bool validateUniformParameters(const char* functionName, const WebGLUniformLocation*, void*, GCGLsizei, GCGLsizei requiredMinSize, GCGLuint srcOffset, GCGLuint srcLength);
-    bool validateUniformMatrixParameters(const char* functionName, const WebGLUniformLocation*, GCGLboolean transpose, const Float32List&, GCGLsizei requiredMinSize, GCGLuint srcOffset, GCGLuint srcLength);
-    bool validateUniformMatrixParameters(const char* functionName, const WebGLUniformLocation*, GCGLboolean transpose, const void*, GCGLsizei, GCGLsizei requiredMinSize, GCGLuint srcOffset, GCGLuint srcLength);
+    template<typename T, typename TypedListType>
+    Optional<GCGLSpan<const T>> validateUniformParameters(const char* functionName, const WebGLUniformLocation* location, const TypedList<TypedListType, T>& values, GCGLsizei requiredMinSize, GCGLuint srcOffset = 0, GCGLuint srcLength = 0)
+    {
+        return validateUniformMatrixParameters(functionName, location, false, values, requiredMinSize, srcOffset, srcLength);
+    }
+    template<typename T, typename TypedListType>
+    Optional<GCGLSpan<const T>> validateUniformMatrixParameters(const char* functionName, const WebGLUniformLocation*, GCGLboolean transpose, const TypedList<TypedListType, T>&, GCGLsizei requiredMinSize, GCGLuint srcOffset = 0, GCGLuint srcLength = 0);
 
     // Helper function to validate parameters for bufferData.
     // Return the current bound buffer to target, or 0 if parameters are invalid.

@@ -74,8 +74,8 @@ void WebGLDrawBuffers::drawBuffersWEBGL(const Vector<GCGLenum>& buffers)
             return;
         }
         // Because the backbuffer is simulated on all current WebKit ports, we need to change BACK to COLOR_ATTACHMENT0.
-        GCGLenum value = (bufs[0] == GraphicsContextGL::BACK) ? GraphicsContextGL::COLOR_ATTACHMENT0 : GraphicsContextGL::NONE;
-        m_context->graphicsContextGL()->getExtensions().drawBuffersEXT(1, &value);
+        GCGLenum value[1] { (bufs[0] == GraphicsContextGL::BACK) ? GraphicsContextGL::COLOR_ATTACHMENT0 : GraphicsContextGL::NONE };
+        m_context->graphicsContextGL()->getExtensions().drawBuffersEXT(value);
         m_context->setBackDrawBuffer(bufs[0]);
     } else {
         if (n > m_context->getMaxDrawBuffers()) {

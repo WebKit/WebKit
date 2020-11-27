@@ -68,6 +68,10 @@ struct GCGLSpan {
     GCGLSpan(T (&array)[Extent])
         : data(array)
     { }
+    template<typename U>
+    GCGLSpan(const GCGLSpan<U, Extent>& other, std::enable_if_t<std::is_convertible_v<U(*)[], T(*)[]>, nullptr_t> = nullptr)
+        : data(other.data)
+    { }
     T& operator[](size_t i) { RELEASE_ASSERT(data && i < bufSize); return data[i]; }
     T& operator*() { RELEASE_ASSERT(data && bufSize); return *data; }
     T* data;
@@ -80,17 +84,68 @@ struct GCGLSpan<T, std::numeric_limits<size_t>::max()> {
         : data(array)
         , bufSize(bufSize_)
     { }
-    template<size_t Sz> GCGLSpan(T (&array)[Sz])
+    template<size_t Sz>
+    GCGLSpan(T (&array)[Sz])
         : data(array)
         , bufSize(Sz)
     { }
-    GCGLSpan(WTF::Vector<T>& array)
+    template<typename U, size_t UExtent>
+    GCGLSpan(const GCGLSpan<U, UExtent>& other, std::enable_if_t<std::is_convertible_v<U(*)[], T(*)[]>, nullptr_t> = nullptr)
+        : data(other.data)
+        , bufSize(other.bufSize)
+    { }
+    template<typename U, size_t inlineCapacity>
+    GCGLSpan(WTF::Vector<U, inlineCapacity>& array, std::enable_if_t<std::is_convertible_v<U(*)[], T(*)[]>, nullptr_t> = nullptr)
         : data(array.data())
         , bufSize(array.size())
     { }
     T& operator[](size_t i) { RELEASE_ASSERT(data && i < bufSize); return data[i]; }
     T& operator*() { RELEASE_ASSERT(data && bufSize); return *data; }
     T* data;
+    const size_t bufSize;
+};
+
+template<>
+struct GCGLSpan<GCGLvoid> {
+    GCGLSpan(GCGLvoid* array, size_t bufSize_)
+        : data(array)
+        , bufSize(bufSize_)
+    { }
+    template<typename U, size_t Sz>
+    GCGLSpan(U (&array)[Sz])
+        : data(array)
+        , bufSize(Sz * sizeof(U))
+    { }
+    template<typename U, size_t UExtent>
+    GCGLSpan(const GCGLSpan<U, UExtent>& other)
+        : data(other.data)
+        , bufSize(other.bufSize * sizeof(U))
+    { }
+    GCGLvoid* data;
+    const size_t bufSize;
+};
+
+template<>
+struct GCGLSpan<const GCGLvoid> {
+    GCGLSpan(const GCGLvoid* array, size_t bufSize_)
+        : data(array)
+        , bufSize(bufSize_)
+    { }
+    template<typename U, size_t Sz>
+    GCGLSpan(U (&array)[Sz])
+        : data(array)
+        , bufSize(Sz * sizeof(U))
+    { }
+    GCGLSpan(const GCGLSpan<GCGLvoid>& other)
+        : data(other.data)
+        , bufSize(other.bufSize)
+    { }
+    template<typename U, size_t UExtent>
+    GCGLSpan(const GCGLSpan<U, UExtent>& other)
+        : data(other.data)
+        , bufSize(other.bufSize * sizeof(U))
+    { }
+    const GCGLvoid* data;
     const size_t bufSize;
 };
 
@@ -104,4 +159,10 @@ template<typename T>
 GCGLSpan<T> makeGCGLSpan(T* data, size_t count)
 {
     return GCGLSpan<T> { data, count };
+}
+
+template<size_t Extent, typename T>
+GCGLSpan<T, Extent> makeGCGLSpan(T* data)
+{
+    return GCGLSpan<T, Extent> { data };
 }

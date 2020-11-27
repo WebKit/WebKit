@@ -235,18 +235,13 @@ struct GLfloatColors {
 };
 
 struct YCbCrMatrix {
-    union {
         GLfloat rows[4][4];
-        GLfloat data[16];
-    };
 
     constexpr YCbCrMatrix(PixelRange, GLfloat cbCoefficient, GLfloat crCoefficient);
 
-    operator Vector<GLfloat>() const
+    operator GCGLSpan<const GLfloat, 16>() const
     {
-        Vector<GLfloat> vector;
-        vector.append(data, 16);
-        return vector;
+        return makeGCGLSpan<16>(&rows[0][0]);
     }
 
     constexpr GLfloatColor operator*(const GLfloatColor&) const;
@@ -318,10 +313,10 @@ constexpr GLfloatColor YCbCrMatrix::operator*(const GLfloatColor& color) const
     );
 }
 
-static const Vector<GLfloat> YCbCrToRGBMatrixForRangeAndTransferFunction(PixelRange range, TransferFunctionCV transferFunction)
+static GCGLSpan<const GLfloat, 16> YCbCrToRGBMatrixForRangeAndTransferFunction(PixelRange range, TransferFunctionCV transferFunction)
 {
     using MapKey = std::pair<PixelRange, TransferFunctionCV>;
-    using MatrixMap = StdMap<MapKey, Vector<GLfloat>>;
+    using MatrixMap = StdMap<MapKey, const YCbCrMatrix&>;
 
     static NeverDestroyed<MatrixMap> matrices;
     static dispatch_once_t onceToken;
@@ -526,7 +521,7 @@ bool GraphicsContextGLCVANGLE::initializeUVContextObjects()
     float vertices[12] = { -1, -1, 1, -1, 1, 1, 1, 1, -1, 1, -1, -1 };
 
     m_context->bindBuffer(GraphicsContextGL::ARRAY_BUFFER, m_yuvVertexBuffer);
-    m_context->bufferData(GraphicsContextGL::ARRAY_BUFFER, sizeof(vertices), vertices, GraphicsContextGL::STATIC_DRAW);
+    m_context->bufferData(GraphicsContextGL::ARRAY_BUFFER, GCGLSpan<const GCGLvoid>(vertices, sizeof(vertices)), GraphicsContextGL::STATIC_DRAW);
     m_context->enableVertexAttribArray(m_yuvPositionAttributeLocation);
     m_context->vertexAttribPointer(m_yuvPositionAttributeLocation, 2, GraphicsContextGL::FLOAT, false, 0, 0);
 
@@ -625,7 +620,7 @@ bool GraphicsContextGLCVANGLE::copyPixelBufferToTexture(CVPixelBufferRef image, 
     m_context->texParameteri(GraphicsContextGL::TEXTURE_2D, GraphicsContextGL::TEXTURE_MIN_FILTER, GraphicsContextGL::LINEAR);
     m_context->texParameteri(GraphicsContextGL::TEXTURE_2D, GraphicsContextGL::TEXTURE_WRAP_S, GraphicsContextGL::CLAMP_TO_EDGE);
     m_context->texParameteri(GraphicsContextGL::TEXTURE_2D, GraphicsContextGL::TEXTURE_WRAP_T, GraphicsContextGL::CLAMP_TO_EDGE);
-    m_context->texImage2DDirect(GraphicsContextGL::TEXTURE_2D, level, internalFormat, width, height, 0, format, type, nullptr);
+    gl::TexImage2D(GL_TEXTURE_2D, level, internalFormat, width, height, 0, format, type, nullptr);
 
     m_context->framebufferTexture2D(GraphicsContextGL::FRAMEBUFFER, GraphicsContextGL::COLOR_ATTACHMENT0, GraphicsContextGL::TEXTURE_2D, outputTexture, level);
     GCGLenum status = m_context->checkFramebufferStatus(GraphicsContextGL::FRAMEBUFFER);
@@ -682,8 +677,8 @@ bool GraphicsContextGLCVANGLE::copyPixelBufferToTexture(CVPixelBufferRef image, 
 
     auto range = pixelRangeFromPixelFormat(pixelFormat);
     auto transferFunction = transferFunctionFromString((CFStringRef)CVBufferGetAttachment(image, kCVImageBufferYCbCrMatrixKey, nil));
-    auto& colorMatrix = YCbCrToRGBMatrixForRangeAndTransferFunction(range, transferFunction);
-    m_context->uniformMatrix4fv(m_colorMatrixUniformLocation, 1, GL_FALSE, colorMatrix.data());
+    auto colorMatrix = YCbCrToRGBMatrixForRangeAndTransferFunction(range, transferFunction);
+    m_context->uniformMatrix4fv(m_colorMatrixUniformLocation, GL_FALSE, colorMatrix);
 
     // Do the actual drawing.
     m_context->drawArrays(GraphicsContextGL::TRIANGLES, 0, 6);

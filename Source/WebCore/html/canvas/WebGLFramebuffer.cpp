@@ -702,13 +702,10 @@ void WebGLFramebuffer::drawBuffersIfNecessary(bool force)
             }
         }
         if (reset) {
-            if (context()->isWebGL2()) {
-                context()->graphicsContextGL()->drawBuffers(
-                    m_filteredDrawBuffers.size(), m_filteredDrawBuffers.data());
-            } else {
-                context()->graphicsContextGL()->getExtensions().drawBuffersEXT(
-                    m_filteredDrawBuffers.size(), m_filteredDrawBuffers.data());
-            }
+            if (context()->isWebGL2())
+                context()->graphicsContextGL()->drawBuffers(m_filteredDrawBuffers);
+            else
+                context()->graphicsContextGL()->getExtensions().drawBuffersEXT(m_filteredDrawBuffers);
         }
     }
 }

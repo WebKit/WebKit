@@ -341,11 +341,11 @@ void GraphicsContextGLOpenGL::getShaderPrecisionFormat(GCGLenum shaderType, GCGL
     }
 }
 
-bool GraphicsContextGLOpenGL::texImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, const void* pixels)
+void GraphicsContextGLOpenGL::texImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, GCGLSpan<const GCGLvoid> pixels)
 {
-    if (width && height && !pixels) {
+    if (width && height && !pixels.data) {
         synthesizeGLError(INVALID_VALUE);
-        return false;
+        return;
     }
 
     GCGLenum openGLFormat = format;
@@ -403,8 +403,7 @@ bool GraphicsContextGLOpenGL::texImage2D(GCGLenum target, GCGLint level, GCGLenu
         }
     }
 
-    texImage2DDirect(target, level, openGLInternalFormat, width, height, border, openGLFormat, type, pixels);
-    return true;
+    texImage2DDirect(target, level, openGLInternalFormat, width, height, border, openGLFormat, type, pixels.data);
 }
 
 void GraphicsContextGLOpenGL::depthRange(GCGLclampf zNear, GCGLclampf zFar)

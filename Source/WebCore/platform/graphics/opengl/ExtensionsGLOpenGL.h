@@ -50,7 +50,7 @@ public:
     void insertEventMarkerEXT(const String&) override;
     void pushGroupMarkerEXT(const String&) override;
     void popGroupMarkerEXT(void) override;
-    void drawBuffersEXT(GCGLsizei, const GCGLenum*) override;
+    void drawBuffersEXT(GCGLSpan<const GCGLenum>) override;
 
     void drawArraysInstanced(GCGLenum mode, GCGLint first, GCGLsizei count, GCGLsizei primcount) override;
     void drawElementsInstanced(GCGLenum mode, GCGLsizei count, GCGLenum type, long long offset, GCGLsizei primcount) override;

@@ -215,15 +215,14 @@ void GraphicsContextGLOpenGL::getShaderPrecisionFormat(GCGLenum shaderType, GCGL
     ::glGetShaderPrecisionFormat(shaderType, precisionType, range.data, precision);
 }
 
-bool GraphicsContextGLOpenGL::texImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, const void* pixels)
+void GraphicsContextGLOpenGL::texImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, GCGLSpan<const GCGLvoid> pixels)
 {
-    if (width && height && !pixels) {
+    if (width && height && !pixels.data) {
         synthesizeGLError(INVALID_VALUE);
-        return false;
+        return;
     }
 
-    texImage2DDirect(target, level, internalformat, width, height, border, format, type, pixels);
-    return true;
+    texImage2DDirect(target, level, internalformat, width, height, border, format, type, pixels.data);
 }
 
 void GraphicsContextGLOpenGL::validateAttributes()

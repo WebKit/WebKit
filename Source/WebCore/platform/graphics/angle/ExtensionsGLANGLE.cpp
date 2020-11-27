@@ -227,12 +227,12 @@ bool ExtensionsGLANGLE::supportsExtension(const String& name)
     return m_availableExtensions.contains(name) || m_requestableExtensions.contains(name);
 }
 
-void ExtensionsGLANGLE::drawBuffersEXT(GCGLsizei n, const GCGLenum* bufs)
+void ExtensionsGLANGLE::drawBuffersEXT(GCGLSpan<const GCGLenum> bufs)
 {
     if (!m_context->makeContextCurrent())
         return;
 
-    gl::DrawBuffersEXT(n, bufs);
+    gl::DrawBuffersEXT(bufs.bufSize, bufs.data);
 }
 
 void ExtensionsGLANGLE::drawArraysInstanced(GCGLenum mode, GCGLint first, GCGLsizei count, GCGLsizei primcount)
@@ -286,16 +286,6 @@ void ExtensionsGLANGLE::readPixelsRobustANGLE(int x, int y, GCGLsizei width, GCG
     gl::ReadPixelsRobustANGLE(x, y, width, height, format, type, bufSize, length, columns, rows, pixels);
 }
 
-void ExtensionsGLANGLE::texImage2DRobustANGLE(GCGLenum target, int level, int internalformat, GCGLsizei width, GCGLsizei height, int border, GCGLenum format, GCGLenum type, GCGLsizei bufSize, const void *pixels)
-{
-    if (!m_context->m_isForWebGL2)
-        internalformat = adjustWebGL1TextureInternalFormat(internalformat, format, type);
-    if (!m_context->makeContextCurrent())
-        return;
-
-    gl::TexImage2DRobustANGLE(target, level, internalformat, width, height, border, format, type, bufSize, pixels);
-}
-
 void ExtensionsGLANGLE::texParameterfvRobustANGLE(GCGLenum target, GCGLenum pname, GCGLsizei bufSize, const GCGLfloat *params)
 {
     if (!m_context->makeContextCurrent())
@@ -310,66 +300,6 @@ void ExtensionsGLANGLE::texParameterivRobustANGLE(GCGLenum target, GCGLenum pnam
         return;
 
     gl::TexParameterivRobustANGLE(target, pname, bufSize, params);
-}
-
-void ExtensionsGLANGLE::texSubImage2DRobustANGLE(GCGLenum target, int level, int xoffset, int yoffset, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLsizei bufSize, const void *pixels)
-{
-    if (!m_context->makeContextCurrent())
-        return;
-
-    gl::TexSubImage2DRobustANGLE(target, level, xoffset, yoffset, width, height, format, type, bufSize, pixels);
-}
-
-void ExtensionsGLANGLE::compressedTexImage2DRobustANGLE(GCGLenum target, int level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, int border, GCGLsizei imageSize, GCGLsizei bufSize, const void* data)
-{
-    if (!m_context->makeContextCurrent())
-        return;
-
-    gl::CompressedTexImage2DRobustANGLE(target, level, internalformat, width, height, border, imageSize, bufSize, data);
-    m_context->m_state.textureSeedCount.add(m_context->m_state.currentBoundTexture());
-
-}
-
-void ExtensionsGLANGLE::compressedTexSubImage2DRobustANGLE(GCGLenum target, int level, int xoffset, int yoffset, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLsizei imageSize, GCGLsizei bufSize, const void* data)
-{
-    if (!m_context->makeContextCurrent())
-        return;
-
-    gl::CompressedTexSubImage2DRobustANGLE(target, level, xoffset, yoffset, width, height, format, imageSize, bufSize, data);
-    m_context->m_state.textureSeedCount.add(m_context->m_state.currentBoundTexture());
-}
-
-void ExtensionsGLANGLE::compressedTexImage3DRobustANGLE(GCGLenum target, int level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLsizei depth, int border, GCGLsizei imageSize, GCGLsizei bufSize, const void* data)
-{
-    if (!m_context->makeContextCurrent())
-        return;
-
-    gl::CompressedTexImage3DRobustANGLE(target, level, internalformat, width, height, depth, border, imageSize, bufSize, data);
-}
-
-void ExtensionsGLANGLE::compressedTexSubImage3DRobustANGLE(GCGLenum target, int level, int xoffset, int yoffset, int zoffset, GCGLsizei width, GCGLsizei height, GCGLsizei depth, GCGLenum format, GCGLsizei imageSize, GCGLsizei bufSize, const void* data)
-{
-    if (!m_context->makeContextCurrent())
-        return;
-
-    gl::CompressedTexSubImage3DRobustANGLE(target, level, xoffset, yoffset, zoffset, width, height, depth, format, imageSize, bufSize, data);
-}
-
-
-void ExtensionsGLANGLE::texImage3DRobustANGLE(GCGLenum target, int level, int internalformat, GCGLsizei width, GCGLsizei height, GCGLsizei depth, int border, GCGLenum format, GCGLenum type, GCGLsizei bufSize, const void *pixels)
-{
-    if (!m_context->makeContextCurrent())
-        return;
-
-    gl::TexImage3DRobustANGLE(target, level, internalformat, width, height, depth, border, format, type, bufSize, pixels);
-}
-
-void ExtensionsGLANGLE::texSubImage3DRobustANGLE(GCGLenum target, int level, int xoffset, int yoffset, int zoffset, GCGLsizei width, GCGLsizei height, GCGLsizei depth, GCGLenum format, GCGLenum type, GCGLsizei bufSize, const void *pixels)
-{
-    if (!m_context->makeContextCurrent())
-        return;
-
-    gl::TexSubImage3DRobustANGLE(target, level, xoffset, yoffset, zoffset, width, height, depth, format, type, bufSize, pixels);
 }
 
 void ExtensionsGLANGLE::getQueryivRobustANGLE(GCGLenum target, GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLint *params)

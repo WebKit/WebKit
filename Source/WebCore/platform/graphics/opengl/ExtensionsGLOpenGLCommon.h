@@ -50,7 +50,7 @@ public:
     GCGLboolean isVertexArrayOES(PlatformGLObject) override = 0;
     void bindVertexArrayOES(PlatformGLObject) override = 0;
 
-    void drawBuffersEXT(GCGLsizei, const GCGLenum*) override = 0;
+    void drawBuffersEXT(GCGLSpan<const GCGLenum>) override = 0;
 
     String getTranslatedShaderSourceANGLE(PlatformGLObject) override;
 
@@ -70,17 +70,8 @@ public:
 
     // GL_ANGLE_robust_client_memory
     void readPixelsRobustANGLE(int x, int y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLsizei bufSize, GCGLsizei *length, GCGLsizei *columns, GCGLsizei *rows, void *pixels) override;
-    void texImage2DRobustANGLE(GCGLenum target, int level, int internalformat, GCGLsizei width, GCGLsizei height, int border, GCGLenum format, GCGLenum type, GCGLsizei bufSize, const void *pixels) override;
     void texParameterfvRobustANGLE(GCGLenum target, GCGLenum pname, GCGLsizei bufSize, const GCGLfloat *params) override;
     void texParameterivRobustANGLE(GCGLenum target, GCGLenum pname, GCGLsizei bufSize, const GCGLint *params) override;
-    void texSubImage2DRobustANGLE(GCGLenum target, int level, int xoffset, int yoffset, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLsizei bufSize, const void *pixels) override;
-    void compressedTexImage2DRobustANGLE(GCGLenum target, int level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, int border, GCGLsizei imageSize, GCGLsizei bufSize, const void* data) override;
-    void compressedTexSubImage2DRobustANGLE(GCGLenum target, int level, int xoffset, int yoffset, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLsizei imageSize, GCGLsizei bufSize, const void* data) override;
-    void compressedTexImage3DRobustANGLE(GCGLenum target, int level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLsizei depth, int border, GCGLsizei imageSize, GCGLsizei bufSize, const void* data) override;
-    void compressedTexSubImage3DRobustANGLE(GCGLenum target, int level, int xoffset, int yoffset, int zoffset, GCGLsizei width, GCGLsizei height, GCGLsizei depth, GCGLenum format, GCGLsizei imageSize, GCGLsizei bufSize, const void* data) override;
-
-    void texImage3DRobustANGLE(GCGLenum target, int level, int internalformat, GCGLsizei width, GCGLsizei height, GCGLsizei depth, int border, GCGLenum format, GCGLenum type, GCGLsizei bufSize, const void *pixels) override;
-    void texSubImage3DRobustANGLE(GCGLenum target, int level, int xoffset, int yoffset, int zoffset, GCGLsizei width, GCGLsizei height, GCGLsizei depth, GCGLenum format, GCGLenum type, GCGLsizei bufSize, const void *pixels) override;
     void getQueryivRobustANGLE(GCGLenum target, GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLint *params) override;
     void getQueryObjectuivRobustANGLE(GCGLuint id, GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLuint *params) override;
     void getBufferPointervRobustANGLE(GCGLenum target, GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, void **params) override;

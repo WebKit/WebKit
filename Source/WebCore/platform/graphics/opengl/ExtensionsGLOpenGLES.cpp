@@ -180,7 +180,7 @@ void ExtensionsGLOpenGLES::bindVertexArrayOES(PlatformGLObject array)
         m_context->synthesizeGLError(GL_INVALID_OPERATION);
 }
 
-void ExtensionsGLOpenGLES::drawBuffersEXT(GCGLsizei /* n */, const GCGLenum* /* bufs */)
+void ExtensionsGLOpenGLES::drawBuffersEXT(GCGLSpan<const GCGLenum> /* bufs */)
 {
     // FIXME: implement the support.
     notImplemented();

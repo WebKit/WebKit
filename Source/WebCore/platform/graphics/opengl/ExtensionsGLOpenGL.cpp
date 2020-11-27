@@ -208,14 +208,14 @@ bool ExtensionsGLOpenGL::supportsExtension(const String& name)
     return m_availableExtensions.contains(name);
 }
 
-void ExtensionsGLOpenGL::drawBuffersEXT(GCGLsizei n, const GCGLenum* bufs)
+void ExtensionsGLOpenGL::drawBuffersEXT(GCGLSpan<const GCGLenum> bufs)
 {
     if (!m_context->makeContextCurrent())
         return;
 
     //  FIXME: implement support for other platforms.
 #if PLATFORM(GTK)
-    ::glDrawBuffers(n, bufs);
+    ::glDrawBuffers(bufs.bufSize, bufs.data);
 #else
     UNUSED_PARAM(n);
     UNUSED_PARAM(bufs);

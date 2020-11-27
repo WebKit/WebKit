@@ -292,7 +292,8 @@ private:
     bool validateIndexArrayConservative(GCGLenum type, unsigned& numElementsRequired) final;
     bool validateBlendEquation(const char* functionName, GCGLenum mode) final;
     bool validateCapability(const char* functionName, GCGLenum cap) final;
-    bool validateClearBuffer(const char* functionName, GCGLenum buffer, size_t, GCGLuint srcOffset);
+    template<typename T, typename TypedArrayType>
+    Optional<GCGLSpan<const T>> validateClearBuffer(const char* functionName, GCGLenum buffer, TypedList<TypedArrayType, T>& values, GCGLuint srcOffset);
     bool validateFramebufferTarget(GCGLenum target) final;
     WebGLFramebuffer* getFramebufferBinding(GCGLenum target) final;
     WebGLFramebuffer* getReadFramebufferBinding() final;

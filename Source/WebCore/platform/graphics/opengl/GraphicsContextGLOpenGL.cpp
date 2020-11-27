@@ -76,8 +76,8 @@ bool GraphicsContextGLOpenGL::texImage2DResourceSafe(GCGLenum target, GCGLint le
 {
     ASSERT(unpackAlignment == 1 || unpackAlignment == 2 || unpackAlignment == 4 || unpackAlignment == 8);
     UniqueArray<unsigned char> zero;
+    unsigned size = 0;
     if (width > 0 && height > 0) {
-        unsigned size;
         PixelStoreParams params;
         params.alignment = unpackAlignment;
         GCGLenum error = computeImageSizeInBytes(format, type, width, height, 1, params, &size, nullptr, nullptr);
@@ -92,7 +92,8 @@ bool GraphicsContextGLOpenGL::texImage2DResourceSafe(GCGLenum target, GCGLint le
         }
         memset(zero.get(), 0, size);
     }
-    return texImage2D(target, level, internalformat, width, height, border, format, type, zero.get());
+    texImage2D(target, level, internalformat, width, height, border, format, type, makeGCGLSpan(zero.get(), size));
+    return true;
 }
 #endif
 

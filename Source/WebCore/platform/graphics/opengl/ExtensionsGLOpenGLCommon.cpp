@@ -259,53 +259,12 @@ void ExtensionsGLOpenGLCommon::readPixelsRobustANGLE(int, int, GCGLsizei, GCGLsi
     m_context->synthesizeGLError(GL_INVALID_OPERATION);
 }
 
-void ExtensionsGLOpenGLCommon::texImage2DRobustANGLE(GCGLenum, int, int, GCGLsizei, GCGLsizei, int, GCGLenum, GCGLenum, GCGLsizei, const void *)
-{
-    m_context->synthesizeGLError(GL_INVALID_OPERATION);
-}
-
 void ExtensionsGLOpenGLCommon::texParameterfvRobustANGLE(GCGLenum, GCGLenum, GCGLsizei, const GCGLfloat *)
 {
     m_context->synthesizeGLError(GL_INVALID_OPERATION);
 }
 
 void ExtensionsGLOpenGLCommon::texParameterivRobustANGLE(GCGLenum, GCGLenum, GCGLsizei, const GCGLint *)
-{
-    m_context->synthesizeGLError(GL_INVALID_OPERATION);
-}
-
-void ExtensionsGLOpenGLCommon::texSubImage2DRobustANGLE(GCGLenum, int, int, int, GCGLsizei, GCGLsizei, GCGLenum, GCGLenum, GCGLsizei, const void *)
-{
-    m_context->synthesizeGLError(GL_INVALID_OPERATION);
-}
-
-void ExtensionsGLOpenGLCommon::compressedTexImage2DRobustANGLE(GCGLenum, int, GCGLenum, GCGLsizei, GCGLsizei, int, GCGLsizei, GCGLsizei, const void*)
-{
-    m_context->synthesizeGLError(GL_INVALID_OPERATION);
-}
-
-void ExtensionsGLOpenGLCommon::compressedTexSubImage2DRobustANGLE(GCGLenum, int, int, int, GCGLsizei, GCGLsizei, GCGLenum, GCGLsizei, GCGLsizei, const void*)
-{
-    m_context->synthesizeGLError(GL_INVALID_OPERATION);
-}
-
-void ExtensionsGLOpenGLCommon::compressedTexImage3DRobustANGLE(GCGLenum, int, GCGLenum, GCGLsizei, GCGLsizei, GCGLsizei, int, GCGLsizei, GCGLsizei, const void*)
-{
-    m_context->synthesizeGLError(GL_INVALID_OPERATION);
-}
-
-void ExtensionsGLOpenGLCommon::compressedTexSubImage3DRobustANGLE(GCGLenum, int, int, int, int, GCGLsizei, GCGLsizei, GCGLsizei, GCGLenum, GCGLsizei, GCGLsizei, const void*)
-{
-    m_context->synthesizeGLError(GL_INVALID_OPERATION);
-}
-
-
-void ExtensionsGLOpenGLCommon::texImage3DRobustANGLE(GCGLenum, int, int, GCGLsizei, GCGLsizei, GCGLsizei, int, GCGLenum, GCGLenum, GCGLsizei, const void *)
-{
-    m_context->synthesizeGLError(GL_INVALID_OPERATION);
-}
-
-void ExtensionsGLOpenGLCommon::texSubImage3DRobustANGLE(GCGLenum, int, int, int, int, GCGLsizei, GCGLsizei, GCGLsizei, GCGLenum, GCGLenum, GCGLsizei, const void *)
 {
     m_context->synthesizeGLError(GL_INVALID_OPERATION);
 }

@@ -298,7 +298,7 @@ public:
     virtual void popGroupMarkerEXT(void) = 0;
 
     // GL_ARB_draw_buffers / GL_EXT_draw_buffers
-    virtual void drawBuffersEXT(GCGLsizei n, const GCGLenum* bufs) = 0;
+    virtual void drawBuffersEXT(GCGLSpan<const GCGLenum> bufs) = 0;
 
     // GL_ANGLE_instanced_arrays
     virtual void drawArraysInstanced(GCGLenum mode, GCGLint first, GCGLsizei count, GCGLsizei primcount) = 0;
@@ -307,17 +307,9 @@ public:
 
     // GL_ANGLE_robust_client_memory
     virtual void readPixelsRobustANGLE(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLsizei bufSize, GCGLsizei* length, GCGLsizei* columns, GCGLsizei* rows, GCGLvoid* pixels) = 0;
-    virtual void texImage2DRobustANGLE(GCGLenum target, GCGLint level, GCGLint internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, GCGLsizei bufSize, const GCGLvoid* pixels) = 0;
     virtual void texParameterfvRobustANGLE(GCGLenum target, GCGLenum pname, GCGLsizei bufSize, const GCGLfloat* params) = 0;
     virtual void texParameterivRobustANGLE(GCGLenum target, GCGLenum pname, GCGLsizei bufSize, const GCGLint* params) = 0;
-    virtual void texSubImage2DRobustANGLE(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLsizei bufSize, const GCGLvoid* pixels) = 0;
-    virtual void compressedTexImage2DRobustANGLE(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLsizei imageSize, GCGLsizei bufSize, const GCGLvoid* data) = 0;
-    virtual void compressedTexSubImage2DRobustANGLE(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLsizei imageSize, GCGLsizei bufSize, const GCGLvoid* data) = 0;
-    virtual void compressedTexImage3DRobustANGLE(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLsizei depth, GCGLint border, GCGLsizei imageSize, GCGLsizei bufSize, const GCGLvoid* data) = 0;
-    virtual void compressedTexSubImage3DRobustANGLE(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLint zoffset, GCGLsizei width, GCGLsizei height, GCGLsizei depth, GCGLenum format, GCGLsizei imageSize, GCGLsizei bufSize, const GCGLvoid* data) = 0;
 
-    virtual void texImage3DRobustANGLE(GCGLenum target, GCGLint level, GCGLint internalformat, GCGLsizei width, GCGLsizei height, GCGLsizei depth, GCGLint border, GCGLenum format, GCGLenum type, GCGLsizei bufSize, const GCGLvoid* pixels) = 0;
-    virtual void texSubImage3DRobustANGLE(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLint zoffset, GCGLsizei width, GCGLsizei height, GCGLsizei depth, GCGLenum format, GCGLenum type, GCGLsizei bufSize, const GCGLvoid* pixels) = 0;
     virtual void getQueryivRobustANGLE(GCGLenum target, GCGLenum pname, GCGLsizei bufSize, GCGLsizei* length, GCGLint* params) = 0;
     virtual void getQueryObjectuivRobustANGLE(GCGLuint id, GCGLenum pname, GCGLsizei bufSize, GCGLsizei* length, GCGLuint* params) = 0;
     virtual void getBufferPointervRobustANGLE(GCGLenum target, GCGLenum pname, GCGLsizei bufSize, GCGLsizei* length, GCGLvoid** params) = 0;
