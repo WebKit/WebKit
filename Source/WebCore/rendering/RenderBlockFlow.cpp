@@ -34,6 +34,7 @@
 #include "HTMLParserIdioms.h"
 #include "HTMLTextAreaElement.h"
 #include "HitTestLocation.h"
+#include "InlineIterator.h"
 #include "InlineTextBox.h"
 #include "LayoutIntegrationLineIterator.h"
 #include "LayoutIntegrationLineLayout.h"

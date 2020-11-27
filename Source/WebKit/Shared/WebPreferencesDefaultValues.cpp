@@ -27,6 +27,7 @@
 #include "WebPreferencesDefaultValues.h"
 
 #include <WebCore/RuntimeApplicationChecks.h>
+#include <wtf/text/WTFString.h>
 
 #if PLATFORM(COCOA)
 #include <WebCore/VersionChecks.h>
