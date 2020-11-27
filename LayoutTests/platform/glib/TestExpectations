@@ -803,8 +803,6 @@ webkit.org/b/218176 webanimations/accelerated-translate-animation-additional-ani
 # WebAudio-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
 
-webkit.org/b/216868 webaudio/AudioParam/audioparam-processing.html [ Failure Pass ]
-
 # AudioContext.
 webkit.org/b/214422 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/suspend-after-construct.html [ Failure Pass ]
 webkit.org/b/217542 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/processing-after-resume.https.html [ Failure Pass ]

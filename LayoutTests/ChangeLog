@@ -1,3 +1,10 @@
+2020-11-27  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GLib webaudio gardening
+
+        * platform/glib/TestExpectations: webaudio/AudioParam/audioparam-processing.html
+        consistently passing since r270139.
+
 2020-11-27  Youenn Fablet  <youenn@apple.com>
 
         [WebRTC] webrtc/audio-sframe.html is flaky crashing since added in r269830
