@@ -861,9 +861,6 @@ webkit.org/b/193641 webrtc/video-setDirection.html [ Failure ]
 
 webkit.org/b/194611 http/wpt/webrtc/getUserMedia-processSwapping.html [ Failure ]
 
-webkit.org/b/198830 webkit.org/b/211765 webkit.org/b/218787 [ Release ] webrtc/video-autoplay.html [ Pass Timeout Crash Failure ]
-webkit.org/b/218787 [ Debug ] webrtc/video-autoplay.html [ Failure ]
-
 webkit.org/b/201267 webrtc/video-h264.html [ Failure ]
 
 webkit.org/b/212809 webrtc/datachannel/gather-candidates-networkprocess-crash.html [ Timeout Pass ]
@@ -895,28 +892,6 @@ webkit.org/b/216763 webrtc/captureCanvas-webrtc-software-h264-high.html [ Crash 
 
 webkit.org/b/218221 webrtc/vp9-profile2.html [ Failure ]
 
-# Failures after libwebrtc M87 update
-webkit.org/b/218787 webrtc/direction-change.html [ Crash ]
-webkit.org/b/218787 webrtc/h264-packetization-mode.html [ Crash ]
-webkit.org/b/218787 webrtc/connection-state.html [ Failure ]
-webkit.org/b/218787 webrtc/createOfferAnswer.html [ Failure ]
-webkit.org/b/218787 webrtc/disable-encryption.html [ Failure ]
-webkit.org/b/218787 webrtc/ephemeral-certificates-and-cnames.html [ Failure ]
-webkit.org/b/218787 webrtc/libwebrtc/setLocalDescriptionCrash.html [ Failure ]
-webkit.org/b/218787 webrtc/msection-recycling.html [ Failure ]
-webkit.org/b/218787 webrtc/multi-audio.html [ Failure ]
-webkit.org/b/218787 webrtc/release-after-getting-track.html [ Failure ]
-webkit.org/b/218787 webrtc/remove-track.html [ Failure ]
-webkit.org/b/218787 webrtc/utf8-sdp.html [ Failure ]
-webkit.org/b/218787 webrtc/video-mediastreamtrack-stats.html [ Failure ]
-webkit.org/b/218787 webrtc/video-receivers.html [ Failure ]
-webkit.org/b/218787 webrtc/video-replace-track-to-null.html [ Failure ]
-webkit.org/b/218787 webrtc/video-stats.html [ Failure ]
-webkit.org/b/218787 fast/mediastream/RTCPeerConnection-statsSelector.html [ Timeout ]
-webkit.org/b/218787 webrtc/concurrentVideoPlayback.html [ Timeout ]
-webkit.org/b/218787 webrtc/ice-candidate-sdpMLineIndex.html [ Timeout ]
-webkit.org/b/218787 http/wpt/webrtc/webrtc-transform.html [ Failure ]
-
 webkit.org/b/219066 webrtc/audio-sframe.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -938,7 +913,7 @@ webkit.org/b/200301 storage/websql/alter-to-info-table.html [ Failure ]
 webkit.org/b/200301 storage/websql/test-authorizer.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
-# End of WebRTC-related bugs
+# End of WebSQL-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
 
 

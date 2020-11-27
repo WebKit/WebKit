@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2018 Metrological Group B.V.
- * Copyright (C) 2018 Igalia S.L. All rights reserved.
+ * Copyright (C) 2018,2020 Metrological Group B.V.
+ * Copyright (C) 2018,2020 Igalia S.L. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -23,10 +23,8 @@
 #if ENABLE(VIDEO) && ENABLE(MEDIA_STREAM) && USE(LIBWEBRTC) && USE(GSTREAMER)
 #include "GStreamerVideoDecoderFactory.h"
 
+#include "GStreamerVideoCommon.h"
 #include "GStreamerVideoFrameLibWebRTC.h"
-#include "webrtc/common_video/h264/h264_common.h"
-#include "webrtc/common_video/h264/profile_level_id.h"
-#include "webrtc/media/base/codec.h"
 #include "webrtc/modules/video_coding/codecs/h264/include/h264.h"
 #include "webrtc/modules/video_coding/codecs/vp8/include/vp8.h"
 #include "webrtc/modules/video_coding/codecs/vp8/libvpx_vp8_decoder.h"
@@ -282,18 +280,17 @@ public:
         return m_caps.get();
     }
 
-    void AddDecoderIfSupported(std::vector<webrtc::SdpVideoFormat> codecList)
+    void AddDecoderIfSupported(std::vector<webrtc::SdpVideoFormat>& codecList)
     {
         if (HasGstDecoder()) {
-            webrtc::SdpVideoFormat format = ConfigureSupportedDecoder();
-
-            codecList.push_back(format);
+            auto formats = ConfigureSupportedDecoder();
+            codecList.insert(codecList.end(), formats.begin(), formats.end());
         }
     }
 
-    virtual webrtc::SdpVideoFormat ConfigureSupportedDecoder()
+    virtual std::vector<webrtc::SdpVideoFormat> ConfigureSupportedDecoder()
     {
-        return webrtc::SdpVideoFormat(Name());
+        return { webrtc::SdpVideoFormat(Name()) };
     }
 
     static GRefPtr<GstElementFactory> GstDecoderFactory(const char *capsStr)
@@ -370,6 +367,11 @@ public:
     const gchar* Caps() final { return "video/x-h264"; }
     const gchar* Name() final { return cricket::kH264CodecName; }
     webrtc::VideoCodecType CodecType() final { return webrtc::kVideoCodecH264; }
+
+    std::vector<webrtc::SdpVideoFormat> ConfigureSupportedDecoder() final
+    {
+        return gstreamerSupportedH264Codecs();
+    }
 };
 
 class VP8Decoder : public GStreamerVideoDecoder {
