@@ -79,7 +79,7 @@ GdkTexture* BitmapImage::gdkTexture()
     auto* data = cairo_image_surface_get_data(surface.get());
     GRefPtr<GBytes> bytes = adoptGRef(g_bytes_new_with_free_func(data, height * stride, [](gpointer data) {
         cairo_surface_destroy(static_cast<cairo_surface_t*>(data));
-    }, surface.leakRef()));
+    }, const_cast<PlatformImagePtr&>(surface).leakRef()));
     return gdk_memory_texture_new(width, height, GDK_MEMORY_DEFAULT, bytes.get(), stride);
 }
 #endif
