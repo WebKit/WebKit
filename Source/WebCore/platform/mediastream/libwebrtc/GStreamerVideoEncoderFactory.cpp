@@ -55,8 +55,6 @@
 GST_DEBUG_CATEGORY(webkit_webrtcenc_debug);
 #define GST_CAT_DEFAULT webkit_webrtcenc_debug
 
-#define KBIT_TO_BIT 1024
-
 namespace WebCore {
 
 class GStreamerEncodedImageBuffer : public webrtc::EncodedImageBufferInterface {
@@ -470,7 +468,7 @@ GStreamerVideoEncoderFactory::GStreamerVideoEncoderFactory()
 
     std::call_once(debugRegisteredFlag, [] {
         GST_DEBUG_CATEGORY_INIT(webkit_webrtcenc_debug, "webkitlibwebrtcvideoencoder", 0, "WebKit WebRTC video encoder");
-        gst_element_register(nullptr, "webrtcvideoencoder", GST_RANK_PRIMARY, GST_TYPE_WEBRTC_VIDEO_ENCODER);
+        gst_element_register(nullptr, "webrtcvideoencoder", GST_RANK_NONE, WEBRTC_TYPE_VIDEO_ENCODER);
     });
 }
 

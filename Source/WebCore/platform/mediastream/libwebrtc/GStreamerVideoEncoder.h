@@ -24,13 +24,8 @@
 
 G_BEGIN_DECLS
 
-#define GST_TYPE_WEBRTC_VIDEO_ENCODER (gst_webrtc_video_encoder_get_type())
+#define WEBRTC_TYPE_VIDEO_ENCODER (webrtc_video_encoder_get_type())
 
-G_DECLARE_DERIVABLE_TYPE (GstWebrtcVideoEncoder, gst_webrtc_video_encoder, GST, WEBRTC_VIDEO_ENCODER, GstBin)
-
-struct _GstWebrtcVideoEncoderClass
-{
-  GstBinClass parent_class;
-};
+G_DECLARE_FINAL_TYPE (WebrtcVideoEncoder, webrtc_video_encoder, WEBRTC, VIDEO_ENCODER, GstBin)
 
 G_END_DECLS
