@@ -1,3 +1,22 @@
+2020-11-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] MiniBroeser add an option to quit the browser after loading finishes
+        https://bugs.webkit.org/show_bug.cgi?id=219081
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        It's useful to run benchmarks or test case reduction tools.
+
+        * MiniBrowser/gtk/BrowserTab.c:
+        (webProcessTerminatedCallback): Show a warning when the web process crashes.
+        (browserTabConstructed): Connect to web-process-terminated signal.
+        * MiniBrowser/gtk/main.c:
+        (quitApplication): Quit the MiniBrowser.
+        (exitAfterWebViewLoadFinishesCallback): Schedule a browser quit to the next run loop iteration.
+        (exitAfterWebProcessCrashed): Call exitAfterWebViewLoadFinishesCallback with WEBKIT_LOAD_FINISHED.
+        (exitAfterWebViewLoadFinishes): Connect to load-changed and web-process-terminated signals
+        (activate): Ensure the browser is exited after the load finishes or web process crashes when --exit-after-load is passed.
+
 2020-11-26  Lauro Moura  <lmoura@igalia.com>
 
         [GTK] Unreviewed. Remove leftover test case after Internet Explorer quirks changes

@@ -417,6 +417,12 @@ static gboolean runColorChooserCallback(WebKitWebView *webView, WebKitColorChoos
     return TRUE;
 }
 
+static void webProcessTerminatedCallback(WebKitWebView *webView, WebKitWebProcessTerminationReason reason)
+{
+    if (reason == WEBKIT_WEB_PROCESS_CRASHED)
+        g_warning("WebProcess CRASHED");
+}
+
 static gboolean inspectorOpenedInWindow(WebKitWebInspector *inspector, BrowserTab *tab)
 {
     tab->inspectorIsVisible = TRUE;
@@ -626,6 +632,7 @@ static void browserTabConstructed(GObject *gObject)
     g_signal_connect(tab->webView, "load-failed-with-tls-errors", G_CALLBACK(loadFailedWithTLSerrors), tab);
     g_signal_connect(tab->webView, "permission-request", G_CALLBACK(decidePermissionRequest), tab);
     g_signal_connect(tab->webView, "run-color-chooser", G_CALLBACK(runColorChooserCallback), tab);
+    g_signal_connect(tab->webView, "web-process-terminated", G_CALLBACK(webProcessTerminatedCallback), NULL);
 
     g_object_bind_property(tab->webView, "is-playing-audio", tab->titleAudioButton, "visible", G_BINDING_DEFAULT | G_BINDING_SYNC_CREATE);
     g_signal_connect(tab->webView, "notify::is-muted", G_CALLBACK(audioMutedChanged), tab);

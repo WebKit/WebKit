@@ -52,6 +52,8 @@ static const char *cookiesPolicy;
 static const char *proxy;
 static gboolean darkMode;
 static gboolean enableITP;
+static gboolean exitAfterLoad;
+static gboolean webProcessCrashed;
 static gboolean printVersion;
 
 typedef enum {
@@ -143,6 +145,7 @@ static const GOptionEntry commandLineOptions[] =
     { "ignore-tls-errors", 0, 0, G_OPTION_ARG_NONE, &ignoreTLSErrors, "Ignore TLS errors", NULL },
     { "content-filter", 0, 0, G_OPTION_ARG_FILENAME, &contentFilter, "JSON with content filtering rules", "FILE" },
     { "enable-itp", 0, 0, G_OPTION_ARG_NONE, &enableITP, "Enable Intelligent Tracking Prevention (ITP)", NULL },
+    { "exit-after-load", 0, 0, G_OPTION_ARG_NONE, &exitAfterLoad, "Quit the browser after the load finishes", NULL },
     { "version", 'v', 0, G_OPTION_ARG_NONE, &printVersion, "Print the WebKitGTK version", NULL },
     { G_OPTION_REMAINING, 0, 0, G_OPTION_ARG_FILENAME_ARRAY, &uriArguments, 0, "[URL…]" },
     { 0, 0, 0, 0, 0, 0, 0 }
@@ -572,6 +575,34 @@ static void automationStartedCallback(WebKitWebContext *webContext, WebKitAutoma
     g_signal_connect(session, "create-web-view::tab", G_CALLBACK(createWebViewForAutomationInTabCallback), application);
 }
 
+static gboolean quitApplication(GApplication *application)
+{
+    g_application_quit(application);
+    return FALSE;
+}
+
+static void exitAfterWebViewLoadFinishesCallback(WebKitWebView *webView, WebKitLoadEvent loadEvent, GApplication *application)
+{
+    if (loadEvent != WEBKIT_LOAD_FINISHED)
+        return;
+
+    g_idle_add_full(G_PRIORITY_DEFAULT_IDLE, (GSourceFunc)quitApplication, g_object_ref(application), g_object_unref);
+}
+
+static void exitAfterWebProcessCrashed(WebKitWebView *webView, WebKitWebProcessTerminationReason reason, GApplication *application)
+{
+    if (reason == WEBKIT_WEB_PROCESS_CRASHED) {
+        webProcessCrashed = TRUE;
+        exitAfterWebViewLoadFinishesCallback(webView, WEBKIT_LOAD_FINISHED, application);
+    }
+}
+
+static void exitAfterWebViewLoadFinishes(WebKitWebView *webView, GApplication *application)
+{
+    g_signal_connect_object(webView, "load-changed", G_CALLBACK(exitAfterWebViewLoadFinishesCallback), application, G_CONNECT_AFTER);
+    g_signal_connect_object(webView, "web-process-terminated", G_CALLBACK(exitAfterWebProcessCrashed), application, G_CONNECT_AFTER);
+}
+
 typedef struct {
     GMainLoop *mainLoop;
     WebKitUserContentFilter *filter;
@@ -714,8 +745,11 @@ static void activate(GApplication *application, WebKitSettings *webkitSettings)
 
         for (i = 0; uriArguments[i]; i++) {
             WebKitWebView *webView = createBrowserTab(mainWindow, webkitSettings, userContentManager, defaultWebsitePolicies);
-            if (!i)
+            if (!i) {
                 firstTab = GTK_WIDGET(webView);
+                if (exitAfterLoad)
+                    exitAfterWebViewLoadFinishes(webView, application);
+            }
             gchar *url = argumentToURL(uriArguments[i]);
             webkit_web_view_load_uri(webView, url);
             g_free(url);
@@ -727,8 +761,10 @@ static void activate(GApplication *application, WebKitSettings *webkitSettings)
         if (!editorMode) {
             if (sessionFile)
                 browser_window_load_session(mainWindow, sessionFile);
-            else if (!automationMode)
+            else if (!automationMode) {
                 webkit_web_view_load_uri(webView, BROWSER_DEFAULT_URL);
+                exitAfterWebViewLoadFinishes(webView, application);
+            }
         }
     }
 
@@ -796,5 +832,5 @@ int main(int argc, char *argv[])
     g_application_run(G_APPLICATION(application), 0, NULL);
     g_object_unref(application);
 
-    return 0;
+    return exitAfterLoad && webProcessCrashed ? 1 : 0;
 }
