@@ -100,8 +100,8 @@ set(zlib_wrapper_sources
 )
 
 set(angle_gl_enum_utils
-    "src/libANGLE/gl_enum_utils.cpp",
-    "src/libANGLE/gl_enum_utils_autogen.cpp",
+    "src/libANGLE/gl_enum_utils.cpp"
+    "src/libANGLE/gl_enum_utils_autogen.cpp"
 )
 
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
