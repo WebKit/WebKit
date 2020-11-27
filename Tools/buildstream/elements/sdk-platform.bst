@@ -12,6 +12,7 @@ depends:
 - sdk/capnp.bst
 - sdk/ccls.bst
 - sdk/cmake-lsp.bst
+- sdk/clangd.bst
 - sdk/enchant-2.bst
 - sdk/ffmpeg.bst
 - sdk/glib-networking.bst
