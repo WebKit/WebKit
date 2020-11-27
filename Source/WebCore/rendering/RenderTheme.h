@@ -37,6 +37,7 @@ class Element;
 class FileList;
 class FillLayer;
 class HTMLInputElement;
+class HTMLMeterElement;
 class Icon;
 class Page;
 class RenderAttachment;
@@ -210,7 +211,7 @@ public:
 #endif
 
     virtual IntSize meterSizeForBounds(const RenderMeter&, const IntRect&) const;
-    virtual bool supportsMeter(ControlPart) const;
+    virtual bool supportsMeter(ControlPart, const HTMLMeterElement&) const;
 
 #if ENABLE(DATALIST_ELEMENT)
     // Returns the threshold distance for snapping to a slider tick mark.

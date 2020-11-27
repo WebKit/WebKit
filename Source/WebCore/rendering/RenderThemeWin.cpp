@@ -1100,7 +1100,7 @@ void RenderThemeWin::adjustMeterStyle(RenderStyle& style, const Element*) const
     style.setBoxShadow(nullptr);
 }
 
-bool RenderThemeWin::supportsMeter(ControlPart part) const
+bool RenderThemeWin::supportsMeter(ControlPart part, const HTMLMeterElement&) const
 {
     switch (part) {
     case MeterPart:

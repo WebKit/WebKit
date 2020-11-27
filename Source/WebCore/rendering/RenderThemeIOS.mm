@@ -49,6 +49,7 @@
 #import "GraphicsContextCG.h"
 #import "HTMLAttachmentElement.h"
 #import "HTMLInputElement.h"
+#import "HTMLMeterElement.h"
 #import "HTMLNames.h"
 #import "HTMLSelectElement.h"
 #import "IOSurface.h"
@@ -61,6 +62,7 @@
 #import "PathUtilities.h"
 #import "PlatformLocale.h"
 #import "RenderAttachment.h"
+#import "RenderMeter.h"
 #import "RenderObject.h"
 #import "RenderProgress.h"
 #import "RenderStyle.h"
@@ -1986,6 +1988,10 @@ void RenderThemeIOS::paintSystemPreviewBadge(Image& image, const PaintInfo& pain
 constexpr auto controlColor = SRGBA<uint8_t> { 0, 122, 255 };
 constexpr auto controlBackgroundColor = SRGBA<uint8_t> { 238, 238, 238 };
 
+constexpr auto meterOptimalColor = SRGBA<uint8_t> { 52, 199, 89 };
+constexpr auto meterSuboptimalColor = SRGBA<uint8_t> { 247, 206, 70 };
+constexpr auto meterEvenLessGoodColor = SRGBA<uint8_t> { 255, 59, 48 };
+
 bool RenderThemeIOS::paintCheckbox(const RenderObject& box, const PaintInfo& paintInfo, const IntRect& rect)
 {
     if (!box.settings().iOSFormControlRefreshEnabled())
@@ -2134,6 +2140,52 @@ bool RenderThemeIOS::paintProgressBarFCR(const RenderObject& renderer, const Pai
 
     FloatRect barRect(barLeft, barTop, barWidth, barHeight);
     context.fillRoundedRect(FloatRoundedRect(barRect, barCornerRadii), controlColor);
+
+    return false;
+}
+
+bool RenderThemeIOS::supportsMeter(ControlPart part, const HTMLMeterElement& element) const
+{
+    if (part == MeterPart)
+        return element.document().settings().iOSFormControlRefreshEnabled();
+
+    return false;
+}
+
+bool RenderThemeIOS::paintMeter(const RenderObject& renderer, const PaintInfo& paintInfo, const IntRect& rect)
+{
+    if (!renderer.settings().iOSFormControlRefreshEnabled() || !is<RenderMeter>(renderer))
+        return true;
+
+    auto& renderMeter = downcast<RenderMeter>(renderer);
+    auto element = makeRefPtr(renderMeter.meterElement());
+
+    auto& context = paintInfo.context();
+    GraphicsContextStateSaver stateSaver(context);
+
+    float cornerRadius = std::min(rect.width(), rect.height()) / 2.0f;
+    FloatRoundedRect roundedFillRect(rect, FloatRoundedRect::Radii(cornerRadius));
+    context.fillRoundedRect(roundedFillRect, controlBackgroundColor);
+    context.clipRoundedRect(roundedFillRect);
+
+    FloatRect fillRect(rect);
+    if (renderMeter.style().isLeftToRightDirection())
+        fillRect.move(rect.width() * (element->valueRatio() - 1), 0);
+    else
+        fillRect.move(rect.width() * (1 - element->valueRatio()), 0);
+    roundedFillRect.setRect(fillRect);
+
+    switch (element->gaugeRegion()) {
+    case HTMLMeterElement::GaugeRegionOptimum:
+        context.fillRoundedRect(roundedFillRect, meterOptimalColor);
+        break;
+    case HTMLMeterElement::GaugeRegionSuboptimal:
+        context.fillRoundedRect(roundedFillRect, meterSuboptimalColor);
+        break;
+    case HTMLMeterElement::GaugeRegionEvenLessGood:
+        context.fillRoundedRect(roundedFillRect, meterEvenLessGoodColor);
+        break;
+    }
 
     return false;
 }

@@ -85,7 +85,7 @@ public:
 
     IntSize meterSizeForBounds(const RenderMeter&, const IntRect&) const final;
     bool paintMeter(const RenderObject&, const PaintInfo&, const IntRect&) final;
-    bool supportsMeter(ControlPart) const final;
+    bool supportsMeter(ControlPart, const HTMLMeterElement&) const final;
 
     // Returns the repeat interval of the animation for the progress bar.
     Seconds animationRepeatIntervalForProgressBar(const RenderProgress&) const final;

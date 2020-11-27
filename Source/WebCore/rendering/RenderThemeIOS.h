@@ -116,6 +116,9 @@ private:
 
     Seconds animationRepeatIntervalForProgressBar(const RenderProgress&) const final;
     bool paintProgressBarFCR(const RenderObject&, const PaintInfo&, const IntRect&);
+
+    bool supportsMeter(ControlPart, const HTMLMeterElement&) const final;
+    bool paintMeter(const RenderObject&, const PaintInfo&, const IntRect&) final;
 #endif
 
     bool supportsFocusRing(const RenderStyle&) const final;

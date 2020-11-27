@@ -1227,7 +1227,7 @@ bool RenderThemeMac::paintMeter(const RenderObject& renderObject, const PaintInf
     return false;
 }
 
-bool RenderThemeMac::supportsMeter(ControlPart part) const
+bool RenderThemeMac::supportsMeter(ControlPart part, const HTMLMeterElement&) const
 {
     switch (part) {
     case RelevancyLevelIndicatorPart:
