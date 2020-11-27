@@ -158,7 +158,7 @@ void RemoteRenderingBackendProxy::submitDisplayList(const DisplayList::DisplayLi
         m_identifiersOfHandlesAvailableForWriting.add(handle.identifier);
 
         auto* sharedHandle = m_sharedDisplayListHandles.get(handle.identifier);
-        RELEASE_ASSERT_WITH_MESSAGE(sharedHandle, "%s failed to find shared display list", __PRETTY_FUNCTION__);
+        RELEASE_ASSERT_WITH_MESSAGE(sharedHandle, "%s failed to find shared display list", WTF_PRETTY_FUNCTION);
 
         bool unreadCountWasEmpty = sharedHandle->advance(handle.capacity) == handle.capacity;
         if (isFirstHandle && unreadCountWasEmpty)
@@ -228,7 +228,7 @@ DisplayList::ItemBufferHandle RemoteRenderingBackendProxy::createItemBuffer(size
     while (!m_identifiersOfReusableHandles.isEmpty()) {
         auto identifier = m_identifiersOfReusableHandles.first();
         auto* reusableHandle = m_sharedDisplayListHandles.get(identifier);
-        RELEASE_ASSERT_WITH_MESSAGE(reusableHandle, "%s failed to find shared display list", __PRETTY_FUNCTION__);
+        RELEASE_ASSERT_WITH_MESSAGE(reusableHandle, "%s failed to find shared display list", WTF_PRETTY_FUNCTION);
 
         if (m_identifiersOfHandlesAvailableForWriting.contains(identifier) && reusableHandle->availableCapacity() >= capacity) {
             m_identifiersOfHandlesAvailableForWriting.remove(identifier);

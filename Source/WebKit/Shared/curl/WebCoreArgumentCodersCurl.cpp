@@ -30,8 +30,6 @@
 #include <WebCore/CertificateInfo.h>
 #include <WebCore/CurlProxySettings.h>
 #include <WebCore/DictionaryPopupInfo.h>
-#include <WebCore/Font.h>
-#include <WebCore/FontAttributes.h>
 #include <WebCore/ProtectionSpace.h>
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceRequest.h>
@@ -213,17 +211,6 @@ Optional<CurlProxySettings> ArgumentCoder<CurlProxySettings>::decode(Decoder& de
     return CurlProxySettings { WTFMove(url), WTFMove(ignoreHosts) };
 }
 
-void ArgumentCoder<FontAttributes>::encodePlatformData(Encoder&, const FontAttributes&)
-{
-    ASSERT_NOT_REACHED();
-}
-
-Optional<FontAttributes> ArgumentCoder<FontAttributes>::decodePlatformData(Decoder&, FontAttributes&)
-{
-    ASSERT_NOT_REACHED();
-    return WTF::nullopt;
-}
-
 void ArgumentCoder<DictionaryPopupInfo>::encodePlatformData(Encoder&, const DictionaryPopupInfo&)
 {
     ASSERT_NOT_REACHED();
@@ -233,17 +220,6 @@ bool ArgumentCoder<DictionaryPopupInfo>::decodePlatformData(Decoder&, Dictionary
 {
     ASSERT_NOT_REACHED();
     return false;
-}
-
-void ArgumentCoder<Ref<Font>>::encodePlatformData(Encoder&, const Ref<Font>&)
-{
-    ASSERT_NOT_REACHED();
-}
-
-Optional<FontPlatformData> ArgumentCoder<Ref<Font>>::decodePlatformData(Decoder&)
-{
-    ASSERT_NOT_REACHED();
-    return WTF::nullopt;
 }
 
 #if ENABLE(VIDEO)

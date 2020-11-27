@@ -5,6 +5,7 @@
  * Copyright (C) 2006-2008, 2016 Apple Inc.
  * Copyright (C) 2007 Alp Toker
  * Copyright (C) 2008, 2010, 2011 Brent Fulgham
+ * Copyright (C) 2020 Sony Interactive Entertainment Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -26,6 +27,7 @@
 #include "config.h"
 #include "FontPlatformData.h"
 
+#include "HWndDC.h"
 #include "SharedBuffer.h"
 #include <wtf/HashMap.h>
 #include <wtf/RetainPtr.h>
@@ -107,5 +109,17 @@ String FontPlatformData::description() const
     return String();
 }
 #endif
+
+String FontPlatformData::familyName() const
+{
+    HWndDC hdc(0);
+    SaveDC(hdc);
+    cairo_win32_scaled_font_select_font(scaledFont(), hdc);
+    wchar_t faceName[LF_FACESIZE];
+    GetTextFace(hdc, LF_FACESIZE, faceName);
+    cairo_win32_scaled_font_done_font(scaledFont());
+    RestoreDC(hdc, -1);
+    return faceName;
+}
 
 }

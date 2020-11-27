@@ -1,3 +1,51 @@
+2020-11-26  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] Enable GPU process
+        https://bugs.webkit.org/show_bug.cgi?id=219294
+
+        Reviewed by Don Olmstead.
+
+        Added stub functions to build GPU process.
+
+        Invoke the following command to enable GPU process:
+        > reg add HKEY_CURRENT_USER\Software\WebKit /v gpu_process_canvas_rendering /t REG_DWORD /d 1 /f
+
+        Invoke the following command to disable GPU process:
+        > reg delete HKEY_CURRENT_USER\Software\WebKit /v gpu_process_canvas_rendering /f
+
+        * GPUProcess/media/win/RemoteMediaPlayerProxyWin.cpp: Added.
+        (WebKit::RemoteMediaPlayerProxy::prepareForPlayback):
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerFirstVideoFrameAvailable):
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerRenderingModeChanged):
+        (WebKit::RemoteMediaPlayerProxy::enterFullscreen):
+        (WebKit::RemoteMediaPlayerProxy::exitFullscreen):
+        * GPUProcess/win/GPUProcessMainWin.cpp: Added.
+        (WebKit::initializeAuxiliaryProcess<GPUProcess>):
+        (WebKit::GPUProcessMain):
+        * GPUProcess/win/GPUProcessWin.cpp: Added.
+        (WebKit::GPUProcess::initializeProcess):
+        (WebKit::GPUProcess::initializeProcessName):
+        (WebKit::GPUProcess::initializeSandbox):
+        * PlatformWin.cmake:
+        * Shared/WebPreferencesDefaultValues.h:
+        * Shared/curl/WebCoreArgumentCodersCurl.cpp:
+        (IPC::ArgumentCoder<FontAttributes>::encodePlatformData): Deleted.
+        (IPC::ArgumentCoder<FontAttributes>::decodePlatformData): Deleted.
+        (IPC::ArgumentCoder<Ref<Font>>::encodePlatformData): Deleted.
+        (IPC::ArgumentCoder<Ref<Font>>::decodePlatformData): Deleted.
+        * Shared/win/WebCoreArgumentCodersWin.cpp: Added.
+        (IPC::ArgumentCoder<FontAttributes>::encodePlatformData):
+        (IPC::ArgumentCoder<FontAttributes>::decodePlatformData):
+        (IPC::ArgumentCoder<Ref<Font>>::encodePlatformData):
+        (IPC::ArgumentCoder<Ref<Font>>::decodePlatformData):
+        * Shared/win/WebPreferencesDefaultValuesWin.cpp: Added.
+        (WebKit::isFeatureFlagEnabled):
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp:
+        (WebKit::RemoteRenderingBackendProxy::submitDisplayList):
+        (WebKit::RemoteRenderingBackendProxy::createItemBuffer):
+        * WebProcess/GPU/media/win/VideoLayerRemoteWin.cpp: Added.
+        (WebKit::createVideoLayerRemote):
+
 2020-11-26  Youenn Fablet  <youenn@apple.com>
 
         https://collab-project.github.io/videojs-record/demo/video-only.html is not working
