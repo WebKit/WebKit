@@ -1,3 +1,16 @@
+2020-11-27  Youenn Fablet  <youenn@apple.com>
+
+        RTCVideoEncoderH264 does not need to support case without ENABLE_VCP_ENCODER and without HAVE_VTB_REQUIREDLOWLATENCY
+        https://bugs.webkit.org/show_bug.cgi?id=219224
+
+        Reviewed by Eric Carlson.
+
+        * Source/webrtc/sdk/WebKit/VideoProcessingSoftLink.h:
+        Make sure to compile the same with public SDK
+        * Source/webrtc/sdk/objc/components/video_codec/RTCVideoEncoderH264.mm:
+        (-[RTCVideoEncoderH264 resetCompressionSessionWithPixelFormat:]):
+        Remove code path that is no longer useful.
+
 2020-11-13  Youenn Fablet  <youenn@apple.com>
 
         Remote encoder should set its encoder frame callback to nullptr when being released
