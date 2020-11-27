@@ -1,3 +1,12 @@
+2020-11-27  Aakash Jain  <aakash_jain@apple.com>
+
+        [build.webkit.org] use lz4 compression for improving buildbot performance
+        https://bugs.webkit.org/show_bug.cgi?id=219133
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/build-webkit-org/master_buildbot2.cfg:
+
 2020-11-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] MiniBroeser add an option to quit the browser after loading finishes
