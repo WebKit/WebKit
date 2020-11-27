@@ -108,17 +108,14 @@ AudioSourceProviderGStreamer::~AudioSourceProviderGStreamer()
 {
     m_notifier->invalidate();
 
-    GRefPtr<GstElement> deinterleave = adoptGRef(gst_bin_get_by_name(GST_BIN(m_audioSinkBin.get()), "deinterleave"));
+    auto deinterleave = adoptGRef(gst_bin_get_by_name(GST_BIN_CAST(m_audioSinkBin.get()), "deinterleave"));
     if (deinterleave && m_client) {
         g_signal_handler_disconnect(deinterleave.get(), m_deinterleavePadAddedHandlerId);
         g_signal_handler_disconnect(deinterleave.get(), m_deinterleaveNoMorePadsHandlerId);
         g_signal_handler_disconnect(deinterleave.get(), m_deinterleavePadRemovedHandlerId);
     }
 
-#if ENABLE(MEDIA_STREAM)
-    if (m_pipeline)
-        gst_element_set_state(m_pipeline.get(), GST_STATE_NULL);
-#endif
+    setClient(nullptr);
 }
 
 void AudioSourceProviderGStreamer::configureAudioBin(GstElement* audioBin, GstElement* audioSink)
@@ -189,22 +186,26 @@ GstFlowReturn AudioSourceProviderGStreamer::handleSample(GstAppSink* sink, bool 
 
 void AudioSourceProviderGStreamer::setClient(AudioSourceProviderClient* client)
 {
-    if (m_client)
+    if (m_client == client)
         return;
 
-    ASSERT(client);
     m_client = client;
 
 #if ENABLE(MEDIA_STREAM)
     if (m_pipeline)
-        gst_element_set_state(m_pipeline.get(), GST_STATE_PLAYING);
+        gst_element_set_state(m_pipeline.get(), m_client ? GST_STATE_PLAYING : GST_STATE_NULL);
 #endif
+
+    // FIXME: This early return should ideally be replaced by a removal of the m_audioSinkBin from
+    // its parent pipeline. https://bugs.webkit.org/show_bug.cgi?id=219245
+    if (!m_client)
+        return;
 
     // The volume element is used to mute audio playback towards the
     // autoaudiosink. This is needed to avoid double playback of audio
     // from our audio sink and from the WebAudio AudioDestination node
     // supposedly configured already by application side.
-    GRefPtr<GstElement> volumeElement = adoptGRef(gst_bin_get_by_name(GST_BIN(m_audioSinkBin.get()), "volume"));
+    auto volumeElement = adoptGRef(gst_bin_get_by_name(GST_BIN_CAST(m_audioSinkBin.get()), "volume"));
 
     if (volumeElement)
         g_object_set(volumeElement.get(), "mute", TRUE, nullptr);
@@ -320,9 +321,9 @@ void AudioSourceProviderGStreamer::handleRemovedDeinterleavePad(GstPad* pad)
 void AudioSourceProviderGStreamer::deinterleavePadsConfigured()
 {
     GST_DEBUG("Deinterleave configured, notifying client");
-    m_notifier->notify(MainThreadNotification::DeinterleavePadsConfigured, [this] {
-        ASSERT(m_client);
-        m_client->setFormat(m_deinterleaveSourcePads, gSampleBitRate);
+    m_notifier->notify(MainThreadNotification::DeinterleavePadsConfigured, [numberOfChannels = m_deinterleaveSourcePads, sampleRate = gSampleBitRate, client = m_client] {
+        if (client)
+            client->setFormat(numberOfChannels, sampleRate);
     });
 }
 
