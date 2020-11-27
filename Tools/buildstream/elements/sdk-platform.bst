@@ -11,6 +11,7 @@ depends:
 - sdk/adwaita-icon-theme.bst
 - sdk/capnp.bst
 - sdk/ccls.bst
+- sdk/cmake-lsp.bst
 - sdk/enchant-2.bst
 - sdk/ffmpeg.bst
 - sdk/glib-networking.bst
@@ -49,6 +50,7 @@ depends:
 - sdk/perl-term-readkey.bst
 - sdk/psmisc.bst
 - sdk/pycairo.bst
+- sdk/pygls.bst
 - sdk/pygobject.bst
 - sdk/python2-pycairo.bst
 - sdk/python2-pygobject.bst

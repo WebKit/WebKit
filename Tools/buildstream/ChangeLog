@@ -1,3 +1,17 @@
+2020-11-27  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] Add cmake-lsp recipe
+        https://bugs.webkit.org/show_bug.cgi?id=219234
+
+        Reviewed by Adrian Perez de Castro.
+
+        Add CMake LSP server for use in IDEs.
+        
+        * elements/sdk-platform.bst:
+        * elements/sdk/cmake-lsp.bst: Added.
+        * elements/sdk/pygls.bst: Added.
+        * project.conf:
+
 2020-11-16  Philippe Normand  <pnormand@igalia.com>
 
         [Flatpak SDK] Update rr
