@@ -4,7 +4,8 @@ sources:
 - kind: git_tag
   url: gitlab_gnome_org:GNOME/gtk.git
   track: master
-  ref: 3.99.3-101-gdaf3b3a3b4cc70c5db278fd7142a6b49af91ae1d
+  track-tags: true
+  ref: 3.99.4-0-g3eaae748d34703a8770ee8407bd7b4f87336f1b1
 build-depends:
 - sdk-build-depends/sassc.bst
 - freedesktop-sdk.bst:public-stacks/buildsystem-meson.bst
@@ -30,6 +31,8 @@ depends:
 variables:
   meson-local: >-
     -Denable-broadway-backend=true
+    -Dprint-cloudprint=disabled
+    -Dmedia-ffmpeg=disabled
     -Dvulkan=disabled
 
 public:
