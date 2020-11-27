@@ -36,7 +36,7 @@ layer at (0,0) size 785x614
         RenderText {#text} at (0,0) size 267x19
           text run at (0,0) width 267: "In each box, all the lines should be the same."
       RenderBlock (anonymous) at (0,166) size 769x249
-        RenderBlock {DIV} at (3,3) size 96x188 [border: (1px solid #008000)]
+        RenderBlock {DIV} at (3,4) size 96x188 [border: (1px solid #008000)]
           RenderBlock {P} at (4,4) size 88x20
             RenderText {#text} at (0,0) size 88x19
               text run at (0,0) width 88: "ABCDEFGHI"
@@ -90,9 +90,9 @@ layer at (0,0) size 785x614
               text run at (0,0) width 32 RTL override: "\x{202C}CBA"
               text run at (32,0) width 29 LTR override: "\x{202D}DEF"
               text run at (61,0) width 27 RTL override: "\x{202E}IHG"
-        RenderText {#text} at (102,85) size 4x19
-          text run at (102,85) width 4: " "
-        RenderBlock {DIV} at (109,53) size 28x88 [border: (1px solid #008000)]
+        RenderText {#text} at (102,86) size 4x19
+          text run at (102,86) width 4: " "
+        RenderBlock {DIV} at (109,54) size 28x88 [border: (1px solid #008000)]
           RenderTable {TABLE} at (4,4) size 20x20
             RenderTableSection {TBODY} at (0,0) size 20x20
               RenderTableRow {TR} at (0,0) size 20x20
@@ -116,9 +116,9 @@ layer at (0,0) size 785x614
             RenderText {#text} at (0,0) size 20x19
               text run at (0,0) width 20 LTR override: "\x{202D}\x{5D2}\x{5D1}\x{5D0}"
               text run at (20,0) width 0: "\x{202C}"
-        RenderText {#text} at (140,85) size 4x19
-          text run at (140,85) width 4: " "
-        RenderBlock {DIV} at (147,63) size 87x68 [border: (1px solid #008000)]
+        RenderText {#text} at (140,86) size 4x19
+          text run at (140,86) width 4: " "
+        RenderBlock {DIV} at (147,64) size 87x68 [border: (1px solid #008000)]
           RenderTable {TABLE} at (4,4) size 79x20
             RenderTableSection {TBODY} at (0,0) size 79x20
               RenderTableRow {TR} at (0,0) size 79x20
@@ -165,9 +165,9 @@ layer at (0,0) size 785x614
               text run at (0,0) width 24 RTL: " \x{5D0}\x{5D1}\x{5D2}"
               text run at (24,0) width 32: "ABC"
               text run at (56,0) width 23 RTL: "\x{5D3}\x{5D4}\x{5D5} "
-        RenderText {#text} at (237,85) size 4x19
-          text run at (237,85) width 4: " "
-        RenderBlock {DIV} at (244,3) size 145x188 [border: (1px solid #008000)]
+        RenderText {#text} at (237,86) size 4x19
+          text run at (237,86) width 4: " "
+        RenderBlock {DIV} at (244,4) size 145x188 [border: (1px solid #008000)]
           RenderTable {TABLE} at (4,4) size 137x20
             RenderTableSection {TBODY} at (0,0) size 137x20
               RenderTableRow {TR} at (0,0) size 137x20
@@ -288,9 +288,9 @@ layer at (0,0) size 785x614
               text run at (24,0) width 55 LTR override: "\x{202D}ABC \x{5D5}\x{5D4}\x{5D3}"
               text run at (79,0) width 33: "\x{202C} DEF"
               text run at (112,0) width 25 RTL: "\x{5D6}\x{5D7}\x{5D8} "
-        RenderText {#text} at (392,85) size 4x19
-          text run at (392,85) width 4: " "
-        RenderBlock {DIV} at (399,73) size 176x48 [border: (1px solid #008000)]
+        RenderText {#text} at (392,86) size 4x19
+          text run at (392,86) width 4: " "
+        RenderBlock {DIV} at (399,74) size 176x48 [border: (1px solid #008000)]
           RenderTable {TABLE} at (4,4) size 168x20
             RenderTableSection {TBODY} at (0,0) size 168x20
               RenderTableRow {TR} at (0,0) size 168x20
@@ -370,10 +370,10 @@ layer at (0,0) size 785x614
               text run at (60,0) width 19 RTL: "\x{5D3}\x{5D4}\x{5D5}"
               text run at (79,0) width 68: " DEF GHI "
               text run at (147,0) width 21 RTL: "\x{5D6}\x{5D7}\x{5D8}"
-        RenderText {#text} at (578,85) size 4x19
-          text run at (578,85) width 4: " "
-        RenderBR {BR} at (582,85) size 0x19
-        RenderBlock {DIV} at (3,197) size 176x48 [border: (1px solid #008000)]
+        RenderText {#text} at (578,86) size 4x19
+          text run at (578,86) width 4: " "
+        RenderBR {BR} at (582,86) size 0x19
+        RenderBlock {DIV} at (3,198) size 176x48 [border: (1px solid #008000)]
           RenderTable {TABLE} at (4,4) size 168x20
             RenderTableSection {TBODY} at (0,0) size 168x20
               RenderTableRow {TR} at (0,0) size 168x20
@@ -452,9 +452,9 @@ layer at (0,0) size 785x614
               text run at (88,0) width 24 RTL: "\x{5D0}\x{5D1}\x{5D2} "
               text run at (112,0) width 35: "\x{202C} GHI "
               text run at (147,0) width 21 RTL: "\x{5D6}\x{5D7}\x{5D8}"
-        RenderText {#text} at (182,209) size 4x19
-          text run at (182,209) width 4: " "
-        RenderBlock {DIV} at (189,197) size 176x48 [border: (1px solid #008000)]
+        RenderText {#text} at (182,210) size 4x19
+          text run at (182,210) width 4: " "
+        RenderBlock {DIV} at (189,198) size 176x48 [border: (1px solid #008000)]
           RenderTable {TABLE} at (4,4) size 168x20
             RenderTableSection {TBODY} at (0,0) size 168x20
               RenderTableRow {TR} at (0,0) size 168x20

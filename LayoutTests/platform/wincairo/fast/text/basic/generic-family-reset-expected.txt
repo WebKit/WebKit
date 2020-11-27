@@ -14,12 +14,12 @@ layer at (0,0) size 800x600
                 text run at (1,1) width 352: "The css in the head of this file is like this:"
               RenderBR {BR} at (353,1) size 0x18
               RenderBR {BR} at (1,19) size 0x18
-              RenderText {#text} at (1,37) size 110x18
-                text run at (1,37) width 110: "html, body { "
-              RenderBR {BR} at (111,37) size 0x18
-              RenderText {#text} at (1,55) size 207x18
-                text run at (1,55) width 207: "    font-family: Verdana; "
-              RenderBR {BR} at (208,55) size 0x18
+              RenderText {#text} at (1,37) size 104x18
+                text run at (1,37) width 104: "html, body {"
+              RenderBR {BR} at (105,37) size 0x18
+              RenderText {#text} at (1,55) size 201x18
+                text run at (1,55) width 201: "    font-family: Verdana;"
+              RenderBR {BR} at (202,55) size 0x18
               RenderText {#text} at (1,73) size 10x18
                 text run at (1,73) width 10: "}"
               RenderBR {BR} at (11,73) size 0x18

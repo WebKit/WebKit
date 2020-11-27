@@ -84,9 +84,9 @@ layer at (0,0) size 785x4502
             text run at (0,96) width 55: "line."
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,781) size 769x70
-        RenderImage {IMG} at (0,0) size 15x50
-        RenderText {#text} at (15,13) size 756x56
-          text run at (15,13) width 741: " The image at the beginning of this sentence should be middle-aligned, which should align its middle with the point defined as"
+        RenderImage {IMG} at (0,1) size 15x50
+        RenderText {#text} at (15,14) size 756x55
+          text run at (15,14) width 741: " The image at the beginning of this sentence should be middle-aligned, which should align its middle with the point defined as"
           text run at (0,50) width 227: "the text baseline plus half the x-height."
       RenderBlock {P} at (0,867) size 769x124
         RenderImage {IMG} at (0,0) size 15x50
@@ -426,9 +426,9 @@ layer at (0,0) size 785x4502
                     text run at (0,96) width 133: "in the line."
                 RenderText {#text} at (0,0) size 0x0
               RenderBlock {P} at (4,430) size 747x70
-                RenderImage {IMG} at (0,0) size 15x50
-                RenderText {#text} at (15,13) size 739x56
-                  text run at (15,13) width 724: " The image at the beginning of this sentence should be middle-aligned, which should align its middle with the point defined"
+                RenderImage {IMG} at (0,1) size 15x50
+                RenderText {#text} at (15,14) size 739x55
+                  text run at (15,14) width 724: " The image at the beginning of this sentence should be middle-aligned, which should align its middle with the point defined"
                   text run at (0,50) width 244: "as the text baseline plus half the x-height."
               RenderBlock {P} at (4,516) size 747x124
                 RenderImage {IMG} at (0,0) size 15x50

@@ -1,3 +1,31 @@
+2020-11-26  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] Unreviewed test gardening
+
+        * platform/wincairo/TestExpectations:
+        * platform/wincairo/css1/formatting_model/height_of_lines-expected.txt:
+        * platform/wincairo/css1/text_properties/vertical_align-expected.txt:
+        * platform/wincairo/css2.1/20110323/replaced-intrinsic-ratio-001-expected.txt:
+        * platform/wincairo/editing/input/caret-at-the-edge-of-contenteditable-expected.txt:
+        * platform/wincairo/editing/input/reveal-caret-of-multiline-input-expected.txt:
+        * platform/wincairo/editing/inserting/paragraph-separator-in-table-1-expected.txt:
+        * platform/wincairo/fast/css/named-images-expected.txt:
+        * platform/wincairo/fast/css/text-overflow-input-expected.txt:
+        * platform/wincairo/fast/dom/HTMLMeterElement/meter-element-expected.txt:
+        * platform/wincairo/fast/dom/HTMLMeterElement/meter-element-repaint-on-update-value-expected.txt:
+        * platform/wincairo/fast/dom/HTMLMeterElement/meter-styles-changing-pseudo-expected.txt:
+        * platform/wincairo/fast/dom/HTMLMeterElement/meter-styles-expected.txt:
+        * platform/wincairo/fast/dom/HTMLProgressElement/indeterminate-progress-001-expected.txt:
+        * platform/wincairo/fast/dom/HTMLProgressElement/native-progress-bar-expected.txt:
+        * platform/wincairo/fast/dom/HTMLProgressElement/progress-bar-value-pseudo-element-expected.txt:
+        * platform/wincairo/fast/dom/HTMLProgressElement/progress-element-expected.txt:
+        * platform/wincairo/fast/dom/HTMLTextAreaElement/reset-textarea-expected.txt:
+        * platform/wincairo/fast/text/basic/generic-family-reset-expected.txt:
+        * platform/wincairo/fast/text/hyphenate-limit-before-after-expected.txt:
+        * platform/wincairo/fast/text/international/bidi-LDB-2-CSS-expected.txt:
+        * platform/wincairo/fast/text/international/bidi-LDB-2-HTML-expected.txt:
+        * platform/wincairo/fast/text/international/bidi-LDB-2-formatting-characters-expected.txt:
+
 2020-11-26  Youenn Fablet  <youenn@apple.com>
 
         https://collab-project.github.io/videojs-record/demo/video-only.html is not working
