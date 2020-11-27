@@ -514,37 +514,6 @@ std::unique_ptr<Decoder> Connection::waitForMessage(MessageName messageName, uin
 
     timeout = timeoutRespectingIgnoreTimeoutsForTesting(timeout);
 
-    bool hasIncomingSynchronousMessage = false;
-
-    // First, check if this message is already in the incoming messages queue.
-    {
-        auto locker = holdLock(m_incomingMessagesMutex);
-
-        for (auto it = m_incomingMessages.begin(), end = m_incomingMessages.end(); it != end; ++it) {
-            std::unique_ptr<Decoder>& message = *it;
-
-            if (message->messageName() == messageName && message->destinationID() == destinationID) {
-                std::unique_ptr<Decoder> returnedMessage = WTFMove(message);
-
-                m_incomingMessages.remove(it);
-                return returnedMessage;
-            }
-
-            if (message->isSyncMessage())
-                hasIncomingSynchronousMessage = true;
-        }
-    }
-
-    // Don't even start waiting if we have InterruptWaitingIfSyncMessageArrives and there's a sync message already in the queue.
-    if (hasIncomingSynchronousMessage && waitForOptions.contains(WaitForOption::InterruptWaitingIfSyncMessageArrives)) {
-#if ASSERT_ENABLED
-        auto locker = holdLock(m_waitForMessageMutex);
-        // We don't support having multiple clients waiting for messages.
-        ASSERT(!m_waitingForMessage);
-#endif
-        return nullptr;
-    }
-
     WaitForMessageState waitingForMessage(messageName, destinationID, waitForOptions);
 
     {
@@ -559,6 +528,35 @@ std::unique_ptr<Decoder> Connection::waitForMessage(MessageName messageName, uin
         // Once m_waitingForMessage is set, messageWaitingInterrupted will cover this instead.
         if (!m_shouldWaitForMessages)
             return nullptr;
+
+        bool hasIncomingSynchronousMessage = false;
+
+        // First, check if this message is already in the incoming messages queue.
+        {
+            auto locker = holdLock(m_incomingMessagesMutex);
+            for (auto it = m_incomingMessages.begin(), end = m_incomingMessages.end(); it != end; ++it) {
+                std::unique_ptr<Decoder>& message = *it;
+
+                if (message->messageName() == messageName && message->destinationID() == destinationID) {
+                    std::unique_ptr<Decoder> returnedMessage = WTFMove(message);
+
+                    m_incomingMessages.remove(it);
+                    return returnedMessage;
+                }
+
+                if (message->isSyncMessage())
+                    hasIncomingSynchronousMessage = true;
+            }
+        }
+
+        // Don't even start waiting if we have InterruptWaitingIfSyncMessageArrives and there's a sync message already in the queue.
+        if (hasIncomingSynchronousMessage && waitForOptions.contains(WaitForOption::InterruptWaitingIfSyncMessageArrives)) {
+#if ASSERT_ENABLED
+            // We don't support having multiple clients waiting for messages.
+            ASSERT(!m_waitingForMessage);
+#endif
+            return nullptr;
+        }
 
         m_waitingForMessage = &waitingForMessage;
     }
@@ -781,15 +779,15 @@ void Connection::processIncomingMessage(std::unique_ptr<Decoder> message)
                 return;
             }
         }
+
+        // Check if this is a sync message or if it's a message that should be dispatched even when waiting for
+        // a sync reply. If it is, and we're waiting for a sync reply this message needs to be dispatched.
+        // If we don't we'll end up with a deadlock where both sync message senders are stuck waiting for a reply.
+        if (SyncMessageState::singleton().processIncomingMessage(*this, message))
+            return;
+
+        enqueueIncomingMessage(WTFMove(message));
     }
-
-    // Check if this is a sync message or if it's a message that should be dispatched even when waiting for
-    // a sync reply. If it is, and we're waiting for a sync reply this message needs to be dispatched.
-    // If we don't we'll end up with a deadlock where both sync message senders are stuck waiting for a reply.
-    if (SyncMessageState::singleton().processIncomingMessage(*this, message))
-        return;
-
-    enqueueIncomingMessage(WTFMove(message));
 }
 
 uint64_t Connection::installIncomingSyncMessageCallback(WTF::Function<void ()>&& callback)

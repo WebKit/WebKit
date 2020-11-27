@@ -1,3 +1,50 @@
+2020-11-26  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Calling waitForAndDispatchImmediately<M> on a loop fails when multiple M messages arrive simultaneously
+        https://bugs.webkit.org/show_bug.cgi?id=219240
+
+        Reviewed by Chris Dumez.
+
+        Fixes a race that may occur when calling `waitForAndDispatchImmediately<N>` in a loop, when multiple messages
+        `N` arrive on the IPC thread simultaneously. This may result from the following sequence of events (note that
+        (Main) and (IPC) in the timeline below refer to the main thread and IPC background thread, respectively):
+
+        (Main)  Call `waitForAndDispatchImmediately`, and begin waiting.
+
+        (IPC)   A message `N` arrives, and is handled in `processIncomingMessage` by setting the decoder of
+                `m_waitingForMessage` and notifying the condition variable.
+
+        (Main)  The main thread wakes up and starts to process `N`, clearing out `m_waitingForMessage` in the process.
+
+        (IPC)   A second message `N` arrives. We see that `m_waitingForMessage` is null, so we don't set the decoder
+                and bail. Instead, we prepare to call `enqueueIncomingMessage` and push the message onto the main
+                thread, *but importantly*, we haven't done so yet.
+
+        (Main)  Call `waitForAndDispatchImmediately` again, set `m_waitingForMessage`, and begin waiting. Since the
+                incoming message that was just received above has not been enqueued yet, we are unable to avoid waiting
+                due to the incoming message.
+
+        (IPC)   We finally call `enqueueIncomingMessage`, which pushes the message `N` into `m_incomingMessages` and
+                dispatches onto the main thread. However, this is too late, since the main thread is already stuck
+                waiting for the incoming IPC message that we've now just enqueued.
+
+        Two minor adjustments are required to fix this, described in the below comments. The combination of these two
+        changes ensures that the scenario described above is impossible, since we'll either set `m_waitingForMessage`'s
+        decoder and wake up the main thread in the case where `waitForMessage` is called before `processIncomingMessage`,
+        or we'll bail early in `waitForMessage` with the enqueued IPC message in the case where `processIncomingMessage`
+        runs before `waitForMessage`.
+
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::waitForMessage):
+
+        Move logic that checks the incoming messages queue when calling `Connection::waitForMessage` into the
+        `m_waitForMessageMutex` critical section.
+
+        (IPC::Connection::processIncomingMessage):
+
+        Extend the critical section of `m_waitForMessageMutex` when processing an incoming message, such that it
+        encompasses the part that enqueues the incoming message.
+
 2020-11-26  Lauro Moura  <lmoura@igalia.com>
 
         [GTK][GTK4] Building with GObject-Introspection support does not work
