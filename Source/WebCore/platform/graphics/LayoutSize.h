@@ -205,6 +205,11 @@ inline FloatSize floorSizeToDevicePixels(const LayoutSize& size, float pixelSnap
     return FloatSize(floorToDevicePixel(size.width(), pixelSnappingFactor), floorToDevicePixel(size.height(), pixelSnappingFactor));
 }
 
+inline FloatSize roundSizeToDevicePixels(const LayoutSize& size, float pixelSnappingFactor)
+{
+    return FloatSize(roundToDevicePixel(size.width(), pixelSnappingFactor), roundToDevicePixel(size.height(), pixelSnappingFactor));
+}
+
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const LayoutSize&);
 
 } // namespace WebCore

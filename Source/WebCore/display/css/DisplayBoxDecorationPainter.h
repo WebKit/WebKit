@@ -33,15 +33,15 @@ namespace WebCore {
 
 class FillLayer;
 class GraphicsContext;
+enum class ShadowStyle : uint8_t;
 
 namespace Display {
 
 class BoxModelBox;
 class FillLayerImageGeometry;
 struct PaintingContext;
-enum class BackgroundBleedAvoidance;
 
-enum class BackgroundBleedAvoidance {
+enum class BackgroundBleedAvoidance : uint8_t {
     None,
     ShrinkBackground,
     UseTransparencyLayer,
@@ -62,12 +62,14 @@ private:
     void computeBorderRect();
 
     void paintBorders(PaintingContext&) const;
+    void paintBoxShadow(PaintingContext&, ShadowStyle) const;
     void paintBackground(PaintingContext&) const;
     void paintBackgroundImages(PaintingContext&) const;
 
     void paintFillLayer(PaintingContext&, const FillLayer&, const FillLayerImageGeometry&) const;
     
     FloatRoundedRect borderRoundedRect() const { return m_borderRect; }
+    FloatRoundedRect innerBorderRoundedRect() const;
     
     FloatRoundedRect backgroundRoundedRectAdjustedForBleedAvoidance(const PaintingContext&) const;
 

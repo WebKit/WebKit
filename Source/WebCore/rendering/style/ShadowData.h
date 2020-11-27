@@ -74,11 +74,14 @@ public:
     }
     LayoutUnit spread() const { return m_spread; }
     ShadowStyle style() const { return m_style; }
+
+    void setColor(const Color& color) { m_color = color; }
     const Color& color() const { return m_color; }
+
     bool isWebkitBoxShadow() const { return m_isWebkitBoxShadow; }
 
     const ShadowData* next() const { return m_next.get(); }
-    void setNext(std::unique_ptr<ShadowData> shadow) { m_next = WTFMove(shadow); }
+    void setNext(std::unique_ptr<ShadowData>&& shadow) { m_next = WTFMove(shadow); }
 
     void adjustRectForShadow(LayoutRect&, int additionalOutlineSize = 0) const;
     void adjustRectForShadow(FloatRect&, int additionalOutlineSize = 0) const;

@@ -41,6 +41,7 @@ namespace WebCore {
 
 class FillLayer;
 class RenderStyle;
+class ShadowData;
 
 namespace Display {
 
@@ -68,6 +69,8 @@ public:
 
     const FillLayer* backgroundLayers() const { return m_backgroundLayers.get(); }
     bool backgroundHasOpaqueTopLayer() const;
+    
+    const ShadowData* boxShadow() const { return m_boxShadow.get(); }
 
     Optional<int> zIndex() const { return m_zIndex; }
     bool isStackingContext() const { return m_zIndex.hasValue(); }
@@ -97,6 +100,7 @@ private:
     Color m_backgroundColor;
 
     RefPtr<FillLayer> m_backgroundLayers;
+    std::unique_ptr<ShadowData> m_boxShadow;
 
     FontCascade m_fontCascade;
     WhiteSpace m_whiteSpace;

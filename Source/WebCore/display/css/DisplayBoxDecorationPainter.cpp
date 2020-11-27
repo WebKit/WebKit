@@ -40,6 +40,7 @@
 #include "GraphicsContext.h"
 #include "IntRect.h"
 #include "LayoutPoint.h"
+#include "ShadowData.h"
 
 namespace WebCore {
 namespace Display {
@@ -1206,6 +1207,15 @@ void BorderPainter::paintBorders(PaintingContext& paintingContext) const
         paintBorderSides(paintingContext, m_borderRect, innerBorderRect, innerBorderBleedAdjustment, edgesToDraw, antialias);
 }
 
+BoxDecorationPainter::BoxDecorationPainter(const BoxModelBox& box, PaintingContext& paintingContext, bool includeLeftEdge, bool includeRightEdge)
+    : m_box(box)
+    , m_borderRect(computeBorderRect(box))
+    , m_bleedAvoidance(determineBackgroundBleedAvoidance(box, paintingContext))
+    , m_includeLeftEdge(includeLeftEdge)
+    , m_includeRightEdge(includeRightEdge)
+{
+}
+
 void BoxDecorationPainter::paintBorders(PaintingContext& paintingContext) const
 {
     auto* boxDecorationData = m_box.boxDecorationData();
@@ -1278,13 +1288,185 @@ void BoxDecorationPainter::paintFillLayer(PaintingContext& paintingContext, cons
     paintingContext.context.drawTiledImage(*image, geometry.destRect(), toFloatPoint(geometry.relativePhase()), geometry.tileSize(), geometry.spaceSize(), options);
 }
 
-BoxDecorationPainter::BoxDecorationPainter(const BoxModelBox& box, PaintingContext& paintingContext, bool includeLeftEdge, bool includeRightEdge)
-    : m_box(box)
-    , m_borderRect(computeBorderRect(box))
-    , m_bleedAvoidance(determineBackgroundBleedAvoidance(box, paintingContext))
-    , m_includeLeftEdge(includeLeftEdge)
-    , m_includeRightEdge(includeRightEdge)
+void BoxDecorationPainter::paintBoxShadow(PaintingContext& paintingContext, ShadowStyle shadowStyle) const
 {
+    if (!m_box.style().boxShadow())
+        return;
+
+    auto borderRect = shadowStyle == ShadowStyle::Inset ? innerBorderRoundedRect() : borderRoundedRect();
+    auto* boxDecorationData = m_box.boxDecorationData();
+    bool hasBorderRadius = boxDecorationData && boxDecorationData->hasBorderRadius();
+
+    bool hasOpaqueBackground = m_box.style().backgroundColor().isOpaque();
+
+    auto paintNormalShadow = [&](const ShadowData& shadow) {
+        // FIXME: Snapping here isn't ideal. It would be better to compute a rect which is border rect + offset + spread, and snap that at tree building time.
+        auto shadowOffset = roundSizeToDevicePixels({ shadow.x(), shadow.y() }, paintingContext.deviceScaleFactor);
+        float shadowPaintingExtent = ceilToDevicePixel(shadow.paintingExtent(), paintingContext.deviceScaleFactor);
+        float shadowSpread = roundToDevicePixel(shadow.spread(), paintingContext.deviceScaleFactor);
+        int shadowRadius = shadow.radius();
+
+        auto fillRect = borderRect;
+        fillRect.inflate(shadowSpread);
+        if (fillRect.isEmpty())
+            return;
+
+        auto shadowRect = borderRect.rect();
+        shadowRect.inflate(shadowPaintingExtent + shadowSpread);
+        shadowRect.move(shadowOffset);
+
+        GraphicsContextStateSaver stateSaver(paintingContext.context);
+        paintingContext.context.clip(shadowRect);
+
+        // Move the fill just outside the clip, adding at least 1 pixel of separation so that the fill does not
+        // bleed in (due to antialiasing) if the context is transformed.
+        float xOffset = shadowRect.width() + std::max<float>(0, shadowOffset.width()) + shadowPaintingExtent + 2 * shadowSpread + 1.0f;
+        auto extraOffset = FloatSize { std::ceil(xOffset), 0 };
+        shadowOffset -= extraOffset;
+        fillRect.move(extraOffset);
+
+        auto rectToClipOut = borderRect;
+        auto adjustedFillRect = fillRect;
+
+        auto shadowRectOrigin = fillRect.rect().location() + shadowOffset;
+        auto adjustedShadowOffset = shadowRectOrigin - adjustedFillRect.rect().location();
+
+        if (shadow.isWebkitBoxShadow())
+            paintingContext.context.setLegacyShadow(adjustedShadowOffset, shadowRadius, shadow.color());
+        else
+            paintingContext.context.setShadow(adjustedShadowOffset, shadowRadius, shadow.color());
+
+        if (hasBorderRadius) {
+            // If the box is opaque, it is unnecessary to clip it out. However, doing so saves time
+            // when painting the shadow. On the other hand, it introduces subpixel gaps along the
+            // corners. Those are avoided by insetting the clipping path by one pixel.
+            if (hasOpaqueBackground)
+                rectToClipOut.inflateWithRadii(-1.0f);
+
+            if (!rectToClipOut.isEmpty())
+                paintingContext.context.clipOutRoundedRect(rectToClipOut);
+
+            auto influenceRect = FloatRoundedRect { shadowRect, borderRect.radii() };
+            influenceRect.expandRadii(2 * shadowPaintingExtent + shadowSpread);
+
+            // FIXME: Optimize for clipped-out corners
+            adjustedFillRect.expandRadii(shadowSpread);
+            if (!adjustedFillRect.isRenderable())
+                adjustedFillRect.adjustRadii();
+            paintingContext.context.fillRoundedRect(adjustedFillRect, Color::black);
+        } else {
+            // If the box is opaque, it is unnecessary to clip it out. However, doing so saves time
+            // when painting the shadow. On the other hand, it introduces subpixel gaps along the
+            // edges if they are not pixel-aligned. Those are avoided by insetting the clipping path
+            // by one pixel.
+            if (hasOpaqueBackground) {
+                // FIXME: The function to decide on the policy based on the transform should be a named function.
+                // FIXME: It's not clear if this check is right. What about integral scale factors?
+                AffineTransform transform = paintingContext.context.getCTM();
+                if (transform.a() != 1 || (transform.d() != 1 && transform.d() != -1) || transform.b() || transform.c())
+                    rectToClipOut.inflate(-1.0f);
+            }
+
+            if (!rectToClipOut.isEmpty())
+                paintingContext.context.clipOut(rectToClipOut.rect());
+
+            paintingContext.context.fillRect(adjustedFillRect.rect(), Color::black);
+        }
+    };
+
+    auto paintInsetShadow = [&](const ShadowData& shadow) {
+        auto shadowOffset = roundSizeToDevicePixels({ shadow.x(), shadow.y() }, paintingContext.deviceScaleFactor);
+        float shadowPaintingExtent = ceilToDevicePixel(shadow.paintingExtent(), paintingContext.deviceScaleFactor);
+        float shadowSpread = roundToDevicePixel(shadow.spread(), paintingContext.deviceScaleFactor);
+        int shadowRadius = shadow.radius();
+
+        auto holeRect = borderRect.rect();
+        holeRect.inflate(-shadowSpread);
+
+        if (!m_includeLeftEdge) {
+            // FIXME: Need to take writing mode into account.
+            holeRect.shiftXEdgeBy(-(std::max<float>(shadowOffset.width(), 0) + shadowPaintingExtent + shadowSpread));
+        }
+
+        if (!m_includeRightEdge) {
+            // FIXME: Need to take writing mode into account.
+            holeRect.setWidth(holeRect.width() - std::min<float>(shadowOffset.width(), 0) + shadowPaintingExtent + shadowSpread);
+        }
+
+        auto roundedHoleRect = FloatRoundedRect { holeRect, borderRect.radii() };
+        if (shadowSpread && roundedHoleRect.isRounded()) {
+            auto roundedRectCorrectingForSpread = [&]() {
+                bool horizontal = true; // FIXME: Handle writing modes.
+                auto borderWidth = borderWidths(boxDecorationData->borderEdges());
+
+                float leftWidth { (!horizontal || m_includeLeftEdge) ? borderWidth.left() + shadowSpread : 0 };
+                float rightWidth { (!horizontal || m_includeRightEdge) ? borderWidth.right() + shadowSpread : 0 };
+                float topWidth { (horizontal || m_includeLeftEdge) ? borderWidth.top() + shadowSpread : 0 };
+                float bottomWidth { (horizontal || m_includeRightEdge) ? borderWidth.bottom() + shadowSpread : 0 };
+
+                return roundedInsetBorderForRect(m_borderRect.rect(), m_borderRect.radii(), { topWidth, rightWidth, bottomWidth, leftWidth }, m_includeLeftEdge, m_includeRightEdge);
+            }();
+            roundedHoleRect.setRadii(roundedRectCorrectingForSpread.radii());
+        }
+
+        if (roundedHoleRect.isEmpty()) {
+            if (hasBorderRadius)
+                paintingContext.context.fillRoundedRect(borderRect, shadow.color());
+            else
+                paintingContext.context.fillRect(borderRect.rect(), shadow.color());
+            return;
+        }
+
+        auto areaCastingShadowInHole = [](const FloatRect& holeRect, float shadowExtent, float shadowSpread, FloatSize shadowOffset) {
+            auto bounds(holeRect);
+            
+            bounds.inflate(shadowExtent);
+
+            if (shadowSpread < 0)
+                bounds.inflate(-shadowSpread);
+            
+            auto offsetBounds = bounds;
+            offsetBounds.move(-shadowOffset);
+            return unionRect(bounds, offsetBounds);
+        };
+
+        Color fillColor = shadow.color().opaqueColor();
+        auto shadowCastingRect = areaCastingShadowInHole(borderRect.rect(), shadowPaintingExtent, shadowSpread, shadowOffset);
+
+        GraphicsContextStateSaver stateSaver(paintingContext.context);
+        if (hasBorderRadius)
+            paintingContext.context.clipRoundedRect(borderRect);
+        else
+            paintingContext.context.clip(borderRect.rect());
+
+        float xOffset = shadowCastingRect.width() + std::max<float>(0, shadowOffset.width()) + shadowPaintingExtent - 2 * shadowSpread + 1.0f;
+        auto extraOffset = FloatSize { std::ceil(xOffset), 0 };
+
+        paintingContext.context.translate(extraOffset);
+        shadowOffset -= extraOffset;
+
+        if (shadow.isWebkitBoxShadow())
+            paintingContext.context.setLegacyShadow(shadowOffset, shadowRadius, shadow.color());
+        else
+            paintingContext.context.setShadow(shadowOffset, shadowRadius, shadow.color());
+
+        paintingContext.context.fillRectWithRoundedHole(shadowCastingRect, roundedHoleRect, fillColor);
+    };
+
+
+    for (auto* shadow = m_box.style().boxShadow(); shadow; shadow = shadow->next()) {
+        if (shadow->style() != shadowStyle)
+            continue;
+
+        LayoutSize shadowOffset(shadow->x(), shadow->y());
+        if (shadowOffset.isZero() && !shadow->radius() && !shadow->spread())
+            continue;
+
+        if (shadow->style() == ShadowStyle::Normal)
+            paintNormalShadow(*shadow);
+        else
+            paintInsetShadow(*shadow);
+    }
 }
 
 FloatRoundedRect BoxDecorationPainter::computeBorderRect(const BoxModelBox& box)
@@ -1318,6 +1500,14 @@ void BoxDecorationPainter::paintBackgroundImages(PaintingContext& paintingContex
     }
 }
 
+FloatRoundedRect BoxDecorationPainter::innerBorderRoundedRect() const
+{
+    if (auto* boxDecorationData = m_box.boxDecorationData())
+        return roundedInsetBorderForRect(m_borderRect.rect(), m_borderRect.radii(), borderWidths(boxDecorationData->borderEdges()), m_includeLeftEdge, m_includeRightEdge);
+
+    return borderRoundedRect();
+}
+
 FloatRoundedRect BoxDecorationPainter::backgroundRoundedRectAdjustedForBleedAvoidance(const PaintingContext& paintingContext) const
 {
     if (m_bleedAvoidance == BackgroundBleedAvoidance::ShrinkBackground) {
@@ -1325,11 +1515,8 @@ FloatRoundedRect BoxDecorationPainter::backgroundRoundedRectAdjustedForBleedAvoi
         return roundedRectWithIncludedRadii(shrinkRectByOneDevicePixel(paintingContext, m_borderRect.rect()), m_borderRect.radii(), m_includeLeftEdge, m_includeRightEdge);
     }
 
-    if (m_bleedAvoidance == BackgroundBleedAvoidance::BackgroundOverBorder) {
-        auto* boxDecorationData = m_box.boxDecorationData();
-        ASSERT(boxDecorationData);
-        return roundedInsetBorderForRect(m_borderRect.rect(), m_borderRect.radii(), borderWidths(boxDecorationData->borderEdges()), m_includeLeftEdge, m_includeRightEdge);
-    }
+    if (m_bleedAvoidance == BackgroundBleedAvoidance::BackgroundOverBorder)
+        return innerBorderRoundedRect();
 
     return roundedRectWithIncludedRadii(m_borderRect.rect(), m_borderRect.radii(), m_includeLeftEdge, m_includeRightEdge);
 }
@@ -1391,17 +1578,21 @@ void BoxDecorationPainter::paintBackgroundAndBorders(PaintingContext& paintingCo
     
     switch (m_bleedAvoidance) {
     case BackgroundBleedAvoidance::BackgroundOverBorder:
+        paintBoxShadow(paintingContext, ShadowStyle::Normal);
         paintBorders(paintingContext);
         paintBackground(paintingContext);
+        paintBoxShadow(paintingContext, ShadowStyle::Inset);
         break;
 
     case BackgroundBleedAvoidance::UseTransparencyLayer: {
+        paintBoxShadow(paintingContext, ShadowStyle::Normal);
         GraphicsContextStateSaver stateSaver(paintingContext.context);
         auto outerBorder = borderRoundedRect();
         paintingContext.context.clipRoundedRect(outerBorder);
         paintingContext.context.beginTransparencyLayer(1);
 
         paintBackground(paintingContext);
+        paintBoxShadow(paintingContext, ShadowStyle::Inset);
         paintBorders(paintingContext);
 
         paintingContext.context.endTransparencyLayer();
@@ -1410,7 +1601,9 @@ void BoxDecorationPainter::paintBackgroundAndBorders(PaintingContext& paintingCo
     
     case BackgroundBleedAvoidance::ShrinkBackground:
     case BackgroundBleedAvoidance::None:
+        paintBoxShadow(paintingContext, ShadowStyle::Normal);
         paintBackground(paintingContext);
+        paintBoxShadow(paintingContext, ShadowStyle::Inset);
         paintBorders(paintingContext);
         break;
     }
