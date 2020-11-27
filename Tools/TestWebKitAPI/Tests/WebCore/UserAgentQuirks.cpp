@@ -41,6 +41,7 @@ static void assertUserAgentForURLHasChromeBrowserQuirk(const char* url)
     EXPECT_FALSE(uaString.contains("Chromium"));
     EXPECT_FALSE(uaString.contains("Firefox"));
     EXPECT_FALSE(uaString.contains("Version"));
+    EXPECT_FALSE(uaString.contains("Trident"));
 }
 
 static void assertUserAgentForURLHasFirefoxBrowserQuirk(const char* url)
@@ -52,6 +53,19 @@ static void assertUserAgentForURLHasFirefoxBrowserQuirk(const char* url)
     EXPECT_FALSE(uaString.contains("Chromium"));
     EXPECT_TRUE(uaString.contains("Firefox"));
     EXPECT_FALSE(uaString.contains("Version"));
+    EXPECT_FALSE(uaString.contains("Trident"));
+}
+
+static void assertUserAgentForURLHasInternetExplorerBrowserQuirk(const char* url)
+{
+    String uaString = standardUserAgentForURL(URL({ }, url));
+
+    EXPECT_FALSE(uaString.contains("Chrome"));
+    EXPECT_FALSE(uaString.contains("Safari"));
+    EXPECT_FALSE(uaString.contains("Chromium"));
+    EXPECT_FALSE(uaString.contains("Firefox"));
+    EXPECT_FALSE(uaString.contains("Version"));
+    EXPECT_TRUE(uaString.contains("Trident"));
 }
 
 static void assertUserAgentForURLHasLinuxPlatformQuirk(const char* url)
@@ -62,6 +76,18 @@ static void assertUserAgentForURLHasLinuxPlatformQuirk(const char* url)
     EXPECT_FALSE(uaString.contains("Macintosh"));
     EXPECT_FALSE(uaString.contains("Mac OS X"));
     EXPECT_FALSE(uaString.contains("Windows"));
+    EXPECT_FALSE(uaString.contains("Chrome"));
+    EXPECT_FALSE(uaString.contains("FreeBSD"));
+}
+
+static void assertUserAgentForURLHasWindowsPlatformQuirk(const char* url)
+{
+    String uaString = standardUserAgentForURL(URL({ }, url));
+
+    EXPECT_FALSE(uaString.contains("Macintosh"));
+    EXPECT_FALSE(uaString.contains("Mac OS X"));
+    EXPECT_FALSE(uaString.contains("Linux"));
+    EXPECT_TRUE(uaString.contains("Windows"));
     EXPECT_FALSE(uaString.contains("Chrome"));
     EXPECT_FALSE(uaString.contains("FreeBSD"));
 }
@@ -80,7 +106,7 @@ static void assertUserAgentForURLHasMacPlatformQuirk(const char* url)
 
 TEST(UserAgentTest, Quirks)
 {
-    // A site with not quirks should return a null String.
+    // A site with no quirks should return a null String.
     String uaString = standardUserAgentForURL(URL({ }, "http://www.webkit.org/"));
     EXPECT_TRUE(uaString.isNull());
 
@@ -95,8 +121,15 @@ TEST(UserAgentTest, Quirks)
     assertUserAgentForURLHasChromeBrowserQuirk("http://auth.mayohr.com/");
     assertUserAgentForURLHasChromeBrowserQuirk("http://bankofamerica.com/");
 
-    assertUserAgentForURLHasFirefoxBrowserQuirk("http://drive.google.com/");
     assertUserAgentForURLHasFirefoxBrowserQuirk("http://bugzilla.redhat.com/");
+
+    assertUserAgentForURLHasInternetExplorerBrowserQuirk("http://accounts.youtube.com/");
+    assertUserAgentForURLHasInternetExplorerBrowserQuirk("http://docs.google.com/");
+    assertUserAgentForURLHasInternetExplorerBrowserQuirk("http://drive.google.com/");
+
+    assertUserAgentForURLHasWindowsPlatformQuirk("http://accounts.youtube.com/");
+    assertUserAgentForURLHasWindowsPlatformQuirk("http://docs.google.com/");
+    assertUserAgentForURLHasWindowsPlatformQuirk("http://drive.google.com/");
 
     assertUserAgentForURLHasLinuxPlatformQuirk("http://www.google.com/");
     assertUserAgentForURLHasLinuxPlatformQuirk("http://www.google.es/");
@@ -104,8 +137,6 @@ TEST(UserAgentTest, Quirks)
     assertUserAgentForURLHasLinuxPlatformQuirk("http://plus.google.com/");
     assertUserAgentForURLHasLinuxPlatformQuirk("http://drive.google.com/");
     assertUserAgentForURLHasLinuxPlatformQuirk("http://fonts.googleapis.com/");
-    assertUserAgentForURLHasLinuxPlatformQuirk("http://accounts.youtube.com/");
-    assertUserAgentForURLHasLinuxPlatformQuirk("http://docs.google.com/");
 
     assertUserAgentForURLHasMacPlatformQuirk("http://www.yahoo.com/");
     assertUserAgentForURLHasMacPlatformQuirk("http://finance.yahoo.com/");

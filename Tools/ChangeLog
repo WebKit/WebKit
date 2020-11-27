@@ -1,3 +1,17 @@
+2020-11-26  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        [WPE][GTK] Use Internet Explorer quirk for Google Docs
+        https://bugs.webkit.org/show_bug.cgi?id=219278
+
+        Reviewed by Carlos Garcia Campos.
+
+        * TestWebKitAPI/Tests/WebCore/UserAgentQuirks.cpp:
+        (TestWebKitAPI::assertUserAgentForURLHasChromeBrowserQuirk):
+        (TestWebKitAPI::assertUserAgentForURLHasFirefoxBrowserQuirk):
+        (TestWebKitAPI::assertUserAgentForURLHasInternetExplorerBrowserQuirk):
+        (TestWebKitAPI::assertUserAgentForURLHasWindowsPlatformQuirk):
+        (TestWebKitAPI::TEST):
+
 2020-11-21  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Implement SPI for AuthenticationServices.Framework
