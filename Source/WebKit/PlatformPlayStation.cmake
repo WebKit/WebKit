@@ -71,6 +71,8 @@ list(APPEND WebKit_SOURCES
     Shared/libwpe/NativeWebWheelEventLibWPE.cpp
     Shared/libwpe/WebEventFactory.cpp
 
+    Shared/playstation/WebCoreArgumentCodersPlayStation.cpp
+
     Shared/unix/AuxiliaryProcessMain.cpp
 
     UIProcess/BackingStore.cpp

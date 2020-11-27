@@ -1,3 +1,14 @@
+2020-11-27  Yoshiaki Jitsukawa  <yoshiaki.jitsukawa@sony.com>
+
+        [PlayStation] Define platform argument coders for Font
+        https://bugs.webkit.org/show_bug.cgi?id=219300
+
+        Reviewed by Fujii Hironori.
+
+        * PlatformPlayStation.cmake:
+        * Shared/playstation/WebCoreArgumentCodersPlayStation.cpp: Added.
+        Define required member functions of ArgumentCoder<Ref<WebCore::Font>> class.
+
 2020-11-26  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Calling waitForAndDispatchImmediately<M> on a loop fails when multiple M messages arrive simultaneously
