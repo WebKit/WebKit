@@ -35,6 +35,7 @@
 #include "Attr.h"
 #include "Document.h"
 #include "Element.h"
+#include "Frame.h"
 #include "HTMLFrameOwnerElement.h"
 #include "NodeList.h"
 #include "NodeTraversal.h"

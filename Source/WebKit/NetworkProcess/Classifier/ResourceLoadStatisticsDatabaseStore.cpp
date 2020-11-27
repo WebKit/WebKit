@@ -32,6 +32,7 @@
 #include "NetworkSession.h"
 #include "PluginProcessManager.h"
 #include "PluginProcessProxy.h"
+#include "PrivateClickMeasurementManager.h"
 #include "ResourceLoadStatisticsMemoryStore.h"
 #include "StorageAccessStatus.h"
 #include "WebProcessProxy.h"

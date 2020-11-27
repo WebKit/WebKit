@@ -19,6 +19,7 @@
 
 #pragma once
 
+#include <wtf/Forward.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/AtomString.h>
 

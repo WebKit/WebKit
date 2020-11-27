@@ -33,6 +33,7 @@
 namespace WebCore {
 
 class Document;
+class FontCascadeDescription;
 class RenderStyle;
 
 namespace CSSPropertyParserHelpers {

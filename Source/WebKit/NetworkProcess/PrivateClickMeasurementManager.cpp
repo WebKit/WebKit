@@ -27,6 +27,7 @@
 #include "PrivateClickMeasurementManager.h"
 
 #include "Logging.h"
+#include "NetworkSession.h"
 #include <JavaScriptCore/ConsoleTypes.h>
 #include <WebCore/FetchOptions.h>
 #include <WebCore/FormData.h>

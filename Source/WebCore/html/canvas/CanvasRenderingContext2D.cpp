@@ -169,17 +169,6 @@ void CanvasRenderingContext2D::strokeText(const String& text, float x, float y, 
     drawTextInternal(text, x, y, false, maxWidth);
 }
 
-static inline bool isSpaceThatNeedsReplacing(UChar c)
-{
-    // According to specification all space characters should be replaced with 0x0020 space character.
-    // http://www.whatwg.org/specs/web-apps/current-work/multipage/the-canvas-element.html#text-preparation-algorithm
-    // The space characters according to specification are : U+0020, U+0009, U+000A, U+000C, and U+000D.
-    // http://www.whatwg.org/specs/web-apps/current-work/multipage/common-microsyntaxes.html#space-character
-    // This function returns true for 0x000B also, so that this is backward compatible.
-    // Otherwise, the test LayoutTests/canvas/philip/tests/2d.text.draw.space.collapse.space.html will fail
-    return c == 0x0009 || c == 0x000A || c == 0x000B || c == 0x000C || c == 0x000D;
-}
-
 Ref<TextMetrics> CanvasRenderingContext2D::measureText(const String& text)
 {
     if (RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled()) {

@@ -33,9 +33,12 @@
 
 #include "CSSFontSelector.h"
 #include "CSSPropertyParserHelpers.h"
+#include "CSSToLengthConversionData.h"
 #include "Document.h"
+#include "FontCascade.h"
 #include "FontCascadeDescription.h"
 #include "RenderStyle.h"
+#include "Settings.h"
 #include "StyleFontSizeFunctions.h"
 
 namespace WebCore {

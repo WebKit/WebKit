@@ -77,7 +77,7 @@ void SpeechRecognitionServer::requestPermissionForRequest(WebCore::SpeechRecogni
 void SpeechRecognitionServer::handleRequest(WebCore::SpeechRecognitionConnectionClientIdentifier clientIdentifier)
 {
     if (!m_recognizer) {
-        m_recognizer = makeUnique<SpeechRecognizer>([this, weakThis = makeWeakPtr(this)](auto& update) {
+        m_recognizer = makeUnique<WebCore::SpeechRecognizer>([this, weakThis = makeWeakPtr(this)](auto& update) {
             if (!weakThis)
                 return;
 
@@ -86,7 +86,7 @@ void SpeechRecognitionServer::handleRequest(WebCore::SpeechRecognitionConnection
                 return;
 
             auto type = update.type();
-            if (type == SpeechRecognitionUpdateType::Error || type == SpeechRecognitionUpdateType::End)
+            if (type == WebCore::SpeechRecognitionUpdateType::Error || type == WebCore::SpeechRecognitionUpdateType::End)
                 m_requests.remove(clientIdentifier);
 
             sendUpdate(update);
