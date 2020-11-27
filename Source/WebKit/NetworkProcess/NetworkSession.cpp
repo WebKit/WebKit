@@ -188,11 +188,6 @@ void NetworkSession::setResourceLoadStatisticsEnabled(bool enable)
     forwardResourceLoadStatisticsSettings();
 }
 
-void NetworkSession::firePrivateClickMeasurementTimerImmediately()
-{
-    m_privateClickMeasurement->startTimer(0_s);
-}
-
 void NetworkSession::recreateResourceLoadStatisticStore(CompletionHandler<void()>&& completionHandler)
 {
     destroyResourceLoadStatistics([this, weakThis = makeWeakPtr(*this), completionHandler = WTFMove(completionHandler)] () mutable {
@@ -351,6 +346,11 @@ void NetworkSession::setPrivateClickMeasurementConversionURLForTesting(URL&& url
 void NetworkSession::markPrivateClickMeasurementsAsExpiredForTesting()
 {
     m_privateClickMeasurement->markAllUnattributedAsExpiredForTesting();
+}
+
+void NetworkSession::firePrivateClickMeasurementTimerImmediately()
+{
+    m_privateClickMeasurement->startTimer(0_s);
 }
 
 void NetworkSession::addKeptAliveLoad(Ref<NetworkResourceLoader>&& loader)

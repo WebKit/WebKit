@@ -1,3 +1,36 @@
+2020-11-27  Don Olmstead  <don.olmstead@sony.com>
+
+        Fix build when ENABLE_RESOURCE_LOAD_STATISTICS is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=219316
+
+        Unreviewed build fix.
+
+        Add ENABLE(RESOURCE_LOAD_STATISTICS) guards around NetworkSession requests for
+        resource load statistics. Move firePrivateClickMeasurementTimerImmediately out of
+        a ENABLE(RESOURCE_LOAD_STATISTICS) guard and place it where its ordered in the header.
+
+        This originally broke the PlayStation build before ENABLE_RESOURCE_LOAD_STATISTICS
+        was turned on.
+
+        No new tests. No change in behavior.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::simulateResourceLoadStatisticsSessionRestart):
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::firePrivateClickMeasurementTimerImmediately):
+        * NetworkProcess/PrivateClickMeasurementManager.cpp:
+        (WebKit::PrivateClickMeasurementManager::storeUnattributed):
+        (WebKit::PrivateClickMeasurementManager::attribute):
+        (WebKit::PrivateClickMeasurementManager::clearSentAttributions):
+        (WebKit::PrivateClickMeasurementManager::updateTimerLastFired):
+        (WebKit::PrivateClickMeasurementManager::firePendingAttributionRequests):
+        (WebKit::PrivateClickMeasurementManager::clear):
+        (WebKit::PrivateClickMeasurementManager::clearForRegistrableDomain):
+        (WebKit::PrivateClickMeasurementManager::clearExpired):
+        (WebKit::PrivateClickMeasurementManager::toString const):
+        (WebKit::PrivateClickMeasurementManager::markAllUnattributedAsExpiredForTesting):
+        (WebKit::PrivateClickMeasurementManager::markAttributedPrivateClickMeasurementsAsExpiredForTesting):
+
 2020-11-27  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Introduce new display list meta commands in preparation for webkit.org/b/219091
