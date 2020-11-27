@@ -255,7 +255,7 @@ void WebPopupMenuProxyGtk::createPopupMenu(const Vector<WebPopupItem>& items, in
     gtk_widget_set_parent(m_popup, m_webView);
 
     auto* controller = gtk_event_controller_key_new();
-    g_signal_connect_swapped(controller, "key-pressed", G_CALLBACK(+[](WebPopupMenuProxyGtk* popupMenu, unsigned keyval, unsigned, GdkModifierType, GtkEventController* controller) {
+    g_signal_connect_swapped(controller, "key-pressed", G_CALLBACK(+[](WebPopupMenuProxyGtk* popupMenu, unsigned keyval, unsigned, GdkModifierType, GtkEventController* controller) -> gboolean {
         auto* event = gtk_event_controller_get_current_event(controller);
         if (popupMenu->typeAheadFind(keyval, gdk_event_get_time(event)))
             return GDK_EVENT_STOP;
