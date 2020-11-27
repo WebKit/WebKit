@@ -135,7 +135,6 @@ TEST(UserAgentTest, Quirks)
     assertUserAgentForURLHasLinuxPlatformQuirk("http://www.google.es/");
     assertUserAgentForURLHasLinuxPlatformQuirk("http://calendar.google.com/");
     assertUserAgentForURLHasLinuxPlatformQuirk("http://plus.google.com/");
-    assertUserAgentForURLHasLinuxPlatformQuirk("http://drive.google.com/");
     assertUserAgentForURLHasLinuxPlatformQuirk("http://fonts.googleapis.com/");
 
     assertUserAgentForURLHasMacPlatformQuirk("http://www.yahoo.com/");

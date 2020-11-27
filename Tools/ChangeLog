@@ -1,3 +1,14 @@
+2020-11-26  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK] Unreviewed. Remove leftover test case after Internet Explorer quirks changes
+
+        The test cases were still expecting Linux platform for
+        drive.google.com, which now uses the IE quirk and thus the Windows
+        platform.
+
+        * TestWebKitAPI/Tests/WebCore/UserAgentQuirks.cpp:
+        (TestWebKitAPI::TEST):
+
 2020-11-26  Aakash Jain  <aakash_jain@apple.com>
 
         [build.webkit.org] Update Run32bitJSCTests step for new buildbot
