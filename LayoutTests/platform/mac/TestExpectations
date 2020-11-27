@@ -2246,5 +2246,3 @@ webkit.org/b/218346 [ Mojave ] fast/text/canvas-color-fonts [ Skip ]
 
 # rdar://rdar://71039166
 [ Mojave ] http/tests/canvas/color-fonts [ Skip ]
-
-webkit.org/b/219066 [ Mojave Catalina ] webrtc/audio-sframe.html [ Pass Crash ]

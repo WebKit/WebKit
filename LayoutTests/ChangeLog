@@ -1,3 +1,18 @@
+2020-11-27  Youenn Fablet  <youenn@apple.com>
+
+        [WebRTC] webrtc/audio-sframe.html is flaky crashing since added in r269830
+        https://bugs.webkit.org/show_bug.cgi?id=219066
+        <rdar://problem/71747778>
+
+        Unreviewed.
+
+        webrtc/audio-sframe.html is no longer crashing after revision 270107.
+        Update test expectations accordingly.
+
+        * platform/glib/TestExpectations:
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2020-11-26  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo] Unreviewed test gardening
