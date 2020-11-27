@@ -131,6 +131,7 @@ list(APPEND WebKit_SOURCES
 list(APPEND WebKit_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/NetworkProcess/curl"
     "${WEBKIT_DIR}/Platform/IPC/unix"
+    "${WEBKIT_DIR}/Platform/classifier"
     "${WEBKIT_DIR}/Platform/generic"
     "${WEBKIT_DIR}/Shared/CoordinatedGraphics"
     "${WEBKIT_DIR}/Shared/CoordinatedGraphics/threadedcompositor"
