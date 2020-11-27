@@ -141,14 +141,25 @@ void TreeBuilder::recursiveBuildDisplayTree(const Layout::LayoutState& layoutSta
     offsetFromRoot += toLayoutSize(borderBoxRect.location());
 
     auto positionForChildren = InsertionPosition { downcast<ContainerBox>(*insertionPosition.currentChild) };
-    
+
+    enum class DescendantBoxInclusion { AllBoxes, OutOfFlowOnly };
+    auto boxInclusion = DescendantBoxInclusion::AllBoxes;
+
     if (layoutContainerBox.establishesInlineFormattingContext()) {
         buildInlineDisplayTree(layoutState, offsetFromRoot, downcast<Layout::ContainerBox>(layoutContainerBox), positionForChildren);
-        return;
+        boxInclusion = DescendantBoxInclusion::OutOfFlowOnly;
     }
 
+    auto includeBox = [](DescendantBoxInclusion boxInclusion, const Layout::Box& box) {
+        switch (boxInclusion) {
+        case DescendantBoxInclusion::AllBoxes: return true;
+        case DescendantBoxInclusion::OutOfFlowOnly: return !box.isInFlow();
+        }
+        return false;
+    };
+
     for (auto& child : Layout::childrenOfType<Layout::Box>(layoutContainerBox)) {
-        if (layoutState.hasBoxGeometry(child))
+        if (includeBox(boxInclusion, child) && layoutState.hasBoxGeometry(child))
             recursiveBuildDisplayTree(layoutState, offsetFromRoot, child, positionForChildren);
     }
 }
