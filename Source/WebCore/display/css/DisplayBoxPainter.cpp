@@ -94,16 +94,6 @@ void BoxPainter::paintBox(const Box& box, PaintingContext& paintingContext, cons
     if (!dirtyRect.intersects(enclosingIntRect(absoluteRect)))
         return;
 
-    if (is<ImageBox>(box)) {
-        auto& imageBox = downcast<ImageBox>(box);
-        
-        auto* image = imageBox.image();
-        auto imageRect = imageBox.replacedContentRect();
-
-        if (image)
-            paintingContext.context.drawImage(*image, imageRect);
-    }
-
     if (is<BoxModelBox>(box))
         paintBoxDecorations(downcast<BoxModelBox>(box), paintingContext);
 
