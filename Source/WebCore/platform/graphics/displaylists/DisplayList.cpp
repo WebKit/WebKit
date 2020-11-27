@@ -278,8 +278,12 @@ void DisplayList::append(ItemHandle item)
         return append<FillEllipse>(item.get<FillEllipse>());
     case ItemType::FlushContext:
         return append<FlushContext>(item.get<FlushContext>());
-    case ItemType::MetaCommandSwitchToItemBuffer:
-        return append<MetaCommandSwitchToItemBuffer>(item.get<MetaCommandSwitchToItemBuffer>());
+    case ItemType::MetaCommandChangeDestinationImageBuffer:
+        return append<MetaCommandChangeDestinationImageBuffer>(item.get<MetaCommandChangeDestinationImageBuffer>());
+    case ItemType::MetaCommandChangeItemBuffer:
+        return append<MetaCommandChangeItemBuffer>(item.get<MetaCommandChangeItemBuffer>());
+    case ItemType::MetaCommandEnd:
+        return append<MetaCommandEnd>(item.get<MetaCommandEnd>());
     case ItemType::PutImageData:
         return append<PutImageData>(item.get<PutImageData>());
     case ItemType::PaintFrameForMedia:

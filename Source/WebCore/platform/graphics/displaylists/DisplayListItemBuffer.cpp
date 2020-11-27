@@ -226,7 +226,9 @@ void ItemHandle::apply(GraphicsContext& context)
         get<FlushContext>().apply(context);
         return;
     }
-    case ItemType::MetaCommandSwitchToItemBuffer:
+    case ItemType::MetaCommandChangeDestinationImageBuffer:
+    case ItemType::MetaCommandChangeItemBuffer:
+    case ItemType::MetaCommandEnd:
         return;
     case ItemType::PutImageData: {
         get<PutImageData>().apply(context);
@@ -454,8 +456,16 @@ void ItemHandle::destroy()
         static_assert(std::is_trivially_destructible<FlushContext>::value);
         return;
     }
-    case ItemType::MetaCommandSwitchToItemBuffer: {
-        static_assert(std::is_trivially_destructible<MetaCommandSwitchToItemBuffer>::value);
+    case ItemType::MetaCommandChangeDestinationImageBuffer: {
+        static_assert(std::is_trivially_destructible<MetaCommandChangeDestinationImageBuffer>::value);
+        return;
+    }
+    case ItemType::MetaCommandChangeItemBuffer: {
+        static_assert(std::is_trivially_destructible<MetaCommandChangeItemBuffer>::value);
+        return;
+    }
+    case ItemType::MetaCommandEnd: {
+        static_assert(std::is_trivially_destructible<MetaCommandEnd>::value);
         return;
     }
     case ItemType::PaintFrameForMedia: {
@@ -705,8 +715,16 @@ void ItemHandle::copyTo(ItemHandle destination) const
         new (itemOffset) FlushContext(get<FlushContext>());
         return;
     }
-    case ItemType::MetaCommandSwitchToItemBuffer: {
-        new (itemOffset) MetaCommandSwitchToItemBuffer(get<MetaCommandSwitchToItemBuffer>());
+    case ItemType::MetaCommandChangeDestinationImageBuffer: {
+        new (itemOffset) MetaCommandChangeDestinationImageBuffer(get<MetaCommandChangeDestinationImageBuffer>());
+        return;
+    }
+    case ItemType::MetaCommandChangeItemBuffer: {
+        new (itemOffset) MetaCommandChangeItemBuffer(get<MetaCommandChangeItemBuffer>());
+        return;
+    }
+    case ItemType::MetaCommandEnd: {
+        new (itemOffset) MetaCommandEnd(get<MetaCommandEnd>());
         return;
     }
     case ItemType::PaintFrameForMedia: {
@@ -860,14 +878,14 @@ void ItemBuffer::clear()
 
 void ItemBuffer::swapWritableBufferIfNeeded(size_t numberOfBytes)
 {
-    auto sizeForBufferSwitchItem = paddedSizeOfTypeAndItemInBytes(ItemType::MetaCommandSwitchToItemBuffer);
+    auto sizeForBufferSwitchItem = paddedSizeOfTypeAndItemInBytes(ItemType::MetaCommandChangeItemBuffer);
     if (m_writtenNumberOfBytes + numberOfBytes + sizeForBufferSwitchItem <= m_writableBuffer.capacity)
         return;
 
     auto nextBuffer = createItemBuffer(numberOfBytes + sizeForBufferSwitchItem);
     bool hadPreviousBuffer = m_writableBuffer;
     if (hadPreviousBuffer)
-        uncheckedAppend<MetaCommandSwitchToItemBuffer>(nextBuffer.identifier);
+        uncheckedAppend<MetaCommandChangeItemBuffer>(nextBuffer.identifier);
     auto previousBuffer = std::exchange(m_writableBuffer, { });
     previousBuffer.capacity = std::exchange(m_writtenNumberOfBytes, 0);
     if (hadPreviousBuffer)

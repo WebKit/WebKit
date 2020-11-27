@@ -41,12 +41,15 @@ namespace DisplayList {
 enum class StopReplayReason : uint8_t {
     ReplayedAllItems,
     MissingCachedResource,
+    ChangeDestinationImageBuffer,
+    EndOfDisplayList,
     DecodingFailure // FIXME: Propagate decoding errors to display list replay clients through this enum as well.
 };
 
 struct ReplayResult {
     std::unique_ptr<DisplayList> trackedDisplayList;
     size_t numberOfBytesRead { 0 };
+    Optional<RenderingResourceIdentifier> nextDestinationImageBuffer;
     StopReplayReason reasonForStopping { StopReplayReason::ReplayedAllItems };
 };
 

@@ -315,7 +315,9 @@ Optional<DisplayList::ItemHandle> WARN_UNUSED_RETURN RemoteRenderingBackend::dec
 #endif
     case DisplayList::ItemType::FillRect:
     case DisplayList::ItemType::FlushContext:
-    case DisplayList::ItemType::MetaCommandSwitchToItemBuffer:
+    case DisplayList::ItemType::MetaCommandChangeDestinationImageBuffer:
+    case DisplayList::ItemType::MetaCommandChangeItemBuffer:
+    case DisplayList::ItemType::MetaCommandEnd:
     case DisplayList::ItemType::PaintFrameForMedia:
     case DisplayList::ItemType::Restore:
     case DisplayList::ItemType::Rotate:

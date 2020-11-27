@@ -109,6 +109,20 @@ ReplayResult Replayer::replay(const FloatRect& initialClip, bool trackReplayList
         }
 
         LOG_WITH_STREAM(DisplayLists, stream << "applying " << i++ << " " << item);
+
+        if (item.is<MetaCommandChangeDestinationImageBuffer>()) {
+            result.numberOfBytesRead += itemSizeInBuffer;
+            result.reasonForStopping = StopReplayReason::ChangeDestinationImageBuffer;
+            result.nextDestinationImageBuffer = item.get<MetaCommandChangeDestinationImageBuffer>().identifier();
+            break;
+        }
+
+        if (item.is<MetaCommandEnd>()) {
+            result.numberOfBytesRead += itemSizeInBuffer;
+            result.reasonForStopping = StopReplayReason::EndOfDisplayList;
+            break;
+        }
+
         if (auto reasonForStopping = applyItem(item)) {
             result.reasonForStopping = *reasonForStopping;
             break;
