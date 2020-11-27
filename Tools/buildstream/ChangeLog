@@ -1,5 +1,14 @@
 2020-11-27  Philippe Normand  <pnormand@igalia.com>
 
+        [Flatpak SDK] Update ccls
+        https://bugs.webkit.org/show_bug.cgi?id=219303
+
+        Reviewed by Adrian Perez de Castro.
+
+        * elements/sdk/ccls.bst: Update to latest release, 0.20201025.
+
+2020-11-27  Philippe Normand  <pnormand@igalia.com>
+
         [Flatpak SDK] Add cmake-lsp recipe
         https://bugs.webkit.org/show_bug.cgi?id=219234
 
