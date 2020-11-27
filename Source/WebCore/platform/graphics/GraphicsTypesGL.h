@@ -69,7 +69,7 @@ struct GCGLSpan {
         : data(array)
     { }
     template<typename U>
-    GCGLSpan(const GCGLSpan<U, Extent>& other, std::enable_if_t<std::is_convertible_v<U(*)[], T(*)[]>, nullptr_t> = nullptr)
+    GCGLSpan(const GCGLSpan<U, Extent>& other, std::enable_if_t<std::is_convertible_v<U(*)[], T(*)[]>, std::nullptr_t> = nullptr)
         : data(other.data)
     { }
     T& operator[](size_t i) { RELEASE_ASSERT(data && i < bufSize); return data[i]; }
@@ -90,12 +90,12 @@ struct GCGLSpan<T, std::numeric_limits<size_t>::max()> {
         , bufSize(Sz)
     { }
     template<typename U, size_t UExtent>
-    GCGLSpan(const GCGLSpan<U, UExtent>& other, std::enable_if_t<std::is_convertible_v<U(*)[], T(*)[]>, nullptr_t> = nullptr)
+    GCGLSpan(const GCGLSpan<U, UExtent>& other, std::enable_if_t<std::is_convertible_v<U(*)[], T(*)[]>, std::nullptr_t> = nullptr)
         : data(other.data)
         , bufSize(other.bufSize)
     { }
     template<typename U, size_t inlineCapacity>
-    GCGLSpan(WTF::Vector<U, inlineCapacity>& array, std::enable_if_t<std::is_convertible_v<U(*)[], T(*)[]>, nullptr_t> = nullptr)
+    GCGLSpan(WTF::Vector<U, inlineCapacity>& array, std::enable_if_t<std::is_convertible_v<U(*)[], T(*)[]>, std::nullptr_t> = nullptr)
         : data(array.data())
         , bufSize(array.size())
     { }
