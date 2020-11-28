@@ -73,9 +73,6 @@ imported/w3c/web-platform-tests/css/css-text/text-align/text-align-start-016.htm
 imported/w3c/web-platform-tests/css/css-text/text-align/text-align-start-017.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-text/white-space/trailing-space-before-br-001.html [ Pass ]
 
-# Font variations
-fast/text/variations [ Pass ]
-
 imported/w3c/web-platform-tests/fetch/http-cache/basic-auth-cache-test.html [ Pass ]
 
 imported/w3c/web-platform-tests/html/browsers/windows/browsing-context-names/002.html [ Pass ]
@@ -949,12 +946,7 @@ webkit.org/b/212350 fast/dom/timer-throttling-hidden-page.html [ Timeout ]
 # 8. TESTS FAILING
 #////////////////////////////////////////////////////////////////////////////////////////
 
-# Implement testRunner.setUseDeferredFrameLoading
-
-Bug(WPE) http/tests/cache/ [ Pass ]
 webkit.org/b/118220 http/tests/cache/partitioned-cache.html [ Failure ]
-
-# Font variations
 
 # Content extensions, the failures need up-to-date expectations.
 http/tests/contentextensions/plugin-doesnt-crash.html [ Timeout Failure ]
@@ -1279,11 +1271,9 @@ Bug(WPE) css3/zoom-coords.xhtml [ Failure ]
 # ENABLE_CSS_COMPOSITING
 transitions/svg-text-shadow-transition.html [ DumpJSConsoleLogInStdErr ]
 
-# ENABLE_MEDIA_SOURCE
-# Can't remove this PASS yet as the root media/ folder is skipped.
-media/media-source/ [ Pass ]
 webkit.org/b/168373 media/media-source/media-source-resize.html [ Failure ]
 webkit.org/b/168373 media/media-source/only-bcp47-language-tags-accepted-as-valid.html [ Timeout ]
+webkit.org/b/171726 media/media-source/media-source-init-segment-duration.html [ Failure ]
 webkit.org/b/218317 media/media-source/media-source-trackid-change.html [ Failure ]
 webkit.org/b/214636 media/media-source/media-source-webm.html [ Timeout Crash ]
 
