@@ -49,6 +49,7 @@ namespace Display {
 
 class Box;
 class ContainerBox;
+class PositioningContext;
 class Tree;
 
 class TreeBuilder {
@@ -59,14 +60,14 @@ public:
 
 private:
     struct InsertionPosition {
-        Display::ContainerBox& container;
-        Display::Box* currentChild { nullptr };
+        ContainerBox& container;
+        Box* currentChild { nullptr };
     };
 
-    void recursiveBuildDisplayTree(const Layout::LayoutState&, LayoutSize offsetFromRoot, const Layout::Box&, InsertionPosition&) const;
+    void recursiveBuildDisplayTree(const Layout::LayoutState&, const Layout::Box&, const PositioningContext&, InsertionPosition&) const;
 
-    void buildInlineDisplayTree(const Layout::LayoutState&, LayoutSize offsetFromRoot, const Layout::ContainerBox&, InsertionPosition&) const;
-    
+    void buildInlineDisplayTree(const Layout::LayoutState&, const Layout::ContainerBox&, const PositioningContext&, InsertionPosition&) const;
+
     void insert(std::unique_ptr<Box>&&, InsertionPosition&) const;
 
     BoxFactory m_boxFactory;

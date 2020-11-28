@@ -208,7 +208,7 @@ const ContainerBox& Box::containingBlock() const
     if (!isPositioned() || isInFlowPositioned()) {
         auto* ancestor = &parent();
         for (; !is<InitialContainingBlock>(*ancestor); ancestor = &ancestor->parent()) {
-            if (ancestor->isBlockContainer() || ancestor->establishesFormattingContext())
+            if (ancestor->isContainingBlockForInFlow())
                 return *ancestor;
         }
         return *ancestor;
@@ -217,7 +217,7 @@ const ContainerBox& Box::containingBlock() const
     if (isFixedPositioned()) {
         auto* ancestor = &parent();
         for (; !is<InitialContainingBlock>(*ancestor); ancestor = &ancestor->parent()) {
-            if (ancestor->style().hasTransform())
+            if (ancestor->isContainingBlockForFixedPosition())
                 return *ancestor;
         }
         return *ancestor;
@@ -226,7 +226,7 @@ const ContainerBox& Box::containingBlock() const
     if (isOutOfFlowPositioned()) {
         auto* ancestor = &parent();
         for (; !is<InitialContainingBlock>(*ancestor); ancestor = &ancestor->parent()) {
-            if (ancestor->isPositioned() || ancestor->style().hasTransform())
+            if (ancestor->isContainingBlockForOutOfFlowPosition())
                 return *ancestor;
         }
         return *ancestor;

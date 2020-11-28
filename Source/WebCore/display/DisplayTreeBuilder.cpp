@@ -46,6 +46,57 @@
 namespace WebCore {
 namespace Display {
 
+class PositioningContext {
+public:
+    PositioningContext(const Display::ContainerBox& rootDisplayBox)
+        : m_fixedPositionContainer({ rootDisplayBox, { } })
+        , m_absolutePositionContainer({ rootDisplayBox, { } })
+        , m_inFlowContainer ({ rootDisplayBox, { } })
+    {
+    }
+
+    PositioningContext contextForDescendants(const Layout::Box& layoutBox, const Layout::BoxGeometry geometry, const Display::ContainerBox& displayBox) const
+    {
+        auto currentOffset = containingBlockContextForLayoutBox(layoutBox).offsetFromRoot;
+
+        auto borderBoxRect = LayoutRect { Layout::BoxGeometry::borderBoxRect(geometry) };
+        currentOffset += toLayoutSize(borderBoxRect.location());
+
+        auto currentBoxes = ContainingBlockContext { displayBox, currentOffset };
+        return {
+            layoutBox.isContainingBlockForFixedPosition() ? currentBoxes : m_fixedPositionContainer,
+            layoutBox.isContainingBlockForOutOfFlowPosition() ? currentBoxes : m_absolutePositionContainer,
+            layoutBox.isContainingBlockForInFlow() ? currentBoxes : m_inFlowContainer
+        };
+    }
+
+    const ContainingBlockContext& containingBlockContextForLayoutBox(const Layout::Box& layoutBox) const
+    {
+        if (layoutBox.isFixedPositioned())
+            return m_fixedPositionContainer;
+
+        if (layoutBox.isOutOfFlowPositioned())
+            return m_absolutePositionContainer;
+
+        return m_inFlowContainer;
+    }
+    
+    const ContainingBlockContext& inFlowContainingBlockContext() const { return m_inFlowContainer; }
+
+private:
+    PositioningContext(const ContainingBlockContext& fixedContainer, const ContainingBlockContext& absoluteContainer, const ContainingBlockContext& inFlowContainer)
+        : m_fixedPositionContainer(fixedContainer)
+        , m_absolutePositionContainer(absoluteContainer)
+        , m_inFlowContainer(inFlowContainer)
+    {
+    }
+
+    ContainingBlockContext m_fixedPositionContainer;
+    ContainingBlockContext m_absolutePositionContainer;
+    ContainingBlockContext m_inFlowContainer;
+};
+
+
 TreeBuilder::TreeBuilder(float pixelSnappingFactor)
     : m_boxFactory(pixelSnappingFactor)
 {
@@ -70,11 +121,9 @@ std::unique_ptr<Tree> TreeBuilder::build(const Layout::LayoutState& layoutState)
     if (!rootLayoutBox.firstChild())
         return makeUnique<Tree>(WTFMove(rootDisplayContainerBox));
 
-    auto borderBoxRect = LayoutRect { Layout::BoxGeometry::borderBoxRect(geometry) };
-    auto offset = toLayoutSize(borderBoxRect.location());
     auto insertionPosition = InsertionPosition { *rootDisplayContainerBox };
 
-    recursiveBuildDisplayTree(layoutState, offset, *rootLayoutBox.firstChild(), insertionPosition);
+    recursiveBuildDisplayTree(layoutState, *rootLayoutBox.firstChild(), { *rootDisplayContainerBox }, insertionPosition);
 
 #if ENABLE(TREE_DEBUGGING)
     LOG_WITH_STREAM(FormattingContextLayout, stream << "Display tree:\n" << displayTreeAsText(*rootDisplayContainerBox));
@@ -95,38 +144,39 @@ void TreeBuilder::insert(std::unique_ptr<Box>&& box, InsertionPosition& insertio
     }
 }
 
-void TreeBuilder::buildInlineDisplayTree(const Layout::LayoutState& layoutState, LayoutSize offsetFromRoot, const Layout::ContainerBox& inlineFormattingRoot, InsertionPosition& insertionPosition) const
+void TreeBuilder::buildInlineDisplayTree(const Layout::LayoutState& layoutState, const Layout::ContainerBox& inlineFormattingRoot, const PositioningContext& positioningContext, InsertionPosition& insertionPosition) const
 {
     auto& inlineFormattingState = layoutState.establishedInlineFormattingState(inlineFormattingRoot);
 
     for (auto& run : inlineFormattingState.lineRuns()) {
         if (run.text()) {
             auto& lineGeometry = inlineFormattingState.lines().at(run.lineIndex());
-            auto textBox = m_boxFactory.displayBoxForTextRun(run, lineGeometry, offsetFromRoot);
+            auto textBox = m_boxFactory.displayBoxForTextRun(run, lineGeometry, positioningContext.inFlowContainingBlockContext());
             insert(WTFMove(textBox), insertionPosition);
             continue;
         }
 
         if (is<Layout::ContainerBox>(run.layoutBox())) {
-            recursiveBuildDisplayTree(layoutState, offsetFromRoot, run.layoutBox(), insertionPosition);
+            recursiveBuildDisplayTree(layoutState, run.layoutBox(), positioningContext, insertionPosition);
             continue;
         }
 
         auto geometry = layoutState.geometryForBox(run.layoutBox());
-        auto displayBox = m_boxFactory.displayBoxForLayoutBox(run.layoutBox(), geometry, offsetFromRoot);
+        auto displayBox = m_boxFactory.displayBoxForLayoutBox(run.layoutBox(), geometry, positioningContext.inFlowContainingBlockContext());
         insert(WTFMove(displayBox), insertionPosition);
     }
 }
 
-void TreeBuilder::recursiveBuildDisplayTree(const Layout::LayoutState& layoutState, LayoutSize offsetFromRoot, const Layout::Box& layoutBox, InsertionPosition& insertionPosition) const
+void TreeBuilder::recursiveBuildDisplayTree(const Layout::LayoutState& layoutState, const Layout::Box& layoutBox, const PositioningContext& positioningContext, InsertionPosition& insertionPosition) const
 {
     auto geometry = layoutState.geometryForBox(layoutBox);
     std::unique_ptr<Box> displayBox;
-    
+
+    auto& containingBlockContext = positioningContext.containingBlockContextForLayoutBox(layoutBox);
     if (layoutBox.isBodyBox())
-        displayBox = m_boxFactory.displayBoxForBodyBox(layoutBox, geometry, m_rootBackgroundPropgation, offsetFromRoot);
+        displayBox = m_boxFactory.displayBoxForBodyBox(layoutBox, geometry, containingBlockContext, m_rootBackgroundPropgation);
     else
-        displayBox = m_boxFactory.displayBoxForLayoutBox(layoutBox, geometry, offsetFromRoot);
+        displayBox = m_boxFactory.displayBoxForLayoutBox(layoutBox, geometry, containingBlockContext);
     
     insert(WTFMove(displayBox), insertionPosition);
 
@@ -137,16 +187,16 @@ void TreeBuilder::recursiveBuildDisplayTree(const Layout::LayoutState& layoutSta
     if (!layoutContainerBox.hasChild())
         return;
 
-    auto borderBoxRect = LayoutRect { Layout::BoxGeometry::borderBoxRect(geometry) };
-    offsetFromRoot += toLayoutSize(borderBoxRect.location());
+    ContainerBox& currentBox = downcast<ContainerBox>(*insertionPosition.currentChild);
+    auto insertionPositionForChildren = InsertionPosition { currentBox };
 
-    auto positionForChildren = InsertionPosition { downcast<ContainerBox>(*insertionPosition.currentChild) };
+    auto positioningContextForDescendants = positioningContext.contextForDescendants(layoutContainerBox, geometry, currentBox);
 
     enum class DescendantBoxInclusion { AllBoxes, OutOfFlowOnly };
     auto boxInclusion = DescendantBoxInclusion::AllBoxes;
 
     if (layoutContainerBox.establishesInlineFormattingContext()) {
-        buildInlineDisplayTree(layoutState, offsetFromRoot, downcast<Layout::ContainerBox>(layoutContainerBox), positionForChildren);
+        buildInlineDisplayTree(layoutState, downcast<Layout::ContainerBox>(layoutContainerBox), positioningContextForDescendants, insertionPositionForChildren);
         boxInclusion = DescendantBoxInclusion::OutOfFlowOnly;
     }
 
@@ -160,7 +210,7 @@ void TreeBuilder::recursiveBuildDisplayTree(const Layout::LayoutState& layoutSta
 
     for (auto& child : Layout::childrenOfType<Layout::Box>(layoutContainerBox)) {
         if (includeBox(boxInclusion, child) && layoutState.hasBoxGeometry(child))
-            recursiveBuildDisplayTree(layoutState, offsetFromRoot, child, positionForChildren);
+            recursiveBuildDisplayTree(layoutState, child, positioningContextForDescendants, insertionPositionForChildren);
     }
 }
 

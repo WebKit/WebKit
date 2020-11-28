@@ -4650,6 +4650,8 @@ fast/layoutformattingcontext/block-only/absolute-position-with-margin-auto-simpl
 fast/layoutformattingcontext/block-only/min-max-and-preferred-width-simple.html [ ImageOnlyFailure ]
 fast/layoutformattingcontext/block-only/out-of-flow-is-never-float-box.html [ ImageOnlyFailure ]
 webkit.org/b/217054 fast/layoutformattingcontext/horizontal-sizing-with-trailing-letter-spacing.html [ Skip ]
+webkit.org/b/219322 fast/layoutformattingcontext/table-simple-border-collapse.html [ ImageOnlyFailure ]
+webkit.org/b/219322 fast/layoutformattingcontext/table-simple-border-collapse2.html [ ImageOnlyFailure ]
 
 # These tests are for iOS port.
 fast/shadow-dom/ios/ [ Skip ]

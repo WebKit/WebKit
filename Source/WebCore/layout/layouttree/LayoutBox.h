@@ -97,6 +97,10 @@ public:
     const ContainerBox& formattingContextRoot() const;
     const InitialContainingBlock& initialContainingBlock() const;
 
+    bool isContainingBlockForInFlow() const;
+    bool isContainingBlockForFixedPosition() const;
+    bool isContainingBlockForOutOfFlowPosition() const;
+
     bool isInFormattingContextOf(const ContainerBox&) const;
 
     bool isAnonymous() const { return m_isAnonymous; }
@@ -213,6 +217,21 @@ private:
     bool m_hasRareData : 1;
     bool m_isAnonymous : 1;
 };
+
+inline bool Box::isContainingBlockForInFlow() const
+{
+    return isBlockContainer() || establishesFormattingContext();
+}
+
+inline bool Box::isContainingBlockForFixedPosition() const
+{
+    return isInitialContainingBlock() || style().hasTransform();
+}
+
+inline bool Box::isContainingBlockForOutOfFlowPosition() const
+{
+    return isInitialContainingBlock() || isPositioned() || style().hasTransform();
+}
 
 }
 }

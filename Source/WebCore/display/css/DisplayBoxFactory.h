@@ -39,7 +39,6 @@ class Box;
 class BoxGeometry;
 class ContainerBox;
 class InlineLineGeometry;
-class ReplacedBox;
 struct LineRun;
 }
 
@@ -48,11 +47,17 @@ namespace Display {
 class Box;
 class BoxDecorationData;
 class BoxModelBox;
+class ContainerBox;
 class Style;
 
 enum class RootBackgroundPropagation : uint8_t {
     None,
     BodyToRoot,
+};
+
+struct ContainingBlockContext {
+    const Display::ContainerBox& box;
+    LayoutSize offsetFromRoot;
 };
 
 class BoxFactory {
@@ -62,18 +67,18 @@ public:
     static RootBackgroundPropagation determineRootBackgroundPropagation(const Layout::ContainerBox& rootLayoutBox);
 
     std::unique_ptr<Box> displayBoxForRootBox(const Layout::ContainerBox&, const Layout::BoxGeometry&, RootBackgroundPropagation) const;
-    std::unique_ptr<Box> displayBoxForBodyBox(const Layout::Box&, const Layout::BoxGeometry&, RootBackgroundPropagation, LayoutSize offsetFromRoot) const;
-    std::unique_ptr<Box> displayBoxForLayoutBox(const Layout::Box&, const Layout::BoxGeometry&, LayoutSize offsetFromRoot) const;
+    std::unique_ptr<Box> displayBoxForBodyBox(const Layout::Box&, const Layout::BoxGeometry&, const ContainingBlockContext&, RootBackgroundPropagation) const;
+    std::unique_ptr<Box> displayBoxForLayoutBox(const Layout::Box&, const Layout::BoxGeometry&, const ContainingBlockContext&) const;
 
-    std::unique_ptr<Box> displayBoxForTextRun(const Layout::LineRun&, const Layout::InlineLineGeometry&, LayoutSize offsetFromRoot) const;
+    std::unique_ptr<Box> displayBoxForTextRun(const Layout::LineRun&, const Layout::InlineLineGeometry&, const ContainingBlockContext&) const;
 
 private:
-    std::unique_ptr<Box> displayBoxForLayoutBox(const Layout::Box&, const RenderStyle* styleForBackground, const Layout::BoxGeometry&, LayoutSize offsetFromRoot, Style&&) const;
+    std::unique_ptr<Box> displayBoxForLayoutBox(const Layout::Box&, const Layout::BoxGeometry&, const ContainingBlockContext&, const RenderStyle* styleForBackground, Style&&) const;
 
-    void setupBoxGeometry(BoxModelBox&, const Layout::Box&, const Layout::BoxGeometry&, LayoutSize offsetFromRoot) const;
-    void setupBoxModelBox(BoxModelBox&, const Layout::Box&, const RenderStyle* styleForBackground, const Layout::BoxGeometry&, LayoutSize offsetFromRoot) const;
+    void setupBoxGeometry(BoxModelBox&, const Layout::Box&, const Layout::BoxGeometry&, const ContainingBlockContext&) const;
+    void setupBoxModelBox(BoxModelBox&, const Layout::Box&, const Layout::BoxGeometry&, const ContainingBlockContext&, const RenderStyle* styleForBackground) const;
 
-    std::unique_ptr<BoxDecorationData> constructBoxDecorationData(const Layout::Box&, const RenderStyle* styleForBackground, const Layout::BoxGeometry&, LayoutSize offsetFromRoot) const;
+    std::unique_ptr<BoxDecorationData> constructBoxDecorationData(const Layout::Box&, const Layout::BoxGeometry&, const RenderStyle* styleForBackground, LayoutSize offsetFromRoot) const;
 
     static const Layout::ContainerBox* documentElementBoxFromRootBox(const Layout::ContainerBox& rootLayoutBox);
     static const Layout::Box* bodyBoxFromRootBox(const Layout::ContainerBox& rootLayoutBox);
