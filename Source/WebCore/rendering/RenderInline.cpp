@@ -610,8 +610,10 @@ private:
 
 IntRect RenderInline::linesBoundingBox() const
 {
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
     if (auto* layout = LayoutIntegration::LineLayout::containing(*this))
         return enclosingIntRect(layout->enclosingBorderBoxRectFor(*this));
+#endif
 
     if (!alwaysCreateLineBoxes()) {
         ASSERT(!firstLineBox());
