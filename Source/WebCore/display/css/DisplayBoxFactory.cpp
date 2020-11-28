@@ -209,6 +209,11 @@ void BoxFactory::setupBoxModelBox(BoxModelBox& box, const Layout::Box& layoutBox
 
     auto boxDecorationData = constructBoxDecorationData(layoutBox, layoutGeometry, styleForBackground, containingBlockContext.offsetFromRoot);
     box.setBoxDecorationData(WTFMove(boxDecorationData));
+
+    if (box.style().participatesInZOrderSorting()) {
+        RefPtr<BoxClip> clip = containingBlockContext.box.clipForDescendants();
+        box.setAncestorClip(WTFMove(clip));
+    }
 }
 
 const Layout::ContainerBox* BoxFactory::documentElementBoxFromRootBox(const Layout::ContainerBox& rootLayoutBox)

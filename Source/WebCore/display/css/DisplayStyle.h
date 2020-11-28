@@ -82,6 +82,10 @@ public:
 
     const FontCascade& fontCascade() const { return m_fontCascade; }
     const FontMetrics& fontMetrics() const { return m_fontCascade.fontMetrics(); }
+    
+    Overflow overflowX() const;
+    Overflow overflowY() const;
+    bool hasClippedOverflow() const { return m_overflowX != Overflow::Visible || m_overflowY != Overflow::Visible; }
 
     WhiteSpace whiteSpace() const { return m_whiteSpace; }
     bool autoWrap() const;
@@ -101,6 +105,9 @@ private:
 
     RefPtr<FillLayer> m_backgroundLayers;
     std::unique_ptr<ShadowData> m_boxShadow;
+    
+    Overflow m_overflowX;
+    Overflow m_overflowY;
 
     FontCascade m_fontCascade;
     WhiteSpace m_whiteSpace;

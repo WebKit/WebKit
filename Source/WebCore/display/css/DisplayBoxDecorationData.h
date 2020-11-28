@@ -120,6 +120,9 @@ private:
     std::unique_ptr<FloatRoundedRect::Radii> m_borderRadii;
 };
 
+FloatRoundedRect roundedRectWithIncludedRadii(const FloatRect&, const FloatRoundedRect::Radii&, bool includeLeftEdge = true, bool includeRightEdge = true);
+FloatRoundedRect roundedInsetBorderForRect(const FloatRect&, const FloatRoundedRect::Radii&, const RectEdges<float>&, bool includeLeftEdge = true, bool includeRightEdge = true);
+
 } // namespace Display
 } // namespace WebCore
 

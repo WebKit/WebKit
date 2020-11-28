@@ -23,38 +23,56 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "DisplayContainerBox.h"
+#pragma once
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-#include "DisplayStyle.h"
-#include <wtf/IsoMallocInlines.h>
+#include "DisplayBox.h"
+#include "FloatRoundedRect.h"
+#include "RectEdges.h"
+#include <utility>
+#include <wtf/IsoMalloc.h>
+#include <wtf/Optional.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
+
+class RenderStyle;
+
+namespace Layout {
+class Box;
+class BoxGeometry;
+}
+
 namespace Display {
 
-ContainerBox::ContainerBox(AbsoluteFloatRect borderBox, Style&& displayStyle)
-    : BoxModelBox(borderBox, WTFMove(displayStyle), { Flags::ContainerBox })
-{
-}
+class BoxClip : public RefCounted<BoxClip> {
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(BoxClip);
+public:
+    ~BoxClip();
 
-void ContainerBox::setFirstChild(std::unique_ptr<Box>&& box)
-{
-    m_firstChild = WTFMove(box);
-}
+    static Ref<BoxClip> create() { return adoptRef(*new BoxClip); }
+    Ref<BoxClip> copy() const;
 
-String ContainerBox::debugDescription() const
-{
-    TextStream stream;
-    stream << "container box " << absoluteBorderBoxRect() << " (" << this << ")";
-    if (auto* clip = ancestorClip())
-        stream << " ancestor clip " << clip->clipRect() << " affected by radius " << clip->affectedByBorderRadius();
+    Optional<AbsoluteFloatRect> clipRect() const { return m_clipRect; }
+    
+    bool affectedByBorderRadius() const { return m_affectedByBorderRadius; }
+    const Vector<FloatRoundedRect>& clipStack() const { return m_clipStack; }
 
-    return stream.release();
-}
+    void pushClip(const AbsoluteFloatRect&);
+    void pushRoundedClip(const FloatRoundedRect&);
+
+private:
+    BoxClip();
+    BoxClip(const BoxClip&);
+
+    Optional<AbsoluteFloatRect> m_clipRect;
+    Vector<FloatRoundedRect> m_clipStack;
+    bool m_affectedByBorderRadius { false };
+};
 
 } // namespace Display
 } // namespace WebCore
+
 
 #endif // ENABLE(LAYOUT_FORMATTING_CONTEXT)

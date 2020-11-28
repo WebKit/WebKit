@@ -28,10 +28,12 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "DisplayBox.h"
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 namespace Display {
 
+class BoxClip;
 class BoxDecorationData;
 
 // A box in the sense of the CSS Box Model.
@@ -47,6 +49,10 @@ public:
     AbsoluteFloatRect absoluteContentBoxRect() const { return m_contentBoxRect; }
 
     const BoxDecorationData* boxDecorationData() const { return m_boxDecorationData.get(); }
+    const BoxClip* ancestorClip() const { return m_ancestorClip.get(); }
+
+    FloatRoundedRect borderRoundedRect() const;
+    FloatRoundedRect innerBorderRoundedRect() const;
 
     virtual String debugDescription() const;
 
@@ -54,12 +60,17 @@ private:
     friend class BoxFactory;
     void setAbsolutePaddingBoxRect(const AbsoluteFloatRect& box) { m_paddingBoxRect = box; }
     void setAbsoluteContentBoxRect(const AbsoluteFloatRect& box) { m_contentBoxRect = box; }
+
     void setBoxDecorationData(std::unique_ptr<BoxDecorationData>&&);
+
+    void setAncestorClip(RefPtr<BoxClip>&&);
+    RefPtr<BoxClip> clipForDescendants() const;
 
     AbsoluteFloatRect m_paddingBoxRect;
     AbsoluteFloatRect m_contentBoxRect;
 
     std::unique_ptr<BoxDecorationData> m_boxDecorationData;
+    RefPtr<BoxClip> m_ancestorClip;
 };
 
 } // namespace Display

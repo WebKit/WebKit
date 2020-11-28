@@ -117,38 +117,6 @@ private:
     const bool m_includeRightEdge;
 };
 
-static FloatRoundedRect roundedRectWithIncludedRadii(const FloatRect& rect, const FloatRoundedRect::Radii& radii, bool includeLeftEdge, bool includeRightEdge)
-{
-    FloatRoundedRect::Radii resultRadii;
-
-    if (includeLeftEdge) {
-        resultRadii.setTopLeft(radii.topLeft());
-        resultRadii.setBottomLeft(radii.bottomLeft());
-    }
-
-    if (includeRightEdge) {
-        resultRadii.setTopRight(radii.topRight());
-        resultRadii.setBottomRight(radii.bottomRight());
-    }
-
-    resultRadii.scale(calcBorderRadiiConstraintScaleFor(rect, resultRadii));
-    return FloatRoundedRect { rect, resultRadii };
-}
-
-static FloatRoundedRect roundedInsetBorderForRect(const FloatRect& borderRect, const FloatRoundedRect::Radii& radii, const RectEdges<float>& borderWidth, bool includeLeftEdge, bool includeRightEdge)
-{
-    auto insetRect = FloatRect { borderRect.x() + borderWidth.left(), borderRect.y() + borderWidth.top(),
-        borderRect.width() - borderWidth.left() - borderWidth.right(), borderRect.height() - borderWidth.top() - borderWidth.bottom() };
-
-    if (!radii.isZero()) {
-        auto adjustedRadii = radii;
-        adjustedRadii.shrink(borderWidth.top(), borderWidth.bottom(), borderWidth.left(), borderWidth.right());
-        return roundedRectWithIncludedRadii(insetRect, adjustedRadii, includeLeftEdge, includeRightEdge);
-    }
-
-    return FloatRoundedRect { insetRect, { } };
-}
-
 // BorderStyle::Outset darkens the bottom and right (and maybe lightens the top and left)
 // BorderStyle::Inset darkens the top and left (and maybe lightens the bottom and right)
 bool BorderPainter::borderStyleHasUnmatchedColorsAtCorner(BorderStyle style, BoxSide side, BoxSide adjacentSide)
@@ -1502,10 +1470,7 @@ void BoxDecorationPainter::paintBackgroundImages(PaintingContext& paintingContex
 
 FloatRoundedRect BoxDecorationPainter::innerBorderRoundedRect() const
 {
-    if (auto* boxDecorationData = m_box.boxDecorationData())
-        return roundedInsetBorderForRect(m_borderRect.rect(), m_borderRect.radii(), borderWidths(boxDecorationData->borderEdges()), m_includeLeftEdge, m_includeRightEdge);
-
-    return borderRoundedRect();
+    return m_box.innerBorderRoundedRect();
 }
 
 FloatRoundedRect BoxDecorationPainter::backgroundRoundedRectAdjustedForBleedAvoidance(const PaintingContext& paintingContext) const

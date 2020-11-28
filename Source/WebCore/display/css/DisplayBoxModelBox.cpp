@@ -28,6 +28,7 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "DisplayBoxClip.h"
 #include "DisplayBoxDecorationData.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/text/TextStream.h>
@@ -47,10 +48,65 @@ void BoxModelBox::setBoxDecorationData(std::unique_ptr<BoxDecorationData>&& deco
     m_boxDecorationData = WTFMove(decorationData);
 }
 
+FloatRoundedRect BoxModelBox::borderRoundedRect() const
+{
+    auto borderRect = FloatRoundedRect { absoluteBorderBoxRect(), { } };
+    auto* borderRadii = m_boxDecorationData ? m_boxDecorationData->borderRadii() : nullptr;
+    if (borderRadii)
+        borderRect.setRadii(*borderRadii);
+    
+    return borderRect;
+}
+
+FloatRoundedRect BoxModelBox::innerBorderRoundedRect() const
+{
+    if (!m_boxDecorationData)
+        return borderRoundedRect();
+
+    if (!m_boxDecorationData->borderRadii())
+        return roundedInsetBorderForRect(absoluteBorderBoxRect(), { }, borderWidths(m_boxDecorationData->borderEdges()));
+
+    return roundedInsetBorderForRect(absoluteBorderBoxRect(), *m_boxDecorationData->borderRadii(), borderWidths(m_boxDecorationData->borderEdges()));
+}
+
+void BoxModelBox::setAncestorClip(RefPtr<BoxClip>&& clip)
+{
+    m_ancestorClip = WTFMove(clip);
+}
+
+RefPtr<BoxClip> BoxModelBox::clipForDescendants() const
+{
+    if (!style().hasClippedOverflow())
+        return m_ancestorClip;
+
+    auto clip = m_ancestorClip ? m_ancestorClip->copy() : BoxClip::create();
+
+    auto pushClip = [&](BoxClip& boxClip) {
+        if (m_boxDecorationData && m_boxDecorationData->hasBorderRadius()) {
+            auto roundedInnerBorder = innerBorderRoundedRect();
+            if (roundedInnerBorder.isRounded()) {
+                boxClip.pushRoundedClip(roundedInnerBorder);
+                return;
+            }
+
+            boxClip.pushClip(roundedInnerBorder.rect());
+            return;
+        }
+
+        boxClip.pushClip(absolutePaddingBoxRect());
+    };
+    pushClip(clip);
+
+    return clip;
+}
+
 String BoxModelBox::debugDescription() const
 {
     TextStream stream;
     stream << "display box model box " << absoluteBorderBoxRect() << " (" << this << ")";
+    if (m_ancestorClip)
+        stream << " ancestor clip " << m_ancestorClip->clipRect() << " affected by radius " << m_ancestorClip->affectedByBorderRadius();
+
     return stream.release();
 }
 

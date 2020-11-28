@@ -95,6 +95,9 @@ Style::Style(const RenderStyle& style, const RenderStyle* styleForBackground)
         setupBackground(*styleForBackground);
 
     m_boxShadow = deepCopy(style.boxShadow(), style);
+    
+    m_overflowX = style.overflowX();
+    m_overflowY = style.overflowY();
 
     if (!style.hasAutoUsedZIndex())
         m_zIndex = style.usedZIndex();

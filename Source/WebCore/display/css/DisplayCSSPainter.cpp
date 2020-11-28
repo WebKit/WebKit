@@ -39,9 +39,38 @@
 namespace WebCore {
 namespace Display {
 
+static void applyClipIfNecessary(const Box& box, PaintingContext& paintingContext, GraphicsContextStateSaver& stateSaver)
+{
+    if (is<BoxModelBox>(box) && box.style().hasClippedOverflow()) {
+        stateSaver.save();
+        auto roundedInnerBorder = downcast<BoxModelBox>(box).innerBorderRoundedRect();
+        paintingContext.context.clipRoundedRect(roundedInnerBorder);
+    }
+}
+
+static void applyAncestorClip(const BoxModelBox& box, PaintingContext& paintingContext, GraphicsContextStateSaver& stateSaver)
+{
+    auto* boxClip = box.ancestorClip();
+    if (!boxClip || !boxClip->clipRect())
+        return;
+
+    stateSaver.save();
+
+    if (!boxClip->affectedByBorderRadius()) {
+        paintingContext.context.clip(*boxClip->clipRect());
+        return;
+    }
+
+    for (auto& roundedRect : boxClip->clipStack())
+        paintingContext.context.clipRoundedRect(roundedRect);
+}
+
 // FIXME: Make this an iterator.
 void CSSPainter::recursivePaintDescendantsForPhase(const ContainerBox& containerBox, PaintingContext& paintingContext, PaintPhase paintPhase)
 {
+    auto stateSaver = GraphicsContextStateSaver { paintingContext.context, false };
+    applyClipIfNecessary(containerBox, paintingContext, stateSaver);
+
     for (const auto* child = containerBox.firstChild(); child; child = child->nextSibling()) {
         auto& box = *child;
         if (participatesInZOrderSorting(box))
@@ -89,7 +118,12 @@ void CSSPainter::recursivePaintDescendants(const ContainerBox& containerBox, Pai
 void CSSPainter::paintAtomicallyPaintedBox(const Box& box, PaintingContext& paintingContext, const IntRect& dirtyRect, IncludeStackingContextDescendants includeStackingContextDescendants)
 {
     UNUSED_PARAM(dirtyRect);
-    
+
+    auto stateSaver = GraphicsContextStateSaver { paintingContext.context, false };
+
+    if (is<BoxModelBox>(box))
+        applyAncestorClip(downcast<BoxModelBox>(box), paintingContext, stateSaver);
+
     BoxPainter::paintBox(box, paintingContext, dirtyRect);
     if (!is<ContainerBox>(box))
         return;

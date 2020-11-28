@@ -98,6 +98,38 @@ RectEdges<BorderEdge> calculateBorderEdges(const RenderStyle& style, float pixel
     };
 }
 
+FloatRoundedRect roundedRectWithIncludedRadii(const FloatRect& rect, const FloatRoundedRect::Radii& radii, bool includeLeftEdge, bool includeRightEdge)
+{
+    FloatRoundedRect::Radii resultRadii;
+
+    if (includeLeftEdge) {
+        resultRadii.setTopLeft(radii.topLeft());
+        resultRadii.setBottomLeft(radii.bottomLeft());
+    }
+
+    if (includeRightEdge) {
+        resultRadii.setTopRight(radii.topRight());
+        resultRadii.setBottomRight(radii.bottomRight());
+    }
+
+    resultRadii.scale(calcBorderRadiiConstraintScaleFor(rect, resultRadii));
+    return FloatRoundedRect { rect, resultRadii };
+}
+
+FloatRoundedRect roundedInsetBorderForRect(const FloatRect& borderRect, const FloatRoundedRect::Radii& radii, const RectEdges<float>& borderWidth, bool includeLeftEdge, bool includeRightEdge)
+{
+    auto insetRect = FloatRect { borderRect.x() + borderWidth.left(), borderRect.y() + borderWidth.top(),
+        borderRect.width() - borderWidth.left() - borderWidth.right(), borderRect.height() - borderWidth.top() - borderWidth.bottom() };
+
+    if (!radii.isZero()) {
+        auto adjustedRadii = radii;
+        adjustedRadii.shrink(borderWidth.top(), borderWidth.bottom(), borderWidth.left(), borderWidth.right());
+        return roundedRectWithIncludedRadii(insetRect, adjustedRadii, includeLeftEdge, includeRightEdge);
+    }
+
+    return FloatRoundedRect { insetRect, { } };
+}
+
 std::pair<BoxSide, BoxSide> adjacentSidesForSide(BoxSide side)
 {
     switch (side) {

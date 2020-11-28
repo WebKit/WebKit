@@ -24,35 +24,50 @@
  */
 
 #include "config.h"
-#include "DisplayContainerBox.h"
+#include "DisplayBoxClip.h"
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-#include "DisplayStyle.h"
-#include <wtf/IsoMallocInlines.h>
+#include "RenderStyle.h"
 
 namespace WebCore {
 namespace Display {
 
-ContainerBox::ContainerBox(AbsoluteFloatRect borderBox, Style&& displayStyle)
-    : BoxModelBox(borderBox, WTFMove(displayStyle), { Flags::ContainerBox })
+BoxClip::BoxClip() = default;
+BoxClip::~BoxClip() = default;
+
+BoxClip::BoxClip(const BoxClip& other)
+    : m_clipRect(other.clipRect())
+    , m_clipStack(other.clipStack())
+    , m_affectedByBorderRadius(other.affectedByBorderRadius())
 {
 }
 
-void ContainerBox::setFirstChild(std::unique_ptr<Box>&& box)
+Ref<BoxClip> BoxClip::copy() const
 {
-    m_firstChild = WTFMove(box);
+    return adoptRef(*new BoxClip(*this));
 }
 
-String ContainerBox::debugDescription() const
+void BoxClip::pushClip(const AbsoluteFloatRect& rect)
 {
-    TextStream stream;
-    stream << "container box " << absoluteBorderBoxRect() << " (" << this << ")";
-    if (auto* clip = ancestorClip())
-        stream << " ancestor clip " << clip->clipRect() << " affected by radius " << clip->affectedByBorderRadius();
-
-    return stream.release();
+    if (m_clipRect) {
+        m_clipRect->intersect(rect);
+        return;
+    }
+    
+    m_clipRect = rect;
 }
+
+void BoxClip::pushRoundedClip(const FloatRoundedRect& roundedRect)
+{
+    ASSERT(roundedRect.isRounded());
+    pushClip(roundedRect.rect());
+
+    m_affectedByBorderRadius = true;
+    m_clipStack.append(roundedRect);
+}
+
+
 
 } // namespace Display
 } // namespace WebCore
