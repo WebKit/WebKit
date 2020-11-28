@@ -2352,12 +2352,12 @@ private:
         Arg address = addr(m_value);
         
         if (isValidForm(atomicOpcode, Arg::Imm, address.kind()) && imm(m_value->child(0))) {
-            append(atomicOpcode, imm(m_value->child(0)), address);
+            appendTrapping(atomicOpcode, imm(m_value->child(0)), address);
             return true;
         }
         
         if (isValidForm(atomicOpcode, Arg::Tmp, address.kind())) {
-            append(atomicOpcode, tmp(m_value->child(0)), address);
+            appendTrapping(atomicOpcode, tmp(m_value->child(0)), address);
             return true;
         }
         
@@ -3594,7 +3594,7 @@ private:
             Air::Opcode opcode = OPCODE_FOR_WIDTH(AtomicXchgAdd, atomic->accessWidth());
             if (isValidForm(opcode, Arg::Tmp, address.kind())) {
                 append(relaxedMoveForType(atomic->type()), tmp(atomic->child(0)), tmp(atomic));
-                append(opcode, tmp(atomic), address);
+                appendTrapping(opcode, tmp(atomic), address);
                 return;
             }
 
@@ -3645,7 +3645,7 @@ private:
             Air::Opcode opcode = OPCODE_FOR_WIDTH(AtomicXchg, atomic->accessWidth());
             if (isValidForm(opcode, Arg::Tmp, address.kind())) {
                 append(relaxedMoveForType(atomic->type()), tmp(atomic->child(0)), tmp(atomic));
-                append(opcode, tmp(atomic), address);
+                appendTrapping(opcode, tmp(atomic), address);
                 return;
             }
             

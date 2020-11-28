@@ -29,18 +29,22 @@ import * as WASM from './WASM.js';
 
 const put = (bin, type, value) => bin[type](value);
 
-const putResizableLimits = (bin, initial, maximum) => {
+const putResizableLimits = (bin, initial, maximum, shared = false) => {
     assert.truthy(typeof initial === "number", "We expect 'initial' to be an integer");
-    let hasMaximum = 0;
+    let flag = 0;
     if (typeof maximum === "number") {
-        hasMaximum = 1;
+        flag |= 0b01;
     } else {
         assert.truthy(typeof maximum === "undefined", "We expect 'maximum' to be an integer if it's defined");
     }
+    if (shared) {
+        assert.truthy(typeof maximum === "number", "We expect 'maximum' to be an integer if shared is true");
+        flag |= 0b10;
+    }
 
-    put(bin, "uint8", hasMaximum);
+    put(bin, "uint8", flag);
     put(bin, "varuint32", initial);
-    if (hasMaximum)
+    if (flag & 0b01)
         put(bin, "varuint32", maximum);
 };
 
@@ -132,8 +136,8 @@ const emitters = {
                 break;
             }
             case "Memory": {
-                let {initial, maximum} = entry.memoryDescription;
-                putResizableLimits(bin, initial, maximum);
+                let {initial, maximum, shared} = entry.memoryDescription;
+                putResizableLimits(bin, initial, maximum, shared);
                 break;
             };
             case "Global":
@@ -160,7 +164,7 @@ const emitters = {
         // Flags, currently can only be [0,1]
         put(bin, "varuint1", section.data.length);
         for (const memory of section.data)
-            putResizableLimits(bin, memory.initial, memory.maximum);
+            putResizableLimits(bin, memory.initial, memory.maximum, memory.shared);
     },
 
     Global: (section, bin) => {

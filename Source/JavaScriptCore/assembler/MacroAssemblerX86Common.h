@@ -3845,37 +3845,31 @@ public:
     
     void atomicXchg8(RegisterID reg, Address address)
     {
-        m_assembler.lock();
         m_assembler.xchgb_rm(reg, address.offset, address.base);
     }
     
     void atomicXchg8(RegisterID reg, BaseIndex address)
     {
-        m_assembler.lock();
         m_assembler.xchgb_rm(reg, address.offset, address.base, address.index, address.scale);
     }
     
     void atomicXchg16(RegisterID reg, Address address)
     {
-        m_assembler.lock();
         m_assembler.xchgw_rm(reg, address.offset, address.base);
     }
     
     void atomicXchg16(RegisterID reg, BaseIndex address)
     {
-        m_assembler.lock();
         m_assembler.xchgw_rm(reg, address.offset, address.base, address.index, address.scale);
     }
     
     void atomicXchg32(RegisterID reg, Address address)
     {
-        m_assembler.lock();
         m_assembler.xchgl_rm(reg, address.offset, address.base);
     }
     
     void atomicXchg32(RegisterID reg, BaseIndex address)
     {
-        m_assembler.lock();
         m_assembler.xchgl_rm(reg, address.offset, address.base, address.index, address.scale);
     }
     

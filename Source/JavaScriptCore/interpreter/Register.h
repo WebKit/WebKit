@@ -68,6 +68,8 @@ namespace JSC {
         int64_t asanUnsafeUnboxedInt52() const;
         int64_t unboxedStrictInt52() const;
         int64_t asanUnsafeUnboxedStrictInt52() const;
+        int64_t unboxedInt64() const;
+        int64_t asanUnsafeUnboxedInt64() const;
         bool unboxedBoolean() const;
         double unboxedDouble() const;
         double asanUnsafeUnboxedDouble() const;
@@ -161,6 +163,16 @@ namespace JSC {
     }
 
     SUPPRESS_ASAN ALWAYS_INLINE int64_t Register::asanUnsafeUnboxedStrictInt52() const
+    {
+        return u.integer;
+    }
+
+    ALWAYS_INLINE int64_t Register::unboxedInt64() const
+    {
+        return u.integer;
+    }
+
+    SUPPRESS_ASAN ALWAYS_INLINE int64_t Register::asanUnsafeUnboxedInt64() const
     {
         return u.integer;
     }

@@ -1,3 +1,35 @@
+2020-11-26  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Add wasm atomics instructions
+        https://bugs.webkit.org/show_bug.cgi?id=218954
+
+        Reviewed by Filip Pizlo.
+
+        * wasm.yaml:
+        * wasm/Builder.js:
+        (const._importMemoryContinuation):
+        (export.default.Builder.prototype._registerSectionBuilders.const.section.in.WASM.description.section.switch.section.case.string_appeared_here.this.section):
+        * wasm/Builder_WebAssemblyBinary.js:
+        (const.putResizableLimits):
+        (const.emitters.Import):
+        (const.emitters.Memory):
+        * wasm/function-tests/trap-load-shared.js:
+        * wasm/function-tests/trap-store-shared.js:
+        * wasm/stress/atomic-decrement.js: Added.
+        (i.agent.start.import.string_appeared_here.then):
+        (i.async error):
+        * wasm/stress/atomic-increment.js: Added.
+        (i.agent.start.import.string_appeared_here.then):
+        (i.async error):
+        * wasm/stress/memory-fence.js: Added.
+        (async try):
+        (catch):
+        * wasm/threads-spec-tests/atomic-signed.wast.js: Added.
+        * wasm/threads-spec-tests/atomic.wast.js: Added.
+        * wasm/threads-spec-tests/memory.wast.js: Added.
+        * wasm/threads-spec-tests/resources/atomic-signed.wast: Added.
+        * wasm/wasm.json:
+
 2020-11-19  Xan López  <xan@igalia.com>
 
         [JSC] Add support for static private class fields

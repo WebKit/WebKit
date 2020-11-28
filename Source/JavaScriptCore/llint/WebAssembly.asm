@@ -566,6 +566,9 @@ slowWasmOp(table_fill)
 slowWasmOp(table_grow)
 slowWasmOp(set_global_ref)
 slowWasmOp(set_global_ref_portable_binding)
+slowWasmOp(memory_atomic_wait32)
+slowWasmOp(memory_atomic_wait64)
+slowWasmOp(memory_atomic_notify)
 
 wasmOp(grow_memory, WasmGrowMemory, macro(ctx)
     callWasmSlowPath(_slow_path_wasm_grow_memory)
@@ -880,6 +883,27 @@ macro emitCheckAndPreparePointer(ctx, pointer, offset, size)
     throwException(OutOfBoundsMemoryAccess)
 .continuation:
     addp memoryBase, pointer
+end
+
+macro emitCheckAndPreparePointerAddingOffset(ctx, pointer, offset, size)
+    leap size - 1[pointer, offset], t5
+    bpb t5, boundsCheckingSize, .continuation
+.throw:
+    throwException(OutOfBoundsMemoryAccess)
+.continuation:
+    addp memoryBase, pointer
+    addp offset, pointer
+end
+
+macro emitCheckAndPreparePointerAddingOffsetWithAlignmentCheck(ctx, pointer, offset, size)
+    leap size - 1[pointer, offset], t5
+    bpb t5, boundsCheckingSize, .continuation
+.throw:
+    throwException(OutOfBoundsMemoryAccess)
+.continuation:
+    addp memoryBase, pointer
+    addp offset, pointer
+    btpnz pointer, (size - 1), .throw
 end
 
 macro wasmLoadOp(name, struct, size, fn)
@@ -2140,5 +2164,325 @@ wasmOp(drop_keep, WasmDropKeep, macro(ctx)
 
     dropKeep(t0, t1, t2)
 
+    dispatch(ctx)
+end)
+
+macro wasmAtomicBinaryRMWOps(lowerCaseOpcode, upperCaseOpcode, fnb, fnh, fni, fnq)
+    wasmOp(i64_atomic_rmw8%lowerCaseOpcode%_u, WasmI64AtomicRmw8%upperCaseOpcode%U, macro(ctx)
+        mloadi(ctx, m_pointer, t3)
+        wgetu(ctx, m_offset, t1)
+        mloadq(ctx, m_value, t0)
+        emitCheckAndPreparePointerAddingOffset(ctx, t3, t1, 1)
+        fnb(t0, [t3], t2, t5, t1)
+        andq 0xff, t0 # FIXME: ZeroExtend8To64
+        assert(macro(ok) bqbeq t0, 0xff, .ok end)
+        returnq(ctx, t0)
+    end)
+    wasmOp(i64_atomic_rmw16%lowerCaseOpcode%_u, WasmI64AtomicRmw16%upperCaseOpcode%U, macro(ctx)
+        mloadi(ctx, m_pointer, t3)
+        wgetu(ctx, m_offset, t1)
+        mloadq(ctx, m_value, t0)
+        emitCheckAndPreparePointerAddingOffsetWithAlignmentCheck(ctx, t3, t1, 2)
+        fnh(t0, [t3], t2, t5, t1)
+        andq 0xffff, t0 # FIXME: ZeroExtend16To64
+        assert(macro(ok) bqbeq t0, 0xffff, .ok end)
+        returnq(ctx, t0)
+    end)
+    wasmOp(i64_atomic_rmw32%lowerCaseOpcode%_u, WasmI64AtomicRmw32%upperCaseOpcode%U, macro(ctx)
+        mloadi(ctx, m_pointer, t3)
+        wgetu(ctx, m_offset, t1)
+        mloadq(ctx, m_value, t0)
+        emitCheckAndPreparePointerAddingOffsetWithAlignmentCheck(ctx, t3, t1, 4)
+        fni(t0, [t3], t2, t5, t1)
+        zxi2q t0, t0
+        assert(macro(ok) bqbeq t0, 0xffffffff, .ok end)
+        returnq(ctx, t0)
+    end)
+    wasmOp(i64_atomic_rmw%lowerCaseOpcode%, WasmI64AtomicRmw%upperCaseOpcode%, macro(ctx)
+        mloadi(ctx, m_pointer, t3)
+        wgetu(ctx, m_offset, t1)
+        mloadq(ctx, m_value, t0)
+        emitCheckAndPreparePointerAddingOffsetWithAlignmentCheck(ctx, t3, t1, 8)
+        fnq(t0, [t3], t2, t5, t1)
+        returnq(ctx, t0)
+    end)
+end
+
+macro wasmAtomicBinaryRMWOpsWithWeakCAS(lowerCaseOpcode, upperCaseOpcode, fni, fnq)
+    wasmAtomicBinaryRMWOps(lowerCaseOpcode, upperCaseOpcode,
+        macro(t0GPR, mem, t2GPR, t5GPR, t1GPR)
+            if X86_64
+                move t0GPR, t5GPR
+                loadb mem, t0GPR
+            .loop:
+                move t0GPR, t2GPR
+                fni(t5GPR, t2GPR)
+                batomicweakcasb t0GPR, t2GPR, mem, .loop
+            else
+            .loop:
+                loadlinkacqb mem, t1GPR
+                fni(t0GPR, t1GPR, t2GPR)
+                storecondrelb t5GPR, t2GPR, mem
+                bineq t5GPR, 0, .loop
+                move t1GPR, t0GPR
+            end
+        end,
+        macro(t0GPR, mem, t2GPR, t5GPR, t1GPR)
+            if X86_64
+                move t0GPR, t5GPR
+                loadh mem, t0GPR
+            .loop:
+                move t0GPR, t2GPR
+                fni(t5GPR, t2GPR)
+                batomicweakcash t0GPR, t2GPR, mem, .loop
+            else
+            .loop:
+                loadlinkacqh mem, t1GPR
+                fni(t0GPR, t1GPR, t2GPR)
+                storecondrelh t5GPR, t2GPR, mem
+                bineq t5GPR, 0, .loop
+                move t1GPR, t0GPR
+            end
+        end,
+        macro(t0GPR, mem, t2GPR, t5GPR, t1GPR)
+            if X86_64
+                move t0GPR, t5GPR
+                loadi mem, t0GPR
+            .loop:
+                move t0GPR, t2GPR
+                fni(t5GPR, t2GPR)
+                batomicweakcasi t0GPR, t2GPR, mem, .loop
+            else
+            .loop:
+                loadlinkacqi mem, t1GPR
+                fni(t0GPR, t1GPR, t2GPR)
+                storecondreli t5GPR, t2GPR, mem
+                bineq t5GPR, 0, .loop
+                move t1GPR, t0GPR
+            end
+        end,
+        macro(t0GPR, mem, t2GPR, t5GPR, t1GPR)
+            if X86_64
+                move t0GPR, t5GPR
+                loadq mem, t0GPR
+            .loop:
+                move t0GPR, t2GPR
+                fnq(t5GPR, t2GPR)
+                batomicweakcasq t0GPR, t2GPR, mem, .loop
+            else
+            .loop:
+                loadlinkacqq mem, t1GPR
+                fnq(t0GPR, t1GPR, t2GPR)
+                storecondrelq t5GPR, t2GPR, mem
+                bineq t5GPR, 0, .loop
+                move t1GPR, t0GPR
+            end
+        end)
+end
+
+if X86_64
+    wasmAtomicBinaryRMWOps(_add, Add,
+        macro(t0GPR, mem, t2GPR, t5GPR, t1GPR) atomicxchgaddb t0GPR, mem end,
+        macro(t0GPR, mem, t2GPR, t5GPR, t1GPR) atomicxchgaddh t0GPR, mem end,
+        macro(t0GPR, mem, t2GPR, t5GPR, t1GPR) atomicxchgaddi t0GPR, mem end,
+        macro(t0GPR, mem, t2GPR, t5GPR, t1GPR) atomicxchgaddq t0GPR, mem end)
+    wasmAtomicBinaryRMWOps(_sub, Sub,
+        macro(t0GPR, mem, t2GPR, t5GPR, t1GPR) atomicxchgsubb t0GPR, mem end,
+        macro(t0GPR, mem, t2GPR, t5GPR, t1GPR) atomicxchgsubh t0GPR, mem end,
+        macro(t0GPR, mem, t2GPR, t5GPR, t1GPR) atomicxchgsubi t0GPR, mem end,
+        macro(t0GPR, mem, t2GPR, t5GPR, t1GPR) atomicxchgsubq t0GPR, mem end)
+    wasmAtomicBinaryRMWOps(_xchg, Xchg,
+        macro(t0GPR, mem, t2GPR, t5GPR, t1GPR) atomicxchgb t0GPR, mem end,
+        macro(t0GPR, mem, t2GPR, t5GPR, t1GPR) atomicxchgh t0GPR, mem end,
+        macro(t0GPR, mem, t2GPR, t5GPR, t1GPR) atomicxchgi t0GPR, mem end,
+        macro(t0GPR, mem, t2GPR, t5GPR, t1GPR) atomicxchgq t0GPR, mem end)
+    wasmAtomicBinaryRMWOpsWithWeakCAS(_and, And,
+        macro(t5GPR, t2GPR)
+            andi t5GPR, t2GPR
+        end,
+        macro(t5GPR, t2GPR)
+            andq t5GPR, t2GPR
+        end)
+    wasmAtomicBinaryRMWOpsWithWeakCAS(_or, Or,
+        macro(t5GPR, t2GPR)
+            ori t5GPR, t2GPR
+        end,
+        macro(t5GPR, t2GPR)
+            orq t5GPR, t2GPR
+        end)
+    wasmAtomicBinaryRMWOpsWithWeakCAS(_xor, Xor,
+        macro(t5GPR, t2GPR)
+            xori t5GPR, t2GPR
+        end,
+        macro(t5GPR, t2GPR)
+            xorq t5GPR, t2GPR
+        end)
+else
+    wasmAtomicBinaryRMWOpsWithWeakCAS(_add, Add,
+        macro(t0GPR, t1GPR, t2GPR)
+            addi t0GPR, t1GPR, t2GPR
+        end,
+        macro(t0GPR, t1GPR, t2GPR)
+            addq t0GPR, t1GPR, t2GPR
+        end)
+    wasmAtomicBinaryRMWOpsWithWeakCAS(_sub, Sub,
+        macro(t0GPR, t1GPR, t2GPR)
+            subi t1GPR, t0GPR, t2GPR
+        end,
+        macro(t0GPR, t1GPR, t2GPR)
+            subq t1GPR, t0GPR, t2GPR
+        end)
+    wasmAtomicBinaryRMWOpsWithWeakCAS(_xchg, Xchg,
+        macro(t0GPR, t1GPR, t2GPR)
+            move t0GPR, t2GPR
+        end,
+        macro(t0GPR, t1GPR, t2GPR)
+            move t0GPR, t2GPR
+        end)
+    wasmAtomicBinaryRMWOpsWithWeakCAS(_and, And,
+        macro(t0GPR, t1GPR, t2GPR)
+            andi t0GPR, t1GPR, t2GPR
+        end,
+        macro(t0GPR, t1GPR, t2GPR)
+            andq t0GPR, t1GPR, t2GPR
+        end)
+    wasmAtomicBinaryRMWOpsWithWeakCAS(_or, Or,
+        macro(t0GPR, t1GPR, t2GPR)
+            ori t0GPR, t1GPR, t2GPR
+        end,
+        macro(t0GPR, t1GPR, t2GPR)
+            orq t0GPR, t1GPR, t2GPR
+        end)
+    wasmAtomicBinaryRMWOpsWithWeakCAS(_xor, Xor,
+        macro(t0GPR, t1GPR, t2GPR)
+            xori t0GPR, t1GPR, t2GPR
+        end,
+        macro(t0GPR, t1GPR, t2GPR)
+            xorq t0GPR, t1GPR, t2GPR
+        end)
+end
+
+macro wasmAtomicCompareExchangeOps(lowerCaseOpcode, upperCaseOpcode, fnb, fnh, fni, fnq)
+    wasmOp(i64_atomic_rmw8%lowerCaseOpcode%_u, WasmI64AtomicRmw8%upperCaseOpcode%U, macro(ctx)
+        mloadi(ctx, m_pointer, t3)
+        wgetu(ctx, m_offset, t1)
+        mloadq(ctx, m_expected, t0)
+        mloadq(ctx, m_value, t2)
+        emitCheckAndPreparePointerAddingOffset(ctx, t3, t1, 1)
+        fnb(t0, t2, [t3], t5, t1)
+        andq 0xff, t0 # FIXME: ZeroExtend8To64
+        assert(macro(ok) bqbeq t0, 0xff, .ok end)
+        returnq(ctx, t0)
+    end)
+    wasmOp(i64_atomic_rmw16%lowerCaseOpcode%_u, WasmI64AtomicRmw16%upperCaseOpcode%U, macro(ctx)
+        mloadi(ctx, m_pointer, t3)
+        wgetu(ctx, m_offset, t1)
+        mloadq(ctx, m_expected, t0)
+        mloadq(ctx, m_value, t2)
+        emitCheckAndPreparePointerAddingOffsetWithAlignmentCheck(ctx, t3, t1, 2)
+        fnh(t0, t2, [t3], t5, t1)
+        andq 0xffff, t0 # FIXME: ZeroExtend16To64
+        assert(macro(ok) bqbeq t0, 0xffff, .ok end)
+        returnq(ctx, t0)
+    end)
+    wasmOp(i64_atomic_rmw32%lowerCaseOpcode%_u, WasmI64AtomicRmw32%upperCaseOpcode%U, macro(ctx)
+        mloadi(ctx, m_pointer, t3)
+        wgetu(ctx, m_offset, t1)
+        mloadq(ctx, m_expected, t0)
+        mloadq(ctx, m_value, t2)
+        emitCheckAndPreparePointerAddingOffsetWithAlignmentCheck(ctx, t3, t1, 4)
+        fni(t0, t2, [t3], t5, t1)
+        zxi2q t0, t0
+        assert(macro(ok) bqbeq t0, 0xffffffff, .ok end)
+        returnq(ctx, t0)
+    end)
+    wasmOp(i64_atomic_rmw%lowerCaseOpcode%, WasmI64AtomicRmw%upperCaseOpcode%, macro(ctx)
+        mloadi(ctx, m_pointer, t3)
+        wgetu(ctx, m_offset, t1)
+        mloadq(ctx, m_expected, t0)
+        mloadq(ctx, m_value, t2)
+        emitCheckAndPreparePointerAddingOffsetWithAlignmentCheck(ctx, t3, t1, 8)
+        fnq(t0, t2, [t3], t5, t1)
+        returnq(ctx, t0)
+    end)
+end
+
+# t0GPR => expected, t2GPR => value, mem => memory reference
+wasmAtomicCompareExchangeOps(_cmpxchg, Cmpxchg,
+    macro(t0GPR, t2GPR, mem, t5GPR, t1GPR)
+        if X86_64
+            atomicweakcasb t0GPR, t2GPR, mem
+        else
+        .loop:
+            loadlinkacqb mem, t1GPR
+            bineq t0GPR, t1GPR, .fail
+            storecondrelb t5GPR, t2GPR, mem
+            bieq t5GPR, 0, .done
+            jmp .loop
+        .fail:
+            storecondrelb t5GPR, t1GPR, mem
+            bieq t5GPR, 0, .done
+            jmp .loop
+        .done:
+            move t1GPR, t0GPR
+        end
+    end,
+    macro(t0GPR, t2GPR, mem, t5GPR, t1GPR)
+        if X86_64
+            atomicweakcash t0GPR, t2GPR, mem
+        else
+        .loop:
+            loadlinkacqh mem, t1GPR
+            bineq t0GPR, t1GPR, .fail
+            storecondrelh t5GPR, t2GPR, mem
+            bieq t5GPR, 0, .done
+            jmp .loop
+        .fail:
+            storecondrelh t5GPR, t1GPR, mem
+            bieq t5GPR, 0, .done
+            jmp .loop
+        .done:
+            move t1GPR, t0GPR
+        end
+    end,
+    macro(t0GPR, t2GPR, mem, t5GPR, t1GPR)
+        if X86_64
+            atomicweakcasi t0GPR, t2GPR, mem
+        else
+        .loop:
+            loadlinkacqi mem, t1GPR
+            bineq t0GPR, t1GPR, .fail
+            storecondreli t5GPR, t2GPR, mem
+            bieq t5GPR, 0, .done
+            jmp .loop
+        .fail:
+            storecondreli t5GPR, t1GPR, mem
+            bieq t5GPR, 0, .done
+            jmp .loop
+        .done:
+            move t1GPR, t0GPR
+        end
+    end,
+    macro(t0GPR, t2GPR, mem, t5GPR, t1GPR)
+        if X86_64
+            atomicweakcasq t0GPR, t2GPR, mem
+        else
+        .loop:
+            loadlinkacqq mem, t1GPR
+            bqneq t0GPR, t1GPR, .fail
+            storecondrelq t5GPR, t2GPR, mem
+            bieq t5GPR, 0, .done
+            jmp .loop
+        .fail:
+            storecondrelq t5GPR, t1GPR, mem
+            bieq t5GPR, 0, .done
+            jmp .loop
+        .done:
+            move t1GPR, t0GPR
+        end
+    end)
+
+wasmOp(atomic_fence, WasmDropKeep, macro(ctx)
+    fence
     dispatch(ctx)
 end)

@@ -35,6 +35,7 @@
 #include "AllowMacroScratchRegisterUsageIf.h"
 #include "B3CheckSpecial.h"
 #include "B3CheckValue.h"
+#include "B3Commutativity.h"
 #include "B3PatchpointSpecial.h"
 #include "B3Procedure.h"
 #include "B3ProcedureInlines.h"
@@ -277,6 +278,15 @@ public:
     PartialResult WARN_UNUSED_RETURN addGrowMemory(ExpressionType delta, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addCurrentMemory(ExpressionType& result);
 
+    // Atomics
+    PartialResult WARN_UNUSED_RETURN atomicLoad(ExtAtomicOpType, Type, ExpressionType pointer, ExpressionType& result, uint32_t offset);
+    PartialResult WARN_UNUSED_RETURN atomicStore(ExtAtomicOpType, Type, ExpressionType pointer, ExpressionType value, uint32_t offset);
+    PartialResult WARN_UNUSED_RETURN atomicBinaryRMW(ExtAtomicOpType, Type, ExpressionType pointer, ExpressionType value, ExpressionType& result, uint32_t offset);
+    PartialResult WARN_UNUSED_RETURN atomicCompareExchange(ExtAtomicOpType, Type, ExpressionType pointer, ExpressionType expected, ExpressionType value, ExpressionType& result, uint32_t offset);
+    PartialResult WARN_UNUSED_RETURN atomicWait(ExtAtomicOpType, ExpressionType pointer, ExpressionType value, ExpressionType timeout, ExpressionType& result, uint32_t offset);
+    PartialResult WARN_UNUSED_RETURN atomicNotify(ExtAtomicOpType, ExpressionType pointer, ExpressionType value, ExpressionType& result, uint32_t offset);
+    PartialResult WARN_UNUSED_RETURN atomicFence(ExtAtomicOpType, uint8_t flags);
+
     // Basic operators
     template<OpType>
     PartialResult WARN_UNUSED_RETURN addOp(ExpressionType arg, ExpressionType& result);
@@ -360,6 +370,14 @@ private:
         Kind kind = op;
         kind.effects = true;
         append(m_currentBlock, kind, std::forward<Arguments>(arguments)...);
+    }
+
+    template<typename... Arguments>
+    void appendEffectful(BasicBlock* block, B3::Air::Opcode op, Arguments&&... arguments)
+    {
+        Kind kind = op;
+        kind.effects = true;
+        append(block, kind, std::forward<Arguments>(arguments)...);
     }
 
     Tmp newTmp(B3::Bank bank)
@@ -637,6 +655,14 @@ private:
     ExpressionType emitCheckAndPreparePointer(ExpressionType pointer, uint32_t offset, uint32_t sizeOfOp);
     ExpressionType emitLoadOp(LoadOpType, ExpressionType pointer, uint32_t offset);
     void emitStoreOp(StoreOpType, ExpressionType pointer, ExpressionType value, uint32_t offset);
+    ExpressionType emitAtomicLoadOp(ExtAtomicOpType, Type, ExpressionType pointer, uint32_t offset);
+    void emitAtomicStoreOp(ExtAtomicOpType, Type, ExpressionType pointer, ExpressionType value, uint32_t offset);
+    ExpressionType emitAtomicBinaryRMWOp(ExtAtomicOpType, Type, ExpressionType pointer, ExpressionType value, uint32_t offset);
+    ExpressionType emitAtomicCompareExchange(ExtAtomicOpType, Type, ExpressionType pointer, ExpressionType expected, ExpressionType value, uint32_t offset);
+
+    TypedTmp sanitizeAtomicResult(ExtAtomicOpType, Type, TypedTmp result);
+    TypedTmp appendGeneralAtomic(ExtAtomicOpType, Type, B3::Air::Opcode nonAtomicOpcode, B3::Commutativity, Arg input, Arg addrArg);
+    TypedTmp appendStrongCAS(ExtAtomicOpType, Type, TypedTmp expected, TypedTmp value, Arg addrArg);
 
     void unify(const ExpressionType dst, const ExpressionType source);
     void unifyValuesWithBlock(const Stack& resultStack, const ResultList& stack);
@@ -652,6 +678,7 @@ private:
     PartialResult addFloatingPointMinOrMax(Type, MinOrMax, ExpressionType lhs, ExpressionType rhs, ExpressionType& result);
 
     int32_t WARN_UNUSED_RETURN fixupPointerPlusOffset(ExpressionType&, uint32_t);
+    ExpressionType WARN_UNUSED_RETURN fixupPointerPlusOffsetForAtomicOps(ExtAtomicOpType, ExpressionType, uint32_t);
 
     void restoreWasmContextInstance(BasicBlock*, TypedTmp);
     enum class RestoreCachedStackLimit { No, Yes };
@@ -1683,6 +1710,605 @@ auto AirIRGenerator::store(StoreOpType op, ExpressionType pointer, ExpressionTyp
     return { };
 }
 
+#define OPCODE_FOR_WIDTH(opcode, width) ( \
+    (width) == B3::Width8 ? B3::Air::opcode ## 8 : \
+    (width) == B3::Width16 ? B3::Air::opcode ## 16 :    \
+    (width) == B3::Width32 ? B3::Air::opcode ## 32 :    \
+    B3::Air::opcode ## 64)
+#define OPCODE_FOR_CANONICAL_WIDTH(opcode, width) ( \
+    (width) == B3::Width64 ? B3::Air::opcode ## 64 : B3::Air::opcode ## 32)
+
+inline B3::Width accessWidth(ExtAtomicOpType op)
+{
+    return static_cast<B3::Width>(memoryLog2Alignment(op));
+}
+
+inline uint32_t sizeOfAtomicOpMemoryAccess(ExtAtomicOpType op)
+{
+    return bytesForWidth(accessWidth(op));
+}
+
+auto AirIRGenerator::fixupPointerPlusOffsetForAtomicOps(ExtAtomicOpType op, ExpressionType pointer, uint32_t uoffset) -> ExpressionType
+{
+    uint32_t offset = fixupPointerPlusOffset(pointer, uoffset);
+    if (Arg::isValidAddrForm(offset, B3::widthForBytes(sizeOfAtomicOpMemoryAccess(op)))) {
+        if (offset == 0)
+            return pointer;
+        TypedTmp newPtr = g64();
+        append(Lea64, Arg::addr(pointer, offset), newPtr);
+        return newPtr;
+    }
+    TypedTmp newPtr = g64();
+    append(Move, Arg::bigImm(offset), newPtr);
+    append(Add64, pointer, newPtr);
+    return newPtr;
+}
+
+TypedTmp AirIRGenerator::sanitizeAtomicResult(ExtAtomicOpType op, Type valueType, TypedTmp result)
+{
+    switch (valueType) {
+    case Type::I64: {
+        switch (accessWidth(op)) {
+        case B3::Width8:
+            append(ZeroExtend8To32, result, result);
+            return result;
+        case B3::Width16:
+            append(ZeroExtend16To32, result, result);
+            return result;
+        case B3::Width32:
+            append(Move32, result, result);
+            return result;
+        case B3::Width64:
+            return result;
+        }
+        break;
+    }
+    case Type::I32:
+        switch (accessWidth(op)) {
+        case B3::Width8:
+            append(ZeroExtend8To32, result, result);
+            return result;
+        case B3::Width16:
+            append(ZeroExtend16To32, result, result);
+            return result;
+        case B3::Width32:
+        case B3::Width64:
+            return result;
+        }
+        break;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        break;
+    }
+
+    return result;
+}
+
+TypedTmp AirIRGenerator::appendGeneralAtomic(ExtAtomicOpType op, Type valueType, B3::Air::Opcode opcode, B3::Commutativity commutativity, Arg input, Arg address)
+{
+    B3::Width accessWidth = Wasm::accessWidth(op);
+
+    auto newTmp = [&]() {
+        if (accessWidth == B3::Width64)
+            return g64();
+        return g32();
+    };
+
+    auto tmp = [&](Arg arg) -> TypedTmp {
+        if (arg.isTmp())
+            return TypedTmp(arg.tmp(), accessWidth == B3::Width64 ? Type::I64 : Type::I32);
+        TypedTmp result = newTmp();
+        append(Move, arg, result);
+        return result;
+    };
+
+    auto imm = [&](Arg arg) {
+        if (arg.isImm())
+            return arg;
+        return Arg();
+    };
+
+    auto bitImm = [&](Arg arg) {
+        if (arg.isBitImm())
+            return arg;
+        return Arg();
+    };
+
+    TypedTmp oldValue = valueType == Type::I64 ? g64() : g32();
+    Tmp newValue = opcode == B3::Air::Nop ? tmp(input) : newTmp();
+
+    // We need a CAS loop or a LL/SC loop. Using prepare/attempt jargon, we want:
+    //
+    // Block #reloop:
+    //     Prepare
+    //     opcode
+    //     Attempt
+    //   Successors: Then:#done, Else:#reloop
+    // Block #done:
+    //     Move oldValue, result
+
+    auto* beginBlock = m_currentBlock;
+    auto* reloopBlock = m_code.addBlock();
+    auto* doneBlock = m_code.addBlock();
+
+    append(B3::Air::Jump);
+    beginBlock->setSuccessors(reloopBlock);
+    m_currentBlock = reloopBlock;
+
+    B3::Air::Opcode prepareOpcode;
+    if (isX86()) {
+        switch (accessWidth) {
+        case B3::Width8:
+            prepareOpcode = Load8SignedExtendTo32;
+            break;
+        case B3::Width16:
+            prepareOpcode = Load16SignedExtendTo32;
+            break;
+        case B3::Width32:
+            prepareOpcode = Move32;
+            break;
+        case B3::Width64:
+            prepareOpcode = Move;
+            break;
+        }
+    } else {
+        RELEASE_ASSERT(isARM64());
+        prepareOpcode = OPCODE_FOR_WIDTH(LoadLinkAcq, accessWidth);
+    }
+    appendEffectful(prepareOpcode, address, oldValue);
+
+    if (opcode != B3::Air::Nop) {
+        // FIXME: If we ever have to write this again, we need to find a way to share the code with
+        // appendBinOp.
+        // https://bugs.webkit.org/show_bug.cgi?id=169249
+        if (commutativity == B3::Commutative && imm(input) && isValidForm(opcode, Arg::Imm, Arg::Tmp, Arg::Tmp))
+            append(opcode, imm(input), oldValue, newValue);
+        else if (imm(input) && isValidForm(opcode, Arg::Tmp, Arg::Imm, Arg::Tmp))
+            append(opcode, oldValue, imm(input), newValue);
+        else if (commutativity == B3::Commutative && bitImm(input) && isValidForm(opcode, Arg::BitImm, Arg::Tmp, Arg::Tmp))
+            append(opcode, bitImm(input), oldValue, newValue);
+        else if (isValidForm(opcode, Arg::Tmp, Arg::Tmp, Arg::Tmp))
+            append(opcode, oldValue, tmp(input), newValue);
+        else {
+            append(Move, oldValue, newValue);
+            if (imm(input) && isValidForm(opcode, Arg::Imm, Arg::Tmp))
+                append(opcode, imm(input), newValue);
+            else
+                append(opcode, tmp(input), newValue);
+        }
+    }
+
+    if (isX86()) {
+#if CPU(X86) || CPU(X86_64)
+        Tmp eax(X86Registers::eax);
+        B3::Air::Opcode casOpcode = OPCODE_FOR_WIDTH(BranchAtomicStrongCAS, accessWidth);
+        append(Move, oldValue, eax);
+        appendEffectful(casOpcode, Arg::statusCond(MacroAssembler::Success), eax, newValue, address);
+#endif
+    } else {
+        RELEASE_ASSERT(isARM64());
+        TypedTmp boolResult = newTmp();
+        appendEffectful(OPCODE_FOR_WIDTH(StoreCondRel, accessWidth), newValue, address, boolResult);
+        append(BranchTest32, Arg::resCond(MacroAssembler::Zero), boolResult, boolResult);
+    }
+    reloopBlock->setSuccessors(doneBlock, reloopBlock);
+    m_currentBlock = doneBlock;
+    return oldValue;
+}
+
+TypedTmp AirIRGenerator::appendStrongCAS(ExtAtomicOpType op, Type valueType, TypedTmp expected, TypedTmp value, Arg address)
+{
+    B3::Width accessWidth = Wasm::accessWidth(op);
+
+    auto newTmp = [&]() {
+        if (accessWidth == B3::Width64)
+            return g64();
+        return g32();
+    };
+
+    auto tmp = [&](Arg arg) -> TypedTmp {
+        if (arg.isTmp())
+            return TypedTmp(arg.tmp(), accessWidth == B3::Width64 ? Type::I64 : Type::I32);
+        TypedTmp result = newTmp();
+        append(Move, arg, result);
+        return result;
+    };
+
+    TypedTmp valueResultTmp = valueType == Type::I64 ? g64() : g32();
+    Tmp successBoolResultTmp = newTmp();
+
+    Tmp expectedValueTmp = tmp(expected);
+    Tmp newValueTmp = tmp(value);
+
+    if (isX86()) {
+#if CPU(X86) || CPU(X86_64)
+        Tmp eax(X86Registers::eax);
+        append(Move, expectedValueTmp, eax);
+        appendEffectful(OPCODE_FOR_WIDTH(AtomicStrongCAS, accessWidth), eax, newValueTmp, address);
+        append(Move, eax, valueResultTmp);
+#endif
+        return valueResultTmp;
+    }
+
+    RELEASE_ASSERT(isARM64());
+    // We wish to emit:
+    //
+    // Block #reloop:
+    //     LoadLink
+    //     Branch NotEqual
+    //   Successors: Then:#fail, Else: #store
+    // Block #store:
+    //     StoreCond
+    //     Xor $1, %result    <--- only if !invert
+    //     Jump
+    //   Successors: #done
+    // Block #fail:
+    //     Move $invert, %result
+    //     Jump
+    //   Successors: #done
+    // Block #done:
+
+    auto* reloopBlock = m_code.addBlock();
+    auto* storeBlock = m_code.addBlock();
+    auto* strongFailBlock = m_code.addBlock();
+    auto* doneBlock = m_code.addBlock();
+    auto* beginBlock = m_currentBlock;
+
+    append(B3::Air::Jump);
+    beginBlock->setSuccessors(reloopBlock);
+
+    m_currentBlock = reloopBlock;
+    appendEffectful(OPCODE_FOR_WIDTH(LoadLinkAcq, accessWidth), address, valueResultTmp);
+    append(OPCODE_FOR_CANONICAL_WIDTH(Branch, accessWidth), Arg::relCond(MacroAssembler::NotEqual), valueResultTmp, expectedValueTmp);
+    reloopBlock->setSuccessors(B3::Air::FrequentedBlock(strongFailBlock), storeBlock);
+
+    m_currentBlock = storeBlock;
+    appendEffectful(OPCODE_FOR_WIDTH(StoreCondRel, accessWidth), newValueTmp, address, successBoolResultTmp);
+    append(BranchTest32, Arg::resCond(MacroAssembler::Zero), successBoolResultTmp, successBoolResultTmp);
+    storeBlock->setSuccessors(doneBlock, reloopBlock);
+
+    m_currentBlock = strongFailBlock;
+    {
+        TypedTmp tmp = newTmp();
+        appendEffectful(OPCODE_FOR_WIDTH(StoreCondRel, accessWidth), valueResultTmp, address, tmp);
+        append(BranchTest32, Arg::resCond(MacroAssembler::Zero), tmp, tmp);
+    }
+    strongFailBlock->setSuccessors(B3::Air::FrequentedBlock(doneBlock), reloopBlock);
+
+    m_currentBlock = doneBlock;
+    return valueResultTmp;
+}
+
+inline TypedTmp AirIRGenerator::emitAtomicLoadOp(ExtAtomicOpType op, Type valueType, ExpressionType pointer, uint32_t uoffset)
+{
+    TypedTmp newPtr = fixupPointerPlusOffsetForAtomicOps(op, pointer, uoffset);
+    Arg addrArg = isX86() ? Arg::addr(newPtr) : Arg::simpleAddr(newPtr);
+
+    if (accessWidth(op) != B3::Width8) {
+        emitCheck([&] {
+            return Inst(BranchTest64, nullptr, Arg::resCond(MacroAssembler::NonZero), newPtr, isX86() ? Arg::bitImm(sizeOfAtomicOpMemoryAccess(op) - 1) : Arg::bitImm64(sizeOfAtomicOpMemoryAccess(op) - 1));
+        }, [=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+            this->emitThrowException(jit, ExceptionType::OutOfBoundsMemoryAccess);
+        });
+    }
+
+    Optional<B3::Air::Opcode> opcode;
+    if (isX86())
+        opcode = OPCODE_FOR_WIDTH(AtomicXchgAdd, accessWidth(op));
+    B3::Air::Opcode nonAtomicOpcode = OPCODE_FOR_CANONICAL_WIDTH(Add, accessWidth(op));
+
+    if (opcode && isValidForm(opcode.value(), Arg::Tmp, addrArg.kind())) {
+        TypedTmp result = valueType == Type::I64 ? g64() : g32();
+        append(Move, Arg::imm(0), result);
+        appendEffectful(opcode.value(), result, addrArg);
+        return sanitizeAtomicResult(op, valueType, result);
+    }
+
+    return sanitizeAtomicResult(op, valueType, appendGeneralAtomic(op, valueType, nonAtomicOpcode, B3::Commutative, Arg::imm(0), addrArg));
+}
+
+auto AirIRGenerator::atomicLoad(ExtAtomicOpType op, Type valueType, ExpressionType pointer, ExpressionType& result, uint32_t offset) -> PartialResult
+{
+    ASSERT(pointer.tmp().isGP());
+
+    if (UNLIKELY(sumOverflows<uint32_t>(offset, sizeOfAtomicOpMemoryAccess(op)))) {
+        // FIXME: Even though this is provably out of bounds, it's not a validation error, so we have to handle it
+        // as a runtime exception. However, this may change: https://bugs.webkit.org/show_bug.cgi?id=166435
+        auto* patch = addPatchpoint(B3::Void);
+        patch->setGenerator([this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+            this->emitThrowException(jit, ExceptionType::OutOfBoundsMemoryAccess);
+        });
+        emitPatchpoint(patch, Tmp());
+
+        // We won't reach here, so we just pick a random reg.
+        switch (valueType) {
+        case Type::I32:
+            result = g32();
+            break;
+        case Type::I64:
+            result = g64();
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
+        }
+    } else
+        result = emitAtomicLoadOp(op, valueType, emitCheckAndPreparePointer(pointer, offset, sizeOfAtomicOpMemoryAccess(op)), offset);
+
+    return { };
+}
+
+inline void AirIRGenerator::emitAtomicStoreOp(ExtAtomicOpType op, Type valueType, ExpressionType pointer, ExpressionType value, uint32_t uoffset)
+{
+    TypedTmp newPtr = fixupPointerPlusOffsetForAtomicOps(op, pointer, uoffset);
+    Arg addrArg = isX86() ? Arg::addr(newPtr) : Arg::simpleAddr(newPtr);
+
+    if (accessWidth(op) != B3::Width8) {
+        emitCheck([&] {
+            return Inst(BranchTest64, nullptr, Arg::resCond(MacroAssembler::NonZero), newPtr, isX86() ? Arg::bitImm(sizeOfAtomicOpMemoryAccess(op) - 1) : Arg::bitImm64(sizeOfAtomicOpMemoryAccess(op) - 1));
+        }, [=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+            this->emitThrowException(jit, ExceptionType::OutOfBoundsMemoryAccess);
+        });
+    }
+
+    Optional<B3::Air::Opcode> opcode;
+    if (isX86())
+        opcode = OPCODE_FOR_WIDTH(AtomicXchg, accessWidth(op));
+    B3::Air::Opcode nonAtomicOpcode = B3::Air::Nop;
+
+    if (opcode && isValidForm(opcode.value(), Arg::Tmp, addrArg.kind())) {
+        TypedTmp result = valueType == Type::I64 ? g64() : g32();
+        append(Move, value, result);
+        appendEffectful(opcode.value(), result, addrArg);
+        return;
+    }
+
+    appendGeneralAtomic(op, valueType, nonAtomicOpcode, B3::Commutative, value, addrArg);
+}
+
+auto AirIRGenerator::atomicStore(ExtAtomicOpType op, Type valueType, ExpressionType pointer, ExpressionType value, uint32_t offset) -> PartialResult
+{
+    ASSERT(pointer.tmp().isGP());
+
+    if (UNLIKELY(sumOverflows<uint32_t>(offset, sizeOfAtomicOpMemoryAccess(op)))) {
+        // FIXME: Even though this is provably out of bounds, it's not a validation error, so we have to handle it
+        // as a runtime exception. However, this may change: https://bugs.webkit.org/show_bug.cgi?id=166435
+        auto* throwException = addPatchpoint(B3::Void);
+        throwException->setGenerator([this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+            this->emitThrowException(jit, ExceptionType::OutOfBoundsMemoryAccess);
+        });
+        emitPatchpoint(throwException, Tmp());
+    } else
+        emitAtomicStoreOp(op, valueType, emitCheckAndPreparePointer(pointer, offset, sizeOfAtomicOpMemoryAccess(op)), value, offset);
+
+    return { };
+}
+
+TypedTmp AirIRGenerator::emitAtomicBinaryRMWOp(ExtAtomicOpType op, Type valueType, ExpressionType pointer, ExpressionType value, uint32_t uoffset)
+{
+    TypedTmp newPtr = fixupPointerPlusOffsetForAtomicOps(op, pointer, uoffset);
+    Arg addrArg = isX86() ? Arg::addr(newPtr) : Arg::simpleAddr(newPtr);
+
+    if (accessWidth(op) != B3::Width8) {
+        emitCheck([&] {
+            return Inst(BranchTest64, nullptr, Arg::resCond(MacroAssembler::NonZero), newPtr, isX86() ? Arg::bitImm(sizeOfAtomicOpMemoryAccess(op) - 1) : Arg::bitImm64(sizeOfAtomicOpMemoryAccess(op) - 1));
+        }, [=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+            this->emitThrowException(jit, ExceptionType::OutOfBoundsMemoryAccess);
+        });
+    }
+
+    Optional<B3::Air::Opcode> opcode;
+    B3::Air::Opcode nonAtomicOpcode = B3::Air::Nop;
+    B3::Commutativity commutativity = B3::NotCommutative;
+    switch (op) {
+    case ExtAtomicOpType::I32AtomicRmw8AddU:
+    case ExtAtomicOpType::I32AtomicRmw16AddU:
+    case ExtAtomicOpType::I32AtomicRmwAdd:
+    case ExtAtomicOpType::I64AtomicRmw8AddU:
+    case ExtAtomicOpType::I64AtomicRmw16AddU:
+    case ExtAtomicOpType::I64AtomicRmw32AddU:
+    case ExtAtomicOpType::I64AtomicRmwAdd:
+        if (isX86())
+            opcode = OPCODE_FOR_WIDTH(AtomicXchgAdd, accessWidth(op));
+        nonAtomicOpcode = OPCODE_FOR_CANONICAL_WIDTH(Add, accessWidth(op));
+        commutativity = B3::Commutative;
+        break;
+    case ExtAtomicOpType::I32AtomicRmw8SubU:
+    case ExtAtomicOpType::I32AtomicRmw16SubU:
+    case ExtAtomicOpType::I32AtomicRmwSub:
+    case ExtAtomicOpType::I64AtomicRmw8SubU:
+    case ExtAtomicOpType::I64AtomicRmw16SubU:
+    case ExtAtomicOpType::I64AtomicRmw32SubU:
+    case ExtAtomicOpType::I64AtomicRmwSub:
+        if (isX86()) {
+            TypedTmp newValue;
+            if (valueType == Type::I64) {
+                newValue = g64();
+                append(Move, value, newValue);
+                append(Neg64, newValue);
+            } else {
+                newValue = g32();
+                append(Move, value, newValue);
+                append(Neg32, newValue);
+            }
+            value = newValue;
+            opcode = OPCODE_FOR_WIDTH(AtomicXchgAdd, accessWidth(op));
+            nonAtomicOpcode = OPCODE_FOR_CANONICAL_WIDTH(Add, accessWidth(op));
+            commutativity = B3::Commutative;
+        } else {
+            nonAtomicOpcode = OPCODE_FOR_CANONICAL_WIDTH(Sub, accessWidth(op));
+            commutativity = B3::NotCommutative;
+        }
+        break;
+    case ExtAtomicOpType::I32AtomicRmw8AndU:
+    case ExtAtomicOpType::I32AtomicRmw16AndU:
+    case ExtAtomicOpType::I32AtomicRmwAnd:
+    case ExtAtomicOpType::I64AtomicRmw8AndU:
+    case ExtAtomicOpType::I64AtomicRmw16AndU:
+    case ExtAtomicOpType::I64AtomicRmw32AndU:
+    case ExtAtomicOpType::I64AtomicRmwAnd:
+        nonAtomicOpcode = OPCODE_FOR_CANONICAL_WIDTH(And, accessWidth(op));
+        commutativity = B3::Commutative;
+        break;
+    case ExtAtomicOpType::I32AtomicRmw8OrU:
+    case ExtAtomicOpType::I32AtomicRmw16OrU:
+    case ExtAtomicOpType::I32AtomicRmwOr:
+    case ExtAtomicOpType::I64AtomicRmw8OrU:
+    case ExtAtomicOpType::I64AtomicRmw16OrU:
+    case ExtAtomicOpType::I64AtomicRmw32OrU:
+    case ExtAtomicOpType::I64AtomicRmwOr:
+        nonAtomicOpcode = OPCODE_FOR_CANONICAL_WIDTH(Or, accessWidth(op));
+        commutativity = B3::Commutative;
+        break;
+    case ExtAtomicOpType::I32AtomicRmw8XorU:
+    case ExtAtomicOpType::I32AtomicRmw16XorU:
+    case ExtAtomicOpType::I32AtomicRmwXor:
+    case ExtAtomicOpType::I64AtomicRmw8XorU:
+    case ExtAtomicOpType::I64AtomicRmw16XorU:
+    case ExtAtomicOpType::I64AtomicRmw32XorU:
+    case ExtAtomicOpType::I64AtomicRmwXor:
+        nonAtomicOpcode = OPCODE_FOR_CANONICAL_WIDTH(Xor, accessWidth(op));
+        commutativity = B3::Commutative;
+        break;
+    case ExtAtomicOpType::I32AtomicRmw8XchgU:
+    case ExtAtomicOpType::I32AtomicRmw16XchgU:
+    case ExtAtomicOpType::I32AtomicRmwXchg:
+    case ExtAtomicOpType::I64AtomicRmw8XchgU:
+    case ExtAtomicOpType::I64AtomicRmw16XchgU:
+    case ExtAtomicOpType::I64AtomicRmw32XchgU:
+    case ExtAtomicOpType::I64AtomicRmwXchg:
+        if (isX86())
+            opcode = OPCODE_FOR_WIDTH(AtomicXchg, accessWidth(op));
+        nonAtomicOpcode = B3::Air::Nop;
+        break;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        break;
+    }
+
+    if (opcode && isValidForm(opcode.value(), Arg::Tmp, addrArg.kind())) {
+        TypedTmp result = valueType == Type::I64 ? g64() : g32();
+        append(Move, value, result);
+        appendEffectful(opcode.value(), result, addrArg);
+        return sanitizeAtomicResult(op, valueType, result);
+    }
+
+    return sanitizeAtomicResult(op, valueType, appendGeneralAtomic(op, valueType, nonAtomicOpcode, commutativity, value, addrArg));
+}
+
+auto AirIRGenerator::atomicBinaryRMW(ExtAtomicOpType op, Type valueType, ExpressionType pointer, ExpressionType value, ExpressionType& result, uint32_t offset) -> PartialResult
+{
+    ASSERT(pointer.tmp().isGP());
+
+    if (UNLIKELY(sumOverflows<uint32_t>(offset, sizeOfAtomicOpMemoryAccess(op)))) {
+        // FIXME: Even though this is provably out of bounds, it's not a validation error, so we have to handle it
+        // as a runtime exception. However, this may change: https://bugs.webkit.org/show_bug.cgi?id=166435
+        auto* patch = addPatchpoint(B3::Void);
+        patch->setGenerator([this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+            this->emitThrowException(jit, ExceptionType::OutOfBoundsMemoryAccess);
+        });
+        emitPatchpoint(patch, Tmp());
+
+        switch (valueType) {
+        case Type::I32:
+            result = g32();
+            break;
+        case Type::I64:
+            result = g64();
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
+        }
+    } else
+        result = emitAtomicBinaryRMWOp(op, valueType, emitCheckAndPreparePointer(pointer, offset, sizeOfAtomicOpMemoryAccess(op)), value, offset);
+
+    return { };
+}
+
+TypedTmp AirIRGenerator::emitAtomicCompareExchange(ExtAtomicOpType op, Type valueType, ExpressionType pointer, ExpressionType expected, ExpressionType value, uint32_t uoffset)
+{
+    TypedTmp newPtr = fixupPointerPlusOffsetForAtomicOps(op, pointer, uoffset);
+    Arg addrArg = isX86() ? Arg::addr(newPtr) : Arg::simpleAddr(newPtr);
+
+    if (accessWidth(op) != B3::Width8) {
+        emitCheck([&] {
+            return Inst(BranchTest64, nullptr, Arg::resCond(MacroAssembler::NonZero), newPtr, isX86() ? Arg::bitImm(sizeOfAtomicOpMemoryAccess(op) - 1) : Arg::bitImm64(sizeOfAtomicOpMemoryAccess(op) - 1));
+        }, [=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+            this->emitThrowException(jit, ExceptionType::OutOfBoundsMemoryAccess);
+        });
+    }
+
+    return sanitizeAtomicResult(op, valueType, appendStrongCAS(op, valueType, expected, value, addrArg));
+}
+
+auto AirIRGenerator::atomicCompareExchange(ExtAtomicOpType op, Type valueType, ExpressionType pointer, ExpressionType expected, ExpressionType value, ExpressionType& result, uint32_t offset) -> PartialResult
+{
+    ASSERT(pointer.tmp().isGP());
+
+    if (UNLIKELY(sumOverflows<uint32_t>(offset, sizeOfAtomicOpMemoryAccess(op)))) {
+        // FIXME: Even though this is provably out of bounds, it's not a validation error, so we have to handle it
+        // as a runtime exception. However, this may change: https://bugs.webkit.org/show_bug.cgi?id=166435
+        auto* patch = addPatchpoint(B3::Void);
+        patch->setGenerator([this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+            this->emitThrowException(jit, ExceptionType::OutOfBoundsMemoryAccess);
+        });
+        emitPatchpoint(patch, Tmp());
+
+        // We won't reach here, so we just pick a random reg.
+        switch (valueType) {
+        case Type::I32:
+            result = g32();
+            break;
+        case Type::I64:
+            result = g64();
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+    } else
+        result = emitAtomicCompareExchange(op, valueType, emitCheckAndPreparePointer(pointer, offset, sizeOfAtomicOpMemoryAccess(op)), expected, value, offset);
+
+    return { };
+}
+
+auto AirIRGenerator::atomicWait(ExtAtomicOpType op, ExpressionType pointer, ExpressionType value, ExpressionType timeout, ExpressionType& result, uint32_t offset) -> PartialResult
+{
+    result = g32();
+
+    if (op == ExtAtomicOpType::MemoryAtomicWait32)
+        emitCCall(&operationMemoryAtomicWait32, result, instanceValue(), pointer, addConstant(Type::I32, offset), value, timeout);
+    else
+        emitCCall(&operationMemoryAtomicWait64, result, instanceValue(), pointer, addConstant(Type::I32, offset), value, timeout);
+    emitCheck([&] {
+        return Inst(Branch32, nullptr, Arg::relCond(MacroAssembler::LessThan), result, Arg::imm(0));
+    }, [=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+        this->emitThrowException(jit, ExceptionType::OutOfBoundsMemoryAccess);
+    });
+
+    return { };
+}
+
+auto AirIRGenerator::atomicNotify(ExtAtomicOpType, ExpressionType pointer, ExpressionType count, ExpressionType& result, uint32_t offset) -> PartialResult
+{
+    result = g32();
+
+    emitCCall(&operationMemoryAtomicNotify, result, instanceValue(), pointer, addConstant(Type::I32, offset), count);
+    emitCheck([&] {
+        return Inst(Branch32, nullptr, Arg::relCond(MacroAssembler::LessThan), result, Arg::imm(0));
+    }, [=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+        this->emitThrowException(jit, ExceptionType::OutOfBoundsMemoryAccess);
+    });
+
+    return { };
+}
+
+auto AirIRGenerator::atomicFence(ExtAtomicOpType, uint8_t) -> PartialResult
+{
+    append(MemoryFence);
+    return { };
+}
+
 auto AirIRGenerator::addSelect(ExpressionType condition, ExpressionType nonZero, ExpressionType zero, ExpressionType& result) -> PartialResult
 {
     ASSERT(nonZero.type() == zero.type());
@@ -2158,7 +2784,7 @@ auto AirIRGenerator::addCall(uint32_t functionIndex, const Signature& signature,
     } else {
         auto* patchpoint = emitCallPatchpoint(m_currentBlock, signature, results, args);
         // We need to clobber the size register since the LLInt always bounds checks
-        if (m_mode == MemoryMode::Signaling)
+        if (m_mode == MemoryMode::Signaling || m_info.memory.isShared())
             patchpoint->clobberLate(RegisterSet { PinnedRegisterInfo::get().boundsCheckingSizeRegister });
         patchpoint->setGenerator([unlinkedWasmToWasmCalls, functionIndex] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
             AllowMacroScratchRegisterUsage allowScratch(jit);

@@ -126,6 +126,14 @@ public:
         case Store8:
         case Store16:
         case Store:
+        case AtomicWeakCAS:
+        case AtomicStrongCAS:
+        case AtomicXchgAdd:
+        case AtomicXchgAnd:
+        case AtomicXchgOr:
+        case AtomicXchgSub:
+        case AtomicXchgXor:
+        case AtomicXchg:
             return true;
         default:
             return false;

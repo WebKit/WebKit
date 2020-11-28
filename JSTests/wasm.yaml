@@ -65,6 +65,13 @@
 - path: wasm/multi-value-spec-tests/type.wast.js
   cmd: runWebAssemblySpecTest :normal
 
+- path: wasm/threads-spec-tests/atomic.wast.js
+  cmd: runWebAssemblySpecTest :normal
+- path: wasm/threads-spec-tests/memory.wast.js
+  cmd: runWebAssemblySpecTest :normal
+- path: wasm/threads-spec-tests/atomic-signed.wast.js
+  cmd: runWebAssemblySpecTest :normal
+
 - path: wasm/spec-tests/address.wast.js
   cmd: runWebAssemblySpecTest :normal
 - path: wasm/spec-tests/align.wast.js

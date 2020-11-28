@@ -72,10 +72,11 @@ public:
         ASSERT(!*this);
     }
 
-    MemoryInformation(PageCount initial, PageCount maximum, bool isImport);
+    MemoryInformation(PageCount initial, PageCount maximum, bool isShared, bool isImport);
 
     PageCount initial() const { return m_initial; }
     PageCount maximum() const { return m_maximum; }
+    bool isShared() const { return m_isShared; }
     bool isImport() const { return m_isImport; }
 
     explicit operator bool() const { return !!m_initial; }
@@ -83,6 +84,7 @@ public:
 private:
     PageCount m_initial { };
     PageCount m_maximum { };
+    bool m_isShared { false };
     bool m_isImport { false };
 };
 

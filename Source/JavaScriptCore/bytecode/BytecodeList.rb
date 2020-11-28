@@ -1691,4 +1691,67 @@ op_group :Store,
         offset: unsigned,
     }
 
+op_group :AtomicBinaryRMW,
+    [
+        "add",
+        "sub",
+        "and",
+        "or",
+        "xor",
+        "xchg",
+    ].flat_map {|op|
+        [
+            "i64_atomic_rmw_#{op}",
+            "i64_atomic_rmw8_#{op}_u",
+            "i64_atomic_rmw16_#{op}_u",
+            "i64_atomic_rmw32_#{op}_u",
+        ]
+    }.map {|op| op.to_sym },
+    args: {
+        dst: VirtualRegister,
+        pointer: VirtualRegister,
+        offset: unsigned,
+        value: VirtualRegister,
+    }
+
+op_group :AtomicCompareExchange,
+    [
+        :i64_atomic_rmw_cmpxchg,
+        :i64_atomic_rmw8_cmpxchg_u,
+        :i64_atomic_rmw16_cmpxchg_u,
+        :i64_atomic_rmw32_cmpxchg_u,
+    ],
+    args: {
+        dst: VirtualRegister,
+        pointer: VirtualRegister,
+        offset: unsigned,
+        expected: VirtualRegister,
+        value: VirtualRegister,
+    }
+
+op_group :AtomicWait,
+    [
+        :memory_atomic_wait32,
+        :memory_atomic_wait64,
+    ],
+    args: {
+        dst: VirtualRegister,
+        pointer: VirtualRegister,
+        offset: unsigned,
+        value: VirtualRegister,
+        timeout: VirtualRegister,
+    }
+
+op :memory_atomic_notify,
+    args: {
+        dst: VirtualRegister,
+        pointer: VirtualRegister,
+        offset: unsigned,
+        count: VirtualRegister,
+    }
+
+op :atomic_fence,
+    args: {
+    }
+
 end_section :Wasm

@@ -201,14 +201,19 @@ static void checkException(GlobalObject*, bool isLastFile, bool hasException, JS
 
 class Message : public ThreadSafeRefCounted<Message> {
 public:
-    Message(ArrayBufferContents&&, int32_t);
+#if ENABLE(WEBASSEMBLY)
+    using Content = Variant<ArrayBufferContents, Ref<Wasm::MemoryHandle>>;
+#else
+    using Content = Variant<ArrayBufferContents>;
+#endif
+    Message(Content&&, int32_t);
     ~Message();
     
-    ArrayBufferContents&& releaseContents() { return WTFMove(m_contents); }
+    Content&& releaseContents() { return WTFMove(m_contents); }
     int32_t index() const { return m_index; }
 
 private:
-    ArrayBufferContents m_contents;
+    Content m_contents;
     int32_t m_index { 0 };
 };
 
@@ -1784,7 +1789,7 @@ JSC_DEFINE_HOST_FUNCTION(functionCallerIsOMGCompiled, (JSGlobalObject* globalObj
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-Message::Message(ArrayBufferContents&& contents, int32_t index)
+Message::Message(Content&& contents, int32_t index)
     : m_contents(WTFMove(contents))
     , m_index(index)
 {
@@ -1946,10 +1951,16 @@ JSC_DEFINE_HOST_FUNCTION(functionDollarAgentStart, (JSGlobalObject* globalObject
 
     if (isGigacageMemoryExhausted(Gigacage::JSValue) || isGigacageMemoryExhausted(Gigacage::Primitive))
         return JSValue::encode(throwOutOfMemoryError(globalObject, scope, "Gigacage is exhausted"_s));
+
+    String workerPath = "worker"_s;
+    if (!callFrame->argument(1).isUndefined()) {
+        workerPath = callFrame->argument(1).toWTFString(globalObject);
+        RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    }
     
     Thread::create(
         "JSC Agent",
-        [sourceCode = sourceCode.isolatedCopy(), &didStartLock, &didStartCondition, &didStart] () {
+        [sourceCode = sourceCode.isolatedCopy(), workerPath = workerPath.isolatedCopy(), &didStartLock, &didStartCondition, &didStart] () {
             CommandLine commandLine(CommandLine::CommandLineForWorkers);
             commandLine.m_interactive = false;
             runJSC(
@@ -1964,7 +1975,7 @@ JSC_DEFINE_HOST_FUNCTION(functionDollarAgentStart, (JSGlobalObject* globalObject
                     
                     NakedPtr<Exception> evaluationException;
                     JSValue result;
-                    result = evaluate(globalObject, jscSource(sourceCode, SourceOrigin(URL({ }, "worker"_s))), JSValue(), evaluationException);
+                    result = evaluate(globalObject, jscSource(sourceCode, SourceOrigin(URL({ }, workerPath))), JSValue(), evaluationException);
                     if (evaluationException)
                         result = evaluationException->value();
                     checkException(globalObject, true, evaluationException, result, commandLine, success);
@@ -1997,13 +2008,31 @@ JSC_DEFINE_HOST_FUNCTION(functionDollarAgentReceiveBroadcast, (JSGlobalObject* g
         ReleaseHeapAccessScope releaseAccess(vm.heap);
         message = Worker::current().dequeue();
     }
-    
-    auto nativeBuffer = ArrayBuffer::create(message->releaseContents());
-    ArrayBufferSharingMode sharingMode = nativeBuffer->sharingMode();
-    JSArrayBuffer* jsBuffer = JSArrayBuffer::create(vm, globalObject->arrayBufferStructure(sharingMode), WTFMove(nativeBuffer));
-    
+
+    auto content = message->releaseContents();
+    JSValue result = ([&]() -> JSValue {
+        if (WTF::holds_alternative<ArrayBufferContents>(content)) {
+            auto nativeBuffer = ArrayBuffer::create(WTF::get<ArrayBufferContents>(WTFMove(content)));
+            ArrayBufferSharingMode sharingMode = nativeBuffer->sharingMode();
+            return JSArrayBuffer::create(vm, globalObject->arrayBufferStructure(sharingMode), WTFMove(nativeBuffer));
+        }
+#if ENABLE(WEBASSEMBLY)
+        if (WTF::holds_alternative<Ref<Wasm::MemoryHandle>>(content)) {
+            JSWebAssemblyMemory* jsMemory = JSC::JSWebAssemblyMemory::tryCreate(globalObject, vm, globalObject->webAssemblyMemoryStructure());
+            scope.releaseAssertNoException();
+            Ref<Wasm::Memory> memory = Wasm::Memory::create(WTF::get<Ref<Wasm::MemoryHandle>>(WTFMove(content)),
+                [&vm] (Wasm::Memory::NotifyPressure) { vm.heap.collectAsync(CollectionScope::Full); },
+                [&vm] (Wasm::Memory::SyncTryToReclaim) { vm.heap.collectSync(CollectionScope::Full); },
+                [&vm, jsMemory] (Wasm::Memory::GrowSuccess, Wasm::PageCount oldPageCount, Wasm::PageCount newPageCount) { jsMemory->growSuccessCallback(vm, oldPageCount, newPageCount); });
+            jsMemory->adopt(WTFMove(memory));
+            return jsMemory;
+        }
+#endif
+        return jsUndefined();
+    })();
+
     MarkedArgumentBuffer args;
-    args.append(jsBuffer);
+    args.append(result);
     args.append(jsNumber(message->index()));
     if (UNLIKELY(args.hasOverflowed()))
         return JSValue::encode(throwOutOfMemoryError(globalObject, scope));
@@ -2041,23 +2070,36 @@ JSC_DEFINE_HOST_FUNCTION(functionDollarAgentBroadcast, (JSGlobalObject* globalOb
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSArrayBuffer* jsBuffer = jsDynamicCast<JSArrayBuffer*>(vm, callFrame->argument(0));
-    if (!jsBuffer || !jsBuffer->isShared())
-        return JSValue::encode(throwException(globalObject, scope, createError(globalObject, "Expected SharedArrayBuffer"_s)));
-    
     int32_t index = callFrame->argument(1).toInt32(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    
-    Workers::singleton().broadcast(
-        [&] (const AbstractLocker& locker, Worker& worker) {
-            ArrayBuffer* nativeBuffer = jsBuffer->impl();
-            ArrayBufferContents contents;
-            nativeBuffer->transferTo(vm, contents); // "transferTo" means "share" if the buffer is shared.
-            RefPtr<Message> message = adoptRef(new Message(WTFMove(contents), index));
-            worker.enqueue(locker, message);
-        });
-    
-    return JSValue::encode(jsUndefined());
+
+    JSArrayBuffer* jsBuffer = jsDynamicCast<JSArrayBuffer*>(vm, callFrame->argument(0));
+    if (jsBuffer && jsBuffer->isShared()) {
+        Workers::singleton().broadcast(
+            [&] (const AbstractLocker& locker, Worker& worker) {
+                ArrayBuffer* nativeBuffer = jsBuffer->impl();
+                ArrayBufferContents contents;
+                nativeBuffer->transferTo(vm, contents); // "transferTo" means "share" if the buffer is shared.
+                RefPtr<Message> message = adoptRef(new Message(WTFMove(contents), index));
+                worker.enqueue(locker, message);
+            });
+        return JSValue::encode(jsUndefined());
+    }
+
+#if ENABLE(WEBASSEMBLY)
+    JSWebAssemblyMemory* memory = jsDynamicCast<JSWebAssemblyMemory*>(vm, callFrame->argument(0));
+    if (memory && memory->memory().sharingMode() == Wasm::MemorySharingMode::Shared) {
+        Workers::singleton().broadcast(
+            [&] (const AbstractLocker& locker, Worker& worker) {
+                Ref<Wasm::MemoryHandle> handle { memory->memory().handle() };
+                RefPtr<Message> message = adoptRef(new Message(WTFMove(handle), index));
+                worker.enqueue(locker, message);
+            });
+        return JSValue::encode(jsUndefined());
+    }
+#endif
+
+    return JSValue::encode(throwException(globalObject, scope, createError(globalObject, "Not supported object"_s)));
 }
 
 JSC_DEFINE_HOST_FUNCTION(functionDollarAgentGetReport, (JSGlobalObject* globalObject, CallFrame*))

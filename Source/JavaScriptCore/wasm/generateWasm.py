@@ -93,13 +93,45 @@ def isBinary(op):
     return isNormal(op) and len(op["parameter"]) == 2
 
 
+def isAtomic(op):
+    return op["category"].startswith("atomic")
+
+
+def isAtomicLoad(op):
+    return op["category"] == "atomic.load"
+
+
+def isAtomicStore(op):
+    return op["category"] == "atomic.store"
+
+
+def isAtomicBinaryRMW(op):
+    return op["category"] == "atomic.rmw.binary"
+
+
 def isSimple(op):
     return "b3op" in op
 
 
 def memoryLog2Alignment(op):
-    assert op["opcode"]["category"] == "memory"
-    match = re.match(r'^[if]([36][24])\.[^0-9]+([0-9]+)?_?[us]?$', op["name"])
-    memoryBits = int(match.group(2) if match.group(2) else match.group(1))
+    assert op["opcode"]["category"] == "memory" or op["opcode"]["category"] == "atomic.load" or op["opcode"]["category"] == "atomic.store" or op["opcode"]["category"] == "atomic.rmw" or op["opcode"]["category"] == "atomic" or op["opcode"]["category"] == "atomic.rmw.binary"
+    if op["opcode"]["category"] == "atomic.rmw.binary" or op["opcode"]["category"] == "atomic.rmw":
+        match = re.match(r'^[if]([36][24])\.[^0-9]+([0-9]+)?\.[^0-9]+_?[us]?$', op["name"])
+        if not match:
+            print(op["name"])
+        memoryBits = int(match.group(2) if match.group(2) else match.group(1))
+    elif op["opcode"]["category"] == "atomic":
+        if op["name"] == "atomic.fence":
+            memoryBits = 8
+        elif op["name"] == "memory.atomic.notify":
+            memoryBits = 32
+        else:
+            match = re.match(r'^memory\.atomic\.wait([0-9]+)$', op["name"])
+            memoryBits = int(match.group(1))
+    else:
+        match = re.match(r'^[if]([36][24])\.[^0-9]+([0-9]+)?_?[us]?$', op["name"])
+        if not match:
+            print(op["name"])
+        memoryBits = int(match.group(2) if match.group(2) else match.group(1))
     assert 2 ** math.log(memoryBits, 2) == memoryBits
     return str(int(math.log(memoryBits / 8, 2)))

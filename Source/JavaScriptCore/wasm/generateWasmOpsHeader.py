@@ -92,8 +92,26 @@ def memoryStoreMacroizer():
     return opcodeMacroizer(lambda op: (op["category"] == "memory" and len(op["return"]) == 0), modifier=modifier)
 
 
+def atomicMemoryLoadMacroizer():
+    def modifier(op):
+        return [cppType(op["return"][0])]
+    return opcodeMacroizer(lambda op: isAtomicLoad(op), modifier=modifier, opcodeField="extendedOp")
+
+
+def atomicMemoryStoreMacroizer():
+    def modifier(op):
+        return [cppType(op["parameter"][1])]
+    return opcodeMacroizer(lambda op: isAtomicStore(op), modifier=modifier, opcodeField="extendedOp")
+
+
+def atomicBinaryRMWMacroizer():
+    def modifier(op):
+        return [cppType(op["parameter"][1])]
+    return opcodeMacroizer(lambda op: isAtomicBinaryRMW(op), modifier=modifier, opcodeField="extendedOp")
+
+
 defines = ["#define FOR_EACH_WASM_SPECIAL_OP(macro)"]
-defines.extend([op for op in opcodeMacroizer(lambda op: not (isUnary(op) or isBinary(op) or op["category"] == "control" or op["category"] == "memory" or op["category"] == "exttable"))])
+defines.extend([op for op in opcodeMacroizer(lambda op: not (isUnary(op) or isBinary(op) or op["category"] == "control" or op["category"] == "memory" or op["category"] == "exttable"or isAtomic(op)))])
 defines.append("\n\n#define FOR_EACH_WASM_CONTROL_FLOW_OP(macro)")
 defines.extend([op for op in opcodeMacroizer(lambda op: op["category"] == "control")])
 defines.append("\n\n#define FOR_EACH_WASM_SIMPLE_UNARY_OP(macro)")
@@ -110,6 +128,14 @@ defines.append("\n\n#define FOR_EACH_WASM_MEMORY_STORE_OP(macro)")
 defines.extend([op for op in memoryStoreMacroizer()])
 defines.append("\n\n#define FOR_EACH_WASM_EXT_TABLE_OP(macro)")
 defines.extend([op for op in opcodeMacroizer(lambda op: (op["category"] == "exttable"), opcodeField="extendedOp")])
+defines.append("\n\n#define FOR_EACH_WASM_EXT_ATOMIC_LOAD_OP(macro)")
+defines.extend([op for op in atomicMemoryLoadMacroizer()])
+defines.append("\n\n#define FOR_EACH_WASM_EXT_ATOMIC_STORE_OP(macro)")
+defines.extend([op for op in atomicMemoryStoreMacroizer()])
+defines.append("\n\n#define FOR_EACH_WASM_EXT_ATOMIC_BINARY_RMW_OP(macro)")
+defines.extend([op for op in atomicBinaryRMWMacroizer()])
+defines.append("\n\n#define FOR_EACH_WASM_EXT_ATOMIC_OTHER_OP(macro)")
+defines.extend([op for op in opcodeMacroizer(lambda op: isAtomic(op) and (not isAtomicLoad(op) and not isAtomicStore(op) and not isAtomicBinaryRMW(op)), opcodeField="extendedOp")])
 defines.append("\n\n")
 
 defines = "".join(defines)
@@ -142,9 +168,17 @@ def memoryLog2AlignmentGenerator(filter):
         result.append("    case " + wasm.toCpp(op["name"]) + ": return " + memoryLog2Alignment(op) + ";")
     return "\n".join(result)
 
+
+def atomicMemoryLog2AlignmentGenerator(filter):
+    result = []
+    for op in wasm.opcodeIterator(filter):
+        result.append("    case ExtAtomicOpType::" + wasm.toCpp(op["name"]) + ": return " + memoryLog2Alignment(op) + ";")
+    return "\n".join(result)
+
+
 memoryLog2AlignmentLoads = memoryLog2AlignmentGenerator(lambda op: (op["category"] == "memory" and len(op["return"]) == 1))
 memoryLog2AlignmentStores = memoryLog2AlignmentGenerator(lambda op: (op["category"] == "memory" and len(op["return"]) == 0))
-
+memoryLog2AlignmentAtomic = atomicMemoryLog2AlignmentGenerator(lambda op: (isAtomic(op)))
 
 contents = wasm.header + """
 
@@ -233,7 +267,8 @@ inline Type linearizedToType(int i)
     FOR_EACH_WASM_BINARY_OP(macro) \\
     FOR_EACH_WASM_MEMORY_LOAD_OP(macro) \\
     FOR_EACH_WASM_MEMORY_STORE_OP(macro) \\
-    macro(ExtTable, 0xFC, Oops, 0)
+    macro(ExtTable,  0xFC, Oops, 0) \\
+    macro(ExtAtomic, 0xFE, Oops, 0)
 
 #define CREATE_ENUM_VALUE(name, id, ...) name = id,
 
@@ -267,6 +302,13 @@ enum class StoreOpType : uint8_t {
 
 enum class ExtTableOpType : uint8_t {
     FOR_EACH_WASM_EXT_TABLE_OP(CREATE_ENUM_VALUE)
+};
+
+enum class ExtAtomicOpType : uint8_t {
+    FOR_EACH_WASM_EXT_ATOMIC_LOAD_OP(CREATE_ENUM_VALUE)
+    FOR_EACH_WASM_EXT_ATOMIC_STORE_OP(CREATE_ENUM_VALUE)
+    FOR_EACH_WASM_EXT_ATOMIC_BINARY_RMW_OP(CREATE_ENUM_VALUE)
+    FOR_EACH_WASM_EXT_ATOMIC_OTHER_OP(CREATE_ENUM_VALUE)
 };
 
 #undef CREATE_ENUM_VALUE
@@ -315,6 +357,17 @@ inline uint32_t memoryLog2Alignment(OpType op)
     switch (op) {
 """ + memoryLog2AlignmentLoads + """
 """ + memoryLog2AlignmentStores + """
+    default:
+        break;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+    return 0;
+}
+
+inline uint32_t memoryLog2Alignment(ExtAtomicOpType op)
+{
+    switch (op) {
+""" + memoryLog2AlignmentAtomic + """
     default:
         break;
     }

@@ -372,18 +372,18 @@ class Sequence
         result = riscLowerMalformedAddresses(result) {
             | node, address |
             case node.opcode
-            when "loadb", "loadbsi", "loadbsq", "storeb", /^bb/, /^btb/, /^cb/, /^tb/
+            when "loadb", "loadbsi", "loadbsq", "storeb", /^bb/, /^btb/, /^cb/, /^tb/, "loadlinkacqb", "storecondrelb"
                 size = 1
-            when "loadh", "loadhsi", "loadhsq", "orh", "storeh"
+            when "loadh", "loadhsi", "loadhsq", "orh", "storeh", "loadlinkacqh", "storecondrelh"
                 size = 2
             when "loadi", "loadis", "storei", "addi", "andi", "lshifti", "muli", "negi",
                 "noti", "ori", "rshifti", "urshifti", "subi", "xori", /^bi/, /^bti/,
-                /^ci/, /^ti/, "addis", "subis", "mulis", "smulli", "leai", "loadf", "storef"
+                /^ci/, /^ti/, "addis", "subis", "mulis", "smulli", "leai", "loadf", "storef", "loadlinkacqi", "storecondreli"
                 size = 4
             when "loadp", "storep", "loadq", "storeq", "loadd", "stored", "lshiftp", "lshiftq", "negp", "negq", "rshiftp", "rshiftq",
                 "urshiftp", "urshiftq", "addp", "addq", "mulp", "mulq", "andp", "andq", "orp", "orq", "subp", "subq", "xorp", "xorq", "addd",
                 "divd", "subd", "muld", "sqrtd", /^bp/, /^bq/, /^btp/, /^btq/, /^cp/, /^cq/, /^tp/, /^tq/, /^bd/,
-                "jmp", "call", "leap", "leaq"
+                "jmp", "call", "leap", "leaq", "loadlinkacqq", "storecondrelq"
                 size = $currentSettings["ADDRESS64"] ? 8 : 4
             else
                 raise "Bad instruction #{node.opcode} for heap access at #{node.codeOriginString}: #{node.dump}"
@@ -1095,6 +1095,8 @@ class Instruction
             $asm.puts "smaddl #{operands[2].arm64Operand(:quad)}, #{operands[0].arm64Operand(:word)}, #{operands[1].arm64Operand(:word)}, xzr"
         when "memfence"
             $asm.puts "dmb sy"
+        when "fence"
+            $asm.puts "dmb ish"
         when "bfiq"
             $asm.puts "bfi #{operands[3].arm64Operand(:quad)}, #{operands[0].arm64Operand(:quad)}, #{operands[1].value}, #{operands[2].value}"
         when "pcrtoaddr"
@@ -1309,6 +1311,22 @@ class Instruction
             $asm.puts "mrs #{tmp}, tpidrro_el0"
             $asm.puts "bic #{tmp}, #{tmp}, #7"
             $asm.puts "str #{operands[0].arm64Operand(:ptr)}, [#{tmp}, #{offset}]"
+        when "loadlinkacqb"
+            $asm.puts "ldaxrb #{operands[1].arm64Operand(:word)}, #{operands[0].arm64Operand(:word)}"
+        when "loadlinkacqh"
+            $asm.puts "ldaxrh #{operands[1].arm64Operand(:word)}, #{operands[0].arm64Operand(:word)}"
+        when "loadlinkacqi"
+            $asm.puts "ldaxr #{operands[1].arm64Operand(:word)}, #{operands[0].arm64Operand(:word)}"
+        when "loadlinkacqq"
+            $asm.puts "ldaxr #{operands[1].arm64Operand(:quad)}, #{operands[0].arm64Operand(:quad)}"
+        when "storecondrelb"
+            $asm.puts "stlxrb #{operands[0].arm64Operand(:word)}, #{operands[1].arm64Operand(:word)}, #{operands[2].arm64Operand(:word)}"
+        when "storecondrelh"
+            $asm.puts "stlxrh #{operands[0].arm64Operand(:word)}, #{operands[1].arm64Operand(:word)}, #{operands[2].arm64Operand(:word)}"
+        when "storecondreli"
+            $asm.puts "stlxr #{operands[0].arm64Operand(:word)}, #{operands[1].arm64Operand(:word)}, #{operands[2].arm64Operand(:word)}"
+        when "storecondrelq"
+            $asm.puts "stlxr #{operands[0].arm64Operand(:word)}, #{operands[1].arm64Operand(:quad)}, #{operands[2].arm64Operand(:quad)}"
         else
             lowerDefault
         end

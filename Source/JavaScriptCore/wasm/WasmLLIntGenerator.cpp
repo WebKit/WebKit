@@ -209,6 +209,15 @@ public:
     PartialResult WARN_UNUSED_RETURN addGrowMemory(ExpressionType delta, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addCurrentMemory(ExpressionType& result);
 
+    // Atomics
+    PartialResult WARN_UNUSED_RETURN atomicLoad(ExtAtomicOpType, Type, ExpressionType pointer, ExpressionType& result, uint32_t offset);
+    PartialResult WARN_UNUSED_RETURN atomicStore(ExtAtomicOpType, Type, ExpressionType pointer, ExpressionType value, uint32_t offset);
+    PartialResult WARN_UNUSED_RETURN atomicBinaryRMW(ExtAtomicOpType, Type, ExpressionType pointer, ExpressionType value, ExpressionType& result, uint32_t offset);
+    PartialResult WARN_UNUSED_RETURN atomicCompareExchange(ExtAtomicOpType, Type, ExpressionType pointer, ExpressionType expected, ExpressionType value, ExpressionType& result, uint32_t offset);
+    PartialResult WARN_UNUSED_RETURN atomicWait(ExtAtomicOpType, ExpressionType pointer, ExpressionType value, ExpressionType timeout, ExpressionType& result, uint32_t offset);
+    PartialResult WARN_UNUSED_RETURN atomicNotify(ExtAtomicOpType, ExpressionType pointer, ExpressionType value, ExpressionType& result, uint32_t offset);
+    PartialResult WARN_UNUSED_RETURN atomicFence(ExtAtomicOpType, uint8_t flags);
+
     // Basic operators
     template<OpType>
     PartialResult WARN_UNUSED_RETURN addOp(ExpressionType arg, ExpressionType& result);
@@ -1237,6 +1246,219 @@ auto LLIntGenerator::store(StoreOpType op, ExpressionType pointer, ExpressionTyp
         break;
     }
 
+    return { };
+}
+
+auto LLIntGenerator::atomicLoad(ExtAtomicOpType op, Type, ExpressionType pointer, ExpressionType& result, uint32_t offset) -> PartialResult
+{
+    result = push();
+    switch (op) {
+    case ExtAtomicOpType::I32AtomicLoad8U:
+    case ExtAtomicOpType::I64AtomicLoad8U:
+        WasmI64AtomicRmw8AddU::emit(this, result, pointer, offset, zeroConstant());
+        break;
+    case ExtAtomicOpType::I32AtomicLoad16U:
+    case ExtAtomicOpType::I64AtomicLoad16U:
+        WasmI64AtomicRmw16AddU::emit(this, result, pointer, offset, zeroConstant());
+        break;
+    case ExtAtomicOpType::I32AtomicLoad:
+    case ExtAtomicOpType::I64AtomicLoad32U:
+        WasmI64AtomicRmw32AddU::emit(this, result, pointer, offset, zeroConstant());
+        break;
+    case ExtAtomicOpType::I64AtomicLoad:
+        WasmI64AtomicRmwAdd::emit(this, result, pointer, offset, zeroConstant());
+        break;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+
+    return { };
+}
+
+auto LLIntGenerator::atomicStore(ExtAtomicOpType op, Type, ExpressionType pointer, ExpressionType value, uint32_t offset) -> PartialResult
+{
+    auto result = push();
+    switch (op) {
+    case ExtAtomicOpType::I32AtomicStore8U:
+    case ExtAtomicOpType::I64AtomicStore8U:
+        WasmI64AtomicRmw8XchgU::emit(this, result, pointer, offset, value);
+        break;
+    case ExtAtomicOpType::I32AtomicStore16U:
+    case ExtAtomicOpType::I64AtomicStore16U:
+        WasmI64AtomicRmw16XchgU::emit(this, result, pointer, offset, value);
+        break;
+    case ExtAtomicOpType::I32AtomicStore:
+    case ExtAtomicOpType::I64AtomicStore32U:
+        WasmI64AtomicRmw32XchgU::emit(this, result, pointer, offset, value);
+        break;
+    case ExtAtomicOpType::I64AtomicStore:
+        WasmI64AtomicRmwXchg::emit(this, result, pointer, offset, value);
+        break;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+
+    didPopValueFromStack(); // Ignore the result.
+    return { };
+}
+
+auto LLIntGenerator::atomicBinaryRMW(ExtAtomicOpType op, Type, ExpressionType pointer, ExpressionType value, ExpressionType& result, uint32_t offset) -> PartialResult
+{
+    result = push();
+    switch (op) {
+    case ExtAtomicOpType::I32AtomicRmw8AddU:
+    case ExtAtomicOpType::I64AtomicRmw8AddU:
+        WasmI64AtomicRmw8AddU::emit(this, result, pointer, offset, value);
+        break;
+    case ExtAtomicOpType::I32AtomicRmw16AddU:
+    case ExtAtomicOpType::I64AtomicRmw16AddU:
+        WasmI64AtomicRmw16AddU::emit(this, result, pointer, offset, value);
+        break;
+    case ExtAtomicOpType::I32AtomicRmwAdd:
+    case ExtAtomicOpType::I64AtomicRmw32AddU:
+        WasmI64AtomicRmw32AddU::emit(this, result, pointer, offset, value);
+        break;
+    case ExtAtomicOpType::I64AtomicRmwAdd:
+        WasmI64AtomicRmwAdd::emit(this, result, pointer, offset, value);
+        break;
+    case ExtAtomicOpType::I32AtomicRmw8SubU:
+    case ExtAtomicOpType::I64AtomicRmw8SubU:
+        WasmI64AtomicRmw8SubU::emit(this, result, pointer, offset, value);
+        break;
+    case ExtAtomicOpType::I32AtomicRmw16SubU:
+    case ExtAtomicOpType::I64AtomicRmw16SubU:
+        WasmI64AtomicRmw16SubU::emit(this, result, pointer, offset, value);
+        break;
+    case ExtAtomicOpType::I32AtomicRmwSub:
+    case ExtAtomicOpType::I64AtomicRmw32SubU:
+        WasmI64AtomicRmw32SubU::emit(this, result, pointer, offset, value);
+        break;
+    case ExtAtomicOpType::I64AtomicRmwSub:
+        WasmI64AtomicRmwSub::emit(this, result, pointer, offset, value);
+        break;
+    case ExtAtomicOpType::I32AtomicRmw8AndU:
+    case ExtAtomicOpType::I64AtomicRmw8AndU:
+        WasmI64AtomicRmw8AndU::emit(this, result, pointer, offset, value);
+        break;
+    case ExtAtomicOpType::I32AtomicRmw16AndU:
+    case ExtAtomicOpType::I64AtomicRmw16AndU:
+        WasmI64AtomicRmw16AndU::emit(this, result, pointer, offset, value);
+        break;
+    case ExtAtomicOpType::I32AtomicRmwAnd:
+    case ExtAtomicOpType::I64AtomicRmw32AndU:
+        WasmI64AtomicRmw32AndU::emit(this, result, pointer, offset, value);
+        break;
+    case ExtAtomicOpType::I64AtomicRmwAnd:
+        WasmI64AtomicRmwAnd::emit(this, result, pointer, offset, value);
+        break;
+    case ExtAtomicOpType::I32AtomicRmw8OrU:
+    case ExtAtomicOpType::I64AtomicRmw8OrU:
+        WasmI64AtomicRmw8OrU::emit(this, result, pointer, offset, value);
+        break;
+    case ExtAtomicOpType::I32AtomicRmw16OrU:
+    case ExtAtomicOpType::I64AtomicRmw16OrU:
+        WasmI64AtomicRmw16OrU::emit(this, result, pointer, offset, value);
+        break;
+    case ExtAtomicOpType::I32AtomicRmwOr:
+    case ExtAtomicOpType::I64AtomicRmw32OrU:
+        WasmI64AtomicRmw32OrU::emit(this, result, pointer, offset, value);
+        break;
+    case ExtAtomicOpType::I64AtomicRmwOr:
+        WasmI64AtomicRmwOr::emit(this, result, pointer, offset, value);
+        break;
+    case ExtAtomicOpType::I32AtomicRmw8XorU:
+    case ExtAtomicOpType::I64AtomicRmw8XorU:
+        WasmI64AtomicRmw8XorU::emit(this, result, pointer, offset, value);
+        break;
+    case ExtAtomicOpType::I32AtomicRmw16XorU:
+    case ExtAtomicOpType::I64AtomicRmw16XorU:
+        WasmI64AtomicRmw16XorU::emit(this, result, pointer, offset, value);
+        break;
+    case ExtAtomicOpType::I32AtomicRmwXor:
+    case ExtAtomicOpType::I64AtomicRmw32XorU:
+        WasmI64AtomicRmw32XorU::emit(this, result, pointer, offset, value);
+        break;
+    case ExtAtomicOpType::I64AtomicRmwXor:
+        WasmI64AtomicRmwXor::emit(this, result, pointer, offset, value);
+        break;
+    case ExtAtomicOpType::I32AtomicRmw8XchgU:
+    case ExtAtomicOpType::I64AtomicRmw8XchgU:
+        WasmI64AtomicRmw8XchgU::emit(this, result, pointer, offset, value);
+        break;
+    case ExtAtomicOpType::I32AtomicRmw16XchgU:
+    case ExtAtomicOpType::I64AtomicRmw16XchgU:
+        WasmI64AtomicRmw16XchgU::emit(this, result, pointer, offset, value);
+        break;
+    case ExtAtomicOpType::I32AtomicRmwXchg:
+    case ExtAtomicOpType::I64AtomicRmw32XchgU:
+        WasmI64AtomicRmw32XchgU::emit(this, result, pointer, offset, value);
+        break;
+    case ExtAtomicOpType::I64AtomicRmwXchg:
+        WasmI64AtomicRmwXchg::emit(this, result, pointer, offset, value);
+        break;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        break;
+    }
+
+    return { };
+}
+
+auto LLIntGenerator::atomicCompareExchange(ExtAtomicOpType op, Type, ExpressionType pointer, ExpressionType expected, ExpressionType value, ExpressionType& result, uint32_t offset) -> PartialResult
+{
+    result = push();
+    switch (op) {
+    case ExtAtomicOpType::I32AtomicRmw8CmpxchgU:
+    case ExtAtomicOpType::I64AtomicRmw8CmpxchgU:
+        WasmI64AtomicRmw8CmpxchgU::emit(this, result, pointer, offset, expected, value);
+        break;
+    case ExtAtomicOpType::I32AtomicRmw16CmpxchgU:
+    case ExtAtomicOpType::I64AtomicRmw16CmpxchgU:
+        WasmI64AtomicRmw16CmpxchgU::emit(this, result, pointer, offset, expected, value);
+        break;
+    case ExtAtomicOpType::I32AtomicRmwCmpxchg:
+    case ExtAtomicOpType::I64AtomicRmw32CmpxchgU:
+        WasmI64AtomicRmw32CmpxchgU::emit(this, result, pointer, offset, expected, value);
+        break;
+    case ExtAtomicOpType::I64AtomicRmwCmpxchg:
+        WasmI64AtomicRmwCmpxchg::emit(this, result, pointer, offset, expected, value);
+        break;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        break;
+    }
+
+    return { };
+}
+
+auto LLIntGenerator::atomicWait(ExtAtomicOpType op, ExpressionType pointer, ExpressionType value, ExpressionType timeout, ExpressionType& result, uint32_t offset) -> PartialResult
+{
+    result = push();
+    switch (op) {
+    case ExtAtomicOpType::MemoryAtomicWait32:
+        WasmMemoryAtomicWait32::emit(this, result, pointer, offset, value, timeout);
+        break;
+    case ExtAtomicOpType::MemoryAtomicWait64:
+        WasmMemoryAtomicWait64::emit(this, result, pointer, offset, value, timeout);
+        break;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        break;
+    }
+    return { };
+}
+
+auto LLIntGenerator::atomicNotify(ExtAtomicOpType op, ExpressionType pointer, ExpressionType count, ExpressionType& result, uint32_t offset) -> PartialResult
+{
+    result = push();
+    RELEASE_ASSERT(op == ExtAtomicOpType::MemoryAtomicNotify);
+    WasmMemoryAtomicNotify::emit(this, result, pointer, offset, count);
+    return { };
+}
+
+auto LLIntGenerator::atomicFence(ExtAtomicOpType, uint8_t) -> PartialResult
+{
+    WasmAtomicFence::emit(this);
     return { };
 }
 

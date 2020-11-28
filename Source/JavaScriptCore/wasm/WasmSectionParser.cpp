@@ -177,14 +177,18 @@ auto SectionParser::parseFunction() -> PartialResult
     return { };
 }
 
-auto SectionParser::parseResizableLimits(uint32_t& initial, Optional<uint32_t>& maximum) -> PartialResult
+auto SectionParser::parseResizableLimits(uint32_t& initial, Optional<uint32_t>& maximum, bool& isShared, LimitsType limitsType) -> PartialResult
 {
     ASSERT(!maximum);
 
     uint8_t flags;
     WASM_PARSER_FAIL_IF(!parseUInt8(flags), "can't parse resizable limits flags");
-    WASM_PARSER_FAIL_IF(flags != 0x0 && flags != 0x1, "resizable limits flag should be 0x00 or 0x01 but 0x", hex(flags, 2, Lowercase));
+    WASM_PARSER_FAIL_IF(flags != 0x0 && flags != 0x1 && flags != 0x3, "resizable limits flag should be 0x00, 0x01, or 0x03 but 0x", hex(flags, 2, Lowercase));
+    WASM_PARSER_FAIL_IF(flags == 0x3 && limitsType != LimitsType::Memory, "can't use shared limits for non memory");
     WASM_PARSER_FAIL_IF(!parseVarUInt32(initial), "can't parse resizable limits initial page count");
+
+    isShared = flags == 0x3;
+    WASM_PARSER_FAIL_IF(isShared && !Options::useSharedArrayBuffer(), "shared memory is not enabled");
 
     if (flags) {
         uint32_t maximumInt;
@@ -206,7 +210,8 @@ auto SectionParser::parseTableHelper(bool isImport) -> PartialResult
 
     uint32_t initial;
     Optional<uint32_t> maximum;
-    PartialResult limits = parseResizableLimits(initial, maximum);
+    bool isShared = false;
+    PartialResult limits = parseResizableLimits(initial, maximum, isShared, LimitsType::Table);
     if (UNLIKELY(!limits))
         return makeUnexpected(WTFMove(limits.error()));
     WASM_PARSER_FAIL_IF(initial > maxTableEntries, "Table's initial page count of ", initial, " is too big, maximum ", maxTableEntries);
@@ -240,10 +245,11 @@ auto SectionParser::parseMemoryHelper(bool isImport) -> PartialResult
 
     PageCount initialPageCount;
     PageCount maximumPageCount;
+    bool isShared = false;
     {
         uint32_t initial;
         Optional<uint32_t> maximum;
-        PartialResult limits = parseResizableLimits(initial, maximum);
+        PartialResult limits = parseResizableLimits(initial, maximum, isShared, LimitsType::Memory);
         if (UNLIKELY(!limits))
             return makeUnexpected(WTFMove(limits.error()));
         ASSERT(!maximum || *maximum >= initial);
@@ -259,7 +265,7 @@ auto SectionParser::parseMemoryHelper(bool isImport) -> PartialResult
     ASSERT(initialPageCount);
     ASSERT(!maximumPageCount || maximumPageCount >= initialPageCount);
 
-    m_info->memory = MemoryInformation(initialPageCount, maximumPageCount, isImport);
+    m_info->memory = MemoryInformation(initialPageCount, maximumPageCount, isShared, isImport);
     return { };
 }
 

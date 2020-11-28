@@ -344,6 +344,27 @@ X86_INSTRUCTIONS =
      "cqoq",
      "idivq",
      "udivq",
+     "atomicxchgaddb",
+     "atomicxchgaddh",
+     "atomicxchgaddi",
+     "atomicxchgaddq",
+     "atomicxchgsubb",
+     "atomicxchgsubh",
+     "atomicxchgsubi",
+     "atomicxchgsubq",
+     "atomicxchgb",
+     "atomicxchgh",
+     "atomicxchgi",
+     "atomicxchgq",
+     "batomicweakcasb",
+     "batomicweakcash",
+     "batomicweakcasi",
+     "batomicweakcasq",
+     "atomicweakcasb",
+     "atomicweakcash",
+     "atomicweakcasi",
+     "atomicweakcasq",
+     "fence",
     ]
 
 ARM_INSTRUCTIONS =
@@ -362,6 +383,15 @@ ARM64_INSTRUCTIONS =
      "divis",
      "divq",
      "divqs",
+     "loadlinkacqb",
+     "loadlinkacqh",
+     "loadlinkacqi",
+     "loadlinkacqq",
+     "storecondrelb",
+     "storecondrelh",
+     "storecondreli",
+     "storecondrelq",
+     "fence",
     ]
 
 RISC_INSTRUCTIONS =

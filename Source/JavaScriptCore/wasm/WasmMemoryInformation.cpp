@@ -60,9 +60,10 @@ PinnedRegisterInfo::PinnedRegisterInfo(GPRReg boundsCheckingSizeRegister, GPRReg
 {
 }
 
-MemoryInformation::MemoryInformation(PageCount initial, PageCount maximum, bool isImport)
+MemoryInformation::MemoryInformation(PageCount initial, PageCount maximum, bool isShared, bool isImport)
     : m_initial(initial)
     , m_maximum(maximum)
+    , m_isShared(isShared)
     , m_isImport(isImport)
 {
     RELEASE_ASSERT(!!m_initial);

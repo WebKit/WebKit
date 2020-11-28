@@ -1,3 +1,136 @@
+2020-11-26  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Add wasm atomics instructions
+        https://bugs.webkit.org/show_bug.cgi?id=218954
+
+        Reviewed by Filip Pizlo.
+
+        This patch implements wasm threading's atomic operations[1] in X86_64 and ARM64. Currently, all ARM64 atomic operations are implemented by using LL/SC.
+        Later, we will use ARM64 CAS operations if possible, at least in ARM64E.
+
+        To test it easily, we also extend jsc shell's worker to support transferring shared WebAssembly.Memory so that we can use wasm atomic operations in several
+        workers in jsc shell.
+
+        [1]: https://github.com/WebAssembly/threads
+
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::atomicXchg8):
+        (JSC::MacroAssemblerX86Common::atomicXchg16):
+        (JSC::MacroAssemblerX86Common::atomicXchg32):
+        * b3/B3Kind.h:
+        (JSC::B3::Kind::hasTraps const):
+        * b3/B3LowerToAir.cpp:
+        * b3/B3Width.h:
+        (JSC::B3::bytesForWidth):
+        * b3/testb3_8.cpp:
+        (testAtomicXchg):
+        * bytecode/BytecodeList.rb:
+        * interpreter/Register.h:
+        (JSC::Register::unboxedInt64 const):
+        (JSC::Register::asanUnsafeUnboxedInt64 const):
+        * jsc.cpp:
+        (Message::releaseContents):
+        (Message::Message):
+        (JSC_DEFINE_HOST_FUNCTION):
+        * llint/WebAssembly.asm:
+        * offlineasm/arm64.rb:
+        * offlineasm/instructions.rb:
+        * offlineasm/x86.rb:
+        * runtime/OptionsList.h:
+        * wasm/WasmAirIRGenerator.cpp:
+        (JSC::Wasm::AirIRGenerator::appendEffectful):
+        (JSC::Wasm::accessWidth):
+        (JSC::Wasm::sizeOfAtomicOpMemoryAccess):
+        (JSC::Wasm::AirIRGenerator::fixupPointerPlusOffsetForAtomicOps):
+        (JSC::Wasm::AirIRGenerator::sanitizeAtomicResult):
+        (JSC::Wasm::AirIRGenerator::appendGeneralAtomic):
+        (JSC::Wasm::AirIRGenerator::appendStrongCAS):
+        (JSC::Wasm::AirIRGenerator::emitAtomicLoadOp):
+        (JSC::Wasm::AirIRGenerator::atomicLoad):
+        (JSC::Wasm::AirIRGenerator::emitAtomicStoreOp):
+        (JSC::Wasm::AirIRGenerator::atomicStore):
+        (JSC::Wasm::AirIRGenerator::emitAtomicBinaryRMWOp):
+        (JSC::Wasm::AirIRGenerator::atomicBinaryRMW):
+        (JSC::Wasm::AirIRGenerator::emitAtomicCompareExchange):
+        (JSC::Wasm::AirIRGenerator::atomicCompareExchange):
+        (JSC::Wasm::AirIRGenerator::atomicWait):
+        (JSC::Wasm::AirIRGenerator::atomicNotify):
+        (JSC::Wasm::AirIRGenerator::atomicFence):
+        (JSC::Wasm::AirIRGenerator::addCall):
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::emitCheckAndPreparePointer):
+        (JSC::Wasm::B3IRGenerator::memoryKind):
+        (JSC::Wasm::accessWidth):
+        (JSC::Wasm::sizeOfAtomicOpMemoryAccess):
+        (JSC::Wasm::B3IRGenerator::sanitizeAtomicResult):
+        (JSC::Wasm::B3IRGenerator::fixupPointerPlusOffsetForAtomicOps):
+        (JSC::Wasm::B3IRGenerator::emitAtomicLoadOp):
+        (JSC::Wasm::B3IRGenerator::atomicLoad):
+        (JSC::Wasm::B3IRGenerator::emitAtomicStoreOp):
+        (JSC::Wasm::B3IRGenerator::atomicStore):
+        (JSC::Wasm::B3IRGenerator::emitAtomicBinaryRMWOp):
+        (JSC::Wasm::B3IRGenerator::atomicBinaryRMW):
+        (JSC::Wasm::B3IRGenerator::emitAtomicCompareExchange):
+        (JSC::Wasm::B3IRGenerator::atomicCompareExchange):
+        (JSC::Wasm::B3IRGenerator::atomicWait):
+        (JSC::Wasm::B3IRGenerator::atomicNotify):
+        (JSC::Wasm::B3IRGenerator::atomicFence):
+        (JSC::Wasm::B3IRGenerator::addCall):
+        * wasm/WasmFunctionParser.h:
+        (JSC::Wasm::FunctionParser<Context>::atomicLoad):
+        (JSC::Wasm::FunctionParser<Context>::atomicStore):
+        (JSC::Wasm::FunctionParser<Context>::atomicBinaryRMW):
+        (JSC::Wasm::FunctionParser<Context>::atomicCompareExchange):
+        (JSC::Wasm::FunctionParser<Context>::atomicWait):
+        (JSC::Wasm::FunctionParser<Context>::atomicNotify):
+        (JSC::Wasm::FunctionParser<Context>::atomicFence):
+        (JSC::Wasm::FunctionParser<Context>::parseExpression):
+        (JSC::Wasm::FunctionParser<Context>::parseUnreachableExpression):
+        * wasm/WasmLLIntGenerator.cpp:
+        (JSC::Wasm::LLIntGenerator::atomicLoad):
+        (JSC::Wasm::LLIntGenerator::atomicStore):
+        (JSC::Wasm::LLIntGenerator::atomicBinaryRMW):
+        (JSC::Wasm::LLIntGenerator::atomicCompareExchange):
+        (JSC::Wasm::LLIntGenerator::atomicWait):
+        (JSC::Wasm::LLIntGenerator::atomicNotify):
+        (JSC::Wasm::LLIntGenerator::atomicFence):
+        * wasm/WasmMemory.h:
+        * wasm/WasmMemoryInformation.cpp:
+        (JSC::Wasm::MemoryInformation::MemoryInformation):
+        * wasm/WasmMemoryInformation.h:
+        (JSC::Wasm::MemoryInformation::isShared const):
+        * wasm/WasmOperations.cpp:
+        (JSC::Wasm::wait):
+        (JSC::Wasm::JSC_DEFINE_JIT_OPERATION):
+        * wasm/WasmOperations.h:
+        * wasm/WasmSectionParser.cpp:
+        (JSC::Wasm::SectionParser::parseResizableLimits):
+        (JSC::Wasm::SectionParser::parseTableHelper):
+        (JSC::Wasm::SectionParser::parseMemoryHelper):
+        * wasm/WasmSectionParser.h:
+        * wasm/WasmSlowPaths.cpp:
+        (JSC::LLInt::WASM_SLOW_PATH_DECL):
+        * wasm/WasmSlowPaths.h:
+        * wasm/generateWasm.py:
+        (isAtomic):
+        (isAtomicLoad):
+        (isAtomicStore):
+        (isAtomicBinaryRMW):
+        (memoryLog2Alignment):
+        * wasm/generateWasmOpsHeader.py:
+        (atomicMemoryLoadMacroizer):
+        (atomicMemoryLoadMacroizer.modifier):
+        (atomicMemoryStoreMacroizer):
+        (atomicMemoryStoreMacroizer.modifier):
+        (atomicBinaryRMWMacroizer):
+        (atomicBinaryRMWMacroizer.modifier):
+        (memoryLog2AlignmentGenerator):
+        (atomicMemoryLog2AlignmentGenerator):
+        (ExtAtomicOpType):
+        * wasm/js/JSWebAssemblyInstance.cpp:
+        (JSC::JSWebAssemblyInstance::tryCreate):
+        * wasm/wasm.json:
+
 2020-11-19  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Enable private instance and static fields

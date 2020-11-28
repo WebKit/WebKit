@@ -127,6 +127,14 @@ private:
     PartialResult WARN_UNUSED_RETURN store(Type memoryType);
     PartialResult WARN_UNUSED_RETURN load(Type memoryType);
 
+    PartialResult WARN_UNUSED_RETURN atomicLoad(ExtAtomicOpType, Type memoryType);
+    PartialResult WARN_UNUSED_RETURN atomicStore(ExtAtomicOpType, Type memoryType);
+    PartialResult WARN_UNUSED_RETURN atomicBinaryRMW(ExtAtomicOpType, Type memoryType);
+    PartialResult WARN_UNUSED_RETURN atomicCompareExchange(ExtAtomicOpType, Type memoryType);
+    PartialResult WARN_UNUSED_RETURN atomicWait(ExtAtomicOpType, Type memoryType);
+    PartialResult WARN_UNUSED_RETURN atomicNotify(ExtAtomicOpType);
+    PartialResult WARN_UNUSED_RETURN atomicFence(ExtAtomicOpType);
+
 #define WASM_TRY_ADD_TO_CONTEXT(add_expression) WASM_FAIL_IF_HELPER_FAILS(m_context.add_expression)
 
     template <typename ...Args>
@@ -317,6 +325,161 @@ auto FunctionParser<Context>::store(Type memoryType) -> PartialResult
 }
 
 template<typename Context>
+auto FunctionParser<Context>::atomicLoad(ExtAtomicOpType op, Type memoryType) -> PartialResult
+{
+    WASM_VALIDATOR_FAIL_IF(!m_info.memory, "atomic instruction without memory");
+
+    uint32_t alignment;
+    uint32_t offset;
+    TypedExpression pointer;
+    WASM_PARSER_FAIL_IF(!parseVarUInt32(alignment), "can't get load alignment");
+    WASM_PARSER_FAIL_IF(alignment > memoryLog2Alignment(op), "byte alignment ", 1ull << alignment, " exceeds load's natural alignment ", 1ull << memoryLog2Alignment(op));
+    WASM_PARSER_FAIL_IF(!parseVarUInt32(offset), "can't get load offset");
+    WASM_TRY_POP_EXPRESSION_STACK_INTO(pointer, "load pointer");
+
+    WASM_VALIDATOR_FAIL_IF(pointer.type() != I32, static_cast<unsigned>(op), " pointer type mismatch");
+
+    ExpressionType result;
+    WASM_TRY_ADD_TO_CONTEXT(atomicLoad(op, memoryType, pointer, result, offset));
+    m_expressionStack.constructAndAppend(memoryType, result);
+    return { };
+}
+
+template<typename Context>
+auto FunctionParser<Context>::atomicStore(ExtAtomicOpType op, Type memoryType) -> PartialResult
+{
+    WASM_VALIDATOR_FAIL_IF(!m_info.memory, "atomic instruction without memory");
+
+    uint32_t alignment;
+    uint32_t offset;
+    TypedExpression value;
+    TypedExpression pointer;
+    WASM_PARSER_FAIL_IF(!parseVarUInt32(alignment), "can't get store alignment");
+    WASM_PARSER_FAIL_IF(alignment > memoryLog2Alignment(op), "byte alignment ", 1ull << alignment, " exceeds store's natural alignment ", 1ull << memoryLog2Alignment(op));
+    WASM_PARSER_FAIL_IF(!parseVarUInt32(offset), "can't get store offset");
+    WASM_TRY_POP_EXPRESSION_STACK_INTO(value, "store value");
+    WASM_TRY_POP_EXPRESSION_STACK_INTO(pointer, "store pointer");
+
+    WASM_VALIDATOR_FAIL_IF(pointer.type() != I32, m_currentOpcode, " pointer type mismatch");
+    WASM_VALIDATOR_FAIL_IF(value.type() != memoryType, m_currentOpcode, " value type mismatch");
+
+    WASM_TRY_ADD_TO_CONTEXT(atomicStore(op, memoryType, pointer, value, offset));
+    return { };
+}
+
+template<typename Context>
+auto FunctionParser<Context>::atomicBinaryRMW(ExtAtomicOpType op, Type memoryType) -> PartialResult
+{
+    WASM_VALIDATOR_FAIL_IF(!m_info.memory, "atomic instruction without memory");
+
+    uint32_t alignment;
+    uint32_t offset;
+    TypedExpression pointer;
+    TypedExpression value;
+    WASM_PARSER_FAIL_IF(!parseVarUInt32(alignment), "can't get load alignment");
+    WASM_PARSER_FAIL_IF(alignment > memoryLog2Alignment(op), "byte alignment ", 1ull << alignment, " exceeds load's natural alignment ", 1ull << memoryLog2Alignment(op));
+    WASM_PARSER_FAIL_IF(!parseVarUInt32(offset), "can't get load offset");
+    WASM_TRY_POP_EXPRESSION_STACK_INTO(value, "value");
+    WASM_TRY_POP_EXPRESSION_STACK_INTO(pointer, "pointer");
+
+    WASM_VALIDATOR_FAIL_IF(pointer.type() != I32, static_cast<unsigned>(op), " pointer type mismatch");
+    WASM_VALIDATOR_FAIL_IF(value.type() != memoryType, static_cast<unsigned>(op), " value type mismatch");
+
+    ExpressionType result;
+    WASM_TRY_ADD_TO_CONTEXT(atomicBinaryRMW(op, memoryType, pointer, value, result, offset));
+    m_expressionStack.constructAndAppend(memoryType, result);
+    return { };
+}
+
+template<typename Context>
+auto FunctionParser<Context>::atomicCompareExchange(ExtAtomicOpType op, Type memoryType) -> PartialResult
+{
+    WASM_VALIDATOR_FAIL_IF(!m_info.memory, "atomic instruction without memory");
+
+    uint32_t alignment;
+    uint32_t offset;
+    TypedExpression pointer;
+    TypedExpression expected;
+    TypedExpression value;
+    WASM_PARSER_FAIL_IF(!parseVarUInt32(alignment), "can't get load alignment");
+    WASM_PARSER_FAIL_IF(alignment > memoryLog2Alignment(op), "byte alignment ", 1ull << alignment, " exceeds load's natural alignment ", 1ull << memoryLog2Alignment(op));
+    WASM_PARSER_FAIL_IF(!parseVarUInt32(offset), "can't get load offset");
+    WASM_TRY_POP_EXPRESSION_STACK_INTO(value, "value");
+    WASM_TRY_POP_EXPRESSION_STACK_INTO(expected, "expected");
+    WASM_TRY_POP_EXPRESSION_STACK_INTO(pointer, "pointer");
+
+    WASM_VALIDATOR_FAIL_IF(pointer.type() != I32, static_cast<unsigned>(op), " pointer type mismatch");
+    WASM_VALIDATOR_FAIL_IF(expected.type() != memoryType, static_cast<unsigned>(op), " expected type mismatch");
+    WASM_VALIDATOR_FAIL_IF(value.type() != memoryType, static_cast<unsigned>(op), " value type mismatch");
+
+    ExpressionType result;
+    WASM_TRY_ADD_TO_CONTEXT(atomicCompareExchange(op, memoryType, pointer, expected, value, result, offset));
+    m_expressionStack.constructAndAppend(memoryType, result);
+    return { };
+}
+
+template<typename Context>
+auto FunctionParser<Context>::atomicWait(ExtAtomicOpType op, Type memoryType) -> PartialResult
+{
+    WASM_VALIDATOR_FAIL_IF(!m_info.memory, "atomic instruction without memory");
+
+    uint32_t alignment;
+    uint32_t offset;
+    TypedExpression pointer;
+    TypedExpression value;
+    TypedExpression timeout;
+    WASM_PARSER_FAIL_IF(!parseVarUInt32(alignment), "can't get load alignment");
+    WASM_PARSER_FAIL_IF(alignment > memoryLog2Alignment(op), "byte alignment ", 1ull << alignment, " exceeds load's natural alignment ", 1ull << memoryLog2Alignment(op));
+    WASM_PARSER_FAIL_IF(!parseVarUInt32(offset), "can't get load offset");
+    WASM_TRY_POP_EXPRESSION_STACK_INTO(timeout, "timeout");
+    WASM_TRY_POP_EXPRESSION_STACK_INTO(value, "value");
+    WASM_TRY_POP_EXPRESSION_STACK_INTO(pointer, "pointer");
+
+    WASM_VALIDATOR_FAIL_IF(pointer.type() != I32, static_cast<unsigned>(op), " pointer type mismatch");
+    WASM_VALIDATOR_FAIL_IF(value.type() != memoryType, static_cast<unsigned>(op), " value type mismatch");
+    WASM_VALIDATOR_FAIL_IF(timeout.type() != I64, static_cast<unsigned>(op), " timeout type mismatch");
+
+    ExpressionType result;
+    WASM_TRY_ADD_TO_CONTEXT(atomicWait(op, pointer, value, timeout, result, offset));
+    m_expressionStack.constructAndAppend(I32, result);
+    return { };
+}
+
+template<typename Context>
+auto FunctionParser<Context>::atomicNotify(ExtAtomicOpType op) -> PartialResult
+{
+    WASM_VALIDATOR_FAIL_IF(!m_info.memory, "atomic instruction without memory");
+
+    uint32_t alignment;
+    uint32_t offset;
+    TypedExpression pointer;
+    TypedExpression count;
+    WASM_PARSER_FAIL_IF(!parseVarUInt32(alignment), "can't get load alignment");
+    WASM_PARSER_FAIL_IF(alignment > memoryLog2Alignment(op), "byte alignment ", 1ull << alignment, " exceeds load's natural alignment ", 1ull << memoryLog2Alignment(op));
+    WASM_PARSER_FAIL_IF(!parseVarUInt32(offset), "can't get load offset");
+    WASM_TRY_POP_EXPRESSION_STACK_INTO(count, "count");
+    WASM_TRY_POP_EXPRESSION_STACK_INTO(pointer, "pointer");
+
+    WASM_VALIDATOR_FAIL_IF(pointer.type() != I32, static_cast<unsigned>(op), " pointer type mismatch");
+    WASM_VALIDATOR_FAIL_IF(count.type() != I32, static_cast<unsigned>(op), " count type mismatch"); // The spec's definition is saying i64, but all implementations (including tests) are using i32. So looks like the spec is wrong.
+
+    ExpressionType result;
+    WASM_TRY_ADD_TO_CONTEXT(atomicNotify(op, pointer, count, result, offset));
+    m_expressionStack.constructAndAppend(I32, result);
+    return { };
+}
+
+template<typename Context>
+auto FunctionParser<Context>::atomicFence(ExtAtomicOpType op) -> PartialResult
+{
+    uint8_t flags;
+    WASM_PARSER_FAIL_IF(!parseUInt8(flags), "can't get flags");
+    WASM_PARSER_FAIL_IF(flags != 0x0, "flags should be 0x0 but got ", flags);
+    WASM_TRY_ADD_TO_CONTEXT(atomicFence(op, flags));
+    return { };
+}
+
+template<typename Context>
 auto FunctionParser<Context>::checkBranchTarget(const ControlType& target) -> PartialResult
 {
     if (!target.branchTargetArity())
@@ -486,6 +649,46 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         }
         default:
             WASM_PARSER_FAIL_IF(true, "invalid extended table op ", extOp);
+            break;
+        }
+        return { };
+    }
+
+    case ExtAtomic: {
+        WASM_PARSER_FAIL_IF(!Options::useWebAssemblyThreading(), "wasm-threading is not enabled");
+        uint8_t extOp;
+        WASM_PARSER_FAIL_IF(!parseUInt8(extOp), "can't parse atomic extended opcode");
+
+        ExtAtomicOpType op = static_cast<ExtAtomicOpType>(extOp);
+        switch (op) {
+#define CREATE_CASE(name, id, b3op, inc, memoryType) case ExtAtomicOpType::name: return atomicLoad(op, memoryType);
+        FOR_EACH_WASM_EXT_ATOMIC_LOAD_OP(CREATE_CASE)
+#undef CREATE_CASE
+#define CREATE_CASE(name, id, b3op, inc, memoryType) case ExtAtomicOpType::name: return atomicStore(op, memoryType);
+        FOR_EACH_WASM_EXT_ATOMIC_STORE_OP(CREATE_CASE)
+#undef CREATE_CASE
+#define CREATE_CASE(name, id, b3op, inc, memoryType) case ExtAtomicOpType::name: return atomicBinaryRMW(op, memoryType);
+        FOR_EACH_WASM_EXT_ATOMIC_BINARY_RMW_OP(CREATE_CASE)
+#undef CREATE_CASE
+        case ExtAtomicOpType::MemoryAtomicWait64:
+            return atomicWait(op, I64);
+        case ExtAtomicOpType::MemoryAtomicWait32:
+            return atomicWait(op, I32);
+        case ExtAtomicOpType::MemoryAtomicNotify:
+            return atomicNotify(op);
+        case ExtAtomicOpType::AtomicFence:
+            return atomicFence(op);
+        case ExtAtomicOpType::I32AtomicRmw8CmpxchgU:
+        case ExtAtomicOpType::I32AtomicRmw16CmpxchgU:
+        case ExtAtomicOpType::I32AtomicRmwCmpxchg:
+            return atomicCompareExchange(op, I32);
+        case ExtAtomicOpType::I64AtomicRmw8CmpxchgU:
+        case ExtAtomicOpType::I64AtomicRmw16CmpxchgU:
+        case ExtAtomicOpType::I64AtomicRmw32CmpxchgU:
+        case ExtAtomicOpType::I64AtomicRmwCmpxchg:
+            return atomicCompareExchange(op, I64);
+        default:
+            WASM_PARSER_FAIL_IF(true, "invalid extended atomic op ", extOp);
             break;
         }
         return { };
@@ -1011,6 +1214,50 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
         WASM_PARSER_FAIL_IF(reserved != 0, "reserved byte for grow_memory/current_memory must be zero");
         return { };
     }
+
+#define CREATE_ATOMIC_CASE(name, ...) case ExtAtomicOpType::name:
+    case ExtAtomic: {
+        WASM_PARSER_FAIL_IF(!Options::useWebAssemblyThreading(), "wasm-threading is not enabled");
+        uint8_t extOp;
+        WASM_PARSER_FAIL_IF(!parseUInt8(extOp), "can't parse atomic extended opcode");
+        ExtAtomicOpType op = static_cast<ExtAtomicOpType>(extOp);
+        switch (op) {
+        FOR_EACH_WASM_EXT_ATOMIC_LOAD_OP(CREATE_ATOMIC_CASE)
+        FOR_EACH_WASM_EXT_ATOMIC_STORE_OP(CREATE_ATOMIC_CASE)
+        FOR_EACH_WASM_EXT_ATOMIC_BINARY_RMW_OP(CREATE_ATOMIC_CASE)
+        case ExtAtomicOpType::MemoryAtomicWait64:
+        case ExtAtomicOpType::MemoryAtomicWait32:
+        case ExtAtomicOpType::MemoryAtomicNotify:
+        case ExtAtomicOpType::I32AtomicRmw8CmpxchgU:
+        case ExtAtomicOpType::I32AtomicRmw16CmpxchgU:
+        case ExtAtomicOpType::I32AtomicRmwCmpxchg:
+        case ExtAtomicOpType::I64AtomicRmw8CmpxchgU:
+        case ExtAtomicOpType::I64AtomicRmw16CmpxchgU:
+        case ExtAtomicOpType::I64AtomicRmw32CmpxchgU:
+        case ExtAtomicOpType::I64AtomicRmwCmpxchg:
+        {
+            WASM_VALIDATOR_FAIL_IF(!m_info.memory, "atomic instruction without memory");
+            uint32_t alignment;
+            uint32_t unused;
+            WASM_PARSER_FAIL_IF(!parseVarUInt32(alignment), "can't get load alignment");
+            WASM_PARSER_FAIL_IF(alignment > memoryLog2Alignment(op), "byte alignment ", 1ull << alignment, " exceeds load's natural alignment ", 1ull << memoryLog2Alignment(op));
+            WASM_PARSER_FAIL_IF(!parseVarUInt32(unused), "can't get first immediate for atomic ", static_cast<unsigned>(op), " in unreachable context");
+            break;
+        }
+        case ExtAtomicOpType::AtomicFence: {
+            uint8_t flags;
+            WASM_PARSER_FAIL_IF(!parseUInt8(flags), "can't get flags");
+            WASM_PARSER_FAIL_IF(flags != 0x0, "flags should be 0x0 but got ", flags);
+            break;
+        }
+        default:
+            WASM_PARSER_FAIL_IF(true, "invalid extended atomic op ", extOp);
+            break;
+        }
+
+        return { };
+    }
+#undef CREATE_ATOMIC_CASE
 
     // no immediate cases
     FOR_EACH_WASM_BINARY_OP(CREATE_CASE)

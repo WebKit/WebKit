@@ -438,6 +438,44 @@ WASM_SLOW_PATH_DECL(set_global_ref_portable_binding)
     WASM_END_IMPL();
 }
 
+WASM_SLOW_PATH_DECL(memory_atomic_wait32)
+{
+    auto instruction = pc->as<WasmMemoryAtomicWait32, WasmOpcodeTraits>();
+    unsigned base = READ(instruction.m_pointer).unboxedInt32();
+    unsigned offset = instruction.m_offset;
+    uint32_t value = READ(instruction.m_value).unboxedInt32();
+    int64_t timeout = READ(instruction.m_timeout).unboxedInt64();
+    int32_t result = Wasm::operationMemoryAtomicWait32(instance, base, offset, value, timeout);
+    if (result < 0)
+        WASM_THROW(Wasm::ExceptionType::OutOfBoundsMemoryAccess);
+    WASM_RETURN(result);
+}
+
+WASM_SLOW_PATH_DECL(memory_atomic_wait64)
+{
+    auto instruction = pc->as<WasmMemoryAtomicWait64, WasmOpcodeTraits>();
+    unsigned base = READ(instruction.m_pointer).unboxedInt32();
+    unsigned offset = instruction.m_offset;
+    uint64_t value = READ(instruction.m_value).unboxedInt64();
+    int64_t timeout = READ(instruction.m_timeout).unboxedInt64();
+    int32_t result = Wasm::operationMemoryAtomicWait64(instance, base, offset, value, timeout);
+    if (result < 0)
+        WASM_THROW(Wasm::ExceptionType::OutOfBoundsMemoryAccess);
+    WASM_RETURN(result);
+}
+
+WASM_SLOW_PATH_DECL(memory_atomic_notify)
+{
+    auto instruction = pc->as<WasmMemoryAtomicNotify, WasmOpcodeTraits>();
+    unsigned base = READ(instruction.m_pointer).unboxedInt32();
+    unsigned offset = instruction.m_offset;
+    int32_t count = READ(instruction.m_count).unboxedInt32();
+    int32_t result = Wasm::operationMemoryAtomicNotify(instance, base, offset, count);
+    if (result < 0)
+        WASM_THROW(Wasm::ExceptionType::OutOfBoundsMemoryAccess);
+    WASM_RETURN(result);
+}
+
 extern "C" SlowPathReturnType slow_path_wasm_throw_exception(CallFrame* callFrame, const Instruction* pc, Wasm::Instance* instance, Wasm::ExceptionType exceptionType)
 {
     UNUSED_PARAM(pc);

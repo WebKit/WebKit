@@ -8,7 +8,7 @@ const numPages = 10;
     const builder = (new Builder())
         .Type().End()
         .Import()
-            .Memory("a", "b", {initial: numPages})
+            .Memory("a", "b", {initial: numPages, maximum: numPages * 2, shared: true})
         .End()
         .Function().End()
         .Export().Function("foo").End()

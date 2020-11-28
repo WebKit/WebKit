@@ -589,9 +589,11 @@ void testAtomicXchg(B3::Opcode opcode)
     };
 
     auto checkMyDisassembly = [&] (Compilation& compilation, bool fenced) {
-        if (isX86())
-            checkUsesInstruction(compilation, "lock");
-        else {
+        if (isX86()) {
+            // AtomicXchg can be lowered to "xchg" without "lock", and this is OK since "lock" signal is asserted for "xchg" by default.
+            if (AtomicXchg != opcode)
+                checkUsesInstruction(compilation, "lock");
+        } else {
             if (fenced) {
                 checkUsesInstruction(compilation, "ldax");
                 checkUsesInstruction(compilation, "stlx");

@@ -111,10 +111,10 @@ const _importFunctionContinuation = (builder, section, nextBuilder) => {
 };
 
 const _importMemoryContinuation = (builder, section, nextBuilder) => {
-    return (module, field, {initial, maximum}) => {
+    return (module, field, {initial, maximum, shared = false}) => {
         assert.isString(module, `Import Memory module should be a string, got "${module}"`);
         assert.isString(field, `Import Memory field should be a string, got "${field}"`);
-        section.data.push({module, field, kind: "Memory", memoryDescription: {initial, maximum}});
+        section.data.push({module, field, kind: "Memory", memoryDescription: {initial, maximum, shared}});
         return _errorHandlingProxyFor(nextBuilder);
     };
 };
@@ -522,8 +522,8 @@ export default class Builder {
                     const s = this._addSection(section);
                     const memoryBuilder = {
                         End: () => this,
-                        InitialMaxPages: (initial, maximum) => {
-                            s.data.push({ initial, maximum });
+                        InitialMaxPages: (initial, maximum, shared = false) => {
+                            s.data.push({ initial, maximum, shared });
                             return _errorHandlingProxyFor(memoryBuilder);
                         }
                     };

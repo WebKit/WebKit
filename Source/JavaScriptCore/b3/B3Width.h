@@ -37,7 +37,7 @@ IGNORE_RETURN_TYPE_WARNINGS_BEGIN
 namespace JSC { namespace B3 {
 
 enum Width : int8_t {
-    Width8,
+    Width8 = 0,
     Width16,
     Width32,
     Width64
@@ -109,6 +109,21 @@ inline Width widthForBytes(unsigned bytes)
     default:
         return Width64;
     }
+}
+
+inline unsigned bytesForWidth(Width width)
+{
+    switch (width) {
+    case Width8:
+        return 1;
+    case Width16:
+        return 2;
+    case Width32:
+        return 4;
+    case Width64:
+        return 8;
+    }
+    return 1;
 }
 
 inline uint64_t mask(Width width)
