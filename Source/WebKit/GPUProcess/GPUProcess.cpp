@@ -114,11 +114,6 @@ bool GPUProcess::shouldTerminate()
     return m_webProcessConnections.isEmpty();
 }
 
-void GPUProcess::didClose(IPC::Connection&)
-{
-    ASSERT(RunLoop::isMain());
-}
-
 void GPUProcess::lowMemoryHandler(Critical critical)
 {
     WTF::releaseFastMallocFreeMemory();
