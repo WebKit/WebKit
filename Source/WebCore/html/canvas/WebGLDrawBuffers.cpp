@@ -74,7 +74,7 @@ void WebGLDrawBuffers::drawBuffersWEBGL(const Vector<GCGLenum>& buffers)
             return;
         }
         // Because the backbuffer is simulated on all current WebKit ports, we need to change BACK to COLOR_ATTACHMENT0.
-        GCGLenum value[1] { static_cast<GCGLenum>(bufs[0] == GraphicsContextGL::BACK ? GraphicsContextGL::COLOR_ATTACHMENT0 : GraphicsContextGL::NONE) };
+        GCGLenum value[1] { bufs[0] == GraphicsContextGL::BACK ? GraphicsContextGL::COLOR_ATTACHMENT0 : GraphicsContextGL::NONE };
         m_context->graphicsContextGL()->getExtensions().drawBuffersEXT(value);
         m_context->setBackDrawBuffer(bufs[0]);
     } else {
@@ -83,7 +83,7 @@ void WebGLDrawBuffers::drawBuffersWEBGL(const Vector<GCGLenum>& buffers)
             return;
         }
         for (GCGLsizei i = 0; i < n; ++i) {
-            if (bufs[i] != GraphicsContextGL::NONE && bufs[i] != static_cast<GCGLenum>(ExtensionsGL::COLOR_ATTACHMENT0_EXT + i)) {
+            if (bufs[i] != GraphicsContextGL::NONE && bufs[i] != ExtensionsGL::COLOR_ATTACHMENT0_EXT + i) {
                 m_context->synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "drawBuffersWEBGL", "COLOR_ATTACHMENTi_EXT or NONE");
                 return;
             }

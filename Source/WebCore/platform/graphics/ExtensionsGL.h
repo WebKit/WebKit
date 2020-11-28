@@ -92,179 +92,177 @@ public:
     // Has no other side-effects.
     virtual bool isEnabled(const String&) = 0;
 
-    enum ExtensionsEnumType {
-        // EXT_sRGB formats
-        SRGB_EXT = 0x8C40,
-        SRGB_ALPHA_EXT = 0x8C42,
-        SRGB8_ALPHA8_EXT = 0x8C43,
-        FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING_EXT = 0x8210,
+    // EXT_sRGB formats
+    static constexpr GCGLenum SRGB_EXT = 0x8C40;
+    static constexpr GCGLenum SRGB_ALPHA_EXT = 0x8C42;
+    static constexpr GCGLenum SRGB8_ALPHA8_EXT = 0x8C43;
+    static constexpr GCGLenum FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING_EXT = 0x8210;
 
-        // EXT_blend_minmax enums
-        MIN_EXT = 0x8007,
-        MAX_EXT = 0x8008,
+    // EXT_blend_minmax enums
+    static constexpr GCGLenum MIN_EXT = 0x8007;
+    static constexpr GCGLenum MAX_EXT = 0x8008;
 
-        // GL_EXT_texture_format_BGRA8888 enums
-        BGRA_EXT = 0x80E1,
+    // GL_EXT_texture_format_BGRA8888 enums
+    static constexpr GCGLenum BGRA_EXT = 0x80E1;
 
-        // GL_ARB_robustness enums
-        GUILTY_CONTEXT_RESET_ARB = 0x8253,
-        INNOCENT_CONTEXT_RESET_ARB = 0x8254,
-        UNKNOWN_CONTEXT_RESET_ARB = 0x8255,
-        CONTEXT_ROBUST_ACCESS = 0x90F3,
+    // GL_ARB_robustness enums
+    static constexpr GCGLenum GUILTY_CONTEXT_RESET_ARB = 0x8253;
+    static constexpr GCGLenum INNOCENT_CONTEXT_RESET_ARB = 0x8254;
+    static constexpr GCGLenum UNKNOWN_CONTEXT_RESET_ARB = 0x8255;
+    static constexpr GCGLenum CONTEXT_ROBUST_ACCESS = 0x90F3;
 
-        // GL_EXT/OES_packed_depth_stencil enums
-        DEPTH24_STENCIL8 = 0x88F0,
+    // GL_EXT/OES_packed_depth_stencil enums
+    static constexpr GCGLenum DEPTH24_STENCIL8 = 0x88F0;
 
-        // GL_ANGLE_framebuffer_blit names
-        READ_FRAMEBUFFER = 0x8CA8,
-        DRAW_FRAMEBUFFER = 0x8CA9,
-        DRAW_FRAMEBUFFER_BINDING = 0x8CA6,
-        READ_FRAMEBUFFER_BINDING = 0x8CAA,
+    // GL_ANGLE_framebuffer_blit names
+    static constexpr GCGLenum READ_FRAMEBUFFER = 0x8CA8;
+    static constexpr GCGLenum DRAW_FRAMEBUFFER = 0x8CA9;
+    static constexpr GCGLenum DRAW_FRAMEBUFFER_BINDING = 0x8CA6;
+    static constexpr GCGLenum READ_FRAMEBUFFER_BINDING = 0x8CAA;
 
-        // GL_ANGLE_framebuffer_multisample names
-        RENDERBUFFER_SAMPLES = 0x8CAB,
-        FRAMEBUFFER_INCOMPLETE_MULTISAMPLE = 0x8D56,
-        MAX_SAMPLES = 0x8D57,
+    // GL_ANGLE_framebuffer_multisample names
+    static constexpr GCGLenum RENDERBUFFER_SAMPLES = 0x8CAB;
+    static constexpr GCGLenum FRAMEBUFFER_INCOMPLETE_MULTISAMPLE = 0x8D56;
+    static constexpr GCGLenum MAX_SAMPLES = 0x8D57;
 
-        // GL_IMG_multisampled_render_to_texture
-        RENDERBUFFER_SAMPLES_IMG = 0x9133,
-        FRAMEBUFFER_INCOMPLETE_MULTISAMPLE_IMG = 0x9134,
-        MAX_SAMPLES_IMG = 0x9135,
-        TEXTURE_SAMPLES_IMG = 0x9136,
+    // GL_IMG_multisampled_render_to_texture
+    static constexpr GCGLenum RENDERBUFFER_SAMPLES_IMG = 0x9133;
+    static constexpr GCGLenum FRAMEBUFFER_INCOMPLETE_MULTISAMPLE_IMG = 0x9134;
+    static constexpr GCGLenum MAX_SAMPLES_IMG = 0x9135;
+    static constexpr GCGLenum TEXTURE_SAMPLES_IMG = 0x9136;
 
-        // GL_OES_standard_derivatives names
-        FRAGMENT_SHADER_DERIVATIVE_HINT_OES = 0x8B8B,
+    // GL_OES_standard_derivatives names
+    static constexpr GCGLenum FRAGMENT_SHADER_DERIVATIVE_HINT_OES = 0x8B8B;
 
-        // GL_OES_rgb8_rgba8 names
-        RGB8_OES = 0x8051,
-        RGBA8_OES = 0x8058,
+    // GL_OES_rgb8_rgba8 names
+    static constexpr GCGLenum RGB8_OES = 0x8051;
+    static constexpr GCGLenum RGBA8_OES = 0x8058;
 
-        // GL_OES_vertex_array_object names
-        VERTEX_ARRAY_BINDING_OES = 0x85B5,
+    // GL_OES_vertex_array_object names
+    static constexpr GCGLenum VERTEX_ARRAY_BINDING_OES = 0x85B5;
 
-        // GL_ANGLE_translated_shader_source
-        TRANSLATED_SHADER_SOURCE_LENGTH_ANGLE = 0x93A0,
+    // GL_ANGLE_translated_shader_source
+    static constexpr GCGLenum TRANSLATED_SHADER_SOURCE_LENGTH_ANGLE = 0x93A0;
 
-        // GL_ARB_texture_rectangle
-        TEXTURE_RECTANGLE_ARB =  0x84F5,
-        TEXTURE_BINDING_RECTANGLE_ARB = 0x84F6,
+    // GL_ARB_texture_rectangle
+    static constexpr GCGLenum TEXTURE_RECTANGLE_ARB =  0x84F5;
+    static constexpr GCGLenum TEXTURE_BINDING_RECTANGLE_ARB = 0x84F6;
 
-        // GL_EXT_texture_compression_dxt1
-        // GL_EXT_texture_compression_s3tc
-        COMPRESSED_RGB_S3TC_DXT1_EXT = 0x83F0,
-        COMPRESSED_RGBA_S3TC_DXT1_EXT = 0x83F1,
-        COMPRESSED_RGBA_S3TC_DXT3_EXT = 0x83F2,
-        COMPRESSED_RGBA_S3TC_DXT5_EXT = 0x83F3,
+    // GL_EXT_texture_compression_dxt1
+    // GL_EXT_texture_compression_s3tc
+    static constexpr GCGLenum COMPRESSED_RGB_S3TC_DXT1_EXT = 0x83F0;
+    static constexpr GCGLenum COMPRESSED_RGBA_S3TC_DXT1_EXT = 0x83F1;
+    static constexpr GCGLenum COMPRESSED_RGBA_S3TC_DXT3_EXT = 0x83F2;
+    static constexpr GCGLenum COMPRESSED_RGBA_S3TC_DXT5_EXT = 0x83F3;
 
-        // GL_EXT_texture_compression_s3tc_srgb
-        COMPRESSED_SRGB_S3TC_DXT1_EXT = 0x8C4C,
-        COMPRESSED_SRGB_ALPHA_S3TC_DXT1_EXT = 0x8C4D,
-        COMPRESSED_SRGB_ALPHA_S3TC_DXT3_EXT = 0x8C4E,
-        COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT = 0x8C4F,
+    // GL_EXT_texture_compression_s3tc_srgb
+    static constexpr GCGLenum COMPRESSED_SRGB_S3TC_DXT1_EXT = 0x8C4C;
+    static constexpr GCGLenum COMPRESSED_SRGB_ALPHA_S3TC_DXT1_EXT = 0x8C4D;
+    static constexpr GCGLenum COMPRESSED_SRGB_ALPHA_S3TC_DXT3_EXT = 0x8C4E;
+    static constexpr GCGLenum COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT = 0x8C4F;
 
-        // GL_OES_compressed_ETC1_RGB8_texture
-        ETC1_RGB8_OES = 0x8D64,
+    // GL_OES_compressed_ETC1_RGB8_texture
+    static constexpr GCGLenum ETC1_RGB8_OES = 0x8D64;
 
-        // WEBGL_compressed_texture_etc
-        COMPRESSED_R11_EAC = 0x9270,
-        COMPRESSED_SIGNED_R11_EAC = 0x9271,
-        COMPRESSED_RG11_EAC = 0x9272,
-        COMPRESSED_SIGNED_RG11_EAC = 0x9273,
-        COMPRESSED_RGB8_ETC2 = 0x9274,
-        COMPRESSED_SRGB8_ETC2 = 0x9275,
-        COMPRESSED_RGB8_PUNCHTHROUGH_ALPHA1_ETC2 = 0x9276,
-        COMPRESSED_SRGB8_PUNCHTHROUGH_ALPHA1_ETC2 = 0x9277,
-        COMPRESSED_RGBA8_ETC2_EAC = 0x9278,
-        COMPRESSED_SRGB8_ALPHA8_ETC2_EAC = 0x9279,
+    // WEBGL_compressed_texture_etc
+    static constexpr GCGLenum COMPRESSED_R11_EAC = 0x9270;
+    static constexpr GCGLenum COMPRESSED_SIGNED_R11_EAC = 0x9271;
+    static constexpr GCGLenum COMPRESSED_RG11_EAC = 0x9272;
+    static constexpr GCGLenum COMPRESSED_SIGNED_RG11_EAC = 0x9273;
+    static constexpr GCGLenum COMPRESSED_RGB8_ETC2 = 0x9274;
+    static constexpr GCGLenum COMPRESSED_SRGB8_ETC2 = 0x9275;
+    static constexpr GCGLenum COMPRESSED_RGB8_PUNCHTHROUGH_ALPHA1_ETC2 = 0x9276;
+    static constexpr GCGLenum COMPRESSED_SRGB8_PUNCHTHROUGH_ALPHA1_ETC2 = 0x9277;
+    static constexpr GCGLenum COMPRESSED_RGBA8_ETC2_EAC = 0x9278;
+    static constexpr GCGLenum COMPRESSED_SRGB8_ALPHA8_ETC2_EAC = 0x9279;
 
-        // GL_IMG_texture_compression_pvrtc
-        COMPRESSED_RGB_PVRTC_4BPPV1_IMG = 0x8C00,
-        COMPRESSED_RGB_PVRTC_2BPPV1_IMG = 0x8C01,
-        COMPRESSED_RGBA_PVRTC_4BPPV1_IMG = 0x8C02,
-        COMPRESSED_RGBA_PVRTC_2BPPV1_IMG = 0x8C03,
+    // GL_IMG_texture_compression_pvrtc
+    static constexpr GCGLenum COMPRESSED_RGB_PVRTC_4BPPV1_IMG = 0x8C00;
+    static constexpr GCGLenum COMPRESSED_RGB_PVRTC_2BPPV1_IMG = 0x8C01;
+    static constexpr GCGLenum COMPRESSED_RGBA_PVRTC_4BPPV1_IMG = 0x8C02;
+    static constexpr GCGLenum COMPRESSED_RGBA_PVRTC_2BPPV1_IMG = 0x8C03;
 
-        // GL_AMD_compressed_ATC_texture
-        COMPRESSED_ATC_RGB_AMD = 0x8C92,
-        COMPRESSED_ATC_RGBA_EXPLICIT_ALPHA_AMD = 0x8C93,
-        COMPRESSED_ATC_RGBA_INTERPOLATED_ALPHA_AMD = 0x87EE,
+    // GL_AMD_compressed_ATC_texture
+    static constexpr GCGLenum COMPRESSED_ATC_RGB_AMD = 0x8C92;
+    static constexpr GCGLenum COMPRESSED_ATC_RGBA_EXPLICIT_ALPHA_AMD = 0x8C93;
+    static constexpr GCGLenum COMPRESSED_ATC_RGBA_INTERPOLATED_ALPHA_AMD = 0x87EE;
 
-        // GL_KHR_texture_compression_astc_hdr
-        COMPRESSED_RGBA_ASTC_4x4_KHR = 0x93B0,
-        COMPRESSED_RGBA_ASTC_5x4_KHR = 0x93B1,
-        COMPRESSED_RGBA_ASTC_5x5_KHR = 0x93B2,
-        COMPRESSED_RGBA_ASTC_6x5_KHR = 0x93B3,
-        COMPRESSED_RGBA_ASTC_6x6_KHR = 0x93B4,
-        COMPRESSED_RGBA_ASTC_8x5_KHR = 0x93B5,
-        COMPRESSED_RGBA_ASTC_8x6_KHR = 0x93B6,
-        COMPRESSED_RGBA_ASTC_8x8_KHR = 0x93B7,
-        COMPRESSED_RGBA_ASTC_10x5_KHR = 0x93B8,
-        COMPRESSED_RGBA_ASTC_10x6_KHR = 0x93B9,
-        COMPRESSED_RGBA_ASTC_10x8_KHR = 0x93BA,
-        COMPRESSED_RGBA_ASTC_10x10_KHR = 0x93BB,
-        COMPRESSED_RGBA_ASTC_12x10_KHR = 0x93BC,
-        COMPRESSED_RGBA_ASTC_12x12_KHR = 0x93BD,
+    // GL_KHR_texture_compression_astc_hdr
+    static constexpr GCGLenum COMPRESSED_RGBA_ASTC_4x4_KHR = 0x93B0;
+    static constexpr GCGLenum COMPRESSED_RGBA_ASTC_5x4_KHR = 0x93B1;
+    static constexpr GCGLenum COMPRESSED_RGBA_ASTC_5x5_KHR = 0x93B2;
+    static constexpr GCGLenum COMPRESSED_RGBA_ASTC_6x5_KHR = 0x93B3;
+    static constexpr GCGLenum COMPRESSED_RGBA_ASTC_6x6_KHR = 0x93B4;
+    static constexpr GCGLenum COMPRESSED_RGBA_ASTC_8x5_KHR = 0x93B5;
+    static constexpr GCGLenum COMPRESSED_RGBA_ASTC_8x6_KHR = 0x93B6;
+    static constexpr GCGLenum COMPRESSED_RGBA_ASTC_8x8_KHR = 0x93B7;
+    static constexpr GCGLenum COMPRESSED_RGBA_ASTC_10x5_KHR = 0x93B8;
+    static constexpr GCGLenum COMPRESSED_RGBA_ASTC_10x6_KHR = 0x93B9;
+    static constexpr GCGLenum COMPRESSED_RGBA_ASTC_10x8_KHR = 0x93BA;
+    static constexpr GCGLenum COMPRESSED_RGBA_ASTC_10x10_KHR = 0x93BB;
+    static constexpr GCGLenum COMPRESSED_RGBA_ASTC_12x10_KHR = 0x93BC;
+    static constexpr GCGLenum COMPRESSED_RGBA_ASTC_12x12_KHR = 0x93BD;
 
-        COMPRESSED_SRGB8_ALPHA8_ASTC_4x4_KHR = 0x93D0,
-        COMPRESSED_SRGB8_ALPHA8_ASTC_5x4_KHR = 0x93D1,
-        COMPRESSED_SRGB8_ALPHA8_ASTC_5x5_KHR = 0x93D2,
-        COMPRESSED_SRGB8_ALPHA8_ASTC_6x5_KHR = 0x93D3,
-        COMPRESSED_SRGB8_ALPHA8_ASTC_6x6_KHR = 0x93D4,
-        COMPRESSED_SRGB8_ALPHA8_ASTC_8x5_KHR = 0x93D5,
-        COMPRESSED_SRGB8_ALPHA8_ASTC_8x6_KHR = 0x93D6,
-        COMPRESSED_SRGB8_ALPHA8_ASTC_8x8_KHR = 0x93D7,
-        COMPRESSED_SRGB8_ALPHA8_ASTC_10x5_KHR = 0x93D8,
-        COMPRESSED_SRGB8_ALPHA8_ASTC_10x6_KHR = 0x93D9,
-        COMPRESSED_SRGB8_ALPHA8_ASTC_10x8_KHR = 0x93DA,
-        COMPRESSED_SRGB8_ALPHA8_ASTC_10x10_KHR = 0x93DB,
-        COMPRESSED_SRGB8_ALPHA8_ASTC_12x10_KHR = 0x93DC,
-        COMPRESSED_SRGB8_ALPHA8_ASTC_12x12_KHR = 0x93DD,
+    static constexpr GCGLenum COMPRESSED_SRGB8_ALPHA8_ASTC_4x4_KHR = 0x93D0;
+    static constexpr GCGLenum COMPRESSED_SRGB8_ALPHA8_ASTC_5x4_KHR = 0x93D1;
+    static constexpr GCGLenum COMPRESSED_SRGB8_ALPHA8_ASTC_5x5_KHR = 0x93D2;
+    static constexpr GCGLenum COMPRESSED_SRGB8_ALPHA8_ASTC_6x5_KHR = 0x93D3;
+    static constexpr GCGLenum COMPRESSED_SRGB8_ALPHA8_ASTC_6x6_KHR = 0x93D4;
+    static constexpr GCGLenum COMPRESSED_SRGB8_ALPHA8_ASTC_8x5_KHR = 0x93D5;
+    static constexpr GCGLenum COMPRESSED_SRGB8_ALPHA8_ASTC_8x6_KHR = 0x93D6;
+    static constexpr GCGLenum COMPRESSED_SRGB8_ALPHA8_ASTC_8x8_KHR = 0x93D7;
+    static constexpr GCGLenum COMPRESSED_SRGB8_ALPHA8_ASTC_10x5_KHR = 0x93D8;
+    static constexpr GCGLenum COMPRESSED_SRGB8_ALPHA8_ASTC_10x6_KHR = 0x93D9;
+    static constexpr GCGLenum COMPRESSED_SRGB8_ALPHA8_ASTC_10x8_KHR = 0x93DA;
+    static constexpr GCGLenum COMPRESSED_SRGB8_ALPHA8_ASTC_10x10_KHR = 0x93DB;
+    static constexpr GCGLenum COMPRESSED_SRGB8_ALPHA8_ASTC_12x10_KHR = 0x93DC;
+    static constexpr GCGLenum COMPRESSED_SRGB8_ALPHA8_ASTC_12x12_KHR = 0x93DD;
 
-        // GL_EXT_texture_compression_rgtc
-        COMPRESSED_RED_RGTC1_EXT = 0x8DBB,
-        COMPRESSED_SIGNED_RED_RGTC1_EXT = 0x8DBC,
-        COMPRESSED_RED_GREEN_RGTC2_EXT = 0x8DBD,
-        COMPRESSED_SIGNED_RED_GREEN_RGTC2_EXT = 0x8DBE,
+    // GL_EXT_texture_compression_rgtc
+    static constexpr GCGLenum COMPRESSED_RED_RGTC1_EXT = 0x8DBB;
+    static constexpr GCGLenum COMPRESSED_SIGNED_RED_RGTC1_EXT = 0x8DBC;
+    static constexpr GCGLenum COMPRESSED_RED_GREEN_RGTC2_EXT = 0x8DBD;
+    static constexpr GCGLenum COMPRESSED_SIGNED_RED_GREEN_RGTC2_EXT = 0x8DBE;
 
-        // GL_EXT_texture_filter_anisotropic
-        TEXTURE_MAX_ANISOTROPY_EXT = 0x84FE,
-        MAX_TEXTURE_MAX_ANISOTROPY_EXT = 0x84FF,
+    // GL_EXT_texture_filter_anisotropic
+    static constexpr GCGLenum TEXTURE_MAX_ANISOTROPY_EXT = 0x84FE;
+    static constexpr GCGLenum MAX_TEXTURE_MAX_ANISOTROPY_EXT = 0x84FF;
 
-        // GL_ARB_draw_buffers / GL_EXT_draw_buffers
-        MAX_DRAW_BUFFERS_EXT = 0x8824,
-        DRAW_BUFFER0_EXT = 0x8825,
-        DRAW_BUFFER1_EXT = 0x8826,
-        DRAW_BUFFER2_EXT = 0x8827,
-        DRAW_BUFFER3_EXT = 0x8828,
-        DRAW_BUFFER4_EXT = 0x8829,
-        DRAW_BUFFER5_EXT = 0x882A,
-        DRAW_BUFFER6_EXT = 0x882B,
-        DRAW_BUFFER7_EXT = 0x882C,
-        DRAW_BUFFER8_EXT = 0x882D,
-        DRAW_BUFFER9_EXT = 0x882E,
-        DRAW_BUFFER10_EXT = 0x882F,
-        DRAW_BUFFER11_EXT = 0x8830,
-        DRAW_BUFFER12_EXT = 0x8831,
-        DRAW_BUFFER13_EXT = 0x8832,
-        DRAW_BUFFER14_EXT = 0x8833,
-        DRAW_BUFFER15_EXT = 0x8834,
-        MAX_COLOR_ATTACHMENTS_EXT = 0x8CDF,
-        COLOR_ATTACHMENT0_EXT = 0x8CE0,
-        COLOR_ATTACHMENT1_EXT = 0x8CE1,
-        COLOR_ATTACHMENT2_EXT = 0x8CE2,
-        COLOR_ATTACHMENT3_EXT = 0x8CE3,
-        COLOR_ATTACHMENT4_EXT = 0x8CE4,
-        COLOR_ATTACHMENT5_EXT = 0x8CE5,
-        COLOR_ATTACHMENT6_EXT = 0x8CE6,
-        COLOR_ATTACHMENT7_EXT = 0x8CE7,
-        COLOR_ATTACHMENT8_EXT = 0x8CE8,
-        COLOR_ATTACHMENT9_EXT = 0x8CE9,
-        COLOR_ATTACHMENT10_EXT = 0x8CEA,
-        COLOR_ATTACHMENT11_EXT = 0x8CEB,
-        COLOR_ATTACHMENT12_EXT = 0x8CEC,
-        COLOR_ATTACHMENT13_EXT = 0x8CED,
-        COLOR_ATTACHMENT14_EXT = 0x8CEE,
-        COLOR_ATTACHMENT15_EXT = 0x8CEF
-    };
+    // GL_ARB_draw_buffers / GL_EXT_draw_buffers
+    static constexpr GCGLenum MAX_DRAW_BUFFERS_EXT = 0x8824;
+    static constexpr GCGLenum DRAW_BUFFER0_EXT = 0x8825;
+    static constexpr GCGLenum DRAW_BUFFER1_EXT = 0x8826;
+    static constexpr GCGLenum DRAW_BUFFER2_EXT = 0x8827;
+    static constexpr GCGLenum DRAW_BUFFER3_EXT = 0x8828;
+    static constexpr GCGLenum DRAW_BUFFER4_EXT = 0x8829;
+    static constexpr GCGLenum DRAW_BUFFER5_EXT = 0x882A;
+    static constexpr GCGLenum DRAW_BUFFER6_EXT = 0x882B;
+    static constexpr GCGLenum DRAW_BUFFER7_EXT = 0x882C;
+    static constexpr GCGLenum DRAW_BUFFER8_EXT = 0x882D;
+    static constexpr GCGLenum DRAW_BUFFER9_EXT = 0x882E;
+    static constexpr GCGLenum DRAW_BUFFER10_EXT = 0x882F;
+    static constexpr GCGLenum DRAW_BUFFER11_EXT = 0x8830;
+    static constexpr GCGLenum DRAW_BUFFER12_EXT = 0x8831;
+    static constexpr GCGLenum DRAW_BUFFER13_EXT = 0x8832;
+    static constexpr GCGLenum DRAW_BUFFER14_EXT = 0x8833;
+    static constexpr GCGLenum DRAW_BUFFER15_EXT = 0x8834;
+    static constexpr GCGLenum MAX_COLOR_ATTACHMENTS_EXT = 0x8CDF;
+    static constexpr GCGLenum COLOR_ATTACHMENT0_EXT = 0x8CE0;
+    static constexpr GCGLenum COLOR_ATTACHMENT1_EXT = 0x8CE1;
+    static constexpr GCGLenum COLOR_ATTACHMENT2_EXT = 0x8CE2;
+    static constexpr GCGLenum COLOR_ATTACHMENT3_EXT = 0x8CE3;
+    static constexpr GCGLenum COLOR_ATTACHMENT4_EXT = 0x8CE4;
+    static constexpr GCGLenum COLOR_ATTACHMENT5_EXT = 0x8CE5;
+    static constexpr GCGLenum COLOR_ATTACHMENT6_EXT = 0x8CE6;
+    static constexpr GCGLenum COLOR_ATTACHMENT7_EXT = 0x8CE7;
+    static constexpr GCGLenum COLOR_ATTACHMENT8_EXT = 0x8CE8;
+    static constexpr GCGLenum COLOR_ATTACHMENT9_EXT = 0x8CE9;
+    static constexpr GCGLenum COLOR_ATTACHMENT10_EXT = 0x8CEA;
+    static constexpr GCGLenum COLOR_ATTACHMENT11_EXT = 0x8CEB;
+    static constexpr GCGLenum COLOR_ATTACHMENT12_EXT = 0x8CEC;
+    static constexpr GCGLenum COLOR_ATTACHMENT13_EXT = 0x8CED;
+    static constexpr GCGLenum COLOR_ATTACHMENT14_EXT = 0x8CEE;
+    static constexpr GCGLenum COLOR_ATTACHMENT15_EXT = 0x8CEF;
 
     // WebGL functions in format generate-gpup-webgl understands.
 
