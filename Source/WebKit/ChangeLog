@@ -1,3 +1,28 @@
+2020-11-28  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Issue sandbox extension to icon services when starting a drag operation
+        https://bugs.webkit.org/show_bug.cgi?id=219159
+        <rdar://problem/71585876>
+
+        Reviewed by Brent Fulgham.
+
+        Issue sandbox extension to icon services when starting a drag operation on macOS, since the WebContent process needs
+        access to these services when a drag is started. This patch detects when a drag is about to start, and sends sandbox
+        extensions to the icon services along with the mouse event. The sandbox extensions are then temporarily consumed
+        while handling the mouse event in the WebContent process.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::processNextQueuedMouseEvent):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::mouseEvent):
+        (WebKit::WebPage::simulateMouseDown):
+        (WebKit::WebPage::simulateMouseUp):
+        (WebKit::WebPage::simulateMouseMotion):
+        (WebKit::WebPage::consumeSandboxExtensions):
+        (WebKit::WebPage::revokeSandboxExtensions):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2020-11-27  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Unreviewed, reverting r270210.
