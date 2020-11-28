@@ -1449,12 +1449,96 @@ Value* B3IRGenerator::emitAtomicCompareExchange(ExtAtomicOpType op, Type valueTy
 {
     pointer = fixupPointerPlusOffsetForAtomicOps(op, pointer, uoffset);
 
-    if (valueType == Type::I64 && accessWidth(op) != B3::Width64) {
-        expected = m_currentBlock->appendNew<B3::Value>(m_proc, B3::Trunc, Origin(), expected);
-        value = m_currentBlock->appendNew<B3::Value>(m_proc, B3::Trunc, Origin(), value);
+    B3::Width accessWidth = Wasm::accessWidth(op);
+
+    if (widthForType(toB3Type(valueType)) == accessWidth)
+        return sanitizeAtomicResult(op, valueType, m_currentBlock->appendNew<AtomicValue>(m_proc, memoryKind(AtomicStrongCAS), origin(), accessWidth, expected, value, pointer));
+
+    Value* maximum = nullptr;
+    switch (valueType) {
+    case Type::I64: {
+        switch (accessWidth) {
+        case B3::Width8:
+            maximum = constant(Int64, UINT8_MAX);
+            break;
+        case B3::Width16:
+            maximum = constant(Int64, UINT16_MAX);
+            break;
+        case B3::Width32:
+            maximum = constant(Int64, UINT32_MAX);
+            break;
+        case B3::Width64:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+        break;
+    }
+    case Type::I32:
+        switch (accessWidth) {
+        case B3::Width8:
+            maximum = constant(Int32, UINT8_MAX);
+            break;
+        case B3::Width16:
+            maximum = constant(Int32, UINT16_MAX);
+            break;
+        case B3::Width32:
+        case B3::Width64:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+        break;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
     }
 
-    return sanitizeAtomicResult(op, valueType, m_currentBlock->appendNew<AtomicValue>(m_proc, memoryKind(AtomicStrongCAS), origin(), accessWidth(op), expected, value, pointer));
+    BasicBlock* failureCase = m_proc.addBlock();
+    BasicBlock* successCase = m_proc.addBlock();
+    BasicBlock* continuation = m_proc.addBlock();
+
+    auto condition = m_currentBlock->appendNew<Value>(m_proc, Above, origin(), expected, maximum);
+    m_currentBlock->appendNewControlValue(m_proc, B3::Branch, origin(), condition, FrequentedBlock(failureCase, FrequencyClass::Rare), FrequentedBlock(successCase, FrequencyClass::Normal));
+    failureCase->addPredecessor(m_currentBlock);
+    successCase->addPredecessor(m_currentBlock);
+
+    m_currentBlock = successCase;
+    B3::UpsilonValue* successValue = nullptr;
+    {
+        auto truncatedExpected = expected;
+        auto truncatedValue = value;
+        if (valueType == Type::I64) {
+            truncatedExpected = m_currentBlock->appendNew<B3::Value>(m_proc, B3::Trunc, Origin(), expected);
+            truncatedValue = m_currentBlock->appendNew<B3::Value>(m_proc, B3::Trunc, Origin(), value);
+        }
+
+        auto result = m_currentBlock->appendNew<AtomicValue>(m_proc, memoryKind(AtomicStrongCAS), origin(), accessWidth, truncatedExpected, truncatedValue, pointer);
+        successValue = m_currentBlock->appendNew<B3::UpsilonValue>(m_proc, origin(), result);
+        m_currentBlock->appendNewControlValue(m_proc, Jump, origin(), continuation);
+        continuation->addPredecessor(m_currentBlock);
+    }
+
+    m_currentBlock = failureCase;
+    B3::UpsilonValue* failureValue = nullptr;
+    {
+        Value* addingValue = nullptr;
+        switch (accessWidth) {
+        case B3::Width8:
+        case B3::Width16:
+        case B3::Width32:
+            addingValue = constant(Int32, 0);
+            break;
+        case B3::Width64:
+            addingValue = constant(Int64, 0);
+            break;
+        }
+        auto result = m_currentBlock->appendNew<AtomicValue>(m_proc, memoryKind(AtomicXchgAdd), origin(), accessWidth, addingValue, pointer);
+        failureValue = m_currentBlock->appendNew<B3::UpsilonValue>(m_proc, origin(), result);
+        m_currentBlock->appendNewControlValue(m_proc, Jump, origin(), continuation);
+        continuation->addPredecessor(m_currentBlock);
+    }
+
+    m_currentBlock = continuation;
+    Value* phi = continuation->appendNew<Value>(m_proc, Phi, accessWidth == B3::Width64 ? Int64 : Int32, origin());
+    successValue->setPhi(phi);
+    failureValue->setPhi(phi);
+    return sanitizeAtomicResult(op, valueType, phi);
 }
 
 auto B3IRGenerator::atomicCompareExchange(ExtAtomicOpType op, Type valueType, ExpressionType pointer, ExpressionType expected, ExpressionType value, ExpressionType& result, uint32_t offset) -> PartialResult

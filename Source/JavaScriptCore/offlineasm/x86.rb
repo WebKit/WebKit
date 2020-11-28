@@ -1116,6 +1116,8 @@ class Instruction
             $asm.puts "neg#{x86Suffix(:quad)} #{x86Operands(:quad)}"
         when "noti"
             $asm.puts "not#{x86Suffix(:int)} #{x86Operands(:int)}"
+        when "notq"
+            $asm.puts "not#{x86Suffix(:quad)} #{x86Operands(:quad)}"
         when "ori"
             handleX86Op("or#{x86Suffix(:int)}", :int)
         when "orp"
@@ -1162,7 +1164,7 @@ class Instruction
             handleX86Op("xor#{x86Suffix(:quad)}", :quad)
         when "leap"
             emitX86Lea(operands[0], operands[1], :ptr)
-        when "loadi"
+        when "loadi", "atomicloadi"
             $asm.puts "mov#{x86Suffix(:int)} #{x86LoadOperands(:int, :int)}"
         when "storei"
             $asm.puts "mov#{x86Suffix(:int)} #{x86Operands(:int, :int)}"
@@ -1180,11 +1182,11 @@ class Instruction
             $asm.puts "mov#{x86Suffix(:ptr)} #{x86LoadOperands(:ptr, :ptr)}"
         when "storep"
             $asm.puts "mov#{x86Suffix(:ptr)} #{x86Operands(:ptr, :ptr)}"
-        when "loadq"
+        when "loadq", "atomicloadq"
             $asm.puts "mov#{x86Suffix(:quad)} #{x86LoadOperands(:quad, :quad)}"
         when "storeq"
             $asm.puts "mov#{x86Suffix(:quad)} #{x86Operands(:quad, :quad)}"
-        when "loadb"
+        when "loadb", "atomicloadb"
             if !isIntelSyntax
                 $asm.puts "movzbl #{x86LoadOperands(:byte, :int)}"
             else
@@ -1202,7 +1204,7 @@ class Instruction
             else
                 $asm.puts "movsx #{x86LoadOperands(:byte, :quad)}"
             end
-        when "loadh"
+        when "loadh", "atomicloadh"
             if !isIntelSyntax
                 $asm.puts "movzwl #{x86LoadOperands(:half, :int)}"
             else

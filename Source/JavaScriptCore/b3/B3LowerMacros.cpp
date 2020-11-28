@@ -306,6 +306,14 @@ private:
                     if (exempt)
                         break;
                 }
+
+                if (isARM64E()) {
+                    if (m_value->opcode() == AtomicXchgSub) {
+                        m_value->setOpcodeUnsafely(AtomicXchgAdd);
+                        m_value->child(0) = m_insertionSet.insert<Value>(
+                            m_index, Neg, m_origin, m_value->child(0));
+                    }
+                }
                 
                 AtomicValue* atomic = m_value->as<AtomicValue>();
                 Width width = atomic->accessWidth();

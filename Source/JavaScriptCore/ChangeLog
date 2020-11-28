@@ -1,3 +1,93 @@
+2020-11-27  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Use ARM atomic ops in wasm
+        https://bugs.webkit.org/show_bug.cgi?id=219281
+
+        Reviewed by Filip Pizlo.
+
+        This patch uses ARM LSE Atomic instructions in wasm atomic operations. This includes support in MacroAssembler, offlineasm, Air and B3,
+        so that FTL atomic operations automatically leverage ARM LSE atomic instructions too. Later we can extend DFG JIT to use it too.
+
+        One interesting thing is that this includes a fix for cmpxchg wasm operation implementations. Unfortunately, current wasm cmpxchg ops
+        are not the same to ARM cas / X86 cmpxchg. For example, i64.atomic.rmw8.cmpxchg_u takes i64 expected value. And the spec requires that
+        we should perform `i64-expected-value <cmp> loaded-zero-extended-1byte-value`. For example, if the expected value is `0xffffffff_ffffff00`,
+        and the value stored in the memory is `0x00`, then the wasm op needs to fail since `0x00` is not `0xffffffff_ffffff00`. But x86 and ARM
+        cmpxchg / cas ops behave differently since it truncates expected value to 1byte when performing 1byte cmpxchg. So we need to have a check
+        which performs the value is within 1byte range in this operation.
+
+        * assembler/ARM64EAssembler.h:
+        (JSC::ARM64EAssembler::exoticAtomicLoadStore):
+        (JSC::ARM64EAssembler::exoticAtomicCAS):
+        (JSC::ARM64EAssembler::ldaddal):
+        (JSC::ARM64EAssembler::ldeoral):
+        (JSC::ARM64EAssembler::ldclral):
+        (JSC::ARM64EAssembler::ldsetal):
+        (JSC::ARM64EAssembler::swpal):
+        (JSC::ARM64EAssembler::casal):
+        * assembler/MacroAssemblerARM64E.h:
+        (JSC::MacroAssemblerARM64E::atomicXchgAdd8):
+        (JSC::MacroAssemblerARM64E::atomicXchgAdd16):
+        (JSC::MacroAssemblerARM64E::atomicXchgAdd32):
+        (JSC::MacroAssemblerARM64E::atomicXchgAdd64):
+        (JSC::MacroAssemblerARM64E::atomicXchgXor8):
+        (JSC::MacroAssemblerARM64E::atomicXchgXor16):
+        (JSC::MacroAssemblerARM64E::atomicXchgXor32):
+        (JSC::MacroAssemblerARM64E::atomicXchgXor64):
+        (JSC::MacroAssemblerARM64E::atomicXchgOr8):
+        (JSC::MacroAssemblerARM64E::atomicXchgOr16):
+        (JSC::MacroAssemblerARM64E::atomicXchgOr32):
+        (JSC::MacroAssemblerARM64E::atomicXchgOr64):
+        (JSC::MacroAssemblerARM64E::atomicXchgClear8):
+        (JSC::MacroAssemblerARM64E::atomicXchgClear16):
+        (JSC::MacroAssemblerARM64E::atomicXchgClear32):
+        (JSC::MacroAssemblerARM64E::atomicXchgClear64):
+        (JSC::MacroAssemblerARM64E::atomicXchg8):
+        (JSC::MacroAssemblerARM64E::atomicXchg16):
+        (JSC::MacroAssemblerARM64E::atomicXchg32):
+        (JSC::MacroAssemblerARM64E::atomicXchg64):
+        (JSC::MacroAssemblerARM64E::atomicStrongCAS8):
+        (JSC::MacroAssemblerARM64E::atomicStrongCAS16):
+        (JSC::MacroAssemblerARM64E::atomicStrongCAS32):
+        (JSC::MacroAssemblerARM64E::atomicStrongCAS64):
+        * b3/B3LowerMacros.cpp:
+        * b3/B3LowerToAir.cpp:
+        * b3/air/AirOpcode.opcodes:
+        * b3/air/opcode_generator.rb:
+        * disassembler/ARM64/A64DOpcode.cpp:
+        (JSC::ARM64Disassembler::A64DOpcodeLoadAtomic::format):
+        (JSC::ARM64Disassembler::A64DOpcodeSwapAtomic::format):
+        (JSC::ARM64Disassembler::A64DOpcodeCAS::format):
+        * disassembler/ARM64/A64DOpcode.h:
+        (JSC::ARM64Disassembler::A64DOpcode::appendInstructionName):
+        (JSC::ARM64Disassembler::A64DOpcodeLoadAtomic::opName):
+        (JSC::ARM64Disassembler::A64DOpcodeLoadAtomic::rs):
+        (JSC::ARM64Disassembler::A64DOpcodeLoadAtomic::opc):
+        (JSC::ARM64Disassembler::A64DOpcodeLoadAtomic::ar):
+        (JSC::ARM64Disassembler::A64DOpcodeLoadAtomic::opNumber):
+        (JSC::ARM64Disassembler::A64DOpcodeSwapAtomic::opName):
+        (JSC::ARM64Disassembler::A64DOpcodeSwapAtomic::rs):
+        (JSC::ARM64Disassembler::A64DOpcodeSwapAtomic::ar):
+        (JSC::ARM64Disassembler::A64DOpcodeSwapAtomic::opNumber):
+        (JSC::ARM64Disassembler::A64DOpcodeCAS::opName):
+        (JSC::ARM64Disassembler::A64DOpcodeCAS::rs):
+        (JSC::ARM64Disassembler::A64DOpcodeCAS::o1):
+        (JSC::ARM64Disassembler::A64DOpcodeCAS::l):
+        (JSC::ARM64Disassembler::A64DOpcodeCAS::opNumber):
+        * llint/WebAssembly.asm:
+        * offlineasm/arm64.rb:
+        * offlineasm/instructions.rb:
+        * offlineasm/x86.rb:
+        * wasm/WasmAirIRGenerator.cpp:
+        (JSC::Wasm::AirIRGenerator::sanitizeAtomicResult):
+        (JSC::Wasm::AirIRGenerator::appendGeneralAtomic):
+        (JSC::Wasm::AirIRGenerator::appendStrongCAS):
+        (JSC::Wasm::AirIRGenerator::emitAtomicLoadOp):
+        (JSC::Wasm::AirIRGenerator::emitAtomicStoreOp):
+        (JSC::Wasm::AirIRGenerator::emitAtomicBinaryRMWOp):
+        (JSC::Wasm::AirIRGenerator::emitAtomicCompareExchange):
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::emitAtomicCompareExchange):
+
 2020-11-26  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Add wasm atomics instructions

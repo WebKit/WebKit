@@ -31,6 +31,11 @@
 
 namespace JSC {
 
+#define CHECK_MEMOPSIZE_OF(size) ASSERT(size == 8 || size == 16 || size == 32 || size == 64 || size == 128);
+#define MEMOPSIZE_OF(datasize) ((datasize == 8 || datasize == 128) ? MemOpSize_8_or_128 : (datasize == 16) ? MemOpSize_16 : (datasize == 32) ? MemOpSize_32 : MemOpSize_64)
+#define CHECK_MEMOPSIZE() CHECK_MEMOPSIZE_OF(datasize)
+#define MEMOPSIZE MEMOPSIZE_OF(datasize)
+
 class ARM64EAssembler : public ARM64Assembler {
 protected:
     static constexpr RegisterID unusedID = static_cast<RegisterID>(0b11111);
@@ -279,6 +284,72 @@ public:
     ALWAYS_INLINE void eretaa() { insn(encodeGroup4(Group4Op::ERETAA)); }
     ALWAYS_INLINE void eretab() { insn(encodeGroup4(Group4Op::ERETAB)); }
 
+    enum ExoticAtomicLoadStoreOp {
+        ExoticAtomicLoadStoreOp_Add   = 0b0'000'00,
+        ExoticAtomicLoadStoreOp_Clear = 0b0'001'00,
+        ExoticAtomicLoadStoreOp_Xor   = 0b0'010'00,
+        ExoticAtomicLoadStoreOp_Set   = 0b0'011'00,
+        ExoticAtomicLoadStoreOp_Swap  = 0b1'000'00,
+    };
+
+    static int exoticAtomicLoadStore(MemOpSize size, ExoticAtomicLoadStoreOp op, ExoticLoadFence loadFence, ExoticStoreFence storeFence, RegisterID rs, RegisterID rt, RegisterID rn)
+    {
+        ASSERT((rs & 0b11111) == rs);
+        ASSERT((rn & 0b11111) == rn);
+        ASSERT((rt & 0b11111) == rt);
+        return 0b00111000'00100000'00000000'00000000 | size << 30 | loadFence << 23 | storeFence << 22 | rs << 16 | op << 10 | rn << 5 | rt;
+    }
+
+    static int exoticAtomicCAS(MemOpSize size, ExoticLoadFence loadFence, ExoticStoreFence storeFence, RegisterID rs, RegisterID rt, RegisterID rn)
+    {
+        ASSERT((rs & 0b11111) == rs);
+        ASSERT((rn & 0b11111) == rn);
+        ASSERT((rt & 0b11111) == rt);
+        return 0b00001000'10100000'01111100'00000000 | size << 30 | storeFence << 22 | rs << 16 | loadFence << 15 | rn << 5 | rt;
+    }
+
+    template<int datasize>
+    ALWAYS_INLINE void ldaddal(RegisterID rs, RegisterID rt, RegisterID rn)
+    {
+        CHECK_MEMOPSIZE();
+        insn(exoticAtomicLoadStore(MEMOPSIZE, ExoticAtomicLoadStoreOp_Add, ExoticLoadFence_Acquire, ExoticStoreFence_Release, rs, rt, rn));
+    }
+
+    template<int datasize>
+    ALWAYS_INLINE void ldeoral(RegisterID rs, RegisterID rt, RegisterID rn)
+    {
+        CHECK_MEMOPSIZE();
+        insn(exoticAtomicLoadStore(MEMOPSIZE, ExoticAtomicLoadStoreOp_Xor, ExoticLoadFence_Acquire, ExoticStoreFence_Release, rs, rt, rn));
+    }
+
+    template<int datasize>
+    ALWAYS_INLINE void ldclral(RegisterID rs, RegisterID rt, RegisterID rn)
+    {
+        CHECK_MEMOPSIZE();
+        insn(exoticAtomicLoadStore(MEMOPSIZE, ExoticAtomicLoadStoreOp_Clear, ExoticLoadFence_Acquire, ExoticStoreFence_Release, rs, rt, rn));
+    }
+
+    template<int datasize>
+    ALWAYS_INLINE void ldsetal(RegisterID rs, RegisterID rt, RegisterID rn)
+    {
+        CHECK_MEMOPSIZE();
+        insn(exoticAtomicLoadStore(MEMOPSIZE, ExoticAtomicLoadStoreOp_Set, ExoticLoadFence_Acquire, ExoticStoreFence_Release, rs, rt, rn));
+    }
+
+    template<int datasize>
+    ALWAYS_INLINE void swpal(RegisterID rs, RegisterID rt, RegisterID rn)
+    {
+        CHECK_MEMOPSIZE();
+        insn(exoticAtomicLoadStore(MEMOPSIZE, ExoticAtomicLoadStoreOp_Swap, ExoticLoadFence_Acquire, ExoticStoreFence_Release, rs, rt, rn));
+    }
+
+    template<int datasize>
+    ALWAYS_INLINE void casal(RegisterID rs, RegisterID rt, RegisterID rn)
+    {
+        CHECK_MEMOPSIZE();
+        insn(exoticAtomicCAS(MEMOPSIZE, ExoticLoadFence_Acquire, ExoticStoreFence_Release, rs, rt, rn));
+    }
+
     // Overload of the ARM64 equivalents.
 
     // Needed because we need to call our overloaded linkPointer below.
@@ -370,6 +441,11 @@ public:
     static constexpr ptrdiff_t BITS_ENCODEABLE_PER_INSTRUCTION = 16;
     static constexpr ptrdiff_t NUMBER_OF_ADDRESS_ENCODING_INSTRUCTIONS = MAX_POINTER_BITS / BITS_ENCODEABLE_PER_INSTRUCTION;
 };
+
+#undef CHECK_MEMOPSIZE_OF
+#undef MEMOPSIZE_OF
+#undef CHECK_MEMOPSIZE
+#undef MEMOPSIZE
 
 } // namespace JSC
 

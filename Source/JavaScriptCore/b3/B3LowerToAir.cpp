@@ -2257,6 +2257,19 @@ private:
                 appendTrapping(OPCODE_FOR_WIDTH(AtomicStrongCAS, width), Arg::statusCond(invert ? MacroAssembler::Failure : MacroAssembler::Success), m_eax, tmp(atomic->child(1)), address, boolResultTmp);
             return;
         }
+
+        if (isARM64E()) {
+            append(relaxedMoveForType(atomic->accessType()), expectedValueTmp, valueResultTmp);
+            appendTrapping(OPCODE_FOR_WIDTH(AtomicStrongCAS, width), valueResultTmp, newValueTmp, address);
+            if (returnsOldValue)
+                return;
+            if (isBranch) {
+                m_blockToBlock[m_block]->setSuccessors(success, failure);
+                return;
+            }
+            append(OPCODE_FOR_CANONICAL_WIDTH(Compare, width), Arg::relCond(invert ? MacroAssembler::NotEqual : MacroAssembler::Equal), valueResultTmp, expectedValueTmp, boolResultTmp);
+            return;
+        }
         
         RELEASE_ASSERT(isARM64());
         // We wish to emit:
@@ -3592,6 +3605,11 @@ private:
             
             Arg address = addr(atomic);
             Air::Opcode opcode = OPCODE_FOR_WIDTH(AtomicXchgAdd, atomic->accessWidth());
+            if (isValidForm(opcode, Arg::Tmp, address.kind(), Arg::Tmp)) {
+                appendTrapping(opcode, tmp(atomic->child(0)), address, tmp(atomic));
+                return;
+            }
+
             if (isValidForm(opcode, Arg::Tmp, address.kind())) {
                 append(relaxedMoveForType(atomic->type()), tmp(atomic->child(0)), tmp(atomic));
                 appendTrapping(opcode, tmp(atomic), address);
@@ -3615,6 +3633,16 @@ private:
             AtomicValue* atomic = m_value->as<AtomicValue>();
             if (appendVoidAtomic(OPCODE_FOR_WIDTH(AtomicAnd, atomic->accessWidth())))
                 return;
+
+            if (isARM64E()) {
+                Arg address = addr(atomic);
+                Air::Opcode opcode = OPCODE_FOR_WIDTH(AtomicXchgClear, atomic->accessWidth());
+                if (isValidForm(opcode, Arg::Tmp, address.kind(), Arg::Tmp)) {
+                    append(OPCODE_FOR_CANONICAL_WIDTH(Not, atomic->accessWidth()), tmp(atomic->child(0)), tmp(atomic));
+                    appendTrapping(opcode, tmp(atomic), address, tmp(atomic));
+                    return;
+                }
+            }
             
             appendGeneralAtomic(OPCODE_FOR_CANONICAL_WIDTH(And, atomic->accessWidth()), Commutative);
             return;
@@ -3624,6 +3652,13 @@ private:
             AtomicValue* atomic = m_value->as<AtomicValue>();
             if (appendVoidAtomic(OPCODE_FOR_WIDTH(AtomicOr, atomic->accessWidth())))
                 return;
+
+            Arg address = addr(atomic);
+            Air::Opcode opcode = OPCODE_FOR_WIDTH(AtomicXchgOr, atomic->accessWidth());
+            if (isValidForm(opcode, Arg::Tmp, address.kind(), Arg::Tmp)) {
+                appendTrapping(opcode, tmp(atomic->child(0)), address, tmp(atomic));
+                return;
+            }
             
             appendGeneralAtomic(OPCODE_FOR_CANONICAL_WIDTH(Or, atomic->accessWidth()), Commutative);
             return;
@@ -3633,6 +3668,13 @@ private:
             AtomicValue* atomic = m_value->as<AtomicValue>();
             if (appendVoidAtomic(OPCODE_FOR_WIDTH(AtomicXor, atomic->accessWidth())))
                 return;
+
+            Arg address = addr(atomic);
+            Air::Opcode opcode = OPCODE_FOR_WIDTH(AtomicXchgXor, atomic->accessWidth());
+            if (isValidForm(opcode, Arg::Tmp, address.kind(), Arg::Tmp)) {
+                appendTrapping(opcode, tmp(atomic->child(0)), address, tmp(atomic));
+                return;
+            }
             
             appendGeneralAtomic(OPCODE_FOR_CANONICAL_WIDTH(Xor, atomic->accessWidth()), Commutative);
             return;
@@ -3643,6 +3685,11 @@ private:
             
             Arg address = addr(atomic);
             Air::Opcode opcode = OPCODE_FOR_WIDTH(AtomicXchg, atomic->accessWidth());
+            if (isValidForm(opcode, Arg::Tmp, address.kind(), Arg::Tmp)) {
+                appendTrapping(opcode, tmp(atomic->child(0)), address, tmp(atomic));
+                return;
+            }
+
             if (isValidForm(opcode, Arg::Tmp, address.kind())) {
                 append(relaxedMoveForType(atomic->type()), tmp(atomic->child(0)), tmp(atomic));
                 appendTrapping(opcode, tmp(atomic), address);

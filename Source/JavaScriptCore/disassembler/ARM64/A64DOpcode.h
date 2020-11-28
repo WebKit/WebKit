@@ -116,7 +116,7 @@ protected:
 
     void appendInstructionName(const char* instructionName)
     {
-        bufferPrintf("   %-8.8s", instructionName);
+        bufferPrintf("   %-9.9s", instructionName);
     }
 
     void appendRegisterName(unsigned registerNumber, bool is64Bit = true);
@@ -709,6 +709,80 @@ public:
     unsigned wBit() { return (m_opcode >> 11) & 0x1; }
     int immediate10() { return (sBit() << 9) | ((m_opcode >> 12) & 0x1ff); }
     
+};
+
+class A64DOpcodeLoadAtomic : public A64DOpcodeLoadStore {
+private:
+    static const char* const s_opNames[64];
+
+protected:
+    const char* opName()
+    {
+        unsigned number = opNumber();
+        if (number < 64)
+            return s_opNames[number];
+        return nullptr;
+    }
+
+public:
+    static constexpr uint32_t mask    = 0b00111111'00100000'10001100'00000000U;
+    static constexpr uint32_t pattern = 0b00111000'00100000'00000000'00000000U;
+
+    DEFINE_STATIC_FORMAT(A64DOpcodeLoadAtomic, thisObj);
+
+    const char* format();
+
+    unsigned rs() { return rm(); }
+    unsigned opc() { return (m_opcode >> 12) & 0b111; }
+    unsigned ar() { return (m_opcode >> 22) & 0b11; }
+    unsigned opNumber() { return (opc() << 4) | (size() << 2) | ar(); }
+};
+
+class A64DOpcodeSwapAtomic : public A64DOpcodeLoadStore {
+private:
+    static const char* const s_opNames[16];
+
+protected:
+    const char* opName()
+    {
+        return s_opNames[opNumber()];
+    }
+
+public:
+    static constexpr uint32_t mask    = 0b00111111'00100000'11111100'00000000U;
+    static constexpr uint32_t pattern = 0b00111000'00100000'10000000'00000000U;
+
+    DEFINE_STATIC_FORMAT(A64DOpcodeSwapAtomic, thisObj);
+
+    const char* format();
+
+    unsigned rs() { return rm(); }
+    unsigned ar() { return (m_opcode >> 22) & 0b11; }
+    unsigned opNumber() { return (size() << 2) | ar(); }
+};
+
+class A64DOpcodeCAS : public A64DOpcodeLoadStore {
+private:
+    static const char* const s_opNames[16];
+
+protected:
+    const char* opName()
+    {
+        return s_opNames[opNumber()];
+    }
+
+public:
+    static constexpr uint32_t mask    = 0b00111111'10100000'01111100'00000000U;
+    static constexpr uint32_t pattern = 0b00001000'10100000'01111100'00000000U;
+
+    DEFINE_STATIC_FORMAT(A64DOpcodeCAS, thisObj);
+
+    const char* format();
+
+    unsigned rs() { return rm(); }
+    unsigned o1() { return (m_opcode >> 15) & 0x1; }
+    unsigned l() { return (m_opcode >> 22) & 0x1; }
+    unsigned opNumber() { return (size() << 2) | (l() << 1) | o1(); }
 };
 
 class A64DOpcodeLoadStoreRegisterPair : public A64DOpcodeLoadStore {

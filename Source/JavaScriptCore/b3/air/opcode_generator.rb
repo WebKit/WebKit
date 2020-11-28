@@ -233,7 +233,7 @@ def isKind(token)
 end
 
 def isArch(token)
-    token =~ /\A((x86)|(x86_32)|(x86_64)|(arm)|(armv7)|(arm64)|(32)|(64))\Z/
+    token =~ /\A((x86)|(x86_32)|(x86_64)|(arm)|(armv7)|(arm64e)|(arm64)|(32)|(64))\Z/
 end
 
 def isWidth(token)
@@ -335,6 +335,8 @@ class Parser
                 result << "ARMv7"
             when "arm64"
                 result << "ARM64"
+            when "arm64e"
+                result << "ARM64E"
             when "32"
                 result << "X86"
                 result << "ARMv7"

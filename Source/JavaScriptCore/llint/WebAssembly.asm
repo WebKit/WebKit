@@ -2194,7 +2194,6 @@ macro wasmAtomicBinaryRMWOps(lowerCaseOpcode, upperCaseOpcode, fnb, fnh, fni, fn
         mloadq(ctx, m_value, t0)
         emitCheckAndPreparePointerAddingOffsetWithAlignmentCheck(ctx, t3, t1, 4)
         fni(t0, [t3], t2, t5, t1)
-        zxi2q t0, t0
         assert(macro(ok) bqbeq t0, 0xffffffff, .ok end)
         returnq(ctx, t0)
     end)
@@ -2317,6 +2316,61 @@ if X86_64
         macro(t5GPR, t2GPR)
             xorq t5GPR, t2GPR
         end)
+elsif ARM64E
+    wasmAtomicBinaryRMWOps(_add, Add,
+        macro(t0GPR, mem, t2GPR, t5GPR, t1GPR) atomicxchgaddb t0GPR, mem, t0GPR end,
+        macro(t0GPR, mem, t2GPR, t5GPR, t1GPR) atomicxchgaddh t0GPR, mem, t0GPR end,
+        macro(t0GPR, mem, t2GPR, t5GPR, t1GPR) atomicxchgaddi t0GPR, mem, t0GPR end,
+        macro(t0GPR, mem, t2GPR, t5GPR, t1GPR) atomicxchgaddq t0GPR, mem, t0GPR end)
+    wasmAtomicBinaryRMWOps(_sub, Sub,
+        macro(t0GPR, mem, t2GPR, t5GPR, t1GPR)
+            negq t0GPR
+            atomicxchgaddb t0GPR, mem, t0GPR
+        end,
+        macro(t0GPR, mem, t2GPR, t5GPR, t1GPR)
+            negq t0GPR
+            atomicxchgaddh t0GPR, mem, t0GPR
+        end,
+        macro(t0GPR, mem, t2GPR, t5GPR, t1GPR)
+            negq t0GPR
+            atomicxchgaddi t0GPR, mem, t0GPR
+        end,
+        macro(t0GPR, mem, t2GPR, t5GPR, t1GPR)
+            negq t0GPR
+            atomicxchgaddq t0GPR, mem, t0GPR
+        end)
+    wasmAtomicBinaryRMWOps(_and, And,
+        macro(t0GPR, mem, t2GPR, t5GPR, t1GPR)
+            notq t0GPR
+            atomicxchgclearb t0GPR, mem, t0GPR
+        end,
+        macro(t0GPR, mem, t2GPR, t5GPR, t1GPR)
+            notq t0GPR
+            atomicxchgclearh t0GPR, mem, t0GPR
+        end,
+        macro(t0GPR, mem, t2GPR, t5GPR, t1GPR)
+            notq t0GPR
+            atomicxchgcleari t0GPR, mem, t0GPR
+        end,
+        macro(t0GPR, mem, t2GPR, t5GPR, t1GPR)
+            notq t0GPR
+            atomicxchgclearq t0GPR, mem, t0GPR
+        end)
+    wasmAtomicBinaryRMWOps(_or, Or,
+        macro(t0GPR, mem, t2GPR, t5GPR, t1GPR) atomicxchgorb t0GPR, mem, t0GPR end,
+        macro(t0GPR, mem, t2GPR, t5GPR, t1GPR) atomicxchgorh t0GPR, mem, t0GPR end,
+        macro(t0GPR, mem, t2GPR, t5GPR, t1GPR) atomicxchgori t0GPR, mem, t0GPR end,
+        macro(t0GPR, mem, t2GPR, t5GPR, t1GPR) atomicxchgorq t0GPR, mem, t0GPR end)
+    wasmAtomicBinaryRMWOps(_xor, Xor,
+        macro(t0GPR, mem, t2GPR, t5GPR, t1GPR) atomicxchgxorb t0GPR, mem, t0GPR end,
+        macro(t0GPR, mem, t2GPR, t5GPR, t1GPR) atomicxchgxorh t0GPR, mem, t0GPR end,
+        macro(t0GPR, mem, t2GPR, t5GPR, t1GPR) atomicxchgxori t0GPR, mem, t0GPR end,
+        macro(t0GPR, mem, t2GPR, t5GPR, t1GPR) atomicxchgxorq t0GPR, mem, t0GPR end)
+    wasmAtomicBinaryRMWOps(_xchg, Xchg,
+        macro(t0GPR, mem, t2GPR, t5GPR, t1GPR) atomicxchgb t0GPR, mem, t0GPR end,
+        macro(t0GPR, mem, t2GPR, t5GPR, t1GPR) atomicxchgh t0GPR, mem, t0GPR end,
+        macro(t0GPR, mem, t2GPR, t5GPR, t1GPR) atomicxchgi t0GPR, mem, t0GPR end,
+        macro(t0GPR, mem, t2GPR, t5GPR, t1GPR) atomicxchgq t0GPR, mem, t0GPR end)
 else
     wasmAtomicBinaryRMWOpsWithWeakCAS(_add, Add,
         macro(t0GPR, t1GPR, t2GPR)
@@ -2392,7 +2446,6 @@ macro wasmAtomicCompareExchangeOps(lowerCaseOpcode, upperCaseOpcode, fnb, fnh, f
         mloadq(ctx, m_value, t2)
         emitCheckAndPreparePointerAddingOffsetWithAlignmentCheck(ctx, t3, t1, 4)
         fni(t0, t2, [t3], t5, t1)
-        zxi2q t0, t0
         assert(macro(ok) bqbeq t0, 0xffffffff, .ok end)
         returnq(ctx, t0)
     end)
@@ -2410,12 +2463,17 @@ end
 # t0GPR => expected, t2GPR => value, mem => memory reference
 wasmAtomicCompareExchangeOps(_cmpxchg, Cmpxchg,
     macro(t0GPR, t2GPR, mem, t5GPR, t1GPR)
-        if X86_64
+        if X86_64 or ARM64E
+            bqa t0GPR , 0xff, .fail
             atomicweakcasb t0GPR, t2GPR, mem
+            jmp .done
+        .fail:
+            atomicloadb mem, t0GPR
+        .done:
         else
         .loop:
             loadlinkacqb mem, t1GPR
-            bineq t0GPR, t1GPR, .fail
+            bqneq t0GPR, t1GPR, .fail
             storecondrelb t5GPR, t2GPR, mem
             bieq t5GPR, 0, .done
             jmp .loop
@@ -2428,12 +2486,17 @@ wasmAtomicCompareExchangeOps(_cmpxchg, Cmpxchg,
         end
     end,
     macro(t0GPR, t2GPR, mem, t5GPR, t1GPR)
-        if X86_64
+        if X86_64 or ARM64E
+            bqa t0GPR, 0xffff, .fail
             atomicweakcash t0GPR, t2GPR, mem
+            jmp .done
+        .fail:
+            atomicloadh mem, t0GPR
+        .done:
         else
         .loop:
             loadlinkacqh mem, t1GPR
-            bineq t0GPR, t1GPR, .fail
+            bqneq t0GPR, t1GPR, .fail
             storecondrelh t5GPR, t2GPR, mem
             bieq t5GPR, 0, .done
             jmp .loop
@@ -2446,12 +2509,17 @@ wasmAtomicCompareExchangeOps(_cmpxchg, Cmpxchg,
         end
     end,
     macro(t0GPR, t2GPR, mem, t5GPR, t1GPR)
-        if X86_64
+        if X86_64 or ARM64E
+            bqa t0GPR, 0xffffffff, .fail
             atomicweakcasi t0GPR, t2GPR, mem
+            jmp .done
+        .fail:
+            atomicloadi mem, t0GPR
+        .done:
         else
         .loop:
             loadlinkacqi mem, t1GPR
-            bineq t0GPR, t1GPR, .fail
+            bqneq t0GPR, t1GPR, .fail
             storecondreli t5GPR, t2GPR, mem
             bieq t5GPR, 0, .done
             jmp .loop
@@ -2464,7 +2532,7 @@ wasmAtomicCompareExchangeOps(_cmpxchg, Cmpxchg,
         end
     end,
     macro(t0GPR, t2GPR, mem, t5GPR, t1GPR)
-        if X86_64
+        if X86_64 or ARM64E
             atomicweakcasq t0GPR, t2GPR, mem
         else
         .loop:

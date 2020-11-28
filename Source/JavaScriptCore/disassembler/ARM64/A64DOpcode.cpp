@@ -65,6 +65,7 @@ struct OpcodeGroupInitializer {
 { groupIndex, groupClass::mask, groupClass::pattern, groupClass::format }
 
 static const OpcodeGroupInitializer opcodeGroupList[] = {
+    OPCODE_GROUP_ENTRY(0x08, A64DOpcodeCAS),
     OPCODE_GROUP_ENTRY(0x08, A64DOpcodeLoadStoreRegisterPair),
     OPCODE_GROUP_ENTRY(0x08, A64DOpcodeLoadStoreExclusive),
     OPCODE_GROUP_ENTRY(0x09, A64DOpcodeLoadStoreRegisterPair),
@@ -96,6 +97,8 @@ static const OpcodeGroupInitializer opcodeGroupList[] = {
     OPCODE_GROUP_ENTRY(0x18, A64DOpcodeLoadStoreImmediate),
     OPCODE_GROUP_ENTRY(0x18, A64DOpcodeLoadStoreRegisterOffset),
     OPCODE_GROUP_ENTRY(0x18, A64DOpcodeLoadStoreAuthenticated),
+    OPCODE_GROUP_ENTRY(0x18, A64DOpcodeLoadAtomic),
+    OPCODE_GROUP_ENTRY(0x18, A64DOpcodeSwapAtomic),
     OPCODE_GROUP_ENTRY(0x19, A64DOpcodeLoadStoreUnsignedImmediate),
     OPCODE_GROUP_ENTRY(0x1a, A64DOpcodeConditionalSelect),
     OPCODE_GROUP_ENTRY(0x1a, A64DOpcodeDataProcessing1Source),
@@ -1252,6 +1255,86 @@ const char* A64DOpcodeLoadStoreAuthenticated::format()
     if (wBit())
         appendCharacter('!');
     
+    return m_formatBuffer;
+}
+
+const char* const A64DOpcodeLoadAtomic::s_opNames[64] = {
+    "ldaddb", "ldaddlb", "ldaddab", "ldaddalb",
+    "ldaddh", "ldaddlh", "ldaddah", "ldaddalh",
+    "ldadd", "ldaddl", "ldadda", "ldaddal",
+    "ldadd", "ldaddl", "ldadda", "ldaddal",
+
+    "ldclrb", "ldclrlb", "ldclrab", "ldclralb",
+    "ldclrh", "ldclrlh", "ldclrah", "ldclralh",
+    "ldclr", "ldclrl", "ldclra", "ldclral",
+    "ldclr", "ldclrl", "ldclra", "ldclral",
+
+    "ldeorb", "ldeorlb", "ldeorab", "ldeoralb",
+    "ldeorh", "ldeorlh", "ldeorah", "ldeoralh",
+    "ldeor", "ldeorl", "ldeora", "ldeoral",
+    "ldeor", "ldeorl", "ldeora", "ldeoral",
+
+    "ldsetb", "ldsetlb", "ldsetab", "ldsetalb",
+    "ldseth", "ldsetlh", "ldsetah", "ldsetalh",
+    "ldset", "ldsetl", "ldseta", "ldsetal",
+    "ldset", "ldsetl", "ldseta", "ldsetal",
+};
+
+const char* A64DOpcodeLoadAtomic::format()
+{
+    const auto* name = opName();
+    if (!name)
+        return A64DOpcode::format();
+    appendInstructionName(name);
+    appendSPOrRegisterName(rs(), is64Bit());
+    appendSeparator();
+    appendSPOrRegisterName(rt(), is64Bit());
+    appendSeparator();
+    appendCharacter('[');
+    appendSPOrRegisterName(rn(), is64Bit());
+    appendCharacter(']');
+    return m_formatBuffer;
+}
+
+const char* const A64DOpcodeSwapAtomic::s_opNames[16] = {
+    "swpb", "swplb", "swpab", "swpalb",
+    "swph", "swplh", "swpah", "swpalh",
+    "swp", "swpl", "swpa", "swpal",
+    "swp", "swpl", "swpa", "swpal",
+};
+
+const char* A64DOpcodeSwapAtomic::format()
+{
+    const auto* name = opName();
+    appendInstructionName(name);
+    appendSPOrRegisterName(rs(), is64Bit());
+    appendSeparator();
+    appendSPOrRegisterName(rt(), is64Bit());
+    appendSeparator();
+    appendCharacter('[');
+    appendSPOrRegisterName(rn(), is64Bit());
+    appendCharacter(']');
+    return m_formatBuffer;
+}
+
+const char* const A64DOpcodeCAS::s_opNames[16] = {
+    "casb", "caslb", "casab", "casalb",
+    "cash", "caslh", "casah", "casalh",
+    "cas", "casl", "casa", "casal",
+    "cas", "casl", "casa", "casal",
+};
+
+const char* A64DOpcodeCAS::format()
+{
+    const auto* name = opName();
+    appendInstructionName(name);
+    appendSPOrRegisterName(rs(), is64Bit());
+    appendSeparator();
+    appendSPOrRegisterName(rt(), is64Bit());
+    appendSeparator();
+    appendCharacter('[');
+    appendSPOrRegisterName(rn(), is64Bit());
+    appendCharacter(']');
     return m_formatBuffer;
 }
 
