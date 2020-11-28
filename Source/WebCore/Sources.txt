@@ -2154,6 +2154,7 @@ rendering/BidiRun.cpp
 rendering/BorderEdge.cpp
 rendering/BreakLines.cpp
 rendering/CSSFilter.cpp
+rendering/CaretRectComputation.cpp
 rendering/ClipRect.cpp
 rendering/ComplexLineLayout.cpp
 rendering/ContentfulPaintChecker.cpp

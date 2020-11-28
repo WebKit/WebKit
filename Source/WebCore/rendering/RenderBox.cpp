@@ -4432,55 +4432,6 @@ void RenderBox::computePositionedLogicalHeightReplaced(LogicalExtentComputedValu
     computedValues.m_position = logicalTopPos;
 }
 
-LayoutRect RenderBox::localCaretRect(const InlineRunAndOffset& runAndOffset, CaretRectMode caretRectMode) const
-{
-    // VisiblePositions at offsets inside containers either a) refer to the positions before/after
-    // those containers (tables and select elements) or b) refer to the position inside an empty block.
-    // They never refer to children.
-    // FIXME: Paint the carets inside empty blocks differently than the carets before/after elements.
-
-    LayoutRect rect(location(), LayoutSize(caretWidth, height()));
-    bool ltr = runAndOffset.run ? runAndOffset.run->isLeftToRightDirection() : style().isLeftToRightDirection();
-
-    if ((!runAndOffset.offset) ^ ltr)
-        rect.move(LayoutSize(width() - caretWidth, 0_lu));
-
-    if (runAndOffset.run) {
-        auto line = runAndOffset.run.line();
-        LayoutUnit top = line->top();
-        rect.setY(top);
-        rect.setHeight(line->bottom() - top);
-    }
-
-    // If height of box is smaller than font height, use the latter one,
-    // otherwise the caret might become invisible.
-    //
-    // Also, if the box is not a replaced element, always use the font height.
-    // This prevents the "big caret" bug described in:
-    // <rdar://problem/3777804> Deleting all content in a document can result in giant tall-as-window insertion point
-    //
-    // FIXME: ignoring :first-line, missing good reason to take care of
-    LayoutUnit fontHeight = style().fontMetrics().height();
-    if (fontHeight > rect.height() || (!isReplaced() && !isTable()))
-        rect.setHeight(fontHeight);
-
-    // Move to local coords
-    rect.moveBy(-location());
-
-    // FIXME: Border/padding should be added for all elements but this workaround
-    // is needed because we use offsets inside an "atomic" element to represent
-    // positions before and after the element in deprecated editing offsets.
-    if (element() && !(editingIgnoresContent(*element()) || isRenderedTable(element()))) {
-        rect.setX(rect.x() + borderLeft() + paddingLeft());
-        rect.setY(rect.y() + paddingTop() + borderTop());
-    }
-
-    if (caretRectMode == CaretRectMode::ExpandToEndOfLine)
-        rect.shiftMaxXEdgeTo(x() + width());
-
-    return isHorizontalWritingMode() ? rect : rect.transposedRect();
-}
-
 VisiblePosition RenderBox::positionForPoint(const LayoutPoint& point, const RenderFragmentContainer* fragment)
 {
     // no children...return this render object's element, if there is one, and offset 0

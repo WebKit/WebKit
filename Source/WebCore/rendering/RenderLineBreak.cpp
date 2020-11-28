@@ -159,18 +159,6 @@ void RenderLineBreak::setSelectionState(HighlightState state)
     m_inlineBoxWrapper->root().setHasSelectedChildren(state != HighlightState::None);
 }
 
-LayoutRect RenderLineBreak::localCaretRect(const InlineRunAndOffset& runAndOffset, CaretRectMode caretRectMode) const
-{
-    ASSERT(!runAndOffset.offset);
-    ASSERT(runAndOffset.run == LayoutIntegration::runFor(*this));
-
-    if (!runAndOffset.run)
-        return LayoutRect();
-
-    auto line = runAndOffset.run.line();
-    return line->containingBlock().computeCaretRect(line->selectionRect(), line->contentLogicalLeft(), caretWidth, caretRectMode);
-}
-
 IntRect RenderLineBreak::linesBoundingBox() const
 {
     auto run = LayoutIntegration::runFor(*this);
@@ -214,7 +202,10 @@ void RenderLineBreak::collectSelectionRects(Vector<SelectionRect>& rects, unsign
         return;
     auto line = run.line();
 
-    LayoutRect rect = line->containingBlock().computeCaretRect(line->selectionRect(), line->contentLogicalLeft(), 0);
+    auto lineSelectionRect = line->selectionRect();
+    LayoutRect rect = IntRect(run->logicalLeft(), lineSelectionRect.y(), 0, lineSelectionRect.height());
+    if (!line->isHorizontal())
+        rect = rect.transposedRect();
 
     if (line->legacyRootInlineBox() && line->legacyRootInlineBox()->isFirstAfterPageBreak()) {
         if (run->isHorizontal())

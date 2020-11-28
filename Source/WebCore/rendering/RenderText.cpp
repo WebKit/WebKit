@@ -699,18 +699,6 @@ VisiblePosition RenderText::positionForPoint(const LayoutPoint& point, const Ren
     return createVisiblePosition(0, Affinity::Downstream);
 }
 
-LayoutRect RenderText::localCaretRect(const InlineRunAndOffset& runAndOffset, CaretRectMode caretRectMode) const
-{
-    if (!runAndOffset.run)
-        return LayoutRect();
-
-    auto& textRun = downcast<LayoutIntegration::TextRunIterator>(runAndOffset.run);
-    auto line = textRun.line();
-
-    float position = textRun->positionForOffset(runAndOffset.offset);
-    return line->containingBlock().computeCaretRect(line->selectionRect(), position, caretWidth, caretRectMode);
-}
-
 ALWAYS_INLINE float RenderText::widthFromCache(const FontCascade& f, unsigned start, unsigned len, float xPos, HashSet<const Font*>* fallbackFonts, GlyphOverflow* glyphOverflow, const RenderStyle& style) const
 {
     if (style.hasTextCombine() && is<RenderCombineText>(*this)) {

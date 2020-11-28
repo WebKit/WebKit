@@ -64,6 +64,7 @@
 #include "AccessibilityTableRow.h"
 #include "AccessibilityTree.h"
 #include "AccessibilityTreeItem.h"
+#include "CaretRectComputation.h"
 #include "Document.h"
 #include "Editing.h"
 #include "Editor.h"
@@ -2902,7 +2903,7 @@ LayoutRect AXObjectCache::localCaretRectForCharacterOffset(RenderObject*& render
     if (is<RenderLineBreak>(renderer) && LayoutIntegration::runFor(downcast<RenderLineBreak>(*renderer)) != runAndOffset.run)
         return IntRect();
 
-    return renderer->localCaretRect(runAndOffset);
+    return computeLocalCaretRect(*renderer, runAndOffset);
 }
 
 IntRect AXObjectCache::absoluteCaretBoundsForCharacterOffset(const CharacterOffset& characterOffset)

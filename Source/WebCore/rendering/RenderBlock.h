@@ -484,8 +484,6 @@ private:
 
     void paintContinuationOutlines(PaintInfo&, const LayoutPoint&);
 
-    LayoutRect localCaretRect(const InlineRunAndOffset&, CaretRectMode) const final;
-    
     // FIXME-BLOCKFLOW: Remove virtualizaion when all callers have moved to RenderBlockFlow
     virtual VisiblePosition positionForPointWithInlineChildren(const LayoutPoint&, const RenderFragmentContainer*);
 

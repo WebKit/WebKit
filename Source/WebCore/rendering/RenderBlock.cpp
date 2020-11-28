@@ -2841,15 +2841,6 @@ void RenderBlock::updateHitTestResult(HitTestResult& result, const LayoutPoint& 
     }
 }
 
-LayoutRect RenderBlock::localCaretRect(const InlineRunAndOffset& runAndOffset, CaretRectMode caretRectMode) const
-{
-    // Do the normal calculation in most cases.
-    if (firstChild())
-        return RenderBox::localCaretRect(runAndOffset, caretRectMode);
-
-    return localCaretRectForEmptyElement(width(), textIndentOffset(), caretRectMode);
-}
-
 void RenderBlock::addFocusRingRectsForInlineChildren(Vector<LayoutRect>&, const LayoutPoint&, const RenderLayerModelObject*)
 {
     ASSERT_NOT_REACHED();

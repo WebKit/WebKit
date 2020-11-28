@@ -203,7 +203,6 @@ private:
 
     void setSelectionState(HighlightState) final;
     LayoutRect selectionRectForRepaint(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent = true) final;
-    LayoutRect localCaretRect(const InlineRunAndOffset&, CaretRectMode) const override;
     LayoutRect clippedOverflowRectForRepaint(const RenderLayerModelObject* repaintContainer) const final;
 
     void computePreferredLogicalWidths(float leadWidth, HashSet<const Font*>& fallbackFonts, GlyphOverflow&);

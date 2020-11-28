@@ -30,6 +30,7 @@
 
 #pragma once
 
+#include "CaretRectComputation.h"
 #include "LayoutIntegrationLineIterator.h"
 #include "LayoutIntegrationRunIterator.h"
 #include "TextAffinity.h"

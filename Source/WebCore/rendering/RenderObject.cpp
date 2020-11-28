@@ -1400,11 +1400,6 @@ LayoutSize RenderObject::offsetFromAncestorContainer(RenderElement& container) c
     return offset;
 }
 
-LayoutRect RenderObject::localCaretRect(const InlineRunAndOffset&, CaretRectMode) const
-{
-    return LayoutRect();
-}
-
 bool RenderObject::isRooted() const
 {
     return isDescendantOf(&view());

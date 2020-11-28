@@ -119,30 +119,6 @@ std::unique_ptr<InlineTextBox> RenderSVGInlineText::createTextBox()
     return box; 
 }
 
-LayoutRect RenderSVGInlineText::localCaretRect(const InlineRunAndOffset& runAndOffset, CaretRectMode) const
-{
-    auto* box = runAndOffset.run ? runAndOffset.run->legacyInlineBox() : nullptr;
-    auto caretOffset = runAndOffset.offset;
-
-    if (!is<InlineTextBox>(box))
-        return LayoutRect();
-
-    auto& textBox = downcast<InlineTextBox>(*box);
-    if (caretOffset < textBox.start() || caretOffset > textBox.start() + textBox.len())
-        return LayoutRect();
-
-    // Use the edge of the selection rect to determine the caret rect.
-    if (caretOffset < textBox.start() + textBox.len()) {
-        LayoutRect rect = textBox.localSelectionRect(caretOffset, caretOffset + 1);
-        LayoutUnit x = textBox.isLeftToRightDirection() ? rect.x() : rect.maxX();
-        return LayoutRect(x, rect.y(), caretWidth, rect.height());
-    }
-
-    LayoutRect rect = textBox.localSelectionRect(caretOffset - 1, caretOffset);
-    LayoutUnit x = textBox.isLeftToRightDirection() ? rect.maxX() : rect.x();
-    return LayoutRect(x, rect.y(), caretWidth, rect.height());
-}
-
 FloatRect RenderSVGInlineText::floatLinesBoundingBox() const
 {
     FloatRect boundingBox;

@@ -260,8 +260,6 @@ protected:
 
     InterpolationQuality chooseInterpolationQuality(GraphicsContext&, Image&, const void*, const LayoutSize&);
 
-    LayoutRect localCaretRectForEmptyElement(LayoutUnit width, LayoutUnit textIndentOffset, CaretRectMode = CaretRectMode::Normal) const;
-
     static bool shouldAntialiasLines(GraphicsContext&);
 
     static void clipRoundedInnerRect(GraphicsContext&, const FloatRect&, const FloatRoundedRect& clipRect);
