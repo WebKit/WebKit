@@ -29,6 +29,8 @@
 #import "LegacyCustomProtocolManager.h"
 #import "LogInitialization.h"
 #import "Logging.h"
+#import "NetworkConnectionToWebProcessMessages.h"
+#import "NetworkProcessConnection.h"
 #import "ObjCObjectGraph.h"
 #import "ProcessAssertion.h"
 #import "SandboxExtension.h"
@@ -306,6 +308,9 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     // check in with Launch Services
     [NSApplication _accessibilityInitialize];
 
+    // Update process name while holding the Launch Services sandbox extension
+    updateProcessName();
+
     // FIXME: (<rdar://problem/70345312): Notify LaunchServices that we will be disconnecting.
     if (launchServicesExtension)
         launchServicesExtension->revoke();
@@ -373,8 +378,6 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
         PAL::softLinkMediaToolboxFigPhotoDecompressionSetHardwareCutoff(kPALFigPhotoContainerFormat_JFIF, INT_MAX);
 #endif
 
-    updateProcessName();
-    
     SystemSoundManager::singleton().setSystemSoundDelegate(makeUnique<WebSystemSoundDelegate>());
 
 #if PLATFORM(MAC)
@@ -430,6 +433,17 @@ void WebProcess::updateProcessName()
         break;
     }
 
+#if ENABLE(SET_WEBCONTENT_PROCESS_INFORMATION_IN_NETWORK_PROCESS)
+    audit_token_t auditToken = { 0 };
+    mach_msg_type_number_t info_size = TASK_AUDIT_TOKEN_COUNT;
+    kern_return_t err = task_info(mach_task_self(), TASK_AUDIT_TOKEN, reinterpret_cast<integer_t *>(&auditToken), &info_size);
+    if (err != KERN_SUCCESS) {
+        WTFLogAlways("Unable to get audit token for self: 0x%x", err);
+        return;
+    }
+    String displayName = applicationName.get();
+    m_networkProcessConnection->connection().send(Messages::NetworkConnectionToWebProcess::UpdateActivePages(displayName, Vector<String>(), auditToken), 0);
+#else
     RunLoop::main().dispatch([this, applicationName = WTFMove(applicationName)] {
         // Note that it is important for _RegisterApplication() to have been called before setting the display name.
         auto error = _LSSetApplicationInformationItem(kLSDefaultSessionID, _LSGetCurrentApplicationASN(), _kLSDisplayNameKey, (CFStringRef)applicationName.get(), nullptr);
@@ -444,6 +458,7 @@ void WebProcess::updateProcessName()
         ASSERT(!actualApplicationName.isEmpty());
 #endif
     });
+#endif // ENABLE(SET_WEBCONTENT_PROCESS_INFORMATION_IN_NETWORK_PROCESS)
 #endif // PLATFORM(MAC)
 }
 
@@ -677,29 +692,40 @@ static NSURL *origin(WebPage& page)
 #endif
 
 #if PLATFORM(MAC)
-
-static RetainPtr<NSArray<NSString *>> activePagesOrigins(const HashMap<PageIdentifier, RefPtr<WebPage>>& pageMap)
+static Vector<String> activePagesOrigins(const HashMap<PageIdentifier, RefPtr<WebPage>>& pageMap)
 {
-    return createNSArray(pageMap.values(), [] (auto& page) -> NSString * {
+    Vector<String> origins;
+    for (auto& page : pageMap.values()) {
         if (page->usesEphemeralSession())
-            return nil;
+            continue;
 
         NSURL *originAsURL = origin(*page);
         if (!originAsURL)
-            return nil;
+            continue;
 
-        return WTF::userVisibleString(originAsURL);
-    });
+        origins.append(WTF::userVisibleString(originAsURL));
+    }
+    return origins;
 }
-
 #endif
 
 void WebProcess::updateActivePages(const String& overrideDisplayName)
 {
 #if PLATFORM(MAC)
+#if ENABLE(SET_WEBCONTENT_PROCESS_INFORMATION_IN_NETWORK_PROCESS)
+    audit_token_t auditToken = { 0 };
+    mach_msg_type_number_t info_size = TASK_AUDIT_TOKEN_COUNT;
+    kern_return_t err = task_info(mach_task_self(), TASK_AUDIT_TOKEN, reinterpret_cast<integer_t *>(&auditToken), &info_size);
+    if (err != KERN_SUCCESS) {
+        WTFLogAlways("Unable to get audit token for self: 0x%x", err);
+        return;
+    }
+
+    m_networkProcessConnection->connection().send(Messages::NetworkConnectionToWebProcess::UpdateActivePages(overrideDisplayName, activePagesOrigins(m_pageMap), auditToken), 0);
+#else
     if (!overrideDisplayName) {
         RunLoop::main().dispatch([activeOrigins = activePagesOrigins(m_pageMap)] {
-            _LSSetApplicationInformationItem(kLSDefaultSessionID, _LSGetCurrentApplicationASN(), CFSTR("LSActivePageUserVisibleOriginsKey"), (__bridge CFArrayRef)activeOrigins.get(), nullptr);
+            _LSSetApplicationInformationItem(kLSDefaultSessionID, _LSGetCurrentApplicationASN(), CFSTR("LSActivePageUserVisibleOriginsKey"), (__bridge CFArrayRef)createNSArray(activeOrigins).get(), nullptr);
         });
     } else {
         RunLoop::main().dispatch([name = overrideDisplayName.createCFString()] {
@@ -707,12 +733,13 @@ void WebProcess::updateActivePages(const String& overrideDisplayName)
         });
     }
 #endif
+#endif
 }
 
 void WebProcess::getActivePagesOriginsForTesting(CompletionHandler<void(Vector<String>&&)>&& completionHandler)
 {
 #if PLATFORM(MAC)
-    completionHandler(makeVector<String>(activePagesOrigins(m_pageMap).get()));
+    completionHandler(activePagesOrigins(m_pageMap));
 #else
     completionHandler({ });
 #endif

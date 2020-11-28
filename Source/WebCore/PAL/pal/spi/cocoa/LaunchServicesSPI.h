@@ -108,6 +108,7 @@ WTF_EXTERN_C_BEGIN
 extern const CFStringRef _kLSDisplayNameKey;
 
 LSASNRef _LSGetCurrentApplicationASN();
+LSASNRef _LSCopyLSASNForAuditToken(LSSessionID, audit_token_t);
 OSStatus _LSSetApplicationInformationItem(LSSessionID, LSASNRef, CFStringRef keyToSetRef, CFTypeRef valueToSetRef, CFDictionaryRef* newInformationDictRef);
 CFTypeRef _LSCopyApplicationInformationItem(LSSessionID, LSASNRef, CFTypeRef);
 

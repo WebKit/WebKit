@@ -1775,6 +1775,7 @@
 		C18173612058424700DFDA65 /* DisplayLink.h in Headers */ = {isa = PBXBuildFile; fileRef = C18173602058424700DFDA65 /* DisplayLink.h */; };
 		C18F3A152563334300797E66 /* WebInspectorPreferenceObserver.mm in Sources */ = {isa = PBXBuildFile; fileRef = C18F3A142563334300797E66 /* WebInspectorPreferenceObserver.mm */; };
 		C1A152D724E5A29A00978C8B /* HandleXPCEndpointMessages.mm in Sources */ = {isa = PBXBuildFile; fileRef = C1A152D624E5A29A00978C8B /* HandleXPCEndpointMessages.mm */; };
+		C1C1B30F2540F50D00D9100B /* NetworkConnectionToWebProcessMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = C1C1B30E2540F45600D9100B /* NetworkConnectionToWebProcessMac.mm */; };
 		C1E123BA20A11573002646F4 /* PDFContextMenu.h in Headers */ = {isa = PBXBuildFile; fileRef = C1E123B920A11572002646F4 /* PDFContextMenu.h */; };
 		C517388112DF8F4F00EE3F47 /* DragControllerAction.h in Headers */ = {isa = PBXBuildFile; fileRef = C517388012DF8F4F00EE3F47 /* DragControllerAction.h */; };
 		C54256B518BEC18C00DE4179 /* WKDateTimeInputControl.h in Headers */ = {isa = PBXBuildFile; fileRef = C54256AF18BEC18B00DE4179 /* WKDateTimeInputControl.h */; };
@@ -5246,6 +5247,7 @@
 		C18FB51E242F9F77007E9875 /* WebSleepDisablerClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSleepDisablerClient.h; sourceTree = "<group>"; };
 		C1A152D524E5A1D200978C8B /* HandleXPCEndpointMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HandleXPCEndpointMessages.h; sourceTree = "<group>"; };
 		C1A152D624E5A29A00978C8B /* HandleXPCEndpointMessages.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = HandleXPCEndpointMessages.mm; sourceTree = "<group>"; };
+		C1C1B30E2540F45600D9100B /* NetworkConnectionToWebProcessMac.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = NetworkConnectionToWebProcessMac.mm; sourceTree = "<group>"; };
 		C1E123B920A11572002646F4 /* PDFContextMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PDFContextMenu.h; sourceTree = "<group>"; };
 		C1ED723724A5690E003F6CD3 /* NetworkProcessProxyCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = NetworkProcessProxyCocoa.mm; sourceTree = "<group>"; };
 		C517388012DF8F4F00EE3F47 /* DragControllerAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DragControllerAction.h; sourceTree = "<group>"; };
@@ -8127,6 +8129,7 @@
 			isa = PBXGroup;
 			children = (
 				E17AE2C116B9C139001C42F1 /* com.apple.WebKit.NetworkProcess.sb.in */,
+				C1C1B30E2540F45600D9100B /* NetworkConnectionToWebProcessMac.mm */,
 				51A8A6151627F3F9000D90E9 /* NetworkProcessMac.mm */,
 				E1B78472163F253E0007B692 /* RemoteNetworkingContext.mm */,
 			);
@@ -11013,8 +11016,8 @@
 				5790A66C25679EB70077C5A7 /* _WKPublicKeyCredentialDescriptor.h in Headers */,
 				5790A656256799DA0077C5A7 /* _WKPublicKeyCredentialEntity.h in Headers */,
 				5790A66225679C860077C5A7 /* _WKPublicKeyCredentialParameters.h in Headers */,
-				5790A6782567A0CD0077C5A7 /* _WKPublicKeyCredentialRequestOptions.h in Headers */,
 				5790A65A25679B260077C5A7 /* _WKPublicKeyCredentialRelyingPartyEntity.h in Headers */,
+				5790A6782567A0CD0077C5A7 /* _WKPublicKeyCredentialRequestOptions.h in Headers */,
 				5790A65E25679C110077C5A7 /* _WKPublicKeyCredentialUserEntity.h in Headers */,
 				1A9E328D182165A900F5D04C /* _WKRemoteObjectInterface.h in Headers */,
 				1AABFE3A1829C1ED005B070E /* _WKRemoteObjectInterfaceInternal.h in Headers */,
@@ -13206,8 +13209,8 @@
 				5790A66D25679EB70077C5A7 /* _WKPublicKeyCredentialDescriptor.mm in Sources */,
 				5790A657256799DA0077C5A7 /* _WKPublicKeyCredentialEntity.mm in Sources */,
 				5790A66325679C860077C5A7 /* _WKPublicKeyCredentialParameters.mm in Sources */,
-				5790A6792567A0CD0077C5A7 /* _WKPublicKeyCredentialRequestOptions.mm in Sources */,
 				5790A65B25679B260077C5A7 /* _WKPublicKeyCredentialRelyingPartyEntity.mm in Sources */,
+				5790A6792567A0CD0077C5A7 /* _WKPublicKeyCredentialRequestOptions.mm in Sources */,
 				5790A65F25679C110077C5A7 /* _WKPublicKeyCredentialUserEntity.mm in Sources */,
 				49FBEFFD239B011D00BD032F /* _WKResourceLoadStatisticsFirstParty.mm in Sources */,
 				49FBEFFF239B012F00BD032F /* _WKResourceLoadStatisticsThirdParty.mm in Sources */,
@@ -13262,6 +13265,7 @@
 				2D913444212CF9F000128AFD /* NetscapePlugin.cpp in Sources */,
 				2D92A796212B6ADA00F493FD /* NetscapePluginModule.cpp in Sources */,
 				2D913445212CF9F000128AFD /* NetscapePluginStream.cpp in Sources */,
+				C1C1B30F2540F50D00D9100B /* NetworkConnectionToWebProcessMac.mm in Sources */,
 				51DD9F2816367DA2001578E9 /* NetworkConnectionToWebProcessMessageReceiver.cpp in Sources */,
 				52F060E11654318500F3281B /* NetworkContentRuleListManagerMessageReceiver.cpp in Sources */,
 				51F060E11654318500F3283F /* NetworkMDNSRegisterMessageReceiver.cpp in Sources */,

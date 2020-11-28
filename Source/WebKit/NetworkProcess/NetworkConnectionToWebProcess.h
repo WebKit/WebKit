@@ -253,6 +253,10 @@ private:
 
     void setCORSDisablingPatterns(WebCore::PageIdentifier, Vector<String>&&);
 
+#if PLATFORM(MAC)
+    void updateActivePages(const String& name, const Vector<String>& activePagesOrigins, audit_token_t);
+#endif
+
 #if USE(LIBWEBRTC)
     NetworkRTCProvider& rtcProvider();
 #endif

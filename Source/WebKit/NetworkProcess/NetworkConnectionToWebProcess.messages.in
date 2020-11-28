@@ -98,4 +98,7 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
     DidDeliverMessagePortMessages(uint64_t messageBatchIdentifier)
     RegisterURLSchemesAsCORSEnabled(Vector<String> schemes);
     SetCORSDisablingPatterns(WebCore::PageIdentifier pageIdentifier, Vector<String> patterns)
+#if PLATFORM(MAC)
+    UpdateActivePages(String name, Vector<String> activePagesOrigins, audit_token_t auditToken)
+#endif
 }

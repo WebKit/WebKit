@@ -1,3 +1,15 @@
+2020-11-28  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Set application information in the Networking process on behalf of the WebContent process
+        https://bugs.webkit.org/show_bug.cgi?id=218052
+        <rdar://problem/70586405>
+
+        Reviewed by Brent Fulgham.
+
+        Declare function to create ASN from an audit token.
+
+        * pal/spi/cocoa/LaunchServicesSPI.h:
+
 2020-11-17  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Perform AX TCC check in the UI process

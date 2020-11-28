@@ -921,7 +921,9 @@
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
     (with report) (with telemetry-backtrace)
 #endif
+#if !ENABLE(SET_WEBCONTENT_PROCESS_INFORMATION_IN_NETWORK_PROCESS)
     (global-name "com.apple.coreservices.launchservicesd")
+#endif
     (global-name "com.apple.iconservices")
     (global-name "com.apple.iconservices.store")
     (global-name "com.apple.tccd.system")
@@ -1209,6 +1211,7 @@
 (deny mach-lookup (with telemetry-backtrace)
     (global-name "com.apple.containermanagerd")
     (global-name "com.apple.cookied")
+    (global-name "com.apple.coreservices.launchservicesd")
 )
 #endif
 

@@ -1,5 +1,29 @@
 2020-11-28  Per Arne Vollan  <pvollan@apple.com>
 
+        [macOS] Set application information in the Networking process on behalf of the WebContent process
+        https://bugs.webkit.org/show_bug.cgi?id=218052
+        <rdar://problem/70586405>
+
+        Reviewed by Brent Fulgham.
+
+        In preparation for blocking Launch Services in the WebContent process' sandbox, application information for the process
+        should be set in the Networking process.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        * NetworkProcess/mac/NetworkConnectionToWebProcessMac.mm: Added.
+        (WebKit::NetworkConnectionToWebProcess::updateActivePages):
+        * Scripts/process-entitlements.sh:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+        (WebKit::activePagesOrigins):
+        (WebKit::WebProcess::updateActivePages):
+        (WebKit::WebProcess::getActivePagesOriginsForTesting):
+        * WebProcess/com.apple.WebProcess.sb.in:
+
+2020-11-28  Per Arne Vollan  <pvollan@apple.com>
+
         [macOS] Issue sandbox extension to icon services when starting a drag operation
         https://bugs.webkit.org/show_bug.cgi?id=219159
         <rdar://problem/71585876>
