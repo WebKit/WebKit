@@ -1,3 +1,18 @@
+2020-11-27  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [ANGLE] Convert adjust-angle-include-paths.sh to a Python script for Windows without Cygwin
+        https://bugs.webkit.org/show_bug.cgi?id=219299
+
+        Reviewed by Kenneth Russell.
+
+        WinCairo port can't use shell scripts because it isn't using
+        Cygwin.
+
+        * ANGLE.xcodeproj/project.pbxproj:
+        * CMakeLists.txt:
+        * adjust-angle-include-paths.py: Added.
+        * adjust-angle-include-paths.sh: Removed.
+
 2020-11-27  Rob Buis  <rbuis@igalia.com>
 
         Fix ANGLE CMakeLists.txt warnings
