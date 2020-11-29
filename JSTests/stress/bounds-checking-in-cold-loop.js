@@ -1,3 +1,4 @@
+//@ skip if $memoryLimited
 //@ runFTLEager("--watchdog=1000", "--watchdog-exception-ok")
 let a = [];
 a[0] = undefined;

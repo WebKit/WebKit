@@ -1,3 +1,9 @@
+2020-11-28  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewd, annotate stress/bounds-checking-in-cold-loop.js with memoryLimited
+
+        * stress/bounds-checking-in-cold-loop.js:
+
 2020-11-27  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Use ARM atomic ops in wasm
