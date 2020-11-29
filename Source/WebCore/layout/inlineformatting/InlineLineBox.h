@@ -29,13 +29,13 @@
 
 #include "InlineLine.h"
 #include "InlineRect.h"
-#include "LayoutBoxGeometry.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
 namespace Layout {
 
+class BoxGeometry;
 class InlineFormattingContext;
 class LineBoxBuilder;
 
@@ -143,7 +143,7 @@ public:
     const InlineLevelBox& inlineLevelBoxForLayoutBox(const Box& layoutBox) const { return *m_inlineLevelBoxRectMap.get(&layoutBox); }
 
     InlineRect logicalRectForTextRun(const Line::Run&) const;
-    InlineRect logicalMarginRectForInlineLevelBox(const Box&) const;
+    InlineRect logicalMarginRectForInlineLevelBox(const Box&, const BoxGeometry&) const;
 
     auto inlineLevelBoxList() const { return m_inlineLevelBoxRectMap.values(); }
     bool containsInlineLevelBox(const Box& layoutBox) const { return m_inlineLevelBoxRectMap.contains(&layoutBox); }

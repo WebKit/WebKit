@@ -325,9 +325,9 @@ void InlineContentBuilder::createDisplayLines(const Layout::InlineFormattingStat
             auto& lineBox = lineBoxes[lineIndex];
             for (auto& inlineLevelBox : lineBox.inlineLevelBoxList()) {
                 auto& layoutBox = inlineLevelBox->layoutBox();
-                auto inlineLevelBoxLogicalRect = lineBox.logicalMarginRectForInlineLevelBox(layoutBox);
-                // inlineLevelBoxLogicalRect encloses the margin box, but we need border box for the display line.
                 auto& geometry = m_layoutState.geometryForBox(layoutBox);
+                auto inlineLevelBoxLogicalRect = lineBox.logicalMarginRectForInlineLevelBox(layoutBox, geometry);
+                // inlineLevelBoxLogicalRect encloses the margin box, but we need border box for the display line.
                 inlineLevelBoxLogicalRect.expandVertically(-std::max(0_lu, geometry.marginBefore() + geometry.marginAfter()));
                 inlineLevelBoxLogicalRect.moveVertically(std::max(0_lu, geometry.marginBefore()));
 
@@ -363,9 +363,9 @@ void InlineContentBuilder::createDisplayInlineBoxes(const Layout::InlineFormatti
             if (!inlineLevelBox->isInlineBox() || inlineLevelBox->isRootInlineBox())
                 continue;
             auto& layoutBox = inlineLevelBox->layoutBox();
-            auto inlineLevelBoxLogicalRect = lineBox.logicalMarginRectForInlineLevelBox(layoutBox);
-            // inlineLevelBoxLogicalRect encloses the margin box, but we need border box for the display line.
             auto& geometry = m_layoutState.geometryForBox(layoutBox);
+            auto inlineLevelBoxLogicalRect = lineBox.logicalMarginRectForInlineLevelBox(layoutBox, geometry);
+            // inlineLevelBoxLogicalRect encloses the margin box, but we need border box for the display line.
             inlineLevelBoxLogicalRect.expandVertically(-std::max(0_lu, geometry.marginBefore() + geometry.marginAfter()));
             inlineLevelBoxLogicalRect.moveVertically(std::max(0_lu, geometry.marginBefore()));
             inlineLevelBoxLogicalRect.moveBy(lineBoxLogicalRect.topLeft());

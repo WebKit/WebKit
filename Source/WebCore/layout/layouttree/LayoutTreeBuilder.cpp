@@ -416,7 +416,8 @@ void showInlineTreeAndRuns(TextStream& stream, const LayoutState& layoutState, c
                 stream << "Generic inline box";
             else
                 stream << "Generic inline level box";
-            auto logicalRect = lineBox.logicalMarginRectForInlineLevelBox(inlineLevelBox.layoutBox());
+            auto& layoutBox = inlineLevelBox.layoutBox();
+            auto logicalRect = lineBox.logicalMarginRectForInlineLevelBox(layoutBox, layoutState.geometryForBox(layoutBox));
             stream
                 << " at (" << logicalRect.left() << "," << logicalRect.top() << ")"
                 << " size (" << logicalRect.width() << "x" << logicalRect.height() << ")"
