@@ -2187,13 +2187,12 @@ TypedTmp AirIRGenerator::emitAtomicBinaryRMWOp(ExtAtomicOpType op, Type valueTyp
             TypedTmp newValue;
             if (valueType == Type::I64) {
                 newValue = g64();
-                append(Move, value, newValue);
-                append(Not64, newValue);
+                append(Not64, value, newValue);
             } else {
                 newValue = g32();
-                append(Move, value, newValue);
-                append(Not32, newValue);
+                append(Not32, value, newValue);
             }
+            value = newValue;
             opcode = OPCODE_FOR_WIDTH(AtomicXchgClear, accessWidth(op));
         }
         nonAtomicOpcode = OPCODE_FOR_CANONICAL_WIDTH(And, accessWidth(op));
