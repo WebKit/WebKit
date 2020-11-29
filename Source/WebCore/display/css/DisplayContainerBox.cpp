@@ -28,6 +28,7 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "DisplayBoxClip.h"
 #include "DisplayStyle.h"
 #include <wtf/IsoMallocInlines.h>
 

@@ -28,7 +28,9 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "DisplayBoxClip.h"
 #include "DisplayBoxPainter.h"
+#include "DisplayBoxRareGeometry.h"
 #include "DisplayContainerBox.h"
 #include "DisplayPaintingContext.h"
 #include "DisplayStyle.h"
