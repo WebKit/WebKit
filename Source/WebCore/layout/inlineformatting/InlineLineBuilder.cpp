@@ -331,11 +331,12 @@ LineBuilder::InlineItemRange LineBuilder::close(const InlineItemRange& needsLayo
         // Line is empty, we only managed to place float boxes.
         return lineRange;
     }
-    m_line.removeCollapsibleContent(availableWidth());
+    auto availableWidth = m_horizontalSpaceForLine - m_line.contentLogicalWidth();
+    m_line.removeCollapsibleContent(availableWidth);
     auto horizontalAlignment = root().style().textAlign();
     auto runsExpandHorizontally = horizontalAlignment == TextAlignMode::Justify && !isLastLineWithInlineContent(lineRange, needsLayoutRange.end, committedContent.partialTrailingContentLength);
     if (runsExpandHorizontally)
-        m_line.applyRunExpansion(availableWidth());
+        m_line.applyRunExpansion(m_horizontalSpaceForLine - m_line.contentLogicalWidth());
     auto lineEndsWithHyphen = false;
     if (!m_line.isConsideredEmpty()) {
         ASSERT(!m_line.runs().isEmpty());
@@ -530,9 +531,10 @@ LineBuilder::Result LineBuilder::handleFloatOrInlineContent(InlineContentBreaker
         ASSERT(inlineContent.trailingLineBreak() || inlineContent.trailingWordBreakOpportunity());
         return { inlineContent.trailingLineBreak() ? InlineContentBreaker::IsEndOfLine::Yes : InlineContentBreaker::IsEndOfLine::No };
     }
+    auto availableWidth = m_horizontalSpaceForLine - m_line.contentLogicalWidth();
     if (lineCandidate.floatItem) {
         auto floatBoxWidth = inlineItemWidth(*lineCandidate.floatItem, { });
-        if (floatBoxWidth > availableWidth() && !m_line.isConsideredEmpty())
+        if (floatBoxWidth > availableWidth && !m_line.isConsideredEmpty())
             return { InlineContentBreaker::IsEndOfLine::Yes };
         // This float shrinks the current line.
         auto& floatBox = lineCandidate.floatItem->layoutBox();
@@ -555,7 +557,7 @@ LineBuilder::Result LineBuilder::handleFloatOrInlineContent(InlineContentBreaker
     // Check if this new content fits.
     auto& continuousInlineContent = lineCandidate.inlineContent();
     auto isLineConsideredEmpty = m_line.isConsideredEmpty() && !m_contentIsConstrainedByFloat;
-    auto lineStatus = InlineContentBreaker::LineStatus { m_line.contentLogicalWidth(), availableWidth(), m_line.trimmableTrailingWidth(), m_line.trailingSoftHyphenWidth(), m_line.isTrailingRunFullyTrimmable(), isLineConsideredEmpty };
+    auto lineStatus = InlineContentBreaker::LineStatus { m_line.contentLogicalWidth(), availableWidth, m_line.trimmableTrailingWidth(), m_line.trailingSoftHyphenWidth(), m_line.isTrailingRunFullyTrimmable(), isLineConsideredEmpty };
     auto result = inlineContentBreaker.processInlineContent(continuousInlineContent, lineStatus);
     if (result.lastWrapOpportunityItem)
         m_wrapOpportunityList.append(result.lastWrapOpportunityItem);
@@ -666,9 +668,10 @@ size_t LineBuilder::rebuildLineForTrailingSoftHyphen(const InlineItemRange& layo
         // FIXME: If this turns out to be a perf issue, we could also traverse the wrap list and keep adding the items
         // while watching the available width very closely.
         auto committedCount = rebuildLine(layoutRange, softWrapOpportunityItem);
+        auto availableWidth = m_horizontalSpaceForLine - m_line.contentLogicalWidth();
         auto trailingSoftHyphenWidth = m_line.trailingSoftHyphenWidth();
         // Check if the trailing hyphen now fits the line (or we don't need hyhen anymore).
-        if (!trailingSoftHyphenWidth || trailingSoftHyphenWidth <= availableWidth()) {
+        if (!trailingSoftHyphenWidth || trailingSoftHyphenWidth <= availableWidth) {
             if (trailingSoftHyphenWidth)
                 m_line.addTrailingHyphen(*trailingSoftHyphenWidth);
             return committedCount;

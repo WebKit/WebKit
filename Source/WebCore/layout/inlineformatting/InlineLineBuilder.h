@@ -101,7 +101,6 @@ private:
 
     InlineLayoutUnit inlineItemWidth(const InlineItem&, InlineLayoutUnit contentLogicalLeft) const;
     bool isLastLineWithInlineContent(const InlineItemRange& lineRange, size_t lastInlineItemIndex, bool hasPartialTrailingContent) const;
-    InlineLayoutUnit availableWidth() const { return m_horizontalSpaceForLine - m_line.contentLogicalWidth(); }
 
     const InlineFormattingContext& formattingContext() const { return m_inlineFormattingContext; }
     const ContainerBox& root() const { return m_formattingContextRoot; }
