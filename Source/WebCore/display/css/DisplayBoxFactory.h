@@ -32,7 +32,9 @@
 
 namespace WebCore {
 
+class FloatPoint3D;
 class RenderStyle;
+class TransformationMatrix;
 
 namespace Layout {
 class Box;
@@ -47,6 +49,7 @@ namespace Display {
 class Box;
 class BoxDecorationData;
 class BoxModelBox;
+class BoxRareGeometry;
 class ContainerBox;
 class Style;
 
@@ -79,6 +82,11 @@ private:
     void setupBoxModelBox(BoxModelBox&, const Layout::Box&, const Layout::BoxGeometry&, const ContainingBlockContext&, const RenderStyle* styleForBackground) const;
 
     std::unique_ptr<BoxDecorationData> constructBoxDecorationData(const Layout::Box&, const Layout::BoxGeometry&, const RenderStyle* styleForBackground, LayoutSize offsetFromRoot) const;
+
+    std::unique_ptr<BoxRareGeometry> constructBoxRareGeometry(const BoxModelBox& box, const Layout::Box&, const Layout::BoxGeometry&, LayoutSize offsetFromRoot) const;
+
+    FloatPoint3D computeTransformOrigin(const BoxModelBox&, const Layout::BoxGeometry&, const RenderStyle&, LayoutSize offsetFromRoot) const;
+    TransformationMatrix computeTransformationMatrix(const BoxModelBox&, const Layout::BoxGeometry&, const RenderStyle&, LayoutSize offsetFromRoot) const;
 
     static const Layout::ContainerBox* documentElementBoxFromRootBox(const Layout::ContainerBox& rootLayoutBox);
     static const Layout::Box* bodyBoxFromRootBox(const Layout::ContainerBox& rootLayoutBox);

@@ -30,6 +30,7 @@
 
 #include "DisplayBoxClip.h"
 #include "DisplayBoxDecorationData.h"
+#include "DisplayBoxRareGeometry.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
@@ -46,6 +47,11 @@ BoxModelBox::~BoxModelBox() = default;
 void BoxModelBox::setBoxDecorationData(std::unique_ptr<BoxDecorationData>&& decorationData)
 {
     m_boxDecorationData = WTFMove(decorationData);
+}
+
+void BoxModelBox::setBoxRareGeometry(std::unique_ptr<BoxRareGeometry>&& rareGeometry)
+{
+    m_boxRareGeometry = WTFMove(rareGeometry);
 }
 
 FloatRoundedRect BoxModelBox::borderRoundedRect() const
@@ -72,6 +78,11 @@ FloatRoundedRect BoxModelBox::innerBorderRoundedRect() const
 void BoxModelBox::setAncestorClip(RefPtr<BoxClip>&& clip)
 {
     m_ancestorClip = WTFMove(clip);
+}
+
+bool BoxModelBox::hasAncestorClip() const
+{
+    return m_ancestorClip && m_ancestorClip->clipRect();
 }
 
 RefPtr<BoxClip> BoxModelBox::clipForDescendants() const

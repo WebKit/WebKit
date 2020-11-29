@@ -35,6 +35,7 @@
 #include "DisplayTree.h"
 #include "GraphicsContext.h"
 #include "IntRect.h"
+#include "TransformationMatrix.h"
 
 namespace WebCore {
 namespace Display {
@@ -48,13 +49,11 @@ static void applyClipIfNecessary(const Box& box, PaintingContext& paintingContex
     }
 }
 
-static void applyAncestorClip(const BoxModelBox& box, PaintingContext& paintingContext, GraphicsContextStateSaver& stateSaver)
+static void applyAncestorClip(const BoxModelBox& box, PaintingContext& paintingContext)
 {
     auto* boxClip = box.ancestorClip();
     if (!boxClip || !boxClip->clipRect())
         return;
-
-    stateSaver.save();
 
     if (!boxClip->affectedByBorderRadius()) {
         paintingContext.context.clip(*boxClip->clipRect());
@@ -65,7 +64,7 @@ static void applyAncestorClip(const BoxModelBox& box, PaintingContext& paintingC
         paintingContext.context.clipRoundedRect(roundedRect);
 }
 
-static void applyEffects(const Box& box, PaintingContext&, GraphicsContextStateSaver&, TransparencyLayerScope& transparencyScope)
+static void applyEffects(const Box& box, PaintingContext&, TransparencyLayerScope& transparencyScope)
 {
     if (box.style().opacity() < 1) {
         // FIXME: Compute and set a clip to avoid creating large transparency layers.
@@ -127,13 +126,34 @@ void CSSPainter::paintAtomicallyPaintedBox(const Box& box, PaintingContext& pain
 {
     UNUSED_PARAM(dirtyRect);
 
-    auto stateSaver = GraphicsContextStateSaver { paintingContext.context, false };
+    auto needToSaveState = [](const Box& box) {
+        if (!is<BoxModelBox>(box))
+            return false;
+        
+        auto& boxModelBox = downcast<BoxModelBox>(box);
+        return boxModelBox.hasAncestorClip() || boxModelBox.style().hasTransform();
+    };
+
+    auto stateSaver = GraphicsContextStateSaver { paintingContext.context, needToSaveState(box) };
 
     if (is<BoxModelBox>(box))
-        applyAncestorClip(downcast<BoxModelBox>(box), paintingContext, stateSaver);
+        applyAncestorClip(downcast<BoxModelBox>(box), paintingContext);
+
+    if (is<BoxModelBox>(box) && box.style().hasTransform()) {
+        auto transformationMatrix = downcast<BoxModelBox>(box).rareGeometry()->transform();
+        auto absoluteBorderBox = box.absoluteBoxRect();
+
+        // Equivalent to adjusting the CTM so that the origin is in the top left of the border box.
+        transformationMatrix.translateRight(absoluteBorderBox.x(), absoluteBorderBox.y());
+        // Allow descendants rendered using absolute coordinates to paint relative to this box.
+        transformationMatrix.translate(-absoluteBorderBox.x(), -absoluteBorderBox.y());
+
+        auto affineTransform = transformationMatrix.toAffineTransform();
+        paintingContext.context.concatCTM(affineTransform);
+    }
 
     auto transparencyScope = TransparencyLayerScope { paintingContext.context, 1, false };
-    applyEffects(box, paintingContext, stateSaver, transparencyScope);
+    applyEffects(box, paintingContext, transparencyScope);
 
     BoxPainter::paintBox(box, paintingContext, dirtyRect);
     if (!is<ContainerBox>(box))

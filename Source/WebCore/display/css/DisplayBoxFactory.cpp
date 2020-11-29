@@ -30,16 +30,19 @@
 
 #include "DisplayBoxDecorationData.h"
 #include "DisplayBoxDecorationPainter.h"
+#include "DisplayBoxRareGeometry.h"
 #include "DisplayContainerBox.h"
 #include "DisplayFillLayerImageGeometry.h"
 #include "DisplayImageBox.h"
 #include "DisplayTextBox.h"
+#include "FloatPoint3D.h"
 #include "InlineLineGeometry.h"
 #include "LayoutBoxGeometry.h"
 #include "LayoutContainerBox.h"
 #include "LayoutInitialContainingBlock.h"
 #include "LayoutReplacedBox.h"
 #include "Logging.h"
+#include "TransformationMatrix.h"
 
 namespace WebCore {
 namespace Display {
@@ -199,12 +202,62 @@ std::unique_ptr<BoxDecorationData> BoxFactory::constructBoxDecorationData(const 
     return boxDecorationData;
 }
 
+FloatPoint3D BoxFactory::computeTransformOrigin(const BoxModelBox& box, const Layout::BoxGeometry& layoutGeometry, const RenderStyle& renderStyle, LayoutSize offsetFromRoot) const
+{
+    auto transformBoxRect = LayoutRect { Layout::BoxGeometry::borderBoxRect(layoutGeometry) };
+
+    auto absoluteOrigin = LayoutPoint {
+        offsetFromRoot.width() + transformBoxRect.x() + valueForLength(renderStyle.transformOriginX(), transformBoxRect.width()),
+        offsetFromRoot.height() + transformBoxRect.y() + valueForLength(renderStyle.transformOriginY(), transformBoxRect.height())
+    };
+
+    auto snappedAbsoluteOrigin = roundPointToDevicePixels(absoluteOrigin, m_pixelSnappingFactor);
+    auto boxRelativeTransformOriginXY = snappedAbsoluteOrigin - box.absoluteBorderBoxRect().location();
+
+    return { boxRelativeTransformOriginXY.width(), boxRelativeTransformOriginXY.height(), renderStyle.transformOriginZ() };
+}
+
+TransformationMatrix BoxFactory::computeTransformationMatrix(const BoxModelBox& box, const Layout::BoxGeometry& layoutGeometry, const RenderStyle& renderStyle, LayoutSize offsetFromRoot) const
+{
+    auto boxRelativeTransformOrigin = computeTransformOrigin(box, layoutGeometry, renderStyle, offsetFromRoot);
+
+    // FIXME: Respect transform-box.
+    auto transformBoxRect = box.absoluteBorderBoxRect();
+
+    // FIXME: This is similar to RenderStyle::applyTransform(), but that fails to pixel snap transform origin.
+    auto transform = TransformationMatrix { };
+    transform.translate3d(boxRelativeTransformOrigin.x(), boxRelativeTransformOrigin.y(), boxRelativeTransformOrigin.z());
+
+    for (auto& operation : renderStyle.transform().operations())
+        operation->apply(transform, transformBoxRect.size());
+
+    transform.translate3d(-boxRelativeTransformOrigin.x(), -boxRelativeTransformOrigin.y(), -boxRelativeTransformOrigin.z());
+    return transform;
+
+}
+
+std::unique_ptr<BoxRareGeometry> BoxFactory::constructBoxRareGeometry(const BoxModelBox& box, const Layout::Box& layoutBox, const Layout::BoxGeometry& layoutGeometry, LayoutSize offsetFromRoot) const
+{
+    if (!box.style().hasTransform())
+        return nullptr;
+
+    auto boxRareGeometry = makeUnique<BoxRareGeometry>();
+
+    auto transformationMatrix = computeTransformationMatrix(box, layoutGeometry, layoutBox.style(), offsetFromRoot);
+    boxRareGeometry->setTransform(WTFMove(transformationMatrix));
+
+    return boxRareGeometry;
+}
+
 void BoxFactory::setupBoxModelBox(BoxModelBox& box, const Layout::Box& layoutBox, const Layout::BoxGeometry& layoutGeometry, const ContainingBlockContext& containingBlockContext, const RenderStyle* styleForBackground) const
 {
     setupBoxGeometry(box, layoutBox, layoutGeometry, containingBlockContext);
 
+    auto boxRareGeometry = constructBoxRareGeometry(box, layoutBox, layoutGeometry, containingBlockContext.offsetFromRoot);
+    box.setBoxRareGeometry(WTFMove(boxRareGeometry));
+
     auto& renderStyle = layoutBox.style();
-    if (!(styleForBackground && styleForBackground->hasBackground()) && !renderStyle.hasBorder())
+    if (!(styleForBackground && styleForBackground->hasBackground()) && !renderStyle.hasBorder()) // FIXME: Misses border-radius.
         return;
 
     auto boxDecorationData = constructBoxDecorationData(layoutBox, layoutGeometry, styleForBackground, containingBlockContext.offsetFromRoot);

@@ -33,6 +33,7 @@
 #include "NinePieceImage.h"
 #include "RenderStyleConstants.h"
 #include "TabSize.h"
+#include "TransformOperations.h"
 #include <wtf/IsoMalloc.h>
 #include <wtf/OptionSet.h>
 #include <wtf/Optional.h>
@@ -54,8 +55,9 @@ class Style {
 public:
 
     enum class Flags : uint8_t {
-        Positioned  = 1 << 0,
-        Floating    = 1 << 1,
+        Positioned      = 1 << 0,
+        Floating        = 1 << 1,
+        HasTransform    = 1 << 2,
     };
 
     explicit Style(const RenderStyle&);
@@ -77,6 +79,9 @@ public:
     
     bool isPositioned() const { return m_flags.contains(Flags::Positioned); }
     bool isFloating() const { return m_flags.contains(Flags::Floating); }
+
+    // Just the transform property (not translate, rotate, scale).
+    bool hasTransform() const { return m_flags.contains(Flags::HasTransform); }
 
     bool participatesInZOrderSorting() const { return isPositioned() || isStackingContext(); }
 
@@ -101,13 +106,14 @@ private:
 
     void setIsPositioned(bool value) { m_flags.set({ Flags::Positioned }, value); }
     void setIsFloating(bool value) { m_flags.set({ Flags::Floating }, value); }
+    void setHasTransform(bool value) { m_flags.set({ Flags::HasTransform }, value); }
 
     Color m_color;
     Color m_backgroundColor;
 
     RefPtr<FillLayer> m_backgroundLayers;
     std::unique_ptr<ShadowData> m_boxShadow;
-    
+
     Overflow m_overflowX;
     Overflow m_overflowY;
 

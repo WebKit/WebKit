@@ -104,6 +104,7 @@ Style::Style(const RenderStyle& style, const RenderStyle* styleForBackground)
 
     setIsPositioned(style.position() != PositionType::Static);
     setIsFloating(style.floating() != Float::No);
+    setHasTransform(style.hasTransform());
 }
 
 void Style::setupBackground(const RenderStyle& style)
