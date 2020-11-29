@@ -141,11 +141,19 @@ void BlockFormattingContext::layoutInFlowContent(InvalidationState& invalidation
             auto& layoutBox = *layoutQueue.takeLast();
             auto containingBlockConstraints = constraintsForLayoutBox(layoutBox);
 
-            // All inflow descendants (if there are any) are laid out by now. Let's compute the box's height.
+            // All inflow descendants (if there are any) are laid out by now. Let's compute the box's height and vertical margin.
             computeHeightAndMargin(layoutBox, containingBlockConstraints);
             if (layoutBox.isFloatingPositioned())
                 floatingState.append(floatingContext.toFloatItem(layoutBox));
-
+            else {
+                // Adjust the vertical position now that we've got final margin values for non-float avoider boxes.
+                // Float avoiders have pre-computed vertical positions when floats are present.
+                if (!layoutBox.isFloatAvoider() || floatingContext.isEmpty()) {
+                    auto& formattingState = this->formattingState();
+                    auto& boxGeometry = formattingState.boxGeometry(layoutBox);
+                    boxGeometry.setLogicalTop(verticalPositionWithMargin(layoutBox, formattingState.usedVerticalMargin(layoutBox), containingBlockConstraints.vertical));
+                }
+            }
             auto establishesFormattingContext = layoutBox.establishesFormattingContext(); 
             if (establishesFormattingContext) {
                 // Now that we computed the box's height, we can layout the out-of-flow descendants.
@@ -383,10 +391,6 @@ void BlockFormattingContext::computeHeightAndMargin(const Box& layoutBox, const 
     }
 #endif
     auto& boxGeometry = formattingState().boxGeometry(layoutBox);
-    if (!layoutBox.isFloatAvoider()) {
-        // Float avoiders have pre-computed vertical margins.
-        boxGeometry.setLogicalTop(verticalPositionWithMargin(layoutBox, verticalMargin, constraints.vertical));
-    }
     boxGeometry.setContentBoxHeight(contentHeightAndMargin.contentHeight);
     boxGeometry.setVerticalMargin({ marginBefore(verticalMargin), marginAfter(verticalMargin) });
     // Adjust the previous sibling's margin bottom now that this box's vertical margin is computed.

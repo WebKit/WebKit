@@ -81,6 +81,8 @@ static bool checkForMatchingNonTextRuns(const LineRun& lineRun, const WebCore::I
 
 static bool checkForMatchingTextRuns(const LineRun& lineRun, const WebCore::InlineTextBox& inlineTextBox)
 {
+    if (!lineRun.text())
+        return false;
     return areEssentiallyEqual(inlineTextBox.left(), lineRun.logicalLeft())
         && areEssentiallyEqual(inlineTextBox.right(), lineRun.logicalRight())
         && areEssentiallyEqual(inlineTextBox.top(), lineRun.logicalTop())
