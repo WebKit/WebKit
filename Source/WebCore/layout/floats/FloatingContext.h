@@ -44,9 +44,9 @@ class LayoutState;
 class FloatingContext {
     WTF_MAKE_ISO_ALLOCATED(FloatingContext);
 public:
-    FloatingContext(const FormattingContext&, FloatingState&);
+    FloatingContext(const FormattingContext&, const FloatingState&);
 
-    FloatingState& floatingState() const { return m_floatingState; }
+    const FloatingState& floatingState() const { return m_floatingState; }
 
     LayoutPoint positionForFloat(const Box&, const HorizontalConstraints&) const;
     LayoutPoint positionForNonFloatingFloatAvoider(const Box&, const HorizontalConstraints&) const;
@@ -69,12 +69,13 @@ public:
         Optional<PointInContextRoot> right;
     };
     Constraints constraints(LayoutUnit candidateTop, LayoutUnit candidateHeight) const;
-    void append(const Box&);
+
+    FloatingState::FloatItem toFloatItem(const Box& floatBox) const;
 
 private:
     Optional<LayoutUnit> bottom(Clear) const;
 
-    LayoutState& layoutState() const { return m_floatingState.layoutState(); }
+    const LayoutState& layoutState() const { return m_floatingState.layoutState(); }
     const FormattingContext& formattingContext() const { return m_formattingContext; }
     const ContainerBox& root() const { return m_formattingContext.root(); }
 
@@ -86,7 +87,7 @@ private:
     Point mapPointFromFormattingContextRootToFloatingStateRoot(Point) const;
 
     const FormattingContext& m_formattingContext;
-    FloatingState& m_floatingState;
+    const FloatingState& m_floatingState;
 };
 
 }

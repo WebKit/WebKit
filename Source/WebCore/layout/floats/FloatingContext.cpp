@@ -212,7 +212,7 @@ struct FloatingContext::AbsoluteCoordinateValuesForFloatAvoider {
     HorizontalEdges containingBlockContentBox;
 };
 
-FloatingContext::FloatingContext(const FormattingContext& formattingContext, FloatingState& floatingState)
+FloatingContext::FloatingContext(const FormattingContext& formattingContext, const FloatingState& floatingState)
     : m_formattingContext(formattingContext)
     , m_floatingState(floatingState)
 {
@@ -440,11 +440,11 @@ FloatingContext::Constraints FloatingContext::constraints(LayoutUnit candidateTo
     return constraints;
 }
 
-void FloatingContext::append(const Box& floatBox)
+FloatingState::FloatItem FloatingContext::toFloatItem(const Box& floatBox) const
 {
     auto absoluteBoxGeometry = BoxGeometry(formattingContext().geometryForBox(floatBox));
     absoluteBoxGeometry.setLogicalTopLeft(mapTopLeftToFloatingStateRoot(floatBox));
-    floatingState().append(FloatingState::FloatItem { floatBox, absoluteBoxGeometry });
+    return { floatBox, absoluteBoxGeometry };
 }
 
 void FloatingContext::findPositionForFormattingContextRoot(FloatAvoider& floatAvoider) const

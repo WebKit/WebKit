@@ -62,7 +62,8 @@ void BlockFormattingContext::layoutInFlowContent(InvalidationState& invalidation
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Start] -> block formatting context -> formatting root(" << &root() << ")");
     auto& formattingRoot = root();
     ASSERT(formattingRoot.hasInFlowOrFloatingChild());
-    auto floatingContext = FloatingContext { *this, formattingState().floatingState() };
+    auto& floatingState = formattingState().floatingState();
+    auto floatingContext = FloatingContext { *this, floatingState };
 
     LayoutQueue layoutQueue;
     enum class LayoutDirection { Child, Sibling };
@@ -143,7 +144,7 @@ void BlockFormattingContext::layoutInFlowContent(InvalidationState& invalidation
             // All inflow descendants (if there are any) are laid out by now. Let's compute the box's height.
             computeHeightAndMargin(layoutBox, containingBlockConstraints);
             if (layoutBox.isFloatingPositioned())
-                floatingContext.append(layoutBox);
+                floatingState.append(floatingContext.toFloatItem(layoutBox));
 
             auto establishesFormattingContext = layoutBox.establishesFormattingContext(); 
             if (establishesFormattingContext) {

@@ -415,7 +415,8 @@ InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuil
     auto updateFloatGeometry = [&] {
         if (lineContent.floats.isEmpty())
             return;
-        auto floatingContext = FloatingContext { *this, formattingState.floatingState() };
+        auto& floatingState = formattingState.floatingState();
+        auto floatingContext = FloatingContext { *this, floatingState };
         // Move floats to their final position.
         for (auto* floatBox : lineContent.floats) {
             auto& boxGeometry = formattingState.boxGeometry(*floatBox);
@@ -423,7 +424,7 @@ InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuil
             boxGeometry.setLogicalTopLeft({ lineBoxLogicalRect.left(), lineBoxLogicalRect.top() });
             // Float it.
             boxGeometry.setLogicalTopLeft(floatingContext.positionForFloat(*floatBox, horizontalConstraints));
-            floatingContext.append(*floatBox);
+            floatingState.append(floatingContext.toFloatItem(*floatBox));
         }
     };
     updateFloatGeometry();
