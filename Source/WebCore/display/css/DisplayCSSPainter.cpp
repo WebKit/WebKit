@@ -65,6 +65,14 @@ static void applyAncestorClip(const BoxModelBox& box, PaintingContext& paintingC
         paintingContext.context.clipRoundedRect(roundedRect);
 }
 
+static void applyEffects(const Box& box, PaintingContext&, GraphicsContextStateSaver&, TransparencyLayerScope& transparencyScope)
+{
+    if (box.style().opacity() < 1) {
+        // FIXME: Compute and set a clip to avoid creating large transparency layers.
+        transparencyScope.beginLayer(box.style().opacity());
+    }
+}
+
 // FIXME: Make this an iterator.
 void CSSPainter::recursivePaintDescendantsForPhase(const ContainerBox& containerBox, PaintingContext& paintingContext, PaintPhase paintPhase)
 {
@@ -123,6 +131,9 @@ void CSSPainter::paintAtomicallyPaintedBox(const Box& box, PaintingContext& pain
 
     if (is<BoxModelBox>(box))
         applyAncestorClip(downcast<BoxModelBox>(box), paintingContext, stateSaver);
+
+    auto transparencyScope = TransparencyLayerScope { paintingContext.context, 1, false };
+    applyEffects(box, paintingContext, stateSaver, transparencyScope);
 
     BoxPainter::paintBox(box, paintingContext, dirtyRect);
     if (!is<ContainerBox>(box))

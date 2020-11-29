@@ -83,6 +83,8 @@ public:
     const FontCascade& fontCascade() const { return m_fontCascade; }
     const FontMetrics& fontMetrics() const { return m_fontCascade.fontMetrics(); }
     
+    float opacity() const { return m_opacity; }
+
     Overflow overflowX() const;
     Overflow overflowY() const;
     bool hasClippedOverflow() const { return m_overflowX != Overflow::Visible || m_overflowY != Overflow::Visible; }
@@ -112,6 +114,8 @@ private:
     FontCascade m_fontCascade;
     WhiteSpace m_whiteSpace;
     TabSize m_tabSize;
+    
+    float m_opacity;
 
     Optional<int> m_zIndex;
     OptionSet<Flags> m_flags;

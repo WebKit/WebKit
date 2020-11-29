@@ -962,15 +962,13 @@ void BorderPainter::paintTranslucentBorderSides(PaintingContext& paintingContext
         }
 
         bool useTransparencyLayer = includesAdjacentEdges(commonColorEdgeSet) && !commonColor.isOpaque();
-        if (useTransparencyLayer) {
-            paintingContext.context.beginTransparencyLayer(commonColor.alphaAsFloat());
-            commonColor = commonColor.opaqueColor();
-        }
+        {
+            auto transparencyScope = TransparencyLayerScope { paintingContext.context, commonColor.alphaAsFloat(), useTransparencyLayer };
+            if (useTransparencyLayer)
+                commonColor = commonColor.opaqueColor();
 
-        paintBorderSides(paintingContext, outerBorder, innerBorder, innerBorderBleedAdjustment, commonColorEdgeSet, antialias, &commonColor);
-            
-        if (useTransparencyLayer)
-            paintingContext.context.endTransparencyLayer();
+            paintBorderSides(paintingContext, outerBorder, innerBorder, innerBorderBleedAdjustment, commonColorEdgeSet, antialias, &commonColor);
+        }
         
         edgesToDraw.remove(commonColorEdgeSet);
     }

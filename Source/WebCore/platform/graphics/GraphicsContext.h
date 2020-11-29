@@ -709,6 +709,35 @@ private:
     bool m_saveAndRestore;
 };
 
+class TransparencyLayerScope {
+public:
+    TransparencyLayerScope(GraphicsContext& context, float alpha, bool beginLayer = true)
+        : m_context(context)
+        , m_alpha(alpha)
+        , m_beganLayer(beginLayer)
+    {
+        if (beginLayer)
+            m_context.beginTransparencyLayer(m_alpha);
+    }
+    
+    void beginLayer(float alpha)
+    {
+        m_alpha = alpha;
+        m_context.beginTransparencyLayer(m_alpha);
+        m_beganLayer = true;
+    }
+    
+    ~TransparencyLayerScope()
+    {
+        if (m_beganLayer)
+            m_context.endTransparencyLayer();
+    }
+
+private:
+    GraphicsContext& m_context;
+    float m_alpha;
+    bool m_beganLayer;
+};
 
 class GraphicsContextStateStackChecker {
 public:
