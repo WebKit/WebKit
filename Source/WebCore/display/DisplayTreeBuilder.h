@@ -51,6 +51,7 @@ class Box;
 class ContainerBox;
 class PositioningContext;
 class Tree;
+struct BuildingState;
 
 class TreeBuilder {
 public:
@@ -64,14 +65,21 @@ private:
         Box* currentChild { nullptr };
     };
 
-    void recursiveBuildDisplayTree(const Layout::LayoutState&, const Layout::Box&, const PositioningContext&, InsertionPosition&) const;
-
-    void buildInlineDisplayTree(const Layout::LayoutState&, const Layout::ContainerBox&, const PositioningContext&, InsertionPosition&) const;
+    void recursiveBuildDisplayTree(const Layout::LayoutState&, const Layout::Box&, InsertionPosition&);
+    void buildInlineDisplayTree(const Layout::LayoutState&, const Layout::ContainerBox&, InsertionPosition&);
 
     void insert(std::unique_ptr<Box>&&, InsertionPosition&) const;
 
+    void pushStateForBoxDescendants(const Layout::ContainerBox&, const Layout::BoxGeometry&, const ContainerBox&);
+    void popState();
+    
+    const BuildingState& currentState() const;
+    const PositioningContext& positioningContext() const;
+
     BoxFactory m_boxFactory;
     RootBackgroundPropagation m_rootBackgroundPropgation { RootBackgroundPropagation::None };
+    
+    std::unique_ptr<Vector<BuildingState>> m_stateStack;
 };
 
 #if ENABLE(TREE_DEBUGGING)

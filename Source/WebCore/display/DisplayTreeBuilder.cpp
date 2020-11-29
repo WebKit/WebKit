@@ -96,10 +96,15 @@ private:
     ContainingBlockContext m_inFlowContainer;
 };
 
+struct BuildingState {
+    PositioningContext positioningContext;
+};
 
 TreeBuilder::TreeBuilder(float pixelSnappingFactor)
     : m_boxFactory(pixelSnappingFactor)
+    , m_stateStack(makeUnique<Vector<BuildingState>>())
 {
+    m_stateStack->reserveInitialCapacity(32);
 }
 
 std::unique_ptr<Tree> TreeBuilder::build(const Layout::LayoutState& layoutState)
@@ -123,13 +128,37 @@ std::unique_ptr<Tree> TreeBuilder::build(const Layout::LayoutState& layoutState)
 
     auto insertionPosition = InsertionPosition { *rootDisplayContainerBox };
 
-    recursiveBuildDisplayTree(layoutState, *rootLayoutBox.firstChild(), { *rootDisplayContainerBox }, insertionPosition);
+    m_stateStack->append({ *rootDisplayContainerBox });
+
+    recursiveBuildDisplayTree(layoutState, *rootLayoutBox.firstChild(), insertionPosition);
 
 #if ENABLE(TREE_DEBUGGING)
     LOG_WITH_STREAM(FormattingContextLayout, stream << "Display tree:\n" << displayTreeAsText(*rootDisplayContainerBox));
 #endif
 
     return makeUnique<Tree>(WTFMove(rootDisplayContainerBox));
+}
+
+void TreeBuilder::pushStateForBoxDescendants(const Layout::ContainerBox& layoutContainerBox, const Layout::BoxGeometry& layoutGeometry, const ContainerBox& displayBox)
+{
+    auto& positioningContext = m_stateStack->last().positioningContext;
+    m_stateStack->append({ positioningContext.contextForDescendants(layoutContainerBox, layoutGeometry, displayBox) });
+}
+
+void TreeBuilder::popState()
+{
+    m_stateStack->removeLast();
+}
+
+const BuildingState& TreeBuilder::currentState() const
+{
+    ASSERT(m_stateStack && m_stateStack->size());
+    return m_stateStack->last();
+}
+
+const PositioningContext& TreeBuilder::positioningContext() const
+{
+    return currentState().positioningContext;
 }
 
 void TreeBuilder::insert(std::unique_ptr<Box>&& box, InsertionPosition& insertionPosition) const
@@ -144,35 +173,35 @@ void TreeBuilder::insert(std::unique_ptr<Box>&& box, InsertionPosition& insertio
     }
 }
 
-void TreeBuilder::buildInlineDisplayTree(const Layout::LayoutState& layoutState, const Layout::ContainerBox& inlineFormattingRoot, const PositioningContext& positioningContext, InsertionPosition& insertionPosition) const
+void TreeBuilder::buildInlineDisplayTree(const Layout::LayoutState& layoutState, const Layout::ContainerBox& inlineFormattingRoot, InsertionPosition& insertionPosition)
 {
     auto& inlineFormattingState = layoutState.establishedInlineFormattingState(inlineFormattingRoot);
 
     for (auto& run : inlineFormattingState.lineRuns()) {
         if (run.text()) {
             auto& lineGeometry = inlineFormattingState.lines().at(run.lineIndex());
-            auto textBox = m_boxFactory.displayBoxForTextRun(run, lineGeometry, positioningContext.inFlowContainingBlockContext());
+            auto textBox = m_boxFactory.displayBoxForTextRun(run, lineGeometry, positioningContext().inFlowContainingBlockContext());
             insert(WTFMove(textBox), insertionPosition);
             continue;
         }
 
         if (is<Layout::ContainerBox>(run.layoutBox())) {
-            recursiveBuildDisplayTree(layoutState, run.layoutBox(), positioningContext, insertionPosition);
+            recursiveBuildDisplayTree(layoutState, run.layoutBox(), insertionPosition);
             continue;
         }
 
         auto geometry = layoutState.geometryForBox(run.layoutBox());
-        auto displayBox = m_boxFactory.displayBoxForLayoutBox(run.layoutBox(), geometry, positioningContext.inFlowContainingBlockContext());
+        auto displayBox = m_boxFactory.displayBoxForLayoutBox(run.layoutBox(), geometry, positioningContext().inFlowContainingBlockContext());
         insert(WTFMove(displayBox), insertionPosition);
     }
 }
 
-void TreeBuilder::recursiveBuildDisplayTree(const Layout::LayoutState& layoutState, const Layout::Box& layoutBox, const PositioningContext& positioningContext, InsertionPosition& insertionPosition) const
+void TreeBuilder::recursiveBuildDisplayTree(const Layout::LayoutState& layoutState, const Layout::Box& layoutBox, InsertionPosition& insertionPosition)
 {
     auto geometry = layoutState.geometryForBox(layoutBox);
     std::unique_ptr<Box> displayBox;
 
-    auto& containingBlockContext = positioningContext.containingBlockContextForLayoutBox(layoutBox);
+    auto& containingBlockContext = positioningContext().containingBlockContextForLayoutBox(layoutBox);
     if (layoutBox.isBodyBox())
         displayBox = m_boxFactory.displayBoxForBodyBox(layoutBox, geometry, containingBlockContext, m_rootBackgroundPropgation);
     else
@@ -190,13 +219,13 @@ void TreeBuilder::recursiveBuildDisplayTree(const Layout::LayoutState& layoutSta
     ContainerBox& currentBox = downcast<ContainerBox>(*insertionPosition.currentChild);
     auto insertionPositionForChildren = InsertionPosition { currentBox };
 
-    auto positioningContextForDescendants = positioningContext.contextForDescendants(layoutContainerBox, geometry, currentBox);
+    pushStateForBoxDescendants(layoutContainerBox, geometry, currentBox);
 
     enum class DescendantBoxInclusion { AllBoxes, OutOfFlowOnly };
     auto boxInclusion = DescendantBoxInclusion::AllBoxes;
 
     if (layoutContainerBox.establishesInlineFormattingContext()) {
-        buildInlineDisplayTree(layoutState, downcast<Layout::ContainerBox>(layoutContainerBox), positioningContextForDescendants, insertionPositionForChildren);
+        buildInlineDisplayTree(layoutState, downcast<Layout::ContainerBox>(layoutContainerBox), insertionPositionForChildren);
         boxInclusion = DescendantBoxInclusion::OutOfFlowOnly;
     }
 
@@ -210,8 +239,10 @@ void TreeBuilder::recursiveBuildDisplayTree(const Layout::LayoutState& layoutSta
 
     for (auto& child : Layout::childrenOfType<Layout::Box>(layoutContainerBox)) {
         if (includeBox(boxInclusion, child) && layoutState.hasBoxGeometry(child))
-            recursiveBuildDisplayTree(layoutState, child, positioningContextForDescendants, insertionPositionForChildren);
+            recursiveBuildDisplayTree(layoutState, child, insertionPositionForChildren);
     }
+
+    popState();
 }
 
 #if ENABLE(TREE_DEBUGGING)
