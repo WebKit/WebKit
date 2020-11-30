@@ -1316,7 +1316,5 @@ webkit.org/b/217054 fast/layoutformattingcontext/horizontal-sizing-with-trailing
 webkit.org/b/219322 fast/layoutformattingcontext/table-simple-border-collapse.html [ ImageOnlyFailure ]
 webkit.org/b/219322 fast/layoutformattingcontext/table-simple-border-collapse2.html [ ImageOnlyFailure ]
 
-webkit.org/b/218875 webrtc/captureCanvas-webrtc-software-h264-baseline.html [ Pass Failure ]
-
 webkit.org/b/218995 fast/lists/001.html [ Skip ]
 webkit.org/b/218995 fast/lists/001-vertical.html [ Skip ]
