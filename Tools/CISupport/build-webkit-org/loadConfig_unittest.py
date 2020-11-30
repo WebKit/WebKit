@@ -97,7 +97,7 @@ class TagsForBuilderTest(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    from steps_unittest import BuildBotConfigLoader
+    from steps_unittest_old import BuildBotConfigLoader
     BuildBotConfigLoader()._add_dependent_modules_to_sys_modules()
     import loadConfig
     unittest.main()
