@@ -1,3 +1,14 @@
+2020-11-30  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitscmpy] webkitscmpy.test.svn_unittest.TestRemoteSvn.test_info timezone dependent
+        https://bugs.webkit.org/show_bug.cgi?id=219263
+        <rdar://problem/71806358>
+
+        Reviewed by Aakash Jain.
+
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/svn_unittest.py:
+        (TestRemoteSvn.test_info):
+
 2020-11-30  Aakash Jain  <aakash_jain@apple.com>
 
         [build.webkit.org] Update RunTest262Tests step for new buildbot

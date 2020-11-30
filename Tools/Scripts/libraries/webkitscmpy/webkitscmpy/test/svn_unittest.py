@@ -249,7 +249,7 @@ class TestRemoteSvn(unittest.TestCase):
         with mocks.remote.Svn():
             self.assertDictEqual({
                 'Last Changed Author': 'jbedard@apple.com',
-                'Last Changed Date': '2020-10-02 11:58:20',
+                'Last Changed Date': datetime.fromtimestamp(1601665100).strftime('%Y-%m-%d %H:%M:%S'),
                 'Last Changed Rev': '6',
                 'Revision': 10,
             }, remote.Svn(self.remote).info())
