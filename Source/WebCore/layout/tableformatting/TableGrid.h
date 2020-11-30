@@ -128,7 +128,7 @@ public:
     private:
         LayoutUnit m_logicalTop;
         LayoutUnit m_logicalHeight;
-        InlineLayoutUnit m_baseline;
+        InlineLayoutUnit m_baseline { 0 };
         WeakPtr<const ContainerBox> m_layoutBox;
     };
 
