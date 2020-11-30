@@ -42,26 +42,10 @@ namespace WebKit {
 
 using namespace WebCore;
 
-struct NetworkLoad::Throttle {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
-
-    Throttle(NetworkLoad& load, Seconds delay, ResourceResponse&& response, ResponseCompletionHandler&& handler)
-        : timer(load, &NetworkLoad::throttleDelayCompleted)
-        , response(WTFMove(response))
-        , responseCompletionHandler(WTFMove(handler))
-    {
-        timer.startOneShot(delay);
-    }
-    Timer timer;
-    ResourceResponse response;
-    ResponseCompletionHandler responseCompletionHandler;
-};
-
 NetworkLoad::NetworkLoad(NetworkLoadClient& client, BlobRegistryImpl* blobRegistry, NetworkLoadParameters&& parameters, NetworkSession& networkSession)
     : m_client(client)
     , m_networkProcess(networkSession.networkProcess())
     , m_parameters(WTFMove(parameters))
-    , m_loadThrottleLatency(networkSession.loadThrottleLatency())
     , m_currentRequest(m_parameters.request)
 {
     if (blobRegistry && m_parameters.request.url().protocolIsBlob())
@@ -210,15 +194,9 @@ void NetworkLoad::didReceiveChallenge(AuthenticationChallenge&& challenge, Negot
 void NetworkLoad::didReceiveResponse(ResourceResponse&& response, NegotiatedLegacyTLS negotiatedLegacyTLS, ResponseCompletionHandler&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
-    ASSERT(!m_throttle);
 
     if (m_task && m_task->isDownload()) {
         m_networkProcess->findPendingDownloadLocation(*m_task.get(), WTFMove(completionHandler), response);
-        return;
-    }
-
-    if (m_loadThrottleLatency > 0_s) {
-        m_throttle = makeUnique<Throttle>(*this, m_loadThrottleLatency, WTFMove(response), WTFMove(completionHandler));
         return;
     }
 
@@ -240,8 +218,6 @@ void NetworkLoad::notifyDidReceiveResponse(ResourceResponse&& response, Negotiat
 
 void NetworkLoad::didReceiveData(Ref<SharedBuffer>&& buffer)
 {
-    ASSERT(!m_throttle);
-
     // FIXME: This should be the encoded data length, not the decoded data length.
     auto size = buffer->size();
     m_client.get().didReceiveBuffer(WTFMove(buffer), size);
@@ -249,21 +225,10 @@ void NetworkLoad::didReceiveData(Ref<SharedBuffer>&& buffer)
 
 void NetworkLoad::didCompleteWithError(const ResourceError& error, const WebCore::NetworkLoadMetrics& networkLoadMetrics)
 {
-    ASSERT(!m_throttle);
-
     if (error.isNull())
         m_client.get().didFinishLoading(networkLoadMetrics);
     else
         m_client.get().didFailLoading(error);
-}
-
-void NetworkLoad::throttleDelayCompleted()
-{
-    ASSERT(m_throttle);
-
-    auto throttle = WTFMove(m_throttle);
-
-    notifyDidReceiveResponse(WTFMove(throttle->response), NegotiatedLegacyTLS::No, WTFMove(throttle->responseCompletionHandler));
 }
 
 void NetworkLoad::didSendData(uint64_t totalBytesSent, uint64_t totalBytesExpectedToSend)

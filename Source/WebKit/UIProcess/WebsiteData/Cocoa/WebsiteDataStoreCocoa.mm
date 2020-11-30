@@ -64,8 +64,6 @@ static HashSet<WebsiteDataStore*>& dataStores()
     return dataStores;
 }
 
-static NSString * const WebKitNetworkLoadThrottleLatencyMillisecondsDefaultsKey = @"WebKitNetworkLoadThrottleLatencyMilliseconds";
-
 #if ENABLE(APP_BOUND_DOMAINS)
 static WorkQueue& appBoundDomainQueue()
 {
@@ -170,7 +168,6 @@ void WebsiteDataStore::platformSetNetworkParameters(WebsiteDataStoreParameters& 
     parameters.networkSessionParameters.sourceApplicationBundleIdentifier = configuration().sourceApplicationBundleIdentifier();
     parameters.networkSessionParameters.sourceApplicationSecondaryIdentifier = configuration().sourceApplicationSecondaryIdentifier();
     parameters.networkSessionParameters.shouldLogCookieInformation = shouldLogCookieInformation;
-    parameters.networkSessionParameters.loadThrottleLatency = Seconds { [defaults integerForKey:WebKitNetworkLoadThrottleLatencyMillisecondsDefaultsKey] / 1000. };
     parameters.networkSessionParameters.httpProxy = WTFMove(httpProxy);
     parameters.networkSessionParameters.httpsProxy = WTFMove(httpsProxy);
 #if HAVE(CFNETWORK_ALTERNATIVE_SERVICE)

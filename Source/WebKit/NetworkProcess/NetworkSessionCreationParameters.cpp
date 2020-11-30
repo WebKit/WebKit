@@ -48,7 +48,6 @@ void NetworkSessionCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << sourceApplicationBundleIdentifier;
     encoder << sourceApplicationSecondaryIdentifier;
     encoder << shouldLogCookieInformation;
-    encoder << loadThrottleLatency;
     encoder << httpProxy;
     encoder << httpsProxy;
 #endif
@@ -124,12 +123,7 @@ Optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters::dec
     decoder >> shouldLogCookieInformation;
     if (!shouldLogCookieInformation)
         return WTF::nullopt;
-    
-    Optional<Seconds> loadThrottleLatency;
-    decoder >> loadThrottleLatency;
-    if (!loadThrottleLatency)
-        return WTF::nullopt;
-    
+
     Optional<URL> httpProxy;
     decoder >> httpProxy;
     if (!httpProxy)
@@ -296,7 +290,6 @@ Optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters::dec
         , WTFMove(*sourceApplicationBundleIdentifier)
         , WTFMove(*sourceApplicationSecondaryIdentifier)
         , WTFMove(*shouldLogCookieInformation)
-        , WTFMove(*loadThrottleLatency)
         , WTFMove(*httpProxy)
         , WTFMove(*httpsProxy)
 #endif

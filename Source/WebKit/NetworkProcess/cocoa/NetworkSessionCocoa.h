@@ -113,7 +113,6 @@ private:
     void invalidateAndCancel() override;
     void clearCredentials() override;
     bool shouldLogCookieInformation() const override { return m_shouldLogCookieInformation; }
-    Seconds loadThrottleLatency() const override { return m_loadThrottleLatency; }
     SessionWrapper& isolatedSession(WebCore::StoredCredentialsPolicy, const WebCore::RegistrableDomain, NavigatingToAppBoundDomain);
 
 #if ENABLE(APP_BOUND_DOMAINS)
@@ -153,7 +152,6 @@ private:
     bool m_deviceManagementRestrictionsEnabled { false };
     bool m_allLoadsBlockedByDeviceManagementRestrictionsForTesting { false };
     bool m_shouldLogCookieInformation { false };
-    Seconds m_loadThrottleLatency;
     bool m_fastServerTrustEvaluationEnabled { false };
     String m_dataConnectionServiceType;
     bool m_preventsSystemHTTPProxyAuthentication { false };

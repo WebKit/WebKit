@@ -1,3 +1,33 @@
+2020-11-30  Antti Koivisto  <antti@apple.com>
+
+        Remove throttling code from NetworkLoad
+        https://bugs.webkit.org/show_bug.cgi?id=219347
+
+        Reviewed by Anders Carlsson.
+
+        It is not a good latency simulation and no one is using it anyway.
+
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::NetworkLoad):
+        (WebKit::NetworkLoad::didReceiveResponse):
+        (WebKit::NetworkLoad::didReceiveData):
+        (WebKit::NetworkLoad::didCompleteWithError):
+        (WebKit::NetworkLoad::Throttle::Throttle): Deleted.
+        (WebKit::NetworkLoad::throttleDelayCompleted): Deleted.
+        * NetworkProcess/NetworkLoad.h:
+        * NetworkProcess/NetworkSession.h:
+        (WebKit::NetworkSession::shouldLogCookieInformation const):
+        (WebKit::NetworkSession::loadThrottleLatency const): Deleted.
+        * NetworkProcess/NetworkSessionCreationParameters.cpp:
+        (WebKit::NetworkSessionCreationParameters::encode const):
+        (WebKit::NetworkSessionCreationParameters::decode):
+        * NetworkProcess/NetworkSessionCreationParameters.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSessionCocoa::NetworkSessionCocoa):
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::platformSetNetworkParameters):
+
 2020-11-29  Adam Mazander  <mazander@apple.com>
 
         Deny logs for benign fontservicesd daemon

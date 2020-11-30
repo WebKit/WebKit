@@ -75,7 +75,6 @@ public:
     virtual void invalidateAndCancel();
     virtual void clearCredentials() { };
     virtual bool shouldLogCookieInformation() const { return false; }
-    virtual Seconds loadThrottleLatency() const { return { }; }
     virtual Vector<WebCore::SecurityOriginData> hostNamesWithAlternativeServices() const { return { }; }
     virtual void deleteAlternativeServicesForHostNames(const Vector<String>&) { }
     virtual void clearAlternativeServices(WallTime) { }

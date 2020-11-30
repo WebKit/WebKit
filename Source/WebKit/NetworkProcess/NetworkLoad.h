@@ -84,17 +84,12 @@ private:
     void didNegotiateModernTLS(const WebCore::AuthenticationChallenge&) final;
 
     void notifyDidReceiveResponse(WebCore::ResourceResponse&&, NegotiatedLegacyTLS, ResponseCompletionHandler&&);
-    void throttleDelayCompleted();
 
     std::reference_wrapper<NetworkLoadClient> m_client;
     Ref<NetworkProcess> m_networkProcess;
     const NetworkLoadParameters m_parameters;
     CompletionHandler<void(WebCore::ResourceRequest&&)> m_redirectCompletionHandler;
     RefPtr<NetworkDataTask> m_task;
-    
-    struct Throttle;
-    std::unique_ptr<Throttle> m_throttle;
-    Seconds m_loadThrottleLatency;
 
     WebCore::ResourceRequest m_currentRequest; // Updated on redirects.
 };

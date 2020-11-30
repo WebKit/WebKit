@@ -61,7 +61,6 @@ struct NetworkSessionCreationParameters {
     String sourceApplicationBundleIdentifier;
     String sourceApplicationSecondaryIdentifier;
     bool shouldLogCookieInformation { false };
-    Seconds loadThrottleLatency;
     URL httpProxy;
     URL httpsProxy;
 #endif
