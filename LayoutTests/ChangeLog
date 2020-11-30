@@ -1,3 +1,15 @@
+2020-11-30  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] Properly garden webrtc crashes
+
+        Unreviewed test gardening.
+
+        * platform/gtk-wayland/TestExpectations: Move wayland-specific issue here
+        * platform/gtk/TestExpectations: Updated already existing expectations
+        * platform/wpe/TestExpectations: Remove undeed pass entries from previous
+          unimplemented-like bugs that are already fixed. These entries were
+          overriding the generic glib entries.
+
 2020-11-30  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-flex] Import flex-aspect-ratio-img-* tests
