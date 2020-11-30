@@ -197,6 +197,15 @@ webkit.org/b/218349 fast/forms/focus2.html [ Failure ]
 webkit.org/b/218349 mathml/presentation/href-enter.html [ ImageOnlyFailure ]
 webkit.org/b/218349 mathml/presentation/href-style.html [ ImageOnlyFailure ]
 
+# OpenGL issues
+webkit.org/b/219340 fast/canvas/webgl/gl-bind-attrib-location-test.html [ Failure ]
+webkit.org/b/219340 fast/canvas/webgl/gl-bind-attrib-mapped-names.html [ Failure ]
+webkit.org/b/219340 webgl/1.0.3/conformance/attribs/gl-disabled-vertex-attrib.html [ Failure ]
+webkit.org/b/219340 webgl/1.0.3/conformance/extensions/angle-instanced-arrays-out-of-bounds.html [ Failure ]
+webkit.org/b/219340 webgl/1.0.3/conformance/programs/gl-bind-attrib-location-long-names-test.html [ Failure ]
+webkit.org/b/219340 webgl/1.0.3/conformance/programs/gl-bind-attrib-location-test.html [ Failure ]
+webkit.org/b/219340 webgl/1.0.3/conformance/rendering/draw-elements-out-of-bounds.html [ Failure ]
+
 # Parsing
 webkit.org/b/217421 fast/parser/entities-in-html.html [ Failure ]
 
