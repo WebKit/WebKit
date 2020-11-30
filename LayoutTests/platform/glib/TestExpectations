@@ -444,6 +444,13 @@ webkit.org/b/218653 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-p
 
 webkit.org/b/218580 fast/mediastream/captureStream/canvas2d.html [ Failure Timeout ]
 
+webkit.org/b/219245 webrtc/audio-replace-track.html [ Crash ]
+webkit.org/b/219245 webrtc/peer-connection-audio-mute.html [ Crash ]
+webkit.org/b/219245 webrtc/peer-connection-audio-mute2.html [ Crash ]
+webkit.org/b/219245 webrtc/peer-connection-audio-unmute.html [ Crash ]
+webkit.org/b/219245 webrtc/peer-connection-remote-audio-mute.html [ Crash ]
+webkit.org/b/219245 webrtc/peer-connection-remote-audio-mute2.html [ Crash ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of GStreamer-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////

@@ -1,3 +1,11 @@
+2020-11-29  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] Gardening webrtc crashes
+
+        Unreviewed test gardening.
+
+        * platform/glib/TestExpectations:
+
 2020-11-29  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][Display] Enable LFC tests that are passing now
