@@ -68,7 +68,7 @@ private:
     void adjustMenuListButtonStyle(RenderStyle&, const Element*) const override;
     LengthBox popupInternalPaddingBox(const RenderStyle&) const final;
     bool paintMenuList(const RenderObject&, const PaintInfo&, const FloatRect&) final;
-    bool paintMenuListButtonDecorations(const RenderBox&, const PaintInfo&, const FloatRect&) final;
+    void paintMenuListButtonDecorations(const RenderBox&, const PaintInfo&, const FloatRect&) final;
 
     Seconds animationRepeatIntervalForProgressBar(const RenderProgress&) const final;
     Seconds animationDurationForProgressBar(const RenderProgress&) const final;

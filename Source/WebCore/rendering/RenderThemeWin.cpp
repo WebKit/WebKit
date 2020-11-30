@@ -739,7 +739,9 @@ bool RenderThemeWin::paintMenuList(const RenderObject& renderer, const PaintInfo
 
     drawControl(paintInfo.context(), renderer, theme, ThemeData(part, determineState(renderer)), IntRect(rect));
     
-    return paintMenuListButtonDecorations(downcast<RenderBox>(renderer), paintInfo, FloatRect(rect));
+    paintMenuListButtonDecorations(downcast<RenderBox>(renderer), paintInfo, FloatRect(rect));
+
+    return false;
 }
 
 void RenderThemeWin::adjustMenuListStyle(RenderStyle& style, const Element* e) const
@@ -779,7 +781,7 @@ void RenderThemeWin::adjustMenuListButtonStyle(RenderStyle& style, const Element
     style.setWhiteSpace(WhiteSpace::Pre);
 }
 
-bool RenderThemeWin::paintMenuListButtonDecorations(const RenderBox& renderer, const PaintInfo& paintInfo, const FloatRect& rect)
+void RenderThemeWin::paintMenuListButtonDecorations(const RenderBox& renderer, const PaintInfo& paintInfo, const FloatRect& rect)
 {
     // FIXME: Don't make hardcoded assumptions about the thickness of the textfield border.
     int borderThickness = haveTheme ? 1 : 2;
@@ -800,8 +802,6 @@ bool RenderThemeWin::paintMenuListButtonDecorations(const RenderBox& renderer, c
     }
 
     drawControl(paintInfo.context(), renderer, menuListTheme(), getThemeData(renderer), buttonRect);
-
-    return false;
 }
 
 const int trackWidth = 4;

@@ -84,7 +84,7 @@ public:
     bool paintMenuList(const RenderObject&, const PaintInfo&, const FloatRect&) override;
     void adjustMenuListButtonStyle(RenderStyle&, const Element*) const override;
 
-    bool paintMenuListButtonDecorations(const RenderBox&, const PaintInfo&, const FloatRect&) override;
+    void paintMenuListButtonDecorations(const RenderBox&, const PaintInfo&, const FloatRect&) override;
 
     bool paintSliderTrack(const RenderObject&, const PaintInfo&, const IntRect&) override;
     bool paintSliderThumb(const RenderObject&, const PaintInfo&, const IntRect&) override;

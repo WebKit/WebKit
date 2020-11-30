@@ -120,7 +120,7 @@ private:
     bool paintMenuList(const RenderObject&, const PaintInfo&, const FloatRect&) final;
     void adjustMenuListStyle(RenderStyle&, const Element*) const final;
 
-    bool paintMenuListButtonDecorations(const RenderBox&, const PaintInfo&, const FloatRect&) final;
+    void paintMenuListButtonDecorations(const RenderBox&, const PaintInfo&, const FloatRect&) final;
     void adjustMenuListButtonStyle(RenderStyle&, const Element*) const final;
 
     void adjustProgressBarStyle(RenderStyle&, const Element*) const final;

@@ -375,11 +375,11 @@ static void drawJoinedLines(CGContextRef context, const Vector<CGPoint>& points,
     CGContextStrokePath(context);
 }
 
-bool RenderThemeIOS::paintCheckboxDecorations(const RenderObject& box, const PaintInfo& paintInfo, const IntRect& rect)
+void RenderThemeIOS::paintCheckboxDecorations(const RenderObject& box, const PaintInfo& paintInfo, const IntRect& rect)
 {
 #if ENABLE(IOS_FORM_CONTROL_REFRESH)
     if (box.settings().iOSFormControlRefreshEnabled())
-        return true;
+        return;
 #endif
 
     bool checked = isChecked(box);
@@ -438,7 +438,6 @@ bool RenderThemeIOS::paintCheckboxDecorations(const RenderObject& box, const Pai
         drawAxialGradient(cgContext, gradientWithName(ShadeGradient), clip.location(), FloatPoint { clip.x(), clip.maxY() }, LinearInterpolation);
         drawRadialGradient(cgContext, gradientWithName(ShineGradient), bottomCenter, 0, bottomCenter, sqrtf((width * width) / 4.0f + height * height), ExponentialInterpolation);
     }
-    return false;
 }
 
 int RenderThemeIOS::baselinePosition(const RenderBox& box) const
@@ -473,11 +472,11 @@ void RenderThemeIOS::adjustRadioStyle(RenderStyle& style, const Element*) const
     style.setBorderRadius({ size / 2, size / 2 });
 }
 
-bool RenderThemeIOS::paintRadioDecorations(const RenderObject& box, const PaintInfo& paintInfo, const IntRect& rect)
+void RenderThemeIOS::paintRadioDecorations(const RenderObject& box, const PaintInfo& paintInfo, const IntRect& rect)
 {
 #if ENABLE(IOS_FORM_CONTROL_REFRESH)
     if (box.settings().iOSFormControlRefreshEnabled())
-        return true;
+        return;
 #endif
 
     GraphicsContextStateSaver stateSaver(paintInfo.context());
@@ -514,10 +513,9 @@ bool RenderThemeIOS::paintRadioDecorations(const RenderObject& box, const PaintI
         auto clip = addRoundedBorderClip(box, paintInfo.context(), rect);
         drawShadeAndShineGradients(clip);
     }
-    return false;
 }
 
-bool RenderThemeIOS::paintTextFieldDecorations(const RenderObject& box, const PaintInfo& paintInfo, const FloatRect& rect)
+void RenderThemeIOS::paintTextFieldDecorations(const RenderObject& box, const PaintInfo& paintInfo, const FloatRect& rect)
 {
     auto& style = box.style();
     FloatPoint point(rect.x() + style.borderLeftWidth(), rect.y() + style.borderTopWidth());
@@ -531,12 +529,11 @@ bool RenderThemeIOS::paintTextFieldDecorations(const RenderObject& box, const Pa
     bool topBorderIsInvisible = !style.hasBorder() || !style.borderTopWidth() || style.borderTopIsTransparent();
     if (!box.view().printing() && !topBorderIsInvisible)
         drawAxialGradient(paintInfo.context().platformContext(), gradientWithName(InsetGradient), point, FloatPoint(CGPointMake(point.x(), point.y() + 3.0f)), LinearInterpolation);
-    return false;
 }
 
-bool RenderThemeIOS::paintTextAreaDecorations(const RenderObject& box, const PaintInfo& paintInfo, const FloatRect& rect)
+void RenderThemeIOS::paintTextAreaDecorations(const RenderObject& box, const PaintInfo& paintInfo, const FloatRect& rect)
 {
-    return paintTextFieldDecorations(box, paintInfo, rect);
+    paintTextFieldDecorations(box, paintInfo, rect);
 }
 
 const int MenuListMinHeight = 15;
@@ -663,7 +660,7 @@ void RenderThemeIOS::adjustMenuListButtonStyle(RenderStyle& style, const Element
         adjustInputElementButtonStyle(style, downcast<HTMLInputElement>(*element));
 }
 
-bool RenderThemeIOS::paintMenuListButtonDecorations(const RenderBox& box, const PaintInfo& paintInfo, const FloatRect& rect)
+void RenderThemeIOS::paintMenuListButtonDecorations(const RenderBox& box, const PaintInfo& paintInfo, const FloatRect& rect)
 {
     auto& style = box.style();
     bool isRTL = style.direction() == TextDirection::RTL;
@@ -780,8 +777,6 @@ bool RenderThemeIOS::paintMenuListButtonDecorations(const RenderBox& box, const 
         paintInfo.context().setFillColor(Color::white);
         paintInfo.context().drawPath(Path::polygonPathFromPoints(arrow));
     }
-
-    return false;
 }
 
 const CGFloat kTrackThickness = 4.0;
@@ -890,7 +885,7 @@ void RenderThemeIOS::adjustSliderThumbSize(RenderStyle& style, const Element*) c
     }
 }
 
-bool RenderThemeIOS::paintSliderThumbDecorations(const RenderObject& box, const PaintInfo& paintInfo, const IntRect& rect)
+void RenderThemeIOS::paintSliderThumbDecorations(const RenderObject& box, const PaintInfo& paintInfo, const IntRect& rect)
 {
     GraphicsContextStateSaver stateSaver(paintInfo.context());
     FloatRect clip = addRoundedBorderClip(box, paintInfo.context(), rect);
@@ -903,8 +898,6 @@ bool RenderThemeIOS::paintSliderThumbDecorations(const RenderObject& box, const 
         drawAxialGradient(cgContext, gradientWithName(ShadeGradient), clip.location(), FloatPoint(clip.x(), clip.maxY()), LinearInterpolation);
         drawRadialGradient(cgContext, gradientWithName(ShineGradient), bottomCenter, 0.0f, bottomCenter, std::max(clip.width(), clip.height()), ExponentialInterpolation);
     }
-
-    return false;
 }
 
 bool RenderThemeIOS::paintProgressBar(const RenderObject& renderer, const PaintInfo& paintInfo, const IntRect& rect)
@@ -1024,9 +1017,9 @@ void RenderThemeIOS::adjustSearchFieldStyle(RenderStyle& style, const Element* e
     adjustRoundBorderRadius(style, *box);
 }
 
-bool RenderThemeIOS::paintSearchFieldDecorations(const RenderObject& box, const PaintInfo& paintInfo, const IntRect& rect)
+void RenderThemeIOS::paintSearchFieldDecorations(const RenderObject& box, const PaintInfo& paintInfo, const IntRect& rect)
 {
-    return paintTextFieldDecorations(box, paintInfo, rect);
+    paintTextFieldDecorations(box, paintInfo, rect);
 }
 
 void RenderThemeIOS::adjustButtonStyle(RenderStyle& style, const Element* element) const
@@ -1056,9 +1049,9 @@ void RenderThemeIOS::adjustButtonStyle(RenderStyle& style, const Element* elemen
     adjustRoundBorderRadius(style, *box);
 }
 
-bool RenderThemeIOS::paintButtonDecorations(const RenderObject& box, const PaintInfo& paintInfo, const IntRect& rect)
+void RenderThemeIOS::paintButtonDecorations(const RenderObject& box, const PaintInfo& paintInfo, const IntRect& rect)
 {
-    return paintPushButtonDecorations(box, paintInfo, rect);
+    paintPushButtonDecorations(box, paintInfo, rect);
 }
 
 static bool shouldUseConvexGradient(const Color& backgroundColor)
@@ -1069,7 +1062,7 @@ static bool shouldUseConvexGradient(const Color& backgroundColor)
     return a > 0.5 && largestNonAlphaChannel < 0.5;
 }
 
-bool RenderThemeIOS::paintPushButtonDecorations(const RenderObject& box, const PaintInfo& paintInfo, const IntRect& rect)
+void RenderThemeIOS::paintPushButtonDecorations(const RenderObject& box, const PaintInfo& paintInfo, const IntRect& rect)
 {
     GraphicsContextStateSaver stateSaver(paintInfo.context());
     FloatRect clip = addRoundedBorderClip(box, paintInfo.context(), rect);
@@ -1081,7 +1074,6 @@ bool RenderThemeIOS::paintPushButtonDecorations(const RenderObject& box, const P
         drawAxialGradient(cgContext, gradientWithName(ShadeGradient), clip.location(), FloatPoint(clip.x(), clip.maxY()), LinearInterpolation);
         drawAxialGradient(cgContext, gradientWithName(ShineGradient), FloatPoint(clip.x(), clip.maxY()), clip.location(), ExponentialInterpolation);
     }
-    return false;
 }
 
 void RenderThemeIOS::setButtonSize(RenderStyle& style) const
@@ -1099,7 +1091,7 @@ const int kThumbnailBorderCornerRadius = 1;
 const int kVisibleBackgroundImageWidth = 1;
 const int kMultipleThumbnailShrinkSize = 2;
 
-bool RenderThemeIOS::paintFileUploadIconDecorations(const RenderObject&, const RenderObject& buttonRenderer, const PaintInfo& paintInfo, const IntRect& rect, Icon* icon, FileUploadDecorations fileUploadDecorations)
+void RenderThemeIOS::paintFileUploadIconDecorations(const RenderObject&, const RenderObject& buttonRenderer, const PaintInfo& paintInfo, const IntRect& rect, Icon* icon, FileUploadDecorations fileUploadDecorations)
 {
     GraphicsContextStateSaver stateSaver(paintInfo.context());
 
@@ -1141,8 +1133,6 @@ bool RenderThemeIOS::paintFileUploadIconDecorations(const RenderObject&, const R
     // Foreground picture frame and icon.
     paintInfo.context().fillRoundedRect(FloatRoundedRect(thumbnailPictureFrameRect, cornerSize, cornerSize, cornerSize, cornerSize), pictureFrameColor);
     icon->paint(paintInfo.context(), thumbnailRect);
-
-    return false;
 }
 
 Color RenderThemeIOS::platformActiveSelectionBackgroundColor(OptionSet<StyleColor::Options>) const

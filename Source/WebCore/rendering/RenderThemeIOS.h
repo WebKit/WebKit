@@ -76,29 +76,29 @@ private:
 
     // Methods for each appearance value.
     void adjustCheckboxStyle(RenderStyle&, const Element*) const override;
-    bool paintCheckboxDecorations(const RenderObject&, const PaintInfo&, const IntRect&) override;
+    void paintCheckboxDecorations(const RenderObject&, const PaintInfo&, const IntRect&) override;
 
     void adjustRadioStyle(RenderStyle&, const Element*) const override;
-    bool paintRadioDecorations(const RenderObject&, const PaintInfo&, const IntRect&) override;
+    void paintRadioDecorations(const RenderObject&, const PaintInfo&, const IntRect&) override;
 
     void adjustButtonStyle(RenderStyle&, const Element*) const override;
-    bool paintButtonDecorations(const RenderObject&, const PaintInfo&, const IntRect&) override;
-    bool paintPushButtonDecorations(const RenderObject&, const PaintInfo&, const IntRect&) override;
+    void paintButtonDecorations(const RenderObject&, const PaintInfo&, const IntRect&) override;
+    void paintPushButtonDecorations(const RenderObject&, const PaintInfo&, const IntRect&) override;
     void setButtonSize(RenderStyle&) const override;
 
-    bool paintFileUploadIconDecorations(const RenderObject& inputRenderer, const RenderObject& buttonRenderer, const PaintInfo&, const IntRect&, Icon*, FileUploadDecorations) override;
+    void paintFileUploadIconDecorations(const RenderObject& inputRenderer, const RenderObject& buttonRenderer, const PaintInfo&, const IntRect&, Icon*, FileUploadDecorations) override;
 
-    bool paintTextFieldDecorations(const RenderObject&, const PaintInfo&, const FloatRect&) override;
-    bool paintTextAreaDecorations(const RenderObject&, const PaintInfo&, const FloatRect&) override;
+    void paintTextFieldDecorations(const RenderObject&, const PaintInfo&, const FloatRect&) override;
+    void paintTextAreaDecorations(const RenderObject&, const PaintInfo&, const FloatRect&) override;
 
     void adjustMenuListButtonStyle(RenderStyle&, const Element*) const override;
-    bool paintMenuListButtonDecorations(const RenderBox&, const PaintInfo&, const FloatRect&) override;
+    void paintMenuListButtonDecorations(const RenderBox&, const PaintInfo&, const FloatRect&) override;
 
     void adjustSliderTrackStyle(RenderStyle&, const Element*) const override;
     bool paintSliderTrack(const RenderObject&, const PaintInfo&, const IntRect&) override;
 
     void adjustSliderThumbSize(RenderStyle&, const Element*) const override;
-    bool paintSliderThumbDecorations(const RenderObject&, const PaintInfo&, const IntRect&) override;
+    void paintSliderThumbDecorations(const RenderObject&, const PaintInfo&, const IntRect&) override;
 
     bool paintProgressBar(const RenderObject&, const PaintInfo&, const IntRect&) override;
 
@@ -108,7 +108,7 @@ private:
 #endif
 
     void adjustSearchFieldStyle(RenderStyle&, const Element*) const override;
-    bool paintSearchFieldDecorations(const RenderObject&, const PaintInfo&, const IntRect&) override;
+    void paintSearchFieldDecorations(const RenderObject&, const PaintInfo&, const IntRect&) override;
 
 #if ENABLE(IOS_FORM_CONTROL_REFRESH)
     bool paintCheckbox(const RenderObject&, const PaintInfo&, const IntRect&) override;
