@@ -71,6 +71,20 @@ function getInboundRTPStats(connection)
     });
 }
 
+function getRemoteInboundRTPStats(connection)
+{
+    return connection.getStats().then((report) => {
+        checkStatsReportIterator(report);
+        var stats;
+        report.forEach((statItem) => {
+            if (statItem.type === "remote-inbound-rtp") {
+                stats = statItem;
+            }
+        });
+        return stats;
+    });
+}
+
 function getOutboundRTPStats(connection)
 {
     return connection.getStats().then((report) => {
@@ -108,6 +122,7 @@ function testTimestampDifference(timeStampDifference, numberOfFrames)
 function checkInboundFramesNumberIncreased(secondConnection, statsSecondConnection, count)
 {
     return getInboundRTPStats(secondConnection).then((stats) => {
+        assert_true(!!stats.kind);
         if (stats.framesDecoded > statsSecondConnection.framesDecoded) {
             if (testTimestampDifference(stats.timestamp - statsSecondConnection.timestamp, stats.framesDecoded - statsSecondConnection.framesDecoded))
                 return Promise.reject("timestamp and frames increment do not match");
@@ -197,11 +212,14 @@ promise_test(async (test) => {
 
     assert_array_equals(types, ["candidate-pair", "certificate", "codec", "inbound-rtp", "local-candidate", "media-source", "outbound-rtp", "peer-connection", "remote-candidate", "remote-inbound-rtp", "track", "transport"], "second connection");
 
-     const audioSourceStats = await getAudioSourceStats(firstConnection);
-     assert_true(!!audioSourceStats, "audio source presence");
+    const audioSourceStats = await getAudioSourceStats(firstConnection);
+    assert_true(!!audioSourceStats, "audio source presence");
 
-     const videoSourceStats = await getVideoSourceStats(firstConnection);
-     assert_true(!!videoSourceStats, "video source presence");
+    const videoSourceStats = await getVideoSourceStats(firstConnection);
+    assert_true(!!videoSourceStats, "video source presence");
+
+    const remoteInboundStats = await getRemoteInboundRTPStats(firstConnection);
+    assert_true(remoteInboundStats.kind === "audio"|| remoteInboundStats.kind === "video", "kind is present");
 }, "Basic video stats");
 
 promise_test(async (test) => {
@@ -230,6 +248,11 @@ promise_test(async (test) => {
     });
     assert_false(!!outstats);
     assert_true(!!instats);
+
+    assert_greater_than_equal(instats.jitterBufferDelay, 0, "jitterBufferDelay");
+    assert_greater_than_equal(instats.jitterBufferEmittedCount, 0, "jitterBufferEmittedCount");
+    assert_greater_than_equal(instats.concealedSamples, 0, "concealedSamples");
+    assert_greater_than_equal(instats.totalSamplesReceived, 0, "totalSamplesReceived");
 }, "Receiver stats");
 
 promise_test(async (test) => {
