@@ -1,0 +1,17 @@
+
+FAIL img 1 assert_equals:
+<img src="data:image/svg+xml,&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; /&gt;" style="height: 200px; background: green;" data-expected-height="150">
+height expected 150 but got 0
+Specified size suggestion = 200px
+Content size suggestion = 150px [1]
+Automatic minimum height = min(150px, 200px)
+
+[1] fallback size from last bullet point in https://drafts.csswg.org/css-sizing-3/#intrinsic-sizes :
+
+For boxes without a preferred aspect ratio:
+ * If the available space is definite in the appropriate dimension, use the stretch fit into that size in that dimension.
+ * Otherwise, if the box has a  as its computed minimum size (min-width/min-height) in that dimension, use that size.
+ * Otherwise, use 300px for the width and/or 150px for the height as needed.
+
+Pass condition: there is a 150x150 green square.
+

@@ -1,3 +1,45 @@
+2020-11-30  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-flex] Import flex-aspect-ratio-img-* tests
+        https://bugs.webkit.org/show_bug.cgi?id=219344
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        * resources/import-expectations.json:
+        * web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-column-011-expected.txt: Updated.
+        * web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-column-011.html: Ditto.
+        * web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-column-012-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-column-012.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-column-013-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-column-013.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-column-014-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-column-014.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-column-015-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-column-015.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-column-016-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-column-016.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-column-017-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-column-017.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-row-006-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-row-006.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-row-007-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-row-007.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-row-008-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-row-008.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-row-009-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-row-009.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-row-010-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-row-010.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-row-011-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-row-011.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-row-012-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-row-012.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-row-013-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-row-013.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-row-014-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-row-014.html: Added.
+        * web-platform-tests/css/css-flexbox/w3c-import.log:
+
 2020-11-20  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-flex] Images as flex items should use the overridingLogicalWidth when defined to compute the logical height

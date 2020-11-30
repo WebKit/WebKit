@@ -1,3 +1,16 @@
+2020-11-30  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-flex] Import flex-aspect-ratio-img-* tests
+        https://bugs.webkit.org/show_bug.cgi?id=219344
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        As part of the work to fix the images with aspect ratio handling when they're flex items, we're importing the latest
+        additions to the WPT test suite related to that. A few of them work as expected but others require fixes. Note that
+        one of the tests also updated their expectations and it's now failing now 2 subtests.
+
+        * TestExpectations: Added tests that are not working as expected.
+
 2020-11-30  Youenn Fablet  <youenn@apple.com>
 
         REGRESSION: [ Mac wk2 ] webrtc/captureCanvas-webrtc-software-h264-baseline.html is flaky failing

@@ -3,12 +3,24 @@ PASS .flexbox 1
 PASS .flexbox 2
 PASS .flexbox 3
 PASS .flexbox 4
-PASS .flexbox 5
+FAIL .flexbox 5 assert_equals:
+<div class="flexbox" style="width: 10px;" data-expected-width="10">
+    <!-- transferred and content suggestions are both 100px here, so minimum
+      width is min(transferred, content width) = 100px. -->
+    <img src="support/10x10-green.png" style="height: 100px;" data-expected-width="100">
+</div>
+width expected 100 but got 10
 PASS .flexbox 6
 PASS .flexbox 7
 PASS .flexbox 8
 PASS .flexbox 9
-PASS .flexbox 10
+FAIL .flexbox 10 assert_equals:
+<div class="flexbox column" style="height: 10px;" data-expected-height="10">
+    <!-- should use min(transferred (100), content height (100)) = 100px as
+         minimum height, which will be final height of the image -->
+    <img src="support/10x10-green.png" style="width: 100px;" data-expected-height="100">
+</div>
+height expected 100 but got 10
 
 
 

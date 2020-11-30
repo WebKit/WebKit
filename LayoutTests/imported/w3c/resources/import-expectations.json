@@ -5,6 +5,7 @@
     "css/css-animations": "import", 
     "css/css-box": "import", 
     "css/css-color": "import", 
+    "css/css-flexbox": "import", 
     "css/css-masking/clip-path/": "import", 
     "css/css-masking/clip-path/clip-path-with-zoo": "import", 
     "css/css-masking/clip-path/clip-path-with-zoom*": "import", 
