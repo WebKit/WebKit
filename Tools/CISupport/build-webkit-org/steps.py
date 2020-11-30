@@ -499,12 +499,25 @@ class RunTest262Tests(TestWithFailureCount):
     descriptionDone = ["test262-tests"]
     failedTestsFormatString = "%d Test262 test%s failed"
     command = ["perl", "./Tools/Scripts/test262-runner", "--verbose", WithProperties("--%(configuration)s")]
+    test_summary_re = re.compile(r'^\! NEW FAIL')
 
     def start(self):
+        if USE_BUILDBOT_VERSION2:
+            self.log_observer = ParseByLineLogObserver(self.parseOutputLine)
+            self.addLogObserver('stdio', self.log_observer)
+            self.failedTestCount = 0
         appendCustomBuildFlags(self, self.getProperty('platform'), self.getProperty('fullPlatform'))
         return shell.Test.start(self)
 
+    def parseOutputLine(self, line):
+        match = self.test_summary_re.match(line)
+        if match:
+            self.failedTestCount += 1
+
     def countFailures(self, cmd):
+        if USE_BUILDBOT_VERSION2:
+            return self.failedTestCount
+
         logText = cmd.logs['stdio'].getText()
         matches = re.findall(r'^\! NEW FAIL', logText, flags=re.MULTILINE)
         if matches:
