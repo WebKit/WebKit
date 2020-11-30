@@ -261,10 +261,12 @@ FormattingContext::IntrinsicWidthConstraints InlineFormattingContext::computedIn
 InlineLayoutUnit InlineFormattingContext::computedIntrinsicWidthForConstraint(InlineLayoutUnit availableWidth) const
 {
     auto& inlineItems = formattingState().inlineItems();
-    auto maximumLineWidth = InlineLayoutUnit { };
-    auto floatingContext = FloatingContext { *this, formattingState().floatingState() };
+    // Preferred width computation is not constrained by floats. 
+    auto floatingState = FloatingState::create(layoutState(), root());
+    auto floatingContext = FloatingContext { *this, floatingState };
     auto lineBuilder = LineBuilder { *this, floatingContext, root(), inlineItems };
     auto layoutRange = LineBuilder::InlineItemRange { 0 , inlineItems.size() };
+    auto maximumLineWidth = InlineLayoutUnit { };
     while (!layoutRange.isEmpty()) {
         auto intrinsicContent = lineBuilder.computedIntrinsicWidth(layoutRange, availableWidth);
         layoutRange.start = intrinsicContent.inlineItemRange.end;
