@@ -1202,3 +1202,13 @@ webkit.org/b/217934 inspector/debugger/breakpoint-resolve-when-script-added.html
 webkit.org/b/218341 [ Debug ] inspector/dom-debugger/attribute-modified-style.html [ Pass Timeout ]
 
 webkit.org/b/218591 fast/text/canvas-color-fonts/COLR.html [ ImageOnlyFailure ]
+
+# These tests fail because of missing painting features in LFC (they still pass the layout ASSERT test).
+# webkit.org/b/216471
+fast/layoutformattingcontext/br-and-wbr-simple.html [ ImageOnlyFailure ]
+fast/layoutformattingcontext/horizontal-sizing-with-trailing-letter-spacing.html [ ImageOnlyFailure ]
+fast/layoutformattingcontext/inlin-box-content-fits-but-the-box-does-not.html [ ImageOnlyFailure ]
+fast/layoutformattingcontext/intrusive-floats-takes-entire-horizontal-space.html [ ImageOnlyFailure ]
+fast/layoutformattingcontext/quirk-margin-not-collapse-when-floating.html [ ImageOnlyFailure ]
+fast/layoutformattingcontext/run-expansion-extends-line-content-width.html [ ImageOnlyFailure ]
+fast/layoutformattingcontext/wbr-simple.html [ ImageOnlyFailure ]
