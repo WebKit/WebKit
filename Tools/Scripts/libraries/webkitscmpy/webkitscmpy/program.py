@@ -28,7 +28,7 @@ import sys
 
 from datetime import datetime
 from webkitcorepy import arguments, log as webkitcorepy_log
-from webkitscmpy import Commit, local, log
+from webkitscmpy import Commit, local, log, remote
 
 
 class Command(object):
@@ -36,14 +36,14 @@ class Command(object):
     help = None
 
     @classmethod
-    def parser(cls, parser, repository):
+    def parser(cls, parser):
         if cls.name is None:
             raise NotImplementedError('Command does not have a name')
         if cls.help is None:
             raise NotImplementedError("'{}' does not have a help message")
 
     @classmethod
-    def main(cls, repository):
+    def main(cls, args, repository):
         sys.stderr.write('No command specified\n')
         return -1
 
@@ -53,7 +53,7 @@ class Find(Command):
     help = 'Given an identifier, revision or hash, normalize and print the commit'
 
     @classmethod
-    def parser(cls, parser, repository, loggers=None):
+    def parser(cls, parser, loggers=None):
         arguments.LoggingGroup(
             parser,
             loggers=loggers,
@@ -121,7 +121,7 @@ class Checkout(Command):
     help = 'Given an identifier, revision or hash, normalize and checkout that commit'
 
     @classmethod
-    def parser(cls, parser, repository, loggers=None):
+    def parser(cls, parser, loggers=None):
         arguments.LoggingGroup(
             parser,
             loggers=loggers,
@@ -136,6 +136,10 @@ class Checkout(Command):
 
     @classmethod
     def main(cls, args, repository):
+        if not repository.path:
+            sys.stderr.write("Cannot checkout on remote repository")
+            return 1
+
         try:
             commit = repository.checkout(args.argument[0])
         except (local.Scm.Exception, ValueError) as exception:
@@ -155,20 +159,32 @@ def main(args=None, path=None, loggers=None):
 
     loggers = [logging.getLogger(), webkitcorepy_log,  log] + (loggers or [])
 
-    repository = local.Scm.from_path(path=path or os.getcwd())
-
     parser = argparse.ArgumentParser(
         description='Custom git tooling from the WebKit team to interact with a ' +
                     'repository using identifers',
     )
     arguments.LoggingGroup(parser)
+
+    group = parser.add_argument_group('Repository')
+    group.add_argument(
+        '--path', '-p', '-C',
+        dest='repository', default=path or os.getcwd(),
+        help='Set the repository path or URL to be used',
+        action='store',
+    )
+
     subparsers = parser.add_subparsers(help='sub-command help')
 
     for program in [Find, Checkout]:
         subparser = subparsers.add_parser(program.name, help=program.help)
         subparser.set_defaults(main=program.main)
-        program.parser(subparser, repository=repository, loggers=loggers)
+        program.parser(subparser, loggers=loggers)
 
     parsed = parser.parse_args(args=args)
+
+    if parsed.repository.startswith(('https://', 'http://')):
+        repository = remote.Scm.from_url(parsed.repository)
+    else:
+        repository = local.Scm.from_path(path=parsed.repository)
 
     return parsed.main(args=parsed, repository=repository)

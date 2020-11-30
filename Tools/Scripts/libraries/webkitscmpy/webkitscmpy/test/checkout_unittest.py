@@ -62,3 +62,10 @@ class TestCheckout(unittest.TestCase):
             ))
 
             self.assertEqual(4, local.Svn(self.path).commit().revision)
+
+    def test_checkout_remote(self):
+        with mocks.remote.Svn(), OutputCapture():
+            self.assertEqual(1, program.main(
+                args=('-C', 'https://svn.webkit.org/repository/webkit', 'checkout', '3@trunk'),
+                path=self.path,
+            ))

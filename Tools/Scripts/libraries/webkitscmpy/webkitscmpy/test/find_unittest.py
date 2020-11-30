@@ -56,6 +56,14 @@ class TestFind(unittest.TestCase):
             ))
         self.assertEqual(captured.stdout.getvalue(), '4@trunk | r6 | 6th commit\n')
 
+    def test_basic_svn_remote(self):
+        with mocks.remote.Svn(), OutputCapture() as captured:
+            self.assertEqual(0, program.main(
+                args=('-C', 'https://svn.webkit.org/repository/webkit', 'find', 'HEAD', '-q'),
+                path=self.path,
+            ))
+        self.assertEqual(captured.stdout.getvalue(), '4@trunk | r6 | 6th commit\n')
+
     def test_branch_tilde(self):
         with mocks.local.Git(self.path, git_svn=True), mocks.local.Svn(), MockTime, OutputCapture() as captured:
             self.assertEqual(0, program.main(
