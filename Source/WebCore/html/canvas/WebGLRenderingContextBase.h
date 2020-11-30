@@ -647,6 +647,8 @@ protected:
     GCGLint m_stencilFuncRef, m_stencilFuncRefBack; // Note that these are the user specified values, not the internal clamped value.
     GCGLuint m_stencilFuncMask, m_stencilFuncMaskBack;
 
+    bool m_rasterizerDiscardEnabled { false };
+
     bool m_isGLES2Compliant;
     bool m_isGLES2NPOTStrict;
     bool m_isDepthStencilSupported;
@@ -718,10 +720,17 @@ protected:
     RefPtr<Float32Array> getWebGLFloatArrayParameter(GCGLenum);
     RefPtr<Int32Array> getWebGLIntArrayParameter(GCGLenum);
 
+    enum ClearCaller {
+        // Caller of ClearIfComposited is a user-level draw or clear call.
+        ClearCallerDrawOrClear,
+        // Caller of ClearIfComposited is anything else, including
+        // readbacks or copies.
+        ClearCallerOther,
+    };
     // Clear the backbuffer if it was composited since the last operation.
     // clearMask is set to the bitfield of any clear that would happen anyway at this time
     // and the function returns true if that clear is now unnecessary.
-    bool clearIfComposited(GCGLbitfield clearMask = 0);
+    bool clearIfComposited(ClearCaller, GCGLbitfield clearMask = 0);
 
     // Helper to restore state that clearing the framebuffer may destroy.
     void restoreStateAfterClear();
