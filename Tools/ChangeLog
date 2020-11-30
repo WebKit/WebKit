@@ -1,5 +1,15 @@
 2020-11-30  Aakash Jain  <aakash_jain@apple.com>
 
+        Automatically delete old data from ews buildbot instance
+        https://bugs.webkit.org/show_bug.cgi?id=214921
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/ews-build/master.cfg: Configured JanitorConfigurator to delete logs older than one year, and
+        configured to run every morning.
+
+2020-11-30  Aakash Jain  <aakash_jain@apple.com>
+
         [build.webkit.org] Update RunLLINTCLoopTests step for new buildbot
         https://bugs.webkit.org/show_bug.cgi?id=219084
 
