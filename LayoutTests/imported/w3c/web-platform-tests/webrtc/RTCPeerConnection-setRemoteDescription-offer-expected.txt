@@ -13,4 +13,5 @@ NOTRUN Naive rollback approach is not glare-proof (control)
 NOTRUN setRemoteDescription(offer) from have-local-offer is glare-proof
 NOTRUN setRemoteDescription(invalidOffer) from have-local-offer does not undo rollback
 NOTRUN repeated sRD(offer) works
+NOTRUN sRD(reoffer) with candidates and without trickle works
 

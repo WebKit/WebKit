@@ -3,8 +3,4 @@ PASS Perfect negotiation setup connects
 PASS Perfect negotiation setup connects with roles reversed
 FAIL Perfect negotiation glare Description type incompatible with current signaling state
 FAIL Perfect negotiation glare with roles reversed assert_unreached: Error in iframe: InvalidStateError: Description type incompatible with current signaling state Reached unreachable code
-FAIL Perfect negotiation stress glare Description type incompatible with current signaling state
-FAIL Perfect negotiation stress glare with roles reversed assert_unreached: Error in iframe: InvalidStateError: Description type incompatible with current signaling state Reached unreachable code
-FAIL Perfect negotiation stress glare linear Description type incompatible with current signaling state
-FAIL Perfect negotiation stress glare linear with roles reversed assert_unreached: Error in iframe: InvalidStateError: Description type incompatible with current signaling state Reached unreachable code
 

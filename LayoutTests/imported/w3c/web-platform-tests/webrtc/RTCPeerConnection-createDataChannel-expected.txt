@@ -70,9 +70,7 @@ FAIL Reusing a data channel id that is in use (after setRemoteDescription, negot
 PASS New datachannel should be in the connecting state after creation (after connection establishment)
 PASS addTrack, then creating datachannel, should negotiate properly
 PASS addTrack, then creating datachannel, should negotiate properly when max-bundle is used
-FAIL Stopping the bundle-tag when there is a datachannel in the bundle should kill the DataChannel promise_test: Unhandled rejection with value: object "OperationError: Failed to set local answer sdp: Failed to apply the description for m= section with mid='1': Failed to setup RTCP mux."
 PASS New negotiated datachannel should be in the connecting state after creation (after connection establishment)
 PASS addTrack, then creating negotiated datachannel, should negotiate properly
 PASS addTrack, then creating negotiated datachannel, should negotiate properly when max-bundle is used
-FAIL Stopping the bundle-tag when there is a negotiated datachannel in the bundle should kill the DataChannel promise_test: Unhandled rejection with value: object "OperationError: Failed to set local answer sdp: Failed to apply the description for m= section with mid='1': Failed to setup RTCP mux."
 

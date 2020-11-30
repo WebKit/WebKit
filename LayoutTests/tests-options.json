@@ -2963,6 +2963,9 @@
     "imported/w3c/web-platform-tests/webrtc/RTCIceConnectionState-candidate-pair.https.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-SLD-SRD-timing.https.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-createDataChannel.html": [
         "slow"
     ],
@@ -2973,6 +2976,12 @@
         "slow"
     ],
     "imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-mandatory-getStats.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-perfect-negotiation-stress-glare-linear.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-perfect-negotiation-stress-glare.https.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-perfect-negotiation.https.html": [
@@ -2994,6 +3003,9 @@
         "slow"
     ],
     "imported/w3c/web-platform-tests/webrtc/RTCRtpReceiver-getSynchronizationSources.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webrtc/RTCRtpSender-encode-same-track-twice.https.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/webrtc/RTCRtpSender-replaceTrack.https.html": [

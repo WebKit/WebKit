@@ -1,3 +1,15 @@
+2020-11-30  Youenn Fablet  <youenn@apple.com>
+
+        Update WPT WebRTC tests
+        https://bugs.webkit.org/show_bug.cgi?id=219272
+
+        Reviewed by Eric Carlson.
+
+        Mark a new test as flaky in iOS simulator.
+
+        * platform/ios-simulator-wk2/TestExpectations:
+        * tests-options.json:
+
 2020-11-30  Tyler Wilcock  <twilco.o@protonmail.com>
 
         getComputedStyle rounds lineHeight to nearest pixel

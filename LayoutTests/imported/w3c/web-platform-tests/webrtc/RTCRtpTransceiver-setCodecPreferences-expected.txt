@@ -16,4 +16,6 @@ PASS setCodecPreferences() with modified codec clock rate should throw InvalidMo
 PASS setCodecPreferences() with modified codec channel count should throw InvalidModificationError
 PASS setCodecPreferences() with modified codec parameters should throw InvalidModificationError
 PASS setCodecPreferences() with modified codecs returned from getCapabilities() should throw InvalidModificationError
+PASS setCodecPreferences() modifies the order of audio codecs in createOffer
+FAIL setCodecPreferences() modifies the order of video codecs in createOffer assert_equals: expected "VP8" but got "H264"
 
