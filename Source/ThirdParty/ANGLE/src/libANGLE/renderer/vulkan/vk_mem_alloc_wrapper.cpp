@@ -17,7 +17,6 @@ VkResult InitAllocator(VkPhysicalDevice physicalDevice,
                        VkDevice device,
                        VkInstance instance,
                        uint32_t apiVersion,
-                       VkDeviceSize preferredLargeHeapBlockSize,
                        VmaAllocator *pAllocator)
 {
     VmaVulkanFunctions funcs                  = {};
@@ -43,26 +42,19 @@ VkResult InitAllocator(VkPhysicalDevice physicalDevice,
         // When the vulkan-loader is statically linked, we need to use the extension
         // functions defined in ANGLE's rx namespace. When it's dynamically linked
         // with volk, this will default to the function definitions with no namespace
-        using rx::vkBindBufferMemory2KHR;
-        using rx::vkBindImageMemory2KHR;
         using rx::vkGetBufferMemoryRequirements2KHR;
         using rx::vkGetImageMemoryRequirements2KHR;
-        using rx::vkGetPhysicalDeviceMemoryProperties2KHR;
 #endif  // !defined(ANGLE_SHARED_LIBVULKAN)
-        funcs.vkGetBufferMemoryRequirements2KHR       = vkGetBufferMemoryRequirements2KHR;
-        funcs.vkGetImageMemoryRequirements2KHR        = vkGetImageMemoryRequirements2KHR;
-        funcs.vkBindBufferMemory2KHR                  = vkBindBufferMemory2KHR;
-        funcs.vkBindImageMemory2KHR                   = vkBindImageMemory2KHR;
-        funcs.vkGetPhysicalDeviceMemoryProperties2KHR = vkGetPhysicalDeviceMemoryProperties2KHR;
+        funcs.vkGetBufferMemoryRequirements2KHR = vkGetBufferMemoryRequirements2KHR;
+        funcs.vkGetImageMemoryRequirements2KHR  = vkGetImageMemoryRequirements2KHR;
     }
 
-    VmaAllocatorCreateInfo allocatorInfo      = {};
-    allocatorInfo.physicalDevice              = physicalDevice;
-    allocatorInfo.device                      = device;
-    allocatorInfo.instance                    = instance;
-    allocatorInfo.pVulkanFunctions            = &funcs;
-    allocatorInfo.vulkanApiVersion            = apiVersion;
-    allocatorInfo.preferredLargeHeapBlockSize = preferredLargeHeapBlockSize;
+    VmaAllocatorCreateInfo allocatorInfo = {};
+    allocatorInfo.physicalDevice         = physicalDevice;
+    allocatorInfo.device                 = device;
+    allocatorInfo.instance               = instance;
+    allocatorInfo.pVulkanFunctions       = &funcs;
+    allocatorInfo.vulkanApiVersion       = apiVersion;
 
     return vmaCreateAllocator(&allocatorInfo, pAllocator);
 }
@@ -147,15 +139,5 @@ void InvalidateAllocation(VmaAllocator allocator,
                           VkDeviceSize size)
 {
     vmaInvalidateAllocation(allocator, allocation, offset, size);
-}
-
-void BuildStatsString(VmaAllocator allocator, char **statsString, VkBool32 detailedMap)
-{
-    vmaBuildStatsString(allocator, statsString, detailedMap);
-}
-
-void FreeStatsString(VmaAllocator allocator, char *statsString)
-{
-    vmaFreeStatsString(allocator, statsString);
 }
 }  // namespace vma

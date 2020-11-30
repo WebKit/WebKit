@@ -47,8 +47,6 @@ std::string VendorName(VendorID vendor)
             return "Vivante";
         case kVendorID_VMWare:
             return "VMWare";
-        case kVendorID_Apple:
-            return "Apple";
         default:
             return "Unknown (" + std::to_string(vendor) + ")";
     }
@@ -160,11 +158,6 @@ bool IsVMWare(VendorID vendorId)
 bool IsVivante(VendorID vendorId)
 {
     return vendorId == kVendorID_Vivante;
-}
-
-bool IsApple(VendorID vendorId)
-{
-    return vendorId == kVendorID_Apple;
 }
 
 bool ParseAMDBrahmaDriverVersion(const std::string &content, std::string *version)

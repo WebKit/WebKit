@@ -55,10 +55,10 @@
 #include "libANGLE/renderer/d3d/d3d11/Trim11.h"
 #include "libANGLE/renderer/d3d/d3d11/VertexArray11.h"
 #include "libANGLE/renderer/d3d/d3d11/VertexBuffer11.h"
+#include "libANGLE/renderer/d3d/d3d11/dxgi_support_table.h"
 #include "libANGLE/renderer/d3d/d3d11/formatutils11.h"
 #include "libANGLE/renderer/d3d/d3d11/renderer11_utils.h"
 #include "libANGLE/renderer/d3d/d3d11/texture_format_table.h"
-#include "libANGLE/renderer/dxgi_support_table.h"
 #include "libANGLE/renderer/renderer_utils.h"
 #include "libANGLE/trace.h"
 
@@ -956,11 +956,6 @@ egl::Error Renderer11::initializeD3DDevice()
     return egl::NoError();
 }
 
-void Renderer11::setGlobalDebugAnnotator()
-{
-    gl::InitializeDebugAnnotations(&mAnnotator);
-}
-
 // do any one-time device initialization
 // NOTE: this is also needed after a device lost/reset
 // to reset the scene status and ensure the default states are reset.
@@ -1303,9 +1298,8 @@ void Renderer11::generateDisplayExtensions(egl::DisplayExtensions *outExtensions
     outExtensions->flexibleSurfaceCompatibility = true;
     outExtensions->directComposition            = !!mDCompModule;
 
-    // Contexts are virtualized so textures and semaphores can be shared globally
-    outExtensions->displayTextureShareGroup   = true;
-    outExtensions->displaySemaphoreShareGroup = true;
+    // Contexts are virtualized so textures can be shared globally
+    outExtensions->displayTextureShareGroup = true;
 
     // syncControlCHROMIUM requires direct composition.
     outExtensions->syncControlCHROMIUM = outExtensions->directComposition;
@@ -2072,7 +2066,7 @@ bool Renderer11::testDeviceLost()
 
 bool Renderer11::testDeviceResettable()
 {
-    // determine if the device is resettable by creating a mock device
+    // determine if the device is resettable by creating a dummy device
     PFN_D3D11_CREATE_DEVICE D3D11CreateDevice =
         (PFN_D3D11_CREATE_DEVICE)GetProcAddress(mD3d11Module, "D3D11CreateDevice");
 
@@ -2081,24 +2075,24 @@ bool Renderer11::testDeviceResettable()
         return false;
     }
 
-    ID3D11Device *mockDevice;
-    D3D_FEATURE_LEVEL mockFeatureLevel;
-    ID3D11DeviceContext *mockContext;
+    ID3D11Device *dummyDevice;
+    D3D_FEATURE_LEVEL dummyFeatureLevel;
+    ID3D11DeviceContext *dummyContext;
     UINT flags = (mCreateDebugDevice ? D3D11_CREATE_DEVICE_DEBUG : 0);
 
     ASSERT(mRequestedDriverType != D3D_DRIVER_TYPE_UNKNOWN);
     HRESULT result = D3D11CreateDevice(
         nullptr, mRequestedDriverType, nullptr, flags, mAvailableFeatureLevels.data(),
-        static_cast<unsigned int>(mAvailableFeatureLevels.size()), D3D11_SDK_VERSION, &mockDevice,
-        &mockFeatureLevel, &mockContext);
+        static_cast<unsigned int>(mAvailableFeatureLevels.size()), D3D11_SDK_VERSION, &dummyDevice,
+        &dummyFeatureLevel, &dummyContext);
 
     if (!mDevice || FAILED(result))
     {
         return false;
     }
 
-    SafeRelease(mockContext);
-    SafeRelease(mockDevice);
+    SafeRelease(dummyContext);
+    SafeRelease(dummyDevice);
 
     return true;
 }
@@ -4222,10 +4216,5 @@ angle::Result Renderer11::getIncompleteTexture(const gl::Context *context,
                                                gl::Texture **textureOut)
 {
     return GetImplAs<Context11>(context)->getIncompleteTexture(context, type, textureOut);
-}
-
-RendererD3D *CreateRenderer11(egl::Display *display)
-{
-    return new Renderer11(display);
 }
 }  // namespace rx

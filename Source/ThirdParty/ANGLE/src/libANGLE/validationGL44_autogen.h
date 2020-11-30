@@ -48,7 +48,7 @@ bool ValidateBindVertexBuffers(const Context *context,
                                const GLintptr *offsets,
                                const GLsizei *strides);
 bool ValidateBufferStorage(const Context *context,
-                           BufferBinding targetPacked,
+                           GLenum target,
                            GLsizeiptr size,
                            const void *data,
                            GLbitfield flags);

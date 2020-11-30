@@ -24,6 +24,7 @@ class ANGLE_UTIL_EXPORT X11Window : public OSWindow
     X11Window(int visualId);
     ~X11Window() override;
 
+    bool initialize(const std::string &name, int width, int height) override;
     void disableErrorMessageDialog() override;
     void destroy() override;
 
@@ -42,7 +43,6 @@ class ANGLE_UTIL_EXPORT X11Window : public OSWindow
     void signalTestEvent() override;
 
   private:
-    bool initializeImpl(const std::string &name, int width, int height) override;
     void processEvent(const XEvent &event);
 
     Atom WM_DELETE_WINDOW;

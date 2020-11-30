@@ -11,8 +11,7 @@ namespace rx
 ContextWGL::ContextWGL(const gl::State &state,
                        gl::ErrorSet *errorSet,
                        const std::shared_ptr<RendererWGL> &renderer)
-    : ContextGL(state, errorSet, renderer, RobustnessVideoMemoryPurgeStatus::NOT_REQUESTED),
-      mRendererWGL(renderer)
+    : ContextGL(state, errorSet, renderer), mRendererWGL(renderer)
 {}
 
 ContextWGL::~ContextWGL() {}

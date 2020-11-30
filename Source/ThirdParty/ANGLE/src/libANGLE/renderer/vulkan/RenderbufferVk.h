@@ -27,43 +27,14 @@ class RenderbufferVk : public RenderbufferImpl, public angle::ObserverInterface
 
     angle::Result setStorage(const gl::Context *context,
                              GLenum internalformat,
-                             GLsizei width,
-                             GLsizei height) override;
+                             size_t width,
+                             size_t height) override;
     angle::Result setStorageMultisample(const gl::Context *context,
-                                        GLsizei samples,
+                                        size_t samples,
                                         GLenum internalformat,
-                                        GLsizei width,
-                                        GLsizei height,
-                                        gl::MultisamplingMode mode) override;
+                                        size_t width,
+                                        size_t height) override;
     angle::Result setStorageEGLImageTarget(const gl::Context *context, egl::Image *image) override;
-
-    angle::Result copyRenderbufferSubData(const gl::Context *context,
-                                          const gl::Renderbuffer *srcBuffer,
-                                          GLint srcLevel,
-                                          GLint srcX,
-                                          GLint srcY,
-                                          GLint srcZ,
-                                          GLint dstLevel,
-                                          GLint dstX,
-                                          GLint dstY,
-                                          GLint dstZ,
-                                          GLsizei srcWidth,
-                                          GLsizei srcHeight,
-                                          GLsizei srcDepth) override;
-
-    angle::Result copyTextureSubData(const gl::Context *context,
-                                     const gl::Texture *srcTexture,
-                                     GLint srcLevel,
-                                     GLint srcX,
-                                     GLint srcY,
-                                     GLint srcZ,
-                                     GLint dstLevel,
-                                     GLint dstX,
-                                     GLint dstY,
-                                     GLint dstZ,
-                                     GLsizei srcWidth,
-                                     GLsizei srcHeight,
-                                     GLsizei srcDepth) override;
 
     angle::Result getAttachmentRenderTarget(const gl::Context *context,
                                             GLenum binding,
@@ -87,18 +58,15 @@ class RenderbufferVk : public RenderbufferImpl, public angle::ObserverInterface
                                        GLenum type,
                                        void *pixels) override;
 
-    angle::Result ensureImageInitialized(const gl::Context *context);
-
   private:
     void releaseAndDeleteImage(ContextVk *contextVk);
     void releaseImage(ContextVk *contextVk);
 
     angle::Result setStorageImpl(const gl::Context *context,
-                                 GLsizei samples,
+                                 size_t samples,
                                  GLenum internalformat,
-                                 GLsizei width,
-                                 GLsizei height,
-                                 gl::MultisamplingMode mode);
+                                 size_t width,
+                                 size_t height);
 
     const gl::InternalFormat &getImplementationSizedFormat() const;
 
@@ -106,21 +74,8 @@ class RenderbufferVk : public RenderbufferImpl, public angle::ObserverInterface
     void onSubjectStateChange(angle::SubjectIndex index, angle::SubjectMessage message) override;
 
     bool mOwnsImage;
-
-    // |mOwnsImage| indicates that |RenderbufferVk| owns the image.  Otherwise, this is a weak
-    // pointer shared with another class.  Due to this sharing, for example through EGL images, the
-    // image must always be dynamically allocated as the renderbuffer can release ownership for
-    // example and it can be transferred to another |RenderbufferVk|.
     vk::ImageHelper *mImage;
     vk::ImageViewHelper mImageViews;
-
-    // If renderbuffer is created through the EXT_multisampled_render_to_texture API, it is expected
-    // that all rendering is done multisampled during the renderpass, and is automatically resolved
-    // (into |mImage|) and discarded afterwards.  |mMultisampledImage| is the implicit image that
-    // contains the multisampled data.
-    vk::ImageHelper mMultisampledImage;
-    vk::ImageViewHelper mMultisampledImageViews;
-
     RenderTargetVk mRenderTarget;
 
     angle::ObserverBinding mImageObserverBinding;

@@ -26,7 +26,7 @@ class SimpleLightingSample : public SampleApplication
         : SampleApplication("SimpleLightingSample", argc, argv, 1, 0)
     {}
 
-    bool initialize() override
+    virtual bool initialize()
     {
         glClearColor(0.4f, 0.3f, 0.2f, 1.0f);
         mRotDeg = 0.0f;
@@ -34,9 +34,9 @@ class SimpleLightingSample : public SampleApplication
         return true;
     }
 
-    void destroy() override {}
+    virtual void destroy() {}
 
-    void draw() override
+    virtual void draw()
     {
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

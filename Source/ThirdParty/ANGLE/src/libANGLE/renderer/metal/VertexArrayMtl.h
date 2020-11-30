@@ -61,10 +61,6 @@ class VertexArrayMtl : public VertexArrayImpl
   private:
     void reset(ContextMtl *context);
 
-    void getVertexAttribFormatAndArraySize(const sh::ShaderVariable &var,
-                                           MTLVertexFormat *formatOut,
-                                           uint32_t *arraySizeOut);
-
     angle::Result syncDirtyAttrib(const gl::Context *glContext,
                                   const gl::VertexAttribute &attrib,
                                   const gl::VertexBinding &binding,
@@ -95,22 +91,11 @@ class VertexArrayMtl : public VertexArrayImpl
                                       size_t attribIndex,
                                       const mtl::VertexFormat &vertexFormat);
 
-    angle::Result convertVertexBufferCPU(ContextMtl *contextMtl,
+    angle::Result convertVertexBufferCPU(const gl::Context *glContext,
                                          BufferMtl *srcBuffer,
                                          const gl::VertexBinding &binding,
                                          size_t attribIndex,
-                                         const mtl::VertexFormat &convertedFormat,
-                                         GLuint targetStride,
-                                         size_t vertexCount,
-                                         ConversionBufferMtl *conversion);
-    angle::Result convertVertexBufferGPU(const gl::Context *glContext,
-                                         BufferMtl *srcBuffer,
-                                         const gl::VertexBinding &binding,
-                                         size_t attribIndex,
-                                         const mtl::VertexFormat &convertedFormat,
-                                         GLuint targetStride,
-                                         size_t vertexCount,
-                                         bool isExpandingComponents,
+                                         const mtl::VertexFormat &vertexFormat,
                                          ConversionBufferMtl *conversion);
 
     // These can point to real BufferMtl or converted buffer in mConvertedArrayBufferHolders
@@ -119,10 +104,6 @@ class VertexArrayMtl : public VertexArrayImpl
     gl::AttribArray<size_t> mCurrentArrayBufferOffsets;
     gl::AttribArray<GLuint> mCurrentArrayBufferStrides;
     gl::AttribArray<const mtl::VertexFormat *> mCurrentArrayBufferFormats;
-
-    const mtl::VertexFormat &mDefaultFloatVertexFormat;
-    const mtl::VertexFormat &mDefaultIntVertexFormat;
-    const mtl::VertexFormat &mDefaultUIntVertexFormat;
 
     mtl::BufferPool mDynamicVertexData;
     mtl::BufferPool mDynamicIndexData;

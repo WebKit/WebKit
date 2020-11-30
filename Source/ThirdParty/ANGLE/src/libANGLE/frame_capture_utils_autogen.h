@@ -47,7 +47,6 @@ enum class ParamType
     TGLdouble,
     TGLdoubleConstPointer,
     TGLdoublePointer,
-    TGLeglClientBufferEXT,
     TGLeglImageOES,
     TGLenum,
     TGLenumConstPointer,
@@ -140,7 +139,7 @@ enum class ParamType
     TvoidPointerPointer,
 };
 
-constexpr uint32_t kParamTypeCount = 121;
+constexpr uint32_t kParamTypeCount = 120;
 
 union ParamValue
 {
@@ -174,7 +173,6 @@ union ParamValue
     GLdouble GLdoubleVal;
     const GLdouble *GLdoubleConstPointerVal;
     GLdouble *GLdoublePointerVal;
-    GLeglClientBufferEXT GLeglClientBufferEXTVal;
     GLeglImageOES GLeglImageOESVal;
     GLenum GLenumVal;
     const GLenum *GLenumConstPointerVal;
@@ -467,13 +465,6 @@ template <>
 inline GLdouble *GetParamVal<ParamType::TGLdoublePointer, GLdouble *>(const ParamValue &value)
 {
     return value.GLdoublePointerVal;
-}
-
-template <>
-inline GLeglClientBufferEXT GetParamVal<ParamType::TGLeglClientBufferEXT, GLeglClientBufferEXT>(
-    const ParamValue &value)
-{
-    return value.GLeglClientBufferEXTVal;
 }
 
 template <>
@@ -1146,8 +1137,6 @@ T AccessParamValue(ParamType paramType, const ParamValue &value)
             return GetParamVal<ParamType::TGLdoubleConstPointer, T>(value);
         case ParamType::TGLdoublePointer:
             return GetParamVal<ParamType::TGLdoublePointer, T>(value);
-        case ParamType::TGLeglClientBufferEXT:
-            return GetParamVal<ParamType::TGLeglClientBufferEXT, T>(value);
         case ParamType::TGLeglImageOES:
             return GetParamVal<ParamType::TGLeglImageOES, T>(value);
         case ParamType::TGLenum:
@@ -1521,13 +1510,6 @@ template <>
 inline void SetParamVal<ParamType::TGLdoublePointer>(GLdouble *valueIn, ParamValue *valueOut)
 {
     valueOut->GLdoublePointerVal = valueIn;
-}
-
-template <>
-inline void SetParamVal<ParamType::TGLeglClientBufferEXT>(GLeglClientBufferEXT valueIn,
-                                                          ParamValue *valueOut)
-{
-    valueOut->GLeglClientBufferEXTVal = valueIn;
 }
 
 template <>
@@ -2216,9 +2198,6 @@ void InitParamValue(ParamType paramType, T valueIn, ParamValue *valueOut)
             break;
         case ParamType::TGLdoublePointer:
             SetParamVal<ParamType::TGLdoublePointer>(valueIn, valueOut);
-            break;
-        case ParamType::TGLeglClientBufferEXT:
-            SetParamVal<ParamType::TGLeglClientBufferEXT>(valueIn, valueOut);
             break;
         case ParamType::TGLeglImageOES:
             SetParamVal<ParamType::TGLeglImageOES>(valueIn, valueOut);

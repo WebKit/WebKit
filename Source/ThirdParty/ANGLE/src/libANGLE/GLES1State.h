@@ -135,7 +135,6 @@ struct ClipPlaneParameters
     ClipPlaneParameters();
     ClipPlaneParameters(bool enabled, const angle::Vector4 &equation);
     ClipPlaneParameters(const ClipPlaneParameters &other);
-    ClipPlaneParameters &operator=(const ClipPlaneParameters &other);
 
     bool enabled;
     angle::Vector4 equation;

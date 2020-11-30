@@ -20,7 +20,7 @@ namespace rx
 ContextEAGL::ContextEAGL(const gl::State &state,
                          gl::ErrorSet *errorSet,
                          const std::shared_ptr<RendererGL> &renderer)
-    : ContextGL(state, errorSet, renderer, RobustnessVideoMemoryPurgeStatus::NOT_REQUESTED)
+    : ContextGL(state, errorSet, renderer)
 {}
 
 }  // namespace rx

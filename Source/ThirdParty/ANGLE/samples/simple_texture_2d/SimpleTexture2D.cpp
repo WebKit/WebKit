@@ -61,6 +61,8 @@ void main()
 
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
+        mTimer.start();
+
         return true;
     }
 
@@ -110,6 +112,14 @@ void main()
         glUniform1i(mSamplerLoc, 0);
 
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, indices);
+
+        mDrawCount++;
+
+        if (mDrawCount % 100 == 0)
+        {
+            printf("Rate: %0.2lf iterations / second\n",
+                   static_cast<double>(mDrawCount) / mTimer.getElapsedTime());
+        }
     }
 
   private:
@@ -125,6 +135,9 @@ void main()
 
     // Texture handle
     GLuint mTexture;
+
+    Timer mTimer;
+    uint32_t mDrawCount = 0;
 };
 
 int main(int argc, char **argv)

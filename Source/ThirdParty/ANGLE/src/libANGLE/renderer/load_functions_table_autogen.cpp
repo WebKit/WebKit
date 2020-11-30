@@ -3126,18 +3126,6 @@ LoadImageFunctionInfo SRGB8_ALPHA8_to_R8G8B8A8_UNORM_SRGB(GLenum type)
     }
 }
 
-LoadImageFunctionInfo STENCIL_INDEX8_to_S8_UINT(GLenum type)
-{
-    switch (type)
-    {
-        case GL_UNSIGNED_BYTE:
-            return LoadImageFunctionInfo(LoadToNative<GLubyte, 1>, false);
-        default:
-            UNREACHABLE();
-            return LoadImageFunctionInfo(UnreachableLoadFunction, true);
-    }
-}
-
 LoadImageFunctionInfo STENCIL_INDEX8_to_default(GLenum type)
 {
     switch (type)
@@ -4520,15 +4508,7 @@ LoadFunctionMap GetLoadFunctionsMap(GLenum internalFormat, FormatID angleFormat)
             break;
         }
         case GL_STENCIL_INDEX8:
-        {
-            switch (angleFormat)
-            {
-                case FormatID::S8_UINT:
-                    return STENCIL_INDEX8_to_S8_UINT;
-                default:
-                    return STENCIL_INDEX8_to_default;
-            }
-        }
+            return STENCIL_INDEX8_to_default;
 
         default:
             break;

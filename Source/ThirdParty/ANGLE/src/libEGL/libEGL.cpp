@@ -715,12 +715,6 @@ EGLClientBuffer EGLAPIENTRY eglGetNativeClientBufferANDROID(const struct AHardwa
     return EGL_GetNativeClientBufferANDROID(buffer);
 }
 
-EGLClientBuffer EGLAPIENTRY eglCreateNativeClientBufferANDROID(const EGLint *attrib_list)
-{
-    EnsureEGLLoaded();
-    return EGL_CreateNativeClientBufferANDROID(attrib_list);
-}
-
 EGLint EGLAPIENTRY eglDupNativeFenceFDANDROID(EGLDisplay dpy, EGLSyncKHR sync)
 {
     EnsureEGLLoaded();
@@ -766,12 +760,6 @@ EGLint EGLAPIENTRY eglWaitSyncKHR(EGLDisplay dpy, EGLSync sync, EGLint flags)
 {
     EnsureEGLLoaded();
     return EGL_WaitSyncKHR(dpy, sync, flags);
-}
-
-EGLBoolean EGLAPIENTRY eglSignalSyncKHR(EGLDisplay dpy, EGLSync sync, EGLenum mode)
-{
-    EnsureEGLLoaded();
-    return EGL_SignalSyncKHR(dpy, sync, mode);
 }
 
 }  // extern "C"

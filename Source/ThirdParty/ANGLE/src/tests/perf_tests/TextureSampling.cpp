@@ -31,7 +31,7 @@ struct TextureSamplingParams final : public RenderTestParams
         iterationsPerStep = kIterationsPerStep;
 
         // Common default params
-        majorVersion = 3;
+        majorVersion = 2;
         minorVersion = 0;
         windowWidth  = 720;
         windowHeight = 720;
@@ -274,11 +274,12 @@ class TextureSamplingMutableFormatBenchmark : public TextureSamplingBenchmark
 
 void TextureSamplingMutableFormatBenchmark::initializeBenchmark()
 {
-    if (IsGLExtensionEnabled("GL_EXT_texture_sRGB_override"))
+    if (!IsGLExtensionEnabled("GL_EXT_texture_sRGB_override"))
     {
-        TextureSamplingBenchmark::initializeBenchmark();
-        initTextures();
+        FAIL() << "GL_EXT_texture_sRGB_override not supported!" << std::endl;
     }
+    TextureSamplingBenchmark::initializeBenchmark();
+    initTextures();
 }
 
 void TextureSamplingMutableFormatBenchmark::initTextures()
@@ -310,6 +311,13 @@ TextureSamplingParams D3D11Params()
     return params;
 }
 
+TextureSamplingParams D3D9Params()
+{
+    TextureSamplingParams params;
+    params.eglParameters = egl_platform::D3D9();
+    return params;
+}
+
 TextureSamplingParams OpenGLOrGLESParams()
 {
     TextureSamplingParams params;
@@ -328,18 +336,17 @@ TextureSamplingParams VulkanParams()
 
 TEST_P(TextureSamplingBenchmark, Run)
 {
-    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_sRGB_override"));
     run();
 }
 
 TEST_P(TextureSamplingMutableFormatBenchmark, Run)
 {
-    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_sRGB_override"));
     run();
 }
 
 ANGLE_INSTANTIATE_TEST(TextureSamplingBenchmark,
                        D3D11Params(),
+                       D3D9Params(),
                        OpenGLOrGLESParams(),
                        VulkanParams());
 

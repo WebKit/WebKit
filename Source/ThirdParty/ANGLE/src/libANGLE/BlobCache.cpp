@@ -9,6 +9,7 @@
 
 #include "libANGLE/BlobCache.h"
 #include "common/utilities.h"
+#include "common/version.h"
 #include "libANGLE/Context.h"
 #include "libANGLE/Display.h"
 #include "libANGLE/histogram_macros.h"

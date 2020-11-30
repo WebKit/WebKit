@@ -38,7 +38,7 @@ namespace tcu
 class ANGLEPlatform : public tcu::Platform, private glu::Platform, private eglu::Platform
 {
   public:
-    ANGLEPlatform(angle::LogErrorFunc logErrorFunc, uint32_t preRotation);
+    ANGLEPlatform(angle::LogErrorFunc logErrorFunc);
     ~ANGLEPlatform();
 
     bool processEvents() override;
@@ -61,7 +61,6 @@ class ANGLEPlatform : public tcu::Platform, private glu::Platform, private eglu:
 
     EventState mEvents;
     angle::PlatformMethods mPlatformMethods;
-    std::vector<const char *> mEnableFeatureOverrides;
 };
 
 }  // namespace tcu

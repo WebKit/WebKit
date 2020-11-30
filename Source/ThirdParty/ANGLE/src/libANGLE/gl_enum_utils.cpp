@@ -8,10 +8,7 @@
 
 #include "libANGLE/gl_enum_utils.h"
 
-#include "common/bitset_utils.h"
-
 #include <iomanip>
-#include <sstream>
 
 namespace gl
 {
@@ -56,31 +53,5 @@ const char *GLbooleanToString(unsigned int value)
         default:
             return kUnknownGLenumString;
     }
-}
-
-std::string GLbitfieldToString(GLenumGroup enumGroup, unsigned int value)
-{
-    std::stringstream st;
-
-    if (value == 0)
-    {
-        return "0";
-    }
-
-    const angle::BitSet<32> bitSet(value);
-    bool first = true;
-    for (const auto index : bitSet)
-    {
-        if (!first)
-        {
-            st << " | ";
-        }
-        first = false;
-
-        unsigned int mask = 1u << index;
-        OutputGLenumString(st, enumGroup, mask);
-    }
-
-    return st.str();
 }
 }  // namespace gl

@@ -12,37 +12,24 @@
 
 #include "common/MemoryBuffer.h"
 #include "libANGLE/renderer/DisplayImpl.h"
-#include "libANGLE/renderer/vulkan/vk_cache_utils.h"
 #include "libANGLE/renderer/vulkan/vk_utils.h"
 
 namespace rx
 {
 class RendererVk;
 
-using ShareContextSet = std::set<ContextVk *>;
-
 class ShareGroupVk : public ShareGroupImpl
 {
   public:
-    ShareGroupVk() {}
-    void onDestroy(const egl::Display *display) override;
+    ShareGroupVk() : mCurrentUniqueSerial(1) {}
 
-    // PipelineLayoutCache and DescriptorSetLayoutCache can be shared between multiple threads
-    // accessing them via shared contexts. The ShareGroup locks around gl entrypoints ensuring
-    // synchronous update to the caches.
-    PipelineLayoutCache &getPipelineLayoutCache() { return mPipelineLayoutCache; }
-    DescriptorSetLayoutCache &getDescriptorSetLayoutCache() { return mDescriptorSetLayoutCache; }
-    ShareContextSet *getShareContextSet() { return &mShareContextSet; }
+    BufferSerial generateBufferSerial() { return ++mCurrentUniqueSerial; }
+    TextureSerial generateTextureSerial() { return ++mCurrentUniqueSerial; }
+    SamplerSerial generateSamplerSerial() { return ++mCurrentUniqueSerial; }
+    ImageViewSerial generateImageViewSerial() { return ++mCurrentUniqueSerial; }
 
   private:
-    // ANGLE uses a PipelineLayout cache to store compatible pipeline layouts.
-    PipelineLayoutCache mPipelineLayoutCache;
-
-    // DescriptorSetLayouts are also managed in a cache.
-    DescriptorSetLayoutCache mDescriptorSetLayoutCache;
-
-    // The list of contexts within the share group
-    ShareContextSet mShareContextSet;
+    uint32_t mCurrentUniqueSerial;
 };
 
 class DisplayVk : public DisplayImpl, public vk::Context
@@ -54,8 +41,7 @@ class DisplayVk : public DisplayImpl, public vk::Context
     egl::Error initialize(egl::Display *display) override;
     void terminate() override;
 
-    egl::Error makeCurrent(egl::Display *display,
-                           egl::Surface *drawSurface,
+    egl::Error makeCurrent(egl::Surface *drawSurface,
                            egl::Surface *readSurface,
                            gl::Context *context) override;
 
@@ -105,10 +91,9 @@ class DisplayVk : public DisplayImpl, public vk::Context
     virtual const char *getWSILayer() const;
 
     // Determine if a config with given formats and sample counts is supported.  This callback may
-    // modify the config to add or remove platform specific attributes such as nativeVisualID.  If
-    // the config is not supported by the window system, it removes the EGL_WINDOW_BIT from
-    // surfaceType, which would still allow the config to be used for pbuffers.
-    virtual void checkConfigSupport(egl::Config *config) = 0;
+    // modify the config to add or remove platform specific attributes such as nativeVisualID before
+    // returning a bool to indicate if the config should be supported.
+    virtual bool checkConfigSupport(egl::Config *config) = 0;
 
     ANGLE_NO_DISCARD bool getScratchBuffer(size_t requestedSizeBytes,
                                            angle::MemoryBuffer **scratchBufferOut) const;
@@ -124,6 +109,8 @@ class DisplayVk : public DisplayImpl, public vk::Context
 
     void populateFeatureList(angle::FeatureList *features) override;
 
+    bool isRobustResourceInitEnabled() const override;
+
     ShareGroupImpl *createShareGroup() override;
 
   protected:
@@ -138,7 +125,8 @@ class DisplayVk : public DisplayImpl, public vk::Context
 
     mutable angle::ScratchBuffer mScratchBuffer;
 
-    vk::Error mSavedError;
+    std::string mStoredErrorString;
+    bool mHasSurfaceWithRobustInit;
 };
 
 }  // namespace rx

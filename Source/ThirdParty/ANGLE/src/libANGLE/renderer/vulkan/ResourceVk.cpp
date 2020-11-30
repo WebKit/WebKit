@@ -21,11 +21,6 @@ Resource::Resource()
     mUse.init();
 }
 
-Resource::Resource(Resource &&other) : Resource()
-{
-    mUse = std::move(other.mUse);
-}
-
 Resource::~Resource()
 {
     mUse.release();
@@ -36,7 +31,7 @@ angle::Result Resource::finishRunningCommands(ContextVk *contextVk)
     return contextVk->finishToSerial(mUse.getSerial());
 }
 
-angle::Result Resource::waitForIdle(ContextVk *contextVk, const char *debugMessage)
+angle::Result Resource::waitForIdle(ContextVk *contextVk)
 {
     // If there are pending commands for the resource, flush them.
     if (usedInRecordedCommands())
@@ -47,10 +42,6 @@ angle::Result Resource::waitForIdle(ContextVk *contextVk, const char *debugMessa
     // Make sure the driver is done with the resource.
     if (usedInRunningCommands(contextVk->getLastCompletedQueueSerial()))
     {
-        if (debugMessage)
-        {
-            ANGLE_PERF_WARNING(contextVk->getDebug(), GL_DEBUG_SEVERITY_HIGH, debugMessage);
-        }
         ANGLE_TRY(finishRunningCommands(contextVk));
     }
 
@@ -85,37 +76,22 @@ bool SharedGarbage::destroyIfComplete(RendererVk *renderer, Serial completedSeri
     if (mLifetime.isCurrentlyInUse(completedSerial))
         return false;
 
+    mLifetime.release();
+
     for (GarbageObject &object : mGarbage)
     {
         object.destroy(renderer);
     }
 
-    mLifetime.release();
-
     return true;
 }
 
 // ResourceUseList implementation.
-ResourceUseList::ResourceUseList()
-{
-    constexpr size_t kDefaultResourceUseCount = 4096;
-    mResourceUses.reserve(kDefaultResourceUseCount);
-}
-
-ResourceUseList::ResourceUseList(ResourceUseList &&other)
-{
-    *this = std::move(other);
-}
+ResourceUseList::ResourceUseList() = default;
 
 ResourceUseList::~ResourceUseList()
 {
     ASSERT(mResourceUses.empty());
-}
-
-ResourceUseList &ResourceUseList::operator=(ResourceUseList &&rhs)
-{
-    std::swap(mResourceUses, rhs.mResourceUses);
-    return *this;
 }
 
 void ResourceUseList::releaseResourceUses()

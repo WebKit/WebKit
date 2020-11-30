@@ -21,17 +21,17 @@ namespace rx
 {
 
 DisplayVkWin32::DisplayVkWin32(const egl::DisplayState &state)
-    : DisplayVk(state), mWindowClass(NULL), mMockWindow(nullptr)
+    : DisplayVk(state), mWindowClass(NULL), mDummyWindow(nullptr)
 {}
 
 DisplayVkWin32::~DisplayVkWin32() {}
 
 void DisplayVkWin32::terminate()
 {
-    if (mMockWindow)
+    if (mDummyWindow)
     {
-        DestroyWindow(mMockWindow);
-        mMockWindow = nullptr;
+        DestroyWindow(mDummyWindow);
+        mDummyWindow = nullptr;
     }
     if (mWindowClass)
     {
@@ -91,18 +91,18 @@ egl::Error DisplayVkWin32::initialize(egl::Display *display)
         }
     }
 
-    mMockWindow =
-        CreateWindowExA(0, reinterpret_cast<const char *>(mWindowClass), "ANGLE Mock Window",
+    mDummyWindow =
+        CreateWindowExA(0, reinterpret_cast<const char *>(mWindowClass), "ANGLE Dummy Window",
                         WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
                         CW_USEDEFAULT, nullptr, nullptr, nullptr, nullptr);
-    if (!mMockWindow)
+    if (!mDummyWindow)
     {
-        return egl::EglNotInitialized() << "Failed to create mock OpenGL window.";
+        return egl::EglNotInitialized() << "Failed to create dummy OpenGL window.";
     }
 
     VkSurfaceKHR surfaceVk;
     VkWin32SurfaceCreateInfoKHR info = {VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR, nullptr, 0,
-                                        GetModuleHandle(nullptr), mMockWindow};
+                                        GetModuleHandle(nullptr), mDummyWindow};
 
     VkInstance instance         = mRenderer->getInstance();
     VkPhysicalDevice physDevice = mRenderer->getPhysicalDevice();
@@ -126,30 +126,20 @@ egl::Error DisplayVkWin32::initialize(egl::Display *display)
     }
     vkDestroySurfaceKHR(instance, surfaceVk, nullptr);
 
-    DestroyWindow(mMockWindow);
-    mMockWindow = nullptr;
+    DestroyWindow(mDummyWindow);
+    mDummyWindow = nullptr;
 
     return egl::NoError();
 }
 
 egl::ConfigSet DisplayVkWin32::generateConfigs()
 {
-    const std::array<GLenum, 5> kColorFormats = {GL_RGB565, GL_BGRA8_EXT, GL_BGRX8_ANGLEX,
-                                                 GL_RGB10_A2_EXT, GL_RGBA16F_EXT};
-
-    std::vector<GLenum> depthStencilFormats(
-        egl_vk::kConfigDepthStencilFormats,
-        egl_vk::kConfigDepthStencilFormats + ArraySize(egl_vk::kConfigDepthStencilFormats));
-
-    if (getCaps().stencil8)
-    {
-        depthStencilFormats.push_back(GL_STENCIL_INDEX8);
-    }
-    return egl_vk::GenerateConfigs(kColorFormats.data(), kColorFormats.size(),
-                                   depthStencilFormats.data(), depthStencilFormats.size(), this);
+    constexpr GLenum kColorFormats[] = {GL_RGB565, GL_BGRA8_EXT, GL_BGRX8_ANGLEX, GL_RGB10_A2_EXT,
+                                        GL_RGBA16F_EXT};
+    return egl_vk::GenerateConfigs(kColorFormats, egl_vk::kConfigDepthStencilFormats, this);
 }
 
-void DisplayVkWin32::checkConfigSupport(egl::Config *config)
+bool DisplayVkWin32::checkConfigSupport(egl::Config *config)
 {
     const vk::Format &formatVk = this->getRenderer()->getFormat(config->renderTargetFormat);
     VkFormat nativeFormat      = formatVk.vkImageFormat;
@@ -159,19 +149,18 @@ void DisplayVkWin32::checkConfigSupport(egl::Config *config)
     // supported format will be returned.
     if (mSurfaceFormats.size() == 1u && mSurfaceFormats[0].format == VK_FORMAT_UNDEFINED)
     {
-        return;
+        return true;
     }
 
     for (const VkSurfaceFormatKHR &surfaceFormat : mSurfaceFormats)
     {
         if (surfaceFormat.format == nativeFormat)
         {
-            return;
+            return true;
         }
     }
 
-    // No window support for this config.
-    config->surfaceType &= ~EGL_WINDOW_BIT;
+    return false;
 }
 
 const char *DisplayVkWin32::getWSIExtension() const

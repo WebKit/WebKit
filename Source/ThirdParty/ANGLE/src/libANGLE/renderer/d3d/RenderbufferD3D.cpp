@@ -34,25 +34,18 @@ void RenderbufferD3D::onDestroy(const gl::Context *context)
 
 angle::Result RenderbufferD3D::setStorage(const gl::Context *context,
                                           GLenum internalformat,
-                                          GLsizei width,
-                                          GLsizei height)
+                                          size_t width,
+                                          size_t height)
 {
-    return setStorageMultisample(context, 0, internalformat, width, height,
-                                 gl::MultisamplingMode::Regular);
+    return setStorageMultisample(context, 0, internalformat, width, height);
 }
 
 angle::Result RenderbufferD3D::setStorageMultisample(const gl::Context *context,
-                                                     GLsizei samples,
+                                                     size_t samples,
                                                      GLenum internalformat,
-                                                     GLsizei width,
-                                                     GLsizei height,
-                                                     gl::MultisamplingMode mode)
+                                                     size_t width,
+                                                     size_t height)
 {
-    // TODO: Correctly differentiate between normal multisampling and render to texture.  In the
-    // latter case, the renderbuffer must be automatically resolved when rendering is broken and
-    // operations performed on it (such as blit, copy etc) should use the resolved image.
-    // http://anglebug.com/3107.
-
     // If the renderbuffer parameters are queried, the calling function
     // will expect one of the valid renderbuffer formats for use in
     // glRenderbufferStorage, but we should create depth and stencil buffers
@@ -68,12 +61,12 @@ angle::Result RenderbufferD3D::setStorageMultisample(const gl::Context *context,
     // Because ES 3.0 already knows the exact number of supported samples, it would already have
     // been validated and generated GL_INVALID_VALUE.
     const gl::TextureCaps &formatCaps = mRenderer->getNativeTextureCaps().get(creationFormat);
-    ANGLE_CHECK_GL_ALLOC(GetImplAs<ContextD3D>(context),
-                         static_cast<uint32_t>(samples) <= formatCaps.getMaxSamples());
+    ANGLE_CHECK_GL_ALLOC(GetImplAs<ContextD3D>(context), samples <= formatCaps.getMaxSamples());
 
     RenderTargetD3D *newRT = nullptr;
-    ANGLE_TRY(
-        mRenderer->createRenderTarget(context, width, height, creationFormat, samples, &newRT));
+    ANGLE_TRY(mRenderer->createRenderTarget(context, static_cast<int>(width),
+                                            static_cast<int>(height), creationFormat,
+                                            static_cast<GLsizei>(samples), &newRT));
 
     SafeDelete(mRenderTarget);
     mImage        = nullptr;

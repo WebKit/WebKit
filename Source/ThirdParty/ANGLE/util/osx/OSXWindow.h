@@ -35,6 +35,7 @@ class OSXWindow : public OSWindow
     OSXWindow();
     ~OSXWindow() override;
 
+    bool initialize(const std::string &name, int width, int height) override;
     void disableErrorMessageDialog() override;
     void destroy() override;
 
@@ -55,8 +56,6 @@ class OSXWindow : public OSWindow
     NSWindow *getNSWindow() const;
 
   private:
-    bool initializeImpl(const std::string &name, int width, int height) override;
-
     NSWindow *mWindow;
     WindowDelegate *mDelegate;
     ContentView *mView;

@@ -33,9 +33,7 @@ BufferState::BufferState()
       mMapLength(0),
       mBindingCount(0),
       mTransformFeedbackIndexedBindingCount(0),
-      mTransformFeedbackGenericBindingCount(0),
-      mImmutable(false),
-      mStorageExtUsageFlags(0)
+      mTransformFeedbackGenericBindingCount(0)
 {}
 
 BufferState::~BufferState() {}
@@ -70,31 +68,11 @@ const std::string &Buffer::getLabel() const
     return mState.mLabel;
 }
 
-angle::Result Buffer::bufferStorage(Context *context,
-                                    BufferBinding target,
-                                    GLsizeiptr size,
-                                    const void *data,
-                                    GLbitfield flags)
-{
-    return bufferDataImpl(context, target, data, size, BufferUsage::InvalidEnum, flags);
-}
-
 angle::Result Buffer::bufferData(Context *context,
                                  BufferBinding target,
                                  const void *data,
                                  GLsizeiptr size,
                                  BufferUsage usage)
-{
-    GLbitfield flags = (GL_MAP_READ_BIT | GL_MAP_WRITE_BIT | GL_DYNAMIC_STORAGE_BIT_EXT);
-    return bufferDataImpl(context, target, data, size, usage, flags);
-}
-
-angle::Result Buffer::bufferDataImpl(Context *context,
-                                     BufferBinding target,
-                                     const void *data,
-                                     GLsizeiptr size,
-                                     BufferUsage usage,
-                                     GLbitfield flags)
 {
     const void *dataForImpl = data;
 
@@ -122,8 +100,7 @@ angle::Result Buffer::bufferDataImpl(Context *context,
         dataForImpl = scratchBuffer->data();
     }
 
-    if (mImpl->setDataWithUsageFlags(context, target, dataForImpl, size, usage, flags) ==
-        angle::Result::Stop)
+    if (mImpl->setData(context, target, dataForImpl, size, usage) == angle::Result::Stop)
     {
         // If setData fails, the buffer contents are undefined. Set a zero size to indicate that.
         mIndexRangeCache.clear();
@@ -136,10 +113,8 @@ angle::Result Buffer::bufferDataImpl(Context *context,
     }
 
     mIndexRangeCache.clear();
-    mState.mUsage                = usage;
-    mState.mSize                 = size;
-    mState.mImmutable            = (usage == BufferUsage::InvalidEnum);
-    mState.mStorageExtUsageFlags = flags;
+    mState.mUsage = usage;
+    mState.mSize  = size;
 
     // Notify when storage changes.
     onStateChange(angle::SubjectMessage::SubjectChanged);

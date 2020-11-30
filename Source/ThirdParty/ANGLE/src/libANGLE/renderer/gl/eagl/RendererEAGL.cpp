@@ -8,7 +8,7 @@
 
 #import "common/platform.h"
 
-#if defined(ANGLE_ENABLE_EAGL)
+#if (defined(ANGLE_PLATFORM_IOS) && !defined(ANGLE_PLATFORM_MACCATALYST)) || (defined(ANGLE_PLATFORM_MACCATALYST) && defined(ANGLE_CPU_ARM64))
 
 #    include "libANGLE/renderer/gl/eagl/DisplayEAGL.h"
 #    include "libANGLE/renderer/gl/eagl/RendererEAGL.h"
@@ -31,4 +31,4 @@ WorkerContext *RendererEAGL::createWorkerContext(std::string *infoLog)
 
 }  // namespace rx
 
-#endif  // defined(ANGLE_ENABLE_EAGL)
+#endif  // (defined(ANGLE_PLATFORM_IOS) && !defined(ANGLE_PLATFORM_MACCATALYST)) || (defined(ANGLE_PLATFORM_MACCATALYST) && defined(ANGLE_CPU_ARM64))

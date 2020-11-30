@@ -6,9 +6,6 @@
 // TestSuite:
 //   Basic implementation of a test harness in ANGLE.
 
-#ifndef ANGLE_TESTS_TEST_UTILS_TEST_SUITE_H_
-#define ANGLE_TESTS_TEST_UTILS_TEST_SUITE_H_
-
 #include <map>
 #include <memory>
 #include <mutex>
@@ -16,7 +13,6 @@
 #include <string>
 #include <thread>
 
-#include "HistogramWriter.h"
 #include "util/test_utils.h"
 
 namespace angle
@@ -58,7 +54,7 @@ enum class TestResultType
 {
     Crash,
     Fail,
-    NoResult,
+    Skip,
     Pass,
     Timeout,
     Unknown,
@@ -68,9 +64,8 @@ const char *TestResultTypeToString(TestResultType type);
 
 struct TestResult
 {
-    TestResultType type       = TestResultType::NoResult;
+    TestResultType type       = TestResultType::Skip;
     double elapsedTimeSeconds = 0.0;
-    uint32_t flakyFailures    = 0;
 };
 
 inline bool operator==(const TestResult &a, const TestResult &b)
@@ -113,7 +108,6 @@ struct ProcessInfo : angle::NonCopyable
     std::string resultsFileName;
     std::string filterFileName;
     std::string commandLine;
-    std::string filterString;
 };
 
 using TestQueue = std::queue<std::vector<TestIdentifier>>;
@@ -126,21 +120,13 @@ class TestSuite
 
     int run();
     void onCrashOrTimeout(TestResultType crashOrTimeout);
-    void addHistogramSample(const std::string &measurement,
-                            const std::string &story,
-                            double value,
-                            const std::string &units);
-
-    static TestSuite *GetInstance() { return mInstance; }
 
   private:
     bool parseSingleArg(const char *argument);
-    bool launchChildTestProcess(uint32_t batchId, const std::vector<TestIdentifier> &testsInBatch);
+    bool launchChildTestProcess(const std::vector<TestIdentifier> &testsInBatch);
     bool finishProcess(ProcessInfo *processInfo);
     int printFailuresAndReturnCount() const;
     void startWatchdog();
-
-    static TestSuite *mInstance;
 
     std::string mTestExecutableName;
     std::string mTestSuiteName;
@@ -156,26 +142,17 @@ class TestSuite
     TestResults mTestResults;
     bool mBotMode;
     bool mDebugTestGroups;
-    bool mGTestListTests;
-    bool mListTests;
-    bool mPrintTestStdout;
-    bool mDisableCrashHandler;
     int mBatchSize;
     int mCurrentResultCount;
     int mTotalResultCount;
     int mMaxProcesses;
     int mTestTimeout;
     int mBatchTimeout;
-    int mBatchId;
-    int mFlakyRetries;
-    std::vector<std::string> mChildProcessArgs;
+    std::vector<std::string> mGoogleTestCommandLineArgs;
     std::map<TestIdentifier, FileLine> mTestFileLines;
     std::vector<ProcessInfo> mCurrentProcesses;
     std::thread mWatchdogThread;
-    HistogramWriter mHistogramWriter;
 };
 
 bool GetTestResultsFromFile(const char *fileName, TestResults *resultsOut);
 }  // namespace angle
-
-#endif  // ANGLE_TESTS_TEST_UTILS_TEST_SUITE_H_

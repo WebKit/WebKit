@@ -136,7 +136,7 @@ egl::Error DisplayWGL::initializeImpl(egl::Display *display)
     mFunctionsWGL->initialize(mOpenGLModule, nullptr);
 
     // WGL can't grab extensions until it creates a context because it needs to load the driver's
-    // DLLs first. Create a stub context to load the driver and determine which GL versions are
+    // DLLs first. Create a dummy context to load the driver and determine which GL versions are
     // available.
 
     // Work around compile error from not defining "UNICODE" while Chromium does
@@ -165,61 +165,60 @@ egl::Error DisplayWGL::initializeImpl(egl::Display *display)
                << "\":" << gl::FmtErr(HRESULT_CODE(GetLastError()));
     }
 
-    HWND placeholderWindow =
-        CreateWindowExA(0, reinterpret_cast<const char *>(mWindowClass), "ANGLE Placeholder Window",
+    HWND dummyWindow =
+        CreateWindowExA(0, reinterpret_cast<const char *>(mWindowClass), "ANGLE Dummy Window",
                         WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
                         CW_USEDEFAULT, nullptr, nullptr, nullptr, nullptr);
-    if (!placeholderWindow)
+    if (!dummyWindow)
     {
-        return egl::EglNotInitialized() << "Failed to create placeholder OpenGL window.";
+        return egl::EglNotInitialized() << "Failed to create dummy OpenGL window.";
     }
 
-    HDC placeholderDeviceContext = GetDC(placeholderWindow);
-    if (!placeholderDeviceContext)
+    HDC dummyDeviceContext = GetDC(dummyWindow);
+    if (!dummyDeviceContext)
     {
         return egl::EglNotInitialized()
-               << "Failed to get the device context of the placeholder OpenGL window.";
+               << "Failed to get the device context of the dummy OpenGL window.";
     }
 
     const PIXELFORMATDESCRIPTOR pixelFormatDescriptor = wgl::GetDefaultPixelFormatDescriptor();
 
-    int placeholderPixelFormat =
-        ChoosePixelFormat(placeholderDeviceContext, &pixelFormatDescriptor);
-    if (placeholderPixelFormat == 0)
+    int dummyPixelFormat = ChoosePixelFormat(dummyDeviceContext, &pixelFormatDescriptor);
+    if (dummyPixelFormat == 0)
     {
         return egl::EglNotInitialized()
-               << "Could not find a compatible pixel format for the placeholder OpenGL window.";
+               << "Could not find a compatible pixel format for the dummy OpenGL window.";
     }
 
-    if (!SetPixelFormat(placeholderDeviceContext, placeholderPixelFormat, &pixelFormatDescriptor))
+    if (!SetPixelFormat(dummyDeviceContext, dummyPixelFormat, &pixelFormatDescriptor))
     {
         return egl::EglNotInitialized()
                << "Failed to set the pixel format on the intermediate OpenGL window.";
     }
 
-    HGLRC placeholderWGLContext = mFunctionsWGL->createContext(placeholderDeviceContext);
-    if (!placeholderDeviceContext)
+    HGLRC dummyWGLContext = mFunctionsWGL->createContext(dummyDeviceContext);
+    if (!dummyDeviceContext)
     {
         return egl::EglNotInitialized()
-               << "Failed to create a WGL context for the placeholder OpenGL window.";
+               << "Failed to create a WGL context for the dummy OpenGL window.";
     }
 
-    if (!mFunctionsWGL->makeCurrent(placeholderDeviceContext, placeholderWGLContext))
+    if (!mFunctionsWGL->makeCurrent(dummyDeviceContext, dummyWGLContext))
     {
-        return egl::EglNotInitialized() << "Failed to make the placeholder WGL context current.";
+        return egl::EglNotInitialized() << "Failed to make the dummy WGL context current.";
     }
 
     // Reinitialize the wgl functions to grab the extensions
-    mFunctionsWGL->initialize(mOpenGLModule, placeholderDeviceContext);
+    mFunctionsWGL->initialize(mOpenGLModule, dummyDeviceContext);
 
     mHasWGLCreateContextRobustness =
         mFunctionsWGL->hasExtension("WGL_ARB_create_context_robustness");
 
-    // Destroy the placeholder window and context
-    mFunctionsWGL->makeCurrent(placeholderDeviceContext, nullptr);
-    mFunctionsWGL->deleteContext(placeholderWGLContext);
-    ReleaseDC(placeholderWindow, placeholderDeviceContext);
-    DestroyWindow(placeholderWindow);
+    // Destroy the dummy window and context
+    mFunctionsWGL->makeCurrent(dummyDeviceContext, nullptr);
+    mFunctionsWGL->deleteContext(dummyWGLContext);
+    ReleaseDC(dummyWindow, dummyDeviceContext);
+    DestroyWindow(dummyWindow);
 
     const egl::AttributeMap &displayAttributes = display->getAttributeMap();
     EGLint requestedDisplayType                = static_cast<EGLint>(displayAttributes.get(
@@ -646,9 +645,8 @@ void DisplayWGL::generateExtensions(egl::DisplayExtensions *outExtensions) const
     outExtensions->querySurfacePointer            = true;
     outExtensions->keyedMutex                     = true;
 
-    // Contexts are virtualized so textures and semaphores can be shared globally
-    outExtensions->displayTextureShareGroup   = true;
-    outExtensions->displaySemaphoreShareGroup = true;
+    // Contexts are virtualized so textures can be shared globally
+    outExtensions->displayTextureShareGroup = true;
 
     outExtensions->surfacelessContext = true;
 
@@ -679,8 +677,7 @@ egl::Error DisplayWGL::waitNative(const gl::Context *context, EGLint engine)
     return egl::NoError();
 }
 
-egl::Error DisplayWGL::makeCurrent(egl::Display *display,
-                                   egl::Surface *drawSurface,
+egl::Error DisplayWGL::makeCurrent(egl::Surface *drawSurface,
                                    egl::Surface *readSurface,
                                    gl::Context *context)
 {
@@ -721,7 +718,7 @@ egl::Error DisplayWGL::makeCurrent(egl::Display *display,
         currentContext.glrc = newContext;
     }
 
-    return DisplayGL::makeCurrent(display, drawSurface, readSurface, context);
+    return DisplayGL::makeCurrent(drawSurface, readSurface, context);
 }
 
 egl::Error DisplayWGL::registerD3DDevice(IUnknown *device, HANDLE *outHandle)

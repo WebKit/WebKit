@@ -12,7 +12,6 @@
 #include "angle_gl.h"
 #include "common/angleutils.h"
 #include "libANGLE/Error.h"
-#include "libANGLE/angletypes.h"
 #include "libANGLE/renderer/FramebufferAttachmentObjectImpl.h"
 
 namespace gl
@@ -38,44 +37,15 @@ class RenderbufferImpl : public FramebufferAttachmentObjectImpl
 
     virtual angle::Result setStorage(const gl::Context *context,
                                      GLenum internalformat,
-                                     GLsizei width,
-                                     GLsizei height)                        = 0;
+                                     size_t width,
+                                     size_t height)                   = 0;
     virtual angle::Result setStorageMultisample(const gl::Context *context,
-                                                GLsizei samples,
+                                                size_t samples,
                                                 GLenum internalformat,
-                                                GLsizei width,
-                                                GLsizei height,
-                                                gl::MultisamplingMode mode) = 0;
+                                                size_t width,
+                                                size_t height)        = 0;
     virtual angle::Result setStorageEGLImageTarget(const gl::Context *context,
-                                                   egl::Image *image)       = 0;
-
-    virtual angle::Result copyRenderbufferSubData(const gl::Context *context,
-                                                  const gl::Renderbuffer *srcBuffer,
-                                                  GLint srcLevel,
-                                                  GLint srcX,
-                                                  GLint srcY,
-                                                  GLint srcZ,
-                                                  GLint dstLevel,
-                                                  GLint dstX,
-                                                  GLint dstY,
-                                                  GLint dstZ,
-                                                  GLsizei srcWidth,
-                                                  GLsizei srcHeight,
-                                                  GLsizei srcDepth);
-
-    virtual angle::Result copyTextureSubData(const gl::Context *context,
-                                             const gl::Texture *srcTexture,
-                                             GLint srcLevel,
-                                             GLint srcX,
-                                             GLint srcY,
-                                             GLint srcZ,
-                                             GLint dstLevel,
-                                             GLint dstX,
-                                             GLint dstY,
-                                             GLint dstZ,
-                                             GLsizei srcWidth,
-                                             GLsizei srcHeight,
-                                             GLsizei srcDepth);
+                                                   egl::Image *image) = 0;
 
     virtual GLenum getColorReadFormat(const gl::Context *context);
     virtual GLenum getColorReadType(const gl::Context *context);
@@ -93,42 +63,6 @@ class RenderbufferImpl : public FramebufferAttachmentObjectImpl
   protected:
     const gl::RenderbufferState &mState;
 };
-
-inline angle::Result RenderbufferImpl::copyRenderbufferSubData(const gl::Context *context,
-                                                               const gl::Renderbuffer *srcBuffer,
-                                                               GLint srcLevel,
-                                                               GLint srcX,
-                                                               GLint srcY,
-                                                               GLint srcZ,
-                                                               GLint dstLevel,
-                                                               GLint dstX,
-                                                               GLint dstY,
-                                                               GLint dstZ,
-                                                               GLsizei srcWidth,
-                                                               GLsizei srcHeight,
-                                                               GLsizei srcDepth)
-{
-    UNREACHABLE();
-    return angle::Result::Stop;
-}
-
-inline angle::Result RenderbufferImpl::copyTextureSubData(const gl::Context *context,
-                                                          const gl::Texture *srcTexture,
-                                                          GLint srcLevel,
-                                                          GLint srcX,
-                                                          GLint srcY,
-                                                          GLint srcZ,
-                                                          GLint dstLevel,
-                                                          GLint dstX,
-                                                          GLint dstY,
-                                                          GLint dstZ,
-                                                          GLsizei srcWidth,
-                                                          GLsizei srcHeight,
-                                                          GLsizei srcDepth)
-{
-    UNREACHABLE();
-    return angle::Result::Stop;
-}
 
 inline GLint RenderbufferImpl::getMemorySize() const
 {

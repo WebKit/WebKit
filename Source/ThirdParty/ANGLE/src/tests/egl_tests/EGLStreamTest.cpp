@@ -177,7 +177,8 @@ TEST_P(EGLStreamTest, StreamConsumerGLTextureValidationTest)
     ASSERT_EGL_FALSE(result);
     ASSERT_EGL_ERROR(EGL_BAD_ACCESS);
 
-    GLTexture tex;
+    GLuint tex;
+    glGenTextures(1, &tex);
     glBindTexture(GL_TEXTURE_EXTERNAL_OES, tex);
     result = eglStreamConsumerGLTextureExternalKHR(display, stream);
     ASSERT_EGL_TRUE(result);
@@ -285,7 +286,8 @@ TEST_P(EGLStreamTest, StreamConsumerGLTextureYUVValidationTest)
     ASSERT_EGL_FALSE(result);
     ASSERT_EGL_ERROR(EGL_BAD_ACCESS);
 
-    GLTexture tex[2];
+    GLuint tex[2];
+    glGenTextures(2, tex);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_EXTERNAL_OES, tex[0]);
     glActiveTexture(GL_TEXTURE1);
@@ -340,7 +342,6 @@ TEST_P(EGLStreamTest, StreamConsumerGLTextureYUVDeletionTest)
         EGL_NONE,
     };
 
-    // Note: The purpose of this test means that we can't use the RAII GLTexture class
     GLuint tex[2];
     glGenTextures(2, tex);
     glActiveTexture(GL_TEXTURE0);
@@ -398,7 +399,7 @@ class D3D11TextureStreamSamplingTest : public ANGLETest
         glGenFramebuffers(1, &mFB);
         glBindFramebuffer(GL_FRAMEBUFFER, mFB);
         glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, mRB);
-        ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+        ASSERT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_FRAMEBUFFER));
 
         glViewport(0, 0, 2, 2);
         glClearColor(1, 0, 0, 1);
@@ -783,7 +784,8 @@ TEST_P(EGLStreamTest, StreamProducerTextureNV12End2End)
         EGL_NONE,
     };
 
-    GLTexture tex[2];
+    GLuint tex[2];
+    glGenTextures(2, tex);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_EXTERNAL_OES, tex[0]);
     glTexParameteri(GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_MIN_FILTER, GL_LINEAR);

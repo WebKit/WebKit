@@ -44,9 +44,6 @@ GLuint64 MergeQueryResults(gl::QueryType type, GLuint64 currentResult, GLuint64 
     }
 }
 
-// Some drivers tend to hang when flushing pending queries.  Wait until this number of queries have
-// added up before checking if results are ready.
-constexpr uint32_t kPauseResumeFlushThreshold = 5;
 }  // anonymous namespace
 
 namespace rx
@@ -162,12 +159,7 @@ angle::Result StandardQueryGL::pause(const gl::Context *context)
     }
 
     // Flush to make sure the pending queries don't add up too much.
-    if (mPendingQueries.size() >= kPauseResumeFlushThreshold)
-    {
-        ANGLE_TRY(flush(context, false));
-    }
-
-    return angle::Result::Continue;
+    return flush(context, false);
 }
 
 angle::Result StandardQueryGL::resume(const gl::Context *context)
@@ -175,11 +167,7 @@ angle::Result StandardQueryGL::resume(const gl::Context *context)
     if (mActiveQuery == 0)
     {
         // Flush to make sure the pending queries don't add up too much.
-        if (mPendingQueries.size() >= kPauseResumeFlushThreshold)
-        {
-            ANGLE_TRY(flush(context, false));
-        }
-
+        ANGLE_TRY(flush(context, false));
         mFunctions->genQueries(1, &mActiveQuery);
         mStateManager->beginQuery(mType, this, mActiveQuery);
     }

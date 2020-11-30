@@ -46,7 +46,6 @@
 //     * UnormToFloat: Similar to UintToFloat, but normalized.
 //     * FixedToFloat: 16.16 signed fixed-point to floating point.
 //     * FloatToFloat: float.
-//     * FloatToHalf: float to half-float
 //
 // SintToSint, UintToUint and FloatToFloat correspond to CopyNativeVertexData() and
 // Copy8SintTo16SintVertexData() in renderer/copyvertex.inc.
@@ -68,7 +67,7 @@
 #define SrcType int
 #elif UintToUint || UintToFloat
 #define SrcType uint
-#elif SnormToFloat || UnormToFloat || FixedToFloat || FloatToFloat || FloatToHalf
+#elif SnormToFloat || UnormToFloat || FixedToFloat || FloatToFloat
 #define SrcType float
 #else
 #error "Not all conversions are accounted for"
@@ -84,9 +83,6 @@
 #elif SintToFloat || UintToFloat || SnormToFloat || UnormToFloat || FixedToFloat || FloatToFloat
 #define DestType float
 #define IsDestFloat 1
-#elif FloatToHalf
-#define DestType float
-#define IsDestFloat 0
 #else
 #error "Not all conversions are accounted for"
 #endif
@@ -258,7 +254,7 @@ SrcType loadSourceComponent(uint cd)
 #elif FixedToFloat
         // 1.0 in fixed point is 0x10000
         valueAsUint = 0x10000;
-#elif FloatToFloat || FloatToHalf
+#elif FloatToFloat
         valueAsUint = floatBitsToUint(1.0);
 #else
 #error "Not all conversions are accounted for"
@@ -300,7 +296,7 @@ SrcType loadSourceComponent(uint cd)
 #elif FixedToFloat
     float divisor = 1.0f / 65536.0f;
     SrcType value = int(valueAsUint) * divisor;
-#elif FloatToFloat || FloatToHalf
+#elif FloatToFloat
     SrcType value = uintBitsToFloat(valueAsUint);
 #else
 #error "Not all conversions are accounted for"
@@ -331,10 +327,6 @@ uint makeDestinationComponent(uint cd, DestType value)
     uint valueBits = Bd * 8;
     uint valueMask = valueBits == 32 ? -1 : (1 << valueBits) - 1;
     uint valueAsUint = (uint(value) & valueMask) << shiftBits;
-
-#elif FloatToHalf
-    uint shift = ((cd & 1) == 0) ? 0 : 16;
-    uint valueAsUint = packHalf2x16(vec2(value, 0.0)) << shift;
 
 #elif IsDestFloat
     // If the destination is float, it will occupy the whole result.

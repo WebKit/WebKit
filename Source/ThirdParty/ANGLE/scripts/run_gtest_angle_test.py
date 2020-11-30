@@ -35,10 +35,7 @@ import traceback
 # //src/testing/scripts for importing common.
 d = os.path.dirname
 THIS_DIR = d(os.path.abspath(__file__))
-ANGLE_SRC_DIR = d(THIS_DIR)
-sys.path.insert(0, os.path.join(ANGLE_SRC_DIR, 'testing'))
-sys.path.insert(0, os.path.join(ANGLE_SRC_DIR, 'testing', 'scripts'))
-CHROMIUM_SRC_DIR = d(d(ANGLE_SRC_DIR))
+CHROMIUM_SRC_DIR = d(d(d(THIS_DIR)))
 sys.path.insert(0, os.path.join(CHROMIUM_SRC_DIR, 'testing'))
 sys.path.insert(0, os.path.join(CHROMIUM_SRC_DIR, 'testing', 'scripts'))
 
@@ -60,24 +57,21 @@ def IsWindows():
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('executable', help='Test executable.')
-    parser.add_argument('--isolated-script-test-output', type=str)
-    parser.add_argument('--isolated-script-test-filter', type=str)
+    parser.add_argument('--isolated-script-test-output', type=str, required=True)
+    parser.add_argument('--isolated-script-test-perf-output', type=str, required=False)
+    parser.add_argument('--isolated-script-test-filter', type=str, required=False)
     parser.add_argument('--xvfb', help='Start xvfb.', action='store_true')
-
-    # Kept for compatiblity.
-    # TODO(jmadill): Remove when removed from the recipes. http://crbug.com/954415
-    parser.add_argument('--isolated-script-test-perf-output', type=str)
 
     args, extra_flags = parser.parse_known_args()
 
     env = os.environ.copy()
 
+    # total_shards = None
+    # shard_index = None
     if 'GTEST_TOTAL_SHARDS' in env:
-        extra_flags += ['--shard-count=' + env['GTEST_TOTAL_SHARDS']]
-        env.pop('GTEST_TOTAL_SHARDS')
+        extra_flags += ['--shard-count=%d' % env['GTEST_TOTAL_SHARDS']]
     if 'GTEST_SHARD_INDEX' in env:
-        extra_flags += ['--shard-index=' + env['GTEST_SHARD_INDEX']]
-        env.pop('GTEST_SHARD_INDEX')
+        extra_flags += ['--shard-index=%d' % env['GTEST_SHARD_INDEX']]
 
     # Assume we want to set up the sandbox environment variables all the
     # time; doing so is harmless on non-Linux platforms and is needed
@@ -88,8 +82,10 @@ def main():
     try:
         # Consider adding stdio control flags.
         if args.isolated_script_test_output:
-            extra_flags.append('--isolated-script-test-output=%s' %
-                               args.isolated_script_test_output)
+            extra_flags.append('--results-file=%s' % args.isolated_script_test_output)
+
+        if args.isolated_script_test_perf_output:
+            extra_flags.append('--histogram-json-file=%s' % args.isolated_script_test_perf_output)
 
         if args.isolated_script_test_filter:
             filter_list = common.extract_filter_list(args.isolated_script_test_filter)

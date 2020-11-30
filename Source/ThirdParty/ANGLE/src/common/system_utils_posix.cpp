@@ -59,9 +59,9 @@ const char *GetPathSeparatorForEnvironmentVar()
 std::string GetHelperExecutableDir()
 {
     std::string directory;
-    static int placeholderSymbol = 0;
+    static int dummySymbol = 0;
     Dl_info dlInfo;
-    if (dladdr(&placeholderSymbol, &dlInfo) != 0)
+    if (dladdr(&dummySymbol, &dlInfo) != 0)
     {
         std::string moduleName = dlInfo.dli_fname;
         directory              = moduleName.substr(0, moduleName.find_last_of('/') + 1);
@@ -72,7 +72,13 @@ std::string GetHelperExecutableDir()
 class PosixLibrary : public Library
 {
   public:
-    PosixLibrary(const std::string &fullPath) : mModule(dlopen(fullPath.c_str(), RTLD_NOW)) {}
+    PosixLibrary(const std::string &fullPath) : mModule(dlopen(fullPath.c_str(), RTLD_NOW))
+    {
+        if (!mModule)
+        {
+            std::cerr << "Failed to load " << fullPath << ": " << dlerror() << std::endl;
+        }
+    }
 
     ~PosixLibrary() override
     {

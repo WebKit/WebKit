@@ -9,7 +9,7 @@
 
 #import "common/platform.h"
 
-#if defined(ANGLE_ENABLE_EAGL)
+#if (defined(ANGLE_PLATFORM_IOS) && !defined(ANGLE_PLATFORM_MACCATALYST)) || (defined(ANGLE_PLATFORM_MACCATALYST) && defined(ANGLE_CPU_ARM64))
 
 #    import "libANGLE/renderer/gl/eagl/IOSurfaceSurfaceEAGL.h"
 
@@ -206,9 +206,7 @@ egl::Error IOSurfaceSurfaceEAGL::bindTexImage(const gl::Context *context,
         // TODO(kbr): possibly more state to be set here, including setting any
         // pixel unpack buffer to 0 when using ES 3.0 contexts.
         gl::PixelUnpackState defaultUnpackState;
-        if (IsError(stateManager->setPixelUnpackState(context, defaultUnpackState))) {
-            return egl::EglBadState() << "Failed to set pixel unpack state.";
-        }
+        stateManager->setPixelUnpackState(defaultUnpackState);
         textureData = IOSurfaceGetBaseAddress(mIOSurface);
     }
 
@@ -240,9 +238,7 @@ egl::Error IOSurfaceSurfaceEAGL::releaseTexImage(const gl::Context *context, EGL
         gl::PixelPackState state;
         state.rowLength = mRowStrideInPixels;
         state.alignment = 1;
-        if (IsError(stateManager->setPixelPackState(context, state))) {
-            return egl::EglBadState() << "Failed to set pixel unpack state.";
-        }
+        stateManager->setPixelPackState(state);
         // TODO(kbr): possibly more state to be set here, including setting any
         // pixel pack buffer to 0 when using ES 3.0 contexts.
         const auto &format = kIOSurfaceFormats[mFormatIndex];
@@ -431,4 +427,4 @@ IOSurfaceLockOptions IOSurfaceSurfaceEAGL::getIOSurfaceLockOptions() const
 
 }  // namespace rx
 
-#endif  // defined(ANGLE_ENABLE_EAGL)
+#endif  // (defined(ANGLE_PLATFORM_IOS) && !defined(ANGLE_PLATFORM_MACCATALYST)) || (defined(ANGLE_PLATFORM_MACCATALYST) && defined(ANGLE_CPU_ARM64))

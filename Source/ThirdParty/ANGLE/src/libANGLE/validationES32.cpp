@@ -14,7 +14,6 @@
 #include "libANGLE/VertexArray.h"
 #include "libANGLE/validationES.h"
 #include "libANGLE/validationES2_autogen.h"
-#include "libANGLE/validationES31.h"
 #include "libANGLE/validationES31_autogen.h"
 #include "libANGLE/validationES3_autogen.h"
 
@@ -140,15 +139,7 @@ bool ValidateCopyImageSubData(const Context *context,
                               GLsizei srcHeight,
                               GLsizei srcDepth)
 {
-    if (context->getClientVersion() < ES_3_2)
-    {
-        context->validationError(GL_INVALID_OPERATION, kES32Required);
-        return false;
-    }
-
-    return ValidateCopyImageSubDataBase(context, srcName, srcTarget, srcLevel, srcX, srcY, srcZ,
-                                        dstName, dstTarget, dstLevel, dstX, dstY, dstZ, srcWidth,
-                                        srcHeight, srcDepth);
+    return true;
 }
 
 bool ValidateDebugMessageCallback(const Context *context,
@@ -529,33 +520,21 @@ bool ValidateSamplerParameterIuiv(const Context *context,
 }
 
 bool ValidateTexBuffer(const Context *context,
-                       TextureType target,
+                       GLenum target,
                        GLenum internalformat,
                        BufferID buffer)
 {
-    if (context->getClientVersion() < ES_3_2)
-    {
-        context->validationError(GL_INVALID_OPERATION, kES32Required);
-        return false;
-    }
-
-    return ValidateTexBufferBase(context, target, internalformat, buffer);
+    return true;
 }
 
 bool ValidateTexBufferRange(const Context *context,
-                            TextureType target,
+                            GLenum target,
                             GLenum internalformat,
                             BufferID buffer,
                             GLintptr offset,
                             GLsizeiptr size)
 {
-    if (context->getClientVersion() < ES_3_2)
-    {
-        context->validationError(GL_INVALID_OPERATION, kES32Required);
-        return false;
-    }
-
-    return ValidateTexBufferRangeBase(context, target, internalformat, buffer, offset, size);
+    return true;
 }
 
 bool ValidateTexParameterIiv(const Context *context,

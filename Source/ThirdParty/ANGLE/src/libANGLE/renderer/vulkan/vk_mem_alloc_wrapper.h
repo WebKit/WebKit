@@ -21,7 +21,6 @@ VkResult InitAllocator(VkPhysicalDevice physicalDevice,
                        VkDevice device,
                        VkInstance instance,
                        uint32_t apiVersion,
-                       VkDeviceSize preferredLargeHeapBlockSize,
                        VmaAllocator *pAllocator);
 
 void DestroyAllocator(VmaAllocator allocator);
@@ -61,9 +60,6 @@ void InvalidateAllocation(VmaAllocator allocator,
                           VmaAllocation allocation,
                           VkDeviceSize offset,
                           VkDeviceSize size);
-
-void BuildStatsString(VmaAllocator allocator, char **statsString, VkBool32 detailedMap);
-void FreeStatsString(VmaAllocator allocator, char *statsString);
 
 }  // namespace vma
 

@@ -86,9 +86,8 @@ enum Conversion
     kUnormToFloat = 0x00000005,
     kFixedToFloat = 0x00000006,
     kFloatToFloat = 0x00000007,
-    kFloatToHalf  = 0x00000008,
 };
-constexpr size_t kArrayLen = 0x00000009;
+constexpr size_t kArrayLen = 0x00000008;
 }  // namespace ConvertVertex_comp
 
 namespace FullScreenQuad_vert
@@ -116,28 +115,24 @@ constexpr size_t kArrayLen = 0x0000000A;
 
 namespace ImageClear_frag
 {
-enum flags
-{
-    kClearDepth = 0x00000001,
-};
 enum AttachmentIndex
 {
     kAttachment0 = 0x00000000,
-    kAttachment1 = 0x00000002,
-    kAttachment2 = 0x00000004,
-    kAttachment3 = 0x00000006,
-    kAttachment4 = 0x00000008,
-    kAttachment5 = 0x0000000A,
-    kAttachment6 = 0x0000000C,
-    kAttachment7 = 0x0000000E,
+    kAttachment1 = 0x00000001,
+    kAttachment2 = 0x00000002,
+    kAttachment3 = 0x00000003,
+    kAttachment4 = 0x00000004,
+    kAttachment5 = 0x00000005,
+    kAttachment6 = 0x00000006,
+    kAttachment7 = 0x00000007,
 };
 enum Format
 {
     kIsFloat = 0x00000000,
-    kIsSint  = 0x00000010,
-    kIsUint  = 0x00000020,
+    kIsSint  = 0x00000008,
+    kIsUint  = 0x00000010,
 };
-constexpr size_t kArrayLen = 0x00000030;
+constexpr size_t kArrayLen = 0x00000018;
 }  // namespace ImageClear_frag
 
 namespace ImageCopy_frag

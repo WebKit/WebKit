@@ -72,9 +72,7 @@ class TextureD3D : public TextureImpl, public angle::ObserverInterface
                                            GLenum internalFormat,
                                            const gl::Extents &size,
                                            gl::MemoryObject *memoryObject,
-                                           GLuint64 offset,
-                                           GLbitfield createFlags,
-                                           GLbitfield usageFlags) override;
+                                           GLuint64 offset) override;
 
     bool isImmutable() const { return mImmutable; }
 
@@ -110,7 +108,7 @@ class TextureD3D : public TextureImpl, public angle::ObserverInterface
 
     angle::Result syncState(const gl::Context *context,
                             const gl::Texture::DirtyBits &dirtyBits,
-                            gl::Command source) override;
+                            gl::TextureCommand source) override;
 
     angle::Result initializeContents(const gl::Context *context,
                                      const gl::ImageIndex &imageIndex) override;
@@ -273,7 +271,7 @@ class TextureD3D_2D : public TextureD3D
                               const gl::ImageIndex &index,
                               GLenum internalFormat,
                               GLenum type,
-                              GLint sourceLevel,
+                              size_t sourceLevel,
                               bool unpackFlipY,
                               bool unpackPremultiplyAlpha,
                               bool unpackUnmultiplyAlpha,
@@ -281,7 +279,7 @@ class TextureD3D_2D : public TextureD3D
     angle::Result copySubTexture(const gl::Context *context,
                                  const gl::ImageIndex &index,
                                  const gl::Offset &destOffset,
-                                 GLint sourceLevel,
+                                 size_t sourceLevel,
                                  const gl::Box &sourceBox,
                                  bool unpackFlipY,
                                  bool unpackPremultiplyAlpha,
@@ -405,7 +403,7 @@ class TextureD3D_Cube : public TextureD3D
                               const gl::ImageIndex &index,
                               GLenum internalFormat,
                               GLenum type,
-                              GLint sourceLevel,
+                              size_t sourceLevel,
                               bool unpackFlipY,
                               bool unpackPremultiplyAlpha,
                               bool unpackUnmultiplyAlpha,
@@ -413,7 +411,7 @@ class TextureD3D_Cube : public TextureD3D
     angle::Result copySubTexture(const gl::Context *context,
                                  const gl::ImageIndex &index,
                                  const gl::Offset &destOffset,
-                                 GLint sourceLevel,
+                                 size_t sourceLevel,
                                  const gl::Box &sourceBox,
                                  bool unpackFlipY,
                                  bool unpackPremultiplyAlpha,
@@ -538,7 +536,7 @@ class TextureD3D_3D : public TextureD3D
                               const gl::ImageIndex &index,
                               GLenum internalFormat,
                               GLenum type,
-                              GLint sourceLevel,
+                              size_t sourceLevel,
                               bool unpackFlipY,
                               bool unpackPremultiplyAlpha,
                               bool unpackUnmultiplyAlpha,
@@ -546,7 +544,7 @@ class TextureD3D_3D : public TextureD3D
     angle::Result copySubTexture(const gl::Context *context,
                                  const gl::ImageIndex &index,
                                  const gl::Offset &destOffset,
-                                 GLint sourceLevel,
+                                 size_t sourceLevel,
                                  const gl::Box &sourceBox,
                                  bool unpackFlipY,
                                  bool unpackPremultiplyAlpha,
@@ -668,7 +666,7 @@ class TextureD3D_2DArray : public TextureD3D
                               const gl::ImageIndex &index,
                               GLenum internalFormat,
                               GLenum type,
-                              GLint sourceLevel,
+                              size_t sourceLevel,
                               bool unpackFlipY,
                               bool unpackPremultiplyAlpha,
                               bool unpackUnmultiplyAlpha,
@@ -676,7 +674,7 @@ class TextureD3D_2DArray : public TextureD3D
     angle::Result copySubTexture(const gl::Context *context,
                                  const gl::ImageIndex &index,
                                  const gl::Offset &destOffset,
-                                 GLint sourceLevel,
+                                 size_t sourceLevel,
                                  const gl::Box &sourceBox,
                                  bool unpackFlipY,
                                  bool unpackPremultiplyAlpha,

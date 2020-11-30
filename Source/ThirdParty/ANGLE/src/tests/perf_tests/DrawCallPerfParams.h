@@ -30,6 +30,14 @@ struct DrawCallPerfParams : public RenderTestParams
 namespace params
 {
 template <typename ParamsT>
+ParamsT D3D9(const ParamsT &in)
+{
+    ParamsT out       = in;
+    out.eglParameters = angle::egl_platform::D3D9();
+    return out;
+}
+
+template <typename ParamsT>
 ParamsT D3D11(const ParamsT &in)
 {
     ParamsT out       = in;
@@ -58,22 +66,6 @@ ParamsT Vulkan(const ParamsT &in)
 {
     ParamsT out       = in;
     out.eglParameters = angle::egl_platform::VULKAN();
-    return out;
-}
-
-template <typename ParamsT>
-ParamsT VulkanMockICD(const ParamsT &in)
-{
-    ParamsT out       = in;
-    out.eglParameters = angle::egl_platform::VULKAN_NULL();
-    return out;
-}
-
-template <typename ParamsT>
-ParamsT VulkanSwiftShader(const ParamsT &in)
-{
-    ParamsT out       = in;
-    out.eglParameters = angle::egl_platform::VULKAN_SWIFTSHADER();
     return out;
 }
 

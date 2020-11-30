@@ -23,9 +23,6 @@ enum
     kTextureTypeCount         = 5,
 };
 
-// Metal doesn't support constexpr to be used as array size, so we need to use macro here
-#define kGenerateMipThreadGroupSizePerDim 8
-
 }  // namespace mtl_shader
 }  // namespace rx
 

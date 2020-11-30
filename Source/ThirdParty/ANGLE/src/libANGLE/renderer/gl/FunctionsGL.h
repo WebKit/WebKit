@@ -54,7 +54,7 @@ class FunctionsGL : public DispatchTableGL
 
   private:
     void *loadProcAddress(const std::string &function) const override = 0;
-    void initializeStubFunctionsForNULLDriver(const std::set<std::string> &extensionSet);
+    void initializeDummyFunctionsForNULLDriver(const std::set<std::string> &extensionSet);
 };
 
 }  // namespace rx

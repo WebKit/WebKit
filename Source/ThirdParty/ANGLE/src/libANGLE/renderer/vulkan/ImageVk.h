@@ -40,12 +40,12 @@ class ImageVk : public ImageImpl
 
     vk::ImageHelper *getImage() const { return mImage; }
     gl::TextureType getImageTextureType() const { return mImageTextureType; }
-    gl::LevelIndex getImageLevel() const { return mImageLevel; }
+    uint32_t getImageLevel() const { return mImageLevel; }
     uint32_t getImageLayer() const { return mImageLayer; }
 
   private:
     gl::TextureType mImageTextureType;
-    gl::LevelIndex mImageLevel;
+    uint32_t mImageLevel;
     uint32_t mImageLayer;
 
     bool mOwnsImage;

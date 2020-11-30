@@ -17,12 +17,13 @@
 #    import <QuartzCore/QuartzCore.h>
 
 #    include "common/debug.h"
-#    include "common/gl/cgl/FunctionsCGL.h"
 #    include "libANGLE/Context.h"
 #    include "libANGLE/renderer/gl/FramebufferGL.h"
 #    include "libANGLE/renderer/gl/RendererGL.h"
 #    include "libANGLE/renderer/gl/StateManagerGL.h"
 #    include "libANGLE/renderer/gl/cgl/DisplayCGL.h"
+
+#    include "libANGLE/renderer/gl/cgl/CGLFunctions.h"
 
 @interface WebSwapLayerCGL : CAOpenGLLayer {
     CGLContextObj mDisplayContext;
@@ -154,7 +155,7 @@ WindowSurfaceCGL::WindowSurfaceCGL(const egl::SurfaceState &state,
     : SurfaceGL(state),
       mSwapLayer(nil),
       mCurrentSwapId(0),
-      mLayer((__bridge CALayer *)layer),
+      mLayer(reinterpret_cast<CALayer *>(layer)),
       mContext(context),
       mFunctions(renderer->getFunctions()),
       mStateManager(renderer->getStateManager()),
@@ -165,13 +166,11 @@ WindowSurfaceCGL::WindowSurfaceCGL(const egl::SurfaceState &state,
 
 WindowSurfaceCGL::~WindowSurfaceCGL()
 {
-    EnsureCGLContextIsCurrent ensureContextCurrent(mContext);
-
     pthread_mutex_destroy(&mSwapState.mutex);
 
     if (mDSRenderbuffer != 0)
     {
-        mStateManager->deleteRenderbuffer(mDSRenderbuffer);
+        mFunctions->deleteRenderbuffers(1, &mDSRenderbuffer);
         mDSRenderbuffer = 0;
     }
 
@@ -186,7 +185,7 @@ WindowSurfaceCGL::~WindowSurfaceCGL()
     {
         if (mSwapState.textures[i].texture != 0)
         {
-            mStateManager->deleteTexture(mSwapState.textures[i].texture);
+            mFunctions->deleteTextures(1, &mSwapState.textures[i].texture);
             mSwapState.textures[i].texture = 0;
         }
     }
@@ -194,8 +193,6 @@ WindowSurfaceCGL::~WindowSurfaceCGL()
 
 egl::Error WindowSurfaceCGL::initialize(const egl::Display *display)
 {
-    EnsureCGLContextIsCurrent ensureContextCurrent(mContext);
-
     unsigned width  = getWidth();
     unsigned height = getHeight();
 

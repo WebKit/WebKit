@@ -13,7 +13,6 @@
 #include "common/angleutils.h"
 #include "libANGLE/Error.h"
 #include "libANGLE/Framebuffer.h"
-#include "libANGLE/State.h"
 
 namespace gl
 {
@@ -86,8 +85,7 @@ class FramebufferImpl : angle::NonCopyable
 
     virtual angle::Result syncState(const gl::Context *context,
                                     GLenum binding,
-                                    const gl::Framebuffer::DirtyBits &dirtyBits,
-                                    gl::Command command) = 0;
+                                    const gl::Framebuffer::DirtyBits &dirtyBits) = 0;
 
     virtual angle::Result getSamplePosition(const gl::Context *context,
                                             size_t index,

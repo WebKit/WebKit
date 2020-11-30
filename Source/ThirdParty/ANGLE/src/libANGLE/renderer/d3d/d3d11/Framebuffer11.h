@@ -40,8 +40,7 @@ class Framebuffer11 : public FramebufferD3D
 
     angle::Result syncState(const gl::Context *context,
                             GLenum binding,
-                            const gl::Framebuffer::DirtyBits &dirtyBits,
-                            gl::Command command) override;
+                            const gl::Framebuffer::DirtyBits &dirtyBits) override;
 
     const gl::AttachmentArray<RenderTarget11 *> &getCachedColorRenderTargets() const
     {
@@ -49,7 +48,7 @@ class Framebuffer11 : public FramebufferD3D
     }
     const RenderTarget11 *getCachedDepthStencilRenderTarget() const
     {
-        return mRenderTargetCache.getDepthStencil();
+        return mRenderTargetCache.getDepthStencil(true);
     }
 
     RenderTarget11 *getFirstRenderTarget() const;

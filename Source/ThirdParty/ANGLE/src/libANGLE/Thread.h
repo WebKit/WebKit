@@ -13,11 +13,6 @@
 
 #include "libANGLE/Debug.h"
 
-namespace angle
-{
-extern bool gUseAndroidOpenGLTlsSlot;
-}  // namespace angle
-
 namespace gl
 {
 class Context;
@@ -52,6 +47,7 @@ class Thread : public LabeledObject
     Surface *getCurrentDrawSurface() const;
     Surface *getCurrentReadSurface() const;
     gl::Context *getContext() const;
+    gl::Context *getValidContext() const;
     Display *getDisplay() const;
 
   private:

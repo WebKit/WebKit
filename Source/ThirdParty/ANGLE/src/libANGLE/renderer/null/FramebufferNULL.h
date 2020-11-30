@@ -69,8 +69,7 @@ class FramebufferNULL : public FramebufferImpl
 
     angle::Result syncState(const gl::Context *context,
                             GLenum binding,
-                            const gl::Framebuffer::DirtyBits &dirtyBits,
-                            gl::Command command) override;
+                            const gl::Framebuffer::DirtyBits &dirtyBits) override;
 
     angle::Result getSamplePosition(const gl::Context *context,
                                     size_t index,

@@ -140,8 +140,6 @@ class GLES1ConformanceTest : public ANGLETest
 
 TEST_P(GLES1ConformanceTest, AmbLight)
 {
-    // Flaky timeouts due to slow test. http://anglebug.com/5234
-    ANGLE_SKIP_TEST_IF(IsVulkan());
     ASSERT_NE(CONFORMANCE_TEST_ERROR, AmbLightExec());
 }
 
@@ -187,8 +185,6 @@ TEST_P(GLES1ConformanceTest, BCorner)
 
 TEST_P(GLES1ConformanceTest, Blend)
 {
-    // Slow test, takes over 20 seconds in some configs. http://anglebug.com/5171
-    ANGLE_SKIP_TEST_IF(IsVulkan() && IsIntel() && IsWindows());
     ASSERT_NE(CONFORMANCE_TEST_ERROR, BlendExec());
 }
 
@@ -414,8 +410,6 @@ TEST_P(GLES1ConformanceTest, SpotExpPos)
 
 TEST_P(GLES1ConformanceTest, SpotExpDir)
 {
-    // http://crbug.com/1136238
-    ANGLE_SKIP_TEST_IF(IsWindows() && IsVulkan());
     ASSERT_NE(CONFORMANCE_TEST_ERROR, SpotExpDirExec());
 }
 

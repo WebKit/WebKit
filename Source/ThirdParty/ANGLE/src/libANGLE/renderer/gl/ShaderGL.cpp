@@ -247,7 +247,7 @@ std::shared_ptr<WaitableCompileEvent> ShaderGL::compile(const gl::Context *conte
     ShCompileOptions additionalOptions = SH_INIT_GL_POSITION;
 
     bool isWebGL = context->getExtensions().webglCompatibility;
-    if (isWebGL && (mState.getShaderType() != gl::ShaderType::Compute))
+    if (isWebGL && (mData.getShaderType() != gl::ShaderType::Compute))
     {
         additionalOptions |= SH_INIT_OUTPUT_VARIABLES;
     }
@@ -374,7 +374,7 @@ std::shared_ptr<WaitableCompileEvent> ShaderGL::compile(const gl::Context *conte
 
     auto workerThreadPool = context->getWorkerThreadPool();
 
-    const std::string &source = mState.getSource();
+    const std::string &source = mData.getSource();
 
     auto postTranslateFunctor = [this](std::string *infoLog) {
         if (mCompileStatus == GL_FALSE)
@@ -437,7 +437,7 @@ std::shared_ptr<WaitableCompileEvent> ShaderGL::compile(const gl::Context *conte
 
 std::string ShaderGL::getDebugInfo() const
 {
-    return mState.getTranslatedSource();
+    return mData.getTranslatedSource();
 }
 
 GLuint ShaderGL::getShaderID() const

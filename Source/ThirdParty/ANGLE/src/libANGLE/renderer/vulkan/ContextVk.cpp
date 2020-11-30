@@ -123,10 +123,39 @@ constexpr gl::ShaderMap<vk::ImageLayout> kShaderWriteImageLayouts = {
     {gl::ShaderType::Geometry, vk::ImageLayout::GeometryShaderWrite},
     {gl::ShaderType::Compute, vk::ImageLayout::ComputeShaderWrite}};
 
+constexpr VkColorComponentFlags kAllColorChannelsMask =
+    (VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT |
+     VK_COLOR_COMPONENT_A_BIT);
+
 constexpr VkBufferUsageFlags kVertexBufferUsage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
 constexpr size_t kDefaultValueSize              = sizeof(gl::VertexAttribCurrentValueData::Values);
 constexpr size_t kDefaultBufferSize             = kDefaultValueSize * 16;
 constexpr size_t kDriverUniformsAllocatorPageSize = 4 * 1024;
+
+constexpr size_t kInFlightCommandsLimit = 100u;
+
+void InitializeSubmitInfo(VkSubmitInfo *submitInfo,
+                          const vk::PrimaryCommandBuffer &commandBuffer,
+                          const std::vector<VkSemaphore> &waitSemaphores,
+                          const std::vector<VkPipelineStageFlags> &waitSemaphoreStageMasks,
+                          const vk::Semaphore *signalSemaphore)
+{
+    // Verify that the submitInfo has been zero'd out.
+    ASSERT(submitInfo->signalSemaphoreCount == 0);
+    ASSERT(waitSemaphores.size() == waitSemaphoreStageMasks.size());
+    submitInfo->sType              = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+    submitInfo->commandBufferCount = commandBuffer.valid() ? 1 : 0;
+    submitInfo->pCommandBuffers    = commandBuffer.ptr();
+    submitInfo->waitSemaphoreCount = static_cast<uint32_t>(waitSemaphores.size());
+    submitInfo->pWaitSemaphores    = waitSemaphores.data();
+    submitInfo->pWaitDstStageMask  = waitSemaphoreStageMasks.data();
+
+    if (signalSemaphore)
+    {
+        submitInfo->signalSemaphoreCount = 1;
+        submitInfo->pSignalSemaphores    = signalSemaphore->ptr();
+    }
+}
 
 uint32_t GetCoverageSampleCount(const gl::State &glState, FramebufferVk *drawFramebuffer)
 {
@@ -136,18 +165,8 @@ uint32_t GetCoverageSampleCount(const gl::State &glState, FramebufferVk *drawFra
     }
 
     // Get a fraction of the samples based on the coverage parameters.
-    // There are multiple ways to obtain an integer value from a float -
-    //     truncation, ceil and round
-    //
-    // round() provides a more even distribution of values but doesn't seem to play well
-    // with all vendors (AMD). A way to work around this is to increase the comparison threshold
-    // of deqp tests. Though this takes care of deqp tests other apps would still have issues.
-    //
-    // Truncation provides an uneven distribution near the edges of the interval but seems to
-    // play well with all vendors.
-    //
-    // We are going with truncation for expediency.
-    return static_cast<uint32_t>(glState.getSampleCoverageValue() * drawFramebuffer->getSamples());
+    return static_cast<uint32_t>(
+        std::round(glState.getSampleCoverageValue() * drawFramebuffer->getSamples()));
 }
 
 void ApplySampleCoverage(const gl::State &glState,
@@ -264,59 +283,7 @@ EventName GetTraceEventName(const char *title, uint32_t counter)
     snprintf(buf.data(), kMaxGpuEventNameLen - 1, "%s %u", title, counter);
     return buf;
 }
-
-vk::ResourceAccess GetDepthAccess(const gl::DepthStencilState &dsState)
-{
-    if (!dsState.depthTest)
-    {
-        return vk::ResourceAccess::Unused;
-    }
-    return dsState.isDepthMaskedOut() ? vk::ResourceAccess::ReadOnly : vk::ResourceAccess::Write;
-}
-
-vk::ResourceAccess GetStencilAccess(const gl::DepthStencilState &dsState)
-{
-    if (!dsState.stencilTest)
-    {
-        return vk::ResourceAccess::Unused;
-    }
-
-    return dsState.isStencilNoOp() && dsState.isStencilBackNoOp() ? vk::ResourceAccess::ReadOnly
-                                                                  : vk::ResourceAccess::Write;
-}
-
-egl::ContextPriority GetContextPriority(const gl::State &state)
-{
-    return egl::FromEGLenum<egl::ContextPriority>(state.getContextPriority());
-}
 }  // anonymous namespace
-
-ANGLE_INLINE void ContextVk::flushDescriptorSetUpdates()
-{
-    if (mWriteDescriptorSets.empty())
-    {
-        ASSERT(mDescriptorBufferInfos.empty());
-        ASSERT(mDescriptorImageInfos.empty());
-        return;
-    }
-
-    vkUpdateDescriptorSets(getDevice(), static_cast<uint32_t>(mWriteDescriptorSets.size()),
-                           mWriteDescriptorSets.data(), 0, nullptr);
-    mWriteDescriptorSets.clear();
-    mDescriptorBufferInfos.clear();
-    mDescriptorImageInfos.clear();
-}
-
-// ContextVk::ScopedDescriptorSetUpdates implementation.
-class ContextVk::ScopedDescriptorSetUpdates final : angle::NonCopyable
-{
-  public:
-    ANGLE_INLINE ScopedDescriptorSetUpdates(ContextVk *contextVk) : mContextVk(contextVk) {}
-    ANGLE_INLINE ~ScopedDescriptorSetUpdates() { mContextVk->flushDescriptorSetUpdates(); }
-
-  private:
-    ContextVk *mContextVk;
-};
 
 ContextVk::DriverUniformsDescriptorSet::DriverUniformsDescriptorSet()
     : descriptorSet(VK_NULL_HANDLE), dynamicOffset(0)
@@ -339,6 +306,291 @@ void ContextVk::DriverUniformsDescriptorSet::destroy(RendererVk *renderer)
     descriptorPoolBinding.reset();
     dynamicBuffer.destroy(renderer);
     descriptorSetCache.clear();
+}
+
+// CommandBatch implementation.
+CommandBatch::CommandBatch() = default;
+
+CommandBatch::~CommandBatch() = default;
+
+CommandBatch::CommandBatch(CommandBatch &&other)
+{
+    *this = std::move(other);
+}
+
+CommandBatch &CommandBatch::operator=(CommandBatch &&other)
+{
+    std::swap(primaryCommands, other.primaryCommands);
+    std::swap(commandPool, other.commandPool);
+    std::swap(fence, other.fence);
+    std::swap(serial, other.serial);
+    return *this;
+}
+
+void CommandBatch::destroy(VkDevice device)
+{
+    primaryCommands.destroy(device);
+    commandPool.destroy(device);
+    fence.reset(device);
+}
+
+// CommandQueue implementation.
+CommandQueue::CommandQueue()  = default;
+CommandQueue::~CommandQueue() = default;
+
+void CommandQueue::destroy(VkDevice device)
+{
+    mPrimaryCommandPool.destroy(device);
+    ASSERT(mInFlightCommands.empty() && mGarbageQueue.empty());
+}
+
+angle::Result CommandQueue::init(vk::Context *context)
+{
+    RendererVk *renderer = context->getRenderer();
+
+    // Initialize the command pool now that we know the queue family index.
+    uint32_t queueFamilyIndex = renderer->getQueueFamilyIndex();
+    ANGLE_TRY(mPrimaryCommandPool.init(context, queueFamilyIndex));
+
+    return angle::Result::Continue;
+}
+
+angle::Result CommandQueue::checkCompletedCommands(vk::Context *context)
+{
+    ANGLE_TRACE_EVENT0("gpu.angle", "CommandQueue::checkCompletedCommands");
+    RendererVk *renderer = context->getRenderer();
+    VkDevice device      = renderer->getDevice();
+
+    int finishedCount = 0;
+
+    for (CommandBatch &batch : mInFlightCommands)
+    {
+        VkResult result = batch.fence.get().getStatus(device);
+        if (result == VK_NOT_READY)
+        {
+            break;
+        }
+        ANGLE_VK_TRY(context, result);
+
+        renderer->onCompletedSerial(batch.serial);
+
+        renderer->resetSharedFence(&batch.fence);
+        ANGLE_TRACE_EVENT0("gpu.angle", "command buffer recycling");
+        batch.commandPool.destroy(device);
+        ANGLE_TRY(releasePrimaryCommandBuffer(context, std::move(batch.primaryCommands)));
+        ++finishedCount;
+    }
+
+    if (finishedCount > 0)
+    {
+        auto beginIter = mInFlightCommands.begin();
+        mInFlightCommands.erase(beginIter, beginIter + finishedCount);
+    }
+
+    Serial lastCompleted = renderer->getLastCompletedQueueSerial();
+
+    size_t freeIndex = 0;
+    for (; freeIndex < mGarbageQueue.size(); ++freeIndex)
+    {
+        vk::GarbageAndSerial &garbageList = mGarbageQueue[freeIndex];
+        if (garbageList.getSerial() < lastCompleted)
+        {
+            for (vk::GarbageObject &garbage : garbageList.get())
+            {
+                garbage.destroy(renderer);
+            }
+        }
+        else
+        {
+            break;
+        }
+    }
+
+    // Remove the entries from the garbage list - they should be ready to go.
+    if (freeIndex > 0)
+    {
+        mGarbageQueue.erase(mGarbageQueue.begin(), mGarbageQueue.begin() + freeIndex);
+    }
+
+    return angle::Result::Continue;
+}
+
+angle::Result CommandQueue::releaseToCommandBatch(vk::Context *context,
+                                                  vk::PrimaryCommandBuffer &&commandBuffer,
+                                                  vk::CommandPool *commandPool,
+                                                  CommandBatch *batch)
+{
+    RendererVk *renderer = context->getRenderer();
+    VkDevice device      = renderer->getDevice();
+
+    batch->primaryCommands = std::move(commandBuffer);
+
+    if (commandPool->valid())
+    {
+        batch->commandPool = std::move(*commandPool);
+        // Recreate CommandPool
+        VkCommandPoolCreateInfo poolInfo = {};
+        poolInfo.sType                   = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+        poolInfo.flags                   = VK_COMMAND_POOL_CREATE_TRANSIENT_BIT;
+        poolInfo.queueFamilyIndex        = renderer->getQueueFamilyIndex();
+
+        ANGLE_VK_TRY(context, commandPool->init(device, poolInfo));
+    }
+
+    return angle::Result::Continue;
+}
+
+void CommandQueue::clearAllGarbage(RendererVk *renderer)
+{
+    for (vk::GarbageAndSerial &garbageList : mGarbageQueue)
+    {
+        for (vk::GarbageObject &garbage : garbageList.get())
+        {
+            garbage.destroy(renderer);
+        }
+    }
+    mGarbageQueue.clear();
+}
+
+angle::Result CommandQueue::allocatePrimaryCommandBuffer(vk::Context *context,
+                                                         const vk::CommandPool &commandPool,
+                                                         vk::PrimaryCommandBuffer *commandBufferOut)
+{
+    return mPrimaryCommandPool.allocate(context, commandBufferOut);
+}
+
+angle::Result CommandQueue::releasePrimaryCommandBuffer(vk::Context *context,
+                                                        vk::PrimaryCommandBuffer &&commandBuffer)
+{
+    ASSERT(mPrimaryCommandPool.valid());
+    ANGLE_TRY(mPrimaryCommandPool.collect(context, std::move(commandBuffer)));
+
+    return angle::Result::Continue;
+}
+
+void CommandQueue::handleDeviceLost(RendererVk *renderer)
+{
+    VkDevice device = renderer->getDevice();
+
+    for (CommandBatch &batch : mInFlightCommands)
+    {
+        // On device loss we need to wait for fence to be signaled before destroying it
+        VkResult status = batch.fence.get().wait(device, renderer->getMaxFenceWaitTimeNs());
+        // If the wait times out, it is probably not possible to recover from lost device
+        ASSERT(status == VK_SUCCESS || status == VK_ERROR_DEVICE_LOST);
+
+        // On device lost, here simply destroy the CommandBuffer, it will fully cleared later
+        // by CommandPool::destroy
+        batch.primaryCommands.destroy(device);
+
+        batch.commandPool.destroy(device);
+        batch.fence.reset(device);
+    }
+    mInFlightCommands.clear();
+}
+
+bool CommandQueue::hasInFlightCommands() const
+{
+    return !mInFlightCommands.empty();
+}
+
+angle::Result CommandQueue::finishToSerial(vk::Context *context, Serial serial, uint64_t timeout)
+{
+    if (mInFlightCommands.empty())
+    {
+        return angle::Result::Continue;
+    }
+    ANGLE_TRACE_EVENT0("gpu.angle", "CommandQueue::finishToSerial");
+    // Find the first batch with serial equal to or bigger than given serial (note that
+    // the batch serials are unique, otherwise upper-bound would have been necessary).
+    //
+    // Note: we don't check for the exact serial, because it may belong to another context.  For
+    // example, imagine the following submissions:
+    //
+    // - Context 1: Serial 1, Serial 3, Serial 5
+    // - Context 2: Serial 2, Serial 4, Serial 6
+    //
+    // And imagine none of the submissions have finished yet.  Now if Context 2 asks for
+    // finishToSerial(3), it will have no choice but to finish until Serial 4 instead.
+    size_t batchIndex = mInFlightCommands.size() - 1;
+    for (size_t i = 0; i < mInFlightCommands.size(); ++i)
+    {
+        if (mInFlightCommands[i].serial >= serial)
+        {
+            batchIndex = i;
+            break;
+        }
+    }
+    const CommandBatch &batch = mInFlightCommands[batchIndex];
+
+    // Wait for it finish
+    VkDevice device = context->getDevice();
+    VkResult status = batch.fence.get().wait(device, timeout);
+
+    ANGLE_VK_TRY(context, status);
+
+    // Clean up finished batches.
+    return checkCompletedCommands(context);
+}
+
+angle::Result CommandQueue::submitFrame(vk::Context *context,
+                                        egl::ContextPriority priority,
+                                        const VkSubmitInfo &submitInfo,
+                                        const vk::Shared<vk::Fence> &sharedFence,
+                                        vk::GarbageList *currentGarbage,
+                                        vk::CommandPool *commandPool,
+                                        vk::PrimaryCommandBuffer &&commandBuffer)
+{
+    ANGLE_TRACE_EVENT0("gpu.angle", "CommandQueue::submitFrame");
+
+    RendererVk *renderer = context->getRenderer();
+    VkDevice device      = renderer->getDevice();
+
+    vk::DeviceScoped<CommandBatch> scopedBatch(device);
+    CommandBatch &batch = scopedBatch.get();
+    batch.fence.copy(device, sharedFence);
+
+    ANGLE_TRY(
+        renderer->queueSubmit(context, priority, submitInfo, &batch.fence.get(), &batch.serial));
+
+    if (!currentGarbage->empty())
+    {
+        mGarbageQueue.emplace_back(std::move(*currentGarbage), batch.serial);
+    }
+
+    // Store the primary CommandBuffer and command pool used for secondary CommandBuffers
+    // in the in-flight list.
+    ANGLE_TRY(releaseToCommandBatch(context, std::move(commandBuffer), commandPool, &batch));
+
+    mInFlightCommands.emplace_back(scopedBatch.release());
+
+    ANGLE_TRY(checkCompletedCommands(context));
+
+    // CPU should be throttled to avoid mInFlightCommands from growing too fast. Important for
+    // off-screen scenarios.
+    while (mInFlightCommands.size() > kInFlightCommandsLimit)
+    {
+        ANGLE_TRY(finishToSerial(context, mInFlightCommands[0].serial,
+                                 renderer->getMaxFenceWaitTimeNs()));
+    }
+
+    return angle::Result::Continue;
+}
+
+vk::Shared<vk::Fence> CommandQueue::getLastSubmittedFence(const vk::Context *context) const
+{
+    vk::Shared<vk::Fence> fence;
+    if (!mInFlightCommands.empty())
+    {
+        fence.copy(context->getDevice(), mInFlightCommands.back().fence);
+    }
+
+    return fence;
+}
+
+egl::ContextPriority GetContextPriority(const gl::State &state)
+{
+    return egl::FromEGLenum<egl::ContextPriority>(state.getContextPriority());
 }
 
 // ContextVk implementation.
@@ -364,22 +616,25 @@ ContextVk::ContextVk(const gl::State &state, gl::ErrorSet *errorSet, RendererVk 
       mCurrentDrawElementsType(gl::DrawElementsType::InvalidEnum),
       mXfbBaseVertex(0),
       mXfbVertexCountPerInstance(0),
-      mClearColorMasks(0),
+      mClearColorMask(kAllColorChannelsMask),
       mFlipYForCurrentSurface(false),
       mIsAnyHostVisibleBufferWritten(false),
       mEmulateSeamfulCubeMapSampling(false),
       mUseOldRewriteStructSamplers(false),
       mOutsideRenderPassCommands(nullptr),
       mRenderPassCommands(nullptr),
+      mRenderPassFramebuffer(VK_NULL_HANDLE),
+      mHasPrimaryCommands(false),
       mGpuEventsEnabled(false),
-      mSyncObjectPendingFlush(false),
-      mDeferredFlushCount(0),
       mGpuClockSync{std::numeric_limits<double>::max(), std::numeric_limits<double>::max()},
       mGpuEventTimestampOrigin(0),
-      mPerfCounters{},
-      mObjectPerfCounters{},
+      mPrimaryBufferCounter(0),
+      mRenderPassCounter(0),
       mContextPriority(renderer->getDriverPriority(GetContextPriority(state))),
       mCurrentIndirectBuffer(nullptr),
+      mBufferInfos(),
+      mImageInfos(),
+      mWriteInfos(),
       mShareGroupVk(vk::GetImpl(state.getShareGroup()))
 {
     ANGLE_TRACE_EVENT0("gpu.angle", "ContextVk::ContextVk");
@@ -396,6 +651,16 @@ ContextVk::ContextVk(const gl::State &state, gl::ErrorSet *errorSet, RendererVk 
     mNewGraphicsCommandBufferDirtyBits.set(DIRTY_BIT_VERTEX_BUFFERS);
     mNewGraphicsCommandBufferDirtyBits.set(DIRTY_BIT_INDEX_BUFFER);
     mNewGraphicsCommandBufferDirtyBits.set(DIRTY_BIT_SHADER_RESOURCES);
+    if (getFeatures().supportsTransformFeedbackExtension.enabled ||
+        getFeatures().emulateTransformFeedback.enabled)
+    {
+        mNewGraphicsCommandBufferDirtyBits.set(DIRTY_BIT_TRANSFORM_FEEDBACK_BUFFERS);
+    }
+    if (getFeatures().supportsTransformFeedbackExtension.enabled)
+    {
+        mNewGraphicsCommandBufferDirtyBits.set(DIRTY_BIT_TRANSFORM_FEEDBACK_STATE);
+        mNewGraphicsCommandBufferDirtyBits.set(DIRTY_BIT_TRANSFORM_FEEDBACK_RESUME);
+    }
     mNewGraphicsCommandBufferDirtyBits.set(DIRTY_BIT_DESCRIPTOR_SETS);
     mNewGraphicsCommandBufferDirtyBits.set(DIRTY_BIT_DRIVER_UNIFORMS_BINDING);
 
@@ -405,7 +670,12 @@ ContextVk::ContextVk(const gl::State &state, gl::ErrorSet *errorSet, RendererVk 
     mNewComputeCommandBufferDirtyBits.set(DIRTY_BIT_DESCRIPTOR_SETS);
     mNewComputeCommandBufferDirtyBits.set(DIRTY_BIT_DRIVER_UNIFORMS_BINDING);
 
-    mGraphicsDirtyBitHandlers[DIRTY_BIT_EVENT_LOG] = &ContextVk::handleDirtyGraphicsEventLog;
+    mNewGraphicsPipelineDirtyBits.set(DIRTY_BIT_PIPELINE);
+    if (getFeatures().supportsTransformFeedbackExtension.enabled)
+    {
+        mNewGraphicsPipelineDirtyBits.set(DIRTY_BIT_TRANSFORM_FEEDBACK_RESUME);
+    }
+
     mGraphicsDirtyBitHandlers[DIRTY_BIT_DEFAULT_ATTRIBS] =
         &ContextVk::handleDirtyGraphicsDefaultAttribs;
     mGraphicsDirtyBitHandlers[DIRTY_BIT_PIPELINE] = &ContextVk::handleDirtyGraphicsPipeline;
@@ -436,9 +706,8 @@ ContextVk::ContextVk(const gl::State &state, gl::ErrorSet *errorSet, RendererVk 
 
     mGraphicsDirtyBitHandlers[DIRTY_BIT_DESCRIPTOR_SETS] = &ContextVk::handleDirtyDescriptorSets;
 
-    mComputeDirtyBitHandlers[DIRTY_BIT_EVENT_LOG] = &ContextVk::handleDirtyGraphicsEventLog;
-    mComputeDirtyBitHandlers[DIRTY_BIT_PIPELINE]  = &ContextVk::handleDirtyComputePipeline;
-    mComputeDirtyBitHandlers[DIRTY_BIT_TEXTURES]  = &ContextVk::handleDirtyComputeTextures;
+    mComputeDirtyBitHandlers[DIRTY_BIT_PIPELINE] = &ContextVk::handleDirtyComputePipeline;
+    mComputeDirtyBitHandlers[DIRTY_BIT_TEXTURES] = &ContextVk::handleDirtyComputeTextures;
     mComputeDirtyBitHandlers[DIRTY_BIT_DRIVER_UNIFORMS] =
         &ContextVk::handleDirtyComputeDriverUniforms;
     mComputeDirtyBitHandlers[DIRTY_BIT_DRIVER_UNIFORMS_BINDING] =
@@ -450,29 +719,22 @@ ContextVk::ContextVk(const gl::State &state, gl::ErrorSet *errorSet, RendererVk 
     mGraphicsDirtyBits = mNewGraphicsCommandBufferDirtyBits;
     mComputeDirtyBits  = mNewComputeCommandBufferDirtyBits;
 
-    mActiveTextures.fill({nullptr, nullptr, true});
+    mActiveTextures.fill({nullptr, nullptr});
     mActiveImages.fill(nullptr);
 
     mPipelineDirtyBitsMask.set();
     mPipelineDirtyBitsMask.reset(gl::State::DIRTY_BIT_TEXTURE_BINDINGS);
 
     // Reserve reasonable amount of spaces so that for majority of apps we don't need to grow at all
-    mDescriptorBufferInfos.reserve(kDescriptorBufferInfosInitialSize);
-    mDescriptorImageInfos.reserve(kDescriptorImageInfosInitialSize);
-    mWriteDescriptorSets.reserve(kDescriptorWriteInfosInitialSize);
-
-    mObjectPerfCounters.descriptorSetsAllocated.fill(0);
+    mBufferInfos.reserve(kDescriptorBufferInfosInitialSize);
+    mImageInfos.reserve(kDescriptorImageInfosInitialSize);
+    mWriteInfos.reserve(kDescriptorWriteInfosInitialSize);
 }
 
 ContextVk::~ContextVk() = default;
 
 void ContextVk::onDestroy(const gl::Context *context)
 {
-    outputCumulativePerfCounters();
-
-    // Remove context from the share group
-    mShareGroupVk->getShareContextSet()->erase(this);
-
     // This will not destroy any resources. It will release them to be collected after finish.
     mIncompleteTextures.onDestroy(context);
 
@@ -486,14 +748,11 @@ void ContextVk::onDestroy(const gl::Context *context)
         driverUniforms.destroy(mRenderer);
     }
 
-    for (vk::DynamicDescriptorPool &dynamicDescriptorPool : mDriverUniformsDescriptorPools)
-    {
-        dynamicDescriptorPool.destroy(device);
-    }
+    mDriverUniformsDescriptorPool.destroy(device);
 
     mDefaultUniformStorage.release(mRenderer);
     mEmptyBuffer.release(mRenderer);
-    mStagingBuffer.release(mRenderer);
+    mStagingBufferStorage.release(mRenderer);
 
     for (vk::DynamicBuffer &defaultBuffer : mDefaultAttribBuffers)
     {
@@ -509,7 +768,7 @@ void ContextVk::onDestroy(const gl::Context *context)
 
     mCommandQueue.destroy(device);
 
-    mRenderer->releaseSharedResources(&mResourceUseList);
+    mResourceUseList.releaseResourceUses();
 
     mUtils.destroy(mRenderer);
 
@@ -518,9 +777,7 @@ void ContextVk::onDestroy(const gl::Context *context)
     mShaderLibrary.destroy(device);
     mGpuEventQueryPool.destroy(device);
     mCommandPool.destroy(device);
-
-    // This will clean up any outstanding buffer allocations
-    (void)mRenderer->cleanupGarbage(false);
+    mPrimaryCommands.destroy(device);
 }
 
 angle::Result ContextVk::getIncompleteTexture(const gl::Context *context,
@@ -535,6 +792,9 @@ angle::Result ContextVk::getIncompleteTexture(const gl::Context *context,
 angle::Result ContextVk::initialize()
 {
     ANGLE_TRACE_EVENT0("gpu.angle", "ContextVk::initialize");
+
+    VkDescriptorPoolSize driverSetSize = {VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, 1};
+    ANGLE_TRY(mDriverUniformsDescriptorPool.init(this, &driverSetSize, 1));
 
     ANGLE_TRY(mQueryPools[gl::QueryType::AnySamples].init(this, VK_QUERY_TYPE_OCCLUSION,
                                                           vk::kDefaultOcclusionQueryPoolSize));
@@ -564,31 +824,8 @@ angle::Result ContextVk::initialize()
 
         vk::DescriptorSetLayoutDesc desc =
             getDriverUniformsDescriptorSetDesc(kPipelineStages[pipeline]);
-        ANGLE_TRY(getDescriptorSetLayoutCache().getDescriptorSetLayout(
+        ANGLE_TRY(mRenderer->getDescriptorSetLayout(
             this, desc, &mDriverUniforms[pipeline].descriptorSetLayout));
-
-        vk::DescriptorSetLayoutBindingVector bindingVector;
-        std::vector<VkSampler> immutableSamplers;
-        desc.unpackBindings(&bindingVector, &immutableSamplers);
-        std::vector<VkDescriptorPoolSize> descriptorPoolSizes;
-
-        for (const VkDescriptorSetLayoutBinding &binding : bindingVector)
-        {
-            if (binding.descriptorCount > 0)
-            {
-                VkDescriptorPoolSize poolSize = {};
-
-                poolSize.type            = binding.descriptorType;
-                poolSize.descriptorCount = binding.descriptorCount;
-                descriptorPoolSizes.emplace_back(poolSize);
-            }
-        }
-        if (!descriptorPoolSizes.empty())
-        {
-            ANGLE_TRY(mDriverUniformsDescriptorPools[pipeline].init(
-                this, descriptorPoolSizes.data(), descriptorPoolSizes.size(),
-                mDriverUniforms[pipeline].descriptorSetLayout.get().getHandle()));
-        }
     }
 
     mGraphicsPipelineDesc.reset(new vk::GraphicsPipelineDesc());
@@ -622,12 +859,16 @@ angle::Result ContextVk::initialize()
     //  2. Put a pointer to each command buffer into queue
     for (vk::CommandBufferHelper &commandBuffer : mCommandBuffers)
     {
-        commandBuffer.initialize(false);
+        // TODO: b/157508684 Don't cache feature in class like this, just check when needed
+        commandBuffer.initialize(false,
+                                 mRenderer->getFeatures().preferAggregateBarrierCalls.enabled);
         recycleCommandBuffer(&commandBuffer);
     }
     // Now assign initial command buffers from queue
     getNextAvailableCommandBuffer(&mOutsideRenderPassCommands, false);
     getNextAvailableCommandBuffer(&mRenderPassCommands, true);
+
+    ANGLE_TRY(startPrimaryCommandBuffer());
 
     if (mGpuEventsEnabled)
     {
@@ -638,9 +879,9 @@ angle::Result ContextVk::initialize()
                                           vk::kDefaultTimestampQueryPoolSize));
         ANGLE_TRY(synchronizeCpuGpuTime());
 
-        mPerfCounters.primaryBuffers++;
+        mPrimaryBufferCounter++;
 
-        EventName eventName = GetTraceEventName("Primary", mPerfCounters.primaryBuffers);
+        EventName eventName = GetTraceEventName("Primary", mPrimaryBufferCounter);
         ANGLE_TRY(traceGpuEvent(&mOutsideRenderPassCommands->getCommandBuffer(),
                                 TRACE_EVENT_PHASE_BEGIN, eventName));
     }
@@ -666,33 +907,32 @@ angle::Result ContextVk::initialize()
     constexpr VkMemoryPropertyFlags kMemoryType = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
     ANGLE_TRY(mEmptyBuffer.init(this, emptyBufferInfo, kMemoryType));
 
-    constexpr VkImageUsageFlags kStagingBufferUsageFlags =
-        VK_BUFFER_USAGE_TRANSFER_SRC_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT;
+    constexpr VkImageUsageFlags kStagingBufferUsageFlags = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
     size_t stagingBufferAlignment =
         static_cast<size_t>(mRenderer->getPhysicalDeviceProperties().limits.minMemoryMapAlignment);
     constexpr size_t kStagingBufferSize = 1024u * 1024u;  // 1M
-    mStagingBuffer.init(mRenderer, kStagingBufferUsageFlags, stagingBufferAlignment,
-                        kStagingBufferSize, true);
+    mStagingBufferStorage.init(mRenderer, kStagingBufferUsageFlags, stagingBufferAlignment,
+                               kStagingBufferSize, true);
 
-    // Add context into the share group
-    mShareGroupVk->getShareContextSet()->insert(this);
+    return angle::Result::Continue;
+}
 
+angle::Result ContextVk::startPrimaryCommandBuffer()
+{
+    ANGLE_TRY(mCommandQueue.allocatePrimaryCommandBuffer(this, mCommandPool, &mPrimaryCommands));
+
+    VkCommandBufferBeginInfo beginInfo = {};
+    beginInfo.sType                    = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+    beginInfo.flags                    = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+    beginInfo.pInheritanceInfo         = nullptr;
+    ANGLE_VK_TRY(this, mPrimaryCommands.begin(beginInfo));
+
+    mHasPrimaryCommands = false;
     return angle::Result::Continue;
 }
 
 angle::Result ContextVk::flush(const gl::Context *context)
 {
-    // If we are in middle of renderpass and it is not a shared context, then we will defer the
-    // glFlush call here until the renderpass ends. If sync object has been used, we must respect
-    // glFlush call, otherwise we a wait for sync object without GL_SYNC_FLUSH_COMMANDS_BIT may
-    // never come back.
-    if (mRenderer->getFeatures().deferFlushUntilEndRenderPass.enabled && !context->isShared() &&
-        !mSyncObjectPendingFlush && hasStartedRenderPass())
-    {
-        mDeferredFlushCount++;
-        return angle::Result::Continue;
-    }
-
     return flushImpl(nullptr);
 }
 
@@ -820,10 +1060,6 @@ angle::Result ContextVk::setupIndexedDraw(const gl::Context *context,
         }
         if (shouldConvertUint8VkIndexType(indexType) && mGraphicsDirtyBits[DIRTY_BIT_INDEX_BUFFER])
         {
-            ANGLE_PERF_WARNING(getDebug(), GL_DEBUG_SEVERITY_LOW,
-                               "Potential inefficiency emulating uint8 vertex attributes due to "
-                               "lack of hardware support");
-
             BufferVk *bufferVk             = vk::GetImpl(elementArrayBuffer);
             vk::BufferHelper &bufferHelper = bufferVk->getBuffer();
 
@@ -862,7 +1098,7 @@ angle::Result ContextVk::setupIndirectDraw(const gl::Context *context,
 
     if (indirectBuffer != mCurrentIndirectBuffer)
     {
-        ANGLE_TRY(flushCommandsAndEndRenderPass());
+        ANGLE_TRY(endRenderPass());
         mCurrentIndirectBuffer = indirectBuffer;
     }
 
@@ -979,7 +1215,8 @@ angle::Result ContextVk::setupDispatch(const gl::Context *context,
     // |setupDispatch| and |setupDraw| are special in that they flush dirty bits. Therefore they
     // don't use the same APIs to record commands as the functions outside ContextVk.
     // The following ensures prior commands are flushed before we start processing dirty bits.
-    ANGLE_TRY(flushCommandsAndEndRenderPass());
+    ANGLE_TRY(flushOutsideRenderPassCommands());
+    ANGLE_TRY(endRenderPass());
     *commandBufferOut = &mOutsideRenderPassCommands->getCommandBuffer();
 
     // Create a local object to ensure we flush the descriptor updates to device when we leave this
@@ -1011,57 +1248,6 @@ angle::Result ContextVk::setupDispatch(const gl::Context *context,
     return angle::Result::Continue;
 }
 
-angle::Result ContextVk::handleDirtyGraphicsEventLog(const gl::Context *context,
-                                                     vk::CommandBuffer *commandBuffer)
-{
-    if (mEventLog.empty())
-    {
-        return angle::Result::Continue;
-    }
-
-    // Insert OpenGL ES commands into debug label.  We create a 3-level cascade here for
-    // OpenGL-ES-first debugging in AGI.  Here's the general outline of commands:
-    // -glDrawCommand
-    // --vkCmdBeginDebugUtilsLabelEXT() #1 for "glDrawCommand"
-    // --OpenGL ES Commands
-    // ---vkCmdBeginDebugUtilsLabelEXT() #2 for "OpenGL ES Commands"
-    // ---Individual OpenGL ES Commands leading up to glDrawCommand
-    // ----vkCmdBeginDebugUtilsLabelEXT() #3 for each individual OpenGL ES Command
-    // ----vkCmdEndDebugUtilsLabelEXT() #3 for each individual OpenGL ES Command
-    // ----...More Individual OGL Commands...
-    // ----Final Individual OGL command will be the same glDrawCommand shown in #1 above
-    // ---vkCmdEndDebugUtilsLabelEXT() #2 for "OpenGL ES Commands"
-    // --VK SetupDraw & Draw-related commands will be embedded here under glDraw #1
-    // --vkCmdEndDebugUtilsLabelEXT() #1 is called after each vkDraw* or vkDispatch* call
-    VkDebugUtilsLabelEXT label = {VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT,
-                                  nullptr,
-                                  mEventLog.back().c_str(),
-                                  {0.0f, 0.0f, 0.0f, 0.0f}};
-    // This is #1 from comment above
-    commandBuffer->beginDebugUtilsLabelEXT(label);
-    std::string oglCmds = "OpenGL ES Commands";
-    label.pLabelName    = oglCmds.c_str();
-    // This is #2 from comment above
-    commandBuffer->beginDebugUtilsLabelEXT(label);
-    for (uint32_t i = 0; i < mEventLog.size(); ++i)
-    {
-        label.pLabelName = mEventLog[i].c_str();
-        // NOTE: We have to use a begin/end pair here because AGI does not promote the
-        // pLabelName from an insertDebugUtilsLabelEXT() call to the Commands panel.
-        // Internal bug b/169243237 is tracking this and once the insert* call shows the
-        // pLabelName similar to begin* call, we can switch these to insert* calls instead.
-        // This is #3 from comment above.
-        commandBuffer->beginDebugUtilsLabelEXT(label);
-        commandBuffer->endDebugUtilsLabelEXT();
-    }
-    commandBuffer->endDebugUtilsLabelEXT();
-    // The final end* call for #1 above is made in the ContextVk::draw* or
-    //  ContextVk::dispatch* function calls.
-
-    mEventLog.clear();
-    return angle::Result::Continue;
-}
-
 angle::Result ContextVk::handleDirtyGraphicsDefaultAttribs(const gl::Context *context,
                                                            vk::CommandBuffer *commandBuffer)
 {
@@ -1080,6 +1266,7 @@ angle::Result ContextVk::handleDirtyGraphicsPipeline(const gl::Context *context,
                                                      vk::CommandBuffer *commandBuffer)
 {
     ASSERT(mExecutable);
+    mExecutable->updateEarlyFragmentTestsOptimization(this);
 
     if (!mCurrentGraphicsPipeline)
     {
@@ -1111,14 +1298,10 @@ angle::Result ContextVk::handleDirtyGraphicsPipeline(const gl::Context *context,
 
         mGraphicsPipelineTransition.reset();
     }
-
-    resumeTransformFeedbackIfStarted();
-
+    mRenderPassCommands->pauseTransformFeedbackIfStarted();
     commandBuffer->bindGraphicsPipeline(mCurrentGraphicsPipeline->getPipeline());
     // Update the queue serial for the pipeline object.
     ASSERT(mCurrentGraphicsPipeline && mCurrentGraphicsPipeline->valid());
-    // TODO: https://issuetracker.google.com/issues/169788986: Need to change this so that we get
-    // the actual serial used when this work is submitted.
     mCurrentGraphicsPipeline->updateSerial(getCurrentQueueSerial());
     return angle::Result::Continue;
 }
@@ -1133,8 +1316,6 @@ angle::Result ContextVk::handleDirtyComputePipeline(const gl::Context *context,
     }
 
     commandBuffer->bindComputePipeline(mCurrentComputePipeline->get());
-    // TODO: https://issuetracker.google.com/issues/169788986: Need to change this so that we get
-    // the actual serial used when this work is submitted.
     mCurrentComputePipeline->updateSerial(getCurrentQueueSerial());
 
     return angle::Result::Continue;
@@ -1160,36 +1341,34 @@ ANGLE_INLINE angle::Result ContextVk::handleDirtyTexturesImpl(
         // Select the appropriate vk::ImageLayout depending on whether the texture is also bound as
         // a GL image, and whether the program is a compute or graphics shader.
         vk::ImageLayout textureLayout;
-        if (textureVk->hasBeenBoundAsImage())
+        if (textureVk->isBoundAsImageTexture(mState.getContextID()))
         {
             textureLayout = executable->isCompute() ? vk::ImageLayout::ComputeShaderWrite
-                                                    : vk::ImageLayout::AllGraphicsShadersWrite;
-        }
-        else if (image.isDepthOrStencil())
-        {
-            // We always use a depth-stencil read-only layout for any depth Textures to simplify our
-            // implementation's handling of depth-stencil read-only mode. We don't have to split a
-            // RenderPass to transition a depth texture from shader-read to read-only. This improves
-            // performance in Manhattan. Future optimizations are likely possible here including
-            // using specialized barriers without breaking the RenderPass.
-            textureLayout = vk::ImageLayout::DepthStencilReadOnly;
+                                                    : vk::ImageLayout::AllGraphicsShadersReadWrite;
         }
         else
         {
-            gl::ShaderBitSet remainingShaderBits =
+            gl::ShaderBitSet shaderBits =
                 executable->getSamplerShaderBitsForTextureUnitIndex(textureUnit);
-            ASSERT(remainingShaderBits.any());
-            gl::ShaderType firstShader = remainingShaderBits.first();
-            remainingShaderBits.reset(firstShader);
-            // If we have multiple shader accessing it, we barrier against all shader stage read
-            // given that we only support vertex/frag shaders
-            if (remainingShaderBits.any())
+            if (shaderBits.any())
             {
-                textureLayout = vk::ImageLayout::AllGraphicsShadersReadOnly;
+                gl::ShaderType shader =
+                    static_cast<gl::ShaderType>(gl::ScanForward(shaderBits.bits()));
+                shaderBits.reset(shader);
+                // If we have multiple shader accessing it, we barrier against all shader stage read
+                // given that we only support vertex/frag shaders
+                if (shaderBits.any())
+                {
+                    textureLayout = vk::ImageLayout::AllGraphicsShadersReadOnly;
+                }
+                else
+                {
+                    textureLayout = kShaderReadOnlyImageLayouts[shader];
+                }
             }
             else
             {
-                textureLayout = kShaderReadOnlyImageLayouts[firstShader];
+                textureLayout = vk::ImageLayout::AllGraphicsShadersReadOnly;
             }
         }
         // Ensure the image is in read-only layout
@@ -1304,35 +1483,29 @@ angle::Result ContextVk::handleDirtyGraphicsTransformFeedbackBuffersEmulation(
     const gl::ProgramExecutable *executable = mState.getProgramExecutable();
     ASSERT(executable);
 
-    if (!executable->hasTransformFeedbackOutput())
+    if (!executable->hasTransformFeedbackOutput() || !mState.isTransformFeedbackActive())
     {
         return angle::Result::Continue;
     }
 
     TransformFeedbackVk *transformFeedbackVk = vk::GetImpl(mState.getCurrentTransformFeedback());
+    size_t bufferCount                       = executable->getTransformFeedbackBufferCount();
+    const gl::TransformFeedbackBuffersArray<vk::BufferHelper *> &bufferHelpers =
+        transformFeedbackVk->getBufferHelpers();
 
-    if (mState.isTransformFeedbackActiveUnpaused())
+    for (size_t bufferIndex = 0; bufferIndex < bufferCount; ++bufferIndex)
     {
-        size_t bufferCount = executable->getTransformFeedbackBufferCount();
-        const gl::TransformFeedbackBuffersArray<vk::BufferHelper *> &bufferHelpers =
-            transformFeedbackVk->getBufferHelpers();
-
-        for (size_t bufferIndex = 0; bufferIndex < bufferCount; ++bufferIndex)
-        {
-            vk::BufferHelper *bufferHelper = bufferHelpers[bufferIndex];
-            ASSERT(bufferHelper);
-            mRenderPassCommands->bufferWrite(&mResourceUseList, VK_ACCESS_SHADER_WRITE_BIT,
-                                             vk::PipelineStage::VertexShader,
-                                             vk::AliasingMode::Disallowed, bufferHelper);
-        }
+        vk::BufferHelper *bufferHelper = bufferHelpers[bufferIndex];
+        ASSERT(bufferHelper);
+        mRenderPassCommands->bufferWrite(&mResourceUseList, VK_ACCESS_SHADER_WRITE_BIT,
+                                         vk::PipelineStage::VertexShader, bufferHelper);
     }
 
     // TODO(http://anglebug.com/3570): Need to update to handle Program Pipelines
     vk::BufferHelper *uniformBuffer      = mDefaultUniformStorage.getCurrentBuffer();
     vk::UniformsAndXfbDesc xfbBufferDesc = transformFeedbackVk->getTransformFeedbackDesc();
     xfbBufferDesc.updateDefaultUniformBuffer(uniformBuffer ? uniformBuffer->getBufferSerial()
-                                                           : vk::kInvalidBufferSerial);
-
+                                                           : kInvalidBufferSerial);
     return mProgram->getExecutable().updateTransformFeedbackDescriptorSet(
         mProgram->getState(), mProgram->getDefaultUniformBlocks(), uniformBuffer, this,
         xfbBufferDesc);
@@ -1360,9 +1533,9 @@ angle::Result ContextVk::handleDirtyGraphicsTransformFeedbackBuffersExtension(
     {
         vk::BufferHelper *bufferHelper = bufferHelpers[bufferIndex];
         ASSERT(bufferHelper);
-        mRenderPassCommands->bufferWrite(
-            &mResourceUseList, VK_ACCESS_TRANSFORM_FEEDBACK_WRITE_BIT_EXT,
-            vk::PipelineStage::TransformFeedback, vk::AliasingMode::Disallowed, bufferHelper);
+        mRenderPassCommands->bufferWrite(&mResourceUseList,
+                                         VK_ACCESS_TRANSFORM_FEEDBACK_WRITE_BIT_EXT,
+                                         vk::PipelineStage::TransformFeedback, bufferHelper);
     }
 
     const gl::TransformFeedbackBuffersArray<VkBuffer> &bufferHandles =
@@ -1409,10 +1582,7 @@ angle::Result ContextVk::handleDirtyGraphicsTransformFeedbackResume(
     const gl::Context *context,
     vk::CommandBuffer *commandBuffer)
 {
-    if (mRenderPassCommands->isTransformFeedbackStarted())
-    {
-        mRenderPassCommands->resumeTransformFeedback();
-    }
+    mRenderPassCommands->resumeTransformFeedbackIfStarted();
     return angle::Result::Continue;
 }
 
@@ -1425,141 +1595,32 @@ angle::Result ContextVk::handleDirtyDescriptorSets(const gl::Context *context,
 
 void ContextVk::updateOverlayOnPresent()
 {
-    const gl::OverlayType *overlay = mState.getOverlay();
-    ASSERT(overlay->isEnabled());
-
     // Update overlay if active.
-    {
-        gl::RunningGraphWidget *renderPassCount =
-            overlay->getRunningGraphWidget(gl::WidgetId::VulkanRenderPassCount);
-        renderPassCount->add(mRenderPassCommands->getAndResetCounter());
-        renderPassCount->next();
-    }
-
-    {
-        gl::RunningGraphWidget *writeDescriptorSetCount =
-            overlay->getRunningGraphWidget(gl::WidgetId::VulkanWriteDescriptorSetCount);
-        writeDescriptorSetCount->add(mPerfCounters.writeDescriptorSets);
-        writeDescriptorSetCount->next();
-
-        mPerfCounters.writeDescriptorSets = 0;
-    }
-
-    {
-        uint32_t descriptorSetAllocations = 0;
-
-        // ContextVk's descriptor set allocations
-        for (const uint32_t count : mObjectPerfCounters.descriptorSetsAllocated)
-        {
-            descriptorSetAllocations += count;
-        }
-        // UtilsVk's descriptor set allocations
-        descriptorSetAllocations += mUtils.getObjectPerfCounters().descriptorSetsAllocated;
-        // ProgramExecutableVk's descriptor set allocations
-        const gl::State &state = getState();
-        const gl::ShaderProgramManager &shadersAndPrograms =
-            state.getShaderProgramManagerForCapture();
-        const gl::ResourceMap<gl::Program, gl::ShaderProgramID> &programs =
-            shadersAndPrograms.getProgramsForCaptureAndPerf();
-        for (const std::pair<GLuint, gl::Program *> &resource : programs)
-        {
-            ProgramVk *programVk = vk::GetImpl(resource.second);
-            ProgramExecutableVk::PerfCounters progPerfCounters =
-                programVk->getExecutable().getObjectPerfCounters();
-
-            for (const uint32_t count : progPerfCounters.descriptorSetsAllocated)
-            {
-                descriptorSetAllocations += count;
-            }
-        }
-
-        gl::RunningGraphWidget *descriptorSetAllocationCount =
-            overlay->getRunningGraphWidget(gl::WidgetId::VulkanDescriptorSetAllocations);
-        descriptorSetAllocationCount->add(descriptorSetAllocations -
-                                          mPerfCounters.descriptorSetAllocations);
-        descriptorSetAllocationCount->next();
-        mPerfCounters.descriptorSetAllocations = descriptorSetAllocations;
-    }
+    gl::RunningGraphWidget *renderPassCount =
+        mState.getOverlay()->getRunningGraphWidget(gl::WidgetId::VulkanRenderPassCount);
+    renderPassCount->add(mRenderPassCommands->getAndResetCounter());
+    renderPassCount->next();
 }
 
-void ContextVk::addOverlayUsedBuffersCount(vk::CommandBufferHelper *commandBuffer)
+angle::Result ContextVk::submitFrame(const VkSubmitInfo &submitInfo,
+                                     vk::PrimaryCommandBuffer &&commandBuffer)
 {
-    const gl::OverlayType *overlay = mState.getOverlay();
-    if (!overlay->isEnabled())
-    {
-        return;
-    }
-
-    gl::RunningHistogramWidget *widget =
-        overlay->getRunningHistogramWidget(gl::WidgetId::VulkanRenderPassBufferCount);
-    size_t buffersCount = commandBuffer->getUsedBuffersCount();
-    if (buffersCount > 0)
-    {
-        widget->add(buffersCount);
-        widget->next();
-    }
-}
-
-void ContextVk::commandProcessorSyncErrors()
-{
-    while (mRenderer->hasPendingError())
-    {
-        vk::Error error = mRenderer->getAndClearPendingError();
-        if (error.mErrorCode != VK_SUCCESS)
-        {
-            handleError(error.mErrorCode, error.mFile, error.mFunction, error.mLine);
-        }
-    }
-}
-
-void ContextVk::commandProcessorSyncErrorsAndQueueCommand(vk::CommandProcessorTask *command)
-{
-    commandProcessorSyncErrors();
-    mRenderer->queueCommand(this, command);
-}
-
-angle::Result ContextVk::submitFrame(const vk::Semaphore *signalSemaphore)
-{
-    if (mCurrentWindowSurface)
-    {
-        vk::Semaphore waitSemaphore = mCurrentWindowSurface->getAcquireImageSemaphore();
-        if (waitSemaphore.valid())
-        {
-            addWaitSemaphore(waitSemaphore.getHandle(),
-                             VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT);
-            addGarbage(&waitSemaphore);
-        }
-    }
-
     if (vk::CommandBufferHelper::kEnableCommandStreamDiagnostics)
     {
         dumpCommandStreamDiagnostics();
     }
 
-    if (mRenderer->getFeatures().commandProcessor.enabled)
-    {
-        vk::CommandProcessorTask flushAndQueueSubmit;
-        flushAndQueueSubmit.initFlushAndQueueSubmit(
-            std::move(mWaitSemaphores), std::move(mWaitSemaphoreStageMasks), signalSemaphore,
-            mContextPriority, std::move(mCurrentGarbage), std::move(mResourceUseList));
+    ANGLE_TRY(ensureSubmitFenceInitialized());
+    ANGLE_TRY(mCommandQueue.submitFrame(this, mContextPriority, submitInfo, mSubmitFence,
+                                        &mCurrentGarbage, &mCommandPool, std::move(commandBuffer)));
 
-        commandProcessorSyncErrorsAndQueueCommand(&flushAndQueueSubmit);
-    }
-    else
-    {
-        ANGLE_TRY(ensureSubmitFenceInitialized());
-        ANGLE_TRY(mCommandQueue.submitFrame(this, mContextPriority, mWaitSemaphores,
-                                            mWaitSemaphoreStageMasks, signalSemaphore, mSubmitFence,
-                                            &mResourceUseList, &mCurrentGarbage, &mCommandPool));
-        // Make sure a new fence is created for the next submission.
-        mRenderer->resetSharedFence(&mSubmitFence);
-
-        mWaitSemaphores.clear();
-        mWaitSemaphoreStageMasks.clear();
-    }
-
+    // we need to explicitly notify every other Context using this VkQueue that their current
+    // command buffer is no longer valid.
     onRenderPassFinished();
     mComputeDirtyBits |= mNewComputeCommandBufferDirtyBits;
+
+    // Make sure a new fence is created for the next submission.
+    mRenderer->resetSharedFence(&mSubmitFence);
 
     if (mGpuEventsEnabled)
     {
@@ -1644,7 +1705,7 @@ angle::Result ContextVk::synchronizeCpuGpuTime()
     // Make sure nothing is running
     ASSERT(!hasRecordedCommands());
 
-    ANGLE_TRACE_EVENT0("gpu.angle", "ContextVk::synchronizeCpuGpuTime");
+    ANGLE_TRACE_EVENT0("gpu.angle", "RendererVk::synchronizeCpuGpuTime");
 
     // Create a query used to receive the GPU timestamp
     vk::QueryHelper timestampQuery;
@@ -1684,7 +1745,7 @@ angle::Result ContextVk::synchronizeCpuGpuTime()
         commandBuffer.waitEvents(1, cpuReady.get().ptr(), VK_PIPELINE_STAGE_HOST_BIT,
                                  VK_PIPELINE_STAGE_ALL_GRAPHICS_BIT, 0, nullptr, 0, nullptr, 0,
                                  nullptr);
-        timestampQuery.writeTimestampToPrimary(this, &commandBuffer);
+        timestampQuery.writeTimestamp(this, &commandBuffer);
         commandBuffer.setEvent(gpuDone.get().getHandle(), VK_PIPELINE_STAGE_ALL_GRAPHICS_BIT);
 
         ANGLE_VK_TRY(this, commandBuffer.end());
@@ -1723,8 +1784,6 @@ angle::Result ContextVk::synchronizeCpuGpuTime()
         double TeS = platform->monotonicallyIncreasingTime(platform);
 
         // Get the query results
-        // Note: This LastSubmittedQueueSerial may include more work then was submitted above if
-        // another thread had submitted work.
         ANGLE_TRY(finishToSerial(getLastSubmittedQueueSerial()));
 
         uint64_t gpuTimestampCycles = 0;
@@ -1879,22 +1938,13 @@ void ContextVk::flushGpuEvents(double nextSyncGpuTimestampS, double nextSyncCpuT
 
 void ContextVk::clearAllGarbage()
 {
-    ANGLE_TRACE_EVENT0("gpu.angle", "ContextVk::finishAllWork");
+    ANGLE_TRACE_EVENT0("gpu.angle", "ContextVk::clearAllGarbage");
     for (vk::GarbageObject &garbage : mCurrentGarbage)
     {
         garbage.destroy(mRenderer);
     }
     mCurrentGarbage.clear();
-    if (mRenderer->getFeatures().commandProcessor.enabled)
-    {
-        // Issue command to CommandProcessor to ensure all work is complete, which will return any
-        // garbage items as well.
-        mRenderer->finishAllWork(this);
-    }
-    else
-    {
-        mCommandQueue.clearAllGarbage(mRenderer);
-    }
+    mCommandQueue.clearAllGarbage(mRenderer);
 }
 
 void ContextVk::handleDeviceLost()
@@ -1902,14 +1952,7 @@ void ContextVk::handleDeviceLost()
     mOutsideRenderPassCommands->reset();
     mRenderPassCommands->reset();
 
-    if (mRenderer->getFeatures().commandProcessor.enabled)
-    {
-        mRenderer->handleDeviceLost();
-    }
-    else
-    {
-        mCommandQueue.handleDeviceLost(mRenderer);
-    }
+    mCommandQueue.handleDeviceLost(mRenderer);
     clearAllGarbage();
 
     mRenderer->notifyDeviceLost();
@@ -2232,10 +2275,6 @@ angle::Result ContextVk::drawElementsIndirect(const gl::Context *context,
 
     if (shouldConvertUint8VkIndexType(type) && mGraphicsDirtyBits[DIRTY_BIT_INDEX_BUFFER])
     {
-        ANGLE_PERF_WARNING(getDebug(), GL_DEBUG_SEVERITY_LOW,
-                           "Potential inefficiency emulating uint8 vertex attributes due to lack "
-                           "of hardware support");
-
         vk::BufferHelper *dstIndirectBuf;
         VkDeviceSize dstIndirectBufOffset;
 
@@ -2365,25 +2404,18 @@ void ContextVk::optimizeRenderPassForPresent(VkFramebuffer framebufferHandle)
     RenderTargetVk *depthStencilRenderTarget = mDrawFramebuffer->getDepthStencilRenderTarget();
     if (depthStencilRenderTarget)
     {
+        size_t depthStencilAttachmentIndexVk = mDrawFramebuffer->getDepthStencilAttachmentIndexVk();
         // Change depthstencil attachment storeOp to DONT_CARE
-        const gl::DepthStencilState &dsState = mState.getDepthStencilState();
-        mRenderPassCommands->invalidateRenderPassStencilAttachment(
-            dsState, mRenderPassCommands->getRenderArea());
-        mRenderPassCommands->invalidateRenderPassDepthAttachment(
-            dsState, mRenderPassCommands->getRenderArea());
+        mRenderPassCommands->invalidateRenderPassStencilAttachment(depthStencilAttachmentIndexVk);
+        mRenderPassCommands->invalidateRenderPassDepthAttachment(depthStencilAttachmentIndexVk);
         // Mark content as invalid so that we will not load them in next renderpass
-        depthStencilRenderTarget->invalidateEntireContent(this);
-        depthStencilRenderTarget->invalidateEntireStencilContent(this);
+        depthStencilRenderTarget->invalidateEntireContent();
     }
 
     // Use finalLayout instead of extra barrier for layout change to present
     vk::ImageHelper &image = color0RenderTarget->getImageForWrite();
     image.setCurrentImageLayout(vk::ImageLayout::Present);
-    // TODO(syoussefi):  We currently don't store the layout of the resolve attachments, so once
-    // multisampled backbuffers are optimized to use resolve attachments, this information needs to
-    // be stored somewhere.  http://anglebug.com/4836
-    mRenderPassCommands->updateRenderPassAttachmentFinalLayout(vk::kAttachmentIndexZero,
-                                                               image.getCurrentImageLayout());
+    mRenderPassCommands->updateRenderPassAttachmentFinalLayout(0, image.getCurrentImageLayout());
 }
 
 gl::GraphicsResetStatus ContextVk::getResetStatus()
@@ -2415,9 +2447,12 @@ angle::Result ContextVk::insertEventMarker(GLsizei length, const char *marker)
     if (!mRenderer->enableDebugUtils())
         return angle::Result::Continue;
 
+    vk::CommandBuffer *outsideRenderPassCommandBuffer;
+    ANGLE_TRY(endRenderPassAndGetCommandBuffer(&outsideRenderPassCommandBuffer));
+
     VkDebugUtilsLabelEXT label;
     vk::MakeDebugUtilsLabel(GL_DEBUG_SOURCE_APPLICATION, marker, &label);
-    mOutsideRenderPassCommands->getCommandBuffer().insertDebugUtilsLabelEXT(label);
+    outsideRenderPassCommandBuffer->insertDebugUtilsLabelEXT(label);
 
     return angle::Result::Continue;
 }
@@ -2427,9 +2462,12 @@ angle::Result ContextVk::pushGroupMarker(GLsizei length, const char *marker)
     if (!mRenderer->enableDebugUtils())
         return angle::Result::Continue;
 
+    vk::CommandBuffer *outsideRenderPassCommandBuffer;
+    ANGLE_TRY(endRenderPassAndGetCommandBuffer(&outsideRenderPassCommandBuffer));
+
     VkDebugUtilsLabelEXT label;
     vk::MakeDebugUtilsLabel(GL_DEBUG_SOURCE_APPLICATION, marker, &label);
-    mOutsideRenderPassCommands->getCommandBuffer().beginDebugUtilsLabelEXT(label);
+    outsideRenderPassCommandBuffer->beginDebugUtilsLabelEXT(label);
 
     return angle::Result::Continue;
 }
@@ -2439,7 +2477,9 @@ angle::Result ContextVk::popGroupMarker()
     if (!mRenderer->enableDebugUtils())
         return angle::Result::Continue;
 
-    mOutsideRenderPassCommands->getCommandBuffer().endDebugUtilsLabelEXT();
+    vk::CommandBuffer *outsideRenderPassCommandBuffer;
+    ANGLE_TRY(endRenderPassAndGetCommandBuffer(&outsideRenderPassCommandBuffer));
+    outsideRenderPassCommandBuffer->endDebugUtilsLabelEXT();
 
     return angle::Result::Continue;
 }
@@ -2452,9 +2492,12 @@ angle::Result ContextVk::pushDebugGroup(const gl::Context *context,
     if (!mRenderer->enableDebugUtils())
         return angle::Result::Continue;
 
+    vk::CommandBuffer *outsideRenderPassCommandBuffer;
+    ANGLE_TRY(endRenderPassAndGetCommandBuffer(&outsideRenderPassCommandBuffer));
+
     VkDebugUtilsLabelEXT label;
     vk::MakeDebugUtilsLabel(source, message.c_str(), &label);
-    mOutsideRenderPassCommands->getCommandBuffer().beginDebugUtilsLabelEXT(label);
+    outsideRenderPassCommandBuffer->beginDebugUtilsLabelEXT(label);
 
     return angle::Result::Continue;
 }
@@ -2464,25 +2507,11 @@ angle::Result ContextVk::popDebugGroup(const gl::Context *context)
     if (!mRenderer->enableDebugUtils())
         return angle::Result::Continue;
 
-    mOutsideRenderPassCommands->getCommandBuffer().endDebugUtilsLabelEXT();
+    vk::CommandBuffer *outsideRenderPassCommandBuffer;
+    ANGLE_TRY(endRenderPassAndGetCommandBuffer(&outsideRenderPassCommandBuffer));
+    outsideRenderPassCommandBuffer->endDebugUtilsLabelEXT();
 
     return angle::Result::Continue;
-}
-
-void ContextVk::logEvent(const char *eventString)
-{
-    // Save this event (about an OpenGL ES command being called).
-    mEventLog.push_back(eventString);
-
-    // Set a dirty bit in order to stay off the "hot path" for when not logging.
-    mGraphicsDirtyBits.set(DIRTY_BIT_EVENT_LOG);
-    mComputeDirtyBits.set(DIRTY_BIT_EVENT_LOG);
-}
-
-void ContextVk::endEventLog(gl::EntryPoint entryPoint)
-{
-    ASSERT(mRenderPassCommands);
-    mRenderPassCommands->getCommandBuffer().endDebugUtilsLabelEXT();
 }
 
 bool ContextVk::isViewportFlipEnabledForDrawFBO() const
@@ -2515,14 +2544,15 @@ SurfaceRotation ContextVk::getRotationReadFramebuffer() const
     return mCurrentRotationReadFramebuffer;
 }
 
-void ContextVk::updateColorMasks(const gl::BlendStateExt &blendStateExt)
+void ContextVk::updateColorMask(const gl::BlendState &blendState)
 {
-    mClearColorMasks = blendStateExt.mColorMask;
+    mClearColorMask =
+        gl_vk::GetColorComponentFlags(blendState.colorMaskRed, blendState.colorMaskGreen,
+                                      blendState.colorMaskBlue, blendState.colorMaskAlpha);
 
     FramebufferVk *framebufferVk = vk::GetImpl(mState.getDrawFramebuffer());
-    mGraphicsPipelineDesc->updateColorWriteMasks(&mGraphicsPipelineTransition, mClearColorMasks,
-                                                 framebufferVk->getEmulatedAlphaAttachmentMask(),
-                                                 framebufferVk->getState().getEnabledDrawBuffers());
+    mGraphicsPipelineDesc->updateColorWriteMask(&mGraphicsPipelineTransition, mClearColorMask,
+                                                framebufferVk->getEmulatedAlphaAttachmentMask());
 }
 
 void ContextVk::updateSampleMask(const gl::State &glState)
@@ -2609,7 +2639,7 @@ void ContextVk::updateDepthRange(float nearPlane, float farPlane)
     mGraphicsPipelineDesc->updateDepthRange(&mGraphicsPipelineTransition, nearPlane, farPlane);
 }
 
-void ContextVk::updateScissor(const gl::State &glState)
+angle::Result ContextVk::updateScissor(const gl::State &glState)
 {
     FramebufferVk *framebufferVk = vk::GetImpl(glState.getDrawFramebuffer());
     gl::Rectangle renderArea     = framebufferVk->getNonRotatedCompleteRenderArea();
@@ -2627,15 +2657,26 @@ void ContextVk::updateScissor(const gl::State &glState)
     mGraphicsPipelineDesc->updateScissor(&mGraphicsPipelineTransition,
                                          gl_vk::GetRect(rotatedScissoredArea));
 
-    // If the scissor has grown beyond the previous scissoredRenderArea, grow the render pass render
-    // area.  The only undesirable effect this may have is that if the render area does not cover a
-    // previously invalidated area, that invalidate will have to be discarded.
-    if (mRenderPassCommandBuffer &&
-        !mRenderPassCommands->getRenderArea().encloses(rotatedScissoredArea))
+    // If the scissor has grown beyond the previous scissoredRenderArea, make sure the render pass
+    // is restarted.  Otherwise, we can continue using the same renderpass area.
+    //
+    // Without a scissor, the render pass area covers the whole of the framebuffer.  With a
+    // scissored clear, the render pass area could be smaller than the framebuffer size.  When the
+    // scissor changes, if the scissor area is completely encompassed by the render pass area, it's
+    // possible to continue using the same render pass.  However, if the current render pass area
+    // is too small, we need to start a new one.  The latter can happen if a scissored clear starts
+    // a render pass, the scissor is disabled and a draw call is issued to affect the whole
+    // framebuffer.
+    gl::Rectangle scissoredRenderArea = framebufferVk->getRotatedScissoredRenderArea(this);
+    if (!mRenderPassCommands->empty())
     {
-        ASSERT(mRenderPassCommands->started());
-        mRenderPassCommands->growRenderArea(this, rotatedScissoredArea);
+        if (!mRenderPassCommands->getRenderArea().encloses(scissoredRenderArea))
+        {
+            ANGLE_TRY(endRenderPass());
+        }
     }
+
+    return angle::Result::Continue;
 }
 
 void ContextVk::invalidateProgramBindingHelper(const gl::State &glState)
@@ -2672,8 +2713,7 @@ void ContextVk::invalidateProgramBindingHelper(const gl::State &glState)
 
 angle::Result ContextVk::invalidateProgramExecutableHelper(const gl::Context *context)
 {
-    const gl::State &glState                = context->getState();
-    const gl::ProgramExecutable *executable = glState.getProgramExecutable();
+    const gl::State &glState = context->getState();
 
     if (glState.getProgramExecutable()->isCompute())
     {
@@ -2685,14 +2725,11 @@ angle::Result ContextVk::invalidateProgramExecutableHelper(const gl::Context *co
         // later.
         invalidateDefaultAttributes(context->getStateCache().getActiveDefaultAttribsMask());
         invalidateVertexAndIndexBuffers();
-        bool useVertexBuffer = (executable->getMaxActiveAttribLocation() > 0);
+        bool useVertexBuffer = (glState.getProgramExecutable()->getMaxActiveAttribLocation() > 0);
         mNonIndexedDirtyBitsMask.set(DIRTY_BIT_VERTEX_BUFFERS, useVertexBuffer);
         mIndexedDirtyBitsMask.set(DIRTY_BIT_VERTEX_BUFFERS, useVertexBuffer);
         mCurrentGraphicsPipeline = nullptr;
         mGraphicsPipelineTransition.reset();
-
-        ASSERT(mExecutable);
-        mExecutable->updateEarlyFragmentTestsOptimization(this);
     }
 
     return angle::Result::Continue;
@@ -2718,7 +2755,7 @@ angle::Result ContextVk::syncState(const gl::Context *context,
         {
             case gl::State::DIRTY_BIT_SCISSOR_TEST_ENABLED:
             case gl::State::DIRTY_BIT_SCISSOR:
-                updateScissor(glState);
+                ANGLE_TRY(updateScissor(glState));
                 break;
             case gl::State::DIRTY_BIT_VIEWPORT:
             {
@@ -2726,7 +2763,7 @@ angle::Result ContextVk::syncState(const gl::Context *context,
                 updateViewport(framebufferVk, glState.getViewport(), glState.getNearPlane(),
                                glState.getFarPlane(), isViewportFlipEnabledForDrawFBO());
                 // Update the scissor, which will be constrained to the viewport
-                updateScissor(glState);
+                ANGLE_TRY(updateScissor(glState));
                 break;
             }
             case gl::State::DIRTY_BIT_DEPTH_RANGE:
@@ -2734,7 +2771,7 @@ angle::Result ContextVk::syncState(const gl::Context *context,
                 break;
             case gl::State::DIRTY_BIT_BLEND_ENABLED:
                 mGraphicsPipelineDesc->updateBlendEnabled(&mGraphicsPipelineTransition,
-                                                          glState.getBlendStateExt().mEnabledMask);
+                                                          glState.isBlendEnabled());
                 break;
             case gl::State::DIRTY_BIT_BLEND_COLOR:
                 mGraphicsPipelineDesc->updateBlendColor(&mGraphicsPipelineTransition,
@@ -2742,14 +2779,14 @@ angle::Result ContextVk::syncState(const gl::Context *context,
                 break;
             case gl::State::DIRTY_BIT_BLEND_FUNCS:
                 mGraphicsPipelineDesc->updateBlendFuncs(&mGraphicsPipelineTransition,
-                                                        glState.getBlendStateExt());
+                                                        glState.getBlendState());
                 break;
             case gl::State::DIRTY_BIT_BLEND_EQUATIONS:
                 mGraphicsPipelineDesc->updateBlendEquations(&mGraphicsPipelineTransition,
-                                                            glState.getBlendStateExt());
+                                                            glState.getBlendState());
                 break;
             case gl::State::DIRTY_BIT_COLOR_MASK:
-                updateColorMasks(glState.getBlendStateExt());
+                updateColorMask(glState.getBlendState());
                 break;
             case gl::State::DIRTY_BIT_SAMPLE_ALPHA_TO_COVERAGE_ENABLED:
                 mGraphicsPipelineDesc->updateAlphaToCoverageEnable(
@@ -2771,33 +2808,24 @@ angle::Result ContextVk::syncState(const gl::Context *context,
                 updateSampleMask(glState);
                 break;
             case gl::State::DIRTY_BIT_DEPTH_TEST_ENABLED:
-            {
                 mGraphicsPipelineDesc->updateDepthTestEnabled(&mGraphicsPipelineTransition,
                                                               glState.getDepthStencilState(),
                                                               glState.getDrawFramebuffer());
-                ANGLE_TRY(updateRenderPassDepthStencilAccess());
                 break;
-            }
             case gl::State::DIRTY_BIT_DEPTH_FUNC:
                 mGraphicsPipelineDesc->updateDepthFunc(&mGraphicsPipelineTransition,
                                                        glState.getDepthStencilState());
                 break;
             case gl::State::DIRTY_BIT_DEPTH_MASK:
-            {
                 mGraphicsPipelineDesc->updateDepthWriteEnabled(&mGraphicsPipelineTransition,
                                                                glState.getDepthStencilState(),
                                                                glState.getDrawFramebuffer());
-                ANGLE_TRY(updateRenderPassDepthStencilAccess());
                 break;
-            }
             case gl::State::DIRTY_BIT_STENCIL_TEST_ENABLED:
-            {
                 mGraphicsPipelineDesc->updateStencilTestEnabled(&mGraphicsPipelineTransition,
                                                                 glState.getDepthStencilState(),
                                                                 glState.getDrawFramebuffer());
-                ANGLE_TRY(updateRenderPassDepthStencilAccess());
                 break;
-            }
             case gl::State::DIRTY_BIT_STENCIL_FUNCS_FRONT:
                 mGraphicsPipelineDesc->updateStencilFrontFuncs(&mGraphicsPipelineTransition,
                                                                glState.getStencilRef(),
@@ -2893,27 +2921,24 @@ angle::Result ContextVk::syncState(const gl::Context *context,
                 // FramebufferVk::syncState signals that we should start a new command buffer.
                 // But changing the binding can skip FramebufferVk::syncState if the Framebuffer
                 // has no dirty bits. Thus we need to explicitly clear the current command
-                // buffer to ensure we start a new one. We don't actually close the render pass here
-                // as some optimizations in non-draw commands require the render pass to remain
-                // open, such as invalidate or blit. Note that we always start a new command buffer
-                // because we currently can only support one open RenderPass at a time.
+                // buffer to ensure we start a new one. Note that we always start a new command
+                // buffer because we currently can only support one open RenderPass at a time.
                 onRenderPassFinished();
 
                 gl::Framebuffer *drawFramebuffer = glState.getDrawFramebuffer();
                 mDrawFramebuffer                 = vk::GetImpl(drawFramebuffer);
-                mDrawFramebuffer->setReadOnlyDepthFeedbackLoopMode(false);
                 updateFlipViewportDrawFramebuffer(glState);
                 updateSurfaceRotationDrawFramebuffer(glState);
                 updateViewport(mDrawFramebuffer, glState.getViewport(), glState.getNearPlane(),
                                glState.getFarPlane(), isViewportFlipEnabledForDrawFBO());
-                updateColorMasks(glState.getBlendStateExt());
+                updateColorMask(glState.getBlendState());
                 updateSampleMask(glState);
                 mGraphicsPipelineDesc->updateRasterizationSamples(&mGraphicsPipelineTransition,
                                                                   mDrawFramebuffer->getSamples());
                 mGraphicsPipelineDesc->updateFrontFace(&mGraphicsPipelineTransition,
                                                        glState.getRasterizerState(),
                                                        isViewportFlipEnabledForDrawFBO());
-                updateScissor(glState);
+                ANGLE_TRY(updateScissor(glState));
                 const gl::DepthStencilState depthStencilState = glState.getDepthStencilState();
                 mGraphicsPipelineDesc->updateDepthTestEnabled(&mGraphicsPipelineTransition,
                                                               depthStencilState, drawFramebuffer);
@@ -2925,7 +2950,8 @@ angle::Result ContextVk::syncState(const gl::Context *context,
                     &mGraphicsPipelineTransition, depthStencilState, drawFramebuffer);
                 mGraphicsPipelineDesc->updateStencilBackWriteMask(
                     &mGraphicsPipelineTransition, depthStencilState, drawFramebuffer);
-                onDrawFramebufferRenderPassDescChange(mDrawFramebuffer);
+                mGraphicsPipelineDesc->updateRenderPassDesc(&mGraphicsPipelineTransition,
+                                                            mDrawFramebuffer->getRenderPassDesc());
                 break;
             }
             case gl::State::DIRTY_BIT_RENDERBUFFER_BINDING:
@@ -2994,11 +3020,6 @@ angle::Result ContextVk::syncState(const gl::Context *context,
                 mGraphicsPipelineDesc->updateAlphaToOneEnable(&mGraphicsPipelineTransition,
                                                               glState.isSampleAlphaToOneEnabled());
                 break;
-            case gl::State::DIRTY_BIT_SAMPLE_SHADING:
-                mGraphicsPipelineDesc->updateSampleShading(&mGraphicsPipelineTransition,
-                                                           glState.isSampleShadingEnabled(),
-                                                           glState.getMinSampleShading());
-                break;
             case gl::State::DIRTY_BIT_COVERAGE_MODULATION:
                 break;
             case gl::State::DIRTY_BIT_FRAMEBUFFER_SRGB:
@@ -3046,10 +3067,11 @@ angle::Result ContextVk::onMakeCurrent(const gl::Context *context)
 {
     mRenderer->reloadVolkIfNeeded();
 
-    // Flip viewports if the user did not request that the surface is flipped.
+    // Flip viewports if FeaturesVk::flipViewportY is enabled and the user did not request that
+    // the surface is flipped.
     egl::Surface *drawSurface = context->getCurrentDrawSurface();
     mFlipYForCurrentSurface =
-        drawSurface != nullptr &&
+        drawSurface != nullptr && mRenderer->getFeatures().flipViewportY.enabled &&
         !IsMaskFlagSet(drawSurface->getOrientation(), EGL_SURFACE_ORIENTATION_INVERT_Y_ANGLE);
 
     if (drawSurface && drawSurface->getType() == EGL_WINDOW_BIT)
@@ -3068,57 +3090,28 @@ angle::Result ContextVk::onMakeCurrent(const gl::Context *context)
     updateSurfaceRotationReadFramebuffer(glState);
     invalidateDriverUniforms();
 
-    const gl::ProgramExecutable *executable = mState.getProgramExecutable();
-    if (executable && executable->hasTransformFeedbackOutput() &&
-        mState.isTransformFeedbackActive())
-    {
-        onTransformFeedbackStateChanged();
-        if (getFeatures().supportsTransformFeedbackExtension.enabled)
-        {
-            mGraphicsDirtyBits.set(DIRTY_BIT_TRANSFORM_FEEDBACK_RESUME);
-        }
-    }
-
     return angle::Result::Continue;
 }
 
 angle::Result ContextVk::onUnMakeCurrent(const gl::Context *context)
 {
     ANGLE_TRY(flushImpl(nullptr));
-    if (mRenderer->getFeatures().commandProcessor.enabled)
-    {
-        ANGLE_TRACE_EVENT0("gpu.angle", "ContextVk::onUnMakeCurrent");
-        mRenderer->finishAllWork(this);
-    }
     mCurrentWindowSurface = nullptr;
     return angle::Result::Continue;
 }
 
 void ContextVk::updateFlipViewportDrawFramebuffer(const gl::State &glState)
 {
-    // The default framebuffer (originating from the swapchain) is rendered upside-down due to the
-    // difference in the coordinate systems of Vulkan and GLES.  Rendering upside-down has the
-    // effect that rendering is done the same way as OpenGL.  The KHR_MAINTENANCE_1 extension is
-    // subsequently enabled to allow negative viewports.  We inverse rendering to the backbuffer by
-    // reversing the height of the viewport and increasing Y by the height.  So if the viewport was
-    // (0, 0, width, height), it becomes (0, height, width, -height).  Unfortunately, when we start
-    // doing this, we also need to adjust a number of places since the rendering now happens
-    // upside-down.  Affected places so far:
-    //
-    // - readPixels
-    // - copyTexImage
-    // - framebuffer blit
-    // - generating mipmaps
-    // - Point sprites tests
-    // - texStorage
     gl::Framebuffer *drawFramebuffer = glState.getDrawFramebuffer();
-    mFlipViewportForDrawFramebuffer  = drawFramebuffer->isDefault();
+    mFlipViewportForDrawFramebuffer =
+        drawFramebuffer->isDefault() && mRenderer->getFeatures().flipViewportY.enabled;
 }
 
 void ContextVk::updateFlipViewportReadFramebuffer(const gl::State &glState)
 {
     gl::Framebuffer *readFramebuffer = glState.getReadFramebuffer();
-    mFlipViewportForReadFramebuffer  = readFramebuffer->isDefault();
+    mFlipViewportForReadFramebuffer =
+        readFramebuffer->isDefault() && mRenderer->getFeatures().flipViewportY.enabled;
 }
 
 void ContextVk::updateSurfaceRotationDrawFramebuffer(const gl::State &glState)
@@ -3126,15 +3119,6 @@ void ContextVk::updateSurfaceRotationDrawFramebuffer(const gl::State &glState)
     gl::Framebuffer *drawFramebuffer = glState.getDrawFramebuffer();
     mCurrentRotationDrawFramebuffer =
         DetermineSurfaceRotation(drawFramebuffer, mCurrentWindowSurface);
-
-    if (mCurrentRotationDrawFramebuffer != mGraphicsPipelineDesc->getSurfaceRotation())
-    {
-        // surface rotation are specialization constants, which affects program compilation. When
-        // rotation changes, we need to update GraphicsPipelineDesc so that the correct pipeline
-        // program object will be retrieved.
-        mGraphicsPipelineDesc->updateSurfaceRotation(&mGraphicsPipelineTransition,
-                                                     mCurrentRotationDrawFramebuffer);
-    }
 }
 
 void ContextVk::updateSurfaceRotationReadFramebuffer(const gl::State &glState)
@@ -3308,34 +3292,19 @@ void ContextVk::invalidateDriverUniforms()
     mComputeDirtyBits.set(DIRTY_BIT_DRIVER_UNIFORMS_BINDING);
 }
 
-void ContextVk::onFramebufferChange(FramebufferVk *framebufferVk)
+void ContextVk::onDrawFramebufferChange(FramebufferVk *framebufferVk)
 {
-    // This is called from FramebufferVk::syncState.  Skip these updates if the framebuffer being
-    // synced is the read framebuffer (which is not equal the draw framebuffer).
-    if (framebufferVk != vk::GetImpl(mState.getDrawFramebuffer()))
-    {
-        return;
-    }
+    const vk::RenderPassDesc &renderPassDesc = framebufferVk->getRenderPassDesc();
 
-    // Ensure that the pipeline description is updated.
+    // Ensure that the RenderPass description is updated.
+    invalidateCurrentGraphicsPipeline();
     if (mGraphicsPipelineDesc->getRasterizationSamples() !=
         static_cast<uint32_t>(framebufferVk->getSamples()))
     {
         mGraphicsPipelineDesc->updateRasterizationSamples(&mGraphicsPipelineTransition,
                                                           framebufferVk->getSamples());
     }
-
-    // Update scissor.
-    updateScissor(mState);
-
-    onDrawFramebufferRenderPassDescChange(framebufferVk);
-}
-
-void ContextVk::onDrawFramebufferRenderPassDescChange(FramebufferVk *framebufferVk)
-{
-    invalidateCurrentGraphicsPipeline();
-    mGraphicsPipelineDesc->updateRenderPassDesc(&mGraphicsPipelineTransition,
-                                                framebufferVk->getRenderPassDesc());
+    mGraphicsPipelineDesc->updateRenderPassDesc(&mGraphicsPipelineTransition, renderPassDesc);
 }
 
 void ContextVk::invalidateCurrentTransformFeedbackBuffers()
@@ -3346,7 +3315,6 @@ void ContextVk::invalidateCurrentTransformFeedbackBuffers()
     }
     else if (getFeatures().emulateTransformFeedback.enabled)
     {
-        mGraphicsDirtyBits.set(DIRTY_BIT_TRANSFORM_FEEDBACK_BUFFERS);
         mGraphicsDirtyBits.set(DIRTY_BIT_DESCRIPTOR_SETS);
     }
 }
@@ -3356,12 +3324,11 @@ void ContextVk::onTransformFeedbackStateChanged()
     if (getFeatures().supportsTransformFeedbackExtension.enabled)
     {
         mGraphicsDirtyBits.set(DIRTY_BIT_TRANSFORM_FEEDBACK_STATE);
-        mGraphicsDirtyBits.set(DIRTY_BIT_TRANSFORM_FEEDBACK_BUFFERS);
+        invalidateCurrentTransformFeedbackBuffers();
     }
     else if (getFeatures().emulateTransformFeedback.enabled)
     {
         invalidateGraphicsDriverUniforms();
-        invalidateCurrentTransformFeedbackBuffers();
     }
 }
 
@@ -3373,11 +3340,9 @@ angle::Result ContextVk::onBeginTransformFeedback(
 
     for (size_t bufferIndex = 0; bufferIndex < bufferCount; ++bufferIndex)
     {
-        const vk::BufferHelper *buffer = buffers[bufferIndex];
-        if (mCurrentTransformFeedbackBuffers.contains(buffer) ||
-            mRenderPassCommands->usesBuffer(*buffer))
+        if (mCurrentTransformFeedbackBuffers.count(buffers[bufferIndex]) != 0)
         {
-            ANGLE_TRY(flushCommandsAndEndRenderPass());
+            ANGLE_TRY(endRenderPass());
             break;
         }
     }
@@ -3398,11 +3363,7 @@ void ContextVk::populateTransformFeedbackBufferSet(
 {
     for (size_t bufferIndex = 0; bufferIndex < bufferCount; ++bufferIndex)
     {
-        vk::BufferHelper *buffer = buffers[bufferIndex];
-        if (!mCurrentTransformFeedbackBuffers.contains(buffer))
-        {
-            mCurrentTransformFeedbackBuffers.insert(buffer);
-        }
+        mCurrentTransformFeedbackBuffers.insert(buffers[bufferIndex]);
     }
 }
 
@@ -3410,10 +3371,7 @@ void ContextVk::onEndTransformFeedback()
 {
     if (getFeatures().supportsTransformFeedbackExtension.enabled)
     {
-        if (mRenderPassCommands->isTransformFeedbackStarted())
-        {
-            mRenderPassCommands->endTransformFeedback();
-        }
+        mRenderPassCommands->endTransformFeedback();
     }
     else if (getFeatures().emulateTransformFeedback.enabled)
     {
@@ -3425,30 +3383,29 @@ angle::Result ContextVk::onPauseTransformFeedback()
 {
     if (getFeatures().supportsTransformFeedbackExtension.enabled)
     {
-        return flushCommandsAndEndRenderPass();
+        return endRenderPass();
     }
     else if (getFeatures().emulateTransformFeedback.enabled)
     {
-        invalidateCurrentTransformFeedbackBuffers();
-        return flushCommandsAndEndRenderPass();
+        onTransformFeedbackStateChanged();
     }
     return angle::Result::Continue;
 }
 
-void ContextVk::invalidateGraphicsDescriptorSet(DescriptorSetIndex usedDescriptorSet)
+void ContextVk::invalidateGraphicsDescriptorSet(uint32_t usedDescriptorSet)
 {
     // UtilsVk currently only uses set 0
-    ASSERT(usedDescriptorSet == DescriptorSetIndex::DriverUniforms);
+    ASSERT(usedDescriptorSet == kDriverUniformsDescriptorSetIndex);
     if (mDriverUniforms[PipelineType::Graphics].descriptorSet != VK_NULL_HANDLE)
     {
         mGraphicsDirtyBits.set(DIRTY_BIT_DRIVER_UNIFORMS_BINDING);
     }
 }
 
-void ContextVk::invalidateComputeDescriptorSet(DescriptorSetIndex usedDescriptorSet)
+void ContextVk::invalidateComputeDescriptorSet(uint32_t usedDescriptorSet)
 {
     // UtilsVk currently only uses set 0
-    ASSERT(usedDescriptorSet == DescriptorSetIndex::DriverUniforms);
+    ASSERT(usedDescriptorSet == kDriverUniformsDescriptorSetIndex);
     if (mDriverUniforms[PipelineType::Compute].descriptorSet != VK_NULL_HANDLE)
     {
         mComputeDirtyBits.set(DIRTY_BIT_DRIVER_UNIFORMS_BINDING);
@@ -3520,21 +3477,15 @@ angle::Result ContextVk::memoryBarrierImpl(GLbitfield barriers, VkPipelineStageF
         dstAccess |= VK_ACCESS_SHADER_WRITE_BIT | VK_ACCESS_SHADER_READ_BIT;
     }
 
-    ANGLE_TRY(flushCommandsAndEndRenderPass());
+    vk::CommandBuffer *commandBuffer;
+    ANGLE_TRY(endRenderPassAndGetCommandBuffer(&commandBuffer));
 
     VkMemoryBarrier memoryBarrier = {};
     memoryBarrier.sType           = VK_STRUCTURE_TYPE_MEMORY_BARRIER;
     memoryBarrier.srcAccessMask   = srcAccess;
     memoryBarrier.dstAccessMask   = dstAccess;
 
-    mOutsideRenderPassCommands->getCommandBuffer().memoryBarrier(stageMask, stageMask,
-                                                                 &memoryBarrier);
-
-    if ((barriers & GL_CLIENT_MAPPED_BUFFER_BARRIER_BIT_EXT) != 0)
-    {
-        // We need to make sure that all device-writes are host-visible, force a finish
-        ANGLE_TRY(finishImpl());
-    }
+    commandBuffer->memoryBarrier(stageMask, stageMask, &memoryBarrier);
 
     return angle::Result::Continue;
 }
@@ -3562,9 +3513,9 @@ const VkClearValue &ContextVk::getClearDepthStencilValue() const
     return mClearDepthStencilValue;
 }
 
-gl::BlendStateExt::ColorMaskStorage::Type ContextVk::getClearColorMasks() const
+VkColorComponentFlags ContextVk::getClearColorMask() const
 {
-    return mClearColorMasks;
+    return mClearColorMask;
 }
 
 void ContextVk::writeAtomicCounterBufferDriverUniformOffsets(uint32_t *offsetsOut,
@@ -3601,16 +3552,6 @@ void ContextVk::writeAtomicCounterBufferDriverUniformOffsets(uint32_t *offsetsOu
         ASSERT(bufferIndex % 4 != 0 || offsetsOut[bufferIndex / 4] == 0);
 
         offsetsOut[bufferIndex / 4] |= static_cast<uint8_t>(offsetDiff) << ((bufferIndex % 4) * 8);
-    }
-}
-
-ANGLE_INLINE void ContextVk::resumeTransformFeedbackIfStarted()
-{
-    if (mRenderPassCommands->isTransformFeedbackStarted())
-    {
-        ASSERT(getFeatures().supportsTransformFeedbackExtension.enabled);
-        mGraphicsDirtyBits.set(DIRTY_BIT_TRANSFORM_FEEDBACK_RESUME);
-        mRenderPassCommands->pauseTransformFeedback();
     }
 }
 
@@ -3706,11 +3647,8 @@ angle::Result ContextVk::handleDirtyGraphicsDriverUniforms(const gl::Context *co
                                               driverUniforms->xfbBufferOffsets.size());
     }
 
-    if (mState.hasValidAtomicCounterBuffer())
-    {
-        writeAtomicCounterBufferDriverUniformOffsets(driverUniforms->acbBufferOffsets.data(),
-                                                     driverUniforms->acbBufferOffsets.size());
-    }
+    writeAtomicCounterBufferDriverUniformOffsets(driverUniforms->acbBufferOffsets.data(),
+                                                 driverUniforms->acbBufferOffsets.size());
 
     return updateDriverUniformsDescriptorSet(newBuffer, sizeof(GraphicsDriverUniforms),
                                              &mDriverUniforms[PipelineType::Graphics]);
@@ -3729,32 +3667,21 @@ angle::Result ContextVk::handleDirtyComputeDriverUniforms(const gl::Context *con
     ComputeDriverUniforms *driverUniforms = reinterpret_cast<ComputeDriverUniforms *>(ptr);
     *driverUniforms                       = {};
 
-    if (mState.hasValidAtomicCounterBuffer())
-    {
-        writeAtomicCounterBufferDriverUniformOffsets(driverUniforms->acbBufferOffsets.data(),
-                                                     driverUniforms->acbBufferOffsets.size());
-    }
+    writeAtomicCounterBufferDriverUniformOffsets(driverUniforms->acbBufferOffsets.data(),
+                                                 driverUniforms->acbBufferOffsets.size());
 
     return updateDriverUniformsDescriptorSet(newBuffer, sizeof(ComputeDriverUniforms),
                                              &mDriverUniforms[PipelineType::Compute]);
 }
 
-void ContextVk::handleDirtyDriverUniformsBindingImpl(vk::CommandBuffer *commandBuffer,
-                                                     VkPipelineBindPoint bindPoint,
-                                                     DriverUniformsDescriptorSet *driverUniforms)
+void ContextVk::handleDirtyDriverUniformsBindingImpl(
+    vk::CommandBuffer *commandBuffer,
+    VkPipelineBindPoint bindPoint,
+    const DriverUniformsDescriptorSet &driverUniforms)
 {
-    // The descriptor pool that this descriptor set was allocated from needs to be retained when the
-    // descriptor set is used in a new command. Since the descriptor pools are specific to each
-    // ContextVk, we only need to retain them once to ensure the reference count and Serial are
-    // updated correctly.
-    if (!driverUniforms->descriptorPoolBinding.get().usedInRecordedCommands())
-    {
-        driverUniforms->descriptorPoolBinding.get().retain(&mResourceUseList);
-    }
-
     commandBuffer->bindDescriptorSets(
-        mExecutable->getPipelineLayout(), bindPoint, DescriptorSetIndex::DriverUniforms, 1,
-        &driverUniforms->descriptorSet, 1, &driverUniforms->dynamicOffset);
+        mExecutable->getPipelineLayout(), bindPoint, kDriverUniformsDescriptorSetIndex, 1,
+        &driverUniforms.descriptorSet, 1, &driverUniforms.dynamicOffset);
 }
 
 angle::Result ContextVk::handleDirtyGraphicsDriverUniformsBinding(const gl::Context *context,
@@ -3762,7 +3689,7 @@ angle::Result ContextVk::handleDirtyGraphicsDriverUniformsBinding(const gl::Cont
 {
     // Bind the driver descriptor set.
     handleDirtyDriverUniformsBindingImpl(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS,
-                                         &mDriverUniforms[PipelineType::Graphics]);
+                                         mDriverUniforms[PipelineType::Graphics]);
     return angle::Result::Continue;
 }
 
@@ -3771,7 +3698,7 @@ angle::Result ContextVk::handleDirtyComputeDriverUniformsBinding(const gl::Conte
 {
     // Bind the driver descriptor set.
     handleDirtyDriverUniformsBindingImpl(commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE,
-                                         &mDriverUniforms[PipelineType::Compute]);
+                                         mDriverUniforms[PipelineType::Compute]);
     return angle::Result::Continue;
 }
 
@@ -3806,39 +3733,27 @@ angle::Result ContextVk::updateDriverUniformsDescriptorSet(
     }
 
     const vk::BufferHelper *buffer = driverUniforms->dynamicBuffer.getCurrentBuffer();
-    vk::BufferSerial bufferSerial  = buffer->getBufferSerial();
+    BufferSerial bufferSerial      = buffer->getBufferSerial();
     // Look up in the cache first
-    if (driverUniforms->descriptorSetCache.get(bufferSerial.getValue(),
-                                               &driverUniforms->descriptorSet))
+    auto iter = driverUniforms->descriptorSetCache.find(bufferSerial);
+    if (iter != driverUniforms->descriptorSetCache.end())
     {
-        // The descriptor pool that this descriptor set was allocated from needs to be retained each
-        // time the descriptor set is used in a new command.
-        driverUniforms->descriptorPoolBinding.get().retain(&mResourceUseList);
+        driverUniforms->descriptorSet = iter->second;
         return angle::Result::Continue;
     }
 
     // Allocate a new descriptor set.
-    bool isCompute            = getState().getProgramExecutable()->isCompute();
-    PipelineType pipelineType = isCompute ? PipelineType::Compute : PipelineType::Graphics;
-    bool newPoolAllocated;
-    ANGLE_TRY(mDriverUniformsDescriptorPools[pipelineType].allocateSetsAndGetInfo(
+    ANGLE_TRY(mDriverUniformsDescriptorPool.allocateSets(
         this, driverUniforms->descriptorSetLayout.get().ptr(), 1,
-        &driverUniforms->descriptorPoolBinding, &driverUniforms->descriptorSet, &newPoolAllocated));
-    mObjectPerfCounters.descriptorSetsAllocated[ToUnderlying(pipelineType)]++;
-
-    // Clear descriptor set cache. It may no longer be valid.
-    if (newPoolAllocated)
-    {
-        driverUniforms->descriptorSetCache.clear();
-    }
+        &driverUniforms->descriptorPoolBinding, &driverUniforms->descriptorSet));
 
     // Update the driver uniform descriptor set.
-    VkDescriptorBufferInfo &bufferInfo = allocDescriptorBufferInfo();
+    VkDescriptorBufferInfo &bufferInfo = allocBufferInfo();
     bufferInfo.buffer                  = buffer->getBuffer().getHandle();
     bufferInfo.offset                  = 0;
     bufferInfo.range                   = driverUniformsSize;
 
-    VkWriteDescriptorSet &writeInfo = allocWriteDescriptorSet();
+    VkWriteDescriptorSet &writeInfo = allocWriteInfo();
     writeInfo.sType                 = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
     writeInfo.dstSet                = driverUniforms->descriptorSet;
     writeInfo.dstBinding            = 0;
@@ -3850,8 +3765,7 @@ angle::Result ContextVk::updateDriverUniformsDescriptorSet(
     writeInfo.pBufferInfo           = &bufferInfo;
 
     // Add into descriptor set cache
-    driverUniforms->descriptorSetCache.insert(bufferSerial.getValue(),
-                                              driverUniforms->descriptorSet);
+    driverUniforms->descriptorSetCache.emplace(bufferSerial, driverUniforms->descriptorSet);
 
     return angle::Result::Continue;
 }
@@ -3880,14 +3794,15 @@ void ContextVk::handleError(VkResult errorCode,
 
 angle::Result ContextVk::updateActiveTextures(const gl::Context *context)
 {
-    const gl::ProgramExecutable *executable = mState.getProgramExecutable();
+    const gl::State &glState                = mState;
+    const gl::ProgramExecutable *executable = glState.getProgramExecutable();
     ASSERT(executable);
 
     uint32_t prevMaxIndex = mActiveTexturesDesc.getMaxIndex();
     memset(mActiveTextures.data(), 0, sizeof(mActiveTextures[0]) * prevMaxIndex);
     mActiveTexturesDesc.reset();
 
-    const gl::ActiveTexturesCache &textures        = mState.getActiveTexturesCache();
+    const gl::ActiveTexturesCache &textures        = glState.getActiveTexturesCache();
     const gl::ActiveTextureMask &activeTextures    = executable->getActiveSamplersMask();
     const gl::ActiveTextureTypeArray &textureTypes = executable->getActiveSamplerTypes();
 
@@ -3899,77 +3814,42 @@ angle::Result ContextVk::updateActiveTextures(const gl::Context *context)
         gl::TextureType textureType = textureTypes[textureUnit];
         ASSERT(textureType != gl::TextureType::InvalidEnum);
 
-        vk::TextureUnit &activeTexture = mActiveTextures[textureUnit];
-
         // Null textures represent incomplete textures.
         if (texture == nullptr)
         {
             ANGLE_TRY(getIncompleteTexture(context, textureType, &texture));
         }
-        else if (shouldSwitchToReadOnlyDepthFeedbackLoopMode(context, texture))
-        {
-            // The "readOnlyDepthMode" feature enables read-only depth-stencil feedback loops. We
-            // only switch to "read-only" mode when there's loop. We track the depth-stencil access
-            // mode in the RenderPass. The tracking tells us when we can retroactively go back and
-            // change the RenderPass to read-only. If there are any writes we need to break and
-            // finish the current RP before starting the read-only one.
-            ASSERT(!mState.isDepthWriteEnabled());
-
-            // Special handling for deferred clears.
-            ANGLE_TRY(mDrawFramebuffer->flushDeferredClears(this));
-
-            if (hasStartedRenderPass())
-            {
-                if (!mRenderPassCommands->isReadOnlyDepthMode())
-                {
-                    // To enter depth feedback loop, we must flush and start a new renderpass.
-                    // Otherwise it will stick with writable layout and cause validation error.
-                    ANGLE_TRY(flushCommandsAndEndRenderPass());
-                }
-                else
-                {
-                    mDrawFramebuffer->updateRenderPassReadOnlyDepthMode(this, mRenderPassCommands);
-                }
-            }
-
-            mDrawFramebuffer->setReadOnlyDepthFeedbackLoopMode(true);
-        }
 
         TextureVk *textureVk = vk::GetImpl(texture);
-        ASSERT(textureVk != nullptr);
 
-        const SamplerVk *samplerVk = sampler ? vk::GetImpl(sampler) : nullptr;
-
-        const vk::SamplerHelper &samplerHelper =
-            samplerVk ? samplerVk->getSampler() : textureVk->getSampler();
-        const gl::SamplerState &samplerState =
-            sampler ? sampler->getSamplerState() : texture->getSamplerState();
-        activeTexture.texture    = textureVk;
-        activeTexture.sampler    = &samplerHelper;
-        activeTexture.srgbDecode = samplerState.getSRGBDecode();
-
-        if (activeTexture.srgbDecode == GL_SKIP_DECODE_EXT)
+        SamplerVk *samplerVk;
+        SamplerSerial samplerSerial;
+        if (sampler == nullptr)
         {
-            // Make sure we use the MUTABLE bit for the storage. Because the "skip decode" is a
-            // Sampler state we might not have caught this setting in TextureVk::syncState.
-            ANGLE_TRY(textureVk->ensureMutable(this));
+            samplerVk     = nullptr;
+            samplerSerial = rx::kInvalidSamplerSerial;
         }
-
-        vk::ImageViewSubresourceSerial imageViewSerial =
-            textureVk->getImageViewSubresourceSerial(samplerState);
-        mActiveTexturesDesc.update(textureUnit, imageViewSerial, samplerHelper.getSamplerSerial());
+        else
+        {
+            samplerVk     = vk::GetImpl(sampler);
+            samplerSerial = samplerVk->getSerial();
+        }
 
         if (textureVk->getImage().hasImmutableSampler())
         {
             haveImmutableSampler = true;
         }
+
+        mActiveTextures[textureUnit].texture = textureVk;
+        mActiveTextures[textureUnit].sampler = samplerVk;
+        // Cache serials from sampler and texture, but re-use texture if no sampler bound
+        ASSERT(textureVk != nullptr);
+        mActiveTexturesDesc.update(textureUnit, textureVk->getSerial(), samplerSerial);
     }
 
     if (haveImmutableSampler)
     {
-        // TODO(http://anglebug.com/5033): This will recreate the descriptor pools each time, which
-        // will likely affect performance negatively.
-        ANGLE_TRY(mExecutable->createPipelineLayout(context, &mActiveTextures));
+        ANGLE_TRY(mExecutable->updatePipelineLayout(context, &mActiveTextures));
         invalidateCurrentGraphicsPipeline();
     }
 
@@ -4029,7 +3909,7 @@ angle::Result ContextVk::updateActiveImages(const gl::Context *context,
             // This is accessed by multiple shaders
             if (shaderBits.any())
             {
-                imageLayout = vk::ImageLayout::AllGraphicsShadersWrite;
+                imageLayout = vk::ImageLayout::AllGraphicsShadersReadWrite;
             }
             else
             {
@@ -4038,21 +3918,11 @@ angle::Result ContextVk::updateActiveImages(const gl::Context *context,
         }
         else
         {
-            imageLayout = vk::ImageLayout::AllGraphicsShadersWrite;
+            imageLayout = vk::ImageLayout::AllGraphicsShadersReadWrite;
         }
         VkImageAspectFlags aspectFlags = image->getAspectFlags();
 
-        uint32_t layerStart = 0;
-        uint32_t layerCount = image->getLayerCount();
-        if (imageUnit.layered)
-        {
-            layerStart = imageUnit.layered;
-            layerCount = 1;
-        }
-
-        commandBufferHelper->imageWrite(
-            &mResourceUseList, gl::LevelIndex(static_cast<uint32_t>(imageUnit.level)), layerStart,
-            layerCount, aspectFlags, imageLayout, vk::AliasingMode::Allowed, image);
+        commandBufferHelper->imageWrite(&mResourceUseList, aspectFlags, imageLayout, image);
     }
 
     return angle::Result::Continue;
@@ -4061,19 +3931,22 @@ angle::Result ContextVk::updateActiveImages(const gl::Context *context,
 bool ContextVk::hasRecordedCommands()
 {
     ASSERT(mOutsideRenderPassCommands && mRenderPassCommands);
-    return !mOutsideRenderPassCommands->empty() || mRenderPassCommands->started();
+    return !mOutsideRenderPassCommands->empty() || !mRenderPassCommands->empty() ||
+           mHasPrimaryCommands;
 }
 
 angle::Result ContextVk::flushImpl(const vk::Semaphore *signalSemaphore)
 {
-    ANGLE_TRACE_EVENT0("gpu.angle", "ContextVk::flushImpl");
+    bool hasPendingSemaphore = signalSemaphore || !mWaitSemaphores.empty();
+    if (!hasRecordedCommands() && !hasPendingSemaphore && !mGpuEventsEnabled)
+    {
+        return angle::Result::Continue;
+    }
 
-    // We must set this to zero before calling flushCommandsAndEndRenderPass to prevent it from
-    // calling back to flushImpl.
-    mDeferredFlushCount     = 0;
-    mSyncObjectPendingFlush = false;
+    ANGLE_TRACE_EVENT0("gpu.angle", "ContextVk::flush");
 
-    ANGLE_TRY(flushCommandsAndEndRenderPass());
+    ANGLE_TRY(flushOutsideRenderPassCommands());
+    ANGLE_TRY(endRenderPass());
 
     if (mIsAnyHostVisibleBufferWritten)
     {
@@ -4083,7 +3956,7 @@ angle::Result ContextVk::flushImpl(const vk::Semaphore *signalSemaphore)
         VkMemoryBarrier memoryBarrier = {};
         memoryBarrier.sType           = VK_STRUCTURE_TYPE_MEMORY_BARRIER;
         memoryBarrier.srcAccessMask   = VK_ACCESS_MEMORY_WRITE_BIT;
-        memoryBarrier.dstAccessMask   = VK_ACCESS_HOST_READ_BIT | VK_ACCESS_HOST_WRITE_BIT;
+        memoryBarrier.dstAccessMask   = VK_ACCESS_HOST_READ_BIT;
 
         mOutsideRenderPassCommands->getCommandBuffer().memoryBarrier(
             VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, VK_PIPELINE_STAGE_HOST_BIT, &memoryBarrier);
@@ -4092,7 +3965,7 @@ angle::Result ContextVk::flushImpl(const vk::Semaphore *signalSemaphore)
 
     if (mGpuEventsEnabled)
     {
-        EventName eventName = GetTraceEventName("Primary", mPerfCounters.primaryBuffers);
+        EventName eventName = GetTraceEventName("Primary", mPrimaryBufferCounter);
         ANGLE_TRY(traceGpuEvent(&mOutsideRenderPassCommands->getCommandBuffer(),
                                 TRACE_EVENT_PHASE_END, eventName));
     }
@@ -4107,23 +3980,39 @@ angle::Result ContextVk::flushImpl(const vk::Semaphore *signalSemaphore)
         driverUniform.dynamicBuffer.releaseInFlightBuffersToResourceUseList(this);
     }
     mDefaultUniformStorage.releaseInFlightBuffersToResourceUseList(this);
-    mStagingBuffer.releaseInFlightBuffersToResourceUseList(this);
+    mStagingBufferStorage.releaseInFlightBuffersToResourceUseList(this);
 
-    ANGLE_TRY(submitFrame(signalSemaphore));
+    if (mRenderer->getFeatures().enableCommandProcessingThread.enabled)
+    {
+        // Worker thread must complete adding any commands that were just flushed above to the
+        //  primary command buffer before we can End the primary command buffer below.
+        mRenderer->waitForWorkerThreadIdle();
+    }
 
-    mPerfCounters.renderPasses                           = 0;
-    mPerfCounters.writeDescriptorSets                    = 0;
-    mPerfCounters.flushedOutsideRenderPassCommandBuffers = 0;
-    mPerfCounters.resolveImageCommands                   = 0;
+    ANGLE_VK_TRY(this, mPrimaryCommands.end());
 
-    ASSERT(mWaitSemaphores.empty());
-    ASSERT(mWaitSemaphoreStageMasks.empty());
+    Serial serial = getCurrentQueueSerial();
+    mResourceUseList.releaseResourceUsesAndUpdateSerials(serial);
 
-    mPerfCounters.primaryBuffers++;
+    waitForSwapchainImageIfNecessary();
+
+    VkSubmitInfo submitInfo = {};
+    InitializeSubmitInfo(&submitInfo, mPrimaryCommands, mWaitSemaphores, mWaitSemaphoreStageMasks,
+                         signalSemaphore);
+
+    ANGLE_TRY(submitFrame(submitInfo, std::move(mPrimaryCommands)));
+
+    ANGLE_TRY(startPrimaryCommandBuffer());
+
+    mRenderPassCounter = 0;
+    mWaitSemaphores.clear();
+    mWaitSemaphoreStageMasks.clear();
+
+    mPrimaryBufferCounter++;
 
     if (mGpuEventsEnabled)
     {
-        EventName eventName = GetTraceEventName("Primary", mPerfCounters.primaryBuffers);
+        EventName eventName = GetTraceEventName("Primary", mPrimaryBufferCounter);
         ANGLE_TRY(traceGpuEvent(&mOutsideRenderPassCommands->getCommandBuffer(),
                                 TRACE_EVENT_PHASE_BEGIN, eventName));
     }
@@ -4133,19 +4022,12 @@ angle::Result ContextVk::flushImpl(const vk::Semaphore *signalSemaphore)
 
 angle::Result ContextVk::finishImpl()
 {
-    ANGLE_TRACE_EVENT0("gpu.angle", "ContextVk::finishImpl");
+    ANGLE_TRACE_EVENT0("gpu.angle", "ContextVk::finish");
 
     ANGLE_TRY(flushImpl(nullptr));
 
-    if (mRenderer->getFeatures().commandProcessor.enabled)
-    {
-        ANGLE_TRY(finishToSerial(getLastSubmittedQueueSerial()));
-    }
-    else
-    {
-        ANGLE_TRY(finishToSerial(getLastSubmittedQueueSerial()));
-        ASSERT(!mCommandQueue.hasInFlightCommands());
-    }
+    ANGLE_TRY(finishToSerial(getLastSubmittedQueueSerial()));
+    ASSERT(!mCommandQueue.hasInFlightCommands());
 
     clearAllGarbage();
 
@@ -4186,41 +4068,27 @@ bool ContextVk::isSerialInUse(Serial serial) const
 
 angle::Result ContextVk::checkCompletedCommands()
 {
-    if (mRenderer->getFeatures().commandProcessor.enabled)
-    {
-        // TODO: https://issuetracker.google.com/169788986 - would be better if we could just wait
-        // for the work we need but that requires QueryHelper to use the actual serial for the
-        // query.
-        mRenderer->checkCompletedCommands(this);
-        return angle::Result::Continue;
-    }
-
     return mCommandQueue.checkCompletedCommands(this);
 }
 
 angle::Result ContextVk::finishToSerial(Serial serial)
 {
-    if (mRenderer->getFeatures().commandProcessor.enabled)
-    {
-        mRenderer->finishToSerial(this, serial);
-        return angle::Result::Continue;
-    }
     return mCommandQueue.finishToSerial(this, serial, mRenderer->getMaxFenceWaitTimeNs());
 }
 
 angle::Result ContextVk::getCompatibleRenderPass(const vk::RenderPassDesc &desc,
                                                  vk::RenderPass **renderPassOut)
 {
-    // Note: Each context has it's own RenderPassCache so no locking needed.
-    return mRenderPassCache.getCompatibleRenderPass(this, desc, renderPassOut);
+    return mRenderPassCache.getCompatibleRenderPass(this, getCurrentQueueSerial(), desc,
+                                                    renderPassOut);
 }
 
 angle::Result ContextVk::getRenderPassWithOps(const vk::RenderPassDesc &desc,
                                               const vk::AttachmentOpsArray &ops,
                                               vk::RenderPass **renderPassOut)
 {
-    // Note: Each context has it's own RenderPassCache so no locking needed.
-    return mRenderPassCache.getRenderPassWithOps(this, desc, ops, renderPassOut);
+    return mRenderPassCache.getRenderPassWithOps(this, getCurrentQueueSerial(), desc, ops,
+                                                 renderPassOut);
 }
 
 angle::Result ContextVk::ensureSubmitFenceInitialized()
@@ -4229,13 +4097,12 @@ angle::Result ContextVk::ensureSubmitFenceInitialized()
     {
         return angle::Result::Continue;
     }
+
     return mRenderer->newSharedFence(this, &mSubmitFence);
 }
 
 angle::Result ContextVk::getNextSubmitFence(vk::Shared<vk::Fence> *sharedFenceOut)
 {
-    ASSERT(!getRenderer()->getFeatures().commandProcessor.enabled);
-
     ANGLE_TRY(ensureSubmitFenceInitialized());
 
     ASSERT(!sharedFenceOut->isReferenced());
@@ -4245,10 +4112,6 @@ angle::Result ContextVk::getNextSubmitFence(vk::Shared<vk::Fence> *sharedFenceOu
 
 vk::Shared<vk::Fence> ContextVk::getLastSubmittedFence() const
 {
-    if (mRenderer->getFeatures().commandProcessor.enabled)
-    {
-        return mRenderer->getLastSubmittedFence(this);
-    }
     return mCommandQueue.getLastSubmittedFence(this);
 }
 
@@ -4288,7 +4151,7 @@ angle::Result ContextVk::getTimestamp(uint64_t *timestampOut)
 
     ANGLE_TRY(mRenderer->getCommandBufferOneOff(this, &commandBuffer));
 
-    timestampQuery.writeTimestampToPrimary(this, &commandBuffer);
+    timestampQuery.writeTimestamp(this, &commandBuffer);
     ANGLE_VK_TRY(this, commandBuffer.end());
 
     // Create fence for the submission
@@ -4369,6 +4232,20 @@ angle::Result ContextVk::updateDefaultAttribute(size_t attribIndex)
                                              static_cast<uint32_t>(offset));
 }
 
+void ContextVk::waitForSwapchainImageIfNecessary()
+{
+    if (mCurrentWindowSurface)
+    {
+        vk::Semaphore waitSemaphore = mCurrentWindowSurface->getAcquireImageSemaphore();
+        if (waitSemaphore.valid())
+        {
+            addWaitSemaphore(waitSemaphore.getHandle(),
+                             VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT);
+            addGarbage(&waitSemaphore);
+        }
+    }
+}
+
 vk::DescriptorSetLayoutDesc ContextVk::getDriverUniformsDescriptorSetDesc(
     VkShaderStageFlags shaderStages) const
 {
@@ -4404,11 +4281,9 @@ angle::Result ContextVk::onBufferRead(VkAccessFlags readAccessType,
 {
     ASSERT(!buffer->isReleasedToExternal());
 
-    if (mRenderPassCommands->usesBufferForWrite(*buffer))
-    {
-        ANGLE_TRY(flushCommandsAndEndRenderPass());
-    }
-    else if (mOutsideRenderPassCommands->usesBufferForWrite(*buffer))
+    ANGLE_TRY(endRenderPass());
+
+    if (!buffer->canAccumulateRead(this, readAccessType))
     {
         ANGLE_TRY(flushOutsideRenderPassCommands());
     }
@@ -4424,31 +4299,16 @@ angle::Result ContextVk::onBufferWrite(VkAccessFlags writeAccessType,
 {
     ASSERT(!buffer->isReleasedToExternal());
 
-    if (mRenderPassCommands->usesBuffer(*buffer))
-    {
-        ANGLE_TRY(flushCommandsAndEndRenderPass());
-    }
-    else if (mOutsideRenderPassCommands->usesBuffer(*buffer))
+    ANGLE_TRY(endRenderPass());
+
+    if (!buffer->canAccumulateWrite(this, writeAccessType))
     {
         ANGLE_TRY(flushOutsideRenderPassCommands());
     }
 
-    mOutsideRenderPassCommands->bufferWrite(&mResourceUseList, writeAccessType, writeStage,
-                                            vk::AliasingMode::Disallowed, buffer);
+    mOutsideRenderPassCommands->bufferWrite(&mResourceUseList, writeAccessType, writeStage, buffer);
 
     return angle::Result::Continue;
-}
-
-angle::Result ContextVk::endRenderPassIfImageUsed(const vk::ImageHelper &image)
-{
-    if (mRenderPassCommands->started() && mRenderPassCommands->usesImageInRenderPass(image))
-    {
-        return flushCommandsAndEndRenderPass();
-    }
-    else
-    {
-        return angle::Result::Continue;
-    }
 }
 
 angle::Result ContextVk::onImageRead(VkImageAspectFlags aspectFlags,
@@ -4456,76 +4316,57 @@ angle::Result ContextVk::onImageRead(VkImageAspectFlags aspectFlags,
                                      vk::ImageHelper *image)
 {
     ASSERT(!image->isReleasedToExternal());
-    ASSERT(image->getImageSerial().valid());
 
-    // Note that different read methods are not compatible. A shader read uses a different layout
-    // than a transfer read. So we cannot support simultaneous read usage as easily as for Buffers.
-    // TODO: Don't close the render pass if the image was only used read-only in the render pass.
-    // http://anglebug.com/4984
-    ANGLE_TRY(endRenderPassIfImageUsed(*image));
+    ANGLE_TRY(endRenderPass());
 
-    image->recordReadBarrier(aspectFlags, imageLayout,
-                             &mOutsideRenderPassCommands->getCommandBuffer());
+    if (image->isLayoutChangeNecessary(imageLayout))
+    {
+        vk::CommandBuffer *commandBuffer;
+        ANGLE_TRY(endRenderPassAndGetCommandBuffer(&commandBuffer));
+        image->changeLayout(aspectFlags, imageLayout, commandBuffer);
+    }
     image->retain(&mResourceUseList);
-
     return angle::Result::Continue;
 }
 
-angle::Result ContextVk::onImageWrite(gl::LevelIndex levelStart,
-                                      uint32_t levelCount,
-                                      uint32_t layerStart,
-                                      uint32_t layerCount,
-                                      VkImageAspectFlags aspectFlags,
+angle::Result ContextVk::onImageWrite(VkImageAspectFlags aspectFlags,
                                       vk::ImageLayout imageLayout,
                                       vk::ImageHelper *image)
 {
     ASSERT(!image->isReleasedToExternal());
-    ASSERT(image->getImageSerial().valid());
 
-    ANGLE_TRY(endRenderPassIfImageUsed(*image));
+    ANGLE_TRY(endRenderPass());
 
-    image->recordWriteBarrier(aspectFlags, imageLayout,
-                              &mOutsideRenderPassCommands->getCommandBuffer());
+    // Barriers are always required for image writes.
+    ASSERT(image->isLayoutChangeNecessary(imageLayout));
+
+    vk::CommandBuffer *commandBuffer;
+    ANGLE_TRY(endRenderPassAndGetCommandBuffer(&commandBuffer));
+
+    image->changeLayout(aspectFlags, imageLayout, commandBuffer);
     image->retain(&mResourceUseList);
-    image->onWrite(levelStart, levelCount, layerStart, layerCount, aspectFlags);
+    image->onWrite();
 
     return angle::Result::Continue;
 }
 
-angle::Result ContextVk::onBufferReleaseToExternal(const vk::BufferHelper &buffer)
-{
-    if (mRenderPassCommands->usesBuffer(buffer))
-    {
-        ANGLE_TRY(flushCommandsAndEndRenderPass());
-    }
-    return angle::Result::Continue;
-}
-
-angle::Result ContextVk::onImageReleaseToExternal(const vk::ImageHelper &image)
-{
-    return endRenderPassIfImageUsed(image);
-}
-
-angle::Result ContextVk::beginNewRenderPass(
+angle::Result ContextVk::flushAndBeginRenderPass(
     const vk::Framebuffer &framebuffer,
     const gl::Rectangle &renderArea,
     const vk::RenderPassDesc &renderPassDesc,
     const vk::AttachmentOpsArray &renderPassAttachmentOps,
-    const vk::PackedAttachmentIndex depthStencilAttachmentIndex,
-    const vk::PackedClearValuesArray &clearValues,
+    const vk::ClearValuesArray &clearValues,
     vk::CommandBuffer **commandBufferOut)
 {
+    // Flush any outside renderPass commands first
+    ANGLE_TRY(flushOutsideRenderPassCommands());
     // Next end any currently outstanding renderPass
-    ANGLE_TRY(flushCommandsAndEndRenderPass());
+    vk::CommandBuffer *outsideRenderPassCommandBuffer;
+    ANGLE_TRY(endRenderPassAndGetCommandBuffer(&outsideRenderPassCommandBuffer));
 
     mRenderPassCommands->beginRenderPass(framebuffer, renderArea, renderPassDesc,
-                                         renderPassAttachmentOps, depthStencilAttachmentIndex,
-                                         clearValues, commandBufferOut);
-    // Restart at subpass 0.
-    mGraphicsPipelineDesc->resetSubpass(&mGraphicsPipelineTransition);
-
-    mPerfCounters.renderPasses++;
-
+                                         renderPassAttachmentOps, clearValues, commandBufferOut);
+    mRenderPassFramebuffer = framebuffer.getHandle();
     return angle::Result::Continue;
 }
 
@@ -4533,18 +4374,17 @@ angle::Result ContextVk::startRenderPass(gl::Rectangle renderArea,
                                          vk::CommandBuffer **commandBufferOut)
 {
     mGraphicsDirtyBits |= mNewGraphicsCommandBufferDirtyBits;
-
     ANGLE_TRY(mDrawFramebuffer->startNewRenderPass(this, renderArea, &mRenderPassCommandBuffer));
-
-    ANGLE_TRY(resumeOcclusionQueryIfActive());
-
-    const gl::DepthStencilState &dsState = mState.getDepthStencilState();
-    vk::ResourceAccess depthAccess       = GetDepthAccess(dsState);
-    vk::ResourceAccess stencilAccess     = GetStencilAccess(dsState);
-    mRenderPassCommands->onDepthAccess(depthAccess);
-    mRenderPassCommands->onStencilAccess(stencilAccess);
-
-    mDrawFramebuffer->updateRenderPassReadOnlyDepthMode(this, mRenderPassCommands);
+    if (mActiveQueryAnySamples)
+    {
+        mActiveQueryAnySamples->getQueryHelper()->beginOcclusionQuery(this,
+                                                                      mRenderPassCommandBuffer);
+    }
+    if (mActiveQueryAnySamplesConservative)
+    {
+        mActiveQueryAnySamplesConservative->getQueryHelper()->beginOcclusionQuery(
+            this, mRenderPassCommandBuffer);
+    }
 
     if (commandBufferOut)
     {
@@ -4554,56 +4394,26 @@ angle::Result ContextVk::startRenderPass(gl::Rectangle renderArea,
     return angle::Result::Continue;
 }
 
-void ContextVk::startNextSubpass()
+angle::Result ContextVk::endRenderPass()
 {
-    ASSERT(hasStartedRenderPass());
-
-    mRenderPassCommands->getCommandBuffer().nextSubpass(VK_SUBPASS_CONTENTS_INLINE);
-
-    // The graphics pipelines are bound to a subpass, so update the subpass as well.
-    mGraphicsPipelineDesc->nextSubpass(&mGraphicsPipelineTransition);
-}
-
-void ContextVk::restoreFinishedRenderPass(vk::Framebuffer *framebuffer)
-{
-    if (mRenderPassCommandBuffer != nullptr)
+    if (mRenderPassCommands->empty())
     {
-        // The render pass isn't finished yet, so nothing to restore.
-        return;
-    }
-
-    if (mRenderPassCommands->started() &&
-        mRenderPassCommands->getFramebufferHandle() == framebuffer->getHandle())
-    {
-        // There is already a render pass open for this framebuffer, so just restore the
-        // pointer rather than starting a whole new render pass. One possible path here
-        // is if the draw framebuffer binding has changed from FBO A -> B -> A, without
-        // any commands that started a new render pass for FBO B (such as a clear being
-        // issued that was deferred).
-        mRenderPassCommandBuffer = &mRenderPassCommands->getCommandBuffer();
-        ASSERT(hasStartedRenderPass());
-    }
-}
-
-uint32_t ContextVk::getCurrentSubpassIndex() const
-{
-    return mGraphicsPipelineDesc->getSubpass();
-}
-
-angle::Result ContextVk::flushCommandsAndEndRenderPass()
-{
-    // Ensure we flush the RenderPass *after* the prior commands.
-    ANGLE_TRY(flushOutsideRenderPassCommands());
-    ASSERT(mOutsideRenderPassCommands->empty());
-
-    if (!mRenderPassCommands->started())
-    {
-        ASSERT(!mDeferredFlushCount);
         onRenderPassFinished();
         return angle::Result::Continue;
     }
 
-    ANGLE_TRY(pauseOcclusionQueryIfActive());
+    ASSERT(mOutsideRenderPassCommands->empty());
+    if (mActiveQueryAnySamples)
+    {
+        mActiveQueryAnySamples->getQueryHelper()->endOcclusionQuery(this, mRenderPassCommandBuffer);
+        ANGLE_TRY(mActiveQueryAnySamples->stashQueryHelper(this));
+    }
+    if (mActiveQueryAnySamplesConservative)
+    {
+        mActiveQueryAnySamplesConservative->getQueryHelper()->endOcclusionQuery(
+            this, mRenderPassCommandBuffer);
+        ANGLE_TRY(mActiveQueryAnySamplesConservative->stashQueryHelper(this));
+    }
 
     mCurrentTransformFeedbackBuffers.clear();
     mCurrentIndirectBuffer = nullptr;
@@ -4625,56 +4435,45 @@ angle::Result ContextVk::flushCommandsAndEndRenderPass()
 
     if (mGpuEventsEnabled)
     {
-        EventName eventName = GetTraceEventName("RP", mPerfCounters.renderPasses);
+        mRenderPassCounter++;
+
+        EventName eventName = GetTraceEventName("RP", mRenderPassCounter);
         ANGLE_TRY(traceGpuEvent(&mOutsideRenderPassCommands->getCommandBuffer(),
                                 TRACE_EVENT_PHASE_BEGIN, eventName));
         ANGLE_TRY(flushOutsideRenderPassCommands());
     }
 
-    addOverlayUsedBuffersCount(mRenderPassCommands);
+    mRenderPassCommands->pauseTransformFeedbackIfStarted();
 
-    resumeTransformFeedbackIfStarted();
-
-    mRenderPassCommands->endRenderPass(this);
-
-    if (vk::CommandBufferHelper::kEnableCommandStreamDiagnostics)
+    if (mRenderer->getFeatures().enableCommandProcessingThread.enabled)
     {
-        mRenderPassCommands->addCommandDiagnostics(this);
-    }
-
-    vk::RenderPass *renderPass = nullptr;
-    ANGLE_TRY(getRenderPassWithOps(mRenderPassCommands->getRenderPassDesc(),
-                                   mRenderPassCommands->getAttachmentOps(), &renderPass));
-
-    if (mRenderer->getFeatures().commandProcessor.enabled)
-    {
-        mRenderPassCommands->markClosed();
-        vk::CommandProcessorTask flushToPrimary;
-        flushToPrimary.initProcessCommands(this, mRenderPassCommands, renderPass);
-        ANGLE_TRACE_EVENT0("gpu.angle", "ContextVk::flushInsideRenderPassCommands");
-        commandProcessorSyncErrorsAndQueueCommand(&flushToPrimary);
+        vk::CommandProcessorTask task = {this, &mPrimaryCommands, mRenderPassCommands};
+        queueCommandsToWorker(task);
         getNextAvailableCommandBuffer(&mRenderPassCommands, true);
     }
     else
     {
-        ANGLE_TRY(mCommandQueue.flushRenderPassCommands(this, *renderPass, mRenderPassCommands));
+        ANGLE_TRY(mRenderPassCommands->flushToPrimary(this, &mPrimaryCommands));
     }
+
+    mHasPrimaryCommands = true;
 
     if (mGpuEventsEnabled)
     {
-        EventName eventName = GetTraceEventName("RP", mPerfCounters.renderPasses);
+        EventName eventName = GetTraceEventName("RP", mRenderPassCounter);
         ANGLE_TRY(traceGpuEvent(&mOutsideRenderPassCommands->getCommandBuffer(),
                                 TRACE_EVENT_PHASE_END, eventName));
         ANGLE_TRY(flushOutsideRenderPassCommands());
     }
 
-    if (mDeferredFlushCount > 0)
-    {
-        // If we have deferred glFlush call in the middle of renderpass, flush them now.
-        ANGLE_TRY(flushImpl(nullptr));
-    }
-
     return angle::Result::Continue;
+}
+
+void ContextVk::onRenderPassImageWrite(VkImageAspectFlags aspectFlags,
+                                       vk::ImageLayout imageLayout,
+                                       vk::ImageHelper *image)
+{
+    mRenderPassCommands->imageWrite(&mResourceUseList, aspectFlags, imageLayout, image);
 }
 
 void ContextVk::getNextAvailableCommandBuffer(vk::CommandBufferHelper **commandBuffer,
@@ -4690,12 +4489,11 @@ void ContextVk::getNextAvailableCommandBuffer(vk::CommandBufferHelper **commandB
     mAvailableCommandBuffers.pop();
     lock.unlock();
     (*commandBuffer)->setHasRenderPass(hasRenderPass);
-    (*commandBuffer)->markOpen();
 }
 
 void ContextVk::recycleCommandBuffer(vk::CommandBufferHelper *commandBuffer)
 {
-    ANGLE_TRACE_EVENT0("gpu.angle", "ContextVk::recycleCommandBuffer");
+    ANGLE_TRACE_EVENT0("gpu.angle", "RendererVk::waitForWorkerThreadIdle");
     std::lock_guard<std::mutex> queueLock(mCommandBufferQueueMutex);
     ASSERT(commandBuffer->empty());
     mAvailableCommandBuffers.push(commandBuffer);
@@ -4704,13 +4502,16 @@ void ContextVk::recycleCommandBuffer(vk::CommandBufferHelper *commandBuffer)
 
 angle::Result ContextVk::syncExternalMemory()
 {
+    vk::CommandBuffer *commandBuffer;
+    ANGLE_TRY(endRenderPassAndGetCommandBuffer(&commandBuffer));
+
     VkMemoryBarrier memoryBarrier = {};
     memoryBarrier.sType           = VK_STRUCTURE_TYPE_MEMORY_BARRIER;
     memoryBarrier.srcAccessMask   = VK_ACCESS_MEMORY_WRITE_BIT;
     memoryBarrier.dstAccessMask   = VK_ACCESS_MEMORY_READ_BIT | VK_ACCESS_MEMORY_WRITE_BIT;
 
-    mOutsideRenderPassCommands->getCommandBuffer().memoryBarrier(
-        VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, &memoryBarrier);
+    commandBuffer->memoryBarrier(VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
+                                 VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, &memoryBarrier);
     return angle::Result::Continue;
 }
 
@@ -4779,32 +4580,20 @@ bool ContextVk::shouldConvertUint8VkIndexType(gl::DrawElementsType glIndexType) 
 
 angle::Result ContextVk::flushOutsideRenderPassCommands()
 {
-    if (mOutsideRenderPassCommands->empty())
+    if (!mOutsideRenderPassCommands->empty())
     {
-        return angle::Result::Continue;
+        if (mRenderer->getFeatures().enableCommandProcessingThread.enabled)
+        {
+            vk::CommandProcessorTask task = {this, &mPrimaryCommands, mOutsideRenderPassCommands};
+            queueCommandsToWorker(task);
+            getNextAvailableCommandBuffer(&mOutsideRenderPassCommands, false);
+        }
+        else
+        {
+            ANGLE_TRY(mOutsideRenderPassCommands->flushToPrimary(this, &mPrimaryCommands));
+        }
+        mHasPrimaryCommands = true;
     }
-
-    addOverlayUsedBuffersCount(mOutsideRenderPassCommands);
-
-    if (vk::CommandBufferHelper::kEnableCommandStreamDiagnostics)
-    {
-        mOutsideRenderPassCommands->addCommandDiagnostics(this);
-    }
-
-    if (mRenderer->getFeatures().commandProcessor.enabled)
-    {
-        mOutsideRenderPassCommands->markClosed();
-        vk::CommandProcessorTask flushToPrimary;
-        flushToPrimary.initProcessCommands(this, mOutsideRenderPassCommands, nullptr);
-        ANGLE_TRACE_EVENT0("gpu.angle", "ContextVk::flushOutsideRenderPassCommands");
-        commandProcessorSyncErrorsAndQueueCommand(&flushToPrimary);
-        getNextAvailableCommandBuffer(&mOutsideRenderPassCommands, false);
-    }
-    else
-    {
-        ANGLE_TRY(mCommandQueue.flushOutsideRPCommands(this, mOutsideRenderPassCommands));
-    }
-    mPerfCounters.flushedOutsideRenderPassCommandBuffers++;
     return angle::Result::Continue;
 }
 
@@ -4834,7 +4623,7 @@ void ContextVk::beginOcclusionQuery(QueryVk *queryVk)
 
 void ContextVk::endOcclusionQuery(QueryVk *queryVk)
 {
-    if (mRenderPassCommands->started() && mRenderPassCommandBuffer)
+    if (mRenderPassCommands->started())
     {
         queryVk->getQueryHelper()->endOcclusionQuery(this, mRenderPassCommandBuffer);
     }
@@ -4854,105 +4643,96 @@ void ContextVk::endOcclusionQuery(QueryVk *queryVk)
     }
 }
 
-angle::Result ContextVk::pauseOcclusionQueryIfActive()
-{
-    if (mRenderPassCommandBuffer == nullptr)
-    {
-        return angle::Result::Continue;
-    }
-
-    if (mActiveQueryAnySamples)
-    {
-        mActiveQueryAnySamples->getQueryHelper()->endOcclusionQuery(this, mRenderPassCommandBuffer);
-        ANGLE_TRY(mActiveQueryAnySamples->stashQueryHelper(this));
-    }
-    if (mActiveQueryAnySamplesConservative)
-    {
-        mActiveQueryAnySamplesConservative->getQueryHelper()->endOcclusionQuery(
-            this, mRenderPassCommandBuffer);
-        ANGLE_TRY(mActiveQueryAnySamplesConservative->stashQueryHelper(this));
-    }
-
-    return angle::Result::Continue;
-}
-
-angle::Result ContextVk::resumeOcclusionQueryIfActive()
-{
-    if (mActiveQueryAnySamples)
-    {
-        mActiveQueryAnySamples->getQueryHelper()->beginOcclusionQuery(this,
-                                                                      mRenderPassCommandBuffer);
-    }
-    if (mActiveQueryAnySamplesConservative)
-    {
-        mActiveQueryAnySamplesConservative->getQueryHelper()->beginOcclusionQuery(
-            this, mRenderPassCommandBuffer);
-    }
-
-    return angle::Result::Continue;
-}
-
 bool ContextVk::isRobustResourceInitEnabled() const
 {
     return mState.isRobustResourceInitEnabled();
 }
 
-template <typename T, const T *VkWriteDescriptorSet::*pInfo>
-void ContextVk::growDesciptorCapacity(std::vector<T> *descriptorVector, size_t newSize)
+VkDescriptorBufferInfo &ContextVk::allocBufferInfos(size_t count)
 {
-    const T *const oldInfoStart = descriptorVector->empty() ? nullptr : &(*descriptorVector)[0];
-    size_t newCapacity          = std::max(descriptorVector->capacity() << 1, newSize);
-    descriptorVector->reserve(newCapacity);
+    return allocInfos<VkDescriptorBufferInfo, &VkWriteDescriptorSet::pBufferInfo>(&mBufferInfos,
+                                                                                  count);
+}
+
+VkDescriptorImageInfo &ContextVk::allocImageInfos(size_t count)
+{
+    return allocInfos<VkDescriptorImageInfo, &VkWriteDescriptorSet::pImageInfo>(&mImageInfos,
+                                                                                count);
+}
+
+template <typename T, const T *VkWriteDescriptorSet::*pInfo>
+T &ContextVk::allocInfos(std::vector<T> *mInfos, size_t count)
+{
+    size_t oldSize = mInfos->size();
+    size_t newSize = oldSize + count;
+    if (newSize > mInfos->capacity())
+    {
+        // If we have reached capacity, grow the storage and patch the descriptor set with new
+        // buffer info pointer
+        growCapacity<T, pInfo>(mInfos, newSize);
+    }
+    mInfos->resize(newSize);
+    return (*mInfos)[oldSize];
+}
+
+template <typename T, const T *VkWriteDescriptorSet::*pInfo>
+void ContextVk::growCapacity(std::vector<T> *mInfos, size_t newSize)
+{
+    const T *const oldInfoStart = mInfos->empty() ? nullptr : &(*mInfos)[0];
+    size_t newCapacity          = std::max(mInfos->capacity() << 1, newSize);
+    mInfos->reserve(newCapacity);
 
     if (oldInfoStart)
     {
         // patch mWriteInfo with new BufferInfo/ImageInfo pointers
-        for (VkWriteDescriptorSet &set : mWriteDescriptorSets)
+        for (VkWriteDescriptorSet &set : mWriteInfos)
         {
             if (set.*pInfo)
             {
                 size_t index = set.*pInfo - oldInfoStart;
-                set.*pInfo   = &(*descriptorVector)[index];
+                set.*pInfo   = &(*mInfos)[index];
             }
         }
     }
 }
 
-template <typename T, const T *VkWriteDescriptorSet::*pInfo>
-T *ContextVk::allocDescriptorInfos(std::vector<T> *descriptorVector, size_t count)
+// ScopedDescriptorSetUpdates
+ANGLE_INLINE ContextVk::ScopedDescriptorSetUpdates::ScopedDescriptorSetUpdates(ContextVk *contextVk)
+    : mContextVk(contextVk)
+{}
+
+ANGLE_INLINE ContextVk::ScopedDescriptorSetUpdates::~ScopedDescriptorSetUpdates()
 {
-    size_t oldSize = descriptorVector->size();
-    size_t newSize = oldSize + count;
-    if (newSize > descriptorVector->capacity())
+    if (mContextVk->mWriteInfos.empty())
     {
-        // If we have reached capacity, grow the storage and patch the descriptor set with new
-        // buffer info pointer
-        growDesciptorCapacity<T, pInfo>(descriptorVector, newSize);
+        ASSERT(mContextVk->mBufferInfos.empty());
+        ASSERT(mContextVk->mImageInfos.empty());
+        return;
     }
-    descriptorVector->resize(newSize);
-    return &(*descriptorVector)[oldSize];
+
+    vkUpdateDescriptorSets(mContextVk->getDevice(),
+                           static_cast<uint32_t>(mContextVk->mWriteInfos.size()),
+                           mContextVk->mWriteInfos.data(), 0, nullptr);
+    mContextVk->mWriteInfos.clear();
+    mContextVk->mBufferInfos.clear();
+    mContextVk->mImageInfos.clear();
 }
 
-VkDescriptorBufferInfo *ContextVk::allocDescriptorBufferInfos(size_t count)
+BufferSerial ContextVk::generateBufferSerial()
 {
-    return allocDescriptorInfos<VkDescriptorBufferInfo, &VkWriteDescriptorSet::pBufferInfo>(
-        &mDescriptorBufferInfos, count);
+    return mShareGroupVk->generateBufferSerial();
 }
-
-VkDescriptorImageInfo *ContextVk::allocDescriptorImageInfos(size_t count)
+TextureSerial ContextVk::generateTextureSerial()
 {
-    return allocDescriptorInfos<VkDescriptorImageInfo, &VkWriteDescriptorSet::pImageInfo>(
-        &mDescriptorImageInfos, count);
+    return mShareGroupVk->generateTextureSerial();
 }
-
-VkWriteDescriptorSet *ContextVk::allocWriteDescriptorSets(size_t count)
+SamplerSerial ContextVk::generateSamplerSerial()
 {
-    mPerfCounters.writeDescriptorSets += count;
-
-    size_t oldSize = mWriteDescriptorSets.size();
-    size_t newSize = oldSize + count;
-    mWriteDescriptorSets.resize(newSize);
-    return &mWriteDescriptorSets[oldSize];
+    return mShareGroupVk->generateSamplerSerial();
+}
+ImageViewSerial ContextVk::generateAttachmentImageViewSerial()
+{
+    return mShareGroupVk->generateImageViewSerial();
 }
 
 void ContextVk::setDefaultUniformBlocksMinSizeForTesting(size_t minSize)
@@ -4960,80 +4740,4 @@ void ContextVk::setDefaultUniformBlocksMinSizeForTesting(size_t minSize)
     mDefaultUniformStorage.setMinimumSizeForTesting(minSize);
 }
 
-void ContextVk::invalidateGraphicsPipelineAndDescriptorSets()
-{
-    mGraphicsDirtyBits.set(DIRTY_BIT_PIPELINE);
-    mGraphicsDirtyBits.set(DIRTY_BIT_DESCRIPTOR_SETS);
-}
-
-angle::Result ContextVk::updateRenderPassDepthStencilAccess()
-{
-    if (hasStartedRenderPass() && mDrawFramebuffer->getDepthStencilRenderTarget())
-    {
-        const gl::DepthStencilState &dsState = mState.getDepthStencilState();
-        vk::ResourceAccess depthAccess       = GetDepthAccess(dsState);
-        vk::ResourceAccess stencilAccess     = GetStencilAccess(dsState);
-
-        if ((depthAccess == vk::ResourceAccess::Write ||
-             stencilAccess == vk::ResourceAccess::Write) &&
-            mDrawFramebuffer->isReadOnlyDepthFeedbackLoopMode())
-        {
-            // If we are switching out of read only mode and we are in feedback loop, we must end
-            // renderpass here. Otherwise, updating it to writeable layout will produce a writable
-            // feedback loop that is illegal in vulkan and will trigger validation errors that depth
-            // texture is using the writable layout.
-            ANGLE_TRY(flushCommandsAndEndRenderPass());
-            // Clear read-only depth feedback mode.
-            mDrawFramebuffer->setReadOnlyDepthFeedbackLoopMode(false);
-        }
-        else
-        {
-            mRenderPassCommands->onDepthAccess(depthAccess);
-            mRenderPassCommands->onStencilAccess(stencilAccess);
-
-            mDrawFramebuffer->updateRenderPassReadOnlyDepthMode(this, mRenderPassCommands);
-        }
-    }
-
-    return angle::Result::Continue;
-}
-
-bool ContextVk::shouldSwitchToReadOnlyDepthFeedbackLoopMode(const gl::Context *context,
-                                                            gl::Texture *texture) const
-{
-    const gl::ProgramExecutable *programExecutable = mState.getProgramExecutable();
-
-    // When running compute we don't have a draw FBO.
-    if (programExecutable->isCompute())
-    {
-        return false;
-    }
-
-    return texture->isDepthOrStencil() &&
-           texture->isBoundToFramebuffer(mDrawFramebuffer->getState().getFramebufferSerial()) &&
-           !mDrawFramebuffer->isReadOnlyDepthFeedbackLoopMode();
-}
-
-// Requires that trace is enabled to see the output, which is supported with is_debug=true
-void ContextVk::outputCumulativePerfCounters()
-{
-    if (!vk::kOutputCumulativePerfCounters)
-    {
-        return;
-    }
-
-    {
-        INFO() << "Context Descriptor Set Allocations: ";
-
-        for (size_t pipelineType = 0;
-             pipelineType < mObjectPerfCounters.descriptorSetsAllocated.size(); ++pipelineType)
-        {
-            uint32_t count = mObjectPerfCounters.descriptorSetsAllocated[pipelineType];
-            if (count > 0)
-            {
-                INFO() << "    PipelineType " << pipelineType << ": " << count;
-            }
-        }
-    }
-}
 }  // namespace rx

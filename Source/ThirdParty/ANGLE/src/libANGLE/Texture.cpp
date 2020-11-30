@@ -49,9 +49,9 @@ InitState DetermineInitState(const Context *context, Buffer *unpackBuffer, const
 }
 }  // namespace
 
-bool IsMipmapFiltered(GLenum minFilterMode)
+bool IsMipmapFiltered(const SamplerState &samplerState)
 {
-    switch (minFilterMode)
+    switch (samplerState.getMinFilter())
     {
         case GL_NEAREST:
         case GL_LINEAR:
@@ -65,43 +65,6 @@ bool IsMipmapFiltered(GLenum minFilterMode)
             UNREACHABLE();
             return false;
     }
-}
-
-GLenum ConvertToNearestFilterMode(GLenum filterMode)
-{
-    switch (filterMode)
-    {
-        case GL_LINEAR:
-            return GL_NEAREST;
-        case GL_LINEAR_MIPMAP_NEAREST:
-            return GL_NEAREST_MIPMAP_NEAREST;
-        case GL_LINEAR_MIPMAP_LINEAR:
-            return GL_NEAREST_MIPMAP_LINEAR;
-        default:
-            return filterMode;
-    }
-}
-
-GLenum ConvertToNearestMipFilterMode(GLenum filterMode)
-{
-    switch (filterMode)
-    {
-        case GL_LINEAR_MIPMAP_LINEAR:
-            return GL_LINEAR_MIPMAP_NEAREST;
-        case GL_NEAREST_MIPMAP_LINEAR:
-            return GL_NEAREST_MIPMAP_NEAREST;
-        default:
-            return filterMode;
-    }
-}
-
-bool IsMipmapSupported(const TextureType &type)
-{
-    if (type == TextureType::_2DMultisample || type == TextureType::Buffer)
-    {
-        return false;
-    }
-    return true;
 }
 
 SwizzleState::SwizzleState()
@@ -136,14 +99,13 @@ TextureState::TextureState(TextureType type)
       mBaseLevel(0),
       mMaxLevel(kInitialMaxLevel),
       mDepthStencilTextureMode(GL_DEPTH_COMPONENT),
-      mHasBeenBoundAsImage(false),
       mImmutableFormat(false),
       mImmutableLevels(0),
       mUsage(GL_NONE),
       mImageDescs((IMPLEMENTATION_MAX_TEXTURE_LEVELS + 1) * (type == TextureType::CubeMap ? 6 : 1)),
       mCropRect(0, 0, 0, 0),
       mGenerateMipmapHint(GL_FALSE),
-      mInitState(InitState::Initialized),
+      mInitState(InitState::MayNeedInit),
       mCachedSamplerFormat(SamplerFormat::InvalidEnum),
       mCachedSamplerCompareMode(GL_NONE),
       mCachedSamplerFormatValid(false)
@@ -309,12 +271,6 @@ SamplerFormat TextureState::computeRequiredSamplerFormat(const SamplerState &sam
 bool TextureState::computeSamplerCompleteness(const SamplerState &samplerState,
                                               const State &state) const
 {
-    // Buffer textures cannot be incomplete.
-    if (mType == TextureType::Buffer)
-    {
-        return true;
-    }
-
     if (mBaseLevel > mMaxLevel)
     {
         return false;
@@ -358,7 +314,7 @@ bool TextureState::computeSamplerCompleteness(const SamplerState &samplerState,
         }
     }
 
-    if (IsMipmapSupported(mType) && IsMipmapFiltered(samplerState.getMinFilter()))
+    if (mType != TextureType::_2DMultisample && IsMipmapFiltered(samplerState))
     {
         if (!npotSupport)
         {
@@ -569,7 +525,7 @@ GLuint TextureState::getEnabledLevelCount() const
 }
 
 ImageDesc::ImageDesc()
-    : ImageDesc(Extents(0, 0, 0), Format::Invalid(), 0, GL_TRUE, InitState::Initialized)
+    : ImageDesc(Extents(0, 0, 0), Format::Invalid(), 0, GL_TRUE, InitState::MayNeedInit)
 {}
 
 ImageDesc::ImageDesc(const Extents &size, const Format &format, const InitState initState)
@@ -615,27 +571,6 @@ void TextureState::setImageDesc(TextureTarget target, size_t level, const ImageD
     if (desc.initState == InitState::MayNeedInit)
     {
         mInitState = InitState::MayNeedInit;
-    }
-    else
-    {
-        // Scan for any uninitialized images. If there are none, set the init state of the entire
-        // texture to initialized. The cost of the scan is only paid after doing image
-        // initialization which is already very expensive.
-        bool allImagesInitialized = true;
-
-        for (const ImageDesc &desc : mImageDescs)
-        {
-            if (desc.initState == InitState::MayNeedInit)
-            {
-                allImagesInitialized = false;
-                break;
-            }
-        }
-
-        if (allImagesInitialized)
-        {
-            mInitState = InitState::Initialized;
-        }
     }
 }
 
@@ -737,8 +672,6 @@ void Texture::onDestroy(const Context *context)
     }
 
     (void)(orphanImages(context));
-
-    mState.mBuffer.set(context, nullptr, 0, 0);
 
     if (mTexture)
     {
@@ -930,7 +863,8 @@ GLenum Texture::getSRGBDecode() const
 void Texture::setSRGBOverride(const Context *context, GLenum sRGBOverride)
 {
     SrgbOverride oldOverride = mState.mSrgbOverride;
-    mState.mSrgbOverride = (sRGBOverride == GL_SRGB) ? SrgbOverride::SRGB : SrgbOverride::Default;
+    mState.mSrgbOverride =
+        (sRGBOverride == GL_SRGB) ? SrgbOverride::Enabled : SrgbOverride::Default;
     if (mState.mSrgbOverride != oldOverride)
     {
         signalDirtyState(DIRTY_BIT_SRGB_OVERRIDE);
@@ -939,7 +873,7 @@ void Texture::setSRGBOverride(const Context *context, GLenum sRGBOverride)
 
 GLenum Texture::getSRGBOverride() const
 {
-    return (mState.mSrgbOverride == SrgbOverride::SRGB) ? GL_SRGB : GL_NONE;
+    return (mState.mSrgbOverride == SrgbOverride::Enabled) ? GL_SRGB : GL_NONE;
 }
 
 const SamplerState &Texture::getSamplerState() const
@@ -1253,17 +1187,9 @@ angle::Result Texture::copyImage(Context *context,
     // the copy lies entirely off the source framebuffer, initialize as though a zero-size box is
     // going to be set during the copy operation.
     Box destBox;
-    bool forceCopySubImage = false;
     if (context->isRobustResourceInitEnabled())
     {
-        const FramebufferAttachment *sourceReadAttachment = source->getReadColorAttachment();
-        Extents fbSize                                    = sourceReadAttachment->getSize();
-        // Force using copySubImage when the source area is out of bounds AND
-        // we're not copying to and from the same texture
-        forceCopySubImage = ((sourceArea.x < 0) || (sourceArea.y < 0) ||
-                             ((sourceArea.x + sourceArea.width) > fbSize.width) ||
-                             ((sourceArea.y + sourceArea.height) > fbSize.height)) &&
-                            (sourceReadAttachment->getResource() != this);
+        Extents fbSize = source->getReadColorAttachment()->getSize();
         Rectangle clippedArea;
         if (ClipRectangle(sourceArea, Rectangle(0, 0, fbSize.width, fbSize.height), &clippedArea))
         {
@@ -1278,7 +1204,7 @@ angle::Result Texture::copyImage(Context *context,
     // an initializeContents call, and then a copySubImage call. This ensures the destination
     // texture exists before we try to clear it.
     Extents size(sourceArea.width, sourceArea.height, 1);
-    if (forceCopySubImage || doesSubImageNeedInit(context, index, destBox))
+    if (doesSubImageNeedInit(context, index, destBox))
     {
         ANGLE_TRY(mTexture->setImage(context, index, internalFormat, size,
                                      internalFormatInfo.format, internalFormatInfo.type,
@@ -1339,52 +1265,6 @@ angle::Result Texture::copySubImage(Context *context,
     ANGLE_TRY(handleMipmapGenerationHint(context, index.getLevelIndex()));
 
     onStateChange(angle::SubjectMessage::ContentsChanged);
-
-    return angle::Result::Continue;
-}
-
-angle::Result Texture::copyRenderbufferSubData(Context *context,
-                                               const gl::Renderbuffer *srcBuffer,
-                                               GLint srcLevel,
-                                               GLint srcX,
-                                               GLint srcY,
-                                               GLint srcZ,
-                                               GLint dstLevel,
-                                               GLint dstX,
-                                               GLint dstY,
-                                               GLint dstZ,
-                                               GLsizei srcWidth,
-                                               GLsizei srcHeight,
-                                               GLsizei srcDepth)
-{
-    ANGLE_TRY(mTexture->copyRenderbufferSubData(context, srcBuffer, srcLevel, srcX, srcY, srcZ,
-                                                dstLevel, dstX, dstY, dstZ, srcWidth, srcHeight,
-                                                srcDepth));
-
-    signalDirtyStorage(InitState::Initialized);
-
-    return angle::Result::Continue;
-}
-
-angle::Result Texture::copyTextureSubData(Context *context,
-                                          const gl::Texture *srcTexture,
-                                          GLint srcLevel,
-                                          GLint srcX,
-                                          GLint srcY,
-                                          GLint srcZ,
-                                          GLint dstLevel,
-                                          GLint dstX,
-                                          GLint dstY,
-                                          GLint dstZ,
-                                          GLsizei srcWidth,
-                                          GLsizei srcHeight,
-                                          GLsizei srcDepth)
-{
-    ANGLE_TRY(mTexture->copyTextureSubData(context, srcTexture, srcLevel, srcX, srcY, srcZ,
-                                           dstLevel, dstX, dstY, dstZ, srcWidth, srcHeight,
-                                           srcDepth));
-
-    signalDirtyStorage(InitState::Initialized);
 
     return angle::Result::Continue;
 }
@@ -1572,9 +1452,7 @@ angle::Result Texture::setStorageExternalMemory(Context *context,
                                                 GLenum internalFormat,
                                                 const Extents &size,
                                                 MemoryObject *memoryObject,
-                                                GLuint64 offset,
-                                                GLbitfield createFlags,
-                                                GLbitfield usageFlags)
+                                                GLuint64 offset)
 {
     ASSERT(type == mState.mType);
 
@@ -1583,7 +1461,7 @@ angle::Result Texture::setStorageExternalMemory(Context *context,
     ANGLE_TRY(orphanImages(context));
 
     ANGLE_TRY(mTexture->setStorageExternalMemory(context, type, levels, internalFormat, size,
-                                                 memoryObject, offset, createFlags, usageFlags));
+                                                 memoryObject, offset));
 
     mState.mImmutableFormat = true;
     mState.mImmutableLevels = static_cast<GLuint>(levels);
@@ -1623,7 +1501,7 @@ angle::Result Texture::generateMipmap(Context *context)
         return angle::Result::Continue;
     }
 
-    ANGLE_TRY(syncState(context, Command::GenerateMipmap));
+    ANGLE_TRY(syncState(context, TextureCommand::GenerateMipmap));
 
     // Clear the base image(s) immediately if needed
     if (context->isRobustResourceInitEnabled())
@@ -1894,48 +1772,13 @@ GLenum Texture::getGenerateMipmapHint() const
     return mState.getGenerateMipmapHint();
 }
 
-angle::Result Texture::setBuffer(const gl::Context *context,
-                                 gl::Buffer *buffer,
-                                 GLenum internalFormat,
-                                 GLintptr offset,
-                                 GLsizeiptr size)
-{
-    mState.mImmutableFormat = true;
-    mState.mBuffer.set(context, buffer, offset, size);
-    ANGLE_TRY(mTexture->setBuffer(context, internalFormat));
-
-    mState.mImmutableLevels = static_cast<GLuint>(1);
-    mState.clearImageDescs();
-    InternalFormat internalFormatInfo = GetSizedInternalFormatInfo(internalFormat);
-    Format format(internalFormat);
-    Extents extents(static_cast<GLuint>(size / internalFormatInfo.pixelBytes), 1, 1);
-    mState.setImageDesc(TextureTarget::Buffer, 0,
-                        ImageDesc(extents, format, InitState::MayNeedInit));
-
-    signalDirtyStorage(InitState::MayNeedInit);
-
-    return angle::Result::Continue;
-}
-
-const OffsetBindingPointer<Buffer> &Texture::getBuffer() const
-{
-    return mState.mBuffer;
-}
-
-void Texture::onAttach(const Context *context, rx::Serial framebufferSerial)
+void Texture::onAttach(const Context *context)
 {
     addRef();
-
-    // Duplicates allowed for multiple attachment points. See the comment in the header.
-    mBoundFramebufferSerials.push_back(framebufferSerial);
 }
 
-void Texture::onDetach(const Context *context, rx::Serial framebufferSerial)
+void Texture::onDetach(const Context *context)
 {
-    // Erase first instance. If there are multiple bindings, leave the others.
-    ASSERT(isBoundToFramebuffer(framebufferSerial));
-    mBoundFramebufferSerials.remove_and_permute(framebufferSerial);
-
     release(context);
 }
 
@@ -1949,9 +1792,9 @@ GLuint Texture::getNativeID() const
     return mTexture->getNativeID();
 }
 
-angle::Result Texture::syncState(const Context *context, Command source)
+angle::Result Texture::syncState(const Context *context, TextureCommand source)
 {
-    ASSERT(hasAnyDirtyBit() || source == Command::GenerateMipmap);
+    ASSERT(hasAnyDirtyBit() || source == TextureCommand::GenerateMipmap);
     ANGLE_TRY(mTexture->syncState(context, mDirtyBits, source));
     mDirtyBits.reset();
     return angle::Result::Continue;
@@ -1981,12 +1824,12 @@ bool Texture::isSamplerComplete(const Context *context, const Sampler *optionalS
 }
 
 Texture::SamplerCompletenessCache::SamplerCompletenessCache()
-    : context({0}), samplerState(), samplerComplete(false)
+    : context(0), samplerState(), samplerComplete(false)
 {}
 
 void Texture::invalidateCompletenessCache() const
 {
-    mCompletenessCache.context = {0};
+    mCompletenessCache.context = 0;
 }
 
 angle::Result Texture::ensureInitialized(const Context *context)
@@ -2061,19 +1904,6 @@ void Texture::setInitState(const ImageIndex &imageIndex, InitState initState)
         newDesc.initState = initState;
         mState.setImageDesc(imageIndex.getTarget(), imageIndex.getLevelIndex(), newDesc);
     }
-}
-
-void Texture::setInitState(InitState initState)
-{
-    for (ImageDesc &imageDesc : mState.mImageDescs)
-    {
-        // Only modifiy defined images, undefined images will remain in the initialized state
-        if (!imageDesc.size.empty())
-        {
-            imageDesc.initState = initState;
-        }
-    }
-    mState.mInitState = initState;
 }
 
 bool Texture::doesSubImageNeedInit(const Context *context,
@@ -2178,19 +2008,22 @@ angle::Result Texture::getTexImage(const Context *context,
 {
     if (hasAnyDirtyBit())
     {
-        ANGLE_TRY(syncState(context, Command::Other));
+        ANGLE_TRY(syncState(context, TextureCommand::Other));
     }
 
     return mTexture->getTexImage(context, packState, packBuffer, target, level, format, type,
                                  pixels);
 }
 
-void Texture::onBindAsImageTexture()
+void Texture::onBindAsImageTexture(ContextID contextID)
 {
-    if (!mState.mHasBeenBoundAsImage)
+    ContextBindingCount &bindingCount = mState.getBindingCount(contextID);
+
+    ASSERT(bindingCount.imageBindingCount < std::numeric_limits<uint32_t>::max());
+    mState.getBindingCount(contextID).imageBindingCount++;
+    if (bindingCount.imageBindingCount == 1)
     {
         mDirtyBits.set(DIRTY_BIT_BOUND_AS_IMAGE);
-        mState.mHasBeenBoundAsImage = true;
     }
 }
 

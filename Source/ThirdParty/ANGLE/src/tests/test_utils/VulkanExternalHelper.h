@@ -30,12 +30,8 @@ class VulkanExternalHelper
     bool canCreateImageExternal(VkFormat format,
                                 VkImageType type,
                                 VkImageTiling tiling,
-                                VkImageCreateFlags createFlags,
-                                VkImageUsageFlags usageFlags,
                                 VkExternalMemoryHandleTypeFlagBits handleType) const;
     VkResult createImage2DExternal(VkFormat format,
-                                   VkImageCreateFlags createFlags,
-                                   VkImageUsageFlags usageFlags,
                                    VkExtent3D extent,
                                    VkExternalMemoryHandleTypeFlags handleTypes,
                                    VkImage *imageOut,
@@ -43,14 +39,8 @@ class VulkanExternalHelper
                                    VkDeviceSize *deviceMemorySizeOut);
 
     // VK_KHR_external_memory_fd
-    bool canCreateImageOpaqueFd(VkFormat format,
-                                VkImageType type,
-                                VkImageTiling tiling,
-                                VkImageCreateFlags createFlags,
-                                VkImageUsageFlags usageFlags) const;
+    bool canCreateImageOpaqueFd(VkFormat format, VkImageType type, VkImageTiling tiling) const;
     VkResult createImage2DOpaqueFd(VkFormat format,
-                                   VkImageCreateFlags createFlags,
-                                   VkImageUsageFlags usageFlags,
                                    VkExtent3D extent,
                                    VkImage *imageOut,
                                    VkDeviceMemory *deviceMemoryOut,
@@ -58,14 +48,8 @@ class VulkanExternalHelper
     VkResult exportMemoryOpaqueFd(VkDeviceMemory deviceMemory, int *fd);
 
     // VK_FUCHSIA_external_memory
-    bool canCreateImageZirconVmo(VkFormat format,
-                                 VkImageType type,
-                                 VkImageTiling tiling,
-                                 VkImageCreateFlags createFlags,
-                                 VkImageUsageFlags usageFlags) const;
+    bool canCreateImageZirconVmo(VkFormat format, VkImageType type, VkImageTiling tiling) const;
     VkResult createImage2DZirconVmo(VkFormat format,
-                                    VkImageCreateFlags createFlags,
-                                    VkImageUsageFlags usageFlags,
                                     VkExtent3D extent,
                                     VkImage *imageOut,
                                     VkDeviceMemory *deviceMemoryOut,
