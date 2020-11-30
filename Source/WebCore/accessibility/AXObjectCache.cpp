@@ -790,7 +790,7 @@ RefPtr<AXIsolatedTree> AXObjectCache::getOrCreateIsolatedTree() const
     auto tree = AXIsolatedTree::treeForPageID(*m_pageID);
     if (!tree) {
         tree = Accessibility::retrieveValueFromMainThread<RefPtr<AXIsolatedTree>>([this] () -> RefPtr<AXIsolatedTree> {
-            return generateIsolatedTree(*m_pageID, m_document);
+            return AXIsolatedTree::create(const_cast<AXObjectCache*>(this));
         });
         AXObjectCache::initializeSecondaryAXThread();
     }
@@ -3162,31 +3162,6 @@ void AXObjectCache::performDeferredCacheUpdate()
 }
     
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-Ref<AXIsolatedTree> AXObjectCache::generateIsolatedTree(PageIdentifier pageID, Document& document)
-{
-    AXTRACE("AXObjectCache::generateIsolatedTree");
-    RELEASE_ASSERT(isMainThread());
-
-    RefPtr<AXIsolatedTree> tree(AXIsolatedTree::createTreeForPageID(pageID));
-
-    // Set the root and focused objects in the isolated tree. For that, we need
-    // the root and the focused object in the AXObject tree.
-    auto* axObjectCache = document.axObjectCache();
-    if (!axObjectCache)
-        return makeRef(*tree);
-    tree->setAXObjectCache(axObjectCache);
-
-    auto* axRoot = axObjectCache->getOrCreate(document.view());
-    if (axRoot)
-        tree->generateSubtree(*axRoot, nullptr, true);
-
-    auto* axFocus = axObjectCache->focusedObjectForPage(document.page());
-    if (axFocus)
-        tree->setFocusedNodeID(axFocus->objectID());
-
-    return makeRef(*tree);
-}
-
 void AXObjectCache::updateIsolatedTree(AXCoreObject& object, AXNotification notification)
 {
     AXTRACE("AXObjectCache::updateIsolatedTree");

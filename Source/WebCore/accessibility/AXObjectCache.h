@@ -352,6 +352,7 @@ public:
     AXComputedObjectAttributeCache* computedObjectAttributeCache() { return m_computedObjectAttributeCache.get(); }
 
     Document& document() const { return m_document; }
+    Optional<PageIdentifier> pageID() const { return m_pageID; }
 
 #if PLATFORM(MAC)
     static void setShouldRepostNotificationsForTests(bool value);
@@ -372,7 +373,6 @@ private:
     AXCoreObject* isolatedTreeRootObject();
     AXCoreObject* isolatedTreeFocusedObject();
     void setIsolatedTreeFocusedObject(Node*);
-    static Ref<AXIsolatedTree> generateIsolatedTree(PageIdentifier, Document&);
     RefPtr<AXIsolatedTree> getOrCreateIsolatedTree() const;
     void updateIsolatedTree(AXCoreObject&, AXNotification);
     void updateIsolatedTree(AXCoreObject*, AXNotification);
@@ -432,7 +432,6 @@ protected:
 
 private:
     AccessibilityObject* rootWebArea();
-
     static AccessibilityObject* focusedImageMapUIElement(HTMLAreaElement*);
 
     AXID getAXID(AccessibilityObject*);

@@ -47,7 +47,7 @@ class AXIsolatedTree;
 class AXIsolatedObject final : public AXCoreObject {
     friend class AXIsolatedTree;
 public:
-    static Ref<AXIsolatedObject> create(AXCoreObject&, AXIsolatedTreeID, AXID parentID);
+    static Ref<AXIsolatedObject> create(AXCoreObject&, AXIsolatedTree*, AXID parentID);
     ~AXIsolatedObject();
 
     void setObjectID(AXID id) override { m_id = id; }
@@ -58,14 +58,6 @@ public:
     bool isDetached() const override;
 
     void setParent(AXID);
-    void setChildrenIDs(Vector<AXID>&& childrenIDs)
-    {
-        // FIXME: The following ASSERT should be met but it is commented out at the
-        // moment because of <rdar://problem/63985646> After calling _AXUIElementUseSecondaryAXThread(true),
-        // still receives client request on main thread.
-        // ASSERT(axObjectCache()->canUseSecondaryAXThread() ? !isMainThread() : isMainThread());
-        m_childrenIDs = childrenIDs;
-    }
 
 private:
     void detachRemoteParts(AccessibilityDetachmentType) override;
@@ -73,19 +65,14 @@ private:
 
     AXID parent() const { return m_parentID; }
 
-    AXIsolatedTreeID treeIdentifier() const { return m_treeID; }
     AXIsolatedTree* tree() const { return m_cachedTree.get(); }
 
     AXIsolatedObject() = default;
-    AXIsolatedObject(AXCoreObject&, AXIsolatedTreeID, AXID parentID);
+    AXIsolatedObject(AXCoreObject&, AXIsolatedTree*, AXID parentID);
     bool isAXIsolatedObjectInstance() const override { return true; }
     void initializeAttributeData(AXCoreObject&, bool isRoot);
     void initializePlatformProperties(const AXCoreObject&);
-    AXCoreObject* associatedAXObject() const
-    {
-        ASSERT(isMainThread());
-        return m_id != InvalidAXID ? axObjectCache()->objectFromAXID(m_id) : nullptr;
-    }
+    AXCoreObject* associatedAXObject() const;
 
     void setProperty(AXPropertyName, AXPropertyValueVariant&&, bool shouldRemove = false);
     void setObjectProperty(AXPropertyName, AXCoreObject*);
@@ -650,7 +637,6 @@ private:
     String innerHTML() const override;
     String outerHTML() const override;
 
-    AXIsolatedTreeID m_treeID;
     RefPtr<AXIsolatedTree> m_cachedTree;
     AXID m_parentID { InvalidAXID };
     AXID m_id { InvalidAXID };

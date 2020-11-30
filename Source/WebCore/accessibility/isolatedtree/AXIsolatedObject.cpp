@@ -36,14 +36,12 @@
 
 namespace WebCore {
 
-AXIsolatedObject::AXIsolatedObject(AXCoreObject& object, AXIsolatedTreeID treeID, AXID parentID)
-    : m_treeID(treeID)
+AXIsolatedObject::AXIsolatedObject(AXCoreObject& object, AXIsolatedTree* tree, AXID parentID)
+    : m_cachedTree(tree)
     , m_parentID(parentID)
     , m_id(object.objectID())
 {
     ASSERT(isMainThread());
-    if (auto tree = AXIsolatedTree::treeForID(m_treeID))
-        m_cachedTree = tree;
     if (m_id != InvalidAXID)
         initializeAttributeData(object, parentID == InvalidAXID);
     else {
@@ -52,9 +50,9 @@ AXIsolatedObject::AXIsolatedObject(AXCoreObject& object, AXIsolatedTreeID treeID
     }
 }
 
-Ref<AXIsolatedObject> AXIsolatedObject::create(AXCoreObject& object, AXIsolatedTreeID treeID, AXID parentID)
+Ref<AXIsolatedObject> AXIsolatedObject::create(AXCoreObject& object, AXIsolatedTree* tree, AXID parentID)
 {
-    return adoptRef(*new AXIsolatedObject(object, treeID, parentID));
+    return adoptRef(*new AXIsolatedObject(object, tree, parentID));
 }
 
 AXIsolatedObject::~AXIsolatedObject()
@@ -405,6 +403,14 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& object, bool isRoot
     initializePlatformProperties(object);
 }
 
+AXCoreObject* AXIsolatedObject::associatedAXObject() const
+{
+    ASSERT(isMainThread());
+
+    auto* axObjectCache = this->axObjectCache();
+    return axObjectCache && m_id != InvalidAXID ? axObjectCache->objectFromAXID(m_id) : nullptr;
+}
+
 void AXIsolatedObject::setMathscripts(AXPropertyName propertyName, AXCoreObject& object)
 {
     AccessibilityMathMultiscriptPairs pairs;
@@ -511,10 +517,12 @@ void AXIsolatedObject::setSelectedChildren(const AccessibilityChildrenVector& se
             return;
         }
 
-        ASSERT(axObjectCache());
+        auto* axObjectCache = this->axObjectCache();
+        if (!axObjectCache)
+            return;
 
         auto axIDs = tree()->idsForObjects(selectedChildren);
-        auto axSelectedChildren = axObjectCache()->objectsForIDs(axIDs);
+        auto axSelectedChildren = axObjectCache->objectsForIDs(axIDs);
         object->setSelectedChildren(axSelectedChildren);
     });
 }

@@ -55,10 +55,13 @@ HashMap<AXIsolatedTreeID, Ref<AXIsolatedTree>>& AXIsolatedTree::treeIDCache()
     return map;
 }
 
-AXIsolatedTree::AXIsolatedTree()
+AXIsolatedTree::AXIsolatedTree(AXObjectCache* axObjectCache)
     : m_treeID(newTreeID())
+    , m_axObjectCache(axObjectCache)
+    , m_usedOnAXThread(axObjectCache->canUseSecondaryAXThread())
 {
     AXTRACE("AXIsolatedTree::AXIsolatedTree");
+    ASSERT(isMainThread());
 }
 
 AXIsolatedTree::~AXIsolatedTree()
@@ -70,19 +73,12 @@ void AXIsolatedTree::clear()
 {
     AXTRACE("AXIsolatedTree::clear");
     ASSERT(isMainThread());
+    m_axObjectCache = nullptr;
 
     LockHolder locker { m_changeLogLock };
     m_pendingSubtreeRemovals.append(m_rootNode->objectID());
     m_rootNode = nullptr;
     m_nodeMap.clear();
-    m_axObjectCache = nullptr;
-}
-
-Ref<AXIsolatedTree> AXIsolatedTree::create()
-{
-    AXTRACE("AXIsolatedTree::create");
-    ASSERT(isMainThread());
-    return adoptRef(*new AXIsolatedTree());
 }
 
 RefPtr<AXIsolatedTree> AXIsolatedTree::treeForID(AXIsolatedTreeID treeID)
@@ -91,16 +87,32 @@ RefPtr<AXIsolatedTree> AXIsolatedTree::treeForID(AXIsolatedTreeID treeID)
     return treeIDCache().get(treeID);
 }
 
-Ref<AXIsolatedTree> AXIsolatedTree::createTreeForPageID(PageIdentifier pageID)
+Ref<AXIsolatedTree> AXIsolatedTree::create(AXObjectCache* axObjectCache)
 {
-    AXTRACE("AXIsolatedTree::createTreeForPageID");
-    LockHolder locker(s_cacheLock);
-    ASSERT(!treePageCache().contains(pageID));
+    AXTRACE("AXIsolatedTree::create");
+    ASSERT(isMainThread());
+    ASSERT(axObjectCache && axObjectCache->pageID());
 
-    auto newTree = AXIsolatedTree::create();
-    treePageCache().set(pageID, newTree.copyRef());
-    treeIDCache().set(newTree->treeID(), newTree.copyRef());
-    return newTree;
+    auto tree = adoptRef(*new AXIsolatedTree(axObjectCache));
+
+    // Generate the nodes of the tree and set its root and focused objects.
+    // For this, we need the root and focused objects of the AXObject tree.
+    auto* axRoot = axObjectCache->getOrCreate(axObjectCache->document().view());
+    if (axRoot)
+        tree->generateSubtree(*axRoot, nullptr, true);
+    auto* axFocus = axObjectCache->focusedObjectForPage(axObjectCache->document().page());
+    if (axFocus)
+        tree->setFocusedNodeID(axFocus->objectID());
+
+    // Now that the tree is ready to take client requests, add it to the tree
+    // maps so that it can be found.
+    auto pageID = axObjectCache->pageID();
+    LockHolder locker(s_cacheLock);
+    ASSERT(!treePageCache().contains(*pageID));
+    treePageCache().set(*pageID, tree.copyRef());
+    treeIDCache().set(tree->treeID(), tree.copyRef());
+
+    return tree;
 }
 
 void AXIsolatedTree::removeTreeForPageID(PageIdentifier pageID)
@@ -128,7 +140,7 @@ RefPtr<AXIsolatedTree> AXIsolatedTree::treeForPageID(PageIdentifier pageID)
 RefPtr<AXIsolatedObject> AXIsolatedTree::nodeForID(AXID axID) const
 {
     // In isolated tree mode 2, only access m_readerThreadNodeMap on the AX thread.
-    if (axObjectCache()->canUseSecondaryAXThread() && isMainThread())
+    if (m_usedOnAXThread && isMainThread())
         return nullptr;
 
     return axID != InvalidAXID ? m_readerThreadNodeMap.get(axID) : nullptr;
@@ -187,7 +199,7 @@ Ref<AXIsolatedObject> AXIsolatedTree::createSubtree(AXCoreObject& axObject, AXID
     AXTRACE("AXIsolatedTree::createSubtree");
     ASSERT(isMainThread());
 
-    auto object = AXIsolatedObject::create(axObject, m_treeID, parentID);
+    auto object = AXIsolatedObject::create(axObject, this, parentID);
     if (object->objectID() == InvalidAXID) {
         // Either the axObject has an invalid ID or something else went terribly wrong. Don't bother doing anything else.
         ASSERT_NOT_REACHED();
@@ -229,7 +241,7 @@ void AXIsolatedTree::updateNode(AXCoreObject& axObject)
     auto* axParent = axObject.parentObject();
     AXID parentID = axParent ? axParent->objectID() : InvalidAXID;
 
-    auto newObject = AXIsolatedObject::create(axObject, m_treeID, parentID);
+    auto newObject = AXIsolatedObject::create(axObject, this, parentID);
     newObject->m_childrenIDs = axObject.childrenIDs();
 
     LockHolder locker { m_changeLogLock };
@@ -419,7 +431,7 @@ void AXIsolatedTree::applyPendingChanges()
     AXTRACE("AXIsolatedTree::applyPendingChanges");
 
     // In isolated tree mode 2, only apply pending changes on the AX thread.
-    if (axObjectCache()->canUseSecondaryAXThread() && isMainThread())
+    if (m_usedOnAXThread && isMainThread())
         return;
 
     LockHolder locker { m_changeLogLock };
@@ -487,7 +499,7 @@ void AXIsolatedTree::applyPendingChanges()
     for (auto& update : m_pendingChildrenUpdates) {
         AXLOG(makeString("updating children for axID ", update.first));
         if (auto object = nodeForID(update.first))
-            object->setChildrenIDs(WTFMove(update.second));
+            object->m_childrenIDs = WTFMove(update.second);
     }
     m_pendingChildrenUpdates.clear();
 
