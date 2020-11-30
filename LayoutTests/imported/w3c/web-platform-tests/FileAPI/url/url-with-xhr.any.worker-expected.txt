@@ -1,6 +1,6 @@
 
 PASS Blob URLs can be used in XHR
-FAIL XHR with a fragment should succeed promise_test: Unhandled rejection with value: "Got unexpected error event"
+PASS XHR with a fragment should succeed
 PASS XHR of a revoked URL should fail
 PASS Only exact matches should revoke URLs, using XHR
 PASS Appending a query string should cause XHR to fail

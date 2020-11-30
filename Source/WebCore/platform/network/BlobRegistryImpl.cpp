@@ -223,6 +223,8 @@ void BlobRegistryImpl::unregisterBlobURL(const URL& url)
 BlobData* BlobRegistryImpl::getBlobDataFromURL(const URL& url) const
 {
     ASSERT(isMainThread());
+    if (url.hasFragmentIdentifier())
+        return m_blobs.get(url.stringWithoutFragmentIdentifier().toStringWithoutCopying());
     return m_blobs.get(url.string());
 }
 

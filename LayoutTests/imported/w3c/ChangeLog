@@ -1,3 +1,15 @@
+2020-11-30  Alex Christensen  <achristensen@webkit.org>
+
+        Allow blob URLs with fragments
+        https://bugs.webkit.org/show_bug.cgi?id=219361
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/FileAPI/url/url-with-fetch.any-expected.txt:
+        * web-platform-tests/FileAPI/url/url-with-fetch.any.worker-expected.txt:
+        * web-platform-tests/FileAPI/url/url-with-xhr.any-expected.txt:
+        * web-platform-tests/FileAPI/url/url-with-xhr.any.worker-expected.txt:
+
 2020-11-30  Youenn Fablet  <youenn@apple.com>
 
         Update WPT WebRTC tests
