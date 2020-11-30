@@ -191,6 +191,7 @@ DateTimeEditElement::DateTimeEditElement(Document& document, EditControlOwner& e
     : HTMLDivElement(divTag, document)
     , m_editControlOwner(makeWeakPtr(editControlOwner))
 {
+    m_placeholderDate.setToCurrentLocalTime();
 }
 
 DateTimeEditElement::~DateTimeEditElement() = default;
@@ -361,6 +362,11 @@ bool DateTimeEditElement::isFieldOwnerReadOnly() const
 AtomString DateTimeEditElement::localeIdentifier() const
 {
     return m_editControlOwner ? m_editControlOwner->localeIdentifier() : nullAtom();
+}
+
+const GregorianDateTime& DateTimeEditElement::placeholderDate() const
+{
+    return m_placeholderDate;
 }
 
 void DateTimeEditElement::resetFields()

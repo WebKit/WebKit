@@ -30,6 +30,7 @@
 
 #include "HTMLDivElement.h"
 
+#include <wtf/GregorianDateTime.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -52,20 +53,24 @@ public:
         virtual bool isFieldOwnerDisabled() const = 0;
         virtual bool isFieldOwnerReadOnly() const = 0;
         virtual AtomString localeIdentifier() const = 0;
+        virtual const GregorianDateTime& placeholderDate() const = 0;
     };
 
     void defaultEventHandler(Event&) override;
     bool isFocusable() const final;
 
+    String visibleValue() const;
+
+    virtual void setEmptyValue(EventBehavior = DispatchNoEvent);
+    virtual void setValueAsInteger(int, EventBehavior = DispatchNoEvent);
+
     virtual bool hasValue() const = 0;
     virtual void populateDateTimeFieldsState(DateTimeFieldsState&) = 0;
-    virtual void setEmptyValue(EventBehavior = DispatchNoEvent) = 0;
     virtual void setValueAsDate(const DateComponents&) = 0;
-    virtual void setValueAsInteger(int, EventBehavior = DispatchNoEvent) = 0;
     virtual void stepDown() = 0;
     virtual void stepUp() = 0;
     virtual String value() const = 0;
-    virtual String visibleValue() const = 0;
+    virtual String placeholderValue() const = 0;
 
 protected:
     DateTimeFieldElement(Document&, FieldOwner&);

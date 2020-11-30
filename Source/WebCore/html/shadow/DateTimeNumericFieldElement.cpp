@@ -54,10 +54,10 @@ bool DateTimeNumericFieldElement::Range::isInRange(int value) const
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(DateTimeNumericFieldElement);
 
-DateTimeNumericFieldElement::DateTimeNumericFieldElement(Document& document, FieldOwner& fieldOwner, const Range& range, const String& placeholder)
+DateTimeNumericFieldElement::DateTimeNumericFieldElement(Document& document, FieldOwner& fieldOwner, const Range& range, int placeholder)
     : DateTimeFieldElement(document, fieldOwner)
     , m_range(range)
-    , m_placeholder(placeholder)
+    , m_placeholder(formatValue(placeholder))
 {
 }
 
@@ -115,6 +115,8 @@ void DateTimeNumericFieldElement::initialize(const AtomString& pseudo)
 
 void DateTimeNumericFieldElement::setEmptyValue(EventBehavior eventBehavior)
 {
+    DateTimeFieldElement::setEmptyValue(eventBehavior);
+
     m_value = 0;
     m_hasValue = false;
     m_typeAheadBuffer.clear();
@@ -123,6 +125,8 @@ void DateTimeNumericFieldElement::setEmptyValue(EventBehavior eventBehavior)
 
 void DateTimeNumericFieldElement::setValueAsInteger(int value, EventBehavior eventBehavior)
 {
+    DateTimeFieldElement::setValueAsInteger(value, eventBehavior);
+
     m_value = m_range.clampValue(value);
     m_hasValue = true;
     updateVisibleValue(eventBehavior);
@@ -155,14 +159,14 @@ String DateTimeNumericFieldElement::value() const
     return m_hasValue ? formatValue(m_value) : emptyString();
 }
 
+String DateTimeNumericFieldElement::placeholderValue() const
+{
+    return m_placeholder;
+}
+
 int DateTimeNumericFieldElement::valueAsInteger() const
 {
     return m_hasValue ? m_value : -1;
-}
-
-String DateTimeNumericFieldElement::visibleValue() const
-{
-    return m_hasValue ? value() : m_placeholder;
 }
 
 void DateTimeNumericFieldElement::handleKeyboardEvent(KeyboardEvent& keyboardEvent)

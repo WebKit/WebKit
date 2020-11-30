@@ -41,18 +41,10 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(DateTimeSymbolicFieldElement);
 
-static AtomString makeVisibleEmptyValue(const Vector<String>& symbols)
-{
-    unsigned maximumLength = 0;
-    for (auto& symbol : symbols)
-        maximumLength = std::max(maximumLength, numGraphemeClusters(symbol));
-    return makeString(pad('-', maximumLength, emptyString()));
-}
-
-DateTimeSymbolicFieldElement::DateTimeSymbolicFieldElement(Document& document, FieldOwner& fieldOwner, const Vector<String>& symbols)
+DateTimeSymbolicFieldElement::DateTimeSymbolicFieldElement(Document& document, FieldOwner& fieldOwner, const Vector<String>& symbols, int placeholderIndex)
     : DateTimeFieldElement(document, fieldOwner)
     , m_symbols(symbols)
-    , m_visibleEmptyValue(makeVisibleEmptyValue(symbols))
+    , m_placeholderIndex(placeholderIndex)
     , m_typeAhead(this)
 {
     ASSERT(!m_symbols.isEmpty());
@@ -86,12 +78,16 @@ void DateTimeSymbolicFieldElement::initialize(const AtomString& pseudo)
 
 void DateTimeSymbolicFieldElement::setEmptyValue(EventBehavior eventBehavior)
 {
+    DateTimeFieldElement::setEmptyValue(eventBehavior);
+
     m_selectedIndex = invalidIndex;
     updateVisibleValue(eventBehavior);
 }
 
 void DateTimeSymbolicFieldElement::setValueAsInteger(int newSelectedIndex, EventBehavior eventBehavior)
 {
+    DateTimeFieldElement::setValueAsInteger(newSelectedIndex, eventBehavior);
+
     m_selectedIndex = std::max(0, std::min(newSelectedIndex, static_cast<int>(m_symbols.size() - 1)));
     updateVisibleValue(eventBehavior);
 }
@@ -117,19 +113,14 @@ String DateTimeSymbolicFieldElement::value() const
     return hasValue() ? m_symbols[m_selectedIndex] : emptyString();
 }
 
+String DateTimeSymbolicFieldElement::placeholderValue() const
+{
+    return m_symbols[m_placeholderIndex];
+}
+
 int DateTimeSymbolicFieldElement::valueAsInteger() const
 {
     return m_selectedIndex;
-}
-
-String DateTimeSymbolicFieldElement::visibleEmptyValue() const
-{
-    return m_visibleEmptyValue;
-}
-
-String DateTimeSymbolicFieldElement::visibleValue() const
-{
-    return hasValue() ? m_symbols[m_selectedIndex] : visibleEmptyValue();
 }
 
 void DateTimeSymbolicFieldElement::handleKeyboardEvent(KeyboardEvent& keyboardEvent)

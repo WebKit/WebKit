@@ -36,7 +36,7 @@ namespace WebCore {
 class DateTimeSymbolicFieldElement : public DateTimeFieldElement, public TypeAheadDataSource {
     WTF_MAKE_ISO_ALLOCATED(DateTimeSymbolicFieldElement);
 protected:
-    DateTimeSymbolicFieldElement(Document&, FieldOwner&, const Vector<String>&);
+    DateTimeSymbolicFieldElement(Document&, FieldOwner&, const Vector<String>&, int);
     size_t symbolsSize() const { return m_symbols.size(); }
     bool hasValue() const final;
     void initialize(const AtomString& pseudo);
@@ -49,13 +49,11 @@ private:
 
     Optional<Style::ElementStyle> resolveCustomStyle(const RenderStyle&, const RenderStyle*) final;
 
-    String visibleEmptyValue() const;
-
     // DateTimeFieldElement functions:
     void stepDown() final;
     void stepUp() final;
     String value() const final;
-    String visibleValue() const final;
+    String placeholderValue() const final;
     void handleKeyboardEvent(KeyboardEvent&) final;
 
     // TypeAheadDataSource functions:
@@ -64,10 +62,10 @@ private:
     String optionAtIndex(int index) const final;
 
     const Vector<String> m_symbols;
-
-    const AtomString m_visibleEmptyValue;
-    TypeAhead m_typeAhead;
     int m_selectedIndex { invalidIndex };
+    int m_placeholderIndex { invalidIndex };
+
+    TypeAhead m_typeAhead;
 };
 
 } // namespace WebCore

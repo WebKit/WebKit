@@ -103,9 +103,11 @@ private:
     bool isFieldOwnerDisabled() const final;
     bool isFieldOwnerReadOnly() const final;
     AtomString localeIdentifier() const final;
+    const GregorianDateTime& placeholderDate() const final;
 
     Vector<Ref<DateTimeFieldElement>, maximumNumberOfFields> m_fields;
     WeakPtr<EditControlOwner> m_editControlOwner;
+    GregorianDateTime m_placeholderDate;
 };
 
 } // namespace WebCore

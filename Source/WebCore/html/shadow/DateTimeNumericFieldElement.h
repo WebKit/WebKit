@@ -48,7 +48,7 @@ public:
     };
 
 protected:
-    DateTimeNumericFieldElement(Document&, FieldOwner&, const Range&, const String& placeholder);
+    DateTimeNumericFieldElement(Document&, FieldOwner&, const Range&, int placeholder);
 
     int maximum() const;
 
@@ -60,13 +60,13 @@ protected:
     void stepDown() final;
     void stepUp() final;
     int valueAsInteger() const final;
-    String visibleValue() const final;
 
 private:
     Optional<Style::ElementStyle> resolveCustomStyle(const RenderStyle&, const RenderStyle*) final;
 
     // DateTimeFieldElement functions:
     String value() const final;
+    String placeholderValue() const final;
     void handleKeyboardEvent(KeyboardEvent&) final;
     void handleBlurEvent(Event&) final;
 

@@ -29,6 +29,8 @@
 
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
 
+#include "CSSPropertyNames.h"
+#include "CSSValueKeywords.h"
 #include "DateComponents.h"
 #include "EventNames.h"
 #include "HTMLNames.h"
@@ -158,6 +160,22 @@ AtomString DateTimeFieldElement::localeIdentifier() const
     return m_fieldOwner ? m_fieldOwner->localeIdentifier() : nullAtom();
 }
 
+void DateTimeFieldElement::setEmptyValue(EventBehavior)
+{
+    setInlineStyleProperty(CSSPropertyColor, CSSValueDarkgray);
+}
+
+void DateTimeFieldElement::setValueAsInteger(int, EventBehavior)
+{
+    if (!hasValue())
+        removeInlineStyleProperty(CSSPropertyColor);
+}
+
+String DateTimeFieldElement::visibleValue() const
+{
+    return hasValue() ? value() : placeholderValue();
+}
+
 void DateTimeFieldElement::updateVisibleValue(EventBehavior eventBehavior)
 {
     if (!firstChild())
@@ -165,10 +183,8 @@ void DateTimeFieldElement::updateVisibleValue(EventBehavior eventBehavior)
 
     auto& textNode = downcast<Text>(*firstChild());
     String newVisibleValue = visibleValue();
-    if (textNode.wholeText() == newVisibleValue)
-        return;
-
-    textNode.replaceWholeText(newVisibleValue);
+    if (textNode.wholeText() != newVisibleValue)
+        textNode.replaceWholeText(newVisibleValue);
 
     if (eventBehavior == DispatchInputAndChangeEvents && m_fieldOwner)
         m_fieldOwner->fieldValueChanged();
