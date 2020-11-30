@@ -46,8 +46,7 @@ class DisplayAndroid : public DisplayEGL
                                                          EGLClientBuffer buffer,
                                                          const egl::AttributeMap &attribs) override;
 
-    egl::Error makeCurrent(egl::Display *display,
-                           egl::Surface *drawSurface,
+    egl::Error makeCurrent(egl::Surface *drawSurface,
                            egl::Surface *readSurface,
                            gl::Context *context) override;
 
@@ -68,7 +67,7 @@ class DisplayAndroid : public DisplayEGL
 
     bool mSupportsSurfaceless;
 
-    EGLSurface mMockPbuffer;
+    EGLSurface mDummyPbuffer;
 };
 
 }  // namespace rx

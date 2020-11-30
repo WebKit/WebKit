@@ -49,7 +49,7 @@ Error &Error::operator=(const Error &other)
     }
     else
     {
-        mMessage.reset();
+        mMessage.release();
     }
 
     return *this;

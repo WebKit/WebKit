@@ -12,7 +12,7 @@
 #define COMMON_POOLALLOC_H_
 
 #if !defined(NDEBUG)
-#    define ANGLE_POOL_ALLOC_GUARD_BLOCKS  // define to enable guard block checking
+#    define ANGLE_POOL_ALLOC_GUARD_BLOCKS  // define to enable guard block sanity checking
 #endif
 
 //

@@ -18,14 +18,12 @@
 #include "compiler/translator/ImmutableStringBuilder.h"
 #include "compiler/translator/OutputVulkanGLSL.h"
 #include "compiler/translator/StaticType.h"
-#include "compiler/translator/tree_ops/FlagSamplersWithTexelFetch.h"
 #include "compiler/translator/tree_ops/NameEmbeddedUniformStructs.h"
 #include "compiler/translator/tree_ops/RemoveAtomicCounterBuiltins.h"
 #include "compiler/translator/tree_ops/RemoveInactiveInterfaceVariables.h"
 #include "compiler/translator/tree_ops/RewriteAtomicCounters.h"
 #include "compiler/translator/tree_ops/RewriteCubeMapSamplersAs2DArray.h"
 #include "compiler/translator/tree_ops/RewriteDfdy.h"
-#include "compiler/translator/tree_ops/RewriteInterpolateAtOffset.h"
 #include "compiler/translator/tree_ops/RewriteStructSamplers.h"
 #include "compiler/translator/tree_util/BuiltIn.h"
 #include "compiler/translator/tree_util/FindFunction.h"
@@ -244,17 +242,8 @@ ANGLE_NO_DISCARD bool RotateAndFlipBuiltinVariable(TCompiler *compiler,
     }
 
     // Create the expression "(builtin.xy * fragRotation)"
-    TIntermTyped *rotatedXY;
-    if (fragRotation)
-    {
-        rotatedXY = new TIntermBinary(EOpMatrixTimesVector, fragRotation->deepCopy(),
-                                      builtinXY->deepCopy());
-    }
-    else
-    {
-        // No rotation applied, use original variable.
-        rotatedXY = builtinXY->deepCopy();
-    }
+    TIntermBinary *rotatedXY =
+        new TIntermBinary(EOpMatrixTimesVector, fragRotation->deepCopy(), builtinXY->deepCopy());
 
     // Create the expression "(builtin.xy - pivot) * flipXY + pivot
     TIntermBinary *removePivot = new TIntermBinary(EOpSub, rotatedXY, pivot);
@@ -582,7 +571,6 @@ ANGLE_NO_DISCARD bool AddBresenhamEmulationVS(TCompiler *compiler,
 }
 
 ANGLE_NO_DISCARD bool InsertFragCoordCorrection(TCompiler *compiler,
-                                                ShCompileOptions compileOptions,
                                                 TIntermBlock *root,
                                                 TIntermSequence *insertSequence,
                                                 TSymbolTable *symbolTable,
@@ -590,9 +578,7 @@ ANGLE_NO_DISCARD bool InsertFragCoordCorrection(TCompiler *compiler,
 {
     TIntermBinary *flipXY       = CreateDriverUniformRef(driverUniforms, kFlipXY);
     TIntermBinary *pivot        = CreateDriverUniformRef(driverUniforms, kHalfRenderArea);
-    TIntermBinary *fragRotation = (compileOptions & SH_ADD_PRE_ROTATION)
-                                      ? CreateDriverUniformRef(driverUniforms, kFragRotation)
-                                      : nullptr;
+    TIntermBinary *fragRotation = CreateDriverUniformRef(driverUniforms, kFragRotation);
     return RotateAndFlipBuiltinVariable(compiler, root, insertSequence, flipXY, symbolTable,
                                         BuiltInVariable::gl_FragCoord(), kFlippedFragCoordName,
                                         pivot, fragRotation);
@@ -632,7 +618,6 @@ ANGLE_NO_DISCARD bool InsertFragCoordCorrection(TCompiler *compiler,
 // Note this emulation can not provide fully correct rasterization. See the docs more more info.
 
 ANGLE_NO_DISCARD bool AddBresenhamEmulationFS(TCompiler *compiler,
-                                              ShCompileOptions compileOptions,
                                               TInfoSinkBase &sink,
                                               TIntermBlock *root,
                                               TSymbolTable *symbolTable,
@@ -733,8 +718,8 @@ ANGLE_NO_DISCARD bool AddBresenhamEmulationFS(TCompiler *compiler,
     // If the shader does not use frag coord, we should insert it inside the emulation if.
     if (!usesFragCoord)
     {
-        if (!InsertFragCoordCorrection(compiler, compileOptions, root, emulationSequence,
-                                       symbolTable, driverUniforms))
+        if (!InsertFragCoordCorrection(compiler, root, emulationSequence, symbolTable,
+                                       driverUniforms))
         {
             return false;
         }
@@ -850,11 +835,6 @@ bool TranslatorVulkan::translateImpl(TIntermBlock *root,
         }
     }
 
-    if (!FlagSamplersForTexelFetch(this, root, &getSymbolTable(), &mUniforms))
-    {
-        return false;
-    }
-
     if (defaultUniformCount > 0)
     {
         gl::ShaderType shaderType = gl::FromGLenum<gl::ShaderType>(getShaderType());
@@ -953,8 +933,8 @@ bool TranslatorVulkan::translateImpl(TIntermBlock *root,
 
         if (compileOptions & SH_ADD_BRESENHAM_LINE_RASTER_EMULATION)
         {
-            if (!AddBresenhamEmulationFS(this, compileOptions, sink, root, &getSymbolTable(),
-                                         driverUniforms, usesFragCoord))
+            if (!AddBresenhamEmulationFS(this, sink, root, &getSymbolTable(), driverUniforms,
+                                         usesFragCoord))
             {
                 return false;
             }
@@ -962,7 +942,6 @@ bool TranslatorVulkan::translateImpl(TIntermBlock *root,
 
         bool hasGLFragColor = false;
         bool hasGLFragData  = false;
-        bool usePreRotation = compileOptions & SH_ADD_PRE_ROTATION;
 
         for (const ShaderVariable &outputVar : mOutputVariables)
         {
@@ -993,8 +972,7 @@ bool TranslatorVulkan::translateImpl(TIntermBlock *root,
         {
             TIntermBinary *flipXY       = CreateDriverUniformRef(driverUniforms, kNegFlipXY);
             TIntermConstantUnion *pivot = CreateFloatNode(0.5f);
-            TIntermBinary *fragRotation =
-                usePreRotation ? CreateDriverUniformRef(driverUniforms, kFragRotation) : nullptr;
+            TIntermBinary *fragRotation = CreateDriverUniformRef(driverUniforms, kFragRotation);
             if (!RotateAndFlipBuiltinVariable(this, root, GetMainSequence(root), flipXY,
                                               &getSymbolTable(), BuiltInVariable::gl_PointCoord(),
                                               kFlippedPointCoordName, pivot, fragRotation))
@@ -1005,30 +983,18 @@ bool TranslatorVulkan::translateImpl(TIntermBlock *root,
 
         if (usesFragCoord)
         {
-            if (!InsertFragCoordCorrection(this, compileOptions, root, GetMainSequence(root),
-                                           &getSymbolTable(), driverUniforms))
+            if (!InsertFragCoordCorrection(this, root, GetMainSequence(root), &getSymbolTable(),
+                                           driverUniforms))
             {
                 return false;
             }
         }
 
         {
-            TIntermBinary *flipXY = CreateDriverUniformRef(driverUniforms, kFlipXY);
-            TIntermBinary *fragRotation =
-                usePreRotation ? CreateDriverUniformRef(driverUniforms, kFragRotation) : nullptr;
+            TIntermBinary *flipXY       = CreateDriverUniformRef(driverUniforms, kFlipXY);
+            TIntermBinary *fragRotation = CreateDriverUniformRef(driverUniforms, kFragRotation);
             if (!RewriteDfdy(this, root, getSymbolTable(), getShaderVersion(), flipXY,
                              fragRotation))
-            {
-                return false;
-            }
-        }
-
-        {
-            TIntermBinary *flipXY = CreateDriverUniformRef(driverUniforms, kFlipXY);
-            TIntermBinary *fragRotation =
-                usePreRotation ? CreateDriverUniformRef(driverUniforms, kFragRotation) : nullptr;
-            if (!RewriteInterpolateAtOffset(this, root, getSymbolTable(), getShaderVersion(),
-                                            flipXY, fragRotation))
             {
                 return false;
             }
@@ -1081,8 +1047,7 @@ bool TranslatorVulkan::translateImpl(TIntermBlock *root,
         {
             return false;
         }
-        if ((compileOptions & SH_ADD_PRE_ROTATION) != 0 &&
-            !AppendPreRotation(this, root, &getSymbolTable(), driverUniforms))
+        if (!AppendPreRotation(this, root, &getSymbolTable(), driverUniforms))
         {
             return false;
         }

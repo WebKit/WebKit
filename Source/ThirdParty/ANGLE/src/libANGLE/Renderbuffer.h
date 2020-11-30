@@ -42,8 +42,6 @@ class RenderbufferState final : angle::NonCopyable
     GLsizei getHeight() const;
     const Format &getFormat() const;
     GLsizei getSamples() const;
-    MultisamplingMode getMultisamplingMode() const;
-    InitState getInitState() const;
 
   private:
     friend class Renderbuffer;
@@ -52,14 +50,12 @@ class RenderbufferState final : angle::NonCopyable
                 GLsizei height,
                 const Format &format,
                 GLsizei samples,
-                MultisamplingMode multisamplingMode,
                 InitState initState);
 
     GLsizei mWidth;
     GLsizei mHeight;
     Format mFormat;
     GLsizei mSamples;
-    MultisamplingMode mMultisamplingMode;
 
     // For robust resource init.
     InitState mInitState;
@@ -80,43 +76,14 @@ class Renderbuffer final : public RefCountObject<RenderbufferID>,
 
     angle::Result setStorage(const Context *context,
                              GLenum internalformat,
-                             GLsizei width,
-                             GLsizei height);
+                             size_t width,
+                             size_t height);
     angle::Result setStorageMultisample(const Context *context,
-                                        GLsizei samples,
+                                        size_t samples,
                                         GLenum internalformat,
-                                        GLsizei width,
-                                        GLsizei height,
-                                        MultisamplingMode mode);
+                                        size_t width,
+                                        size_t height);
     angle::Result setStorageEGLImageTarget(const Context *context, egl::Image *imageTarget);
-
-    angle::Result copyRenderbufferSubData(Context *context,
-                                          const gl::Renderbuffer *srcBuffer,
-                                          GLint srcLevel,
-                                          GLint srcX,
-                                          GLint srcY,
-                                          GLint srcZ,
-                                          GLint dstLevel,
-                                          GLint dstX,
-                                          GLint dstY,
-                                          GLint dstZ,
-                                          GLsizei srcWidth,
-                                          GLsizei srcHeight,
-                                          GLsizei srcDepth);
-
-    angle::Result copyTextureSubData(Context *context,
-                                     const gl::Texture *srcTexture,
-                                     GLint srcLevel,
-                                     GLint srcX,
-                                     GLint srcY,
-                                     GLint srcZ,
-                                     GLint dstLevel,
-                                     GLint dstX,
-                                     GLint dstY,
-                                     GLint dstZ,
-                                     GLsizei srcWidth,
-                                     GLsizei srcHeight,
-                                     GLsizei srcDepth);
 
     rx::RenderbufferImpl *getImplementation() const;
 
@@ -124,14 +91,12 @@ class Renderbuffer final : public RefCountObject<RenderbufferID>,
     GLsizei getHeight() const;
     const Format &getFormat() const;
     GLsizei getSamples() const;
-    MultisamplingMode getMultisamplingMode() const;
     GLuint getRedSize() const;
     GLuint getGreenSize() const;
     GLuint getBlueSize() const;
     GLuint getAlphaSize() const;
     GLuint getDepthSize() const;
     GLuint getStencilSize() const;
-    const RenderbufferState &getState() const;
 
     GLint getMemorySize() const;
 
@@ -143,8 +108,8 @@ class Renderbuffer final : public RefCountObject<RenderbufferID>,
                       GLenum binding,
                       const ImageIndex &imageIndex) const override;
 
-    void onAttach(const Context *context, rx::Serial framebufferSerial) override;
-    void onDetach(const Context *context, rx::Serial framebufferSerial) override;
+    void onAttach(const Context *context) override;
+    void onDetach(const Context *context) override;
     GLuint getId() const override;
 
     InitState initState(const ImageIndex &imageIndex) const override;

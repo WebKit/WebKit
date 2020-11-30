@@ -12,12 +12,12 @@
 #include <algorithm>
 #include <utility>
 
-#include "common/angle_version.h"
 #include "common/bitset_utils.h"
 #include "common/debug.h"
 #include "common/platform.h"
 #include "common/string_utils.h"
 #include "common/utilities.h"
+#include "common/version.h"
 #include "compiler/translator/blocklayout.h"
 #include "libANGLE/Context.h"
 #include "libANGLE/ErrorStrings.h"
@@ -658,7 +658,7 @@ void WriteShaderVariableBuffer(BinaryOutputStream *stream, const ShaderVariableB
 
     for (ShaderType shaderType : AllShaderTypes())
     {
-        stream->writeBool(var.isActive(shaderType));
+        stream->writeInt(var.isActive(shaderType));
     }
 
     stream->writeInt(var.memberIndexes.size());
@@ -678,8 +678,8 @@ void LoadShaderVariableBuffer(BinaryInputStream *stream, ShaderVariableBuffer *v
         var->setActive(shaderType, stream->readBool());
     }
 
-    size_t numMembers = stream->readInt<size_t>();
-    for (size_t blockMemberIndex = 0; blockMemberIndex < numMembers; blockMemberIndex++)
+    unsigned int numMembers = stream->readInt<unsigned int>();
+    for (unsigned int blockMemberIndex = 0; blockMemberIndex < numMembers; blockMemberIndex++)
     {
         var->memberIndexes.push_back(stream->readInt<unsigned int>());
     }
@@ -695,7 +695,7 @@ void WriteBufferVariable(BinaryOutputStream *stream, const BufferVariable &var)
 
     for (ShaderType shaderType : AllShaderTypes())
     {
-        stream->writeBool(var.isActive(shaderType));
+        stream->writeInt(var.isActive(shaderType));
     }
 }
 
@@ -717,7 +717,7 @@ void WriteInterfaceBlock(BinaryOutputStream *stream, const InterfaceBlock &block
 {
     stream->writeString(block.name);
     stream->writeString(block.mappedName);
-    stream->writeBool(block.isArray);
+    stream->writeInt(block.isArray);
     stream->writeInt(block.arrayElement);
 
     WriteShaderVariableBuffer(stream, block);
@@ -857,7 +857,7 @@ bool IsActiveInterfaceBlock(const sh::InterfaceBlock &interfaceBlock)
 void WriteBlockMemberInfo(BinaryOutputStream *stream, const sh::BlockMemberInfo &var)
 {
     stream->writeInt(var.arrayStride);
-    stream->writeBool(var.isRowMajorMatrix);
+    stream->writeInt(var.isRowMajorMatrix);
     stream->writeInt(var.matrixStride);
     stream->writeInt(var.offset);
     stream->writeInt(var.topLevelArrayStride);
@@ -879,17 +879,16 @@ void WriteShaderVar(BinaryOutputStream *stream, const sh::ShaderVariable &var)
     stream->writeString(var.name);
     stream->writeString(var.mappedName);
     stream->writeIntVector(var.arraySizes);
-    stream->writeBool(var.staticUse);
-    stream->writeBool(var.active);
+    stream->writeInt(var.staticUse);
+    stream->writeInt(var.active);
     stream->writeInt(var.binding);
     stream->writeString(var.structName);
     stream->writeInt(var.hasParentArrayIndex() ? var.parentArrayIndex() : -1);
 
     stream->writeInt(var.imageUnitFormat);
     stream->writeInt(var.offset);
-    stream->writeBool(var.readonly);
-    stream->writeBool(var.writeonly);
-    stream->writeBool(var.texelFetchStaticUse);
+    stream->writeInt(var.readonly);
+    stream->writeInt(var.writeonly);
 
     ASSERT(var.fields.empty());
 }
@@ -907,11 +906,10 @@ void LoadShaderVar(BinaryInputStream *stream, sh::ShaderVariable *var)
     var->structName = stream->readString();
     var->setParentArrayIndex(stream->readInt<int>());
 
-    var->imageUnitFormat     = stream->readInt<GLenum>();
-    var->offset              = stream->readInt<int>();
-    var->readonly            = stream->readBool();
-    var->writeonly           = stream->readBool();
-    var->texelFetchStaticUse = stream->readBool();
+    var->imageUnitFormat = stream->readInt<GLenum>();
+    var->offset          = stream->readInt<int>();
+    var->readonly        = stream->readBool();
+    var->writeonly       = stream->readBool();
 }
 
 // VariableLocation implementation.
@@ -1077,7 +1075,6 @@ ProgramState::ProgramState()
     : mLabel(),
       mAttachedShaders{},
       mAttachedShadersMarkedForDetach{},
-      mLocationsUsedForXfbExtension(0),
       mAtomicCounterUniformRange(0, 0),
       mBinaryRetrieveableHint(false),
       mSeparable(false),
@@ -1435,7 +1432,6 @@ angle::Result Program::linkImpl(const Context *context)
     // TODO: http://anglebug.com/4530: Enable program caching for separable programs
     if (cache && !isSeparable())
     {
-        std::lock_guard<std::mutex> cacheLock(context->getProgramCacheMutex());
         angle::Result cacheResult = cache->getProgram(context, this, &programHash);
         ANGLE_TRY(cacheResult);
 
@@ -1459,13 +1455,11 @@ angle::Result Program::linkImpl(const Context *context)
     bool result = linkValidateShaders(infoLog);
     ASSERT(result);
 
-    ProgramMergedVaryings mergedVaryings;
-
     if (mState.mAttachedShaders[ShaderType::Compute])
     {
         mState.mExecutable->mResources.reset(new ProgramLinkedResources(
             0, PackMode::ANGLE_RELAXED, &mState.mExecutable->mUniformBlocks,
-            &mState.mExecutable->mUniforms, &mState.mExecutable->mComputeShaderStorageBlocks,
+            &mState.mExecutable->mUniforms, &mState.mExecutable->mShaderStorageBlocks,
             &mState.mBufferVariables, &mState.mExecutable->mAtomicCounterBuffers));
 
         GLuint combinedImageUniforms = 0u;
@@ -1522,7 +1516,7 @@ angle::Result Program::linkImpl(const Context *context)
         mState.mExecutable->mResources.reset(new ProgramLinkedResources(
             static_cast<GLuint>(data.getCaps().maxVaryingVectors), packMode,
             &mState.mExecutable->mUniformBlocks, &mState.mExecutable->mUniforms,
-            &mState.mExecutable->mGraphicsShaderStorageBlocks, &mState.mBufferVariables,
+            &mState.mExecutable->mShaderStorageBlocks, &mState.mBufferVariables,
             &mState.mExecutable->mAtomicCounterBuffers));
 
         if (!linkAttributes(context, infoLog))
@@ -1585,13 +1579,15 @@ angle::Result Program::linkImpl(const Context *context)
         ProgramPipeline *programPipeline = context->getState().getProgramPipeline();
         if (programPipeline && programPipeline->usesShaderProgram(id()))
         {
-            mergedVaryings = context->getState().getProgramPipeline()->getMergedVaryings();
+            const ProgramMergedVaryings &mergedVaryings =
+                context->getState().getProgramPipeline()->getMergedVaryings();
+            ANGLE_TRY(linkMergedVaryings(context, *mState.mExecutable, mergedVaryings));
         }
         else
         {
-            mergedVaryings = getMergedVaryings();
+            const ProgramMergedVaryings &mergedVaryings = getMergedVaryings();
+            ANGLE_TRY(linkMergedVaryings(context, *mState.mExecutable, mergedVaryings));
         }
-        ANGLE_TRY(linkMergedVaryings(context, *mState.mExecutable, mergedVaryings));
     }
 
     updateLinkedShaderStages();
@@ -1599,8 +1595,7 @@ angle::Result Program::linkImpl(const Context *context)
     mLinkingState.reset(new LinkingState());
     mLinkingState->linkingFromBinary = false;
     mLinkingState->programHash       = programHash;
-    mLinkingState->linkEvent =
-        mProgram->link(context, mState.mExecutable->getResources(), infoLog, mergedVaryings);
+    mLinkingState->linkEvent = mProgram->link(context, mState.mExecutable->getResources(), infoLog);
 
     // Must be after mProgram->link() to avoid misleading the linker about output variables.
     mState.updateProgramInterfaceInputs();
@@ -1649,15 +1644,14 @@ void Program::resolveLinkImpl(const Context *context)
     ASSERT(mLinked);
 
     // Mark implementation-specific unreferenced uniforms as ignored.
-    std::vector<ImageBinding> *imageBindings = getExecutable().getImageBindings();
     mProgram->markUnusedUniformLocations(&mState.mUniformLocations,
-                                         &mState.mExecutable->mSamplerBindings, imageBindings);
+                                         &mState.mExecutable->mSamplerBindings,
+                                         &mState.mExecutable->mImageBindings);
 
     // Must be called after markUnusedUniformLocations.
     postResolveLink(context);
 
     // Save to the program cache.
-    std::lock_guard<std::mutex> cacheLock(context->getProgramCacheMutex());
     MemoryProgramCache *cache = context->getMemoryProgramCache();
     // TODO: http://anglebug.com/4530: Enable program caching for separable programs
     if (cache && !isSeparable() &&
@@ -2902,18 +2896,19 @@ GLuint Program::getSamplerUniformBinding(const VariableLocation &uniformLocation
     GLuint samplerIndex = mState.getSamplerIndexFromUniformIndex(uniformLocation.index);
     const std::vector<GLuint> &boundTextureUnits =
         mState.mExecutable->mSamplerBindings[samplerIndex].boundTextureUnits;
-    return (uniformLocation.arrayIndex < boundTextureUnits.size())
-               ? boundTextureUnits[uniformLocation.arrayIndex]
-               : 0;
+    if (boundTextureUnits.size() <= uniformLocation.arrayIndex)
+        return 0;
+    return boundTextureUnits[uniformLocation.arrayIndex];
 }
 
 GLuint Program::getImageUniformBinding(const VariableLocation &uniformLocation) const
 {
     ASSERT(!mLinkingState);
     GLuint imageIndex = mState.getImageIndexFromUniformIndex(uniformLocation.index);
-
-    const std::vector<ImageBinding> &imageBindings = getExecutable().getImageBindings();
-    const std::vector<GLuint> &boundImageUnits     = imageBindings[imageIndex].boundImageUnits;
+    const std::vector<GLuint> &boundImageUnits =
+        mState.mExecutable->mImageBindings[imageIndex].boundImageUnits;
+    if (boundImageUnits.size() <= uniformLocation.arrayIndex)
+        return 0;
     return boundImageUnits[uniformLocation.arrayIndex];
 }
 
@@ -3702,14 +3697,6 @@ void Program::linkSamplerAndImageBindings(GLuint *combinedImageUniforms)
 
     mState.mExecutable->mImageUniformRange = RangeUI(low, high);
     *combinedImageUniforms                 = 0u;
-    // The Program is still linking, so getExecutable().isCompute() isn't accurate yet.
-    bool hasComputeShader = mState.mAttachedShaders[ShaderType::Compute] != nullptr;
-    std::vector<ImageBinding> &imageBindings = hasComputeShader
-                                                   ? mState.mExecutable->mComputeImageBindings
-                                                   : mState.mExecutable->mGraphicsImageBindings;
-    // The arrays of arrays are flattened to arrays, it needs to record the array offset for the
-    // correct binding image unit.
-    uint32_t arrayOffset = 0;
     // If uniform is a image type, insert it into the mImageBindings array.
     for (unsigned int imageIndex : mState.mExecutable->getImageUniformRange())
     {
@@ -3720,24 +3707,17 @@ void Program::linkSamplerAndImageBindings(GLuint *combinedImageUniforms)
         auto &imageUniform = mState.mExecutable->getUniforms()[imageIndex];
         if (imageUniform.binding == -1)
         {
-            imageBindings.emplace_back(ImageBinding(imageUniform.getBasicTypeElementCount()));
+            mState.mExecutable->mImageBindings.emplace_back(
+                ImageBinding(imageUniform.getBasicTypeElementCount()));
         }
         else
         {
-            imageBindings.emplace_back(ImageBinding(imageUniform.binding + arrayOffset,
-                                                    imageUniform.getBasicTypeElementCount()));
+            mState.mExecutable->mImageBindings.emplace_back(
+                ImageBinding(imageUniform.binding, imageUniform.getBasicTypeElementCount()));
         }
 
         GLuint arraySize = imageUniform.isArray() ? imageUniform.arraySizes[0] : 1u;
         *combinedImageUniforms += imageUniform.activeShaderCount() * arraySize;
-        if (imageUniform.hasParentArrayIndex() && imageUniform.isArray())
-        {
-            arrayOffset += arraySize;
-        }
-        else
-        {
-            arrayOffset = 0;
-        }
     }
 
     highIter = lowIter;
@@ -4918,22 +4898,18 @@ void Program::updateSamplerUniform(Context *context,
     std::vector<GLuint> &boundTextureUnits = samplerBinding.boundTextureUnits;
 
     if (locationInfo.arrayIndex >= boundTextureUnits.size())
-    {
         return;
-    }
-    GLsizei safeUniformCount = std::min(
+    clampedCount = std::min(
         clampedCount, static_cast<GLsizei>(boundTextureUnits.size() - locationInfo.arrayIndex));
 
     // Update the sampler uniforms.
-    for (GLsizei arrayIndex = 0; arrayIndex < safeUniformCount; ++arrayIndex)
+    for (GLsizei arrayIndex = 0; arrayIndex < clampedCount; ++arrayIndex)
     {
         GLint oldTextureUnit = boundTextureUnits[arrayIndex + locationInfo.arrayIndex];
         GLint newTextureUnit = v[arrayIndex];
 
         if (oldTextureUnit == newTextureUnit)
-        {
             continue;
-        }
 
         boundTextureUnits[arrayIndex + locationInfo.arrayIndex] = newTextureUnit;
 
@@ -5135,8 +5111,6 @@ angle::Result Program::serialize(const Context *context, angle::MemoryBuffer *bi
         stream.writeInt(0);
     }
 
-    mState.mExecutable->save(&stream);
-
     const auto &computeLocalSize = mState.getComputeShaderLocalSize();
 
     stream.writeInt(computeLocalSize[0]);
@@ -5150,7 +5124,7 @@ angle::Result Program::serialize(const Context *context, angle::MemoryBuffer *bi
     stream.writeInt(mState.mGeometryShaderMaxVertices);
 
     stream.writeInt(mState.mNumViews);
-    stream.writeBool(mState.mEarlyFramentTestsOptimization);
+    stream.writeInt(mState.mEarlyFramentTestsOptimization);
 
     stream.writeInt(mState.getProgramInputs().size());
     for (const sh::ShaderVariable &attrib : mState.getProgramInputs())
@@ -5174,7 +5148,7 @@ angle::Result Program::serialize(const Context *context, angle::MemoryBuffer *bi
         // Active shader info
         for (ShaderType shaderType : gl::AllShaderTypes())
         {
-            stream.writeBool(uniform.isActive(shaderType));
+            stream.writeInt(uniform.isActive(shaderType));
         }
     }
 
@@ -5183,7 +5157,7 @@ angle::Result Program::serialize(const Context *context, angle::MemoryBuffer *bi
     {
         stream.writeInt(variable.arrayIndex);
         stream.writeIntOrNegOne(variable.index);
-        stream.writeBool(variable.ignored);
+        stream.writeInt(variable.ignored);
     }
 
     stream.writeInt(mState.getUniformBlocks().size());
@@ -5204,9 +5178,8 @@ angle::Result Program::serialize(const Context *context, angle::MemoryBuffer *bi
         WriteInterfaceBlock(&stream, shaderStorageBlock);
     }
 
-    stream.writeInt(mState.mExecutable->mAtomicCounterBuffers.size());
-    for (const AtomicCounterBuffer &atomicCounterBuffer :
-         mState.mExecutable->getAtomicCounterBuffers())
+    stream.writeInt(mState.mExecutable->getActiveAtomicCounterBufferCount());
+    for (const auto &atomicCounterBuffer : mState.mExecutable->getAtomicCounterBuffers())
     {
         WriteShaderVariableBuffer(&stream, atomicCounterBuffer);
     }
@@ -5244,7 +5217,7 @@ angle::Result Program::serialize(const Context *context, angle::MemoryBuffer *bi
     {
         stream.writeInt(outputVar.arrayIndex);
         stream.writeIntOrNegOne(outputVar.index);
-        stream.writeBool(outputVar.ignored);
+        stream.writeInt(outputVar.ignored);
     }
 
     stream.writeInt(mState.getSecondaryOutputLocations().size());
@@ -5252,7 +5225,7 @@ angle::Result Program::serialize(const Context *context, angle::MemoryBuffer *bi
     {
         stream.writeInt(outputVar.arrayIndex);
         stream.writeIntOrNegOne(outputVar.index);
-        stream.writeBool(outputVar.ignored);
+        stream.writeInt(outputVar.ignored);
     }
 
     stream.writeInt(mState.mOutputVariableTypes.size());
@@ -5297,6 +5270,8 @@ angle::Result Program::serialize(const Context *context, angle::MemoryBuffer *bi
     stream.writeInt(mState.getAtomicCounterUniformRange().low());
     stream.writeInt(mState.getAtomicCounterUniformRange().high());
 
+    mState.mExecutable->save(&stream);
+
     mProgram->save(context, &stream);
 
     ASSERT(binaryOut);
@@ -5332,8 +5307,6 @@ angle::Result Program::deserialize(const Context *context,
         return angle::Result::Incomplete;
     }
 
-    mState.mExecutable->load(&stream);
-
     mState.mComputeShaderLocalSize[0] = stream.readInt<int>();
     mState.mComputeShaderLocalSize[1] = stream.readInt<int>();
     mState.mComputeShaderLocalSize[2] = stream.readInt<int>();
@@ -5344,11 +5317,11 @@ angle::Result Program::deserialize(const Context *context,
     mState.mGeometryShaderMaxVertices         = stream.readInt<int>();
 
     mState.mNumViews                      = stream.readInt<int>();
-    mState.mEarlyFramentTestsOptimization = stream.readBool();
+    mState.mEarlyFramentTestsOptimization = stream.readInt<bool>();
 
-    size_t attribCount = stream.readInt<size_t>();
+    unsigned int attribCount = stream.readInt<unsigned int>();
     ASSERT(mState.mExecutable->getProgramInputs().empty());
-    for (size_t attribIndex = 0; attribIndex < attribCount; ++attribIndex)
+    for (unsigned int attribIndex = 0; attribIndex < attribCount; ++attribIndex)
     {
         sh::ShaderVariable attrib;
         LoadShaderVar(&stream, &attrib);
@@ -5356,9 +5329,9 @@ angle::Result Program::deserialize(const Context *context,
         mState.mExecutable->mProgramInputs.push_back(attrib);
     }
 
-    size_t uniformCount = stream.readInt<size_t>();
+    unsigned int uniformCount = stream.readInt<unsigned int>();
     ASSERT(mState.mExecutable->getUniforms().empty());
-    for (size_t uniformIndex = 0; uniformIndex < uniformCount; ++uniformIndex)
+    for (unsigned int uniformIndex = 0; uniformIndex < uniformCount; ++uniformIndex)
     {
         LinkedUniform uniform;
         LoadShaderVar(&stream, &uniform);
@@ -5379,9 +5352,10 @@ angle::Result Program::deserialize(const Context *context,
         mState.mExecutable->mUniforms.push_back(uniform);
     }
 
-    const size_t uniformIndexCount = stream.readInt<size_t>();
+    const unsigned int uniformIndexCount = stream.readInt<unsigned int>();
     ASSERT(mState.mUniformLocations.empty());
-    for (size_t uniformIndexIndex = 0; uniformIndexIndex < uniformIndexCount; ++uniformIndexIndex)
+    for (unsigned int uniformIndexIndex = 0; uniformIndexIndex < uniformIndexCount;
+         uniformIndexIndex++)
     {
         VariableLocation variable;
         stream.readInt(&variable.arrayIndex);
@@ -5391,9 +5365,10 @@ angle::Result Program::deserialize(const Context *context,
         mState.mUniformLocations.push_back(variable);
     }
 
-    size_t uniformBlockCount = stream.readInt<size_t>();
+    unsigned int uniformBlockCount = stream.readInt<unsigned int>();
     ASSERT(mState.mExecutable->getUniformBlocks().empty());
-    for (size_t uniformBlockIndex = 0; uniformBlockIndex < uniformBlockCount; ++uniformBlockIndex)
+    for (unsigned int uniformBlockIndex = 0; uniformBlockIndex < uniformBlockCount;
+         ++uniformBlockIndex)
     {
         InterfaceBlock uniformBlock;
         LoadInterfaceBlock(&stream, &uniformBlock);
@@ -5402,35 +5377,28 @@ angle::Result Program::deserialize(const Context *context,
         mState.mActiveUniformBlockBindings.set(uniformBlockIndex, uniformBlock.binding != 0);
     }
 
-    size_t bufferVariableCount = stream.readInt<size_t>();
+    unsigned int bufferVariableCount = stream.readInt<unsigned int>();
     ASSERT(mState.mBufferVariables.empty());
-    for (size_t bufferVarIndex = 0; bufferVarIndex < bufferVariableCount; ++bufferVarIndex)
+    for (unsigned int index = 0; index < bufferVariableCount; ++index)
     {
         BufferVariable bufferVariable;
         LoadBufferVariable(&stream, &bufferVariable);
         mState.mBufferVariables.push_back(bufferVariable);
     }
 
-    size_t shaderStorageBlockCount = stream.readInt<size_t>();
+    unsigned int shaderStorageBlockCount = stream.readInt<unsigned int>();
     ASSERT(mState.mExecutable->getShaderStorageBlocks().empty());
-    for (size_t shaderStorageBlockIndex = 0; shaderStorageBlockIndex < shaderStorageBlockCount;
-         ++shaderStorageBlockIndex)
+    for (unsigned int shaderStorageBlockIndex = 0;
+         shaderStorageBlockIndex < shaderStorageBlockCount; ++shaderStorageBlockIndex)
     {
         InterfaceBlock shaderStorageBlock;
         LoadInterfaceBlock(&stream, &shaderStorageBlock);
-        if (getExecutable().isCompute())
-        {
-            mState.mExecutable->mComputeShaderStorageBlocks.push_back(shaderStorageBlock);
-        }
-        else
-        {
-            mState.mExecutable->mGraphicsShaderStorageBlocks.push_back(shaderStorageBlock);
-        }
+        mState.mExecutable->mShaderStorageBlocks.push_back(shaderStorageBlock);
     }
 
-    size_t atomicCounterBufferCount = stream.readInt<size_t>();
+    unsigned int atomicCounterBufferCount = stream.readInt<unsigned int>();
     ASSERT(mState.mExecutable->getAtomicCounterBuffers().empty());
-    for (size_t bufferIndex = 0; bufferIndex < atomicCounterBufferCount; ++bufferIndex)
+    for (unsigned int bufferIndex = 0; bufferIndex < atomicCounterBufferCount; ++bufferIndex)
     {
         AtomicCounterBuffer atomicCounterBuffer;
         LoadShaderVariableBuffer(&stream, &atomicCounterBuffer);
@@ -5438,7 +5406,7 @@ angle::Result Program::deserialize(const Context *context,
         mState.mExecutable->mAtomicCounterBuffers.push_back(atomicCounterBuffer);
     }
 
-    size_t transformFeedbackVaryingCount = stream.readInt<size_t>();
+    unsigned int transformFeedbackVaryingCount = stream.readInt<unsigned int>();
 
     // Reject programs that use transform feedback varyings if the hardware cannot support them.
     if (transformFeedbackVaryingCount > 0 &&
@@ -5449,7 +5417,7 @@ angle::Result Program::deserialize(const Context *context,
     }
 
     ASSERT(mState.mExecutable->mLinkedTransformFeedbackVaryings.empty());
-    for (size_t transformFeedbackVaryingIndex = 0;
+    for (unsigned int transformFeedbackVaryingIndex = 0;
          transformFeedbackVaryingIndex < transformFeedbackVaryingCount;
          ++transformFeedbackVaryingIndex)
     {
@@ -5465,9 +5433,9 @@ angle::Result Program::deserialize(const Context *context,
 
     stream.readInt(&mState.mExecutable->mTransformFeedbackBufferMode);
 
-    size_t outputCount = stream.readInt<size_t>();
+    unsigned int outputCount = stream.readInt<unsigned int>();
     ASSERT(mState.mExecutable->getOutputVariables().empty());
-    for (size_t outputIndex = 0; outputIndex < outputCount; ++outputIndex)
+    for (unsigned int outputIndex = 0; outputIndex < outputCount; ++outputIndex)
     {
         sh::ShaderVariable output;
         LoadShaderVar(&stream, &output);
@@ -5476,9 +5444,9 @@ angle::Result Program::deserialize(const Context *context,
         mState.mExecutable->mOutputVariables.push_back(output);
     }
 
-    size_t outputVarCount = stream.readInt<size_t>();
+    unsigned int outputVarCount = stream.readInt<unsigned int>();
     ASSERT(mState.mExecutable->getOutputLocations().empty());
-    for (size_t outputIndex = 0; outputIndex < outputVarCount; ++outputIndex)
+    for (unsigned int outputIndex = 0; outputIndex < outputVarCount; ++outputIndex)
     {
         VariableLocation locationData;
         stream.readInt(&locationData.arrayIndex);
@@ -5487,9 +5455,9 @@ angle::Result Program::deserialize(const Context *context,
         mState.mExecutable->mOutputLocations.push_back(locationData);
     }
 
-    size_t secondaryOutputVarCount = stream.readInt<size_t>();
+    unsigned int secondaryOutputVarCount = stream.readInt<unsigned int>();
     ASSERT(mState.mSecondaryOutputLocations.empty());
-    for (size_t outputIndex = 0; outputIndex < secondaryOutputVarCount; ++outputIndex)
+    for (unsigned int outputIndex = 0; outputIndex < secondaryOutputVarCount; ++outputIndex)
     {
         VariableLocation locationData;
         stream.readInt(&locationData.arrayIndex);
@@ -5498,8 +5466,8 @@ angle::Result Program::deserialize(const Context *context,
         mState.mSecondaryOutputLocations.push_back(locationData);
     }
 
-    size_t outputTypeCount = stream.readInt<size_t>();
-    for (size_t outputIndex = 0; outputIndex < outputTypeCount; ++outputIndex)
+    unsigned int outputTypeCount = stream.readInt<unsigned int>();
+    for (unsigned int outputIndex = 0; outputIndex < outputTypeCount; ++outputIndex)
     {
         mState.mOutputVariableTypes.push_back(stream.readInt<GLenum>());
     }
@@ -5507,9 +5475,8 @@ angle::Result Program::deserialize(const Context *context,
     static_assert(IMPLEMENTATION_MAX_DRAW_BUFFERS * 2 <= 8 * sizeof(uint32_t),
                   "All bits of mDrawBufferTypeMask and mActiveOutputVariables types and mask fit "
                   "into 32 bits each");
-    mState.mDrawBufferTypeMask = gl::ComponentTypeMask(stream.readInt<uint32_t>());
-    mState.mActiveOutputVariables =
-        gl::DrawBufferMask(stream.readInt<gl::DrawBufferMask::value_type>());
+    mState.mDrawBufferTypeMask    = gl::ComponentTypeMask(stream.readInt<uint32_t>());
+    mState.mActiveOutputVariables = stream.readInt<gl::DrawBufferMask>();
 
     unsigned int defaultUniformRangeLow  = stream.readInt<unsigned int>();
     unsigned int defaultUniformRangeHigh = stream.readInt<unsigned int>();
@@ -5519,8 +5486,8 @@ angle::Result Program::deserialize(const Context *context,
     unsigned int samplerRangeLow             = stream.readInt<unsigned int>();
     unsigned int samplerRangeHigh            = stream.readInt<unsigned int>();
     mState.mExecutable->mSamplerUniformRange = RangeUI(samplerRangeLow, samplerRangeHigh);
-    size_t samplerCount                      = stream.readInt<size_t>();
-    for (size_t samplerIndex = 0; samplerIndex < samplerCount; ++samplerIndex)
+    unsigned int samplerCount                = stream.readInt<unsigned int>();
+    for (unsigned int samplerIndex = 0; samplerIndex < samplerCount; ++samplerIndex)
     {
         TextureType textureType = stream.readEnum<TextureType>();
         SamplerFormat format    = stream.readEnum<SamplerFormat>();
@@ -5531,23 +5498,16 @@ angle::Result Program::deserialize(const Context *context,
     unsigned int imageRangeLow             = stream.readInt<unsigned int>();
     unsigned int imageRangeHigh            = stream.readInt<unsigned int>();
     mState.mExecutable->mImageUniformRange = RangeUI(imageRangeLow, imageRangeHigh);
-    size_t imageBindingCount               = stream.readInt<size_t>();
-    for (size_t imageIndex = 0; imageIndex < imageBindingCount; ++imageIndex)
+    unsigned int imageBindingCount         = stream.readInt<unsigned int>();
+    for (unsigned int imageIndex = 0; imageIndex < imageBindingCount; ++imageIndex)
     {
-        size_t elementCount = stream.readInt<size_t>();
+        unsigned int elementCount = stream.readInt<unsigned int>();
         ImageBinding imageBinding(elementCount);
-        for (size_t elementIndex = 0; elementIndex < elementCount; ++elementIndex)
+        for (unsigned int i = 0; i < elementCount; ++i)
         {
-            imageBinding.boundImageUnits[elementIndex] = stream.readInt<unsigned int>();
+            imageBinding.boundImageUnits[i] = stream.readInt<unsigned int>();
         }
-        if (getExecutable().isCompute())
-        {
-            mState.mExecutable->mComputeImageBindings.emplace_back(imageBinding);
-        }
-        else
-        {
-            mState.mExecutable->mGraphicsImageBindings.emplace_back(imageBinding);
-        }
+        mState.mExecutable->mImageBindings.emplace_back(imageBinding);
     }
 
     unsigned int atomicCounterRangeLow  = stream.readInt<unsigned int>();
@@ -5561,6 +5521,8 @@ angle::Result Program::deserialize(const Context *context,
     {
         mState.updateTransformFeedbackStrides();
     }
+
+    mState.mExecutable->load(&stream);
 
     postResolveLink(context);
     mState.mExecutable->updateCanDrawWith();

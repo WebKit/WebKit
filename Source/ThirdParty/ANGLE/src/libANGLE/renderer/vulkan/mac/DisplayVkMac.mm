@@ -43,7 +43,7 @@ SurfaceImpl *DisplayVkMac::createPbufferFromClientBuffer(const egl::SurfaceState
 {
     ASSERT(buftype == EGL_IOSURFACE_ANGLE);
 
-    return new IOSurfaceSurfaceVkMac(state, clientBuffer, attribs, mRenderer);
+    return new IOSurfaceSurfaceVkMac(state, clientBuffer, attribs);
 }
 
 egl::ConfigSet DisplayVkMac::generateConfigs()
@@ -52,10 +52,11 @@ egl::ConfigSet DisplayVkMac::generateConfigs()
     return egl_vk::GenerateConfigs(kColorFormats, egl_vk::kConfigDepthStencilFormats, this);
 }
 
-void DisplayVkMac::checkConfigSupport(egl::Config *config)
+bool DisplayVkMac::checkConfigSupport(egl::Config *config)
 {
     // TODO(geofflang): Test for native support and modify the config accordingly.
     // anglebug.com/2692
+    return true;
 }
 
 const char *DisplayVkMac::getWSIExtension() const

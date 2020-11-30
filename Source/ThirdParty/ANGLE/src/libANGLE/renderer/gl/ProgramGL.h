@@ -45,8 +45,7 @@ class ProgramGL : public ProgramImpl
 
     std::unique_ptr<LinkEvent> link(const gl::Context *contextImpl,
                                     const gl::ProgramLinkedResources &resources,
-                                    gl::InfoLog &infoLog,
-                                    const gl::ProgramMergedVaryings &mergedVaryings) override;
+                                    gl::InfoLog &infoLog) override;
     GLboolean validate(const gl::Caps &caps, gl::InfoLog *infoLog) override;
 
     void setUniform1fv(GLint location, GLsizei count, const GLfloat *v) override;

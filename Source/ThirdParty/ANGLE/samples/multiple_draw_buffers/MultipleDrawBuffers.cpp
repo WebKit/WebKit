@@ -29,7 +29,7 @@ class MultipleDrawBuffersSample : public SampleApplication
         : SampleApplication("MultipleDrawBuffers", argc, argv)
     {}
 
-    bool initialize() override
+    virtual bool initialize()
     {
         // Check EXT_draw_buffers is supported
         char *extensionString = (char *)glGetString(GL_EXTENSIONS);
@@ -107,7 +107,7 @@ class MultipleDrawBuffersSample : public SampleApplication
         return true;
     }
 
-    void destroy() override
+    virtual void destroy()
     {
         glDeleteProgram(mCopyProgram);
         glDeleteProgram(mMRTProgram);
@@ -116,7 +116,7 @@ class MultipleDrawBuffersSample : public SampleApplication
         glDeleteFramebuffers(1, &mFramebuffer);
     }
 
-    void draw() override
+    virtual void draw()
     {
         GLfloat vertices[] = {
             -0.8f, 0.8f,  0.0f,  // Position 0

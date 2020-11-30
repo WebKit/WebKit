@@ -55,7 +55,6 @@ ANGLE_UTIL_EXPORT PFNEGLCREATEPLATFORMWINDOWSURFACEPROC l_eglCreatePlatformWindo
 ANGLE_UTIL_EXPORT PFNEGLCREATEPLATFORMPIXMAPSURFACEPROC l_eglCreatePlatformPixmapSurface;
 ANGLE_UTIL_EXPORT PFNEGLWAITSYNCPROC l_eglWaitSync;
 ANGLE_UTIL_EXPORT PFNEGLSETBLOBCACHEFUNCSANDROIDPROC l_eglSetBlobCacheFuncsANDROID;
-ANGLE_UTIL_EXPORT PFNEGLCREATENATIVECLIENTBUFFERANDROIDPROC l_eglCreateNativeClientBufferANDROID;
 ANGLE_UTIL_EXPORT PFNEGLGETCOMPOSITORTIMINGANDROIDPROC l_eglGetCompositorTimingANDROID;
 ANGLE_UTIL_EXPORT PFNEGLGETCOMPOSITORTIMINGSUPPORTEDANDROIDPROC
     l_eglGetCompositorTimingSupportedANDROID;
@@ -99,7 +98,6 @@ ANGLE_UTIL_EXPORT PFNEGLDESTROYSYNCKHRPROC l_eglDestroySyncKHR;
 ANGLE_UTIL_EXPORT PFNEGLGETSYNCATTRIBKHRPROC l_eglGetSyncAttribKHR;
 ANGLE_UTIL_EXPORT PFNEGLCREATEIMAGEKHRPROC l_eglCreateImageKHR;
 ANGLE_UTIL_EXPORT PFNEGLDESTROYIMAGEKHRPROC l_eglDestroyImageKHR;
-ANGLE_UTIL_EXPORT PFNEGLSIGNALSYNCKHRPROC l_eglSignalSyncKHR;
 ANGLE_UTIL_EXPORT PFNEGLCREATESTREAMKHRPROC l_eglCreateStreamKHR;
 ANGLE_UTIL_EXPORT PFNEGLDESTROYSTREAMKHRPROC l_eglDestroyStreamKHR;
 ANGLE_UTIL_EXPORT PFNEGLQUERYSTREAMKHRPROC l_eglQueryStreamKHR;
@@ -177,9 +175,6 @@ void LoadEGL(LoadProc loadProc)
     l_eglWaitSync                 = reinterpret_cast<PFNEGLWAITSYNCPROC>(loadProc("eglWaitSync"));
     l_eglSetBlobCacheFuncsANDROID = reinterpret_cast<PFNEGLSETBLOBCACHEFUNCSANDROIDPROC>(
         loadProc("eglSetBlobCacheFuncsANDROID"));
-    l_eglCreateNativeClientBufferANDROID =
-        reinterpret_cast<PFNEGLCREATENATIVECLIENTBUFFERANDROIDPROC>(
-            loadProc("eglCreateNativeClientBufferANDROID"));
     l_eglGetCompositorTimingANDROID = reinterpret_cast<PFNEGLGETCOMPOSITORTIMINGANDROIDPROC>(
         loadProc("eglGetCompositorTimingANDROID"));
     l_eglGetCompositorTimingSupportedANDROID =
@@ -261,7 +256,6 @@ void LoadEGL(LoadProc loadProc)
     l_eglCreateImageKHR = reinterpret_cast<PFNEGLCREATEIMAGEKHRPROC>(loadProc("eglCreateImageKHR"));
     l_eglDestroyImageKHR =
         reinterpret_cast<PFNEGLDESTROYIMAGEKHRPROC>(loadProc("eglDestroyImageKHR"));
-    l_eglSignalSyncKHR = reinterpret_cast<PFNEGLSIGNALSYNCKHRPROC>(loadProc("eglSignalSyncKHR"));
     l_eglCreateStreamKHR =
         reinterpret_cast<PFNEGLCREATESTREAMKHRPROC>(loadProc("eglCreateStreamKHR"));
     l_eglDestroyStreamKHR =

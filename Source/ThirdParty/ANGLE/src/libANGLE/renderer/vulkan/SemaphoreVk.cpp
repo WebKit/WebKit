@@ -117,11 +117,12 @@ angle::Result SemaphoreVk::wait(gl::Context *context,
             BufferVk *bufferVk             = vk::GetImpl(buffer);
             vk::BufferHelper &bufferHelper = bufferVk->getBuffer();
 
-            vk::CommandBuffer &commandBuffer = contextVk->getOutsideRenderPassCommandBuffer();
+            vk::CommandBuffer *commandBuffer;
+            ANGLE_TRY(contextVk->endRenderPassAndGetCommandBuffer(&commandBuffer));
 
             // Queue ownership transfer.
             bufferHelper.acquireFromExternal(contextVk, VK_QUEUE_FAMILY_EXTERNAL,
-                                             rendererQueueFamilyIndex, &commandBuffer);
+                                             rendererQueueFamilyIndex, commandBuffer);
         }
     }
 
@@ -136,16 +137,15 @@ angle::Result SemaphoreVk::wait(gl::Context *context,
             vk::ImageHelper &image = textureVk->getImage();
             vk::ImageLayout layout = GetVulkanImageLayout(textureAndLayout.layout);
 
-            vk::CommandBuffer &commandBuffer = contextVk->getOutsideRenderPassCommandBuffer();
+            vk::CommandBuffer *commandBuffer;
+            ANGLE_TRY(contextVk->endRenderPassAndGetCommandBuffer(&commandBuffer));
 
-            // Image should not be accessed while unowned. Emulated formats may have staged updates
-            // to clear the image after initialization.
-            ASSERT(!image.hasStagedUpdatesInAllocatedLevels() ||
-                   image.getFormat().hasEmulatedImageChannels());
+            // Image should not be accessed while unowned.
+            ASSERT(!textureVk->getImage().hasStagedUpdates());
 
             // Queue ownership transfer and layout transition.
             image.acquireFromExternal(contextVk, VK_QUEUE_FAMILY_EXTERNAL, rendererQueueFamilyIndex,
-                                      layout, &commandBuffer);
+                                      layout, commandBuffer);
         }
     }
 
@@ -169,12 +169,12 @@ angle::Result SemaphoreVk::signal(gl::Context *context,
             BufferVk *bufferVk             = vk::GetImpl(buffer);
             vk::BufferHelper &bufferHelper = bufferVk->getBuffer();
 
-            ANGLE_TRY(contextVk->onBufferReleaseToExternal(bufferHelper));
-            vk::CommandBuffer &commandBuffer = contextVk->getOutsideRenderPassCommandBuffer();
+            vk::CommandBuffer *commandBuffer;
+            ANGLE_TRY(contextVk->endRenderPassAndGetCommandBuffer(&commandBuffer));
 
             // Queue ownership transfer.
             bufferHelper.releaseToExternal(contextVk, rendererQueueFamilyIndex,
-                                           VK_QUEUE_FAMILY_EXTERNAL, &commandBuffer);
+                                           VK_QUEUE_FAMILY_EXTERNAL, commandBuffer);
         }
     }
 
@@ -198,12 +198,12 @@ angle::Result SemaphoreVk::signal(gl::Context *context,
 
             ANGLE_TRY(textureVk->ensureImageInitialized(contextVk, ImageMipLevels::EnabledLevels));
 
-            ANGLE_TRY(contextVk->onImageReleaseToExternal(image));
-            vk::CommandBuffer &commandBuffer = contextVk->getOutsideRenderPassCommandBuffer();
+            vk::CommandBuffer *commandBuffer;
+            ANGLE_TRY(contextVk->endRenderPassAndGetCommandBuffer(&commandBuffer));
 
             // Queue ownership transfer and layout transition.
             image.releaseToExternal(contextVk, rendererQueueFamilyIndex, VK_QUEUE_FAMILY_EXTERNAL,
-                                    layout, &commandBuffer);
+                                    layout, commandBuffer);
         }
     }
 

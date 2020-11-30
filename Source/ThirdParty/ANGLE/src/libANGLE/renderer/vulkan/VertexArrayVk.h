@@ -123,16 +123,14 @@ class VertexArrayVk : public VertexArrayImpl
                                          size_t attribIndex,
                                          const vk::Format &vertexFormat,
                                          ConversionBuffer *conversion,
-                                         GLuint relativeOffset,
-                                         bool compressed);
+                                         GLuint relativeOffset);
     angle::Result convertVertexBufferCPU(ContextVk *contextVk,
                                          BufferVk *srcBuffer,
                                          const gl::VertexBinding &binding,
                                          size_t attribIndex,
                                          const vk::Format &vertexFormat,
                                          ConversionBuffer *conversion,
-                                         GLuint relativeOffset,
-                                         bool compress);
+                                         GLuint relativeOffset);
 
     angle::Result syncDirtyAttrib(ContextVk *contextVk,
                                   const gl::VertexAttribute &attrib,
@@ -147,7 +145,6 @@ class VertexArrayVk : public VertexArrayImpl
     gl::AttribArray<vk::BufferHelper *> mCurrentArrayBuffers;
     // Cache strides of attributes for a fast pipeline cache update when VAOs are changed
     gl::AttribArray<GLuint> mCurrentArrayBufferStrides;
-    gl::AttributesMask mCurrentArrayBufferCompressed;
     VkDeviceSize mCurrentElementArrayBufferOffset;
     vk::BufferHelper *mCurrentElementArrayBuffer;
 

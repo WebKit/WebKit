@@ -277,9 +277,6 @@ LRESULT CALLBACK Win32Window::WndProc(HWND hWnd, UINT message, WPARAM wParam, LP
 
             case WM_SIZE:
             {
-                if (window->mIgnoreSizeEvents)
-                    break;
-
                 RECT winRect;
                 GetClientRect(hWnd, &winRect);
 
@@ -501,7 +498,7 @@ Win32Window::~Win32Window()
     destroy();
 }
 
-bool Win32Window::initializeImpl(const std::string &name, int width, int height)
+bool Win32Window::initialize(const std::string &name, int width, int height)
 {
     destroy();
 

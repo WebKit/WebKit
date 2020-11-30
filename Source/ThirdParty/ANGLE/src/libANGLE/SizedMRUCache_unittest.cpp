@@ -53,8 +53,7 @@ TEST(SizedMRUCacheTest, ManySmallValues)
 
     for (size_t value = 0; value < kSize; ++value)
     {
-        size_t valueCopy = value;
-        EXPECT_TRUE(sizedCache.put(value, std::move(valueCopy), 1));
+        EXPECT_TRUE(sizedCache.put(value, std::move(value), 1));
 
         const size_t *qvalue = nullptr;
         EXPECT_TRUE(sizedCache.get(value, &qvalue));
@@ -91,8 +90,7 @@ TEST(SizedMRUCacheTest, ManySmallValues)
     // Put a bunch of items in the cache sequentially.
     for (size_t value = 0; value < kSize * 10; ++value)
     {
-        size_t valueCopy = value;
-        EXPECT_TRUE(sizedCache.put(value, std::move(valueCopy), 1));
+        EXPECT_TRUE(sizedCache.put(value, std::move(value), 1));
     }
 
     EXPECT_EQ(32u, sizedCache.size());

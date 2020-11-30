@@ -27,7 +27,6 @@
 #include "libANGLE/formatutils.h"
 #include "libANGLE/renderer/d3d/CompilerD3D.h"
 #include "libANGLE/renderer/d3d/DeviceD3D.h"
-#include "libANGLE/renderer/d3d/DisplayD3D.h"
 #include "libANGLE/renderer/d3d/FramebufferD3D.h"
 #include "libANGLE/renderer/d3d/IndexDataManager.h"
 #include "libANGLE/renderer/d3d/ProgramD3D.h"
@@ -151,11 +150,6 @@ Renderer9::Renderer9(egl::Display *display) : RendererD3D(display), mStateManage
     mAppliedPixelShader   = nullptr;
     mAppliedProgramSerial = 0;
 
-    gl::InitializeDebugAnnotations(&mAnnotator);
-}
-
-void Renderer9::setGlobalDebugAnnotator()
-{
     gl::InitializeDebugAnnotations(&mAnnotator);
 }
 
@@ -597,9 +591,8 @@ void Renderer9::generateDisplayExtensions(egl::DisplayExtensions *outExtensions)
 
     outExtensions->flexibleSurfaceCompatibility = true;
 
-    // Contexts are virtualized so textures and semaphores can be shared globally
-    outExtensions->displayTextureShareGroup   = true;
-    outExtensions->displaySemaphoreShareGroup = true;
+    // Contexts are virtualized so textures can be shared globally
+    outExtensions->displayTextureShareGroup = true;
 
     // D3D9 can be used without an output surface
     outExtensions->surfacelessContext = true;
@@ -3268,10 +3261,5 @@ angle::Result Renderer9::ensureVertexDataManagerInitialized(const gl::Context *c
     }
 
     return angle::Result::Continue;
-}
-
-RendererD3D *CreateRenderer9(egl::Display *display)
-{
-    return new Renderer9(display);
 }
 }  // namespace rx

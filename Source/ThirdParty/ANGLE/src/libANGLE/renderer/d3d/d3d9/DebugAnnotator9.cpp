@@ -13,22 +13,17 @@
 namespace rx
 {
 
-void DebugAnnotator9::beginEvent(gl::Context *context,
-                                 gl::EntryPoint entryPoint,
-                                 const char *eventName,
-                                 const char *eventMessage)
+void DebugAnnotator9::beginEvent(const char *eventName, const char *eventMessage)
 {
-    angle::LoggingAnnotator::beginEvent(context, entryPoint, eventName, eventMessage);
+    angle::LoggingAnnotator::beginEvent(eventName, eventMessage);
     std::mbstate_t state = std::mbstate_t();
     std::mbsrtowcs(mWCharMessage, &eventMessage, kMaxMessageLength, &state);
     D3DPERF_BeginEvent(0, mWCharMessage);
 }
 
-void DebugAnnotator9::endEvent(gl::Context *context,
-                               const char *eventName,
-                               gl::EntryPoint entryPoint)
+void DebugAnnotator9::endEvent(const char *eventName)
 {
-    angle::LoggingAnnotator::endEvent(context, eventName, entryPoint);
+    angle::LoggingAnnotator::endEvent(eventName);
     D3DPERF_EndEvent();
 }
 

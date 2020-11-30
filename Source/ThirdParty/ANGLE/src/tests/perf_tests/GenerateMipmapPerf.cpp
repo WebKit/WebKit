@@ -92,8 +92,10 @@ class GenerateMipmapBenchmarkBase : public ANGLERenderTest,
   protected:
     void initShaders();
 
-    GLuint mProgram = 0;
-    GLuint mTexture = 0;
+    GLuint mProgram    = 0;
+    GLint mPositionLoc = -1;
+    GLint mSamplerLoc  = -1;
+    GLuint mTexture    = 0;
 
     std::vector<uint8_t> mTextureData;
 };
@@ -151,6 +153,7 @@ void GenerateMipmapBenchmarkBase::initializeBenchmark()
         glRequestExtensionANGLE("GL_EXT_disjoint_timer_query");
     }
 
+    glActiveTexture(GL_TEXTURE0);
     glGenTextures(1, &mTexture);
     glBindTexture(GL_TEXTURE_2D, mTexture);
 
@@ -175,21 +178,26 @@ void GenerateMipmapBenchmarkBase::initializeBenchmark()
 
 void GenerateMipmapBenchmarkBase::initShaders()
 {
-    constexpr char kVS[] = R"(void main()
+    constexpr char kVS[] = R"(attribute vec4 a_position;
+void main()
 {
-    gl_Position = vec4(0, 0, 0, 1);
+    gl_Position = a_position;
 })";
 
     constexpr char kFS[] = R"(precision mediump float;
+uniform sampler2D s_texture;
 void main()
 {
-    gl_FragColor = vec4(0);
+    gl_FragColor = texture2D(s_texture, vec2(0, 0));
 })";
 
     mProgram = CompileProgram(kVS, kFS);
     ASSERT_NE(0u, mProgram);
 
+    mPositionLoc = glGetAttribLocation(mProgram, "a_position");
+    mSamplerLoc  = glGetUniformLocation(mProgram, "s_texture");
     glUseProgram(mProgram);
+    glUniform1i(mSamplerLoc, 0);
 
     glDisable(GL_DEPTH_TEST);
 

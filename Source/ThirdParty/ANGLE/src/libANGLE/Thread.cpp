@@ -11,11 +11,7 @@
 #include "libANGLE/Context.h"
 #include "libANGLE/Debug.h"
 #include "libANGLE/Error.h"
-
-namespace angle
-{
-bool gUseAndroidOpenGLTlsSlot;
-}  // namespace angle
+#include "libANGLE/ErrorStrings.h"
 
 namespace egl
 {
@@ -100,6 +96,18 @@ gl::Context *Thread::getContext() const
     return mContext;
 }
 
+gl::Context *Thread::getValidContext() const
+{
+    if (mContext && mContext->isContextLost())
+    {
+        mContext->handleError(GL_OUT_OF_MEMORY, gl::err::kContextLost, __FILE__, ANGLE_FUNCTION,
+                              __LINE__);
+        return nullptr;
+    }
+
+    return mContext;
+}
+
 Display *Thread::getDisplay() const
 {
     if (mContext)
@@ -108,4 +116,5 @@ Display *Thread::getDisplay() const
     }
     return nullptr;
 }
+
 }  // namespace egl

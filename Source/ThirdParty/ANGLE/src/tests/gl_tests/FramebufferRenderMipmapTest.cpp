@@ -103,9 +103,6 @@ TEST_P(FramebufferRenderMipmapTest, RenderToMipmap)
         IsGLExtensionEnabled("GL_OES_fbo_render_mipmap") || getClientMajorVersion() > 2;
     ANGLE_SKIP_TEST_IF(!renderToMipmapSupported);
 
-    // http://anglebug.com/5241
-    ANGLE_SKIP_TEST_IF(IsMetal() && IsOSX() && IsNVIDIA());
-
     const GLfloat levelColors[] = {
         1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,
         1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f,

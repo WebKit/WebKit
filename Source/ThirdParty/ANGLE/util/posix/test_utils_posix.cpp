@@ -58,36 +58,33 @@ struct ScopedPipe
     };
 };
 
-enum class ReadResult
+bool ReadFromFile(int fd, std::string *out)
 {
-    NoData,
-    GotData,
-};
-
-ReadResult ReadFromFile(int fd, std::string *out)
-{
-    constexpr size_t kBufSize = 2048;
-    char buffer[kBufSize];
+    char buffer[256];
     ssize_t bytesRead = read(fd, buffer, sizeof(buffer));
 
+    // If interrupted, retry.
     if (bytesRead < 0 && errno == EINTR)
     {
-        return ReadResult::GotData;
+        return true;
     }
 
+    // If failed, or nothing to read, we are done.
     if (bytesRead <= 0)
     {
-        return ReadResult::NoData;
+        return false;
     }
 
     out->append(buffer, bytesRead);
-    return ReadResult::GotData;
+    return true;
 }
 
 void ReadEntireFile(int fd, std::string *out)
 {
-    while (ReadFromFile(fd, out) == ReadResult::GotData)
+    while (true)
     {
+        if (!ReadFromFile(fd, out))
+            break;
     }
 }
 
@@ -247,12 +244,12 @@ class PosixProcess : public Process
 
         if (mStdoutPipe.valid())
         {
-            ReadEntireFile(mStdoutPipe.fds[0], &mStdout);
+            ReadFromFile(mStdoutPipe.fds[0], &mStdout);
         }
 
         if (mStderrPipe.valid())
         {
-            ReadEntireFile(mStderrPipe.fds[0], &mStderr);
+            ReadFromFile(mStderrPipe.fds[0], &mStderr);
         }
 
         return false;
@@ -383,7 +380,7 @@ bool GetTempDir(char *tempDirOut, uint32_t maxDirNameLen)
     }
 
 #if defined(ANGLE_PLATFORM_ANDROID)
-    // Not used right now in the ANGLE test runner.
+    // TODO(jmadill): Android support. http://anglebug.com/3162
     // return PathService::Get(DIR_CACHE, path);
     return false;
 #else

@@ -18,14 +18,11 @@
 namespace rx
 {
 
-enum DescriptorSetIndex : uint32_t;
-
 namespace vk
 {
 
 namespace priv
 {
-
 // NOTE: Please keep command-related enums, stucts, functions
 //  and other code dealing with commands in alphabetical order
 //  This simplifies searching and updating commands.
@@ -71,14 +68,12 @@ enum class CommandID : uint16_t
     ImageBarrier,
     InsertDebugUtilsLabel,
     MemoryBarrier,
-    NextSubpass,
     PipelineBarrier,
     PushConstants,
     ResetEvent,
     ResetQueryPool,
     ResolveImage,
     SetEvent,
-    SetScissor,
     WaitEvents,
     WriteTimestamp,
 };
@@ -361,12 +356,6 @@ struct MemoryBarrierParams
 };
 VERIFY_4_BYTE_ALIGNMENT(MemoryBarrierParams)
 
-struct NextSubpassParams
-{
-    VkSubpassContents subpassContents;
-};
-VERIFY_4_BYTE_ALIGNMENT(NextSubpassParams)
-
 struct PipelineBarrierParams
 {
     VkPipelineStageFlags srcStageMask;
@@ -416,12 +405,6 @@ struct SetEventParams
     VkPipelineStageFlags stageMask;
 };
 VERIFY_4_BYTE_ALIGNMENT(SetEventParams)
-
-struct SetScissorParams
-{
-    VkRect2D scissor;
-};
-VERIFY_4_BYTE_ALIGNMENT(SetScissorParams)
 
 struct WaitEventsParams
 {
@@ -485,7 +468,7 @@ class SecondaryCommandBuffer final : angle::NonCopyable
 
     void bindDescriptorSets(const PipelineLayout &layout,
                             VkPipelineBindPoint pipelineBindPoint,
-                            DescriptorSetIndex firstSet,
+                            uint32_t firstSet,
                             uint32_t descriptorSetCount,
                             const VkDescriptorSet *descriptorSets,
                             uint32_t dynamicOffsetCount,
@@ -614,8 +597,6 @@ class SecondaryCommandBuffer final : angle::NonCopyable
                        VkPipelineStageFlags dstStageMask,
                        const VkMemoryBarrier *memoryBarrier);
 
-    void nextSubpass(VkSubpassContents subpassContents);
-
     void pipelineBarrier(VkPipelineStageFlags srcStageMask,
                          VkPipelineStageFlags dstStageMask,
                          VkDependencyFlags dependencyFlags,
@@ -647,8 +628,6 @@ class SecondaryCommandBuffer final : angle::NonCopyable
                       const VkImageResolve *regions);
 
     void setEvent(VkEvent event, VkPipelineStageFlags stageMask);
-
-    void setScissor(uint32_t firstScissor, uint32_t scissorCount, const VkRect2D *scissors);
 
     void waitEvents(uint32_t eventCount,
                     const VkEvent *events,
@@ -697,9 +676,6 @@ class SecondaryCommandBuffer final : angle::NonCopyable
         reinterpret_cast<CommandHeader *>(mCurrentWritePointer)->id = CommandID::Invalid;
     }
 
-    void open() { mIsOpen = true; }
-    void close() { mIsOpen = false; }
-
     void reset()
     {
         mCommands.clear();
@@ -714,21 +690,12 @@ class SecondaryCommandBuffer final : angle::NonCopyable
 
     static bool CanKnowIfEmpty() { return true; }
     bool empty() const { return mCommands.size() == 0 || mCommands[0]->id == CommandID::Invalid; }
-    // The following is used to give the size of the command buffer in bytes
-    uint32_t getCommandSize() const
-    {
-        ASSERT(mCommands.size() > 0 || mCurrentBytesRemaining == 0);
-        uint32_t rtn =
-            static_cast<uint32_t>((mCommands.size() * kBlockSize) - mCurrentBytesRemaining);
-        return rtn;
-    }
 
   private:
     void commonDebugUtilsLabel(CommandID cmd, const VkDebugUtilsLabelEXT &label);
     template <class StructType>
     ANGLE_INLINE StructType *commonInit(CommandID cmdID, size_t allocationSize)
     {
-        ASSERT(mIsOpen);
         mCurrentBytesRemaining -= allocationSize;
 
         CommandHeader *header = reinterpret_cast<CommandHeader *>(mCurrentWritePointer);
@@ -769,7 +736,7 @@ class SecondaryCommandBuffer final : angle::NonCopyable
             else
             {
                 // Make sure allocation is 4-byte aligned
-                const size_t alignedSize = roundUpPow2<size_t>(requiredSize, 4);
+                const size_t alignedSize = roundUp<size_t>(requiredSize, 4);
                 ASSERT((alignedSize % 4) == 0);
                 allocateNewBlock(alignedSize);
             }
@@ -811,9 +778,6 @@ class SecondaryCommandBuffer final : angle::NonCopyable
         return writePointer + sizeInBytes;
     }
 
-    // flag to indicate that commandBuffer is open for new commands
-    bool mIsOpen;
-
     std::vector<CommandHeader *> mCommands;
 
     // Allocator used by this class. If non-null then the class is valid.
@@ -837,7 +801,7 @@ ANGLE_INLINE void SecondaryCommandBuffer::commonDebugUtilsLabel(CommandID cmd,
 {
     uint8_t *writePtr;
     const size_t stringSize        = strlen(label.pLabelName) + 1;
-    const size_t alignedStringSize = roundUpPow2<size_t>(stringSize, 4);
+    const size_t alignedStringSize = roundUp<size_t>(stringSize, 4);
     DebugUtilsLabelParams *paramStruct =
         initCommand<DebugUtilsLabelParams>(cmd, alignedStringSize, &writePtr);
     paramStruct->color[0] = label.color[0];
@@ -882,7 +846,7 @@ ANGLE_INLINE void SecondaryCommandBuffer::bindComputePipeline(const Pipeline &pi
 
 ANGLE_INLINE void SecondaryCommandBuffer::bindDescriptorSets(const PipelineLayout &layout,
                                                              VkPipelineBindPoint pipelineBindPoint,
-                                                             DescriptorSetIndex firstSet,
+                                                             uint32_t firstSet,
                                                              uint32_t descriptorSetCount,
                                                              const VkDescriptorSet *descriptorSets,
                                                              uint32_t dynamicOffsetCount,
@@ -896,7 +860,7 @@ ANGLE_INLINE void SecondaryCommandBuffer::bindDescriptorSets(const PipelineLayou
     // Copy params into memory
     paramStruct->layout             = layout.getHandle();
     paramStruct->pipelineBindPoint  = pipelineBindPoint;
-    paramStruct->firstSet           = ToUnderlying(firstSet);
+    paramStruct->firstSet           = firstSet;
     paramStruct->descriptorSetCount = descriptorSetCount;
     paramStruct->dynamicOffsetCount = dynamicOffsetCount;
     // Copy variable sized data
@@ -1296,12 +1260,6 @@ ANGLE_INLINE void SecondaryCommandBuffer::memoryBarrier(VkPipelineStageFlags src
     paramStruct->memoryBarrier       = *memoryBarrier;
 }
 
-ANGLE_INLINE void SecondaryCommandBuffer::nextSubpass(VkSubpassContents subpassContents)
-{
-    NextSubpassParams *paramStruct = initCommand<NextSubpassParams>(CommandID::NextSubpass);
-    paramStruct->subpassContents   = subpassContents;
-}
-
 ANGLE_INLINE void SecondaryCommandBuffer::pipelineBarrier(
     VkPipelineStageFlags srcStageMask,
     VkPipelineStageFlags dstStageMask,
@@ -1396,17 +1354,6 @@ ANGLE_INLINE void SecondaryCommandBuffer::setEvent(VkEvent event, VkPipelineStag
     SetEventParams *paramStruct = initCommand<SetEventParams>(CommandID::SetEvent);
     paramStruct->event          = event;
     paramStruct->stageMask      = stageMask;
-}
-
-ANGLE_INLINE void SecondaryCommandBuffer::setScissor(uint32_t firstScissor,
-                                                     uint32_t scissorCount,
-                                                     const VkRect2D *scissors)
-{
-    ASSERT(firstScissor == 0);
-    ASSERT(scissorCount == 1);
-    ASSERT(scissors != nullptr);
-    SetScissorParams *paramStruct = initCommand<SetScissorParams>(CommandID::SetScissor);
-    paramStruct->scissor          = scissors[0];
 }
 
 ANGLE_INLINE void SecondaryCommandBuffer::waitEvents(

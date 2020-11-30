@@ -18,7 +18,6 @@
 #include "common/utilities.h"
 #include "libANGLE/renderer/ProgramImpl.h"
 #include "libANGLE/renderer/glslang_wrapper_utils.h"
-#include "libANGLE/renderer/metal/mtl_buffer_pool.h"
 #include "libANGLE/renderer/metal/mtl_command_buffer.h"
 #include "libANGLE/renderer/metal/mtl_glslang_utils.h"
 #include "libANGLE/renderer/metal/mtl_resources.h"
@@ -28,28 +27,15 @@ namespace rx
 {
 class ContextMtl;
 
-struct ProgramArgumentBufferEncoderMtl
-{
-    void reset(ContextMtl *contextMtl);
-
-    mtl::AutoObjCPtr<id<MTLArgumentEncoder>> metalArgBufferEncoder;
-    mtl::BufferPool bufferPool;
-};
-
 // Represents a specialized shader variant. For example, a shader variant with fragment coverage
 // mask enabled and a shader variant without.
-struct ProgramShaderObjVariantMtl
+struct ProgramShaderVariantMtl
 {
     void reset(ContextMtl *contextMtl);
 
     mtl::AutoObjCPtr<id<MTLFunction>> metalShader;
-    // UBO's argument buffer encoder. Used when number of UBOs used exceeds number of allowed
-    // discrete slots, and thus needs to encode all into one argument buffer.
-    ProgramArgumentBufferEncoderMtl uboArgBufferEncoder;
-
-    // Store reference to the TranslatedShaderInfo to easy querying mapped textures/UBO/XFB
-    // bindings.
-    const mtl::TranslatedShaderInfo *translatedSrcInfo;
+    // NOTE(hqle): might need additional info such as uniform buffer encoder, fragment coverage mask
+    // enabled or not, etc.
 };
 
 class ProgramMtl : public ProgramImpl, public mtl::RenderPipelineCacheSpecializeShaderFactory
@@ -69,8 +55,7 @@ class ProgramMtl : public ProgramImpl, public mtl::RenderPipelineCacheSpecialize
 
     std::unique_ptr<LinkEvent> link(const gl::Context *context,
                                     const gl::ProgramLinkedResources &resources,
-                                    gl::InfoLog &infoLog,
-                                    const gl::ProgramMergedVaryings &mergedVaryings) override;
+                                    gl::InfoLog &infoLog) override;
     GLboolean validate(const gl::Caps &caps, gl::InfoLog *infoLog) override;
 
     void setUniform1fv(GLint location, GLsizei count, const GLfloat *v) override;
@@ -138,10 +123,8 @@ class ProgramMtl : public ProgramImpl, public mtl::RenderPipelineCacheSpecialize
     // shader program changed.
     angle::Result setupDraw(const gl::Context *glContext,
                             mtl::RenderCommandEncoder *cmdEncoder,
-                            const mtl::RenderPipelineDesc &pipelineDesc,
-                            bool pipelineDescChanged,
-                            bool forceTexturesSetting,
-                            bool uniformBuffersDirty);
+                            const Optional<mtl::RenderPipelineDesc> &changedPipelineDesc,
+                            bool forceTexturesSetting);
 
   private:
     template <int cols, int rows>
@@ -162,36 +145,16 @@ class ProgramMtl : public ProgramImpl, public mtl::RenderPipelineCacheSpecialize
                                  mtl::RenderCommandEncoder *cmdEncoder,
                                  bool forceUpdate);
 
-    angle::Result updateUniformBuffers(ContextMtl *context,
-                                       mtl::RenderCommandEncoder *cmdEncoder,
-                                       const mtl::RenderPipelineDesc &pipelineDesc);
-    angle::Result legalizeUniformBufferOffsets(ContextMtl *context,
-                                               const std::vector<gl::InterfaceBlock> &blocks);
-    angle::Result bindUniformBuffersToDiscreteSlots(ContextMtl *context,
-                                                    mtl::RenderCommandEncoder *cmdEncoder,
-                                                    const std::vector<gl::InterfaceBlock> &blocks,
-                                                    gl::ShaderType shaderType);
-    angle::Result encodeUniformBuffersInfoArgumentBuffer(
-        ContextMtl *context,
-        mtl::RenderCommandEncoder *cmdEncoder,
-        const std::vector<gl::InterfaceBlock> &blocks,
-        gl::ShaderType shaderType);
-
-    angle::Result updateXfbBuffers(ContextMtl *context,
-                                   mtl::RenderCommandEncoder *cmdEncoder,
-                                   const mtl::RenderPipelineDesc &pipelineDesc);
-
     void reset(ContextMtl *context);
-
     void linkResources(const gl::ProgramLinkedResources &resources);
     angle::Result linkImpl(const gl::Context *glContext,
                            const gl::ProgramLinkedResources &resources,
                            gl::InfoLog &infoLog);
 
-    angle::Result createMslShaderLib(mtl::Context *context,
+    angle::Result createMslShaderLib(const gl::Context *glContext,
                                      gl::ShaderType shaderType,
                                      gl::InfoLog &infoLog,
-                                     mtl::TranslatedShaderInfo *translatedMslInfo);
+                                     const std::string &translatedSource);
 
     // State for the default uniform blocks.
     struct DefaultUniformBlock final : private angle::NonCopyable
@@ -211,32 +174,16 @@ class ProgramMtl : public ProgramImpl, public mtl::RenderPipelineCacheSpecialize
     gl::ShaderBitSet mSamplerBindingsDirty;
     gl::ShaderMap<DefaultUniformBlock> mDefaultUniformBlocks;
 
-    // Translated metal shaders:
+    gl::ShaderMap<std::string> mTranslatedMslShader;
+
     gl::ShaderMap<mtl::TranslatedShaderInfo> mMslShaderTranslateInfo;
+    gl::ShaderMap<mtl::AutoObjCPtr<id<MTLLibrary>>> mMslShaderLibrary;
 
-    // Translated metal version for transform feedback only vertex shader:
-    // - Metal doesn't allow vertex shader to write to both buffers and to stage output
-    // (gl_Position). Need a special version of vertex shader that only writes to transform feedback
-    // buffers.
-    mtl::TranslatedShaderInfo mMslXfbOnlyVertexShaderInfo;
-
-    // Compiled native shader object variants:
-    // - Vertex shader: One with emulated rasterization discard, one with true rasterization
-    // discard, one without.
-    mtl::RenderPipelineRasterStateMap<ProgramShaderObjVariantMtl> mVertexShaderVariants;
+    // Shader variants:
+    // - Vertex shader: One variant for now.
+    std::array<ProgramShaderVariantMtl, 1> mVertexShaderVariants;
     // - Fragment shader: One with sample coverage mask enabled, one with it disabled.
-    std::array<ProgramShaderObjVariantMtl, 2> mFragmentShaderVariants;
-
-    // Cached references of current shader variants.
-    gl::ShaderMap<ProgramShaderObjVariantMtl *> mCurrentShaderVariants;
-
-    // Scratch data:
-    // Legalized buffers and their offsets. For example, uniform buffer's offset=1 is not a valid
-    // offset, it will be converted to legal offset and the result is stored in this array.
-    std::vector<std::pair<mtl::BufferRef, uint32_t>> mLegalizedOffsetedUniformBuffers;
-    // Stores the render stages usage of each uniform buffer. Only used if the buffers are encoded
-    // into an argument buffer.
-    std::vector<uint32_t> mArgumentBufferRenderStageUsages;
+    std::array<ProgramShaderVariantMtl, 2> mFragmentShaderVariants;
 
     mtl::RenderPipelineCache mMetalRenderPipelineCache;
 };

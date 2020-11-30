@@ -34,7 +34,7 @@ class SyncHelper : public vk::Resource
 {
   public:
     SyncHelper();
-    ~SyncHelper() override;
+    virtual ~SyncHelper();
 
     virtual void releaseToRenderer(RendererVk *renderer);
 

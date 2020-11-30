@@ -166,10 +166,19 @@ DynamicPromotionParams DynamicPromotionD3D11Params()
     return params;
 }
 
+DynamicPromotionParams DynamicPromotionD3D9Params()
+{
+    DynamicPromotionParams params;
+    params.eglParameters = egl_platform::D3D9();
+    return params;
+}
+
 TEST_P(DynamicPromotionPerfTest, Run)
 {
     run();
 }
 
-ANGLE_INSTANTIATE_TEST(DynamicPromotionPerfTest, DynamicPromotionD3D11Params());
+ANGLE_INSTANTIATE_TEST(DynamicPromotionPerfTest,
+                       DynamicPromotionD3D11Params(),
+                       DynamicPromotionD3D9Params());
 }  // anonymous namespace

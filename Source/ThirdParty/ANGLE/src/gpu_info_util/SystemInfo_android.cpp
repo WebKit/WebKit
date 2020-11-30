@@ -6,7 +6,10 @@
 
 // SystemInfo_android.cpp: implementation of the Android-specific parts of SystemInfo.h
 
+#include <dlfcn.h>
+#include <vulkan/vulkan.h>
 #include "gpu_info_util/SystemInfo_internal.h"
+#include "gpu_info_util/SystemInfo_vulkan.h"
 
 #include <sys/system_properties.h>
 #include <cstring>
@@ -17,8 +20,7 @@
 
 namespace angle
 {
-namespace
-{
+
 bool GetAndroidSystemProperty(const std::string &propertyName, std::string *value)
 {
     // PROP_VALUE_MAX from <sys/system_properties.h>
@@ -31,7 +33,6 @@ bool GetAndroidSystemProperty(const std::string &propertyName, std::string *valu
     *value = std::string(propertyBuf.data());
     return true;
 }
-}  // namespace
 
 bool GetSystemInfo(SystemInfo *info)
 {

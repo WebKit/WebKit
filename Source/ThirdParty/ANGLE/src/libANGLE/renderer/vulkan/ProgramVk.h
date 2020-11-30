@@ -46,8 +46,7 @@ class ProgramVk : public ProgramImpl
 
     std::unique_ptr<LinkEvent> link(const gl::Context *context,
                                     const gl::ProgramLinkedResources &resources,
-                                    gl::InfoLog &infoLog,
-                                    const gl::ProgramMergedVaryings &mergedVaryings) override;
+                                    gl::InfoLog &infoLog) override;
     GLboolean validate(const gl::Caps &caps, gl::InfoLog *infoLog) override;
 
     void setUniform1fv(GLint location, GLsizei count, const GLfloat *v) override;
@@ -147,7 +146,7 @@ class ProgramVk : public ProgramImpl
 
     ANGLE_INLINE angle::Result initGraphicsShaderProgram(ContextVk *contextVk,
                                                          const gl::ShaderType shaderType,
-                                                         ProgramTransformOptions optionBits,
+                                                         ProgramTransformOptionBits optionBits,
                                                          ProgramInfo *programInfo,
                                                          ProgramExecutableVk *executableVk)
     {
@@ -158,7 +157,7 @@ class ProgramVk : public ProgramImpl
                                                   ProgramInfo *programInfo,
                                                   ProgramExecutableVk *executableVk)
     {
-        ProgramTransformOptions optionBits = {};
+        ProgramTransformOptionBits optionBits;
         return initProgram(contextVk, gl::ShaderType::Compute, optionBits, programInfo,
                            executableVk);
     }
@@ -192,7 +191,7 @@ class ProgramVk : public ProgramImpl
 
     ANGLE_INLINE angle::Result initProgram(ContextVk *contextVk,
                                            const gl::ShaderType shaderType,
-                                           ProgramTransformOptions optionBits,
+                                           ProgramTransformOptionBits optionBits,
                                            ProgramInfo *programInfo,
                                            ProgramExecutableVk *executableVk)
     {

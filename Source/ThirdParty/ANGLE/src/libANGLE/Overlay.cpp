@@ -22,10 +22,13 @@ namespace gl
 {
 namespace
 {
-#define ANGLE_WIDGET_NAME_PROC(WIDGET_ID) {ANGLE_STRINGIFY(WIDGET_ID), WidgetId::WIDGET_ID},
-
 constexpr std::pair<const char *, WidgetId> kWidgetNames[] = {
-    ANGLE_WIDGET_ID_X(ANGLE_WIDGET_NAME_PROC)};
+    {"FPS", WidgetId::FPS},
+    {"VulkanLastValidationMessage", WidgetId::VulkanLastValidationMessage},
+    {"VulkanValidationMessageCount", WidgetId::VulkanValidationMessageCount},
+    {"VulkanRenderPassCount", WidgetId::VulkanRenderPassCount},
+    {"VulkanSecondaryCommandBufferPoolWaste", WidgetId::VulkanSecondaryCommandBufferPoolWaste},
+};
 }  // namespace
 
 OverlayState::OverlayState() : mEnabledWidgetCount(0), mOverlayWidgets{} {}
@@ -58,8 +61,8 @@ void Overlay::destroy(const gl::Context *context)
 
 void Overlay::enableOverlayWidgetsFromEnvironment()
 {
-    std::vector<std::string> enabledWidgets = angle::GetStringsFromEnvironmentVarOrAndroidProperty(
-        "ANGLE_OVERLAY", "debug.angle.overlay", ":");
+    std::vector<std::string> enabledWidgets =
+        angle::GetStringsFromEnvironmentVar("ANGLE_OVERLAY", ":");
 
     for (const std::pair<const char *, WidgetId> &widgetName : kWidgetNames)
     {
@@ -96,7 +99,7 @@ void Overlay::onSwap() const
     }
 }
 
-MockOverlay::MockOverlay(rx::GLImplFactory *implFactory) {}
-MockOverlay::~MockOverlay() = default;
+DummyOverlay::DummyOverlay(rx::GLImplFactory *implFactory) {}
+DummyOverlay::~DummyOverlay() = default;
 
 }  // namespace gl

@@ -18,17 +18,12 @@ bool LoggingAnnotator::getStatus()
     return false;
 }
 
-void LoggingAnnotator::beginEvent(gl::Context *context,
-                                  gl::EntryPoint entryPoint,
-                                  const char *eventName,
-                                  const char *eventMessage)
+void LoggingAnnotator::beginEvent(const char *eventName, const char *eventMessage)
 {
     ANGLE_TRACE_EVENT_BEGIN0("gpu.angle", eventName);
 }
 
-void LoggingAnnotator::endEvent(gl::Context *context,
-                                const char *eventName,
-                                gl::EntryPoint entryPoint)
+void LoggingAnnotator::endEvent(const char *eventName)
 {
     ANGLE_TRACE_EVENT_END0("gpu.angle", eventName);
 }

@@ -96,8 +96,7 @@ class FramebufferD3D : public FramebufferImpl
 
     angle::Result syncState(const gl::Context *context,
                             GLenum binding,
-                            const gl::Framebuffer::DirtyBits &dirtyBits,
-                            gl::Command command) override;
+                            const gl::Framebuffer::DirtyBits &dirtyBits) override;
 
     const gl::AttachmentList &getColorAttachmentsForRender(const gl::Context *context);
 
@@ -136,7 +135,7 @@ class FramebufferD3D : public FramebufferImpl
     gl::DrawBufferMask mCurrentActiveProgramOutputs;
     gl::DrawBufferMask mColorAttachmentsForRenderMask;
 
-    gl::FramebufferAttachment mMockAttachment;
+    gl::FramebufferAttachment mDummyAttachment;
 };
 }  // namespace rx
 

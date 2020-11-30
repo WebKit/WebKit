@@ -29,12 +29,6 @@
 namespace
 {
 
-rx::RobustnessVideoMemoryPurgeStatus GetRobustnessVideoMemoryPurge(const egl::AttributeMap &attribs)
-{
-    return static_cast<rx::RobustnessVideoMemoryPurgeStatus>(
-        attribs.get(GLX_GENERATE_RESET_ON_VIDEO_MEMORY_PURGE_NV, GL_FALSE));
-}
-
 bool HasParallelShaderCompileExtension(const rx::FunctionsGL *functions)
 {
     return functions->maxShaderCompilerThreadsKHR != nullptr ||
@@ -74,7 +68,7 @@ DisplayGLX::DisplayGLX(const egl::DisplayState &state)
       mVisuals(nullptr),
       mContext(nullptr),
       mSharedContext(nullptr),
-      mInitPbuffer(0),
+      mDummyPbuffer(0),
       mUsesNewXDisplay(false),
       mIsMesa(false),
       mHasMultisample(false),
@@ -82,7 +76,6 @@ DisplayGLX::DisplayGLX(const egl::DisplayState &state)
       mHasARBCreateContextProfile(false),
       mHasARBCreateContextRobustness(false),
       mHasEXTCreateContextES2Profile(false),
-      mHasNVRobustnessVideoMemoryPurge(false),
       mSwapControl(SwapControl::Absent),
       mMinSwapInterval(0),
       mMaxSwapInterval(0),
@@ -122,9 +115,8 @@ egl::Error DisplayGLX::initialize(egl::Display *display)
     mHasMultisample             = mGLX.minorVersion > 3 || mGLX.hasExtension("GLX_ARB_multisample");
     mHasARBCreateContext        = mGLX.hasExtension("GLX_ARB_create_context");
     mHasARBCreateContextProfile = mGLX.hasExtension("GLX_ARB_create_context_profile");
-    mHasARBCreateContextRobustness   = mGLX.hasExtension("GLX_ARB_create_context_robustness");
-    mHasEXTCreateContextES2Profile   = mGLX.hasExtension("GLX_EXT_create_context_es2_profile");
-    mHasNVRobustnessVideoMemoryPurge = mGLX.hasExtension("GLX_NV_robustness_video_memory_purge");
+    mHasARBCreateContextRobustness = mGLX.hasExtension("GLX_ARB_create_context_robustness");
+    mHasEXTCreateContextES2Profile = mGLX.hasExtension("GLX_EXT_create_context_es2_profile");
 
     std::string clientVendor = mGLX.getClientString(GLX_VENDOR);
     mIsMesa                  = clientVendor.find("Mesa") != std::string::npos;
@@ -277,30 +269,23 @@ egl::Error DisplayGLX::initialize(egl::Display *display)
     // as commented on https://bugs.freedesktop.org/show_bug.cgi?id=38869 so we
     // use (1, 1) instead.
 
-    int initPbufferAttribs[] = {
+    int dummyPbufferAttribs[] = {
         GLX_PBUFFER_WIDTH, 1, GLX_PBUFFER_HEIGHT, 1, None,
     };
-    mInitPbuffer = mGLX.createPbuffer(mContextConfig, initPbufferAttribs);
-    if (!mInitPbuffer)
+    mDummyPbuffer = mGLX.createPbuffer(mContextConfig, dummyPbufferAttribs);
+    if (!mDummyPbuffer)
     {
-        return egl::EglNotInitialized() << "Could not create the initialization pbuffer.";
+        return egl::EglNotInitialized() << "Could not create the dummy pbuffer.";
     }
 
-    if (!mGLX.makeCurrent(mInitPbuffer, mContext))
+    if (!mGLX.makeCurrent(mDummyPbuffer, mContext))
     {
-        return egl::EglNotInitialized() << "Could not make the initialization pbuffer current.";
+        return egl::EglNotInitialized() << "Could not make the dummy pbuffer current.";
     }
 
     std::unique_ptr<FunctionsGL> functionsGL(new FunctionsGLGLX(mGLX.getProc));
     functionsGL->initialize(eglAttributes);
-    if (mHasNVRobustnessVideoMemoryPurge)
-    {
-        GLenum status = functionsGL->getGraphicsResetStatus();
-        if (status != GL_NO_ERROR && status != GL_PURGED_CONTEXT_RESET_NV)
-        {
-            return egl::EglNotInitialized() << "Context lost for unknown reason.";
-        }
-    }
+
     // TODO(cwallez, angleproject:1303) Disable the OpenGL ES backend on Linux NVIDIA and Intel as
     // it has problems on our automated testing. An OpenGL ES backend might not trigger this test if
     // there is no Desktop OpenGL support, but that's not the case in our automated testing.
@@ -324,7 +309,8 @@ egl::Error DisplayGLX::initialize(egl::Display *display)
         {
             for (unsigned int i = 0; i < RendererGL::getMaxWorkerContexts(); ++i)
             {
-                glx::Pbuffer workerPbuffer = mGLX.createPbuffer(mContextConfig, initPbufferAttribs);
+                glx::Pbuffer workerPbuffer =
+                    mGLX.createPbuffer(mContextConfig, dummyPbufferAttribs);
                 if (!workerPbuffer)
                 {
                     return egl::EglNotInitialized() << "Could not create the worker pbuffers.";
@@ -356,10 +342,10 @@ void DisplayGLX::terminate()
         mVisuals = 0;
     }
 
-    if (mInitPbuffer)
+    if (mDummyPbuffer)
     {
-        mGLX.destroyPbuffer(mInitPbuffer);
-        mInitPbuffer = 0;
+        mGLX.destroyPbuffer(mDummyPbuffer);
+        mDummyPbuffer = 0;
     }
 
     for (auto &workerPbuffer : mWorkerPbufferPool)
@@ -392,13 +378,12 @@ void DisplayGLX::terminate()
     }
 }
 
-egl::Error DisplayGLX::makeCurrent(egl::Display *display,
-                                   egl::Surface *drawSurface,
+egl::Error DisplayGLX::makeCurrent(egl::Surface *drawSurface,
                                    egl::Surface *readSurface,
                                    gl::Context *context)
 {
     glx::Drawable newDrawable =
-        (drawSurface ? GetImplAs<SurfaceGLX>(drawSurface)->getDrawable() : mInitPbuffer);
+        (drawSurface ? GetImplAs<SurfaceGLX>(drawSurface)->getDrawable() : mDummyPbuffer);
     glx::Context newContext = mContext;
     // If the thread calling makeCurrent does not have the correct context current (either mContext
     // or 0), we need to set it current.
@@ -418,7 +403,7 @@ egl::Error DisplayGLX::makeCurrent(egl::Display *display,
         mCurrentDrawable                             = newDrawable;
     }
 
-    return DisplayGL::makeCurrent(display, drawSurface, readSurface, context);
+    return DisplayGL::makeCurrent(drawSurface, readSurface, context);
 }
 
 SurfaceImpl *DisplayGLX::createWindowSurface(const egl::SurfaceState &state,
@@ -490,9 +475,7 @@ ContextImpl *DisplayGLX::createContext(const gl::State &state,
                                        const gl::Context *shareContext,
                                        const egl::AttributeMap &attribs)
 {
-    RobustnessVideoMemoryPurgeStatus robustnessVideoMemoryPurgeStatus =
-        GetRobustnessVideoMemoryPurge(attribs);
-    return new ContextGL(state, errorSet, mRenderer, robustnessVideoMemoryPurgeStatus);
+    return new ContextGL(state, errorSet, mRenderer);
 }
 
 DeviceImpl *DisplayGLX::createDevice()
@@ -897,22 +880,16 @@ void DisplayGLX::generateExtensions(egl::DisplayExtensions *outExtensions) const
 {
     outExtensions->createContextRobustness = mHasARBCreateContextRobustness;
 
-    // Contexts are virtualized so textures ans semaphores can be shared globally
-    outExtensions->displayTextureShareGroup   = true;
-    outExtensions->displaySemaphoreShareGroup = true;
+    // Contexts are virtualized so textures can be shared globally
+    outExtensions->displayTextureShareGroup = true;
 
     outExtensions->surfacelessContext = true;
 
-    if (!mRenderer->getFeatures().disableSyncControlSupport.enabled)
-    {
-        const bool hasSyncControlOML        = mGLX.hasExtension("GLX_OML_sync_control");
-        outExtensions->syncControlCHROMIUM  = hasSyncControlOML;
-        outExtensions->syncControlRateANGLE = hasSyncControlOML;
-    }
+    const bool hasSyncControlOML        = mGLX.hasExtension("GLX_OML_sync_control");
+    outExtensions->syncControlCHROMIUM  = hasSyncControlOML;
+    outExtensions->syncControlRateANGLE = hasSyncControlOML;
 
     outExtensions->textureFromPixmapNOK = mGLX.hasExtension("GLX_EXT_texture_from_pixmap");
-
-    outExtensions->robustnessVideoMemoryPurgeNV = mHasNVRobustnessVideoMemoryPurge;
 
     DisplayGL::generateExtensions(outExtensions);
 }
@@ -949,11 +926,6 @@ egl::Error DisplayGLX::createContextAttribs(glx::FBConfig,
         mAttribs.push_back(GLX_CONTEXT_ROBUST_ACCESS_BIT_ARB);
         mAttribs.push_back(GLX_CONTEXT_RESET_NOTIFICATION_STRATEGY_ARB);
         mAttribs.push_back(GLX_LOSE_CONTEXT_ON_RESET_ARB);
-        if (mHasNVRobustnessVideoMemoryPurge)
-        {
-            mAttribs.push_back(GLX_GENERATE_RESET_ON_VIDEO_MEMORY_PURGE_NV);
-            mAttribs.push_back(GL_TRUE);
-        }
     }
 
     if (version.valid())

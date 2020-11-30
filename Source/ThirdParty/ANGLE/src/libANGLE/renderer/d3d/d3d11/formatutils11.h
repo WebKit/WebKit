@@ -17,7 +17,6 @@
 #include "libANGLE/formatutils.h"
 #include "libANGLE/renderer/copyvertex.h"
 #include "libANGLE/renderer/d3d/formatutilsD3D.h"
-#include "libANGLE/renderer/dxgi_format_map.h"
 #include "libANGLE/renderer/renderer_utils.h"
 
 namespace rx
@@ -57,7 +56,16 @@ struct VertexFormat : private angle::NonCopyable
 
 const VertexFormat &GetVertexFormatInfo(angle::FormatID vertexFormatID,
                                         D3D_FEATURE_LEVEL featureLevel);
+
+// Auto-generated in dxgi_format_map_autogen.cpp.
+GLenum GetComponentType(DXGI_FORMAT dxgiFormat);
+
 }  // namespace d3d11
+
+namespace d3d11_angle
+{
+const angle::Format &GetFormat(DXGI_FORMAT dxgiFormat);
+}
 
 }  // namespace rx
 

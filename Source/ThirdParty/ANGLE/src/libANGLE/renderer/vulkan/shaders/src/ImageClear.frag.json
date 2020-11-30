@@ -6,9 +6,6 @@
         "",
         "ImageClear.frag.json: Build parameters for ImageClear.frag."
     ],
-    "Flags": [
-        "ClearDepth"
-    ],
     "AttachmentIndex": [
         "Attachment0",
         "Attachment1",

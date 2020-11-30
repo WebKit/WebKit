@@ -608,7 +608,6 @@ bool ValidES3Format(GLenum format)
         case GL_RG_INTEGER:
         case GL_SRGB_ALPHA_EXT:
         case GL_SRGB_EXT:
-        case GL_STENCIL_INDEX:
             return true;
 
         default:
@@ -1398,37 +1397,6 @@ bool ValidES3FormatCombination(GLenum format, GLenum type, GLenum internalFormat
             }
             break;
 
-        case GL_DEPTH_STENCIL:
-            switch (type)
-            {
-                case GL_UNSIGNED_INT_24_8:
-                {
-                    switch (internalFormat)
-                    {
-                        case GL_DEPTH_STENCIL:
-                        case GL_DEPTH24_STENCIL8:
-                            return true;
-                        default:
-                            break;
-                    }
-                    break;
-                }
-                case GL_FLOAT_32_UNSIGNED_INT_24_8_REV:
-                {
-                    switch (internalFormat)
-                    {
-                        case GL_DEPTH32F_STENCIL8:
-                            return true;
-                        default:
-                            break;
-                    }
-                    break;
-                }
-                default:
-                    break;
-            }
-            break;
-
         case GL_RED:
             switch (type)
             {
@@ -1575,14 +1543,26 @@ bool ValidES3FormatCombination(GLenum format, GLenum type, GLenum internalFormat
             }
             break;
 
-        case GL_STENCIL_INDEX:
+        case GL_DEPTH_STENCIL:
             switch (type)
             {
-                case GL_UNSIGNED_BYTE:
+                case GL_UNSIGNED_INT_24_8:
                 {
                     switch (internalFormat)
                     {
-                        case GL_STENCIL_INDEX8:
+                        case GL_DEPTH_STENCIL:
+                        case GL_DEPTH24_STENCIL8:
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                }
+                case GL_FLOAT_32_UNSIGNED_INT_24_8_REV:
+                {
+                    switch (internalFormat)
+                    {
+                        case GL_DEPTH32F_STENCIL8:
                             return true;
                         default:
                             break;

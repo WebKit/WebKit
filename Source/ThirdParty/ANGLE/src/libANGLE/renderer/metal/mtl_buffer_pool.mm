@@ -10,7 +10,6 @@
 #include "libANGLE/renderer/metal/mtl_buffer_pool.h"
 
 #include "libANGLE/renderer/metal/ContextMtl.h"
-#include "libANGLE/renderer/metal/DisplayMtl.h"
 
 namespace rx
 {
@@ -19,114 +18,34 @@ namespace mtl
 {
 
 // BufferPool implementation.
-BufferPool::BufferPool() : BufferPool(false) {}
 BufferPool::BufferPool(bool alwaysAllocNewBuffer)
-    : BufferPool(alwaysAllocNewBuffer, BufferPoolMemPolicy::Auto)
-{}
-BufferPool::BufferPool(bool alwaysAllocNewBuffer, BufferPoolMemPolicy policy)
     : mInitialSize(0),
       mBuffer(nullptr),
       mNextAllocationOffset(0),
-      mLastFlushOffset(0),
       mSize(0),
       mAlignment(1),
       mBuffersAllocated(0),
       mMaxBuffers(0),
-      mMemPolicy(policy),
       mAlwaysAllocateNewBuffer(alwaysAllocNewBuffer)
 
 {}
 
-angle::Result BufferPool::reset(ContextMtl *contextMtl,
-                                size_t initialSize,
-                                size_t alignment,
-                                size_t maxBuffers)
-{
-    ANGLE_TRY(finalizePendingBuffer(contextMtl));
-    releaseInFlightBuffers(contextMtl);
-
-    mSize = 0;
-    if (mBufferFreeList.size() && mInitialSize <= mBufferFreeList.front()->size())
-    {
-        // Instead of deleteing old buffers, we should reset them to avoid excessive
-        // memory re-allocations
-        if (maxBuffers && mBufferFreeList.size() > maxBuffers)
-        {
-            mBufferFreeList.resize(maxBuffers);
-            mBuffersAllocated = maxBuffers;
-        }
-
-        mSize = mBufferFreeList.front()->size();
-        for (size_t i = 0; i < mBufferFreeList.size(); ++i)
-        {
-            BufferRef &buffer = mBufferFreeList[i];
-            if (!buffer->isBeingUsedByGPU(contextMtl))
-            {
-                // If buffer is not used by GPU, re-use it immediately.
-                continue;
-            }
-            bool useSharedMem = shouldAllocateInSharedMem(contextMtl);
-            if (IsError(buffer->resetWithSharedMemOpt(contextMtl, useSharedMem, mSize, nullptr)))
-            {
-                mBufferFreeList.clear();
-                mBuffersAllocated = 0;
-                mSize             = 0;
-                break;
-            }
-        }
-    }
-    else
-    {
-        mBufferFreeList.clear();
-        mBuffersAllocated = 0;
-    }
-
-    mInitialSize = initialSize;
-
-    mMaxBuffers = maxBuffers;
-
-    updateAlignment(contextMtl, alignment);
-
-    return angle::Result::Continue;
-}
-
-void BufferPool::initialize(Context *context,
+void BufferPool::initialize(ContextMtl *contextMtl,
                             size_t initialSize,
                             size_t alignment,
                             size_t maxBuffers)
 {
-    if (mBuffersAllocated)
-    {
-        // Invalid call, must call destroy() first.
-        UNREACHABLE();
-    }
+    destroy(contextMtl);
 
     mInitialSize = initialSize;
+    mSize        = 0;
 
     mMaxBuffers = maxBuffers;
 
-    updateAlignment(context, alignment);
+    updateAlignment(contextMtl, alignment);
 }
 
 BufferPool::~BufferPool() {}
-
-bool BufferPool::shouldAllocateInSharedMem(ContextMtl *contextMtl) const
-{
-    if (ANGLE_UNLIKELY(contextMtl->getDisplay()->getFeatures().forceBufferGPUStorage.enabled))
-    {
-        return false;
-    }
-
-    switch (mMemPolicy)
-    {
-        case BufferPoolMemPolicy::AlwaysSharedMem:
-            return true;
-        case BufferPoolMemPolicy::AlwaysGPUMem:
-            return false;
-        default:
-            return mSize <= kSharedMemBufferMaxBufSizeHint;
-    }
-}
 
 angle::Result BufferPool::allocateNewBuffer(ContextMtl *contextMtl)
 {
@@ -158,9 +77,7 @@ angle::Result BufferPool::allocateNewBuffer(ContextMtl *contextMtl)
         return angle::Result::Continue;
     }
 
-    bool useSharedMem = shouldAllocateInSharedMem(contextMtl);
-    ANGLE_TRY(
-        Buffer::MakeBufferWithSharedMemOpt(contextMtl, useSharedMem, mSize, nullptr, &mBuffer));
+    ANGLE_TRY(Buffer::MakeBuffer(contextMtl, mSize, nullptr, &mBuffer));
 
     ASSERT(mBuffer);
 
@@ -182,13 +99,11 @@ angle::Result BufferPool::allocate(ContextMtl *contextMtl,
     checkedNextWriteOffset += sizeToAllocate;
 
     if (!mBuffer || !checkedNextWriteOffset.IsValid() ||
-        checkedNextWriteOffset.ValueOrDie() >= mSize ||
-        // If the current buffer has been modified by GPU, do not reuse it:
-        mBuffer->isCPUReadMemNeedSync() || mAlwaysAllocateNewBuffer)
+        checkedNextWriteOffset.ValueOrDie() >= mSize || mAlwaysAllocateNewBuffer)
     {
         if (mBuffer)
         {
-            ANGLE_TRY(finalizePendingBuffer(contextMtl));
+            ANGLE_TRY(commit(contextMtl));
         }
 
         if (sizeToAllocate > mSize)
@@ -214,7 +129,6 @@ angle::Result BufferPool::allocate(ContextMtl *contextMtl,
         ASSERT(mBuffer->size() == mSize);
 
         mNextAllocationOffset = 0;
-        mLastFlushOffset      = 0;
 
         if (newBufferAllocatedOut != nullptr)
         {
@@ -236,10 +150,7 @@ angle::Result BufferPool::allocate(ContextMtl *contextMtl,
     // Optionally map() the buffer if possible
     if (ptrOut)
     {
-        // We don't need to synchronize with GPU access, since allocation should return a
-        // non-overlapped region each time.
-        *ptrOut = mBuffer->mapWithOpt(contextMtl, /** readOnly */ false, /** noSync */ true) +
-                  mNextAllocationOffset;
+        *ptrOut = mBuffer->map(contextMtl) + mNextAllocationOffset;
     }
 
     if (offsetOut)
@@ -252,28 +163,15 @@ angle::Result BufferPool::allocate(ContextMtl *contextMtl,
 
 angle::Result BufferPool::commit(ContextMtl *contextMtl)
 {
-    if (mBuffer && mNextAllocationOffset > mLastFlushOffset)
-    {
-        mBuffer->flush(contextMtl, mLastFlushOffset, mNextAllocationOffset - mLastFlushOffset);
-        mLastFlushOffset = mNextAllocationOffset;
-    }
-    return angle::Result::Continue;
-}
-
-angle::Result BufferPool::finalizePendingBuffer(ContextMtl *contextMtl)
-{
     if (mBuffer)
     {
-        ANGLE_TRY(commit(contextMtl));
-        // commit() already flushes so no need to flush here.
-        mBuffer->unmapNoFlush(contextMtl);
+        mBuffer->unmap(contextMtl);
 
         mInFlightBuffers.push_back(mBuffer);
         mBuffer = nullptr;
     }
 
     mNextAllocationOffset = 0;
-    mLastFlushOffset      = 0;
 
     return angle::Result::Continue;
 }
@@ -283,12 +181,7 @@ void BufferPool::releaseInFlightBuffers(ContextMtl *contextMtl)
     for (auto &toRelease : mInFlightBuffers)
     {
         // If the dynamic buffer was resized we cannot reuse the retained buffer.
-        if (toRelease->size() < mSize
-#if TARGET_OS_OSX || TARGET_OS_MACCATALYST
-            // Also release buffer if it was allocated in different policy
-            || toRelease->useSharedMem() != shouldAllocateInSharedMem(contextMtl)
-#endif
-        )
+        if (toRelease->size() < mSize)
         {
             toRelease = nullptr;
             mBuffersAllocated--;
@@ -302,7 +195,7 @@ void BufferPool::releaseInFlightBuffers(ContextMtl *contextMtl)
     mInFlightBuffers.clear();
 }
 
-void BufferPool::destroyBufferList(ContextMtl *contextMtl, std::deque<BufferRef> *buffers)
+void BufferPool::destroyBufferList(ContextMtl *contextMtl, std::vector<BufferRef> *buffers)
 {
     ASSERT(mBuffersAllocated >= buffers->size());
     mBuffersAllocated -= buffers->size();
@@ -324,25 +217,19 @@ void BufferPool::destroy(ContextMtl *contextMtl)
     }
 }
 
-void BufferPool::updateAlignment(Context *context, size_t alignment)
+void BufferPool::updateAlignment(ContextMtl *contextMtl, size_t alignment)
 {
     ASSERT(alignment > 0);
 
     // NOTE(hqle): May check additional platform limits.
 
-    // If alignment has changed, make sure the next allocation is done at an aligned offset.
-    if (alignment != mAlignment)
-    {
-        mNextAllocationOffset = roundUp(mNextAllocationOffset, static_cast<uint32_t>(alignment));
-        mAlignment            = alignment;
-    }
+    mAlignment = alignment;
 }
 
 void BufferPool::reset()
 {
     mSize                    = 0;
     mNextAllocationOffset    = 0;
-    mLastFlushOffset         = 0;
     mMaxBuffers              = 0;
     mAlwaysAllocateNewBuffer = false;
     mBuffersAllocated        = 0;

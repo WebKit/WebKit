@@ -20,7 +20,7 @@ angle::Result TextureImpl::copyTexture(const gl::Context *context,
                                        const gl::ImageIndex &index,
                                        GLenum internalFormat,
                                        GLenum type,
-                                       GLint sourceLevel,
+                                       size_t sourceLevel,
                                        bool unpackFlipY,
                                        bool unpackPremultiplyAlpha,
                                        bool unpackUnmultiplyAlpha,
@@ -33,48 +33,12 @@ angle::Result TextureImpl::copyTexture(const gl::Context *context,
 angle::Result TextureImpl::copySubTexture(const gl::Context *context,
                                           const gl::ImageIndex &index,
                                           const gl::Offset &destOffset,
-                                          GLint sourceLevel,
+                                          size_t sourceLevel,
                                           const gl::Box &sourceBox,
                                           bool unpackFlipY,
                                           bool unpackPremultiplyAlpha,
                                           bool unpackUnmultiplyAlpha,
                                           const gl::Texture *source)
-{
-    UNREACHABLE();
-    return angle::Result::Stop;
-}
-
-angle::Result TextureImpl::copyRenderbufferSubData(const gl::Context *context,
-                                                   const gl::Renderbuffer *srcBuffer,
-                                                   GLint srcLevel,
-                                                   GLint srcX,
-                                                   GLint srcY,
-                                                   GLint srcZ,
-                                                   GLint dstLevel,
-                                                   GLint dstX,
-                                                   GLint dstY,
-                                                   GLint dstZ,
-                                                   GLsizei srcWidth,
-                                                   GLsizei srcHeight,
-                                                   GLsizei srcDepth)
-{
-    UNREACHABLE();
-    return angle::Result::Stop;
-}
-
-angle::Result TextureImpl::copyTextureSubData(const gl::Context *context,
-                                              const gl::Texture *srcTexture,
-                                              GLint srcLevel,
-                                              GLint srcX,
-                                              GLint srcY,
-                                              GLint srcZ,
-                                              GLint dstLevel,
-                                              GLint dstX,
-                                              GLint dstY,
-                                              GLint dstZ,
-                                              GLsizei srcWidth,
-                                              GLsizei srcHeight,
-                                              GLsizei srcDepth)
 {
     UNREACHABLE();
     return angle::Result::Stop;
@@ -91,8 +55,8 @@ angle::Result TextureImpl::copy3DTexture(const gl::Context *context,
                                          gl::TextureTarget target,
                                          GLenum internalFormat,
                                          GLenum type,
-                                         GLint sourceLevel,
-                                         GLint destLevel,
+                                         size_t sourceLevel,
+                                         size_t destLevel,
                                          bool unpackFlipY,
                                          bool unpackPremultiplyAlpha,
                                          bool unpackUnmultiplyAlpha,
@@ -105,8 +69,8 @@ angle::Result TextureImpl::copy3DTexture(const gl::Context *context,
 angle::Result TextureImpl::copy3DSubTexture(const gl::Context *context,
                                             const gl::TextureTarget target,
                                             const gl::Offset &destOffset,
-                                            GLint sourceLevel,
-                                            GLint destLevel,
+                                            size_t sourceLevel,
+                                            size_t destLevel,
                                             const gl::Box &srcBox,
                                             bool unpackFlipY,
                                             bool unpackPremultiplyAlpha,
@@ -123,12 +87,6 @@ angle::Result TextureImpl::setImageExternal(const gl::Context *context,
                                             const gl::Extents &size,
                                             GLenum format,
                                             GLenum type)
-{
-    UNREACHABLE();
-    return angle::Result::Stop;
-}
-
-angle::Result TextureImpl::setBuffer(const gl::Context *context, GLenum internalFormat)
 {
     UNREACHABLE();
     return angle::Result::Stop;

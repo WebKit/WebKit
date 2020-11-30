@@ -45,7 +45,7 @@ DisplayAndroid::DisplayAndroid(const egl::DisplayState &state)
     : DisplayEGL(state),
       mVirtualizedContexts(kDefaultEGLVirtualizedContexts),
       mSupportsSurfaceless(false),
-      mMockPbuffer(EGL_NO_SURFACE)
+      mDummyPbuffer(EGL_NO_SURFACE)
 {}
 
 DisplayAndroid::~DisplayAndroid() {}
@@ -125,22 +125,22 @@ egl::Error DisplayAndroid::initialize(egl::Display *display)
                << "eglChooseConfig failed with " << egl::Error(mEGL->getError());
     }
 
-    // A mock pbuffer is only needed if surfaceless contexts are not supported.
+    // A dummy pbuffer is only needed if surfaceless contexts are not supported.
     mSupportsSurfaceless = mEGL->hasExtension("EGL_KHR_surfaceless_context");
     if (!mSupportsSurfaceless)
     {
-        int mockPbufferAttribs[] = {
+        int dummyPbufferAttribs[] = {
             EGL_WIDTH, 1, EGL_HEIGHT, 1, EGL_NONE,
         };
-        mMockPbuffer = mEGL->createPbufferSurface(configWithFormat, mockPbufferAttribs);
-        if (mMockPbuffer == EGL_NO_SURFACE)
+        mDummyPbuffer = mEGL->createPbufferSurface(configWithFormat, dummyPbufferAttribs);
+        if (mDummyPbuffer == EGL_NO_SURFACE)
         {
             return egl::EglNotInitialized()
                    << "eglCreatePbufferSurface failed with " << egl::Error(mEGL->getError());
         }
     }
 
-    // Create mMockPbuffer with a normal config, but create a no_config mContext, if possible
+    // Create mDummyPbuffer with a normal config, but create a no_config mContext, if possible
     if (mEGL->hasExtension("EGL_KHR_no_config_context"))
     {
         mConfigAttribList = configAttribListBase;
@@ -177,10 +177,10 @@ void DisplayAndroid::terminate()
         ERR() << "eglMakeCurrent error " << egl::Error(mEGL->getError());
     }
 
-    if (mMockPbuffer != EGL_NO_SURFACE)
+    if (mDummyPbuffer != EGL_NO_SURFACE)
     {
-        success      = mEGL->destroySurface(mMockPbuffer);
-        mMockPbuffer = EGL_NO_SURFACE;
+        success       = mEGL->destroySurface(mDummyPbuffer);
+        mDummyPbuffer = EGL_NO_SURFACE;
         if (success == EGL_FALSE)
         {
             ERR() << "eglDestroySurface error " << egl::Error(mEGL->getError());
@@ -229,8 +229,7 @@ ContextImpl *DisplayAndroid::createContext(const gl::State &state,
         }
     }
 
-    return new ContextEGL(state, errorSet, renderer,
-                          RobustnessVideoMemoryPurgeStatus::NOT_REQUESTED);
+    return new ContextEGL(state, errorSet, renderer);
 }
 
 bool DisplayAndroid::isValidNativeWindow(EGLNativeWindowType window) const
@@ -269,8 +268,7 @@ ExternalImageSiblingImpl *DisplayAndroid::createExternalImageSibling(
     }
 }
 
-egl::Error DisplayAndroid::makeCurrent(egl::Display *display,
-                                       egl::Surface *drawSurface,
+egl::Error DisplayAndroid::makeCurrent(egl::Surface *drawSurface,
                                        egl::Surface *readSurface,
                                        gl::Context *context)
 {
@@ -308,10 +306,10 @@ egl::Error DisplayAndroid::makeCurrent(egl::Display *display,
         }
 
         // It's possible that no surface has been created yet and the driver doesn't support
-        // surfaceless, bind the mock pbuffer.
+        // surfaceless, bind the dummy pbuffer.
         if (newSurface == EGL_NO_SURFACE && !mSupportsSurfaceless)
         {
-            newSurface = mMockPbuffer;
+            newSurface = mDummyPbuffer;
             ASSERT(newSurface != EGL_NO_SURFACE);
         }
     }
@@ -326,7 +324,7 @@ egl::Error DisplayAndroid::makeCurrent(egl::Display *display,
         currentContext.context = newContext;
     }
 
-    return DisplayGL::makeCurrent(display, drawSurface, readSurface, context);
+    return DisplayGL::makeCurrent(drawSurface, readSurface, context);
 }
 
 void DisplayAndroid::destroyNativeContext(EGLContext context)
@@ -351,7 +349,7 @@ egl::Error DisplayAndroid::createRenderer(EGLContext shareContext,
     native_egl::AttributeVector attribs;
     ANGLE_TRY(initializeContext(shareContext, mDisplayAttributes, &context, &attribs));
 
-    if (mEGL->makeCurrent(mMockPbuffer, context) == EGL_FALSE)
+    if (mEGL->makeCurrent(mDummyPbuffer, context) == EGL_FALSE)
     {
         return egl::EglNotInitialized()
                << "eglMakeCurrent failed with " << egl::Error(mEGL->getError());
@@ -366,7 +364,7 @@ egl::Error DisplayAndroid::createRenderer(EGLContext shareContext,
     CurrentNativeContext &currentContext = mCurrentNativeContexts[std::this_thread::get_id()];
     if (makeNewContextCurrent)
     {
-        currentContext.surface = mMockPbuffer;
+        currentContext.surface = mDummyPbuffer;
         currentContext.context = context;
     }
     else
@@ -433,7 +431,7 @@ WorkerContext *DisplayAndroid::createWorkerContext(std::string *infoLog,
         *infoLog += "Unable to create the EGL context.";
         return nullptr;
     }
-    return new WorkerContextAndroid(context, mEGL, mMockPbuffer);
+    return new WorkerContextAndroid(context, mEGL, mDummyPbuffer);
 }
 
 }  // namespace rx

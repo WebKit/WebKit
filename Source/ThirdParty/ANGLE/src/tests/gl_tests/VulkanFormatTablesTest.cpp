@@ -70,7 +70,7 @@ TEST_P(VulkanFormatTablesTest, TestFormatSupport)
 
         for (const ParametersToTest params : parametersToTest)
         {
-            // Now let's verify that against vulkan.
+            // Now lets verify that that agaisnt vulkan.
             VkFormatProperties formatProperties;
             vkGetPhysicalDeviceFormatProperties(renderer->getPhysicalDevice(),
                                                 vkFormat.vkImageFormat, &formatProperties);

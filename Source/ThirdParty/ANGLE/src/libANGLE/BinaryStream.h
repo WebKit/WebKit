@@ -19,14 +19,6 @@
 
 namespace gl
 {
-template <typename IntT>
-struct PromotedIntegerType
-{
-    using type = typename std::conditional<
-        std::is_signed<IntT>::value,
-        typename std::conditional<sizeof(IntT) <= 4, int32_t, int64_t>::type,
-        typename std::conditional<sizeof(IntT) <= 4, uint32_t, uint64_t>::type>::type;
-};
 
 class BinaryInputStream : angle::NonCopyable
 {
@@ -43,11 +35,8 @@ class BinaryInputStream : angle::NonCopyable
     template <class IntT>
     IntT readInt()
     {
-        static_assert(!std::is_same<bool, std::remove_cv<IntT>()>(), "Use readBool");
-        using PromotedIntT = typename PromotedIntegerType<IntT>::type;
-        PromotedIntT value = 0;
+        int value = 0;
         read(&value);
-        ASSERT(angle::IsValueInRangeForNumericType<IntT>(value));
         return static_cast<IntT>(value);
     }
 
@@ -60,8 +49,8 @@ class BinaryInputStream : angle::NonCopyable
     template <class IntT, class VectorElementT>
     void readIntVector(std::vector<VectorElementT> *param)
     {
-        size_t size = readInt<size_t>();
-        for (size_t index = 0; index < size; ++index)
+        unsigned int size = readInt<unsigned int>();
+        for (unsigned int index = 0; index < size; ++index)
         {
             param->push_back(readInt<IntT>());
         }
@@ -197,8 +186,8 @@ class BinaryOutputStream : angle::NonCopyable
     template <class IntT>
     void writeInt(IntT param)
     {
-        static_assert(!std::is_same<bool, std::remove_cv<IntT>()>(), "Use writeBool");
-        using PromotedIntT = typename PromotedIntegerType<IntT>::type;
+        using PromotedIntT =
+            typename std::conditional<std::is_signed<IntT>::value, int, unsigned>::type;
         ASSERT(angle::IsValueInRangeForNumericType<PromotedIntT>(param));
         PromotedIntT intValue = static_cast<PromotedIntT>(param);
         write(&intValue, 1);
@@ -243,12 +232,6 @@ class BinaryOutputStream : angle::NonCopyable
 
     void writeBytes(const unsigned char *bytes, size_t count) { write(bytes, count); }
 
-    void writeBool(bool value)
-    {
-        int intValue = value ? 1 : 0;
-        write(&intValue, 1);
-    }
-
     size_t length() const { return mData.size(); }
 
     const void *data() const { return mData.size() ? &mData[0] : nullptr; }
@@ -256,6 +239,8 @@ class BinaryOutputStream : angle::NonCopyable
     const std::vector<uint8_t> &getData() const { return mData; }
 
   private:
+    std::vector<uint8_t> mData;
+
     template <typename T>
     void write(const T *v, size_t num)
     {
@@ -263,8 +248,6 @@ class BinaryOutputStream : angle::NonCopyable
         const char *asBytes = reinterpret_cast<const char *>(v);
         mData.insert(mData.end(), asBytes, asBytes + num * sizeof(T));
     }
-
-    std::vector<uint8_t> mData;
 };
 
 inline BinaryOutputStream::BinaryOutputStream() {}

@@ -66,7 +66,7 @@ bool ValidateBindVertexBuffers(const Context *context,
 }
 
 bool ValidateBufferStorage(const Context *context,
-                           BufferBinding targetPacked,
+                           GLenum target,
                            GLsizeiptr size,
                            const void *data,
                            GLbitfield flags)

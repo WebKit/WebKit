@@ -100,10 +100,9 @@ ANGLE_INLINE angle::Result Context::syncDirtyBits(const State::DirtyBits &bitMas
     return angle::Result::Continue;
 }
 
-ANGLE_INLINE angle::Result Context::syncDirtyObjects(const State::DirtyObjects &objectMask,
-                                                     Command command)
+ANGLE_INLINE angle::Result Context::syncDirtyObjects(const State::DirtyObjects &objectMask)
 {
-    return mState.syncDirtyObjects(this, objectMask, command);
+    return mState.syncDirtyObjects(this, objectMask);
 }
 
 ANGLE_INLINE angle::Result Context::prepareForDraw(PrimitiveMode mode)
@@ -113,7 +112,7 @@ ANGLE_INLINE angle::Result Context::prepareForDraw(PrimitiveMode mode)
         ANGLE_TRY(mGLES1Renderer->prepareForDraw(mode, this, &mState));
     }
 
-    ANGLE_TRY(syncDirtyObjects(mDrawDirtyObjects, Command::Draw));
+    ANGLE_TRY(syncDirtyObjects(mDrawDirtyObjects));
     ASSERT(!isRobustResourceInitEnabled() ||
            !mState.getDrawFramebuffer()->hasResourceThatNeedsInit());
     return syncDirtyBits();

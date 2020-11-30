@@ -213,7 +213,7 @@ TEST(TestUtils, MAYBE_RunAppAsync)
     }
 }
 
-// Verify that NumberOfProcessors returns something reasonable.
+// Verify that NumberOfProcessors returns something sane.
 TEST(TestUtils, NumberOfProcessors)
 {
     int numProcs = angle::NumberOfProcessors();

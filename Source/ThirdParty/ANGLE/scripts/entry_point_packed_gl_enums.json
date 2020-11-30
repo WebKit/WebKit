@@ -105,12 +105,6 @@
         "target": "BufferBinding",
         "usage": "BufferUsage"
     },
-    "glBufferStorage": {
-        "target": "BufferBinding"
-    },
-    "glBufferStorageExternal": {
-        "target": "BufferBinding"
-    },
     "glBufferStorageMem": {
         "memory": "MemoryObjectID",
         "target": "TextureType"
@@ -418,10 +412,6 @@
         "texture": "TextureID"
     },
     "glFramebufferTexture2D": {
-        "textarget": "TextureTarget",
-        "texture": "TextureID"
-    },
-    "glFramebufferTexture2DMultisample": {
         "textarget": "TextureTarget",
         "texture": "TextureID"
     },
@@ -1072,8 +1062,7 @@
         "buffer": "BufferID"
     },
     "glNamedBufferStorage": {
-        "buffer": "BufferID",
-        "target": "BufferBinding"
+        "buffer": "BufferID"
     },
     "glNamedBufferSubData": {
         "buffer": "BufferID"
@@ -1471,12 +1460,10 @@
         "fence": "FenceNVID"
     },
     "glTexBuffer": {
-        "buffer": "BufferID",
-        "target": "TextureType"
+        "buffer": "BufferID"
     },
     "glTexBufferRange": {
-        "buffer": "BufferID",
-        "target": "TextureType"
+        "buffer": "BufferID"
     },
     "glTexCoordPointer": {
         "type": "VertexAttribType"
@@ -1581,22 +1568,6 @@
         "target": "TextureType"
     },
     "glTexStorageMem3DMultisample": {
-        "memory": "MemoryObjectID",
-        "target": "TextureType"
-    },
-    "glTexStorageMemFlags2D": {
-        "memory": "MemoryObjectID",
-        "target": "TextureType"
-    },
-    "glTexStorageMemFlags2DMultisample": {
-        "memory": "MemoryObjectID",
-        "target": "TextureType"
-    },
-    "glTexStorageMemFlags3D": {
-        "memory": "MemoryObjectID",
-        "target": "TextureType"
-    },
-    "glTexStorageMemFlags3DMultisample": {
         "memory": "MemoryObjectID",
         "target": "TextureType"
     },

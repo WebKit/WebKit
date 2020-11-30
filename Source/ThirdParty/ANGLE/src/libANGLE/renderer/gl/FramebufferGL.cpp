@@ -1198,8 +1198,7 @@ bool FramebufferGL::checkStatus(const gl::Context *context) const
 
 angle::Result FramebufferGL::syncState(const gl::Context *context,
                                        GLenum binding,
-                                       const gl::Framebuffer::DirtyBits &dirtyBits,
-                                       gl::Command command)
+                                       const gl::Framebuffer::DirtyBits &dirtyBits)
 {
     // Don't need to sync state for the default FBO.
     if (mIsDefault)
@@ -1468,14 +1467,13 @@ angle::Result FramebufferGL::readPixelsRowByRow(const gl::Context *context,
 
     gl::PixelPackState directPack;
     directPack.alignment = 1;
-    ANGLE_TRY(stateManager->setPixelPackState(context, directPack));
+    stateManager->setPixelPackState(directPack);
 
     GLubyte *readbackPixels = workaround.Pixels();
     readbackPixels += skipBytes;
     for (GLint y = area.y; y < area.y + area.height; ++y)
     {
-        ANGLE_GL_TRY(context,
-                     functions->readPixels(area.x, y, area.width, 1, format, type, readbackPixels));
+        functions->readPixels(area.x, y, area.width, 1, format, type, readbackPixels);
         readbackPixels += rowBytes;
     }
 
@@ -1524,21 +1522,21 @@ angle::Result FramebufferGL::readPixelsAllAtOnce(const gl::Context *context,
     GLint height = area.height - readLastRowSeparately;
     if (height > 0)
     {
-        ANGLE_TRY(stateManager->setPixelPackState(context, pack));
-        ANGLE_GL_TRY(context, functions->readPixels(area.x, area.y, area.width, height, format,
-                                                    type, workaround.Pixels()));
+        stateManager->setPixelPackState(pack);
+        functions->readPixels(area.x, area.y, area.width, height, format, type,
+                              workaround.Pixels());
     }
 
     if (readLastRowSeparately)
     {
         gl::PixelPackState directPack;
         directPack.alignment = 1;
-        ANGLE_TRY(stateManager->setPixelPackState(context, directPack));
+        stateManager->setPixelPackState(directPack);
 
         GLubyte *readbackPixels = workaround.Pixels();
         readbackPixels += skipBytes + (area.height - 1) * rowBytes;
-        ANGLE_GL_TRY(context, functions->readPixels(area.x, area.y + area.height - 1, area.width, 1,
-                                                    format, type, readbackPixels));
+        functions->readPixels(area.x, area.y + area.height - 1, area.width, 1, format, type,
+                              readbackPixels);
     }
 
     if (workaround.IsEnabled())

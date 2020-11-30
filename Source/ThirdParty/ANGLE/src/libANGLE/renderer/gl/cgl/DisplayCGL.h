@@ -25,17 +25,6 @@ namespace rx
 
 class WorkerContext;
 
-struct EnsureCGLContextIsCurrent : angle::NonCopyable
-{
-  public:
-    EnsureCGLContextIsCurrent(CGLContextObj context);
-    ~EnsureCGLContextIsCurrent();
-
-  private:
-    CGLContextObj mOldContext;
-    bool mResetContext;
-};
-
 class DisplayCGL : public DisplayGL
 {
   public:
@@ -47,8 +36,7 @@ class DisplayCGL : public DisplayGL
     egl::Error prepareForCall() override;
     egl::Error releaseThread() override;
 
-    egl::Error makeCurrent(egl::Display *display,
-                           egl::Surface *drawSurface,
+    egl::Error makeCurrent(egl::Surface *drawSurface,
                            egl::Surface *readSurface,
                            gl::Context *context) override;
 

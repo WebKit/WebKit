@@ -10,9 +10,7 @@
 #include "util/EGLWindow.h"
 #include "util/gles_loader_autogen.h"
 #include "util/random_utils.h"
-#include "util/shader_utils.h"
 #include "util/test_utils.h"
-#include "util/util_gl.h"
 
 #include <string.h>
 #include <iostream>
@@ -66,12 +64,6 @@ EGLint GetDeviceTypeFromArg(const char *displayTypeArg)
         return EGL_PLATFORM_ANGLE_DEVICE_TYPE_HARDWARE_ANGLE;
     }
 }
-
-ANGLE_MAYBE_UNUSED bool IsGLExtensionEnabled(const std::string &extName)
-{
-    return angle::CheckExtensionExists(reinterpret_cast<const char *>(glGetString(GL_EXTENSIONS)),
-                                       extName);
-}
 }  // anonymous namespace
 
 SampleApplication::SampleApplication(std::string name,
@@ -85,7 +77,6 @@ SampleApplication::SampleApplication(std::string name,
       mWidth(width),
       mHeight(height),
       mRunning(false),
-      mFrameCount(0),
       mGLWindow(nullptr),
       mEGLWindow(nullptr),
       mOSWindow(nullptr),
@@ -216,13 +207,6 @@ int SampleApplication::run()
     mRunning   = true;
     int result = 0;
 
-#if defined(ANGLE_ENABLE_ASSERTS)
-    if (IsGLExtensionEnabled("GL_KHR_debug"))
-    {
-        EnableDebugCallback(this);
-    }
-#endif
-
     if (!initialize())
     {
         mRunning = false;
@@ -271,14 +255,6 @@ int SampleApplication::run()
         mOSWindow->messageLoop();
 
         prevTime = elapsedTime;
-
-        mFrameCount++;
-
-        if (mFrameCount % 100 == 0)
-        {
-            printf("Rate: %0.2lf frames / second\n",
-                   static_cast<double>(mFrameCount) / mTimer.getElapsedTime());
-        }
     }
 
     destroy();

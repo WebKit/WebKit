@@ -17,7 +17,7 @@
 namespace rx
 {
 
-ShaderVk::ShaderVk(const gl::ShaderState &state) : ShaderImpl(state) {}
+ShaderVk::ShaderVk(const gl::ShaderState &data) : ShaderImpl(data) {}
 
 ShaderVk::~ShaderVk() {}
 
@@ -25,22 +25,14 @@ std::shared_ptr<WaitableCompileEvent> ShaderVk::compile(const gl::Context *conte
                                                         gl::ShCompilerInstance *compilerInstance,
                                                         ShCompileOptions options)
 {
-    ShCompileOptions compileOptions = 0;
+    ShCompileOptions compileOptions = SH_INITIALIZE_UNINITIALIZED_LOCALS;
 
     ContextVk *contextVk = vk::GetImpl(context);
 
     bool isWebGL = context->getExtensions().webglCompatibility;
-
-    if (isWebGL)
+    if (isWebGL && mData.getShaderType() != gl::ShaderType::Compute)
     {
-        // Only webgl requires initialization of local variables, others don't.
-        // Extra initialization in spirv shader may affect performance.
-        compileOptions |= SH_INITIALIZE_UNINITIALIZED_LOCALS;
-
-        if (mState.getShaderType() != gl::ShaderType::Compute)
-        {
-            compileOptions |= SH_INIT_OUTPUT_VARIABLES;
-        }
+        compileOptions |= SH_INIT_OUTPUT_VARIABLES;
     }
 
     if (contextVk->getFeatures().clampPointSize.enabled)
@@ -72,21 +64,12 @@ std::shared_ptr<WaitableCompileEvent> ShaderVk::compile(const gl::Context *conte
     // context state does not allow it
     compileOptions |= SH_EARLY_FRAGMENT_TESTS_OPTIMIZATION;
 
-    if (contextVk->getFeatures().enablePreRotateSurfaces.enabled ||
-        contextVk->getFeatures().emulatedPrerotation90.enabled ||
-        contextVk->getFeatures().emulatedPrerotation180.enabled ||
-        contextVk->getFeatures().emulatedPrerotation270.enabled)
-    {
-        // Let compiler insert pre-rotation code.
-        compileOptions |= SH_ADD_PRE_ROTATION;
-    }
-
-    return compileImpl(context, compilerInstance, mState.getSource(), compileOptions | options);
+    return compileImpl(context, compilerInstance, mData.getSource(), compileOptions | options);
 }
 
 std::string ShaderVk::getDebugInfo() const
 {
-    return mState.getTranslatedSource();
+    return mData.getTranslatedSource();
 }
 
 }  // namespace rx

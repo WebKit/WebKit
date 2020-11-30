@@ -52,8 +52,7 @@ void ProgramPipelineVk::fillProgramStateMap(
     }
 }
 
-angle::Result ProgramPipelineVk::link(const gl::Context *glContext,
-                                      const gl::ProgramMergedVaryings &mergedVaryings)
+angle::Result ProgramPipelineVk::link(const gl::Context *glContext)
 {
     ContextVk *contextVk                  = vk::GetImpl(glContext);
     const gl::State &glState              = glContext->getState();
@@ -87,12 +86,7 @@ angle::Result ProgramPipelineVk::link(const gl::Context *glContext,
         }
     }
 
-    if (contextVk->getFeatures().enablePrecisionQualifiers.enabled)
-    {
-        mExecutable.resolvePrecisionMismatch(mergedVaryings);
-    }
-
-    return mExecutable.createPipelineLayout(glContext, nullptr);
+    return mExecutable.createPipelineLayout(glContext);
 }
 
 size_t ProgramPipelineVk::calcUniformUpdateRequiredSpace(
