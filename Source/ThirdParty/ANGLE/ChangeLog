@@ -1,3 +1,19 @@
+2020-11-30  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r270258. rdar://problem/71819648
+
+    Attempted build fix for Mac Catalyst. Include the SystemInfo header.
+    
+    * src/libANGLE/renderer/gl/apple/DisplayApple_api.cpp:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@270258 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-11-30  Dean Jackson  <dino@apple.com>
+
+            Attempted build fix for Mac Catalyst. Include the SystemInfo header.
+
+            * src/libANGLE/renderer/gl/apple/DisplayApple_api.cpp:
+
 2020-11-27  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [ANGLE] Convert adjust-angle-include-paths.sh to a Python script for Windows without Cygwin
