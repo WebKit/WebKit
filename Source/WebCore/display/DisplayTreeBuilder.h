@@ -56,6 +56,7 @@ struct BuildingState;
 class TreeBuilder {
 public:
     explicit TreeBuilder(float pixelSnappingFactor);
+    ~TreeBuilder();
 
     std::unique_ptr<Tree> build(const Layout::LayoutState&);
 

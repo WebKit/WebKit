@@ -107,6 +107,8 @@ TreeBuilder::TreeBuilder(float pixelSnappingFactor)
     m_stateStack->reserveInitialCapacity(32);
 }
 
+TreeBuilder::~TreeBuilder() = default;
+
 std::unique_ptr<Tree> TreeBuilder::build(const Layout::LayoutState& layoutState)
 {
     ASSERT(layoutState.hasRoot());
