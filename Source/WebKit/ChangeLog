@@ -1,3 +1,15 @@
+2020-11-29  Adam Mazander  <mazander@apple.com>
+
+        Deny logs for benign fontservicesd daemon
+        https://bugs.webkit.org/show_bug.cgi?id=219180
+
+        Reviewed by Per Arne Vollan.
+
+        After investigating denials of fontservicesd logs over several submissions 
+        and without any fallout we are removing logging.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2020-11-28  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Set application information in the Networking process on behalf of the WebContent process

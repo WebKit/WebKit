@@ -942,6 +942,9 @@
 
 (media-accessibility-support)
 
+(deny mach-lookup (with no-log)
+    (global-name "com.apple.fontservicesd"))
+
 (deny mach-lookup (with telemetry-backtrace)
     (global-name "com.apple.PowerManagement.control"))
 
