@@ -39,7 +39,7 @@ struct LineCandidate;
 
 class LineBuilder {
 public:
-    LineBuilder(const InlineFormattingContext&, const FloatingContext&, const ContainerBox& formattingContextRoot, const InlineItems&);
+    LineBuilder(const InlineFormattingContext&, const FloatingContext&, const InlineItems&);
 
     struct InlineItemRange {
         bool isEmpty() const { return start == end; }
@@ -103,12 +103,11 @@ private:
     bool isLastLineWithInlineContent(const InlineItemRange& lineRange, size_t lastInlineItemIndex, bool hasPartialTrailingContent) const;
 
     const InlineFormattingContext& formattingContext() const { return m_inlineFormattingContext; }
-    const ContainerBox& root() const { return m_formattingContextRoot; }
+    const ContainerBox& root() const;
     const LayoutState& layoutState() const;
 
     const InlineFormattingContext& m_inlineFormattingContext;
     const FloatingContext& m_floatingContext;
-    const ContainerBox& m_formattingContextRoot;
     Line m_line;
     InlineLayoutUnit m_horizontalSpaceForLine { 0 };
     const InlineItems& m_inlineItems;

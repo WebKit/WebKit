@@ -152,7 +152,7 @@ void InlineFormattingContext::lineLayout(InlineItems& inlineItems, LineBuilder::
     auto floatingContext = FloatingContext { *this, formattingState().floatingState() };
     auto isFirstLine = formattingState().lines().isEmpty();
 
-    auto lineBuilder = LineBuilder { *this, floatingContext, root(), inlineItems };
+    auto lineBuilder = LineBuilder { *this, floatingContext, inlineItems };
     while (!needsLayoutRange.isEmpty()) {
         // Turn previous line's overflow content length into the next line's leading content partial length.
         // "sp[<-line break->]lit_content" -> overflow length: 11 -> leading partial content length: 11.
@@ -264,7 +264,7 @@ InlineLayoutUnit InlineFormattingContext::computedIntrinsicWidthForConstraint(In
     // Preferred width computation is not constrained by floats. 
     auto floatingState = FloatingState::create(layoutState(), root());
     auto floatingContext = FloatingContext { *this, floatingState };
-    auto lineBuilder = LineBuilder { *this, floatingContext, root(), inlineItems };
+    auto lineBuilder = LineBuilder { *this, floatingContext, inlineItems };
     auto layoutRange = LineBuilder::InlineItemRange { 0 , inlineItems.size() };
     auto maximumLineWidth = InlineLayoutUnit { };
     while (!layoutRange.isEmpty()) {

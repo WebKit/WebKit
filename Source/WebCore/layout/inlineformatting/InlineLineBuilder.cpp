@@ -229,10 +229,9 @@ InlineLayoutUnit LineBuilder::inlineItemWidth(const InlineItem& inlineItem, Inli
     return boxGeometry.marginBoxWidth();
 }
 
-LineBuilder::LineBuilder(const InlineFormattingContext& inlineFormattingContext, const FloatingContext& floatingContext, const ContainerBox& formattingContextRoot, const InlineItems& inlineItems)
+LineBuilder::LineBuilder(const InlineFormattingContext& inlineFormattingContext, const FloatingContext& floatingContext, const InlineItems& inlineItems)
     : m_inlineFormattingContext(inlineFormattingContext)
     , m_floatingContext(floatingContext)
-    , m_formattingContextRoot(formattingContextRoot)
     , m_line(inlineFormattingContext)
     , m_inlineItems(inlineItems)
 {
@@ -698,6 +697,11 @@ bool LineBuilder::isLastLineWithInlineContent(const InlineItemRange& lineRange, 
     // There has to be at least one non-float item.
     ASSERT_NOT_REACHED();
     return false;
+}
+
+const ContainerBox& LineBuilder::root() const
+{
+    return formattingContext().root();
 }
 
 const LayoutState& LineBuilder::layoutState() const
