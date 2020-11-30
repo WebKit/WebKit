@@ -3523,7 +3523,7 @@ void FrameLoader::continueLoadAfterNewWindowPolicy(const ResourceRequest& reques
         return;
 
     Ref<Frame> frame(m_frame);
-    RefPtr<Frame> mainFrame = m_client->dispatchCreatePage(action);
+    RefPtr<Frame> mainFrame = m_client->dispatchCreatePage(action, openerPolicy);
     if (!mainFrame)
         return;
 

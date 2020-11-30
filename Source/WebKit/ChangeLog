@@ -1,3 +1,15 @@
+2020-11-30  Chris Dumez  <cdumez@apple.com>
+
+        sessionStorage should not be cloned when a window is opened with rel=noopener
+        https://bugs.webkit.org/show_bug.cgi?id=218804
+        <rdar://problem/71286606>
+
+        Reviewed by Alex Christensen.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchCreatePage):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+
 2020-11-30  Youenn Fablet  <youenn@apple.com>
 
         Introduce an experimental flag specific to VP9 profile 2

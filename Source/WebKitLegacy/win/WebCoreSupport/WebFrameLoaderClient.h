@@ -111,7 +111,7 @@ public:
     void revertToProvisionalState(WebCore::DocumentLoader*) override;
     bool dispatchDidLoadResourceFromMemoryCache(WebCore::DocumentLoader*, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&, int length) override;
 
-    WebCore::Frame* dispatchCreatePage(const WebCore::NavigationAction&) override;
+    WebCore::Frame* dispatchCreatePage(const WebCore::NavigationAction&, WebCore::NewFrameOpenerPolicy) override;
     void dispatchShow() override;
 
     void setMainDocumentError(WebCore::DocumentLoader*, const WebCore::ResourceError&) override;
