@@ -1,3 +1,15 @@
+2020-11-30  Tyler Wilcock  <twilco.o@protonmail.com>
+
+        getComputedStyle rounds lineHeight to nearest pixel
+        https://bugs.webkit.org/show_bug.cgi?id=216601
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/css/css-fonts/parsing/font-computed-expected.txt:
+            Update test reflecting the fact that serialization of `line-height` from
+            `getComputedStyle` is now represented fractionally (when appropriate).
+            Prior to this patch, `line-height` serialization was always an integer value.
+
 2020-11-30  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-flex] Import flex-aspect-ratio-img-* tests

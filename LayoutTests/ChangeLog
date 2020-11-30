@@ -1,3 +1,28 @@
+2020-11-30  Tyler Wilcock  <twilco.o@protonmail.com>
+
+        getComputedStyle rounds lineHeight to nearest pixel
+        https://bugs.webkit.org/show_bug.cgi?id=216601
+
+        Reviewed by Simon Fraser.
+
+        Add test ensuring serialization of `line-height` from
+        `getComputedStyle` is represented fractionally (when appropriate).
+        Prior to this patch, `line-height` serialization was always an integer value.
+
+        The `line-height-rounding.html` test has been removed, as it expected
+        `line-height` to serialize as an integer, which seems wrong
+        considering the used value for `line-height` can be a `<number>`
+        (which is fractional).  Gecko and Chromium allow fractional
+        `line-height`s to be returned from `getComputedStyle`, further
+        confirming this.
+
+        https://drafts.csswg.org/css2/#propdef-line-height
+
+        * fast/css/line-height-get-computed-style-expected.txt: Added.
+        * fast/css/line-height-get-computed-style.html: Added.
+        * fast/css/line-height-rounding-expected.txt: Removed.
+        * fast/css/line-height-rounding.html: Removed.
+
 2020-11-30  Lauro Moura  <lmoura@igalia.com>
 
         [GLIB] Properly garden webrtc crashes
