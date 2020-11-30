@@ -10,6 +10,7 @@
 #ifndef LIBANGLE_RENDERER_GL_APPLE_DISPLAYAPPLE_API_H_
 #define LIBANGLE_RENDERER_GL_APPLE_DISPLAYAPPLE_API_H_
 
+#include "gpu_info_util/SystemInfo.h"
 #include "libANGLE/renderer/DisplayImpl.h"
 
 #if defined(ANGLE_PLATFORM_MACOS) || defined(ANGLE_PLATFORM_MACCATALYST)

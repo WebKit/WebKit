@@ -1,3 +1,9 @@
+2020-11-30  Dean Jackson  <dino@apple.com>
+
+        Attempted build fix for Mac Catalyst. Include the SystemInfo header.
+
+        * src/libANGLE/renderer/gl/apple/DisplayApple_api.cpp:
+
 2020-11-27  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [ANGLE] Convert adjust-angle-include-paths.sh to a Python script for Windows without Cygwin
