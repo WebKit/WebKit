@@ -1,3 +1,31 @@
+2020-11-30  Youenn Fablet  <youenn@apple.com>
+
+        Introduce an experimental flag specific to VP9 profile 2
+        https://bugs.webkit.org/show_bug.cgi?id=219350
+
+        Reviewed by Eric Carlson.
+
+        Allow to enable profile 0 but not profile 2 for VP9 encoder and decoder.
+
+        * Source/webrtc/sdk/WebKit/WebKitDecoder.mm:
+        (webrtc::createWebKitDecoderFactory):
+        * Source/webrtc/sdk/WebKit/WebKitEncoder.mm:
+        (webrtc::createWebKitEncoderFactory):
+        * Source/webrtc/sdk/WebKit/WebKitUtilities.h:
+        * Source/webrtc/sdk/objc/components/video_codec/RTCDefaultVideoDecoderFactory.h:
+        * Source/webrtc/sdk/objc/components/video_codec/RTCDefaultVideoDecoderFactory.m:
+        (-[RTCDefaultVideoDecoderFactory initWithH265:vp9Profile0:vp9Profile2:vp9VTB:]):
+        (-[RTCDefaultVideoDecoderFactory supportedCodecs]):
+        (-[RTCDefaultVideoDecoderFactory initWithH265:vp9:vp9VTB:]): Deleted.
+        * Source/webrtc/sdk/objc/components/video_codec/RTCDefaultVideoEncoderFactory.h:
+        * Source/webrtc/sdk/objc/components/video_codec/RTCDefaultVideoEncoderFactory.m:
+        (-[RTCDefaultVideoEncoderFactory initWithH265:vp9Profile0:vp9Profile2:lowLatencyH264:]):
+        (+[RTCDefaultVideoEncoderFactory supportedCodecs]):
+        (+[RTCDefaultVideoEncoderFactory supportedCodecsWithH265:vp9Profile0:vp9Profile2:]):
+        (-[RTCDefaultVideoEncoderFactory supportedCodecs]):
+        (-[RTCDefaultVideoEncoderFactory initWithH265:vp9:lowLatencyH264:]): Deleted.
+        (+[RTCDefaultVideoEncoderFactory supportedCodecsWithH265:vp9:]): Deleted.
+
 2020-11-27  Youenn Fablet  <youenn@apple.com>
 
         RTCVideoEncoderH264 does not need to support case without ENABLE_VCP_ENCODER and without HAVE_VTB_REQUIREDLOWLATENCY

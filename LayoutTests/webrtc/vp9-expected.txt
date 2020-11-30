@@ -1,6 +1,7 @@
 
 
-PASS VP9 in getCapabilities
+PASS VP9 in sender getCapabilities
+PASS VP9 in receiver getCapabilities
 PASS Verify VP9 activation
 PASS Setting video exchange
 PASS Ensuring connection state is connected

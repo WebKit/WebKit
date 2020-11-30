@@ -36,7 +36,7 @@ namespace webrtc {
 class VideoFrame;
 
 enum class WebKitH265 { Off, On };
-enum class WebKitVP9 { Off, On };
+enum class WebKitVP9 { Off, Profile0, Profile0And2 };
 enum class WebKitVP9VTB { Off, On };
 enum class WebKitH264LowLatency { Off, On };
 

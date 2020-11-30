@@ -13,22 +13,58 @@
         <canvas id="canvas3" width="320" height="240"></canvas>
         <script src ="routines.js"></script>
         <script>
-let hasVP9;
+let hasVP9 = false;
 test(() => {
     if (window.internals)
-        window.internals.setWebRTCVP9Support(false);
+        window.internals.setWebRTCVP9Support(false, false);
 
     let codecs = RTCRtpSender.getCapabilities("video").codecs;
-    hasVP9 = codecs.some((codec) => { return codec.mimeType == "video/VP9"; });
-    assert_false(hasVP9);
+    vp9Codecs = codecs.filter(codec => codec.mimeType === "video/VP9");
+    assert_equals(vp9Codecs.length, 0, "no vp9 codec");
 
     if (window.internals)
-        window.internals.setWebRTCVP9Support(true);
+        window.internals.setWebRTCVP9Support(true, false);
 
     codecs = RTCRtpSender.getCapabilities("video").codecs;
-    hasVP9 = codecs.some((codec) => { return codec.mimeType == "video/VP9"; });
-    assert_true(hasVP9);
-}, "VP9 in getCapabilities");
+    vp9Codecs = codecs.filter(codec => codec.mimeType === "video/VP9");
+    assert_equals(vp9Codecs.length, 1, "One vp9 codec");
+    assert_equals(vp9Codecs[0].sdpFmtpLine, "profile-id=0", "profile 0");
+
+    if (window.internals)
+        window.internals.setWebRTCVP9Support(true, true);
+
+    codecs = RTCRtpSender.getCapabilities("video").codecs;
+    vp9Codecs = codecs.filter(codec => codec.mimeType === "video/VP9");
+    assert_equals(vp9Codecs[0].sdpFmtpLine, "profile-id=0", "first codec");
+    assert_equals(vp9Codecs[1].sdpFmtpLine, "profile-id=2", "second codec");
+
+    hasVP9 = true;
+}, "VP9 in sender getCapabilities");
+
+test(() => {
+    if (window.internals)
+        window.internals.setWebRTCVP9Support(false, false);
+
+    let codecs = RTCRtpReceiver.getCapabilities("video").codecs;
+    vp9Codecs = codecs.filter(codec => codec.mimeType === "video/VP9");
+    assert_equals(vp9Codecs.length, 0, "no vp9 codec");
+
+    if (window.internals)
+        window.internals.setWebRTCVP9Support(true, false);
+
+    codecs = RTCRtpReceiver.getCapabilities("video").codecs;
+    vp9Codecs = codecs.filter(codec => codec.mimeType === "video/VP9");
+    assert_equals(vp9Codecs.length, 1, "One vp9 codec");
+    assert_equals(vp9Codecs[0].sdpFmtpLine, "profile-id=0", "profile 0");
+
+    if (window.internals)
+        window.internals.setWebRTCVP9Support(true, true);
+
+    codecs = RTCRtpReceiver.getCapabilities("video").codecs;
+    vp9Codecs = codecs.filter(codec => codec.mimeType === "video/VP9");
+    assert_equals(vp9Codecs[0].sdpFmtpLine, "profile-id=0", "first codec");
+    assert_equals(vp9Codecs[1].sdpFmtpLine, "profile-id=2", "second codec");
+}, "VP9 in receiver getCapabilities");
 
 if (hasVP9) {
     promise_test(async (test) => {

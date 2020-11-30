@@ -220,7 +220,7 @@ std::unique_ptr<webrtc::VideoEncoderFactory> createWebKitEncoderFactory(WebKitH2
     });
 #endif
 
-    auto internalFactory = ObjCToNativeVideoEncoderFactory([[RTCDefaultVideoEncoderFactory alloc] initWithH265: supportsH265 == WebKitH265::On vp9:supportsVP9 == WebKitVP9::On lowLatencyH264:useH264LowLatency == WebKitH264LowLatency::On]);
+    auto internalFactory = ObjCToNativeVideoEncoderFactory([[RTCDefaultVideoEncoderFactory alloc] initWithH265: supportsH265 == WebKitH265::On vp9Profile0:supportsVP9 > WebKitVP9::Off vp9Profile2:supportsVP9 == WebKitVP9::Profile0And2 lowLatencyH264:useH264LowLatency == WebKitH264LowLatency::On]);
 
     if (videoEncoderCallbacks().createCallback)
         internalFactory = std::make_unique<RemoteVideoEncoderFactory>(std::move(internalFactory));

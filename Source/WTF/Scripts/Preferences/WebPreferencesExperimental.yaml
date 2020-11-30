@@ -1037,11 +1037,22 @@ WebRTCPlatformCodecsInGPUProcessEnabled:
     WebKit:
       default: WebKit::defaultWebRTCCodecsInGPUProcess()
 
-# FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely.
-WebRTCVP9CodecEnabled:
+WebRTCVP9Profile0CodecEnabled:
   type: bool
-  humanReadableName: "WebRTC VP9 codec"
-  humanReadableDescription: "Enable WebRTC VP9 codec"
+  humanReadableName: "WebRTC VP9 profile 0 codec"
+  humanReadableDescription: "Enable WebRTC VP9 profile 0 codec"
+  webcoreBinding: RuntimeEnabledFeatures
+  condition: ENABLE(WEB_RTC)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+
+WebRTCVP9Profile2CodecEnabled:
+  type: bool
+  humanReadableName: "WebRTC VP9 profile 2 codec"
+  humanReadableDescription: "Enable WebRTC VP9 profile 2 codec"
   webcoreBinding: RuntimeEnabledFeatures
   condition: ENABLE(WEB_RTC)
   defaultValue:

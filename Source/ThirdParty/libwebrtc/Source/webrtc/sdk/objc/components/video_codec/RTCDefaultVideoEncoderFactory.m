@@ -25,26 +25,28 @@
 
 @implementation RTCDefaultVideoEncoderFactory {
   bool _supportsH265;
-  bool _supportsVP9;
+  bool _supportsVP9Profile0;
+  bool _supportsVP9Profile2;
   bool _useLowLatencyH264;
 }
 
-- (id)initWithH265:(bool)supportsH265 vp9:(bool)supportsVP9 lowLatencyH264:(bool)useLowLatencyH264
+- (id)initWithH265:(bool)supportsH265 vp9Profile0:(bool)supportsVP9Profile0 vp9Profile2:(bool)supportsVP9Profile2 lowLatencyH264:(bool)useLowLatencyH264
 {
   self = [super init];
   if (self) {
-      _supportsH265 = supportsH265;
-      _supportsVP9 = supportsVP9;
-      _useLowLatencyH264 = useLowLatencyH264;
+    _supportsH265 = supportsH265;
+    _supportsVP9Profile0 = supportsVP9Profile0;
+    _supportsVP9Profile2 = supportsVP9Profile2;
+    _useLowLatencyH264 = useLowLatencyH264;
   }
   return self;
 }
 
 + (NSArray<RTCVideoCodecInfo *> *)supportedCodecs {
-    return [self supportedCodecsWithH265:true vp9:true];
+    return [self supportedCodecsWithH265:true vp9Profile0:true vp9Profile2:true];
 }
 
-+ (NSArray<RTCVideoCodecInfo *> *)supportedCodecsWithH265:(bool)supportsH265 vp9:(bool)supportsVP9 {
++ (NSArray<RTCVideoCodecInfo *> *)supportedCodecsWithH265:(bool)supportsH265 vp9Profile0:(bool)supportsVP9Profile0 vp9Profile2:(bool)supportsVP9Profile2 {
 
    NSMutableArray<RTCVideoCodecInfo *> *codecs = [[NSMutableArray alloc] initWithCapacity:8];
 
@@ -80,11 +82,12 @@
   [codecs addObject:vp8Info];
 
 #if defined(RTC_ENABLE_VP9)
-  if (supportsVP9) {
+  if (supportsVP9Profile0) {
     [codecs addObject:[[RTCVideoCodecInfo alloc] initWithName:kRTCVideoCodecVp9Name parameters: @{
       @"profile-id" : @"0",
     }]];
-
+  }
+  if (supportsVP9Profile2) {
     [codecs addObject:[[RTCVideoCodecInfo alloc] initWithName:kRTCVideoCodecVp9Name parameters: @{
       @"profile-id" : @"2",
     }]];
@@ -117,7 +120,7 @@
 }
 
 - (NSArray<RTCVideoCodecInfo *> *)supportedCodecs {
-  return [[self class] supportedCodecsWithH265:_supportsH265 vp9: _supportsVP9];
+  return [[self class] supportedCodecsWithH265:_supportsH265 vp9Profile0:_supportsVP9Profile0 vp9Profile2: _supportsVP9Profile2];
 }
 
 @end

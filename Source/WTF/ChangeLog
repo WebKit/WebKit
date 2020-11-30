@@ -1,3 +1,12 @@
+2020-11-30  Youenn Fablet  <youenn@apple.com>
+
+        Introduce an experimental flag specific to VP9 profile 2
+        https://bugs.webkit.org/show_bug.cgi?id=219350
+
+        Reviewed by Eric Carlson.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
 2020-11-28  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Set application information in the Networking process on behalf of the WebContent process

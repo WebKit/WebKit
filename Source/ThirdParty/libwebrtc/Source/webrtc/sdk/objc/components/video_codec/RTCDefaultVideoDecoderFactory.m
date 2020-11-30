@@ -28,18 +28,20 @@
 
 @implementation RTCDefaultVideoDecoderFactory {
   bool _supportsH265;
-  bool _supportsVP9;
+  bool _supportsVP9Profile0;
+  bool _supportsVP9Profile2;
   bool _supportsVP9VTB;
 }
 
-- (id)initWithH265:(bool)supportsH265 vp9:(bool)supportsVP9 vp9VTB:(bool)supportsVP9VTB
+- (id)initWithH265:(bool)supportsH265 vp9Profile0:(bool)supportsVP9Profile0 vp9Profile2:(bool)supportsVP9Profile2 vp9VTB:(bool)supportsVP9VTB
 {
   self = [super init];
   if (self) {
       _supportsH265 = supportsH265;
-      _supportsVP9 = supportsVP9;
+      _supportsVP9Profile0 = supportsVP9Profile0;
+      _supportsVP9Profile2 = supportsVP9Profile2;
       // Use kCMVideoCodecType_VP9 once added to CMFormatDescription.h
-      _supportsVP9VTB = supportsVP9 && (supportsVP9VTB || VTIsHardwareDecodeSupported('vp09'));
+      _supportsVP9VTB = (supportsVP9Profile0 || supportsVP9Profile2) && (supportsVP9VTB || VTIsHardwareDecodeSupported('vp09'));
 ;
   }
   return self;
@@ -80,11 +82,12 @@
   [codecs addObject:vp8Info];
 
 #if defined(RTC_ENABLE_VP9)
-  if (_supportsVP9) {
+  if (_supportsVP9Profile0) {
     [codecs addObject:[[RTCVideoCodecInfo alloc] initWithName:kRTCVideoCodecVp9Name parameters: @{
       @"profile-id" : @"0",
     }]];
-
+  }
+  if (_supportsVP9Profile2) {
     [codecs addObject:[[RTCVideoCodecInfo alloc] initWithName:kRTCVideoCodecVp9Name parameters: @{
       @"profile-id" : @"2",
     }]];

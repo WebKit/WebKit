@@ -1556,11 +1556,11 @@ void Internals::setWebRTCH265Support(bool value)
 #endif
 }
 
-void Internals::setWebRTCVP9Support(bool value)
+void Internals::setWebRTCVP9Support(bool supportVP9Profile0, bool supportVP9Profile2)
 {
 #if USE(LIBWEBRTC)
     if (auto* page = contextDocument()->page()) {
-        page->libWebRTCProvider().setVP9Support(value);
+        page->libWebRTCProvider().setVP9Support(supportVP9Profile0, supportVP9Profile2);
         page->libWebRTCProvider().clearFactory();
     }
 #endif

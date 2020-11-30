@@ -107,10 +107,11 @@ public:
     void enableEnumeratingAllNetworkInterfaces();
 
     void setH265Support(bool value) { m_supportsH265 = value; }
-    void setVP9Support(bool value) { m_supportsVP9 = value; }
+    void setVP9Support(bool supportsVP9Profile0, bool supportsVP9Profile2);
     void setVP9VTBSupport(bool value) { m_supportsVP9VTB = value; }
     bool isSupportingH265() const { return m_supportsH265; }
-    bool isSupportingVP9() const { return m_supportsVP9; }
+    bool isSupportingVP9Profile0() const { return m_supportsVP9Profile0; }
+    bool isSupportingVP9Profile2() const { return m_supportsVP9Profile2; }
     bool isSupportingVP9VTB() const { return m_supportsVP9VTB; }
     virtual void disableNonLocalhostConnections() { m_disableNonLocalhostConnections = true; }
 
@@ -154,12 +155,21 @@ protected:
     rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface> m_factory;
     bool m_disableNonLocalhostConnections { false };
     bool m_supportsH265 { false };
-    bool m_supportsVP9 { false };
+    bool m_supportsVP9Profile0 { false };
+    bool m_supportsVP9Profile2 { false };
     bool m_supportsVP9VTB { false };
     bool m_enableLogging { true };
     bool m_useDTLS10 { false };
 #endif
 };
+
+#if USE(LIBWEBRTC)
+inline void LibWebRTCProvider::setVP9Support(bool supportsVP9Profile0, bool supportsVP9Profile2)
+{
+    m_supportsVP9Profile0 = supportsVP9Profile0;
+    m_supportsVP9Profile2 = supportsVP9Profile2;
+}
+#endif
 
 } // namespace WebCore
 
