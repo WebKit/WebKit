@@ -498,8 +498,14 @@ void MediaPlayerPrivateGStreamerMSE::updateStates()
     MediaPlayer::NetworkState oldNetworkState = m_networkState;
     MediaPlayer::ReadyState oldReadyState = m_readyState;
     GstState state, pending;
+    bool stateReallyChanged = false;
 
     GstStateChangeReturn getStateResult = gst_element_get_state(m_pipeline.get(), &state, &pending, 250 * GST_NSECOND);
+    if (state != m_currentState) {
+        m_oldState = m_currentState;
+        m_currentState = state;
+        stateReallyChanged = true;
+    }
 
     bool shouldUpdatePlaybackState = false;
     switch (getStateResult) {
@@ -574,6 +580,15 @@ void MediaPlayerPrivateGStreamerMSE::updateStates()
         if (m_requestedState == GST_STATE_PAUSED && state == GST_STATE_PAUSED) {
             shouldUpdatePlaybackState = true;
             GST_DEBUG("Requested state change to %s was completed", gst_element_state_get_name(state));
+        }
+
+        // Emit play state change notification only when going to PLAYING so that
+        // the media element gets a chance to enable its page sleep disabler.
+        // Emitting this notification in more cases triggers unwanted code paths
+        // and test timeouts.
+        if (stateReallyChanged && (m_oldState != m_currentState) && (m_oldState == GST_STATE_PAUSED && m_currentState == GST_STATE_PLAYING)) {
+            GST_INFO_OBJECT(pipeline(), "Playback state changed from %s to %s. Notifying the media player client", gst_element_state_get_name(m_oldState), gst_element_state_get_name(m_currentState));
+            shouldUpdatePlaybackState = true;
         }
 
         break;
