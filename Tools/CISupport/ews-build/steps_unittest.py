@@ -737,11 +737,11 @@ class TestRunBuildWebKitOrgUnitTests(BuildStepMixinAdditions, unittest.TestCase)
             ExpectShell(workdir='build/Tools/CISupport/build-webkit-org',
                         timeout=120,
                         logEnviron=False,
-                        command=['python', 'steps_unittest.py'],
+                        command=['python', 'steps_unittest_old.py'],
                         )
             + 0,
         )
-        self.expectOutcome(result=SUCCESS, state_string='Passed build.webkit.org unit tests')
+        self.expectOutcome(result=SUCCESS, state_string='Passed build.webkit.org old unit tests')
         return self.runStep()
 
     def test_failure(self):
@@ -750,12 +750,12 @@ class TestRunBuildWebKitOrgUnitTests(BuildStepMixinAdditions, unittest.TestCase)
             ExpectShell(workdir='build/Tools/CISupport/build-webkit-org',
                         timeout=120,
                         logEnviron=False,
-                        command=['python', 'steps_unittest.py'],
+                        command=['python', 'steps_unittest_old.py'],
                         )
             + ExpectShell.log('stdio', stdout='Unhandled Error. Traceback (most recent call last): Keys in cmd missing from expectation: [logfiles.json]')
             + 2,
         )
-        self.expectOutcome(result=FAILURE, state_string='Failed build.webkit.org unit tests')
+        self.expectOutcome(result=FAILURE, state_string='Failed build.webkit.org old unit tests')
         return self.runStep()
 
 

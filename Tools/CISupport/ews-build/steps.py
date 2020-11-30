@@ -1125,17 +1125,17 @@ class ReRunWebKitPerlTests(RunWebKitPerlTests):
 
 
 class RunBuildWebKitOrgUnitTests(shell.ShellCommand):
-    name = 'build-webkit-org-unit-tests'
+    name = 'build-webkit-old-unit-tests'
     description = ['build-webkit-unit-tests running']
-    command = ['python', 'steps_unittest.py']
+    command = ['python', 'steps_unittest_old.py']
 
     def __init__(self, **kwargs):
         shell.ShellCommand.__init__(self, workdir='build/Tools/CISupport/build-webkit-org', timeout=2 * 60, logEnviron=False, **kwargs)
 
     def getResultSummary(self):
         if self.results == SUCCESS:
-            return {u'step': u'Passed build.webkit.org unit tests'}
-        return {u'step': u'Failed build.webkit.org unit tests'}
+            return {u'step': u'Passed build.webkit.org old unit tests'}
+        return {u'step': u'Failed build.webkit.org old unit tests'}
 
 
 class RunEWSUnitTests(shell.ShellCommand):
