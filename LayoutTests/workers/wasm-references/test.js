@@ -393,7 +393,10 @@ const WASM_JSON = `
         "i32.reinterpret/f32": { "category": "conversion", "value": 188, "return": ["i32"],      "parameter": ["f32"],                  "immediate": [], "b3op": "BitwiseCast"  },
         "i64.reinterpret/f64": { "category": "conversion", "value": 189, "return": ["i64"],      "parameter": ["f64"],                  "immediate": [], "b3op": "BitwiseCast"  },
         "i32.extend8_s":       { "category": "conversion", "value": 192, "return": ["i32"],      "parameter": ["i32"],                  "immediate": [], "b3op": "SExt8"        },
-        "i32.extend16_s":      { "category": "conversion", "value": 193, "return": ["i32"],      "parameter": ["i32"],                  "immediate": [], "b3op": "SExt16"       }
+        "i32.extend16_s":      { "category": "conversion", "value": 193, "return": ["i32"],      "parameter": ["i32"],                  "immediate": [], "b3op": "SExt16"       },
+        "i64.extend8_s":       { "category": "conversion", "value": 194, "return": ["i64"],      "parameter": ["i64"],                  "immediate": [], "b3op": "SExt32(SExt8(Trunc(@0)))"  },
+        "i64.extend16_s":      { "category": "conversion", "value": 195, "return": ["i64"],      "parameter": ["i64"],                  "immediate": [], "b3op": "SExt32(SExt16(Trunc(@0)))" },
+        "i64.extend32_s":      { "category": "conversion", "value": 196, "return": ["i64"],      "parameter": ["i64"],                  "immediate": [], "b3op": "SExt32(Trunc(@0))"         }
     }
 }
 `;

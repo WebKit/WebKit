@@ -1426,6 +1426,18 @@ class Instruction
             else
                 $asm.puts "movsx #{orderOperands(operands[0].x86Operand(:half), operands[1].x86Operand(:int))}"
             end
+        when "sxb2q"
+            if !isIntelSyntax
+                $asm.puts "movsbq #{operands[0].x86Operand(:byte)}, #{operands[1].x86Operand(:quad)}"
+            else
+                $asm.puts "movsxd #{orderOperands(operands[0].x86Operand(:byte), operands[1].x86Operand(:quad))}"
+            end
+        when "sxh2q"
+            if !isIntelSyntax
+                $asm.puts "movswq #{operands[0].x86Operand(:half)}, #{operands[1].x86Operand(:quad)}"
+            else
+                $asm.puts "movsxd #{orderOperands(operands[0].x86Operand(:half), operands[1].x86Operand(:quad))}"
+            end
         when "nop"
             $asm.puts "nop"
         when "bieq"

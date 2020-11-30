@@ -2080,6 +2080,24 @@ wasmOp(i32_extend16_s, WasmI32Extend16S, macro(ctx)
     returnq(ctx, t1)
 end)
 
+wasmOp(i64_extend8_s, WasmI64Extend8S, macro(ctx)
+    mloadq(ctx, m_operand, t0)
+    sxb2q t0, t1
+    returnq(ctx, t1)
+end)
+
+wasmOp(i64_extend16_s, WasmI64Extend16S, macro(ctx)
+    mloadq(ctx, m_operand, t0)
+    sxh2q t0, t1
+    returnq(ctx, t1)
+end)
+
+wasmOp(i64_extend32_s, WasmI64Extend16S, macro(ctx)
+    mloadq(ctx, m_operand, t0)
+    sxi2q t0, t1
+    returnq(ctx, t1)
+end)
+
 wasmOp(f32_convert_s_i32, WasmF32ConvertSI32, macro(ctx)
     mloadi(ctx, m_operand, t0)
     ci2fs t0, ft0

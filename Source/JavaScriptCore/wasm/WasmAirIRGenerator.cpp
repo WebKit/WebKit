@@ -4618,6 +4618,35 @@ template<> auto AirIRGenerator::addOp<OpType::I32Extend16S>(ExpressionType arg0,
     return { };
 }
 
+template<> auto AirIRGenerator::addOp<OpType::I64Extend8S>(ExpressionType arg0, ExpressionType& result) -> PartialResult
+{
+    result = g64();
+    auto temp = g32();
+    append(Move32, arg0, temp);
+    append(SignExtend8To32, temp, temp);
+    append(SignExtend32ToPtr, temp, result);
+    return { };
+}
+
+template<> auto AirIRGenerator::addOp<OpType::I64Extend16S>(ExpressionType arg0, ExpressionType& result) -> PartialResult
+{
+    result = g64();
+    auto temp = g32();
+    append(Move32, arg0, temp);
+    append(SignExtend16To32, temp, temp);
+    append(SignExtend32ToPtr, temp, result);
+    return { };
+}
+
+template<> auto AirIRGenerator::addOp<OpType::I64Extend32S>(ExpressionType arg0, ExpressionType& result) -> PartialResult
+{
+    result = g64();
+    auto temp = g32();
+    append(Move32, arg0, temp);
+    append(SignExtend32ToPtr, temp, result);
+    return { };
+}
+
 template<> auto AirIRGenerator::addOp<OpType::I32GtS>(ExpressionType arg0, ExpressionType arg1, ExpressionType& result) -> PartialResult
 {
     result = g32();

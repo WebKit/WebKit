@@ -143,6 +143,8 @@ MACRO_INSTRUCTIONS =
      "zxi2q",
      "sxb2i",
      "sxh2i",
+     "sxb2q",
+     "sxh2q",
      "nop",
      "bieq",
      "bineq",

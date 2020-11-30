@@ -1,3 +1,21 @@
+2020-11-30  Sergey Rubanov  <chi187@gmail.com>
+
+        Add support for the Wasm i64 sign-extension-ops proposal
+        https://bugs.webkit.org/show_bug.cgi?id=218990
+
+        Reviewed by Yusuke Suzuki.
+
+        * llint/WebAssembly.asm:
+        * offlineasm/arm64.rb:
+        * offlineasm/cloop.rb:
+        * offlineasm/instructions.rb:
+        * offlineasm/x86.rb:
+        * wasm/WasmAirIRGenerator.cpp:
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I64Extend8S>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I64Extend16S>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I64Extend32S>):
+        * wasm/wasm.json:
+
 2020-11-28  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, follow-up after r270214
