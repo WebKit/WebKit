@@ -61,6 +61,7 @@
 #include "InspectorInstrumentation.h"
 #include "IntSize.h"
 #include "JSExecState.h"
+#include "KHRParallelShaderCompile.h"
 #include "Logging.h"
 #include "NavigatorWebXR.h"
 #include "NotImplemented.h"
@@ -3209,7 +3210,14 @@ WebGLAny WebGLRenderingContextBase::getParameter(GCGLenum pname)
 
 WebGLAny WebGLRenderingContextBase::getProgramParameter(WebGLProgram& program, GCGLenum pname)
 {
-    if (isContextLostOrPending() || !validateWebGLProgramOrShader("getProgramParameter", &program))
+    // COMPLETION_STATUS_KHR should always return true if the context is lost, so applications
+    // don't get stuck in an infinite polling loop.
+    if (isContextLostOrPending()) {
+        if (pname == ExtensionsGL::COMPLETION_STATUS_KHR)
+            return true;
+        return nullptr;
+    }
+    if (!validateWebGLProgramOrShader("getProgramParameter", &program))
         return nullptr;
 
     switch (pname) {
@@ -3232,6 +3240,11 @@ WebGLAny WebGLRenderingContextBase::getProgramParameter(WebGLProgram& program, G
             return value;
         }
 #endif // USE(ANGLE)
+    case ExtensionsGL::COMPLETION_STATUS_KHR:
+        if (m_khrParallelShaderCompile)
+            return static_cast<bool>(m_context->getProgrami(program.object(), pname));
+        synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getProgramParameter", "KHR_parallel_shader_compile not enabled");
+        return nullptr;
     default:
 #if ENABLE(WEBGL2)
         if (isWebGL2()) {
@@ -3328,8 +3341,16 @@ WebGLAny WebGLRenderingContextBase::getRenderbufferParameter(GCGLenum target, GC
 
 WebGLAny WebGLRenderingContextBase::getShaderParameter(WebGLShader& shader, GCGLenum pname)
 {
-    if (isContextLostOrPending() || !validateWebGLProgramOrShader("getShaderParameter", &shader))
+    // COMPLETION_STATUS_KHR should always return true if the context is lost, so applications
+    // don't get stuck in an infinite polling loop.
+    if (isContextLostOrPending()) {
+        if (pname == ExtensionsGL::COMPLETION_STATUS_KHR)
+            return true;
         return nullptr;
+    }
+    if (!validateWebGLProgramOrShader("getShaderParameter", &shader))
+        return nullptr;
+
     switch (pname) {
     case GraphicsContextGL::DELETE_STATUS:
         return shader.isDeleted();
@@ -3337,6 +3358,11 @@ WebGLAny WebGLRenderingContextBase::getShaderParameter(WebGLShader& shader, GCGL
         return static_cast<bool>(m_context->getShaderi(shader.object(), pname));
     case GraphicsContextGL::SHADER_TYPE:
         return static_cast<unsigned>(m_context->getShaderi(shader.object(), pname));
+    case ExtensionsGL::COMPLETION_STATUS_KHR:
+        if (m_khrParallelShaderCompile)
+            return static_cast<bool>(m_context->getShaderi(shader.object(), pname));
+        synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getShaderParameter", "KHR_parallel_shader_compile not enabled");
+        return nullptr;
     default:
         synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getShaderParameter", "invalid parameter name");
         return nullptr;
@@ -3732,6 +3758,7 @@ bool WebGLRenderingContextBase::extensionIsEnabled(const String& name)
     CHECK_EXTENSION(m_extTextureFilterAnisotropic, "EXT_texture_filter_anisotropic");
     CHECK_EXTENSION(m_extTextureFilterAnisotropic, "WEBKIT_EXT_texture_filter_anisotropic");
     CHECK_EXTENSION(m_extShaderTextureLOD, "EXT_shader_texture_lod");
+    CHECK_EXTENSION(m_khrParallelShaderCompile, "KHR_parallel_shader_compile");
     CHECK_EXTENSION(m_oesTextureFloat, "OES_texture_float");
     CHECK_EXTENSION(m_oesTextureFloatLinear, "OES_texture_float_linear");
     CHECK_EXTENSION(m_oesTextureHalfFloat, "OES_texture_half_float");
@@ -7836,6 +7863,7 @@ void WebGLRenderingContextBase::loseExtensions(LostContextMode mode)
     LOSE_EXTENSION(m_extTextureCompressionRGTC);
     LOSE_EXTENSION(m_extTextureFilterAnisotropic);
     LOSE_EXTENSION(m_extShaderTextureLOD);
+    LOSE_EXTENSION(m_khrParallelShaderCompile);
     LOSE_EXTENSION(m_oesTextureFloat);
     LOSE_EXTENSION(m_oesTextureFloatLinear);
     LOSE_EXTENSION(m_oesTextureHalfFloat);

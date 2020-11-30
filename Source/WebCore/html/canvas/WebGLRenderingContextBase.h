@@ -80,6 +80,7 @@ class EXTFragDepth;
 class HTMLImageElement;
 class ImageData;
 class IntSize;
+class KHRParallelShaderCompile;
 class OESStandardDerivatives;
 class OESTextureFloat;
 class OESTextureFloatLinear;
@@ -676,6 +677,7 @@ protected:
     RefPtr<EXTTextureCompressionRGTC> m_extTextureCompressionRGTC;
     RefPtr<EXTTextureFilterAnisotropic> m_extTextureFilterAnisotropic;
     RefPtr<EXTShaderTextureLOD> m_extShaderTextureLOD;
+    RefPtr<KHRParallelShaderCompile> m_khrParallelShaderCompile;
     RefPtr<OESTextureFloat> m_oesTextureFloat;
     RefPtr<OESTextureFloatLinear> m_oesTextureFloatLinear;
     RefPtr<OESTextureHalfFloat> m_oesTextureHalfFloat;

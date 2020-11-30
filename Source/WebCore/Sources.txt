@@ -1305,6 +1305,7 @@ html/canvas/EXTTextureFilterAnisotropic.cpp
 html/canvas/EXTsRGB.cpp
 html/canvas/GPUBasedCanvasRenderingContext.cpp
 html/canvas/ImageBitmapRenderingContext.cpp
+html/canvas/KHRParallelShaderCompile.cpp
 html/canvas/OESElementIndexUint.cpp
 html/canvas/OESFBORenderMipmap.cpp
 html/canvas/OESStandardDerivatives.cpp
@@ -2934,6 +2935,7 @@ JSEXTShaderTextureLOD.cpp
 JSEXTTextureCompressionRGTC.cpp
 JSEXTTextureFilterAnisotropic.cpp
 JSEXTsRGB.cpp
+JSKHRParallelShaderCompile.cpp
 JSEcKeyParams.cpp
 JSEcdhKeyDeriveParams.cpp
 JSEcdsaParams.cpp

@@ -44,6 +44,7 @@ public:
         EXTTextureCompressionRGTCName,
         EXTTextureFilterAnisotropicName,
         EXTsRGBName,
+        KHRParallelShaderCompileName,
         OESTextureFloatName,
         OESTextureFloatLinearName,
         OESTextureHalfFloatName,

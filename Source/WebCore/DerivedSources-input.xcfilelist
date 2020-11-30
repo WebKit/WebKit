@@ -985,6 +985,7 @@ $(PROJECT_DIR)/html/canvas/EXTsRGB.idl
 $(PROJECT_DIR)/html/canvas/ImageBitmapRenderingContext.idl
 $(PROJECT_DIR)/html/canvas/ImageBitmapRenderingContextSettings.idl
 $(PROJECT_DIR)/html/canvas/ImageSmoothingQuality.idl
+$(PROJECT_DIR)/html/canvas/KHRParallelShaderCompile.idl
 $(PROJECT_DIR)/html/canvas/OESElementIndexUint.idl
 $(PROJECT_DIR)/html/canvas/OESFBORenderMipmap.idl
 $(PROJECT_DIR)/html/canvas/OESStandardDerivatives.idl

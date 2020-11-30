@@ -264,6 +264,9 @@ public:
     static constexpr GCGLenum COLOR_ATTACHMENT14_EXT = 0x8CEE;
     static constexpr GCGLenum COLOR_ATTACHMENT15_EXT = 0x8CEF;
 
+    // GL_KHR_parallel_shader_compile
+    static constexpr GCGLenum COMPLETION_STATUS_KHR = 0x91B1;
+
     // WebGL functions in format generate-gpup-webgl understands.
 
     // GL_ARB_robustness

@@ -42,6 +42,7 @@
 #include "ImageBitmap.h"
 #include "ImageData.h"
 #include "InspectorInstrumentation.h"
+#include "KHRParallelShaderCompile.h"
 #include "Logging.h"
 #include "OESTextureFloatLinear.h"
 #include "RenderBox.h"
@@ -2688,6 +2689,7 @@ WebGLExtension* WebGL2RenderingContext::getExtension(const String& name)
     ENABLE_IF_REQUESTED(EXTColorBufferFloat, m_extColorBufferFloat, "EXT_color_buffer_float", EXTColorBufferFloat::supported(*this));
     ENABLE_IF_REQUESTED(EXTColorBufferHalfFloat, m_extColorBufferHalfFloat, "EXT_color_buffer_half_float", EXTColorBufferHalfFloat::supported(*this));
     ENABLE_IF_REQUESTED(EXTFloatBlend, m_extFloatBlend, "EXT_float_blend", EXTFloatBlend::supported(*this));
+    ENABLE_IF_REQUESTED(KHRParallelShaderCompile, m_khrParallelShaderCompile, "KHR_parallel_shader_compile", KHRParallelShaderCompile::supported(*this));
     return nullptr;
 }
 
@@ -2734,6 +2736,8 @@ Optional<Vector<String>> WebGL2RenderingContext::getSupportedExtensions()
         result.append("EXT_color_buffer_half_float"_s);
     if (EXTFloatBlend::supported(*this))
         result.append("EXT_float_blend"_s);
+    if (KHRParallelShaderCompile::supported(*this))
+        result.append("KHR_parallel_shader_compile"_s);
 
     return result;
 }

@@ -1515,6 +1515,7 @@ if (ENABLE_WEBGL)
         html/canvas/EXTTextureCompressionRGTC.cpp
         html/canvas/EXTTextureFilterAnisotropic.cpp
         html/canvas/EXTsRGB.cpp
+        html/canvas/KHRParallelShaderCompile.cpp
         html/canvas/OESElementIndexUint.cpp
         html/canvas/OESFBORenderMipmap.cpp
         html/canvas/OESStandardDerivatives.cpp
@@ -1574,6 +1575,7 @@ list(APPEND WebCore_IDL_FILES
     html/canvas/EXTTextureCompressionRGTC.idl
     html/canvas/EXTTextureFilterAnisotropic.idl
     html/canvas/EXTsRGB.idl
+    html/canvas/KHRParallelShaderCompile.idl
     html/canvas/OESElementIndexUint.idl
     html/canvas/OESFBORenderMipmap.idl
     html/canvas/OESStandardDerivatives.idl

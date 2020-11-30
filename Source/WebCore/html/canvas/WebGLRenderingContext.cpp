@@ -44,6 +44,7 @@
 #include "HTMLVideoElement.h"
 #include "ImageData.h"
 #include "InspectorInstrumentation.h"
+#include "KHRParallelShaderCompile.h"
 #include "OESElementIndexUint.h"
 #include "OESFBORenderMipmap.h"
 #include "OESStandardDerivatives.h"
@@ -155,6 +156,7 @@ WebGLExtension* WebGLRenderingContext::getExtension(const String& name)
     }
     ENABLE_IF_REQUESTED(EXTTextureFilterAnisotropic, m_extTextureFilterAnisotropic, "EXT_texture_filter_anisotropic", enableSupportedExtension("GL_EXT_texture_filter_anisotropic"_s));
     ENABLE_IF_REQUESTED(EXTTextureCompressionRGTC, m_extTextureCompressionRGTC, "EXT_texture_compression_rgtc", enableSupportedExtension("GL_EXT_texture_compression_rgtc"_s));
+    ENABLE_IF_REQUESTED(KHRParallelShaderCompile, m_khrParallelShaderCompile, "KHR_parallel_shader_compile", KHRParallelShaderCompile::supported(*this));
     ENABLE_IF_REQUESTED(OESStandardDerivatives, m_oesStandardDerivatives, "OES_standard_derivatives", enableSupportedExtension("GL_OES_standard_derivatives"_s));
     ENABLE_IF_REQUESTED(OESTextureFloat, m_oesTextureFloat, "OES_texture_float", OESTextureFloat::supported(*this));
     ENABLE_IF_REQUESTED(OESTextureFloatLinear, m_oesTextureFloatLinear, "OES_texture_float_linear", enableSupportedExtension("GL_OES_texture_float_linear"_s));
@@ -275,6 +277,8 @@ Optional<Vector<String>> WebGLRenderingContext::getSupportedExtensions()
         result.append("EXT_float_blend"_s);
     if (WebGLColorBufferFloat::supported(*this))
         result.append("WEBGL_color_buffer_float"_s);
+    if (KHRParallelShaderCompile::supported(*this))
+        result.append("KHR_parallel_shader_compile");
 
     return result;
 }

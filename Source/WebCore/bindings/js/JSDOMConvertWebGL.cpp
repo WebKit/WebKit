@@ -39,6 +39,7 @@
 #include "JSEXTTextureCompressionRGTC.h"
 #include "JSEXTTextureFilterAnisotropic.h"
 #include "JSEXTsRGB.h"
+#include "JSKHRParallelShaderCompile.h"
 #include "JSOESElementIndexUint.h"
 #include "JSOESFBORenderMipmap.h"
 #include "JSOESStandardDerivatives.h"
@@ -182,6 +183,8 @@ JSValue convertToJSValue(JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject&
         return toJS(&lexicalGlobalObject, &globalObject, static_cast<EXTFragDepth&>(extension));
     case WebGLExtension::EXTBlendMinMaxName:
         return toJS(&lexicalGlobalObject, &globalObject, static_cast<EXTBlendMinMax&>(extension));
+    case WebGLExtension::KHRParallelShaderCompileName:
+        return toJS(&lexicalGlobalObject, &globalObject, static_cast<KHRParallelShaderCompile&>(extension));
     case WebGLExtension::OESStandardDerivativesName:
         return toJS(&lexicalGlobalObject, &globalObject, static_cast<OESStandardDerivatives&>(extension));
     case WebGLExtension::OESTextureFloatName:
