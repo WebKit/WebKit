@@ -266,6 +266,8 @@ bool WebPageProxy::readSelectionFromPasteboard(const String& pasteboardName)
     if (!hasRunningProcess())
         return false;
 
+    grantAccessToCurrentPasteboardData(pasteboardName);
+
     bool result = false;
     const Seconds messageTimeout(20);
     sendSync(Messages::WebPage::ReadSelectionFromPasteboard(pasteboardName), Messages::WebPage::ReadSelectionFromPasteboard::Reply(result), messageTimeout);

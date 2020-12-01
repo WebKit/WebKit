@@ -45,6 +45,9 @@
 @end
 
 #if PLATFORM(MAC)
+@interface WKWebView () <NSServicesMenuRequestor>
+@end
+
 void writeHTMLToPasteboard(NSString *html)
 {
     [[NSPasteboard generalPasteboard] declareTypes:@[WebCore::legacyHTMLPasteboardType()] owner:nil];
@@ -386,6 +389,24 @@ TEST(PasteHTML, DoesNotAddStandardFontFamily)
     EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"getComputedStyle(document.querySelector('.s4')).fontFamily"],
         [webView stringByEvaluatingJavaScript:@"getComputedStyle(document.body).fontFamily"]);
 }
+
+#if PLATFORM(MAC)
+
+TEST(PasteHTML, ReadSelectionFromPasteboard)
+{
+    auto generalPasteboard = NSPasteboard.generalPasteboard;
+    [generalPasteboard clearContents];
+    [generalPasteboard setString:@"Hello world" forType:NSPasteboardTypeString];
+
+    auto webView = createWebViewWithCustomPasteboardDataSetting(true);
+    [webView synchronouslyLoadHTMLString:@"<input autofocus>"];
+    [webView readSelectionFromPasteboard:generalPasteboard];
+
+    NSString *inputValue = [webView stringByEvaluatingJavaScript:@"document.querySelector('input').value"];
+    EXPECT_WK_STREQ(inputValue, "Hello world");
+}
+
+#endif // PLATFORM(MAC)
 
 #if ENABLE(DARK_MODE_CSS) && HAVE(OS_DARK_MODE_SUPPORT)
 
