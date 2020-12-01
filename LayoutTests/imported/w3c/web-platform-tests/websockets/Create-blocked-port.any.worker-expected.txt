@@ -17,6 +17,7 @@ PASS WebSocket blocked port test 37
 PASS WebSocket blocked port test 42
 PASS WebSocket blocked port test 43
 PASS WebSocket blocked port test 53
+PASS WebSocket blocked port test 69
 PASS WebSocket blocked port test 77
 PASS WebSocket blocked port test 79
 PASS WebSocket blocked port test 87
@@ -34,8 +35,10 @@ PASS WebSocket blocked port test 117
 PASS WebSocket blocked port test 119
 PASS WebSocket blocked port test 123
 PASS WebSocket blocked port test 135
+PASS WebSocket blocked port test 137
 PASS WebSocket blocked port test 139
 PASS WebSocket blocked port test 143
+PASS WebSocket blocked port test 161
 PASS WebSocket blocked port test 179
 PASS WebSocket blocked port test 389
 PASS WebSocket blocked port test 427
@@ -50,6 +53,7 @@ PASS WebSocket blocked port test 531
 PASS WebSocket blocked port test 532
 PASS WebSocket blocked port test 540
 PASS WebSocket blocked port test 548
+PASS WebSocket blocked port test 554
 PASS WebSocket blocked port test 556
 PASS WebSocket blocked port test 563
 PASS WebSocket blocked port test 587
@@ -58,11 +62,15 @@ PASS WebSocket blocked port test 636
 PASS WebSocket blocked port test 993
 PASS WebSocket blocked port test 995
 PASS WebSocket blocked port test 2049
+PASS WebSocket blocked port test 1719
+PASS WebSocket blocked port test 1720
+PASS WebSocket blocked port test 1723
 PASS WebSocket blocked port test 3659
 PASS WebSocket blocked port test 4045
 PASS WebSocket blocked port test 5060
 PASS WebSocket blocked port test 5061
 PASS WebSocket blocked port test 6000
+PASS WebSocket blocked port test 6566
 PASS WebSocket blocked port test 6665
 PASS WebSocket blocked port test 6666
 PASS WebSocket blocked port test 6667

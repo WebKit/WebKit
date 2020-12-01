@@ -15,6 +15,7 @@ Blocked access to external URL http://example.com:37/
 Blocked access to external URL http://example.com:42/
 Blocked access to external URL http://example.com:43/
 Blocked access to external URL http://example.com:53/
+Blocked access to external URL http://example.com:69/
 Blocked access to external URL http://example.com:77/
 Blocked access to external URL http://example.com:79/
 Blocked access to external URL http://example.com:87/
@@ -32,8 +33,10 @@ Blocked access to external URL http://example.com:117/
 Blocked access to external URL http://example.com:119/
 Blocked access to external URL http://example.com:123/
 Blocked access to external URL http://example.com:135/
+Blocked access to external URL http://example.com:137/
 Blocked access to external URL http://example.com:139/
 Blocked access to external URL http://example.com:143/
+Blocked access to external URL http://example.com:161/
 Blocked access to external URL http://example.com:179/
 Blocked access to external URL http://example.com:389/
 Blocked access to external URL http://example.com:427/
@@ -48,6 +51,7 @@ Blocked access to external URL http://example.com:531/
 Blocked access to external URL http://example.com:532/
 Blocked access to external URL http://example.com:540/
 Blocked access to external URL http://example.com:548/
+Blocked access to external URL http://example.com:554/
 Blocked access to external URL http://example.com:556/
 Blocked access to external URL http://example.com:563/
 Blocked access to external URL http://example.com:587/
@@ -56,11 +60,15 @@ Blocked access to external URL http://example.com:636/
 Blocked access to external URL http://example.com:993/
 Blocked access to external URL http://example.com:995/
 Blocked access to external URL http://example.com:2049/
+Blocked access to external URL http://example.com:1719/
+Blocked access to external URL http://example.com:1720/
+Blocked access to external URL http://example.com:1723/
 Blocked access to external URL http://example.com:3659/
 Blocked access to external URL http://example.com:4045/
 Blocked access to external URL http://example.com:5060/
 Blocked access to external URL http://example.com:5061/
 Blocked access to external URL http://example.com:6000/
+Blocked access to external URL http://example.com:6566/
 Blocked access to external URL http://example.com:6665/
 Blocked access to external URL http://example.com:6666/
 Blocked access to external URL http://example.com:6667/
@@ -85,6 +93,7 @@ PASS Request on bad port 37 should throw TypeError.
 PASS Request on bad port 42 should throw TypeError.
 PASS Request on bad port 43 should throw TypeError.
 PASS Request on bad port 53 should throw TypeError.
+PASS Request on bad port 69 should throw TypeError.
 PASS Request on bad port 77 should throw TypeError.
 PASS Request on bad port 79 should throw TypeError.
 PASS Request on bad port 87 should throw TypeError.
@@ -102,8 +111,10 @@ PASS Request on bad port 117 should throw TypeError.
 PASS Request on bad port 119 should throw TypeError.
 PASS Request on bad port 123 should throw TypeError.
 PASS Request on bad port 135 should throw TypeError.
+PASS Request on bad port 137 should throw TypeError.
 PASS Request on bad port 139 should throw TypeError.
 PASS Request on bad port 143 should throw TypeError.
+PASS Request on bad port 161 should throw TypeError.
 PASS Request on bad port 179 should throw TypeError.
 PASS Request on bad port 389 should throw TypeError.
 PASS Request on bad port 427 should throw TypeError.
@@ -118,6 +129,7 @@ PASS Request on bad port 531 should throw TypeError.
 PASS Request on bad port 532 should throw TypeError.
 PASS Request on bad port 540 should throw TypeError.
 PASS Request on bad port 548 should throw TypeError.
+PASS Request on bad port 554 should throw TypeError.
 PASS Request on bad port 556 should throw TypeError.
 PASS Request on bad port 563 should throw TypeError.
 PASS Request on bad port 587 should throw TypeError.
@@ -126,11 +138,15 @@ PASS Request on bad port 636 should throw TypeError.
 PASS Request on bad port 993 should throw TypeError.
 PASS Request on bad port 995 should throw TypeError.
 PASS Request on bad port 2049 should throw TypeError.
+PASS Request on bad port 1719 should throw TypeError.
+PASS Request on bad port 1720 should throw TypeError.
+PASS Request on bad port 1723 should throw TypeError.
 PASS Request on bad port 3659 should throw TypeError.
 PASS Request on bad port 4045 should throw TypeError.
 PASS Request on bad port 5060 should throw TypeError.
 PASS Request on bad port 5061 should throw TypeError.
 PASS Request on bad port 6000 should throw TypeError.
+PASS Request on bad port 6566 should throw TypeError.
 PASS Request on bad port 6665 should throw TypeError.
 PASS Request on bad port 6666 should throw TypeError.
 PASS Request on bad port 6667 should throw TypeError.
