@@ -1,3 +1,13 @@
+2020-12-01  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-flexbox] WebKit doesn't preserve aspect ratio when computing cross size of flexed images in auto-height flex container
+        https://bugs.webkit.org/show_bug.cgi?id=209983
+        <rdar://problem/61288094>
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/css/css-flexbox/flexitem-stretch-image-expected.txt: Replace FAIL by PASS expectations.
+
 2020-11-30  Alex Christensen  <achristensen@webkit.org>
 
         Allow blob URLs with fragments

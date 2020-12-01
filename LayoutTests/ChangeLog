@@ -1,3 +1,14 @@
+2020-12-01  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-flexbox] WebKit doesn't preserve aspect ratio when computing cross size of flexed images in auto-height flex container
+        https://bugs.webkit.org/show_bug.cgi?id=209983
+        <rdar://problem/61288094>
+
+        Reviewed by Darin Adler.
+
+        * TestExpectations: Unskipped 2 tests that are working fine now
+        * css3/flexbox/flexitem.html: Updated expectations. Aspect ratio must be preserved.
+
 2020-12-01  Diego Pino Garcia  <dpino@igalia.com>
 
         [WPE] Unreviewed test gardening. Update WPE baselines of baselines updated r238731.

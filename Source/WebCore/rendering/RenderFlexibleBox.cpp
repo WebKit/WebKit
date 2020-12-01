@@ -1550,6 +1550,10 @@ bool RenderFlexibleBox::needToStretchChildLogicalHeight(const RenderBox& child) 
     if (isHorizontalFlow() != child.style().isHorizontalWritingMode())
         return false;
 
+    // Aspect ratio is properly handled by RenderReplaced during layout.
+    if (child.isRenderReplaced() && child.hasAspectRatio())
+        return false;
+
     return child.style().logicalHeight().isAuto();
 }
 
