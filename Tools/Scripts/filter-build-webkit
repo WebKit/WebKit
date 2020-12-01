@@ -330,6 +330,8 @@ sub shouldIgnoreLine($$)
     return 1 if $line =~ /^\S+\/$/;
     return 1 if $line =~ /^sent \d+ bytes/;
     return 1 if $line =~ /^total size is/;
+    return 1 if $line =~ /One of the two will be used\. Which one is undefined\./;
+    return 1 if $line =~ /The Legacy Build System will be removed in a future release/;
     return 1 if $line =~ /^\( (xcodebuild|if) /;
     return 1 if $line =~ /^warning\: detected internal install, passing entitlements to simulator anyway\./;
     return 1 if $line =~ /may not function in the Simulator because Ad Hoc/;
