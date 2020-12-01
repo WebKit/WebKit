@@ -1,3 +1,22 @@
+2020-12-01  Diego Pino Garcia  <dpino@igalia.com>
+
+        [WPE] Unreviewed test gardening. Update WPE baselines of baselines updated r238731.
+
+        * platform/wpe/fast/css/resize-corner-tracking-expected.png: Added.
+        * platform/wpe/fast/css/resize-corner-tracking-expected.txt:
+        * platform/wpe/fast/css/text-overflow-input-expected.png: Added.
+        * platform/wpe/fast/css/text-overflow-input-expected.txt:
+        * platform/wpe/fast/dom/HTMLProgressElement/native-progress-bar-expected.png: Added.
+        * platform/wpe/fast/dom/HTMLProgressElement/native-progress-bar-expected.txt:
+        * platform/wpe/fast/text/hyphenate-limit-before-after-expected.png: Added.
+        * platform/wpe/fast/text/hyphenate-limit-before-after-expected.txt:
+        * platform/wpe/fast/text/international/bidi-LDB-2-CSS-expected.png: Added.
+        * platform/wpe/fast/text/international/bidi-LDB-2-CSS-expected.txt:
+        * platform/wpe/fast/text/international/bidi-LDB-2-HTML-expected.png: Added.
+        * platform/wpe/fast/text/international/bidi-LDB-2-HTML-expected.txt:
+        * platform/wpe/fast/text/international/bidi-LDB-2-formatting-characters-expected.png: Added.
+        * platform/wpe/fast/text/international/bidi-LDB-2-formatting-characters-expected.txt:
+
 2020-11-30  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Unreviewed test gardening. Update baselines after r270269.

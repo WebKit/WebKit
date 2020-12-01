@@ -20,10 +20,10 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,187) size 784x378
         RenderText {#text} at (173,111) size 4x17
           text run at (173,111) width 4: " "
-        RenderBR {BR} at (0,0) size 0x0
+        RenderBR {BR} at (177,111) size 0x17
         RenderText {#text} at (207,185) size 4x17
           text run at (207,185) width 4: " "
-        RenderBR {BR} at (0,0) size 0x0
+        RenderBR {BR} at (211,185) size 0x17
         RenderText {#text} at (0,0) size 0x0
 layer at (8,70) size 173x125 clip at (10,72) size 169x121
   RenderBlock {DIV} at (0,62) size 173x125 [border: (2px solid #0000FF)]
