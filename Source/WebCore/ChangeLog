@@ -1,3 +1,36 @@
+2020-12-01  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r269695. rdar://problem/71836652
+
+    Protect ScheduledURLNavigation member
+    https://bugs.webkit.org/show_bug.cgi?id=218593
+    
+    Patch by Rob Buis <rbuis@igalia.com> on 2020-11-11
+    Reviewed by Alex Christensen.
+    
+    Protect ScheduledURLNavigation member m_url by using a copy since
+    ScheduledURLNavigation itself is not protected and may be cancelled
+    (and thus deleted) just at the time it is sending a message to the
+    UIProcess which encodes the passed m_url member variable.
+    
+    * loader/NavigationScheduler.cpp:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@269695 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-11-11  Rob Buis  <rbuis@igalia.com>
+
+            Protect ScheduledURLNavigation member
+            https://bugs.webkit.org/show_bug.cgi?id=218593
+
+            Reviewed by Alex Christensen.
+
+            Protect ScheduledURLNavigation member m_url by using a copy since
+            ScheduledURLNavigation itself is not protected and may be cancelled
+            (and thus deleted) just at the time it is sending a message to the
+            UIProcess which encodes the passed m_url member variable.
+
+            * loader/NavigationScheduler.cpp:
+
 2020-11-16  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r268979. rdar://problem/71446613
