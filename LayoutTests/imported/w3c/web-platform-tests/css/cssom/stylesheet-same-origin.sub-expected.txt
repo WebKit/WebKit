@@ -17,5 +17,5 @@ FAIL Origin-clean check in loading error CSSOM Stylesheets assert_throws_dom: st
                     sheet.cssRules;
                 }" did not throw
 PASS Origin-clean check in same-origin CSSOM Stylesheets
-FAIL Origin-clean check in data:css CSSOM Stylesheets null is not an object (evaluating 'sheet.cssRules.length')
+FAIL Origin-clean check in data:css CSSOM Stylesheets Not allowed to access cross-origin stylesheet
 

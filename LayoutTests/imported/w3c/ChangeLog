@@ -1,3 +1,15 @@
+2020-12-01  Youenn Fablet  <youenn@apple.com>
+
+        CSSStyleSheet.cssRules and rules should throw in case of opaque stylesheets
+        https://bugs.webkit.org/show_bug.cgi?id=219203
+
+        Reviewed by Alex Christensen.
+
+        Rebased tests.
+
+        * web-platform-tests/css/cssom/stylesheet-same-origin.sub-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-request-css-cross-origin.https-expected.txt:
+
 2020-12-01  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-flexbox] WebKit doesn't preserve aspect ratio when computing cross size of flexed images in auto-height flex container

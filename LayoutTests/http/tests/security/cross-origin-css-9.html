@@ -21,7 +21,13 @@ function checkCSSLoading(id, expectToIncludeOrigin, expectVisibility)
 {
     expectedColor = expectToIncludeOrigin ? "rgb(255, 255, 0)" : "rgb(0, 0, 255)";
     assert_equals(getBackgroundColorForId(id), expectedColor);
-    assert_equals(document.getElementById("link-" + id).sheet.cssRules !== null, expectVisibility);
+    let visibility = true;
+    try {
+        document.getElementById("link-" + id).sheet.cssRules
+    } catch (e) {
+        visibility = false;
+    }
+    assert_equals(visibility, expectVisibility);
 }
 
 var onloadTest = async_test(" Testing that link element to load stylesheets correctly handle crossorigin mode.");

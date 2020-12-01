@@ -254,6 +254,14 @@ bool CSSStyleSheet::canAccessRules() const
     return document->securityOrigin().canRequest(baseURL);
 }
 
+ExceptionOr<Ref<CSSRuleList>> CSSStyleSheet::rulesForBindings()
+{
+    auto rules = this->rules();
+    if (!rules)
+        return Exception { SecurityError, "Not allowed to access cross-origin stylesheet"_s };
+    return rules.releaseNonNull();
+}
+
 RefPtr<CSSRuleList> CSSStyleSheet::rules()
 {
     if (!canAccessRules())
@@ -322,6 +330,14 @@ ExceptionOr<int> CSSStyleSheet::addRule(const String& selector, const String& st
     
     // As per Microsoft documentation, always return -1.
     return -1;
+}
+
+ExceptionOr<Ref<CSSRuleList>> CSSStyleSheet::cssRulesForBindings()
+{
+    auto cssRules = this->cssRules();
+    if (!cssRules)
+        return Exception { SecurityError, "Not allowed to access cross-origin stylesheet"_s };
+    return cssRules.releaseNonNull();
 }
 
 RefPtr<CSSRuleList> CSSStyleSheet::cssRules()

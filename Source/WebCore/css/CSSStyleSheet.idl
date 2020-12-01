@@ -22,11 +22,11 @@
     Exposed=Window
 ] interface CSSStyleSheet : StyleSheet {
     readonly attribute CSSRule ownerRule;
-    readonly attribute CSSRuleList cssRules;
+    [MayThrowException, ImplementedAs=cssRulesForBindings] readonly attribute CSSRuleList cssRules;
     [MayThrowException] unsigned long insertRule(DOMString rule, optional unsigned long index = 0);
     [MayThrowException] undefined deleteRule(unsigned long index);
 
-    readonly attribute CSSRuleList rules;
+    [MayThrowException, ImplementedAs=rulesForBindings] readonly attribute CSSRuleList rules;
     [MayThrowException] long addRule(optional DOMString selector = "undefined", optional DOMString style = "undefined", optional unsigned long index);
     [MayThrowException] undefined removeRule(optional unsigned long index = 0);
 };

@@ -3,6 +3,6 @@ PASS setup global state
 PASS MIME checking of CSS resources fetched via service worker when Content-Type is not set.
 FAIL Same-origin policy for access to CSS resources fetched via service worker assert_throws_dom: function "() => {
     f.contentDocument.styleSheets[0].cssRules[0].cssText;
-  }" threw object "TypeError: null is not an object (evaluating 'f.contentDocument.styleSheets[0].cssRules[0]')" that is not a DOMException SecurityError: property "code" is equal to undefined, expected 18
+  }" threw an exception from the wrong global
 PASS cleanup global state
 
