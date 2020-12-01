@@ -1170,14 +1170,31 @@ void SctpTransport::OnDataFromSctpToTransport(
 void SctpTransport::OnNotificationFromSctp(
     const rtc::CopyOnWriteBuffer& buffer) {
   RTC_DCHECK_RUN_ON(network_thread_);
+  if (buffer.size() < sizeof(sctp_notification::sn_header)) {
+    RTC_LOG(LS_ERROR) << "SCTP notification is shorter than header size: "
+                      << buffer.size();
+    return;
+  }
+
   const sctp_notification& notification =
       reinterpret_cast<const sctp_notification&>(*buffer.data());
-  RTC_DCHECK(notification.sn_header.sn_length == buffer.size());
+  if (buffer.size() != notification.sn_header.sn_length) {
+    RTC_LOG(LS_ERROR) << "SCTP notification length (" << buffer.size()
+                      << ") does not match sn_length field ("
+                      << notification.sn_header.sn_length << ").";
+    return;
+  }
 
   // TODO(ldixon): handle notifications appropriately.
   switch (notification.sn_header.sn_type) {
     case SCTP_ASSOC_CHANGE:
       RTC_LOG(LS_VERBOSE) << "SCTP_ASSOC_CHANGE";
+      if (buffer.size() < sizeof(notification.sn_assoc_change)) {
+        RTC_LOG(LS_ERROR)
+            << "SCTP_ASSOC_CHANGE notification has less than required length: "
+            << buffer.size();
+        return;
+      }
       OnNotificationAssocChange(notification.sn_assoc_change);
       break;
     case SCTP_REMOTE_ERROR:
@@ -1204,6 +1221,12 @@ void SctpTransport::OnNotificationFromSctp(
       RTC_LOG(LS_INFO) << "SCTP_NOTIFICATIONS_STOPPED_EVENT";
       break;
     case SCTP_SEND_FAILED_EVENT: {
+      if (buffer.size() < sizeof(notification.sn_send_failed_event)) {
+        RTC_LOG(LS_ERROR) << "SCTP_SEND_FAILED_EVENT notification has less "
+                             "than required length: "
+                          << buffer.size();
+        return;
+      }
       const struct sctp_send_failed_event& ssfe =
           notification.sn_send_failed_event;
       RTC_LOG(LS_WARNING) << "SCTP_SEND_FAILED_EVENT: message with"
@@ -1216,6 +1239,12 @@ void SctpTransport::OnNotificationFromSctp(
       break;
     }
     case SCTP_STREAM_RESET_EVENT:
+      if (buffer.size() < sizeof(notification.sn_strreset_event)) {
+        RTC_LOG(LS_ERROR) << "SCTP_STREAM_RESET_EVENT notification has less "
+                             "than required length: "
+                          << buffer.size();
+        return;
+      }
       OnStreamResetEvent(&notification.sn_strreset_event);
       break;
     case SCTP_ASSOC_RESET_EVENT:
