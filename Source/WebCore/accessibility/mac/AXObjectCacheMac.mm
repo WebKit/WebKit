@@ -601,7 +601,7 @@ static id AXTextMarkerRange(id startMarker, id endMarker)
     return CFBridgingRelease(AXTextMarkerRangeCreate(kCFAllocatorDefault, (AXTextMarkerRef)startMarker, (AXTextMarkerRef)endMarker));
 }
 
-id textMarkerRangeFromMarkers(id textMarker1, id textMarker2)
+static id textMarkerRangeFromMarkers(id textMarker1, id textMarker2)
 {
     if (!textMarker1 || !textMarker2)
         return nil;
@@ -631,6 +631,31 @@ id textMarkerRangeFromVisiblePositions(AXObjectCache* cache, const VisiblePositi
 
     id startTextMarker = textMarkerForVisiblePosition(cache, startPosition);
     id endTextMarker = textMarkerForVisiblePosition(cache, endPosition);
+    return textMarkerRangeFromMarkers(startTextMarker, endTextMarker);
+}
+
+id startOrEndTextMarkerForRange(AXObjectCache* cache, const Optional<SimpleRange>& range, bool isStart)
+{
+    ASSERT(isMainThread());
+    if (!cache || !range)
+        return nil;
+
+    TextMarkerData textMarkerData;
+    cache->startOrEndTextMarkerDataForRange(textMarkerData, *range, isStart);
+    if (!textMarkerData.axID)
+        return nil;
+
+    return CFBridgingRelease(AXTextMarkerCreate(kCFAllocatorDefault, (const UInt8*)&textMarkerData, sizeof(textMarkerData)));
+}
+
+id textMarkerRangeFromRange(AXObjectCache* cache, const Optional<SimpleRange>& range)
+{
+    ASSERT(isMainThread());
+    if (!cache)
+        return nil;
+
+    id startTextMarker = startOrEndTextMarkerForRange(cache, range, true);
+    id endTextMarker = startOrEndTextMarkerForRange(cache, range, false);
     return textMarkerRangeFromMarkers(startTextMarker, endTextMarker);
 }
 
