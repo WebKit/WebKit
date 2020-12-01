@@ -97,6 +97,7 @@ class Widget;
 struct DragState;
 
 enum class WheelEventProcessingSteps : uint8_t;
+enum class WheelScrollGestureState : uint8_t;
 
 #if ENABLE(DRAG_SUPPORT)
 extern const int LinkDragHysteresis;
@@ -606,6 +607,7 @@ private:
 #if PLATFORM(COCOA)
     NSView *m_mouseDownView { nullptr };
     bool m_sendingEventToSubview { false };
+    Optional<WheelScrollGestureState> m_wheelScrollGestureState;
 #endif
 
 #if PLATFORM(MAC)

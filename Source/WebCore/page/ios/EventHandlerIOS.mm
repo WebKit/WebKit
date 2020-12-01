@@ -107,7 +107,17 @@ bool EventHandler::wheelEvent(WebEvent *event)
 
     CurrentEventScope scope(event);
 
-    bool eventWasHandled = handleWheelEvent(PlatformEventFactory::createPlatformWheelEvent(event), { WheelEventProcessingSteps::MainThreadForScrolling, WheelEventProcessingSteps::MainThreadForBlockingDOMEventDispatch });
+    auto wheelEvent = PlatformEventFactory::createPlatformWheelEvent(event);
+    OptionSet<WheelEventProcessingSteps> processingSteps = { WheelEventProcessingSteps::MainThreadForScrolling, WheelEventProcessingSteps::MainThreadForBlockingDOMEventDispatch };
+
+    if (wheelEvent.isGestureStart())
+        m_wheelScrollGestureState = WTF::nullopt;
+    else if (wheelEvent.phase() == PlatformWheelEventPhase::Changed || wheelEvent.momentumPhase() == PlatformWheelEventPhase::Changed) {
+        if (m_wheelScrollGestureState && *m_wheelScrollGestureState == WheelScrollGestureState::NonBlocking)
+            processingSteps = { WheelEventProcessingSteps::MainThreadForScrolling, WheelEventProcessingSteps::MainThreadForNonBlockingDOMEventDispatch };
+    }
+
+    bool eventWasHandled = handleWheelEvent(wheelEvent, processingSteps);
     event.wasHandled = eventWasHandled;
     return eventWasHandled;
 }

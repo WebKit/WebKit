@@ -282,6 +282,8 @@ fast/events/wheel/wheel-event-listeners-on-document-made-passive.html [ Skip ]
 fast/events/wheel/wheel-event-listeners-on-window-left-active.html [ Skip ]
 fast/events/wheel/wheel-event-listeners-on-window-made-passive.html [ Skip ]
 fast/events/wheel/wheel-event-in-passive-region-non-cancelable.html [ Skip ]
+fast/events/wheel/wheel-events-become-non-cancelable.html [ Skip ]
+fast/events/wheel/first-wheel-event-cancelable.html [ Skip ]
 
 scrollbars/scroll-rtl-or-bt-layer.html [ Timeout ]
 webkit.org/b/208559 fast/scrolling/arrow-key-scroll-in-rtl-document.html [ Skip ]

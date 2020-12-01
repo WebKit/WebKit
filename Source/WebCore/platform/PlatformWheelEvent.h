@@ -43,6 +43,11 @@ enum class WheelEventProcessingSteps : uint8_t {
     MainThreadForBlockingDOMEventDispatch       = 1 << 3,
 };
 
+enum class WheelScrollGestureState : uint8_t {
+    Blocking,
+    NonBlocking
+};
+
 // The ScrollByPixelWheelEvent is a fine-grained event that specifies the precise number of pixels to scroll.
 // It is sent directly by touch pads on macOS, or synthesized when platforms generate line-by-line scrolling events.
 //
@@ -267,5 +272,6 @@ inline FloatPoint PlatformWheelEvent::swipeVelocity() const
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const PlatformWheelEvent&);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, WheelEventProcessingSteps);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, EventHandling);
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, WheelScrollGestureState);
 
 } // namespace WebCore

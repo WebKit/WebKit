@@ -80,4 +80,13 @@ TextStream& operator<<(TextStream& ts, EventHandling steps)
     return ts;
 }
 
+TextStream& operator<<(TextStream& ts, WheelScrollGestureState state)
+{
+    switch (state) {
+    case WheelScrollGestureState::Blocking: ts << "blocking"; break;
+    case WheelScrollGestureState::NonBlocking: ts << "non-blocking"; break;
+    }
+    return ts;
+}
+
 } // namespace WebCore

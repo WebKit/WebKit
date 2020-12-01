@@ -149,6 +149,13 @@ bool EventHandler::wheelEvent(NSEvent *event)
     CurrentEventScope scope(event, nil);
     auto wheelEvent = PlatformEventFactory::createPlatformWheelEvent(event, page->chrome().platformPageClient());
     OptionSet<WheelEventProcessingSteps> processingSteps = { WheelEventProcessingSteps::MainThreadForScrolling, WheelEventProcessingSteps::MainThreadForBlockingDOMEventDispatch };
+
+    if (wheelEvent.isGestureStart())
+        m_wheelScrollGestureState = WTF::nullopt;
+    else if (wheelEvent.phase() == PlatformWheelEventPhase::Changed || wheelEvent.momentumPhase() == PlatformWheelEventPhase::Changed) {
+        if (m_frame.settings().wheelEventGesturesBecomeNonBlocking() && m_wheelScrollGestureState && *m_wheelScrollGestureState == WheelScrollGestureState::NonBlocking)
+            processingSteps = { WheelEventProcessingSteps::MainThreadForScrolling, WheelEventProcessingSteps::MainThreadForNonBlockingDOMEventDispatch };
+    }
     return handleWheelEvent(wheelEvent, processingSteps);
 }
 
@@ -969,6 +976,9 @@ void EventHandler::wheelEventWasProcessedByMainThread(const PlatformWheelEvent& 
         if (scrollingCoordinator->coordinatesScrollingForFrameView(*view))
             scrollingCoordinator->wheelEventWasProcessedByMainThread(wheelEvent, eventHandling);
     }
+
+    if (wheelEvent.isGestureStart() && eventHandling.contains(EventHandling::DispatchedToDOM))
+        m_wheelScrollGestureState = eventHandling.contains(EventHandling::DefaultPrevented) ? WheelScrollGestureState::Blocking : WheelScrollGestureState::NonBlocking;
 #else
     UNUSED_PARAM(wheelEvent);
     UNUSED_PARAM(eventHandling);
