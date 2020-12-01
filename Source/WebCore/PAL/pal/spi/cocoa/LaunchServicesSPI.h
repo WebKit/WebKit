@@ -75,6 +75,10 @@ typedef void (^LSAppLinkOpenCompletionHandler)(BOOL success, NSError *error);
 enum LSSessionID {
     kLSDefaultSessionID = -2,
 };
+
+enum {
+    kLSServerConnectionStatusDoNotConnectToServerMask = 0x1ULL,
+};
 #endif
 
 #if HAVE(LSDATABASECONTEXT)

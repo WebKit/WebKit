@@ -1,3 +1,15 @@
+2020-11-30  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Adopt SPI to prevent establishing XPC connections to Launch Services
+        https://bugs.webkit.org/show_bug.cgi?id=219173
+        <rdar://problem/71595536>
+
+        Reviewed by Alex Christensen.
+
+        Declare enum value to be used when adopting the SPI.
+
+        * pal/spi/cocoa/LaunchServicesSPI.h:
+
 2020-11-28  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Set application information in the Networking process on behalf of the WebContent process

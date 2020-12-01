@@ -384,6 +384,10 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     if (canLoad_HIServices__AXSetAuditTokenIsAuthenticatedCallback())
         softLink_HIServices__AXSetAuditTokenIsAuthenticatedCallback(isAXAuthenticatedCallback);
 #endif
+    
+#if ENABLE(SET_WEBCONTENT_PROCESS_INFORMATION_IN_NETWORK_PROCESS)
+    _LSSetApplicationLaunchServicesServerConnectionStatus(kLSServerConnectionStatusDoNotConnectToServerMask, nullptr);
+#endif
 }
 
 void WebProcess::platformSetWebsiteDataStoreParameters(WebProcessDataStoreParameters&& parameters)
