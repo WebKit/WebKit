@@ -72,6 +72,8 @@ inline ExceptionOr<void> RTCRtpScriptTransformerContext::requestKeyFrame()
     case MediaType::Video:
         m_backend->requestKeyFrame();
         return { };
+    default:
+        return { };
     }
 }
 
