@@ -1,3 +1,12 @@
+2020-12-01  Sergey Rubanov  <chi187@gmail.com>
+
+        Fix Aarch64 build failure
+        https://bugs.webkit.org/show_bug.cgi?id=219395
+
+        Reviewed by Yusuke Suzuki.
+
+        * offlineasm/arm64.rb:
+
 2020-12-01  Keith Rollin  <krollin@apple.com>
 
         Consolidate header postprocessing scripts

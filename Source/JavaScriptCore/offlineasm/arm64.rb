@@ -902,9 +902,9 @@ class Instruction
         when "sxh2i"
             emitARM64("sxth", operands, [:word, :word])
         when "sxb2q"
-            emitARM64("sxtb", operands, [:quad, :quad])
+            emitARM64("sxtb", operands, [:word, :quad])
         when "sxh2q"
-            emitARM64("sxth", operands, [:quad, :quad])
+            emitARM64("sxth", operands, [:word, :quad])
         when "nop"
             $asm.puts "nop"
         when "bieq", "bbeq"
