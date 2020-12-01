@@ -150,6 +150,8 @@ ExceptionOr<void> RTCRtpSFrameTransformer::setEncryptionKey(const Vector<uint8_t
     if (saltKeyResult.hasException())
         return saltKeyResult.releaseException();
 
+    ASSERT(saltKeyResult.returnValue().size() >= 16);
+
     auto authenticationKeyResult = computeAuthenticationKey(rawKey);
     if (authenticationKeyResult.hasException())
         return authenticationKeyResult.releaseException();

@@ -130,6 +130,40 @@ ExceptionOr<Vector<uint8_t>> deriveHDKFSHA256Bits(const uint8_t* key, size_t key
     return deriveHDKFBits(kCCDigestSHA256, key, keySize, salt, saltSize, info, infoSize, length);
 }
 
+Vector<uint8_t> calculateHMACSignature(CCHmacAlgorithm algorithm, const Vector<uint8_t>& key, const uint8_t* data, size_t size)
+{
+    size_t digestLength;
+    switch (algorithm) {
+    case kCCHmacAlgSHA1:
+        digestLength = CC_SHA1_DIGEST_LENGTH;
+        break;
+    case kCCHmacAlgSHA224:
+        digestLength = CC_SHA224_DIGEST_LENGTH;
+        break;
+    case kCCHmacAlgSHA256:
+        digestLength = CC_SHA256_DIGEST_LENGTH;
+        break;
+    case kCCHmacAlgSHA384:
+        digestLength = CC_SHA384_DIGEST_LENGTH;
+        break;
+    case kCCHmacAlgSHA512:
+        digestLength = CC_SHA512_DIGEST_LENGTH;
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+        return Vector<uint8_t>();
+    }
+
+    Vector<uint8_t> result(digestLength);
+    CCHmac(algorithm, key.data(), key.size(), data, size, result.data());
+    return result;
+}
+
+Vector<uint8_t> calculateSHA256Signature(const Vector<uint8_t>& key, const uint8_t* data, size_t size)
+{
+    return calculateHMACSignature(kCCHmacAlgSHA256, key, data, size);
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(WEB_CRYPTO)

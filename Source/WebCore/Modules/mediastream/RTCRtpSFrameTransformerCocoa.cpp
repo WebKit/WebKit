@@ -63,9 +63,7 @@ ExceptionOr<Vector<uint8_t>> RTCRtpSFrameTransformer::encryptData(const uint8_t*
 
 Vector<uint8_t> RTCRtpSFrameTransformer::computeEncryptedDataSignature(const uint8_t* data, size_t size, const Vector<uint8_t>& key)
 {
-    Vector<uint8_t> result(CC_SHA256_DIGEST_LENGTH);
-    CCHmac(kCCHmacAlgSHA256, key.data(), key.size(), data, size, result.data());
-    return result;
+    return calculateSHA256Signature(key, data, size);
 }
 
 void RTCRtpSFrameTransformer::updateAuthenticationSize()
