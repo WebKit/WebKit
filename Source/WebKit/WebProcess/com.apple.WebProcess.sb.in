@@ -84,6 +84,9 @@
 (allow file-read*
        file-write-data
        file-ioctl
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
+    (with telemetry-backtrace)
+#endif
     (literal "/dev/dtracehelper"))
 
 ;;; Allow creation of core dumps.
@@ -104,6 +107,9 @@
         (preference-domain "com.nvidia.OpenGL"))
     ;; CVMS
     (allow mach-lookup
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
+        (with telemetry-backtrace)
+#endif
         (global-name "com.apple.cvmsServ"))
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400 || PLATFORM(MACCATALYST)
     (allow file-read*
@@ -281,10 +287,22 @@
 
 ;;; process-info* defaults to allow; deny it and then allow operations we actually need.
 (deny process-info*)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
+(allow process-info-pidinfo
+    (with report) (with telemetry-backtrace))
+(allow process-info-pidinfo (target self))
+#else
 (allow process-info-pidinfo)
+#endif
 (allow process-info-setcontrol (target self))
 (allow process-info-dirtycontrol (target self))
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
+(allow process-codesigning-status*
+    (with report) (with telemetry-backtrace))
+(allow process-codesigning-status* (target self))
+#else
 (allow process-codesigning-status*)
+#endif
 
 (deny sysctl*)
 (allow sysctl-read
@@ -793,7 +811,11 @@
 
 ;; Allow the OpenGL Profiler to attach.
 (if (defined? 'mach-register)
-    (allow mach-register (global-name-regex #"^_oglprof_attach_<[0-9]+>$")))
+    (allow mach-register
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
+        (with telemetry-backtrace)
+#endif
+        (global-name-regex #"^_oglprof_attach_<[0-9]+>$")))
 
 (if (positive? (string-length (param "DARWIN_USER_CACHE_DIR")))
     (allow-read-write-directory-and-issue-read-write-extensions (param "DARWIN_USER_CACHE_DIR")))
@@ -972,7 +994,11 @@
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400 || PLATFORM(MACCATALYST)
 ;; <rdar://problem/47268166>
-(allow mach-lookup (xpc-service-name "com.apple.MTLCompilerService"))
+(allow mach-lookup
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
+    (with telemetry-backtrace)
+#endif
+    (xpc-service-name "com.apple.MTLCompilerService"))
 #endif
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400 || PLATFORM(MACCATALYST)
@@ -995,13 +1021,24 @@
     (global-name "com.apple.ocspd"))
 #endif
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
+(allow file-read* (subpath "/private/var/db/mds/system")) ;; FIXME: This should be removed when <rdar://problem/9538414> is fixed.
+(allow file-write*
+    (with report) (with telemetry-backtrace)
+    (subpath "/private/var/db/mds/system")) ;; FIXME: This should be removed when <rdar://problem/9538414> is fixed.
+#else
 (allow file-read* file-write* (subpath "/private/var/db/mds/system")) ;; FIXME: This should be removed when <rdar://problem/9538414> is fixed.
+#endif
+
 
 (allow file-read*
        (subpath "/private/var/db/mds")
        (literal "/private/var/db/DetachedSignatures"))
 
 (allow ipc-posix-shm-read* ipc-posix-shm-write-data ipc-posix-shm-write-create
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
+       (with report) (with telemetry-backtrace)
+#endif
        (ipc-posix-name "com.apple.AppleDatabaseChanged"))
 
 ;; CoreFoundation. We don't import com.apple.corefoundation.sb, because it allows unnecessary access to pasteboard.
@@ -1021,8 +1058,15 @@
 (allow file-read-data
     (literal "/dev/autofs_nowait")) ; Used by CF to circumvent automount triggers
 (allow ipc-posix-shm
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
+    (with report) (with telemetry-backtrace)
+#endif
     (ipc-posix-name-regex #"^CFPBS:")) ; <rdar://problem/13757475>
-(allow system-fsctl (fsctl-command (_IO "h" 47)))
+(allow system-fsctl
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
+    (with report) (with telemetry-backtrace)
+#endif
+    (fsctl-command (_IO "h" 47)))
 
 ;; Graphics
 (system-graphics)
