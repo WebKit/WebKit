@@ -1184,7 +1184,7 @@ static void activateSessionCleanup(NetworkSessionCocoa& session, const NetworkSe
     bool passedEnabledState = session.isResourceLoadStatisticsEnabled();
 
     if (itpEnabled != passedEnabledState)
-        WTFLogAlways("Passed ITP enabled state (%d) does not match TCC setting (%d)\n", itpEnabled, passedEnabledState);
+        WTFLogAlways("Passed ITP enabled state (%d) does not match TCC setting (%d)\n", passedEnabledState, itpEnabled);
     session.setResourceLoadStatisticsEnabled(passedEnabledState);
 #endif
 #endif
