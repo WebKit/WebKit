@@ -33,7 +33,7 @@
 namespace WebKit {
 
 using UnacceleratedRemoteImageBufferProxy = RemoteImageBufferProxy<UnacceleratedImageBufferShareableBackend>;
-using AcceleratedRemoteImageBufferProxy = RemoteImageBufferProxy<AcceleratedImageBufferShareableUnmappedBackend>;
+using AcceleratedRemoteImageBufferProxy = RemoteImageBufferProxy<AcceleratedImageBufferShareableBackend>;
 
 } // namespace WebKit
 

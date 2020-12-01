@@ -26,7 +26,7 @@
 #include "config.h"
 #include "ImageBufferShareableIOSurfaceBackend.h"
 
-#if ENABLE(GPU_PROCESS) && HAVE(IOSURFACE)
+#if ENABLE(GPU_PROCESS)
 
 #include <WebCore/GraphicsContextCG.h>
 #include <wtf/IsoMallocInlines.h>
@@ -54,6 +54,20 @@ std::unique_ptr<ImageBufferShareableIOSurfaceBackend> ImageBufferShareableIOSurf
     CGContextClearRect(cgContext.get(), FloatRect(FloatPoint::zero(), backendSize));
 
     return makeUnique<ImageBufferShareableIOSurfaceBackend>(size, backendSize, resolutionScale, colorSpace, pixelFormat, WTFMove(surface));
+}
+
+std::unique_ptr<ImageBufferShareableIOSurfaceBackend> ImageBufferShareableIOSurfaceBackend::create(const FloatSize& logicalSize, const IntSize& internalSize, float resolutionScale, ColorSpace colorSpace, PixelFormat pixelFormat, ImageBufferBackendHandle handle)
+{
+    if (!WTF::holds_alternative<MachSendRight>(handle)) {
+        ASSERT_NOT_REACHED();
+        return nullptr;
+    }
+
+    auto surface = IOSurface::createFromSendRight(WTFMove(WTF::get<MachSendRight>(handle)), cachedCGColorSpace(colorSpace));
+    if (!surface)
+        return nullptr;
+
+    return makeUnique<ImageBufferShareableIOSurfaceBackend>(logicalSize, internalSize, resolutionScale, colorSpace, pixelFormat, WTFMove(surface));
 }
 
 ImageBufferBackendHandle ImageBufferShareableIOSurfaceBackend::createImageBufferBackendHandle() const

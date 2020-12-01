@@ -2951,9 +2951,6 @@
 		2D1B5D5C185869C8006C6596 /* ViewGestureControllerMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewGestureControllerMessages.h; path = DerivedSources/WebKit2/ViewGestureControllerMessages.h; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D1E8221216FFF5000A15265 /* WKWebEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKWebEvent.h; path = ios/WKWebEvent.h; sourceTree = "<group>"; };
 		2D1E8222216FFF5100A15265 /* WKWebEvent.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKWebEvent.mm; path = ios/WKWebEvent.mm; sourceTree = "<group>"; };
-		2D25F3272575872400231A8B /* ConcreteShareableImageBuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ConcreteShareableImageBuffer.h; sourceTree = "<group>"; };
-		2D25F32825758E9000231A8B /* ImageBufferShareableUnmappedIOSurfaceBackend.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageBufferShareableUnmappedIOSurfaceBackend.h; sourceTree = "<group>"; };
-		2D25F32925758E9100231A8B /* ImageBufferShareableUnmappedIOSurfaceBackend.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ImageBufferShareableUnmappedIOSurfaceBackend.cpp; sourceTree = "<group>"; };
 		2D28A4951AF965A100F190C9 /* WKViewLayoutStrategy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKViewLayoutStrategy.h; sourceTree = "<group>"; };
 		2D28A4961AF965A100F190C9 /* WKViewLayoutStrategy.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKViewLayoutStrategy.mm; sourceTree = "<group>"; };
 		2D28F3E01885CCC1004B9EAE /* WebChromeClientIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebChromeClientIOS.mm; path = ios/WebChromeClientIOS.mm; sourceTree = "<group>"; };
@@ -6247,7 +6244,6 @@
 				BCF18637167D071E00A1A85A /* CacheModel.cpp */,
 				BC3065F91259344E00E71278 /* CacheModel.h */,
 				9BC59D6C1EFCCCB6001E8D09 /* CallbackID.h */,
-				2D25F3272575872400231A8B /* ConcreteShareableImageBuffer.h */,
 				CA05397823EE324400A553DC /* ContentAsStringIncludesChildFrames.h */,
 				5129EB1123D0DE7800AF1CD7 /* ContentWorldShared.h */,
 				5106D7BF18BDBE73000AB166 /* ContextMenuContextData.cpp */,
@@ -8725,8 +8721,6 @@
 			children = (
 				727A7F342407857D004D2931 /* ImageBufferShareableIOSurfaceBackend.cpp */,
 				727A7F352407857F004D2931 /* ImageBufferShareableIOSurfaceBackend.h */,
-				2D25F32925758E9100231A8B /* ImageBufferShareableUnmappedIOSurfaceBackend.cpp */,
-				2D25F32825758E9000231A8B /* ImageBufferShareableUnmappedIOSurfaceBackend.h */,
 			);
 			path = cocoa;
 			sourceTree = "<group>";

@@ -25,10 +25,9 @@
 
 #pragma once
 
-#if ENABLE(GPU_PROCESS) && HAVE(IOSURFACE)
+#if ENABLE(GPU_PROCESS)
 
 #include "ImageBufferBackendHandle.h"
-#include <WebCore/GraphicsContext.h>
 #include <WebCore/ImageBufferIOSurfaceBackend.h>
 #include <wtf/IsoMalloc.h>
 
@@ -36,11 +35,12 @@ namespace WebKit {
 
 class ShareableBitmap;
 
-class ImageBufferShareableIOSurfaceBackend final : public WebCore::ImageBufferIOSurfaceBackend {
+class ImageBufferShareableIOSurfaceBackend : public WebCore::ImageBufferIOSurfaceBackend {
     WTF_MAKE_ISO_ALLOCATED(ImageBufferShareableIOSurfaceBackend);
     WTF_MAKE_NONCOPYABLE(ImageBufferShareableIOSurfaceBackend);
 public:
     static std::unique_ptr<ImageBufferShareableIOSurfaceBackend> create(const WebCore::FloatSize& logicalSize, const float resolutionScale, WebCore::ColorSpace, WebCore::PixelFormat, const WebCore::HostWindow*);
+    static std::unique_ptr<ImageBufferShareableIOSurfaceBackend> create(const WebCore::FloatSize& logicalSize, const WebCore::IntSize& internalSize, float resolutionScale, WebCore::ColorSpace, WebCore::PixelFormat, ImageBufferBackendHandle);
 
     using WebCore::ImageBufferIOSurfaceBackend::ImageBufferIOSurfaceBackend;
 
@@ -49,4 +49,4 @@ public:
 
 } // namespace WebKit
 
-#endif // ENABLE(GPU_PROCESS) && HAVE(IOSURFACE)
+#endif // ENABLE(GPU_PROCESS)

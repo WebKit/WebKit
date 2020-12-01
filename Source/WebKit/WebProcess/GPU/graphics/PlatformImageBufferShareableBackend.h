@@ -31,7 +31,6 @@
 
 #if HAVE(IOSURFACE)
 #include "ImageBufferShareableIOSurfaceBackend.h"
-#include "ImageBufferShareableUnmappedIOSurfaceBackend.h"
 #endif
 
 namespace WebKit {
@@ -39,10 +38,8 @@ namespace WebKit {
 using UnacceleratedImageBufferShareableBackend = ImageBufferShareableBitmapBackend;
 
 #if HAVE(IOSURFACE)
-using AcceleratedImageBufferShareableUnmappedBackend = ImageBufferShareableUnmappedIOSurfaceBackend;
 using AcceleratedImageBufferShareableBackend = ImageBufferShareableIOSurfaceBackend;
 #else
-using AcceleratedImageBufferShareableUnmappedBackend = UnacceleratedImageBufferShareableBackend;
 using AcceleratedImageBufferShareableBackend = UnacceleratedImageBufferShareableBackend;
 #endif
 

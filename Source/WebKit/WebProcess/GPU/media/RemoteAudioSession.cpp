@@ -29,11 +29,9 @@
 #if ENABLE(GPU_PROCESS) && USE(AUDIO_SESSION)
 
 #include "GPUConnectionToWebProcessMessages.h"
-#include "GPUProcessConnection.h"
 #include "GPUProcessProxy.h"
 #include "RemoteAudioSessionMessages.h"
 #include "RemoteAudioSessionProxyMessages.h"
-#include "WebProcess.h"
 #include <WebCore/PlatformMediaSessionManager.h>
 
 namespace WebKit {
