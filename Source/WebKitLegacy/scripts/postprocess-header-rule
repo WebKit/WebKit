@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (C) 2019 Apple Inc. All rights reserved.
+# Copyright (C) 2019-2020 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -70,12 +70,10 @@ case $? in
 esac
 
 HEADER_NAME=$(basename "${WORK_FILE}" '.tmp')
-if [[ "${HEADER_NAME}" == "WebKitAvailability.h" ]]; then
-    exit 0
-fi
-
-if [[ ${WK_PLATFORM_NAME} != macosx ]]; then
-    sed -i '' -E -e "s/ *WEBKIT_((CLASS_|ENUM_)?(AVAILABLE|DEPRECATED))_MAC\([^)]+\)//g" "${WORK_FILE}"
+if [[ "${HEADER_NAME}" != "WebKitAvailability.h" ]]; then
+    if [[ ${WK_PLATFORM_NAME} != macosx ]]; then
+        sed -i '' -E -e "s/ *WEBKIT_((CLASS_|ENUM_)?(AVAILABLE|DEPRECATED))_MAC\([^)]+\)//g" "${WORK_FILE}"
+    fi
 fi
 
 cmp -s "${WORK_FILE}" "${DEST_FILE}" && rm -f "${WORK_FILE}" || mv "${WORK_FILE}" "${DEST_FILE}"

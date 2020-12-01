@@ -1,3 +1,73 @@
+2020-12-01  Keith Rollin  <krollin@apple.com>
+
+        Consolidate header postprocessing scripts
+        https://bugs.webkit.org/show_bug.cgi?id=219388
+        <rdar://problem/71840357>
+
+        Reviewed by David Kilzer.
+
+        Our build system contains the following scripts to perform some
+        postprocessing of headers that we export to the SDK:
+
+            JavaScriptCore/postprocess-headers.sh
+            WebKit/mac/postprocess-framework-headers.sh
+            WebKitLegacy/mac/postprocess-headers.sh
+
+        The preceding scripts are used when using the non-XCBuild -- or
+        "legacy" -- Xcode build system. They are invoked in a custom Run
+        Script build phase after the headers have been exported with the
+        standard Xcode facility for creating frameworks.
+
+        Alternatively, we also have the following postprocessing scripts:
+
+            WebKit/Scripts/postprocess-header-rule
+            JavaScriptCore/Scripts/postprocess-header-rule
+            WebKitLegacy/scripts/postprocess-header-rule
+
+        These scripts are used when using the XCBuild build system. They are
+        invoked *during* the header export process to copy and postprocess the
+        headers in one blow. They are part of a Custom Build Rule for
+        exporting files ending in ".h".
+
+        The reason why we have two sets of scripts is because of the different
+        capabilities of the two Xcode build systems. The legacy system does
+        not support a custom "export header" step that would allow us to copy
+        and postprocess each header in a single step. Therefore, when using
+        the legacy build system, we export in one build step and postprocess
+        in a subsequent build step. And XCBuild doesn't like the approach
+        taken by the old build system where files are exported first and then
+        munged in a separate step, since that confuses its notion of the state
+        of the build ("Hey! That file I exported in the previous build? I see
+        now that it's been changed, so I'm going to export it again. And
+        change its modification date. And then rebuild everything downstream
+        that uses it."). Therefore, XCBuild added a facility for copying and
+        postprocessing in one step.
+
+        The scripts supporting each of these approaches are very similar to
+        each other, such that there is a lot of code duplication between them.
+        At the same time, by having two sets of scripts that are very similar
+        to each other, we run the risk of "drift", where files in one set may
+        get updated while their counterparts in the other set are not.
+
+        Address this duplication by making the scripts in the "legacy" set be
+        mere stubs that invoke the scripts in the new "XCBuild" set. In doing
+        this, we also fix a case of drift: the legacy-based scripts made use
+        of a timestamp file to determine if headers needed to be reprocessed
+        and exported, while the XCBuild-based scripts used a "process the
+        files and export them if any actual changes now exist between this new
+        version and any previously-exported version" approach.
+
+        Along the way, fix a bug in WebKitLegacy's postprocess-header-rule
+        that resulted in WebKitAvailability.h not being processed. The
+        practical effect of this bug is that the file ended up with both macOS
+        and iOS code, along with the #if that controlled which chunk of code
+        was compiled, instead of just the chunk of code specific to the
+        targeted SDK. Normally, the unused chunk of code would get removed
+        through the invocation of `unifdef`. But, because of the bug, the
+        results of running `unifdef` were being discarded.
+
+        * mac/postprocess-framework-headers.sh:
+
 2020-12-01  Kate Cheney  <katherine_cheney@apple.com>
 
         ITP logging mixes up the UI process ITP state with the Settings ITP state

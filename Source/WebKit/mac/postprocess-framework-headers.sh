@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Copyright (C) 2014 Apple Inc. All rights reserved.
+# Copyright (C) 2014-2020 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -24,74 +24,18 @@
 # THE POSSIBILITY OF SUCH DAMAGE.
 #
 
-if [[ "${WK_FRAMEWORK_HEADER_POSTPROCESSING_DISABLED}" == "YES" ]]; then
-    exit 0;
-fi
+POSTPROCESS_HEADER_RULE="${SRCROOT}/Scripts/postprocess-header-rule"
+[[ -x "${POSTPROCESS_HEADER_RULE}" ]] || { echo "### Unable to find ${POSTPROCESS_HEADER_RULE}"; exit 1; }
 
-TIMESTAMP_PATH=${TARGET_TEMP_DIR}/${0##*/}
-
-if [[ -e $TIMESTAMP_PATH && $0 -nt $TIMESTAMP_PATH ]]; then
-    rm "${TIMESTAMP_PATH}";
-fi
-
-function process_definitions () {
-    local DEFINITIONS_FILE=$1
-
-    if [[ ! -f "${DEFINITIONS_FILE}" ]]; then
-        return 1
-    fi
-
-    if [[ -e $TIMESTAMP_PATH && "${DEFINITIONS_FILE}" -nt $TIMESTAMP_PATH ]]; then
-        rm "${TIMESTAMP_PATH}";
-    fi
-
-    source "${DEFINITIONS_FILE}"
-}
-
-function rewrite_headers () {
-    if [[ "${WK_PLATFORM_NAME}" == "macosx" ]]; then
-        [[ -n ${OSX_VERSION} ]] || OSX_VERSION=${MACOSX_DEPLOYMENT_TARGET}
-        [[ -n ${IOS_VERSION} ]] || IOS_VERSION="NA"
-    elif [[ "${WK_PLATFORM_NAME}" =~ "iphone" ]]; then
-        [[ -n ${IOS_VERSION} ]] || IOS_VERSION=${IPHONEOS_DEPLOYMENT_TARGET}
-        [[ -n ${OSX_VERSION} ]] || OSX_VERSION="NA"
-    fi
-
-    SED_OPTIONS=(
-    )
-
-    if [[ -n "$OSX_VERSION" && -n "$IOS_VERSION" ]]; then
-        SED_OPTIONS+=(
-            -e s/WK_MAC_TBA/${OSX_VERSION}/g
-            -e s/WK_IOS_TBA/${IOS_VERSION}/g
-            -e s/WK_API_AVAILABLE/API_AVAILABLE/
-            -e s/WK_API_DEPRECATED/API_DEPRECATED/
-            -e "s/^WK_CLASS_AVAILABLE/WK_EXTERN API_AVAILABLE/"
-            -e "s/^WK_CLASS_DEPRECATED/WK_EXTERN API_DEPRECATED/"
-        )
-    else
-        SED_OPTIONS+=(
-            -e 's/WK_(API_|CLASS_)AVAILABLE\(.*\)\s*\)//g'
-            -e 's/WK_(API_|CLASS_)DEPRECATED(_WITH_REPLACEMENT)?\(.*\)\s*\)//g'
-        )
-    fi
-
-    SED_OPTIONS+=(${OTHER_SED_OPTIONS[*]})
-
+function rewrite_headers ()
+{
     for HEADER_PATH in "${1}/"*.h; do
-        if [[ "$HEADER_PATH" -nt $TIMESTAMP_PATH ]]; then
-            ditto "${HEADER_PATH}" "${TARGET_TEMP_DIR}/${HEADER_PATH##*/}"
-            sed -i .tmp -E "${SED_OPTIONS[@]}" "${TARGET_TEMP_DIR}/${HEADER_PATH##*/}" || exit $?
-            mv "${TARGET_TEMP_DIR}/${HEADER_PATH##*/}" "$HEADER_PATH"
-        fi
+        SCRIPT_HEADER_VISIBILITY="${2}" \
+        SCRIPT_INPUT_FILE="${HEADER_PATH}" \
+        SCRIPT_OUTPUT_FILE_0="${HEADER_PATH}" \
+            "${POSTPROCESS_HEADER_RULE}"
     done
 }
 
-DEFINITIONS_PATH=usr/local/include/WebKitAdditions/Scripts/postprocess-framework-headers-definitions
-
-process_definitions "${BUILT_PRODUCTS_DIR}/${DEFINITIONS_PATH}" || process_definitions "${SDKROOT}/${DEFINITIONS_PATH}"
-
-rewrite_headers "${TARGET_BUILD_DIR}/${PUBLIC_HEADERS_FOLDER_PATH}"
-rewrite_headers "${TARGET_BUILD_DIR}/${PRIVATE_HEADERS_FOLDER_PATH}"
-
-touch ${TIMESTAMP_PATH}
+rewrite_headers "${TARGET_BUILD_DIR}/${PUBLIC_HEADERS_FOLDER_PATH}" Public
+rewrite_headers "${TARGET_BUILD_DIR}/${PRIVATE_HEADERS_FOLDER_PATH}" Private
