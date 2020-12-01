@@ -2247,6 +2247,4 @@ webkit.org/b/218346 [ Mojave ] fast/text/canvas-color-fonts [ Skip ]
 # rdar://rdar://71039166
 [ Mojave ] http/tests/canvas/color-fonts [ Skip ]
 
-webkit.org/b/219366 imported/w3c/web-platform-tests/streams/transform-streams/terminate.any.html [ Pass Failure ]
-
 webkit.org/b/219403 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-candidate-in-sdp.https.html [ Pass Failure ]

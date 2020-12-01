@@ -1,3 +1,13 @@
+2020-12-01  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION: imported/w3c/web-platform-tests/streams/transform-streams/terminate.any.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=219366
+        <rdar://problem/71819641>
+
+        Unreviewed, rebaseline test.
+
+        * web-platform-tests/streams/transform-streams/terminate.any-expected.txt:
+
 2020-12-01  Youenn Fablet  <youenn@apple.com>
 
         Update list of block ports according fetch spec

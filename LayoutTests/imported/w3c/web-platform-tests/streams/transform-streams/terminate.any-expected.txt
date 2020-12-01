@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: the stream has been terminated
-CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: the stream has been terminated
 
 Harness Error (FAIL), message = Unhandled rejection: the stream has been terminated
 
