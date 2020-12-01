@@ -237,6 +237,17 @@ function resolvePromiseWithFirstResolvingFunctionCallCheck(promise, value)
 }
 
 @globalPrivate
+function fulfillPromiseWithFirstResolvingFunctionCallCheck(promise, value)
+{
+    @assert(@isPromise(promise));
+    var flags = @getPromiseInternalField(promise, @promiseFieldFlags);
+    if (flags & @promiseFlagsIsFirstResolvingFunctionCalled)
+        return;
+    @putPromiseInternalField(promise, @promiseFieldFlags, flags | @promiseFlagsIsFirstResolvingFunctionCalled);
+    return @fulfillPromise(promise, value);
+}
+
+@globalPrivate
 function rejectPromiseWithFirstResolvingFunctionCallCheck(promise, reason)
 {
     @assert(@isPromise(promise));

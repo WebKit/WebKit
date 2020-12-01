@@ -1,3 +1,23 @@
+2020-11-30  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Making module entry promise-like by setting "then"
+        https://bugs.webkit.org/show_bug.cgi?id=216695
+
+        Reviewed by Saam Barati.
+
+        Setting then: @undefined to make entry promise-like.
+        We also optimize @InternalPromise.internalAll a bit.
+
+        * builtins/InternalPromiseConstructor.js:
+        (internalAll.newResolveElement):
+        (internalAll):
+        * builtins/ModuleLoader.js:
+        (globalPrivate.newRegistryEntry):
+        (requestImportModule):
+        (async requestImportModule): Deleted.
+        * builtins/PromiseOperations.js:
+        (globalPrivate.fulfillPromiseWithFirstResolvingFunctionCallCheck):
+
 2020-11-30  Sergey Rubanov  <chi187@gmail.com>
 
         Add support for the Wasm i64 sign-extension-ops proposal

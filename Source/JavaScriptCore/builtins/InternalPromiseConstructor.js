@@ -36,7 +36,11 @@ function internalAll(array)
 
     "use strict";
 
-    var promiseCapability = @newPromiseCapability(@InternalPromise);
+    var constructor = @InternalPromise;
+    var promise = @createPromise(constructor, /* isInternalPromise */ true);
+    var reject = (reason) => {
+        return @rejectPromiseWithFirstResolvingFunctionCallCheck(promise, reason);
+    };
 
     var values = [];
     var index = 0;
@@ -55,7 +59,7 @@ function internalAll(array)
 
             --remainingElementsCount;
             if (remainingElementsCount === 0)
-                return promiseCapability.@resolve.@call(@undefined, values);
+                return @fulfillPromiseWithFirstResolvingFunctionCallCheck(promise, values);
 
             return @undefined;
         }
@@ -63,24 +67,18 @@ function internalAll(array)
 
     try {
         if (array.length === 0)
-            promiseCapability.@resolve.@call(@undefined, values);
+            @fulfillPromiseWithFirstResolvingFunctionCallCheck(promise, values);
         else {
             for (var index = 0, length = array.length; index < length; ++index) {
                 var value = array[index];
                 @putByValDirect(values, index, @undefined);
-
-                var nextPromiseCapability = @newPromiseCapability(@InternalPromise);
-                nextPromiseCapability.@resolve.@call(@undefined, value);
-                var nextPromise = nextPromiseCapability.@promise;
-
-                var resolveElement = newResolveElement(index);
                 ++remainingElementsCount;
-                nextPromise.then(resolveElement, promiseCapability.@reject);
+                @resolveWithoutPromise(value, newResolveElement(index), reject);
             }
         }
     } catch (error) {
-        promiseCapability.@reject.@call(@undefined, error);
+        reject(error);
     }
 
-    return promiseCapability.@promise;
+    return promise;
 }

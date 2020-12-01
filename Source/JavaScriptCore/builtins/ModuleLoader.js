@@ -99,6 +99,7 @@ function newRegistryEntry(key)
         linkError: @undefined,
         linkSucceeded: true,
         evaluated: false,
+        then: @undefined,
     };
 }
 
@@ -363,13 +364,25 @@ async function loadAndEvaluateModule(moduleName, parameters, fetcher)
     return await this.linkAndEvaluateModule(key, fetcher);
 }
 
-async function requestImportModule(key, parameters, fetcher)
+function requestImportModule(key, parameters, fetcher)
 {
     "use strict";
 
-    var entry = await this.requestSatisfy(this.ensureRegistered(key), parameters, fetcher, new @Set);
-    this.linkAndEvaluateModule(entry.key, fetcher);
-    return this.getModuleNamespaceObject(entry.module);
+    var constructor = @InternalPromise;
+    var promise = @createPromise(constructor, /* isInternalPromise */ true);
+    @resolveWithoutPromise(this.requestSatisfy(this.ensureRegistered(key), parameters, fetcher, new @Set),
+        (entry) => {
+            try {
+                this.linkAndEvaluateModule(entry.key, fetcher);
+                @fulfillPromiseWithFirstResolvingFunctionCallCheck(promise, this.getModuleNamespaceObject(entry.module));
+            } catch (error) {
+                @rejectPromiseWithFirstResolvingFunctionCallCheck(promise, error);
+            }
+        },
+        (reason) => {
+            @rejectPromiseWithFirstResolvingFunctionCallCheck(promise, reason);
+        });
+    return promise;
 }
 
 function dependencyKeysIfEvaluated(key)
