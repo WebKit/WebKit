@@ -1,3 +1,26 @@
+2020-12-01  Tim Horton  <timothy_horton@apple.com>
+
+        GPU Process: Invalid static_cast from ConcreteImageBuffer to RemoteImageBufferProxy
+        https://bugs.webkit.org/show_bug.cgi?id=219387
+
+        Reviewed by Ryosuke Niwa.
+
+        * Shared/ConcreteShareableImageBuffer.h: Copied from Source/WebKit/WebProcess/GPU/graphics/cocoa/ImageBufferShareableIOSurfaceBackend.h.
+        (WebKit::ConcreteShareableImageBuffer::create):
+        (WebKit::ConcreteShareableImageBuffer::ConcreteShareableImageBuffer):
+        (WebKit::ConcreteShareableImageBuffer::createImageBufferBackendHandle):
+        * Shared/RemoteLayerTree/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::encode const):
+        (WebKit::RemoteLayerBackingStore::swapToValidFrontBuffer):
+        * WebKit.xcodeproj/project.pbxproj:
+        Add and adopt ConcreteShareableImageBuffer. This is a ConcreteImageBuffer that knows how
+        to create an ImageBufferBackendHandle, with no other behavior change.
+        Previously, we were (completely incorrectly) casting ConcreteImageBuffer to RemoteImageBufferProxy
+        to get this behavior, and somehow just got very lucky.
+
+        * WebProcess/GPU/media/RemoteAudioSession.cpp:
+        Fix some unified source issues.
+
 2020-11-30  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Adopt SPI to prevent establishing XPC connections to Launch Services

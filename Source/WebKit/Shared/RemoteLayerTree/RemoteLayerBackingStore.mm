@@ -27,6 +27,7 @@
 #import "RemoteLayerBackingStore.h"
 
 #import "ArgumentCoders.h"
+#import "ConcreteShareableImageBuffer.h"
 #import "MachPort.h"
 #import "PlatformCALayerRemote.h"
 #import "PlatformRemoteImageBufferProxy.h"
@@ -105,10 +106,17 @@ void RemoteLayerBackingStore::encode(IPC::Encoder& encoder) const
     Optional<ImageBufferBackendHandle> handle;
     if (m_frontBuffer.imageBuffer) {
         // FIXME: We need to flatten the class hierarchy so we can avoid this bifurcation.
-        if (m_acceleratesDrawing)
-            handle = static_cast<AcceleratedRemoteImageBufferProxy *>(m_frontBuffer.imageBuffer.get())->createImageBufferBackendHandle();
-        else
-            handle = static_cast<UnacceleratedRemoteImageBufferProxy *>(m_frontBuffer.imageBuffer.get())->createImageBufferBackendHandle();
+        if (WebProcess::singleton().shouldUseRemoteRenderingFor(WebCore::RenderingPurpose::DOM)) {
+            if (m_acceleratesDrawing)
+                handle = static_cast<AcceleratedRemoteImageBufferProxy *>(m_frontBuffer.imageBuffer.get())->createImageBufferBackendHandle();
+            else
+                handle = static_cast<UnacceleratedRemoteImageBufferProxy *>(m_frontBuffer.imageBuffer.get())->createImageBufferBackendHandle();
+        } else {
+            if (m_acceleratesDrawing)
+                handle = static_cast<ConcreteShareableImageBuffer<AcceleratedImageBufferShareableBackend> *>(m_frontBuffer.imageBuffer.get())->createImageBufferBackendHandle();
+            else
+                handle = static_cast<ConcreteShareableImageBuffer<UnacceleratedImageBufferShareableBackend> *>(m_frontBuffer.imageBuffer.get())->createImageBufferBackendHandle();
+        }
     }
 
     encoder << handle;
@@ -185,9 +193,9 @@ void RemoteLayerBackingStore::swapToValidFrontBuffer()
     }
 
     if (m_acceleratesDrawing)
-        m_frontBuffer.imageBuffer = WebCore::ConcreteImageBuffer<AcceleratedImageBufferShareableBackend>::create(backingStoreSize(), 1, WebCore::ColorSpace::SRGB, pixelFormat(), nullptr);
+        m_frontBuffer.imageBuffer = ConcreteShareableImageBuffer<AcceleratedImageBufferShareableBackend>::create(backingStoreSize(), WebCore::RenderingMode::Accelerated, 1, WebCore::ColorSpace::SRGB, pixelFormat());
     else
-        m_frontBuffer.imageBuffer = WebCore::ConcreteImageBuffer<UnacceleratedImageBufferShareableBackend>::create(backingStoreSize(), 1, WebCore::ColorSpace::SRGB, pixelFormat(), nullptr);
+        m_frontBuffer.imageBuffer = ConcreteShareableImageBuffer<UnacceleratedImageBufferShareableBackend>::create(backingStoreSize(), WebCore::RenderingMode::Unaccelerated, 1, WebCore::ColorSpace::SRGB, pixelFormat());
 }
 
 bool RemoteLayerBackingStore::display()
