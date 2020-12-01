@@ -3427,6 +3427,16 @@ class OrderOfIncludesTest(CppStyleTestBase):
                                          '#include <Framework/Bar.h>\n',
                                          '*SoftLink.h header should be included after all other headers.  [build/include_order] [4]')
 
+        # Allow WebKitAdditions headers to appear after *SoftLink.h headers.
+        self.assert_language_rules_check('Foo.cpp',
+                                         '#include "config.h"\n'
+                                         '#include "Foo.h"\n'
+                                         '\n'
+                                         '#include "ALocalHeader.h"\n'
+                                         '#include "FrameworkSoftLink.h"\n'
+                                         '#include <WebKitAdditions/FooAdditions.h>\n',
+                                         '')
+
         self.assert_language_rules_check('Foo.cpp',
                                          '#include "config.h"\n'
                                          '#include "Foo.h"\n'

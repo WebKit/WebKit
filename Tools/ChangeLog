@@ -1,3 +1,23 @@
+2020-11-30  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        check-webkit-style should allow WebKitAdditions headers to appear after soft linking headers
+        https://bugs.webkit.org/show_bug.cgi?id=219382
+
+        Reviewed by Darin Adler.
+
+        The header include ordering rule that forces soft linking headers to be included last in implementation (cpp and
+        mm) files shouldn't really apply to WebKitAdditions headers, since those additions headers are only meant to
+        contain method and function implementations anyways.
+
+        Fix this by adding code to recognize WebKitAdditions headers as a special type of header, and exempt these
+        headers from the `'*SoftLink.h header should be included after all other headers.'` rule.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (_IncludeState):
+        (_IncludeState.check_next_include_order):
+        (_classify_include):
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py: Add a test case to exercise this scenario.
+
 2020-11-30  Brian Burg  <bburg@apple.com>
 
         filter-build-webkit: reduce non-actionable warnings from objc runtime and xcodebuild
