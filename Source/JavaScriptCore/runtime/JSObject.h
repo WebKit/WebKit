@@ -683,7 +683,6 @@ public:
     JS_EXPORT_PRIVATE static void getGenericPropertyNames(JSObject*, JSGlobalObject*, PropertyNameArray&, EnumerationMode);
 
     JS_EXPORT_PRIVATE JSValue toPrimitive(JSGlobalObject*, PreferredPrimitiveType = NoPreference) const;
-    bool getPrimitiveNumber(JSGlobalObject*, double& number, JSValue&) const;
     JS_EXPORT_PRIVATE double toNumber(JSGlobalObject*) const;
     JS_EXPORT_PRIVATE JSString* toString(JSGlobalObject*) const;
 

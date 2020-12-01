@@ -155,17 +155,6 @@ JSValue JSCell::toPrimitive(JSGlobalObject* globalObject, PreferredPrimitiveType
     return static_cast<const JSObject*>(this)->toPrimitive(globalObject, preferredType);
 }
 
-bool JSCell::getPrimitiveNumber(JSGlobalObject* globalObject, double& number, JSValue& value) const
-{
-    if (isString())
-        return static_cast<const JSString*>(this)->getPrimitiveNumber(globalObject, number, value);
-    if (isSymbol())
-        return static_cast<const Symbol*>(this)->getPrimitiveNumber(globalObject, number, value);
-    if (isHeapBigInt())
-        return static_cast<const JSBigInt*>(this)->getPrimitiveNumber(globalObject, number, value);
-    return static_cast<const JSObject*>(this)->getPrimitiveNumber(globalObject, number, value);
-}
-
 double JSCell::toNumber(JSGlobalObject* globalObject) const
 {
     if (isString())

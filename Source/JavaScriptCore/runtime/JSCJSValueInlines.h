@@ -822,46 +822,6 @@ inline PreferredPrimitiveType toPreferredPrimitiveType(JSGlobalObject* globalObj
     return NoPreference;
 }
 
-inline bool JSValue::getPrimitiveNumber(JSGlobalObject* globalObject, double& number, JSValue& value)
-{
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    if (isInt32()) {
-        number = asInt32();
-        value = *this;
-        return true;
-    }
-    if (isDouble()) {
-        number = asDouble();
-        value = *this;
-        return true;
-    }
-    if (isCell())
-        return asCell()->getPrimitiveNumber(globalObject, number, value);
-    if (isTrue()) {
-        number = 1.0;
-        value = *this;
-        return true;
-    }
-    if (isFalse() || isNull()) {
-        number = 0.0;
-        value = *this;
-        return true;
-    }
-    if (isUndefined()) {
-        number = PNaN;
-        value = *this;
-        return true;
-    }
-
-    ASSERT(isBigInt32());
-    throwTypeError(globalObject, scope, "Conversion from 'BigInt' to 'number' is not allowed."_s);
-    number = 0.0;
-    value = *this;
-    return true;
-}
-
 ALWAYS_INLINE double JSValue::toNumber(JSGlobalObject* globalObject) const
 {
     if (isInt32())

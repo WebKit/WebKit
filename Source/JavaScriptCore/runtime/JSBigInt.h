@@ -153,9 +153,7 @@ public:
         return JSBigInt::ComparisonResult::GreaterThan;
     }
 
-    bool getPrimitiveNumber(JSGlobalObject*, double& number, JSValue& result) const;
     double toNumber(JSGlobalObject*) const;
-
     JSObject* toObject(JSGlobalObject*) const;
     inline bool toBoolean() const { return !isZero(); }
 

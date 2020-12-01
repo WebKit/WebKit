@@ -61,7 +61,6 @@ public:
     String description() const;
 
     JSValue toPrimitive(JSGlobalObject*, PreferredPrimitiveType) const;
-    bool getPrimitiveNumber(JSGlobalObject*, double& number, JSValue&) const;
     JSObject* toObject(JSGlobalObject*) const;
     double toNumber(JSGlobalObject*) const;
 

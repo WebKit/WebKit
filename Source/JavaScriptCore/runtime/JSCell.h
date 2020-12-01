@@ -156,7 +156,6 @@ public:
 
     // Basic conversions.
     JS_EXPORT_PRIVATE JSValue toPrimitive(JSGlobalObject*, PreferredPrimitiveType) const;
-    bool getPrimitiveNumber(JSGlobalObject*, double& number, JSValue&) const;
     bool toBoolean(JSGlobalObject*) const;
     TriState pureToBoolean() const;
     JS_EXPORT_PRIVATE double toNumber(JSGlobalObject*) const;

@@ -2273,18 +2273,6 @@ JSValue JSObject::toPrimitive(JSGlobalObject* globalObject, PreferredPrimitiveTy
     RELEASE_AND_RETURN(scope, this->methodTable(vm)->defaultValue(this, globalObject, preferredType));
 }
 
-bool JSObject::getPrimitiveNumber(JSGlobalObject* globalObject, double& number, JSValue& result) const
-{
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    result = toPrimitive(globalObject, PreferNumber);
-    RETURN_IF_EXCEPTION(scope, false);
-    scope.release();
-    number = result.toNumber(globalObject);
-    return !result.isString();
-}
-
 bool JSObject::getOwnStaticPropertySlot(VM& vm, PropertyName propertyName, PropertySlot& slot)
 {
     for (auto* info = classInfo(vm); info; info = info->parentClass) {

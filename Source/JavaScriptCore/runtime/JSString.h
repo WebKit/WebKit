@@ -199,7 +199,6 @@ public:
 
     JSValue toPrimitive(JSGlobalObject*, PreferredPrimitiveType) const;
     bool toBoolean() const { return !!length(); }
-    bool getPrimitiveNumber(JSGlobalObject*, double& number, JSValue&) const;
     JSObject* toObject(JSGlobalObject*) const;
     double toNumber(JSGlobalObject*) const;
 

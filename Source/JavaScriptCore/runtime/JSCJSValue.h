@@ -268,8 +268,6 @@ public:
         
     // Basic conversions.
     JSValue toPrimitive(JSGlobalObject*, PreferredPrimitiveType = NoPreference) const;
-    bool getPrimitiveNumber(JSGlobalObject*, double& number, JSValue&);
-
     bool toBoolean(JSGlobalObject*) const;
     TriState pureToBoolean() const;
 

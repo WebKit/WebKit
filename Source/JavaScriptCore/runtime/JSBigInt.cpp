@@ -2356,13 +2356,6 @@ double JSBigInt::toNumber(JSGlobalObject* globalObject) const
     return 0.0;
 }
 
-bool JSBigInt::getPrimitiveNumber(JSGlobalObject* globalObject, double& number, JSValue& result) const
-{
-    result = this;
-    number = toNumber(globalObject);
-    return true;
-}
-
 template <typename CharType>
 JSValue JSBigInt::parseInt(JSGlobalObject* globalObject, CharType*  data, unsigned length, ErrorParseMode errorParseMode)
 {

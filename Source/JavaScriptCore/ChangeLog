@@ -1,3 +1,33 @@
+2020-12-01  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Remove unused getPrimitiveNumber() methods
+        https://bugs.webkit.org/show_bug.cgi?id=219370
+
+        Reviewed by Mark Lam.
+
+        These methods were originated in KJS, have weird signature / return value,
+        are currently unused, and were displaced by toNumber() / toPrimitive().
+
+        * runtime/JSBigInt.cpp:
+        (JSC::JSBigInt::getPrimitiveNumber const): Deleted.
+        * runtime/JSBigInt.h:
+        * runtime/JSCJSValue.h:
+        * runtime/JSCJSValueInlines.h:
+        (JSC::JSValue::getPrimitiveNumber): Deleted.
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::getPrimitiveNumber const): Deleted.
+        * runtime/JSCell.h:
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::getPrimitiveNumber const): Deleted.
+        * runtime/JSObject.h:
+        * runtime/JSString.cpp:
+        (JSC::JSString::getPrimitiveNumber const): Deleted.
+        * runtime/JSString.h:
+        (JSC::JSString::toBoolean const):
+        * runtime/Symbol.cpp:
+        (JSC::Symbol::getPrimitiveNumber const): Deleted.
+        * runtime/Symbol.h:
+
 2020-12-01  Lauro Moura  <lmoura@igalia.com>
 
         [JSC] Make Bytecodes generator command also depend on wasm.json

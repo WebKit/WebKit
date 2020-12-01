@@ -382,17 +382,6 @@ JSValue JSString::toPrimitive(JSGlobalObject*, PreferredPrimitiveType) const
     return const_cast<JSString*>(this);
 }
 
-bool JSString::getPrimitiveNumber(JSGlobalObject* globalObject, double& number, JSValue& result) const
-{
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-    StringView view = unsafeView(globalObject);
-    RETURN_IF_EXCEPTION(scope, false);
-    result = this;
-    number = jsToNumber(view);
-    return false;
-}
-
 double JSString::toNumber(JSGlobalObject* globalObject) const
 {
     VM& vm = globalObject->vm();

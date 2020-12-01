@@ -72,13 +72,6 @@ JSValue Symbol::toPrimitive(JSGlobalObject*, PreferredPrimitiveType) const
     return const_cast<Symbol*>(this);
 }
 
-bool Symbol::getPrimitiveNumber(JSGlobalObject* globalObject, double& number, JSValue& result) const
-{
-    result = this;
-    number = toNumber(globalObject);
-    return true;
-}
-
 JSObject* Symbol::toObject(JSGlobalObject* globalObject) const
 {
     return SymbolObject::create(globalObject->vm(), globalObject, const_cast<Symbol*>(this));
