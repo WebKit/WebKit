@@ -1024,7 +1024,11 @@ void RenderThemeIOS::paintSearchFieldDecorations(const RenderObject& box, const 
 
 void RenderThemeIOS::adjustButtonStyle(RenderStyle& style, const Element* element) const
 {
-    RenderTheme::adjustButtonStyle(style, element);
+    // If no size is specified, ensure the height of the button matches ControlBaseHeight scaled
+    // with the font size. min-height is used rather than height to avoid clipping the contents of
+    // the button in cases where the button contains more than one line of text.
+    if (style.width().isIntrinsicOrAuto() || style.height().isAuto())
+        style.setMinHeight(Length(ControlBaseHeight / ControlBaseFontSize * style.fontDescription().computedSize(), Fixed));
 
 #if ENABLE(INPUT_TYPE_COLOR)
     if (style.appearance() == ColorWellPart)
@@ -1074,16 +1078,6 @@ void RenderThemeIOS::paintPushButtonDecorations(const RenderObject& box, const P
         drawAxialGradient(cgContext, gradientWithName(ShadeGradient), clip.location(), FloatPoint(clip.x(), clip.maxY()), LinearInterpolation);
         drawAxialGradient(cgContext, gradientWithName(ShineGradient), FloatPoint(clip.x(), clip.maxY()), clip.location(), ExponentialInterpolation);
     }
-}
-
-void RenderThemeIOS::setButtonSize(RenderStyle& style) const
-{
-    // If the width and height are both specified, then we have nothing to do.
-    if (!style.width().isIntrinsicOrAuto() && !style.height().isAuto())
-        return;
-
-    // Use the font size to determine the intrinsic width of the control.
-    style.setHeight(Length(static_cast<int>(ControlBaseHeight / ControlBaseFontSize * style.fontDescription().computedSize()), Fixed));
 }
 
 const int kThumbnailBorderStrokeWidth = 1;

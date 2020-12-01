@@ -1,3 +1,19 @@
+2020-12-01  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS] <button> with multi-line content does not render properly
+        https://bugs.webkit.org/show_bug.cgi?id=219372
+        <rdar://problem/6061602>
+
+        Reviewed by Darin Adler.
+
+        * fast/forms/button-multiline-height-expected.txt: Added.
+        * fast/forms/button-multiline-height.html: Added.
+        * platform/ios/css3/flexbox/button-expected.txt:
+        * platform/ios/fast/forms/box-shadow-override-expected.txt:
+        * platform/ios/fast/forms/button-sizes-expected.txt:
+        * platform/ios/fast/forms/control-restrict-line-height-expected.txt:
+        * platform/ios/fast/forms/input-button-sizes-expected.txt:
+
 2020-12-01  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION: imported/w3c/web-platform-tests/streams/transform-streams/terminate.any.html is a flaky failure

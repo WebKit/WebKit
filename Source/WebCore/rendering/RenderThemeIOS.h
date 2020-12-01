@@ -84,7 +84,6 @@ private:
     void adjustButtonStyle(RenderStyle&, const Element*) const override;
     void paintButtonDecorations(const RenderObject&, const PaintInfo&, const IntRect&) override;
     void paintPushButtonDecorations(const RenderObject&, const PaintInfo&, const IntRect&) override;
-    void setButtonSize(RenderStyle&) const override;
 
     void paintFileUploadIconDecorations(const RenderObject& inputRenderer, const RenderObject& buttonRenderer, const PaintInfo&, const IntRect&, Icon*, FileUploadDecorations) override;
 

@@ -50,7 +50,7 @@ layer at (0,0) size 800x600
                 text run at (0,0) width 59: "Choose File"
         RenderText {#text} at (422,12) size 4x19
           text run at (422,12) width 4: " "
-        RenderButton {INPUT} at (428,2) size 100x36 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
+        RenderButton {INPUT} at (428,2) size 100x37 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
           RenderBlock (anonymous) at (21,5) size 58x26
             RenderText at (0,0) size 58x25
               text run at (0,0) width 58: "Button"
@@ -62,13 +62,13 @@ layer at (0,0) size 800x600
               text run at (0,0) width 32: "Button"
         RenderText {#text} at (593,12) size 5x19
           text run at (593,12) width 5: " "
-        RenderButton {INPUT} at (597,21) size 28x9 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
-          RenderBlock (anonymous) at (6,1) size 15x7
+        RenderButton {INPUT} at (597,21) size 28x10 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
+          RenderBlock (anonymous) at (6,1) size 15x8
             RenderText at (0,0) size 15x7
               text run at (0,0) width 15: "Button"
         RenderText {#text} at (624,12) size 5x19
           text run at (624,12) width 5: " "
-        RenderButton {BUTTON} at (630,2) size 100x36 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
+        RenderButton {BUTTON} at (630,2) size 100x37 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
           RenderBlock (anonymous) at (21,5) size 58x26
             RenderText {#text} at (0,0) size 58x25
               text run at (0,0) width 58: "Button"

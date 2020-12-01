@@ -292,7 +292,6 @@ protected:
 
     virtual void adjustButtonStyle(RenderStyle&, const Element*) const;
     virtual bool paintButton(const RenderObject&, const PaintInfo&, const IntRect&) { return true; }
-    virtual void setButtonSize(RenderStyle&) const { }
 
     virtual void adjustInnerSpinButtonStyle(RenderStyle&, const Element*) const;
     virtual bool paintInnerSpinButton(const RenderObject&, const PaintInfo&, const IntRect&) { return true; }

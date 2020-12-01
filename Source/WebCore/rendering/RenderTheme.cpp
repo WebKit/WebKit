@@ -956,12 +956,8 @@ void RenderTheme::adjustRadioStyle(RenderStyle& style, const Element*) const
     style.setBoxShadow(nullptr);
 }
 
-void RenderTheme::adjustButtonStyle(RenderStyle& style, const Element*) const
+void RenderTheme::adjustButtonStyle(RenderStyle&, const Element*) const
 {
-    // Most platforms will completely honor all CSS, and so we have no need to
-    // adjust the style at all by default. We will still allow the theme a crack
-    // at setting up a desired vertical size.
-    setButtonSize(style);
 }
 
 void RenderTheme::adjustInnerSpinButtonStyle(RenderStyle&, const Element*) const
