@@ -70,11 +70,11 @@ Vector<uint8_t> getRawKey()
     );
 }
 
-static Ref<WebCore::RTCRtpSFrameTransformer> createVideoTransformer(bool isSending = true)
+static Ref<WebCore::RTCRtpSFrameTransformer> createVideoTransformer(bool isEncrypting = true)
 {
     auto transformer = WebCore::RTCRtpSFrameTransformer::create();
-    transformer->setIsSending(isSending);
-    transformer->setIsProcessingAudio(false);
+    transformer->setIsEncrypting(isEncrypting);
+    transformer->setAuthenticationSize(10);
 
     auto keyId = Vector<uint8_t>::from(198, 31, 251, 197, 48, 139, 91, 51);
     uint64_t keyIdValue = 0;

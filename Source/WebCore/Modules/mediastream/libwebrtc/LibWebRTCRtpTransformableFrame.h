@@ -27,39 +27,30 @@
 #if ENABLE(WEB_RTC)
 
 #include "RTCRtpTransformableFrame.h"
+#include <wtf/Ref.h>
+
+namespace webrtc {
+class TransformableFrameInterface;
+}
 
 namespace WebCore {
 
 class LibWebRTCRtpTransformableFrame final : public RTCRtpTransformableFrame {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit LibWebRTCRtpTransformableFrame(std::unique_ptr<webrtc::TransformableFrameInterface>&&);
-    virtual ~LibWebRTCRtpTransformableFrame() = default;
+    static Ref<LibWebRTCRtpTransformableFrame> create(std::unique_ptr<webrtc::TransformableFrameInterface>&& frame) { return adoptRef(*new LibWebRTCRtpTransformableFrame(WTFMove(frame))); }
+    ~LibWebRTCRtpTransformableFrame();
 
-    static std::unique_ptr<webrtc::TransformableFrameInterface> toRTCFrame(LibWebRTCRtpTransformableFrame&&);
+    std::unique_ptr<webrtc::TransformableFrameInterface> takeRTCFrame();
 
 private:
+    explicit LibWebRTCRtpTransformableFrame(std::unique_ptr<webrtc::TransformableFrameInterface>&&);
+
     Data data() const final;
-    void setData(Data data) final { m_rtcFrame->SetData({ data.data, data.size }); }
+    void setData(Data) final;
 
     std::unique_ptr<webrtc::TransformableFrameInterface> m_rtcFrame;
 };
-
-inline LibWebRTCRtpTransformableFrame::LibWebRTCRtpTransformableFrame(std::unique_ptr<webrtc::TransformableFrameInterface>&& frame)
-    : m_rtcFrame(WTFMove(frame))
-{
-}
-
-inline std::unique_ptr<webrtc::TransformableFrameInterface> LibWebRTCRtpTransformableFrame::toRTCFrame(LibWebRTCRtpTransformableFrame&& frame)
-{
-    return WTFMove(frame.m_rtcFrame);
-}
-
-inline RTCRtpTransformableFrame::Data LibWebRTCRtpTransformableFrame::data() const
-{
-    auto data = m_rtcFrame->GetData();
-    return { data.begin(), data.size() };
-}
 
 } // namespace WebCore
 

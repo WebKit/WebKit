@@ -33,11 +33,11 @@ namespace WebCore {
 
 class RTCEncodedVideoFrame : public RTCEncodedFrame {
 public:
-    static Ref<RTCEncodedVideoFrame> create(UniqueRef<RTCRtpTransformableFrame>&& frame) { return adoptRef(*new RTCEncodedVideoFrame(WTFMove(frame))); }
+    static Ref<RTCEncodedVideoFrame> create(Ref<RTCRtpTransformableFrame>&& frame) { return adoptRef(*new RTCEncodedVideoFrame(WTFMove(frame))); }
     ~RTCEncodedVideoFrame();
 
 private:
-    explicit RTCEncodedVideoFrame(UniqueRef<RTCRtpTransformableFrame>&&);
+    explicit RTCEncodedVideoFrame(Ref<RTCRtpTransformableFrame>&&);
 };
 
 } // namespace WebCore

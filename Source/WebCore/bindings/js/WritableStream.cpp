@@ -36,6 +36,30 @@
 namespace WebCore {
 using namespace JSC;
 
+namespace WritableStreamInternal {
+static inline JSC::JSValue callFunction(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue jsFunction, JSC::JSValue thisValue, const JSC::ArgList& arguments)
+{
+    VM& vm = lexicalGlobalObject.vm();
+    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto callData = JSC::getCallData(vm, jsFunction);
+    ASSERT(callData.type != JSC::CallData::Type::None);
+    auto result = call(&lexicalGlobalObject, jsFunction, callData, thisValue, arguments);
+    scope.assertNoException();
+    return result;
+}
+}
+
+static inline bool checkWritableStream(JSDOMGlobalObject& globalObject, JSWritableStream* writableStream, JSC::JSValue function)
+{
+    auto& lexicalGlobalObject = globalObject;
+
+    ASSERT(function);
+    JSC::MarkedArgumentBuffer arguments;
+    arguments.append(writableStream);
+    ASSERT(!arguments.hasOverflowed());
+    return WritableStreamInternal::callFunction(lexicalGlobalObject, function, JSC::jsUndefined(), arguments).isTrue();
+}
+
 ExceptionOr<Ref<WritableStream>> WritableStream::create(JSC::JSGlobalObject& lexicalGlobalObject, RefPtr<WritableStreamSink>&& sink)
 {
     VM& vm = lexicalGlobalObject.vm();
@@ -58,6 +82,32 @@ ExceptionOr<Ref<WritableStream>> WritableStream::create(JSC::JSGlobalObject& lex
     RETURN_IF_EXCEPTION(scope, Exception { ExistingExceptionError });
 
     return create(globalObject, *jsCast<JSWritableStream*>(object));
+}
+
+void WritableStream::lock()
+{
+    auto& lexicalGlobalObject = *m_globalObject;
+    VM& vm = lexicalGlobalObject.vm();
+    auto scope = DECLARE_CATCH_SCOPE(vm);
+
+    auto& clientData = *static_cast<JSVMClientData*>(vm.clientData);
+
+    auto* constructor = JSC::asObject(m_globalObject->get(&lexicalGlobalObject, clientData.builtinNames().WritableStreamDefaultWriterPrivateName()));
+
+    auto constructData = getConstructData(vm, constructor);
+    ASSERT(constructData.type != CallData::Type::None);
+
+    MarkedArgumentBuffer args;
+    args.append(writableStream());
+    ASSERT(!args.hasOverflowed());
+
+    JSC::construct(&lexicalGlobalObject, constructor, constructData, args);
+    scope.assertNoException();
+}
+
+bool WritableStream::isLocked() const
+{
+    return checkWritableStream(*globalObject(), writableStream(), globalObject()->builtinInternalFunctions().writableStreamInternals().m_isWritableStreamLockedFunction.get());
 }
 
 }

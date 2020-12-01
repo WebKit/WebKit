@@ -27,6 +27,7 @@
 
 #if ENABLE(WEB_RTC)
 
+#include "ContextDestructionObserver.h"
 #include "JSDOMPromiseDeferred.h"
 
 namespace WebCore {
@@ -34,29 +35,45 @@ namespace WebCore {
 class CryptoKey;
 class RTCRtpSFrameTransformer;
 class RTCRtpTransformBackend;
+class ReadableStream;
+class SimpleReadableStreamSource;
+class WritableStream;
 
-class RTCRtpSFrameTransform : public RefCounted<RTCRtpSFrameTransform> {
+class RTCRtpSFrameTransform : public RefCounted<RTCRtpSFrameTransform>, private ContextDestructionObserver {
 public:
-    static Ref<RTCRtpSFrameTransform> create() { return adoptRef(*new RTCRtpSFrameTransform); }
+    enum class Role { Encrypt, Decrypt };
+    struct Options {
+        Role role { Role::Encrypt };
+        uint64_t authenticationSize { 10 };
+    };
+
+    static Ref<RTCRtpSFrameTransform> create(ScriptExecutionContext& context, Options options) { return adoptRef(*new RTCRtpSFrameTransform(context, options)); }
     ~RTCRtpSFrameTransform();
 
     void setEncryptionKey(CryptoKey&, Optional<uint64_t>, DOMPromiseDeferred<void>&&);
 
-    bool isAttached() const { return m_isAttached; }
+    bool isAttached() const;
     void initializeBackendForReceiver(RTCRtpTransformBackend&);
     void initializeBackendForSender(RTCRtpTransformBackend&);
     void willClearBackend(RTCRtpTransformBackend&);
 
     WEBCORE_EXPORT uint64_t counterForTesting() const;
 
+    ExceptionOr<RefPtr<ReadableStream>> readable();
+    ExceptionOr<RefPtr<WritableStream>> writable();
+
 private:
-    RTCRtpSFrameTransform();
+    RTCRtpSFrameTransform(ScriptExecutionContext&, Options);
 
     enum class Side { Sender, Receiver };
     void initializeTransformer(RTCRtpTransformBackend&, Side);
+    void createStreams();
 
     bool m_isAttached { false };
     Ref<RTCRtpSFrameTransformer> m_transformer;
+    RefPtr<ReadableStream> m_readable;
+    RefPtr<WritableStream> m_writable;
+    RefPtr<SimpleReadableStreamSource> m_readableStreamSource;
 };
 
 } // namespace WebCore

@@ -23,33 +23,46 @@
  */
 
 #include "config.h"
-#include "LibWebRTCRtpSenderTransformBackend.h"
+#include "LibWebRTCRtpTransformableFrame.h"
 
 #if ENABLE(WEB_RTC) && USE(LIBWEBRTC)
 
-#include "LibWebRTCRtpTransformableFrame.h"
+ALLOW_UNUSED_PARAMETERS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+
+#include <webrtc/api/frame_transformer_interface.h>
+
+ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_UNUSED_PARAMETERS_END
 
 namespace WebCore {
 
-static inline LibWebRTCRtpSenderTransformBackend::MediaType mediaTypeFromSender(const webrtc::RtpSenderInterface& sender)
-{
-    return sender.media_type() == cricket::MEDIA_TYPE_AUDIO ? RTCRtpTransformBackend::MediaType::Audio : RTCRtpTransformBackend::MediaType::Video;
-}
-
-LibWebRTCRtpSenderTransformBackend::LibWebRTCRtpSenderTransformBackend(rtc::scoped_refptr<webrtc::RtpSenderInterface> rtcSender)
-    : LibWebRTCRtpTransformBackend(mediaTypeFromSender(*rtcSender), Side::Sender)
-    , m_rtcSender(WTFMove(rtcSender))
+LibWebRTCRtpTransformableFrame::LibWebRTCRtpTransformableFrame(std::unique_ptr<webrtc::TransformableFrameInterface>&& frame)
+    : m_rtcFrame(WTFMove(frame))
 {
 }
 
-LibWebRTCRtpSenderTransformBackend::~LibWebRTCRtpSenderTransformBackend()
+LibWebRTCRtpTransformableFrame::~LibWebRTCRtpTransformableFrame()
 {
 }
 
-void LibWebRTCRtpSenderTransformBackend::setTransformableFrameCallback(Callback&& callback)
+std::unique_ptr<webrtc::TransformableFrameInterface> LibWebRTCRtpTransformableFrame::takeRTCFrame()
 {
-    setInputCallback(WTFMove(callback));
-    m_rtcSender->SetEncoderToPacketizerFrameTransformer(this);
+    return WTFMove(m_rtcFrame);
+}
+
+RTCRtpTransformableFrame::Data LibWebRTCRtpTransformableFrame::data() const
+{
+    if (!m_rtcFrame)
+        return { nullptr, 0 };
+    auto data = m_rtcFrame->GetData();
+    return { data.begin(), data.size() };
+}
+
+void LibWebRTCRtpTransformableFrame::setData(Data data)
+{
+    if (m_rtcFrame)
+        m_rtcFrame->SetData({ data.data, data.size });
 }
 
 } // namespace WebCore

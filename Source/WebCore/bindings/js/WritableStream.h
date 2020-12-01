@@ -42,6 +42,9 @@ public:
     static ExceptionOr<Ref<WritableStream>> create(JSC::JSGlobalObject&, RefPtr<WritableStreamSink>&&);
     JSWritableStream* writableStream() const { return guarded(); }
 
+    void lock();
+    bool isLocked() const;
+
 private:
     WritableStream(JSDOMGlobalObject&, JSWritableStream&);
 };

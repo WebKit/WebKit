@@ -26,16 +26,17 @@
 
 #if ENABLE(WEB_RTC)
 
+#include <wtf/RefCounted.h>
+
 namespace WebCore {
 
-class RTCRtpTransformableFrame {
-    WTF_MAKE_FAST_ALLOCATED;
+class RTCRtpTransformableFrame : public RefCounted<RTCRtpTransformableFrame> {
 public:
     virtual ~RTCRtpTransformableFrame() = default;
 
     struct Data {
-        const uint8_t* data;
-        size_t size;
+        const uint8_t* data { nullptr };
+        size_t size { 0 };
     };
     virtual Data data() const = 0;
     virtual void setData(Data) = 0;

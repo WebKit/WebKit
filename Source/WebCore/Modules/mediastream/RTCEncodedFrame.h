@@ -43,12 +43,12 @@ public:
     RefPtr<JSC::ArrayBuffer> data() const;
     void setData(JSC::ArrayBuffer&);
 
-    UniqueRef<RTCRtpTransformableFrame> takeRTCFrame() { return WTFMove(m_frame); }
+    RTCRtpTransformableFrame& rtcFrame() { return m_frame.get(); }
 
 protected:
-    explicit RTCEncodedFrame(UniqueRef<RTCRtpTransformableFrame>&&);
+    explicit RTCEncodedFrame(Ref<RTCRtpTransformableFrame>&&);
 
-    UniqueRef<RTCRtpTransformableFrame> m_frame;
+    Ref<RTCRtpTransformableFrame> m_frame;
 };
 
 } // namespace WebCore

@@ -28,7 +28,6 @@
 #if ENABLE(WEB_RTC) && USE(LIBWEBRTC)
 
 #include "LibWebRTCRtpTransformableFrame.h"
-#include <wtf/UniqueRef.h>
 
 namespace WebCore {
 
@@ -49,11 +48,11 @@ void LibWebRTCRtpTransformBackend::setOutputCallback(rtc::scoped_refptr<webrtc::
     m_outputCallback = WTFMove(callback);
 }
 
-void LibWebRTCRtpTransformBackend::processTransformedFrame(RTCRtpTransformableFrame&& frame)
+void LibWebRTCRtpTransformBackend::processTransformedFrame(RTCRtpTransformableFrame& frame)
 {
     auto locker = holdLock(m_outputCallbackLock);
     if (m_outputCallback)
-        m_outputCallback->OnTransformedFrame(LibWebRTCRtpTransformableFrame::toRTCFrame(WTFMove(static_cast<LibWebRTCRtpTransformableFrame&>(frame))));
+        m_outputCallback->OnTransformedFrame(static_cast<LibWebRTCRtpTransformableFrame&>(frame).takeRTCFrame());
 }
 
 void LibWebRTCRtpTransformBackend::Transform(std::unique_ptr<webrtc::TransformableFrameInterface> rtcFrame)
@@ -61,7 +60,7 @@ void LibWebRTCRtpTransformBackend::Transform(std::unique_ptr<webrtc::Transformab
     {
         auto locker = holdLock(m_inputCallbackLock);
         if (m_inputCallback) {
-            m_inputCallback(makeUniqueRef<LibWebRTCRtpTransformableFrame>(WTFMove(rtcFrame)));
+            m_inputCallback(LibWebRTCRtpTransformableFrame::create(WTFMove(rtcFrame)));
             return;
         }
     }

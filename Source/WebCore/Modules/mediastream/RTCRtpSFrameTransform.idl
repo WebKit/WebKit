@@ -23,18 +23,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+enum RTCRtpSFrameTransformRole {
+    "encrypt",
+    "decrypt"
+};
+
+dictionary RTCRtpSFrameTransformOptions {
+    RTCRtpSFrameTransformRole role = "encrypt";
+    unsigned long authenticationSize = 10;
+};
+
 [
     Conditional=WEB_RTC,
     EnabledBySetting=WebRTCInsertableStreams,
     ExportMacro=WEBCORE_EXPORT,
     Exposed=Window,
-    ImplementationLacksVTable,
     JSGenerateToNativeObject,
 ] interface RTCRtpSFrameTransform {
-    constructor();
+    [CallWith=ScriptExecutionContext] constructor(optional RTCRtpSFrameTransformOptions options);
 
     Promise<undefined> setEncryptionKey(CryptoKey key, optional unsigned long long keyID);
     // FIXME: Add support for missing methods.
     // Promise<undefined> ratchetEncryptionKey();
     // Promise<undefined> setSigningKey(CryptoKey key);
+
+    [MayThrowException] readonly attribute ReadableStream readable;
+    [MayThrowException] readonly attribute WritableStream writable;
 };

@@ -40,8 +40,8 @@ public:
     WEBCORE_EXPORT static Ref<RTCRtpSFrameTransformer> create();
     WEBCORE_EXPORT ~RTCRtpSFrameTransformer();
 
-    void setIsSending(bool);
-    void setIsProcessingAudio(bool);
+    void setIsEncrypting(bool);
+    void setAuthenticationSize(uint64_t);
 
     WEBCORE_EXPORT ExceptionOr<void> setEncryptionKey(const Vector<uint8_t>& rawKey, Optional<uint64_t>);
     WEBCORE_EXPORT ExceptionOr<Vector<uint8_t>> transform(const uint8_t*, size_t);
@@ -66,6 +66,7 @@ private:
     ExceptionOr<Vector<uint8_t>> encryptData(const uint8_t*, size_t, const Vector<uint8_t>& iv, const Vector<uint8_t>& key);
     ExceptionOr<Vector<uint8_t>> decryptData(const uint8_t*, size_t, const Vector<uint8_t>& iv, const Vector<uint8_t>& key);
     Vector<uint8_t> computeEncryptedDataSignature(const uint8_t*, size_t, const Vector<uint8_t>& key);
+    void updateAuthenticationSize();
 
     Lock m_keyLock;
     bool m_hasKey { false };
@@ -73,20 +74,20 @@ private:
     Vector<uint8_t> m_encryptionKey;
     Vector<uint8_t> m_saltKey;
 
-    bool m_isSending { false };
+    bool m_isEncrypting { false };
     uint64_t m_authenticationSize { 10 };
     uint64_t m_keyId { 0 };
     uint64_t m_counter { 0 };
 };
 
-inline void RTCRtpSFrameTransformer::setIsSending(bool isSending)
+inline void RTCRtpSFrameTransformer::setIsEncrypting(bool isEncrypting)
 {
-    m_isSending = isSending;
+    m_isEncrypting = isEncrypting;
 }
 
-inline void RTCRtpSFrameTransformer::setIsProcessingAudio(bool isProcessingAudio)
+inline void RTCRtpSFrameTransformer::setAuthenticationSize(uint64_t size)
 {
-    m_authenticationSize = isProcessingAudio ? 4 : 10;
+    m_authenticationSize = size;
 }
 
 } // namespace WebCore

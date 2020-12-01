@@ -182,6 +182,7 @@ Modules/mediastream/libwebrtc/LibWebRTCCertificateGenerator.cpp
 Modules/mediastream/libwebrtc/LibWebRTCRtpReceiverTransformBackend.cpp
 Modules/mediastream/libwebrtc/LibWebRTCRtpSenderTransformBackend.cpp
 Modules/mediastream/libwebrtc/LibWebRTCRtpTransformBackend.cpp
+Modules/mediastream/libwebrtc/LibWebRTCRtpTransformableFrame.cpp
 Modules/model-element/HTMLModelElement.cpp
 Modules/notifications/Notification.cpp
 Modules/notifications/NotificationController.cpp

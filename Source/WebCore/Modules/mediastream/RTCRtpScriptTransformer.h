@@ -38,7 +38,7 @@ class JSCallbackDataStrong;
 class MessagePort;
 class ScriptExecutionContext;
 class RTCRtpTransformBackend;
-class RTCRtpReadableStreamSource;
+class SimpleReadableStreamSource;
 
 class RTCRtpScriptTransformer
     : public RefCounted<RTCRtpScriptTransformer>
@@ -59,7 +59,7 @@ public:
 private:
     RTCRtpScriptTransformer(ScriptExecutionContext&, Ref<MessagePort>&&);
 
-    RefPtr<RTCRtpReadableStreamSource> startStreams(RTCRtpTransformBackend&);
+    RefPtr<SimpleReadableStreamSource> startStreams(RTCRtpTransformBackend&);
 
     // ActiveDOMObject
     const char* activeDOMObjectName() const { return "RTCRtpScriptTransformer"; }

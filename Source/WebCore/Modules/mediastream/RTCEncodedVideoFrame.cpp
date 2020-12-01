@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-RTCEncodedVideoFrame::RTCEncodedVideoFrame(UniqueRef<RTCRtpTransformableFrame>&& frame)
+RTCEncodedVideoFrame::RTCEncodedVideoFrame(Ref<RTCRtpTransformableFrame>&& frame)
     : RTCEncodedFrame(WTFMove(frame))
 {
 }

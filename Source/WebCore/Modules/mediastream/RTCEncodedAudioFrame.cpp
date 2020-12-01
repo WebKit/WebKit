@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-RTCEncodedAudioFrame::RTCEncodedAudioFrame(UniqueRef<RTCRtpTransformableFrame>&& frame)
+RTCEncodedAudioFrame::RTCEncodedAudioFrame(Ref<RTCRtpTransformableFrame>&& frame)
     : RTCEncodedFrame(WTFMove(frame))
 {
 }

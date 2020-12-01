@@ -33,11 +33,11 @@ namespace WebCore {
 
 class RTCEncodedAudioFrame : public RTCEncodedFrame {
 public:
-    static Ref<RTCEncodedAudioFrame> create(UniqueRef<RTCRtpTransformableFrame>&& frame) { return adoptRef(*new RTCEncodedAudioFrame(WTFMove(frame))); }
+    static Ref<RTCEncodedAudioFrame> create(Ref<RTCRtpTransformableFrame>&& frame) { return adoptRef(*new RTCEncodedAudioFrame(WTFMove(frame))); }
     ~RTCEncodedAudioFrame();
 
 private:
-    explicit RTCEncodedAudioFrame(UniqueRef<RTCRtpTransformableFrame>&&);
+    explicit RTCEncodedAudioFrame(Ref<RTCRtpTransformableFrame>&&);
 };
 
 } // namespace WebCore

@@ -27,8 +27,6 @@
 #include "config.h"
 #include "ReadableStreamSource.h"
 
-#include "JSDOMPromiseDeferred.h"
-
 namespace WebCore {
 
 ReadableStreamSource::~ReadableStreamSource() = default;

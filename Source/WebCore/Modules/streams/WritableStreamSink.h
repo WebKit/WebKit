@@ -45,4 +45,29 @@ public:
     virtual void error(String&&) = 0;
 };
 
+class SimpleWritableStreamSink : public WritableStreamSink {
+public:
+    using WriteCallback = Function<ExceptionOr<void>(ScriptExecutionContext&, JSC::JSValue)>;
+    static Ref<SimpleWritableStreamSink> create(WriteCallback&& writeCallback) { return adoptRef(*new SimpleWritableStreamSink(WTFMove(writeCallback))); }
+
+private:
+    explicit SimpleWritableStreamSink(WriteCallback&&);
+
+    void write(ScriptExecutionContext&, JSC::JSValue, DOMPromiseDeferred<void>&&) final;
+    void close() final { }
+    void error(String&&) final { }
+
+    WriteCallback m_writeCallback;
+};
+
+inline SimpleWritableStreamSink::SimpleWritableStreamSink(WriteCallback&& writeCallback)
+    : m_writeCallback(WTFMove(writeCallback))
+{
+}
+
+inline void SimpleWritableStreamSink::write(ScriptExecutionContext& context, JSC::JSValue value, DOMPromiseDeferred<void>&& promise)
+{
+    promise.settle(m_writeCallback(context, value));
+}
+
 } // namespace WebCore

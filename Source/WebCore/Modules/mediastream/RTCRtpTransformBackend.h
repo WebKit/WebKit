@@ -36,15 +36,15 @@ class RTCRtpTransformBackend : public ThreadSafeRefCounted<RTCRtpTransformBacken
 public:
     virtual ~RTCRtpTransformBackend() = default;
 
-    using Callback = Function<void(UniqueRef<RTCRtpTransformableFrame>&&)>;
+    using Callback = Function<void(Ref<RTCRtpTransformableFrame>&&)>;
     virtual void setTransformableFrameCallback(Callback&&) = 0;
     virtual void clearTransformableFrameCallback() = 0;
-    virtual void processTransformedFrame(RTCRtpTransformableFrame&&) = 0;
+    virtual void processTransformedFrame(RTCRtpTransformableFrame&) = 0;
 
     enum class MediaType { Audio, Video };
     virtual MediaType mediaType() const = 0;
 
-    enum class Side { Sender, Receiver };
+    enum class Side { Receiver, Sender };
     virtual Side side() const = 0;
 };
 

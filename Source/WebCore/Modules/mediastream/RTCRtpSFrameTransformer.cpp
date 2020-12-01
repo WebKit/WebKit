@@ -167,14 +167,14 @@ ExceptionOr<void> RTCRtpSFrameTransformer::setEncryptionKey(const Vector<uint8_t
     if (keyId)
         m_keyId = *keyId;
 
+    updateAuthenticationSize();
     m_hasKey = true;
+
     return { };
 }
 
 ExceptionOr<Vector<uint8_t>> RTCRtpSFrameTransformer::decryptFrame(const uint8_t* frameData, size_t frameSize)
 {
-    // FIXME: Support signature.
-
     auto locker = holdLock(m_keyLock);
 
     auto header = parseSFrameHeader(frameData, frameSize);
@@ -190,6 +190,9 @@ ExceptionOr<Vector<uint8_t>> RTCRtpSFrameTransformer::decryptFrame(const uint8_t
         // FIXME: We should search for keys.
         return Exception { NotSupportedError };
     }
+
+    if (frameSize < (header->size + m_authenticationSize))
+        return Exception { DataError, "Chunk is too small for authentication size" };
 
     // Compute signature
     auto* transmittedSignature = frameData + frameSize - m_authenticationSize;
@@ -214,8 +217,6 @@ ExceptionOr<Vector<uint8_t>> RTCRtpSFrameTransformer::decryptFrame(const uint8_t
 
 ExceptionOr<Vector<uint8_t>> RTCRtpSFrameTransformer::encryptFrame(const uint8_t* frameData, size_t frameSize)
 {
-    // FIXME: Support signature.
-
     static const unsigned MaxHeaderSize = 17;
 
     auto locker = holdLock(m_keyLock);
@@ -259,9 +260,9 @@ ExceptionOr<Vector<uint8_t>> RTCRtpSFrameTransformer::encryptFrame(const uint8_t
 ExceptionOr<Vector<uint8_t>> RTCRtpSFrameTransformer::transform(const uint8_t* data, size_t size)
 {
     if (!m_hasKey)
-        return Exception { InvalidStateError };
+        return Exception { InvalidStateError, "Key is not initialized"_s };
 
-    return m_isSending ? encryptFrame(data, size) : decryptFrame(data, size);
+    return m_isEncrypting ? encryptFrame(data, size) : decryptFrame(data, size);
 }
 
 #if !PLATFORM(COCOA)
@@ -293,6 +294,10 @@ ExceptionOr<Vector<uint8_t>> RTCRtpSFrameTransformer::encryptData(const uint8_t*
 Vector<uint8_t> RTCRtpSFrameTransformer::computeEncryptedDataSignature(const uint8_t*, size_t, const Vector<uint8_t>&)
 {
     return { };
+}
+
+void RTCRtpSFrameTransformer::updateAuthenticationSize()
+{
 }
 #endif // !PLATFORM(COCOA)
 

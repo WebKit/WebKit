@@ -46,13 +46,15 @@ protected:
     LibWebRTCRtpTransformBackend(MediaType, Side);
     void setInputCallback(Callback&&);
 
+protected:
+    MediaType mediaType() const final { return m_mediaType; }
+
 private:
     void setOutputCallback(rtc::scoped_refptr<webrtc::TransformedFrameCallback>&&);
 
     // RTCRtpTransformBackend
-    void processTransformedFrame(RTCRtpTransformableFrame&&) final;
+    void processTransformedFrame(RTCRtpTransformableFrame&) final;
     void clearTransformableFrameCallback() final;
-    MediaType mediaType() const final { return m_mediaType; }
     Side side() const final { return m_side; }
 
     // webrtc::FrameTransformerInterface

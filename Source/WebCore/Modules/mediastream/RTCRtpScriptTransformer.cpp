@@ -40,63 +40,6 @@
 
 namespace WebCore {
 
-class RTCRtpReadableStreamSource
-    : public ReadableStreamSource
-    , public CanMakeWeakPtr<RTCRtpReadableStreamSource> {
-public:
-    static Ref<RTCRtpReadableStreamSource> create() { return adoptRef(*new RTCRtpReadableStreamSource); }
-
-    void close() { controller().close(); }
-    void enqueue(JSC::JSValue value) { controller().enqueue(value); }
-
-private:
-    RTCRtpReadableStreamSource() = default;
-
-    // ReadableStreamSource
-    void setActive() final { }
-    void setInactive() final { }
-    void doStart() final { }
-    void doPull() final { }
-    void doCancel() final { }
-};
-
-class RTCRtpWritableStreamSink : public WritableStreamSink {
-public:
-    static Ref<RTCRtpWritableStreamSink> create(Function<void(UniqueRef<RTCRtpTransformableFrame>&&)>&& enqueueFunction) { return adoptRef(*new RTCRtpWritableStreamSink(WTFMove(enqueueFunction))); }
-
-private:
-    explicit RTCRtpWritableStreamSink(Function<void(UniqueRef<RTCRtpTransformableFrame>&&)>&& enqueueFunction)
-        : m_enqueueFunction(WTFMove(enqueueFunction))
-    {
-    }
-
-    void write(ScriptExecutionContext& context, JSC::JSValue value, DOMPromiseDeferred<void>&& promise)
-    {
-        auto& globalObject = *context.globalObject();
-
-        auto scope = DECLARE_THROW_SCOPE(globalObject.vm());
-        auto frame = convert<IDLUnion<IDLInterface<RTCEncodedAudioFrame>, IDLInterface<RTCEncodedVideoFrame>>>(globalObject, value);
-
-        if (scope.exception()) {
-            promise.reject(Exception { ExistingExceptionError }, RejectAsHandled::Yes);
-            return;
-        }
-
-        WTF::switchOn(frame, [&](RefPtr<RTCEncodedAudioFrame>& value) {
-            m_enqueueFunction(value->takeRTCFrame());
-        }, [&](RefPtr<RTCEncodedVideoFrame>& value) {
-            m_enqueueFunction(value->takeRTCFrame());
-        });
-        promise.resolve();
-    }
-
-    // FIXME: Decide whether clearing all pending frames.
-    void close() final { }
-    void error(String&&) final { }
-
-    Function<void(UniqueRef<RTCRtpTransformableFrame>&&)> m_enqueueFunction;
-};
-
 ExceptionOr<Ref<RTCRtpScriptTransformer>> RTCRtpScriptTransformer::create(ScriptExecutionContext& context)
 {
     auto port = downcast<DedicatedWorkerGlobalScope>(context).takePendingRTCTransfomerMessagePort();
@@ -118,7 +61,7 @@ RTCRtpScriptTransformer::~RTCRtpScriptTransformer()
 {
 }
 
-RefPtr<RTCRtpReadableStreamSource> RTCRtpScriptTransformer::startStreams(RTCRtpTransformBackend& backend)
+RefPtr<SimpleReadableStreamSource> RTCRtpScriptTransformer::startStreams(RTCRtpTransformBackend& backend)
 {
     auto callback = WTFMove(m_callback);
     if (!callback)
@@ -130,13 +73,27 @@ RefPtr<RTCRtpReadableStreamSource> RTCRtpScriptTransformer::startStreams(RTCRtpT
     auto& vm = globalObject.vm();
     JSC::JSLockHolder lock(vm);
 
-    auto readableStreamSource = RTCRtpReadableStreamSource::create();
+    auto readableStreamSource = SimpleReadableStreamSource::create();
     auto readableStream = ReadableStream::create(globalObject, readableStreamSource.copyRef());
     if (readableStream.hasException())
         return nullptr;
 
-    auto writableStream = WritableStream::create(globalObject, RTCRtpWritableStreamSink::create([backend = makeRef(backend)](auto&& frame) {
-        backend->processTransformedFrame(WTFMove(frame.get()));
+    auto writableStream = WritableStream::create(globalObject, SimpleWritableStreamSink::create([backend = makeRef(backend)](auto& context, auto value) -> ExceptionOr<void> {
+        auto& globalObject = *context.globalObject();
+
+        auto scope = DECLARE_THROW_SCOPE(globalObject.vm());
+        auto frame = convert<IDLUnion<IDLInterface<RTCEncodedAudioFrame>, IDLInterface<RTCEncodedVideoFrame>>>(globalObject, value);
+
+        if (scope.exception())
+            return Exception { ExistingExceptionError };
+
+        auto rtcFrame = WTF::switchOn(frame, [&](RefPtr<RTCEncodedAudioFrame>& value) {
+            return makeRef(value->rtcFrame());
+        }, [&](RefPtr<RTCEncodedVideoFrame>& value) {
+            return makeRef(value->rtcFrame());
+        });
+        backend->processTransformedFrame(rtcFrame.get());
+        return { };
     }));
     if (writableStream.hasException())
         return nullptr;
