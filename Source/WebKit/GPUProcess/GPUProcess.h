@@ -98,7 +98,6 @@ private:
 
     // IPC::Connection::Client
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
-    void didClose(IPC::Connection&) override;
 
     // Message Handlers
     void initializeGPUProcess(GPUProcessCreationParameters&&);
