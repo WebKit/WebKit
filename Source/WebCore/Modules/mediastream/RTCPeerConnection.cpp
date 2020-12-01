@@ -596,9 +596,9 @@ bool RTCPeerConnection::virtualHasPendingActivity() const
     return hasEventListeners();
 }
 
-void RTCPeerConnection::addTransceiver(Ref<RTCRtpTransceiver>&& transceiver)
+void RTCPeerConnection::addInternalTransceiver(Ref<RTCRtpTransceiver>&& transceiver)
 {
-    INFO_LOG(LOGIDENTIFIER);
+    transceiver->setConnection(*this);
     m_transceiverSet->append(WTFMove(transceiver));
 }
 

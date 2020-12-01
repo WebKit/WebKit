@@ -132,7 +132,7 @@ public:
     bool isClosed() const { return m_connectionState == RTCPeerConnectionState::Closed; }
     bool isStopped() const { return m_isStopped; }
 
-    void addInternalTransceiver(Ref<RTCRtpTransceiver>&& transceiver) { m_transceiverSet->append(WTFMove(transceiver)); }
+    void addInternalTransceiver(Ref<RTCRtpTransceiver>&&);
 
     // 5.1 RTCPeerConnection extensions
     Vector<std::reference_wrapper<RTCRtpSender>> getSenders() const;
@@ -164,7 +164,6 @@ public:
     WEBCORE_EXPORT void emulatePlatformEvent(const String& action);
 
     // API used by PeerConnectionBackend and relatives
-    void addTransceiver(Ref<RTCRtpTransceiver>&&);
     void setSignalingState(RTCSignalingState);
     void updateIceGatheringState(RTCIceGatheringState);
     void updateIceConnectionState(RTCIceConnectionState);

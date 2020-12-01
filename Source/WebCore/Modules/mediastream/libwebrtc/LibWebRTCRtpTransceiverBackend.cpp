@@ -73,8 +73,7 @@ String LibWebRTCRtpTransceiverBackend::mid()
 
 void LibWebRTCRtpTransceiverBackend::stop()
 {
-    // FIXME: Use StopStandard.
-    m_rtcTransceiver->StopInternal();
+    m_rtcTransceiver->StopStandard();
 }
 
 bool LibWebRTCRtpTransceiverBackend::stopped() const

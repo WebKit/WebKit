@@ -42,6 +42,6 @@ typedef RTCRtpTransceiverDirection RtpTransceiverDirection;
     readonly attribute boolean stopped;
     attribute RtpTransceiverDirection direction;
     readonly attribute RTCRtpTransceiverDirection? currentDirection;
-    undefined stop();
+    [MayThrowException] undefined stop();
     [MayThrowException] undefined setCodecPreferences(sequence<RTCRtpCodecCapability> codecs);
 };

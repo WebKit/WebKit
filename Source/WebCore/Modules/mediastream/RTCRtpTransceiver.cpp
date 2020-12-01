@@ -34,6 +34,7 @@
 
 #if ENABLE(WEB_RTC)
 
+#include "RTCPeerConnection.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
 
@@ -98,15 +99,28 @@ void RTCRtpTransceiver::disableSendingDirection()
         m_direction = RTCRtpTransceiverDirection::Inactive;
 }
 
-void RTCRtpTransceiver::stop()
+void RTCRtpTransceiver::setConnection(RTCPeerConnection& connection)
 {
+    ASSERT(!m_connection);
+    m_connection = makeWeakPtr(connection);
+}
+
+ExceptionOr<void> RTCRtpTransceiver::stop()
+{
+    if (!m_connection || m_connection->isClosed())
+        return Exception { InvalidStateError, "RTCPeerConnection is closed"_s };
+
     if (m_stopped)
-        return;
+        return { };
+
     m_stopped = true;
     m_receiver->stop();
     m_sender->stop();
     if (m_backend)
         m_backend->stop();
+
+    m_connection->scheduleNegotiationNeededEvent();
+    return { };
 }
 
 ExceptionOr<void> RTCRtpTransceiver::setCodecPreferences(const Vector<RTCRtpCodecCapability>& codecs)

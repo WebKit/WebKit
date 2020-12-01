@@ -45,6 +45,7 @@
 
 namespace WebCore {
 
+class RTCPeerConnection;
 struct RTCRtpCodecCapability;
 
 class RTCRtpTransceiver final : public RefCounted<RTCRtpTransceiver>, public ScriptWrappable {
@@ -66,7 +67,7 @@ public:
     RTCRtpReceiver& receiver() { return m_receiver.get(); }
 
     bool stopped() const;
-    void stop();
+    ExceptionOr<void> stop();
     ExceptionOr<void> setCodecPreferences(const Vector<RTCRtpCodecCapability>&);
 
     // FIXME: Temporary solution to keep track of ICE states for this transceiver. Later, each
@@ -75,6 +76,7 @@ public:
     RTCIceTransport& iceTransport() { return m_iceTransport.get(); }
 
     RTCRtpTransceiverBackend* backend() { return m_backend.get(); }
+    void setConnection(RTCPeerConnection&);
 
 private:
     RTCRtpTransceiver(Ref<RTCRtpSender>&&, Ref<RTCRtpReceiver>&&, std::unique_ptr<RTCRtpTransceiverBackend>&&);
@@ -88,6 +90,7 @@ private:
 
     Ref<RTCIceTransport> m_iceTransport;
     std::unique_ptr<RTCRtpTransceiverBackend> m_backend;
+    WeakPtr<RTCPeerConnection> m_connection;
 };
 
 class RtpTransceiverSet {

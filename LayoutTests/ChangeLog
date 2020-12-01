@@ -1,3 +1,12 @@
+2020-12-01  Youenn Fablet  <youenn@apple.com>
+
+        REGRESSION(STP116): wpt.live/webrtc/RTCRtpTransceiver.https.html crashes on load
+        https://bugs.webkit.org/show_bug.cgi?id=219259
+
+        Reviewed by Eric Carlson.
+
+        * TestExpectations: mark test as flaky, as identified by EWS and in results.webkit.org since resyncing WPT tests.
+
 2020-12-01  Lauro Moura  <lmoura@igalia.com>
 
         [GLIB] Skip http/wpt/webrtc/sframe-transform.html
