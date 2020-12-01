@@ -662,10 +662,10 @@ class TestRunEWSUnitTests(BuildStepMixinAdditions, unittest.TestCase):
     def test_success(self):
         self.setupStep(RunEWSUnitTests())
         self.expectRemoteCommands(
-            ExpectShell(workdir='wkdir',
+            ExpectShell(workdir='build/Tools/CISupport',
                         timeout=120,
                         logEnviron=False,
-                        command=['python', 'Tools/CISupport/ews-build/runUnittests.py'],
+                        command=['python', 'runUnittests.py', 'ews-build'],
                         )
             + 0,
         )
@@ -675,10 +675,10 @@ class TestRunEWSUnitTests(BuildStepMixinAdditions, unittest.TestCase):
     def test_failure(self):
         self.setupStep(RunEWSUnitTests())
         self.expectRemoteCommands(
-            ExpectShell(workdir='wkdir',
+            ExpectShell(workdir='build/Tools/CISupport',
                         timeout=120,
                         logEnviron=False,
-                        command=['python', 'Tools/CISupport/ews-build/runUnittests.py'],
+                        command=['python', 'runUnittests.py', 'ews-build'],
                         )
             + ExpectShell.log('stdio', stdout='Unhandled Error. Traceback (most recent call last): Keys in cmd missing from expectation: [logfiles.json]')
             + 2,

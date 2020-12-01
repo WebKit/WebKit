@@ -1141,10 +1141,10 @@ class RunBuildWebKitOrgUnitTests(shell.ShellCommand):
 class RunEWSUnitTests(shell.ShellCommand):
     name = 'ews-unit-tests'
     description = ['ews-unit-tests running']
-    command = ['python', 'Tools/CISupport/ews-build/runUnittests.py']
+    command = ['python', 'runUnittests.py', 'ews-build']
 
     def __init__(self, **kwargs):
-        super(RunEWSUnitTests, self).__init__(timeout=2 * 60, logEnviron=False, **kwargs)
+        super(RunEWSUnitTests, self).__init__(workdir='build/Tools/CISupport', timeout=2 * 60, logEnviron=False, **kwargs)
 
     def getResultSummary(self):
         if self.results == SUCCESS:
