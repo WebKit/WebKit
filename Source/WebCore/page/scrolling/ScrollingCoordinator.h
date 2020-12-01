@@ -127,7 +127,7 @@ public:
     // These virtual functions are currently unique to the threaded scrolling architecture. 
     virtual void commitTreeStateIfNeeded() { }
     virtual bool requestScrollPositionUpdate(ScrollableArea&, const IntPoint&, ScrollType = ScrollType::Programmatic, ScrollClamping = ScrollClamping::Clamped) { return false; }
-    virtual bool handleWheelEventForScrolling(const PlatformWheelEvent&, ScrollingNodeID) { return false; }
+    virtual bool handleWheelEventForScrolling(const PlatformWheelEvent&, ScrollingNodeID, OptionSet<EventHandling>) { return false; }
     virtual void wheelEventWasProcessedByMainThread(const PlatformWheelEvent&, OptionSet<EventHandling>) { }
 
     // Create an unparented node.

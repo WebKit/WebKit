@@ -48,6 +48,8 @@ class ScrollAnimator;
 class GraphicsLayer;
 class TiledBacking;
 
+enum class EventHandling : uint8_t;
+
 inline int offsetForOrientation(ScrollOffset offset, ScrollbarOrientation orientation)
 {
     switch (orientation) {
@@ -82,7 +84,7 @@ public:
     // expect it to happen sometime in the future.
     virtual bool requestScrollPositionUpdate(const ScrollPosition&, ScrollType = ScrollType::User, ScrollClamping = ScrollClamping::Clamped) { return false; }
 
-    WEBCORE_EXPORT virtual bool handleWheelEventForScrolling(const PlatformWheelEvent&);
+    WEBCORE_EXPORT virtual bool handleWheelEventForScrolling(const PlatformWheelEvent&, OptionSet<EventHandling>);
 
     bool usesScrollSnap() const;
 

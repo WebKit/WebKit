@@ -437,7 +437,7 @@ bool Element::dispatchWheelEvent(const PlatformWheelEvent& platformEvent, Option
 
     dispatchEvent(event);
     
-    LOG_WITH_STREAM(Scrolling, stream << "Element " << *this << " dispatchWheelEvent: defaultPrevented " << event->defaultPrevented() << " defaultHandled " << event->defaultHandled());
+    LOG_WITH_STREAM(Scrolling, stream << "Element " << *this << " dispatchWheelEvent: (cancelable " << event->cancelable() << ") defaultPrevented " << event->defaultPrevented() << " defaultHandled " << event->defaultHandled());
     
     if (event->defaultPrevented())
         processing.add(EventHandling::DefaultPrevented);

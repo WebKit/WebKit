@@ -147,7 +147,9 @@ bool EventHandler::wheelEvent(NSEvent *event)
         return false;
 
     CurrentEventScope scope(event, nil);
-    return handleWheelEvent(PlatformEventFactory::createPlatformWheelEvent(event, page->chrome().platformPageClient()), { WheelEventProcessingSteps::MainThreadForScrolling, WheelEventProcessingSteps::MainThreadForBlockingDOMEventDispatch });
+    auto wheelEvent = PlatformEventFactory::createPlatformWheelEvent(event, page->chrome().platformPageClient());
+    OptionSet<WheelEventProcessingSteps> processingSteps = { WheelEventProcessingSteps::MainThreadForScrolling, WheelEventProcessingSteps::MainThreadForBlockingDOMEventDispatch };
+    return handleWheelEvent(wheelEvent, processingSteps);
 }
 
 bool EventHandler::keyEvent(NSEvent *event)
@@ -904,7 +906,7 @@ void EventHandler::recordWheelEventForDeltaFilter(const PlatformWheelEvent& whee
     page->wheelEventDeltaFilter()->updateFromDelta(FloatSize(wheelEvent.deltaX(), wheelEvent.deltaY()));
 }
 
-bool EventHandler::processWheelEventForScrolling(const PlatformWheelEvent& wheelEvent, const WeakPtr<ScrollableArea>& scrollableArea)
+bool EventHandler::processWheelEventForScrolling(const PlatformWheelEvent& wheelEvent, const WeakPtr<ScrollableArea>& scrollableArea, OptionSet<EventHandling> eventHandling)
 {
     LOG_WITH_STREAM(ScrollLatching, stream << "EventHandler::processWheelEventForScrolling " << wheelEvent << " - scrollableArea " << ValueOrNull(scrollableArea.get()) << " use latched element " << wheelEvent.useLatchedEventElement());
 
@@ -939,7 +941,7 @@ bool EventHandler::processWheelEventForScrolling(const PlatformWheelEvent& wheel
 
         LOG_WITH_STREAM(ScrollLatching, stream << " sending to view " << *view);
 
-        bool didHandleWheelEvent = view->handleWheelEventForScrolling(wheelEvent);
+        bool didHandleWheelEvent = view->handleWheelEventForScrolling(wheelEvent, eventHandling);
         // If the platform widget is handling the event, we always want to return false.
         if (view->platformWidget())
             didHandleWheelEvent = false;
@@ -948,7 +950,7 @@ bool EventHandler::processWheelEventForScrolling(const PlatformWheelEvent& wheel
         return didHandleWheelEvent;
     }
     
-    bool didHandleEvent = view->handleWheelEventForScrolling(wheelEvent);
+    bool didHandleEvent = view->handleWheelEventForScrolling(wheelEvent, eventHandling);
     m_isHandlingWheelEvent = false;
     return didHandleEvent;
 }

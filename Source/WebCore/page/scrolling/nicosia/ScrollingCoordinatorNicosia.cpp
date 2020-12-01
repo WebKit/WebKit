@@ -69,22 +69,22 @@ void ScrollingCoordinatorNicosia::commitTreeStateIfNeeded()
     m_scrollingStateTreeCommitterTimer.stop();
 }
 
-bool ScrollingCoordinatorNicosia::handleWheelEventForScrolling(const PlatformWheelEvent& wheelEvent, ScrollingNodeID targetNode)
+bool ScrollingCoordinatorNicosia::handleWheelEventForScrolling(const PlatformWheelEvent& wheelEvent, ScrollingNodeID targetNode, OptionSet<EventHandling> eventHandling)
 {
     ASSERT(isMainThread());
     ASSERT(m_page);
     ASSERT(scrollingTree());
 
-    ScrollingThread::dispatch([threadedScrollingTree = makeRef(downcast<ThreadedScrollingTree>(*scrollingTree())), wheelEvent, targetNode] {
-        threadedScrollingTree->handleWheelEventAfterMainThread(wheelEvent, targetNode);
+    ScrollingThread::dispatch([threadedScrollingTree = makeRef(downcast<ThreadedScrollingTree>(*scrollingTree())), wheelEvent, targetNode, eventHandling] {
+        threadedScrollingTree->handleWheelEventAfterMainThread(wheelEvent, targetNode, eventHandling);
     });
     return true;
 }
 
-void ScrollingCoordinatorNicosia::wheelEventWasProcessedByMainThread(const PlatformWheelEvent& wheelEvent, OptionSet<EventHandling> defaultHandling)
+void ScrollingCoordinatorNicosia::wheelEventWasProcessedByMainThread(const PlatformWheelEvent& wheelEvent, OptionSet<EventHandling> eventHandling)
 {
-    ScrollingThread::dispatch([threadedScrollingTree = makeRef(downcast<ThreadedScrollingTree>(*scrollingTree())), wheelEvent, defaultHandling] {
-        threadedScrollingTree->wheelEventWasProcessedByMainThread(wheelEvent, defaultHandling);
+    ScrollingThread::dispatch([threadedScrollingTree = makeRef(downcast<ThreadedScrollingTree>(*scrollingTree())), wheelEvent, eventHandling] {
+        threadedScrollingTree->wheelEventWasProcessedByMainThread(wheelEvent, eventHandling);
     });
 }
 

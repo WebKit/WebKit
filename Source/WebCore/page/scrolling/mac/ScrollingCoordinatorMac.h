@@ -41,7 +41,7 @@ public:
     void commitTreeStateIfNeeded() final;
 
     // Handle the wheel event on the scrolling thread. Returns whether the event was handled or not.
-    bool handleWheelEventForScrolling(const PlatformWheelEvent&, ScrollingNodeID) final;
+    bool handleWheelEventForScrolling(const PlatformWheelEvent&, ScrollingNodeID, OptionSet<EventHandling>) final;
     void wheelEventWasProcessedByMainThread(const PlatformWheelEvent&, OptionSet<EventHandling>) final;
 
 private:

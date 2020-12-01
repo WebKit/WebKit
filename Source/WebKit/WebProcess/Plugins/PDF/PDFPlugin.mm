@@ -2938,7 +2938,7 @@ bool PDFPlugin::handleWheelEvent(const WebWheelEvent& event)
     PDFDisplayMode displayMode = [m_pdfLayerController displayMode];
 
     if (displayMode == kPDFDisplaySinglePageContinuous || displayMode == kPDFDisplayTwoUpContinuous)
-        return ScrollableArea::handleWheelEventForScrolling(platform(event));
+        return ScrollableArea::handleWheelEventForScrolling(platform(event), { });
 
     NSUInteger currentPageIndex = [m_pdfLayerController currentPageIndex];
     bool inFirstPage = !currentPageIndex;
@@ -2971,7 +2971,7 @@ bool PDFPlugin::handleWheelEvent(const WebWheelEvent& event)
         return true;
     }
 
-    return ScrollableArea::handleWheelEventForScrolling(platform(event));
+    return ScrollableArea::handleWheelEventForScrolling(platform(event), { });
 }
 
 NSData *PDFPlugin::liveData() const

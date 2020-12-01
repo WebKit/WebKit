@@ -315,7 +315,7 @@ static bool didScrollInScrollableArea(ScrollableArea& scrollableArea, const Whee
     return didHandleWheelEvent;
 }
 
-static bool handleWheelEventInAppropriateEnclosingBox(Node* startNode, const WheelEvent& wheelEvent, const FloatSize& filteredPlatformDelta, const FloatSize& filteredVelocity)
+static bool handleWheelEventInAppropriateEnclosingBox(Node* startNode, const WheelEvent& wheelEvent, const FloatSize& filteredPlatformDelta, const FloatSize& filteredVelocity, OptionSet<EventHandling> eventHandling)
 {
     bool shouldHandleEvent = wheelEvent.deltaX() || wheelEvent.deltaY();
 #if ENABLE(WHEEL_EVENT_LATCHING)
@@ -346,7 +346,7 @@ static bool handleWheelEventInAppropriateEnclosingBox(Node* startNode, const Whe
             bool scrollingWasHandled;
             if (platformEvent) {
                 auto copiedEvent = platformEvent->copyWithDeltasAndVelocity(filteredPlatformDelta.width(), filteredPlatformDelta.height(), filteredVelocity);
-                scrollingWasHandled = boxLayer->handleWheelEventForScrolling(copiedEvent);
+                scrollingWasHandled = boxLayer->handleWheelEventForScrolling(copiedEvent, eventHandling);
             } else
                 scrollingWasHandled = didScrollInScrollableArea(*boxLayer, wheelEvent);
 
@@ -2780,14 +2780,14 @@ void EventHandler::recordWheelEventForDeltaFilter(const PlatformWheelEvent& even
         page->wheelEventDeltaFilter()->updateFromDelta(FloatSize(event.deltaX(), event.deltaY()));
 }
 
-bool EventHandler::processWheelEventForScrolling(const PlatformWheelEvent& event, const WeakPtr<ScrollableArea>&)
+bool EventHandler::processWheelEventForScrolling(const PlatformWheelEvent& event, const WeakPtr<ScrollableArea>&, OptionSet<EventHandling> eventHandling)
 {
     Ref<Frame> protectedFrame(m_frame);
 
     // We do another check on the frame view because the event handler can run JS which results in the frame getting destroyed.
     FrameView* view = m_frame.view();
     
-    bool didHandleEvent = view ? view->handleWheelEventForScrolling(event) : false;
+    bool didHandleEvent = view ? view->handleWheelEventForScrolling(event, eventHandling) : false;
     m_isHandlingWheelEvent = false;
     return didHandleEvent;
 }
@@ -2869,6 +2869,7 @@ bool EventHandler::handleWheelEvent(const PlatformWheelEvent& event, OptionSet<W
 {
     OptionSet<EventHandling> handling;
     bool handled = handleWheelEventInternal(event, processingSteps, handling);
+    // wheelEventWasProcessedByMainThread() may have already been called via performDefaultWheelEventHandling(), but this ensures that it's always called if that code path doesn't run.
     wheelEventWasProcessedByMainThread(event, handling);
     return handled;
 }
@@ -2965,7 +2966,7 @@ bool EventHandler::handleWheelEventInternal(const PlatformWheelEvent& event, Opt
 #endif
     if (allowScrolling) {
         // FIXME: processWheelEventForScrolling() is only called for FrameView scrolling, not overflow scrolling, which is confusing.
-        handledEvent = processWheelEventForScrolling(event, scrollableArea);
+        handledEvent = processWheelEventForScrolling(event, scrollableArea, handling);
         processWheelEventForScrollSnap(event, scrollableArea);
     }
 
@@ -3007,6 +3008,10 @@ void EventHandler::defaultWheelEventHandler(Node* startNode, WheelEvent& wheelEv
         filteredPlatformDelta.setHeight(platformWheelEvent->deltaY());
     }
 
+    OptionSet<EventHandling> eventHandling = { EventHandling::DispatchedToDOM };
+    if (wheelEvent.defaultPrevented())
+        eventHandling.add(EventHandling::DefaultPrevented);
+
 #if ENABLE(WHEEL_EVENT_LATCHING)
     if (m_frame.page()->wheelEventDeltaFilter()->isFilteringDeltas()) {
         filteredPlatformDelta = m_frame.page()->wheelEventDeltaFilter()->filteredDelta();
@@ -3026,14 +3031,14 @@ void EventHandler::defaultWheelEventHandler(Node* startNode, WheelEvent& wheelEv
         auto platformEvent = wheelEvent.underlyingPlatformEvent();
         if (platformEvent) {
             auto copiedEvent = platformEvent->copyWithDeltasAndVelocity(filteredPlatformDelta.width(), filteredPlatformDelta.height(), filteredVelocity);
-            if (latchedScroller->handleWheelEventForScrolling(copiedEvent))
+            if (latchedScroller->handleWheelEventForScrolling(copiedEvent, eventHandling))
                 wheelEvent.setDefaultHandled();
             return;
         }
     }
 #endif
 
-    if (handleWheelEventInAppropriateEnclosingBox(startNode, wheelEvent, filteredPlatformDelta, filteredVelocity))
+    if (handleWheelEventInAppropriateEnclosingBox(startNode, wheelEvent, filteredPlatformDelta, filteredVelocity, eventHandling))
         wheelEvent.setDefaultHandled();
 }
 

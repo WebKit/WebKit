@@ -3165,7 +3165,7 @@ ScrollingNodeID RenderLayer::scrollingNodeID() const
     return backing()->scrollingNodeIDForRole(ScrollCoordinationRole::Scrolling);
 }
 
-bool RenderLayer::handleWheelEventForScrolling(const PlatformWheelEvent& wheelEvent)
+bool RenderLayer::handleWheelEventForScrolling(const PlatformWheelEvent& wheelEvent, OptionSet<EventHandling> eventHandling)
 {
     if (!isScrollableOrRubberbandable())
         return false;
@@ -3173,11 +3173,11 @@ bool RenderLayer::handleWheelEventForScrolling(const PlatformWheelEvent& wheelEv
 #if ENABLE(ASYNC_SCROLLING)
     if (usesAsyncScrolling() && scrollingNodeID()) {
         if (auto* scrollingCoordinator = page().scrollingCoordinator())
-            return scrollingCoordinator->handleWheelEventForScrolling(wheelEvent, scrollingNodeID());
+            return scrollingCoordinator->handleWheelEventForScrolling(wheelEvent, scrollingNodeID(), eventHandling);
     }
 #endif
 
-    return ScrollableArea::handleWheelEventForScrolling(wheelEvent);
+    return ScrollableArea::handleWheelEventForScrolling(wheelEvent, eventHandling);
 }
 
 IntRect RenderLayer::visibleContentRectInternal(VisibleContentRectIncludesScrollbars scrollbarInclusion, VisibleContentRectBehavior) const
