@@ -1,3 +1,531 @@
+2020-11-30  Tadeu Zagallo  <tzagallo@apple.com>
+
+        Add C and ObjC tests to APIBench
+        https://bugs.webkit.org/show_bug.cgi?id=219246
+
+        Reviewed by Yusuke Suzuki.
+
+        The benchmark now consists of two groups: initially they are identical, but the first group will not
+        be changed going forward while the second group will be free to adopt new APIs.
+        The two original tests (one mostly JS and the other mostly native) were also split into three tests each (C, ObjC and Swift).
+
+        * APIBench/CurrentAPI/RichardsMostlyC/RichardsMostlyC.xcodeproj/project.pbxproj: Copied from PerformanceTests/APIBench/RichardsMostlyJS/RichardsMostlyJS.xcodeproj/project.pbxproj.
+        * APIBench/CurrentAPI/RichardsMostlyC/RichardsMostlyC.xcodeproj/xcshareddata/xcschemes/RichardsMostlyC.xcscheme: Copied from PerformanceTests/APIBench/RichardsSwift/RichardsSwift.xcodeproj/xcshareddata/xcschemes/RichardsSwift.xcscheme.
+        * APIBench/CurrentAPI/RichardsMostlyC/RichardsMostlyC/richards.c: Added.
+        (pkt):
+        (trace):
+        (schedule):
+        (wait_):
+        (holdself):
+        (findtcb):
+        (release):
+        (qpkt):
+        (idlefn):
+        (valueToTask):
+        (waitWrapper):
+        (qpktWrapper):
+        (readFile):
+        (workfn):
+        (handlerfn):
+        (devfn):
+        (append):
+        (setup):
+        (getQpktcount):
+        (getHoldcount):
+        (main):
+        * APIBench/CurrentAPI/RichardsMostlyC/RichardsMostlyC/richards.js: Copied from PerformanceTests/APIBench/RichardsSwift/RichardsSwift/main.swift.
+        (createWorkfn):
+        * APIBench/CurrentAPI/RichardsMostlyObjC/RichardsMostlyObjC.xcodeproj/project.pbxproj: Copied from PerformanceTests/APIBench/RichardsMostlySwift/RichardsMostlySwift.xcodeproj/project.pbxproj.
+        * APIBench/CurrentAPI/RichardsMostlyObjC/RichardsMostlyObjC.xcodeproj/xcshareddata/xcschemes/RichardsMostlySwift.xcscheme: Copied from PerformanceTests/APIBench/RichardsSwift/RichardsSwift.xcodeproj/xcshareddata/xcschemes/RichardsSwift.xcscheme.
+        * APIBench/CurrentAPI/RichardsMostlyObjC/RichardsMostlyObjC/Device.h: Copied from PerformanceTests/APIBench/RichardsSwift/RichardsSwift/main.swift.
+        * APIBench/CurrentAPI/RichardsMostlyObjC/RichardsMostlyObjC/DeviceTask.h: Copied from PerformanceTests/APIBench/RichardsSwift/RichardsSwift/main.swift.
+        * APIBench/CurrentAPI/RichardsMostlyObjC/RichardsMostlyObjC/DeviceTask.m: Copied from PerformanceTests/APIBench/RichardsSwift/RichardsSwift/main.swift.
+        (+[DeviceTask createWithScheduler:device:priority:]):
+        (-[DeviceTask run:]):
+        * APIBench/CurrentAPI/RichardsMostlyObjC/RichardsMostlyObjC/HandlerTask.h: Copied from PerformanceTests/APIBench/RichardsSwift/RichardsSwift/main.swift.
+        * APIBench/CurrentAPI/RichardsMostlyObjC/RichardsMostlyObjC/HandlerTask.m: Copied from PerformanceTests/APIBench/RichardsMostlySwift/RichardsMostlySwift/DeviceTask.swift.
+        (+[HandlerTask createWithScheduler:device:priority:queue:]):
+        (-[HandlerTask run:]):
+        * APIBench/CurrentAPI/RichardsMostlyObjC/RichardsMostlyObjC/IdleTask.h: Copied from PerformanceTests/APIBench/RichardsSwift/RichardsSwift/main.swift.
+        * APIBench/CurrentAPI/RichardsMostlyObjC/RichardsMostlyObjC/IdleTask.m: Copied from PerformanceTests/APIBench/RichardsSwift/RichardsSwift/main.swift.
+        (+[IdleTask createWithScheduler:priority:]):
+        (-[IdleTask run:]):
+        * APIBench/CurrentAPI/RichardsMostlyObjC/RichardsMostlyObjC/Packet.h: Copied from PerformanceTests/APIBench/RichardsSwift/RichardsSwift/Packet.swift.
+        * APIBench/CurrentAPI/RichardsMostlyObjC/RichardsMostlyObjC/Packet.m: Copied from PerformanceTests/APIBench/RichardsSwift/RichardsSwift/IdleTask.swift.
+        (+[Packet create:withLink:]):
+        (-[Packet addToQueue:]):
+        (+[DevicePacket create:withLink:]):
+        (+[WorkPacket createWithLink:]):
+        (+[WorkPacket size]):
+        * APIBench/CurrentAPI/RichardsMostlyObjC/RichardsMostlyObjC/Scheduler.h: Added.
+        * APIBench/CurrentAPI/RichardsMostlyObjC/RichardsMostlyObjC/Scheduler.m: Added.
+        (-[Scheduler schedule]):
+        (-[Scheduler addTask:]):
+        (-[Scheduler releaseDevice:]):
+        (-[Scheduler holdCurrent]):
+        (-[Scheduler waitCurrent]):
+        (-[Scheduler queue:]):
+        (-[Scheduler handle:]):
+        (-[Scheduler _queueImpl:packet:]):
+        (-[Scheduler _find:]):
+        * APIBench/CurrentAPI/RichardsMostlyObjC/RichardsMostlyObjC/Task.h: Copied from PerformanceTests/APIBench/RichardsMostlySwift/RichardsMostlySwift/DeviceTask.swift.
+        * APIBench/CurrentAPI/RichardsMostlyObjC/RichardsMostlyObjC/Task.m: Added.
+        (+[Task createWithScheduler:priority:queue:]):
+        (-[Task run:]):
+        (-[Task release_]):
+        (-[Task hold]):
+        (-[Task wait]):
+        (-[Task resume]):
+        (-[Task takePacket]):
+        (-[Task checkPriorityAdd:packet:]):
+        * APIBench/CurrentAPI/RichardsMostlyObjC/RichardsMostlyObjC/WorkerTask.h: Copied from PerformanceTests/APIBench/RichardsSwift/RichardsSwift/main.swift.
+        * APIBench/CurrentAPI/RichardsMostlyObjC/RichardsMostlyObjC/WorkerTask.m: Added.
+        (+[WorkerTask createWithScheduler:priority:queue:]):
+        (+[WorkerTask context]):
+        (+[WorkerTask constructor]):
+        (-[WorkerTask run:]):
+        * APIBench/CurrentAPI/RichardsMostlyObjC/RichardsMostlyObjC/main.m: Added.
+        (runRichards):
+        (main):
+        * APIBench/CurrentAPI/RichardsMostlyObjC/RichardsMostlyObjC/richards.js: Copied from PerformanceTests/APIBench/RichardsMostlySwift/RichardsMostlySwift/richards.js.
+        (return.prototype.run):
+        * APIBench/CurrentAPI/RichardsMostlyObjC/RichardsMostlyObjC/richards.m: Copied from PerformanceTests/APIBench/RichardsSwift/RichardsSwift/main.swift.
+        * APIBench/CurrentAPI/RichardsMostlySwift/RichardsMostlySwift.xcodeproj/project.pbxproj: Copied from PerformanceTests/APIBench/RichardsMostlySwift/RichardsMostlySwift.xcodeproj/project.pbxproj.
+        * APIBench/CurrentAPI/RichardsMostlySwift/RichardsMostlySwift.xcodeproj/xcshareddata/xcschemes/RichardsMostlySwift.xcscheme: Copied from PerformanceTests/APIBench/RichardsMostlySwift/RichardsMostlySwift.xcodeproj/xcshareddata/xcschemes/RichardsMostlySwift.xcscheme.
+        * APIBench/CurrentAPI/RichardsMostlySwift/RichardsMostlySwift/DeviceTask.swift: Copied from PerformanceTests/APIBench/RichardsMostlySwift/RichardsMostlySwift/DeviceTask.swift.
+        * APIBench/CurrentAPI/RichardsMostlySwift/RichardsMostlySwift/HandlerTask.swift: Copied from PerformanceTests/APIBench/RichardsMostlySwift/RichardsMostlySwift/HandlerTask.swift.
+        * APIBench/CurrentAPI/RichardsMostlySwift/RichardsMostlySwift/IdleTask.swift: Copied from PerformanceTests/APIBench/RichardsMostlySwift/RichardsMostlySwift/IdleTask.swift.
+        * APIBench/CurrentAPI/RichardsMostlySwift/RichardsMostlySwift/Packet.swift: Copied from PerformanceTests/APIBench/RichardsMostlySwift/RichardsMostlySwift/Packet.swift.
+        * APIBench/CurrentAPI/RichardsMostlySwift/RichardsMostlySwift/Scheduler.swift: Copied from PerformanceTests/APIBench/RichardsMostlySwift/RichardsMostlySwift/Scheduler.swift.
+        * APIBench/CurrentAPI/RichardsMostlySwift/RichardsMostlySwift/Task.swift: Copied from PerformanceTests/APIBench/RichardsMostlySwift/RichardsMostlySwift/Task.swift.
+        * APIBench/CurrentAPI/RichardsMostlySwift/RichardsMostlySwift/WorkerTask.swift: Copied from PerformanceTests/APIBench/RichardsMostlySwift/RichardsMostlySwift/WorkerTask.swift.
+        * APIBench/CurrentAPI/RichardsMostlySwift/RichardsMostlySwift/main.swift: Copied from PerformanceTests/APIBench/RichardsMostlySwift/RichardsMostlySwift/main.swift.
+        * APIBench/CurrentAPI/RichardsMostlySwift/RichardsMostlySwift/richards.js: Copied from PerformanceTests/APIBench/RichardsMostlySwift/RichardsMostlySwift/richards.js.
+        * APIBench/CurrentAPI/RichardsMostlySwift/RichardsMostlySwift/richards.swift: Copied from PerformanceTests/APIBench/RichardsMostlySwift/RichardsMostlySwift/richards.swift.
+        * APIBench/CurrentAPI/RichardsSomeC/RichardsSomeC.xcodeproj/project.pbxproj: Copied from PerformanceTests/APIBench/RichardsMostlyJS/RichardsMostlyJS.xcodeproj/project.pbxproj.
+        * APIBench/CurrentAPI/RichardsSomeC/RichardsSomeC/main.m: Added.
+        (WorkerTask_run):
+        (WorkerTask_constructor):
+        (WorkerTask_getProperty):
+        (main):
+        * APIBench/CurrentAPI/RichardsSomeC/RichardsSomeC/richards.js: Copied from PerformanceTests/APIBench/RichardsMostlyJS/RichardsMostlyJS/richards.js.
+        * APIBench/CurrentAPI/RichardsSomeObjC/RichardsSomeObjC.xcodeproj/project.pbxproj: Copied from PerformanceTests/APIBench/RichardsMostlyJS/RichardsMostlyJS.xcodeproj/project.pbxproj.
+        * APIBench/CurrentAPI/RichardsSomeObjC/RichardsSomeObjC.xcodeproj/xcshareddata/xcschemes/RichardsSomeObjC.xcscheme: Copied from PerformanceTests/APIBench/RichardsMostlyJS/RichardsMostlyJS.xcodeproj/xcshareddata/xcschemes/RichardsMostlyJS.xcscheme.
+        * APIBench/CurrentAPI/RichardsSomeObjC/RichardsSomeObjC/main.m: Added.
+        (-[WorkerTask initWithScheduler:v1:v2:]):
+        (-[WorkerTask toString]):
+        (-[WorkerTask run:]):
+        (main):
+        * APIBench/CurrentAPI/RichardsSomeObjC/RichardsSomeObjC/richards.js: Copied from PerformanceTests/APIBench/RichardsMostlyJS/RichardsMostlyJS/richards.js.
+        (runRichards):
+        (Scheduler):
+        (Scheduler.prototype.addIdleTask):
+        (Scheduler.prototype.addWorkerTask):
+        (Scheduler.prototype.addHandlerTask):
+        (Scheduler.prototype.addDeviceTask):
+        (Scheduler.prototype.addRunningTask):
+        (Scheduler.prototype.addTask):
+        (Scheduler.prototype.schedule):
+        (Scheduler.prototype.release):
+        (Scheduler.prototype.holdCurrent):
+        (Scheduler.prototype.suspendCurrent):
+        (Scheduler.prototype.queue):
+        (TaskControlBlock):
+        (TaskControlBlock.prototype.setRunning):
+        (TaskControlBlock.prototype.markAsNotHeld):
+        (TaskControlBlock.prototype.markAsHeld):
+        (TaskControlBlock.prototype.isHeldOrSuspended):
+        (TaskControlBlock.prototype.markAsSuspended):
+        (TaskControlBlock.prototype.markAsRunnable):
+        (TaskControlBlock.prototype.run):
+        (TaskControlBlock.prototype.checkPriorityAdd):
+        (TaskControlBlock.prototype.toString):
+        (IdleTask):
+        (IdleTask.prototype.run):
+        (IdleTask.prototype.toString):
+        (DeviceTask):
+        (DeviceTask.prototype.run):
+        (DeviceTask.prototype.toString):
+        (HandlerTask):
+        (HandlerTask.prototype.run):
+        (HandlerTask.prototype.toString):
+        (Packet):
+        (Packet.prototype.addTo):
+        (Packet.prototype.toString):
+        * APIBench/CurrentAPI/RichardsSomeSwift/RichardsSomeSwift.xcodeproj/project.pbxproj: Copied from PerformanceTests/APIBench/RichardsMostlyJS/RichardsMostlyJS.xcodeproj/project.pbxproj.
+        * APIBench/CurrentAPI/RichardsSomeSwift/RichardsSomeSwift.xcodeproj/xcshareddata/xcschemes/RichardsSomeSwift.xcscheme: Copied from PerformanceTests/APIBench/RichardsMostlyJS/RichardsMostlyJS.xcodeproj/xcshareddata/xcschemes/RichardsMostlyJS.xcscheme.
+        * APIBench/CurrentAPI/RichardsSomeSwift/RichardsSomeSwift/main.swift: Copied from PerformanceTests/APIBench/RichardsMostlyJS/RichardsMostlyJS/main.swift.
+        * APIBench/CurrentAPI/RichardsSomeSwift/RichardsSomeSwift/richards.js: Copied from PerformanceTests/APIBench/RichardsMostlyJS/RichardsMostlyJS/richards.js.
+        (runRichards):
+        (Scheduler):
+        (Scheduler.prototype.addIdleTask):
+        (Scheduler.prototype.addWorkerTask):
+        (Scheduler.prototype.addHandlerTask):
+        (Scheduler.prototype.addDeviceTask):
+        (Scheduler.prototype.addRunningTask):
+        (Scheduler.prototype.addTask):
+        (Scheduler.prototype.schedule):
+        (Scheduler.prototype.release):
+        (Scheduler.prototype.holdCurrent):
+        (Scheduler.prototype.suspendCurrent):
+        (Scheduler.prototype.queue):
+        (TaskControlBlock):
+        (TaskControlBlock.prototype.setRunning):
+        (TaskControlBlock.prototype.markAsNotHeld):
+        (TaskControlBlock.prototype.markAsHeld):
+        (TaskControlBlock.prototype.isHeldOrSuspended):
+        (TaskControlBlock.prototype.markAsSuspended):
+        (TaskControlBlock.prototype.markAsRunnable):
+        (TaskControlBlock.prototype.run):
+        (TaskControlBlock.prototype.checkPriorityAdd):
+        (TaskControlBlock.prototype.toString):
+        (IdleTask):
+        (IdleTask.prototype.run):
+        (IdleTask.prototype.toString):
+        (DeviceTask):
+        (DeviceTask.prototype.run):
+        (DeviceTask.prototype.toString):
+        (HandlerTask):
+        (HandlerTask.prototype.run):
+        (HandlerTask.prototype.toString):
+        (Packet):
+        (Packet.prototype.addTo):
+        (Packet.prototype.toString):
+        * APIBench/References/RichardsC/RichardsC.xcodeproj/project.pbxproj: Copied from PerformanceTests/APIBench/RichardsMostlyJS/RichardsMostlyJS.xcodeproj/project.pbxproj.
+        * APIBench/References/RichardsC/RichardsC.xcodeproj/xcshareddata/xcschemes/RichardsC.xcscheme: Copied from PerformanceTests/APIBench/RichardsSwift/RichardsSwift.xcodeproj/xcshareddata/xcschemes/RichardsSwift.xcscheme.
+        * APIBench/References/RichardsC/RichardsC/richards.c: Added.
+        (pkt):
+        (trace):
+        (schedule):
+        (wait_):
+        (holdself):
+        (findtcb):
+        (release):
+        (qpkt):
+        (idlefn):
+        (workfn):
+        (handlerfn):
+        (devfn):
+        (append):
+        (setup):
+        (getQpktcount):
+        (getHoldcount):
+        (main):
+        * APIBench/References/RichardsC/RichardsC/richards.js: Copied from PerformanceTests/APIBench/RichardsSwift/RichardsSwift/main.swift.
+        (createWorkfn):
+        * APIBench/References/RichardsJS/RichardsJS.js: Renamed from PerformanceTests/APIBench/RichardsJS/RichardsJS.js.
+        * APIBench/References/RichardsObjC/RichardsObjC.xcodeproj/project.pbxproj: Copied from PerformanceTests/APIBench/RichardsMostlySwift/RichardsMostlySwift.xcodeproj/project.pbxproj.
+        * APIBench/References/RichardsObjC/RichardsObjC.xcodeproj/xcshareddata/xcschemes/RichardsObjC.xcscheme: Copied from PerformanceTests/APIBench/RichardsSwift/RichardsSwift.xcodeproj/xcshareddata/xcschemes/RichardsSwift.xcscheme.
+        * APIBench/References/RichardsObjC/RichardsObjC/Device.h: Copied from PerformanceTests/APIBench/RichardsSwift/RichardsSwift/main.swift.
+        * APIBench/References/RichardsObjC/RichardsObjC/DeviceTask.h: Copied from PerformanceTests/APIBench/RichardsSwift/RichardsSwift/main.swift.
+        * APIBench/References/RichardsObjC/RichardsObjC/DeviceTask.m: Copied from PerformanceTests/APIBench/RichardsSwift/RichardsSwift/main.swift.
+        (+[DeviceTask createWithScheduler:device:priority:]):
+        (-[DeviceTask run:]):
+        * APIBench/References/RichardsObjC/RichardsObjC/HandlerTask.h: Copied from PerformanceTests/APIBench/RichardsSwift/RichardsSwift/main.swift.
+        * APIBench/References/RichardsObjC/RichardsObjC/HandlerTask.m: Copied from PerformanceTests/APIBench/RichardsMostlySwift/RichardsMostlySwift/DeviceTask.swift.
+        (+[HandlerTask createWithScheduler:device:priority:queue:]):
+        (-[HandlerTask run:]):
+        * APIBench/References/RichardsObjC/RichardsObjC/IdleTask.h: Copied from PerformanceTests/APIBench/RichardsSwift/RichardsSwift/main.swift.
+        * APIBench/References/RichardsObjC/RichardsObjC/IdleTask.m: Copied from PerformanceTests/APIBench/RichardsSwift/RichardsSwift/main.swift.
+        (+[IdleTask createWithScheduler:priority:]):
+        (-[IdleTask run:]):
+        * APIBench/References/RichardsObjC/RichardsObjC/Packet.h: Copied from PerformanceTests/APIBench/RichardsSwift/RichardsSwift/Packet.swift.
+        * APIBench/References/RichardsObjC/RichardsObjC/Packet.m: Copied from PerformanceTests/APIBench/RichardsSwift/RichardsSwift/IdleTask.swift.
+        (+[Packet create:withLink:]):
+        (-[Packet addToQueue:]):
+        (+[DevicePacket create:withLink:]):
+        (+[WorkPacket createWithLink:]):
+        (+[WorkPacket size]):
+        * APIBench/References/RichardsObjC/RichardsObjC/Scheduler.h: Added.
+        * APIBench/References/RichardsObjC/RichardsObjC/Scheduler.m: Added.
+        (-[Scheduler schedule]):
+        (-[Scheduler addTask:]):
+        (-[Scheduler releaseDevice:]):
+        (-[Scheduler holdCurrent]):
+        (-[Scheduler waitCurrent]):
+        (-[Scheduler queue:]):
+        (-[Scheduler handle:]):
+        (-[Scheduler _queueImpl:packet:]):
+        (-[Scheduler _find:]):
+        * APIBench/References/RichardsObjC/RichardsObjC/Task.h: Copied from PerformanceTests/APIBench/RichardsMostlySwift/RichardsMostlySwift/DeviceTask.swift.
+        * APIBench/References/RichardsObjC/RichardsObjC/Task.m: Added.
+        (+[Task createWithScheduler:priority:queue:]):
+        (-[Task run:]):
+        (-[Task release_]):
+        (-[Task hold]):
+        (-[Task wait]):
+        (-[Task resume]):
+        (-[Task takePacket]):
+        (-[Task checkPriorityAdd:packet:]):
+        * APIBench/References/RichardsObjC/RichardsObjC/WorkerTask.h: Copied from PerformanceTests/APIBench/RichardsSwift/RichardsSwift/main.swift.
+        * APIBench/References/RichardsObjC/RichardsObjC/WorkerTask.m: Copied from PerformanceTests/APIBench/RichardsSwift/RichardsSwift/main.swift.
+        (+[WorkerTask createWithScheduler:priority:queue:]):
+        (-[WorkerTask run:]):
+        * APIBench/References/RichardsObjC/RichardsObjC/main.m: Added.
+        (runRichards):
+        (main):
+        * APIBench/References/RichardsObjC/RichardsObjC/richards.m: Copied from PerformanceTests/APIBench/RichardsSwift/RichardsSwift/main.swift.
+        * APIBench/References/RichardsSwift/RichardsSwift.xcodeproj/project.pbxproj: Renamed from PerformanceTests/APIBench/RichardsSwift/RichardsSwift.xcodeproj/project.pbxproj.
+        * APIBench/References/RichardsSwift/RichardsSwift.xcodeproj/xcshareddata/xcschemes/RichardsSwift.xcscheme: Copied from PerformanceTests/APIBench/RichardsSwift/RichardsSwift.xcodeproj/xcshareddata/xcschemes/RichardsSwift.xcscheme.
+        * APIBench/References/RichardsSwift/RichardsSwift/DeviceTask.swift: Renamed from PerformanceTests/APIBench/RichardsSwift/RichardsSwift/DeviceTask.swift.
+        * APIBench/References/RichardsSwift/RichardsSwift/HandlerTask.swift: Renamed from PerformanceTests/APIBench/RichardsSwift/RichardsSwift/HandlerTask.swift.
+        * APIBench/References/RichardsSwift/RichardsSwift/IdleTask.swift: Copied from PerformanceTests/APIBench/RichardsSwift/RichardsSwift/IdleTask.swift.
+        * APIBench/References/RichardsSwift/RichardsSwift/Packet.swift: Copied from PerformanceTests/APIBench/RichardsSwift/RichardsSwift/Packet.swift.
+        * APIBench/References/RichardsSwift/RichardsSwift/Scheduler.swift: Renamed from PerformanceTests/APIBench/RichardsSwift/RichardsSwift/Scheduler.swift.
+        * APIBench/References/RichardsSwift/RichardsSwift/Task.swift: Renamed from PerformanceTests/APIBench/RichardsSwift/RichardsSwift/Task.swift.
+        * APIBench/References/RichardsSwift/RichardsSwift/WorkerTask.swift: Renamed from PerformanceTests/APIBench/RichardsSwift/RichardsSwift/WorkerTask.swift.
+        * APIBench/References/RichardsSwift/RichardsSwift/main.swift: Copied from PerformanceTests/APIBench/RichardsSwift/RichardsSwift/main.swift.
+        * APIBench/References/RichardsSwift/RichardsSwift/richards.swift: Renamed from PerformanceTests/APIBench/RichardsSwift/RichardsSwift/richards.swift.
+        * APIBench/UpcomingAPI/RichardsMostlyC/RichardsMostlyC.xcodeproj/project.pbxproj: Copied from PerformanceTests/APIBench/RichardsMostlyJS/RichardsMostlyJS.xcodeproj/project.pbxproj.
+        * APIBench/UpcomingAPI/RichardsMostlyC/RichardsMostlyC.xcodeproj/xcshareddata/xcschemes/RichardsMostlyC.xcscheme: Copied from PerformanceTests/APIBench/RichardsSwift/RichardsSwift.xcodeproj/xcshareddata/xcschemes/RichardsSwift.xcscheme.
+        * APIBench/UpcomingAPI/RichardsMostlyC/RichardsMostlyC/richards.c: Added.
+        (pkt):
+        (trace):
+        (schedule):
+        (wait_):
+        (holdself):
+        (findtcb):
+        (release):
+        (qpkt):
+        (idlefn):
+        (valueToTask):
+        (waitWrapper):
+        (qpktWrapper):
+        (readFile):
+        (workfn):
+        (handlerfn):
+        (devfn):
+        (append):
+        (setup):
+        (getQpktcount):
+        (getHoldcount):
+        (main):
+        * APIBench/UpcomingAPI/RichardsMostlyC/RichardsMostlyC/richards.js: Copied from PerformanceTests/APIBench/RichardsSwift/RichardsSwift/main.swift.
+        (createWorkfn):
+        * APIBench/UpcomingAPI/RichardsMostlyObjC/RichardsMostlyObjC.xcodeproj/project.pbxproj: Copied from PerformanceTests/APIBench/RichardsMostlySwift/RichardsMostlySwift.xcodeproj/project.pbxproj.
+        * APIBench/UpcomingAPI/RichardsMostlyObjC/RichardsMostlyObjC.xcodeproj/xcshareddata/xcschemes/RichardsMostlySwift.xcscheme: Renamed from PerformanceTests/APIBench/RichardsSwift/RichardsSwift.xcodeproj/xcshareddata/xcschemes/RichardsSwift.xcscheme.
+        * APIBench/UpcomingAPI/RichardsMostlyObjC/RichardsMostlyObjC/Device.h: Copied from PerformanceTests/APIBench/RichardsSwift/RichardsSwift/main.swift.
+        * APIBench/UpcomingAPI/RichardsMostlyObjC/RichardsMostlyObjC/DeviceTask.h: Copied from PerformanceTests/APIBench/RichardsSwift/RichardsSwift/main.swift.
+        * APIBench/UpcomingAPI/RichardsMostlyObjC/RichardsMostlyObjC/DeviceTask.m: Copied from PerformanceTests/APIBench/RichardsSwift/RichardsSwift/main.swift.
+        (+[DeviceTask createWithScheduler:device:priority:]):
+        (-[DeviceTask run:]):
+        * APIBench/UpcomingAPI/RichardsMostlyObjC/RichardsMostlyObjC/HandlerTask.h: Copied from PerformanceTests/APIBench/RichardsSwift/RichardsSwift/main.swift.
+        * APIBench/UpcomingAPI/RichardsMostlyObjC/RichardsMostlyObjC/HandlerTask.m: Copied from PerformanceTests/APIBench/RichardsMostlySwift/RichardsMostlySwift/DeviceTask.swift.
+        (+[HandlerTask createWithScheduler:device:priority:queue:]):
+        (-[HandlerTask run:]):
+        * APIBench/UpcomingAPI/RichardsMostlyObjC/RichardsMostlyObjC/IdleTask.h: Copied from PerformanceTests/APIBench/RichardsSwift/RichardsSwift/main.swift.
+        * APIBench/UpcomingAPI/RichardsMostlyObjC/RichardsMostlyObjC/IdleTask.m: Copied from PerformanceTests/APIBench/RichardsSwift/RichardsSwift/main.swift.
+        (+[IdleTask createWithScheduler:priority:]):
+        (-[IdleTask run:]):
+        * APIBench/UpcomingAPI/RichardsMostlyObjC/RichardsMostlyObjC/Packet.h: Renamed from PerformanceTests/APIBench/RichardsSwift/RichardsSwift/Packet.swift.
+        * APIBench/UpcomingAPI/RichardsMostlyObjC/RichardsMostlyObjC/Packet.m: Renamed from PerformanceTests/APIBench/RichardsSwift/RichardsSwift/IdleTask.swift.
+        (+[Packet create:withLink:]):
+        (-[Packet addToQueue:]):
+        (+[DevicePacket create:withLink:]):
+        (+[WorkPacket createWithLink:]):
+        (+[WorkPacket size]):
+        * APIBench/UpcomingAPI/RichardsMostlyObjC/RichardsMostlyObjC/Scheduler.h: Added.
+        * APIBench/UpcomingAPI/RichardsMostlyObjC/RichardsMostlyObjC/Scheduler.m: Added.
+        (-[Scheduler schedule]):
+        (-[Scheduler addTask:]):
+        (-[Scheduler releaseDevice:]):
+        (-[Scheduler holdCurrent]):
+        (-[Scheduler waitCurrent]):
+        (-[Scheduler queue:]):
+        (-[Scheduler handle:]):
+        (-[Scheduler _queueImpl:packet:]):
+        (-[Scheduler _find:]):
+        * APIBench/UpcomingAPI/RichardsMostlyObjC/RichardsMostlyObjC/Task.h: Copied from PerformanceTests/APIBench/RichardsMostlySwift/RichardsMostlySwift/DeviceTask.swift.
+        * APIBench/UpcomingAPI/RichardsMostlyObjC/RichardsMostlyObjC/Task.m: Added.
+        (+[Task createWithScheduler:priority:queue:]):
+        (-[Task run:]):
+        (-[Task release_]):
+        (-[Task hold]):
+        (-[Task wait]):
+        (-[Task resume]):
+        (-[Task takePacket]):
+        (-[Task checkPriorityAdd:packet:]):
+        * APIBench/UpcomingAPI/RichardsMostlyObjC/RichardsMostlyObjC/WorkerTask.h: Copied from PerformanceTests/APIBench/RichardsSwift/RichardsSwift/main.swift.
+        * APIBench/UpcomingAPI/RichardsMostlyObjC/RichardsMostlyObjC/WorkerTask.m: Added.
+        (+[WorkerTask createWithScheduler:priority:queue:]):
+        (+[WorkerTask context]):
+        (+[WorkerTask constructor]):
+        (-[WorkerTask run:]):
+        * APIBench/UpcomingAPI/RichardsMostlyObjC/RichardsMostlyObjC/main.m: Added.
+        (runRichards):
+        (main):
+        * APIBench/UpcomingAPI/RichardsMostlyObjC/RichardsMostlyObjC/richards.js: Copied from PerformanceTests/APIBench/RichardsMostlySwift/RichardsMostlySwift/richards.js.
+        (return.prototype.run):
+        * APIBench/UpcomingAPI/RichardsMostlyObjC/RichardsMostlyObjC/richards.m: Renamed from PerformanceTests/APIBench/RichardsSwift/RichardsSwift/main.swift.
+        * APIBench/UpcomingAPI/RichardsMostlySwift/RichardsMostlySwift.xcodeproj/project.pbxproj: Renamed from PerformanceTests/APIBench/RichardsMostlySwift/RichardsMostlySwift.xcodeproj/project.pbxproj.
+        * APIBench/UpcomingAPI/RichardsMostlySwift/RichardsMostlySwift.xcodeproj/xcshareddata/xcschemes/RichardsMostlySwift.xcscheme: Renamed from PerformanceTests/APIBench/RichardsMostlySwift/RichardsMostlySwift.xcodeproj/xcshareddata/xcschemes/RichardsMostlySwift.xcscheme.
+        * APIBench/UpcomingAPI/RichardsMostlySwift/RichardsMostlySwift/DeviceTask.swift: Renamed from PerformanceTests/APIBench/RichardsMostlySwift/RichardsMostlySwift/DeviceTask.swift.
+        (DeviceTask.create(_:device:priority:)):
+        (DeviceTask.run(_:)):
+        * APIBench/UpcomingAPI/RichardsMostlySwift/RichardsMostlySwift/HandlerTask.swift: Renamed from PerformanceTests/APIBench/RichardsMostlySwift/RichardsMostlySwift/HandlerTask.swift.
+        (HandlerTask.device):
+        (HandlerTask.create(_:device:priority:queue:)):
+        (HandlerTask.run(_:)):
+        * APIBench/UpcomingAPI/RichardsMostlySwift/RichardsMostlySwift/IdleTask.swift: Renamed from PerformanceTests/APIBench/RichardsMostlySwift/RichardsMostlySwift/IdleTask.swift.
+        (IdleTask.create(_:priority:)):
+        (IdleTask.run(_:)):
+        * APIBench/UpcomingAPI/RichardsMostlySwift/RichardsMostlySwift/Packet.swift: Renamed from PerformanceTests/APIBench/RichardsMostlySwift/RichardsMostlySwift/Packet.swift.
+        (Packet.addTo(_:)):
+        * APIBench/UpcomingAPI/RichardsMostlySwift/RichardsMostlySwift/Scheduler.swift: Renamed from PerformanceTests/APIBench/RichardsMostlySwift/RichardsMostlySwift/Scheduler.swift.
+        (waitCurrent):
+        (handle(_:)):
+        (Scheduler.schedule):
+        (Scheduler.add(_:)):
+        (Scheduler.release_(_:)):
+        (holdCurrent):
+        (queue(_:)):
+        (queueImpl(_:packet:)):
+        * APIBench/UpcomingAPI/RichardsMostlySwift/RichardsMostlySwift/Task.swift: Renamed from PerformanceTests/APIBench/RichardsMostlySwift/RichardsMostlySwift/Task.swift.
+        (Task.run(_:)):
+        (Task.release_):
+        (Task.hold):
+        (Task.wait):
+        (Task.resume):
+        (Task.takePacket):
+        (Task.checkPriorityAdd(_:packet:)):
+        * APIBench/UpcomingAPI/RichardsMostlySwift/RichardsMostlySwift/WorkerTask.swift: Renamed from PerformanceTests/APIBench/RichardsMostlySwift/RichardsMostlySwift/WorkerTask.swift.
+        (WorkerTask.create(_:priority:queue:)):
+        (WorkerTask.run(_:)):
+        * APIBench/UpcomingAPI/RichardsMostlySwift/RichardsMostlySwift/main.swift: Renamed from PerformanceTests/APIBench/RichardsMostlySwift/RichardsMostlySwift/main.swift.
+        * APIBench/UpcomingAPI/RichardsMostlySwift/RichardsMostlySwift/richards.js: Renamed from PerformanceTests/APIBench/RichardsMostlySwift/RichardsMostlySwift/richards.js.
+        (return.prototype.run):
+        * APIBench/UpcomingAPI/RichardsMostlySwift/RichardsMostlySwift/richards.swift: Renamed from PerformanceTests/APIBench/RichardsMostlySwift/RichardsMostlySwift/richards.swift.
+        (runRichards):
+        * APIBench/UpcomingAPI/RichardsSomeC/RichardsSomeC.xcodeproj/project.pbxproj: Copied from PerformanceTests/APIBench/RichardsMostlyJS/RichardsMostlyJS.xcodeproj/project.pbxproj.
+        * APIBench/UpcomingAPI/RichardsSomeC/RichardsSomeC/main.m: Added.
+        (WorkerTask_run):
+        (WorkerTask_constructor):
+        (WorkerTask_getProperty):
+        (main):
+        * APIBench/UpcomingAPI/RichardsSomeC/RichardsSomeC/richards.js: Copied from PerformanceTests/APIBench/RichardsMostlyJS/RichardsMostlyJS/richards.js.
+        (runRichards):
+        (Scheduler):
+        (Scheduler.prototype.addIdleTask):
+        (Scheduler.prototype.addWorkerTask):
+        (Scheduler.prototype.addHandlerTask):
+        (Scheduler.prototype.addDeviceTask):
+        (Scheduler.prototype.addRunningTask):
+        (Scheduler.prototype.addTask):
+        (Scheduler.prototype.schedule):
+        (Scheduler.prototype.release):
+        (Scheduler.prototype.holdCurrent):
+        (Scheduler.prototype.suspendCurrent):
+        (Scheduler.prototype.queue):
+        (TaskControlBlock):
+        (TaskControlBlock.prototype.setRunning):
+        (TaskControlBlock.prototype.markAsNotHeld):
+        (TaskControlBlock.prototype.markAsHeld):
+        (TaskControlBlock.prototype.isHeldOrSuspended):
+        (TaskControlBlock.prototype.markAsSuspended):
+        (TaskControlBlock.prototype.markAsRunnable):
+        (TaskControlBlock.prototype.run):
+        (TaskControlBlock.prototype.checkPriorityAdd):
+        (TaskControlBlock.prototype.toString):
+        (IdleTask):
+        (IdleTask.prototype.run):
+        (IdleTask.prototype.toString):
+        (DeviceTask):
+        (DeviceTask.prototype.run):
+        (DeviceTask.prototype.toString):
+        (HandlerTask):
+        (HandlerTask.prototype.run):
+        (HandlerTask.prototype.toString):
+        (Packet):
+        (Packet.prototype.addTo):
+        (Packet.prototype.toString):
+        * APIBench/UpcomingAPI/RichardsSomeObjC/RichardsSomeObjC.xcodeproj/project.pbxproj: Copied from PerformanceTests/APIBench/RichardsMostlyJS/RichardsMostlyJS.xcodeproj/project.pbxproj.
+        * APIBench/UpcomingAPI/RichardsSomeObjC/RichardsSomeObjC.xcodeproj/xcshareddata/xcschemes/RichardsSomeObjC.xcscheme: Copied from PerformanceTests/APIBench/RichardsMostlyJS/RichardsMostlyJS.xcodeproj/xcshareddata/xcschemes/RichardsMostlyJS.xcscheme.
+        * APIBench/UpcomingAPI/RichardsSomeObjC/RichardsSomeObjC/main.m: Added.
+        (-[WorkerTask initWithScheduler:v1:v2:]):
+        (-[WorkerTask toString]):
+        (-[WorkerTask run:]):
+        (main):
+        * APIBench/UpcomingAPI/RichardsSomeObjC/RichardsSomeObjC/richards.js: Copied from PerformanceTests/APIBench/RichardsMostlyJS/RichardsMostlyJS/richards.js.
+        (runRichards):
+        (Scheduler):
+        (Scheduler.prototype.addIdleTask):
+        (Scheduler.prototype.addWorkerTask):
+        (Scheduler.prototype.addHandlerTask):
+        (Scheduler.prototype.addDeviceTask):
+        (Scheduler.prototype.addRunningTask):
+        (Scheduler.prototype.addTask):
+        (Scheduler.prototype.schedule):
+        (Scheduler.prototype.release):
+        (Scheduler.prototype.holdCurrent):
+        (Scheduler.prototype.suspendCurrent):
+        (Scheduler.prototype.queue):
+        (TaskControlBlock):
+        (TaskControlBlock.prototype.setRunning):
+        (TaskControlBlock.prototype.markAsNotHeld):
+        (TaskControlBlock.prototype.markAsHeld):
+        (TaskControlBlock.prototype.isHeldOrSuspended):
+        (TaskControlBlock.prototype.markAsSuspended):
+        (TaskControlBlock.prototype.markAsRunnable):
+        (TaskControlBlock.prototype.run):
+        (TaskControlBlock.prototype.checkPriorityAdd):
+        (TaskControlBlock.prototype.toString):
+        (IdleTask):
+        (IdleTask.prototype.run):
+        (IdleTask.prototype.toString):
+        (DeviceTask):
+        (DeviceTask.prototype.run):
+        (DeviceTask.prototype.toString):
+        (HandlerTask):
+        (HandlerTask.prototype.run):
+        (HandlerTask.prototype.toString):
+        (Packet):
+        (Packet.prototype.addTo):
+        (Packet.prototype.toString):
+        * APIBench/UpcomingAPI/RichardsSomeSwift/RichardsSomeSwift.xcodeproj/project.pbxproj: Renamed from PerformanceTests/APIBench/RichardsMostlyJS/RichardsMostlyJS.xcodeproj/project.pbxproj.
+        * APIBench/UpcomingAPI/RichardsSomeSwift/RichardsSomeSwift.xcodeproj/xcshareddata/xcschemes/RichardsSomeSwift.xcscheme: Renamed from PerformanceTests/APIBench/RichardsMostlyJS/RichardsMostlyJS.xcodeproj/xcshareddata/xcschemes/RichardsMostlyJS.xcscheme.
+        * APIBench/UpcomingAPI/RichardsSomeSwift/RichardsSomeSwift/main.swift: Renamed from PerformanceTests/APIBench/RichardsMostlyJS/RichardsMostlyJS/main.swift.
+        (run(_:)):
+        (toString):
+        (WorkerTask.toString):
+        (WorkerTask.run(_:)):
+        * APIBench/UpcomingAPI/RichardsSomeSwift/RichardsSomeSwift/richards.js: Renamed from PerformanceTests/APIBench/RichardsMostlyJS/RichardsMostlyJS/richards.js.
+        (runRichards):
+        (Scheduler):
+        (Scheduler.prototype.addIdleTask):
+        (Scheduler.prototype.addWorkerTask):
+        (Scheduler.prototype.addHandlerTask):
+        (Scheduler.prototype.addDeviceTask):
+        (Scheduler.prototype.addRunningTask):
+        (Scheduler.prototype.addTask):
+        (Scheduler.prototype.schedule):
+        (Scheduler.prototype.release):
+        (Scheduler.prototype.holdCurrent):
+        (Scheduler.prototype.suspendCurrent):
+        (Scheduler.prototype.queue):
+        (TaskControlBlock):
+        (TaskControlBlock.prototype.setRunning):
+        (TaskControlBlock.prototype.markAsNotHeld):
+        (TaskControlBlock.prototype.markAsHeld):
+        (TaskControlBlock.prototype.isHeldOrSuspended):
+        (TaskControlBlock.prototype.markAsSuspended):
+        (TaskControlBlock.prototype.markAsRunnable):
+        (TaskControlBlock.prototype.run):
+        (TaskControlBlock.prototype.checkPriorityAdd):
+        (TaskControlBlock.prototype.toString):
+        (IdleTask):
+        (IdleTask.prototype.run):
+        (IdleTask.prototype.toString):
+        (DeviceTask):
+        (DeviceTask.prototype.run):
+        (DeviceTask.prototype.toString):
+        (HandlerTask):
+        (HandlerTask.prototype.run):
+        (HandlerTask.prototype.toString):
+        (Packet):
+        (Packet.prototype.addTo):
+        (Packet.prototype.toString):
+        * APIBench/api-bench:
+
 2020-10-27  Jer Noble  <jer.noble@apple.com>
 
         [Mac] Audio and Video element creation up to 300x slower than other browsers
