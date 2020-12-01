@@ -1,3 +1,18 @@
+2020-12-01  Diego Pino Garcia  <dpino@igalia.com>
+
+        [WPE] Unreviewed test gardening. Update baselines after r270284.
+
+        * platform/wpe/css1/formatting_model/height_of_lines-expected.png: Added.
+        * platform/wpe/css1/formatting_model/height_of_lines-expected.txt: Update after r238730.
+        * platform/wpe/fast/block/float/overhanging-tall-block-expected.png: Added.
+        * platform/wpe/fast/block/float/overhanging-tall-block-expected.txt: Update after r270070.
+        * platform/wpe/imported/w3c/web-platform-tests/fetch/api/basic/request-headers-case.any-expected.txt: Update after r269947.
+        * platform/wpe/imported/w3c/web-platform-tests/fetch/api/basic/request-headers-case.any.worker-expected.txt: Update after r269947.
+        * platform/wpe/imported/w3c/web-platform-tests/html/browsers/sandboxing/sandbox-parse-noscript-expected.png: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/html/browsers/sandboxing/sandbox-parse-noscript-expected.txt: Update after r269745.
+        * platform/wpe/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt: Update after r270102.
+        * platform/wpe/imported/w3c/web-platform-tests/html/dom/idlharness.worker-expected.txt: Update after r270102.
+
 2020-12-01  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-flexbox] WebKit doesn't preserve aspect ratio when computing cross size of flexed images in auto-height flex container
