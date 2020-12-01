@@ -65,8 +65,8 @@
 #include "WebKitWebSourceGStreamer.h"
 #endif
 
-GST_DEBUG_CATEGORY_EXTERN(webkit_media_player_debug);
-#define GST_CAT_DEFAULT webkit_media_player_debug
+GST_DEBUG_CATEGORY(webkit_gst_common_debug);
+#define GST_CAT_DEFAULT webkit_gst_common_debug
 
 namespace WebCore {
 
@@ -255,6 +255,7 @@ bool initializeGStreamer(Optional<Vector<String>>&& options)
         isGStreamerInitialized = gst_init_check(&argc, &argv, &error.outPtr());
         ASSERT_WITH_MESSAGE(isGStreamerInitialized, "GStreamer initialization failed: %s", error ? error->message : "unknown error occurred");
         g_strfreev(argv);
+        GST_DEBUG_CATEGORY_INIT(webkit_gst_common_debug, "webkitcommon", 0, "WebKit Common utilities");
 
         if (isFastMallocEnabled()) {
             const char* disableFastMalloc = getenv("WEBKIT_GST_DISABLE_FAST_MALLOC");
