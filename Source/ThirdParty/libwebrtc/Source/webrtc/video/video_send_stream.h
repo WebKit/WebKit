@@ -86,6 +86,9 @@ class VideoSendStream : public webrtc::VideoSendStream {
 
   void ReconfigureVideoEncoder(VideoEncoderConfig) override;
   Stats GetStats() override;
+#if defined(WEBRTC_WEBKIT_BUILD)
+  void GenerateKeyFrame() override;
+#endif
 
   void StopPermanentlyAndGetRtpStates(RtpStateMap* rtp_state_map,
                                       RtpPayloadStateMap* payload_state_map);

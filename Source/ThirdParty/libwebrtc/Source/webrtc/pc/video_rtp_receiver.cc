@@ -115,6 +115,18 @@ void VideoRtpReceiver::SetDepacketizerToDecoderFrameTransformer(
   });
 }
 
+#if defined(WEBRTC_WEBKIT_BUILD)
+void VideoRtpReceiver::GenerateKeyFrame()
+{
+  worker_thread_->Invoke<void>(RTC_FROM_HERE, [&] {
+    RTC_DCHECK_RUN_ON(worker_thread_);
+    if (media_channel_ && !stopped_) {
+      media_channel_->GenerateKeyFrame(ssrc_.value_or(0));
+    }
+  });
+}
+#endif
+
 void VideoRtpReceiver::Stop() {
   // TODO(deadbeef): Need to do more here to fully stop receiving packets.
   if (stopped_) {

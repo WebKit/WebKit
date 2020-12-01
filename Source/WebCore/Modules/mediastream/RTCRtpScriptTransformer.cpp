@@ -32,6 +32,7 @@
 #include "JSCallbackData.h"
 #include "JSRTCEncodedAudioFrame.h"
 #include "JSRTCEncodedVideoFrame.h"
+#include "JSRTCRtpScriptTransformerContext.h"
 #include "RTCRtpTransformableFrame.h"
 #include "ReadableStream.h"
 #include "ReadableStreamSource.h"
@@ -102,6 +103,7 @@ RefPtr<SimpleReadableStreamSource> RTCRtpScriptTransformer::startStreams(RTCRtpT
     JSC::MarkedArgumentBuffer args;
     args.append(toJSNewlyCreated(&globalObject, &globalObject, readableStream.releaseReturnValue()));
     args.append(toJSNewlyCreated(&globalObject, &globalObject, writableStream.releaseReturnValue()));
+    args.append(toJSNewlyCreated(&globalObject, &globalObject, RTCRtpScriptTransformerContext::create(makeRef(backend))));
 
     NakedPtr<JSC::Exception> returnedException;
     callback->invokeCallback(JSC::jsUndefined(), args, JSCallbackData::CallbackType::Object, JSC::Identifier::fromString(vm, "start"), returnedException);

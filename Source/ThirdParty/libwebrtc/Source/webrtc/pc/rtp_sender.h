@@ -348,6 +348,10 @@ class VideoRtpSender : public RtpSenderBase {
   // Hook to allow custom logic when tracks are attached.
   void AttachTrack() override;
 
+#if defined(WEBRTC_WEBKIT_BUILD)
+  void GenerateKeyFrame() override;
+#endif
+
  private:
   cricket::VideoMediaChannel* video_media_channel() {
     return static_cast<cricket::VideoMediaChannel*>(media_channel_);

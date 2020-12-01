@@ -52,6 +52,12 @@ void LibWebRTCRtpSenderTransformBackend::setTransformableFrameCallback(Callback&
     m_rtcSender->SetEncoderToPacketizerFrameTransformer(this);
 }
 
+void LibWebRTCRtpSenderTransformBackend::requestKeyFrame()
+{
+    ASSERT(mediaType() == MediaType::Video);
+    m_rtcSender->GenerateKeyFrame();
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(WEB_RTC) && USE(LIBWEBRTC)

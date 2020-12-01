@@ -359,6 +359,9 @@ class WebRtcVideoChannel : public VideoMediaChannel,
     void SetEncoderToPacketizerFrameTransformer(
         rtc::scoped_refptr<webrtc::FrameTransformerInterface>
             frame_transformer);
+#if defined(WEBRTC_WEBKIT_BUILD)
+    void GenerateKeyFrame();
+#endif
 
    private:
     // Parameters needed to reconstruct the underlying stream.

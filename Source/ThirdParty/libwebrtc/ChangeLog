@@ -1,3 +1,29 @@
+2020-12-01  Youenn Fablet  <youenn@apple.com>
+
+        Allow RTCRtpScriptTransformer to request key frames
+        https://bugs.webkit.org/show_bug.cgi?id=219199
+
+        Reviewed by Eric Carlson.
+
+        Add GenerateKeyFrame to sender and receiver interface.
+        Pipe the request to the necessary underlying objects implementing this as follows:
+        - Ask encoder to generate a key frame for sender transforms
+        - Send a FIR network request from receiver to sender for receiver transforms
+
+        * Source/webrtc/api/rtp_receiver_interface.h:
+        * Source/webrtc/api/rtp_sender_interface.h:
+        * Source/webrtc/call/video_send_stream.h:
+        * Source/webrtc/media/base/media_channel.h:
+        (cricket::MediaChannel::GenerateKeyFrame):
+        * Source/webrtc/media/engine/webrtc_video_engine.cc:
+        * Source/webrtc/media/engine/webrtc_video_engine.h:
+        * Source/webrtc/pc/rtp_sender.cc:
+        * Source/webrtc/pc/rtp_sender.h:
+        * Source/webrtc/pc/video_rtp_receiver.cc:
+        * Source/webrtc/pc/video_rtp_receiver.h:
+        * Source/webrtc/video/video_send_stream.cc:
+        * Source/webrtc/video/video_send_stream.h:
+
 2020-11-30  Youenn Fablet  <youenn@apple.com>
 
         Introduce an experimental flag specific to VP9 profile 2

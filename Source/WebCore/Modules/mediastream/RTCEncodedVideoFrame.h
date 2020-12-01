@@ -36,8 +36,13 @@ public:
     static Ref<RTCEncodedVideoFrame> create(Ref<RTCRtpTransformableFrame>&& frame) { return adoptRef(*new RTCEncodedVideoFrame(WTFMove(frame))); }
     ~RTCEncodedVideoFrame();
 
+    enum class Type { Empty, Key, Delta };
+    Type type() const { return m_type; }
+
 private:
     explicit RTCEncodedVideoFrame(Ref<RTCRtpTransformableFrame>&&);
+
+    Type m_type;
 };
 
 } // namespace WebCore

@@ -65,6 +65,13 @@ void LibWebRTCRtpTransformableFrame::setData(Data data)
         m_rtcFrame->SetData({ data.data, data.size });
 }
 
+bool LibWebRTCRtpTransformableFrame::isKeyFrame() const
+{
+    ASSERT(m_rtcFrame);
+    auto* videoFrame = static_cast<webrtc::TransformableVideoFrameInterface*>(m_rtcFrame.get());
+    return videoFrame && videoFrame->IsKeyFrame();
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(WEB_RTC) && USE(LIBWEBRTC)

@@ -52,6 +52,12 @@ void LibWebRTCRtpReceiverTransformBackend::setTransformableFrameCallback(Callbac
     m_rtcReceiver->SetDepacketizerToDecoderFrameTransformer(this);
 }
 
+void LibWebRTCRtpReceiverTransformBackend::requestKeyFrame()
+{
+    ASSERT(mediaType() == MediaType::Video);
+    m_rtcReceiver->GenerateKeyFrame();
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(WEB_RTC) && USE(LIBWEBRTC)

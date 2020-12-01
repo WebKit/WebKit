@@ -244,6 +244,7 @@ $(PROJECT_DIR)/Modules/mediastream/RTCRtpScriptTransform.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCRtpScriptTransformProvider.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCRtpScriptTransformer.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCRtpScriptTransformerConstructor.idl
+$(PROJECT_DIR)/Modules/mediastream/RTCRtpScriptTransformerContext.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCRtpSendParameters.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCRtpSender+Transform.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCRtpSender.idl

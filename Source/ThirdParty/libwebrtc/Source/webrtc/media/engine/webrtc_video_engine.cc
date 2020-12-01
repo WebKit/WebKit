@@ -2644,6 +2644,14 @@ void WebRtcVideoChannel::WebRtcVideoSendStream::
     RecreateWebRtcStream();
 }
 
+#if defined(WEBRTC_WEBKIT_BUILD)
+void WebRtcVideoChannel::WebRtcVideoSendStream::GenerateKeyFrame() {
+  RTC_DCHECK_RUN_ON(&thread_checker_);
+  if (stream_ != NULL)
+    stream_->GenerateKeyFrame();
+}
+#endif
+
 void WebRtcVideoChannel::WebRtcVideoSendStream::RecreateWebRtcStream() {
   RTC_DCHECK_RUN_ON(&thread_checker_);
   if (stream_ != NULL) {
@@ -3316,11 +3324,20 @@ void WebRtcVideoChannel::GenerateKeyFrame(uint32_t ssrc) {
   WebRtcVideoReceiveStream* stream = FindReceiveStream(ssrc);
   if (stream) {
     stream->GenerateKeyFrame();
-  } else {
-    RTC_LOG(LS_ERROR)
-        << "Absent receive stream; ignoring key frame generation for ssrc "
-        << ssrc;
+    return;
   }
+#if defined(WEBRTC_WEBKIT_BUILD)
+  if (ssrc != 0) {
+    auto matching_stream = send_streams_.find(ssrc);
+    if (matching_stream != send_streams_.end()) {
+      matching_stream->second->GenerateKeyFrame();
+      return;
+    }
+  }
+#endif
+  RTC_LOG(LS_ERROR)
+      << "Absent receive stream; ignoring key frame generation for ssrc "
+      << ssrc;
 }
 
 void WebRtcVideoChannel::SetEncoderToPacketizerFrameTransformer(

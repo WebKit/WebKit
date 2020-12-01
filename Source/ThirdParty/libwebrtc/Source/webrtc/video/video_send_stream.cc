@@ -240,5 +240,14 @@ void VideoSendStream::DeliverRtcp(const uint8_t* packet, size_t length) {
   send_stream_->DeliverRtcp(packet, length);
 }
 
+#if defined(WEBRTC_WEBKIT_BUILD)
+void VideoSendStream::GenerateKeyFrame()
+{
+  RTC_DCHECK_RUN_ON(&thread_checker_);
+  if (video_stream_encoder_)
+      video_stream_encoder_->SendKeyFrame();
+}
+#endif
+
 }  // namespace internal
 }  // namespace webrtc

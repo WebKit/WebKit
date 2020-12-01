@@ -53,6 +53,7 @@ private:
 
     // RTCRtpTransformBackend
     void setTransformableFrameCallback(Callback&&) final;
+    void requestKeyFrame() final;
 
     rtc::scoped_refptr<webrtc::RtpReceiverInterface> m_rtcReceiver;
 };

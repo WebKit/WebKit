@@ -46,8 +46,10 @@ public:
 private:
     explicit LibWebRTCRtpTransformableFrame(std::unique_ptr<webrtc::TransformableFrameInterface>&&);
 
+    // RTCRtpTransformableFrame
     Data data() const final;
     void setData(Data) final;
+    bool isKeyFrame() const final;
 
     std::unique_ptr<webrtc::TransformableFrameInterface> m_rtcFrame;
 };

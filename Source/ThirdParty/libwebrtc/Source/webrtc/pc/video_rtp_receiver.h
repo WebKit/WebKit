@@ -88,6 +88,9 @@ class VideoRtpReceiver : public rtc::RefCountedObject<RtpReceiverInternal>,
 
   void SetDepacketizerToDecoderFrameTransformer(
       rtc::scoped_refptr<FrameTransformerInterface> frame_transformer) override;
+#if defined(WEBRTC_WEBKIT_BUILD)
+  void GenerateKeyFrame() override;
+#endif
 
   // RtpReceiverInternal implementation.
   void Stop() override;

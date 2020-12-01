@@ -96,6 +96,9 @@ class RTC_EXPORT RtpSenderInterface : public rtc::RefCountInterface {
 
   virtual void SetEncoderToPacketizerFrameTransformer(
       rtc::scoped_refptr<FrameTransformerInterface> frame_transformer);
+#if defined(WEBRTC_WEBKIT_BUILD)
+  virtual void GenerateKeyFrame() { }
+#endif
 
  protected:
   ~RtpSenderInterface() override = default;
@@ -126,6 +129,9 @@ PROXY_METHOD1(void, SetStreams, const std::vector<std::string>&)
 PROXY_METHOD1(void,
               SetEncoderToPacketizerFrameTransformer,
               rtc::scoped_refptr<FrameTransformerInterface>)
+#if defined(WEBRTC_WEBKIT_BUILD)
+PROXY_METHOD0(void, GenerateKeyFrame)
+#endif
 END_PROXY_MAP()
 
 }  // namespace webrtc

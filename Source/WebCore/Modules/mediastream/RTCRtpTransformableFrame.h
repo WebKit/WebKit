@@ -40,6 +40,8 @@ public:
     };
     virtual Data data() const = 0;
     virtual void setData(Data) = 0;
+
+    virtual bool isKeyFrame() const = 0;
 };
 
 } // namespace WebCore

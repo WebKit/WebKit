@@ -46,6 +46,8 @@ public:
 
     enum class Side { Receiver, Sender };
     virtual Side side() const = 0;
+
+    virtual void requestKeyFrame() = 0;
 };
 
 } // namespace WebCore

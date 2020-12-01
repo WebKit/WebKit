@@ -271,6 +271,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/mediastream/RTCRtpScriptTransformProvider.idl \
     $(WebCore)/Modules/mediastream/RTCRtpScriptTransformer.idl \
     $(WebCore)/Modules/mediastream/RTCRtpScriptTransformerConstructor.idl \
+    $(WebCore)/Modules/mediastream/RTCRtpScriptTransformerContext.idl \
     $(WebCore)/Modules/mediastream/RTCRtpSynchronizationSource.idl \
     $(WebCore)/Modules/mediastream/RTCRtpTransceiver.idl \
     $(WebCore)/Modules/mediastream/RTCRtpTransceiverDirection.idl \

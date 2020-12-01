@@ -3347,6 +3347,7 @@ JSRTCRtpSFrameTransform.cpp
 JSRTCRtpScriptTransform.cpp
 JSRTCRtpScriptTransformer.cpp
 JSRTCRtpScriptTransformerConstructor.cpp
+JSRTCRtpScriptTransformerContext.cpp
 JSRTCRtpSendParameters.cpp
 JSRTCRtpSender.cpp
 JSRTCRtpSynchronizationSource.cpp

@@ -647,4 +647,15 @@ void VideoRtpSender::ClearSend() {
   });
 }
 
+#if defined(WEBRTC_WEBKIT_BUILD)
+void VideoRtpSender::GenerateKeyFrame()
+{
+  if (video_media_channel() && ssrc_ && !stopped_) {
+    worker_thread_->Invoke<void>(RTC_FROM_HERE, [&] {
+        video_media_channel()->GenerateKeyFrame(ssrc_);
+    });
+  }
+}
+#endif
+
 }  // namespace webrtc
