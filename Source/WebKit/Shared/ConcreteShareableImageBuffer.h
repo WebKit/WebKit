@@ -25,27 +25,31 @@
 
 #pragma once
 
-#if ENABLE(GPU_PROCESS)
-
-#include "ImageBufferShareableBitmapBackend.h"
-
-#if HAVE(IOSURFACE)
-#include "ImageBufferShareableIOSurfaceBackend.h"
-#include "ImageBufferShareableUnmappedIOSurfaceBackend.h"
-#endif
+#include "ImageBufferBackendHandle.h"
+#include <WebCore/ConcreteImageBuffer.h>
 
 namespace WebKit {
 
-using UnacceleratedImageBufferShareableBackend = ImageBufferShareableBitmapBackend;
+template<typename BackendType>
+class ConcreteShareableImageBuffer : public WebCore::ConcreteImageBuffer<BackendType> {
+    using BaseConcreteImageBuffer = WebCore::ConcreteImageBuffer<BackendType>;
+    using BaseConcreteImageBuffer::m_backend;
 
-#if HAVE(IOSURFACE)
-using AcceleratedImageBufferShareableUnmappedBackend = ImageBufferShareableUnmappedIOSurfaceBackend;
-using AcceleratedImageBufferShareableBackend = ImageBufferShareableIOSurfaceBackend;
-#else
-using AcceleratedImageBufferShareableUnmappedBackend = UnacceleratedImageBufferShareableBackend;
-using AcceleratedImageBufferShareableBackend = UnacceleratedImageBufferShareableBackend;
-#endif
+public:
+    static auto create(const WebCore::FloatSize& size, WebCore::RenderingMode renderingMode, float resolutionScale, WebCore::ColorSpace colorSpace, WebCore::PixelFormat pixelFormat)
+    {
+        return BaseConcreteImageBuffer::template create<ConcreteShareableImageBuffer>(size, resolutionScale, colorSpace, pixelFormat, nullptr);
+    }
+
+    ConcreteShareableImageBuffer(std::unique_ptr<BackendType>&& backend)
+        : BaseConcreteImageBuffer(WTFMove(backend))
+    {
+    }
+
+    ImageBufferBackendHandle createImageBufferBackendHandle()
+    {
+        return m_backend->createImageBufferBackendHandle();
+    }
+};
 
 } // namespace WebKit
-
-#endif // ENABLE(GPU_PROCESS)

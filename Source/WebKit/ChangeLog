@@ -1,3 +1,63 @@
+2020-11-30  Tim Horton  <timothy_horton@apple.com>
+
+        GPU Process: IOSurfaces should not be mapped into the Web Content Process
+        https://bugs.webkit.org/show_bug.cgi?id=219368
+
+        Reviewed by Ryosuke Niwa.
+
+        Since the Web Content process sandbox will eventually not have access to IOKit,
+        it will not be able to map/lock/use IOSurfaces. Thankfully, all it really needs
+        to be able to do is carry a reference to the surface from the GPU process to the
+        UI process (where it is mapped and applied as layer contents).
+
+        * Shared/ConcreteShareableImageBuffer.h: Copied from Source/WebKit/WebProcess/GPU/graphics/cocoa/ImageBufferShareableIOSurfaceBackend.h.
+        (WebKit::ConcreteShareableImageBuffer::create):
+        (WebKit::ConcreteShareableImageBuffer::ConcreteShareableImageBuffer):
+        (WebKit::ConcreteShareableImageBuffer::createImageBufferBackendHandle):
+        * Shared/RemoteLayerTree/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::encode const):
+        (WebKit::RemoteLayerBackingStore::swapToValidFrontBuffer):
+        Add and adopt ConcreteShareableImageBuffer. This is a ConcreteImageBuffer that knows how
+        to create an ImageBufferBackendHandle, with no other behavior change.
+        Previously, we were (completely incorrectly) casting ConcreteImageBuffer to RemoteImageBufferProxy
+        to get this behavior, and somehow just got very lucky.
+
+        * SourcesCocoa.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/GPU/graphics/PlatformImageBufferShareableBackend.h:
+        * WebProcess/GPU/graphics/PlatformRemoteImageBufferProxy.h:
+        * WebProcess/GPU/graphics/cocoa/ImageBufferShareableIOSurfaceBackend.cpp:
+        * WebProcess/GPU/graphics/cocoa/ImageBufferShareableIOSurfaceBackend.h:
+        Remove the ImageBufferShareableIOSurfaceBackend create() method that takes
+        an ImageBufferBackendHandle, since we always use the Unmapped variant.
+        ImageBufferShareableIOSurfaceBackend is now only used:
+        - in the GPU process
+        - in the Web Content process when DOM rendering in the GPU process is disabled
+        In both cases, the process that uses ImageBufferShareableIOSurfaceBackend also
+        originates the surface, so does not create it from a handle.
+
+        * WebProcess/GPU/graphics/cocoa/ImageBufferShareableUnmappedIOSurfaceBackend.cpp: Added.
+        (WebKit::ImageBufferShareableUnmappedIOSurfaceBackend::create):
+        (WebKit::ImageBufferShareableUnmappedIOSurfaceBackend::createImageBufferBackendHandle const):
+        (WebKit::ImageBufferShareableUnmappedIOSurfaceBackend::context const):
+        (WebKit::ImageBufferShareableUnmappedIOSurfaceBackend::copyNativeImage const):
+        (WebKit::ImageBufferShareableUnmappedIOSurfaceBackend::copyImage const):
+        (WebKit::ImageBufferShareableUnmappedIOSurfaceBackend::draw):
+        (WebKit::ImageBufferShareableUnmappedIOSurfaceBackend::drawPattern):
+        (WebKit::ImageBufferShareableUnmappedIOSurfaceBackend::toDataURL const):
+        (WebKit::ImageBufferShareableUnmappedIOSurfaceBackend::toData const):
+        (WebKit::ImageBufferShareableUnmappedIOSurfaceBackend::toBGRAData const):
+        (WebKit::ImageBufferShareableUnmappedIOSurfaceBackend::getImageData const):
+        (WebKit::ImageBufferShareableUnmappedIOSurfaceBackend::putImageData):
+        * WebProcess/GPU/graphics/cocoa/ImageBufferShareableUnmappedIOSurfaceBackend.h: Added.
+        Add and adopt ImageBufferShareableUnmappedIOSurfaceBackend, which is a ImageBufferBackend
+        that cannot perform most ImageBufferBackend duties, except creating an ImageBufferBackendHandle,
+        which it does by cloning the existing handle. It explicitly does *not* map the IOSurface in the
+        process, and is meant for use in Web Content processes that do not have access to IOSurface.
+
+        * WebProcess/GPU/media/RemoteAudioSession.cpp:
+        Fix some unified source issues.
+
 2020-11-30  Chris Dumez  <cdumez@apple.com>
 
         sessionStorage should not be cloned when a window is opened with rel=noopener
