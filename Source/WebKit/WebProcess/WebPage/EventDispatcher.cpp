@@ -43,9 +43,7 @@
 #include <WebCore/AsyncScrollingCoordinator.h>
 #endif
 
-#if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
 #include <WebCore/DisplayRefreshMonitorManager.h>
-#endif
 
 #if ENABLE(SCROLLING_THREAD)
 #include <WebCore/ScrollingThread.h>
@@ -273,8 +271,6 @@ void EventDispatcher::sendDidReceiveEvent(PageIdentifier pageID, WebEvent::Type 
 }
 #endif
 
-#if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
-
 void EventDispatcher::notifyScrollingTreesDisplayWasRefreshed(PlatformDisplayID displayID)
 {
 #if ENABLE(SCROLLING_THREAD)
@@ -284,6 +280,7 @@ void EventDispatcher::notifyScrollingTreesDisplayWasRefreshed(PlatformDisplayID 
 #endif
 }
 
+#if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
 void EventDispatcher::displayWasRefreshed(PlatformDisplayID displayID)
 {
     ASSERT(!RunLoop::isMain());

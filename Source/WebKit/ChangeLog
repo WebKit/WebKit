@@ -1,3 +1,24 @@
+2020-12-01  Alejandro G. Castro  <alex@igalia.com>
+
+        [GTK][WPE] Async scrolling udpates are blocked in the main thread
+        https://bugs.webkit.org/show_bug.cgi?id=219308
+
+        Reviewed by Simon Fraser.
+
+        We need to use the EventDispatcher from the frameDone callback in
+        the ThreadedCompositor, for GTK and WPE we receive the frame
+        information in that thread. We have to notify the scrolling trees
+        in the scrolling thread even if the main thread is busy or we will
+        freeze when the main thread is busy. For that we use the API in
+        the EventDispatcher.
+
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.cpp:
+        (WebKit::ThreadedCompositor::sceneUpdateFinished): Call the
+        EventDispatcher to notify the scrolling trees a frame was rendered.
+        * WebProcess/WebPage/EventDispatcher.cpp: Enable the compilation
+        of the notify function for all the ports.
+        * WebProcess/WebPage/EventDispatcher.h: Ditto.
+
 2020-12-01  Tim Horton  <timothy_horton@apple.com>
 
         GPU Process: Invalid static_cast from ConcreteImageBuffer to RemoteImageBufferProxy

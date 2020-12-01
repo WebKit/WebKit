@@ -29,7 +29,9 @@
 #if USE(COORDINATED_GRAPHICS)
 
 #include "CompositingRunLoop.h"
+#include "EventDispatcher.h"
 #include "ThreadedDisplayRefreshMonitor.h"
+#include "WebProcess.h"
 #include <WebCore/PlatformDisplay.h>
 #include <WebCore/TransformationMatrix.h>
 #include <wtf/SetForScope.h>
@@ -252,6 +254,9 @@ void ThreadedCompositor::sceneUpdateFinished()
     // Schedule the DisplayRefreshMonitor callback, if necessary.
     if (shouldDispatchDisplayRefreshCallback)
         m_displayRefreshMonitor->dispatchDisplayRefreshCallback();
+
+    // Always notify the ScrollingTrees to make sure scrolling does not depend on the main thread.
+    WebProcess::singleton().eventDispatcher().notifyScrollingTreesDisplayWasRefreshed(m_displayRefreshMonitor->displayID());
 
     // Mark the scene update as completed.
     m_compositingRunLoop->updateCompleted(stateLocker);

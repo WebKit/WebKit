@@ -342,13 +342,15 @@ void ThreadedScrollingTree::displayDidRefreshOnScrollingThread()
 
 void ThreadedScrollingTree::displayDidRefresh(PlatformDisplayID displayID)
 {
-    // We're on the EventDispatcher thread here.
+    // We're on the EventDispatcher thread or in the ThreadedCompositor thread here.
 
     if (displayID != this->displayID())
         return;
-    
+
+#if !PLATFORM(WPE) && !PLATFORM(GTK)
     if (!hasProcessedWheelEventsRecently())
         return;
+#endif
 
     ScrollingThread::dispatch([protectedThis = makeRef(*this)]() {
         protectedThis->displayDidRefreshOnScrollingThread();
