@@ -1,3 +1,16 @@
+2020-12-01  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] Add some WPE-specific baselines after r269745
+
+        Unreviewed test gardening.
+
+        * platform/gtk/fast/block/basic/013-expected.txt: Copied from LayoutTests/platform/glib/fast/block/basic/013-expected.txt.
+        * platform/gtk/fast/frames/iframe-scrolling-attribute-expected.txt: Copied from LayoutTests/platform/glib/fast/frames/iframe-scrolling-attribute-expected.txt.
+        * platform/gtk/svg/as-object/object-box-sizing-no-width-height-expected.txt: Copied from LayoutTests/platform/glib/svg/as-object/object-box-sizing-no-width-height-expected.txt.
+        * platform/wpe/fast/block/basic/013-expected.txt: Renamed from LayoutTests/platform/glib/fast/block/basic/013-expected.txt.
+        * platform/wpe/fast/frames/iframe-scrolling-attribute-expected.txt: Renamed from LayoutTests/platform/glib/fast/frames/iframe-scrolling-attribute-expected.txt.
+        * platform/wpe/svg/as-object/object-box-sizing-no-width-height-expected.txt: Renamed from LayoutTests/platform/glib/svg/as-object/object-box-sizing-no-width-height-expected.txt.
+
 2020-12-01  Truitt Savell  <tsavell@apple.com>
 
         (r270252) [ Mac ] imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-candidate-in-sdp.https.html is flaky failing
