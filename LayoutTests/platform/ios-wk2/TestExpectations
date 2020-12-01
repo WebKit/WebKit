@@ -1259,7 +1259,7 @@ webkit.org/b/196274 imported/w3c/web-platform-tests/xhr/send-redirect-post-uploa
 
 webkit.org/b/196633 imported/w3c/web-platform-tests/webrtc/RTCRtpReceiver-getSynchronizationSources.https.html [ Pass Failure ]
 
-webkit.org/b/197662 [ Debug ] imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-getStats.https.html [ Pass Failure ]
+webkit.org/b/197662 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-getStats.https.html [ Pass Failure ]
 
 webkit.org/b/176030 http/tests/websocket/tests/hybi/send-object-tostring-check.html [ Pass Failure ]
 
