@@ -100,8 +100,8 @@ TARGET_MAC_OS_X_VERSION_MAJOR_10_15 = 101500
 
 SDKROOT = macosx.internal;
 
-// FIXME: Bug 218453: libwebrtc.dylib fails to link if this value is changed in libwebrtc.xcconfig or changed here for all targets.
 DEAD_CODE_STRIPPING = YES;
+DEAD_CODE_STRIPPING[config=Debug] = NO;
 
 DEBUG_DEFINES = NDEBUG;
 DEBUG_DEFINES[config=Debug] = ;

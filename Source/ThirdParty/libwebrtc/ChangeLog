@@ -1,5 +1,19 @@
 2020-12-01  Youenn Fablet  <youenn@apple.com>
 
+        libwebrtc.dylib relies on dead code stripping (fails to link if dead code is not stripped in Debug builds)
+        https://bugs.webkit.org/show_bug.cgi?id=218453
+
+        Reviewed by Eric Carlson.
+
+        Update build config and code to allow building without code stripping.
+
+        * Configurations/Base.xcconfig:
+        * Source/third_party/libvpx/source/libvpx/vp9/encoder/vp9_temporal_filter.c:
+        Compile out some functions that are not-realtime only.
+        * libwebrtc.xcodeproj/project.pbxproj:
+
+2020-12-01  Youenn Fablet  <youenn@apple.com>
+
         Allow RTCRtpScriptTransformer to request key frames
         https://bugs.webkit.org/show_bug.cgi?id=219199
 

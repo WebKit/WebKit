@@ -995,6 +995,7 @@ void vp9_temporal_filter_iterate_row_c(VP9_COMP *cpi, ThreadData *td,
   }
 }
 
+#if !CONFIG_REALTIME_ONLY
 static void temporal_filter_iterate_tile_c(VP9_COMP *cpi, int tile_row,
                                            int tile_col) {
   VP9_COMMON *const cm = &cpi->common;
@@ -1203,3 +1204,4 @@ void vp9_temporal_filter(VP9_COMP *cpi, int distance) {
   else
     vp9_temporal_filter_row_mt(cpi);
 }
+#endif
