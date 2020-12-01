@@ -1386,6 +1386,9 @@ fast/dom/Window/slow-unload-handler-only-frame-is-stopped.html [ WontFix ]
 webkit.org/b/136224 fast/speechsynthesis [ Skip ]
 webkit.org/b/136224 fast/speechrecognition [ Skip ]
 
+# No plans to support Sframes for a while
+http/wpt/webrtc/sframe-transform.html [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of UNSUPPORTED tests.
 #////////////////////////////////////////////////////////////////////////////////////////

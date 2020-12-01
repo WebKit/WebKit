@@ -1,3 +1,11 @@
+2020-12-01  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] Skip http/wpt/webrtc/sframe-transform.html
+
+        Unreviewed test gardening
+
+        * platform/glib/TestExpectations:
+
 2020-12-01  Youenn Fablet  <youenn@apple.com>
 
         CSSStyleSheet.cssRules and rules should throw in case of opaque stylesheets
