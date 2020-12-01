@@ -97,7 +97,6 @@ private:
     GridAsMatrix m_grid;
 
     HashMap<const RenderBox*, GridArea> m_gridItemArea;
-    HashMap<const RenderBox*, size_t> m_gridItemsIndexesMap;
 
     std::unique_ptr<OrderedTrackIndexSet> m_autoRepeatEmptyColumns;
     std::unique_ptr<OrderedTrackIndexSet> m_autoRepeatEmptyRows;
