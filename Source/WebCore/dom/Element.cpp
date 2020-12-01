@@ -107,6 +107,7 @@
 #include "ScrollLatchingController.h"
 #include "SelectorQuery.h"
 #include "Settings.h"
+#include "ShadowRootInit.h"
 #include "SimulatedClick.h"
 #include "SlotAssignment.h"
 #include "StyleInvalidator.h"

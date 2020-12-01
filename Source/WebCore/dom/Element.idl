@@ -98,11 +98,6 @@
     [NotEnumerable, Conditional=WIRELESS_PLAYBACK_TARGET] attribute EventHandler onwebkitplaybacktargetavailabilitychanged;
 };
 
-dictionary ShadowRootInit {
-    required ShadowRootMode mode;
-    boolean delegatesFocus = false;
-};
-
 Element includes AccessibilityRole;
 Element includes AriaAttributes;
 Element includes Animatable;

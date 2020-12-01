@@ -2139,6 +2139,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSServiceWorkerWindowClient.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSServiceWorkerWindowClient.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSShadowRoot.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSShadowRoot.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSShadowRootInit.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSShadowRootInit.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSShadowRootMode.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSShadowRootMode.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSShareData.cpp

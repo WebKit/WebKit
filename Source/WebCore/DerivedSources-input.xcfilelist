@@ -806,6 +806,7 @@ $(PROJECT_DIR)/dom/Range.idl
 $(PROJECT_DIR)/dom/RequestAnimationFrameCallback.idl
 $(PROJECT_DIR)/dom/SecurityPolicyViolationEvent.idl
 $(PROJECT_DIR)/dom/ShadowRoot.idl
+$(PROJECT_DIR)/dom/ShadowRootInit.idl
 $(PROJECT_DIR)/dom/ShadowRootMode.idl
 $(PROJECT_DIR)/dom/Slotable.idl
 $(PROJECT_DIR)/dom/StaticRange.idl

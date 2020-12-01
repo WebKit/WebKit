@@ -29,6 +29,7 @@
 #include "ElementData.h"
 #include "HTMLNames.h"
 #include "ScrollTypes.h"
+#include "ShadowRootInit.h"
 #include "ShadowRootMode.h"
 #include "SimulatedClickOptions.h"
 #include "StyleChange.h"
@@ -297,10 +298,6 @@ public:
     WEBCORE_EXPORT ShadowRoot* shadowRoot() const;
     ShadowRoot* shadowRootForBindings(JSC::JSGlobalObject&) const;
 
-    struct ShadowRootInit {
-        ShadowRootMode mode;
-        bool delegatesFocus { false };
-    };
     WEBCORE_EXPORT ExceptionOr<ShadowRoot&> attachShadow(const ShadowRootInit&);
 
     RefPtr<ShadowRoot> userAgentShadowRoot() const;

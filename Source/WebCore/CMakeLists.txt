@@ -890,6 +890,7 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/RequestAnimationFrameCallback.idl
     dom/SecurityPolicyViolationEvent.idl
     dom/ShadowRoot.idl
+    dom/ShadowRootInit.idl
     dom/ShadowRootMode.idl
     dom/Slotable.idl
     dom/StaticRange.idl

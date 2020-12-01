@@ -491,6 +491,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     dom/SecurityContext.h
     dom/SecurityPolicyViolationEvent.h
     dom/ShadowRoot.h
+    dom/ShadowRootInit.h
     dom/ShadowRootMode.h
     dom/SimpleRange.h
     dom/SimulatedClickOptions.h

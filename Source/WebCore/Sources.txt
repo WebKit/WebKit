@@ -3551,6 +3551,7 @@ JSServiceWorkerRegistration.cpp
 JSServiceWorkerUpdateViaCache.cpp
 JSServiceWorkerWindowClient.cpp
 JSShadowRoot.cpp
+JSShadowRootInit.cpp
 JSShadowRootMode.cpp
 JSShareData.cpp
 JSSlotable.cpp
