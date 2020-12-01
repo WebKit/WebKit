@@ -1,3 +1,20 @@
+2020-12-01  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] GPUProcess.CrashWhilePlayingVideo is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=219377
+        <rdar://problem/71859117>
+
+        Reviewed by Darin Adler.
+
+        Disable the flaky check on iOS while this is investigated so that the bots are happy.
+
+        In the iOS simulator, I see the audio track getting disabled shortly after the GPU
+        process is relaunched for some reason. I have spent a lot of time investigating the
+        issue but have been unable to identify the root cause yet.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/GPUProcess.mm:
+        (TEST):
+
 2020-12-01  Sergey Rubanov  <chi187@gmail.com>
 
         Add Sergey Rubanov to contributors.json
