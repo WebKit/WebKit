@@ -1,5 +1,55 @@
 2020-12-01  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r269954. rdar://problem/71836563
+
+    RenderTreeBuilderBlock using an incorrect anonymous parent to attach a new renderer
+    https://bugs.webkit.org/show_bug.cgi?id=218505
+    
+    Reviewed by Antti Koivisto.
+    
+    Let's consider the following simplified render tree:
+    
+    PARENT
+    |___beforeChildAnonymousContainer
+        |___hierarchy of anonymous blocks
+            |___beforeChild
+    
+    When RenderTreeBuilderBlock is attaching a new renderer given PARENT and beforeChild, it first tries to attach it to the PARENT
+    if beforeChild is a direct child of PARENT. Otherwise it assumes that beforeChild is the direct child of an anonymous block which is
+    in between PARENT and beforeChild. However in some cases, as the one presented above, beforeChild might have a whole hierarchy of
+    anonymous blocks in between. That's why we cannot assume that beforeChild->parent() is a direct child of PARENT. Instead we should use
+    beforeChildAnonymousContainer as the parent of the new renderer.
+    
+    * rendering/updating/RenderTreeBuilderBlock.cpp:
+    (WebCore::RenderTreeBuilder::Block::attachIgnoringContinuation): Use beforeChildAnonymousContainer instead of beforeChild->parent().
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@269954 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-11-17  Sergio Villar Senin  <svillar@igalia.com>
+
+            RenderTreeBuilderBlock using an incorrect anonymous parent to attach a new renderer
+            https://bugs.webkit.org/show_bug.cgi?id=218505
+
+            Reviewed by Antti Koivisto.
+
+            Let's consider the following simplified render tree:
+
+            PARENT
+            |___beforeChildAnonymousContainer
+                |___hierarchy of anonymous blocks
+                    |___beforeChild
+
+            When RenderTreeBuilderBlock is attaching a new renderer given PARENT and beforeChild, it first tries to attach it to the PARENT
+            if beforeChild is a direct child of PARENT. Otherwise it assumes that beforeChild is the direct child of an anonymous block which is
+            in between PARENT and beforeChild. However in some cases, as the one presented above, beforeChild might have a whole hierarchy of
+            anonymous blocks in between. That's why we cannot assume that beforeChild->parent() is a direct child of PARENT. Instead we should use
+            beforeChildAnonymousContainer as the parent of the new renderer.
+
+            * rendering/updating/RenderTreeBuilderBlock.cpp:
+            (WebCore::RenderTreeBuilder::Block::attachIgnoringContinuation): Use beforeChildAnonymousContainer instead of beforeChild->parent().
+
+2020-12-01  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r269695. rdar://problem/71836652
 
     Protect ScheduledURLNavigation member
