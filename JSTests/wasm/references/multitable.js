@@ -304,7 +304,7 @@ assert.throws(() => new WebAssembly.Instance(new WebAssembly.Module((new Builder
             .Function("ret42", { params: [], ret: "i32" })
               .I32Const(42)
             .End()
-          .End().WebAssembly().get())), Error, "WebAssembly.Module doesn't parse at byte 41: Table 0 must have type 'funcref' to have an element section (evaluating 'new WebAssembly.Module')")
+          .End().WebAssembly().get())), Error, "WebAssembly.Module doesn't parse at byte 42: Table 0 must have type 'funcref' to have an element section (evaluating 'new WebAssembly.Module')")
 
 assert.throws(() => new WebAssembly.Instance(new WebAssembly.Module((new Builder())
           .Type().End()

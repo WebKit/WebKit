@@ -1,3 +1,30 @@
+2020-12-02  Dmitry Bezhetskov  <dbezhetskov@igalia.com>
+
+        [WASM-References] Add support for active mods in element section
+        https://bugs.webkit.org/show_bug.cgi?id=219192
+
+        Reviewed by Yusuke Suzuki.
+        
+        Adjust wasm parser to parse new form of element section.
+        https://webassembly.github.io/reference-types/core/binary/modules.html#element-section.
+
+        * wasm/WasmEntryPlan.cpp:
+        (JSC::Wasm::EntryPlan::prepare):
+        * wasm/WasmFormat.h:
+        (JSC::Wasm::Element::Element):
+        (JSC::Wasm::Element::active const):
+        * wasm/WasmSectionParser.cpp:
+        (JSC::Wasm::SectionParser::parseElement):
+        (JSC::Wasm::SectionParser::validateElementTableIdx):
+        (JSC::Wasm::SectionParser::parseI32InitExpr):
+        (JSC::Wasm::SectionParser::parseElemKind):
+        (JSC::Wasm::SectionParser::parseIndexCountForElemSection):
+        (JSC::Wasm::SectionParser::parseFuncIdxFromRefExpForElemSection):
+        (JSC::Wasm::SectionParser::parseFuncIdxForElemSection):
+        * wasm/WasmSectionParser.h:
+        * wasm/js/WebAssemblyModuleRecord.cpp:
+        (JSC::WebAssemblyModuleRecord::evaluate):
+
 2020-12-01  Sergey Rubanov  <chi187@gmail.com>
 
         Fix Aarch64 build failure

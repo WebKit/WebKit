@@ -594,8 +594,8 @@ export default class Builder {
                     const s = this._addSection(section);
                     const elementBuilder = {
                         End: () => this,
-                        Element: ({tableIndex = 0, offset, functionIndices}) => {
-                            s.data.push({tableIndex, offset, functionIndices});
+                        Element: ({tableIndex = 0, offset, elemkind = 0, functionIndices}) => {
+                            s.data.push({tableIndex, offset, elemkind, functionIndices});
                             return _errorHandlingProxyFor(elementBuilder);
                         }
                     };

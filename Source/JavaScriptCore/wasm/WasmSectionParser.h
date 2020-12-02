@@ -67,6 +67,13 @@ private:
     PartialResult WARN_UNUSED_RETURN parseResizableLimits(uint32_t& initial, Optional<uint32_t>& maximum, bool& isShared, LimitsType);
     PartialResult WARN_UNUSED_RETURN parseInitExpr(uint8_t&, uint64_t&, Type& initExprType);
 
+    PartialResult WARN_UNUSED_RETURN validateElementTableIdx(uint32_t);
+    PartialResult WARN_UNUSED_RETURN parseI32InitExpr(Optional<I32InitExpr>&);
+    PartialResult WARN_UNUSED_RETURN parseElementKind(uint8_t& elementKind);
+    PartialResult WARN_UNUSED_RETURN parseIndexCountForElementSection(uint32_t&, const unsigned);
+    PartialResult WARN_UNUSED_RETURN parseFuncIdxFromRefExpForElementSection(uint32_t&, const unsigned, const unsigned);
+    PartialResult WARN_UNUSED_RETURN parseFuncIdxForElementSection(uint32_t&, const unsigned, const unsigned);
+
     size_t m_offsetInSource;
     Ref<ModuleInformation> m_info;
 };

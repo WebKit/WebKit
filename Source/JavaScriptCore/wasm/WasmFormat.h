@@ -38,6 +38,7 @@
 #include "WasmOps.h"
 #include "WasmPageCount.h"
 #include "WasmSignature.h"
+#include <cstdint>
 #include <limits>
 #include <memory>
 #include <wtf/Optional.h>
@@ -226,13 +227,34 @@ struct Segment {
 
 struct Element {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
-    Element(uint32_t tableIndex, I32InitExpr offset)
-        : tableIndex(tableIndex)
-        , offset(offset)
+
+    // nullFuncIndex represents the case when an element segment (of type funcref)
+    // contains a null element.
+    constexpr static uint32_t nullFuncIndex = UINT32_MAX;
+
+    enum class Kind : uint8_t {
+        Active,
+        Passive,
+        Declared,
+    };
+
+    Element(Element::Kind kind, TableElementType elementType, uint32_t tableIndex, Optional<I32InitExpr> initExpr)
+        : kind(kind)
+        , elementType(elementType)
+        , tableIndex(tableIndex)
+        , offsetIfActive(initExpr)
     { }
 
+    bool isActive() const { return kind == Kind::Active; }
+
+    static bool isNullFuncIndex(uint32_t idx) { return idx == nullFuncIndex; }
+
+    Kind kind;
+    TableElementType elementType;
     uint32_t tableIndex;
-    I32InitExpr offset;
+    Optional<I32InitExpr> offsetIfActive;
+
+    // Index may be nullFuncIndex.
     Vector<uint32_t> functionIndices;
 };
 

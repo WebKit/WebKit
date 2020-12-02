@@ -1,3 +1,29 @@
+2020-12-02  Dmitry Bezhetskov  <dbezhetskov@igalia.com>
+
+        [WASM-References] Add support for active mods in element section
+        https://bugs.webkit.org/show_bug.cgi?id=219192
+
+        Reviewed by Yusuke Suzuki.
+        
+        Fix builder dsl to produce the right element section.
+        It produces correct wasm code for the previous spec and for the ref-types spec because the core spec is binary compatible with the ref-types.
+        https://webassembly.github.io/reference-types/core/binary/modules.html#element-section.
+        Added basic tests for the element section.
+
+
+        * wasm/Builder.js:
+        (export.default.Builder.prototype._registerSectionBuilders.const.section.in.WASM.description.section.switch.section.case.string_appeared_here.this.section):
+        * wasm/Builder_WebAssemblyBinary.js:
+        (const.emitters.Element):
+        * wasm/references-spec-tests/ref_null.js:
+        (module):
+        * wasm/references/element_active_mod.js: Added.
+        (module):
+        (basicTest):
+        (refNullExternInElemsSection):
+        * wasm/references/element_parsing.js:
+        * wasm/references/multitable.js:
+
 2020-11-30  Sergey Rubanov  <chi187@gmail.com>
 
         Add support for the Wasm i64 sign-extension-ops proposal

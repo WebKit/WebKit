@@ -62,7 +62,7 @@ function module(bytes, valid = true) {
     throw new Error("Wasm validate throws");
   }
   if (validated !== valid) {
-    //throw new Error("Wasm validate failure" + (valid ? "" : " expected"));
+    throw new Error("Wasm validate failure" + (valid ? "" : " expected"));
   }
   return new WebAssembly.Module(buffer);
 }

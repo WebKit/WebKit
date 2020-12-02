@@ -197,10 +197,13 @@ const emitters = {
     Element: (section, bin) => {
         const data = section.data;
         put(bin, "varuint32", data.length);
-        for (const {tableIndex, offset, functionIndices} of data) {
-            if (tableIndex != 0)
-                put(bin, "uint8", 2);
-            put(bin, "varuint32", tableIndex);
+        for (const {tableIndex, offset, elemkind, functionIndices} of data) {
+            let flags = tableIndex == 0 ? 0 : 2;
+            put(bin, "uint8", flags);
+
+            if (flags == 2) {
+              put(bin, "varuint32", tableIndex);
+            }
 
             let initExpr;
             if (typeof offset === "number")
@@ -208,6 +211,10 @@ const emitters = {
             else
                 initExpr = offset;
             putInitExpr(bin, initExpr);
+
+            if (flags == 2) {
+              put(bin, "uint8", elemkind);
+            }
 
             put(bin, "varuint32", functionIndices.length);
             for (const functionIndex of functionIndices)

@@ -555,9 +555,13 @@ JSValue WebAssemblyModuleRecord::evaluate(JSGlobalObject* globalObject)
             if (!element.functionIndices.size())
                 continue;
 
-            uint32_t elementIndex = element.offset.isGlobalImport()
-                ? static_cast<uint32_t>(m_instance->instance().loadI32Global(element.offset.globalImportIndex()))
-                : element.offset.constValue();
+            if (!element.isActive())
+                continue;
+
+            const auto& offset = *element.offsetIfActive;
+            const uint32_t elementIndex = offset.isGlobalImport()
+                ? static_cast<uint32_t>(m_instance->instance().loadI32Global(offset.globalImportIndex()))
+                : offset.constValue();
 
             fn(element, element.tableIndex, elementIndex);
 
@@ -604,13 +608,19 @@ JSValue WebAssemblyModuleRecord::evaluate(JSGlobalObject* globalObject)
     if (UNLIKELY(exception))
         return exception.value();
 
-    forEachElement([&] (const Wasm::Element& element, uint32_t tableIndex, uint32_t elementIndex) {
+    forEachElement([&] (const Wasm::Element& element, uint32_t tableIndex, uint32_t startElementIndex) {
         for (uint32_t i = 0; i < element.functionIndices.size(); ++i) {
+            const uint32_t elementIndex = startElementIndex + i;
+            const uint32_t functionIndex = element.functionIndices[i];
+            if (Wasm::Element::isNullFuncIndex(functionIndex)) {
+                m_instance->table(tableIndex)->clear(elementIndex);
+                continue;
+            }
+
             // FIXME: This essentially means we're exporting an import.
             // We need a story here. We need to create a WebAssemblyFunction
             // for the import.
             // https://bugs.webkit.org/show_bug.cgi?id=165510
-            uint32_t functionIndex = element.functionIndices[i];
             Wasm::SignatureIndex signatureIndex = module.signatureIndexFromFunctionIndexSpace(functionIndex);
             if (functionIndex < codeBlock->functionImportCount()) {
                 JSObject* functionImport = m_instance->instance().importFunction<WriteBarrier<JSObject>>(functionIndex)->get();
@@ -621,13 +631,11 @@ JSValue WebAssemblyModuleRecord::evaluate(JSGlobalObject* globalObject)
                     // the only type this could be is WebAssemblyFunction.
                     RELEASE_ASSERT(wasmFunction);
                     m_instance->table(tableIndex)->set(elementIndex, wasmFunction);
-                    ++elementIndex;
                     continue;
                 }
 
                 m_instance->table(tableIndex)->set(elementIndex,
                     WebAssemblyWrapperFunction::create(vm, globalObject, globalObject->webAssemblyWrapperFunctionStructure(), functionImport, functionIndex, m_instance.get(), signatureIndex));
-                ++elementIndex;
                 continue;
             }
 
@@ -640,9 +648,7 @@ JSValue WebAssemblyModuleRecord::evaluate(JSGlobalObject* globalObject)
             // https://bugs.webkit.org/show_bug.cgi?id=165825
             WebAssemblyFunction* function = WebAssemblyFunction::create(
                 vm, globalObject, globalObject->webAssemblyFunctionStructure(), signature.argumentCount(), String(), m_instance.get(), embedderEntrypointCallee, entrypointLoadLocation, signatureIndex);
-
             m_instance->table(tableIndex)->set(elementIndex, function);
-            ++elementIndex;
         }
     });
 
