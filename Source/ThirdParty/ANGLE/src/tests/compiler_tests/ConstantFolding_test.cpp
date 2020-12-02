@@ -13,7 +13,7 @@ using namespace sh;
 
 // Test that zero, true or false are not found in AST when they are not expected. This is to make
 // sure that the subsequent tests run correctly.
-TEST_F(ConstantFoldingExpressionTest, FoldFloatTestSanityCheck)
+TEST_F(ConstantFoldingExpressionTest, FoldFloatTestCheck)
 {
     const std::string &floatString = "1.0";
     evaluateFloat(floatString);

@@ -110,6 +110,9 @@ struct alignas(4) SamplerDesc
     uint8_t mipFilter : 2;
 
     uint8_t maxAnisotropy : 5;
+
+    // Use uint8_t instead of MTLCompareFunction to compact space
+    uint8_t compareFunction : 3;
 };
 
 struct VertexAttributeDesc
@@ -206,6 +209,8 @@ struct RenderPipelineOutputDesc
 {
     bool operator==(const RenderPipelineOutputDesc &rhs) const;
 
+    void updateEnabledDrawBuffers(gl::DrawBufferMask enabledBuffers);
+
     RenderPipelineColorAttachmentDesc colorAttachments[kMaxRenderTargets];
 
     // Use uint16_t instead of MTLPixelFormat to compact space
@@ -231,6 +236,28 @@ constexpr PrimitiveTopologyClass kPrimitiveTopologyClassTriangle =
 constexpr PrimitiveTopologyClass kPrimitiveTopologyClassPoint = MTLPrimitiveTopologyClassPoint;
 #endif
 
+enum class RenderPipelineRasterization : uint32_t
+{
+    // This flag is used for vertex shader not writing any stage output (e.g gl_Position).
+    // This will disable fragment shader stage. This is useful for transform feedback ouput vertex
+    // shader.
+    Disabled,
+
+    // Fragment shader is enabled.
+    Enabled,
+
+    // This flag is for rasterization discard emulation when vertex shader still writes to stage
+    // output. Disabled flag cannot be used in this case since Metal doesn't allow that. The
+    // emulation would insert a code snippet to move gl_Position out of clip space's visible area to
+    // simulate the discard.
+    EmulatedDiscard,
+
+    EnumCount,
+};
+
+template <typename T>
+using RenderPipelineRasterStateMap = angle::PackedEnumMap<RenderPipelineRasterization, T>;
+
 struct alignas(4) RenderPipelineDesc
 {
     RenderPipelineDesc();
@@ -243,6 +270,8 @@ struct alignas(4) RenderPipelineDesc
 
     size_t hash() const;
 
+    bool rasterizationEnabled() const;
+
     VertexDesc vertexDescriptor;
 
     RenderPipelineOutputDesc outputDescriptor;
@@ -250,12 +279,12 @@ struct alignas(4) RenderPipelineDesc
     // Use uint8_t instead of PrimitiveTopologyClass to compact space.
     uint8_t inputPrimitiveTopology : 2;
 
-    bool rasterizationEnabled : 1;
     bool alphaToCoverageEnabled : 1;
 
     // These flags are for emulation and do not correspond to any flags in
     // MTLRenderPipelineDescriptor descriptor. These flags should be used by
     // RenderPipelineCacheSpecializeShaderFactory.
+    RenderPipelineRasterization rasterizationType : 2;
     bool emulateCoverageMask : 1;
 };
 
@@ -274,8 +303,11 @@ struct RenderPassAttachmentDesc
     // Implicit multisample texture that will be rendered into and discarded at the end of
     // a render pass. Its result will be resolved into normal texture above.
     TextureRef implicitMSTexture;
-    uint32_t level;
+    MipmapNativeLevel level;
     uint32_t sliceOrDepth;
+
+    // This attachment is blendable or not.
+    bool blendable;
 
     MTLLoadAction loadAction;
     MTLStoreAction storeAction;

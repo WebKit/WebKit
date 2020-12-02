@@ -93,7 +93,7 @@ buffer_struct_template = """{{{buffer}, {vk_buffer_format}, {vk_buffer_format_is
 
 buffer_fallback_template = """{{
 static constexpr BufferFormatInitInfo kInfo[] = {{{buffer_list}}};
-initBufferFallback(renderer, kInfo, ArraySize(kInfo));
+initBufferFallback(renderer, kInfo, ArraySize(kInfo), {buffer_compressed_offset});
 }}"""
 
 
@@ -155,9 +155,17 @@ def gen_format_case(angle, internal_format, vk_json_data):
         fallbacks = vk_fallbacks.get(format, {}).get(type, [])
         if not isinstance(fallbacks, list):
             fallbacks = [fallbacks]
-        if format not in vk_map:
-            return fallbacks
-        return [format] + fallbacks
+
+        compressed = vk_fallbacks.get(format, {}).get(type + "_compressed", [])
+        if not isinstance(compressed, list):
+            compressed = [compressed]
+
+        fallbacks += compressed
+
+        if format in vk_map:
+            fallbacks = [format] + fallbacks
+
+        return (fallbacks, len(fallbacks) - len(compressed))
 
     def image_args(format):
         return dict(
@@ -176,7 +184,7 @@ def gen_format_case(angle, internal_format, vk_json_data):
             vertex_load_converts='false' if angle == format else 'true',
         )
 
-    images = get_formats(angle, "image")
+    images, images_compressed_offset = get_formats(angle, "image")
     if len(images) == 1:
         args.update(image_template=image_basic_template)
         args.update(image_args(images[0]))
@@ -185,7 +193,7 @@ def gen_format_case(angle, internal_format, vk_json_data):
             image_template=image_fallback_template,
             image_list=", ".join(image_struct_template.format(**image_args(i)) for i in images))
 
-    buffers = get_formats(angle, "buffer")
+    buffers, buffers_compressed_offset = get_formats(angle, "buffer")
     if len(buffers) == 1:
         args.update(buffer_template=buffer_basic_template)
         args.update(buffer_args(buffers[0]))
@@ -193,7 +201,8 @@ def gen_format_case(angle, internal_format, vk_json_data):
         args.update(
             buffer_template=buffer_fallback_template,
             buffer_list=", ".join(
-                buffer_struct_template.format(**buffer_args(i)) for i in buffers))
+                buffer_struct_template.format(**buffer_args(i)) for i in buffers),
+            buffer_compressed_offset=buffers_compressed_offset)
 
     return format_entry_template.format(**args).format(**args)
 

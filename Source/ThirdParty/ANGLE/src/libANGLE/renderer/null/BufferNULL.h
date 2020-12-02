@@ -23,6 +23,12 @@ class BufferNULL : public BufferImpl
     BufferNULL(const gl::BufferState &state, AllocationTrackerNULL *allocationTracker);
     ~BufferNULL() override;
 
+    angle::Result setDataWithUsageFlags(const gl::Context *context,
+                                        gl::BufferBinding target,
+                                        const void *data,
+                                        size_t size,
+                                        gl::BufferUsage usage,
+                                        GLbitfield flags) override;
     angle::Result setData(const gl::Context *context,
                           gl::BufferBinding target,
                           const void *data,

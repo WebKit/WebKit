@@ -1,3 +1,12 @@
+2020-12-02  James Darpinian  <jdarpinian@chromium.org>
+
+        Update ANGLE 2020-11-12
+        https://bugs.webkit.org/show_bug.cgi?id=218877
+
+        Reviewed by Kenneth Russell.
+
+        * webgl/2.0.0/conformance2/textures/misc/tex-mipmap-levels-expected.txt: Test fixed.
+
 2020-12-01  Lauro Moura  <lmoura@igalia.com>
 
         [GLIB] Add some WPE-specific baselines

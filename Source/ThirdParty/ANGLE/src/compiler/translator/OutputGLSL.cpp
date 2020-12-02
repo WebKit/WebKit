@@ -117,7 +117,8 @@ ImmutableString TOutputGLSL::translateTextureFunction(const ImmutableString &nam
         "textureCubeLodEXT", "textureLod", "texture2DGradEXT", "textureGrad",
         "texture2DProjGradEXT", "textureProjGrad", "textureCubeGradEXT", "textureGrad", "texture3D",
         "texture", "texture3DProj", "textureProj", "texture3DLod", "textureLod", "texture3DProjLod",
-        "textureProjLod", nullptr, nullptr};
+        "textureProjLod", "shadow2DEXT", "texture", "shadow2DProjEXT", "textureProj", nullptr,
+        nullptr};
     const char **mapping =
         (sh::IsGLSL130OrNewer(getShaderOutput())) ? legacyToCoreRename : simpleRename;
 

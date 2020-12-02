@@ -2,6 +2,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+import("../../../gni/angle.gni")
+
 config("volk_config") {
   include_dirs = [ "." ]
 }
@@ -12,5 +14,6 @@ source_set("volk") {
     "volk.h",
   ]
   public_configs = [ ":volk_config" ]
+  configs += [ "$angle_root:angle_no_cfi_icall" ]
   public_deps = [ "../../../third_party/vulkan-headers/src:vulkan_headers" ]
 }

@@ -1150,10 +1150,10 @@ void main()
 })";
 
     constexpr char kFragmentShader[] = R"(#version 300 es
-out mediump float dummy;
+out mediump float unused;
 void main()
 {
-    dummy = 1.0;
+    unused = 1.0;
 })";
 
     std::vector<std::string> tfVaryings = {"valueOut"};
@@ -2803,6 +2803,70 @@ void main()
     blendAndVerifyColor(GLColor32F(1.0f, 0.0f, 0.0f, 0.5f), GLColor(127, 127, 127, 191));
 }
 
+// Tests that invalidate then compute write works inside PPO
+TEST_P(SimpleStateChangeTestES31, InvalidateThenStorageWriteThenBlendPpo)
+{
+    // Fails on AMD OpenGL Windows. This configuration isn't maintained.
+    ANGLE_SKIP_TEST_IF(IsWindows() && IsAMD() && IsOpenGL());
+    // PPOs are only supported in the Vulkan backend
+    ANGLE_SKIP_TEST_IF(!isVulkanRenderer());
+
+    constexpr char kCS[] = R"(#version 310 es
+layout(local_size_x=1, local_size_y=1) in;
+layout (rgba8, binding = 1) writeonly uniform highp image2D dstImage;
+void main()
+{
+    imageStore(dstImage, ivec2(gl_GlobalInvocationID.xy), vec4(0.0f, 1.0f, 1.0f, 1.0f));
+})";
+
+    GLProgramPipeline pipeline;
+    ANGLE_GL_COMPUTE_PROGRAM(program, kCS);
+    glProgramParameteri(program, GL_PROGRAM_SEPARABLE, GL_TRUE);
+    glUseProgramStages(pipeline, GL_COMPUTE_SHADER_BIT, program);
+    EXPECT_GL_NO_ERROR();
+    glBindProgramPipeline(pipeline);
+    EXPECT_GL_NO_ERROR();
+    glUseProgram(0);
+
+    // Create the framebuffer texture
+    GLTexture renderTarget;
+    glBindTexture(GL_TEXTURE_2D, renderTarget);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, 1, 1);
+    glBindImageTexture(1, renderTarget, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA8);
+
+    // Write to the texture with compute once.  In the Vulkan backend, this will make sure the image
+    // is already created with STORAGE usage and avoids recreate later.
+    glDispatchCompute(1, 1, 1);
+    EXPECT_GL_NO_ERROR();
+
+    // Create the framebuffer that will be invalidated
+    GLFramebuffer drawFBO;
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, drawFBO);
+    glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, renderTarget,
+                           0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_DRAW_FRAMEBUFFER);
+
+    EXPECT_GL_NO_ERROR();
+
+    // Clear the framebuffer and invalidate it.
+    glClearColor(1.0f, 1.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    GLenum invalidateAttachment = GL_COLOR_ATTACHMENT0;
+    glInvalidateFramebuffer(GL_DRAW_FRAMEBUFFER, 1, &invalidateAttachment);
+    EXPECT_GL_NO_ERROR();
+
+    // Write to it with a compute shader
+    glDispatchCompute(1, 1, 1);
+    EXPECT_GL_NO_ERROR();
+
+    glMemoryBarrier(GL_FRAMEBUFFER_BARRIER_BIT);
+
+    // Blend into the framebuffer, then verify that the framebuffer should have had cyan.
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, drawFBO);
+    blendAndVerifyColor(GLColor32F(1.0f, 0.0f, 0.0f, 0.5f), GLColor(127, 127, 127, 191));
+}
+
 // Tests that sub-invalidate then draw works.
 TEST_P(SimpleStateChangeTestES3, SubInvalidateThenDraw)
 {
@@ -3103,6 +3167,62 @@ TEST_P(SimpleStateChangeTestES3, ClearThenNoopClearThenRebindAttachment)
     // a framebuffer sync state, which extracts deferred clears.  However, as the clear is actually
     // a noop, the deferred clears will remain unflushed.
     glClear(0);
+
+    // Change framebuffer's attachment to the other texture.
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture1, 0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    // A bogus draw to make sure the render pass is cleared in the Vulkan backend.
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::Blue());
+    glUseProgram(program);
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_ZERO, GL_ONE);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5);
+    EXPECT_GL_NO_ERROR();
+
+    // Expect red, which is the original contents of texture1.  If the clear is mistakenly applied
+    // to the new attachment, green will be read back.
+    EXPECT_PIXEL_COLOR_EQ(0, 0, kInitColor1);
+
+    // Attach back to texture2.  It should be cleared to green.
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture2, 0);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+}
+
+// Test that clear followed by rebind of framebuffer attachment works (with 0-sized scissor clear in
+// between).
+TEST_P(SimpleStateChangeTestES3, ClearThenZeroSizeScissoredClearThenRebindAttachment)
+{
+    // Create a texture with red
+    const GLColor kInitColor1 = GLColor::red;
+    GLTexture texture1;
+    glBindTexture(GL_TEXTURE_2D, texture1);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, &kInitColor1);
+
+    // Create a framebuffer to be cleared
+    GLTexture texture2;
+    glBindTexture(GL_TEXTURE_2D, texture2);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+
+    GLFramebuffer drawFBO;
+    glBindFramebuffer(GL_FRAMEBUFFER, drawFBO);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture2, 0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    EXPECT_GL_NO_ERROR();
+
+    // Clear the framebuffer to green
+    glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // Clear again, but in a way that would be a no-op.  In the Vulkan backend, this will result in
+    // a framebuffer sync state, which extracts deferred clears.  However, as the clear is actually
+    // a noop, the deferred clears will remain unflushed.
+    glEnable(GL_SCISSOR_TEST);
+    glScissor(0, 0, 0, 0);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glDisable(GL_SCISSOR_TEST);
 
     // Change framebuffer's attachment to the other texture.
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture1, 0);
@@ -3661,7 +3781,7 @@ void main()
     glUseProgram(program);
     glUniform1i(s1loc, 0);
     glUniform1i(s2loc, 1);
-    // Draw. This first draw is a sanitycheck and not really necessary for the test
+    // Draw. This first draw is a confidence check and not really necessary for the test
     drawQuad(program, std::string(essl1_shaders::PositionAttrib()), 0.5f);
     ASSERT_GL_NO_ERROR();
 
@@ -4050,8 +4170,8 @@ class RobustBufferAccessWebGL2ValidationStateChangeTest : public WebGL2Validatio
   protected:
     RobustBufferAccessWebGL2ValidationStateChangeTest()
     {
-        // SwS/OSX GL do not support robustness.
-        if (!isSwiftshader() && !IsOSX())
+        // SwS/OSX GL do not support robustness. Mali does not support it.
+        if (!isSwiftshader() && !IsOSX() && !IsARM())
         {
             setRobustAccess(true);
         }
@@ -4442,6 +4562,9 @@ TEST_P(WebGL2ValidationStateChangeTest, MultiAttachmentDrawFramebufferNegativeAP
 {
     // Crashes on 64-bit Android.  http://anglebug.com/3878
     ANGLE_SKIP_TEST_IF(IsVulkan() && IsAndroid());
+
+    // http://anglebug.com/5233
+    ANGLE_SKIP_TEST_IF(IsMetal());
 
     // Set up a program that writes to two outputs: one int and one float.
     constexpr char kVS[] = R"(#version 300 es
@@ -5652,6 +5775,9 @@ TEST_P(RobustBufferAccessWebGL2ValidationStateChangeTest, BindZeroSizeBufferThen
     // no intent to follow up on this failure.
     ANGLE_SKIP_TEST_IF(IsOSX());
 
+    // Mali does not support robustness now.
+    ANGLE_SKIP_TEST_IF(IsARM());
+
     std::vector<GLubyte> data(48, 1);
 
     ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Passthrough(), essl1_shaders::fs::Red());
@@ -5677,6 +5803,25 @@ TEST_P(RobustBufferAccessWebGL2ValidationStateChangeTest, BindZeroSizeBufferThen
     ASSERT_GL_NO_ERROR();
 }
 
+// Tests DrawElements with an empty buffer using a VAO.
+TEST_P(WebGL2ValidationStateChangeTest, DrawElementsEmptyVertexArray)
+{
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
+
+    glUseProgram(program);
+
+    // Draw with empty buffer. Out of range but valid.
+    GLBuffer buffer;
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffer);
+    glDrawElements(GL_TRIANGLES, 0, GL_UNSIGNED_SHORT, reinterpret_cast<const GLvoid *>(0x1000));
+
+    // Switch VAO. No buffer bound, should be an error.
+    GLVertexArray vao;
+    glBindVertexArray(vao);
+    glDrawElements(GL_LINE_STRIP, 0x1000, GL_UNSIGNED_SHORT,
+                   reinterpret_cast<const GLvoid *>(0x1000));
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+}
 }  // anonymous namespace
 
 ANGLE_INSTANTIATE_TEST_ES2(StateChangeTest);

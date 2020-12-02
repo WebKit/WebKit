@@ -82,7 +82,8 @@ class FramebufferMtl : public FramebufferImpl
 
     angle::Result syncState(const gl::Context *context,
                             GLenum binding,
-                            const gl::Framebuffer::DirtyBits &dirtyBits) override;
+                            const gl::Framebuffer::DirtyBits &dirtyBits,
+                            gl::Command command) override;
 
     angle::Result getSamplePosition(const gl::Context *context,
                                     size_t index,
@@ -114,12 +115,20 @@ class FramebufferMtl : public FramebufferImpl
     angle::Result readPixelsImpl(const gl::Context *context,
                                  const gl::Rectangle &area,
                                  const PackPixelsParams &packPixelsParams,
-                                 RenderTargetMtl *renderTarget,
-                                 uint8_t *pixels);
+                                 const RenderTargetMtl *renderTarget,
+                                 uint8_t *pixels) const;
 
   private:
     void reset();
+    bool checkPackedDepthStencilAttachment() const;
     angle::Result invalidateImpl(ContextMtl *contextMtl, size_t count, const GLenum *attachments);
+    angle::Result blitWithDraw(const gl::Context *context,
+                               FramebufferMtl *srcFrameBuffer,
+                               bool blitColorBuffer,
+                               bool blitDepthBuffer,
+                               bool blitStencilBuffer,
+                               GLenum filter,
+                               const mtl::BlitParams &baseParams);
     angle::Result clearImpl(const gl::Context *context,
                             gl::DrawBufferMask clearColorBuffers,
                             mtl::ClearRectParams *clearOpts);
@@ -127,6 +136,15 @@ class FramebufferMtl : public FramebufferImpl
     angle::Result clearWithLoadOp(const gl::Context *context,
                                   gl::DrawBufferMask clearColorBuffers,
                                   const mtl::ClearRectParams &clearOpts);
+
+    angle::Result clearWithLoadOpRenderPassNotStarted(const gl::Context *context,
+                                                      gl::DrawBufferMask clearColorBuffers,
+                                                      const mtl::ClearRectParams &clearOpts);
+
+    angle::Result clearWithLoadOpRenderPassStarted(const gl::Context *context,
+                                                   gl::DrawBufferMask clearColorBuffers,
+                                                   const mtl::ClearRectParams &clearOpts,
+                                                   mtl::RenderCommandEncoder *encoder);
 
     angle::Result clearWithDraw(const gl::Context *context,
                                 gl::DrawBufferMask clearColorBuffers,
@@ -144,16 +162,17 @@ class FramebufferMtl : public FramebufferImpl
     mtl::RenderCommandEncoder *ensureRenderPassStarted(const gl::Context *context,
                                                        const mtl::RenderPassDesc &desc);
 
-    void overrideClearColor(const mtl::TextureRef &texture,
-                            MTLClearColor clearColor,
-                            MTLClearColor *colorOut);
-
     angle::Result updateColorRenderTarget(const gl::Context *context, size_t colorIndexGL);
     angle::Result updateDepthRenderTarget(const gl::Context *context);
     angle::Result updateStencilRenderTarget(const gl::Context *context);
     angle::Result updateCachedRenderTarget(const gl::Context *context,
                                            const gl::FramebufferAttachment *attachment,
                                            RenderTargetMtl **cachedRenderTarget);
+
+    angle::Result readPixelsToPBO(const gl::Context *context,
+                                  const gl::Rectangle &area,
+                                  const PackPixelsParams &packPixelsParams,
+                                  const RenderTargetMtl *renderTarget) const;
 
     // NOTE: we cannot use RenderTargetCache here because it doesn't support separate
     // depth & stencil attachments as of now. Separate depth & stencil could be useful to
@@ -162,6 +181,9 @@ class FramebufferMtl : public FramebufferImpl
     RenderTargetMtl *mDepthRenderTarget   = nullptr;
     RenderTargetMtl *mStencilRenderTarget = nullptr;
     mtl::RenderPassDesc mRenderPassDesc;
+
+    const mtl::Format *mRenderPassFirstColorAttachmentFormat = nullptr;
+    bool mRenderPassAttachmentsSameColorType                 = false;
 
     // Flag indicating the render pass start is a clean start or a resume from interruption such
     // as by a compute pass.

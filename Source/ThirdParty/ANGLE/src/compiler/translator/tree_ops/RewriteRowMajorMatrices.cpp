@@ -185,7 +185,7 @@ TOperator GetIndexOp(TIntermNode *node)
 }
 
 bool IsConvertedField(TIntermTyped *indexNode,
-                      const std::unordered_map<const TField *, bool> &convertedFields)
+                      const angle::HashMap<const TField *, bool> &convertedFields)
 {
     TIntermBinary *asBinary = indexNode->getAsBinaryNode();
     if (asBinary == nullptr)
@@ -261,7 +261,10 @@ class TransformArrayHelper
         // The last value is unused, and is not present.
         TVector<unsigned int> accumulatedArraySizes(arraySizes.size() - 1);
 
-        accumulatedArraySizes[0] = arraySizes[0];
+        if (accumulatedArraySizes.size() > 0)
+        {
+            accumulatedArraySizes[0] = arraySizes[0];
+        }
         for (size_t index = 1; index + 1 < arraySizes.size(); ++index)
         {
             accumulatedArraySizes[index] = accumulatedArraySizes[index - 1] * arraySizes[index];
@@ -529,9 +532,9 @@ class RewriteRowMajorMatricesTraverser : public TIntermTraverser
     TIntermSequence *getStructCopyFunctions() { return &mOuterPass.copyFunctionDefinitions; }
 
   private:
-    typedef std::unordered_map<const TStructure *, StructConversionData> StructMap;
-    typedef std::unordered_map<const TVariable *, TVariable *> InterfaceBlockMap;
-    typedef std::unordered_map<const TField *, bool> InterfaceBlockFieldConverted;
+    typedef angle::HashMap<const TStructure *, StructConversionData> StructMap;
+    typedef angle::HashMap<const TVariable *, TVariable *> InterfaceBlockMap;
+    typedef angle::HashMap<const TField *, bool> InterfaceBlockFieldConverted;
 
     RewriteRowMajorMatricesTraverser(
         TSymbolTable *symbolTable,

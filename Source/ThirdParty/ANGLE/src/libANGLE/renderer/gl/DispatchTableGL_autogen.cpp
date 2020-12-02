@@ -1798,6 +1798,7 @@ void DispatchTableGL::initProcsDesktopGL(const gl::Version &version,
     if (extensions.count("GL_EXT_texture_buffer_object") != 0)
     {
         ASSIGN("glTexBufferEXT", texBuffer);
+        ASSIGN("glTexBufferEXT", texBufferEXT);
     }
 
     if (extensions.count("GL_EXT_texture_integer") != 0)
@@ -2458,7 +2459,9 @@ void DispatchTableGL::initProcsGLES(const gl::Version &version,
     if (extensions.count("GL_EXT_texture_buffer") != 0)
     {
         ASSIGN("glTexBufferEXT", texBuffer);
+        ASSIGN("glTexBufferEXT", texBufferEXT);
         ASSIGN("glTexBufferRangeEXT", texBufferRange);
+        ASSIGN("glTexBufferRangeEXT", texBufferRangeEXT);
     }
 
     if (extensions.count("GL_EXT_texture_storage") != 0)
@@ -2589,7 +2592,9 @@ void DispatchTableGL::initProcsGLES(const gl::Version &version,
     if (extensions.count("GL_OES_texture_buffer") != 0)
     {
         ASSIGN("glTexBufferOES", texBuffer);
+        ASSIGN("glTexBufferOES", texBufferOES);
         ASSIGN("glTexBufferRangeOES", texBufferRange);
+        ASSIGN("glTexBufferRangeOES", texBufferRangeOES);
     }
 
     if (extensions.count("GL_OES_texture_storage_multisample_2d_array") != 0)
@@ -4562,7 +4567,8 @@ void DispatchTableGL::initProcsDesktopGLNULL(const gl::Version &version,
 
     if (extensions.count("GL_EXT_texture_buffer_object") != 0)
     {
-        texBuffer = &glTexBufferNULL;
+        texBuffer    = &glTexBufferNULL;
+        texBufferEXT = &glTexBufferEXTNULL;
     }
 
     if (extensions.count("GL_EXT_texture_integer") != 0)
@@ -5222,8 +5228,10 @@ void DispatchTableGL::initProcsGLESNULL(const gl::Version &version,
 
     if (extensions.count("GL_EXT_texture_buffer") != 0)
     {
-        texBuffer      = &glTexBufferNULL;
-        texBufferRange = &glTexBufferRangeNULL;
+        texBuffer         = &glTexBufferNULL;
+        texBufferEXT      = &glTexBufferEXTNULL;
+        texBufferRange    = &glTexBufferRangeNULL;
+        texBufferRangeEXT = &glTexBufferRangeEXTNULL;
     }
 
     if (extensions.count("GL_EXT_texture_storage") != 0)
@@ -5353,8 +5361,10 @@ void DispatchTableGL::initProcsGLESNULL(const gl::Version &version,
 
     if (extensions.count("GL_OES_texture_buffer") != 0)
     {
-        texBuffer      = &glTexBufferNULL;
-        texBufferRange = &glTexBufferRangeNULL;
+        texBuffer         = &glTexBufferNULL;
+        texBufferOES      = &glTexBufferOESNULL;
+        texBufferRange    = &glTexBufferRangeNULL;
+        texBufferRangeOES = &glTexBufferRangeOESNULL;
     }
 
     if (extensions.count("GL_OES_texture_storage_multisample_2d_array") != 0)

@@ -108,14 +108,14 @@ TEST_P(DebugTest, InsertMessage)
 
     GLint messageLength = 0;
     glGetIntegerv(GL_DEBUG_NEXT_LOGGED_MESSAGE_LENGTH, &messageLength);
-    EXPECT_EQ(static_cast<GLint>(message.length()), messageLength);
+    EXPECT_EQ(static_cast<GLint>(message.length()) + 1, messageLength);
 
     GLenum sourceBuf   = 0;
     GLenum typeBuf     = 0;
     GLenum idBuf       = 0;
     GLenum severityBuf = 0;
     GLsizei lengthBuf  = 0;
-    std::vector<char> messageBuf(messageLength + 1);
+    std::vector<char> messageBuf(messageLength);
     GLuint ret =
         glGetDebugMessageLogKHR(1, static_cast<GLsizei>(messageBuf.size()), &sourceBuf, &typeBuf,
                                 &idBuf, &severityBuf, &lengthBuf, messageBuf.data());
@@ -165,14 +165,14 @@ TEST_P(DebugTest, InsertMessageMultiple)
 
         GLint messageLength = 0;
         glGetIntegerv(GL_DEBUG_NEXT_LOGGED_MESSAGE_LENGTH, &messageLength);
-        EXPECT_EQ(static_cast<GLint>(expectedMessage.length()), messageLength);
+        EXPECT_EQ(static_cast<GLint>(expectedMessage.length()) + 1, messageLength);
 
         GLenum sourceBuf   = 0;
         GLenum typeBuf     = 0;
         GLenum idBuf       = 0;
         GLenum severityBuf = 0;
         GLsizei lengthBuf  = 0;
-        std::vector<char> messageBuf(messageLength + 1);
+        std::vector<char> messageBuf(messageLength);
         GLuint ret =
             glGetDebugMessageLogKHR(1, static_cast<GLsizei>(messageBuf.size()), &sourceBuf,
                                     &typeBuf, &idBuf, &severityBuf, &lengthBuf, messageBuf.data());

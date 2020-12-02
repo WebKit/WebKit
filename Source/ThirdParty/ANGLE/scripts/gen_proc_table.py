@@ -104,7 +104,7 @@ def main():
 
     glesxml = registry_xml.RegistryXML('gl.xml', 'gl_angle_ext.xml')
 
-    for annotation in ["2_0", "3_0", "3_1", "1_0"]:
+    for annotation in ["2_0", "3_0", "3_1", "3_2", "1_0"]:
 
         name_prefix = "GL_ES_VERSION_"
         if annotation[0] == '1':

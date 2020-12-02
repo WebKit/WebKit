@@ -83,7 +83,8 @@ class FramebufferGL : public FramebufferImpl
 
     angle::Result syncState(const gl::Context *context,
                             GLenum binding,
-                            const gl::Framebuffer::DirtyBits &dirtyBits) override;
+                            const gl::Framebuffer::DirtyBits &dirtyBits,
+                            gl::Command command) override;
 
     GLuint getFramebufferID() const;
     bool isDefault() const;

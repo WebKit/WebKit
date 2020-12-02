@@ -9,11 +9,11 @@
 
 #include "libANGLE/renderer/gl/cgl/ContextCGL.h"
 
-#if defined(ANGLE_PLATFORM_MACOS) || defined(ANGLE_PLATFORM_MACCATALYST)
-
 #include "libANGLE/Context.h"
 #include "libANGLE/Display.h"
 #include "libANGLE/renderer/gl/cgl/DisplayCGL.h"
+
+#if defined(ANGLE_PLATFORM_MACOS) || defined(ANGLE_PLATFORM_MACCATALYST)
 
 namespace rx
 {
@@ -23,7 +23,7 @@ ContextCGL::ContextCGL(DisplayCGL *display,
                        gl::ErrorSet *errorSet,
                        const std::shared_ptr<RendererGL> &renderer,
                        bool usesDiscreteGPU)
-    : ContextGL(state, errorSet, renderer),
+    : ContextGL(state, errorSet, renderer, RobustnessVideoMemoryPurgeStatus::NOT_REQUESTED),
       mUsesDiscreteGpu(usesDiscreteGPU),
       mReleasedDiscreteGpu(false)
 {

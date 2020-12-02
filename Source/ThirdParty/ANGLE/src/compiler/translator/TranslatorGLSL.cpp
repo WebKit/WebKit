@@ -255,6 +255,7 @@ void TranslatorGLSL::writeVersion(TIntermNode *root)
 void TranslatorGLSL::writeExtensionBehavior(TIntermNode *root, ShCompileOptions compileOptions)
 {
     bool usesTextureCubeMapArray = false;
+    bool usesTextureBuffer       = false;
 
     TInfoSinkBase &sink                   = getInfoSink().obj;
     const TExtensionBehavior &extBehavior = getExtensionBehavior();
@@ -314,6 +315,13 @@ void TranslatorGLSL::writeExtensionBehavior(TIntermNode *root, ShCompileOptions 
         {
             usesTextureCubeMapArray = true;
         }
+
+        if ((iter.first == TExtension::OES_texture_buffer ||
+             iter.first == TExtension::EXT_texture_buffer) &&
+            (iter.second == EBhRequire || iter.second == EBhEnable))
+        {
+            usesTextureBuffer = true;
+        }
     }
 
     // GLSL ES 3 explicit location qualifiers need to use an extension before GLSL 330
@@ -346,6 +354,20 @@ void TranslatorGLSL::writeExtensionBehavior(TIntermNode *root, ShCompileOptions 
         {
             sink << "#extension GL_OES_texture_cube_map_array : enable\n";
             sink << "#extension GL_EXT_texture_cube_map_array : enable\n";
+        }
+    }
+
+    if (usesTextureBuffer)
+    {
+        if (getOutputType() >= SH_GLSL_COMPATIBILITY_OUTPUT &&
+            getOutputType() < SH_GLSL_400_CORE_OUTPUT)
+        {
+            sink << "#extension GL_ARB_texture_buffer_objects : enable\n";
+        }
+        else if (getOutputType() == SH_ESSL_OUTPUT && getShaderVersion() < 320)
+        {
+            sink << "#extension GL_OES_texture_buffer : enable\n";
+            sink << "#extension GL_EXT_texture_buffer : enable\n";
         }
     }
 

@@ -38,6 +38,8 @@ if (enable_java_templates) {
       forward_variables_from(invoker, "*")
       android_manifest = manifest_path
       android_manifest_dep = ":$manifest_target_name"
+      version_code = invoker.version_code
+      version_name = invoker.version_name
       min_sdk_version = 26
       target_sdk_version = 28
       deps = [ ":${invoker.package_name}_assets" ]

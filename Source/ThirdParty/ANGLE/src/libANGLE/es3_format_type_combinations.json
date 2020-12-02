@@ -176,5 +176,9 @@
     [
         [ "GL_RGBA",               "GL_RGBA",            "GL_UNSIGNED_INT_2_10_10_10_REV" ],
         [ "GL_RGB",                "GL_RGB",             "GL_UNSIGNED_INT_2_10_10_10_REV" ]
+    ],
+    "From GL_OES_texture_stencil8":
+    [
+        [ "GL_STENCIL_INDEX8", "GL_STENCIL_INDEX", "GL_UNSIGNED_BYTE" ]
     ]
 }

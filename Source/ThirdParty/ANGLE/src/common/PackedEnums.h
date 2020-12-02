@@ -223,6 +223,8 @@ TextureType SamplerTypeToTextureType(GLenum samplerType);
 bool IsMultisampled(gl::TextureType type);
 bool IsArrayTextureType(gl::TextureType type);
 
+bool IsStaticBufferUsage(BufferUsage useage);
+
 enum class PrimitiveMode : uint8_t
 {
     Points                 = 0x0,

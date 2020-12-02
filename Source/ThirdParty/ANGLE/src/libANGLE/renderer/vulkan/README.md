@@ -26,25 +26,25 @@ of a front-end OpenGL Context. ContextVk processes state changes and handles act
 
 The back-end records commands into command buffers via the the following `ContextVk` APIs:
 
- * `endRenderPassAndGetCommandBuffer`: returns a secondary command buffer *outside* a RenderPass instance.
+ * `getOutsideRenderPassCommandBuffer`: returns a secondary command buffer *outside* a RenderPass instance.
  * `flushAndBeginRenderPass`: returns a secondary command buffer *inside* a RenderPass instance.
- * `flushAndGetPrimaryCommandBuffer`: returns the primary command buffer. You should rarely need this API.
 
 *Note*: All of these commands may write out (aka flush) prior pending commands into a primary
-command buffer. When a RenderPass is open `endRenderPassAndGetCommandBuffer` will flush the
+command buffer. When a RenderPass is open `getOutsideRenderPassCommandBuffer` will flush the
 pending RenderPass commands. `flushAndBeginRenderPass` will flush out pending commands outside a
 RenderPass to a primary buffer. On submit ANGLE submits the primary command buffer to a `VkQueue`.
 
 If you need to record inside a RenderPass, use `flushAndBeginRenderPass`. Otherwise, use
-`endRenderPassAndGetCommandBuffer`. You should rarely need to call `flushAndGetPrimaryCommandBuffer`.
-It's there for commands like debug labels, barriers and queries that need to be recorded serially on
-the primary command buffer.
+`getOutsideRenderPassCommandBuffer`.
 
-The back-end usually records Image and Buffer barriers through additional `ContextVk` APIs:
+The back-end (mostly) records Image and Buffer barriers through additional `ContextVk` APIs:
 
- * `onBufferTransferRead/onBufferComputeShaderRead` and `onBufferTransferWrite/onBufferComputeShaderWrite` accumulate `VkBuffer` barriers.
- * `onImageRead` and `onImageWrite` accumulate `VkImage` barriers.
- * `onRenderPassImageWrite` is a special API for write barriers inside a RenderPass instance.
+ * `onBufferTransferRead` and `onBufferComputeShaderRead` accumulate `VkBuffer` read barriers.
+ * `onBufferTransferWrite` and `onBufferComputeShaderWrite` accumulate `VkBuffer` write barriers.
+ * `onBuffferSelfCopy` is a special case for `VkBuffer` self copies. It behaves the same as write.
+ * `onImageTransferRead` and `onImageComputerShadeRead` accumulate `VkImage` read barriers.
+ * `onImageTransferWrite` and `onImageComputerShadeWrite` accumulate `VkImage` write barriers.
+ * `onImageRenderPassRead` and `onImageRenderPassWrite` accumulate `VkImage` barriers inside a started RenderPass.
 
 After the back-end records commands to the primary buffer we flush (e.g. on swap) or when we call
 `ContextVk::finishToSerial`.
@@ -62,7 +62,7 @@ In this example we'll be recording a buffer copy command:
 
     # Get a pointer to a secondary command buffer for command recording. May "flush" the RP.
     vk::CommandBuffer *commandBuffer;
-    ANGLE_TRY(contextVk->endRenderPassAndGetCommandBuffer(&commandBuffer));
+    ANGLE_TRY(contextVk->getOutsideRenderPassCommandBuffer(&commandBuffer));
 
     # Record the copy command into the secondary buffer. We're done!
     commandBuffer->copyBuffer(srcBuffer->getBuffer(), destBuffer->getBuffer(), copyCount, copies);
@@ -76,6 +76,7 @@ More implementation details can be found in the `doc` directory:
 - [Shader Module Compilation](doc/ShaderModuleCompilation.md)
 - [OpenGL Line Segment Rasterization](doc/OpenGLLineSegmentRasterization.md)
 - [Format Tables and Emulation](doc/FormatTablesAndEmulation.md)
+- [Deferred Clears](doc/DeferredClears.md)
 
 [VkDevice]: https://www.khronos.org/registry/vulkan/specs/1.1-extensions/man/html/VkDevice.html
 [VkQueue]: https://www.khronos.org/registry/vulkan/specs/1.1-extensions/man/html/VkQueue.html

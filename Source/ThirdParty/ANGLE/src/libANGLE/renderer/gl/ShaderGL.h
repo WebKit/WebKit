@@ -19,7 +19,7 @@ enum class MultiviewImplementationTypeGL;
 class ShaderGL : public ShaderImpl
 {
   public:
-    ShaderGL(const gl::ShaderState &data,
+    ShaderGL(const gl::ShaderState &state,
              GLuint shaderID,
              MultiviewImplementationTypeGL multiviewImplementationType,
              const std::shared_ptr<RendererGL> &renderer);

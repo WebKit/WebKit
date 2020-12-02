@@ -12,6 +12,7 @@
 #include <X11/Xutil.h>
 #include <xcb/xcb.h>
 
+#include "common/system_utils.h"
 #include "libANGLE/Display.h"
 #include "libANGLE/renderer/vulkan/vk_caps_utils.h"
 #include "libANGLE/renderer/vulkan/xcb/WindowSurfaceVkXcb.h"
@@ -86,12 +87,31 @@ SurfaceImpl *DisplayVkXcb::createWindowSurfaceVk(const egl::SurfaceState &state,
 
 egl::ConfigSet DisplayVkXcb::generateConfigs()
 {
-    constexpr GLenum kColorFormats[] = {GL_BGRA8_EXT};
-    return egl_vk::GenerateConfigs(kColorFormats, egl_vk::kConfigDepthStencilFormats, this);
+    const std::array<GLenum, 1> kColorFormats = {GL_BGRA8_EXT};
+
+    std::vector<GLenum> depthStencilFormats(
+        egl_vk::kConfigDepthStencilFormats,
+        egl_vk::kConfigDepthStencilFormats + ArraySize(egl_vk::kConfigDepthStencilFormats));
+
+    if (getCaps().stencil8)
+    {
+        depthStencilFormats.push_back(GL_STENCIL_INDEX8);
+    }
+    return egl_vk::GenerateConfigs(kColorFormats.data(), kColorFormats.size(),
+                                   depthStencilFormats.data(), depthStencilFormats.size(), this);
 }
 
-bool DisplayVkXcb::checkConfigSupport(egl::Config *config)
+void DisplayVkXcb::checkConfigSupport(egl::Config *config)
 {
+    // If no window system, cannot support windows.
+    static bool sNoX11Display = angle::GetEnvironmentVar("DISPLAY").empty();
+    if (sNoX11Display)
+    {
+        // No window support if no X11.
+        config->surfaceType &= ~EGL_WINDOW_BIT;
+        return;
+    }
+
     // TODO(geofflang): Test for native support and modify the config accordingly.
     // http://anglebug.com/2692
 
@@ -105,8 +125,6 @@ bool DisplayVkXcb::checkConfigSupport(egl::Config *config)
     // Visual id is root_visual of the screen
     config->nativeVisualID   = screen->root_visual;
     config->nativeVisualType = GetXcbVisualType(screen);
-
-    return true;
 }
 
 const char *DisplayVkXcb::getWSIExtension() const

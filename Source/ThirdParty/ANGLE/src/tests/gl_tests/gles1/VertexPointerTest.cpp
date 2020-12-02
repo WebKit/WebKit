@@ -64,4 +64,35 @@ TEST_P(VertexPointerTest, AssignRetrieve)
     }
 }
 
+// Checks that we can assign to client side vertex arrays with color vertex attributes of type
+// GLubyte
+TEST_P(VertexPointerTest, AssignRetrieveColorUnsignedByte)
+{
+    std::vector<float> testVertexAttribute = {
+        1.0f,
+        1.0f,
+        1.0f,
+        1.0f,
+    };
+
+    std::vector<GLubyte> testColorAttribute = {
+        1,
+        1,
+        1,
+        1,
+    };
+
+    glVertexPointer(4, GL_FLOAT, 0, testVertexAttribute.data());
+    EXPECT_GL_NO_ERROR();
+
+    void *ptr = nullptr;
+    glGetPointerv(GL_VERTEX_ARRAY_POINTER, &ptr);
+    EXPECT_EQ(testVertexAttribute.data(), ptr);
+
+    glColorPointer(4, GL_UNSIGNED_BYTE, 0, testColorAttribute.data());
+    glGetPointerv(GL_COLOR_ARRAY_POINTER, &ptr);
+    EXPECT_EQ(testColorAttribute.data(), ptr);
+    ASSERT_GL_NO_ERROR();
+}
+
 ANGLE_INSTANTIATE_TEST_ES1(VertexPointerTest);

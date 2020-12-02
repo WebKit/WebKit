@@ -25,7 +25,7 @@ for i in range(2, len(sys.argv)):
         if os.path.isfile(f):
             os.remove(f)
 
-# touch a dummy file to keep a timestamp
+# touch an unused file to keep a timestamp
 with open(stamp_file, "w") as f:
     f.write("blah")
     f.close()

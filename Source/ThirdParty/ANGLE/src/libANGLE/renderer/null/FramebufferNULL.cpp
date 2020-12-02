@@ -158,7 +158,8 @@ bool FramebufferNULL::checkStatus(const gl::Context *context) const
 
 angle::Result FramebufferNULL::syncState(const gl::Context *context,
                                          GLenum binding,
-                                         const gl::Framebuffer::DirtyBits &dirtyBits)
+                                         const gl::Framebuffer::DirtyBits &dirtyBits,
+                                         gl::Command command)
 {
     return angle::Result::Continue;
 }

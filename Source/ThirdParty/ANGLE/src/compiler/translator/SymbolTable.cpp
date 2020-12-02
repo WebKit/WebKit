@@ -431,6 +431,13 @@ void TSymbolTable::initializeBuiltIns(sh::GLenum type,
     // It isn't specified whether Sampler2DRect has default precision.
     initSamplerDefaultPrecision(EbtSampler2DRect);
 
+    if (spec < SH_GLES3_SPEC)
+    {
+        // Only set the default precision of shadow samplers in ESLL1. They become core in ESSL3
+        // where they do not have a defalut precision.
+        initSamplerDefaultPrecision(EbtSampler2DShadow);
+    }
+
     setDefaultPrecision(EbtAtomicCounter, EbpHigh);
 
     initializeBuiltInVariables(type, spec, resources);

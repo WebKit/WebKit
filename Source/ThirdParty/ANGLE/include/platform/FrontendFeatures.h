@@ -49,6 +49,22 @@ struct FrontendFeatures : angle::FeatureSetBase
         "scalarize_vec_and_mat_constructor_args", angle::FeatureCategory::FrontendWorkarounds,
         "Always rewrite vec/mat constructors to be consistent", &members,
         "http://crbug.com/398694"};
+
+    // Disable support for GL_OES_get_program_binary
+    angle::Feature disableProgramBinary = {
+        "disable_program_binary", angle::FeatureCategory::FrontendFeatures,
+        "Disable support for GL_OES_get_program_binary", &members, "http://anglebug.com/5007"};
+
+    // Allow disabling of GL_EXT_texture_filter_anisotropic through a runtime feature for
+    // performance comparisons.
+    angle::Feature disableAnisotropicFiltering = {
+        "disable_anisotropic_filtering", angle::FeatureCategory::FrontendWorkarounds,
+        "Disable support for anisotropic filtering", &members};
+
+    // We can use this feature to override compressed format support for portability.
+    angle::Feature allowCompressedFormats = {"allow_compressed_formats",
+                                             angle::FeatureCategory::FrontendWorkarounds,
+                                             "Allow compressed formats", &members};
 };
 
 inline FrontendFeatures::FrontendFeatures()  = default;

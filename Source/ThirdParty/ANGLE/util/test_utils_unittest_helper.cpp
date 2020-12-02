@@ -12,15 +12,25 @@
 
 #include <string.h>
 
+// This variable is also defined in angle_unittest_main.
+bool gVerbose = false;
+
 int main(int argc, char **argv)
 {
+    bool runTestSuite = false;
+
     for (int argIndex = 1; argIndex < argc; ++argIndex)
     {
         if (strcmp(argv[argIndex], kRunTestSuite) == 0)
         {
-            angle::TestSuite testSuite(&argc, argv);
-            return testSuite.run();
+            runTestSuite = true;
         }
+    }
+
+    if (runTestSuite)
+    {
+        angle::TestSuite testSuite(&argc, argv);
+        return testSuite.run();
     }
 
     if (argc != 3 || strcmp(argv[1], kRunAppTestArg1) != 0 || strcmp(argv[2], kRunAppTestArg2) != 0)

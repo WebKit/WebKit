@@ -20,17 +20,18 @@ RenderbufferNULL::~RenderbufferNULL() {}
 
 angle::Result RenderbufferNULL::setStorage(const gl::Context *context,
                                            GLenum internalformat,
-                                           size_t width,
-                                           size_t height)
+                                           GLsizei width,
+                                           GLsizei height)
 {
     return angle::Result::Continue;
 }
 
 angle::Result RenderbufferNULL::setStorageMultisample(const gl::Context *context,
-                                                      size_t samples,
+                                                      GLsizei samples,
                                                       GLenum internalformat,
-                                                      size_t width,
-                                                      size_t height)
+                                                      GLsizei width,
+                                                      GLsizei height,
+                                                      gl::MultisamplingMode mode)
 {
     return angle::Result::Continue;
 }

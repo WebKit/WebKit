@@ -212,20 +212,6 @@ InterleavedAttributeDataParams D3D11Params()
     return params;
 }
 
-InterleavedAttributeDataParams D3D11_9_3Params()
-{
-    InterleavedAttributeDataParams params;
-    params.eglParameters = egl_platform::D3D11_FL9_3();
-    return params;
-}
-
-InterleavedAttributeDataParams D3D9Params()
-{
-    InterleavedAttributeDataParams params;
-    params.eglParameters = egl_platform::D3D9();
-    return params;
-}
-
 InterleavedAttributeDataParams OpenGLOrGLESParams()
 {
     InterleavedAttributeDataParams params;
@@ -242,8 +228,6 @@ InterleavedAttributeDataParams VulkanParams()
 
 ANGLE_INSTANTIATE_TEST(InterleavedAttributeDataBenchmark,
                        D3D11Params(),
-                       D3D11_9_3Params(),
-                       D3D9Params(),
                        OpenGLOrGLESParams(),
                        VulkanParams());
 

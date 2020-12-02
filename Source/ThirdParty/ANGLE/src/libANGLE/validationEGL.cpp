@@ -652,9 +652,10 @@ Error ValidateGetPlatformDisplayCommon(EGLenum platform,
                         case EGL_TRUE:
                             break;
                         default:
-                            return EglBadAttribute() << "Invalid value for "
-                                                        "EGL_PLATFORM_ANGLE_DEVICE_CONTEXT_VOLATILE_"
-                                                        "EAGL_ANGLE attrib";
+                            return EglBadAttribute()
+                                   << "Invalid value for "
+                                      "EGL_PLATFORM_ANGLE_DEVICE_CONTEXT_VOLATILE_"
+                                      "EAGL_ANGLE attrib";
                     }
                     break;
                 case EGL_PLATFORM_ANGLE_DEVICE_CONTEXT_VOLATILE_CGL_ANGLE:
@@ -666,9 +667,10 @@ Error ValidateGetPlatformDisplayCommon(EGLenum platform,
                         case EGL_TRUE:
                             break;
                         default:
-                            return EglBadAttribute() << "Invalid value for "
-                                                        "EGL_PLATFORM_ANGLE_DEVICE_CONTEXT_VOLATILE_"
-                                                        "CGL_ANGLE attrib";
+                            return EglBadAttribute()
+                                   << "Invalid value for "
+                                      "EGL_PLATFORM_ANGLE_DEVICE_CONTEXT_VOLATILE_"
+                                      "CGL_ANGLE attrib";
                     }
                     break;
                 default:
@@ -1306,6 +1308,27 @@ Error ValidateCreateContext(Display *display,
                 }
                 break;
 
+            case EGL_DISPLAY_SEMAPHORE_SHARE_GROUP_ANGLE:
+                if (!display->getExtensions().displayTextureShareGroup)
+                {
+                    return EglBadAttribute() << "Attribute "
+                                                "EGL_DISPLAY_SEMAPHORE_SHARE_GROUP_ANGLE requires "
+                                                "EGL_ANGLE_display_semaphore_share_group.";
+                }
+                if (value != EGL_TRUE && value != EGL_FALSE)
+                {
+                    return EglBadAttribute() << "EGL_DISPLAY_SEMAPHORE_SHARE_GROUP_ANGLE must be "
+                                                "EGL_TRUE or EGL_FALSE.";
+                }
+                if (shareContext &&
+                    (shareContext->usingDisplaySemaphoreShareGroup() != (value == EGL_TRUE)))
+                {
+                    return EglBadAttribute() << "All contexts within a share group must be "
+                                                "created with the same value of "
+                                                "EGL_DISPLAY_SEMAPHORE_SHARE_GROUP_ANGLE.";
+                }
+                break;
+
             case EGL_CONTEXT_CLIENT_ARRAYS_ENABLED_ANGLE:
                 if (!display->getExtensions().createContextClientArrays)
                 {
@@ -1409,6 +1432,20 @@ Error ValidateCreateContext(Display *display,
                                                     "must be one of: EGL_CONTEXT_PRIORITY_LOW_IMG, "
                                                     "EGL_CONTEXT_PRIORITY_MEDIUM_IMG, or "
                                                     "EGL_CONTEXT_PRIORITY_HIGH_IMG.";
+                }
+                break;
+
+            case EGL_GENERATE_RESET_ON_VIDEO_MEMORY_PURGE_NV:
+                if (!display->getExtensions().robustnessVideoMemoryPurgeNV)
+                {
+                    return EglBadAttribute()
+                           << "Attribute EGL_GENERATE_RESET_ON_VIDEO_MEMORY_PURGE_NV requires "
+                              "extension EGL_NV_robustness_video_memory_purge.";
+                }
+                if (value != EGL_TRUE && value != EGL_FALSE)
+                {
+                    return EglBadAttribute() << "EGL_GENERATE_RESET_ON_VIDEO_MEMORY_PURGE_NV must "
+                                                "be either EGL_TRUE or EGL_FALSE.";
                 }
                 break;
 
@@ -2812,13 +2849,49 @@ Error ValidateCreateSyncBase(const Display *display,
             {
                 return EglBadAttribute() << "Invalid attribute";
             }
+
+            if (!display->getExtensions().fenceSync)
+            {
+                return EglBadMatch() << "EGL_KHR_fence_sync extension is not available";
+            }
+
+            if (display != currentDisplay)
+            {
+                return EglBadMatch() << "CreateSync can only be called on the current display";
+            }
+
+            ANGLE_TRY(ValidateContext(currentDisplay, currentContext));
+
+            if (!currentContext->getExtensions().eglSyncOES)
+            {
+                return EglBadMatch() << "EGL_SYNC_FENCE_KHR cannot be used without "
+                                        "GL_OES_EGL_sync support.";
+            }
             break;
 
         case EGL_SYNC_NATIVE_FENCE_ANDROID:
+            if (!display->getExtensions().fenceSync)
+            {
+                return EglBadMatch() << "EGL_KHR_fence_sync extension is not available";
+            }
+
             if (!display->getExtensions().nativeFenceSyncANDROID)
             {
                 return EglBadDisplay()
                        << "EGL_ANDROID_native_fence_sync extension is not available.";
+            }
+
+            if (display != currentDisplay)
+            {
+                return EglBadMatch() << "CreateSync can only be called on the current display";
+            }
+
+            ANGLE_TRY(ValidateContext(currentDisplay, currentContext));
+
+            if (!currentContext->getExtensions().eglSyncOES)
+            {
+                return EglBadMatch() << "EGL_SYNC_FENCE_KHR cannot be used without "
+                                        "GL_OES_EGL_sync support.";
             }
 
             for (const auto &attributeIter : attribs)
@@ -2836,6 +2909,18 @@ Error ValidateCreateSyncBase(const Display *display,
             }
             break;
 
+        case EGL_SYNC_REUSABLE_KHR:
+            if (!attribs.isEmpty())
+            {
+                return EglBadAttribute() << "Invalid attribute";
+            }
+
+            if (!display->getExtensions().reusableSyncKHR)
+            {
+                return EglBadMatch() << "EGL_KHR_reusable_sync extension is not available.";
+            }
+            break;
+
         default:
             if (isExt)
             {
@@ -2845,19 +2930,6 @@ Error ValidateCreateSyncBase(const Display *display,
             {
                 return EglBadParameter() << "Invalid type parameter";
             }
-    }
-
-    if (display != currentDisplay)
-    {
-        return EglBadMatch() << "CreateSync can only be called on the current display";
-    }
-
-    ANGLE_TRY(ValidateContext(currentDisplay, currentContext));
-
-    if (!currentContext->getExtensions().eglSyncOES)
-    {
-        return EglBadMatch() << "EGL_SYNC_FENCE_KHR cannot be used without "
-                                "GL_OES_EGL_sync support.";
     }
 
     return NoError();
@@ -2900,14 +2972,6 @@ Error ValidateCreateSyncKHR(const Display *display,
                             const Display *currentDisplay,
                             const gl::Context *currentContext)
 {
-    ANGLE_TRY(ValidateDisplay(display));
-
-    const DisplayExtensions &extensions = display->getExtensions();
-    if (!extensions.fenceSync)
-    {
-        return EglBadAccess() << "EGL_KHR_fence_sync extension is not available";
-    }
-
     return ValidateCreateSyncBase(display, type, attribs, currentDisplay, currentContext, true);
 }
 
@@ -4527,6 +4591,65 @@ Error ValidateGetNativeClientBufferANDROID(const AHardwareBuffer *buffer)
     return NoError();
 }
 
+Error ValidateCreateNativeClientBufferANDROID(const egl::AttributeMap &attribMap)
+{
+    int width     = attribMap.getAsInt(EGL_WIDTH, 0);
+    int height    = attribMap.getAsInt(EGL_HEIGHT, 0);
+    int redSize   = attribMap.getAsInt(EGL_RED_SIZE, 0);
+    int greenSize = attribMap.getAsInt(EGL_GREEN_SIZE, 0);
+    int blueSize  = attribMap.getAsInt(EGL_BLUE_SIZE, 0);
+    int alphaSize = attribMap.getAsInt(EGL_ALPHA_SIZE, 0);
+    int usage     = attribMap.getAsInt(EGL_NATIVE_BUFFER_USAGE_ANDROID, 0);
+
+    for (AttributeMap::const_iterator attributeIter = attribMap.begin();
+         attributeIter != attribMap.end(); attributeIter++)
+    {
+        EGLAttrib attribute = attributeIter->first;
+        switch (attribute)
+        {
+            case EGL_WIDTH:
+            case EGL_HEIGHT:
+                // Validation done after the switch statement
+                break;
+            case EGL_RED_SIZE:
+            case EGL_GREEN_SIZE:
+            case EGL_BLUE_SIZE:
+            case EGL_ALPHA_SIZE:
+                if (redSize < 0 || greenSize < 0 || blueSize < 0 || alphaSize < 0)
+                {
+                    return EglBadParameter() << "incorrect channel size requested";
+                }
+                break;
+            case EGL_NATIVE_BUFFER_USAGE_ANDROID:
+                // The buffer must be used for either a texture or a renderbuffer.
+                if ((usage & ~(EGL_NATIVE_BUFFER_USAGE_PROTECTED_BIT_ANDROID |
+                               EGL_NATIVE_BUFFER_USAGE_RENDERBUFFER_BIT_ANDROID |
+                               EGL_NATIVE_BUFFER_USAGE_TEXTURE_BIT_ANDROID)) != 0)
+                {
+                    return EglBadParameter() << "invalid usage flag";
+                }
+                break;
+            case EGL_NONE:
+                break;
+            default:
+                return EglBadAttribute() << "invalid attribute";
+        }
+    }
+
+    // Validate EGL_WIDTH and EGL_HEIGHT values passed in. Done here to account
+    // for the case where EGL_WIDTH and EGL_HEIGHT were not part of the attribute list.
+    if (width <= 0 || height <= 0)
+    {
+        return EglBadParameter() << "incorrect buffer dimensions requested";
+    }
+
+    if (gl::GetAndroidHardwareBufferFormatFromChannelSizes(attribMap) == 0)
+    {
+        return EglBadParameter() << "unsupported format";
+    }
+    return NoError();
+}
+
 Error ValidateDupNativeFenceFDANDROID(const Display *display, const Sync *sync)
 {
     ANGLE_TRY(ValidateDisplay(display));
@@ -4556,4 +4679,29 @@ Error ValidateSwapBuffersWithFrameTokenANGLE(const Display *display,
 
     return NoError();
 }
+
+Error ValidateSignalSyncKHR(const Display *display, const Sync *sync, EGLint mode)
+{
+    ANGLE_TRY(ValidateDisplay(display));
+
+    ANGLE_TRY(ValidateSync(display, sync));
+
+    if (sync->getType() == EGL_SYNC_REUSABLE_KHR)
+    {
+        if (!display->getExtensions().reusableSyncKHR)
+        {
+            return EglBadMatch() << "EGL_KHR_reusable_sync extension is not available.";
+        }
+
+        if ((mode != EGL_SIGNALED_KHR) && (mode != EGL_UNSIGNALED_KHR))
+        {
+            return EglBadParameter() << "eglSignalSyncKHR invalid mode.";
+        }
+
+        return NoError();
+    }
+
+    return EglBadMatch();
+}
+
 }  // namespace egl

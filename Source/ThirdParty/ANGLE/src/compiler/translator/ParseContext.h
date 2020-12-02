@@ -441,6 +441,7 @@ class TParseContext : angle::NonCopyable
     void checkImageMemoryAccessForUserDefinedFunctions(const TFunction *functionDefinition,
                                                        const TIntermAggregate *functionCall);
     void checkAtomicMemoryBuiltinFunctions(TIntermAggregate *functionCall);
+    void checkInterpolationFS(TIntermAggregate *functionCall);
 
     // fnCall is only storing the built-in op, and function name or constructor type. arguments
     // has the arguments.
@@ -545,6 +546,9 @@ class TParseContext : angle::NonCopyable
     void checkUniformLocationInRange(const TSourceLoc &location,
                                      int objectLocationCount,
                                      const TLayoutQualifier &layoutQualifier);
+    void checkAttributeLocationInRange(const TSourceLoc &location,
+                                       int objectLocationCount,
+                                       const TLayoutQualifier &layoutQualifier);
 
     void checkYuvIsNotSpecified(const TSourceLoc &location, bool yuv);
 
@@ -653,6 +657,7 @@ class TParseContext : angle::NonCopyable
     int mMaxCombinedTextureImageUnits;
     int mMaxUniformLocations;
     int mMaxUniformBufferBindings;
+    int mMaxVertexAttribs;
     int mMaxAtomicCounterBindings;
     int mMaxShaderStorageBufferBindings;
 

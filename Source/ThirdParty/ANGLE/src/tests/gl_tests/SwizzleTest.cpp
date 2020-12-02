@@ -97,6 +97,12 @@ void main()
         glDeleteTextures(1, &mTexture);
     }
 
+    bool isTextureSwizzleAvailable() const
+    {
+        // On Metal back-end, texture swizzle is not always supported.
+        return !IsMetal() || IsMetalTextureSwizzleAvailable();
+    }
+
     template <typename T>
     void init2DTexture(GLenum internalFormat, GLenum dataFormat, GLenum dataType, const T *data)
     {
@@ -116,8 +122,7 @@ void main()
     {
         glGenTextures(1, &mTexture);
         glBindTexture(GL_TEXTURE_2D, mTexture);
-        glCompressedTexImage2D(GL_TEXTURE_2D, 0, GL_COMPRESSED_RGBA_S3TC_DXT1_EXT, width, height, 0,
-                               dataSize, data);
+        glCompressedTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, dataSize, data);
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -245,6 +250,8 @@ class SwizzleIntegerTest : public SwizzleTest
 
 TEST_P(SwizzleTest, RGBA8_2D)
 {
+    ANGLE_SKIP_TEST_IF(!isTextureSwizzleAvailable());
+
     GLubyte data[] = {1, 64, 128, 200};
     init2DTexture(GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, data);
     runTest2D();
@@ -252,6 +259,8 @@ TEST_P(SwizzleTest, RGBA8_2D)
 
 TEST_P(SwizzleTest, RGB8_2D)
 {
+    ANGLE_SKIP_TEST_IF(!isTextureSwizzleAvailable());
+
     GLubyte data[] = {77, 66, 55};
     init2DTexture(GL_RGB8, GL_RGB, GL_UNSIGNED_BYTE, data);
     runTest2D();
@@ -259,6 +268,8 @@ TEST_P(SwizzleTest, RGB8_2D)
 
 TEST_P(SwizzleTest, RG8_2D)
 {
+    ANGLE_SKIP_TEST_IF(!isTextureSwizzleAvailable());
+
     GLubyte data[] = {11, 99};
     init2DTexture(GL_RG8, GL_RG, GL_UNSIGNED_BYTE, data);
     runTest2D();
@@ -266,6 +277,8 @@ TEST_P(SwizzleTest, RG8_2D)
 
 TEST_P(SwizzleTest, R8_2D)
 {
+    ANGLE_SKIP_TEST_IF(!isTextureSwizzleAvailable());
+
     GLubyte data[] = {2};
     init2DTexture(GL_R8, GL_RED, GL_UNSIGNED_BYTE, data);
     runTest2D();
@@ -273,6 +286,8 @@ TEST_P(SwizzleTest, R8_2D)
 
 TEST_P(SwizzleTest, RGB10_A2_2D)
 {
+    ANGLE_SKIP_TEST_IF(!isTextureSwizzleAvailable());
+
     GLuint data[] = {20u | (40u << 10) | (60u << 20) | (2u << 30)};
     init2DTexture(GL_RGB10_A2, GL_RGBA, GL_UNSIGNED_INT_2_10_10_10_REV, data);
     runTest2D();
@@ -280,6 +295,8 @@ TEST_P(SwizzleTest, RGB10_A2_2D)
 
 TEST_P(SwizzleTest, RGBA32F_2D)
 {
+    ANGLE_SKIP_TEST_IF(!isTextureSwizzleAvailable());
+
     GLfloat data[] = {0.25f, 0.5f, 0.75f, 0.8f};
     init2DTexture(GL_RGBA32F, GL_RGBA, GL_FLOAT, data);
     runTest2D();
@@ -287,6 +304,8 @@ TEST_P(SwizzleTest, RGBA32F_2D)
 
 TEST_P(SwizzleTest, RGB32F_2D)
 {
+    ANGLE_SKIP_TEST_IF(!isTextureSwizzleAvailable());
+
     ANGLE_SKIP_TEST_IF(IsVulkan());  // anglebug.com/2898 - float textures
     GLfloat data[] = {0.1f, 0.2f, 0.3f};
     init2DTexture(GL_RGB32F, GL_RGB, GL_FLOAT, data);
@@ -295,6 +314,8 @@ TEST_P(SwizzleTest, RGB32F_2D)
 
 TEST_P(SwizzleTest, RG32F_2D)
 {
+    ANGLE_SKIP_TEST_IF(!isTextureSwizzleAvailable());
+
     GLfloat data[] = {0.9f, 0.1f};
     init2DTexture(GL_RG32F, GL_RG, GL_FLOAT, data);
     runTest2D();
@@ -302,6 +323,8 @@ TEST_P(SwizzleTest, RG32F_2D)
 
 TEST_P(SwizzleTest, R32F_2D)
 {
+    ANGLE_SKIP_TEST_IF(!isTextureSwizzleAvailable());
+
     GLfloat data[] = {0.5f};
     init2DTexture(GL_R32F, GL_RED, GL_FLOAT, data);
     runTest2D();
@@ -309,6 +332,8 @@ TEST_P(SwizzleTest, R32F_2D)
 
 TEST_P(SwizzleTest, D32F_2D)
 {
+    ANGLE_SKIP_TEST_IF(!isTextureSwizzleAvailable());
+
     GLfloat data[] = {0.5f};
     init2DTexture(GL_DEPTH_COMPONENT32F, GL_DEPTH_COMPONENT, GL_FLOAT, data);
     runTest2D();
@@ -316,6 +341,8 @@ TEST_P(SwizzleTest, D32F_2D)
 
 TEST_P(SwizzleTest, D16_2D)
 {
+    ANGLE_SKIP_TEST_IF(!isTextureSwizzleAvailable());
+
     GLushort data[] = {0xFF};
     init2DTexture(GL_DEPTH_COMPONENT16, GL_DEPTH_COMPONENT, GL_UNSIGNED_SHORT, data);
     runTest2D();
@@ -323,6 +350,8 @@ TEST_P(SwizzleTest, D16_2D)
 
 TEST_P(SwizzleTest, D24_2D)
 {
+    ANGLE_SKIP_TEST_IF(!isTextureSwizzleAvailable());
+
     ANGLE_SKIP_TEST_IF(IsVulkan() && IsAMD() && IsWindows());  // anglebug.com/3545
     GLuint data[] = {0xFFFF};
     init2DTexture(GL_DEPTH_COMPONENT24, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, data);
@@ -331,6 +360,8 @@ TEST_P(SwizzleTest, D24_2D)
 
 TEST_P(SwizzleTest, L8_2D)
 {
+    ANGLE_SKIP_TEST_IF(!isTextureSwizzleAvailable());
+
     GLubyte data[] = {0x77};
     init2DTexture(GL_LUMINANCE, GL_LUMINANCE, GL_UNSIGNED_BYTE, data);
     runTest2D();
@@ -338,6 +369,8 @@ TEST_P(SwizzleTest, L8_2D)
 
 TEST_P(SwizzleTest, A8_2D)
 {
+    ANGLE_SKIP_TEST_IF(!isTextureSwizzleAvailable());
+
     GLubyte data[] = {0x55};
     init2DTexture(GL_ALPHA, GL_ALPHA, GL_UNSIGNED_BYTE, data);
     runTest2D();
@@ -345,6 +378,8 @@ TEST_P(SwizzleTest, A8_2D)
 
 TEST_P(SwizzleTest, LA8_2D)
 {
+    ANGLE_SKIP_TEST_IF(!isTextureSwizzleAvailable());
+
     GLubyte data[] = {0x77, 0x66};
     init2DTexture(GL_LUMINANCE_ALPHA, GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE, data);
     runTest2D();
@@ -352,6 +387,8 @@ TEST_P(SwizzleTest, LA8_2D)
 
 TEST_P(SwizzleTest, L32F_2D)
 {
+    ANGLE_SKIP_TEST_IF(!isTextureSwizzleAvailable());
+
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_texture_float"));
 
     GLfloat data[] = {0.7f};
@@ -361,6 +398,8 @@ TEST_P(SwizzleTest, L32F_2D)
 
 TEST_P(SwizzleTest, A32F_2D)
 {
+    ANGLE_SKIP_TEST_IF(!isTextureSwizzleAvailable());
+
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_texture_float"));
 
     GLfloat data[] = {
@@ -372,6 +411,8 @@ TEST_P(SwizzleTest, A32F_2D)
 
 TEST_P(SwizzleTest, LA32F_2D)
 {
+    ANGLE_SKIP_TEST_IF(!isTextureSwizzleAvailable());
+
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_texture_float"));
 
     GLfloat data[] = {
@@ -386,6 +427,8 @@ TEST_P(SwizzleTest, LA32F_2D)
 
 TEST_P(SwizzleTest, CompressedDXT_2D)
 {
+    ANGLE_SKIP_TEST_IF(!isTextureSwizzleAvailable());
+
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_compression_dxt1"));
 
     init2DCompressedTexture(GL_COMPRESSED_RGBA_S3TC_DXT1_EXT, pixel_0_width, pixel_0_height,
@@ -393,8 +436,21 @@ TEST_P(SwizzleTest, CompressedDXT_2D)
     runTest2D();
 }
 
+TEST_P(SwizzleTest, CompressedDXT1_RGB_2D)
+{
+    ANGLE_SKIP_TEST_IF(!isTextureSwizzleAvailable());
+
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_compression_dxt1"));
+
+    init2DCompressedTexture(GL_COMPRESSED_RGB_S3TC_DXT1_EXT, pixel_0_width, pixel_0_height,
+                            pixel_0_size, pixel_0_data);
+    runTest2D();
+}
+
 TEST_P(SwizzleIntegerTest, RGB8UI_2D)
 {
+    ANGLE_SKIP_TEST_IF(!isTextureSwizzleAvailable());
+
     ANGLE_SKIP_TEST_IF(IsVulkan());  // anglebug.com/3196 - integer textures
     GLubyte data[] = {77, 66, 55};
     init2DTexture(GL_RGB8UI, GL_RGB_INTEGER, GL_UNSIGNED_BYTE, data);
@@ -404,6 +460,8 @@ TEST_P(SwizzleIntegerTest, RGB8UI_2D)
 // Test that updating the texture data still generates the correct swizzles
 TEST_P(SwizzleTest, SubUpdate)
 {
+    ANGLE_SKIP_TEST_IF(!isTextureSwizzleAvailable());
+
     GLColor data(1, 64, 128, 200);
     init2DTexture(GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, &data);
 
@@ -432,7 +490,7 @@ TEST_P(SwizzleTest, SubUpdate)
     EXPECT_PIXEL_COLOR_EQ(0, 0, expectedUpdateData);
 }
 
-ANGLE_INSTANTIATE_TEST_ES3(SwizzleTest);
-ANGLE_INSTANTIATE_TEST_ES3(SwizzleIntegerTest);
+ANGLE_INSTANTIATE_TEST_ES3_AND(SwizzleTest);
+ANGLE_INSTANTIATE_TEST_ES3_AND(SwizzleIntegerTest);
 
 }  // namespace

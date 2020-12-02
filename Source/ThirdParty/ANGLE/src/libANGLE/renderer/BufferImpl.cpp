@@ -20,4 +20,14 @@ angle::Result BufferImpl::getSubData(const gl::Context *context,
     return angle::Result::Stop;
 }
 
+angle::Result BufferImpl::setDataWithUsageFlags(const gl::Context *context,
+                                                gl::BufferBinding target,
+                                                const void *data,
+                                                size_t size,
+                                                gl::BufferUsage usage,
+                                                GLbitfield flags)
+{
+    return setData(context, target, data, size, usage);
+}
+
 }  // namespace rx

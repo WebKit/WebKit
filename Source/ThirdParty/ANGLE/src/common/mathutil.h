@@ -248,8 +248,9 @@ inline unsigned short float32ToFloat11(float fp32)
     const unsigned short float11BitMask      = 0x7FF;
     const unsigned int float11ExponentBias   = 14;
 
-    const unsigned int float32Maxfloat11 = 0x477E0000;
-    const unsigned int float32Minfloat11 = 0x38800000;
+    const unsigned int float32Maxfloat11       = 0x477E0000;
+    const unsigned int float32MinNormfloat11   = 0x38800000;
+    const unsigned int float32MinDenormfloat11 = 0x35000080;
 
     const unsigned int float32Bits = bitCast<unsigned int>(fp32);
     const bool float32Sign         = (float32Bits & float32SignMask) == float32SignMask;
@@ -285,9 +286,14 @@ inline unsigned short float32ToFloat11(float fp32)
         // The number is too large to be represented as a float11, set to max
         return float11Max;
     }
+    else if (float32Val < float32MinDenormfloat11)
+    {
+        // The number is too small to be represented as a denormalized float11, set to 0
+        return 0;
+    }
     else
     {
-        if (float32Val < float32Minfloat11)
+        if (float32Val < float32MinNormfloat11)
         {
             // The number is too small to be represented as a normalized float11
             // Convert it to a denormalized value.
@@ -321,8 +327,9 @@ inline unsigned short float32ToFloat10(float fp32)
     const unsigned short float10BitMask      = 0x3FF;
     const unsigned int float10ExponentBias   = 14;
 
-    const unsigned int float32Maxfloat10 = 0x477C0000;
-    const unsigned int float32Minfloat10 = 0x38800000;
+    const unsigned int float32Maxfloat10       = 0x477C0000;
+    const unsigned int float32MinNormfloat10   = 0x38800000;
+    const unsigned int float32MinDenormfloat10 = 0x35800040;
 
     const unsigned int float32Bits = bitCast<unsigned int>(fp32);
     const bool float32Sign         = (float32Bits & float32SignMask) == float32SignMask;
@@ -340,7 +347,7 @@ inline unsigned short float32ToFloat10(float fp32)
         }
         else if (float32Sign)
         {
-            // -INF is clamped to 0 since float11 is positive only
+            // -INF is clamped to 0 since float10 is positive only
             return 0;
         }
         else
@@ -355,14 +362,19 @@ inline unsigned short float32ToFloat10(float fp32)
     }
     else if (float32Val > float32Maxfloat10)
     {
-        // The number is too large to be represented as a float11, set to max
+        // The number is too large to be represented as a float10, set to max
         return float10Max;
+    }
+    else if (float32Val < float32MinDenormfloat10)
+    {
+        // The number is too small to be represented as a denormalized float10, set to 0
+        return 0;
     }
     else
     {
-        if (float32Val < float32Minfloat10)
+        if (float32Val < float32MinNormfloat10)
         {
-            // The number is too small to be represented as a normalized float11
+            // The number is too small to be represented as a normalized float10
             // Convert it to a denormalized value.
             const unsigned int shift = (float32ExponentBias - float10ExponentBias) -
                                        (float32Val >> float32ExponentFirstBit);
@@ -371,7 +383,7 @@ inline unsigned short float32ToFloat10(float fp32)
         }
         else
         {
-            // Rebias the exponent to represent the value as a normalized float11
+            // Rebias the exponent to represent the value as a normalized float10
             float32Val += 0xC8000000;
         }
 
@@ -417,10 +429,10 @@ inline float float11ToFloat32(unsigned short fp11)
     }
 }
 
-inline float float10ToFloat32(unsigned short fp11)
+inline float float10ToFloat32(unsigned short fp10)
 {
-    unsigned short exponent = (fp11 >> 5) & 0x1F;
-    unsigned short mantissa = fp11 & 0x1F;
+    unsigned short exponent = (fp10 >> 5) & 0x1F;
+    unsigned short mantissa = fp10 & 0x1F;
 
     if (exponent == 0x1F)
     {

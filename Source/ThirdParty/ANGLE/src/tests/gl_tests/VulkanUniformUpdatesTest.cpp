@@ -39,6 +39,17 @@ class VulkanUniformUpdatesTest : public ANGLETest
         // tests. This is to ensure that the assumption that each TEST_P will recreate context.
         ASSERT(mLastContext != getEGLWindow()->getContext());
         mLastContext = getEGLWindow()->getContext();
+
+        mMaxSetsPerPool = rx::vk::DynamicDescriptorPool::GetMaxSetsPerPoolForTesting();
+        mMaxSetsPerPoolMultiplier =
+            rx::vk::DynamicDescriptorPool::GetMaxSetsPerPoolMultiplierForTesting();
+    }
+
+    void testTearDown() override
+    {
+        rx::vk::DynamicDescriptorPool::SetMaxSetsPerPoolForTesting(mMaxSetsPerPool);
+        rx::vk::DynamicDescriptorPool::SetMaxSetsPerPoolMultiplierForTesting(
+            mMaxSetsPerPoolMultiplier);
     }
 
     rx::ContextVk *hackANGLE() const
@@ -46,14 +57,6 @@ class VulkanUniformUpdatesTest : public ANGLETest
         // Hack the angle!
         const gl::Context *context = static_cast<gl::Context *>(getEGLWindow()->getContext());
         return rx::GetImplAs<rx::ContextVk>(context);
-    }
-
-    rx::ProgramVk *hackProgram(GLuint handle) const
-    {
-        // Hack the angle!
-        const gl::Context *context = static_cast<gl::Context *>(getEGLWindow()->getContext());
-        const gl::Program *program = context->getProgramResolveLink({handle});
-        return rx::vk::GetImpl(program);
     }
 
     rx::TextureVk *hackTexture(GLuint handle) const
@@ -64,33 +67,14 @@ class VulkanUniformUpdatesTest : public ANGLETest
         return rx::vk::GetImpl(texture);
     }
 
-    static constexpr uint32_t kMaxSetsForTesting = 32;
+    static constexpr uint32_t kMaxSetsForTesting           = 1;
+    static constexpr uint32_t kMaxSetsMultiplierForTesting = 1;
 
-    void limitMaxSets(GLuint program)
+    void limitMaxSets()
     {
-        rx::ContextVk *contextVk = hackANGLE();
-        rx::ProgramVk *programVk = hackProgram(program);
-
-        // Force a small limit on the max sets per pool to more easily trigger a new allocation.
-        rx::vk::DynamicDescriptorPool *uniformPool =
-            programVk->getDynamicDescriptorPool(rx::kUniformsAndXfbDescriptorSetIndex);
-        uniformPool->setMaxSetsPerPoolForTesting(kMaxSetsForTesting);
-        VkDescriptorPoolSize uniformSetSize = {VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC,
-                                               rx::kReservedDefaultUniformBindingCount};
-        (void)uniformPool->init(contextVk, &uniformSetSize, 1);
-
-        uint32_t textureCount =
-            static_cast<uint32_t>(programVk->getState().getSamplerBindings().size());
-
-        // To support the bindEmptyForUnusedDescriptorSets workaround.
-        textureCount = std::max(textureCount, 1u);
-
-        rx::vk::DynamicDescriptorPool *texturePool =
-            programVk->getDynamicDescriptorPool(rx::kTextureDescriptorSetIndex);
-        texturePool->setMaxSetsPerPoolForTesting(kMaxSetsForTesting);
-        VkDescriptorPoolSize textureSetSize = {VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-                                               textureCount};
-        (void)texturePool->init(contextVk, &textureSetSize, 1);
+        rx::vk::DynamicDescriptorPool::SetMaxSetsPerPoolForTesting(kMaxSetsForTesting);
+        rx::vk::DynamicDescriptorPool::SetMaxSetsPerPoolMultiplierForTesting(
+            kMaxSetsMultiplierForTesting);
     }
 
     static constexpr size_t kTextureStagingBufferSizeForTesting = 128;
@@ -103,6 +87,8 @@ class VulkanUniformUpdatesTest : public ANGLETest
 
   private:
     EGLContext mLastContext;
+    uint32_t mMaxSetsPerPool;
+    uint32_t mMaxSetsPerPoolMultiplier;
 };
 
 // This test updates a uniform until a new buffer is allocated and then make sure the uniform
@@ -128,7 +114,7 @@ void main()
     ANGLE_GL_PROGRAM(program, kPositionUniformVertexShader, kColorUniformFragmentShader);
     glUseProgram(program);
 
-    limitMaxSets(program);
+    limitMaxSets();
 
     // Set a really small min size so that uniform updates often allocates a new buffer.
     rx::ContextVk *contextVk = hackANGLE();
@@ -171,7 +157,7 @@ TEST_P(VulkanUniformUpdatesTest, DescriptorPoolUpdates)
     glUseProgram(program);
 
     // Force a small limit on the max sets per pool to more easily trigger a new allocation.
-    limitMaxSets(program);
+    limitMaxSets();
 
     GLint texLoc = glGetUniformLocation(program, "tex");
     ASSERT_NE(-1, texLoc);
@@ -212,7 +198,7 @@ void main()
     ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Texture2D(), kFS);
     glUseProgram(program);
 
-    limitMaxSets(program);
+    limitMaxSets();
 
     // Get uniform locations.
     GLint texLoc = glGetUniformLocation(program, "tex");
@@ -280,7 +266,7 @@ void main()
     ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Texture2D(), kFS);
     glUseProgram(program);
 
-    limitMaxSets(program);
+    limitMaxSets();
 
     // Initialize large arrays of textures.
     std::vector<GLTexture> whiteTextures;
@@ -369,8 +355,8 @@ void main()
     glUseProgram(program1);
 
     // Force a small limit on the max sets per pool to more easily trigger a new allocation.
-    limitMaxSets(program1);
-    limitMaxSets(program2);
+    limitMaxSets();
+    limitMaxSets();
 
     // Set a really small min size so that uniform updates often allocates a new buffer.
     rx::ContextVk *contextVk = hackANGLE();
@@ -513,7 +499,7 @@ void main()
     ANGLE_GL_PROGRAM(program, kPositionUniformVertexShader, kColorUniformFragmentShader);
     glUseProgram(program);
 
-    limitMaxSets(program);
+    limitMaxSets();
 
     // Set a really small min size so that every uniform update actually allocates a new buffer.
     rx::ContextVk *contextVk = hackANGLE();
@@ -613,7 +599,7 @@ void main()
     EXPECT_GL_NO_ERROR();
 
     glUseProgram(program);
-    limitMaxSets(program);
+    limitMaxSets();
     // Set a really small min size so that every uniform update actually allocates a new buffer.
     rx::ContextVk *contextVk = hackANGLE();
     contextVk->setDefaultUniformBlocksMinSizeForTesting(128);

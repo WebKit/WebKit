@@ -47,7 +47,7 @@ void *AlignedAlloc(size_t size, size_t alignment)
               << "size=" << size << ", alignment=" << alignment;
         ASSERT(false);
     }
-    // Sanity check alignment just to be safe.
+    // Confidence check alignment just to be safe.
     ASSERT((reinterpret_cast<uintptr_t>(ptr) & (alignment - 1)) == 0);
     return ptr;
 }

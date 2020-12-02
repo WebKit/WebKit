@@ -11,9 +11,14 @@
 #import <Metal/Metal.h>
 #include <TargetConditionals.h>
 
+#include "image_util/copyimage.h"
+#include "image_util/generatemip.h"
+#include "image_util/loadimage.h"
 #include "libANGLE/renderer/Format.h"
 #include "libANGLE/renderer/metal/DisplayMtl.h"
 #include "libANGLE/renderer/metal/mtl_format_utils.h"
+
+using namespace angle;
 
 namespace rx
 {
@@ -30,602 +35,1455 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
     switch (this->intendedFormatId)
     {
         case angle::FormatID::A8_UNORM:
+
             this->metalFormat    = MTLPixelFormatA8Unorm;
             this->actualFormatId = angle::FormatID::A8_UNORM;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
             break;
 
-#if TARGET_OS_OSX || TARGET_OS_MACCATALYST
-        case angle::FormatID::B8G8R8A8_UNORM:
-            if (metalDevice.depth24Stencil8PixelFormatSupported)
-            {
-                this->metalFormat    = MTLPixelFormatBGRA8Unorm;
-                this->actualFormatId = angle::FormatID::B8G8R8A8_UNORM;
-            }
-            else
-            {
-                this->metalFormat    = MTLPixelFormatRGBA8Unorm;
-                this->actualFormatId = angle::FormatID::R8G8B8A8_UNORM;
-            }
+        case angle::FormatID::B10G10R10A2_UNORM:
+
+            this->metalFormat    = MTLPixelFormatBGR10A2Unorm;
+            this->actualFormatId = angle::FormatID::B10G10R10A2_UNORM;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
             break;
 
-#else  // TARGET_OS_OSX || TARGET_OS_MACCATALYST
         case angle::FormatID::B8G8R8A8_UNORM:
+
             this->metalFormat    = MTLPixelFormatBGRA8Unorm;
             this->actualFormatId = angle::FormatID::B8G8R8A8_UNORM;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
             break;
 
-#endif  // TARGET_OS_OSX || TARGET_OS_MACCATALYST
         case angle::FormatID::B8G8R8A8_UNORM_SRGB:
+
             this->metalFormat    = MTLPixelFormatBGRA8Unorm_sRGB;
             this->actualFormatId = angle::FormatID::B8G8R8A8_UNORM_SRGB;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
             break;
 
         case angle::FormatID::D32_FLOAT:
+
             this->metalFormat    = MTLPixelFormatDepth32Float;
             this->actualFormatId = angle::FormatID::D32_FLOAT;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
             break;
 
         case angle::FormatID::D32_FLOAT_S8X24_UINT:
+
             this->metalFormat    = MTLPixelFormatDepth32Float_Stencil8;
             this->actualFormatId = angle::FormatID::D32_FLOAT_S8X24_UINT;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
             break;
 
         case angle::FormatID::NONE:
+
             this->metalFormat    = MTLPixelFormatInvalid;
             this->actualFormatId = angle::FormatID::NONE;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
             break;
 
-#if TARGET_OS_OSX || TARGET_OS_MACCATALYST
-        case angle::FormatID::R16G16B16A16_FLOAT:
-            if (metalDevice.depth24Stencil8PixelFormatSupported)
-            {
-                this->metalFormat    = MTLPixelFormatRGBA16Float;
-                this->actualFormatId = angle::FormatID::R16G16B16A16_FLOAT;
-            }
-            else
-            {
-                this->metalFormat    = MTLPixelFormatInvalid;
-                this->actualFormatId = angle::FormatID::NONE;
-            }
+        case angle::FormatID::R10G10B10A2_UINT:
+
+            this->metalFormat    = MTLPixelFormatRGB10A2Uint;
+            this->actualFormatId = angle::FormatID::R10G10B10A2_UINT;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
             break;
 
-#else  // TARGET_OS_OSX || TARGET_OS_MACCATALYST
+        case angle::FormatID::R10G10B10A2_UNORM:
+
+            this->metalFormat    = MTLPixelFormatRGB10A2Unorm;
+            this->actualFormatId = angle::FormatID::R10G10B10A2_UNORM;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
+            break;
+
+        case angle::FormatID::R11G11B10_FLOAT:
+
+            this->metalFormat    = MTLPixelFormatRG11B10Float;
+            this->actualFormatId = angle::FormatID::R11G11B10_FLOAT;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
+            break;
+
         case angle::FormatID::R16G16B16A16_FLOAT:
+
             this->metalFormat    = MTLPixelFormatRGBA16Float;
             this->actualFormatId = angle::FormatID::R16G16B16A16_FLOAT;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
             break;
 
-#endif  // TARGET_OS_OSX || TARGET_OS_MACCATALYST
+        case angle::FormatID::R16G16B16A16_SINT:
+
+            this->metalFormat    = MTLPixelFormatRGBA16Sint;
+            this->actualFormatId = angle::FormatID::R16G16B16A16_SINT;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
+            break;
+
+        case angle::FormatID::R16G16B16A16_SNORM:
+
+            this->metalFormat    = MTLPixelFormatRGBA16Snorm;
+            this->actualFormatId = angle::FormatID::R16G16B16A16_SNORM;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
+            break;
+
+        case angle::FormatID::R16G16B16A16_UINT:
+
+            this->metalFormat    = MTLPixelFormatRGBA16Uint;
+            this->actualFormatId = angle::FormatID::R16G16B16A16_UINT;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
+            break;
+
+        case angle::FormatID::R16G16B16A16_UNORM:
+
+            this->metalFormat    = MTLPixelFormatRGBA16Unorm;
+            this->actualFormatId = angle::FormatID::R16G16B16A16_UNORM;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
+            break;
+
         case angle::FormatID::R16G16_FLOAT:
+
             this->metalFormat    = MTLPixelFormatRG16Float;
             this->actualFormatId = angle::FormatID::R16G16_FLOAT;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
             break;
 
-#if TARGET_OS_OSX || TARGET_OS_MACCATALYST
-        case angle::FormatID::R16_FLOAT:
-            if (metalDevice.depth24Stencil8PixelFormatSupported)
-            {
-                this->metalFormat    = MTLPixelFormatR16Float;
-                this->actualFormatId = angle::FormatID::R16_FLOAT;
-            }
-            else
-            {
-                this->metalFormat    = MTLPixelFormatInvalid;
-                this->actualFormatId = angle::FormatID::NONE;
-            }
+        case angle::FormatID::R16G16_SINT:
+
+            this->metalFormat    = MTLPixelFormatRG16Sint;
+            this->actualFormatId = angle::FormatID::R16G16_SINT;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
             break;
 
-#else  // TARGET_OS_OSX || TARGET_OS_MACCATALYST
+        case angle::FormatID::R16G16_SNORM:
+
+            this->metalFormat    = MTLPixelFormatRG16Snorm;
+            this->actualFormatId = angle::FormatID::R16G16_SNORM;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
+            break;
+
+        case angle::FormatID::R16G16_UINT:
+
+            this->metalFormat    = MTLPixelFormatRG16Uint;
+            this->actualFormatId = angle::FormatID::R16G16_UINT;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
+            break;
+
+        case angle::FormatID::R16G16_UNORM:
+
+            this->metalFormat    = MTLPixelFormatRG16Unorm;
+            this->actualFormatId = angle::FormatID::R16G16_UNORM;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
+            break;
+
         case angle::FormatID::R16_FLOAT:
+
             this->metalFormat    = MTLPixelFormatR16Float;
             this->actualFormatId = angle::FormatID::R16_FLOAT;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
             break;
 
-#endif  // TARGET_OS_OSX || TARGET_OS_MACCATALYST
+        case angle::FormatID::R16_SINT:
+
+            this->metalFormat    = MTLPixelFormatR16Sint;
+            this->actualFormatId = angle::FormatID::R16_SINT;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
+            break;
+
+        case angle::FormatID::R16_SNORM:
+
+            this->metalFormat    = MTLPixelFormatR16Snorm;
+            this->actualFormatId = angle::FormatID::R16_SNORM;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
+            break;
+
+        case angle::FormatID::R16_UINT:
+
+            this->metalFormat    = MTLPixelFormatR16Uint;
+            this->actualFormatId = angle::FormatID::R16_UINT;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
+            break;
+
         case angle::FormatID::R16_UNORM:
+
             this->metalFormat    = MTLPixelFormatR16Unorm;
             this->actualFormatId = angle::FormatID::R16_UNORM;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
             break;
 
-#if TARGET_OS_OSX || TARGET_OS_MACCATALYST
         case angle::FormatID::R32G32B32A32_FLOAT:
-            if (metalDevice.depth24Stencil8PixelFormatSupported)
-            {
-                this->metalFormat    = MTLPixelFormatRGBA32Float;
-                this->actualFormatId = angle::FormatID::R32G32B32A32_FLOAT;
-            }
-            else
-            {
-                this->metalFormat    = MTLPixelFormatInvalid;
-                this->actualFormatId = angle::FormatID::NONE;
-            }
-            break;
 
-#else  // TARGET_OS_OSX || TARGET_OS_MACCATALYST
-        case angle::FormatID::R32G32B32A32_FLOAT:
             this->metalFormat    = MTLPixelFormatRGBA32Float;
             this->actualFormatId = angle::FormatID::R32G32B32A32_FLOAT;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
             break;
 
-#endif  // TARGET_OS_OSX || TARGET_OS_MACCATALYST
+        case angle::FormatID::R32G32B32A32_SINT:
+
+            this->metalFormat    = MTLPixelFormatRGBA32Sint;
+            this->actualFormatId = angle::FormatID::R32G32B32A32_SINT;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
+            break;
+
+        case angle::FormatID::R32G32B32A32_UINT:
+
+            this->metalFormat    = MTLPixelFormatRGBA32Uint;
+            this->actualFormatId = angle::FormatID::R32G32B32A32_UINT;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
+            break;
+
         case angle::FormatID::R32G32_FLOAT:
+
             this->metalFormat    = MTLPixelFormatRG32Float;
             this->actualFormatId = angle::FormatID::R32G32_FLOAT;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
             break;
 
-#if TARGET_OS_OSX || TARGET_OS_MACCATALYST
-        case angle::FormatID::R32_FLOAT:
-            if (metalDevice.depth24Stencil8PixelFormatSupported)
-            {
-                this->metalFormat    = MTLPixelFormatR32Float;
-                this->actualFormatId = angle::FormatID::R32_FLOAT;
-            }
-            else
-            {
-                this->metalFormat    = MTLPixelFormatInvalid;
-                this->actualFormatId = angle::FormatID::NONE;
-            }
+        case angle::FormatID::R32G32_SINT:
+
+            this->metalFormat    = MTLPixelFormatRG32Sint;
+            this->actualFormatId = angle::FormatID::R32G32_SINT;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
             break;
 
-#else  // TARGET_OS_OSX || TARGET_OS_MACCATALYST
+        case angle::FormatID::R32G32_UINT:
+
+            this->metalFormat    = MTLPixelFormatRG32Uint;
+            this->actualFormatId = angle::FormatID::R32G32_UINT;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
+            break;
+
         case angle::FormatID::R32_FLOAT:
+
             this->metalFormat    = MTLPixelFormatR32Float;
             this->actualFormatId = angle::FormatID::R32_FLOAT;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
             break;
 
-#endif  // TARGET_OS_OSX || TARGET_OS_MACCATALYST
+        case angle::FormatID::R32_SINT:
+
+            this->metalFormat    = MTLPixelFormatR32Sint;
+            this->actualFormatId = angle::FormatID::R32_SINT;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
+            break;
+
+        case angle::FormatID::R32_UINT:
+
+            this->metalFormat    = MTLPixelFormatR32Uint;
+            this->actualFormatId = angle::FormatID::R32_UINT;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
+            break;
+
+        case angle::FormatID::R8G8B8A8_SINT:
+
+            this->metalFormat    = MTLPixelFormatRGBA8Sint;
+            this->actualFormatId = angle::FormatID::R8G8B8A8_SINT;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
+            break;
+
+        case angle::FormatID::R8G8B8A8_SNORM:
+
+            this->metalFormat    = MTLPixelFormatRGBA8Snorm;
+            this->actualFormatId = angle::FormatID::R8G8B8A8_SNORM;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
+            break;
+
+        case angle::FormatID::R8G8B8A8_UINT:
+
+            this->metalFormat    = MTLPixelFormatRGBA8Uint;
+            this->actualFormatId = angle::FormatID::R8G8B8A8_UINT;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
+            break;
+
         case angle::FormatID::R8G8B8A8_UNORM:
+
             this->metalFormat    = MTLPixelFormatRGBA8Unorm;
             this->actualFormatId = angle::FormatID::R8G8B8A8_UNORM;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
             break;
 
         case angle::FormatID::R8G8B8A8_UNORM_SRGB:
+
             this->metalFormat    = MTLPixelFormatRGBA8Unorm_sRGB;
             this->actualFormatId = angle::FormatID::R8G8B8A8_UNORM_SRGB;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
+            break;
+
+        case angle::FormatID::R8G8_SINT:
+
+            this->metalFormat    = MTLPixelFormatRG8Sint;
+            this->actualFormatId = angle::FormatID::R8G8_SINT;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
+            break;
+
+        case angle::FormatID::R8G8_SNORM:
+
+            this->metalFormat    = MTLPixelFormatRG8Snorm;
+            this->actualFormatId = angle::FormatID::R8G8_SNORM;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
+            break;
+
+        case angle::FormatID::R8G8_UINT:
+
+            this->metalFormat    = MTLPixelFormatRG8Uint;
+            this->actualFormatId = angle::FormatID::R8G8_UINT;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
             break;
 
         case angle::FormatID::R8G8_UNORM:
+
             this->metalFormat    = MTLPixelFormatRG8Unorm;
             this->actualFormatId = angle::FormatID::R8G8_UNORM;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
             break;
 
-#if TARGET_OS_OSX || TARGET_OS_MACCATALYST
-        case angle::FormatID::R8_UNORM:
-            if (metalDevice.depth24Stencil8PixelFormatSupported)
-            {
-                this->metalFormat    = MTLPixelFormatR8Unorm;
-                this->actualFormatId = angle::FormatID::R8_UNORM;
-            }
-            else
-            {
-                this->metalFormat    = MTLPixelFormatInvalid;
-                this->actualFormatId = angle::FormatID::NONE;
-            }
+        case angle::FormatID::R8_SINT:
+
+            this->metalFormat    = MTLPixelFormatR8Sint;
+            this->actualFormatId = angle::FormatID::R8_SINT;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
             break;
 
-#else  // TARGET_OS_OSX || TARGET_OS_MACCATALYST
+        case angle::FormatID::R8_SNORM:
+
+            this->metalFormat    = MTLPixelFormatR8Snorm;
+            this->actualFormatId = angle::FormatID::R8_SNORM;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
+            break;
+
+        case angle::FormatID::R8_UINT:
+
+            this->metalFormat    = MTLPixelFormatR8Uint;
+            this->actualFormatId = angle::FormatID::R8_UINT;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
+            break;
+
         case angle::FormatID::R8_UNORM:
+
             this->metalFormat    = MTLPixelFormatR8Unorm;
             this->actualFormatId = angle::FormatID::R8_UNORM;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
             break;
 
-#endif  // TARGET_OS_OSX || TARGET_OS_MACCATALYST
+        case angle::FormatID::R9G9B9E5_SHAREDEXP:
+
+            this->metalFormat    = MTLPixelFormatRGB9E5Float;
+            this->actualFormatId = angle::FormatID::R9G9B9E5_SHAREDEXP;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
+            break;
+
         case angle::FormatID::S8_UINT:
+
             this->metalFormat    = MTLPixelFormatStencil8;
             this->actualFormatId = angle::FormatID::S8_UINT;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
             break;
 
-#if TARGET_OS_OSX || TARGET_OS_MACCATALYST
         case angle::FormatID::A16_FLOAT:
-            if (metalDevice.depth24Stencil8PixelFormatSupported)
-            {
-                this->metalFormat    = MTLPixelFormatRGBA16Float;
-                this->actualFormatId = angle::FormatID::R16G16B16A16_FLOAT;
-            }
-            else
-            {
-                this->metalFormat    = MTLPixelFormatInvalid;
-                this->actualFormatId = angle::FormatID::NONE;
-            }
-            break;
 
-#else  // TARGET_OS_OSX || TARGET_OS_MACCATALYST
-        case angle::FormatID::A16_FLOAT:
             this->metalFormat    = MTLPixelFormatRGBA16Float;
             this->actualFormatId = angle::FormatID::R16G16B16A16_FLOAT;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
             break;
 
-#endif  // TARGET_OS_OSX || TARGET_OS_MACCATALYST
-#if TARGET_OS_OSX || TARGET_OS_MACCATALYST
         case angle::FormatID::A32_FLOAT:
-            if (metalDevice.depth24Stencil8PixelFormatSupported)
-            {
-                this->metalFormat    = MTLPixelFormatRGBA32Float;
-                this->actualFormatId = angle::FormatID::R32G32B32A32_FLOAT;
-            }
-            else
-            {
-                this->metalFormat    = MTLPixelFormatInvalid;
-                this->actualFormatId = angle::FormatID::NONE;
-            }
-            break;
 
-#else  // TARGET_OS_OSX || TARGET_OS_MACCATALYST
-        case angle::FormatID::A32_FLOAT:
             this->metalFormat    = MTLPixelFormatRGBA32Float;
             this->actualFormatId = angle::FormatID::R32G32B32A32_FLOAT;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
             break;
 
-#endif  // TARGET_OS_OSX || TARGET_OS_MACCATALYST
         case angle::FormatID::D24_UNORM_X8_UINT:
+
             this->metalFormat    = MTLPixelFormatDepth32Float;
             this->actualFormatId = angle::FormatID::D32_FLOAT;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
             break;
 
         case angle::FormatID::D32_UNORM:
+
             this->metalFormat    = MTLPixelFormatDepth32Float;
             this->actualFormatId = angle::FormatID::D32_FLOAT;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
             break;
 
-#if TARGET_OS_OSX || TARGET_OS_MACCATALYST
         case angle::FormatID::L16A16_FLOAT:
-            if (metalDevice.depth24Stencil8PixelFormatSupported)
-            {
-                this->metalFormat    = MTLPixelFormatRGBA16Float;
-                this->actualFormatId = angle::FormatID::R16G16B16A16_FLOAT;
-            }
-            else
-            {
-                this->metalFormat    = MTLPixelFormatInvalid;
-                this->actualFormatId = angle::FormatID::NONE;
-            }
-            break;
 
-#else  // TARGET_OS_OSX || TARGET_OS_MACCATALYST
-        case angle::FormatID::L16A16_FLOAT:
             this->metalFormat    = MTLPixelFormatRGBA16Float;
             this->actualFormatId = angle::FormatID::R16G16B16A16_FLOAT;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
             break;
 
-#endif  // TARGET_OS_OSX || TARGET_OS_MACCATALYST
-#if TARGET_OS_OSX || TARGET_OS_MACCATALYST
         case angle::FormatID::L16_FLOAT:
-            if (metalDevice.depth24Stencil8PixelFormatSupported)
-            {
-                this->metalFormat    = MTLPixelFormatRGBA16Float;
-                this->actualFormatId = angle::FormatID::R16G16B16A16_FLOAT;
-            }
-            else
-            {
-                this->metalFormat    = MTLPixelFormatInvalid;
-                this->actualFormatId = angle::FormatID::NONE;
-            }
-            break;
 
-#else  // TARGET_OS_OSX || TARGET_OS_MACCATALYST
-        case angle::FormatID::L16_FLOAT:
             this->metalFormat    = MTLPixelFormatRGBA16Float;
             this->actualFormatId = angle::FormatID::R16G16B16A16_FLOAT;
+            this->initFunction =
+                Initialize4ComponentData<GLhalf, 0x0000, 0x0000, 0x0000, gl::Float16One>;
+
+            this->swizzled = false;
             break;
 
-#endif  // TARGET_OS_OSX || TARGET_OS_MACCATALYST
-#if TARGET_OS_OSX || TARGET_OS_MACCATALYST
         case angle::FormatID::L32A32_FLOAT:
-            if (metalDevice.depth24Stencil8PixelFormatSupported)
-            {
-                this->metalFormat    = MTLPixelFormatRGBA32Float;
-                this->actualFormatId = angle::FormatID::R32G32B32A32_FLOAT;
-            }
-            else
-            {
-                this->metalFormat    = MTLPixelFormatInvalid;
-                this->actualFormatId = angle::FormatID::NONE;
-            }
-            break;
 
-#else  // TARGET_OS_OSX || TARGET_OS_MACCATALYST
-        case angle::FormatID::L32A32_FLOAT:
             this->metalFormat    = MTLPixelFormatRGBA32Float;
             this->actualFormatId = angle::FormatID::R32G32B32A32_FLOAT;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
             break;
 
-#endif  // TARGET_OS_OSX || TARGET_OS_MACCATALYST
-#if TARGET_OS_OSX || TARGET_OS_MACCATALYST
         case angle::FormatID::L32_FLOAT:
-            if (metalDevice.depth24Stencil8PixelFormatSupported)
-            {
-                this->metalFormat    = MTLPixelFormatRGBA32Float;
-                this->actualFormatId = angle::FormatID::R32G32B32A32_FLOAT;
-            }
-            else
-            {
-                this->metalFormat    = MTLPixelFormatInvalid;
-                this->actualFormatId = angle::FormatID::NONE;
-            }
-            break;
 
-#else  // TARGET_OS_OSX || TARGET_OS_MACCATALYST
-        case angle::FormatID::L32_FLOAT:
             this->metalFormat    = MTLPixelFormatRGBA32Float;
             this->actualFormatId = angle::FormatID::R32G32B32A32_FLOAT;
+            this->initFunction   = Initialize4ComponentData<GLfloat, 0x00000000, 0x00000000,
+                                                          0x00000000, gl::Float32One>;
+
+            this->swizzled = false;
             break;
 
-#endif  // TARGET_OS_OSX || TARGET_OS_MACCATALYST
         case angle::FormatID::L8A8_UNORM:
+
             this->metalFormat    = MTLPixelFormatRGBA8Unorm;
             this->actualFormatId = angle::FormatID::R8G8B8A8_UNORM;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
             break;
 
         case angle::FormatID::L8_UNORM:
+
             this->metalFormat    = MTLPixelFormatRGBA8Unorm;
             this->actualFormatId = angle::FormatID::R8G8B8A8_UNORM;
+            this->initFunction   = Initialize4ComponentData<GLubyte, 0x00, 0x00, 0x00, 0xFF>;
+
+            this->swizzled = false;
             break;
 
-#if TARGET_OS_OSX || TARGET_OS_MACCATALYST
         case angle::FormatID::R16G16B16_FLOAT:
-            if (metalDevice.depth24Stencil8PixelFormatSupported)
-            {
-                this->metalFormat    = MTLPixelFormatRGBA16Float;
-                this->actualFormatId = angle::FormatID::R16G16B16A16_FLOAT;
-            }
-            else
-            {
-                this->metalFormat    = MTLPixelFormatInvalid;
-                this->actualFormatId = angle::FormatID::NONE;
-            }
-            break;
 
-#else  // TARGET_OS_OSX || TARGET_OS_MACCATALYST
-        case angle::FormatID::R16G16B16_FLOAT:
             this->metalFormat    = MTLPixelFormatRGBA16Float;
             this->actualFormatId = angle::FormatID::R16G16B16A16_FLOAT;
+            this->initFunction =
+                Initialize4ComponentData<GLhalf, 0x0000, 0x0000, 0x0000, gl::Float16One>;
+
+            this->swizzled = false;
             break;
 
-#endif  // TARGET_OS_OSX || TARGET_OS_MACCATALYST
-#if TARGET_OS_OSX || TARGET_OS_MACCATALYST
-        case angle::FormatID::R32G32B32_FLOAT:
-            if (metalDevice.depth24Stencil8PixelFormatSupported)
-            {
-                this->metalFormat    = MTLPixelFormatRGBA32Float;
-                this->actualFormatId = angle::FormatID::R32G32B32A32_FLOAT;
-            }
-            else
-            {
-                this->metalFormat    = MTLPixelFormatInvalid;
-                this->actualFormatId = angle::FormatID::NONE;
-            }
+        case angle::FormatID::R16G16B16_SINT:
+
+            this->metalFormat    = MTLPixelFormatRGBA16Sint;
+            this->actualFormatId = angle::FormatID::R16G16B16A16_SINT;
+            this->initFunction = Initialize4ComponentData<GLshort, 0x0000, 0x0000, 0x0000, 0x0001>;
+
+            this->swizzled = false;
             break;
 
-#else  // TARGET_OS_OSX || TARGET_OS_MACCATALYST
+        case angle::FormatID::R16G16B16_SNORM:
+
+            this->metalFormat    = MTLPixelFormatRGBA16Snorm;
+            this->actualFormatId = angle::FormatID::R16G16B16A16_SNORM;
+            this->initFunction = Initialize4ComponentData<GLushort, 0x0000, 0x0000, 0x0000, 0x7FFF>;
+
+            this->swizzled = false;
+            break;
+
+        case angle::FormatID::R16G16B16_UINT:
+
+            this->metalFormat    = MTLPixelFormatRGBA16Uint;
+            this->actualFormatId = angle::FormatID::R16G16B16A16_UINT;
+            this->initFunction = Initialize4ComponentData<GLushort, 0x0000, 0x0000, 0x0000, 0x0001>;
+
+            this->swizzled = false;
+            break;
+
+        case angle::FormatID::R16G16B16_UNORM:
+
+            this->metalFormat    = MTLPixelFormatRGBA16Unorm;
+            this->actualFormatId = angle::FormatID::R16G16B16A16_UNORM;
+            this->initFunction = Initialize4ComponentData<GLubyte, 0x0000, 0x0000, 0x0000, 0xFFFF>;
+
+            this->swizzled = false;
+            break;
+
         case angle::FormatID::R32G32B32_FLOAT:
+
             this->metalFormat    = MTLPixelFormatRGBA32Float;
             this->actualFormatId = angle::FormatID::R32G32B32A32_FLOAT;
+            this->initFunction   = Initialize4ComponentData<GLfloat, 0x00000000, 0x00000000,
+                                                          0x00000000, gl::Float32One>;
+
+            this->swizzled = false;
             break;
 
-#endif  // TARGET_OS_OSX || TARGET_OS_MACCATALYST
+        case angle::FormatID::R32G32B32_SINT:
+
+            this->metalFormat    = MTLPixelFormatRGBA32Sint;
+            this->actualFormatId = angle::FormatID::R32G32B32A32_SINT;
+            this->initFunction =
+                Initialize4ComponentData<GLint, 0x00000000, 0x00000000, 0x00000000, 0x00000001>;
+
+            this->swizzled = false;
+            break;
+
+        case angle::FormatID::R32G32B32_UINT:
+
+            this->metalFormat    = MTLPixelFormatRGBA32Uint;
+            this->actualFormatId = angle::FormatID::R32G32B32A32_UINT;
+            this->initFunction =
+                Initialize4ComponentData<GLuint, 0x00000000, 0x00000000, 0x00000000, 0x00000001>;
+
+            this->swizzled = false;
+            break;
+
+        case angle::FormatID::R8G8B8_SINT:
+
+            this->metalFormat    = MTLPixelFormatRGBA8Sint;
+            this->actualFormatId = angle::FormatID::R8G8B8A8_SINT;
+            this->initFunction   = Initialize4ComponentData<GLbyte, 0x00, 0x00, 0x00, 0x01>;
+
+            this->swizzled = false;
+            break;
+
+        case angle::FormatID::R8G8B8_SNORM:
+
+            this->metalFormat    = MTLPixelFormatRGBA8Snorm;
+            this->actualFormatId = angle::FormatID::R8G8B8A8_SNORM;
+            this->initFunction   = Initialize4ComponentData<GLbyte, 0x00, 0x00, 0x00, 0x7F>;
+
+            this->swizzled = false;
+            break;
+
+        case angle::FormatID::R8G8B8_UINT:
+
+            this->metalFormat    = MTLPixelFormatRGBA8Uint;
+            this->actualFormatId = angle::FormatID::R8G8B8A8_UINT;
+            this->initFunction   = Initialize4ComponentData<GLubyte, 0x00, 0x00, 0x00, 0x01>;
+
+            this->swizzled = false;
+            break;
+
         case angle::FormatID::R8G8B8_UNORM:
+
             this->metalFormat    = MTLPixelFormatRGBA8Unorm;
             this->actualFormatId = angle::FormatID::R8G8B8A8_UNORM;
+            this->initFunction   = Initialize4ComponentData<GLubyte, 0x00, 0x00, 0x00, 0xFF>;
+
+            this->swizzled = false;
             break;
 
         case angle::FormatID::R8G8B8_UNORM_SRGB:
+
             this->metalFormat    = MTLPixelFormatRGBA8Unorm_sRGB;
             this->actualFormatId = angle::FormatID::R8G8B8A8_UNORM_SRGB;
+            this->initFunction   = Initialize4ComponentData<GLubyte, 0x00, 0x00, 0x00, 0xFF>;
+
+            this->swizzled = false;
             break;
 
 #if TARGET_OS_OSX || TARGET_OS_MACCATALYST
         case angle::FormatID::BC1_RGBA_UNORM_BLOCK:
+
             this->metalFormat    = MTLPixelFormatBC1_RGBA;
             this->actualFormatId = angle::FormatID::BC1_RGBA_UNORM_BLOCK;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
             break;
 
         case angle::FormatID::BC1_RGBA_UNORM_SRGB_BLOCK:
+
             this->metalFormat    = MTLPixelFormatBC1_RGBA_sRGB;
             this->actualFormatId = angle::FormatID::BC1_RGBA_UNORM_SRGB_BLOCK;
-            break;
+            this->initFunction   = nullptr;
 
-        case angle::FormatID::BC1_RGB_UNORM_BLOCK:
-            this->metalFormat    = MTLPixelFormatBC1_RGBA;
-            this->actualFormatId = angle::FormatID::BC1_RGB_UNORM_BLOCK;
-            break;
-
-        case angle::FormatID::BC1_RGB_UNORM_SRGB_BLOCK:
-            this->metalFormat    = MTLPixelFormatBC1_RGBA_sRGB;
-            this->actualFormatId = angle::FormatID::BC1_RGB_UNORM_SRGB_BLOCK;
+            this->swizzled = false;
             break;
 
         case angle::FormatID::BC2_RGBA_UNORM_BLOCK:
+
             this->metalFormat    = MTLPixelFormatBC2_RGBA;
             this->actualFormatId = angle::FormatID::BC2_RGBA_UNORM_BLOCK;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
             break;
 
         case angle::FormatID::BC2_RGBA_UNORM_SRGB_BLOCK:
+
             this->metalFormat    = MTLPixelFormatBC2_RGBA_sRGB;
             this->actualFormatId = angle::FormatID::BC2_RGBA_UNORM_SRGB_BLOCK;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
             break;
 
         case angle::FormatID::BC3_RGBA_UNORM_BLOCK:
+
             this->metalFormat    = MTLPixelFormatBC3_RGBA;
             this->actualFormatId = angle::FormatID::BC3_RGBA_UNORM_BLOCK;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
             break;
 
         case angle::FormatID::BC3_RGBA_UNORM_SRGB_BLOCK:
+
             this->metalFormat    = MTLPixelFormatBC3_RGBA_sRGB;
             this->actualFormatId = angle::FormatID::BC3_RGBA_UNORM_SRGB_BLOCK;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
             break;
 
         case angle::FormatID::BC4_RED_SNORM_BLOCK:
+
             this->metalFormat    = MTLPixelFormatBC4_RSnorm;
             this->actualFormatId = angle::FormatID::BC4_RED_SNORM_BLOCK;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
             break;
 
         case angle::FormatID::BC4_RED_UNORM_BLOCK:
+
             this->metalFormat    = MTLPixelFormatBC4_RUnorm;
             this->actualFormatId = angle::FormatID::BC4_RED_UNORM_BLOCK;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
             break;
 
         case angle::FormatID::BC5_RG_SNORM_BLOCK:
+
             this->metalFormat    = MTLPixelFormatBC5_RGSnorm;
             this->actualFormatId = angle::FormatID::BC5_RG_SNORM_BLOCK;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
             break;
 
         case angle::FormatID::BC5_RG_UNORM_BLOCK:
+
             this->metalFormat    = MTLPixelFormatBC5_RGUnorm;
             this->actualFormatId = angle::FormatID::BC5_RG_UNORM_BLOCK;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
+            break;
+
+        case angle::FormatID::BPTC_RGBA_UNORM_BLOCK:
+
+            this->metalFormat    = MTLPixelFormatBC7_RGBAUnorm;
+            this->actualFormatId = angle::FormatID::BPTC_RGBA_UNORM_BLOCK;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
+            break;
+
+        case angle::FormatID::BPTC_RGB_SIGNED_FLOAT_BLOCK:
+
+            this->metalFormat    = MTLPixelFormatBC6H_RGBFloat;
+            this->actualFormatId = angle::FormatID::BPTC_RGB_SIGNED_FLOAT_BLOCK;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
+            break;
+
+        case angle::FormatID::BPTC_RGB_UNSIGNED_FLOAT_BLOCK:
+
+            this->metalFormat    = MTLPixelFormatBC6H_RGBUfloat;
+            this->actualFormatId = angle::FormatID::BPTC_RGB_UNSIGNED_FLOAT_BLOCK;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
+            break;
+
+        case angle::FormatID::BPTC_SRGB_ALPHA_UNORM_BLOCK:
+
+            this->metalFormat    = MTLPixelFormatBC7_RGBAUnorm_sRGB;
+            this->actualFormatId = angle::FormatID::BPTC_SRGB_ALPHA_UNORM_BLOCK;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
             break;
 
         case angle::FormatID::D16_UNORM:
+
             this->metalFormat    = MTLPixelFormatDepth16Unorm;
             this->actualFormatId = angle::FormatID::D16_UNORM;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
             break;
 
         case angle::FormatID::D24_UNORM_S8_UINT:
-            if (metalDevice.depth24Stencil8PixelFormatSupported)
+
+            if (metalDevice.depth24Stencil8PixelFormatSupported &&
+                !display->getFeatures().forceD24S8AsUnsupported.enabled)
             {
                 this->metalFormat    = MTLPixelFormatDepth24Unorm_Stencil8;
                 this->actualFormatId = angle::FormatID::D24_UNORM_S8_UINT;
+                this->initFunction   = nullptr;
             }
             else
             {
                 this->metalFormat    = MTLPixelFormatDepth32Float_Stencil8;
                 this->actualFormatId = angle::FormatID::D32_FLOAT_S8X24_UINT;
+                this->initFunction   = nullptr;
+            }
+
+            this->swizzled = false;
+            break;
+
+        case angle::FormatID::BC1_RGB_UNORM_BLOCK:
+#    if defined(__IPHONE_13_0) || defined(__MAC_10_15)
+            if (display->getFeatures().hasTextureSwizzle.enabled)
+            {
+
+                this->metalFormat    = MTLPixelFormatBC1_RGBA;
+                this->actualFormatId = angle::FormatID::BC1_RGBA_UNORM_BLOCK;
+                this->initFunction   = nullptr;
+
+                this->swizzled = true;
+                this->swizzle  = {GL_RED, GL_GREEN, GL_BLUE, GL_ONE};
+            }
+            else
+#    endif  // #if defined(__IPHONE_13_0) || defined(__MAC_10_15)
+            {
+
+                this->metalFormat    = MTLPixelFormatBC1_RGBA;
+                this->actualFormatId = angle::FormatID::BC1_RGBA_UNORM_BLOCK;
+                this->initFunction   = nullptr;
+
+                this->swizzled = false;
             }
             break;
 
-        case angle::FormatID::R4G4B4A4_UNORM:
-            this->metalFormat    = MTLPixelFormatRGBA8Unorm;
-            this->actualFormatId = angle::FormatID::R8G8B8A8_UNORM;
+        case angle::FormatID::BC1_RGB_UNORM_SRGB_BLOCK:
+#    if defined(__IPHONE_13_0) || defined(__MAC_10_15)
+            if (display->getFeatures().hasTextureSwizzle.enabled)
+            {
+
+                this->metalFormat    = MTLPixelFormatBC1_RGBA_sRGB;
+                this->actualFormatId = angle::FormatID::BC1_RGBA_UNORM_SRGB_BLOCK;
+                this->initFunction   = nullptr;
+
+                this->swizzled = true;
+                this->swizzle  = {GL_RED, GL_GREEN, GL_BLUE, GL_ONE};
+            }
+            else
+#    endif  // #if defined(__IPHONE_13_0) || defined(__MAC_10_15)
+            {
+
+                this->metalFormat    = MTLPixelFormatBC1_RGBA_sRGB;
+                this->actualFormatId = angle::FormatID::BC1_RGBA_UNORM_SRGB_BLOCK;
+                this->initFunction   = nullptr;
+
+                this->swizzled = false;
+            }
             break;
 
-        case angle::FormatID::R5G5B5A1_UNORM:
-            this->metalFormat    = MTLPixelFormatRGBA8Unorm;
-            this->actualFormatId = angle::FormatID::R8G8B8A8_UNORM;
-            break;
-
-        case angle::FormatID::R5G6B5_UNORM:
-            this->metalFormat    = MTLPixelFormatRGBA8Unorm;
-            this->actualFormatId = angle::FormatID::R8G8B8A8_UNORM;
-            break;
-
-#elif TARGET_OS_IOS  // TARGET_OS_OSX || TARGET_OS_MACCATALYST
         case angle::FormatID::EAC_R11G11_SNORM_BLOCK:
-            this->metalFormat    = MTLPixelFormatEAC_RG11Snorm;
-            this->actualFormatId = angle::FormatID::EAC_R11G11_SNORM_BLOCK;
+
+            this->metalFormat    = MTLPixelFormatRG16Snorm;
+            this->actualFormatId = angle::FormatID::R16G16_SNORM;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
             break;
 
         case angle::FormatID::EAC_R11G11_UNORM_BLOCK:
-            this->metalFormat    = MTLPixelFormatEAC_R11Unorm;
-            this->actualFormatId = angle::FormatID::EAC_R11G11_UNORM_BLOCK;
+
+            this->metalFormat    = MTLPixelFormatRG16Unorm;
+            this->actualFormatId = angle::FormatID::R16G16_UNORM;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
             break;
 
         case angle::FormatID::EAC_R11_SNORM_BLOCK:
-            this->metalFormat    = MTLPixelFormatEAC_R11Snorm;
-            this->actualFormatId = angle::FormatID::EAC_R11_SNORM_BLOCK;
+
+            this->metalFormat    = MTLPixelFormatR16Snorm;
+            this->actualFormatId = angle::FormatID::R16_SNORM;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
             break;
 
         case angle::FormatID::EAC_R11_UNORM_BLOCK:
-            this->metalFormat    = MTLPixelFormatEAC_R11Unorm;
-            this->actualFormatId = angle::FormatID::EAC_R11_UNORM_BLOCK;
+
+            this->metalFormat    = MTLPixelFormatR16Unorm;
+            this->actualFormatId = angle::FormatID::R16_UNORM;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
             break;
 
         case angle::FormatID::ETC1_R8G8B8_UNORM_BLOCK:
-            this->metalFormat    = MTLPixelFormatETC2_RGB8;
-            this->actualFormatId = angle::FormatID::ETC1_R8G8B8_UNORM_BLOCK;
+
+            this->metalFormat    = MTLPixelFormatRGBA8Unorm;
+            this->actualFormatId = angle::FormatID::R8G8B8A8_UNORM;
+            this->initFunction   = Initialize4ComponentData<GLubyte, 0x00, 0x00, 0x00, 0xFF>;
+
+            this->swizzled = false;
             break;
 
         case angle::FormatID::ETC2_R8G8B8A1_SRGB_BLOCK:
-            this->metalFormat    = MTLPixelFormatETC2_RGB8A1_sRGB;
-            this->actualFormatId = angle::FormatID::ETC2_R8G8B8A1_SRGB_BLOCK;
+
+            this->metalFormat    = MTLPixelFormatRGBA8Unorm_sRGB;
+            this->actualFormatId = angle::FormatID::R8G8B8A8_UNORM_SRGB;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
             break;
 
         case angle::FormatID::ETC2_R8G8B8A1_UNORM_BLOCK:
-            this->metalFormat    = MTLPixelFormatETC2_RGB8A1;
-            this->actualFormatId = angle::FormatID::ETC2_R8G8B8A1_UNORM_BLOCK;
+
+            this->metalFormat    = MTLPixelFormatRGBA8Unorm;
+            this->actualFormatId = angle::FormatID::R8G8B8A8_UNORM;
+            this->initFunction   = Initialize4ComponentData<GLubyte, 0x00, 0x00, 0x00, 0xFF>;
+
+            this->swizzled = false;
             break;
 
         case angle::FormatID::ETC2_R8G8B8A8_SRGB_BLOCK:
-            this->metalFormat    = MTLPixelFormatEAC_RGBA8_sRGB;
-            this->actualFormatId = angle::FormatID::ETC2_R8G8B8A8_SRGB_BLOCK;
+
+            this->metalFormat    = MTLPixelFormatRGBA8Unorm_sRGB;
+            this->actualFormatId = angle::FormatID::R8G8B8A8_UNORM_SRGB;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
             break;
 
         case angle::FormatID::ETC2_R8G8B8A8_UNORM_BLOCK:
-            this->metalFormat    = MTLPixelFormatEAC_RGBA8;
-            this->actualFormatId = angle::FormatID::ETC2_R8G8B8A8_UNORM_BLOCK;
+
+            this->metalFormat    = MTLPixelFormatRGBA8Unorm;
+            this->actualFormatId = angle::FormatID::R8G8B8A8_UNORM;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
             break;
 
         case angle::FormatID::ETC2_R8G8B8_SRGB_BLOCK:
-            this->metalFormat    = MTLPixelFormatETC2_RGB8_sRGB;
-            this->actualFormatId = angle::FormatID::ETC2_R8G8B8_SRGB_BLOCK;
+
+            this->metalFormat    = MTLPixelFormatRGBA8Unorm_sRGB;
+            this->actualFormatId = angle::FormatID::R8G8B8A8_UNORM_SRGB;
+            this->initFunction   = Initialize4ComponentData<GLubyte, 0x00, 0x00, 0x00, 0xFF>;
+
+            this->swizzled = false;
             break;
 
         case angle::FormatID::ETC2_R8G8B8_UNORM_BLOCK:
-            this->metalFormat    = MTLPixelFormatETC2_RGB8;
-            this->actualFormatId = angle::FormatID::ETC2_R8G8B8_UNORM_BLOCK;
-            break;
 
-        case angle::FormatID::PVRTC1_RGBA_2BPP_UNORM_BLOCK:
-            this->metalFormat    = MTLPixelFormatPVRTC_RGBA_2BPP;
-            this->actualFormatId = angle::FormatID::PVRTC1_RGBA_2BPP_UNORM_BLOCK;
-            break;
+            this->metalFormat    = MTLPixelFormatRGBA8Unorm;
+            this->actualFormatId = angle::FormatID::R8G8B8A8_UNORM;
+            this->initFunction   = Initialize4ComponentData<GLubyte, 0x00, 0x00, 0x00, 0xFF>;
 
-        case angle::FormatID::PVRTC1_RGBA_2BPP_UNORM_SRGB_BLOCK:
-            this->metalFormat    = MTLPixelFormatPVRTC_RGBA_2BPP_sRGB;
-            this->actualFormatId = angle::FormatID::PVRTC1_RGBA_2BPP_UNORM_SRGB_BLOCK;
-            break;
-
-        case angle::FormatID::PVRTC1_RGBA_4BPP_UNORM_BLOCK:
-            this->metalFormat    = MTLPixelFormatPVRTC_RGBA_4BPP;
-            this->actualFormatId = angle::FormatID::PVRTC1_RGBA_4BPP_UNORM_BLOCK;
-            break;
-
-        case angle::FormatID::PVRTC1_RGBA_4BPP_UNORM_SRGB_BLOCK:
-            this->metalFormat    = MTLPixelFormatPVRTC_RGBA_4BPP_sRGB;
-            this->actualFormatId = angle::FormatID::PVRTC1_RGBA_4BPP_UNORM_SRGB_BLOCK;
-            break;
-
-        case angle::FormatID::PVRTC1_RGB_2BPP_UNORM_BLOCK:
-            this->metalFormat    = MTLPixelFormatPVRTC_RGB_2BPP;
-            this->actualFormatId = angle::FormatID::PVRTC1_RGB_2BPP_UNORM_BLOCK;
-            break;
-
-        case angle::FormatID::PVRTC1_RGB_2BPP_UNORM_SRGB_BLOCK:
-            this->metalFormat    = MTLPixelFormatPVRTC_RGB_2BPP_sRGB;
-            this->actualFormatId = angle::FormatID::PVRTC1_RGB_2BPP_UNORM_SRGB_BLOCK;
-            break;
-
-        case angle::FormatID::PVRTC1_RGB_4BPP_UNORM_BLOCK:
-            this->metalFormat    = MTLPixelFormatPVRTC_RGB_4BPP;
-            this->actualFormatId = angle::FormatID::PVRTC1_RGB_4BPP_UNORM_BLOCK;
-            break;
-
-        case angle::FormatID::PVRTC1_RGB_4BPP_UNORM_SRGB_BLOCK:
-            this->metalFormat    = MTLPixelFormatPVRTC_RGB_4BPP_sRGB;
-            this->actualFormatId = angle::FormatID::PVRTC1_RGB_4BPP_UNORM_SRGB_BLOCK;
+            this->swizzled = false;
             break;
 
         case angle::FormatID::R4G4B4A4_UNORM:
-            this->metalFormat    = MTLPixelFormatABGR4Unorm;
-            this->actualFormatId = angle::FormatID::R4G4B4A4_UNORM;
+
+            this->metalFormat    = MTLPixelFormatRGBA8Unorm;
+            this->actualFormatId = angle::FormatID::R8G8B8A8_UNORM;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
             break;
 
         case angle::FormatID::R5G5B5A1_UNORM:
-            this->metalFormat    = MTLPixelFormatBGR5A1Unorm;
-            this->actualFormatId = angle::FormatID::R5G5B5A1_UNORM;
+
+            this->metalFormat    = MTLPixelFormatRGBA8Unorm;
+            this->actualFormatId = angle::FormatID::R8G8B8A8_UNORM;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
             break;
 
         case angle::FormatID::R5G6B5_UNORM:
+
+            this->metalFormat    = MTLPixelFormatRGBA8Unorm;
+            this->actualFormatId = angle::FormatID::R8G8B8A8_UNORM;
+            this->initFunction   = Initialize4ComponentData<GLubyte, 0x00, 0x00, 0x00, 0xFF>;
+
+            this->swizzled = false;
+            break;
+
+#elif TARGET_OS_IOS || TARGET_OS_TV  // TARGET_OS_OSX || TARGET_OS_MACCATALYST
+        case angle::FormatID::ASTC_10x10_SRGB_BLOCK:
+
+            this->metalFormat    = MTLPixelFormatASTC_10x10_sRGB;
+            this->actualFormatId = angle::FormatID::ASTC_10x10_SRGB_BLOCK;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
+            break;
+
+        case angle::FormatID::ASTC_10x10_UNORM_BLOCK:
+
+            this->metalFormat    = MTLPixelFormatASTC_10x10_LDR;
+            this->actualFormatId = angle::FormatID::ASTC_10x10_UNORM_BLOCK;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
+            break;
+
+        case angle::FormatID::ASTC_10x5_SRGB_BLOCK:
+
+            this->metalFormat    = MTLPixelFormatASTC_10x5_sRGB;
+            this->actualFormatId = angle::FormatID::ASTC_10x5_SRGB_BLOCK;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
+            break;
+
+        case angle::FormatID::ASTC_10x5_UNORM_BLOCK:
+
+            this->metalFormat    = MTLPixelFormatASTC_10x5_LDR;
+            this->actualFormatId = angle::FormatID::ASTC_10x5_UNORM_BLOCK;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
+            break;
+
+        case angle::FormatID::ASTC_10x6_SRGB_BLOCK:
+
+            this->metalFormat    = MTLPixelFormatASTC_10x6_sRGB;
+            this->actualFormatId = angle::FormatID::ASTC_10x6_SRGB_BLOCK;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
+            break;
+
+        case angle::FormatID::ASTC_10x6_UNORM_BLOCK:
+
+            this->metalFormat    = MTLPixelFormatASTC_10x6_LDR;
+            this->actualFormatId = angle::FormatID::ASTC_10x6_UNORM_BLOCK;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
+            break;
+
+        case angle::FormatID::ASTC_10x8_SRGB_BLOCK:
+
+            this->metalFormat    = MTLPixelFormatASTC_10x8_sRGB;
+            this->actualFormatId = angle::FormatID::ASTC_10x8_SRGB_BLOCK;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
+            break;
+
+        case angle::FormatID::ASTC_10x8_UNORM_BLOCK:
+
+            this->metalFormat    = MTLPixelFormatASTC_10x8_LDR;
+            this->actualFormatId = angle::FormatID::ASTC_10x8_UNORM_BLOCK;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
+            break;
+
+        case angle::FormatID::ASTC_12x10_SRGB_BLOCK:
+
+            this->metalFormat    = MTLPixelFormatASTC_12x10_sRGB;
+            this->actualFormatId = angle::FormatID::ASTC_12x10_SRGB_BLOCK;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
+            break;
+
+        case angle::FormatID::ASTC_12x10_UNORM_BLOCK:
+
+            this->metalFormat    = MTLPixelFormatASTC_12x10_LDR;
+            this->actualFormatId = angle::FormatID::ASTC_12x10_UNORM_BLOCK;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
+            break;
+
+        case angle::FormatID::ASTC_12x12_SRGB_BLOCK:
+
+            this->metalFormat    = MTLPixelFormatASTC_12x12_sRGB;
+            this->actualFormatId = angle::FormatID::ASTC_12x12_SRGB_BLOCK;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
+            break;
+
+        case angle::FormatID::ASTC_12x12_UNORM_BLOCK:
+
+            this->metalFormat    = MTLPixelFormatASTC_12x12_LDR;
+            this->actualFormatId = angle::FormatID::ASTC_12x12_UNORM_BLOCK;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
+            break;
+
+        case angle::FormatID::ASTC_4x4_SRGB_BLOCK:
+
+            this->metalFormat    = MTLPixelFormatASTC_4x4_sRGB;
+            this->actualFormatId = angle::FormatID::ASTC_4x4_SRGB_BLOCK;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
+            break;
+
+        case angle::FormatID::ASTC_4x4_UNORM_BLOCK:
+
+            this->metalFormat    = MTLPixelFormatASTC_4x4_LDR;
+            this->actualFormatId = angle::FormatID::ASTC_4x4_UNORM_BLOCK;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
+            break;
+
+        case angle::FormatID::ASTC_5x4_SRGB_BLOCK:
+
+            this->metalFormat    = MTLPixelFormatASTC_5x4_sRGB;
+            this->actualFormatId = angle::FormatID::ASTC_5x4_SRGB_BLOCK;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
+            break;
+
+        case angle::FormatID::ASTC_5x4_UNORM_BLOCK:
+
+            this->metalFormat    = MTLPixelFormatASTC_5x4_LDR;
+            this->actualFormatId = angle::FormatID::ASTC_5x4_UNORM_BLOCK;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
+            break;
+
+        case angle::FormatID::ASTC_5x5_SRGB_BLOCK:
+
+            this->metalFormat    = MTLPixelFormatASTC_5x5_sRGB;
+            this->actualFormatId = angle::FormatID::ASTC_5x5_SRGB_BLOCK;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
+            break;
+
+        case angle::FormatID::ASTC_5x5_UNORM_BLOCK:
+
+            this->metalFormat    = MTLPixelFormatASTC_5x5_LDR;
+            this->actualFormatId = angle::FormatID::ASTC_5x5_UNORM_BLOCK;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
+            break;
+
+        case angle::FormatID::ASTC_6x5_SRGB_BLOCK:
+
+            this->metalFormat    = MTLPixelFormatASTC_6x5_sRGB;
+            this->actualFormatId = angle::FormatID::ASTC_6x5_SRGB_BLOCK;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
+            break;
+
+        case angle::FormatID::ASTC_6x5_UNORM_BLOCK:
+
+            this->metalFormat    = MTLPixelFormatASTC_6x5_LDR;
+            this->actualFormatId = angle::FormatID::ASTC_6x5_UNORM_BLOCK;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
+            break;
+
+        case angle::FormatID::ASTC_6x6_SRGB_BLOCK:
+
+            this->metalFormat    = MTLPixelFormatASTC_6x6_sRGB;
+            this->actualFormatId = angle::FormatID::ASTC_6x6_SRGB_BLOCK;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
+            break;
+
+        case angle::FormatID::ASTC_6x6_UNORM_BLOCK:
+
+            this->metalFormat    = MTLPixelFormatASTC_6x6_LDR;
+            this->actualFormatId = angle::FormatID::ASTC_6x6_UNORM_BLOCK;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
+            break;
+
+        case angle::FormatID::ASTC_8x5_SRGB_BLOCK:
+
+            this->metalFormat    = MTLPixelFormatASTC_8x5_sRGB;
+            this->actualFormatId = angle::FormatID::ASTC_8x5_SRGB_BLOCK;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
+            break;
+
+        case angle::FormatID::ASTC_8x5_UNORM_BLOCK:
+
+            this->metalFormat    = MTLPixelFormatASTC_8x5_LDR;
+            this->actualFormatId = angle::FormatID::ASTC_8x5_UNORM_BLOCK;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
+            break;
+
+        case angle::FormatID::ASTC_8x6_SRGB_BLOCK:
+
+            this->metalFormat    = MTLPixelFormatASTC_8x6_sRGB;
+            this->actualFormatId = angle::FormatID::ASTC_8x6_SRGB_BLOCK;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
+            break;
+
+        case angle::FormatID::ASTC_8x6_UNORM_BLOCK:
+
+            this->metalFormat    = MTLPixelFormatASTC_8x6_LDR;
+            this->actualFormatId = angle::FormatID::ASTC_8x6_UNORM_BLOCK;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
+            break;
+
+        case angle::FormatID::ASTC_8x8_SRGB_BLOCK:
+
+            this->metalFormat    = MTLPixelFormatASTC_8x8_sRGB;
+            this->actualFormatId = angle::FormatID::ASTC_8x8_SRGB_BLOCK;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
+            break;
+
+        case angle::FormatID::ASTC_8x8_UNORM_BLOCK:
+
+            this->metalFormat    = MTLPixelFormatASTC_8x8_LDR;
+            this->actualFormatId = angle::FormatID::ASTC_8x8_UNORM_BLOCK;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
+            break;
+
+        case angle::FormatID::EAC_R11G11_SNORM_BLOCK:
+
+            this->metalFormat    = MTLPixelFormatEAC_RG11Snorm;
+            this->actualFormatId = angle::FormatID::EAC_R11G11_SNORM_BLOCK;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
+            break;
+
+        case angle::FormatID::EAC_R11G11_UNORM_BLOCK:
+
+            this->metalFormat    = MTLPixelFormatEAC_RG11Unorm;
+            this->actualFormatId = angle::FormatID::EAC_R11G11_UNORM_BLOCK;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
+            break;
+
+        case angle::FormatID::EAC_R11_SNORM_BLOCK:
+
+            this->metalFormat    = MTLPixelFormatEAC_R11Snorm;
+            this->actualFormatId = angle::FormatID::EAC_R11_SNORM_BLOCK;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
+            break;
+
+        case angle::FormatID::EAC_R11_UNORM_BLOCK:
+
+            this->metalFormat    = MTLPixelFormatEAC_R11Unorm;
+            this->actualFormatId = angle::FormatID::EAC_R11_UNORM_BLOCK;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
+            break;
+
+        case angle::FormatID::ETC2_R8G8B8A1_SRGB_BLOCK:
+
+            this->metalFormat    = MTLPixelFormatETC2_RGB8A1_sRGB;
+            this->actualFormatId = angle::FormatID::ETC2_R8G8B8A1_SRGB_BLOCK;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
+            break;
+
+        case angle::FormatID::ETC2_R8G8B8A1_UNORM_BLOCK:
+
+            this->metalFormat    = MTLPixelFormatETC2_RGB8A1;
+            this->actualFormatId = angle::FormatID::ETC2_R8G8B8A1_UNORM_BLOCK;
+            this->initFunction   = Initialize4ComponentData<GLubyte, 0x00, 0x00, 0x00, 0xFF>;
+
+            this->swizzled = false;
+            break;
+
+        case angle::FormatID::ETC2_R8G8B8A8_SRGB_BLOCK:
+
+            this->metalFormat    = MTLPixelFormatEAC_RGBA8_sRGB;
+            this->actualFormatId = angle::FormatID::ETC2_R8G8B8A8_SRGB_BLOCK;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
+            break;
+
+        case angle::FormatID::ETC2_R8G8B8A8_UNORM_BLOCK:
+
+            this->metalFormat    = MTLPixelFormatEAC_RGBA8;
+            this->actualFormatId = angle::FormatID::ETC2_R8G8B8A8_UNORM_BLOCK;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
+            break;
+
+        case angle::FormatID::ETC2_R8G8B8_SRGB_BLOCK:
+
+            this->metalFormat    = MTLPixelFormatETC2_RGB8_sRGB;
+            this->actualFormatId = angle::FormatID::ETC2_R8G8B8_SRGB_BLOCK;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
+            break;
+
+        case angle::FormatID::ETC2_R8G8B8_UNORM_BLOCK:
+
+            this->metalFormat    = MTLPixelFormatETC2_RGB8;
+            this->actualFormatId = angle::FormatID::ETC2_R8G8B8_UNORM_BLOCK;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
+            break;
+
+        case angle::FormatID::PVRTC1_RGBA_2BPP_UNORM_BLOCK:
+
+            this->metalFormat    = MTLPixelFormatPVRTC_RGBA_2BPP;
+            this->actualFormatId = angle::FormatID::PVRTC1_RGBA_2BPP_UNORM_BLOCK;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
+            break;
+
+        case angle::FormatID::PVRTC1_RGBA_2BPP_UNORM_SRGB_BLOCK:
+
+            this->metalFormat    = MTLPixelFormatPVRTC_RGBA_2BPP_sRGB;
+            this->actualFormatId = angle::FormatID::PVRTC1_RGBA_2BPP_UNORM_SRGB_BLOCK;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
+            break;
+
+        case angle::FormatID::PVRTC1_RGBA_4BPP_UNORM_BLOCK:
+
+            this->metalFormat    = MTLPixelFormatPVRTC_RGBA_4BPP;
+            this->actualFormatId = angle::FormatID::PVRTC1_RGBA_4BPP_UNORM_BLOCK;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
+            break;
+
+        case angle::FormatID::PVRTC1_RGBA_4BPP_UNORM_SRGB_BLOCK:
+
+            this->metalFormat    = MTLPixelFormatPVRTC_RGBA_4BPP_sRGB;
+            this->actualFormatId = angle::FormatID::PVRTC1_RGBA_4BPP_UNORM_SRGB_BLOCK;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
+            break;
+
+        case angle::FormatID::PVRTC1_RGB_2BPP_UNORM_BLOCK:
+
+            this->metalFormat    = MTLPixelFormatPVRTC_RGB_2BPP;
+            this->actualFormatId = angle::FormatID::PVRTC1_RGB_2BPP_UNORM_BLOCK;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
+            break;
+
+        case angle::FormatID::PVRTC1_RGB_2BPP_UNORM_SRGB_BLOCK:
+
+            this->metalFormat    = MTLPixelFormatPVRTC_RGB_2BPP_sRGB;
+            this->actualFormatId = angle::FormatID::PVRTC1_RGB_2BPP_UNORM_SRGB_BLOCK;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
+            break;
+
+        case angle::FormatID::PVRTC1_RGB_4BPP_UNORM_BLOCK:
+
+            this->metalFormat    = MTLPixelFormatPVRTC_RGB_4BPP;
+            this->actualFormatId = angle::FormatID::PVRTC1_RGB_4BPP_UNORM_BLOCK;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
+            break;
+
+        case angle::FormatID::PVRTC1_RGB_4BPP_UNORM_SRGB_BLOCK:
+
+            this->metalFormat    = MTLPixelFormatPVRTC_RGB_4BPP_sRGB;
+            this->actualFormatId = angle::FormatID::PVRTC1_RGB_4BPP_UNORM_SRGB_BLOCK;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
+            break;
+
+        case angle::FormatID::R4G4B4A4_UNORM:
+
+            this->metalFormat    = MTLPixelFormatABGR4Unorm;
+            this->actualFormatId = angle::FormatID::R4G4B4A4_UNORM;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
+            break;
+
+        case angle::FormatID::R5G5B5A1_UNORM:
+
+            this->metalFormat    = MTLPixelFormatA1BGR5Unorm;
+            this->actualFormatId = angle::FormatID::R5G5B5A1_UNORM;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
+            break;
+
+        case angle::FormatID::R5G6B5_UNORM:
+
             this->metalFormat    = MTLPixelFormatB5G6R5Unorm;
             this->actualFormatId = angle::FormatID::R5G6B5_UNORM;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
             break;
 
         case angle::FormatID::D16_UNORM:
+
             this->metalFormat    = MTLPixelFormatDepth32Float;
             this->actualFormatId = angle::FormatID::D32_FLOAT;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
             break;
 
         case angle::FormatID::D24_UNORM_S8_UINT:
+
             this->metalFormat    = MTLPixelFormatDepth32Float_Stencil8;
             this->actualFormatId = angle::FormatID::D32_FLOAT_S8X24_UINT;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
+            break;
+
+        case angle::FormatID::ETC1_R8G8B8_UNORM_BLOCK:
+
+            this->metalFormat    = MTLPixelFormatETC2_RGB8;
+            this->actualFormatId = angle::FormatID::ETC2_R8G8B8_UNORM_BLOCK;
+            this->initFunction   = nullptr;
+
+            this->swizzled = false;
             break;
 
 #endif  // TARGET_OS_OSX || TARGET_OS_MACCATALYST
@@ -646,257 +1504,403 @@ void VertexFormat::init(angle::FormatID angleFormatId, bool tightlyPacked)
             this->metalFormat        = MTLVertexFormatInvalid;
             this->actualFormatId     = angle::FormatID::NONE;
             this->vertexLoadFunction = nullptr;
+            this->defaultAlpha       = 0;
+            this->actualSameGLType   = false;
+            break;
+
+        case angle::FormatID::R10G10B10A2_SNORM:
+            this->metalFormat        = MTLVertexFormatInt1010102Normalized;
+            this->actualFormatId     = angle::FormatID::R10G10B10A2_SNORM;
+            this->vertexLoadFunction = CopyNativeVertexData<GLuint, 1, 1, 0>;
+            this->defaultAlpha       = 0;
+            this->actualSameGLType   = true;
+            break;
+
+        case angle::FormatID::R10G10B10A2_UNORM:
+            this->metalFormat        = MTLVertexFormatUInt1010102Normalized;
+            this->actualFormatId     = angle::FormatID::R10G10B10A2_UNORM;
+            this->vertexLoadFunction = CopyNativeVertexData<GLuint, 1, 1, 0>;
+            this->defaultAlpha       = 0;
+            this->actualSameGLType   = true;
+            break;
+
+        case angle::FormatID::R16G16B16A16_FLOAT:
+            this->metalFormat        = MTLVertexFormatHalf4;
+            this->actualFormatId     = angle::FormatID::R16G16B16A16_FLOAT;
+            this->vertexLoadFunction = CopyNativeVertexData<GLhalf, 4, 4, 0>;
+            this->defaultAlpha       = 0;
+            this->actualSameGLType   = true;
             break;
 
         case angle::FormatID::R16G16B16A16_SINT:
             this->metalFormat        = MTLVertexFormatShort4;
             this->actualFormatId     = angle::FormatID::R16G16B16A16_SINT;
             this->vertexLoadFunction = CopyNativeVertexData<GLshort, 4, 4, 0>;
+            this->defaultAlpha       = 0;
+            this->actualSameGLType   = true;
             break;
 
         case angle::FormatID::R16G16B16A16_SNORM:
             this->metalFormat        = MTLVertexFormatShort4Normalized;
             this->actualFormatId     = angle::FormatID::R16G16B16A16_SNORM;
             this->vertexLoadFunction = CopyNativeVertexData<GLshort, 4, 4, 0>;
+            this->defaultAlpha       = 0;
+            this->actualSameGLType   = true;
             break;
 
         case angle::FormatID::R16G16B16A16_SSCALED:
             this->metalFormat        = MTLVertexFormatShort4;
             this->actualFormatId     = angle::FormatID::R16G16B16A16_SSCALED;
             this->vertexLoadFunction = CopyNativeVertexData<GLshort, 4, 4, 0>;
+            this->defaultAlpha       = 0;
+            this->actualSameGLType   = true;
             break;
 
         case angle::FormatID::R16G16B16A16_UINT:
             this->metalFormat        = MTLVertexFormatUShort4;
             this->actualFormatId     = angle::FormatID::R16G16B16A16_UINT;
             this->vertexLoadFunction = CopyNativeVertexData<GLushort, 4, 4, 0>;
+            this->defaultAlpha       = 0;
+            this->actualSameGLType   = true;
             break;
 
         case angle::FormatID::R16G16B16A16_UNORM:
             this->metalFormat        = MTLVertexFormatUShort4Normalized;
             this->actualFormatId     = angle::FormatID::R16G16B16A16_UNORM;
             this->vertexLoadFunction = CopyNativeVertexData<GLushort, 4, 4, 0>;
+            this->defaultAlpha       = 0;
+            this->actualSameGLType   = true;
             break;
 
         case angle::FormatID::R16G16B16A16_USCALED:
             this->metalFormat        = MTLVertexFormatUShort4;
             this->actualFormatId     = angle::FormatID::R16G16B16A16_USCALED;
             this->vertexLoadFunction = CopyNativeVertexData<GLushort, 4, 4, 0>;
+            this->defaultAlpha       = 0;
+            this->actualSameGLType   = true;
+            break;
+
+        case angle::FormatID::R16G16B16_FLOAT:
+            if (tightlyPacked)
+            {
+                this->metalFormat        = MTLVertexFormatHalf4;
+                this->actualFormatId     = angle::FormatID::R16G16B16A16_FLOAT;
+                this->vertexLoadFunction = CopyNativeVertexData<GLhalf, 3, 4, gl::Float16One>;
+                this->defaultAlpha       = gl::Float16One;
+                this->actualSameGLType   = true;
+            }
+            else
+            {
+                this->metalFormat        = MTLVertexFormatHalf3;
+                this->actualFormatId     = angle::FormatID::R16G16B16_FLOAT;
+                this->vertexLoadFunction = CopyNativeVertexData<GLhalf, 3, 3, 0>;
+                this->defaultAlpha       = 0;
+                this->actualSameGLType   = true;
+            }
             break;
 
         case angle::FormatID::R16G16B16_SINT:
             if (tightlyPacked)
             {
-                this->metalFormat        = MTLVertexFormatFloat3;
-                this->actualFormatId     = angle::FormatID::R32G32B32_FLOAT;
-                this->vertexLoadFunction = CopyTo32FVertexData<GLshort, 3, 3, false>;
+                this->metalFormat        = MTLVertexFormatShort4;
+                this->actualFormatId     = angle::FormatID::R16G16B16A16_SINT;
+                this->vertexLoadFunction = CopyNativeVertexData<GLshort, 3, 4, 1>;
+                this->defaultAlpha       = 1;
+                this->actualSameGLType   = true;
             }
             else
             {
                 this->metalFormat        = MTLVertexFormatShort3;
                 this->actualFormatId     = angle::FormatID::R16G16B16_SINT;
                 this->vertexLoadFunction = CopyNativeVertexData<GLshort, 3, 3, 0>;
+                this->defaultAlpha       = 0;
+                this->actualSameGLType   = true;
             }
             break;
 
         case angle::FormatID::R16G16B16_SNORM:
             if (tightlyPacked)
             {
-                this->metalFormat        = MTLVertexFormatFloat3;
-                this->actualFormatId     = angle::FormatID::R32G32B32_FLOAT;
-                this->vertexLoadFunction = CopyTo32FVertexData<GLshort, 3, 3, true>;
+                this->metalFormat    = MTLVertexFormatShort4Normalized;
+                this->actualFormatId = angle::FormatID::R16G16B16A16_SNORM;
+                this->vertexLoadFunction =
+                    CopyNativeVertexData<GLshort, 3, 4, std::numeric_limits<GLshort>::max()>;
+                this->defaultAlpha     = std::numeric_limits<GLshort>::max();
+                this->actualSameGLType = true;
             }
             else
             {
                 this->metalFormat        = MTLVertexFormatShort3Normalized;
                 this->actualFormatId     = angle::FormatID::R16G16B16_SNORM;
                 this->vertexLoadFunction = CopyNativeVertexData<GLshort, 3, 3, 0>;
+                this->defaultAlpha       = 0;
+                this->actualSameGLType   = true;
             }
             break;
 
         case angle::FormatID::R16G16B16_SSCALED:
             if (tightlyPacked)
             {
-                this->metalFormat        = MTLVertexFormatFloat3;
-                this->actualFormatId     = angle::FormatID::R32G32B32_FLOAT;
-                this->vertexLoadFunction = CopyTo32FVertexData<GLshort, 3, 3, false>;
+                this->metalFormat        = MTLVertexFormatShort4;
+                this->actualFormatId     = angle::FormatID::R16G16B16A16_SINT;
+                this->vertexLoadFunction = CopyNativeVertexData<GLshort, 3, 4, 1>;
+                this->defaultAlpha       = 1;
+                this->actualSameGLType   = true;
             }
             else
             {
                 this->metalFormat        = MTLVertexFormatShort3;
                 this->actualFormatId     = angle::FormatID::R16G16B16_SSCALED;
                 this->vertexLoadFunction = CopyNativeVertexData<GLshort, 3, 3, 0>;
+                this->defaultAlpha       = 0;
+                this->actualSameGLType   = true;
             }
             break;
 
         case angle::FormatID::R16G16B16_UINT:
             if (tightlyPacked)
             {
-                this->metalFormat        = MTLVertexFormatFloat3;
-                this->actualFormatId     = angle::FormatID::R32G32B32_FLOAT;
-                this->vertexLoadFunction = CopyTo32FVertexData<GLushort, 3, 3, false>;
+                this->metalFormat        = MTLVertexFormatUShort4;
+                this->actualFormatId     = angle::FormatID::R16G16B16A16_UINT;
+                this->vertexLoadFunction = CopyNativeVertexData<GLushort, 3, 4, 1>;
+                this->defaultAlpha       = 1;
+                this->actualSameGLType   = true;
             }
             else
             {
                 this->metalFormat        = MTLVertexFormatUShort3;
                 this->actualFormatId     = angle::FormatID::R16G16B16_UINT;
                 this->vertexLoadFunction = CopyNativeVertexData<GLushort, 3, 3, 0>;
+                this->defaultAlpha       = 0;
+                this->actualSameGLType   = true;
             }
             break;
 
         case angle::FormatID::R16G16B16_UNORM:
             if (tightlyPacked)
             {
-                this->metalFormat        = MTLVertexFormatFloat3;
-                this->actualFormatId     = angle::FormatID::R32G32B32_FLOAT;
-                this->vertexLoadFunction = CopyTo32FVertexData<GLushort, 3, 3, true>;
+                this->metalFormat    = MTLVertexFormatUShort4Normalized;
+                this->actualFormatId = angle::FormatID::R16G16B16A16_UNORM;
+                this->vertexLoadFunction =
+                    CopyNativeVertexData<GLushort, 3, 4, std::numeric_limits<GLushort>::max()>;
+                this->defaultAlpha     = std::numeric_limits<GLushort>::max();
+                this->actualSameGLType = true;
             }
             else
             {
                 this->metalFormat        = MTLVertexFormatUShort3Normalized;
                 this->actualFormatId     = angle::FormatID::R16G16B16_UNORM;
                 this->vertexLoadFunction = CopyNativeVertexData<GLushort, 3, 3, 0>;
+                this->defaultAlpha       = 0;
+                this->actualSameGLType   = true;
             }
             break;
 
         case angle::FormatID::R16G16B16_USCALED:
             if (tightlyPacked)
             {
-                this->metalFormat        = MTLVertexFormatFloat3;
-                this->actualFormatId     = angle::FormatID::R32G32B32_FLOAT;
-                this->vertexLoadFunction = CopyTo32FVertexData<GLushort, 3, 3, false>;
+                this->metalFormat        = MTLVertexFormatUShort4;
+                this->actualFormatId     = angle::FormatID::R16G16B16A16_UINT;
+                this->vertexLoadFunction = CopyNativeVertexData<GLushort, 3, 4, 1>;
+                this->defaultAlpha       = 1;
+                this->actualSameGLType   = true;
             }
             else
             {
                 this->metalFormat        = MTLVertexFormatUShort3;
                 this->actualFormatId     = angle::FormatID::R16G16B16_USCALED;
                 this->vertexLoadFunction = CopyNativeVertexData<GLushort, 3, 3, 0>;
+                this->defaultAlpha       = 0;
+                this->actualSameGLType   = true;
             }
+            break;
+
+        case angle::FormatID::R16G16_FLOAT:
+            this->metalFormat        = MTLVertexFormatHalf2;
+            this->actualFormatId     = angle::FormatID::R16G16_FLOAT;
+            this->vertexLoadFunction = CopyNativeVertexData<GLhalf, 2, 2, 0>;
+            this->defaultAlpha       = 0;
+            this->actualSameGLType   = true;
             break;
 
         case angle::FormatID::R16G16_SINT:
             this->metalFormat        = MTLVertexFormatShort2;
             this->actualFormatId     = angle::FormatID::R16G16_SINT;
             this->vertexLoadFunction = CopyNativeVertexData<GLshort, 2, 2, 0>;
+            this->defaultAlpha       = 0;
+            this->actualSameGLType   = true;
             break;
 
         case angle::FormatID::R16G16_SNORM:
             this->metalFormat        = MTLVertexFormatShort2Normalized;
             this->actualFormatId     = angle::FormatID::R16G16_SNORM;
             this->vertexLoadFunction = CopyNativeVertexData<GLshort, 2, 2, 0>;
+            this->defaultAlpha       = 0;
+            this->actualSameGLType   = true;
             break;
 
         case angle::FormatID::R16G16_SSCALED:
             this->metalFormat        = MTLVertexFormatShort2;
             this->actualFormatId     = angle::FormatID::R16G16_SSCALED;
             this->vertexLoadFunction = CopyNativeVertexData<GLshort, 2, 2, 0>;
+            this->defaultAlpha       = 0;
+            this->actualSameGLType   = true;
             break;
 
         case angle::FormatID::R16G16_UINT:
             this->metalFormat        = MTLVertexFormatUShort2;
             this->actualFormatId     = angle::FormatID::R16G16_UINT;
             this->vertexLoadFunction = CopyNativeVertexData<GLushort, 2, 2, 0>;
+            this->defaultAlpha       = 0;
+            this->actualSameGLType   = true;
             break;
 
         case angle::FormatID::R16G16_UNORM:
             this->metalFormat        = MTLVertexFormatUShort2Normalized;
             this->actualFormatId     = angle::FormatID::R16G16_UNORM;
             this->vertexLoadFunction = CopyNativeVertexData<GLushort, 2, 2, 0>;
+            this->defaultAlpha       = 0;
+            this->actualSameGLType   = true;
             break;
 
         case angle::FormatID::R16G16_USCALED:
             this->metalFormat        = MTLVertexFormatUShort2;
             this->actualFormatId     = angle::FormatID::R16G16_USCALED;
             this->vertexLoadFunction = CopyNativeVertexData<GLushort, 2, 2, 0>;
+            this->defaultAlpha       = 0;
+            this->actualSameGLType   = true;
+            break;
+
+        case angle::FormatID::R16_FLOAT:
+            if (tightlyPacked)
+            {
+                this->metalFormat        = MTLVertexFormatHalf2;
+                this->actualFormatId     = angle::FormatID::R16G16_FLOAT;
+                this->vertexLoadFunction = CopyNativeVertexData<GLhalf, 1, 2, 0>;
+                this->defaultAlpha       = 0;
+                this->actualSameGLType   = true;
+            }
+            else
+            {
+                this->metalFormat        = MTLVertexFormatHalf;
+                this->actualFormatId     = angle::FormatID::R16_FLOAT;
+                this->vertexLoadFunction = CopyNativeVertexData<GLhalf, 1, 1, 0>;
+                this->defaultAlpha       = 0;
+                this->actualSameGLType   = true;
+            }
             break;
 
         case angle::FormatID::R16_SINT:
             if (tightlyPacked)
             {
-                this->metalFormat        = MTLVertexFormatFloat;
-                this->actualFormatId     = angle::FormatID::R32_FLOAT;
-                this->vertexLoadFunction = CopyTo32FVertexData<GLshort, 1, 1, false>;
+                this->metalFormat        = MTLVertexFormatShort2;
+                this->actualFormatId     = angle::FormatID::R16G16_SINT;
+                this->vertexLoadFunction = CopyNativeVertexData<GLshort, 1, 2, 0>;
+                this->defaultAlpha       = 0;
+                this->actualSameGLType   = true;
             }
             else
             {
                 this->metalFormat        = MTLVertexFormatShort;
                 this->actualFormatId     = angle::FormatID::R16_SINT;
                 this->vertexLoadFunction = CopyNativeVertexData<GLshort, 1, 1, 0>;
+                this->defaultAlpha       = 0;
+                this->actualSameGLType   = true;
             }
             break;
 
         case angle::FormatID::R16_SNORM:
             if (tightlyPacked)
             {
-                this->metalFormat        = MTLVertexFormatFloat;
-                this->actualFormatId     = angle::FormatID::R32_FLOAT;
-                this->vertexLoadFunction = CopyTo32FVertexData<GLshort, 1, 1, true>;
+                this->metalFormat        = MTLVertexFormatShort2Normalized;
+                this->actualFormatId     = angle::FormatID::R16G16_SNORM;
+                this->vertexLoadFunction = CopyNativeVertexData<GLshort, 1, 2, 0>;
+                this->defaultAlpha       = 0;
+                this->actualSameGLType   = true;
             }
             else
             {
                 this->metalFormat        = MTLVertexFormatShortNormalized;
                 this->actualFormatId     = angle::FormatID::R16_SNORM;
                 this->vertexLoadFunction = CopyNativeVertexData<GLshort, 1, 1, 0>;
+                this->defaultAlpha       = 0;
+                this->actualSameGLType   = true;
             }
             break;
 
         case angle::FormatID::R16_SSCALED:
             if (tightlyPacked)
             {
-                this->metalFormat        = MTLVertexFormatFloat;
-                this->actualFormatId     = angle::FormatID::R32_FLOAT;
-                this->vertexLoadFunction = CopyTo32FVertexData<GLshort, 1, 1, false>;
+                this->metalFormat        = MTLVertexFormatShort2;
+                this->actualFormatId     = angle::FormatID::R16G16_SINT;
+                this->vertexLoadFunction = CopyNativeVertexData<GLshort, 1, 2, 0>;
+                this->defaultAlpha       = 0;
+                this->actualSameGLType   = true;
             }
             else
             {
                 this->metalFormat        = MTLVertexFormatShort;
                 this->actualFormatId     = angle::FormatID::R16_SSCALED;
                 this->vertexLoadFunction = CopyNativeVertexData<GLshort, 1, 1, 0>;
+                this->defaultAlpha       = 0;
+                this->actualSameGLType   = true;
             }
             break;
 
         case angle::FormatID::R16_UINT:
             if (tightlyPacked)
             {
-                this->metalFormat        = MTLVertexFormatFloat;
-                this->actualFormatId     = angle::FormatID::R32_FLOAT;
-                this->vertexLoadFunction = CopyTo32FVertexData<GLushort, 1, 1, false>;
+                this->metalFormat        = MTLVertexFormatUShort2;
+                this->actualFormatId     = angle::FormatID::R16G16_UINT;
+                this->vertexLoadFunction = CopyNativeVertexData<GLushort, 1, 2, 0>;
+                this->defaultAlpha       = 0;
+                this->actualSameGLType   = true;
             }
             else
             {
                 this->metalFormat        = MTLVertexFormatUShort;
                 this->actualFormatId     = angle::FormatID::R16_UINT;
                 this->vertexLoadFunction = CopyNativeVertexData<GLushort, 1, 1, 0>;
+                this->defaultAlpha       = 0;
+                this->actualSameGLType   = true;
             }
             break;
 
         case angle::FormatID::R16_UNORM:
             if (tightlyPacked)
             {
-                this->metalFormat        = MTLVertexFormatFloat;
-                this->actualFormatId     = angle::FormatID::R32_FLOAT;
-                this->vertexLoadFunction = CopyTo32FVertexData<GLushort, 1, 1, true>;
+                this->metalFormat        = MTLVertexFormatUShort2Normalized;
+                this->actualFormatId     = angle::FormatID::R16G16_UNORM;
+                this->vertexLoadFunction = CopyNativeVertexData<GLushort, 1, 2, 0>;
+                this->defaultAlpha       = 0;
+                this->actualSameGLType   = true;
             }
             else
             {
                 this->metalFormat        = MTLVertexFormatUShortNormalized;
                 this->actualFormatId     = angle::FormatID::R16_UNORM;
                 this->vertexLoadFunction = CopyNativeVertexData<GLushort, 1, 1, 0>;
+                this->defaultAlpha       = 0;
+                this->actualSameGLType   = true;
             }
             break;
 
         case angle::FormatID::R16_USCALED:
             if (tightlyPacked)
             {
-                this->metalFormat        = MTLVertexFormatFloat;
-                this->actualFormatId     = angle::FormatID::R32_FLOAT;
-                this->vertexLoadFunction = CopyTo32FVertexData<GLushort, 1, 1, false>;
+                this->metalFormat        = MTLVertexFormatUShort2;
+                this->actualFormatId     = angle::FormatID::R16G16_UINT;
+                this->vertexLoadFunction = CopyNativeVertexData<GLushort, 1, 2, 0>;
+                this->defaultAlpha       = 0;
+                this->actualSameGLType   = true;
             }
             else
             {
                 this->metalFormat        = MTLVertexFormatUShort;
                 this->actualFormatId     = angle::FormatID::R16_USCALED;
                 this->vertexLoadFunction = CopyNativeVertexData<GLushort, 1, 1, 0>;
+                this->defaultAlpha       = 0;
+                this->actualSameGLType   = true;
             }
             break;
 
@@ -904,361 +1908,1196 @@ void VertexFormat::init(angle::FormatID angleFormatId, bool tightlyPacked)
             this->metalFormat        = MTLVertexFormatFloat4;
             this->actualFormatId     = angle::FormatID::R32G32B32A32_FLOAT;
             this->vertexLoadFunction = CopyNativeVertexData<GLfloat, 4, 4, 0>;
+            this->defaultAlpha       = 0;
+            this->actualSameGLType   = true;
+            break;
+
+        case angle::FormatID::R32G32B32A32_SINT:
+            this->metalFormat        = MTLVertexFormatInt4;
+            this->actualFormatId     = angle::FormatID::R32G32B32A32_SINT;
+            this->vertexLoadFunction = CopyNativeVertexData<GLint, 4, 4, 0>;
+            this->defaultAlpha       = 0;
+            this->actualSameGLType   = true;
+            break;
+
+        case angle::FormatID::R32G32B32A32_UINT:
+            this->metalFormat        = MTLVertexFormatUInt4;
+            this->actualFormatId     = angle::FormatID::R32G32B32A32_UINT;
+            this->vertexLoadFunction = CopyNativeVertexData<GLuint, 4, 4, 0>;
+            this->defaultAlpha       = 0;
+            this->actualSameGLType   = true;
             break;
 
         case angle::FormatID::R32G32B32_FLOAT:
             this->metalFormat        = MTLVertexFormatFloat3;
             this->actualFormatId     = angle::FormatID::R32G32B32_FLOAT;
             this->vertexLoadFunction = CopyNativeVertexData<GLfloat, 3, 3, 0>;
+            this->defaultAlpha       = 0;
+            this->actualSameGLType   = true;
+            break;
+
+        case angle::FormatID::R32G32B32_SINT:
+            this->metalFormat        = MTLVertexFormatInt3;
+            this->actualFormatId     = angle::FormatID::R32G32B32_SINT;
+            this->vertexLoadFunction = CopyNativeVertexData<GLint, 3, 3, 0>;
+            this->defaultAlpha       = 0;
+            this->actualSameGLType   = true;
+            break;
+
+        case angle::FormatID::R32G32B32_UINT:
+            this->metalFormat        = MTLVertexFormatUInt3;
+            this->actualFormatId     = angle::FormatID::R32G32B32_UINT;
+            this->vertexLoadFunction = CopyNativeVertexData<GLuint, 3, 3, 0>;
+            this->defaultAlpha       = 0;
+            this->actualSameGLType   = true;
             break;
 
         case angle::FormatID::R32G32_FLOAT:
             this->metalFormat        = MTLVertexFormatFloat2;
             this->actualFormatId     = angle::FormatID::R32G32_FLOAT;
             this->vertexLoadFunction = CopyNativeVertexData<GLfloat, 2, 2, 0>;
+            this->defaultAlpha       = 0;
+            this->actualSameGLType   = true;
+            break;
+
+        case angle::FormatID::R32G32_SINT:
+            this->metalFormat        = MTLVertexFormatInt2;
+            this->actualFormatId     = angle::FormatID::R32G32_SINT;
+            this->vertexLoadFunction = CopyNativeVertexData<GLint, 2, 2, 0>;
+            this->defaultAlpha       = 0;
+            this->actualSameGLType   = true;
+            break;
+
+        case angle::FormatID::R32G32_UINT:
+            this->metalFormat        = MTLVertexFormatUInt2;
+            this->actualFormatId     = angle::FormatID::R32G32_UINT;
+            this->vertexLoadFunction = CopyNativeVertexData<GLuint, 2, 2, 0>;
+            this->defaultAlpha       = 0;
+            this->actualSameGLType   = true;
             break;
 
         case angle::FormatID::R32_FLOAT:
             this->metalFormat        = MTLVertexFormatFloat;
             this->actualFormatId     = angle::FormatID::R32_FLOAT;
             this->vertexLoadFunction = CopyNativeVertexData<GLfloat, 1, 1, 0>;
+            this->defaultAlpha       = 0;
+            this->actualSameGLType   = true;
+            break;
+
+        case angle::FormatID::R32_SINT:
+            this->metalFormat        = MTLVertexFormatInt;
+            this->actualFormatId     = angle::FormatID::R32_SINT;
+            this->vertexLoadFunction = CopyNativeVertexData<GLint, 1, 1, 0>;
+            this->defaultAlpha       = 0;
+            this->actualSameGLType   = true;
+            break;
+
+        case angle::FormatID::R32_UINT:
+            this->metalFormat        = MTLVertexFormatUInt;
+            this->actualFormatId     = angle::FormatID::R32_UINT;
+            this->vertexLoadFunction = CopyNativeVertexData<GLuint, 1, 1, 0>;
+            this->defaultAlpha       = 0;
+            this->actualSameGLType   = true;
             break;
 
         case angle::FormatID::R8G8B8A8_SINT:
             this->metalFormat        = MTLVertexFormatChar4;
             this->actualFormatId     = angle::FormatID::R8G8B8A8_SINT;
             this->vertexLoadFunction = CopyNativeVertexData<GLbyte, 4, 4, 0>;
+            this->defaultAlpha       = 0;
+            this->actualSameGLType   = true;
             break;
 
         case angle::FormatID::R8G8B8A8_SNORM:
             this->metalFormat        = MTLVertexFormatChar4Normalized;
             this->actualFormatId     = angle::FormatID::R8G8B8A8_SNORM;
             this->vertexLoadFunction = CopyNativeVertexData<GLbyte, 4, 4, 0>;
+            this->defaultAlpha       = 0;
+            this->actualSameGLType   = true;
             break;
 
         case angle::FormatID::R8G8B8A8_SSCALED:
             this->metalFormat        = MTLVertexFormatChar4;
             this->actualFormatId     = angle::FormatID::R8G8B8A8_SSCALED;
             this->vertexLoadFunction = CopyNativeVertexData<GLbyte, 4, 4, 0>;
+            this->defaultAlpha       = 0;
+            this->actualSameGLType   = true;
             break;
 
         case angle::FormatID::R8G8B8A8_UINT:
             this->metalFormat        = MTLVertexFormatUChar4;
             this->actualFormatId     = angle::FormatID::R8G8B8A8_UINT;
             this->vertexLoadFunction = CopyNativeVertexData<GLubyte, 4, 4, 0>;
+            this->defaultAlpha       = 0;
+            this->actualSameGLType   = true;
             break;
 
         case angle::FormatID::R8G8B8A8_UNORM:
             this->metalFormat        = MTLVertexFormatUChar4Normalized;
             this->actualFormatId     = angle::FormatID::R8G8B8A8_UNORM;
             this->vertexLoadFunction = CopyNativeVertexData<GLubyte, 4, 4, 0>;
+            this->defaultAlpha       = 0;
+            this->actualSameGLType   = true;
             break;
 
         case angle::FormatID::R8G8B8A8_USCALED:
             this->metalFormat        = MTLVertexFormatUChar4;
             this->actualFormatId     = angle::FormatID::R8G8B8A8_USCALED;
             this->vertexLoadFunction = CopyNativeVertexData<GLubyte, 4, 4, 0>;
+            this->defaultAlpha       = 0;
+            this->actualSameGLType   = true;
             break;
 
         case angle::FormatID::R8G8B8_SINT:
             if (tightlyPacked)
             {
-                this->metalFormat        = MTLVertexFormatFloat3;
-                this->actualFormatId     = angle::FormatID::R32G32B32_FLOAT;
-                this->vertexLoadFunction = CopyTo32FVertexData<GLbyte, 3, 3, false>;
+                this->metalFormat        = MTLVertexFormatChar4;
+                this->actualFormatId     = angle::FormatID::R8G8B8A8_SINT;
+                this->vertexLoadFunction = CopyNativeVertexData<GLbyte, 3, 4, 1>;
+                this->defaultAlpha       = 1;
+                this->actualSameGLType   = true;
             }
             else
             {
                 this->metalFormat        = MTLVertexFormatChar3;
                 this->actualFormatId     = angle::FormatID::R8G8B8_SINT;
                 this->vertexLoadFunction = CopyNativeVertexData<GLbyte, 3, 3, 0>;
+                this->defaultAlpha       = 0;
+                this->actualSameGLType   = true;
             }
             break;
 
         case angle::FormatID::R8G8B8_SNORM:
             if (tightlyPacked)
             {
-                this->metalFormat        = MTLVertexFormatFloat3;
-                this->actualFormatId     = angle::FormatID::R32G32B32_FLOAT;
-                this->vertexLoadFunction = CopyTo32FVertexData<GLbyte, 3, 3, true>;
+                this->metalFormat    = MTLVertexFormatChar4Normalized;
+                this->actualFormatId = angle::FormatID::R8G8B8A8_SNORM;
+                this->vertexLoadFunction =
+                    CopyNativeVertexData<GLbyte, 3, 4, std::numeric_limits<GLbyte>::max()>;
+                this->defaultAlpha     = std::numeric_limits<GLbyte>::max();
+                this->actualSameGLType = true;
             }
             else
             {
                 this->metalFormat        = MTLVertexFormatChar3Normalized;
                 this->actualFormatId     = angle::FormatID::R8G8B8_SNORM;
                 this->vertexLoadFunction = CopyNativeVertexData<GLbyte, 3, 3, 0>;
+                this->defaultAlpha       = 0;
+                this->actualSameGLType   = true;
             }
             break;
 
         case angle::FormatID::R8G8B8_SSCALED:
             if (tightlyPacked)
             {
-                this->metalFormat        = MTLVertexFormatFloat3;
-                this->actualFormatId     = angle::FormatID::R32G32B32_FLOAT;
-                this->vertexLoadFunction = CopyTo32FVertexData<GLbyte, 3, 3, false>;
+                this->metalFormat        = MTLVertexFormatChar4;
+                this->actualFormatId     = angle::FormatID::R8G8B8A8_SINT;
+                this->vertexLoadFunction = CopyNativeVertexData<GLbyte, 3, 4, 1>;
+                this->defaultAlpha       = 1;
+                this->actualSameGLType   = true;
             }
             else
             {
                 this->metalFormat        = MTLVertexFormatChar3;
                 this->actualFormatId     = angle::FormatID::R8G8B8_SSCALED;
                 this->vertexLoadFunction = CopyNativeVertexData<GLbyte, 3, 3, 0>;
+                this->defaultAlpha       = 0;
+                this->actualSameGLType   = true;
             }
             break;
 
         case angle::FormatID::R8G8B8_UINT:
             if (tightlyPacked)
             {
-                this->metalFormat        = MTLVertexFormatFloat3;
-                this->actualFormatId     = angle::FormatID::R32G32B32_FLOAT;
-                this->vertexLoadFunction = CopyTo32FVertexData<GLubyte, 3, 3, false>;
+                this->metalFormat        = MTLVertexFormatUChar4;
+                this->actualFormatId     = angle::FormatID::R8G8B8A8_UINT;
+                this->vertexLoadFunction = CopyNativeVertexData<GLubyte, 3, 4, 1>;
+                this->defaultAlpha       = 1;
+                this->actualSameGLType   = true;
             }
             else
             {
                 this->metalFormat        = MTLVertexFormatUChar3;
                 this->actualFormatId     = angle::FormatID::R8G8B8_UINT;
                 this->vertexLoadFunction = CopyNativeVertexData<GLubyte, 3, 3, 0>;
+                this->defaultAlpha       = 0;
+                this->actualSameGLType   = true;
             }
             break;
 
         case angle::FormatID::R8G8B8_UNORM:
             if (tightlyPacked)
             {
-                this->metalFormat        = MTLVertexFormatFloat3;
-                this->actualFormatId     = angle::FormatID::R32G32B32_FLOAT;
-                this->vertexLoadFunction = CopyTo32FVertexData<GLubyte, 3, 3, true>;
+                this->metalFormat    = MTLVertexFormatUChar4Normalized;
+                this->actualFormatId = angle::FormatID::R8G8B8A8_UNORM;
+                this->vertexLoadFunction =
+                    CopyNativeVertexData<GLubyte, 3, 4, std::numeric_limits<GLubyte>::max()>;
+                this->defaultAlpha     = std::numeric_limits<GLubyte>::max();
+                this->actualSameGLType = true;
             }
             else
             {
                 this->metalFormat        = MTLVertexFormatUChar3Normalized;
                 this->actualFormatId     = angle::FormatID::R8G8B8_UNORM;
                 this->vertexLoadFunction = CopyNativeVertexData<GLubyte, 3, 3, 0>;
+                this->defaultAlpha       = 0;
+                this->actualSameGLType   = true;
             }
             break;
 
         case angle::FormatID::R8G8B8_USCALED:
             if (tightlyPacked)
             {
-                this->metalFormat        = MTLVertexFormatFloat3;
-                this->actualFormatId     = angle::FormatID::R32G32B32_FLOAT;
-                this->vertexLoadFunction = CopyTo32FVertexData<GLubyte, 3, 3, false>;
+                this->metalFormat        = MTLVertexFormatUChar4;
+                this->actualFormatId     = angle::FormatID::R8G8B8A8_UINT;
+                this->vertexLoadFunction = CopyNativeVertexData<GLubyte, 3, 4, 1>;
+                this->defaultAlpha       = 1;
+                this->actualSameGLType   = true;
             }
             else
             {
                 this->metalFormat        = MTLVertexFormatUChar3;
                 this->actualFormatId     = angle::FormatID::R8G8B8_USCALED;
                 this->vertexLoadFunction = CopyNativeVertexData<GLubyte, 3, 3, 0>;
+                this->defaultAlpha       = 0;
+                this->actualSameGLType   = true;
             }
             break;
 
         case angle::FormatID::R8G8_SINT:
             if (tightlyPacked)
             {
-                this->metalFormat        = MTLVertexFormatFloat2;
-                this->actualFormatId     = angle::FormatID::R32G32_FLOAT;
-                this->vertexLoadFunction = CopyTo32FVertexData<GLbyte, 2, 2, false>;
+                this->metalFormat        = MTLVertexFormatChar4;
+                this->actualFormatId     = angle::FormatID::R8G8B8A8_SINT;
+                this->vertexLoadFunction = CopyNativeVertexData<GLbyte, 2, 4, 1>;
+                this->defaultAlpha       = 1;
+                this->actualSameGLType   = true;
             }
             else
             {
                 this->metalFormat        = MTLVertexFormatChar2;
                 this->actualFormatId     = angle::FormatID::R8G8_SINT;
                 this->vertexLoadFunction = CopyNativeVertexData<GLbyte, 2, 2, 0>;
+                this->defaultAlpha       = 0;
+                this->actualSameGLType   = true;
             }
             break;
 
         case angle::FormatID::R8G8_SNORM:
             if (tightlyPacked)
             {
-                this->metalFormat        = MTLVertexFormatFloat2;
-                this->actualFormatId     = angle::FormatID::R32G32_FLOAT;
-                this->vertexLoadFunction = CopyTo32FVertexData<GLbyte, 2, 2, true>;
+                this->metalFormat    = MTLVertexFormatChar4Normalized;
+                this->actualFormatId = angle::FormatID::R8G8B8A8_SNORM;
+                this->vertexLoadFunction =
+                    CopyNativeVertexData<GLbyte, 2, 4, std::numeric_limits<GLbyte>::max()>;
+                this->defaultAlpha     = std::numeric_limits<GLbyte>::max();
+                this->actualSameGLType = true;
             }
             else
             {
                 this->metalFormat        = MTLVertexFormatChar2Normalized;
                 this->actualFormatId     = angle::FormatID::R8G8_SNORM;
                 this->vertexLoadFunction = CopyNativeVertexData<GLbyte, 2, 2, 0>;
+                this->defaultAlpha       = 0;
+                this->actualSameGLType   = true;
             }
             break;
 
         case angle::FormatID::R8G8_SSCALED:
             if (tightlyPacked)
             {
-                this->metalFormat        = MTLVertexFormatFloat2;
-                this->actualFormatId     = angle::FormatID::R32G32_FLOAT;
-                this->vertexLoadFunction = CopyTo32FVertexData<GLbyte, 2, 2, false>;
+                this->metalFormat        = MTLVertexFormatChar4;
+                this->actualFormatId     = angle::FormatID::R8G8B8A8_SINT;
+                this->vertexLoadFunction = CopyNativeVertexData<GLbyte, 2, 4, 1>;
+                this->defaultAlpha       = 1;
+                this->actualSameGLType   = true;
             }
             else
             {
                 this->metalFormat        = MTLVertexFormatChar2;
                 this->actualFormatId     = angle::FormatID::R8G8_SSCALED;
                 this->vertexLoadFunction = CopyNativeVertexData<GLbyte, 2, 2, 0>;
+                this->defaultAlpha       = 0;
+                this->actualSameGLType   = true;
             }
             break;
 
         case angle::FormatID::R8G8_UINT:
             if (tightlyPacked)
             {
-                this->metalFormat        = MTLVertexFormatFloat2;
-                this->actualFormatId     = angle::FormatID::R32G32_FLOAT;
-                this->vertexLoadFunction = CopyTo32FVertexData<GLubyte, 2, 2, false>;
+                this->metalFormat        = MTLVertexFormatUChar4;
+                this->actualFormatId     = angle::FormatID::R8G8B8A8_UINT;
+                this->vertexLoadFunction = CopyNativeVertexData<GLubyte, 2, 4, 1>;
+                this->defaultAlpha       = 1;
+                this->actualSameGLType   = true;
             }
             else
             {
                 this->metalFormat        = MTLVertexFormatUChar2;
                 this->actualFormatId     = angle::FormatID::R8G8_UINT;
                 this->vertexLoadFunction = CopyNativeVertexData<GLubyte, 2, 2, 0>;
+                this->defaultAlpha       = 0;
+                this->actualSameGLType   = true;
             }
             break;
 
         case angle::FormatID::R8G8_UNORM:
             if (tightlyPacked)
             {
-                this->metalFormat        = MTLVertexFormatFloat2;
-                this->actualFormatId     = angle::FormatID::R32G32_FLOAT;
-                this->vertexLoadFunction = CopyTo32FVertexData<GLubyte, 2, 2, true>;
+                this->metalFormat    = MTLVertexFormatUChar4Normalized;
+                this->actualFormatId = angle::FormatID::R8G8B8A8_UNORM;
+                this->vertexLoadFunction =
+                    CopyNativeVertexData<GLubyte, 2, 4, std::numeric_limits<GLubyte>::max()>;
+                this->defaultAlpha     = std::numeric_limits<GLubyte>::max();
+                this->actualSameGLType = true;
             }
             else
             {
                 this->metalFormat        = MTLVertexFormatUChar2Normalized;
                 this->actualFormatId     = angle::FormatID::R8G8_UNORM;
                 this->vertexLoadFunction = CopyNativeVertexData<GLubyte, 2, 2, 0>;
+                this->defaultAlpha       = 0;
+                this->actualSameGLType   = true;
             }
             break;
 
         case angle::FormatID::R8G8_USCALED:
             if (tightlyPacked)
             {
-                this->metalFormat        = MTLVertexFormatFloat2;
-                this->actualFormatId     = angle::FormatID::R32G32_FLOAT;
-                this->vertexLoadFunction = CopyTo32FVertexData<GLubyte, 2, 2, false>;
+                this->metalFormat        = MTLVertexFormatUChar4;
+                this->actualFormatId     = angle::FormatID::R8G8B8A8_UINT;
+                this->vertexLoadFunction = CopyNativeVertexData<GLubyte, 2, 4, 1>;
+                this->defaultAlpha       = 1;
+                this->actualSameGLType   = true;
             }
             else
             {
                 this->metalFormat        = MTLVertexFormatUChar2;
                 this->actualFormatId     = angle::FormatID::R8G8_USCALED;
                 this->vertexLoadFunction = CopyNativeVertexData<GLubyte, 2, 2, 0>;
+                this->defaultAlpha       = 0;
+                this->actualSameGLType   = true;
             }
             break;
 
         case angle::FormatID::R8_SINT:
             if (tightlyPacked)
             {
-                this->metalFormat        = MTLVertexFormatFloat;
-                this->actualFormatId     = angle::FormatID::R32_FLOAT;
-                this->vertexLoadFunction = CopyTo32FVertexData<GLbyte, 1, 1, false>;
+                this->metalFormat        = MTLVertexFormatChar4;
+                this->actualFormatId     = angle::FormatID::R8G8B8A8_SINT;
+                this->vertexLoadFunction = CopyNativeVertexData<GLbyte, 1, 4, 1>;
+                this->defaultAlpha       = 1;
+                this->actualSameGLType   = true;
             }
             else
             {
                 this->metalFormat        = MTLVertexFormatChar;
                 this->actualFormatId     = angle::FormatID::R8_SINT;
                 this->vertexLoadFunction = CopyNativeVertexData<GLbyte, 1, 1, 0>;
+                this->defaultAlpha       = 0;
+                this->actualSameGLType   = true;
             }
             break;
 
         case angle::FormatID::R8_SNORM:
             if (tightlyPacked)
             {
-                this->metalFormat        = MTLVertexFormatFloat;
-                this->actualFormatId     = angle::FormatID::R32_FLOAT;
-                this->vertexLoadFunction = CopyTo32FVertexData<GLbyte, 1, 1, true>;
+                this->metalFormat    = MTLVertexFormatChar4Normalized;
+                this->actualFormatId = angle::FormatID::R8G8B8A8_SNORM;
+                this->vertexLoadFunction =
+                    CopyNativeVertexData<GLbyte, 1, 4, std::numeric_limits<GLbyte>::max()>;
+                this->defaultAlpha     = std::numeric_limits<GLbyte>::max();
+                this->actualSameGLType = true;
             }
             else
             {
                 this->metalFormat        = MTLVertexFormatCharNormalized;
                 this->actualFormatId     = angle::FormatID::R8_SNORM;
                 this->vertexLoadFunction = CopyNativeVertexData<GLbyte, 1, 1, 0>;
+                this->defaultAlpha       = 0;
+                this->actualSameGLType   = true;
             }
             break;
 
         case angle::FormatID::R8_SSCALED:
             if (tightlyPacked)
             {
-                this->metalFormat        = MTLVertexFormatFloat;
-                this->actualFormatId     = angle::FormatID::R32_FLOAT;
-                this->vertexLoadFunction = CopyTo32FVertexData<GLbyte, 1, 1, false>;
+                this->metalFormat        = MTLVertexFormatChar4;
+                this->actualFormatId     = angle::FormatID::R8G8B8A8_SINT;
+                this->vertexLoadFunction = CopyNativeVertexData<GLbyte, 1, 4, 1>;
+                this->defaultAlpha       = 1;
+                this->actualSameGLType   = true;
             }
             else
             {
                 this->metalFormat        = MTLVertexFormatChar;
                 this->actualFormatId     = angle::FormatID::R8_SSCALED;
                 this->vertexLoadFunction = CopyNativeVertexData<GLbyte, 1, 1, 0>;
+                this->defaultAlpha       = 0;
+                this->actualSameGLType   = true;
             }
             break;
 
         case angle::FormatID::R8_UINT:
             if (tightlyPacked)
             {
-                this->metalFormat        = MTLVertexFormatFloat;
-                this->actualFormatId     = angle::FormatID::R32_FLOAT;
-                this->vertexLoadFunction = CopyTo32FVertexData<GLubyte, 1, 1, false>;
+                this->metalFormat        = MTLVertexFormatUChar4;
+                this->actualFormatId     = angle::FormatID::R8G8B8A8_UINT;
+                this->vertexLoadFunction = CopyNativeVertexData<GLubyte, 1, 4, 1>;
+                this->defaultAlpha       = 1;
+                this->actualSameGLType   = true;
             }
             else
             {
                 this->metalFormat        = MTLVertexFormatUChar;
                 this->actualFormatId     = angle::FormatID::R8_UINT;
                 this->vertexLoadFunction = CopyNativeVertexData<GLubyte, 1, 1, 0>;
+                this->defaultAlpha       = 0;
+                this->actualSameGLType   = true;
             }
             break;
 
         case angle::FormatID::R8_UNORM:
             if (tightlyPacked)
             {
-                this->metalFormat        = MTLVertexFormatFloat;
-                this->actualFormatId     = angle::FormatID::R32_FLOAT;
-                this->vertexLoadFunction = CopyTo32FVertexData<GLubyte, 1, 1, true>;
+                this->metalFormat    = MTLVertexFormatUChar4Normalized;
+                this->actualFormatId = angle::FormatID::R8G8B8A8_UNORM;
+                this->vertexLoadFunction =
+                    CopyNativeVertexData<GLubyte, 1, 4, std::numeric_limits<GLubyte>::max()>;
+                this->defaultAlpha     = std::numeric_limits<GLubyte>::max();
+                this->actualSameGLType = true;
             }
             else
             {
                 this->metalFormat        = MTLVertexFormatUCharNormalized;
                 this->actualFormatId     = angle::FormatID::R8_UNORM;
                 this->vertexLoadFunction = CopyNativeVertexData<GLubyte, 1, 1, 0>;
+                this->defaultAlpha       = 0;
+                this->actualSameGLType   = true;
             }
             break;
 
         case angle::FormatID::R8_USCALED:
             if (tightlyPacked)
             {
-                this->metalFormat        = MTLVertexFormatFloat;
-                this->actualFormatId     = angle::FormatID::R32_FLOAT;
-                this->vertexLoadFunction = CopyTo32FVertexData<GLubyte, 1, 1, false>;
+                this->metalFormat        = MTLVertexFormatUChar4;
+                this->actualFormatId     = angle::FormatID::R8G8B8A8_UINT;
+                this->vertexLoadFunction = CopyNativeVertexData<GLubyte, 1, 4, 1>;
+                this->defaultAlpha       = 1;
+                this->actualSameGLType   = true;
             }
             else
             {
                 this->metalFormat        = MTLVertexFormatUChar;
                 this->actualFormatId     = angle::FormatID::R8_USCALED;
                 this->vertexLoadFunction = CopyNativeVertexData<GLubyte, 1, 1, 0>;
+                this->defaultAlpha       = 0;
+                this->actualSameGLType   = true;
             }
+            break;
+
+        case angle::FormatID::R10G10B10A2_SINT:
+            this->metalFormat        = MTLVertexFormatFloat4;
+            this->actualFormatId     = angle::FormatID::R32G32B32A32_FLOAT;
+            this->vertexLoadFunction = CopyXYZ10W2ToXYZW32FVertexData<true, false, true>;
+            this->defaultAlpha       = 0;
+            this->actualSameGLType   = false;
+            break;
+
+        case angle::FormatID::R10G10B10A2_SSCALED:
+            this->metalFormat        = MTLVertexFormatFloat4;
+            this->actualFormatId     = angle::FormatID::R32G32B32A32_FLOAT;
+            this->vertexLoadFunction = CopyXYZ10W2ToXYZW32FVertexData<true, false, true>;
+            this->defaultAlpha       = 0;
+            this->actualSameGLType   = false;
+            break;
+
+        case angle::FormatID::R10G10B10A2_UINT:
+            this->metalFormat        = MTLVertexFormatFloat4;
+            this->actualFormatId     = angle::FormatID::R32G32B32A32_FLOAT;
+            this->vertexLoadFunction = CopyXYZ10W2ToXYZW32FVertexData<false, false, true>;
+            this->defaultAlpha       = 0;
+            this->actualSameGLType   = false;
+            break;
+
+        case angle::FormatID::R10G10B10A2_USCALED:
+            this->metalFormat        = MTLVertexFormatFloat4;
+            this->actualFormatId     = angle::FormatID::R32G32B32A32_FLOAT;
+            this->vertexLoadFunction = CopyXYZ10W2ToXYZW32FVertexData<false, false, true>;
+            this->defaultAlpha       = 0;
+            this->actualSameGLType   = false;
             break;
 
         case angle::FormatID::R32G32B32A32_FIXED:
             this->metalFormat        = MTLVertexFormatFloat4;
             this->actualFormatId     = angle::FormatID::R32G32B32A32_FLOAT;
             this->vertexLoadFunction = Copy32FixedTo32FVertexData<4, 4>;
+            this->defaultAlpha       = 0;
+            this->actualSameGLType   = false;
+            break;
+
+        case angle::FormatID::R32G32B32A32_SNORM:
+            this->metalFormat        = MTLVertexFormatFloat4;
+            this->actualFormatId     = angle::FormatID::R32G32B32A32_FLOAT;
+            this->vertexLoadFunction = CopyTo32FVertexData<GLint, 4, 4, true>;
+            this->defaultAlpha       = 0;
+            this->actualSameGLType   = false;
+            break;
+
+        case angle::FormatID::R32G32B32A32_SSCALED:
+            this->metalFormat        = MTLVertexFormatFloat4;
+            this->actualFormatId     = angle::FormatID::R32G32B32A32_FLOAT;
+            this->vertexLoadFunction = CopyTo32FVertexData<GLint, 4, 4, false>;
+            this->defaultAlpha       = 0;
+            this->actualSameGLType   = false;
+            break;
+
+        case angle::FormatID::R32G32B32A32_UNORM:
+            this->metalFormat        = MTLVertexFormatFloat4;
+            this->actualFormatId     = angle::FormatID::R32G32B32A32_FLOAT;
+            this->vertexLoadFunction = CopyTo32FVertexData<GLuint, 4, 4, true>;
+            this->defaultAlpha       = 0;
+            this->actualSameGLType   = false;
+            break;
+
+        case angle::FormatID::R32G32B32A32_USCALED:
+            this->metalFormat        = MTLVertexFormatFloat4;
+            this->actualFormatId     = angle::FormatID::R32G32B32A32_FLOAT;
+            this->vertexLoadFunction = CopyTo32FVertexData<GLuint, 4, 4, false>;
+            this->defaultAlpha       = 0;
+            this->actualSameGLType   = false;
             break;
 
         case angle::FormatID::R32G32B32_FIXED:
             this->metalFormat        = MTLVertexFormatFloat3;
             this->actualFormatId     = angle::FormatID::R32G32B32_FLOAT;
             this->vertexLoadFunction = Copy32FixedTo32FVertexData<3, 3>;
+            this->defaultAlpha       = 0;
+            this->actualSameGLType   = false;
+            break;
+
+        case angle::FormatID::R32G32B32_SNORM:
+            this->metalFormat        = MTLVertexFormatFloat3;
+            this->actualFormatId     = angle::FormatID::R32G32B32_FLOAT;
+            this->vertexLoadFunction = CopyTo32FVertexData<GLint, 3, 3, true>;
+            this->defaultAlpha       = 0;
+            this->actualSameGLType   = false;
+            break;
+
+        case angle::FormatID::R32G32B32_SSCALED:
+            this->metalFormat        = MTLVertexFormatFloat3;
+            this->actualFormatId     = angle::FormatID::R32G32B32_FLOAT;
+            this->vertexLoadFunction = CopyTo32FVertexData<GLint, 3, 3, false>;
+            this->defaultAlpha       = 0;
+            this->actualSameGLType   = false;
+            break;
+
+        case angle::FormatID::R32G32B32_UNORM:
+            this->metalFormat        = MTLVertexFormatFloat3;
+            this->actualFormatId     = angle::FormatID::R32G32B32_FLOAT;
+            this->vertexLoadFunction = CopyTo32FVertexData<GLuint, 3, 3, true>;
+            this->defaultAlpha       = 0;
+            this->actualSameGLType   = false;
+            break;
+
+        case angle::FormatID::R32G32B32_USCALED:
+            this->metalFormat        = MTLVertexFormatFloat3;
+            this->actualFormatId     = angle::FormatID::R32G32B32_FLOAT;
+            this->vertexLoadFunction = CopyTo32FVertexData<GLuint, 3, 3, false>;
+            this->defaultAlpha       = 0;
+            this->actualSameGLType   = false;
             break;
 
         case angle::FormatID::R32G32_FIXED:
             this->metalFormat        = MTLVertexFormatFloat2;
             this->actualFormatId     = angle::FormatID::R32G32_FLOAT;
             this->vertexLoadFunction = Copy32FixedTo32FVertexData<2, 2>;
+            this->defaultAlpha       = 0;
+            this->actualSameGLType   = false;
+            break;
+
+        case angle::FormatID::R32G32_SNORM:
+            this->metalFormat        = MTLVertexFormatFloat2;
+            this->actualFormatId     = angle::FormatID::R32G32_FLOAT;
+            this->vertexLoadFunction = CopyTo32FVertexData<GLint, 2, 2, true>;
+            this->defaultAlpha       = 0;
+            this->actualSameGLType   = false;
+            break;
+
+        case angle::FormatID::R32G32_SSCALED:
+            this->metalFormat        = MTLVertexFormatFloat2;
+            this->actualFormatId     = angle::FormatID::R32G32_FLOAT;
+            this->vertexLoadFunction = CopyTo32FVertexData<GLint, 2, 2, false>;
+            this->defaultAlpha       = 0;
+            this->actualSameGLType   = false;
+            break;
+
+        case angle::FormatID::R32G32_UNORM:
+            this->metalFormat        = MTLVertexFormatFloat2;
+            this->actualFormatId     = angle::FormatID::R32G32_FLOAT;
+            this->vertexLoadFunction = CopyTo32FVertexData<GLuint, 2, 2, true>;
+            this->defaultAlpha       = 0;
+            this->actualSameGLType   = false;
+            break;
+
+        case angle::FormatID::R32G32_USCALED:
+            this->metalFormat        = MTLVertexFormatFloat2;
+            this->actualFormatId     = angle::FormatID::R32G32_FLOAT;
+            this->vertexLoadFunction = CopyTo32FVertexData<GLuint, 2, 2, false>;
+            this->defaultAlpha       = 0;
+            this->actualSameGLType   = false;
             break;
 
         case angle::FormatID::R32_FIXED:
             this->metalFormat        = MTLVertexFormatFloat;
             this->actualFormatId     = angle::FormatID::R32_FLOAT;
             this->vertexLoadFunction = Copy32FixedTo32FVertexData<1, 1>;
+            this->defaultAlpha       = 0;
+            this->actualSameGLType   = false;
+            break;
+
+        case angle::FormatID::R32_SNORM:
+            this->metalFormat        = MTLVertexFormatFloat;
+            this->actualFormatId     = angle::FormatID::R32_FLOAT;
+            this->vertexLoadFunction = CopyTo32FVertexData<GLint, 1, 1, true>;
+            this->defaultAlpha       = 0;
+            this->actualSameGLType   = false;
+            break;
+
+        case angle::FormatID::R32_SSCALED:
+            this->metalFormat        = MTLVertexFormatFloat;
+            this->actualFormatId     = angle::FormatID::R32_FLOAT;
+            this->vertexLoadFunction = CopyTo32FVertexData<GLint, 1, 1, false>;
+            this->defaultAlpha       = 0;
+            this->actualSameGLType   = false;
+            break;
+
+        case angle::FormatID::R32_UNORM:
+            this->metalFormat        = MTLVertexFormatFloat;
+            this->actualFormatId     = angle::FormatID::R32_FLOAT;
+            this->vertexLoadFunction = CopyTo32FVertexData<GLuint, 1, 1, true>;
+            this->defaultAlpha       = 0;
+            this->actualSameGLType   = false;
+            break;
+
+        case angle::FormatID::R32_USCALED:
+            this->metalFormat        = MTLVertexFormatFloat;
+            this->actualFormatId     = angle::FormatID::R32_FLOAT;
+            this->vertexLoadFunction = CopyTo32FVertexData<GLuint, 1, 1, false>;
+            this->defaultAlpha       = 0;
+            this->actualSameGLType   = false;
             break;
 
         default:
             this->metalFormat        = MTLVertexFormatInvalid;
             this->actualFormatId     = angle::FormatID::NONE;
             this->vertexLoadFunction = nullptr;
+            this->defaultAlpha       = 0;
+            this->actualSameGLType   = false;
     }
+}
+
+void FormatTable::initNativeFormatCapsAutogen(const DisplayMtl *display)
+{
+    const angle::FeaturesMtl &featuresMtl = display->getFeatures();
+    // Skip auto resolve if either hasDepth/StencilAutoResolve or allowMultisampleStoreAndResolve
+    // feature are disabled.
+    bool supportDepthAutoResolve = featuresMtl.hasDepthAutoResolve.enabled &&
+                                   featuresMtl.allowMultisampleStoreAndResolve.enabled;
+    bool supportStencilAutoResolve = featuresMtl.hasStencilAutoResolve.enabled &&
+                                     featuresMtl.allowMultisampleStoreAndResolve.enabled;
+    bool supportDepthStencilAutoResolve = supportDepthAutoResolve && supportStencilAutoResolve;
+
+    // Source: https://developer.apple.com/metal/Metal-Feature-Set-Tables.pdf
+    setFormatCaps(MTLPixelFormatA8Unorm, /** filterable*/ true, /** writable*/ false,
+                  /** blendable*/ false, /** multisample*/ false, /** resolve*/ false,
+                  /** colorRenderable*/ false, /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatBGR10A2Unorm, /** filterable*/ true,
+                  /** writable*/ display->supportsEitherGPUFamily(3, 1), /** blendable*/ true,
+                  /** multisample*/ true, /** resolve*/ true, /** colorRenderable*/ true,
+                  /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatBGRA8Unorm, /** filterable*/ true, /** writable*/ true,
+                  /** blendable*/ true, /** multisample*/ true, /** resolve*/ true,
+                  /** colorRenderable*/ true, /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatBGRA8Unorm_sRGB, /** filterable*/ true,
+                  /** writable*/ display->supportsIOSGPUFamily(2), /** blendable*/ true,
+                  /** multisample*/ true, /** resolve*/ true, /** colorRenderable*/ true,
+                  /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatDepth32Float, /** filterable*/ display->supportsMacGPUFamily(1),
+                  /** writable*/ false, /** blendable*/ false, /** multisample*/ true,
+                  /** resolve*/ supportDepthAutoResolve, /** colorRenderable*/ false,
+                  /** depthRenderable*/ true);
+
+    setFormatCaps(MTLPixelFormatDepth32Float_Stencil8,
+                  /** filterable*/ display->supportsMacGPUFamily(1), /** writable*/ false,
+                  /** blendable*/ false, /** multisample*/ true,
+                  /** resolve*/ supportDepthStencilAutoResolve, /** colorRenderable*/ false,
+                  /** depthRenderable*/ true);
+
+    setFormatCaps(MTLPixelFormatR16Float, /** filterable*/ true, /** writable*/ true,
+                  /** blendable*/ true, /** multisample*/ true, /** resolve*/ true,
+                  /** colorRenderable*/ true, /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatR16Sint, /** filterable*/ false, /** writable*/ true,
+                  /** blendable*/ false, /** multisample*/ true, /** resolve*/ false,
+                  /** colorRenderable*/ true, /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatR16Snorm, /** filterable*/ true, /** writable*/ true,
+                  /** blendable*/ true, /** multisample*/ true,
+                  /** resolve*/ display->supportsMacGPUFamily(1), /** colorRenderable*/ true,
+                  /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatR16Uint, /** filterable*/ false, /** writable*/ true,
+                  /** blendable*/ false, /** multisample*/ true, /** resolve*/ false,
+                  /** colorRenderable*/ true, /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatR16Unorm, /** filterable*/ true, /** writable*/ true,
+                  /** blendable*/ true, /** multisample*/ true,
+                  /** resolve*/ display->supportsMacGPUFamily(1), /** colorRenderable*/ true,
+                  /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatR32Float, /** filterable*/ display->supportsMacGPUFamily(1),
+                  /** writable*/ true, /** blendable*/ true, /** multisample*/ true,
+                  /** resolve*/ display->supportsMacGPUFamily(1), /** colorRenderable*/ true,
+                  /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatR32Sint, /** filterable*/ false, /** writable*/ true,
+                  /** blendable*/ false, /** multisample*/ display->supportsMacGPUFamily(1),
+                  /** resolve*/ false, /** colorRenderable*/ true, /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatR32Uint, /** filterable*/ false, /** writable*/ true,
+                  /** blendable*/ false, /** multisample*/ display->supportsMacGPUFamily(1),
+                  /** resolve*/ false, /** colorRenderable*/ true, /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatR8Sint, /** filterable*/ false, /** writable*/ true,
+                  /** blendable*/ false, /** multisample*/ true, /** resolve*/ false,
+                  /** colorRenderable*/ true, /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatR8Snorm, /** filterable*/ true, /** writable*/ true,
+                  /** blendable*/ true, /** multisample*/ true,
+                  /** resolve*/ display->supportsEitherGPUFamily(2, 1), /** colorRenderable*/ true,
+                  /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatR8Uint, /** filterable*/ false, /** writable*/ true,
+                  /** blendable*/ false, /** multisample*/ true, /** resolve*/ false,
+                  /** colorRenderable*/ true, /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatR8Unorm, /** filterable*/ true, /** writable*/ true,
+                  /** blendable*/ true, /** multisample*/ true, /** resolve*/ true,
+                  /** colorRenderable*/ true, /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatRG11B10Float, /** filterable*/ true,
+                  /** writable*/ display->supportsEitherGPUFamily(3, 1), /** blendable*/ true,
+                  /** multisample*/ true, /** resolve*/ true, /** colorRenderable*/ true,
+                  /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatRG16Float, /** filterable*/ true, /** writable*/ true,
+                  /** blendable*/ true, /** multisample*/ true, /** resolve*/ true,
+                  /** colorRenderable*/ true, /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatRG16Sint, /** filterable*/ false, /** writable*/ true,
+                  /** blendable*/ false, /** multisample*/ true, /** resolve*/ false,
+                  /** colorRenderable*/ true, /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatRG16Snorm, /** filterable*/ true, /** writable*/ true,
+                  /** blendable*/ true, /** multisample*/ true,
+                  /** resolve*/ display->supportsMacGPUFamily(1), /** colorRenderable*/ true,
+                  /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatRG16Uint, /** filterable*/ false, /** writable*/ true,
+                  /** blendable*/ false, /** multisample*/ true, /** resolve*/ false,
+                  /** colorRenderable*/ true, /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatRG16Unorm, /** filterable*/ true, /** writable*/ true,
+                  /** blendable*/ true, /** multisample*/ true,
+                  /** resolve*/ display->supportsMacGPUFamily(1), /** colorRenderable*/ true,
+                  /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatRG32Float, /** filterable*/ display->supportsMacGPUFamily(1),
+                  /** writable*/ true, /** blendable*/ true,
+                  /** multisample*/ display->supportsMacGPUFamily(1),
+                  /** resolve*/ display->supportsMacGPUFamily(1), /** colorRenderable*/ true,
+                  /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatRG32Sint, /** filterable*/ false, /** writable*/ true,
+                  /** blendable*/ false, /** multisample*/ display->supportsMacGPUFamily(1),
+                  /** resolve*/ false, /** colorRenderable*/ true, /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatRG32Uint, /** filterable*/ false, /** writable*/ true,
+                  /** blendable*/ false, /** multisample*/ display->supportsMacGPUFamily(1),
+                  /** resolve*/ false, /** colorRenderable*/ true, /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatRG8Sint, /** filterable*/ false, /** writable*/ true,
+                  /** blendable*/ false, /** multisample*/ true, /** resolve*/ false,
+                  /** colorRenderable*/ true, /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatRG8Snorm, /** filterable*/ true, /** writable*/ true,
+                  /** blendable*/ true, /** multisample*/ true,
+                  /** resolve*/ display->supportsEitherGPUFamily(2, 1), /** colorRenderable*/ true,
+                  /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatRG8Uint, /** filterable*/ false, /** writable*/ true,
+                  /** blendable*/ false, /** multisample*/ true, /** resolve*/ false,
+                  /** colorRenderable*/ true, /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatRG8Unorm, /** filterable*/ true, /** writable*/ true,
+                  /** blendable*/ true, /** multisample*/ true, /** resolve*/ true,
+                  /** colorRenderable*/ true, /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatRGB10A2Uint, /** filterable*/ false,
+                  /** writable*/ display->supportsEitherGPUFamily(3, 1), /** blendable*/ false,
+                  /** multisample*/ true, /** resolve*/ false, /** colorRenderable*/ true,
+                  /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatRGB10A2Unorm, /** filterable*/ true,
+                  /** writable*/ display->supportsEitherGPUFamily(3, 1), /** blendable*/ true,
+                  /** multisample*/ true, /** resolve*/ true, /** colorRenderable*/ true,
+                  /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatRGB9E5Float, /** filterable*/ true,
+                  /** writable*/ display->supportsIOSGPUFamily(3),
+                  /** blendable*/ display->supportsIOSGPUFamily(1),
+                  /** multisample*/ display->supportsIOSGPUFamily(1),
+                  /** resolve*/ display->supportsIOSGPUFamily(1),
+                  /** colorRenderable*/ display->supportsIOSGPUFamily(1),
+                  /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatRGBA16Float, /** filterable*/ true, /** writable*/ true,
+                  /** blendable*/ true, /** multisample*/ true, /** resolve*/ true,
+                  /** colorRenderable*/ true, /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatRGBA16Sint, /** filterable*/ false, /** writable*/ true,
+                  /** blendable*/ false, /** multisample*/ true, /** resolve*/ false,
+                  /** colorRenderable*/ true, /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatRGBA16Snorm, /** filterable*/ true, /** writable*/ true,
+                  /** blendable*/ true, /** multisample*/ true,
+                  /** resolve*/ display->supportsMacGPUFamily(1), /** colorRenderable*/ true,
+                  /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatRGBA16Uint, /** filterable*/ false, /** writable*/ true,
+                  /** blendable*/ false, /** multisample*/ true, /** resolve*/ false,
+                  /** colorRenderable*/ true, /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatRGBA16Unorm, /** filterable*/ true, /** writable*/ true,
+                  /** blendable*/ true, /** multisample*/ true,
+                  /** resolve*/ display->supportsMacGPUFamily(1), /** colorRenderable*/ true,
+                  /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatRGBA32Float, /** filterable*/ display->supportsMacGPUFamily(1),
+                  /** writable*/ true, /** blendable*/ display->supportsMacGPUFamily(1),
+                  /** multisample*/ display->supportsMacGPUFamily(1),
+                  /** resolve*/ display->supportsMacGPUFamily(1), /** colorRenderable*/ true,
+                  /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatRGBA32Sint, /** filterable*/ false, /** writable*/ true,
+                  /** blendable*/ false, /** multisample*/ display->supportsMacGPUFamily(1),
+                  /** resolve*/ false, /** colorRenderable*/ true, /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatRGBA32Uint, /** filterable*/ false, /** writable*/ true,
+                  /** blendable*/ false, /** multisample*/ display->supportsMacGPUFamily(1),
+                  /** resolve*/ false, /** colorRenderable*/ true, /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatRGBA8Sint, /** filterable*/ false, /** writable*/ true,
+                  /** blendable*/ false, /** multisample*/ true, /** resolve*/ false,
+                  /** colorRenderable*/ true, /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatRGBA8Snorm, /** filterable*/ true, /** writable*/ true,
+                  /** blendable*/ true, /** multisample*/ true,
+                  /** resolve*/ display->supportsEitherGPUFamily(2, 1), /** colorRenderable*/ true,
+                  /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatRGBA8Uint, /** filterable*/ false, /** writable*/ true,
+                  /** blendable*/ false, /** multisample*/ true, /** resolve*/ false,
+                  /** colorRenderable*/ true, /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatRGBA8Unorm, /** filterable*/ true, /** writable*/ true,
+                  /** blendable*/ true, /** multisample*/ true, /** resolve*/ true,
+                  /** colorRenderable*/ true, /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatRGBA8Unorm_sRGB, /** filterable*/ true,
+                  /** writable*/ display->supportsIOSGPUFamily(2), /** blendable*/ true,
+                  /** multisample*/ true, /** resolve*/ true, /** colorRenderable*/ true,
+                  /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatStencil8, /** filterable*/ false, /** writable*/ false,
+                  /** blendable*/ false, /** multisample*/ true, /** resolve*/ false,
+                  /** colorRenderable*/ false, /** depthRenderable*/ true);
+
+#if TARGET_OS_OSX || TARGET_OS_MACCATALYST
+    setFormatCaps(MTLPixelFormatBC1_RGBA, /** filterable*/ true, /** writable*/ false,
+                  /** blendable*/ false, /** multisample*/ false, /** resolve*/ false,
+                  /** colorRenderable*/ false, /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatBC1_RGBA_sRGB, /** filterable*/ true, /** writable*/ false,
+                  /** blendable*/ false, /** multisample*/ false, /** resolve*/ false,
+                  /** colorRenderable*/ false, /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatBC2_RGBA, /** filterable*/ true, /** writable*/ false,
+                  /** blendable*/ false, /** multisample*/ false, /** resolve*/ false,
+                  /** colorRenderable*/ false, /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatBC2_RGBA_sRGB, /** filterable*/ true, /** writable*/ false,
+                  /** blendable*/ false, /** multisample*/ false, /** resolve*/ false,
+                  /** colorRenderable*/ false, /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatBC3_RGBA, /** filterable*/ true, /** writable*/ false,
+                  /** blendable*/ false, /** multisample*/ false, /** resolve*/ false,
+                  /** colorRenderable*/ false, /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatBC3_RGBA_sRGB, /** filterable*/ true, /** writable*/ false,
+                  /** blendable*/ false, /** multisample*/ false, /** resolve*/ false,
+                  /** colorRenderable*/ false, /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatBC4_RSnorm, /** filterable*/ true, /** writable*/ false,
+                  /** blendable*/ false, /** multisample*/ false, /** resolve*/ false,
+                  /** colorRenderable*/ false, /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatBC4_RUnorm, /** filterable*/ true, /** writable*/ false,
+                  /** blendable*/ false, /** multisample*/ false, /** resolve*/ false,
+                  /** colorRenderable*/ false, /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatBC5_RGSnorm, /** filterable*/ true, /** writable*/ false,
+                  /** blendable*/ false, /** multisample*/ false, /** resolve*/ false,
+                  /** colorRenderable*/ false, /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatBC5_RGUnorm, /** filterable*/ true, /** writable*/ false,
+                  /** blendable*/ false, /** multisample*/ false, /** resolve*/ false,
+                  /** colorRenderable*/ false, /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatBC6H_RGBFloat, /** filterable*/ true, /** writable*/ false,
+                  /** blendable*/ false, /** multisample*/ false, /** resolve*/ false,
+                  /** colorRenderable*/ false, /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatBC6H_RGBUfloat, /** filterable*/ true, /** writable*/ false,
+                  /** blendable*/ false, /** multisample*/ false, /** resolve*/ false,
+                  /** colorRenderable*/ false, /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatBC7_RGBAUnorm, /** filterable*/ true, /** writable*/ false,
+                  /** blendable*/ false, /** multisample*/ false, /** resolve*/ false,
+                  /** colorRenderable*/ false, /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatBC7_RGBAUnorm_sRGB, /** filterable*/ true, /** writable*/ false,
+                  /** blendable*/ false, /** multisample*/ false, /** resolve*/ false,
+                  /** colorRenderable*/ false, /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatDepth16Unorm, /** filterable*/ true, /** writable*/ false,
+                  /** blendable*/ false, /** multisample*/ true,
+                  /** resolve*/ supportDepthAutoResolve, /** colorRenderable*/ false,
+                  /** depthRenderable*/ true);
+
+    setFormatCaps(MTLPixelFormatDepth24Unorm_Stencil8,
+                  /** filterable*/ display->supportsMacGPUFamily(1), /** writable*/ false,
+                  /** blendable*/ false, /** multisample*/ true,
+                  /** resolve*/ supportDepthStencilAutoResolve, /** colorRenderable*/ false,
+                  /** depthRenderable*/ display->supportsMacGPUFamily(1));
+
+#elif TARGET_OS_IOS || TARGET_OS_TV  // TARGET_OS_OSX || TARGET_OS_MACCATALYST
+    setFormatCaps(MTLPixelFormatA1BGR5Unorm, /** filterable*/ true, /** writable*/ false,
+                  /** blendable*/ true, /** multisample*/ true, /** resolve*/ true,
+                  /** colorRenderable*/ true, /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatABGR4Unorm, /** filterable*/ true, /** writable*/ false,
+                  /** blendable*/ true, /** multisample*/ true, /** resolve*/ true,
+                  /** colorRenderable*/ true, /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatASTC_10x10_LDR, /** filterable*/ display->supportsIOSGPUFamily(2),
+                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
+                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatASTC_10x10_sRGB, /** filterable*/ display->supportsIOSGPUFamily(2),
+                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
+                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatASTC_10x5_LDR, /** filterable*/ display->supportsIOSGPUFamily(2),
+                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
+                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatASTC_10x5_sRGB, /** filterable*/ display->supportsIOSGPUFamily(2),
+                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
+                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatASTC_10x6_LDR, /** filterable*/ display->supportsIOSGPUFamily(2),
+                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
+                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatASTC_10x6_sRGB, /** filterable*/ display->supportsIOSGPUFamily(2),
+                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
+                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatASTC_10x8_LDR, /** filterable*/ display->supportsIOSGPUFamily(2),
+                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
+                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatASTC_10x8_sRGB, /** filterable*/ display->supportsIOSGPUFamily(2),
+                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
+                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatASTC_12x10_LDR, /** filterable*/ display->supportsIOSGPUFamily(2),
+                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
+                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatASTC_12x10_sRGB, /** filterable*/ display->supportsIOSGPUFamily(2),
+                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
+                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatASTC_12x12_LDR, /** filterable*/ display->supportsIOSGPUFamily(2),
+                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
+                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatASTC_12x12_sRGB, /** filterable*/ display->supportsIOSGPUFamily(2),
+                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
+                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatASTC_4x4_LDR, /** filterable*/ display->supportsIOSGPUFamily(2),
+                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
+                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatASTC_4x4_sRGB, /** filterable*/ display->supportsIOSGPUFamily(2),
+                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
+                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatASTC_5x4_LDR, /** filterable*/ display->supportsIOSGPUFamily(2),
+                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
+                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatASTC_5x4_sRGB, /** filterable*/ display->supportsIOSGPUFamily(2),
+                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
+                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatASTC_5x5_LDR, /** filterable*/ display->supportsIOSGPUFamily(2),
+                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
+                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatASTC_5x5_sRGB, /** filterable*/ display->supportsIOSGPUFamily(2),
+                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
+                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatASTC_6x5_LDR, /** filterable*/ display->supportsIOSGPUFamily(2),
+                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
+                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatASTC_6x5_sRGB, /** filterable*/ display->supportsIOSGPUFamily(2),
+                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
+                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatASTC_6x6_LDR, /** filterable*/ display->supportsIOSGPUFamily(2),
+                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
+                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatASTC_6x6_sRGB, /** filterable*/ display->supportsIOSGPUFamily(2),
+                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
+                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatASTC_8x5_LDR, /** filterable*/ display->supportsIOSGPUFamily(2),
+                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
+                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatASTC_8x5_sRGB, /** filterable*/ display->supportsIOSGPUFamily(2),
+                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
+                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatASTC_8x6_LDR, /** filterable*/ display->supportsIOSGPUFamily(2),
+                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
+                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatASTC_8x6_sRGB, /** filterable*/ display->supportsIOSGPUFamily(2),
+                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
+                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatASTC_8x8_LDR, /** filterable*/ display->supportsIOSGPUFamily(2),
+                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
+                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatASTC_8x8_sRGB, /** filterable*/ display->supportsIOSGPUFamily(2),
+                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
+                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatB5G6R5Unorm, /** filterable*/ true, /** writable*/ false,
+                  /** blendable*/ true, /** multisample*/ true, /** resolve*/ true,
+                  /** colorRenderable*/ true, /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatBGR5A1Unorm, /** filterable*/ true, /** writable*/ false,
+                  /** blendable*/ true, /** multisample*/ true, /** resolve*/ true,
+                  /** colorRenderable*/ true, /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatEAC_R11Snorm, /** filterable*/ true, /** writable*/ false,
+                  /** blendable*/ false, /** multisample*/ false, /** resolve*/ false,
+                  /** colorRenderable*/ false, /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatEAC_R11Unorm, /** filterable*/ true, /** writable*/ false,
+                  /** blendable*/ false, /** multisample*/ false, /** resolve*/ false,
+                  /** colorRenderable*/ false, /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatEAC_RG11Snorm, /** filterable*/ true, /** writable*/ false,
+                  /** blendable*/ false, /** multisample*/ false, /** resolve*/ false,
+                  /** colorRenderable*/ false, /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatEAC_RG11Unorm, /** filterable*/ true, /** writable*/ false,
+                  /** blendable*/ false, /** multisample*/ false, /** resolve*/ false,
+                  /** colorRenderable*/ false, /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatEAC_RGBA8, /** filterable*/ true, /** writable*/ false,
+                  /** blendable*/ false, /** multisample*/ false, /** resolve*/ false,
+                  /** colorRenderable*/ false, /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatEAC_RGBA8_sRGB, /** filterable*/ true, /** writable*/ false,
+                  /** blendable*/ false, /** multisample*/ false, /** resolve*/ false,
+                  /** colorRenderable*/ false, /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatETC2_RGB8, /** filterable*/ true, /** writable*/ false,
+                  /** blendable*/ false, /** multisample*/ false, /** resolve*/ false,
+                  /** colorRenderable*/ false, /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatETC2_RGB8A1, /** filterable*/ true, /** writable*/ false,
+                  /** blendable*/ false, /** multisample*/ false, /** resolve*/ false,
+                  /** colorRenderable*/ false, /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatETC2_RGB8A1_sRGB, /** filterable*/ true, /** writable*/ false,
+                  /** blendable*/ false, /** multisample*/ false, /** resolve*/ false,
+                  /** colorRenderable*/ false, /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatETC2_RGB8_sRGB, /** filterable*/ true, /** writable*/ false,
+                  /** blendable*/ false, /** multisample*/ false, /** resolve*/ false,
+                  /** colorRenderable*/ false, /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatPVRTC_RGBA_2BPP, /** filterable*/ true, /** writable*/ false,
+                  /** blendable*/ false, /** multisample*/ false, /** resolve*/ false,
+                  /** colorRenderable*/ false, /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatPVRTC_RGBA_2BPP_sRGB, /** filterable*/ true, /** writable*/ false,
+                  /** blendable*/ false, /** multisample*/ false, /** resolve*/ false,
+                  /** colorRenderable*/ false, /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatPVRTC_RGBA_4BPP, /** filterable*/ true, /** writable*/ false,
+                  /** blendable*/ false, /** multisample*/ false, /** resolve*/ false,
+                  /** colorRenderable*/ false, /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatPVRTC_RGBA_4BPP_sRGB, /** filterable*/ true, /** writable*/ false,
+                  /** blendable*/ false, /** multisample*/ false, /** resolve*/ false,
+                  /** colorRenderable*/ false, /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatPVRTC_RGB_2BPP, /** filterable*/ true, /** writable*/ false,
+                  /** blendable*/ false, /** multisample*/ false, /** resolve*/ false,
+                  /** colorRenderable*/ false, /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatPVRTC_RGB_2BPP_sRGB, /** filterable*/ true, /** writable*/ false,
+                  /** blendable*/ false, /** multisample*/ false, /** resolve*/ false,
+                  /** colorRenderable*/ false, /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatPVRTC_RGB_4BPP, /** filterable*/ true, /** writable*/ false,
+                  /** blendable*/ false, /** multisample*/ false, /** resolve*/ false,
+                  /** colorRenderable*/ false, /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatPVRTC_RGB_4BPP_sRGB, /** filterable*/ true, /** writable*/ false,
+                  /** blendable*/ false, /** multisample*/ false, /** resolve*/ false,
+                  /** colorRenderable*/ false, /** depthRenderable*/ false);
+
+#endif  // TARGET_OS_OSX || TARGET_OS_MACCATALYST
 }
 
 }  // namespace mtl

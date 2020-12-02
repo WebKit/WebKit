@@ -13,17 +13,27 @@ import re
 # are added to the ANGLE gn files, hopefully we can just add
 # a few extra regexes here.
 
-if len(sys.argv) != 3:
+if len(sys.argv) != 4:
     sys.stderr.write('Error: wrong number of arguments.\n\n')
-    sys.stderr.write('Two arguments are required. The first argument is the path\n')
-    sys.stderr.write('of the input .gni file, and the second argument is the path\n')
-    sys.stderr.write('of the output .cmake file.\n')
+    sys.stderr.write('Three arguments are required. The first argument is the path\n')
+    sys.stderr.write('of the input .gni file. The second argument is the path of\n')
+    sys.stderr.write('the output .cmake file. The third argument is a path to prepend\n')
+    sys.stderr.write('to each file name (can be the empty string).\n')
     exit(1)
 
 file = open(sys.argv[1], 'rb').read()
 
-# First translate gn single line list declaration:
-file = re.sub(r'\[ ((?:"[^"]*",? )*)\]$', r' \1)', file, flags=re.M)
+# Prepend path to every string.
+file = re.sub(r'"((\\\"|[^"])+)"', '"' + sys.argv[3] + r'\1"', file)
+
+# Remove import, assert, config, and angle_source_set statements.
+file = re.sub(r'^\s*(import|assert|config|angle_source_set)\([^)]+\)( {.*})?$', r'', file, flags=re.MULTILINE|re.DOTALL)
+
+# Translate gn single line list declaration:
+file = re.sub(r'\[ ((?:"[^"]*",? )*)\]$', r' \1)', file, flags=re.MULTILINE)
+
+# Translate gn single line list append:
+file = re.sub(r'^(\s*)(\w+) \+= (\w+)$', r'\1 set(\2, "${\2};${\3}")', file, flags=re.MULTILINE)
 
 # Translate gn list declaration:
 # variable_name = [
@@ -33,24 +43,24 @@ file = re.sub(r'\[ ((?:"[^"]*",? )*)\]$', r' \1)', file, flags=re.M)
 # set(variable_name
 #     "file/name/foo.cpp"
 # )
-file = re.sub(r'^(\s*)(\w+) = ?\[?', r'\1\1set(\2', file, flags=re.M)
-file = re.sub(r'^(\s*)("[^"]+"),$', r'\1\1\2', file, flags=re.M)
-file = re.sub(r'^(\s*)]$', r'\1\1)', file, flags=re.M)
+file = re.sub(r'^(\s*)(\w+) = ?\[?', r'\1\1set(\2', file, flags=re.MULTILINE)
+file = re.sub(r'^(\s*)("[^"]+"),$', r'\1\1\2', file, flags=re.MULTILINE)
+file = re.sub(r'^(\s*)]$', r'\1\1)', file, flags=re.MULTILINE)
 
 # Translate list append fom gn to cmake
-file = re.sub(r'^(\s*)(\w+) \+= ?\[?', r'\1\1list(APPEND \2', file, flags=re.M)
+file = re.sub(r'^(\s*)(\w+) \+= ?\[?', r'\1\1list(APPEND \2', file, flags=re.MULTILINE)
 
 # Translate if statements from gn to cmake
-file = re.sub(r'^(\s*)((?:} else )?)if \((.+)\) {$', r'\1\1\2if(\3)', file, flags=re.M)
-file = re.sub(r'^} else if$', r'elseif', file, flags=re.M)
-file = re.sub(r'^(\s*)} else {$', r'\1\1else()', file, flags=re.M)
-file = re.sub(r'^(\s*)}$', r'\1\1endif()', file, flags=re.M)
+file = re.sub(r'^(\s*)((?:} else )?)if \((.+)\) {$', r'\1\1\2if(\3)', file, flags=re.MULTILINE)
+file = re.sub(r'^} else if$', r'elseif', file, flags=re.MULTILINE)
+file = re.sub(r'^(\s*)} else {$', r'\1\1else()', file, flags=re.MULTILINE)
+file = re.sub(r'^(\s*)}$', r'\1\1endif()', file, flags=re.MULTILINE)
 
 # Translate logic ops from gn to cmake
-file = re.sub(r' \|\| ', r' OR ', file, flags=re.M)
-file = re.sub(r' \&\& ', r' AND ', file, flags=re.M)
-file = re.sub(r' == ', r' STREQUAL ', file, flags=re.M)
-file = re.sub(r'!', r' NOT ', file, flags=re.M)
+file = re.sub(r' \|\| ', r' OR ', file, flags=re.MULTILINE)
+file = re.sub(r' \&\& ', r' AND ', file, flags=re.MULTILINE)
+file = re.sub(r' == ', r' STREQUAL ', file, flags=re.MULTILINE)
+file = re.sub(r'!', r' NOT ', file, flags=re.MULTILINE)
 
 out = open(sys.argv[2], 'wb')
 

@@ -19,7 +19,8 @@ class ContextEGL : public ContextGL
   public:
     ContextEGL(const gl::State &state,
                gl::ErrorSet *errorSet,
-               const std::shared_ptr<RendererEGL> &renderer);
+               const std::shared_ptr<RendererEGL> &renderer,
+               RobustnessVideoMemoryPurgeStatus robustnessVideoMemoryPurgeStatus);
     ~ContextEGL() override;
 
     EGLContext getContext() const;

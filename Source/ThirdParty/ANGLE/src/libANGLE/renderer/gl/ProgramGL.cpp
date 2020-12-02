@@ -221,7 +221,8 @@ class ProgramGL::LinkEventGL final : public LinkEvent
 
 std::unique_ptr<LinkEvent> ProgramGL::link(const gl::Context *context,
                                            const gl::ProgramLinkedResources &resources,
-                                           gl::InfoLog &infoLog)
+                                           gl::InfoLog &infoLog,
+                                           const gl::ProgramMergedVaryings & /*mergedVaryings*/)
 {
     ANGLE_TRACE_EVENT0("gpu.angle", "ProgramGL::link");
 
@@ -1087,19 +1088,23 @@ void ProgramGL::markUnusedUniformLocations(std::vector<gl::VariableLocation> *un
             auto &locationRef = (*uniformLocations)[location];
             if (mState.isSamplerUniformIndex(locationRef.index))
             {
-                GLuint samplerIndex  = mState.getSamplerIndexFromUniformIndex(locationRef.index);
-                auto &samplerBinding = (*samplerBindings)[samplerIndex];
-                // Crop unused sampler bindings in the sampler array.
+                GLuint samplerIndex = mState.getSamplerIndexFromUniformIndex(locationRef.index);
+                gl::SamplerBinding &samplerBinding = (*samplerBindings)[samplerIndex];
                 if (locationRef.arrayIndex < samplerBinding.boundTextureUnits.size())
+                {
+                    // Crop unused sampler bindings in the sampler array.
                     samplerBinding.boundTextureUnits.resize(locationRef.arrayIndex);
+                }
             }
             else if (mState.isImageUniformIndex(locationRef.index))
             {
-                GLuint imageIndex  = mState.getImageIndexFromUniformIndex(locationRef.index);
-                auto &imageBinding = (*imageBindings)[imageIndex];
-                // Crop unused image bindings in the image array.
+                GLuint imageIndex = mState.getImageIndexFromUniformIndex(locationRef.index);
+                gl::ImageBinding &imageBinding = (*imageBindings)[imageIndex];
                 if (locationRef.arrayIndex < imageBinding.boundImageUnits.size())
+                {
+                    // Crop unused image bindings in the image array.
                     imageBinding.boundImageUnits.resize(locationRef.arrayIndex);
+                }
             }
             // If the location has been previously bound by a glBindUniformLocation call, it should
             // be marked as ignored. Otherwise it's unused.

@@ -37,8 +37,11 @@ namespace rx
 
 ContextGL::ContextGL(const gl::State &state,
                      gl::ErrorSet *errorSet,
-                     const std::shared_ptr<RendererGL> &renderer)
-    : ContextImpl(state, errorSet), mRenderer(renderer)
+                     const std::shared_ptr<RendererGL> &renderer,
+                     RobustnessVideoMemoryPurgeStatus robustnessVideoMemoryPurgeStatus)
+    : ContextImpl(state, errorSet),
+      mRenderer(renderer),
+      mRobustnessVideoMemoryPurgeStatus(robustnessVideoMemoryPurgeStatus)
 {}
 
 ContextGL::~ContextGL() {}
@@ -102,7 +105,12 @@ RenderbufferImpl *ContextGL::createRenderbuffer(const gl::RenderbufferState &sta
 
 BufferImpl *ContextGL::createBuffer(const gl::BufferState &state)
 {
-    return new BufferGL(state, getFunctions(), getStateManager());
+    const FunctionsGL *functions = getFunctions();
+
+    GLuint buffer = 0;
+    functions->genBuffers(1, &buffer);
+
+    return new BufferGL(state, buffer);
 }
 
 VertexArrayImpl *ContextGL::createVertexArray(const gl::VertexArrayState &data)
@@ -280,11 +288,12 @@ angle::Result ContextGL::drawArrays(const gl::Context *context,
     ANGLE_TRY(setDrawArraysState(context, first, count, instanceCount));
     if (!usesMultiview)
     {
-        getFunctions()->drawArrays(ToGLenum(mode), first, count);
+        ANGLE_GL_TRY(context, getFunctions()->drawArrays(ToGLenum(mode), first, count));
     }
     else
     {
-        getFunctions()->drawArraysInstanced(ToGLenum(mode), first, count, instanceCount);
+        ANGLE_GL_TRY(context, getFunctions()->drawArraysInstanced(ToGLenum(mode), first, count,
+                                                                  instanceCount));
     }
     return angle::Result::Continue;
 }
@@ -303,7 +312,8 @@ angle::Result ContextGL::drawArraysInstanced(const gl::Context *context,
     }
 
     ANGLE_TRY(setDrawArraysState(context, first, count, adjustedInstanceCount));
-    getFunctions()->drawArraysInstanced(ToGLenum(mode), first, count, adjustedInstanceCount);
+    ANGLE_GL_TRY(context, getFunctions()->drawArraysInstanced(ToGLenum(mode), first, count,
+                                                              adjustedInstanceCount));
     return angle::Result::Continue;
 }
 
@@ -405,8 +415,9 @@ angle::Result ContextGL::drawArraysInstancedBaseInstance(const gl::Context *cont
     if (functions->drawArraysInstancedBaseInstance)
     {
         // GL 4.2+ or GL_EXT_base_instance
-        functions->drawArraysInstancedBaseInstance(ToGLenum(mode), first, count,
-                                                   adjustedInstanceCount, baseInstance);
+        ANGLE_GL_TRY(context,
+                     functions->drawArraysInstancedBaseInstance(
+                         ToGLenum(mode), first, count, adjustedInstanceCount, baseInstance));
     }
     else
     {
@@ -418,7 +429,8 @@ angle::Result ContextGL::drawArraysInstancedBaseInstance(const gl::Context *cont
         gl::AttributesMask attribToResetMask =
             updateAttributesForBaseInstance(program, baseInstance);
 
-        functions->drawArraysInstanced(ToGLenum(mode), first, count, adjustedInstanceCount);
+        ANGLE_GL_TRY(context, functions->drawArraysInstanced(ToGLenum(mode), first, count,
+                                                             adjustedInstanceCount));
 
         resetUpdatedAttributes(attribToResetMask);
     }
@@ -445,12 +457,14 @@ angle::Result ContextGL::drawElements(const gl::Context *context,
     ANGLE_TRY(setDrawElementsState(context, count, type, indices, instanceCount, &drawIndexPtr));
     if (!usesMultiview)
     {
-        getFunctions()->drawElements(ToGLenum(mode), count, ToGLenum(type), drawIndexPtr);
+        ANGLE_GL_TRY(context, getFunctions()->drawElements(ToGLenum(mode), count, ToGLenum(type),
+                                                           drawIndexPtr));
     }
     else
     {
-        getFunctions()->drawElementsInstanced(ToGLenum(mode), count, ToGLenum(type), drawIndexPtr,
-                                              instanceCount);
+        ANGLE_GL_TRY(context,
+                     getFunctions()->drawElementsInstanced(ToGLenum(mode), count, ToGLenum(type),
+                                                           drawIndexPtr, instanceCount));
     }
     return angle::Result::Continue;
 }
@@ -475,13 +489,14 @@ angle::Result ContextGL::drawElementsBaseVertex(const gl::Context *context,
     ANGLE_TRY(setDrawElementsState(context, count, type, indices, instanceCount, &drawIndexPtr));
     if (!usesMultiview)
     {
-        getFunctions()->drawElementsBaseVertex(ToGLenum(mode), count, ToGLenum(type), drawIndexPtr,
-                                               baseVertex);
+        ANGLE_GL_TRY(context, getFunctions()->drawElementsBaseVertex(
+                                  ToGLenum(mode), count, ToGLenum(type), drawIndexPtr, baseVertex));
     }
     else
     {
-        getFunctions()->drawElementsInstancedBaseVertex(ToGLenum(mode), count, ToGLenum(type),
-                                                        drawIndexPtr, instanceCount, baseVertex);
+        ANGLE_GL_TRY(context, getFunctions()->drawElementsInstancedBaseVertex(
+                                  ToGLenum(mode), count, ToGLenum(type), drawIndexPtr,
+                                  instanceCount, baseVertex));
     }
     return angle::Result::Continue;
 }
@@ -503,8 +518,9 @@ angle::Result ContextGL::drawElementsInstanced(const gl::Context *context,
 
     ANGLE_TRY(setDrawElementsState(context, count, type, indices, adjustedInstanceCount,
                                    &drawIndexPointer));
-    getFunctions()->drawElementsInstanced(ToGLenum(mode), count, ToGLenum(type), drawIndexPointer,
-                                          adjustedInstanceCount);
+    ANGLE_GL_TRY(context,
+                 getFunctions()->drawElementsInstanced(ToGLenum(mode), count, ToGLenum(type),
+                                                       drawIndexPointer, adjustedInstanceCount));
     return angle::Result::Continue;
 }
 
@@ -526,8 +542,9 @@ angle::Result ContextGL::drawElementsInstancedBaseVertex(const gl::Context *cont
 
     ANGLE_TRY(setDrawElementsState(context, count, type, indices, adjustedInstanceCount,
                                    &drawIndexPointer));
-    getFunctions()->drawElementsInstancedBaseVertex(
-        ToGLenum(mode), count, ToGLenum(type), drawIndexPointer, adjustedInstanceCount, baseVertex);
+    ANGLE_GL_TRY(context, getFunctions()->drawElementsInstancedBaseVertex(
+                              ToGLenum(mode), count, ToGLenum(type), drawIndexPointer,
+                              adjustedInstanceCount, baseVertex));
     return angle::Result::Continue;
 }
 
@@ -556,9 +573,9 @@ angle::Result ContextGL::drawElementsInstancedBaseVertexBaseInstance(const gl::C
     if (functions->drawElementsInstancedBaseVertexBaseInstance)
     {
         // GL 4.2+ or GL_EXT_base_instance
-        functions->drawElementsInstancedBaseVertexBaseInstance(
-            ToGLenum(mode), count, ToGLenum(type), drawIndexPointer, adjustedInstanceCount,
-            baseVertex, baseInstance);
+        ANGLE_GL_TRY(context, functions->drawElementsInstancedBaseVertexBaseInstance(
+                                  ToGLenum(mode), count, ToGLenum(type), drawIndexPointer,
+                                  adjustedInstanceCount, baseVertex, baseInstance));
     }
     else
     {
@@ -567,9 +584,9 @@ angle::Result ContextGL::drawElementsInstancedBaseVertexBaseInstance(const gl::C
         gl::AttributesMask attribToResetMask =
             updateAttributesForBaseInstance(program, baseInstance);
 
-        functions->drawElementsInstancedBaseVertex(ToGLenum(mode), count, ToGLenum(type),
-                                                   drawIndexPointer, adjustedInstanceCount,
-                                                   baseVertex);
+        ANGLE_GL_TRY(context, functions->drawElementsInstancedBaseVertex(
+                                  ToGLenum(mode), count, ToGLenum(type), drawIndexPointer,
+                                  adjustedInstanceCount, baseVertex));
 
         resetUpdatedAttributes(attribToResetMask);
     }
@@ -594,13 +611,14 @@ angle::Result ContextGL::drawRangeElements(const gl::Context *context,
         setDrawElementsState(context, count, type, indices, instanceCount, &drawIndexPointer));
     if (!usesMultiview)
     {
-        getFunctions()->drawRangeElements(ToGLenum(mode), start, end, count, ToGLenum(type),
-                                          drawIndexPointer);
+        ANGLE_GL_TRY(context, getFunctions()->drawRangeElements(ToGLenum(mode), start, end, count,
+                                                                ToGLenum(type), drawIndexPointer));
     }
     else
     {
-        getFunctions()->drawElementsInstanced(ToGLenum(mode), count, ToGLenum(type),
-                                              drawIndexPointer, instanceCount);
+        ANGLE_GL_TRY(context,
+                     getFunctions()->drawElementsInstanced(ToGLenum(mode), count, ToGLenum(type),
+                                                           drawIndexPointer, instanceCount));
     }
     return angle::Result::Continue;
 }
@@ -623,13 +641,15 @@ angle::Result ContextGL::drawRangeElementsBaseVertex(const gl::Context *context,
         setDrawElementsState(context, count, type, indices, instanceCount, &drawIndexPointer));
     if (!usesMultiview)
     {
-        getFunctions()->drawRangeElementsBaseVertex(ToGLenum(mode), start, end, count,
-                                                    ToGLenum(type), drawIndexPointer, baseVertex);
+        ANGLE_GL_TRY(context, getFunctions()->drawRangeElementsBaseVertex(
+                                  ToGLenum(mode), start, end, count, ToGLenum(type),
+                                  drawIndexPointer, baseVertex));
     }
     else
     {
-        getFunctions()->drawElementsInstancedBaseVertex(
-            ToGLenum(mode), count, ToGLenum(type), drawIndexPointer, instanceCount, baseVertex);
+        ANGLE_GL_TRY(context, getFunctions()->drawElementsInstancedBaseVertex(
+                                  ToGLenum(mode), count, ToGLenum(type), drawIndexPointer,
+                                  instanceCount, baseVertex));
     }
     return angle::Result::Continue;
 }
@@ -638,7 +658,7 @@ angle::Result ContextGL::drawArraysIndirect(const gl::Context *context,
                                             gl::PrimitiveMode mode,
                                             const void *indirect)
 {
-    getFunctions()->drawArraysIndirect(ToGLenum(mode), indirect);
+    ANGLE_GL_TRY(context, getFunctions()->drawArraysIndirect(ToGLenum(mode), indirect));
     return angle::Result::Continue;
 }
 
@@ -647,7 +667,8 @@ angle::Result ContextGL::drawElementsIndirect(const gl::Context *context,
                                               gl::DrawElementsType type,
                                               const void *indirect)
 {
-    getFunctions()->drawElementsIndirect(ToGLenum(mode), ToGLenum(type), indirect);
+    ANGLE_GL_TRY(context,
+                 getFunctions()->drawElementsIndirect(ToGLenum(mode), ToGLenum(type), indirect));
     return angle::Result::Continue;
 }
 
@@ -723,7 +744,15 @@ angle::Result ContextGL::multiDrawElementsInstancedBaseVertexBaseInstance(
 
 gl::GraphicsResetStatus ContextGL::getResetStatus()
 {
-    return mRenderer->getResetStatus();
+    gl::GraphicsResetStatus resetStatus = mRenderer->getResetStatus();
+    if (resetStatus == gl::GraphicsResetStatus::PurgedContextResetNV)
+    {
+        if (mRobustnessVideoMemoryPurgeStatus == RobustnessVideoMemoryPurgeStatus::NOT_REQUESTED)
+        {
+            resetStatus = gl::GraphicsResetStatus::UnknownContextReset;
+        }
+    }
+    return resetStatus;
 }
 
 std::string ContextGL::getVendorString() const

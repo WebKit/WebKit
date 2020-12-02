@@ -1,0 +1,23 @@
+// Copyright 2020 The ANGLE Project Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+// See README.md for format.
+
+// Only tested on Vulkan currently
+
+// Flat shading:
+3430 VULKAN : dEQP-GLES3.functional.rasterization.flatshading.* = FAIL
+
+// Android Vulkan failures
+2830 ANDROID VULKAN : dEQP-GLES3.functional.rasterization.fbo.rbo_singlesample.primitives.lines = FAIL
+2830 ANDROID VULKAN : dEQP-GLES3.functional.rasterization.fbo.texture_2d.primitives.lines = FAIL
+2830 ANDROID VULKAN : dEQP-GLES3.functional.rasterization.primitives.line* = FAIL
+2808 ANDROID VULKAN : dEQP-GLES3.functional.shaders.builtin_variable.fragcoord_w = FAIL
+
+161540999 PIXEL2ORXL VULKAN : dEQP-GLES3.functional.color_clear.masked_rgb = FAIL
+161540999 PIXEL2ORXL VULKAN : dEQP-GLES3.functional.color_clear.masked_rgba = FAIL
+161540999 PIXEL2ORXL VULKAN : dEQP-GLES3.functional.depth_stencil_clear.depth_stencil_masked = FAIL
+
+// Fixed in later driver versions.
+2727 VULKAN ANDROID : dEQP-GLES3.functional.shaders.builtin_variable.pointcoord = FAIL

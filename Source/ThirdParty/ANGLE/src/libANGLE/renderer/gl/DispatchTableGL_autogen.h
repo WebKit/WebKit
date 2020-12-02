@@ -783,6 +783,10 @@ class DispatchTableGL : angle::NonCopyable
     PFNGLIMPORTSEMAPHOREWIN32HANDLEEXTPROC importSemaphoreWin32HandleEXT = nullptr;
     PFNGLIMPORTSEMAPHOREWIN32NAMEEXTPROC importSemaphoreWin32NameEXT = nullptr;
 
+    // GL_EXT_texture_buffer
+    PFNGLTEXBUFFEREXTPROC texBufferEXT = nullptr;
+    PFNGLTEXBUFFERRANGEEXTPROC texBufferRangeEXT = nullptr;
+
     // GL_KHR_parallel_shader_compile
     PFNGLMAXSHADERCOMPILERTHREADSKHRPROC maxShaderCompilerThreadsKHR = nullptr;
 
@@ -792,6 +796,10 @@ class DispatchTableGL : angle::NonCopyable
     // GL_OES_EGL_image
     PFNGLEGLIMAGETARGETRENDERBUFFERSTORAGEOESPROC eGLImageTargetRenderbufferStorageOES = nullptr;
     PFNGLEGLIMAGETARGETTEXTURE2DOESPROC eGLImageTargetTexture2DOES = nullptr;
+
+    // GL_OES_texture_buffer
+    PFNGLTEXBUFFEROESPROC texBufferOES = nullptr;
+    PFNGLTEXBUFFERRANGEOESPROC texBufferRangeOES = nullptr;
 
     // GL_OVR_multiview2
     PFNGLFRAMEBUFFERTEXTUREMULTIVIEWOVRPROC framebufferTextureMultiviewOVR = nullptr;

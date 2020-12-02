@@ -37,20 +37,22 @@ using ReferencedVariables = std::map<int, const TVariable *>;
 class OutputHLSL : public TIntermTraverser
 {
   public:
-    OutputHLSL(sh::GLenum shaderType,
-               ShShaderSpec shaderSpec,
-               int shaderVersion,
-               const TExtensionBehavior &extensionBehavior,
-               const char *sourcePath,
-               ShShaderOutput outputType,
-               int numRenderTargets,
-               int maxDualSourceDrawBuffers,
-               const std::vector<ShaderVariable> &uniforms,
-               ShCompileOptions compileOptions,
-               sh::WorkGroupSize workGroupSize,
-               TSymbolTable *symbolTable,
-               PerformanceDiagnostics *perfDiagnostics,
-               const std::vector<InterfaceBlock> &shaderStorageBlocks);
+    OutputHLSL(
+        sh::GLenum shaderType,
+        ShShaderSpec shaderSpec,
+        int shaderVersion,
+        const TExtensionBehavior &extensionBehavior,
+        const char *sourcePath,
+        ShShaderOutput outputType,
+        int numRenderTargets,
+        int maxDualSourceDrawBuffers,
+        const std::vector<ShaderVariable> &uniforms,
+        ShCompileOptions compileOptions,
+        sh::WorkGroupSize workGroupSize,
+        TSymbolTable *symbolTable,
+        PerformanceDiagnostics *perfDiagnostics,
+        const std::map<int, const TInterfaceBlock *> &uniformBlocksTranslatedToStructuredBuffers,
+        const std::vector<InterfaceBlock> &shaderStorageBlocks);
 
     ~OutputHLSL() override;
 
@@ -178,6 +180,8 @@ class OutputHLSL : public TIntermTraverser
 
     // Indexed by block id, not instance id.
     ReferencedInterfaceBlocks mReferencedUniformBlocks;
+
+    std::map<int, const TInterfaceBlock *> mUniformBlocksTranslatedToStructuredBuffers;
 
     ReferencedVariables mReferencedAttributes;
     ReferencedVariables mReferencedVaryings;

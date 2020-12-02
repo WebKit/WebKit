@@ -59,7 +59,7 @@ class WaitableEvent : angle::NonCopyable
     std::shared_ptr<WorkerThreadPool> mPool;
 };
 
-// A dummy waitable event.
+// A mock waitable event.
 class WaitableEventDone final : public WaitableEvent
 {
   public:

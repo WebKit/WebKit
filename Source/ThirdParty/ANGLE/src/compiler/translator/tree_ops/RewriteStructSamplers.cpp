@@ -353,7 +353,7 @@ class Traverser final : public TIntermTraverser, public ArrayTraverser
             mMultiReplacements.emplace_back(getParentNode()->getAsBlock(), decl, *newSequence);
         }
 
-        if (type.isSampler() && type.isArray())
+        if ((type.isSampler() || type.isImage()) && type.isArray())
         {
             TIntermSequence *newSequence = new TIntermSequence;
             TIntermSymbol *asSymbol      = declarator->getAsSymbolNode();
@@ -373,9 +373,10 @@ class Traverser final : public TIntermTraverser, public ArrayTraverser
     {
         if (visit != PreVisit)
             return true;
-        // If the node isn't a sampler or if this isn't the outermost access,
-        // continue.
-        if (!node->getType().isSampler() || node->getType().isArray())
+        // If the node isn't a sampler and it isn't an image or if this isn't the outermost
+        // access, continue.
+        if ((!node->getType().isSampler() && !node->getType().isImage()) ||
+            node->getType().isArray())
         {
             return true;
         }

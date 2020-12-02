@@ -249,9 +249,9 @@ struct ETC2Block
                 {
                     // Byte 1
                     unsigned char TR1b : 2;
-                    unsigned char TdummyB : 1;
+                    unsigned char TunusedB : 1;
                     unsigned char TR1a : 2;
-                    unsigned char TdummyA : 3;
+                    unsigned char TunusedA : 3;
                     // Byte 2
                     unsigned char TB1 : 4;
                     unsigned char TG1 : 4;
@@ -270,13 +270,13 @@ struct ETC2Block
                     // Byte 1
                     unsigned char HG1a : 3;
                     unsigned char HR1 : 4;
-                    unsigned char HdummyA : 1;
+                    unsigned char HunusedA : 1;
                     // Byte 2
                     unsigned char HB1b : 2;
-                    unsigned char HdummyC : 1;
+                    unsigned char HunusedC : 1;
                     unsigned char HB1a : 1;
                     unsigned char HG1b : 1;
-                    unsigned char HdummyB : 3;
+                    unsigned char HunusedB : 3;
                     // Byte 3
                     unsigned char HG2a : 3;
                     unsigned char HR2 : 4;
@@ -298,16 +298,16 @@ struct ETC2Block
             // Byte 1
             unsigned char GO1 : 1;
             unsigned char RO : 6;
-            unsigned char PdummyA : 1;
+            unsigned char PunusedA : 1;
             // Byte 2
             unsigned char BO1 : 1;
             unsigned char GO2 : 6;
-            unsigned char PdummyB : 1;
+            unsigned char PunusedB : 1;
             // Byte 3
             unsigned char BO3a : 2;
-            unsigned char PdummyD : 1;
+            unsigned char PunusedD : 1;
             unsigned char BO2 : 2;
-            unsigned char PdummyC : 3;
+            unsigned char PunusedC : 3;
             // Byte 4
             unsigned char RH2 : 1;
             bool Pflipbit : 1;

@@ -51,11 +51,13 @@ LinkMismatchError LinkValidateUniforms(const sh::ShaderVariable &uniform1,
                                        std::string *mismatchedStructFieldName)
 {
 #if ANGLE_PROGRAM_LINK_VALIDATE_UNIFORM_PRECISION == ANGLE_ENABLED
-    const bool validatePrecision = true;
+    const bool validatePrecisionFeature = true;
 #else
-    const bool validatePrecision = false;
+    const bool validatePrecisionFeature = false;
 #endif
 
+    // Validate precision match of uniforms iff they are statically used
+    bool validatePrecision = uniform1.staticUse && uniform2.staticUse && validatePrecisionFeature;
     LinkMismatchError linkError = Program::LinkValidateVariablesBase(
         uniform1, uniform2, validatePrecision, true, mismatchedStructFieldName);
     if (linkError != LinkMismatchError::NO_MISMATCH)
@@ -299,7 +301,7 @@ class ShaderStorageBlockVisitor : public sh::BlockEncoderVisitor
                               std::vector<BufferVariable> *bufferVariablesOut,
                               ShaderType shaderType,
                               int blockIndex)
-        : sh::BlockEncoderVisitor(namePrefix, mappedNamePrefix, &mDummyEncoder),
+        : sh::BlockEncoderVisitor(namePrefix, mappedNamePrefix, &mStubEncoder),
           mGetMemberInfo(getMemberInfo),
           mBufferVariablesOut(bufferVariablesOut),
           mShaderType(shaderType),
@@ -350,7 +352,7 @@ class ShaderStorageBlockVisitor : public sh::BlockEncoderVisitor
     std::vector<BufferVariable> *mBufferVariablesOut;
     const ShaderType mShaderType;
     const int mBlockIndex;
-    sh::DummyBlockEncoder mDummyEncoder;
+    sh::StubBlockEncoder mStubEncoder;
 };
 
 struct ShaderUniformCount
@@ -397,10 +399,10 @@ class FlattenUniformVisitor : public sh::VariableNameVisitor
           mUnusedUniforms(unusedUniforms)
     {}
 
-    void visitNamedSampler(const sh::ShaderVariable &sampler,
-                           const std::string &name,
-                           const std::string &mappedName,
-                           const std::vector<unsigned int> &arraySizes) override
+    void visitNamedSamplerOrImage(const sh::ShaderVariable &sampler,
+                                  const std::string &name,
+                                  const std::string &mappedName,
+                                  const std::vector<unsigned int> &arraySizes) override
     {
         visitNamedVariable(sampler, false, name, mappedName, arraySizes);
     }
@@ -469,10 +471,11 @@ class FlattenUniformVisitor : public sh::VariableNameVisitor
             LinkedUniform linkedUniform(variable.type, variable.precision, fullNameWithArrayIndex,
                                         variable.arraySizes, getBinding(), getOffset(), mLocation,
                                         -1, sh::kDefaultBlockMemberInfo);
-            linkedUniform.mappedName      = fullMappedNameWithArrayIndex;
-            linkedUniform.active          = mMarkActive;
-            linkedUniform.staticUse       = mMarkStaticUse;
-            linkedUniform.outerArraySizes = arraySizes;
+            linkedUniform.mappedName          = fullMappedNameWithArrayIndex;
+            linkedUniform.active              = mMarkActive;
+            linkedUniform.staticUse           = mMarkStaticUse;
+            linkedUniform.outerArraySizes     = arraySizes;
+            linkedUniform.texelFetchStaticUse = variable.texelFetchStaticUse;
             if (variable.hasParentArrayIndex())
             {
                 linkedUniform.setParentArrayIndex(variable.parentArrayIndex());

@@ -161,7 +161,7 @@ std::shared_ptr<WaitableEvent> AsyncWorkerPool::postWorkerTask(std::shared_ptr<C
         mTaskQueue.push(std::make_pair(waitable, task));
     }
     checkToRunPendingTasks();
-    return waitable;
+    return std::move(waitable);
 }
 
 void AsyncWorkerPool::setMaxThreads(size_t maxThreads)
@@ -303,7 +303,7 @@ std::shared_ptr<WaitableEvent> DelegateWorkerPool::postWorkerTask(std::shared_pt
     auto *platform                 = ANGLEPlatformCurrent();
     platform->postWorkerTask(platform, DelegateWorkerTask::RunTask, workerTask);
 
-    return waitable;
+    return std::move(waitable);
 }
 
 void DelegateWorkerPool::setMaxThreads(size_t maxThreads) {}

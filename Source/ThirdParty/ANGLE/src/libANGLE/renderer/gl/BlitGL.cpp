@@ -280,9 +280,9 @@ angle::Result BlitGL::copyImageToLUMAWorkaroundTexture(const gl::Context *contex
     GLenum readType = source->getImplementationColorReadType(context);
 
     gl::PixelUnpackState unpack;
-    mStateManager->setPixelUnpackState(unpack);
-    mStateManager->setPixelUnpackBuffer(
-        context->getState().getTargetBuffer(gl::BufferBinding::PixelUnpack));
+    ANGLE_TRY(mStateManager->setPixelUnpackState(context, unpack));
+    ANGLE_TRY(mStateManager->setPixelUnpackBuffer(
+        context, context->getState().getTargetBuffer(gl::BufferBinding::PixelUnpack)));
     ANGLE_GL_TRY_ALWAYS_CHECK(
         context,
         mFunctions->texImage2D(ToGLenum(target), static_cast<GLint>(level), internalFormat,
@@ -779,8 +779,8 @@ angle::Result BlitGL::copySubTextureCPUReadback(const gl::Context *context,
 
     gl::PixelUnpackState unpack;
     unpack.alignment = 1;
-    mStateManager->setPixelUnpackState(unpack);
-    mStateManager->setPixelUnpackBuffer(nullptr);
+    ANGLE_TRY(mStateManager->setPixelUnpackState(context, unpack));
+    ANGLE_TRY(mStateManager->setPixelUnpackBuffer(context, nullptr));
     ANGLE_GL_TRY(context, mFunctions->readPixels(readPixelsArea.x, readPixelsArea.y,
                                                  readPixelsArea.width, readPixelsArea.height,
                                                  readPixelsFormat, GL_UNSIGNED_BYTE, sourceMemory));
@@ -797,8 +797,8 @@ angle::Result BlitGL::copySubTextureCPUReadback(const gl::Context *context,
 
     gl::PixelPackState pack;
     pack.alignment = 1;
-    mStateManager->setPixelPackState(pack);
-    mStateManager->setPixelPackBuffer(nullptr);
+    ANGLE_TRY(mStateManager->setPixelPackState(context, pack));
+    ANGLE_TRY(mStateManager->setPixelPackBuffer(context, nullptr));
 
     nativegl::TexSubImageFormat texSubImageFormat =
         nativegl::GetTexSubImageFormat(mFunctions, mFeatures, destFormat, destType);
@@ -1109,52 +1109,45 @@ angle::Result BlitGL::generateSRGBMipmap(const gl::Context *context,
 
 angle::Result BlitGL::initializeResources(const gl::Context *context)
 {
+    if (mResourcesInitialized)
+    {
+        return angle::Result::Continue;
+    }
+
     for (size_t i = 0; i < ArraySize(mScratchTextures); i++)
     {
-        if (mScratchTextures[i] == 0)
-        {
-            ANGLE_GL_TRY(context, mFunctions->genTextures(1, &mScratchTextures[i]));
-        }
+        ANGLE_GL_TRY(context, mFunctions->genTextures(1, &mScratchTextures[i]));
     }
 
-    if (mScratchFBO == 0)
+    ANGLE_GL_TRY(context, mFunctions->genFramebuffers(1, &mScratchFBO));
+
+    ANGLE_GL_TRY(context, mFunctions->genBuffers(1, &mVertexBuffer));
+    mStateManager->bindBuffer(gl::BufferBinding::Array, mVertexBuffer);
+
+    // Use a single, large triangle, to avoid arithmetic precision issues where fragments
+    // with the same Y coordinate don't get exactly the same interpolated texcoord Y.
+    float vertexData[] = {
+        -0.5f, 0.0f, 1.5f, 0.0f, 0.5f, 2.0f,
+    };
+
+    ANGLE_GL_TRY(context, mFunctions->bufferData(GL_ARRAY_BUFFER, sizeof(float) * 6, vertexData,
+                                                 GL_STATIC_DRAW));
+
+    ANGLE_GL_TRY(context, mFunctions->genVertexArrays(1, &mVAO));
+
+    mStateManager->bindVertexArray(mVAO, 0);
+    mStateManager->bindBuffer(gl::BufferBinding::Array, mVertexBuffer);
+
+    // Enable all attributes with the same buffer so that it doesn't matter what location the
+    // texcoord attribute is assigned
+    GLint maxAttributes = 0;
+    ANGLE_GL_TRY(context, mFunctions->getIntegerv(GL_MAX_VERTEX_ATTRIBS, &maxAttributes));
+
+    for (GLint i = 0; i < maxAttributes; i++)
     {
-        ANGLE_GL_TRY(context, mFunctions->genFramebuffers(1, &mScratchFBO));
-    }
-
-    if (mVertexBuffer == 0)
-    {
-        ANGLE_GL_TRY(context, mFunctions->genBuffers(1, &mVertexBuffer));
-        mStateManager->bindBuffer(gl::BufferBinding::Array, mVertexBuffer);
-
-        // Use a single, large triangle, to avoid arithmetic precision issues where fragments
-        // with the same Y coordinate don't get exactly the same interpolated texcoord Y.
-        float vertexData[] = {
-            -0.5f, 0.0f, 1.5f, 0.0f, 0.5f, 2.0f,
-        };
-
-        ANGLE_GL_TRY(context, mFunctions->bufferData(GL_ARRAY_BUFFER, sizeof(float) * 6, vertexData,
-                                                     GL_STATIC_DRAW));
-    }
-
-    if (mVAO == 0)
-    {
-        ANGLE_GL_TRY(context, mFunctions->genVertexArrays(1, &mVAO));
-
-        mStateManager->bindVertexArray(mVAO, 0);
-        mStateManager->bindBuffer(gl::BufferBinding::Array, mVertexBuffer);
-
-        // Enable all attributes with the same buffer so that it doesn't matter what location the
-        // texcoord attribute is assigned
-        GLint maxAttributes = 0;
-        ANGLE_GL_TRY(context, mFunctions->getIntegerv(GL_MAX_VERTEX_ATTRIBS, &maxAttributes));
-
-        for (GLint i = 0; i < maxAttributes; i++)
-        {
-            ANGLE_GL_TRY(context, mFunctions->enableVertexAttribArray(i));
-            ANGLE_GL_TRY(context,
-                         mFunctions->vertexAttribPointer(i, 2, GL_FLOAT, GL_FALSE, 0, nullptr));
-        }
+        ANGLE_GL_TRY(context, mFunctions->enableVertexAttribArray(i));
+        ANGLE_GL_TRY(context,
+                     mFunctions->vertexAttribPointer(i, 2, GL_FLOAT, GL_FALSE, 0, nullptr));
     }
 
     constexpr GLenum potentialSRGBMipmapGenerationFormats[] = {
@@ -1178,6 +1171,7 @@ angle::Result BlitGL::initializeResources(const gl::Context *context)
     }
     ASSERT(mSRGBMipmapGenerationFormat.internalFormat != GL_NONE);
 
+    mResourcesInitialized = true;
     return angle::Result::Continue;
 }
 
@@ -1187,8 +1181,8 @@ angle::Result BlitGL::orphanScratchTextures(const gl::Context *context)
     {
         mStateManager->bindTexture(gl::TextureType::_2D, texture);
         gl::PixelUnpackState unpack;
-        mStateManager->setPixelUnpackState(unpack);
-        mStateManager->setPixelUnpackBuffer(nullptr);
+        ANGLE_TRY(mStateManager->setPixelUnpackState(context, unpack));
+        ANGLE_TRY(mStateManager->setPixelUnpackBuffer(context, nullptr));
         if (mFunctions->isAtLeastGL(gl::Version(3, 3)))
         {
             constexpr GLint swizzle[4] = {GL_RED, GL_GREEN, GL_BLUE, GL_ALPHA};

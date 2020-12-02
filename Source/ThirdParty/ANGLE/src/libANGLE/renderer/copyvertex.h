@@ -44,6 +44,13 @@ void Copy32FixedTo32FVertexData(const uint8_t *input, size_t stride, size_t coun
 template <typename T, size_t inputComponentCount, size_t outputComponentCount, bool normalized>
 void CopyTo32FVertexData(const uint8_t *input, size_t stride, size_t count, uint8_t *output);
 
+template <size_t inputComponentCount, size_t outputComponentCount>
+void Copy32FTo16FVertexData(const uint8_t *input, size_t stride, size_t count, uint8_t *output);
+
+void CopyXYZ32FToXYZ9E5(const uint8_t *input, size_t stride, size_t count, uint8_t *output);
+
+void CopyXYZ32FToX11Y11B10F(const uint8_t *input, size_t stride, size_t count, uint8_t *output);
+
 template <bool isSigned, bool normalized, bool toFloat>
 void CopyXYZ10W2ToXYZW32FVertexData(const uint8_t *input,
                                     size_t stride,

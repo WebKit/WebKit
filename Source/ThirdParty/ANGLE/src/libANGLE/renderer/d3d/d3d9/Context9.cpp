@@ -9,6 +9,7 @@
 
 #include "libANGLE/renderer/d3d/d3d9/Context9.h"
 
+#include "common/entry_points_enum_autogen.h"
 #include "common/string_utils.h"
 #include "libANGLE/renderer/OverlayImpl.h"
 #include "libANGLE/renderer/d3d/CompilerD3D.h"
@@ -375,7 +376,7 @@ angle::Result Context9::insertEventMarker(GLsizei length, const char *marker)
 
 angle::Result Context9::pushGroupMarker(GLsizei length, const char *marker)
 {
-    mRenderer->getAnnotator()->beginEvent(marker, marker);
+    mRenderer->getAnnotator()->beginEvent(nullptr, gl::EntryPoint::Begin, marker, marker);
     mMarkerStack.push(std::string(marker));
     return angle::Result::Continue;
 }
@@ -387,7 +388,7 @@ angle::Result Context9::popGroupMarker()
     {
         marker = mMarkerStack.top().c_str();
         mMarkerStack.pop();
-        mRenderer->getAnnotator()->endEvent(marker);
+        mRenderer->getAnnotator()->endEvent(nullptr, marker, gl::EntryPoint::Begin);
     }
     return angle::Result::Continue;
 }

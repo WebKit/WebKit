@@ -23,9 +23,14 @@ class MockRenderbufferImpl : public RenderbufferImpl
   public:
     MockRenderbufferImpl() : RenderbufferImpl(mMockState) {}
     virtual ~MockRenderbufferImpl() { destructor(); }
-    MOCK_METHOD4(setStorage, angle::Result(const gl::Context *, GLenum, size_t, size_t));
-    MOCK_METHOD5(setStorageMultisample,
-                 angle::Result(const gl::Context *, size_t, GLenum, size_t, size_t));
+    MOCK_METHOD4(setStorage, angle::Result(const gl::Context *, GLenum, GLsizei, GLsizei));
+    MOCK_METHOD6(setStorageMultisample,
+                 angle::Result(const gl::Context *,
+                               GLsizei,
+                               GLenum,
+                               GLsizei,
+                               GLsizei,
+                               gl::MultisamplingMode));
     MOCK_METHOD2(setStorageEGLImageTarget, angle::Result(const gl::Context *, egl::Image *));
 
     MOCK_METHOD5(getAttachmentRenderTarget,

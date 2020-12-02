@@ -43,8 +43,12 @@ TEST_P(ContextLostTest, BasicUsage)
     EXPECT_GL_NO_ERROR();
     EXPECT_GLENUM_EQ(glGetGraphicsResetStatusEXT(), GL_GUILTY_CONTEXT_RESET);
 
-    glBindTexture(GL_TEXTURE_2D, 0);
-    EXPECT_GL_ERROR(GL_OUT_OF_MEMORY);
+    // Errors should be continually generated
+    for (size_t i = 0; i < 10; i++)
+    {
+        glBindTexture(GL_TEXTURE_2D, 0);
+        EXPECT_GL_ERROR(GL_CONTEXT_LOST);
+    }
 }
 
 // When context is lost, polling queries such as glGetSynciv with GL_SYNC_STATUS should always

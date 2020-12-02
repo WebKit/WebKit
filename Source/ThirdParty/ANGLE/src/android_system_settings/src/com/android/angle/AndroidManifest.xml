@@ -31,6 +31,7 @@
     <application android:label="Android System Angle"
                  android:icon="@drawable/icon"
                  android:extractNativeLibs="false"
+                 android:forceQueryable="true"
                  android:multiArch="true">
 
         <activity android:name="com.android.angle.MainActivity"

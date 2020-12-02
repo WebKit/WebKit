@@ -71,7 +71,7 @@ static constexpr rx::FastCopyFunctionMap NoCopyFunctions;
 
 const Format gFormatInfoTable[] = {{
     // clang-format off
-    {{ FormatID::NONE, GL_NONE, GL_NONE, nullptr, NoCopyFunctions, nullptr, nullptr, GL_NONE, 0, 0, 0, 0, 0, 0, 0, 0, 0, false, false, false, gl::VertexAttribType::InvalidEnum }},
+    {{ FormatID::NONE, GL_NONE, GL_NONE, nullptr, NoCopyFunctions, nullptr, nullptr, GL_NONE, 0, 0, 0, 0, 0, 0, 0, 0, 0, false, false, false, false, gl::VertexAttribType::InvalidEnum }},
 {angle_format_info_cases}    // clang-format on
 }};
 
@@ -194,7 +194,7 @@ def get_color_write_function(angle_format):
     return 'WriteColor<' + channel_struct + ', ' + write_component_type + '>'
 
 
-format_entry_template = """    {{ FormatID::{id}, {glInternalFormat}, {fboImplementationInternalFormat}, {mipGenerationFunction}, {fastCopyFunctions}, {colorReadFunction}, {colorWriteFunction}, {namedComponentType}, {R}, {G}, {B}, {A}, {L}, {D}, {S}, {pixelBytes}, {componentAlignmentMask}, {isBlock}, {isFixed}, {isScaled}, {vertexAttribType} }},
+format_entry_template = """    {{ FormatID::{id}, {glInternalFormat}, {fboImplementationInternalFormat}, {mipGenerationFunction}, {fastCopyFunctions}, {colorReadFunction}, {colorWriteFunction}, {namedComponentType}, {R}, {G}, {B}, {A}, {L}, {D}, {S}, {pixelBytes}, {componentAlignmentMask}, {isBlock}, {isFixed}, {isScaled}, {isSRGB}, {vertexAttribType} }},
 """
 
 
@@ -275,6 +275,10 @@ def get_vertex_attrib_type(format_id):
     return "InvalidEnum"
 
 
+def bool_str(cond):
+    return "true" if cond else "false"
+
+
 def json_to_table_data(format_id, json, angle_to_gl):
 
     table_data = ""
@@ -334,30 +338,46 @@ def json_to_table_data(format_id, json, angle_to_gl):
     parsed["pixelBytes"] = pixel_bytes
     parsed["componentAlignmentMask"] = get_component_alignment_mask(parsed["channels"],
                                                                     parsed["bits"])
-    parsed["isBlock"] = "true" if is_block else "false"
-    parsed["isFixed"] = "true" if "FIXED" in format_id else "false"
-    parsed["isScaled"] = "true" if "SCALED" in format_id else "false"
+    parsed["isBlock"] = bool_str(is_block)
+    parsed["isFixed"] = bool_str("FIXED" in format_id)
+    parsed["isScaled"] = bool_str("SCALED" in format_id)
+    parsed["isSRGB"] = bool_str("SRGB" in format_id)
 
     parsed["vertexAttribType"] = "gl::VertexAttribType::" + get_vertex_attrib_type(format_id)
 
     return format_entry_template.format(**parsed)
 
 
+# For convenience of the Vulkan backend, place depth/stencil formats first.  This allows
+# depth/stencil format IDs to be placed in only a few bits.
+def sorted_ds_first(all_angle):
+    ds_sorted = []
+    color_sorted = []
+    for format_id in sorted(all_angle):
+        if format_id == 'NONE':
+            continue
+        if format_id[0] == 'D' or format_id[0] == 'S':
+            ds_sorted.append(format_id)
+        else:
+            color_sorted.append(format_id)
+
+    return ds_sorted + color_sorted
+
+
 def parse_angle_format_table(all_angle, json_data, angle_to_gl):
     table_data = ''
-    for format_id in sorted(all_angle):
-        if format_id != "NONE":
-            format_info = json_data[format_id] if format_id in json_data else {}
-            table_data += json_to_table_data(format_id, format_info, angle_to_gl)
+    for format_id in sorted_ds_first(all_angle):
+        assert (format_id != 'NONE')
+        format_info = json_data[format_id] if format_id in json_data else {}
+        table_data += json_to_table_data(format_id, format_info, angle_to_gl)
 
     return table_data
 
 
 def gen_enum_string(all_angle):
     enum_data = '    NONE'
-    for format_id in sorted(all_angle):
-        if format_id == 'NONE':
-            continue
+    for format_id in sorted_ds_first(all_angle):
+        assert (format_id != 'NONE')
         enum_data += ',\n    ' + format_id
     return enum_data
 

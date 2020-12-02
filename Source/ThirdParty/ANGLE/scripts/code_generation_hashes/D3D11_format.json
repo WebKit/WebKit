@@ -2,7 +2,7 @@
   "src/libANGLE/renderer/angle_format.py":
     "32ba71942c0fd00e6807104f1bb80a3c",
   "src/libANGLE/renderer/d3d/d3d11/gen_texture_format_table.py":
-    "bf11e3404d4622059b6e9c4e96abf95e",
+    "c7231167a88211c35ef91459e2ff0191",
   "src/libANGLE/renderer/d3d/d3d11/texture_format_data.json":
     "9bef26093805f5499eceb5a615648aea",
   "src/libANGLE/renderer/d3d/d3d11/texture_format_map.json":

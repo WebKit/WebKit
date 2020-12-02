@@ -19,8 +19,7 @@ source_set("libXNVCtrl") {
     "nv_control.h",
   ]
 
-  configs += [
-    ":libXNVCtrl_config",
-    "//build/config/linux:x11",
-  ]
+  configs += [ ":libXNVCtrl_config" ]
+
+  libs = [ "xcb" ]
 }

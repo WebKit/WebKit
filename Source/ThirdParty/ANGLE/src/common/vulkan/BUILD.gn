@@ -63,6 +63,8 @@ angle_source_set("vulkan") {
     "$angle_root:angle_common",
   ]
 
+  configs += [ "$angle_root:angle_no_cfi_icall" ]
+
   defines = [
     "ANGLE_VK_LAYERS_DIR=\"$angle_data_dir\"",
     "ANGLE_VK_MOCK_ICD_JSON=\"$angle_data_dir/VkICD_mock_icd.json\"",

@@ -77,6 +77,8 @@
 2222 D3D11 NVIDIA : dEQP-GLES3.functional.texture.mipmap.3d.min_lod.nearest_nearest = FAIL
 2222 D3D11 NVIDIA : dEQP-GLES3.functional.texture.mipmap.cube.min_lod.linear_nearest = FAIL
 2222 D3D11 NVIDIA : dEQP-GLES3.functional.texture.mipmap.cube.min_lod.nearest_nearest = FAIL
+// Fails on 451.48 driver version
+4948 D3D11 NVIDIA : dEQP-GLES3.functional.shaders.texture_functions.texturesize.* = FAIL
 
 // Flaky on Win7 D3D11 NVIDIA
 4070 WIN7 D3D11 NVIDIA : dEQP-GLES3.functional.rasterization.flatshading.triangles = FAIL
@@ -235,15 +237,6 @@
 
 // Linux only failures
 
-// UBO tests trigger crashes when getting the program info log, skip them until this is fixed.
-1323 LINUX OPENGL : dEQP-GLES3.functional.ubo.* = SKIP
-
-1323 LINUX OPENGL : dEQP-GLES3.functional.fbo.depth.depth_test_clamp.depth_component32f = FAIL
-1323 LINUX OPENGL : dEQP-GLES3.functional.fbo.depth.depth_test_clamp.depth32f_stencil8 = FAIL
-1323 LINUX OPENGL : dEQP-GLES3.functional.fbo.depth.depth_write_clamp.depth_component32f = FAIL
-1323 LINUX OPENGL : dEQP-GLES3.functional.fbo.depth.depth_write_clamp.depth32f_stencil8 = FAIL
-1323 LINUX OPENGL : dEQP-GLES3.functional.rasterization.fbo.rbo_multisample_max.primitives.points = FAIL
-
 // While loops with 'continue' seem flaky on Linux. (Possibly all GL renderers)
 1324 LINUX OPENGL : dEQP-GLES3.functional.shaders.loops.while_constant_iterations.conditional_continue_vertex = FAIL
 1324 LINUX OPENGL : dEQP-GLES3.functional.shaders.loops.while_constant_iterations.conditional_continue_fragment = FAIL
@@ -342,6 +335,10 @@
 2137 MAC OPENGL : dEQP-GLES3.functional.shaders.loops.short_circuit.* = FAIL
 3317 MAC OPENGL : dEQP-GLES3.functional.fbo.blit.rect.out_of_bounds_linear = FAIL
 
+5136 MAC OPENGL : dEQP-GLES3.functional.fbo.completeness.renderable.texture.color0.stencil_index8 = FAIL
+5136 MAC OPENGL : dEQP-GLES3.functional.fbo.completeness.renderable.texture.stencil.stencil_index8 = FAIL
+5136 MAC OPENGL : dEQP-GLES3.functional.fbo.completeness.renderable.texture.depth.stencil_index8 = FAIL
+
 // ETC compressed formats not supported
 3853 MAC OPENGL : dEQP-GLES3.functional.negative_api.texture.compressedtexsubimage* = FAIL
 3853 MAC OPENGL : dEQP-GLES3.functional.negative_api.texture.generatemipmap = FAIL
@@ -358,6 +355,17 @@
 3317 MAC OPENGL AMD : dEQP-GLES3.functional.shaders.builtin_functions.precision.ceil.* = FAIL
 3317 MAC OPENGL AMD : dEQP-GLES3.functional.shaders.texture_functions.textureprojlod.isampler3d_vertex = FAIL
 3317 MAC OPENGL AMD : dEQP-GLES3.functional.shaders.texture_functions.textureprojlod.usampler3d_vertex = FAIL
+
+5172 MAC OPENGL AMD : dEQP-GLES3.functional.draw.draw_elements.indices.user_ptr.index_byte = FAIL
+5172 MAC OPENGL AMD : dEQP-GLES3.functional.draw.draw_elements_instanced.indices.user_ptr.index_byte = FAIL
+5172 MAC OPENGL AMD : dEQP-GLES3.functional.dither.enabled.* = FAIL
+5172 MAC OPENGL AMD : dEQP-GLES3.functional.draw.random.* = FAIL
+5172 MAC OPENGL AMD : dEQP-GLES3.functional.fragment_ops.depth_stencil.stencil_depth_funcs.no_stencil* = FAIL
+5172 MAC OPENGL AMD : dEQP-GLES3.functional.fragment_ops.depth_stencil.stencil_ops.keep* = FAIL
+5172 MAC OPENGL AMD : dEQP-GLES3.functional.fragment_ops.depth_stencil.stencil_ops.zero* = FAIL
+5172 MAC OPENGL AMD : dEQP-GLES3.functional.shaders.fragdata.valid_dynamic_index = FAIL
+5172 MAC OPENGL AMD : dEQP-GLES3.functional.shaders.fragdata.valid_uniform_index = FAIL
+5172 MAC OPENGL AMD : dEQP-GLES3.functional.shaders.fragdata.draw_buffers = FAIL
 
 // Mac Intel crashes
 2137 MAC OPENGL INTEL : dEQP-GLES3.functional.shaders.discard.function_static_loop_never = SKIP
@@ -433,6 +441,9 @@
 3531 MAC OPENGL INTEL : dEQP-GLES3.functional.fbo.render.resize.tex2d_rgb16f = FAIL
 3531 MAC OPENGL INTEL : dEQP-GLES3.functional.fbo.render.resize.tex2d_rgb8 = FAIL
 
+5172 MAC OPENGL INTEL : dEQP-GLES3.functional.fragment_out.basic.int.* = FAIL
+5172 MAC OPENGL INTEL : dEQP-GLES3.functional.fragment_out.basic.uint.* = FAIL
+
 // Android only failures
 1487 ANDROID GLES : dEQP-GLES3.functional.fbo.completeness.renderable.texture.color0.red_half_float_oes = FAIL
 1487 ANDROID GLES : dEQP-GLES3.functional.fbo.completeness.renderable.texture.color0.rg_half_float_oes = FAIL
@@ -496,6 +507,7 @@
 3308 NEXUS5X GLES : dEQP-GLES3.functional.transform_feedback.random.interleaved.triangles.8 = FAIL
 3308 NEXUS5X GLES : dEQP-GLES3.functional.transform_feedback.random.interleaved.triangles.10 = FAIL
 2322 NEXUS5X GLES : dEQP-GLES3.functional.shaders.metamorphic.* = SKIP
+5184 NEXUS5X GLES : dEQP-GLES3.functional.transform_feedback.random_full_array_capture.* = FAIL
 
 // Seems to fail on all desktop GL
 2960 OPENGL : dEQP-GLES3.functional.fbo.blit.default_framebuffer.srgb8_alpha8 = FAIL
@@ -506,6 +518,10 @@
 // Fails on Windows + Linux.
 2222 OPENGL NVIDIA : dEQP-GLES3.functional.fbo.completeness.samples.rbo2_rbo2_rbo0 = FAIL
 2222 OPENGL NVIDIA : dEQP-GLES3.functional.fbo.completeness.samples.rbo1_rbo2_rbo0 = FAIL
+
+// Low memory warnings when run multi-process.
+5162 OPENGL NVIDIA WIN : dEQP-GLES3.functional.multisample.fbo_8_samples.constancy* = SKIP
+5162 OPENGL NVIDIA WIN : dEQP-GLES3.functional.multisample.fbo_max_samples.constancy* = SKIP
 
 // General Vulkan failures
 
@@ -533,10 +549,6 @@
 
 // Flat shading:
 3430 VULKAN : dEQP-GLES3.functional.rasterization.flatshading.* = FAIL
-
-// Vertex attribute aliasing generates invalid SPIRV
-4249 VULKAN : dEQP-GLES3.functional.attribute_location.bind_aliasing.cond* = SKIP
-4249 VULKAN : dEQP-GLES3.functional.attribute_location.bind_aliasing.max_cond* = SKIP
 
 // Misc unimplemented:
 
@@ -639,3 +651,230 @@
 
 // Fails on SwANGLE bots
 4418 SWIFTSHADER : dEQP-GLES3.functional.negative_api.buffer.framebuffer_texture_layer = FAIL
+
+
+///////// Metal ////////////////
+
+// shadow sampler doesn't support bias & gradient & lod versions
+5107 METAL : dEQP-GLES3.*shadow_bias* = SKIP
+5107 METAL : dEQP-GLES3.*texturegrad*shadow* = SKIP
+5107 METAL : dEQP-GLES3.*textureprojgrad*shadow* = SKIP
+5107 METAL : dEQP-GLES3.*texturelod*shadow* = FAIL
+5107 METAL : dEQP-GLES3.*textureprojlod*shadow* = FAIL
+
+// shadow sampler doesn't support compare mode = none
+5107 METAL : dEQP-GLES3.*texturesize*shadow* = FAIL
+
+// last provoking vertex (for flat shading) is not supported
+5232 METAL : dEQP-GLES3.*fragment_out*int* = FAIL
+5232 METAL : dEQP-GLES3.*fragment_out*random* = FAIL
+5232 METAL : dEQP-GLES3.*flatshading* = FAIL
+5232 METAL : dEQP-GLES3.functional.shaders.builtin_functions.pack_unpack.unpacksnorm2x16_fragment = FAIL
+5232 METAL : dEQP-GLES3.functional.shaders.builtin_functions.pack_unpack.unpackunorm2x16_fragment = FAIL
+5232 METAL : dEQP-GLES3.functional.shaders.builtin_functions.precision.tanh.highp_fragment.* = FAIL
+5232 METAL : dEQP-GLES3.functional.shaders.builtin_functions.precision.tanh.highp_vertex.* = FAIL
+
+// Metal doesn't support attribute alias yet
+4235 METAL : dEQP-GLES3.*bind_aliasing* = FAIL
+
+// Texture swizzle is not always available on host machine
+// Depth sampling requires texture swizzle to correctly return (red, 0, 0, 1) per GLES3 spec
+5243 METAL : dEQP-GLES3.*texture.swizzle* = FAIL
+5243 METAL : dEQP-GLES3.*functional.fbo.invalidate.sub.unbind_read_depth = FAIL
+5243 METAL : dEQP-GLES3.*functional.fbo.invalidate.sub.unbind_read_depth_stencil = FAIL
+5243 METAL : dEQP-GLES3.*functional.fbo.invalidate.sub.unbind_read_stencil = FAIL
+5243 METAL : dEQP-GLES3.*functional.fbo.invalidate.whole.unbind_read_color = FAIL
+5243 METAL : dEQP-GLES3.*functional.fbo.invalidate.whole.unbind_read_color_stencil = FAIL
+5243 METAL : dEQP-GLES3.*functional.fbo.invalidate.whole.unbind_read_stencil = FAIL
+5243 METAL : dEQP-GLES3.*texture.format.sized*depth* = FAIL
+5243 METAL : dEQP-GLES3.*texture.specification*depth* = FAIL
+
+// FBO with distinct attachment's sizes is not supported yet
+4235 METAL : dEQP-GLES3.functional.fbo.completeness.size.distinct = FAIL
+
+// primitive restart AMD driver bug (except line loops & triangle fans which are emulated)
+4235 METAL AMD : dEQP-GLES3.*primitive_restart*points* = FAIL
+4235 METAL AMD : dEQP-GLES3.*primitive_restart*triangles* = FAIL
+4235 METAL AMD : dEQP-GLES3.*primitive_restart*lines* = FAIL
+
+// mac AMD shader compiler bug
+4235 METAL AMD : dEQP-GLES3.functional.shaders.arrays.constructor.int_vec3_fragment = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.shaders.arrays.constructor.int_vec3_vertex = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.shaders.arrays.declaration.implicit_size_int_ivec3_fragment = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.shaders.arrays.declaration.implicit_size_int_ivec3_vertex = FAIL
+
+// FBO blit bugs (failed a few pixels)
+4235 METAL AMD : dEQP-GLES3.functional.fbo.blit.rect.out_of_bounds_linear = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.fbo.blit.rect.out_of_bounds_reverse_dst_x_linear = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.fbo.blit.rect.out_of_bounds_reverse_dst_y_linear = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.fbo.blit.rect.out_of_bounds_reverse_src_dst_x_linear = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.fbo.blit.rect.out_of_bounds_reverse_src_dst_y_linear = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.fbo.blit.rect.out_of_bounds_reverse_src_x_linear = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.fbo.blit.rect.out_of_bounds_reverse_src_y_linear = FAIL
+
+// Wide point out of clip space issue on AMD
+4235 METAL AMD : dEQP-GLES3.functional.clipping.point.wide_point_clip = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.clipping.point.wide_point_clip_viewport_center = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.clipping.point.wide_point_clip_viewport_corner = FAIL
+
+// Polygon offset bug
+4235 METAL AMD : dEQP-GLES3.functional.polygon_offset.fixed16_render_with_units = FAIL
+
+// Texture filtering bug (mostly failing a few pixels)
+4235 METAL AMD : dEQP-GLES3.*textureprojoffset*shadow_vertex = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.shaders.texture_functions.texture.samplercubeshadow_vertex = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.shaders.texture_functions.textureprojlod.isampler3d_vertex = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.shaders.texture_functions.textureprojlod.usampler3d_vertex = FAIL
+
+4235 METAL AMD : dEQP-GLES3.functional.texture.filtering.2d_array.combinations.linear_mipmap_linear_linear_clamp_mirror = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.filtering.2d_array.combinations.linear_mipmap_linear_linear_clamp_repeat = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.filtering.2d_array.combinations.linear_mipmap_linear_linear_mirror_clamp = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.filtering.2d_array.combinations.linear_mipmap_linear_linear_mirror_mirror = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.filtering.2d_array.combinations.linear_mipmap_linear_linear_mirror_repeat = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.filtering.2d_array.combinations.linear_mipmap_linear_linear_repeat_clamp = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.filtering.2d_array.combinations.linear_mipmap_linear_linear_repeat_mirror = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.filtering.2d_array.combinations.linear_mipmap_linear_linear_repeat_repeat = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.filtering.2d_array.combinations.linear_mipmap_linear_nearest_clamp_mirror = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.filtering.2d_array.combinations.linear_mipmap_linear_nearest_clamp_repeat = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.filtering.2d_array.combinations.linear_mipmap_linear_nearest_mirror_clamp = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.filtering.2d_array.combinations.linear_mipmap_linear_nearest_mirror_mirror = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.filtering.2d_array.combinations.linear_mipmap_linear_nearest_mirror_repeat = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.filtering.2d_array.combinations.linear_mipmap_linear_nearest_repeat_clamp = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.filtering.2d_array.combinations.linear_mipmap_linear_nearest_repeat_mirror = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.filtering.2d_array.combinations.linear_mipmap_linear_nearest_repeat_repeat = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.filtering.2d_array.combinations.nearest_mipmap_linear_linear_clamp_mirror = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.filtering.2d_array.combinations.nearest_mipmap_linear_linear_clamp_repeat = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.filtering.2d_array.combinations.nearest_mipmap_linear_linear_mirror_clamp = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.filtering.2d_array.combinations.nearest_mipmap_linear_linear_mirror_mirror = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.filtering.2d_array.combinations.nearest_mipmap_linear_linear_mirror_repeat = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.filtering.2d_array.combinations.nearest_mipmap_linear_linear_repeat_clamp = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.filtering.2d_array.combinations.nearest_mipmap_linear_linear_repeat_mirror = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.filtering.2d_array.combinations.nearest_mipmap_linear_linear_repeat_repeat = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.filtering.2d_array.combinations.nearest_mipmap_linear_nearest_clamp_mirror = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.filtering.2d_array.combinations.nearest_mipmap_linear_nearest_clamp_repeat = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.filtering.2d_array.combinations.nearest_mipmap_linear_nearest_mirror_clamp = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.filtering.2d_array.combinations.nearest_mipmap_linear_nearest_mirror_mirror = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.filtering.2d_array.combinations.nearest_mipmap_linear_nearest_mirror_repeat = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.filtering.2d_array.combinations.nearest_mipmap_linear_nearest_repeat_clamp = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.filtering.2d_array.combinations.nearest_mipmap_linear_nearest_repeat_mirror = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.filtering.2d_array.combinations.nearest_mipmap_linear_nearest_repeat_repeat = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.filtering.2d_array.formats.r11f_g11f_b10f_linear_mipmap_linear = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.filtering.2d_array.formats.r11f_g11f_b10f_nearest_mipmap_linear = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.filtering.2d_array.formats.rgb10_a2_linear_mipmap_linear = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.filtering.2d_array.formats.rgb10_a2_nearest_mipmap_linear = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.filtering.2d_array.formats.rgb565_linear_mipmap_linear = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.filtering.2d_array.formats.rgb565_nearest_mipmap_linear = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.filtering.2d_array.formats.rgb5_a1_linear_mipmap_linear = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.filtering.2d_array.formats.rgb5_a1_nearest_mipmap_linear = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.filtering.2d_array.formats.rgba16f_linear_mipmap_linear = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.filtering.2d_array.formats.rgba16f_nearest_mipmap_linear = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.filtering.2d_array.formats.rgba4_linear_mipmap_linear = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.filtering.2d_array.formats.rgba4_nearest_mipmap_linear = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.filtering.2d_array.formats.rgba8_linear_mipmap_linear = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.filtering.2d_array.formats.rgba8_nearest_mipmap_linear = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.filtering.2d_array.formats.rgba8_snorm_linear_mipmap_linear = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.filtering.2d_array.formats.rgba8_snorm_nearest_mipmap_linear = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.filtering.2d_array.formats.srgb8_alpha8_linear_mipmap_linear = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.filtering.2d_array.formats.srgb8_alpha8_nearest_mipmap_linear = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.filtering.2d_array.sizes.128x32x64_linear_mipmap_linear = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.filtering.2d_array.sizes.128x32x64_nearest_mipmap_linear = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.filtering.2d_array.sizes.63x63x63_linear_mipmap_linear = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.filtering.2d_array.sizes.63x63x63_nearest_mipmap_linear = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.filtering.cube.no_edges_visible.nearest = FAIL
+
+4235 METAL AMD : dEQP-GLES3.functional.texture.mipmap.2d.base_level.linear_linear = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.mipmap.2d.basic.linear_linear_clamp = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.mipmap.2d.basic.linear_linear_clamp_non_square = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.mipmap.2d.basic.linear_linear_clamp_npot = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.mipmap.2d.basic.linear_linear_mirror = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.mipmap.2d.basic.linear_linear_mirror_non_square = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.mipmap.2d.basic.linear_linear_mirror_npot = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.mipmap.2d.basic.linear_linear_repeat = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.mipmap.2d.basic.linear_linear_repeat_non_square = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.mipmap.2d.basic.linear_linear_repeat_npot = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.mipmap.2d.basic.nearest_linear_clamp = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.mipmap.2d.basic.nearest_linear_clamp_non_square = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.mipmap.2d.basic.nearest_linear_clamp_npot = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.mipmap.2d.basic.nearest_linear_mirror = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.mipmap.2d.basic.nearest_linear_mirror_non_square = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.mipmap.2d.basic.nearest_linear_mirror_npot = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.mipmap.2d.basic.nearest_linear_repeat = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.mipmap.2d.basic.nearest_linear_repeat_non_square = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.mipmap.2d.basic.nearest_linear_repeat_npot = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.mipmap.2d.bias.linear_linear = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.mipmap.2d.bias.nearest_linear = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.mipmap.2d.max_lod.linear_linear = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.mipmap.2d.max_lod.nearest_linear = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.mipmap.3d.max_lod.linear_linear = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.mipmap.3d.max_lod.nearest_linear = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.mipmap.2d.projected.linear_linear_mirror = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.mipmap.2d.projected.linear_linear_repeat = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.mipmap.2d.projected.nearest_linear_clamp = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.mipmap.2d.projected.nearest_linear_mirror = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.mipmap.2d.projected.nearest_linear_repeat = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.mipmap.3d.projected.nearest_linear_clamp = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.mipmap.3d.projected.nearest_linear_mirror = FAIL
+
+4235 METAL AMD : dEQP-GLES3.functional.texture.shadow.2d.linear_mipmap_nearest.greater_depth24_stencil8 = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.shadow.2d.linear_mipmap_nearest.greater_or_equal_depth24_stencil8 = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.shadow.2d.linear_mipmap_nearest.less_depth24_stencil8 = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.shadow.2d.linear_mipmap_nearest.less_or_equal_depth24_stencil8 = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.shadow.2d.nearest_mipmap_nearest.greater_depth24_stencil8 = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.shadow.2d.nearest_mipmap_nearest.greater_or_equal_depth24_stencil8 = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.shadow.2d.nearest_mipmap_nearest.less_depth24_stencil8 = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.shadow.2d.nearest_mipmap_nearest.less_or_equal_depth24_stencil8 = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.shadow.2d_array.nearest_mipmap_nearest.greater_depth24_stencil8 = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.shadow.2d_array.nearest_mipmap_nearest.greater_or_equal_depth24_stencil8 = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.shadow.2d_array.nearest_mipmap_nearest.less_depth24_stencil8 = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.shadow.2d_array.nearest_mipmap_nearest.less_or_equal_depth24_stencil8 = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.shadow.2d_array.linear_mipmap_nearest.greater_depth24_stencil8 = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.shadow.2d_array.linear_mipmap_nearest.greater_or_equal_depth24_stencil8 = FAIL
+
+4235 METAL AMD : dEQP-GLES3.functional.texture.vertex.2d*.filtering.nearest_mipmap_linear_nearest_clamp = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.vertex.2d*.filtering.nearest_mipmap_linear_nearest_repeat = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.vertex.2d*.filtering.nearest_mipmap_linear_nearest_mirror = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.vertex.2d*.filtering.nearest_mipmap_linear_linear_clamp = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.vertex.2d*.filtering.nearest_mipmap_linear_linear_repeat = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.vertex.2d*.filtering.nearest_mipmap_linear_linear_mirror = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.vertex.2d*.filtering.linear_mipmap_linear_nearest_clamp = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.vertex.2d*.filtering.linear_mipmap_linear_nearest_repeat = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.vertex.2d*.filtering.linear_mipmap_linear_nearest_mirror = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.vertex.2d*.filtering.linear_mipmap_linear_linear_clamp = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.vertex.2d*.filtering.linear_mipmap_linear_linear_repeat = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.vertex.2d*.filtering.linear_mipmap_linear_linear_mirror = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.vertex.2d*.wrap.clamp_clamp = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.vertex.2d*.wrap.clamp_repeat = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.vertex.2d*.wrap.clamp_mirror = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.vertex.2d*.wrap.repeat_clamp = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.vertex.2d*.wrap.repeat_repeat = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.vertex.2d*.wrap.repeat_mirror = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.vertex.2d*.wrap.mirror_clamp = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.vertex.2d*.wrap.mirror_repeat = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.vertex.2d*.wrap.mirror_mirror = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.vertex.cube.filtering.nearest_mipmap_linear_nearest_clamp = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.vertex.cube.filtering.nearest_mipmap_linear_nearest_repeat = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.vertex.cube.filtering.nearest_mipmap_linear_nearest_mirror = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.vertex.cube.filtering.nearest_mipmap_linear_linear_clamp = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.vertex.cube.filtering.nearest_mipmap_linear_linear_repeat = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.vertex.cube.filtering.nearest_mipmap_linear_linear_mirror = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.vertex.cube.filtering.linear_mipmap_linear_nearest_clamp = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.vertex.cube.filtering.linear_mipmap_linear_nearest_repeat = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.vertex.cube.filtering.linear_mipmap_linear_nearest_mirror = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.vertex.cube.filtering.linear_mipmap_linear_linear_clamp = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.vertex.cube.filtering.linear_mipmap_linear_linear_repeat = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.vertex.cube.filtering.linear_mipmap_linear_linear_mirror = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.vertex.cube.wrap.clamp_clamp = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.vertex.cube.wrap.clamp_repeat = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.vertex.cube.wrap.clamp_mirror = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.vertex.cube.wrap.repeat_clamp = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.vertex.cube.wrap.repeat_repeat = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.vertex.cube.wrap.repeat_mirror = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.vertex.cube.wrap.mirror_clamp = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.vertex.cube.wrap.mirror_repeat = FAIL
+4235 METAL AMD : dEQP-GLES3.functional.texture.vertex.cube.wrap.mirror_mirror = FAIL
+
+// Globally disable Metal testing on Intel & NVIDIA for now
+4235 METAL INTEL : dEQP-GLES3.* = SKIP
+4235 METAL NVIDIA : dEQP-GLES3.* = SKIP
+
+/////////////////////////////////////

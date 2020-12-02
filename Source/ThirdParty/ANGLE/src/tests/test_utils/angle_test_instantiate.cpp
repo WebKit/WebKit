@@ -9,6 +9,7 @@
 
 #include "test_utils/angle_test_instantiate.h"
 
+#include <algorithm>
 #include <array>
 #include <iostream>
 #include <map>
@@ -147,12 +148,20 @@ constexpr size_t kMaxConfigNameLen = 100;
 std::array<char, kMaxConfigNameLen> gSelectedConfig;
 }  // namespace
 
-bool gSeparateProcessPerConfig = false;
+bool gEnableANGLEPerTestCaptureLabel = false;
 
 bool IsConfigSelected()
 {
     return gSelectedConfig[0] != 0;
 }
+
+#if !defined(ANGLE_PLATFORM_APPLE)
+// For Apple platform, see angle_test_instantiate_apple.mm
+bool IsMetalTextureSwizzleAvailable()
+{
+    return false;
+}
+#endif
 
 SystemInfo *GetTestSystemInfo()
 {
@@ -212,9 +221,35 @@ bool IsOSX()
 #endif
 }
 
+bool IsARM64()
+{
+// _M_ARM64 is Windows-specific, while __aarch64__ is for other platforms.
+#if defined(_M_ARM64) || defined(__aarch64__)
+    return true;
+#else
+    return false;
+#endif
+}
+
 bool IsOzone()
 {
-#if defined(USE_OZONE)
+#if defined(USE_OZONE) && (defined(USE_X11) || defined(ANGLE_USE_VULKAN_DISPLAY))
+    // We do not have a proper support for Ozone/Linux yet. Still, we need to figure out how to
+    // properly initialize tests and differentiate between X11 and Wayland. Probably, passing a
+    // command line argument could be sufficient. At the moment, run tests only for X11 backend
+    // as we don't have Wayland support in Angle. Yes, this is a bit weird to return false, but
+    // it makes it possible to continue angle tests with X11 regardless of the Chromium config
+    // for linux, which is use_x11 && use_ozone.  Also, IsOzone is a bit vague now. It was only
+    // expected that angle could run with ozone/drm backend for ChromeOS. And returning true
+    // for desktop Linux when USE_OZONE && USE_X11 are both defined results in incorrect tests'
+    // expectations. We should also rework them and make IsOzone less vague.
+    //
+    // TODO(crbug.com/angleproject/4977): make it possible to switch between X11 and Wayland on
+    // Ozone/Linux builds. Probably, it's possible to identify the WAYLAND backend by checking
+    // the WAYLAND_DISPLAY or XDG_SESSION_TYPE env vars. And also make the IsOzone method less
+    // vague (read the comment above).
+    return false;
+#elif defined(USE_OZONE)
     return true;
 #else
     return false;
@@ -288,6 +323,11 @@ bool IsIntel()
     return HasSystemVendorID(kVendorID_Intel);
 }
 
+bool IsIntelUHD630Mobile()
+{
+    return HasSystemDeviceID(kVendorID_Intel, kDeviceID_UHD630Mobile);
+}
+
 bool IsAMD()
 {
     return HasSystemVendorID(kVendorID_AMD);
@@ -315,16 +355,7 @@ bool IsNVIDIA()
     return HasSystemVendorID(kVendorID_NVIDIA);
 }
 
-bool IsARM64()
-{
-#if defined(_M_ARM64)
-    return true;
-#else
-    return false;
-#endif
-}
-
-bool IsConfigWhitelisted(const SystemInfo &systemInfo, const PlatformParameters &param)
+bool IsConfigAllowlisted(const SystemInfo &systemInfo, const PlatformParameters &param)
 {
     VendorID vendorID =
         systemInfo.gpus.empty() ? 0 : systemInfo.gpus[systemInfo.activeGPUIndex].vendorId;
@@ -360,8 +391,11 @@ bool IsConfigWhitelisted(const SystemInfo &systemInfo, const PlatformParameters 
                 {
                     case EGL_PLATFORM_ANGLE_TYPE_D3D9_ANGLE:
                     case EGL_PLATFORM_ANGLE_TYPE_D3D11_ANGLE:
-                    case EGL_PLATFORM_ANGLE_TYPE_OPENGL_ANGLE:
                         return true;
+                    case EGL_PLATFORM_ANGLE_TYPE_OPENGL_ANGLE:
+                        // Note we disable AMD OpenGL testing on Windows due to using a very old and
+                        // outdated card with many driver bugs. See http://anglebug.com/5123
+                        return !IsAMD();
                     case EGL_PLATFORM_ANGLE_TYPE_VULKAN_ANGLE:
                         if (IsARM64())
                         {
@@ -409,10 +443,8 @@ bool IsConfigWhitelisted(const SystemInfo &systemInfo, const PlatformParameters 
                 }
                 return true;
             case EGL_PLATFORM_ANGLE_TYPE_METAL_ANGLE:
-                if (!IsMetalRendererAvailable() || IsIntel(vendorID))
+                if (!IsMetalRendererAvailable())
                 {
-                    // TODO(hqle): Intel metal tests seem to have problems. Disable for now.
-                    // http://anglebug.com/4133
                     return false;
                 }
                 return true;
@@ -637,7 +669,7 @@ bool IsPlatformAvailable(const PlatformParameters &param)
 
             if (systemInfo)
             {
-                result = IsConfigWhitelisted(*systemInfo, param);
+                result = IsConfigAllowlisted(*systemInfo, param);
             }
             else
             {
@@ -660,12 +692,6 @@ bool IsPlatformAvailable(const PlatformParameters &param)
             std::cout << "Skipping tests using configuration " << param
                       << " because it is not available.\n";
         }
-    }
-
-    // Disable all tests in the parent process when running child processes.
-    if (gSeparateProcessPerConfig)
-    {
-        return false;
     }
     return result;
 }

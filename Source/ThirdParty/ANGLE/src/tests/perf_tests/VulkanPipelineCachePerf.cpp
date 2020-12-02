@@ -88,7 +88,7 @@ void VulkanPipelineCachePerfTest::step()
     gl::AttributesMask am;
     gl::ComponentTypeMask ctm;
 
-    vk::SpecializationConstantBitSet defaultSpecConsts;
+    vk::SpecializationConstants defaultSpecConsts{};
 
     for (unsigned int iteration = 0; iteration < kIterationsPerStep; ++iteration)
     {

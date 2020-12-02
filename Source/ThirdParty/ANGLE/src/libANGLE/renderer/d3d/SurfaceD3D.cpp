@@ -16,7 +16,6 @@
 #include "libANGLE/renderer/d3d/RenderTargetD3D.h"
 #include "libANGLE/renderer/d3d/RendererD3D.h"
 #include "libANGLE/renderer/d3d/SwapChainD3D.h"
-#include "libANGLE/renderer/d3d/d3d11/formatutils11.h"
 
 #include <EGL/eglext.h>
 #include <tchar.h>

@@ -9,10 +9,14 @@ declare_args() {
 
   # Extract native libs in ANGLE apk. Useful for flamegraph generation.
   angle_extract_native_libs = false
+
+  # Display mode for ANGLE vulkan display, could be 'simple' or 'headless', default is 'simple'.
+  angle_vulkan_display_mode = "simple"
 }
 
 if (angle_has_build) {
   import("//build/config/dcheck_always_on.gni")
+  import("//build/config/ozone.gni")
   import("//build/config/sanitizers/sanitizers.gni")
   import("//build/config/ui.gni")  # import the use_x11 variable
   import("//build_overrides/build.gni")
@@ -26,6 +30,7 @@ if (angle_has_build) {
   }
 
   angle_use_x11 = use_x11 && !is_ggp
+  angle_use_vulkan_display = is_linux && !use_x11 && !is_ggp && !use_ozone
 } else {
   declare_args() {
     is_ubsan = false
@@ -33,17 +38,14 @@ if (angle_has_build) {
     is_asan = false
     build_with_chromium = false
     dcheck_always_on = false
-    angle_use_x11 = is_linux && !is_ggp
+    angle_use_x11 = (is_linux || is_chromeos) && !is_ggp
     use_ozone = false
+    ozone_platform_gbm = false
     use_fuzzing_engine = false
   }
-}
 
-if (build_with_chromium) {
-  import("//ui/ozone/ozone.gni")
-} else {
   declare_args() {
-    ozone_platform_gbm = false
+    angle_use_vulkan_display = is_linux && !angle_use_x11 && !is_ggp
   }
 }
 
@@ -99,18 +101,19 @@ declare_args() {
 
   angle_enable_d3d9 = is_win && !angle_is_winuwp
   angle_enable_d3d11 = is_win
-  angle_enable_gl =
-      (ozone_platform_gbm || !is_linux || (angle_use_x11 && !is_chromeos)) &&
-      !is_fuchsia && !angle_is_winuwp && !is_ggp && !is_win_arm64
+  angle_enable_gl = (ozone_platform_gbm || (!is_linux && !is_chromeos) ||
+                     (angle_use_x11 && !is_chromeos)) && !is_fuchsia &&
+                    !angle_is_winuwp && !is_ggp && !is_win_arm64
 
   # ANGLE Vulkan backend on Android requires API level 26, i.e. Oreo, due to
   # Vulkan Validation Layers compatibility issues, see http://crrev/c/1405714.
   # Otherwise, API level 24 would have been enough.
   angle_enable_vulkan =
-      angle_has_build && ((is_win && !angle_is_winuwp) ||
-                          (is_linux && angle_use_x11 && !is_chromeos) ||
-                          (is_android && ndk_api_level_at_least_26) ||
-                          is_fuchsia || is_ggp || is_mac)
+      angle_has_build &&
+      ((is_win && !angle_is_winuwp) ||
+       (is_linux && (angle_use_x11 || angle_use_vulkan_display) &&
+        !is_chromeos) || (is_android && ndk_api_level_at_least_26) ||
+       is_fuchsia || is_ggp || is_mac)
   angle_enable_null = true
   angle_enable_essl = true
   angle_enable_glsl = true
@@ -126,9 +129,9 @@ declare_args() {
   angle_enable_swiftshader =
       angle_enable_vulkan && !is_android && !is_fuchsia && !is_ggp
 
-  angle_enable_gl_null = angle_enable_gl
   angle_enable_hlsl = angle_enable_d3d9 || angle_enable_d3d11
   angle_enable_trace = false
+  angle_enable_trace_android_logcat = false
 
   # Disable the layers in ubsan builds because of really slow builds.
   # TODO(anglebug.com/4082) enable validation layers on mac for swiftshader
@@ -138,11 +141,21 @@ declare_args() {
 
   # Disable overlay by default
   angle_enable_overlay = false
+
+  # Disable performance counter output by default
+  angle_enable_perf_counter_output = false
+}
+
+declare_args() {
+  angle_has_histograms = angle_has_build
+}
+
+if (!defined(angle_zlib_compression_utils_dir)) {
+  angle_zlib_compression_utils_dir = "//third_party/zlib/google"
 }
 
 angle_common_configs = [
   angle_root + ":angle_release_asserts_config",
-  angle_root + ":better_linux_stack_traces",
   angle_root + ":constructor_and_destructor_warnings",
   angle_root + ":extra_warnings",
   angle_root + ":internal_config",
@@ -153,22 +166,9 @@ angle_remove_configs = []
 if (angle_has_build) {
   angle_remove_configs += [ "//build/config/compiler:default_include_dirs" ]
 }
-angle_better_stack_traces =
-    (is_debug || dcheck_always_on) && is_linux && !is_asan && !is_cfi
 
 if (angle_has_build && is_clang) {
   angle_remove_configs += [ "//build/config/clang:find_bad_constructs" ]
-
-  # Disabled to enable better stack traces.
-  if (angle_better_stack_traces) {
-    # This line causes in-class-inline-functions in glslang to be weak symbols.  The KHR dEQP tests
-    # link against glslang as well as libGLESv2.so, resulting in angle_deqp_khr_gles*_tests to link
-    # those weak symbols.  Due to glslang's usage of a global variable in InitializeDll.cpp, a bug
-    # is created where ANGLE sometimes calls into its own copy of glslang and sometimes the KHR
-    # dEQP's version, with the two copies of the global variable being inconsistent.
-    # Commented out until the underlying issue is resolved.  http://anglebug.com/4123
-    # angle_remove_configs += [ "//build/config/gcc:symbol_visibility_hidden" ]
-  }
 }
 
 set_defaults("angle_executable") {
@@ -196,28 +196,20 @@ set_defaults("angle_static_library") {
 }
 
 set_defaults("angle_test") {
-  configs = []
-
   # Gtest itself can't pass all the strict warning filters.
-  public_configs = angle_common_configs - [
-                     "$angle_root:constructor_and_destructor_warnings",
-                     "$angle_root:extra_warnings",
-                   ]
+  configs = angle_common_configs - [
+              "$angle_root:constructor_and_destructor_warnings",
+              "$angle_root:extra_warnings",
+            ] + [ "$angle_root/src/tests:angle_maybe_has_histograms" ]
 
+  public_configs = []
   public_deps = []
   sources = []
   data = []
   defines = []
+  deps = []
   data_deps = []
-  main = ""
   suppressed_configs = angle_remove_configs
-
-  # By default use the Chromium harness in Chromium. Can be overriden in a target.
-  standalone_harness = !build_with_chromium
-
-  if (!standalone_harness) {
-    suppressed_configs -= [ "//build/config/compiler:default_include_dirs" ]
-  }
 }
 
 template("angle_executable") {
@@ -300,91 +292,62 @@ template("angle_static_library") {
 }
 
 template("angle_test") {
-  _lib = target_name + "_lib"
-  angle_source_set(_lib) {
-    testonly = true
+  test(target_name) {
     forward_variables_from(invoker,
                            "*",
                            [
-                             "deps",
-                             "manifest",
+                             "configs",
+                             "data",
+                             "public_deps",
                            ])
 
-    if (is_android) {
-      public_configs += [ "$angle_root:build_id_config" ]
-    }
+    configs += invoker.configs
+    configs -= invoker.suppressed_configs
 
-    public_deps += invoker.deps + [
-                     "$angle_root:angle_common",
-                     "$angle_root:includes",
-                     "$angle_root/third_party/rapidjson:rapidjson",
-                     "$angle_root/util:angle_test_utils",
-                     "//testing/gmock",
-                     "//testing/gtest",
-                     "//third_party/googletest:gmock",
-                     "//third_party/googletest:gtest",
-                   ]
+    public_deps = invoker.public_deps + [
+                    "$angle_root:angle_common",
+                    "$angle_root:includes",
+                    "$angle_root/util:angle_test_utils",
+                    "$angle_root/third_party/rapidjson:rapidjson",
+                    "//testing/gmock",
+                    "//testing/gtest",
+                    "//third_party/googletest:gmock",
+                    "//third_party/googletest:gtest",
+                  ]
 
-    sources += [
-      "$angle_root/src/tests/test_utils/runner/TestSuite.cpp",
-      "$angle_root/src/tests/test_utils/runner/TestSuite.h",
-    ]
-  }
-
-  # To use the Chromium test infrastructure we must currently use the //base test launcher.
-  # Eventually we could switch to using standalone testing. See http://crbug.com/837741
-  # TODO(jmadill): Clean up duplication as part of http://anglebug.com/3152
-
-  _standalone_harness_test_name = target_name
-
-  if (build_with_chromium) {
-    _standalone_harness_test_name = "standalone_" + target_name
-    test(target_name) {
-      public_deps = [ ":${_lib}" ]
-      if (invoker.main != "") {
-        sources = [ "//gpu/${invoker.main}.cc" ]
-      }
-      deps = [ "//base/test:test_support" ]
-      if (is_android) {
-        configs -= [ "//build/config/android:hide_all_but_jni" ]
-      }
-
-      if (is_linux && !is_component_build) {
-        # Set rpath to find shared libs in a non-component build.
-        configs += [ "//build/config/gcc:rpath_for_built_shared_libraries" ]
-      }
-
-      if (defined(invoker.manifest)) {
-        manifest = invoker.manifest
-      }
-
-      if (is_android) {
-        use_native_activity = true
-      }
-    }
-  }
-
-  test(_standalone_harness_test_name) {
-    public_deps = [ ":${_lib}" ]
-    if (invoker.main != "") {
-      sources = [ "${invoker.main}.cpp" ]
-    }
     data = invoker.data + [
              "$angle_root/scripts/run_gtest_angle_test.py",
              "//testing/scripts/common.py",
              "//testing/xvfb.py",
            ]
 
-    if (is_linux && !is_component_build) {
+    sources += [
+      "$angle_root/src/tests/test_utils/runner/HistogramWriter.h",
+      "$angle_root/src/tests/test_utils/runner/TestSuite.cpp",
+      "$angle_root/src/tests/test_utils/runner/TestSuite.h",
+    ]
+
+    if (angle_has_histograms) {
+      sources +=
+          [ "$angle_root/src/tests/test_utils/runner/HistogramWriter.cpp" ]
+      deps += [
+        "//third_party/catapult/tracing/tracing:histogram",
+        "//third_party/catapult/tracing/tracing:reserved_infos",
+      ]
+    }
+
+    if ((is_linux && !is_chromeos) ||
+        (build_with_chromium && chromeos_is_browser_only)) {
+      use_xvfb = true
+    }
+
+    if ((is_linux || is_chromeos) && !is_component_build) {
       # Set rpath to find shared libs in a non-component build.
       configs += [ "//build/config/gcc:rpath_for_built_shared_libraries" ]
     }
 
-    if (defined(invoker.manifest)) {
-      manifest = invoker.manifest
-    }
-
     if (is_android) {
+      public_configs += [ "$angle_root:build_id_config" ]
       if (build_with_chromium) {
         use_native_activity = true
         configs -= [ "//build/config/android:hide_all_but_jni" ]

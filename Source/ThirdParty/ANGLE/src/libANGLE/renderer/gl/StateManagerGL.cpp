@@ -76,7 +76,7 @@ StateManagerGL::StateManagerGL(const FunctionsGL *functions,
       mTransformFeedback(0),
       mCurrentTransformFeedback(nullptr),
       mQueries(),
-      mPrevDrawContext(0),
+      mPrevDrawContext({0}),
       mUnpackAlignment(4),
       mUnpackRowLength(0),
       mUnpackSkipRows(0),
@@ -473,12 +473,13 @@ void StateManagerGL::bindImageTexture(size_t unit,
     }
 }
 
-void StateManagerGL::setPixelUnpackState(const gl::PixelUnpackState &unpack)
+angle::Result StateManagerGL::setPixelUnpackState(const gl::Context *context,
+                                                  const gl::PixelUnpackState &unpack)
 {
     if (mUnpackAlignment != unpack.alignment)
     {
         mUnpackAlignment = unpack.alignment;
-        mFunctions->pixelStorei(GL_UNPACK_ALIGNMENT, mUnpackAlignment);
+        ANGLE_GL_TRY(context, mFunctions->pixelStorei(GL_UNPACK_ALIGNMENT, mUnpackAlignment));
 
         mLocalDirtyBits.set(gl::State::DIRTY_BIT_UNPACK_STATE);
     }
@@ -486,7 +487,7 @@ void StateManagerGL::setPixelUnpackState(const gl::PixelUnpackState &unpack)
     if (mUnpackRowLength != unpack.rowLength)
     {
         mUnpackRowLength = unpack.rowLength;
-        mFunctions->pixelStorei(GL_UNPACK_ROW_LENGTH, mUnpackRowLength);
+        ANGLE_GL_TRY(context, mFunctions->pixelStorei(GL_UNPACK_ROW_LENGTH, mUnpackRowLength));
 
         mLocalDirtyBits.set(gl::State::DIRTY_BIT_UNPACK_STATE);
     }
@@ -494,7 +495,7 @@ void StateManagerGL::setPixelUnpackState(const gl::PixelUnpackState &unpack)
     if (mUnpackSkipRows != unpack.skipRows)
     {
         mUnpackSkipRows = unpack.skipRows;
-        mFunctions->pixelStorei(GL_UNPACK_SKIP_ROWS, mUnpackSkipRows);
+        ANGLE_GL_TRY(context, mFunctions->pixelStorei(GL_UNPACK_SKIP_ROWS, mUnpackSkipRows));
 
         mLocalDirtyBits.set(gl::State::DIRTY_BIT_UNPACK_STATE);
     }
@@ -502,7 +503,7 @@ void StateManagerGL::setPixelUnpackState(const gl::PixelUnpackState &unpack)
     if (mUnpackSkipPixels != unpack.skipPixels)
     {
         mUnpackSkipPixels = unpack.skipPixels;
-        mFunctions->pixelStorei(GL_UNPACK_SKIP_PIXELS, mUnpackSkipPixels);
+        ANGLE_GL_TRY(context, mFunctions->pixelStorei(GL_UNPACK_SKIP_PIXELS, mUnpackSkipPixels));
 
         mLocalDirtyBits.set(gl::State::DIRTY_BIT_UNPACK_STATE);
     }
@@ -510,7 +511,7 @@ void StateManagerGL::setPixelUnpackState(const gl::PixelUnpackState &unpack)
     if (mUnpackImageHeight != unpack.imageHeight)
     {
         mUnpackImageHeight = unpack.imageHeight;
-        mFunctions->pixelStorei(GL_UNPACK_IMAGE_HEIGHT, mUnpackImageHeight);
+        ANGLE_GL_TRY(context, mFunctions->pixelStorei(GL_UNPACK_IMAGE_HEIGHT, mUnpackImageHeight));
 
         mLocalDirtyBits.set(gl::State::DIRTY_BIT_UNPACK_STATE);
     }
@@ -518,13 +519,16 @@ void StateManagerGL::setPixelUnpackState(const gl::PixelUnpackState &unpack)
     if (mUnpackSkipImages != unpack.skipImages)
     {
         mUnpackSkipImages = unpack.skipImages;
-        mFunctions->pixelStorei(GL_UNPACK_SKIP_IMAGES, mUnpackSkipImages);
+        ANGLE_GL_TRY(context, mFunctions->pixelStorei(GL_UNPACK_SKIP_IMAGES, mUnpackSkipImages));
 
         mLocalDirtyBits.set(gl::State::DIRTY_BIT_UNPACK_STATE);
     }
+
+    return angle::Result::Continue;
 }
 
-void StateManagerGL::setPixelUnpackBuffer(const gl::Buffer *pixelBuffer)
+angle::Result StateManagerGL::setPixelUnpackBuffer(const gl::Context *context,
+                                                   const gl::Buffer *pixelBuffer)
 {
     GLuint bufferID = 0;
     if (pixelBuffer != nullptr)
@@ -532,14 +536,17 @@ void StateManagerGL::setPixelUnpackBuffer(const gl::Buffer *pixelBuffer)
         bufferID = GetImplAs<BufferGL>(pixelBuffer)->getBufferID();
     }
     bindBuffer(gl::BufferBinding::PixelUnpack, bufferID);
+
+    return angle::Result::Continue;
 }
 
-void StateManagerGL::setPixelPackState(const gl::PixelPackState &pack)
+angle::Result StateManagerGL::setPixelPackState(const gl::Context *context,
+                                                const gl::PixelPackState &pack)
 {
     if (mPackAlignment != pack.alignment)
     {
         mPackAlignment = pack.alignment;
-        mFunctions->pixelStorei(GL_PACK_ALIGNMENT, mPackAlignment);
+        ANGLE_GL_TRY(context, mFunctions->pixelStorei(GL_PACK_ALIGNMENT, mPackAlignment));
 
         mLocalDirtyBits.set(gl::State::DIRTY_BIT_PACK_STATE);
     }
@@ -547,7 +554,7 @@ void StateManagerGL::setPixelPackState(const gl::PixelPackState &pack)
     if (mPackRowLength != pack.rowLength)
     {
         mPackRowLength = pack.rowLength;
-        mFunctions->pixelStorei(GL_PACK_ROW_LENGTH, mPackRowLength);
+        ANGLE_GL_TRY(context, mFunctions->pixelStorei(GL_PACK_ROW_LENGTH, mPackRowLength));
 
         mLocalDirtyBits.set(gl::State::DIRTY_BIT_PACK_STATE);
     }
@@ -555,7 +562,7 @@ void StateManagerGL::setPixelPackState(const gl::PixelPackState &pack)
     if (mPackSkipRows != pack.skipRows)
     {
         mPackSkipRows = pack.skipRows;
-        mFunctions->pixelStorei(GL_PACK_SKIP_ROWS, mPackSkipRows);
+        ANGLE_GL_TRY(context, mFunctions->pixelStorei(GL_PACK_SKIP_ROWS, mPackSkipRows));
 
         mLocalDirtyBits.set(gl::State::DIRTY_BIT_PACK_STATE);
     }
@@ -563,13 +570,16 @@ void StateManagerGL::setPixelPackState(const gl::PixelPackState &pack)
     if (mPackSkipPixels != pack.skipPixels)
     {
         mPackSkipPixels = pack.skipPixels;
-        mFunctions->pixelStorei(GL_PACK_SKIP_PIXELS, mPackSkipPixels);
+        ANGLE_GL_TRY(context, mFunctions->pixelStorei(GL_PACK_SKIP_PIXELS, mPackSkipPixels));
 
         mLocalDirtyBits.set(gl::State::DIRTY_BIT_PACK_STATE);
     }
+
+    return angle::Result::Continue;
 }
 
-void StateManagerGL::setPixelPackBuffer(const gl::Buffer *pixelBuffer)
+angle::Result StateManagerGL::setPixelPackBuffer(const gl::Context *context,
+                                                 const gl::Buffer *pixelBuffer)
 {
     GLuint bufferID = 0;
     if (pixelBuffer != nullptr)
@@ -577,6 +587,8 @@ void StateManagerGL::setPixelPackBuffer(const gl::Buffer *pixelBuffer)
         bufferID = GetImplAs<BufferGL>(pixelBuffer)->getBufferID();
     }
     bindBuffer(gl::BufferBinding::PixelPack, bufferID);
+
+    return angle::Result::Continue;
 }
 
 void StateManagerGL::bindFramebuffer(GLenum type, GLuint framebuffer)
@@ -1865,16 +1877,18 @@ angle::Result StateManagerGL::syncState(const gl::Context *context,
                 setClearStencil(state.getStencilClearValue());
                 break;
             case gl::State::DIRTY_BIT_UNPACK_STATE:
-                setPixelUnpackState(state.getUnpackState());
+                ANGLE_TRY(setPixelUnpackState(context, state.getUnpackState()));
                 break;
             case gl::State::DIRTY_BIT_UNPACK_BUFFER_BINDING:
-                setPixelUnpackBuffer(state.getTargetBuffer(gl::BufferBinding::PixelUnpack));
+                ANGLE_TRY(setPixelUnpackBuffer(
+                    context, state.getTargetBuffer(gl::BufferBinding::PixelUnpack)));
                 break;
             case gl::State::DIRTY_BIT_PACK_STATE:
-                setPixelPackState(state.getPackState());
+                ANGLE_TRY(setPixelPackState(context, state.getPackState()));
                 break;
             case gl::State::DIRTY_BIT_PACK_BUFFER_BINDING:
-                setPixelPackBuffer(state.getTargetBuffer(gl::BufferBinding::PixelPack));
+                ANGLE_TRY(setPixelPackBuffer(context,
+                                             state.getTargetBuffer(gl::BufferBinding::PixelPack)));
                 break;
             case gl::State::DIRTY_BIT_DITHER_ENABLED:
                 setDitherEnabled(state.isDitherEnabled());
@@ -2058,6 +2072,9 @@ angle::Result StateManagerGL::syncState(const gl::Context *context,
                 setClipDistancesEnable(state.getEnabledClipDistances());
                 // TODO(jmadill): handle mipmap generation hint
                 // TODO(jmadill): handle shader derivative hint
+                break;
+            case gl::State::DIRTY_BIT_SAMPLE_SHADING:
+                // Nothing to do until OES_sample_shading is implemented.
                 break;
             default:
                 UNREACHABLE();

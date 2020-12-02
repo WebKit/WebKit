@@ -1408,9 +1408,8 @@ TEST_P(UniformTest, UniformWithReservedOpenGLName)
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::white);
 }
 
-// Test that unused sampler array elements do not corrupt
-// used sampler array elements. Checks for a bug where unused
-// samplers in an array would mark the whole array unused.
+// Test that unused sampler array elements do not corrupt used sampler array elements. Checks for a
+// bug where unused samplers in an array would mark the whole array unused.
 TEST_P(UniformTest, UnusedUniformsInSamplerArray)
 {
     constexpr char kVS[] = R"(precision highp float;

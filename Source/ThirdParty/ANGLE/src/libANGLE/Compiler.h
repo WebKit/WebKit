@@ -31,7 +31,9 @@ class State;
 class Compiler final : public RefCountObjectNoID
 {
   public:
-    Compiler(rx::GLImplFactory *implFactory, const State &data);
+    Compiler(rx::GLImplFactory *implFactory, const State &data, egl::Display *display);
+
+    void onDestroy(const Context *context) override;
 
     ShCompilerInstance getInstance(ShaderType shaderType);
     void putInstance(ShCompilerInstance &&instance);

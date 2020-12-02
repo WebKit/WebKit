@@ -11,6 +11,35 @@
 
     <!-- SECTION: GL parameter class type definitions. -->
     <groups>
+        <group name="CreateFlagMask">
+            <enum name="GL_CREATE_SPARSE_BINDING_BIT_ANGLE"/>
+            <enum name="GL_CREATE_SPARSE_RESIDENCY_BIT_ANGLE"/>
+            <enum name="GL_CREATE_SPARSE_ALIASED_BIT_ANGLE"/>
+            <enum name="GL_CREATE_MUTABLE_FORMAT_BIT_ANGLE"/>
+            <enum name="GL_CREATE_CUBE_COMPATIBLE_BIT_ANGLE"/>
+            <enum name="GL_CREATE_ALIAS_BIT_ANGLE"/>
+            <enum name="GL_CREATE_SPLIT_INSTANCE_BIND_REGIONS_BIT_ANGLE"/>
+            <enum name="GL_CREATE_2D_ARRAY_COMPATIBLE_BIT_ANGLE"/>
+            <enum name="GL_CREATE_BLOCK_TEXEL_VIEW_COMPATIBLE_BIT_ANGLE"/>
+            <enum name="GL_CREATE_EXTENDED_USAGE_BIT_ANGLE"/>
+            <enum name="GL_CREATE_PROTECTED_BIT_ANGLE"/>
+            <enum name="GL_CREATE_DISJOINT_BIT_ANGLE"/>
+            <enum name="GL_CREATE_CORNER_SAMPLED_BIT_ANGLE"/>
+            <enum name="GL_CREATE_SAMPLE_LOCATIONS_COMPATIBLE_DEPTH_BIT_ANGLE"/>
+            <enum name="GL_CREATE_SUBSAMPLED_BIT_ANGLE"/>
+        </group>
+        <group name="UsageFlagMask">
+            <enum name="GL_USAGE_TRANSFER_SRC_BIT_ANGLE"/>
+            <enum name="GL_USAGE_TRANSFER_DST_BIT_ANGLE"/>
+            <enum name="GL_USAGE_SAMPLED_BIT_ANGLE"/>
+            <enum name="GL_USAGE_STORAGE_BIT_ANGLE"/>
+            <enum name="GL_USAGE_COLOR_ATTACHMENT_BIT_ANGLE"/>
+            <enum name="GL_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT_ANGLE"/>
+            <enum name="GL_USAGE_TRANSIENT_ATTACHMENT_BIT_ANGLE"/>
+            <enum name="GL_USAGE_INPUT_ATTACHMENT_BIT_ANGLE"/>
+            <enum name="GL_USAGE_SHADING_RATE_IMAGE_BIT_ANGLE"/>
+            <enum name="GL_USAGE_FRAGMENT_DENSITY_MAP_BIT_ANGLE"/>
+        </group>
         <group name="ExternalHandleType">
             <enum name="GL_HANDLE_TYPE_ZIRCON_VMO_ANGLE"/>
             <enum name="GL_HANDLE_TYPE_ZIRCON_EVENT_ANGLE"/>
@@ -819,6 +848,58 @@
             <param len="COMPSIZE(target,level,format,type)">void *<name>pixels</name></param>
         </command>
         <command>
+            <proto>void <name>glTexStorageMemFlags2DANGLE</name></proto>
+            <param group="TextureTarget"><ptype>GLenum</ptype> <name>target</name></param>
+            <param><ptype>GLsizei</ptype> <name>levels</name></param>
+            <param><ptype>GLenum</ptype> <name>internalFormat</name></param>
+            <param><ptype>GLsizei</ptype> <name>width</name></param>
+            <param><ptype>GLsizei</ptype> <name>height</name></param>
+            <param><ptype>GLuint</ptype> <name>memory</name></param>
+            <param><ptype>GLuint64</ptype> <name>offset</name></param>
+            <param><ptype>GLbitfield</ptype> <name>createFlags</name></param>
+            <param><ptype>GLbitfield</ptype> <name>usageFlags</name></param>
+        </command>
+        <command>
+            <proto>void <name>glTexStorageMemFlags2DMultisampleANGLE</name></proto>
+            <param group="TextureTarget"><ptype>GLenum</ptype> <name>target</name></param>
+            <param><ptype>GLsizei</ptype> <name>samples</name></param>
+            <param><ptype>GLenum</ptype> <name>internalFormat</name></param>
+            <param><ptype>GLsizei</ptype> <name>width</name></param>
+            <param><ptype>GLsizei</ptype> <name>height</name></param>
+            <param><ptype>GLboolean</ptype> <name>fixedSampleLocations</name></param>
+            <param><ptype>GLuint</ptype> <name>memory</name></param>
+            <param><ptype>GLuint64</ptype> <name>offset</name></param>
+            <param><ptype>GLbitfield</ptype> <name>createFlags</name></param>
+            <param><ptype>GLbitfield</ptype> <name>usageFlags</name></param>
+        </command>
+        <command>
+            <proto>void <name>glTexStorageMemFlags3DANGLE</name></proto>
+            <param group="TextureTarget"><ptype>GLenum</ptype> <name>target</name></param>
+            <param><ptype>GLsizei</ptype> <name>levels</name></param>
+            <param><ptype>GLenum</ptype> <name>internalFormat</name></param>
+            <param><ptype>GLsizei</ptype> <name>width</name></param>
+            <param><ptype>GLsizei</ptype> <name>height</name></param>
+            <param><ptype>GLsizei</ptype> <name>depth</name></param>
+            <param><ptype>GLuint</ptype> <name>memory</name></param>
+            <param><ptype>GLuint64</ptype> <name>offset</name></param>
+            <param><ptype>GLbitfield</ptype> <name>createFlags</name></param>
+            <param><ptype>GLbitfield</ptype> <name>usageFlags</name></param>
+        </command>
+        <command>
+            <proto>void <name>glTexStorageMemFlags3DMultisampleANGLE</name></proto>
+            <param group="TextureTarget"><ptype>GLenum</ptype> <name>target</name></param>
+            <param><ptype>GLsizei</ptype> <name>samples</name></param>
+            <param><ptype>GLenum</ptype> <name>internalFormat</name></param>
+            <param><ptype>GLsizei</ptype> <name>width</name></param>
+            <param><ptype>GLsizei</ptype> <name>height</name></param>
+            <param><ptype>GLsizei</ptype> <name>depth</name></param>
+            <param><ptype>GLboolean</ptype> <name>fixedSampleLocations</name></param>
+            <param><ptype>GLuint</ptype> <name>memory</name></param>
+            <param><ptype>GLuint64</ptype> <name>offset</name></param>
+            <param><ptype>GLbitfield</ptype> <name>createFlags</name></param>
+            <param><ptype>GLbitfield</ptype> <name>usageFlags</name></param>
+        </command>
+        <command>
             <proto>void <name>glImportMemoryZirconHandleANGLE</name></proto>
             <param><ptype>GLuint</ptype> <name>memory</name></param>
             <param><ptype>GLuint64</ptype> <name>size</name></param>
@@ -989,6 +1070,45 @@
                 <command name="glGetRenderbufferImageANGLE"/>
             </require>
         </extension>
+        <extension name ="GL_ANGLE_get_tex_level_parameter" supported='gles2'>
+            <require>
+                <command name="glGetTexLevelParameterfvANGLE"/>
+                <command name="glGetTexLevelParameterivANGLE"/>
+            </require>
+        </extension>
+        <extension name="GL_ANGLE_memory_object_flags" supported="gl|gles2">
+            <require>
+                <enum name="GL_CREATE_SPARSE_BINDING_BIT_ANGLE"/>
+                <enum name="GL_CREATE_SPARSE_RESIDENCY_BIT_ANGLE"/>
+                <enum name="GL_CREATE_SPARSE_ALIASED_BIT_ANGLE"/>
+                <enum name="GL_CREATE_MUTABLE_FORMAT_BIT_ANGLE"/>
+                <enum name="GL_CREATE_CUBE_COMPATIBLE_BIT_ANGLE"/>
+                <enum name="GL_CREATE_ALIAS_BIT_ANGLE"/>
+                <enum name="GL_CREATE_SPLIT_INSTANCE_BIND_REGIONS_BIT_ANGLE"/>
+                <enum name="GL_CREATE_2D_ARRAY_COMPATIBLE_BIT_ANGLE"/>
+                <enum name="GL_CREATE_BLOCK_TEXEL_VIEW_COMPATIBLE_BIT_ANGLE"/>
+                <enum name="GL_CREATE_EXTENDED_USAGE_BIT_ANGLE"/>
+                <enum name="GL_CREATE_PROTECTED_BIT_ANGLE"/>
+                <enum name="GL_CREATE_DISJOINT_BIT_ANGLE"/>
+                <enum name="GL_CREATE_CORNER_SAMPLED_BIT_ANGLE"/>
+                <enum name="GL_CREATE_SAMPLE_LOCATIONS_COMPATIBLE_DEPTH_BIT_ANGLE"/>
+                <enum name="GL_CREATE_SUBSAMPLED_BIT_ANGLE"/>
+                <enum name="GL_USAGE_TRANSFER_SRC_BIT_ANGLE"/>
+                <enum name="GL_USAGE_TRANSFER_DST_BIT_ANGLE"/>
+                <enum name="GL_USAGE_SAMPLED_BIT_ANGLE"/>
+                <enum name="GL_USAGE_STORAGE_BIT_ANGLE"/>
+                <enum name="GL_USAGE_COLOR_ATTACHMENT_BIT_ANGLE"/>
+                <enum name="GL_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT_ANGLE"/>
+                <enum name="GL_USAGE_TRANSIENT_ATTACHMENT_BIT_ANGLE"/>
+                <enum name="GL_USAGE_INPUT_ATTACHMENT_BIT_ANGLE"/>
+                <enum name="GL_USAGE_SHADING_RATE_IMAGE_BIT_ANGLE"/>
+                <enum name="GL_USAGE_FRAGMENT_DENSITY_MAP_BIT_ANGLE"/>
+                <command name="glTexStorageMemFlags2DANGLE"/>
+                <command name="glTexStorageMemFlags2DMultisampleANGLE"/>
+                <command name="glTexStorageMemFlags3DANGLE"/>
+                <command name="glTexStorageMemFlags3DMultisampleANGLE"/>
+            </require>
+        </extension>
         <extension name="GL_ANGLE_memory_object_fuchsia" supported="gl|gles2">
             <require>
                 <enum name="GL_HANDLE_TYPE_ZIRCON_VMO_ANGLE"/>
@@ -1007,5 +1127,36 @@
     <enums namespace="GL" start="0x93AE" end="0x93AF" vendor="ANGLE">
         <enum value="0x93AE" name="GL_HANDLE_TYPE_ZIRCON_VMO_ANGLE"/>
         <enum value="0x93AF" name="GL_HANDLE_TYPE_ZIRCON_EVENT_ANGLE"/>
+    </enums>
+
+    <enums namespace="GL" group="CreateFlagMask" type="bitmask" vendor="ANGLE">
+        <enum value="0x00000001" name="GL_CREATE_SPARSE_BINDING_BIT_ANGLE"/>
+        <enum value="0x00000002" name="GL_CREATE_SPARSE_RESIDENCY_BIT_ANGLE"/>
+        <enum value="0x00000004" name="GL_CREATE_SPARSE_ALIASED_BIT_ANGLE"/>
+        <enum value="0x00000008" name="GL_CREATE_MUTABLE_FORMAT_BIT_ANGLE"/>
+        <enum value="0x00000010" name="GL_CREATE_CUBE_COMPATIBLE_BIT_ANGLE"/>
+        <enum value="0x00000400" name="GL_CREATE_ALIAS_BIT_ANGLE"/>
+        <enum value="0x00000040" name="GL_CREATE_SPLIT_INSTANCE_BIND_REGIONS_BIT_ANGLE"/>
+        <enum value="0x00000020" name="GL_CREATE_2D_ARRAY_COMPATIBLE_BIT_ANGLE"/>
+        <enum value="0x00000080" name="GL_CREATE_BLOCK_TEXEL_VIEW_COMPATIBLE_BIT_ANGLE"/>
+        <enum value="0x00000100" name="GL_CREATE_EXTENDED_USAGE_BIT_ANGLE"/>
+        <enum value="0x00000800" name="GL_CREATE_PROTECTED_BIT_ANGLE"/>
+        <enum value="0x00000200" name="GL_CREATE_DISJOINT_BIT_ANGLE"/>
+        <enum value="0x00002000" name="GL_CREATE_CORNER_SAMPLED_BIT_ANGLE"/>
+        <enum value="0x00001000" name="GL_CREATE_SAMPLE_LOCATIONS_COMPATIBLE_DEPTH_BIT_ANGLE"/>
+        <enum value="0x00004000" name="GL_CREATE_SUBSAMPLED_BIT_ANGLE"/>
+    </enums>
+
+    <enums namespace="GL" group="UsageFlagMask" type="bitmask" vendor="ANGLE">
+        <enum value="0x00000001" name="GL_USAGE_TRANSFER_SRC_BIT_ANGLE"/>
+        <enum value="0x00000002" name="GL_USAGE_TRANSFER_DST_BIT_ANGLE"/>
+        <enum value="0x00000004" name="GL_USAGE_SAMPLED_BIT_ANGLE"/>
+        <enum value="0x00000008" name="GL_USAGE_STORAGE_BIT_ANGLE"/>
+        <enum value="0x00000010" name="GL_USAGE_COLOR_ATTACHMENT_BIT_ANGLE"/>
+        <enum value="0x00000020" name="GL_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT_ANGLE"/>
+        <enum value="0x00000040" name="GL_USAGE_TRANSIENT_ATTACHMENT_BIT_ANGLE"/>
+        <enum value="0x00000080" name="GL_USAGE_INPUT_ATTACHMENT_BIT_ANGLE"/>
+        <enum value="0x00000100" name="GL_USAGE_SHADING_RATE_IMAGE_BIT_ANGLE"/>
+        <enum value="0x00000200" name="GL_USAGE_FRAGMENT_DENSITY_MAP_BIT_ANGLE"/>
     </enums>
 </registry>

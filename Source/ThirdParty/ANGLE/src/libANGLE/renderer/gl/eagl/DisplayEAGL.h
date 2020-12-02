@@ -9,21 +9,21 @@
 #ifndef LIBANGLE_RENDERER_GL_EAGL_DISPLAYEAGL_H_
 #define LIBANGLE_RENDERER_GL_EAGL_DISPLAYEAGL_H_
 
-#import "common/platform.h"
-
-#if (defined(ANGLE_PLATFORM_IOS) && !defined(ANGLE_PLATFORM_MACCATALYST)) || (defined(ANGLE_PLATFORM_MACCATALYST) && defined(ANGLE_CPU_ARM64))
-
 #include <thread>
 #include <unordered_set>
 
-#include "libANGLE/renderer/gl/DisplayGL.h"
+#import "common/platform.h"
 
-#ifdef __OBJC__
+#if defined(ANGLE_ENABLE_EAGL)
+
+#    include "libANGLE/renderer/gl/DisplayGL.h"
+
+#    ifdef __OBJC__
 @class EAGLContext;
 typedef EAGLContext *EAGLContextObj;
-#else
+#    else
 typedef void *EAGLContextObj;
-#endif
+#    endif
 
 namespace rx
 {
@@ -104,6 +104,6 @@ class DisplayEAGL : public DisplayGL
 
 }  // namespace rx
 
-#endif // (defined(ANGLE_PLATFORM_IOS) && !defined(ANGLE_PLATFORM_MACCATALYST)) || (defined(ANGLE_PLATFORM_MACCATALYST) && defined(ANGLE_CPU_ARM64))
+#endif  // defined(ANGLE_ENABLE_EAGL)
 
 #endif  // LIBANGLE_RENDERER_GL_EAGL_DISPLAYEAGL_H_

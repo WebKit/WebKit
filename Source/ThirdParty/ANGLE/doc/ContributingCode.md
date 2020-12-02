@@ -200,6 +200,49 @@ about the process.
 
 [TBR]: https://chromium.googlesource.com/chromium/src/+/master/docs/code_reviews.md#tbr-to-be-reviewed
 
+### Reverting a CL
+
+Sometimes a change will cause an unforseen problem, e.g. on a platform that's not tested with
+pre-submit testing.  In those cases, a CL may be reverted; often by a "[Wrangler][wrangler]", who is
+an engineer who keeps the testing infrastructure healthy/green.
+
+[wrangler]: ../infra/ANGLEWrangling.md
+
+The best and easiest way to create a revert change is with Gerrit's **REVERT** button, in the
+upper-right corner of the original change.  Pressing this will pop up a dialog with a template
+commit message, and an optional checkbox for automatically sending the revert CL to CQ.  Please edit
+the commit message with the reason for the revert.  When satisfied, press the dialog's **REVERT**
+button.  It is wise to add the author and reviewers of the original CL as reviewers of the revert
+CL.  If it's been less than 24 hours since the original CL landed, the revert Cl will land
+immediately and bypass the try bots.
+
+If you cannot use Gerrit's **REVERT** button, you can create a revert CL with the "git revert"
+command.  When doing so, the commit message should include a short description for why the original
+commit needs to be reverted, and potentially a bug; similar to this example [revert CL][RevertCL].
+
+[RevertCL]: https://chromium-review.googlesource.com/c/chromium/src/+/2453504
+
+
+### Relanding a reverted CL
+
+When you re-land a reverted CL, follow this process:
+
+ * Prefix the CL title with "Reland: ".
+ * Keep the commit message of the original CL and add a description of what changed in the re-land.
+ * Ensure the re-land CL has a unique Change-Id.
+ * First upload the reverted CL as Patchset 1 with no changes applied.
+ * Then, apply your fixes, and upload your CL as a new Patchset.  The reviewers will be able to see
+   the diff between Patchset 1 and the fixed/final Patchset.
+
+Here is an example [reland CL][RelandCL].  This [link][RelandCLDiff] shows the difference between Patchset 1
+and the fixed/final Patchset.  Notice how a reviewer can easily see the fix to the original CL.
+
+[RelandCL]: https://chromium-review.googlesource.com/c/angle/angle/+/2197735
+[RelandCLDiff]: https://chromium-review.googlesource.com/c/angle/angle/+/2197735/1..3
+
+If you do not need to make any changes to your CL to re-land, you can instead use Gerrit's **CREATE
+RELAND** button.
+
 ### Committer status
 
 Similar to [Chromium's committer status][Committer-status], long-term contributors to the ANGLE

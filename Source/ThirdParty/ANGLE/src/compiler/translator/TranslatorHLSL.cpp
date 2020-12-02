@@ -12,6 +12,7 @@
 #include "compiler/translator/tree_ops/BreakVariableAliasingInInnerLoops.h"
 #include "compiler/translator/tree_ops/ExpandIntegerPowExpressions.h"
 #include "compiler/translator/tree_ops/PruneEmptyCases.h"
+#include "compiler/translator/tree_ops/RecordUniformBlocksTranslatedToStructuredBuffers.h"
 #include "compiler/translator/tree_ops/RemoveDynamicIndexing.h"
 #include "compiler/translator/tree_ops/RewriteAtomicFunctionExpressions.h"
 #include "compiler/translator/tree_ops/RewriteElseBlocks.h"
@@ -183,11 +184,25 @@ bool TranslatorHLSL::translate(TIntermBlock *root,
         }
     }
 
-    sh::OutputHLSL outputHLSL(getShaderType(), getShaderSpec(), getShaderVersion(),
-                              getExtensionBehavior(), getSourcePath(), getOutputType(),
-                              numRenderTargets, maxDualSourceDrawBuffers, getUniforms(),
-                              compileOptions, getComputeShaderLocalSize(), &getSymbolTable(),
-                              perfDiagnostics, mShaderStorageBlocks);
+    mUniformBlocksTranslatedToStructuredBuffers.clear();
+    // In order to get the exact maximum of slots are available for shader resources, which would
+    // been bound with StructuredBuffer, we only translate uniform block with a large array member
+    // into StructuredBuffer when shader version is 300.
+    if (getShaderVersion() == 300 &&
+        (compileOptions & SH_ALLOW_TRANSLATE_UNIFORM_BLOCK_TO_STRUCTUREDBUFFER) != 0)
+    {
+        if (!sh::RecordUniformBlocksTranslatedToStructuredBuffers(
+                root, mUniformBlocksTranslatedToStructuredBuffers))
+        {
+            return false;
+        }
+    }
+
+    sh::OutputHLSL outputHLSL(
+        getShaderType(), getShaderSpec(), getShaderVersion(), getExtensionBehavior(),
+        getSourcePath(), getOutputType(), numRenderTargets, maxDualSourceDrawBuffers, getUniforms(),
+        compileOptions, getComputeShaderLocalSize(), &getSymbolTable(), perfDiagnostics,
+        mUniformBlocksTranslatedToStructuredBuffers, mShaderStorageBlocks);
 
     outputHLSL.output(root, getInfoSink().obj);
 

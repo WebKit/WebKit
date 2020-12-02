@@ -45,6 +45,10 @@
 #endif
 // clang-format on
 
+#if defined(ANGLE_USE_X11)
+#    include <X11/Xlib.h>
+#endif
+
 namespace tcu
 {
 namespace
@@ -139,7 +143,7 @@ class NativePixmap : public eglu::NativePixmap
 class NativeWindowFactory : public eglu::NativeWindowFactory
 {
   public:
-    explicit NativeWindowFactory(EventState *eventState);
+    explicit NativeWindowFactory(EventState *eventState, uint32_t preRotation);
     ~NativeWindowFactory() override = default;
 
     eglu::NativeWindow *createWindow(eglu::NativeDisplay *nativeDisplay,
@@ -152,6 +156,7 @@ class NativeWindowFactory : public eglu::NativeWindowFactory
 
   private:
     EventState *mEvents;
+    uint32_t mPreRotation;
 };
 
 class NativeWindow : public eglu::NativeWindow
@@ -159,7 +164,8 @@ class NativeWindow : public eglu::NativeWindow
   public:
     NativeWindow(ANGLENativeDisplay *nativeDisplay,
                  const eglu::WindowParams &params,
-                 EventState *eventState);
+                 EventState *eventState,
+                 uint32_t preRotation);
     ~NativeWindow() override;
 
     eglw::EGLNativeWindowType getLegacyNative() override;
@@ -173,6 +179,7 @@ class NativeWindow : public eglu::NativeWindow
   private:
     OSWindow *mWindow;
     EventState *mEvents;
+    uint32_t mPreRotation;
 };
 
 // ANGLE NativeDisplay
@@ -250,8 +257,10 @@ eglu::NativePixmap *NativePixmapFactory::createPixmap(eglu::NativeDisplay *nativ
 
 // NativeWindowFactory
 
-NativeWindowFactory::NativeWindowFactory(EventState *eventState)
-    : eglu::NativeWindowFactory("window", "ANGLE Window", kWindowCapabilities), mEvents(eventState)
+NativeWindowFactory::NativeWindowFactory(EventState *eventState, uint32_t preRotation)
+    : eglu::NativeWindowFactory("window", "ANGLE Window", kWindowCapabilities),
+      mEvents(eventState),
+      mPreRotation(preRotation)
 {}
 
 eglu::NativeWindow *NativeWindowFactory::createWindow(eglu::NativeDisplay *nativeDisplay,
@@ -267,21 +276,33 @@ eglu::NativeWindow *NativeWindowFactory::createWindow(eglu::NativeDisplay *nativ
                                                       const eglw::EGLAttrib *attribList,
                                                       const eglu::WindowParams &params) const
 {
-    return new NativeWindow(dynamic_cast<ANGLENativeDisplay *>(nativeDisplay), params, mEvents);
+    return new NativeWindow(dynamic_cast<ANGLENativeDisplay *>(nativeDisplay), params, mEvents,
+                            mPreRotation);
 }
 
 // NativeWindow
 
 NativeWindow::NativeWindow(ANGLENativeDisplay *nativeDisplay,
                            const eglu::WindowParams &params,
-                           EventState *eventState)
-    : eglu::NativeWindow(kWindowCapabilities), mWindow(OSWindow::New()), mEvents(eventState)
+                           EventState *eventState,
+                           uint32_t preRotation)
+    : eglu::NativeWindow(kWindowCapabilities),
+      mWindow(OSWindow::New()),
+      mEvents(eventState),
+      mPreRotation(preRotation)
 {
-    bool initialized = mWindow->initialize(
-        "dEQP ANGLE Tests",
-        params.width == eglu::WindowParams::SIZE_DONT_CARE ? DEFAULT_SURFACE_WIDTH : params.width,
-        params.height == eglu::WindowParams::SIZE_DONT_CARE ? DEFAULT_SURFACE_HEIGHT
-                                                            : params.height);
+    int osWindowWidth =
+        params.width == eglu::WindowParams::SIZE_DONT_CARE ? DEFAULT_SURFACE_WIDTH : params.width;
+    int osWindowHeight = params.height == eglu::WindowParams::SIZE_DONT_CARE
+                             ? DEFAULT_SURFACE_HEIGHT
+                             : params.height;
+
+    if (mPreRotation == 90 || mPreRotation == 270)
+    {
+        std::swap(osWindowWidth, osWindowHeight);
+    }
+
+    bool initialized = mWindow->initialize("dEQP ANGLE Tests", osWindowWidth, osWindowHeight);
     TCU_CHECK(initialized);
 
     if (params.visibility != eglu::WindowParams::VISIBILITY_DONT_CARE)
@@ -318,7 +339,17 @@ eglw::EGLNativeWindowType NativeWindow::getLegacyNative()
 
 IVec2 NativeWindow::getSurfaceSize() const
 {
-    return IVec2(mWindow->getWidth(), mWindow->getHeight());
+    int width  = mWindow->getWidth();
+    int height = mWindow->getHeight();
+
+    if (mPreRotation == 90 || mPreRotation == 270)
+    {
+        // Return the original dimensions dEQP asked for.  This ensures that the dEQP code is never
+        // aware of the window actually being rotated.
+        std::swap(width, height);
+    }
+
+    return IVec2(width, height);
 }
 
 void NativeWindow::processEvents()
@@ -338,7 +369,15 @@ void NativeWindow::processEvents()
 
 void NativeWindow::setSurfaceSize(IVec2 size)
 {
-    mWindow->resize(size.x(), size.y());
+    int osWindowWidth  = size.x();
+    int osWindowHeight = size.y();
+
+    if (mPreRotation == 90 || mPreRotation == 270)
+    {
+        std::swap(osWindowWidth, osWindowHeight);
+    }
+
+    mWindow->resize(osWindowWidth, osWindowHeight);
 }
 
 void NativeWindow::readScreenPixels(tcu::TextureLevel *dst) const
@@ -348,6 +387,12 @@ void NativeWindow::readScreenPixels(tcu::TextureLevel *dst) const
     if (!mWindow->takeScreenshot(reinterpret_cast<uint8_t *>(dst->getAccess().getDataPtr())))
     {
         throw InternalError("Failed to read screen pixels", DE_NULL, __FILE__, __LINE__);
+    }
+
+    if (mPreRotation != 0)
+    {
+        throw InternalError("Read screen pixels with prerotation is not supported", DE_NULL,
+                            __FILE__, __LINE__);
     }
 }
 
@@ -366,13 +411,47 @@ ANGLENativeDisplayFactory::ANGLENativeDisplayFactory(
       mNativeDisplay(bitCast<eglw::EGLNativeDisplayType>(EGL_DEFAULT_DISPLAY)),
       mPlatformAttributes(std::move(platformAttributes))
 {
-#if (DE_OS == DE_OS_UNIX)
+#if (DE_OS == DE_OS_UNIX) && defined(ANGLE_USE_X11)
     // Make sure to only open the X display once so that it can be used by the EGL display as well
     // as pixmaps
     mNativeDisplay = bitCast<eglw::EGLNativeDisplayType>(XOpenDisplay(nullptr));
 #endif  // (DE_OS == DE_OS_UNIX)
 
-    m_nativeWindowRegistry.registerFactory(new NativeWindowFactory(eventState));
+    // If pre-rotating, let NativeWindowFactory know.
+    uint32_t preRotation = 0;
+    for (size_t attrIndex = 0;
+         attrIndex < mPlatformAttributes.size() && mPlatformAttributes[attrIndex] != EGL_NONE;
+         attrIndex += 2)
+    {
+        if (mPlatformAttributes[attrIndex] != EGL_FEATURE_OVERRIDES_ENABLED_ANGLE)
+        {
+            continue;
+        }
+
+        const char **preRotationFeatures =
+            reinterpret_cast<const char **>(mPlatformAttributes[attrIndex + 1]);
+        DE_ASSERT(preRotationFeatures != nullptr && preRotationFeatures[0] != nullptr);
+
+        if (strcmp(preRotationFeatures[0], "emulated_prerotation_90") == 0)
+        {
+            preRotation = 90;
+        }
+        else if (strcmp(preRotationFeatures[0], "emulated_prerotation_180") == 0)
+        {
+            preRotation = 180;
+        }
+        else if (strcmp(preRotationFeatures[0], "emulated_prerotation_270") == 0)
+        {
+            preRotation = 270;
+        }
+        else
+        {
+            DE_ASSERT(DE_FALSE);
+        }
+        break;
+    }
+
+    m_nativeWindowRegistry.registerFactory(new NativeWindowFactory(eventState, preRotation));
     m_nativePixmapRegistry.registerFactory(new NativePixmapFactory());
 }
 

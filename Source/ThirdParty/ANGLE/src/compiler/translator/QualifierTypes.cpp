@@ -440,6 +440,23 @@ bool JoinVariableStorageQualifier(TQualifier *joinedQualifier, TQualifier storag
             }
             break;
         }
+        case EvqSample:
+        {
+            switch (storageQualifier)
+            {
+                case EvqVertexOut:
+                case EvqGeometryOut:
+                    *joinedQualifier = EvqSampleOut;
+                    break;
+                case EvqFragmentIn:
+                case EvqGeometryIn:
+                    *joinedQualifier = EvqSampleIn;
+                    break;
+                default:
+                    return false;
+            }
+            break;
+        }
         default:
             return false;
     }

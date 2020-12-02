@@ -21,7 +21,7 @@ Status
     Draft
 
 Version
-    Version 4, Dec 28, 2019
+    Version 6, Aug 25, 2020
 
 Number
 
@@ -109,8 +109,10 @@ Additions to Chapter 3 of the EGL 1.4 Specification (EGL Functions and Errors)
     Texture Type               Texture Internal Format
     ---------------------------------------------------------------------------
     GL_UNSIGNED_BYTE               GL_RED
+    GL_UNSIGNED_SHORT              GL_RED
     GL_UNSIGNED_SHORT              GL_R16UI
     GL_UNSIGNED_BYTE               GL_RG
+    GL_UNSIGNED_SHORT              GL_RG
     GL_UNSIGNED_BYTE               GL_RGB
     GL_UNSIGNED_BYTE               GL_BGRA_EXT
     GL_UNSIGNED_INT_2_10_10_10_REV GL_RGB10_A2
@@ -150,3 +152,4 @@ Revision History
     Version 4, 2019/12/28 - Add usage hint; require TEXTURE_RECTANGLE on macOS
                             and TEXTURE_2D on iOS
     Version 5, 2020/06/30 - Allow RGB10_A2 internal formats
+    Version 6, 2020/08/25 - Allow R16 and RG16 formats for P010 surfaces

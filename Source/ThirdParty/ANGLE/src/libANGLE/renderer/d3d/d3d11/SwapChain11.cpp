@@ -94,7 +94,7 @@ SwapChain11::SwapChain11(Renderer11 *renderer,
       mDepthStencilRenderTarget(this, renderer, true),
       mEGLSamples(samples)
 {
-    // Sanity check that if present path fast is active then we're using the default orientation
+    // Check that if present path fast is active then we're using the default orientation
     ASSERT(!mRenderer->presentPathFastEnabled() || orientation == 0);
 
     // Get the performance counter

@@ -135,7 +135,7 @@ print("running with %d steps." % steps)
 
 # Loop 'max_experiments' times, running the tests.
 for experiment in range(max_experiments):
-    experiment_scores = get_results(metric, ["--steps", str(steps)])
+    experiment_scores = get_results(metric, ["--steps-per-trial", str(steps)])
 
     for score in experiment_scores:
         sys.stdout.write("%s: %.2f" % (metric, score))

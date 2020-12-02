@@ -40,18 +40,16 @@ IDType AllocateEmptyObject(HandleAllocator *handleAllocator,
 
 }  // anonymous namespace
 
-template <typename HandleAllocatorType>
-ResourceManagerBase<HandleAllocatorType>::ResourceManagerBase() : mRefCount(1)
-{}
+ResourceManagerBase::ResourceManagerBase() : mRefCount(1) {}
 
-template <typename HandleAllocatorType>
-void ResourceManagerBase<HandleAllocatorType>::addRef()
+ResourceManagerBase::~ResourceManagerBase() = default;
+
+void ResourceManagerBase::addRef()
 {
     mRefCount++;
 }
 
-template <typename HandleAllocatorType>
-void ResourceManagerBase<HandleAllocatorType>::release(const Context *context)
+void ResourceManagerBase::release(const Context *context)
 {
     if (--mRefCount == 0)
     {
@@ -60,15 +58,14 @@ void ResourceManagerBase<HandleAllocatorType>::release(const Context *context)
     }
 }
 
-template <typename ResourceType, typename HandleAllocatorType, typename ImplT, typename IDType>
-TypedResourceManager<ResourceType, HandleAllocatorType, ImplT, IDType>::~TypedResourceManager()
+template <typename ResourceType, typename ImplT, typename IDType>
+TypedResourceManager<ResourceType, ImplT, IDType>::~TypedResourceManager()
 {
     ASSERT(mObjectMap.empty());
 }
 
-template <typename ResourceType, typename HandleAllocatorType, typename ImplT, typename IDType>
-void TypedResourceManager<ResourceType, HandleAllocatorType, ImplT, IDType>::reset(
-    const Context *context)
+template <typename ResourceType, typename ImplT, typename IDType>
+void TypedResourceManager<ResourceType, ImplT, IDType>::reset(const Context *context)
 {
     this->mHandleAllocator.reset();
     for (const auto &resource : mObjectMap)
@@ -81,10 +78,9 @@ void TypedResourceManager<ResourceType, HandleAllocatorType, ImplT, IDType>::res
     mObjectMap.clear();
 }
 
-template <typename ResourceType, typename HandleAllocatorType, typename ImplT, typename IDType>
-void TypedResourceManager<ResourceType, HandleAllocatorType, ImplT, IDType>::deleteObject(
-    const Context *context,
-    IDType handle)
+template <typename ResourceType, typename ImplT, typename IDType>
+void TypedResourceManager<ResourceType, ImplT, IDType>::deleteObject(const Context *context,
+                                                                     IDType handle)
 {
     ResourceType *resource = nullptr;
     if (!mObjectMap.erase(handle, &resource))
@@ -101,25 +97,19 @@ void TypedResourceManager<ResourceType, HandleAllocatorType, ImplT, IDType>::del
     }
 }
 
-template class ResourceManagerBase<HandleAllocator>;
-template class TypedResourceManager<Buffer, HandleAllocator, BufferManager, BufferID>;
-template class TypedResourceManager<Texture, HandleAllocator, TextureManager, TextureID>;
-template class TypedResourceManager<Renderbuffer,
-                                    HandleAllocator,
-                                    RenderbufferManager,
-                                    RenderbufferID>;
-template class TypedResourceManager<Sampler, HandleAllocator, SamplerManager, SamplerID>;
-template class TypedResourceManager<Sync, HandleAllocator, SyncManager, GLuint>;
-template class TypedResourceManager<Framebuffer,
-                                    HandleAllocator,
-                                    FramebufferManager,
-                                    FramebufferID>;
-template class TypedResourceManager<ProgramPipeline,
-                                    HandleAllocator,
-                                    ProgramPipelineManager,
-                                    ProgramPipelineID>;
+// Unclear why Clang warns about weak vtables in this case.
+ANGLE_DISABLE_WEAK_TEMPLATE_VTABLES_WARNING
+template class TypedResourceManager<Buffer, BufferManager, BufferID>;
+template class TypedResourceManager<Texture, TextureManager, TextureID>;
+template class TypedResourceManager<Renderbuffer, RenderbufferManager, RenderbufferID>;
+template class TypedResourceManager<Sampler, SamplerManager, SamplerID>;
+template class TypedResourceManager<Sync, SyncManager, GLuint>;
+template class TypedResourceManager<Framebuffer, FramebufferManager, FramebufferID>;
+template class TypedResourceManager<ProgramPipeline, ProgramPipelineManager, ProgramPipelineID>;
+ANGLE_REENABLE_WEAK_TEMPLATE_VTABLES_WARNING
 
 // BufferManager Implementation.
+BufferManager::~BufferManager() = default;
 
 // static
 Buffer *BufferManager::AllocateNewObject(rx::GLImplFactory *factory, BufferID handle)
@@ -226,6 +216,8 @@ void ShaderProgramManager::deleteObject(const Context *context,
 
 // TextureManager Implementation.
 
+TextureManager::~TextureManager() = default;
+
 // static
 Texture *TextureManager::AllocateNewObject(rx::GLImplFactory *factory,
                                            TextureID handle,
@@ -267,6 +259,8 @@ void TextureManager::enableHandleAllocatorLogging()
 
 // RenderbufferManager Implementation.
 
+RenderbufferManager::~RenderbufferManager() = default;
+
 // static
 Renderbuffer *RenderbufferManager::AllocateNewObject(rx::GLImplFactory *factory,
                                                      RenderbufferID handle)
@@ -293,6 +287,8 @@ Renderbuffer *RenderbufferManager::getRenderbuffer(RenderbufferID handle) const
 }
 
 // SamplerManager Implementation.
+
+SamplerManager::~SamplerManager() = default;
 
 // static
 Sampler *SamplerManager::AllocateNewObject(rx::GLImplFactory *factory, SamplerID handle)
@@ -325,6 +321,8 @@ bool SamplerManager::isSampler(SamplerID sampler) const
 
 // SyncManager Implementation.
 
+SyncManager::~SyncManager() = default;
+
 // static
 void SyncManager::DeleteObject(const Context *context, Sync *sync)
 {
@@ -347,15 +345,17 @@ Sync *SyncManager::getSync(GLuint handle) const
 
 // FramebufferManager Implementation.
 
+FramebufferManager::~FramebufferManager() = default;
+
 // static
 Framebuffer *FramebufferManager::AllocateNewObject(rx::GLImplFactory *factory,
                                                    FramebufferID handle,
                                                    const Caps &caps,
-                                                   ContextID owningContextID)
+                                                   egl::ShareGroup *shareGroup)
 {
     // Make sure the caller isn't using a reserved handle.
     ASSERT(handle != Framebuffer::kDefaultDrawFramebufferHandle);
-    return new Framebuffer(caps, factory, handle, owningContextID);
+    return new Framebuffer(caps, factory, handle, shareGroup);
 }
 
 // static
@@ -393,6 +393,8 @@ void FramebufferManager::invalidateFramebufferCompletenessCache() const
 }
 
 // ProgramPipelineManager Implementation.
+
+ProgramPipelineManager::~ProgramPipelineManager() = default;
 
 // static
 ProgramPipeline *ProgramPipelineManager::AllocateNewObject(rx::GLImplFactory *factory,

@@ -19,14 +19,18 @@
 namespace rx
 {
 class GLImplFactory;
-}
+}  // namespace rx
+
+namespace egl
+{
+class ShareGroup;
+}  // namespace egl
 
 namespace gl
 {
 class Buffer;
 struct Caps;
 class Context;
-class Sync;
 class Framebuffer;
 struct Limitations;
 class MemoryObject;
@@ -35,11 +39,11 @@ class Program;
 class ProgramPipeline;
 class Renderbuffer;
 class Sampler;
-class Shader;
 class Semaphore;
+class Shader;
+class Sync;
 class Texture;
 
-template <typename HandleAllocatorType>
 class ResourceManagerBase : angle::NonCopyable
 {
   public:
@@ -50,16 +54,16 @@ class ResourceManagerBase : angle::NonCopyable
 
   protected:
     virtual void reset(const Context *context) = 0;
-    virtual ~ResourceManagerBase() {}
+    virtual ~ResourceManagerBase();
 
-    HandleAllocatorType mHandleAllocator;
+    HandleAllocator mHandleAllocator;
 
   private:
     size_t mRefCount;
 };
 
-template <typename ResourceType, typename HandleAllocatorType, typename ImplT, typename IDType>
-class TypedResourceManager : public ResourceManagerBase<HandleAllocatorType>
+template <typename ResourceType, typename ImplT, typename IDType>
+class TypedResourceManager : public ResourceManagerBase
 {
   public:
     TypedResourceManager() {}
@@ -122,7 +126,7 @@ class TypedResourceManager : public ResourceManagerBase<HandleAllocatorType>
     }
 };
 
-class BufferManager : public TypedResourceManager<Buffer, HandleAllocator, BufferManager, BufferID>
+class BufferManager : public TypedResourceManager<Buffer, BufferManager, BufferID>
 {
   public:
     BufferID createBuffer();
@@ -138,10 +142,10 @@ class BufferManager : public TypedResourceManager<Buffer, HandleAllocator, Buffe
     static void DeleteObject(const Context *context, Buffer *buffer);
 
   protected:
-    ~BufferManager() override {}
+    ~BufferManager() override;
 };
 
-class ShaderProgramManager : public ResourceManagerBase<HandleAllocator>
+class ShaderProgramManager : public ResourceManagerBase
 {
   public:
     ShaderProgramManager();
@@ -160,9 +164,12 @@ class ShaderProgramManager : public ResourceManagerBase<HandleAllocator>
         return mPrograms.query(handle);
     }
 
-    // For capture only.
+    // For capture and performance counters only.
     const ResourceMap<Shader, ShaderProgramID> &getShadersForCapture() const { return mShaders; }
-    const ResourceMap<Program, ShaderProgramID> &getProgramsForCapture() const { return mPrograms; }
+    const ResourceMap<Program, ShaderProgramID> &getProgramsForCaptureAndPerf() const
+    {
+        return mPrograms;
+    }
 
   protected:
     ~ShaderProgramManager() override;
@@ -179,8 +186,7 @@ class ShaderProgramManager : public ResourceManagerBase<HandleAllocator>
     ResourceMap<Program, ShaderProgramID> mPrograms;
 };
 
-class TextureManager
-    : public TypedResourceManager<Texture, HandleAllocator, TextureManager, TextureID>
+class TextureManager : public TypedResourceManager<Texture, TextureManager, TextureID>
 {
   public:
     TextureID createTexture();
@@ -207,13 +213,11 @@ class TextureManager
     void enableHandleAllocatorLogging();
 
   protected:
-    ~TextureManager() override {}
+    ~TextureManager() override;
 };
 
-class RenderbufferManager : public TypedResourceManager<Renderbuffer,
-                                                        HandleAllocator,
-                                                        RenderbufferManager,
-                                                        RenderbufferID>
+class RenderbufferManager
+    : public TypedResourceManager<Renderbuffer, RenderbufferManager, RenderbufferID>
 {
   public:
     RenderbufferID createRenderbuffer();
@@ -228,11 +232,10 @@ class RenderbufferManager : public TypedResourceManager<Renderbuffer,
     static void DeleteObject(const Context *context, Renderbuffer *renderbuffer);
 
   protected:
-    ~RenderbufferManager() override {}
+    ~RenderbufferManager() override;
 };
 
-class SamplerManager
-    : public TypedResourceManager<Sampler, HandleAllocator, SamplerManager, SamplerID>
+class SamplerManager : public TypedResourceManager<Sampler, SamplerManager, SamplerID>
 {
   public:
     SamplerID createSampler();
@@ -248,10 +251,10 @@ class SamplerManager
     static void DeleteObject(const Context *context, Sampler *sampler);
 
   protected:
-    ~SamplerManager() override {}
+    ~SamplerManager() override;
 };
 
-class SyncManager : public TypedResourceManager<Sync, HandleAllocator, SyncManager, GLuint>
+class SyncManager : public TypedResourceManager<Sync, SyncManager, GLuint>
 {
   public:
     GLuint createSync(rx::GLImplFactory *factory);
@@ -260,11 +263,11 @@ class SyncManager : public TypedResourceManager<Sync, HandleAllocator, SyncManag
     static void DeleteObject(const Context *context, Sync *sync);
 
   protected:
-    ~SyncManager() override {}
+    ~SyncManager() override;
 };
 
 class FramebufferManager
-    : public TypedResourceManager<Framebuffer, HandleAllocator, FramebufferManager, FramebufferID>
+    : public TypedResourceManager<Framebuffer, FramebufferManager, FramebufferID>
 {
   public:
     FramebufferID createFramebuffer();
@@ -276,25 +279,23 @@ class FramebufferManager
     Framebuffer *checkFramebufferAllocation(rx::GLImplFactory *factory,
                                             const Caps &caps,
                                             FramebufferID handle,
-                                            ContextID owningContextID)
+                                            egl::ShareGroup *shareGroup)
     {
-        return checkObjectAllocation<const Caps &>(factory, handle, caps, owningContextID);
+        return checkObjectAllocation<const Caps &>(factory, handle, caps, shareGroup);
     }
 
     static Framebuffer *AllocateNewObject(rx::GLImplFactory *factory,
                                           FramebufferID handle,
                                           const Caps &caps,
-                                          ContextID owningContextID);
+                                          egl::ShareGroup *shareGroup);
     static void DeleteObject(const Context *context, Framebuffer *framebuffer);
 
   protected:
-    ~FramebufferManager() override {}
+    ~FramebufferManager() override;
 };
 
-class ProgramPipelineManager : public TypedResourceManager<ProgramPipeline,
-                                                           HandleAllocator,
-                                                           ProgramPipelineManager,
-                                                           ProgramPipelineID>
+class ProgramPipelineManager
+    : public TypedResourceManager<ProgramPipeline, ProgramPipelineManager, ProgramPipelineID>
 {
   public:
     ProgramPipelineID createProgramPipeline();
@@ -310,10 +311,10 @@ class ProgramPipelineManager : public TypedResourceManager<ProgramPipeline,
     static void DeleteObject(const Context *context, ProgramPipeline *pipeline);
 
   protected:
-    ~ProgramPipelineManager() override {}
+    ~ProgramPipelineManager() override;
 };
 
-class MemoryObjectManager : public ResourceManagerBase<HandleAllocator>
+class MemoryObjectManager : public ResourceManagerBase
 {
   public:
     MemoryObjectManager();
@@ -331,7 +332,7 @@ class MemoryObjectManager : public ResourceManagerBase<HandleAllocator>
     ResourceMap<MemoryObject, MemoryObjectID> mMemoryObjects;
 };
 
-class SemaphoreManager : public ResourceManagerBase<HandleAllocator>
+class SemaphoreManager : public ResourceManagerBase
 {
   public:
     SemaphoreManager();

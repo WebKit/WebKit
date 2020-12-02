@@ -41,7 +41,9 @@ enum
     IMPLEMENTATION_MAX_COMBINED_SHADER_UNIFORM_BUFFERS = 36,
 
     // GL_EXT_geometry_shader increases the minimum value of GL_MAX_UNIFORM_BUFFER_BINDINGS to 48.
-    IMPLEMENTATION_MAX_UNIFORM_BUFFER_BINDINGS = 48,
+    // Vulkan's minimum value for maxDescriptorSetUniformBuffers is 72 so allow exposing up to that
+    // many.
+    IMPLEMENTATION_MAX_UNIFORM_BUFFER_BINDINGS = 72,
 
     // Transform feedback limits set to the minimum required by the spec.
     IMPLEMENTATION_MAX_TRANSFORM_FEEDBACK_INTERLEAVED_COMPONENTS = 128,

@@ -22,7 +22,7 @@
 #include "tcuResource.hpp"
 #include "tcuTestLog.hpp"
 
-tcu::Platform *CreateANGLEPlatform(angle::LogErrorFunc logErrorFunc);
+tcu::Platform *CreateANGLEPlatform(angle::LogErrorFunc logErrorFunc, uint32_t preRotation);
 
 namespace
 {
@@ -77,7 +77,8 @@ std::string GetLogFileName(std::string deqpDataDir)
 
 ANGLE_LIBTESTER_EXPORT bool deqp_libtester_init_platform(int argc,
                                                          const char *argv[],
-                                                         void *logErrorFunc)
+                                                         void *logErrorFunc,
+                                                         uint32_t preRotation)
 {
     try
     {
@@ -85,7 +86,8 @@ ANGLE_LIBTESTER_EXPORT bool deqp_libtester_init_platform(int argc,
         // Set stdout to line-buffered mode (will be fully buffered by default if stdout is pipe).
         setvbuf(stdout, DE_NULL, _IOLBF, 4 * 1024);
 #endif
-        g_platform = CreateANGLEPlatform(reinterpret_cast<angle::LogErrorFunc>(logErrorFunc));
+        g_platform =
+            CreateANGLEPlatform(reinterpret_cast<angle::LogErrorFunc>(logErrorFunc), preRotation);
 
         if (!deSetRoundingMode(DE_ROUNDINGMODE_TO_NEAREST_EVEN))
         {
@@ -119,7 +121,7 @@ ANGLE_LIBTESTER_EXPORT bool deqp_libtester_init_platform(int argc,
 // Exported to the tester app.
 ANGLE_LIBTESTER_EXPORT int deqp_libtester_main(int argc, const char *argv[])
 {
-    if (!deqp_libtester_init_platform(argc, argv, nullptr))
+    if (!deqp_libtester_init_platform(argc, argv, nullptr, 0))
     {
         tcu::die("Could not initialize the dEQP platform");
     }
@@ -166,7 +168,7 @@ ANGLE_LIBTESTER_EXPORT void deqp_libtester_shutdown_platform()
 ANGLE_LIBTESTER_EXPORT TestResult deqp_libtester_run(const char *caseName)
 {
     const char *emptyString = "";
-    if (g_platform == nullptr && !deqp_libtester_init_platform(1, &emptyString, nullptr))
+    if (g_platform == nullptr && !deqp_libtester_init_platform(1, &emptyString, nullptr, 0))
     {
         tcu::die("Failed to initialize platform.");
     }
