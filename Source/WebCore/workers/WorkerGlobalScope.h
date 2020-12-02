@@ -110,7 +110,7 @@ public:
     Crypto& crypto();
     Performance& performance() const;
 
-    void prepareForDestruction() final;
+    void prepareForDestruction() override;
 
     void removeAllEventListeners() final;
 

@@ -72,6 +72,15 @@ EventTargetInterface DedicatedWorkerGlobalScope::eventTargetInterface() const
     return DedicatedWorkerGlobalScopeEventTargetInterfaceType;
 }
 
+void DedicatedWorkerGlobalScope::prepareForDestruction()
+{
+    WorkerGlobalScope::prepareForDestruction();
+
+#if ENABLE(WEB_RTC)
+    m_rtcRtpTransformerConstructorMap.clear();
+#endif
+}
+
 ExceptionOr<void> DedicatedWorkerGlobalScope::postMessage(JSC::JSGlobalObject& state, JSC::JSValue messageValue, PostMessageOptions&& options)
 {
     Vector<RefPtr<MessagePort>> ports;

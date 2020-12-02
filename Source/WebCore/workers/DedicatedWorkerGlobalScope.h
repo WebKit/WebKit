@@ -90,6 +90,8 @@ private:
     ExceptionOr<void> importScripts(const Vector<String>& urls) final;
     EventTargetInterface eventTargetInterface() const final;
 
+    void prepareForDestruction() final;
+
     String m_name;
 
 #if ENABLE(OFFSCREEN_CANVAS)
