@@ -431,6 +431,7 @@ struct WKAutoCorrectionData {
 
 #if ENABLE(IMAGE_EXTRACTION)
     RetainPtr<WKImageExtractionGestureRecognizer> _imageExtractionGestureRecognizer;
+    RetainPtr<UILongPressGestureRecognizer> _imageExtractionTimeoutGestureRecognizer;
     WebKit::ImageExtractionState _imageExtractionState;
     CGRect _imageExtractionInteractionBounds;
     Vector<BlockPtr<void()>> _actionsToPerformAfterPendingImageExtraction;

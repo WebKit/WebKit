@@ -2188,7 +2188,7 @@ static Class tapAndAHalfRecognizerClass()
         return YES;
 
 #if ENABLE(IMAGE_EXTRACTION)
-    if (gestureRecognizer == _imageExtractionGestureRecognizer)
+    if (gestureRecognizer == _imageExtractionGestureRecognizer || gestureRecognizer == _imageExtractionTimeoutGestureRecognizer)
         return YES;
 #endif
 
@@ -9034,6 +9034,24 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 }
 
 #endif // ENABLE(ATTACHMENT_ELEMENT)
+
+#if ENABLE(IMAGE_EXTRACTION)
+
+- (void)_doAfterPendingImageExtraction:(dispatch_block_t)block
+{
+    if (_imageExtractionState == WebKit::ImageExtractionState::Pending)
+        _actionsToPerformAfterPendingImageExtraction.append(makeBlockPtr(block));
+    else
+        block();
+}
+
+- (void)_invokeAllActionsToPerformAfterPendingImageExtraction
+{
+    for (auto block : std::exchange(_actionsToPerformAfterPendingImageExtraction, { }))
+        block();
+}
+
+#endif // ENABLE(IMAGE_EXTRACTION)
 
 #if USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/WKContentViewInteractionAdditionsAfter.mm>

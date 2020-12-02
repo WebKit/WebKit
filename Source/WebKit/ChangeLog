@@ -1,3 +1,22 @@
+2020-12-02  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Context menu should be shown after a long timeout following image extraction
+        https://bugs.webkit.org/show_bug.cgi?id=219415
+        <rdar://problem/71872600>
+
+        Reviewed by Andy Estes.
+
+        Ensures that the context menu can still be shown when triggering an image extraction gesture. To do this, we
+        add a new long press gesture recognizer with a much longer delay. See WebKitAdditions patch for more details.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView gestureRecognizer:shouldRecognizeSimultaneouslyWithGestureRecognizer:]):
+        (-[WKContentView _doAfterPendingImageExtraction:]):
+        (-[WKContentView _invokeAllActionsToPerformAfterPendingImageExtraction]):
+
+        Drive-by fix: move a couple of methods out of WebKitAdditions and into non-internal source.
+
 2020-12-01  Tim Horton  <timothy_horton@apple.com>
 
         GPU Process: IOSurfaces should not be mapped into the Web Content Process
