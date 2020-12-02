@@ -1,3 +1,57 @@
+2020-12-01  Tim Horton  <timothy_horton@apple.com>
+
+        GPU Process: IOSurfaces should not be mapped into the Web Content Process
+        https://bugs.webkit.org/show_bug.cgi?id=219368
+
+        Reviewed by Said Abou-Hallawa.
+
+        Since the Web Content process sandbox will eventually not have access to IOKit,
+        it will not be able to map/lock/use IOSurfaces. Thankfully, all it really needs
+        to be able to do is carry a reference to the surface from the GPU process to the
+        UI process (where it is mapped and applied as layer contents).
+
+        * GPUProcess/graphics/PlatformRemoteImageBuffer.h:
+        * Shared/RemoteLayerTree/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::encode const):
+        (WebKit::RemoteLayerBackingStore::swapToValidFrontBuffer):
+        * SourcesCocoa.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/GPU/graphics/PlatformImageBufferShareableBackend.h:
+        * WebProcess/GPU/graphics/PlatformRemoteImageBufferProxy.h:
+        (isType):
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp:
+        (WebKit::RemoteRenderingBackendProxy::reestablishGPUProcessConnection):
+        (WebKit::RemoteRenderingBackendProxy::createImageBuffer):
+        (WebKit::RemoteRenderingBackendProxy::imageBufferBackendWasCreated):
+        (WebKit::RemoteRenderingBackendProxy::didFlush):
+
+        * WebProcess/GPU/graphics/cocoa/ImageBufferShareableIOSurfaceBackend.cpp:
+        (WebKit::ImageBufferShareableIOSurfaceBackend::create):
+        (WebKit::ImageBufferShareableIOSurfaceBackend::createImageBufferBackendHandle const):
+        (WebKit::ImageBufferShareableIOSurfaceBackend::context const):
+        (WebKit::ImageBufferShareableIOSurfaceBackend::copyNativeImage const):
+        (WebKit::ImageBufferShareableIOSurfaceBackend::copyImage const):
+        (WebKit::ImageBufferShareableIOSurfaceBackend::draw):
+        (WebKit::ImageBufferShareableIOSurfaceBackend::drawPattern):
+        (WebKit::ImageBufferShareableIOSurfaceBackend::toDataURL const):
+        (WebKit::ImageBufferShareableIOSurfaceBackend::toData const):
+        (WebKit::ImageBufferShareableIOSurfaceBackend::toBGRAData const):
+        (WebKit::ImageBufferShareableIOSurfaceBackend::getImageData const):
+        (WebKit::ImageBufferShareableIOSurfaceBackend::putImageData):
+        * WebProcess/GPU/graphics/cocoa/ImageBufferShareableIOSurfaceBackend.h:
+        * WebProcess/GPU/graphics/cocoa/ImageBufferShareableMappedIOSurfaceBackend.cpp: Copied from Source/WebKit/WebProcess/GPU/graphics/cocoa/ImageBufferShareableIOSurfaceBackend.cpp.
+        (WebKit::ImageBufferShareableMappedIOSurfaceBackend::create):
+        (WebKit::ImageBufferShareableMappedIOSurfaceBackend::createImageBufferBackendHandle const):
+        * WebProcess/GPU/graphics/cocoa/ImageBufferShareableMappedIOSurfaceBackend.h: Copied from Source/WebKit/WebProcess/GPU/graphics/cocoa/ImageBufferShareableIOSurfaceBackend.h.
+        Rename ImageBufferShareableIOSurfaceBackend to ImageBufferShareableMappedIOSurfaceBackend.
+        Readd ImageBufferShareableIOSurfaceBackend, the unmapped variant. The mapped variant is only used:
+        - in the GPU process
+        - in the Web Content process when DOM rendering in the GPU process is disabled
+
+        The unmapped variant cannot perform most ImageBufferBackend duties, except creating an ImageBufferBackendHandle,
+        which it does by cloning the existing handle. It explicitly does *not* map the IOSurface in the
+        process, and is meant for use in Web Content processes that do not have access to IOSurface.
+
 2020-12-01  Peng Liu  <peng.liu6@apple.com>
 
         [Media In GPU Process][MSE] Add the support to forward initialization segment from the GPU Process to Web processes

@@ -26,7 +26,7 @@
 #include "config.h"
 #include "ImageBufferShareableIOSurfaceBackend.h"
 
-#if ENABLE(GPU_PROCESS)
+#if HAVE(IOSURFACE)
 
 #include <WebCore/GraphicsContextCG.h>
 #include <wtf/IsoMallocInlines.h>
@@ -37,44 +37,78 @@ using namespace WebCore;
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(ImageBufferShareableIOSurfaceBackend);
 
-std::unique_ptr<ImageBufferShareableIOSurfaceBackend> ImageBufferShareableIOSurfaceBackend::create(const FloatSize& size, float resolutionScale, ColorSpace colorSpace, PixelFormat pixelFormat, const HostWindow*)
-{
-    IntSize backendSize = calculateBackendSize(size, resolutionScale);
-    if (backendSize.isEmpty())
-        return nullptr;
-
-    auto surface = IOSurface::create(backendSize, backendSize, cachedCGColorSpace(colorSpace), IOSurface::formatForPixelFormat(pixelFormat));
-    if (!surface)
-        return nullptr;
-
-    RetainPtr<CGContextRef> cgContext = surface->ensurePlatformContext();
-    if (!cgContext)
-        return nullptr;
-
-    CGContextClearRect(cgContext.get(), FloatRect(FloatPoint::zero(), backendSize));
-
-    return makeUnique<ImageBufferShareableIOSurfaceBackend>(size, backendSize, resolutionScale, colorSpace, pixelFormat, WTFMove(surface));
-}
-
-std::unique_ptr<ImageBufferShareableIOSurfaceBackend> ImageBufferShareableIOSurfaceBackend::create(const FloatSize& logicalSize, const IntSize& internalSize, float resolutionScale, ColorSpace colorSpace, PixelFormat pixelFormat, ImageBufferBackendHandle handle)
+std::unique_ptr<ImageBufferShareableIOSurfaceBackend> ImageBufferShareableIOSurfaceBackend::create(const FloatSize& logicalSize, const IntSize& backendSize, float resolutionScale, ColorSpace colorSpace, PixelFormat pixelFormat, ImageBufferBackendHandle handle)
 {
     if (!WTF::holds_alternative<MachSendRight>(handle)) {
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
         return nullptr;
     }
 
-    auto surface = IOSurface::createFromSendRight(WTFMove(WTF::get<MachSendRight>(handle)), cachedCGColorSpace(colorSpace));
-    if (!surface)
-        return nullptr;
-
-    return makeUnique<ImageBufferShareableIOSurfaceBackend>(logicalSize, internalSize, resolutionScale, colorSpace, pixelFormat, WTFMove(surface));
+    return makeUnique<ImageBufferShareableIOSurfaceBackend>(logicalSize, backendSize, resolutionScale, colorSpace, pixelFormat, WTFMove(handle));
 }
 
 ImageBufferBackendHandle ImageBufferShareableIOSurfaceBackend::createImageBufferBackendHandle() const
 {
-    return ImageBufferBackendHandle(m_surface->createSendRight());
+    return WTF::get<MachSendRight>(m_handle).copySendRight();
+}
+
+GraphicsContext& ImageBufferShareableIOSurfaceBackend::context() const
+{
+    RELEASE_ASSERT_NOT_REACHED();
+    return *(GraphicsContext*)nullptr;
+}
+
+RefPtr<NativeImage> ImageBufferShareableIOSurfaceBackend::copyNativeImage(BackingStoreCopy) const
+{
+    RELEASE_ASSERT_NOT_REACHED();
+    return { };
+}
+
+RefPtr<Image> ImageBufferShareableIOSurfaceBackend::copyImage(BackingStoreCopy, PreserveResolution) const
+{
+    RELEASE_ASSERT_NOT_REACHED();
+    return { };
+}
+
+void ImageBufferShareableIOSurfaceBackend::draw(GraphicsContext&, const FloatRect&, const FloatRect&, const ImagePaintingOptions&)
+{
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+void ImageBufferShareableIOSurfaceBackend::drawPattern(GraphicsContext&, const FloatRect&, const FloatRect&, const AffineTransform&, const FloatPoint&, const FloatSize&, const ImagePaintingOptions&)
+{
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+String ImageBufferShareableIOSurfaceBackend::toDataURL(const String&, Optional<double>, PreserveResolution) const
+{
+    RELEASE_ASSERT_NOT_REACHED();
+    return { };
+}
+
+Vector<uint8_t> ImageBufferShareableIOSurfaceBackend::toData(const String&, Optional<double>) const
+{
+    RELEASE_ASSERT_NOT_REACHED();
+    return { };
+}
+
+Vector<uint8_t> ImageBufferShareableIOSurfaceBackend::toBGRAData() const
+{
+    RELEASE_ASSERT_NOT_REACHED();
+    return { };
+}
+
+RefPtr<ImageData> ImageBufferShareableIOSurfaceBackend::getImageData(AlphaPremultiplication, const IntRect&) const
+{
+    RELEASE_ASSERT_NOT_REACHED();
+    return { };
+}
+
+void ImageBufferShareableIOSurfaceBackend::putImageData(AlphaPremultiplication, const ImageData&, const IntRect&, const IntPoint&, AlphaPremultiplication)
+{
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 } // namespace WebKit
 
-#endif // ENABLE(GPU_PROCESS) && HAVE(IOSURFACE)
+#endif // HAVE(IOSURFACE)

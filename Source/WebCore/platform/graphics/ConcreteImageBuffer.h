@@ -52,6 +52,7 @@ public:
     }
 
     bool isAccelerated() const override { return BackendType::isAccelerated; }
+    bool canMapBackingStore() const override { return BackendType::canMapBackingStore; }
 
 protected:
     ConcreteImageBuffer(std::unique_ptr<BackendType>&& backend = nullptr, RenderingResourceIdentifier renderingResourceIdentifier = RenderingResourceIdentifier::generate())

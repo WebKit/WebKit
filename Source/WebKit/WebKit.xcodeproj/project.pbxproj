@@ -2970,6 +2970,8 @@
 		2D1E8221216FFF5000A15265 /* WKWebEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKWebEvent.h; path = ios/WKWebEvent.h; sourceTree = "<group>"; };
 		2D1E8222216FFF5100A15265 /* WKWebEvent.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKWebEvent.mm; path = ios/WKWebEvent.mm; sourceTree = "<group>"; };
 		2D25F3272575872400231A8B /* ConcreteShareableImageBuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ConcreteShareableImageBuffer.h; sourceTree = "<group>"; };
+		2D25F32825758E9000231A8B /* ImageBufferShareableIOSurfaceBackend.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageBufferShareableIOSurfaceBackend.h; sourceTree = "<group>"; };
+		2D25F32925758E9100231A8B /* ImageBufferShareableIOSurfaceBackend.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ImageBufferShareableIOSurfaceBackend.cpp; sourceTree = "<group>"; };
 		2D28A4951AF965A100F190C9 /* WKViewLayoutStrategy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKViewLayoutStrategy.h; sourceTree = "<group>"; };
 		2D28A4961AF965A100F190C9 /* WKViewLayoutStrategy.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKViewLayoutStrategy.mm; sourceTree = "<group>"; };
 		2D28F3E01885CCC1004B9EAE /* WebChromeClientIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebChromeClientIOS.mm; path = ios/WebChromeClientIOS.mm; sourceTree = "<group>"; };
@@ -4339,8 +4341,8 @@
 		7227800B2408BD7D007D376B /* PlatformRemoteImageBufferProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PlatformRemoteImageBufferProxy.h; sourceTree = "<group>"; };
 		726D56DD253A64810002EF90 /* RemoteResourceCache.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteResourceCache.cpp; sourceTree = "<group>"; };
 		726D56DE253A64810002EF90 /* RemoteResourceCache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteResourceCache.h; sourceTree = "<group>"; };
-		727A7F342407857D004D2931 /* ImageBufferShareableIOSurfaceBackend.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImageBufferShareableIOSurfaceBackend.cpp; sourceTree = "<group>"; };
-		727A7F352407857F004D2931 /* ImageBufferShareableIOSurfaceBackend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageBufferShareableIOSurfaceBackend.h; sourceTree = "<group>"; };
+		727A7F342407857D004D2931 /* ImageBufferShareableMappedIOSurfaceBackend.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImageBufferShareableMappedIOSurfaceBackend.cpp; sourceTree = "<group>"; };
+		727A7F352407857F004D2931 /* ImageBufferShareableMappedIOSurfaceBackend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageBufferShareableMappedIOSurfaceBackend.h; sourceTree = "<group>"; };
 		727A7F36240788F0004D2931 /* ImageBufferShareableBitmapBackend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageBufferShareableBitmapBackend.h; sourceTree = "<group>"; };
 		727A7F37240788F0004D2931 /* ImageBufferShareableBitmapBackend.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImageBufferShareableBitmapBackend.cpp; sourceTree = "<group>"; };
 		727A7F38240788F0004D2931 /* PlatformImageBufferShareableBackend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformImageBufferShareableBackend.h; sourceTree = "<group>"; };
@@ -8748,8 +8750,10 @@
 		727A7F3324078527004D2931 /* cocoa */ = {
 			isa = PBXGroup;
 			children = (
-				727A7F342407857D004D2931 /* ImageBufferShareableIOSurfaceBackend.cpp */,
-				727A7F352407857F004D2931 /* ImageBufferShareableIOSurfaceBackend.h */,
+				2D25F32925758E9100231A8B /* ImageBufferShareableIOSurfaceBackend.cpp */,
+				2D25F32825758E9000231A8B /* ImageBufferShareableIOSurfaceBackend.h */,
+				727A7F342407857D004D2931 /* ImageBufferShareableMappedIOSurfaceBackend.cpp */,
+				727A7F352407857F004D2931 /* ImageBufferShareableMappedIOSurfaceBackend.h */,
 			);
 			path = cocoa;
 			sourceTree = "<group>";

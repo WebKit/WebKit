@@ -64,6 +64,7 @@ public:
     WEBCORE_EXPORT virtual ~ImageBuffer() = default;
 
     virtual bool isAccelerated() const = 0;
+    virtual bool canMapBackingStore() const = 0;
     virtual RenderingResourceIdentifier renderingResourceIdentifier() const { return { }; }
     
     virtual GraphicsContext& context() const = 0;

@@ -83,7 +83,9 @@ void RemoteRenderingBackendProxy::reestablishGPUProcessConnection()
 
     for (auto& pair : m_remoteResourceCacheProxy.imageBuffers()) {
         if (auto& baseImageBuffer = pair.value) {
-            if (is<AcceleratedRemoteImageBufferProxy>(*baseImageBuffer))
+            if (is<AcceleratedRemoteImageBufferMappedProxy>(*baseImageBuffer))
+                recreateImageBuffer(*this, downcast<AcceleratedRemoteImageBufferMappedProxy>(*baseImageBuffer), pair.key, m_renderingBackendIdentifier);
+            else if (is<AcceleratedRemoteImageBufferProxy>(*baseImageBuffer))
                 recreateImageBuffer(*this, downcast<AcceleratedRemoteImageBufferProxy>(*baseImageBuffer), pair.key, m_renderingBackendIdentifier);
             else
                 recreateImageBuffer(*this, downcast<UnacceleratedRemoteImageBufferProxy>(*baseImageBuffer), pair.key, m_renderingBackendIdentifier);
@@ -128,8 +130,15 @@ RefPtr<ImageBuffer> RemoteRenderingBackendProxy::createImageBuffer(const FloatSi
 {
     RefPtr<ImageBuffer> imageBuffer;
 
-    if (renderingMode == RenderingMode::Accelerated)
-        imageBuffer = AcceleratedRemoteImageBufferProxy::create(size, renderingMode, resolutionScale, colorSpace, pixelFormat, *this);
+    if (renderingMode == RenderingMode::Accelerated) {
+        // Unless DOM rendering is always enabled when any GPU process rendering is enabled,
+        // we need to create ImageBuffers for e.g. Canvas that are actually mapped into the
+        // Web Content process, so they can be painted into the tiles.
+        if (!WebProcess::singleton().shouldUseRemoteRenderingFor(RenderingPurpose::DOM))
+            imageBuffer = AcceleratedRemoteImageBufferMappedProxy::create(size, renderingMode, resolutionScale, colorSpace, pixelFormat, *this);
+        else
+            imageBuffer = AcceleratedRemoteImageBufferProxy::create(size, renderingMode, resolutionScale, colorSpace, pixelFormat, *this);
+    }
 
     if (!imageBuffer)
         imageBuffer = UnacceleratedRemoteImageBufferProxy::create(size, renderingMode, resolutionScale, colorSpace, pixelFormat, *this);
@@ -188,8 +197,10 @@ void RemoteRenderingBackendProxy::imageBufferBackendWasCreated(const FloatSize& 
     auto imageBuffer = m_remoteResourceCacheProxy.cachedImageBuffer(renderingResourceIdentifier);
     if (!imageBuffer)
         return;
-    
-    if (imageBuffer->isAccelerated())
+
+    if (is<AcceleratedRemoteImageBufferMappedProxy>(*imageBuffer))
+        downcast<AcceleratedRemoteImageBufferMappedProxy>(*imageBuffer).createBackend(logicalSize, backendSize, resolutionScale, colorSpace, pixelFormat, WTFMove(handle));
+    else if (is<AcceleratedRemoteImageBufferProxy>(*imageBuffer))
         downcast<AcceleratedRemoteImageBufferProxy>(*imageBuffer).createBackend(logicalSize, backendSize, resolutionScale, colorSpace, pixelFormat, WTFMove(handle));
     else
         downcast<UnacceleratedRemoteImageBufferProxy>(*imageBuffer).createBackend(logicalSize, backendSize, resolutionScale, colorSpace, pixelFormat, WTFMove(handle));
@@ -201,7 +212,9 @@ void RemoteRenderingBackendProxy::didFlush(DisplayList::FlushIdentifier flushIde
     if (!imageBuffer)
         return;
 
-    if (imageBuffer->isAccelerated())
+    if (is<AcceleratedRemoteImageBufferMappedProxy>(*imageBuffer))
+        downcast<AcceleratedRemoteImageBufferMappedProxy>(*imageBuffer).didFlush(flushIdentifier);
+    else if (is<AcceleratedRemoteImageBufferProxy>(*imageBuffer))
         downcast<AcceleratedRemoteImageBufferProxy>(*imageBuffer).didFlush(flushIdentifier);
     else
         downcast<UnacceleratedRemoteImageBufferProxy>(*imageBuffer).didFlush(flushIdentifier);

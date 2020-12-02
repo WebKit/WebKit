@@ -113,7 +113,7 @@ void RemoteLayerBackingStore::encode(IPC::Encoder& encoder) const
                 handle = static_cast<UnacceleratedRemoteImageBufferProxy *>(m_frontBuffer.imageBuffer.get())->createImageBufferBackendHandle();
         } else {
             if (m_acceleratesDrawing)
-                handle = static_cast<ConcreteShareableImageBuffer<AcceleratedImageBufferShareableBackend> *>(m_frontBuffer.imageBuffer.get())->createImageBufferBackendHandle();
+                handle = static_cast<ConcreteShareableImageBuffer<AcceleratedImageBufferShareableMappedBackend> *>(m_frontBuffer.imageBuffer.get())->createImageBufferBackendHandle();
             else
                 handle = static_cast<ConcreteShareableImageBuffer<UnacceleratedImageBufferShareableBackend> *>(m_frontBuffer.imageBuffer.get())->createImageBufferBackendHandle();
         }
@@ -193,7 +193,7 @@ void RemoteLayerBackingStore::swapToValidFrontBuffer()
     }
 
     if (m_acceleratesDrawing)
-        m_frontBuffer.imageBuffer = ConcreteShareableImageBuffer<AcceleratedImageBufferShareableBackend>::create(backingStoreSize(), WebCore::RenderingMode::Accelerated, 1, WebCore::ColorSpace::SRGB, pixelFormat());
+        m_frontBuffer.imageBuffer = ConcreteShareableImageBuffer<AcceleratedImageBufferShareableMappedBackend>::create(backingStoreSize(), WebCore::RenderingMode::Accelerated, 1, WebCore::ColorSpace::SRGB, pixelFormat());
     else
         m_frontBuffer.imageBuffer = ConcreteShareableImageBuffer<UnacceleratedImageBufferShareableBackend>::create(backingStoreSize(), WebCore::RenderingMode::Unaccelerated, 1, WebCore::ColorSpace::SRGB, pixelFormat());
 }

@@ -128,6 +128,7 @@ public:
     
     static constexpr bool isOriginAtUpperLeftCorner = false;
     static constexpr bool isAccelerated = false;
+    static constexpr bool canMapBackingStore = true;
 
 protected:
     WEBCORE_EXPORT ImageBufferBackend(const FloatSize& logicalSize, const IntSize& backendSize, float resolutionScale, ColorSpace, PixelFormat);

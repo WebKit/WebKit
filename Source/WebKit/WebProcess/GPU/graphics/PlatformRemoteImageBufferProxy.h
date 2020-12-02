@@ -34,6 +34,7 @@ namespace WebKit {
 
 using UnacceleratedRemoteImageBufferProxy = RemoteImageBufferProxy<UnacceleratedImageBufferShareableBackend>;
 using AcceleratedRemoteImageBufferProxy = RemoteImageBufferProxy<AcceleratedImageBufferShareableBackend>;
+using AcceleratedRemoteImageBufferMappedProxy = RemoteImageBufferProxy<AcceleratedImageBufferShareableMappedBackend>;
 
 } // namespace WebKit
 
@@ -43,7 +44,11 @@ SPECIALIZE_TYPE_TRAITS_END()
 
 #if HAVE(IOSURFACE)
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::AcceleratedRemoteImageBufferProxy)
-    static bool isType(const WebCore::ImageBuffer& imageBuffer) { return imageBuffer.renderingResourceIdentifier() && imageBuffer.isAccelerated(); }
+    static bool isType(const WebCore::ImageBuffer& imageBuffer) { return imageBuffer.renderingResourceIdentifier() && imageBuffer.isAccelerated() && !imageBuffer.canMapBackingStore(); }
+SPECIALIZE_TYPE_TRAITS_END()
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::AcceleratedRemoteImageBufferMappedProxy)
+    static bool isType(const WebCore::ImageBuffer& imageBuffer) { return imageBuffer.renderingResourceIdentifier() && imageBuffer.isAccelerated() && imageBuffer.canMapBackingStore(); }
 SPECIALIZE_TYPE_TRAITS_END()
 #endif
 

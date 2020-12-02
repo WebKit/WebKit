@@ -25,28 +25,50 @@
 
 #pragma once
 
-#if ENABLE(GPU_PROCESS)
+#if HAVE(IOSURFACE)
 
 #include "ImageBufferBackendHandle.h"
-#include <WebCore/ImageBufferIOSurfaceBackend.h>
+#include <WebCore/GraphicsContext.h>
+#include <WebCore/ImageBufferBackend.h>
 #include <wtf/IsoMalloc.h>
 
 namespace WebKit {
 
 class ShareableBitmap;
 
-class ImageBufferShareableIOSurfaceBackend : public WebCore::ImageBufferIOSurfaceBackend {
+class ImageBufferShareableIOSurfaceBackend final : public WebCore::ImageBufferBackend {
     WTF_MAKE_ISO_ALLOCATED(ImageBufferShareableIOSurfaceBackend);
     WTF_MAKE_NONCOPYABLE(ImageBufferShareableIOSurfaceBackend);
 public:
-    static std::unique_ptr<ImageBufferShareableIOSurfaceBackend> create(const WebCore::FloatSize& logicalSize, const float resolutionScale, WebCore::ColorSpace, WebCore::PixelFormat, const WebCore::HostWindow*);
-    static std::unique_ptr<ImageBufferShareableIOSurfaceBackend> create(const WebCore::FloatSize& logicalSize, const WebCore::IntSize& internalSize, float resolutionScale, WebCore::ColorSpace, WebCore::PixelFormat, ImageBufferBackendHandle);
+    static std::unique_ptr<ImageBufferShareableIOSurfaceBackend> create(const WebCore::FloatSize& logicalSize, const WebCore::IntSize& backendSize, float resolutionScale, WebCore::ColorSpace, WebCore::PixelFormat, ImageBufferBackendHandle);
 
-    using WebCore::ImageBufferIOSurfaceBackend::ImageBufferIOSurfaceBackend;
+    ImageBufferShareableIOSurfaceBackend(const WebCore::FloatSize& logicalSize, const WebCore::IntSize& physicalSize, float resolutionScale, WebCore::ColorSpace colorSpace, WebCore::PixelFormat pixelFormat, ImageBufferBackendHandle&& handle)
+        : ImageBufferBackend(logicalSize, physicalSize, resolutionScale, colorSpace, pixelFormat)
+        , m_handle(WTFMove(handle))
+    {
+    }
 
     ImageBufferBackendHandle createImageBufferBackendHandle() const;
+
+    WebCore::GraphicsContext& context() const override;
+    RefPtr<WebCore::NativeImage> copyNativeImage(WebCore::BackingStoreCopy) const override;
+    RefPtr<WebCore::Image> copyImage(WebCore::BackingStoreCopy, WebCore::PreserveResolution) const override;
+    void draw(WebCore::GraphicsContext&, const WebCore::FloatRect& destRect, const WebCore::FloatRect& srcRect, const WebCore::ImagePaintingOptions&) override;
+    void drawPattern(WebCore::GraphicsContext&, const WebCore::FloatRect& destRect, const WebCore::FloatRect& srcRect, const WebCore::AffineTransform& patternTransform, const WebCore::FloatPoint& phase, const WebCore::FloatSize& spacing, const WebCore::ImagePaintingOptions&) override;
+    String toDataURL(const String& mimeType, Optional<double> quality, WebCore::PreserveResolution) const override;
+    Vector<uint8_t> toData(const String& mimeType, Optional<double> quality) const override;
+    Vector<uint8_t> toBGRAData() const override;
+    RefPtr<WebCore::ImageData> getImageData(WebCore::AlphaPremultiplication outputFormat, const WebCore::IntRect&) const override;
+    void putImageData(WebCore::AlphaPremultiplication inputFormat, const WebCore::ImageData&, const WebCore::IntRect& srcRect, const WebCore::IntPoint& destPoint, WebCore::AlphaPremultiplication destFormat) override;
+
+    static constexpr bool isOriginAtUpperLeftCorner = true;
+    static constexpr bool isAccelerated = true;
+    static constexpr bool canMapBackingStore = false;
+
+private:
+    ImageBufferBackendHandle m_handle;
 };
 
 } // namespace WebKit
 
-#endif // ENABLE(GPU_PROCESS)
+#endif // HAVE(IOSURFACE)
