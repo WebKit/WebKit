@@ -616,4 +616,9 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 
     SetHasResourceLoadClient(bool has)
     SetCanUseCredentialStorage(bool canUse)
+
+#if ENABLE(APP_HIGHLIGHTS)
+    CreateAppHighlightInSelectedRange(enum:bool WebKit::CreateNewGroupForHighlight createNewGroup)
+#endif
+
 }

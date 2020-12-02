@@ -43,7 +43,7 @@ public:
     };
 
     static ExceptionOr<Ref<StaticRange>> create(Init&&);
-    static Ref<StaticRange> create(const SimpleRange&);
+    WEBCORE_EXPORT static Ref<StaticRange> create(const SimpleRange&);
     static Ref<StaticRange> create(SimpleRange&&);
 
     Node& startContainer() const final { return SimpleRange::startContainer(); }

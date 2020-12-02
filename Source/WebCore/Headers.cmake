@@ -44,6 +44,9 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/geolocation/PositionErrorCallback.h
     Modules/geolocation/PositionOptions.h
 
+    Modules/highlight/Highlight.h
+    Modules/highlight/HighlightRegister.h
+
     Modules/indexeddb/IDBActiveDOMObject.h
     Modules/indexeddb/IDBDatabaseIdentifier.h
     Modules/indexeddb/IDBDatabaseNameAndVersionRequest.h

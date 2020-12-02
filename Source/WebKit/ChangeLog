@@ -1,3 +1,29 @@
+2020-12-02  Megan Gardner  <megan_gardner@apple.com>
+
+        Create and draw app highlights
+        https://bugs.webkit.org/show_bug.cgi?id=219365
+
+        Reviewed by Wenson Hsieh.
+
+        Handle the creation of App Highlights from selections when the context menu item is selected. 
+        This patch will add the highlights to the Document's app Highlight register, and handle drawing
+        them in InlineTextBox. Later patches will handle the persistent storage and repopulation of app
+        highlights on launch or reload of a page. 
+
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::createAppHighlightInSelectedRange):
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::contextMenuItemSelected):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView createHighlightInCurrentGroupWithRange:]):
+        (-[WKContentView createHighlightInNewGroupWithRange:]):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::createAppHighlightInSelectedRange):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2020-12-02  Brent Fulgham  <bfulgham@apple.com>
 
         [iOS] Silence sandbox warning for unneeded sysctl-read of "hw.tbfrequency_compat"

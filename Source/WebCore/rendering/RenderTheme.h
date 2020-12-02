@@ -158,6 +158,9 @@ public:
     // Highlighting color for search matches.
     Color textSearchHighlightColor(OptionSet<StyleColor::Options>) const;
 
+    // Default highlighting color for app highlights.
+    Color appHighlightColor(OptionSet<StyleColor::Options>) const;
+
     virtual Color disabledTextColor(const Color& textColor, const Color& backgroundColor) const;
 
     WEBCORE_EXPORT Color focusRingColor(OptionSet<StyleColor::Options>) const;
@@ -276,7 +279,9 @@ protected:
     virtual Color platformInactiveListBoxSelectionForegroundColor(OptionSet<StyleColor::Options>) const;
 
     virtual Color platformTextSearchHighlightColor(OptionSet<StyleColor::Options>) const;
-
+#if ENABLE(APP_HIGHLIGHTS)
+    virtual Color platformAppHighlightColor(OptionSet<StyleColor::Options>) const;
+#endif
     virtual bool supportsSelectionForegroundColors(OptionSet<StyleColor::Options>) const { return true; }
     virtual bool supportsListBoxSelectionForegroundColors(OptionSet<StyleColor::Options>) const { return true; }
 
@@ -427,6 +432,10 @@ protected:
         Color inactiveListBoxSelectionForegroundColor;
 
         Color textSearchHighlightColor;
+
+#if ENABLE(APP_HIGHLIGHTS)
+        Color appHighlightColor;
+#endif
     };
 
     virtual ColorCache& colorCache(OptionSet<StyleColor::Options>) const;

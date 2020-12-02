@@ -29,6 +29,7 @@
 #include "Connection.h"
 #include "ContentAsStringIncludesChildFrames.h"
 #include "ContextMenuContextData.h"
+#include "CreateNewGroupForHighlight.h"
 #include "DownloadID.h"
 #include "DragControllerAction.h"
 #include "EditingRange.h"
@@ -363,6 +364,7 @@ struct WebSpeechSynthesisVoice;
 struct URLSchemeTaskParameters;
 struct UserMessage;
 
+enum class CreateNewGroupForHighlight : bool;
 enum class NegotiatedLegacyTLS : bool;
 enum class ProcessSwapRequestedByClient : bool;
 enum class SpeechRecognitionPermissionDecision : bool;
@@ -1826,6 +1828,10 @@ public:
     void requestSpeechRecognitionPermissionByDefaultAction(const WebCore::SecurityOrigin&, CompletionHandler<void(bool)>&&);
 
     void syncIfMockDevicesEnabledChanged();
+
+#if ENABLE(APP_HIGHLIGHTS)
+    void createAppHighlightInSelectedRange(CreateNewGroupForHighlight);
+#endif
 
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, Ref<API::PageConfiguration>&&);

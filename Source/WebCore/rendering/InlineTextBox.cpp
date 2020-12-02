@@ -846,6 +846,13 @@ auto InlineTextBox::resolveStyleForMarkedText(const MarkedText& markedText, cons
             }
         }
         break;
+#if ENABLE(APP_HIGHLIGHTS)
+    case MarkedText::AppHighlight: {
+        OptionSet<StyleColor::Options> styleColorOptions = { StyleColor::Options::UseSystemAppearance };
+        style.backgroundColor = renderer().theme().appHighlightColor(styleColorOptions);
+        break;
+    }
+#endif
     case MarkedText::DraggedContent:
         style.alpha = 0.25;
         break;
@@ -1052,21 +1059,37 @@ Vector<MarkedText> InlineTextBox::collectMarkedTextsForHighlights(TextPaintPhase
     auto& parentRenderer = parent()->renderer();
     auto& parentStyle = parentRenderer.style();
     HighlightData highlightData;
-    for (auto& highlight : renderer().document().highlightRegister().map()) {
-        auto renderStyle = parentRenderer.getUncachedPseudoStyle({ PseudoId::Highlight, highlight.key }, &parentStyle);
-        if (!renderStyle)
-            continue;
-        if (renderStyle->textDecorationsInEffect().isEmpty() && phase == TextPaintPhase::Decoration)
-            continue;
-        for (auto& rangeData : highlight.value->rangesData()) {
-            if (!highlightData.setRenderRange(rangeData))
+    if (auto highlightRegister = renderer().document().highlightRegisterIfExists()) {
+        for (auto& highlight : highlightRegister->map()) {
+            auto renderStyle = parentRenderer.getUncachedPseudoStyle({ PseudoId::Highlight, highlight.key }, &parentStyle);
+            if (!renderStyle)
                 continue;
-            
-            auto [highlightStart, highlightEnd] = highlightStartEnd(highlightData);
-            if (highlightStart < highlightEnd)
-                markedTexts.append({ highlightStart, highlightEnd, MarkedText::Highlight, nullptr, highlight.key });
+            if (renderStyle->textDecorationsInEffect().isEmpty() && phase == TextPaintPhase::Decoration)
+                continue;
+            for (auto& rangeData : highlight.value->rangesData()) {
+                if (!highlightData.setRenderRange(rangeData))
+                    continue;
+
+                auto [highlightStart, highlightEnd] = highlightStartEnd(highlightData);
+                if (highlightStart < highlightEnd)
+                    markedTexts.append({ highlightStart, highlightEnd, MarkedText::Highlight, nullptr, highlight.key });
+            }
         }
     }
+#if ENABLE(APP_HIGHLIGHTS)
+    if (auto appHighlightRegister = renderer().document().appHighlightRegisterIfExists()) {
+        for (auto& highlight : appHighlightRegister->map()) {
+            for (auto& rangeData : highlight.value->rangesData()) {
+                if (!highlightData.setRenderRange(rangeData))
+                    continue;
+
+                auto [highlightStart, highlightEnd] = highlightStartEnd(highlightData);
+                if (highlightStart < highlightEnd)
+                    markedTexts.append({ highlightStart, highlightEnd, MarkedText::AppHighlight });
+            }
+        }
+    }
+#endif
     return markedTexts;
 }
 

@@ -231,6 +231,7 @@ class XPathNSResolver;
 class XPathResult;
 
 struct BoundaryPoint;
+struct HighlightRangeData;
 struct IntersectionObserverData;
 
 template<typename> class ExceptionOr;
@@ -1572,8 +1573,11 @@ public:
 
     WEBCORE_EXPORT TextManipulationController& textManipulationController();
     TextManipulationController* textManipulationControllerIfExists() { return m_textManipulationController.get(); }
-        
+
+    HighlightRegister* highlightRegisterIfExists() { return m_highlightRegister.get(); }
     HighlightRegister& highlightRegister();
+    HighlightRegister* appHighlightRegisterIfExists() { return m_appHighlightRegister.get(); }
+    WEBCORE_EXPORT HighlightRegister& appHighlightRegister();
     void updateHighlightPositions();
 
     bool allowsContentJavaScript() const;
@@ -1700,6 +1704,8 @@ private:
     bool shouldEnforceHTTP09Sandbox() const;
 
     void platformSuspendOrStopActiveDOMObjects();
+
+    void collectRangeDataFromRegister(Vector<WeakPtr<HighlightRangeData>>&, const HighlightRegister&);
 
     bool isBodyPotentiallyScrollable(HTMLBodyElement&);
 
@@ -1931,6 +1937,7 @@ private:
 #endif
         
     RefPtr<HighlightRegister> m_highlightRegister;
+    RefPtr<HighlightRegister> m_appHighlightRegister;
 
     Timer m_visualUpdatesSuppressionTimer;
 

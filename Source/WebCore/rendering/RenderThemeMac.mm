@@ -476,6 +476,14 @@ Color RenderThemeMac::platformTextSearchHighlightColor(OptionSet<StyleColor::Opt
     return colorFromNSColor([NSColor findHighlightColor]);
 }
 
+#if ENABLE(APP_HIGHLIGHTS)
+Color RenderThemeMac::platformAppHighlightColor(OptionSet<StyleColor::Options>) const
+{
+    // FIXME: expose the real value from AppKit.
+    return SRGBA<uint8_t> { 255, 238, 190 };
+}
+#endif
+
 static SRGBA<uint8_t> menuBackgroundColor()
 {
     RetainPtr<NSBitmapImageRep> offscreenRep = adoptNS([[NSBitmapImageRep alloc] initWithBitmapDataPlanes:nil pixelsWide:1 pixelsHigh:1

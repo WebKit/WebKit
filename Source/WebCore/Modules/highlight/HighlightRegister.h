@@ -34,6 +34,7 @@ namespace WebCore {
 class DOMMapAdapter;
 class DOMString;
 class Highlight;
+class StaticRange;
 
 class HighlightRegister : public RefCounted<HighlightRegister> {
 public:
@@ -43,6 +44,9 @@ public:
     void setFromMapLike(String&&, Ref<Highlight>&&);
     void clear();
     bool remove(const String&);
+
+    WEBCORE_EXPORT void addAppHighlight(Ref<StaticRange>&&);
+    static ASCIILiteral appHighlightKey();
     
     const HashMap<String, Ref<Highlight>>& map() const { return m_map; }
     

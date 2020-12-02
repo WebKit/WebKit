@@ -66,6 +66,9 @@ public:
     Color platformInactiveListBoxSelectionForegroundColor(OptionSet<StyleColor::Options>) const final;
     Color platformFocusRingColor(OptionSet<StyleColor::Options>) const final;
     Color platformTextSearchHighlightColor(OptionSet<StyleColor::Options>) const final;
+#if ENABLE(APP_HIGHLIGHTS)
+    Color platformAppHighlightColor(OptionSet<StyleColor::Options>) const final;
+#endif
 
     ScrollbarControlSize scrollbarControlSizeForPart(ControlPart) final { return ScrollbarControlSize::Small; }
 

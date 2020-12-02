@@ -34,6 +34,7 @@
 #include "APIObject.h"
 #include "CallbackID.h"
 #include "ContentAsStringIncludesChildFrames.h"
+#include "CreateNewGroupForHighlight.h"
 #include "DownloadID.h"
 #include "DrawingAreaInfo.h"
 #include "EditingRange.h"
@@ -1364,6 +1365,10 @@ public:
 
 #if ENABLE(GPU_PROCESS)
     RemoteRenderingBackendProxy& ensureRemoteRenderingBackendProxy();
+#endif
+
+#if ENABLE(APP_HIGHLIGHTS)
+    bool createAppHighlightInSelectedRange(CreateNewGroupForHighlight);
 #endif
 
 private:

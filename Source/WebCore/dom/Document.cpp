@@ -795,6 +795,9 @@ void Document::commonTeardown()
     if (m_highlightRegister)
         m_highlightRegister->clear();
 
+    if (m_appHighlightRegister)
+        m_appHighlightRegister->clear();
+
     m_pendingScrollEventTargetList = nullptr;
 
     if (m_timelinesController)
@@ -2774,21 +2777,34 @@ HighlightRegister& Document::highlightRegister()
     return *m_highlightRegister;
 }
 
+HighlightRegister& Document::appHighlightRegister()
+{
+    if (!m_appHighlightRegister)
+        m_appHighlightRegister = HighlightRegister::create();
+    return *m_appHighlightRegister;
+}
+
+void Document::collectRangeDataFromRegister(Vector<WeakPtr<HighlightRangeData>>& rangesData, const HighlightRegister& highlightRegister)
+{
+    for (auto& highlight : highlightRegister.map()) {
+        for (auto& rangeData : highlight.value->rangesData()) {
+            if (rangeData->startPosition && rangeData->endPosition)
+                continue;
+            if (&rangeData->range->startContainer().treeScope() != &rangeData->range->endContainer().treeScope())
+                continue;
+            rangesData.append(makeWeakPtr(rangeData.ptr()));
+        }
+    }
+}
+
 void Document::updateHighlightPositions()
 {
     Vector<WeakPtr<HighlightRangeData>> rangesData;
-    if (m_highlightRegister) {
-        for (auto& highlight : m_highlightRegister->map()) {
-            for (auto& rangeData : highlight.value->rangesData()) {
-                if (rangeData->startPosition && rangeData->endPosition)
-                    continue;
-                if (&rangeData->range->startContainer().treeScope() != &rangeData->range->endContainer().treeScope())
-                    continue;
-                rangesData.append(makeWeakPtr(rangeData.ptr()));
-            }
-        }
-    }
-    
+    if (m_highlightRegister)
+        collectRangeDataFromRegister(rangesData, *m_highlightRegister.get());
+    if (m_appHighlightRegister)
+        collectRangeDataFromRegister(rangesData, *m_appHighlightRegister.get());
+
     for (auto& weakRangeData : rangesData) {
         if (auto* rangeData = weakRangeData.get()) {
             VisibleSelection visibleSelection(rangeData->range);
@@ -2797,7 +2813,7 @@ void Document::updateHighlightPositions()
             if (!rangeData->startPosition.hasValue())
                 startPosition = visibleSelection.visibleStart().deepEquivalent();
             if (!rangeData->endPosition.hasValue())
-                endPosition = visibleSelection.visibleEnd().deepEquivalent(); // <MMG> switch to END
+                endPosition = visibleSelection.visibleEnd().deepEquivalent();
             if (!weakRangeData.get())
                 continue;
             

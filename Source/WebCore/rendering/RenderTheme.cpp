@@ -1353,6 +1353,21 @@ Color RenderTheme::platformTextSearchHighlightColor(OptionSet<StyleColor::Option
     return Color::yellow;
 }
 
+#if ENABLE(APP_HIGHLIGHTS)
+Color RenderTheme::appHighlightColor(OptionSet<StyleColor::Options> options) const
+{
+    auto& cache = colorCache(options);
+    if (!cache.appHighlightColor.isValid())
+        cache.appHighlightColor = transformSelectionBackgroundColor(platformAppHighlightColor(options), options);
+    return cache.appHighlightColor;
+}
+
+Color RenderTheme::platformAppHighlightColor(OptionSet<StyleColor::Options>) const
+{
+    return Color::yellow;
+}
+#endif
+
 #if ENABLE(TOUCH_EVENTS)
 
 Color RenderTheme::tapHighlightColor()

@@ -1159,6 +1159,14 @@ Color RenderThemeIOS::platformFocusRingColor(OptionSet<StyleColor::Options>) con
     return systemFocusRingColor();
 }
 
+#if ENABLE(APP_HIGHLIGHTS)
+Color RenderThemeIOS::platformAppHighlightColor(OptionSet<StyleColor::Options>) const
+{
+    // FIXME: expose the real value from UIKit.
+    return SRGBA<uint8_t> { 255, 238, 190 };
+}
+#endif
+
 bool RenderThemeIOS::shouldHaveSpinButton(const HTMLInputElement&) const
 {
     return false;

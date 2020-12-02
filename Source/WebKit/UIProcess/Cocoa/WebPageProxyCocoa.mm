@@ -38,6 +38,7 @@
 #import "SafeBrowsingSPI.h"
 #import "SafeBrowsingWarning.h"
 #import "SharedBufferCopy.h"
+#import "WebPage.h"
 #import "WebPageMessages.h"
 #import "WebPasteboardProxy.h"
 #import "WebProcessProxy.h"
@@ -542,6 +543,17 @@ void WebPageProxy::addActivityStateUpdateCompletionHandler(CompletionHandler<voi
 
     m_activityStateUpdateCallbacks.append(WTFMove(completionHandler));
 }
+
+#if ENABLE(APP_HIGHLIGHTS)
+void WebPageProxy::createAppHighlightInSelectedRange(CreateNewGroupForHighlight createNewGroup)
+{
+    if (!hasRunningProcess())
+        return;
+
+    send(Messages::WebPage::CreateAppHighlightInSelectedRange(createNewGroup));
+}
+
+#endif
 
 } // namespace WebKit
 

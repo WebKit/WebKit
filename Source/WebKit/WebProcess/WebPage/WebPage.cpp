@@ -156,6 +156,7 @@
 #include <WebCore/DataTransfer.h>
 #include <WebCore/DatabaseManager.h>
 #include <WebCore/DeprecatedGlobalSettings.h>
+#include <WebCore/Document.h>
 #include <WebCore/DocumentFragment.h>
 #include <WebCore/DocumentLoader.h>
 #include <WebCore/DocumentMarkerController.h>
@@ -186,6 +187,8 @@
 #include <WebCore/HTMLPlugInElement.h>
 #include <WebCore/HTMLSelectElement.h>
 #include <WebCore/HTMLTextFormControlElement.h>
+#include <WebCore/Highlight.h>
+#include <WebCore/HighlightRegister.h>
 #include <WebCore/HistoryController.h>
 #include <WebCore/HistoryItem.h>
 #include <WebCore/HitTestResult.h>
@@ -229,6 +232,7 @@
 #include <WebCore/Settings.h>
 #include <WebCore/ShadowRoot.h>
 #include <WebCore/SharedBuffer.h>
+#include <WebCore/StaticRange.h>
 #include <WebCore/StyleProperties.h>
 #include <WebCore/SubframeLoader.h>
 #include <WebCore/SubstituteData.h>
@@ -7059,6 +7063,26 @@ void WebPage::revokeSandboxExtensions(Vector<RefPtr<SandboxExtension>>& sandboxE
         sandboxExtension->revoke();
     sandboxExtensions.clear();
 }
+
+#if ENABLE(APP_HIGHLIGHTS)
+bool WebPage::createAppHighlightInSelectedRange(CreateNewGroupForHighlight createNewGroup)
+{
+    auto document = makeRefPtr(m_page->focusController().focusedOrMainFrame().document());
+
+    auto frame = makeRefPtr(document->frame());
+    if (!frame)
+        return false;
+
+    auto selectionRange = frame->selection().selection().toNormalizedRange();
+    if (!selectionRange)
+        return false;
+
+    document->appHighlightRegister().addAppHighlight(StaticRange::create(selectionRange.value()));
+
+    return true;
+}
+#endif
+
 
 } // namespace WebKit
 

@@ -117,6 +117,7 @@
 #include "WebNavigationState.h"
 #include "WebNotificationManagerProxy.h"
 #include "WebOpenPanelResultListenerProxy.h"
+#include "WebPage.h"
 #include "WebPageCreationParameters.h"
 #include "WebPageDebuggable.h"
 #include "WebPageGroup.h"
@@ -6629,6 +6630,16 @@ void WebPageProxy::contextMenuItemSelected(const WebContextMenuItemData& item)
         TextChecker::toggleSpellingUIIsShowing();
         return;
     }
+#if ENABLE(APP_HIGHLIGHTS)
+    if (item.action() == ContextMenuItemTagAddHighlightToNewGroup) {
+        createAppHighlightInSelectedRange(CreateNewGroupForHighlight::Yes);
+        return;
+    }
+    if (item.action() == ContextMenuItemTagAddHighlightToCurrentGroup) {
+        createAppHighlightInSelectedRange(CreateNewGroupForHighlight::No);
+        return;
+    }
+#endif
     if (item.action() == ContextMenuItemTagLearnSpelling || item.action() == ContextMenuItemTagIgnoreSpelling)
         ++m_pendingLearnOrIgnoreWordMessageCount;
 

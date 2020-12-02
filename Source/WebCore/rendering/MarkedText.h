@@ -42,6 +42,9 @@ struct MarkedText {
         TextMatch,
         DictationAlternatives,
         Highlight,
+#if ENABLE(APP_HIGHLIGHTS)
+        AppHighlight,
+#endif
 #if PLATFORM(IOS_FAMILY)
         // FIXME: See <rdar://problem/8933352>. Also, remove the PLATFORM(IOS_FAMILY)-guard.
         DictationPhraseWithAlternatives,

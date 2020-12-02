@@ -259,6 +259,7 @@ windowtext
 -apple-system-purple
 -apple-system-red
 -apple-system-yellow
+-apple-system-app-highlight-background
 #endif
 #if defined(WTF_PLATFORM_MAC) && WTF_PLATFORM_MAC
 -apple-system-alternate-selected-text

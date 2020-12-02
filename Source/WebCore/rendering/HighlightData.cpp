@@ -82,7 +82,7 @@ void RenderRangeIterator::checkForSpanner()
     m_current = placeholder.spanner();
 }
 
-static RenderObject* rendererAfterOffset(const RenderObject& renderer, unsigned offset) // <MMG> used in both, might should not be static
+static RenderObject* rendererAfterOffset(const RenderObject& renderer, unsigned offset)
 {
     auto* child = renderer.childAt(offset);
     return child ? child : renderer.nextInPreOrderAfterChildren();

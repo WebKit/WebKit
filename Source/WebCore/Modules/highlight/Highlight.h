@@ -54,7 +54,7 @@ struct HighlightRangeData : RefCounted<HighlightRangeData>, public CanMakeWeakPt
 
 class Highlight : public RefCounted<Highlight> {
 public:
-    static Ref<Highlight> create(StaticRange&);
+    WEBCORE_EXPORT static Ref<Highlight> create(StaticRange&);
     void clearFromSetLike();
     bool addToSetLike(StaticRange&);
     bool removeFromSetLike(const StaticRange&);
