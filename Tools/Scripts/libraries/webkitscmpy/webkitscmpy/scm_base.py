@@ -63,7 +63,7 @@ class ScmBase(object):
     def tags(self):
         raise NotImplementedError()
 
-    def commit(self, hash=None, revision=None, identifier=None, branch=None, tag=None):
+    def commit(self, hash=None, revision=None, identifier=None, branch=None, tag=None, include_log=True):
         raise NotImplementedError()
 
     def prioritize_branches(self, branches):
@@ -85,7 +85,7 @@ class ScmBase(object):
             filtered_candidates = branches
         return sorted(filtered_candidates)[0]
 
-    def find(self, argument):
+    def find(self, argument, include_log=True):
         if not isinstance(argument, six.string_types):
             raise ValueError("Expected 'argument' to be a string, not '{}'".format(type(argument)))
 
@@ -98,13 +98,13 @@ class ScmBase(object):
             argument = argument.split('~')[0]
 
         if argument == 'HEAD':
-            result = self.commit()
+            result = self.commit(include_log=include_log)
 
         elif argument in self.branches:
-            result = self.commit(branch=argument)
+            result = self.commit(branch=argument, include_log=include_log)
 
         elif argument in self.tags:
-            result = self.commit(tag=argument)
+            result = self.commit(tag=argument, include_log=include_log)
 
         else:
             if offset:
@@ -116,6 +116,7 @@ class ScmBase(object):
                 revision=parsed_commit.revision,
                 identifier=parsed_commit.identifier,
                 branch=parsed_commit.branch,
+                include_log=include_log,
             )
 
         if not offset:
@@ -124,6 +125,7 @@ class ScmBase(object):
         return self.commit(
             identifier=result.identifier - offset,
             branch=result.branch,
+            include_log=include_log,
         )
 
     @classmethod

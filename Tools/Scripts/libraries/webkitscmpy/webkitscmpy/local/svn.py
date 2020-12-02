@@ -257,7 +257,7 @@ class Svn(Scm):
             return partial[1:].rstrip('/')
         return candidate
 
-    def commit(self, hash=None, revision=None, identifier=None, branch=None, tag=None):
+    def commit(self, hash=None, revision=None, identifier=None, branch=None, tag=None, include_log=True):
         if hash:
             raise ValueError('SVN does not support Git hashes')
 
@@ -361,9 +361,9 @@ class Svn(Scm):
         log = run(
             [self.executable(), 'log', '-l', '1', '-r', str(revision), branch_arg], cwd=self.root_path,
             capture_output=True, encoding='utf-8',
-        )
-        split_log = log.stdout.splitlines()
-        if not log.returncode or len(split_log) >= 3:
+        ) if include_log else None
+        split_log = log.stdout.splitlines() if log else []
+        if log and (not log.returncode or len(split_log) >= 3):
             author_line = split_log[1]
             for line in split_log[2:8]:
                 if Contributor.SVN_PATCH_FROM_RE.match(line):
@@ -373,15 +373,16 @@ class Svn(Scm):
             author = Contributor.from_scm_log(author_line)
             message = '\n'.join(split_log[3:-1])
         else:
-            self.log('Failed to connect to remote, cannot compute commit message')
-            email = info['Last Changed Author']
+            if include_log:
+                self.log('Failed to connect to remote, cannot compute commit message')
+            email = info.get('Last Changed Author')
             author = Contributor.by_email.get(
                 email,
                 Contributor.by_name.get(
                     email,
                     Contributor(name=email, emails=[email]),
                 ),
-            )
+            ) if email else None
             message = None
 
         return Commit(

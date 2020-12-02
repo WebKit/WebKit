@@ -238,3 +238,8 @@ class TestGit(unittest.TestCase):
 
                 self.assertEqual('621652add7fc416099bd2063366cc38ff61afe36', repository.checkout('tag-1').hash)
                 self.assertEqual('621652add7fc416099bd2063366cc38ff61afe36', repository.commit().hash)
+
+    def test_no_log(self):
+        for mock in [mocks.local.Git(self.path), mocks.local.Git(self.path, git_svn=True)]:
+            with mock:
+                self.assertIsNone(local.Git(self.path).commit(identifier='4@main', include_log=False).message)

@@ -54,16 +54,24 @@ class Find(Command):
 
     @classmethod
     def parser(cls, parser, loggers=None):
-        arguments.LoggingGroup(
+        output_args = arguments.LoggingGroup(
             parser,
             loggers=loggers,
             help='{} amount of logging and commit information displayed'
-        ).add_argument(
+        )
+        output_args.add_argument(
             '--json', '-j',
             help='Convert the commit to a machine-readable JSON object',
             action='store_true',
             dest='json',
             default=False,
+        )
+        output_args.add_argument(
+            '--log', '--no-log',
+            help='Include the commit message for the requested commit',
+            action=arguments.NoAction,
+            dest='include_log',
+            default=True,
         )
 
         parser.add_argument(
@@ -75,7 +83,7 @@ class Find(Command):
     @classmethod
     def main(cls, args, repository):
         try:
-            commit = repository.find(args.argument[0])
+            commit = repository.find(args.argument[0], include_log=args.include_log)
         except (local.Scm.Exception, ValueError) as exception:
             # ValueErrors and Scm exceptions usually contain enough information to be displayed
             # to the user as an error

@@ -1,3 +1,35 @@
+2020-12-02  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitscmpy] Provide switch to exclude commit message
+        https://bugs.webkit.org/show_bug.cgi?id=219409
+        <rdar://problem/71866445>
+
+        Rubber-stamped by Aakash Jain.
+
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/git.py:
+        (Git.commit): Pass --format-short if the user is opting out of the commit message.
+        (Git.find): Add include_log flag, pass to commit(...) function.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/svn.py:
+        (Svn.commit): Skip network call to retrieve commit message if include_log is false.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program.py:
+        (Find.parser): Add --log and --no-log flags.
+        (Find.main): Allow user to skip network call to retrieve commit message.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/remote/svn.py:
+        (Svn.info): Support case were SVN cannot determine the author.
+        (Svn.commit): Skip network call to retrieve commit message if include_log is false.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/scm_base.py:
+        (ScmBase.commit): Add include_log flag.
+        (ScmBase.find): Add include_log flag, pass to commit(...) function.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/find_unittest.py:
+        (TestFind.test_no_log_svn):
+        (TestFind.test_no_log_git):
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/git_unittest.py:
+        (TestGit.test_no_log):
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/svn_unittest.py:
+        (TestLocalSvn.test_no_log):
+        (TestRemoteSvn.test_no_log):
+
 2020-12-02  Aakash Jain  <aakash_jain@apple.com>
 
         [build.webkit.org] Add unit-tests based on new buildbot

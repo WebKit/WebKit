@@ -139,7 +139,7 @@ class Svn(Scm):
 
         return {
             'Last Changed Rev': response['lp1:version-name'],
-            'Last Changed Author': response['lp1:creator-displayname'],
+            'Last Changed Author': response.get('lp1:creator-displayname'),
             'Last Changed Date': ' '.join(response['lp1:creationdate'].split('T')).split('.')[0],
             'Revision': revision,
         }
@@ -315,7 +315,7 @@ class Svn(Scm):
             return len(self._metadata_cache[branch])
         return self._commit_count(revision=self._metadata_cache[branch][0], branch=self.default_branch)
 
-    def commit(self, hash=None, revision=None, identifier=None, branch=None, tag=None):
+    def commit(self, hash=None, revision=None, identifier=None, branch=None, tag=None, include_log=True):
         if hash:
             raise ValueError('SVN does not support Git hashes')
 
@@ -368,7 +368,7 @@ class Svn(Scm):
             if tag:
                 raise ValueError('Cannot define both tag and revision')
             revision = Commit._parse_revision(revision, do_assert=True)
-            branch = self._branch_for(revision)
+            branch = self._branch_for(revision) or self.default_branch
             info = self.info(cached=True, branch=branch, revision=revision)
 
         else:
@@ -411,21 +411,20 @@ class Svn(Scm):
                     '<S:end-revision>{revision}</S:end-revision>\n'
                     '<S:limit>1</S:limit>\n'
                     '</S:log-report>\n'.format(revision=revision),
-        )
+        ) if include_log else None
 
-        if response.status_code == 200:
+        if response and response.status_code == 200:
             response = xmltodict.parse(response.text)
             response = response.get('S:log-report', {}).get('S:log-item')
 
             name = response.get('D:creator-displayname')
             message = response.get('D:comment', None)
-            if not name:
-                raise self.Exception('Failed to find creator name')
 
         else:
-            self.log('Failed to connect to remote, cannot compute commit message')
+            if include_log:
+                self.log('Failed to connect to remote, cannot compute commit message')
             message = None
-            name = info['Last Changed Author']
+            name = info.get('Last Changed Author')
 
         author = Contributor.by_email.get(
             name,
@@ -433,7 +432,7 @@ class Svn(Scm):
                 name,
                 Contributor(name=name, emails=[name] if '@' in name else []),
             ),
-        )
+        ) if name else None
 
         return Commit(
             revision=int(revision),

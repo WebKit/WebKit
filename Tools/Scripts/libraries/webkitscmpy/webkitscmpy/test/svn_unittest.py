@@ -218,6 +218,10 @@ class TestLocalSvn(unittest.TestCase):
             self.assertEqual(9, repository.checkout('tag-1').revision)
             self.assertEqual(9, repository.commit().revision)
 
+    def test_no_log(self):
+        with mocks.local.Svn(self.path), OutputCapture():
+            self.assertIsNone(local.Svn(self.path).commit(identifier='4@trunk', include_log=False).message)
+
 
 class TestRemoteSvn(unittest.TestCase):
     remote = 'https://svn.webkit.org/repository/webkit'
@@ -301,3 +305,7 @@ class TestRemoteSvn(unittest.TestCase):
     def test_tag_previous(self):
         with mocks.remote.Svn():
             self.assertEqual(7, remote.Svn(self.remote).commit(identifier='2.2@tags/tag-1').revision)
+
+    def test_no_log(self):
+        with mocks.remote.Svn():
+            self.assertIsNone(remote.Svn(self.remote).commit(identifier='4@trunk', include_log=False).message)

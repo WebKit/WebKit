@@ -190,3 +190,19 @@ Hash: 1abe25b443e9
                 path=self.path,
             ))
         self.assertEqual(captured.stdout.getvalue(), '2.2@branch-a | 621652add7fc, r7 | 7th commit\n')
+
+    def test_no_log_svn(self):
+        with mocks.local.Git(), mocks.local.Svn(self.path), MockTime, OutputCapture() as captured:
+            self.assertEqual(0, program.main(
+                args=('find', 'trunk', '--no-log', '-q'),
+                path=self.path,
+            ))
+        self.assertEqual(captured.stdout.getvalue(), '4@trunk | r6\n')
+
+    def test_no_log_git(self):
+        with mocks.local.Git(self.path, git_svn=True), mocks.local.Svn(), MockTime, OutputCapture() as captured:
+            self.assertEqual(0, program.main(
+                args=('find', 'main', '--no-log', '-q'),
+                path=self.path,
+            ))
+        self.assertEqual(captured.stdout.getvalue(), '4@main | bae5d1e90999, r6\n')

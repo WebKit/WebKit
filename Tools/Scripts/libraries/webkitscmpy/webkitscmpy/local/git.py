@@ -151,7 +151,7 @@ class Git(Scm):
         result = [branch.lstrip(' *') for branch in filter(lambda branch: '->' not in branch, branch.stdout.splitlines())]
         return sorted(set(['/'.join(branch.split('/')[2:]) if branch.startswith('remotes/origin/') else branch for branch in result]))
 
-    def commit(self, hash=None, revision=None, identifier=None, branch=None, tag=None):
+    def commit(self, hash=None, revision=None, identifier=None, branch=None, tag=None, include_log=True):
         if revision and not self.is_svn:
             raise self.Exception('This git checkout does not support SVN revisions')
         elif revision:
@@ -172,6 +172,7 @@ class Git(Scm):
 
         default_branch = self.default_branch
         parsed_branch_point = None
+        log_format = ['-1'] if include_log else ['-1', '--format=short']
 
         if identifier is not None:
             if revision:
@@ -204,7 +205,7 @@ class Git(Scm):
             if identifier > base_count:
                 raise self.Exception('Identifier {} cannot be found on the specified branch in the current checkout'.format(identifier))
             log = run(
-                [self.executable(), 'log', '{}~{}'.format(branch or 'HEAD', base_count - identifier), '-1'],
+                [self.executable(), 'log', '{}~{}'.format(branch or 'HEAD', base_count - identifier)] + log_format,
                 cwd=self.root_path,
                 capture_output=True,
                 encoding='utf-8',
@@ -224,13 +225,13 @@ class Git(Scm):
             if branch and tag:
                 raise ValueError('Cannot define both tag and branch')
 
-            log = run([self.executable(), 'log', branch or tag, '-1'], cwd=self.root_path, capture_output=True, encoding='utf-8')
+            log = run([self.executable(), 'log', branch or tag] + log_format, cwd=self.root_path, capture_output=True, encoding='utf-8')
             if log.returncode:
                 raise self.Exception("Failed to retrieve commit information for '{}'".format(branch or tag))
 
         else:
             hash = Commit._parse_hash(hash, do_assert=True)
-            log = run([self.executable(), 'log', hash or 'HEAD', '-1'], cwd=self.root_path, capture_output=True, encoding='utf-8')
+            log = run([self.executable(), 'log', hash or 'HEAD'] + log_format, cwd=self.root_path, capture_output=True, encoding='utf-8')
             if log.returncode:
                 raise self.Exception("Failed to retrieve commit information for '{}'".format(hash or 'HEAD'))
 
@@ -265,10 +266,10 @@ class Git(Scm):
             branch=branch,
             timestamp=int(commit_time.stdout.lstrip()),
             author=Contributor.from_scm_log(log.stdout.splitlines()[1]),
-            message='\n'.join(line[4:] for line in log.stdout.splitlines()[4:]),
+            message='\n'.join(line[4:] for line in log.stdout.splitlines()[4:]) if include_log else None,
         )
 
-    def find(self, argument):
+    def find(self, argument, include_log=True):
         if not isinstance(argument, six.string_types):
             raise ValueError("Expected 'argument' to be a string, not '{}'".format(type(argument)))
 
@@ -279,6 +280,7 @@ class Git(Scm):
                 revision=parsed_commit.revision,
                 identifier=parsed_commit.identifier,
                 branch=parsed_commit.branch,
+                include_log=include_log,
             )
 
         output = run(
@@ -287,7 +289,7 @@ class Git(Scm):
         )
         if output.returncode:
             raise ValueError("'{}' is not an argument recognized by git".format(argument))
-        return self.commit(hash=output.stdout.rstrip())
+        return self.commit(hash=output.stdout.rstrip(), include_log=include_log)
 
     def checkout(self, argument):
         if not isinstance(argument, six.string_types):
