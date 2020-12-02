@@ -1,5 +1,30 @@
 2020-12-01  Lauro Moura  <lmoura@igalia.com>
 
+        [GLIB] Add some WPE-specific baselines
+
+        Unreviewed test gardening.
+
+        These tests started failing by small amounts after some layout commits
+
+        * platform/glib/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/css/named-images-expected.txt: Copied from LayoutTests/platform/glib/fast/css/named-images-expected.txt.
+        * platform/gtk/fast/dom/HTMLMeterElement/meter-element-repaint-on-update-value-expected.txt: Copied from LayoutTests/platform/glib/fast/dom/HTMLMeterElement/meter-element-repaint-on-update-value-expected.txt.
+        * platform/gtk/fast/dom/HTMLProgressElement/indeterminate-progress-001-expected.txt: Copied from LayoutTests/platform/glib/fast/dom/HTMLProgressElement/indeterminate-progress-001-expected.txt.
+        * platform/gtk/svg/transforms/svg-css-transforms-clip-path-expected.txt: Copied from LayoutTests/platform/glib/svg/transforms/svg-css-transforms-clip-path-expected.txt.
+        * platform/gtk/svg/transforms/svg-css-transforms-expected.txt: Copied from LayoutTests/platform/glib/svg/transforms/svg-css-transforms-expected.txt.
+        * platform/gtk/transforms/3d/general/perspective-units-expected.txt: Copied from LayoutTests/platform/glib/transforms/3d/general/perspective-units-expected.txt.
+        * platform/wpe/TestExpectations:
+        * platform/wpe/fast/css/named-images-expected.txt: Renamed from LayoutTests/platform/glib/fast/css/named-images-expected.txt.
+        * platform/wpe/fast/dom/HTMLMeterElement/meter-element-repaint-on-update-value-expected.txt: Renamed from LayoutTests/platform/glib/fast/dom/HTMLMeterElement/meter-element-repaint-on-update-value-expected.txt.
+        * platform/wpe/fast/dom/HTMLProgressElement/indeterminate-progress-001-expected.txt: Renamed from LayoutTests/platform/glib/fast/dom/HTMLProgressElement/indeterminate-progress-001-expected.txt.
+        * platform/wpe/svg/transforms/svg-css-transforms-clip-path-expected.txt: Renamed from LayoutTests/platform/glib/svg/transforms/svg-css-transforms-clip-path-expected.txt.
+        * platform/wpe/svg/transforms/svg-css-transforms-expected.txt: Copied from LayoutTests/platform/glib/svg/transforms/svg-css-transforms-expected.txt.
+        * platform/wpe/transforms/3d/general/perspective-units-expected.txt: Renamed from LayoutTests/platform/glib/transforms/3d/general/perspective-units-expected.txt.
+        * platform/wpe/transforms/svg-vs-css-expected.txt: Renamed from LayoutTests/platform/glib/svg/transforms/svg-css-transforms-expected.txt.
+
+2020-12-01  Lauro Moura  <lmoura@igalia.com>
+
         [GLIB] Gardening wheel timeouts
 
         Unreviewed test gardening.

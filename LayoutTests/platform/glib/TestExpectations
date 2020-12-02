@@ -855,6 +855,8 @@ webkit.org/b/217816 webgl/conformance2/uniforms/gl-uniform-arrays-sub-source.htm
 
 webkit.org/b/218318 fast/canvas/webgl/webgl-clear-composited-notshowing.html [ Failure ]
 
+webkit.org/b/219251 fast/canvas/webgl/getIndexedParameter-crash.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WebGL-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
