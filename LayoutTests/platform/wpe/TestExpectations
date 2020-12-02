@@ -222,6 +222,9 @@ webkit.org/b/215508 [ Release ] scrollingcoordinator/overflow-proxy-reattach.htm
 # Subpixel
 webkit.org/b/216037 imported/w3c/web-platform-tests/css/css-backgrounds/background-position/subpixel-position-center.tentative.html [ Pass ImageOnlyFailure ]
 
+# WebGL
+webkit.org/b/213203 webgl/1.0.3/conformance/rendering/multisample-corruption.html [ Failure Timeout ]
+
 # Workers
 webkit.org/b/187597 fast/workers/worker-exception-during-navigation.html [ Timeout Pass ]
 
@@ -620,8 +623,6 @@ webkit.org/b/212349 fast/canvas/webgl/readPixels-float.html [ Failure ]
 webkit.org/b/212351 fast/events/mouse-cursor-udpate-during-raf.html [ Failure ]
 
 webkit.org/b/213202 fast/mediastream/getUserMedia-grant-persistency3.html [ Failure ]
-
-webkit.org/b/213203 webgl/1.0.3/conformance/rendering/multisample-corruption.html [ Failure ]
 
 webkit.org/b/213235 imported/w3c/web-platform-tests/content-security-policy/script-src/scriptnonce-changed-1.html [ Failure Pass ]
 webkit.org/b/213235 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/async_005.htm [ Failure Pass ]

@@ -1,3 +1,11 @@
+2020-12-02  Lauro Moura  <lmoura@igalia.com>
+
+        [WPE] webgl/1.0.3/conformance/rendering/multisample-corruption.html is also timing out
+
+        Unreviewed test gardening.
+
+        * platform/wpe/TestExpectations:
+
 2020-12-02  Julian Gonzalez  <julian_a_gonzalez@apple.com>
 
         Fix crash with performance.measure() with negative duration
