@@ -20,6 +20,7 @@ PASS performance.mark() threw exception TypeError: Not enough arguments.
 PASS performance.mark("mark_name") did not throw exception.
 PASS performance.measure() threw exception TypeError: Not enough arguments.
 PASS performance.measure("measure_name") did not throw exception.
+PASS performance.measure("measure_name", { start: 0, duration: -1 }) threw exception TypeError: Type error.
 PASS performance.clearMarks() did not throw exception.
 PASS performance.clearMarks("mark_name") did not throw exception.
 PASS performance.clearMeasures() did not throw exception.
@@ -43,6 +44,7 @@ PASS [Worker] performance.mark() threw exception TypeError: Not enough arguments
 PASS [Worker] performance.mark("mark_name") did not throw exception.
 PASS [Worker] performance.measure() threw exception TypeError: Not enough arguments.
 PASS [Worker] performance.measure("measure_name") did not throw exception.
+PASS [Worker] performance.measure("measure_name", { start: 0, duration: -1 }) threw exception TypeError: Type error.
 PASS [Worker] performance.clearMarks() did not throw exception.
 PASS [Worker] performance.clearMarks("mark_name") did not throw exception.
 PASS [Worker] performance.clearMeasures() did not throw exception.

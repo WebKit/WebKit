@@ -23,6 +23,7 @@ shouldThrow(`performance.mark()`);
 shouldNotThrow(`performance.mark("mark_name")`);
 shouldThrow(`performance.measure()`);
 shouldNotThrow(`performance.measure("measure_name")`);
+shouldThrow(`performance.measure("measure_name", { start: 0, duration: -1 })`);
 shouldNotThrow(`performance.clearMarks()`);
 shouldNotThrow(`performance.clearMarks("mark_name")`);
 shouldNotThrow(`performance.clearMeasures()`);

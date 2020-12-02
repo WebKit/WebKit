@@ -211,7 +211,7 @@ ExceptionOr<Ref<PerformanceMeasure>> PerformanceUserTiming::measure(JSC::JSGloba
             return start.releaseException();
         auto duration = convertMarkToTimestamp(*measureOptions.duration);
         if (duration.hasException())
-            return start.releaseException();
+            return duration.releaseException();
         endTime = start.returnValue() + duration.returnValue();
     } else
         endTime = m_performance.now();
