@@ -1,3 +1,43 @@
+2020-12-02  Aakash Jain  <aakash_jain@apple.com>
+
+        [build.webkit.org] Add unit-tests based on new buildbot
+        https://bugs.webkit.org/show_bug.cgi?id=219363
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/build-webkit-org/loadConfig_unittest.py: Drive-by fix to import loadConfig when running through runUnittests.py
+        * CISupport/build-webkit-org/htdigestparser.py: Adding python 3 compatibality.
+        * CISupport/build-webkit-org/htdigestparser_unittest.py: Adding python 3 compatibality.
+        * CISupport/build-webkit-org/steps_unittest.py: Added unit-tests for various steps.
+        (ExpectMasterShellCommand):
+        (BuildStepMixinAdditions):
+        (TestStepNameShouldBeValidIdentifier):
+        (TestStepNameShouldBeValidIdentifier.test_step_names_are_valid):
+        (TestRunBindingsTests):
+        (TestRunBindingsTests.test_success):
+        (TestRunBindingsTests.test_failure):
+        (TestKillOldProcesses):
+        (TestKillOldProcesses.test_success):
+        (TestKillOldProcesses.test_failure):
+        (TestCleanBuildIfScheduled):
+        (TestCleanBuildIfScheduled.test_success):
+        (TestCleanBuildIfScheduled.test_failure):
+        (TestCleanBuildIfScheduled.test_skip):
+        (TestInstallGtkDependencies):
+        (TestInstallGtkDependencies.test_success):
+        (TestInstallGtkDependencies.test_failure):
+        (TestInstallWpeDependencies):
+        (TestInstallWpeDependencies.test_success):
+        (TestInstallWpeDependencies.test_failure):
+        (TestCompileWebKit):
+        (TestCompileWebKit.test_success):
+        (TestCompileWebKit.test_success_gtk):
+        (TestCompileWebKit.test_success_wpe):
+        (TestCompileWebKit.test_failure):
+        (TestCompileJSCOnly):
+        (TestCompileJSCOnly.test_success):
+        (TestCompileJSCOnly.test_failure):
+
 2020-12-02  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitscmpy] Handle adding, modifying and deleting files on branches

@@ -36,9 +36,9 @@ class HTDigestParserTest(unittest.TestCase):
     def assertEntriesEqual(self, entries, additional_content=None):
         digest_file = self.fake_htdigest_file()
         if additional_content is not None:
-            digest_file.seek(pos=0, mode=os.SEEK_END)
+            digest_file.seek(0)
             digest_file.write(additional_content)
-            digest_file.seek(pos=0, mode=os.SEEK_SET)
+            digest_file.seek(0)
         self.assertEqual(entries, HTDigestParser(digest_file).entries())
 
     def test_authenticate(self):

@@ -31,7 +31,7 @@ class HTDigestParser(object):
         self._entries = self.parse_file(digest_file)
 
     def authenticate(self, username, realm, password):
-        hashed_password = hashlib.md5(':'.join((username, realm, password))).hexdigest()
+        hashed_password = hashlib.md5(':'.join((username, realm, password)).encode('utf-8')).hexdigest()
         return [username, realm, hashed_password] in self.entries()
 
     def entries(self):
