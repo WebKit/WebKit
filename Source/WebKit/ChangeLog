@@ -1,3 +1,36 @@
+2020-12-01  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r270330. rdar://problem/71876973
+
+    [macCatalyst] Embedded YouTube videos fail to play
+    https://bugs.webkit.org/show_bug.cgi?id=219412
+    <rdar://problem/71869657>
+    
+    Reviewed by Tim Horton.
+    
+    Add a missing comma in list of Media services, for which sandbox extensions are created. The missing comma
+    is causing a sandbox violation, since strings are concatenated when there's no comma.
+    
+    * UIProcess/WebPageProxy.cpp:
+    (WebKit::mediaRelatedMachServices):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@270330 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-12-01  Per Arne Vollan  <pvollan@apple.com>
+
+            [macCatalyst] Embedded YouTube videos fail to play
+            https://bugs.webkit.org/show_bug.cgi?id=219412
+            <rdar://problem/71869657>
+
+            Reviewed by Tim Horton.
+
+            Add a missing comma in list of Media services, for which sandbox extensions are created. The missing comma
+            is causing a sandbox violation, since strings are concatenated when there's no comma.
+
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::mediaRelatedMachServices):
+
 2020-11-28  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Set application information in the Networking process on behalf of the WebContent process
