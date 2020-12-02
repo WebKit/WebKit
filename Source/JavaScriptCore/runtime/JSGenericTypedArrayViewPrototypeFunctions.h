@@ -452,14 +452,14 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncSlice(VM& vm, JSGloba
         return ViewClass::createUninitialized(globalObject, structure, length);
     });
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-
     ASSERT(!result->isDetached());
-    if (thisObject->isDetached())
-        return throwVMTypeError(globalObject, scope, typedArrayBufferHasBeenDetachedErrorMessage);
 
     // We return early here since we don't allocate a backing store if length is 0 and memmove does not like nullptrs
     if (!length)
         return JSValue::encode(result);
+
+    if (thisObject->isDetached())
+        return throwVMTypeError(globalObject, scope, typedArrayBufferHasBeenDetachedErrorMessage);
 
     // The species constructor may return an array with any arbitrary length.
     if (result->length() < length)
