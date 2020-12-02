@@ -1,3 +1,13 @@
+2020-12-02  Tim Horton  <timothy_horton@apple.com>
+
+        Enable UI-side compositing on the GPU Process layout tests bot
+        https://bugs.webkit.org/show_bug.cgi?id=219450
+
+        Reviewed by Simon Fraser.
+
+        * CISupport/build-webkit-org/config.json:
+        GPU Process without UI-side compositing is not a valid configuration.
+
 2020-12-02  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitscmpy] Json encode Contributor
