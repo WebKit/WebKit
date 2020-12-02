@@ -1,3 +1,16 @@
+2020-12-02  Truitt Savell  <tsavell@apple.com>
+
+        Unreviewed, reverting r270339.
+
+        introduced a constantly failing test.
+
+        Reverted changeset:
+
+        "Toggling pointer-events on body does not re-enable scrolling
+        on child"
+        https://bugs.webkit.org/show_bug.cgi?id=218533
+        https://trac.webkit.org/changeset/270339
+
 2020-12-02  Lauro Moura  <lmoura@igalia.com>
 
         [WPE] webgl/1.0.3/conformance/rendering/multisample-corruption.html is also timing out
