@@ -3576,8 +3576,12 @@ bool Document::isNavigationBlockedByThirdPartyIFrameRedirectBlocking(Frame& targ
 
     // Only prevent navigations by unsandboxed iframes. Such navigations by unsandboxed iframes would have already been blocked unless
     // "allow-top-navigation" / "allow-top-navigation-by-user-activation" was explicitly specified.
-    if (sandboxFlags() != SandboxNone)
-        return false;
+    if (sandboxFlags() != SandboxNone) {
+        // Navigation is only allowed if the parent of the sandboxed iframe is first-party.
+        auto* parentDocument = m_frame->tree().parent() ? m_frame->tree().parent()->document() : nullptr;
+        if (parentDocument && canAccessAncestor(parentDocument->securityOrigin(), &targetFrame))
+            return false;
+    }
 
     // Only prevent navigations by third-party iframes or untrusted first-party iframes.
     bool isUntrustedIframe = m_hasLoadedThirdPartyScript && m_hasLoadedThirdPartyFrame;

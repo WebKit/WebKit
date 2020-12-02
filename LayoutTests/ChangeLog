@@ -1,3 +1,17 @@
+2020-12-02  Chris Dumez  <cdumez@apple.com>
+
+        Block suspicious top level navigations by iframes even if sandbox=allow-top-navigation is specified
+        https://bugs.webkit.org/show_bug.cgi?id=219408
+        <rdar://problem/71049726>
+
+        Reviewed by Geoffrey Garen.
+
+        Add layout test coverage.
+
+        * http/tests/security/block-top-level-navigations-by-third-party-sandboxed-iframe-expected.txt: Added.
+        * http/tests/security/block-top-level-navigations-by-third-party-sandboxed-iframe.html: Added.
+        * http/tests/security/resources/navigate-top-level-frame-to-failure-page-via-sandboxed-iframe.html: Added.
+
 2020-12-02  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, reverting r270339.
