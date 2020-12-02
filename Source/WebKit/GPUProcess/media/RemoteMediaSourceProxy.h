@@ -34,6 +34,7 @@
 #include <WebCore/MediaSourcePrivateClient.h>
 #include <wtf/MediaTime.h>
 #include <wtf/Optional.h>
+#include <wtf/WeakPtr.h>
 
 namespace IPC {
 class Connection;
@@ -50,13 +51,14 @@ class PlatformTimeRanges;
 namespace WebKit {
 
 class GPUConnectionToWebProcess;
+class RemoteMediaPlayerProxy;
 
 class RemoteMediaSourceProxy final
     : public WebCore::MediaSourcePrivateClient
     , private IPC::MessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    RemoteMediaSourceProxy(RemoteMediaSourceIdentifier, GPUConnectionToWebProcess&);
+    RemoteMediaSourceProxy(GPUConnectionToWebProcess&, RemoteMediaSourceIdentifier, RemoteMediaPlayerProxy&);
     virtual ~RemoteMediaSourceProxy();
 
     // MediaSourcePrivateClient overrides
@@ -80,9 +82,11 @@ private:
     using AddSourceBufferCallback = CompletionHandler<void(WebCore::MediaSourcePrivate::AddStatus, Optional<RemoteSourceBufferIdentifier> remoteSourceBufferIdentifier)>;
     void addSourceBuffer(const WebCore::ContentType&, AddSourceBufferCallback&&);
 
-    RemoteMediaSourceIdentifier m_identifier;
     GPUConnectionToWebProcess& m_connectionToWebProcess;
+    RemoteMediaSourceIdentifier m_identifier;
     RefPtr<WebCore::MediaSourcePrivate> m_private;
+    WeakPtr<RemoteMediaPlayerProxy> m_remoteMediaPlayerProxy;
+
     Vector<RefPtr<RemoteSourceBufferProxy>> m_sourceBuffers;
 };
 

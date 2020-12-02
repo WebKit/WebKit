@@ -32,17 +32,22 @@
 #include "TrackPrivateRemoteIdentifier.h"
 #include <WebCore/VideoTrackPrivate.h>
 
+namespace IPC {
+class Connection;
+}
+
 namespace WebKit {
 
 class MediaPlayerPrivateRemote;
 struct TrackPrivateRemoteConfiguration;
 
-class VideoTrackPrivateRemote : public WebCore::VideoTrackPrivate {
+class VideoTrackPrivateRemote
+    : public WebCore::VideoTrackPrivate {
     WTF_MAKE_NONCOPYABLE(VideoTrackPrivateRemote)
 public:
-    static Ref<VideoTrackPrivateRemote> create(MediaPlayerPrivateRemote& player, TrackPrivateRemoteIdentifier idendifier, TrackPrivateRemoteConfiguration&& configuration)
+    static Ref<VideoTrackPrivateRemote> create(IPC::Connection& connection, TrackPrivateRemoteIdentifier idendifier, TrackPrivateRemoteConfiguration&& configuration)
     {
-        return adoptRef(*new VideoTrackPrivateRemote(player, idendifier, WTFMove(configuration)));
+        return adoptRef(*new VideoTrackPrivateRemote(connection, idendifier, WTFMove(configuration)));
     }
 
     void updateConfiguration(TrackPrivateRemoteConfiguration&&);
@@ -54,12 +59,12 @@ public:
     AtomString language() const final { return m_language; }
     int trackIndex() const final { return m_trackIndex; }
 
-protected:
-    VideoTrackPrivateRemote(MediaPlayerPrivateRemote&, TrackPrivateRemoteIdentifier, TrackPrivateRemoteConfiguration&&);
+private:
+    VideoTrackPrivateRemote(IPC::Connection&, TrackPrivateRemoteIdentifier, TrackPrivateRemoteConfiguration&&);
 
     void setSelected(bool) final;
 
-    MediaPlayerPrivateRemote& m_player;
+    IPC::Connection& m_connection;
     VideoTrackKind m_kind { None };
     AtomString m_id;
     AtomString m_label;

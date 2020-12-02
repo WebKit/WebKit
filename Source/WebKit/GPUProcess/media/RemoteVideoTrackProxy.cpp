@@ -29,22 +29,31 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "Connection.h"
+#include "GPUConnectionToWebProcess.h"
 #include "MediaPlayerPrivateRemoteMessages.h"
 #include "RemoteMediaPlayerProxy.h"
+#include "RemoteVideoTrackProxyMessages.h"
 #include "TrackPrivateRemoteConfiguration.h"
 
 namespace WebKit {
 
 using namespace WebCore;
 
-RemoteVideoTrackProxy::RemoteVideoTrackProxy(RemoteMediaPlayerProxy& player, TrackPrivateRemoteIdentifier identifier, Ref<IPC::Connection>&& connection, VideoTrackPrivate& trackPrivate)
-    : m_player(player)
+RemoteVideoTrackProxy::RemoteVideoTrackProxy(GPUConnectionToWebProcess& connectionToWebProcess, TrackPrivateRemoteIdentifier identifier, VideoTrackPrivate& trackPrivate, MediaPlayerIdentifier mediaPlayerIdentifier)
+    : m_connectionToWebProcess(connectionToWebProcess)
     , m_identifier(identifier)
-    , m_webProcessConnection(WTFMove(connection))
     , m_trackPrivate(trackPrivate)
+    , m_mediaPlayerIdentifier(mediaPlayerIdentifier)
 {
     m_trackPrivate->setClient(this);
-    m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::AddRemoteVideoTrack(m_identifier, configuration()), m_player.idendifier());
+    m_connectionToWebProcess.messageReceiverMap().addMessageReceiver(Messages::RemoteVideoTrackProxy::messageReceiverName(), m_identifier.toUInt64(), *this);
+    m_connectionToWebProcess.connection().send(Messages::MediaPlayerPrivateRemote::AddRemoteVideoTrack(m_identifier, configuration()), m_mediaPlayerIdentifier);
+}
+
+RemoteVideoTrackProxy::~RemoteVideoTrackProxy()
+{
+    m_connectionToWebProcess.messageReceiverMap().removeMessageReceiver(Messages::RemoteVideoTrackProxy::messageReceiverName(), m_identifier.toUInt64());
 }
 
 TrackPrivateRemoteConfiguration& RemoteVideoTrackProxy::configuration()
@@ -64,12 +73,12 @@ TrackPrivateRemoteConfiguration& RemoteVideoTrackProxy::configuration()
 
 void RemoteVideoTrackProxy::configurationChanged()
 {
-    m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::RemoteVideoTrackConfigurationChanged(m_identifier, configuration()), m_player.idendifier());
+    m_connectionToWebProcess.connection().send(Messages::MediaPlayerPrivateRemote::RemoteVideoTrackConfigurationChanged(m_identifier, configuration()), m_mediaPlayerIdentifier);
 }
 
 void RemoteVideoTrackProxy::willRemove()
 {
-    m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::RemoveRemoteVideoTrack(m_identifier), m_player.idendifier());
+    ASSERT_NOT_REACHED();
 }
 
 void RemoteVideoTrackProxy::selectedChanged(bool)

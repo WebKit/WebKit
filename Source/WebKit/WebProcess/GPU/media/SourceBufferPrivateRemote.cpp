@@ -28,12 +28,15 @@
 
 #if ENABLE(GPU_PROCESS) && ENABLE(MEDIA_SOURCE)
 
+#include "InitializationSegmentInfo.h"
 #include "Logging.h"
 #include "MediaPlayerPrivateRemote.h"
 #include "MediaSourcePrivateRemote.h"
 #include "RemoteSourceBufferProxyMessages.h"
 #include "SourceBufferPrivateRemoteMessages.h"
 #include <WebCore/NotImplemented.h>
+#include <WebCore/SourceBufferPrivateClient.h>
+#include <wtf/Ref.h>
 
 namespace WebCore {
 #if !RELEASE_LOG_DISABLED
@@ -45,15 +48,16 @@ namespace WebKit {
 
 using namespace WebCore;
 
-Ref<SourceBufferPrivateRemote> SourceBufferPrivateRemote::create(GPUProcessConnection& gpuProcessConnection, RemoteSourceBufferIdentifier remoteSourceBufferIdentifier, const MediaSourcePrivateRemote& mediaSourcePrivate)
+Ref<SourceBufferPrivateRemote> SourceBufferPrivateRemote::create(GPUProcessConnection& gpuProcessConnection, RemoteSourceBufferIdentifier remoteSourceBufferIdentifier, const MediaSourcePrivateRemote& mediaSourcePrivate, const MediaPlayerPrivateRemote& mediaPlayerPrivate)
 {
-    return adoptRef(*new SourceBufferPrivateRemote(gpuProcessConnection, remoteSourceBufferIdentifier, mediaSourcePrivate));
+    return adoptRef(*new SourceBufferPrivateRemote(gpuProcessConnection, remoteSourceBufferIdentifier, mediaSourcePrivate, mediaPlayerPrivate));
 }
 
-SourceBufferPrivateRemote::SourceBufferPrivateRemote(GPUProcessConnection& gpuProcessConnection, RemoteSourceBufferIdentifier remoteSourceBufferIdentifier, const MediaSourcePrivateRemote& mediaSourcePrivate)
+SourceBufferPrivateRemote::SourceBufferPrivateRemote(GPUProcessConnection& gpuProcessConnection, RemoteSourceBufferIdentifier remoteSourceBufferIdentifier, const MediaSourcePrivateRemote& mediaSourcePrivate, const MediaPlayerPrivateRemote& mediaPlayerPrivate)
     : m_gpuProcessConnection(gpuProcessConnection)
     , m_remoteSourceBufferIdentifier(remoteSourceBufferIdentifier)
     , m_mediaSourcePrivate(makeWeakPtr(mediaSourcePrivate))
+    , m_mediaPlayerPrivate(makeWeakPtr(mediaPlayerPrivate))
 #if !RELEASE_LOG_DISABLED
     , m_logger(m_mediaSourcePrivate->logger())
     , m_logIdentifier(m_mediaSourcePrivate->nextSourceBufferLogIdentifier())
@@ -98,7 +102,7 @@ void SourceBufferPrivateRemote::removedFromMediaSource()
 
 MediaPlayer::ReadyState SourceBufferPrivateRemote::readyState() const
 {
-    return m_mediaSourcePrivate ? m_mediaSourcePrivate->player()->readyState() : MediaPlayer::ReadyState::HaveNothing;
+    return m_mediaPlayerPrivate ? m_mediaPlayerPrivate->readyState() : MediaPlayer::ReadyState::HaveNothing;
 }
 
 void SourceBufferPrivateRemote::setReadyState(MediaPlayer::ReadyState)
@@ -150,6 +154,38 @@ bool SourceBufferPrivateRemote::canSwitchToType(const ContentType&)
 {
     notImplemented();
     return false;
+}
+
+void SourceBufferPrivateRemote::sourceBufferPrivateDidReceiveInitializationSegment(InitializationSegmentInfo&& segmentInfo)
+{
+    if (!m_client || !m_mediaPlayerPrivate)
+        return;
+
+    SourceBufferPrivateClient::InitializationSegment segment;
+    segment.duration = segmentInfo.duration;
+
+    for (auto& audioTrack : segmentInfo.audioTracks) {
+        SourceBufferPrivateClient::InitializationSegment::AudioTrackInformation info;
+        info.track = m_mediaPlayerPrivate->audioTrackPrivateRemote(audioTrack.identifier);
+        info.description = RemoteMediaDescription::create(audioTrack.description);
+        segment.audioTracks.append(info);
+    }
+
+    for (auto& videoTrack : segmentInfo.videoTracks) {
+        SourceBufferPrivateClient::InitializationSegment::VideoTrackInformation info;
+        info.track = m_mediaPlayerPrivate->videoTrackPrivateRemote(videoTrack.identifier);
+        info.description = RemoteMediaDescription::create(videoTrack.description);
+        segment.videoTracks.append(info);
+    }
+
+    for (auto& textTrack : segmentInfo.textTracks) {
+        SourceBufferPrivateClient::InitializationSegment::TextTrackInformation info;
+        info.track = m_mediaPlayerPrivate->textTrackPrivateRemote(textTrack.identifier);
+        info.description = RemoteMediaDescription::create(textTrack.description);
+        segment.textTracks.append(info);
+    }
+
+    m_client->sourceBufferPrivateDidReceiveInitializationSegment(WTFMove(segment));
 }
 
 void SourceBufferPrivateRemote::sourceBufferPrivateAppendComplete(SourceBufferPrivateClient::AppendResult appendResult)

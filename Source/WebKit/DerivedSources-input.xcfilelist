@@ -25,6 +25,7 @@ $(PROJECT_DIR)/GPUProcess/mac/com.apple.WebKit.GPUProcess.sb.in
 $(PROJECT_DIR)/GPUProcess/media/RemoteAudioDestinationManager.messages.in
 $(PROJECT_DIR)/GPUProcess/media/RemoteAudioSessionProxy.messages.in
 $(PROJECT_DIR)/GPUProcess/media/RemoteAudioSessionProxyManager.messages.in
+$(PROJECT_DIR)/GPUProcess/media/RemoteAudioTrackProxy.messages.in
 $(PROJECT_DIR)/GPUProcess/media/RemoteCDMFactoryProxy.messages.in
 $(PROJECT_DIR)/GPUProcess/media/RemoteCDMInstanceProxy.messages.in
 $(PROJECT_DIR)/GPUProcess/media/RemoteCDMInstanceSessionProxy.messages.in
@@ -37,6 +38,8 @@ $(PROJECT_DIR)/GPUProcess/media/RemoteMediaPlayerProxy.messages.in
 $(PROJECT_DIR)/GPUProcess/media/RemoteMediaResourceManager.messages.in
 $(PROJECT_DIR)/GPUProcess/media/RemoteMediaSourceProxy.messages.in
 $(PROJECT_DIR)/GPUProcess/media/RemoteSourceBufferProxy.messages.in
+$(PROJECT_DIR)/GPUProcess/media/RemoteTextTrackProxy.messages.in
+$(PROJECT_DIR)/GPUProcess/media/RemoteVideoTrackProxy.messages.in
 $(PROJECT_DIR)/GPUProcess/media/ios/RemoteMediaSessionHelperProxy.messages.in
 $(PROJECT_DIR)/GPUProcess/webrtc/LibWebRTCCodecsProxy.messages.in
 $(PROJECT_DIR)/GPUProcess/webrtc/RemoteAudioMediaStreamTrackRenderer.messages.in

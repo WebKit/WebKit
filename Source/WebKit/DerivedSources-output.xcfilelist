@@ -157,6 +157,9 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteAudioSessionProxyMessagesRepl
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteAudioSourceProviderManagerMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteAudioSourceProviderManagerMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteAudioSourceProviderManagerMessagesReplies.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteAudioTrackProxyMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteAudioTrackProxyMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteAudioTrackProxyMessagesReplies.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteCDMFactoryProxyMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteCDMFactoryProxyMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteCDMFactoryProxyMessagesReplies.h
@@ -239,6 +242,12 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteScrollingCoordinatorMessagesR
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteSourceBufferProxyMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteSourceBufferProxyMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteSourceBufferProxyMessagesReplies.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteTextTrackProxyMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteTextTrackProxyMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteTextTrackProxyMessagesReplies.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteVideoTrackProxyMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteVideoTrackProxyMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteVideoTrackProxyMessagesReplies.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteWebInspectorProxyMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteWebInspectorProxyMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteWebInspectorProxyMessagesReplies.h

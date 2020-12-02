@@ -39,9 +39,10 @@ namespace WebKit {
 
 using namespace WebCore;
 
-RemoteMediaSourceProxy::RemoteMediaSourceProxy(RemoteMediaSourceIdentifier identifier, GPUConnectionToWebProcess& connectionToWebProcess)
-    : m_identifier(identifier)
-    , m_connectionToWebProcess(connectionToWebProcess)
+RemoteMediaSourceProxy::RemoteMediaSourceProxy(GPUConnectionToWebProcess& connectionToWebProcess, RemoteMediaSourceIdentifier identifier, RemoteMediaPlayerProxy& remoteMediaPlayerProxy)
+    : m_connectionToWebProcess(connectionToWebProcess)
+    , m_identifier(identifier)
+    , m_remoteMediaPlayerProxy(makeWeakPtr(remoteMediaPlayerProxy))
 {
     m_connectionToWebProcess.messageReceiverMap().addMessageReceiver(Messages::RemoteMediaSourceProxy::messageReceiverName(), m_identifier.toUInt64(), *this);
 }
@@ -93,13 +94,16 @@ void RemoteMediaSourceProxy::failedToCreateRenderer(RendererType)
 
 void RemoteMediaSourceProxy::addSourceBuffer(const WebCore::ContentType& contentType, AddSourceBufferCallback&& callback)
 {
+    if (!m_remoteMediaPlayerProxy)
+        return;
+
     RefPtr<SourceBufferPrivate> sourceBufferPrivate;
     MediaSourcePrivate::AddStatus status = m_private->addSourceBuffer(contentType, sourceBufferPrivate);
 
     Optional<RemoteSourceBufferIdentifier> remoteSourceIdentifier;
     if (status == MediaSourcePrivate::AddStatus::Ok) {
         auto identifier = RemoteSourceBufferIdentifier::generate();
-        auto remoteSourceBufferProxy = RemoteSourceBufferProxy::create(identifier, m_connectionToWebProcess, sourceBufferPrivate.releaseNonNull());
+        auto remoteSourceBufferProxy = RemoteSourceBufferProxy::create(m_connectionToWebProcess, identifier, sourceBufferPrivate.releaseNonNull(), *m_remoteMediaPlayerProxy);
         m_sourceBuffers.append(WTFMove(remoteSourceBufferProxy));
         remoteSourceIdentifier = identifier;
     }

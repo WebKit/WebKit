@@ -34,6 +34,7 @@
 #include <WebCore/InbandTextTrackPrivate.h>
 
 namespace IPC {
+class Connection;
 class DataReference;
 }
 
@@ -50,9 +51,9 @@ class TextTrackPrivateRemote final : public WebCore::InbandTextTrackPrivate {
     WTF_MAKE_NONCOPYABLE(TextTrackPrivateRemote)
 public:
 
-    static Ref<TextTrackPrivateRemote> create(MediaPlayerPrivateRemote& player, TrackPrivateRemoteIdentifier idendifier, TextTrackPrivateRemoteConfiguration&& configuration)
+    static Ref<TextTrackPrivateRemote> create(IPC::Connection& connection, TrackPrivateRemoteIdentifier idendifier, TextTrackPrivateRemoteConfiguration&& configuration)
     {
-        return adoptRef(*new TextTrackPrivateRemote(player, idendifier, WTFMove(configuration)));
+        return adoptRef(*new TextTrackPrivateRemote(connection, idendifier, WTFMove(configuration)));
     }
 
     void addDataCue(MediaTime&& start, MediaTime&& end, IPC::DataReference&&);
@@ -99,9 +100,9 @@ public:
     bool isDefault() const final { return m_isDefault; }
 
 private:
-    TextTrackPrivateRemote(MediaPlayerPrivateRemote&, TrackPrivateRemoteIdentifier, TextTrackPrivateRemoteConfiguration&&);
+    TextTrackPrivateRemote(IPC::Connection&, TrackPrivateRemoteIdentifier, TextTrackPrivateRemoteConfiguration&&);
 
-    MediaPlayerPrivateRemote& m_player;
+    IPC::Connection& m_connection;
     AtomString m_id;
     AtomString m_label;
     AtomString m_language;

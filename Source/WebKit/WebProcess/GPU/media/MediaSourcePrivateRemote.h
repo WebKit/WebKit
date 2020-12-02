@@ -54,8 +54,6 @@ public:
     static Ref<MediaSourcePrivateRemote> create(GPUProcessConnection&, RemoteMediaSourceIdentifier, RemoteMediaPlayerMIMETypeCache&, const MediaPlayerPrivateRemote&, WebCore::MediaSourcePrivateClient*);
     virtual ~MediaSourcePrivateRemote();
 
-    MediaPlayerPrivateRemote* player() const { return m_playerPrivate.get(); }
-
     // MediaSourcePrivate overrides
     AddStatus addSourceBuffer(const WebCore::ContentType&, RefPtr<WebCore::SourceBufferPrivate>&) final;
     void durationChanged() final;
@@ -77,7 +75,7 @@ private:
     GPUProcessConnection& m_gpuProcessConnection;
     RemoteMediaSourceIdentifier m_identifier;
     RemoteMediaPlayerMIMETypeCache& m_mimeTypeCache;
-    WeakPtr<MediaPlayerPrivateRemote> m_playerPrivate;
+    WeakPtr<MediaPlayerPrivateRemote> m_mediaPlayerPrivate;
     RefPtr<WebCore::MediaSourcePrivateClient> m_client;
     Vector<RefPtr<SourceBufferPrivateRemote>> m_sourceBuffers;
 

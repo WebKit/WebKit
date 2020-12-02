@@ -47,13 +47,15 @@ class MediaSample;
 
 namespace WebKit {
 
+class RemoteMediaPlayerProxy;
+
 class RemoteSourceBufferProxy final
     : public RefCounted<RemoteSourceBufferProxy>
     , public WebCore::SourceBufferPrivateClient
     , private IPC::MessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RemoteSourceBufferProxy> create(RemoteSourceBufferIdentifier, GPUConnectionToWebProcess&, Ref<WebCore::SourceBufferPrivate>&&);
+    static Ref<RemoteSourceBufferProxy> create(GPUConnectionToWebProcess&, RemoteSourceBufferIdentifier, Ref<WebCore::SourceBufferPrivate>&&, RemoteMediaPlayerProxy&);
     virtual ~RemoteSourceBufferProxy();
 
     void sourceBufferPrivateDidReceiveInitializationSegment(const InitializationSegment&) final;
@@ -70,7 +72,7 @@ public:
     void sourceBufferPrivateDidReceiveRenderingError(int errorCode) final;
 
 private:
-    RemoteSourceBufferProxy(RemoteSourceBufferIdentifier, GPUConnectionToWebProcess&, Ref<WebCore::SourceBufferPrivate>&&);
+    RemoteSourceBufferProxy(GPUConnectionToWebProcess&, RemoteSourceBufferIdentifier, Ref<WebCore::SourceBufferPrivate>&&, RemoteMediaPlayerProxy&);
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
@@ -78,9 +80,10 @@ private:
 
     void append(const IPC::DataReference&);
 
-    RemoteSourceBufferIdentifier m_identifier;
     GPUConnectionToWebProcess& m_connectionToWebProcess;
+    RemoteSourceBufferIdentifier m_identifier;
     Ref<WebCore::SourceBufferPrivate> m_sourceBufferPrivate;
+    WeakPtr<RemoteMediaPlayerProxy> m_remoteMediaPlayerProxy;
 };
 
 } // namespace WebKit

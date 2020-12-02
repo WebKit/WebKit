@@ -44,11 +44,12 @@
 namespace IPC {
 class Connection;
 class Decoder;
-class DataReference;
 }
 
 namespace WebKit {
 
+struct InitializationSegmentInfo;
+class MediaPlayerPrivateRemote;
 class MediaSourcePrivateRemote;
 
 class SourceBufferPrivateRemote final
@@ -60,13 +61,13 @@ class SourceBufferPrivateRemote final
 #endif
 {
 public:
-    static Ref<SourceBufferPrivateRemote> create(GPUProcessConnection&, RemoteSourceBufferIdentifier, const MediaSourcePrivateRemote&);
+    static Ref<SourceBufferPrivateRemote> create(GPUProcessConnection&, RemoteSourceBufferIdentifier, const MediaSourcePrivateRemote&, const MediaPlayerPrivateRemote&);
     virtual ~SourceBufferPrivateRemote();
 
     void clearMediaSource() { m_mediaSourcePrivate = nullptr; }
 
 private:
-    SourceBufferPrivateRemote(GPUProcessConnection&, RemoteSourceBufferIdentifier, const MediaSourcePrivateRemote&);
+    SourceBufferPrivateRemote(GPUProcessConnection&, RemoteSourceBufferIdentifier, const MediaSourcePrivateRemote&, const MediaPlayerPrivateRemote&);
 
     // SourceBufferPrivate overrides
     void setClient(WebCore::SourceBufferPrivateClient*) final;
@@ -87,11 +88,14 @@ private:
     bool canSwitchToType(const WebCore::ContentType&) final;
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
+
+    void sourceBufferPrivateDidReceiveInitializationSegment(InitializationSegmentInfo&&);
     void sourceBufferPrivateAppendComplete(WebCore::SourceBufferPrivateClient::AppendResult);
 
     GPUProcessConnection& m_gpuProcessConnection;
     RemoteSourceBufferIdentifier m_remoteSourceBufferIdentifier;
     WeakPtr<MediaSourcePrivateRemote> m_mediaSourcePrivate;
+    WeakPtr<MediaPlayerPrivateRemote> m_mediaPlayerPrivate;
     WebCore::SourceBufferPrivateClient* m_client { nullptr };
 
 #if !RELEASE_LOG_DISABLED

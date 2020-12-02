@@ -46,22 +46,22 @@ namespace WebKit {
 
 using namespace WebCore;
 
-Ref<MediaSourcePrivateRemote> MediaSourcePrivateRemote::create(GPUProcessConnection& gpuProcessConnection, RemoteMediaSourceIdentifier identifier, RemoteMediaPlayerMIMETypeCache& mimeTypeCache, const MediaPlayerPrivateRemote& playerPrivate, MediaSourcePrivateClient* client)
+Ref<MediaSourcePrivateRemote> MediaSourcePrivateRemote::create(GPUProcessConnection& gpuProcessConnection, RemoteMediaSourceIdentifier identifier, RemoteMediaPlayerMIMETypeCache& mimeTypeCache, const MediaPlayerPrivateRemote& mediaPlayerPrivate, MediaSourcePrivateClient* client)
 {
-    auto mediaSourcePrivate = adoptRef(*new MediaSourcePrivateRemote(gpuProcessConnection, identifier, mimeTypeCache, playerPrivate, client));
+    auto mediaSourcePrivate = adoptRef(*new MediaSourcePrivateRemote(gpuProcessConnection, identifier, mimeTypeCache, mediaPlayerPrivate, client));
     client->setPrivateAndOpen(mediaSourcePrivate.copyRef());
     return mediaSourcePrivate;
 }
 
-MediaSourcePrivateRemote::MediaSourcePrivateRemote(GPUProcessConnection& gpuProcessConnection, RemoteMediaSourceIdentifier identifier, RemoteMediaPlayerMIMETypeCache& mimeTypeCache, const MediaPlayerPrivateRemote& playerPrivate, MediaSourcePrivateClient* client)
+MediaSourcePrivateRemote::MediaSourcePrivateRemote(GPUProcessConnection& gpuProcessConnection, RemoteMediaSourceIdentifier identifier, RemoteMediaPlayerMIMETypeCache& mimeTypeCache, const MediaPlayerPrivateRemote& mediaPlayerPrivate, MediaSourcePrivateClient* client)
     : m_gpuProcessConnection(gpuProcessConnection)
     , m_identifier(identifier)
     , m_mimeTypeCache(mimeTypeCache)
-    , m_playerPrivate(makeWeakPtr(playerPrivate))
+    , m_mediaPlayerPrivate(makeWeakPtr(mediaPlayerPrivate))
     , m_client(client)
 #if !RELEASE_LOG_DISABLED
-    , m_logger(m_playerPrivate->mediaPlayerLogger())
-    , m_logIdentifier(m_playerPrivate->mediaPlayerLogIdentifier())
+    , m_logger(m_mediaPlayerPrivate->mediaPlayerLogger())
+    , m_logIdentifier(m_mediaPlayerPrivate->mediaPlayerLogIdentifier())
 #endif
 {
     ALWAYS_LOG(LOGIDENTIFIER);
@@ -95,7 +95,7 @@ MediaSourcePrivate::AddStatus MediaSourcePrivateRemote::addSourceBuffer(const Co
 
     if (status == AddStatus::Ok) {
         ASSERT(remoteSourceBufferIdentifier.hasValue());
-        auto newSourceBuffer = SourceBufferPrivateRemote::create(m_gpuProcessConnection, *remoteSourceBufferIdentifier, *this);
+        auto newSourceBuffer = SourceBufferPrivateRemote::create(m_gpuProcessConnection, *remoteSourceBufferIdentifier, *this, *m_mediaPlayerPrivate);
         outPrivate = newSourceBuffer.copyRef();
         m_sourceBuffers.append(WTFMove(newSourceBuffer));
     }
@@ -120,7 +120,7 @@ void MediaSourcePrivateRemote::unmarkEndOfStream()
 
 MediaPlayer::ReadyState MediaSourcePrivateRemote::readyState() const
 {
-    return m_playerPrivate ? m_playerPrivate->readyState() : MediaPlayer::ReadyState::HaveNothing;
+    return m_mediaPlayerPrivate ? m_mediaPlayerPrivate->readyState() : MediaPlayer::ReadyState::HaveNothing;
 }
 
 void MediaSourcePrivateRemote::setReadyState(MediaPlayer::ReadyState)

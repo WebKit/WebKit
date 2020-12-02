@@ -1,3 +1,118 @@
+2020-12-01  Peng Liu  <peng.liu6@apple.com>
+
+        [Media In GPU Process][MSE] Add the support to forward initialization segment from the GPU Process to Web processes
+        https://bugs.webkit.org/show_bug.cgi?id=219227
+
+        Reviewed by Eric Carlson.
+
+        This patch adds the support to forward `sourceBufferPrivateDidReceiveInitializationSegment()`
+        callback from the source buffer parser running in the GPU process to the `SourceBufferPrivateRemote`
+        running in the Web process, which in turn provides the initialization segment to `SourceBuffer`.
+
+        No change in behavior.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * GPUProcess/media/InitializationSegmentInfo.h: Added.
+        (WebKit::InitializationSegmentInfo::TrackInformation::encode const):
+        (WebKit::InitializationSegmentInfo::TrackInformation::decode):
+        (WebKit::InitializationSegmentInfo::encode const):
+        (WebKit::InitializationSegmentInfo::decode):
+        * GPUProcess/media/RemoteAudioTrackProxy.cpp:
+        (WebKit::RemoteAudioTrackProxy::RemoteAudioTrackProxy):
+        (WebKit::RemoteAudioTrackProxy::~RemoteAudioTrackProxy):
+        (WebKit::RemoteAudioTrackProxy::configurationChanged):
+        (WebKit::RemoteAudioTrackProxy::willRemove):
+        * GPUProcess/media/RemoteAudioTrackProxy.h:
+        * GPUProcess/media/RemoteAudioTrackProxy.messages.in: Copied from Source/WebKit/WebProcess/GPU/media/SourceBufferPrivateRemote.messages.in.
+        * GPUProcess/media/RemoteMediaDescription.h: Added.
+        (WebKit::MediaDescriptionInfo::encode const):
+        (WebKit::MediaDescriptionInfo::decode):
+        (WebKit::RemoteMediaDescription::RemoteMediaDescription):
+        * GPUProcess/media/RemoteMediaPlayerProxy.cpp:
+        (WebKit::RemoteMediaPlayerProxy::loadMediaSource):
+        (WebKit::RemoteMediaPlayerProxy::addRemoteAudioTrackProxy):
+        (WebKit::RemoteMediaPlayerProxy::addRemoteVideoTrackProxy):
+        (WebKit::RemoteMediaPlayerProxy::addRemoteTextTrackProxy):
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerDidAddAudioTrack):
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerDidRemoveAudioTrack):
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerDidAddVideoTrack):
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerDidRemoveVideoTrack):
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerDidAddTextTrack):
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerDidRemoveTextTrack):
+        (WebKit::RemoteMediaPlayerProxy::audioTrackSetEnabled): Deleted.
+        (WebKit::RemoteMediaPlayerProxy::videoTrackSetSelected): Deleted.
+        (WebKit::RemoteMediaPlayerProxy::textTrackSetMode): Deleted.
+        * GPUProcess/media/RemoteMediaPlayerProxy.h:
+        * GPUProcess/media/RemoteMediaPlayerProxy.messages.in:
+        * GPUProcess/media/RemoteMediaSourceProxy.cpp:
+        (WebKit::RemoteMediaSourceProxy::RemoteMediaSourceProxy):
+        (WebKit::RemoteMediaSourceProxy::addSourceBuffer):
+        * GPUProcess/media/RemoteMediaSourceProxy.h:
+        * GPUProcess/media/RemoteSourceBufferProxy.cpp:
+        (WebKit::RemoteSourceBufferProxy::create):
+        (WebKit::RemoteSourceBufferProxy::RemoteSourceBufferProxy):
+        (WebKit::RemoteSourceBufferProxy::sourceBufferPrivateDidReceiveInitializationSegment):
+        * GPUProcess/media/RemoteSourceBufferProxy.h:
+        * GPUProcess/media/RemoteTextTrackProxy.cpp:
+        (WebKit::RemoteTextTrackProxy::RemoteTextTrackProxy):
+        (WebKit::RemoteTextTrackProxy::~RemoteTextTrackProxy):
+        (WebKit::RemoteTextTrackProxy::configurationChanged):
+        (WebKit::RemoteTextTrackProxy::willRemove):
+        (WebKit::RemoteTextTrackProxy::addDataCue):
+        (WebKit::RemoteTextTrackProxy::updateDataCue):
+        (WebKit::RemoteTextTrackProxy::removeDataCue):
+        (WebKit::RemoteTextTrackProxy::addGenericCue):
+        (WebKit::RemoteTextTrackProxy::updateGenericCue):
+        (WebKit::RemoteTextTrackProxy::removeGenericCue):
+        (WebKit::RemoteTextTrackProxy::parseWebVTTFileHeader):
+        (WebKit::RemoteTextTrackProxy::parseWebVTTCueData):
+        * GPUProcess/media/RemoteTextTrackProxy.h:
+        * GPUProcess/media/RemoteTextTrackProxy.messages.in: Copied from Source/WebKit/WebProcess/GPU/media/SourceBufferPrivateRemote.messages.in.
+        * GPUProcess/media/RemoteVideoTrackProxy.cpp:
+        (WebKit::RemoteVideoTrackProxy::RemoteVideoTrackProxy):
+        (WebKit::RemoteVideoTrackProxy::~RemoteVideoTrackProxy):
+        (WebKit::RemoteVideoTrackProxy::configurationChanged):
+        (WebKit::RemoteVideoTrackProxy::willRemove):
+        * GPUProcess/media/RemoteVideoTrackProxy.h:
+        * GPUProcess/media/RemoteVideoTrackProxy.messages.in: Copied from Source/WebKit/WebProcess/GPU/media/SourceBufferPrivateRemote.messages.in.
+        * Scripts/webkit/messages.py:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/GPU/media/AudioTrackPrivateRemote.cpp:
+        (WebKit::AudioTrackPrivateRemote::AudioTrackPrivateRemote):
+        (WebKit::AudioTrackPrivateRemote::setEnabled):
+        * WebProcess/GPU/media/AudioTrackPrivateRemote.h:
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        (WebKit::MediaPlayerPrivateRemote::addRemoteAudioTrack):
+        (WebKit::MediaPlayerPrivateRemote::addRemoteTextTrack):
+        (WebKit::MediaPlayerPrivateRemote::addRemoteVideoTrack):
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.h:
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.messages.in:
+        * WebProcess/GPU/media/MediaSourcePrivateRemote.cpp:
+        (WebKit::MediaSourcePrivateRemote::create):
+        (WebKit::MediaSourcePrivateRemote::MediaSourcePrivateRemote):
+        (WebKit::MediaSourcePrivateRemote::addSourceBuffer):
+        (WebKit::MediaSourcePrivateRemote::readyState const):
+        * WebProcess/GPU/media/MediaSourcePrivateRemote.h:
+        * WebProcess/GPU/media/SourceBufferPrivateRemote.cpp:
+        (WebKit::SourceBufferPrivateRemote::create):
+        (WebKit::SourceBufferPrivateRemote::SourceBufferPrivateRemote):
+        (WebKit::SourceBufferPrivateRemote::readyState const):
+        (WebKit::SourceBufferPrivateRemote::sourceBufferPrivateDidReceiveInitializationSegment):
+        * WebProcess/GPU/media/SourceBufferPrivateRemote.h:
+        * WebProcess/GPU/media/SourceBufferPrivateRemote.messages.in:
+        * WebProcess/GPU/media/TextTrackPrivateRemote.cpp:
+        (WebKit::TextTrackPrivateRemote::TextTrackPrivateRemote):
+        (WebKit::TextTrackPrivateRemote::setMode):
+        * WebProcess/GPU/media/TextTrackPrivateRemote.h:
+        * WebProcess/GPU/media/VideoTrackPrivateRemote.cpp:
+        (WebKit::VideoTrackPrivateRemote::VideoTrackPrivateRemote):
+        (WebKit::VideoTrackPrivateRemote::setSelected):
+        * WebProcess/GPU/media/VideoTrackPrivateRemote.h:
+        (WebKit::VideoTrackPrivateRemote::create):
+
 2020-12-01  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Support image extraction interactions for accessibility

@@ -29,17 +29,18 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "Connection.h"
 #include "DataReference.h"
 #include "MediaPlayerPrivateRemote.h"
-#include "RemoteMediaPlayerProxyMessages.h"
+#include "RemoteTextTrackProxyMessages.h"
 #include <WebCore/NotImplemented.h>
 
 namespace WebKit {
 using namespace WebCore;
 
-TextTrackPrivateRemote::TextTrackPrivateRemote(MediaPlayerPrivateRemote& player, TrackPrivateRemoteIdentifier idendifier, TextTrackPrivateRemoteConfiguration&& configuration)
+TextTrackPrivateRemote::TextTrackPrivateRemote(IPC::Connection& connection, TrackPrivateRemoteIdentifier idendifier, TextTrackPrivateRemoteConfiguration&& configuration)
     : WebCore::InbandTextTrackPrivate(configuration.cueFormat)
-    , m_player(player)
+    , m_connection(connection)
     , m_idendifier(idendifier)
 {
     updateConfiguration(WTFMove(configuration));
@@ -48,7 +49,7 @@ TextTrackPrivateRemote::TextTrackPrivateRemote(MediaPlayerPrivateRemote& player,
 void TextTrackPrivateRemote::setMode(TextTrackMode mode)
 {
     if (mode != m_mode)
-        m_player.connection().send(Messages::RemoteMediaPlayerProxy::TextTrackSetMode(m_idendifier, mode), m_player.itentifier());
+        m_connection.send(Messages::RemoteTextTrackProxy::SetMode(mode), m_idendifier);
 
     InbandTextTrackPrivate::setMode(mode);
 }

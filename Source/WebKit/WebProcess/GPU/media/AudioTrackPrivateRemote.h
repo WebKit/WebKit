@@ -31,6 +31,10 @@
 #include "TrackPrivateRemoteIdentifier.h"
 #include <WebCore/AudioTrackPrivate.h>
 
+namespace IPC {
+class Connection;
+}
+
 namespace WebKit {
 
 class MediaPlayerPrivateRemote;
@@ -39,15 +43,15 @@ struct TrackPrivateRemoteConfiguration;
 class AudioTrackPrivateRemote final : public WebCore::AudioTrackPrivate {
     WTF_MAKE_NONCOPYABLE(AudioTrackPrivateRemote)
 public:
-    static Ref<AudioTrackPrivateRemote> create(MediaPlayerPrivateRemote& player, TrackPrivateRemoteIdentifier idendifier, TrackPrivateRemoteConfiguration&& configuration)
+    static Ref<AudioTrackPrivateRemote> create(IPC::Connection& connection, TrackPrivateRemoteIdentifier idendifier, TrackPrivateRemoteConfiguration&& configuration)
     {
-        return adoptRef(*new AudioTrackPrivateRemote(player, idendifier, WTFMove(configuration)));
+        return adoptRef(*new AudioTrackPrivateRemote(connection, idendifier, WTFMove(configuration)));
     }
 
     void updateConfiguration(TrackPrivateRemoteConfiguration&&);
 
 private:
-    AudioTrackPrivateRemote(MediaPlayerPrivateRemote&, TrackPrivateRemoteIdentifier, TrackPrivateRemoteConfiguration&&);
+    AudioTrackPrivateRemote(IPC::Connection&, TrackPrivateRemoteIdentifier, TrackPrivateRemoteConfiguration&&);
 
     using AudioTrackKind = WebCore::AudioTrackPrivate::Kind;
     AudioTrackKind kind() const final { return m_kind; }
@@ -57,7 +61,7 @@ private:
     int trackIndex() const final { return m_trackIndex; }
     void setEnabled(bool) final;
 
-    MediaPlayerPrivateRemote& m_player;
+    IPC::Connection& m_connection;
     AudioTrackKind m_kind { None };
     AtomString m_id;
     AtomString m_label;

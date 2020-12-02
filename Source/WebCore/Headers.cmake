@@ -1011,6 +1011,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/Logging.h
     platform/LowPowerModeNotifier.h
     platform/MIMETypeRegistry.h
+    platform/MediaDescription.h
     platform/MediaSample.h
     platform/MediaSelectionOption.h
     platform/MediaSessionIdentifier.h

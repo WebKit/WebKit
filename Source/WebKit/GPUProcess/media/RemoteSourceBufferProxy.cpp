@@ -30,6 +30,8 @@
 
 #include "Connection.h"
 #include "DataReference.h"
+#include "InitializationSegmentInfo.h"
+#include "RemoteMediaPlayerProxy.h"
 #include "RemoteSourceBufferProxyMessages.h"
 #include "SourceBufferPrivateRemoteMessages.h"
 #include <WebCore/NotImplemented.h>
@@ -38,16 +40,17 @@ namespace WebKit {
 
 using namespace WebCore;
 
-Ref<RemoteSourceBufferProxy> RemoteSourceBufferProxy::create(RemoteSourceBufferIdentifier identifier, GPUConnectionToWebProcess& connectionToWebProcess, Ref<SourceBufferPrivate>&& sourceBufferPrivate)
+Ref<RemoteSourceBufferProxy> RemoteSourceBufferProxy::create(GPUConnectionToWebProcess& connectionToWebProcess, RemoteSourceBufferIdentifier identifier, Ref<SourceBufferPrivate>&& sourceBufferPrivate, RemoteMediaPlayerProxy& remoteMediaPlayerProxy)
 {
-    auto remoteSourceBufferProxy = adoptRef(*new RemoteSourceBufferProxy(identifier, connectionToWebProcess, WTFMove(sourceBufferPrivate)));
+    auto remoteSourceBufferProxy = adoptRef(*new RemoteSourceBufferProxy(connectionToWebProcess, identifier, WTFMove(sourceBufferPrivate), remoteMediaPlayerProxy));
     return remoteSourceBufferProxy;
 }
 
-RemoteSourceBufferProxy::RemoteSourceBufferProxy(RemoteSourceBufferIdentifier identifier, GPUConnectionToWebProcess& connectionToWebProcess, Ref<SourceBufferPrivate>&& sourceBufferPrivate)
-    : m_identifier(identifier)
-    , m_connectionToWebProcess(connectionToWebProcess)
+RemoteSourceBufferProxy::RemoteSourceBufferProxy(GPUConnectionToWebProcess& connectionToWebProcess, RemoteSourceBufferIdentifier identifier, Ref<SourceBufferPrivate>&& sourceBufferPrivate, RemoteMediaPlayerProxy& remoteMediaPlayerProxy)
+    : m_connectionToWebProcess(connectionToWebProcess)
+    , m_identifier(identifier)
     , m_sourceBufferPrivate(WTFMove(sourceBufferPrivate))
+    , m_remoteMediaPlayerProxy(makeWeakPtr(remoteMediaPlayerProxy))
 {
     m_connectionToWebProcess.messageReceiverMap().addMessageReceiver(Messages::RemoteSourceBufferProxy::messageReceiverName(), m_identifier.toUInt64(), *this);
     m_sourceBufferPrivate->setClient(this);
@@ -58,9 +61,29 @@ RemoteSourceBufferProxy::~RemoteSourceBufferProxy()
     m_connectionToWebProcess.messageReceiverMap().removeMessageReceiver(Messages::RemoteSourceBufferProxy::messageReceiverName(), m_identifier.toUInt64());
 }
 
-void RemoteSourceBufferProxy::sourceBufferPrivateDidReceiveInitializationSegment(const InitializationSegment&)
+void RemoteSourceBufferProxy::sourceBufferPrivateDidReceiveInitializationSegment(const InitializationSegment& segment)
 {
-    notImplemented();
+    if (!m_remoteMediaPlayerProxy)
+        return;
+
+    InitializationSegmentInfo segmentInfo;
+    segmentInfo.duration = segment.duration;
+    for (auto& audioTrackInfo : segment.audioTracks) {
+        auto identifier = m_remoteMediaPlayerProxy->addRemoteAudioTrackProxy(*audioTrackInfo.track);
+        segmentInfo.audioTracks.append({ MediaDescriptionInfo(*audioTrackInfo.description), identifier });
+    }
+
+    for (auto& videoTrackInfo : segment.videoTracks) {
+        auto identifier = m_remoteMediaPlayerProxy->addRemoteVideoTrackProxy(*videoTrackInfo.track);
+        segmentInfo.videoTracks.append({ MediaDescriptionInfo(*videoTrackInfo.description), identifier });
+    }
+
+    for (auto& textTrackInfo : segment.textTracks) {
+        auto identifier = m_remoteMediaPlayerProxy->addRemoteTextTrackProxy(*textTrackInfo.track);
+        segmentInfo.textTracks.append({ MediaDescriptionInfo(*textTrackInfo.description), identifier });
+    }
+
+    m_connectionToWebProcess.connection().send(Messages::SourceBufferPrivateRemote::SourceBufferPrivateDidReceiveInitializationSegment(segmentInfo), m_identifier);
 }
 
 void RemoteSourceBufferProxy::sourceBufferPrivateDidReceiveSample(WebCore::MediaSample&)

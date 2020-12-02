@@ -29,14 +29,15 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "Connection.h"
 #include "MediaPlayerPrivateRemote.h"
-#include "RemoteMediaPlayerProxyMessages.h"
+#include "RemoteAudioTrackProxyMessages.h"
 #include "TrackPrivateRemoteConfiguration.h"
 
 namespace WebKit {
 
-AudioTrackPrivateRemote::AudioTrackPrivateRemote(MediaPlayerPrivateRemote& player, TrackPrivateRemoteIdentifier idendifier, TrackPrivateRemoteConfiguration&& configuration)
-    : m_player(player)
+AudioTrackPrivateRemote::AudioTrackPrivateRemote(IPC::Connection& connection, TrackPrivateRemoteIdentifier idendifier, TrackPrivateRemoteConfiguration&& configuration)
+    : m_connection(connection)
     , m_idendifier(idendifier)
 {
     updateConfiguration(WTFMove(configuration));
@@ -45,7 +46,7 @@ AudioTrackPrivateRemote::AudioTrackPrivateRemote(MediaPlayerPrivateRemote& playe
 void AudioTrackPrivateRemote::setEnabled(bool enabled)
 {
     if (enabled != this->enabled())
-        m_player.connection().send(Messages::RemoteMediaPlayerProxy::AudioTrackSetEnabled(m_idendifier, enabled), m_player.itentifier());
+        m_connection.send(Messages::RemoteAudioTrackProxy::SetEnabled(enabled), m_idendifier);
 
     AudioTrackPrivate::setEnabled(enabled);
 }

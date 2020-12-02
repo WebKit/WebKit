@@ -152,6 +152,12 @@ public:
     void initializationDataEncountered(const String&, IPC::DataReference&&);
 #endif
 
+#if ENABLE(MEDIA_SOURCE)
+    RefPtr<AudioTrackPrivateRemote> audioTrackPrivateRemote(TrackPrivateRemoteIdentifier identifier) const { return m_audioTracks.get(identifier); }
+    RefPtr<VideoTrackPrivateRemote> videoTrackPrivateRemote(TrackPrivateRemoteIdentifier identifier) const { return m_videoTracks.get(identifier); }
+    RefPtr<TextTrackPrivateRemote> textTrackPrivateRemote(TrackPrivateRemoteIdentifier identifier) const { return m_textTracks.get(identifier); }
+#endif
+
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     void currentPlaybackTargetIsWirelessChanged(bool);
 #endif

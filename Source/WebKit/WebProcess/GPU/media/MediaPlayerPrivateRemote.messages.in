@@ -42,6 +42,10 @@ messages -> MediaPlayerPrivateRemote NotRefCounted {
     RemoveRemoteAudioTrack(WebKit::TrackPrivateRemoteIdentifier trackID)
     RemoteAudioTrackConfigurationChanged(WebKit::TrackPrivateRemoteIdentifier trackID, struct WebKit::TrackPrivateRemoteConfiguration configuration)
 
+    AddRemoteVideoTrack(WebKit::TrackPrivateRemoteIdentifier trackID, struct WebKit::TrackPrivateRemoteConfiguration configuration)
+    RemoveRemoteVideoTrack(WebKit::TrackPrivateRemoteIdentifier trackID)
+    RemoteVideoTrackConfigurationChanged(WebKit::TrackPrivateRemoteIdentifier trackID, struct WebKit::TrackPrivateRemoteConfiguration configuration)
+
     AddRemoteTextTrack(WebKit::TrackPrivateRemoteIdentifier trackID, struct WebKit::TextTrackPrivateRemoteConfiguration configuration)
     RemoveRemoteTextTrack(WebKit::TrackPrivateRemoteIdentifier trackID)
     RemoteTextTrackConfigurationChanged(WebKit::TrackPrivateRemoteIdentifier trackID, struct WebKit::TextTrackPrivateRemoteConfiguration configuration)
@@ -60,10 +64,6 @@ messages -> MediaPlayerPrivateRemote NotRefCounted {
     AddGenericCue(WebKit::TrackPrivateRemoteIdentifier trackID, struct WebCore::GenericCueData cue)
     UpdateGenericCue(WebKit::TrackPrivateRemoteIdentifier trackID, struct WebCore::GenericCueData cue)
     RemoveGenericCue(WebKit::TrackPrivateRemoteIdentifier trackID, struct WebCore::GenericCueData cue)
-
-    AddRemoteVideoTrack(WebKit::TrackPrivateRemoteIdentifier trackID, struct WebKit::TrackPrivateRemoteConfiguration configuration)
-    RemoveRemoteVideoTrack(WebKit::TrackPrivateRemoteIdentifier trackID)
-    RemoteVideoTrackConfigurationChanged(WebKit::TrackPrivateRemoteIdentifier trackID, struct WebKit::TrackPrivateRemoteConfiguration configuration)
 
     RequestResource(WebKit::RemoteMediaResourceIdentifier remoteMediaResourceIdentifier, WebCore::ResourceRequest request, enum:uint8_t WebCore::PlatformMediaResourceLoader::LoadOptions options) -> () Async
     RemoveResource(WebKit::RemoteMediaResourceIdentifier remoteMediaResourceIdentifier)

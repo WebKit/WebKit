@@ -65,10 +65,6 @@ messages -> RemoteMediaPlayerProxy NotRefCounted {
 
     SetBufferingPolicy(WebCore::MediaPlayer::BufferingPolicy policy)
 
-    AudioTrackSetEnabled(WebKit::TrackPrivateRemoteIdentifier trackID, bool enabled)
-    VideoTrackSetSelected(WebKit::TrackPrivateRemoteIdentifier trackID, bool enabled)
-    TextTrackSetMode(WebKit::TrackPrivateRemoteIdentifier trackID, enum:uint8_t WebCore::InbandTextTrackPrivate::Mode mode)
-
 #if PLATFORM(COCOA)
     SetVideoInlineSizeFenced(WebCore::IntSize size, MachSendRight machSendRight)
 #endif

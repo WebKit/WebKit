@@ -28,34 +28,39 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "MessageReceiver.h"
 #include "TrackPrivateRemoteIdentifier.h"
 #include <WebCore/AudioTrackPrivate.h>
+#include <WebCore/MediaPlayerIdentifier.h>
 #include <WebCore/TrackBase.h>
+#include <wtf/Ref.h>
 
 namespace IPC {
 class Connection;
+class Decoder;
 }
 
 namespace WebKit {
 
+class GPUConnectionToWebProcess;
 struct TrackPrivateRemoteConfiguration;
-class RemoteMediaPlayerProxy;
 
 class RemoteAudioTrackProxy final
     : public ThreadSafeRefCounted<RemoteAudioTrackProxy, WTF::DestructionThread::Main>
-    , private WebCore::AudioTrackPrivateClient {
+    , private WebCore::AudioTrackPrivateClient
+    , private IPC::MessageReceiver {
 public:
-    static Ref<RemoteAudioTrackProxy> create(RemoteMediaPlayerProxy& player, TrackPrivateRemoteIdentifier identifier, Ref<IPC::Connection>&& connection, WebCore::AudioTrackPrivate& trackPrivate)
+    static Ref<RemoteAudioTrackProxy> create(GPUConnectionToWebProcess& connectionToWebProcess, TrackPrivateRemoteIdentifier identifier, WebCore::AudioTrackPrivate& trackPrivate, WebCore::MediaPlayerIdentifier mediaPlayerIdentifier)
     {
-        return adoptRef(*new RemoteAudioTrackProxy(player, identifier, WTFMove(connection), trackPrivate));
+        return adoptRef(*new RemoteAudioTrackProxy(connectionToWebProcess, identifier, trackPrivate, mediaPlayerIdentifier));
     }
+
+    virtual ~RemoteAudioTrackProxy();
 
     TrackPrivateRemoteIdentifier identifier() const { return m_identifier; };
 
-    void setEnabled(bool enabled) { m_trackPrivate->setEnabled(enabled); }
-
 private:
-    RemoteAudioTrackProxy(RemoteMediaPlayerProxy&, TrackPrivateRemoteIdentifier, Ref<IPC::Connection>&&, WebCore::AudioTrackPrivate&);
+    RemoteAudioTrackProxy(GPUConnectionToWebProcess&, TrackPrivateRemoteIdentifier, WebCore::AudioTrackPrivate&, WebCore::MediaPlayerIdentifier);
 
     // AudioTrackPrivateClient
     void enabledChanged(bool) final;
@@ -66,13 +71,16 @@ private:
     void languageChanged(const AtomString&) final;
     void willRemove() final;
 
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
+    void setEnabled(bool enabled) { m_trackPrivate->setEnabled(enabled); }
+
     TrackPrivateRemoteConfiguration& configuration();
     void configurationChanged();
 
-    RemoteMediaPlayerProxy& m_player;
+    GPUConnectionToWebProcess& m_connectionToWebProcess;
     TrackPrivateRemoteIdentifier m_identifier;
-    Ref<IPC::Connection> m_webProcessConnection;
     Ref<WebCore::AudioTrackPrivate> m_trackPrivate;
+    WebCore::MediaPlayerIdentifier m_mediaPlayerIdentifier;
 };
 
 } // namespace WebKit

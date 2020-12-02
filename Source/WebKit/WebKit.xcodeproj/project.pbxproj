@@ -416,6 +416,9 @@
 		1CA8B946127C882A00576C2B /* WebInspectorProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CA8B944127C882A00576C2B /* WebInspectorProxyMessages.h */; };
 		1CBBE4A019B66C53006B7D81 /* WebInspectorUIMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1CBBE49E19B66C53006B7D81 /* WebInspectorUIMessageReceiver.cpp */; };
 		1CBBE4A119B66C53006B7D81 /* WebInspectorUIMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CBBE49F19B66C53006B7D81 /* WebInspectorUIMessages.h */; };
+		1D0369AC2567969900440372 /* RemoteTextTrackProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1D0369AA2567943C00440372 /* RemoteTextTrackProxyMessageReceiver.cpp */; };
+		1D0369AD256796AB00440372 /* RemoteVideoTrackProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1D0369A52567943B00440372 /* RemoteVideoTrackProxyMessageReceiver.cpp */; };
+		1D0369AE256796B900440372 /* RemoteAudioTrackProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1D0369A22567943B00440372 /* RemoteAudioTrackProxyMessageReceiver.cpp */; };
 		1D4D737023A9E54700717A25 /* RemoteMediaResourceManagerMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1D4D736B23A9DF5500717A25 /* RemoteMediaResourceManagerMessageReceiver.cpp */; };
 		1D4D737123A9E56200717A25 /* RemoteMediaResourceManagerMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 1D4D736C23A9DF6000717A25 /* RemoteMediaResourceManagerMessages.h */; };
 		1D4D737623A9ED1800717A25 /* RemoteMediaResourceManagerMessagesReplies.h in Headers */ = {isa = PBXBuildFile; fileRef = 1D4D737523A9EB6800717A25 /* RemoteMediaResourceManagerMessagesReplies.h */; };
@@ -2841,6 +2844,15 @@
 		1CA8B944127C882A00576C2B /* WebInspectorProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebInspectorProxyMessages.h; path = DerivedSources/WebKit2/WebInspectorProxyMessages.h; sourceTree = BUILT_PRODUCTS_DIR; };
 		1CBBE49E19B66C53006B7D81 /* WebInspectorUIMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebInspectorUIMessageReceiver.cpp; path = DerivedSources/WebKit2/WebInspectorUIMessageReceiver.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
 		1CBBE49F19B66C53006B7D81 /* WebInspectorUIMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebInspectorUIMessages.h; path = DerivedSources/WebKit2/WebInspectorUIMessages.h; sourceTree = BUILT_PRODUCTS_DIR; };
+		1D0369A22567943B00440372 /* RemoteAudioTrackProxyMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = RemoteAudioTrackProxyMessageReceiver.cpp; path = DerivedSources/WebKit2/RemoteAudioTrackProxyMessageReceiver.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
+		1D0369A32567943B00440372 /* RemoteAudioTrackProxyMessagesReplies.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RemoteAudioTrackProxyMessagesReplies.h; path = DerivedSources/WebKit2/RemoteAudioTrackProxyMessagesReplies.h; sourceTree = BUILT_PRODUCTS_DIR; };
+		1D0369A42567943B00440372 /* RemoteVideoTrackProxyMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RemoteVideoTrackProxyMessages.h; path = DerivedSources/WebKit2/RemoteVideoTrackProxyMessages.h; sourceTree = BUILT_PRODUCTS_DIR; };
+		1D0369A52567943B00440372 /* RemoteVideoTrackProxyMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = RemoteVideoTrackProxyMessageReceiver.cpp; path = DerivedSources/WebKit2/RemoteVideoTrackProxyMessageReceiver.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
+		1D0369A62567943C00440372 /* RemoteTextTrackProxyMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RemoteTextTrackProxyMessages.h; path = DerivedSources/WebKit2/RemoteTextTrackProxyMessages.h; sourceTree = BUILT_PRODUCTS_DIR; };
+		1D0369A72567943C00440372 /* RemoteAudioTrackProxyMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RemoteAudioTrackProxyMessages.h; path = DerivedSources/WebKit2/RemoteAudioTrackProxyMessages.h; sourceTree = BUILT_PRODUCTS_DIR; };
+		1D0369A82567943C00440372 /* RemoteTextTrackProxyMessagesReplies.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RemoteTextTrackProxyMessagesReplies.h; path = DerivedSources/WebKit2/RemoteTextTrackProxyMessagesReplies.h; sourceTree = BUILT_PRODUCTS_DIR; };
+		1D0369A92567943C00440372 /* RemoteVideoTrackProxyMessagesReplies.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RemoteVideoTrackProxyMessagesReplies.h; path = DerivedSources/WebKit2/RemoteVideoTrackProxyMessagesReplies.h; sourceTree = BUILT_PRODUCTS_DIR; };
+		1D0369AA2567943C00440372 /* RemoteTextTrackProxyMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = RemoteTextTrackProxyMessageReceiver.cpp; path = DerivedSources/WebKit2/RemoteTextTrackProxyMessageReceiver.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
 		1D0ECEAA23FC858400D172F6 /* RemoteMediaPlayerProxyCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteMediaPlayerProxyCocoa.mm; sourceTree = "<group>"; };
 		1D32F89823A8465A00B1EA6A /* RemoteMediaResource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteMediaResource.h; sourceTree = "<group>"; };
 		1D32F89923A8468000B1EA6A /* RemoteMediaResource.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteMediaResource.cpp; sourceTree = "<group>"; };
@@ -2852,6 +2864,11 @@
 		1D4D736B23A9DF5500717A25 /* RemoteMediaResourceManagerMessageReceiver.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = RemoteMediaResourceManagerMessageReceiver.cpp; path = DerivedSources/WebKit2/RemoteMediaResourceManagerMessageReceiver.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
 		1D4D736C23A9DF6000717A25 /* RemoteMediaResourceManagerMessages.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; name = RemoteMediaResourceManagerMessages.h; path = DerivedSources/WebKit2/RemoteMediaResourceManagerMessages.h; sourceTree = BUILT_PRODUCTS_DIR; };
 		1D4D737523A9EB6800717A25 /* RemoteMediaResourceManagerMessagesReplies.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; name = RemoteMediaResourceManagerMessagesReplies.h; path = DerivedSources/WebKit2/RemoteMediaResourceManagerMessagesReplies.h; sourceTree = BUILT_PRODUCTS_DIR; };
+		1D4FB40B2565C89A001AC2AD /* InitializationSegmentInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InitializationSegmentInfo.h; sourceTree = "<group>"; };
+		1D4FB40C2565CBF9001AC2AD /* RemoteMediaDescription.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteMediaDescription.h; sourceTree = "<group>"; };
+		1D6E27DD2566E83000AC7AEB /* RemoteAudioTrackProxy.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteAudioTrackProxy.messages.in; sourceTree = "<group>"; };
+		1D6E27DE2566E85800AC7AEB /* RemoteVideoTrackProxy.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteVideoTrackProxy.messages.in; sourceTree = "<group>"; };
+		1D6E27DF2566E86B00AC7AEB /* RemoteTextTrackProxy.messages.in */ = {isa = PBXFileReference; explicitFileType = text; path = RemoteTextTrackProxy.messages.in; sourceTree = "<group>"; };
 		1D97EC7D240898D200466FFA /* MediaPlayerPrivateRemoteCocoa.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = MediaPlayerPrivateRemoteCocoa.mm; sourceTree = "<group>"; };
 		1DA4089423A80A3E0058C950 /* RemoteMediaResourceManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteMediaResourceManager.h; sourceTree = "<group>"; };
 		1DA4089E23A827780058C950 /* RemoteMediaResourceManager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteMediaResourceManager.cpp; sourceTree = "<group>"; };
@@ -5800,6 +5817,7 @@
 			children = (
 				1D0ECEA923FC84BB00D172F6 /* cocoa */,
 				CDA959442412C4DA00910EEF /* ios */,
+				1D4FB40B2565C89A001AC2AD /* InitializationSegmentInfo.h */,
 				9B1229CC23FF25F2008CA751 /* RemoteAudioDestinationManager.cpp */,
 				9B1229CB23FF25F2008CA751 /* RemoteAudioDestinationManager.h */,
 				9B1229CF23FF2814008CA751 /* RemoteAudioDestinationManager.messages.in */,
@@ -5812,6 +5830,7 @@
 				412FF92725382D85001DF036 /* RemoteAudioSourceProviderProxy.h */,
 				071BC57E23CA5DB100680D7C /* RemoteAudioTrackProxy.cpp */,
 				071BC57F23CA5DB100680D7C /* RemoteAudioTrackProxy.h */,
+				1D6E27DD2566E83000AC7AEB /* RemoteAudioTrackProxy.messages.in */,
 				CDAC207923FB1E210021DEE3 /* RemoteCDMFactoryProxy.cpp */,
 				CDAC207823FB1E210021DEE3 /* RemoteCDMFactoryProxy.h */,
 				CDAC207C23FB1EF90021DEE3 /* RemoteCDMFactoryProxy.messages.in */,
@@ -5833,6 +5852,7 @@
 				CDE554F924058208008A3DDB /* RemoteLegacyCDMSessionProxy.cpp */,
 				CDE554F824058208008A3DDB /* RemoteLegacyCDMSessionProxy.h */,
 				CDE5550024058284008A3DDB /* RemoteLegacyCDMSessionProxy.messages.in */,
+				1D4FB40C2565CBF9001AC2AD /* RemoteMediaDescription.h */,
 				0725EFAD239B024500A538A9 /* RemoteMediaPlayerManagerProxy.cpp */,
 				0725EFAC239AE38500A538A9 /* RemoteMediaPlayerManagerProxy.h */,
 				0725EFAB239AE38400A538A9 /* RemoteMediaPlayerManagerProxy.messages.in */,
@@ -5857,8 +5877,10 @@
 				1DD2A6662561ED0400FF7B6F /* RemoteSourceBufferProxy.messages.in */,
 				07E19F0723D4DC880094FFB4 /* RemoteTextTrackProxy.cpp */,
 				07E19F0623D4DC880094FFB4 /* RemoteTextTrackProxy.h */,
+				1D6E27DF2566E86B00AC7AEB /* RemoteTextTrackProxy.messages.in */,
 				071BC58423CC2C0900680D7C /* RemoteVideoTrackProxy.cpp */,
 				071BC58523CC2C0900680D7C /* RemoteVideoTrackProxy.h */,
+				1D6E27DE2566E85800AC7AEB /* RemoteVideoTrackProxy.messages.in */,
 				07E19F0523D4DC880094FFB4 /* TextTrackPrivateRemoteConfiguration.h */,
 				071BC57B23CA532400680D7C /* TrackPrivateRemoteConfiguration.h */,
 				071BC57D23CA56D200680D7C /* TrackPrivateRemoteIdentifier.h */,
@@ -10458,6 +10480,9 @@
 				CDD53571240DDE0600F7B8C4 /* RemoteAudioSessionProxyMessageReceiver.cpp */,
 				CDD53572240DDE0600F7B8C4 /* RemoteAudioSessionProxyMessages.h */,
 				CDD53577240DDE0700F7B8C4 /* RemoteAudioSessionProxyMessagesReplies.h */,
+				1D0369A22567943B00440372 /* RemoteAudioTrackProxyMessageReceiver.cpp */,
+				1D0369A72567943C00440372 /* RemoteAudioTrackProxyMessages.h */,
+				1D0369A32567943B00440372 /* RemoteAudioTrackProxyMessagesReplies.h */,
 				0FF24A2B1879E4BC003ABF0D /* RemoteCaptureSampleManagerMessageReceiver.cpp */,
 				CDAC20F223FC383A0021DEE3 /* RemoteCDMFactoryProxyMessageReceiver.cpp */,
 				CDAC20F323FC383A0021DEE3 /* RemoteCDMFactoryProxyMessages.h */,
@@ -10507,6 +10532,12 @@
 				1DD2A66B2562021E00FF7B6F /* RemoteSourceBufferProxyMessageReceiver.cpp */,
 				1DD2A6692562021E00FF7B6F /* RemoteSourceBufferProxyMessages.h */,
 				1DD2A66A2562021E00FF7B6F /* RemoteSourceBufferProxyMessagesReplies.h */,
+				1D0369AA2567943C00440372 /* RemoteTextTrackProxyMessageReceiver.cpp */,
+				1D0369A62567943C00440372 /* RemoteTextTrackProxyMessages.h */,
+				1D0369A82567943C00440372 /* RemoteTextTrackProxyMessagesReplies.h */,
+				1D0369A52567943B00440372 /* RemoteVideoTrackProxyMessageReceiver.cpp */,
+				1D0369A42567943B00440372 /* RemoteVideoTrackProxyMessages.h */,
+				1D0369A92567943C00440372 /* RemoteVideoTrackProxyMessagesReplies.h */,
 				A55BA8211BA25BB8007CD33D /* RemoteWebInspectorProxyMessageReceiver.cpp */,
 				A55BA8221BA25BB8007CD33D /* RemoteWebInspectorProxyMessages.h */,
 				1BBBE49E19B66C53006B7D81 /* RemoteWebInspectorUIMessageReceiver.cpp */,
@@ -13321,6 +13352,7 @@
 				1A0C227F2451130A00ED614D /* QuickLookThumbnailingSoftLink.mm in Sources */,
 				1A0C225E243575CD00ED614D /* QuickLookThumbnailLoader.mm in Sources */,
 				9B1229CE23FF25F2008CA751 /* RemoteAudioDestinationManager.cpp in Sources */,
+				1D0369AE256796B900440372 /* RemoteAudioTrackProxyMessageReceiver.cpp in Sources */,
 				0FF24A2D1879E4BC003ABF0D /* RemoteCaptureSampleManagerMessageReceiver.cpp in Sources */,
 				CDAC20F723FC726C0021DEE3 /* RemoteCDMFactoryProxyMessageReceiver.cpp in Sources */,
 				CDAC20F823FC726C0021DEE3 /* RemoteCDMInstanceProxyMessageReceiver.cpp in Sources */,
@@ -13342,6 +13374,8 @@
 				1AC1338518590C4600F3EC05 /* RemoteObjectRegistryMessageReceiver.cpp in Sources */,
 				0F5947A7187B517600437857 /* RemoteScrollingCoordinatorMessageReceiver.cpp in Sources */,
 				1DD2A66E2562021E00FF7B6F /* RemoteSourceBufferProxyMessageReceiver.cpp in Sources */,
+				1D0369AC2567969900440372 /* RemoteTextTrackProxyMessageReceiver.cpp in Sources */,
+				1D0369AD256796AB00440372 /* RemoteVideoTrackProxyMessageReceiver.cpp in Sources */,
 				A55BA8261BA25CFD007CD33D /* RemoteWebInspectorProxyMessageReceiver.cpp in Sources */,
 				1BBBE4A019B66C53006B7D81 /* RemoteWebInspectorUIMessageReceiver.cpp in Sources */,
 				E18E6917169B667B009B6670 /* SecItemShimProxyMessageReceiver.cpp in Sources */,

@@ -74,8 +74,8 @@ namespace WebKit {
 
 using LayerHostingContextID = uint32_t;
 class LayerHostingContext;
-class RemoteAudioSourceProviderProxy;
 class RemoteAudioTrackProxy;
+class RemoteAudioSourceProviderProxy;
 class RemoteMediaPlayerManagerProxy;
 class RemoteTextTrackProxy;
 class RemoteVideoTrackProxy;
@@ -143,10 +143,6 @@ public:
     void setShouldDisableSleep(bool);
     void setRate(double);
 
-    void audioTrackSetEnabled(TrackPrivateRemoteIdentifier, bool);
-    void videoTrackSetSelected(TrackPrivateRemoteIdentifier, bool);
-    void textTrackSetMode(TrackPrivateRemoteIdentifier, WebCore::InbandTextTrackPrivate::Mode);
-
 #if PLATFORM(COCOA)
     void setVideoInlineSizeFenced(const WebCore::IntSize&, const WTF::MachSendRight&);
 #endif
@@ -194,6 +190,10 @@ public:
 
     RefPtr<WebCore::MediaPlayer> mediaPlayer() { return m_player; }
 
+    TrackPrivateRemoteIdentifier addRemoteAudioTrackProxy(WebCore::AudioTrackPrivate&);
+    TrackPrivateRemoteIdentifier addRemoteVideoTrackProxy(WebCore::VideoTrackPrivate&);
+    TrackPrivateRemoteIdentifier addRemoteTextTrackProxy(WebCore::InbandTextTrackPrivate&);
+
 private:
     // MediaPlayerClient
     void mediaPlayerNetworkStateChanged() final;
@@ -213,6 +213,8 @@ private:
     void mediaPlayerDidRemoveAudioTrack(WebCore::AudioTrackPrivate&) final;
     void mediaPlayerDidAddVideoTrack(WebCore::VideoTrackPrivate&) final;
     void mediaPlayerDidRemoveVideoTrack(WebCore::VideoTrackPrivate&) final;
+    void mediaPlayerDidAddTextTrack(WebCore::InbandTextTrackPrivate&) final;
+    void mediaPlayerDidRemoveTextTrack(WebCore::InbandTextTrackPrivate&) final;
 
     // Not implemented
     void mediaPlayerResourceNotSupported() final;
@@ -248,9 +250,6 @@ private:
     bool doesHaveAttribute(const AtomString&, AtomString* = nullptr) const final;
     bool mediaPlayerShouldUsePersistentCache() const final;
     const String& mediaPlayerMediaCacheDirectory() const final;
-
-    void mediaPlayerDidAddTextTrack(WebCore::InbandTextTrackPrivate&) final;
-    void mediaPlayerDidRemoveTextTrack(WebCore::InbandTextTrackPrivate&) final;
 
     void textTrackRepresentationBoundsChanged(const WebCore::IntRect&) final;
 
