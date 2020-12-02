@@ -1,3 +1,33 @@
+2020-12-01  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r270311. rdar://problem/71876970
+
+    Unreviewed, reverting r270132.
+    
+    Caused at least one regression test failure
+    (webkit.org/b/219401)
+    
+    Reverted changeset:
+    
+    "Use a Version 1 CFRunLoopSource for faster task dispatch"
+    https://bugs.webkit.org/show_bug.cgi?id=202874
+    https://trac.webkit.org/changeset/270132
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@270311 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-12-01  Ryan Haddad  <ryanhaddad@apple.com>
+
+            Unreviewed, reverting r270132.
+
+            Caused at least one regression test failure
+            (webkit.org/b/219401)
+
+            Reverted changeset:
+
+            "Use a Version 1 CFRunLoopSource for faster task dispatch"
+            https://bugs.webkit.org/show_bug.cgi?id=202874
+            https://trac.webkit.org/changeset/270132
+
 2020-11-28  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Set application information in the Networking process on behalf of the WebContent process
