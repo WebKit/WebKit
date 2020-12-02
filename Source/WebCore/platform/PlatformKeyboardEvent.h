@@ -48,25 +48,21 @@ namespace WebCore {
     public:
         PlatformKeyboardEvent()
             : PlatformEvent(PlatformEvent::KeyDown)
-            , m_windowsVirtualKeyCode(0)
-            , m_autoRepeat(false)
-            , m_isKeypad(false)
-            , m_isSystemKey(false)
         {
         }
 
         PlatformKeyboardEvent(Type type, const String& text, const String& unmodifiedText, const String& key, const String& code,
         const String& keyIdentifier, int windowsVirtualKeyCode, bool isAutoRepeat, bool isKeypad, bool isSystemKey, OptionSet<Modifier> modifiers, WallTime timestamp)
             : PlatformEvent(type, modifiers, timestamp)
+            , m_autoRepeat(isAutoRepeat)
+            , m_isKeypad(isKeypad)
+            , m_isSystemKey(isSystemKey)
             , m_text(text)
             , m_unmodifiedText(unmodifiedText)
             , m_key(key)
             , m_code(code)
             , m_keyIdentifier(keyIdentifier)
             , m_windowsVirtualKeyCode(windowsVirtualKeyCode)
-            , m_autoRepeat(isAutoRepeat)
-            , m_isKeypad(isKeypad)
-            , m_isSystemKey(isSystemKey)
         {
         }
 
@@ -151,12 +147,18 @@ namespace WebCore {
 #endif
 
     protected:
+        bool m_autoRepeat { false };
+        bool m_isKeypad { false };
+        bool m_isSystemKey { false };
+
         String m_text;
         String m_unmodifiedText;
         String m_key;
         String m_code;
         String m_keyIdentifier;
-        int m_windowsVirtualKeyCode;
+        int m_windowsVirtualKeyCode { 0 };
+
+        bool m_isSyntheticEvent { false };
 #if USE(APPKIT) || USE(UIKIT_KEYBOARD_ADDITIONS) || PLATFORM(GTK) || USE(LIBWPE)
         bool m_handledByInputMethod { false };
 #endif
@@ -170,11 +172,6 @@ namespace WebCore {
 #elif PLATFORM(GTK)
         Vector<String> m_commands;
 #endif
-        bool m_autoRepeat;
-        bool m_isKeypad;
-        bool m_isSystemKey;
-        
-        bool m_isSyntheticEvent { false };
 
 #if PLATFORM(COCOA)
 #if !PLATFORM(IOS_FAMILY)

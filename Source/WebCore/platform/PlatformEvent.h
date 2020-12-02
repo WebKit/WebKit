@@ -110,15 +110,15 @@ protected:
     }
 
     PlatformEvent(Type type, OptionSet<Modifier> modifiers, WallTime timestamp)
-        : m_type(type)
+        : m_timestamp(timestamp)
+        , m_type(type)
         , m_modifiers(modifiers)
-        , m_timestamp(timestamp)
     {
     }
 
     PlatformEvent(Type type, bool shiftKey, bool ctrlKey, bool altKey, bool metaKey, WallTime timestamp)
-        : m_type(type)
-        , m_timestamp(timestamp)
+        : m_timestamp(timestamp)
+        , m_type(type)
     {
         if (shiftKey)
             m_modifiers.add(Modifier::ShiftKey);
@@ -134,9 +134,9 @@ protected:
     // delete a PlatformEvent.
     ~PlatformEvent() = default;
 
+    WallTime m_timestamp;
     unsigned m_type;
     OptionSet<Modifier> m_modifiers;
-    WallTime m_timestamp;
 };
 
 } // namespace WebCore

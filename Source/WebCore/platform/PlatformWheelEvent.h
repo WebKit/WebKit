@@ -96,13 +96,13 @@ public:
 
     PlatformWheelEvent(IntPoint position, IntPoint globalPosition, float deltaX, float deltaY, float wheelTicksX, float wheelTicksY, PlatformWheelEventGranularity granularity, bool shiftKey, bool ctrlKey, bool altKey, bool metaKey)
         : PlatformEvent(PlatformEvent::Wheel, shiftKey, ctrlKey, altKey, metaKey, { })
+        , m_granularity(granularity)
         , m_position(position)
         , m_globalPosition(globalPosition)
         , m_deltaX(deltaX)
         , m_deltaY(deltaY)
         , m_wheelTicksX(wheelTicksX)
         , m_wheelTicksY(wheelTicksY)
-        , m_granularity(granularity)
     {
     }
 
@@ -176,14 +176,16 @@ public:
 #endif
 
 protected:
+    PlatformWheelEventGranularity m_granularity { ScrollByPixelWheelEvent };
+    bool m_directionInvertedFromDevice { false };
+    bool m_hasPreciseScrollingDeltas { false };
+
     IntPoint m_position;
     IntPoint m_globalPosition;
     float m_deltaX { 0 };
     float m_deltaY { 0 };
     float m_wheelTicksX { 0 };
     float m_wheelTicksY { 0 };
-    PlatformWheelEventGranularity m_granularity { ScrollByPixelWheelEvent };
-    bool m_directionInvertedFromDevice { false };
 
     // Scrolling velocity in pixels per second.
     FloatSize m_scrollingVelocity;
@@ -192,7 +194,6 @@ protected:
     PlatformWheelEventPhase m_phase { PlatformWheelEventPhase::None };
     PlatformWheelEventPhase m_momentumPhase { PlatformWheelEventPhase::None };
 #endif
-    bool m_hasPreciseScrollingDeltas { false };
 #if PLATFORM(COCOA)
     unsigned m_scrollCount { 0 };
     float m_unacceleratedScrollingDeltaX { 0 };
