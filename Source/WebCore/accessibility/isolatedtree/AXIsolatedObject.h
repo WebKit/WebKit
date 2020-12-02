@@ -374,6 +374,7 @@ private:
     PlainTextRange doAXRangeForPosition(const IntPoint&) const override;
     PlainTextRange doAXRangeForIndex(unsigned) const override;
     PlainTextRange doAXStyleRangeForIndex(unsigned) const override;
+    IntRect doAXBoundsForRangeUsingCharacterOffset(const PlainTextRange&) const override;
     IntRect doAXBoundsForRange(const PlainTextRange&) const override;
     unsigned doAXLineForIndex(unsigned) override;
 
@@ -397,7 +398,7 @@ private:
     VisiblePositionRange styleRangeForPosition(const VisiblePosition&) const override;
     VisiblePositionRange visiblePositionRangeForRange(const PlainTextRange&) const override;
     VisiblePositionRange lineRangeForPosition(const VisiblePosition&) const override;
-    Optional<SimpleRange> rangeForPlainTextRange(const PlainTextRange&) const override { return WTF::nullopt; }
+    Optional<SimpleRange> rangeForPlainTextRange(const PlainTextRange&) const override;
     String stringForRange(const SimpleRange&) const override;
     IntRect boundsForVisiblePositionRange(const VisiblePositionRange&) const override { return IntRect(); }
     IntRect boundsForRange(const SimpleRange&) const override { return IntRect(); }
@@ -422,7 +423,6 @@ private:
     PlainTextRange plainTextRangeForVisiblePositionRange(const VisiblePositionRange&) const override { return PlainTextRange(); }
     int index(const VisiblePosition&) const override { return 0; }
     void lineBreaks(Vector<int>&) const override { }
-    IntRect doAXBoundsForRangeUsingCharacterOffset(const PlainTextRange&) const override { return IntRect(); }
 
     // Attribute setters.
     void setARIAGrabbed(bool) override;
@@ -451,7 +451,7 @@ private:
     void scrollToGlobalPoint(const IntPoint&) const override;
     bool replaceTextInRange(const String&, const PlainTextRange&) override;
     bool insertText(const String&) override;
-    void makeRangeVisible(const PlainTextRange&) override { }
+    void makeRangeVisible(const PlainTextRange&) override;
     bool press() override;
     bool performDefaultAction() override;
 

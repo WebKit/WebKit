@@ -939,6 +939,13 @@ void AXIsolatedObject::updateBackingStore()
         tree->applyPendingChanges();
 }
 
+Optional<SimpleRange> AXIsolatedObject::rangeForPlainTextRange(const PlainTextRange& axRange) const
+{
+    ASSERT(isMainThread());
+    auto* axObject = associatedAXObject();
+    return axObject ? axObject->rangeForPlainTextRange(axRange) : WTF::nullopt;
+}
+
 String AXIsolatedObject::stringForRange(const SimpleRange& range) const
 {
     return Accessibility::retrieveValueFromMainThread<String>([&range, this] () -> String {
@@ -1019,6 +1026,13 @@ bool AXIsolatedObject::insertText(const String& text)
         if (auto* axObject = associatedAXObject())
             return axObject->insertText(text);
         return false;
+    });
+}
+
+void AXIsolatedObject::makeRangeVisible(const PlainTextRange& axRange)
+{
+    performFunctionOnMainThread([&axRange] (AXCoreObject* axObject) {
+        axObject->makeRangeVisible(axRange);
     });
 }
 
@@ -1213,6 +1227,15 @@ IntRect AXIsolatedObject::doAXBoundsForRange(const PlainTextRange& axRange) cons
         return { };
     });
 }
+IntRect AXIsolatedObject::doAXBoundsForRangeUsingCharacterOffset(const PlainTextRange& axRange) const
+{
+    return Accessibility::retrieveValueFromMainThread<IntRect>([&axRange, this] () -> IntRect {
+        if (auto* object = associatedAXObject())
+            return object->doAXBoundsForRangeUsingCharacterOffset(axRange);
+        return { };
+    });
+}
+
 
 unsigned AXIsolatedObject::doAXLineForIndex(unsigned index)
 {
