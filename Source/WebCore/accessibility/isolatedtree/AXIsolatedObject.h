@@ -401,7 +401,7 @@ private:
     Optional<SimpleRange> rangeForPlainTextRange(const PlainTextRange&) const override;
     String stringForRange(const SimpleRange&) const override;
     IntRect boundsForVisiblePositionRange(const VisiblePositionRange&) const override { return IntRect(); }
-    IntRect boundsForRange(const SimpleRange&) const override { return IntRect(); }
+    IntRect boundsForRange(const SimpleRange&) const override;
     int lengthForVisiblePositionRange(const VisiblePositionRange&) const override { return 0; }
     VisiblePosition visiblePositionForBounds(const IntRect&, AccessibilityVisiblePositionForBounds) const override { return VisiblePosition(); }
     VisiblePosition visiblePositionForPoint(const IntPoint&) const override { return VisiblePosition(); }
@@ -419,7 +419,7 @@ private:
     VisiblePosition visiblePositionForIndex(int) const override { return VisiblePosition(); }
     int indexForVisiblePosition(const VisiblePosition&) const override { return 0; }
     AXCoreObject* accessibilityObjectForPosition(const VisiblePosition&) const override { return nullptr; }
-    int lineForPosition(const VisiblePosition&) const override { return 0; }
+    int lineForPosition(const VisiblePosition&) const override;
     PlainTextRange plainTextRangeForVisiblePositionRange(const VisiblePositionRange&) const override { return PlainTextRange(); }
     int index(const VisiblePosition&) const override { return 0; }
     void lineBreaks(Vector<int>&) const override { }
@@ -441,7 +441,7 @@ private:
 
     // TODO: Functions
     String textUnderElement(AccessibilityTextUnderElementMode = AccessibilityTextUnderElementMode()) const override { return String(); }
-    Optional<SimpleRange> misspellingRange(const SimpleRange&, AccessibilitySearchDirection) const override { return WTF::nullopt; }
+    Optional<SimpleRange> misspellingRange(const SimpleRange&, AccessibilitySearchDirection) const override;
     FloatRect convertFrameToSpace(const FloatRect&, AccessibilityConversionSpace) const override;
     void increment() override;
     void decrement() override;

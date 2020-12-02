@@ -948,11 +948,16 @@ Optional<SimpleRange> AXIsolatedObject::rangeForPlainTextRange(const PlainTextRa
 
 String AXIsolatedObject::stringForRange(const SimpleRange& range) const
 {
-    return Accessibility::retrieveValueFromMainThread<String>([&range, this] () -> String {
-        if (auto* object = associatedAXObject())
-            return object->stringForRange(range);
-        return String();
-    });
+    ASSERT(isMainThread());
+    auto* axObject = associatedAXObject();
+    return axObject ? axObject->stringForRange(range).isolatedCopy() : String();
+}
+
+IntRect AXIsolatedObject::boundsForRange(const SimpleRange& range) const
+{
+    ASSERT(isMainThread());
+    auto* axObject = associatedAXObject();
+    return axObject ? axObject->boundsForRange(range) : IntRect();
 }
 
 Vector<SimpleRange> AXIsolatedObject::findTextRanges(const AccessibilitySearchTextCriteria& criteria) const
@@ -981,6 +986,13 @@ void AXIsolatedObject::findMatchingObjects(AccessibilitySearchCriteria* criteria
 
     criteria->anchorObject = this;
     Accessibility::findMatchingObjects(*criteria, results);
+}
+
+Optional<SimpleRange> AXIsolatedObject::misspellingRange(const SimpleRange& range, AccessibilitySearchDirection direction) const
+{
+    ASSERT(isMainThread());
+    auto* axObject = associatedAXObject();
+    return axObject ? axObject->misspellingRange(range, direction) : WTF::nullopt;
 }
 
 FloatRect AXIsolatedObject::relativeFrame() const
@@ -1227,6 +1239,7 @@ IntRect AXIsolatedObject::doAXBoundsForRange(const PlainTextRange& axRange) cons
         return { };
     });
 }
+
 IntRect AXIsolatedObject::doAXBoundsForRangeUsingCharacterOffset(const PlainTextRange& axRange) const
 {
     return Accessibility::retrieveValueFromMainThread<IntRect>([&axRange, this] () -> IntRect {
@@ -1351,6 +1364,13 @@ VisiblePositionRange AXIsolatedObject::lineRangeForPosition(const VisiblePositio
     ASSERT(isMainThread());
     auto* axObject = associatedAXObject();
     return axObject ? axObject->lineRangeForPosition(position) : VisiblePositionRange();
+}
+
+int AXIsolatedObject::lineForPosition(const VisiblePosition& position) const
+{
+    ASSERT(isMainThread());
+    auto* axObject = associatedAXObject();
+    return axObject ? axObject->lineForPosition(position) : -1;
 }
 
 bool AXIsolatedObject::isListBoxOption() const
