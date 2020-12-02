@@ -179,7 +179,9 @@ class Svn(mocks.Subprocess):
                         '{line}\n'
                         'Changed paths:\n'
                         '    M /{branch}/ChangeLog\n'
-                        '    M /{branch}/file.cpp\n'.format(
+                        '    M /{branch}/file.cpp\n'
+                        '    D /{branch}/deleted.cpp\n'
+                        '    A /{branch}/added.cpp\n'.format(
                             line=self.log_line(self.find(revision=args[6])),
                             branch=self.find(revision=args[6]).branch if self.find(revision=args[6]).branch.split('/')[0] in ['trunk', 'tags'] else 'branches/{}'.format(self.find(revision=args[6]).branch)
                         ),

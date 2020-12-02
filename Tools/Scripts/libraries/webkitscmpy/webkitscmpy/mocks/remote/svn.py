@@ -371,7 +371,9 @@ class Svn(mocks.Requests):
                                 commit.author.email,
                             ),
                             '<S:modified-path node-kind="file" text-mods="true" prop-mods="false">/{branch}/Changelog</S:modified-path>\n'
-                            '<S:modified-path node-kind="file" text-mods="true" prop-mods="false">/{branch}/file.cpp</S:modified-path>\n'.format(
+                            '<S:modified-path node-kind="file" text-mods="true" prop-mods="false">/{branch}/file.cpp</S:modified-path>\n'
+                            '<S:added-path node-kind="file" text-mods="true" prop-mods="false">/{branch}/deleted.cpp</S:added-path>\n'
+                            '<S:deleted-path node-kind="file" text-mods="true" prop-mods="false">/{branch}/added.cpp</S:deleted-path>\n'.format(
                                 branch=commit.branch if commit.branch.split('/')[0] in ['trunk', 'tags'] else 'branches/{}'.format(commit.branch),
                             ) if 'S:discover-changed-paths' in data['S:log-report'] else '',
                         ) for commit in commits

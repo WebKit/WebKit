@@ -1,3 +1,21 @@
+2020-12-02  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitscmpy] Handle adding, modifying and deleting files on branches
+        https://bugs.webkit.org/show_bug.cgi?id=219432
+        <rdar://problem/71894089>
+
+        Rubber-stamped by Aakash Jain.
+
+         Scripts/libraries/webkitcorepy/webkitcorepy/__init__.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/svn.py:
+        (Svn._branch_for): Support branch detection when files are added or deleted.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/mocks/local/svn.py:
+        (Svn.__init__):
+        * Scripts/libraries/webkitscmpy/webkitscmpy/mocks/remote/svn.py:
+        (Svn.request):
+        * Scripts/libraries/webkitscmpy/webkitscmpy/remote/svn.py:
+        (Svn._branch_for): Support branch detection when files are deleted.
+
 2020-12-02  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         Switch EWS workers for JSC-ARMv7-32bits build and test queues to a new machine.

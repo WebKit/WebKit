@@ -241,15 +241,15 @@ class Svn(Scm):
             if partial is None and line == 'Changed paths:':
                 partial = ''
             elif partial == '':
-                partial = line.lstrip()
+                partial = line.lstrip()[2:]
             elif partial:
                 line = line.lstrip()
-                while line.startswith('M ') and not line.startswith(partial):
+                while line.startswith(('A ', 'D ', 'M ')) and not line[2:].startswith(partial):
                     partial = partial[:-1]
 
         if len(partial) <= 3:
             raise self.Exception('Malformed set  of edited files')
-        partial = partial[2:].split(' ')[0]
+        partial = partial.split(' ')[0]
         candidate = partial.split('/')[2 if partial.startswith('/branches') else 1]
 
         # Tags are a unique case for SVN, because they're treated as branches in native SVN

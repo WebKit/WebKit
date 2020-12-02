@@ -290,7 +290,7 @@ class Svn(Scm):
 
         partial = None
         items = xmltodict.parse(response.text)['S:log-report']['S:log-item']
-        for group in (items.get('S:modified-path', []), items.get('S:added-path', [])):
+        for group in (items.get('S:modified-path', []), items.get('S:added-path', []), items.get('S:deleted-path', [])):
             for item in group if isinstance(group, list) else [group]:
                 if not partial:
                     partial = item['#text']
