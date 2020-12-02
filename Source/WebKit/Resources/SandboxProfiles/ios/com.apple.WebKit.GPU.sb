@@ -600,7 +600,9 @@
        (require-entitlement "com.apple.private.kernel.override-cpumon"))
 
 (deny sysctl-read (with no-report)
-      (sysctl-name "sysctl.proc_native"))
+      (sysctl-name
+          "hw.tbfrequency_compat" ;; <rdar://71740719>
+          "sysctl.proc_native"))
 
 (with-filter (system-attribute apple-internal)
     (allow sysctl-read sysctl-write

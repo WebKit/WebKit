@@ -628,6 +628,7 @@
 (deny sysctl-read (with no-report)
       (sysctl-name
           "hw.cpufrequency_compat"
+          "hw.tbfrequency_compat" ;; <rdar://71740719>
           "sysctl.proc_native"))
 
 (with-filter (system-attribute apple-internal)

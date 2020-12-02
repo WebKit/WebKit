@@ -1,3 +1,21 @@
+2020-12-02  Brent Fulgham  <bfulgham@apple.com>
+
+        [iOS] Silence sandbox warning for unneeded sysctl-read of "hw.tbfrequency_compat"
+        https://bugs.webkit.org/show_bug.cgi?id=219414
+        <rdar://problem/71740719>
+
+        Reviewed by Per Arne Vollan.
+
+        Silence a spurious log generated when our sandbox denies access to the unused sysctl
+        "hw.tbfrequency_compat". I have confirmed with the framework that attempts to read this
+        value, and they confirm they don't need the value, and actually are not using the result
+        anywhere in their framework.
+
+        Let's silence this report.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.GPU.sb:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2020-12-02  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Entire image elements are sometimes selected after ending a image extraction interaction
