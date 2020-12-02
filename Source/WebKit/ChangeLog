@@ -1,5 +1,19 @@
 2020-12-01  Per Arne Vollan  <pvollan@apple.com>
 
+        [macCatalyst] Embedded YouTube videos fail to play
+        https://bugs.webkit.org/show_bug.cgi?id=219412
+        <rdar://problem/71869657>
+
+        Reviewed by Tim Horton.
+
+        Add a missing comma in list of Media services, for which sandbox extensions are created. The missing comma
+        is causing a sandbox violation, since strings are concatenated when there's no comma.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::mediaRelatedMachServices):
+
+2020-12-01  Per Arne Vollan  <pvollan@apple.com>
+
         [macOS] Deny mach lookup of 'com.apple.webinspector' in the WebContent process
         https://bugs.webkit.org/show_bug.cgi?id=219386
         <rdar://problem/60932734>

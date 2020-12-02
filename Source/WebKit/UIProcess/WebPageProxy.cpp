@@ -7758,12 +7758,12 @@ static const Vector<ASCIILiteral>& mediaRelatedMachServices()
         "com.apple.coremedia.sandboxserver.xpc"_s, "com.apple.coremedia.sts"_s,
         "com.apple.coremedia.systemcontroller.xpc"_s, "com.apple.coremedia.videoqueue"_s,
         "com.apple.coremedia.visualcontext.xpc"_s, "com.apple.airplay.apsynccontroller.xpc"_s,
-        "com.apple.audio.AURemoteIOServer"_s
+        "com.apple.audio.AURemoteIOServer"_s,
 #endif
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
         "com.apple.audio.audiohald"_s, "com.apple.coremedia.endpointstream.xpc"_s, "com.apple.coremedia.endpointplaybacksession.xpc"_s,
         "com.apple.coremedia.endpointremotecontrolsession.xpc"_s, "com.apple.coremedia.videodecoder"_s,
-        "com.apple.coremedia.videoencoder"_s, "com.apple.lskdd"_s, "com.apple.trustd.agent"_s, "com.apple.BluetoothServices"_s
+        "com.apple.coremedia.videoencoder"_s, "com.apple.lskdd"_s, "com.apple.trustd.agent"_s, "com.apple.BluetoothServices"_s,
 #endif
     });
     return services;
