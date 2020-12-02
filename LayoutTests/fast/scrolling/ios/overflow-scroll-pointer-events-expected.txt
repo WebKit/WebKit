@@ -1,0 +1,11 @@
+Tests that toggling `pointer-events: none;` doesn't prevent scrolling.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS innerScrollElement.scrollTop is 0
+Disabling pointer events...
+PASS innerScrollElement.scrollTop is 0
+Enabling pointer events...
+PASS innerScrollElement.scrollTop is 150
+
