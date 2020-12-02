@@ -95,8 +95,10 @@ void WheelEventTestMonitor::removeDeferralForReason(ScrollableAreaIdentifier ide
     LockHolder lock(m_mutex);
 
     auto it = m_deferCompletionReasons.find(identifier);
-    if (it == m_deferCompletionReasons.end())
+    if (it == m_deferCompletionReasons.end()) {
+        LOG_WITH_STREAM(WheelEventTestMonitor, stream << "      (=) WheelEventTestMonitor::removeDeferralForReason: failed to find defer for id=" << identifier << ", reason=" << reason);
         return;
+    }
 
     LOG_WITH_STREAM(WheelEventTestMonitor, stream << "      (=) WheelEventTestMonitor::removeDeferralForReason: id=" << identifier << ", reason=" << reason);
     it->value.remove(reason);

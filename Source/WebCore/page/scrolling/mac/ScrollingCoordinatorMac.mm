@@ -98,18 +98,11 @@ static uint64_t nextDeferIdentifier()
 
 void ScrollingCoordinatorMac::wheelEventWasProcessedByMainThread(const PlatformWheelEvent& wheelEvent, OptionSet<EventHandling> defaultHandling)
 {
-    uint64_t deferIdentifier = 0;
-    if (m_page && m_page->isMonitoringWheelEvents()) {
-        deferIdentifier = nextDeferIdentifier();
-        m_page->wheelEventTestMonitor()->deferForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(deferIdentifier), WheelEventTestMonitor::ReportDOMEventHandling);
-    }
+    auto deferrer = WheelEventTestMonitorCompletionDeferrer { m_page->wheelEventTestMonitor().get(), reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(nextDeferIdentifier()), WheelEventTestMonitor::ReportDOMEventHandling };
 
     RefPtr<ThreadedScrollingTree> threadedScrollingTree = downcast<ThreadedScrollingTree>(scrollingTree());
-    ScrollingThread::dispatch([threadedScrollingTree, wheelEvent, defaultHandling, deferIdentifier] {
+    ScrollingThread::dispatch([threadedScrollingTree, wheelEvent, defaultHandling, deferrer = WTFMove(deferrer)] {
         threadedScrollingTree->wheelEventWasProcessedByMainThread(wheelEvent, defaultHandling);
-
-        if (threadedScrollingTree->isMonitoringWheelEvents())
-            threadedScrollingTree->removeWheelEventTestCompletionDeferralForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(deferIdentifier), WheelEventTestMonitor::ReportDOMEventHandling);
     });
 }
 

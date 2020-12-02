@@ -53,8 +53,7 @@ public:
 
     void applyPendingScrollUpdates();
 
-    enum class InformWheelEventMonitor { Yes, No };
-    WEBCORE_EXPORT void applyScrollUpdate(ScrollingNodeID, const FloatPoint&, Optional<FloatPoint> layoutViewportOrigin, ScrollType, ScrollingLayerPositionAction, InformWheelEventMonitor = InformWheelEventMonitor::Yes);
+    WEBCORE_EXPORT void applyScrollUpdate(ScrollingNodeID, const FloatPoint&, Optional<FloatPoint> layoutViewportOrigin, ScrollType, ScrollingLayerPositionAction);
 
 #if PLATFORM(COCOA)
     WEBCORE_EXPORT void handleWheelEventPhase(ScrollingNodeID, PlatformWheelEventPhase) final;
@@ -159,9 +158,7 @@ private:
     void setEventTrackingRegionsDirty();
     void updateEventTrackingRegions();
     
-    void noteScrollingThreadSyncCompleteForNode(ScrollingNodeID);
-
-    void updateScrollPositionAfterAsyncScroll(ScrollingNodeID, const FloatPoint&, Optional<FloatPoint> layoutViewportOrigin, ScrollType, ScrollingLayerPositionAction, InformWheelEventMonitor);
+    void updateScrollPositionAfterAsyncScroll(ScrollingNodeID, const FloatPoint&, Optional<FloatPoint> layoutViewportOrigin, ScrollType, ScrollingLayerPositionAction);
     
     FrameView* frameViewForScrollingNode(ScrollingNodeID) const;
 

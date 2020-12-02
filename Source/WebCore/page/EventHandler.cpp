@@ -2899,10 +2899,11 @@ bool EventHandler::handleWheelEventInternal(const PlatformWheelEvent& event, Opt
 
 #if PLATFORM(COCOA)
     LOG_WITH_STREAM(Scrolling, stream << "EventHandler::handleWheelEvent " << event << " processing steps " << processingSteps);
-    if (auto monitor = m_frame.page()->wheelEventTestMonitor())
+    auto monitor = m_frame.page()->wheelEventTestMonitor();
+    if (monitor)
         monitor->receivedWheelEvent(event);
 
-    WheelEventTestMonitorCompletionDeferrer deferrer(m_frame.page()->wheelEventTestMonitor().get(), this, WheelEventTestMonitor::DeferReason::HandlingWheelEventOnMainThread);
+    auto deferrer = WheelEventTestMonitorCompletionDeferrer { monitor.get(), this, WheelEventTestMonitor::DeferReason::HandlingWheelEventOnMainThread };
 #endif
 
     m_isHandlingWheelEvent = true;

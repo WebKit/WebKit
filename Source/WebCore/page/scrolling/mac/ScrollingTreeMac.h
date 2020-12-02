@@ -48,6 +48,7 @@ private:
 #endif
 
     void setWheelEventTestMonitor(RefPtr<WheelEventTestMonitor>&&) final;
+    WheelEventTestMonitor* wheelEventTestMonitor() final { return m_wheelEventTestMonitor.get(); }
 
     void receivedWheelEvent(const PlatformWheelEvent&) final;
 
