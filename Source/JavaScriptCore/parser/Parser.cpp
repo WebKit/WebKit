@@ -228,8 +228,9 @@ Expected<typename Parser<LexerType>::ParseInnerResult, String> Parser<LexerType>
             parameters = parseFunctionParameters(context, parseMode, functionInfo);
 
         if (SourceParseModeSet(SourceParseMode::ArrowFunctionMode, SourceParseMode::AsyncArrowFunctionMode).contains(parseMode) && !hasError()) {
-            // The only way we could have an error wile reparsing is if we run out of stack space.
-            RELEASE_ASSERT(match(ARROWFUNCTION));
+            // The only way we could have an error while reparsing is if we run out of stack space.
+            if (UNLIKELY(!match(ARROWFUNCTION)))
+                return makeUnexpected("Parser error"_s);
             next();
             isArrowFunctionBodyExpression = !match(OPENBRACE);
         }
