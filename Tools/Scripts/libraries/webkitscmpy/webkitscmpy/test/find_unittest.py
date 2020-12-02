@@ -169,8 +169,10 @@ Hash: 1abe25b443e9
                 identifier='3@main',
                 hash='1abe25b443e985f93b90d830e4a7e3731336af4d',
                 revision=4,
-                author='jbedard@apple.com',
-                timestamp=1601663000,
+                author=dict(
+                    name='Jonathan Bedard',
+                    emails=['jbedard@apple.com'],
+                ), timestamp=1601663000,
                 branch='main',
                 message='4th commit\nsvn-id: https://svn.webkit.orgrepository/repository/trunk@4 268f45cc-cd09-0410-ab3c-d52691b4dbfc',
             ))

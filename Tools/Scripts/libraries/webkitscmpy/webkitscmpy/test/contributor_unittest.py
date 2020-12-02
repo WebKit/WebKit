@@ -20,6 +20,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import json
 import unittest
 
 from webkitcorepy import string_utils
@@ -137,3 +138,25 @@ class TestContributor(unittest.TestCase):
             str(Contributor(u'Michael Br\u00fcning', ['michael.bruning@digia.com'])),
             string_utils.encode(u'Michael Br\u00fcning <michael.bruning@digia.com>', target_type=str),
         )
+
+    def test_json_encode(self):
+        self.assertDictEqual(
+            dict(
+                name='Jonathan Bedard',
+                emails=['jbedard@apple.com', 'jbedard@webkit.org'],
+            ), json.loads(json.dumps(Contributor(
+                name='Jonathan Bedard',
+                emails=['jbedard@apple.com', 'jbedard@webkit.org'],
+            ), cls=Contributor.Encoder))
+        )
+
+    def test_json_decode(self):
+        contributor_a = Contributor(
+            name='Jonathan Bedard',
+            emails=['jbedard@apple.com', 'jbedard@webkit.org'],
+        )
+
+        dictionary = json.loads(json.dumps(contributor_a, cls=Contributor.Encoder))
+        contributor_b = Contributor(**dictionary)
+
+        self.assertEqual(contributor_a, contributor_b)

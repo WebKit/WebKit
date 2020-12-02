@@ -228,8 +228,10 @@ PRINTED
                 branch='main',
                 identifier='1@main',
                 timestamp=1000,
-                author='jbedard@apple.com',
-                message='Message',
+                author=dict(
+                    name='Jonathan Bedard',
+                    emails=['jbedard@apple.com'],
+                ), message='Message',
             ), json.loads(json.dumps(Commit(
                 revision=1,
                 hash='c3bd784f8b88bd03f64467ddd3304ed8be28acbe',

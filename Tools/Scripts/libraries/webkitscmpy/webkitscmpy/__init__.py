@@ -46,7 +46,7 @@ except ImportError:
         "Please install webkitcorepy with `pip install webkitcorepy --extra-index-url <package index URL>`"
     )
 
-version = Version(0, 4, 3)
+version = Version(0, 4, 4)
 
 AutoInstall.register(Package('dateutil', Version(2, 8, 1), pypi_name='python-dateutil'))
 AutoInstall.register(Package('fasteners', Version(0, 15, 0)))

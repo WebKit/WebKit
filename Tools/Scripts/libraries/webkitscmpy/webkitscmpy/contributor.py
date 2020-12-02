@@ -20,6 +20,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import json
 import re
 
 from webkitcorepy import string_utils
@@ -33,6 +34,18 @@ class Contributor(object):
 
     by_email = dict()
     by_name = dict()
+
+    class Encoder(json.JSONEncoder):
+
+        def default(self, obj):
+            if not isinstance(obj, Contributor):
+                return super(Contributor.Encoder, self).default(obj)
+
+            result = dict(name=obj.name)
+            if obj.emails:
+                result['emails'] = [str(email) for email in obj.emails]
+
+            return result
 
     @classmethod
     def clear(cls):

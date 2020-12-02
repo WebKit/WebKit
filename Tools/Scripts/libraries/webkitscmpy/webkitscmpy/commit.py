@@ -48,7 +48,7 @@ class Commit(object):
                     result[attribute] = value
 
             if obj.author:
-                result['author'] = obj.author.email or obj.author.name
+                result['author'] = Contributor.Encoder().default(obj.author)
 
             if obj.identifier is not None:
                 result['identifier'] = str(obj)
@@ -194,6 +194,8 @@ class Commit(object):
             )
             if not self.author:
                 raise ValueError("'{}' does not match a known contributor")
+        elif author and isinstance(author, dict) and author.get('name'):
+            self.author = Contributor(author.get('name'), author.get('emails'))
         elif author and not isinstance(author, Contributor):
             raise TypeError("Expected 'author' to be of type {}, got '{}'".format(Contributor, author))
         else:
