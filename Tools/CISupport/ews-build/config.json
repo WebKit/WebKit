@@ -586,8 +586,7 @@
       "platform": "jsc-only",
       "configuration": "release",
       "architectures": ["armv7"],
-      "workernames": ["igalia-jsc32-armv7-ews"],
-      "remotes": "../../EWS-test-devices.json"
+      "workernames": ["igalia-jsc32-armv7-ews-02"]
     },
     {
       "name": "JSC-i386-32bits-EWS",

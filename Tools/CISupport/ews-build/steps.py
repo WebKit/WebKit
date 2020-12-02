@@ -1613,7 +1613,14 @@ class RunJavaScriptCoreTests(shell.Test):
 
         platform = self.getProperty('platform')
         if platform == 'jsc-only' and remotesfile:
-            self.command.extend(['--no-testmasm', '--no-testair', '--no-testb3', '--no-testdfg', '--no-testapi', '--memory-limited'])
+            # FIXME: the bundle copied to the remote should include the testair, testb3, testapi, etc.. binaries
+            self.command.extend(['--no-testmasm', '--no-testair', '--no-testb3', '--no-testdfg', '--no-testapi'])
+
+        # Linux bots have currently problems with JSC tests that try to use large amounts of memory.
+        # Check: https://bugs.webkit.org/show_bug.cgi?id=175140
+        if platform in ('gtk', 'wpe', 'jsc-only'):
+            self.command.extend(['--memory-limited', '--verbose'])
+
         appendCustomBuildFlags(self, self.getProperty('platform'), self.getProperty('fullPlatform'))
         return shell.Test.start(self)
 
