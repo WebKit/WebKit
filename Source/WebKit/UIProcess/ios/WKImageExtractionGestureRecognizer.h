@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,41 +25,20 @@
 
 #pragma once
 
-#if PLATFORM(IOS_FAMILY)
+#if PLATFORM(IOS_FAMILY) && ENABLE(IMAGE_EXTRACTION)
 
-#include "ArgumentCoders.h"
-#include "ShareableBitmap.h"
-#include <WebCore/IntPoint.h>
-#include <WebCore/SelectionRect.h>
-#include <WebCore/TextIndicator.h>
-#include <wtf/text/WTFString.h>
+#include <UIKit/UIKit.h>
 
-namespace WebKit {
+@class WKImageExtractionGestureRecognizer;
 
-struct InteractionInformationRequest {
-    WebCore::IntPoint point;
+@protocol WKImageExtractionGestureRecognizerDelegate <UIGestureRecognizerDelegate>
+- (void)imageExtractionGestureDidBegin:(WKImageExtractionGestureRecognizer *)gesture;
+@end
 
-    bool includeSnapshot { false };
-    bool includeLinkIndicator { false };
-    bool includeCaretContext { false };
-    bool includeHasDoubleClickHandler { true };
-    bool includeImageData { false };
+@interface WKImageExtractionGestureRecognizer : UILongPressGestureRecognizer
 
-    bool linkIndicatorShouldHaveLegacyMargins { false };
+- (instancetype)initWithImageExtractionGestureDelegate:(UIView <WKImageExtractionGestureRecognizerDelegate> *)delegate;
 
-    InteractionInformationRequest() { }
-    explicit InteractionInformationRequest(WebCore::IntPoint point)
-    {
-        this->point = point;
-    }
+@end
 
-    bool isValidForRequest(const InteractionInformationRequest&, int radius = 0) const;
-    bool isApproximatelyValidForRequest(const InteractionInformationRequest&, int radius) const;
-
-    void encode(IPC::Encoder&) const;
-    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, InteractionInformationRequest&);
-};
-
-}
-
-#endif // PLATFORM(IOS_FAMILY)
+#endif // PLATFORM(IOS_FAMILY) && ENABLE(IMAGE_EXTRACTION)

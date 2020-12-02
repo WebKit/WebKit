@@ -118,6 +118,10 @@ class WebPageProxy;
 @class _UILookupGestureRecognizer;
 @class _UIHighlightView;
 
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/WKContentViewInteractionAdditionsBefore.h>
+#endif
+
 typedef void (^UIWKAutocorrectionCompletionHandler)(UIWKAutocorrectionRects *rectsForInput);
 typedef void (^UIWKAutocorrectionContextHandler)(UIWKAutocorrectionContext *autocorrectionContext);
 typedef void (^UIWKDictationContextHandler)(NSString *selectedText, NSString *beforeText, NSString *afterText);
@@ -424,6 +428,17 @@ struct WKAutoCorrectionData {
 #endif
 
     Vector<BlockPtr<void()>> _actionsToPerformAfterResettingSingleTapGestureRecognizer;
+
+#if ENABLE(IMAGE_EXTRACTION)
+    RetainPtr<WKImageExtractionGestureRecognizer> _imageExtractionGestureRecognizer;
+    WebKit::ImageExtractionState _imageExtractionState;
+    CGRect _imageExtractionInteractionBounds;
+    Vector<BlockPtr<void()>> _actionsToPerformAfterPendingImageExtraction;
+#endif
+
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/WKContentViewInteractionAdditionsAfter.h>
+#endif
 }
 
 @end

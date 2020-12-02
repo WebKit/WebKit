@@ -2634,7 +2634,7 @@ static void imagePositionInformation(WebPage& page, Element& element, const Inte
     info.imageURL = element.document().completeURL(renderImage.cachedImage()->url().string());
     info.isAnimatedImage = image->isAnimated();
 
-    if (!request.includeSnapshot)
+    if (!request.includeSnapshot && !request.includeImageData)
         return;
 
     FloatSize screenSizeInPixels = screenSize();

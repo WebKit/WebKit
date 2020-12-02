@@ -40,6 +40,7 @@ void InteractionInformationRequest::encode(IPC::Encoder& encoder) const
     encoder << includeLinkIndicator;
     encoder << includeCaretContext;
     encoder << includeHasDoubleClickHandler;
+    encoder << includeImageData;
     encoder << linkIndicatorShouldHaveLegacyMargins;
 }
 
@@ -60,6 +61,9 @@ bool InteractionInformationRequest::decode(IPC::Decoder& decoder, InteractionInf
     if (!decoder.decode(result.includeHasDoubleClickHandler))
         return false;
 
+    if (!decoder.decode(result.includeImageData))
+        return false;
+
     if (!decoder.decode(result.linkIndicatorShouldHaveLegacyMargins))
         return false;
 
@@ -78,6 +82,10 @@ bool InteractionInformationRequest::isValidForRequest(const InteractionInformati
         return false;
 
     if (other.includeHasDoubleClickHandler && !includeHasDoubleClickHandler)
+        return false;
+
+    // If `includeSnapshot` is set, then we will include data for images as well.
+    if (other.includeImageData && !includeImageData && !includeSnapshot)
         return false;
 
     if (other.linkIndicatorShouldHaveLegacyMargins != linkIndicatorShouldHaveLegacyMargins)

@@ -462,6 +462,7 @@ UIProcess/ios/WKDeferringGestureRecognizer.mm
 UIProcess/ios/WKGeolocationProviderIOS.mm
 UIProcess/ios/WKGeolocationProviderIOSObjCSecurityOrigin.mm
 UIProcess/ios/WKHighlightLongPressGestureRecognizer.mm
+UIProcess/ios/WKImageExtractionGestureRecognizer.mm
 UIProcess/ios/WKKeyboardScrollingAnimator.mm
 UIProcess/ios/WKMouseDeviceObserver.mm
 UIProcess/ios/WKMouseGestureRecognizer.mm

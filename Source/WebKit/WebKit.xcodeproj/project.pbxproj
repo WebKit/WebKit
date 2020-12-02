@@ -1934,6 +1934,7 @@
 		F48D2A8521583A7E00C6752B /* AppKitSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = F48D2A8421583A0200C6752B /* AppKitSPI.h */; };
 		F496A4311F58A272004C1757 /* DragDropInteractionState.h in Headers */ = {isa = PBXBuildFile; fileRef = F496A42F1F58A272004C1757 /* DragDropInteractionState.h */; };
 		F4A6D6BC254CA3E900B65FAA /* SharedDisplayListHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = F4A6D6BB254CA3E900B65FAA /* SharedDisplayListHandle.h */; };
+		F4BA33F225757E89000A3CE8 /* WKImageExtractionGestureRecognizer.h in Headers */ = {isa = PBXBuildFile; fileRef = F4BA33F025757E89000A3CE8 /* WKImageExtractionGestureRecognizer.h */; };
 		F4CB09E5225D5A0900891487 /* WebsiteMediaSourcePolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = F4CB09E4225D5A0300891487 /* WebsiteMediaSourcePolicy.h */; };
 		F4D5F51D206087A10038BBA8 /* WKTextInputListViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = F4D5F519206087A00038BBA8 /* WKTextInputListViewController.h */; };
 		F4D5F51F206087A10038BBA8 /* WKQuickboardListViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = F4D5F51B206087A10038BBA8 /* WKQuickboardListViewController.h */; };
@@ -5602,6 +5603,8 @@
 		F4A6D6BB254CA3E900B65FAA /* SharedDisplayListHandle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SharedDisplayListHandle.h; sourceTree = "<group>"; };
 		F4AC655E22A3140E00A05607 /* WebPreferencesDefaultValuesIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebPreferencesDefaultValuesIOS.mm; path = ios/WebPreferencesDefaultValuesIOS.mm; sourceTree = "<group>"; };
 		F4B378D021DDBBAB0095A378 /* WebUndoStepID.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebUndoStepID.h; sourceTree = "<group>"; };
+		F4BA33F025757E89000A3CE8 /* WKImageExtractionGestureRecognizer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WKImageExtractionGestureRecognizer.h; path = ios/WKImageExtractionGestureRecognizer.h; sourceTree = "<group>"; };
+		F4BA33F125757E89000A3CE8 /* WKImageExtractionGestureRecognizer.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = WKImageExtractionGestureRecognizer.mm; path = ios/WKImageExtractionGestureRecognizer.mm; sourceTree = "<group>"; };
 		F4CB09E4225D5A0300891487 /* WebsiteMediaSourcePolicy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebsiteMediaSourcePolicy.h; sourceTree = "<group>"; };
 		F4D5F519206087A00038BBA8 /* WKTextInputListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKTextInputListViewController.h; path = ios/forms/WKTextInputListViewController.h; sourceTree = "<group>"; };
 		F4D5F51A206087A10038BBA8 /* WKTextInputListViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKTextInputListViewController.mm; path = ios/forms/WKTextInputListViewController.mm; sourceTree = "<group>"; };
@@ -7279,6 +7282,8 @@
 				0FCB4E4118BBE044000FCFC9 /* WKGeolocationProviderIOSObjCSecurityOrigin.mm */,
 				F4DB54E42319E733009E3155 /* WKHighlightLongPressGestureRecognizer.h */,
 				F4DB54E52319E733009E3155 /* WKHighlightLongPressGestureRecognizer.mm */,
+				F4BA33F025757E89000A3CE8 /* WKImageExtractionGestureRecognizer.h */,
+				F4BA33F125757E89000A3CE8 /* WKImageExtractionGestureRecognizer.mm */,
 				933DF82D1B3BC09000AEA9E3 /* WKImagePreviewViewController.h */,
 				933DF82F1B3BC0B400AEA9E3 /* WKImagePreviewViewController.mm */,
 				2DD5E127210ADC7A00DB6012 /* WKKeyboardScrollingAnimator.h */,
@@ -12055,6 +12060,7 @@
 				5123CF1C133D260A0056F800 /* WKIconDatabaseCG.h in Headers */,
 				BCCF6AC312C91F34008F9C35 /* WKImage.h in Headers */,
 				BCCF6ACA12C91F59008F9C35 /* WKImageCG.h in Headers */,
+				F4BA33F225757E89000A3CE8 /* WKImageExtractionGestureRecognizer.h in Headers */,
 				933DF82E1B3BC09000AEA9E3 /* WKImagePreviewViewController.h in Headers */,
 				9321D5861A38EE3C008052BE /* WKImmediateActionController.h in Headers */,
 				9321D58A1A38F196008052BE /* WKImmediateActionTypes.h in Headers */,

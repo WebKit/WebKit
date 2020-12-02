@@ -1,3 +1,67 @@
+2020-12-01  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Support image extraction interactions for accessibility
+        https://bugs.webkit.org/show_bug.cgi?id=219398
+        <rdar://problem/70744914>
+
+        Reviewed by Devin Rousso.
+
+        Adds support for a new accessibility feature related to images. Refer to the bug for more details.
+
+        * Shared/ios/InteractionInformationRequest.cpp:
+        (WebKit::InteractionInformationRequest::encode const):
+        (WebKit::InteractionInformationRequest::decode):
+        (WebKit::InteractionInformationRequest::isValidForRequest const):
+        * Shared/ios/InteractionInformationRequest.h:
+
+        Add a new flag to request image data via position information. This flag works similarly to the existing
+        `includeSnapshot` flag, except that it only grabs data when the hit-tested node is an image. As such, a position
+        information request with the `includeSnapshot` flag set is valid for an identical request with this new
+        `includeImageData` flag set, but not vice versa.
+
+        * SourcesCocoa.txt:
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+
+        Add various extension points for new WebKitAdditions snippets.
+
+        (-[WKContentView setUpInteraction]):
+        (-[WKContentView cleanUpInteraction]):
+
+        Call new methods to set up and tear down the image extraction interaction (defined in WebKitAdditions).
+
+        (-[WKContentView _webTouchEventsRecognized:]):
+
+        Upon starting a new gesture, reset the active (or pending) image extraction interaction, if appropriate.
+
+        (-[WKContentView gestureRecognizer:shouldRecognizeSimultaneouslyWithGestureRecognizer:]):
+
+        Allow the image extraction gesture to fire alongside any other gesture.
+
+        (-[WKContentView _dragInteraction:prepareForSession:completion:]):
+        (-[WKContentView _contextMenuInteraction:configurationForMenuAtLocation:completion:]):
+
+        These existing interactions may conflict with pending image extraction interactions. Luckily, since these
+        interactions are both asynchronous, we're able to defer them until any pending image extraction request has
+        finished, to determine whether or not they should commence. In both cases, image extraction should take
+        precedence over dragging and context menus.
+
+        * UIProcess/ios/WKImageExtractionGestureRecognizer.h:
+        * UIProcess/ios/WKImageExtractionGestureRecognizer.mm:
+
+        Add a new long press gesture recognizer that fires on a very short (100ms) delay. This gesture is used to
+        preflight image extraction requests ahead of the other long press gestures (in particular, context menus), such
+        that these other gestures should be minimally impacted by the time required to perform image extraction.
+
+        This is still a long press gesture instead of a regular gesture recognizer, since preflighting image extraction
+        requests could be expensive if performed during every single gesture (i.e. scrolling, taps, etc).
+
+        (-[WKImageExtractionGestureRecognizer initWithDelegate:]):
+        (-[WKImageExtractionGestureRecognizer setState:]):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::imagePositionInformation):
+
 2020-12-01  Per Arne Vollan  <pvollan@apple.com>
 
         [macCatalyst] Embedded YouTube videos fail to play

@@ -138,6 +138,10 @@
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/TextStream.h>
 
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/WKContentViewInteractionAdditionsBefore.mm>
+#endif
+
 #if ENABLE(DRAG_SUPPORT)
 #import <WebCore/DragData.h>
 #import <WebCore/DragItem.h>
@@ -892,6 +896,10 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     _page->process().updateTextCheckerState();
     _page->setScreenIsBeingCaptured([[[self window] screen] isCaptured]);
 
+#if ENABLE(IMAGE_EXTRACTION)
+    [self _setUpImageExtraction];
+#endif
+
     _hasSetUpInteractions = YES;
 }
 
@@ -1043,6 +1051,10 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
 #if ENABLE(DATALIST_ELEMENT)
     _dataListTextSuggestionsInputView = nil;
     _dataListTextSuggestions = nil;
+#endif
+
+#if ENABLE(IMAGE_EXTRACTION)
+    [self _tearDownImageExtraction];
 #endif
 
     _hasSetUpInteractions = NO;
@@ -1508,6 +1520,10 @@ inline static UIKeyModifierFlags gestureRecognizerModifierFlags(UIGestureRecogni
         [self doAfterPositionInformationUpdate:[assistant = WeakObjCPtr<WKActionSheetAssistant>(_actionSheetAssistant.get())] (WebKit::InteractionInformationAtPosition information) {
             [assistant interactionDidStartWithPositionInformation:information];
         } forRequest:positionInformationRequest];
+
+#if ENABLE(IMAGE_EXTRACTION)
+        [self _cancelImageExtractionIfNeeded:_lastInteractionLocation];
+#endif
     }
 
 #if ENABLE(TOUCH_EVENTS)
@@ -2170,6 +2186,11 @@ static Class tapAndAHalfRecognizerClass()
 
     if (isSamePair(gestureRecognizer, otherGestureRecognizer, _doubleTapGestureRecognizer.get(), _doubleTapGestureRecognizerForDoubleClick.get()))
         return YES;
+
+#if ENABLE(IMAGE_EXTRACTION)
+    if (gestureRecognizer == _imageExtractionGestureRecognizer)
+        return YES;
+#endif
 
     return NO;
 }
@@ -8104,12 +8125,31 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
 
     [self cleanUpDragSourceSessionState];
 
-    _dragDropInteractionState.prepareForDragSession(session, completion);
+    auto prepareForSession = [weakSelf = WeakObjCPtr<WKContentView>(self), session = retainPtr(session), completion = makeBlockPtr(completion)] {
+        auto strongSelf = weakSelf.get();
+        if (!strongSelf)
+            return;
 
-    auto dragOrigin = WebCore::roundedIntPoint([session locationInView:self]);
-    _page->requestDragStart(dragOrigin, WebCore::roundedIntPoint([self convertPoint:dragOrigin toView:self.window]), self._allowedDragSourceActions);
+#if ENABLE(IMAGE_EXTRACTION)
+        if (strongSelf->_imageExtractionState == WebKit::ImageExtractionState::Active) {
+            RELEASE_LOG(DragAndDrop, "Drag session failed: %p (deferring to active image extraction)", session.get());
+            completion();
+            return;
+        }
+#endif
 
-    RELEASE_LOG(DragAndDrop, "Drag session requested: %p at origin: {%d, %d}", session, dragOrigin.x(), dragOrigin.y());
+        strongSelf->_dragDropInteractionState.prepareForDragSession(session.get(), completion.get());
+
+        auto dragOrigin = WebCore::roundedIntPoint([session locationInView:strongSelf.get()]);
+        strongSelf->_page->requestDragStart(dragOrigin, WebCore::roundedIntPoint([strongSelf convertPoint:dragOrigin toView:[strongSelf window]]), [strongSelf _allowedDragSourceActions]);
+        RELEASE_LOG(DragAndDrop, "Drag session requested: %p at origin: {%d, %d}", session.get(), dragOrigin.x(), dragOrigin.y());
+    };
+
+#if ENABLE(IMAGE_EXTRACTION)
+    [self _doAfterPendingImageExtraction:prepareForSession];
+#else
+    prepareForSession();
+#endif
 }
 
 - (NSArray<UIDragItem *> *)dragInteraction:(UIDragInteraction *)interaction itemsForBeginningSession:(id <UIDragSession>)session
@@ -8995,6 +9035,10 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 
 #endif // ENABLE(ATTACHMENT_ELEMENT)
 
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/WKContentViewInteractionAdditionsAfter.mm>
+#endif
+
 @end
 
 @implementation WKContentView (WKTesting)
@@ -9437,24 +9481,43 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
     if (!self.webView.configuration._longPressActionsEnabled)
         return completion(nil);
 
-    [_webView _didShowContextMenu];
-    
-    _showLinkPreviews = true;
-    if (NSNumber *value = [[NSUserDefaults standardUserDefaults] objectForKey:webkitShowLinkPreviewsPreferenceKey])
-        _showLinkPreviews = value.boolValue;
-
-    const auto position = [interaction locationInView:self];
-    WebKit::InteractionInformationRequest request { WebCore::roundedIntPoint(position) };
-    request.includeSnapshot = true;
-    request.includeLinkIndicator = true;
-    request.linkIndicatorShouldHaveLegacyMargins = !self._shouldUseContextMenus;
-
-    [self doAfterPositionInformationUpdate:[weakSelf = WeakObjCPtr<WKContentView>(self), completion = makeBlockPtr(completion)] (WebKit::InteractionInformationAtPosition) {
+    auto getConfigurationAndContinue = [weakSelf = WeakObjCPtr<WKContentView>(self), interaction = retainPtr(interaction), completion = makeBlockPtr(completion)] {
         auto strongSelf = weakSelf.get();
         if (!strongSelf)
-            return completion(nil);
-        [strongSelf continueContextMenuInteraction:completion.get()];
-    } forRequest:request];
+            return;
+
+#if ENABLE(IMAGE_EXTRACTION)
+        if (strongSelf->_imageExtractionState == WebKit::ImageExtractionState::Active) {
+            completion(nil);
+            return;
+        }
+#endif
+
+        [strongSelf->_webView _didShowContextMenu];
+
+        strongSelf->_showLinkPreviews = true;
+        if (NSNumber *value = [[NSUserDefaults standardUserDefaults] objectForKey:webkitShowLinkPreviewsPreferenceKey])
+            strongSelf->_showLinkPreviews = value.boolValue;
+
+        const auto position = [interaction locationInView:strongSelf.get()];
+        WebKit::InteractionInformationRequest request { WebCore::roundedIntPoint(position) };
+        request.includeSnapshot = true;
+        request.includeLinkIndicator = true;
+        request.linkIndicatorShouldHaveLegacyMargins = ![strongSelf _shouldUseContextMenus];
+
+        [strongSelf doAfterPositionInformationUpdate:[weakSelf = WeakObjCPtr<WKContentView>(strongSelf.get()), completion] (WebKit::InteractionInformationAtPosition) {
+            if (auto strongSelf = weakSelf.get())
+                [strongSelf continueContextMenuInteraction:completion.get()];
+            else
+                completion(nil);
+        } forRequest:request];
+    };
+
+#if ENABLE(IMAGE_EXTRACTION)
+    [self _doAfterPendingImageExtraction:getConfigurationAndContinue];
+#else
+    getConfigurationAndContinue();
+#endif
 }
 
 - (void)continueContextMenuInteraction:(void(^)(UIContextMenuConfiguration *))continueWithContextMenuConfiguration

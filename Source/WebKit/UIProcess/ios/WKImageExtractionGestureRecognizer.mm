@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,43 +23,38 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "WKImageExtractionGestureRecognizer.h"
 
-#if PLATFORM(IOS_FAMILY)
+#if PLATFORM(IOS_FAMILY) && ENABLE(IMAGE_EXTRACTION)
 
-#include "ArgumentCoders.h"
-#include "ShareableBitmap.h"
-#include <WebCore/IntPoint.h>
-#include <WebCore/SelectionRect.h>
-#include <WebCore/TextIndicator.h>
-#include <wtf/text/WTFString.h>
-
-namespace WebKit {
-
-struct InteractionInformationRequest {
-    WebCore::IntPoint point;
-
-    bool includeSnapshot { false };
-    bool includeLinkIndicator { false };
-    bool includeCaretContext { false };
-    bool includeHasDoubleClickHandler { true };
-    bool includeImageData { false };
-
-    bool linkIndicatorShouldHaveLegacyMargins { false };
-
-    InteractionInformationRequest() { }
-    explicit InteractionInformationRequest(WebCore::IntPoint point)
-    {
-        this->point = point;
-    }
-
-    bool isValidForRequest(const InteractionInformationRequest&, int radius = 0) const;
-    bool isApproximatelyValidForRequest(const InteractionInformationRequest&, int radius) const;
-
-    void encode(IPC::Encoder&) const;
-    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, InteractionInformationRequest&);
-};
-
+@implementation WKImageExtractionGestureRecognizer {
+    __weak UIView <WKImageExtractionGestureRecognizerDelegate> *_imageExtractionDelegate;
 }
 
-#endif // PLATFORM(IOS_FAMILY)
+- (instancetype)initWithImageExtractionGestureDelegate:(UIView <WKImageExtractionGestureRecognizerDelegate> *)delegate
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _imageExtractionDelegate = delegate;
+    self.delegate = delegate;
+    self.minimumPressDuration = 0.1;
+    self.allowableMovement = 0;
+    self.name = @"Image extraction";
+    return self;
+}
+
+- (void)setState:(UIGestureRecognizerState)state
+{
+    auto previousState = self.state;
+    super.state = state;
+
+    auto newState = self.state;
+    if (previousState != newState && newState == UIGestureRecognizerStateBegan)
+        [_imageExtractionDelegate imageExtractionGestureDidBegin:self];
+}
+
+@end
+
+#endif // PLATFORM(IOS_FAMILY) && ENABLE(IMAGE_EXTRACTION)
