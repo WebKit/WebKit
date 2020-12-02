@@ -1,3 +1,10 @@
+2020-12-02  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed test gardening, skip two webgl tests that are frequently timing out on macOS.
+
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2020-12-02  Chris Dumez  <cdumez@apple.com>
 
         Block suspicious top level navigations by iframes even if sandbox=allow-top-navigation is specified

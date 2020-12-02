@@ -2164,6 +2164,8 @@ webkit.org/b/215814 [ Debug ] inspector/console/queryInstances.html [ Pass Failu
 
 webkit.org/b/215817 [ Release ] webgl/2.0.0/conformance2/textures/canvas_sub_rectangle/tex-2d-rgb32f-rgb-float.html [ Pass Failure ]
 
+webkit.org/b/219448 [ Debug ] webgl/2.0.0/conformance/rendering/multisample-corruption.html [ Skip ]
+
 # <rdar://64947666> [ BigSur+ ] fast/images/image-controls-basic.html 
 [ BigSur+ ] fast/images/image-controls-basic.html [ Failure ]
 
