@@ -14,10 +14,6 @@
       "platform": "jsc-only"
     },
     {
-      "name": "igalia-jsc32-armv7-ews-03",
-      "platform": "jsc-only"
-    },
-    {
       "name": "igalia-jsc32-mipsel-ews",
       "platform": "jsc-only"
     },
