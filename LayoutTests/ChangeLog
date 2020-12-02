@@ -1,3 +1,11 @@
+2020-12-01  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] Gardening wheel timeouts
+
+        Unreviewed test gardening.
+
+        * platform/glib/TestExpectations:
+
 2020-12-01  Devin Rousso  <drousso@apple.com>
 
         Toggling pointer-events on body does not re-enable scrolling on child
