@@ -1,3 +1,11 @@
+2020-12-02  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, fix the iOS build after r270362
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView createHighlightInCurrentGroupWithRange:]):
+        (-[WKContentView createHighlightInNewGroupWithRange:]):
+
 2020-12-02  Megan Gardner  <megan_gardner@apple.com>
 
         Create and draw app highlights
