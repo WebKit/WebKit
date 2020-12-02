@@ -1,5 +1,14 @@
 2020-12-02  Truitt Savell  <tsavell@apple.com>
 
+        [ iOS ] Update expectations for http/wpt/service-workers/skipFetchEvent.https.html which is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=208581
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
+2020-12-02  Truitt Savell  <tsavell@apple.com>
+
         [ iOS ] fast/canvas/canvas-overflow-hidden-animation.html is a flaky failure
         https://bugs.webkit.org/show_bug.cgi?id=219438
 
