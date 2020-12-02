@@ -2069,8 +2069,11 @@ bool RenderThemeIOS::paintRadio(const RenderObject& box, const PaintInfo& paintI
 // progress bar is repainted.
 constexpr Seconds progressAnimationRepeatInterval = 33_ms;
 
-Seconds RenderThemeIOS::animationRepeatIntervalForProgressBar(const RenderProgress&) const
+Seconds RenderThemeIOS::animationRepeatIntervalForProgressBar(const RenderProgress& renderProgress) const
 {
+    if (!renderProgress.settings().iOSFormControlRefreshEnabled())
+        return RenderTheme::animationRepeatIntervalForProgressBar(renderProgress);
+
     return progressAnimationRepeatInterval;
 }
 
