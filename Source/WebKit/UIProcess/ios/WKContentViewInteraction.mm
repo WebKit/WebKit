@@ -2559,6 +2559,11 @@ static Class tapAndAHalfRecognizerClass()
     if (_suppressSelectionAssistantReasons)
         return NO;
 
+#if ENABLE(IMAGE_EXTRACTION)
+    if ([self _imageExtractionShouldPreventTextInteractionAtPoint:point])
+        return NO;
+#endif
+
     if (_inspectorNodeSearchEnabled)
         return NO;
 
@@ -2593,7 +2598,12 @@ static Class tapAndAHalfRecognizerClass()
 
     if (_suppressSelectionAssistantReasons)
         return NO;
-    
+
+#if ENABLE(IMAGE_EXTRACTION)
+    if ([self _imageExtractionShouldPreventTextInteractionAtPoint:point])
+        return NO;
+#endif
+
     if (!self.isFocusingElement) {
         if (gesture == UIWKGestureDoubleTap) {
             // Don't allow double tap text gestures in noneditable content.

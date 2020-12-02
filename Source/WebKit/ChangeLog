@@ -1,5 +1,20 @@
 2020-12-02  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        Entire image elements are sometimes selected after ending a image extraction interaction
+        https://bugs.webkit.org/show_bug.cgi?id=219435
+        <rdar://problem/71897557>
+
+        Reviewed by Megan Gardner.
+
+        If the image extraction interaction is currently active, regular text interactions may need to defer to these
+        image extraction interactions. See WebKitAdditions changes for more details.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView hasSelectablePositionAtPoint:]):
+        (-[WKContentView textInteractionGesture:shouldBeginAtPoint:]):
+
+2020-12-02  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         Context menu should be shown after a long timeout following image extraction
         https://bugs.webkit.org/show_bug.cgi?id=219415
         <rdar://problem/71872600>
