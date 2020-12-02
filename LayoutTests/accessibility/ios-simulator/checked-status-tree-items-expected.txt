@@ -1,0 +1,13 @@
+item
+This tests that aria-checked is supported on tree items and changes generate notifications.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS addedNotification is true
+initial tree item value: AXValue: 1
+final tree item value: AXValue: 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1699,8 +1699,11 @@ void AXObjectCache::handleAriaRoleChanged(Node* node)
 
 void AXObjectCache::deferAttributeChangeIfNeeded(const QualifiedName& attrName, Element* element)
 {
-    if (nodeAndRendererAreValid(element) && rendererNeedsDeferredUpdate(*element->renderer()))
+    if (nodeAndRendererAreValid(element) && rendererNeedsDeferredUpdate(*element->renderer())) {
         m_deferredAttributeChange.add(element, attrName);
+        if (!m_performCacheUpdateTimer.isActive())
+            m_performCacheUpdateTimer.startOneShot(0_s);
+    }
     else
         handleAttributeChange(attrName, element);
 }

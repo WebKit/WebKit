@@ -75,14 +75,15 @@ void AXObjectCache::postPlatformNotification(AXCoreObject* obj, AXNotification n
         case AXInvalidStatusChanged:
             [obj->wrapper() postInvalidStatusChangedNotification];
             break;
+        case AXCheckedStateChanged:
         case AXValueChanged:
             [obj->wrapper() postValueChangedNotification];
+            notificationString = @"AXValueChanged";
             break;
         case AXExpandedChanged:
             [obj->wrapper() postExpandedChangedNotification];
             break;
         case AXSelectedChildrenChanged:
-        case AXCheckedStateChanged:
         default:
             break;
     }

@@ -691,6 +691,7 @@ bool AccessibilityNodeObject::isChecked() const
     case AccessibilityRole::MenuItemCheckbox:
     case AccessibilityRole::MenuItemRadio:
     case AccessibilityRole::Switch:
+    case AccessibilityRole::TreeItem:
         validRole = true;
         break;
     default:

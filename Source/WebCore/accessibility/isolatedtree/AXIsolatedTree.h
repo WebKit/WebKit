@@ -280,6 +280,7 @@ enum class AXPropertyName : uint16_t {
     SupportsDragging,
     SupportsDropping,
     SupportsARIAOwns,
+    SupportsCheckedState,
     SupportsCurrent,
     SupportsDatetimeAttribute,
     SupportsExpanded,

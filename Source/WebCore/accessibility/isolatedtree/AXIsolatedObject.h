@@ -352,6 +352,7 @@ private:
     AXCoreObject* decrementButton() override { return objectAttributeValue(AXPropertyName::DecrementButton); }
     bool isIncrementor() const override { return boolAttributeValue(AXPropertyName::IsIncrementor); }
     AccessibilityChildrenVector documentLinks() override { return tree()->objectsForIDs(vectorAttributeValue<AXID>(AXPropertyName::DocumentLinks)); }
+    bool supportsCheckedState() const override { return boolAttributeValue(AXPropertyName::SupportsCheckedState); }
 
     String stringValue() const override { return stringAttributeValue(AXPropertyName::StringValue); }
 

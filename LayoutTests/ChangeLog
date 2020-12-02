@@ -1,3 +1,16 @@
+2020-12-01  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: VoiceOver does not announce the  aria-checked state for ARIA treeitem
+        https://bugs.webkit.org/show_bug.cgi?id=218316
+        <rdar://problem/70787809>
+
+        Reviewed by Zalan Bujtas.
+
+        * accessibility/ios-simulator/checked-status-tree-items-expected.txt: Added.
+        * accessibility/ios-simulator/checked-status-tree-items.html: Added.
+        * accessibility/mac/checked-status-tree-items-expected.txt: Added.
+        * accessibility/mac/checked-status-tree-items.html: Added.
+
 2020-12-01  Truitt Savell  <tsavell@apple.com>
 
         [macOS / iOS ] Layout Test imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-getStats.https.html a flaky failure

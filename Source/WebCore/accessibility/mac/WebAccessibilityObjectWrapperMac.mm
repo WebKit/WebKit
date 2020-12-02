@@ -1147,7 +1147,7 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
 {
     // skip invisible text
     RenderObject* renderer = node->renderer();
-    if (!renderer)
+    if (!renderer || !text.length())
         return;
     
     // easier to calculate the range before appending the string
@@ -1723,6 +1723,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         [tempArray addObject:NSAccessibilityDisclosedByRowAttribute];
         [tempArray addObject:NSAccessibilityDisclosureLevelAttribute];
         [tempArray addObject:NSAccessibilityDisclosedRowsAttribute];
+        [tempArray removeObject:NSAccessibilityValueAttribute];
         outlineRowAttrs = [[NSArray alloc] initWithArray:tempArray];
         [tempArray release];
     }
@@ -1759,8 +1760,12 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
             objectAttributes = tableRowAttrs;
     } else if (backingObject->isTree())
         objectAttributes = outlineAttrs;
-    else if (backingObject->isTreeItem())
-        objectAttributes = outlineRowAttrs;
+    else if (backingObject->isTreeItem()) {
+        if (backingObject->supportsCheckedState())
+            objectAttributes = [outlineRowAttrs arrayByAddingObject:NSAccessibilityValueAttribute];
+        else
+            objectAttributes = outlineRowAttrs;
+    }
     else if (backingObject->isListBox())
         objectAttributes = listBoxAttrs;
     else if (backingObject->isList())
@@ -2472,7 +2477,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         if (backingObject->isHeading())
             return @(backingObject->headingLevel());
 
-        if (backingObject->isCheckboxOrRadio() || backingObject->isMenuItem() || backingObject->isSwitch() || backingObject->isToggleButton()) {
+        if (backingObject->supportsCheckedState()) {
             switch (backingObject->checkboxOrRadioValue()) {
             case AccessibilityButtonState::Off:
                 return @(0);

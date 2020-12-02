@@ -957,7 +957,8 @@ public:
     virtual void setIsExpanded(bool) = 0;
     virtual FloatRect relativeFrame() const = 0;
     virtual FloatRect convertFrameToSpace(const FloatRect&, AccessibilityConversionSpace) const = 0;
-
+    virtual bool supportsCheckedState() const = 0;
+    
     // In a multi-select list, many items can be selected but only one is active at a time.
     virtual bool isSelectedOptionActive() const = 0;
 

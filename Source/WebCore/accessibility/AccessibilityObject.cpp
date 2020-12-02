@@ -1489,6 +1489,16 @@ String AccessibilityObject::readOnlyValue() const
     return getAttribute(aria_readonlyAttr).string().convertToASCIILowercase();
 }
 
+bool AccessibilityObject::supportsCheckedState() const
+{
+    auto role = roleValue();
+    return isCheckboxOrRadio()
+    || role == AccessibilityRole::MenuItemCheckbox
+    || role == AccessibilityRole::MenuItemRadio
+    || role == AccessibilityRole::Switch
+    || isToggleButton();
+}
+
 bool AccessibilityObject::supportsAutoComplete() const
 {
     return (isComboBox() || isARIATextControl()) && hasAttribute(aria_autocompleteAttr);

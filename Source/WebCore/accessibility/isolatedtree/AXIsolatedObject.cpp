@@ -229,6 +229,7 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& object, bool isRoot
     setProperty(AXPropertyName::IsKeyboardFocusable, object.isKeyboardFocusable());
     setObjectProperty(AXPropertyName::NextSibling, object.nextSibling());
     setObjectProperty(AXPropertyName::PreviousSibling, object.previousSibling());
+    setProperty(AXPropertyName::SupportsCheckedState, object.supportsCheckedState());
 
     if (object.isTable()) {
         setProperty(AXPropertyName::IsTable, true);

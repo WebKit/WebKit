@@ -851,6 +851,10 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
     if (!self.axBackingObject->isEnabled())
         traits |= [self _axNotEnabledTrait];
     
+    // If the treeitem supports the checked state, then it should also be marked with toggle status.
+    if (self.axBackingObject->supportsCheckedState())
+        traits |= [self _axToggleTrait];
+
     if (m_accessibilityTraitsFromAncestor == ULLONG_MAX)
         m_accessibilityTraitsFromAncestor = [self _accessibilityTraitsFromAncestors];
     
@@ -1446,8 +1450,7 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     if (value)
         return value;
     
-    AccessibilityRole role = self.axBackingObject->roleValue();
-    if (self.axBackingObject->isCheckboxOrRadio() || role == AccessibilityRole::MenuItemCheckbox || role == AccessibilityRole::MenuItemRadio || role == AccessibilityRole::Switch) {
+    if (self.axBackingObject->supportsCheckedState()) {
         switch (self.axBackingObject->checkboxOrRadioValue()) {
         case AccessibilityButtonState::Off:
             return [NSString stringWithFormat:@"%d", 0];

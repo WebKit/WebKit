@@ -38,6 +38,7 @@ public:
     virtual ~AccessibilityTreeItem();
 
     bool shouldIgnoreAttributeRole() const override { return !m_isTreeItemValid; }
+    bool supportsCheckedState() const override;
 
 private:
     explicit AccessibilityTreeItem(RenderObject*);
