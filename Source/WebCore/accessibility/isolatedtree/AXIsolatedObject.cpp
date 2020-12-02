@@ -1155,7 +1155,70 @@ PlainTextRange AXIsolatedObject::selectedTextRange() const
     return Accessibility::retrieveValueFromMainThread<PlainTextRange>([this] () -> PlainTextRange {
         if (auto* object = associatedAXObject())
             return object->selectedTextRange();
-        return PlainTextRange();
+        return { };
+    });
+}
+
+PlainTextRange AXIsolatedObject::doAXRangeForLine(unsigned lineIndex) const
+{
+    return Accessibility::retrieveValueFromMainThread<PlainTextRange>([&lineIndex, this] () -> PlainTextRange {
+        if (auto* object = associatedAXObject())
+            return object->doAXRangeForLine(lineIndex);
+        return { };
+    });
+}
+
+String AXIsolatedObject::doAXStringForRange(const PlainTextRange& axRange) const
+{
+    return Accessibility::retrieveValueFromMainThread<String>([&axRange, this] () -> String {
+        if (auto* object = associatedAXObject())
+            return object->doAXStringForRange(axRange);
+        return { };
+    });
+}
+
+PlainTextRange AXIsolatedObject::doAXRangeForPosition(const IntPoint& point) const
+{
+    return Accessibility::retrieveValueFromMainThread<PlainTextRange>([&point, this] () -> PlainTextRange {
+        if (auto* object = associatedAXObject())
+            return object->doAXRangeForPosition(point);
+        return { };
+    });
+}
+
+PlainTextRange AXIsolatedObject::doAXRangeForIndex(unsigned index) const
+{
+    return Accessibility::retrieveValueFromMainThread<PlainTextRange>([&index, this] () -> PlainTextRange {
+        if (auto* object = associatedAXObject())
+            return object->doAXRangeForIndex(index);
+        return { };
+    });
+}
+
+PlainTextRange AXIsolatedObject::doAXStyleRangeForIndex(unsigned index) const
+{
+    return Accessibility::retrieveValueFromMainThread<PlainTextRange>([&index, this] () -> PlainTextRange {
+        if (auto* object = associatedAXObject())
+            return object->doAXStyleRangeForIndex(index);
+        return { };
+    });
+}
+
+IntRect AXIsolatedObject::doAXBoundsForRange(const PlainTextRange& axRange) const
+{
+    return Accessibility::retrieveValueFromMainThread<IntRect>([&axRange, this] () -> IntRect {
+        if (auto* object = associatedAXObject())
+            return object->doAXBoundsForRange(axRange);
+        return { };
+    });
+}
+
+unsigned AXIsolatedObject::doAXLineForIndex(unsigned index)
+{
+    return Accessibility::retrieveValueFromMainThread<unsigned>([&index, this] () -> unsigned {
+        if (auto* object = associatedAXObject())
+            return object->doAXLineForIndex(index);
+        return 0;
     });
 }
 

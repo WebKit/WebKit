@@ -366,9 +366,19 @@ private:
     String documentEncoding() const override;
     bool preventKeyboardDOMEventDispatch() const override;
 
+    // PlainTextRange support.
     PlainTextRange selectedTextRange() const override;
+    PlainTextRange doAXRangeForLine(unsigned) const override;
+    String doAXStringForRange(const PlainTextRange&) const override;
+    PlainTextRange doAXRangeForPosition(const IntPoint&) const override;
+    PlainTextRange doAXRangeForIndex(unsigned) const override;
+    PlainTextRange doAXStyleRangeForIndex(unsigned) const override;
+    IntRect doAXBoundsForRange(const PlainTextRange&) const override;
+    unsigned doAXLineForIndex(unsigned) override;
+
     VisibleSelection selection() const override;
     void setSelectedVisiblePositionRange(const VisiblePositionRange&) const override;
+
     // TODO: Text ranges and selection.
     unsigned selectionStart() const override { return 0; }
     unsigned selectionEnd() const override { return 0; }
@@ -411,14 +421,7 @@ private:
     PlainTextRange plainTextRangeForVisiblePositionRange(const VisiblePositionRange&) const override { return PlainTextRange(); }
     int index(const VisiblePosition&) const override { return 0; }
     void lineBreaks(Vector<int>&) const override { }
-    PlainTextRange doAXRangeForLine(unsigned) const override { return PlainTextRange(); }
-    PlainTextRange doAXRangeForPosition(const IntPoint&) const override { return PlainTextRange(); }
-    PlainTextRange doAXRangeForIndex(unsigned) const override { return PlainTextRange(); }
-    PlainTextRange doAXStyleRangeForIndex(unsigned) const override { return PlainTextRange(); }
-    String doAXStringForRange(const PlainTextRange&) const override { return String(); }
-    IntRect doAXBoundsForRange(const PlainTextRange&) const override { return IntRect(); }
     IntRect doAXBoundsForRangeUsingCharacterOffset(const PlainTextRange&) const override { return IntRect(); }
-    unsigned doAXLineForIndex(unsigned) override { return 0; }
 
     // Attribute setters.
     void setARIAGrabbed(bool) override;
