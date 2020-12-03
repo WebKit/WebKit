@@ -3797,6 +3797,10 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     WebProcess::singleton().setUseGPUProcessForCanvasRendering(m_shouldRenderCanvasInGPUProcess);
     WebProcess::singleton().setUseGPUProcessForDOMRendering(m_shouldRenderDOMInGPUProcess);
     WebProcess::singleton().setUseGPUProcessForMedia(m_shouldPlayMediaInGPUProcess);
+
+    // FIXME: We should support web fonts in the GPU process.
+    if (m_shouldRenderDOMInGPUProcess)
+        settings.setDownloadableBinaryFontsEnabled(false);
 #endif
 
 #if ENABLE(IPC_TESTING_API)
