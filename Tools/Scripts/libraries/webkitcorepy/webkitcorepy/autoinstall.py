@@ -319,20 +319,16 @@ class AutoInstall(object):
     packages = defaultdict(list)
     manifest = {}
 
+    # Rely on our own certificates for PyPi, since we use PyPi to standardize root certificates
+    ca_cert_path = os.path.join(os.path.dirname(__file__), 'cacert.pem')
+
     # When sharing an install location, projects may wish to overwrite packages on disk
     # originating from a different index.
     overwrite_foreign_packages = False
 
     @classmethod
-    def _request(cls, url):
-        # Rely on our own certificates for PyPi, since we use PyPi to standardize root certificates
-        if url.startswith('https://pypi.org') or url.startswith('https://files.pythonhosted.org'):
-            return urlopen(
-                url,
-                timeout=cls.timeout,
-                cafile=os.path.join(os.path.dirname(__file__), 'cacert.pem'),
-            )
-        return urlopen(url, timeout=cls.timeout)
+    def _request(cls, url, ca_cert_path=None):
+        return urlopen(url, timeout=cls.timeout, cafile=ca_cert_path or cls.ca_cert_path)
 
     @classmethod
     def enabled(cls):
@@ -399,9 +395,10 @@ class AutoInstall(object):
         cls.directory = directory
 
     @classmethod
-    def set_index(cls, index, check=True, fatal=False):
+    def set_index(cls, index, check=True, fatal=False, ca_cert_path=None):
         if not check:
             cls.index = index
+            cls.ca_cert_path = ca_cert_path
             return cls.index
 
         def error(message):
@@ -413,11 +410,12 @@ class AutoInstall(object):
 
         response = None
         try:
-            response = AutoInstall._request('https://{}/simple/pip/'.format(index))
+            response = AutoInstall._request('https://{}/simple/pip/'.format(index), ca_cert_path=ca_cert_path)
             if response.code != 200:
                 error('Failed to set AutoInstall index to {}, received {} response when searching for simple/pip'.format(index, response.code))
             else:
                 cls.index = index
+                cls.ca_cert_path = ca_cert_path
         except URLError:
             error('Failed to set AutoInstall index to {}, no response from the server'.format(index))
         finally:
