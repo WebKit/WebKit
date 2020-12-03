@@ -1214,3 +1214,6 @@ fast/layoutformattingcontext/intrusive-floats-takes-entire-horizontal-space.html
 fast/layoutformattingcontext/quirk-margin-not-collapse-when-floating.html [ ImageOnlyFailure ]
 fast/layoutformattingcontext/run-expansion-extends-line-content-width.html [ ImageOnlyFailure ]
 fast/layoutformattingcontext/wbr-simple.html [ ImageOnlyFailure ]
+
+webkit.org/b/219498 imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-padding-003.html [ Pass ImageOnlyFailure ]
+
