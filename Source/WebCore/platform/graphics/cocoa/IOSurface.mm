@@ -242,24 +242,27 @@ static IntSize computeMaximumSurfaceSize()
     return maxSize.constrainedBetween({ maxSurfaceDimensionLowerBound, maxSurfaceDimensionLowerBound }, { maxSurfaceDimension, maxSurfaceDimension });
 }
 
-static WTF::Optional<IntSize>& surfaceMaximumSize()
+static WTF::Atomic<IntSize>& surfaceMaximumSize()
 {
-    ASSERT(isMainThread());
-    static WTF::Optional<IntSize> maximumSize;
+    static WTF::Atomic<IntSize> maximumSize;
     return maximumSize;
 }
 
 void IOSurface::setMaximumSize(IntSize size)
 {
-    surfaceMaximumSize() = size;
+    ASSERT(!size.isEmpty());
+    surfaceMaximumSize().store(size);
 }
 
 IntSize IOSurface::maximumSize()
 {
-    auto& size = surfaceMaximumSize();
-    if (!size)
-        size = computeMaximumSurfaceSize();
-    return *size;
+    auto size = surfaceMaximumSize().load();
+    if (size.isEmpty()) {
+        auto computedSize = computeMaximumSurfaceSize();
+        surfaceMaximumSize().store(computedSize);
+        return computedSize;
+    }
+    return size;
 }
 
 MachSendRight IOSurface::createSendRight() const
