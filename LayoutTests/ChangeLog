@@ -1,3 +1,24 @@
+2020-12-03  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS][FCR] Add new look for search fields
+        https://bugs.webkit.org/show_bug.cgi?id=219443
+        <rdar://problem/71902666>
+
+        Reviewed by Wenson Hsieh.
+
+        Added tests to verify the stylability of search fields with the new appearance.
+
+        * fast/forms/ios/form-control-refresh/search/background-color-expected-mismatch.html: Added.
+        * fast/forms/ios/form-control-refresh/search/background-color.html: Added.
+        * fast/forms/ios/form-control-refresh/search/border-expected-mismatch.html: Added.
+        * fast/forms/ios/form-control-refresh/search/border.html: Added.
+        * fast/forms/ios/form-control-refresh/search/font-size-expected-mismatch.html: Added.
+        * fast/forms/ios/form-control-refresh/search/font-size.html: Added.
+        * fast/forms/ios/form-control-refresh/search/results-attribute-expected.html: Added.
+        * fast/forms/ios/form-control-refresh/search/results-attribute.html: Added.
+        * fast/forms/ios/form-control-refresh/search/width-height-expected-mismatch.html: Added.
+        * fast/forms/ios/form-control-refresh/search/width-height.html: Added.
+
 2020-12-03  Ryan Haddad  <ryanhaddad@apple.com>
 
         [macOS WK1] imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-padding-003.html is a flaky failure
