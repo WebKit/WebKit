@@ -856,6 +856,11 @@ webkit.org/b/216650 fast/events/mouse-drag-from-frame.html [ Failure Pass ]
 webkit.org/b/216650 fast/events/mouse-focus-imagemap.html [ Failure Pass ]
 webkit.org/b/216650 fast/events/mouse-moved-remove-frame-crash.html [ Timeout Pass ]
 
+webkit.org/b/219425 fast/events/touch/emulate-touch-events.html [ Failure Pass ]
+
+webkit.org/b/219465 fast/loader/font-load-timer.html [ ImageOnlyFailure Pass ]
+webkit.org/b/219465 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/persisted-user-state-restoration/resume-timer-on-history-back.html [ Failure Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # 6. SLOW TESTS
 #////////////////////////////////////////////////////////////////////////////////////////

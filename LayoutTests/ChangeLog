@@ -1,3 +1,11 @@
+2020-12-02  Diego Pino Garcia  <dpino@igalia.com>
+
+        [WPE] Unreviewed test gardening. Gardened several flaky failures.
+
+        * platform/glib/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2020-12-02  Ryan Haddad  <ryanhaddad@apple.com>
 
         [macOS Debug] imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/moving-between-documents/before-prepare-* tests are flaky
