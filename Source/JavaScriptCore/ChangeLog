@@ -1,3 +1,20 @@
+2020-12-02  Alan Coon  <alancoon@apple.com>
+
+        Apply patch. rdar://problem/71921536
+
+    2020-12-02  Saam Barati  <sbarati@apple.com>
+
+            Don't crash when reparsing an arrow function and the parsing invariant is broken.
+            <rdar://problem/70289034>
+
+            Reviewed by Mark Lam.
+
+            Instead, let's turn it into a runtime error for now, since that's better than
+            crashing. We're still not sure how this invariant is broken.
+
+            * parser/Parser.cpp:
+            (JSC::Parser<LexerType>::parseInner):
+
 2020-12-01  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r269931. rdar://problem/71836676
