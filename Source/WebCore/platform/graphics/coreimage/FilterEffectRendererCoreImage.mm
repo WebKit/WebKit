@@ -36,6 +36,7 @@
 #import "FloatConversion.h"
 #import "GraphicsContextCG.h"
 #import "ImageBuffer.h"
+#import "Logging.h"
 #import "PlatformImageBuffer.h"
 #import "SourceGraphic.h"
 #import <CoreImage/CIContext.h>

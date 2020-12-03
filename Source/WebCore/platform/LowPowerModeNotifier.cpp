@@ -28,7 +28,7 @@
 
 namespace WebCore {
 
-#if !PLATFORM(IOS_FAMILY) && !USE(GLIB)
+#if !HAVE(APPLE_LOW_POWER_MODE_SUPPORT) && !USE(GLIB)
 
 LowPowerModeNotifier::LowPowerModeNotifier(LowPowerModeChangeCallback&&)
 {

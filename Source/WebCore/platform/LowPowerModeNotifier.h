@@ -27,7 +27,7 @@
 
 #include <wtf/Function.h>
 
-#if PLATFORM(IOS_FAMILY)
+#if HAVE(APPLE_LOW_POWER_MODE_SUPPORT)
 #include <wtf/RetainPtr.h>
 OBJC_CLASS WebLowPowerModeObserver;
 #endif
@@ -49,7 +49,7 @@ public:
     WEBCORE_EXPORT bool isLowPowerModeEnabled() const;
 
 private:
-#if PLATFORM(IOS_FAMILY)
+#if HAVE(APPLE_LOW_POWER_MODE_SUPPORT)
     void notifyLowPowerModeChanged(bool);
     friend void notifyLowPowerModeChanged(LowPowerModeNotifier&, bool);
 

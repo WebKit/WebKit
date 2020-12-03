@@ -29,6 +29,7 @@
 
 #include "GamepadProvider.h"
 #include "GamepadProviderClient.h"
+#include "PlatformGamepad.h"
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
 

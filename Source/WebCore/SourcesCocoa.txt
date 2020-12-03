@@ -237,6 +237,7 @@ platform/cocoa/DragImageCocoa.mm
 platform/cocoa/FileMonitorCocoa.mm
 platform/cocoa/KeyEventCocoa.mm
 platform/cocoa/LocalizedStringsCocoa.mm
+platform/cocoa/LowPowerModeNotifier.mm
 platform/cocoa/MIMETypeRegistryCocoa.mm
 platform/cocoa/MediaUtilities.cpp
 platform/cocoa/NetworkExtensionContentFilter.mm
@@ -436,7 +437,6 @@ platform/ios/LegacyTileLayerPool.mm
 platform/ios/LocalCurrentGraphicsContextIOS.mm
 platform/ios/LocalCurrentTraitCollection.mm
 platform/ios/LocalizedDeviceModel.mm
-platform/ios/LowPowerModeNotifierIOS.mm
 platform/ios/PasteboardIOS.mm
 platform/ios/PlatformEventFactoryIOS.mm @no-unify
 platform/ios/PlatformPasteboardIOS.mm
