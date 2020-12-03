@@ -764,7 +764,7 @@ bool ScrollController::processWheelEventForScrollSnap(const PlatformWheelEvent& 
 
 void ScrollController::updateGestureInProgressState(const PlatformWheelEvent& wheelEvent)
 {
-    if (wheelEvent.isGestureBegin() || wheelEvent.isTransitioningToMomentumScroll())
+    if (wheelEvent.isGestureStart() || wheelEvent.isTransitioningToMomentumScroll())
         m_inScrollGesture = true;
     else if (wheelEvent.isEndOfNonMomentumScroll() || wheelEvent.isGestureCancel() || wheelEvent.isEndOfMomentumScroll())
         m_inScrollGesture = false;

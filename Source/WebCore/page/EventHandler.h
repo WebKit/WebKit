@@ -464,6 +464,11 @@ private:
     void processWheelEventForScrollSnap(const PlatformWheelEvent&, const WeakPtr<ScrollableArea>&);
     bool completeWidgetWheelEvent(const PlatformWheelEvent&, const WeakPtr<Widget>&, const WeakPtr<ScrollableArea>&);
 
+    bool handleWheelEventInAppropriateEnclosingBox(Node* startNode, const WheelEvent&, const FloatSize& filteredPlatformDelta, const FloatSize& filteredVelocity, OptionSet<EventHandling>);
+
+    bool handleWheelEventInScrollableArea(const PlatformWheelEvent&, ScrollableArea&, OptionSet<EventHandling>);
+    Optional<WheelScrollGestureState> updateWheelGestureState(const PlatformWheelEvent&, OptionSet<EventHandling>);
+
     bool platformCompletePlatformWidgetWheelEvent(const PlatformWheelEvent&, const Widget&, const WeakPtr<ScrollableArea>&);
 
     void defaultSpaceEventHandler(KeyboardEvent&);
@@ -584,6 +589,10 @@ private:
     bool m_hasActiveGesture { false };
 #endif
 
+#if ENABLE(KINETIC_SCROLLING)
+    Optional<WheelScrollGestureState> m_wheelScrollGestureState;
+#endif
+
 #if ENABLE(TOUCH_EVENTS) && !ENABLE(IOS_TOUCH_EVENTS)
     using TouchTargetMap = HashMap<int, RefPtr<EventTarget>>;
     TouchTargetMap m_originatingTouchPointTargets;
@@ -614,7 +623,6 @@ private:
 
 #if PLATFORM(COCOA)
     NSView *m_mouseDownView { nullptr };
-    Optional<WheelScrollGestureState> m_wheelScrollGestureState;
     bool m_sendingEventToSubview { false };
 #endif
 

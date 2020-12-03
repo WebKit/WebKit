@@ -64,7 +64,7 @@ WheelEventHandlingResult ThreadedScrollingTree::handleWheelEvent(const PlatformW
     return ScrollingTree::handleWheelEvent(wheelEvent, processingSteps);
 }
 
-bool ThreadedScrollingTree::handleWheelEventAfterMainThread(const PlatformWheelEvent& wheelEvent, ScrollingNodeID targetNodeID, OptionSet<EventHandling>)
+bool ThreadedScrollingTree::handleWheelEventAfterMainThread(const PlatformWheelEvent& wheelEvent, ScrollingNodeID targetNodeID, Optional<WheelScrollGestureState>)
 {
     LOG_WITH_STREAM(Scrolling, stream << "ThreadedScrollingTree::handleWheelEventAfterMainThread " << wheelEvent << " node " << targetNodeID);
 
@@ -76,7 +76,7 @@ bool ThreadedScrollingTree::handleWheelEventAfterMainThread(const PlatformWheelE
     return result.wasHandled;
 }
 
-void ThreadedScrollingTree::wheelEventWasProcessedByMainThread(const PlatformWheelEvent&, OptionSet<EventHandling>)
+void ThreadedScrollingTree::wheelEventWasProcessedByMainThread(const PlatformWheelEvent&, Optional<WheelScrollGestureState>)
 {
     // FIXME: Set state based on EventHandling flags.
 }

@@ -41,7 +41,7 @@ ScrollingTreeGestureState::ScrollingTreeGestureState(ScrollingTree& scrollingTre
 
 void ScrollingTreeGestureState::receivedWheelEvent(const PlatformWheelEvent& event)
 {
-    if (event.isGestureBegin()) {
+    if (event.isGestureStart()) {
         clearAllNodes();
         return;
     }

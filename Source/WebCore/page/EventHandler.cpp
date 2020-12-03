@@ -291,76 +291,6 @@ static inline ScrollGranularity wheelGranularityToScrollGranularity(unsigned del
     }
 }
 
-static void handleWheelEventPhaseInScrollableArea(ScrollableArea& scrollableArea, const WheelEvent& wheelEvent)
-{
-#if PLATFORM(MAC)
-    if (wheelEvent.phase() == PlatformWheelEventPhase::MayBegin || wheelEvent.phase() == PlatformWheelEventPhase::Cancelled)
-        scrollableArea.scrollAnimator().handleWheelEventPhase(wheelEvent.phase());
-#else
-    UNUSED_PARAM(scrollableArea);
-    UNUSED_PARAM(wheelEvent);
-#endif
-}
-
-static bool didScrollInScrollableArea(ScrollableArea& scrollableArea, const WheelEvent& wheelEvent)
-{
-    ScrollGranularity scrollGranularity = wheelGranularityToScrollGranularity(wheelEvent.deltaMode());
-    bool didHandleWheelEvent = false;
-    if (float absoluteDelta = std::abs(wheelEvent.deltaX()))
-        didHandleWheelEvent |= scrollableArea.scroll(wheelEvent.deltaX() > 0 ? ScrollRight : ScrollLeft, scrollGranularity, absoluteDelta);
-    
-    if (float absoluteDelta = std::abs(wheelEvent.deltaY()))
-        didHandleWheelEvent |= scrollableArea.scroll(wheelEvent.deltaY() > 0 ? ScrollDown : ScrollUp, scrollGranularity, absoluteDelta);
-    
-    return didHandleWheelEvent;
-}
-
-static bool handleWheelEventInAppropriateEnclosingBox(Node* startNode, const WheelEvent& wheelEvent, const FloatSize& filteredPlatformDelta, const FloatSize& filteredVelocity, OptionSet<EventHandling> eventHandling)
-{
-    bool shouldHandleEvent = wheelEvent.deltaX() || wheelEvent.deltaY();
-#if ENABLE(WHEEL_EVENT_LATCHING)
-    shouldHandleEvent |= wheelEvent.phase() == PlatformWheelEventPhase::Ended;
-#if ENABLE(CSS_SCROLL_SNAP)
-    shouldHandleEvent |= wheelEvent.momentumPhase() == PlatformWheelEventPhase::Ended;
-#endif
-#endif
-    if (!startNode->renderer())
-        return false;
-
-    RenderBox& initialEnclosingBox = startNode->renderer()->enclosingBox();
-
-    // RenderListBox is special because it's a ScrollableArea that the scrolling tree doesn't know about.
-    if (is<RenderListBox>(initialEnclosingBox))
-        handleWheelEventPhaseInScrollableArea(downcast<RenderListBox>(initialEnclosingBox), wheelEvent);
-
-    if (!shouldHandleEvent)
-        return false;
-
-    if (is<RenderListBox>(initialEnclosingBox))
-        return didScrollInScrollableArea(downcast<RenderListBox>(initialEnclosingBox), wheelEvent);
-
-    RenderBox* currentEnclosingBox = &initialEnclosingBox;
-    while (currentEnclosingBox) {
-        if (RenderLayer* boxLayer = currentEnclosingBox->layer()) {
-            auto platformEvent = wheelEvent.underlyingPlatformEvent();
-            bool scrollingWasHandled;
-            if (platformEvent) {
-                auto copiedEvent = platformEvent->copyWithDeltasAndVelocity(filteredPlatformDelta.width(), filteredPlatformDelta.height(), filteredVelocity);
-                scrollingWasHandled = boxLayer->handleWheelEventForScrolling(copiedEvent, eventHandling);
-            } else
-                scrollingWasHandled = didScrollInScrollableArea(*boxLayer, wheelEvent);
-
-            if (scrollingWasHandled)
-                return true;
-        }
-
-        currentEnclosingBox = currentEnclosingBox->containingBlock();
-        if (!currentEnclosingBox || currentEnclosingBox->isRenderView())
-            return false;
-    }
-    return false;
-}
-
 #if (ENABLE(TOUCH_EVENTS) && !PLATFORM(IOS_FAMILY))
 static bool shouldGesturesTriggerActive()
 {
@@ -2787,7 +2717,7 @@ bool EventHandler::processWheelEventForScrolling(const PlatformWheelEvent& event
     // We do another check on the frame view because the event handler can run JS which results in the frame getting destroyed.
     FrameView* view = m_frame.view();
     
-    bool didHandleEvent = view ? view->handleWheelEventForScrolling(event, eventHandling) : false;
+    bool didHandleEvent = view ? handleWheelEventInScrollableArea(event, *view, eventHandling) : false;
     m_isHandlingWheelEvent = false;
     return didHandleEvent;
 }
@@ -2865,12 +2795,17 @@ bool EventHandler::completeWidgetWheelEvent(const PlatformWheelEvent& event, con
     return platformCompletePlatformWidgetWheelEvent(event, *widget.get(), scrollableArea);
 }
 
-bool EventHandler::handleWheelEvent(const PlatformWheelEvent& event, OptionSet<WheelEventProcessingSteps> processingSteps)
+bool EventHandler::handleWheelEvent(const PlatformWheelEvent& wheelEvent, OptionSet<WheelEventProcessingSteps> processingSteps)
 {
+#if ENABLE(KINETIC_SCROLLING)
+    if (wheelEvent.isGestureStart())
+        m_wheelScrollGestureState = WTF::nullopt;
+#endif
+
     OptionSet<EventHandling> handling;
-    bool handled = handleWheelEventInternal(event, processingSteps, handling);
+    bool handled = handleWheelEventInternal(wheelEvent, processingSteps, handling);
     // wheelEventWasProcessedByMainThread() may have already been called via performDefaultWheelEventHandling(), but this ensures that it's always called if that code path doesn't run.
-    wheelEventWasProcessedByMainThread(event, handling);
+    wheelEventWasProcessedByMainThread(wheelEvent, handling);
     return handled;
 }
 
@@ -2974,6 +2909,97 @@ bool EventHandler::handleWheelEventInternal(const PlatformWheelEvent& event, Opt
     return handledEvent;
 }
 
+static void handleWheelEventPhaseInScrollableArea(ScrollableArea& scrollableArea, const WheelEvent& wheelEvent)
+{
+#if PLATFORM(MAC)
+    if (wheelEvent.phase() == PlatformWheelEventPhase::MayBegin || wheelEvent.phase() == PlatformWheelEventPhase::Cancelled)
+        scrollableArea.scrollAnimator().handleWheelEventPhase(wheelEvent.phase());
+#else
+    UNUSED_PARAM(scrollableArea);
+    UNUSED_PARAM(wheelEvent);
+#endif
+}
+
+static bool didScrollInScrollableArea(ScrollableArea& scrollableArea, const WheelEvent& wheelEvent)
+{
+    ScrollGranularity scrollGranularity = wheelGranularityToScrollGranularity(wheelEvent.deltaMode());
+    bool didHandleWheelEvent = false;
+    if (float absoluteDelta = std::abs(wheelEvent.deltaX()))
+        didHandleWheelEvent |= scrollableArea.scroll(wheelEvent.deltaX() > 0 ? ScrollRight : ScrollLeft, scrollGranularity, absoluteDelta);
+
+    if (float absoluteDelta = std::abs(wheelEvent.deltaY()))
+        didHandleWheelEvent |= scrollableArea.scroll(wheelEvent.deltaY() > 0 ? ScrollDown : ScrollUp, scrollGranularity, absoluteDelta);
+
+    return didHandleWheelEvent;
+}
+
+bool EventHandler::handleWheelEventInAppropriateEnclosingBox(Node* startNode, const WheelEvent& wheelEvent, const FloatSize& filteredPlatformDelta, const FloatSize& filteredVelocity, OptionSet<EventHandling> eventHandling)
+{
+    bool shouldHandleEvent = wheelEvent.deltaX() || wheelEvent.deltaY();
+#if ENABLE(WHEEL_EVENT_LATCHING)
+    shouldHandleEvent |= wheelEvent.phase() == PlatformWheelEventPhase::Ended;
+#if ENABLE(CSS_SCROLL_SNAP)
+    shouldHandleEvent |= wheelEvent.momentumPhase() == PlatformWheelEventPhase::Ended;
+#endif
+#endif
+    if (!startNode->renderer())
+        return false;
+
+    RenderBox& initialEnclosingBox = startNode->renderer()->enclosingBox();
+
+    // RenderListBox is special because it's a ScrollableArea that the scrolling tree doesn't know about.
+    if (is<RenderListBox>(initialEnclosingBox))
+        handleWheelEventPhaseInScrollableArea(downcast<RenderListBox>(initialEnclosingBox), wheelEvent);
+
+    if (!shouldHandleEvent)
+        return false;
+
+    if (is<RenderListBox>(initialEnclosingBox))
+        return didScrollInScrollableArea(downcast<RenderListBox>(initialEnclosingBox), wheelEvent);
+
+    RenderBox* currentEnclosingBox = &initialEnclosingBox;
+    while (currentEnclosingBox) {
+        if (RenderLayer* boxLayer = currentEnclosingBox->layer()) {
+            auto platformEvent = wheelEvent.underlyingPlatformEvent();
+            bool scrollingWasHandled;
+            if (platformEvent) {
+                auto copiedEvent = platformEvent->copyWithDeltasAndVelocity(filteredPlatformDelta.width(), filteredPlatformDelta.height(), filteredVelocity);
+                scrollingWasHandled = handleWheelEventInScrollableArea(copiedEvent, *boxLayer, eventHandling);
+            } else
+                scrollingWasHandled = didScrollInScrollableArea(*boxLayer, wheelEvent);
+
+            if (scrollingWasHandled)
+                return true;
+        }
+
+        currentEnclosingBox = currentEnclosingBox->containingBlock();
+        if (!currentEnclosingBox || currentEnclosingBox->isRenderView())
+            return false;
+    }
+    return false;
+}
+
+bool EventHandler::handleWheelEventInScrollableArea(const PlatformWheelEvent& wheelEvent, ScrollableArea& scrollableArea, OptionSet<EventHandling> eventHandling)
+{
+    auto gestureState = updateWheelGestureState(wheelEvent, eventHandling);
+    LOG_WITH_STREAM(Scrolling, stream << "EventHandler::handleWheelEventInScrollableArea() - eventHandling " << eventHandling << " -> gesture state " << gestureState);
+    return scrollableArea.handleWheelEventForScrolling(wheelEvent, gestureState);
+}
+
+Optional<WheelScrollGestureState> EventHandler::updateWheelGestureState(const PlatformWheelEvent& wheelEvent, OptionSet<EventHandling> eventHandling)
+{
+#if ENABLE(KINETIC_SCROLLING)
+    if (!m_wheelScrollGestureState && wheelEvent.isGestureStart() && eventHandling.contains(EventHandling::DispatchedToDOM))
+        m_wheelScrollGestureState = eventHandling.contains(EventHandling::DefaultPrevented) ? WheelScrollGestureState::Blocking : WheelScrollGestureState::NonBlocking;
+
+    return m_wheelScrollGestureState;
+#else
+    UNUSED_PARAM(wheelEvent);
+    UNUSED_PARAM(eventHandling);
+    return WTF::nullopt;
+#endif
+}
+
 void EventHandler::clearLatchedState()
 {
     auto* page = m_frame.page();
@@ -3032,7 +3058,7 @@ void EventHandler::defaultWheelEventHandler(Node* startNode, WheelEvent& wheelEv
         auto platformEvent = wheelEvent.underlyingPlatformEvent();
         if (platformEvent) {
             auto copiedEvent = platformEvent->copyWithDeltasAndVelocity(filteredPlatformDelta.width(), filteredPlatformDelta.height(), filteredVelocity);
-            if (latchedScroller->handleWheelEventForScrolling(copiedEvent, eventHandling))
+            if (handleWheelEventInScrollableArea(copiedEvent, *latchedScroller, eventHandling))
                 wheelEvent.setDefaultHandled();
             return;
         }

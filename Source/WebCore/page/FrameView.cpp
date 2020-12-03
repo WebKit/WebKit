@@ -5098,7 +5098,7 @@ void FrameView::removeChild(Widget& widget)
     ScrollView::removeChild(widget);
 }
 
-bool FrameView::handleWheelEventForScrolling(const PlatformWheelEvent& wheelEvent, OptionSet<EventHandling> eventHandling)
+bool FrameView::handleWheelEventForScrolling(const PlatformWheelEvent& wheelEvent, Optional<WheelScrollGestureState> gestureState)
 {
     // Note that to allow for rubber-band over-scroll behavior, even non-scrollable views
     // should handle wheel events.
@@ -5128,11 +5128,11 @@ bool FrameView::handleWheelEventForScrolling(const PlatformWheelEvent& wheelEven
 #if ENABLE(ASYNC_SCROLLING)
     if (auto scrollingCoordinator = this->scrollingCoordinator()) {
         if (scrollingCoordinator->coordinatesScrollingForFrameView(*this))
-            return scrollingCoordinator->handleWheelEventForScrolling(wheelEvent, scrollingNodeID(), eventHandling);
+            return scrollingCoordinator->handleWheelEventForScrolling(wheelEvent, scrollingNodeID(), gestureState);
     }
 #endif
 
-    return ScrollableArea::handleWheelEventForScrolling(wheelEvent, eventHandling);
+    return ScrollableArea::handleWheelEventForScrolling(wheelEvent, gestureState);
 }
 
 bool FrameView::isVerticalDocument() const

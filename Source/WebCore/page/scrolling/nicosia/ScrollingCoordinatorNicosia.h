@@ -44,8 +44,8 @@ public:
 
     void commitTreeStateIfNeeded() override;
 
-    bool handleWheelEventForScrolling(const PlatformWheelEvent&, ScrollingNodeID, OptionSet<EventHandling>) override;
-    void wheelEventWasProcessedByMainThread(const PlatformWheelEvent&, OptionSet<EventHandling>) override;
+    bool handleWheelEventForScrolling(const PlatformWheelEvent&, ScrollingNodeID, Optional<WheelScrollGestureState>) override;
+    void wheelEventWasProcessedByMainThread(const PlatformWheelEvent&, Optional<WheelScrollGestureState>) override;
 
 private:
     void scheduleTreeStateCommit() override;

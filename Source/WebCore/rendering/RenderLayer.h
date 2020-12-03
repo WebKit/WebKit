@@ -493,7 +493,7 @@ public:
     Scrollbar* verticalScrollbar() const final { return m_vBar.get(); }
     ScrollableArea* enclosingScrollableArea() const final;
 
-    bool handleWheelEventForScrolling(const PlatformWheelEvent&, OptionSet<EventHandling>) final;
+    bool handleWheelEventForScrolling(const PlatformWheelEvent&, Optional<WheelScrollGestureState>) final;
     bool isScrollableOrRubberbandable() final;
     bool hasScrollableOrRubberbandableAncestor() final;
     bool useDarkAppearance() const final;

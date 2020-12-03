@@ -48,7 +48,7 @@ class ScrollAnimator;
 class GraphicsLayer;
 class TiledBacking;
 
-enum class EventHandling : uint8_t;
+enum class WheelScrollGestureState : uint8_t;
 
 inline int offsetForOrientation(ScrollOffset offset, ScrollbarOrientation orientation)
 {
@@ -84,7 +84,7 @@ public:
     // expect it to happen sometime in the future.
     virtual bool requestScrollPositionUpdate(const ScrollPosition&, ScrollType = ScrollType::User, ScrollClamping = ScrollClamping::Clamped) { return false; }
 
-    WEBCORE_EXPORT virtual bool handleWheelEventForScrolling(const PlatformWheelEvent&, OptionSet<EventHandling>);
+    WEBCORE_EXPORT virtual bool handleWheelEventForScrolling(const PlatformWheelEvent&, Optional<WheelScrollGestureState>);
 
     bool usesScrollSnap() const;
 

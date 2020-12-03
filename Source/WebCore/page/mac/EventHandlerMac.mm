@@ -150,10 +150,8 @@ bool EventHandler::wheelEvent(NSEvent *event)
     auto wheelEvent = PlatformEventFactory::createPlatformWheelEvent(event, page->chrome().platformPageClient());
     OptionSet<WheelEventProcessingSteps> processingSteps = { WheelEventProcessingSteps::MainThreadForScrolling, WheelEventProcessingSteps::MainThreadForBlockingDOMEventDispatch };
 
-    if (wheelEvent.isGestureStart())
-        m_wheelScrollGestureState = WTF::nullopt;
-    else if (wheelEvent.phase() == PlatformWheelEventPhase::Changed || wheelEvent.momentumPhase() == PlatformWheelEventPhase::Changed) {
-        if (m_frame.settings().wheelEventGesturesBecomeNonBlocking() && m_wheelScrollGestureState && *m_wheelScrollGestureState == WheelScrollGestureState::NonBlocking)
+    if (wheelEvent.phase() == PlatformWheelEventPhase::Changed || wheelEvent.momentumPhase() == PlatformWheelEventPhase::Changed) {
+        if (m_frame.settings().wheelEventGesturesBecomeNonBlocking() && m_wheelScrollGestureState.valueOr(WheelScrollGestureState::Blocking) == WheelScrollGestureState::NonBlocking)
             processingSteps = { WheelEventProcessingSteps::MainThreadForScrolling, WheelEventProcessingSteps::MainThreadForNonBlockingDOMEventDispatch };
     }
     return handleWheelEvent(wheelEvent, processingSteps);
@@ -948,7 +946,7 @@ bool EventHandler::processWheelEventForScrolling(const PlatformWheelEvent& wheel
 
         LOG_WITH_STREAM(ScrollLatching, stream << " sending to view " << *view);
 
-        bool didHandleWheelEvent = view->handleWheelEventForScrolling(wheelEvent, eventHandling);
+        bool didHandleWheelEvent = handleWheelEventInScrollableArea(wheelEvent, *view, eventHandling);
         // If the platform widget is handling the event, we always want to return false.
         if (view->platformWidget())
             didHandleWheelEvent = false;
@@ -957,7 +955,7 @@ bool EventHandler::processWheelEventForScrolling(const PlatformWheelEvent& wheel
         return didHandleWheelEvent;
     }
     
-    bool didHandleEvent = view->handleWheelEventForScrolling(wheelEvent, eventHandling);
+    bool didHandleEvent = handleWheelEventInScrollableArea(wheelEvent, *view, eventHandling);
     m_isHandlingWheelEvent = false;
     return didHandleEvent;
 }
@@ -972,13 +970,12 @@ void EventHandler::wheelEventWasProcessedByMainThread(const PlatformWheelEvent& 
     if (!view)
         return;
 
+    updateWheelGestureState(wheelEvent, eventHandling);
+
     if (auto scrollingCoordinator = m_frame.page()->scrollingCoordinator()) {
         if (scrollingCoordinator->coordinatesScrollingForFrameView(*view))
-            scrollingCoordinator->wheelEventWasProcessedByMainThread(wheelEvent, eventHandling);
+            scrollingCoordinator->wheelEventWasProcessedByMainThread(wheelEvent, m_wheelScrollGestureState);
     }
-
-    if (wheelEvent.isGestureStart() && eventHandling.contains(EventHandling::DispatchedToDOM))
-        m_wheelScrollGestureState = eventHandling.contains(EventHandling::DefaultPrevented) ? WheelScrollGestureState::Blocking : WheelScrollGestureState::NonBlocking;
 #else
     UNUSED_PARAM(wheelEvent);
     UNUSED_PARAM(eventHandling);

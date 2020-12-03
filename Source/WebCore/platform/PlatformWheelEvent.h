@@ -150,7 +150,6 @@ public:
 
 #if ENABLE(ASYNC_SCROLLING)
     bool useLatchedEventElement() const;
-    bool isGestureStart() const;
     bool isGestureContinuation() const; // The fingers-down part of the gesture excluding momentum.
     bool shouldResetLatching() const;
     bool isNonGestureEvent() const;
@@ -163,7 +162,7 @@ public:
     PlatformWheelEventPhase phase() const { return m_phase; }
     PlatformWheelEventPhase momentumPhase() const { return m_momentumPhase; }
 
-    bool isGestureBegin() const;
+    bool isGestureStart() const;
     bool isGestureCancel() const;
 
     bool isEndOfNonMomentumScroll() const;
@@ -212,11 +211,6 @@ inline bool PlatformWheelEvent::useLatchedEventElement() const
         || (m_phase == PlatformWheelEventPhase::Ended && m_momentumPhase == PlatformWheelEventPhase::None);
 }
 
-inline bool PlatformWheelEvent::isGestureStart() const
-{
-    return m_phase == PlatformWheelEventPhase::Began || m_phase == PlatformWheelEventPhase::MayBegin;
-}
-
 inline bool PlatformWheelEvent::isGestureContinuation() const
 {
     return m_phase == PlatformWheelEventPhase::Changed;
@@ -241,10 +235,9 @@ inline bool PlatformWheelEvent::isEndOfMomentumScroll() const
 
 #if ENABLE(KINETIC_SCROLLING)
 
-inline bool PlatformWheelEvent::isGestureBegin() const
+inline bool PlatformWheelEvent::isGestureStart() const
 {
-    return m_phase == PlatformWheelEventPhase::MayBegin
-        || m_phase == PlatformWheelEventPhase::Began;
+    return m_phase == PlatformWheelEventPhase::Began || m_phase == PlatformWheelEventPhase::MayBegin;
 }
 
 inline bool PlatformWheelEvent::isGestureCancel() const
