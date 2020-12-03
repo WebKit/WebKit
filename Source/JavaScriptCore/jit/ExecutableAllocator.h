@@ -178,7 +178,7 @@ public:
 
     Lock& getLock() const;
 
-#if USE(JUMP_ISLANDS)
+#if ENABLE(JUMP_ISLANDS)
     JS_EXPORT_PRIVATE void* getJumpIslandTo(void* from, void* newDestination);
     JS_EXPORT_PRIVATE void* getJumpIslandToConcurrently(void* from, void* newDestination);
 #endif

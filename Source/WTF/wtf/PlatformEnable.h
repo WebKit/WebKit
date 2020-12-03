@@ -594,6 +594,10 @@
 #endif
 #endif
 
+#if !defined(ENABLE_JUMP_ISLANDS) && CPU(ARM64) && CPU(ADDRESS64) && ENABLE(JIT)
+#define ENABLE_JUMP_ISLANDS 1
+#endif
+
 /* FIXME: This should be turned into an #error invariant */
 /* The FTL *does not* work on 32-bit platforms. Disable it even if someone asked us to enable it. */
 #if USE(JSVALUE32_64)

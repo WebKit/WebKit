@@ -388,6 +388,7 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, JITCompi
         m_executableMemory->shrink(m_size);
     }
 
+#if ENABLE(JIT)
     if (useFastJITPermissions()) {
         ASSERT(codeOutData == outData);
         if (UNLIKELY(Options::dumpJITMemoryPath()))
@@ -396,6 +397,10 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, JITCompi
         ASSERT(codeOutData != outData);
         performJITMemcpy(codeOutData, outData, m_size);
     }
+#else
+    ASSERT(codeOutData != outData);
+    performJITMemcpy(codeOutData, outData, m_size);
+#endif
 
     jumpsToLink.clear();
 
