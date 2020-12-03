@@ -1,5 +1,14 @@
 2020-12-02  Ryan Haddad  <ryanhaddad@apple.com>
 
+        [macOS Debug] imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/moving-between-documents/before-prepare-* tests are flaky
+        https://bugs.webkit.org/show_bug.cgi?id=219464
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations: Mark tests as flaky.
+
+2020-12-02  Ryan Haddad  <ryanhaddad@apple.com>
+
         [iOS macOS] imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-perfect-negotiation.https.html is a flaky failure
         https://bugs.webkit.org/show_bug.cgi?id=219460
 

@@ -2255,3 +2255,13 @@ webkit.org/b/219455 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-a
 
 webkit.org/b/219460 [ Release ] imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-perfect-negotiation.https.html [ Pass Failure ]
 
+webkit.org/b/219464 [ Debug ] imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/moving-between-documents/before-prepare-createHTMLDocument-parse-error-inline-classic.html [ Pass Failure ]
+webkit.org/b/219464 [ Debug ] imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/moving-between-documents/before-prepare-createHTMLDocument-success-empty-src-classic.html [ Pass Failure ]
+webkit.org/b/219464 [ Debug ] imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/moving-between-documents/before-prepare-createHTMLDocument-success-inline-module.html [ Pass Failure ]
+webkit.org/b/219464 [ Debug ] imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/moving-between-documents/before-prepare-iframe-parse-error-inline-classic.html [ Pass Failure ]
+webkit.org/b/219464 [ Debug ] imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/moving-between-documents/before-prepare-iframe-parse-error-inline-module.html [ Pass Failure ]
+webkit.org/b/219464 [ Debug ] imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/moving-between-documents/before-prepare-iframe-success-empty-src-classic.html [ Pass Failure ]
+webkit.org/b/219464 [ Debug ] imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/moving-between-documents/before-prepare-iframe-success-empty-src-module.html [ Pass Failure ]
+webkit.org/b/219464 [ Debug ] imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/moving-between-documents/before-prepare-iframe-success-inline-classic.html [ Pass Failure ]
+webkit.org/b/219464 [ Debug ] imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/moving-between-documents/before-prepare-iframe-success-inline-module.html [ Pass Failure ]
+
