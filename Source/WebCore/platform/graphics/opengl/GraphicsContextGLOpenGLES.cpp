@@ -395,16 +395,6 @@ void GraphicsContextGLOpenGL::checkGPUStatus()
 {
 }
 
-PlatformGraphicsContextGL GraphicsContextGLOpenGL::platformGraphicsContextGL()
-{
-    return m_private->platformContext();
-}
-
-PlatformGLObject GraphicsContextGLOpenGL::platformTexture() const
-{
-    return m_texture;
-}
-
 bool GraphicsContextGLOpenGL::isGLES2Compliant() const
 {
 #if USE(OPENGL_ES)

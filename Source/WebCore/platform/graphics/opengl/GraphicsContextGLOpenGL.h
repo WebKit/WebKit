@@ -94,8 +94,6 @@ public:
 
 #if PLATFORM(COCOA)
     static Ref<GraphicsContextGLOpenGL> createShared(GraphicsContextGLOpenGL& sharedContext);
-    PlatformGraphicsContextGL platformGraphicsContextGL() const final { return m_contextObj; }
-    PlatformGLObject platformTexture() const final { return m_texture; }
     CALayer* platformLayer() const final { return reinterpret_cast<CALayer*>(m_webGLLayer.get()); }
     PlatformGraphicsContextGLDisplay platformDisplay() const { return m_displayObj; }
     PlatformGraphicsContextGLConfig platformConfig() const { return m_configObj; }
@@ -103,8 +101,6 @@ public:
     static GCGLenum IOSurfaceTextureTargetQuery();
     static GCGLint EGLIOSurfaceTextureTarget();
 #else
-    PlatformGraphicsContextGL platformGraphicsContextGL() const final;
-    PlatformGLObject platformTexture() const final;
     PlatformLayer* platformLayer() const final;
 #endif
 

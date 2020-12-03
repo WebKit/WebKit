@@ -785,8 +785,6 @@ public:
         Yes
     };
 
-    virtual PlatformGraphicsContextGL platformGraphicsContextGL() const = 0;
-    virtual PlatformGLObject platformTexture() const = 0;
     virtual PlatformLayer* platformLayer() const = 0;
 
     ALWAYS_INLINE static bool hasAlpha(DataFormat format)

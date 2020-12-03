@@ -437,20 +437,6 @@ void GraphicsContextGLOpenGL::checkGPUStatus()
 {
 }
 
-PlatformGraphicsContextGL GraphicsContextGLOpenGL::platformGraphicsContextGL() const
-{
-#if USE(NICOSIA)
-    return m_nicosiaLayer->platformContext();
-#else
-    return m_texmapLayer->platformContext();
-#endif
-}
-
-PlatformGLObject GraphicsContextGLOpenGL::platformTexture() const
-{
-    return m_texture;
-}
-
 bool GraphicsContextGLOpenGL::isGLES2Compliant() const
 {
 #if USE(OPENGL_ES)
