@@ -403,10 +403,8 @@ input[type="hidden"] {
 
 #if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
 textarea,
-input[type="range"],
 #endif
-input,
-input:matches([type="password"], [type="search"]) {
+input {
     -webkit-appearance: textfield;
 #if defined(HAVE_OS_DARK_MODE_SUPPORT) && HAVE_OS_DARK_MODE_SUPPORT
     color: text;
@@ -430,8 +428,7 @@ input:matches([type="password"], [type="search"]) {
 
 #if defined(HAVE_OS_DARK_MODE_SUPPORT) && HAVE_OS_DARK_MODE_SUPPORT
 @media (prefers-dark-interface) {
-    input,
-    input:matches([type="password"], [type="search"]) {
+    input {
         background-color: transparent;
     }
 }

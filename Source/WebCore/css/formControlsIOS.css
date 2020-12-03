@@ -24,6 +24,12 @@
 
 #if defined(ENABLE_IOS_FORM_CONTROL_REFRESH) && ENABLE_IOS_FORM_CONTROL_REFRESH
 
+textarea,
+input {
+    border: 1px solid rgb(217, 217, 217);
+    font: 11px system-ui;
+}
+
 input:matches([type="checkbox"], [type="radio"]) {
     border: initial;
     box-sizing: border-box;

@@ -517,6 +517,11 @@ void RenderThemeIOS::paintRadioDecorations(const RenderObject& box, const PaintI
 
 void RenderThemeIOS::paintTextFieldDecorations(const RenderObject& box, const PaintInfo& paintInfo, const FloatRect& rect)
 {
+#if ENABLE(IOS_FORM_CONTROL_REFRESH)
+    if (box.settings().iOSFormControlRefreshEnabled())
+        return;
+#endif
+
     auto& style = box.style();
     FloatPoint point(rect.x() + style.borderLeftWidth(), rect.y() + style.borderTopWidth());
 
