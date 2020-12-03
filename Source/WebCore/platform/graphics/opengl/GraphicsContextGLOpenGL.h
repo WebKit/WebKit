@@ -532,10 +532,6 @@ private:
     void readRenderingResults(unsigned char* pixels, int pixelsSize);
     void readPixelsAndConvertToBGRAIfNecessary(int x, int y, int width, int height, unsigned char* pixels);
 
-#if USE(OPENGL_ES)
-    void setRenderbufferStorageFromDrawable(GCGLsizei width, GCGLsizei height);
-#endif
-
     bool reshapeFBOs(const IntSize&);
     void prepareTextureImpl();
     void resolveMultisamplingIfNecessary(const IntRect& = IntRect());
