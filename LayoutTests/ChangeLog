@@ -1,3 +1,93 @@
+2020-12-03  Truitt Savell  <tsavell@apple.com>
+
+        Get rid of LayoutTests/platform/mac-bigsur
+        https://bugs.webkit.org/show_bug.cgi?id=218359
+
+        Unreviewed test gardening.
+
+        * platform/mac-bigsur/editing/pasteboard/pasting-tabs-expected.txt: Removed.
+        * platform/mac-bigsur/editing/selection/select-from-textfield-outwards-expected.txt: Removed.
+        * platform/mac-bigsur/editing/selection/vertical-rl-rtl-extend-line-backward-br-expected.txt: Removed.
+        * platform/mac-bigsur/editing/selection/vertical-rl-rtl-extend-line-backward-br-mixed-expected.txt: Removed.
+        * platform/mac-bigsur/editing/selection/vertical-rl-rtl-extend-line-backward-p-expected.txt: Removed.
+        * platform/mac-bigsur/editing/selection/vertical-rl-rtl-extend-line-backward-p-mixed-expected.txt: Removed.
+        * platform/mac-bigsur/editing/selection/vertical-rl-rtl-extend-line-forward-br-expected.txt: Removed.
+        * platform/mac-bigsur/editing/selection/vertical-rl-rtl-extend-line-forward-br-mixed-expected.txt: Removed.
+        * platform/mac-bigsur/editing/selection/vertical-rl-rtl-extend-line-forward-p-expected.txt: Removed.
+        * platform/mac-bigsur/editing/selection/vertical-rl-rtl-extend-line-forward-p-mixed-expected.txt: Removed.
+        * platform/mac-bigsur/fast/css/apple-system-control-colors-expected.txt: Removed.
+        * platform/mac-bigsur/fast/forms/auto-fill-button/hide-auto-fill-strong-password-viewable-treatment-when-form-is-reset-expected.txt: Removed.
+        * platform/mac-bigsur/fast/forms/basic-textareas-quirks-expected.txt: Removed.
+        * platform/mac-bigsur/fast/forms/box-shadow-override-expected.txt: Removed.
+        * platform/mac-bigsur/fast/forms/form-element-geometry-expected.txt: Removed.
+        * platform/mac-bigsur/fast/forms/hidpi-textfield-background-bleeding-expected.html: Removed.
+        * platform/mac-bigsur/fast/forms/input-appearance-preventDefault-expected.txt: Removed.
+        * platform/mac-bigsur/fast/forms/input-appearance-spinbutton-up-expected.txt: Removed.
+        * platform/mac-bigsur/fast/forms/input-placeholder-visibility-1-expected.txt: Removed.
+        * platform/mac-bigsur/fast/forms/input-placeholder-visibility-3-expected.txt: Removed.
+        * platform/mac-bigsur/fast/forms/input-table-expected.txt: Removed.
+        * platform/mac-bigsur/fast/forms/input-value-expected.txt: Removed.
+        * platform/mac-bigsur/fast/forms/listbox-width-change-expected.txt: Removed.
+        * platform/mac-bigsur/fast/forms/number/number-appearance-spinbutton-disabled-readonly-expected.txt: Removed.
+        * platform/mac-bigsur/fast/forms/search-rtl-expected.txt: Removed.
+        * platform/mac-bigsur/fast/forms/search/search-size-with-decorations-expected.txt: Removed.
+        * platform/mac-bigsur/fast/forms/search/search-zoom-computed-style-height-expected.txt: Removed.
+        * platform/mac-bigsur/fast/forms/select-visual-hebrew-expected.txt: Removed.
+        * platform/mac-bigsur/fast/forms/textAreaLineHeight-expected.txt: Removed.
+        * platform/mac-bigsur/fast/forms/textarea-placeholder-visibility-1-expected.txt: Removed.
+        * platform/mac-bigsur/fast/forms/textarea-placeholder-visibility-2-expected.txt: Removed.
+        * platform/mac-bigsur/fast/forms/visual-hebrew-text-field-expected.txt: Removed.
+        * platform/mac-bigsur/fast/parser/entity-comment-in-textarea-expected.txt: Removed.
+        * platform/mac-bigsur/fast/parser/open-comment-in-textarea-expected.txt: Removed.
+        * platform/mac-bigsur/fast/text/backslash-to-yen-sign-euc-expected.txt: Removed.
+        * platform/mac-bigsur/fast/text/drawBidiText-expected.txt: Removed.
+        * platform/mac-bigsur/fast/text/international/danda-space-expected.txt: Removed.
+        * platform/mac-bigsur/fast/text/international/system-language/system-font-punctuation-expected.txt: Removed.
+        * platform/mac-bigsur/fast/text/justify-ideograph-leading-expansion-expected.txt: Removed.
+        * platform/mac-bigsur/fast/text/vertical-rl-rtl-linebreak-expected.txt: Removed.
+        * platform/mac-bigsur/fast/text/vertical-rl-rtl-linebreak-mixed-expected.txt: Removed.
+        * platform/mac-catalina/fast/forms/listbox-width-change-expected.txt:
+        * platform/mac-catalina/fast/forms/search/search-size-with-decorations-expected.txt:
+        * platform/mac/editing/pasteboard/pasting-tabs-expected.txt:
+        * platform/mac/editing/selection/select-from-textfield-outwards-expected.txt:
+        * platform/mac/editing/selection/vertical-rl-rtl-extend-line-backward-br-expected.txt:
+        * platform/mac/editing/selection/vertical-rl-rtl-extend-line-backward-br-mixed-expected.txt:
+        * platform/mac/editing/selection/vertical-rl-rtl-extend-line-backward-p-expected.txt:
+        * platform/mac/editing/selection/vertical-rl-rtl-extend-line-backward-p-mixed-expected.txt:
+        * platform/mac/editing/selection/vertical-rl-rtl-extend-line-forward-br-expected.txt:
+        * platform/mac/editing/selection/vertical-rl-rtl-extend-line-forward-br-mixed-expected.txt:
+        * platform/mac/editing/selection/vertical-rl-rtl-extend-line-forward-p-expected.txt:
+        * platform/mac/editing/selection/vertical-rl-rtl-extend-line-forward-p-mixed-expected.txt:
+        * platform/mac/fast/css/apple-system-control-colors-expected.txt:
+        * platform/mac/fast/forms/auto-fill-button/hide-auto-fill-strong-password-viewable-treatment-when-form-is-reset-expected.txt:
+        * platform/mac/fast/forms/basic-textareas-quirks-expected.txt:
+        * platform/mac/fast/forms/box-shadow-override-expected.txt:
+        * platform/mac/fast/forms/form-element-geometry-expected.txt:
+        * platform/mac/fast/forms/input-appearance-preventDefault-expected.txt:
+        * platform/mac/fast/forms/input-appearance-spinbutton-up-expected.txt:
+        * platform/mac/fast/forms/input-placeholder-visibility-1-expected.txt:
+        * platform/mac/fast/forms/input-placeholder-visibility-3-expected.txt:
+        * platform/mac/fast/forms/input-table-expected.txt:
+        * platform/mac/fast/forms/input-value-expected.txt:
+        * platform/mac/fast/forms/listbox-width-change-expected.txt:
+        * platform/mac/fast/forms/number/number-appearance-spinbutton-disabled-readonly-expected.txt:
+        * platform/mac/fast/forms/search-rtl-expected.txt:
+        * platform/mac/fast/forms/search/search-size-with-decorations-expected.txt:
+        * platform/mac/fast/forms/select-visual-hebrew-expected.txt:
+        * platform/mac/fast/forms/textAreaLineHeight-expected.txt:
+        * platform/mac/fast/forms/textarea-placeholder-visibility-1-expected.txt:
+        * platform/mac/fast/forms/textarea-placeholder-visibility-2-expected.txt:
+        * platform/mac/fast/forms/visual-hebrew-text-field-expected.txt:
+        * platform/mac/fast/parser/entity-comment-in-textarea-expected.txt:
+        * platform/mac/fast/parser/open-comment-in-textarea-expected.txt:
+        * platform/mac/fast/text/backslash-to-yen-sign-euc-expected.txt:
+        * platform/mac/fast/text/drawBidiText-expected.txt:
+        * platform/mac/fast/text/international/danda-space-expected.txt:
+        * platform/mac/fast/text/international/system-language/system-font-punctuation-expected.txt:
+        * platform/mac/fast/text/justify-ideograph-leading-expansion-expected.txt:
+        * platform/mac/fast/text/vertical-rl-rtl-linebreak-expected.txt:
+        * platform/mac/fast/text/vertical-rl-rtl-linebreak-mixed-expected.txt:
+
 2020-12-03  Chris Dumez  <cdumez@apple.com>
 
         Crash when trying to suspend an OfflineAudioContext with a bad buffer
