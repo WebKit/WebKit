@@ -27,7 +27,6 @@
 
 #if ENABLE(CSS_SCROLL_SNAP)
 
-#include "AxisScrollSnapOffsets.h"
 #include "PlatformWheelEvent.h"
 #include "ScrollTypes.h"
 #include <wtf/Optional.h>

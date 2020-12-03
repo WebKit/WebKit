@@ -25,9 +25,18 @@
 
 #pragma once
 
+#if ENABLE(CSS_SCROLL_SNAP)
+
+#include "LayoutUnit.h"
+#include "StyleScrollSnapPoints.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
+
+class LayoutRect;
+class ScrollableArea;
+class RenderBox;
+class RenderStyle;
 
 template <typename T>
 struct ScrollOffsetRange {
@@ -49,4 +58,16 @@ struct ScrollSnapOffsetsInfo {
     Vector<ScrollOffsetRange<T>> verticalSnapOffsetRanges;
 };
 
+const unsigned invalidSnapOffsetIndex = UINT_MAX;
+
+// Update the snap offsets for this scrollable area, given the RenderBox of the scroll container, the RenderStyle
+// which defines the scroll-snap properties, and the viewport rectangle with the origin at the top left of
+// the scrolling container's border box.
+void updateSnapOffsetsForScrollableArea(ScrollableArea&, const RenderBox& scrollingElementBox, const RenderStyle& scrollingElementStyle, LayoutRect viewportRectInBorderBoxCoordinates);
+
+WEBCORE_EXPORT LayoutUnit closestSnapOffset(const Vector<LayoutUnit>& snapOffsets, const Vector<ScrollOffsetRange<LayoutUnit>>& snapOffsetRanges, LayoutUnit scrollDestination, float velocity, unsigned& activeSnapIndex);
+WEBCORE_EXPORT float closestSnapOffset(const Vector<float>& snapOffsets, const Vector<ScrollOffsetRange<float>>& snapOffsetRanges, float scrollDestination, float velocity, unsigned& activeSnapIndex);
+
 }; // namespace WebCore
+
+#endif // ENABLE(CSS_SCROLL_SNAP)

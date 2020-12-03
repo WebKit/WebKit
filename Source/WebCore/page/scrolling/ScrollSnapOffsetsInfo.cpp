@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2014-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,59 +25,21 @@
  */
 
 #include "config.h"
-#include "AxisScrollSnapOffsets.h"
+#include "ScrollSnapOffsetsInfo.h"
+
+#if ENABLE(CSS_SCROLL_SNAP)
 
 #include "ElementChildIterator.h"
-#include "HTMLElement.h"
+#include "LayoutRect.h"
 #include "Length.h"
-#include "Logging.h"
 #include "RenderBox.h"
+#include "RenderStyle.h"
 #include "RenderView.h"
 #include "ScrollableArea.h"
 #include "StyleScrollSnapPoints.h"
 #include <wtf/text/StringConcatenateNumbers.h>
 
-#if ENABLE(CSS_SCROLL_SNAP)
-
 namespace WebCore {
-
-enum class InsetOrOutset {
-    Inset,
-    Outset
-};
-
-static LayoutRect computeScrollSnapPortOrAreaRect(const LayoutRect& rect, const LengthBox& insetOrOutsetBox, InsetOrOutset insetOrOutset)
-{
-    LayoutBoxExtent extents(valueForLength(insetOrOutsetBox.top(), rect.height()), valueForLength(insetOrOutsetBox.right(), rect.width()), valueForLength(insetOrOutsetBox.bottom(), rect.height()), valueForLength(insetOrOutsetBox.left(), rect.width()));
-    auto snapPortOrArea(rect);
-    if (insetOrOutset == InsetOrOutset::Inset)
-        snapPortOrArea.contract(extents);
-    else
-        snapPortOrArea.expand(extents);
-    return snapPortOrArea;
-}
-
-static LayoutUnit computeScrollSnapAlignOffset(LayoutUnit minLocation, LayoutUnit maxLocation, ScrollSnapAxisAlignType alignment, bool axisIsFlipped)
-{
-    switch (alignment) {
-    case ScrollSnapAxisAlignType::Start:
-        return axisIsFlipped ? maxLocation : minLocation;
-    case ScrollSnapAxisAlignType::Center:
-        return (minLocation + maxLocation) / 2;
-    case ScrollSnapAxisAlignType::End:
-        return axisIsFlipped ? minLocation : maxLocation;
-    default:
-        ASSERT_NOT_REACHED();
-        return 0;
-    }
-}
-
-template<typename T>
-TextStream& operator<<(TextStream& ts, const ScrollOffsetRange<T>& range)
-{
-    ts << "start: " << range.start << " end: " << range.end;
-    return ts;
-}
 
 template <typename LayoutType>
 static void indicesOfNearestSnapOffsetRanges(LayoutType offset, const Vector<ScrollOffsetRange<LayoutType>>& snapOffsetRanges, unsigned& lowerIndex, unsigned& upperIndex)
@@ -134,6 +97,105 @@ static void indicesOfNearestSnapOffsets(LayoutType offset, const Vector<LayoutTy
         else
             upperIndex = middleIndex;
     }
+}
+
+template <typename LayoutType>
+LayoutType closestSnapOffset(const Vector<LayoutType>& snapOffsets, const Vector<ScrollOffsetRange<LayoutType>>& snapOffsetRanges, LayoutType scrollDestination, float velocity, unsigned& activeSnapIndex)
+{
+    ASSERT(snapOffsets.size());
+    activeSnapIndex = 0;
+
+    unsigned lowerSnapOffsetRangeIndex;
+    unsigned upperSnapOffsetRangeIndex;
+    indicesOfNearestSnapOffsetRanges<LayoutType>(scrollDestination, snapOffsetRanges, lowerSnapOffsetRangeIndex, upperSnapOffsetRangeIndex);
+    if (lowerSnapOffsetRangeIndex == upperSnapOffsetRangeIndex && upperSnapOffsetRangeIndex != invalidSnapOffsetIndex) {
+        activeSnapIndex = invalidSnapOffsetIndex;
+        return scrollDestination;
+    }
+
+    if (scrollDestination <= snapOffsets.first())
+        return snapOffsets.first();
+
+    activeSnapIndex = snapOffsets.size() - 1;
+    if (scrollDestination >= snapOffsets.last())
+        return snapOffsets.last();
+
+    unsigned lowerIndex;
+    unsigned upperIndex;
+    indicesOfNearestSnapOffsets<LayoutType>(scrollDestination, snapOffsets, lowerIndex, upperIndex);
+    LayoutType lowerSnapPosition = snapOffsets[lowerIndex];
+    LayoutType upperSnapPosition = snapOffsets[upperIndex];
+    if (!std::abs(velocity)) {
+        bool isCloserToLowerSnapPosition = scrollDestination - lowerSnapPosition <= upperSnapPosition - scrollDestination;
+        activeSnapIndex = isCloserToLowerSnapPosition ? lowerIndex : upperIndex;
+        return isCloserToLowerSnapPosition ? lowerSnapPosition : upperSnapPosition;
+    }
+
+    // Non-zero velocity indicates a flick gesture. Even if another snap point is closer, we should choose the one in the direction of the flick gesture
+    // as long as a scroll snap offset range does not lie between the scroll destination and the targeted snap offset.
+    if (velocity < 0) {
+        if (lowerSnapOffsetRangeIndex != invalidSnapOffsetIndex && lowerSnapPosition < snapOffsetRanges[lowerSnapOffsetRangeIndex].end) {
+            activeSnapIndex = upperIndex;
+            return upperSnapPosition;
+        }
+        activeSnapIndex = lowerIndex;
+        return lowerSnapPosition;
+    }
+
+    if (upperSnapOffsetRangeIndex != invalidSnapOffsetIndex && snapOffsetRanges[upperSnapOffsetRangeIndex].start < upperSnapPosition) {
+        activeSnapIndex = lowerIndex;
+        return lowerSnapPosition;
+    }
+    activeSnapIndex = upperIndex;
+    return upperSnapPosition;
+}
+
+LayoutUnit closestSnapOffset(const Vector<LayoutUnit>& snapOffsets, const Vector<ScrollOffsetRange<LayoutUnit>>& snapOffsetRanges, LayoutUnit scrollDestination, float velocity, unsigned& activeSnapIndex)
+{
+    return closestSnapOffset<LayoutUnit>(snapOffsets, snapOffsetRanges, scrollDestination, velocity, activeSnapIndex);
+}
+
+float closestSnapOffset(const Vector<float>& snapOffsets, const Vector<ScrollOffsetRange<float>>& snapOffsetRanges, float scrollDestination, float velocity, unsigned& activeSnapIndex)
+{
+    return closestSnapOffset<float>(snapOffsets, snapOffsetRanges, scrollDestination, velocity, activeSnapIndex);
+}
+
+enum class InsetOrOutset {
+    Inset,
+    Outset
+};
+
+static LayoutRect computeScrollSnapPortOrAreaRect(const LayoutRect& rect, const LengthBox& insetOrOutsetBox, InsetOrOutset insetOrOutset)
+{
+    LayoutBoxExtent extents(valueForLength(insetOrOutsetBox.top(), rect.height()), valueForLength(insetOrOutsetBox.right(), rect.width()), valueForLength(insetOrOutsetBox.bottom(), rect.height()), valueForLength(insetOrOutsetBox.left(), rect.width()));
+    auto snapPortOrArea(rect);
+    if (insetOrOutset == InsetOrOutset::Inset)
+        snapPortOrArea.contract(extents);
+    else
+        snapPortOrArea.expand(extents);
+    return snapPortOrArea;
+}
+
+static LayoutUnit computeScrollSnapAlignOffset(LayoutUnit minLocation, LayoutUnit maxLocation, ScrollSnapAxisAlignType alignment, bool axisIsFlipped)
+{
+    switch (alignment) {
+    case ScrollSnapAxisAlignType::Start:
+        return axisIsFlipped ? maxLocation : minLocation;
+    case ScrollSnapAxisAlignType::Center:
+        return (minLocation + maxLocation) / 2;
+    case ScrollSnapAxisAlignType::End:
+        return axisIsFlipped ? minLocation : maxLocation;
+    default:
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
+}
+
+template<typename T>
+TextStream& operator<<(TextStream& ts, const ScrollOffsetRange<T>& range)
+{
+    ts << "start: " << range.start << " end: " << range.end;
+    return ts;
 }
 
 static void computeAxisProximitySnapOffsetRanges(const Vector<LayoutUnit>& snapOffsets, Vector<ScrollOffsetRange<LayoutUnit>>& offsetRanges, LayoutUnit scrollPortAxisLength)
@@ -247,67 +309,6 @@ void updateSnapOffsetsForScrollableArea(ScrollableArea& scrollableArea, const Re
         scrollableArea.clearVerticalSnapOffsets();
 }
 
-template <typename LayoutType>
-LayoutType closestSnapOffset(const Vector<LayoutType>& snapOffsets, const Vector<ScrollOffsetRange<LayoutType>>& snapOffsetRanges, LayoutType scrollDestination, float velocity, unsigned& activeSnapIndex)
-{
-    ASSERT(snapOffsets.size());
-    activeSnapIndex = 0;
-
-    unsigned lowerSnapOffsetRangeIndex;
-    unsigned upperSnapOffsetRangeIndex;
-    indicesOfNearestSnapOffsetRanges<LayoutType>(scrollDestination, snapOffsetRanges, lowerSnapOffsetRangeIndex, upperSnapOffsetRangeIndex);
-    if (lowerSnapOffsetRangeIndex == upperSnapOffsetRangeIndex && upperSnapOffsetRangeIndex != invalidSnapOffsetIndex) {
-        activeSnapIndex = invalidSnapOffsetIndex;
-        return scrollDestination;
-    }
-
-    if (scrollDestination <= snapOffsets.first())
-        return snapOffsets.first();
-
-    activeSnapIndex = snapOffsets.size() - 1;
-    if (scrollDestination >= snapOffsets.last())
-        return snapOffsets.last();
-
-    unsigned lowerIndex;
-    unsigned upperIndex;
-    indicesOfNearestSnapOffsets<LayoutType>(scrollDestination, snapOffsets, lowerIndex, upperIndex);
-    LayoutType lowerSnapPosition = snapOffsets[lowerIndex];
-    LayoutType upperSnapPosition = snapOffsets[upperIndex];
-    if (!std::abs(velocity)) {
-        bool isCloserToLowerSnapPosition = scrollDestination - lowerSnapPosition <= upperSnapPosition - scrollDestination;
-        activeSnapIndex = isCloserToLowerSnapPosition ? lowerIndex : upperIndex;
-        return isCloserToLowerSnapPosition ? lowerSnapPosition : upperSnapPosition;
-    }
-
-    // Non-zero velocity indicates a flick gesture. Even if another snap point is closer, we should choose the one in the direction of the flick gesture
-    // as long as a scroll snap offset range does not lie between the scroll destination and the targeted snap offset.
-    if (velocity < 0) {
-        if (lowerSnapOffsetRangeIndex != invalidSnapOffsetIndex && lowerSnapPosition < snapOffsetRanges[lowerSnapOffsetRangeIndex].end) {
-            activeSnapIndex = upperIndex;
-            return upperSnapPosition;
-        }
-        activeSnapIndex = lowerIndex;
-        return lowerSnapPosition;
-    }
-
-    if (upperSnapOffsetRangeIndex != invalidSnapOffsetIndex && snapOffsetRanges[upperSnapOffsetRangeIndex].start < upperSnapPosition) {
-        activeSnapIndex = lowerIndex;
-        return lowerSnapPosition;
-    }
-    activeSnapIndex = upperIndex;
-    return upperSnapPosition;
 }
 
-LayoutUnit closestSnapOffset(const Vector<LayoutUnit>& snapOffsets, const Vector<ScrollOffsetRange<LayoutUnit>>& snapOffsetRanges, LayoutUnit scrollDestination, float velocity, unsigned& activeSnapIndex)
-{
-    return closestSnapOffset<LayoutUnit>(snapOffsets, snapOffsetRanges, scrollDestination, velocity, activeSnapIndex);
-}
-
-float closestSnapOffset(const Vector<float>& snapOffsets, const Vector<ScrollOffsetRange<float>>& snapOffsetRanges, float scrollDestination, float velocity, unsigned& activeSnapIndex)
-{
-    return closestSnapOffset<float>(snapOffsets, snapOffsetRanges, scrollDestination, velocity, activeSnapIndex);
-}
-
-} // namespace WebCore
-
-#endif // CSS_SCROLL_SNAP
+#endif // ENABLE(CSS_SCROLL_SNAP)

@@ -45,7 +45,6 @@
 #import <wtf/SetForScope.h>
 
 #if ENABLE(CSS_SCROLL_SNAP)
-#import <WebCore/AxisScrollSnapOffsets.h>
 #import <WebCore/ScrollSnapOffsetsInfo.h>
 #endif
 

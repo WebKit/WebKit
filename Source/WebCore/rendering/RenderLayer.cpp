@@ -117,6 +117,7 @@
 #include "ScaleTransformOperation.h"
 #include "ScriptDisallowedScope.h"
 #include "ScrollAnimator.h"
+#include "ScrollSnapOffsetsInfo.h"
 #include "Scrollbar.h"
 #include "ScrollbarTheme.h"
 #include "ScrollingCoordinator.h"
@@ -134,10 +135,6 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/TextStream.h>
-
-#if ENABLE(CSS_SCROLL_SNAP)
-#include "AxisScrollSnapOffsets.h"
-#endif
 
 #define MIN_INTERSECT_FOR_REVEAL 32
 

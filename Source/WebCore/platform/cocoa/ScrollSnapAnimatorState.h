@@ -27,7 +27,6 @@
 
 #if ENABLE(CSS_SCROLL_SNAP)
 
-#include "AxisScrollSnapOffsets.h"
 #include "FloatPoint.h"
 #include "FloatSize.h"
 #include "LayoutPoint.h"

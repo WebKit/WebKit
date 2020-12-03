@@ -41,7 +41,6 @@
 #import <WebCore/ScrollingStateTree.h>
 
 #if ENABLE(CSS_SCROLL_SNAP)
-#import <WebCore/AxisScrollSnapOffsets.h>
 #import <WebCore/ScrollSnapOffsetsInfo.h>
 #import <WebCore/ScrollTypes.h>
 #import <WebCore/ScrollingTreeFrameScrollingNode.h>

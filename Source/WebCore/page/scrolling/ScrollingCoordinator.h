@@ -42,10 +42,6 @@
 #include <wtf/Threading.h>
 #endif
 
-#if ENABLE(CSS_SCROLL_SNAP)
-#include "AxisScrollSnapOffsets.h"
-#endif
-
 namespace WTF {
 class TextStream;
 }

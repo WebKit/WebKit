@@ -96,6 +96,7 @@
 #include "ScriptRunner.h"
 #include "ScriptedAnimationController.h"
 #include "ScrollAnimator.h"
+#include "ScrollSnapOffsetsInfo.h"
 #include "ScrollingCoordinator.h"
 #include "Settings.h"
 #include "StyleResolver.h"
@@ -115,10 +116,6 @@
 
 #if USE(COORDINATED_GRAPHICS)
 #include "TiledBackingStore.h"
-#endif
-
-#if ENABLE(CSS_SCROLL_SNAP)
-#include "AxisScrollSnapOffsets.h"
 #endif
 
 #if PLATFORM(IOS_FAMILY)
