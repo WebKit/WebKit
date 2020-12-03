@@ -1,3 +1,17 @@
+2020-12-03  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] not using std::make_pair for workaround of (possibly) ASan bug
+        https://bugs.webkit.org/show_bug.cgi?id=219502
+        <rdar://71642789>
+
+        Reviewed by Robin Morisset.
+
+        We are getting ASan crash in LayoutTests/fast/canvas/webgl/array-unit-tests.html after r269574.
+        However, this is inside std::make_pair, and it looks like a bug in ASan.
+        To workaround this for now, we avoid using std::make_pair and instead just using C++ uniform initialization.
+
+        * runtime/JSArrayBufferPrototype.cpp:
+
 2020-12-03  Saam Barati  <sbarati@apple.com>
 
         JIT::emit_op_iterator_next fast path passes in the wrong identifier to the "done" JITGetByIdGenerator

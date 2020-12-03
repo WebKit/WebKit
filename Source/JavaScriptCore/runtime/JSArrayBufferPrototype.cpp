@@ -69,84 +69,82 @@ static ALWAYS_INLINE std::pair<SpeciesConstructResult, JSArrayBuffer*> speciesCo
     // https://tc39.es/ecma262/#sec-sharedarraybuffer.prototype.slice
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-
-    auto exceptionResult = [] () {
-        return std::make_pair(SpeciesConstructResult::Exception, nullptr);
-    };
+    constexpr std::pair<SpeciesConstructResult, JSArrayBuffer*> errorResult { SpeciesConstructResult::Exception, nullptr };
+    constexpr std::pair<SpeciesConstructResult, JSArrayBuffer*> fastPathResult { SpeciesConstructResult::FastPath, nullptr };
 
     // Fast path in the normal case where the user has not set an own constructor and the ArrayBuffer.prototype.constructor is normal.
     // We need prototype check for subclasses of ArrayBuffer, which are ArrayBuffer objects but have a different prototype by default.
     bool isValid = speciesWatchpointIsValid(vm, thisObject, mode);
     scope.assertNoException();
     if (LIKELY(isValid))
-        return std::make_pair(SpeciesConstructResult::FastPath, nullptr);
+        return fastPathResult;
 
     JSValue constructor = thisObject->get(globalObject, vm.propertyNames->constructor);
-    RETURN_IF_EXCEPTION(scope, exceptionResult());
+    RETURN_IF_EXCEPTION(scope, errorResult);
     if (constructor.isConstructor(vm)) {
         JSObject* constructorObject = jsCast<JSObject*>(constructor);
         JSGlobalObject* globalObjectFromConstructor = constructorObject->globalObject(vm);
         bool isArrayBufferConstructorFromAnotherRealm = globalObject != globalObjectFromConstructor
             && constructorObject == globalObjectFromConstructor->arrayBufferConstructor(mode);
         if (isArrayBufferConstructorFromAnotherRealm)
-            return std::make_pair(SpeciesConstructResult::FastPath, nullptr);
+            return fastPathResult;
     }
     if (constructor.isObject()) {
         constructor = constructor.get(globalObject, vm.propertyNames->speciesSymbol);
-        RETURN_IF_EXCEPTION(scope, exceptionResult());
+        RETURN_IF_EXCEPTION(scope, errorResult);
         if (constructor.isNull())
-            return std::make_pair(SpeciesConstructResult::FastPath, nullptr);
+            return fastPathResult;
     }
 
     if (constructor.isUndefined())
-        return std::make_pair(SpeciesConstructResult::FastPath, nullptr);
+        return fastPathResult;
 
     // 16. Let new be ? Construct(ctor, « 𝔽(newLen) »).
     MarkedArgumentBuffer args;
     args.append(jsNumber(length));
     ASSERT(!args.hasOverflowed());
     JSObject* newObject = construct(globalObject, constructor, args, "Species construction did not get a valid constructor");
-    RETURN_IF_EXCEPTION(scope, exceptionResult());
+    RETURN_IF_EXCEPTION(scope, errorResult);
 
     // 17. Perform ? RequireInternalSlot(new, [[ArrayBufferData]]).
     JSArrayBuffer* result = jsDynamicCast<JSArrayBuffer*>(vm, newObject);
     if (UNLIKELY(!result)) {
         throwTypeError(globalObject, scope, "Species construction does not create ArrayBuffer"_s);
-        return exceptionResult();
+        return errorResult;
     }
 
     if (mode == ArrayBufferSharingMode::Default) {
         // 18. If IsSharedArrayBuffer(new) is true, throw a TypeError exception.
         if (result->isShared()) {
             throwTypeError(globalObject, scope, "ArrayBuffer.prototype.slice creates SharedArrayBuffer"_s);
-            return exceptionResult();
+            return errorResult;
         }
         // 19. If IsDetachedBuffer(new) is true, throw a TypeError exception.
         if (result->impl()->isDetached()) {
             throwVMTypeError(globalObject, scope, "Created ArrayBuffer is detached"_s);
-            return exceptionResult();
+            return errorResult;
         }
     } else {
         // 17. If IsSharedArrayBuffer(new) is false, throw a TypeError exception.
         if (!result->isShared()) {
             throwTypeError(globalObject, scope, "SharedArrayBuffer.prototype.slice creates non-shared ArrayBuffer"_s);
-            return exceptionResult();
+            return errorResult;
         }
     }
 
     // 20. If SameValue(new, O) is true, throw a TypeError exception.
     if (result == thisObject) {
         throwVMTypeError(globalObject, scope, "Species construction returns same ArrayBuffer to a receiver"_s);
-        return exceptionResult();
+        return errorResult;
     }
 
     // 21. If new.[[ArrayBufferByteLength]] < newLen, throw a TypeError exception.
     if (result->impl()->byteLength() < length) {
         throwVMTypeError(globalObject, scope, "Species construction returns ArrayBuffer which byteLength is less than requested"_s);
-        return exceptionResult();
+        return errorResult;
     }
 
-    return std::make_pair(SpeciesConstructResult::CreatedObject, result);
+    return { SpeciesConstructResult::CreatedObject, result };
 }
 
 
