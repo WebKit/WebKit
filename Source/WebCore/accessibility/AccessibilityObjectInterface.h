@@ -1169,6 +1169,7 @@ public:
 
     virtual TextIteratorBehavior textIteratorBehaviorForTextRange() const = 0;
     virtual PlainTextRange selectedTextRange() const = 0;
+    // FIXME: why do we need the following two methods if we already have selectedTextRange?
     virtual unsigned selectionStart() const = 0;
     virtual unsigned selectionEnd() const = 0;
 

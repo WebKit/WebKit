@@ -2407,16 +2407,20 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
             if (backingObject->isPasswordField() || backingObject->selectionEnd() > 0)
                 return nil;
 
-            auto *focusedObject = backingObject->focusedUIElement();
+            auto* focusedObject = backingObject->focusedUIElement();
             if (focusedObject != backingObject)
                 return nil;
 
-            VisiblePosition focusedPosition = focusedObject->visiblePositionForIndex(focusedObject->selectionStart(), true);
-            int lineNumber = backingObject->lineForPosition(focusedPosition);
-            if (lineNumber < 0)
-                return nil;
+            int lineNumber = Accessibility::retrieveValueFromMainThread<int>([protectedSelf = retainPtr(self)] () -> int {
+                auto* backingObject = protectedSelf.get().axBackingObject;
+                if (!backingObject)
+                    return -1;
 
-            return @(lineNumber);
+                auto focusedPosition = backingObject->visiblePositionForIndex(backingObject->selectionStart(), true);
+                return backingObject->lineForPosition(focusedPosition);
+            });
+
+            return lineNumber >= 0 ? @(lineNumber) : nil;
         }
     }
 

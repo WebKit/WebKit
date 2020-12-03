@@ -382,9 +382,9 @@ private:
     void setSelectedVisiblePositionRange(const VisiblePositionRange&) const override;
 
     // TODO: Text ranges and selection.
-    unsigned selectionStart() const override { return 0; }
-    unsigned selectionEnd() const override { return 0; }
-    String selectedText() const override { return String(); }
+    unsigned selectionStart() const override;
+    unsigned selectionEnd() const override;
+    String selectedText() const override;
     VisiblePositionRange visiblePositionRange() const override;
     VisiblePositionRange visiblePositionRangeForLine(unsigned) const override;
     Optional<SimpleRange> elementRange() const override;
@@ -415,7 +415,7 @@ private:
     VisiblePosition previousSentenceStartPosition(const VisiblePosition&) const override { return VisiblePosition(); }
     VisiblePosition nextParagraphEndPosition(const VisiblePosition&) const override { return VisiblePosition(); }
     VisiblePosition previousParagraphStartPosition(const VisiblePosition&) const override { return VisiblePosition(); }
-    VisiblePosition visiblePositionForIndex(unsigned, bool /*lastIndexOK */) const override { return VisiblePosition(); }
+    VisiblePosition visiblePositionForIndex(unsigned, bool lastIndexOK) const override;
     VisiblePosition visiblePositionForIndex(int) const override { return VisiblePosition(); }
     int indexForVisiblePosition(const VisiblePosition&) const override { return 0; }
     AXCoreObject* accessibilityObjectForPosition(const VisiblePosition&) const override { return nullptr; }

@@ -1282,6 +1282,33 @@ Optional<SimpleRange> AXIsolatedObject::elementRange() const
     return axObject ? axObject->elementRange() : WTF::nullopt;
 }
 
+unsigned AXIsolatedObject::selectionStart() const
+{
+    return Accessibility::retrieveValueFromMainThread<unsigned>([this] () -> unsigned {
+        if (auto* object = associatedAXObject())
+            return object->selectionStart();
+        return 0;
+    });
+}
+
+unsigned AXIsolatedObject::selectionEnd() const
+{
+    return Accessibility::retrieveValueFromMainThread<unsigned>([this] () -> unsigned {
+        if (auto* object = associatedAXObject())
+            return object->selectionEnd();
+        return 0;
+    });
+}
+
+String AXIsolatedObject::selectedText() const
+{
+    return Accessibility::retrieveValueFromMainThread<String>([this] () -> String {
+        if (auto* object = associatedAXObject())
+            return object->selectedText().isolatedCopy();
+        return { };
+    });
+}
+
 VisiblePositionRange AXIsolatedObject::visiblePositionRange() const
 {
     ASSERT(isMainThread());
@@ -1364,6 +1391,13 @@ VisiblePositionRange AXIsolatedObject::lineRangeForPosition(const VisiblePositio
     ASSERT(isMainThread());
     auto* axObject = associatedAXObject();
     return axObject ? axObject->lineRangeForPosition(position) : VisiblePositionRange();
+}
+
+VisiblePosition AXIsolatedObject::visiblePositionForIndex(unsigned index, bool lastIndexOK) const
+{
+    ASSERT(isMainThread());
+    auto* axObject = associatedAXObject();
+    return axObject ? axObject->visiblePositionForIndex(index, lastIndexOK) : VisiblePosition();
 }
 
 int AXIsolatedObject::lineForPosition(const VisiblePosition& position) const
