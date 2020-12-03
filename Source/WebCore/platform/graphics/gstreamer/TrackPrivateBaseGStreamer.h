@@ -49,6 +49,7 @@ public:
     };
 
     GstPad* pad() const { return m_pad.get(); }
+    void setPad(GRefPtr<GstPad>&& pad) { m_pad = WTFMove(pad); }
 
     virtual void disconnect();
 

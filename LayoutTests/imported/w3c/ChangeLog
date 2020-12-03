@@ -1,3 +1,17 @@
+2020-12-03  Alicia Boya García  <aboya@igalia.com>
+
+        [GStreamer] Fix video losing size at the end of the stream
+        https://bugs.webkit.org/show_bug.cgi?id=219493
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Added a test reproducing the bug that gets fixed with the patch.
+
+        * web-platform-tests/html/semantics/embedded-content/the-video-element/video_size_preserved_after_ended-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-video-element/video_size_preserved_after_ended.html: Added.
+        * web-platform-tests/media/test-1s.mp4: Added.
+        * web-platform-tests/media/test-1s.webm: Added.
+
 2020-12-01  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION: imported/w3c/web-platform-tests/streams/transform-streams/terminate.any.html is a flaky failure

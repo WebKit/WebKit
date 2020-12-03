@@ -1023,6 +1023,10 @@ void MediaPlayerPrivateGStreamer::notifyPlayerOfVideo()
 
     ASSERT(m_isLegacyPlaybin || isMediaSource());
 
+    // Ignore notifications after a EOS. We don't want the tracks to disappear when the video is finished.
+    if (m_isEndReached)
+        return;
+
     unsigned numTracks = 0;
     bool useMediaSource = isMediaSource();
     GstElement* element = useMediaSource ? m_source.get() : m_pipeline.get();
@@ -1056,8 +1060,11 @@ void MediaPlayerPrivateGStreamer::notifyPlayerOfVideo()
             RefPtr<VideoTrackPrivateGStreamer> existingTrack = m_videoTracks.get(streamId);
             if (existingTrack) {
                 existingTrack->setIndex(i);
-                if (existingTrack->pad() == pad)
-                    continue;
+                // If the video has been played twice, the track is still there, but we need
+                // to update the pad pointer.
+                if (existingTrack->pad() != pad)
+                    existingTrack->setPad(GRefPtr(pad));
+                continue;
             }
         }
 
@@ -1101,6 +1108,10 @@ void MediaPlayerPrivateGStreamer::notifyPlayerOfAudio()
 
     ASSERT(m_isLegacyPlaybin || isMediaSource());
 
+    // Ignore notifications after a EOS. We don't want the tracks to disappear when the video is finished.
+    if (m_isEndReached)
+        return;
+
     unsigned numTracks = 0;
     bool useMediaSource = isMediaSource();
     GstElement* element = useMediaSource ? m_source.get() : m_pipeline.get();
@@ -1130,8 +1141,11 @@ void MediaPlayerPrivateGStreamer::notifyPlayerOfAudio()
             RefPtr<AudioTrackPrivateGStreamer> existingTrack = m_audioTracks.get(streamId);
             if (existingTrack) {
                 existingTrack->setIndex(i);
-                if (existingTrack->pad() == pad)
-                    continue;
+                // If the video has been played twice, the track is still there, but we need
+                // to update the pad pointer.
+                if (existingTrack->pad() != pad)
+                    existingTrack->setPad(GRefPtr(pad));
+                continue;
             }
         }
 
