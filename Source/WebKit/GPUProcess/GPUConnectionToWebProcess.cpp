@@ -183,7 +183,7 @@ GPUConnectionToWebProcess::~GPUConnectionToWebProcess()
 #endif
 }
 
-void GPUConnectionToWebProcess::didClose(IPC::Connection&)
+void GPUConnectionToWebProcess::didClose(IPC::Connection& connection)
 {
 #if USE(AUDIO_SESSION)
     if (m_audioSessionProxy) {
@@ -191,6 +191,9 @@ void GPUConnectionToWebProcess::didClose(IPC::Connection&)
         m_audioSessionProxy = nullptr;
     }
 #endif
+
+    gpuProcess().connectionToWebProcessClosed(connection);
+    gpuProcess().removeGPUConnectionToWebProcess(*this);
 }
 
 Logger& GPUConnectionToWebProcess::logger()
