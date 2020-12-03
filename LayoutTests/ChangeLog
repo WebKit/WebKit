@@ -1,3 +1,15 @@
+2020-12-03  Youenn Fablet  <youenn@apple.com>
+
+        (r270171) [ iOS ] http/wpt/mediarecorder/set-srcObject-MediaStream-Blob.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=219439
+        <rdar://problem/71900353>
+
+        Reviewed by Darin Adler.
+
+        * http/wpt/mediarecorder/set-srcObject-MediaStream-Blob.html:
+        Remove the audio track to allow both video elements to play concurrently on iOS.
+        Tested by running the test on iOS simulator.
+
 2020-12-02  Diego Pino Garcia  <dpino@igalia.com>
 
         [WPE] Unreviewed test gardening. Gardened several flaky timeout failures.
