@@ -190,6 +190,10 @@ void WebProcessCreationParameters::encode(IPC::Encoder& encoder) const
 #if HAVE(CATALYST_USER_INTERFACE_IDIOM_AND_SCALE_FACTOR)
     encoder << overrideUserInterfaceIdiomAndScale;
 #endif
+
+#if HAVE(IOSURFACE)
+    encoder << maximumIOSurfaceSize;
+#endif
 }
 
 bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreationParameters& parameters)
@@ -513,6 +517,11 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
     if (!overrideUserInterfaceIdiomAndScale)
         return false;
     parameters.overrideUserInterfaceIdiomAndScale = WTFMove(*overrideUserInterfaceIdiomAndScale);
+#endif
+
+#if HAVE(IOSURFACE)
+    if (!decoder.decode(parameters.maximumIOSurfaceSize))
+        return false;
 #endif
 
     return true;

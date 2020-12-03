@@ -232,6 +232,10 @@ struct WebProcessCreationParameters {
 #if HAVE(CATALYST_USER_INTERFACE_IDIOM_AND_SCALE_FACTOR)
     std::pair<int64_t, double> overrideUserInterfaceIdiomAndScale;
 #endif
+
+#if HAVE(IOSURFACE)
+    WebCore::IntSize maximumIOSurfaceSize;
+#endif
 };
 
 } // namespace WebKit

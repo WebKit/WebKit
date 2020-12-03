@@ -462,6 +462,8 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
 #if HAVE(PENCILKIT_TEXT_INPUT)
     parameters.hasStylusDevice = [[WKStylusDeviceObserver sharedInstance] hasStylusDevice];
 #endif
+
+    parameters.maximumIOSurfaceSize = WebCore::IOSurface::maximumSize();
 }
 
 void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationParameters& parameters)

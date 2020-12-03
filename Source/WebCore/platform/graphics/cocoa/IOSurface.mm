@@ -224,22 +224,42 @@ IOSurface::IOSurface(IOSurfaceRef surface, CGColorSpaceRef colorSpace)
 
 IOSurface::~IOSurface() = default;
 
-IntSize IOSurface::maximumSize()
+static IntSize computeMaximumSurfaceSize()
 {
     IntSize maxSize(clampToInteger(IOSurfaceGetPropertyMaximum(kIOSurfaceWidth)), clampToInteger(IOSurfaceGetPropertyMaximum(kIOSurfaceHeight)));
 
     // Protect against maxSize being { 0, 0 }.
-    const int iOSMaxSurfaceDimensionLowerBound = 1024;
+    const int maxSurfaceDimensionLowerBound = 1024;
 
 #if PLATFORM(IOS_FAMILY)
     // Match limits imposed by Core Animation. FIXME: should have API for this <rdar://problem/25454148>
-    const int iOSMaxSurfaceDimension = 8 * 1024;
+    const int maxSurfaceDimension = 8 * 1024;
 #else
     // IOSurface::maximumSize() can return { INT_MAX, INT_MAX } when hardware acceleration is unavailable.
-    const int iOSMaxSurfaceDimension = 32 * 1024;
+    const int maxSurfaceDimension = 32 * 1024;
 #endif
 
-    return maxSize.constrainedBetween({ iOSMaxSurfaceDimensionLowerBound, iOSMaxSurfaceDimensionLowerBound }, { iOSMaxSurfaceDimension, iOSMaxSurfaceDimension });
+    return maxSize.constrainedBetween({ maxSurfaceDimensionLowerBound, maxSurfaceDimensionLowerBound }, { maxSurfaceDimension, maxSurfaceDimension });
+}
+
+static WTF::Optional<IntSize>& surfaceMaximumSize()
+{
+    ASSERT(isMainThread());
+    static WTF::Optional<IntSize> maximumSize;
+    return maximumSize;
+}
+
+void IOSurface::setMaximumSize(IntSize size)
+{
+    surfaceMaximumSize() = size;
+}
+
+IntSize IOSurface::maximumSize()
+{
+    auto& size = surfaceMaximumSize();
+    if (!size)
+        size = computeMaximumSurfaceSize();
+    return *size;
 }
 
 MachSendRight IOSurface::createSendRight() const

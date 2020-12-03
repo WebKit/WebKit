@@ -1,3 +1,22 @@
+2020-12-03  Tim Horton  <timothy_horton@apple.com>
+
+        GPU Process: Sandbox violations under IOSurface::maximumSize in the Web Content process
+        https://bugs.webkit.org/show_bug.cgi?id=219484
+        <rdar://problem/71603808>
+
+        Reviewed by Ryosuke Niwa.
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode const):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+        Fetch the maximum allowed size of an IOSurface on the current hardware
+        in the UI process, and push it to the Web Content process on creation.
+
 2020-12-03  Martin Robinson  <mrobinson@igalia.com>
 
         Move code from AxisScrollSnapOffsets to ScrollSnapOffsetsInfo

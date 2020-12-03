@@ -113,7 +113,8 @@ public:
 
     WEBCORE_EXPORT static void moveToPool(std::unique_ptr<IOSurface>&&);
 
-    static IntSize maximumSize();
+    WEBCORE_EXPORT static IntSize maximumSize();
+    WEBCORE_EXPORT static void setMaximumSize(IntSize);
 
     WEBCORE_EXPORT WTF::MachSendRight createSendRight() const;
 
@@ -175,6 +176,8 @@ private:
     RetainPtr<CGContextRef> m_cgContext;
 
     RetainPtr<IOSurfaceRef> m_surface;
+
+    static WTF::Optional<IntSize> s_maximumSize;
 };
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const WebCore::IOSurface&);
