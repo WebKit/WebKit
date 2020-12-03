@@ -168,7 +168,7 @@
 
                     { "name": "Apple-Catalina-Debug-WK2-GPUProcess-Tests", "factory": "TestAllButJSCFactory", "builddir": "catalina-debug-tests-wk2-gpuprocess",
                       "platform": "mac-catalina", "configuration": "debug", "architectures": ["x86_64"],
-                      "additionalArguments": ["--no-retry-failures", "--use-gpu-process", "--remote-layer-tree"],
+                      "additionalArguments": ["--no-retry-failures", "--use-gpu-process"],
                       "workernames": ["bot260"]
                     },
                     { "name": "Apple-Catalina-Release-Build", "factory": "BuildFactory", "builddir": "catalina-release",

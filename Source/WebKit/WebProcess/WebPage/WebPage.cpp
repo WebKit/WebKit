@@ -421,6 +421,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     : m_identifier(pageID)
     , m_mainFrame(WebFrame::create())
     , m_viewSize(parameters.viewSize)
+    , m_drawingAreaType(parameters.drawingAreaType)
     , m_alwaysShowsHorizontalScroller { parameters.alwaysShowsHorizontalScroller }
     , m_alwaysShowsVerticalScroller { parameters.alwaysShowsVerticalScroller }
     , m_shouldRenderCanvasInGPUProcess { parameters.shouldRenderCanvasInGPUProcess }
@@ -3795,7 +3796,7 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     static_cast<WebMediaStrategy&>(platformStrategies()->mediaStrategy()).setUseGPUProcess(m_shouldPlayMediaInGPUProcess);
     WebProcess::singleton().supplement<RemoteMediaPlayerManager>()->setUseGPUProcess(m_shouldPlayMediaInGPUProcess);
     WebProcess::singleton().setUseGPUProcessForCanvasRendering(m_shouldRenderCanvasInGPUProcess);
-    WebProcess::singleton().setUseGPUProcessForDOMRendering(m_shouldRenderDOMInGPUProcess);
+    WebProcess::singleton().setUseGPUProcessForDOMRendering(m_shouldRenderDOMInGPUProcess && DrawingArea::supportsGPUProcessRendering(m_drawingAreaType));
     WebProcess::singleton().setUseGPUProcessForMedia(m_shouldPlayMediaInGPUProcess);
 
     // FIXME: We should support web fonts in the GPU process.

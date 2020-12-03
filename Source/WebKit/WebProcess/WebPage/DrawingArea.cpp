@@ -97,4 +97,21 @@ void DrawingArea::removeMessageReceiverIfNeeded()
     WebProcess::singleton().removeMessageReceiver(Messages::DrawingArea::messageReceiverName(), m_identifier);
 }
 
+bool DrawingArea::supportsGPUProcessRendering(DrawingAreaType type)
+{
+    switch (type) {
+#if PLATFORM(COCOA)
+#if !PLATFORM(IOS_FAMILY)
+    case DrawingAreaTypeTiledCoreAnimation:
+        return false;
+#endif
+    case DrawingAreaTypeRemoteLayerTree:
+        return true;
+#elif USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
+    case DrawingAreaTypeCoordinatedGraphics:
+        return false;
+#endif
+    }
+}
+
 } // namespace WebKit

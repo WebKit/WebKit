@@ -75,6 +75,8 @@ public:
     DrawingAreaType type() const { return m_type; }
     DrawingAreaIdentifier identifier() const { return m_identifier; }
 
+    static bool supportsGPUProcessRendering(DrawingAreaType);
+
     virtual void setNeedsDisplay() = 0;
     virtual void setNeedsDisplayInRect(const WebCore::IntRect&) = 0;
     virtual void scroll(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollDelta) = 0;

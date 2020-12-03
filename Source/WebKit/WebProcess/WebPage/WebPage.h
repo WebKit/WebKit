@@ -1802,6 +1802,7 @@ private:
 
     WebCore::IntSize m_viewSize;
     std::unique_ptr<DrawingArea> m_drawingArea;
+    DrawingAreaType m_drawingAreaType;
 
     HashSet<PluginView*> m_pluginViews;
     bool m_hasSeenPlugin { false };
