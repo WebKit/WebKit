@@ -239,7 +239,16 @@ bool RenderFlexibleBox::hitTestChildren(const HitTestRequest& request, HitTestRe
 
     LayoutPoint scrolledOffset = hasOverflowClip() ? adjustedLocation - toLayoutSize(scrollPosition()) : adjustedLocation;
 
-    for (auto* child : m_reversedOrderIteratorForHitTesting) {
+    // If collecting the children in reverse order is bad for performance, this Vector could be determined at layout time.
+    Vector<RenderBox*> reversedOrderIteratorForHitTesting;
+    for (auto* child = m_orderIterator.first(); child; child = m_orderIterator.next()) {
+        if (m_orderIterator.shouldSkipChild(*child))
+            continue;
+        reversedOrderIteratorForHitTesting.append(child);
+    }
+    reversedOrderIteratorForHitTesting.reverse();
+
+    for (auto* child : reversedOrderIteratorForHitTesting) {
         if (child->hasSelfPaintingLayer())
             continue;
         auto childPoint = flipForWritingModeForChild(child, scrolledOffset);
@@ -890,9 +899,7 @@ void RenderFlexibleBox::layoutFlexItems(bool relayoutChildren)
     // Set up our master list of flex items. All of the rest of the algorithm
     // should work off this list of a subset.
     // TODO(cbiesinger): That second part is not yet true.
-    // Also initialize the reversed order iterator that would be eventually used for hit testing.
     Vector<FlexItem> allItems;
-    m_reversedOrderIteratorForHitTesting.clear();
     m_orderIterator.first();
     for (RenderBox* child = m_orderIterator.currentChild(); child; child = m_orderIterator.next()) {
         if (m_orderIterator.shouldSkipChild(*child)) {
@@ -901,10 +908,8 @@ void RenderFlexibleBox::layoutFlexItems(bool relayoutChildren)
                 prepareChildForPositionedLayout(*child);
             continue;
         }
-        m_reversedOrderIteratorForHitTesting.append(child);
         allItems.append(constructFlexItem(*child, relayoutChildren));
     }
-    m_reversedOrderIteratorForHitTesting.reverse();
 
     // constructFlexItem() might set the override containing block height so any value cached for definiteness might be incorrect.
     m_hasDefiniteHeight = SizeDefiniteness::Unknown;

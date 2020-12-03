@@ -212,7 +212,6 @@ private:
     HashSet<const RenderBox*> m_relaidOutChildren;
     
     mutable OrderIterator m_orderIterator { *this };
-    Vector<RenderBox*> m_reversedOrderIteratorForHitTesting;
     int m_numberOfInFlowChildrenOnFirstLine { -1 };
     
     // This is SizeIsUnknown outside of layoutBlock()
