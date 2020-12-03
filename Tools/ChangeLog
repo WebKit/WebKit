@@ -1,3 +1,17 @@
+2020-12-03  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitscmpy] Incorrect identifier on remote SVN branches
+        https://bugs.webkit.org/show_bug.cgi?id=219509
+        <rdar://problem/71953465>
+
+        Reviewed by Stephanie Lewis.
+
+        Request reconstructed from packet inspection of requests sent by the svn binary.
+
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/remote/svn.py:
+        (Svn._cache_revisions): Clarify that revisions should only come from the specified branch.
+
 2020-12-02  Tim Horton  <timothy_horton@apple.com>
 
         Many different assertion failures on the GPU process bot after r270366

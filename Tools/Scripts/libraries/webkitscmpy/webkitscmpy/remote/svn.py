@@ -226,7 +226,7 @@ class Svn(Scm):
             }, data='<S:log-report xmlns:S="svn:">\n'
                 '<S:start-revision>{revision}</S:start-revision>\n'
                 '<S:end-revision>0</S:end-revision>\n'
-                '<S:revprop>svn:date</S:revprop>\n'
+                '<S:path></S:path>\n'
                 '</S:log-report>\n'.format(revision=latest),
         ) as response:
             if response.status_code != 200:
