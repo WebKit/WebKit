@@ -1,3 +1,20 @@
+2020-12-02  Brent Fulgham  <bfulgham@apple.com>
+
+        [macOS] WebContent sandbox; remove AppleIntelMEUserClient
+        https://bugs.webkit.org/show_bug.cgi?id=219012
+        <rdar://problem/70462796>
+
+        Reviewed by Eric Carlson.
+
+        Instead of globally extending access to the AppleIntelMEUserClient IOKit class,
+        only extend it when the GPU process is not in use.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::gpuIOKitClasses): Add 'AppleIntelMEUserClient' as a dynamically-extended
+        IOKit class.
+        * WebProcess/com.apple.WebProcess.sb.in: Only allow 'AppleIntelMEUserClient' if it
+        was dynamically extended.
+
 2020-12-02  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, fix the iOS build after r270362

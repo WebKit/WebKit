@@ -180,7 +180,10 @@
 
     ;; This is needed for Encrypted Media on some hardware (MacMini8,1 for example)
     (allow iokit-open
-        (iokit-registry-entry-class "AppleIntelMEUserClient")
+        (require-all
+            (extension "com.apple.webkit.extension.iokit")
+            (iokit-registry-entry-class "AppleIntelMEUserClient")
+        )
 #if HAVE(SANDBOX_MESSAGE_FILTERING)
         (with telemetry-backtrace)
         (apply-message-filter
@@ -1606,4 +1609,16 @@
         )
     )
 )
+
+;; FIXME: This is just for logging. Remove when the GPU process is enabled by default.
+;; These should only be accessed through an iokit-extension, so log if they are not.
+(allow iokit-open (with report) (with telemetry-backtrace)
+    (require-all
+        (require-not (extension "com.apple.webkit.extension.iokit"))
+        (iokit-registry-entry-class
+            "AppleIntelMEUserClient"
+        )
+    )
+)
+
 #endif // HAVE(SANDBOX_MESSAGE_FILTERING)

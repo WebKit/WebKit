@@ -9,6 +9,7 @@
 	<key>com.apple.security.temporary-exception.sbpl</key>
 	<array>
 		<string>(allow mach-issue-extension (require-all (extension-class &quot;com.apple.webkit.extension.mach&quot;)))</string>
+		<string>(allow iokit-issue-extension (require-all (extension-class &quot;com.apple.webkit.extension.iokit&quot;)))</string>
 	</array>
 </dict>
 </plist>

@@ -1,3 +1,19 @@
+2020-12-02  Brent Fulgham  <bfulgham@apple.com>
+
+        [macOS] WebContent sandbox; remove AppleIntelMEUserClient
+        https://bugs.webkit.org/show_bug.cgi?id=219012
+        <rdar://problem/70462796>
+
+        Reviewed by Eric Carlson.
+
+        Update the various sandboxes to allow the UIProcess to extend IOKit classes
+        to child processes on macOS. We already do this on iOS.
+
+        * MiniBrowser/MiniBrowser.entitlements:
+        * TestWebKitAPI/Configurations/TestWebKitAPI-macOS-internal.entitlements:
+        * TestWebKitAPI/Configurations/TestWebKitAPI-macOS.entitlements:
+        * WebKitTestRunner/Configurations/WebKitTestRunner.entitlements:
+
 2020-12-02  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitcorepy] Allow caller of autoinstall to specify CA file

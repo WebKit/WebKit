@@ -7739,6 +7739,9 @@ static const Vector<ASCIILiteral>& gpuIOKitClasses()
         "IOSurfaceAcceleratorClient"_s,
         "IOSurfaceRootUserClient"_s,
 #endif
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
+        "AppleIntelMEUserClient"_s,
+#endif
     });
     return services;
 }
