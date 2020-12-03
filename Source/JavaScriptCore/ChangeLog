@@ -1,28 +1,3 @@
-2020-12-02  Russell Epstein  <repstein@apple.com>
-
-        Apply patch. rdar://problem/71911423
-
-    Apply patch. rdar://problem/70289034
-    
-    git-svn-id: https://svn.webkit.org/repository/webkit/branches/safari-610.3.7.1-branch@270359 268f45cc-cd09-0410-ab3c-d52691b4dbfc
-
-    2020-12-02  Russell Epstein  <repstein@apple.com>
-
-            Apply patch. rdar://problem/70289034
-
-        2020-12-02  Saam Barati  <sbarati@apple.com>
-
-                Don't crash when reparsing an arrow function and the parsing invariant is broken.
-                <rdar://problem/70289034>
-
-                Reviewed by Mark Lam.
-
-                Instead, let's turn it into a runtime error for now, since that's better than
-                crashing. We're still not sure how this invariant is broken.
-
-                * parser/Parser.cpp:
-                (JSC::Parser<LexerType>::parseInner):
-
 2020-10-27  Russell Epstein  <repstein@apple.com>
 
         Apply patch. rdar://problem/70733375
