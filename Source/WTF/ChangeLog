@@ -1,3 +1,21 @@
+2020-12-03  Lauro Moura  <lmoura@igalia.com>
+
+        [WTF] Avoid JSONValue::create with raw string falling to bool overload
+        https://bugs.webkit.org/show_bug.cgi?id=219483
+
+        Reviewed by Adrian Perez de Castro.
+
+        r269757 removed the const char* overload for Value::create() and replaced
+        them with makeString() versions. While this worked most of the time, one
+        could still call Value::create(raw_string) and it would end up calling the
+        bool overload. This could cause side effects like making a number of
+        WebDriver tests to fail with wrong types in the executed javascript code.
+
+        To avoid these accidental conversions, this commit added an overload to
+        delete all implicit conversions of Value::create().
+
+        * wtf/JSONValues.h: Delete implicit overloads for Value::create(T).
+
 2020-12-02  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         aarch64 llint does not build with JIT disabled

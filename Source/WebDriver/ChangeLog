@@ -1,3 +1,17 @@
+2020-12-03  Lauro Moura  <lmoura@igalia.com>
+
+        [WTF] Avoid JSONValue::create with raw string falling to bool overload
+        https://bugs.webkit.org/show_bug.cgi?id=219483
+
+        Reviewed by Adrian Perez de Castro.
+
+        Avoid accidental conversion of "selected" to bool that would make the
+        getElementAttribute javascriptcode to fail with "attributeName.toLowerCase
+        is undefined"
+
+        * Session.cpp:
+        (WebDriver::Session::isElementSelected): Convert to WTF::String when creating the value.
+
 2020-11-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: session can have more than one active input source of the same type

@@ -1216,7 +1216,7 @@ void Session::isElementSelected(const String& elementID, Function<void (CommandR
         }
         auto arguments = JSON::Array::create();
         arguments->pushString(createElement(elementID)->toJSONString());
-        arguments->pushString(JSON::Value::create("selected")->toJSONString());
+        arguments->pushString(JSON::Value::create(makeString("selected"_s))->toJSONString());
 
         auto parameters = JSON::Object::create();
         parameters->setString("browsingContextHandle"_s, m_toplevelBrowsingContext.value());

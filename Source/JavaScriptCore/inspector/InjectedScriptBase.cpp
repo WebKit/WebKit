@@ -121,7 +121,7 @@ void InjectedScriptBase::makeAsyncCall(Deprecated::ScriptFunctionCall& function,
 
         jsFunction = JSC::JSNativeStdFunction::create(vm, globalObject, 1, String(), [&, callback = WTFMove(callback)] (JSC::JSGlobalObject* globalObject, JSC::CallFrame* callFrame) {
             if (!callFrame)
-                checkAsyncCallResult(JSON::Value::create("Exception while making a call."), callback);
+                checkAsyncCallResult(JSON::Value::create(makeString("Exception while making a call."_s)), callback);
             else if (auto resultJSONValue = toInspectorValue(globalObject, callFrame->argument(0)))
                 checkAsyncCallResult(resultJSONValue, callback);
             else

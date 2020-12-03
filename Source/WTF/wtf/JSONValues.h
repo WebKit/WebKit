@@ -77,6 +77,8 @@ public:
     static Ref<Value> create(int);
     static Ref<Value> create(double);
     static Ref<Value> create(const String&);
+    template<class T>
+    static Ref<Value> create(T) = delete;
 
     enum class Type {
         Null = 0,
