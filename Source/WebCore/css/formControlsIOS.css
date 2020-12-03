@@ -58,4 +58,23 @@ input[type="search"]::-webkit-search-results-button {
     -webkit-mask-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 73 73"><path fill="darkgray" d="M29.6875 59.375c6.2988 0 12.1094-1.953 16.9434-5.3222l17.334 17.334c.9277.9277 2.1484 1.3672 3.418 1.3672 2.7343 0 4.7362-2.0996 4.7362-4.7852 0-1.2695-.4394-2.4902-1.3672-3.418L53.5644 47.3145c3.6622-4.9316 5.8106-11.0352 5.8106-17.627C59.375 13.3301 46.045 0 29.6875 0 13.3301 0 0 13.3301 0 29.6875 0 46.045 13.33 59.375 29.6875 59.375zm0-7.2753c-12.2559 0-22.4121-10.1563-22.4121-22.4122 0-12.3046 10.1562-22.4121 22.4121-22.4121C41.9922 7.2754 52.1 17.3829 52.1 29.6875c0 12.256-10.1078 22.4122-22.4125 22.4122z"/></svg>');
 }
 
+input:matches([type="button"], [type="submit"], [type="reset"]), input[type="file"]::-webkit-file-upload-button, button {
+    border: initial;
+    font: 11px system-ui;
+    font-weight: bold;
+}
+
+/* FIXME: Use semantic colors once final specifications are obtained. */
+/* FIXME: Add styles for additional button states once final specifications are obtained. */
+
+input:matches([type="button"], [type="reset"]), input[type="file"]::-webkit-file-upload-button, button {
+    background-color: rgb(235, 245, 255);
+    color: rgb(22, 122, 255);
+}
+
+input[type="submit"] {
+    background-color: rgb(22, 122, 255);
+    color: white;
+}
+
 #endif
