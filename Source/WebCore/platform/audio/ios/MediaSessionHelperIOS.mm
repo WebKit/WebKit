@@ -126,25 +126,30 @@ private:
 #endif
 };
 
-static UniqueRef<MediaSessionHelper>& sharedHelperInstance()
+static std::unique_ptr<MediaSessionHelper>& sharedHelperInstance()
 {
-    static NeverDestroyed<UniqueRef<MediaSessionHelper>> helper = makeUniqueRef<MediaSessionHelperiOS>();
+    static NeverDestroyed<std::unique_ptr<MediaSessionHelper>> helper;
     return helper;
 }
 
 MediaSessionHelper& MediaSessionHelper::sharedHelper()
 {
-    return sharedHelperInstance();
+    auto& helper = sharedHelperInstance();
+    if (!helper)
+        resetSharedHelper();
+
+    ASSERT(helper);
+    return *helper;
 }
 
 void MediaSessionHelper::resetSharedHelper()
 {
-    sharedHelperInstance() = makeUniqueRef<MediaSessionHelperiOS>();
+    sharedHelperInstance() = makeUnique<MediaSessionHelperiOS>();
 }
 
 void MediaSessionHelper::setSharedHelper(UniqueRef<MediaSessionHelper>&& helper)
 {
-    sharedHelperInstance() = WTFMove(helper);
+    sharedHelperInstance() = helper.moveToUniquePtr();
 }
 
 void MediaSessionHelper::addClient(MediaSessionHelperClient& client)
