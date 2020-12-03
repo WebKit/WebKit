@@ -1,3 +1,19 @@
+2020-12-03  Saam Barati  <sbarati@apple.com>
+
+        JIT::emit_op_iterator_next fast path passes in the wrong identifier to the "done" JITGetByIdGenerator
+        https://bugs.webkit.org/show_bug.cgi?id=219499
+
+        Reviewed by Keith Miller.
+
+        The reason nothing was failing here is that the slow path which calls into C
+        code to do repatching of the IC was using the right "done" identifier. The
+        fast path only checks if the identifier is "length", so the code sidestepped
+        itself being wrong in any way. However, it's good form to use the correct
+        identifier.
+
+        * jit/JITCall.cpp:
+        (JSC::JIT::emit_op_iterator_next):
+
 2020-12-03  Lauro Moura  <lmoura@igalia.com>
 
         [WTF] Avoid JSONValue::create with raw string falling to bool overload

@@ -482,7 +482,7 @@ void JIT::emit_op_iterator_next(const Instruction* instruction)
         preservedRegs.add(valueGPR);
         JITGetByIdGenerator gen(
             m_codeBlock, CodeOrigin(m_bytecodeIndex), CallSiteIndex(BytecodeIndex(m_bytecodeIndex.offset())), preservedRegs,
-            CacheableIdentifier::createFromImmortalIdentifier(vm().propertyNames->next.impl()), JSValueRegs(iterResultGPR), JSValueRegs(doneGPR), AccessType::GetById);
+            CacheableIdentifier::createFromImmortalIdentifier(vm().propertyNames->done.impl()), JSValueRegs(iterResultGPR), JSValueRegs(doneGPR), AccessType::GetById);
         gen.generateFastPath(*this);
         addSlowCase(gen.slowPathJump());
         m_getByIds.append(gen);
