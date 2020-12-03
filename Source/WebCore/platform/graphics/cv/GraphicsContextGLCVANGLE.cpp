@@ -456,7 +456,7 @@ GraphicsContextGLCVANGLE::~GraphicsContextGLCVANGLE()
 
 bool GraphicsContextGLCVANGLE::initializeUVContextObjects()
 {
-    const bool useTexture2D = GraphicsContextGLOpenGL::IOSurfaceTextureTarget() == GraphicsContextGL::TEXTURE_2D;
+    const bool useTexture2D = GraphicsContextGLOpenGL::drawingBufferTextureTarget() == GraphicsContextGL::TEXTURE_2D;
 
     PlatformGLObject vertexShader = m_context->createShader(GraphicsContextGL::VERTEX_SHADER);
     if (useTexture2D)
@@ -541,7 +541,7 @@ void* GraphicsContextGLCVANGLE::attachIOSurfaceToTexture(GCGLenum target, GCGLen
         LOG(WebGL, "Unknown texture target %d.", static_cast<int>(target));
         return nullptr;
     }
-    if (eglTextureTarget != GraphicsContextGLOpenGL::EGLIOSurfaceTextureTarget()) {
+    if (eglTextureTarget != GraphicsContextGLOpenGL::EGLDrawingBufferTextureTarget()) {
         LOG(WebGL, "Mismatch in EGL texture target %d.", static_cast<int>(target));
         return nullptr;
     }
@@ -639,7 +639,7 @@ bool GraphicsContextGLCVANGLE::copyPixelBufferToTexture(CVPixelBufferRef image, 
     auto uvPlaneWidth = IOSurfaceGetWidthOfPlane(surface, 1);
     auto uvPlaneHeight = IOSurfaceGetHeightOfPlane(surface, 1);
 
-    GCGLenum videoTextureTarget = GraphicsContextGLOpenGL::IOSurfaceTextureTarget();
+    GCGLenum videoTextureTarget = GraphicsContextGLOpenGL::drawingBufferTextureTarget();
 
     auto uvTexture = m_context->createTexture();
     m_context->activeTexture(GraphicsContextGL::TEXTURE1);

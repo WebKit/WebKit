@@ -342,7 +342,7 @@ GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes att
     END_BLOCK_OBJC_EXCEPTIONS
 
     // Create the texture that will be used for the framebuffer.
-    GLenum textureTarget = IOSurfaceTextureTarget();
+    GLenum textureTarget = drawingBufferTextureTarget();
 
     gl::GenTextures(1, &m_texture);
     gl::BindTexture(textureTarget, m_texture);
@@ -426,7 +426,7 @@ GraphicsContextGLOpenGL::~GraphicsContextGLOpenGL()
     LOG(WebGL, "Destroyed a GraphicsContextGLOpenGL (%p).", this);
 }
 
-GCGLenum GraphicsContextGLOpenGL::IOSurfaceTextureTarget()
+GCGLenum GraphicsContextGLOpenGL::drawingBufferTextureTarget()
 {
 #if PLATFORM(MACCATALYST)
     if (needsEAGLOnMac())
@@ -439,7 +439,7 @@ GCGLenum GraphicsContextGLOpenGL::IOSurfaceTextureTarget()
 #endif
 }
 
-GCGLenum GraphicsContextGLOpenGL::IOSurfaceTextureTargetQuery()
+GCGLenum GraphicsContextGLOpenGL::drawingBufferTextureTargetQuery()
 {
 #if PLATFORM(MACCATALYST)
     if (needsEAGLOnMac())
@@ -452,7 +452,7 @@ GCGLenum GraphicsContextGLOpenGL::IOSurfaceTextureTargetQuery()
 #endif
 }
 
-GCGLint GraphicsContextGLOpenGL::EGLIOSurfaceTextureTarget()
+GCGLint GraphicsContextGLOpenGL::EGLDrawingBufferTextureTarget()
 {
 #if PLATFORM(MACCATALYST)
     if (needsEAGLOnMac())
@@ -594,7 +594,7 @@ bool GraphicsContextGLOpenGL::reshapeDisplayBufferBacking()
         EGL_WIDTH, size.width(),
         EGL_HEIGHT, size.height(),
         EGL_IOSURFACE_PLANE_ANGLE, 0,
-        EGL_TEXTURE_TARGET, WebCore::GraphicsContextGLOpenGL::EGLIOSurfaceTextureTarget(),
+        EGL_TEXTURE_TARGET, WebCore::GraphicsContextGLOpenGL::EGLDrawingBufferTextureTarget(),
         EGL_TEXTURE_INTERNAL_FORMAT_ANGLE, usingAlpha ? GL_BGRA_EXT : GL_RGB,
         EGL_TEXTURE_FORMAT, EGL_TEXTURE_RGBA,
         EGL_TEXTURE_TYPE_ANGLE, GL_UNSIGNED_BYTE,
@@ -610,8 +610,8 @@ bool GraphicsContextGLOpenGL::reshapeDisplayBufferBacking()
 
 bool GraphicsContextGLOpenGL::bindDisplayBufferBacking(std::unique_ptr<IOSurface> backing, void* pbuffer)
 {
-    GCGLenum textureTarget = IOSurfaceTextureTarget();
-    ScopedRestoreTextureBinding restoreBinding(IOSurfaceTextureTargetQuery(), textureTarget, textureTarget != TEXTURE_RECTANGLE_ARB);
+    GCGLenum textureTarget = drawingBufferTextureTarget();
+    ScopedRestoreTextureBinding restoreBinding(drawingBufferTextureTargetQuery(), textureTarget, textureTarget != TEXTURE_RECTANGLE_ARB);
     gl::BindTexture(textureTarget, m_texture);
     if (!EGL_BindTexImage(m_displayObj, pbuffer, EGL_BACK_BUFFER)) {
         EGL_DestroySurface(m_displayObj, pbuffer);
