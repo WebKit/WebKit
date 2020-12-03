@@ -279,10 +279,10 @@ public:
     virtual GCGLint getGraphicsResetStatusARB() = 0;
 
     // GL_ANGLE_framebuffer_blit
-    virtual void blitFramebuffer(long srcX0, long srcY0, long srcX1, long srcY1, long dstX0, long dstY0, long dstX1, long dstY1, unsigned long mask, unsigned long filter) = 0;
+    virtual void blitFramebufferANGLE(GCGLint srcX0, GCGLint srcY0, GCGLint srcX1, GCGLint srcY1, GCGLint dstX0, GCGLint dstY0, GCGLint dstX1, GCGLint dstY1, GCGLbitfield mask, GCGLenum filter) = 0;
 
     // GL_ANGLE_framebuffer_multisample
-    virtual void renderbufferStorageMultisample(unsigned long target, unsigned long samples, unsigned long internalformat, unsigned long width, unsigned long height) = 0;
+    virtual void renderbufferStorageMultisampleANGLE(GCGLenum target, GCGLsizei samples, GCGLenum internalformat, GCGLsizei width, GCGLsizei height) = 0;
 
     // GL_OES_vertex_array_object
     virtual PlatformGLObject createVertexArrayOES() = 0;
@@ -296,15 +296,15 @@ public:
     // GL_EXT_debug_marker
     virtual void insertEventMarkerEXT(const String&) = 0;
     virtual void pushGroupMarkerEXT(const String&) = 0;
-    virtual void popGroupMarkerEXT(void) = 0;
+    virtual void popGroupMarkerEXT() = 0;
 
     // GL_ARB_draw_buffers / GL_EXT_draw_buffers
     virtual void drawBuffersEXT(GCGLSpan<const GCGLenum> bufs) = 0;
 
     // GL_ANGLE_instanced_arrays
-    virtual void drawArraysInstanced(GCGLenum mode, GCGLint first, GCGLsizei count, GCGLsizei primcount) = 0;
-    virtual void drawElementsInstanced(GCGLenum mode, GCGLsizei count, GCGLenum type, long long offset, GCGLsizei primcount) = 0;
-    virtual void vertexAttribDivisor(GCGLuint index, GCGLuint divisor) = 0;
+    virtual void drawArraysInstancedANGLE(GCGLenum mode, GCGLint first, GCGLsizei count, GCGLsizei primcount) = 0;
+    virtual void drawElementsInstancedANGLE(GCGLenum mode, GCGLsizei count, GCGLenum type, GCGLvoidptr offset, GCGLsizei primcount) = 0;
+    virtual void vertexAttribDivisorANGLE(GCGLuint index, GCGLuint divisor) = 0;
 
     // GL_ANGLE_robust_client_memory
     virtual void readPixelsRobustANGLE(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLsizei bufSize, GCGLsizei* length, GCGLsizei* columns, GCGLsizei* rows, GCGLvoid* pixels) = 0;
@@ -314,7 +314,6 @@ public:
     virtual void getQueryivRobustANGLE(GCGLenum target, GCGLenum pname, GCGLsizei bufSize, GCGLsizei* length, GCGLint* params) = 0;
     virtual void getQueryObjectuivRobustANGLE(GCGLuint id, GCGLenum pname, GCGLsizei bufSize, GCGLsizei* length, GCGLuint* params) = 0;
     virtual void getBufferPointervRobustANGLE(GCGLenum target, GCGLenum pname, GCGLsizei bufSize, GCGLsizei* length, GCGLvoid** params) = 0;
-    virtual void getInternalformativRobustANGLE(GCGLenum target, GCGLenum internalformat, GCGLenum pname, GCGLsizei bufSize, GCGLsizei* length, GCGLint* params) = 0;
     virtual void getVertexAttribIivRobustANGLE(GCGLuint index, GCGLenum pname, GCGLsizei bufSize, GCGLsizei* length, GCGLint* params) = 0;
     virtual void getVertexAttribIuivRobustANGLE(GCGLuint index, GCGLenum pname, GCGLsizei bufSize, GCGLsizei* length, GCGLuint* params) = 0;
     virtual void getUniformuivRobustANGLE(GCGLuint program, GCGLint location, GCGLsizei bufSize, GCGLsizei* length, GCGLuint* params) = 0;
@@ -332,7 +331,6 @@ public:
     virtual void getTexLevelParameterfvRobustANGLE(GCGLenum target, GCGLint level, GCGLenum pname, GCGLsizei bufSize, GCGLsizei* length, GCGLfloat* params) = 0;
 
     virtual void getPointervRobustANGLERobustANGLE(GCGLenum pname, GCGLsizei bufSize, GCGLsizei* length, GCGLvoid** params) = 0;
-    virtual void readnPixelsRobustANGLE(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLsizei bufSize, GCGLsizei* length, GCGLsizei* columns, GCGLsizei* rows, GCGLvoid* data, bool readingToPixelBufferObject) = 0;
     virtual void getnUniformfvRobustANGLE(GCGLuint program, GCGLint location, GCGLsizei bufSize, GCGLsizei* length, GCGLfloat* params) = 0;
     virtual void getnUniformivRobustANGLE(GCGLuint program, GCGLint location, GCGLsizei bufSize, GCGLsizei* length, GCGLint* params) = 0;
     virtual void getnUniformuivRobustANGLE(GCGLuint program, GCGLint location, GCGLsizei bufSize, GCGLsizei* length, GCGLuint* params) = 0;
@@ -355,7 +353,6 @@ public:
     virtual void readnPixelsEXT(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLsizei bufSize, GCGLvoid* data) = 0;
     virtual void getnUniformfvEXT(GCGLuint program, GCGLint location, GCGLsizei bufSize, GCGLfloat* params) = 0;
     virtual void getnUniformivEXT(GCGLuint program, GCGLint location, GCGLsizei bufSize, GCGLint* params) = 0;
-#endif
 
     virtual bool isNVIDIA() = 0;
     virtual bool isAMD() = 0;
@@ -367,6 +364,7 @@ public:
     // that must be avoided. Ports should implement these flags on such configurations.
     virtual bool requiresBuiltInFunctionEmulation() = 0;
     virtual bool requiresRestrictedMaximumTextureSize() = 0;
+#endif
 
 };
 

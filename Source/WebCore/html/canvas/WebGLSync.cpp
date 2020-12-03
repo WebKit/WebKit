@@ -71,7 +71,7 @@ void WebGLSync::updateCache(WebGLRenderingContextBase& context)
         return;
 
     m_allowCacheUpdate = false;
-    context.graphicsContextGL()->getSynciv(m_sync, GraphicsContextGL::SYNC_STATUS, sizeof(m_syncStatus), &m_syncStatus);
+    m_syncStatus = context.graphicsContextGL()->getSynci(m_sync, GraphicsContextGL::SYNC_STATUS);
     if (m_syncStatus == GraphicsContextGL::UNSIGNALED)
         scheduleAllowCacheUpdate(context);
 }

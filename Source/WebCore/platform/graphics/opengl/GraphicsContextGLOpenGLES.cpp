@@ -40,7 +40,7 @@
 
 namespace WebCore {
 
-void GraphicsContextGLOpenGL::readPixels(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, void* data)
+void GraphicsContextGLOpenGL::readnPixels(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLSpan<GCGLvoid> data)
 {
     if (!makeContextCurrent())
         return;
@@ -58,7 +58,7 @@ void GraphicsContextGLOpenGL::readPixels(GCGLint x, GCGLint y, GCGLsizei width, 
         ::glFlush();
     }
 
-    ::glReadPixels(x, y, width, height, format, type, data);
+    ::glReadPixels(x, y, width, height, format, type, data.data);
 
     if (attributes.antialias && m_state.boundDrawFBO == m_multisampleFBO)
         ::glBindFramebuffer(GL_FRAMEBUFFER, m_multisampleFBO);
@@ -130,7 +130,7 @@ bool GraphicsContextGLOpenGL::reshapeFBOs(const IntSize& size)
             // Use a 24 bit depth buffer where we know we have it.
             if (supportPackedDepthStencilBuffer) {
                 ::glBindRenderbuffer(GL_RENDERBUFFER, m_depthStencilBuffer);
-                extensions.renderbufferStorageMultisample(GL_RENDERBUFFER, sampleCount, GL_DEPTH24_STENCIL8_OES, width, height);
+                extensions.renderbufferStorageMultisampleANGLE(GL_RENDERBUFFER, sampleCount, GL_DEPTH24_STENCIL8_OES, width, height);
                 if (attributes.stencil)
                     ::glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_depthStencilBuffer);
                 if (attributes.depth)
@@ -138,12 +138,12 @@ bool GraphicsContextGLOpenGL::reshapeFBOs(const IntSize& size)
             } else {
                 if (attributes.stencil) {
                     ::glBindRenderbuffer(GL_RENDERBUFFER, m_stencilBuffer);
-                    extensions.renderbufferStorageMultisample(GL_RENDERBUFFER, sampleCount, GL_STENCIL_INDEX8, width, height);
+                    extensions.renderbufferStorageMultisampleANGLE(GL_RENDERBUFFER, sampleCount, GL_STENCIL_INDEX8, width, height);
                     ::glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_stencilBuffer);
                 }
                 if (attributes.depth) {
                     ::glBindRenderbuffer(GL_RENDERBUFFER, m_depthBuffer);
-                    extensions.renderbufferStorageMultisample(GL_RENDERBUFFER, sampleCount, GL_DEPTH_COMPONENT16, width, height);
+                    extensions.renderbufferStorageMultisampleANGLE(GL_RENDERBUFFER, sampleCount, GL_DEPTH_COMPONENT16, width, height);
                     ::glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_depthBuffer);
                 }
             }

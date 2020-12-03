@@ -51,6 +51,8 @@ typedef long long GCGLint64;
 typedef unsigned long long GCGLuint64;
 typedef struct __GLsync* GCGLsync;
 typedef void GCGLvoid;
+typedef intptr_t GCGLvoidptr;
+
 
 typedef GCGLuint PlatformGLObject;
 

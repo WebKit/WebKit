@@ -443,13 +443,23 @@ ExtensionsGL& GraphicsContextGLOpenGL::getExtensions()
     return *m_extensions;
 }
 
-void GraphicsContextGLOpenGL::readPixels(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, void* data)
+void GraphicsContextGLOpenGL::readnPixels(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLSpan<GCGLvoid> data)
 {
-    // FIXME: remove the two glFlush calls when the driver bug is fixed, i.e.,
-    // all previous rendering calls should be done before reading pixels.
+    readnPixelsImpl(x, y, width, height, format, type, data.bufSize, nullptr, nullptr, nullptr, data.data, false);
+}
+
+void GraphicsContextGLOpenGL::readnPixels(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLintptr offset)
+{
+    readnPixelsImpl(x, y, width, height, format, type, 0, nullptr, nullptr, nullptr, reinterpret_cast<GCGLvoid*>(offset), true);
+}
+
+void GraphicsContextGLOpenGL::readnPixelsImpl(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLsizei bufSize, GCGLsizei* length, GCGLsizei* columns, GCGLsizei* rows, GCGLvoid* data, bool readingToPixelBufferObject)
+{
     if (!makeContextCurrent())
         return;
 
+    // FIXME: remove the two glFlush calls when the driver bug is fixed, i.e.,
+    // all previous rendering calls should be done before reading pixels.
     gl::Flush();
     auto attrs = contextAttributes();
     GCGLenum framebufferTarget = m_isForWebGL2 ? GraphicsContextGL::READ_FRAMEBUFFER : GraphicsContextGL::FRAMEBUFFER;
@@ -458,16 +468,27 @@ void GraphicsContextGLOpenGL::readPixels(GCGLint x, GCGLint y, GCGLsizei width, 
         gl::BindFramebuffer(framebufferTarget, m_fbo);
         gl::Flush();
     }
-    gl::ReadPixels(x, y, width, height, format, type, data);
+    moveErrorsToSyntheticErrorList();
+    gl::ReadnPixelsRobustANGLE(x, y, width, height, format, type, bufSize, length, columns, rows, data);
+    GLenum error = gl::GetError();
     if (attrs.antialias && m_state.boundReadFBO == m_multisampleFBO)
         gl::BindFramebuffer(framebufferTarget, m_multisampleFBO);
 
+    if (error) {
+        // ANGLE detected a failure during the ReadnPixelsRobustANGLE operation. Surface this in the
+        // synthetic error list, and skip the alpha channel fixup below.
+        synthesizeGLError(error);
+        return;
+    }
+
+
 #if PLATFORM(MAC) || PLATFORM(IOS_FAMILY)
-    if (!attrs.alpha && (format == GraphicsContextGL::RGBA || format == GraphicsContextGL::BGRA) && (type == GraphicsContextGL::UNSIGNED_BYTE) && (m_state.boundReadFBO == m_fbo || (attrs.antialias && m_state.boundReadFBO == m_multisampleFBO)))
+    if (!readingToPixelBufferObject && !attrs.alpha && (format == GraphicsContextGL::RGBA || format == GraphicsContextGL::BGRA) && (type == GraphicsContextGL::UNSIGNED_BYTE) && (m_state.boundReadFBO == m_fbo || (attrs.antialias && m_state.boundReadFBO == m_multisampleFBO)))
         wipeAlphaChannelFromPixels(width, height, static_cast<unsigned char*>(data));
+#else
+    UNUSED_PARAM(readingToPixelBufferObject);
 #endif
 }
-
 
 // The contents of GraphicsContextGLOpenGLCommon follow, ported to use ANGLE.
 
@@ -898,20 +919,16 @@ void GraphicsContextGLOpenGL::bufferSubData(GCGLenum target, GCGLintptr offset, 
     gl::BufferSubData(target, offset, data.bufSize, data.data);
 }
 
-void* GraphicsContextGLOpenGL::mapBufferRange(GCGLenum target, GCGLintptr offset, GCGLsizeiptr length, GCGLbitfield access)
+void GraphicsContextGLOpenGL::getBufferSubData(GCGLenum target, GCGLintptr offset, GCGLSpan<GCGLvoid> data)
 {
     if (!makeContextCurrent())
-        return nullptr;
-
-    return gl::MapBufferRange(target, offset, length, access);
-}
-
-GCGLboolean GraphicsContextGLOpenGL::unmapBuffer(GCGLenum target)
-{
-    if (!makeContextCurrent())
-        return GL_FALSE;
-
-    return gl::UnmapBuffer(target);
+        return;
+    GCGLvoid* ptr = gl::MapBufferRange(target, offset, data.bufSize, GraphicsContextGL::MAP_READ_BIT);
+    if (!ptr)
+        return;
+    memcpy(data.data, ptr, data.bufSize);
+    if (!gl::UnmapBuffer(target))
+        synthesizeGLError(GraphicsContextGL::INVALID_OPERATION);
 }
 
 void GraphicsContextGLOpenGL::copyBufferSubData(GCGLenum readTarget, GCGLenum writeTarget, GCGLintptr readOffset, GCGLintptr writeOffset, GCGLsizeiptr size)
@@ -922,12 +939,11 @@ void GraphicsContextGLOpenGL::copyBufferSubData(GCGLenum readTarget, GCGLenum wr
     gl::CopyBufferSubData(readTarget, writeTarget, readOffset, writeOffset, size);
 }
 
-void GraphicsContextGLOpenGL::getInternalformativ(GCGLenum target, GCGLenum internalformat, GCGLenum pname, GCGLsizei bufSize, GCGLint* params)
+void GraphicsContextGLOpenGL::getInternalformativ(GCGLenum target, GCGLenum internalformat, GCGLenum pname, GCGLSpan<GCGLint> data)
 {
     if (!makeContextCurrent())
         return;
-
-    gl::GetInternalformativ(target, internalformat, pname, bufSize, params);
+    gl::GetInternalformativRobustANGLE(target, internalformat, pname, data.bufSize, nullptr, data.data);
 }
 
 void GraphicsContextGLOpenGL::renderbufferStorageMultisample(GCGLenum target, GCGLsizei samples, GCGLenum internalformat, GCGLsizei width, GCGLsizei height)
@@ -1008,14 +1024,15 @@ void GraphicsContextGLOpenGL::compressedTexSubImage3D(GCGLenum target, int level
     compressedTexSubImage3D(target, level, xoffset, yoffset, zoffset, width, height, depth, format, imageSize, makeGCGLSpan(reinterpret_cast<const GCGLvoid*>(offset), 0));
 }
 
-void GraphicsContextGLOpenGL::getActiveUniforms(PlatformGLObject program, const Vector<GCGLuint>& uniformIndices, GCGLenum pname, Vector<GCGLint>& params)
+Vector<GCGLint> GraphicsContextGLOpenGL::getActiveUniforms(PlatformGLObject program, const Vector<GCGLuint>& uniformIndices, GCGLenum pname)
 {
+    Vector<GCGLint> result(uniformIndices.size(), 0);
     ASSERT(program);
     if (!makeContextCurrent())
-        return;
+        return result;
 
-
-    gl::GetActiveUniformsiv(program, uniformIndices.size(), uniformIndices.data(), pname, params.data());
+    gl::GetActiveUniformsiv(program, uniformIndices.size(), uniformIndices.data(), pname, result.data());
+    return result;
 }
 
 GCGLenum GraphicsContextGLOpenGL::checkFramebufferStatus(GCGLenum target)
@@ -2101,22 +2118,6 @@ GCGLint GraphicsContextGLOpenGL::getUniformLocation(PlatformGLObject program, co
     return gl::GetUniformLocation(program, name.utf8().data());
 }
 
-void GraphicsContextGLOpenGL::getVertexAttribfv(GCGLuint index, GCGLenum pname, GCGLSpan<GCGLfloat> value)
-{
-    if (!makeContextCurrent())
-        return;
-
-    gl::GetVertexAttribfvRobustANGLE(index, pname, value.bufSize, nullptr, value.data);
-}
-
-void GraphicsContextGLOpenGL::getVertexAttribiv(GCGLuint index, GCGLenum pname, GCGLSpan<GCGLint> value)
-{
-    if (!makeContextCurrent())
-        return;
-
-    gl::GetVertexAttribivRobustANGLE(index, pname, value.bufSize, nullptr, value.data);
-}
-
 GCGLsizeiptr GraphicsContextGLOpenGL::getVertexAttribOffset(GCGLuint index, GCGLenum pname)
 {
     if (!makeContextCurrent())
@@ -2392,12 +2393,13 @@ void GraphicsContextGLOpenGL::endQuery(GCGLenum target)
     gl::EndQuery(target);
 }
 
-void GraphicsContextGLOpenGL::getQueryObjectuiv(GCGLuint id, GCGLenum pname, GCGLuint* params)
+GCGLuint GraphicsContextGLOpenGL::getQueryObjectui(GCGLuint id, GCGLenum pname)
 {
+    GCGLuint value = 0;
     if (!makeContextCurrent())
-        return;
-
-    gl::GetQueryObjectuiv(id, pname, params);
+        return value;
+    gl::GetQueryObjectuivRobustANGLE(id, pname, 1, nullptr, &value);
+    return value;
 }
 
 // Transform Feedback Functions
@@ -2839,20 +2841,24 @@ void GraphicsContextGLOpenGL::samplerParameterf(PlatformGLObject sampler, GCGLen
     gl::SamplerParameterf(sampler, pname, param);
 }
 
-void GraphicsContextGLOpenGL::getSamplerParameterfv(PlatformGLObject sampler, GCGLenum pname, GCGLfloat* value)
+GCGLfloat GraphicsContextGLOpenGL::getSamplerParameterf(PlatformGLObject sampler, GCGLenum pname)
 {
+    GCGLfloat value = 0.f;
     if (!makeContextCurrent())
-        return;
+        return value;
 
-    gl::GetSamplerParameterfv(sampler, pname, value);
+    gl::GetSamplerParameterfvRobustANGLE(sampler, pname, 1, nullptr, &value);
+    return value;
 }
 
-void GraphicsContextGLOpenGL::getSamplerParameteriv(PlatformGLObject sampler, GCGLenum pname, GCGLint* value)
+GCGLint GraphicsContextGLOpenGL::getSamplerParameteri(PlatformGLObject sampler, GCGLenum pname)
 {
+    GCGLint value = 0;
     if (!makeContextCurrent())
-        return;
+        return value;
 
-    gl::GetSamplerParameteriv(sampler, pname, value);
+    gl::GetSamplerParameterivRobustANGLE(sampler, pname, 1, nullptr, &value);
+    return value;
 }
 
 GCGLsync GraphicsContextGLOpenGL::fenceSync(GCGLenum condition, GCGLbitfield flags)
@@ -2895,12 +2901,14 @@ void GraphicsContextGLOpenGL::waitSync(GCGLsync sync, GCGLbitfield flags, GCGLin
     gl::WaitSync(sync, flags, timeout);
 }
 
-void GraphicsContextGLOpenGL::getSynciv(GCGLsync sync, GCGLenum pname, GCGLsizei bufSize, GCGLint *value)
+GCGLint GraphicsContextGLOpenGL::getSynci(GCGLsync sync, GCGLenum pname)
 {
+    GCGLint value = 0;
     if (!makeContextCurrent())
-        return;
+        return value;
 
-    gl::GetSynciv(sync, pname, bufSize, nullptr, value);
+    gl::GetSynciv(sync, pname, 1, nullptr, &value);
+    return value;
 }
 
 void GraphicsContextGLOpenGL::pauseTransformFeedback()

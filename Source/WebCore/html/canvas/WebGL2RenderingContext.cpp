@@ -681,17 +681,8 @@ void WebGL2RenderingContext::getBufferSubData(GCGLenum target, long long srcByte
     if (!copyLength)
         return;
 
-    m_context->moveErrorsToSyntheticErrorList();
-#if PLATFORM(COCOA)
     // FIXME: Coalesce multiple getBufferSubData() calls to use a single map() call
-    void* ptr = m_context->mapBufferRange(target, checkedSrcByteOffset.unsafeGet(), static_cast<GCGLsizeiptr>(checkedCopyLengthPtr.unsafeGet() * checkedElementSize.unsafeGet()), GraphicsContextGL::MAP_READ_BIT);
-    if (ptr)
-        memcpy(static_cast<char*>(dstData->baseAddress()) + dstData->byteOffset() + dstOffset * elementSize, ptr, copyLength * elementSize);
-
-    if (!m_context->unmapBuffer(target))
-        synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "getBufferSubData", "Failed while unmapping buffer");
-#endif
-    m_context->moveErrorsToSyntheticErrorList();
+    m_context->getBufferSubData(target, srcByteOffset, makeGCGLSpan(static_cast<char*>(dstData->baseAddress()) + dstData->byteOffset() + dstOffset * elementSize, copyLength * elementSize));
 }
 
 void WebGL2RenderingContext::bindFramebuffer(GCGLenum target, WebGLFramebuffer* buffer)
@@ -832,25 +823,19 @@ WebGLAny WebGL2RenderingContext::getInternalformatParameter(GCGLenum target, GCG
         return nullptr;
     }
 
-    int numValues = -1;
 #if USE(OPENGL_ES) || USE(ANGLE)
-    m_context->getInternalformativ(target, internalformat, GraphicsContextGL::NUM_SAMPLE_COUNTS, 1, &numValues);
-    if (numValues < 0) {
-        // Assume the getInternalformativ call failed; return null from the SAMPLES query.
+    m_context->moveErrorsToSyntheticErrorList();
+    GCGLint numValues = m_context->getInternalformati(target, internalformat, GraphicsContextGL::NUM_SAMPLE_COUNTS);
+    if (m_context->moveErrorsToSyntheticErrorList() || numValues < 0)
         return nullptr;
-    }
 
     // Integer formats do not support multisampling, so numValues == 0 may occur.
 
     Vector<GCGLint> params(numValues);
     if (numValues > 0) {
-        // Add a sentinel to know whether the call succeeded without additionally checking OpenGL errors.
-        params[0] = -1;
-        m_context->getInternalformativ(target, internalformat, pname, numValues, params.data());
-        if (params[0] == -1) {
-            // The getInternalformativ call failed; return null from the SAMPLES query.
+        m_context->getInternalformativ(target, internalformat, pname, params);
+        if (m_context->moveErrorsToSyntheticErrorList())
             return nullptr;
-        }
     }
 #else
     // On desktop OpenGL 4.1 or below we must emulate glGetInternalformativ.
@@ -879,13 +864,13 @@ WebGLAny WebGL2RenderingContext::getInternalformatParameter(GCGLenum target, GCG
 
     // Since multisampling is not supported for signed and unsigned integer internal formats,
     // the value of GL_NUM_SAMPLE_COUNTS will be zero for such formats.
-    numValues = isIntegerFormat(internalformat) ? 0 : samples.size();
+    GCGLint numValues = isIntegerFormat(internalformat) ? 0 : samples.size();
     Vector<GCGLint> params(numValues);
     for (size_t i = 0; i < static_cast<size_t>(numValues); ++i)
         params[i] = samples[i];
 #endif
 
-    return Int32Array::tryCreate(params.data(), numValues);
+    return Int32Array::tryCreate(params.data(), params.size());
 }
 
 void WebGL2RenderingContext::invalidateFramebuffer(GCGLenum target, const Vector<GCGLenum>& attachments)
@@ -1967,9 +1952,7 @@ WebGLAny WebGL2RenderingContext::getQueryParameter(WebGLQuery& query, GCGLenum p
         return nullptr;
     }
 
-    unsigned result = 0;
-    m_context->getQueryObjectuiv(query.object(), pname, &result);
-    return result;
+    return static_cast<unsigned>(m_context->getQueryObjectui(query.object(), pname));
 }
 
 RefPtr<WebGLSampler> WebGL2RenderingContext::createSampler()
@@ -2059,17 +2042,11 @@ WebGLAny WebGL2RenderingContext::getSamplerParameter(WebGLSampler& sampler, GCGL
     case GraphicsContextGL::TEXTURE_MIN_FILTER:
     case GraphicsContextGL::TEXTURE_WRAP_R:
     case GraphicsContextGL::TEXTURE_WRAP_S:
-    case GraphicsContextGL::TEXTURE_WRAP_T: {
-        int value = 0;
-        m_context->getSamplerParameteriv(sampler.object(), pname, &value);
-        return value;
-    }
+    case GraphicsContextGL::TEXTURE_WRAP_T:
+        return m_context->getSamplerParameteri(sampler.object(), pname);
     case GraphicsContextGL::TEXTURE_MAX_LOD:
-    case GraphicsContextGL::TEXTURE_MIN_LOD: {
-        float value = 0;
-        m_context->getSamplerParameterfv(sampler.object(), pname, &value);
-        return value;
-    }
+    case GraphicsContextGL::TEXTURE_MIN_LOD:
+        return m_context->getSamplerParameterf(sampler.object(), pname);
     default:
         synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getSamplerParameter", "Invalid pname");
         return nullptr;
@@ -2485,24 +2462,24 @@ WebGLAny WebGL2RenderingContext::getActiveUniforms(WebGLProgram& program, const 
     if (isContextLostOrPending() || !validateWebGLProgramOrShader("getActiveUniforms", &program))
         return nullptr;
 
-    Vector<GCGLint> result(uniformIndices.size(), 0);
-    
     switch (pname) {
-    case GraphicsContextGL::UNIFORM_TYPE:
-        m_context->getActiveUniforms(program.object(), uniformIndices, pname, result);
+    case GraphicsContextGL::UNIFORM_TYPE: {
+        auto result = m_context->getActiveUniforms(program.object(), uniformIndices, pname);
         return result.map([](auto x) { return static_cast<GCGLenum>(x); });
-    case GraphicsContextGL::UNIFORM_SIZE:
-        m_context->getActiveUniforms(program.object(), uniformIndices, pname, result);
+    }
+    case GraphicsContextGL::UNIFORM_SIZE: {
+        auto result = m_context->getActiveUniforms(program.object(), uniformIndices, pname);
         return result.map([](auto x) { return static_cast<GCGLuint>(x); });
+    }
     case GraphicsContextGL::UNIFORM_BLOCK_INDEX:
     case GraphicsContextGL::UNIFORM_OFFSET:
     case GraphicsContextGL::UNIFORM_ARRAY_STRIDE:
     case GraphicsContextGL::UNIFORM_MATRIX_STRIDE:
-        m_context->getActiveUniforms(program.object(), uniformIndices, pname, result);
-        return WTFMove(result);
-    case GraphicsContextGL::UNIFORM_IS_ROW_MAJOR:
-        m_context->getActiveUniforms(program.object(), uniformIndices, pname, result);
+        return m_context->getActiveUniforms(program.object(), uniformIndices, pname);
+    case GraphicsContextGL::UNIFORM_IS_ROW_MAJOR: {
+        auto result = m_context->getActiveUniforms(program.object(), uniformIndices, pname);
         return result.map([](auto x) { return static_cast<bool>(x); });
+    }
     default:
         synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getActiveUniforms", "invalid parameter name");
         return nullptr;
@@ -3572,8 +3549,7 @@ void WebGL2RenderingContext::readPixels(GCGLint x, GCGLint y, GCGLsizei width, G
 
     clearIfComposited(ClearCallerOther);
 
-    GCGLsizei length, columns, rows;
-    m_context->getExtensions().readnPixelsRobustANGLE(x, y, width, height, format, type, 0, &length, &columns, &rows, reinterpret_cast<uint8_t*>(offset), true);
+    m_context->readnPixels(x, y, width, height, format, type, offset);
 }
 
 void WebGL2RenderingContext::readPixels(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, ArrayBufferView& dstData, GCGLuint dstOffset)

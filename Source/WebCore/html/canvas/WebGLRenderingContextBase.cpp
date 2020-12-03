@@ -4395,15 +4395,12 @@ void WebGLRenderingContextBase::readPixels(GCGLint x, GCGLint y, GCGLsizei width
     void* data = pixels.baseAddress();
 
 #if USE(ANGLE)
-    GCGLsizei length = 0;
-    GCGLsizei columns = 0;
-    GCGLsizei rows = 0;
-    m_context->getExtensions().readnPixelsRobustANGLE(x, y, width, height, format, type, pixels.byteLength(), &length, &columns, &rows, data, false);
+    m_context->readnPixels(x, y, width, height, format, type, makeGCGLSpan(data, pixels.byteLength()));
 #else
     if (m_isRobustnessEXTSupported)
         m_context->getExtensions().readnPixelsEXT(x, y, width, height, format, type, pixels.byteLength(), data);
     else
-        m_context->readPixels(x, y, width, height, format, type, data);
+        m_context->readnPixels(x, y, width, height, format, type, makeGCGLSpan(data, pixels.byteLength()));
 #endif
 }
 

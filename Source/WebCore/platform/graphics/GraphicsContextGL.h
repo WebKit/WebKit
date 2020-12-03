@@ -978,7 +978,6 @@ public:
 
     virtual bool getActiveAttrib(PlatformGLObject program, GCGLuint index, ActiveInfo&) = 0;
     virtual bool getActiveUniform(PlatformGLObject program, GCGLuint index, ActiveInfo&) = 0;
-    virtual void getAttachedShaders(PlatformGLObject program, GCGLsizei maxCount, GCGLsizei* count, PlatformGLObject* shaders) = 0;
 
     virtual GCGLint getAttribLocation(PlatformGLObject, const String& name) = 0;
 
@@ -1022,10 +1021,6 @@ public:
     virtual void getUniformuiv(PlatformGLObject program, GCGLint location, GCGLSpan<GCGLuint> value) = 0;
 
     virtual GCGLint getUniformLocation(PlatformGLObject, const String& name) = 0;
-
-    // getVertexAttrib
-    virtual void getVertexAttribfv(GCGLuint index, GCGLenum pname, GCGLSpan<GCGLfloat> value) = 0;
-    virtual void getVertexAttribiv(GCGLuint index, GCGLenum pname, GCGLSpan<GCGLint> value) = 0;
 
     virtual GCGLsizeiptr getVertexAttribOffset(GCGLuint index, GCGLenum pname) = 0;
 
@@ -1098,7 +1093,8 @@ public:
     virtual void bufferData(GCGLenum target, GCGLSpan<const GCGLvoid> data, GCGLenum usage) = 0;
     virtual void bufferSubData(GCGLenum target, GCGLintptr offset, GCGLSpan<const GCGLvoid> data) = 0;
 
-    virtual void readPixels(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLvoid* data) = 0;
+    virtual void readnPixels(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLSpan<GCGLvoid> data) = 0;
+    virtual void readnPixels(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLintptr offset) = 0;
 
     virtual void texImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type,  GCGLSpan<const GCGLvoid> pixels) = 0;
     virtual void texImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, GCGLintptr offset) = 0;
@@ -1122,8 +1118,7 @@ public:
     // ========== WebGL 2 entry points.
 
     virtual void copyBufferSubData(GCGLenum readTarget, GCGLenum writeTarget, GCGLintptr readOffset, GCGLintptr writeOffset, GCGLsizeiptr size) = 0;
-    virtual GCGLvoid* mapBufferRange(GCGLenum target, GCGLintptr offset, GCGLsizeiptr length, GCGLbitfield access) = 0;
-    virtual GCGLboolean unmapBuffer(GCGLenum target) = 0;
+    virtual void getBufferSubData(GCGLenum target, GCGLintptr offset, GCGLSpan<GCGLvoid> data) = 0;
 
     virtual void blitFramebuffer(GCGLint srcX0, GCGLint srcY0, GCGLint srcX1, GCGLint srcY1, GCGLint dstX0, GCGLint dstY0, GCGLint dstX1, GCGLint dstY1, GCGLbitfield mask, GCGLenum filter) = 0;
     virtual void framebufferTextureLayer(GCGLenum target, GCGLenum attachment, PlatformGLObject texture, GCGLint level, GCGLint layer) = 0;
@@ -1132,7 +1127,7 @@ public:
     virtual void readBuffer(GCGLenum src) = 0;
 
     // getInternalFormatParameter
-    virtual void getInternalformativ(GCGLenum target, GCGLenum internalformat, GCGLenum pname, GCGLsizei bufSize, GCGLint* params) = 0;
+    virtual void getInternalformativ(GCGLenum target, GCGLenum internalformat, GCGLenum pname, GCGLSpan<GCGLint> data) = 0;
     virtual void renderbufferStorageMultisample(GCGLenum target, GCGLsizei samples, GCGLenum internalformat, GCGLsizei width, GCGLsizei height) = 0;
 
     virtual void texStorage2D(GCGLenum target, GCGLsizei levels, GCGLenum internalformat, GCGLsizei width, GCGLsizei height) = 0;
@@ -1185,7 +1180,7 @@ public:
     virtual void endQuery(GCGLenum target) = 0;
     virtual PlatformGLObject getQuery(GCGLenum target, GCGLenum pname) = 0;
     // getQueryParameter
-    virtual void getQueryObjectuiv(PlatformGLObject query, GCGLenum pname, GCGLuint* value) = 0;
+    virtual GCGLuint getQueryObjectui(PlatformGLObject query, GCGLenum pname) = 0;
 
     virtual PlatformGLObject createSampler() = 0;
     virtual void deleteSampler(PlatformGLObject sampler) = 0;
@@ -1194,8 +1189,8 @@ public:
     virtual void samplerParameteri(PlatformGLObject sampler, GCGLenum pname, GCGLint param) = 0;
     virtual void samplerParameterf(PlatformGLObject sampler, GCGLenum pname, GCGLfloat param) = 0;
     // getSamplerParameter
-    virtual void getSamplerParameterfv(PlatformGLObject sampler, GCGLenum pname, GCGLfloat* value) = 0;
-    virtual void getSamplerParameteriv(PlatformGLObject sampler, GCGLenum pname, GCGLint* value) = 0;
+    virtual GCGLfloat getSamplerParameterf(PlatformGLObject sampler, GCGLenum pname) = 0;
+    virtual GCGLint getSamplerParameteri(PlatformGLObject sampler, GCGLenum pname) = 0;
 
     virtual GCGLsync fenceSync(GCGLenum condition, GCGLbitfield flags) = 0;
     virtual GCGLboolean isSync(GCGLsync) = 0;
@@ -1203,7 +1198,7 @@ public:
     virtual GCGLenum clientWaitSync(GCGLsync, GCGLbitfield flags, GCGLuint64 timeout) = 0;
     virtual void waitSync(GCGLsync, GCGLbitfield flags, GCGLint64 timeout) = 0;
     // getSyncParameter
-    virtual void getSynciv(GCGLsync, GCGLenum pname, GCGLsizei bufSize, GCGLint* value) = 0;
+    virtual GCGLint getSynci(GCGLsync, GCGLenum pname) = 0;
 
     virtual PlatformGLObject createTransformFeedback() = 0;
     virtual void deleteTransformFeedback(PlatformGLObject id) = 0;
@@ -1220,7 +1215,7 @@ public:
     virtual void bindBufferRange(GCGLenum target, GCGLuint index, PlatformGLObject buffer, GCGLintptr offset, GCGLsizeiptr size) = 0;
     // getIndexedParameter -> use getParameter calls above.
     virtual Vector<GCGLuint> getUniformIndices(PlatformGLObject program, const Vector<String>& uniformNames) = 0;
-    virtual void getActiveUniforms(PlatformGLObject program, const Vector<GCGLuint>& uniformIndices, GCGLenum pname, Vector<GCGLint>& params) = 0;
+    virtual Vector<GCGLint> getActiveUniforms(PlatformGLObject program, const Vector<GCGLuint>& uniformIndices, GCGLenum pname) = 0;
 
     virtual GCGLuint getUniformBlockIndex(PlatformGLObject program, const String& uniformBlockName) = 0;
     // getActiveUniformBlockParameter
@@ -1234,6 +1229,7 @@ public:
     GCGLboolean getBoolean(GCGLenum pname);
     GCGLint getInteger(GCGLenum pname);
     GCGLint getActiveUniformBlocki(GCGLuint program, GCGLuint uniformBlockIndex, GCGLenum pname);
+    GCGLint getInternalformati(GCGLenum target, GCGLenum internalformat, GCGLenum pname);
 
     GraphicsContextGLAttributes contextAttributes() const { return m_attrs; }
     void setContextAttributes(const GraphicsContextGLAttributes& attrs) { m_attrs = attrs; }
@@ -1389,6 +1385,13 @@ inline GCGLint GraphicsContextGL::getActiveUniformBlocki(GCGLuint program, GCGLu
 {
     GCGLint value[1] { };
     getActiveUniformBlockiv(program, uniformBlockIndex, pname, value);
+    return value[0];
+}
+
+inline GCGLint GraphicsContextGL::getInternalformati(GCGLenum target, GCGLenum internalformat, GCGLenum pname)
+{
+    GCGLint value[1] { };
+    getInternalformativ(target, internalformat, pname, value);
     return value[0];
 }
 

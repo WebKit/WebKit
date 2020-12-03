@@ -56,21 +56,12 @@ public:
 
     String getTranslatedShaderSourceANGLE(PlatformGLObject) override;
 
-    void blitFramebuffer(long srcX0, long srcY0, long srcX1, long srcY1, long dstX0, long dstY0, long dstX1, long dstY1, unsigned long mask, unsigned long filter) override;
-    void renderbufferStorageMultisample(unsigned long target, unsigned long samples, unsigned long internalformat, unsigned long width, unsigned long height) override;
+    void blitFramebufferANGLE(GCGLint srcX0, GCGLint srcY0, GCGLint srcX1, GCGLint srcY1, GCGLint dstX0, GCGLint dstY0, GCGLint dstX1, GCGLint dstY1, GCGLbitfield mask, GCGLenum filter) override;
+    void renderbufferStorageMultisampleANGLE(GCGLenum target, GCGLsizei samples, GCGLenum internalformat, GCGLsizei width, GCGLsizei height) override;
 
-    void drawArraysInstanced(GCGLenum mode, GCGLint first, GCGLsizei count, GCGLsizei primcount) override;
-    void drawElementsInstanced(GCGLenum mode, GCGLsizei count, GCGLenum type, long long offset, GCGLsizei primcount) override;
-    void vertexAttribDivisor(GCGLuint index, GCGLuint divisor) override;
-
-    bool isNVIDIA() override { return m_isNVIDIA; }
-    bool isAMD() override { return m_isAMD; }
-    bool isIntel() override { return m_isIntel; }
-    bool isImagination() override { return m_isImagination; }
-    String vendor() override { return m_vendor; }
-
-    bool requiresBuiltInFunctionEmulation() override { return m_requiresBuiltInFunctionEmulation; }
-    bool requiresRestrictedMaximumTextureSize() override { return m_requiresRestrictedMaximumTextureSize; }
+    void drawArraysInstancedANGLE(GCGLenum mode, GCGLint first, GCGLsizei count, GCGLsizei primcount) override;
+    void drawElementsInstancedANGLE(GCGLenum mode, GCGLsizei count, GCGLenum type, GCGLvoidptr offset, GCGLsizei primcount) override;
+    void vertexAttribDivisorANGLE(GCGLuint index, GCGLuint divisor) override;
 
     // GL_ANGLE_robust_client_memory
     void readPixelsRobustANGLE(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLsizei bufSize, GCGLsizei *length, GCGLsizei *columns, GCGLsizei *rows, void *pixels) override;
@@ -79,7 +70,6 @@ public:
     void getQueryivRobustANGLE(GCGLenum target, GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLint *params) override;
     void getQueryObjectuivRobustANGLE(GCGLuint id, GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLuint *params) override;
     void getBufferPointervRobustANGLE(GCGLenum target, GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, void **params) override;
-    void getInternalformativRobustANGLE(GCGLenum target, GCGLenum internalformat, GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLint *params) override;
     void getVertexAttribIivRobustANGLE(GCGLuint index, GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLint *params) override;
     void getVertexAttribIuivRobustANGLE(GCGLuint index, GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLuint *params) override;
     void getUniformuivRobustANGLE(GCGLuint program, GCGLint location, GCGLsizei bufSize, GCGLsizei *length, GCGLuint *params) override;
@@ -97,7 +87,6 @@ public:
     void getTexLevelParameterfvRobustANGLE(GCGLenum target, GCGLint level, GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLfloat *params) override;
 
     void getPointervRobustANGLERobustANGLE(GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, void **params) override;
-    void readnPixelsRobustANGLE(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLsizei bufSize, GCGLsizei *length, GCGLsizei *columns, GCGLsizei *rows, void *data, bool readingToPixelBufferObject) override;
     void getnUniformfvRobustANGLE(GCGLuint program, GCGLint location, GCGLsizei bufSize, GCGLsizei *length, GCGLfloat *params) override;
     void getnUniformivRobustANGLE(GCGLuint program, GCGLint location, GCGLsizei bufSize, GCGLsizei *length, GCGLint *params) override;
     void getnUniformuivRobustANGLE(GCGLuint program, GCGLint location, GCGLsizei bufSize, GCGLsizei *length, GCGLuint *params) override;
@@ -130,17 +119,7 @@ private:
     // Weak pointer back to GraphicsContextGLOpenGL.
     GraphicsContextGLOpenGL* m_context;
 
-    bool m_isNVIDIA;
-    bool m_isAMD;
-    bool m_isIntel;
-    bool m_isImagination;
-    bool m_requiresBuiltInFunctionEmulation;
-    bool m_requiresRestrictedMaximumTextureSize;
-
     bool m_useIndexedGetString { false };
-
-    String m_vendor;
-    String m_renderer;
 
     // Whether the WebGL 1.0-related floating-point renderability extensions have been enabled.
     bool m_webglColorBufferFloatRGB { false };

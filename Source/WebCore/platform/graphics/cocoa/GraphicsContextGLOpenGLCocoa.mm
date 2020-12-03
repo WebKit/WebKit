@@ -293,26 +293,28 @@ GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes att
     if (m_isForWebGL2)
         gl::Enable(GraphicsContextGL::PRIMITIVE_RESTART_FIXED_INDEX);
 
+    Vector<ASCIILiteral, 4> requiredExtensions;
+    if (m_isForWebGL2) {
+        // For WebGL 2.0 occlusion queries to work.
+        requiredExtensions.append("GL_EXT_occlusion_query_boolean"_s);
+    }
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
-    ExtensionsGL& extensions = getExtensions();
-
     if (!needsEAGLOnMac()) {
-        static constexpr const char* requiredExtensions[] = {
-            "GL_ANGLE_texture_rectangle", // For IOSurface-backed textures.
-            "GL_EXT_texture_format_BGRA8888", // For creating the EGL surface from an IOSurface.
-        };
-
-        for (size_t i = 0; i < WTF_ARRAY_LENGTH(requiredExtensions); ++i) {
-            if (!extensions.supports(requiredExtensions[i])) {
-                LOG(WebGL, "Missing required extension. %s", requiredExtensions[i]);
-                return;
+        // For IOSurface-backed textures.
+        requiredExtensions.append("GL_ANGLE_texture_rectangle"_s);
+        // For creating the EGL surface from an IOSurface.
+        requiredExtensions.append("GL_EXT_texture_format_BGRA8888"_s);
             }
 
-            extensions.ensureEnabled(requiredExtensions[i]);
-        }
-    }
 #endif // PLATFORM(MAC) || PLATFORM(MACCATALYST)
-
+    ExtensionsGL& extensions = getExtensions();
+    for (auto& extension : requiredExtensions) {
+        if (!extensions.supports(extension)) {
+            LOG(WebGL, "Missing required extension. %s", extension.characters());
+            return;
+        }
+        extensions.ensureEnabled(extension);
+    }
 #if PLATFORM(MAC)
     // FIXME: It's unclear if MACCATALYST should take these steps as well, but that
     // would require the PlatformScreenMac code to be exposed to Catalyst too.

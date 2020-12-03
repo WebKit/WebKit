@@ -284,11 +284,6 @@ void ExtensionsGLOpenGLCommon::getBufferPointervRobustANGLE(GCGLenum, GCGLenum, 
     m_context->synthesizeGLError(GL_INVALID_OPERATION);
 }
 
-void ExtensionsGLOpenGLCommon::getInternalformativRobustANGLE(GCGLenum, GCGLenum, GCGLenum, GCGLsizei, GCGLsizei *, GCGLint *)
-{
-    m_context->synthesizeGLError(GL_INVALID_OPERATION);
-}
-
 void ExtensionsGLOpenGLCommon::getVertexAttribIivRobustANGLE(GCGLuint, GCGLenum, GCGLsizei, GCGLsizei *, GCGLint *)
 {
     m_context->synthesizeGLError(GL_INVALID_OPERATION);
@@ -362,11 +357,6 @@ void ExtensionsGLOpenGLCommon::getTexLevelParameterfvRobustANGLE(GCGLenum, int, 
 
 
 void ExtensionsGLOpenGLCommon::getPointervRobustANGLERobustANGLE(GCGLenum, GCGLsizei, GCGLsizei *, void **)
-{
-    m_context->synthesizeGLError(GL_INVALID_OPERATION);
-}
-
-void ExtensionsGLOpenGLCommon::readnPixelsRobustANGLE(int, int, GCGLsizei, GCGLsizei, GCGLenum, GCGLenum, GCGLsizei, GCGLsizei *, GCGLsizei *, GCGLsizei *, void *, bool)
 {
     m_context->synthesizeGLError(GL_INVALID_OPERATION);
 }

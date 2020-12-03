@@ -2029,22 +2029,6 @@ GCGLint GraphicsContextGLOpenGL::getUniformLocation(PlatformGLObject program, co
     return ::glGetUniformLocation(program, mappedName.utf8().data());
 }
 
-void GraphicsContextGLOpenGL::getVertexAttribfv(GCGLuint index, GCGLenum pname, GCGLSpan<GCGLfloat> value)
-{
-    if (!makeContextCurrent())
-        return;
-
-    ::glGetVertexAttribfv(index, pname, value.data);
-}
-
-void GraphicsContextGLOpenGL::getVertexAttribiv(GCGLuint index, GCGLenum pname, GCGLSpan<GCGLint> value)
-{
-    if (!makeContextCurrent())
-        return;
-
-    ::glGetVertexAttribiv(index, pname, value.data);
-}
-
 GCGLsizeiptr GraphicsContextGLOpenGL::getVertexAttribOffset(GCGLuint index, GCGLenum pname)
 {
     if (!makeContextCurrent())
@@ -2278,19 +2262,19 @@ void GraphicsContextGLOpenGL::texImage2DDirect(GCGLenum target, GCGLint level, G
 
 void GraphicsContextGLOpenGL::drawArraysInstanced(GCGLenum mode, GCGLint first, GCGLsizei count, GCGLsizei primcount)
 {
-    getExtensions().drawArraysInstanced(mode, first, count, primcount);
+    getExtensions().drawArraysInstancedANGLE(mode, first, count, primcount);
     checkGPUStatus();
 }
 
 void GraphicsContextGLOpenGL::drawElementsInstanced(GCGLenum mode, GCGLsizei count, GCGLenum type, GCGLintptr offset, GCGLsizei primcount)
 {
-    getExtensions().drawElementsInstanced(mode, count, type, offset, primcount);
+    getExtensions().drawElementsInstancedANGLE(mode, count, type, offset, primcount);
     checkGPUStatus();
 }
 
 void GraphicsContextGLOpenGL::vertexAttribDivisor(GCGLuint index, GCGLuint divisor)
 {
-    getExtensions().vertexAttribDivisor(index, divisor);
+    getExtensions().vertexAttribDivisorANGLE(index, divisor);
 }
 
 #if HAVE(OPENGL_4) && ENABLE(WEBGL2)
@@ -2335,42 +2319,25 @@ void GraphicsContextGLOpenGL::copyBufferSubData(GCGLenum, GCGLenum, GCGLintptr, 
 }
 #endif
 
-void GraphicsContextGLOpenGL::getBufferSubData(GCGLenum target, GCGLintptr srcByteOffset, const void* dstData, GCGLuint dstOffset, GCGLuint length)
+void GraphicsContextGLOpenGL::getBufferSubData(GCGLenum target, GCGLintptr offset, GCGLSpan<GCGLvoid> data)
 {
-    UNUSED_PARAM(target);
-    UNUSED_PARAM(srcByteOffset);
-    UNUSED_PARAM(dstData);
-    UNUSED_PARAM(dstOffset);
-    UNUSED_PARAM(length);
-}
-
 #if HAVE(OPENGL_4) || HAVE(OPENGL_ES_3)
-void* GraphicsContextGLOpenGL::mapBufferRange(GCGLenum target, GCGLintptr offset, GCGLsizeiptr length, GCGLbitfield access)
-{
     if (!makeContextCurrent())
-        return nullptr;
-
-    return ::glMapBufferRange(target, offset, length, access);
-}
-
-GCGLboolean GraphicsContextGLOpenGL::unmapBuffer(GCGLenum target)
-{
-    if (!makeContextCurrent())
-        return GL_FALSE;
-
-    return ::glUnmapBuffer(target);
-}
+        return;
+    GCGLvoid* ptr = ::glMapBufferRange(target, offset, data.bufSize, GraphicsContextGL::MAP_READ_BIT);
+    if (!ptr)
+        return;
+    memcpy(data.data, ptr, data.bufSize);
+    if (!::glUnmapBuffer(target))
+        synthesizeGLError(GraphicsContextGL::INVALID_OPERATION);
 #else
-void* GraphicsContextGLOpenGL::mapBufferRange(GCGLenum, GCGLintptr, GCGLsizeiptr, GCGLbitfield)
-{
-    return nullptr;
+    UNUSED_PARAM(target);
+    UNUSED_PARAM(offset);
+    UNUSED_PARAM(data);
+    synthesizeGLError(GraphicsContextGL::INVALID_OPERATION);
+#endif
 }
 
-GCGLboolean GraphicsContextGLOpenGL::unmapBuffer(GCGLenum)
-{
-    return false;
-}
-#endif
 
 void GraphicsContextGLOpenGL::blitFramebuffer(GCGLint srcX0, GCGLint srcY0, GCGLint srcX1, GCGLint srcY1, GCGLint dstX0, GCGLint dstY0, GCGLint dstX1, GCGLint dstY1, GCGLbitfield mask, GCGLenum filter)
 {
@@ -2417,13 +2384,13 @@ void GraphicsContextGLOpenGL::readBuffer(GCGLenum src)
 }
 
 #if HAVE(OPENGL_4) || HAVE(OPENGL_ES_3)
-void GraphicsContextGLOpenGL::getInternalformativ(GCGLenum target, GCGLenum internalformat, GCGLenum pname, GCGLsizei bufSize, GCGLint* params)
+void GraphicsContextGLOpenGL::getInternalformativ(GCGLenum target, GCGLenum internalformat, GCGLenum pname, GCGLSpan<GCGLint> data)
 {
 #if USE(OPENGL_ES)
     if (!makeContextCurrent())
         return;
 
-    ::glGetInternalformativ(target, internalformat, pname, bufSize, params);
+    ::glGetInternalformativ(target, internalformat, pname, data.bufSize, data.data);
 #else
     UNUSED_PARAM(target);
     UNUSED_PARAM(internalformat);
@@ -2459,7 +2426,7 @@ void GraphicsContextGLOpenGL::texStorage3D(GCGLenum target, GCGLsizei levels, GC
     m_state.textureSeedCount.add(m_state.currentBoundTexture());
 }
 #else
-void GraphicsContextGLOpenGL::getInternalformativ(GCGLenum, GCGLenum, GCGLenum, GCGLsizei, GCGLint*)
+void GraphicsContextGLOpenGL::getInternalformativ(GCGLenum, GCGLenum, GCGLenum, GCGLSpan<GCGLint>)
 {
 }
 
@@ -2712,11 +2679,11 @@ PlatformGLObject GraphicsContextGLOpenGL::getQuery(GCGLenum target, GCGLenum pna
     return 0;
 }
 
-void GraphicsContextGLOpenGL::getQueryObjectuiv(PlatformGLObject query, GCGLenum pname, GCGLuint* value)
+GCGLuint GraphicsContextGLOpenGL::getQueryObjectui(PlatformGLObject query, GCGLenum pname)
 {
     UNUSED_PARAM(query);
     UNUSED_PARAM(pname);
-    UNUSED_PARAM(value);
+    return 0;
 }
 
 PlatformGLObject GraphicsContextGLOpenGL::createSampler()
@@ -2756,18 +2723,19 @@ void GraphicsContextGLOpenGL::samplerParameterf(PlatformGLObject sampler, GCGLen
     UNUSED_PARAM(param);
 }
 
-void GraphicsContextGLOpenGL::getSamplerParameterfv(PlatformGLObject sampler, GCGLenum pname, GCGLfloat* value)
+GCGLfloat GraphicsContextGLOpenGL::getSamplerParameterf(PlatformGLObject sampler, GCGLenum pname)
 {
     UNUSED_PARAM(sampler);
     UNUSED_PARAM(pname);
-    UNUSED_PARAM(value);
+    return 0.f;
 }
 
-void GraphicsContextGLOpenGL::getSamplerParameteriv(PlatformGLObject sampler, GCGLenum pname, GCGLint* value)
+GCGLint GraphicsContextGLOpenGL::getSamplerParameteri(PlatformGLObject sampler, GCGLenum pname)
+
 {
     UNUSED_PARAM(sampler);
     UNUSED_PARAM(pname);
-    UNUSED_PARAM(value);
+    return 0;
 }
 
 GCGLsync GraphicsContextGLOpenGL::fenceSync(GCGLenum condition, GCGLbitfield flags)
@@ -2806,12 +2774,11 @@ void GraphicsContextGLOpenGL::waitSync(GCGLsync sync, GCGLbitfield flags, GCGLin
     UNUSED_PARAM(timeout);
 }
 
-void GraphicsContextGLOpenGL::getSynciv(GCGLsync sync, GCGLenum pname, GCGLsizei bufSize, GCGLint *value)
+GCGLint GraphicsContextGLOpenGL::getSynci(GCGLsync sync, GCGLenum pname)
 {
     UNUSED_PARAM(sync);
     UNUSED_PARAM(pname);
-    UNUSED_PARAM(bufSize);
-    UNUSED_PARAM(value);
+    return 0;
 }
 
 PlatformGLObject GraphicsContextGLOpenGL::createTransformFeedback()
@@ -2891,21 +2858,23 @@ Vector<GCGLuint> GraphicsContextGLOpenGL::getUniformIndices(PlatformGLObject pro
     return { };
 }
 
-#if HAVE(OPENGL_4) || HAVE(OPENGL_ES_3)
-void GraphicsContextGLOpenGL::getActiveUniforms(PlatformGLObject program, const Vector<GCGLuint>& uniformIndices, GCGLenum pname, Vector<GCGLint>& params)
+Vector<GCGLint> GraphicsContextGLOpenGL::getActiveUniforms(PlatformGLObject program, const Vector<GCGLuint>& uniformIndices, GCGLenum pname)
 {
+    Vector<GCGLint> result(uniformIndices.size(), 0);
+#if HAVE(OPENGL_4) || HAVE(OPENGL_ES_3)
     ASSERT(program);
     if (!makeContextCurrent())
-        return;
+        return result;
 
-    ::glGetActiveUniformsiv(program, uniformIndices.size(), uniformIndices.data(), pname, params.data());
+    ::glGetActiveUniformsiv(program, uniformIndices.size(), uniformIndices.data(), pname, result.data());
+#endif
+    return result;
 }
 
 GCGLuint GraphicsContextGLOpenGL::getUniformBlockIndex(PlatformGLObject program, const String& uniformBlockName)
 {
     UNUSED_PARAM(program);
     UNUSED_PARAM(uniformBlockName);
-
     return 0;
 }
 
@@ -2913,7 +2882,6 @@ String GraphicsContextGLOpenGL::getActiveUniformBlockName(PlatformGLObject progr
 {
     UNUSED_PARAM(program);
     UNUSED_PARAM(uniformBlockIndex);
-
     return emptyString();
 }
 
@@ -2923,27 +2891,8 @@ void GraphicsContextGLOpenGL::uniformBlockBinding(PlatformGLObject program, GCGL
     UNUSED_PARAM(uniformBlockIndex);
     UNUSED_PARAM(uniformBlockBinding);
 }
-#else
-void GraphicsContextGLOpenGL::getActiveUniforms(PlatformGLObject, const Vector<GCGLuint>&, GCGLenum, Vector<GCGLint>&)
-{
-}
 
-GCGLuint GraphicsContextGLOpenGL::getUniformBlockIndex(PlatformGLObject, const String&)
-{
-    return 0;
-}
-
-String GraphicsContextGLOpenGL::getActiveUniformBlockName(PlatformGLObject, GCGLuint)
-{
-    return emptyString();
-}
-
-void GraphicsContextGLOpenGL::uniformBlockBinding(PlatformGLObject, GCGLuint, GCGLuint)
-{
-}
-#endif
-
-void GraphicsContextGLOpenGL::readPixels(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLintptr offset)
+void GraphicsContextGLOpenGL::readnPixels(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLintptr offset)
 {
     UNUSED_PARAM(x);
     UNUSED_PARAM(y);
@@ -2952,18 +2901,6 @@ void GraphicsContextGLOpenGL::readPixels(GCGLint x, GCGLint y, GCGLsizei width, 
     UNUSED_PARAM(format);
     UNUSED_PARAM(type);
     UNUSED_PARAM(offset);
-}
-
-void GraphicsContextGLOpenGL::readPixels(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, const void* dstData, GCGLuint dstOffset)
-{
-    UNUSED_PARAM(x);
-    UNUSED_PARAM(y);
-    UNUSED_PARAM(width);
-    UNUSED_PARAM(height);
-    UNUSED_PARAM(format);
-    UNUSED_PARAM(type);
-    UNUSED_PARAM(dstData);
-    UNUSED_PARAM(dstOffset);
 }
 
 void GraphicsContextGLOpenGL::getActiveUniformBlockiv(GCGLuint program, GCGLuint uniformBlockIndex, GCGLenum pname, GCGLSpan<GCGLint> params)

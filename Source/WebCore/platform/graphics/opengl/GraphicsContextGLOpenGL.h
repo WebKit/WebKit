@@ -187,7 +187,7 @@ public:
     bool getActiveAttribImpl(PlatformGLObject program, GCGLuint index, ActiveInfo&);
     bool getActiveUniform(PlatformGLObject program, GCGLuint index, ActiveInfo&) final;
     bool getActiveUniformImpl(PlatformGLObject program, GCGLuint index, ActiveInfo&);
-    void getAttachedShaders(PlatformGLObject program, GCGLsizei maxCount, GCGLsizei* count, PlatformGLObject* shaders) final;
+    void getAttachedShaders(PlatformGLObject program, GCGLsizei maxCount, GCGLsizei* count, PlatformGLObject* shaders);
     GCGLint getAttribLocation(PlatformGLObject, const String& name) final;
     void getBooleanv(GCGLenum pname, GCGLSpan<GCGLboolean> value) final;
     GCGLint getBufferParameteri(GCGLenum target, GCGLenum pname) final;
@@ -215,8 +215,6 @@ public:
     void getUniformiv(PlatformGLObject program, GCGLint location, GCGLSpan<GCGLint> value) final;
     void getUniformuiv(PlatformGLObject program, GCGLint location, GCGLSpan<GCGLuint> value) final;
     GCGLint getUniformLocation(PlatformGLObject, const String& name) final;
-    void getVertexAttribfv(GCGLuint index, GCGLenum pname, GCGLSpan<GCGLfloat> value) final;
-    void getVertexAttribiv(GCGLuint index, GCGLenum pname, GCGLSpan<GCGLint> value) final;
     GCGLsizeiptr getVertexAttribOffset(GCGLuint index, GCGLenum pname) final;
 
     void hint(GCGLenum target, GCGLenum mode) final;
@@ -232,7 +230,8 @@ public:
     void pixelStorei(GCGLenum pname, GCGLint param) final;
     void polygonOffset(GCGLfloat factor, GCGLfloat units) final;
 
-    void readPixels(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, void* data) final;
+    void readnPixels(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLSpan<GCGLvoid> data) final;
+    void readnPixels(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLintptr offset) final;
 
     void renderbufferStorage(GCGLenum target, GCGLenum internalformat, GCGLsizei width, GCGLsizei height) final;
     void sampleCoverage(GCGLclampf value, GCGLboolean invert) final;
@@ -313,12 +312,10 @@ public:
 #if !USE(ANGLE)
     void bufferData(GCGLenum target, const void* data, GCGLenum usage, GCGLuint srcOffset, GCGLuint length);
     void bufferSubData(GCGLenum target, GCGLintptr dstByteOffset, const void* srcData, GCGLuint srcOffset, GCGLuint length);
-    void getBufferSubData(GCGLenum target, GCGLintptr srcByteOffset, const void* dstData, GCGLuint dstOffset, GCGLuint length);
 #endif
     void copyBufferSubData(GCGLenum readTarget, GCGLenum writeTarget, GCGLintptr readOffset, GCGLintptr writeOffset, GCGLsizeiptr size) final;
 
-    void* mapBufferRange(GCGLenum target, GCGLintptr offset, GCGLsizeiptr length, GCGLbitfield access) final;
-    GCGLboolean unmapBuffer(GCGLenum target) final;
+    void getBufferSubData(GCGLenum target, GCGLintptr offset, GCGLSpan<GCGLvoid> data) final;
 
     void blitFramebuffer(GCGLint srcX0, GCGLint srcY0, GCGLint srcX1, GCGLint srcY1, GCGLint dstX0, GCGLint dstY0, GCGLint dstX1, GCGLint dstY1, GCGLbitfield mask, GCGLenum filter) final;
     void framebufferTextureLayer(GCGLenum target, GCGLenum attachment, PlatformGLObject texture, GCGLint level, GCGLint layer) final;
@@ -327,7 +324,7 @@ public:
     void readBuffer(GCGLenum src) final;
 
     // getInternalFormatParameter
-    void getInternalformativ(GCGLenum target, GCGLenum internalformat, GCGLenum pname, GCGLsizei bufSize, GCGLint* params) final;
+    void getInternalformativ(GCGLenum target, GCGLenum internalformat, GCGLenum pname, GCGLSpan<GCGLint> data) final;
     void renderbufferStorageMultisample(GCGLenum target, GCGLsizei samples, GCGLenum internalformat, GCGLsizei width, GCGLsizei height) final;
 
     void texStorage2D(GCGLenum target, GCGLsizei levels, GCGLenum internalformat, GCGLsizei width, GCGLsizei height) final;
@@ -380,7 +377,7 @@ public:
     void endQuery(GCGLenum target) final;
     PlatformGLObject getQuery(GCGLenum target, GCGLenum pname) final;
     // getQueryParameter
-    void getQueryObjectuiv(PlatformGLObject query, GCGLenum pname, GCGLuint* value) final;
+    GCGLuint getQueryObjectui(PlatformGLObject query, GCGLenum pname) final;
 
     PlatformGLObject createSampler() final;
     void deleteSampler(PlatformGLObject sampler) final;
@@ -389,8 +386,8 @@ public:
     void samplerParameteri(PlatformGLObject sampler, GCGLenum pname, GCGLint param) final;
     void samplerParameterf(PlatformGLObject sampler, GCGLenum pname, GCGLfloat param) final;
     // getSamplerParameter
-    void getSamplerParameterfv(PlatformGLObject sampler, GCGLenum pname, GCGLfloat* value) final;
-    void getSamplerParameteriv(PlatformGLObject sampler, GCGLenum pname, GCGLint* value) final;
+    GCGLfloat getSamplerParameterf(PlatformGLObject sampler, GCGLenum pname) final;
+    GCGLint getSamplerParameteri(PlatformGLObject sampler, GCGLenum pname) final;
 
     GCGLsync fenceSync(GCGLenum condition, GCGLbitfield flags) final;
     GCGLboolean isSync(GCGLsync) final;
@@ -399,7 +396,7 @@ public:
     void waitSync(GCGLsync, GCGLbitfield flags, GCGLint64 timeout) final;
     // getSyncParameter
     // FIXME - this can be implemented at the WebGL level if we signal the WebGLSync object.
-    void getSynciv(GCGLsync, GCGLenum pname, GCGLsizei bufSize, GCGLint *value) final;
+    GCGLint getSynci(GCGLsync, GCGLenum pname) final;
 
     PlatformGLObject createTransformFeedback() final;
     void deleteTransformFeedback(PlatformGLObject id) final;
@@ -416,7 +413,7 @@ public:
     void bindBufferRange(GCGLenum target, GCGLuint index, PlatformGLObject buffer, GCGLintptr offset, GCGLsizeiptr size) final;
     // getIndexedParameter -> use getParameter calls above.
     Vector<GCGLuint> getUniformIndices(PlatformGLObject program, const Vector<String>& uniformNames) final;
-    void getActiveUniforms(PlatformGLObject program, const Vector<GCGLuint>& uniformIndices, GCGLenum pname, Vector<GCGLint>& params) final;
+    Vector<GCGLint> getActiveUniforms(PlatformGLObject program, const Vector<GCGLuint>& uniformIndices, GCGLenum pname) final;
 
     GCGLuint getUniformBlockIndex(PlatformGLObject program, const String& uniformBlockName) final;
     // getActiveUniformBlockParameter
@@ -424,11 +421,6 @@ public:
     void uniformBlockBinding(PlatformGLObject program, GCGLuint uniformBlockIndex, GCGLuint uniformBlockBinding) final;
 
     void getActiveUniformBlockiv(GCGLuint program, GCGLuint uniformBlockIndex, GCGLenum pname, GCGLSpan<GCGLint> params) final;
-
-#if !USE(ANGLE)
-    void readPixels(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLintptr offset);
-    void readPixels(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, const void* dstData, GCGLuint dstOffset);
-#endif
 
     // Helper methods.
 
@@ -524,6 +516,8 @@ private:
     void validateDepthStencil(const char* packedDepthStencilExtension);
     void validateAttributes();
     
+    void readnPixelsImpl(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLsizei bufSize, GCGLsizei* length, GCGLsizei* columns, GCGLsizei* rows, GCGLvoid* data, bool readingToPixelBufferObject);
+
     // Did the most recent drawing operation leave the GPU in an acceptable state?
     void checkGPUStatus();
 

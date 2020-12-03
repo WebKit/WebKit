@@ -100,12 +100,12 @@ void ExtensionsGLOpenGLES::renderbufferStorageMultisampleIMG(unsigned long targe
         m_context->synthesizeGLError(GL_INVALID_OPERATION);
 }
 
-void ExtensionsGLOpenGLES::blitFramebuffer(long /* srcX0 */, long /* srcY0 */, long /* srcX1 */, long /* srcY1 */, long /* dstX0 */, long /* dstY0 */, long /* dstX1 */, long /* dstY1 */, unsigned long /* mask */, unsigned long /* filter */)
+void ExtensionsGLOpenGLES::blitFramebufferANGLE(GCGLint, GCGLint, GCGLint, GCGLint, GCGLint, GCGLint, GCGLint, GCGLint, GCGLbitfield, GCGLenum)
 {
     notImplemented();
 }
 
-void ExtensionsGLOpenGLES::renderbufferStorageMultisample(unsigned long target, unsigned long samples, unsigned long internalformat, unsigned long width, unsigned long height)
+void ExtensionsGLOpenGLES::renderbufferStorageMultisampleANGLE(GCGLenum target, GCGLsizei samples, GCGLenum internalformat, GCGLsizei width, GCGLsizei height)
 {
     if (!m_context->makeContextCurrent())
         return;
@@ -251,7 +251,7 @@ void ExtensionsGLOpenGLES::getnUniformivEXT(GCGLuint program, int location, GCGL
     m_context->synthesizeGLError(GL_INVALID_OPERATION);
 }
 
-void ExtensionsGLOpenGLES::drawArraysInstanced(GCGLenum mode, GCGLint first, GCGLsizei count, GCGLsizei primcount)
+void ExtensionsGLOpenGLES::drawArraysInstancedANGLE(GCGLenum mode, GCGLint first, GCGLsizei count, GCGLsizei primcount)
 {
     if (!m_glDrawArraysInstancedANGLE) {
         m_context->synthesizeGLError(GL_INVALID_OPERATION);
@@ -264,7 +264,7 @@ void ExtensionsGLOpenGLES::drawArraysInstanced(GCGLenum mode, GCGLint first, GCG
     m_glDrawArraysInstancedANGLE(mode, first, count, primcount);
 }
 
-void ExtensionsGLOpenGLES::drawElementsInstanced(GCGLenum mode, GCGLsizei count, GCGLenum type, long long offset, GCGLsizei primcount)
+void ExtensionsGLOpenGLES::drawElementsInstancedANGLE(GCGLenum mode, GCGLsizei count, GCGLenum type, GCGLvoidptr offset, GCGLsizei primcount)
 {
     if (!m_glDrawElementsInstancedANGLE) {
         m_context->synthesizeGLError(GL_INVALID_OPERATION);
@@ -277,7 +277,7 @@ void ExtensionsGLOpenGLES::drawElementsInstanced(GCGLenum mode, GCGLsizei count,
     m_glDrawElementsInstancedANGLE(mode, count, type, reinterpret_cast<GLvoid*>(static_cast<intptr_t>(offset)), primcount);
 }
 
-void ExtensionsGLOpenGLES::vertexAttribDivisor(GCGLuint index, GCGLuint divisor)
+void ExtensionsGLOpenGLES::vertexAttribDivisorANGLE(GCGLuint index, GCGLuint divisor)
 {
     if (!m_glVertexAttribDivisorANGLE) {
         m_context->synthesizeGLError(GL_INVALID_OPERATION);

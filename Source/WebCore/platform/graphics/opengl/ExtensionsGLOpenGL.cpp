@@ -48,7 +48,7 @@ ExtensionsGLOpenGL::ExtensionsGLOpenGL(GraphicsContextGLOpenGL* context, bool us
 ExtensionsGLOpenGL::~ExtensionsGLOpenGL() = default;
 
 
-void ExtensionsGLOpenGL::blitFramebuffer(long srcX0, long srcY0, long srcX1, long srcY1, long dstX0, long dstY0, long dstX1, long dstY1, unsigned long mask, unsigned long filter)
+void ExtensionsGLOpenGL::blitFramebufferANGLE(GCGLint srcX0, GCGLint srcY0, GCGLint srcX1, GCGLint srcY1, GCGLint dstX0, GCGLint dstY0, GCGLint dstX1, GCGLint dstY1, GCGLbitfield mask, GCGLenum filter)
 {
     if (!m_context->makeContextCurrent())
         return;
@@ -56,7 +56,7 @@ void ExtensionsGLOpenGL::blitFramebuffer(long srcX0, long srcY0, long srcX1, lon
     ::glBlitFramebufferEXT(srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, mask, filter);
 }
 
-void ExtensionsGLOpenGL::renderbufferStorageMultisample(unsigned long target, unsigned long samples, unsigned long internalformat, unsigned long width, unsigned long height)
+void ExtensionsGLOpenGL::renderbufferStorageMultisampleANGLE(GCGLenum target, GCGLsizei samples, GCGLenum internalformat, GCGLsizei width, GCGLsizei height)
 {
     if (!m_context->makeContextCurrent())
         return;
@@ -222,7 +222,7 @@ void ExtensionsGLOpenGL::drawBuffersEXT(GCGLSpan<const GCGLenum> bufs)
 #endif
 }
 
-void ExtensionsGLOpenGL::drawArraysInstanced(GCGLenum mode, GCGLint first, GCGLsizei count, GCGLsizei primcount)
+void ExtensionsGLOpenGL::drawArraysInstancedANGLE(GCGLenum mode, GCGLint first, GCGLsizei count, GCGLsizei primcount)
 {
     if (!m_context->makeContextCurrent())
         return;
@@ -237,7 +237,7 @@ void ExtensionsGLOpenGL::drawArraysInstanced(GCGLenum mode, GCGLint first, GCGLs
 #endif
 }
 
-void ExtensionsGLOpenGL::drawElementsInstanced(GCGLenum mode, GCGLsizei count, GCGLenum type, long long offset, GCGLsizei primcount)
+void ExtensionsGLOpenGL::drawElementsInstancedANGLE(GCGLenum mode, GCGLsizei count, GCGLenum type, GCGLvoidptr offset, GCGLsizei primcount)
 {
     if (!m_context->makeContextCurrent())
         return;
@@ -253,7 +253,7 @@ void ExtensionsGLOpenGL::drawElementsInstanced(GCGLenum mode, GCGLsizei count, G
 #endif
 }
 
-void ExtensionsGLOpenGL::vertexAttribDivisor(GCGLuint index, GCGLuint divisor)
+void ExtensionsGLOpenGL::vertexAttribDivisorANGLE(GCGLuint index, GCGLuint divisor)
 {
     if (!m_context->makeContextCurrent())
         return;

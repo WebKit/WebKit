@@ -46,28 +46,8 @@ namespace WebCore {
 ExtensionsGLANGLE::ExtensionsGLANGLE(GraphicsContextGLOpenGL* context, bool useIndexedGetString)
     : m_initializedAvailableExtensions(false)
     , m_context(context)
-    , m_isNVIDIA(false)
-    , m_isAMD(false)
-    , m_isIntel(false)
-    , m_isImagination(false)
-    , m_requiresBuiltInFunctionEmulation(false)
-    , m_requiresRestrictedMaximumTextureSize(false)
     , m_useIndexedGetString(useIndexedGetString)
 {
-    // FIXME: ideally, remove this initialization altogether. ANGLE
-    // subsumes the responsibility for graphics driver workarounds.
-    m_vendor = String(reinterpret_cast<const char*>(gl::GetString(GL_VENDOR)));
-    m_renderer = String(reinterpret_cast<const char*>(gl::GetString(GL_RENDERER)));
-
-    Vector<String> vendorComponents = m_vendor.convertToASCIILowercase().split(' ');
-    if (vendorComponents.contains("nvidia"))
-        m_isNVIDIA = true;
-    if (vendorComponents.contains("ati") || vendorComponents.contains("amd"))
-        m_isAMD = true;
-    if (vendorComponents.contains("intel"))
-        m_isIntel = true;
-    if (vendorComponents.contains("imagination"))
-        m_isImagination = true;
 }
 
 ExtensionsGLANGLE::~ExtensionsGLANGLE() = default;
@@ -103,7 +83,7 @@ bool ExtensionsGLANGLE::isEnabled(const String& name)
     return m_availableExtensions.contains(name) || m_enabledExtensions.contains(name);
 }
 
-int ExtensionsGLANGLE::getGraphicsResetStatusARB()
+GLint ExtensionsGLANGLE::getGraphicsResetStatusARB()
 {
     return GraphicsContextGL::NO_ERROR;
 }
@@ -114,10 +94,11 @@ String ExtensionsGLANGLE::getTranslatedShaderSourceANGLE(PlatformGLObject shader
         return String();
 
     int sourceLength = m_context->getShaderi(shader, GL_TRANSLATED_SHADER_SOURCE_LENGTH_ANGLE);
+
     if (!sourceLength)
         return emptyString();
     Vector<GLchar> name(sourceLength); // GL_TRANSLATED_SHADER_SOURCE_LENGTH_ANGLE includes null termination.
-    int returnedLength = 0;
+    GCGLint returnedLength = 0;
     gl::GetTranslatedShaderSourceANGLE(shader, sourceLength, &returnedLength, name.data());
     if (!returnedLength)
         return emptyString();
@@ -147,7 +128,7 @@ void ExtensionsGLANGLE::initializeAvailableExtensions()
     m_initializedAvailableExtensions = true;
 }
 
-void ExtensionsGLANGLE::blitFramebuffer(long srcX0, long srcY0, long srcX1, long srcY1, long dstX0, long dstY0, long dstX1, long dstY1, unsigned long mask, unsigned long filter)
+void ExtensionsGLANGLE::blitFramebufferANGLE(GCGLint srcX0, GCGLint srcY0, GCGLint srcX1, GCGLint srcY1, GCGLint dstX0, GCGLint dstY0, GCGLint dstX1, GCGLint dstY1, GCGLbitfield mask, GCGLenum filter)
 {
     // FIXME: consider adding support for APPLE_framebuffer_multisample.
     if (!m_context->makeContextCurrent())
@@ -156,7 +137,7 @@ void ExtensionsGLANGLE::blitFramebuffer(long srcX0, long srcY0, long srcX1, long
     gl::BlitFramebufferANGLE(srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, mask, filter);
 }
 
-void ExtensionsGLANGLE::renderbufferStorageMultisample(unsigned long target, unsigned long samples, unsigned long internalformat, unsigned long width, unsigned long height)
+void ExtensionsGLANGLE::renderbufferStorageMultisampleANGLE(GCGLenum target, GCGLsizei samples, GCGLenum internalformat, GCGLsizei width, GCGLsizei height)
 {
     if (!m_context->makeContextCurrent())
         return;
@@ -235,7 +216,7 @@ void ExtensionsGLANGLE::drawBuffersEXT(GCGLSpan<const GCGLenum> bufs)
     gl::DrawBuffersEXT(bufs.bufSize, bufs.data);
 }
 
-void ExtensionsGLANGLE::drawArraysInstanced(GCGLenum mode, GCGLint first, GCGLsizei count, GCGLsizei primcount)
+void ExtensionsGLANGLE::drawArraysInstancedANGLE(GCGLenum mode, GCGLint first, GCGLsizei count, GCGLsizei primcount)
 {
     if (!m_context->makeContextCurrent())
         return;
@@ -243,15 +224,15 @@ void ExtensionsGLANGLE::drawArraysInstanced(GCGLenum mode, GCGLint first, GCGLsi
     gl::DrawArraysInstancedANGLE(mode, first, count, primcount);
 }
 
-void ExtensionsGLANGLE::drawElementsInstanced(GCGLenum mode, GCGLsizei count, GCGLenum type, long long offset, GCGLsizei primcount)
+void ExtensionsGLANGLE::drawElementsInstancedANGLE(GCGLenum mode, GCGLsizei count, GCGLenum type, GCGLvoidptr offset, GCGLsizei primcount)
 {
     if (!m_context->makeContextCurrent())
         return;
 
-    gl::DrawElementsInstancedANGLE(mode, count, type, reinterpret_cast<GLvoid*>(static_cast<intptr_t>(offset)), primcount);
+    gl::DrawElementsInstancedANGLE(mode, count, type, reinterpret_cast<GLvoid*>(offset), primcount);
 }
 
-void ExtensionsGLANGLE::vertexAttribDivisor(GCGLuint index, GCGLuint divisor)
+void ExtensionsGLANGLE::vertexAttribDivisorANGLE(GCGLuint index, GCGLuint divisor)
 {
     if (!m_context->makeContextCurrent())
         return;
@@ -326,14 +307,6 @@ void ExtensionsGLANGLE::getBufferPointervRobustANGLE(GCGLenum target, GCGLenum p
     gl::GetBufferPointervRobustANGLE(target, pname, bufSize, length, params);
 }
 
-void ExtensionsGLANGLE::getInternalformativRobustANGLE(GCGLenum target, GCGLenum internalformat, GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLint *params)
-{
-    if (!m_context->makeContextCurrent())
-        return;
-
-    gl::GetInternalformativRobustANGLE(target, internalformat, pname, bufSize, length, params);
-}
-
 void ExtensionsGLANGLE::getVertexAttribIivRobustANGLE(GCGLuint index, GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLint *params)
 {
     if (!m_context->makeContextCurrent())
@@ -350,7 +323,7 @@ void ExtensionsGLANGLE::getVertexAttribIuivRobustANGLE(GCGLuint index, GCGLenum 
     gl::GetVertexAttribIuivRobustANGLE(index, pname, bufSize, length, params);
 }
 
-void ExtensionsGLANGLE::getUniformuivRobustANGLE(GCGLuint program, int location, GCGLsizei bufSize, GCGLsizei *length, GCGLuint *params)
+void ExtensionsGLANGLE::getUniformuivRobustANGLE(GCGLuint program, GCGLint location, GCGLsizei bufSize, GCGLsizei *length, GCGLuint *params)
 {
     if (!m_context->makeContextCurrent())
         return;
@@ -431,7 +404,7 @@ void ExtensionsGLANGLE::getMultisamplefvRobustANGLE(GCGLenum pname, GCGLuint ind
     gl::GetMultisamplefvRobustANGLE(pname, index, bufSize, length, val);
 }
 
-void ExtensionsGLANGLE::getTexLevelParameterivRobustANGLE(GCGLenum target, int level, GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLint *params)
+void ExtensionsGLANGLE::getTexLevelParameterivRobustANGLE(GCGLenum target, GCGLint level, GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLint *params)
 {
     if (!m_context->makeContextCurrent())
         return;
@@ -439,7 +412,7 @@ void ExtensionsGLANGLE::getTexLevelParameterivRobustANGLE(GCGLenum target, int l
     gl::GetTexLevelParameterivRobustANGLE(target, level, pname, bufSize, length, params);
 }
 
-void ExtensionsGLANGLE::getTexLevelParameterfvRobustANGLE(GCGLenum target, int level, GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLfloat *params)
+void ExtensionsGLANGLE::getTexLevelParameterfvRobustANGLE(GCGLenum target, GCGLint level, GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLfloat *params)
 {
     if (!m_context->makeContextCurrent())
         return;
@@ -456,55 +429,7 @@ void ExtensionsGLANGLE::getPointervRobustANGLERobustANGLE(GCGLenum pname, GCGLsi
     gl::GetPointervRobustANGLERobustANGLE(pname, bufSize, length, params);
 }
 
-#if PLATFORM(MAC) || PLATFORM(IOS_FAMILY)
-static void wipeAlphaChannelFromPixels(int width, int height, unsigned char* pixels)
-{
-    // We can assume this doesn't overflow because the calling functions
-    // use checked arithmetic.
-    int totalBytes = width * height * 4;
-    for (int i = 0; i < totalBytes; i += 4)
-        pixels[i + 3] = 255;
-}
-#endif
-
-void ExtensionsGLANGLE::readnPixelsRobustANGLE(int x, int y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLsizei bufSize, GCGLsizei *length, GCGLsizei *columns, GCGLsizei *rows, void *data, bool readingToPixelBufferObject)
-{
-    if (!m_context->makeContextCurrent())
-        return;
-
-    // FIXME: remove the two glFlush calls when the driver bug is fixed, i.e.,
-    // all previous rendering calls should be done before reading pixels.
-    gl::Flush();
-    auto attrs = m_context->contextAttributes();
-    GCGLenum framebufferTarget = m_context->m_isForWebGL2 ? GraphicsContextGL::READ_FRAMEBUFFER : GraphicsContextGL::FRAMEBUFFER;
-    const GraphicsContextGLOpenGL::GraphicsContextGLState& state = m_context->m_state;
-    if (attrs.antialias && state.boundReadFBO == m_context->m_multisampleFBO) {
-        m_context->resolveMultisamplingIfNecessary(IntRect(x, y, width, height));
-        gl::BindFramebuffer(framebufferTarget, m_context->m_fbo);
-        gl::Flush();
-    }
-    (void) m_context->moveErrorsToSyntheticErrorList();
-    gl::ReadnPixelsRobustANGLE(x, y, width, height, format, type, bufSize, length, columns, rows, data);
-    GLenum error = gl::GetError();
-    if (attrs.antialias && state.boundReadFBO == m_context->m_multisampleFBO)
-        gl::BindFramebuffer(framebufferTarget, m_context->m_multisampleFBO);
-
-    if (error) {
-        // ANGLE detected a failure during the ReadnPixelsRobustANGLE operation. Surface this in the
-        // synthetic error list, and skip the alpha channel fixup below.
-        m_context->synthesizeGLError(error);
-        return;
-    }
-
-#if PLATFORM(MAC) || PLATFORM(IOS_FAMILY)
-    if (!readingToPixelBufferObject && !attrs.alpha && (format == GraphicsContextGL::RGBA || format == GraphicsContextGL::BGRA) && (type == GraphicsContextGL::UNSIGNED_BYTE) && (state.boundReadFBO == m_context->m_fbo || (attrs.antialias && state.boundReadFBO == m_context->m_multisampleFBO)))
-        wipeAlphaChannelFromPixels(width, height, static_cast<unsigned char*>(data));
-#else
-    UNUSED_PARAM(readingToPixelBufferObject);
-#endif
-}
-
-void ExtensionsGLANGLE::getnUniformfvRobustANGLE(GCGLuint program, int location, GCGLsizei bufSize, GCGLsizei *length, GCGLfloat *params)
+void ExtensionsGLANGLE::getnUniformfvRobustANGLE(GCGLuint program, GCGLint location, GCGLsizei bufSize, GCGLsizei *length, GCGLfloat *params)
 {
     if (!m_context->makeContextCurrent())
         return;
@@ -512,7 +437,7 @@ void ExtensionsGLANGLE::getnUniformfvRobustANGLE(GCGLuint program, int location,
     gl::GetnUniformfvRobustANGLE(program, location, bufSize, length, params);
 }
 
-void ExtensionsGLANGLE::getnUniformivRobustANGLE(GCGLuint program, int location, GCGLsizei bufSize, GCGLsizei *length, GCGLint *params)
+void ExtensionsGLANGLE::getnUniformivRobustANGLE(GCGLuint program, GCGLint location, GCGLsizei bufSize, GCGLsizei *length, GCGLint *params)
 {
     if (!m_context->makeContextCurrent())
         return;
@@ -520,7 +445,7 @@ void ExtensionsGLANGLE::getnUniformivRobustANGLE(GCGLuint program, int location,
     gl::GetnUniformivRobustANGLE(program, location, bufSize, length, params);
 }
 
-void ExtensionsGLANGLE::getnUniformuivRobustANGLE(GCGLuint program, int location, GCGLsizei bufSize, GCGLsizei *length, GCGLuint *params)
+void ExtensionsGLANGLE::getnUniformuivRobustANGLE(GCGLuint program, GCGLint location, GCGLsizei bufSize, GCGLsizei *length, GCGLuint *params)
 {
     if (!m_context->makeContextCurrent())
         return;
