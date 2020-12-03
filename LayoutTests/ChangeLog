@@ -1,5 +1,11 @@
 2020-12-02  Diego Pino Garcia  <dpino@igalia.com>
 
+        [WPE] Unreviewed test gardening. Gardened several flaky timeout failures.
+
+        * platform/wpe/TestExpectations:
+
+2020-12-02  Diego Pino Garcia  <dpino@igalia.com>
+
         [WPE] Unreviewed test gardening. Gardened several flaky failures.
 
         * platform/glib/TestExpectations:

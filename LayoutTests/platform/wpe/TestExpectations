@@ -861,6 +861,12 @@ webkit.org/b/219425 fast/events/touch/emulate-touch-events.html [ Failure Pass ]
 webkit.org/b/219465 fast/loader/font-load-timer.html [ ImageOnlyFailure Pass ]
 webkit.org/b/219465 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/persisted-user-state-restoration/resume-timer-on-history-back.html [ Failure Pass ]
 
+webkit.org/b/219470 fast/visual-viewport/visual-viewport-resize-subframe-in-rendering-update.html [ Timeout Pass ]
+
+webkit.org/b/219473 fast/mediastream/media-stream-renders-first-frame.html [ Timeout Pass ]
+
+webkit.org/b/219474 svg/custom/animate-initial-pause-unpause.html [ Timeout Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # 6. SLOW TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
