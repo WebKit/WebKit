@@ -103,7 +103,7 @@ void OfflineAudioContext::startOfflineRendering(Ref<DeferredPromise>&& promise)
     }
 
     if (!renderTarget()) {
-        promise->reject(Exception { InvalidStateError, "Failed to create audio buffer"_s });
+        promise->reject(Exception { NotSupportedError, "Failed to create audio buffer"_s });
         return;
     }
 
@@ -134,7 +134,7 @@ void OfflineAudioContext::suspendOfflineRendering(double suspendTime, Ref<Deferr
         return;
     }
 
-    double totalRenderDuration = renderTarget()->length() / sampleRate();
+    double totalRenderDuration = length() / sampleRate();
     if (totalRenderDuration <= suspendTime) {
         promise->reject(Exception { InvalidStateError, "suspendTime cannot be greater than total rendering duration"_s });
         return;

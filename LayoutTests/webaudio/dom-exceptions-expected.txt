@@ -152,7 +152,7 @@ PASS   new OfflineAudioContext(1, 0, 44100) threw SyntaxError: "length cannot be
 PASS < [invalid-offline-audio-context-parameters] All assertions passed. (total 5 assertions)
 PASS > [invalid-frame-length]
 PASS   testContext = new OfflineAudioContext(1, -88200000000000, 44100) did not throw an exception.
-PASS   testContext.startRendering() rejected correctly with InvalidStateError: Failed to create audio buffer.
+PASS   testContext.startRendering() rejected correctly with NotSupportedError: Failed to create audio buffer.
 PASS < [invalid-frame-length] All assertions passed. (total 2 assertions)
 PASS > [waveshaper]
 PASS   node.oversample = "9x" did not throw an exception.
