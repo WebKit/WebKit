@@ -1,3 +1,14 @@
+2020-12-04  David Kilzer  <ddkilzer@apple.com>
+
+        Add safety checks to xsltParamArrayFromParameterMap()
+        <https://webkit.org/b/219407>
+        <rdar://problem/71853069>
+
+        Reviewed by Darin Adler.
+
+        * wtf/PlatformHave.h:
+        (HAVE_LIBXSLT_FIX_FOR_RADAR_71864140): Add.
+
 2020-12-04  Kate Cheney  <katherine_cheney@apple.com>
 
         Create API to enable/disable text interaction gestures in WKWebView
