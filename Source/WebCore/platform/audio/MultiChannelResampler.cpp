@@ -53,16 +53,11 @@ public:
 
     // provideInput() will be called once for each channel, starting with the first channel.
     // Each time it's called, it will provide the next channel of data.
-    void provideInputForChannel(AudioBus* bus, size_t framesToProcess, unsigned channelIndex)
+    void provideInputForChannel(float* buffer, size_t framesToProcess, unsigned channelIndex)
     {
         ASSERT(channelIndex < m_multiChannelBus->numberOfChannels());
         ASSERT(framesToProcess <= m_multiChannelBus->length());
         if (framesToProcess > m_multiChannelBus->length())
-            return;
-
-        bool isBusGood = bus && bus->numberOfChannels() == 1;
-        ASSERT(isBusGood);
-        if (!isBusGood)
             return;
 
         // Get the data from the multi-channel provider when the first channel asks for it.
@@ -79,7 +74,7 @@ public:
             return;
 
         // Copy the channel data from what we received from m_multiChannelProvider.
-        memcpy(bus->channel(0)->mutableData(), m_multiChannelBus->channel(channelIndex)->data(), sizeof(float) * framesToProcess);
+        memcpy(buffer, m_multiChannelBus->channel(channelIndex)->data(), sizeof(float) * framesToProcess);
     }
 
 private:
@@ -119,10 +114,10 @@ void MultiChannelResampler::process(AudioSourceProvider* provider, AudioBus* des
         for (unsigned channelIndex = 0; channelIndex < m_numberOfChannels; ++channelIndex) {
             ASSERT(chunkSize == m_kernels[channelIndex]->chunkSize());
             bool wasProvideInputCalled = false;
-            m_kernels[channelIndex]->process(destination->channel(channelIndex)->mutableData() + m_outputFramesReady, framesThisTime, [this, channelIndex, &wasProvideInputCalled](AudioBus* bus, size_t framesToProcess) {
+            m_kernels[channelIndex]->process(destination->channel(channelIndex)->mutableData() + m_outputFramesReady, framesThisTime, [this, channelIndex, &wasProvideInputCalled](float* buffer, size_t framesToProcess) {
                 ASSERT_WITH_MESSAGE(!wasProvideInputCalled, "provideInputForChannel should only be called once");
                 wasProvideInputCalled = true;
-                m_channelProvider->provideInputForChannel(bus, framesToProcess, channelIndex);
+                m_channelProvider->provideInputForChannel(buffer, framesToProcess, channelIndex);
             });
         }
 

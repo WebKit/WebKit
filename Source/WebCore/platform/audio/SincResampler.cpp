@@ -197,22 +197,6 @@ void SincResampler::initializeKernel()
     }
 }
 
-void SincResampler::consumeSource(float* buffer, unsigned numberOfSourceFrames, const Function<void(AudioBus* bus, size_t framesToProcess)>& provideInput)
-{
-    ASSERT(provideInput);
-    if (!provideInput)
-        return;
-
-    // Wrap the provided buffer by an AudioBus for use by the source provider.
-    if (!m_internalBus || m_internalBus->length() != numberOfSourceFrames)
-        m_internalBus = AudioBus::create(1, numberOfSourceFrames, false);
-
-    // FIXME: Find a way to make the following const-correct:
-    m_internalBus->setChannelMemory(0, buffer, numberOfSourceFrames);
-    
-    provideInput(m_internalBus.get(), numberOfSourceFrames);
-}
-
 namespace {
 
 // BufferSourceProvider is an audio source provider wrapping an in-memory buffer.
@@ -226,13 +210,11 @@ public:
     }
     
     // Consumes samples from the in-memory buffer.
-    void provideInput(AudioBus* bus, size_t framesToProcess)
+    void provideInput(float* buffer, size_t framesToProcess)
     {
-        ASSERT(m_source && bus);
-        if (!m_source || !bus)
+        ASSERT(m_source && buffer);
+        if (!m_source || !buffer)
             return;
-            
-        float* buffer = bus->channel(0)->mutableData();
 
         // Clamp to number of frames available and zero-pad.
         size_t framesToCopy = std::min(m_sourceFramesAvailable, framesToProcess);
@@ -263,8 +245,8 @@ void SincResampler::process(const float* source, float* destination, unsigned nu
     
     while (remaining) {
         unsigned framesThisTime = std::min(remaining, m_requestFrames);
-        process(destination, framesThisTime, [&sourceProvider](AudioBus* bus, size_t framesToProcess) {
-            sourceProvider.provideInput(bus, framesToProcess);
+        process(destination, framesThisTime, [&sourceProvider](float* buffer, size_t framesToProcess) {
+            sourceProvider.provideInput(buffer, framesToProcess);
         });
         
         destination += framesThisTime;
@@ -272,7 +254,7 @@ void SincResampler::process(const float* source, float* destination, unsigned nu
     }
 }
 
-void SincResampler::process(float* destination, size_t framesToProcess, const Function<void(AudioBus* bus, size_t framesToProcess)>& provideInput)
+void SincResampler::process(float* destination, size_t framesToProcess, const Function<void(float* buffer, size_t framesToProcess)>& provideInput)
 {
     ASSERT(provideInput);
     if (!provideInput)
@@ -283,7 +265,7 @@ void SincResampler::process(float* destination, size_t framesToProcess, const Fu
     // Step (1)
     // Prime the input buffer at the start of the input stream.
     if (!m_isBufferPrimed) {
-        consumeSource(m_r0, m_requestFrames, provideInput);
+        provideInput(m_r0, m_requestFrames);
         m_isBufferPrimed = true;
     }
     
@@ -335,7 +317,7 @@ void SincResampler::process(float* destination, size_t framesToProcess, const Fu
 
         // Step (5)
         // Refresh the buffer with more input.
-        consumeSource(m_r0, m_requestFrames, provideInput);
+        provideInput(m_r0, m_requestFrames);
     }
 }
 

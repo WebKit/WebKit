@@ -53,11 +53,10 @@ public:
     void process(const float* source, float* destination, unsigned numberOfSourceFrames);
 
     // Process with provideInput callback function for streaming applications.
-    void process(float* destination, size_t framesToProcess, const Function<void(AudioBus* bus, size_t framesToProcess)>& provideInput);
+    void process(float* destination, size_t framesToProcess, const Function<void(float* buffer, size_t framesToProcess)>& provideInput);
 
 protected:
     void initializeKernel();
-    void consumeSource(float* buffer, unsigned numberOfSourceFrames, const Function<void(AudioBus* bus, size_t framesToProcess)>& provideInput);
     void updateRegions(bool isSecondLoad);
 
     float convolve(const float* inputP, const float* k1, const float* k2, float kernelInterpolationFactor);
@@ -93,8 +92,6 @@ protected:
 
     // The buffer is primed once at the very beginning of processing.
     bool m_isBufferPrimed { false };
-
-    RefPtr<AudioBus> m_internalBus;
 };
 
 } // namespace WebCore
