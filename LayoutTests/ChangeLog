@@ -1,3 +1,11 @@
+2020-12-04  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK] Gardening wheel failures and timeouts
+
+        Unreviewed test gardening.
+
+        * platform/gtk/TestExpectations:
+
 2020-12-02  Darin Adler  <darin@apple.com>
 
         Make dump-as-markup.js dump newlines within text as "\n"

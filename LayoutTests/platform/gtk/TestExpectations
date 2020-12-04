@@ -118,8 +118,6 @@ imported/w3c/web-platform-tests/css/css-ui/outline-019.html [ Pass ]
 # Passing since r260062.
 imported/w3c/web-platform-tests/css/css-shapes/spec-examples/shape-outside-018.html [ Pass ]
 
-fast/scrolling/rtl-scrollbars-listbox-scroll.html [ Pass ]
-
 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-audio-tainting.https.html [ Pass ]
 
 webkit.org/b/214291 imported/w3c/web-platform-tests/css/css-writing-modes/baseline-with-orthogonal-flow-001.html  [ Pass ]
@@ -226,6 +224,24 @@ webkit.org/b/201270 [ Release ] http/tests/security/navigate-when-restoring-cach
 webkit.org/b/201270 [ Debug ] http/tests/security/navigate-when-restoring-cached-page.html [ Crash ]
 webkit.org/b/201270 [ Release ] http/tests/security/showModalDialog-sync-cross-origin-page-load2.html [ Timeout ]
 webkit.org/b/201270 [ Debug ] http/tests/security/showModalDialog-sync-cross-origin-page-load2.html [ Crash ]
+
+# Wheel events and scrolling
+webkit.org/b/219547 fast/events/remove-child-onscroll.html [ Timeout ]
+webkit.org/b/219547 fast/events/wheel/wheel-event-destroys-frame.html [ Timeout ]
+webkit.org/b/219547 fast/events/wheel/wheel-event-destroys-overflow.html [ Timeout ]
+webkit.org/b/219547 fast/events/wheel/wheel-event-outside-body.html [ Timeout ]
+webkit.org/b/219547 fast/events/wheel/wheelevent-basic.html [ Timeout ]
+webkit.org/b/219547 fast/events/wheel/wheelevent-in-text-node.html [ Timeout ]
+webkit.org/b/219547 fast/events/wheel/wheelevent-mousewheel-interaction.html [ Timeout ]
+webkit.org/b/186670 webkit.org/b/219547 fast/scrolling/iframe-scrollable-after-back.html [ Timeout Pass Failure ]
+webkit.org/b/219547 fast/scrolling/overflow-scrollable-after-back.html [ Timeout ]
+webkit.org/b/219547 pointer-lock/mouse-event-delivery.html [ Timeout ]
+webkit.org/b/219547 scrollbars/scroll-rtl-or-bt-layer.html [ Timeout ]
+webkit.org/b/219547 fast/events/wheel/continuous-platform-wheelevent-in-scrolling-div.html [ ImageOnlyFailure ]
+webkit.org/b/219547 fast/frames/flattening/scrolling-in-object.html [ ImageOnlyFailure ]
+# This one below should be moved back to PASS when fixed to override the root expectation of ImageOnlyFailure
+webkit.org/b/219547 fast/scrolling/rtl-scrollbars-listbox-scroll.html [ ImageOnlyFailure ]
+
 
 # Workers
 ## Also timeouts sometimes in Wayland
@@ -1359,8 +1375,6 @@ webkit.org/b/186638 storage/indexeddb/cursor-overloads.html [ Timeout Pass ]
 webkit.org/b/186664 media/video-playsinline.html [ Failure ]
 
 webkit.org/b/186667 compositing/repaint/iframes/composited-iframe-with-fixed-background-doc-repaint.html [ Failure Pass ]
-
-webkit.org/b/186670 fast/scrolling/iframe-scrollable-after-back.html [ Failure Pass ]
 
 webkit.org/b/186673 editing/spelling/spellcheck-async-mutation.html [ Failure Pass ]
 
