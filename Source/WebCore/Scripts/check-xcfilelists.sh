@@ -9,4 +9,4 @@ SCRIPT="${BUILD_SCRIPTS_DIR}/generate-xcfilelists"
 [ -f "${SCRIPT}" ] || SCRIPT="${PROJECT_DIR}/../../Tools/Scripts/generate-xcfilelists"
 [ -f "${SCRIPT}" ] || { echo "### Cannot find generate-xcfilelists script"; exit 1; }
 
-"${SCRIPT}" generate-xcode --project WebCore --platform "${PLATFORM_NAME}" --configuration "${CONFIGURATION}"
+"${SCRIPT}" generate-xcode --project WebCore --platform "${FALLBACK_PLATFORM:-$PLATFORM_NAME}" --configuration "${CONFIGURATION}"

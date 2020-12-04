@@ -1,3 +1,13 @@
+2020-12-03  Adam Roben  <aroben@apple.com>
+
+        Adopt FALLBACK_PLATFORM
+        https://bugs.webkit.org/show_bug.cgi?id=219504
+
+        Reviewed by Tim Horton.
+
+        * gtest/xcode/Config/SDKVariant.xcconfig: Use FALLBACK_PLATFORM it if
+        it's defined, otherwise use PLATFORM_NAME as before.
+
 2020-10-12  Luming Yin  <luming_yin@apple.com>
 
         [macOS] Workaround for MAC_OS_X_VERSION_MAJOR incorrectly including minor version when building 
