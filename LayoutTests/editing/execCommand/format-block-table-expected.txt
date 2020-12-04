@@ -1,7 +1,6 @@
 
 Formatting:
-| "
-"
+| "\n"
 | <#selection-anchor>
 | <table>
 |   <tbody>
@@ -11,12 +10,10 @@ Formatting:
 |       <td>
 |         "world"
 | <#selection-focus>
-| "
-"
+| "\n"
 
 by p yields:
-| "
-"
+| "\n"
 | <p>
 |   <#selection-anchor>
 |   <table>
@@ -27,12 +24,10 @@ by p yields:
 |         <td>
 |           "world"
 |   <#selection-focus>
-| "
-"
+| "\n"
 
 Formatting:
-| "
-"
+| "\n"
 | <table>
 |   <tbody>
 |     <tr>
@@ -40,12 +35,10 @@ Formatting:
 |         "<#selection-anchor>hello<#selection-focus>"
 |       <td>
 |         "world"
-| "
-"
+| "\n"
 
 by blockquote yields:
-| "
-"
+| "\n"
 | <table>
 |   <tbody>
 |     <tr>
@@ -54,12 +47,10 @@ by blockquote yields:
 |           "<#selection-anchor>hello<#selection-focus>"
 |       <td>
 |         "world"
-| "
-"
+| "\n"
 
 Formatting:
-| "
-"
+| "\n"
 | <table>
 |   <tbody>
 |     <tr>
@@ -70,12 +61,10 @@ Formatting:
 |           "world<#selection-focus>"
 |       <td>
 |         "WebKit"
-| "
-"
+| "\n"
 
 by h3 yields:
-| "
-"
+| "\n"
 | <table>
 |   <tbody>
 |     <tr>
@@ -86,12 +75,10 @@ by h3 yields:
 |           "world<#selection-focus>"
 |       <td>
 |         "WebKit"
-| "
-"
+| "\n"
 
 Formatting:
-| "
-"
+| "\n"
 | <table>
 |   <tbody>
 |     <tr>
@@ -103,12 +90,10 @@ Formatting:
 |             "world<#selection-focus>"
 |       <td>
 |         "WebKit"
-| "
-"
+| "\n"
 
 by address yields:
-| "
-"
+| "\n"
 | <table>
 |   <tbody>
 |     <tr>
@@ -122,5 +107,4 @@ by address yields:
 |               "world<#selection-focus>"
 |       <td>
 |         "WebKit"
-| "
-"
+| "\n"

@@ -1,7 +1,6 @@
 There was a bug when pasting at the end of the block. The content was inserted at the start
 the block instead of the end. This tests the insert-at-end case.
-| "
-"
+| "\n"
 | <div>
 |   class="editing"
 |   id="test"
@@ -9,5 +8,4 @@ the block instead of the end. This tests the insert-at-end case.
 |   <br>
 |   <br>
 |   "of men. of men.<#selection-caret>"
-| "
-"
+| "\n"

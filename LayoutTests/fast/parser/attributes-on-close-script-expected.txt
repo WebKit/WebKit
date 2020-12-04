@@ -3,12 +3,8 @@ ALERT: PASS (as long as this test doesn't trigger an ASSERT)
 |   <head>
 |     <script>
 |       src="../../resources/dump-as-markup.js"
-|     "
-"
+|     "\n"
 |     <script>
-|       "
-alert("PASS (as long as this test doesn't trigger an ASSERT)");
-"
-|     "
-"
+|       "\nalert("PASS (as long as this test doesn't trigger an ASSERT)");\n"
+|     "\n"
 |   <body>

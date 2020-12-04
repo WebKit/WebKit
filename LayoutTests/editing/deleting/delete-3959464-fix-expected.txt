@@ -25,8 +25,7 @@ EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
 
 Should see two blank lines after "foo" each in a separate red box (class=editing).
 
-| "
-"
+| "\n"
 | <div>
 |   class="editing"
 |   id="test"
@@ -40,5 +39,4 @@ Should see two blank lines after "foo" each in a separate red box (class=editing
 |   id="test"
 |   <#selection-caret>
 |   <br>
-| "
-"
+| "\n"

@@ -1,8 +1,7 @@
 This test drags a selection of one <li> and drops them after another <li> in the first list. The same test is repeated in the second list but this time with two selected items instead of one. It verifies that the behavior is independent of how many fully selected items we move, i.e. fully selected <li> are moved as <li> and not just as plain text
 
 The original list looks like this. 'two' is selected and is going to be dropped after 'four':
-| "
-"
+| "\n"
 | <li>
 |   id="one"
 |   "one"
@@ -15,12 +14,10 @@ The original list looks like this. 'two' is selected and is going to be dropped 
 | <li>
 |   id="four"
 |   "four"
-| "
-"
+| "\n"
 
 'two' should appear as a new <li> after 'four':
-| "
-"
+| "\n"
 | <li>
 |   id="one"
 |   "one"
@@ -33,8 +30,7 @@ The original list looks like this. 'two' is selected and is going to be dropped 
 | <li>
 |   id="two"
 |   "two"
-| "
-"
+| "\n"
 
 The original list looks like this. 'two' and 'three' are selected and are going to be dropped after 'four':
 | <li>

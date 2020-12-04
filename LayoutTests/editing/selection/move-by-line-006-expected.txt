@@ -1,10 +1,5 @@
-| "
-aaaa aaaa
-"
+| "\naaaa aaaa\n"
 | <span>
 |   style="border-style: dashed; background-color: #000"
-|   "
-aaaa aaaa aaaa <#selection-caret>aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa
-aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa"
-| "
-"
+|   "\naaaa aaaa aaaa <#selection-caret>aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa\naaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa"
+| "\n"

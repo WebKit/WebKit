@@ -10,22 +10,16 @@ After pasting line 2 (table A):
 | <br>
 | <table>
 |   border="1"
-|   "
-"
+|   "\n"
 |   <tbody>
-|     "
-"
+|     "\n"
 |     <tr>
-|       "
-"
+|       "\n"
 |       <td>
 |         "line 2 table A"
-|       "
-"
-|     "
-"
-|   "
-"
+|       "\n"
+|     "\n"
+|   "\n"
 | <#selection-caret>
 
 After typing ling 3:
@@ -33,22 +27,16 @@ After typing ling 3:
 | <br>
 | <table>
 |   border="1"
-|   "
-"
+|   "\n"
 |   <tbody>
-|     "
-"
+|     "\n"
 |     <tr>
-|       "
-"
+|       "\n"
 |       <td>
 |         "line 2 table A"
-|       "
-"
-|     "
-"
-|   "
-"
+|       "\n"
+|     "\n"
+|   "\n"
 | "line 3<#selection-caret>"
 
 After pasting ling 4 (table B):
@@ -56,45 +44,32 @@ After pasting ling 4 (table B):
 | <br>
 | <table>
 |   border="1"
-|   "
-"
+|   "\n"
 |   <tbody>
-|     "
-"
+|     "\n"
 |     <tr>
-|       "
-"
+|       "\n"
 |       <td>
 |         "line 2 table A"
-|       "
-"
-|     "
-"
-|   "
-"
+|       "\n"
+|     "\n"
+|   "\n"
 | "line 3"
 | <table>
 |   border="1"
-|   "
-"
+|   "\n"
 |   <tbody>
-|     "
-"
+|     "\n"
 |     <tr>
-|       "
-"
+|       "\n"
 |       <td>
 |         "line 4"
-|       "
-"
+|       "\n"
 |       <td>
 |         "table B"
-|       "
-"
-|     "
-"
-|   "
-"
+|       "\n"
+|     "\n"
+|   "\n"
 | <#selection-caret>
 
 After typing ling 5:
@@ -102,43 +77,30 @@ After typing ling 5:
 | <br>
 | <table>
 |   border="1"
-|   "
-"
+|   "\n"
 |   <tbody>
-|     "
-"
+|     "\n"
 |     <tr>
-|       "
-"
+|       "\n"
 |       <td>
 |         "line 2 table A"
-|       "
-"
-|     "
-"
-|   "
-"
+|       "\n"
+|     "\n"
+|   "\n"
 | "line 3"
 | <table>
 |   border="1"
-|   "
-"
+|   "\n"
 |   <tbody>
-|     "
-"
+|     "\n"
 |     <tr>
-|       "
-"
+|       "\n"
 |       <td>
 |         "line 4"
-|       "
-"
+|       "\n"
 |       <td>
 |         "table B"
-|       "
-"
-|     "
-"
-|   "
-"
+|       "\n"
+|     "\n"
+|   "\n"
 | "line 5<#selection-caret>"

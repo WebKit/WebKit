@@ -2,14 +2,12 @@ This tests copying and pasting doesn't strip content.
 To manually test, copy the content in the first box and paste it into the second box.
 
 Original content:
-| "
-"
+| "\n"
 | <font>
 |   face="Verdana"
 |   "hello "
 | <br>
-| "
-"
+| "\n"
 | <font>
 |   face="Verdana"
 |   <div>
@@ -18,15 +16,13 @@ Original content:
 |       <font>
 |         face="Verdana"
 |         "world"
-|     "
-"
+|     "\n"
 |     <div>
 |       style="-webkit-line-break: after-white-space; "
 |       <font>
 |         face="Verdana"
 |         "WebKit"
-|   "
-"
+|   "\n"
 
 Pasted content:
 | <font>

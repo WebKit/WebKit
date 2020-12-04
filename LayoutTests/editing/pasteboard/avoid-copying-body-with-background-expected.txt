@@ -1,16 +1,13 @@
 This test copies and pastes content inside a body with background and text-decoration properties. WebKit should not nest body.
-| "
-"
+| "\n"
 | <ul>
-|   "
-"
+|   "\n"
 |   <li>
 |     "hello, world "
 |     <a>
 |       href="http://www.webkit.org/"
 |       "WebKit"
-|   "
-"
+|   "\n"
 |   <li>
 |     "Copied content"
 |   <li>
@@ -20,9 +17,6 @@ This test copies and pastes content inside a body with background and text-decor
 |       "WebKit"
 |   <li>
 |     "Copied content<#selection-caret>"
-|   "
-"
-| "
-"
-| "
-"
+|   "\n"
+| "\n"
+| "\n"

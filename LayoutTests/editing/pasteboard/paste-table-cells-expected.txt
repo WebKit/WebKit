@@ -9,8 +9,7 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 
 After copy:
-| "
-"
+| "\n"
 | <table>
 |   <tbody>
 |     <tr>
@@ -20,19 +19,14 @@ After copy:
 |       <td>
 |         id="test2"
 |         "world<#selection-focus>"
-| "
-"
+| "\n"
 | <div>
 |   id="target"
 |   "replaceme"
-| "
-
-
-"
+| "\n\n\n"
 
 Before paste:
-| "
-"
+| "\n"
 | <table>
 |   <tbody>
 |     <tr>
@@ -42,19 +36,14 @@ Before paste:
 |       <td>
 |         id="test2"
 |         "world"
-| "
-"
+| "\n"
 | <div>
 |   id="target"
 |   "<#selection-anchor>replaceme<#selection-focus>"
-| "
-
-
-"
+| "\n\n\n"
 
 After paste:
-| "
-"
+| "\n"
 | <table>
 |   <tbody>
 |     <tr>
@@ -64,8 +53,7 @@ After paste:
 |       <td>
 |         id="test2"
 |         "world"
-| "
-"
+| "\n"
 | <div>
 |   id="target"
 |   <table>
@@ -77,7 +65,4 @@ After paste:
 |         <td>
 |           id="test2"
 |           "world<#selection-caret>"
-| "
-
-
-"
+| "\n\n\n"

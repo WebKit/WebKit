@@ -4,9 +4,7 @@ Dump of markup 1:
 |   <shadow:root>
 |     <div>
 |       contenteditable="plaintext-only"
-|       "Here is an emoticon [:)], some more text [sample text], an empty alt tag [], no alt tag [] and two consecutive images [firstsecond].
-
-"
+|       "Here is an emoticon [:)], some more text [sample text], an empty alt tag [], no alt tag [] and two consecutive images [firstsecond].\n\n"
 
 Dump of markup 2:
 | <div>

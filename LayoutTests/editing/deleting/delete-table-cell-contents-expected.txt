@@ -11,5 +11,4 @@ This tests for a crash when deleting the contents of a table cell. Below, you sh
 |         <a>
 |           href="fakelink.html"
 |           "Cached<#selection-caret>"
-| "
-"
+| "\n"

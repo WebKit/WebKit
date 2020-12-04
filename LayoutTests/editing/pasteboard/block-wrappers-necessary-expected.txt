@@ -26,25 +26,20 @@ Applying block styles, like text-align, used to wrap paragraphs that needed bloc
 
 
 Before cut:
-| "
-"
+| "\n"
 | <div>
 |   class="editing"
 |   id="test"
-|   "
-"
+|   "\n"
 |   <center>
-|     "
-"
+|     "\n"
 |     <p>
-|       "
-<#selection-anchor>This is an "
+|       "\n<#selection-anchor>This is an "
 |       <b>
 |         "interactive"
 |       " documentation site, so please help out by posting any useful information that you've had to search out."
 |       <br>
-|       "
-(Adding to this "
+|       "\n(Adding to this "
 |       <a>
 |         href="db.cgi?Wiki_Is_So_Easy"
 |         "wiki is so easy"
@@ -54,59 +49,44 @@ Before cut:
 |         "Wiki Reference"
 |       " for text formatting syntax."
 |       <br>
-|       "
-Info for setting up your own wiki is at "
+|       "\nInfo for setting up your own wiki is at "
 |       <a>
 |         href="db.cgi?About_Howto.Apple.Com"
 |         "about howto.apple.com"
 |       "."
 |       <br>
-|       "
-Check out a cool wiki editor application that helps in wiki generation: "
+|       "\nCheck out a cool wiki editor application that helps in wiki generation: "
 |       <a>
 |         href="db.cgi?Wikinator"
 |         "Wikinator"
-|       "
-"
+|       "\n"
 |     <p>
-|       "
-Start browsing the topics below, or use the search field at the bottom of every page.<#selection-focus>
-"
-|   "
-"
-| "
-"
+|       "\nStart browsing the topics below, or use the search field at the bottom of every page.<#selection-focus>\n"
+|   "\n"
+| "\n"
 
 After cut:
-| "
-"
+| "\n"
 | <div>
 |   class="editing"
 |   id="test"
-|   "
-"
+|   "\n"
 |   <center>
-|     "
-"
+|     "\n"
 |     <p>
 |       <#selection-caret>
 |       <br>
-|   "
-"
-| "
-"
+|   "\n"
+| "\n"
 
 After paste (this should be identical to before cut):
-| "
-"
+| "\n"
 | <div>
 |   class="editing"
 |   id="test"
-|   "
-"
+|   "\n"
 |   <center>
-|     "
-"
+|     "\n"
 |     <p>
 |       "This is an "
 |       <b>
@@ -141,7 +121,5 @@ After paste (this should be identical to before cut):
 |         "Wikinator"
 |     <p>
 |       "Start browsing the topics below, or use the search field at the bottom of every page.<#selection-caret>"
-|   "
-"
-| "
-"
+|   "\n"
+| "\n"

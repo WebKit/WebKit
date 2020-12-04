@@ -10,8 +10,7 @@ EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
 
 You should see aax\tz below:
-| "
-"
+| "\n"
 | <span>
 |   id="test"
 |   "aax<#selection-caret>"
@@ -20,5 +19,4 @@ You should see aax\tz below:
 |     style="white-space:pre"
 |     "			"
 |   "z"
-| "
-"
+| "\n"

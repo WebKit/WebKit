@@ -2,16 +2,9 @@
 |   <head>
 |     <script>
 |       src="../../resources/dump-as-markup.js"
-|     "
-"
+|     "\n"
 |     <script>
-|       "
-var kDepth = 100;
-
-for (var i=0; i < kDepth; ++i) {
-    document.write("<b><div>");
-}
-"
+|       "\nvar kDepth = 100;\n\nfor (var i=0; i < kDepth; ++i) {\n    document.write("<b><div>");\n}\n"
 |   <body>
 |     <b>
 |       <div>
@@ -219,15 +212,7 @@ for (var i=0; i < kDepth; ++i) {
 |                                                                                                                                                                                                                                                                                                                                                                                                               <b>
 |                                                                                                                                                                                                                                                                                                                                                                                                                 <b>
 |                                                                                                                                                                                                                                                                                                                                                                                                                   <b>
-|                                                                                                                                                                                                                                                                                                                                                                                                                     "
-This test creates a nutty dom by abusing the residual style algorithm.  It's
-unclear exactly what DOM we should create here, but we shouldn't hang.
-"
+|                                                                                                                                                                                                                                                                                                                                                                                                                     "\nThis test creates a nutty dom by abusing the residual style algorithm.  It's\nunclear exactly what DOM we should create here, but we shouldn't hang.\n"
 |                                                                                                                                                                                                                                                                                                                                                                                                                     <script>
-|                                                                                                                                                                                                                                                                                                                                                                                                                       "
-for (var i=0; i < kDepth; ++i) {
-    document.write("</b>");
-}
-"
-|                                                                                                                                                                                                                                                                                                                                                                                                               "
-"
+|                                                                                                                                                                                                                                                                                                                                                                                                                       "\nfor (var i=0; i < kDepth; ++i) {\n    document.write("</b>");\n}\n"
+|                                                                                                                                                                                                                                                                                                                                                                                                               "\n"

@@ -12,8 +12,7 @@ EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
 
 You should see a\tax\t\tz below:
-| "
-"
+| "\n"
 | <span>
 |   id="test"
 |   "a"
@@ -27,5 +26,4 @@ You should see a\tax\t\tz below:
 |     style="white-space:pre"
 |     "		"
 |   "z"
-| "
-"
+| "\n"

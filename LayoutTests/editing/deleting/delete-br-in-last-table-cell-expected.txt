@@ -1,37 +1,22 @@
 | <html>
 |   <head>
-|     "
-"
+|     "\n"
 |     <script>
 |       language="JavaScript"
 |       src="../../resources/dump-as-markup.js"
 |       type="text/JavaScript"
-|     "
-"
+|     "\n"
 |     <script>
 |       language="JavaScript"
 |       src="../editing.js"
 |       type="text/JavaScript"
-|     "
-"
+|     "\n"
 |     <script>
-|       "
-function runTest()
-{
-    br = document.getElementById("lastBR");
-    sel = window.getSelection();
-    sel.setBaseAndExtent(br, 0, br, 0);
-    deleteCommand();
-}
-"
-|     "
-"
-|   "
-
-"
+|       "\nfunction runTest()\n{\n    br = document.getElementById("lastBR");\n    sel = window.getSelection();\n    sel.setBaseAndExtent(br, 0, br, 0);\n    deleteCommand();\n}\n"
+|     "\n"
+|   "\n\n"
 |   <body>
-|     "
-"
+|     "\n"
 |     <p>
 |       <a>
 |         href="https://bugs.webkit.org/show_bug.cgi?id=35369"
@@ -40,16 +25,13 @@ function runTest()
 |       <a>
 |         href="https://bugs.webkit.org/show_bug.cgi?id=35632"
 |         "Bug 35632"
-|     "
-"
+|     "\n"
 |     <p>
 |       "Executing a delete command when positioned before a BR in a table cell (esp. the last)"
-|     "
-"
+|     "\n"
 |     <div>
 |       contenteditable=""
-|       "
-"
+|       "\n"
 |       <table>
 |         id="table"
 |         <tbody>
@@ -65,15 +47,8 @@ function runTest()
 |               "4<#selection-caret>"
 |               <br>
 |                 id="lastBR"
-|       "
-"
-|     "
-"
+|       "\n"
+|     "\n"
 |     <script>
-|       "
-runTest();
-"
-|     "
-
-
-"
+|       "\nrunTest();\n"
+|     "\n\n\n"

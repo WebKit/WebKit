@@ -19,17 +19,14 @@ EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
 Test inserting paragraphs: should see "foo", then an empty line, then "bar" in the next line.
 Fix for this bug: <rdar://problem/3924579> REGRESSION (Mail): After deleting, hitting return key does not insert visible newline
-| "
-"
+| "\n"
 | <div>
 |   style="border: none; height: 12px"
-| "
-"
+| "\n"
 | <span>
 |   id="test"
 |   "foo"
 | <div>
 |   <br>
 | <div>
-|   "<#selection-caret>bar
-"
+|   "<#selection-caret>bar\n"

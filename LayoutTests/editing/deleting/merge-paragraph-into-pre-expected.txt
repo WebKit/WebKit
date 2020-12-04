@@ -10,7 +10,6 @@ EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
 This tests deleting line break after pre.
 WebKit should not cancel styles added by pre by those of document's default style.
-| "
-"
+| "\n"
 | <pre>
 |   "hello<#selection-caret>world"

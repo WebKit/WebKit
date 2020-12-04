@@ -344,6 +344,9 @@ Markup._getMarkupForTextNode = function(node)
     else if (startText)
         innerMarkup = innerMarkup.substring(0, startOffset) + startText + innerMarkup.substring(startOffset);
 
+    if (!Markup._useHTML5libOutputFormat)
+        innerMarkup = innerMarkup.replace(/\\/g, "\\\\").replace(/\n/g, "\\n");
+
     return innerMarkup;
 }
 

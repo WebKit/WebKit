@@ -1,41 +1,32 @@
 
 Indenting:
-| "
-"
+| "\n"
 | <pre>
 |   <ul>
 |     <li>
 |       "<#selection-anchor>hello<#selection-focus>"
-| "
-"
+| "\n"
 
 yields:
-| "
-"
+| "\n"
 | <pre>
 |   <ul>
 |     <ul>
 |       <li>
 |         "<#selection-anchor>hello<#selection-focus>"
-| "
-"
+| "\n"
 
 Indenting:
-| "
-"
+| "\n"
 | <pre>
 |   <ul>
 |     <li>
-|       "<#selection-anchor>hello
-world"
-|     "<#selection-focus>
-"
-| "
-"
+|       "<#selection-anchor>hello\nworld"
+|     "<#selection-focus>\n"
+| "\n"
 
 yields:
-| "
-"
+| "\n"
 | <pre>
 |   <ul>
 |     <ul>
@@ -43,27 +34,19 @@ yields:
 |         "<#selection-anchor>hello"
 |       <li>
 |         "world<#selection-focus>"
-|     "
-"
-| "
-"
+|     "\n"
+| "\n"
 
 Indenting:
-| "
-"
+| "\n"
 | <ul>
 |   <li>
 |     <pre>
-|       "<#selection-anchor>hello
-world
-webkit<#selection-focus>
-"
-| "
-"
+|       "<#selection-anchor>hello\nworld\nwebkit<#selection-focus>\n"
+| "\n"
 
 yields:
-| "
-"
+| "\n"
 | <ul>
 |   <li>
 |     <pre>
@@ -74,90 +57,62 @@ yields:
 |         "world"
 |         <br>
 |         "webkit<#selection-focus>"
-| "
-"
+| "\n"
 
 Indenting:
-| "
-"
+| "\n"
 | <ul>
 |   <li>
 |     <pre>
-|       "<#selection-anchor>hello<#selection-focus>
-world
-webkit
-"
-| "
-"
+|       "<#selection-anchor>hello<#selection-focus>\nworld\nwebkit\n"
+| "\n"
 
 yields:
-| "
-"
+| "\n"
 | <ul>
 |   <li>
 |     <pre>
 |       <blockquote>
 |         style="margin: 0 0 0 40px; border: none; padding: 0px;"
 |         "<#selection-anchor>hello<#selection-focus>"
-|       "world
-webkit
-"
-| "
-"
+|       "world\nwebkit\n"
+| "\n"
 
 Indenting:
-| "
-"
+| "\n"
 | <ul>
 |   <li>
 |     <pre>
-|       "hello
-<#selection-anchor>world<#selection-focus>
-webkit
-"
-| "
-"
+|       "hello\n<#selection-anchor>world<#selection-focus>\nwebkit\n"
+| "\n"
 
 yields:
-| "
-"
+| "\n"
 | <ul>
 |   <li>
 |     <pre>
-|       "hello
-"
+|       "hello\n"
 |       <blockquote>
 |         style="margin: 0 0 0 40px; border: none; padding: 0px;"
 |         "<#selection-anchor>world<#selection-focus>"
-|       "webkit
-"
-| "
-"
+|       "webkit\n"
+| "\n"
 
 Indenting:
-| "
-"
+| "\n"
 | <ul>
 |   <li>
 |     <pre>
-|       "hello
-world
-<#selection-anchor>webki<#selection-focus>t
-"
-| "
-"
+|       "hello\nworld\n<#selection-anchor>webki<#selection-focus>t\n"
+| "\n"
 
 yields:
-| "
-"
+| "\n"
 | <ul>
 |   <li>
 |     <pre>
-|       "hello
-world
-"
+|       "hello\nworld\n"
 |       <blockquote>
 |         style="margin: 0 0 0 40px; border: none; padding: 0px;"
 |         "<#selection-anchor>webki<#selection-focus>t"
-| "
-"
+| "\n"

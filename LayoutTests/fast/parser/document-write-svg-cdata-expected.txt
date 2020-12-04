@@ -2,16 +2,9 @@
 |   <head>
 |     <script>
 |       src="../../resources/dump-as-markup.js"
-|     "
-"
+|     "\n"
 |     <script>
-|       "
-document.write("<svg>");
-"
+|       "\ndocument.write("<svg>");\n"
 |   <body>
 |     <svg svg>
-|       "
-
-This should <strong>not</strong> be bold!
-
-"
+|       "\n\nThis should <strong>not</strong> be bold!\n\n"

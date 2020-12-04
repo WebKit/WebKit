@@ -1,6 +1,5 @@
 You should see "hello webKit" all in blue:
-| "
-"
+| "\n"
 | <p>
 |   <span>
 |     class="someClass"
@@ -14,5 +13,4 @@ You should see "hello webKit" all in blue:
 |   <span>
 |     style="color: blue; font-size: 12pt;"
 |     "ebKit"
-| "
-"
+| "\n"

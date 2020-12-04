@@ -18,8 +18,7 @@ before deletion:
 |   <#selection-caret>
 |   <br>
 | <br>
-| "
-"
+| "\n"
 
 after deletion:
 | "hello"
@@ -28,5 +27,4 @@ after deletion:
 |   id="test"
 |   <#selection-caret>
 |   <br>
-| "
-"
+| "\n"

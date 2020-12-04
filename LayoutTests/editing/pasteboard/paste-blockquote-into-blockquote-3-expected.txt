@@ -1,6 +1,5 @@
 This tests pasting a blockquote into a blockquote. Nothing below should be double-blockquoted.
-| "
-        "
+| "\n        "
 | <blockquote>
 |   type="cite"
 |   "one"
@@ -15,5 +14,4 @@ This tests pasting a blockquote into a blockquote. Nothing below should be doubl
 | <blockquote>
 |   type="cite"
 |   <br>
-| "
-    "
+| "\n    "

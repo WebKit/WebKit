@@ -9,12 +9,8 @@ EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
 This test uses FormatBlock with html brackets in the tag string passed to execCommand.
 
 Before FormatBlock with <h1>:
-| "
-Format Me
-"
+| "\nFormat Me\n"
 
 After FormatBlock with <h1>:
 | <h1>
-|   "
-<#selection-caret>Format Me
-"
+|   "\n<#selection-caret>Format Me\n"

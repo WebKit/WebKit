@@ -10,8 +10,7 @@ EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
 
 Markup before:
-| "
-"
+| "\n"
 | <b>
 |   <i>
 |     "<#selection-caret>hello bold and italic"
@@ -22,8 +21,7 @@ Markup before:
 |   <font>
 |     color="#ff0000"
 |     "hello red"
-| "
-"
+| "\n"
 
 Markup after:
 | <b>
@@ -36,5 +34,4 @@ Markup after:
 |   <font>
 |     color="#ff0000"
 |     "hello red<#selection-caret>"
-| "
-"
+| "\n"

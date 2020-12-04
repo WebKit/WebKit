@@ -8,8 +8,7 @@ EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
 This tests for a bug where pasted content starting with an interchange newline would end up
 outside of the editable region where it was pasted. You should see 'foo\nbar' below.
-| "
-"
+| "\n"
 | <div>
 |   contenteditable="true"
 |   id="test"
@@ -17,10 +16,6 @@ outside of the editable region where it was pasted. You should see 'foo\nbar' be
 |   <div>
 |     "bar<#selection-caret>"
 |     <br>
-| "
-non-editable
-"
+| "\nnon-editable\n"
 | <script>
-|   "
-runTest();
-"
+|   "\nrunTest();\n"

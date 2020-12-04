@@ -7,26 +7,21 @@ first test - after:
 | "1234שדגכ:<#selection-caret>"
 
 second test - before:
-| "
-"
+| "\n"
 | <div>
 |   "1234שדגכ:"
-| "
-"
+| "\n"
 | <div>
 |   style="direction: rtl;"
 |   "1234שדגכ:"
-| "
-"
+| "\n"
 
 second test - after:
-| "
-"
+| "\n"
 | <div>
 |   <div>
 |     "1234שדגכ:"
 |   <div>
 |     style="direction: rtl;"
 |     "1234שדגכ:<#selection-caret>"
-| "
-"
+| "\n"

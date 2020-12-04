@@ -49,9 +49,7 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 
 Before copy:
-| "
-
-"
+| "\n\n"
 | <div>
 |   class="editing"
 |   id="test"
@@ -66,16 +64,10 @@ Before copy:
 |       <div>
 |         class="editing"
 |         "Is bound in shallows and in miseries."
-| "
-
-
-
-"
+| "\n\n\n\n"
 
 After first paste:
-| "
-
-"
+| "\n\n"
 | <div>
 |   class="editing"
 |   id="test"
@@ -89,16 +81,10 @@ After first paste:
 |       <div>
 |         class="editing"
 |         "Is bound in shallows and in miseries."
-| "
-
-
-
-"
+| "\n\n\n\n"
 
 After second paste:
-| "
-
-"
+| "\n\n"
 | <div>
 |   class="editing"
 |   id="test"
@@ -114,8 +100,4 @@ After second paste:
 |       <div>
 |         class="editing"
 |         "Is bound in shallows and in miseries."
-| "
-
-
-
-"
+| "\n\n\n\n"

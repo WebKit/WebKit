@@ -4,9 +4,7 @@ Tests dump-as-markup for input and textarea forms.
 |   <head>
 |     <script>
 |       src="../../resources/dump-as-markup.js"
-|     "
-
-"
+|     "\n\n"
 |   <body>
 |     <input>
 |       value="original"
@@ -15,8 +13,7 @@ Tests dump-as-markup for input and textarea forms.
 |         <div>
 |           contenteditable="plaintext-only"
 |           "replaced"
-|     "
-"
+|     "\n"
 |     <textarea>
 |       this.value="replaced"
 |       "original"
@@ -24,14 +21,7 @@ Tests dump-as-markup for input and textarea forms.
 |         <div>
 |           contenteditable="plaintext-only"
 |           "replaced"
-|     "
-"
+|     "\n"
 |     <script>
-|       "
-Markup.description("Tests dump-as-markup for input and textarea forms.");
-
-document.getElementsByTagName("input")[0].value = "replaced";
-document.getElementsByTagName("textarea")[0].value = "replaced";
-"
-|     "
-"
+|       "\nMarkup.description("Tests dump-as-markup for input and textarea forms.");\n\ndocument.getElementsByTagName("input")[0].value = "replaced";\ndocument.getElementsByTagName("textarea")[0].value = "replaced";\n"
+|     "\n"

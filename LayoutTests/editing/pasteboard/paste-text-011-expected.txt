@@ -10,15 +10,13 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 There was a bug when pasting at the end of the block.
 The content was inserted at the start of the block instead of the end. This tests the insert-at-end case.
-| "
-"
+| "\n"
 | <p>
 |   <font>
 |     face="Monaco"
 |     <b>
 |       "hello"
-| "
-"
+| "\n"
 | <p>
 |   <font>
 |     face="Monaco"
@@ -34,7 +32,4 @@ The content was inserted at the start of the block instead of the end. This test
 |     face="Monaco"
 |     <b>
 |       "there<#selection-caret>"
-| "
-
-
-"
+| "\n\n\n"

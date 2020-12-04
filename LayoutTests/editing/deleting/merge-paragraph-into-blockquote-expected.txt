@@ -11,7 +11,6 @@ EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
 This tests deleting line break after blockquote.
 WebKit should not cancel styles added by blockquote by those of document's default style.
-| "
-"
+| "\n"
 | <blockquote>
 |   "hello<#selection-caret>world"

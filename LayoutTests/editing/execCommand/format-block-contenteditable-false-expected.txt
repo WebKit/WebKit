@@ -1,16 +1,10 @@
 formatblock on selection with a contenteditable="false" child.
 | <h1>
 |   <i>
-|     "
-        <#selection-anchor>Will select from here
-        "
+|     "\n        <#selection-anchor>Will select from here\n        "
 |   <br>
 |   <i>
-|     "
-        until here.<#selection-focus>
-    "
+|     "\n        until here.<#selection-focus>\n    "
 | <div>
 |   contenteditable="false"
-|   "
-            over this contenteditable=false div
-        "
+|   "\n            over this contenteditable=false div\n        "

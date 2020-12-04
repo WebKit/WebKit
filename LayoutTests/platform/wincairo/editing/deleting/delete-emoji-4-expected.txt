@@ -1,45 +1,34 @@
 This test verifies that deletions are correct over emoji groups and emoji with variations
 
 Dump of markup 1:
-| "
-🏃🏽‍♂️🏃🏽‍♂🏃🏽🏃🏾‍♀️🏃🏾‍♀🏃🏾‍♂️🏃🏾‍♂🏃🏾🏃🏿‍♀️🏃🏿‍♀<#selection-caret>
-"
+| "\n🏃🏽‍♂️🏃🏽‍♂🏃🏽🏃🏾‍♀️🏃🏾‍♀🏃🏾‍♂️🏃🏾‍♂🏃🏾🏃🏿‍♀️🏃🏿‍♀<#selection-caret>\n"
 
 Dump of markup 2:
-| "
-🏃🏽‍♂️🏃🏽‍♂🏃🏽🏃🏾‍♀️🏃🏾‍♀🏃🏾‍♂️🏃🏾‍♂🏃🏾🏃🏿‍♀️<#selection-caret>"
+| "\n🏃🏽‍♂️🏃🏽‍♂🏃🏽🏃🏾‍♀️🏃🏾‍♀🏃🏾‍♂️🏃🏾‍♂🏃🏾🏃🏿‍♀️<#selection-caret>"
 
 Dump of markup 3:
-| "
-🏃🏽‍♂️🏃🏽‍♂🏃🏽🏃🏾‍♀️🏃🏾‍♀🏃🏾‍♂️🏃🏾‍♂🏃🏾<#selection-caret>"
+| "\n🏃🏽‍♂️🏃🏽‍♂🏃🏽🏃🏾‍♀️🏃🏾‍♀🏃🏾‍♂️🏃🏾‍♂🏃🏾<#selection-caret>"
 
 Dump of markup 4:
-| "
-🏃🏽‍♂️🏃🏽‍♂🏃🏽🏃🏾‍♀️🏃🏾‍♀🏃🏾‍♂️🏃🏾‍♂<#selection-caret>"
+| "\n🏃🏽‍♂️🏃🏽‍♂🏃🏽🏃🏾‍♀️🏃🏾‍♀🏃🏾‍♂️🏃🏾‍♂<#selection-caret>"
 
 Dump of markup 5:
-| "
-🏃🏽‍♂️🏃🏽‍♂🏃🏽🏃🏾‍♀️🏃🏾‍♀🏃🏾‍♂️<#selection-caret>"
+| "\n🏃🏽‍♂️🏃🏽‍♂🏃🏽🏃🏾‍♀️🏃🏾‍♀🏃🏾‍♂️<#selection-caret>"
 
 Dump of markup 6:
-| "
-🏃🏽‍♂️🏃🏽‍♂🏃🏽🏃🏾‍♀️🏃🏾‍♀<#selection-caret>"
+| "\n🏃🏽‍♂️🏃🏽‍♂🏃🏽🏃🏾‍♀️🏃🏾‍♀<#selection-caret>"
 
 Dump of markup 7:
-| "
-🏃🏽‍♂️🏃🏽‍♂🏃🏽🏃🏾‍♀️<#selection-caret>"
+| "\n🏃🏽‍♂️🏃🏽‍♂🏃🏽🏃🏾‍♀️<#selection-caret>"
 
 Dump of markup 8:
-| "
-🏃🏽‍♂️🏃🏽‍♂🏃🏽<#selection-caret>"
+| "\n🏃🏽‍♂️🏃🏽‍♂🏃🏽<#selection-caret>"
 
 Dump of markup 9:
-| "
-🏃🏽‍♂️🏃🏽‍♂<#selection-caret>"
+| "\n🏃🏽‍♂️🏃🏽‍♂<#selection-caret>"
 
 Dump of markup 10:
-| "
-🏃🏽‍♂️<#selection-caret>"
+| "\n🏃🏽‍♂️<#selection-caret>"
 
 Dump of markup 11:
 | <#selection-caret>

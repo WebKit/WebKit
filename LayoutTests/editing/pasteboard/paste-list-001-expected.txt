@@ -11,26 +11,20 @@ EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 21 of #text > LI > OL 
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
-| "
-"
+| "\n"
 | <span>
 |   id="test"
 |   "Empty list item"
-| "
-"
+| "\n"
 | <p>
-|   "
-"
+|   "\n"
 | <ol>
-|   "
-    "
+|   "\n    "
 |   <li>
 |     "I should be number 1."
-|   "
-    "
+|   "\n    "
 |   <li>
-|   "
-    "
+|   "\n    "
 |   <li>
 |     "I should be number 3."
 |   <li>
@@ -38,7 +32,5 @@ EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
 |   <li>
 |   <li>
 |     "I should be number 3.<#selection-caret>"
-|   "
-"
-| "
-"
+|   "\n"
+| "\n"

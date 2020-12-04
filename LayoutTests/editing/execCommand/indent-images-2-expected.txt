@@ -6,7 +6,5 @@ This test indents insides a document with exactly two image elements.
 |     <img>
 |     <img>
 |     <#selection-caret>
-| "
-"
-| "
-"
+| "\n"
+| "\n"

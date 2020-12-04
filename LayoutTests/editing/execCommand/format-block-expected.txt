@@ -15,16 +15,13 @@ EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
 This test uses FormatBlock to modify three of the paragraphs below
 
 Before FormatBlock:
-| "
-"
+| "\n"
 | <p>
 |   id="item1"
 |   "Make Pre"
-| "
-"
+| "\n"
 | <br>
-| "
-"
+| "\n"
 | <div>
 |   "Foo"
 |   <br>
@@ -33,27 +30,21 @@ Before FormatBlock:
 |     "Make h1"
 |   <br>
 |   "baz"
-| "
-"
+| "\n"
 | <br>
-| "
-"
+| "\n"
 | <address>
 |   id="item3"
 |   "Attempt to apply the current formatting here"
-| "
-"
+| "\n"
 
 After FormatBlock:
-| "
-"
+| "\n"
 | <pre>
 |   "Make Pre"
-| "
-"
+| "\n"
 | <br>
-| "
-"
+| "\n"
 | <div>
 |   "Foo"
 |   <br>
@@ -62,13 +53,10 @@ After FormatBlock:
 |       id="item2"
 |       "Make h1"
 |   "baz"
-| "
-"
+| "\n"
 | <br>
-| "
-"
+| "\n"
 | <address>
 |   id="item3"
 |   "<#selection-caret>Attempt to apply the current formatting here"
-| "
-"
+| "\n"

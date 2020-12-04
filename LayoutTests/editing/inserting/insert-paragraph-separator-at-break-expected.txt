@@ -10,5 +10,4 @@ After:
 |   <br>
 |   "and press return"
 | <br>
-| "
-"
+| "\n"

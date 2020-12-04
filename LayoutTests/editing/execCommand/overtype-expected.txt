@@ -1,8 +1,7 @@
 This is a test for Overwrite mode
 
 These are the original contents:
-| "
-"
+| "\n"
 | <b>
 |   "foo"
 | <a>
@@ -10,12 +9,10 @@ These are the original contents:
 |   <div>
 |     id="linkText"
 |     "bar"
-| "
-"
+| "\n"
 
 After overwritting the first character:
-| "
-"
+| "\n"
 | <b>
 |   "F<#selection-caret>oo"
 | <a>
@@ -23,12 +20,10 @@ After overwritting the first character:
 |   <div>
 |     id="linkText"
 |     "bar"
-| "
-"
+| "\n"
 
 After inserting a blank:
-| "
-"
+| "\n"
 | <b>
 |   "F <#selection-caret>o"
 | <a>
@@ -36,12 +31,10 @@ After inserting a blank:
 |   <div>
 |     id="linkText"
 |     "bar"
-| "
-"
+| "\n"
 
 After inserting a blank at the line end:
-| "
-"
+| "\n"
 | <b>
 |   "F o <#selection-caret>"
 | <a>
@@ -49,12 +42,10 @@ After inserting a blank at the line end:
 |   <div>
 |     id="linkText"
 |     "bar"
-| "
-"
+| "\n"
 
 Overwrite at the end of a line performs as a normal Insert:
-| "
-"
+| "\n"
 | <b>
 |   "F o SOME MORE<#selection-caret>"
 | <a>
@@ -62,12 +53,10 @@ Overwrite at the end of a line performs as a normal Insert:
 |   <div>
 |     id="linkText"
 |     "bar"
-| "
-"
+| "\n"
 
 Overwritting works even if the inserted text is longer than the replaced text:
-| "
-"
+| "\n"
 | <b>
 |   "F o SOME MORE"
 | <a>
@@ -75,12 +64,10 @@ Overwritting works even if the inserted text is longer than the replaced text:
 |   <div>
 |     id="linkText"
 |     "BAR.BAR<#selection-caret>"
-| "
-"
+| "\n"
 
 Overwrite should create new text nodes on demand:
-| "
-"
+| "\n"
 | <b>
 |   "F o SOME MORE"
 | <div>
@@ -90,8 +77,7 @@ Overwrite should create new text nodes on demand:
 |     "BAR.BAR"
 |   <br>
 |   "TEXT IN NEW NODE<#selection-caret>"
-| "
-"
+| "\n"
 
 New plain text contents with an inner selection:
 | "we<#selection-anchor>bk<#selection-focus>it"

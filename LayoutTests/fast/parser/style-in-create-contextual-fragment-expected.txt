@@ -2,24 +2,15 @@
 |   <head>
 |     <script>
 |       src="../../resources/dump-as-markup.js"
-|     "
-"
+|     "\n"
 |   <body>
-|     "
-"
+|     "\n"
 |     <script>
-|       "
-var range = document.createRange();
-range.selectNode(document.body);
-var documentFragment = range.createContextualFragment("<title>hi</title><style></style><body>XXX<div>ttt</div></body>");
-document.body.appendChild(documentFragment);
-"
+|       "\nvar range = document.createRange();\nrange.selectNode(document.body);\nvar documentFragment = range.createContextualFragment("<title>hi</title><style></style><body>XXX<div>ttt</div></body>");\ndocument.body.appendChild(documentFragment);\n"
 |     <title>
 |       "hi"
 |     <style>
 |     "XXX"
 |     <div>
 |       "ttt"
-|     "
-
-"
+|     "\n\n"

@@ -17,5 +17,4 @@ pasted html:
 |     "WebKit <#selection-caret>"
 
 text/plain:
-| "hello world
-WebKit "
+| "hello world\nWebKit "

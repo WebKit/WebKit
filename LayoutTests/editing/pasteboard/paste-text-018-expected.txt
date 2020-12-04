@@ -34,27 +34,21 @@ Should see two lines of text below, self-documenting themselves as "line one" an
 
 
 After copy:
-| "
-"
+| "\n"
 | <div>
 |   class="editing"
 |   id="test"
 |   <#selection-caret>
 |   <br>
-|   "line two
-"
-| "
-"
+|   "line two\n"
+| "\n"
 
 After paste:
-| "
-"
+| "\n"
 | <div>
 |   class="editing"
 |   id="test"
 |   "line one<#selection-caret>"
 |   <br>
-|   "line two
-"
-| "
-"
+|   "line two\n"
+| "\n"

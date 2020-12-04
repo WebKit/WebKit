@@ -7,19 +7,15 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 5 of BODY > HTML > #document to 5 of BODY > HTML > #document toDOMRange:range from 3 of #text > DIV > DIV > BODY > HTML > #document to 3 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
-| "
-These demonstrate 11475: the '\n's at the end of the fragment should be unrendered."
+| "\nThese demonstrate 11475: the '\\n's at the end of the fragment should be unrendered."
 | <br>
 | <div>
 |   "This test checks that pasing in a combination of nested blocks where one starts with a text field doesn't crash or fail assertions."
-| "
-"
+| "\n"
 | <div>
-|   "
-"
+|   "\n"
 |   <div>
-|     "
-"
+|     "\n"
 |     <textarea>
 |       this.value=" "
 |       " "
@@ -27,9 +23,5 @@ These demonstrate 11475: the '\n's at the end of the fragment should be unrender
 |         <div>
 |           contenteditable="plaintext-only"
 |           " "
-|     "
-x<#selection-caret>
-"
-| "
-
-"
+|     " \nx<#selection-caret>\n"
+| "\n\n"

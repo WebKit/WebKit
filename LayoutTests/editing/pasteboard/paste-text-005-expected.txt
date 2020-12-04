@@ -50,36 +50,28 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 
 Before copy:
-| "
-"
+| "\n"
 | <div>
 |   class="editing"
 |   id="test"
 |   "There <#selection-anchor>is a tide in the affairs of men,"
-| "
-"
+| "\n"
 | <div>
 |   class="editing"
 |   <#selection-focus>
 |   "Which taken at the flood leads on to fortune."
-| "
-"
+| "\n"
 | <div>
 |   class="editing"
 |   "Omitted, all the voyage of their life,"
-| "
-"
+| "\n"
 | <div>
 |   class="editing"
 |   "Is bound in shallows and in miseries."
-| "
-
-
-"
+| "\n\n\n"
 
 After first paste:
-| "
-"
+| "\n"
 | <div>
 |   class="editing"
 |   id="test"
@@ -87,24 +79,18 @@ After first paste:
 | <div>
 |   class="editing"
 |   "<#selection-caret>Which taken at the flood leads on to fortune."
-| "
-"
+| "\n"
 | <div>
 |   class="editing"
 |   "Omitted, all the voyage of their life,"
-| "
-"
+| "\n"
 | <div>
 |   class="editing"
 |   "Is bound in shallows and in miseries."
-| "
-
-
-"
+| "\n\n\n"
 
 After second paste:
-| "
-"
+| "\n"
 | <div>
 |   class="editing"
 |   id="test"
@@ -116,17 +102,12 @@ After second paste:
 | <div>
 |   class="editing"
 |   "<#selection-caret>Which taken at the flood leads on to fortune."
-| "
-"
+| "\n"
 | <div>
 |   class="editing"
 |   "Omitted, all the voyage of their life,"
-| "
-"
+| "\n"
 | <div>
 |   class="editing"
 |   "Is bound in shallows and in miseries."
-| "
-
-
-"
+| "\n\n\n"

@@ -9,10 +9,8 @@ EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
 This tests deleting line break before p.
 "world" in "helloworld" should be italicized in red.
-| "
-hello<#selection-caret>"
+| "\nhello<#selection-caret>"
 | <span>
 |   style="color: red; font-style: italic;"
 |   "world"
-| "
-"
+| "\n"

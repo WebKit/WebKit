@@ -13,38 +13,32 @@ EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
 This demonstrates a bug: copying an empty line that's implemented with a br doesn't put an interchange newline on the pasteboard.  There should be two blank lines after the 'a'.
 
 Before paste:
-| "
-"
+| "\n"
 | <div>
 |   class="editing"
 |   "a"
 |   <br>
 |   <br>
 |   "b"
-| "
-"
+| "\n"
 | <div>
 |   class="editing"
 |   <#selection-caret>
-| "
-"
+| "\n"
 
 After paste:
-| "
-"
+| "\n"
 | <div>
 |   class="editing"
 |   "a"
 |   <br>
 |   <br>
 |   "b"
-| "
-"
+| "\n"
 | <div>
 |   class="editing"
 |   "a"
 |   <br>
 |   <#selection-caret>
 |   <br>
-| "
-"
+| "\n"

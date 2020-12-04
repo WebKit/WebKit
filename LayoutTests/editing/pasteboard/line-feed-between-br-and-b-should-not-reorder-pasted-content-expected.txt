@@ -23,42 +23,32 @@ plain
 
 
 Before cut:
-| "
-"
+| "\n"
 | <div>
 |   class="editing"
 |   id="test"
-|   "
-"
+|   "\n"
 |   <#selection-anchor>
 |   <br>
-|   "
-"
+|   "\n"
 |   <b>
 |     "bold"
 |     <br>
-|     "
-"
-|   "
-plain<#selection-focus>
-"
-| "
-"
+|     "\n"
+|   "\nplain<#selection-focus>\n"
+| "\n"
 
 After cut:
-| "
-"
+| "\n"
 | <div>
 |   class="editing"
 |   id="test"
 |   <#selection-caret>
 |   <br>
-| "
-"
+| "\n"
 
 After paste:
-| "
-"
+| "\n"
 | <div>
 |   class="editing"
 |   id="test"
@@ -68,5 +58,4 @@ After paste:
 |     <br>
 |   "plain<#selection-caret>"
 |   <br>
-| "
-"
+| "\n"

@@ -1,6 +1,5 @@
 This test ensures WebKit inserts a paragraph separator properly at the end of a tab span.
-| "
-"
+| "\n"
 | <span>
 |   class="Apple-tab-span"
 |   style="white-space:pre"
@@ -8,8 +7,7 @@ This test ensures WebKit inserts a paragraph separator properly at the end of a 
 | <div>
 |   <#selection-caret>
 |   <br>
-|   "
-"
+|   "\n"
 |   <span>
 |     class="Apple-style-span"
 |     <span>

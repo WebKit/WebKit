@@ -2,8 +2,7 @@
 |   <head>
 |     <script>
 |       src="../../resources/dump-as-markup.js"
-|     "
-"
+|     "\n"
 |     <title>
 |       "hi"
 |     <style>
@@ -11,15 +10,7 @@
 |     <div>
 |       "ttt"
 |   <body>
-|     "
-"
+|     "\n"
 |     <script>
-|       "
-var range = document.createRange();
-range.selectNode(document.head);
-var documentFragment = range.createContextualFragment("<title>hi</title><style></style><body>XXX<div>ttt</div></body>");
-document.head.appendChild(documentFragment);
-"
-|     "
-
-"
+|       "\nvar range = document.createRange();\nrange.selectNode(document.head);\nvar documentFragment = range.createContextualFragment("<title>hi</title><style></style><body>XXX<div>ttt</div></body>");\ndocument.head.appendChild(documentFragment);\n"
+|     "\n\n"

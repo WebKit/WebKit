@@ -22,29 +22,23 @@ Should see the three lines in the red box. First line should be "A". Next two li
 be blinking on the second line (the first blank one).
 
 
-| "
-"
+| "\n"
 | <div>
 |   class="editing"
 |   id="test"
-|   "
-"
+|   "\n"
 |   <p>
 |     style="margin-top: 0; margin-bottom: 0"
 |     "A"
-|   "
-"
+|   "\n"
 |   <p>
 |     style="margin-top: 0; margin-bottom: 0"
 |     <#selection-caret>
 |     <br>
-|   "
-"
+|   "\n"
 |   <p>
 |     style="margin-top: 0; margin-bottom: 0"
 |     <br>
 |       class="webkit-block-placeholder"
-|   "
-"
-| "
-"
+|   "\n"
+| "\n"

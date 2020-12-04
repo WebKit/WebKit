@@ -4,7 +4,5 @@ Indentation should fail because the root editable element is inline.
 |   contenteditable=""
 |   <img>
 |   <img>
-| "
-"
-| "
-"
+| "\n"
+| "\n"

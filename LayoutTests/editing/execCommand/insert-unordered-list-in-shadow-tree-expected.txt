@@ -4,14 +4,11 @@ Before:
 | <div>
 |   contenteditable=""
 |   id="editor"
-|   "
-    one"
+|   "\n    one"
 |   <br>
-|   "
-    two"
+|   "\n    two"
 |   <br>
-|   "
-"
+|   "\n"
 
 After:
 | <div>
@@ -24,5 +21,4 @@ After:
 |     <li>
 |       "two"
 |       <br>
-|   "
-"
+|   "\n"

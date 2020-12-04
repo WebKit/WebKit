@@ -1,32 +1,19 @@
 Buggy code before fix would insert blockquote after body element in second paste
 | <html>
 |   <head>
-|     "
-
-"
+|     "\n\n"
 |     <style>
-|       "
-.editing {
-    word-wrap: break-word;
-    -khtml-nbsp-mode: space;
-    -khtml-line-break: after-white-space;
-}
-"
-|     "
-
-"
+|       "\n.editing { \n    word-wrap: break-word; \n    -khtml-nbsp-mode: space; \n    -khtml-line-break: after-white-space;\n}\n"
+|     "\n\n"
 |     <title>
 |       "Editing Test"
-|     "
-"
-|   "
-"
+|     " \n"
+|   " \n"
 |   <body>
 |     class="editing"
 |     contenteditable=""
 |     id="test"
-|     "
-"
+|     "\n"
 |     <div>
 |       "foo"
 |       <blockquote>
@@ -34,19 +21,9 @@ Buggy code before fix would insert blockquote after body element in second paste
 |       "bazfoo"
 |     <blockquote>
 |       "bar"
-|     "baz<#selection-caret>
-
-"
+|     "baz<#selection-caret>\n\n"
 |     <script>
 |       src="../../resources/dump-as-markup.js"
-|     "
-"
+|     "\n"
 |     <script>
-|       "
-    document.execCommand("SelectAll");
-    document.execCommand("Cut");
-    document.execCommand("Paste");
-    document.execCommand("Paste");
-    Markup.description("Buggy code before fix would insert blockquote after body element in second paste");
-    Markup.dump();
-"
+|       "\n    document.execCommand("SelectAll");\n    document.execCommand("Cut");\n    document.execCommand("Paste");\n    document.execCommand("Paste");\n    Markup.description("Buggy code before fix would insert blockquote after body element in second paste");\n    Markup.dump();\n"

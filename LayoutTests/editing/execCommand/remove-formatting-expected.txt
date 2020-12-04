@@ -10,16 +10,14 @@ EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
 This is a test for execCommand("RemoveFormat"). It demonstrates a bug: everything in the editable region below should be selected, as everything was selected before Remove Format was performed.
 
 markup:
-| "
-"
+| "\n"
 | "<#selection-anchor>foo"
 | <a>
 |   href="http://www.google.com/"
 |   "bar"
 | "baz"
 | <br>
-| "
-"
+| "\n"
 | <table>
 |   border="1"
 |   <tbody>
@@ -30,14 +28,12 @@ markup:
 |         "bar"
 |       <td>
 |         "baz"
-| "
-"
+| "\n"
 | "foo"
 | "bar"
 | "baz<#selection-focus>"
 | <br>
-| "
-"
+| "\n"
 
 console:
 |

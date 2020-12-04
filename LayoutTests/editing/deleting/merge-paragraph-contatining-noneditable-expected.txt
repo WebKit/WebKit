@@ -2,12 +2,10 @@ This test verifies merging of second paragraph containing non-editable element w
 Expected behavior is on hitting backspace all three word (First, Second and Third) should be visible and merged at the end of first line.
 
 Before:
-| "
-        "
+| "\n        "
 | <p>
 |   "First Paragraph."
-| "
-        "
+| "\n        "
 | <p>
 |   id="paragraph"
 |   "<#selection-caret>First"
@@ -16,17 +14,14 @@ Before:
 |     contenteditable="false"
 |     "Second"
 |   "Third"
-| "
-    "
+| "\n    "
 
 After:
-| "
-        "
+| "\n        "
 | <p>
 |   "First Paragraph.<#selection-caret>First"
 |   <span>
 |     class="noteditable"
 |     "Second"
 |   "Third"
-| "
-    "
+| "\n    "

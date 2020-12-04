@@ -5,5 +5,4 @@ This tests inserting a text in the middle of a text node. You should see "1 Two 
 | <b>
 |   <i>
 |     " 3"
-| "
-"
+| "\n"

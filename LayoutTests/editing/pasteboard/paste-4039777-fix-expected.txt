@@ -11,42 +11,30 @@ EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
 Bug fix for <a href="rdar://problem/4039777">&lt;rdar://problem/4039777&gt;</a> Pasting particular snippet of HTML containing list items and a link creates too many list items
 
 Expected result:
-| "
-"
+| "\n"
 | <ul>
 |   style="text-align:right;"
 |   <li>
 |     "A"
-| "
-"
+| "\n"
 | <div>
-|   "
-    "
+|   "\n    "
 |   <ul>
-|     "
-        "
+|     "\n        "
 |     <li>
-|       "
-            "
+|       "\n            "
 |       <a>
 |         href=""
 |         "B"
-|       "
-            "
+|       "\n            "
 |       <br>
-|       "
-            C
-        "
-|     "
-    "
-|   "
-"
-| "
-"
+|       "\n            C \n        "
+|     "\n    "
+|   "\n"
+| "\n"
 
 Actual result:
-| "
-"
+| "\n"
 | <ul>
 |   style="text-align:right;"
 |   <li>
@@ -63,9 +51,6 @@ Actual result:
 |         "C<#selection-caret>"
 | <div>
 |   <ul>
-|     "
-    "
-|   "
-"
-| "
-"
+|     "\n    "
+|   "\n"
+| "\n"

@@ -43,48 +43,35 @@ EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 2 of P > DIV > BODY > 
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
-| "
-"
+| "\n"
 | <span>
 |   id="test"
 |   "Empty table cell"
-| "
-"
+| "\n"
 | <p>
-|   "
-"
+|   "\n"
 |   <table>
 |     border="2"
-|     "
-"
+|     "\n"
 |     <tbody>
 |       <tr>
-|         "
-    "
+|         "\n    "
 |         <td>
 |           "Left column"
-|         "
-    "
+|         "\n    "
 |         <td>
 |           "Right column"
-|         "
-"
-|       "
-"
+|         "\n"
+|       "\n"
 |       <tr>
-|         "
-    "
+|         "\n    "
 |         <td>
-|         "
-    "
+|         "\n    "
 |         <td>
 |           "I should be in the right column."
-|         "
-"
-|       "
-"
-|   "
-"
+|         "\n"
+|       "\n"
+|   "\n"
 | <table>
 |   border="2"
 |   <tbody>

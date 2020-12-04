@@ -6,8 +6,7 @@ in an editable area in an xhtml document and verifies that no script, handlers o
 
 
 Copied content:
-| "
-"
+| "\n"
 | <button>
 |   id="button1"
 |   onclick="sayHello()"
@@ -22,24 +21,20 @@ Copied content:
 |   href="javascript:sayHello()"
 |   id="anchor2"
 |   "Hello"
-| "
-"
+| "\n"
 | <script>
 |   style="display: block; position: fixed; top: 4000px"
 |   "alert('hello');"
-| "
-"
+| "\n"
 | <script>
 |   src="../editing.js"
 |   style="display: block; position: fixed; top: 4000px"
-| "
-"
+| "\n"
 | <iframe>
 |   id="iframe1"
 |   src="javascript:alert('hello')"
 |   style="width: 200px; height: 100px; background-color:#cee;"
-| "
-"
+| "\n"
 | <form>
 |   action="javascript:sayHello()"
 |   formaction="javascript:sayHello()"
@@ -49,9 +44,7 @@ Copied content:
 |   <button>
 |     formaction="javascript:sayHello()"
 |     "Submit."
-| "
-
-"
+| "\n\n"
 
 FRAME 0:
 | <head>

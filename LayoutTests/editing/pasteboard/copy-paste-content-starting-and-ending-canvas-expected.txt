@@ -2,30 +2,24 @@ This tests selecting all, copying, and pasting a content that starts and ends wi
 To manually test, copy and paste the content below:
 
 Before paste:
-| "
-"
+| "\n"
 | <#selection-anchor>
 | <canvas>
 |   height="100"
 |   style="border: 1px solid black"
 |   width="100"
-| "
-some text
-"
+| "\nsome text\n"
 | <canvas>
 |   height="100"
 |   style="border: 1px solid black"
 |   width="100"
-| "
-some more text
-"
+| "\nsome more text\n"
 | <canvas>
 |   height="100"
 |   style="border: 1px solid black"
 |   width="100"
 | <#selection-focus>
-| "
-"
+| "\n"
 
 After paste:
 | <canvas>

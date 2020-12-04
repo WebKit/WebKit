@@ -27,31 +27,26 @@ EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
 
 Markup before:
-| "
-"
+| "\n"
 | <span>
 |   style="background-color: rgb(255, 0, 0);"
 |   "<#selection-caret>Red background"
-| "
-"
+| "\n"
 | <div>
 |   id="test2"
 |   <span>
 |     style="background-color: green;"
 |     "Green background"
-| "
-"
+| "\n"
 | <div>
 |   id="test3"
 |   <span>
 |     style="background-color: rgb(255, 0, 0, 0);"
 |     "Transparent background"
-| "
-"
+| "\n"
 
 Markup after:
-| "
-"
+| "\n"
 | <span>
 |   style="background-color: rgb(255, 0, 0);"
 |   "Red background"
@@ -66,13 +61,11 @@ Markup after:
 |   <span>
 |     style="background-color: rgb(0, 128, 0);"
 |     "Green background"
-| "
-"
+| "\n"
 | <div>
 |   id="test3"
 |   <span>
 |     style="background-color: rgb(255, 0, 0, 0);"
 |     "Transparent background"
 |   "Transparent background<#selection-caret>"
-| "
-"
+| "\n"

@@ -8,8 +8,7 @@ EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
 This demonstrates a bug in interchange newline handling during paste.
 There is an interchange newline at the end of the incoming fragment and so the caret should end up on an empty line.
 The editable region is followed by non-editable content, which breaks the old code in paste that handled interchange newlines.
-| "
-"
+| "\n"
 | <div>
 |   contenteditable="true"
 |   id="test"
@@ -19,11 +18,6 @@ The editable region is followed by non-editable content, which breaks the old co
 |   <div>
 |     <#selection-caret>
 |     <br>
-| "
-This is non-editable content.
-
-"
+| "\nThis is non-editable content.\n\n"
 | <script>
-|   "
-runTest();
-"
+|   "\nrunTest();\n"

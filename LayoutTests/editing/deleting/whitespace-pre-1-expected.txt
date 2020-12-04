@@ -32,36 +32,22 @@ EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
 This tests for a bug in endOfLine.
 
 initial state:
-| "You should not see this paragraph unless the command has been undone.
-There should be three paragraphs in this editable region.
-The first one should be empty."
+| "You should not see this paragraph unless the command has been undone.\nThere should be three paragraphs in this editable region.\nThe first one should be empty."
 
 on mac:
-| "<#selection-caret>
-There should be three paragraphs in this editable region.
-The first one should be empty."
+| "<#selection-caret>\nThere should be three paragraphs in this editable region.\nThe first one should be empty."
 
 after undo on mac:
-| "<#selection-anchor>You should not see this paragraph unless the command has been undone.<#selection-focus>
-There should be three paragraphs in this editable region.
-The first one should be empty."
+| "<#selection-anchor>You should not see this paragraph unless the command has been undone.<#selection-focus>\nThere should be three paragraphs in this editable region.\nThe first one should be empty."
 
 on windows:
-| "<#selection-caret>
-There should be three paragraphs in this editable region.
-The first one should be empty."
+| "<#selection-caret>\nThere should be three paragraphs in this editable region.\nThe first one should be empty."
 
 after undo on windows:
-| "<#selection-anchor>You should not see this paragraph unless the command has been undone.<#selection-focus>
-There should be three paragraphs in this editable region.
-The first one should be empty."
+| "<#selection-anchor>You should not see this paragraph unless the command has been undone.<#selection-focus>\nThere should be three paragraphs in this editable region.\nThe first one should be empty."
 
 on unix:
-| "<#selection-caret>
-There should be three paragraphs in this editable region.
-The first one should be empty."
+| "<#selection-caret>\nThere should be three paragraphs in this editable region.\nThe first one should be empty."
 
 after undo on unix:
-| "<#selection-anchor>You should not see this paragraph unless the command has been undone.<#selection-focus>
-There should be three paragraphs in this editable region.
-The first one should be empty."
+| "<#selection-anchor>You should not see this paragraph unless the command has been undone.<#selection-focus>\nThere should be three paragraphs in this editable region.\nThe first one should be empty."

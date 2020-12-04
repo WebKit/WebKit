@@ -14,10 +14,8 @@ EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
 
 You should see "foo barbar baz" below:
-| "
-"
+| "\n"
 | <span>
 |   id="test"
 |   "foo bar bar<#selection-caret> baz"
-| "
-"
+| "\n"

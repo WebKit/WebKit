@@ -2,31 +2,22 @@
 |   <head>
 |     <script>
 |       src="../../resources/dump-as-markup.js"
-|     "
-"
+|     "\n"
 |   <body>
 |     <div>
 |       "This test passes if it doesn't crash."
-|     "
-"
+|     "\n"
 |     <ul>
 |       contenteditable=""
-|       "
-    "
+|       "\n    "
 |       <li>
 |         id="foo"
 |       <li>
 |         id="foo"
 |         <#selection-caret>
 |         <br>
-|       "
-"
-|     "
-"
+|       "\n"
+|     "\n"
 |     <script>
-|       "
-window.getSelection().selectAllChildren(foo);
-document.execCommand('insertParagraph');
-"
-|     "
-"
+|       "\nwindow.getSelection().selectAllChildren(foo);\ndocument.execCommand('insertParagraph');\n"
+|     "\n"

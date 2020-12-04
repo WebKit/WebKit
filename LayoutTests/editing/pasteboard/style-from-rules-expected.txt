@@ -6,8 +6,7 @@ Original:
 | <blockquote>
 |   title="none"
 |   "hello"
-| "
-"
+| "\n"
 | <p>
 |   title="none"
 |   <span>
@@ -15,8 +14,7 @@ Original:
 |     style="font-size: 1em; font-weight: bold;"
 |     title="font-size: 1em; font-weight: bold;"
 |     "world"
-|   "
-"
+|   "\n"
 |   <em>
 |     style="color: blue;"
 |     title="font-weight: bold; color: blue;"
