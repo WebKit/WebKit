@@ -1,3 +1,16 @@
+2020-12-04  Chris Dumez  <cdumez@apple.com>
+
+        [macOS] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffer-interface/ctor-audiobuffer.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=219455
+        <rdar://problem/71909972>
+
+        Reviewed by Darin Adler.
+
+        Import flakiness fix I landed upstream:
+        - https://github.com/web-platform-tests/wpt/commit/2ab8d794f0c48068703f4d9769bf693ac5b52a3f
+
+        * web-platform-tests/webaudio/the-audio-api/the-audiobuffer-interface/ctor-audiobuffer.html:
+
 2020-12-03  Alicia Boya García  <aboya@igalia.com>
 
         [GStreamer] Fix video losing size at the end of the stream

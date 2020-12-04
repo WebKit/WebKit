@@ -814,9 +814,6 @@ webkit.org/b/218176 webanimations/accelerated-translate-animation-additional-ani
 webkit.org/b/214422 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/suspend-after-construct.html [ Failure Pass ]
 webkit.org/b/217542 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/processing-after-resume.https.html [ Failure Pass ]
 
-# AudioBuffer.
-webkit.org/b/215281 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffer-interface/ctor-audiobuffer.html [ Pass Failure ]
-
 # AudioWorklet.
 webkit.org/b/218010 http/wpt/webaudio/the-audio-api/the-audioworklet-interface/exposed-properties.https.html [ Failure Pass ]
 webkit.org/b/218010 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletnode-output-channel-count.https.html [ Failure Pass ]
