@@ -190,12 +190,6 @@ GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes att
             // Bind canvas FBO.
             gl::BindFramebuffer(GL_FRAMEBUFFER, m_fbo);
             m_state.boundDrawFBO = m_state.boundReadFBO = m_fbo;
-#if USE(OPENGL_ES)
-            if (attributes.depth)
-                gl::GenRenderbuffers(1, &m_depthBuffer);
-            if (attributes.stencil)
-                gl::GenRenderbuffers(1, &m_stencilBuffer);
-#endif
             if (attributes.stencil || attributes.depth)
                 gl::GenRenderbuffers(1, &m_depthStencilBuffer);
         }
@@ -352,7 +346,7 @@ GraphicsContextGLOpenGL::~GraphicsContextGLOpenGL()
             gl::DeleteRenderbuffers(1, &m_multisampleDepthStencilBuffer);
         gl::DeleteFramebuffers(1, &m_multisampleFBO);
     } else if (attributes.stencil || attributes.depth) {
-#if USE(OPENGL_ES)
+#if !USE(ANGLE) && USE(OPENGL_ES)
         if (m_depthBuffer)
             glDeleteRenderbuffers(1, &m_depthBuffer);
 

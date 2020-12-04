@@ -644,8 +644,10 @@ private:
     GCGLuint m_intermediateTexture { 0 };
 #endif
 
+#if !USE(ANGLE) && USE(OPENGL_ES)
     GCGLuint m_depthBuffer { 0 };
     GCGLuint m_stencilBuffer { 0 };
+#endif
     GCGLuint m_depthStencilBuffer { 0 };
 
     bool m_layerComposited { false };
