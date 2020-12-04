@@ -27,10 +27,23 @@
 
 namespace WebCore {
 
-enum class HdrMetadataType {
+enum class HdrMetadataType : uint8_t {
     SmpteSt2086,
     SmpteSt209410,
     SmpteSt209440
 };
 
 } // namespace WebCore
+
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::HdrMetadataType> {
+    using values = EnumValues<
+        WebCore::HdrMetadataType,
+        WebCore::HdrMetadataType::SmpteSt2086,
+        WebCore::HdrMetadataType::SmpteSt209410,
+        WebCore::HdrMetadataType::SmpteSt209440
+    >;
+};
+
+}

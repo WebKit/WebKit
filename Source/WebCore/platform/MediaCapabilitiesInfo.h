@@ -25,12 +25,51 @@
 
 #pragma once
 
+#include <wtf/Optional.h>
+
 namespace WebCore {
     
 struct MediaCapabilitiesInfo {
     bool supported { false };
     bool smooth { false };
     bool powerEfficient { false };
+
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static Optional<MediaCapabilitiesInfo> decode(Decoder&);
 };
-    
+
+template<class Encoder>
+void MediaCapabilitiesInfo::encode(Encoder& encoder) const
+{
+    encoder << supported;
+    encoder << smooth;
+    encoder << powerEfficient;
 }
+
+template<class Decoder>
+Optional<MediaCapabilitiesInfo> MediaCapabilitiesInfo::decode(Decoder& decoder)
+{
+    Optional<bool> supported;
+    decoder >> supported;
+    if (!supported)
+        return WTF::nullopt;
+
+    Optional<bool> smooth;
+    decoder >> smooth;
+    if (!smooth)
+        return WTF::nullopt;
+
+    Optional<bool> powerEfficient;
+    decoder >> powerEfficient;
+    if (!powerEfficient)
+        return WTF::nullopt;
+
+    return {{
+        *supported,
+        *smooth,
+        *powerEfficient,
+    }};
+}
+
+} // namespace WebCore
+

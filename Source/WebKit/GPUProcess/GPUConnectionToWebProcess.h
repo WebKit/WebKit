@@ -49,6 +49,7 @@ class RemoteAudioSessionProxy;
 class RemoteAudioSessionProxyManager;
 class RemoteCDMFactoryProxy;
 class RemoteLegacyCDMFactoryProxy;
+class RemoteMediaEngineConfigurationFactoryProxy;
 class RemoteMediaPlayerManagerProxy;
 class RemoteMediaRecorderManager;
 class RemoteMediaResourceManager;
@@ -93,6 +94,9 @@ public:
 #endif
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     RemoteLegacyCDMFactoryProxy& legacyCdmFactoryProxy();
+#endif
+#if ENABLE(GPU_PROCESS)
+    RemoteMediaEngineConfigurationFactoryProxy& mediaEngineConfigurationFactoryProxy();
 #endif
     RemoteMediaPlayerManagerProxy& remoteMediaPlayerManagerProxy();
 
@@ -189,6 +193,9 @@ private:
 #endif
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     std::unique_ptr<RemoteLegacyCDMFactoryProxy> m_legacyCdmFactoryProxy;
+#endif
+#if ENABLE(GPU_PROCESS)
+    std::unique_ptr<RemoteMediaEngineConfigurationFactoryProxy> m_mediaEngineConfigurationFactoryProxy;
 #endif
 };
 

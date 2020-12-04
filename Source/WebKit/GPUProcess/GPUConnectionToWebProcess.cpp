@@ -102,6 +102,11 @@
 #include "RemoteLegacyCDMSessionProxyMessages.h"
 #endif
 
+#if ENABLE(GPU_PROCESS)
+#include "RemoteMediaEngineConfigurationFactoryProxy.h"
+#include "RemoteMediaEngineConfigurationFactoryProxyMessages.h"
+#endif
+
 namespace WebKit {
 using namespace WebCore;
 
@@ -339,6 +344,15 @@ RemoteLegacyCDMFactoryProxy& GPUConnectionToWebProcess::legacyCdmFactoryProxy()
 }
 #endif
 
+#if ENABLE(GPU_PROCESS)
+RemoteMediaEngineConfigurationFactoryProxy& GPUConnectionToWebProcess::mediaEngineConfigurationFactoryProxy()
+{
+    if (!m_mediaEngineConfigurationFactoryProxy)
+        m_mediaEngineConfigurationFactoryProxy = makeUnique<RemoteMediaEngineConfigurationFactoryProxy>(*this);
+    return *m_mediaEngineConfigurationFactoryProxy;
+}
+#endif
+
 bool GPUConnectionToWebProcess::dispatchMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
 #if ENABLE(WEB_AUDIO)
@@ -414,6 +428,10 @@ bool GPUConnectionToWebProcess::dispatchMessage(IPC::Connection& connection, IPC
         return true;
     }
 #endif
+    if (decoder.messageReceiverName() == Messages::RemoteMediaEngineConfigurationFactoryProxy::messageReceiverName()) {
+        mediaEngineConfigurationFactoryProxy().didReceiveMessageFromWebProcess(connection, decoder);
+        return true;
+    }
 
     return messageReceiverMap().dispatchMessage(connection, decoder);
 }

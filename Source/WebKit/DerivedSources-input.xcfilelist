@@ -33,6 +33,7 @@ $(PROJECT_DIR)/GPUProcess/media/RemoteCDMProxy.messages.in
 $(PROJECT_DIR)/GPUProcess/media/RemoteLegacyCDMFactoryProxy.messages.in
 $(PROJECT_DIR)/GPUProcess/media/RemoteLegacyCDMProxy.messages.in
 $(PROJECT_DIR)/GPUProcess/media/RemoteLegacyCDMSessionProxy.messages.in
+$(PROJECT_DIR)/GPUProcess/media/RemoteMediaEngineConfigurationFactoryProxy.messages.in
 $(PROJECT_DIR)/GPUProcess/media/RemoteMediaPlayerManagerProxy.messages.in
 $(PROJECT_DIR)/GPUProcess/media/RemoteMediaPlayerProxy.messages.in
 $(PROJECT_DIR)/GPUProcess/media/RemoteMediaResourceManager.messages.in

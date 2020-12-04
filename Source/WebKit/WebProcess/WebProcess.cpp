@@ -45,6 +45,7 @@
 #include "ProcessAssertion.h"
 #include "RemoteAudioSession.h"
 #include "RemoteLegacyCDMFactory.h"
+#include "RemoteMediaEngineConfigurationFactory.h"
 #include "StorageAreaMap.h"
 #include "UserData.h"
 #include "WebAutomationSessionProxy.h"
@@ -107,6 +108,7 @@
 #include <WebCore/HTMLMediaElement.h>
 #include <WebCore/JSDOMWindow.h>
 #include <WebCore/LegacySchemeRegistry.h>
+#include <WebCore/MediaEngineConfigurationFactory.h>
 #include <WebCore/MemoryCache.h>
 #include <WebCore/MemoryRelease.h>
 #include <WebCore/MessagePort.h>
@@ -281,6 +283,8 @@ WebProcess::WebProcess()
 #if ENABLE(ROUTING_ARBITRATION)
     addSupplement<AudioSessionRoutingArbitrator>();
 #endif
+
+    addSupplement<RemoteMediaEngineConfigurationFactory>();
 
     Gigacage::forbidDisablingPrimitiveGigacage();
 }
@@ -1926,6 +1930,11 @@ void WebProcess::setUseGPUProcessForMedia(bool useGPUProcessForMedia)
     else
         LegacyCDM::resetFactories();
 #endif
+    
+    if (useGPUProcessForMedia)
+        ensureGPUProcessConnection().mediaEngineConfigurationFactory().registerFactory();
+    else
+        MediaEngineConfigurationFactory::resetFactories();
 }
 
 bool WebProcess::shouldUseRemoteRenderingFor(RenderingPurpose purpose)

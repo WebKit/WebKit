@@ -27,6 +27,7 @@
 
 #include "MediaCapabilitiesInfo.h"
 #include "MediaDecodingConfiguration.h"
+#include <wtf/Optional.h>
 
 namespace WebCore {
 
@@ -46,6 +47,35 @@ struct MediaCapabilitiesDecodingInfo : MediaCapabilitiesInfo {
     }
 
     MediaDecodingConfiguration supportedConfiguration;
+
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static Optional<MediaCapabilitiesDecodingInfo> decode(Decoder&);
 };
 
+template<class Encoder>
+void MediaCapabilitiesDecodingInfo::encode(Encoder& encoder) const
+{
+    MediaCapabilitiesInfo::encode(encoder);
+    encoder << supportedConfiguration;
 }
+
+template<class Decoder>
+Optional<MediaCapabilitiesDecodingInfo> MediaCapabilitiesDecodingInfo::decode(Decoder& decoder)
+{
+    auto info = MediaCapabilitiesInfo::decode(decoder);
+    if (!info)
+        return WTF::nullopt;
+
+    Optional<MediaDecodingConfiguration> supportedConfiguration;
+    decoder >> supportedConfiguration;
+    if (!supportedConfiguration)
+        return WTF::nullopt;
+
+    return MediaCapabilitiesDecodingInfo(
+        WTFMove(*info),
+        WTFMove(*supportedConfiguration)
+    );
+}
+
+} // namespace WebCore
+

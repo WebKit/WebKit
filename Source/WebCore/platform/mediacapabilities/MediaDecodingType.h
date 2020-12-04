@@ -27,9 +27,21 @@
 
 namespace WebCore {
 
-enum class MediaDecodingType {
+enum class MediaDecodingType : bool {
     File,
     MediaSource,
+};
+
+}
+
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::MediaDecodingType> {
+    using values = EnumValues<
+        WebCore::MediaDecodingType,
+        WebCore::MediaDecodingType::File,
+        WebCore::MediaDecodingType::MediaSource
+    >;
 };
 
 }

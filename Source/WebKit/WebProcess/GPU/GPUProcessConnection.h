@@ -43,6 +43,7 @@ namespace WebKit {
 
 class RemoteAudioSourceProviderManager;
 class RemoteCDMFactory;
+class RemoteMediaEngineConfigurationFactory;
 class RemoteMediaPlayerManager;
 class RemoteLegacyCDMFactory;
 struct WebPageCreationParameters;
@@ -79,6 +80,8 @@ public:
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     RemoteLegacyCDMFactory& legacyCDMFactory();
 #endif
+
+    RemoteMediaEngineConfigurationFactory& mediaEngineConfigurationFactory();
 
     void updateParameters(const WebPageCreationParameters&);
 

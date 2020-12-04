@@ -27,6 +27,8 @@
 
 #if PLATFORM(COCOA) && ENABLE(GPU_PROCESS)
 
+#import "Connection.h"
+#import "SharedMemory.h"
 #include <WebCore/CAAudioStreamDescription.h>
 #include <WebCore/CARingBuffer.h>
 #include <WebCore/MediaPlayerIdentifier.h>

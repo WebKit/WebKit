@@ -32,6 +32,35 @@ namespace WebCore {
 
 struct MediaEncodingConfiguration : MediaConfiguration {
     MediaEncodingType type;
+
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static Optional<MediaEncodingConfiguration> decode(Decoder&);
 };
 
+template<class Encoder>
+void MediaEncodingConfiguration::encode(Encoder& encoder) const
+{
+    MediaConfiguration::encode(encoder);
+    encoder << type;
 }
+
+template<class Decoder>
+Optional<MediaEncodingConfiguration> MediaEncodingConfiguration::decode(Decoder& decoder)
+{
+    auto mediaConfiguration = MediaConfiguration::decode(decoder);
+    if (!mediaConfiguration)
+        return WTF::nullopt;
+
+    Optional<MediaEncodingType> type;
+    decoder >> type;
+    if (!type)
+        return WTF::nullopt;
+
+    return {{
+        *mediaConfiguration,
+        *type,
+    }};
+}
+
+} // namespace WebCore
+

@@ -44,9 +44,21 @@ public:
     static bool hasDecodingConfigurationFactory();
     static bool hasEncodingConfigurationFactory();
 
-    static void createDecodingConfiguration(MediaDecodingConfiguration&&, DecodingConfigurationCallback&&);
-    static void createEncodingConfiguration(MediaEncodingConfiguration&&, EncodingConfigurationCallback&&);
+    WEBCORE_EXPORT static void createDecodingConfiguration(MediaDecodingConfiguration&&, DecodingConfigurationCallback&&);
+    WEBCORE_EXPORT static void createEncodingConfiguration(MediaEncodingConfiguration&&, EncodingConfigurationCallback&&);
+    
+    using CreateDecodingConfiguration = WTF::Function<void(MediaDecodingConfiguration&&, DecodingConfigurationCallback&&)>;
+    using CreateEncodingConfiguration = WTF::Function<void(MediaEncodingConfiguration&&, EncodingConfigurationCallback&&)>;
 
+    struct MediaEngineFactory {
+        CreateDecodingConfiguration createDecodingConfiguration;
+        CreateEncodingConfiguration createEncodingConfiguration;
+    };
+    
+    WEBCORE_EXPORT static void clearFactories();
+    WEBCORE_EXPORT static void resetFactories();
+    WEBCORE_EXPORT static void installFactory(MediaEngineFactory&&);
+    
     WEBCORE_EXPORT static void enableMock();
     WEBCORE_EXPORT static void disableMock();
 };

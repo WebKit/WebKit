@@ -34,6 +34,36 @@ namespace WebCore {
 struct MediaConfiguration {
     Optional<VideoConfiguration> video;
     Optional<AudioConfiguration> audio;
+
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static Optional<MediaConfiguration> decode(Decoder&);
 };
 
+template<class Encoder>
+void MediaConfiguration::encode(Encoder& encoder) const
+{
+    encoder << video;
+    encoder << audio;
 }
+
+template<class Decoder>
+Optional<MediaConfiguration> MediaConfiguration::decode(Decoder& decoder)
+{
+    Optional<Optional<VideoConfiguration>> video;
+    decoder >> video;
+    if (!video)
+        return WTF::nullopt;
+
+    Optional<Optional<AudioConfiguration>> audio;
+    decoder >> audio;
+    if (!audio)
+        return WTF::nullopt;
+
+    return {{
+        *video,
+        *audio,
+    }};
+}
+
+} // namespace WebCore
+

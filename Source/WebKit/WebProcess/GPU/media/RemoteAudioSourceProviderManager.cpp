@@ -26,14 +26,16 @@
 #include "config.h"
 #include "RemoteAudioSourceProviderManager.h"
 
+#include "GPUProcessConnection.h"
 #include "Logging.h"
+#include "RemoteAudioSourceProvider.h"
 #include "RemoteAudioSourceProviderManagerMessages.h"
 #include "SharedRingBufferStorage.h"
+#include "WebProcess.h"
 
 #if PLATFORM(COCOA) && ENABLE(GPU_PROCESS)
 
 namespace WebKit {
-using namespace PAL;
 using namespace WebCore;
 
 RemoteAudioSourceProviderManager::RemoteAudioSourceProviderManager()

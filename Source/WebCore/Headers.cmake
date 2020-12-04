@@ -1014,6 +1014,9 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/Logging.h
     platform/LowPowerModeNotifier.h
     platform/MIMETypeRegistry.h
+    platform/MediaCapabilitiesDecodingInfo.h
+    platform/MediaCapabilitiesEncodingInfo.h
+    platform/MediaCapabilitiesInfo.h
     platform/MediaDescription.h
     platform/MediaSample.h
     platform/MediaSelectionOption.h
@@ -1314,6 +1317,18 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/transforms/TransformOperations.h
     platform/graphics/transforms/TransformationMatrix.h
     platform/graphics/transforms/TranslateTransformOperation.h
+
+    platform/mediacapabilities/AudioConfiguration.h
+    platform/mediacapabilities/ColorGamut.h
+    platform/mediacapabilities/HdrMetadataType.h
+    platform/mediacapabilities/MediaConfiguration.h
+    platform/mediacapabilities/MediaDecodingConfiguration.h
+    platform/mediacapabilities/MediaDecodingType.h
+    platform/mediacapabilities/MediaEncodingConfiguration.h
+    platform/mediacapabilities/MediaEncodingType.h
+    platform/mediacapabilities/MediaEngineConfigurationFactory.h
+    platform/mediacapabilities/TransferFunction.h
+    platform/mediacapabilities/VideoConfiguration.h
 
     platform/mediarecorder/MediaRecorderPrivate.h
 

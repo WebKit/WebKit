@@ -37,6 +37,7 @@
 #include "RemoteCDMFactory.h"
 #include "RemoteCDMProxy.h"
 #include "RemoteLegacyCDMFactory.h"
+#include "RemoteMediaEngineConfigurationFactory.h"
 #include "RemoteMediaPlayerManager.h"
 #include "SampleBufferDisplayLayerMessages.h"
 #include "WebCoreArgumentCoders.h"
@@ -130,6 +131,11 @@ RemoteLegacyCDMFactory& GPUProcessConnection::legacyCDMFactory()
     return *WebProcess::singleton().supplement<RemoteLegacyCDMFactory>();
 }
 #endif
+
+RemoteMediaEngineConfigurationFactory& GPUProcessConnection::mediaEngineConfigurationFactory()
+{
+    return *WebProcess::singleton().supplement<RemoteMediaEngineConfigurationFactory>();
+}
 
 bool GPUProcessConnection::dispatchMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {

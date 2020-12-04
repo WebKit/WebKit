@@ -29,6 +29,7 @@
 #if ENABLE(GPU_PROCESS) && ENABLE(MEDIA_SOURCE)
 
 #include "GPUConnectionToWebProcess.h"
+#include "RemoteMediaPlayerProxy.h"
 #include "RemoteMediaSourceProxyMessages.h"
 #include "RemoteSourceBufferProxy.h"
 #include <WebCore/ContentType.h>

@@ -43,6 +43,84 @@ struct VideoConfiguration {
     Optional<ColorGamut> colorGamut;
     Optional<HdrMetadataType> hdrMetadataType;
     Optional<TransferFunction> transferFunction;
+
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static Optional<VideoConfiguration> decode(Decoder&);
 };
 
+template<class Encoder>
+void VideoConfiguration::encode(Encoder& encoder) const
+{
+    encoder << contentType;
+    encoder << width;
+    encoder << height;
+    encoder << bitrate;
+    encoder << framerate;
+    encoder << alphaChannel;
+    encoder << colorGamut;
+    encoder << hdrMetadataType;
+    encoder << transferFunction;
 }
+
+template<class Decoder>
+Optional<VideoConfiguration> VideoConfiguration::decode(Decoder& decoder)
+{
+    Optional<String> contentType;
+    decoder >> contentType;
+    if (!contentType)
+        return WTF::nullopt;
+
+    Optional<uint32_t> width;
+    decoder >> width;
+    if (!width)
+        return WTF::nullopt;
+
+    Optional<uint32_t> height;
+    decoder >> height;
+    if (!height)
+        return WTF::nullopt;
+
+    Optional<uint64_t> bitrate;
+    decoder >> bitrate;
+    if (!bitrate)
+        return WTF::nullopt;
+
+    Optional<double> framerate;
+    decoder >> framerate;
+    if (!framerate)
+        return WTF::nullopt;
+
+    Optional<Optional<bool>> alphaChannel;
+    decoder >> alphaChannel;
+    if (!alphaChannel)
+        return WTF::nullopt;
+
+    Optional<Optional<ColorGamut>> colorGamut;
+    decoder >> colorGamut;
+    if (!colorGamut)
+        return WTF::nullopt;
+
+    Optional<Optional<HdrMetadataType>> hdrMetadataType;
+    decoder >> hdrMetadataType;
+    if (!hdrMetadataType)
+        return WTF::nullopt;
+
+    Optional<Optional<TransferFunction>> transferFunction;
+    decoder >> transferFunction;
+    if (!transferFunction)
+        return WTF::nullopt;
+
+    return {{
+        *contentType,
+        *width,
+        *height,
+        *bitrate,
+        *framerate,
+        *alphaChannel,
+        *colorGamut,
+        *hdrMetadataType,
+        *transferFunction,
+    }};
+}
+
+} // namespace WebCore

@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/Optional.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -35,6 +36,56 @@ struct AudioConfiguration {
     Optional<uint64_t> bitrate;
     Optional<uint32_t> samplerate;
     Optional<bool> spatialRendering;
+
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static Optional<AudioConfiguration> decode(Decoder&);
 };
+
+template<class Encoder>
+void AudioConfiguration::encode(Encoder& encoder) const
+{
+    encoder << contentType;
+    encoder << channels;
+    encoder << bitrate;
+    encoder << samplerate;
+    encoder << spatialRendering;
+}
+
+template<class Decoder>
+Optional<AudioConfiguration> AudioConfiguration::decode(Decoder& decoder)
+{
+    Optional<String> contentType;
+    decoder >> contentType;
+    if (!contentType)
+        return WTF::nullopt;
+
+    Optional<String> channels;
+    decoder >> channels;
+    if (!channels)
+        return WTF::nullopt;
+
+    Optional<Optional<uint64_t>> bitrate;
+    decoder >> bitrate;
+    if (!bitrate)
+        return WTF::nullopt;
+
+    Optional<Optional<uint32_t>> sampleRate;
+    decoder >> sampleRate;
+    if (!sampleRate)
+        return WTF::nullopt;
+
+    Optional<Optional<bool>> spatialRendering;
+    decoder >> spatialRendering;
+    if (!spatialRendering)
+        return WTF::nullopt;
+
+    return {{
+        *contentType,
+        *channels,
+        *bitrate,
+        *sampleRate,
+        *spatialRendering
+    }};
+}
 
 } // namespace WebCore

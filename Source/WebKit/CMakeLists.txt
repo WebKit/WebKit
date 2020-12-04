@@ -135,6 +135,7 @@ set(WebKit_MESSAGES_IN_FILES
     GPUProcess/media/RemoteLegacyCDMFactoryProxy
     GPUProcess/media/RemoteLegacyCDMProxy
     GPUProcess/media/RemoteLegacyCDMSessionProxy
+    GPUProcess/media/RemoteMediaEngineConfigurationFactoryProxy
     GPUProcess/media/RemoteMediaPlayerManagerProxy
     GPUProcess/media/RemoteMediaPlayerProxy
     GPUProcess/media/RemoteMediaResourceManager

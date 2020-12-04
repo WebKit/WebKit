@@ -246,6 +246,7 @@ MESSAGE_RECEIVERS = \
 	GPUProcess/media/RemoteCDMFactoryProxy \
 	GPUProcess/media/RemoteCDMInstanceProxy \
 	GPUProcess/media/RemoteLegacyCDMProxy \
+	GPUProcess/media/RemoteMediaEngineConfigurationFactoryProxy \
 	GPUProcess/media/RemoteMediaPlayerManagerProxy \
 	GPUProcess/media/RemoteMediaPlayerProxy \
 	GPUProcess/media/RemoteMediaResourceManager \

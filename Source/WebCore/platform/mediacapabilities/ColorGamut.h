@@ -27,10 +27,23 @@
 
 namespace WebCore {
 
-enum class ColorGamut {
+enum class ColorGamut : uint8_t {
     SRGB,
     P3,
     Rec2020,
 };
 
 } // namespace WebCore
+
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::ColorGamut> {
+    using values = EnumValues<
+        WebCore::ColorGamut,
+        WebCore::ColorGamut::SRGB,
+        WebCore::ColorGamut::P3,
+        WebCore::ColorGamut::Rec2020
+    >;
+};
+
+}

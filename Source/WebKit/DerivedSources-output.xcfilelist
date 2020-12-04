@@ -193,6 +193,9 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteLegacyCDMSessionMessagesRepli
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteLegacyCDMSessionProxyMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteLegacyCDMSessionProxyMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteLegacyCDMSessionProxyMessagesReplies.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteMediaEngineConfigurationFactoryProxyMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteMediaEngineConfigurationFactoryProxyMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteMediaEngineConfigurationFactoryProxyMessagesReplies.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteMediaPlayerManagerMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteMediaPlayerManagerMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteMediaPlayerManagerMessagesReplies.h

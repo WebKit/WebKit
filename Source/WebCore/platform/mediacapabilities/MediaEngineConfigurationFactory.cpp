@@ -53,33 +53,48 @@ static bool& mockEnabled()
     return enabled;
 }
 
-struct MediaEngineFactory {
-    void(*createDecodingConfiguration)(MediaDecodingConfiguration&&, MediaEngineConfigurationFactory::DecodingConfigurationCallback&&);
-    void(*createEncodingConfiguration)(MediaEncodingConfiguration&&, MediaEngineConfigurationFactory::EncodingConfigurationCallback&&);
-};
-
-using FactoryVector = Vector<MediaEngineFactory>;
-static const FactoryVector& factories()
+using FactoryVector = Vector<MediaEngineConfigurationFactory::MediaEngineFactory>;
+static FactoryVector defaultFactories()
 {
-    static NeverDestroyed<FactoryVector> factories = makeNeverDestroyed(FactoryVector({
+    FactoryVector factories;
 #if PLATFORM(COCOA)
-        { &createMediaPlayerDecodingConfigurationCocoa, nullptr },
+    factories.append({ &createMediaPlayerDecodingConfigurationCocoa, nullptr });
 #endif
 #if USE(GSTREAMER)
-        { &createMediaPlayerDecodingConfigurationGStreamer, &createMediaPlayerEncodingConfigurationGStreamer },
+    factories.append({ &createMediaPlayerDecodingConfigurationGStreamer, &createMediaPlayerEncodingConfigurationGStreamer });
 #endif
-    }));
     return factories;
+}
+
+static FactoryVector& factories()
+{
+    static auto factories = makeNeverDestroyed<FactoryVector>(defaultFactories());
+    return factories;
+}
+
+void MediaEngineConfigurationFactory::clearFactories()
+{
+    factories().clear();
+}
+
+void MediaEngineConfigurationFactory::resetFactories()
+{
+    factories() = defaultFactories();
+}
+
+void MediaEngineConfigurationFactory::installFactory(MediaEngineFactory&& factory)
+{
+    factories().append(WTFMove(factory));
 }
 
 bool MediaEngineConfigurationFactory::hasDecodingConfigurationFactory()
 {
-    return mockEnabled() || WTF::anyOf(factories(), [] (auto& factory) { return factory.createDecodingConfiguration; });
+    return mockEnabled() || WTF::anyOf(factories(), [] (auto& factory) { return (bool)factory.createDecodingConfiguration; });
 }
 
 bool MediaEngineConfigurationFactory::hasEncodingConfigurationFactory()
 {
-    return mockEnabled() || WTF::anyOf(factories(), [] (auto& factory) { return factory.createEncodingConfiguration; });
+    return mockEnabled() || WTF::anyOf(factories(), [] (auto& factory) { return (bool)factory.createEncodingConfiguration; });
 }
 
 void MediaEngineConfigurationFactory::createDecodingConfiguration(MediaDecodingConfiguration&& config, MediaEngineConfigurationFactory::DecodingConfigurationCallback&& callback)

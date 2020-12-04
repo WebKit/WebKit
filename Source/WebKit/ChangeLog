@@ -1,3 +1,43 @@
+2020-12-04  Jer Noble  <jer.noble@apple.com>
+
+        [GPUP] Move MediaCapabilities into the GPU process
+        https://bugs.webkit.org/show_bug.cgi?id=219521
+
+        Reviewed by Eric Carlson.
+
+        Add a new pair of process supplements, RemoteMediaEngineConfigurationFactory and ..Proxy.
+
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        (WebKit::GPUConnectionToWebProcess::mediaEngineConfigurationFactoryProxy):
+        (WebKit::GPUConnectionToWebProcess::dispatchMessage):
+        * GPUProcess/GPUConnectionToWebProcess.h:
+        * GPUProcess/media/RemoteMediaEngineConfigurationFactoryProxy.cpp: Added.
+        (WebKit::RemoteMediaEngineConfigurationFactoryProxy::RemoteMediaEngineConfigurationFactoryProxy):
+        (WebKit::createDecodingConfiguration):
+        (WebKit::RemoteMediaEngineConfigurationFactoryProxy::createEncodingConfiguration):
+        * GPUProcess/media/RemoteMediaEngineConfigurationFactoryProxy.h: Added.
+        * GPUProcess/media/RemoteMediaEngineConfigurationFactoryProxy.messages.in: Added.
+        * Sources.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/GPU/GPUProcessConnection.cpp:
+        (WebKit::GPUProcessConnection::mediaEngineConfigurationFactory):
+        * WebProcess/GPU/GPUProcessConnection.h:
+        * WebProcess/GPU/media/RemoteAudioSourceProviderManager.cpp:
+        * WebProcess/GPU/media/RemoteAudioSourceProviderManager.h:
+        * WebProcess/GPU/media/RemoteMediaEngineConfigurationFactory.cpp: Added.
+        (WebKit::RemoteMediaEngineConfigurationFactory::RemoteMediaEngineConfigurationFactory):
+        (WebKit::RemoteMediaEngineConfigurationFactory::registerFactory):
+        (WebKit::RemoteMediaEngineConfigurationFactory::supplementName):
+        (WebKit::RemoteMediaEngineConfigurationFactory::gpuProcessConnection):
+        (WebKit::RemoteMediaEngineConfigurationFactory::createDecodingConfiguration):
+        (WebKit::RemoteMediaEngineConfigurationFactory::createEncodingConfiguration):
+        * WebProcess/GPU/media/RemoteMediaEngineConfigurationFactory.h: Copied from Source/WTF/wtf/Algorithms.h.
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::setUseGPUProcessForMedia):
+
 2020-12-04  Said Abou-Hallawa  <said@apple.com>
 
         [GPU Process] Clean up recreating the ImageBufferBackend because of GPU crashing
