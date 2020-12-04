@@ -61,6 +61,9 @@ public:
     };
     InlineFormattingContext::Quirks quirks() const { return Quirks(*this); }
 
+    const InlineFormattingState& formattingState() const { return downcast<InlineFormattingState>(FormattingContext::formattingState()); }
+    InlineFormattingState& formattingState() { return downcast<InlineFormattingState>(FormattingContext::formattingState()); }
+
 private:
     IntrinsicWidthConstraints computedIntrinsicWidthConstraints() override;
 
@@ -93,9 +96,6 @@ private:
     void collectInlineContentIfNeeded();
     InlineRect computeGeometryForLineContent(const LineBuilder::LineContent&, const HorizontalConstraints&);
     void invalidateFormattingState(const InvalidationState&);
-
-    const InlineFormattingState& formattingState() const { return downcast<InlineFormattingState>(FormattingContext::formattingState()); }
-    InlineFormattingState& formattingState() { return downcast<InlineFormattingState>(FormattingContext::formattingState()); }
 };
 
 inline InlineFormattingContext::Geometry::Geometry(const InlineFormattingContext& inlineFormattingContext)

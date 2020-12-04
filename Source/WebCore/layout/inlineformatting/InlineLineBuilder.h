@@ -39,7 +39,8 @@ struct LineCandidate;
 
 class LineBuilder {
 public:
-    LineBuilder(const InlineFormattingContext&, const FloatingContext&, const InlineItems&);
+    LineBuilder(InlineFormattingContext&, FloatingState&, HorizontalConstraints rootHorizontalConstraints, const InlineItems&);
+    LineBuilder(const InlineFormattingContext&, const InlineItems&);
 
     struct InlineItemRange {
         bool isEmpty() const { return start == end; }
@@ -47,10 +48,10 @@ public:
         size_t start { 0 };
         size_t end { 0 };
     };
+    using FloatList = Vector<const Box*>;
     struct LineContent {
         InlineItemRange inlineItemRange;
         size_t partialTrailingContentLength { 0 };
-        using FloatList = Vector<const Box*>;
         const FloatList& floats;
         bool hasIntrusiveFloat { false };
         InlineLayoutPoint logicalTopLeft;
@@ -65,6 +66,7 @@ public:
     struct IntrinsicContent {
         InlineItemRange inlineItemRange;
         InlineLayoutUnit logicalWidth { 0 };
+        const FloatList& floats;
     };
     IntrinsicContent computedIntrinsicWidth(const InlineItemRange&, InlineLayoutUnit availableWidth);
 
@@ -82,7 +84,7 @@ private:
         size_t partialTrailingContentLength { 0 };
     };
     struct UsedConstraints {
-        InlineLayoutUnit logicalLeft { 0 };
+        InlineLayoutPoint logicalTopLeft;
         InlineLayoutUnit logicalWidth { 0 };
         bool isConstrainedByFloat { false };
     };
@@ -104,15 +106,21 @@ private:
     bool isLastLineWithInlineContent(const InlineItemRange& lineRange, size_t lastInlineItemIndex, bool hasPartialTrailingContent) const;
 
     const InlineFormattingContext& formattingContext() const { return m_inlineFormattingContext; }
+    InlineFormattingState* formattingState() { return m_inlineFormattingState; }
+    FloatingState* floatingState() { return m_floatingState; }
     const ContainerBox& root() const;
     const LayoutState& layoutState() const;
 
     const InlineFormattingContext& m_inlineFormattingContext;
-    const FloatingContext& m_floatingContext;
+    InlineFormattingState* m_inlineFormattingState { nullptr };
+    FloatingState* m_floatingState { nullptr };
+    Optional<HorizontalConstraints> m_rootHorizontalConstraints;
+
     Line m_line;
+    InlineLayoutPoint m_lineLogicalTopLeft;
     InlineLayoutUnit m_horizontalSpaceForLine { 0 };
     const InlineItems& m_inlineItems;
-    LineContent::FloatList m_floats;
+    FloatList m_floats;
     Optional<InlineTextItem> m_partialLeadingTextItem;
     Vector<const InlineItem*> m_wrapOpportunityList;
     unsigned m_successiveHyphenatedLineCount { 0 };

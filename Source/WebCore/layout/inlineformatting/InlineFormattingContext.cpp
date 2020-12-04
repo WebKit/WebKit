@@ -149,10 +149,11 @@ void InlineFormattingContext::lineLayout(InlineItems& inlineItems, LineBuilder::
         size_t overflowContentLength { 0 };
     };
     Optional<PreviousLine> previousLine;
-    auto floatingContext = FloatingContext { *this, formattingState().floatingState() };
+    auto& floatingState = formattingState().floatingState();
+    auto floatingContext = FloatingContext { *this, floatingState };
     auto isFirstLine = formattingState().lines().isEmpty();
 
-    auto lineBuilder = LineBuilder { *this, floatingContext, inlineItems };
+    auto lineBuilder = LineBuilder { *this, floatingState, constraints.horizontal, inlineItems };
     while (!needsLayoutRange.isEmpty()) {
         // Turn previous line's overflow content length into the next line's leading content partial length.
         // "sp[<-line break->]lit_content" -> overflow length: 11 -> leading partial content length: 11.
@@ -261,19 +262,19 @@ FormattingContext::IntrinsicWidthConstraints InlineFormattingContext::computedIn
 InlineLayoutUnit InlineFormattingContext::computedIntrinsicWidthForConstraint(InlineLayoutUnit availableWidth) const
 {
     auto& inlineItems = formattingState().inlineItems();
-    // Preferred width computation is not constrained by floats. 
-    auto floatingState = FloatingState::create(layoutState(), root());
-    auto floatingContext = FloatingContext { *this, floatingState };
-    auto lineBuilder = LineBuilder { *this, floatingContext, inlineItems };
+    auto lineBuilder = LineBuilder { *this, inlineItems };
     auto layoutRange = LineBuilder::InlineItemRange { 0 , inlineItems.size() };
     auto maximumLineWidth = InlineLayoutUnit { };
+    auto maximumFloatWidth = LayoutUnit { };
     while (!layoutRange.isEmpty()) {
         auto intrinsicContent = lineBuilder.computedIntrinsicWidth(layoutRange, availableWidth);
         layoutRange.start = intrinsicContent.inlineItemRange.end;
-        // FIXME: Use line logical left and right to take floats into account.
         maximumLineWidth = std::max(maximumLineWidth, intrinsicContent.logicalWidth);
+        // FIXME: Add support for clear.
+        for (auto* floatBox : intrinsicContent.floats)
+            maximumFloatWidth += geometryForBox(*floatBox).marginBoxWidth();
     }
-    return maximumLineWidth;
+    return maximumLineWidth + maximumFloatWidth;
 }
 
 void InlineFormattingContext::computeIntrinsicWidthForFormattingRoot(const Box& formattingRoot)
@@ -413,23 +414,6 @@ InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuil
     formattingState.addLineBox(geometry.lineBoxForLineContent(lineContent));
     const auto& lineBox = formattingState.lineBoxes().last();
     auto& lineBoxLogicalRect = lineBox.logicalRect();
-
-    auto updateFloatGeometry = [&] {
-        if (lineContent.floats.isEmpty())
-            return;
-        auto& floatingState = formattingState.floatingState();
-        auto floatingContext = FloatingContext { *this, floatingState };
-        // Move floats to their final position.
-        for (auto* floatBox : lineContent.floats) {
-            auto& boxGeometry = formattingState.boxGeometry(*floatBox);
-            // Set static position first.
-            boxGeometry.setLogicalTopLeft({ lineBoxLogicalRect.left(), lineBoxLogicalRect.top() });
-            // Float it.
-            boxGeometry.setLogicalTopLeft(floatingContext.positionForFloat(*floatBox, horizontalConstraints));
-            floatingState.append(floatingContext.toFloatItem(*floatBox));
-        }
-    };
-    updateFloatGeometry();
 
     auto constructLineRuns = [&] {
         auto lineIndex = formattingState.lines().size();
