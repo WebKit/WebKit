@@ -41,7 +41,7 @@ namespace Layout {
 class FloatAvoider {
     WTF_MAKE_ISO_ALLOCATED(FloatAvoider);
 public:
-    FloatAvoider(const Box&, LayoutPoint absoluteTopLeft, LayoutUnit borderBoxWidth, const Edges& margin, HorizontalEdges containingBlockAbsoluteContentBox);
+    FloatAvoider(LayoutPoint absoluteTopLeft, LayoutUnit borderBoxWidth, const Edges& margin, HorizontalEdges containingBlockAbsoluteContentBox, bool isFloatingPositioned, bool isLeftAligned);
     virtual ~FloatAvoider() = default;
 
     void setHorizontalPosition(LayoutUnit);
@@ -54,7 +54,7 @@ public:
     LayoutUnit left() const;
     LayoutUnit right() const;
 
-    bool isLeftAligned() const { return isFloatingBox() ? layoutBox().isLeftFloatingPositioned() : layoutBox().style().isLeftToRightDirection(); }
+    bool isLeftAligned() const { return m_isLeftAligned; }
 
 private:
     LayoutUnit borderBoxWidth() const { return m_borderBoxWidth; }
@@ -66,17 +66,17 @@ private:
     LayoutUnit marginEnd() const { return m_margin.horizontal.right; }
     LayoutUnit marginBoxWidth() const { return marginStart() + borderBoxWidth() + marginEnd(); }
 
-    bool isFloatingBox() const { return layoutBox().isFloatingPositioned(); }
-    const Box& layoutBox() const { return *m_layoutBox; }
+    bool isFloatingBox() const { return m_isFloatingPositioned; }
 
 private:
-    WeakPtr<const Box> m_layoutBox;
     // These coordinate values are relative to the formatting root's border box.
     LayoutPoint m_absoluteTopLeft;
     // Note that float avoider should work with no height value.
     LayoutUnit m_borderBoxWidth;
     Edges m_margin;
     HorizontalEdges m_containingBlockAbsoluteContentBox;
+    bool m_isFloatingPositioned { true };
+    bool m_isLeftAligned { true };
 };
 
 inline LayoutUnit FloatAvoider::top() const

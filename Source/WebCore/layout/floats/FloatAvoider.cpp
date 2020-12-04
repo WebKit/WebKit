@@ -39,14 +39,14 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(FloatAvoider);
 
 // Floating boxes intersect their margin box with the other floats in the context,
 // while other float avoiders (e.g. non-floating formatting context roots) intersect their border box.
-FloatAvoider::FloatAvoider(const Box& layoutBox, LayoutPoint absoluteTopLeft, LayoutUnit borderBoxWidth, const Edges& margin, HorizontalEdges containingBlockAbsoluteContentBox)
-    : m_layoutBox(makeWeakPtr(layoutBox))
-    , m_absoluteTopLeft(absoluteTopLeft)
+FloatAvoider::FloatAvoider(LayoutPoint absoluteTopLeft, LayoutUnit borderBoxWidth, const Edges& margin, HorizontalEdges containingBlockAbsoluteContentBox, bool isFloatingPositioned, bool isLeftAligned)
+    : m_absoluteTopLeft(absoluteTopLeft)
     , m_borderBoxWidth(borderBoxWidth)
     , m_margin(margin)
     , m_containingBlockAbsoluteContentBox(containingBlockAbsoluteContentBox)
+    , m_isFloatingPositioned(isFloatingPositioned)
+    , m_isLeftAligned(isLeftAligned)
 {
-    ASSERT(m_layoutBox->establishesBlockFormattingContext());
     m_absoluteTopLeft.setX(initialHorizontalPosition());
 }
 

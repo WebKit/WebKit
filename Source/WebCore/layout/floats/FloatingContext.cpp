@@ -269,7 +269,8 @@ LayoutPoint FloatingContext::positionForFloat(const Box& layoutBox, const Horizo
     absoluteTopLeft.setY(verticalPositionCandidate);
     auto horizontalMargin = computedHorizontalMargin(layoutBox, horizontalConstraints.logicalWidth);
     auto margins = Edges { { *horizontalMargin.start, *horizontalMargin.end }, { boxGeometry.marginBefore(), boxGeometry.marginAfter() } };
-    auto floatBox = FloatAvoider { layoutBox, absoluteTopLeft, boxGeometry.borderBoxWidth(), margins, absoluteCoordinates.containingBlockContentBox };
+    auto isLeftAligned = layoutBox.isFloatingPositioned() ? layoutBox.isLeftFloatingPositioned() : layoutBox.style().isLeftToRightDirection();
+    auto floatBox = FloatAvoider { absoluteTopLeft, boxGeometry.borderBoxWidth(), margins, absoluteCoordinates.containingBlockContentBox, layoutBox.isFloatingPositioned(), isLeftAligned };
     findAvailablePosition(floatBox, m_floatingState.floats());
     // Convert box coordinates from formatting root back to containing block.
     auto containingBlockTopLeft = absoluteCoordinates.containingBlockTopLeft;
@@ -290,7 +291,8 @@ LayoutPoint FloatingContext::positionForNonFloatingFloatAvoider(const Box& layou
     auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
     auto horizontalMargin = computedHorizontalMargin(layoutBox, horizontalConstraints.logicalWidth);
     auto margins = Edges { { *horizontalMargin.start, *horizontalMargin.end }, { boxGeometry.marginBefore(), boxGeometry.marginAfter() } };
-    auto floatAvoider = FloatAvoider { layoutBox, absoluteCoordinates.topLeft, boxGeometry.borderBoxWidth(), margins, absoluteCoordinates.containingBlockContentBox };
+    auto isLeftAligned = layoutBox.isFloatingPositioned() ? layoutBox.isLeftFloatingPositioned() : layoutBox.style().isLeftToRightDirection();
+    auto floatAvoider = FloatAvoider { absoluteCoordinates.topLeft, boxGeometry.borderBoxWidth(), margins, absoluteCoordinates.containingBlockContentBox, layoutBox.isFloatingPositioned(), isLeftAligned };
     findPositionForFormattingContextRoot(floatAvoider);
     auto containingBlockTopLeft = absoluteCoordinates.containingBlockTopLeft;
     return { floatAvoider.left() - containingBlockTopLeft.x(), floatAvoider.top() - containingBlockTopLeft.y() };
