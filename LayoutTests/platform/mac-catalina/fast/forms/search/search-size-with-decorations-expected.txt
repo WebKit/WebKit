@@ -65,5 +65,5 @@ layer at (35,128) size 141x13
       text run at (0,0) width 135: "12345678901234567890"
 layer at (35,151) size 281x13
   RenderBlock {DIV} at (0,0) size 281x13
-    RenderText {#text} at (0,0) size 269x13
-      text run at (0,0) width 269: "1234567890123456789012345678901234567890"
+    RenderText {#text} at (0,0) size 270x13
+      text run at (0,0) width 270: "1234567890123456789012345678901234567890"
