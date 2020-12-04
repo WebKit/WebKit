@@ -497,6 +497,8 @@ void JIT::emit_op_iterator_next(const Instruction* instruction)
     GPRReg payloadDoneGPR = regT4;
 
     {
+        JSValueRegs doneRegs = JSValueRegs(tagDoneGPR, payloadDoneGPR);
+
         GPRReg tagIterResultGPR = regT3;
         GPRReg payloadIterResultGPR = regT2;
         
@@ -516,18 +518,19 @@ void JIT::emit_op_iterator_next(const Instruction* instruction)
             preservedRegs,
             CacheableIdentifier::createFromImmortalIdentifier(vm().propertyNames->done.impl()),
             JSValueRegs(tagIterResultGPR, payloadIterResultGPR),
-            JSValueRegs(tagDoneGPR, payloadDoneGPR),
+            doneRegs,
             AccessType::GetById);
         gen.generateFastPath(*this);
         addSlowCase(gen.slowPathJump());
         m_getByIds.append(gen);
 
-        emitValueProfilingSite(metadata);
-        emitPutVirtualRegister(bytecode.m_done, JSValueRegs(tagDoneGPR, payloadDoneGPR));
+        emitValueProfilingSite(metadata, doneRegs);
+        emitPutVirtualRegister(bytecode.m_done, doneRegs);
         advanceToNextCheckpoint();
     }
 
     {
+        JSValueRegs resultRegs = JSValueRegs(tagValueGPR, payloadValueGPR);
         GPRReg tagIterResultGPR = regT1;
         GPRReg payloadIterResultGPR = regT0;
 
@@ -543,14 +546,14 @@ void JIT::emit_op_iterator_next(const Instruction* instruction)
             RegisterSet::stubUnavailableRegisters(),
             CacheableIdentifier::createFromImmortalIdentifier(vm().propertyNames->value.impl()),
             JSValueRegs(tagIterResultGPR, payloadIterResultGPR),
-            JSValueRegs(tagValueGPR, payloadValueGPR),
+            resultRegs,
             AccessType::GetById);
         gen.generateFastPath(*this);
         addSlowCase(gen.slowPathJump());
         m_getByIds.append(gen);
 
-        emitValueProfilingSite(metadata);
-        emitPutVirtualRegister(bytecode.m_value, JSValueRegs(tagValueGPR, payloadValueGPR));
+        emitValueProfilingSite(metadata, resultRegs);
+        emitPutVirtualRegister(bytecode.m_value, resultRegs);
 
         iterationDone.link(this);
     }

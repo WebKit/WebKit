@@ -1785,7 +1785,7 @@ void JIT::emit_op_get_prototype_of(const Instruction* currentInstruction)
     emitLoadPrototype(vm(), valueRegs.payloadGPR(), resultRegs, scratchGPR, slowCases);
     addSlowCase(slowCases);
 
-    emitValueProfilingSite(bytecode.metadata(m_codeBlock));
+    emitValueProfilingSite(bytecode.metadata(m_codeBlock), resultRegs);
     emitPutVirtualRegister(bytecode.m_dst, resultRegs);
 }
 
