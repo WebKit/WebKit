@@ -71,7 +71,7 @@ void PrivateClickMeasurementManager::storeUnattributed(PrivateClickMeasurement&&
 
     if (UNLIKELY(debugModeEnabled())) {
         RELEASE_LOG_INFO(PrivateClickMeasurement, "Storing an ad click.");
-        m_networkProcess->broadcastConsoleMessage(m_sessionID, MessageSource::PrivateClickMeasurement, MessageLevel::Error, "[Private Click Measurement] Storing an ad click."_s);
+        m_networkProcess->broadcastConsoleMessage(m_sessionID, MessageSource::PrivateClickMeasurement, MessageLevel::Log, "[Private Click Measurement] Storing an ad click."_s);
     }
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
@@ -123,8 +123,8 @@ void PrivateClickMeasurementManager::attribute(const SourceSite& sourceSite, con
                     return;
 
                 if (UNLIKELY(debugModeEnabled())) {
-                    RELEASE_LOG_INFO(PrivateClickMeasurement, "Setting timer for firing attribution requests to the debug mode timeout of %{public}f seconds where the regular timeout would have been %{public}f seconds.", debugModeSecondsUntilSend.seconds(), secondsUntilSend.seconds());
-                    m_networkProcess->broadcastConsoleMessage(m_sessionID, MessageSource::PrivateClickMeasurement, MessageLevel::Info, makeString("[Private Click Measurement] Setting timer for firing attribution requests to the debug mode timeout of "_s, debugModeSecondsUntilSend.seconds(), " seconds where the regular timeout would have been "_s, secondsUntilSend.seconds(), " seconds."_s));
+                    RELEASE_LOG_INFO(PrivateClickMeasurement, "Setting timer for firing attribution request to the debug mode timeout of %{public}f seconds where the regular timeout would have been %{public}f seconds.", debugModeSecondsUntilSend.seconds(), secondsUntilSend.seconds());
+                    m_networkProcess->broadcastConsoleMessage(m_sessionID, MessageSource::PrivateClickMeasurement, MessageLevel::Log, makeString("[Private Click Measurement] Setting timer for firing attribution request to the debug mode timeout of "_s, debugModeSecondsUntilSend.seconds(), " seconds where the regular timeout would have been "_s, secondsUntilSend.seconds(), " seconds."_s));
                         secondsUntilSend = debugModeSecondsUntilSend;
                 }
                 startTimer(secondsUntilSend);
@@ -165,7 +165,7 @@ void PrivateClickMeasurementManager::fireConversionRequest(const PrivateClickMea
 
     if (UNLIKELY(debugModeEnabled())) {
         RELEASE_LOG_INFO(PrivateClickMeasurement, "About to fire an attribution request.");
-        m_networkProcess->broadcastConsoleMessage(m_sessionID, MessageSource::PrivateClickMeasurement, MessageLevel::Error, "[Private Click Measurement] About to fire an attribution request."_s);
+        m_networkProcess->broadcastConsoleMessage(m_sessionID, MessageSource::PrivateClickMeasurement, MessageLevel::Log, "[Private Click Measurement] About to fire an attribution request."_s);
     }
 
     m_pingLoadFunction(WTFMove(loadParameters), [weakThis = makeWeakPtr(*this)](const WebCore::ResourceError& error, const WebCore::ResourceResponse& response) {

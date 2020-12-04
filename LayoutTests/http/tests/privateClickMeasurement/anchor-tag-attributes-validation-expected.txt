@@ -1,5 +1,5 @@
-CONSOLE MESSAGE: attributionsourceid must have a non-negative value less than or equal to 63 for Private Click Measurement.
-CONSOLE MESSAGE: attributionsourceid must have a non-negative value less than or equal to 63 for Private Click Measurement.
+CONSOLE MESSAGE: attributionsourceid must have a non-negative value less than or equal to 255 for Private Click Measurement.
+CONSOLE MESSAGE: attributionsourceid must have a non-negative value less than or equal to 255 for Private Click Measurement.
 CONSOLE MESSAGE: attributionsourceid can not be converted to a non-negative integer which is required for Private Click Measurement.
 CONSOLE MESSAGE: attributionsourceid can not be converted to a non-negative integer which is required for Private Click Measurement.
 CONSOLE MESSAGE: attributionsourceid can not be converted to a non-negative integer which is required for Private Click Measurement.

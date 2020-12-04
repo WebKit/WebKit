@@ -56,9 +56,9 @@
     const sameSite = document.location.origin;
     const testCases = [
         [ validAdCampaignID, validAdDestination ],
-        [ "100", validAdDestination ],           // Too many characters.
+        [ "1220", validAdDestination ],          // Too many characters.
         [ "1", validAdDestination ],             // Too few characters.
-        [ "98", validAdDestination ],            // Too high value.
+        [ "298", validAdDestination ],           // Too high value.
         [ "-1", validAdDestination ],            // Negative value.
         [ "ab", validAdDestination ],            // Non-digits.
         [ "1", validAdDestination ],            // Non-ASCII.

@@ -41,9 +41,9 @@ class PrivateClickMeasurement {
 public:
     using PriorityValue = uint32_t;
 
-    static constexpr uint32_t MaxEntropy = 63;
-
     struct SourceID {
+        static constexpr uint32_t MaxEntropy = 255;
+
         SourceID() = default;
         explicit SourceID(uint32_t id)
             : id { id }
@@ -199,6 +199,8 @@ public:
     };
 
     struct Priority {
+        static constexpr uint32_t MaxEntropy = 63;
+
         explicit Priority(PriorityValue value)
         : value { value }
         {
@@ -208,6 +210,8 @@ public:
     };
     
     struct AttributionTriggerData {
+        static constexpr uint32_t MaxEntropy = 15;
+
         enum class WasSent : bool { No, Yes };
         
         AttributionTriggerData(uint32_t data, Priority priority, WasSent wasSent = WasSent::No)
@@ -219,7 +223,7 @@ public:
 
         bool isValid() const
         {
-            return data <= MaxEntropy && priority <= MaxEntropy;
+            return data <= MaxEntropy && priority <= Priority::MaxEntropy;
         }
         
         uint32_t data;

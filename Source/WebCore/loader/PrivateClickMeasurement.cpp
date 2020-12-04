@@ -57,6 +57,10 @@ bool PrivateClickMeasurement::isValid() const
 
 Expected<PrivateClickMeasurement::AttributionTriggerData, String> PrivateClickMeasurement::parseAttributionRequest(const URL& redirectURL)
 {
+    auto path = StringView(redirectURL.string()).substring(redirectURL.pathStart(), redirectURL.pathEnd() - redirectURL.pathStart());
+    if (path.isEmpty() || !path.startsWith(privateClickMeasurementPathPrefix))
+        return makeUnexpected(nullString());
+
     if (!redirectURL.protocolIs("https") || redirectURL.hasCredentials() || redirectURL.hasQuery() || redirectURL.hasFragmentIdentifier()) {
         if (UNLIKELY(debugModeEnabled())) {
             RELEASE_LOG_INFO(PrivateClickMeasurement, "Conversion was not accepted because the URL's protocol is not HTTPS or the URL contains one or more of username, password, query string, and fragment.");
@@ -65,22 +69,14 @@ Expected<PrivateClickMeasurement::AttributionTriggerData, String> PrivateClickMe
         return makeUnexpected(nullString());
     }
 
-    auto path = StringView(redirectURL.string()).substring(redirectURL.pathStart(), redirectURL.pathEnd() - redirectURL.pathStart());
-    if (path.isEmpty() || !path.startsWith(privateClickMeasurementPathPrefix)) {
-        if (UNLIKELY(debugModeEnabled())) {
-            RELEASE_LOG_INFO(PrivateClickMeasurement, "Conversion was not accepted because the URL path did not start with %" PUBLIC_LOG_STRING ".", privateClickMeasurementPathPrefix);
-            return makeUnexpected(makeString("[Private Click Measurement] Conversion was not accepted because the URL path did not start with "_s, privateClickMeasurementPathPrefix, "."_s));
-        }
-        return makeUnexpected(nullString());
-    }
 
     auto prefixLength = sizeof(privateClickMeasurementPathPrefix) - 1;
     if (path.length() == prefixLength + privateClickMeasurementAttributionTriggerDataPathSegmentSize) {
         auto attributionTriggerDataUInt64 = path.substring(prefixLength, privateClickMeasurementAttributionTriggerDataPathSegmentSize).toUInt64Strict();
-        if (!attributionTriggerDataUInt64 || *attributionTriggerDataUInt64 > MaxEntropy) {
+        if (!attributionTriggerDataUInt64 || *attributionTriggerDataUInt64 > AttributionTriggerData::MaxEntropy) {
             if (UNLIKELY(debugModeEnabled())) {
-                RELEASE_LOG_INFO(PrivateClickMeasurement, "Conversion was not accepted because the conversion data could not be parsed or was higher than the allowed maximum of %{public}u.", MaxEntropy);
-                return makeUnexpected(makeString("[Private Click Measurement] Conversion was not accepted because the conversion data could not be parsed or was higher than the allowed maximum of "_s, MaxEntropy, "."_s));
+                RELEASE_LOG_INFO(PrivateClickMeasurement, "Conversion was not accepted because the conversion data could not be parsed or was higher than the allowed maximum of %{public}u.", AttributionTriggerData::MaxEntropy);
+                return makeUnexpected(makeString("[Private Click Measurement] Conversion was not accepted because the conversion data could not be parsed or was higher than the allowed maximum of "_s, AttributionTriggerData::MaxEntropy, "."_s));
             }
             return makeUnexpected(nullString());
         }
@@ -90,19 +86,19 @@ Expected<PrivateClickMeasurement::AttributionTriggerData, String> PrivateClickMe
     
     if (path.length() == prefixLength + privateClickMeasurementAttributionTriggerDataPathSegmentSize + 1 + privateClickMeasurementPriorityPathSegmentSize) {
         auto attributionTriggerDataUInt64 = path.substring(prefixLength, privateClickMeasurementAttributionTriggerDataPathSegmentSize).toUInt64Strict();
-        if (!attributionTriggerDataUInt64 || *attributionTriggerDataUInt64 > MaxEntropy) {
+        if (!attributionTriggerDataUInt64 || *attributionTriggerDataUInt64 > AttributionTriggerData::MaxEntropy) {
             if (UNLIKELY(debugModeEnabled())) {
-                RELEASE_LOG_INFO(PrivateClickMeasurement, "Conversion was not accepted because the conversion data could not be parsed or was higher than the allowed maximum of %{public}u.", MaxEntropy);
-                return makeUnexpected(makeString("[Private Click Measurement] Conversion was not accepted because the conversion data could not be parsed or was higher than the allowed maximum of "_s, MaxEntropy, "."_s));
+                RELEASE_LOG_INFO(PrivateClickMeasurement, "Conversion was not accepted because the conversion data could not be parsed or was higher than the allowed maximum of %{public}u.", AttributionTriggerData::MaxEntropy);
+                return makeUnexpected(makeString("[Private Click Measurement] Conversion was not accepted because the conversion data could not be parsed or was higher than the allowed maximum of "_s, AttributionTriggerData::MaxEntropy, "."_s));
             }
             return makeUnexpected(nullString());
         }
 
         auto attributionPriorityUInt64 = path.substring(prefixLength + privateClickMeasurementAttributionTriggerDataPathSegmentSize + 1, privateClickMeasurementPriorityPathSegmentSize).toUInt64Strict();
-        if (!attributionPriorityUInt64 || *attributionPriorityUInt64 > MaxEntropy) {
+        if (!attributionPriorityUInt64 || *attributionPriorityUInt64 > Priority::MaxEntropy) {
             if (UNLIKELY(debugModeEnabled())) {
-                RELEASE_LOG_INFO(PrivateClickMeasurement, "Conversion was not accepted because the priority could not be parsed or was higher than the allowed maximum of %{public}u.", MaxEntropy);
-                return makeUnexpected(makeString("[Private Click Measurement] Conversion was not accepted because the priority could not be parsed or was higher than the allowed maximum of "_s, MaxEntropy, "."_s));
+                RELEASE_LOG_INFO(PrivateClickMeasurement, "Conversion was not accepted because the priority could not be parsed or was higher than the allowed maximum of %{public}u.", Priority::MaxEntropy);
+                return makeUnexpected(makeString("[Private Click Measurement] Conversion was not accepted because the priority could not be parsed or was higher than the allowed maximum of "_s, Priority::MaxEntropy, "."_s));
             }
             return makeUnexpected(nullString());
         }
@@ -161,7 +157,7 @@ URL PrivateClickMeasurement::reportURL() const
 Ref<JSON::Object> PrivateClickMeasurement::json() const
 {
     auto reportDetails = JSON::Object::create();
-    if (!m_attributionTriggerData)
+    if (!m_attributionTriggerData || !isValid())
         return reportDetails;
 
     reportDetails->setString("source-engagement-type"_s, "click"_s);

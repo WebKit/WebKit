@@ -433,8 +433,8 @@ Optional<PrivateClickMeasurement> HTMLAnchorElement::parsePrivateClickMeasuremen
         return WTF::nullopt;
     }
     
-    if (attributionSourceID.value() > PrivateClickMeasurement::MaxEntropy) {
-        document().addConsoleMessage(MessageSource::Other, MessageLevel::Warning, makeString("attributionsourceid must have a non-negative value less than or equal to ", PrivateClickMeasurement::MaxEntropy, " for Private Click Measurement."));
+    if (attributionSourceID.value() > PrivateClickMeasurement::SourceID::MaxEntropy) {
+        document().addConsoleMessage(MessageSource::Other, MessageLevel::Warning, makeString("attributionsourceid must have a non-negative value less than or equal to ", PrivateClickMeasurement::SourceID::MaxEntropy, " for Private Click Measurement."));
         return WTF::nullopt;
     }
 
