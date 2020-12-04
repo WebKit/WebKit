@@ -27,15 +27,15 @@ from webkitscmpy.scm_base import ScmBase
 
 class Scm(ScmBase):
     @classmethod
-    def from_url(cls, url):
+    def from_url(cls, url, contributors=None):
         from webkitscmpy import remote
 
         if remote.Svn.is_webserver(url):
-            return remote.Svn(url)
+            return remote.Svn(url, contributors=contributors)
         raise OSError("'{}' is not a known SCM server".format(url))
 
-    def __init__(self, url, dev_branches=None, prod_branches=None):
-        super(Scm, self).__init__(dev_branches=dev_branches, prod_branches=prod_branches)
+    def __init__(self, url, dev_branches=None, prod_branches=None, contributors=None):
+        super(Scm, self).__init__(dev_branches=dev_branches, prod_branches=prod_branches, contributors=contributors)
 
         if not isinstance(url, six.string_types):
             raise ValueError("Expected 'url' to be a string type, not '{}'".format(type(url)))

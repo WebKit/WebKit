@@ -48,17 +48,17 @@ class Scm(ScmBase):
         raise OSError("Cannot find '{}' program".format(program))
 
     @classmethod
-    def from_path(cls, path):
+    def from_path(cls, path,  contributors=None):
         from webkitscmpy import local
 
         if local.Git.is_checkout(path):
-            return local.Git(path)
+            return local.Git(path, contributors=contributors)
         if local.Svn.is_checkout(path):
-            return local.Svn(path)
+            return local.Svn(path, contributors=contributors)
         raise OSError("'{}' is not a known SCM type".format(path))
 
-    def __init__(self, path, dev_branches=None, prod_branches=None):
-        super(Scm, self).__init__(dev_branches=dev_branches, prod_branches=prod_branches)
+    def __init__(self, path, dev_branches=None, prod_branches=None, contributors=None):
+        super(Scm, self).__init__(dev_branches=dev_branches, prod_branches=prod_branches, contributors=contributors)
 
         if not isinstance(path, six.string_types):
             raise ValueError("Expected 'path' to be a string type, not '{}'".format(type(path)))

@@ -187,14 +187,7 @@ class Commit(object):
             raise TypeError("Expected 'timestamp' to be of type int, got '{}'".format(timestamp))
         self.timestamp = timestamp
 
-        if author and isinstance(author, six.string_types):
-            self.author = Contributor.by_email.get(
-                author,
-                Contributor.by_name.get(author),
-            )
-            if not self.author:
-                raise ValueError("'{}' does not match a known contributor")
-        elif author and isinstance(author, dict) and author.get('name'):
+        if author and isinstance(author, dict) and author.get('name'):
             self.author = Contributor(author.get('name'), author.get('emails'))
         elif author and not isinstance(author, Contributor):
             raise TypeError("Expected 'author' to be of type {}, got '{}'".format(Contributor, author))

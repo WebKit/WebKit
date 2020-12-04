@@ -162,7 +162,7 @@ class Checkout(Command):
         return 0
 
 
-def main(args=None, path=None, loggers=None):
+def main(args=None, path=None, loggers=None, contributors=None):
     logging.basicConfig(level=logging.WARNING)
 
     loggers = [logging.getLogger(), webkitcorepy_log,  log] + (loggers or [])
@@ -191,8 +191,8 @@ def main(args=None, path=None, loggers=None):
     parsed = parser.parse_args(args=args)
 
     if parsed.repository.startswith(('https://', 'http://')):
-        repository = remote.Scm.from_url(parsed.repository)
+        repository = remote.Scm.from_url(parsed.repository, contributors=contributors)
     else:
-        repository = local.Scm.from_path(path=parsed.repository)
+        repository = local.Scm.from_path(path=parsed.repository, contributors=contributors)
 
     return parsed.main(args=parsed, repository=repository)

@@ -29,68 +29,60 @@ from webkitscmpy import Contributor
 
 class TestContributor(unittest.TestCase):
     def test_git_log(self):
-        Contributor.clear()
         contributor = Contributor.from_scm_log('Author: Jonathan Bedard <jbedard@apple.com>')
 
         self.assertEqual(contributor.name, 'Jonathan Bedard')
         self.assertEqual(contributor.emails, ['jbedard@apple.com'])
 
     def test_git_svn_log(self):
-        Contributor.clear()
         contributor = Contributor.from_scm_log('Author: Jonathan Bedard <jbedard@apple.com@268f45cc-cd09-0410-ab3c-d52691b4dbfc>')
 
         self.assertEqual(contributor.name, 'Jonathan Bedard')
         self.assertEqual(contributor.emails, ['jbedard@apple.com'])
 
     def test_git_no_author(self):
-        Contributor.clear()
         contributor = Contributor.from_scm_log('Author: Automated Checkin <devnull>')
         self.assertIsNone(contributor)
 
     def test_git_svn_no_author(self):
-        Contributor.clear()
         contributor = Contributor.from_scm_log('Author: (no author) <(no author)@268f45cc-cd09-0410-ab3c-d52691b4dbfc>')
         self.assertIsNone(contributor)
 
     def test_svn_log(self):
-        Contributor.clear()
         contributor = Contributor.from_scm_log('r266751 | jbedard@apple.com | 2020-09-08 14:33:42 -0700 (Tue, 08 Sep 2020) | 10 lines')
 
         self.assertEqual(contributor.name, 'jbedard@apple.com')
         self.assertEqual(contributor.emails, ['jbedard@apple.com'])
 
     def test_short_svn_log(self):
-        Contributor.clear()
         contributor = Contributor.from_scm_log('r266751 | jbedard@apple.com | 2020-09-08 14:33:42 -0700 (Tue, 08 Sep 2020) | 1 line')
 
         self.assertEqual(contributor.name, 'jbedard@apple.com')
         self.assertEqual(contributor.emails, ['jbedard@apple.com'])
 
     def test_svn_patch_by_log(self):
-        Contributor.clear()
         contributor = Contributor.from_scm_log('Patch by Jonathan Bedard <jbedard@apple.com> on 2020-09-10')
 
         self.assertEqual(contributor.name, 'Jonathan Bedard')
         self.assertEqual(contributor.emails, ['jbedard@apple.com'])
 
     def test_author_mapping(self):
-        Contributor.clear()
-        Contributor.from_scm_log('Author: Jonathan Bedard <jbedard@apple.com>')
-        contributor = Contributor.from_scm_log('Author: Jonathan Bedard <jbedard@webkit.org>')
+        contributors = Contributor.Mapping()
+        Contributor.from_scm_log('Author: Jonathan Bedard <jbedard@apple.com>', contributors)
+        contributor = Contributor.from_scm_log('Author: Jonathan Bedard <jbedard@webkit.org>', contributors)
 
         self.assertEqual(contributor.name, 'Jonathan Bedard')
         self.assertEqual(contributor.emails, ['jbedard@apple.com', 'jbedard@webkit.org'])
 
     def test_email_mapping(self):
-        Contributor.clear()
-        Contributor.from_scm_log('Author: Jonathan Bedard <jbedard@apple.com>')
-        contributor = Contributor.from_scm_log('r266751 | jbedard@apple.com | 2020-09-08 14:33:42 -0700 (Tue, 08 Sep 2020) | 10 lines')
+        contributors = Contributor.Mapping()
+        Contributor.from_scm_log('Author: Jonathan Bedard <jbedard@apple.com>', contributors)
+        contributor = Contributor.from_scm_log('r266751 | jbedard@apple.com | 2020-09-08 14:33:42 -0700 (Tue, 08 Sep 2020) | 10 lines', contributors)
 
         self.assertEqual(contributor.name, 'Jonathan Bedard')
         self.assertEqual(contributor.emails, ['jbedard@apple.com'])
 
     def test_invalid_log(self):
-        Contributor.clear()
         with self.assertRaises(ValueError):
             Contributor.from_scm_log('Jonathan Bedard <jbedard@apple.com>')
 

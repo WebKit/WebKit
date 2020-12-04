@@ -23,6 +23,7 @@
 import json
 import re
 
+from collections import defaultdict
 from webkitcorepy import string_utils
 
 
@@ -31,9 +32,6 @@ class Contributor(object):
     AUTOMATED_CHECKIN_RE = re.compile(r'Author: (?P<author>.*) <devnull>')
     SVN_AUTHOR_RE = re.compile(r'r\d+ \| (?P<email>.*) \| (?P<date>.*) \| \d+ lines?')
     SVN_PATCH_FROM_RE = re.compile(r'Patch by (?P<author>.*) <(?P<email>.*)> on \d+-\d+-\d+')
-
-    by_email = dict()
-    by_name = dict()
 
     class Encoder(json.JSONEncoder):
 
@@ -47,13 +45,43 @@ class Contributor(object):
 
             return result
 
-    @classmethod
-    def clear(cls):
-        cls.by_email = dict()
-        cls.by_name = dict()
+    class Mapping(defaultdict):
+        def __init__(self):
+            super(Contributor.Mapping, self).__init__(lambda: None)
+
+        def add(self, contributor):
+            if not isinstance(contributor, Contributor):
+                raise ValueError("'{}' is not a Contributor object".format(type(contributor)))
+            return self.create(name=contributor.name, *contributor.emails)
+
+        def create(self, name=None, *emails):
+            emails = [email for email in emails or []]
+            if not name and not emails:
+                return None
+
+            contributor = None
+            for argument in [name] + (emails or []):
+                contributor = self[argument]
+                if contributor:
+                    break
+
+            if contributor:
+                for email in emails or []:
+                    if email not in contributor.emails:
+                        contributor.emails.append(email)
+                if contributor.name in contributor.emails and name:
+                    contributor.name = name
+            else:
+                contributor = Contributor(name or emails[0], emails=emails)
+
+            self[contributor.name] = contributor
+            for email in contributor.emails or []:
+                self[email] = contributor
+            return contributor
+
 
     @classmethod
-    def from_scm_log(cls, line):
+    def from_scm_log(cls, line, contributors=None):
         email = None
         author = None
 
@@ -75,18 +103,9 @@ class Contributor(object):
         if not email and not author:
             return None
 
-        contributor = cls.by_name.get(author or email)
-        if not contributor:
-            contributor = cls.by_email.get(email)
-
-        if not contributor:
-            contributor = cls(author or email, emails=[email])
-            cls.by_name[contributor.name] = contributor
-        elif email not in contributor.emails:
-            contributor.emails.append(email)
-
-        cls.by_name[email] = contributor
-        return contributor
+        if contributors is not None:
+            return contributors.create(author, email)
+        return cls(author or email, emails=[email])
 
     def __init__(self, name, emails=None):
         self.name = string_utils.decode(name)

@@ -50,8 +50,8 @@ class Svn(Scm):
     def is_checkout(cls, path):
         return run([cls.executable(), 'info'], cwd=path, capture_output=True).returncode == 0
 
-    def __init__(self, path, dev_branches=None, prod_branches=None):
-        super(Svn, self).__init__(path, dev_branches=dev_branches, prod_branches=prod_branches)
+    def __init__(self, path, dev_branches=None, prod_branches=None, contributors=None):
+        super(Svn, self).__init__(path, dev_branches=dev_branches, prod_branches=prod_branches, contributors=contributors)
 
         self._root_path = self.path
         self._root_path = self.info(cached=False).get('Working Copy Root Path')
@@ -370,19 +370,13 @@ class Svn(Scm):
                     author_line = line
                     break
 
-            author = Contributor.from_scm_log(author_line)
+            author = Contributor.from_scm_log(author_line, self.contributors)
             message = '\n'.join(split_log[3:-1])
         else:
             if include_log:
                 self.log('Failed to connect to remote, cannot compute commit message')
             email = info.get('Last Changed Author')
-            author = Contributor.by_email.get(
-                email,
-                Contributor.by_name.get(
-                    email,
-                    Contributor(name=email, emails=[email]),
-                ),
-            ) if email else None
+            author = self.contributors.create(email, email) if '@' in email else self.contributors.create(email)
             message = None
 
         return Commit(

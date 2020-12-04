@@ -1,3 +1,65 @@
+2020-12-04  Jonathan Bedard  <jbedard@apple.com>
+
+        [git-webkit] Use contributors.json
+        https://bugs.webkit.org/show_bug.cgi?id=217732
+        <rdar://problem/70309518>
+
+        Reviewed by Dewei Zhu.
+
+        The interaction between Git, Svn and old commits means that our canonical record of
+        commit authors is somewhat incomplete. contributors.json has most of the information
+        we are missing, we should rely on it to map non-standard author names to their canonical
+        names and email addresses.
+
+        Additionally, making the record of Contributors owned by the repository instead of being global
+        to the entire process.
+
+        * Scripts/git-webkit: Parse contributors.json and add it to a Contributor.Mapping.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/commit.py:
+        (Commit): Contributor class object no longer owns record of contributors.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/contributor.py:
+        (Contributor):
+        (Contributor.Mapping): Dictionary mapping Contributors and their potential aliases.
+        (Contributor.Mapping.__init__):
+        (Contributor.Mapping.add): Add Contributor to mapping.
+        (Contributor.Mapping.create): Find or create a contributor with the specified name and email
+        addresses and bind it to the record of contributors.
+        (Contributor.from_scm_log): Leverage Contributor.Mapping provided by caller.
+        (Contributor.clear): Deleted.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/git.py:
+        (Git.__init__): Instantiate repository with existing Contributor.Mapping.
+        (Git.commit): Repository now owns the record of contributors.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/scm.py:
+        (Scm.from_path): Instantiate repository with existing Contributor.Mapping.
+        (Scm.__init__): Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/svn.py:
+        (Svn.__init__): Instantiate repository with existing Contributor.Mapping.
+        (Svn.commit): Repository now owns the record of contributors.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program.py:
+        (main): Allow caller to pass an existing record of contributors.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/remote/scm.py:
+        (Scm.from_url): Instantiate repository with existing Contributor.Mapping.
+        (Scm.__init__): Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/remote/svn.py:
+        (Svn.__init__): Instantiate repository with existing Contributor.Mapping.
+        (Svn.commit): Repository now owns the record of contributors.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/scm_base.py:
+        (ScmBase.__init__): Instantiate repository with existing Contributor.Mapping.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/commit_unittest.py:
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/contributor_unittest.py:
+        (TestContributor.test_git_log): No more global contributor record.
+        (TestContributor.test_git_svn_log): Ditto.
+        (TestContributor.test_git_no_author): Ditto.
+        (TestContributor.test_git_svn_no_author): Ditto.
+        (TestContributor.test_svn_log): Ditto.
+        (TestContributor.test_short_svn_log): Ditto.
+        (TestContributor.test_svn_patch_by_log): Ditto.
+        (TestContributor.test_author_mapping): Contributor record is owned by the caller of the caller
+        of Contributor management.
+        (TestContributor.test_email_mapping): Ditto.
+        (TestContributor.test_invalid_log): No more global contributor record.
+
 2020-12-04  Kate Cheney  <katherine_cheney@apple.com>
 
         Create API to enable/disable text interaction gestures in WKWebView

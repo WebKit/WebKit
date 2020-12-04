@@ -42,8 +42,8 @@ class Git(Scm):
     def is_checkout(cls, path):
         return run([cls.executable(), 'rev-parse', '--show-toplevel'], cwd=path, capture_output=True).returncode == 0
 
-    def __init__(self, path, dev_branches=None, prod_branches=None):
-        super(Git, self).__init__(path, dev_branches=dev_branches, prod_branches=prod_branches)
+    def __init__(self, path, dev_branches=None, prod_branches=None, contributors=None):
+        super(Git, self).__init__(path, dev_branches=dev_branches, prod_branches=prod_branches, contributors=contributors)
         if not self.root_path:
             raise OSError('Provided path {} is not a git repository'.format(path))
 
@@ -265,7 +265,7 @@ class Git(Scm):
             branch_point=branch_point,
             branch=branch,
             timestamp=int(commit_time.stdout.lstrip()),
-            author=Contributor.from_scm_log(log.stdout.splitlines()[1]),
+            author=Contributor.from_scm_log(log.stdout.splitlines()[1], self.contributors),
             message='\n'.join(line[4:] for line in log.stdout.splitlines()[4:]) if include_log else None,
         )
 

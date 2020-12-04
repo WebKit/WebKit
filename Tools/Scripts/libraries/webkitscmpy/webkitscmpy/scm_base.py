@@ -26,7 +26,7 @@ import six
 import sys
 
 from logging import NullHandler
-from webkitscmpy import Commit, log
+from webkitscmpy import Commit, Contributor, log
 
 
 class ScmBase(object):
@@ -38,10 +38,11 @@ class ScmBase(object):
     DEV_BRANCHES = re.compile(r'.*[(eng)(dev)(bug)]/.+')
     PROD_BRANCHES = re.compile(r'\S+-[\d+\.]+-branch')
 
-    def __init__(self, dev_branches=None, prod_branches=None):
+    def __init__(self, dev_branches=None, prod_branches=None, contributors=None):
         self.dev_branches = dev_branches or self.DEV_BRANCHES
         self.prod_branches = prod_branches or self.PROD_BRANCHES
         self.path = None
+        self.contributors = Contributor.Mapping() if contributors is None else contributors
 
     @property
     def is_svn(self):

@@ -23,10 +23,24 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import os
-import webkitpy
 import sys
 
-from webkitscmpy import program
+from webkitpy.common.config.committers import CommitterList
+from webkitscmpy import program, Contributor
 
-sys.exit(program.main(path=os.path.dirname(__file__)))
+
+if '__main__' == __name__:
+    contributors = Contributor.Mapping()
+    for contributor in CommitterList().contributors():
+        c = contributors.create(contributor.full_name, *contributor.emails)
+        if not c:
+            continue
+        for alias in contributor.aliases or []:
+            if alias not in contributors:
+                contributors[alias] = c
+        for nick in contributor.irc_nicknames or []:
+            if nick not in contributors:
+                contributors[nick] = c
+
+    sys.exit(program.main(path=os.path.dirname(__file__), contributors=contributors))
 

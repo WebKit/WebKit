@@ -195,21 +195,16 @@ PRINTED
             Commit(revision=1, timestamp=100).__cmp__(Commit(identifier=2, timestamp=100))
 
     def test_contributor(self):
-        Contributor.clear()
         contributor = Contributor.from_scm_log('Author: Jonathan Bedard <jbedard@apple.com>')
 
         commit = Commit(revision=1, identifier=1, author=contributor)
         self.assertEqual(commit.author, contributor)
 
-        commit = Commit(revision=1, identifier=1, author='Jonathan Bedard')
-        self.assertEqual(commit.author, contributor)
-
-        commit = Commit(revision=1, identifier=1, author='jbedard@apple.com')
+        commit = Commit(revision=1, identifier=1, author=Contributor.Encoder().default(contributor))
         self.assertEqual(commit.author, contributor)
 
     def test_invalid_contributor(self):
-        Contributor.clear()
-        with self.assertRaises(ValueError):
+        with self.assertRaises(TypeError):
             Commit(revision=1, identifier=1, author='Jonathan Bedard')
 
     def test_branch_point(self):
@@ -218,7 +213,6 @@ PRINTED
         self.assertEqual('1234.0@branch-a', str(Commit(branch_point=1234, identifier=0, branch='branch-a')))
 
     def test_json_encode(self):
-        Contributor.clear()
         contributor = Contributor.from_scm_log('Author: Jonathan Bedard <jbedard@apple.com>')
 
         self.assertDictEqual(
@@ -243,7 +237,6 @@ PRINTED
         )
 
     def test_json_decode(self):
-        Contributor.clear()
         contributor = Contributor.from_scm_log('Author: Jonathan Bedard <jbedard@apple.com>')
 
         commit_a = Commit(
@@ -251,7 +244,7 @@ PRINTED
             hash='c3bd784f8b88bd03f64467ddd3304ed8be28acbe',
             identifier='1@main',
             timestamp=1000,
-            author=contributor,
+            author=Contributor.Encoder().default(contributor),
             message='Message'
         )
 

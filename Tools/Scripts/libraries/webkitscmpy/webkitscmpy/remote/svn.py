@@ -46,12 +46,12 @@ class Svn(Scm):
     def is_webserver(cls, url):
         return True if cls.URL_RE.match(url) else False
 
-    def __init__(self, url, dev_branches=None, prod_branches=None):
+    def __init__(self, url, dev_branches=None, prod_branches=None, contributors=None):
         if url[-1] != '/':
             url += '/'
         if not self.is_webserver(url):
             raise self.Exception("'{}' is not a valid SVN webserver".format(url))
-        super(Svn, self).__init__(url, dev_branches=dev_branches, prod_branches=prod_branches)
+        super(Svn, self).__init__(url, dev_branches=dev_branches, prod_branches=prod_branches, contributors=contributors)
 
         if os.path.exists(self._cache_path):
             try:
@@ -426,13 +426,7 @@ class Svn(Scm):
             message = None
             name = info.get('Last Changed Author')
 
-        author = Contributor.by_email.get(
-            name,
-            Contributor.by_name.get(
-                name,
-                Contributor(name=name, emails=[name] if '@' in name else []),
-            ),
-        ) if name else None
+        author = self.contributors.create(name, name) if name and '@' in name else self.contributors.create(name)
 
         return Commit(
             revision=int(revision),
