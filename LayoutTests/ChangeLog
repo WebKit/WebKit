@@ -1,3 +1,11 @@
+2020-12-03  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK] Gardening anchor download failures after r270422
+
+        Unreviewed test gardening.
+
+        * platform/gtk/TestExpectations:
+
 2020-12-03  Alex Christensen  <achristensen@webkit.org>
 
         Introduce new download API
