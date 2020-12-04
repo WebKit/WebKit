@@ -1,3 +1,16 @@
+2020-12-04  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r270422.
+        https://bugs.webkit.org/show_bug.cgi?id=219554
+
+        Deleted an SPI that is still in use.
+
+        Reverted changeset:
+
+        "Introduce new download API"
+        https://bugs.webkit.org/show_bug.cgi?id=217747
+        https://trac.webkit.org/changeset/270422
+
 2020-12-04  Kate Cheney  <katherine_cheney@apple.com>
 
         Create API to enable/disable text interaction gestures in WKWebView

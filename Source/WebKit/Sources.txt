@@ -374,7 +374,7 @@ UIProcess/API/C/WKContext.cpp
 UIProcess/API/C/WKContextConfigurationRef.cpp
 UIProcess/API/C/WKCookieManager.cpp
 UIProcess/API/C/WKCredential.cpp
-UIProcess/API/C/WKDownloadRef.cpp
+UIProcess/API/C/WKDownload.cpp
 UIProcess/API/C/WKFormSubmissionListener.cpp
 UIProcess/API/C/WKFrame.cpp
 UIProcess/API/C/WKFrameHandleRef.cpp

@@ -55,7 +55,6 @@
 #include "AuthenticationChallengeProxy.h"
 #include "AuthenticationDecisionListener.h"
 #include "ContentAsStringIncludesChildFrames.h"
-#include "DownloadProxy.h"
 #include "LegacySessionStateCoding.h"
 #include "Logging.h"
 #include "NativeWebKeyboardEvent.h"
@@ -1241,7 +1240,7 @@ void WKPageSetPagePolicyClient(WKPageRef pageRef, const WKPagePolicyClientBase* 
         }
 
     private:
-        void decidePolicyForNavigationAction(WebPageProxy& page, WebFrameProxy* frame, Ref<API::NavigationAction>&& navigationAction, WebFrameProxy* originatingFrame, const WebCore::ResourceRequest& originalResourceRequest, const WebCore::ResourceRequest& resourceRequest, Ref<WebFramePolicyListenerProxy>&& listener, API::Object* userData) override
+        void decidePolicyForNavigationAction(WebPageProxy& page, WebFrameProxy* frame, const NavigationActionData& navigationActionData, WebFrameProxy* originatingFrame, const WebCore::ResourceRequest& originalResourceRequest, const WebCore::ResourceRequest& resourceRequest, Ref<WebFramePolicyListenerProxy>&& listener, API::Object* userData) override
         {
             if (!m_client.decidePolicyForNavigationAction_deprecatedForUseWithV0 && !m_client.decidePolicyForNavigationAction_deprecatedForUseWithV1 && !m_client.decidePolicyForNavigationAction) {
                 listener->use();
@@ -1252,14 +1251,14 @@ void WKPageSetPagePolicyClient(WKPageRef pageRef, const WKPagePolicyClientBase* 
             Ref<API::URLRequest> request = API::URLRequest::create(resourceRequest);
 
             if (m_client.decidePolicyForNavigationAction_deprecatedForUseWithV0)
-                m_client.decidePolicyForNavigationAction_deprecatedForUseWithV0(toAPI(&page), toAPI(frame), toAPI(navigationAction->data().navigationType), toAPI(navigationAction->data().modifiers), toAPI(navigationAction->data().mouseButton), toAPI(request.ptr()), toAPI(listener.ptr()), toAPI(userData), m_client.base.clientInfo);
+                m_client.decidePolicyForNavigationAction_deprecatedForUseWithV0(toAPI(&page), toAPI(frame), toAPI(navigationActionData.navigationType), toAPI(navigationActionData.modifiers), toAPI(navigationActionData.mouseButton), toAPI(request.ptr()), toAPI(listener.ptr()), toAPI(userData), m_client.base.clientInfo);
             else if (m_client.decidePolicyForNavigationAction_deprecatedForUseWithV1)
-                m_client.decidePolicyForNavigationAction_deprecatedForUseWithV1(toAPI(&page), toAPI(frame), toAPI(navigationAction->data().navigationType), toAPI(navigationAction->data().modifiers), toAPI(navigationAction->data().mouseButton), toAPI(originatingFrame), toAPI(request.ptr()), toAPI(listener.ptr()), toAPI(userData), m_client.base.clientInfo);
+                m_client.decidePolicyForNavigationAction_deprecatedForUseWithV1(toAPI(&page), toAPI(frame), toAPI(navigationActionData.navigationType), toAPI(navigationActionData.modifiers), toAPI(navigationActionData.mouseButton), toAPI(originatingFrame), toAPI(request.ptr()), toAPI(listener.ptr()), toAPI(userData), m_client.base.clientInfo);
             else
-                m_client.decidePolicyForNavigationAction(toAPI(&page), toAPI(frame), toAPI(navigationAction->data().navigationType), toAPI(navigationAction->data().modifiers), toAPI(navigationAction->data().mouseButton), toAPI(originatingFrame), toAPI(originalRequest.ptr()), toAPI(request.ptr()), toAPI(listener.ptr()), toAPI(userData), m_client.base.clientInfo);
+                m_client.decidePolicyForNavigationAction(toAPI(&page), toAPI(frame), toAPI(navigationActionData.navigationType), toAPI(navigationActionData.modifiers), toAPI(navigationActionData.mouseButton), toAPI(originatingFrame), toAPI(originalRequest.ptr()), toAPI(request.ptr()), toAPI(listener.ptr()), toAPI(userData), m_client.base.clientInfo);
         }
 
-        void decidePolicyForNewWindowAction(WebPageProxy& page, WebFrameProxy& frame, Ref<API::NavigationAction>&& navigationAction, const WebCore::ResourceRequest& resourceRequest, const String& frameName, Ref<WebFramePolicyListenerProxy>&& listener, API::Object* userData) override
+        void decidePolicyForNewWindowAction(WebPageProxy& page, WebFrameProxy& frame, const NavigationActionData& navigationActionData, const WebCore::ResourceRequest& resourceRequest, const String& frameName, Ref<WebFramePolicyListenerProxy>&& listener, API::Object* userData) override
         {
             if (!m_client.decidePolicyForNewWindowAction) {
                 listener->use();
@@ -1268,7 +1267,7 @@ void WKPageSetPagePolicyClient(WKPageRef pageRef, const WKPagePolicyClientBase* 
 
             Ref<API::URLRequest> request = API::URLRequest::create(resourceRequest);
 
-            m_client.decidePolicyForNewWindowAction(toAPI(&page), toAPI(&frame), toAPI(navigationAction->data().navigationType), toAPI(navigationAction->data().modifiers), toAPI(navigationAction->data().mouseButton), toAPI(request.ptr()), toAPI(frameName.impl()), toAPI(listener.ptr()), toAPI(userData), m_client.base.clientInfo);
+            m_client.decidePolicyForNewWindowAction(toAPI(&page), toAPI(&frame), toAPI(navigationActionData.navigationType), toAPI(navigationActionData.modifiers), toAPI(navigationActionData.mouseButton), toAPI(request.ptr()), toAPI(frameName.impl()), toAPI(listener.ptr()), toAPI(userData), m_client.base.clientInfo);
         }
 
         void decidePolicyForResponse(WebPageProxy& page, WebFrameProxy& frame, const WebCore::ResourceResponse& resourceResponse, const WebCore::ResourceRequest& resourceRequest, bool canShowMIMEType, Ref<WebFramePolicyListenerProxy>&& listener, API::Object* userData) override
@@ -2258,27 +2257,6 @@ void WKPageSetPageNavigationClient(WKPageRef pageRef, const WKPageNavigationClie
             if (m_client.copySignedPublicKeyAndChallengeString)
                 return adoptRef(toImpl(m_client.copySignedPublicKeyAndChallengeString(toAPI(&page), m_client.base.clientInfo)));
             return API::String::create(WebCore::signedPublicKeyAndChallengeString(keySizeIndex, challengeString->string(), url));
-        }
-
-        void navigationActionDidBecomeDownload(WebKit::WebPageProxy& page, API::NavigationAction& action, WebKit::DownloadProxy& download) override
-        {
-            if (!m_client.navigationActionDidBecomeDownload)
-                return;
-            m_client.navigationActionDidBecomeDownload(toAPI(&page), toAPI(&action), toAPI(&download), m_client.base.clientInfo);
-        }
-
-        void navigationResponseDidBecomeDownload(WebKit::WebPageProxy& page, API::NavigationResponse& response, WebKit::DownloadProxy& download) override
-        {
-            if (!m_client.navigationResponseDidBecomeDownload)
-                return;
-            m_client.navigationResponseDidBecomeDownload(toAPI(&page), toAPI(&response), toAPI(&download), m_client.base.clientInfo);
-        }
-
-        void contextMenuDidCreateDownload(WebKit::WebPageProxy& page, WebKit::DownloadProxy& download) override
-        {
-            if (!m_client.contextMenuDidCreateDownload)
-                return;
-            m_client.contextMenuDidCreateDownload(toAPI(&page), toAPI(&download), m_client.base.clientInfo);
         }
 
         void didBeginNavigationGesture(WebPageProxy& page) override

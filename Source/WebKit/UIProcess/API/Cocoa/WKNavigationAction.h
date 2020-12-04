@@ -76,10 +76,6 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
  */
 @property (nonatomic, readonly, copy) NSURLRequest *request;
 
-/*! @abstract The download attribute of the element that caused this navigation.
-*/
-@property (nonatomic, readonly, nullable, copy) NSString *downloadAttribute WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
-
 #if !TARGET_OS_IPHONE
 
 /*! @abstract The modifier keys that were in effect when the navigation was requested.

@@ -151,7 +151,7 @@ TEST(ContentFiltering, URLAfterServerRedirect)
 
 - (void)webView:(WKWebView *)webView decidePolicyForNavigationResponse:(WKNavigationResponse *)navigationResponse decisionHandler:(void (^)(WKNavigationResponsePolicy))decisionHandler
 {
-    decisionHandler(WKNavigationResponsePolicyBecomeDownload);
+    decisionHandler(_WKNavigationResponsePolicyBecomeDownload);
 }
 
 - (void)webView:(WKWebView *)webView didFailProvisionalNavigation:(WKNavigation *)navigation withError:(NSError *)error

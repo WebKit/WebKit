@@ -38,7 +38,6 @@ NS_ASSUME_NONNULL_BEGIN
 @class WKBackForwardList;
 @class WKBackForwardListItem;
 @class WKContentWorld;
-@class WKDownload;
 @class WKFindConfiguration;
 @class WKFindResult;
 @class WKFrameInfo;
@@ -450,18 +449,6 @@ The uniform type identifier kUTTypeWebArchive can be used get the related pasteb
  @param scheme The URL scheme to check.
  */
 + (BOOL)handlesURLScheme:(NSString *)urlScheme WK_API_AVAILABLE(macos(10.13), ios(11.0));
-
-/* @abstract Begins a download in the context of the currently displayed webpage as if the WKNavigationDelegate turned a navigation into a download instead
- @param request The request specifying the URL to download.
- @param completionHandler A block called when the download has started.
- */
-- (void)startDownloadWithRequest:(NSURLRequest *)request completionHandler:(void(^)(WKDownload *))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
-
-/* @abstract Resumes a download that failed or was canceled.
- @param resumeData Data from a WKDownloadDelegate's didFailWithError or a WKDownload's cancel completionHandler.
- @param completionHandler A block called when the download has resumed.
- */
-- (void)resumeDownloadWithData:(NSData *)resumeData completionHandler:(void(^)(WKDownload *))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 /* @abstract The media type for the WKWebView
  @discussion The value of mediaType will override the normal value of the CSS media property.

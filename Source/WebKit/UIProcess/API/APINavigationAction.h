@@ -57,7 +57,7 @@ public:
     bool canHandleRequest() const { return m_navigationActionData.canHandleRequest; }
     bool shouldOpenExternalSchemes() const { return m_navigationActionData.shouldOpenExternalURLsPolicy == WebCore::ShouldOpenExternalURLsPolicy::ShouldAllow || m_navigationActionData.shouldOpenExternalURLsPolicy == WebCore::ShouldOpenExternalURLsPolicy::ShouldAllowExternalSchemesButNotAppLinks; }
     bool shouldOpenAppLinks() const { return m_shouldOpenAppLinks && m_navigationActionData.shouldOpenExternalURLsPolicy == WebCore::ShouldOpenExternalURLsPolicy::ShouldAllow; }
-    const WTF::String& downloadAttribute() const { return m_navigationActionData.downloadAttribute; }
+    bool shouldPerformDownload() const { return !m_navigationActionData.downloadAttribute.isNull(); }
     bool isRedirect() const { return m_navigationActionData.isRedirect; }
     WebCore::ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy() const { return m_navigationActionData.shouldOpenExternalURLsPolicy; }
 
@@ -71,8 +71,6 @@ public:
     void unsetShouldPerformSOAuthorization() { m_shouldPerformSOAuthorization = false; }
 #endif
 
-    const WebKit::NavigationActionData& data() const { return m_navigationActionData; }
-    
 private:
     NavigationAction(WebKit::NavigationActionData&& navigationActionData, API::FrameInfo* sourceFrame, API::FrameInfo* targetFrame, Optional<WTF::String> targetFrameName, WebCore::ResourceRequest&& request, const WTF::URL& originalURL, bool shouldOpenAppLinks, RefPtr<UserInitiatedAction>&& userInitiatedAction, API::Navigation* mainFrameNavigation)
         : m_sourceFrame(sourceFrame)

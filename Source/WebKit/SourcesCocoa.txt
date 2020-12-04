@@ -300,7 +300,6 @@ UIProcess/API/Cocoa/WKContentRuleList.mm
 UIProcess/API/Cocoa/WKContentRuleListStore.mm
 UIProcess/API/Cocoa/WKContentWorld.mm
 UIProcess/API/Cocoa/WKContextMenuElementInfo.mm
-UIProcess/API/Cocoa/WKDownload.mm
 UIProcess/API/Cocoa/WKError.mm
 UIProcess/API/Cocoa/WKFindConfiguration.mm
 UIProcess/API/Cocoa/WKFindResult.mm

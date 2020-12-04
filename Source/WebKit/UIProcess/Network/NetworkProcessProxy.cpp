@@ -32,7 +32,6 @@
 #include "AuthenticationManager.h"
 #include "DownloadProxyMap.h"
 #include "DownloadProxyMessages.h"
-#include "FrameInfoData.h"
 #if ENABLE(LEGACY_CUSTOM_PROTOCOL_MANAGER)
 #include "LegacyCustomProtocolManagerMessages.h"
 #include "LegacyCustomProtocolManagerProxyMessages.h"

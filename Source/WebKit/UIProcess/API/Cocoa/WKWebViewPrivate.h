@@ -109,7 +109,6 @@ typedef NS_OPTIONS(NSUInteger, _WKRectEdge) {
 #endif
 
 @class WKBrowsingContextHandle;
-@class WKDownload;
 @class WKFrameInfo;
 @class WKWebpagePreferences;
 @class _WKApplicationManifest;

@@ -43,7 +43,6 @@
 #import "SOAuthorizationCoordinator.h"
 #import "WKBackForwardListInternal.h"
 #import "WKBackForwardListItemInternal.h"
-#import "WKDownloadInternal.h"
 #import "WKFrameInfoInternal.h"
 #import "WKHistoryDelegatePrivate.h"
 #import "WKNSDictionary.h"
@@ -188,9 +187,6 @@ void NavigationState::setNavigationDelegate(id <WKNavigationDelegate> delegate)
     m_navigationDelegateMethods.webViewWebProcessDidBecomeResponsive = [delegate respondsToSelector:@selector(_webViewWebProcessDidBecomeResponsive:)];
     m_navigationDelegateMethods.webViewWebProcessDidBecomeUnresponsive = [delegate respondsToSelector:@selector(_webViewWebProcessDidBecomeUnresponsive:)];
     m_navigationDelegateMethods.webCryptoMasterKeyForWebView = [delegate respondsToSelector:@selector(_webCryptoMasterKeyForWebView:)];
-    m_navigationDelegateMethods.navigationActionDidBecomeDownload = [delegate respondsToSelector:@selector(webView:navigationAction:didBecomeDownload:)];
-    m_navigationDelegateMethods.navigationResponseDidBecomeDownload = [delegate respondsToSelector:@selector(webView:navigationResponse:didBecomeDownload:)];
-    m_navigationDelegateMethods.contextMenuDidCreateDownload = [delegate respondsToSelector:@selector(_webView:contextMenuDidCreateDownload:)];
     m_navigationDelegateMethods.webViewDidBeginNavigationGesture = [delegate respondsToSelector:@selector(_webViewDidBeginNavigationGesture:)];
     m_navigationDelegateMethods.webViewWillEndNavigationGestureWithNavigationToBackForwardListItem = [delegate respondsToSelector:@selector(_webViewWillEndNavigationGesture:withNavigationToBackForwardListItem:)];
     m_navigationDelegateMethods.webViewDidEndNavigationGestureWithNavigationToBackForwardListItem = [delegate respondsToSelector:@selector(_webViewDidEndNavigationGesture:withNavigationToBackForwardListItem:)];
@@ -476,10 +472,11 @@ void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageP
             }
 
             NSURLRequest *nsURLRequest = wrapper(API::URLRequest::create(navigationAction->request()));
-            if ([NSURLConnection canHandleRequest:nsURLRequest]
-                || webPage->urlSchemeHandlerForScheme([nsURLRequest URL].scheme)
-                || [nsURLRequest.URL.scheme isEqualToString:@"blob"]) {
-                listener->use(defaultWebsitePolicies.get());
+            if ([NSURLConnection canHandleRequest:nsURLRequest] || webPage->urlSchemeHandlerForScheme([nsURLRequest URL].scheme)) {
+                if (navigationAction->shouldPerformDownload())
+                    listener->download();
+                else
+                    listener->use(defaultWebsitePolicies.get());
                 return;
             }
 
@@ -558,12 +555,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             localListener->ignore();
             break;
 
-            ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         case _WKNavigationActionPolicyDownload:
-            ALLOW_DEPRECATED_DECLARATIONS_END
             localListener->download();
             break;
-
         case _WKNavigationActionPolicyAllowWithoutTryingAppLink:
             trySOAuthorization(WTFMove(navigationAction), webPageProxy, [localListener = WTFMove(localListener), websitePolicies = WTFMove(apiWebsitePolicies)] (bool optimizedLoad) {
                 if (optimizedLoad) {
@@ -677,7 +671,7 @@ void NavigationState::NavigationClient::decidePolicyForNavigationResponse(WebPag
             localListener->ignore();
             break;
 
-        case WKNavigationResponsePolicyBecomeDownload:
+        case _WKNavigationResponsePolicyBecomeDownload:
             localListener->download();
             break;
         }
@@ -1090,42 +1084,6 @@ RefPtr<API::String> NavigationState::NavigationClient::signedPublicKeyAndChallen
 {
     // WebKitTestRunner uses C API. Hence, no SPI is provided to override the following function.
     return API::String::create(WebCore::signedPublicKeyAndChallengeString(keySizeIndex, challengeString->string(), url));
-}
-
-void NavigationState::NavigationClient::navigationActionDidBecomeDownload(WebPageProxy&, API::NavigationAction& navigationAction, DownloadProxy& download)
-{
-    if (!m_navigationState.m_navigationDelegateMethods.navigationActionDidBecomeDownload)
-        return;
-
-    auto navigationDelegate = m_navigationState.m_navigationDelegate.get();
-    if (!navigationDelegate)
-        return;
-
-    [navigationDelegate.get() webView:m_navigationState.m_webView navigationAction:wrapper(navigationAction) didBecomeDownload:wrapper(download)];
-}
-
-void NavigationState::NavigationClient::navigationResponseDidBecomeDownload(WebPageProxy&, API::NavigationResponse& navigationResponse, DownloadProxy& download)
-{
-    if (!m_navigationState.m_navigationDelegateMethods.navigationResponseDidBecomeDownload)
-        return;
-
-    auto navigationDelegate = m_navigationState.m_navigationDelegate.get();
-    if (!navigationDelegate)
-        return;
-
-    [navigationDelegate.get() webView:m_navigationState.m_webView navigationResponse:wrapper(navigationResponse) didBecomeDownload:wrapper(download)];
-}
-
-void NavigationState::NavigationClient::contextMenuDidCreateDownload(WebPageProxy&, DownloadProxy& download)
-{
-    if (!m_navigationState.m_navigationDelegateMethods.contextMenuDidCreateDownload)
-        return;
-
-    auto navigationDelegate = m_navigationState.m_navigationDelegate.get();
-    if (!navigationDelegate)
-        return;
-
-    [static_cast<id <WKNavigationDelegatePrivate>>(navigationDelegate.get())  _webView:m_navigationState.m_webView contextMenuDidCreateDownload:wrapper(download)];
 }
 
 #if USE(QUICK_LOOK)

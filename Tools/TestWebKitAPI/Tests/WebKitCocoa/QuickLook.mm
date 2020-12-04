@@ -364,7 +364,7 @@ TEST(QuickLook, CancelResponseAfterLoadingPreview)
 
 TEST(QuickLook, DownloadResponseBeforeLoadingPreview)
 {
-    auto delegate = adoptNS([[QuickLookDelegate alloc] initWithExpectedFileURL:pagesDocumentURL responsePolicy:WKNavigationResponsePolicyBecomeDownload]);
+    auto delegate = adoptNS([[QuickLookDelegate alloc] initWithExpectedFileURL:pagesDocumentURL responsePolicy:_WKNavigationResponsePolicyBecomeDownload]);
     runTestDecideBeforeLoading(delegate.get(), [NSURLRequest requestWithURL:pagesDocumentURL]);
     EXPECT_EQ(WebKitErrorFrameLoadInterruptedByPolicyChange, [delegate navigationError].code);
     EXPECT_FALSE([delegate didFinishNavigation]);
@@ -379,7 +379,7 @@ TEST(QuickLook, DownloadResponseBeforeLoadingPreview)
 #if PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED > 130400
 TEST(QuickLook, DownloadResponseAfterLoadingPreview)
 {
-    auto delegate = adoptNS([[QuickLookDelegate alloc] initWithExpectedFileURL:pagesDocumentURL previewMIMEType:pagesDocumentPreviewMIMEType responsePolicy:WKNavigationResponsePolicyBecomeDownload]);
+    auto delegate = adoptNS([[QuickLookDelegate alloc] initWithExpectedFileURL:pagesDocumentURL previewMIMEType:pagesDocumentPreviewMIMEType responsePolicy:_WKNavigationResponsePolicyBecomeDownload]);
     runTestDecideAfterLoading(delegate.get(), [NSURLRequest requestWithURL:pagesDocumentURL]);
     EXPECT_EQ(WebKitErrorFrameLoadInterruptedByPolicyChange, [delegate navigationError].code);
     EXPECT_FALSE([delegate didFinishNavigation]);

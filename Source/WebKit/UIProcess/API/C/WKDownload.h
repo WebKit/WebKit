@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,18 +23,32 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WebKit.h>
-#import <WebKit/_WKDownloadDelegate.h>
+#ifndef WKDownload_h
+#define WKDownload_h
 
-@interface TestLegacyDownloadDelegate : NSObject<_WKDownloadDelegate>
-@property (nonatomic, copy) void (^downloadDidStart)(_WKDownload *);
-@property (nonatomic, copy) void (^didReceiveServerRedirectToURL)(_WKDownload *, NSURL *);
-@property (nonatomic, copy) void (^didReceiveResponse)(_WKDownload *, NSURLResponse *);
-@property (nonatomic, copy) void (^didWriteData)(_WKDownload *, uint64_t, uint64_t, uint64_t);
-@property (nonatomic, copy) void (^decideDestinationWithSuggestedFilename)(_WKDownload *, NSString *, void (^)(BOOL, NSString *));
-@property (nonatomic, copy) void (^downloadDidFinish)(_WKDownload *);
-@property (nonatomic, copy) void (^didFailWithError)(_WKDownload *, NSError *);
-@property (nonatomic, copy) void (^downloadDidCancel)(_WKDownload *);
-@property (nonatomic, copy) void (^didReceiveAuthenticationChallenge)(_WKDownload *, NSURLAuthenticationChallenge *, void (^)(NSURLSessionAuthChallengeDisposition, NSURLCredential*));
-@property (nonatomic, copy) void (^didCreateDestination)(_WKDownload *, NSString *);
-@end
+#include <WebKit/WKBase.h>
+#include <WebKit/WKDeprecated.h>
+
+#ifndef __cplusplus
+#include <stdbool.h>
+#endif
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+WK_EXPORT WKTypeID WKDownloadGetTypeID();
+
+WK_EXPORT uint64_t WKDownloadGetID(WKDownloadRef download) WK_C_API_DEPRECATED;
+WK_EXPORT WKURLRequestRef WKDownloadCopyRequest(WKDownloadRef download);
+WK_EXPORT WKDataRef WKDownloadGetResumeData(WKDownloadRef download);
+WK_EXPORT void WKDownloadCancel(WKDownloadRef download);
+WK_EXPORT WKPageRef WKDownloadGetOriginatingPage(WKDownloadRef download);
+WK_EXPORT WKArrayRef WKDownloadCopyRedirectChain(WKDownloadRef download);
+WK_EXPORT bool WKDownloadGetWasUserInitiated(WKDownloadRef download);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif // WKDownload_h

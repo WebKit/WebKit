@@ -444,19 +444,19 @@ private:
     static void didFinishNavigation(WKPageRef, WKNavigationRef, WKTypeRef userData, const void*);
     void didFinishNavigation(WKPageRef, WKNavigationRef);
 
-    // WKDownloadClient
-    static void navigationActionDidBecomeDownload(WKPageRef, WKNavigationActionRef, WKDownloadRef, const void*);
-    static void navigationResponseDidBecomeDownload(WKPageRef, WKNavigationResponseRef, WKDownloadRef, const void*);
-    static void navigationDidBecomeDownloadShared(WKDownloadRef, const void*);
-    void downloadDidStart(WKDownloadRef);
-    static WKStringRef decideDestinationWithSuggestedFilename(WKDownloadRef, WKURLResponseRef, WKStringRef suggestedFilename, const void* clientInfo);
-    WKStringRef decideDestinationWithSuggestedFilename(WKDownloadRef, WKStringRef filename);
-    static void downloadDidFinish(WKDownloadRef, const void*);
-    void downloadDidFinish(WKDownloadRef);
-    static void downloadDidFail(WKDownloadRef, WKErrorRef, WKDataRef, const void*);
-    void downloadDidFail(WKDownloadRef, WKErrorRef);
-    static bool downloadDidReceiveServerRedirectToURL(WKDownloadRef, WKURLResponseRef, WKURLRequestRef, const void*);
-    bool downloadDidReceiveServerRedirectToURL(WKDownloadRef, WKURLRequestRef);
+    // WKContextDownloadClient
+    static void downloadDidStart(WKContextRef, WKDownloadRef, const void*);
+    void downloadDidStart(WKContextRef, WKDownloadRef);
+    static WKStringRef decideDestinationWithSuggestedFilename(WKContextRef, WKDownloadRef, WKStringRef filename, bool* allowOverwrite, const void *clientInfo);
+    WKStringRef decideDestinationWithSuggestedFilename(WKContextRef, WKDownloadRef, WKStringRef filename, bool*& allowOverwrite);
+    static void downloadDidFinish(WKContextRef, WKDownloadRef, const void*);
+    void downloadDidFinish(WKContextRef, WKDownloadRef);
+    static void downloadDidFail(WKContextRef, WKDownloadRef, WKErrorRef, const void*);
+    void downloadDidFail(WKContextRef, WKDownloadRef, WKErrorRef);
+    static void downloadDidCancel(WKContextRef, WKDownloadRef, const void*);
+    void downloadDidCancel(WKContextRef, WKDownloadRef);
+    static void downloadDidReceiveServerRedirectToURL(WKContextRef, WKDownloadRef, WKURLRef, const void*);
+    void downloadDidReceiveServerRedirectToURL(WKContextRef, WKDownloadRef, WKURLRef);
     
     static void processDidCrash(WKPageRef, const void* clientInfo);
     void processDidCrash();

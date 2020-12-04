@@ -166,7 +166,7 @@ static RetainPtr<NSURL> clientRedirectDestinationURL;
 
 - (void)webView:(WKWebView *)webView decidePolicyForNavigationResponse:(WKNavigationResponse *)navigationResponse decisionHandler:(void (^)(WKNavigationResponsePolicy))decisionHandler
 {
-    decisionHandler(shouldConvertToDownload ? WKNavigationResponsePolicyBecomeDownload : WKNavigationResponsePolicyAllow);
+    decisionHandler(shouldConvertToDownload ? _WKNavigationResponsePolicyBecomeDownload : WKNavigationResponsePolicyAllow);
 }
 
 - (void)webView:(WKWebView *)webView didReceiveServerRedirectForProvisionalNavigation:(WKNavigation *)navigation

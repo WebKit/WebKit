@@ -26,7 +26,6 @@
 #import "config.h"
 #import "WebProcessProxy.h"
 
-#import "AccessibilitySupportSPI.h"
 #import "HighPerformanceGPUManager.h"
 #import "Logging.h"
 #import "ObjCObjectGraph.h"

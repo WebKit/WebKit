@@ -106,7 +106,6 @@ class NetworkResourceLoader;
 class StorageManagerSet;
 class WebSWServerConnection;
 class WebSWServerToContextConnection;
-enum class CallDownloadDidStart : bool;
 enum class ShouldGrandfatherStatistics : bool;
 enum class StorageAccessStatus : uint8_t;
 enum class WebsiteDataFetchOption : uint8_t;
@@ -424,7 +423,7 @@ private:
     void clearDiskCache(WallTime modifiedSince, CompletionHandler<void()>&&);
 
     void downloadRequest(PAL::SessionID, DownloadID, const WebCore::ResourceRequest&, Optional<NavigatingToAppBoundDomain>, const String& suggestedFilename);
-    void resumeDownload(PAL::SessionID, DownloadID, const IPC::DataReference& resumeData, const String& path, SandboxExtension::Handle&&, CallDownloadDidStart);
+    void resumeDownload(PAL::SessionID, DownloadID, const IPC::DataReference& resumeData, const String& path, SandboxExtension::Handle&&);
     void cancelDownload(DownloadID, CompletionHandler<void(const IPC::DataReference&)>&&);
 #if PLATFORM(COCOA)
     void publishDownloadProgress(DownloadID, const URL&, SandboxExtension::Handle&&);

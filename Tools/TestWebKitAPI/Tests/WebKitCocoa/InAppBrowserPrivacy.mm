@@ -1372,8 +1372,6 @@ TEST(InAppBrowserPrivacy, AboutBlankSubFrameMatchesTopFrameAppBound)
         [webView callAsyncJavaScript:@"return location.href;" arguments:nil inFrame:frame inContentWorld:WKContentWorld.defaultClientWorld completionHandler:[isMainFrame] (id result, NSError *error) {
             EXPECT_TRUE([result isKindOfClass:[NSString class]]);
             EXPECT_FALSE(!!error);
-            if (error)
-                WTFLogAlways("ERROR %@", error);
             if (isMainFrame)
                 EXPECT_TRUE([result isEqualToString:@"in-app-browser://apple.com/in-app-browser-privacy-test-about-blank-subframe"]);
             else

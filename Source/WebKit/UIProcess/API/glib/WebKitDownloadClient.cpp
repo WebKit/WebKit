@@ -41,7 +41,7 @@ public:
     }
 
 private:
-    void legacyDidStart(DownloadProxy& downloadProxy) override
+    void didStart(DownloadProxy& downloadProxy) override
     {
         GRefPtr<WebKitDownload> download = webkitWebContextGetOrCreateDownload(&downloadProxy);
         webkitDownloadStarted(download.get());
@@ -101,7 +101,7 @@ private:
         webkitDownloadDestinationCreated(download.get(), path);
     }
 
-    void didFail(DownloadProxy& downloadProxy, const ResourceError& error, API::Data*) override
+    void didFail(DownloadProxy& downloadProxy, const ResourceError& error) override
     {
         GRefPtr<WebKitDownload> download = webkitWebContextGetOrCreateDownload(&downloadProxy);
         if (webkitDownloadIsCancelled(download.get())) {

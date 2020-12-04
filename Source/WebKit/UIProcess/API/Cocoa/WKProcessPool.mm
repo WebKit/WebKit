@@ -28,13 +28,11 @@
 
 #import "AutomationClient.h"
 #import "CacheModel.h"
-#import "DownloadManager.h"
 #import "LegacyDownloadClient.h"
 #import "Logging.h"
 #import "PluginProcessManager.h"
 #import "SandboxUtilities.h"
 #import "UIGamepadProvider.h"
-#import "WKDownloadInternal.h"
 #import "WKObject.h"
 #import "WKWebViewInternal.h"
 #import "WKWebsiteDataStoreInternal.h"
@@ -483,12 +481,12 @@ static WKProcessPool *sharedProcessPool;
 
 - (_WKDownload *)_downloadURLRequest:(NSURLRequest *)request websiteDataStore:(WKWebsiteDataStore *)dataStore originatingWebView:(WKWebView *)webView
 {
-    return [_WKDownload downloadWithDownload:wrapper(_processPool->download(*dataStore->_websiteDataStore, [webView _page], request))];
+    return wrapper(_processPool->download(*dataStore->_websiteDataStore, [webView _page], request));
 }
 
 - (_WKDownload *)_resumeDownloadFromData:(NSData *)resumeData websiteDataStore:(WKWebsiteDataStore *)dataStore  path:(NSString *)path originatingWebView:(WKWebView *)webView
 {
-    return [_WKDownload downloadWithDownload:wrapper(_processPool->resumeDownload(*dataStore->_websiteDataStore, [webView _page], API::Data::createWithoutCopying(resumeData).get(), path, WebKit::CallDownloadDidStart::No))];
+    return wrapper(_processPool->resumeDownload(*dataStore->_websiteDataStore, [webView _page], API::Data::createWithoutCopying(resumeData).get(), path));
 }
 
 - (void)_getActivePagesOriginsInWebProcessForTesting:(pid_t)pid completionHandler:(void(^)(NSArray<NSString *> *))completionHandler

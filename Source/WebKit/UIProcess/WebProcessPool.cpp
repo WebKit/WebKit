@@ -1148,7 +1148,7 @@ DownloadProxy& WebProcessPool::download(WebsiteDataStore& dataStore, WebPageProx
     return downloadProxy;
 }
 
-DownloadProxy& WebProcessPool::resumeDownload(WebsiteDataStore& dataStore, WebPageProxy* initiatingPage, const API::Data& resumeData, const String& path, CallDownloadDidStart callDownloadDidStart)
+DownloadProxy& WebProcessPool::resumeDownload(WebsiteDataStore& dataStore, WebPageProxy* initiatingPage, const API::Data& resumeData, const String& path)
 {
     auto& downloadProxy = createDownloadProxy(dataStore, ResourceRequest(), initiatingPage, { });
 
@@ -1156,7 +1156,7 @@ DownloadProxy& WebProcessPool::resumeDownload(WebsiteDataStore& dataStore, WebPa
     if (!path.isEmpty())
         SandboxExtension::createHandle(path, SandboxExtension::Type::ReadWrite, sandboxExtensionHandle);
 
-    dataStore.networkProcess().send(Messages::NetworkProcess::ResumeDownload(dataStore.sessionID(), downloadProxy.downloadID(), resumeData.dataReference(), path, sandboxExtensionHandle, callDownloadDidStart), 0);
+    dataStore.networkProcess().send(Messages::NetworkProcess::ResumeDownload(dataStore.sessionID(), downloadProxy.downloadID(), resumeData.dataReference(), path, sandboxExtensionHandle), 0);
     return downloadProxy;
 }
 

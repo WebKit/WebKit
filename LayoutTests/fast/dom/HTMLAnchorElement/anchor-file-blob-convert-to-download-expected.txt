@@ -1,5 +1,5 @@
 Download started.
-Downloading URL with suggested filename "Unknown"
+Downloading URL with suggested filename "unknown"
 Download completed.
 The download should succeed.
 

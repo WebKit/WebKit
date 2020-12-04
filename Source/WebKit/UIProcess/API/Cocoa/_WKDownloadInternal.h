@@ -25,12 +25,16 @@
 
 #import "_WKDownload.h"
 
-#import <wtf/RetainPtr.h>
+#import "DownloadProxy.h"
+#import "WKObject.h"
 
-@class WKDownload;
+namespace WebKit {
 
-@interface _WKDownload () <WKObject> {
-@package
-    RetainPtr<WKDownload> _download;
+template<> struct WrapperTraits<DownloadProxy> {
+    using WrapperClass = _WKDownload;
+};
+
 }
+
+@interface _WKDownload () <WKObject>
 @end
