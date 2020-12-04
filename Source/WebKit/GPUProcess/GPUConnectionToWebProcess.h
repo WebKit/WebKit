@@ -71,9 +71,6 @@ public:
     GPUProcess& gpuProcess() { return m_gpuProcess.get(); }
     WebCore::ProcessIdentifier webProcessIdentifier() const { return m_webProcessIdentifier; }
 
-    void cleanupForSuspension(Function<void()>&&);
-    void endSuspension();
-
     RemoteMediaResourceManager& remoteMediaResourceManager();
 
     Logger& logger();

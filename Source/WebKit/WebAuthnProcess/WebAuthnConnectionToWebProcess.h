@@ -56,9 +56,6 @@ public:
     WebAuthnProcess& WebAuthnProcessProcess() { return m_WebAuthnProcess.get(); }
     WebCore::ProcessIdentifier webProcessIdentifier() const { return m_webProcessIdentifier; }
 
-    void cleanupForSuspension(Function<void()>&&);
-    void endSuspension();
-
 private:
     using RequestCompletionHandler = CompletionHandler<void(const WebCore::AuthenticatorResponseData&, const WebCore::ExceptionData&)>;
     using QueryCompletionHandler = CompletionHandler<void(bool)>;

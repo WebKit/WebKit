@@ -1,3 +1,16 @@
+2020-12-03  Chris Dumez  <cdumez@apple.com>
+
+        Drop unimplemented suspension functions on GPUConnectionToWebProcess and WebAuthnConnectionToWebProcess
+        https://bugs.webkit.org/show_bug.cgi?id=219513
+
+        Reviewed by Tim Horton.
+
+        These functions are never called and have no implementation. This is just bad copy/paste from
+        NetworkConnectionToWebProcess.
+
+        * GPUProcess/GPUConnectionToWebProcess.h:
+        * WebAuthnProcess/WebAuthnConnectionToWebProcess.h:
+
 2020-12-03  Brent Fulgham  <bfulgham@apple.com>
 
         [macOS] Only extend access to the AppleSNBFBUserClient IOKit class if the GPU Process is not used
