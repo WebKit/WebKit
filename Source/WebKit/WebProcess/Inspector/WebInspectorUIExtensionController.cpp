@@ -28,11 +28,14 @@
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
 
+#include "Logging.h"
 #include "WebInspectorUI.h"
 #include "WebInspectorUIExtensionControllerMessages.h"
 #include "WebInspectorUIExtensionControllerMessagesReplies.h"
 #include "WebPage.h"
 #include "WebProcess.h"
+#include <JavaScriptCore/JSCInlines.h>
+#include <WebCore/ExceptionDetails.h>
 #include <WebCore/InspectorFrontendAPIDispatcher.h>
 
 namespace WebKit {
@@ -43,27 +46,42 @@ WebInspectorUIExtensionController::WebInspectorUIExtensionController(WebCore::In
     Page* page = inspectorFrontend.frontendPage();
     ASSERT(page);
 
-//    WTFReportBacktrace();
     WebProcess::singleton().addMessageReceiver(Messages::WebInspectorUIExtensionController::messageReceiverName(), WebPage::fromCorePage(*page).identifier(), *this);
 }
 
 WebInspectorUIExtensionController::~WebInspectorUIExtensionController()
 {
-//    WTFReportBacktrace();
     WebProcess::singleton().removeMessageReceiver(*this);
 }
 
-Optional<InspectorExtensionError> WebInspectorUIExtensionController::parseInspectorExtensionErrorFromResult(JSC::JSValue result)
+Optional<InspectorExtensionError> WebInspectorUIExtensionController::parseInspectorExtensionErrorFromEvaluationResult(InspectorFrontendAPIDispatcher::EvaluationResult result)
 {
+    if (!result.has_value()) {
+        switch (result.error()) {
+        case WebCore::InspectorFrontendAPIDispatcher::EvaluationError::ContextDestroyed:
+            return InspectorExtensionError::ContextDestroyed;
+        case WebCore::InspectorFrontendAPIDispatcher::EvaluationError::ExecutionSuspended:
+            return InspectorExtensionError::InternalError;
+        }
+    }
+
     ASSERT(m_frontendClient);
     auto globalObject = m_frontendClient->frontendAPIDispatcher().frontendGlobalObject();
     if (!globalObject)
         return InspectorExtensionError::ContextDestroyed;
 
+    auto valueOrException = result.value();
+    if (!valueOrException.has_value()) {
+        LOG(Inspector, "Encountered exception while evaluating upon the frontend: %s", valueOrException.error().message.utf8().data());
+        return InspectorExtensionError::InternalError;
+    }
+    
     // If the evaluation result is a string, the frontend returned an error string.
+    // If there was a JS exception, log it and return error code InternalError.
     // Anything else (falsy values, objects, arrays, DOM, etc.) is interpreted as success.
-    if (result.isString()) {
-        auto resultString = result.toWTFString(globalObject);
+    JSC::JSValue scriptValue = valueOrException.value();
+    if (scriptValue.isString()) {
+        auto resultString = scriptValue.toWTFString(globalObject);
         if (resultString == "ContextDestroyed"_s)
             return InspectorExtensionError::ContextDestroyed;
         if (resultString == "InternalError"_s)
@@ -82,7 +100,7 @@ Optional<InspectorExtensionError> WebInspectorUIExtensionController::parseInspec
 
 // WebInspectorUIExtensionController IPC messages.
 
-void WebInspectorUIExtensionController::registerExtension(const String& extensionID, const String& displayName, CompletionHandler<void(Expected<bool, InspectorExtensionError>)>&& completionHandler)
+void WebInspectorUIExtensionController::registerExtension(const InspectorExtensionID& extensionID, const String& displayName, CompletionHandler<void(Expected<bool, InspectorExtensionError>)>&& completionHandler)
 {
     if (!m_frontendClient) {
         completionHandler(makeUnexpected(InspectorExtensionError::InvalidRequest));
@@ -99,7 +117,7 @@ void WebInspectorUIExtensionController::registerExtension(const String& extensio
             return;
         }
 
-        if (auto parsedError = weakThis->parseInspectorExtensionErrorFromResult(result.value())) {
+        if (auto parsedError = weakThis->parseInspectorExtensionErrorFromEvaluationResult(result)) {
             completionHandler(makeUnexpected(parsedError.value()));
             return;
         }
@@ -108,7 +126,7 @@ void WebInspectorUIExtensionController::registerExtension(const String& extensio
     });
 }
 
-void WebInspectorUIExtensionController::unregisterExtension(const String& extensionID, CompletionHandler<void(Expected<bool, InspectorExtensionError>)>&& completionHandler)
+void WebInspectorUIExtensionController::unregisterExtension(const InspectorExtensionID& extensionID, CompletionHandler<void(Expected<bool, InspectorExtensionError>)>&& completionHandler)
 {
     if (!m_frontendClient) {
         completionHandler(makeUnexpected(InspectorExtensionError::InvalidRequest));
@@ -122,7 +140,7 @@ void WebInspectorUIExtensionController::unregisterExtension(const String& extens
             return;
         }
 
-        if (auto parsedError = weakThis->parseInspectorExtensionErrorFromResult(result.value())) {
+        if (auto parsedError = weakThis->parseInspectorExtensionErrorFromEvaluationResult(result.value())) {
             completionHandler(makeUnexpected(parsedError.value()));
             return;
         }

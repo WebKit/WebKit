@@ -35,6 +35,7 @@
 #include "Chrome.h"
 #include "DOMWrapperWorld.h"
 #include "Document.h"
+#include "ExceptionDetails.h"
 #include "FloatRect.h"
 #include "Frame.h"
 #include "FrameLoadRequest.h"
@@ -43,6 +44,7 @@
 #include "InspectorController.h"
 #include "InspectorFrontendHost.h"
 #include "InspectorPageAgent.h"
+#include "Logging.h"
 #include "Page.h"
 #include "ScriptController.h"
 #include "ScriptSourceCode.h"
@@ -323,11 +325,23 @@ void InspectorFrontendClientLocal::restoreAttachedWindowHeight()
     setAttachedWindowHeight(constrainedAttachedWindowHeight(preferredHeight, inspectedPageHeight));
 }
 
+Optional<bool> InspectorFrontendClientLocal::evaluationResultToBoolean(InspectorFrontendAPIDispatcher::EvaluationResult result)
+{
+    if (!result)
+        return WTF::nullopt;
+
+    auto valueOrException = result.value();
+    if (!valueOrException) {
+        LOG(Inspector, "Encountered exception while evaluating upon the frontend: %s", valueOrException.error().message.utf8().data());
+        return WTF::nullopt;
+    }
+
+    return valueOrException.value().toBoolean(m_frontendAPIDispatcher->frontendGlobalObject());
+}
+
 bool InspectorFrontendClientLocal::isDebuggingEnabled()
 {
-    auto result = m_frontendAPIDispatcher->dispatchCommandWithResultSync("isDebuggingEnabled"_s);
-    return result && result.value().toBoolean(m_frontendAPIDispatcher->frontendGlobalObject());
-
+    return evaluationResultToBoolean(m_frontendAPIDispatcher->dispatchCommandWithResultSync("isDebuggingEnabled"_s)).valueOr(false);
 }
 
 void InspectorFrontendClientLocal::setDebuggingEnabled(bool enabled)
@@ -337,8 +351,7 @@ void InspectorFrontendClientLocal::setDebuggingEnabled(bool enabled)
 
 bool InspectorFrontendClientLocal::isTimelineProfilingEnabled()
 {
-    auto result = m_frontendAPIDispatcher->dispatchCommandWithResultSync("isTimelineProfilingEnabled"_s);
-    return result && result.value().toBoolean(m_frontendAPIDispatcher->frontendGlobalObject());
+    return evaluationResultToBoolean(m_frontendAPIDispatcher->dispatchCommandWithResultSync("isTimelineProfilingEnabled"_s)).valueOr(false);
 }
 
 void InspectorFrontendClientLocal::setTimelineProfilingEnabled(bool enabled)
@@ -348,8 +361,7 @@ void InspectorFrontendClientLocal::setTimelineProfilingEnabled(bool enabled)
 
 bool InspectorFrontendClientLocal::isProfilingJavaScript()
 {
-    auto result = m_frontendAPIDispatcher->dispatchCommandWithResultSync("isProfilingJavaScript"_s);
-    return result && result.value().toBoolean(m_frontendAPIDispatcher->frontendGlobalObject());
+    return evaluationResultToBoolean(m_frontendAPIDispatcher->dispatchCommandWithResultSync("isProfilingJavaScript"_s)).valueOr(false);
 }
 
 void InspectorFrontendClientLocal::startProfilingJavaScript()

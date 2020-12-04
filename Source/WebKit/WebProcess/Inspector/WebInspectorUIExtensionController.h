@@ -30,6 +30,7 @@
 #include "Connection.h"
 #include "InspectorExtensionTypes.h"
 #include "MessageReceiver.h"
+#include <WebCore/InspectorFrontendAPIDispatcher.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/URL.h>
@@ -37,6 +38,7 @@
 
 namespace JSC {
 class JSValue;
+class JSObject;
 }
 
 namespace WebCore {
@@ -60,11 +62,11 @@ public:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     // WebInspectorUIExtensionController IPC messages.
-    void registerExtension(const String& extensionID, const String& displayName, CompletionHandler<void(Expected<bool, InspectorExtensionError>)>&&);
-    void unregisterExtension(const String& extensionID, CompletionHandler<void(Expected<bool, InspectorExtensionError>)>&&);
+    void registerExtension(const InspectorExtensionID&, const String& displayName, CompletionHandler<void(Expected<bool, InspectorExtensionError>)>&&);
+    void unregisterExtension(const InspectorExtensionID&, CompletionHandler<void(Expected<bool, InspectorExtensionError>)>&&);
 
 private:
-    Optional<InspectorExtensionError> parseInspectorExtensionErrorFromResult(JSC::JSValue result);
+    Optional<InspectorExtensionError> parseInspectorExtensionErrorFromEvaluationResult(WebCore::InspectorFrontendAPIDispatcher::EvaluationResult);
 
     WeakPtr<WebCore::InspectorFrontendClient> m_frontendClient;
 };

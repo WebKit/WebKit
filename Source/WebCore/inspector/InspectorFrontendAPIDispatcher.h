@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include <JavaScriptCore/JSCJSValue.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Expected.h>
 #include <wtf/JSONValues.h>
@@ -33,14 +32,21 @@
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
+namespace JSC {
+class JSGlobalObject;
+class JSValue;
+}
+
 namespace WebCore {
 
 class Page;
+struct ExceptionDetails;
 
 class InspectorFrontendAPIDispatcher final : public RefCounted<InspectorFrontendAPIDispatcher> {
 public:
     enum class EvaluationError { ExecutionSuspended, ContextDestroyed };
-    using EvaluationResult = Expected<JSC::JSValue, EvaluationError>;
+    using ValueOrException = Expected<JSC::JSValue, ExceptionDetails>;
+    using EvaluationResult = Expected<ValueOrException, EvaluationError>;
     using EvaluationResultHandler = CompletionHandler<void(EvaluationResult)>;
 
     enum class UnsuspendSoon { Yes, No };
@@ -78,7 +84,7 @@ private:
     void evaluateOrQueueExpression(const String&, EvaluationResultHandler&& handler = { });
     void evaluateQueuedExpressions();
     void invalidateQueuedExpressions();
-    JSC::JSValue evaluateExpression(const String&);
+    ValueOrException evaluateExpression(const String&);
 
     WeakPtr<Page> m_frontendPage;
     Vector<std::pair<String, EvaluationResultHandler>> m_queuedEvaluations;

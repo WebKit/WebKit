@@ -165,7 +165,7 @@ void InspectorFrontendAPIDispatcher::evaluateOrQueueExpression(const String& exp
         return;
     }
 
-    JSC::JSValue result = evaluateExpression(expression);
+    ValueOrException result = evaluateExpression(expression);
     if (optionalResultHandler)
         optionalResultHandler(result);
 }
@@ -197,14 +197,14 @@ void InspectorFrontendAPIDispatcher::evaluateQueuedExpressions()
     }
 }
 
-JSC::JSValue InspectorFrontendAPIDispatcher::evaluateExpression(const String& expression)
+ValueOrException InspectorFrontendAPIDispatcher::evaluateExpression(const String& expression)
 {
     ASSERT(m_frontendPage);
     ASSERT(!m_suspended);
     ASSERT(m_queuedEvaluations.isEmpty());
 
     JSC::SuspendExceptionScope scope(&m_frontendPage->inspectorController().vm());
-    return m_frontendPage->mainFrame().script().evaluateIgnoringException(ScriptSourceCode(expression));
+    return m_frontendPage->mainFrame().script().evaluateInWorld(ScriptSourceCode(expression), mainThreadNormalWorld());
 }
 
 void InspectorFrontendAPIDispatcher::evaluateExpressionForTesting(const String& expression)

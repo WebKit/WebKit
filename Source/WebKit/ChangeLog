@@ -1,3 +1,33 @@
+2020-12-04  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: InspectorFrontendAPIDispatcher should not ignore all exceptions
+        https://bugs.webkit.org/show_bug.cgi?id=219378
+
+        Reviewed by Devin Rousso.
+
+        The underlying method used for frontend expression evaluations is 
+        ScriptController::evaluateIgnoringExceptions. This method calls
+        evaluateInWorld and returns nullopt if an exception happens.
+
+        Switch to using evaluateInWorld directly and using the existing ValueOrException
+        type from in WebCore. Change our EvaluationResult type to use ValueOrException 
+        in place of JSC::JSValue. ValueOrException is Expected<JSC::JSValue, ExceptionDetails>
+        so this is exposing more error information in addition to the JSC::JSValue.
+
+        * Platform/Logging.h: Add 'Inspector' log channel for WebKit.framework.
+
+        * WebProcess/Inspector/WebInspectorUIExtensionController.cpp:
+        (WebKit::WebInspectorUIExtensionController::WebInspectorUIExtensionController):
+        (WebKit::WebInspectorUIExtensionController::~WebInspectorUIExtensionController):
+        Remove unnecessary debugging code that was accidentally left in/commented out.
+
+        * WebProcess/Inspector/WebInspectorUIExtensionController.h:
+        (WebKit::WebInspectorUIExtensionController::parseInspectorExtensionErrorFromResult): Deleted.
+        (WebKit::WebInspectorUIExtensionController::parseInspectorExtensionErrorFromEvaluationResult): Added.
+        (WebKit::WebInspectorUIExtensionController::registerExtension):
+        (WebKit::WebInspectorUIExtensionController::unregisterExtension):
+        Adapt to using the new result type. Use the InspectorExtensionID type where possible.
+
 2020-12-04  Kate Cheney  <katherine_cheney@apple.com>
 
         Create API to enable/disable text interaction gestures in WKWebView

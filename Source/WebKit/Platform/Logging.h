@@ -60,6 +60,7 @@ extern "C" {
     M(Images) \
     M(IncrementalPDF) \
     M(IncrementalPDFVerbose) \
+    M(Inspector) \
     M(IndexedDB) \
     M(KeyHandling) \
     M(Layers) \
