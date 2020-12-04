@@ -89,9 +89,6 @@ protected:
     float* m_r3 { nullptr };
     float* m_r4 { nullptr };
 
-    const float* m_source { nullptr };
-    unsigned m_sourceFramesAvailable { 0 };
-
     // The buffer is primed once at the very beginning of processing.
     bool m_isBufferPrimed { false };
 
