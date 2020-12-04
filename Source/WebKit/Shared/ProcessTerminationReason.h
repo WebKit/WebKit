@@ -34,6 +34,7 @@ enum class ProcessTerminationReason {
     Crash,
     NavigationSwap,
     RequestedByNetworkProcess,
+    RequestedByGPUProcess
 };
 
 }

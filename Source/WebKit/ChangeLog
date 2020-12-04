@@ -1,3 +1,29 @@
+2020-12-03  Chris Dumez  <cdumez@apple.com>
+
+        Bad IPC from the WebProcess should not terminate the GPUProcess
+        https://bugs.webkit.org/show_bug.cgi?id=219511
+
+        Reviewed by Simon Fraser.
+
+        Bad IPC from the WebProcess should not terminate the GPUProcess. The GPUProcess is shared by all
+        WebProcesses and it is not acceptable for a single bad WebProcess to negatively impact other
+        WebProcesses. Instead, we should terminate the bad WebProcess, like the NetworkProcess already
+        does on bad IPC.
+
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        (WebKit::GPUConnectionToWebProcess::didReceiveInvalidMessage):
+        * Shared/ProcessTerminationReason.h:
+        * UIProcess/API/C/WKAPICast.h:
+        (WebKit::toAPI):
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::wkProcessTerminationReason):
+        * UIProcess/GPU/GPUProcessProxy.cpp:
+        (WebKit::GPUProcessProxy::terminateWebProcess):
+        * UIProcess/GPU/GPUProcessProxy.h:
+        * UIProcess/GPU/GPUProcessProxy.messages.in:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::shouldReloadAfterProcessTermination):
+
 2020-12-03  Alex Christensen  <achristensen@webkit.org>
 
         Serialize NFA to disk before converting it to a DFA when compiling a WKContentRuleList

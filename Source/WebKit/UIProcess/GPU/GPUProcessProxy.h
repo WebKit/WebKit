@@ -100,6 +100,8 @@ private:
     void didClose(IPC::Connection&) override;
     void didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName) override;
 
+    void terminateWebProcess(WebCore::ProcessIdentifier);
+
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
     void didCreateContextForVisibilityPropagation(LayerHostingContextID);
 #endif

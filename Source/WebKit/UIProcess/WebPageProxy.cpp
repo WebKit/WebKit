@@ -7420,6 +7420,7 @@ static bool shouldReloadAfterProcessTermination(ProcessTerminationReason reason)
     case ProcessTerminationReason::ExceededMemoryLimit:
     case ProcessTerminationReason::ExceededCPULimit:
     case ProcessTerminationReason::RequestedByNetworkProcess:
+    case ProcessTerminationReason::RequestedByGPUProcess:
     case ProcessTerminationReason::Crash:
         return true;
     case ProcessTerminationReason::NavigationSwap:

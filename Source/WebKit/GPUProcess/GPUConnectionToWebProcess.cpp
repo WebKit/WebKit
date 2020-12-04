@@ -208,8 +208,8 @@ Logger& GPUConnectionToWebProcess::logger()
 
 void GPUConnectionToWebProcess::didReceiveInvalidMessage(IPC::Connection& connection, IPC::MessageName messageName)
 {
-    WTFLogAlways("Received an invalid message \"%s\" from the web process.\n", description(messageName));
-    CRASH();
+    RELEASE_LOG_FAULT(IPC, "Received an invalid message '%" PUBLIC_LOG_STRING "' from WebContent process %" PRIu64 ", requesting for it to be terminated.", description(messageName), m_webProcessIdentifier.toUInt64());
+    gpuProcess().parentProcessConnection()->send(Messages::GPUProcessProxy::TerminateWebProcess(m_webProcessIdentifier), 0);
 }
 
 #if ENABLE(WEB_AUDIO)

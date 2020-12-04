@@ -242,6 +242,7 @@ inline WKProcessTerminationReason toAPI(ProcessTerminationReason reason)
     case ProcessTerminationReason::RequestedByClient:
         return kWKProcessTerminationReasonRequestedByClient;
     case ProcessTerminationReason::RequestedByNetworkProcess:
+    case ProcessTerminationReason::RequestedByGPUProcess:
     case ProcessTerminationReason::Crash:
         return kWKProcessTerminationReasonCrash;
     }

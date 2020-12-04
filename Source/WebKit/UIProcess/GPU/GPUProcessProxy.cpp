@@ -339,6 +339,12 @@ void GPUProcessProxy::sendProcessDidResume()
         send(Messages::GPUProcess::ProcessDidResume(), 0);
 }
 
+void GPUProcessProxy::terminateWebProcess(WebCore::ProcessIdentifier webProcessIdentifier)
+{
+    if (auto* process = WebProcessProxy::processForIdentifier(webProcessIdentifier))
+        process->requestTermination(ProcessTerminationReason::RequestedByGPUProcess);
+}
+
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
 void GPUProcessProxy::didCreateContextForVisibilityPropagation(LayerHostingContextID contextID)
 {

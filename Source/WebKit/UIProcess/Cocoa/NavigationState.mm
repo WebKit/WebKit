@@ -1003,6 +1003,7 @@ static _WKProcessTerminationReason wkProcessTerminationReason(ProcessTermination
     case ProcessTerminationReason::RequestedByClient:
         return _WKProcessTerminationReasonRequestedByClient;
     case ProcessTerminationReason::RequestedByNetworkProcess:
+    case ProcessTerminationReason::RequestedByGPUProcess:
     case ProcessTerminationReason::Crash:
         return _WKProcessTerminationReasonCrash;
     }
