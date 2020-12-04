@@ -83,9 +83,8 @@ bool ScrollingCoordinatorNicosia::handleWheelEventForScrolling(const PlatformWhe
 
 void ScrollingCoordinatorNicosia::wheelEventWasProcessedByMainThread(const PlatformWheelEvent& wheelEvent, Optional<WheelScrollGestureState> gestureState)
 {
-    ScrollingThread::dispatch([threadedScrollingTree = makeRef(downcast<ThreadedScrollingTree>(*scrollingTree())), wheelEvent, gestureState] {
-        threadedScrollingTree->wheelEventWasProcessedByMainThread(wheelEvent, gestureState);
-    });
+    RefPtr<ThreadedScrollingTree> threadedScrollingTree = downcast<ThreadedScrollingTree>(scrollingTree());
+    threadedScrollingTree->wheelEventWasProcessedByMainThread(wheelEvent, gestureState);
 }
 
 void ScrollingCoordinatorNicosia::scheduleTreeStateCommit()

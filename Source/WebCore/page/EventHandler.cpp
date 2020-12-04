@@ -2722,8 +2722,17 @@ bool EventHandler::processWheelEventForScrolling(const PlatformWheelEvent& event
     return didHandleEvent;
 }
 
-void EventHandler::wheelEventWasProcessedByMainThread(const PlatformWheelEvent&, OptionSet<EventHandling>)
+void EventHandler::wheelEventWasProcessedByMainThread(const PlatformWheelEvent& wheelEvent, OptionSet<EventHandling> eventHandling)
 {
+    updateWheelGestureState(wheelEvent, eventHandling);
+
+#if ENABLE(ASYNC_SCROLLING)
+    FrameView* view = m_frame.view();
+    if (auto scrollingCoordinator = m_frame.page()->scrollingCoordinator()) {
+        if (scrollingCoordinator->coordinatesScrollingForFrameView(*view))
+            scrollingCoordinator->wheelEventWasProcessedByMainThread(wheelEvent, m_wheelScrollGestureState);
+    }
+#endif
 }
 
 bool EventHandler::platformCompletePlatformWidgetWheelEvent(const PlatformWheelEvent&, const Widget&, const WeakPtr<ScrollableArea>&)
@@ -2982,7 +2991,7 @@ bool EventHandler::handleWheelEventInAppropriateEnclosingBox(Node* startNode, co
 bool EventHandler::handleWheelEventInScrollableArea(const PlatformWheelEvent& wheelEvent, ScrollableArea& scrollableArea, OptionSet<EventHandling> eventHandling)
 {
     auto gestureState = updateWheelGestureState(wheelEvent, eventHandling);
-    LOG_WITH_STREAM(Scrolling, stream << "EventHandler::handleWheelEventInScrollableArea() - eventHandling " << eventHandling << " -> gesture state " << gestureState);
+    LOG_WITH_STREAM(Scrolling, stream << "EventHandler::handleWheelEventInScrollableArea() " << scrollableArea << " - eventHandling " << eventHandling << " -> gesture state " << gestureState);
     return scrollableArea.handleWheelEventForScrolling(wheelEvent, gestureState);
 }
 

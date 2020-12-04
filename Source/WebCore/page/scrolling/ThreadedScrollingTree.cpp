@@ -64,21 +64,74 @@ WheelEventHandlingResult ThreadedScrollingTree::handleWheelEvent(const PlatformW
     return ScrollingTree::handleWheelEvent(wheelEvent, processingSteps);
 }
 
-bool ThreadedScrollingTree::handleWheelEventAfterMainThread(const PlatformWheelEvent& wheelEvent, ScrollingNodeID targetNodeID, Optional<WheelScrollGestureState>)
+bool ThreadedScrollingTree::handleWheelEventAfterMainThread(const PlatformWheelEvent& wheelEvent, ScrollingNodeID targetNodeID, Optional<WheelScrollGestureState> gestureState)
 {
-    LOG_WITH_STREAM(Scrolling, stream << "ThreadedScrollingTree::handleWheelEventAfterMainThread " << wheelEvent << " node " << targetNodeID);
+    ASSERT(ScrollingThread::isCurrentThread());
+
+    LOG_WITH_STREAM(Scrolling, stream << "ThreadedScrollingTree::handleWheelEventAfterMainThread " << wheelEvent << " node " << targetNodeID << " gestureState " << gestureState);
 
     LockHolder locker(m_treeMutex);
 
-    SetForScope<bool> disallowLatchingScope(m_allowLatching, false);
+    bool allowLatching = false;
+    OptionSet<WheelEventProcessingSteps> processingSteps;
+    if (gestureState.valueOr(WheelScrollGestureState::Blocking) == WheelScrollGestureState::NonBlocking) {
+        allowLatching = true;
+        processingSteps = { WheelEventProcessingSteps::ScrollingThread, WheelEventProcessingSteps::MainThreadForNonBlockingDOMEventDispatch };
+    }
+
+    SetForScope<bool> disallowLatchingScope(m_allowLatching, allowLatching);
     RefPtr<ScrollingTreeNode> targetNode = nodeForID(targetNodeID);
-    auto result = handleWheelEventWithNode(wheelEvent, { }, targetNode.get(), EventTargeting::NodeOnly);
+    auto result = handleWheelEventWithNode(wheelEvent, processingSteps, targetNode.get(), EventTargeting::NodeOnly);
     return result.wasHandled;
 }
 
-void ThreadedScrollingTree::wheelEventWasProcessedByMainThread(const PlatformWheelEvent&, Optional<WheelScrollGestureState>)
+void ThreadedScrollingTree::wheelEventWasProcessedByMainThread(const PlatformWheelEvent& wheelEvent, Optional<WheelScrollGestureState> gestureState)
 {
-    // FIXME: Set state based on EventHandling flags.
+    LOG_WITH_STREAM(Scrolling, stream << "ThreadedScrollingTree::wheelEventWasProcessedByMainThread - gestureState " << gestureState);
+
+    ASSERT(isMainThread());
+    
+    LockHolder locker(m_treeMutex);
+    if (m_receivedBeganEventFromMainThread || !wheelEvent.isGestureStart())
+        return;
+
+    setGestureState(gestureState);
+
+    m_receivedBeganEventFromMainThread = true;
+    m_waitingForBeganEventCondition.notifyOne();
+}
+
+void ThreadedScrollingTree::willSendEventToMainThread(const PlatformWheelEvent&)
+{
+    ASSERT(ScrollingThread::isCurrentThread());
+
+    LockHolder locker(m_treeMutex);
+    m_receivedBeganEventFromMainThread = false;
+}
+
+void ThreadedScrollingTree::waitForEventToBeProcessedByMainThread(const PlatformWheelEvent& wheelEvent)
+{
+    ASSERT(ScrollingThread::isCurrentThread());
+
+    if (!wheelEvent.isGestureStart())
+        return;
+
+    LockHolder locker(m_treeMutex);
+
+    static constexpr auto maxAllowableMainThreadDelay = 50_ms;
+    auto startTime = MonotonicTime::now();
+    auto timeoutTime = startTime + maxAllowableMainThreadDelay;
+
+    bool receivedEvent = m_waitingForBeganEventCondition.waitUntil(m_treeMutex, timeoutTime, [&] {
+        return m_receivedBeganEventFromMainThread;
+    });
+
+    if (!receivedEvent) {
+        // Timed out, go asynchronous.
+        setGestureState(WheelScrollGestureState::NonBlocking);
+    }
+
+    LOG_WITH_STREAM(Scrolling, stream << "ThreadedScrollingTree::waitForBeganEventFromMainThread done - timed out " << !receivedEvent << " gesture state is " << gestureState());
 }
 
 void ThreadedScrollingTree::invalidate()

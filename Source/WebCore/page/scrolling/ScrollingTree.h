@@ -210,6 +210,9 @@ public:
     virtual void lockLayersForHitTesting() { }
     virtual void unlockLayersForHitTesting() { }
 
+    virtual void willSendEventToMainThread(const PlatformWheelEvent&) { }
+    virtual void waitForEventToBeProcessedByMainThread(const PlatformWheelEvent&) { };
+
     Lock& treeMutex() { return m_treeMutex; }
 
     void windowScreenDidChange(PlatformDisplayID, Optional<unsigned> nominalFramesPerSecond);
@@ -244,6 +247,9 @@ protected:
 
     FloatPoint mainFrameScrollPosition() const;
     void setMainFrameScrollPosition(FloatPoint);
+
+    void setGestureState(Optional<WheelScrollGestureState>);
+    Optional<WheelScrollGestureState> gestureState();
 
     Optional<unsigned> nominalFramesPerSecond();
 
@@ -285,6 +291,7 @@ private:
         FloatPoint mainFrameScrollPosition;
         PlatformDisplayID displayID { 0 };
         Optional<unsigned> nominalFramesPerSecond;
+        Optional<WheelScrollGestureState> gestureState;
         HashSet<ScrollingNodeID> nodesWithActiveRubberBanding;
         HashSet<ScrollingNodeID> nodesWithActiveScrollSnap;
         HashSet<ScrollingNodeID> nodesWithActiveUserScrolls;

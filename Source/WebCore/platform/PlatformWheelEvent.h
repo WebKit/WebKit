@@ -208,7 +208,8 @@ inline bool PlatformWheelEvent::useLatchedEventElement() const
         || m_phase == PlatformWheelEventPhase::Changed
         || m_momentumPhase == PlatformWheelEventPhase::Began
         || m_momentumPhase == PlatformWheelEventPhase::Changed
-        || (m_phase == PlatformWheelEventPhase::Ended && m_momentumPhase == PlatformWheelEventPhase::None);
+        || (m_phase == PlatformWheelEventPhase::Ended && m_momentumPhase == PlatformWheelEventPhase::None)
+        || (m_phase == PlatformWheelEventPhase::None && m_momentumPhase == PlatformWheelEventPhase::Ended);
 }
 
 inline bool PlatformWheelEvent::isGestureContinuation() const

@@ -1,3 +1,20 @@
+2020-12-03  Simon Fraser  <simon.fraser@apple.com>
+
+        Only the first wheel event in a gesture should be cancelable
+        https://bugs.webkit.org/show_bug.cgi?id=218764
+        <rdar://problem/71248946>
+
+        Reviewed by Tim Horton.
+
+        In EventDispatcher::wheelEvent(), all wheel events now bounce through the scrolling
+        thread, even those destined for main thread scrolling. This allows the scrolling thread
+        to wait on a condition for the event to come back to the scrolling thread via
+        handleWheelEventAfterMainThread(), since we have to know whether content called
+        preventDefault() on the first event before sending subsequent events.
+
+        * WebProcess/WebPage/EventDispatcher.cpp:
+        (WebKit::EventDispatcher::wheelEvent):
+
 2020-12-03  Alex Christensen  <achristensen@webkit.org>
 
         Introduce new download API

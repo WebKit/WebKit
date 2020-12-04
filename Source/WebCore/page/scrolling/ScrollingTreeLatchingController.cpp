@@ -41,15 +41,18 @@ static const Seconds resetLatchedStateTimeout { 100_ms };
 
 ScrollingTreeLatchingController::ScrollingTreeLatchingController() = default;
 
-void ScrollingTreeLatchingController::receivedWheelEvent(const PlatformWheelEvent& wheelEvent, OptionSet<WheelEventProcessingSteps>, bool allowLatching)
+void ScrollingTreeLatchingController::receivedWheelEvent(const PlatformWheelEvent& wheelEvent, OptionSet<WheelEventProcessingSteps> processingSteps, bool allowLatching)
 {
     if (!allowLatching)
         return;
 
     LockHolder locker(m_latchedNodeMutex);
-    if (wheelEvent.isGestureStart() && m_latchedNodeAndSteps && !latchedNodeIsRelevant()) {
-        LOG_WITH_STREAM(ScrollLatching, stream << "ScrollingTreeLatchingController " << this << " receivedWheelEvent - " << (MonotonicTime::now() - m_lastLatchedNodeInterationTime).milliseconds() << "ms since last event, clearing latched node");
-        m_latchedNodeAndSteps.reset();
+    if (wheelEvent.isGestureStart() && !latchedNodeIsRelevant()) {
+        if (m_latchedNodeAndSteps) {
+            LOG_WITH_STREAM(ScrollLatching, stream << "ScrollingTreeLatchingController " << this << " receivedWheelEvent - " << (MonotonicTime::now() - m_lastLatchedNodeInterationTime).milliseconds() << "ms since last event, clearing latched node");
+            m_latchedNodeAndSteps.reset();
+        }
+        m_processingStepsForCurrentGesture = processingSteps;
     }
 }
 
@@ -96,8 +99,26 @@ void ScrollingTreeLatchingController::nodeDidHandleEvent(ScrollingNodeID scrolli
         return;
     }
 
-    if (wheelEvent.delta().isZero() || !wheelEvent.isGestureStart())
+    auto shouldLatch = [&]() {
+        if (wheelEvent.delta().isZero())
+            return false;
+
+        if (wheelEvent.isGestureStart())
+            return true;
+
+        if (!wheelEvent.isGestureContinuation())
+            return false;
+
+        if (m_processingStepsForCurrentGesture.valueOr(OptionSet<WheelEventProcessingSteps> { }).contains(WheelEventProcessingSteps::MainThreadForScrolling) && processingSteps.contains(WheelEventProcessingSteps::ScrollingThread))
+            return true;
+
+        return false;
+    };
+    
+    if (!shouldLatch())
         return;
+
+    m_processingStepsForCurrentGesture = processingSteps;
 
     LOG_WITH_STREAM(ScrollLatching, stream << "ScrollingTreeLatchingController " << this << " nodeDidHandleEvent: latching to " << scrollingNodeID);
     m_latchedNodeAndSteps = ScrollingNodeAndProcessingSteps { scrollingNodeID, processingSteps };

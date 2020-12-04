@@ -10,6 +10,7 @@
     background-image: repeating-linear-gradient(silver, white 200px);
 }
 </style>
+<script src="../../../resources/ui-helper.js"></script>
 <script src="../../../resources/js-test-pre.js"></script>
 <script>
     jsTestIsAsync = true;
@@ -43,11 +44,9 @@
             testFailed("div received wheel events during the second gesture.");
         else
             testPassed("div did not receive wheel events during the second gesture.");
-
-        finishJSTest();
     }
 
-    function checkForFirstScroll()
+    async function doSecondScroll()
     {
         // 'parent' should not have scrolled, and the content of 'target' should
         // not have moved. However, 'wrapper' should have moved.
@@ -81,10 +80,11 @@
         eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'begin');
         eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'continue');
         eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'none', 'end');
-        eventSender.callAfterScrollingCompletes(checkForSecondScroll);
+
+        await UIHelper.waitForScrollCompletion();
     }
 
-    function scrollTest()
+    async function doFirstScroll()
     {
         pageScrollPositionBefore = document.scrollingElement.scrollTop;
 
@@ -110,7 +110,16 @@
         eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -5, 'none', 'begin');
         eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, 'none', 'continue');
         eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'none', 'end');
-        eventSender.callAfterScrollingCompletes(checkForFirstScroll);
+        
+        await UIHelper.waitForScrollCompletion();
+    }
+
+    async function scrollTest()
+    {
+        await doFirstScroll();
+        await doSecondScroll();
+        checkForSecondScroll();
+        finishJSTest();
     }
 
     function setupTopLevel()

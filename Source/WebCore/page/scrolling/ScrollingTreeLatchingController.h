@@ -64,6 +64,7 @@ private:
 
     mutable Lock m_latchedNodeMutex;
     Optional<ScrollingNodeAndProcessingSteps> m_latchedNodeAndSteps;
+    Optional<OptionSet<WheelEventProcessingSteps>> m_processingStepsForCurrentGesture;
     MonotonicTime m_lastLatchedNodeInterationTime;
 };
 

@@ -954,7 +954,7 @@ bool EventHandler::processWheelEventForScrolling(const PlatformWheelEvent& wheel
         LOG_WITH_STREAM(ScrollLatching, stream << "  EventHandler::processWheelEventForScrolling returning " << didHandleWheelEvent);
         return didHandleWheelEvent;
     }
-    
+
     bool didHandleEvent = handleWheelEventInScrollableArea(wheelEvent, *view, eventHandling);
     m_isHandlingWheelEvent = false;
     return didHandleEvent;

@@ -73,6 +73,8 @@ OptionSet<WheelEventProcessingSteps> ScrollingTree::determineWheelEventProcessin
         LOG_WITH_STREAM(ScrollLatching, stream << "ScrollingTree::determineWheelEventProcessing " << wheelEvent << " have latched node " << latchedNodeAndSteps->scrollingNodeID << " steps " << latchedNodeAndSteps->processingSteps);
         return latchedNodeAndSteps->processingSteps;
     }
+    if (wheelEvent.isGestureStart() || wheelEvent.isNonGestureEvent())
+        m_treeState.gestureState = WTF::nullopt;
 
     auto processingSteps = [&]() -> OptionSet<WheelEventProcessingSteps> {
         if (!m_rootNode)
@@ -96,8 +98,12 @@ OptionSet<WheelEventProcessingSteps> ScrollingTree::determineWheelEventProcessin
 
 #if ENABLE(WHEEL_EVENT_REGIONS)
         auto eventListenerTypes = eventListenerRegionTypesForPoint(position);
-        if (eventListenerTypes.contains(EventListenerRegionType::NonPassiveWheel))
+        if (eventListenerTypes.contains(EventListenerRegionType::NonPassiveWheel)) {
+            if (m_treeState.gestureState.valueOr(WheelScrollGestureState::Blocking) == WheelScrollGestureState::NonBlocking)
+                return { WheelEventProcessingSteps::ScrollingThread, WheelEventProcessingSteps::MainThreadForNonBlockingDOMEventDispatch };
+
             return { WheelEventProcessingSteps::MainThreadForScrolling, WheelEventProcessingSteps::MainThreadForBlockingDOMEventDispatch };
+        }
 
         if (eventListenerTypes.contains(EventListenerRegionType::Wheel))
             return { WheelEventProcessingSteps::ScrollingThread, WheelEventProcessingSteps::MainThreadForNonBlockingDOMEventDispatch };
@@ -480,6 +486,18 @@ void ScrollingTree::setMainFrameScrollPosition(FloatPoint position)
 {
     LockHolder lock(m_treeStateMutex);
     m_treeState.mainFrameScrollPosition = position;
+}
+
+void ScrollingTree::setGestureState(Optional<WheelScrollGestureState> gestureState)
+{
+    LockHolder lock(m_treeStateMutex);
+    m_treeState.gestureState = gestureState;
+}
+
+Optional<WheelScrollGestureState> ScrollingTree::gestureState()
+{
+    LockHolder lock(m_treeStateMutex);
+    return m_treeState.gestureState;
 }
 
 TrackingType ScrollingTree::eventTrackingTypeForPoint(const AtomString& eventName, IntPoint p)

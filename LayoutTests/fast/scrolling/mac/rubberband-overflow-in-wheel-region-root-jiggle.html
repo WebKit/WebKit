@@ -51,10 +51,17 @@
 
             // Scroll down to latch, then up to rubberband.
             eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, "began", "none");
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, "changed", "none");
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, "changed", "none");
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 12, "changed", "none");
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 12, "changed", "none");
+            await UIHelper.renderingUpdate();
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -5, "changed", "none");
+            await UIHelper.renderingUpdate();
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -5, "changed", "none");
+            await UIHelper.renderingUpdate();
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 5, "changed", "none");
+            await UIHelper.renderingUpdate();
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 5, "changed", "none");
+            await UIHelper.renderingUpdate();
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 5, "changed", "none");
+            await UIHelper.renderingUpdate();
             eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "ended", "none");
 
             await UIHelper.renderingUpdate();

@@ -50,6 +50,9 @@ public:
     bool handleWheelEventAfterMainThread(const PlatformWheelEvent&, ScrollingNodeID, Optional<WheelScrollGestureState>);
     void wheelEventWasProcessedByMainThread(const PlatformWheelEvent&, Optional<WheelScrollGestureState>);
 
+    WEBCORE_EXPORT void willSendEventToMainThread(const PlatformWheelEvent&) final;
+    WEBCORE_EXPORT void waitForEventToBeProcessedByMainThread(const PlatformWheelEvent&) final;
+
     void invalidate() override;
 
     WEBCORE_EXPORT void displayDidRefresh(PlatformDisplayID);
@@ -85,7 +88,7 @@ private:
 
     void displayDidRefreshOnScrollingThread();
     void waitForRenderingUpdateCompletionOrTimeout();
-    
+
     bool canUpdateLayersOnScrollingThread() const;
 
     void scheduleDelayedRenderingUpdateDetectionTimer(Seconds);
@@ -102,6 +105,9 @@ private:
 
     SynchronizationState m_state { SynchronizationState::Idle };
     Condition m_stateCondition;
+
+    bool m_receivedBeganEventFromMainThread { false };
+    Condition m_waitingForBeganEventCondition;
 
     // Dynamically allocated because it has to use the ScrollingThread's runloop.
     std::unique_ptr<RunLoop::Timer<ThreadedScrollingTree>> m_delayedRenderingUpdateDetectionTimer;

@@ -81,29 +81,23 @@ bool ScrollingCoordinatorMac::handleWheelEventForScrolling(const PlatformWheelEv
     if (scrollingTree()->willWheelEventStartSwipeGesture(wheelEvent))
         return false;
 
-    LOG_WITH_STREAM(Scrolling, stream << "ScrollingCoordinatorMac::handleWheelEventForScrolling - sending event to scrolling thread, node " << targetNodeID << " gestureState " << gestureState);
-    
+    LOG_WITH_STREAM(Scrolling, stream << "ScrollingCoordinatorMac::handleWheelEventForScrolling " << wheelEvent << " - sending event to scrolling thread, node " << targetNodeID << " gestureState " << gestureState);
+
+    auto deferrer = WheelEventTestMonitorCompletionDeferrer { m_page->wheelEventTestMonitor().get(), reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(targetNodeID), WheelEventTestMonitor::PostMainThreadWheelEventHandling };
+
     RefPtr<ThreadedScrollingTree> threadedScrollingTree = downcast<ThreadedScrollingTree>(scrollingTree());
-    ScrollingThread::dispatch([threadedScrollingTree, wheelEvent, targetNodeID, gestureState] {
+    ScrollingThread::dispatch([threadedScrollingTree, wheelEvent, targetNodeID, gestureState, deferrer = WTFMove(deferrer)] {
         threadedScrollingTree->handleWheelEventAfterMainThread(wheelEvent, targetNodeID, gestureState);
     });
     return true;
 }
 
-static uint64_t nextDeferIdentifier()
-{
-    static uint64_t deferIdentifier;
-    return ++deferIdentifier;
-}
-
 void ScrollingCoordinatorMac::wheelEventWasProcessedByMainThread(const PlatformWheelEvent& wheelEvent, Optional<WheelScrollGestureState> gestureState)
 {
-    auto deferrer = WheelEventTestMonitorCompletionDeferrer { m_page->wheelEventTestMonitor().get(), reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(nextDeferIdentifier()), WheelEventTestMonitor::ReportDOMEventHandling };
+    LOG_WITH_STREAM(Scrolling, stream << "ScrollingCoordinatorMac::wheelEventWasProcessedByMainThread " << gestureState);
 
     RefPtr<ThreadedScrollingTree> threadedScrollingTree = downcast<ThreadedScrollingTree>(scrollingTree());
-    ScrollingThread::dispatch([threadedScrollingTree, wheelEvent, gestureState, deferrer = WTFMove(deferrer)] {
-        threadedScrollingTree->wheelEventWasProcessedByMainThread(wheelEvent, gestureState);
-    });
+    threadedScrollingTree->wheelEventWasProcessedByMainThread(wheelEvent, gestureState);
 }
 
 void ScrollingCoordinatorMac::scheduleTreeStateCommit()

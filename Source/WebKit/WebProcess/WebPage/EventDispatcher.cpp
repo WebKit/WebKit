@@ -136,12 +136,17 @@ void EventDispatcher::wheelEvent(PageIdentifier pageID, const WebWheelEvent& whe
             scrollingTree->setMainFrameCanRubberBand({ canRubberBandAtTop, canRubberBandAtRight, canRubberBandAtBottom, canRubberBandAtLeft });
 
         auto processingSteps = scrollingTree->determineWheelEventProcessing(platformWheelEvent);
-        if (!processingSteps.contains(WheelEventProcessingSteps::ScrollingThread))
-            return processingSteps;
 
         scrollingTree->willProcessWheelEvent();
 
         ScrollingThread::dispatch([scrollingTree, wheelEvent, platformWheelEvent, processingSteps, pageID, protectedThis = makeRef(*this)] {
+            if (processingSteps.contains(WheelEventProcessingSteps::MainThreadForScrolling)) {
+                scrollingTree->willSendEventToMainThread(platformWheelEvent);
+                protectedThis->dispatchWheelEventViaMainThread(pageID, wheelEvent, processingSteps);
+                scrollingTree->waitForEventToBeProcessedByMainThread(platformWheelEvent);
+                return;
+            }
+        
             auto result = scrollingTree->handleWheelEvent(platformWheelEvent, processingSteps);
 
             if (result.needsMainThreadProcessing()) {
@@ -157,18 +162,14 @@ void EventDispatcher::wheelEvent(PageIdentifier pageID, const WebWheelEvent& whe
 
         return processingSteps;
     }();
-
-    if (processingSteps.contains(WheelEventProcessingSteps::ScrollingThread))
-        return;
-
 #else
     UNUSED_PARAM(canRubberBandAtLeft);
     UNUSED_PARAM(canRubberBandAtRight);
     UNUSED_PARAM(canRubberBandAtTop);
     UNUSED_PARAM(canRubberBandAtBottom);
-#endif
 
     dispatchWheelEventViaMainThread(pageID, wheelEvent, processingSteps);
+#endif
 }
 
 #if ENABLE(MAC_GESTURE_EVENTS)

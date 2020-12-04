@@ -1,3 +1,14 @@
+2020-12-03  Simon Fraser  <simon.fraser@apple.com>
+
+        Only the first wheel event in a gesture should be cancelable
+        https://bugs.webkit.org/show_bug.cgi?id=218764
+        <rdar://problem/71248946>
+
+        Reviewed by Tim Horton.
+
+        * fast/scrolling/mac/rubberband-overflow-in-wheel-region-root-jiggle.html: Make more robust.
+        * platform/mac-wk2/fast/events/wheel/wheel-events-become-non-cancelable-expected.txt: Test now passes in WK2.
+
 2020-12-03  Lauro Moura  <lmoura@igalia.com>
 
         [GTK] Gardening anchor download failures after r270422
