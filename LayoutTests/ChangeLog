@@ -1,3 +1,12 @@
+2020-12-04  Truitt Savell  <tsavell@apple.com>
+
+        [ Mac ] inspector/animation/effectChanged.html is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=219555
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2020-12-04  Chris Dumez  <cdumez@apple.com>
 
         [macOS] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffer-interface/ctor-audiobuffer.html is a flaky failure
