@@ -623,7 +623,9 @@
 #endif
     (xpc-service-name "com.apple.audio.SandboxHelper")
     (xpc-service-name "com.apple.hiservices-xpcservice")
+#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 110000
     (xpc-service-name "com.apple.print.normalizerd")
+#endif
 )
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED < 110000
