@@ -138,6 +138,7 @@ struct LineCandidate {
         void appendtrailingWordBreakOpportunity(const InlineItem& wordBreakItem) { m_trailingWordBreakOpportunity = &wordBreakItem; }
         void reset();
         bool isEmpty() const { return m_continuousContent.runs().isEmpty() && !trailingWordBreakOpportunity() && !trailingLineBreak(); }
+        bool hasInlineLevelBox() const { return m_hasInlineLevelBox; }
 
     private:
         bool m_ignoreTrailingLetterSpacing { false };
@@ -145,6 +146,7 @@ struct LineCandidate {
         InlineContentBreaker::ContinuousContent m_continuousContent;
         const InlineItem* m_trailingLineBreak { nullptr };
         const InlineItem* m_trailingWordBreakOpportunity { nullptr };
+        bool m_hasInlineLevelBox { false };
     };
 
     // Candidate content is a collection of inline content or a float box.
@@ -183,6 +185,7 @@ inline void LineCandidate::InlineContent::appendInlineItem(const InlineItem& inl
         return letterSpacing;
     };
     m_continuousContent.append(inlineItem, logicalWidth, collapsibleWidth());
+    m_hasInlineLevelBox = m_hasInlineLevelBox || inlineItem.isBox() || inlineItem.isInlineBoxStart();
 }
 
 inline void LineCandidate::InlineContent::reset()
@@ -190,6 +193,7 @@ inline void LineCandidate::InlineContent::reset()
     m_continuousContent.reset();
     m_trailingLineBreak = { };
     m_trailingWordBreakOpportunity = { };
+    m_hasInlineLevelBox = false;
 }
 
 inline void LineCandidate::reset()
@@ -590,7 +594,6 @@ LineBuilder::Result LineBuilder::handleInlineContent(InlineContentBreaker& inlin
         ASSERT(inlineContent.trailingLineBreak() || inlineContent.trailingWordBreakOpportunity());
         return { inlineContent.trailingLineBreak() ? InlineContentBreaker::IsEndOfLine::Yes : InlineContentBreaker::IsEndOfLine::No };
     }
-    auto availableWidth = m_lineLogicalRect.width() - m_line.contentLogicalWidth();
     auto shouldDisableHyphenation = [&] {
         auto& style = root().style();
         unsigned limitLines = style.hyphenationLimitLines() == RenderStyle::initialHyphenationLimitLines() ? std::numeric_limits<unsigned>::max() : style.hyphenationLimitLines();
@@ -599,8 +602,29 @@ LineBuilder::Result LineBuilder::handleInlineContent(InlineContentBreaker& inlin
     if (shouldDisableHyphenation())
         inlineContentBreaker.setHyphenationDisabled();
 
-    // Check if this new content fits.
     auto& continuousInlineContent = lineCandidate.inlineContent.continuousContent();
+    auto lineLogicalRectForCandidateContent = [&] {
+        // Check if the candidate content would stretch the line and whether additional floats are getting in the way.
+        if (!floatingState() || !inlineContent.hasInlineLevelBox())
+            return m_lineLogicalRect;
+        auto maximumLineLogicalHeight = m_lineLogicalRect.height();
+        for (auto& run : continuousInlineContent.runs()) {
+            // FIXME: Add support for inline boxes too.
+            if (!run.inlineItem.isBox())
+                continue;
+            maximumLineLogicalHeight = std::max(maximumLineLogicalHeight, InlineLayoutUnit { formattingContext().geometryForBox(run.inlineItem.layoutBox()).marginBoxHeight() });
+        }
+        if (maximumLineLogicalHeight == m_lineLogicalRect.height())
+            return m_lineLogicalRect;
+        auto adjustedLineLogicalRect = InlineRect { m_lineLogicalRect.top(), m_lineLogicalRect.left(), m_lineLogicalRect.width(), maximumLineLogicalHeight };
+        if (auto horizontalConstraints = floatConstraints(adjustedLineLogicalRect)) {
+            adjustedLineLogicalRect.setLeft(horizontalConstraints->logicalLeft);
+            adjustedLineLogicalRect.setWidth(horizontalConstraints->logicalWidth);
+        }
+        return adjustedLineLogicalRect;
+    }();
+    auto availableWidth = lineLogicalRectForCandidateContent.width() - m_line.contentLogicalWidth();
+    // Check if this new content fits.
     auto isLineConsideredEmpty = m_line.isConsideredEmpty() && !m_contentIsConstrainedByFloat;
     auto lineStatus = InlineContentBreaker::LineStatus { m_line.contentLogicalWidth(), availableWidth, m_line.trimmableTrailingWidth(), m_line.trailingSoftHyphenWidth(), m_line.isTrailingRunFullyTrimmable(), isLineConsideredEmpty };
     auto result = inlineContentBreaker.processInlineContent(continuousInlineContent, lineStatus);
@@ -609,6 +633,7 @@ LineBuilder::Result LineBuilder::handleInlineContent(InlineContentBreaker& inlin
     auto& candidateRuns = continuousInlineContent.runs();
     if (result.action == InlineContentBreaker::Result::Action::Keep) {
         // This continuous content can be fully placed on the current line.
+        m_lineLogicalRect = lineLogicalRectForCandidateContent;
         for (auto& run : candidateRuns)
             m_line.append(run.inlineItem, run.logicalWidth);
         return { result.isEndOfLine, { candidateRuns.size(), false } };
