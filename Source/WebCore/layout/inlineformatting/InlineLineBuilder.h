@@ -87,7 +87,8 @@ private:
         bool isConstrainedByFloat { false };
     };
     UsedConstraints constraintsForLine(const InlineRect& initialLineConstraints, bool isFirstLine);
-    Result handleFloatOrInlineContent(InlineContentBreaker&, const InlineItemRange& needsLayoutRange, const LineCandidate&);
+    Result handleFloatContent(const InlineItem&);
+    Result handleInlineContent(InlineContentBreaker&, const InlineItemRange& needsLayoutRange, const LineCandidate&);
     size_t rebuildLine(const InlineItemRange& needsLayoutRange, const InlineItem& lastInlineItemToAdd);
     size_t rebuildLineForTrailingSoftHyphen(const InlineItemRange& layoutRange);
     void commitPartialContent(const InlineContentBreaker::ContinuousContent::RunList&, const InlineContentBreaker::Result::PartialTrailingContent&);
