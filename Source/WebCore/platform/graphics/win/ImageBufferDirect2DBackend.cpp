@@ -171,7 +171,7 @@ static RefPtr<Image> createBitmapImageAfterScalingIfNeeded(ID2D1BitmapRenderTarg
 RefPtr<Image> ImageBufferDirect2DBackend::copyImage(BackingStoreCopy copyBehavior, PreserveResolution preserveResolution) const
 {
     PlatformImagePtr image;
-    if (m_resolutionScale == 1 || preserveResolution == PreserveResolution::Yes)
+    if (resolutionScale() == 1 || preserveResolution == PreserveResolution::Yes)
         image = copyNativeImage(copyBehavior)->platformImage();
     else
         image = copyNativeImage(DontCopyBackingStore)->platformImage();
@@ -269,7 +269,7 @@ PlatformImagePtr ImageBufferDirect2DBackend::compatibleBitmap(ID2D1RenderTarget*
 void ImageBufferDirect2DBackend::draw(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
 {
     FloatRect adjustedSrcRect = srcRect;
-    adjustedSrcRect.scale(m_resolutionScale, m_resolutionScale);
+    adjustedSrcRect.scale(resolutionScale());
 
     auto compatibleBitmap = compatibleBitmap(destContext.platformContext()->renderTarget());
 
@@ -283,7 +283,7 @@ void ImageBufferDirect2DBackend::draw(GraphicsContext& destContext, const FloatR
 void ImageBufferDirect2DBackend::drawPattern(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
 {
     FloatRect adjustedSrcRect = srcRect;
-    adjustedSrcRect.scale(m_resolutionScale);
+    adjustedSrcRect.scale(resolutionScale());
 
     if (auto image = copyImage(&destContext == &context() ? CopyBackingStore : DontCopyBackingStore))
         image->drawPattern(destContext, destRect, adjustedSrcRect, patternTransform, phase, spacing, options);

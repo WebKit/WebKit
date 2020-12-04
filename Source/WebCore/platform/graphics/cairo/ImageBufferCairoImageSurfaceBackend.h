@@ -40,11 +40,11 @@ class ImageBufferCairoImageSurfaceBackend : public ImageBufferCairoSurfaceBacken
     WTF_MAKE_ISO_ALLOCATED(ImageBufferCairoImageSurfaceBackend);
     WTF_MAKE_NONCOPYABLE(ImageBufferCairoImageSurfaceBackend);
 public:
-    static std::unique_ptr<ImageBufferCairoImageSurfaceBackend> create(const FloatSize&, float resolutionScale, ColorSpace, PixelFormat, const HostWindow*);
-    static std::unique_ptr<ImageBufferCairoImageSurfaceBackend> create(const FloatSize&, const GraphicsContext&);
+    static std::unique_ptr<ImageBufferCairoImageSurfaceBackend> create(const Parameters&, const HostWindow*);
+    static std::unique_ptr<ImageBufferCairoImageSurfaceBackend> create(const Parameters&, const GraphicsContext&);
 
 private:
-    ImageBufferCairoImageSurfaceBackend(const FloatSize& logicalSize, const IntSize& backendSize, float resolutionScale, ColorSpace, PixelFormat, RefPtr<cairo_surface_t>&&);
+    ImageBufferCairoImageSurfaceBackend(const Parameters&, RefPtr<cairo_surface_t>&&);
 
     void platformTransformColorSpace(const std::array<uint8_t, 256>& lookUpTable) override;
 };

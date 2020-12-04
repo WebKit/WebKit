@@ -79,8 +79,8 @@ void ImageBufferCGBackend::setupContext() const
 {
     // The initial CTM matches DisplayList::Recorder::clipToDrawingCommands()'s initial CTM.
     context().scale(FloatSize(1, -1));
-    context().translate(0, -m_backendSize.height());
-    context().applyDeviceScaleFactor(m_resolutionScale);
+    context().translate(0, -backendSize().height());
+    context().applyDeviceScaleFactor(resolutionScale());
 }
 
 static RetainPtr<CGImageRef> createCroppedImageIfNecessary(CGImageRef image, const IntSize& backendSize)
@@ -112,31 +112,33 @@ static RefPtr<Image> createBitmapImageAfterScalingIfNeeded(RefPtr<NativeImage>&&
 RefPtr<Image> ImageBufferCGBackend::copyImage(BackingStoreCopy copyBehavior, PreserveResolution preserveResolution) const
 {
     RefPtr<NativeImage> image;
-    if (m_resolutionScale == 1 || preserveResolution == PreserveResolution::Yes)
+    if (resolutionScale() == 1 || preserveResolution == PreserveResolution::Yes)
         image = copyNativeImage(copyBehavior);
     else
         image = copyNativeImage(DontCopyBackingStore);
-    return createBitmapImageAfterScalingIfNeeded(WTFMove(image), m_logicalSize, m_backendSize, m_resolutionScale, preserveResolution);
+    return createBitmapImageAfterScalingIfNeeded(WTFMove(image), logicalSize(), backendSize(), resolutionScale(), preserveResolution);
 }
 
 RefPtr<Image> ImageBufferCGBackend::sinkIntoImage(PreserveResolution preserveResolution)
 {
-    return createBitmapImageAfterScalingIfNeeded(sinkIntoNativeImage(), m_logicalSize, m_backendSize, m_resolutionScale, preserveResolution);
+    // Get the backend size before sinking the it into a NativeImage. sinkIntoNativeImage() sets the IOSurface to null if it's an accelerated backend.
+    auto backendSize = this->backendSize();
+    return createBitmapImageAfterScalingIfNeeded(sinkIntoNativeImage(), logicalSize(), backendSize, resolutionScale(), preserveResolution);
 }
 
 void ImageBufferCGBackend::draw(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
 {
     FloatRect srcRectScaled = srcRect;
-    srcRectScaled.scale(m_resolutionScale);
+    srcRectScaled.scale(resolutionScale());
 
     if (auto image = copyNativeImage(&destContext == &context() ? CopyBackingStore : DontCopyBackingStore))
-        destContext.drawNativeImage(*image, m_backendSize, destRect, srcRectScaled, options);
+        destContext.drawNativeImage(*image, backendSize(), destRect, srcRectScaled, options);
 }
 
 void ImageBufferCGBackend::drawPattern(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
 {
     FloatRect adjustedSrcRect = srcRect;
-    adjustedSrcRect.scale(m_resolutionScale);
+    adjustedSrcRect.scale(resolutionScale());
 
     if (auto image = copyImage(&destContext == &context() ? CopyBackingStore : DontCopyBackingStore))
         image->drawPattern(destContext, destRect, adjustedSrcRect, patternTransform, phase, spacing, options);
@@ -157,11 +159,6 @@ void ImageBufferCGBackend::clipToMask(GraphicsContext& destContext, const FloatR
     CGContextClipToMask(cgContext, { { }, destRect.size() }, nativeImage->platformImage().get());
     CGContextScaleCTM(cgContext, 1, -1);
     CGContextTranslateCTM(cgContext, -destRect.x(), -destRect.maxY());
-}
-
-AffineTransform ImageBufferCGBackend::baseTransform() const
-{
-    return AffineTransform(1, 0, 0, -1, 0, m_logicalSize.height());
 }
 
 RetainPtr<CFDataRef> ImageBufferCGBackend::toCFData(const String& mimeType, Optional<double> quality, PreserveResolution preserveResolution) const
@@ -190,7 +187,7 @@ RetainPtr<CFDataRef> ImageBufferCGBackend::toCFData(const String& mimeType, Opti
             return nullptr;
 
         image = adoptCF(CGImageCreate(pixelArrayDimensions.width(), pixelArrayDimensions.height(), 8, 32, 4 * pixelArrayDimensions.width(), sRGBColorSpaceRef(), kCGBitmapByteOrderDefault | kCGImageAlphaNoneSkipLast, dataProvider.get(), 0, false, kCGRenderingIntentDefault));
-    } else if (m_resolutionScale == 1 || preserveResolution == PreserveResolution::Yes) {
+    } else if (resolutionScale() == 1 || preserveResolution == PreserveResolution::Yes) {
         image = copyNativeImage(CopyBackingStore)->platformImage();
         image = createCroppedImageIfNecessary(image.get(), backendSize());
     } else {

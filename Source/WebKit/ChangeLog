@@ -1,3 +1,99 @@
+2020-12-04  Said Abou-Hallawa  <said@apple.com>
+
+        [GPU Process] Clean up recreating the ImageBufferBackend because of GPU crashing
+        https://bugs.webkit.org/show_bug.cgi?id=219007
+
+        Reviewed by Simon Fraser.
+
+        There is no need to store the backend parameters in RemoteImageBufferProxy.
+        These parameters are now stored in the base class ImageBuffer before the
+        backend is created.
+
+        Remove the traits definition for RemoteImageBufferProxy types because
+        they are wrong. All ImageBuffers have valid renderingResourceIdentifier()
+        regardless whether they are remote or not. ImageBuffer::setBackend and
+        ImageBuffer::submitDisplayList() are now implemented in WebCore. So no
+        casting is needed.
+
+        * GPUProcess/graphics/RemoteImageBuffer.h:
+        (WebKit::RemoteImageBuffer::RemoteImageBuffer):
+        (WebKit::RemoteImageBuffer::submitDisplayList): Deleted.
+        submitDisplayList() is now a virtual method of ImageBuffer. So make it
+        private and ignore the return of DisplayList::Replayer::replay() since 
+        the caller does not use it.
+
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::didCreateImageBufferBackend):
+        (WebKit::RemoteRenderingBackend::applyDisplayListsFromHandle):
+        (WebKit::RemoteRenderingBackend::imageBufferBackendWasCreated): Deleted.
+        * GPUProcess/graphics/RemoteRenderingBackend.h:
+        Rename 'imageBufferBackendWasCreated()' to 'didCreateImageBufferBackend()'
+        to be consistent with 'didFlush()'.
+
+        * Shared/ConcreteShareableImageBuffer.h:
+        (WebKit::ConcreteShareableImageBuffer::create):
+        (WebKit::ConcreteShareableImageBuffer::ConcreteShareableImageBuffer): Deleted.
+        * Shared/RemoteLayerTree/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::encode const):
+        (WebKit::RemoteLayerBackingStore::swapToValidFrontBuffer):
+        Call the function with the new name and delete the FIXME comment.
+
+        * WebProcess/GPU/graphics/ImageBufferShareableBitmapBackend.cpp:
+        (WebKit::ImageBufferShareableBitmapBackend::create):
+        (WebKit::ImageBufferShareableBitmapBackend::ImageBufferShareableBitmapBackend):
+        (WebKit::ImageBufferShareableBitmapBackend::backendSize const):
+        * WebProcess/GPU/graphics/ImageBufferShareableBitmapBackend.h:
+        Use the new structure 'ImageBufferBackend::Parameters'. Implement the
+        virtual method 'backendSize()'.
+
+        * WebProcess/GPU/graphics/PlatformRemoteImageBufferProxy.h:
+        (isType): Deleted.
+        Delete the wrong traits.
+
+        * WebProcess/GPU/graphics/RemoteImageBufferProxy.h:
+        (WebKit::RemoteImageBufferProxy::create):
+        (WebKit::RemoteImageBufferProxy::RemoteImageBufferProxy):
+        Use the new structure 'ImageBufferBackend::Parameters'.
+
+        (WebKit::RemoteImageBufferProxy::clearBackend): Deleted.
+        (WebKit::RemoteImageBufferProxy::createBackend): Deleted.
+        (WebKit::RemoteImageBufferProxy::didFlush): Deleted.
+        (WebKit::RemoteImageBufferProxy::size const): Deleted.
+        (WebKit::RemoteImageBufferProxy::renderingMode const): Deleted.
+        (WebKit::RemoteImageBufferProxy::colorSpace const): Deleted.
+        (WebKit::RemoteImageBufferProxy::pixelFormat const): Deleted.
+        These functions are now implemented in ConcreteImageBuffer.
+
+        (WebKit::RemoteImageBufferProxy::submitDisplayList): Deleted.
+        submitDisplayList() is now virtual.
+
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp:
+        (WebKit::RemoteRenderingBackendProxy::reestablishGPUProcessConnection):
+        (WebKit::RemoteRenderingBackendProxy::waitForDidCreateImageBufferBackend):
+        (WebKit::RemoteRenderingBackendProxy::createImageBuffer):
+        (WebKit::RemoteRenderingBackendProxy::didCreateImageBufferBackend):
+        (WebKit::RemoteRenderingBackendProxy::didFlush):
+        (WebKit::recreateImageBuffer): Deleted.
+        (WebKit::RemoteRenderingBackendProxy::waitForImageBufferBackendWasCreated): Deleted.
+        (WebKit::RemoteRenderingBackendProxy::imageBufferBackendWasCreated): Deleted.
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.h:
+        No need to cast the ImageBuffer to RemoteImageBufferProxy since all what
+        RemoteRenderingBackendProxy needs can be accessed through the base class.
+
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.messages.in:
+        Rename 'ImageBufferBackendWasCreated' to 'DidCreateImageBufferBackend'
+        to be consistent with 'DidFlush'. No need to pass the creation parameters
+        since they set in the ConcreteImageBuffer. No need to pass the backendSize
+        since it can be retrieved through the backend itself.
+
+        * WebProcess/GPU/graphics/cocoa/ImageBufferShareableIOSurfaceBackend.cpp:
+        (WebKit::ImageBufferShareableIOSurfaceBackend::create):
+        * WebProcess/GPU/graphics/cocoa/ImageBufferShareableIOSurfaceBackend.h:
+        * WebProcess/GPU/graphics/cocoa/ImageBufferShareableMappedIOSurfaceBackend.cpp:
+        (WebKit::ImageBufferShareableMappedIOSurfaceBackend::create):
+        * WebProcess/GPU/graphics/cocoa/ImageBufferShareableMappedIOSurfaceBackend.h:
+        Use the new structure 'ImageBufferBackend::Parameters'.
+
 2020-12-04  John Wilander  <wilander@apple.com>
 
         PCM: Switch to 8+4 bits for source IDs and trigger values respectively

@@ -43,14 +43,16 @@ class ImageBufferShareableBitmapBackend : public WebCore::PlatformImageBufferBac
     WTF_MAKE_ISO_ALLOCATED(ImageBufferShareableBitmapBackend);
     WTF_MAKE_NONCOPYABLE(ImageBufferShareableBitmapBackend);
 public:
-    static std::unique_ptr<ImageBufferShareableBitmapBackend> create(const WebCore::FloatSize& logicalSize, const float resolutionScale, WebCore::ColorSpace, WebCore::PixelFormat, const WebCore::HostWindow*);
-    static std::unique_ptr<ImageBufferShareableBitmapBackend> create(const WebCore::FloatSize& logicalSize, const WebCore::IntSize& internalSize, float resolutionScale, WebCore::ColorSpace, WebCore::PixelFormat, ImageBufferBackendHandle);
+    static std::unique_ptr<ImageBufferShareableBitmapBackend> create(const Parameters&, const WebCore::HostWindow*);
+    static std::unique_ptr<ImageBufferShareableBitmapBackend> create(const Parameters&, ImageBufferBackendHandle);
 
-    ImageBufferShareableBitmapBackend(const WebCore::FloatSize& logicalSize, const WebCore::IntSize& physicalSize, float resolutionScale, WebCore::ColorSpace, WebCore::PixelFormat, RefPtr<ShareableBitmap>&&, std::unique_ptr<WebCore::GraphicsContext>&&);
+    ImageBufferShareableBitmapBackend(const Parameters&, RefPtr<ShareableBitmap>&&, std::unique_ptr<WebCore::GraphicsContext>&&);
 
     ImageBufferBackendHandle createImageBufferBackendHandle() const;
 
     WebCore::GraphicsContext& context() const override { return *m_context; }
+    
+    WebCore::IntSize backendSize() const override;
 
     RefPtr<WebCore::NativeImage> copyNativeImage(WebCore::BackingStoreCopy = WebCore::CopyBackingStore) const override;
     RefPtr<WebCore::Image> copyImage(WebCore::BackingStoreCopy = WebCore::CopyBackingStore, WebCore::PreserveResolution = WebCore::PreserveResolution::No) const override;

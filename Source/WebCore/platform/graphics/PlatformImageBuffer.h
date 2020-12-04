@@ -75,5 +75,5 @@ using DisplayListAcceleratedImageBuffer = DisplayList::ImageBuffer<AcceleratedIm
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::AcceleratedImageBuffer)
-    static bool isType(const WebCore::ImageBuffer& buffer) { return buffer.isAccelerated(); }
+    static bool isType(const WebCore::ImageBuffer& buffer) { return buffer.renderingMode() == WebCore::RenderingMode::Accelerated; }
 SPECIALIZE_TYPE_TRAITS_END()

@@ -36,15 +36,12 @@ class ConcreteShareableImageBuffer : public WebCore::ConcreteImageBuffer<Backend
     using BaseConcreteImageBuffer::m_backend;
 
 public:
-    static auto create(const WebCore::FloatSize& size, WebCore::RenderingMode renderingMode, float resolutionScale, WebCore::ColorSpace colorSpace, WebCore::PixelFormat pixelFormat)
+    static auto create(const WebCore::FloatSize& size, float resolutionScale, WebCore::ColorSpace colorSpace, WebCore::PixelFormat pixelFormat)
     {
         return BaseConcreteImageBuffer::template create<ConcreteShareableImageBuffer>(size, resolutionScale, colorSpace, pixelFormat, nullptr);
     }
 
-    ConcreteShareableImageBuffer(std::unique_ptr<BackendType>&& backend)
-        : BaseConcreteImageBuffer(WTFMove(backend))
-    {
-    }
+    using BaseConcreteImageBuffer::BaseConcreteImageBuffer;
 
     ImageBufferBackendHandle createImageBufferBackendHandle()
     {

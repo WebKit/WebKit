@@ -80,7 +80,7 @@ void ImageBufferCairoBackend::drawPattern(GraphicsContext& destContext, const Fl
     }
 
     if (auto image = copyNativeImage(&destContext == &context() ? CopyBackingStore : DontCopyBackingStore))
-        Cairo::drawPattern(*destContext.platformContext(), image->platformImage().get(), m_logicalSize, destRect, srcRect, patternTransform, phase, options);
+        Cairo::drawPattern(*destContext.platformContext(), image->platformImage().get(), logicalSize(), destRect, srcRect, patternTransform, phase, options);
 }
 
 void ImageBufferCairoBackend::clipToMask(GraphicsContext& destContext, const FloatRect& destRect)

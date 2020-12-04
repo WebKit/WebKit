@@ -39,15 +39,17 @@ class WEBCORE_EXPORT ImageBufferIOSurfaceBackend : public ImageBufferCGBackend {
 public:
     static IntSize calculateBackendSize(const FloatSize& logicalSize, float resolutionScale);
 
-    static std::unique_ptr<ImageBufferIOSurfaceBackend> create(const FloatSize&, float resolutionScale, ColorSpace, CGColorSpaceRef, PixelFormat, const HostWindow*);
-    static std::unique_ptr<ImageBufferIOSurfaceBackend> create(const FloatSize&, float resolutionScale, ColorSpace, PixelFormat, const HostWindow*);
-    static std::unique_ptr<ImageBufferIOSurfaceBackend> create(const FloatSize&, const GraphicsContext&);
+    static std::unique_ptr<ImageBufferIOSurfaceBackend> create(const Parameters&, CGColorSpaceRef, const HostWindow*);
+    static std::unique_ptr<ImageBufferIOSurfaceBackend> create(const Parameters&, const HostWindow*);
+    static std::unique_ptr<ImageBufferIOSurfaceBackend> create(const Parameters&, const GraphicsContext&);
 
-    ImageBufferIOSurfaceBackend(const FloatSize& logicalSize, const IntSize& physicalSize, float resolutionScale, ColorSpace, PixelFormat, std::unique_ptr<IOSurface>&&);
+    ImageBufferIOSurfaceBackend(const Parameters&, std::unique_ptr<IOSurface>&&);
 
     GraphicsContext& context() const override;
     void flushContext() override;
 
+    IntSize backendSize() const override;
+    
     size_t memoryCost() const override;
     size_t externalMemoryCost() const override;
 
@@ -69,7 +71,7 @@ public:
     void releaseBufferToPool() override;
 
     static constexpr bool isOriginAtUpperLeftCorner = true;
-    static constexpr bool isAccelerated = true;
+    static constexpr RenderingMode renderingMode = RenderingMode::Accelerated;
 
 protected:
     static RetainPtr<CGColorSpaceRef> contextColorSpace(const GraphicsContext&);

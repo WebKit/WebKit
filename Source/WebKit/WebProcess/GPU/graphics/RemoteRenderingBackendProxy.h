@@ -81,7 +81,7 @@ public:
     void cacheNativeImage(const ShareableBitmap::Handle&, WebCore::RenderingResourceIdentifier);
     void releaseRemoteResource(WebCore::RenderingResourceIdentifier);
 
-    bool waitForImageBufferBackendWasCreated();
+    bool waitForDidCreateImageBufferBackend();
     bool waitForDidFlush();
 
 private:
@@ -95,7 +95,7 @@ private:
     void updateReusableHandles();
 
     // Messages to be received.
-    void imageBufferBackendWasCreated(const WebCore::FloatSize& logicalSize, const WebCore::IntSize& backendSize, float resolutionScale, WebCore::ColorSpace, WebCore::PixelFormat, ImageBufferBackendHandle, WebCore::RenderingResourceIdentifier);
+    void didCreateImageBufferBackend(ImageBufferBackendHandle, WebCore::RenderingResourceIdentifier);
     void didFlush(WebCore::DisplayList::FlushIdentifier, WebCore::RenderingResourceIdentifier);
 
     RemoteResourceCacheProxy m_remoteResourceCacheProxy { *this };

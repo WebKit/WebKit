@@ -36,31 +36,43 @@ public:
     template<typename ImageBufferType = ConcreteImageBuffer, typename... Arguments>
     static RefPtr<ImageBufferType> create(const FloatSize& size, float resolutionScale, ColorSpace colorSpace, PixelFormat pixelFormat, const HostWindow* hostWindow, Arguments&&... arguments)
     {
-        auto backend = BackendType::create(size, resolutionScale, colorSpace, pixelFormat, hostWindow);
+        auto parameters = ImageBufferBackend::Parameters { size, resolutionScale, colorSpace, pixelFormat };
+        auto backend = BackendType::create(parameters, hostWindow);
         if (!backend)
             return nullptr;
-        return adoptRef(new ImageBufferType(WTFMove(backend), std::forward<Arguments>(arguments)...));
+        return adoptRef(new ImageBufferType(parameters, WTFMove(backend), std::forward<Arguments>(arguments)...));
     }
 
     template<typename ImageBufferType = ConcreteImageBuffer, typename... Arguments>
     static RefPtr<ImageBufferType> create(const FloatSize& size, const GraphicsContext& context, Arguments&&... arguments)
     {
-        auto backend = BackendType::create(size, context);
+        auto parameters = ImageBufferBackend::Parameters { size, 1, ColorSpace::SRGB, PixelFormat::BGRA8 };
+        auto backend = BackendType::create(parameters, context);
         if (!backend)
             return nullptr;
-        return adoptRef(new ImageBufferType(WTFMove(backend), std::forward<Arguments>(arguments)...));
+        return adoptRef(new ImageBufferType(parameters, WTFMove(backend), std::forward<Arguments>(arguments)...));
     }
 
-    bool isAccelerated() const override { return BackendType::isAccelerated; }
+    RenderingMode renderingMode() const override { return BackendType::renderingMode; }
     bool canMapBackingStore() const override { return BackendType::canMapBackingStore; }
 
 protected:
-    ConcreteImageBuffer(std::unique_ptr<BackendType>&& backend = nullptr, RenderingResourceIdentifier renderingResourceIdentifier = RenderingResourceIdentifier::generate())
-        : m_backend(WTFMove(backend))
+    ConcreteImageBuffer(const ImageBufferBackend::Parameters& parameters, std::unique_ptr<BackendType>&& backend = nullptr, RenderingResourceIdentifier renderingResourceIdentifier = RenderingResourceIdentifier::generate())
+        : m_parameters(parameters)
+        , m_backend(WTFMove(backend))
         , m_renderingResourceIdentifier(renderingResourceIdentifier)
     {
     }
 
+    void setBackend(std::unique_ptr<ImageBufferBackend>&& backend) override
+    {
+        ASSERT(!m_backend);
+        m_backend = std::unique_ptr<BackendType> { static_cast<BackendType*>(backend.release()) };
+    }
+
+    void clearBackend() override { m_backend = nullptr; }
+
+    ImageBufferBackend* backend() const override { return m_backend.get(); }
     virtual BackendType* ensureBackendCreated() const { return m_backend.get(); }
 
     RenderingResourceIdentifier renderingResourceIdentifier() const override { return m_renderingResourceIdentifier; }
@@ -79,19 +91,11 @@ protected:
         }
     }
 
-    AffineTransform baseTransform() const override
-    {
-        if (auto* backend = ensureBackendCreated())
-            return backend->baseTransform();
-        return { };
-    }
-
-    IntSize logicalSize() const override
-    {
-        if (auto* backend = ensureBackendCreated())
-            return backend->logicalSize();
-        return { };
-    }
+    IntSize logicalSize() const override { return IntSize(m_parameters.logicalSize); }
+    float resolutionScale() const override { return m_parameters.resolutionScale; }
+    ColorSpace colorSpace() const override { return m_parameters.colorSpace; }
+    PixelFormat pixelFormat() const override { return m_parameters.pixelFormat; }
+    const ImageBufferBackend::Parameters& parameters() const override { return m_parameters; }
 
     IntSize backendSize() const override
     {
@@ -100,11 +104,11 @@ protected:
         return { };
     }
 
-    float resolutionScale() const override
+    AffineTransform baseTransform() const override
     {
-        if (auto* backend = ensureBackendCreated())
-            return backend->resolutionScale();
-        return 1;
+        if (BackendType::isOriginAtUpperLeftCorner)
+            return AffineTransform(1, 0, 0, -1, 0, logicalSize().height());
+        return { };
     }
 
     size_t memoryCost() const override
@@ -292,6 +296,7 @@ protected:
             backend->releaseBufferToPool();
     }
 
+    ImageBufferBackend::Parameters m_parameters;
     std::unique_ptr<BackendType> m_backend;
     RenderingResourceIdentifier m_renderingResourceIdentifier;
 };

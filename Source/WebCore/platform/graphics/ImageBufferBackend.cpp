@@ -31,12 +31,8 @@
 
 namespace WebCore {
 
-ImageBufferBackend::ImageBufferBackend(const FloatSize& logicalSize, const IntSize& backendSize, float resolutionScale, ColorSpace colorSpace, PixelFormat pixelFormat)
-    : m_logicalSize(logicalSize)
-    , m_backendSize(backendSize)
-    , m_resolutionScale(resolutionScale)
-    , m_colorSpace(colorSpace)
-    , m_pixelFormat(pixelFormat)
+ImageBufferBackend::ImageBufferBackend(const Parameters& parameters)
+    : m_parameters(parameters)
 {
 }
 
@@ -99,15 +95,15 @@ void ImageBufferBackend::convertToLuminanceMask()
 
 Vector<uint8_t> ImageBufferBackend::toBGRAData(void* data) const
 {
-    Vector<uint8_t> result(4 * m_logicalSize.area().unsafeGet());
-    size_t destBytesPerRow = m_logicalSize.width() * 4;
+    Vector<uint8_t> result(4 * logicalSize().area().unsafeGet());
+    size_t destBytesPerRow = logicalSize().width() * 4;
     size_t srcBytesPerRow = bytesPerRow();
 
     uint8_t* srcRows = reinterpret_cast<uint8_t*>(data);
 
     copyImagePixels(
         AlphaPremultiplication::Premultiplied, pixelFormat(), srcBytesPerRow, srcRows,
-        AlphaPremultiplication::Unpremultiplied, PixelFormat::BGRA8, destBytesPerRow, result.data(), m_logicalSize);
+        AlphaPremultiplication::Unpremultiplied, PixelFormat::BGRA8, destBytesPerRow, result.data(), logicalSize());
 
     return result;
 }

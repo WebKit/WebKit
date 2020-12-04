@@ -37,13 +37,13 @@ using namespace WebCore;
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(ImageBufferShareableMappedIOSurfaceBackend);
 
-std::unique_ptr<ImageBufferShareableMappedIOSurfaceBackend> ImageBufferShareableMappedIOSurfaceBackend::create(const FloatSize& size, float resolutionScale, ColorSpace colorSpace, PixelFormat pixelFormat, const HostWindow*)
+std::unique_ptr<ImageBufferShareableMappedIOSurfaceBackend> ImageBufferShareableMappedIOSurfaceBackend::create(const Parameters& parameters, const HostWindow*)
 {
-    IntSize backendSize = calculateBackendSize(size, resolutionScale);
+    IntSize backendSize = calculateBackendSize(parameters.logicalSize, parameters.resolutionScale);
     if (backendSize.isEmpty())
         return nullptr;
 
-    auto surface = IOSurface::create(backendSize, backendSize, cachedCGColorSpace(colorSpace), IOSurface::formatForPixelFormat(pixelFormat));
+    auto surface = IOSurface::create(backendSize, backendSize, cachedCGColorSpace(parameters.colorSpace), IOSurface::formatForPixelFormat(parameters.pixelFormat));
     if (!surface)
         return nullptr;
 
@@ -53,21 +53,21 @@ std::unique_ptr<ImageBufferShareableMappedIOSurfaceBackend> ImageBufferShareable
 
     CGContextClearRect(cgContext.get(), FloatRect(FloatPoint::zero(), backendSize));
 
-    return makeUnique<ImageBufferShareableMappedIOSurfaceBackend>(size, backendSize, resolutionScale, colorSpace, pixelFormat, WTFMove(surface));
+    return makeUnique<ImageBufferShareableMappedIOSurfaceBackend>(parameters, WTFMove(surface));
 }
 
-std::unique_ptr<ImageBufferShareableMappedIOSurfaceBackend> ImageBufferShareableMappedIOSurfaceBackend::create(const FloatSize& logicalSize, const IntSize& internalSize, float resolutionScale, ColorSpace colorSpace, PixelFormat pixelFormat, ImageBufferBackendHandle handle)
+std::unique_ptr<ImageBufferShareableMappedIOSurfaceBackend> ImageBufferShareableMappedIOSurfaceBackend::create(const Parameters& parameters, ImageBufferBackendHandle handle)
 {
     if (!WTF::holds_alternative<MachSendRight>(handle)) {
         ASSERT_NOT_REACHED();
         return nullptr;
     }
 
-    auto surface = IOSurface::createFromSendRight(WTFMove(WTF::get<MachSendRight>(handle)), cachedCGColorSpace(colorSpace));
+    auto surface = IOSurface::createFromSendRight(WTFMove(WTF::get<MachSendRight>(handle)), cachedCGColorSpace(parameters.colorSpace));
     if (!surface)
         return nullptr;
 
-    return makeUnique<ImageBufferShareableMappedIOSurfaceBackend>(logicalSize, internalSize, resolutionScale, colorSpace, pixelFormat, WTFMove(surface));
+    return makeUnique<ImageBufferShareableMappedIOSurfaceBackend>(parameters, WTFMove(surface));
 }
 
 ImageBufferBackendHandle ImageBufferShareableMappedIOSurfaceBackend::createImageBufferBackendHandle() const

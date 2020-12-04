@@ -34,26 +34,29 @@ namespace DisplayList {
 template<typename BackendType>
 class ImageBuffer : public ConcreteImageBuffer<BackendType> {
     using BaseConcreteImageBuffer = ConcreteImageBuffer<BackendType>;
+    using BaseConcreteImageBuffer::logicalSize;
+    using BaseConcreteImageBuffer::baseTransform;
 
 public:
     static auto create(const FloatSize& size, float resolutionScale, ColorSpace colorSpace, PixelFormat pixelFormat, const HostWindow* hostWindow)
     {
-        return BaseConcreteImageBuffer::template create<ImageBuffer>(size, resolutionScale, colorSpace, pixelFormat, hostWindow, size);
+        return BaseConcreteImageBuffer::template create<ImageBuffer>(size, resolutionScale, colorSpace, pixelFormat, hostWindow);
     }
 
     static auto create(const FloatSize& size, const GraphicsContext& context)
     {
-        return BaseConcreteImageBuffer::template create<ImageBuffer>(size, context, size);
+        return BaseConcreteImageBuffer::template create<ImageBuffer>(size, context);
     }
 
-    ImageBuffer(std::unique_ptr<BackendType>&& dataBackend, const FloatSize& size)
-        : BaseConcreteImageBuffer(WTFMove(dataBackend))
-        , m_drawingContext(size, initialDrawingContextCTM(size))
+    ImageBuffer(const ImageBufferBackend::Parameters& parameters, std::unique_ptr<BackendType>&& backend)
+        : BaseConcreteImageBuffer(parameters, WTFMove(backend))
+        , m_drawingContext(logicalSize(), baseTransform())
     {
     }
 
-    ImageBuffer(const FloatSize& size, Recorder::Delegate* delegate = nullptr)
-        : m_drawingContext(size, initialDrawingContextCTM(size), delegate)
+    ImageBuffer(const ImageBufferBackend::Parameters& parameters, Recorder::Delegate* delegate = nullptr)
+        : BaseConcreteImageBuffer(parameters)
+        , m_drawingContext(logicalSize(), baseTransform(), delegate)
     {
     }
 
@@ -77,15 +80,6 @@ public:
 
 protected:
     DrawingContext m_drawingContext;
-
-private:
-    static AffineTransform initialDrawingContextCTM(const FloatSize& logicalSize)
-    {
-        AffineTransform initialCTM;
-        if (BackendType::isOriginAtUpperLeftCorner)
-            initialCTM = initialCTM.scale(1, -1).translate(0, -logicalSize.height());
-        return initialCTM;
-    }
 };
 
 } // DisplayList

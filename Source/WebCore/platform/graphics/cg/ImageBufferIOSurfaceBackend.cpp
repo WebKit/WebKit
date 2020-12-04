@@ -64,13 +64,13 @@ RetainPtr<CGColorSpaceRef> ImageBufferIOSurfaceBackend::contextColorSpace(const 
     return ImageBufferCGBackend::contextColorSpace(context);
 }
 
-std::unique_ptr<ImageBufferIOSurfaceBackend> ImageBufferIOSurfaceBackend::create(const FloatSize& size, float resolutionScale, ColorSpace colorSpace, CGColorSpaceRef cgColorSpace, PixelFormat pixelFormat, const HostWindow* hostWindow)
+std::unique_ptr<ImageBufferIOSurfaceBackend> ImageBufferIOSurfaceBackend::create(const Parameters& parameters, CGColorSpaceRef cgColorSpace, const HostWindow* hostWindow)
 {
-    IntSize backendSize = calculateBackendSize(size, resolutionScale);
+    IntSize backendSize = calculateBackendSize(parameters.logicalSize, parameters.resolutionScale);
     if (backendSize.isEmpty())
         return nullptr;
 
-    auto surface = IOSurface::create(backendSize, backendSize, cgColorSpace, IOSurface::formatForPixelFormat(pixelFormat));
+    auto surface = IOSurface::create(backendSize, backendSize, cgColorSpace, IOSurface::formatForPixelFormat(parameters.pixelFormat));
     if (!surface)
         return nullptr;
 
@@ -80,24 +80,24 @@ std::unique_ptr<ImageBufferIOSurfaceBackend> ImageBufferIOSurfaceBackend::create
 
     CGContextClearRect(cgContext.get(), FloatRect(FloatPoint::zero(), backendSize));
 
-    return makeUnique<ImageBufferIOSurfaceBackend>(size, backendSize, resolutionScale, colorSpace, pixelFormat, WTFMove(surface));
+    return makeUnique<ImageBufferIOSurfaceBackend>(parameters, WTFMove(surface));
 }
 
-std::unique_ptr<ImageBufferIOSurfaceBackend> ImageBufferIOSurfaceBackend::create(const FloatSize& size, const GraphicsContext& context)
+std::unique_ptr<ImageBufferIOSurfaceBackend> ImageBufferIOSurfaceBackend::create(const Parameters& parameters, const GraphicsContext& context)
 {
-    if (auto cgColorSpace = contextColorSpace(context))
-        return ImageBufferIOSurfaceBackend::create(size, 1, ColorSpace::SRGB, cgColorSpace.get(), PixelFormat::BGRA8, nullptr);
-    
-    return ImageBufferIOSurfaceBackend::create(size, 1, ColorSpace::SRGB, PixelFormat::BGRA8, nullptr);
+    if (auto cgColorSpace = context.hasPlatformContext() ? contextColorSpace(context) : nullptr)
+        return ImageBufferIOSurfaceBackend::create(parameters, cgColorSpace.get(), nullptr);
+
+    return ImageBufferIOSurfaceBackend::create(parameters, nullptr);
 }
 
-std::unique_ptr<ImageBufferIOSurfaceBackend> ImageBufferIOSurfaceBackend::create(const FloatSize& size, float resolutionScale, ColorSpace colorSpace, PixelFormat pixelFormat, const HostWindow* hostWindow)
+std::unique_ptr<ImageBufferIOSurfaceBackend> ImageBufferIOSurfaceBackend::create(const Parameters& parameters, const HostWindow* hostWindow)
 {
-    return ImageBufferIOSurfaceBackend::create(size, resolutionScale, colorSpace, cachedCGColorSpace(colorSpace), pixelFormat, hostWindow);
+    return ImageBufferIOSurfaceBackend::create(parameters, cachedCGColorSpace(parameters.colorSpace), hostWindow);
 }
 
-ImageBufferIOSurfaceBackend::ImageBufferIOSurfaceBackend(const FloatSize& logicalSize, const IntSize& backendSize, float resolutionScale, ColorSpace colorSpace, PixelFormat pixelFormat, std::unique_ptr<IOSurface>&& surface)
-    : ImageBufferCGBackend(logicalSize, backendSize, resolutionScale, colorSpace, pixelFormat)
+ImageBufferIOSurfaceBackend::ImageBufferIOSurfaceBackend(const Parameters& parameters, std::unique_ptr<IOSurface>&& surface)
+    : ImageBufferCGBackend(parameters)
     , m_surface(WTFMove(surface))
 {
     ASSERT(m_surface);
@@ -118,6 +118,11 @@ GraphicsContext& ImageBufferIOSurfaceBackend::context() const
 void ImageBufferIOSurfaceBackend::flushContext()
 {
     CGContextFlush(context().platformContext());
+}
+
+IntSize ImageBufferIOSurfaceBackend::backendSize() const
+{
+    return m_surface->size();
 }
 
 size_t ImageBufferIOSurfaceBackend::memoryCost() const
@@ -148,10 +153,10 @@ RefPtr<NativeImage> ImageBufferIOSurfaceBackend::sinkIntoNativeImage()
 void ImageBufferIOSurfaceBackend::drawConsuming(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
 {
     FloatRect adjustedSrcRect = srcRect;
-    adjustedSrcRect.scale(m_resolutionScale);
+    adjustedSrcRect.scale(resolutionScale());
 
     if (auto image = sinkIntoNativeImage())
-        destContext.drawNativeImage(*image, m_backendSize, destRect, adjustedSrcRect, options);
+        destContext.drawNativeImage(*image, backendSize(), destRect, adjustedSrcRect, options);
 }
 
 RetainPtr<CFDataRef> ImageBufferIOSurfaceBackend::toCFData(const String& mimeType, Optional<double> quality, PreserveResolution preserveResolution) const

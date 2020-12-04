@@ -27,6 +27,7 @@
 
 #pragma once
 
+#include "DisplayListFlushIdentifier.h"
 #include "ImageBufferBackend.h"
 #include "RenderingMode.h"
 #include "RenderingResourceIdentifier.h"
@@ -63,10 +64,14 @@ public:
     
     WEBCORE_EXPORT virtual ~ImageBuffer() = default;
 
-    virtual bool isAccelerated() const = 0;
+    virtual void setBackend(std::unique_ptr<ImageBufferBackend>&&) = 0;
+    virtual void clearBackend() = 0;
+    virtual ImageBufferBackend* backend() const { return nullptr; }
+
+    virtual RenderingMode renderingMode() const = 0;
     virtual bool canMapBackingStore() const = 0;
     virtual RenderingResourceIdentifier renderingResourceIdentifier() const { return { }; }
-    
+
     virtual GraphicsContext& context() const = 0;
     virtual void flushContext() = 0;
 
@@ -74,11 +79,17 @@ public:
     virtual bool prefersPreparationForDisplay() { return false; }
     virtual void flushDrawingContext() { }
     virtual void flushDrawingContextAndCommit() { }
+    virtual void submitDisplayList(const DisplayList::DisplayList&) { }
+    virtual void didFlush(DisplayList::FlushIdentifier) { }
 
-    virtual AffineTransform baseTransform() const = 0;
     virtual IntSize logicalSize() const = 0;
-    virtual IntSize backendSize() const = 0;
     virtual float resolutionScale() const = 0;
+    virtual ColorSpace colorSpace() const = 0;
+    virtual PixelFormat pixelFormat() const = 0;
+    virtual const ImageBufferBackend::Parameters& parameters() const = 0;
+
+    virtual IntSize backendSize() const = 0;
+    virtual AffineTransform baseTransform() const = 0;
 
     virtual size_t memoryCost() const = 0;
     virtual size_t externalMemoryCost() const = 0;

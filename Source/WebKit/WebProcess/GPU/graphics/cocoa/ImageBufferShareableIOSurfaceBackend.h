@@ -34,16 +34,14 @@
 
 namespace WebKit {
 
-class ShareableBitmap;
-
 class ImageBufferShareableIOSurfaceBackend final : public WebCore::ImageBufferBackend {
     WTF_MAKE_ISO_ALLOCATED(ImageBufferShareableIOSurfaceBackend);
     WTF_MAKE_NONCOPYABLE(ImageBufferShareableIOSurfaceBackend);
 public:
-    static std::unique_ptr<ImageBufferShareableIOSurfaceBackend> create(const WebCore::FloatSize& logicalSize, const WebCore::IntSize& backendSize, float resolutionScale, WebCore::ColorSpace, WebCore::PixelFormat, ImageBufferBackendHandle);
+    static std::unique_ptr<ImageBufferShareableIOSurfaceBackend> create(const Parameters&, ImageBufferBackendHandle);
 
-    ImageBufferShareableIOSurfaceBackend(const WebCore::FloatSize& logicalSize, const WebCore::IntSize& physicalSize, float resolutionScale, WebCore::ColorSpace colorSpace, WebCore::PixelFormat pixelFormat, ImageBufferBackendHandle&& handle)
-        : ImageBufferBackend(logicalSize, physicalSize, resolutionScale, colorSpace, pixelFormat)
+    ImageBufferShareableIOSurfaceBackend(const Parameters& parameters, ImageBufferBackendHandle&& handle)
+        : ImageBufferBackend(parameters)
         , m_handle(WTFMove(handle))
     {
     }
@@ -62,8 +60,8 @@ public:
     void putImageData(WebCore::AlphaPremultiplication inputFormat, const WebCore::ImageData&, const WebCore::IntRect& srcRect, const WebCore::IntPoint& destPoint, WebCore::AlphaPremultiplication destFormat) override;
 
     static constexpr bool isOriginAtUpperLeftCorner = true;
-    static constexpr bool isAccelerated = true;
     static constexpr bool canMapBackingStore = false;
+    static constexpr WebCore::RenderingMode renderingMode = WebCore::RenderingMode::Accelerated;
 
 private:
     ImageBufferBackendHandle m_handle;

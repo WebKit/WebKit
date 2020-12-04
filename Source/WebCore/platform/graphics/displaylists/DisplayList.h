@@ -33,7 +33,6 @@
 #include <wtf/FastMalloc.h>
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/ObjectIdentifier.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -44,9 +43,6 @@ class TextStream;
 namespace WebCore {
 
 namespace DisplayList {
-
-enum FlushIdentifierType { };
-using FlushIdentifier = ObjectIdentifier<FlushIdentifierType>;
 
 enum AsTextFlag {
     None                            = 0,

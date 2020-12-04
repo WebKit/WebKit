@@ -49,12 +49,12 @@ public:
         return BaseConcreteImageBuffer::template create<RemoteImageBuffer>(size, resolutionScale, colorSpace, pixelFormat, nullptr, remoteRenderingBackend, renderingResourceIdentifier);
     }
 
-    RemoteImageBuffer(std::unique_ptr<BackendType>&& backend, RemoteRenderingBackend& remoteRenderingBackend, WebCore::RenderingResourceIdentifier renderingResourceIdentifier)
-        : BaseConcreteImageBuffer(WTFMove(backend), renderingResourceIdentifier)
+    RemoteImageBuffer(const WebCore::ImageBufferBackend::Parameters& parameters, std::unique_ptr<BackendType>&& backend, RemoteRenderingBackend& remoteRenderingBackend, WebCore::RenderingResourceIdentifier renderingResourceIdentifier)
+        : BaseConcreteImageBuffer(parameters, WTFMove(backend), renderingResourceIdentifier)
         , m_remoteRenderingBackend(remoteRenderingBackend)
         , m_renderingResourceIdentifier(renderingResourceIdentifier)
     {
-        m_remoteRenderingBackend.imageBufferBackendWasCreated(m_backend->logicalSize(), m_backend->backendSize(), m_backend->resolutionScale(), m_backend->colorSpace(), m_backend->pixelFormat(), m_backend->createImageBufferBackendHandle(), renderingResourceIdentifier);
+        m_remoteRenderingBackend.didCreateImageBufferBackend(m_backend->createImageBufferBackendHandle(), renderingResourceIdentifier);
     }
 
     ~RemoteImageBuffer()
@@ -63,17 +63,6 @@ public:
         // been flushed yet, or the web process may have terminated.
         while (context().stackSize())
             context().restore();
-    }
-
-    WebCore::DisplayList::ReplayResult submitDisplayList(const WebCore::DisplayList::DisplayList& displayList)
-    {
-        if (displayList.isEmpty())
-            return { };
-
-        const auto& imageBuffers = m_remoteRenderingBackend.remoteResourceCache().imageBuffers();
-        const auto& nativeImages = m_remoteRenderingBackend.remoteResourceCache().nativeImages();
-        WebCore::DisplayList::Replayer replayer { BaseConcreteImageBuffer::context(), displayList, &imageBuffers, &nativeImages, this };
-        return replayer.replay();
     }
 
 private:
@@ -99,6 +88,17 @@ private:
         }
 
         return m_remoteRenderingBackend.applyMediaItem(item, context);
+    }
+
+    void submitDisplayList(const WebCore::DisplayList::DisplayList& displayList) override
+    {
+        if (displayList.isEmpty())
+            return;
+
+        const auto& imageBuffers = m_remoteRenderingBackend.remoteResourceCache().imageBuffers();
+        const auto& nativeImages = m_remoteRenderingBackend.remoteResourceCache().nativeImages();
+        WebCore::DisplayList::Replayer replayer { BaseConcreteImageBuffer::context(), displayList, &imageBuffers, &nativeImages, this };
+        replayer.replay();
     }
 
     RemoteRenderingBackend& m_remoteRenderingBackend;

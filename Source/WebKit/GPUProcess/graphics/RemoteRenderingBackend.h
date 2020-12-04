@@ -70,7 +70,7 @@ public:
     bool applyMediaItem(WebCore::DisplayList::ItemHandle, WebCore::GraphicsContext&);
 
     // Messages to be sent.
-    void imageBufferBackendWasCreated(const WebCore::FloatSize& logicalSize, const WebCore::IntSize& backendSize, float resolutionScale, WebCore::ColorSpace, WebCore::PixelFormat, ImageBufferBackendHandle, WebCore::RenderingResourceIdentifier);
+    void didCreateImageBufferBackend(ImageBufferBackendHandle, WebCore::RenderingResourceIdentifier);
     void didFlush(WebCore::DisplayList::FlushIdentifier, WebCore::RenderingResourceIdentifier);
 
     void setNextItemBufferToRead(WebCore::DisplayList::ItemBufferIdentifier);

@@ -37,14 +37,14 @@ using namespace WebCore;
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(ImageBufferShareableIOSurfaceBackend);
 
-std::unique_ptr<ImageBufferShareableIOSurfaceBackend> ImageBufferShareableIOSurfaceBackend::create(const FloatSize& logicalSize, const IntSize& backendSize, float resolutionScale, ColorSpace colorSpace, PixelFormat pixelFormat, ImageBufferBackendHandle handle)
+std::unique_ptr<ImageBufferShareableIOSurfaceBackend> ImageBufferShareableIOSurfaceBackend::create(const Parameters& parameters, ImageBufferBackendHandle handle)
 {
     if (!WTF::holds_alternative<MachSendRight>(handle)) {
         RELEASE_ASSERT_NOT_REACHED();
         return nullptr;
     }
 
-    return makeUnique<ImageBufferShareableIOSurfaceBackend>(logicalSize, backendSize, resolutionScale, colorSpace, pixelFormat, WTFMove(handle));
+    return makeUnique<ImageBufferShareableIOSurfaceBackend>(parameters, WTFMove(handle));
 }
 
 ImageBufferBackendHandle ImageBufferShareableIOSurfaceBackend::createImageBufferBackendHandle() const

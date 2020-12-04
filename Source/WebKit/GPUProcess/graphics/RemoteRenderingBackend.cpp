@@ -99,9 +99,9 @@ bool RemoteRenderingBackend::applyMediaItem(DisplayList::ItemHandle item, Graphi
     return true;
 }
 
-void RemoteRenderingBackend::imageBufferBackendWasCreated(const FloatSize& logicalSize, const IntSize& backendSize, float resolutionScale, ColorSpace colorSpace, PixelFormat pixelFormat, ImageBufferBackendHandle handle, RenderingResourceIdentifier renderingResourceIdentifier)
+void RemoteRenderingBackend::didCreateImageBufferBackend(ImageBufferBackendHandle handle, RenderingResourceIdentifier renderingResourceIdentifier)
 {
-    send(Messages::RemoteRenderingBackendProxy::ImageBufferBackendWasCreated(logicalSize, backendSize, resolutionScale, colorSpace, pixelFormat, WTFMove(handle), renderingResourceIdentifier), m_renderingBackendIdentifier);
+    send(Messages::RemoteRenderingBackendProxy::DidCreateImageBufferBackend(WTFMove(handle), renderingResourceIdentifier), m_renderingBackendIdentifier);
 }
 
 void RemoteRenderingBackend::didFlush(DisplayList::FlushIdentifier flushIdentifier, RenderingResourceIdentifier renderingResourceIdentifier)
@@ -148,10 +148,7 @@ void RemoteRenderingBackend::applyDisplayListsFromHandle(ImageBuffer& destinatio
             return;
         }
 
-        if (destination.isAccelerated())
-            static_cast<AcceleratedRemoteImageBuffer&>(destination).submitDisplayList(*displayList);
-        else
-            static_cast<UnacceleratedRemoteImageBuffer&>(destination).submitDisplayList(*displayList);
+        destination.submitDisplayList(*displayList);
 
         CheckedSize checkedOffset = offset;
         checkedOffset += sizeToRead;

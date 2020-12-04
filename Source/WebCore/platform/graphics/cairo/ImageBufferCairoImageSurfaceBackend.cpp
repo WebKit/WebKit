@@ -41,13 +41,13 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(ImageBufferCairoImageSurfaceBackend);
 
-std::unique_ptr<ImageBufferCairoImageSurfaceBackend> ImageBufferCairoImageSurfaceBackend::create(const FloatSize& size, float resolutionScale, ColorSpace colorSpace, PixelFormat pixelFormat, const HostWindow*)
+std::unique_ptr<ImageBufferCairoImageSurfaceBackend> ImageBufferCairoImageSurfaceBackend::create(const Parameters& parameters, const HostWindow*)
 {
-    ASSERT(pixelFormat == PixelFormat::BGRA8);
+    ASSERT(parameters.pixelFormat == PixelFormat::BGRA8);
 
     static cairo_user_data_key_t s_surfaceDataKey;
 
-    IntSize backendSize = calculateBackendSize(size, resolutionScale);
+    IntSize backendSize = calculateBackendSize(parameters.logicalSize, parameters.resolutionScale);
     if (backendSize.isEmpty() || backendSize.width() > cairoMaxImageSize || backendSize.height() > cairoMaxImageSize)
         return nullptr;
 
@@ -61,16 +61,16 @@ std::unique_ptr<ImageBufferCairoImageSurfaceBackend> ImageBufferCairoImageSurfac
         fastFree(data);
     });
 
-    return std::unique_ptr<ImageBufferCairoImageSurfaceBackend>(new ImageBufferCairoImageSurfaceBackend(size, backendSize, resolutionScale, colorSpace, pixelFormat, WTFMove(surface)));
+    return std::unique_ptr<ImageBufferCairoImageSurfaceBackend>(new ImageBufferCairoImageSurfaceBackend(parameters, WTFMove(surface)));
 }
 
-std::unique_ptr<ImageBufferCairoImageSurfaceBackend> ImageBufferCairoImageSurfaceBackend::create(const FloatSize& size, const GraphicsContext&)
+std::unique_ptr<ImageBufferCairoImageSurfaceBackend> ImageBufferCairoImageSurfaceBackend::create(const Parameters& parameters, const GraphicsContext&)
 {
-    return ImageBufferCairoImageSurfaceBackend::create(size, 1, ColorSpace::SRGB, PixelFormat::BGRA8, nullptr);
+    return ImageBufferCairoImageSurfaceBackend::create(parameters, nullptr);
 }
 
-ImageBufferCairoImageSurfaceBackend::ImageBufferCairoImageSurfaceBackend(const FloatSize& logicalSize, const IntSize& backendSize, float resolutionScale, ColorSpace colorSpace, PixelFormat pixelFormat, RefPtr<cairo_surface_t>&& surface)
-    : ImageBufferCairoSurfaceBackend(logicalSize, backendSize, resolutionScale, colorSpace, pixelFormat, WTFMove(surface))
+ImageBufferCairoImageSurfaceBackend::ImageBufferCairoImageSurfaceBackend(const Parameters& parameters, RefPtr<cairo_surface_t>&& surface)
+    : ImageBufferCairoSurfaceBackend(parameters, WTFMove(surface))
 {
     ASSERT(cairo_surface_get_type(m_surface.get()) == CAIRO_SURFACE_TYPE_IMAGE);
 }
@@ -79,16 +79,16 @@ void ImageBufferCairoImageSurfaceBackend::platformTransformColorSpace(const std:
 {
     unsigned char* dataSrc = cairo_image_surface_get_data(m_surface.get());
     int stride = cairo_image_surface_get_stride(m_surface.get());
-    for (int y = 0; y < m_logicalSize.height(); ++y) {
+    for (int y = 0; y < logicalSize().height(); ++y) {
         unsigned* row = reinterpret_cast_ptr<unsigned*>(dataSrc + stride * y);
-        for (int x = 0; x < m_logicalSize.width(); x++) {
+        for (int x = 0; x < logicalSize().width(); x++) {
             unsigned* pixel = row + x;
             auto pixelComponents = unpremultiplied(asSRGBA(PackedColor::ARGB { *pixel }));
             pixelComponents = { lookUpTable[pixelComponents.red], lookUpTable[pixelComponents.green], lookUpTable[pixelComponents.blue], pixelComponents.alpha };
             *pixel = PackedColor::ARGB { premultipliedCeiling(pixelComponents) }.value;
         }
     }
-    cairo_surface_mark_dirty_rectangle(m_surface.get(), 0, 0, m_logicalSize.width(), m_logicalSize.height());
+    cairo_surface_mark_dirty_rectangle(m_surface.get(), 0, 0, logicalSize().width(), logicalSize().height());
 }
 
 } // namespace WebCore

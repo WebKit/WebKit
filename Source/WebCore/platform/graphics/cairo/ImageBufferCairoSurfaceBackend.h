@@ -40,6 +40,8 @@ class ImageBufferCairoSurfaceBackend : public ImageBufferCairoBackend {
 public:
     GraphicsContext& context() const override;
 
+    IntSize backendSize() const override;
+
     RefPtr<NativeImage> copyNativeImage(BackingStoreCopy) const override;
 
     Vector<uint8_t> toBGRAData() const override;
@@ -47,7 +49,7 @@ public:
     void putImageData(AlphaPremultiplication inputFormat, const ImageData&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat) override;
 
 protected:
-    ImageBufferCairoSurfaceBackend(const FloatSize& logicalSize, const IntSize& backendSize, float resolutionScale, ColorSpace, PixelFormat, RefPtr<cairo_surface_t>&&);
+    ImageBufferCairoSurfaceBackend(const Parameters&, RefPtr<cairo_surface_t>&&);
 
     RefPtr<NativeImage> cairoSurfaceCoerceToImage() const;
     unsigned bytesPerRow() const override;

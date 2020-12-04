@@ -32,6 +32,7 @@
 #include "ImagePaintingOptions.h"
 #include "IntRect.h"
 #include "PlatformLayer.h"
+#include "RenderingMode.h"
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
@@ -77,6 +78,13 @@ public:
 
 class ImageBufferBackend {
 public:
+    struct Parameters {
+        FloatSize logicalSize;
+        float resolutionScale;
+        ColorSpace colorSpace;
+        PixelFormat pixelFormat;
+    };
+
     WEBCORE_EXPORT virtual ~ImageBufferBackend() = default;
 
     WEBCORE_EXPORT static IntSize calculateBackendSize(const FloatSize&, float resolutionScale);
@@ -84,14 +92,9 @@ public:
     virtual GraphicsContext& context() const = 0;
     virtual void flushContext() { }
 
-    IntSize logicalSize() const { return m_logicalSize; }
-    IntSize backendSize() const { return m_backendSize; }
-    float resolutionScale() const { return m_resolutionScale; }
-    ColorSpace colorSpace() const { return m_colorSpace; }
-    PixelFormat pixelFormat() const { return m_pixelFormat; }
+    virtual IntSize backendSize() const { return { }; }
 
-    virtual AffineTransform baseTransform() const { return AffineTransform(); }
-    virtual size_t memoryCost() const { return 4 * m_backendSize.area().unsafeGet(); }
+    virtual size_t memoryCost() const { return 4 * backendSize().area().unsafeGet(); }
     virtual size_t externalMemoryCost() const { return 0; }
 
     virtual RefPtr<NativeImage> copyNativeImage(BackingStoreCopy) const = 0;
@@ -125,27 +128,32 @@ public:
     virtual void releaseBufferToPool() { }
 
     virtual std::unique_ptr<ThreadSafeImageBufferFlusher> createFlusher() { return nullptr; }
-    
+
     static constexpr bool isOriginAtUpperLeftCorner = false;
-    static constexpr bool isAccelerated = false;
     static constexpr bool canMapBackingStore = true;
+    static constexpr RenderingMode renderingMode = RenderingMode::Unaccelerated;
 
 protected:
-    WEBCORE_EXPORT ImageBufferBackend(const FloatSize& logicalSize, const IntSize& backendSize, float resolutionScale, ColorSpace, PixelFormat);
+    WEBCORE_EXPORT ImageBufferBackend(const Parameters&);
 
-    virtual unsigned bytesPerRow() const { return 4 * m_backendSize.width(); }
+    virtual unsigned bytesPerRow() const { return 4 * backendSize().width(); }
 
     template<typename T>
     T toBackendCoordinates(T t) const
     {
         static_assert(std::is_same<T, IntPoint>::value || std::is_same<T, IntSize>::value || std::is_same<T, IntRect>::value);
-        if (m_resolutionScale != 1)
-            t.scale(m_resolutionScale);
+        if (resolutionScale() != 1)
+            t.scale(resolutionScale());
         return t;
     }
 
-    IntRect logicalRect() const { return IntRect(IntPoint::zero(), m_logicalSize); };
-    IntRect backendRect() const { return IntRect(IntPoint::zero(), m_backendSize); };
+    IntSize logicalSize() const { return IntSize(m_parameters.logicalSize); }
+    float resolutionScale() const { return m_parameters.resolutionScale; }
+    ColorSpace colorSpace() const { return m_parameters.colorSpace; }
+    PixelFormat pixelFormat() const { return m_parameters.pixelFormat; }
+
+    IntRect logicalRect() const { return IntRect(IntPoint::zero(), logicalSize()); };
+    IntRect backendRect() const { return IntRect(IntPoint::zero(), backendSize()); };
 
     WEBCORE_EXPORT virtual void copyImagePixels(
         AlphaPremultiplication srcAlphaFormat, PixelFormat srcPixelFormat, unsigned srcBytesPerRow, uint8_t* srcRows,
@@ -156,11 +164,7 @@ protected:
     WEBCORE_EXPORT RefPtr<ImageData> getImageData(AlphaPremultiplication outputFormat, const IntRect& srcRect, void* data) const;
     WEBCORE_EXPORT void putImageData(AlphaPremultiplication inputFormat, const ImageData&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat, void* data);
 
-    IntSize m_logicalSize;
-    IntSize m_backendSize;
-    float m_resolutionScale;
-    ColorSpace m_colorSpace;
-    PixelFormat m_pixelFormat;
+    Parameters m_parameters;
 };
 
 } // namespace WebCore

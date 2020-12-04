@@ -36,11 +36,13 @@ class ImageBufferCGBitmapBackend : public ImageBufferCGBackend {
     WTF_MAKE_ISO_ALLOCATED(ImageBufferCGBitmapBackend);
     WTF_MAKE_NONCOPYABLE(ImageBufferCGBitmapBackend);
 public:
-    static std::unique_ptr<ImageBufferCGBitmapBackend> create(const FloatSize&, float resolutionScale, ColorSpace, CGColorSpaceRef, PixelFormat, const HostWindow*);
-    static std::unique_ptr<ImageBufferCGBitmapBackend> create(const FloatSize&, float resolutionScale, ColorSpace, PixelFormat, const HostWindow*);
-    static std::unique_ptr<ImageBufferCGBitmapBackend> create(const FloatSize&, const GraphicsContext&);
+    static std::unique_ptr<ImageBufferCGBitmapBackend> create(const Parameters&, CGColorSpaceRef, const HostWindow*);
+    static std::unique_ptr<ImageBufferCGBitmapBackend> create(const Parameters&, const HostWindow*);
+    static std::unique_ptr<ImageBufferCGBitmapBackend> create(const Parameters&, const GraphicsContext&);
 
     GraphicsContext& context() const override;
+
+    IntSize backendSize() const override;
 
     RefPtr<NativeImage> copyNativeImage(BackingStoreCopy = CopyBackingStore) const override;
 
@@ -52,7 +54,7 @@ public:
     static constexpr bool isOriginAtUpperLeftCorner = true;
 
 private:
-    ImageBufferCGBitmapBackend(const FloatSize& logicalSize, const IntSize& physicalSize, float resolutionScale, ColorSpace, PixelFormat, void* data, RetainPtr<CGDataProviderRef>&&, std::unique_ptr<GraphicsContext>&&);
+    ImageBufferCGBitmapBackend(const Parameters&, void* data, RetainPtr<CGDataProviderRef>&&, std::unique_ptr<GraphicsContext>&&);
 
     void* m_data;
     RetainPtr<CGDataProviderRef> m_dataProvider;

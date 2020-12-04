@@ -70,26 +70,15 @@ void RemoteRenderingBackendProxy::connectToGPUProcess()
     send(Messages::GPUConnectionToWebProcess::CreateRenderingBackend(m_renderingBackendIdentifier), 0);
 }
 
-template<typename T>
-static void recreateImageBuffer(RemoteRenderingBackendProxy& proxy, T& imageBuffer, RenderingResourceIdentifier resourceIdentifier, RenderingBackendIdentifier renderingBackendIdentifier)
-{
-    imageBuffer.clearBackend();
-    proxy.send(Messages::RemoteRenderingBackend::CreateImageBuffer(imageBuffer.size(), imageBuffer.renderingMode(), imageBuffer.resolutionScale(), imageBuffer.colorSpace(), imageBuffer.pixelFormat(), resourceIdentifier), renderingBackendIdentifier);
-}
-
 void RemoteRenderingBackendProxy::reestablishGPUProcessConnection()
 {
     connectToGPUProcess();
 
-    for (auto& pair : m_remoteResourceCacheProxy.imageBuffers()) {
-        if (auto& baseImageBuffer = pair.value) {
-            if (is<AcceleratedRemoteImageBufferMappedProxy>(*baseImageBuffer))
-                recreateImageBuffer(*this, downcast<AcceleratedRemoteImageBufferMappedProxy>(*baseImageBuffer), pair.key, m_renderingBackendIdentifier);
-            else if (is<AcceleratedRemoteImageBufferProxy>(*baseImageBuffer))
-                recreateImageBuffer(*this, downcast<AcceleratedRemoteImageBufferProxy>(*baseImageBuffer), pair.key, m_renderingBackendIdentifier);
-            else
-                recreateImageBuffer(*this, downcast<UnacceleratedRemoteImageBufferProxy>(*baseImageBuffer), pair.key, m_renderingBackendIdentifier);
-        }
+    for (auto& imageBuffer : m_remoteResourceCacheProxy.imageBuffers().values()) {
+        if (!imageBuffer)
+            continue;
+        send(Messages::RemoteRenderingBackend::CreateImageBuffer(imageBuffer->logicalSize(), imageBuffer->renderingMode(), imageBuffer->resolutionScale(), imageBuffer->colorSpace(), imageBuffer->pixelFormat(), imageBuffer->renderingResourceIdentifier()), m_renderingBackendIdentifier);
+        imageBuffer->clearBackend();
     }
 }
 
@@ -114,10 +103,10 @@ uint64_t RemoteRenderingBackendProxy::messageSenderDestinationID() const
     return m_renderingBackendIdentifier.toUInt64();
 }
 
-bool RemoteRenderingBackendProxy::waitForImageBufferBackendWasCreated()
+bool RemoteRenderingBackendProxy::waitForDidCreateImageBufferBackend()
 {
     Ref<IPC::Connection> connection = WebProcess::singleton().ensureGPUProcessConnection().connection();
-    return connection->waitForAndDispatchImmediately<Messages::RemoteRenderingBackendProxy::ImageBufferBackendWasCreated>(m_renderingBackendIdentifier, 1_s, IPC::WaitForOption::InterruptWaitingIfSyncMessageArrives);
+    return connection->waitForAndDispatchImmediately<Messages::RemoteRenderingBackendProxy::DidCreateImageBufferBackend>(m_renderingBackendIdentifier, 1_s, IPC::WaitForOption::InterruptWaitingIfSyncMessageArrives);
 }
 
 bool RemoteRenderingBackendProxy::waitForDidFlush()
@@ -135,13 +124,13 @@ RefPtr<ImageBuffer> RemoteRenderingBackendProxy::createImageBuffer(const FloatSi
         // we need to create ImageBuffers for e.g. Canvas that are actually mapped into the
         // Web Content process, so they can be painted into the tiles.
         if (!WebProcess::singleton().shouldUseRemoteRenderingFor(RenderingPurpose::DOM))
-            imageBuffer = AcceleratedRemoteImageBufferMappedProxy::create(size, renderingMode, resolutionScale, colorSpace, pixelFormat, *this);
+            imageBuffer = AcceleratedRemoteImageBufferMappedProxy::create(size, resolutionScale, colorSpace, pixelFormat, *this);
         else
-            imageBuffer = AcceleratedRemoteImageBufferProxy::create(size, renderingMode, resolutionScale, colorSpace, pixelFormat, *this);
+            imageBuffer = AcceleratedRemoteImageBufferProxy::create(size, resolutionScale, colorSpace, pixelFormat, *this);
     }
 
     if (!imageBuffer)
-        imageBuffer = UnacceleratedRemoteImageBufferProxy::create(size, renderingMode, resolutionScale, colorSpace, pixelFormat, *this);
+        imageBuffer = UnacceleratedRemoteImageBufferProxy::create(size, resolutionScale, colorSpace, pixelFormat, *this);
 
     if (imageBuffer) {
         send(Messages::RemoteRenderingBackend::CreateImageBuffer(size, renderingMode, resolutionScale, colorSpace, pixelFormat, imageBuffer->renderingResourceIdentifier()), m_renderingBackendIdentifier);
@@ -192,32 +181,24 @@ void RemoteRenderingBackendProxy::releaseRemoteResource(RenderingResourceIdentif
     send(Messages::RemoteRenderingBackend::ReleaseRemoteResource(renderingResourceIdentifier), m_renderingBackendIdentifier);
 }
 
-void RemoteRenderingBackendProxy::imageBufferBackendWasCreated(const FloatSize& logicalSize, const IntSize& backendSize, float resolutionScale, ColorSpace colorSpace, PixelFormat pixelFormat, ImageBufferBackendHandle handle, RenderingResourceIdentifier renderingResourceIdentifier)
+void RemoteRenderingBackendProxy::didCreateImageBufferBackend(ImageBufferBackendHandle handle, RenderingResourceIdentifier renderingResourceIdentifier)
 {
     auto imageBuffer = m_remoteResourceCacheProxy.cachedImageBuffer(renderingResourceIdentifier);
     if (!imageBuffer)
         return;
 
-    if (is<AcceleratedRemoteImageBufferMappedProxy>(*imageBuffer))
-        downcast<AcceleratedRemoteImageBufferMappedProxy>(*imageBuffer).createBackend(logicalSize, backendSize, resolutionScale, colorSpace, pixelFormat, WTFMove(handle));
-    else if (is<AcceleratedRemoteImageBufferProxy>(*imageBuffer))
-        downcast<AcceleratedRemoteImageBufferProxy>(*imageBuffer).createBackend(logicalSize, backendSize, resolutionScale, colorSpace, pixelFormat, WTFMove(handle));
+    if (imageBuffer->renderingMode() == RenderingMode::Unaccelerated)
+        imageBuffer->setBackend(UnacceleratedImageBufferShareableBackend::create(imageBuffer->parameters(), WTFMove(handle)));
+    else if (imageBuffer->canMapBackingStore())
+        imageBuffer->setBackend(AcceleratedImageBufferShareableMappedBackend::create(imageBuffer->parameters(), WTFMove(handle)));
     else
-        downcast<UnacceleratedRemoteImageBufferProxy>(*imageBuffer).createBackend(logicalSize, backendSize, resolutionScale, colorSpace, pixelFormat, WTFMove(handle));
+        imageBuffer->setBackend(AcceleratedImageBufferShareableBackend::create(imageBuffer->parameters(), WTFMove(handle)));
 }
 
 void RemoteRenderingBackendProxy::didFlush(DisplayList::FlushIdentifier flushIdentifier, RenderingResourceIdentifier renderingResourceIdentifier)
 {
-    auto imageBuffer = m_remoteResourceCacheProxy.cachedImageBuffer(renderingResourceIdentifier);
-    if (!imageBuffer)
-        return;
-
-    if (is<AcceleratedRemoteImageBufferMappedProxy>(*imageBuffer))
-        downcast<AcceleratedRemoteImageBufferMappedProxy>(*imageBuffer).didFlush(flushIdentifier);
-    else if (is<AcceleratedRemoteImageBufferProxy>(*imageBuffer))
-        downcast<AcceleratedRemoteImageBufferProxy>(*imageBuffer).didFlush(flushIdentifier);
-    else
-        downcast<UnacceleratedRemoteImageBufferProxy>(*imageBuffer).didFlush(flushIdentifier);
+    if (auto imageBuffer = m_remoteResourceCacheProxy.cachedImageBuffer(renderingResourceIdentifier))
+        imageBuffer->didFlush(flushIdentifier);
 }
 
 void RemoteRenderingBackendProxy::updateReusableHandles()
