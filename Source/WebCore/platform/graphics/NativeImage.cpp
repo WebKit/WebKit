@@ -58,8 +58,8 @@ NativeImage::NativeImage(const PlatformImagePtr& platformImage, RenderingResourc
 
 NativeImage::~NativeImage()
 {
-    if (m_observer)
-        m_observer->releaseNativeImage(m_renderingResourceIdentifier);
+    for (auto observer : m_observers)
+        observer->releaseNativeImage(m_renderingResourceIdentifier);
 }
 
 } // namespace WebCore

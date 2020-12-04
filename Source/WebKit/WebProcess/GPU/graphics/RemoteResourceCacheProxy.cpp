@@ -38,6 +38,12 @@ RemoteResourceCacheProxy::RemoteResourceCacheProxy(RemoteRenderingBackendProxy& 
 {
 }
 
+RemoteResourceCacheProxy::~RemoteResourceCacheProxy()
+{
+    for (auto& image : m_nativeImages.values())
+        image->removeObserver(*this);
+}
+
 void RemoteResourceCacheProxy::cacheImageBuffer(WebCore::ImageBuffer& imageBuffer)
 {
     auto addResult = m_imageBuffers.add(imageBuffer.renderingResourceIdentifier(), makeWeakPtr(imageBuffer));
@@ -60,7 +66,7 @@ void RemoteResourceCacheProxy::cacheNativeImage(NativeImage& image)
     m_nativeImages.ensure(image.renderingResourceIdentifier(), [&]() {
         // Set itself as an observer to NativeImage, so releaseNativeImage()
         // gets called when NativeImage is being deleleted.
-        image.setObserver(this);
+        image.addObserver(*this);
 
         // Tell the GPU process to cache this resource.
         m_remoteRenderingBackendProxy.cacheNativeImage(image);

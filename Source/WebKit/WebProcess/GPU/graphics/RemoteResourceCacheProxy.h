@@ -42,6 +42,7 @@ class RemoteRenderingBackendProxy;
 class RemoteResourceCacheProxy : public WebCore::NativeImage::Observer {
 public:
     RemoteResourceCacheProxy(RemoteRenderingBackendProxy&);
+    ~RemoteResourceCacheProxy();
 
     void cacheImageBuffer(WebCore::ImageBuffer&);
     WebCore::ImageBuffer* cachedImageBuffer(WebCore::RenderingResourceIdentifier);

@@ -32,6 +32,7 @@
 #include "PlatformImage.h"
 #include "RenderingResourceIdentifier.h"
 #include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/WeakPtr.h>
 
@@ -60,7 +61,9 @@ public:
     bool hasAlpha() const;
     Color singlePixelSolidColor() const;
 
-    void setObserver(Observer* observer) { m_observer = observer; }
+    void addObserver(Observer& observer) { m_observers.add(&observer); }
+    void removeObserver(Observer& observer) { m_observers.remove(&observer); }
+    
     void clearSubimages();
 
 private:
@@ -68,7 +71,7 @@ private:
     NativeImage(const PlatformImagePtr&, RenderingResourceIdentifier);
 
     PlatformImagePtr m_platformImage;
-    Observer* m_observer { nullptr };
+    HashSet<Observer*> m_observers;
     RenderingResourceIdentifier m_renderingResourceIdentifier;
 };
 
