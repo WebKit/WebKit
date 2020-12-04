@@ -1279,7 +1279,6 @@ fast/layoutformattingcontext/absolute-positioned-simple-table3.html [ ImageOnlyF
 fast/layoutformattingcontext/br-and-wbr-simple.html [ ImageOnlyFailure ]
 fast/layoutformattingcontext/empty-table-with-specified-height-quirk-simple.html [ ImageOnlyFailure ]
 fast/layoutformattingcontext/empty-table-with-specified-height-standards-simple.html [ ImageOnlyFailure ]
-fast/layoutformattingcontext/float-in-inline-context-simple.html [ ImageOnlyFailure ]
 fast/layoutformattingcontext/flow-integration-basic.html [ ImageOnlyFailure ]
 fast/layoutformattingcontext/inlin-box-content-fits-but-the-box-does-not.html [ ImageOnlyFailure ]
 fast/layoutformattingcontext/inline-box-overlaps-multiple-lines.html [ ImageOnlyFailure ]

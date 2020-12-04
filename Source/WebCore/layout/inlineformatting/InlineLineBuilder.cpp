@@ -247,19 +247,17 @@ LineBuilder::LineBuilder(const InlineFormattingContext& inlineFormattingContext,
 {
 }
 
-LineBuilder::LineContent LineBuilder::layoutInlineContent(const InlineItemRange& needsLayoutRange, size_t partialLeadingContentLength, const InlineRect& initialConstraintsForLine, bool isFirstLine)
+LineBuilder::LineContent LineBuilder::layoutInlineContent(const InlineItemRange& needsLayoutRange, size_t partialLeadingContentLength, const InlineRect& initialLineLogicalRect, bool isFirstLine)
 {
-    auto usedConstraints = constraintsForLine(initialConstraintsForLine, isFirstLine);
-    initialize(usedConstraints);
+    initialize(initialConstraintsForLine(initialLineLogicalRect, isFirstLine));
 
     auto committedContent = placeInlineContent(needsLayoutRange, partialLeadingContentLength);
     auto committedRange = close(needsLayoutRange, committedContent);
 
-    auto lineLogicalTopLeft = usedConstraints.logicalTopLeft;
     auto isLastLine = isLastLineWithInlineContent(committedRange, needsLayoutRange.end, committedContent.partialTrailingContentLength);
     return LineContent { committedRange, committedContent.partialTrailingContentLength, m_floats, m_contentIsConstrainedByFloat
-        , lineLogicalTopLeft
-        , m_horizontalSpaceForLine
+        , m_lineLogicalRect.topLeft()
+        , m_lineLogicalRect.width()
         , m_line.contentLogicalWidth()
         , m_line.isConsideredEmpty()
         , isLastLine
@@ -268,7 +266,7 @@ LineBuilder::LineContent LineBuilder::layoutInlineContent(const InlineItemRange&
 
 LineBuilder::IntrinsicContent LineBuilder::computedIntrinsicWidth(const InlineItemRange& needsLayoutRange, InlineLayoutUnit availableWidth)
 {
-    initialize({ { }, availableWidth, false });
+    initialize({ { { }, { availableWidth, maxInlineLayoutUnit() } }, false });
     auto committedContent = placeInlineContent(needsLayoutRange, { });
     auto committedRange = close(needsLayoutRange, committedContent);
     return { committedRange, m_line.contentLogicalWidth(), m_floats };
@@ -281,9 +279,8 @@ void LineBuilder::initialize(const UsedConstraints& lineConstraints)
     m_wrapOpportunityList.clear();
 
     m_line.initialize();
+    m_lineLogicalRect = lineConstraints.logicalRect;
     m_contentIsConstrainedByFloat = lineConstraints.isConstrainedByFloat;
-    m_horizontalSpaceForLine = lineConstraints.logicalWidth; 
-    m_lineLogicalTopLeft = lineConstraints.logicalTopLeft;
 }
 
 LineBuilder::CommittedContent LineBuilder::placeInlineContent(const InlineItemRange& needsLayoutRange, size_t partialLeadingContentLength)
@@ -303,7 +300,8 @@ LineBuilder::CommittedContent LineBuilder::placeInlineContent(const InlineItemRa
         auto result = Result { };
         if (lineCandidate.floatItem) {
             ASSERT(lineCandidate.inlineContent.isEmpty());
-            result = handleFloatContent(*lineCandidate.floatItem);
+            handleFloatContent(*lineCandidate.floatItem);
+            // Floats never terminate the line.
         } else
             result = handleInlineContent(inlineContentBreaker, needsLayoutRange, lineCandidate);
         committedInlineItemCount = result.committedCount.isRevert ? result.committedCount.value : committedInlineItemCount + result.committedCount.value;
@@ -346,12 +344,12 @@ LineBuilder::InlineItemRange LineBuilder::close(const InlineItemRange& needsLayo
         // Line is empty, we only managed to place float boxes.
         return lineRange;
     }
-    auto availableWidth = m_horizontalSpaceForLine - m_line.contentLogicalWidth();
+    auto availableWidth = m_lineLogicalRect.width() - m_line.contentLogicalWidth();
     m_line.removeCollapsibleContent(availableWidth);
     auto horizontalAlignment = root().style().textAlign();
     auto runsExpandHorizontally = horizontalAlignment == TextAlignMode::Justify && !isLastLineWithInlineContent(lineRange, needsLayoutRange.end, committedContent.partialTrailingContentLength);
     if (runsExpandHorizontally)
-        m_line.applyRunExpansion(m_horizontalSpaceForLine - m_line.contentLogicalWidth());
+        m_line.applyRunExpansion(m_lineLogicalRect.width() - m_line.contentLogicalWidth());
     auto lineEndsWithHyphen = false;
     if (!m_line.isConsideredEmpty()) {
         ASSERT(!m_line.runs().isEmpty());
@@ -362,7 +360,7 @@ LineBuilder::InlineItemRange LineBuilder::close(const InlineItemRange& needsLayo
     return lineRange;
 }
 
-LineBuilder::UsedConstraints LineBuilder::constraintsForLine(const InlineRect& lineLogicalConstraints, bool isFirstLine)
+LineBuilder::UsedConstraints LineBuilder::initialConstraintsForLine(const InlineRect& lineLogicalConstraints, bool isFirstLine)
 {
     auto lineLogicalLeft = lineLogicalConstraints.left();
     auto lineLogicalTop = lineLogicalConstraints.top();
@@ -436,7 +434,7 @@ LineBuilder::UsedConstraints LineBuilder::constraintsForLine(const InlineRect& l
         return { minimumValueForLength(textIndent, lineLogicalConstraints.width()) };
     };
     lineLogicalLeft += computedTextIndent();
-    return UsedConstraints { { lineLogicalLeft, lineLogicalTop }, lineLogicalRight - lineLogicalLeft, lineIsConstrainedByFloat };
+    return UsedConstraints { { lineLogicalTop, lineLogicalLeft, lineLogicalRight - lineLogicalLeft, lineLogicalConstraints.height() }, lineIsConstrainedByFloat };
 }
 
 void LineBuilder::candidateContentForLine(LineCandidate& lineCandidate, size_t currentInlineItemIndex, const InlineItemRange& layoutRange, size_t partialLeadingContentLength, InlineLayoutUnit currentLogicalRight)
@@ -542,34 +540,36 @@ size_t LineBuilder::nextWrapOpportunity(size_t startIndex, const LineBuilder::In
     return layoutRange.end;
 }
 
-LineBuilder::Result LineBuilder::handleFloatContent(const InlineItem& floatItem)
+void LineBuilder::handleFloatContent(const InlineItem& floatItem)
 {
-    auto availableWidth = m_horizontalSpaceForLine - m_line.contentLogicalWidth();
-    auto floatBoxWidth = inlineItemWidth(floatItem, { });
-    if (floatBoxWidth > availableWidth && !m_line.isConsideredEmpty())
-        return { InlineContentBreaker::IsEndOfLine::Yes };
-    // This float shrinks the current line.
     auto& floatBox = floatItem.layoutBox();
     m_floats.append(&floatBox);
+
+    auto* floatingState = this->floatingState();
+    if (!floatingState)
+        return;
+
+    ASSERT(formattingState());
+    auto& boxGeometry = formattingState()->boxGeometry(floatBox);
+    // Set static position first.
+    boxGeometry.setLogicalTopLeft(LayoutPoint { m_lineLogicalRect.topLeft() });
+    // Float it.
+    ASSERT(m_rootHorizontalConstraints);
+    auto floatingContext = FloatingContext { formattingContext(), *floatingState };
+    auto floatingPosition = floatingContext.positionForFloat(floatBox, *m_rootHorizontalConstraints);
+    boxGeometry.setLogicalTopLeft(floatingPosition);
+    floatingState->append(floatingContext.toFloatItem(floatBox));
+    // Check if this float shrinks the line (they don't get positioned higher than the line).
+    if (floatingPosition.y() > m_lineLogicalRect.bottom())
+        return;
+
     m_contentIsConstrainedByFloat = true;
-
-    if (auto* floatingState = this->floatingState()) {
-        ASSERT(formattingState());
-        auto& boxGeometry = formattingState()->boxGeometry(floatBox);
-        // Set static position first.
-        boxGeometry.setLogicalTopLeft(LayoutPoint { m_lineLogicalTopLeft });
-        // Float it.
-        ASSERT(m_rootHorizontalConstraints);
-        auto floatingContext = FloatingContext { formattingContext(), *floatingState };
-        auto floatingPosition = floatingContext.positionForFloat(floatBox, *m_rootHorizontalConstraints);
-        boxGeometry.setLogicalTopLeft(floatingPosition);
-        floatingState->append(floatingContext.toFloatItem(floatBox));
-    }
-
-    if (floatBox.isLeftFloatingPositioned())
+    auto floatBoxWidth = inlineItemWidth(floatItem, { });
+    if (floatBox.isLeftFloatingPositioned()) {
         m_line.moveLogicalLeft(floatBoxWidth);
-    m_horizontalSpaceForLine -= floatBoxWidth;
-    return { InlineContentBreaker::IsEndOfLine::No };
+        m_lineLogicalRect.setLeft(m_lineLogicalRect.left() + floatBoxWidth);    
+    }
+    m_lineLogicalRect.expandHorizontally(-floatBoxWidth);
 }
 
 LineBuilder::Result LineBuilder::handleInlineContent(InlineContentBreaker& inlineContentBreaker, const InlineItemRange& layoutRange, const LineCandidate& lineCandidate)
@@ -579,7 +579,7 @@ LineBuilder::Result LineBuilder::handleInlineContent(InlineContentBreaker& inlin
         ASSERT(inlineContent.trailingLineBreak() || inlineContent.trailingWordBreakOpportunity());
         return { inlineContent.trailingLineBreak() ? InlineContentBreaker::IsEndOfLine::Yes : InlineContentBreaker::IsEndOfLine::No };
     }
-    auto availableWidth = m_horizontalSpaceForLine - m_line.contentLogicalWidth();
+    auto availableWidth = m_lineLogicalRect.width() - m_line.contentLogicalWidth();
     auto shouldDisableHyphenation = [&] {
         auto& style = root().style();
         unsigned limitLines = style.hyphenationLimitLines() == RenderStyle::initialHyphenationLimitLines() ? std::numeric_limits<unsigned>::max() : style.hyphenationLimitLines();
@@ -702,7 +702,7 @@ size_t LineBuilder::rebuildLineForTrailingSoftHyphen(const InlineItemRange& layo
         // FIXME: If this turns out to be a perf issue, we could also traverse the wrap list and keep adding the items
         // while watching the available width very closely.
         auto committedCount = rebuildLine(layoutRange, softWrapOpportunityItem);
-        auto availableWidth = m_horizontalSpaceForLine - m_line.contentLogicalWidth();
+        auto availableWidth = m_lineLogicalRect.width() - m_line.contentLogicalWidth();
         auto trailingSoftHyphenWidth = m_line.trailingSoftHyphenWidth();
         // Check if the trailing hyphen now fits the line (or we don't need hyhen anymore).
         if (!trailingSoftHyphenWidth || trailingSoftHyphenWidth <= availableWidth) {

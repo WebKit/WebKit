@@ -61,7 +61,7 @@ public:
         bool isLastLineWithInlineContent { true };
         const Line::RunList& runs;
     };
-    LineContent layoutInlineContent(const InlineItemRange&, size_t partialLeadingContentLength, const InlineRect& initialConstraintsForLine, bool isFirstLine);
+    LineContent layoutInlineContent(const InlineItemRange&, size_t partialLeadingContentLength, const InlineRect& initialLineLogicalRect, bool isFirstLine);
 
     struct IntrinsicContent {
         InlineItemRange inlineItemRange;
@@ -84,12 +84,11 @@ private:
         size_t partialTrailingContentLength { 0 };
     };
     struct UsedConstraints {
-        InlineLayoutPoint logicalTopLeft;
-        InlineLayoutUnit logicalWidth { 0 };
+        InlineRect logicalRect;
         bool isConstrainedByFloat { false };
     };
-    UsedConstraints constraintsForLine(const InlineRect& initialLineConstraints, bool isFirstLine);
-    Result handleFloatContent(const InlineItem&);
+    UsedConstraints initialConstraintsForLine(const InlineRect& initialLineConstraints, bool isFirstLine);
+    void handleFloatContent(const InlineItem&);
     Result handleInlineContent(InlineContentBreaker&, const InlineItemRange& needsLayoutRange, const LineCandidate&);
     size_t rebuildLine(const InlineItemRange& needsLayoutRange, const InlineItem& lastInlineItemToAdd);
     size_t rebuildLineForTrailingSoftHyphen(const InlineItemRange& layoutRange);
@@ -117,8 +116,7 @@ private:
     Optional<HorizontalConstraints> m_rootHorizontalConstraints;
 
     Line m_line;
-    InlineLayoutPoint m_lineLogicalTopLeft;
-    InlineLayoutUnit m_horizontalSpaceForLine { 0 };
+    InlineRect m_lineLogicalRect;
     const InlineItems& m_inlineItems;
     FloatList m_floats;
     Optional<InlineTextItem> m_partialLeadingTextItem;
