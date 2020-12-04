@@ -308,7 +308,12 @@ bool Box::isInlineLevelBox() const
 {
     // Inline level elements generate inline level boxes.
     auto display = m_style.display();
-    return display == DisplayType::Inline || isInlineBlockBox() || isInlineTableBox();
+    return display == DisplayType::Inline
+        || display == DisplayType::InlineFlex
+        || display == DisplayType::WebKitInlineFlex
+        || display == DisplayType::InlineGrid
+        || isInlineBlockBox()
+        || isInlineTableBox();
 }
 
 bool Box::isInlineBox() const

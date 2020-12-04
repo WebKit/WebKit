@@ -1,3 +1,14 @@
+2020-12-04  Zalan Bujtas  <zalan@apple.com>
+
+        Web process assert when loading slack
+        https://bugs.webkit.org/show_bug.cgi?id=219079
+        <rdar://problem/71814675>
+
+        Reviewed by Antti Koivisto.
+
+        * fast/inline/inline-flex-on-replaced-crash-expected.txt: Added.
+        * fast/inline/inline-flex-on-replaced-crash.html: Added.
+
 2020-12-04  Rob Buis  <rbuis@igalia.com>
 
         WebGL2: Null pointer dereference in std::string implementation in gl::Shader::getTransformFeedbackVaryingMappedName
