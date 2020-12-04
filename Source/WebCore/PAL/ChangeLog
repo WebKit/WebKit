@@ -1,3 +1,24 @@
+2020-12-04  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Adopt AVOutputDevice.allowsHeadTrackedSpatialAudio
+        https://bugs.webkit.org/show_bug.cgi?id=219503
+
+        Reviewed by Eric Carlson.
+
+        On macOS, clients who wish to query head tracking AVOutputDevice capabilities must use the
+        sharedSystemAudioContext--not the sharedAudioPresentationOutputContext--to do so. This context
+        requires a specific entitlement to use.
+
+        In addition to querying -supportsHeadTrackedSpatialAudio, also query
+        -allowsHeadTrackedSpatialAudio, if present, to determine whether the current route supports
+        spatialization.
+
+        * pal/avfoundation/OutputContext.mm:
+        (PAL::OutputContext::sharedAudioPresentationOutputContext):
+        * pal/avfoundation/OutputDevice.mm:
+        (PAL::OutputDevice::supportsSpatialAudio const):
+        * pal/spi/cocoa/AVFoundationSPI.h:
+
 2020-12-04  Adam Roben  <aroben@apple.com>
 
         More FALLBACK_PLATFORM adoption

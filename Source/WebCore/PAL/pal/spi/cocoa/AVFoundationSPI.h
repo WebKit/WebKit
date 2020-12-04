@@ -86,6 +86,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)outputContext;
 + (instancetype)iTunesAudioContext;
 + (nullable AVOutputContext *)sharedAudioPresentationOutputContext;
++ (nullable AVOutputContext *)sharedSystemAudioContext;
 + (nullable AVOutputContext *)outputContextForID:(NSString *)ID;
 @property (readonly) BOOL supportsMultipleOutputDevices;
 @property (readonly) NSArray<AVOutputDevice *> *outputDevices;
@@ -103,6 +104,7 @@ typedef NS_OPTIONS(NSUInteger, AVOutputDeviceFeatures) {
 @property (nonatomic, readonly) NSString *deviceName;
 @property (nonatomic, readonly) AVOutputDeviceFeatures deviceFeatures;
 @property (nonatomic, readonly) BOOL supportsHeadTrackedSpatialAudio;
+- (BOOL)allowsHeadTrackedSpatialAudio;
 @end
 
 #if !PLATFORM(IOS_FAMILY)

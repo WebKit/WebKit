@@ -128,9 +128,15 @@ void createMediaPlayerDecodingConfigurationCocoa(MediaDecodingConfiguration&& co
             return;
         }
 
-        if (configuration.audio->spatialRendering) {
+        if (configuration.audio->spatialRendering.valueOr(false)) {
             auto context = PAL::OutputContext::sharedAudioPresentationOutputContext();
-            if (!context || !WTF::allOf(context->outputDevices(), [] (auto& device) {
+            if (!context) {
+                callback({{ }, WTFMove(configuration)});
+                return;
+            }
+
+            auto devices = context->outputDevices();
+            if (devices.isEmpty() || !WTF::allOf(devices, [](auto& device) {
                 return device.supportsSpatialAudio();
             })) {
                 callback({{ }, WTFMove(configuration)});

@@ -24,6 +24,7 @@ function mac_process_webcontent_entitlements()
             plistbuddy Add :com.apple.pac.shared_region_id string WebContent
             plistbuddy Add :com.apple.private.pac.exception bool YES
             plistbuddy Add :com.apple.private.security.message-filter bool YES
+            plistbuddy Add :com.apple.avfoundation.allow-system-wide-context bool YES
         fi
     fi
 
@@ -39,6 +40,10 @@ function mac_process_gpu_entitlements()
             plistbuddy Add :com.apple.tcc.delegated-services array
             plistbuddy Add :com.apple.tcc.delegated-services:1 string kTCCServiceMicrophone
             plistbuddy Add :com.apple.tcc.delegated-services:0 string kTCCServiceCamera
+        fi
+        if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 110000 ))
+        then
+            plistbuddy Add :com.apple.avfoundation.allow-system-wide-context bool YES
         fi
 
         plistbuddy Add :com.apple.rootless.storage.WebKitGPUSandbox bool YES

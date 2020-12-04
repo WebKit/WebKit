@@ -1,5 +1,16 @@
 2020-12-04  Jer Noble  <jer.noble@apple.com>
 
+        [Cocoa] Adopt AVOutputDevice.allowsHeadTrackedSpatialAudio
+        https://bugs.webkit.org/show_bug.cgi?id=219503
+
+        Reviewed by Eric Carlson.
+
+        Adopt the "com.apple.avfoundation.allow-system-wide-context" entitlement on macOS for both the WebContent and GPU processes.
+
+        * Scripts/process-entitlements.sh:
+
+2020-12-04  Jer Noble  <jer.noble@apple.com>
+
         [GPUP] Move MediaCapabilities into the GPU process
         https://bugs.webkit.org/show_bug.cgi?id=219521
 

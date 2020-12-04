@@ -32,6 +32,11 @@
 
 #include <pal/cocoa/AVFoundationSoftLink.h>
 
+// FIXME(rdar://70358894): Remove once -allowsHeadTrackedSpatialAudio lands:
+@interface AVOutputDevice (AllowsHeadTrackedSpatialAudio)
+- (BOOL)allowsHeadTrackedSpatialAudio;
+@end
+
 namespace PAL {
 
 OutputDevice::OutputDevice(RetainPtr<AVOutputDevice>&& device)
@@ -60,8 +65,12 @@ uint8_t OutputDevice::deviceFeatures() const
 bool OutputDevice::supportsSpatialAudio() const
 {
 #if HAVE(AVOUTPUTDEVICE_SPATIALAUDIO)
-    return [m_device respondsToSelector:@selector(supportsHeadTrackedSpatialAudio)]
-        && [m_device supportsHeadTrackedSpatialAudio];
+    if (![m_device respondsToSelector:@selector(supportsHeadTrackedSpatialAudio)]
+        || ![m_device supportsHeadTrackedSpatialAudio])
+        return false;
+
+    return ![m_device respondsToSelector:@selector(allowsHeadTrackedSpatialAudio)]
+        || [m_device allowsHeadTrackedSpatialAudio];
 #else
     return false;
 #endif

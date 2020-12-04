@@ -49,7 +49,11 @@ Optional<OutputContext>& OutputContext::sharedAudioPresentationOutputContext()
         if (![PAL::getAVOutputContextClass() respondsToSelector:@selector(sharedAudioPresentationOutputContext)])
             return WTF::nullopt;
 
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
+        AVOutputContext* context = [getAVOutputContextClass() sharedSystemAudioContext];
+#else
         auto context = [getAVOutputContextClass() sharedAudioPresentationOutputContext];
+#endif
         if (!context)
             return WTF::nullopt;
 
