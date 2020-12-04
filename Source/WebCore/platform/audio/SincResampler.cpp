@@ -35,8 +35,12 @@
 #include "AudioBus.h"
 #include <wtf/MathExtras.h>
 
-#if CPU(X86_SSE2)
-#include <emmintrin.h>
+#if USE(ACCELERATE)
+#include <Accelerate/Accelerate.h>
+#elif CPU(X86_SSE2)
+#include <xmmintrin.h>
+#elif HAVE(ARM_NEON_INTRINSICS)
+#include <arm_neon.h>
 #endif
 
 // Initial input buffer layout, dividing into regions r0 to r4 (note: r0, r3
@@ -113,6 +117,7 @@ namespace WebCore {
 
 constexpr unsigned kernelSize { 32 };
 constexpr unsigned numberOfKernelOffsets { 32 };
+constexpr unsigned kernelStorageSize { kernelSize * (numberOfKernelOffsets + 1) };
 
 static size_t calculateChunkSize(unsigned blockSize, double scaleFactor)
 {
@@ -121,7 +126,7 @@ static size_t calculateChunkSize(unsigned blockSize, double scaleFactor)
 
 SincResampler::SincResampler(double scaleFactor, unsigned requestFrames)
     : m_scaleFactor(scaleFactor)
-    , m_kernelStorage(kernelSize * (numberOfKernelOffsets + 1))
+    , m_kernelStorage(kernelStorageSize)
     , m_requestFrames(requestFrames)
     , m_inputBuffer(m_requestFrames + kernelSize) // See input buffer layout above.
     , m_r1(m_inputBuffer.data())
@@ -296,213 +301,17 @@ void SincResampler::process(float* destination, size_t framesToProcess, const Fu
             float* k1 = m_kernelStorage.data() + offsetIndex * kernelSize;
             float* k2 = k1 + kernelSize;
 
+            // Ensure |k1|, |k2| are 16-byte aligned for SIMD usage. Should always be true so long as kernelSize is a multiple of 16.
+            ASSERT(!(reinterpret_cast<uintptr_t>(k1) & 0x0F));
+            ASSERT(!(reinterpret_cast<uintptr_t>(k2) & 0x0F));
+
             // Initialize input pointer based on quantized m_virtualSourceIndex.
             float* inputP = m_r1 + sourceIndexI;
-
-            // We'll compute "convolutions" for the two kernels which straddle m_virtualSourceIndex
-            float sum1 = 0;
-            float sum2 = 0;
 
             // Figure out how much to weight each kernel's "convolution".
             double kernelInterpolationFactor = virtualOffsetIndex - offsetIndex;
 
-            // Generate a single output sample. 
-            int n = kernelSize;
-
-#define CONVOLVE_ONE_SAMPLE      \
-            input = *inputP++;   \
-            sum1 += input * *k1; \
-            sum2 += input * *k2; \
-            ++k1;                \
-            ++k2;
-
-            {
-                float input;
-
-#if CPU(X86_SSE2)
-                // If the sourceP address is not 16-byte aligned, the first several frames (at most three) should be processed seperately.
-                while ((reinterpret_cast<uintptr_t>(inputP) & 0x0F) && n) {
-                    CONVOLVE_ONE_SAMPLE
-                    n--;
-                }
-
-                // Now the inputP is aligned and start to apply SSE.
-                float* endP = inputP + n - n % 4;
-                __m128 mInput;
-                __m128 mK1;
-                __m128 mK2;
-                __m128 mul1;
-                __m128 mul2;
-
-                __m128 sums1 = _mm_setzero_ps();
-                __m128 sums2 = _mm_setzero_ps();
-                bool k1Aligned = !(reinterpret_cast<uintptr_t>(k1) & 0x0F);
-                bool k2Aligned = !(reinterpret_cast<uintptr_t>(k2) & 0x0F);
-
-#define LOAD_DATA(l1, l2)                        \
-                mInput = _mm_load_ps(inputP);    \
-                mK1 = _mm_##l1##_ps(k1);         \
-                mK2 = _mm_##l2##_ps(k2);
-
-#define CONVOLVE_4_SAMPLES                       \
-                mul1 = _mm_mul_ps(mInput, mK1);  \
-                mul2 = _mm_mul_ps(mInput, mK2);  \
-                sums1 = _mm_add_ps(sums1, mul1); \
-                sums2 = _mm_add_ps(sums2, mul2); \
-                inputP += 4;                     \
-                k1 += 4;                         \
-                k2 += 4;
-
-                if (k1Aligned && k2Aligned) { // both aligned
-                    while (inputP < endP) {
-                        LOAD_DATA(load, load)
-                        CONVOLVE_4_SAMPLES
-                    }
-                } else if (!k1Aligned && k2Aligned) { // only k2 aligned
-                    while (inputP < endP) {
-                        LOAD_DATA(loadu, load)
-                        CONVOLVE_4_SAMPLES
-                    }
-                } else if (k1Aligned && !k2Aligned) { // only k1 aligned
-                    while (inputP < endP) {
-                        LOAD_DATA(load, loadu)
-                        CONVOLVE_4_SAMPLES
-                    }
-                } else { // both non-aligned
-                    while (inputP < endP) {
-                        LOAD_DATA(loadu, loadu)
-                        CONVOLVE_4_SAMPLES
-                    }
-                }
-
-                // Summarize the SSE results to sum1 and sum2.
-                float* groupSumP = reinterpret_cast<float*>(&sums1);
-                sum1 += groupSumP[0] + groupSumP[1] + groupSumP[2] + groupSumP[3];
-                groupSumP = reinterpret_cast<float*>(&sums2);
-                sum2 += groupSumP[0] + groupSumP[1] + groupSumP[2] + groupSumP[3];
-
-                n %= 4;
-                while (n) {
-                    CONVOLVE_ONE_SAMPLE
-                    n--;
-                }
-#else
-                // FIXME: add ARM NEON optimizations for the following. The scalar code-path can probably also be optimized better.
-                
-                // Optimize size 32 and size 64 kernels by unrolling the while loop.
-                // A 20 - 30% speed improvement was measured in some cases by using this approach.
-                
-                if (n == 32) {
-                    CONVOLVE_ONE_SAMPLE // 1
-                    CONVOLVE_ONE_SAMPLE // 2
-                    CONVOLVE_ONE_SAMPLE // 3
-                    CONVOLVE_ONE_SAMPLE // 4
-                    CONVOLVE_ONE_SAMPLE // 5
-                    CONVOLVE_ONE_SAMPLE // 6
-                    CONVOLVE_ONE_SAMPLE // 7
-                    CONVOLVE_ONE_SAMPLE // 8
-                    CONVOLVE_ONE_SAMPLE // 9
-                    CONVOLVE_ONE_SAMPLE // 10
-                    CONVOLVE_ONE_SAMPLE // 11
-                    CONVOLVE_ONE_SAMPLE // 12
-                    CONVOLVE_ONE_SAMPLE // 13
-                    CONVOLVE_ONE_SAMPLE // 14
-                    CONVOLVE_ONE_SAMPLE // 15
-                    CONVOLVE_ONE_SAMPLE // 16
-                    CONVOLVE_ONE_SAMPLE // 17
-                    CONVOLVE_ONE_SAMPLE // 18
-                    CONVOLVE_ONE_SAMPLE // 19
-                    CONVOLVE_ONE_SAMPLE // 20
-                    CONVOLVE_ONE_SAMPLE // 21
-                    CONVOLVE_ONE_SAMPLE // 22
-                    CONVOLVE_ONE_SAMPLE // 23
-                    CONVOLVE_ONE_SAMPLE // 24
-                    CONVOLVE_ONE_SAMPLE // 25
-                    CONVOLVE_ONE_SAMPLE // 26
-                    CONVOLVE_ONE_SAMPLE // 27
-                    CONVOLVE_ONE_SAMPLE // 28
-                    CONVOLVE_ONE_SAMPLE // 29
-                    CONVOLVE_ONE_SAMPLE // 30
-                    CONVOLVE_ONE_SAMPLE // 31
-                    CONVOLVE_ONE_SAMPLE // 32
-                } else if (n == 64) {
-                    CONVOLVE_ONE_SAMPLE // 1
-                    CONVOLVE_ONE_SAMPLE // 2
-                    CONVOLVE_ONE_SAMPLE // 3
-                    CONVOLVE_ONE_SAMPLE // 4
-                    CONVOLVE_ONE_SAMPLE // 5
-                    CONVOLVE_ONE_SAMPLE // 6
-                    CONVOLVE_ONE_SAMPLE // 7
-                    CONVOLVE_ONE_SAMPLE // 8
-                    CONVOLVE_ONE_SAMPLE // 9
-                    CONVOLVE_ONE_SAMPLE // 10
-                    CONVOLVE_ONE_SAMPLE // 11
-                    CONVOLVE_ONE_SAMPLE // 12
-                    CONVOLVE_ONE_SAMPLE // 13
-                    CONVOLVE_ONE_SAMPLE // 14
-                    CONVOLVE_ONE_SAMPLE // 15
-                    CONVOLVE_ONE_SAMPLE // 16
-                    CONVOLVE_ONE_SAMPLE // 17
-                    CONVOLVE_ONE_SAMPLE // 18
-                    CONVOLVE_ONE_SAMPLE // 19
-                    CONVOLVE_ONE_SAMPLE // 20
-                    CONVOLVE_ONE_SAMPLE // 21
-                    CONVOLVE_ONE_SAMPLE // 22
-                    CONVOLVE_ONE_SAMPLE // 23
-                    CONVOLVE_ONE_SAMPLE // 24
-                    CONVOLVE_ONE_SAMPLE // 25
-                    CONVOLVE_ONE_SAMPLE // 26
-                    CONVOLVE_ONE_SAMPLE // 27
-                    CONVOLVE_ONE_SAMPLE // 28
-                    CONVOLVE_ONE_SAMPLE // 29
-                    CONVOLVE_ONE_SAMPLE // 30
-                    CONVOLVE_ONE_SAMPLE // 31
-                    CONVOLVE_ONE_SAMPLE // 32
-                    CONVOLVE_ONE_SAMPLE // 33
-                    CONVOLVE_ONE_SAMPLE // 34
-                    CONVOLVE_ONE_SAMPLE // 35
-                    CONVOLVE_ONE_SAMPLE // 36
-                    CONVOLVE_ONE_SAMPLE // 37
-                    CONVOLVE_ONE_SAMPLE // 38
-                    CONVOLVE_ONE_SAMPLE // 39
-                    CONVOLVE_ONE_SAMPLE // 40
-                    CONVOLVE_ONE_SAMPLE // 41
-                    CONVOLVE_ONE_SAMPLE // 42
-                    CONVOLVE_ONE_SAMPLE // 43
-                    CONVOLVE_ONE_SAMPLE // 44
-                    CONVOLVE_ONE_SAMPLE // 45
-                    CONVOLVE_ONE_SAMPLE // 46
-                    CONVOLVE_ONE_SAMPLE // 47
-                    CONVOLVE_ONE_SAMPLE // 48
-                    CONVOLVE_ONE_SAMPLE // 49
-                    CONVOLVE_ONE_SAMPLE // 50
-                    CONVOLVE_ONE_SAMPLE // 51
-                    CONVOLVE_ONE_SAMPLE // 52
-                    CONVOLVE_ONE_SAMPLE // 53
-                    CONVOLVE_ONE_SAMPLE // 54
-                    CONVOLVE_ONE_SAMPLE // 55
-                    CONVOLVE_ONE_SAMPLE // 56
-                    CONVOLVE_ONE_SAMPLE // 57
-                    CONVOLVE_ONE_SAMPLE // 58
-                    CONVOLVE_ONE_SAMPLE // 59
-                    CONVOLVE_ONE_SAMPLE // 60
-                    CONVOLVE_ONE_SAMPLE // 61
-                    CONVOLVE_ONE_SAMPLE // 62
-                    CONVOLVE_ONE_SAMPLE // 63
-                    CONVOLVE_ONE_SAMPLE // 64
-                } else {
-                    while (n--) {
-                        // Non-optimized using actual while loop.
-                        CONVOLVE_ONE_SAMPLE
-                    }
-                }
-#endif
-            }
-
-            // Linearly interpolate the two "convolutions".
-            double result = (1.0 - kernelInterpolationFactor) * sum1 + kernelInterpolationFactor * sum2;
-
-            *destination++ = result;
+            *destination++ = convolve(inputP, k1, k2, kernelInterpolationFactor);
 
             // Advance the virtual index.
             m_virtualSourceIndex += m_scaleFactor;
@@ -528,6 +337,84 @@ void SincResampler::process(float* destination, size_t framesToProcess, const Fu
         // Refresh the buffer with more input.
         consumeSource(m_r0, m_requestFrames, provideInput);
     }
+}
+
+float SincResampler::convolve(const float* inputP, const float* k1, const float* k2, float kernelInterpolationFactor)
+{
+#if USE(ACCELERATE)
+    float sum1;
+    float sum2;
+    vDSP_dotpr(inputP, 1, k1, 1, &sum1, kernelSize);
+    vDSP_dotpr(inputP, 1, k2, 1, &sum2, kernelSize);
+
+    // Linearly interpolate the two "convolutions".
+    return (1.0f - kernelInterpolationFactor) * sum1 + kernelInterpolationFactor * sum2;
+#elif CPU(X86_SSE2)
+    __m128 m_input;
+    __m128 m_sums1 = _mm_setzero_ps();
+    __m128 m_sums2 = _mm_setzero_ps();
+
+    // Based on |inputP| alignment, we need to use loadu or load.
+    if (reinterpret_cast<uintptr_t>(inputP) & 0x0F) {
+        for (unsigned i = 0; i < kernelSize; i += 4) {
+            m_input = _mm_loadu_ps(inputP + i);
+            m_sums1 = _mm_add_ps(m_sums1, _mm_mul_ps(m_input, _mm_load_ps(k1 + i)));
+            m_sums2 = _mm_add_ps(m_sums2, _mm_mul_ps(m_input, _mm_load_ps(k2 + i)));
+        }
+    } else {
+        for (unsigned i = 0; i < kernelSize; i += 4) {
+            m_input = _mm_load_ps(inputP + i);
+            m_sums1 = _mm_add_ps(m_sums1, _mm_mul_ps(m_input, _mm_load_ps(k1 + i)));
+            m_sums2 = _mm_add_ps(m_sums2, _mm_mul_ps(m_input, _mm_load_ps(k2 + i)));
+        }
+    }
+
+    // Linearly interpolate the two "convolutions".
+    m_sums1 = _mm_mul_ps(m_sums1, _mm_set_ps1(1.0f - kernelInterpolationFactor));
+    m_sums2 = _mm_mul_ps(m_sums2, _mm_set_ps1(kernelInterpolationFactor));
+    m_sums1 = _mm_add_ps(m_sums1, m_sums2);
+
+    // Sum components together.
+    float result;
+    m_sums2 = _mm_add_ps(_mm_movehl_ps(m_sums1, m_sums1), m_sums1);
+    _mm_store_ss(&result, _mm_add_ss(m_sums2, _mm_shuffle_ps(m_sums2, m_sums2, 1)));
+
+    return result;
+#elif HAVE(ARM_NEON_INTRINSICS)
+    float32x4_t m_input;
+    float32x4_t m_sums1 = vmovq_n_f32(0);
+    float32x4_t m_sums2 = vmovq_n_f32(0);
+
+    const float* upper = inputP + kKernelSize;
+    for (; inputP < upper; ) {
+        m_input = vld1q_f32(inputP);
+        inputP += 4;
+        m_sums1 = vmlaq_f32(m_sums1, m_input, vld1q_f32(k1));
+        k1 += 4;
+        m_sums2 = vmlaq_f32(m_sums2, m_input, vld1q_f32(k2));
+        k2 += 4;
+    }
+
+    // Linearly interpolate the two "convolutions".
+    m_sums1 = vmlaq_f32(vmulq_f32(m_sums1, vmovq_n_f32(1.0 - kernelInterpolationFactor)), m_sums2, vmovq_n_f32(kernelInterpolationFactor));
+
+    // Sum components together.
+    float32x2_t m_half = vadd_f32(vget_high_f32(m_sums1), vget_low_f32(m_sums1));
+    return vget_lane_f32(vpadd_f32(m_half, m_half), 0);
+#else
+    float sum1 = 0;
+    float sum2 = 0;
+
+    // Generate a single output sample.
+    int n = kernelSize;
+    while (n--) {
+        sum1 += *inputP * *k1++;
+        sum2 += *inputP++ * *k2++;
+    }
+
+    // Linearly interpolate the two "convolutions".
+    return (1.0f - kernelInterpolationFactor) * sum1 + kernelInterpolationFactor * sum2;
+#endif
 }
 
 } // namespace WebCore

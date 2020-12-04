@@ -59,6 +59,8 @@ protected:
     void initializeKernel();
     void consumeSource(float* buffer, unsigned numberOfSourceFrames, const Function<void(AudioBus* bus, size_t framesToProcess)>& provideInput);
     void updateRegions(bool isSecondLoad);
+
+    float convolve(const float* inputP, const float* k1, const float* k2, float kernelInterpolationFactor);
     
     double m_scaleFactor;
 
