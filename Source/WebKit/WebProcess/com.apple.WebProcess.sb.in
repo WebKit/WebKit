@@ -200,7 +200,10 @@
     
     ;; This is needed for Encrypted Media on some hardware (MacMini8,1 for example)
     (allow iokit-open
-        (iokit-registry-entry-class "AppleSNBFBUserClient")
+        (require-all
+            (extension "com.apple.webkit.extension.iokit")
+            (iokit-registry-entry-class "AppleSNBFBUserClient")
+        )
 #if HAVE(SANDBOX_MESSAGE_FILTERING)
         (with telemetry-backtrace)
         (apply-message-filter
@@ -1617,6 +1620,7 @@
         (require-not (extension "com.apple.webkit.extension.iokit"))
         (iokit-registry-entry-class
             "AppleIntelMEUserClient"
+            "AppleSNBFBUserClient"
         )
     )
 )

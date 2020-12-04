@@ -7742,6 +7742,7 @@ static const Vector<ASCIILiteral>& gpuIOKitClasses()
 #endif
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
         "AppleIntelMEUserClient"_s,
+        "AppleSNBFBUserClient"_s,
 #endif
     });
     return services;
