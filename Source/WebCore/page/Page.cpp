@@ -303,6 +303,7 @@ Page::Page(PageConfiguration&& pageConfiguration)
     , m_loadsSubresources(pageConfiguration.loadsSubresources)
     , m_loadsFromNetwork(pageConfiguration.loadsFromNetwork)
     , m_shouldRelaxThirdPartyCookieBlocking(pageConfiguration.shouldRelaxThirdPartyCookieBlocking)
+    , m_textInteractionEnabled(pageConfiguration.textInteractionEnabled)
 {
     updateTimerThrottlingState();
 

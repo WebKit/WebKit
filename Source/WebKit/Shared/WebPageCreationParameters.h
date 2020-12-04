@@ -242,6 +242,8 @@ struct WebPageCreationParameters {
 #if PLATFORM(GTK)
     String themeName;
 #endif
+
+    bool textInteractionEnabled { true };
 };
 
 } // namespace WebKit

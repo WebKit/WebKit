@@ -2554,7 +2554,12 @@ static Class tapAndAHalfRecognizerClass()
 
 - (BOOL)hasSelectablePositionAtPoint:(CGPoint)point
 {
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if (!self.webView.configuration._textInteractionGesturesEnabled)
+        return NO;
+    ALLOW_DEPRECATED_DECLARATIONS_END
+
+    if (!_page->preferences().textInteractionEnabled())
         return NO;
 
     if (_suppressSelectionAssistantReasons)
@@ -2577,9 +2582,14 @@ static Class tapAndAHalfRecognizerClass()
 
 - (BOOL)pointIsNearMarkedText:(CGPoint)point
 {
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if (!self.webView.configuration._textInteractionGesturesEnabled)
         return NO;
+    ALLOW_DEPRECATED_DECLARATIONS_END
 
+    if (!_page->preferences().textInteractionEnabled())
+        return NO;
+    
     if (_suppressSelectionAssistantReasons)
         return NO;
 
@@ -2591,9 +2601,14 @@ static Class tapAndAHalfRecognizerClass()
 
 - (BOOL)textInteractionGesture:(UIWKGestureType)gesture shouldBeginAtPoint:(CGPoint)point
 {
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if (!self.webView.configuration._textInteractionGesturesEnabled)
         return NO;
+    ALLOW_DEPRECATED_DECLARATIONS_END
 
+    if (!_page->preferences().textInteractionEnabled())
+        return NO;
+    
     if (_domPasteRequestHandler)
         return NO;
 
@@ -3317,7 +3332,12 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
 
 - (UIColor *)_cascadeInteractionTintColor
 {
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if (!self.webView.configuration._textInteractionGesturesEnabled)
+        return [UIColor clearColor];
+    ALLOW_DEPRECATED_DECLARATIONS_END
+
+    if (!_page->preferences().textInteractionEnabled())
         return [UIColor clearColor];
 
     if (!_page->editorState().isMissingPostLayoutData) {
@@ -3600,6 +3620,9 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
 
 - (void)selectForWebView:(id)sender
 {
+    if (!_page->preferences().textInteractionEnabled())
+        return;
+
     [_textInteractionAssistant selectWord];
     // We cannot use selectWord command, because we want to be able to select the word even when it is the last in the paragraph.
     _page->extendSelection(WebCore::TextGranularity::WordGranularity);
@@ -3607,6 +3630,9 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
 
 - (void)selectAllForWebView:(id)sender
 {
+    if (!_page->preferences().textInteractionEnabled())
+        return;
+
     [_textInteractionAssistant selectAll:sender];
     _page->selectAll();
 }

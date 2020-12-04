@@ -170,6 +170,8 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
 #if PLATFORM(GTK)
     encoder << themeName;
 #endif
+    
+    encoder << textInteractionEnabled;
 }
 
 Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decoder& decoder)
@@ -535,6 +537,9 @@ Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decod
     if (!decoder.decode(parameters.themeName))
         return WTF::nullopt;
 #endif
+    
+    if (!decoder.decode(parameters.textInteractionEnabled))
+        return WTF::nullopt;
 
     return parameters;
 }

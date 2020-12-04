@@ -133,6 +133,7 @@ public:
     bool loadsFromNetwork { true };
     bool userScriptsShouldWaitUntilNotification { true };
     ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking { ShouldRelaxThirdPartyCookieBlocking::No };
+    bool textInteractionEnabled { true };
 };
 
 }

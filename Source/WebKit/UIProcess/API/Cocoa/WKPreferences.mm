@@ -78,6 +78,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 ALLOW_DEPRECATED_DECLARATIONS_END
     [coder encodeBool:self.tabFocusesLinks forKey:@"tabFocusesLinks"];
 #endif
+    [coder encodeBool:self.textInteractionEnabled forKey:@"textInteractionEnabled"];
 }
 
 - (instancetype)initWithCoder:(NSCoder *)coder
@@ -99,6 +100,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 ALLOW_DEPRECATED_DECLARATIONS_END
     self.tabFocusesLinks = [coder decodeBoolForKey:@"tabFocusesLinks"];
 #endif
+    self.textInteractionEnabled = [coder decodeBoolForKey:@"textInteractionEnabled"];
 
     return self;
 }
@@ -136,6 +138,16 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (void)setJavaScriptCanOpenWindowsAutomatically:(BOOL)javaScriptCanOpenWindowsAutomatically
 {
     _preferences->setJavaScriptCanOpenWindowsAutomatically(javaScriptCanOpenWindowsAutomatically);
+}
+
+- (BOOL)textInteractionEnabled
+{
+    return _preferences->textInteractionEnabled();
+}
+
+- (void)setTextInteractionEnabled:(BOOL)textInteractionEnabled
+{
+    _preferences->setTextInteractionEnabled(textInteractionEnabled);
 }
 
 #pragma mark OS X-specific methods

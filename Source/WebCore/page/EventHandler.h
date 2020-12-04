@@ -521,6 +521,8 @@ private:
 
     bool canMouseDownStartSelect(const MouseEventWithHitTestResults&);
 
+    bool mouseDownMayStartSelect();
+    
     Frame& m_frame;
     RefPtr<Node> m_mousePressNode;
     Timer m_hoverTimer;

@@ -8000,6 +8000,8 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
 #if ENABLE(APP_BOUND_DOMAINS)
     parameters.needsInAppBrowserPrivacyQuirks = preferences().needsInAppBrowserPrivacyQuirks();
 #endif
+    
+    parameters.textInteractionEnabled = preferences().textInteractionEnabled();
 
     return parameters;
 }

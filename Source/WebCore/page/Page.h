@@ -828,6 +828,9 @@ public:
 
     MonotonicTime lastRenderingUpdateTimestamp() const { return m_lastRenderingUpdateTimestamp; }
 
+    bool textInteractionEnabled() { return m_textInteractionEnabled; }
+    void setTextInteractionEnabled(bool value) { m_textInteractionEnabled = value; }
+
 private:
     struct Navigation {
         RegistrableDomain domain;
@@ -1131,6 +1134,8 @@ private:
     bool m_hasBeenNotifiedToInjectUserScripts { false };
 
     MonotonicTime m_lastRenderingUpdateTimestamp;
+    
+    bool m_textInteractionEnabled { true };
 };
 
 inline PageGroup& Page::group()

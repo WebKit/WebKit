@@ -63,6 +63,7 @@ public:
     bool shouldShowSpellCheckingDots() const { return boolTestRunnerFeatureValue("spellCheckingDots"); }
     bool shouldShowTouches() const { return boolTestRunnerFeatureValue("shouldShowTouches"); }
     bool shouldShowWebView() const { return boolTestRunnerFeatureValue("shouldShowWebView"); }
+    bool textInteractionEnabled() const { return boolTestRunnerFeatureValue("textInteractionEnabled"); }
     bool useCharacterSelectionGranularity() const { return boolTestRunnerFeatureValue("useCharacterSelectionGranularity"); }
     bool useDataDetection() const { return boolTestRunnerFeatureValue("useDataDetection"); }
     bool useEphemeralSession() const { return boolTestRunnerFeatureValue("useEphemeralSession"); }

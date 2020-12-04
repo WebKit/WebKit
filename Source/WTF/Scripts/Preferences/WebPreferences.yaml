@@ -2277,6 +2277,19 @@ TextAutosizingEnabled:
       "PLATFORM(IOS_FAMILY)": true
       default: false
 
+TextInteractionEnabled:
+  type: bool
+  defaultValue:
+    WebKitLegacy:
+      "PLATFORM(WATCH_OS)": false
+      default: true
+    WebKit:
+      "PLATFORM(WATCH_OS)": false
+      default: true
+    WebCore:
+      "PLATFORM(WATCH_OS)": false
+      default: true
+
 ThreadedScrollingEnabled:
   type: bool
   webcoreBinding: none

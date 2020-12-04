@@ -1,3 +1,28 @@
+2020-12-04  Kate Cheney  <katherine_cheney@apple.com>
+
+        Create API to enable/disable text interaction gestures in WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=217784
+        <rdar://problem/63406241>
+
+        Reviewed by Wenson Hsieh.
+
+        Add API test coverage for macOS and support for layout tests for iOS.
+        API tests do not support user gestures which is why iOS tests must
+        use WebKitTestRunner.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebViewDisableSelection.mm: Added.
+        (TEST):
+        (clickAndDragToSelectText):
+        * TestWebKitAPI/Tests/WebKitCocoa/try-text-select-with-disabled-text-interaction.html: Added.
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::TestController::cocoaResetStateToConsistentValues):
+        * WebKitTestRunner/TestOptions.cpp:
+        (WTR::TestOptions::defaults):
+        (WTR::TestOptions::keyTypeMapping):
+        * WebKitTestRunner/TestOptions.h:
+        (WTR::TestOptions::textInteractionEnabled const):
+
 2020-12-04  Adam Roben  <aroben@apple.com>
 
         More FALLBACK_PLATFORM adoption

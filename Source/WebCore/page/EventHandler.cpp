@@ -499,7 +499,7 @@ static AppendTrailingWhitespace shouldAppendTrailingWhitespace(const MouseEventW
 
 void EventHandler::selectClosestWordFromMouseEvent(const MouseEventWithHitTestResults& result)
 {
-    if (m_mouseDownMayStartSelect)
+    if (mouseDownMayStartSelect())
         selectClosestWordFromHitTestResult(result.hitTestResult(), shouldAppendTrailingWhitespace(result, m_frame));
 }
 
@@ -548,7 +548,7 @@ void EventHandler::selectClosestContextualWordOrLinkFromMouseEvent(const MouseEv
 
     Node* targetNode = result.targetNode();
 
-    if (targetNode && targetNode->renderer() && m_mouseDownMayStartSelect) {
+    if (targetNode && targetNode->renderer() && mouseDownMayStartSelect()) {
         VisibleSelection newSelection;
         VisiblePosition pos(targetNode->renderer()->positionForPoint(result.localPoint(), nullptr));
         if (pos.isNotNull() && pos.deepEquivalent().deprecatedNode()->isDescendantOf(*urlElement))
@@ -582,7 +582,7 @@ bool EventHandler::handleMousePressEventTripleClick(const MouseEventWithHitTestR
         return false;
     
     Node* targetNode = event.targetNode();
-    if (!(targetNode && targetNode->renderer() && m_mouseDownMayStartSelect))
+    if (!(targetNode && targetNode->renderer() && mouseDownMayStartSelect()))
         return false;
 
     VisibleSelection newSelection;
@@ -609,7 +609,7 @@ bool EventHandler::handleMousePressEventSingleClick(const MouseEventWithHitTestR
 
     m_frame.document()->updateLayoutIgnorePendingStylesheets();
     Node* targetNode = event.targetNode();
-    if (!targetNode || !targetNode->renderer() || !m_mouseDownMayStartSelect || m_mouseDownDelegatedFocus)
+    if (!targetNode || !targetNode->renderer() || !mouseDownMayStartSelect() || m_mouseDownDelegatedFocus)
         return false;
 
     // Extend the selection if the Shift key is down, unless the click is in a link.
@@ -696,6 +696,15 @@ bool EventHandler::canMouseDownStartSelect(const MouseEventWithHitTestResults& e
     return node->canStartSelection() || Position::nodeIsUserSelectAll(node);
 }
 
+bool EventHandler::mouseDownMayStartSelect()
+{
+    Page* page = m_frame.page();
+    if (page && !page->textInteractionEnabled())
+        return false;
+
+    return m_mouseDownMayStartSelect;
+}
+
 bool EventHandler::handleMousePressEvent(const MouseEventWithHitTestResults& event)
 {
     Ref<Frame> protectedFrame(m_frame);
@@ -773,7 +782,7 @@ bool EventHandler::handleMousePressEvent(const MouseEventWithHitTestResults& eve
     else
         swallowEvent = handleMousePressEventSingleClick(event);
     
-    m_mouseDownMayStartAutoscroll = m_mouseDownMayStartSelect
+    m_mouseDownMayStartAutoscroll = mouseDownMayStartSelect()
         || (m_mousePressNode && m_mousePressNode->renderBox() && m_mousePressNode->renderBox()->canBeProgramaticallyScrolled());
 
     return swallowEvent;
@@ -841,7 +850,7 @@ bool EventHandler::handleMouseDraggedEvent(const MouseEventWithHitTestResults& e
     }
 
 #if PLATFORM(COCOA) // FIXME: Why does this assertion fire on other platforms?
-    ASSERT(m_mouseDownMayStartSelect || m_mouseDownMayStartAutoscroll);
+    ASSERT(mouseDownMayStartSelect() || m_mouseDownMayStartAutoscroll);
 #endif
 
     m_mouseDownMayStartDrag = false;
@@ -915,7 +924,7 @@ void EventHandler::updateSelectionForMouseDrag(const HitTestResult& hitTestResul
     if (!supportsSelectionUpdatesOnMouseDrag())
         return;
 
-    if (!m_mouseDownMayStartSelect)
+    if (!mouseDownMayStartSelect())
         return;
 
     Node* target = hitTestResult.targetNode();
@@ -1471,7 +1480,7 @@ Optional<Cursor> EventHandler::selectCursor(const HitTestResult& result, bool sh
     // During selection, use an I-beam regardless of the content beneath the cursor.
     // If a drag may be starting or we're capturing mouse events for a particular node, don't treat this as a selection.
     if (m_mousePressed
-        && m_mouseDownMayStartSelect
+        && mouseDownMayStartSelect()
 #if ENABLE(DRAG_SUPPORT)
         && !m_mouseDownMayStartDrag
 #endif

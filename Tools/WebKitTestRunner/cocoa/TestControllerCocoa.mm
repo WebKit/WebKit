@@ -290,6 +290,7 @@ void TestController::cocoaResetStateToConsistentValues(const TestOptions& option
         [platformView _setContinuousSpellCheckingEnabledForTesting:options.shouldShowSpellCheckingDots()];
         [platformView resetInteractionCallbacks];
         [platformView _resetNavigationGestureStateForTesting];
+        [platformView.configuration.preferences setTextInteractionEnabled:options.textInteractionEnabled()];
     }
 
     [globalWebsiteDataStoreDelegateClient setAllowRaisingQuota:YES];

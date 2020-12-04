@@ -572,6 +572,8 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     pageConfiguration.loadsFromNetwork = parameters.loadsFromNetwork;
     pageConfiguration.shouldRelaxThirdPartyCookieBlocking = parameters.shouldRelaxThirdPartyCookieBlocking;
 
+    pageConfiguration.textInteractionEnabled = parameters.textInteractionEnabled;
+    
     if (!parameters.crossOriginAccessControlCheckEnabled)
         CrossOriginAccessControlCheckDisabler::singleton().setCrossOriginAccessControlCheckEnabled(false);
 
@@ -3807,6 +3809,8 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
 #if ENABLE(IPC_TESTING_API)
     m_ipcTestingAPIEnabled = store.getBoolValueForKey(WebPreferencesKey::ipcTestingAPIEnabledKey());
 #endif
+
+    m_page->setTextInteractionEnabled(store.getBoolValueForKey(WebPreferencesKey::textInteractionEnabledKey()));
 }
 
 #if ENABLE(DATA_DETECTION)
