@@ -1,3 +1,14 @@
+2020-12-04  Adam Roben  <aroben@apple.com>
+
+        More FALLBACK_PLATFORM adoption
+        https://bugs.webkit.org/show_bug.cgi?id=219545
+
+        Reviewed by Tim Horton.
+
+        * MediaTime/Configurations/SDKVariant.xcconfig:
+        WK_EMPTY_$(THIS_IS_NOT_EMPTY) evaluates to the empty string, not to
+        NO.
+
 2020-12-03  Adam Roben  <aroben@apple.com>
 
         Adopt FALLBACK_PLATFORM
