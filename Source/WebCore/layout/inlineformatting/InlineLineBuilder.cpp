@@ -360,40 +360,51 @@ LineBuilder::InlineItemRange LineBuilder::close(const InlineItemRange& needsLayo
     return lineRange;
 }
 
-LineBuilder::UsedConstraints LineBuilder::initialConstraintsForLine(const InlineRect& lineLogicalConstraints, bool isFirstLine)
+Optional<HorizontalConstraints> LineBuilder::floatConstraints(const InlineRect& lineLogicalRect) const
 {
-    auto lineLogicalLeft = lineLogicalConstraints.left();
-    auto lineLogicalTop = lineLogicalConstraints.top();
-    auto lineLogicalRight = lineLogicalLeft + lineLogicalConstraints.width();
-    auto lineIsConstrainedByFloat = false;
+    auto* floatingState = this->floatingState();
+    if (!floatingState || floatingState->floats().isEmpty())
+        return { };
 
     // Check for intruding floats and adjust logical left/available width for this line accordingly.
-    if (auto* floatingState = this->floatingState()) {
-        auto floatingContext = FloatingContext { formattingContext(), *floatingState };
-        if (!floatingContext.isEmpty()) {
-            // FIXME: Add support for variable line height, where the floats should be probed as the line height grows.
-            auto floatConstraints = floatingContext.constraints(toLayoutUnit(lineLogicalTop), toLayoutUnit(lineLogicalTop + lineLogicalConstraints.height()));
-            // Check if these values actually constrain the line.
-            if (floatConstraints.left && floatConstraints.left->x <= lineLogicalLeft)
-                floatConstraints.left = { };
+    auto floatingContext = FloatingContext { formattingContext(), *floatingState };
+    auto constraints = floatingContext.constraints(toLayoutUnit(lineLogicalRect.top()), toLayoutUnit(lineLogicalRect.bottom()));
+    // Check if these values actually constrain the line.
+    if (constraints.left && constraints.left->x <= lineLogicalRect.left())
+        constraints.left = { };
 
-            if (floatConstraints.right && floatConstraints.right->x >= lineLogicalRight)
-                floatConstraints.right = { };
+    if (constraints.right && constraints.right->x >= lineLogicalRect.right())
+        constraints.right = { };
 
-            lineIsConstrainedByFloat = floatConstraints.left || floatConstraints.right;
+    if (!constraints.left && !constraints.right)
+        return { };
 
-            if (floatConstraints.left && floatConstraints.right) {
-                ASSERT(floatConstraints.left->x <= floatConstraints.right->x);
-                lineLogicalRight = floatConstraints.right->x;
-                lineLogicalLeft = floatConstraints.left->x;
-            } else if (floatConstraints.left) {
-                ASSERT(floatConstraints.left->x >= lineLogicalLeft);
-                lineLogicalLeft = floatConstraints.left->x;
-            } else if (floatConstraints.right) {
-                // Right float boxes may overflow the containing block on the left.
-                lineLogicalRight = std::max<InlineLayoutUnit>(lineLogicalLeft, floatConstraints.right->x);
-            }
-        }
+    auto lineLogicalLeft = lineLogicalRect.left();
+    auto lineLogicalRight = lineLogicalRect.right();
+    if (constraints.left && constraints.right) {
+        ASSERT(constraints.left->x <= constraints.right->x);
+        lineLogicalRight = constraints.right->x;
+        lineLogicalLeft = constraints.left->x;
+    } else if (constraints.left) {
+        ASSERT(constraints.left->x >= lineLogicalLeft);
+        lineLogicalLeft = constraints.left->x;
+    } else if (constraints.right) {
+        // Right float boxes may overflow the containing block on the left.
+        lineLogicalRight = std::max<InlineLayoutUnit>(lineLogicalLeft, constraints.right->x);
+    }
+    return HorizontalConstraints { toLayoutUnit(lineLogicalLeft), toLayoutUnit(lineLogicalRight - lineLogicalLeft) };
+}
+
+LineBuilder::UsedConstraints LineBuilder::initialConstraintsForLine(const InlineRect& initialLineLogicalRect, bool isFirstLine) const
+{
+    auto lineLogicalLeft = initialLineLogicalRect.left();
+    auto lineLogicalRight = initialLineLogicalRect.right();
+    auto lineIsConstrainedByFloat = false;
+
+    if (auto lineConstraints = floatConstraints(initialLineLogicalRect)) {
+        lineLogicalLeft = lineConstraints->logicalLeft;
+        lineLogicalRight = lineConstraints->logicalRight();
+        lineIsConstrainedByFloat = true;
     }
 
     auto computedTextIndent = [&]() -> InlineLayoutUnit {
@@ -431,10 +442,10 @@ LineBuilder::UsedConstraints LineBuilder::initialConstraintsForLine(const Inline
         auto textIndent = root.style().textIndent();
         if (textIndent == RenderStyle::initialTextIndent())
             return { };
-        return { minimumValueForLength(textIndent, lineLogicalConstraints.width()) };
+        return { minimumValueForLength(textIndent, initialLineLogicalRect.width()) };
     };
     lineLogicalLeft += computedTextIndent();
-    return UsedConstraints { { lineLogicalTop, lineLogicalLeft, lineLogicalRight - lineLogicalLeft, lineLogicalConstraints.height() }, lineIsConstrainedByFloat };
+    return UsedConstraints { { initialLineLogicalRect.top(), lineLogicalLeft, lineLogicalRight - lineLogicalLeft, initialLineLogicalRect.height() }, lineIsConstrainedByFloat };
 }
 
 void LineBuilder::candidateContentForLine(LineCandidate& lineCandidate, size_t currentInlineItemIndex, const InlineItemRange& layoutRange, size_t partialLeadingContentLength, InlineLayoutUnit currentLogicalRight)

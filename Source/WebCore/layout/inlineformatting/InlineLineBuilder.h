@@ -87,7 +87,9 @@ private:
         InlineRect logicalRect;
         bool isConstrainedByFloat { false };
     };
-    UsedConstraints initialConstraintsForLine(const InlineRect& initialLineConstraints, bool isFirstLine);
+    UsedConstraints initialConstraintsForLine(const InlineRect& initialLineLogicalRect, bool isFirstLine) const;
+    Optional<HorizontalConstraints> floatConstraints(const InlineRect& lineLogicalRect) const;
+
     void handleFloatContent(const InlineItem&);
     Result handleInlineContent(InlineContentBreaker&, const InlineItemRange& needsLayoutRange, const LineCandidate&);
     size_t rebuildLine(const InlineItemRange& needsLayoutRange, const InlineItem& lastInlineItemToAdd);
@@ -107,6 +109,7 @@ private:
     const InlineFormattingContext& formattingContext() const { return m_inlineFormattingContext; }
     InlineFormattingState* formattingState() { return m_inlineFormattingState; }
     FloatingState* floatingState() { return m_floatingState; }
+    const FloatingState* floatingState() const { return m_floatingState; }
     const ContainerBox& root() const;
     const LayoutState& layoutState() const;
 
