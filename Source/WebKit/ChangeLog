@@ -1,3 +1,19 @@
+2020-12-04  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        GPU Process WindowServer blocking prevents CGL
+        https://bugs.webkit.org/show_bug.cgi?id=219431
+        <rdar://problem/71893390>
+
+        Reviewed by Per Arne Vollan.
+
+        Mark the GPU process as NSSupportsAutomaticGraphicsSwitching.
+        This allows CGL to work in cases when WindowServer connection
+        is blocked.
+
+        No new tests, makes the future WebGL in GPU process work.
+
+        * GPUProcess/EntryPoint/Cocoa/XPCService/GPUService/Info-OSX.plist:
+
 2020-12-03  Simon Fraser  <simon.fraser@apple.com>
 
         Only the first wheel event in a gesture should be cancelable

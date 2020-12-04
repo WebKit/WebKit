@@ -41,5 +41,7 @@
 		<key>_MultipleInstances</key>
 		<true/>
 	</dict>
+    <key>NSSupportsAutomaticGraphicsSwitching</key>
+    <true/>
 </dict>
 </plist>
