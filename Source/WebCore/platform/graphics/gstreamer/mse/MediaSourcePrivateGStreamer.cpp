@@ -136,6 +136,16 @@ void MediaSourcePrivateGStreamer::seekCompleted()
     m_playerPrivate.seekCompleted();
 }
 
+MediaTime MediaSourcePrivateGStreamer::duration() const
+{
+    return m_mediaSource->duration();
+}
+
+MediaTime MediaSourcePrivateGStreamer::currentMediaTime() const
+{
+    return m_playerPrivate.currentMediaTime();
+}
+
 void MediaSourcePrivateGStreamer::sourceBufferPrivateDidChangeActiveState(SourceBufferPrivateGStreamer* sourceBufferPrivate, bool isActive)
 {
     if (!isActive)

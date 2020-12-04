@@ -118,7 +118,7 @@ void MediaSourcePrivateAVFObjC::removeSourceBuffer(SourceBufferPrivate* buffer)
     m_sourceBuffers.remove(pos);
 }
 
-MediaTime MediaSourcePrivateAVFObjC::duration()
+MediaTime MediaSourcePrivateAVFObjC::duration() const
 {
     return m_client->duration();
 }
@@ -164,6 +164,11 @@ void MediaSourcePrivateAVFObjC::waitForSeekCompleted()
 void MediaSourcePrivateAVFObjC::seekCompleted()
 {
     m_player->seekCompleted();
+}
+
+MediaTime MediaSourcePrivateAVFObjC::currentMediaTime() const
+{
+    return m_player->currentMediaTime();
 }
 
 void MediaSourcePrivateAVFObjC::sourceBufferPrivateDidChangeActiveState(SourceBufferPrivateAVFObjC* buffer, bool active)

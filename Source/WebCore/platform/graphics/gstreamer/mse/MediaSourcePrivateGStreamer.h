@@ -71,6 +71,9 @@ public:
     void waitForSeekCompleted() override;
     void seekCompleted() override;
 
+    MediaTime duration() const;
+    MediaTime currentMediaTime() const;
+
     void sourceBufferPrivateDidChangeActiveState(SourceBufferPrivateGStreamer*, bool);
 
     std::unique_ptr<PlatformTimeRanges> buffered();

@@ -65,6 +65,12 @@ public:
 
     virtual void waitForSeekCompleted() = 0;
     virtual void seekCompleted() = 0;
+
+    void setIsSeeking(bool flag) { m_isSeeking = flag; }
+    bool isSeeking() const { return m_isSeeking; }
+
+private:
+    bool m_isSeeking { false };
 };
 
 String convertEnumerationToString(MediaSourcePrivate::AddStatus);

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -38,6 +38,7 @@
 #include "EventTarget.h"
 #include "ExceptionOr.h"
 #include "GenericEventQueue.h"
+#include "SourceBufferPrivate.h"
 #include "SourceBufferPrivateClient.h"
 #include "TextTrack.h"
 #include "Timer.h"
@@ -95,7 +96,7 @@ public:
     ExceptionOr<void> remove(const MediaTime&, const MediaTime&);
     ExceptionOr<void> changeType(const String&);
 
-    const TimeRanges& bufferedInternal() const { ASSERT(m_buffered); return *m_buffered; }
+    const TimeRanges& bufferedInternal() const { ASSERT(m_private->buffered()); return *m_private->buffered(); }
 
     void abortIfUpdating();
     void removedFromMediaSource();
@@ -107,23 +108,21 @@ public:
 
     bool active() const { return m_active; }
 
+    // EventTarget
     ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
 
     using RefCounted::ref;
     using RefCounted::deref;
 
-    struct TrackBuffer;
-
     Document& document() const;
-
     enum class AppendMode { Segments, Sequence };
     AppendMode mode() const { return m_mode; }
     ExceptionOr<void> setMode(AppendMode);
 
-    void setShouldGenerateTimestamps(bool flag) { m_shouldGenerateTimestamps = flag; }
+    WEBCORE_EXPORT void setShouldGenerateTimestamps(bool flag);
 
-    bool isBufferedDirty() const { return m_bufferedDirty; }
-    void setBufferedDirty(bool flag) { m_bufferedDirty = flag; }
+    bool isBufferedDirty() const;
+    void setBufferedDirty(bool flag);
 
     MediaTime highestPresentationTimestamp() const;
     void readyStateChanged();
@@ -148,19 +147,23 @@ private:
     const char* activeDOMObjectName() const final;
     bool virtualHasPendingActivity() const final;
 
+    // SourceBufferPrivateClient
     void sourceBufferPrivateDidReceiveInitializationSegment(const InitializationSegment&) final;
-    void sourceBufferPrivateDidReceiveSample(MediaSample&) final;
+    void sourceBufferPrivateAppendError(bool decodeError) final;
+    void sourceBufferPrivateDurationChanged(const MediaTime& duration) final;
+    void sourceBufferPrivateDidParseSample(double sampleDuration) final;
+    void sourceBufferPrivateDidDropSample() final;
+    void sourceBufferPrivateStreamEndedWithDecodeError() final;
     bool sourceBufferPrivateHasAudio() const final;
     bool sourceBufferPrivateHasVideo() const final;
-    void sourceBufferPrivateReenqueSamples(const AtomString& trackID) final;
-    void sourceBufferPrivateDidBecomeReadyForMoreSamples(const AtomString& trackID) final;
-    MediaTime sourceBufferPrivateFastSeekTimeForMediaTime(const MediaTime&, const MediaTime& negativeThreshold, const MediaTime& positiveThreshold) final;
     void sourceBufferPrivateAppendComplete(AppendResult) final;
     void sourceBufferPrivateDidReceiveRenderingError(int errorCode) final;
 
+    // AudioTrackClient
     void audioTrackEnabledChanged(AudioTrack&) final;
+    // VideoTrackClient
     void videoTrackSelectedChanged(VideoTrack&) final;
-
+    // TextTrackClient
     void textTrackKindChanged(TextTrack&) final;
     void textTrackModeChanged(TextTrack&) final;
     void textTrackAddCues(TextTrack&, const TextTrackCueList&) final;
@@ -168,6 +171,7 @@ private:
     void textTrackAddCue(TextTrack&, TextTrackCue&) final;
     void textTrackRemoveCue(TextTrack&, TextTrackCue&) final;
 
+    // EventTarget
     EventTargetInterface eventTargetInterface() const final { return SourceBufferEventTargetInterfaceType; }
 
     bool isRemoved() const;
@@ -181,31 +185,20 @@ private:
 
     bool validateInitializationSegment(const InitializationSegment&);
 
-    void reenqueueMediaForTime(TrackBuffer&, const AtomString& trackID, const MediaTime&);
-    void provideMediaData(TrackBuffer&, const AtomString& trackID);
-    void didDropSample();
-    void evictCodedFrames(size_t newDataSize);
     size_t maximumBufferSize() const;
 
     void monitorBufferingRate();
 
     void removeTimerFired();
-    void removeCodedFrames(const MediaTime& start, const MediaTime& end);
 
     size_t extraMemoryCost() const;
     void reportExtraMemoryAllocated();
-
-    void updateBufferedFromTrackBuffers();
-    void updateMinimumUpcomingPresentationTime(TrackBuffer&, const AtomString& trackID);
-    void resetMinimumUpcomingPresentationTime(TrackBuffer&, const AtomString& trackID);
 
     void appendError(bool);
 
     bool hasAudio() const;
 
     void rangeRemoval(const MediaTime&, const MediaTime&);
-
-    void trySignalAllSamplesInTrackEnqueued(const AtomString&);
 
     friend class Internals;
     WEBCORE_EXPORT Vector<String> bufferedSamplesForTrackID(const AtomString&);
@@ -229,16 +222,8 @@ private:
     Vector<AtomString> m_audioCodecs;
     Vector<AtomString> m_textCodecs;
 
-    MediaTime m_timestampOffset;
     MediaTime m_appendWindowStart;
     MediaTime m_appendWindowEnd;
-
-    MediaTime m_groupStartTimestamp;
-    MediaTime m_groupEndTimestamp;
-
-    HashMap<AtomString, TrackBuffer> m_trackBufferMap;
-    RefPtr<TimeRanges> m_buffered;
-    bool m_bufferedDirty { true };
 
     enum AppendStateType { WaitingForSegment, ParsingInitSegment, ParsingMediaSegment };
     AppendStateType m_appendState;
@@ -253,17 +238,16 @@ private:
     MediaTime m_pendingRemoveEnd;
     Timer m_removeTimer;
 
+    bool m_updating { false };
+    bool m_receivedFirstInitializationSegment { false };
+    bool m_active { false };
+    bool m_shouldGenerateTimestamps { false };
+    bool m_pendingInitializationSegmentForChangeType { false };
+
 #if !RELEASE_LOG_DISABLED
     Ref<const Logger> m_logger;
     const void* m_logIdentifier;
 #endif
-
-    bool m_updating { false };
-    bool m_receivedFirstInitializationSegment { false };
-    bool m_active { false };
-    bool m_bufferFull { false };
-    bool m_shouldGenerateTimestamps { false };
-    bool m_pendingInitializationSegmentForChangeType { false };
 };
 
 } // namespace WebCore

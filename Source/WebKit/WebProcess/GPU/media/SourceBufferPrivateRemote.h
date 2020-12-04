@@ -56,9 +56,6 @@ class SourceBufferPrivateRemote final
     : public CanMakeWeakPtr<SourceBufferPrivateRemote>
     , public WebCore::SourceBufferPrivate
     , private IPC::MessageReceiver
-#if !RELEASE_LOG_DISABLED
-    , private LoggerHelper
-#endif
 {
 public:
     static Ref<SourceBufferPrivateRemote> create(GPUProcessConnection&, RemoteSourceBufferIdentifier, const MediaSourcePrivateRemote&, const MediaPlayerPrivateRemote&);
@@ -70,7 +67,6 @@ private:
     SourceBufferPrivateRemote(GPUProcessConnection&, RemoteSourceBufferIdentifier, const MediaSourcePrivateRemote&, const MediaPlayerPrivateRemote&);
 
     // SourceBufferPrivate overrides
-    void setClient(WebCore::SourceBufferPrivateClient*) final;
     void append(Vector<unsigned char>&&) final;
     void abort() final;
     void resetParserState() final;

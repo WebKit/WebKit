@@ -86,7 +86,27 @@ void RemoteSourceBufferProxy::sourceBufferPrivateDidReceiveInitializationSegment
     m_connectionToWebProcess.connection().send(Messages::SourceBufferPrivateRemote::SourceBufferPrivateDidReceiveInitializationSegment(segmentInfo), m_identifier);
 }
 
-void RemoteSourceBufferProxy::sourceBufferPrivateDidReceiveSample(WebCore::MediaSample&)
+void RemoteSourceBufferProxy::sourceBufferPrivateAppendError(bool)
+{
+    notImplemented();
+}
+
+void RemoteSourceBufferProxy::sourceBufferPrivateDurationChanged(const MediaTime&)
+{
+    notImplemented();
+}
+
+void RemoteSourceBufferProxy::sourceBufferPrivateDidParseSample(double)
+{
+    notImplemented();
+}
+
+void RemoteSourceBufferProxy::sourceBufferPrivateDidDropSample()
+{
+    notImplemented();
+}
+
+void RemoteSourceBufferProxy::sourceBufferPrivateStreamEndedWithDecodeError()
 {
     notImplemented();
 }
@@ -101,22 +121,6 @@ bool RemoteSourceBufferProxy::sourceBufferPrivateHasVideo() const
 {
     notImplemented();
     return false;
-}
-
-void RemoteSourceBufferProxy::sourceBufferPrivateReenqueSamples(const AtomString& trackID)
-{
-    notImplemented();
-}
-
-void RemoteSourceBufferProxy::sourceBufferPrivateDidBecomeReadyForMoreSamples(const AtomString& trackID)
-{
-    notImplemented();
-}
-
-MediaTime RemoteSourceBufferProxy::sourceBufferPrivateFastSeekTimeForMediaTime(const MediaTime&, const MediaTime&, const MediaTime&)
-{
-    notImplemented();
-    return { };
 }
 
 void RemoteSourceBufferProxy::sourceBufferPrivateAppendComplete(SourceBufferPrivateClient::AppendResult appendResult)

@@ -231,6 +231,7 @@ void MediaSource::seekToTime(const MediaTime& time)
     // https://rawgit.com/w3c/media-source/45627646344eea0170dd1cbc5a3d508ca751abb8/media-source-respec.html#mediasource-seeking
 
     m_pendingSeekTime = time;
+    m_private->setIsSeeking(true);
 
     // Run the following steps as part of the "Wait until the user agent has established whether or not the
     // media data for the new playback position is available, and, if it is, until it has decoded enough data
@@ -275,6 +276,7 @@ void MediaSource::completeSeek()
     // with the closest random access point before the new playback position.
     MediaTime pendingSeekTime = m_pendingSeekTime;
     m_pendingSeekTime = MediaTime::invalidTime();
+    m_private->setIsSeeking(false);
     for (auto& sourceBuffer : *m_activeSourceBuffers)
         sourceBuffer->seekToTime(pendingSeekTime);
 

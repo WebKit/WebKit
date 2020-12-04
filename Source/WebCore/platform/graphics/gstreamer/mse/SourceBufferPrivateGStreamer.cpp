@@ -67,19 +67,11 @@ SourceBufferPrivateGStreamer::SourceBufferPrivateGStreamer(MediaSourcePrivateGSt
 {
 }
 
-void SourceBufferPrivateGStreamer::setClient(SourceBufferPrivateClient* client)
-{
-    // setClient(nullptr) is only called from SourceBuffer destructor. At that point, SourceBuffer is also the
-    // owner of the last reference to us, so we're about to be destroyed.
-    ASSERT(client || refCount() == 1);
-    m_sourceBufferPrivateClient = client;
-}
-
 void SourceBufferPrivateGStreamer::append(Vector<unsigned char>&& data)
 {
     ASSERT(isMainThread());
     ASSERT(m_mediaSource);
-    ASSERT(m_sourceBufferPrivateClient);
+    ASSERT(m_client);
 
     GST_DEBUG("Appending %zu bytes", data.size());
     // Wrap the whole Vector object in case the data is stored in the inlined buffer.
@@ -111,6 +103,7 @@ void SourceBufferPrivateGStreamer::resetParserState()
 void SourceBufferPrivateGStreamer::removedFromMediaSource()
 {
     ASSERT(isMainThread());
+    clearTrackBuffers();
     m_mediaSource->removeSourceBuffer(this);
     m_playerPrivate.playbackPipeline()->removeSourceBuffer(this);
     // After this only SourceBuffer should hold a reference to us, which will be destroyed eventually (when JS
@@ -167,12 +160,18 @@ void SourceBufferPrivateGStreamer::notifyReadyForMoreSamples()
     ASSERT(WTF::isMainThread());
     setReadyForMoreSamples(true);
     if (m_notifyWhenReadyForMoreSamples)
-        m_sourceBufferPrivateClient->sourceBufferPrivateDidBecomeReadyForMoreSamples(m_trackId);
+        provideMediaData(m_trackId);
 }
 
 void SourceBufferPrivateGStreamer::setActive(bool isActive)
 {
+    m_isActive = isActive;
     m_mediaSource->sourceBufferPrivateDidChangeActiveState(this, isActive);
+}
+
+bool SourceBufferPrivateGStreamer::isActive() const
+{
+    return m_isActive;
 }
 
 void SourceBufferPrivateGStreamer::notifyClientWhenReadyForMoreSamples(const AtomString& trackId)
@@ -184,22 +183,43 @@ void SourceBufferPrivateGStreamer::notifyClientWhenReadyForMoreSamples(const Ato
 
 void SourceBufferPrivateGStreamer::didReceiveInitializationSegment(const SourceBufferPrivateClient::InitializationSegment& initializationSegment)
 {
-    m_sourceBufferPrivateClient->sourceBufferPrivateDidReceiveInitializationSegment(initializationSegment);
+    didReceiveInitializationSegment(initializationSegment);
 }
 
 void SourceBufferPrivateGStreamer::didReceiveSample(MediaSample& sample)
 {
-    m_sourceBufferPrivateClient->sourceBufferPrivateDidReceiveSample(sample);
+    didReceiveSample(sample);
 }
 
 void SourceBufferPrivateGStreamer::didReceiveAllPendingSamples()
 {
-    m_sourceBufferPrivateClient->sourceBufferPrivateAppendComplete(SourceBufferPrivateClient::AppendResult::AppendSucceeded);
+    m_client->sourceBufferPrivateAppendComplete(SourceBufferPrivateClient::AppendResult::AppendSucceeded);
 }
 
 void SourceBufferPrivateGStreamer::appendParsingFailed()
 {
-    m_sourceBufferPrivateClient->sourceBufferPrivateAppendComplete(SourceBufferPrivateClient::AppendResult::ParsingFailed);
+    m_client->sourceBufferPrivateAppendComplete(SourceBufferPrivateClient::AppendResult::ParsingFailed);
+}
+
+bool SourceBufferPrivateGStreamer::isSeeking() const
+{
+    return m_mediaSource && m_mediaSource->isSeeking();
+}
+
+MediaTime SourceBufferPrivateGStreamer::currentMediaTime() const
+{
+    if (!m_mediaSource)
+        return { };
+
+    return m_mediaSource->currentMediaTime();
+}
+
+MediaTime SourceBufferPrivateGStreamer::duration() const
+{
+    if (!m_mediaSource)
+        return { };
+
+    return m_mediaSource->duration();
 }
 
 #if !RELEASE_LOG_DISABLED

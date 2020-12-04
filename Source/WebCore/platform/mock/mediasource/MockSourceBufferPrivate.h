@@ -49,13 +49,10 @@ public:
     bool hasVideo() const;
     bool hasAudio() const;
 
-    MediaTime fastSeekTimeForMediaTime(const MediaTime&, const MediaTime& negativeThreshold, const MediaTime& positiveThreshold);
-
 private:
     explicit MockSourceBufferPrivate(MockMediaSourcePrivate*);
 
     // SourceBufferPrivate overrides
-    void setClient(SourceBufferPrivateClient*) final;
     void append(Vector<unsigned char>&&) final;
     void abort() final;
     void resetParserState() final;
@@ -66,11 +63,15 @@ private:
     void setMinimumUpcomingPresentationTime(const AtomString&, const MediaTime&) final;
     void clearMinimumUpcomingPresentationTime(const AtomString&) final;
     bool canSwitchToType(const ContentType&) final;
+    bool isSeeking() const final;
+    MediaTime currentMediaTime() const final;
+    MediaTime duration() const final;
 
     void flush(const AtomString&) final { m_enqueuedSamples.clear(); m_minimumUpcomingPresentationTime = MediaTime::invalidTime(); }
     void enqueueSample(Ref<MediaSample>&&, const AtomString&) final;
     bool isReadyForMoreSamples(const AtomString&) final { return !m_maxQueueDepth || m_enqueuedSamples.size() < m_maxQueueDepth.value(); }
     void setActive(bool) final;
+    bool isActive() const final;
 
     Vector<String> enqueuedSamplesForTrackID(const AtomString&) final;
     MediaTime minimumUpcomingPresentationTimeForTrackID(const AtomString&) final;
@@ -80,16 +81,26 @@ private:
     void didReceiveSample(const MockSampleBox&);
 
 #if !RELEASE_LOG_DISABLED
-    const Logger& sourceBufferLogger() const final;
-    const void* sourceBufferLogIdentifier() final;
+    const Logger& logger() const final { return m_logger.get(); }
+    const char* logClassName() const override { return "MockSourceBufferPrivate"; }
+    const void* logIdentifier() const final { return m_logIdentifier; }
+    WTFLogChannel& logChannel() const final;
+
+    const Logger& sourceBufferLogger() const final { return m_logger.get(); }
+    const void* sourceBufferLogIdentifier() final { return logIdentifier(); }
 #endif
 
     MockMediaSourcePrivate* m_mediaSource;
-    SourceBufferPrivateClient* m_client;
+    bool m_isActive { false };
     MediaTime m_minimumUpcomingPresentationTime;
     Vector<String> m_enqueuedSamples;
     Optional<size_t> m_maxQueueDepth;
     Vector<char> m_inputBuffer;
+
+#if !RELEASE_LOG_DISABLED
+    Ref<const Logger> m_logger;
+    const void* m_logIdentifier;
+#endif
 };
 
 }

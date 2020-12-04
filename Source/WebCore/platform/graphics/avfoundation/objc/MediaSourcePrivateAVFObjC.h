@@ -75,13 +75,14 @@ public:
     void waitForSeekCompleted() override;
     void seekCompleted() override;
 
-    MediaTime duration();
+    MediaTime duration() const;
     std::unique_ptr<PlatformTimeRanges> buffered();
 
     bool hasAudio() const;
     bool hasVideo() const;
     bool hasSelectedVideo() const;
 
+    MediaTime currentMediaTime() const;
     void willSeek();
     void seekToTime(const MediaTime&);
     MediaTime fastSeekTimeForMediaTime(const MediaTime&, const MediaTime& negativeThreshold, const MediaTime& positiveThreshold);
@@ -134,7 +135,7 @@ private:
     Vector<SourceBufferPrivateAVFObjC*> m_activeSourceBuffers;
     Deque<SourceBufferPrivateAVFObjC*> m_sourceBuffersNeedingSessions;
     SourceBufferPrivateAVFObjC* m_sourceBufferWithSelectedVideo { nullptr };
-    bool m_isEnded;
+    bool m_isEnded { false };
 #if ENABLE(ENCRYPTED_MEDIA)
     RefPtr<CDMInstance> m_cdmInstance;
 #endif

@@ -59,14 +59,13 @@ public:
     virtual ~RemoteSourceBufferProxy();
 
     void sourceBufferPrivateDidReceiveInitializationSegment(const InitializationSegment&) final;
-    void sourceBufferPrivateDidReceiveSample(WebCore::MediaSample&) final;
+    void sourceBufferPrivateAppendError(bool decodeError) final;
+    void sourceBufferPrivateDurationChanged(const MediaTime&) final;
+    void sourceBufferPrivateDidParseSample(double sampleDuration) final;
+    void sourceBufferPrivateDidDropSample() final;
+    void sourceBufferPrivateStreamEndedWithDecodeError() final;
     bool sourceBufferPrivateHasAudio() const final;
     bool sourceBufferPrivateHasVideo() const final;
-
-    void sourceBufferPrivateReenqueSamples(const AtomString& trackID) final;
-    void sourceBufferPrivateDidBecomeReadyForMoreSamples(const AtomString& trackID) final;
-
-    MediaTime sourceBufferPrivateFastSeekTimeForMediaTime(const MediaTime&, const MediaTime&, const MediaTime&) final;
 
     void sourceBufferPrivateAppendComplete(WebCore::SourceBufferPrivateClient::AppendResult) final;
     void sourceBufferPrivateDidReceiveRenderingError(int errorCode) final;

@@ -64,14 +64,13 @@ public:
         Vector<TextTrackInformation> textTracks;
     };
     virtual void sourceBufferPrivateDidReceiveInitializationSegment(const InitializationSegment&) = 0;
-    virtual void sourceBufferPrivateDidReceiveSample(MediaSample&) = 0;
+    virtual void sourceBufferPrivateAppendError(bool decodeError) = 0;
+    virtual void sourceBufferPrivateDurationChanged(const MediaTime&) = 0;
+    virtual void sourceBufferPrivateDidParseSample(double frameDuration) = 0;
+    virtual void sourceBufferPrivateDidDropSample() = 0;
+    virtual void sourceBufferPrivateStreamEndedWithDecodeError() = 0;
     virtual bool sourceBufferPrivateHasAudio() const = 0;
     virtual bool sourceBufferPrivateHasVideo() const = 0;
-
-    virtual void sourceBufferPrivateReenqueSamples(const AtomString& trackID) = 0;
-    virtual void sourceBufferPrivateDidBecomeReadyForMoreSamples(const AtomString& trackID) = 0;
-
-    virtual MediaTime sourceBufferPrivateFastSeekTimeForMediaTime(const MediaTime&, const MediaTime&, const MediaTime&) = 0;
 
     enum class AppendResult : uint8_t {
         AppendSucceeded,

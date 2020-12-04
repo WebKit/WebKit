@@ -75,11 +75,6 @@ SourceBufferPrivateRemote::~SourceBufferPrivateRemote()
     m_gpuProcessConnection.messageReceiverMap().removeMessageReceiver(Messages::SourceBufferPrivateRemote::messageReceiverName(), m_remoteSourceBufferIdentifier.toUInt64());
 }
 
-void SourceBufferPrivateRemote::setClient(SourceBufferPrivateClient* client)
-{
-    m_client = client;
-}
-
 void SourceBufferPrivateRemote::append(Vector<unsigned char>&& data)
 {
     m_gpuProcessConnection.connection().send(Messages::RemoteSourceBufferProxy::Append(IPC::DataReference(data)), m_remoteSourceBufferIdentifier);

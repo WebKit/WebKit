@@ -28,6 +28,7 @@
 
 #if ENABLE(MEDIA_SOURCE)
 
+#include "Logging.h"
 #include "MediaDescription.h"
 #include "MediaPlayer.h"
 #include "MediaSample.h"
@@ -125,16 +126,14 @@ Ref<MockSourceBufferPrivate> MockSourceBufferPrivate::create(MockMediaSourcePriv
 
 MockSourceBufferPrivate::MockSourceBufferPrivate(MockMediaSourcePrivate* parent)
     : m_mediaSource(parent)
-    , m_client(0)
+#if !RELEASE_LOG_DISABLED
+    , m_logger(parent->logger())
+    , m_logIdentifier(parent->nextSourceBufferLogIdentifier())
+#endif
 {
 }
 
 MockSourceBufferPrivate::~MockSourceBufferPrivate() = default;
-
-void MockSourceBufferPrivate::setClient(SourceBufferPrivateClient* client)
-{
-    m_client = client;
-}
 
 void MockSourceBufferPrivate::append(Vector<unsigned char>&& data)
 {
@@ -192,16 +191,15 @@ void MockSourceBufferPrivate::didReceiveInitializationSegment(const MockInitiali
         }
     }
 
-    m_client->sourceBufferPrivateDidReceiveInitializationSegment(segment);
+    SourceBufferPrivate::didReceiveInitializationSegment(segment);
 }
-
 
 void MockSourceBufferPrivate::didReceiveSample(const MockSampleBox& sampleBox)
 {
     if (!m_client)
         return;
 
-    m_client->sourceBufferPrivateDidReceiveSample(MockMediaSample::create(sampleBox));
+    SourceBufferPrivate::didReceiveSample(MockMediaSample::create(sampleBox));
 }
 
 void MockSourceBufferPrivate::abort()
@@ -231,8 +229,14 @@ void MockSourceBufferPrivate::setReadyState(MediaPlayer::ReadyState readyState)
 
 void MockSourceBufferPrivate::setActive(bool isActive)
 {
+    m_isActive = isActive;
     if (m_mediaSource)
         m_mediaSource->sourceBufferPrivateDidChangeActiveState(this, isActive);
+}
+
+bool MockSourceBufferPrivate::isActive() const
+{
+    return m_isActive;
 }
 
 Vector<String> MockSourceBufferPrivate::enqueuedSamplesForTrackID(const AtomString&)
@@ -273,6 +277,27 @@ bool MockSourceBufferPrivate::canSwitchToType(const ContentType& contentType)
     return MockMediaPlayerMediaSource::supportsType(parameters) != MediaPlayer::SupportsType::IsNotSupported;
 }
 
+bool MockSourceBufferPrivate::isSeeking() const
+{
+    return m_mediaSource && m_mediaSource->isSeeking();
+}
+
+MediaTime MockSourceBufferPrivate::currentMediaTime() const
+{
+    if (!m_mediaSource)
+        return { };
+
+    return m_mediaSource->currentMediaTime();
+}
+
+MediaTime MockSourceBufferPrivate::duration() const
+{
+    if (!m_mediaSource)
+        return { };
+
+    return m_mediaSource->duration();
+}
+
 void MockSourceBufferPrivate::enqueueSample(Ref<MediaSample>&& sample, const AtomString&)
 {
     if (!m_mediaSource)
@@ -307,22 +332,10 @@ bool MockSourceBufferPrivate::hasAudio() const
     return m_client && m_client->sourceBufferPrivateHasAudio();
 }
 
-MediaTime MockSourceBufferPrivate::fastSeekTimeForMediaTime(const MediaTime& time, const MediaTime& negativeThreshold, const MediaTime& positiveThreshold)
-{
-    if (m_client)
-        return m_client->sourceBufferPrivateFastSeekTimeForMediaTime(time, negativeThreshold, positiveThreshold);
-    return time;
-}
-
 #if !RELEASE_LOG_DISABLED
-const Logger& MockSourceBufferPrivate::sourceBufferLogger() const
+WTFLogChannel& MockSourceBufferPrivate::logChannel() const
 {
-    return m_mediaSource->mediaSourceLogger();
-}
-
-const void* MockSourceBufferPrivate::sourceBufferLogIdentifier()
-{
-    return m_mediaSource->mediaSourceLogIdentifier();
+    return LogMediaSource;
 }
 #endif
 

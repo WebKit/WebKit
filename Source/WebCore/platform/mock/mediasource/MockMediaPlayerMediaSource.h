@@ -49,6 +49,7 @@ public:
     virtual ~MockMediaPlayerMediaSource();
 
     void advanceCurrentTime();
+    MediaTime currentMediaTime() const override;
     void updateDuration(const MediaTime&);
 
     MediaPlayer::ReadyState readyState() const override;
@@ -84,7 +85,6 @@ private:
     bool didLoadingProgress() const override;
     void setSize(const IntSize&) override;
     void paint(GraphicsContext&, const FloatRect&) override;
-    MediaTime currentMediaTime() const override;
     MediaTime durationMediaTime() const override;
     void seekWithTolerance(const MediaTime&, const MediaTime&, const MediaTime&) override;
     Optional<VideoPlaybackQualityMetrics> videoPlaybackQualityMetrics() override;

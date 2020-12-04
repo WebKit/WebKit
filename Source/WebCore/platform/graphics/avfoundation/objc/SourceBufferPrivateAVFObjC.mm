@@ -384,8 +384,7 @@ void SourceBufferPrivateAVFObjC::didParseInitializationData(InitializationSegmen
     if (m_mediaSource)
         m_mediaSource->player()->characteristicsChanged();
 
-    if (m_client)
-        m_client->sourceBufferPrivateDidReceiveInitializationSegment(segment);
+    didReceiveInitializationSegment(segment);
 }
 
 void SourceBufferPrivateAVFObjC::didEncounterErrorDuringParsing(int32_t code)
@@ -409,8 +408,7 @@ void SourceBufferPrivateAVFObjC::didProvideMediaDataForTrackID(Ref<MediaSample>&
     }
 
     DEBUG_LOG(LOGIDENTIFIER, mediaSample.get());
-    if (m_client)
-        m_client->sourceBufferPrivateDidReceiveSample(mediaSample);
+    didReceiveSample(mediaSample);
 }
 
 void SourceBufferPrivateAVFObjC::willProvideContentKeyRequestInitializationDataForTrackID(uint64_t trackID)
@@ -491,11 +489,6 @@ void SourceBufferPrivateAVFObjC::didProvideContentKeyRequestInitializationDataFo
     UNUSED_PARAM(initData);
     UNUSED_PARAM(trackID);
     UNUSED_PARAM(hasSessionSemaphore);
-}
-
-void SourceBufferPrivateAVFObjC::setClient(SourceBufferPrivateClient* client)
-{
-    m_client = client;
 }
 
 static dispatch_queue_t globalDataParserQueue()
@@ -667,6 +660,7 @@ void SourceBufferPrivateAVFObjC::removedFromMediaSource()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
 
+    clearTrackBuffers();
     destroyParser();
     destroyRenderers();
 
@@ -1100,15 +1094,14 @@ bool SourceBufferPrivateAVFObjC::isReadyForMoreSamples(const AtomString& trackID
 void SourceBufferPrivateAVFObjC::setActive(bool isActive)
 {
     ALWAYS_LOG(LOGIDENTIFIER, isActive);
+    m_isActive = isActive;
     if (m_mediaSource)
         m_mediaSource->sourceBufferPrivateDidChangeActiveState(this, isActive);
 }
 
-MediaTime SourceBufferPrivateAVFObjC::fastSeekTimeForMediaTime(const MediaTime& time, const MediaTime& negativeThreshold, const MediaTime& positiveThreshold)
+bool SourceBufferPrivateAVFObjC::isActive() const
 {
-    if (!m_client)
-        return time;
-    return m_client->sourceBufferPrivateFastSeekTimeForMediaTime(time, negativeThreshold, positiveThreshold);
+    return m_isActive;
 }
 
 void SourceBufferPrivateAVFObjC::willSeek()
@@ -1135,8 +1128,7 @@ void SourceBufferPrivateAVFObjC::didBecomeReadyForMoreSamples(uint64_t trackID)
     else
         return;
 
-    if (m_client)
-        m_client->sourceBufferPrivateDidBecomeReadyForMoreSamples(AtomString::number(trackID));
+    provideMediaData(AtomString::number(trackID));
 }
 
 void SourceBufferPrivateAVFObjC::notifyClientWhenReadyForMoreSamples(const AtomString& trackIDString)
@@ -1196,6 +1188,27 @@ bool SourceBufferPrivateAVFObjC::canSwitchToType(const ContentType& contentType)
     return MediaPlayerPrivateMediaSourceAVFObjC::supportsTypeAndCodecs(parameters) != MediaPlayer::SupportsType::IsNotSupported;
 }
 
+bool SourceBufferPrivateAVFObjC::isSeeking() const
+{
+    return m_mediaSource && m_mediaSource->isSeeking();
+}
+
+MediaTime SourceBufferPrivateAVFObjC::currentMediaTime() const
+{
+    if (!m_mediaSource)
+        return { };
+
+    return m_mediaSource->currentMediaTime();
+}
+
+MediaTime SourceBufferPrivateAVFObjC::duration() const
+{
+    if (!m_mediaSource)
+        return { };
+
+    return m_mediaSource->duration();
+}
+
 void SourceBufferPrivateAVFObjC::setVideoLayer(AVSampleBufferDisplayLayer* layer)
 {
     if (layer == m_displayLayer)
@@ -1218,8 +1231,7 @@ void SourceBufferPrivateAVFObjC::setVideoLayer(AVSampleBufferDisplayLayer* layer
                 weakThis->didBecomeReadyForMoreSamples(m_enabledVideoTrackID);
         }];
         [m_errorListener beginObservingLayer:m_displayLayer.get()];
-        if (m_client)
-            m_client->sourceBufferPrivateReenqueSamples(AtomString::number(m_enabledVideoTrackID));
+        reenqueSamples(AtomString::number(m_enabledVideoTrackID));
     }
 }
 
@@ -1248,8 +1260,7 @@ void SourceBufferPrivateAVFObjC::setDecompressionSession(WebCoreDecompressionSes
         if (weakThis && weakThis->m_mediaSource)
             weakThis->m_mediaSource->player()->setHasAvailableVideoFrame(true);
     });
-    if (m_client)
-        m_client->sourceBufferPrivateReenqueSamples(AtomString::number(m_enabledVideoTrackID));
+    reenqueSamples(AtomString::number(m_enabledVideoTrackID));
 }
 
 #if !RELEASE_LOG_DISABLED

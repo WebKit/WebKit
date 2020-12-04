@@ -35,7 +35,12 @@ namespace WebCore {
 class MockMediaPlayerMediaSource;
 class MockSourceBufferPrivate;
 
-class MockMediaSourcePrivate final : public MediaSourcePrivate {
+class MockMediaSourcePrivate final
+    : public MediaSourcePrivate
+#if !RELEASE_LOG_DISABLED
+    , private LoggerHelper
+#endif
+{
 public:
     static Ref<MockMediaSourcePrivate> create(MockMediaPlayerMediaSource&, MediaSourcePrivateClient&);
     virtual ~MockMediaSourcePrivate();
@@ -52,6 +57,7 @@ public:
 
     void seekToTime(const MediaTime&);
     MediaTime seekToTime(const MediaTime&, const MediaTime& negativeThreshold, const MediaTime& positiveThreshold);
+    MediaTime currentMediaTime() const;
 
     Optional<VideoPlaybackQualityMetrics> videoPlaybackQualityMetrics();
 
@@ -61,8 +67,12 @@ public:
     void incrementTotalFrameDelayBy(const MediaTime& delay) { m_totalFrameDelay += delay; }
 
 #if !RELEASE_LOG_DISABLED
-    const Logger& mediaSourceLogger() const;
-    const void* mediaSourceLogIdentifier();
+    const Logger& logger() const final { return m_logger.get(); }
+    const char* logClassName() const override { return "MockMediaSourcePrivate"; }
+    const void* logIdentifier() const final { return m_logIdentifier; }
+    WTFLogChannel& logChannel() const final;
+
+    const void* nextSourceBufferLogIdentifier() { return childLogIdentifier(m_logIdentifier, ++m_nextSourceBufferID); }
 #endif
 
 private:
@@ -93,6 +103,11 @@ private:
     unsigned m_droppedVideoFrames { 0 };
     unsigned m_corruptedVideoFrames { 0 };
     MediaTime m_totalFrameDelay;
+#if !RELEASE_LOG_DISABLED
+    Ref<const Logger> m_logger;
+    const void* m_logIdentifier;
+    uint64_t m_nextSourceBufferID { 0 };
+#endif
 };
 
 }
