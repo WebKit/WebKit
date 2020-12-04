@@ -1,3 +1,15 @@
+2020-12-03  Alex Christensen  <achristensen@webkit.org>
+
+        Serialize NFA to disk before converting it to a DFA when compiling a WKContentRuleList
+        https://bugs.webkit.org/show_bug.cgi?id=219452
+
+        Reviewed by Geoffrey Garen.
+
+        * UIProcess/API/Cocoa/WKContentRuleListStore.mm:
+        (-[WKContentRuleListStore _compileContentRuleListForIdentifier:encodedContentRuleList:completionHandler:]):
+        * UIProcess/API/Cocoa/WKContentRuleListStorePrivate.h:
+        Remove NS_RELEASES_ARGUMENT because it was incorrect and unnecessary because the WTF::String is copied to a background thread.
+
 2020-12-03  Chris Dumez  <cdumez@apple.com>
 
         Make sure the GPUConnectionToWebProcess gets destroyed when the connection to the WebProcess gets severed

@@ -89,6 +89,8 @@ const std::error_category& contentExtensionErrorCategory()
                 return "A list cannot have if-domain and unless-domain mixed with if-top-url and unless-top-url";
             case ContentExtensionError::JSONInvalidNotification:
                 return "A notify action must have a string notification";
+            case ContentExtensionError::ErrorWritingSerializedNFA:
+                return "Internal I/O error";
             }
 
             return std::string();

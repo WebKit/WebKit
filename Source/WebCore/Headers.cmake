@@ -323,6 +323,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     contentextensions/NFA.h
     contentextensions/NFANode.h
     contentextensions/NFAToDFA.h
+    contentextensions/SerializedNFA.h
     contentextensions/Term.h
     contentextensions/URLFilterParser.h
 

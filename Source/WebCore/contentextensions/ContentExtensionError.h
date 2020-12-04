@@ -59,6 +59,8 @@ enum class ContentExtensionError {
     JSONInvalidCSSDisplayNoneActionType,
     JSONInvalidNotification,
     JSONInvalidRegex,
+
+    ErrorWritingSerializedNFA,
 };
 
 extern const char* WebKitContentBlockerDomain;

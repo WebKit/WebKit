@@ -665,6 +665,7 @@ contentextensions/DFAMinimizer.cpp
 contentextensions/DFANode.cpp
 contentextensions/NFA.cpp
 contentextensions/NFAToDFA.cpp
+contentextensions/SerializedNFA.cpp
 contentextensions/URLFilterParser.cpp
 crypto/CryptoAlgorithm.cpp
 crypto/CryptoAlgorithmRegistry.cpp

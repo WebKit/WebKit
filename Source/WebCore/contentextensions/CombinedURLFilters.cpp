@@ -444,7 +444,7 @@ static void generateNFAForSubtree(NFA& nfa, ImmutableCharNFANodeBuilder&& subtre
     clearReverseSuffixTree(reverseSuffixTreeRoots);
 }
 
-void CombinedURLFilters::processNFAs(size_t maxNFASize, const WTF::Function<void(NFA&&)>& handler)
+bool CombinedURLFilters::processNFAs(size_t maxNFASize, Function<bool(NFA&&)>&& handler)
 {
 #if CONTENT_EXTENSIONS_STATE_MACHINE_DEBUGGING
     print();
@@ -487,9 +487,9 @@ void CombinedURLFilters::processNFAs(size_t maxNFASize, const WTF::Function<void
             ASSERT(stack.last());
             generateNFAForSubtree(nfa, WTFMove(lastNode), *stack.last(), m_actions, maxNFASize);
         }
-        nfa.finalize();
 
-        handler(WTFMove(nfa));
+        if (!handler(WTFMove(nfa)))
+            return false;
 
         // Clean up any processed leaf nodes.
         while (true) {
@@ -503,6 +503,7 @@ void CombinedURLFilters::processNFAs(size_t maxNFASize, const WTF::Function<void
                 break; // Leave the empty root.
         }
     }
+    return true;
 }
 
 } // namespace ContentExtensions

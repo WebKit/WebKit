@@ -58,112 +58,13 @@ struct ImmutableNFA {
     Vector<uint32_t, 0, ContentExtensionsOverflowHandler> epsilonTransitionsTargets;
     Vector<ActionType, 0, ContentExtensionsOverflowHandler> actions;
 
-    struct ConstTargetIterator {
-        const ImmutableNFA& immutableNFA;
-        uint32_t position;
-
-        const uint32_t& operator*() const { return immutableNFA.targets[position]; }
-        const uint32_t* operator->() const { return &immutableNFA.targets[position]; }
-
-        bool operator==(const ConstTargetIterator& other) const
-        {
-            ASSERT(&immutableNFA == &other.immutableNFA);
-            return position == other.position;
-        }
-        bool operator!=(const ConstTargetIterator& other) const { return !(*this == other); }
-
-        ConstTargetIterator& operator++()
-        {
-            ++position;
-            return *this;
-        }
-    };
-
-    struct IterableConstTargets {
-        const ImmutableNFA& immutableNFA;
-        uint32_t targetStart;
-        uint32_t targetEnd;
-
-        ConstTargetIterator begin() const { return { immutableNFA, targetStart }; }
-        ConstTargetIterator end() const { return { immutableNFA, targetEnd }; }
-    };
-
-    struct ConstRangeIterator {
-        const ImmutableNFA& immutableNFA;
-        uint32_t position;
-
-        bool operator==(const ConstRangeIterator& other) const
-        {
-            ASSERT(&immutableNFA == &other.immutableNFA);
-            return position == other.position;
-        }
-        bool operator!=(const ConstRangeIterator& other) const { return !(*this == other); }
-
-        ConstRangeIterator& operator++()
-        {
-            ++position;
-            return *this;
-        }
-
-        CharacterType first() const
-        {
-            return range().first;
-        }
-
-        CharacterType last() const
-        {
-            return range().last;
-        }
-
-        IterableConstTargets data() const
-        {
-            const ImmutableRange<CharacterType>& range = this->range();
-            return { immutableNFA, range.targetStart, range.targetEnd };
-        };
-
-    private:
-        const ImmutableRange<CharacterType>& range() const
-        {
-            return immutableNFA.transitions[position];
-        }
-    };
-
-    struct IterableConstRange {
-        const ImmutableNFA& immutableNFA;
-        uint32_t rangesStart;
-        uint32_t rangesEnd;
-
-        ConstRangeIterator begin() const { return { immutableNFA, rangesStart }; }
-        ConstRangeIterator end() const { return { immutableNFA, rangesEnd }; }
-
-#if CONTENT_EXTENSIONS_STATE_MACHINE_DEBUGGING
-        void debugPrint() const
-        {
-            for (const auto& range : *this)
-                WTFLogAlways("    %d-%d", range.first, range.last);
-        }
-#endif
-    };
-
-    IterableConstRange transitionsForNode(uint32_t nodeId) const
+    void clear()
     {
-        const ImmutableNFANode& node = nodes[nodeId];
-        return { *this, node.rangesStart, node.rangesEnd };
-    };
-
-    uint32_t root() const
-    {
-        RELEASE_ASSERT(!nodes.isEmpty());
-        return 0;
-    }
-
-    void finalize()
-    {
-        nodes.shrinkToFit();
-        transitions.shrinkToFit();
-        targets.shrinkToFit();
-        epsilonTransitionsTargets.shrinkToFit();
-        actions.shrinkToFit();
+        nodes.clear();
+        transitions.clear();
+        targets.clear();
+        epsilonTransitionsTargets.clear();
+        actions.clear();
     }
 
     size_t memoryUsed() const

@@ -33,6 +33,7 @@
 #include "ImmutableNFA.h"
 #include "MutableRangeList.h"
 #include "NFA.h"
+#include "SerializedNFA.h"
 #include <wtf/DataLog.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -51,17 +52,17 @@ typedef Vector<UniqueNodeList, 0, ContentExtensionsOverflowHandler> NFANodeClosu
 // FIXME: include the hash inside NodeIdSet.
 typedef NFANodeIndexSet NodeIdSet;
 
-static inline void epsilonClosureExcludingSelf(NFA& nfa, unsigned nodeId, UniqueNodeList& output)
+static inline void epsilonClosureExcludingSelf(const SerializedNFA& nfa, unsigned nodeId, UniqueNodeList& output)
 {
     NodeIdSet closure({ nodeId });
     Vector<unsigned, 64, ContentExtensionsOverflowHandler> unprocessedNodes({ nodeId });
 
     do {
         unsigned unprocessedNodeId = unprocessedNodes.takeLast();
-        const auto& node = nfa.nodes[unprocessedNodeId];
+        const auto& node = nfa.nodes()[unprocessedNodeId];
 
         for (uint32_t epsilonTargetIndex = node.epsilonTransitionTargetsStart; epsilonTargetIndex < node.epsilonTransitionTargetsEnd; ++epsilonTargetIndex) {
-            uint32_t targetNodeId = nfa.epsilonTransitionsTargets[epsilonTargetIndex];
+            uint32_t targetNodeId = nfa.epsilonTransitionsTargets()[epsilonTargetIndex];
             auto addResult = closure.add(targetNodeId);
             if (addResult.isNewEntry) {
                 unprocessedNodes.append(targetNodeId);
@@ -73,18 +74,16 @@ static inline void epsilonClosureExcludingSelf(NFA& nfa, unsigned nodeId, Unique
     output.shrinkToFit();
 }
 
-static void resolveEpsilonClosures(NFA& nfa, NFANodeClosures& nfaNodeClosures)
+static NFANodeClosures resolveEpsilonClosures(const SerializedNFA& nfa)
 {
-    unsigned nfaGraphSize = nfa.nodes.size();
+    NFANodeClosures nfaNodeClosures;
+    unsigned nfaGraphSize = nfa.nodes().size();
     nfaNodeClosures.resize(nfaGraphSize);
 
     for (unsigned nodeId = 0; nodeId < nfaGraphSize; ++nodeId)
         epsilonClosureExcludingSelf(nfa, nodeId, nfaNodeClosures[nodeId]);
 
-    // Every nodes still point to that table, but we won't use it ever again.
-    // Clear it to get back the memory. That's not pretty but memory is important here, we have both
-    // graphs existing at the same time.
-    nfa.epsilonTransitionsTargets.clear();
+    return nfaNodeClosures;
 }
 
 static ALWAYS_INLINE void extendSetWithClosure(const NFANodeClosures& nfaNodeClosures, unsigned nodeId, NodeIdSet& set)
@@ -215,7 +214,7 @@ struct UniqueNodeIdSetHashHashTraits : public WTF::CustomHashTraits<UniqueNodeId
 typedef HashSet<std::unique_ptr<UniqueNodeIdSet>, UniqueNodeIdSetHash, UniqueNodeIdSetHashHashTraits> UniqueNodeIdSetTable;
 
 struct NodeIdSetToUniqueNodeIdSetSource {
-    NodeIdSetToUniqueNodeIdSetSource(DFA& dfa, const NFA& nfa, const NodeIdSet& nodeIdSet)
+    NodeIdSetToUniqueNodeIdSetSource(DFA& dfa, const SerializedNFA& nfa, const NodeIdSet& nodeIdSet)
         : dfa(dfa)
         , nfa(nfa)
         , nodeIdSet(nodeIdSet)
@@ -227,7 +226,7 @@ struct NodeIdSetToUniqueNodeIdSetSource {
         this->hash = DefaultHash<unsigned>::hash(hash);
     }
     DFA& dfa;
-    const NFA& nfa;
+    const SerializedNFA& nfa;
     const NodeIdSet& nodeIdSet;
     unsigned hash;
 };
@@ -250,9 +249,9 @@ struct NodeIdSetToUniqueNodeIdSetTranslator {
         HashSet<uint64_t, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> actions;
 
         for (unsigned nfaNodeId : source.nodeIdSet) {
-            const auto& nfaNode = source.nfa.nodes[nfaNodeId];
+            const auto& nfaNode = source.nfa.nodes()[nfaNodeId];
             for (unsigned actionIndex = nfaNode.actionStart; actionIndex < nfaNode.actionEnd; ++actionIndex)
-                actions.add(source.nfa.actions[actionIndex]);
+                actions.add(source.nfa.actions()[actionIndex]);
         }
 
         unsigned actionsStart = source.dfa.actions.size();
@@ -299,7 +298,7 @@ struct DataConverterWithEpsilonClosure {
     }
 };
 
-static inline void createCombinedTransition(PreallocatedNFANodeRangeList& combinedRangeList, const UniqueNodeIdSetImpl& sourceNodeSet, const NFA& immutableNFA, const NFANodeClosures& nfaNodeclosures)
+static inline void createCombinedTransition(PreallocatedNFANodeRangeList& combinedRangeList, const UniqueNodeIdSetImpl& sourceNodeSet, const SerializedNFA& serializedNFA, const NFANodeClosures& nfaNodeclosures)
 {
     combinedRangeList.clear();
 
@@ -308,14 +307,14 @@ static inline void createCombinedTransition(PreallocatedNFANodeRangeList& combin
     DataConverterWithEpsilonClosure converter { nfaNodeclosures };
     for (unsigned i = 0; i < sourceNodeSet.m_size; ++i) {
         unsigned nodeId = buffer[i];
-        auto transitions = immutableNFA.transitionsForNode(nodeId);
+        auto transitions = serializedNFA.transitionsForNode(nodeId);
         combinedRangeList.extend(transitions.begin(), transitions.end(), converter);
     }
 }
 
-static ALWAYS_INLINE unsigned getOrCreateDFANode(const NodeIdSet& nfaNodeSet, const NFA& nfa, DFA& dfa, UniqueNodeIdSetTable& uniqueNodeIdSetTable, UniqueNodeQueue& unprocessedNodes)
+static ALWAYS_INLINE unsigned getOrCreateDFANode(const NodeIdSet& nfaNodeSet, const SerializedNFA& serializedNFA, DFA& dfa, UniqueNodeIdSetTable& uniqueNodeIdSetTable, UniqueNodeQueue& unprocessedNodes)
 {
-    NodeIdSetToUniqueNodeIdSetSource nodeIdSetToUniqueNodeIdSetSource(dfa, nfa, nfaNodeSet);
+    NodeIdSetToUniqueNodeIdSetSource nodeIdSetToUniqueNodeIdSetSource(dfa, serializedNFA, nfaNodeSet);
     auto uniqueNodeIdAddResult = uniqueNodeIdSetTable.add<NodeIdSetToUniqueNodeIdSetTranslator>(nodeIdSetToUniqueNodeIdSetSource);
     if (uniqueNodeIdAddResult.isNewEntry)
         unprocessedNodes.append(uniqueNodeIdAddResult.iterator->impl());
@@ -323,19 +322,21 @@ static ALWAYS_INLINE unsigned getOrCreateDFANode(const NodeIdSet& nfaNodeSet, co
     return uniqueNodeIdAddResult.iterator->impl()->m_dfaNodeId;
 }
 
-DFA NFAToDFA::convert(NFA& nfa)
+Optional<DFA> NFAToDFA::convert(NFA&& nfa)
 {
-    NFANodeClosures nfaNodeClosures;
-    resolveEpsilonClosures(nfa, nfaNodeClosures);
+    auto serializedNFA = SerializedNFA::serialize(WTFMove(nfa));
+    if (!serializedNFA)
+        return WTF::nullopt;
 
+    NFANodeClosures nfaNodeClosures = resolveEpsilonClosures(*serializedNFA);
     DFA dfa;
 
-    NodeIdSet initialSet({ nfa.root() });
-    extendSetWithClosure(nfaNodeClosures, nfa.root(), initialSet);
+    NodeIdSet initialSet({ serializedNFA->root() });
+    extendSetWithClosure(nfaNodeClosures, serializedNFA->root(), initialSet);
 
     UniqueNodeIdSetTable uniqueNodeIdSetTable;
 
-    NodeIdSetToUniqueNodeIdSetSource initialNodeIdSetToUniqueNodeIdSetSource(dfa, nfa, initialSet);
+    NodeIdSetToUniqueNodeIdSetSource initialNodeIdSetToUniqueNodeIdSetSource(dfa, *serializedNFA, initialSet);
     auto addResult = uniqueNodeIdSetTable.add<NodeIdSetToUniqueNodeIdSetTranslator>(initialNodeIdSetToUniqueNodeIdSetSource);
 
     UniqueNodeQueue unprocessedNodes;
@@ -344,11 +345,11 @@ DFA NFAToDFA::convert(NFA& nfa)
     PreallocatedNFANodeRangeList combinedRangeList;
     do {
         UniqueNodeIdSetImpl* uniqueNodeIdSetImpl = unprocessedNodes.takeLast();
-        createCombinedTransition(combinedRangeList, *uniqueNodeIdSetImpl, nfa, nfaNodeClosures);
+        createCombinedTransition(combinedRangeList, *uniqueNodeIdSetImpl, *serializedNFA, nfaNodeClosures);
 
         unsigned transitionsStart = dfa.transitionRanges.size();
         for (const NFANodeRange& range : combinedRangeList) {
-            unsigned targetNodeId = getOrCreateDFANode(range.data, nfa, dfa, uniqueNodeIdSetTable, unprocessedNodes);
+            unsigned targetNodeId = getOrCreateDFANode(range.data, *serializedNFA, dfa, uniqueNodeIdSetTable, unprocessedNodes);
             dfa.transitionRanges.append({ range.first, range.last });
             dfa.transitionDestinations.append(targetNodeId);
         }
@@ -360,8 +361,7 @@ DFA NFAToDFA::convert(NFA& nfa)
         dfaSourceNode.setTransitions(transitionsStart, static_cast<uint8_t>(transitionsLength));
     } while (!unprocessedNodes.isEmpty());
 
-    dfa.shrinkToFit();
-    return dfa;
+    return WTFMove(dfa);
 }
 
 } // namespace ContentExtensions

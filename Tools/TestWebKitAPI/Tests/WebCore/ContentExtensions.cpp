@@ -227,11 +227,10 @@ ContentExtensions::ContentExtensionsBackend makeBackend(const char* json)
 static Vector<ContentExtensions::NFA> createNFAs(ContentExtensions::CombinedURLFilters& combinedURLFilters)
 {
     Vector<ContentExtensions::NFA> nfas;
-
     combinedURLFilters.processNFAs(std::numeric_limits<size_t>::max(), [&](ContentExtensions::NFA&& nfa) {
         nfas.append(WTFMove(nfa));
+        return true;
     });
-
     return nfas;
 }
 
@@ -576,7 +575,7 @@ TEST_F(ContentExtensionTest, SearchSuffixesWithIdenticalActionAreMerged)
     EXPECT_EQ(1ul, nfas.size());
     EXPECT_EQ(12ul, nfas.first().nodes.size());
 
-    ContentExtensions::DFA dfa = ContentExtensions::NFAToDFA::convert(nfas.first());
+    ContentExtensions::DFA dfa = *ContentExtensions::NFAToDFA::convert(WTFMove(nfas.first()));
     Vector<ContentExtensions::DFABytecode> bytecode;
     ContentExtensions::DFABytecodeCompiler compiler(dfa, bytecode);
     compiler.compile();
@@ -602,7 +601,7 @@ TEST_F(ContentExtensionTest, SearchSuffixesWithDistinguishableActionAreNotMerged
     EXPECT_EQ(1ul, nfas.size());
     EXPECT_EQ(17ul, nfas.first().nodes.size());
 
-    ContentExtensions::DFA dfa = ContentExtensions::NFAToDFA::convert(nfas.first());
+    ContentExtensions::DFA dfa = *ContentExtensions::NFAToDFA::convert(WTFMove(nfas.first()));
     Vector<ContentExtensions::DFABytecode> bytecode;
     ContentExtensions::DFABytecodeCompiler compiler(dfa, bytecode);
     compiler.compile();
@@ -1125,7 +1124,7 @@ TEST_F(ContentExtensionTest, UselessTermsMatchingEverythingAreEliminated)
     EXPECT_EQ(1ul, nfas.size());
     EXPECT_EQ(7ul, nfas.first().nodes.size());
 
-    ContentExtensions::DFA dfa = ContentExtensions::NFAToDFA::convert(nfas.first());
+    ContentExtensions::DFA dfa = *ContentExtensions::NFAToDFA::convert(WTFMove(nfas.first()));
     Vector<ContentExtensions::DFABytecode> bytecode;
     ContentExtensions::DFABytecodeCompiler compiler(dfa, bytecode);
     compiler.compile();
@@ -1271,12 +1270,13 @@ TEST_F(ContentExtensionTest, LargeJumps)
     Vector<ContentExtensions::NFA> nfas;
     combinedURLFilters.processNFAs(std::numeric_limits<size_t>::max(), [&](ContentExtensions::NFA&& nfa) {
         nfas.append(WTFMove(nfa));
+        return true;
     });
     EXPECT_EQ(nfas.size(), 1ull);
     
     Vector<ContentExtensions::DFA> dfas;
-    for (auto& nfa : nfas)
-        dfas.append(ContentExtensions::NFAToDFA::convert(nfa));
+    for (auto&& nfa : WTFMove(nfas))
+        dfas.append(*ContentExtensions::NFAToDFA::convert(WTFMove(nfa)));
     EXPECT_EQ(dfas.size(), 1ull);
     
     Vector<ContentExtensions::DFABytecode> combinedBytecode;
@@ -1685,12 +1685,13 @@ TEST_F(ContentExtensionTest, SplittingLargeNFAs)
         Vector<ContentExtensions::NFA> nfas;
         combinedURLFilters.processNFAs(i, [&](ContentExtensions::NFA&& nfa) {
             nfas.append(WTFMove(nfa));
+            return true;
         });
         EXPECT_EQ(nfas.size(), expectedNFACounts[i]);
         
         Vector<ContentExtensions::DFA> dfas;
-        for (auto& nfa : nfas)
-            dfas.append(ContentExtensions::NFAToDFA::convert(nfa));
+        for (auto& nfa : WTFMove(nfas))
+            dfas.append(*ContentExtensions::NFAToDFA::convert(WTFMove(nfa)));
         
         Vector<ContentExtensions::DFABytecode> combinedBytecode;
         for (const auto& dfa : dfas) {

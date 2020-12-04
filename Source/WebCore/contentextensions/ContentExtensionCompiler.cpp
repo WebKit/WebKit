@@ -212,7 +212,7 @@ static void addUniversalActionsToDFA(DFA& dfa, UniversalActionSet&& universalAct
 }
 
 template<typename Functor>
-static void compileToBytecode(CombinedURLFilters&& filters, UniversalActionSet&& universalActions, Functor writeBytecodeToClient)
+static bool compileToBytecode(CombinedURLFilters&& filters, UniversalActionSet&& universalActions, Functor writeBytecodeToClient)
 {
     // Smaller maxNFASizes risk high compiling and interpreting times from having too many DFAs,
     // larger maxNFASizes use too much memory when compiling.
@@ -243,22 +243,27 @@ static void compileToBytecode(CombinedURLFilters&& filters, UniversalActionSet&&
 
     const unsigned smallDFASize = 100;
     DFACombiner smallDFACombiner;
-    filters.processNFAs(maxNFASize, [&](NFA&& nfa) {
+    bool processedSuccessfully = filters.processNFAs(maxNFASize, [&](NFA&& nfa) {
 #if CONTENT_EXTENSIONS_STATE_MACHINE_DEBUGGING
         dataLogF("NFA\n");
         nfa.debugPrintDot();
 #endif
         LOG_LARGE_STRUCTURES(nfa, nfa.memoryUsed());
-        DFA dfa = NFAToDFA::convert(nfa);
-        LOG_LARGE_STRUCTURES(dfa, dfa.memoryUsed());
+        auto dfa = NFAToDFA::convert(WTFMove(nfa));
+        if (!dfa)
+            return false;
+        LOG_LARGE_STRUCTURES(*dfa, dfa->memoryUsed());
 
-        if (dfa.graphSize() < smallDFASize)
-            smallDFACombiner.addDFA(WTFMove(dfa));
+        if (dfa->graphSize() < smallDFASize)
+            smallDFACombiner.addDFA(WTFMove(*dfa));
         else {
-            dfa.minimize();
-            lowerDFAToBytecode(WTFMove(dfa));
+            dfa->minimize();
+            lowerDFAToBytecode(WTFMove(*dfa));
         }
+        return true;
     });
+    if (!processedSuccessfully)
+        return false;
 
     smallDFACombiner.combineDFAs(smallDFASize, [&](DFA&& dfa) {
         LOG_LARGE_STRUCTURES(dfa, dfa.memoryUsed());
@@ -281,6 +286,7 @@ static void compileToBytecode(CombinedURLFilters&& filters, UniversalActionSet&&
         writeBytecodeToClient(WTFMove(bytecode));
     }
     LOG_LARGE_STRUCTURES(universalActions, universalActions.capacity() * sizeof(unsigned));
+    return true;
 }
 
 std::error_code compileRuleList(ContentExtensionCompilationClient& client, String&& ruleJSON, Vector<ContentExtensionRule>&& parsedRuleList)
@@ -414,16 +420,22 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, Strin
     MonotonicTime totalNFAToByteCodeBuildTimeStart = MonotonicTime::now();
 #endif
 
-    compileToBytecode(WTFMove(filtersWithoutConditions), WTFMove(universalActionsWithoutConditions), [&](Vector<DFABytecode>&& bytecode) {
+    bool success = compileToBytecode(WTFMove(filtersWithoutConditions), WTFMove(universalActionsWithoutConditions), [&](Vector<DFABytecode>&& bytecode) {
         client.writeFiltersWithoutConditionsBytecode(WTFMove(bytecode));
     });
-    compileToBytecode(WTFMove(filtersWithConditions), WTFMove(universalActionsWithConditions), [&](Vector<DFABytecode>&& bytecode) {
+    if (!success)
+        return ContentExtensionError::ErrorWritingSerializedNFA;
+    success = compileToBytecode(WTFMove(filtersWithConditions), WTFMove(universalActionsWithConditions), [&](Vector<DFABytecode>&& bytecode) {
         client.writeFiltersWithConditionsBytecode(WTFMove(bytecode));
     });
-    compileToBytecode(WTFMove(topURLFilters), WTFMove(universalTopURLActions), [&](Vector<DFABytecode>&& bytecode) {
+    if (!success)
+        return ContentExtensionError::ErrorWritingSerializedNFA;
+    success = compileToBytecode(WTFMove(topURLFilters), WTFMove(universalTopURLActions), [&](Vector<DFABytecode>&& bytecode) {
         client.writeTopURLFiltersBytecode(WTFMove(bytecode));
     });
-    
+    if (!success)
+        return ContentExtensionError::ErrorWritingSerializedNFA;
+
 #if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
     MonotonicTime totalNFAToByteCodeBuildTimeEnd = MonotonicTime::now();
     dataLogF("    Time spent building and compiling the DFAs: %f\n", (totalNFAToByteCodeBuildTimeEnd - totalNFAToByteCodeBuildTimeStart).seconds());

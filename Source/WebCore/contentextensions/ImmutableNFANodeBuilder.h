@@ -35,9 +35,9 @@ namespace WebCore {
 
 namespace ContentExtensions {
 
-// A ImmutableNFANodeBuilder let you build a NFA node by adding states and linking with other nodes.
-// Whe a builder is destructed, all its properties are finalized into the NFA. Using the NA with a live
-// builder results in undefined behaviors.
+// A ImmutableNFANodeBuilder let you build an NFA node by adding states and linking with other nodes.
+// When a builder is destructed, all its properties are finalized into the NFA. Using the NFA with a live
+// builder results in undefined behavior.
 template <typename CharacterType, typename ActionType>
 class ImmutableNFANodeBuilder {
     typedef ImmutableNFA<CharacterType, ActionType> TypedImmutableNFA;

@@ -146,8 +146,7 @@ static WKErrorCode toWKErrorCode(const std::error_code& error)
     });
 }
 
-// NS_RELEASES_ARGUMENT to keep peak memory usage low.
-- (void)_compileContentRuleListForIdentifier:(NSString *)identifier encodedContentRuleList:(NSString *) NS_RELEASES_ARGUMENT encodedContentRuleList completionHandler:(void (^)(WKContentRuleList *, NSError *))completionHandler
+- (void)_compileContentRuleListForIdentifier:(NSString *)identifier encodedContentRuleList:(NSString *) encodedContentRuleList completionHandler:(void (^)(WKContentRuleList *, NSError *))completionHandler
 {
     String json(encodedContentRuleList);
     [encodedContentRuleList release];
