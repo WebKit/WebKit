@@ -978,6 +978,11 @@ static bool isMicrosoftDomain(const RegistrableDomain& domain)
 
     return domain == microsoftDotCom || domain == liveDotCom;
 }
+
+bool Quirks::isMicrosoftTeamsRedirectURL(const URL& url)
+{
+    return url.host() == "teams.microsoft.com"_s && url.query().toString().contains("Retried+3+times+without+success");
+}
 #endif
 
 Quirks::StorageAccessResult Quirks::triggerOptionalStorageAccessQuirk(Element& element, const PlatformMouseEvent& platformEvent, const AtomString& eventType, int detail, Element* relatedTarget) const

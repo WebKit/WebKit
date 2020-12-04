@@ -122,6 +122,10 @@ public:
 
     bool needsBlackFullscreenBackgroundQuirk() const;
 
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    static bool isMicrosoftTeamsRedirectURL(const URL&);
+#endif
+
 private:
     bool needsQuirks() const;
 
