@@ -1,3 +1,36 @@
+2020-12-04  Said Abou-Hallawa  <said@apple.com>
+
+        [GPU Process] Share the NativeImage with GPU Process through a ShareableBitmap
+        https://bugs.webkit.org/show_bug.cgi?id=218934
+
+        Reviewed by Tim Horton.
+
+        Instead of relying on the IPC coders to transfer the NativeImage to the
+        GPUP, we are going to move this logic to RemoteResourceCacheProxy and
+        RemoteRenderingBackend. The NativeImage will be transfered as a handle of
+        ShareableBitamp and a renderingResourceIdentifier.
+
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::cacheNativeImage):
+        * GPUProcess/graphics/RemoteRenderingBackend.h:
+        * GPUProcess/graphics/RemoteRenderingBackend.messages.in:
+        * Shared/ShareableBitmap.h:
+        (WebKit::ShareableBitmap::createPlatformImage):
+        Add this helper function and avoid adding directive code in many places.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<Ref<NativeImage>>::encode): Deleted.
+        (IPC::ArgumentCoder<Ref<NativeImage>>::decode): Deleted.
+        * Shared/WebCoreArgumentCoders.h:
+        * WebProcess/GPU/graphics/ImageBufferShareableBitmapBackend.cpp:
+        (WebKit::ImageBufferShareableBitmapBackend::copyNativeImage const):
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp:
+        (WebKit::RemoteRenderingBackendProxy::cacheNativeImage):
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.h:
+        * WebProcess/GPU/graphics/RemoteResourceCacheProxy.cpp:
+        (WebKit::createShareableBitmapFromNativeImage):
+        (WebKit::RemoteResourceCacheProxy::cacheNativeImage):
+
 2020-12-04  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Deny mach-lookup to the service 'com.apple.print.normalizerd' in the WebContent process

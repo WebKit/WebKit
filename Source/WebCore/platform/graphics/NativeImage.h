@@ -49,8 +49,7 @@ public:
         Observer() = default;
     };
 
-    static WEBCORE_EXPORT RefPtr<NativeImage> create(PlatformImagePtr&&);
-    static WEBCORE_EXPORT RefPtr<NativeImage> create(const PlatformImagePtr&, RenderingResourceIdentifier);
+    static WEBCORE_EXPORT RefPtr<NativeImage> create(PlatformImagePtr&&, RenderingResourceIdentifier = RenderingResourceIdentifier::generate());
 
     WEBCORE_EXPORT ~NativeImage();
 
@@ -68,7 +67,7 @@ public:
 
 private:
     NativeImage(PlatformImagePtr&&);
-    NativeImage(const PlatformImagePtr&, RenderingResourceIdentifier);
+    NativeImage(PlatformImagePtr&&, RenderingResourceIdentifier);
 
     PlatformImagePtr m_platformImage;
     HashSet<Observer*> m_observers;

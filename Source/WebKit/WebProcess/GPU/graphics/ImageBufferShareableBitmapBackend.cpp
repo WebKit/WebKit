@@ -100,13 +100,7 @@ ImageBufferBackendHandle ImageBufferShareableBitmapBackend::createImageBufferBac
 
 RefPtr<NativeImage> ImageBufferShareableBitmapBackend::copyNativeImage(BackingStoreCopy) const
 {
-#if USE(CG)
-    return NativeImage::create(m_bitmap->makeCGImageCopy());
-#elif USE(DIRECT2D)
-    return nullptr;
-#elif USE(CAIRO)
-    return NativeImage::create(m_bitmap->createCairoSurface());
-#endif
+    return NativeImage::create(m_bitmap->createPlatformImage());
 }
 
 RefPtr<Image> ImageBufferShareableBitmapBackend::copyImage(BackingStoreCopy, PreserveResolution) const

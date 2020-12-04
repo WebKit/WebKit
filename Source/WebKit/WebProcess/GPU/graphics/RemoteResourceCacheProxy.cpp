@@ -61,17 +61,44 @@ void RemoteResourceCacheProxy::releaseImageBuffer(RenderingResourceIdentifier re
     ASSERT_UNUSED(found, found);
 }
 
+inline static RefPtr<ShareableBitmap> createShareableBitmapFromNativeImage(NativeImage& image)
+{
+    auto imageSize = image.size();
+
+    auto bitmap = ShareableBitmap::createShareable(image.size(), { });
+    if (!bitmap)
+        return nullptr;
+
+    auto context = bitmap->createGraphicsContext();
+    if (!context)
+        return nullptr;
+
+    context->drawNativeImage(image, imageSize, FloatRect({ }, imageSize), FloatRect({ }, imageSize));
+    return bitmap;
+}
+
 void RemoteResourceCacheProxy::cacheNativeImage(NativeImage& image)
 {
-    m_nativeImages.ensure(image.renderingResourceIdentifier(), [&]() {
-        // Set itself as an observer to NativeImage, so releaseNativeImage()
-        // gets called when NativeImage is being deleleted.
-        image.addObserver(*this);
+    if (m_nativeImages.contains(image.renderingResourceIdentifier()))
+        return;
 
-        // Tell the GPU process to cache this resource.
-        m_remoteRenderingBackendProxy.cacheNativeImage(image);
-        return makeWeakPtr(image);
-    });
+    auto bitmap = createShareableBitmapFromNativeImage(image);
+    if (!bitmap)
+        return;
+
+    ShareableBitmap::Handle handle;
+    bitmap->createHandle(handle);
+    if (handle.isNull())
+        return;
+
+    m_nativeImages.add(image.renderingResourceIdentifier(), makeWeakPtr(image));
+
+    // Set itself as an observer to NativeImage, so releaseNativeImage()
+    // gets called when NativeImage is being deleleted.
+    image.addObserver(*this);
+
+    // Tell the GPU process to cache this resource.
+    m_remoteRenderingBackendProxy.cacheNativeImage(handle, image.renderingResourceIdentifier());
 }
 
 void RemoteResourceCacheProxy::releaseNativeImage(RenderingResourceIdentifier renderingResourceIdentifier)

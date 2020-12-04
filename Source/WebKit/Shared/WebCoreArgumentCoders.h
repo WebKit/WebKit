@@ -419,11 +419,6 @@ template<> struct ArgumentCoder<WebCore::ImageHandle> {
     static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::ImageHandle&);
 };
 
-template<> struct ArgumentCoder<Ref<WebCore::NativeImage>> {
-    static void encode(Encoder&, const Ref<WebCore::NativeImage>&);
-    static Optional<Ref<WebCore::NativeImage>> decode(Decoder&);
-};
-
 template<> struct ArgumentCoder<WebCore::ResourceRequest> {
     static void encode(Encoder&, const WebCore::ResourceRequest&);
     static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::ResourceRequest&);

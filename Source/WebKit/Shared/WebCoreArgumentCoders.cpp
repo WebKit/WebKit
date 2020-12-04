@@ -61,7 +61,6 @@
 #include <WebCore/Length.h>
 #include <WebCore/LengthBox.h>
 #include <WebCore/MediaSelectionOption.h>
-#include <WebCore/NativeImage.h>
 #include <WebCore/Pasteboard.h>
 #include <WebCore/PluginData.h>
 #include <WebCore/PromisedAttachmentInfo.h>
@@ -1098,59 +1097,6 @@ bool ArgumentCoder<ImageHandle>::decode(Decoder& decoder, ImageHandle& imageHand
     if (!decodeOptionalImage(decoder, imageHandle.image))
         return false;
     return true;
-}
-
-void ArgumentCoder<Ref<NativeImage>>::encode(Encoder& encoder, const Ref<NativeImage>& image)
-{
-    auto imageSize = image->size();
-    auto bitmap = ShareableBitmap::createShareable(imageSize, { });
-    auto graphicsContext = bitmap->createGraphicsContext();
-
-    encoder << !!graphicsContext;
-    if (!graphicsContext)
-        return;
-
-    graphicsContext->drawNativeImage(image, imageSize, FloatRect({ }, imageSize), FloatRect({ }, imageSize));
-
-    ShareableBitmap::Handle handle;
-    bitmap->createHandle(handle);
-
-    encoder << image->renderingResourceIdentifier();
-    encoder << handle;
-}
-
-Optional<Ref<NativeImage>> ArgumentCoder<Ref<NativeImage>>::decode(Decoder& decoder)
-{
-    Optional<bool> didCreateGraphicsContext;
-    decoder >> didCreateGraphicsContext;
-    if (!didCreateGraphicsContext.hasValue() || !didCreateGraphicsContext.value())
-        return WTF::nullopt;
-
-    RenderingResourceIdentifier renderingResourceIdentifier;
-    if (!decoder.decode(renderingResourceIdentifier))
-        return WTF::nullopt;
-    
-    ShareableBitmap::Handle handle;
-    if (!decoder.decode(handle))
-        return WTF::nullopt;
-
-    auto bitmap = ShareableBitmap::create(handle);
-    if (!bitmap)
-        return WTF::nullopt;
-
-    auto image = bitmap->createImage();
-    if (!image)
-        return WTF::nullopt;
-
-    auto nativeImage = image->nativeImage();
-    if (!nativeImage)
-        return WTF::nullopt;
-
-    nativeImage = NativeImage::create(nativeImage->platformImage(), renderingResourceIdentifier);
-    if (!nativeImage)
-        return WTF::nullopt;
-
-    return makeRef(*nativeImage);
 }
 
 void ArgumentCoder<Ref<Font>>::encode(Encoder& encoder, const Ref<WebCore::Font>& font)

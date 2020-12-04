@@ -223,9 +223,12 @@ void RemoteRenderingBackend::getImageData(AlphaPremultiplication outputFormat, I
     completionHandler(IPC::ImageDataReference(WTFMove(imageData)));
 }
 
-void RemoteRenderingBackend::cacheNativeImage(Ref<NativeImage>&& image)
+void RemoteRenderingBackend::cacheNativeImage(const ShareableBitmap::Handle& handle, RenderingResourceIdentifier renderingResourceIdentifier)
 {
-    m_remoteResourceCache.cacheNativeImage(WTFMove(image));
+    if (auto bitmap = ShareableBitmap::create(handle)) {
+        if (auto image = NativeImage::create(bitmap->createPlatformImage(), renderingResourceIdentifier))
+            m_remoteResourceCache.cacheNativeImage(makeRef(*image));
+    }
 }
 
 void RemoteRenderingBackend::releaseRemoteResource(RenderingResourceIdentifier renderingResourceIdentifier)

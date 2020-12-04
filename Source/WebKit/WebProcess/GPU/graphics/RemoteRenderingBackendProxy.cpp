@@ -182,9 +182,9 @@ void RemoteRenderingBackendProxy::submitDisplayList(const DisplayList::DisplayLi
     }
 }
 
-void RemoteRenderingBackendProxy::cacheNativeImage(NativeImage& image)
+void RemoteRenderingBackendProxy::cacheNativeImage(const ShareableBitmap::Handle& handle, RenderingResourceIdentifier renderingResourceIdentifier)
 {
-    send(Messages::RemoteRenderingBackend::CacheNativeImage(makeRef(image)), m_renderingBackendIdentifier);
+    send(Messages::RemoteRenderingBackend::CacheNativeImage(handle, renderingResourceIdentifier), m_renderingBackendIdentifier);
 }
 
 void RemoteRenderingBackendProxy::releaseRemoteResource(RenderingResourceIdentifier renderingResourceIdentifier)
