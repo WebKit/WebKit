@@ -3291,17 +3291,15 @@ static RefPtr<Pattern> patternForTouchAction(TouchAction touchAction, FloatSize 
 #if ENABLE(WHEEL_EVENT_REGIONS)
 static RefPtr<Pattern> patternForEventListenerRegionType(EventListenerRegionType type, FloatSize contentOffset, GraphicsContext& destContext)
 {
-    constexpr auto fillColor = Color::darkGreen.colorWithAlphaByte(128);
-
     auto patternAndPhase = [&]() -> PatternDescription {
         switch (type) {
         case EventListenerRegionType::Wheel:
-            return { "wheel"_s, { }, fillColor };
+            return { "wheel"_s, { }, Color::darkGreen.colorWithAlphaByte(128) };
         case EventListenerRegionType::NonPassiveWheel:
-            return { "sync"_s, { 0, 9 }, fillColor };
+            return { "sync"_s, { 0, 9 }, SRGBA<uint8_t> { 200, 0, 0, 128 } };
         }
         ASSERT_NOT_REACHED();
-        return { ""_s, { }, fillColor };
+        return { ""_s, { }, Color::black };
     }();
 
     return patternForDescription(patternAndPhase, contentOffset, destContext);
