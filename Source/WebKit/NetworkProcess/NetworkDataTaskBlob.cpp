@@ -446,10 +446,7 @@ void NetworkDataTaskBlob::setPendingDownloadLocation(const String& filename, San
 
 String NetworkDataTaskBlob::suggestedFilename() const
 {
-    if (!m_suggestedFilename.isEmpty())
-        return m_suggestedFilename;
-
-    return "unknown"_s;
+    return m_suggestedFilename;
 }
 
 void NetworkDataTaskBlob::download()

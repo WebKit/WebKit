@@ -54,6 +54,7 @@ struct SecurityOriginData;
 
 namespace WebKit {
 class AuthenticationChallengeProxy;
+class DownloadProxy;
 class WebBackForwardListItem;
 class WebFramePolicyListenerProxy;
 class WebFrameProxy;
@@ -98,6 +99,10 @@ public:
     virtual void didRunInsecureContent(WebKit::WebPageProxy&, API::Object*) { }
 
     virtual void renderingProgressDidChange(WebKit::WebPageProxy&, OptionSet<WebCore::LayoutMilestone>) { }
+
+    virtual void navigationResponseDidBecomeDownload(WebKit::WebPageProxy&, NavigationResponse&, WebKit::DownloadProxy&) { }
+    virtual void navigationActionDidBecomeDownload(WebKit::WebPageProxy&, NavigationAction&, WebKit::DownloadProxy&) { }
+    virtual void contextMenuDidCreateDownload(WebKit::WebPageProxy&, WebKit::DownloadProxy&) { }
 
     virtual void didReceiveAuthenticationChallenge(WebKit::WebPageProxy&, WebKit::AuthenticationChallengeProxy& challenge) { challenge.listener().completeChallenge(WebKit::AuthenticationChallengeDisposition::PerformDefaultHandling); }
     virtual void shouldAllowLegacyTLS(WebKit::WebPageProxy&, WebKit::AuthenticationChallengeProxy&, CompletionHandler<void(bool)>&& completionHandler) { completionHandler(true); }

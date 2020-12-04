@@ -40,14 +40,14 @@ set(WebKit_PUBLIC_FRAMEWORK_HEADERS
     UIProcess/API/C/WKContext.h
     UIProcess/API/C/WKContextConfigurationRef.h
     UIProcess/API/C/WKContextConnectionClient.h
-    UIProcess/API/C/WKContextDownloadClient.h
     UIProcess/API/C/WKContextHistoryClient.h
     UIProcess/API/C/WKContextInjectedBundleClient.h
     UIProcess/API/C/WKContextPrivate.h
     UIProcess/API/C/WKCookieManager.h
     UIProcess/API/C/WKCredential.h
     UIProcess/API/C/WKCredentialTypes.h
-    UIProcess/API/C/WKDownload.h
+    UIProcess/API/C/WKDownloadClient.h
+    UIProcess/API/C/WKDownloadRef.h
     UIProcess/API/C/WKFormSubmissionListener.h
     UIProcess/API/C/WKFrame.h
     UIProcess/API/C/WKFrameHandleRef.h

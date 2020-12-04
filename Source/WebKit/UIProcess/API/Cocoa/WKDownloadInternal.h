@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,21 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKNavigationActionRef_h
-#define WKNavigationActionRef_h
+#import "DownloadProxy.h"
+#import "WKDownload.h"
+#import "WKObject.h"
 
-#include <WebKit/WKBase.h>
+namespace WebKit {
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+template<> struct WrapperTraits<DownloadProxy> {
+    using WrapperClass = WKDownload;
+};
 
-WK_EXPORT WKTypeID WKNavigationActionGetTypeID();
-
-WK_EXPORT WKStringRef WKNavigationActionGetDownloadAttribute(WKNavigationActionRef action);
-
-#ifdef __cplusplus
 }
-#endif
 
-#endif // WKNavigationActionRef_h
+@interface WKDownload () <WKObject> {
+@package
+    API::ObjectStorage<WebKit::DownloadProxy> _download;
+    WeakObjCPtr<id <WKDownloadDelegate> > _delegate;
+}
+@end

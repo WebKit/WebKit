@@ -29,6 +29,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class WKDownload;
 @class WKNavigation;
 @class WKNavigationAction;
 @class WKNavigationResponse;
@@ -40,20 +41,24 @@ NS_ASSUME_NONNULL_BEGIN
  webView:decidePolicyForNavigationAction:decisionHandler: method.
  @constant WKNavigationActionPolicyCancel   Cancel the navigation.
  @constant WKNavigationActionPolicyAllow    Allow the navigation to continue.
+ @constant WKNavigationActionPolicyBecomeDownload    Turn the navigation into a download.
  */
 typedef NS_ENUM(NSInteger, WKNavigationActionPolicy) {
     WKNavigationActionPolicyCancel,
     WKNavigationActionPolicyAllow,
+    WKNavigationActionPolicyBecomeDownload WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA)),
 } WK_API_AVAILABLE(macos(10.10), ios(8.0));
 
 /*! @enum WKNavigationResponsePolicy
  @abstract The policy to pass back to the decision handler from the webView:decidePolicyForNavigationResponse:decisionHandler: method.
  @constant WKNavigationResponsePolicyCancel   Cancel the navigation.
  @constant WKNavigationResponsePolicyAllow    Allow the navigation to continue.
+ @constant WKNavigationResponsePolicyBecomeDownload    Turn the navigation into a download.
  */
 typedef NS_ENUM(NSInteger, WKNavigationResponsePolicy) {
     WKNavigationResponsePolicyCancel,
     WKNavigationResponsePolicyAllow,
+    WKNavigationResponsePolicyBecomeDownload WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA)),
 } WK_API_AVAILABLE(macos(10.10), ios(8.0));
 
 /*! A class conforming to the WKNavigationDelegate protocol can provide
@@ -163,6 +168,22 @@ typedef NS_ENUM(NSInteger, WKNavigationResponsePolicy) {
  @param decisionHandler The decision handler you must invoke to respond to indicate whether or not to continue with the connection establishment.
  */
 - (void)webView:(WKWebView *)webView authenticationChallenge:(NSURLAuthenticationChallenge *)challenge shouldAllowDeprecatedTLS:(void (^)(BOOL))decisionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
+/*
+ @abstract Called after using WKNavigationActionPolicyBecomeDownload.
+ @param webView The web view that created the download.
+ @param navigationAction The action that is being turned into a download.
+ @param download The download.
+*/
+- (void)webView:(WKWebView *)webView navigationAction:(WKNavigationAction *)navigationAction didBecomeDownload:(WKDownload *)download WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
+/*
+ @abstract Called after using WKNavigationResponsePolicyBecomeDownload.
+ @param webView The web view that created the download.
+ @param navigationResponse The response that is being turned into a download.
+ @param download The download.
+*/
+- (void)webView:(WKWebView *)webView navigationResponse:(WKNavigationResponse *)navigationResponse didBecomeDownload:(WKDownload *)download WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 @end
 

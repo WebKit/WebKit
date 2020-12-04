@@ -45,7 +45,7 @@ typedef NS_ENUM(NSInteger, WKSyntheticClickType) {
 @property (nonatomic, readonly) BOOL _canHandleRequest;
 @property (nonatomic, readonly) BOOL _shouldOpenExternalSchemes WK_API_AVAILABLE(macos(10.11), ios(9.0));
 @property (nonatomic, readonly) BOOL _shouldOpenAppLinks WK_API_AVAILABLE(macos(10.11), ios(9.0));
-@property (nonatomic, readonly) BOOL _shouldPerformDownload WK_API_AVAILABLE(macos(10.15), ios(13.0));
+@property (nonatomic, readonly) BOOL _shouldPerformDownload WK_API_DEPRECATED_WITH_REPLACEMENT("downloadAttribute", macos(10.15, WK_MAC_TBA), ios(13.0, WK_IOS_TBA));
 
 @property (nonatomic, readonly) BOOL _shouldOpenExternalURLs WK_API_DEPRECATED("use _shouldOpenExternalSchemes and _shouldOpenAppLinks", macos(10.11, 10.11), ios(9.0, 9.0));
 

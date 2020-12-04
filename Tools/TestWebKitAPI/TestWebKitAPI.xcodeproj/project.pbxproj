@@ -2220,8 +2220,8 @@
 		5C69BDD41F82A7EB000F4F4B /* JavaScriptDuringNavigation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = JavaScriptDuringNavigation.mm; sourceTree = "<group>"; };
 		5C6E27A6224EEBEA00128736 /* URLCanonicalization.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = URLCanonicalization.mm; sourceTree = "<group>"; };
 		5C7148942123A40700FDE3C5 /* WKWebsiteDatastore.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebsiteDatastore.mm; sourceTree = "<group>"; };
-		5C72E8CD244FFCE300381EB7 /* TestDownloadDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TestDownloadDelegate.h; path = cocoa/TestDownloadDelegate.h; sourceTree = "<group>"; };
-		5C72E8CE244FFCE400381EB7 /* TestDownloadDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TestDownloadDelegate.mm; path = cocoa/TestDownloadDelegate.mm; sourceTree = "<group>"; };
+		5C72E8CD244FFCE300381EB7 /* TestLegacyDownloadDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TestLegacyDownloadDelegate.h; path = cocoa/TestLegacyDownloadDelegate.h; sourceTree = "<group>"; };
+		5C72E8CE244FFCE400381EB7 /* TestLegacyDownloadDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TestLegacyDownloadDelegate.mm; path = cocoa/TestLegacyDownloadDelegate.mm; sourceTree = "<group>"; };
 		5C73A81A2323059800DEA85A /* TLSDeprecation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TLSDeprecation.mm; sourceTree = "<group>"; };
 		5C75715F221249BD00B9E5AC /* BundleRetainPagePlugIn.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BundleRetainPagePlugIn.mm; sourceTree = "<group>"; };
 		5C79640F1EB0269B0075D74C /* EventModifiers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventModifiers.cpp; sourceTree = "<group>"; };
@@ -2806,6 +2806,8 @@
 		D3BE5E341E4CE85E00FD563A /* WKWebViewGetContents.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewGetContents.mm; sourceTree = "<group>"; };
 		DC69AA621CF77C6500C6272F /* ScopedLambda.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScopedLambda.cpp; sourceTree = "<group>"; };
 		DF4B273821A47727009BD1CA /* WKNSDictionaryEmptyDictionaryCrash.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKNSDictionaryEmptyDictionaryCrash.mm; sourceTree = "<group>"; };
+		DF6BC46F2534E120008F63CC /* TestDownloadDelegate.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = TestDownloadDelegate.mm; path = cocoa/TestDownloadDelegate.mm; sourceTree = "<group>"; };
+		DF6BC4702534E120008F63CC /* TestDownloadDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = TestDownloadDelegate.h; path = cocoa/TestDownloadDelegate.h; sourceTree = "<group>"; };
 		DFB8FF312492F51A00F00B0D /* Preconnect.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Preconnect.mm; sourceTree = "<group>"; };
 		E1220D9F155B25480013E2FC /* MemoryCacheDisableWithinResourceLoadDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MemoryCacheDisableWithinResourceLoadDelegate.mm; sourceTree = "<group>"; };
 		E1220DC9155B287D0013E2FC /* MemoryCacheDisableWithinResourceLoadDelegate.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = MemoryCacheDisableWithinResourceLoadDelegate.html; sourceTree = "<group>"; };
@@ -3127,8 +3129,10 @@
 				CE640CA62370A4F300C5CAA4 /* TestCocoa.mm */,
 				5CE7594822A883A500C12409 /* TestContextMenuDriver.h */,
 				5CE7594722A883A500C12409 /* TestContextMenuDriver.mm */,
-				5C72E8CD244FFCE300381EB7 /* TestDownloadDelegate.h */,
-				5C72E8CE244FFCE400381EB7 /* TestDownloadDelegate.mm */,
+				DF6BC4702534E120008F63CC /* TestDownloadDelegate.h */,
+				DF6BC46F2534E120008F63CC /* TestDownloadDelegate.mm */,
+				5C72E8CD244FFCE300381EB7 /* TestLegacyDownloadDelegate.h */,
+				5C72E8CE244FFCE400381EB7 /* TestLegacyDownloadDelegate.mm */,
 				2D1C04A51D76298B000A6816 /* TestNavigationDelegate.h */,
 				2D1C04A61D76298B000A6816 /* TestNavigationDelegate.mm */,
 				516281232325C17A00BB7E42 /* TestPDFDocument.h */,

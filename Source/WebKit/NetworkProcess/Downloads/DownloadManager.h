@@ -60,6 +60,8 @@ class NetworkConnectionToWebProcess;
 class NetworkLoad;
 class PendingDownload;
 
+enum class CallDownloadDidStart : bool { No, Yes };
+
 class DownloadManager {
     WTF_MAKE_NONCOPYABLE(DownloadManager);
 
@@ -86,7 +88,7 @@ public:
     void convertNetworkLoadToDownload(DownloadID, std::unique_ptr<NetworkLoad>&&, ResponseCompletionHandler&&,  Vector<RefPtr<WebCore::BlobDataFileReference>>&&, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
     void downloadDestinationDecided(DownloadID, Ref<NetworkDataTask>&&);
 
-    void resumeDownload(PAL::SessionID, DownloadID, const IPC::DataReference& resumeData, const String& path, SandboxExtension::Handle&&);
+    void resumeDownload(PAL::SessionID, DownloadID, const IPC::DataReference& resumeData, const String& path, SandboxExtension::Handle&&, CallDownloadDidStart);
 
     void cancelDownload(DownloadID, CompletionHandler<void(const IPC::DataReference&)>&&);
 #if PLATFORM(COCOA)

@@ -59,6 +59,7 @@
 #include "AuthenticationManager.h"
 #include "AuthenticatorManager.h"
 #include "DataReference.h"
+#include "DownloadManager.h"
 #include "DownloadProxy.h"
 #include "DrawingAreaMessages.h"
 #include "DrawingAreaProxy.h"
@@ -3139,7 +3140,7 @@ void WebPageProxy::clearServiceWorkerEntitlementOverride(CompletionHandler<void(
 #endif
 }
 
-void WebPageProxy::receivedNavigationPolicyDecision(PolicyAction policyAction, API::Navigation* navigation, ProcessSwapRequestedByClient processSwapRequestedByClient, WebFrameProxy& frame, RefPtr<API::WebsitePolicies>&& policies, Ref<PolicyDecisionSender>&& sender)
+void WebPageProxy::receivedNavigationPolicyDecision(PolicyAction policyAction, API::Navigation* navigation, Ref<API::NavigationAction>&& navigationAction, ProcessSwapRequestedByClient processSwapRequestedByClient, WebFrameProxy& frame, RefPtr<API::WebsitePolicies>&& policies, Ref<PolicyDecisionSender>&& sender)
 {
     RELEASE_LOG_IF_ALLOWED(Loading, "receivedNavigationPolicyDecision: frameID: %llu, navigationID: %llu, policyAction: %u", frame.frameID().toUInt64(), navigation ? navigation->navigationID() : 0, (unsigned)policyAction);
 
@@ -3179,7 +3180,7 @@ void WebPageProxy::receivedNavigationPolicyDecision(PolicyAction policyAction, A
         policyAction = PolicyAction::Download;
 
     if (policyAction != PolicyAction::Use || !frame.isMainFrame() || !navigation) {
-        receivedPolicyDecision(policyAction, navigation, WTFMove(policies), WTFMove(sender));
+        receivedPolicyDecision(policyAction, navigation, WTFMove(policies), WTFMove(navigationAction), WTFMove(sender));
         return;
     }
 
@@ -3192,11 +3193,11 @@ void WebPageProxy::receivedNavigationPolicyDecision(PolicyAction policyAction, A
         }
     }
 
-    process().processPool().processForNavigation(*this, *navigation, sourceProcess.copyRef(), sourceURL, processSwapRequestedByClient, WTFMove(websiteDataStore), [this, protectedThis = makeRef(*this), policyAction, navigation = makeRef(*navigation), sourceProcess = sourceProcess.copyRef(),
+    process().processPool().processForNavigation(*this, *navigation, sourceProcess.copyRef(), sourceURL, processSwapRequestedByClient, WTFMove(websiteDataStore), [this, protectedThis = makeRef(*this), policyAction, navigation = makeRef(*navigation), navigationAction = WTFMove(navigationAction), sourceProcess = sourceProcess.copyRef(),
         policies = WTFMove(policies), sender = WTFMove(sender), processSwapRequestedByClient] (Ref<WebProcessProxy>&& processForNavigation, SuspendedPageProxy* destinationSuspendedPage, const String& reason) mutable {
         // If the navigation has been destroyed, then no need to proceed.
         if (isClosed() || !navigationState().hasNavigation(navigation->navigationID())) {
-            receivedPolicyDecision(policyAction, navigation.ptr(), WTFMove(policies), WTFMove(sender));
+            receivedPolicyDecision(policyAction, navigation.ptr(), WTFMove(policies), WTFMove(navigationAction), WTFMove(sender));
             return;
         }
 
@@ -3232,11 +3233,11 @@ void WebPageProxy::receivedNavigationPolicyDecision(PolicyAction policyAction, A
             }
         }
 
-        receivedPolicyDecision(policyAction, navigation.ptr(), shouldProcessSwap ? nullptr : WTFMove(policies), WTFMove(sender), WTFMove(optionalHandle), shouldProcessSwap ? WillContinueLoadInNewProcess::Yes : WillContinueLoadInNewProcess::No);
+        receivedPolicyDecision(policyAction, navigation.ptr(), shouldProcessSwap ? nullptr : WTFMove(policies), WTFMove(navigationAction), WTFMove(sender), WTFMove(optionalHandle), shouldProcessSwap ? WillContinueLoadInNewProcess::Yes : WillContinueLoadInNewProcess::No);
     });
 }
 
-void WebPageProxy::receivedPolicyDecision(PolicyAction action, API::Navigation* navigation, RefPtr<API::WebsitePolicies>&& websitePolicies, Ref<PolicyDecisionSender>&& sender, Optional<SandboxExtension::Handle> sandboxExtensionHandle, WillContinueLoadInNewProcess willContinueLoadInNewProcess)
+void WebPageProxy::receivedPolicyDecision(PolicyAction action, API::Navigation* navigation, RefPtr<API::WebsitePolicies>&& websitePolicies, Variant<Ref<API::NavigationResponse>, Ref<API::NavigationAction>>&& navigationActionOrResponse, Ref<PolicyDecisionSender>&& sender, Optional<SandboxExtension::Handle> sandboxExtensionHandle, WillContinueLoadInNewProcess willContinueLoadInNewProcess)
 {
     if (!hasRunningProcess()) {
         sender->send(PolicyDecision { sender->identifier(), isNavigatingToAppBoundDomain(), PolicyAction::Ignore, 0, WTF::nullopt, WTF::nullopt });
@@ -3252,6 +3253,19 @@ void WebPageProxy::receivedPolicyDecision(PolicyAction action, API::Navigation* 
     if (action == PolicyAction::Download) {
         // Create a download proxy.
         auto& download = m_process->processPool().createDownloadProxy(m_websiteDataStore, m_decidePolicyForResponseRequest, this, navigation ? navigation->originatingFrameInfo() : FrameInfoData { });
+        download.setDidStartCallback([this, weakThis = makeWeakPtr(*this), navigationActionOrResponse = WTFMove(navigationActionOrResponse)] (auto* downloadProxy) {
+            if (!weakThis || !downloadProxy)
+                return;
+            WTF::switchOn(navigationActionOrResponse,
+                [&] (const Ref<API::NavigationResponse>& response) {
+                    if (!response->downloadAttribute().isNull())
+                        downloadProxy->setSuggestedFilename(response->downloadAttribute());
+                    m_navigationClient->navigationResponseDidBecomeDownload(*this, response.get(), *downloadProxy);
+                }, [&] (const Ref<API::NavigationAction>& action) {
+                    m_navigationClient->navigationActionDidBecomeDownload(*this, action.get(), *downloadProxy);
+                }
+            );
+        });
         if (navigation) {
             download.setWasUserInitiated(navigation->wasUserInitiated());
             download.setRedirectChain(navigation->takeRedirectChain());
@@ -5104,10 +5118,29 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
     navigation->setOriginatingFrameInfo(originatingFrameInfoData);
     navigation->setDestinationFrameSecurityOrigin(frameInfo.securityOrigin);
 
+    API::Navigation* mainFrameNavigation = frame.isMainFrame() ? navigation.get() : nullptr;
+    WebFrameProxy* originatingFrame = originatingFrameInfoData.frameID ? process->webFrame(*originatingFrameInfoData.frameID) : nullptr;
+    auto destinationFrameInfo = API::FrameInfo::create(FrameInfoData { frameInfo }, this);
+    RefPtr<API::FrameInfo> sourceFrameInfo;
+    if (!fromAPI && originatingFrame == &frame)
+        sourceFrameInfo = destinationFrameInfo.copyRef();
+    else if (!fromAPI) {
+        auto* originatingPage = originatingPageID ? process->webPage(*originatingPageID) : nullptr;
+        sourceFrameInfo = API::FrameInfo::create(WTFMove(originatingFrameInfoData), originatingPage);
+    }
+
+    bool shouldOpenAppLinks = !m_shouldSuppressAppLinksInNextNavigationPolicyDecision
+        && destinationFrameInfo->isMainFrame()
+        && (m_mainFrame && m_mainFrame->url().host() != request.url().host())
+        && navigationActionData.navigationType != WebCore::NavigationType::BackForward;
+
+    auto userInitiatedActivity = process->userInitiatedActivity(navigationActionData.userGestureTokenIdentifier);
+    auto navigationAction = API::NavigationAction::create(WTFMove(navigationActionData), sourceFrameInfo.get(), destinationFrameInfo.ptr(), WTF::nullopt, ResourceRequest(request), originalRequest.url(), shouldOpenAppLinks, WTFMove(userInitiatedActivity), mainFrameNavigation);
+
 #if ENABLE(CONTENT_FILTERING)
     if (frame.didHandleContentFilterUnblockNavigation(request)) {
         RELEASE_LOG_ERROR_IF_ALLOWED(Process, "Ignoring request to load this main resource because it was handled by content filter");
-        return receivedPolicyDecision(PolicyAction::Ignore, m_navigationState->navigation(navigationID), nullptr, WTFMove(sender));
+        return receivedPolicyDecision(PolicyAction::Ignore, m_navigationState->navigation(navigationID), nullptr, WTFMove(navigationAction), WTFMove(sender));
     }
 #endif
 
@@ -5119,11 +5152,11 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
 #if ENABLE(APP_BOUND_DOMAINS)
     shouldExpectAppBoundDomainResult = ShouldExpectAppBoundDomainResult::Yes;
 #endif
-    
-    auto listener = makeRef(frame.setUpPolicyListenerProxy([this, protectedThis = makeRef(*this), frame = makeRef(frame), sender = WTFMove(sender), navigation, frameInfo, userDataObject = process->transformHandlesToObjects(userData.object()).get()] (PolicyAction policyAction, API::WebsitePolicies* policies, ProcessSwapRequestedByClient processSwapRequestedByClient, RefPtr<SafeBrowsingWarning>&& safeBrowsingWarning, Optional<NavigatingToAppBoundDomain> isAppBoundDomain) mutable {
+
+    auto listener = makeRef(frame.setUpPolicyListenerProxy([this, protectedThis = makeRef(*this), frame = makeRef(frame), sender = WTFMove(sender), navigation, navigationAction, frameInfo, userDataObject = process->transformHandlesToObjects(userData.object()).get()] (PolicyAction policyAction, API::WebsitePolicies* policies, ProcessSwapRequestedByClient processSwapRequestedByClient, RefPtr<SafeBrowsingWarning>&& safeBrowsingWarning, Optional<NavigatingToAppBoundDomain> isAppBoundDomain) mutable {
         RELEASE_LOG_IF_ALLOWED(Loading, "decidePolicyForNavigationAction: listener called: frameID: %llu, navigationID: %llu, policyAction: %u, safeBrowsingWarning: %d, isAppBoundDomain: %d", frame->frameID().toUInt64(), navigation ? navigation->navigationID() : 0, (unsigned)policyAction, !!safeBrowsingWarning, !!isAppBoundDomain);
 
-        auto completionHandler = [this, protectedThis, frame, sender = WTFMove(sender), navigation, processSwapRequestedByClient, policies = makeRefPtr(policies)] (PolicyAction policyAction) mutable {
+        auto completionHandler = [this, protectedThis, frame, sender = WTFMove(sender), navigation, navigationAction = WTFMove(navigationAction), processSwapRequestedByClient, policies = makeRefPtr(policies)] (PolicyAction policyAction) mutable {
             if (frame->isMainFrame()) {
                 if (!policies) {
                     if (auto* defaultPolicies = m_configuration->defaultWebsitePolicies())
@@ -5132,7 +5165,7 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
                 if (policies)
                     navigation->setEffectiveContentMode(effectiveContentModeAfterAdjustingPolicies(*policies, navigation->currentRequest()));
             }
-            receivedNavigationPolicyDecision(policyAction, navigation.get(), processSwapRequestedByClient, frame, WTFMove(policies), WTFMove(sender));
+            receivedNavigationPolicyDecision(policyAction, navigation.get(), WTFMove(navigationAction), processSwapRequestedByClient, frame, WTFMove(policies), WTFMove(sender));
         };
 
 #if ENABLE(APP_BOUND_DOMAINS)
@@ -5199,10 +5232,7 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
     auto protocol = shouldSendSecurityOriginData ? frameInfo.securityOrigin.protocol : request.url().protocol();
     m_websiteDataStore->beginAppBoundDomainCheck(host.toString(), protocol.toString(), listener);
 #endif
-    API::Navigation* mainFrameNavigation = frame.isMainFrame() ? navigation.get() : nullptr;
-    WebFrameProxy* originatingFrame = originatingFrameInfoData.frameID ? process->webFrame(*originatingFrameInfoData.frameID) : nullptr;
 
-    auto userInitiatedActivity = process->userInitiatedActivity(navigationActionData.userGestureTokenIdentifier);
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     auto wasPotentiallyInitiatedByUser = navigation->isLoadedWithNavigationShared() || userInitiatedActivity;
     if (!sessionID().isEphemeral())
@@ -5210,24 +5240,8 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
 #endif
 
     if (m_policyClient)
-        m_policyClient->decidePolicyForNavigationAction(*this, &frame, WTFMove(navigationActionData), originatingFrame, originalRequest, WTFMove(request), WTFMove(listener), process->transformHandlesToObjects(userData.object()).get());
+        m_policyClient->decidePolicyForNavigationAction(*this, &frame, WTFMove(navigationAction), originatingFrame, originalRequest, WTFMove(request), WTFMove(listener), process->transformHandlesToObjects(userData.object()).get());
     else {
-        auto destinationFrameInfo = API::FrameInfo::create(WTFMove(frameInfo), this);
-        RefPtr<API::FrameInfo> sourceFrameInfo;
-        if (!fromAPI && originatingFrame == &frame)
-            sourceFrameInfo = destinationFrameInfo.copyRef();
-        else if (!fromAPI) {
-            auto* originatingPage = originatingPageID ? process->webPage(*originatingPageID) : nullptr;
-            sourceFrameInfo = API::FrameInfo::create(WTFMove(originatingFrameInfoData), originatingPage);
-        }
-
-        bool shouldOpenAppLinks = !m_shouldSuppressAppLinksInNextNavigationPolicyDecision
-            && destinationFrameInfo->isMainFrame()
-            && (m_mainFrame && m_mainFrame->url().host() != request.url().host())
-            && navigationActionData.navigationType != WebCore::NavigationType::BackForward;
-
-        auto navigationAction = API::NavigationAction::create(WTFMove(navigationActionData), sourceFrameInfo.get(), destinationFrameInfo.ptr(), WTF::nullopt, WTFMove(request), originalRequest.url(), shouldOpenAppLinks, WTFMove(userInitiatedActivity), mainFrameNavigation);
-
 #if HAVE(APP_SSO)
         if (m_shouldSuppressSOAuthorizationInNextNavigationPolicyDecision || m_shouldSuppressSOAuthorizationInAllNavigationPolicyDecision)
             navigationAction->unsetShouldPerformSOAuthorization();
@@ -5329,7 +5343,15 @@ void WebPageProxy::decidePolicyForNewWindowAction(FrameIdentifier frameID, Frame
     MESSAGE_CHECK(m_process, frame);
     MESSAGE_CHECK_URL(m_process, request.url());
 
-    auto listener = makeRef(frame->setUpPolicyListenerProxy([this, protectedThis = makeRef(*this), identifier, listenerID, frameID] (PolicyAction policyAction, API::WebsitePolicies*, ProcessSwapRequestedByClient processSwapRequestedByClient, RefPtr<SafeBrowsingWarning>&& safeBrowsingWarning, Optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain) mutable {
+    RefPtr<API::FrameInfo> sourceFrameInfo;
+    if (frame)
+        sourceFrameInfo = API::FrameInfo::create(WTFMove(frameInfo), this);
+
+    auto userInitiatedActivity = m_process->userInitiatedActivity(navigationActionData.userGestureTokenIdentifier);
+    bool shouldOpenAppLinks = m_mainFrame && m_mainFrame->url().host() != request.url().host();
+    auto navigationAction = API::NavigationAction::create(WTFMove(navigationActionData), sourceFrameInfo.get(), nullptr, frameName, WTFMove(request), URL { }, shouldOpenAppLinks, WTFMove(userInitiatedActivity));
+    
+    auto listener = makeRef(frame->setUpPolicyListenerProxy([this, protectedThis = makeRef(*this), identifier, listenerID, frameID, navigationAction] (PolicyAction policyAction, API::WebsitePolicies*, ProcessSwapRequestedByClient processSwapRequestedByClient, RefPtr<SafeBrowsingWarning>&& safeBrowsingWarning, Optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain) mutable {
         // FIXME: Assert the API::WebsitePolicies* is nullptr here once clients of WKFramePolicyListenerUseWithPolicies go away.
         RELEASE_ASSERT(processSwapRequestedByClient == ProcessSwapRequestedByClient::No);
         ASSERT_UNUSED(safeBrowsingWarning, !safeBrowsingWarning);
@@ -5338,24 +5360,13 @@ void WebPageProxy::decidePolicyForNewWindowAction(FrameIdentifier frameID, Frame
             send(Messages::WebPage::DidReceivePolicyDecision(frameID, listenerID, policyDecision));
         });
 
-        receivedPolicyDecision(policyAction, nullptr, nullptr, WTFMove(sender));
+        receivedPolicyDecision(policyAction, nullptr, nullptr, WTFMove(navigationAction), WTFMove(sender));
     }, ShouldExpectSafeBrowsingResult::No, ShouldExpectAppBoundDomainResult::No));
 
     if (m_policyClient)
-        m_policyClient->decidePolicyForNewWindowAction(*this, *frame, navigationActionData, request, frameName, WTFMove(listener), m_process->transformHandlesToObjects(userData.object()).get());
-    else {
-        RefPtr<API::FrameInfo> sourceFrameInfo;
-        if (frame)
-            sourceFrameInfo = API::FrameInfo::create(WTFMove(frameInfo), this);
-
-        auto userInitiatedActivity = m_process->userInitiatedActivity(navigationActionData.userGestureTokenIdentifier);
-        bool shouldOpenAppLinks = m_mainFrame && m_mainFrame->url().host() != request.url().host();
-        auto navigationAction = API::NavigationAction::create(WTFMove(navigationActionData), sourceFrameInfo.get(), nullptr, frameName, WTFMove(request), URL { }, shouldOpenAppLinks, WTFMove(userInitiatedActivity));
-
+        m_policyClient->decidePolicyForNewWindowAction(*this, *frame, navigationAction.get(), request, frameName, WTFMove(listener), m_process->transformHandlesToObjects(userData.object()).get());
+    else
         m_navigationClient->decidePolicyForNavigationAction(*this, navigationAction.get(), WTFMove(listener), m_process->transformHandlesToObjects(userData.object()).get());
-
-    }
-        
 }
 
 void WebPageProxy::decidePolicyForResponse(FrameIdentifier frameID, FrameInfoData&& frameInfo, PolicyCheckIdentifier identifier,
@@ -5376,8 +5387,10 @@ void WebPageProxy::decidePolicyForResponseShared(Ref<WebProcessProxy>&& process,
     MESSAGE_CHECK_URL(process, request.url());
     MESSAGE_CHECK_URL(process, response.url());
     RefPtr<API::Navigation> navigation = navigationID ? m_navigationState->navigation(navigationID) : nullptr;
+    auto navigationResponse = API::NavigationResponse::create(API::FrameInfo::create(WTFMove(frameInfo), this).get(), request, response, canShowMIMEType, downloadAttribute);
+
     auto listener = makeRef(frame->setUpPolicyListenerProxy([this, protectedThis = makeRef(*this), webPageID, frameID, identifier, listenerID, navigation = WTFMove(navigation),
-        process] (PolicyAction policyAction, API::WebsitePolicies*, ProcessSwapRequestedByClient processSwapRequestedByClient, RefPtr<SafeBrowsingWarning>&& safeBrowsingWarning, Optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain) mutable {
+        process, navigationResponse] (PolicyAction policyAction, API::WebsitePolicies*, ProcessSwapRequestedByClient processSwapRequestedByClient, RefPtr<SafeBrowsingWarning>&& safeBrowsingWarning, Optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain) mutable {
         // FIXME: Assert the API::WebsitePolicies* is nullptr here once clients of WKFramePolicyListenerUseWithPolicies go away.
         RELEASE_ASSERT(processSwapRequestedByClient == ProcessSwapRequestedByClient::No);
         ASSERT_UNUSED(safeBrowsingWarning, !safeBrowsingWarning);
@@ -5386,14 +5399,12 @@ void WebPageProxy::decidePolicyForResponseShared(Ref<WebProcessProxy>&& process,
             process->send(Messages::WebPage::DidReceivePolicyDecision(frameID, listenerID, policyDecision), webPageID);
         });
         
-        receivedPolicyDecision(policyAction, navigation.get(), nullptr, WTFMove(sender));
+        receivedPolicyDecision(policyAction, navigation.get(), nullptr, WTFMove(navigationResponse), WTFMove(sender));
     }, ShouldExpectSafeBrowsingResult::No, ShouldExpectAppBoundDomainResult::No));
     if (m_policyClient)
         m_policyClient->decidePolicyForResponse(*this, *frame, response, request, canShowMIMEType, WTFMove(listener), process->transformHandlesToObjects(userData.object()).get());
-    else {
-        auto navigationResponse = API::NavigationResponse::create(API::FrameInfo::create(WTFMove(frameInfo), this).get(), request, response, canShowMIMEType, downloadAttribute);
+    else
         m_navigationClient->decidePolicyForNavigationResponse(*this, WTFMove(navigationResponse), WTFMove(listener), process->transformHandlesToObjects(userData.object()).get());
-    }
 }
 
 void WebPageProxy::unableToImplementPolicy(FrameIdentifier frameID, const ResourceError& error, const UserData& userData)
@@ -6032,6 +6043,19 @@ void WebPageProxy::handleDownloadRequest(DownloadProxy& download)
     pageClient().handleDownloadRequest(download);
 }
 
+void WebPageProxy::resumeDownload(const API::Data& resumeData, const String& path, CompletionHandler<void(DownloadProxy*)>&& completionHandler)
+{
+    auto& download = process().processPool().resumeDownload(websiteDataStore(), this, resumeData, path, CallDownloadDidStart::Yes);
+    download.setDestinationFilename(path);
+    download.setDidStartCallback(WTFMove(completionHandler));
+}
+
+void WebPageProxy::downloadRequest(WebCore::ResourceRequest&& request, CompletionHandler<void(DownloadProxy*)>&& completionHandler)
+{
+    auto& download = process().processPool().download(websiteDataStore(), this, request, { });
+    download.setDidStartCallback(WTFMove(completionHandler));
+}
+
 void WebPageProxy::didChangeContentSize(const IntSize& size)
 {
     pageClient().didChangeContentSize(size);
@@ -6601,18 +6625,26 @@ void WebPageProxy::contextMenuItemSelected(const WebContextMenuItemData& item)
         return;
     }
 #endif
-    if (item.action() == ContextMenuItemTagDownloadImageToDisk) {
-        m_process->processPool().download(m_websiteDataStore, this, URL(URL(), m_activeContextMenuContextData.webHitTestResultData().absoluteImageURL));
-        return;    
-    }
+    struct DownloadInfo {
+        String url;
+        String suggestedFilename;
+    };
+    Optional<DownloadInfo> downloadInfo;
+    if (item.action() == ContextMenuItemTagDownloadImageToDisk)
+        downloadInfo = {{ m_activeContextMenuContextData.webHitTestResultData().absoluteImageURL, { } }};
     if (item.action() == ContextMenuItemTagDownloadLinkToDisk) {
         auto& hitTestResult = m_activeContextMenuContextData.webHitTestResultData();
-        m_process->processPool().download(m_websiteDataStore, this, URL(URL(), hitTestResult.absoluteLinkURL), hitTestResult.linkSuggestedFilename);
-        return;
+        downloadInfo = {{ hitTestResult.absoluteLinkURL, hitTestResult.linkSuggestedFilename }};
     }
-    if (item.action() == ContextMenuItemTagDownloadMediaToDisk) {
-        m_process->processPool().download(m_websiteDataStore, this, URL(URL(), m_activeContextMenuContextData.webHitTestResultData().absoluteMediaURL));
-        return;
+    if (item.action() == ContextMenuItemTagDownloadMediaToDisk)
+        downloadInfo = {{ m_activeContextMenuContextData.webHitTestResultData().absoluteMediaURL, { } }};
+    if (downloadInfo) {
+        auto& download = m_process->processPool().download(m_websiteDataStore, this, URL(URL(), downloadInfo->url), downloadInfo->suggestedFilename);
+        download.setDidStartCallback([this, weakThis = makeWeakPtr(*this)] (auto* download) {
+            if (!weakThis || !download)
+                return;
+            m_navigationClient->contextMenuDidCreateDownload(*this, *download);
+        });
     }
     if (item.action() == ContextMenuItemTagCheckSpellingWhileTyping) {
         TextChecker::setContinuousSpellCheckingEnabled(!TextChecker::state().isContinuousSpellCheckingEnabled);

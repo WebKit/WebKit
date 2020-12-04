@@ -672,6 +672,7 @@ def headers_for_type(type):
         'WebKit::ActivityStateChangeID': ['"DrawingAreaInfo.h"'],
         'WebKit::AllowOverwrite': ['"DownloadID.h"'],
         'WebKit::BackForwardListItemState': ['"SessionState.h"'],
+        'WebKit::CallDownloadDidStart': ['"DownloadManager.h"'],
         'WebKit::ContentWorldIdentifier': ['"ContentWorldShared.h"'],
         'WebKit::DocumentEditingContextRequest': ['"DocumentEditingContext.h"'],
         'WebKit::FindOptions': ['"WebFindOptions.h"'],

@@ -116,6 +116,14 @@ static WKSyntheticClickType toWKSyntheticClickType(WebKit::WebMouseEvent::Synthe
     return _navigationAction->request().nsURLRequest(WebCore::HTTPBodyUpdatePolicy::UpdateHTTPBody);
 }
 
+- (NSString *)downloadAttribute
+{
+    auto& attribute = _navigationAction->downloadAttribute();
+    if (attribute.isNull())
+        return nil;
+    return attribute;
+}
+
 #if PLATFORM(IOS_FAMILY)
 - (WKSyntheticClickType)_syntheticClickType
 {
@@ -187,7 +195,7 @@ static WKSyntheticClickType toWKSyntheticClickType(WebKit::WebMouseEvent::Synthe
 
 - (BOOL)_shouldPerformDownload
 {
-    return _navigationAction->shouldPerformDownload();
+    return !_navigationAction->downloadAttribute().isNull();
 }
 
 - (BOOL)_shouldOpenExternalURLs

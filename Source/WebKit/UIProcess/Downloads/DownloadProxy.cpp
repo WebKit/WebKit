@@ -59,7 +59,11 @@ DownloadProxy::DownloadProxy(DownloadProxyMap& downloadProxyMap, WebsiteDataStor
 {
 }
 
-DownloadProxy::~DownloadProxy() = default;
+DownloadProxy::~DownloadProxy()
+{
+    if (m_didStartCallback)
+        m_didStartCallback(nullptr);
+}
 
 static RefPtr<API::Data> createData(const IPC::DataReference& data)
 {
@@ -117,7 +121,9 @@ void DownloadProxy::didStart(const ResourceRequest& request, const String& sugge
     if (m_redirectChain.isEmpty() || m_redirectChain.last() != request.url())
         m_redirectChain.append(request.url());
 
-    m_client->didStart(*this);
+    if (m_didStartCallback)
+        m_didStartCallback(this);
+    m_client->legacyDidStart(*this);
 }
 
 void DownloadProxy::didReceiveAuthenticationChallenge(AuthenticationChallenge&& authenticationChallenge, uint64_t challengeID)
@@ -145,13 +151,22 @@ void DownloadProxy::didReceiveData(uint64_t bytesWritten, uint64_t totalBytesWri
     m_client->didReceiveData(*this, bytesWritten, totalBytesWritten, totalBytesExpectedToWrite);
 }
 
-void DownloadProxy::decideDestinationWithSuggestedFilename(const WebCore::ResourceResponse& response, const String& suggestedFilename, CompletionHandler<void(String, SandboxExtension::Handle, AllowOverwrite)>&& completionHandler)
+void DownloadProxy::decideDestinationWithSuggestedFilename(const WebCore::ResourceResponse& response, String&& suggestedFilename, CompletionHandler<void(String, SandboxExtension::Handle, AllowOverwrite)>&& completionHandler)
 {
-    m_client->decideDestinationWithSuggestedFilename(*this, response, ResourceResponseBase::sanitizeSuggestedFilename(suggestedFilename), [completionHandler = WTFMove(completionHandler)] (AllowOverwrite allowOverwrite, String destination) mutable {
+    // As per https://html.spec.whatwg.org/#as-a-download (step 2), the filename from the Content-Disposition header
+    // should override the suggested filename from the download attribute.
+    if (response.isAttachmentWithFilename() || (suggestedFilename.isEmpty() && m_suggestedFilename.isEmpty()))
+        suggestedFilename = response.suggestedFilename();
+    else if (!m_suggestedFilename.isEmpty())
+        suggestedFilename = m_suggestedFilename;
+    suggestedFilename = MIMETypeRegistry::appendFileExtensionIfNecessary(suggestedFilename, response.mimeType());
+
+    m_client->decideDestinationWithSuggestedFilename(*this, response, ResourceResponseBase::sanitizeSuggestedFilename(suggestedFilename), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)] (AllowOverwrite allowOverwrite, String destination) mutable {
         SandboxExtension::Handle sandboxExtensionHandle;
         if (!destination.isNull())
             SandboxExtension::createHandle(destination, SandboxExtension::Type::ReadWrite, sandboxExtensionHandle);
 
+        setDestinationFilename(destination);
         completionHandler(destination, WTFMove(sandboxExtensionHandle), allowOverwrite);
     });
 }
@@ -173,10 +188,15 @@ void DownloadProxy::didFail(const ResourceError& error, const IPC::DataReference
 {
     m_legacyResumeData = createData(resumeData);
 
-    m_client->didFail(*this, error);
+    m_client->didFail(*this, error, m_legacyResumeData.get());
 
     // This can cause the DownloadProxy object to be deleted.
     m_downloadProxyMap.downloadFinished(*this);
+}
+
+void DownloadProxy::setClient(Ref<API::DownloadClient>&& client)
+{
+    m_client = WTFMove(client);
 }
 
 } // namespace WebKit

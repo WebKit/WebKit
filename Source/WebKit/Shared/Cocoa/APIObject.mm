@@ -35,6 +35,7 @@
 #import "WKContentRuleListStoreInternal.h"
 #import "WKContentWorldInternal.h"
 #import "WKContextMenuElementInfoInternal.h"
+#import "WKDownloadInternal.h"
 #import "WKFrameInfoInternal.h"
 #import "WKHTTPCookieStoreInternal.h"
 #import "WKNSArray.h"
@@ -73,7 +74,6 @@
 #import "_WKAutomationSessionInternal.h"
 #import "_WKContentRuleListActionInternal.h"
 #import "_WKCustomHeaderFieldsInternal.h"
-#import "_WKDownloadInternal.h"
 #import "_WKExperimentalFeatureInternal.h"
 #import "_WKFrameHandleInternal.h"
 #import "_WKFrameTreeNodeInternal.h"
@@ -228,7 +228,7 @@ void* Object::newObject(size_t size, Type type)
         break;
 
     case Type::Download:
-        wrapper = [_WKDownload alloc];
+        wrapper = [WKDownload alloc];
         break;
 
     case Type::ExperimentalFeature:

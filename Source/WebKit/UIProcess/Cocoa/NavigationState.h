@@ -126,6 +126,10 @@ private:
 
         RefPtr<API::String> signedPublicKeyAndChallengeString(WebPageProxy&, unsigned keySizeIndex, const RefPtr<API::String>& challengeString, const URL&) override;
 
+        void navigationActionDidBecomeDownload(WebPageProxy&, API::NavigationAction&, DownloadProxy&) final;
+        void navigationResponseDidBecomeDownload(WebPageProxy&, API::NavigationResponse&, DownloadProxy&) final;
+        void contextMenuDidCreateDownload(WebPageProxy&, DownloadProxy&) final;
+
 #if USE(QUICK_LOOK)
         void didStartLoadForQuickLookDocumentInMainFrame(const WTF::String& fileName, const WTF::String& uti) override;
         void didFinishLoadForQuickLookDocumentInMainFrame(const WebCore::SharedBuffer&) override;
@@ -235,6 +239,9 @@ private:
         bool webViewWebProcessDidBecomeResponsive : 1;
         bool webViewWebProcessDidBecomeUnresponsive : 1;
         bool webCryptoMasterKeyForWebView : 1;
+        bool navigationActionDidBecomeDownload : 1;
+        bool navigationResponseDidBecomeDownload : 1;
+        bool contextMenuDidCreateDownload;
         bool webViewDidBeginNavigationGesture : 1;
         bool webViewWillEndNavigationGestureWithNavigationToBackForwardListItem : 1;
         bool webViewDidEndNavigationGestureWithNavigationToBackForwardListItem : 1;

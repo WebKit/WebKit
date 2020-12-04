@@ -326,7 +326,7 @@ static void* progressObservingContext = &progressObservingContext;
 - (void)webView:(WKWebView *)webView decidePolicyForNavigationResponse:(WKNavigationResponse *)navigationResponse decisionHandler:(void (^)(WKNavigationResponsePolicy))decisionHandler
 {
     if (m_startType == DownloadStartType::ConvertLoadToDownload)
-        decisionHandler(_WKNavigationResponsePolicyBecomeDownload);
+        decisionHandler(WKNavigationResponsePolicyBecomeDownload);
     else
         decisionHandler(WKNavigationResponsePolicyAllow);
 }

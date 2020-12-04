@@ -24,17 +24,35 @@
  */
 
 #import <WebKit/WebKit.h>
-#import <WebKit/_WKDownloadDelegate.h>
 
-@interface TestDownloadDelegate : NSObject<_WKDownloadDelegate>
-@property (nonatomic, copy) void (^downloadDidStart)(_WKDownload *);
-@property (nonatomic, copy) void (^didReceiveServerRedirectToURL)(_WKDownload *, NSURL *);
-@property (nonatomic, copy) void (^didReceiveResponse)(_WKDownload *, NSURLResponse *);
-@property (nonatomic, copy) void (^didWriteData)(_WKDownload *, uint64_t, uint64_t, uint64_t);
-@property (nonatomic, copy) void (^decideDestinationWithSuggestedFilename)(_WKDownload *, NSString *, void (^)(BOOL, NSString *));
-@property (nonatomic, copy) void (^downloadDidFinish)(_WKDownload *);
-@property (nonatomic, copy) void (^didFailWithError)(_WKDownload *, NSError *);
-@property (nonatomic, copy) void (^downloadDidCancel)(_WKDownload *);
-@property (nonatomic, copy) void (^didReceiveAuthenticationChallenge)(_WKDownload *, NSURLAuthenticationChallenge *, void (^)(NSURLSessionAuthChallengeDisposition, NSURLCredential*));
-@property (nonatomic, copy) void (^didCreateDestination)(_WKDownload *, NSString *);
+enum class DownloadCallback : uint8_t {
+    WillRedirect,
+    AuthenticationChallenge,
+    DecideDestination,
+    DidWriteData,
+    DidFinish,
+    DidFailWithError,
+    NavigationActionBecameDownload,
+    NavigationResponseBecameDownload,
+    NavigationAction,
+    NavigationResponse,
+};
+
+@interface TestDownloadDelegate : NSObject<WKDownloadDelegate, WKNavigationDelegate>
+
+@property (nonatomic, copy) void (^willPerformHTTPRedirection)(WKDownload *, NSHTTPURLResponse *, NSURLRequest *, void (^)(WKDownloadRedirectPolicy));
+@property (nonatomic, copy) void (^didReceiveAuthenticationChallenge)(WKDownload *, NSURLAuthenticationChallenge *, void (^)(NSURLSessionAuthChallengeDisposition, NSURLCredential*));
+@property (nonatomic, copy) void (^decideDestinationWithResponse)(WKDownload *, NSURLResponse *, NSString *, void (^)(NSURL *));
+@property (nonatomic, copy) void (^didWriteData)(WKDownload *, int64_t, int64_t, int64_t);
+@property (nonatomic, copy) void (^downloadDidFinish)(WKDownload *);
+@property (nonatomic, copy) void (^didFailWithError)(WKDownload *, NSError *, NSData *);
+
+@property (nonatomic, copy) void (^navigationActionDidBecomeDownload)(WKWebView *, WKNavigationAction *, WKDownload *);
+@property (nonatomic, copy) void (^navigationResponseDidBecomeDownload)(WKWebView *, WKNavigationResponse *, WKDownload *);
+@property (nonatomic, copy) void (^decidePolicyForNavigationAction)(WKNavigationAction *, void (^)(WKNavigationActionPolicy));
+@property (nonatomic, copy) void (^decidePolicyForNavigationResponse)(WKNavigationResponse *, void (^)(WKNavigationResponsePolicy));
+
+- (void)waitForDownloadDidFinish;
+- (Vector<DownloadCallback>)takeCallbackRecord;
+
 @end

@@ -36,7 +36,10 @@ WKTypeID WKNavigationActionGetTypeID()
     return toAPI(API::NavigationAction::APIType);
 }
 
-bool WKNavigationActionShouldPerformDownload(WKNavigationActionRef action)
+WKStringRef WKNavigationActionGetDownloadAttribute(WKNavigationActionRef action)
 {
-    return toImpl(action)->shouldPerformDownload();
+    auto& attribute = toImpl(action)->downloadAttribute();
+    if (attribute.isNull())
+        return nullptr;
+    return toAPI(attribute.impl());
 }

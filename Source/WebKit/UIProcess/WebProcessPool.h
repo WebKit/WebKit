@@ -119,6 +119,7 @@ int webProcessLatencyQOS();
 int webProcessThroughputQOS();
 #endif
 
+enum class CallDownloadDidStart : bool;
 enum class ProcessSwapRequestedByClient : bool;
 
 class WebProcessPool final : public API::ObjectImpl<API::Object::Type::ProcessPool>, public CanMakeWeakPtr<WebProcessPool>, private IPC::MessageReceiver {
@@ -207,7 +208,7 @@ public:
 #endif
 
     DownloadProxy& download(WebsiteDataStore&, WebPageProxy* initiatingPage, const WebCore::ResourceRequest&, const String& suggestedFilename = { });
-    DownloadProxy& resumeDownload(WebsiteDataStore&, WebPageProxy* initiatingPage, const API::Data& resumeData, const String& path);
+    DownloadProxy& resumeDownload(WebsiteDataStore&, WebPageProxy* initiatingPage, const API::Data& resumeData, const String& path, CallDownloadDidStart);
 
     void setInjectedBundleInitializationUserData(RefPtr<API::Object>&& userData) { m_injectedBundleInitializationUserData = WTFMove(userData); }
 
