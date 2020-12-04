@@ -54,6 +54,7 @@ typedef NS_ENUM(NSInteger, _WKElementActionType) {
     _WKElementActionTypeOpenInNewWindow WK_API_AVAILABLE(macos(10.15), ios(13.0)),
     _WKElementActionTypeDownload WK_API_AVAILABLE(macos(10.15), ios(13.0)),
     _WKElementActionToggleShowLinkPreviews WK_API_AVAILABLE(macos(10.15), ios(13.0)),
+    _WKElementActionTypeImageExtraction WK_API_AVAILABLE(ios(WK_IOS_TBA)),
 } WK_API_AVAILABLE(macos(10.10), ios(8.0));
 
 WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))

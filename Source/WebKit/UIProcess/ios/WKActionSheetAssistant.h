@@ -71,6 +71,10 @@ typedef NS_ENUM(NSInteger, _WKElementActionType);
 - (void)removeContextMenuViewIfPossibleForActionSheetAssistant:(WKActionSheetAssistant *)assistant;
 #endif
 - (void)actionSheetAssistant:(WKActionSheetAssistant *)assistant shareElementWithImage:(UIImage *)image rect:(CGRect)boundingRect;
+#if ENABLE(IMAGE_EXTRACTION)
+- (BOOL)actionSheetAssistant:(WKActionSheetAssistant *)assistant shouldIncludeImageExtractionActionForElement:(_WKActivatedElementInfo *)element;
+- (void)actionSheetAssistant:(WKActionSheetAssistant *)assistant handleImageExtraction:(UIImage *)image;
+#endif
 
 @end
 

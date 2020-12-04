@@ -61,6 +61,7 @@ static UIActionIdentifier const WKElementActionTypeOpenInNewTabIdentifier = @"WK
 static UIActionIdentifier const WKElementActionTypeOpenInNewWindowIdentifier = @"WKElementActionTypeOpenInNewWindow";
 static UIActionIdentifier const WKElementActionTypeDownloadIdentifier = @"WKElementActionTypeDownload";
 UIActionIdentifier const WKElementActionTypeToggleShowLinkPreviewsIdentifier = @"WKElementActionTypeToggleShowLinkPreviews";
+static UIActionIdentifier const WKElementActionTypeImageExtractionIdentifier = @"WKElementActionTypeImageExtraction";
 
 static NSString * const webkitShowLinkPreviewsPreferenceKey = @"WebKitShowLinkPreviews";
 static NSString * const webkitShowLinkPreviewsPreferenceChangedNotification = @"WebKitShowLinkPreviewsPreferenceChanged";
@@ -159,6 +160,14 @@ static void addToReadingList(NSURL *targetURL, NSString *title)
     case _WKElementActionToggleShowLinkPreviews:
         // This action must still exist for compatibility, but doesn't do anything.
         break;
+    case _WKElementActionTypeImageExtraction:
+#if ENABLE(IMAGE_EXTRACTION)
+        title = WebCore::localizedNSString(@"Get Info");
+        handler = ^(WKActionSheetAssistant *assistant, _WKActivatedElementInfo *actionInfo) {
+            [assistant handleElementActionWithType:type element:actionInfo needsInteraction:YES];
+        };
+#endif
+        break;
     default:
         [NSException raise:NSInvalidArgumentException format:@"There is no standard web element action of type %ld.", (long)type];
         return nil;
@@ -225,6 +234,8 @@ static void addToReadingList(NSURL *targetURL, NSString *title)
         return [UIImage systemImageNamed:@"arrow.down.circle"];
     case _WKElementActionToggleShowLinkPreviews:
         return nil; // Intentionally empty.
+    case _WKElementActionTypeImageExtraction:
+        return [UIImage systemImageNamed:@"info.circle"];
     }
 }
 
@@ -255,6 +266,8 @@ static UIActionIdentifier elementActionTypeToUIActionIdentifier(_WKElementAction
         return WKElementActionTypeDownloadIdentifier;
     case _WKElementActionToggleShowLinkPreviews:
         return WKElementActionTypeToggleShowLinkPreviewsIdentifier;
+    case _WKElementActionTypeImageExtraction:
+        return WKElementActionTypeImageExtractionIdentifier;
     }
 }
 
@@ -284,7 +297,8 @@ static _WKElementActionType uiActionIdentifierToElementActionType(UIActionIdenti
         return _WKElementActionTypeDownload;
     if ([identifier isEqualToString:WKElementActionTypeToggleShowLinkPreviewsIdentifier])
         return _WKElementActionToggleShowLinkPreviews;
-
+    if ([identifier isEqualToString:WKElementActionTypeImageExtractionIdentifier])
+        return _WKElementActionTypeImageExtraction;
     return _WKElementActionTypeCustom;
 }
 
