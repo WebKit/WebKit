@@ -309,23 +309,18 @@ ALWAYS_INLINE bool JIT::isOperandConstantChar(VirtualRegister src)
     return src.isConstant() && getConstantOperand(src).isString() && asString(getConstantOperand(src).asCell())->length() == 1;
 }
 
-inline void JIT::emitValueProfilingSite(ValueProfile& valueProfile)
+inline void JIT::emitValueProfilingSite(ValueProfile& valueProfile, JSValueRegs value)
 {
     ASSERT(shouldEmitProfiling());
 
-    const RegisterID value = regT0;
-#if USE(JSVALUE32_64)
-    const RegisterID valueTag = regT1;
-#endif
-    
     // We're in a simple configuration: only one bucket, so we can just do a direct
     // store.
 #if USE(JSVALUE64)
-    store64(value, valueProfile.m_buckets);
+    store64(value.gpr(), valueProfile.m_buckets);
 #else
     EncodedValueDescriptor* descriptor = bitwise_cast<EncodedValueDescriptor*>(valueProfile.m_buckets);
-    store32(value, &descriptor->asBits.payload);
-    store32(valueTag, &descriptor->asBits.tag);
+    store32(value.payloadGPR(), &descriptor->asBits.payload);
+    store32(value.tagGPR(), &descriptor->asBits.tag);
 #endif
 }
 
@@ -338,11 +333,11 @@ inline std::enable_if_t<std::is_same<decltype(Op::Metadata::m_profile), ValuePro
 inline void JIT::emitValueProfilingSiteIfProfiledOpcode(...) { }
 
 template<typename Metadata>
-inline void JIT::emitValueProfilingSite(Metadata& metadata)
+inline void JIT::emitValueProfilingSite(Metadata& metadata, JSValueRegs value)
 {
     if (!shouldEmitProfiling())
         return;
-    emitValueProfilingSite(valueProfileFor(metadata, m_bytecodeIndex.checkpoint()));
+    emitValueProfilingSite(valueProfileFor(metadata, m_bytecodeIndex.checkpoint()), value);
 }
 
 inline void JIT::emitArrayProfilingSiteWithCell(RegisterID cell, RegisterID indexingType, ArrayProfile* arrayProfile)

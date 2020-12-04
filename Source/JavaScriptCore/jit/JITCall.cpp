@@ -487,7 +487,7 @@ void JIT::emit_op_iterator_next(const Instruction* instruction)
         addSlowCase(gen.slowPathJump());
         m_getByIds.append(gen);
 
-        emitValueProfilingSite(metadata);
+        emitValueProfilingSite(metadata, JSValueRegs { doneGPR });
         emitPutVirtualRegister(bytecode.m_done, doneGPR);
         advanceToNextCheckpoint();
     }
@@ -506,7 +506,7 @@ void JIT::emit_op_iterator_next(const Instruction* instruction)
         addSlowCase(gen.slowPathJump());
         m_getByIds.append(gen);
 
-        emitValueProfilingSite(metadata);
+        emitValueProfilingSite(metadata, JSValueRegs { valueGPR });
         emitPutVirtualRegister(bytecode.m_value, valueGPR);
 
         iterationDone.link(this);

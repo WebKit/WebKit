@@ -373,8 +373,14 @@ namespace JSC {
 
         // This assumes that the value to profile is in regT0 and that regT3 is available for
         // scratch.
-        void emitValueProfilingSite(ValueProfile&);
-        template<typename Metadata> void emitValueProfilingSite(Metadata&);
+#if USE(JSVALUE64)
+        void emitValueProfilingSite(ValueProfile&, JSValueRegs value = JSValueRegs { regT0 });
+        template<typename Metadata> void emitValueProfilingSite(Metadata&, JSValueRegs value = JSValueRegs { regT0 });
+#else
+        void emitValueProfilingSite(ValueProfile&, JSValueRegs value = JSValueRegs { regT1, regT0 });
+        template<typename Metadata> void emitValueProfilingSite(Metadata&, JSValueRegs value = JSValueRegs { regT1, regT0 });
+#endif
+
         void emitValueProfilingSiteIfProfiledOpcode(...);
         template<typename Op>
         std::enable_if_t<std::is_same<decltype(Op::Metadata::m_profile), ValueProfile>::value, void>

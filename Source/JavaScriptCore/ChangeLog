@@ -1,3 +1,17 @@
+2020-12-03  Saam Barati  <sbarati@apple.com>
+
+        "done" checkpoint of iterator_next stores the wrong register in the value profile in baseline JIT
+        https://bugs.webkit.org/show_bug.cgi?id=219501
+
+        Reviewed by Keith Miller.
+
+        * jit/JIT.h:
+        * jit/JITCall.cpp:
+        (JSC::JIT::emit_op_iterator_next):
+        * jit/JITInlines.h:
+        (JSC::JIT::emitValueProfilingSite):
+        (JSC::JIT::emitValueProfilingSiteIfProfiledOpcode):
+
 2020-12-03  Adam Roben  <aroben@apple.com>
 
         Adopt FALLBACK_PLATFORM
