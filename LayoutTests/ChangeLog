@@ -1,3 +1,16 @@
+2020-12-04  Rob Buis  <rbuis@igalia.com>
+
+        WebGL2: Null pointer dereference in std::string implementation in gl::Shader::getTransformFeedbackVaryingMappedName
+        https://bugs.webkit.org/show_bug.cgi?id=218602
+
+        Reviewed by Dean Jackson.
+
+        Add test that triggers the Shader::getTransformFeedbackVaryingMappedName
+        field code.
+
+        * fast/canvas/webgl/webgl-transformed-varying-name-crash-expected.txt: Added.
+        * fast/canvas/webgl/webgl-transformed-varying-name-crash.html: Added.
+
 2020-12-03  Simon Fraser  <simon.fraser@apple.com>
 
         Only the first wheel event in a gesture should be cancelable

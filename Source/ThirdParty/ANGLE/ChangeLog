@@ -1,3 +1,16 @@
+2020-12-04  Rob Buis  <rbuis@igalia.com>
+
+        WebGL2: Null pointer dereference in std::string implementation in gl::Shader::getTransformFeedbackVaryingMappedName
+        https://bugs.webkit.org/show_bug.cgi?id=218602
+
+        Reviewed by Dean Jackson.
+
+        Skip varying if field is not found since in this
+        case we have no match for the varying parameter name.
+
+        * src/libANGLE/Shader.cpp:
+        (gl::Shader::getTransformFeedbackVaryingMappedName):
+
 2020-12-03  Adam Roben  <aroben@apple.com>
 
         Adopt FALLBACK_PLATFORM
