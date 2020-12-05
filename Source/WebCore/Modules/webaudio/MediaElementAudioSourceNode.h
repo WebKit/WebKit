@@ -58,6 +58,7 @@ public:
 
 private:
     MediaElementAudioSourceNode(BaseAudioContext&, Ref<HTMLMediaElement>&&);
+    void provideInput(AudioBus*, size_t framesToProcess);
 
     double tailTime() const override { return 0; }
     double latencyTime() const override { return 0; }

@@ -30,6 +30,8 @@
 
 #include "AudioContext.h"
 #include "AudioNodeOutput.h"
+#include "AudioSourceProvider.h"
+#include "AudioUtilities.h"
 #include "Logging.h"
 #include "MediaStreamAudioSourceOptions.h"
 #include <wtf/IsoMallocInlines.h>
@@ -114,7 +116,7 @@ void MediaStreamAudioSourceNode::setFormat(size_t numberOfChannels, float source
         m_multiChannelResampler = nullptr;
     else {
         double scaleFactor = sourceSampleRate / sampleRate;
-        m_multiChannelResampler = makeUnique<MultiChannelResampler>(scaleFactor, numberOfChannels);
+        m_multiChannelResampler = makeUnique<MultiChannelResampler>(scaleFactor, numberOfChannels, AudioUtilities::renderQuantumSize, std::bind(&MediaStreamAudioSourceNode::provideInput, this, std::placeholders::_1, std::placeholders::_2));
     }
 
     m_sourceNumberOfChannels = numberOfChannels;
@@ -128,12 +130,19 @@ void MediaStreamAudioSourceNode::setFormat(size_t numberOfChannels, float source
     }
 }
 
+void MediaStreamAudioSourceNode::provideInput(AudioBus* bus, size_t framesToProcess)
+{
+    if (auto* provider = m_audioTrack->audioSourceProvider())
+        provider->provideInput(bus, framesToProcess);
+    else
+        bus->zero();
+}
+
 void MediaStreamAudioSourceNode::process(size_t numberOfFrames)
 {
     AudioBus* outputBus = output(0)->bus();
-    AudioSourceProvider* provider = m_audioTrack->audioSourceProvider();
 
-    if (!mediaStream() || !m_sourceNumberOfChannels || !m_sourceSampleRate || !provider) {
+    if (!mediaStream() || !m_sourceNumberOfChannels || !m_sourceSampleRate) {
         outputBus->zero();
         return;
     }
@@ -155,13 +164,13 @@ void MediaStreamAudioSourceNode::process(size_t numberOfFrames)
     if (numberOfFrames > outputBus->length())
         numberOfFrames = outputBus->length();
 
-    if (m_multiChannelResampler.get()) {
+    if (m_multiChannelResampler) {
         ASSERT(m_sourceSampleRate != sampleRate());
-        m_multiChannelResampler->process(provider, outputBus, numberOfFrames);
+        m_multiChannelResampler->process(outputBus, numberOfFrames);
     } else {
         // Bypass the resampler completely if the source is at the context's sample-rate.
         ASSERT(m_sourceSampleRate == sampleRate());
-        provider->provideInput(outputBus, numberOfFrames);
+        provideInput(outputBus, numberOfFrames);
     }
 }
 

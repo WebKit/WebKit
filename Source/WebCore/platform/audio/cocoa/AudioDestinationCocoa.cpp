@@ -83,7 +83,10 @@ AudioDestinationCocoa::AudioDestinationCocoa(AudioIOCallback& callback, unsigned
     auto hardwareSampleRate = this->hardwareSampleRate();
     if (sampleRate != hardwareSampleRate) {
         double scaleFactor = static_cast<double>(sampleRate) / hardwareSampleRate;
-        m_resampler = makeUnique<MultiChannelResampler>(scaleFactor, numberOfOutputChannels, AudioUtilities::renderQuantumSize);
+        m_resampler = makeUnique<MultiChannelResampler>(scaleFactor, numberOfOutputChannels, AudioUtilities::renderQuantumSize, [this](AudioBus* bus, size_t framesToProcess) {
+            ASSERT_UNUSED(framesToProcess, framesToProcess == AudioUtilities::renderQuantumSize);
+            m_callback.render(0, bus, AudioUtilities::renderQuantumSize, m_outputTimestamp);
+        });
     }
 }
 
@@ -214,19 +217,13 @@ void AudioDestinationCocoa::renderOnRenderingThead(size_t framesToRender)
 {
     for (size_t pushedFrames = 0; pushedFrames < framesToRender; pushedFrames += AudioUtilities::renderQuantumSize) {
         if (m_resampler)
-            m_resampler->process(this, m_renderBus.ptr(), AudioUtilities::renderQuantumSize);
+            m_resampler->process(m_renderBus.ptr(), AudioUtilities::renderQuantumSize);
         else
             m_callback.render(0, m_renderBus.ptr(), AudioUtilities::renderQuantumSize, m_outputTimestamp);
 
         auto locker = holdLock(m_fifoLock);
         m_fifo->push(m_renderBus.ptr());
     }
-}
-
-void AudioDestinationCocoa::provideInput(AudioBus* bus, size_t framesToProcess)
-{
-    ASSERT_UNUSED(framesToProcess, framesToProcess == AudioUtilities::renderQuantumSize);
-    m_callback.render(0, bus, AudioUtilities::renderQuantumSize, m_outputTimestamp);
 }
 
 } // namespace WebCore

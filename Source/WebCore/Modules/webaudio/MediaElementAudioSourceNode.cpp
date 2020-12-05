@@ -31,6 +31,8 @@
 
 #include "AudioContext.h"
 #include "AudioNodeOutput.h"
+#include "AudioSourceProvider.h"
+#include "AudioUtilities.h"
 #include "Logging.h"
 #include "MediaElementAudioSourceOptions.h"
 #include "MediaPlayer.h"
@@ -100,7 +102,7 @@ void MediaElementAudioSourceNode::setFormat(size_t numberOfChannels, float sourc
 
         if (sourceSampleRate != sampleRate()) {
             double scaleFactor = sourceSampleRate / sampleRate();
-            m_multiChannelResampler = makeUnique<MultiChannelResampler>(scaleFactor, numberOfChannels);
+            m_multiChannelResampler = makeUnique<MultiChannelResampler>(scaleFactor, numberOfChannels, AudioUtilities::renderQuantumSize, std::bind(&MediaElementAudioSourceNode::provideInput, this, std::placeholders::_1, std::placeholders::_2));
         } else {
             // Bypass resampling.
             m_multiChannelResampler = nullptr;
@@ -113,6 +115,18 @@ void MediaElementAudioSourceNode::setFormat(size_t numberOfChannels, float sourc
             // Do any necesssary re-configuration to the output's number of channels.
             output(0)->setNumberOfChannels(numberOfChannels);
         }
+    }
+}
+
+void MediaElementAudioSourceNode::provideInput(AudioBus* bus, size_t framesToProcess)
+{
+    ASSERT(bus);
+    if (auto* provider = mediaElement().audioSourceProvider())
+        provider->provideInput(bus, framesToProcess);
+    else {
+        // Either this port doesn't yet support HTMLMediaElement audio stream access,
+        // or the stream is not yet available.
+        bus->zero();
     }
 }
 
@@ -155,19 +169,13 @@ void MediaElementAudioSourceNode::process(size_t numberOfFrames)
         return;
     }
 
-    if (AudioSourceProvider* provider = mediaElement().audioSourceProvider()) {
-        if (m_multiChannelResampler.get()) {
-            ASSERT(m_sourceSampleRate != sampleRate());
-            m_multiChannelResampler->process(provider, outputBus, numberOfFrames);
-        } else {
-            // Bypass the resampler completely if the source is at the context's sample-rate.
-            ASSERT(m_sourceSampleRate == sampleRate());
-            provider->provideInput(outputBus, numberOfFrames);
-        }
+    if (m_multiChannelResampler) {
+        ASSERT(m_sourceSampleRate != sampleRate());
+        m_multiChannelResampler->process(outputBus, numberOfFrames);
     } else {
-        // Either this port doesn't yet support HTMLMediaElement audio stream access,
-        // or the stream is not yet available.
-        outputBus->zero();
+        // Bypass the resampler completely if the source is at the context's sample-rate.
+        ASSERT(m_sourceSampleRate == sampleRate());
+        provideInput(outputBus, numberOfFrames);
     }
 }
 

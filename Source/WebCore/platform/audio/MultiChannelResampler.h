@@ -29,25 +29,26 @@
 #ifndef MultiChannelResampler_h
 #define MultiChannelResampler_h
 
-#include "SincResampler.h"
 #include <memory>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 class AudioBus;
+class SincResampler;
 
 class MultiChannelResampler final {
     WTF_MAKE_FAST_ALLOCATED;
 public:   
-    // requestFrames constrols the size of the buffer in frames when AudioSourceProvider::provideInput() is called.
-    explicit MultiChannelResampler(double scaleFactor, unsigned numberOfChannels, unsigned requestFrames = SincResampler::defaultRequestFrames);
+    // requestFrames constrols the size of the buffer in frames when provideInput is called.
+    MultiChannelResampler(double scaleFactor, unsigned numberOfChannels, unsigned requestFrames, Function<void(AudioBus*, size_t framesToProcess)>&& provideInput);
     ~MultiChannelResampler();
 
-    // Process given AudioSourceProvider for streaming applications.
-    void process(AudioSourceProvider*, AudioBus* destination, size_t framesToProcess);
+    void process(AudioBus* destination, size_t framesToProcess);
 
 private:
+    void provideInputForChannel(float* buffer, size_t framesToProcess, unsigned channelIndex);
+
     // FIXME: the mac port can have a more highly optimized implementation based on CoreAudio
     // instead of SincResampler. For now the default implementation will be used on all ports.
     // https://bugs.webkit.org/show_bug.cgi?id=75118
@@ -56,10 +57,9 @@ private:
     Vector<std::unique_ptr<SincResampler>> m_kernels;
     
     unsigned m_numberOfChannels;
-
-    class ChannelProvider;
-    std::unique_ptr<ChannelProvider> m_channelProvider;
     size_t m_outputFramesReady { 0 };
+    Function<void(AudioBus*, size_t framesToProcess)> m_provideInput;
+    RefPtr<AudioBus> m_multiChannelBus;
 };
 
 } // namespace WebCore

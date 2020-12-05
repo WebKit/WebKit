@@ -30,7 +30,6 @@
 #include "AudioDestination.h"
 #include "AudioIOCallback.h"
 #include "AudioOutputUnitAdaptor.h"
-#include "AudioSourceProvider.h"
 #include <AudioUnit/AudioUnit.h>
 #include <wtf/RefPtr.h>
 #include <wtf/UniqueRef.h>
@@ -44,7 +43,7 @@ class PushPullFIFO;
 using CreateAudioDestinationCocoaOverride = Ref<AudioDestination>(*)(AudioIOCallback&, float sampleRate);
 
 // An AudioDestination using CoreAudio's default output AudioUnit
-class AudioDestinationCocoa : public AudioDestination, public AudioUnitRenderer, public AudioSourceProvider {
+class AudioDestinationCocoa : public AudioDestination, public AudioUnitRenderer {
 public:
     WEBCORE_EXPORT AudioDestinationCocoa(AudioIOCallback&, unsigned numberOfOutputChannels, float sampleRate, bool configureAudioOutputUnit = true);
     WEBCORE_EXPORT virtual ~AudioDestinationCocoa();
@@ -71,9 +70,6 @@ private:
     void stop(CompletionHandler<void(bool)>&&) override;
 
     void renderOnRenderingThead(size_t framesToRender);
-
-    // AudioSourceProvider.
-    WEBCORE_EXPORT void provideInput(AudioBus*, size_t framesToProcess) final;
 
     AudioOutputUnitAdaptor m_audioOutputUnitAdaptor;
     AudioIOCallback& m_callback;

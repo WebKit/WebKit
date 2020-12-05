@@ -33,7 +33,6 @@
 #include "AudioBus.h"
 
 #include "DenormalDisabler.h"
-
 #include "SincResampler.h"
 #include "VectorMath.h"
 #include <algorithm>
@@ -557,8 +556,7 @@ RefPtr<AudioBus> AudioBus::createBySampleRateConverting(const AudioBus* sourceBu
         const float* source = resamplerSourceBus->channel(i)->data();
         float* destination = destinationBus->channel(i)->mutableData();
 
-        SincResampler resampler(sampleRateRatio);
-        resampler.process(source, destination, sourceLength);
+        SincResampler::processBuffer(source, destination, sourceLength, sampleRateRatio);
     }
 
     destinationBus->clearSilentFlag();

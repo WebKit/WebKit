@@ -41,19 +41,17 @@ namespace WebCore {
 class SincResampler final {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static constexpr unsigned defaultRequestFrames { 512 };
-
     // scaleFactor == sourceSampleRate / destinationSampleRate
     // requestFrames controls the size in frames of the buffer requested by each provideInput() call.
-    SincResampler(double scaleFactor, unsigned requestFrames = defaultRequestFrames);
+    SincResampler(double scaleFactor, unsigned requestFrames, Function<void(float* buffer, size_t framesToProcess)>&& provideInput);
     
     size_t chunkSize() const { return m_chunkSize; }
 
     // Processes numberOfSourceFrames from source to produce numberOfSourceFrames / scaleFactor frames in destination.
-    void process(const float* source, float* destination, unsigned numberOfSourceFrames);
+    static void processBuffer(const float* source, float* destination, unsigned numberOfSourceFrames, double scaleFactor);
 
     // Process with provideInput callback function for streaming applications.
-    void process(float* destination, size_t framesToProcess, const Function<void(float* buffer, size_t framesToProcess)>& provideInput);
+    void process(float* destination, size_t framesToProcess);
 
 protected:
     void initializeKernel();
@@ -73,6 +71,8 @@ protected:
     
     // This is the number of destination frames we generate per processing pass on the buffer.
     unsigned m_requestFrames;
+
+    Function<void(float* buffer, size_t framesToProcess)> m_provideInput;
 
     // The number of source frames processed per pass.
     unsigned m_blockSize { 0 };
