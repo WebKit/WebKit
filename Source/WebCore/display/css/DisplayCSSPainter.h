@@ -42,6 +42,7 @@ class FillLayerImageGeometry;
 class Box;
 class BoxModelBox;
 class ContainerBox;
+class StackingItem;
 class Tree;
 
 struct PaintingContext;
@@ -60,15 +61,9 @@ private:
     static void recursivePaintDescendantsForPhase(const ContainerBox&, PaintingContext&, PaintPhase);
 
     enum class IncludeStackingContextDescendants { Yes, No };
-    static void paintAtomicallyPaintedBox(const Box&, PaintingContext&, const IntRect& dirtyRect, IncludeStackingContextDescendants = IncludeStackingContextDescendants::No);
+    static void paintAtomicallyPaintedBox(const StackingItem&, PaintingContext&, const IntRect& dirtyRect, IncludeStackingContextDescendants = IncludeStackingContextDescendants::No);
 
-    static void paintStackingContext(const BoxModelBox&, PaintingContext&, const IntRect& dirtyRect);
-
-    static bool isStackingContextPaintingBoundary(const Box&);
-    static bool participatesInZOrderSorting(const Box&);
-
-    static void collectStackingContextDescendants(const ContainerBox&, Vector<const BoxModelBox*>& negativeZOrderList, Vector<const BoxModelBox*>& positiveZOrderList);
-    static void recursiveCollectLayers(const ContainerBox&, Vector<const BoxModelBox*>& negativeZOrderList, Vector<const BoxModelBox*>& positiveZOrderList);
+    static void paintStackingContext(const StackingItem&, PaintingContext&, const IntRect& dirtyRect);
 };
 
 } // namespace Display

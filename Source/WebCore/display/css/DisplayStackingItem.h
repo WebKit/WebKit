@@ -28,27 +28,44 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include <wtf/IsoMalloc.h>
+#include <wtf/OptionSet.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 namespace Display {
 
-class ContainerBox;
-class StackingItem;
+class BoxModelBox;
 
-class Tree {
-    WTF_MAKE_FAST_ALLOCATED(Tree);
+// Container for a display box and its descendants, for boxes that participate in the CSS stacking
+// algorithm <https://www.w3.org/TR/CSS22/zindex.html>, i.e. positioned boxes, and those that create
+// CSS stacking context.
+
+class StackingItem {
+    WTF_MAKE_FAST_ALLOCATED;
+    friend class TreeBuilder;
 public:
-    explicit Tree(std::unique_ptr<StackingItem>&&);
-    ~Tree();
+    using StackingItemList = Vector<std::unique_ptr<StackingItem>>;
 
-    const StackingItem& rootStackingItem() const { return *m_rootStackingItem; }
-    const ContainerBox& rootBox() const;
+    explicit StackingItem(std::unique_ptr<BoxModelBox>&&);
+
+    void addChildStackingItem(std::unique_ptr<StackingItem>&&);
+    const BoxModelBox& box() const { return *m_box; }
+    
+    bool isStackingContext() const;
+
+    const StackingItemList& negativeZOrderList() const { return m_negativeZOrderList; }
+    const StackingItemList& positiveZOrderList() const { return m_positiveZOrderList; }
 
 private:
-    std::unique_ptr<StackingItem> m_rootStackingItem;
+    void sortLists();
+
+    std::unique_ptr<BoxModelBox> m_box;
+    StackingItemList m_negativeZOrderList;
+    StackingItemList m_positiveZOrderList;
 };
 
 } // namespace Display
 } // namespace WebCore
+
 
 #endif // ENABLE(LAYOUT_FORMATTING_CONTEXT)

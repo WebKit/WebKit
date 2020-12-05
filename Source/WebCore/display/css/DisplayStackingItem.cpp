@@ -23,30 +23,47 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "DisplayStackingItem.h"
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-#include <wtf/IsoMalloc.h>
+#include <wtf/IsoMallocInlines.h>
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 namespace Display {
 
-class ContainerBox;
-class StackingItem;
+StackingItem::StackingItem(std::unique_ptr<BoxModelBox>&& box)
+    : m_box(WTFMove(box))
+{
+    ASSERT(m_box);
+}
 
-class Tree {
-    WTF_MAKE_FAST_ALLOCATED(Tree);
-public:
-    explicit Tree(std::unique_ptr<StackingItem>&&);
-    ~Tree();
+bool StackingItem::isStackingContext() const
+{
+    return m_box->style().isStackingContext();
+}
 
-    const StackingItem& rootStackingItem() const { return *m_rootStackingItem; }
-    const ContainerBox& rootBox() const;
+void StackingItem::addChildStackingItem(std::unique_ptr<StackingItem>&& item)
+{
+    auto zIndex = item->box().style().zIndex().valueOr(0);
+    if (zIndex < 0)
+        m_negativeZOrderList.append(WTFMove(item));
+    else
+        m_positiveZOrderList.append(WTFMove(item));
+}
 
-private:
-    std::unique_ptr<StackingItem> m_rootStackingItem;
-};
+void StackingItem::sortLists()
+{
+    auto compareZIndex = [](const std::unique_ptr<StackingItem>& a, const std::unique_ptr<StackingItem>& b) {
+        return a->box().style().zIndex().valueOr(0) < b->box().style().zIndex().valueOr(0);
+    };
+
+    std::stable_sort(m_positiveZOrderList.begin(), m_positiveZOrderList.end(), compareZIndex);
+    std::stable_sort(m_negativeZOrderList.begin(), m_negativeZOrderList.end(), compareZIndex);
+}
+
 
 } // namespace Display
 } // namespace WebCore

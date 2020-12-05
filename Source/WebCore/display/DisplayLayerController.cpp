@@ -31,6 +31,7 @@
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "DisplayCSSPainter.h"
+#include "DisplayContainerBox.h"
 #include "DisplayPaintingContext.h"
 #include "DisplayTree.h"
 #include "DisplayView.h"

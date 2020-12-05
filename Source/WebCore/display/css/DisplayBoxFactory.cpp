@@ -67,7 +67,7 @@ RootBackgroundPropagation BoxFactory::determineRootBackgroundPropagation(const L
     return RootBackgroundPropagation::None;
 }
 
-std::unique_ptr<Box> BoxFactory::displayBoxForRootBox(const Layout::ContainerBox& rootLayoutBox, const Layout::BoxGeometry& geometry, RootBackgroundPropagation rootBackgroundPropagation) const
+std::unique_ptr<ContainerBox> BoxFactory::displayBoxForRootBox(const Layout::ContainerBox& rootLayoutBox, const Layout::BoxGeometry& geometry, RootBackgroundPropagation rootBackgroundPropagation) const
 {
     ASSERT(is<Layout::InitialContainingBlock>(rootLayoutBox));
 
@@ -135,7 +135,12 @@ std::unique_ptr<Box> BoxFactory::displayBoxForLayoutBox(const Layout::Box& layou
         return containerBox;
     }
 
-    return makeUnique<Box>(snapRectToDevicePixels(borderBoxRect, m_pixelSnappingFactor), WTFMove(style));
+    OptionSet<Box::Flags> flags;
+    // FIXME: Workaround for webkit.org/b/219335.
+    if (layoutBox.isLineBreakBox())
+        flags.add(Box::Flags::LineBreakBox);
+
+    return makeUnique<Box>(snapRectToDevicePixels(borderBoxRect, m_pixelSnappingFactor), WTFMove(style), flags);
 }
 
 std::unique_ptr<Box> BoxFactory::displayBoxForTextRun(const Layout::LineRun& run, const Layout::InlineLineGeometry& lineGeometry, const ContainingBlockContext& containingBlockContext) const
@@ -264,7 +269,7 @@ void BoxFactory::setupBoxModelBox(BoxModelBox& box, const Layout::Box& layoutBox
     auto boxDecorationData = constructBoxDecorationData(layoutBox, layoutGeometry, styleForBackground, containingBlockContext.offsetFromRoot);
     box.setBoxDecorationData(WTFMove(boxDecorationData));
 
-    if (box.style().participatesInZOrderSorting()) {
+    if (box.participatesInZOrderSorting()) {
         RefPtr<BoxClip> clip = containingBlockContext.box.clipForDescendants();
         box.setAncestorClip(WTFMove(clip));
     }

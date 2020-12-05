@@ -46,6 +46,7 @@ public:
         ContainerBox    = 1 << 1,
         ImageBox        = 1 << 2,
         TextBox         = 1 << 3,
+        LineBreakBox    = 1 << 4, // FIXME: Workaround for webkit.org/b/219335
     };
 
     Box(AbsoluteFloatRect, Style&&, OptionSet<Flags> = { });
@@ -60,6 +61,9 @@ public:
     bool isImageBox() const { return m_flags.contains(Flags::ImageBox); }
     bool isReplacedBox() const { return m_flags.contains(Flags::ImageBox); /* and other types later. */ }
     bool isTextBox() const { return m_flags.contains(Flags::TextBox); }
+    bool isLineBreakBox() const { return m_flags.contains(Flags::LineBreakBox); }
+
+    bool participatesInZOrderSorting() const;
 
     const Box* nextSibling() const { return m_nextSibling.get(); }
     void setNextSibling(std::unique_ptr<Box>&&);

@@ -50,6 +50,11 @@ void Box::setNextSibling(std::unique_ptr<Box>&& box)
     m_nextSibling = WTFMove(box);
 }
 
+bool Box::participatesInZOrderSorting() const
+{
+    return !isLineBreakBox() && style().participatesInZOrderSorting();
+}
+
 String Box::debugDescription() const
 {
     TextStream stream;

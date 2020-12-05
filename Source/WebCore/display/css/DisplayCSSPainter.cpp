@@ -33,6 +33,7 @@
 #include "DisplayBoxRareGeometry.h"
 #include "DisplayContainerBox.h"
 #include "DisplayPaintingContext.h"
+#include "DisplayStackingItem.h"
 #include "DisplayStyle.h"
 #include "DisplayTree.h"
 #include "GraphicsContext.h"
@@ -82,8 +83,7 @@ void CSSPainter::recursivePaintDescendantsForPhase(const ContainerBox& container
 
     for (const auto* child = containerBox.firstChild(); child; child = child->nextSibling()) {
         auto& box = *child;
-        if (participatesInZOrderSorting(box))
-            continue;
+        ASSERT(!box.participatesInZOrderSorting());
 
         switch (paintPhase) {
         case PaintPhase::BlockBackgrounds:
@@ -124,9 +124,11 @@ void CSSPainter::recursivePaintDescendants(const ContainerBox& containerBox, Pai
     recursivePaintDescendantsForPhase(containerBox, paintingContext, PaintPhase::BlockForegrounds);
 }
 
-void CSSPainter::paintAtomicallyPaintedBox(const Box& box, PaintingContext& paintingContext, const IntRect& dirtyRect, IncludeStackingContextDescendants includeStackingContextDescendants)
+void CSSPainter::paintAtomicallyPaintedBox(const StackingItem& stackingItem, PaintingContext& paintingContext, const IntRect& dirtyRect, IncludeStackingContextDescendants includeStackingContextDescendants)
 {
     UNUSED_PARAM(dirtyRect);
+
+    auto& box = stackingItem.box();
 
     auto needToSaveState = [](const Box& box) {
         if (!is<BoxModelBox>(box))
@@ -161,18 +163,13 @@ void CSSPainter::paintAtomicallyPaintedBox(const Box& box, PaintingContext& pain
     if (!is<ContainerBox>(box))
         return;
 
-    auto& containerBox = downcast<ContainerBox>(box);
-
-    Vector<const BoxModelBox*> negativeZOrderList;
-    Vector<const BoxModelBox*> positiveZOrderList;
     if (includeStackingContextDescendants == IncludeStackingContextDescendants::Yes) {
-        collectStackingContextDescendants(containerBox, negativeZOrderList, positiveZOrderList);
-
         // Stacking contexts formed by positioned descendants with negative z-indices (excluding 0) in z-index order (most negative first) then tree order.
-        for (auto* box : negativeZOrderList)
-            paintStackingContext(*box, paintingContext, dirtyRect);
+        for (auto& stackingItem : stackingItem.negativeZOrderList())
+            paintStackingContext(*stackingItem, paintingContext, dirtyRect);
     }
 
+    auto& containerBox = downcast<ContainerBox>(box);
     recursivePaintDescendants(containerBox, paintingContext);
 
     if (includeStackingContextDescendants == IncludeStackingContextDescendants::Yes) {
@@ -180,66 +177,23 @@ void CSSPainter::paintAtomicallyPaintedBox(const Box& box, PaintingContext& pain
         // as if it created a new stacking context, but any positioned descendants and descendants which actually create a new stacking context
         // should be considered part of the parent stacking context, not this new one. For those with 'z-index: 0', treat the stacking context
         // generated atomically.
-        for (auto* box : positiveZOrderList) {
-            if (box->style().isStackingContext())
-                paintStackingContext(*box, paintingContext, dirtyRect);
+        for (auto& stackingItem : stackingItem.positiveZOrderList()) {
+            if (stackingItem->isStackingContext())
+                paintStackingContext(*stackingItem, paintingContext, dirtyRect);
             else
-                paintAtomicallyPaintedBox(*box, paintingContext, dirtyRect);
+                paintAtomicallyPaintedBox(*stackingItem, paintingContext, dirtyRect);
         }
     }
 }
 
-void CSSPainter::paintStackingContext(const BoxModelBox& contextRoot, PaintingContext& paintingContext, const IntRect& dirtyRect)
+void CSSPainter::paintStackingContext(const StackingItem& stackingItem, PaintingContext& paintingContext, const IntRect& dirtyRect)
 {
-    paintAtomicallyPaintedBox(contextRoot, paintingContext, dirtyRect, IncludeStackingContextDescendants::Yes);
-}
-
-bool CSSPainter::isStackingContextPaintingBoundary(const Box& box)
-{
-    return box.style().isStackingContext();
-}
-
-bool CSSPainter::participatesInZOrderSorting(const Box& box)
-{
-    return box.style().participatesInZOrderSorting();
-}
-
-void CSSPainter::collectStackingContextDescendants(const ContainerBox& containerBox, Vector<const BoxModelBox*>& negativeZOrderList, Vector<const BoxModelBox*>& positiveZOrderList)
-{
-    recursiveCollectLayers(containerBox, negativeZOrderList, positiveZOrderList);
-
-    auto compareZIndex = [] (const BoxModelBox* a, const BoxModelBox* b) {
-        return a->style().zIndex().valueOr(0) < b->style().zIndex().valueOr(0);
-    };
-
-    std::stable_sort(positiveZOrderList.begin(), positiveZOrderList.end(), compareZIndex);
-    std::stable_sort(negativeZOrderList.begin(), negativeZOrderList.end(), compareZIndex);
-}
-
-void CSSPainter::recursiveCollectLayers(const ContainerBox& containerBox, Vector<const BoxModelBox*>& negativeZOrderList, Vector<const BoxModelBox*>& positiveZOrderList)
-{
-    for (const auto* child = containerBox.firstChild(); child; child = child->nextSibling()) {
-        if (child->style().participatesInZOrderSorting() && is<BoxModelBox>(*child)) {
-            auto& childBox = downcast<BoxModelBox>(*child);
-
-            auto zIndex = childBox.style().zIndex().valueOr(0);
-            if (zIndex < 0)
-                negativeZOrderList.append(&childBox);
-            else
-                positiveZOrderList.append(&childBox);
-        }
-
-        if (isStackingContextPaintingBoundary(*child))
-            continue;
-
-        if (is<ContainerBox>(*child))
-            recursiveCollectLayers(downcast<ContainerBox>(*child), negativeZOrderList, positiveZOrderList);
-    }
+    paintAtomicallyPaintedBox(stackingItem, paintingContext, dirtyRect, IncludeStackingContextDescendants::Yes);
 }
 
 void CSSPainter::paintTree(const Tree& displayTree, PaintingContext& paintingContext, const IntRect& dirtyRect)
 {
-    paintStackingContext(displayTree.rootBox(), paintingContext, dirtyRect);
+    paintStackingContext(displayTree.rootStackingItem(), paintingContext, dirtyRect);
 }
 
 } // namespace Display

@@ -30,6 +30,7 @@
 
 #include "DisplayBoxFactory.h"
 #include "DisplayContainerBox.h"
+#include "DisplayStackingItem.h"
 #include "DisplayStyle.h"
 #include "DisplayTree.h"
 #include "InlineFormattingState.h"
@@ -98,6 +99,7 @@ private:
 
 struct BuildingState {
     PositioningContext positioningContext;
+    StackingItem& currentStackingContextItem;
 };
 
 TreeBuilder::TreeBuilder(float pixelSnappingFactor)
@@ -123,32 +125,36 @@ std::unique_ptr<Tree> TreeBuilder::build(const Layout::LayoutState& layoutState)
 
     auto geometry = layoutState.geometryForBox(rootLayoutBox);
     auto rootDisplayBox = m_boxFactory.displayBoxForRootBox(rootLayoutBox, geometry, m_rootBackgroundPropgation);
-    auto rootDisplayContainerBox = std::unique_ptr<ContainerBox> { downcast<ContainerBox>(rootDisplayBox.release()) };
 
-    if (!rootLayoutBox.firstChild())
-        return makeUnique<Tree>(WTFMove(rootDisplayContainerBox));
+    auto insertionPosition = InsertionPosition { *rootDisplayBox };
+    auto rootStackingItem = makeUnique<StackingItem>(WTFMove(rootDisplayBox));
 
-    auto insertionPosition = InsertionPosition { *rootDisplayContainerBox };
-
-    m_stateStack->append({ *rootDisplayContainerBox });
-
-    recursiveBuildDisplayTree(layoutState, *rootLayoutBox.firstChild(), insertionPosition);
+    if (rootLayoutBox.firstChild()) {
+        auto& rootContainerBox = downcast<ContainerBox>(rootStackingItem->box());
+        m_stateStack->append({ rootContainerBox, *rootStackingItem });
+        recursiveBuildDisplayTree(layoutState, *rootLayoutBox.firstChild(), insertionPosition);
+    }
 
 #if ENABLE(TREE_DEBUGGING)
-    LOG_WITH_STREAM(FormattingContextLayout, stream << "Display tree:\n" << displayTreeAsText(*rootDisplayContainerBox));
+    LOG_WITH_STREAM(FormattingContextLayout, stream << "Display tree:\n" << displayTreeAsText(*rootStackingItem));
 #endif
-
-    return makeUnique<Tree>(WTFMove(rootDisplayContainerBox));
+    return makeUnique<Tree>(WTFMove(rootStackingItem));
 }
 
-void TreeBuilder::pushStateForBoxDescendants(const Layout::ContainerBox& layoutContainerBox, const Layout::BoxGeometry& layoutGeometry, const ContainerBox& displayBox)
+void TreeBuilder::pushStateForBoxDescendants(const Layout::ContainerBox& layoutContainerBox, const Layout::BoxGeometry& layoutGeometry, const ContainerBox& displayBox, StackingItem* boxStackingItem)
 {
     auto& positioningContext = m_stateStack->last().positioningContext;
-    m_stateStack->append({ positioningContext.contextForDescendants(layoutContainerBox, layoutGeometry, displayBox) });
+    auto& currentStackingContextItem = (boxStackingItem && boxStackingItem->isStackingContext()) ? *boxStackingItem : m_stateStack->last().currentStackingContextItem;
+
+    m_stateStack->append({ positioningContext.contextForDescendants(layoutContainerBox, layoutGeometry, displayBox), currentStackingContextItem });
 }
 
-void TreeBuilder::popState()
+void TreeBuilder::popState(const ContainerBox& currentBox)
 {
+    auto& currentState = m_stateStack->last();
+    if (&currentState.currentStackingContextItem.box() == &currentBox)
+        currentState.currentStackingContextItem.sortLists();
+
     m_stateStack->removeLast();
 }
 
@@ -175,6 +181,21 @@ void TreeBuilder::insert(std::unique_ptr<Box>&& box, InsertionPosition& insertio
     }
 }
 
+StackingItem* TreeBuilder::insertIntoTree(std::unique_ptr<Box>&& box, InsertionPosition& insertionPosition)
+{
+    if (box->participatesInZOrderSorting() && is<BoxModelBox>(*box)) {
+        auto boxModelBox = std::unique_ptr<BoxModelBox> { downcast<BoxModelBox>(box.release()) };
+        auto stackingItem = makeUnique<StackingItem>(WTFMove(boxModelBox));
+
+        auto* stackingItemPtr = stackingItem.get();
+        currentState().currentStackingContextItem.addChildStackingItem(WTFMove(stackingItem));
+        return stackingItemPtr;
+    }
+
+    insert(WTFMove(box), insertionPosition);
+    return nullptr;
+}
+
 void TreeBuilder::buildInlineDisplayTree(const Layout::LayoutState& layoutState, const Layout::ContainerBox& inlineFormattingRoot, InsertionPosition& insertionPosition)
 {
     auto& inlineFormattingState = layoutState.establishedInlineFormattingState(inlineFormattingRoot);
@@ -192,9 +213,13 @@ void TreeBuilder::buildInlineDisplayTree(const Layout::LayoutState& layoutState,
             continue;
         }
 
+        // FIXME: Workaround for webkit.orgb/b/219335.
+        if (run.layoutBox().isLineBreakBox() && run.layoutBox().isOutOfFlowPositioned())
+            continue;
+
         auto geometry = layoutState.geometryForBox(run.layoutBox());
         auto displayBox = m_boxFactory.displayBoxForLayoutBox(run.layoutBox(), geometry, positioningContext().inFlowContainingBlockContext());
-        insert(WTFMove(displayBox), insertionPosition);
+        insertIntoTree(WTFMove(displayBox), insertionPosition);
     }
 }
 
@@ -208,9 +233,10 @@ void TreeBuilder::recursiveBuildDisplayTree(const Layout::LayoutState& layoutSta
         displayBox = m_boxFactory.displayBoxForBodyBox(layoutBox, geometry, containingBlockContext, m_rootBackgroundPropgation);
     else
         displayBox = m_boxFactory.displayBoxForLayoutBox(layoutBox, geometry, containingBlockContext);
-    
-    insert(WTFMove(displayBox), insertionPosition);
 
+    Box& currentBox = *displayBox;
+
+    auto* stackingItem = insertIntoTree(WTFMove(displayBox), insertionPosition);
     if (!is<Layout::ContainerBox>(layoutBox))
         return;
 
@@ -218,10 +244,10 @@ void TreeBuilder::recursiveBuildDisplayTree(const Layout::LayoutState& layoutSta
     if (!layoutContainerBox.hasChild())
         return;
 
-    ContainerBox& currentBox = downcast<ContainerBox>(*insertionPosition.currentChild);
-    auto insertionPositionForChildren = InsertionPosition { currentBox };
+    ContainerBox& currentContainerBox = downcast<ContainerBox>(currentBox);
+    pushStateForBoxDescendants(layoutContainerBox, geometry, currentContainerBox, stackingItem);
 
-    pushStateForBoxDescendants(layoutContainerBox, geometry, currentBox);
+    auto insertionPositionForChildren = InsertionPosition { currentContainerBox };
 
     enum class DescendantBoxInclusion { AllBoxes, OutOfFlowOnly };
     auto boxInclusion = DescendantBoxInclusion::AllBoxes;
@@ -244,40 +270,72 @@ void TreeBuilder::recursiveBuildDisplayTree(const Layout::LayoutState& layoutSta
             recursiveBuildDisplayTree(layoutState, child, insertionPositionForChildren);
     }
 
-    popState();
+    popState(currentContainerBox);
 }
 
 #if ENABLE(TREE_DEBUGGING)
 
-static void outputDisplayBox(TextStream& stream, const Box& displayBox, unsigned)
+static void outputDisplayBox(TextStream& stream, const Box& displayBox, bool writeIndent = true)
 {
-    stream.writeIndent();
+    if (writeIndent)
+        stream.writeIndent();
 
     stream << displayBox.debugDescription();
     stream << "\n";
 }
 
-static void outputDisplayTree(TextStream& stream, const Box& displayBox, unsigned depth)
+static void outputDisplayTree(TextStream& stream, const Box& displayBox, bool writeFirstItemIndent = true)
 {
-    outputDisplayBox(stream, displayBox, depth);
+    outputDisplayBox(stream, displayBox, writeFirstItemIndent);
 
     if (is<ContainerBox>(displayBox)) {
         TextStream::IndentScope indent(stream);
         for (auto child = downcast<ContainerBox>(displayBox).firstChild(); child; child = child->nextSibling())
-            outputDisplayTree(stream, *child, depth + 1);
+            outputDisplayTree(stream, *child);
     }
 }
 
 String displayTreeAsText(const Box& box)
 {
     TextStream stream(TextStream::LineMode::MultipleLine, TextStream::Formatting::SVGStyleRect);
-    outputDisplayTree(stream, box, 1);
+    outputDisplayTree(stream, box);
     return stream.release();
 }
 
 void showDisplayTree(const Box& box)
 {
     auto treeAsText = displayTreeAsText(box);
+    WTFLogAlways("%s", treeAsText.utf8().data());
+}
+
+static void outputStackingTree(TextStream& stream, const char* prefix, const StackingItem& stackingItem)
+{
+    stream.writeIndent();
+    stream << prefix;
+
+    TextStream::IndentScope indent(stream);
+    outputDisplayTree(stream, stackingItem.box(), false);
+
+    {
+        TextStream::IndentScope indent(stream);
+        for (auto& childStackingItem : stackingItem.negativeZOrderList())
+            outputStackingTree(stream, "- ", *childStackingItem);
+
+        for (auto& childStackingItem : stackingItem.positiveZOrderList())
+            outputStackingTree(stream, childStackingItem->isStackingContext() ? "+ " : "p ", *childStackingItem);
+    }
+}
+
+String displayTreeAsText(const StackingItem& stackingItem)
+{
+    TextStream stream(TextStream::LineMode::MultipleLine, TextStream::Formatting::SVGStyleRect);
+    outputStackingTree(stream, "", stackingItem);
+    return stream.release();
+}
+
+void showDisplayTree(const StackingItem& stackingItem)
+{
+    auto treeAsText = displayTreeAsText(stackingItem);
     WTFLogAlways("%s", treeAsText.utf8().data());
 }
 

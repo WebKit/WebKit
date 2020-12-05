@@ -28,15 +28,24 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "DisplayContainerBox.h"
+#include "DisplayStackingItem.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
 namespace Display {
 
-Tree::Tree(std::unique_ptr<ContainerBox>&& rootBox)
-    : m_rootBox(WTFMove(rootBox))
+Tree::Tree(std::unique_ptr<StackingItem>&& rootStackingItem)
+    : m_rootStackingItem(WTFMove(rootStackingItem))
 {
-    ASSERT(m_rootBox);
+    ASSERT(m_rootStackingItem);
+}
+
+Tree::~Tree() = default;
+
+const ContainerBox& Tree::rootBox() const
+{
+    return downcast<ContainerBox>(m_rootStackingItem->box());
 }
 
 } // namespace Display
