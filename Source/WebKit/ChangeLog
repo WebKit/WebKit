@@ -1,3 +1,17 @@
+2020-12-04  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Cancel image extraction when navigating
+        https://bugs.webkit.org/show_bug.cgi?id=219559
+        <rdar://problem/71997004>
+
+        Reviewed by Tim Horton.
+
+        Call `-_cancelImageExtraction` during mainframe navigation. See WebKitAdditions change for more information.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _webTouchEventsRecognized:]):
+        (-[WKContentView _didStartProvisionalLoadForMainFrame]):
+
 2020-12-04  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa] Adopt AVOutputDevice.allowsHeadTrackedSpatialAudio

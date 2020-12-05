@@ -1523,7 +1523,7 @@ inline static UIKeyModifierFlags gestureRecognizerModifierFlags(UIGestureRecogni
         } forRequest:positionInformationRequest];
 
 #if ENABLE(IMAGE_EXTRACTION)
-        [self _cancelImageExtractionIfNeeded:_lastInteractionLocation];
+        [self _cancelImageExtractionIfNeededAfterTouchAt:_lastInteractionLocation];
 #endif
     }
 
@@ -4376,6 +4376,9 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     // in the same location to trigger double-tap recognition.
     [self _setDoubleTapGesturesEnabled:NO];
     [_twoFingerDoubleTapGestureRecognizer _wk_cancel];
+#if ENABLE(IMAGE_EXTRACTION)
+    [self _cancelImageExtraction];
+#endif
 }
 
 - (void)_didCommitLoadForMainFrame
