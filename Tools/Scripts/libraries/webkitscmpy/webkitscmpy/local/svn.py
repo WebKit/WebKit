@@ -30,7 +30,6 @@ import subprocess
 import sys
 
 from datetime import datetime, timedelta
-from dateutil import tz
 
 from webkitcorepy import log, run, decorators
 from webkitscmpy.local.scm import Scm
@@ -331,16 +330,10 @@ class Svn(Scm):
         date = info['Last Changed Date'].split(' (')[0]
         tz_diff = date.split(' ')[-1]
         date = datetime.strptime(date[:-len(tz_diff)], '%Y-%m-%d %H:%M:%S ')
-        delta = timedelta(
+        date += timedelta(
             hours=int(tz_diff[1:3]),
             minutes=int(tz_diff[3:5]),
-        )
-        date = date.replace(
-            tzinfo=tz.tzoffset(
-                name='UTC{}'.format(tz_diff),
-                offset=delta.seconds * (-1 if tz_diff[0] == '-' else 1)
-            ),
-        )
+        ) * (1 if tz_diff[0] == '-' else -1)
 
         if not identifier:
             if branch != self.default_branch and revision > self._metadata_cache.get(self.default_branch, [0])[-1]:

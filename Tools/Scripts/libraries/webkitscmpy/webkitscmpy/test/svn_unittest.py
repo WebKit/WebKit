@@ -90,7 +90,7 @@ class TestLocalSvn(unittest.TestCase):
                     u'Schedule': u'normal',
                     u'Last Changed Author': u'jbedard@apple.com',
                     u'Last Changed Rev': u'6',
-                    u'Last Changed Date': datetime.fromtimestamp(1601665100).strftime('%Y-%m-%d %H:%M:%S -0100 (%a, %d %b %Y)'),
+                    u'Last Changed Date': datetime.utcfromtimestamp(1601665100).strftime('%Y-%m-%d %H:%M:%S 0000 (%a, %d %b %Y)'),
                 }, local.Svn(self.path).info(),
             )
 

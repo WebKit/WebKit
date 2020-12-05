@@ -1,3 +1,23 @@
+2020-12-04  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitscmpy] local.Svn reports incorrect timestamps
+        https://bugs.webkit.org/show_bug.cgi?id=219549
+        <rdar://problem/71989052>
+
+        Rubber-stamped by Aakash Jain.
+
+        * Scripts/libraries/webkitscmpy/setup.py: Remote dateutil dependency. Add svn remote dependencies.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Bump version, move dateutil library hook.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/svn.py:
+        (Svn.commit): Increment parsed time by UTC delta instead of configuring timezone.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/mocks/local/svn.py:
+        (Svn): Allow caller to specify UTC offset, treat all times as UTC to avoid issues with the
+        local timezone.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/find_unittest.py:
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/svn_unittest.py:
+        (TestLocalSvn.test_info):
+        * Scripts/webkitpy/__init__.py: Move dateutil library hook.
+
 2020-12-04  John Wilander  <wilander@apple.com>
 
         PCM: Switch to 8+4 bits for source IDs and trigger values respectively

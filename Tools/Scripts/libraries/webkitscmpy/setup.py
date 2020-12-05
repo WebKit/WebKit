@@ -56,7 +56,7 @@ setup(
         'webkitscmpy.test',
     ],
     scripts=['git-webkit'],
-    install_requires=['python-dateutil', 'webkitcorepy'],
+    install_requires=['fasteners', 'monotonic', 'webkitcorepy', 'xmltodict'],
     include_package_data=True,
     zip_safe=False,
 )

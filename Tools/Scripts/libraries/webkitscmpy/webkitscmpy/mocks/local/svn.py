@@ -32,22 +32,21 @@ from webkitscmpy import Commit, Contributor
 
 class Svn(mocks.Subprocess):
     BRANCH_RE = re.compile(r'\^/(branches/)?(?P<branch>.+)')
-    UTC_OFFSET = '-0100'
 
-    @classmethod
-    def log_line(cls, commit):
+    def log_line(self, commit):
         email = '(no author)'
         if commit.author:
             email = commit.author.email or commit.author.name
         return 'r{revision} | {email} | {date}'.format(
             revision=commit.revision,
             email=email,
-            date=datetime.fromtimestamp(commit.timestamp).strftime('%Y-%m-%d %H:%M:%S {} (%a, %d %b %Y)'.format(cls.UTC_OFFSET)),
+            date=datetime.utcfromtimestamp(commit.timestamp).strftime('%Y-%m-%d %H:%M:%S {} (%a, %d %b %Y)'.format(self.utc_offset)),
         )
 
-    def __init__(self, path='/.invalid-svn', remote=None, branches=None):
+    def __init__(self, path='/.invalid-svn', remote=None, branches=None, utc_offset=None):
         self.path = path
         self.remote = remote or 'https://svn.mock.org/repository/{}'.format(os.path.basename(path))
+        self.utc_offset = utc_offset or '0000'
 
         self.branches = branches or []
         self.connected = True
@@ -256,7 +255,7 @@ class Svn(mocks.Subprocess):
                 branch=self.branch,
                 revision=commit.revision,
                 author=commit.author.email,
-                date=datetime.fromtimestamp(commit.timestamp).strftime('%Y-%m-%d %H:%M:%S {} (%a, %d %b %Y)'.format(self.UTC_OFFSET)),
+                date=datetime.utcfromtimestamp(commit.timestamp).strftime('%Y-%m-%d %H:%M:%S {} (%a, %d %b %Y)'.format(self.utc_offset)),
             ),
         )
 

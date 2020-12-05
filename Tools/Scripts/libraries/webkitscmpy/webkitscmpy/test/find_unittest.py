@@ -208,3 +208,19 @@ Hash: 1abe25b443e9
                 path=self.path,
             ))
         self.assertEqual(captured.stdout.getvalue(), '4@main | bae5d1e90999, r6\n')
+
+    def test_timezone_svn(self):
+        with mocks.local.Git(), mocks.local.Svn(self.path, utc_offset='-0600'), MockTime, OutputCapture() as captured:
+            self.assertEqual(0, program.main(
+                args=('find', '3@trunk'),
+                path=self.path,
+            ))
+        self.assertEqual(
+            captured.stdout.getvalue(),
+            '''Title: 4th commit
+Author: jbedard@apple.com <jbedard@apple.com>
+Identifier: 3@trunk
+Date: {}
+Revision: 4
+'''.format(datetime.fromtimestamp(1601686700).strftime('%a %b %d %H:%M:%S %Y')),
+        )
