@@ -232,17 +232,20 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const Line::Run
         // e.g.
         // <span>normally the inline box closing forms a continuous content</span>
         // <span>unless it's forced to the next line<br></span>
-        if (isRootBox(firstRunParentLayoutBox) && !firstRun.isInlineBoxEnd())
+        auto firstRunNeedsInlineBox = firstRun.isInlineBoxEnd();
+        if (!firstRunNeedsInlineBox && isRootBox(firstRunParentLayoutBox))
             return;
+        Vector<const Box*> layoutBoxesWithoutInlineBoxes;
+        if (firstRunNeedsInlineBox)
+            layoutBoxesWithoutInlineBoxes.append(&firstRun.layoutBox());
         auto* ancestor = &firstRunParentLayoutBox;
-        Vector<const Box*> ancestorsWithoutInlineBoxes;
         while (!isRootBox(*ancestor)) {
-            ancestorsWithoutInlineBoxes.append(ancestor);
+            layoutBoxesWithoutInlineBoxes.append(ancestor);
             ancestor = &ancestor->parent();
         }
-        // Construct the missing LineBox::InlineBoxes starting with the topmost ancestor.
-        for (auto* ancestor : WTF::makeReversedRange(ancestorsWithoutInlineBoxes)) {
-            auto inlineBox = LineBox::InlineLevelBox::createInlineBox(*ancestor, horizontalAligmentOffset, lineBox.logicalWidth());
+        // Construct the missing LineBox::InlineBoxes starting with the topmost layout box.
+        for (auto* layoutBox : WTF::makeReversedRange(layoutBoxesWithoutInlineBoxes)) {
+            auto inlineBox = LineBox::InlineLevelBox::createInlineBox(*layoutBox, horizontalAligmentOffset, lineBox.logicalWidth());
             setVerticalGeometryForInlineBox(*inlineBox);
             lineBox.addInlineLevelBox(WTFMove(inlineBox));
         }
