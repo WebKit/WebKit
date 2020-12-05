@@ -91,6 +91,8 @@ void BoxTree::buildTree()
     };
 
     for (auto walker = InlineWalker(m_flow); !walker.atEnd(); walker.advance()) {
+        if (walker.atEndOfInline())
+            continue;
         auto& childRenderer = *walker.current();
         auto childBox = createChildBox(childRenderer);
         appendChild(WTFMove(childBox), childRenderer);
