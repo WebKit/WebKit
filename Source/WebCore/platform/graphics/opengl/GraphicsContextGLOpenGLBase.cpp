@@ -27,7 +27,7 @@
 #include "config.h"
 #include "GraphicsContextGLOpenGL.h"
 
-#if ENABLE(GRAPHICS_CONTEXT_GL) && USE(OPENGL)
+#if ENABLE(WEBGL) && USE(OPENGL)
 
 #include "ExtensionsGLOpenGL.h"
 #include "IntRect.h"
@@ -448,4 +448,4 @@ void GraphicsContextGLOpenGL::readnPixels(GCGLint x, GCGLint y, GCGLsizei width,
 
 }
 
-#endif // ENABLE(GRAPHICS_CONTEXT_GL) && USE(OPENGL)
+#endif // ENABLE(WEBGL) && USE(OPENGL)

@@ -1621,7 +1621,7 @@ list(APPEND WebCore_IDL_FILES
     html/canvas/WebGLVertexArrayObjectOES.idl
 )
 
-if (ENABLE_GRAPHICS_CONTEXT_GL)
+if (ENABLE_WEBGL)
     list(APPEND WebCore_SOURCES
         platform/graphics/ANGLEWebKitBridge.cpp
         platform/graphics/FormatConverter.cpp

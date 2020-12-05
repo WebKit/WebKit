@@ -67,7 +67,7 @@
 #include "DateTimeChooser.h"
 #endif
 
-#if PLATFORM(MAC) && ENABLE(GRAPHICS_CONTEXT_GL)
+#if PLATFORM(MAC) && ENABLE(WEBGL)
 #include "GraphicsContextGLOpenGLManager.h"
 #endif
 
@@ -542,7 +542,7 @@ void Chrome::windowScreenDidChange(PlatformDisplayID displayID, Optional<unsigne
 
     m_page.windowScreenDidChange(displayID, nominalFrameInterval);
 
-#if PLATFORM(MAC) && ENABLE(GRAPHICS_CONTEXT_GL)
+#if PLATFORM(MAC) && ENABLE(WEBGL)
     GraphicsContextGLOpenGLManager::sharedManager().screenDidChange(displayID, this);
 #endif
 }

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(GRAPHICS_CONTEXT_GL)
+#if ENABLE(WEBGL)
 
 #include "GraphicsContextGLAttributes.h"
 #include "GraphicsTypesGL.h"

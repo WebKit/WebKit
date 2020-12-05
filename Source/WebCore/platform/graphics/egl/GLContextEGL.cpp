@@ -491,7 +491,7 @@ void GLContextEGL::swapInterval(int interval)
     eglSwapInterval(m_display.eglDisplay(), interval);
 }
 
-#if ENABLE(GRAPHICS_CONTEXT_GL)
+#if ENABLE(WEBGL)
 PlatformGraphicsContextGL GLContextEGL::platformContext()
 {
     return m_context;

@@ -49,7 +49,7 @@ private:
     void swapInterval(int) override;
     bool isEGLContext() const override { return false; }
 
-#if ENABLE(GRAPHICS_CONTEXT_GL)
+#if ENABLE(WEBGL)
     PlatformGraphicsContextGL platformContext() override;
 #endif
 

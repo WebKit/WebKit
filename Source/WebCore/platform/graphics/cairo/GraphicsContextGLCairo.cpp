@@ -28,7 +28,7 @@
 #include "config.h"
 #include "GraphicsContextGLOpenGL.h"
 
-#if ENABLE(GRAPHICS_CONTEXT_GL) && USE(CAIRO)
+#if ENABLE(WEBGL) && USE(CAIRO)
 
 #include "CairoUtilities.h"
 #include "GraphicsContextGLImageExtractor.h"
@@ -138,4 +138,4 @@ void GraphicsContextGLOpenGL::paintToCanvas(const unsigned char* imagePixels, co
 
 } // namespace WebCore
 
-#endif // ENABLE(GRAPHICS_CONTEXT_GL) && USE(CAIRO)
+#endif // ENABLE(WEBGL) && USE(CAIRO)

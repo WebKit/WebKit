@@ -28,7 +28,7 @@
 #include "config.h"
 #include "GraphicsContextGLOpenGL.h"
 
-#if ENABLE(GRAPHICS_CONTEXT_GL) && USE(TEXTURE_MAPPER)
+#if ENABLE(WEBGL) && USE(TEXTURE_MAPPER)
 
 #include "GraphicsContextGLOpenGLPrivate.h"
 #include "TextureMapperGCGLPlatformLayer.h"
@@ -467,4 +467,4 @@ ExtensionsGL& GraphicsContextGLOpenGL::getExtensions()
 
 } // namespace WebCore
 
-#endif // ENABLE(GRAPHICS_CONTEXT_GL) && USE(TEXTURE_MAPPER)
+#endif // ENABLE(WEBGL) && USE(TEXTURE_MAPPER)

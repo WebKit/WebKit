@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(GRAPHICS_CONTEXT_GL) && ENABLE(VIDEO) && USE(AVFOUNDATION)
+#if ENABLE(WEBGL) && ENABLE(VIDEO) && USE(AVFOUNDATION)
 
 #import "GraphicsContextGLCV.h"
 #import "GraphicsContextGLOpenGL.h"

@@ -394,7 +394,7 @@ void GLContextGLX::swapInterval(int interval)
     glXSwapIntervalSGI(interval);
 }
 
-#if ENABLE(GRAPHICS_CONTEXT_GL)
+#if ENABLE(WEBGL)
 PlatformGraphicsContextGL GLContextGLX::platformContext()
 {
     return m_context.get();

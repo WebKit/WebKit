@@ -29,7 +29,7 @@
 #include "config.h"
 #include "GraphicsContextGLOpenGL.h"
 
-#if ENABLE(GRAPHICS_CONTEXT_GL) && (USE(OPENGL) || USE(OPENGL_ES))
+#if ENABLE(WEBGL) && !USE(ANGLE)
 
 #if USE(OPENGL_ES)
 #include "ExtensionsGLOpenGLES.h"
@@ -2961,4 +2961,4 @@ void GraphicsContextGLOpenGL::compressedTexSubImage3D(GCGLenum, GCGLint, GCGLint
 
 }
 
-#endif // ENABLE(GRAPHICS_CONTEXT_GL) && (USE(OPENGL) || USE(OPENGL_ES))
+#endif // ENABLE(WEBGL) && !USE(ANGLE)

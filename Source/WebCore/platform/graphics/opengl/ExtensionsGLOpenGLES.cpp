@@ -30,7 +30,7 @@
 #if USE(OPENGL_ES)
 #include "ExtensionsGLOpenGLES.h"
 
-#if ENABLE(GRAPHICS_CONTEXT_GL)
+#if ENABLE(WEBGL)
 #include "GraphicsContextGLOpenGL.h"
 #include "NotImplemented.h"
 
@@ -330,6 +330,6 @@ String ExtensionsGLOpenGLES::getExtensions()
 
 } // namespace WebCore
 
-#endif // ENABLE(GRAPHICS_CONTEXT_GL)
+#endif // ENABLE(WEBGL)
 
 #endif // USE(OPENGL_ES)

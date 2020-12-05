@@ -26,7 +26,7 @@
 #include "config.h"
 #include "ExtensionsGLOpenGL.h"
 
-#if ENABLE(GRAPHICS_CONTEXT_GL) && USE(OPENGL)
+#if ENABLE(WEBGL) && USE(OPENGL)
 
 #include "GraphicsContextGLOpenGL.h"
 
@@ -282,4 +282,4 @@ bool ExtensionsGLOpenGL::isVertexArrayObjectSupported()
 
 } // namespace WebCore
 
-#endif // ENABLE(GRAPHICS_CONTEXT_GL) && USE(OPENGL)
+#endif // ENABLE(WEBGL) && USE(OPENGL)

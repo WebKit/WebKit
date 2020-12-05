@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(GRAPHICS_CONTEXT_GL) && USE(ANGLE)
+#if ENABLE(WEBGL) && USE(ANGLE)
 
 #include "GraphicsTypesGL.h"
 #include <wtf/Noncopyable.h>

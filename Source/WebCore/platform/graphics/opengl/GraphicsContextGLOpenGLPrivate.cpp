@@ -19,7 +19,7 @@
 
 #include "config.h"
 
-#if ENABLE(GRAPHICS_CONTEXT_GL)
+#if ENABLE(WEBGL)
 #include "GraphicsContextGLOpenGLPrivate.h"
 
 #include "HostWindow.h"
@@ -64,4 +64,4 @@ PlatformGraphicsContextGL GraphicsContextGLOpenGLPrivate::platformContext()
 
 } // namespace WebCore
 
-#endif // ENABLE(GRAPHICS_CONTEXT_GL)
+#endif // ENABLE(WEBGL)

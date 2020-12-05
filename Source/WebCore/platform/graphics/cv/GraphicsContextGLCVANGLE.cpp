@@ -26,7 +26,7 @@
 #include "config.h"
 #include "GraphicsContextGLCVANGLE.h"
 
-#if ENABLE(GRAPHICS_CONTEXT_GL) && ENABLE(VIDEO) && USE(AVFOUNDATION)
+#if ENABLE(WEBGL) && ENABLE(VIDEO) && USE(AVFOUNDATION)
 
 #include "FourCC.h"
 #include "Logging.h"

@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if ENABLE(GRAPHICS_CONTEXT_GL)
+#if ENABLE(WEBGL) && !USE(ANGLE)
 
 #include "ANGLEWebKitBridge.h"
 #include "Logging.h"
@@ -206,4 +206,4 @@ bool ANGLEWebKitBridge::compileShaderSource(const char* shaderSource, ANGLEShade
 
 }
 
-#endif // ENABLE(GRAPHICS_CONTEXT_GL)
+#endif // ENABLE(WEBGL) && !USE(ANGLE)

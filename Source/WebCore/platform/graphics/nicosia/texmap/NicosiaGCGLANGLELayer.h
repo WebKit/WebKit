@@ -61,7 +61,7 @@ public:
         virtual ~ANGLEContext();
 
         bool makeContextCurrent();
-#if ENABLE(GRAPHICS_CONTEXT_GL)
+#if ENABLE(WEBGL)
         PlatformGraphicsContextGL platformContext() const;
 #endif
 

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(GRAPHICS_CONTEXT_GL)
+#if ENABLE(WEBGL)
 
 namespace WebCore {
 
@@ -60,4 +60,4 @@ struct GraphicsContextGLAttributes {
 
 }
 
-#endif // ENABLE(GRAPHICS_CONTEXT_GL)
+#endif // ENABLE(WEBGL)

@@ -20,7 +20,7 @@
 #include "config.h"
 #include "TextureMapperGCGLPlatformLayer.h"
 
-#if ENABLE(GRAPHICS_CONTEXT_GL) && USE(TEXTURE_MAPPER) && !USE(NICOSIA)
+#if ENABLE(WEBGL) && USE(TEXTURE_MAPPER) && !USE(NICOSIA)
 
 #include "BitmapTextureGL.h"
 #include "GLContext.h"
@@ -121,4 +121,4 @@ void TextureMapperGCGLPlatformLayer::paintToTextureMapper(TextureMapper& texture
 
 } // namespace WebCore
 
-#endif // ENABLE(GRAPHICS_CONTEXT_GL) && USE(TEXTURE_MAPPER)
+#endif // ENABLE(WEBGL) && USE(TEXTURE_MAPPER)

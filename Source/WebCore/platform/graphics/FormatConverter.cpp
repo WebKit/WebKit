@@ -27,7 +27,7 @@
 
 #include "config.h"
 
-#if ENABLE(GRAPHICS_CONTEXT_GL)
+#if ENABLE(WEBGL)
 
 #include "FormatConverter.h"
 
@@ -1810,4 +1810,4 @@ ALWAYS_INLINE_EXCEPT_MSVC void FormatConverter::convert()
 
 } // namespace WebCore
 
-#endif // ENABLE(GRAPHICS_CONTEXT_GL)
+#endif // ENABLE(WEBGL)

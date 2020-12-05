@@ -26,7 +26,7 @@
 
 #include "config.h"
 
-#if ENABLE(GRAPHICS_CONTEXT_GL) && USE(ANGLE)
+#if ENABLE(WEBGL) && USE(ANGLE)
 #include "GraphicsContextGL.h"
 
 #include "ExtensionsGLANGLE.h"
@@ -2966,4 +2966,4 @@ GraphicsContextGLCV* GraphicsContextGLOpenGL::asCV()
 #endif
 }
 
-#endif // ENABLE(GRAPHICS_CONTEXT_GL) && USE(ANGLE)
+#endif // ENABLE(WEBGL) && USE(ANGLE)

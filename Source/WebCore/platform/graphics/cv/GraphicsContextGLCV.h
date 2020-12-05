@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(GRAPHICS_CONTEXT_GL) && USE(AVFOUNDATION)
+#if ENABLE(WEBGL) && USE(AVFOUNDATION)
 
 #include "GraphicsContextGL.h"
 

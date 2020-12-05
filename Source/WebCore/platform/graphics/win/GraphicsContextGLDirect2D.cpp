@@ -26,7 +26,7 @@
 #include "config.h"
 #include "GraphicsContextGLOpenGL.h"
 
-#if ENABLE(GRAPHICS_CONTEXT_GL) && USE(DIRECT2D)
+#if ENABLE(WEBGL) && USE(DIRECT2D)
 
 #include "COMPtr.h"
 #include "GraphicsContextGLImageExtractor.h"
@@ -58,4 +58,4 @@ void GraphicsContextGLOpenGL::paintToCanvas(const unsigned char* imagePixels, co
 
 } // namespace WebCore
 
-#endif // ENABLE(GRAPHICS_CONTEXT_GL) && USE(DIRECT2D)
+#endif // ENABLE(WEBGL) && USE(DIRECT2D)

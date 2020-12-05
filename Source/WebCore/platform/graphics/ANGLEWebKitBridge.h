@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(GRAPHICS_CONTEXT_GL)
+#if ENABLE(WEBGL) && !USE(ANGLE)
 
 #if USE(LIBEPOXY)
 // libepoxy headers have to be included before <ANGLE/ShaderLang.h> in order to avoid
@@ -107,4 +107,4 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(GRAPHICS_CONTEXT_GL)
+#endif // ENABLE(WEBGL) && !USE(ANGLE)

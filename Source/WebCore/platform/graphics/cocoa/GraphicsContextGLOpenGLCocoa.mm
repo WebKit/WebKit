@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#if ENABLE(GRAPHICS_CONTEXT_GL)
+#if ENABLE(WEBGL)
 #import "GraphicsContextGLOpenGL.h"
 
 #import "ExtensionsGLANGLE.h"
@@ -709,4 +709,4 @@ void GraphicsContextGLOpenGL::prepareForDisplay()
 
 }
 
-#endif // ENABLE(GRAPHICS_CONTEXT_GL)
+#endif // ENABLE(WEBGL)

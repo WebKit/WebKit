@@ -26,7 +26,7 @@
 
 #include "config.h"
 
-#if ENABLE(GRAPHICS_CONTEXT_GL) && (USE(OPENGL) || USE(OPENGL_ES))
+#if ENABLE(WEBGL) && !USE(ANGLE)
 #include "ExtensionsGLOpenGLCommon.h"
 
 #include "ANGLEWebKitBridge.h"
@@ -435,4 +435,4 @@ void ExtensionsGLOpenGLCommon::getQueryObjectui64vRobustANGLE(GCGLuint, GCGLenum
 
 } // namespace WebCore
 
-#endif // ENABLE(GRAPHICS_CONTEXT_GL) && (USE(OPENGL) || USE(OPENGL_ES))
+#endif // ENABLE(WEBGL) && !USE(ANGLE)

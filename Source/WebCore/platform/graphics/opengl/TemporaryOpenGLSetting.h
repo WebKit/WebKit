@@ -28,7 +28,7 @@
 
 #include "GraphicsTypesGL.h"
 
-#if ENABLE(GRAPHICS_CONTEXT_GL) && (USE(OPENGL) || USE(OPENGL_ES))
+#if ENABLE(WEBGL) && (USE(OPENGL) || USE(OPENGL_ES))
 
 #include <wtf/Noncopyable.h>
 

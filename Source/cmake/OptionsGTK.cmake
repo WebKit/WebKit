@@ -74,7 +74,7 @@ endif ()
 
 # Set the default value for ENABLE_GLES2 automatically.
 # We are not enabling or disabling automatically a feature here, because
-# the feature is by default always on (ENABLE_GRAPHICS_CONTEXT_GL=ON).
+# the feature is by default always on.
 # What we select here automatically is if we use OPENGL (ENABLE_GLES2=OFF)
 # or OPENGLES2 (ENABLE_GLES2=ON) for building the feature.
 set(ENABLE_GLES2_DEFAULT OFF)
@@ -89,7 +89,6 @@ endif ()
 WEBKIT_OPTION_DEFINE(ENABLE_GLES2 "Whether to enable OpenGL ES 2.0." PUBLIC ${ENABLE_GLES2_DEFAULT})
 WEBKIT_OPTION_DEFINE(ENABLE_GTKDOC "Whether or not to use generate gtkdoc." PUBLIC OFF)
 WEBKIT_OPTION_DEFINE(ENABLE_INTROSPECTION "Whether to enable GObject introspection." PUBLIC ON)
-WEBKIT_OPTION_DEFINE(ENABLE_GRAPHICS_CONTEXT_GL "Whether to use OpenGL." PUBLIC ON)
 WEBKIT_OPTION_DEFINE(ENABLE_QUARTZ_TARGET "Whether to enable support for the Quartz windowing target." PUBLIC ${GTK_SUPPORTS_QUARTZ})
 WEBKIT_OPTION_DEFINE(ENABLE_X11_TARGET "Whether to enable support for the X11 windowing target." PUBLIC ${GTK_SUPPORTS_X11})
 WEBKIT_OPTION_DEFINE(ENABLE_WAYLAND_TARGET "Whether to enable support for the Wayland windowing target." PUBLIC ${GTK_SUPPORTS_WAYLAND})
@@ -105,12 +104,7 @@ WEBKIT_OPTION_DEFINE(USE_SYSTEMD "Whether to enable journald logging" PUBLIC ON)
 # completely unsupported. They are intended for use only by WebKit developers.
 WEBKIT_OPTION_DEFINE(USE_ANGLE_WEBGL "Whether to use ANGLE as WebGL backend." PRIVATE OFF)
 
-WEBKIT_OPTION_DEPEND(ENABLE_3D_TRANSFORMS ENABLE_GRAPHICS_CONTEXT_GL)
-WEBKIT_OPTION_DEPEND(ENABLE_ASYNC_SCROLLING ENABLE_GRAPHICS_CONTEXT_GL)
-WEBKIT_OPTION_DEPEND(ENABLE_GLES2 ENABLE_GRAPHICS_CONTEXT_GL)
-WEBKIT_OPTION_DEPEND(ENABLE_WEBGL ENABLE_GRAPHICS_CONTEXT_GL)
 WEBKIT_OPTION_DEPEND(USE_ANGLE_WEBGL ENABLE_WEBGL)
-WEBKIT_OPTION_DEPEND(USE_WPE_RENDERER ENABLE_GRAPHICS_CONTEXT_GL)
 WEBKIT_OPTION_DEPEND(USE_WPE_RENDERER ENABLE_WAYLAND_TARGET)
 
 SET_AND_EXPOSE_TO_BUILD(ENABLE_DEVELOPER_MODE ${DEVELOPER_MODE})
@@ -272,9 +266,8 @@ endif ()
 
 SET_AND_EXPOSE_TO_BUILD(USE_TEXTURE_MAPPER TRUE)
 
-if (ENABLE_GRAPHICS_CONTEXT_GL)
-    # ENABLE_GRAPHICS_CONTEXT_GL is true if either USE_OPENGL or ENABLE_GLES2 is true.
-    # But USE_OPENGL is the opposite of ENABLE_GLES2.
+if (OPENGL_FOUND OR ENABLE_GLES2)
+    # USE_OPENGL is the opposite of ENABLE_GLES2.
     if (ENABLE_GLES2)
         find_package(OpenGLES2 REQUIRED)
         SET_AND_EXPOSE_TO_BUILD(USE_OPENGL_ES TRUE)
@@ -284,14 +277,11 @@ if (ENABLE_GRAPHICS_CONTEXT_GL)
             message(FATAL_ERROR "EGL is needed for ENABLE_GLES2.")
         endif ()
     else ()
-        if (NOT OPENGL_FOUND)
-            message(FATAL_ERROR "Either OpenGL or OpenGLES2 is needed for ENABLE_GRAPHICS_CONTEXT_GL.")
-        endif ()
         SET_AND_EXPOSE_TO_BUILD(USE_OPENGL TRUE)
     endif ()
 
     if (NOT EGL_FOUND AND (NOT ENABLE_X11_TARGET OR NOT GLX_FOUND))
-        message(FATAL_ERROR "Either GLX or EGL is needed for ENABLE_GRAPHICS_CONTEXT_GL.")
+        message(FATAL_ERROR "Either GLX or EGL is needed.")
     endif ()
 
     SET_AND_EXPOSE_TO_BUILD(USE_TEXTURE_MAPPER_GL TRUE)

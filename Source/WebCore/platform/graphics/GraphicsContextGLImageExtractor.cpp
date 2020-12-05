@@ -26,7 +26,7 @@
 #include "config.h"
 #include "GraphicsContextGLImageExtractor.h"
 
-#if ENABLE(GRAPHICS_CONTEXT_GL)
+#if ENABLE(WEBGL)
 
 namespace WebCore {
 

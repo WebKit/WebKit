@@ -74,7 +74,7 @@ public:
 
     virtual bool isEGLContext() const = 0;
 
-#if ENABLE(GRAPHICS_CONTEXT_GL)
+#if ENABLE(WEBGL)
     virtual PlatformGraphicsContextGL platformContext() = 0;
 #endif
 

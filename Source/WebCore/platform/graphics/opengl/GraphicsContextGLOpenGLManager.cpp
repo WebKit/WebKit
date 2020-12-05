@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if ENABLE(GRAPHICS_CONTEXT_GL)
+#if ENABLE(WEBGL)
 #include "GraphicsContextGLOpenGLManager.h"
 
 #include "GraphicsContextGLOpenGL.h"
@@ -275,4 +275,4 @@ void GraphicsContextGLOpenGLManager::recycleContextIfNecessary()
 
 } // namespace WebCore
 
-#endif // ENABLE(GRAPHICS_CONTEXT_GL)
+#endif // ENABLE(WEBGL)

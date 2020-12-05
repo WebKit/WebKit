@@ -18,7 +18,7 @@
 
 #include "config.h"
 
-#if ENABLE(GRAPHICS_CONTEXT_GL)
+#if USE(OPENGL) || USE(OPENGL_ES)
 #include "GLContext.h"
 #include <wtf/ThreadSpecific.h>
 

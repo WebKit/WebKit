@@ -19,7 +19,7 @@
 
 #pragma once
 
-#if ENABLE(GRAPHICS_CONTEXT_GL) && USE(TEXTURE_MAPPER) && !USE(NICOSIA)
+#if ENABLE(WEBGL) && USE(TEXTURE_MAPPER) && !USE(NICOSIA)
 
 #include "GraphicsContextGLOpenGL.h"
 #include "PlatformLayer.h"
@@ -58,4 +58,4 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(GRAPHICS_CONTEXT_GL) && USE(TEXTURE_MAPPER)
+#endif // ENABLE(WEBGL) && USE(TEXTURE_MAPPER)

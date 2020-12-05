@@ -298,46 +298,44 @@ if (ENABLE_ENCRYPTED_MEDIA AND ENABLE_OPENCDM)
   )
 endif ()
 
-if (ENABLE_GRAPHICS_CONTEXT_GL)
-    # For platforms that want to use system-provided OpenGL (ES) / EGL headers,
-    # these include directories, libraries or definitions need to be
-    # added before the ANGLE directories.
-    if (USE_LIBEPOXY)
+# For platforms that want to use system-provided OpenGL (ES) / EGL headers,
+# these include directories, libraries or definitions need to be
+# added before the ANGLE directories.
+if (USE_LIBEPOXY)
+    list(APPEND WebKit_SYSTEM_INCLUDE_DIRECTORIES
+        ${LIBEPOXY_INCLUDE_DIRS}
+    )
+    list(APPEND WebKit_PRIVATE_LIBRARIES
+        ${LIBEPOXY_LIBRARIES}
+    )
+    add_definitions(${LIBEPOXY_DEFINITIONS})
+else ()
+    if (USE_OPENGL)
         list(APPEND WebKit_SYSTEM_INCLUDE_DIRECTORIES
-            ${LIBEPOXY_INCLUDE_DIRS}
+            ${OPENGL_INCLUDE_DIRS}
         )
         list(APPEND WebKit_PRIVATE_LIBRARIES
-            ${LIBEPOXY_LIBRARIES}
+            ${OPENGL_LIBRARIES}
         )
-        add_definitions(${LIBEPOXY_DEFINITIONS})
-    else ()
-        if (USE_OPENGL)
-            list(APPEND WebKit_SYSTEM_INCLUDE_DIRECTORIES
-                ${OPENGL_INCLUDE_DIRS}
-            )
-            list(APPEND WebKit_PRIVATE_LIBRARIES
-                ${OPENGL_LIBRARIES}
-            )
-            add_definitions(${OPENGL_DEFINITIONS})
-        elseif (USE_OPENGL_ES)
-            list(APPEND WebKit_SYSTEM_INCLUDE_DIRECTORIES
-                ${OPENGLES2_INCLUDE_DIRS}
-            )
-            list(APPEND WebKit_PRIVATE_LIBRARIES
-                ${OPENGLES2_LIBRARIES}
-            )
-            add_definitions(${OPENGLES2_DEFINITIONS})
-        endif ()
+        add_definitions(${OPENGL_DEFINITIONS})
+    elseif (USE_OPENGL_ES)
+        list(APPEND WebKit_SYSTEM_INCLUDE_DIRECTORIES
+            ${OPENGLES2_INCLUDE_DIRS}
+        )
+        list(APPEND WebKit_PRIVATE_LIBRARIES
+            ${OPENGLES2_LIBRARIES}
+        )
+        add_definitions(${OPENGLES2_DEFINITIONS})
+    endif ()
 
-        if (USE_EGL)
-            list(APPEND WebKit_SYSTEM_INCLUDE_DIRECTORIES
-                ${EGL_INCLUDE_DIRS}
-            )
-            list(APPEND WebKit_PRIVATE_LIBRARIES
-                ${EGL_LIBRARIES}
-            )
-            add_definitions(${EGL_DEFINITIONS})
-        endif ()
+    if (USE_EGL)
+        list(APPEND WebKit_SYSTEM_INCLUDE_DIRECTORIES
+            ${EGL_INCLUDE_DIRS}
+        )
+        list(APPEND WebKit_PRIVATE_LIBRARIES
+            ${EGL_LIBRARIES}
+        )
+        add_definitions(${EGL_DEFINITIONS})
     endif ()
 endif ()
 

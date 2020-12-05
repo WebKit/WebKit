@@ -28,7 +28,7 @@
 #include "config.h"
 #include "GraphicsContextGLOpenGL.h"
 
-#if ENABLE(GRAPHICS_CONTEXT_GL)
+#if ENABLE(WEBGL)
 
 #include "ExtensionsGL.h"
 #include <wtf/UniqueArray.h>
@@ -196,4 +196,4 @@ void GraphicsContextGLOpenGL::prepareForDisplay()
 
 } // namespace WebCore
 
-#endif // ENABLE(GRAPHICS_CONTEXT_GL)
+#endif // ENABLE(WEBGL)
