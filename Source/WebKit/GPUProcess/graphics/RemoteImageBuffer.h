@@ -90,17 +90,6 @@ private:
         return m_remoteRenderingBackend.applyMediaItem(item, context);
     }
 
-    void submitDisplayList(const WebCore::DisplayList::DisplayList& displayList) override
-    {
-        if (displayList.isEmpty())
-            return;
-
-        const auto& imageBuffers = m_remoteRenderingBackend.remoteResourceCache().imageBuffers();
-        const auto& nativeImages = m_remoteRenderingBackend.remoteResourceCache().nativeImages();
-        WebCore::DisplayList::Replayer replayer { BaseConcreteImageBuffer::context(), displayList, &imageBuffers, &nativeImages, this };
-        replayer.replay();
-    }
-
     RemoteRenderingBackend& m_remoteRenderingBackend;
     WebCore::RenderingResourceIdentifier m_renderingResourceIdentifier;
 };

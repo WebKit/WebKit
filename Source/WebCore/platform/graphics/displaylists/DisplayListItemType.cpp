@@ -130,8 +130,6 @@ static size_t sizeOfItemInBytes(ItemType type)
         return sizeof(MetaCommandChangeDestinationImageBuffer);
     case ItemType::MetaCommandChangeItemBuffer:
         return sizeof(MetaCommandChangeItemBuffer);
-    case ItemType::MetaCommandEnd:
-        return sizeof(MetaCommandEnd);
     case ItemType::PutImageData:
         return sizeof(PutImageData);
     case ItemType::PaintFrameForMedia:
@@ -186,7 +184,6 @@ bool isDrawingItem(ItemType type)
     case ItemType::FlushContext:
     case ItemType::MetaCommandChangeDestinationImageBuffer:
     case ItemType::MetaCommandChangeItemBuffer:
-    case ItemType::MetaCommandEnd:
     case ItemType::Restore:
     case ItemType::Rotate:
     case ItemType::Save:
@@ -299,7 +296,6 @@ bool isInlineItem(ItemType type)
     case ItemType::FlushContext:
     case ItemType::MetaCommandChangeDestinationImageBuffer:
     case ItemType::MetaCommandChangeItemBuffer:
-    case ItemType::MetaCommandEnd:
     case ItemType::PaintFrameForMedia:
     case ItemType::Restore:
     case ItemType::Rotate:

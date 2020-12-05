@@ -228,7 +228,6 @@ void ItemHandle::apply(GraphicsContext& context)
     }
     case ItemType::MetaCommandChangeDestinationImageBuffer:
     case ItemType::MetaCommandChangeItemBuffer:
-    case ItemType::MetaCommandEnd:
         return;
     case ItemType::PutImageData: {
         get<PutImageData>().apply(context);
@@ -462,10 +461,6 @@ void ItemHandle::destroy()
     }
     case ItemType::MetaCommandChangeItemBuffer: {
         static_assert(std::is_trivially_destructible<MetaCommandChangeItemBuffer>::value);
-        return;
-    }
-    case ItemType::MetaCommandEnd: {
-        static_assert(std::is_trivially_destructible<MetaCommandEnd>::value);
         return;
     }
     case ItemType::PaintFrameForMedia: {
@@ -723,10 +718,6 @@ void ItemHandle::copyTo(ItemHandle destination) const
         new (itemOffset) MetaCommandChangeItemBuffer(get<MetaCommandChangeItemBuffer>());
         return;
     }
-    case ItemType::MetaCommandEnd: {
-        new (itemOffset) MetaCommandEnd(get<MetaCommandEnd>());
-        return;
-    }
     case ItemType::PaintFrameForMedia: {
         new (itemOffset) PaintFrameForMedia(get<PaintFrameForMedia>());
         return;
@@ -876,25 +867,25 @@ void ItemBuffer::clear()
     m_writtenNumberOfBytes = 0;
 }
 
-void ItemBuffer::swapWritableBufferIfNeeded(size_t numberOfBytes)
+DidChangeItemBuffer ItemBuffer::swapWritableBufferIfNeeded(size_t numberOfBytes)
 {
     auto sizeForBufferSwitchItem = paddedSizeOfTypeAndItemInBytes(ItemType::MetaCommandChangeItemBuffer);
     if (m_writtenNumberOfBytes + numberOfBytes + sizeForBufferSwitchItem <= m_writableBuffer.capacity)
-        return;
+        return DidChangeItemBuffer::No;
 
     auto nextBuffer = createItemBuffer(numberOfBytes + sizeForBufferSwitchItem);
-    bool hadPreviousBuffer = m_writableBuffer;
-    if (hadPreviousBuffer)
-        uncheckedAppend<MetaCommandChangeItemBuffer>(nextBuffer.identifier);
-    auto previousBuffer = std::exchange(m_writableBuffer, { });
-    previousBuffer.capacity = std::exchange(m_writtenNumberOfBytes, 0);
-    if (hadPreviousBuffer)
-        m_readOnlyBuffers.append(WTFMove(previousBuffer));
-
+    bool hadPreviousBuffer = m_writableBuffer && m_writableBuffer.identifier != nextBuffer.identifier;
+    if (hadPreviousBuffer) {
+        uncheckedAppend<MetaCommandChangeItemBuffer>(DidChangeItemBuffer::No, nextBuffer.identifier);
+        m_writableBuffer.capacity = m_writtenNumberOfBytes;
+        m_readOnlyBuffers.append(m_writableBuffer);
+    }
+    m_writtenNumberOfBytes = 0;
     m_writableBuffer = WTFMove(nextBuffer);
+    return hadPreviousBuffer ? DidChangeItemBuffer::Yes : DidChangeItemBuffer::No;
 }
 
-void ItemBuffer::appendEncodedData(ItemHandle temporaryItem)
+void ItemBuffer::append(ItemHandle temporaryItem)
 {
     auto data = m_writingClient->encodeItem(temporaryItem);
     if (!data)
@@ -903,13 +894,20 @@ void ItemBuffer::appendEncodedData(ItemHandle temporaryItem)
     auto dataLength = data->size();
     auto additionalCapacityForEncodedItem = 2 * sizeof(uint64_t) + roundUpToMultipleOf(alignof(uint64_t), dataLength);
 
-    swapWritableBufferIfNeeded(additionalCapacityForEncodedItem);
+    auto bufferChanged = swapWritableBufferIfNeeded(additionalCapacityForEncodedItem);
 
     m_writableBuffer.data[m_writtenNumberOfBytes] = static_cast<uint8_t>(temporaryItem.type());
     reinterpret_cast<uint64_t*>(m_writableBuffer.data + m_writtenNumberOfBytes)[1] = dataLength;
     memcpy(m_writableBuffer.data + m_writtenNumberOfBytes + 2 * sizeof(uint64_t), data->dataAsUInt8Ptr(), dataLength);
 
-    m_writtenNumberOfBytes += additionalCapacityForEncodedItem;
+    didAppendData(additionalCapacityForEncodedItem, bufferChanged);
+}
+
+void ItemBuffer::didAppendData(size_t numberOfBytes, DidChangeItemBuffer didChangeItemBuffer)
+{
+    m_writtenNumberOfBytes += numberOfBytes;
+    if (m_writingClient)
+        m_writingClient->didAppendData(m_writableBuffer, numberOfBytes, didChangeItemBuffer);
 }
 
 } // namespace DisplayList

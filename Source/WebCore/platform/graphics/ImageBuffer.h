@@ -79,8 +79,10 @@ public:
     virtual bool prefersPreparationForDisplay() { return false; }
     virtual void flushDrawingContext() { }
     virtual void flushDrawingContextAndCommit() { }
-    virtual void submitDisplayList(const DisplayList::DisplayList&) { }
     virtual void didFlush(DisplayList::FlushIdentifier) { }
+
+    virtual void changeDestinationImageBuffer(RenderingResourceIdentifier) { }
+    virtual void clearDisplayList() { }
 
     virtual IntSize logicalSize() const = 0;
     virtual float resolutionScale() const = 0;

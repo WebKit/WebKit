@@ -66,6 +66,10 @@ public:
     RemoteResourceCacheProxy& remoteResourceCacheProxy() { return m_remoteResourceCacheProxy; }
     WebCore::DisplayList::ItemBufferHandle createItemBuffer(size_t capacity, WebCore::RenderingResourceIdentifier destinationBufferIdentifier);
 
+    void didAppendData(const WebCore::DisplayList::ItemBufferHandle&, size_t numberOfBytes, WebCore::DisplayList::DidChangeItemBuffer, WebCore::RenderingResourceIdentifier destinationImageBuffer);
+    void willAppendItem(WebCore::RenderingResourceIdentifier);
+    void sendDeferredWakeupMessageIfNeeded();
+
     // IPC::MessageSender.
     IPC::Connection* messageSenderConnection() const override;
     uint64_t messageSenderDestinationID() const override;
@@ -76,7 +80,6 @@ public:
     // Messages to be sent.
     RefPtr<WebCore::ImageBuffer> createImageBuffer(const WebCore::FloatSize&, WebCore::RenderingMode, float resolutionScale, WebCore::ColorSpace, WebCore::PixelFormat);
     RefPtr<WebCore::ImageData> getImageData(WebCore::AlphaPremultiplication outputFormat, const WebCore::IntRect& srcRect, WebCore::RenderingResourceIdentifier);
-    void submitDisplayList(const WebCore::DisplayList::DisplayList&, WebCore::RenderingResourceIdentifier destinationBufferIdentifier);
     WebCore::DisplayList::FlushIdentifier flushDisplayListAndCommit(const WebCore::DisplayList::DisplayList&, WebCore::RenderingResourceIdentifier);
     void cacheNativeImage(const ShareableBitmap::Handle&, WebCore::RenderingResourceIdentifier);
     void releaseRemoteResource(WebCore::RenderingResourceIdentifier);
@@ -92,17 +95,28 @@ private:
 
     void connectToGPUProcess();
     void reestablishGPUProcessConnection();
-    void updateReusableHandles();
 
     // Messages to be received.
     void didCreateImageBufferBackend(ImageBufferBackendHandle, WebCore::RenderingResourceIdentifier);
     void didFlush(WebCore::DisplayList::FlushIdentifier, WebCore::RenderingResourceIdentifier);
 
+    RefPtr<DisplayListWriterHandle> findReusableDisplayListHandle(size_t capacity);
+
+    struct WakeupMessageArguments {
+        WebCore::DisplayList::ItemBufferIdentifier itemBufferIdentifier;
+        size_t initialOffset;
+        WebCore::RenderingResourceIdentifier imageBufferIdentifier;
+    };
+
+    void sendWakeupMessage(const WakeupMessageArguments&);
+
     RemoteResourceCacheProxy m_remoteResourceCacheProxy { *this };
     HashMap<WebCore::DisplayList::ItemBufferIdentifier, RefPtr<DisplayListWriterHandle>> m_sharedDisplayListHandles;
     Deque<WebCore::DisplayList::ItemBufferIdentifier> m_identifiersOfReusableHandles;
-    HashSet<WebCore::DisplayList::ItemBufferIdentifier> m_identifiersOfHandlesAvailableForWriting;
     RenderingBackendIdentifier m_renderingBackendIdentifier { RenderingBackendIdentifier::generate() };
+    Optional<WebCore::RenderingResourceIdentifier> m_currentDestinationImageBufferIdentifier;
+    Optional<WakeupMessageArguments> m_deferredWakeupMessageArguments;
+    unsigned m_remainingItemsToAppendBeforeSendingWakeup { 0 };
 };
 
 } // namespace WebKit

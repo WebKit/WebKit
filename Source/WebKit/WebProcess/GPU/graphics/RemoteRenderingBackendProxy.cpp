@@ -87,8 +87,10 @@ void RemoteRenderingBackendProxy::gpuProcessConnectionDidClose(GPUProcessConnect
     previousConnection.removeClient(*this);
 
     m_identifiersOfReusableHandles.clear();
-    m_identifiersOfHandlesAvailableForWriting.clear();
     m_sharedDisplayListHandles.clear();
+    m_currentDestinationImageBufferIdentifier = WTF::nullopt;
+    m_deferredWakeupMessageArguments = WTF::nullopt;
+    m_remainingItemsToAppendBeforeSendingWakeup = 0;
 
     reestablishGPUProcessConnection();
 }
@@ -147,30 +149,6 @@ RefPtr<ImageData> RemoteRenderingBackendProxy::getImageData(AlphaPremultiplicati
     return imageDataReference.buffer();
 }
 
-void RemoteRenderingBackendProxy::submitDisplayList(const DisplayList::DisplayList& displayList, RenderingResourceIdentifier destinationBufferIdentifier)
-{
-    Optional<std::pair<DisplayList::ItemBufferIdentifier, size_t>> identifierAndOffsetForWakeUpMessage;
-    bool isFirstHandle = true;
-
-    displayList.forEachItemBuffer([&] (auto& handle) {
-        m_identifiersOfHandlesAvailableForWriting.add(handle.identifier);
-
-        auto* sharedHandle = m_sharedDisplayListHandles.get(handle.identifier);
-        RELEASE_ASSERT_WITH_MESSAGE(sharedHandle, "%s failed to find shared display list", WTF_PRETTY_FUNCTION);
-
-        bool unreadCountWasEmpty = sharedHandle->advance(handle.capacity) == handle.capacity;
-        if (isFirstHandle && unreadCountWasEmpty)
-            identifierAndOffsetForWakeUpMessage = {{ handle.identifier, handle.data - sharedHandle->data() }};
-
-        isFirstHandle = false;
-    });
-
-    if (identifierAndOffsetForWakeUpMessage) {
-        auto [identifier, offset] = *identifierAndOffsetForWakeUpMessage;
-        send(Messages::RemoteRenderingBackend::WakeUpAndApplyDisplayList(identifier, offset, destinationBufferIdentifier), m_renderingBackendIdentifier);
-    }
-}
-
 void RemoteRenderingBackendProxy::cacheNativeImage(const ShareableBitmap::Handle& handle, RenderingResourceIdentifier renderingResourceIdentifier)
 {
     send(Messages::RemoteRenderingBackend::CacheNativeImage(handle, renderingResourceIdentifier), m_renderingBackendIdentifier);
@@ -201,36 +179,92 @@ void RemoteRenderingBackendProxy::didFlush(DisplayList::FlushIdentifier flushIde
         imageBuffer->didFlush(flushIdentifier);
 }
 
-void RemoteRenderingBackendProxy::updateReusableHandles()
+void RemoteRenderingBackendProxy::willAppendItem(RenderingResourceIdentifier newDestinationIdentifier)
 {
-    for (auto identifier : m_identifiersOfHandlesAvailableForWriting) {
-        auto* handle = m_sharedDisplayListHandles.get(identifier);
-        if (!handle->resetWritableOffsetIfPossible())
-            continue;
+    if (m_currentDestinationImageBufferIdentifier == newDestinationIdentifier)
+        return;
 
-        if (m_identifiersOfReusableHandles.contains(identifier))
-            continue;
-
-        m_identifiersOfReusableHandles.append(identifier);
+    if (auto previousDestinationBufferIdentifier = std::exchange(m_currentDestinationImageBufferIdentifier, newDestinationIdentifier)) {
+        if (auto imageBuffer = m_remoteResourceCacheProxy.cachedImageBuffer(*previousDestinationBufferIdentifier))
+            imageBuffer->changeDestinationImageBuffer(newDestinationIdentifier);
+        else
+            ASSERT_NOT_REACHED();
     }
+
+    if (auto imageBuffer = m_remoteResourceCacheProxy.cachedImageBuffer(newDestinationIdentifier))
+        imageBuffer->clearDisplayList();
+}
+
+void RemoteRenderingBackendProxy::sendWakeupMessage(const WakeupMessageArguments& arguments)
+{
+    send(Messages::RemoteRenderingBackend::WakeUpAndApplyDisplayList(arguments.itemBufferIdentifier, arguments.initialOffset, arguments.imageBufferIdentifier), m_renderingBackendIdentifier);
+}
+
+void RemoteRenderingBackendProxy::sendDeferredWakeupMessageIfNeeded()
+{
+    auto arguments = std::exchange(m_deferredWakeupMessageArguments, WTF::nullopt);
+    if (!arguments)
+        return;
+
+    sendWakeupMessage(*arguments);
+    m_remainingItemsToAppendBeforeSendingWakeup = 0;
+}
+
+void RemoteRenderingBackendProxy::didAppendData(const DisplayList::ItemBufferHandle& handle, size_t numberOfBytes, DisplayList::DidChangeItemBuffer didChangeItemBuffer, RenderingResourceIdentifier destinationImageBuffer)
+{
+    auto* sharedHandle = m_sharedDisplayListHandles.get(handle.identifier);
+    if (UNLIKELY(!sharedHandle))
+        RELEASE_ASSERT_NOT_REACHED();
+
+    bool wasEmpty = sharedHandle->advance(numberOfBytes) == numberOfBytes;
+    if (!wasEmpty || didChangeItemBuffer == DisplayList::DidChangeItemBuffer::Yes) {
+        if (m_deferredWakeupMessageArguments && !--m_remainingItemsToAppendBeforeSendingWakeup)
+            sendWakeupMessage(*std::exchange(m_deferredWakeupMessageArguments, WTF::nullopt));
+        return;
+    }
+
+    sendDeferredWakeupMessageIfNeeded();
+
+    // Instead of sending the wakeup message immediately, wait for some additional data. This gives the
+    // web process a "head start", decreasing the likelihood that the GPU process will encounter frequent
+    // wakeups when processing a large amount of display list items.
+    constexpr unsigned itemCountHysteresisBeforeSendingWakeup = 512;
+
+    m_remainingItemsToAppendBeforeSendingWakeup = itemCountHysteresisBeforeSendingWakeup;
+    m_deferredWakeupMessageArguments = {{
+        handle.identifier,
+        sharedHandle->writableOffset() - numberOfBytes,
+        destinationImageBuffer
+    }};
+}
+
+RefPtr<DisplayListWriterHandle> RemoteRenderingBackendProxy::findReusableDisplayListHandle(size_t capacity)
+{
+    if (UNLIKELY(m_identifiersOfReusableHandles.isEmpty()))
+        return nullptr;
+
+    auto mostRecentlyUsedIdentifier = m_identifiersOfReusableHandles.first();
+    auto handle = makeRefPtr(m_sharedDisplayListHandles.get(mostRecentlyUsedIdentifier));
+    handle->moveWritableOffsetToStartIfPossible();
+    if (handle->availableCapacity() >= capacity)
+        return handle;
+
+    m_identifiersOfReusableHandles.append(m_identifiersOfReusableHandles.takeFirst());
+
+    auto leastRecentlyUsedIdentifier = m_identifiersOfReusableHandles.first();
+    if (leastRecentlyUsedIdentifier != mostRecentlyUsedIdentifier) {
+        auto handle = makeRefPtr(m_sharedDisplayListHandles.get(leastRecentlyUsedIdentifier));
+        if (handle->moveWritableOffsetToStartIfPossible() && handle->availableCapacity() >= capacity)
+            return handle;
+    }
+
+    return nullptr;
 }
 
 DisplayList::ItemBufferHandle RemoteRenderingBackendProxy::createItemBuffer(size_t capacity, RenderingResourceIdentifier destinationBufferIdentifier)
 {
-    updateReusableHandles();
-
-    while (!m_identifiersOfReusableHandles.isEmpty()) {
-        auto identifier = m_identifiersOfReusableHandles.first();
-        auto* reusableHandle = m_sharedDisplayListHandles.get(identifier);
-        RELEASE_ASSERT_WITH_MESSAGE(reusableHandle, "%s failed to find shared display list", WTF_PRETTY_FUNCTION);
-
-        if (m_identifiersOfHandlesAvailableForWriting.contains(identifier) && reusableHandle->availableCapacity() >= capacity) {
-            m_identifiersOfHandlesAvailableForWriting.remove(identifier);
-            return reusableHandle->createHandle();
-        }
-
-        m_identifiersOfReusableHandles.removeFirst();
-    }
+    if (auto handle = findReusableDisplayListHandle(capacity))
+        return handle->createHandle();
 
     static constexpr size_t defaultSharedItemBufferSize = 1 << 16;
     static_assert(defaultSharedItemBufferSize > SharedDisplayListHandle::headerSize());
@@ -248,7 +282,7 @@ DisplayList::ItemBufferHandle RemoteRenderingBackendProxy::createItemBuffer(size
     auto newHandle = DisplayListWriterHandle::create(identifier, sharedMemory.releaseNonNull());
     auto displayListHandle = newHandle->createHandle();
 
-    m_identifiersOfReusableHandles.append(identifier);
+    m_identifiersOfReusableHandles.prepend(identifier);
     m_sharedDisplayListHandles.set(identifier, WTFMove(newHandle));
 
     return displayListHandle;

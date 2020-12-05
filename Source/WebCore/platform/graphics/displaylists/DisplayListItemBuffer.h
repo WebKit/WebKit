@@ -83,12 +83,15 @@ struct ItemHandle {
     void copyTo(ItemHandle destination) const;
 };
 
+enum class DidChangeItemBuffer : bool { No, Yes };
+
 class ItemBufferWritingClient {
 public:
     virtual ~ItemBufferWritingClient() { }
 
     virtual ItemBufferHandle createItemBuffer(size_t) = 0;
     virtual RefPtr<SharedBuffer> encodeItem(ItemHandle) const = 0;
+    virtual void didAppendData(const ItemBufferHandle&, size_t numberOfBytes, DidChangeItemBuffer) = 0;
 };
 
 class ItemBufferReadingClient {
@@ -152,17 +155,17 @@ public:
             static uint8_t temporaryItemBuffer[sizeof(uint64_t) + sizeof(T)];
             temporaryItemBuffer[0] = static_cast<uint8_t>(T::itemType);
             new (temporaryItemBuffer + sizeof(uint64_t)) T(std::forward<Args>(args)...);
-            appendEncodedData({ temporaryItemBuffer });
+            append({ temporaryItemBuffer });
             ItemHandle { temporaryItemBuffer }.destroy();
             return;
         }
 
-        swapWritableBufferIfNeeded(paddedSizeOfTypeAndItemInBytes(T::itemType));
+        auto bufferChanged = swapWritableBufferIfNeeded(paddedSizeOfTypeAndItemInBytes(T::itemType));
 
         if (!std::is_trivially_destructible<T>::value)
             m_itemsToDestroyInAllocatedBuffers.append({ &m_writableBuffer.data[m_writtenNumberOfBytes] });
 
-        uncheckedAppend<T>(std::forward<Args>(args)...);
+        uncheckedAppend<T>(bufferChanged, std::forward<Args>(args)...);
     }
 
     void setClient(ItemBufferWritingClient* client) { m_writingClient = client; }
@@ -171,15 +174,16 @@ public:
 private:
     const ItemBufferHandles& readOnlyBuffers() const { return m_readOnlyBuffers; }
     void forEachItemBuffer(Function<void(const ItemBufferHandle&)>&&) const;
+    WEBCORE_EXPORT void didAppendData(size_t numberOfBytes, DidChangeItemBuffer);
 
-    WEBCORE_EXPORT void swapWritableBufferIfNeeded(size_t numberOfBytes);
-    WEBCORE_EXPORT void appendEncodedData(ItemHandle);
-    template<typename T, class... Args> void uncheckedAppend(Args&&... args)
+    WEBCORE_EXPORT DidChangeItemBuffer swapWritableBufferIfNeeded(size_t numberOfBytes);
+    WEBCORE_EXPORT void append(ItemHandle);
+    template<typename T, class... Args> void uncheckedAppend(DidChangeItemBuffer didChangeItemBuffer, Args&&... args)
     {
         auto* startOfItem = &m_writableBuffer.data[m_writtenNumberOfBytes];
         startOfItem[0] = static_cast<uint8_t>(T::itemType);
         new (startOfItem + sizeof(uint64_t)) T(std::forward<Args>(args)...);
-        m_writtenNumberOfBytes += paddedSizeOfTypeAndItemInBytes(T::itemType);
+        didAppendData(paddedSizeOfTypeAndItemInBytes(T::itemType), didChangeItemBuffer);
     }
 
     ItemBufferReadingClient* m_readingClient { nullptr };

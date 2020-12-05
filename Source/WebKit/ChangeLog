@@ -1,3 +1,168 @@
+2020-12-04  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Concurrent display lists] Synchronize display list rendering across remote image buffers
+        https://bugs.webkit.org/show_bug.cgi?id=219091
+        <rdar://problem/71747695>
+
+        Reviewed by Geoff Garen.
+
+        Refactors the existing concurrent display list processing mechanism, such that we no longer update the unread
+        bytes count every 512 items (or when flushing the drawing context), and instead update it every time we append
+        display list item data. In order to achieve this without making it impossible for multiple display-list backed
+        image buffers to render simultaneously, we also add support for synchronizing display list items across
+        different image buffers by using the new meta command items added in bug #219262. As detailed in the ChangeLog
+        for that bug, a stream of display list data written by the web process and consumed by the GPU process is now
+        structured like so:
+
+        Wakeup message initiates display list processing with Image Buffer A and Item Buffer 1
+            |
+            |   MetaCommandChangeDestinationImageBuffer(B)
+            |                       |
+            |                       |                  MetaCommandChangeItemBuffer(2)
+            |                       |                                |
+            |                       |                                |
+            v                       v                                v
+            +-----------------------+--------------------------------++
+            | +--------------------+ +------------------------------+ |
+            | | Destination        | | Destination                  | | Item Buffer 1
+            | | Image Buffer A     | | Image Buffer B               | |
+            | +--------------------+ +------------------------------+ |
+            +---------------------------------------------------------+
+
+            +---------------------------------------------------------+
+            | +--------------+ +-----------------------+              |
+            | | Dst. Image   | | Destination Image     |  Unused      | Item Buffer 2
+            | | Buffer B     | | Buffer A              |  Capacity    |
+            | +--------------+ +-----------------------+              |
+            +-----------------+-------------------------+-------------+
+                              ^
+                              |
+                              |
+            MetaCommandChangeDestinationImageBuffer(A)
+
+        (Note that the `MetaCommandEnd` item has been omitted, since we no longer need to explicitly tell the GPU
+        process to go to sleep with the latest iteration of this patch).
+
+        In order to write display list data conforming to this format, we add a mechanism to the web process that keeps
+        track of the "current destination image buffer" (i.e. the image buffer that has most recently
+        appended a display list item). Right before this destination is about to change, we append a new
+        `MetaCommandChangeDestinationImageBuffer` item before proceeding to append display list items for the new
+        current destination.
+
+        Since we now bump the unread count every time, we need to do some additional work to avoid an excessive number
+        of wakeups and sleeps in the GPU process, which would otherwise cause a massive regression. To do this, we
+        introduce an item count hysteresis in the web process, such that we will wait for 512 items to be written before
+        attempting to send the wakeup message. This allows the web process to get a small head start over the GPU
+        process, and thus allows the GPU process to be more consistently busy over the course of a single frame.
+
+        On the reader (GPU process) side, we make some minor adjustments so that the main display list processing loop
+        of the GPU process is capable of changing destination image buffers while processing a stream of display list
+        items.
+
+        See below for more details.
+
+        * GPUProcess/graphics/DisplayListReaderHandle.cpp:
+        (WebKit::DisplayListReaderHandle::advance):
+
+        Update `advance` so that it just performs a single 8-byte atomic `exchangeSub` rather than grabbing a spinlock.
+
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::submit):
+        (WebKit::RemoteRenderingBackend::nextDestinationImageBufferAfterApplyingDisplayLists):
+
+        Rename `applyDisplayListsFromHandle` to `nextDestinationImageBufferAfterApplyingDisplayLists`, and make it
+        return the current image buffer to use as the destination for replaying display list commands. This helper is
+        still responsible for replaying a display list item buffer until it has no more data (that is, until we
+        encounter a `MetaCommandChangeItemBuffer` item informing us of the next item buffer to consume).
+
+        (WebKit::RemoteRenderingBackend::wakeUpAndApplyDisplayList):
+
+        Adjust this to call `nextDestinationImageBufferAfterApplyingDisplayLists`.
+
+        (WebKit::RemoteRenderingBackend::decodeItem):
+        (WebKit::RemoteRenderingBackend::applyDisplayListsFromHandle): Deleted.
+        * GPUProcess/graphics/RemoteRenderingBackend.h:
+        * Shared/SharedDisplayListHandle.h:
+
+        Remove `SharedDisplayListHandle::Lock` altogether, now that we just have a single atomic `uint64_t` counter to
+        represent the number of unread bytes.
+
+        (WebKit::SharedDisplayListHandle::unreadBytes):
+        (WebKit::SharedDisplayListHandle::Lock::Lock): Deleted.
+        (WebKit::SharedDisplayListHandle::Lock::~Lock): Deleted.
+        * WebProcess/GPU/graphics/DisplayListWriterHandle.cpp:
+        (WebKit::DisplayListWriterHandle::advance):
+
+        Make this use the single atomic counter, instead of grabbing a spinlock.
+
+        (WebKit::DisplayListWriterHandle::moveWritableOffsetToStartIfPossible):
+        (WebKit::DisplayListWriterHandle::resetWritableOffsetIfPossible): Deleted.
+
+        Rename `resetWritableOffsetIfPossible` to the more accurate `moveWritableOffsetToStartIfPossible`.
+
+        * WebProcess/GPU/graphics/DisplayListWriterHandle.h:
+        * WebProcess/GPU/graphics/RemoteImageBufferProxy.h:
+        (WebKit::RemoteImageBufferProxy::changeDestinationImageBuffer):
+
+        Add a helper method to append a `MetaCommandChangeDestinationImageBuffer` item to the display list, given the
+        identifier of this next item buffer.
+
+        (WebKit::RemoteImageBufferProxy::clearDisplayList):
+
+        Add a helper method to clear the display list, such that the `RemoteImageBufferProxy` will be asked for a new
+        buffer handle the next time we append an item.
+
+        (WebKit::RemoteImageBufferProxy::waitForDidFlushWithTimeout):
+
+        Make this hit the maximum `waitForAndDispatchImmediately` attempt count and "fail" only if the call to
+        `waitForAndDispatchImmediately` actually times out. This change is necessary to ensure that the scenario of
+        multiple image buffers simultaneously appending display list items works when all image buffers perform (non-
+        blocking) flushes simultaneously, followed by a sync-wait (blocking) flush. In this situation, the web process
+        may receive more than three `DidFlush` messages in rapid succession, causing it to hit this maximum limit of 3
+        instantly and avoid waiting for the expected `DidFlush` message to arrive.
+
+        (WebKit::RemoteImageBufferProxy::submitDisplayList): Deleted.
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp:
+        (WebKit::RemoteRenderingBackendProxy::gpuProcessConnectionDidClose):
+
+        Reset state when the GPU process is terminated.
+
+        (WebKit::RemoteRenderingBackendProxy::willAppendItem):
+
+        Update the current destination image buffer (`m_currentDestinationImageBufferIdentifier`). If this identifier
+        changed, then we append a `MetaCommandChangeDestinationImageBuffer` item to the previous destination before
+        setting the new destination image buffer. We also need to clear the new destination image buffer's display list
+        before writing new items, to prevent it from overwriting shared display list item data.
+
+        (WebKit::RemoteRenderingBackendProxy::sendWakeupMessage):
+        (WebKit::RemoteRenderingBackendProxy::sendDeferredWakeupMessageIfNeeded):
+        (WebKit::RemoteRenderingBackendProxy::didAppendData):
+
+        Implement a new `ItemBufferWritingClient` hook by advancing the corresponding item buffer's unread count.
+        Additionally, schedule a wakeup message in the case where the unread count was zero when we advanced, and the
+        item buffer we've appended to is not "connected" to a previous item buffer by way of an item buffer change item.
+
+        Additionally, in the case where we don't schedule a new wakeup message, check whether or not there is a deferred
+        wakeup message; if there is, then decrement the remaining item count before we send the wakeup message, and send
+        the message if the count reaches 0.
+
+        (WebKit::RemoteRenderingBackendProxy::findReusableDisplayListHandle):
+
+        Pull logic to find a shared display list handle suitable for reuse into a separate helper method, and adjust it
+        so that if the most recently used display list handle has run out of available capacity, we move it to the end
+        of the reuse queue and only reuse the new first shared handle in the queue if its writable offset can be reset.
+        This ensures that the GPU process can always continue reading display list item data from the start of new item
+        buffers -- i.e., we don't end up with the web process writing out a stream of display list data like:
+
+           (Start) Bytes (16, 65520) in ItemBuffer[1]
+                   Bytes (16, 65536) in ItemBuffer[2]
+                   Bytes (65520, 65536) in ItemBuffer[1]
+
+        (WebKit::RemoteRenderingBackendProxy::createItemBuffer):
+        (WebKit::RemoteRenderingBackendProxy::submitDisplayList): Deleted.
+        (WebKit::RemoteRenderingBackendProxy::updateReusableHandles): Deleted.
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.h:
+
 2020-12-05  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Remove ENABLE_GRAPHICS_CONTEXT_GL by replacing it with ENABLE(WEBGL)

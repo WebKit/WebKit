@@ -76,7 +76,6 @@ enum class ItemType : uint8_t {
     FillPath,
     FillEllipse,
     FlushContext,
-    MetaCommandEnd,
     MetaCommandChangeDestinationImageBuffer,
     MetaCommandChangeItemBuffer,
     PutImageData,

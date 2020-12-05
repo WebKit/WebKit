@@ -69,6 +69,8 @@ public:
         virtual void cacheNativeImage(NativeImage&) { }
     };
 
+    void flushContext(FlushIdentifier identifier) { append<FlushContext>(identifier); }
+
 private:
     friend class DrawGlyphsRecorder;
     bool hasPlatformContext() const override { return false; }
@@ -164,8 +166,8 @@ private:
         }
     }
 
-    void willAppendItemOfType(ItemType);
-    void didAppendItemOfType(ItemType);
+    WEBCORE_EXPORT void willAppendItemOfType(ItemType);
+    WEBCORE_EXPORT void didAppendItemOfType(ItemType);
 
     void appendStateChangeItem(const GraphicsContextStateChange&, GraphicsContextState::StateChangeFlags);
 

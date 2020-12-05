@@ -1014,11 +1014,6 @@ static TextStream& operator<<(TextStream& ts, const MetaCommandChangeDestination
     return ts;
 }
 
-static TextStream& operator<<(TextStream& ts, const MetaCommandEnd&)
-{
-    return ts;
-}
-
 static TextStream& operator<<(TextStream& ts, ItemType type)
 {
     switch (type) {
@@ -1070,7 +1065,6 @@ static TextStream& operator<<(TextStream& ts, ItemType type)
     case ItemType::FlushContext: ts << "flush-context"; break;
     case ItemType::MetaCommandChangeDestinationImageBuffer: ts << "meta-command-change-destination-image-buffer"; break;
     case ItemType::MetaCommandChangeItemBuffer: ts << "meta-command-change-item-buffer"; break;
-    case ItemType::MetaCommandEnd: ts << "meta-command-end"; break;
     case ItemType::PutImageData: ts << "put-image-data"; break;
     case ItemType::PaintFrameForMedia: ts << "paint-frame-for-media"; break;
     case ItemType::StrokeRect: ts << "stroke-rect"; break;
@@ -1231,9 +1225,6 @@ TextStream& operator<<(TextStream& ts, ItemHandle item)
         break;
     case ItemType::MetaCommandChangeItemBuffer:
         ts << item.get<MetaCommandChangeItemBuffer>();
-        break;
-    case ItemType::MetaCommandEnd:
-        ts << item.get<MetaCommandEnd>();
         break;
     case ItemType::PutImageData:
         ts << item.get<PutImageData>();

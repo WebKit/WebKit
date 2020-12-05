@@ -50,38 +50,12 @@ public:
 
     uint64_t unreadBytes()
     {
-        auto locker = SharedDisplayListHandle::Lock { *this };
-        return header().unreadBytes;
+        return header().unreadBytes.load();
     }
 
     virtual size_t advance(size_t amount) = 0;
 
 protected:
-    class Lock {
-    public:
-        Lock(SharedDisplayListHandle& handle)
-            : m_handle(handle)
-        {
-            auto& atomicValue = m_handle.header().lock;
-            while (true) {
-                // FIXME: We need to avoid waiting forever in the case where the web content process
-                // holds on to the lock indefinitely (or crashes while holding the lock).
-                uint64_t unlocked = 0;
-                if (atomicValue.compareExchangeWeak(unlocked, 1))
-                    break;
-                Thread::yield();
-            }
-        }
-
-        ~Lock()
-        {
-            m_handle.header().lock.store(0);
-        }
-
-    private:
-        SharedDisplayListHandle& m_handle;
-    };
-
     SharedDisplayListHandle(WebCore::DisplayList::ItemBufferIdentifier identifier, Ref<SharedMemory>&& sharedMemory)
         : m_identifier(identifier)
         , m_sharedMemory(WTFMove(sharedMemory))
@@ -89,8 +63,7 @@ protected:
     }
 
     struct DisplayListSharedMemoryHeader {
-        Atomic<uint64_t> lock;
-        uint64_t unreadBytes;
+        Atomic<uint64_t> unreadBytes;
     };
 
     DisplayListSharedMemoryHeader& header() { return *reinterpret_cast<DisplayListSharedMemoryHeader*>(data()); }

@@ -173,7 +173,7 @@ TEST(DisplayListTests, ItemBufferClient)
         }
 
     private:
-        Optional<ItemHandle> WARN_UNUSED_RETURN decodeItem(const uint8_t* data, size_t dataLength, ItemType type, uint8_t* handleLocation)
+        Optional<ItemHandle> WARN_UNUSED_RETURN decodeItem(const uint8_t* data, size_t dataLength, ItemType type, uint8_t* handleLocation) final
         {
             EXPECT_EQ(type, ItemType::StrokePath);
             EXPECT_EQ(dataLength, sizeof(size_t));
@@ -204,6 +204,8 @@ TEST(DisplayListTests, ItemBufferClient)
             m_items.append(handle.get<StrokePath>());
             return SharedBuffer::create(reinterpret_cast<uint8_t*>(&index), sizeof(size_t));
         }
+
+        void didAppendData(const ItemBufferHandle&, size_t, DidChangeItemBuffer) final { }
 
         Vector<StrokePath>& m_items;
     };

@@ -31,14 +31,13 @@ using namespace WebCore;
 
 size_t DisplayListReaderHandle::advance(size_t amount)
 {
-    auto locker = SharedDisplayListHandle::Lock { *this };
-    if (LIKELY(amount <= header().unreadBytes))
-        return header().unreadBytes -= amount;
-
-    // FIXME: This should result in terminating the web process.
-    ASSERT_NOT_REACHED();
-    header().unreadBytes = 0;
-    return 0;
+    auto previousUnreadBytes = header().unreadBytes.exchangeSub(amount);
+    if (UNLIKELY(previousUnreadBytes < amount)) {
+        // FIXME: This should result in terminating the web process.
+        RELEASE_ASSERT_NOT_REACHED();
+        return 0;
+    }
+    return previousUnreadBytes - amount;
 }
 
 std::unique_ptr<DisplayList::DisplayList> DisplayListReaderHandle::displayListForReading(size_t offset, size_t capacity, DisplayList::ItemBufferReadingClient& client) const

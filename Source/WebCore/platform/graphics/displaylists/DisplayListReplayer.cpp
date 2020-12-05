@@ -117,12 +117,6 @@ ReplayResult Replayer::replay(const FloatRect& initialClip, bool trackReplayList
             break;
         }
 
-        if (item.is<MetaCommandEnd>()) {
-            result.numberOfBytesRead += itemSizeInBuffer;
-            result.reasonForStopping = StopReplayReason::EndOfDisplayList;
-            break;
-        }
-
         if (auto reasonForStopping = applyItem(item)) {
             result.reasonForStopping = *reasonForStopping;
             break;

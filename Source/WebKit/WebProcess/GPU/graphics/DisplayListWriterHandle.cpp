@@ -33,20 +33,8 @@ using namespace WebCore;
 
 size_t DisplayListWriterHandle::advance(size_t amount)
 {
-    CheckedSize checkedWritableOffset = m_writableOffset;
-    checkedWritableOffset += amount;
-    if (UNLIKELY(checkedWritableOffset.hasOverflowed()))
-        RELEASE_ASSERT_NOT_REACHED();
-
-    auto locker = SharedDisplayListHandle::Lock { *this };
-    CheckedSize checkedUnreadBytes = header().unreadBytes;
-    checkedUnreadBytes += amount;
-    if (UNLIKELY(checkedUnreadBytes.hasOverflowed()))
-        RELEASE_ASSERT_NOT_REACHED();
-
-    m_writableOffset = checkedWritableOffset.unsafeGet();
-    header().unreadBytes = checkedUnreadBytes.unsafeGet();
-    return checkedUnreadBytes.unsafeGet();
+    m_writableOffset = (CheckedSize { m_writableOffset } + amount).unsafeGet();
+    return (CheckedSize { header().unreadBytes.exchangeAdd(amount) } + amount).unsafeGet();
 }
 
 size_t DisplayListWriterHandle::availableCapacity() const
@@ -66,7 +54,7 @@ DisplayList::ItemBufferHandle DisplayListWriterHandle::createHandle() const
     };
 }
 
-bool DisplayListWriterHandle::resetWritableOffsetIfPossible()
+bool DisplayListWriterHandle::moveWritableOffsetToStartIfPossible()
 {
     if (m_writableOffset <= SharedDisplayListHandle::headerSize()) {
         RELEASE_ASSERT(m_writableOffset == SharedDisplayListHandle::headerSize());

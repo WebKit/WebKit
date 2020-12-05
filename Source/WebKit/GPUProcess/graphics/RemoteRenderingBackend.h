@@ -37,6 +37,7 @@
 #include <WebCore/ColorSpace.h>
 #include <WebCore/DisplayList.h>
 #include <WebCore/DisplayListItems.h>
+#include <WebCore/DisplayListReplayer.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -92,7 +93,8 @@ private:
         return WTF::nullopt;
     }
 
-    void applyDisplayListsFromHandle(WebCore::ImageBuffer& destination, DisplayListReaderHandle&, size_t offset);
+    WebCore::DisplayList::ReplayResult submit(const WebCore::DisplayList::DisplayList&, WebCore::ImageBuffer& destination);
+    RefPtr<WebCore::ImageBuffer> nextDestinationImageBufferAfterApplyingDisplayLists(WebCore::ImageBuffer& initialDestination, size_t initialOffset, DisplayListReaderHandle&);
 
     // IPC::MessageSender.
     IPC::Connection* messageSenderConnection() const override;

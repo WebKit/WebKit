@@ -129,33 +129,54 @@ void RemoteRenderingBackend::createImageBuffer(const FloatSize& logicalSize, Ren
     m_remoteResourceCache.cacheImageBuffer(makeRef(*imageBuffer));
 }
 
-void RemoteRenderingBackend::applyDisplayListsFromHandle(ImageBuffer& destination, DisplayListReaderHandle& handle, size_t initialOffset)
+DisplayList::ReplayResult RemoteRenderingBackend::submit(const DisplayList::DisplayList& displayList, ImageBuffer& destination)
 {
+    if (displayList.isEmpty())
+        return { };
+
+    DisplayList::Replayer::Delegate* replayerDelegate = nullptr;
+    if (destination.renderingMode() == RenderingMode::Accelerated)
+        replayerDelegate = static_cast<AcceleratedRemoteImageBuffer*>(&destination);
+    else
+        replayerDelegate = static_cast<UnacceleratedRemoteImageBuffer*>(&destination);
+
+    return WebCore::DisplayList::Replayer {
+        destination.context(),
+        displayList,
+        &remoteResourceCache().imageBuffers(),
+        &remoteResourceCache().nativeImages(),
+        replayerDelegate
+    }.replay();
+}
+
+RefPtr<ImageBuffer> RemoteRenderingBackend::nextDestinationImageBufferAfterApplyingDisplayLists(ImageBuffer& initialDestination, size_t initialOffset, DisplayListReaderHandle& handle)
+{
+    auto destination = makeRefPtr(initialDestination);
     auto handleProtector = makeRef(handle);
 
-    size_t offset = initialOffset;
+    auto offset = initialOffset;
     size_t sizeToRead = 0;
-
     do {
         sizeToRead = handle.unreadBytes();
     } while (!sizeToRead);
 
-    while (sizeToRead) {
+    while (destination && !m_nextItemBufferToRead) {
         auto displayList = handle.displayListForReading(offset, sizeToRead, *this);
         if (UNLIKELY(!displayList)) {
             // FIXME: Add a message check to terminate the web process.
             ASSERT_NOT_REACHED();
-            return;
+            break;
         }
 
-        destination.submitDisplayList(*displayList);
+        auto result = submit(*displayList, *destination);
+        sizeToRead = handle.advance(result.numberOfBytesRead);
 
         CheckedSize checkedOffset = offset;
-        checkedOffset += sizeToRead;
+        checkedOffset += result.numberOfBytesRead;
         if (UNLIKELY(checkedOffset.hasOverflowed())) {
             // FIXME: Add a message check to terminate the web process.
             ASSERT_NOT_REACHED();
-            return;
+            break;
         }
 
         offset = checkedOffset.unsafeGet();
@@ -163,18 +184,24 @@ void RemoteRenderingBackend::applyDisplayListsFromHandle(ImageBuffer& destinatio
         if (UNLIKELY(offset > handle.sharedMemory().size())) {
             // FIXME: Add a message check to terminate the web process.
             ASSERT_NOT_REACHED();
-            return;
+            break;
         }
 
-        sizeToRead = handle.advance(sizeToRead);
+        if (result.reasonForStopping == DisplayList::StopReplayReason::ChangeDestinationImageBuffer)
+            destination = makeRefPtr(m_remoteResourceCache.cachedImageBuffer(*result.nextDestinationImageBuffer));
+
+        if (!sizeToRead)
+            break;
     }
+
+    return destination;
 }
 
 void RemoteRenderingBackend::wakeUpAndApplyDisplayList(DisplayList::ItemBufferIdentifier initialIdentifier, uint64_t initialOffset, RenderingResourceIdentifier destinationBufferIdentifier)
 {
     TraceScope tracingScope(WakeUpAndApplyDisplayListStart, WakeUpAndApplyDisplayListEnd);
-    auto imageBuffer = m_remoteResourceCache.cachedImageBuffer(destinationBufferIdentifier);
-    if (UNLIKELY(!imageBuffer)) {
+    auto destinationImageBuffer = makeRefPtr(m_remoteResourceCache.cachedImageBuffer(destinationBufferIdentifier));
+    if (UNLIKELY(!destinationImageBuffer)) {
         // FIXME: Add a message check to terminate the web process.
         ASSERT_NOT_REACHED();
         return;
@@ -187,7 +214,12 @@ void RemoteRenderingBackend::wakeUpAndApplyDisplayList(DisplayList::ItemBufferId
         return;
     }
 
-    applyDisplayListsFromHandle(*imageBuffer, *initialHandle, initialOffset);
+    destinationImageBuffer = nextDestinationImageBufferAfterApplyingDisplayLists(*destinationImageBuffer, initialOffset, *initialHandle);
+
+    if (!destinationImageBuffer) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
 
     while (m_nextItemBufferToRead) {
         auto nextHandle = m_sharedDisplayListHandles.get(m_nextItemBufferToRead);
@@ -196,9 +228,15 @@ void RemoteRenderingBackend::wakeUpAndApplyDisplayList(DisplayList::ItemBufferId
             // IPC message with a shared memory handle to the next item buffer.
             break;
         }
+
         // Otherwise, continue reading the next display list item buffer from the start.
         m_nextItemBufferToRead = { };
-        applyDisplayListsFromHandle(*imageBuffer, *nextHandle, SharedDisplayListHandle::headerSize());
+        destinationImageBuffer = nextDestinationImageBufferAfterApplyingDisplayLists(*destinationImageBuffer, SharedDisplayListHandle::headerSize(), *nextHandle);
+
+        if (!destinationImageBuffer) {
+            ASSERT_NOT_REACHED();
+            return;
+        }
     }
 }
 
@@ -317,7 +355,6 @@ Optional<DisplayList::ItemHandle> WARN_UNUSED_RETURN RemoteRenderingBackend::dec
     case DisplayList::ItemType::FlushContext:
     case DisplayList::ItemType::MetaCommandChangeDestinationImageBuffer:
     case DisplayList::ItemType::MetaCommandChangeItemBuffer:
-    case DisplayList::ItemType::MetaCommandEnd:
     case DisplayList::ItemType::PaintFrameForMedia:
     case DisplayList::ItemType::Restore:
     case DisplayList::ItemType::Rotate:

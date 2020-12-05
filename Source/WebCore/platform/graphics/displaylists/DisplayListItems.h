@@ -2250,13 +2250,6 @@ private:
     ItemBufferIdentifier m_identifier;
 };
 
-class MetaCommandEnd {
-public:
-    static constexpr ItemType itemType = ItemType::MetaCommandEnd;
-    static constexpr bool isInlineItem = true;
-    static constexpr bool isDrawingItem = false;
-};
-
 class MetaCommandChangeDestinationImageBuffer {
 public:
     static constexpr ItemType itemType = ItemType::MetaCommandChangeDestinationImageBuffer;
@@ -2331,7 +2324,6 @@ template<> struct EnumTraits<WebCore::DisplayList::ItemType> {
     WebCore::DisplayList::ItemType::FillPath,
     WebCore::DisplayList::ItemType::FillEllipse,
     WebCore::DisplayList::ItemType::FlushContext,
-    WebCore::DisplayList::ItemType::MetaCommandEnd,
     WebCore::DisplayList::ItemType::MetaCommandChangeDestinationImageBuffer,
     WebCore::DisplayList::ItemType::MetaCommandChangeItemBuffer,
     WebCore::DisplayList::ItemType::PutImageData,

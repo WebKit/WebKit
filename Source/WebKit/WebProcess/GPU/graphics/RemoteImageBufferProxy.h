@@ -119,9 +119,12 @@ protected:
             return;
 
         // Wait for our DisplayList to be flushed but do not hang.
-        static constexpr unsigned maxWaitingFlush = 3;
-        for (unsigned numWaitingFlush = 0; numWaitingFlush < maxWaitingFlush && hasPendingFlush(); ++numWaitingFlush)
-            m_remoteRenderingBackendProxy->waitForDidFlush();
+        static constexpr unsigned maximumNumberOfTimeouts = 3;
+        unsigned numberOfTimeouts = 0;
+        while (numberOfTimeouts < maximumNumberOfTimeouts && hasPendingFlush()) {
+            if (!m_remoteRenderingBackendProxy->waitForDidFlush())
+                ++numberOfTimeouts;
+        }
     }
 
     BackendType* ensureBackendCreated() const override
@@ -133,18 +136,10 @@ protected:
 
     RefPtr<WebCore::ImageData> getImageData(WebCore::AlphaPremultiplication outputFormat, const WebCore::IntRect& srcRect) const override
     {
-        if (!m_remoteRenderingBackendProxy)
+        if (UNLIKELY(!m_remoteRenderingBackendProxy))
             return nullptr;
 
-        auto& mutableThis = const_cast<RemoteImageBufferProxy&>(*this);
-        auto& displayList = mutableThis.m_drawingContext.displayList();
-        if (!displayList.isEmpty()) {
-            mutableThis.submitDisplayList(displayList);
-            mutableThis.m_itemCountInCurrentDisplayList = 0;
-            displayList.clear();
-        }
-
-        // getImageData is synchronous, which means we've already received the CommitImageBufferFlushContext message.
+        m_remoteRenderingBackendProxy->sendDeferredWakeupMessageIfNeeded();
         return m_remoteRenderingBackendProxy->getImageData(outputFormat, srcRect, m_renderingResourceIdentifier);
     }
 
@@ -166,6 +161,9 @@ protected:
 
     void flushDrawingContext() override
     {
+        if (UNLIKELY(!m_remoteRenderingBackendProxy))
+            return;
+
         TraceScope tracingScope(FlushRemoteImageBufferStart, FlushRemoteImageBufferEnd);
         flushDrawingContextAndCommit();
         waitForDidFlushWithTimeout();
@@ -173,38 +171,16 @@ protected:
 
     void flushDrawingContextAndCommit() override
     {
-        if (!m_remoteRenderingBackendProxy)
+        if (UNLIKELY(!m_remoteRenderingBackendProxy))
             return;
 
-        auto& displayList = m_drawingContext.displayList();
-        if (displayList.isEmpty())
-            return;
+        if (!m_drawingContext.displayList().isEmpty()) {
+            m_sentFlushIdentifier = WebCore::DisplayList::FlushIdentifier::generate();
+            m_drawingContext.recorder().flushContext(m_sentFlushIdentifier);
+        }
 
-        m_sentFlushIdentifier = WebCore::DisplayList::FlushIdentifier::generate();
-        displayList.template append<WebCore::DisplayList::FlushContext>(m_sentFlushIdentifier);
-        submitDisplayList(displayList);
-        displayList.clear();
-        m_itemCountInCurrentDisplayList = 0;
-    }
-
-    void submitDisplayList(const WebCore::DisplayList::DisplayList& displayList) override
-    {
-        if (!m_remoteRenderingBackendProxy || displayList.isEmpty())
-            return;
-
-        m_remoteRenderingBackendProxy->submitDisplayList(displayList, m_renderingResourceIdentifier);
-    }
-
-    void willAppendItemOfType(WebCore::DisplayList::ItemType) override
-    {
-        constexpr size_t DisplayListBatchSize = 512;
-        auto& displayList = m_drawingContext.displayList();
-        if (++m_itemCountInCurrentDisplayList < DisplayListBatchSize)
-            return;
-
-        m_itemCountInCurrentDisplayList = 0;
-        submitDisplayList(displayList);
-        displayList.clear();
+        m_remoteRenderingBackendProxy->sendDeferredWakeupMessageIfNeeded();
+        clearDisplayList();
     }
 
     void cacheNativeImage(WebCore::NativeImage& image) override
@@ -213,9 +189,40 @@ protected:
             m_remoteRenderingBackendProxy->remoteResourceCacheProxy().cacheNativeImage(image);
     }
 
+    void changeDestinationImageBuffer(WebCore::RenderingResourceIdentifier nextImageBuffer) final
+    {
+        bool wasEmpty = m_drawingContext.displayList().isEmpty();
+        m_drawingContext.displayList().template append<WebCore::DisplayList::MetaCommandChangeDestinationImageBuffer>(nextImageBuffer);
+        if (wasEmpty)
+            clearDisplayList();
+    }
+
+    void clearDisplayList() final
+    {
+        m_drawingContext.displayList().clear();
+    }
+
+    void willAppendItemOfType(WebCore::DisplayList::ItemType) override
+    {
+        if (LIKELY(m_remoteRenderingBackendProxy))
+            m_remoteRenderingBackendProxy->willAppendItem(m_renderingResourceIdentifier);
+    }
+
+    void didAppendData(const WebCore::DisplayList::ItemBufferHandle& handle, size_t numberOfBytes, WebCore::DisplayList::DidChangeItemBuffer didChangeItemBuffer) override
+    {
+        if (LIKELY(m_remoteRenderingBackendProxy))
+            m_remoteRenderingBackendProxy->didAppendData(handle, numberOfBytes, didChangeItemBuffer, m_renderingResourceIdentifier);
+    }
+
+    void didAppendItemOfType(WebCore::DisplayList::ItemType type) override
+    {
+        if (type == WebCore::DisplayList::ItemType::DrawImageBuffer)
+            flushDrawingContext();
+    }
+
     WebCore::DisplayList::ItemBufferHandle createItemBuffer(size_t capacity) override
     {
-        if (m_remoteRenderingBackendProxy)
+        if (LIKELY(m_remoteRenderingBackendProxy))
             return m_remoteRenderingBackendProxy->createItemBuffer(capacity, m_renderingResourceIdentifier);
 
         ASSERT_NOT_REACHED();
@@ -289,7 +296,6 @@ protected:
         case WebCore::DisplayList::ItemType::FlushContext:
         case WebCore::DisplayList::ItemType::MetaCommandChangeDestinationImageBuffer:
         case WebCore::DisplayList::ItemType::MetaCommandChangeItemBuffer:
-        case WebCore::DisplayList::ItemType::MetaCommandEnd:
         case WebCore::DisplayList::ItemType::PaintFrameForMedia:
         case WebCore::DisplayList::ItemType::Restore:
         case WebCore::DisplayList::ItemType::Rotate:
@@ -316,12 +322,6 @@ protected:
             RELEASE_ASSERT_NOT_REACHED();
             return nullptr;
         }
-    }
-
-    void didAppendItemOfType(WebCore::DisplayList::ItemType type) override
-    {
-        if (type == WebCore::DisplayList::ItemType::DrawImageBuffer)
-            flushDrawingContext();
     }
 
     std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher> createFlusher() override

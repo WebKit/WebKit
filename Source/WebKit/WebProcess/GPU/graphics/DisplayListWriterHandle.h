@@ -41,7 +41,7 @@ public:
     size_t writableOffset() const { return m_writableOffset; }
     size_t availableCapacity() const;
 
-    bool resetWritableOffsetIfPossible();
+    bool moveWritableOffsetToStartIfPossible();
 
     size_t advance(size_t amount) override;
     WebCore::DisplayList::ItemBufferHandle createHandle() const;
