@@ -1774,30 +1774,6 @@ test/language/expressions/new/non-ctor-err-realm.js:
   strict mode: 'Test262Error: production including Arguments Expected a TypeError but got a TypeError'
 test/language/expressions/object/method-definition/async-gen-meth-eval-var-scope-syntax-err.js:
   default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/expressions/object/method-definition/escaped-get-e.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/expressions/object/method-definition/escaped-get-g.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/expressions/object/method-definition/escaped-get-t.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/expressions/object/method-definition/escaped-get.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/expressions/object/method-definition/escaped-set-e.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/expressions/object/method-definition/escaped-set-s.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/expressions/object/method-definition/escaped-set-t.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/expressions/object/method-definition/escaped-set.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
 test/language/expressions/object/method-definition/forbidden-ext/b2/gen-meth-forbidden-ext-indirect-access-own-prop-caller-get.js:
   default: 'TypeError: Function.caller used to retrieve generator body'
 test/language/expressions/object/method-definition/forbidden-ext/b2/gen-meth-forbidden-ext-indirect-access-own-prop-caller-value.js:

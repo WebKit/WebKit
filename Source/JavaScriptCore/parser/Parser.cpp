@@ -2948,15 +2948,17 @@ parseMethod:
                 }
             }
             FALLTHROUGH;
-        case AWAIT:
+        case AWAIT: {
             ident = m_token.m_data.ident;
+            bool escaped = m_token.m_data.escaped;
             ASSERT(ident);
             next();
-            if (parseMode == SourceParseMode::MethodMode && (matchIdentifierOrKeyword() || match(STRING) || match(DOUBLE) || match(INTEGER) || match(BIGINT) || match(OPENBRACKET))) {
+            if (parseMode == SourceParseMode::MethodMode && !escaped && (matchIdentifierOrKeyword() || match(STRING) || match(DOUBLE) || match(INTEGER) || match(BIGINT) || match(OPENBRACKET))) {
                 isGetter = *ident == propertyNames.get;
                 isSetter = *ident == propertyNames.set;
             }
             break;
+        }
         case DOUBLE:
         case INTEGER:
             ident = &m_parserArena.identifierArena().makeNumericIdentifier(const_cast<VM&>(m_vm), m_token.m_data.doubleValue);
@@ -4212,10 +4214,11 @@ parseProperty:
     case STRING: {
 namedProperty:
         const Identifier* ident = m_token.m_data.ident;
+        bool escaped = m_token.m_data.escaped;
         unsigned getterOrSetterStartOffset = tokenStart();
         JSToken identToken = m_token;
 
-        if (wasIdent && !isGeneratorMethodParseMode(parseMode) && (*ident == m_vm.propertyNames->get || *ident == m_vm.propertyNames->set))
+        if (wasIdent && !isGeneratorMethodParseMode(parseMode) && (!escaped && (*ident == m_vm.propertyNames->get || *ident == m_vm.propertyNames->set)))
             nextExpectIdentifier(LexerFlags::IgnoreReservedWords);
         else
             nextExpectIdentifier(TreeBuilder::DontBuildKeywords | LexerFlags::IgnoreReservedWords);
@@ -4252,14 +4255,16 @@ namedProperty:
         if (match(EQUAL)) // CoverInitializedName is exclusive to BindingPattern and AssignmentPattern
             classifyExpressionError(ErrorIndicatesPattern);
 
-        PropertyNode::Type type;
-        if (*ident == m_vm.propertyNames->get)
-            type = PropertyNode::Getter;
-        else if (*ident == m_vm.propertyNames->set)
-            type = PropertyNode::Setter;
-        else
+        Optional<PropertyNode::Type> type;
+        if (!escaped) {
+            if (*ident == m_vm.propertyNames->get)
+                type = PropertyNode::Getter;
+            else if (*ident == m_vm.propertyNames->set)
+                type = PropertyNode::Setter;
+        }
+        if (!type)
             failWithMessage("Expected a ':' following the property name '", ident->impl(), "'");
-        return parseGetterSetter(context, type, getterOrSetterStartOffset, ConstructorKind::None, ClassElementTag::No);
+        return parseGetterSetter(context, type.value(), getterOrSetterStartOffset, ConstructorKind::None, ClassElementTag::No);
     }
     case DOUBLE:
     case INTEGER: {

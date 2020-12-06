@@ -1,3 +1,21 @@
+2020-12-06  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] get / set for object literal and class should not be escaped
+        https://bugs.webkit.org/show_bug.cgi?id=219576
+
+        Reviewed by Alexey Shvayka.
+
+        * stress/escaped-getter-setter-in-class.js: Added.
+        (testSyntaxError):
+        (testSyntaxError.String.raw.A.prototype.u0067.u0065.u0074.m):
+        (testSyntaxError.String.raw.A):
+        (testSyntaxError.String.raw.A.prototype.u0073.u0065.u0074.m):
+        * stress/escaped-getter-setter-in-object.js: Added.
+        (testSyntaxError):
+        (testSyntaxError.String.raw.u0067.u0065.u0074.m):
+        (testSyntaxError.String.raw.u0073.u0065.u0074.m):
+        * test262/expectations.yaml:
+
 2020-12-05  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Accept escaped keywords for class and object property names
