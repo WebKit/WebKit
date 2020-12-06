@@ -36,13 +36,12 @@
     Exposed=Window
 ] interface RTCRtpSender {
     readonly attribute MediaStreamTrack? track;
-    // FIXME 169662: missing transport
-    // FIXME 169662: missing rtcpTransport
-    // FIXME 169662: missing setStreams
+    // FIXME 169662: readonly attribute RTCDtlsTransport? transport;
     [CallWith=ScriptExecutionContext] static RTCRtpCapabilities? getCapabilities(DOMString kind);
     RTCRtpSendParameters getParameters();
     Promise<undefined> setParameters(RTCRtpSendParameters parameters);
     Promise<undefined> replaceTrack(MediaStreamTrack? withTrack);
+    [MayThrowException] undefined setStreams(MediaStream... streams);
     Promise<RTCStatsReport> getStats();
 
     [Conditional=WEB_RTC, EnabledAtRuntime=WebRTCDTMF] readonly attribute RTCDTMFSender? dtmf;

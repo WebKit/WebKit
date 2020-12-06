@@ -49,12 +49,14 @@ promise_test(async (test) => {
         testRunner.setUserMediaPermission(true);
 
     const localStream = await navigator.mediaDevices.getUserMedia({video: {advanced: [{width:{min:640}}, {height:{min:480} } ]}});
+    const localStream2 = new MediaStream([localStream.getVideoTracks()[0]]); 
     if (window.internals)
         assert_true(internals.pageMediaState().includes('HasActiveVideoCaptureDevice'), "Unexpected HasActiveVideoCaptureDevice");
     const stream = await new Promise((resolve, reject) => {
         createConnections((firstConnection) => {
             pc1 = firstConnection;
-            firstConnection.addTrack(localStream.getVideoTracks()[0], localStream);
+            const sender = firstConnection.addTrack(localStream.getVideoTracks()[0]);
+            sender.setStreams(localStream, localStream2);
         }, (secondConnection) => {
             pc2 = secondConnection;
             secondConnection.ontrack = (trackEvent) => {
@@ -62,6 +64,9 @@ promise_test(async (test) => {
                 assert_true(trackEvent.receiver instanceof RTCRtpReceiver);
                 assert_true(Array.isArray(trackEvent.streams), "Array.isArray() should return true");
                 assert_true(Object.isFrozen(trackEvent.streams), "Object.isFrozen() should return true");
+                assert_equals(trackEvent.streams.length, 2);
+                assert_equals(trackEvent.streams[0].id, localStream.id, "first stream id");
+                assert_equals(trackEvent.streams[1].id, localStream2.id, "second stream id");
                 assert_equals(trackEvent.track.id, localStream.getVideoTracks()[0].id);
                 assert_equals(trackEvent.track, trackEvent.streams[0].getVideoTracks()[0]);
                 resolve(trackEvent.streams[0]);

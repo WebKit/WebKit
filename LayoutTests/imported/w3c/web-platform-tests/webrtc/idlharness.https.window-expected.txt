@@ -237,7 +237,7 @@ PASS RTCRtpSender interface: operation getCapabilities(DOMString)
 PASS RTCRtpSender interface: operation setParameters(RTCRtpSendParameters)
 PASS RTCRtpSender interface: operation getParameters()
 PASS RTCRtpSender interface: operation replaceTrack(MediaStreamTrack?)
-FAIL RTCRtpSender interface: operation setStreams(MediaStream...) assert_own_property: interface prototype object missing non-static operation expected property "setStreams" missing
+PASS RTCRtpSender interface: operation setStreams(MediaStream...)
 PASS RTCRtpSender interface: operation getStats()
 PASS RTCRtpSender interface: attribute dtmf
 PASS RTCRtpSender must be primary interface of new RTCPeerConnection().addTransceiver('audio').sender
@@ -251,8 +251,8 @@ PASS RTCRtpSender interface: calling setParameters(RTCRtpSendParameters) on new 
 PASS RTCRtpSender interface: new RTCPeerConnection().addTransceiver('audio').sender must inherit property "getParameters()" with the proper type
 PASS RTCRtpSender interface: new RTCPeerConnection().addTransceiver('audio').sender must inherit property "replaceTrack(MediaStreamTrack?)" with the proper type
 PASS RTCRtpSender interface: calling replaceTrack(MediaStreamTrack?) on new RTCPeerConnection().addTransceiver('audio').sender with too few arguments must throw TypeError
-FAIL RTCRtpSender interface: new RTCPeerConnection().addTransceiver('audio').sender must inherit property "setStreams(MediaStream...)" with the proper type assert_inherits: property "setStreams" not found in prototype chain
-FAIL RTCRtpSender interface: calling setStreams(MediaStream...) on new RTCPeerConnection().addTransceiver('audio').sender with too few arguments must throw TypeError assert_inherits: property "setStreams" not found in prototype chain
+PASS RTCRtpSender interface: new RTCPeerConnection().addTransceiver('audio').sender must inherit property "setStreams(MediaStream...)" with the proper type
+PASS RTCRtpSender interface: calling setStreams(MediaStream...) on new RTCPeerConnection().addTransceiver('audio').sender with too few arguments must throw TypeError
 PASS RTCRtpSender interface: new RTCPeerConnection().addTransceiver('audio').sender must inherit property "getStats()" with the proper type
 PASS RTCRtpSender interface: new RTCPeerConnection().addTransceiver('audio').sender must inherit property "dtmf" with the proper type
 PASS RTCRtpReceiver interface: existence and properties of interface object

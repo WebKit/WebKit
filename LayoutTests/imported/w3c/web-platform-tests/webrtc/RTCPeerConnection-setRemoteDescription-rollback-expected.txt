@@ -17,7 +17,7 @@ FAIL rollback of a local offer to negotiated stable state should enable applying
 FAIL rollback a local offer with audio direction change to negotiated stable state and then add video receiver promise_test: Unhandled rejection with value: object "InvalidStateError: Description type incompatible with current signaling state"
 FAIL two transceivers with same mids promise_test: Unhandled rejection with value: object "InvalidStateError: Description type incompatible with current signaling state"
 FAIL onremovetrack fires during remote rollback promise_test: Unhandled rejection with value: object "InvalidStateError: Description type incompatible with current signaling state"
-FAIL rollback of a remote offer with stream changes promise_test: Unhandled rejection with value: object "TypeError: pc1.getTransceivers()[0].sender.setStreams is not a function. (In 'pc1.getTransceivers()[0].sender.setStreams(stream2)', 'pc1.getTransceivers()[0].sender.setStreams' is undefined)"
+FAIL rollback of a remote offer with stream changes assert_equals: expected 2 but got 1
 PASS removeTrack() with a sender being rolled back does not crash or throw
 FAIL Implicit rollback with only a datachannel works promise_test: Unhandled rejection with value: object "InvalidStateError: Description type incompatible with current signaling state"
 

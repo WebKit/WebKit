@@ -45,21 +45,20 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(RTCRtpSender);
 
-Ref<RTCRtpSender> RTCRtpSender::create(RTCPeerConnection& connection, Ref<MediaStreamTrack>&& track, Vector<String>&& mediaStreamIds, std::unique_ptr<RTCRtpSenderBackend>&& backend)
+Ref<RTCRtpSender> RTCRtpSender::create(RTCPeerConnection& connection, Ref<MediaStreamTrack>&& track, std::unique_ptr<RTCRtpSenderBackend>&& backend)
 {
-    auto sender = adoptRef(*new RTCRtpSender(connection, String(track->kind()), WTFMove(mediaStreamIds), WTFMove(backend)));
+    auto sender = adoptRef(*new RTCRtpSender(connection, String(track->kind()), WTFMove(backend)));
     sender->setTrack(WTFMove(track));
     return sender;
 }
 
-Ref<RTCRtpSender> RTCRtpSender::create(RTCPeerConnection& connection, String&& trackKind, Vector<String>&& mediaStreamIds, std::unique_ptr<RTCRtpSenderBackend>&& backend)
+Ref<RTCRtpSender> RTCRtpSender::create(RTCPeerConnection& connection, String&& trackKind, std::unique_ptr<RTCRtpSenderBackend>&& backend)
 {
-    return adoptRef(*new RTCRtpSender(connection, WTFMove(trackKind), WTFMove(mediaStreamIds), WTFMove(backend)));
+    return adoptRef(*new RTCRtpSender(connection, WTFMove(trackKind), WTFMove(backend)));
 }
 
-RTCRtpSender::RTCRtpSender(RTCPeerConnection& connection, String&& trackKind, Vector<String>&& mediaStreamIds, std::unique_ptr<RTCRtpSenderBackend>&& backend)
+RTCRtpSender::RTCRtpSender(RTCPeerConnection& connection, String&& trackKind, std::unique_ptr<RTCRtpSenderBackend>&& backend)
     : m_trackKind(WTFMove(trackKind))
-    , m_mediaStreamIds(WTFMove(mediaStreamIds))
     , m_backend(WTFMove(backend))
     , m_connection(makeWeakPtr(connection))
 {
@@ -145,6 +144,21 @@ void RTCRtpSender::setParameters(const RTCRtpSendParameters& parameters, DOMProm
         return;
     }
     return m_backend->setParameters(parameters, WTFMove(promise));
+}
+
+ExceptionOr<void> RTCRtpSender::setStreams(const Vector<std::reference_wrapper<MediaStream>>& streams)
+{
+    return setMediaStreamIds(WTF::map(streams, [](auto& stream) -> String {
+        return stream.get().id();
+    }));
+}
+
+ExceptionOr<void> RTCRtpSender::setMediaStreamIds(const Vector<String>& streamIds)
+{
+    if (!m_connection || m_connection->isClosed() || !m_backend)
+        return Exception { InvalidStateError, "connection is closed"_s };
+    m_backend->setMediaStreamIds(streamIds);
+    return { };
 }
 
 void RTCRtpSender::getStats(Ref<DeferredPromise>&& promise)

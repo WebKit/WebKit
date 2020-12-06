@@ -42,6 +42,7 @@
 
 namespace WebCore {
 
+class MediaStream;
 class RTCDTMFSender;
 class RTCPeerConnection;
 struct RTCRtpCapabilities;
@@ -49,8 +50,8 @@ struct RTCRtpCapabilities;
 class RTCRtpSender final : public RefCounted<RTCRtpSender>, public ScriptWrappable, public CanMakeWeakPtr<RTCRtpSender> {
     WTF_MAKE_ISO_ALLOCATED(RTCRtpSender);
 public:
-    static Ref<RTCRtpSender> create(RTCPeerConnection&, Ref<MediaStreamTrack>&&, Vector<String>&& mediaStreamIds, std::unique_ptr<RTCRtpSenderBackend>&&);
-    static Ref<RTCRtpSender> create(RTCPeerConnection&, String&& trackKind, Vector<String>&& mediaStreamIds, std::unique_ptr<RTCRtpSenderBackend>&&);
+    static Ref<RTCRtpSender> create(RTCPeerConnection&, Ref<MediaStreamTrack>&&, std::unique_ptr<RTCRtpSenderBackend>&&);
+    static Ref<RTCRtpSender> create(RTCPeerConnection&, String&& trackKind, std::unique_ptr<RTCRtpSenderBackend>&&);
     ~RTCRtpSender();
 
     static Optional<RTCRtpCapabilities> getCapabilities(ScriptExecutionContext&, const String& kind);
@@ -60,8 +61,8 @@ public:
     const String& trackId() const { return m_trackId; }
     const String& trackKind() const { return m_trackKind; }
 
-    const Vector<String>& mediaStreamIds() const { return m_mediaStreamIds; }
-    void setMediaStreamIds(Vector<String>&& mediaStreamIds) { m_mediaStreamIds = WTFMove(mediaStreamIds); }
+    ExceptionOr<void> setMediaStreamIds(const Vector<String>&);
+    ExceptionOr<void> setStreams(const Vector<std::reference_wrapper<MediaStream>>&);
 
     bool isStopped() const { return !m_backend; }
     void stop();
@@ -86,12 +87,11 @@ public:
     ExceptionOr<void> setTransform(Optional<RTCRtpTransform>&&);
 
 private:
-    RTCRtpSender(RTCPeerConnection&, String&& trackKind, Vector<String>&& mediaStreamIds, std::unique_ptr<RTCRtpSenderBackend>&&);
+    RTCRtpSender(RTCPeerConnection&, String&& trackKind, std::unique_ptr<RTCRtpSenderBackend>&&);
 
     RefPtr<MediaStreamTrack> m_track;
     String m_trackId;
     String m_trackKind;
-    Vector<String> m_mediaStreamIds;
     std::unique_ptr<RTCRtpSenderBackend> m_backend;
     WeakPtr<RTCPeerConnection> m_connection;
     RefPtr<RTCDTMFSender> m_dtmfSender;

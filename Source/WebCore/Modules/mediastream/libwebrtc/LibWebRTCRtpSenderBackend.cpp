@@ -143,6 +143,14 @@ Ref<RTCRtpTransformBackend> LibWebRTCRtpSenderBackend::createRTCRtpTransformBack
     return LibWebRTCRtpSenderTransformBackend::create(m_rtcSender);
 }
 
+void LibWebRTCRtpSenderBackend::setMediaStreamIds(const Vector<String>& streamIds)
+{
+    std::vector<std::string> ids;
+    for (auto& id : streamIds)
+        ids.push_back(id.utf8().data());
+    m_rtcSender->SetStreams(ids);
+}
+
 RealtimeOutgoingVideoSource* LibWebRTCRtpSenderBackend::videoSource()
 {
     return switchOn(m_source,
