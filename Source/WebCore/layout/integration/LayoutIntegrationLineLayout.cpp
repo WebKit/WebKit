@@ -356,15 +356,8 @@ LayoutRect LineLayout::enclosingBorderBoxRectFor(const RenderInline& renderInlin
     if (!m_inlineContent)
         return { };
 
-    auto& layoutBox = m_boxTree.layoutBoxForRenderer(renderInline);
-
-    LayoutRect rect;
-    for (auto& inlineBox : m_inlineContent->inlineBoxes) {
-        if (&inlineBox.layoutBox() == &layoutBox)
-            rect.uniteIfNonZero(LayoutRect(inlineBox.rect()));
-    }
-
-    return rect;
+    auto boxGeometry = m_inlineFormattingState.boxGeometry(m_boxTree.layoutBoxForRenderer(renderInline));
+    return { Layout::BoxGeometry::borderBoxTopLeft(boxGeometry), boxGeometry.contentBox().size() };
 }
 
 const RenderObject& LineLayout::rendererForLayoutBox(const Layout::Box& layoutBox) const

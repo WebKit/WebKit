@@ -66,10 +66,12 @@ public:
 
     void moveHorizontally(LayoutUnit);
     void moveVertically(LayoutUnit);
+    void moveBy(LayoutPoint);
 
     void expand(Optional<LayoutUnit>, Optional<LayoutUnit>);
     void expandHorizontally(LayoutUnit delta) { expand(delta, { }); }
     void expandVertically(LayoutUnit delta) { expand({ }, delta); }
+    void expandToContain(const Rect&);
     bool intersects(const Rect& rect) const { return m_rect.intersects(rect); }
 
     Rect clone() const;
@@ -277,11 +279,25 @@ inline void Rect::moveVertically(LayoutUnit offset)
     m_rect.move(LayoutSize { 0, offset });
 }
 
+inline void Rect::moveBy(LayoutPoint offset)
+{
+    ASSERT(m_hasValidTop);
+    ASSERT(m_hasValidLeft);
+    m_rect.moveBy(offset);
+}
+
 inline void Rect::expand(Optional<LayoutUnit> width, Optional<LayoutUnit> height)
 {
     ASSERT(!width || m_hasValidWidth);
     ASSERT(!height || m_hasValidHeight);
     m_rect.expand(width.valueOr(0), height.valueOr(0));
+}
+
+inline void Rect::expandToContain(const Rect& rect)
+{
+    ASSERT(m_hasValidWidth);
+    ASSERT(m_hasValidHeight);
+    m_rect.unite(rect);
 }
 
 inline Rect Rect::clone() const
