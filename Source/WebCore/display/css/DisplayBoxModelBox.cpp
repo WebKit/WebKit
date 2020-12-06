@@ -54,10 +54,15 @@ void BoxModelBox::setBoxRareGeometry(std::unique_ptr<BoxRareGeometry>&& rareGeom
     m_boxRareGeometry = WTFMove(rareGeometry);
 }
 
+bool BoxModelBox::hasBorderRadius() const
+{
+    return m_boxRareGeometry && m_boxRareGeometry->hasBorderRadius();
+}
+
 FloatRoundedRect BoxModelBox::borderRoundedRect() const
 {
     auto borderRect = FloatRoundedRect { absoluteBorderBoxRect(), { } };
-    auto* borderRadii = m_boxDecorationData ? m_boxDecorationData->borderRadii() : nullptr;
+    auto* borderRadii = m_boxRareGeometry ? m_boxRareGeometry->borderRadii() : nullptr;
     if (borderRadii)
         borderRect.setRadii(*borderRadii);
     
@@ -69,10 +74,10 @@ FloatRoundedRect BoxModelBox::innerBorderRoundedRect() const
     if (!m_boxDecorationData)
         return borderRoundedRect();
 
-    if (!m_boxDecorationData->borderRadii())
+    if (!hasBorderRadius())
         return roundedInsetBorderForRect(absoluteBorderBoxRect(), { }, borderWidths(m_boxDecorationData->borderEdges()));
 
-    return roundedInsetBorderForRect(absoluteBorderBoxRect(), *m_boxDecorationData->borderRadii(), borderWidths(m_boxDecorationData->borderEdges()));
+    return roundedInsetBorderForRect(absoluteBorderBoxRect(), *m_boxRareGeometry->borderRadii(), borderWidths(m_boxDecorationData->borderEdges()));
 }
 
 void BoxModelBox::setAncestorClip(RefPtr<BoxClip>&& clip)
@@ -93,7 +98,7 @@ RefPtr<BoxClip> BoxModelBox::clipForDescendants() const
     auto clip = m_ancestorClip ? m_ancestorClip->copy() : BoxClip::create();
 
     auto pushClip = [&](BoxClip& boxClip) {
-        if (m_boxDecorationData && m_boxDecorationData->hasBorderRadius()) {
+        if (hasBorderRadius()) {
             auto roundedInnerBorder = innerBorderRoundedRect();
             if (roundedInnerBorder.isRounded()) {
                 boxClip.pushRoundedClip(roundedInnerBorder);

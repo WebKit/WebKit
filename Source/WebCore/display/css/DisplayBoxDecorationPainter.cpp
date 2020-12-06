@@ -32,6 +32,7 @@
 #include "Color.h"
 #include "DisplayBoxDecorationData.h"
 #include "DisplayBoxModelBox.h"
+#include "DisplayBoxRareGeometry.h"
 #include "DisplayPaintingContext.h"
 #include "DisplayStyle.h"
 #include "DisplayTree.h"
@@ -1175,7 +1176,7 @@ void BorderPainter::paintBorders(PaintingContext& paintingContext) const
 
 BoxDecorationPainter::BoxDecorationPainter(const BoxModelBox& box, PaintingContext& paintingContext, bool includeLeftEdge, bool includeRightEdge)
     : m_box(box)
-    , m_borderRect(computeBorderRect(box))
+    , m_borderRect(box.borderRoundedRect())
     , m_bleedAvoidance(determineBackgroundBleedAvoidance(box, paintingContext))
     , m_includeLeftEdge(includeLeftEdge)
     , m_includeRightEdge(includeRightEdge)
@@ -1261,7 +1262,7 @@ void BoxDecorationPainter::paintBoxShadow(PaintingContext& paintingContext, Shad
 
     auto borderRect = shadowStyle == ShadowStyle::Inset ? innerBorderRoundedRect() : borderRoundedRect();
     auto* boxDecorationData = m_box.boxDecorationData();
-    bool hasBorderRadius = boxDecorationData && boxDecorationData->hasBorderRadius();
+    bool hasBorderRadius = m_box.hasBorderRadius();
 
     bool hasOpaqueBackground = m_box.style().backgroundColor().isOpaque();
 
@@ -1435,16 +1436,6 @@ void BoxDecorationPainter::paintBoxShadow(PaintingContext& paintingContext, Shad
     }
 }
 
-FloatRoundedRect BoxDecorationPainter::computeBorderRect(const BoxModelBox& box)
-{
-    auto borderRect = FloatRoundedRect { box.absoluteBorderBoxRect(), { } };
-    auto* borderRadii = box.boxDecorationData() ? box.boxDecorationData()->borderRadii() : nullptr;
-    if (borderRadii)
-        borderRect.setRadii(*borderRadii);
-    
-    return borderRect;
-}
-
 void BoxDecorationPainter::paintBackgroundImages(PaintingContext& paintingContext) const
 {
     const auto& style = m_box.style();
@@ -1488,11 +1479,10 @@ void BoxDecorationPainter::paintBackground(PaintingContext& paintingContext) con
 {
     auto borderBoxRect = m_box.absoluteBorderBoxRect();
     const auto& style = m_box.style();
-    auto* boxDecorationData = m_box.boxDecorationData();
 
     if (style.hasBackground()) {
         GraphicsContextStateSaver stateSaver(paintingContext.context, false);
-        if (m_bleedAvoidance != BackgroundBleedAvoidance::UseTransparencyLayer && boxDecorationData && boxDecorationData->hasBorderRadius()) {
+        if (m_bleedAvoidance != BackgroundBleedAvoidance::UseTransparencyLayer && m_box.hasBorderRadius()) {
             stateSaver.save();
             auto outerBorder = backgroundRoundedRectAdjustedForBleedAvoidance(paintingContext);
             paintingContext.context.clipRoundedRect(outerBorder);
@@ -1518,7 +1508,7 @@ BackgroundBleedAvoidance BoxDecorationPainter::determineBackgroundBleedAvoidance
             return false;
 
         // FIXME: Consult border-image.
-        return style.hasBackground() && boxDecorationData->hasBorder() && boxDecorationData->hasBorderRadius();
+        return style.hasBackground() && boxDecorationData->hasBorder() && box.hasBorderRadius();
     };
 
     if (!hasBackgroundAndRoundedBorder())

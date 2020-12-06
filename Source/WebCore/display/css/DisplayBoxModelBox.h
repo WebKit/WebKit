@@ -55,6 +55,7 @@ public:
     const BoxClip* ancestorClip() const { return m_ancestorClip.get(); }
     bool hasAncestorClip() const;
 
+    bool hasBorderRadius() const;
     FloatRoundedRect borderRoundedRect() const;
     FloatRoundedRect innerBorderRoundedRect() const;
 

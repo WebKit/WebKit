@@ -104,12 +104,8 @@ public:
     const RectEdges<BorderEdge>& borderEdges() const { return m_borderEdges; }
     void setBorderEdges(RectEdges<BorderEdge>&& edges) { m_borderEdges = WTFMove(edges); }
 
-    const FloatRoundedRect::Radii* borderRadii() const { return m_borderRadii.get(); }
-    void setBorderRadii(std::unique_ptr<FloatRoundedRect::Radii>&& radii) { m_borderRadii = WTFMove(radii); }
-
     bool hasBorderImage() const { return false; } // FIXME: Implement border-image.
     bool hasBorder() const;
-    bool hasBorderRadius() const;
 
     bool borderObscuresBackground() const;
     bool borderObscuresBackgroundEdge(const FloatSize& contextScale) const;
@@ -117,11 +113,7 @@ public:
 private:
     Vector<FillLayerImageGeometry, 1> m_backgroundImageGeometry;
     RectEdges<BorderEdge> m_borderEdges;
-    std::unique_ptr<FloatRoundedRect::Radii> m_borderRadii;
 };
-
-FloatRoundedRect roundedRectWithIncludedRadii(const FloatRect&, const FloatRoundedRect::Radii&, bool includeLeftEdge = true, bool includeRightEdge = true);
-FloatRoundedRect roundedInsetBorderForRect(const FloatRect&, const FloatRoundedRect::Radii&, const RectEdges<float>&, bool includeLeftEdge = true, bool includeRightEdge = true);
 
 } // namespace Display
 } // namespace WebCore

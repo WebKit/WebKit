@@ -27,7 +27,6 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-#include "FloatPoint3D.h"
 #include "FloatRoundedRect.h"
 #include "TransformationMatrix.h"
 #include <wtf/IsoMalloc.h>
@@ -41,8 +40,10 @@ class BoxRareGeometry {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(BoxRareGeometry);
 public:
 
-    // FIXME: Move border radii here.
+    const FloatRoundedRect::Radii* borderRadii() const { return m_borderRadii.get(); }
+    void setBorderRadii(std::unique_ptr<FloatRoundedRect::Radii>&& radii) { m_borderRadii = WTFMove(radii); }
 
+    bool hasBorderRadius() const;
 
     // From transform, translate, rotate, scale properties.
     const TransformationMatrix& transform() const { return m_transform; }
@@ -50,7 +51,12 @@ public:
 
 private:
     TransformationMatrix m_transform;
+    std::unique_ptr<FloatRoundedRect::Radii> m_borderRadii;
 };
+
+FloatRoundedRect roundedRectWithIncludedRadii(const FloatRect&, const FloatRoundedRect::Radii&, bool includeLeftEdge = true, bool includeRightEdge = true);
+FloatRoundedRect roundedInsetBorderForRect(const FloatRect&, const FloatRoundedRect::Radii&, const RectEdges<float>&, bool includeLeftEdge = true, bool includeRightEdge = true);
+
 
 } // namespace Display
 } // namespace WebCore

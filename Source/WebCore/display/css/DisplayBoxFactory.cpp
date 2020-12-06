@@ -194,17 +194,6 @@ std::unique_ptr<BoxDecorationData> BoxFactory::constructBoxDecorationData(const 
     auto borderEdges = calculateBorderEdges(layoutBox.style(), m_pixelSnappingFactor, includeLogicalLeftEdge, includeLogicalRightEdge);
     boxDecorationData->setBorderEdges(WTFMove(borderEdges));
 
-    auto& renderStyle = layoutBox.style();
-
-    if (renderStyle.hasBorderRadius()) {
-        auto borderBoxRect = LayoutRect { Layout::BoxGeometry::borderBoxRect(layoutGeometry) };
-        auto borderRoundedRect = renderStyle.getRoundedBorderFor(borderBoxRect, includeLogicalLeftEdge, includeLogicalRightEdge);
-        auto snappedRoundedRect = borderRoundedRect.pixelSnappedRoundedRectForPainting(m_pixelSnappingFactor);
-
-        auto borderRadii = makeUnique<FloatRoundedRect::Radii>(snappedRoundedRect.radii());
-        boxDecorationData->setBorderRadii(WTFMove(borderRadii));
-    }
-
     return boxDecorationData;
 }
 
@@ -244,10 +233,24 @@ TransformationMatrix BoxFactory::computeTransformationMatrix(const BoxModelBox& 
 
 std::unique_ptr<BoxRareGeometry> BoxFactory::constructBoxRareGeometry(const BoxModelBox& box, const Layout::Box& layoutBox, const Layout::BoxGeometry& layoutGeometry, LayoutSize offsetFromRoot) const
 {
-    if (!box.style().hasTransform())
+    auto& renderStyle = layoutBox.style();
+
+    if (!box.style().hasTransform() && !renderStyle.hasBorderRadius())
         return nullptr;
 
     auto boxRareGeometry = makeUnique<BoxRareGeometry>();
+
+    if (renderStyle.hasBorderRadius()) {
+        bool includeLogicalLeftEdge = true; // FIXME.
+        bool includeLogicalRightEdge = true; // FIXME.
+
+        auto borderBoxRect = LayoutRect { Layout::BoxGeometry::borderBoxRect(layoutGeometry) };
+        auto borderRoundedRect = renderStyle.getRoundedBorderFor(borderBoxRect, includeLogicalLeftEdge, includeLogicalRightEdge);
+        auto snappedRoundedRect = borderRoundedRect.pixelSnappedRoundedRectForPainting(m_pixelSnappingFactor);
+
+        auto borderRadii = makeUnique<FloatRoundedRect::Radii>(snappedRoundedRect.radii());
+        boxRareGeometry->setBorderRadii(WTFMove(borderRadii));
+    }
 
     auto transformationMatrix = computeTransformationMatrix(box, layoutGeometry, layoutBox.style(), offsetFromRoot);
     boxRareGeometry->setTransform(WTFMove(transformationMatrix));

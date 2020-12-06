@@ -57,9 +57,6 @@ private:
     friend class BorderPainter;
 
     static BackgroundBleedAvoidance determineBackgroundBleedAvoidance(const BoxModelBox&, PaintingContext&);
-    static FloatRoundedRect computeBorderRect(const BoxModelBox&);
-
-    void computeBorderRect();
 
     void paintBorders(PaintingContext&) const;
     void paintBoxShadow(PaintingContext&, ShadowStyle) const;
