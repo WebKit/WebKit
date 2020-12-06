@@ -155,8 +155,9 @@ void ImageBufferIOSurfaceBackend::drawConsuming(GraphicsContext& destContext, co
     FloatRect adjustedSrcRect = srcRect;
     adjustedSrcRect.scale(resolutionScale());
 
+    auto backendSize = this->backendSize();
     if (auto image = sinkIntoNativeImage())
-        destContext.drawNativeImage(*image, backendSize(), destRect, adjustedSrcRect, options);
+        destContext.drawNativeImage(*image, backendSize, destRect, adjustedSrcRect, options);
 }
 
 RetainPtr<CFDataRef> ImageBufferIOSurfaceBackend::toCFData(const String& mimeType, Optional<double> quality, PreserveResolution preserveResolution) const
