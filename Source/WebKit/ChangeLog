@@ -1,3 +1,13 @@
+2020-12-06  Lauro Moura  <lmoura@igalia.com>
+
+        Unreviewed. Add missing GPU_PROCESS guards around RemoteMediaEngineConfigurationFactory after r270462
+        https://bugs.webkit.org/show_bug.cgi?id=219578
+
+        Was breaking the Ubuntu LTS/Debian builds.
+
+        * WebProcess/GPU/media/RemoteMediaEngineConfigurationFactory.cpp:
+        * WebProcess/WebProcess.cpp:
+
 2020-12-04  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Concurrent display lists] Synchronize display list rendering across remote image buffers

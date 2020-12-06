@@ -26,6 +26,8 @@
 #include "config.h"
 #include "RemoteMediaEngineConfigurationFactory.h"
 
+#if ENABLE(GPU_PROCESS)
+
 #include "GPUProcessConnection.h"
 #include "RemoteMediaEngineConfigurationFactoryProxyMessages.h"
 #include "WebProcess.h"
@@ -93,3 +95,5 @@ void RemoteMediaEngineConfigurationFactory::createEncodingConfiguration(MediaEnc
 }
 
 }
+
+#endif // ENABLE(GPU_PROCESS)

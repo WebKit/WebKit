@@ -284,7 +284,9 @@ WebProcess::WebProcess()
     addSupplement<AudioSessionRoutingArbitrator>();
 #endif
 
+#if ENABLE(GPU_PROCESS)
     addSupplement<RemoteMediaEngineConfigurationFactory>();
+#endif
 
     Gigacage::forbidDisablingPrimitiveGigacage();
 }
