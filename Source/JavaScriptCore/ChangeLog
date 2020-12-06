@@ -1,3 +1,32 @@
+2020-12-05  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Accept escaped keywords for class and object property names
+        https://bugs.webkit.org/show_bug.cgi?id=219575
+
+        Reviewed by Alexey Shvayka.
+
+        In this patch, we accept escaped keywords for class, object, and object pattern property names.
+
+            var object = {
+                bre\u0061k: 42
+            };
+
+        When escaped keyword appears, we produce ESCAPED_KEYWORD with CanBeErrorTokenFlag. Now CanBeErrorTokenFlag
+        represents "when this token appears in an error condition, possibly this is error token and special message will appear",
+        instead of saying this token is definitely an error. So we can just use ESCAPED_KEYWORD token to handle this case.
+
+        * parser/Lexer.cpp:
+        (JSC::Lexer<CharacterType>::parseIdentifierSlowCase):
+        (JSC::Lexer<T>::lexWithoutClearingLineTerminator):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseDestructuringPattern):
+        (JSC::Parser<LexerType>::parseClass):
+        (JSC::Parser<LexerType>::parseProperty):
+        (JSC::Parser<LexerType>::printUnexpectedTokenText):
+        * parser/Parser.h:
+        (JSC::Parser<LexerType>::parse):
+        * parser/ParserTokens.h:
+
 2020-12-04  Adam Roben  <aroben@apple.com>
 
         More FALLBACK_PLATFORM adoption

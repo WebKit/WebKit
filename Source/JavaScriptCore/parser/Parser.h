@@ -2129,7 +2129,7 @@ std::unique_ptr<ParsedNode> Parser<LexerType>::parse(ParserError& error, const I
             ParserError::SyntaxErrorType errorType = ParserError::SyntaxErrorIrrecoverable;
             if (m_token.m_type == EOFTOK)
                 errorType = ParserError::SyntaxErrorRecoverable;
-            else if (m_token.m_type & UnterminatedErrorTokenFlag) {
+            else if (m_token.m_type & UnterminatedCanBeErrorTokenFlag) {
                 // Treat multiline capable unterminated literals as recoverable.
                 if (m_token.m_type == UNTERMINATED_MULTILINE_COMMENT_ERRORTOK || m_token.m_type == UNTERMINATED_TEMPLATE_LITERAL_ERRORTOK)
                     errorType = ParserError::SyntaxErrorRecoverable;

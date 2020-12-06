@@ -40,7 +40,7 @@
 
 #define propagateError() do { if (UNLIKELY(hasError())) return 0; } while (0)
 #define internalFailWithMessage(shouldPrintToken, ...) do { updateErrorMessage(shouldPrintToken, __VA_ARGS__); return 0; } while (0)
-#define handleErrorToken() do { if (m_token.m_type == EOFTOK || m_token.m_type & ErrorTokenFlag) { failDueToUnexpectedToken(); } } while (0)
+#define handleErrorToken() do { if (m_token.m_type == EOFTOK || m_token.m_type & CanBeErrorTokenFlag) { failDueToUnexpectedToken(); } } while (0)
 #define failWithMessage(...) do { { handleErrorToken(); updateErrorMessage(true, __VA_ARGS__); } return 0; } while (0)
 #define failWithStackOverflow() do { updateErrorMessage(false, "Stack exhausted"); m_hasStackOverflow = true; return 0; } while (0)
 #define failIfFalse(cond, ...) do { if (!(cond)) { handleErrorToken(); internalFailWithMessage(true, __VA_ARGS__); } } while (0)
@@ -1208,7 +1208,8 @@ template <class TreeBuilder> TreeDestructuringPattern Parser<LexerType>::parseDe
             TreeExpression propertyExpression = 0;
             TreeDestructuringPattern innerPattern = 0;
             JSTokenLocation location = m_token.m_location;
-            if (matchSpecIdentifier()) {
+            bool escapedKeyword = match(ESCAPED_KEYWORD);
+            if (escapedKeyword || matchSpecIdentifier()) {
                 failIfTrue(match(LET) && (kind == DestructuringKind::DestructureToLet || kind == DestructuringKind::DestructureToConst), "Cannot use 'let' as an identifier name for a LexicalDeclaration");
                 propertyName = m_token.m_data.ident;
                 JSToken identifierToken = m_token;
@@ -1216,6 +1217,7 @@ template <class TreeBuilder> TreeDestructuringPattern Parser<LexerType>::parseDe
                 if (consume(COLON))
                     innerPattern = parseBindingOrAssignmentElement(context, kind, exportType, duplicateIdentifier, hasDestructuringPattern, bindingContext, depth + 1);
                 else {
+                    semanticFailIfTrue(escapedKeyword, "Cannot use abbreviated destructuring syntax for keyword '", propertyName->impl(), "'");
                     if (kind == DestructuringKind::DestructureToExpressions) {
                         bool isEvalOrArguments = m_vm.propertyNames->eval == *propertyName || m_vm.propertyNames->arguments == *propertyName;
                         if (isEvalOrArguments && strictMode())
@@ -2929,6 +2931,7 @@ parseMethod:
             ASSERT(ident);
             next();
             break;
+        case ESCAPED_KEYWORD:
         case IDENT:
             if (UNLIKELY(*m_token.m_data.ident == m_vm.propertyNames->async && !m_token.m_data.escaped)) {
                 if (!isGeneratorMethodParseMode(parseMode) && !isAsyncMethodParseMode(parseMode)) {
@@ -4180,6 +4183,7 @@ template <class TreeBuilder> TreeProperty Parser<LexerType>::parseProperty(TreeB
 
 parseProperty:
     switch (m_token.m_type) {
+    case ESCAPED_KEYWORD:
     case IDENT:
         if (UNLIKELY(*m_token.m_data.ident == m_vm.propertyNames->async && !m_token.m_data.escaped)) {
             if (parseMode == SourceParseMode::MethodMode) {
@@ -5337,7 +5341,7 @@ template <typename LexerType> void Parser<LexerType>::printUnexpectedTokenText(W
     case INVALID_IDENTIFIER_ESCAPE_ERRORTOK:
         out.print("Invalid escape in identifier: '", getToken(), "'");
         return;
-    case UNEXPECTED_ESCAPE_ERRORTOK:
+    case ESCAPED_KEYWORD:
         out.print("Unexpected escaped characters in keyword token: '", getToken(), "'");
         return;
     case INVALID_IDENTIFIER_UNICODE_ESCAPE_ERRORTOK:

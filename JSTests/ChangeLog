@@ -1,3 +1,14 @@
+2020-12-05  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Accept escaped keywords for class and object property names
+        https://bugs.webkit.org/show_bug.cgi?id=219575
+
+        Reviewed by Alexey Shvayka.
+
+        * stress/syntax-error-if-escaped-keyword-used-as-target-object-pattern.js: Added.
+        (testSyntaxError):
+        * test262/expectations.yaml:
+
 2020-12-02  Ross Kirsling  <ross.kirsling@sony.com>
 
         %TypedArray%#slice shouldn't care about source buffer detachment if there's nothing to copy

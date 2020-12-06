@@ -33,8 +33,8 @@ testSyntaxError(String.raw`var v\u0061r = 2000000;`, String.raw`SyntaxError: Une
 testSyntaxError(String.raw`var v\u{0061}r = 2000000`, String.raw`SyntaxError: Unexpected escaped characters in keyword token: 'v\u{0061}r'`);
 
 testSyntaxError(String.raw`var {var} = obj)`, String.raw`SyntaxError: Cannot use abbreviated destructuring syntax for keyword 'var'.`);
-testSyntaxError(String.raw`var {v\u0061r} = obj`, String.raw`SyntaxError: Unexpected escaped characters in keyword token: 'v\u0061r'`);
-testSyntaxError(String.raw`var {v\u{0061}r} = obj`, String.raw`SyntaxError: Unexpected escaped characters in keyword token: 'v\u{0061}r'`);
+testSyntaxError(String.raw`var {v\u0061r} = obj`, String.raw`SyntaxError: Cannot use abbreviated destructuring syntax for keyword 'var'.`);
+testSyntaxError(String.raw`var {v\u{0061}r} = obj`, String.raw`SyntaxError: Cannot use abbreviated destructuring syntax for keyword 'var'.`);
 
 testSyntaxError(String.raw`var {var:var} = obj)`, String.raw`SyntaxError: Cannot use the keyword 'var' as a variable name.`);
 testSyntaxError(String.raw`var {var:v\u0061r} = obj`, String.raw`SyntaxError: Unexpected escaped characters in keyword token: 'v\u0061r'`);
@@ -57,8 +57,8 @@ testSyntaxError(String.raw`function a(v\u0061r) { }`, String.raw`SyntaxError: Un
 testSyntaxError(String.raw`function a(v\u{0061}r) { }`, String.raw`SyntaxError: Unexpected escaped characters in keyword token: 'v\u{0061}r'`);
 
 testSyntaxError(String.raw`function a({var}) { }`, String.raw`SyntaxError: Cannot use abbreviated destructuring syntax for keyword 'var'.`);
-testSyntaxError(String.raw`function a({v\u0061r}) { }`, String.raw`SyntaxError: Unexpected escaped characters in keyword token: 'v\u0061r'`);
-testSyntaxError(String.raw`function a({v\u{0061}r}) { }`, String.raw`SyntaxError: Unexpected escaped characters in keyword token: 'v\u{0061}r'`);
+testSyntaxError(String.raw`function a({v\u0061r}) { }`, String.raw`SyntaxError: Cannot use abbreviated destructuring syntax for keyword 'var'.`);
+testSyntaxError(String.raw`function a({v\u{0061}r}) { }`, String.raw`SyntaxError: Cannot use abbreviated destructuring syntax for keyword 'var'.`);
 
 testSyntaxError(String.raw`function a({var:var}) { }`, String.raw`SyntaxError: Cannot use the keyword 'var' as a parameter name.`);
 testSyntaxError(String.raw`function a({var:v\u0061r}) { }`, String.raw`SyntaxError: Unexpected escaped characters in keyword token: 'v\u0061r'`);
@@ -77,8 +77,8 @@ testSyntaxError(String.raw`(function a(v\u0061r) { })`, String.raw`SyntaxError: 
 testSyntaxError(String.raw`(function a(v\u{0061}r) { })`, String.raw`SyntaxError: Unexpected escaped characters in keyword token: 'v\u{0061}r'`);
 
 testSyntaxError(String.raw`(function a({var}) { })`, String.raw`SyntaxError: Cannot use abbreviated destructuring syntax for keyword 'var'.`);
-testSyntaxError(String.raw`(function a({v\u0061r}) { })`, String.raw`SyntaxError: Unexpected escaped characters in keyword token: 'v\u0061r'`);
-testSyntaxError(String.raw`(function a({v\u{0061}r}) { })`, String.raw`SyntaxError: Unexpected escaped characters in keyword token: 'v\u{0061}r'`);
+testSyntaxError(String.raw`(function a({v\u0061r}) { })`, String.raw`SyntaxError: Cannot use abbreviated destructuring syntax for keyword 'var'.`);
+testSyntaxError(String.raw`(function a({v\u{0061}r}) { })`, String.raw`SyntaxError: Cannot use abbreviated destructuring syntax for keyword 'var'.`);
 
 testSyntaxError(String.raw`(function a({var:var}) { })`, String.raw`SyntaxError: Cannot use the keyword 'var' as a parameter name.`);
 testSyntaxError(String.raw`(function a({var:v\u0061r}) { })`, String.raw`SyntaxError: Unexpected escaped characters in keyword token: 'v\u0061r'`);
@@ -89,8 +89,8 @@ testSyntaxError(String.raw`(function a([v\u0061r]) { })`, String.raw`SyntaxError
 testSyntaxError(String.raw`(function a([v\u{0061}r]) { })`, String.raw`SyntaxError: Unexpected escaped characters in keyword token: 'v\u{0061}r'`);
 
 testSyntaxError(String.raw`(function a([{var}]) { })`, String.raw`SyntaxError: Cannot use abbreviated destructuring syntax for keyword 'var'.`);
-testSyntaxError(String.raw`(function a([{v\u0061r}]) { })`, String.raw`SyntaxError: Unexpected escaped characters in keyword token: 'v\u0061r'`);
-testSyntaxError(String.raw`(function a([{v\u{0061}r}]) { })`, String.raw`SyntaxError: Unexpected escaped characters in keyword token: 'v\u{0061}r'`);
+testSyntaxError(String.raw`(function a([{v\u0061r}]) { })`, String.raw`SyntaxError: Cannot use abbreviated destructuring syntax for keyword 'var'.`);
+testSyntaxError(String.raw`(function a([{v\u{0061}r}]) { })`, String.raw`SyntaxError: Cannot use abbreviated destructuring syntax for keyword 'var'.`);
 
 testSyntaxError(String.raw`(function a([{var:var}]) { })`, String.raw`SyntaxError: Cannot use the keyword 'var' as a parameter name.`);
 testSyntaxError(String.raw`(function a([{var:v\u0061r}]) { })`, String.raw`SyntaxError: Unexpected escaped characters in keyword token: 'v\u0061r'`);
@@ -101,8 +101,8 @@ testSyntaxError(String.raw`(function a([[v\u0061r]]) { })`, String.raw`SyntaxErr
 testSyntaxError(String.raw`(function a([[v\u{0061}r]]) { })`, String.raw`SyntaxError: Unexpected escaped characters in keyword token: 'v\u{0061}r'`);
 
 testSyntaxError(String.raw`(function a({ hello: {var}}) { })`, String.raw`SyntaxError: Cannot use abbreviated destructuring syntax for keyword 'var'.`);
-testSyntaxError(String.raw`(function a({ hello: {v\u0061r}}) { })`, String.raw`SyntaxError: Unexpected escaped characters in keyword token: 'v\u0061r'`);
-testSyntaxError(String.raw`(function a({ hello: {v\u{0061}r}}) { })`, String.raw`SyntaxError: Unexpected escaped characters in keyword token: 'v\u{0061}r'`);
+testSyntaxError(String.raw`(function a({ hello: {v\u0061r}}) { })`, String.raw`SyntaxError: Cannot use abbreviated destructuring syntax for keyword 'var'.`);
+testSyntaxError(String.raw`(function a({ hello: {v\u{0061}r}}) { })`, String.raw`SyntaxError: Cannot use abbreviated destructuring syntax for keyword 'var'.`);
 
 testSyntaxError(String.raw`(function a({ hello: {var:var}}) { })`, String.raw`SyntaxError: Cannot use the keyword 'var' as a parameter name.`);
 testSyntaxError(String.raw`(function a({ hello: {var:v\u0061r}}) { })`, String.raw`SyntaxError: Unexpected escaped characters in keyword token: 'v\u0061r'`);
@@ -113,8 +113,8 @@ testSyntaxError(String.raw`(function a({ hello: [v\u0061r]}) { })`, String.raw`S
 testSyntaxError(String.raw`(function a({ hello: [v\u{0061}r]}) { })`, String.raw`SyntaxError: Unexpected escaped characters in keyword token: 'v\u{0061}r'`);
 
 testSyntaxError(String.raw`(function a({ 0: {var} }) { })`, String.raw`SyntaxError: Cannot use abbreviated destructuring syntax for keyword 'var'.`);
-testSyntaxError(String.raw`(function a({ 0: {v\u0061r}}) { })`, String.raw`SyntaxError: Unexpected escaped characters in keyword token: 'v\u0061r'`);
-testSyntaxError(String.raw`(function a({ 0: {v\u{0061}r}}) { })`, String.raw`SyntaxError: Unexpected escaped characters in keyword token: 'v\u{0061}r'`);
+testSyntaxError(String.raw`(function a({ 0: {v\u0061r}}) { })`, String.raw`SyntaxError: Cannot use abbreviated destructuring syntax for keyword 'var'.`);
+testSyntaxError(String.raw`(function a({ 0: {v\u{0061}r}}) { })`, String.raw`SyntaxError: Cannot use abbreviated destructuring syntax for keyword 'var'.`);
 
 testSyntaxError(String.raw`(function a({ 0: {var:var}}) { })`, String.raw`SyntaxError: Cannot use the keyword 'var' as a parameter name.`);
 testSyntaxError(String.raw`(function a({ 0: {var:v\u0061r}}) { })`, String.raw`SyntaxError: Unexpected escaped characters in keyword token: 'v\u0061r'`);
@@ -136,8 +136,8 @@ testSyntaxError(String.raw`class var { }`, String.raw`SyntaxError: Cannot use th
 testSyntaxError(String.raw`class v\u0061r { }`, String.raw`SyntaxError: Unexpected escaped characters in keyword token: 'v\u0061r'`);
 testSyntaxError(String.raw`class v\u{0061}r { }`, String.raw`SyntaxError: Unexpected escaped characters in keyword token: 'v\u{0061}r'`);
 
-testSyntaxError(String.raw`({ v\u0061r: 'Cocoa' })`, String.raw`SyntaxError: Unexpected escaped characters in keyword token: 'v\u0061r'`);
-testSyntaxError(String.raw`({ v\u{0061}r: 'Cocoa' })`, String.raw`SyntaxError: Unexpected escaped characters in keyword token: 'v\u{0061}r'`);
+testSyntax(String.raw`({ v\u0061r: 'Cocoa' })`);
+testSyntax(String.raw`({ v\u{0061}r: 'Cocoa' })`);
 
 testSyntaxError(String.raw`{for(o i\u006E {}){}}`, String.raw`SyntaxError: Unexpected escaped characters in keyword token: 'i\u006E'`);
 testSyntaxError(String.raw`{for(o i\u{006E} {}){}}`, String.raw`SyntaxError: Unexpected escaped characters in keyword token: 'i\u{006E}'`);

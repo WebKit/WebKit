@@ -1131,7 +1131,7 @@ JSTokenType Lexer<CharacterType>::parseIdentifierSlowCase(JSTokenData* tokenData
     };
 
     JSTokenType type = fillBuffer(identCharsStart == currentSourcePtr());
-    if (UNLIKELY(type & ErrorTokenFlag))
+    if (UNLIKELY(type & CanBeErrorTokenFlag))
         return type;
 
     while (true) {
@@ -1143,7 +1143,7 @@ JSTokenType Lexer<CharacterType>::parseIdentifierSlowCase(JSTokenData* tokenData
             break;
 
         type = fillBuffer();
-        if (UNLIKELY(type & ErrorTokenFlag))
+        if (UNLIKELY(type & CanBeErrorTokenFlag))
             return type;
     }
 
@@ -1166,7 +1166,7 @@ JSTokenType Lexer<CharacterType>::parseIdentifierSlowCase(JSTokenData* tokenData
             return identType;
         JSTokenType token = static_cast<JSTokenType>(entry->lexerValue());
         if ((token != RESERVED_IF_STRICT) || strictMode)
-            return UNEXPECTED_ESCAPE_ERRORTOK;
+            return ESCAPED_KEYWORD;
     }
 
     return identType;
@@ -2576,7 +2576,7 @@ invalidCharacter:
 returnError:
     m_error = true;
     fillTokenInfo(tokenRecord, token, m_lineNumber, currentOffset(), currentLineStartOffset(), currentPosition());
-    RELEASE_ASSERT(token & ErrorTokenFlag);
+    RELEASE_ASSERT(token & CanBeErrorTokenFlag);
     return token;
 }
 
