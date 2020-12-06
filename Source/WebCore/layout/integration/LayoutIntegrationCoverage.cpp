@@ -32,6 +32,7 @@
 #include "Logging.h"
 #include "RenderBlockFlow.h"
 #include "RenderChildIterator.h"
+#include "RenderCounter.h"
 #include "RenderImage.h"
 #include "RenderInline.h"
 #include "RenderLineBreak.h"
@@ -567,6 +568,8 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderObject& child, Incl
     OptionSet<AvoidanceReason> reasons;
     if (child.selectionState() != RenderObject::HighlightState::None)
         SET_REASON_AND_RETURN_IF_NEEDED(FlowChildIsSelected, reasons, includeReasons);
+    if (is<RenderCounter>(child))
+        SET_REASON_AND_RETURN_IF_NEEDED(FlowTextIsRenderCounter, reasons, includeReasons);
     if (is<RenderText>(child)) {
         const auto& renderText = downcast<RenderText>(child);
         if (renderText.textNode() && !renderText.document().markers().markersFor(*renderText.textNode()).isEmpty())
