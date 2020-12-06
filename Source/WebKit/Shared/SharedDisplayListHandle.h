@@ -39,7 +39,7 @@ public:
 
     static constexpr size_t headerSize()
     {
-        return roundUpToMultipleOf<sizeof(std::max_align_t)>(sizeof(DisplayListSharedMemoryHeader));
+        return roundUpToMultipleOf<alignof(std::max_align_t)>(sizeof(DisplayListSharedMemoryHeader));
     }
 
     SharedMemory& sharedMemory() { return m_sharedMemory.get(); }
