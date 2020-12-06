@@ -1414,12 +1414,17 @@ void Page::scheduleRenderingUpdate(OptionSet<RenderingUpdateStep> requestedSteps
 {
     LOG_WITH_STREAM(EventLoop, stream << "Page " << this << " scheduleTimedRenderingUpdate() - requestedSteps " << requestedSteps << " remaining steps " << m_renderingUpdateRemainingSteps);
     if (m_renderingUpdateRemainingSteps.isEmpty()) {
-        if (chrome().client().scheduleRenderingUpdate())
-            return;
-        renderingUpdateScheduler().scheduleRenderingUpdate();
+        scheduleRenderingUpdateInternal();
         return;
     }
     computeUnfulfilledRenderingSteps(requestedSteps);
+}
+
+void Page::scheduleRenderingUpdateInternal()
+{
+    if (chrome().client().scheduleRenderingUpdate())
+        return;
+    renderingUpdateScheduler().scheduleRenderingUpdate();
 }
 
 void Page::computeUnfulfilledRenderingSteps(OptionSet<RenderingUpdateStep> requestedSteps)
@@ -1666,7 +1671,7 @@ void Page::renderingUpdateCompleted()
     LOG_WITH_STREAM(EventLoop, stream << "Page " << this << " renderingUpdateCompleted() - steps " << m_renderingUpdateRemainingSteps << " unfulfilled steps " << m_unfulfilledRequestedSteps);
 
     if (m_unfulfilledRequestedSteps) {
-        renderingUpdateScheduler().scheduleRenderingUpdate();
+        scheduleRenderingUpdateInternal();
         m_unfulfilledRequestedSteps = { };
     }
 }

@@ -869,6 +869,7 @@ private:
     void doAfterUpdateRendering();
     void renderingUpdateCompleted();
     void computeUnfulfilledRenderingSteps(OptionSet<RenderingUpdateStep>);
+    void scheduleRenderingUpdateInternal();
 
     RenderingUpdateScheduler& renderingUpdateScheduler();
 
