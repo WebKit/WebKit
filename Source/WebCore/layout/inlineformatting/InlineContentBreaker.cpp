@@ -277,9 +277,16 @@ Optional<TrailingTextContent> InlineContentBreaker::processOverflowingTextConten
             if (auto partialRun = tryBreakingTextRun(run, lineStatus.contentLogicalRight + accumulatedRunWidth, adjustedAvailableWidth)) {
                 if (partialRun->length)
                     return TrailingTextContent { index, false, partialRun };
-                // When the content is wrapped at the run boundary, the trailing run is the previous run.
-                if (index)
-                    return TrailingTextContent { index - 1, false, { } };
+                if (index) {
+                    // When the content is wrapped at the run boundary, the trailing run is the previous run.
+                    auto trailingCandidateIndex = index - 1;
+                    // Try not break content at inline box boundary
+                    // e.g. <span>fits</span><span>overflows</span>
+                    // when the text "overflows" completely overflows, let's not wrap the content at '<span>'.
+                    if (trailingCandidateIndex && runs[trailingCandidateIndex].inlineItem.isInlineBoxStart())
+                        --trailingCandidateIndex;
+                    return TrailingTextContent { trailingCandidateIndex, false, { } };
+                }
                 // Sometimes we can't accommodate even the very first character.
                 return TrailingTextContent { 0, true, { } };
             }

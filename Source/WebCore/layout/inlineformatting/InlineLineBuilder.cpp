@@ -689,9 +689,9 @@ void LineBuilder::commitPartialContent(const InlineContentBreaker::ContinuousCon
     for (size_t index = 0; index < runs.size(); ++index) {
         auto& run = runs[index];
         if (partialTrailingContent.trailingRunIndex == index) {
-            ASSERT(run.inlineItem.isText());
             // Create and commit partial trailing item.
             if (auto partialRun = partialTrailingContent.partialRun) {
+                ASSERT(run.inlineItem.isText());
                 auto& trailingInlineTextItem = downcast<InlineTextItem>(runs[partialTrailingContent.trailingRunIndex].inlineItem);
                 auto partialTrailingTextItem = trailingInlineTextItem.left(partialRun->length);
                 m_line.append(partialTrailingTextItem, partialRun->logicalWidth);

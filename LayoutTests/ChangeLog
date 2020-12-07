@@ -1,3 +1,13 @@
+2020-12-07  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Overflowing text content should not break at inline box boundary
+        https://bugs.webkit.org/show_bug.cgi?id=219605
+
+        Reviewed by Antti Koivisto.
+
+        * fast/layoutformattingcontext/overflow-at-inline-box-boundary-simple-expected.html: Added.
+        * fast/layoutformattingcontext/overflow-at-inline-box-boundary-simple.html: Added.
+
 2020-12-07  Lauro Moura  <lmoura@igalia.com>
 
         [GStreamer] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-channelmergernode-interface/active-processing.https.html is flaky failing
