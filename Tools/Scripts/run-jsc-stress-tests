@@ -132,6 +132,7 @@ $mode = "full"
 $buildType = "release"
 $forceCollectContinuously = false
 $reportExecutionTime = false
+$ldd = nil
 
 def usage
     puts "run-jsc-stress-tests -j <shell path> <collections path> [<collections path> ...]"
@@ -151,6 +152,7 @@ def usage
     puts "--arch                      Specify architecture instead of determining from JavaScriptCore build."
     puts "--force-architecture        Override the architecture to run tests with."
     puts "                            e.g. x86, x86_64, arm."
+    puts "--ldd                       Use alternate ldd"
     puts "--os                        Specify os instead of determining from JavaScriptCore build."
     puts "                            e.g. darwin, linux & windows."
     puts "--shell-runner              Uses the shell-based test runner instead of the default make-based runner."
@@ -192,6 +194,7 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
                ['--force-vm-copy', GetoptLong::NO_ARGUMENT],
                ['--arch', GetoptLong::REQUIRED_ARGUMENT],
                ['--force-architecture', GetoptLong::REQUIRED_ARGUMENT],
+               ['--ldd', GetoptLong::REQUIRED_ARGUMENT],
                ['--os', GetoptLong::REQUIRED_ARGUMENT],
                ['--shell-runner', GetoptLong::NO_ARGUMENT],
                ['--make-runner', GetoptLong::NO_ARGUMENT],
@@ -265,6 +268,8 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
     when '--force-architecture'
         $architecture = arg unless $architecture
         $forceArchitecture = arg
+    when '--ldd'
+        $ldd = arg
     when '--os'
         $hostOS = arg
     when '--model'
@@ -1858,7 +1863,7 @@ def prepareBundle
             if $copyVM
                 FileUtils.cp_r source, destination
             else
-                begin 
+                begin
                     FileUtils.ln_s source, destination
                 rescue Exception
                     $stderr.puts "Warning: unable to create soft link, trying to copy."
@@ -1867,15 +1872,38 @@ def prepareBundle
             end
 
             if $remote and $hostOS == "linux"
-                begin
-                    dependencies = `ldd #{source}`
-                    dependencies.split(/\n/).each {
-                        | dependency |
-                        FileUtils.cp_r $&, $jscPath.dirname if dependency =~ /#{WEBKIT_PATH}[^ ]*/
-                    }
-                rescue
-                    $stderr.puts "Warning: unable to determine or copy library dependnecies of JSC."
-                end
+                generate_bundle = (Pathname.new(THIS_SCRIPT_PATH).dirname + 'generate-bundle').realpath
+                Dir.mktmpdir {
+                    | tmpdir |
+                    # Generate bundle in a temporary directory so that
+                    # we can safely pick it up regardless of its name
+                    # (it's the only zip file there).
+                    cmdline = [
+                        generate_bundle.to_s,
+                        "--platform=gtk",
+                        "--bundle=jsc",
+                        "--syslibs=bundle-all",
+                        "--no-strip",
+                        "--compression=tar.xz",
+                        ($buildType == "release") ? "--release" : "--debug",
+                        "--destination=#{tmpdir}"
+                    ]
+                    if not $ldd.nil?
+                        cmdline << "--ldd=#{$ldd}"
+                    end
+                    mysys(cmdline)
+                    archives = Dir.glob("#{tmpdir}/*.tar.xz")
+                    if archives.size != 1
+                        raise "Expected exactly one entry in tmpdir, not #{archives}"
+                    end
+                    # Note: we overwrite 'jsc'. This obviously conflicts with
+                    # !copyVM but, then gain, so does $remote.
+                    mysys(["tar",
+                           "-C",
+                           $jscPath.dirname.to_s,
+                           "-xf",
+                           archives[0]])
+                }
             end
         }
     end

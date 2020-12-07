@@ -1,3 +1,27 @@
+2020-12-07  Angelos Oikonomopoulos  <angelos@igalia.com>
+
+        [JSC] Bundle non-native libs in run-jsc-stress-tests
+        https://bugs.webkit.org/show_bug.cgi?id=219485
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        run-jsc-stress-tests already tries to bundle library dependencies
+        (on linux) when using the --remote functionality; this ensures
+        that we don't need to depend on the remote environment exactly
+        matching the build environment. However, this breaks when
+        cross-building; run-jsc-stress-tests uses ldd, which relies on
+        code execution to get the shared object paths.
+
+        This patch extends generate-bundle to be able to handle the output
+        from a cross ldd (specifically, xldd from crosstool-NG) and
+        changes run-jsc-stress-tests to use generate-bundle for bundling
+        the libraries for the remotes.
+
+        * Scripts/generate-bundle:
+        * Scripts/run-javascriptcore-tests:
+        (runJSCStressTests):
+        * Scripts/run-jsc-stress-tests:
+
 2020-12-07  Zan Dobersek  <zdobersek@igalia.com>
 
         [GLib] Leaked RunLoop objects on worker threads

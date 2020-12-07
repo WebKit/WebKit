@@ -106,6 +106,7 @@ my $createTarball = 0;
 my $remoteHost = 0;
 my $model = 0;
 my $archs = undef;
+my $ldd = undef;
 my $version;
 my $versionName;
 my $sdk;
@@ -234,6 +235,7 @@ my $usage = <<EOF;
 Usage: $programName [options] [options to pass to build system]
   --help                        Show this help message
   --architecture                Attempt to override the native architecture of a machine.
+  --ldd                         Use alternate ldd
   --root=                       Path to pre-built root containing jsc
   --[no-]ftl-jit                Turn the FTL JIT on or off
   --[no-]build                  Check (or don't check) to see if the jsc build is up-to-date (default: $buildJSCDefault)
@@ -331,6 +333,7 @@ GetOptions(
     'remote=s' => \$remoteHost,
     'model=s' => \$model,
     'architecture=s' => \$archs,
+    'ldd=s' => \$ldd,
     'version=s' => \$version,
     'version-name=s' => \$versionName,
     'sdk=s' => \$sdk,
@@ -761,6 +764,10 @@ sub runJSCStressTests
         push(@jscStressDriverCmd, $archs);
     }
 
+    if (defined($ldd)) {
+        push(@jscStressDriverCmd, "--ldd");
+        push(@jscStressDriverCmd, $ldd);
+    }
     push(@jscStressDriverCmd, @testList);
 
     if (isWindows() && !isCygwin()) {

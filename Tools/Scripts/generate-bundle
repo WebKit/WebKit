@@ -29,9 +29,11 @@ import hashlib
 import json
 import logging
 import os
+from pathlib import PurePath
 import shutil
 import subprocess
 import sys
+import tarfile
 import tempfile
 import zipfile
 
@@ -86,9 +88,38 @@ fi
 _log = logging.getLogger(__name__)
 LOG_MESSAGE = 25
 
+class Archiver(object):
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, type, v, tb):
+        return self._archive.close()
+
+class TarArchiver(Archiver):
+
+    def __init__(self, path):
+        self._archive = tarfile.open(path, 'w:xz')
+
+    def add_file(self, system_path, zip_path):
+        return self._archive.add(system_path, zip_path)
+
+class ZipArchiver(Archiver):
+
+    def __init__(self, path):
+        self._archive = zipfile.ZipFile(path, 'w', compression=zipfile.ZIP_DEFLATED)
+
+    def add_file(self, system_path, zip_path):
+        if os.path.islink(system_path):
+            symlink_zip_info = zipfile.ZipInfo(zip_path)
+            symlink_zip_info.create_system = 3 # Unix (for symlink support)
+            symlink_zip_info.external_attr = 0xA1ED0000 # Zip softlink magic number
+            return self._archive.writestr(symlink_zip_info, os.readlink(system_path))
+        return self._archive.write(system_path, zip_path)
+
 class BundleCreator(object):
 
-    def __init__(self, configuration, platform, bundle_type, syslibs, should_strip_objects, compression_type, destination = None, revision = None, builder_name = None):
+    def __init__(self, configuration, platform, bundle_type, syslibs, ldd, should_strip_objects, compression_type, destination = None, revision = None, builder_name = None):
         self._configuration = configuration
         self._platform = platform.lower()
         self._revision = revision
@@ -96,6 +127,7 @@ class BundleCreator(object):
         self._bundle_type = bundle_type
         self._buildername = builder_name
         self._syslibs = syslibs
+        self._ldd = ldd
         self._should_strip_objects = should_strip_objects
         self._compression_type = compression_type
         self._tmpdir = None
@@ -125,11 +157,26 @@ class BundleCreator(object):
         return command_process.returncode, stdout, stderr
 
 
-    def _ldd_get_libs_and_interpreter(self, object):
-        interpreter = None
-        retcode, stdout, stderr = self._run_cmd_and_get_output(['ldd', object])
+    def _get_interpreter_objname(self, object):
+        # Note: we use patchelf to get the object name (not the path!)
+        # of the interpreter because this works regardless of the
+        # architecture of the ELF file.
+        retcode, stdout, stderr = self._run_cmd_and_get_output(['patchelf', '--print-interpreter', object])
         if retcode != 0:
-            raise RuntimeError('The ldd command returned non-zero status for object %s' % object)
+            _log.debug("patchelf stdout:\n%s\nPatchelf stderr:\n%s" % (stdout, stderr))
+            if 'cannot find section' in stdout:
+                # This is fine; we only expect an interpreter in the main binary.
+                return None
+            raise RuntimeError('The patchelf command returned non-zero status for object %s' % object)
+        interpreter_path = PurePath(stdout.strip())
+        return interpreter_path.name
+
+    def _get_libs_and_interpreter(self, object):
+        interpreter = None
+        retcode, stdout, stderr = self._run_cmd_and_get_output([self._ldd, object])
+        _log.debug("ldd stdout:\n%s" % stdout)
+        if retcode != 0:
+            raise RuntimeError('The %s command returned non-zero status for object %s' % (self._ldd, object))
         libs = []
         for line in stdout.splitlines():
             line = line.strip()
@@ -144,11 +191,24 @@ class BundleCreator(object):
                 line = line.split(' ')[0].strip()
                 if os.path.isfile(line):
                     interpreter = line
+        if interpreter is None:
+            # This is the case for non-native binaries. For those, we
+            # can use a cross-ldd (xldd), but then the interpreter
+            # looks like any other shared object in the output of
+            # ldd. Try to identify it by looking at the object name
+            # from the interpreter string.
+            interpreter_objname = self._get_interpreter_objname(object)
+            for lib in libs:
+                if PurePath(lib).name == interpreter_objname:
+                    interpreter = lib
+                    break
+            # If we found an interpreter, remove it from the libs.
+            libs = [lib for lib in libs if lib != interpreter]
         return libs, interpreter
 
 
     def _ldd_recursive_get_libs_and_interpreter(self, object, already_checked_libs = []):
-        libs, interpreter = self._ldd_get_libs_and_interpreter(object)
+        libs, interpreter = self._get_libs_and_interpreter(object)
         if libs:
             for lib in libs:
                 if lib in already_checked_libs:
@@ -296,10 +356,14 @@ class BundleCreator(object):
         for bundle_binary in self._bundle_binaries:
             self._create_bundle(bundle_binary)
         self._generate_readme()
+
         if self._compression_type == 'zip':
-            self._create_zip()
+            archiver = ZipArchiver(self._bundle_file_path)
+        elif self._compression_type == 'tar.xz':
+            archiver = TarArchiver(self._bundle_file_path)
         else:
             raise NotImplementedError('Support for compression type %s not implemented' % self._compression_type)
+        self._create_archive(archiver)
         self._remove_tempdir()
         if not os.path.isfile(self._bundle_file_path):
             raise RuntimeError('Unable to create the file %s' % self._bundle_file_path)
@@ -332,20 +396,14 @@ class BundleCreator(object):
         return bundle_lib
 
 
-    def _create_zip(self):
-        _log.info('Create ZIP file')
-        with zipfile.ZipFile(self._bundle_file_path, 'w', compression=zipfile.ZIP_DEFLATED) as zipHandle:
+    def _create_archive(self, archiver):
+        _log.info('Create archive')
+        with archiver:
             for dirname, subdirs, files in os.walk(self._tmpdir):
                 for filename in files:
                     system_file_path = os.path.join(dirname, filename)
                     zip_file_path = system_file_path.replace(self._tmpdir, '', 1).lstrip('/')
-                    if os.path.islink(system_file_path):
-                        symlink_zip_info = zipfile.ZipInfo(zip_file_path)
-                        symlink_zip_info.create_system = 3 # Unix (for symlink support)
-                        symlink_zip_info.external_attr = 0xA1ED0000 # Zip softlink magic number
-                        zipHandle.writestr(symlink_zip_info, os.readlink(system_file_path))
-                    else:
-                        zipHandle.write(system_file_path, zip_file_path)
+                    archiver.add_file(system_file_path, zip_file_path)
 
 
     def _get_system_package_name(self, object):
@@ -456,6 +514,8 @@ class BundleCreator(object):
             # and everything will be examined and bundled as we don't account for system packages in that case.
             if not system_package:
                 libraries, interpreter = self._ldd_recursive_get_libs_and_interpreter(object)
+                if interpreter is None:
+                    raise RuntimeError("Could not determine interpreter for binary %s" % object)
                 if copied_interpreter is None:
                     if self._syslibs == 'bundle-all':
                         self._copy_and_remove_rpath(interpreter, type='interpreter')
@@ -616,6 +676,7 @@ def main():
     parser.add_argument('--syslibs', dest='syslibs', choices=['bundle-all', 'generate-install-script'], default='generate-install-script',
                         help='If value is "bundle-all", the bundle will include _all_ the system libraries instead of a install-dependencies script.\n'
                         'If value is "generate-install-script", the system libraries will not be bundled and a install-dependencies script will be generated for this distribution.')
+    parser.add_argument('--ldd', dest='ldd', default='ldd', help='Use alternative ldd (useful for non-native binaries')
     parser.add_argument('--compression', dest='compression', choices=['zip', 'tar.xz'], default='zip')
     parser.add_argument('--destination', action='store', dest='destination',
                         help='Optional path were to store the bundle')
@@ -633,7 +694,7 @@ def main():
         jhbuildutils.enter_jhbuild_environment_if_available(options.platform)
 
     configure_logging(options.log_level)
-    bundle_creator = BundleCreator(options.configuration, options.platform, options.bundle_binary, options.syslibs,
+    bundle_creator = BundleCreator(options.configuration, options.platform, options.bundle_binary, options.syslibs, options.ldd,
                                    not options.no_strip, options.compression, options.destination, options.webkit_version, options.builder_name)
     bundle_file_path = bundle_creator.create()
 
