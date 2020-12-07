@@ -1,3 +1,14 @@
+2020-12-07  Joonghun Park  <jh718.park@samsung.com>
+
+        Unreviewed. Add the switch case handling missed out from r270415.
+
+        This change removes the build warning below.
+        warning: enumeration value ‘RequestedByGPUProcess’ not handled in switch [-Wswitch]
+
+        No new tests, no new behaviors.
+
+        * UIProcess/API/glib/WebKitNavigationClient.cpp:
+
 2020-12-06  Samuel Thibault  <samuel.thibault@ens-lyon.org>
 
         [WebKit] Fix use of std::max_align_t
