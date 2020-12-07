@@ -237,7 +237,7 @@ webkit.org/b/186670 webkit.org/b/219547 fast/scrolling/iframe-scrollable-after-b
 webkit.org/b/219547 fast/scrolling/overflow-scrollable-after-back.html [ Timeout ]
 webkit.org/b/219547 pointer-lock/mouse-event-delivery.html [ Timeout ]
 webkit.org/b/219547 scrollbars/scroll-rtl-or-bt-layer.html [ Timeout ]
-webkit.org/b/219547 fast/events/wheel/continuous-platform-wheelevent-in-scrolling-div.html [ ImageOnlyFailure ]
+webkit.org/b/219547 fast/events/wheel/continuous-platform-wheelevent-in-scrolling-div.html [ Failure ImageOnlyFailure ]
 webkit.org/b/219547 fast/frames/flattening/scrolling-in-object.html [ ImageOnlyFailure ]
 # This one below should be moved back to PASS when fixed to override the root expectation of ImageOnlyFailure
 webkit.org/b/219547 fast/scrolling/rtl-scrollbars-listbox-scroll.html [ ImageOnlyFailure ]
