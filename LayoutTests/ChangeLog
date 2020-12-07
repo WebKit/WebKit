@@ -1,3 +1,15 @@
+2020-12-07  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, reverting r270507.
+
+        Caused some WebRTC tests to assert
+
+        Reverted changeset:
+
+        "Allow RTCRtpSFrameTransform to handle multiple keys"
+        https://bugs.webkit.org/show_bug.cgi?id=219598
+        https://trac.webkit.org/changeset/270507
+
 2020-12-07  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Deny mach-lookup to the service 'com.apple.audio.SystemSoundServer-OSX' in the WebContent process

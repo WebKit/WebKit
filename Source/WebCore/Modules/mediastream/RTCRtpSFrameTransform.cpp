@@ -80,11 +80,6 @@ uint64_t RTCRtpSFrameTransform::counterForTesting() const
     return m_transformer->counter();
 }
 
-uint64_t RTCRtpSFrameTransform::keyIdForTesting() const
-{
-    return m_transformer->keyId();
-}
-
 bool RTCRtpSFrameTransform::isAttached() const
 {
     return m_isAttached || (m_readable && m_readable->isLocked()) || (m_writable && m_writable->isLocked());

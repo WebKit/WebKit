@@ -60,7 +60,6 @@ public:
     void willClearBackend(RTCRtpTransformBackend&);
 
     WEBCORE_EXPORT uint64_t counterForTesting() const;
-    WEBCORE_EXPORT uint64_t keyIdForTesting() const;
 
     ExceptionOr<RefPtr<ReadableStream>> readable();
     ExceptionOr<RefPtr<WritableStream>> writable();
