@@ -194,6 +194,7 @@ public:
     PartialResult WARN_UNUSED_RETURN addTableSize(unsigned, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addTableGrow(unsigned, ExpressionType fill, ExpressionType delta, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addTableFill(unsigned, ExpressionType offset, ExpressionType fill, ExpressionType count);
+    PartialResult WARN_UNUSED_RETURN addTableCopy(unsigned, unsigned, ExpressionType dstOffset, ExpressionType srcOffset, ExpressionType length);
 
     // Locals
     PartialResult WARN_UNUSED_RETURN getLocal(uint32_t index, ExpressionType& result);
@@ -1138,6 +1139,12 @@ auto LLIntGenerator::addTableFill(unsigned tableIndex, ExpressionType offset, Ex
 {
     WasmTableFill::emit(this, offset, fill, count, tableIndex);
 
+    return { };
+}
+
+auto LLIntGenerator::addTableCopy(unsigned dstTableIndex, unsigned srcTableIndex, ExpressionType dstOffset, ExpressionType srcOffset, ExpressionType length) -> PartialResult
+{
+    WasmTableCopy::emit(this, dstOffset, srcOffset, length, dstTableIndex, srcTableIndex);
     return { };
 }
 

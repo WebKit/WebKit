@@ -71,8 +71,8 @@ private:
     PartialResult WARN_UNUSED_RETURN parseI32InitExpr(Optional<I32InitExpr>&);
     PartialResult WARN_UNUSED_RETURN parseElementKind(uint8_t& elementKind);
     PartialResult WARN_UNUSED_RETURN parseIndexCountForElementSection(uint32_t&, const unsigned);
-    PartialResult WARN_UNUSED_RETURN parseFuncIdxFromRefExpForElementSection(uint32_t&, const unsigned, const unsigned);
-    PartialResult WARN_UNUSED_RETURN parseFuncIdxForElementSection(uint32_t&, const unsigned, const unsigned);
+    PartialResult WARN_UNUSED_RETURN parseFuncIndexFromRefExpForElementSection(uint32_t&, const unsigned, const unsigned);
+    PartialResult WARN_UNUSED_RETURN parseFuncIndexForElementSection(uint32_t&, const unsigned, const unsigned);
 
     size_t m_offsetInSource;
     Ref<ModuleInformation> m_info;

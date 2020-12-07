@@ -49,6 +49,7 @@
 #include "WasmOMGPlan.h"
 #include "WasmOSREntryData.h"
 #include "WasmWorklist.h"
+#include <wtf/CheckedArithmetic.h>
 #include <wtf/DataLog.h>
 #include <wtf/Locker.h>
 #include <wtf/StdLibExtras.h>
@@ -719,6 +720,41 @@ JSC_DEFINE_JIT_OPERATION(operationWasmTableFill, bool, (Instance* instance, unsi
     for (unsigned j = 0; j < count; ++j)
         setWasmTableElement(instance, tableIndex, offset + j, fill);
 
+    return true;
+}
+
+JSC_DEFINE_JIT_OPERATION(operationWasmTableCopy, bool, (Instance* instance, unsigned dstTableIndex, unsigned srcTableIndex, int32_t dstOffset, int32_t srcOffset, int32_t length))
+{
+    ASSERT(dstTableIndex < instance->module().moduleInformation().tableCount());
+    ASSERT(srcTableIndex < instance->module().moduleInformation().tableCount());
+    const Table* dstTable = instance->table(dstTableIndex);
+    const Table* srcTable = instance->table(srcTableIndex);
+    ASSERT(dstTable->type() == srcTable->type());
+
+    if ((srcOffset < 0) || (dstOffset < 0) || (length < 0))
+        return false;
+
+    Checked<uint32_t, RecordOverflow> lastDstElementIndexChecked = static_cast<uint32_t>(dstOffset);
+    lastDstElementIndexChecked += static_cast<uint32_t>(length);
+
+    uint32_t lastDstElementIndex;
+    if (lastDstElementIndexChecked.safeGet(lastDstElementIndex) == CheckedState::DidOverflow)
+        return false;
+
+    if (lastDstElementIndex > dstTable->length())
+        return false;
+
+    Checked<uint32_t, RecordOverflow> lastSrcElementIndexChecked = static_cast<uint32_t>(srcOffset);
+    lastSrcElementIndexChecked += static_cast<uint32_t>(length);
+
+    uint32_t lastSrcElementIndex;
+    if (lastSrcElementIndexChecked.safeGet(lastSrcElementIndex) == CheckedState::DidOverflow)
+        return false;
+
+    if (lastSrcElementIndex > srcTable->length())
+        return false;
+
+    instance->tableCopy(dstOffset, srcOffset, length, dstTableIndex, srcTableIndex);
     return true;
 }
 

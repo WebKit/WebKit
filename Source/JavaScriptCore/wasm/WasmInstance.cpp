@@ -120,6 +120,39 @@ Table* Instance::table(unsigned i)
     return *bitwise_cast<Table**>(bitwise_cast<char*>(this) + offsetOfTablePtr(m_numImportFunctions, i));
 }
 
+void Instance::tableCopy(uint32_t dstOffset, uint32_t srcOffset, uint32_t length, uint32_t dstTableIndex, uint32_t srcTableIndex)
+{
+    RELEASE_ASSERT(srcTableIndex < m_module->moduleInformation().tableCount());
+    RELEASE_ASSERT(dstTableIndex < m_module->moduleInformation().tableCount());
+
+    Table* dstTable = table(dstTableIndex);
+    Table* srcTable = table(srcTableIndex);
+    RELEASE_ASSERT(dstTable->type() == srcTable->type());
+
+    auto forEachTableElement = [&](auto fn) {
+        if (dstTableIndex == srcTableIndex && dstOffset > srcOffset) {
+            for (uint32_t index = length; index--;)
+                fn(dstTable, srcTable, dstOffset + index, srcOffset + index);
+        } else if (dstTableIndex == srcTableIndex && dstOffset == srcOffset)
+            return;
+        else {
+            for (uint32_t index = 0; index < length; ++index)
+                fn(dstTable, srcTable, dstOffset + index, srcOffset + index);
+        }
+    };
+
+    if (dstTable->isExternrefTable()) {
+        forEachTableElement([](Table* dstTable, Table* srcTable, uint32_t dstIndex, uint32_t srcIndex) {
+            dstTable->copy(srcTable, dstIndex, srcIndex);
+        });
+        return;
+    }
+
+    forEachTableElement([](Table* dstTable, Table* srcTable, uint32_t dstIndex, uint32_t srcIndex) {
+        dstTable->asFuncrefTable()->copyFunction(srcTable->asFuncrefTable(), dstIndex, srcIndex);
+    });
+}
+
 void Instance::setTable(unsigned i, Ref<Table>&& table)
 {
     RELEASE_ASSERT(i < m_module->moduleInformation().tableCount());

@@ -609,18 +609,23 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         WASM_PARSER_FAIL_IF(!Options::useWebAssemblyReferences(), "references are not enabled");
         uint8_t extOp;
         WASM_PARSER_FAIL_IF(!parseUInt8(extOp), "can't parse table extended opcode");
-        unsigned tableIndex;
-        WASM_PARSER_FAIL_IF(!parseVarUInt32(tableIndex), "can't parse table index");
-        WASM_VALIDATOR_FAIL_IF(tableIndex >= m_info.tableCount(), "table index ", tableIndex, " is invalid, limit is ", m_info.tableCount());
 
         switch (static_cast<ExtTableOpType>(extOp)) {
         case ExtTableOpType::TableSize: {
+            unsigned tableIndex;
+            WASM_PARSER_FAIL_IF(!parseVarUInt32(tableIndex), "can't parse table index");
+            WASM_VALIDATOR_FAIL_IF(tableIndex >= m_info.tableCount(), "table index ", tableIndex, " is invalid, limit is ", m_info.tableCount());
+
             ExpressionType result;
             WASM_TRY_ADD_TO_CONTEXT(addTableSize(tableIndex, result));
             m_expressionStack.constructAndAppend(I32, result);
             break;
         }
         case ExtTableOpType::TableGrow: {
+            unsigned tableIndex;
+            WASM_PARSER_FAIL_IF(!parseVarUInt32(tableIndex), "can't parse table index");
+            WASM_VALIDATOR_FAIL_IF(tableIndex >= m_info.tableCount(), "table index ", tableIndex, " is invalid, limit is ", m_info.tableCount());
+
             TypedExpression fill;
             TypedExpression delta;
             WASM_TRY_POP_EXPRESSION_STACK_INTO(delta, "table.grow");
@@ -635,6 +640,10 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             break;
         }
         case ExtTableOpType::TableFill: {
+            unsigned tableIndex;
+            WASM_PARSER_FAIL_IF(!parseVarUInt32(tableIndex), "can't parse table index");
+            WASM_VALIDATOR_FAIL_IF(tableIndex >= m_info.tableCount(), "table index ", tableIndex, " is invalid, limit is ", m_info.tableCount());
+
             TypedExpression offset, fill, count;
             WASM_TRY_POP_EXPRESSION_STACK_INTO(count, "table.fill");
             WASM_TRY_POP_EXPRESSION_STACK_INTO(fill, "table.fill");
@@ -645,6 +654,33 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             WASM_VALIDATOR_FAIL_IF(I32 != count.type(), "table.fill expects an i32 count value, got ", count.type());
 
             WASM_TRY_ADD_TO_CONTEXT(addTableFill(tableIndex, offset, fill, count));
+            break;
+        }
+        case ExtTableOpType::TableCopy: {
+            unsigned dstTableIndex;
+            WASM_PARSER_FAIL_IF(!parseVarUInt32(dstTableIndex), "can't parse destination table index");
+            WASM_VALIDATOR_FAIL_IF(dstTableIndex >= m_info.tableCount(), "table index ", dstTableIndex, " is invalid, limit is ", m_info.tableCount());
+
+            unsigned srcTableIndex;
+            WASM_PARSER_FAIL_IF(!parseVarUInt32(srcTableIndex), "can't parse source table index");
+            WASM_VALIDATOR_FAIL_IF(srcTableIndex >= m_info.tableCount(), "table index ", srcTableIndex, " is invalid, limit is ", m_info.tableCount());
+
+            const auto srcType = m_info.table(srcTableIndex).wasmType();
+            const auto dstType = m_info.table(dstTableIndex).wasmType();
+            WASM_VALIDATOR_FAIL_IF(srcType != dstType, "type mismatch at table.copy. got ", srcType, " and ", dstType);
+
+            TypedExpression dstOffset;
+            TypedExpression srcOffset;
+            TypedExpression length;
+            WASM_TRY_POP_EXPRESSION_STACK_INTO(length, "table.copy");
+            WASM_TRY_POP_EXPRESSION_STACK_INTO(srcOffset, "table.copy");
+            WASM_TRY_POP_EXPRESSION_STACK_INTO(dstOffset, "table.copy");
+
+            WASM_VALIDATOR_FAIL_IF(I32 != dstOffset.type(), "table.copy dst_offset to type ", dstOffset.type(), " expected ", I32);
+            WASM_VALIDATOR_FAIL_IF(I32 != srcOffset.type(), "table.copy src_offset to type ", srcOffset.type(), " expected ", I32);
+            WASM_VALIDATOR_FAIL_IF(I32 != length.type(), "table.copy length to type ", length.type(), " expected ", I32);
+
+            WASM_TRY_ADD_TO_CONTEXT(addTableCopy(dstTableIndex, srcTableIndex, dstOffset, srcOffset, length));
             break;
         }
         default:

@@ -263,6 +263,7 @@ public:
     PartialResult WARN_UNUSED_RETURN addTableSize(unsigned, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addTableGrow(unsigned, ExpressionType fill, ExpressionType delta, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addTableFill(unsigned, ExpressionType offset, ExpressionType fill, ExpressionType count);
+    PartialResult WARN_UNUSED_RETURN addTableCopy(unsigned, unsigned, ExpressionType dstOffset, ExpressionType srcOffset, ExpressionType length);
 
     // Locals
     PartialResult WARN_UNUSED_RETURN getLocal(uint32_t index, ExpressionType& result);
@@ -1151,6 +1152,33 @@ auto AirIRGenerator::addTableFill(unsigned tableIndex, ExpressionType offset, Ex
 
     auto result = tmpForType(Type::I32);
     emitCCall(&operationWasmTableFill, result, instanceValue(), addConstant(Type::I32, tableIndex), offset, fill, count);
+
+    emitCheck([&] {
+        return Inst(BranchTest32, nullptr, Arg::resCond(MacroAssembler::Zero), result, result);
+    }, [=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+        this->emitThrowException(jit, ExceptionType::OutOfBoundsTableAccess);
+    });
+
+    return { };
+}
+
+auto AirIRGenerator::addTableCopy(unsigned dstTableIndex, unsigned srcTableIndex, ExpressionType dstOffset, ExpressionType srcOffset, ExpressionType length) -> PartialResult
+{
+    ASSERT(dstOffset.tmp());
+    ASSERT(dstOffset.type() == Type::I32);
+
+    ASSERT(srcOffset.tmp());
+    ASSERT(srcOffset.type() == Type::I32);
+
+    ASSERT(length.tmp());
+    ASSERT(length.type() == Type::I32);
+
+    auto result = tmpForType(Type::I32);
+    emitCCall(
+        &operationWasmTableCopy, result, instanceValue(),
+        addConstant(Type::I32, dstTableIndex),
+        addConstant(Type::I32, srcTableIndex),
+        dstOffset, srcOffset, length);
 
     emitCheck([&] {
         return Inst(BranchTest32, nullptr, Arg::resCond(MacroAssembler::Zero), result, result);

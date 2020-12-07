@@ -1,3 +1,47 @@
+2020-12-07  Dmitry Bezhetskov  <dbezhetskov@igalia.com>
+
+        [WASM-References] Add support for table.copy
+        https://bugs.webkit.org/show_bug.cgi?id=219427
+
+        Reviewed by Yusuke Suzuki.
+
+        Add support for table.copy from reference types proposal:
+        https://webassembly.github.io/reference-types/core/syntax/instructions.html#table-instructions.
+        The table.copy instruction accepts three stack arguments (destination
+        offset, source offset, length) and two immediates for table indexes
+        and copies items from one wasm table to another.
+
+
+        * bytecode/BytecodeList.rb:
+        * llint/WebAssembly.asm:
+        * wasm/WasmAirIRGenerator.cpp:
+        (JSC::Wasm::AirIRGenerator::addTableFill):
+        (JSC::Wasm::AirIRGenerator::addTableCopy):
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::addTableFill):
+        (JSC::Wasm::B3IRGenerator::addTableCopy):
+        * wasm/WasmFunctionParser.h:
+        (JSC::Wasm::FunctionParser<Context>::parseExpression):
+        * wasm/WasmInstance.cpp:
+        (JSC::Wasm::Instance::tableCopy):
+        * wasm/WasmInstance.h:
+        * wasm/WasmLLIntGenerator.cpp:
+        (JSC::Wasm::LLIntGenerator::addTableCopy):
+        * wasm/WasmOperations.cpp:
+        (JSC::Wasm::isSumOverflow):
+        (JSC::Wasm::JSC_DEFINE_JIT_OPERATION):
+        * wasm/WasmOperations.h:
+        * wasm/WasmSectionParser.cpp:
+        (JSC::Wasm::SectionParser::parseElement):
+        * wasm/WasmSlowPaths.cpp:
+        (JSC::LLInt::WASM_SLOW_PATH_DECL):
+        * wasm/WasmSlowPaths.h:
+        * wasm/WasmTable.cpp:
+        (JSC::Wasm::Table::copy):
+        (JSC::Wasm::FuncRefTable::copyFunction):
+        * wasm/WasmTable.h:
+        * wasm/wasm.json:
+
 2020-12-07  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Remove WEBKIT_WRAP_SOURCELIST

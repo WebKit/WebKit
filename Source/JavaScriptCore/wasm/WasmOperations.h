@@ -67,6 +67,7 @@ JSC_DECLARE_JIT_OPERATION(operationSetWasmTableElement, bool, (Instance*, unsign
 JSC_DECLARE_JIT_OPERATION(operationWasmRefFunc, EncodedJSValue, (Instance*, uint32_t));
 JSC_DECLARE_JIT_OPERATION(operationWasmTableGrow, int32_t, (Instance*, unsigned, EncodedJSValue fill, int32_t delta));
 JSC_DECLARE_JIT_OPERATION(operationWasmTableFill, bool, (Instance*, unsigned, int32_t offset, EncodedJSValue fill, int32_t count));
+JSC_DECLARE_JIT_OPERATION(operationWasmTableCopy, bool, (Instance*, unsigned dstTableIndex, unsigned srcTableIndex, int32_t dstOffset, int32_t srcOffset, int32_t length));
 JSC_DECLARE_JIT_OPERATION(operationGetWasmTableSize, int32_t, (Instance*, unsigned));
 
 JSC_DECLARE_JIT_OPERATION(operationMemoryAtomicWait32, int32_t, (Instance* instance, unsigned base, unsigned offset, uint32_t value, int64_t timeout));

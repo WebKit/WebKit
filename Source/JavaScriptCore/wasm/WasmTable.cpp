@@ -130,6 +130,14 @@ Optional<uint32_t> Table::grow(uint32_t delta)
     return newLength;
 }
 
+void Table::copy(const Table* srcTable, uint32_t dstIndex, uint32_t srcIndex)
+{
+    RELEASE_ASSERT(isExternrefTable());
+    RELEASE_ASSERT(srcTable->isExternrefTable());
+
+    set(dstIndex, srcTable->get(srcIndex));
+}
+
 void Table::clear(uint32_t index)
 {
     RELEASE_ASSERT(index < length());
@@ -205,6 +213,16 @@ const WasmToWasmImportableFunction& FuncRefTable::function(uint32_t index) const
 Instance* FuncRefTable::instance(uint32_t index) const
 {
     return m_instances.get()[index & m_mask];
+}
+
+void FuncRefTable::copyFunction(const FuncRefTable* srcTable, uint32_t dstIndex, uint32_t srcIndex)
+{
+    if (srcTable->get(srcIndex).isNull()) {
+        clear(dstIndex);
+        return;
+    }
+
+    setFunction(dstIndex, jsCast<JSObject*>(srcTable->get(srcIndex)), srcTable->function(srcIndex), srcTable->instance(srcIndex));
 }
 
 } } // namespace JSC::Table

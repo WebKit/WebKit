@@ -1609,6 +1609,15 @@ op :table_fill,
         tableIndex: unsigned,
     }
 
+op :table_copy,
+    args: {
+        dstOffset: VirtualRegister,
+        srcOffset: VirtualRegister,
+        length: VirtualRegister,
+        dstTableIndex: unsigned,
+        srcTableIndex: unsigned,
+    }
+
 op :call,
     args: {
         functionIndex: unsigned,

@@ -77,6 +77,8 @@ public:
     Table* table(unsigned);
     void setTable(unsigned, Ref<Table>&&);
 
+    void tableCopy(uint32_t dstOffset, uint32_t srcOffset, uint32_t length, uint32_t dstTableIndex, uint32_t srcTableIndex);
+
     void* cachedMemory() const { return m_cachedMemory.getMayBeNull(cachedBoundsCheckingSize()); }
     size_t cachedBoundsCheckingSize() const { return m_cachedBoundsCheckingSize; }
 

@@ -333,6 +333,17 @@ WASM_SLOW_PATH_DECL(table_fill)
     WASM_END();
 }
 
+WASM_SLOW_PATH_DECL(table_copy)
+{
+    auto instruction = pc->as<WasmTableCopy, WasmOpcodeTraits>();
+    int32_t dstOffset = READ(instruction.m_dstOffset).unboxedInt32();
+    int32_t srcOffset = READ(instruction.m_srcOffset).unboxedInt32();
+    int32_t length = READ(instruction.m_length).unboxedInt32();
+    if (!Wasm::operationWasmTableCopy(instance, instruction.m_dstTableIndex, instruction.m_srcTableIndex, dstOffset, srcOffset, length))
+        WASM_THROW(Wasm::ExceptionType::OutOfBoundsTableAccess);
+    WASM_END();
+}
+
 WASM_SLOW_PATH_DECL(table_grow)
 {
     auto instruction = pc->as<WasmTableGrow, WasmOpcodeTraits>();

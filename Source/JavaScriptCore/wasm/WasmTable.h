@@ -76,6 +76,7 @@ public:
     JSValue get(uint32_t) const;
 
     Optional<uint32_t> grow(uint32_t delta);
+    void copy(const Table* srcTable, uint32_t dstIndex, uint32_t srcIndex);
 
     void visitAggregate(SlotVisitor&);
 
@@ -100,6 +101,8 @@ public:
     void setFunction(uint32_t, JSObject*, WasmToWasmImportableFunction, Instance*);
     const WasmToWasmImportableFunction& function(uint32_t) const;
     Instance* instance(uint32_t) const;
+
+    void copyFunction(const FuncRefTable* srcTable, uint32_t dstIndex, uint32_t srcIndex);
 
     static ptrdiff_t offsetOfFunctions() { return OBJECT_OFFSETOF(FuncRefTable, m_importableFunctions); }
     static ptrdiff_t offsetOfInstances() { return OBJECT_OFFSETOF(FuncRefTable, m_instances); }
