@@ -77,14 +77,17 @@ Ref<ScrollingTreeNode> ScrollingTreeNicosia::createScrollingTreeNode(ScrollingNo
 
 using Nicosia::CompositionLayer;
 
-static void collectDescendantLayersAtPoint(Vector<RefPtr<CompositionLayer>>& layersAtPoint, RefPtr<CompositionLayer> parent, const FloatPoint& point)
+static bool collectDescendantLayersAtPoint(Vector<RefPtr<CompositionLayer>>& layersAtPoint, RefPtr<CompositionLayer> parent, const FloatPoint& point)
 {
-    bool childExistsAtPoint = false;
+    bool existsOnLayer = false;
+    bool existsOnDescendent = false;
 
     parent->accessPending([&](const CompositionLayer::LayerState& state) {
+        if (FloatRect(FloatPoint(), state.size).contains(point))
+            existsOnLayer = !!state.scrollingNodeID;
+
         for (auto child : state.children) {
-            bool containsPoint = false;
-            FloatPoint transformedPoint;
+            FloatPoint transformedPoint(point);
             child->accessPending([&](const CompositionLayer::LayerState& childState) {
                 if (!childState.transform.isInvertible())
                     return;
@@ -94,21 +97,17 @@ static void collectDescendantLayersAtPoint(Vector<RefPtr<CompositionLayer>>& lay
                     .translate3d(originX + childState.position.x(), originY + childState.position.y(), childState.anchorPoint.z())
                     .multiply(childState.transform)
                     .translate3d(-originX, -originY, -childState.anchorPoint.z()).inverse());
-                auto childPoint = transform.projectPoint(point);
-                if (FloatRect(FloatPoint(), childState.size).contains(childPoint)) {
-                    containsPoint = true;
-                    transformedPoint.set(childPoint.x(), childPoint.y());
-                }
+                auto pointInChildSpace = transform.projectPoint(point);
+                transformedPoint.set(pointInChildSpace.x(), pointInChildSpace.y());
             });
-            if (containsPoint) {
-                childExistsAtPoint = true;
-                collectDescendantLayersAtPoint(layersAtPoint, child, transformedPoint);
-            }
+            existsOnDescendent |= collectDescendantLayersAtPoint(layersAtPoint, child, transformedPoint);
         }
     });
 
-    if (!childExistsAtPoint)
+    if (existsOnLayer && !existsOnDescendent)
         layersAtPoint.append(parent);
+
+    return existsOnLayer || existsOnDescendent;
 }
 
 RefPtr<ScrollingTreeNode> ScrollingTreeNicosia::scrollingNodeForPoint(FloatPoint point)
