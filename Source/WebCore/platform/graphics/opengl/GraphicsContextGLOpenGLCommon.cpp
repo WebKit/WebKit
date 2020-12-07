@@ -2867,6 +2867,9 @@ Vector<GCGLint> GraphicsContextGLOpenGL::getActiveUniforms(PlatformGLObject prog
         return result;
 
     ::glGetActiveUniformsiv(program, uniformIndices.size(), uniformIndices.data(), pname, result.data());
+#else
+    UNUSED_PARAM(program);
+    UNUSED_PARAM(pname);
 #endif
     return result;
 }
