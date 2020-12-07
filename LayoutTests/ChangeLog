@@ -1,3 +1,12 @@
+2020-12-06  Diego Pino Garcia  <dpino@igalia.com>
+
+        [WPE] Unreviewed test gardening. Follow-up r270469, media-source timeouts.
+
+        Also gardened flaky failure in imported/w3c/web-platform-tests/xhr/event-timeout.any.html.
+
+        * platform/glib/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2020-12-06  Lauro Moura  <lmoura@igalia.com>
 
         [GLIB] Gardening wheel and webgl failures
