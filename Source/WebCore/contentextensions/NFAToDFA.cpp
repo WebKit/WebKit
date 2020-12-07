@@ -361,7 +361,7 @@ Optional<DFA> NFAToDFA::convert(NFA&& nfa)
         dfaSourceNode.setTransitions(transitionsStart, static_cast<uint8_t>(transitionsLength));
     } while (!unprocessedNodes.isEmpty());
 
-    return WTFMove(dfa);
+    return dfa;
 }
 
 } // namespace ContentExtensions
