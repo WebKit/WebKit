@@ -468,19 +468,19 @@ static OptionSet<AvoidanceReason> canUseForText(StringView text, const FontCasca
     return canUseForText(text.characters16(), text.length(), fontCascade, lineHeightConstraint, textIsJustified, includeReasons);
 }
 
-static OptionSet<AvoidanceReason> canUseForFontAndText(const RenderBlockFlow& flow, IncludeReasons includeReasons)
+static OptionSet<AvoidanceReason> canUseForFontAndText(const RenderBoxModelObject& container, IncludeReasons includeReasons)
 {
     OptionSet<AvoidanceReason> reasons;
     // We assume that all lines have metrics based purely on the primary font.
-    const auto& style = flow.style();
+    const auto& style = container.style();
     auto& fontCascade = style.fontCascade();
     if (fontCascade.primaryFont().isInterstitial())
         SET_REASON_AND_RETURN_IF_NEEDED(FlowIsMissingPrimaryFont, reasons, includeReasons);
     Optional<float> lineHeightConstraint;
     if (style.lineBoxContain().contains(LineBoxContain::Glyphs))
-        lineHeightConstraint = flow.lineHeight(false, HorizontalLine, PositionOfInteriorLineBoxes).toFloat();
+        lineHeightConstraint = container.lineHeight(false, HorizontalLine, PositionOfInteriorLineBoxes).toFloat();
     bool flowIsJustified = style.textAlign() == TextAlignMode::Justify;
-    for (const auto& textRenderer : childrenOfType<RenderText>(flow)) {
+    for (const auto& textRenderer : childrenOfType<RenderText>(container)) {
         // FIXME: Do not return until after checking all children.
         if (textRenderer.isCombineText())
             SET_REASON_AND_RETURN_IF_NEEDED(FlowTextIsCombineText, reasons, includeReasons);
@@ -660,6 +660,9 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderObject& child, Incl
             SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonSupportedChild, reasons, includeReasons);
         if (renderInline.paddingLeft() < 0 || renderInline.paddingRight() < 0 || renderInline.paddingTop() < 0 || renderInline.paddingBottom() < 0)
             SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonSupportedChild, reasons, includeReasons);
+        auto fontAndTextReasons = canUseForFontAndText(downcast<RenderInline>(child), includeReasons);
+        if (fontAndTextReasons)
+            ADD_REASONS_AND_RETURN_IF_NEEDED(fontAndTextReasons, reasons, includeReasons);
 
         return reasons;
     }
