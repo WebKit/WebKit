@@ -30,7 +30,6 @@
 
 #include "Connection.h"
 #include "GPUConnectionToWebProcessMessages.h"
-#include "GPUProcessConnection.h"
 #include "RemoteMediaSessionHelperMessages.h"
 #include "RemoteMediaSessionHelperProxyMessages.h"
 #include "WebProcess.h"
@@ -45,13 +44,27 @@ using namespace WebCore;
 RemoteMediaSessionHelper::RemoteMediaSessionHelper(WebProcess& process)
     : m_process(process)
 {
-    m_process.ensureGPUProcessConnection().messageReceiverMap().addMessageReceiver(Messages::RemoteMediaSessionHelper::messageReceiverName(), *this);
-    connection().send(Messages::GPUConnectionToWebProcess::EnsureMediaSessionHelper(), { });
+    connectToGPUProcess();
+}
+
+void RemoteMediaSessionHelper::connectToGPUProcess()
+{
+    auto& gpuProcessConnection = m_process.ensureGPUProcessConnection();
+    gpuProcessConnection.addClient(*this);
+    gpuProcessConnection.messageReceiverMap().addMessageReceiver(Messages::RemoteMediaSessionHelper::messageReceiverName(), *this);
+    gpuProcessConnection.connection().send(Messages::GPUConnectionToWebProcess::EnsureMediaSessionHelper(), { });
 }
 
 IPC::Connection& RemoteMediaSessionHelper::connection()
 {
     return m_process.ensureGPUProcessConnection().connection();
+}
+
+void RemoteMediaSessionHelper::gpuProcessConnectionDidClose(GPUProcessConnection& gpuProcessConnection)
+{
+    gpuProcessConnection.removeClient(*this);
+    gpuProcessConnection.messageReceiverMap().removeMessageReceiver(*this);
+    connectToGPUProcess();
 }
 
 void RemoteMediaSessionHelper::startMonitoringWirelessRoutes()

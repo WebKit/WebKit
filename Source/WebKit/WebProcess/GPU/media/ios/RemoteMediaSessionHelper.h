@@ -27,6 +27,7 @@
 
 #if ENABLE(GPU_PROCESS) && PLATFORM(IOS_FAMILY)
 
+#include "GPUProcessConnection.h"
 #include "MessageReceiver.h"
 #include <WebCore/MediaPlaybackTargetContext.h>
 #include <WebCore/MediaSessionHelperIOS.h>
@@ -37,7 +38,8 @@ class WebProcess;
 
 class RemoteMediaSessionHelper final
     : public WebCore::MediaSessionHelper
-    , public IPC::MessageReceiver {
+    , public IPC::MessageReceiver
+    , public GPUProcessConnection::Client {
 public:
     RemoteMediaSessionHelper(WebProcess&);
     virtual ~RemoteMediaSessionHelper() = default;
@@ -51,8 +53,13 @@ public:
     using SuspendedUnderLock = WebCore::MediaSessionHelperClient::SuspendedUnderLock;
 
 private:
+    void connectToGPUProcess();
+
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
+
+    // GPUProcessConnection::Client
+    void gpuProcessConnectionDidClose(GPUProcessConnection&) final;
 
     // MediaSessionHelper
     void startMonitoringWirelessRoutes() final;
