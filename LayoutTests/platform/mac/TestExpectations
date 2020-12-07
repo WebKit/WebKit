@@ -2264,3 +2264,5 @@ webkit.org/b/219464 [ Debug ] imported/w3c/web-platform-tests/html/semantics/scr
 webkit.org/b/219464 [ Debug ] imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/moving-between-documents/before-prepare-iframe-success-inline-module.html [ Pass Failure ]
 
 webkit.org/b/219555 inspector/animation/effectChanged.html [ Pass Timeout ]
+
+webkit.org/b/219225 http/tests/inspector/dom/disconnect-dom-tree-after-main-frame-navigation.html [ Pass Failure ]
