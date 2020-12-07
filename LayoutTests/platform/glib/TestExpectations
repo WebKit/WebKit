@@ -857,6 +857,9 @@ webkit.org/b/218010 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-a
 webkit.org/b/218010 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/suspended-context-messageport.https.html [ Failure Pass ]
 webkit.org/b/218099 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/process-getter.https.html [ Failure Pass ]
 
+# ChannelMergeNode Harness timeout
+webkit.org/b/219603 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-channelmergernode-interface/active-processing.https.html [ Failure Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WebAudio-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
