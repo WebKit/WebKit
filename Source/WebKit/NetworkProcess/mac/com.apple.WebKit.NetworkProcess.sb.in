@@ -172,6 +172,7 @@
     (sysctl-name
         "hw.availcpu"
         "hw.ncpu"
+        "hw.memsize"
         "hw.model" ;; Needed for bundle loading
         "kern.hostname"
         "kern.maxfilesperproc"

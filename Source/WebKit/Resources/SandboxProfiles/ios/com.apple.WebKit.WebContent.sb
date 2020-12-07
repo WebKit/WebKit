@@ -635,7 +635,12 @@
     (allow sysctl-read sysctl-write
            (sysctl-name "vm.footprint_suspend")))
 
-(allow file-read-metadata network-outbound
+(allow network-outbound
+       (literal "/private/var/run/syslog"))
+
+;; Confirm this is unused:
+(allow file-read-metadata
+       (with report) (with telemetry-backtrace)
        (literal "/private/var/run/syslog"))
 
 (allow mach-lookup

@@ -1,3 +1,22 @@
+2020-12-07  Brent Fulgham  <bfulgham@apple.com>
+
+        Add sandbox telemetry for likely unused features
+        https://bugs.webkit.org/show_bug.cgi?id=219544
+        <rdar://71985678>
+
+        Reviewed by Per Arne Vollan.
+
+        Add telemetry to confirm the results of our manual review of the sandbox. Add 'hw.memsize' to
+        the allowed sysctl's for the Network process on macOS, since it is needed by CFNetwork, and is
+        already permitted on iOS.
+
+        * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in: Allow the 'hw.memsize' sysctl, 
+        which is needed by CFNetwork, and is already allowed on iOS.
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb: Add logging to confirm we
+        do not need file-read-metadata for syslog.
+        * WebProcess/com.apple.WebProcess.sb.in: Add logging to confirm BluetoothServices is not
+        needed.
+
 2020-12-07  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Ensure that DisplayListSharedMemoryHeader is never explicitly created or destroyed at compile-time
