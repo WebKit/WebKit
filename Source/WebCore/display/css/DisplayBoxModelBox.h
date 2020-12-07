@@ -49,6 +49,8 @@ public:
     AbsoluteFloatRect absolutePaddingBoxRect() const { return m_paddingBoxRect; }
     AbsoluteFloatRect absoluteContentBoxRect() const { return m_contentBoxRect; }
 
+    AbsoluteFloatRect absolutePaintingExtent() const override;
+
     const BoxDecorationData* boxDecorationData() const { return m_boxDecorationData.get(); }
     const BoxRareGeometry* rareGeometry() const { return m_boxRareGeometry.get(); }
 
@@ -59,7 +61,7 @@ public:
     FloatRoundedRect borderRoundedRect() const;
     FloatRoundedRect innerBorderRoundedRect() const;
 
-    virtual String debugDescription() const;
+    String debugDescription() const override;
 
 private:
     friend class BoxFactory;

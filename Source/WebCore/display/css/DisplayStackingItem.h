@@ -53,15 +53,26 @@ public:
     
     bool isStackingContext() const;
 
+    // Bounds for the painted content of this stacking item (excluding descendant items), not taking clips from ancestors into account.
+    AbsoluteFloatRect paintedContentBounds() const { return m_paintedContentBounds; }
+    // Bounds for the painted content of this stacking item and descendant stacking items.
+    AbsoluteFloatRect paintedBoundsIncludingDescendantItems() const { return m_paintedBoundsIncludingDescendantItems; }
+
     const StackingItemList& negativeZOrderList() const { return m_negativeZOrderList; }
     const StackingItemList& positiveZOrderList() const { return m_positiveZOrderList; }
 
 private:
     void sortLists();
 
+    void setPaintedContentBounds(const AbsoluteFloatRect& bounds) { m_paintedContentBounds = bounds; }
+    void setPaintedBoundsIncludingDescendantItems(const AbsoluteFloatRect& bounds) { m_paintedBoundsIncludingDescendantItems = bounds; }
+
     std::unique_ptr<BoxModelBox> m_box;
     StackingItemList m_negativeZOrderList;
     StackingItemList m_positiveZOrderList;
+    
+    AbsoluteFloatRect m_paintedContentBounds;
+    AbsoluteFloatRect m_paintedBoundsIncludingDescendantItems;
 };
 
 } // namespace Display

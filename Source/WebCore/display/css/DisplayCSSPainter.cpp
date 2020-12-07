@@ -40,6 +40,8 @@
 #include "IntRect.h"
 #include "TransformationMatrix.h"
 
+#define SHOW_ITEM_EXTENTS 0
+
 namespace WebCore {
 namespace Display {
 
@@ -67,10 +69,10 @@ static void applyAncestorClip(const BoxModelBox& box, PaintingContext& paintingC
         paintingContext.context.clipRoundedRect(roundedRect);
 }
 
-static void applyEffects(const Box& box, PaintingContext&, TransparencyLayerScope& transparencyScope)
+static void applyEffects(const StackingItem& stackingItem, const Box& box, PaintingContext& paintingContext, TransparencyLayerScope& transparencyScope)
 {
     if (box.style().opacity() < 1) {
-        // FIXME: Compute and set a clip to avoid creating large transparency layers.
+        paintingContext.context.clip(stackingItem.paintedBoundsIncludingDescendantItems());
         transparencyScope.beginLayer(box.style().opacity());
     }
 }
@@ -135,7 +137,7 @@ void CSSPainter::paintAtomicallyPaintedBox(const StackingItem& stackingItem, Pai
             return false;
         
         auto& boxModelBox = downcast<BoxModelBox>(box);
-        return boxModelBox.hasAncestorClip() || boxModelBox.style().hasTransform();
+        return boxModelBox.hasAncestorClip() || boxModelBox.style().hasTransform() || boxModelBox.style().opacity() < 1;
     };
 
     auto stateSaver = GraphicsContextStateSaver { paintingContext.context, needToSaveState(box) };
@@ -157,7 +159,15 @@ void CSSPainter::paintAtomicallyPaintedBox(const StackingItem& stackingItem, Pai
     }
 
     auto transparencyScope = TransparencyLayerScope { paintingContext.context, 1, false };
-    applyEffects(box, paintingContext, transparencyScope);
+    applyEffects(stackingItem, box, paintingContext, transparencyScope);
+
+#if SHOW_ITEM_EXTENTS
+    {
+        GraphicsContextStateSaver saver(paintingContext.context);
+        paintingContext.context.setStrokeColor(Color::gray);
+        paintingContext.context.strokeRect(stackingItem.paintedBoundsIncludingDescendantItems(), 1);
+    }
+#endif
 
     BoxPainter::paintBox(box, paintingContext, dirtyRect);
     if (!is<ContainerBox>(box))

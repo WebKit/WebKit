@@ -56,6 +56,8 @@ public:
 
     AbsoluteFloatRect absoluteBoxRect() const { return m_absoluteBoxRect; }
 
+    virtual AbsoluteFloatRect absolutePaintingExtent() const { return m_absoluteBoxRect; }
+
     bool isBoxModelBox() const { return m_flags.contains(Flags::BoxModelBox); }
     bool isContainerBox() const { return m_flags.contains(Flags::ContainerBox); }
     bool isImageBox() const { return m_flags.contains(Flags::ImageBox); }

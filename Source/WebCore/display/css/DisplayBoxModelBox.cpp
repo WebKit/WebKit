@@ -116,6 +116,16 @@ RefPtr<BoxClip> BoxModelBox::clipForDescendants() const
     return clip;
 }
 
+AbsoluteFloatRect BoxModelBox::absolutePaintingExtent() const
+{
+    auto paintingExtent = absoluteBorderBoxRect();
+
+    if (auto* shadow = style().boxShadow())
+        shadow->adjustRectForShadow(paintingExtent, 0);
+
+    return paintingExtent;
+}
+
 String BoxModelBox::debugDescription() const
 {
     TextStream stream;

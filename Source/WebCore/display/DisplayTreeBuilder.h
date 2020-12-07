@@ -73,11 +73,13 @@ private:
     StackingItem* insertIntoTree(std::unique_ptr<Box>&&, InsertionPosition&);
     void insert(std::unique_ptr<Box>&&, InsertionPosition&) const;
 
+    void accountForBoxPaintingExtent(const Box&);
+
     void pushStateForBoxDescendants(const Layout::ContainerBox&, const Layout::BoxGeometry&, const ContainerBox&, StackingItem*);
     void popState(const ContainerBox& currentBox);
     
-    const BuildingState& currentState() const;
-    const PositioningContext& positioningContext() const;
+    BuildingState& currentState();
+    const PositioningContext& positioningContext();
 
     BoxFactory m_boxFactory;
     RootBackgroundPropagation m_rootBackgroundPropgation { RootBackgroundPropagation::None };
