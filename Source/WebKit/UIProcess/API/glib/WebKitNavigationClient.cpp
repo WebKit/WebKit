@@ -117,7 +117,6 @@ private:
             return true;
         case ProcessTerminationReason::ExceededCPULimit:
         case ProcessTerminationReason::RequestedByClient:
-        case ProcessTerminationReason::RequestedByGPUProcess:
         case ProcessTerminationReason::RequestedByNetworkProcess:
         case ProcessTerminationReason::NavigationSwap:
         case ProcessTerminationReason::RequestedByGPUProcess:
