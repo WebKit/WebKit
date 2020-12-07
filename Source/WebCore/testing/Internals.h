@@ -610,6 +610,7 @@ public:
     void setWebRTCVP9Support(bool supportVP9Profile0, bool supportVP9Profile2);
     void setWebRTCVP9VTBSupport(bool);
     uint64_t sframeCounter(const RTCRtpSFrameTransform&);
+    uint64_t sframeKeyId(const RTCRtpSFrameTransform&);
     void setEnableWebRTCEncryption(bool);
     void setUseDTLS10(bool);
     void setUseGPUProcessForWebRTC(bool);

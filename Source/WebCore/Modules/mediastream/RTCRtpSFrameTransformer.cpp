@@ -149,6 +149,14 @@ RTCRtpSFrameTransformer::~RTCRtpSFrameTransformer()
 
 ExceptionOr<void> RTCRtpSFrameTransformer::setEncryptionKey(const Vector<uint8_t>& rawKey, Optional<uint64_t> keyId)
 {
+    auto locker = holdLock(m_keyLock);
+    return updateEncryptionKey(rawKey, keyId, ShouldUpdateKeys::Yes);
+}
+
+ExceptionOr<void> RTCRtpSFrameTransformer::updateEncryptionKey(const Vector<uint8_t>& rawKey, Optional<uint64_t> keyId, ShouldUpdateKeys shouldUpdateKeys)
+{
+    ASSERT(m_keyLock.isLocked());
+
     auto saltKeyResult = computeSaltKey(rawKey);
     if (saltKeyResult.hasException())
         return saltKeyResult.releaseException();
@@ -163,14 +171,16 @@ ExceptionOr<void> RTCRtpSFrameTransformer::setEncryptionKey(const Vector<uint8_t
     if (encryptionKeyResult.hasException())
         return encryptionKeyResult.releaseException();
 
-    auto locker = holdLock(m_keyLock);
+    if (!keyId)
+        keyId = m_keys.size();
+
+    m_keyId = *keyId;
+    if (shouldUpdateKeys == ShouldUpdateKeys::Yes)
+        m_keys.set(*keyId, rawKey);
 
     m_saltKey = saltKeyResult.releaseReturnValue();
     m_authenticationKey = authenticationKeyResult.releaseReturnValue();
     m_encryptionKey = encryptionKeyResult.releaseReturnValue();
-
-    if (keyId)
-        m_keyId = *keyId;
 
     updateAuthenticationSize();
     m_hasKey = true;
@@ -204,8 +214,12 @@ ExceptionOr<Vector<uint8_t>> RTCRtpSFrameTransformer::decryptFrame(const uint8_t
     m_counter = header->counter;
 
     if (header->keyId != m_keyId) {
-        // FIXME: We should search for keys.
-        return Exception { NotSupportedError };
+        auto iterator = m_keys.find(header->keyId);
+        if (iterator == m_keys.end())
+            return Exception { DataError, "Key ID is unknown" };
+        auto result = updateEncryptionKey(iterator->value, iterator->key, ShouldUpdateKeys::No);
+        if (result.hasException())
+            return result.releaseException();
     }
 
     if (frameSize < (header->size + m_authenticationSize))

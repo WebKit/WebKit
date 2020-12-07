@@ -1581,6 +1581,11 @@ uint64_t Internals::sframeCounter(const RTCRtpSFrameTransform& transform)
     return transform.counterForTesting();
 }
 
+uint64_t Internals::sframeKeyId(const RTCRtpSFrameTransform& transform)
+{
+    return transform.keyIdForTesting();
+}
+
 void Internals::setEnableWebRTCEncryption(bool value)
 {
 #if USE(LIBWEBRTC)

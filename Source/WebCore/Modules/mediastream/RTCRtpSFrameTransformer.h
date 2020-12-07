@@ -28,6 +28,7 @@
 #if ENABLE(WEB_RTC)
 
 #include "ExceptionOr.h"
+#include <wtf/HashMap.h>
 #include <wtf/Lock.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
@@ -52,6 +53,7 @@ public:
     const Vector<uint8_t>& encryptionKey() const { return m_encryptionKey; }
     const Vector<uint8_t>& saltKey() const { return m_saltKey; }
 
+    uint64_t keyId() const { return m_keyId; }
     uint64_t counter() const { return m_counter; }
     void setCounter(uint64_t counter) { m_counter = counter; }
 
@@ -60,6 +62,9 @@ private:
 
     ExceptionOr<Vector<uint8_t>> decryptFrame(const uint8_t*, size_t);
     ExceptionOr<Vector<uint8_t>> encryptFrame(const uint8_t*, size_t);
+
+    enum class ShouldUpdateKeys { No, Yes };
+    ExceptionOr<void> updateEncryptionKey(const Vector<uint8_t>& rawKey, Optional<uint64_t>, ShouldUpdateKeys = ShouldUpdateKeys::Yes);
 
     ExceptionOr<Vector<uint8_t>> computeSaltKey(const Vector<uint8_t>&);
     ExceptionOr<Vector<uint8_t>> computeAuthenticationKey(const Vector<uint8_t>&);
@@ -75,6 +80,7 @@ private:
     Vector<uint8_t> m_authenticationKey;
     Vector<uint8_t> m_encryptionKey;
     Vector<uint8_t> m_saltKey;
+    HashMap<uint64_t, Vector<uint8_t>> m_keys;
 
     bool m_isEncrypting { false };
     uint64_t m_authenticationSize { 10 };
