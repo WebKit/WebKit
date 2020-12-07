@@ -634,6 +634,10 @@ static TextMarkerData getBytesFromAXTextMarker(AXTextMarkerRef textMarker)
     if (CFGetTypeID(textMarker) != AXTextMarkerGetTypeID())
         return data;
 
+    ASSERT(AXTextMarkerGetLength(textMarker) == sizeof(data));
+    if (AXTextMarkerGetLength(textMarker) != sizeof(data))
+        return data;
+
     memcpy(&data, AXTextMarkerGetBytePtr(textMarker), sizeof(data));
     return data;
 }
