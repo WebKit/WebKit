@@ -27,6 +27,7 @@
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
+#include "ContentExtensionsDebugging.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {

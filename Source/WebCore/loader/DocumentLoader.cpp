@@ -69,6 +69,7 @@
 #include "MemoryCache.h"
 #include "NavigationScheduler.h"
 #include "NetworkLoadMetrics.h"
+#include "NetworkStorageSession.h"
 #include "Page.h"
 #include "PingLoader.h"
 #include "PlatformStrategies.h"

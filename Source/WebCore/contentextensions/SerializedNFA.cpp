@@ -26,6 +26,8 @@
 #include "config.h"
 #include "SerializedNFA.h"
 
+#include "NFA.h"
+
 #if ENABLE(CONTENT_EXTENSIONS)
 
 namespace WebCore {
