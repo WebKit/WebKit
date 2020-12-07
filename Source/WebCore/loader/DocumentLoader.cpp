@@ -115,6 +115,10 @@
 #include "QuickLook.h"
 #endif
 
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+#include "NetworkStorageSession.h"
+#endif
+
 #define PAGE_ID ((m_frame ? m_frame->pageID().valueOr(PageIdentifier()) : PageIdentifier()).toUInt64())
 #define FRAME_ID ((m_frame ? m_frame->frameID().valueOr(FrameIdentifier()) : FrameIdentifier()).toUInt64())
 #define IS_MAIN_FRAME (m_frame ? m_frame->isMainFrame() : false)

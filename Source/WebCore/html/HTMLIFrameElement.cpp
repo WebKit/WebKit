@@ -31,6 +31,7 @@
 #include "HTMLNames.h"
 #include "LazyLoadFrameObserver.h"
 #include "RenderIFrame.h"
+#include "ScriptController.h"
 #include "ScriptableDocumentParser.h"
 #include "Settings.h"
 #include <wtf/IsoMallocInlines.h>

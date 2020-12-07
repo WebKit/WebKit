@@ -25,9 +25,11 @@
 
 #include "config.h"
 #include "InlineLineBox.h"
-#include "LayoutContainerBox.h"
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+
+#include "LayoutBoxGeometry.h"
+#include "LayoutContainerBox.h"
 
 namespace WebCore {
 namespace Layout {
@@ -136,7 +138,7 @@ InlineRect LineBox::logicalMarginRectForInlineLevelBox(const Box& layoutBox, con
     return logicalRect;
 }
 
-}
-}
+} // namespace Layout
+} // namespace WebCore
 
 #endif

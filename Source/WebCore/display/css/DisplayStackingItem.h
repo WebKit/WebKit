@@ -27,6 +27,7 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "DisplayBox.h"
 #include <wtf/IsoMalloc.h>
 #include <wtf/OptionSet.h>
 #include <wtf/Vector.h>
