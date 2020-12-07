@@ -663,6 +663,9 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderObject& child, Incl
         auto fontAndTextReasons = canUseForFontAndText(downcast<RenderInline>(child), includeReasons);
         if (fontAndTextReasons)
             ADD_REASONS_AND_RETURN_IF_NEEDED(fontAndTextReasons, reasons, includeReasons);
+        auto styleReasons = canUseForStyle(style, includeReasons);
+        if (styleReasons)
+            ADD_REASONS_AND_RETURN_IF_NEEDED(styleReasons, reasons, includeReasons);
 
         return reasons;
     }
