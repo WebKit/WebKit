@@ -194,8 +194,6 @@ if (ENABLE_REMOTE_INSPECTOR)
     )
 endif ()
 
-WEBKIT_WRAP_SOURCELIST(${WebKit_SOURCES})
-
 # Windows specific
 list(APPEND WebKit_PUBLIC_FRAMEWORK_HEADERS
     Shared/API/c/win/WKBaseWin.h

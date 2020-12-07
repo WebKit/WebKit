@@ -119,20 +119,6 @@ macro(WEBKIT_ADD_PRECOMPILED_HEADER _header _cpp _source)
     #FIXME: Add support for Xcode.
 endmacro()
 
-macro(WEBKIT_WRAP_SOURCELIST)
-    foreach (_file ${ARGN})
-        get_filename_component(_basename ${_file} NAME_WE)
-        get_filename_component(_path ${_file} PATH)
-
-        if (NOT _file MATCHES "${DERIVED_SOURCES_WEBCORE_DIR}")
-            string(REGEX REPLACE "/" "\\\\\\\\" _sourcegroup "${_path}")
-            source_group("${_sourcegroup}" FILES ${_file})
-        endif ()
-    endforeach ()
-
-    source_group("DerivedSources" REGULAR_EXPRESSION "${DERIVED_SOURCES_WEBCORE_DIR}")
-endmacro()
-
 macro(WEBKIT_FRAMEWORK_DECLARE _target)
     # add_library() without any source files triggers CMake warning
     # Addition of dummy "source" file does not result in any changes in generated build.ninja file
