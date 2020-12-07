@@ -1,3 +1,16 @@
+2020-12-07  Lauro Moura  <lmoura@igalia.com>
+
+        Fix warnings when GPUProcess is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=219587
+
+        Reviewed by Žan Doberšek.
+
+        * UIProcess/API/glib/WebKitNavigationClient.cpp: Handle new enum value
+        in switch after r270415.
+        * WebProcess/WebPage/DrawingArea.cpp:
+        (WebKit::DrawingArea::supportsGPUProcessRendering): Default returning
+        false when GPUProcess is disabled.
+
 2020-12-07  Joonghun Park  <jh718.park@samsung.com>
 
         Unreviewed. Add the switch case handling missed out from r270415.

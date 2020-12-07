@@ -111,6 +111,8 @@ bool DrawingArea::supportsGPUProcessRendering(DrawingAreaType type)
     case DrawingAreaTypeCoordinatedGraphics:
         return false;
 #endif
+    default:
+        return false;
     }
 }
 
