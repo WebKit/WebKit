@@ -1,3 +1,29 @@
+2020-12-07  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GLib] Leaked RunLoop objects on worker threads
+        https://bugs.webkit.org/show_bug.cgi?id=219232
+        <rdar://problem/71772277>
+
+        Reviewed by Geoffrey Garen.
+
+        During the thread-local RunLoop::Holder destruction, explicitly clear out
+        the iteration Deque objects on the held RunLoop, destroying any Function
+        objects that never got to execute on this thread. Generally, this allows
+        for any RunLoop reference stored in these objects to be released.
+
+        Specifically, this would allow for destruction of the RunLoop::Timer
+        object that's queued up in the JSRunLoopTimer::Manager::PerVMData
+        destructor but never gets dispatched because the thread (a JS worker) is
+        shut down before that happens. Destruction of the timer will release the
+        reference of the RunLoop that's held by the RunLoop::Holder, finally
+        enabling the RunLoop object itself be destroyed once the RunLoop::Holder
+        reference is let go.
+
+        * wtf/RunLoop.cpp:
+        (WTF::RunLoop::Holder::~Holder):
+        (WTF::RunLoop::threadWillExit):
+        * wtf/RunLoop.h:
+
 2020-12-06  Samuel Thibault  <samuel.thibault@ens-lyon.org>
 
         [WTF] Add Unix-generic way of determining the available RAM
