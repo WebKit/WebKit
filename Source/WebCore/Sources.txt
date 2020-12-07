@@ -835,6 +835,7 @@ css/typedom/TypedOMCSSStyleValue.cpp
 css/typedom/TypedOMCSSUnitValue.cpp
 css/typedom/TypedOMCSSUnparsedValue.cpp
 cssjit/SelectorCompiler.cpp
+display/compositing/DisplayLayerController.cpp
 display/css/DisplayBox.cpp
 display/css/DisplayBoxClip.cpp
 display/css/DisplayBoxDecorationData.cpp
@@ -851,7 +852,6 @@ display/css/DisplayReplacedBox.cpp
 display/css/DisplayStackingItem.cpp
 display/css/DisplayStyle.cpp
 display/css/DisplayTextBox.cpp
-display/DisplayLayerController.cpp
 display/DisplayTree.cpp
 display/DisplayTreeBuilder.cpp
 display/DisplayView.cpp

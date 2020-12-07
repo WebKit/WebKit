@@ -383,10 +383,11 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     css/parser/CSSParserToken.h
     css/parser/CSSParserTokenRange.h
 
-    display/DisplayLayerController.h
     display/DisplayTree.h
     display/DisplayTreeBuilder.h
     display/DisplayView.h
+
+    display/compositing/DisplayLayerController.h
 
     display/css/DisplayBox.h
     display/css/DisplayCSSPainter.h
