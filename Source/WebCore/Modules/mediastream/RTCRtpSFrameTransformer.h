@@ -37,7 +37,9 @@ class CryptoKey;
 
 class RTCRtpSFrameTransformer : public ThreadSafeRefCounted<RTCRtpSFrameTransformer, WTF::DestructionThread::Main> {
 public:
-    WEBCORE_EXPORT static Ref<RTCRtpSFrameTransformer> create();
+    enum class CompatibilityMode { None, H264 };
+
+    WEBCORE_EXPORT static Ref<RTCRtpSFrameTransformer> create(CompatibilityMode = CompatibilityMode::None);
     WEBCORE_EXPORT ~RTCRtpSFrameTransformer();
 
     void setIsEncrypting(bool);
@@ -54,7 +56,7 @@ public:
     void setCounter(uint64_t counter) { m_counter = counter; }
 
 private:
-    WEBCORE_EXPORT RTCRtpSFrameTransformer();
+    WEBCORE_EXPORT explicit RTCRtpSFrameTransformer(CompatibilityMode);
 
     ExceptionOr<Vector<uint8_t>> decryptFrame(const uint8_t*, size_t);
     ExceptionOr<Vector<uint8_t>> encryptFrame(const uint8_t*, size_t);
@@ -78,6 +80,7 @@ private:
     uint64_t m_authenticationSize { 10 };
     uint64_t m_keyId { 0 };
     uint64_t m_counter { 0 };
+    CompatibilityMode m_compatibilityMode { CompatibilityMode::None };
 };
 
 inline void RTCRtpSFrameTransformer::setIsEncrypting(bool isEncrypting)

@@ -28,6 +28,8 @@
 
 #if ENABLE(WEB_RTC)
 
+#include "H264Utils.h"
+
 namespace WebCore {
 
 static inline void writeUInt64(uint8_t* data, uint64_t value, uint8_t valueLength)
@@ -131,12 +133,13 @@ static inline Optional<SFrameHeaderInfo> parseSFrameHeader(const uint8_t* data, 
     return SFrameHeaderInfo { headerSize, keyId, counter };
 }
 
-Ref<RTCRtpSFrameTransformer> RTCRtpSFrameTransformer::create()
+Ref<RTCRtpSFrameTransformer> RTCRtpSFrameTransformer::create(CompatibilityMode mode)
 {
-    return adoptRef(*new RTCRtpSFrameTransformer());
+    return adoptRef(*new RTCRtpSFrameTransformer(mode));
 }
 
-RTCRtpSFrameTransformer::RTCRtpSFrameTransformer()
+RTCRtpSFrameTransformer::RTCRtpSFrameTransformer(CompatibilityMode mode)
+    : m_compatibilityMode(mode)
 {
 }
 
@@ -177,6 +180,18 @@ ExceptionOr<void> RTCRtpSFrameTransformer::setEncryptionKey(const Vector<uint8_t
 
 ExceptionOr<Vector<uint8_t>> RTCRtpSFrameTransformer::decryptFrame(const uint8_t* frameData, size_t frameSize)
 {
+    Vector<uint8_t> buffer;
+    if (m_compatibilityMode == CompatibilityMode::H264) {
+        auto offset = computePrefixOffset(frameData, frameSize);
+        frameData += offset;
+        frameSize -= offset;
+        if (needsRbspUnescaping(frameData, frameSize)) {
+            buffer = fromRbsp(frameData, frameSize);
+            frameData = buffer.data();
+            frameSize = buffer.size();
+        }
+    }
+
     auto locker = holdLock(m_keyLock);
 
     auto header = parseSFrameHeader(frameData, frameSize);
@@ -221,26 +236,34 @@ ExceptionOr<Vector<uint8_t>> RTCRtpSFrameTransformer::encryptFrame(const uint8_t
 {
     static const unsigned MaxHeaderSize = 17;
 
+    Vector<uint8_t> transformedData;
+    H264PrefixBuffer prefixBuffer;
+    if (m_compatibilityMode == CompatibilityMode::H264)
+        prefixBuffer = computePrefixBuffer(frameData, frameSize);
+
     auto locker = holdLock(m_keyLock);
 
     auto iv = computeIV(m_counter, m_saltKey);
 
-    Vector<uint8_t> transformedData;
-    transformedData.resize(frameSize + MaxHeaderSize + m_authenticationSize);
+    transformedData.resize(prefixBuffer.size + frameSize + MaxHeaderSize + m_authenticationSize);
 
+    if (prefixBuffer.data)
+        std::memcpy(transformedData.data(), prefixBuffer.data, prefixBuffer.size);
+
+    auto* newDataPointer = transformedData.data() + prefixBuffer.size;
     // Fill header.
     size_t headerSize = 1;
-    transformedData[0] = computeFirstHeaderByte(m_keyId, m_counter);
+    *newDataPointer = computeFirstHeaderByte(m_keyId, m_counter);
     if (m_keyId >= 8) {
         auto keyIdLength = lengthOfUInt64(m_keyId);
-        writeUInt64(transformedData.data() + headerSize, m_keyId, keyIdLength);
+        writeUInt64(newDataPointer + headerSize, m_keyId, keyIdLength);
         headerSize += keyIdLength;
     }
     auto counterLength = lengthOfUInt64(m_counter);
-    writeUInt64(transformedData.data() + headerSize, m_counter, counterLength);
+    writeUInt64(newDataPointer + headerSize, m_counter, counterLength);
     headerSize += counterLength;
 
-    transformedData.resize(frameSize + headerSize + m_authenticationSize);
+    transformedData.resize(prefixBuffer.size + frameSize + headerSize + m_authenticationSize);
 
     // Fill encrypted data
     auto encryptedData = encryptData(frameData, frameSize, iv, m_encryptionKey);
@@ -248,11 +271,14 @@ ExceptionOr<Vector<uint8_t>> RTCRtpSFrameTransformer::encryptFrame(const uint8_t
     if (encryptedData.hasException())
         return encryptedData.releaseException();
 
-    std::memcpy(transformedData.data() + headerSize, encryptedData.returnValue().data(), frameSize);
+    std::memcpy(newDataPointer + headerSize, encryptedData.returnValue().data(), frameSize);
 
     // Fill signature
-    auto signature = computeEncryptedDataSignature(transformedData.data(), frameSize + headerSize, m_authenticationKey);
-    std::memcpy(transformedData.data() + frameSize + headerSize, signature.data(), m_authenticationSize);
+    auto signature = computeEncryptedDataSignature(newDataPointer, frameSize + headerSize, m_authenticationKey);
+    std::memcpy(newDataPointer + frameSize + headerSize, signature.data(), m_authenticationSize);
+
+    if (m_compatibilityMode == CompatibilityMode::H264)
+        toRbsp(transformedData, prefixBuffer.size);
 
     ++m_counter;
 

@@ -30,6 +30,8 @@
 
 #include "CryptoKeyRaw.h"
 #include "JSDOMConvertBufferSource.h"
+#include "JSRTCEncodedAudioFrame.h"
+#include "JSRTCEncodedVideoFrame.h"
 #include "Logging.h"
 #include "RTCEncodedAudioFrame.h"
 #include "RTCEncodedVideoFrame.h"
@@ -46,7 +48,7 @@ namespace WebCore {
 
 RTCRtpSFrameTransform::RTCRtpSFrameTransform(ScriptExecutionContext& context, Options options)
     : ContextDestructionObserver(&context)
-    , m_transformer(RTCRtpSFrameTransformer::create())
+    , m_transformer(RTCRtpSFrameTransformer::create(options.compatibilityMode))
 {
     m_transformer->setIsEncrypting(options.role == Role::Encrypt);
     m_transformer->setAuthenticationSize(options.authenticationSize);

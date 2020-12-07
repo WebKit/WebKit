@@ -29,12 +29,12 @@
 
 #include "ActiveDOMObject.h"
 #include "ExceptionOr.h"
+#include "JSCallbackData.h"
 #include <wtf/RefCounted.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
-class JSCallbackDataStrong;
 class MessagePort;
 class ScriptExecutionContext;
 class RTCRtpTransformBackend;

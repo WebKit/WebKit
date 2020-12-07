@@ -28,9 +28,15 @@ enum RTCRtpSFrameTransformRole {
     "decrypt"
 };
 
+enum RTCRtpSFrameTransformCompatibilityMode {
+    "none",
+    "H264"
+};
+
 dictionary RTCRtpSFrameTransformOptions {
     RTCRtpSFrameTransformRole role = "encrypt";
     unsigned long authenticationSize = 10;
+    RTCRtpSFrameTransformCompatibilityMode compatibilityMode = "none";
 };
 
 [

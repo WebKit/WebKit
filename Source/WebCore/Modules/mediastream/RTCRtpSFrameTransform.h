@@ -29,11 +29,11 @@
 
 #include "ContextDestructionObserver.h"
 #include "JSDOMPromiseDeferred.h"
+#include "RTCRtpSFrameTransformer.h"
 
 namespace WebCore {
 
 class CryptoKey;
-class RTCRtpSFrameTransformer;
 class RTCRtpTransformBackend;
 class ReadableStream;
 class SimpleReadableStreamSource;
@@ -42,9 +42,11 @@ class WritableStream;
 class RTCRtpSFrameTransform : public RefCounted<RTCRtpSFrameTransform>, private ContextDestructionObserver {
 public:
     enum class Role { Encrypt, Decrypt };
+    using CompatibilityMode = RTCRtpSFrameTransformer::CompatibilityMode;
     struct Options {
         Role role { Role::Encrypt };
         uint64_t authenticationSize { 10 };
+        CompatibilityMode compatibilityMode { CompatibilityMode::None };
     };
 
     static Ref<RTCRtpSFrameTransform> create(ScriptExecutionContext& context, Options options) { return adoptRef(*new RTCRtpSFrameTransform(context, options)); }

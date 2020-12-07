@@ -29,7 +29,6 @@
 #if ENABLE(WEB_RTC)
 
 #include "DedicatedWorkerGlobalScope.h"
-#include "JSCallbackData.h"
 #include "JSRTCEncodedAudioFrame.h"
 #include "JSRTCEncodedVideoFrame.h"
 #include "JSRTCRtpScriptTransformerContext.h"
