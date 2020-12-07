@@ -54,10 +54,6 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/Ref.h>
 
-#if PLATFORM(COCOA)
-#include "VersionChecks.h"
-#endif
-
 #if ENABLE(CONTENT_EXTENSIONS)
 #include "UserContentController.h"
 #endif
@@ -252,15 +248,6 @@ FrameLoader* ResourceLoader::frameLoader() const
     return &m_frame->loader();
 }
 
-static bool shouldStripFragmentIdentifier()
-{
-#if PLATFORM(COCOA)
-    return linkedOnOrAfter(SDKVersion::FirstWithDataURLFragmentRemoval);
-#else
-    return true;
-#endif
-}
-
 void ResourceLoader::loadDataURL()
 {
     auto url = m_request.url();
@@ -274,8 +261,6 @@ void ResourceLoader::loadDataURL()
     auto mode = DataURLDecoder::Mode::Legacy;
     if (m_request.requester() == ResourceRequest::Requester::Fetch)
         mode = DataURLDecoder::Mode::ForgivingBase64;
-    if (shouldStripFragmentIdentifier())
-        url.removeFragmentIdentifier();
     DataURLDecoder::decode(url, scheduleContext, mode, [this, protectedThis = makeRef(*this), url](auto decodeResult) mutable {
         if (this->reachedTerminalState())
             return;

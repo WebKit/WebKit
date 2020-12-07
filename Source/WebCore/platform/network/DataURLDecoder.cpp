@@ -38,8 +38,28 @@
 #include <wtf/WorkQueue.h>
 #include <wtf/text/Base64.h>
 
+#if PLATFORM(COCOA)
+#include "VersionChecks.h"
+#endif
+
 namespace WebCore {
 namespace DataURLDecoder {
+
+static bool shouldRemoveFragmentIdentifier(const String& mediaType)
+{
+#if PLATFORM(COCOA)
+    if (!linkedOnOrAfter(SDKVersion::FirstWithDataURLFragmentRemoval))
+        return false;
+
+    // HLS uses # in the middle of the manifests.
+    return !equalLettersIgnoringASCIICase(mediaType, "video/mpegurl")
+        && !equalLettersIgnoringASCIICase(mediaType, "audio/mpegurl")
+        && !equalLettersIgnoringASCIICase(mediaType, "application/x-mpegurl")
+        && !equalLettersIgnoringASCIICase(mediaType, "vnd.apple.mpegurl");
+#else
+    return false;
+#endif
+}
 
 static WorkQueue& decodeQueue()
 {
@@ -57,8 +77,8 @@ static Result parseMediaType(const String& mediaType)
 struct DecodeTask {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    DecodeTask(const String& urlString, const ScheduleContext& scheduleContext, DecodeCompletionHandler&& completionHandler)
-        : urlString(urlString.isolatedCopy())
+    DecodeTask(const URL& url, const ScheduleContext& scheduleContext, DecodeCompletionHandler&& completionHandler)
+        : url(url.isolatedCopy())
         , scheduleContext(scheduleContext)
         , completionHandler(WTFMove(completionHandler))
     {
@@ -71,18 +91,18 @@ public:
         //  header := [<mediatype>][;base64]
         //  mediatype := [<mimetype>][;charset=<charsettype>]
 
-        if (urlString.find(',') == notFound)
-            return false;
-
         const char dataString[] = "data:";
-        ASSERT(urlString.startsWith(dataString));
+        ASSERT(url.string().startsWith(dataString));
 
         size_t headerStart = strlen(dataString);
-        size_t headerEnd = urlString.find(',', headerStart);
+        size_t headerEnd = url.string().find(',', headerStart);
+        if (headerEnd == notFound)
+            return false;
+        if (size_t fragmentInHeader = url.string().reverseFind('#', headerEnd); fragmentInHeader != notFound)
+            return false;
         size_t encodedDataStart = headerEnd == notFound ? headerEnd : headerEnd + 1;
 
-        encodedData = StringView(urlString).substring(encodedDataStart);
-        auto header = StringView(urlString).substring(headerStart, headerEnd - headerStart);
+        auto header = StringView(url.string()).substring(headerStart, headerEnd - headerStart);
         
         // There might one or two semicolons in the header, find the last one.
         size_t mediaTypeEnd = header.reverseFind(';');
@@ -101,11 +121,16 @@ public:
         if (mediaType.startsWith(';'))
             mediaType.insert("text/plain", 0);
 
+        if (shouldRemoveFragmentIdentifier(mediaType))
+            url.removeFragmentIdentifier();
+
+        encodedData = StringView(url.string()).substring(encodedDataStart);
+
         result = parseMediaType(mediaType);
         return true;
     }
 
-    const String urlString;
+    URL url;
     StringView encodedData;
     bool isBase64 { false };
     const ScheduleContext scheduleContext;
@@ -117,7 +142,7 @@ public:
 static std::unique_ptr<DecodeTask> createDecodeTask(const URL& url, const ScheduleContext& scheduleContext, DecodeCompletionHandler&& completionHandler)
 {
     return makeUnique<DecodeTask>(
-        url.string(),
+        url,
         scheduleContext,
         WTFMove(completionHandler)
     );
