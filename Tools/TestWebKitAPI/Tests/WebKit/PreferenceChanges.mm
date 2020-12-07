@@ -188,6 +188,8 @@ TEST(WebKit, GlobalPreferenceChangesUsingDefaultsWrite)
     CLEAR_DEFAULTS();
 }
 
+// FIXME: Re-enable this test once rdar://70966379 is resolved.
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 110000
 TEST(WebKit, PreferenceChangesArray)
 {
     CLEAR_DEFAULTS();
@@ -226,6 +228,7 @@ TEST(WebKit, PreferenceChangesArray)
 
     CLEAR_DEFAULTS();
 }
+#endif
 
 TEST(WebKit, PreferenceChangesDictionary)
 {
@@ -273,6 +276,8 @@ TEST(WebKit, PreferenceChangesDictionary)
     CLEAR_DEFAULTS();
 }
 
+// FIXME: Re-enable this test once rdar://70966379 is resolved.
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 110000
 TEST(WebKit, PreferenceChangesData)
 {
     CLEAR_DEFAULTS();
@@ -380,6 +385,7 @@ TEST(WebKit, PreferenceChangesNil)
 
     CLEAR_DEFAULTS();
 }
+#endif // PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 110000
 
 #if ENABLE(CFPREFS_DIRECT_MODE)
 static IMP sharedInstanceMethodOriginal = nil;

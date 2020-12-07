@@ -1,3 +1,11 @@
+2020-12-04  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed API test gardening, disable failing tests on Big Sur.
+
+        * TestWebKitAPI/Tests/WebKit/PreferenceChanges.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/PDFLinkReferrer.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/WKPDFView.mm:
+
 2020-12-07  Youenn Fablet  <youenn@apple.com>
 
         Add a SFrame H264 experimental compatibility mode

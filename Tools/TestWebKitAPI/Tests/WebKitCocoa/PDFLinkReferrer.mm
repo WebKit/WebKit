@@ -34,6 +34,8 @@
 #import "Utilities.h"
 #import <WebKit/WKFoundation.h>
 
+// FIXME: Re-enable this test once rdar://68639688 is resolved.
+#if __MAC_OS_X_VERSION_MIN_REQUIRED < 110000
 static size_t putPDFBytesCallback(void* info, void* buffer, size_t count)
 {
     [(NSMutableData *)info appendBytes:buffer length:count];
@@ -112,5 +114,6 @@ TEST(WebKit, PDFLinkReferrer)
     [navigationDelegate waitForDidFinishNavigation];
 
 }
+#endif //__MAC_OS_X_VERSION_MIN_REQUIRED < 110000
 
 #endif // PLATFORM(MAC)

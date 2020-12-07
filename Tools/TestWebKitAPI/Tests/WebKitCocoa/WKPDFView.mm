@@ -186,6 +186,8 @@ TEST(PDFHUD, MainResourcePDF)
         TestWebKitAPI::Util::spinRunLoop();
 }
 
+// FIXME: Re-enable this test once rdar://68639688 is resolved.
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 110000
 TEST(PDFHUD, MoveIFrame)
 {
     TestURLSchemeHandler *handler = [[TestURLSchemeHandler new] autorelease];
@@ -239,6 +241,7 @@ TEST(PDFHUD, MoveIFrame)
     EXPECT_EQ(webView._pdfHUDs.count, 1u);
     checkFrame(webView._pdfHUDs.anyObject.frame, 14, 40, 560, 210);
 }
+#endif
 
 TEST(PDFHUD, NestedIFrames)
 {
