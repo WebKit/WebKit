@@ -29,6 +29,7 @@
 #ifndef MultiChannelResampler_h
 #define MultiChannelResampler_h
 
+#include "AudioArray.h"
 #include <memory>
 #include <wtf/Vector.h>
 
@@ -60,6 +61,7 @@ private:
     size_t m_outputFramesReady { 0 };
     Function<void(AudioBus*, size_t framesToProcess)> m_provideInput;
     RefPtr<AudioBus> m_multiChannelBus;
+    Vector<std::unique_ptr<AudioFloatArray>> m_channelsMemory;
 };
 
 } // namespace WebCore
