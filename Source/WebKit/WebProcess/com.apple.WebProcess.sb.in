@@ -983,7 +983,6 @@
 #endif
     (global-name "com.apple.SystemConfiguration.configd")
     (global-name "com.apple.assertiond.processassertionconnection")
-    (global-name "com.apple.audio.SystemSoundServer-OSX")
     (global-name "com.apple.fonts")
     (global-name "com.apple.PowerManagement.control")
 )
@@ -1257,6 +1256,7 @@
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
 (deny mach-lookup (with telemetry-backtrace)
+    (global-name "com.apple.audio.SystemSoundServer-OSX")
     (global-name "com.apple.containermanagerd")
     (global-name "com.apple.cookied")
     (global-name "com.apple.coreservices.launchservicesd")

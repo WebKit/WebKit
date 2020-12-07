@@ -1,3 +1,17 @@
+2020-12-07  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Deny mach-lookup to the service 'com.apple.audio.SystemSoundServer-OSX' in the WebContent process
+        https://bugs.webkit.org/show_bug.cgi?id=219590
+        <rdar://problem/69019399>
+
+        Reviewed by Brent Fulgham.
+
+        After r269593, mach-lookup to the service 'com.apple.audio.SystemSoundServer-OSX' in the WebContent process can be denied.
+
+        Test: fast/sandbox/mac/sandbox-mach-lookup.html
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2020-12-07  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Remove WEBKIT_WRAP_SOURCELIST

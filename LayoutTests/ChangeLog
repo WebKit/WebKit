@@ -1,3 +1,16 @@
+2020-12-07  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Deny mach-lookup to the service 'com.apple.audio.SystemSoundServer-OSX' in the WebContent process
+        https://bugs.webkit.org/show_bug.cgi?id=219590
+        <rdar://problem/69019399>
+
+        Reviewed by Brent Fulgham.
+
+        * fast/sandbox/mac/sandbox-mach-lookup-expected.txt:
+        * fast/sandbox/mac/sandbox-mach-lookup.html:
+        * platform/mac-catalina/fast/sandbox/mac/sandbox-mach-lookup-expected.txt:
+        * platform/mac-mojave/fast/sandbox/mac/sandbox-mach-lookup-expected.txt:
+
 2020-12-07  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Overflowing text content should not break at inline box boundary
