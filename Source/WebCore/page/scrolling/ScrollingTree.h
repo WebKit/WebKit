@@ -78,7 +78,8 @@ struct WheelEventHandlingResult {
 enum class EventTargeting : uint8_t { NodeOnly, Propagate };
 
 class ScrollingTree : public ThreadSafeRefCounted<ScrollingTree> {
-friend class ScrollingTreeLatchingController;
+    WTF_MAKE_FAST_ALLOCATED;
+    friend class ScrollingTreeLatchingController;
 public:
     WEBCORE_EXPORT ScrollingTree();
     WEBCORE_EXPORT virtual ~ScrollingTree();
