@@ -1,3 +1,11 @@
+2020-12-07  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] Skip remaining sframe tests
+
+        Unreviewed test gardening.
+
+        * platform/glib/TestExpectations:
+
 2020-12-07  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, reverting r270507.

@@ -936,8 +936,6 @@ webkit.org/b/216763 webrtc/captureCanvas-webrtc-software-h264-high.html [ Crash 
 
 webkit.org/b/218221 webrtc/vp9-profile2.html [ Failure ]
 
-webkit.org/b/219066 webrtc/audio-sframe.html [ Failure ]
-
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WebRTC-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1430,6 +1428,8 @@ webkit.org/b/136224 fast/speechrecognition [ Skip ]
 
 # No plans to support Sframes for a while
 http/wpt/webrtc/sframe-transform.html [ Skip ]
+webrtc/audio-sframe.html [ Skip ]
+webrtc/video-sframe.html [ Skip ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of UNSUPPORTED tests.
