@@ -531,7 +531,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     DidLosePointerLock()
 #endif
 
-    clearWheelEventTestMonitor()
+    ClearWheelEventTestMonitor()
     SetShouldScaleViewToFitDocument(bool shouldScaleViewToFitDocument)
 
 #if ENABLE(VIDEO) && USE(GSTREAMER)

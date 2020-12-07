@@ -1,3 +1,14 @@
+2020-12-07  Tim Horton  <timothy_horton@apple.com>
+
+        Fix incorrect capitalization of ClearWheelEventTestMonitor IPC message name
+        https://bugs.webkit.org/show_bug.cgi?id=219606
+
+        Reviewed by Wenson Hsieh.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::clearWheelEventTestMonitor):
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2020-12-07  Chris Dumez  <cdumez@apple.com>
 
         [iOS] Add basic GPUProcess crash recovery logic to RemoteMediaSessionHelper

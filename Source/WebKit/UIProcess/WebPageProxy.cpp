@@ -9353,7 +9353,7 @@ void WebPageProxy::clearWheelEventTestMonitor()
     if (!hasRunningProcess())
         return;
     
-    send(Messages::WebPage::clearWheelEventTestMonitor());
+    send(Messages::WebPage::ClearWheelEventTestMonitor());
 }
 
 void WebPageProxy::callAfterNextPresentationUpdate(WTF::Function<void (CallbackBase::Error)>&& callback)
