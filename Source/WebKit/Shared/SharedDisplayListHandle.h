@@ -63,6 +63,9 @@ protected:
     }
 
     struct DisplayListSharedMemoryHeader {
+        DisplayListSharedMemoryHeader() = delete;
+        ~DisplayListSharedMemoryHeader() = delete;
+
         Atomic<uint64_t> unreadBytes;
     };
 
