@@ -66,7 +66,7 @@ public:
 
     virtual void setBackend(std::unique_ptr<ImageBufferBackend>&&) = 0;
     virtual void clearBackend() = 0;
-    virtual ImageBufferBackend* backend() const { return nullptr; }
+    virtual ImageBufferBackend* ensureBackendCreated() const = 0;
 
     virtual RenderingMode renderingMode() const = 0;
     virtual bool canMapBackingStore() const = 0;

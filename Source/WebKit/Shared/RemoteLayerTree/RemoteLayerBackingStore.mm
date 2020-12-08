@@ -105,11 +105,11 @@ void RemoteLayerBackingStore::encode(IPC::Encoder& encoder) const
     Optional<ImageBufferBackendHandle> handle;
     if (m_frontBuffer.imageBuffer) {
         if (m_frontBuffer.imageBuffer->renderingMode() == WebCore::RenderingMode::Unaccelerated)
-            handle = static_cast<UnacceleratedImageBufferShareableBackend&>(*m_frontBuffer.imageBuffer->backend()).createImageBufferBackendHandle();
+            handle = static_cast<UnacceleratedImageBufferShareableBackend&>(*m_frontBuffer.imageBuffer->ensureBackendCreated()).createImageBufferBackendHandle();
         else if (m_frontBuffer.imageBuffer->canMapBackingStore())
-            handle = static_cast<AcceleratedImageBufferShareableMappedBackend&>(*m_frontBuffer.imageBuffer->backend()).createImageBufferBackendHandle();
+            handle = static_cast<AcceleratedImageBufferShareableMappedBackend&>(*m_frontBuffer.imageBuffer->ensureBackendCreated()).createImageBufferBackendHandle();
         else
-            handle = static_cast<AcceleratedImageBufferShareableBackend&>(*m_frontBuffer.imageBuffer->backend()).createImageBufferBackendHandle();
+            handle = static_cast<AcceleratedImageBufferShareableBackend&>(*m_frontBuffer.imageBuffer->ensureBackendCreated()).createImageBufferBackendHandle();
     }
 
     encoder << handle;

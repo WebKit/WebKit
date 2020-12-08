@@ -1,3 +1,26 @@
+2020-12-07  Said Abou-Hallawa  <said@apple.com>
+
+        [GPU Process] Ensure the backend of ImageBuffer is created before getting its handle
+        https://bugs.webkit.org/show_bug.cgi?id=219623
+
+        Reviewed by Tim Horton.
+
+        In r270458 and in RemoteLayerBackingStore::encode(), casting the ImageBuffer
+        and calling the overriding createImageBufferBackendHandle() of the superclass
+        was replaced by casting the backend and calling its createImageBufferBackendHandle()
+        directly.
+
+        This may lead to crash if the backend was not created when calling its
+        createImageBufferBackendHandle(). The createImageBufferBackendHandle()
+        of the ImageBuffer superclass calls ensureBackendCreated() before calling
+        createImageBufferBackendHandle() of the backend.
+
+        So we need to replace to call backend() to ensureBackendCreated().
+
+        * Shared/RemoteLayerTree/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::encode const):
+        * WebProcess/GPU/graphics/RemoteImageBufferProxy.h:
+
 2020-12-07  Brent Fulgham  <bfulgham@apple.com>
 
         Add sandbox telemetry for likely unused features

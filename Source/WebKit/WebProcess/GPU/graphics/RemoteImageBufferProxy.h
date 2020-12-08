@@ -127,7 +127,7 @@ protected:
         }
     }
 
-    BackendType* ensureBackendCreated() const override
+    WebCore::ImageBufferBackend* ensureBackendCreated() const override
     {
         if (!m_backend && m_remoteRenderingBackendProxy)
             m_remoteRenderingBackendProxy->waitForDidCreateImageBufferBackend();
