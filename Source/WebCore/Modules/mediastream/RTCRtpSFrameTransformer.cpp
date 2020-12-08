@@ -149,6 +149,19 @@ RTCRtpSFrameTransformer::~RTCRtpSFrameTransformer()
 
 ExceptionOr<void> RTCRtpSFrameTransformer::setEncryptionKey(const Vector<uint8_t>& rawKey, Optional<uint64_t> keyId)
 {
+    if (keyId && *keyId == std::numeric_limits<uint64_t>::max())
+        return Exception { TypeError, "Key ID is too big" };
+
+    auto locker = holdLock(m_keyLock);
+    return updateEncryptionKey(rawKey, keyId, ShouldUpdateKeys::Yes);
+}
+
+ExceptionOr<void> RTCRtpSFrameTransformer::updateEncryptionKey(const Vector<uint8_t>& rawKey, Optional<uint64_t> keyId, ShouldUpdateKeys shouldUpdateKeys)
+{
+    ASSERT(!keyId || *keyId != std::numeric_limits<uint64_t>::max());
+
+    ASSERT(m_keyLock.isLocked());
+
     auto saltKeyResult = computeSaltKey(rawKey);
     if (saltKeyResult.hasException())
         return saltKeyResult.releaseException();
@@ -163,14 +176,16 @@ ExceptionOr<void> RTCRtpSFrameTransformer::setEncryptionKey(const Vector<uint8_t
     if (encryptionKeyResult.hasException())
         return encryptionKeyResult.releaseException();
 
-    auto locker = holdLock(m_keyLock);
+    if (!keyId)
+        keyId = m_keys.size();
+
+    m_keyId = *keyId;
+    if (shouldUpdateKeys == ShouldUpdateKeys::Yes)
+        m_keys.set(*keyId + 1, rawKey);
 
     m_saltKey = saltKeyResult.releaseReturnValue();
     m_authenticationKey = authenticationKeyResult.releaseReturnValue();
     m_encryptionKey = encryptionKeyResult.releaseReturnValue();
-
-    if (keyId)
-        m_keyId = *keyId;
 
     updateAuthenticationSize();
     m_hasKey = true;
@@ -204,8 +219,15 @@ ExceptionOr<Vector<uint8_t>> RTCRtpSFrameTransformer::decryptFrame(const uint8_t
     m_counter = header->counter;
 
     if (header->keyId != m_keyId) {
-        // FIXME: We should search for keys.
-        return Exception { NotSupportedError };
+        if (header->keyId == std::numeric_limits<uint64_t>::max())
+            return Exception { DataError, "Key ID is unknown" };
+
+        auto iterator = m_keys.find(header->keyId + 1);
+        if (iterator == m_keys.end())
+            return Exception { DataError, "Key ID is unknown" };
+        auto result = updateEncryptionKey(iterator->value, header->keyId, ShouldUpdateKeys::No);
+        if (result.hasException())
+            return result.releaseException();
     }
 
     if (frameSize < (header->size + m_authenticationSize))
