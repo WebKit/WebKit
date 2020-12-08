@@ -1058,12 +1058,12 @@ bool WKPreferencesGetInteractiveFormValidationEnabled(WKPreferencesRef preferenc
 
 void WKPreferencesSetScrollingPerformanceLoggingEnabled(WKPreferencesRef preferencesRef, bool enabled)
 {
-    toImpl(preferencesRef)->setScrollingPerformanceLoggingEnabled(enabled);
+    toImpl(preferencesRef)->setScrollingPerformanceTestingEnabled(enabled);
 }
 
 bool WKPreferencesGetScrollingPerformanceLoggingEnabled(WKPreferencesRef preferencesRef)
 {
-    return toImpl(preferencesRef)->scrollingPerformanceLoggingEnabled();
+    return toImpl(preferencesRef)->scrollingPerformanceTestingEnabled();
 }
 
 void WKPreferencesSetPlugInSnapshottingEnabled(WKPreferencesRef, bool)

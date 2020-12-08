@@ -227,7 +227,7 @@ RenderLayerBacking::RenderLayerBacking(RenderLayer& layer)
         tiledBacking->setIsInWindow(renderer().page().isInWindow());
 
         if (m_isFrameLayerWithTiledBacking) {
-            tiledBacking->setScrollingPerformanceLoggingEnabled(renderer().settings().scrollingPerformanceLoggingEnabled());
+            tiledBacking->setScrollingPerformanceTestingEnabled(renderer().settings().scrollingPerformanceTestingEnabled());
             adjustTiledBackingCoverage();
         }
     }

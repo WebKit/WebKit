@@ -219,17 +219,6 @@ void TiledCoreAnimationDrawingArea::updatePreferences(const WebPreferencesStore&
 {
     Settings& settings = m_webPage.corePage()->settings();
 
-#if ENABLE(ASYNC_SCROLLING)
-    if (AsyncScrollingCoordinator* scrollingCoordinator = downcast<AsyncScrollingCoordinator>(m_webPage.corePage()->scrollingCoordinator())) {
-        bool scrollingPerformanceLoggingEnabled = store.getBoolValueForKey(WebPreferencesKey::scrollingPerformanceLoggingEnabledKey());
-        
-        RefPtr<ScrollingTree> scrollingTree = scrollingCoordinator->scrollingTree();
-        ScrollingThread::dispatch([scrollingTree, scrollingPerformanceLoggingEnabled] {
-            scrollingTree->setScrollingPerformanceLoggingEnabled(scrollingPerformanceLoggingEnabled);
-        });
-    }
-#endif
-
     // Fixed position elements need to be composited and create stacking contexts
     // in order to be scrolled by the ScrollingCoordinator.
     settings.setAcceleratedCompositingForFixedPositionEnabled(true);

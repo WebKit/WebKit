@@ -95,6 +95,9 @@ public:
     bool wheelEventGesturesBecomeNonBlocking() const { return m_wheelEventGesturesBecomeNonBlocking; }
     void setWheelEventGesturesBecomeNonBlocking(bool value) { m_wheelEventGesturesBecomeNonBlocking = value; }
 
+    bool scrollingPerformanceTestingEnabled() const { return m_scrollingPerformanceTestingEnabled; }
+    void setScrollingPerformanceTestingEnabled(bool value) { m_scrollingPerformanceTestingEnabled = value; }
+
     WEBCORE_EXPORT OptionSet<WheelEventProcessingSteps> determineWheelEventProcessing(const PlatformWheelEvent&);
     WEBCORE_EXPORT virtual WheelEventHandlingResult handleWheelEvent(const PlatformWheelEvent&, OptionSet<WheelEventProcessingSteps> = { });
 
@@ -177,9 +180,6 @@ public:
     WEBCORE_EXPORT ScrollPinningBehavior scrollPinningBehavior();
 
     WEBCORE_EXPORT bool willWheelEventStartSwipeGesture(const PlatformWheelEvent&);
-
-    WEBCORE_EXPORT void setScrollingPerformanceLoggingEnabled(bool flag);
-    bool scrollingPerformanceLoggingEnabled();
 
     ScrollingTreeFrameScrollingNode* rootNode() const { return m_rootNode.get(); }
     Optional<ScrollingNodeID> latchedNodeID() const;
@@ -328,7 +328,7 @@ private:
     unsigned m_fixedOrStickyNodeCount { 0 };
     bool m_isHandlingProgrammaticScroll { false };
     bool m_isMonitoringWheelEvents { false };
-    bool m_scrollingPerformanceLoggingEnabled { false };
+    bool m_scrollingPerformanceTestingEnabled { false };
     bool m_asyncFrameOrOverflowScrollingEnabled { false };
     bool m_wheelEventGesturesBecomeNonBlocking { false };
     bool m_needsApplyLayerPositionsAfterCommit { false };

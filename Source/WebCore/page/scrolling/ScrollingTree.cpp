@@ -272,6 +272,7 @@ void ScrollingTree::commitTreeState(std::unique_ptr<ScrollingStateTree>&& scroll
             || rootNode->hasChangedProperty(ScrollingStateNode::Property::ScrolledContentsLayer)
             || rootNode->hasChangedProperty(ScrollingStateNode::Property::AsyncFrameOrOverflowScrollingEnabled)
             || rootNode->hasChangedProperty(ScrollingStateNode::Property::WheelEventGesturesBecomeNonBlocking)
+            || rootNode->hasChangedProperty(ScrollingStateNode::Property::ScrollingPerformanceTestingEnabled)
             || rootNode->hasChangedProperty(ScrollingStateNode::Property::IsMonitoringWheelEvents))) {
         LockHolder lock(m_treeStateMutex);
 
@@ -286,6 +287,9 @@ void ScrollingTree::commitTreeState(std::unique_ptr<ScrollingStateTree>&& scroll
 
         if (rootStateNodeChanged || rootNode->hasChangedProperty(ScrollingStateNode::Property::WheelEventGesturesBecomeNonBlocking))
             m_wheelEventGesturesBecomeNonBlocking = scrollingStateTree->rootStateNode()->wheelEventGesturesBecomeNonBlocking();
+
+        if (rootStateNodeChanged || rootNode->hasChangedProperty(ScrollingStateNode::Property::ScrollingPerformanceTestingEnabled))
+            m_scrollingPerformanceTestingEnabled = scrollingStateTree->rootStateNode()->scrollingPerformanceTestingEnabled();
 
         if (rootStateNodeChanged || rootNode->hasChangedProperty(ScrollingStateNode::Property::IsMonitoringWheelEvents))
             m_isMonitoringWheelEvents = scrollingStateTree->rootStateNode()->isMonitoringWheelEvents();
@@ -694,16 +698,6 @@ Optional<unsigned> ScrollingTree::nominalFramesPerSecond()
 {
     LockHolder locker(m_treeStateMutex);
     return m_treeState.nominalFramesPerSecond;
-}
-
-void ScrollingTree::setScrollingPerformanceLoggingEnabled(bool flag)
-{
-    m_scrollingPerformanceLoggingEnabled = flag;
-}
-
-bool ScrollingTree::scrollingPerformanceLoggingEnabled()
-{
-    return m_scrollingPerformanceLoggingEnabled;
 }
 
 String ScrollingTree::scrollingTreeAsText(ScrollingStateTreeAsTextBehavior behavior)

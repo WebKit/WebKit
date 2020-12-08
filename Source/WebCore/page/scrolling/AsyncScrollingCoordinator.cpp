@@ -645,6 +645,7 @@ void AsyncScrollingCoordinator::setFrameScrollingNodeState(ScrollingNodeID nodeI
     if (!is<ScrollingStateFrameScrollingNode>(stateNode))
         return;
 
+    auto& settings = m_page->mainFrame().settings();
     auto& frameScrollingNode = downcast<ScrollingStateFrameScrollingNode>(*stateNode);
 
     frameScrollingNode.setFrameScaleFactor(frameView.frame().frameScaleFactor());
@@ -652,8 +653,9 @@ void AsyncScrollingCoordinator::setFrameScrollingNodeState(ScrollingNodeID nodeI
     frameScrollingNode.setFooterHeight(frameView.footerHeight());
     frameScrollingNode.setTopContentInset(frameView.topContentInset());
     frameScrollingNode.setLayoutViewport(frameView.layoutViewportRect());
-    frameScrollingNode.setAsyncFrameOrOverflowScrollingEnabled(asyncFrameOrOverflowScrollingEnabled());
-    frameScrollingNode.setWheelEventGesturesBecomeNonBlocking(wheelEventGesturesBecomeNonBlocking());
+    frameScrollingNode.setAsyncFrameOrOverflowScrollingEnabled(settings.asyncFrameScrollingEnabled() || settings.asyncOverflowScrollingEnabled());
+    frameScrollingNode.setScrollingPerformanceTestingEnabled(settings.scrollingPerformanceTestingEnabled());
+    frameScrollingNode.setWheelEventGesturesBecomeNonBlocking(settings.wheelEventGesturesBecomeNonBlocking());
 
     frameScrollingNode.setMinLayoutViewportOrigin(frameView.minStableLayoutViewportOrigin());
     frameScrollingNode.setMaxLayoutViewportOrigin(frameView.maxStableLayoutViewportOrigin());
@@ -829,18 +831,6 @@ bool AsyncScrollingCoordinator::isRubberBandInProgress(ScrollingNodeID nodeID) c
 void AsyncScrollingCoordinator::setScrollPinningBehavior(ScrollPinningBehavior pinning)
 {
     scrollingTree()->setScrollPinningBehavior(pinning);
-}
-
-bool AsyncScrollingCoordinator::asyncFrameOrOverflowScrollingEnabled() const
-{
-    auto& settings = m_page->mainFrame().settings();
-    return settings.asyncFrameScrollingEnabled() || settings.asyncOverflowScrollingEnabled();
-}
-
-bool AsyncScrollingCoordinator::wheelEventGesturesBecomeNonBlocking() const
-{
-    auto& settings = m_page->mainFrame().settings();
-    return settings.wheelEventGesturesBecomeNonBlocking();
 }
 
 ScrollingNodeID AsyncScrollingCoordinator::scrollableContainerNodeID(const RenderObject& renderer) const

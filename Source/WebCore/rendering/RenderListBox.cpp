@@ -873,7 +873,7 @@ bool RenderListBox::shouldSuspendScrollAnimations() const
 
 bool RenderListBox::forceUpdateScrollbarsOnMainThreadForPerformanceTesting() const
 {
-    return settings().forceUpdateScrollbarsOnMainThreadForPerformanceTesting();
+    return settings().scrollingPerformanceTestingEnabled();
 }
 
 ScrollableArea* RenderListBox::enclosingScrollableArea() const

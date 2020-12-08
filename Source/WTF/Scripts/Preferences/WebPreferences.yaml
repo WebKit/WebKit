@@ -802,16 +802,6 @@ ForceFTPDirectoryListings:
     WebCore:
       default: false
 
-ForceUpdateScrollbarsOnMainThreadForPerformanceTesting:
-  type: bool
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: false
-    WebCore:
-      default: false
-
 ForceWebGLUsesLowPower:
   type: bool
   defaultValue:
@@ -1845,18 +1835,6 @@ ScrollAnimatorEnabled:
       default: true
     WebCore:
       default: true
-
-# FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely (though we should still set the default value to false when initializing settings).
-ScrollingPerformanceLoggingEnabled:
-  type: bool
-  webcoreOnChange: scrollingPerformanceLoggingEnabledChanged
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: false
-    WebCore:
-      default: false
 
 # FIXME: This is handled via WebView SPI rather than WebPreferences for WebKitLegacy. We should change the SPI to lookup the WebPreferences value instead.
 SelectTrailingWhitespaceEnabled:

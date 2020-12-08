@@ -1923,7 +1923,7 @@ bool RenderLayer::isRubberBandInProgress() const
 
 bool RenderLayer::forceUpdateScrollbarsOnMainThreadForPerformanceTesting() const
 {
-    return renderer().settings().forceUpdateScrollbarsOnMainThreadForPerformanceTesting();
+    return renderer().settings().scrollingPerformanceTestingEnabled();
 }
 
 RenderLayer* RenderLayer::enclosingTransformedAncestor() const

@@ -737,7 +737,7 @@ void TileGrid::platformCALayerPaintContents(PlatformCALayer* platformCALayer, Gr
     if (m_controller.rootLayer().owner()->platformCALayerShowRepaintCounter(0))
         PlatformCALayer::drawRepaintIndicator(context, platformCALayer, repaintCount, m_controller.tileDebugBorderColor());
 
-    if (m_controller.scrollingPerformanceLoggingEnabled()) {
+    if (m_controller.scrollingPerformanceTestingEnabled()) {
         FloatRect visiblePart(platformCALayer->position().x(), platformCALayer->position().y(), platformCALayer->bounds().size().width(), platformCALayer->bounds().size().height());
         visiblePart.intersect(m_controller.visibleRect());
 

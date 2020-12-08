@@ -610,6 +610,20 @@ RestrictedHTTPResponseAccess:
     WebKit:
       default: true
 
+ScrollingPerformanceTestingEnabled:
+  type: bool
+  humanReadableName: "Scroll Performance Testing Enabled"
+  humanReadableDescription: "Enable behaviors used by scrolling performance tests"
+  webcoreOnChange: scrollingPerformanceTestingEnabledChanged
+  exposed: [ WebKit ]
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 SecureContextChecksEnabled:
   type: bool
   humanReadableName: "Secure Context Checks"

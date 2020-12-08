@@ -1,3 +1,18 @@
+2020-12-08  Simon Fraser  <simon.fraser@apple.com>
+
+        Make ScrollingPerformanceLoggingEnabled an internal debug preference
+        https://bugs.webkit.org/show_bug.cgi?id=219647
+
+        Reviewed by Sam Weinig.
+
+        Rename ScrollingPerformanceLoggingEnabled to ScrollingPerformanceTestingEnabled and make
+        it an Internal Debug preference.
+
+        Remove ForceUpdateScrollbarsOnMainThreadForPerformanceTesting.
+
+        * Scripts/Preferences/WebPreferences.yaml:
+        * Scripts/Preferences/WebPreferencesInternal.yaml:
+
 2020-12-08  Chris Dumez  <cdumez@apple.com>
 
         [iOS] Stop leaking an XPC boost message to XPC services

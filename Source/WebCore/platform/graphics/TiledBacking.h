@@ -106,8 +106,8 @@ public:
     virtual void revalidateTiles() = 0;
     virtual void forceRepaint() = 0;
 
-    virtual void setScrollingPerformanceLoggingEnabled(bool) = 0;
-    virtual bool scrollingPerformanceLoggingEnabled() const = 0;
+    virtual void setScrollingPerformanceTestingEnabled(bool) = 0;
+    virtual bool scrollingPerformanceTestingEnabled() const = 0;
     
     virtual double retainedTileBackingStoreMemory() const = 0;
 

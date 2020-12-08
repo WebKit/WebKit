@@ -259,17 +259,18 @@ public:
         VisualViewportIsSmallerThanLayoutViewport   = 1LLU << 35,
         AsyncFrameOrOverflowScrollingEnabled        = 1LLU << 36,
         WheelEventGesturesBecomeNonBlocking         = 1LLU << 37,
-        LayoutViewport                              = 1LLU << 38,
-        MinLayoutViewportOrigin                     = 1LLU << 39,
-        MaxLayoutViewportOrigin                     = 1LLU << 40,
-        OverrideVisualViewportSize                  = 1LLU << 41,
+        ScrollingPerformanceTestingEnabled          = 1LLU << 38,
+        LayoutViewport                              = 1LLU << 39,
+        MinLayoutViewportOrigin                     = 1LLU << 40,
+        MaxLayoutViewportOrigin                     = 1LLU << 41,
+        OverrideVisualViewportSize                  = 1LLU << 42,
         // ScrollingStatePositionedNode
-        RelatedOverflowScrollingNodes               = 1LLU << 42,
-        LayoutConstraintData                        = 1LLU << 43,
+        RelatedOverflowScrollingNodes               = 1LLU << 43,
+        LayoutConstraintData                        = 1LLU << 44,
         // ScrollingStateFixedNode, ScrollingStateStickyNode
-        ViewportConstraints                         = 1LLU << 44,
+        ViewportConstraints                         = 1LLU << 45,
         // ScrollingStateOverflowScrollProxyNode
-        OverflowScrollingNode                       = 1LLU << 45,
+        OverflowScrollingNode                       = 1LLU << 46,
     };
     
     bool hasChangedProperties() const { return !m_changedProperties.isEmpty(); }

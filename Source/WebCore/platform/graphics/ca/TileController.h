@@ -125,7 +125,7 @@ public:
     FloatRect adjustTileCoverageRect(const FloatRect& coverageRect, const FloatRect& previousVisibleRect, const FloatRect& currentVisibleRect, bool sizeChanged) final;
     FloatRect adjustTileCoverageRectForScrolling(const FloatRect& coverageRect, const FloatSize& newSize, const FloatRect& previousVisibleRect, const FloatRect& currentVisibleRect, float contentsScale) final;
 
-    bool scrollingPerformanceLoggingEnabled() const final { return m_scrollingPerformanceLoggingEnabled; }
+    bool scrollingPerformanceTestingEnabled() const final { return m_scrollingPerformanceTestingEnabled; }
 
     IntSize computeTileSize();
 
@@ -169,7 +169,7 @@ private:
     void revalidateTiles() final;
     void forceRepaint() final;
     IntRect tileGridExtent() const final;
-    void setScrollingPerformanceLoggingEnabled(bool flag) final { m_scrollingPerformanceLoggingEnabled = flag; }
+    void setScrollingPerformanceTestingEnabled(bool flag) final { m_scrollingPerformanceTestingEnabled = flag; }
     double retainedTileBackingStoreMemory() const final;
     IntRect tileCoverageRect() const final;
 #if USE(CA)
@@ -236,7 +236,7 @@ private:
     RectEdges<bool> m_marginEdges;
     
     bool m_isInWindow { false };
-    bool m_scrollingPerformanceLoggingEnabled { false };
+    bool m_scrollingPerformanceTestingEnabled { false };
     bool m_acceleratesDrawing { false };
     bool m_wantsDeepColorBackingStore { false };
     bool m_supportsSubpixelAntialiasedText { false };

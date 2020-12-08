@@ -7263,6 +7263,9 @@ void WebPageProxy::logScrollingEvent(uint32_t eventType, MonotonicTime timestamp
     PerformanceLoggingClient::ScrollingEvent event = static_cast<PerformanceLoggingClient::ScrollingEvent>(eventType);
 
     switch (event) {
+    case PerformanceLoggingClient::ScrollingEvent::LoggingEnabled:
+        WTFLogAlways("SCROLLING: ScrollingPerformanceTestingEnabled\n");
+        break;
     case PerformanceLoggingClient::ScrollingEvent::ExposedTilelessArea:
         WTFLogAlways("SCROLLING: Exposed tileless area. Time: %f Unfilled Pixels: %llu\n", timestamp.secondsSinceEpoch().value(), (unsigned long long)data);
         break;

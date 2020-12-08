@@ -72,6 +72,7 @@
 #include "OverflowEvent.h"
 #include "Page.h"
 #include "PageOverlayController.h"
+#include "PerformanceLoggingClient.h"
 #include "ProgressTracker.h"
 #include "Quirks.h"
 #include "RenderEmbeddedObject.h"
@@ -3746,7 +3747,7 @@ bool FrameView::isActive() const
 bool FrameView::forceUpdateScrollbarsOnMainThreadForPerformanceTesting() const
 {
     Page* page = frame().page();
-    return page && page->settings().forceUpdateScrollbarsOnMainThreadForPerformanceTesting();
+    return page && page->settings().scrollingPerformanceTestingEnabled();
 }
 
 void FrameView::scrollTo(const ScrollPosition& newPosition)
@@ -5212,10 +5213,16 @@ void FrameView::setScrollVelocity(const VelocityData& velocityData)
 }
 #endif // PLATFORM(IOS_FAMILY)
 
-void FrameView::setScrollingPerformanceLoggingEnabled(bool flag)
+void FrameView::setScrollingPerformanceTestingEnabled(bool scrollingPerformanceTestingEnabled)
 {
+    if (scrollingPerformanceTestingEnabled) {
+        auto* page = frame().page();
+        if (page && page->performanceLoggingClient())
+            page->performanceLoggingClient()->logScrollingEvent(PerformanceLoggingClient::ScrollingEvent::LoggingEnabled, MonotonicTime::now(), 0);
+    }
+
     if (TiledBacking* tiledBacking = this->tiledBacking())
-        tiledBacking->setScrollingPerformanceLoggingEnabled(flag);
+        tiledBacking->setScrollingPerformanceTestingEnabled(scrollingPerformanceTestingEnabled);
 }
 
 void FrameView::didAddScrollbar(Scrollbar* scrollbar, ScrollbarOrientation orientation)

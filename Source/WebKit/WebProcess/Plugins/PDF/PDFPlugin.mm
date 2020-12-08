@@ -1457,7 +1457,7 @@ bool PDFPlugin::forceUpdateScrollbarsOnMainThreadForPerformanceTesting() const
 {
     if (auto* coreFrame = m_frame ? m_frame->coreFrame() : nullptr) {
         if (auto* page = coreFrame->page())
-            return page->settings().forceUpdateScrollbarsOnMainThreadForPerformanceTesting();
+            return page->settings().scrollingPerformanceTestingEnabled();
     }
 
     return false;

@@ -1,3 +1,32 @@
+2020-12-08  Simon Fraser  <simon.fraser@apple.com>
+
+        Make ScrollingPerformanceLoggingEnabled an internal debug preference
+        https://bugs.webkit.org/show_bug.cgi?id=219647
+
+        Reviewed by Sam Weinig.
+
+        ScrollingPerformanceLoggingEnabled is used by a Safari performance test, so it needs to be
+        easily toggleable from a script. That's easier if it's an Internal Debug preference.
+
+        Testing also sets ForceUpdateScrollbarsOnMainThreadForPerformanceTesting but we can just use
+        the ScrollingPerformanceLoggingEnabled flag, but it makes more sense to rename
+        ScrollingPerformanceLoggingEnabled to ScrollingPerformanceTestingEnabled when we do that.
+
+        Also fix how we propagate ScrollingPerformanceTestingEnabled to the scrolling tree;
+        do so via ScrollingStateFrameScrollingNode as we do for the other tree-wide settings,
+        removing code in TiledCoreAnimationDrawingArea::updatePreferences() that did this.
+
+        * Shared/RemoteLayerTree/RemoteScrollingCoordinatorTransaction.cpp:
+        (ArgumentCoder<ScrollingStateFrameScrollingNode>::encode):
+        (ArgumentCoder<ScrollingStateFrameScrollingNode>::decode):
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetScrollingPerformanceLoggingEnabled):
+        (WKPreferencesGetScrollingPerformanceLoggingEnabled):
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::forceUpdateScrollbarsOnMainThreadForPerformanceTesting const):
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::updatePreferences):
+
 2020-12-08  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Deny mach-lookup to the service 'com.apple.assertiond.processassertionconnection' in the WebContent process

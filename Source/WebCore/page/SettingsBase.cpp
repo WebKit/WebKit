@@ -339,10 +339,10 @@ void SettingsBase::backgroundShouldExtendBeyondPageChanged()
         m_page->mainFrame().view()->updateExtendBackgroundIfNecessary();
 }
 
-void SettingsBase::scrollingPerformanceLoggingEnabledChanged()
+void SettingsBase::scrollingPerformanceTestingEnabledChanged()
 {
     if (m_page && m_page->mainFrame().view())
-        m_page->mainFrame().view()->setScrollingPerformanceLoggingEnabled(m_page->settings().scrollingPerformanceLoggingEnabled());
+        m_page->mainFrame().view()->setScrollingPerformanceTestingEnabled(m_page->settings().scrollingPerformanceTestingEnabled());
 }
 
 void SettingsBase::hiddenPageDOMTimerThrottlingStateChanged()

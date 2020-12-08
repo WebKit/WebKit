@@ -111,6 +111,9 @@ public:
     bool asyncFrameOrOverflowScrollingEnabled() const { return m_asyncFrameOrOverflowScrollingEnabled; }
     void setAsyncFrameOrOverflowScrollingEnabled(bool);
 
+    bool scrollingPerformanceTestingEnabled() const { return m_scrollingPerformanceTestingEnabled; }
+    WEBCORE_EXPORT void setScrollingPerformanceTestingEnabled(bool);
+
     bool wheelEventGesturesBecomeNonBlocking() const { return m_wheelEventGesturesBecomeNonBlocking; }
     WEBCORE_EXPORT void setWheelEventGesturesBecomeNonBlocking(bool);
 
@@ -145,6 +148,7 @@ private:
     bool m_visualViewportIsSmallerThanLayoutViewport { false };
     bool m_asyncFrameOrOverflowScrollingEnabled { false };
     bool m_wheelEventGesturesBecomeNonBlocking { false };
+    bool m_scrollingPerformanceTestingEnabled { false };
 };
 
 } // namespace WebCore

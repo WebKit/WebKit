@@ -90,7 +90,7 @@ void ScrollingTreeFrameScrollingNodeMac::commitStateBeforeChildren(const Scrolli
     if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::ReasonsForSynchronousScrolling))
         logScrollingMode = true;
 
-    if (logScrollingMode && isRootNode() && scrollingTree().scrollingPerformanceLoggingEnabled())
+    if (logScrollingMode && isRootNode() && scrollingTree().scrollingPerformanceTestingEnabled())
         scrollingTree().reportSynchronousScrollingReasonsChanged(MonotonicTime::now(), synchronousScrollingReasons());
 
     m_delegate.updateFromStateNode(scrollingStateNode);
@@ -155,7 +155,7 @@ void ScrollingTreeFrameScrollingNodeMac::currentScrollPositionChanged(ScrollType
 
     ScrollingTreeFrameScrollingNode::currentScrollPositionChanged(scrollType, hasSynchronousScrollingReasons() ? ScrollingLayerPositionAction::Set : action);
 
-    if (scrollingTree().scrollingPerformanceLoggingEnabled()) {
+    if (scrollingTree().scrollingPerformanceTestingEnabled()) {
         unsigned unfilledArea = exposedUnfilledArea();
         if (unfilledArea || m_lastScrollHadUnfilledPixels)
             scrollingTree().reportExposedUnfilledArea(MonotonicTime::now(), unfilledArea);

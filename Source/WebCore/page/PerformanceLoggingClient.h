@@ -37,6 +37,7 @@ class PerformanceLoggingClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     enum class ScrollingEvent {
+        LoggingEnabled,
         ExposedTilelessArea,
         FilledTile,
         SwitchedScrollingMode,
