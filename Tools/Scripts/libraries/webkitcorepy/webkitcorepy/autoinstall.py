@@ -64,6 +64,7 @@ class Package(object):
             return '{}/{}-{}.{}'.format(AutoInstall.directory, self.name, self.version, self.extension)
 
         def download(self):
+            AutoInstall._verify_index()
             response = AutoInstall._request(self.link)
             try:
                 if response.code != 200:
@@ -117,6 +118,7 @@ class Package(object):
         if self._archives:
             return self._archives
 
+        AutoInstall._verify_index()
         path = 'simple/{}/'.format(self.pypi_name)
         response = AutoInstall._request('https://{}/{}'.format(AutoInstall.index, path))
         try:
@@ -322,6 +324,10 @@ class AutoInstall(object):
     # Rely on our own certificates for PyPi, since we use PyPi to standardize root certificates
     ca_cert_path = os.path.join(os.path.dirname(__file__), 'cacert.pem')
 
+    _previous_index = None
+    _previous_ca_cert_path = None
+    _fatal_check = False
+
     # When sharing an install location, projects may wish to overwrite packages on disk
     # originating from a different index.
     overwrite_foreign_packages = False
@@ -395,35 +401,50 @@ class AutoInstall(object):
         cls.directory = directory
 
     @classmethod
-    def set_index(cls, index, check=True, fatal=False, ca_cert_path=None):
-        if not check:
-            cls.index = index
-            cls.ca_cert_path = ca_cert_path
-            return cls.index
+    def _verify_index(cls):
+        if not cls._previous_index:
+            return
 
         def error(message):
-            if fatal:
+            if cls._fatal_check:
                 raise ValueError(message)
 
             sys.stderr.write('{}\n'.format(message))
-            sys.stderr.write('Falling back to current index, {}\n\n'.format(cls.index))
+            sys.stderr.write('Falling back to previous index, {}\n\n'.format(cls._previous_index))
+
+            cls.index = cls._previous_index
+            cls.ca_cert_path = cls._previous_ca_cert_path
 
         response = None
         try:
-            response = AutoInstall._request('https://{}/simple/pip/'.format(index), ca_cert_path=ca_cert_path)
+            response = AutoInstall._request('https://{}/simple/pip/'.format(cls.index), ca_cert_path=cls.ca_cert_path)
             if response.code != 200:
                 error('Failed to set AutoInstall index to {}, received {} response when searching for simple/pip'.format(index, response.code))
-            else:
-                cls.index = index
-                cls.ca_cert_path = ca_cert_path
+
         except URLError:
-            error('Failed to set AutoInstall index to {}, no response from the server'.format(index))
+            error('Failed to set AutoInstall index to {}, no response from the server'.format(cls.index))
+
         finally:
             if response:
                 response.close()
 
-        return cls.index
+            cls._previous_index = None
+            cls._previous_ca_cert_path = None
+            cls._fatal_check = False
 
+    @classmethod
+    def set_index(cls, index, check=False, fatal=False, ca_cert_path=None):
+        cls._previous_index = cls.index
+        cls._previous_ca_cert_path = cls.ca_cert_path
+        cls._fatal_check = fatal
+
+        cls.index = index
+        cls.ca_cert_path = ca_cert_path
+
+        if check:
+            cls._verify_index()
+
+        return cls.index
 
     @classmethod
     def set_timeout(cls, timeout):

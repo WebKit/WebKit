@@ -1,3 +1,19 @@
+2020-12-08  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitcorepy] Defer pypi index check until usage
+        https://bugs.webkit.org/show_bug.cgi?id=219271
+        <rdar://problem/71748250>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/libraries/webkitcorepy/webkitcorepy/__init__.py: Bump version.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/autoinstall.py:
+        (Package.Archive.download): Verify our index before using it.
+        (Package.archives): Ditto.
+        (AutoInstall): Provide variables to cache information needed for pypi index verification.
+        (AutoInstall._verify_index): Verify the current index is reachable if a fallback index exists.
+        (AutoInstall.set_index): Defer checking the provided index by default.
+
 2020-12-08  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Concurrent Display Lists] Add a way for display list clients to get missing cached resource identifiers
