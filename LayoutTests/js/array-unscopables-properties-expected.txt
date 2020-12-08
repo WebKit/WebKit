@@ -10,6 +10,10 @@ PASS Object.getOwnPropertyDescriptor(Array.prototype, Symbol.unscopables).enumer
 PASS Object.getOwnPropertyDescriptor(Array.prototype, Symbol.unscopables).configurable is true
 PASS Object.getOwnPropertyNames(Array.prototype[Symbol.unscopables]) is expectedEntries
 PASS Object.getOwnPropertySymbols(Array.prototype[Symbol.unscopables]) is []
+PASS Array.prototype[Symbol.unscopables]["at"] is true
+PASS Object.getOwnPropertyDescriptor(Array.prototype[Symbol.unscopables], "at").writable is true
+PASS Object.getOwnPropertyDescriptor(Array.prototype[Symbol.unscopables], "at").enumerable is true
+PASS Object.getOwnPropertyDescriptor(Array.prototype[Symbol.unscopables], "at").configurable is true
 PASS Array.prototype[Symbol.unscopables]["copyWithin"] is true
 PASS Object.getOwnPropertyDescriptor(Array.prototype[Symbol.unscopables], "copyWithin").writable is true
 PASS Object.getOwnPropertyDescriptor(Array.prototype[Symbol.unscopables], "copyWithin").enumerable is true

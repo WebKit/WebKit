@@ -7,6 +7,7 @@ shouldBeFalse("Object.getOwnPropertyDescriptor(Array.prototype, Symbol.unscopabl
 shouldBeTrue("Object.getOwnPropertyDescriptor(Array.prototype, Symbol.unscopables).configurable");
 
 let expectedEntries = [
+    "at",
     "copyWithin",
     "entries",
     "fill",
