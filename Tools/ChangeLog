@@ -1,3 +1,13 @@
+2020-12-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Concurrent Display Lists] Add a way for display list clients to get missing cached resource identifiers
+        https://bugs.webkit.org/show_bug.cgi?id=219652
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Tests/WebCore/cg/DisplayListTestsCG.cpp:
+        (TestWebKitAPI::TEST):
+
 2020-12-08  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitcorepy] Fix case where cached=True with other arguments

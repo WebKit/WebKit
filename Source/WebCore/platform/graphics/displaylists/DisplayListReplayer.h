@@ -49,6 +49,7 @@ struct ReplayResult {
     std::unique_ptr<DisplayList> trackedDisplayList;
     size_t numberOfBytesRead { 0 };
     Optional<RenderingResourceIdentifier> nextDestinationImageBuffer;
+    Optional<RenderingResourceIdentifier> missingCachedResourceIdentifier;
     StopReplayReason reasonForStopping { StopReplayReason::ReplayedAllItems };
 };
 
@@ -68,7 +69,7 @@ public:
     };
     
 private:
-    Optional<StopReplayReason> applyItem(ItemHandle);
+    std::pair<Optional<StopReplayReason>, Optional<RenderingResourceIdentifier>> applyItem(ItemHandle);
 
     GraphicsContext& m_context;
     const DisplayList& m_displayList;

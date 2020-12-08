@@ -63,6 +63,7 @@ TEST(DisplayListTests, ReplayWithMissingResource)
         auto result = replayer.replay();
         EXPECT_LT(result.numberOfBytesRead, list.sizeInBytes());
         EXPECT_EQ(result.reasonForStopping, StopReplayReason::MissingCachedResource);
+        EXPECT_EQ(result.missingCachedResourceIdentifier, imageBufferIdentifier);
     }
 
     {
@@ -74,6 +75,7 @@ TEST(DisplayListTests, ReplayWithMissingResource)
         auto result = replayer.replay();
         EXPECT_EQ(result.numberOfBytesRead, list.sizeInBytes());
         EXPECT_EQ(result.reasonForStopping, StopReplayReason::ReplayedAllItems);
+        EXPECT_EQ(result.missingCachedResourceIdentifier, WTF::nullopt);
     }
 }
 
