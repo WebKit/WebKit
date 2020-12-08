@@ -66,7 +66,7 @@ public:
 
     TextRun subRun(unsigned startOffset, unsigned length) const
     {
-        ASSERT_WITH_SECURITY_IMPLICATION(startOffset < m_text.length());
+        ASSERT_WITH_SECURITY_IMPLICATION((startOffset + length) <= m_text.length());
 
         auto result { *this };
 
