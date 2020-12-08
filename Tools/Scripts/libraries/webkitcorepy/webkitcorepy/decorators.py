@@ -50,7 +50,7 @@ class Memoize(object):
             if timeout and timeout < time.time() - last_called:
                 is_cached = False
             if is_cached:
-                return self._cache[function].get(args, None)
+                return self._cache[function].get(keyargs, None)
 
             value = function(*args, **kwargs)
             self._last_called[function][keyargs] = time.time()

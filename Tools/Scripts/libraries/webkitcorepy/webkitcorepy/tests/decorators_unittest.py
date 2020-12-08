@@ -58,6 +58,12 @@ class TestMemoize(unittest.TestCase):
     def increment_with_args(timeout=None, cached=None):
         return timeout, cached
 
+    @staticmethod
+    @decorators.Memoize(cached=False)
+    def increment_with_arg(arg=None):
+        TestMemoize.count += 1
+        return TestMemoize.count
+
     def test_cached(self):
         with mocks.Time:
             TestMemoize.count = 0
@@ -107,3 +113,10 @@ class TestMemoize(unittest.TestCase):
             timeout='timeout-new',
             cached='cached-new',
         ), ('timeout-new', 'cached-new'))
+
+    def test_override(self):
+        TestMemoize.count = 0
+        TestMemoize.increment_with_arg.clear()
+        self.assertEqual(TestMemoize.increment_with_arg(arg='x'), 1)
+        self.assertEqual(TestMemoize.increment_with_arg(arg='x'), 2)
+        self.assertEqual(TestMemoize.increment_with_arg(arg='x', cached=True), 2)

@@ -1,3 +1,19 @@
+2020-12-08  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitcorepy] Fix case where cached=True with other arguments
+        https://bugs.webkit.org/show_bug.cgi?id=219644
+        <rdar://problem/72092851>
+
+        Reviewed by Stephanie Lewis.
+
+        * Scripts/libraries/webkitcorepy/webkitcorepy/__init__.py: Bump version.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/decorators.py:
+        (Memoize.__call__.decorator): Use keyargs instead of args.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/tests/decorators_unittest.py:
+        (TestMemoize):
+        (TestMemoize.increment_with_arg): Added.
+        (TestMemoize.test_override):
+
 2020-12-08  Aakash Jain  <aakash_jain@apple.com>
 
         [ews] commit-queue should use only the first email from contributors.json to validate committers and reviewers
