@@ -1,3 +1,14 @@
+2020-12-08  Rob Buis  <rbuis@igalia.com>
+
+        Support aspect-ratio on non-replaced elements
+        https://bugs.webkit.org/show_bug.cgi?id=218794
+
+        Reviewed by Simon Fraser.
+
+        Unskip some tests that pass now.
+
+        * TestExpectations:
+
 2020-12-08  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Enable "at" methods

@@ -2419,6 +2419,14 @@ void RenderBox::updateLogicalWidth()
     setMarginEnd(computedValues.m_margins.m_end);
 }
 
+static LayoutUnit inlineSizeFromAspectRatio(LayoutUnit borderPaddingInlineSum, LayoutUnit borderPaddingBlockSum, double aspectRatio, BoxSizing boxSizing, LayoutUnit blockSize)
+{
+    if (boxSizing == BoxSizing::BorderBox)
+        return blockSize * LayoutUnit(aspectRatio);
+
+    return ((blockSize - borderPaddingBlockSum) * LayoutUnit(aspectRatio)) + borderPaddingInlineSum;
+}
+
 void RenderBox::computeLogicalWidthInFragment(LogicalExtentComputedValues& computedValues, RenderFragmentContainer* fragment) const
 {
     computedValues.m_extent = logicalWidth();
@@ -2475,8 +2483,15 @@ void RenderBox::computeLogicalWidthInFragment(LogicalExtentComputedValues& compu
     if (hasPerpendicularContainingBlock)
         containerWidthInInlineDirection = perpendicularContainingBlockLogicalHeight();
 
+    Optional<LayoutUnit> logicalHeight;
+    if (style().hasAspectRatio() && style().logicalWidth().isAuto() && (style().logicalHeight().isFixed() || style().logicalHeight().isPercentOrCalculated()))
+        logicalHeight = computeLogicalHeightUsing(MainOrPreferredSize, style().logicalHeight(), { });
+
     // Width calculations
-    if (treatAsReplaced) {
+    if (logicalHeight) {
+        LayoutUnit logicalWidth = inlineSizeFromAspectRatio(horizontalBorderAndPaddingExtent(), verticalBorderAndPaddingExtent(), style().logicalAspectRatio(), style().boxSizing(), *logicalHeight);
+        computedValues.m_extent = constrainLogicalWidthInFragmentByMinMax(logicalWidth, containerWidthInInlineDirection, cb, fragment);
+    } else if (treatAsReplaced) {
         computedValues.m_extent = logicalWidthLength.value() + borderAndPaddingLogicalWidth();
     } else {
         LayoutUnit preferredWidth = computeLogicalWidthInFragmentUsing(MainOrPreferredSize, styleToUse.logicalWidth(), containerWidthInInlineDirection, cb, fragment);
@@ -2802,6 +2817,14 @@ void RenderBox::updateLogicalHeight()
     setMarginAfter(computedValues.m_margins.m_after);
 }
 
+static LayoutUnit blockSizeFromAspectRatio(LayoutUnit borderPaddingInlineSum, LayoutUnit borderPaddingBlockSum, double aspectRatio, BoxSizing boxSizing, LayoutUnit inlineSize)
+{
+    if (boxSizing == BoxSizing::BorderBox)
+        return inlineSize / LayoutUnit(aspectRatio);
+
+    return ((inlineSize - borderPaddingInlineSum) / LayoutUnit(aspectRatio)) + borderPaddingBlockSum;
+}
+
 RenderBox::LogicalExtentComputedValues RenderBox::computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop) const
 {
     LogicalExtentComputedValues computedValues;
@@ -2869,7 +2892,10 @@ RenderBox::LogicalExtentComputedValues RenderBox::computeLogicalHeight(LayoutUni
         LayoutUnit heightResult;
         if (checkMinMaxHeight) {
             LayoutUnit intrinsicHeight = computedValues.m_extent - borderAndPaddingLogicalHeight();
-            heightResult = computeLogicalHeightUsing(MainOrPreferredSize, style().logicalHeight(), intrinsicHeight).valueOr(computedValues.m_extent);
+            if (shouldComputeLogicalHeightFromAspectRatio())
+                heightResult = blockSizeFromAspectRatio(horizontalBorderAndPaddingExtent(), verticalBorderAndPaddingExtent(), style().logicalAspectRatio(), style().boxSizing(), logicalWidth());
+            else
+                heightResult = computeLogicalHeightUsing(MainOrPreferredSize, style().logicalHeight(), intrinsicHeight).valueOr(computedValues.m_extent);
             heightResult = constrainLogicalHeightByMinMax(heightResult, intrinsicHeight);
         } else {
             ASSERT(h.isFixed());
@@ -4947,6 +4973,15 @@ void RenderBox::applyTopLeftLocationOffsetWithFlipping(LayoutPoint& point) const
     LayoutRect rect(frameRect());
     containerBlock->flipForWritingMode(rect); // FIXME: This is wrong if we are an absolutely positioned object  enclosed by a relative-positioned inline.
     point.move(rect.x(), rect.y());
+}
+
+bool RenderBox::shouldComputeLogicalHeightFromAspectRatio() const
+{
+    if (!style().hasAspectRatio())
+        return false;
+
+    auto h = style().logicalHeight();
+    return h.isAuto() || (!isOutOfFlowPositioned() && h.isPercentOrCalculated() && percentageLogicalHeightIsResolvable());
 }
 
 bool RenderBox::hasRelativeDimensions() const
