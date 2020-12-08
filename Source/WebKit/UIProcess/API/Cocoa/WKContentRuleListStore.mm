@@ -74,7 +74,7 @@ static WKErrorCode toWKErrorCode(const std::error_code& error)
 
 - (void)compileContentRuleListForIdentifier:(NSString *)identifier encodedContentRuleList:(NSString *)encodedContentRuleList completionHandler:(void (^)(WKContentRuleList *, NSError *))completionHandler
 {
-    [self _compileContentRuleListForIdentifier:identifier encodedContentRuleList:[encodedContentRuleList retain] completionHandler:completionHandler];
+    [self _compileContentRuleListForIdentifier:identifier encodedContentRuleList:encodedContentRuleList completionHandler:completionHandler];
 }
 
 - (void)lookUpContentRuleListForIdentifier:(NSString *)identifier completionHandler:(void (^)(WKContentRuleList *, NSError *))completionHandler
@@ -148,11 +148,7 @@ static WKErrorCode toWKErrorCode(const std::error_code& error)
 
 - (void)_compileContentRuleListForIdentifier:(NSString *)identifier encodedContentRuleList:(NSString *) encodedContentRuleList completionHandler:(void (^)(WKContentRuleList *, NSError *))completionHandler
 {
-    String json(encodedContentRuleList);
-    [encodedContentRuleList release];
-    encodedContentRuleList = nil;
-
-    _contentRuleListStore->compileContentRuleList(identifier, WTFMove(json), [completionHandler = makeBlockPtr(completionHandler)](RefPtr<API::ContentRuleList> contentRuleList, std::error_code error) {
+    _contentRuleListStore->compileContentRuleList(identifier, encodedContentRuleList, [completionHandler = makeBlockPtr(completionHandler)](RefPtr<API::ContentRuleList> contentRuleList, std::error_code error) {
         if (error) {
             auto userInfo = @{NSHelpAnchorErrorKey: [NSString stringWithFormat:@"Rule list compilation failed: %s", error.message().c_str()]};
 

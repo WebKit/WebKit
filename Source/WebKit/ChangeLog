@@ -1,3 +1,16 @@
+2020-12-08  Alex Christensen  <achristensen@webkit.org>
+
+        Remove NSString overrelease in _WKUserContentExtensionStore
+        https://bugs.webkit.org/show_bug.cgi?id=219621
+
+        Reviewed by Darin Adler.
+
+        Gasp!
+
+        * UIProcess/API/Cocoa/WKContentRuleListStore.mm:
+        (-[WKContentRuleListStore compileContentRuleListForIdentifier:encodedContentRuleList:completionHandler:]):
+        (-[WKContentRuleListStore _compileContentRuleListForIdentifier:encodedContentRuleList:completionHandler:]):
+
 2020-12-08  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Create sandbox extension for audio service when Media in GPU process is not enabled
