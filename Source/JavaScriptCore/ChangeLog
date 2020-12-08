@@ -1,3 +1,15 @@
+2020-12-08  Caio Lima  <ticaiolima@gmail.com>
+
+        [ESNext] op_put_private_name is wrong
+        https://bugs.webkit.org/show_bug.cgi?id=219616
+
+        Reviewed by Tadeu Zagallo.
+
+        Since `m_property` is a JSCell pointer, we need to use both `loadp`
+        and `bpneq` on `op_put_private_name`.
+
+        * llint/LowLevelInterpreter64.asm:
+
 2020-12-07  Dmitry Bezhetskov  <dbezhetskov@igalia.com>
 
         [WASM-References] Add support for table.copy

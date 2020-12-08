@@ -1792,8 +1792,8 @@ llintOpWithMetadata(op_put_private_name, OpPutPrivateName, macro (size, get, dis
     loadi OpPutPrivateName::Metadata::m_oldStructureID[t5], t2
     bineq t2, JSCell::m_structureID[t0], .opPutPrivateNameSlow
 
-    loadi OpPutPrivateName::Metadata::m_property[t5], t3
-    bineq t3, t1, .opPutPrivateNameSlow
+    loadp OpPutPrivateName::Metadata::m_property[t5], t3
+    bpneq t3, t1, .opPutPrivateNameSlow
 
     # At this point, we have:
     # t0 -> object base
