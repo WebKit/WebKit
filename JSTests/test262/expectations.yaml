@@ -832,66 +832,6 @@ test/built-ins/TypedArray/prototype/at/prop-desc.js:
 test/built-ins/TypedArray/prototype/includes/detached-buffer-tointeger.js:
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
-test/built-ins/TypedArrayConstructors/ctors/buffer-arg/byteoffset-to-number-detachbuffer.js:
-  default: 'Test262Error: Expected a TypeError but got a RangeError (Testing with Float64Array.)'
-  strict mode: 'Test262Error: Expected a TypeError but got a RangeError (Testing with Float64Array.)'
-test/built-ins/TypedArrayConstructors/ctors/buffer-arg/detachedbuffer.js:
-  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
-  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
-test/built-ins/TypedArrayConstructors/ctors/buffer-arg/length-to-number-detachbuffer.js:
-  default: 'Test262Error: Expected a TypeError but got a RangeError (Testing with Float64Array.)'
-  strict mode: 'Test262Error: Expected a TypeError but got a RangeError (Testing with Float64Array.)'
-test/built-ins/TypedArrayConstructors/ctors/object-arg/length-excessive-throws.js:
-  default: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
-  strict mode: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
-test/built-ins/TypedArrayConstructors/ctors/typedarray-arg/detached-when-species-retrieved-different-type.js:
-  default: 'Test262Error: TypeError thrown for detached source buffer Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
-  strict mode: 'Test262Error: TypeError thrown for detached source buffer Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
-test/built-ins/TypedArrayConstructors/ctors/typedarray-arg/detached-when-species-retrieved-same-type.js:
-  default: 'Test262Error: TypeError thrown for detached source buffer Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
-  strict mode: 'Test262Error: TypeError thrown for detached source buffer Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
-test/built-ins/TypedArrayConstructors/ctors/typedarray-arg/other-ctor-buffer-ctor-access-throws.js:
-  default: 'Test262Error: Expected a Test262Error to be thrown but no exception was thrown at all (Testing with Float64Array.)'
-  strict mode: 'Test262Error: Expected a Test262Error to be thrown but no exception was thrown at all (Testing with Float64Array.)'
-test/built-ins/TypedArrayConstructors/ctors/typedarray-arg/other-ctor-buffer-ctor-custom-species-proto-from-ctor-realm.js:
-  default: 'Test262Error: Expected SameValue(«[object ArrayBuffer]», «[object ArrayBuffer]») to be true (Testing with Float64Array.)'
-  strict mode: 'Test262Error: Expected SameValue(«[object ArrayBuffer]», «[object ArrayBuffer]») to be true (Testing with Float64Array.)'
-test/built-ins/TypedArrayConstructors/ctors/typedarray-arg/other-ctor-buffer-ctor-custom-species.js:
-  default: 'Test262Error: Expected SameValue(«[object ArrayBuffer]», «[object Object]») to be true (Testing with Float64Array.)'
-  strict mode: 'Test262Error: Expected SameValue(«[object ArrayBuffer]», «[object Object]») to be true (Testing with Float64Array.)'
-test/built-ins/TypedArrayConstructors/ctors/typedarray-arg/other-ctor-buffer-ctor-not-object-throws.js:
-  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
-  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
-test/built-ins/TypedArrayConstructors/ctors/typedarray-arg/other-ctor-buffer-ctor-species-access-throws.js:
-  default: 'Test262Error: Expected a Test262Error to be thrown but no exception was thrown at all (Testing with Float64Array.)'
-  strict mode: 'Test262Error: Expected a Test262Error to be thrown but no exception was thrown at all (Testing with Float64Array.)'
-test/built-ins/TypedArrayConstructors/ctors/typedarray-arg/other-ctor-buffer-ctor-species-not-ctor-throws.js:
-  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
-  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
-test/built-ins/TypedArrayConstructors/ctors/typedarray-arg/other-ctor-buffer-ctor-species-prototype-throws.js:
-  default: 'Test262Error: Expected a Test262Error to be thrown but no exception was thrown at all (Testing with Float64Array.)'
-  strict mode: 'Test262Error: Expected a Test262Error to be thrown but no exception was thrown at all (Testing with Float64Array.)'
-test/built-ins/TypedArrayConstructors/ctors/typedarray-arg/same-ctor-buffer-ctor-access-throws.js:
-  default: 'Test262Error: Expected a Test262Error to be thrown but no exception was thrown at all (Testing with Float64Array.)'
-  strict mode: 'Test262Error: Expected a Test262Error to be thrown but no exception was thrown at all (Testing with Float64Array.)'
-test/built-ins/TypedArrayConstructors/ctors/typedarray-arg/same-ctor-buffer-ctor-species-custom-proto-from-ctor-realm.js:
-  default: 'Test262Error: Expected SameValue(«[object ArrayBuffer]», «[object ArrayBuffer]») to be true (Testing with Float64Array.)'
-  strict mode: 'Test262Error: Expected SameValue(«[object ArrayBuffer]», «[object ArrayBuffer]») to be true (Testing with Float64Array.)'
-test/built-ins/TypedArrayConstructors/ctors/typedarray-arg/same-ctor-buffer-ctor-species-custom.js:
-  default: 'Test262Error: Expected SameValue(«[object ArrayBuffer]», «[object Object]») to be true (Testing with Float64Array.)'
-  strict mode: 'Test262Error: Expected SameValue(«[object ArrayBuffer]», «[object Object]») to be true (Testing with Float64Array.)'
-test/built-ins/TypedArrayConstructors/ctors/typedarray-arg/same-ctor-buffer-ctor-species-not-ctor.js:
-  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
-  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
-test/built-ins/TypedArrayConstructors/ctors/typedarray-arg/same-ctor-buffer-ctor-species-prototype-throws.js:
-  default: 'Test262Error: Expected a Test262Error to be thrown but no exception was thrown at all (Testing with Float64Array.)'
-  strict mode: 'Test262Error: Expected a Test262Error to be thrown but no exception was thrown at all (Testing with Float64Array.)'
-test/built-ins/TypedArrayConstructors/ctors/typedarray-arg/same-ctor-buffer-ctor-species-throws.js:
-  default: 'Test262Error: Expected a Test262Error to be thrown but no exception was thrown at all (Testing with Float64Array.)'
-  strict mode: 'Test262Error: Expected a Test262Error to be thrown but no exception was thrown at all (Testing with Float64Array.)'
-test/built-ins/TypedArrayConstructors/ctors/typedarray-arg/same-ctor-buffer-ctor-value-not-obj-throws.js:
-  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
-  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
 test/built-ins/TypedArrayConstructors/internals/Set/key-is-minus-zero.js:
   default: 'Test262Error: Reflect.set(sample, "-0", 1) must return false Expected SameValue(«true», «false») to be true (Testing with Float64Array.)'
   strict mode: 'Test262Error: Reflect.set(sample, "-0", 1) must return false Expected SameValue(«true», «false») to be true (Testing with Float64Array.)'

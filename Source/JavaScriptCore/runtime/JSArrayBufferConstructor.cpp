@@ -28,6 +28,7 @@
 
 #include "BuiltinNames.h"
 #include "JSArrayBuffer.h"
+#include "JSArrayBufferPrototype.h"
 #include "JSArrayBufferView.h"
 #include "JSCInlines.h"
 

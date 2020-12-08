@@ -132,7 +132,7 @@ const assertMemoryAllZero = memory => {
     const module = new WebAssembly.Module(bin);
     const memory = new WebAssembly.Memory(emptyMemory);
     assert.throws(() => new WebAssembly.Instance(module, { imp: { memory: memory } }), WebAssembly.LinkError, `Invalid data segment initialization: segment of 0 bytes memory of 0 bytes, at offset 65536, segment writes outside of memory`);
-    assertMemoryAllZero(memory);
+    assert.eq(memory.buffer.byteLength, 0);
 })();
 
 (function DataSectionSeenByStart() {

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +30,7 @@
 #include "Error.h"
 #include "IteratorOperations.h"
 #include "JSArrayBuffer.h"
+#include "JSArrayBufferPrototypeInlines.h"
 #include "JSCJSValueInlines.h"
 #include "JSDataView.h"
 #include "JSGenericTypedArrayViewConstructor.h"
@@ -103,6 +105,39 @@ inline JSObject* constructGenericTypedArrayViewFromIterator(JSGlobalObject* glob
     return result;
 }
 
+inline JSArrayBuffer* constructCustomArrayBufferIfNeeded(JSGlobalObject* globalObject, JSArrayBuffer* source)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (source->isShared())
+        return nullptr;
+
+    Optional<JSValue> species = arrayBufferSpeciesConstructor(globalObject, source, ArrayBufferSharingMode::Default);
+    RETURN_IF_EXCEPTION(scope, nullptr);
+    if (!species)
+        return nullptr;
+
+    if (!species->isConstructor(vm)) {
+        throwTypeError(globalObject, scope, "species is not a constructor"_s);
+        return nullptr;
+    }
+
+    JSValue prototype = species->get(globalObject, vm.propertyNames->prototype);
+    RETURN_IF_EXCEPTION(scope, nullptr);
+
+    auto buffer = ArrayBuffer::tryCreate(source->impl()->byteLength(), 1);
+    if (!buffer) {
+        throwOutOfMemoryError(globalObject, scope);
+        return nullptr;
+    }
+
+    auto result = JSArrayBuffer::create(vm, getFunctionRealm(vm, asObject(species.value()))->arrayBufferStructure(ArrayBufferSharingMode::Default), WTFMove(buffer));
+    if (prototype.isObject())
+        result->setPrototypeDirect(vm, prototype);
+    return result;
+}
+
 template<typename ViewClass>
 inline JSObject* constructGenericTypedArrayViewWithArguments(JSGlobalObject* globalObject, Structure* structure, EncodedJSValue firstArgument, unsigned offset, Optional<unsigned> lengthOpt)
 {
@@ -113,8 +148,12 @@ inline JSObject* constructGenericTypedArrayViewWithArguments(JSGlobalObject* glo
 
     if (JSArrayBuffer* jsBuffer = jsDynamicCast<JSArrayBuffer*>(vm, firstValue)) {
         RefPtr<ArrayBuffer> buffer = jsBuffer->impl();
-        unsigned length = 0;
+        if (buffer->isDetached()) {
+            throwTypeError(globalObject, scope, "Buffer is already detached"_s);
+            return nullptr;
+        }
 
+        unsigned length = 0;
         if (lengthOpt)
             length = lengthOpt.value();
         else {
@@ -140,10 +179,20 @@ inline JSObject* constructGenericTypedArrayViewWithArguments(JSGlobalObject* glo
 
     if (JSObject* object = jsDynamicCast<JSObject*>(vm, firstValue)) {
         unsigned length;
+        JSArrayBuffer* customBuffer = nullptr;
 
-        if (isTypedView(object->classInfo(vm)->typedArrayStorageType))
-            length = jsCast<JSArrayBufferView*>(object)->length();
-        else {
+        if (isTypedView(object->classInfo(vm)->typedArrayStorageType)) {
+            auto* view = jsCast<JSArrayBufferView*>(object);
+            length = view->length();
+
+            customBuffer = constructCustomArrayBufferIfNeeded(globalObject, view->possiblySharedJSBuffer(globalObject));
+            RETURN_IF_EXCEPTION(scope, nullptr);
+
+            if (view->isDetached()) {
+                throwTypeError(globalObject, scope, "Underlying ArrayBuffer has been detached from the view"_s);
+                return nullptr;
+            }
+        } else {
             // This getPropertySlot operation should not be observed by the Proxy.
             // So we use VMInquiry. And purge the opaque object cases (proxy and namespace object) by isTaintedByOpaqueObject() guard.
             PropertySlot lengthSlot(object, PropertySlot::InternalMethodType::VMInquiry, &vm);
@@ -173,17 +222,18 @@ inline JSObject* constructGenericTypedArrayViewWithArguments(JSGlobalObject* glo
             else {
                 JSValue value = lengthSlot.getValue(globalObject, vm.propertyNames->length);
                 RETURN_IF_EXCEPTION(scope, nullptr);
-                length = value.toUInt32(globalObject);
+                length = value.toLength(globalObject);
                 RETURN_IF_EXCEPTION(scope, nullptr);
             }
         }
 
-        
-        ViewClass* result = ViewClass::createUninitialized(globalObject, structure, length);
+        ViewClass* result = customBuffer
+            ? ViewClass::create(globalObject, structure, customBuffer->impl(), 0, length)
+            : ViewClass::createUninitialized(globalObject, structure, length);
         EXCEPTION_ASSERT(!!scope.exception() == !result);
         if (UNLIKELY(!result))
             return nullptr;
-        
+
         scope.release();
         if (!result->set(globalObject, 0, object, 0, length))
             return nullptr;

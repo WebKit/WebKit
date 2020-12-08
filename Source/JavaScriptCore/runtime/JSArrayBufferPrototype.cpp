@@ -27,33 +27,49 @@
 #include "JSArrayBufferPrototype.h"
 
 #include "JSArrayBuffer.h"
+#include "JSArrayBufferPrototypeInlines.h"
 #include "JSCInlines.h"
 
 namespace JSC {
-namespace JSArrayBufferPrototypeInternal {
-static constexpr bool verbose = false;
-};
 
 static JSC_DECLARE_HOST_FUNCTION(arrayBufferProtoFuncSlice);
 static JSC_DECLARE_HOST_FUNCTION(arrayBufferProtoGetterFuncByteLength);
 static JSC_DECLARE_HOST_FUNCTION(sharedArrayBufferProtoFuncSlice);
 static JSC_DECLARE_HOST_FUNCTION(sharedArrayBufferProtoGetterFuncByteLength);
 
-
-static ALWAYS_INLINE bool speciesWatchpointIsValid(VM& vm, JSObject* thisObject, ArrayBufferSharingMode mode)
+Optional<JSValue> arrayBufferSpeciesConstructorSlow(JSGlobalObject* globalObject, JSArrayBuffer* thisObject, ArrayBufferSharingMode mode)
 {
-    JSGlobalObject* globalObject = thisObject->globalObject(vm);
-    auto* prototype = globalObject->arrayBufferPrototype(mode);
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (globalObject->arrayBufferSpeciesWatchpointSet(mode).stateOnJSThread() == ClearWatchpoint) {
-        dataLogLnIf(JSArrayBufferPrototypeInternal::verbose, "Initializing ArrayBuffer species watchpoints for ArrayBuffer.prototype: ", pointerDump(prototype), " with structure: ", pointerDump(prototype->structure(vm)), "\nand ArrayBuffer: ", pointerDump(globalObject->arrayBufferConstructor(mode)), " with structure: ", pointerDump(globalObject->arrayBufferConstructor(mode)->structure(vm)));
-        globalObject->tryInstallArrayBufferSpeciesWatchpoint(mode);
-        ASSERT(globalObject->arrayBufferSpeciesWatchpointSet(mode).stateOnJSThread() != ClearWatchpoint);
+    bool isValid = speciesWatchpointIsValid(vm, thisObject, mode);
+    scope.assertNoException();
+    if (LIKELY(isValid))
+        return WTF::nullopt;
+
+    JSValue constructor = thisObject->get(globalObject, vm.propertyNames->constructor);
+    RETURN_IF_EXCEPTION(scope, WTF::nullopt);
+    if (constructor.isConstructor(vm)) {
+        JSObject* constructorObject = jsCast<JSObject*>(constructor);
+        JSGlobalObject* globalObjectFromConstructor = constructorObject->globalObject(vm);
+        bool isArrayBufferConstructorFromAnotherRealm = globalObject != globalObjectFromConstructor
+            && constructorObject == globalObjectFromConstructor->arrayBufferConstructor(mode);
+        if (isArrayBufferConstructorFromAnotherRealm)
+            return WTF::nullopt;
     }
 
-    return !thisObject->hasCustomProperties(vm)
-        && prototype == thisObject->getPrototypeDirect(vm)
-        && globalObject->arrayBufferSpeciesWatchpointSet(mode).stateOnJSThread() == IsWatched;
+    if (constructor.isUndefined())
+        return WTF::nullopt;
+
+    if (!constructor.isObject()) {
+        throwTypeError(globalObject, scope, "constructor property should not be null"_s);
+        return WTF::nullopt;
+    }
+
+    JSValue species = constructor.get(globalObject, vm.propertyNames->speciesSymbol);
+    RETURN_IF_EXCEPTION(scope, WTF::nullopt);
+
+    return species.isUndefinedOrNull() ? WTF::nullopt : makeOptional(species);
 }
 
 enum class SpeciesConstructResult : uint8_t {
@@ -74,36 +90,16 @@ static ALWAYS_INLINE std::pair<SpeciesConstructResult, JSArrayBuffer*> speciesCo
 
     // Fast path in the normal case where the user has not set an own constructor and the ArrayBuffer.prototype.constructor is normal.
     // We need prototype check for subclasses of ArrayBuffer, which are ArrayBuffer objects but have a different prototype by default.
-    bool isValid = speciesWatchpointIsValid(vm, thisObject, mode);
-    scope.assertNoException();
-    if (LIKELY(isValid))
-        return fastPathResult;
-
-    JSValue constructor = thisObject->get(globalObject, vm.propertyNames->constructor);
+    Optional<JSValue> species = arrayBufferSpeciesConstructor(globalObject, thisObject, mode);
     RETURN_IF_EXCEPTION(scope, errorResult);
-    if (constructor.isConstructor(vm)) {
-        JSObject* constructorObject = jsCast<JSObject*>(constructor);
-        JSGlobalObject* globalObjectFromConstructor = constructorObject->globalObject(vm);
-        bool isArrayBufferConstructorFromAnotherRealm = globalObject != globalObjectFromConstructor
-            && constructorObject == globalObjectFromConstructor->arrayBufferConstructor(mode);
-        if (isArrayBufferConstructorFromAnotherRealm)
-            return fastPathResult;
-    }
-    if (constructor.isObject()) {
-        constructor = constructor.get(globalObject, vm.propertyNames->speciesSymbol);
-        RETURN_IF_EXCEPTION(scope, errorResult);
-        if (constructor.isNull())
-            return fastPathResult;
-    }
-
-    if (constructor.isUndefined())
+    if (!species)
         return fastPathResult;
 
     // 16. Let new be ? Construct(ctor, « 𝔽(newLen) »).
     MarkedArgumentBuffer args;
     args.append(jsNumber(length));
     ASSERT(!args.hasOverflowed());
-    JSObject* newObject = construct(globalObject, constructor, args, "Species construction did not get a valid constructor");
+    JSObject* newObject = construct(globalObject, species.value(), args, "Species construction did not get a valid constructor");
     RETURN_IF_EXCEPTION(scope, errorResult);
 
     // 17. Perform ? RequireInternalSlot(new, [[ArrayBufferData]]).

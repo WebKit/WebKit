@@ -101,8 +101,7 @@ const action = {
                 break;
             case 'memory': {
                 const current = instance.exports.current();
-                const buffer = new Uint32Array(instance.exports.memory.buffer);
-                assert.eq(buffer.byteLength, current * pageSize);
+                assert.eq(instance.exports.memory.buffer.byteLength, current * pageSize);
                 for (let access = tune.memoryGetCount; current && access; --access) {
                     const address = (Math.random() * (current * pageSize - 4)) | 0;
                     assert.eq(instance.exports.get(address), 0);

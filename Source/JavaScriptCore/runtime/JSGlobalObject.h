@@ -30,7 +30,6 @@
 #include "GetVM.h"
 #include "InternalFunction.h"
 #include "JSArray.h"
-#include "JSArrayBufferPrototype.h"
 #include "JSClassRef.h"
 #include "JSGlobalLexicalEnvironment.h"
 #include "JSPromise.h"

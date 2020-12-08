@@ -1,3 +1,37 @@
+2020-12-08  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Align %TypedArray% constructor behavior with spec
+        https://bugs.webkit.org/show_bug.cgi?id=219527
+
+        Reviewed by Yusuke Suzuki.
+
+        These should be the last JSC-side corrections for typed array behavior:
+        namely, fixes for the constructor itself.
+
+        Broadly speaking, there are three fixes here:
+        1. ArrayBuffer argument (https://tc39.es/ecma262/#sec-initializetypedarrayfromarraybuffer):
+           We need to throw if the input buffer gets detached.
+
+        2. Array-like argument (https://tc39.es/ecma262/#sec-initializetypedarrayfromarraylike):
+           length needs toLength, not toUInt32.
+
+        3. Typed array argument (https://tc39.es/ecma262/#sec-initializetypedarrayfromtypedarray):
+           We need to support the case where the input typed array uses a custom ArrayBuffer.
+           This case is *extremely* strange -- we still create the same type of typed array with a normal ArrayBuffer,
+           but we override the prototype of that ArrayBuffer to inputTypedArray.buffer.constructor[@@species].prototype.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * runtime/JSArrayBufferConstructor.cpp:
+        * runtime/JSArrayBufferPrototype.cpp:
+        (JSC::arrayBufferSpeciesConstructorSlow): Added.
+        (JSC::speciesWatchpointIsValid): Moved.
+        * runtime/JSArrayBufferPrototype.h:
+        * runtime/JSArrayBufferPrototypeInlines.h: Added.
+        * runtime/JSGenericTypedArrayViewConstructorInlines.h:
+        (JSC::constructCustomArrayBufferIfNeeded): Added.
+        (JSC::constructGenericTypedArrayViewWithArguments):
+        * runtime/JSGlobalObject.h:
+
 2020-12-08  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Enable "at" methods
