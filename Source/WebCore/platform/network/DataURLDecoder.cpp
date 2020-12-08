@@ -57,6 +57,7 @@ static bool shouldRemoveFragmentIdentifier(const String& mediaType)
         && !equalLettersIgnoringASCIICase(mediaType, "application/x-mpegurl")
         && !equalLettersIgnoringASCIICase(mediaType, "vnd.apple.mpegurl");
 #else
+    UNUSED_PARAM(mediaType);
     return false;
 #endif
 }
