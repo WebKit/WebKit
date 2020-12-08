@@ -437,7 +437,7 @@ InlineLayoutUnit Line::TrimmableTrailingContent::remove()
     // not produce a run since in ::appendText() we see it as a fully collapsible run.
     for (auto index = *m_firstTrimmableRunIndex + 1; index < m_runs.size(); ++index) {
         auto& run = m_runs[index];
-        ASSERT(run.isInlineBoxStart() || run.isInlineBoxEnd() || run.isLineBreak());
+        ASSERT(run.isWordBreakOpportunity() || run.isInlineBoxStart() || run.isInlineBoxEnd() || run.isLineBreak());
         run.moveHorizontally(-trimmableWidth);
     }
     if (!trimmableRun.textContent()->length()) {
