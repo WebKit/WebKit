@@ -1274,9 +1274,6 @@ IntPoint RenderText::firstRunLocation() const
 
 void RenderText::setSelectionState(HighlightState state)
 {
-    if (state != HighlightState::None)
-        ensureLineBoxes();
-
     RenderObject::setSelectionState(state);
 
     if (canUpdateSelectionOnRootLineBoxes())
@@ -1506,13 +1503,6 @@ void RenderText::positionLineBox(InlineTextBox& textBox)
     if (!textBox.hasTextContent())
         return;
     m_containsReversedText |= !textBox.isLeftToRightDirection();
-}
-
-void RenderText::ensureLineBoxes()
-{
-    if (!is<RenderBlockFlow>(*parent()))
-        return;
-    downcast<RenderBlockFlow>(*parent()).ensureLineBoxes();
 }
 
 bool RenderText::usesComplexLineLayoutPath() const

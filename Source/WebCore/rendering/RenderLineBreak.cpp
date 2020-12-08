@@ -122,13 +122,6 @@ void RenderLineBreak::dirtyLineBoxes(bool fullLayout)
     m_inlineBoxWrapper->dirtyLineBoxes();
 }
 
-void RenderLineBreak::ensureLineBoxes()
-{
-    if (!is<RenderBlockFlow>(*parent()))
-        return;
-    downcast<RenderBlockFlow>(*parent()).ensureLineBoxes();
-}
-
 int RenderLineBreak::caretMinOffset() const
 {
     return 0;
@@ -151,8 +144,6 @@ VisiblePosition RenderLineBreak::positionForPoint(const LayoutPoint&, const Rend
 
 void RenderLineBreak::setSelectionState(HighlightState state)
 {
-    if (state != HighlightState::None)
-        ensureLineBoxes();
     RenderBoxModelObject::setSelectionState(state);
     if (!m_inlineBoxWrapper)
         return;

@@ -167,7 +167,6 @@ public:
     void setCandidateComputedTextSize(float size) { m_candidateComputedTextSize = size; }
 #endif
 
-    void ensureLineBoxes();
     bool usesComplexLineLayoutPath() const;
 
     StringView stringView(unsigned start = 0, Optional<unsigned> stop = WTF::nullopt) const;

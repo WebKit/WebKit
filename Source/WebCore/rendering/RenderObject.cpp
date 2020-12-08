@@ -41,6 +41,7 @@
 #include "HTMLTableCellElement.h"
 #include "HTMLTableElement.h"
 #include "HitTestResult.h"
+#include "LayoutIntegrationLineLayout.h"
 #include "LogicalSelectionOffsetCaches.h"
 #include "Page.h"
 #include "PseudoElement.h"
@@ -1733,6 +1734,18 @@ bool RenderObject::useDarkAppearance() const
 OptionSet<StyleColor::Options> RenderObject::styleColorOptions() const
 {
     return document().styleColorOptions(&style());
+}
+
+void RenderObject::setSelectionState(HighlightState state)
+{
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+    if (state != HighlightState::None) {
+        if (auto* lineLayout = LayoutIntegration::LineLayout::containing(*this))
+            lineLayout->flow().ensureLineBoxes();
+    }
+#endif
+
+    m_bitfields.setSelectionState(state);
 }
 
 bool RenderObject::canUpdateSelectionOnRootLineBoxes()

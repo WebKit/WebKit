@@ -658,7 +658,7 @@ public:
     // The current selection state for an object.  For blocks, the state refers to the state of the leaf
     // descendants (as described above in the HighlightState enum declaration).
     HighlightState selectionState() const { return m_bitfields.selectionState(); }
-    virtual void setSelectionState(HighlightState state) { m_bitfields.setSelectionState(state); }
+    virtual void setSelectionState(HighlightState);
     inline void setSelectionStateIfNeeded(HighlightState);
     bool canUpdateSelectionOnRootLineBoxes();
 

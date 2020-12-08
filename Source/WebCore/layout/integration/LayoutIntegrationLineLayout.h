@@ -92,6 +92,7 @@ public:
 
     const RenderObject& rendererForLayoutBox(const Layout::Box&) const;
     const RenderBlockFlow& flow() const { return m_boxTree.flow(); }
+    RenderBlockFlow& flow() { return m_boxTree.flow(); }
 
     static void releaseCaches(RenderView&);
 
@@ -105,8 +106,6 @@ private:
     void constructContent();
     InlineContent& ensureInlineContent();
     void updateLayoutBoxDimensions(const RenderBox&);
-
-    RenderBlockFlow& flow() { return m_boxTree.flow(); }
 
     const Layout::ContainerBox& rootLayoutBox() const;
     Layout::ContainerBox& rootLayoutBox();
