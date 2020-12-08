@@ -772,8 +772,8 @@
 		7C44697E25377A020024290A /* PreferencesTemplates */ = {
 			isa = PBXGroup;
 			children = (
-				7CD4A69525507EF8007A5382 /* TestOptionsGeneratedWebKitLegacyKeyMapping.cpp.erb */,
 				7C44697F25377A020024290A /* TestOptionsGeneratedKeys.h.erb */,
+				7CD4A69525507EF8007A5382 /* TestOptionsGeneratedWebKitLegacyKeyMapping.cpp.erb */,
 			);
 			path = PreferencesTemplates;
 			sourceTree = "<group>";

@@ -1,3 +1,10 @@
+2020-12-07  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Unreviewed sort-Xcode-project-file
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * jsc-cli/jsc-cli.xcodeproj/project.pbxproj:
+
 2020-12-07  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed API test gardening, disable failing tests on Big Sur.

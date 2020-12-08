@@ -65,8 +65,8 @@
            isa = PBXFrameworksBuildPhase;
            buildActionMask = 2147483647;
            files = (
-               C296621118ADF56000752922 /* JavaScriptCore.framework in Frameworks */,
                C246590518902ACE0029092E /* Foundation.framework in Frameworks */,
+               C296621118ADF56000752922 /* JavaScriptCore.framework in Frameworks */,
            );
            runOnlyForDeploymentPostprocessing = 0;
        };
@@ -109,8 +109,8 @@
        C246590318902ACE0029092E /* Frameworks */ = {
            isa = PBXGroup;
            children = (
-               C296621018ADF56000752922 /* JavaScriptCore.framework */,
                C246590418902ACE0029092E /* Foundation.framework */,
+               C296621018ADF56000752922 /* JavaScriptCore.framework */,
            );
            name = Frameworks;
            sourceTree = "<group>";
@@ -118,17 +118,17 @@
        C246590618902ACE0029092E /* jsc-cli */ = {
            isa = PBXGroup;
            children = (
-               C246590718902ACE0029092E /* main.m */,
                C246591218902B910029092E /* CLIInstance.h */,
                C246591318902B910029092E /* CLIInstance.m */,
                C246591518902C420029092E /* JSModule.h */,
                C246591618902C420029092E /* JSModule.m */,
                C246591818902CCC0029092E /* JSRunLoopThread.h */,
                C246591918902CCC0029092E /* JSRunLoopThread.m */,
-               C246591B18902D100029092E /* RunLoopThread.h */,
-               C246591C18902D100029092E /* RunLoopThread.m */,
+               C246590718902ACE0029092E /* main.m */,
                C246591E18902E150029092E /* ReadEvalPrintLoop.h */,
                C246591F18902E150029092E /* ReadEvalPrintLoop.m */,
+               C246591B18902D100029092E /* RunLoopThread.h */,
+               C246591C18902D100029092E /* RunLoopThread.m */,
                C246592118902EA40029092E /* ScriptInputSource.h */,
                C246592218902EA40029092E /* ScriptInputSource.m */,
            );
@@ -187,13 +187,13 @@
            isa = PBXSourcesBuildPhase;
            buildActionMask = 2147483647;
            files = (
-               C246591A18902CCC0029092E /* JSRunLoopThread.m in Sources */,
-               C246592018902E150029092E /* ReadEvalPrintLoop.m in Sources */,
-               C246592318902EA40029092E /* ScriptInputSource.m in Sources */,
-               C246590818902ACE0029092E /* main.m in Sources */,
                C246591418902B910029092E /* CLIInstance.m in Sources */,
-               C246591D18902D100029092E /* RunLoopThread.m in Sources */,
                C246591718902C420029092E /* JSModule.m in Sources */,
+               C246591A18902CCC0029092E /* JSRunLoopThread.m in Sources */,
+               C246590818902ACE0029092E /* main.m in Sources */,
+               C246592018902E150029092E /* ReadEvalPrintLoop.m in Sources */,
+               C246591D18902D100029092E /* RunLoopThread.m in Sources */,
+               C246592318902EA40029092E /* ScriptInputSource.m in Sources */,
            );
            runOnlyForDeploymentPostprocessing = 0;
        };
