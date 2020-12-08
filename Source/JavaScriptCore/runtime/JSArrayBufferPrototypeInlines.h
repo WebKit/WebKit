@@ -26,6 +26,7 @@
 #pragma once
 
 #include "JSArrayBufferPrototype.h"
+#include "JSGlobalObject.h"
 
 namespace JSC  {
 
