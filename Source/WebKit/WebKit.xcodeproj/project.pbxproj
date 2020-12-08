@@ -46,6 +46,17 @@
 			name = "Apply Configuration to XCFileLists";
 			productName = "Apply Configuration to XCFileLists";
 		};
+		942DB232257EE6D4009BD80A /* EmptyDSTROOT */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 942DB236257EE6D4009BD80A /* Build configuration list for PBXAggregateTarget "EmptyDSTROOT" */;
+			buildPhases = (
+				942DB245257EE6DF009BD80A /* Create /usr/local to work around XBS Bug <rdar://problem/20388650> */,
+			);
+			dependencies = (
+			);
+			name = EmptyDSTROOT;
+			productName = EmptyDSTROOT;
+		};
 		A7AADA1019395CA9003EA1C7 /* Sandbox Profiles */ = {
 			isa = PBXAggregateTarget;
 			buildConfigurationList = A7AADA1419395CA9003EA1C7 /* Build configuration list for PBXAggregateTarget "Sandbox Profiles" */;
@@ -12576,6 +12587,9 @@
 						CreatedOnToolsVersion = 10.1;
 						ProvisioningStyle = Automatic;
 					};
+					942DB232257EE6D4009BD80A = {
+						CreatedOnToolsVersion = 12.4;
+					};
 					E1AC2E2720F7B94C00B0897D = {
 						CreatedOnToolsVersion = 9.3;
 						ProvisioningStyle = Automatic;
@@ -12609,6 +12623,7 @@
 				A7AADA1019395CA9003EA1C7 /* Sandbox Profiles */,
 				E1AC2E2720F7B94C00B0897D /* Unlock Keychain */,
 				5325BDCD21DFF47700A0DEE1 /* Apply Configuration to XCFileLists */,
+				942DB232257EE6D4009BD80A /* EmptyDSTROOT */,
 			);
 		};
 /* End PBXProject section */
@@ -13119,6 +13134,24 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "if [[ \"${DEPLOYMENT_LOCATION}\" == \"YES\" ]]; then\n    exit\nfi\n\nif [[ ${WK_PLATFORM_NAME} != \"macosx\" ]]; then\n    XPC_SERVICES_PATH=\"${BUILT_PRODUCTS_DIR}/WebKit.framework/XPCServices\"\n    BUILT_PRODUCTS_DIR_RELATIVE_PATH_FROM_XPC_SERVICES=\"../..\"\nelse\n    XPC_SERVICES_PATH=\"${BUILT_PRODUCTS_DIR}/WebKit.framework/Versions/A/XPCServices\"\n    BUILT_PRODUCTS_DIR_RELATIVE_PATH_FROM_XPC_SERVICES=\"../../../..\"\nfi\n\nmkdir -p \"${XPC_SERVICES_PATH}\"\nln -sFh \"${BUILT_PRODUCTS_DIR_RELATIVE_PATH_FROM_XPC_SERVICES}/com.apple.WebKit.WebContent.xpc\" \"${XPC_SERVICES_PATH}/com.apple.WebKit.WebContent.xpc\"\nln -sFh \"${BUILT_PRODUCTS_DIR_RELATIVE_PATH_FROM_XPC_SERVICES}/com.apple.WebKit.Networking.xpc\" \"${XPC_SERVICES_PATH}/com.apple.WebKit.Networking.xpc\"\nln -sFh \"${BUILT_PRODUCTS_DIR_RELATIVE_PATH_FROM_XPC_SERVICES}/com.apple.WebKit.GPU.xpc\" \"${XPC_SERVICES_PATH}/com.apple.WebKit.GPU.xpc\"\nln -sFh \"${BUILT_PRODUCTS_DIR_RELATIVE_PATH_FROM_XPC_SERVICES}/com.apple.WebKit.WebAuthn.xpc\" \"${XPC_SERVICES_PATH}/com.apple.WebKit.WebAuthn.xpc\"\n\nif [[ ${WK_PLATFORM_NAME} == macosx ]]; then\n    ln -sFh \"${BUILT_PRODUCTS_DIR_RELATIVE_PATH_FROM_XPC_SERVICES}/com.apple.WebKit.Plugin.64.xpc\" \"${XPC_SERVICES_PATH}/com.apple.WebKit.Plugin.64.xpc\"\nfi\n";
+		};
+		942DB245257EE6DF009BD80A /* Create /usr/local to work around XBS Bug <rdar://problem/20388650> */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Create /usr/local to work around XBS Bug <rdar://problem/20388650>";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "mkdir -p ${DSTROOT}/usr/local\n";
 		};
 		99CA3862207286DB00BAD578 /* Copy WebDriver Atoms to Framework Private Headers */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -14067,6 +14100,24 @@
 			};
 			name = Production;
 		};
+		942DB233257EE6D4009BD80A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		942DB234257EE6D4009BD80A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		942DB235257EE6D4009BD80A /* Production */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Production;
+		};
 		A7AADA1119395CA9003EA1C7 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 37E83D401B37D27B002079EE /* SandboxProfiles.xcconfig */;
@@ -14296,6 +14347,16 @@
 				5742A2F42535613F00B7BA14 /* Debug */,
 				5742A2F52535613F00B7BA14 /* Release */,
 				5742A2F62535613F00B7BA14 /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
+		942DB236257EE6D4009BD80A /* Build configuration list for PBXAggregateTarget "EmptyDSTROOT" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				942DB233257EE6D4009BD80A /* Debug */,
+				942DB234257EE6D4009BD80A /* Release */,
+				942DB235257EE6D4009BD80A /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;
