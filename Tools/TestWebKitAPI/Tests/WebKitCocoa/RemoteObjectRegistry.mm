@@ -126,6 +126,51 @@ TEST(WebKit, RemoteObjectRegistry)
 
         isDone = false;
 
+        NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"https://webkit.org/"]];
+        NSHTTPURLResponse *response = [[[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@"https://webkit.org/"] statusCode:200 HTTPVersion:@"HTTP/1.1" headerFields:@{ @"testFieldName" : @"testFieldValue" }] autorelease];
+        NSError *error = [NSError errorWithDomain:@"testDomain" code:123 userInfo:@{@"a":@"b"}];
+        NSURLProtectionSpace *protectionSpace = [[[NSURLProtectionSpace alloc] initWithHost:@"testHost" port:80 protocol:@"testProtocol" realm:@"testRealm" authenticationMethod:NSURLAuthenticationMethodHTTPDigest] autorelease];
+        NSURLCredential *credential = [NSURLCredential credentialWithUser:@"testUser" password:@"testPassword" persistence:NSURLCredentialPersistenceForSession];
+        id<NSURLAuthenticationChallengeSender> sender = nil;
+        NSURLAuthenticationChallenge *challenge = [[[NSURLAuthenticationChallenge alloc] initWithProtectionSpace:protectionSpace proposedCredential:credential previousFailureCount:42 failureResponse:response error:error sender:sender] autorelease];
+        [object sendRequest:request response:response challenge:challenge error:error completionHandler:^(NSURLRequest *deserializedRequest, NSURLResponse *deserializedResponse, NSURLAuthenticationChallenge *deserializedChallenge, NSError *deserializedError) {
+            EXPECT_WK_STREQ(deserializedRequest.URL.absoluteString, "https://webkit.org/");
+            EXPECT_WK_STREQ([(NSHTTPURLResponse *)deserializedResponse allHeaderFields][@"testFieldName"], "testFieldValue");
+            EXPECT_WK_STREQ(deserializedChallenge.protectionSpace.realm, "testRealm");
+            EXPECT_WK_STREQ(deserializedError.domain, "testDomain");
+            isDone = true;
+        }];
+        TestWebKitAPI::Util::run(&isDone);
+
+        isDone = false;
+
+        bool exceptionThrown = false;
+        NSMutableDictionary *child = [NSMutableDictionary dictionaryWithObjectsAndKeys:@"foo", @"name", [NSNumber numberWithInt:1], @"value", nil];
+        NSMutableDictionary *dictionaryWithCycle = [NSMutableDictionary dictionaryWithObjectsAndKeys:@"root", @"name", child, @"child", nil];
+        [child setValue:dictionaryWithCycle forKey:@"parent"]; // Creates a cycle.
+        @try {
+            [object takeDictionary:dictionaryWithCycle completionHandler:^(NSDictionary* value) {
+                NSString *name = [value objectForKey:@"name"];
+                EXPECT_WK_STREQ(@"root", name);
+                NSDictionary *child = [value objectForKey:@"child"];
+                EXPECT_TRUE(!!child);
+                NSString* childName = [child objectForKey:@"name"];
+                EXPECT_WK_STREQ(@"foo", childName);
+                NSNumber *childValue = [child objectForKey:@"value"];
+                EXPECT_EQ(1, [childValue integerValue]);
+                // We should have encoded parent as an empty NSDictionary.
+                NSDictionary *childParent = [child objectForKey:@"parent"];
+                EXPECT_TRUE(!!childParent);
+                EXPECT_EQ(0U, [childParent count]);
+                isDone = true;
+            }];
+            TestWebKitAPI::Util::run(&isDone);
+            isDone = false;
+        } @catch (NSException *e) {
+            exceptionThrown = true;
+        }
+        EXPECT_FALSE(exceptionThrown);
+
         class DoneWhenDestroyed : public RefCounted<DoneWhenDestroyed> {
         public:
             DoneWhenDestroyed(bool& isDone)
@@ -141,22 +186,6 @@ TEST(WebKit, RemoteObjectRegistry)
             }];
         }
 
-        TestWebKitAPI::Util::run(&isDone);
-
-        NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"https://webkit.org/"]];
-        NSHTTPURLResponse *response = [[[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@"https://webkit.org/"] statusCode:200 HTTPVersion:@"HTTP/1.1" headerFields:@{ @"testFieldName" : @"testFieldValue" }] autorelease];
-        NSError *error = [NSError errorWithDomain:@"testDomain" code:123 userInfo:@{@"a":@"b"}];
-        NSURLProtectionSpace *protectionSpace = [[[NSURLProtectionSpace alloc] initWithHost:@"testHost" port:80 protocol:@"testProtocol" realm:@"testRealm" authenticationMethod:NSURLAuthenticationMethodHTTPDigest] autorelease];
-        NSURLCredential *credential = [NSURLCredential credentialWithUser:@"testUser" password:@"testPassword" persistence:NSURLCredentialPersistenceForSession];
-        id<NSURLAuthenticationChallengeSender> sender = nil;
-        NSURLAuthenticationChallenge *challenge = [[[NSURLAuthenticationChallenge alloc] initWithProtectionSpace:protectionSpace proposedCredential:credential previousFailureCount:42 failureResponse:response error:error sender:sender] autorelease];
-        [object sendRequest:request response:response challenge:challenge error:error completionHandler:^(NSURLRequest *deserializedRequest, NSURLResponse *deserializedResponse, NSURLAuthenticationChallenge *deserializedChallenge, NSError *deserializedError) {
-            EXPECT_WK_STREQ(deserializedRequest.URL.absoluteString, "https://webkit.org/");
-            EXPECT_WK_STREQ([(NSHTTPURLResponse *)deserializedResponse allHeaderFields][@"testFieldName"], "testFieldValue");
-            EXPECT_WK_STREQ(deserializedChallenge.protectionSpace.realm, "testRealm");
-            EXPECT_WK_STREQ(deserializedError.domain, "testDomain");
-            isDone = true;
-        }];
         TestWebKitAPI::Util::run(&isDone);
     }
 }

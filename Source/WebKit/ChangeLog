@@ -1,3 +1,22 @@
+2020-12-08  Chris Dumez  <cdumez@apple.com>
+
+        Potential crash under [WKRemoteObjectEncoder encodeObject:forKey:] when the object graph contains a cycle
+        https://bugs.webkit.org/show_bug.cgi?id=219620
+        <rdar://71551776>
+
+        Reviewed by Geoffrey Garen.
+
+        Update WKRemoteObjectEncoder to detect cycles when encoding objects. When a cycle is detected, we
+        first attempt to encode a default-initialized object of the same type instead. If that fails, we
+        raise a NSInvalidArgumentException.
+
+        Based on crashes in the wild, we have evidence that such cycles are occuring and I suspect this is
+        caused by Norton Safe Web extension somehow.
+
+        * Shared/API/Cocoa/WKRemoteObjectCoder.mm:
+        (-[WKRemoteObjectEncoder init]):
+        (encodeObject):
+
 2020-12-08  Simon Fraser  <simon.fraser@apple.com>
 
         Make ScrollingPerformanceLoggingEnabled an internal debug preference
