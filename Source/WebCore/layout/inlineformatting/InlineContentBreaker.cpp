@@ -283,8 +283,16 @@ Optional<TrailingTextContent> InlineContentBreaker::processOverflowingTextConten
                     // Try not break content at inline box boundary
                     // e.g. <span>fits</span><span>overflows</span>
                     // when the text "overflows" completely overflows, let's not wrap the content at '<span>'.
-                    if (trailingCandidateIndex && runs[trailingCandidateIndex].inlineItem.isInlineBoxStart())
+                    auto isAtInlineBox = runs[trailingCandidateIndex].inlineItem.isInlineBoxStart();
+                    if (isAtInlineBox) {
+                        if (!trailingCandidateIndex) {
+                            // This content starts at an inline box and clearly does not fit.
+                            // Let's wrap this content over to the next line
+                            // e.g <span>this_content_does_not_fit</span>
+                            return TrailingTextContent { 0, true, { } };
+                        }
                         --trailingCandidateIndex;
+                    }
                     return TrailingTextContent { trailingCandidateIndex, false, { } };
                 }
                 // Sometimes we can't accommodate even the very first character.
