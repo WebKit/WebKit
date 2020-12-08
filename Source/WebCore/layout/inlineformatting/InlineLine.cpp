@@ -373,11 +373,14 @@ bool Line::isRunConsideredEmpty(const Run& run) const
 
 void Line::addTrailingHyphen(InlineLayoutUnit hyphenLogicalWidth)
 {
-    ASSERT(!m_runs.isEmpty());
-    auto& lastRun = m_runs.last();
-    ASSERT(lastRun.isText());
-    lastRun.setNeedsHyphen(hyphenLogicalWidth);
-    m_contentLogicalWidth += hyphenLogicalWidth;
+    for (auto& run : WTF::makeReversedRange(m_runs)) {
+        if (!run.isText())
+            continue;
+        run.setNeedsHyphen(hyphenLogicalWidth);
+        m_contentLogicalWidth += hyphenLogicalWidth;
+        return;
+    }
+    ASSERT_NOT_REACHED();
 }
 
 const InlineFormattingContext& Line::formattingContext() const
