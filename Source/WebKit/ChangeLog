@@ -1,3 +1,35 @@
+2020-12-08  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Stop leaking an XPC boost message to XPC services
+        https://bugs.webkit.org/show_bug.cgi?id=219453
+
+        Reviewed by Geoffrey Garen.
+
+        Stop leaking an XPC boost message to XPC services on builds where RunningBoard is able to give the right
+        priorities to our XPC services based on the type of RunningBoard assertion is being held. There is no
+        behavior change for the Network/WebContent processes since those were blocklisted in RunningBoard (Turning
+        on the RB_full_manage_WK_jetsam feature flag gives us the default RunningBoard behavior without
+        blocklisting). However, this allows the new GPUProcess to move to IDLE jetsam band when homing out of
+        MobileSafari, which makes the GPUProcess eligible for the freezer. Previously, the leaked boost message
+        would keep the GPUProcess in a higher jetsam band.
+
+        * FeatureFlags/WebKit.plist:
+        Add RB_full_manage_WK_jetsam feature flag and turn it on. On recent enough builds of RunningBoard, this
+        disables the blocklisting of the WebContent/Network processes in RunningBoard so that RunningBoard can now
+        set the priority of those processes (instead of us boosting our priority via boost messages).
+
+        * GPUProcess/EntryPoint/Cocoa/XPCService/GPUService/Info-iOS.plist:
+        * NetworkProcess/EntryPoint/Cocoa/XPCService/NetworkService/Info-iOS.plist:
+        * WebAuthnProcess/EntryPoint/Cocoa/XPCService/WebAuthnService/Info-iOS.plist:
+        * WebProcess/EntryPoint/Cocoa/XPCService/WebContentService/Info-iOS.plist:
+        Set _ProcessType=App so that RunningBoard is able to set the priority of our XPC services on iOS. Without
+        this change, we get a permission denied when RunningBoard attempts to set the priority of our XPC services.
+
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::shouldLeakBoost):
+        Stop leaking a boost message on iOS when RUNNINGBOARD_WEBKIT_PRIORITY_SUPPORT compile-time flag is enabled
+        and when the RB_full_manage_WK_jetsam feature flag is enabled.
+
 2020-12-08  Ryan Hostetler  <rhost@apple.com>
 
         Add target to create /usr/local to work around XBS Bug <rdar://problem/20388650>
