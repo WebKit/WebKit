@@ -982,7 +982,9 @@
     (with report) (with telemetry-backtrace)
 #endif
     (global-name "com.apple.SystemConfiguration.configd")
+#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 110000
     (global-name "com.apple.assertiond.processassertionconnection")
+#endif
     (global-name "com.apple.fonts")
     (global-name "com.apple.PowerManagement.control")
 )

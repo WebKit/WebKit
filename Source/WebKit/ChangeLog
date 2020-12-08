@@ -1,3 +1,18 @@
+2020-12-08  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Deny mach-lookup to the service 'com.apple.assertiond.processassertionconnection' in the WebContent process
+        https://bugs.webkit.org/show_bug.cgi?id=219637
+        <rdar://problem/69019269>
+
+        Reviewed by Darin Adler.
+
+        Deny mach-lookup to the service 'com.apple.assertiond.processassertionconnection' in the WebContent process on macOS,
+        since there are no reports of this service being used.
+
+        No new tests, since the result will depend on macOS version.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2020-12-08  Alex Christensen  <achristensen@webkit.org>
 
         Remove NSString overrelease in _WKUserContentExtensionStore
