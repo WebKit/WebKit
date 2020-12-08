@@ -756,8 +756,9 @@ class ValidateCommiterAndReviewer(buildstep.BuildStep):
         contributors = {}
         for key, value in contributors_json.iteritems():
             emails = value.get('emails')
-            for email in emails:
-                contributors[email.lower()] = {'name': key, 'status': value.get('status')}
+            if emails:
+                bugzilla_email = emails[0].lower()  # We're requiring that the first email is the primary bugzilla email
+                contributors[bugzilla_email] = {'name': key, 'status': value.get('status')}
         return contributors
 
     @defer.inlineCallbacks

@@ -1,3 +1,14 @@
+2020-12-08  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] commit-queue should use only the first email from contributors.json to validate committers and reviewers
+        https://bugs.webkit.org/show_bug.cgi?id=219608
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/ews-build/steps.py:
+        (ValidateCommiterAndReviewer.load_contributors): Use only first email for validating commiters and reviewers.
+        * Scripts/webkitpy/common/config/contributors.json: Correct Antoine Quint's and Justin Michaud's active accounts.
+
 2020-12-07  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Unreviewed sort-Xcode-project-file
