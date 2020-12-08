@@ -1,3 +1,10 @@
+2020-12-07  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed API test gardening, disable failing tests on Big Sur.
+
+        * TestWebKitAPI/Tests/WebKit/PreferenceChanges.mm:
+        (TEST):
+
 2020-12-04  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed API test gardening, disable failing tests on Big Sur.

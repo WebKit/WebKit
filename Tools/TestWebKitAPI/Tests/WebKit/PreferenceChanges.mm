@@ -228,7 +228,6 @@ TEST(WebKit, PreferenceChangesArray)
 
     CLEAR_DEFAULTS();
 }
-#endif
 
 TEST(WebKit, PreferenceChangesDictionary)
 {
@@ -276,8 +275,6 @@ TEST(WebKit, PreferenceChangesDictionary)
     CLEAR_DEFAULTS();
 }
 
-// FIXME: Re-enable this test once rdar://70966379 is resolved.
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 110000
 TEST(WebKit, PreferenceChangesData)
 {
     CLEAR_DEFAULTS();
