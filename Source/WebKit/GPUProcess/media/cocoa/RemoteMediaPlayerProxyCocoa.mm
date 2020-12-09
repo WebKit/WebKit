@@ -55,11 +55,6 @@ void RemoteMediaPlayerProxy::mediaPlayerFirstVideoFrameAvailable()
     m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::FirstVideoFrameAvailable(), m_id);
 }
 
-void RemoteMediaPlayerProxy::mediaPlayerRenderingModeChanged()
-{
-    m_inlineLayerHostingContext->setRootLayer(m_player->platformLayer());
-}
-
 void RemoteMediaPlayerProxy::setVideoInlineSizeFenced(const WebCore::IntSize& size, const WTF::MachSendRight& machSendRight)
 {
     m_inlineLayerHostingContext->setFencePort(machSendRight.sendRight());

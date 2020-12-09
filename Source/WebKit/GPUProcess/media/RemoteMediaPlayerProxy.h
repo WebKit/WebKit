@@ -196,6 +196,8 @@ public:
 
 private:
     // MediaPlayerClient
+    void mediaPlayerCharacteristicChanged() final;
+    void mediaPlayerRenderingModeChanged() final;
     void mediaPlayerNetworkStateChanged() final;
     void mediaPlayerReadyStateChanged() final;
     void mediaPlayerVolumeChanged() final;
@@ -204,7 +206,10 @@ private:
     void mediaPlayerDurationChanged() final;
     void mediaPlayerRateChanged() final;
     void mediaPlayerPlaybackStateChanged() final;
+    void mediaPlayerResourceNotSupported() final;
     void mediaPlayerEngineFailedToLoad() const final;
+    void mediaPlayerEngineUpdated() final;
+    void mediaPlayerActiveSourceBuffersChanged() final;
     void mediaPlayerBufferedTimeRangesChanged() final;
     void mediaPlayerSeekableTimeRangesChanged() final;
     bool mediaPlayerRenderingCanBeAccelerated() final;
@@ -217,13 +222,8 @@ private:
     void mediaPlayerDidRemoveTextTrack(WebCore::InbandTextTrackPrivate&) final;
 
     // Not implemented
-    void mediaPlayerResourceNotSupported() final;
     void mediaPlayerSizeChanged() final;
-    void mediaPlayerEngineUpdated() final;
     void mediaPlayerFirstVideoFrameAvailable() final;
-    void mediaPlayerCharacteristicChanged() final;
-    void mediaPlayerRenderingModeChanged() final;
-    void mediaPlayerActiveSourceBuffersChanged() final;
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     RefPtr<ArrayBuffer> mediaPlayerCachedKeyForKeyId(const String&) const final;

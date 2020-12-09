@@ -1,3 +1,32 @@
+2020-12-08  Peng Liu  <peng.liu6@apple.com>
+
+        [Media in GPU Process][MSE] The GPU Process may crash in the destructor of MediaPlayerPrivateMediaSourceAVFObjC
+        https://bugs.webkit.org/show_bug.cgi?id=219622
+
+        Reviewed by Eric Carlson.
+
+        The purpose of `mediaPlayerRenderingModeChanged()` callback is to notify the media element
+        that the player's rendering mode is changed, including the case that the layer is destroyed.
+        So we should not operate on the layer in this function.
+
+        With this patch, `RemoteMediaPlayerProxy` forwards the callback from the GPU process to
+        the Web process. This patch also cleans up `RemoteMediaPlayerProxy.h`.
+
+        * GPUProcess/media/RemoteMediaPlayerProxy.cpp:
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerRenderingModeChanged):
+        * GPUProcess/media/RemoteMediaPlayerProxy.h:
+        * GPUProcess/media/cocoa/RemoteMediaPlayerProxyCocoa.mm:
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerRenderingModeChanged): Deleted.
+        * GPUProcess/media/gstreamer/RemoteMediaPlayerProxyGStreamer.cpp:
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerRenderingModeChanged): Deleted.
+        * GPUProcess/media/win/RemoteMediaPlayerProxyWin.cpp:
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerRenderingModeChanged): Deleted.
+
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        (WebKit::MediaPlayerPrivateRemote::renderingModeChanged):
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.h:
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.messages.in:
+
 2020-12-08  Chris Dumez  <cdumez@apple.com>
 
         Potential crash under [WKRemoteObjectEncoder encodeObject:forKey:] when the object graph contains a cycle

@@ -459,6 +459,11 @@ bool RemoteMediaPlayerProxy::mediaPlayerRenderingCanBeAccelerated()
     return m_renderingCanBeAccelerated;
 }
 
+void RemoteMediaPlayerProxy::mediaPlayerRenderingModeChanged()
+{
+    m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::RenderingModeChanged(), m_id);
+}
+
 TrackPrivateRemoteIdentifier RemoteMediaPlayerProxy::addRemoteAudioTrackProxy(WebCore::AudioTrackPrivate& track)
 {
 #if !RELEASE_LOG_DISABLED

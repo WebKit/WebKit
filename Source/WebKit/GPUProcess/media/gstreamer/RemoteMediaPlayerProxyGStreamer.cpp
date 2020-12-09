@@ -43,11 +43,6 @@ void RemoteMediaPlayerProxy::mediaPlayerFirstVideoFrameAvailable()
     notImplemented();
 }
 
-void RemoteMediaPlayerProxy::mediaPlayerRenderingModeChanged()
-{
-    notImplemented();
-}
-
 } // namespace WebKit
 
 

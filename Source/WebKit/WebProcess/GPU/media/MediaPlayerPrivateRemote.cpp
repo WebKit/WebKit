@@ -350,6 +350,12 @@ void MediaPlayerPrivateRemote::firstVideoFrameAvailable()
     m_player->firstVideoFrameAvailable();
 }
 
+void MediaPlayerPrivateRemote::renderingModeChanged()
+{
+    INFO_LOG(LOGIDENTIFIER);
+    m_player->renderingModeChanged();
+}
+
 String MediaPlayerPrivateRemote::engineDescription() const
 {
     return m_configuration.engineDescription;
