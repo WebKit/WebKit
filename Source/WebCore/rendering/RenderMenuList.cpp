@@ -273,9 +273,10 @@ void RenderMenuList::setText(const String& s)
 {
     String textToUse = s.isEmpty() ? "\n"_str : s;
 
-    if (m_buttonText)
+    if (m_buttonText) {
         m_buttonText->setText(textToUse.impl(), true);
-    else {
+        m_buttonText->dirtyLineBoxes(false);
+    } else {
         auto newButtonText = createRenderer<RenderText>(document(), textToUse);
         m_buttonText = makeWeakPtr(*newButtonText);
         // FIXME: This mutation should go through the normal RenderTreeBuilder path.
