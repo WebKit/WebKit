@@ -127,6 +127,9 @@ void RemoteRenderingBackend::createImageBuffer(const FloatSize& logicalSize, Ren
     }
 
     m_remoteResourceCache.cacheImageBuffer(makeRef(*imageBuffer));
+
+    if (m_pendingWakeupInfo && m_pendingWakeupInfo->shouldPerformWakeup(renderingResourceIdentifier))
+        wakeUpAndApplyDisplayList(std::exchange(m_pendingWakeupInfo, WTF::nullopt)->arguments);
 }
 
 DisplayList::ReplayResult RemoteRenderingBackend::submit(const DisplayList::DisplayList& displayList, ImageBuffer& destination)
@@ -190,12 +193,19 @@ RefPtr<ImageBuffer> RemoteRenderingBackend::nextDestinationImageBufferAfterApply
         if (result.reasonForStopping == DisplayList::StopReplayReason::ChangeDestinationImageBuffer) {
             destination = makeRefPtr(m_remoteResourceCache.cachedImageBuffer(*result.nextDestinationImageBuffer));
             if (!destination) {
-                ASSERT(!m_pendingWakeupArguments);
-                m_pendingWakeupArguments = {{ handle.identifier(), offset, *result.nextDestinationImageBuffer }};
+                ASSERT(!m_pendingWakeupInfo);
+                m_pendingWakeupInfo = {{{ handle.identifier(), offset, *result.nextDestinationImageBuffer }, WTF::nullopt }};
             }
         }
 
-        if (m_pendingWakeupArguments)
+        if (result.reasonForStopping == DisplayList::StopReplayReason::MissingCachedResource) {
+            m_pendingWakeupInfo = {{
+                { handle.identifier(), offset, destination->renderingResourceIdentifier() },
+                result.missingCachedResourceIdentifier
+            }};
+        }
+
+        if (m_pendingWakeupInfo)
             break;
 
         if (!sizeToRead)
@@ -224,12 +234,15 @@ void RemoteRenderingBackend::wakeUpAndApplyDisplayList(const GPUProcessWakeupMes
 
     destinationImageBuffer = nextDestinationImageBufferAfterApplyingDisplayLists(*destinationImageBuffer, arguments.offset, *initialHandle);
     if (!destinationImageBuffer) {
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT(m_pendingWakeupInfo);
         return;
     }
 
-    while (m_pendingWakeupArguments) {
-        auto nextHandle = m_sharedDisplayListHandles.get(m_pendingWakeupArguments->itemBufferIdentifier);
+    while (m_pendingWakeupInfo) {
+        if (m_pendingWakeupInfo->missingCachedResourceIdentifier)
+            break;
+
+        auto nextHandle = m_sharedDisplayListHandles.get(m_pendingWakeupInfo->arguments.itemBufferIdentifier);
         if (!nextHandle) {
             // If the handle identifier is currently unknown, wait until the GPU process receives an
             // IPC message with a shared memory handle to the next item buffer.
@@ -237,23 +250,23 @@ void RemoteRenderingBackend::wakeUpAndApplyDisplayList(const GPUProcessWakeupMes
         }
 
         // Otherwise, continue reading the next display list item buffer from the start.
-        auto arguments = *std::exchange(m_pendingWakeupArguments, WTF::nullopt);
+        auto arguments = std::exchange(m_pendingWakeupInfo, WTF::nullopt)->arguments;
         destinationImageBuffer = nextDestinationImageBufferAfterApplyingDisplayLists(*destinationImageBuffer, arguments.offset, *nextHandle);
         if (!destinationImageBuffer) {
-            ASSERT_NOT_REACHED();
-            return;
+            RELEASE_ASSERT(m_pendingWakeupInfo);
+            break;
         }
     }
 }
 
 void RemoteRenderingBackend::setNextItemBufferToRead(DisplayList::ItemBufferIdentifier identifier, WebCore::RenderingResourceIdentifier destinationIdentifier)
 {
-    if (UNLIKELY(m_pendingWakeupArguments)) {
+    if (UNLIKELY(m_pendingWakeupInfo)) {
         // FIXME: Add a message check to terminate the web process.
         ASSERT_NOT_REACHED();
         return;
     }
-    m_pendingWakeupArguments = {{ identifier, SharedDisplayListHandle::headerSize(), destinationIdentifier }};
+    m_pendingWakeupInfo = {{{ identifier, SharedDisplayListHandle::headerSize(), destinationIdentifier }, WTF::nullopt }};
 }
 
 void RemoteRenderingBackend::getImageData(AlphaPremultiplication outputFormat, IntRect srcRect, RenderingResourceIdentifier renderingResourceIdentifier, CompletionHandler<void(IPC::ImageDataReference&&)>&& completionHandler)
@@ -266,10 +279,18 @@ void RemoteRenderingBackend::getImageData(AlphaPremultiplication outputFormat, I
 
 void RemoteRenderingBackend::cacheNativeImage(const ShareableBitmap::Handle& handle, RenderingResourceIdentifier renderingResourceIdentifier)
 {
-    if (auto bitmap = ShareableBitmap::create(handle)) {
-        if (auto image = NativeImage::create(bitmap->createPlatformImage(), renderingResourceIdentifier))
-            m_remoteResourceCache.cacheNativeImage(makeRef(*image));
-    }
+    auto bitmap = ShareableBitmap::create(handle);
+    if (!bitmap)
+        return;
+
+    auto image = NativeImage::create(bitmap->createPlatformImage(), renderingResourceIdentifier);
+    if (!image)
+        return;
+
+    m_remoteResourceCache.cacheNativeImage(makeRef(*image));
+
+    if (m_pendingWakeupInfo && m_pendingWakeupInfo->shouldPerformWakeup(renderingResourceIdentifier))
+        wakeUpAndApplyDisplayList(std::exchange(m_pendingWakeupInfo, WTF::nullopt)->arguments);
 }
 
 void RemoteRenderingBackend::releaseRemoteResource(RenderingResourceIdentifier renderingResourceIdentifier)
@@ -288,8 +309,8 @@ void RemoteRenderingBackend::didCreateSharedDisplayListHandle(DisplayList::ItemB
     if (auto sharedMemory = SharedMemory::map(handle.handle, SharedMemory::Protection::ReadWrite))
         m_sharedDisplayListHandles.set(identifier, DisplayListReaderHandle::create(identifier, sharedMemory.releaseNonNull()));
 
-    if (m_pendingWakeupArguments && m_pendingWakeupArguments->itemBufferIdentifier == identifier)
-        wakeUpAndApplyDisplayList(*std::exchange(m_pendingWakeupArguments, WTF::nullopt));
+    if (m_pendingWakeupInfo && m_pendingWakeupInfo->shouldPerformWakeup(identifier))
+        wakeUpAndApplyDisplayList(std::exchange(m_pendingWakeupInfo, WTF::nullopt)->arguments);
 }
 
 Optional<DisplayList::ItemHandle> WARN_UNUSED_RETURN RemoteRenderingBackend::decodeItem(const uint8_t* data, size_t length, DisplayList::ItemType type, uint8_t* handleLocation)

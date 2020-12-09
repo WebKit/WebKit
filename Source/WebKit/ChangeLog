@@ -1,3 +1,45 @@
+2020-12-09  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Concurrent display lists] Support playback of display list items with cached resources
+        https://bugs.webkit.org/show_bug.cgi?id=218614
+        <rdar://problem/71326662>
+
+        Reviewed by Tim Horton.
+
+        Teaches the GPU process to resume playback of display list items that were previously unable to be played back
+        due to missing cached resources. See below for more details.
+
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::createImageBuffer):
+
+        See if the newly created image buffer's ID matches that of the pending wakeup message; if so, immediately kick
+        off the wakeup loop.
+
+        (WebKit::RemoteRenderingBackend::nextDestinationImageBufferAfterApplyingDisplayLists):
+        (WebKit::RemoteRenderingBackend::wakeUpAndApplyDisplayList):
+
+        In the case where the next destination image buffer is unknown, bail early and resume when we eventually learn
+        about the image buffer in the GPU process. This can happen if a MetaCommandChangeDestinationImageBuffer item is
+        added that references a newly created image buffer.
+
+        (WebKit::RemoteRenderingBackend::setNextItemBufferToRead):
+        (WebKit::RemoteRenderingBackend::cacheNativeImage):
+
+        See if the newly cached image's ID matches that of the pending wakeup message; if so, immediately kick off the
+        wakeup loop.
+
+        (WebKit::RemoteRenderingBackend::didCreateSharedDisplayListHandle):
+        * GPUProcess/graphics/RemoteRenderingBackend.h:
+
+        Add a private `PendingWakeupInformation` struct that encapsulates all the information needed to remember that
+        we stopped display list processing, and resume processing in the future. Currently, this contains a set of
+        wakeup message arguments, and (optionally) the identifier of the missing resource that we need to receive in
+        order to continue.
+
+        We also use this in place of storing GPUProcessWakeupMessageArguments on RemoteRenderingBackend.
+
+        (WebKit::RemoteRenderingBackend::PendingWakeupInformation::shouldPerformWakeup const):
+
 2020-12-09  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         Implement RemoteWebGLBackend

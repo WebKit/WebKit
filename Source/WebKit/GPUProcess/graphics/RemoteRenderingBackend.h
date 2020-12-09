@@ -113,11 +113,27 @@ private:
     void releaseRemoteResource(WebCore::RenderingResourceIdentifier);
     void didCreateSharedDisplayListHandle(WebCore::DisplayList::ItemBufferIdentifier, const SharedMemory::IPCHandle&, WebCore::RenderingResourceIdentifier destinationBufferIdentifier);
 
+    struct PendingWakeupInformation {
+        GPUProcessWakeupMessageArguments arguments;
+        Optional<WebCore::RenderingResourceIdentifier> missingCachedResourceIdentifier;
+
+        bool shouldPerformWakeup(WebCore::RenderingResourceIdentifier identifier) const
+        {
+            return arguments.destinationImageBufferIdentifier == identifier
+                || missingCachedResourceIdentifier == identifier;
+        }
+
+        bool shouldPerformWakeup(WebCore::DisplayList::ItemBufferIdentifier identifier) const
+        {
+            return arguments.itemBufferIdentifier == identifier;
+        }
+    };
+
     RemoteResourceCache m_remoteResourceCache;
     WeakPtr<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
     RenderingBackendIdentifier m_renderingBackendIdentifier;
     HashMap<WebCore::DisplayList::ItemBufferIdentifier, RefPtr<DisplayListReaderHandle>> m_sharedDisplayListHandles;
-    Optional<GPUProcessWakeupMessageArguments> m_pendingWakeupArguments;
+    Optional<PendingWakeupInformation> m_pendingWakeupInfo;
 };
 
 } // namespace WebKit
