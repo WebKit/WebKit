@@ -2224,8 +2224,6 @@ webkit.org/b/217641 [ Debug ] imported/w3c/web-platform-tests/xhr/event-timeout.
 
 webkit.org/b/217620 inspector/audit/basic-async.html [ Pass Timeout ]
 
-webkit.org/b/217931 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/moving-between-documents/before-prepare-createHTMLDocument-success-empty-src-module.html [ Pass Failure ]
-
 imported/w3c/web-platform-tests/speech-api/SpeechSynthesis-speak-twice.html [ Skip ]
 imported/w3c/web-platform-tests/speech-api/SpeechSynthesis-speak-with-activation-succeeds.html [ Skip ]
 imported/w3c/web-platform-tests/speech-api/SpeechSynthesis-speak-without-activation-fails.tentative.html [ Skip ]
@@ -2252,16 +2250,6 @@ webkit.org/b/218346 [ Mojave ] fast/text/canvas-color-fonts [ Skip ]
 webkit.org/b/219403 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-candidate-in-sdp.https.html [ Pass Failure ]
 
 webkit.org/b/219460 [ Release ] imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-perfect-negotiation.https.html [ Pass Failure ]
-
-webkit.org/b/219464 [ Debug ] imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/moving-between-documents/before-prepare-createHTMLDocument-parse-error-inline-classic.html [ Pass Failure ]
-webkit.org/b/219464 [ Debug ] imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/moving-between-documents/before-prepare-createHTMLDocument-success-empty-src-classic.html [ Pass Failure ]
-webkit.org/b/219464 [ Debug ] imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/moving-between-documents/before-prepare-createHTMLDocument-success-inline-module.html [ Pass Failure ]
-webkit.org/b/219464 [ Debug ] imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/moving-between-documents/before-prepare-iframe-parse-error-inline-classic.html [ Pass Failure ]
-webkit.org/b/219464 [ Debug ] imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/moving-between-documents/before-prepare-iframe-parse-error-inline-module.html [ Pass Failure ]
-webkit.org/b/219464 [ Debug ] imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/moving-between-documents/before-prepare-iframe-success-empty-src-classic.html [ Pass Failure ]
-webkit.org/b/219464 [ Debug ] imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/moving-between-documents/before-prepare-iframe-success-empty-src-module.html [ Pass Failure ]
-webkit.org/b/219464 [ Debug ] imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/moving-between-documents/before-prepare-iframe-success-inline-classic.html [ Pass Failure ]
-webkit.org/b/219464 [ Debug ] imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/moving-between-documents/before-prepare-iframe-success-inline-module.html [ Pass Failure ]
 
 webkit.org/b/219555 inspector/animation/effectChanged.html [ Pass Timeout ]
 

@@ -1,3 +1,17 @@
+2020-12-08  Sam Sneddon  <gsnedders@apple.com>
+
+        imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/moving-between-documents/before-prepare-* and move-back-* are flaky failures
+        https://bugs.webkit.org/show_bug.cgi?id=219655
+
+        Reviewed by Alexey Proskuryakov.
+
+        * TestExpectations:
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/ios-wk2/TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2020-12-08  Rob Buis  <rbuis@igalia.com>
 
         Support aspect-ratio on non-replaced elements
