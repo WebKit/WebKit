@@ -541,6 +541,10 @@ public:
 
     virtual void animationDidFinishForElement(const Element&) { }
 
+#if PLATFORM(MAC)
+    virtual void changeUniversalAccessZoomFocus(const IntRect&, const IntRect&) { }
+#endif
+
 protected:
     virtual ~ChromeClient() = default;
 };

@@ -27,6 +27,8 @@
 #import "FrameSelection.h"
 
 #import "AXObjectCache.h"
+#import "Chrome.h"
+#import "ChromeClient.h"
 #import "Frame.h"
 #import "RenderView.h"
 
@@ -41,7 +43,7 @@ void FrameSelection::notifyAccessibilityForSelectionChange(const AXTextStateChan
 
 #if !PLATFORM(IOS_FAMILY)
     // if zoom feature is enabled, insertion point changes should update the zoom
-    if (!UAZoomEnabled() || !m_selection.isCaret())
+    if (!m_selection.isCaret())
         return;
 
     RenderView* renderView = m_document->renderView();
@@ -56,14 +58,11 @@ void FrameSelection::notifyAccessibilityForSelectionChange(const AXTextStateChan
 
     selectionRect = frameView->contentsToScreen(selectionRect);
     viewRect = frameView->contentsToScreen(viewRect);
-    NSRect nsCaretRect = NSMakeRect(selectionRect.x(), selectionRect.y(), selectionRect.width(), selectionRect.height());
-    NSRect nsViewRect = NSMakeRect(viewRect.x(), viewRect.y(), viewRect.width(), viewRect.height());
-    nsCaretRect = toUserSpaceForPrimaryScreen(nsCaretRect);
-    nsViewRect = toUserSpaceForPrimaryScreen(nsViewRect);
-    CGRect cgCaretRect = NSRectToCGRect(nsCaretRect);
-    CGRect cgViewRect = NSRectToCGRect(nsViewRect);
 
-    UAZoomChangeFocus(&cgViewRect, &cgCaretRect, kUAZoomFocusTypeInsertionPoint);
+    if (!m_document->page())
+        return;
+    
+    m_document->page()->chrome().client().changeUniversalAccessZoomFocus(viewRect, selectionRect);
 #endif // !PLATFORM(IOS_FAMILY)
 }
 

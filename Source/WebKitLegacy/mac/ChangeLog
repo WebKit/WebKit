@@ -1,3 +1,17 @@
+2020-12-09  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Change Universal Access zoom in the UI process
+        https://bugs.webkit.org/show_bug.cgi?id=219635
+
+        Reviewed by Darin Adler.
+
+        Implement the method changeUniversalAccessZoomFocus in the WebKit legacy chrome client by changing
+        the Universal Access zoom in-process.
+
+        * WebCoreSupport/WebChromeClient.h:
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::changeUniversalAccessZoomFocus):
+
 2020-12-04  Adam Roben  <aroben@apple.com>
 
         More FALLBACK_PLATFORM adoption

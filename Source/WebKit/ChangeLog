@@ -1,3 +1,21 @@
+2020-12-09  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Change Universal Access zoom in the UI process
+        https://bugs.webkit.org/show_bug.cgi?id=219635
+
+        Reviewed by Darin Adler.
+
+        Implement the method changeUniversalAccessZoomFocus in the WebProcess' chrome client, which will send a message
+        to the UI process, where the Universal Access zoom will be changed.
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::changeUniversalAccessZoomFocus):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::changeUniversalAccessZoomFocus):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+
 2020-12-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         iOS build fix after r270573.

@@ -84,6 +84,7 @@
 #import <WebCore/ResourceRequest.h>
 #import <WebCore/SSLKeyGenerator.h>
 #import <WebCore/SerializedCryptoKeyWrap.h>
+#import <WebCore/UniversalAccessZoom.h>
 #import <WebCore/Widget.h>
 #import <WebCore/WindowFeatures.h>
 #import <pal/spi/mac/NSViewSPI.h>
@@ -1170,3 +1171,10 @@ String WebChromeClient::signedPublicKeyAndChallengeString(unsigned keySizeIndex,
         return CallUIDelegate(m_webView, selector);
     return WebCore::signedPublicKeyAndChallengeString(keySizeIndex, challengeString, url);
 }
+
+#if PLATFORM(MAC)
+void WebChromeClient::changeUniversalAccessZoomFocus(const WebCore::IntRect& viewRect, const WebCore::IntRect& selectionRect)
+{
+    WebCore::changeUniversalAccessZoomFocus(viewRect, selectionRect);
+}
+#endif

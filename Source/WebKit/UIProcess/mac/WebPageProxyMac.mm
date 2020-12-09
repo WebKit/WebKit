@@ -58,6 +58,7 @@
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/TextAlternativeWithRange.h>
+#import <WebCore/UniversalAccessZoom.h>
 #import <WebCore/UserAgent.h>
 #import <WebCore/ValidationBubble.h>
 #import <mach-o/dyld.h>
@@ -712,6 +713,13 @@ void WebPageProxy::pdfOpenWithPreview(PDFPluginIdentifier identifier)
 }
 
 #endif // ENABLE(UI_PROCESS_PDF_HUD)
+
+#if PLATFORM(MAC)
+void WebPageProxy::changeUniversalAccessZoomFocus(const WebCore::IntRect& viewRect, const WebCore::IntRect& selectionRect)
+{
+    WebCore::changeUniversalAccessZoomFocus(viewRect, selectionRect);
+}
+#endif
 
 } // namespace WebKit
 

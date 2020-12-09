@@ -1394,4 +1394,11 @@ void WebChromeClient::animationDidFinishForElement(const Element& element)
     m_page.animationDidFinishForElement(element);
 }
 
+#if PLATFORM(MAC)
+void WebChromeClient::changeUniversalAccessZoomFocus(const WebCore::IntRect& viewRect, const WebCore::IntRect& selectionRect)
+{
+    m_page.send(Messages::WebPageProxy::ChangeUniversalAccessZoomFocus(viewRect, selectionRect));
+}
+#endif
+
 } // namespace WebKit

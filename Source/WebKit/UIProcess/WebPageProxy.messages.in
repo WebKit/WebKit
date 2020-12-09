@@ -593,4 +593,8 @@ messages -> WebPageProxy {
 #endif
 
     SetHasExecutedAppBoundBehaviorBeforeNavigation()
+    
+#if PLATFORM(MAC)
+    ChangeUniversalAccessZoomFocus(WebCore::IntRect viewRect, WebCore::IntRect caretRect)
+#endif
 }
