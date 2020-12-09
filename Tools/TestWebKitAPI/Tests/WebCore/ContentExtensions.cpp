@@ -1513,14 +1513,14 @@ TEST_F(ContentExtensionTest, InvalidJSON)
     
     StringBuilder rules;
     rules.append("[");
-    for (unsigned i = 0; i < 49999; ++i)
+    for (unsigned i = 0; i < 149999; ++i)
         rules.append("{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"a\"}},");
-    String rules50000 = rules.toString();
-    String rules50001 = rules.toString();
-    rules50000.append("{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"a\"}}]");
-    rules50001.append("{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"a\"}},{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"a\"}}]");
-    checkCompilerError(rules50000.utf8().data(), { });
-    checkCompilerError(rules50001.utf8().data(), ContentExtensions::ContentExtensionError::JSONTooManyRules);
+    String rules150000 = rules.toString();
+    String rules150001 = rules.toString();
+    rules150000.append("{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"a\"}}]");
+    rules150001.append("{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"a\"}},{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"a\"}}]");
+    checkCompilerError(rules150000.utf8().data(), { });
+    checkCompilerError(rules150001.utf8().data(), ContentExtensions::ContentExtensionError::JSONTooManyRules);
     
     checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":{}}}]", ContentExtensions::ContentExtensionError::JSONInvalidConditionList);
     checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":[5]}}]", ContentExtensions::ContentExtensionError::JSONInvalidConditionList);

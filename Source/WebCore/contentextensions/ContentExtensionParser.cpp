@@ -324,7 +324,7 @@ static Expected<Vector<ContentExtensionRule>, std::error_code> loadEncodedRules(
     Vector<ContentExtensionRule> ruleList;
 
     unsigned length = topLevelArray->length();
-    const unsigned maxRuleCount = 50000;
+    const unsigned maxRuleCount = 150000;
     if (length > maxRuleCount)
         return makeUnexpected(ContentExtensionError::JSONTooManyRules);
     for (unsigned i = 0; i < length; ++i) {

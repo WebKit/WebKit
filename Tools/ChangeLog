@@ -1,3 +1,13 @@
+2020-12-08  Alex Christensen  <achristensen@webkit.org>
+
+        Increase maximum size of WKContentRuleList
+        https://bugs.webkit.org/show_bug.cgi?id=219626
+
+        Reviewed by Geoffrey Garen.
+
+        * TestWebKitAPI/Tests/WebCore/ContentExtensions.cpp:
+        (TestWebKitAPI::TEST_F):
+
 2020-12-08  Devin Rousso  <drousso@apple.com>
 
         [macCatalyst] Enable context menus for WKWebView
