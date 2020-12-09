@@ -1,5 +1,14 @@
 2020-12-08  Ross Kirsling  <ross.kirsling@sony.com>
 
+        Unreviewed debug test fix following r270552.
+
+        * runtime/JSGenericTypedArrayViewConstructorInlines.h:
+        (JSC::constructCustomArrayBufferIfNeeded):
+        (JSC::constructGenericTypedArrayViewWithArguments):
+        Add missing exception check (and rearrange slightly).
+
+2020-12-08  Ross Kirsling  <ross.kirsling@sony.com>
+
         Unreviewed non-unified build fix following r270552.
 
         * runtime/JSArrayBufferPrototypeInlines.h:

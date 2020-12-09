@@ -105,11 +105,13 @@ inline JSObject* constructGenericTypedArrayViewFromIterator(JSGlobalObject* glob
     return result;
 }
 
-inline JSArrayBuffer* constructCustomArrayBufferIfNeeded(JSGlobalObject* globalObject, JSArrayBuffer* source)
+inline JSArrayBuffer* constructCustomArrayBufferIfNeeded(JSGlobalObject* globalObject, JSArrayBufferView* view)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
+    JSArrayBuffer* source = view->possiblySharedJSBuffer(globalObject);
+    RETURN_IF_EXCEPTION(scope, nullptr);
     if (source->isShared())
         return nullptr;
 
@@ -183,15 +185,15 @@ inline JSObject* constructGenericTypedArrayViewWithArguments(JSGlobalObject* glo
 
         if (isTypedView(object->classInfo(vm)->typedArrayStorageType)) {
             auto* view = jsCast<JSArrayBufferView*>(object);
-            length = view->length();
 
-            customBuffer = constructCustomArrayBufferIfNeeded(globalObject, view->possiblySharedJSBuffer(globalObject));
+            customBuffer = constructCustomArrayBufferIfNeeded(globalObject, view);
             RETURN_IF_EXCEPTION(scope, nullptr);
-
             if (view->isDetached()) {
                 throwTypeError(globalObject, scope, "Underlying ArrayBuffer has been detached from the view"_s);
                 return nullptr;
             }
+
+            length = view->length();
         } else {
             // This getPropertySlot operation should not be observed by the Proxy.
             // So we use VMInquiry. And purge the opaque object cases (proxy and namespace object) by isTaintedByOpaqueObject() guard.
