@@ -189,6 +189,15 @@ protected:
             m_remoteRenderingBackendProxy->remoteResourceCacheProxy().cacheNativeImage(image);
     }
 
+    bool isCachedImageBuffer(const WebCore::ImageBuffer& imageBuffer) const override
+    {
+        if (!m_remoteRenderingBackendProxy)
+            return false;
+        auto cachedImageBuffer = m_remoteRenderingBackendProxy->remoteResourceCacheProxy().cachedImageBuffer(imageBuffer.renderingResourceIdentifier());
+        ASSERT(!cachedImageBuffer || cachedImageBuffer == &imageBuffer);
+        return cachedImageBuffer;
+    }
+
     void changeDestinationImageBuffer(WebCore::RenderingResourceIdentifier nextImageBuffer) final
     {
         bool wasEmpty = m_drawingContext.displayList().isEmpty();

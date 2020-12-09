@@ -803,7 +803,7 @@ void GraphicsContext::drawImageBuffer(ImageBuffer& image, const FloatRect& desti
     if (paintingDisabled())
         return;
 
-    if (m_impl) {
+    if (m_impl && m_impl->canDrawImageBuffer(image)) {
         m_impl->drawImageBuffer(image, destination, source, options);
         return;
     }

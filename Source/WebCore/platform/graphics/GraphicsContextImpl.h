@@ -39,6 +39,7 @@ public:
     GraphicsContext& graphicsContext() const { return m_graphicsContext; }
 
     virtual bool hasPlatformContext() const = 0;
+    virtual bool canDrawImageBuffer(const ImageBuffer&) const { return true; }
     virtual PlatformGraphicsContext* platformContext() const = 0;
 
     virtual void updateState(const GraphicsContextState&, GraphicsContextState::StateChangeFlags) = 0;

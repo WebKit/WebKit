@@ -67,6 +67,7 @@ public:
         virtual void willAppendItemOfType(ItemType) { }
         virtual void didAppendItemOfType(ItemType) { }
         virtual void cacheNativeImage(NativeImage&) { }
+        virtual bool isCachedImageBuffer(const ImageBuffer&) const { return false; }
     };
 
     void flushContext(FlushIdentifier identifier) { append<FlushContext>(identifier); }
@@ -74,6 +75,7 @@ public:
 private:
     friend class DrawGlyphsRecorder;
     bool hasPlatformContext() const override { return false; }
+    bool canDrawImageBuffer(const ImageBuffer&) const override;
     PlatformGraphicsContext* platformContext() const override { return nullptr; }
 
     void updateState(const GraphicsContextState&, GraphicsContextState::StateChangeFlags) override;

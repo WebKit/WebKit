@@ -137,6 +137,11 @@ void Recorder::updateState(const GraphicsContextState& state, GraphicsContextSta
     currentState().stateChange.accumulate(state, flags);
 }
 
+bool Recorder::canDrawImageBuffer(const ImageBuffer& imageBuffer) const
+{
+    return !m_delegate || m_delegate->isCachedImageBuffer(imageBuffer);
+}
+
 void Recorder::clearShadow()
 {
     append<ClearShadow>();
