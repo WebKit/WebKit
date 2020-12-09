@@ -160,7 +160,7 @@ RefPtr<ImageBuffer> RemoteRenderingBackend::nextDestinationImageBufferAfterApply
         sizeToRead = handle.unreadBytes();
     } while (!sizeToRead);
 
-    while (destination && !m_nextItemBufferToRead) {
+    while (destination) {
         auto displayList = handle.displayListForReading(offset, sizeToRead, *this);
         if (UNLIKELY(!displayList)) {
             // FIXME: Add a message check to terminate the web process.
@@ -187,8 +187,16 @@ RefPtr<ImageBuffer> RemoteRenderingBackend::nextDestinationImageBufferAfterApply
             break;
         }
 
-        if (result.reasonForStopping == DisplayList::StopReplayReason::ChangeDestinationImageBuffer)
+        if (result.reasonForStopping == DisplayList::StopReplayReason::ChangeDestinationImageBuffer) {
             destination = makeRefPtr(m_remoteResourceCache.cachedImageBuffer(*result.nextDestinationImageBuffer));
+            if (!destination) {
+                ASSERT(!m_pendingWakeupArguments);
+                m_pendingWakeupArguments = {{ handle.identifier(), offset, *result.nextDestinationImageBuffer }};
+            }
+        }
+
+        if (m_pendingWakeupArguments)
+            break;
 
         if (!sizeToRead)
             break;
@@ -197,32 +205,31 @@ RefPtr<ImageBuffer> RemoteRenderingBackend::nextDestinationImageBufferAfterApply
     return destination;
 }
 
-void RemoteRenderingBackend::wakeUpAndApplyDisplayList(DisplayList::ItemBufferIdentifier initialIdentifier, uint64_t initialOffset, RenderingResourceIdentifier destinationBufferIdentifier)
+void RemoteRenderingBackend::wakeUpAndApplyDisplayList(const GPUProcessWakeupMessageArguments& arguments)
 {
     TraceScope tracingScope(WakeUpAndApplyDisplayListStart, WakeUpAndApplyDisplayListEnd);
-    auto destinationImageBuffer = makeRefPtr(m_remoteResourceCache.cachedImageBuffer(destinationBufferIdentifier));
+    auto destinationImageBuffer = makeRefPtr(m_remoteResourceCache.cachedImageBuffer(arguments.destinationImageBufferIdentifier));
     if (UNLIKELY(!destinationImageBuffer)) {
         // FIXME: Add a message check to terminate the web process.
         ASSERT_NOT_REACHED();
         return;
     }
 
-    auto initialHandle = m_sharedDisplayListHandles.get(initialIdentifier);
+    auto initialHandle = m_sharedDisplayListHandles.get(arguments.itemBufferIdentifier);
     if (UNLIKELY(!initialHandle)) {
         // FIXME: Add a message check to terminate the web process.
         ASSERT_NOT_REACHED();
         return;
     }
 
-    destinationImageBuffer = nextDestinationImageBufferAfterApplyingDisplayLists(*destinationImageBuffer, initialOffset, *initialHandle);
-
+    destinationImageBuffer = nextDestinationImageBufferAfterApplyingDisplayLists(*destinationImageBuffer, arguments.offset, *initialHandle);
     if (!destinationImageBuffer) {
         ASSERT_NOT_REACHED();
         return;
     }
 
-    while (m_nextItemBufferToRead) {
-        auto nextHandle = m_sharedDisplayListHandles.get(m_nextItemBufferToRead);
+    while (m_pendingWakeupArguments) {
+        auto nextHandle = m_sharedDisplayListHandles.get(m_pendingWakeupArguments->itemBufferIdentifier);
         if (!nextHandle) {
             // If the handle identifier is currently unknown, wait until the GPU process receives an
             // IPC message with a shared memory handle to the next item buffer.
@@ -230,9 +237,8 @@ void RemoteRenderingBackend::wakeUpAndApplyDisplayList(DisplayList::ItemBufferId
         }
 
         // Otherwise, continue reading the next display list item buffer from the start.
-        m_nextItemBufferToRead = { };
-        destinationImageBuffer = nextDestinationImageBufferAfterApplyingDisplayLists(*destinationImageBuffer, SharedDisplayListHandle::headerSize(), *nextHandle);
-
+        auto arguments = *std::exchange(m_pendingWakeupArguments, WTF::nullopt);
+        destinationImageBuffer = nextDestinationImageBufferAfterApplyingDisplayLists(*destinationImageBuffer, arguments.offset, *nextHandle);
         if (!destinationImageBuffer) {
             ASSERT_NOT_REACHED();
             return;
@@ -240,14 +246,14 @@ void RemoteRenderingBackend::wakeUpAndApplyDisplayList(DisplayList::ItemBufferId
     }
 }
 
-void RemoteRenderingBackend::setNextItemBufferToRead(DisplayList::ItemBufferIdentifier identifier)
+void RemoteRenderingBackend::setNextItemBufferToRead(DisplayList::ItemBufferIdentifier identifier, WebCore::RenderingResourceIdentifier destinationIdentifier)
 {
-    if (UNLIKELY(m_nextItemBufferToRead)) {
+    if (UNLIKELY(m_pendingWakeupArguments)) {
         // FIXME: Add a message check to terminate the web process.
         ASSERT_NOT_REACHED();
         return;
     }
-    m_nextItemBufferToRead = identifier;
+    m_pendingWakeupArguments = {{ identifier, SharedDisplayListHandle::headerSize(), destinationIdentifier }};
 }
 
 void RemoteRenderingBackend::getImageData(AlphaPremultiplication outputFormat, IntRect srcRect, RenderingResourceIdentifier renderingResourceIdentifier, CompletionHandler<void(IPC::ImageDataReference&&)>&& completionHandler)
@@ -282,10 +288,8 @@ void RemoteRenderingBackend::didCreateSharedDisplayListHandle(DisplayList::ItemB
     if (auto sharedMemory = SharedMemory::map(handle.handle, SharedMemory::Protection::ReadWrite))
         m_sharedDisplayListHandles.set(identifier, DisplayListReaderHandle::create(identifier, sharedMemory.releaseNonNull()));
 
-    if (m_nextItemBufferToRead == identifier) {
-        m_nextItemBufferToRead = { };
-        wakeUpAndApplyDisplayList(identifier, SharedDisplayListHandle::headerSize(), destinationBufferIdentifier);
-    }
+    if (m_pendingWakeupArguments && m_pendingWakeupArguments->itemBufferIdentifier == identifier)
+        wakeUpAndApplyDisplayList(*std::exchange(m_pendingWakeupArguments, WTF::nullopt));
 }
 
 Optional<DisplayList::ItemHandle> WARN_UNUSED_RETURN RemoteRenderingBackend::decodeItem(const uint8_t* data, size_t length, DisplayList::ItemType type, uint8_t* handleLocation)

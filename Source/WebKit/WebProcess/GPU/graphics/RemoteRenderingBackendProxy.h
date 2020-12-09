@@ -28,6 +28,7 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "GPUProcessConnection.h"
+#include "GPUProcessWakeupMessageArguments.h"
 #include "ImageBufferBackendHandle.h"
 #include "MessageReceiver.h"
 #include "MessageSender.h"
@@ -102,20 +103,14 @@ private:
 
     RefPtr<DisplayListWriterHandle> findReusableDisplayListHandle(size_t capacity);
 
-    struct WakeupMessageArguments {
-        WebCore::DisplayList::ItemBufferIdentifier itemBufferIdentifier;
-        size_t initialOffset;
-        WebCore::RenderingResourceIdentifier imageBufferIdentifier;
-    };
-
-    void sendWakeupMessage(const WakeupMessageArguments&);
+    void sendWakeupMessage(const GPUProcessWakeupMessageArguments&);
 
     RemoteResourceCacheProxy m_remoteResourceCacheProxy { *this };
     HashMap<WebCore::DisplayList::ItemBufferIdentifier, RefPtr<DisplayListWriterHandle>> m_sharedDisplayListHandles;
     Deque<WebCore::DisplayList::ItemBufferIdentifier> m_identifiersOfReusableHandles;
     RenderingBackendIdentifier m_renderingBackendIdentifier { RenderingBackendIdentifier::generate() };
     Optional<WebCore::RenderingResourceIdentifier> m_currentDestinationImageBufferIdentifier;
-    Optional<WakeupMessageArguments> m_deferredWakeupMessageArguments;
+    Optional<GPUProcessWakeupMessageArguments> m_deferredWakeupMessageArguments;
     unsigned m_remainingItemsToAppendBeforeSendingWakeup { 0 };
 };
 

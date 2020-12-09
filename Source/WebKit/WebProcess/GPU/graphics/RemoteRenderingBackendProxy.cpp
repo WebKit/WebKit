@@ -195,9 +195,9 @@ void RemoteRenderingBackendProxy::willAppendItem(RenderingResourceIdentifier new
         imageBuffer->clearDisplayList();
 }
 
-void RemoteRenderingBackendProxy::sendWakeupMessage(const WakeupMessageArguments& arguments)
+void RemoteRenderingBackendProxy::sendWakeupMessage(const GPUProcessWakeupMessageArguments& arguments)
 {
-    send(Messages::RemoteRenderingBackend::WakeUpAndApplyDisplayList(arguments.itemBufferIdentifier, arguments.initialOffset, arguments.imageBufferIdentifier), m_renderingBackendIdentifier);
+    send(Messages::RemoteRenderingBackend::WakeUpAndApplyDisplayList(arguments), m_renderingBackendIdentifier);
 }
 
 void RemoteRenderingBackendProxy::sendDeferredWakeupMessageIfNeeded()

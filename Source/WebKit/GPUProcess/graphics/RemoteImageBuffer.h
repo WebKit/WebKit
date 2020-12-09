@@ -83,7 +83,7 @@ private:
 
         if (item.is<WebCore::DisplayList::MetaCommandChangeItemBuffer>()) {
             auto nextBufferIdentifier = item.get<WebCore::DisplayList::MetaCommandChangeItemBuffer>().identifier();
-            m_remoteRenderingBackend.setNextItemBufferToRead(nextBufferIdentifier);
+            m_remoteRenderingBackend.setNextItemBufferToRead(nextBufferIdentifier, m_renderingResourceIdentifier);
             return true;
         }
 

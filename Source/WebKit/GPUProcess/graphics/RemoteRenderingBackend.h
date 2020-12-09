@@ -28,6 +28,7 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "Connection.h"
+#include "GPUProcessWakeupMessageArguments.h"
 #include "ImageBufferBackendHandle.h"
 #include "ImageDataReference.h"
 #include "MessageReceiver.h"
@@ -74,7 +75,7 @@ public:
     void didCreateImageBufferBackend(ImageBufferBackendHandle, WebCore::RenderingResourceIdentifier);
     void didFlush(WebCore::DisplayList::FlushIdentifier, WebCore::RenderingResourceIdentifier);
 
-    void setNextItemBufferToRead(WebCore::DisplayList::ItemBufferIdentifier);
+    void setNextItemBufferToRead(WebCore::DisplayList::ItemBufferIdentifier, WebCore::RenderingResourceIdentifier destination);
 
 private:
     RemoteRenderingBackend(GPUConnectionToWebProcess&, RenderingBackendIdentifier);
@@ -106,7 +107,7 @@ private:
 
     // Messages to be received.
     void createImageBuffer(const WebCore::FloatSize& logicalSize, WebCore::RenderingMode, float resolutionScale, WebCore::ColorSpace, WebCore::PixelFormat, WebCore::RenderingResourceIdentifier);
-    void wakeUpAndApplyDisplayList(WebCore::DisplayList::ItemBufferIdentifier initialIdentifier, uint64_t initialOffset, WebCore::RenderingResourceIdentifier destinationBufferIdentifier);
+    void wakeUpAndApplyDisplayList(const GPUProcessWakeupMessageArguments&);
     void getImageData(WebCore::AlphaPremultiplication outputFormat, WebCore::IntRect srcRect, WebCore::RenderingResourceIdentifier, CompletionHandler<void(IPC::ImageDataReference&&)>&&);
     void cacheNativeImage(const ShareableBitmap::Handle&, WebCore::RenderingResourceIdentifier);
     void releaseRemoteResource(WebCore::RenderingResourceIdentifier);
@@ -116,7 +117,7 @@ private:
     WeakPtr<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
     RenderingBackendIdentifier m_renderingBackendIdentifier;
     HashMap<WebCore::DisplayList::ItemBufferIdentifier, RefPtr<DisplayListReaderHandle>> m_sharedDisplayListHandles;
-    WebCore::DisplayList::ItemBufferIdentifier m_nextItemBufferToRead;
+    Optional<GPUProcessWakeupMessageArguments> m_pendingWakeupArguments;
 };
 
 } // namespace WebKit

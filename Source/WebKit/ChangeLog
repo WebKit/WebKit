@@ -1,3 +1,33 @@
+2020-12-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Concurrent Display Lists] Add a new type to represent a set of GPU process wakeup arguments
+        https://bugs.webkit.org/show_bug.cgi?id=219657
+
+        Reviewed by Tim Horton.
+
+        Pull the initial item buffer identifier, offset, and destination image buffer identifier used to wake the GPU
+        process out into a separate struct, in `GPUProcessWakeupMessageArguments.h`, and refactor both the web and GPU
+        process-side rendering backends to use this new struct.
+
+        This will greatly simplify future logic that will be added to address <webkit.org/b/218614>, which requires us
+        to defer calling into the GPU process wakeup loop in more scenarios. No change in behavior.
+
+        * GPUProcess/graphics/RemoteImageBuffer.h:
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::nextDestinationImageBufferAfterApplyingDisplayLists):
+        (WebKit::RemoteRenderingBackend::wakeUpAndApplyDisplayList):
+        (WebKit::RemoteRenderingBackend::setNextItemBufferToRead):
+        (WebKit::RemoteRenderingBackend::didCreateSharedDisplayListHandle):
+        * GPUProcess/graphics/RemoteRenderingBackend.h:
+        * GPUProcess/graphics/RemoteRenderingBackend.messages.in:
+        * Shared/GPUProcessWakeupMessageArguments.h: Added.
+        (WebKit::GPUProcessWakeupMessageArguments::encode const):
+        (WebKit::GPUProcessWakeupMessageArguments::decode):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp:
+        (WebKit::RemoteRenderingBackendProxy::sendWakeupMessage):
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.h:
+
 2020-12-08  Peng Liu  <peng.liu6@apple.com>
 
         [Media in GPU Process][MSE] The GPU Process may crash in the destructor of MediaPlayerPrivateMediaSourceAVFObjC
