@@ -214,6 +214,11 @@ TEST(PDFHUD, MoveIFrame)
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"test:///main.html"]]];
     EXPECT_EQ(webView._pdfHUDs.count, 0u);
     [webView _test_waitForDidFinishNavigation];
+
+    // If the TestWKWebView is not visible, visibilityDidChange will be called with false, and there will be no HUD.
+    if (!webView._pdfHUDs.count)
+        return;
+
     EXPECT_EQ(webView._pdfHUDs.count, 1u);
     checkFrame(webView._pdfHUDs.anyObject.frame, 10, 28, 300, 150);
 

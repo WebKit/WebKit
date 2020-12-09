@@ -1,3 +1,18 @@
+2020-12-09  Alex Christensen  <achristensen@webkit.org>
+
+        Make PDFHUD.MoveIFrame API test more robust
+        https://bugs.webkit.org/show_bug.cgi?id=219667
+        <rdar://problem/68639688>
+
+        Reviewed by Geoffrey Garen.
+
+        This test would time out if the place where the TestWKWebView is obscured, which happens frequently on the bots.
+        Make the test pass if this is the case.  It's unfortunate to skip it often, but it still runs sometimes,
+        and I think this is better than having no test.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKPDFView.mm:
+        (TEST):
+
 2020-12-09  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitcorepy] Specify TLS configuration of autoinstaller
