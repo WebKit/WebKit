@@ -36,7 +36,7 @@ WebMouseEvent::WebMouseEvent() = default;
 #if PLATFORM(MAC)
 WebMouseEvent::WebMouseEvent(Type type, Button button, unsigned short buttons, const IntPoint& positionInView, const IntPoint& globalPosition, float deltaX, float deltaY, float deltaZ, int clickCount, OptionSet<Modifier> modifiers, WallTime timestamp, double force, SyntheticClickType syntheticClickType, int eventNumber, int menuType)
 #else
-WebMouseEvent::WebMouseEvent(Type type, Button button, unsigned short buttons, const IntPoint& positionInView, const IntPoint& globalPosition, float deltaX, float deltaY, float deltaZ, int clickCount, OptionSet<Modifier> modifiers, WallTime timestamp, double force, SyntheticClickType syntheticClickType)
+WebMouseEvent::WebMouseEvent(Type type, Button button, unsigned short buttons, const IntPoint& positionInView, const IntPoint& globalPosition, float deltaX, float deltaY, float deltaZ, int clickCount, OptionSet<Modifier> modifiers, WallTime timestamp, double force, SyntheticClickType syntheticClickType, WebCore::PointerID pointerId, const String& pointerType)
 #endif
     : WebEvent(type, modifiers, timestamp)
     , m_button(button)
@@ -53,6 +53,10 @@ WebMouseEvent::WebMouseEvent(Type type, Button button, unsigned short buttons, c
 #endif
     , m_force(force)
     , m_syntheticClickType(syntheticClickType)
+#if !PLATFORM(MAC)
+    , m_pointerId(pointerId)
+    , m_pointerType(pointerType)
+#endif
 {
     ASSERT(isMouseEventType(type));
 }
@@ -75,6 +79,8 @@ void WebMouseEvent::encode(IPC::Encoder& encoder) const
 #endif
     encoder << m_force;
     encoder << m_syntheticClickType;
+    encoder << m_pointerId;
+    encoder << m_pointerType;
 }
 
 bool WebMouseEvent::decode(IPC::Decoder& decoder, WebMouseEvent& result)
@@ -108,6 +114,10 @@ bool WebMouseEvent::decode(IPC::Decoder& decoder, WebMouseEvent& result)
         return false;
 
     if (!decoder.decode(result.m_syntheticClickType))
+        return false;
+    if (!decoder.decode(result.m_pointerId))
+        return false;
+    if (!decoder.decode(result.m_pointerType))
         return false;
 
     return true;

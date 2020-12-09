@@ -1,3 +1,49 @@
+2020-12-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebDriver: add support for pen pointer events
+        https://bugs.webkit.org/show_bug.cgi?id=219024
+
+        Reviewed by Brian Burg.
+
+        Make it possible to synthesize pointer events for any pointer type. Add pen input source to automation and
+        handle it when dispatching actions.
+
+        * Shared/NativeWebMouseEvent.h:
+        * Shared/WebEventConversion.cpp:
+        (WebKit::WebKit2PlatformMouseEvent::WebKit2PlatformMouseEvent):
+        * Shared/WebMouseEvent.cpp:
+        (WebKit::WebMouseEvent::WebMouseEvent):
+        (WebKit::WebMouseEvent::encode const):
+        (WebKit::WebMouseEvent::decode):
+        * Shared/WebMouseEvent.h:
+        (WebKit::WebMouseEvent::pointerId const):
+        (WebKit::WebMouseEvent::pointerType const):
+        * Shared/gtk/NativeWebMouseEventGtk.cpp:
+        (WebKit::NativeWebMouseEvent::NativeWebMouseEvent):
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (primaryPointerForType):
+        (webkitWebViewBaseSynthesizeMouseEvent):
+        * UIProcess/API/gtk/WebKitWebViewBaseInternal.h:
+        * UIProcess/Automation/Automation.json:
+        * UIProcess/Automation/SimulatedInputDispatcher.cpp:
+        (WebKit::SimulatedInputSourceState::emptyStateForSourceType):
+        (WebKit::SimulatedInputDispatcher::transitionInputSourceToState):
+        * UIProcess/Automation/SimulatedInputDispatcher.h:
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::simulateMouseInteraction):
+        (WebKit::WebAutomationSession::performMouseInteraction):
+        (WebKit::simulatedInputSourceTypeFromProtocolSourceType):
+        (WebKit::WebAutomationSession::performInteractionSequence):
+        * UIProcess/Automation/WebAutomationSession.h:
+        * UIProcess/Automation/gtk/WebAutomationSessionGtk.cpp:
+        (WebKit::WebAutomationSession::platformSimulateMouseInteraction):
+        * UIProcess/Automation/mac/WebAutomationSessionMac.mm:
+        (WebKit::WebAutomationSession::platformSimulateMouseInteraction):
+        * UIProcess/Automation/wpe/WebAutomationSessionWPE.cpp:
+        (WebKit::WebAutomationSession::platformSimulateMouseInteraction):
+        * UIProcess/gtk/PointerLockManager.cpp:
+        (WebKit::PointerLockManager::handleMotion):
+
 2020-12-09  Stephan Szabo  <stephan.szabo@sony.com>
 
         [PlayStation] Fix PlayStation GPU process code after r270563

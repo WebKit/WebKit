@@ -76,6 +76,7 @@ const double ForceAtForceClick = 2;
         double force() const { return m_force; }
         SyntheticClickType syntheticClickType() const { return m_syntheticClickType; }
         PointerID pointerId() const { return m_pointerId; }
+        const String& pointerType() const { return m_pointerType; }
 
 #if PLATFORM(MAC)
         int eventNumber() const { return m_eventNumber; }
@@ -99,6 +100,7 @@ const double ForceAtForceClick = 2;
 #endif
         double m_force { 0 };
         PointerID m_pointerId { mousePointerID };
+        String m_pointerType { "mouse"_s };
         int m_clickCount { 0 };
         unsigned m_modifierFlags { 0 };
         unsigned short m_buttons { 0 };

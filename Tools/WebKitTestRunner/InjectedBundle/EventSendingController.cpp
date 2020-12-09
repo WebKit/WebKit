@@ -201,31 +201,35 @@ JSClassRef EventSendingController::wrapperClass()
 
 enum MouseState { MouseUp, MouseDown };
 
-static WKRetainPtr<WKDictionaryRef> createMouseMessageBody(MouseState state, int button, WKEventModifiers modifiers)
+static WKRetainPtr<WKDictionaryRef> createMouseMessageBody(MouseState state, int button, WKEventModifiers modifiers, JSStringRef pointerType)
 {
     auto body = adoptWK(WKMutableDictionaryCreate());
     setValue(body, "SubMessage", state == MouseUp ? "MouseUp" : "MouseDown");
     setValue(body, "Button", adoptWK(WKUInt64Create(button)));
     setValue(body, "Modifiers", adoptWK(WKUInt64Create(modifiers)));
+    if (pointerType)
+        setValue(body, "PointerType", pointerType);
     return body;
 }
 
-void EventSendingController::mouseDown(int button, JSValueRef modifierArray) 
+void EventSendingController::mouseDown(int button, JSValueRef modifierArray, JSStringRef pointerType)
 {
-    postSynchronousPageMessage("EventSender", createMouseMessageBody(MouseDown, button, parseModifierArray(modifierArray)));
+    postSynchronousPageMessage("EventSender", createMouseMessageBody(MouseDown, button, parseModifierArray(modifierArray), pointerType));
 }
 
-void EventSendingController::mouseUp(int button, JSValueRef modifierArray)
+void EventSendingController::mouseUp(int button, JSValueRef modifierArray, JSStringRef pointerType)
 {
-    postSynchronousPageMessage("EventSender", createMouseMessageBody(MouseUp, button, parseModifierArray(modifierArray)));
+    postSynchronousPageMessage("EventSender", createMouseMessageBody(MouseUp, button, parseModifierArray(modifierArray), pointerType));
 }
 
-void EventSendingController::mouseMoveTo(int x, int y)
+void EventSendingController::mouseMoveTo(int x, int y, JSStringRef pointerType)
 {
     auto body = adoptWK(WKMutableDictionaryCreate());
     setValue(body, "SubMessage", "MouseMoveTo");
     setValue(body, "X", adoptWK(WKDoubleCreate(x)));
     setValue(body, "Y", adoptWK(WKDoubleCreate(y)));
+    if (pointerType)
+        setValue(body, "PointerType", pointerType);
     m_position = WKPointMake(x, y);
     postSynchronousPageMessage("EventSender", body);
 }
@@ -276,8 +280,8 @@ void EventSendingController::leapForward(int milliseconds)
 
 void EventSendingController::scheduleAsynchronousClick()
 {
-    postPageMessage("EventSender", createMouseMessageBody(MouseDown, 0, 0));
-    postPageMessage("EventSender", createMouseMessageBody(MouseUp, 0, 0));
+    postPageMessage("EventSender", createMouseMessageBody(MouseDown, 0, 0, nullptr));
+    postPageMessage("EventSender", createMouseMessageBody(MouseUp, 0, 0, nullptr));
 }
 
 static WKRetainPtr<WKMutableDictionaryRef> createKeyDownMessageBody(JSStringRef key, WKEventModifiers modifiers, int location)

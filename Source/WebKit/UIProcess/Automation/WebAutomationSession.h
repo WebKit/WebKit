@@ -147,7 +147,7 @@ public:
 
     // SimulatedInputDispatcher::Client API
 #if ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
-    void simulateMouseInteraction(WebPageProxy&, MouseInteraction, MouseButton, const WebCore::IntPoint& locationInView, AutomationCompletionHandler&&);
+    void simulateMouseInteraction(WebPageProxy&, MouseInteraction, MouseButton, const WebCore::IntPoint& locationInView, const String& pointerType, AutomationCompletionHandler&&);
 #endif
 #if ENABLE(WEBDRIVER_TOUCH_INTERACTIONS)
     void simulateTouchInteraction(WebPageProxy&, TouchInteraction, const WebCore::IntPoint& locationInView, Optional<Seconds> duration, AutomationCompletionHandler&&);
@@ -253,7 +253,7 @@ private:
 #if ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
     void updateClickCount(MouseButton, const WebCore::IntPoint&, Seconds maxTime, int maxDistance);
     void resetClickCount();
-    void platformSimulateMouseInteraction(WebPageProxy&, MouseInteraction, MouseButton, const WebCore::IntPoint& locationInViewport, OptionSet<WebEvent::Modifier>);
+    void platformSimulateMouseInteraction(WebPageProxy&, MouseInteraction, MouseButton, const WebCore::IntPoint& locationInViewport, OptionSet<WebEvent::Modifier>, const String& pointerType);
     static OptionSet<WebEvent::Modifier> platformWebModifiersFromRaw(unsigned modifiers);
 #endif
 #if ENABLE(WEBDRIVER_TOUCH_INTERACTIONS)

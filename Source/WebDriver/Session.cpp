@@ -2611,13 +2611,21 @@ Session::InputSourceState& Session::inputSourceState(const String& id)
     return m_inputStateTable.ensure(id, [] { return InputSourceState(); }).iterator->value;
 }
 
-static const char* automationSourceType(InputSource::Type type)
+static const char* automationSourceType(const InputSource& inputSource)
 {
-    switch (type) {
+    switch (inputSource.type) {
     case InputSource::Type::None:
         return "Null";
     case InputSource::Type::Pointer:
-        return "Mouse";
+        switch (inputSource.pointerType.valueOr(PointerType::Mouse)) {
+        case PointerType::Mouse:
+            return "Mouse";
+        case PointerType::Touch:
+            return "Touch";
+        case PointerType::Pen:
+            return "Pen";
+        }
+        break;
     case InputSource::Type::Key:
         return "Keyboard";
     case InputSource::Type::Wheel:
@@ -2800,7 +2808,7 @@ void Session::performActions(Vector<Vector<Action>>&& actionsByTick, Function<vo
             const auto& inputSource = m_activeInputSources.get(id);
             auto inputSourceObject = JSON::Object::create();
             inputSourceObject->setString("sourceId"_s, id);
-            inputSourceObject->setString("sourceType"_s, automationSourceType(inputSource.type));
+            inputSourceObject->setString("sourceType"_s, automationSourceType(inputSource));
             inputSources->pushObject(WTFMove(inputSourceObject));
         }
         parameters->setArray("inputSources"_s, WTFMove(inputSources));

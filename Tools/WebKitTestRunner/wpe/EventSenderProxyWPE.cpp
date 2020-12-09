@@ -132,7 +132,7 @@ static uint32_t wkEventModifiersToWPE(WKEventModifiers wkModifiers)
     return modifiers;
 }
 
-void EventSenderProxy::mouseDown(unsigned button, WKEventModifiers wkModifiers)
+void EventSenderProxy::mouseDown(unsigned button, WKEventModifiers wkModifiers, WKStringRef pointerType)
 {
     m_clickButton = button;
     m_clickPosition = m_position;
@@ -147,7 +147,7 @@ void EventSenderProxy::mouseDown(unsigned button, WKEventModifiers wkModifiers)
     wpe_view_backend_dispatch_pointer_event(viewBackend(*m_testController), &event);
 }
 
-void EventSenderProxy::mouseUp(unsigned button, WKEventModifiers wkModifiers)
+void EventSenderProxy::mouseUp(unsigned button, WKEventModifiers wkModifiers, WKStringRef pointerType)
 {
     m_buttonState = ButtonReleased;
     m_clickButton = kWKEventMouseButtonNoButton;
@@ -160,7 +160,7 @@ void EventSenderProxy::mouseUp(unsigned button, WKEventModifiers wkModifiers)
     wpe_view_backend_dispatch_pointer_event(viewBackend(*m_testController), &event);
 }
 
-void EventSenderProxy::mouseMoveTo(double x, double y)
+void EventSenderProxy::mouseMoveTo(double x, double y, WKStringRef pointerType)
 {
     m_position.x = x;
     m_position.y = y;

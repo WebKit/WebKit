@@ -28,9 +28,9 @@ dictionary MonitorWheelEventsOptions {
 };
 
 interface EventSendingController {
-    undefined mouseDown(long buttonNumber, object modifierArray);
-    undefined mouseUp(long buttonNumber, object modifierArray);
-    undefined mouseMoveTo(long x, long y);
+    undefined mouseDown(long buttonNumber, object modifierArray, optional DOMString pointerType);
+    undefined mouseUp(long buttonNumber, object modifierArray, optional DOMString pointerType);
+    undefined mouseMoveTo(long x, long y, optional DOMString pointerType);
     undefined mouseForceClick();
     undefined startAndCancelMouseForceClick();
     undefined mouseForceDown();

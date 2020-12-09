@@ -32,6 +32,7 @@
 #include "Logging.h"
 #include "WebAutomationSession.h"
 #include "WebAutomationSessionMacros.h"
+#include <WebCore/PointerEvent.h>
 #include <wtf/Variant.h>
 
 namespace WebKit {
@@ -48,6 +49,7 @@ SimulatedInputSourceState SimulatedInputSourceState::emptyStateForSourceType(Sim
         FALLTHROUGH;
     case SimulatedInputSourceType::Mouse:
     case SimulatedInputSourceType::Touch:
+    case SimulatedInputSourceType::Pen:
         result.location = WebCore::IntPoint();
     }
 
@@ -268,11 +270,12 @@ void SimulatedInputDispatcher::transitionInputSourceToState(SimulatedInputSource
         // The maximum duration is handled at the keyframe level by m_keyFrameTransitionDurationTimer.
         eventDispatchFinished(WTF::nullopt);
         break;
-    case SimulatedInputSourceType::Mouse: {
+    case SimulatedInputSourceType::Mouse:
+    case SimulatedInputSourceType::Pen: {
 #if !ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
         RELEASE_ASSERT_NOT_REACHED();
 #else
-        resolveLocation(a.location.valueOr(WebCore::IntPoint()), b.location, b.origin.valueOr(MouseMoveOrigin::Viewport), b.nodeHandle, [this, &a, &b, eventDispatchFinished = WTFMove(eventDispatchFinished)](Optional<WebCore::IntPoint> location, Optional<AutomationCommandError> error) mutable {
+        resolveLocation(a.location.valueOr(WebCore::IntPoint()), b.location, b.origin.valueOr(MouseMoveOrigin::Viewport), b.nodeHandle, [this, &a, &b, inputSource = inputSource.type, eventDispatchFinished = WTFMove(eventDispatchFinished)](Optional<WebCore::IntPoint> location, Optional<AutomationCommandError> error) mutable {
             if (error) {
                 eventDispatchFinished(error);
                 return;
@@ -283,6 +286,8 @@ void SimulatedInputDispatcher::transitionInputSourceToState(SimulatedInputSource
                 return;
             }
 
+            const String& pointerType = inputSource == SimulatedInputSourceType::Mouse ? WebCore::PointerEvent::mousePointerType() : WebCore::PointerEvent::penPointerType();
+
             b.location = location;
             // The "dispatch a pointer{Down,Up,Move} action" algorithms (§17.4 Dispatching Actions).
             if (!a.pressedMouseButton && b.pressedMouseButton) {
@@ -290,17 +295,17 @@ void SimulatedInputDispatcher::transitionInputSourceToState(SimulatedInputSource
                 String mouseButtonName = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(b.pressedMouseButton.value());
                 LOG(Automation, "SimulatedInputDispatcher[%p]: simulating MouseDown[button=%s] @ (%d, %d) for transition to %d.%d", this, mouseButtonName.utf8().data(), b.location.value().x(), b.location.value().y(), m_keyframeIndex, m_inputSourceStateIndex);
 #endif
-                m_client.simulateMouseInteraction(m_page, MouseInteraction::Down, b.pressedMouseButton.value(), b.location.value(), WTFMove(eventDispatchFinished));
+                m_client.simulateMouseInteraction(m_page, MouseInteraction::Down, b.pressedMouseButton.value(), b.location.value(), pointerType, WTFMove(eventDispatchFinished));
             } else if (a.pressedMouseButton && !b.pressedMouseButton) {
 #if !LOG_DISABLED
                 String mouseButtonName = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(a.pressedMouseButton.value());
                 LOG(Automation, "SimulatedInputDispatcher[%p]: simulating MouseUp[button=%s] @ (%d, %d) for transition to %d.%d", this, mouseButtonName.utf8().data(), b.location.value().x(), b.location.value().y(), m_keyframeIndex, m_inputSourceStateIndex);
 #endif
-                m_client.simulateMouseInteraction(m_page, MouseInteraction::Up, a.pressedMouseButton.value(), b.location.value(), WTFMove(eventDispatchFinished));
+                m_client.simulateMouseInteraction(m_page, MouseInteraction::Up, a.pressedMouseButton.value(), b.location.value(), pointerType, WTFMove(eventDispatchFinished));
             } else if (a.location != b.location) {
                 LOG(Automation, "SimulatedInputDispatcher[%p]: simulating MouseMove from (%d, %d) to (%d, %d) for transition to %d.%d", this, a.location.value().x(), a.location.value().y(), b.location.value().x(), b.location.value().y(), m_keyframeIndex, m_inputSourceStateIndex);
                 // FIXME: This does not interpolate mousemoves per the "perform a pointer move" algorithm (§17.4 Dispatching Actions).
-                m_client.simulateMouseInteraction(m_page, MouseInteraction::Move, b.pressedMouseButton.valueOr(MouseButton::None), b.location.value(), WTFMove(eventDispatchFinished));
+                m_client.simulateMouseInteraction(m_page, MouseInteraction::Move, b.pressedMouseButton.valueOr(MouseButton::None), b.location.value(), pointerType, WTFMove(eventDispatchFinished));
             } else
                 eventDispatchFinished(WTF::nullopt);
         });

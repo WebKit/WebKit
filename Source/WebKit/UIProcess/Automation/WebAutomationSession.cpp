@@ -45,6 +45,7 @@
 #include <JavaScriptCore/InspectorBackendDispatcher.h>
 #include <JavaScriptCore/InspectorFrontendRouter.h>
 #include <WebCore/MIMETypeRegistry.h>
+#include <WebCore/PointerEvent.h>
 #include <algorithm>
 #include <wtf/FileSystem.h>
 #include <wtf/HashMap.h>
@@ -1603,9 +1604,9 @@ void WebAutomationSession::resetClickCount()
     m_lastClickPosition = { };
 }
 
-void WebAutomationSession::simulateMouseInteraction(WebPageProxy& page, MouseInteraction interaction, MouseButton mouseButton, const WebCore::IntPoint& locationInViewport, CompletionHandler<void(Optional<AutomationCommandError>)>&& completionHandler)
+void WebAutomationSession::simulateMouseInteraction(WebPageProxy& page, MouseInteraction interaction, MouseButton mouseButton, const WebCore::IntPoint& locationInViewport, const String& pointerType, CompletionHandler<void(Optional<AutomationCommandError>)>&& completionHandler)
 {
-    page.getWindowFrameWithCallback([this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler), page = makeRef(page), interaction, mouseButton, locationInViewport](WebCore::FloatRect windowFrame) mutable {
+    page.getWindowFrameWithCallback([this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler), page = makeRef(page), interaction, mouseButton, locationInViewport, pointerType](WebCore::FloatRect windowFrame) mutable {
         auto clippedX = std::min(std::max(0.0f, (float)locationInViewport.x()), windowFrame.size().width());
         auto clippedY = std::min(std::max(0.0f, (float)locationInViewport.y()), windowFrame.size().height());
         if (clippedX != locationInViewport.x() || clippedY != locationInViewport.y()) {
@@ -1623,7 +1624,7 @@ void WebAutomationSession::simulateMouseInteraction(WebPageProxy& page, MouseInt
             callbackInMap(AUTOMATION_COMMAND_ERROR_WITH_NAME(Timeout));
         callbackInMap = WTFMove(mouseEventsFlushedCallback);
 
-        platformSimulateMouseInteraction(page, interaction, mouseButton, locationInViewport, platformWebModifiersFromRaw(m_currentModifiers));
+        platformSimulateMouseInteraction(page, interaction, mouseButton, locationInViewport, platformWebModifiersFromRaw(m_currentModifiers), pointerType);
 
         // If the event does not hit test anything in the window, then it may not have been delivered.
         if (callbackInMap && !page->isProcessingMouseEvents()) {
@@ -1792,7 +1793,7 @@ void WebAutomationSession::performMouseInteraction(const Inspector::Protocol::Au
             callbackInMap(AUTOMATION_COMMAND_ERROR_WITH_NAME(Timeout));
         callbackInMap = WTFMove(mouseEventsFlushedCallback);
 
-        platformSimulateMouseInteraction(page, mouseInteraction, mouseButton, locationInViewport, keyModifiers);
+        platformSimulateMouseInteraction(page, mouseInteraction, mouseButton, locationInViewport, keyModifiers, WebCore::PointerEvent::mousePointerType());
 
         // If the event location was previously clipped and does not hit test anything in the window, then it will not be processed.
         // For compatibility with pre-W3C driver implementations, don't make this a hard error; just do nothing silently.
@@ -1899,6 +1900,8 @@ static SimulatedInputSourceType simulatedInputSourceTypeFromProtocolSourceType(I
         return SimulatedInputSourceType::Touch;
     case Inspector::Protocol::Automation::InputSourceType::Wheel:
         return SimulatedInputSourceType::Wheel;
+    case Inspector::Protocol::Automation::InputSourceType::Pen:
+        return SimulatedInputSourceType::Pen;
     }
 
     RELEASE_ASSERT_NOT_REACHED();
@@ -2006,7 +2009,7 @@ void WebAutomationSession::performInteractionSequence(const Inspector::Protocol:
         // If a mismatch happens, alias to the supported input source. This works because both Mouse and Touch input sources
         // use a MouseButton to indicate the result of interacting (down/up/move), which can be interpreted for touch or mouse.
 #if !ENABLE(WEBDRIVER_MOUSE_INTERACTIONS) && ENABLE(WEBDRIVER_TOUCH_INTERACTIONS)
-        if (inputSourceType == SimulatedInputSourceType::Mouse)
+        if (inputSourceType == SimulatedInputSourceType::Mouse || inputSourceType == SimulatedInputSourceType::Pen)
             inputSourceType = SimulatedInputSourceType::Touch;
 #elif ENABLE(WEBDRIVER_MOUSE_INTERACTIONS) && !ENABLE(WEBDRIVER_TOUCH_INTERACTIONS)
         if (inputSourceType == SimulatedInputSourceType::Touch)
@@ -2015,6 +2018,8 @@ void WebAutomationSession::performInteractionSequence(const Inspector::Protocol:
 #if !ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
         if (inputSourceType == SimulatedInputSourceType::Mouse)
             ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(NotImplemented, "Mouse input sources are not yet supported.");
+        if (inputSourceType == SimulatedInputSourceType::Pen)
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(NotImplemented, "Pen input sources are not yet supported.");
 #endif
 #if !ENABLE(WEBDRIVER_TOUCH_INTERACTIONS)
         if (inputSourceType == SimulatedInputSourceType::Touch)

@@ -55,7 +55,7 @@ public:
     void pointerLockWasApplied();
     void elementWasRemoved(Element&);
 
-    RefPtr<PointerEvent> pointerEventForMouseEvent(const MouseEvent&);
+    RefPtr<PointerEvent> pointerEventForMouseEvent(const MouseEvent&, PointerID, const String& pointerType);
 
 #if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS_FAMILY)
     void dispatchEventForTouchAtIndex(EventTarget&, const PlatformTouchEvent&, unsigned, bool isPrimary, WindowProxy&);

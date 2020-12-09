@@ -15,7 +15,7 @@ function pause(duration) {
     });
 }
 
-function dispatchMouseActions(actions)
+function dispatchMouseActions(actions, pointerType)
 {
     if (!window.eventSender)
         return Promise.reject(new Error("window.eventSender is undefined."));
@@ -35,15 +35,15 @@ function dispatchMouseActions(actions)
                         origin.y = bounds.top + 1;
                     }
                     logDebug(() => `eventSender.mouseMoveTo(${action.x + origin.x}, ${action.y + origin.y})`);
-                    eventSender.mouseMoveTo(action.x + origin.x, action.y + origin.y);
+                    eventSender.mouseMoveTo(action.x + origin.x, action.y + origin.y, pointerType);
                     break;
                 case "pointerDown":
                     logDebug(() => `eventSender.mouseDown()`);
-                    eventSender.mouseDown(action.button);
+                    eventSender.mouseDown(action.button, [], pointerType);
                     break;
                 case "pointerUp":
                     logDebug(() => `eventSender.mouseUp()`);
-                    eventSender.mouseUp(action.button);
+                    eventSender.mouseUp(action.button, [], pointerType);
                     break;
                 case "pause":
                     logDebug(() => `pause(${action.duration})`);
@@ -237,7 +237,7 @@ window.test_driver_internal.action_sequence = function(sources)
         return Promise.reject(new Error(`Unknown pointer type pointer type "${action.parameters.pointerType}".`));
 
     const pointerType = pointerSource.parameters.pointerType;
-    if (pointerType !== "mouse" && pointerType !== "touch")
+    if (pointerType !== "mouse" && pointerType !== "touch" && pointerType !== "pen")
         return Promise.reject(new Error(`Unknown pointer type "${pointerType}".`));
 
     // If we have a "none" source, let's inject any pause with non-zero durations into the pointer source
@@ -258,6 +258,6 @@ window.test_driver_internal.action_sequence = function(sources)
         return dispatchTouchActions(pointerSource.actions);
     if (testRunner.isIOSFamily && "createTouch" in document)
         return dispatchTouchActions(pointerSource.actions, { insertPauseAfterPointerUp: true });
-    if (pointerType === "mouse")
-        return dispatchMouseActions(pointerSource.actions);
+    if (pointerType === "mouse" || pointerType === "pen")
+        return dispatchMouseActions(pointerSource.actions, pointerType);
 };

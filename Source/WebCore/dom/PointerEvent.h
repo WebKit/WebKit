@@ -75,8 +75,8 @@ public:
         return adoptRef(*new PointerEvent);
     }
 
-    static RefPtr<PointerEvent> create(short button, const MouseEvent&);
-    static Ref<PointerEvent> create(const String& type, short button, const MouseEvent&);
+    static RefPtr<PointerEvent> create(short button, const MouseEvent&, PointerID, const String& pointerType);
+    static Ref<PointerEvent> create(const String& type, short button, const MouseEvent&, PointerID, const String& pointerType);
     static Ref<PointerEvent> create(const String& type, PointerID, const String& pointerType, IsPrimary = IsPrimary::No);
 
 #if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS_FAMILY)
@@ -84,8 +84,8 @@ public:
     static Ref<PointerEvent> create(const String& type, const PlatformTouchEvent&, unsigned touchIndex, bool isPrimary, Ref<WindowProxy>&&);
 #endif
 
-    static const String& mousePointerType();
-    static const String& penPointerType();
+    WEBCORE_EXPORT static const String& mousePointerType();
+    WEBCORE_EXPORT static const String& penPointerType();
     static const String& touchPointerType();
 
     virtual ~PointerEvent();
@@ -121,7 +121,7 @@ private:
 
     PointerEvent();
     PointerEvent(const AtomString&, Init&&);
-    PointerEvent(const AtomString& type, short button, const MouseEvent&);
+    PointerEvent(const AtomString& type, short button, const MouseEvent&, PointerID, const String& pointerType);
     PointerEvent(const AtomString& type, PointerID, const String& pointerType, IsPrimary);
 #if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS_FAMILY)
     PointerEvent(const AtomString& type, const PlatformTouchEvent&, IsCancelable isCancelable, unsigned touchIndex, bool isPrimary, Ref<WindowProxy>&&);

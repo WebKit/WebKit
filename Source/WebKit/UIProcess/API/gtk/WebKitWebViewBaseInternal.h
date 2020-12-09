@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/text/WTFString.h>
+
 typedef struct _WebKitWebViewBase WebKitWebViewBase;
 
 struct KeyEvent {
@@ -34,7 +36,7 @@ struct KeyEvent {
 };
 
 enum class MouseEventType { Press, Release, Motion };
-void webkitWebViewBaseSynthesizeMouseEvent(WebKitWebViewBase*, MouseEventType type, unsigned button, unsigned short buttons, int x, int y, unsigned modifiers, int clickCount);
+void webkitWebViewBaseSynthesizeMouseEvent(WebKitWebViewBase*, MouseEventType type, unsigned button, unsigned short buttons, int x, int y, unsigned modifiers, int clickCount, const String& pointerType = "mouse"_s);
 
 enum class KeyEventType { Press, Release, Insert };
 enum class ShouldTranslateKeyboardState { No, Yes };

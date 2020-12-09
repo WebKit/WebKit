@@ -65,7 +65,7 @@ static unsigned mouseButtonToGdkButton(MouseButton button)
     return GDK_BUTTON_PRIMARY;
 }
 
-void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy& page, MouseInteraction interaction, MouseButton button, const WebCore::IntPoint& locationInView, OptionSet<WebEvent::Modifier> keyModifiers)
+void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy& page, MouseInteraction interaction, MouseButton button, const WebCore::IntPoint& locationInView, OptionSet<WebEvent::Modifier> keyModifiers, const String& pointerType)
 {
     unsigned gdkButton = mouseButtonToGdkButton(button);
     auto modifier = stateModifierForGdkButton(gdkButton);
@@ -74,29 +74,29 @@ void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy& page, 
 
     switch (interaction) {
     case MouseInteraction::Move:
-        webkitWebViewBaseSynthesizeMouseEvent(viewWidget, MouseEventType::Motion, 0, m_currentModifiers, locationInView.x(), locationInView.y(), state, 0);
+        webkitWebViewBaseSynthesizeMouseEvent(viewWidget, MouseEventType::Motion, 0, m_currentModifiers, locationInView.x(), locationInView.y(), state, 0, pointerType);
         break;
     case MouseInteraction::Down: {
         int doubleClickTime, doubleClickDistance;
         g_object_get(gtk_widget_get_settings(page.viewWidget()), "gtk-double-click-time", &doubleClickTime, "gtk-double-click-distance", &doubleClickDistance, nullptr);
         updateClickCount(button, locationInView, Seconds::fromMilliseconds(doubleClickTime), doubleClickDistance);
         m_currentModifiers |= modifier;
-        webkitWebViewBaseSynthesizeMouseEvent(viewWidget, MouseEventType::Press, gdkButton, m_currentModifiers, locationInView.x(), locationInView.y(), state, m_clickCount);
+        webkitWebViewBaseSynthesizeMouseEvent(viewWidget, MouseEventType::Press, gdkButton, m_currentModifiers, locationInView.x(), locationInView.y(), state, m_clickCount, pointerType);
         break;
     }
     case MouseInteraction::Up:
         m_currentModifiers &= ~modifier;
-        webkitWebViewBaseSynthesizeMouseEvent(viewWidget, MouseEventType::Release, gdkButton, m_currentModifiers, locationInView.x(), locationInView.y(), state, 0);
+        webkitWebViewBaseSynthesizeMouseEvent(viewWidget, MouseEventType::Release, gdkButton, m_currentModifiers, locationInView.x(), locationInView.y(), state, 0, pointerType);
         break;
     case MouseInteraction::SingleClick:
-        webkitWebViewBaseSynthesizeMouseEvent(viewWidget, MouseEventType::Press, gdkButton, m_currentModifiers | modifier, locationInView.x(), locationInView.y(), state, 1);
-        webkitWebViewBaseSynthesizeMouseEvent(viewWidget, MouseEventType::Release, gdkButton, m_currentModifiers, locationInView.x(), locationInView.y(), state, 0);
+        webkitWebViewBaseSynthesizeMouseEvent(viewWidget, MouseEventType::Press, gdkButton, m_currentModifiers | modifier, locationInView.x(), locationInView.y(), state, 1, pointerType);
+        webkitWebViewBaseSynthesizeMouseEvent(viewWidget, MouseEventType::Release, gdkButton, m_currentModifiers, locationInView.x(), locationInView.y(), state, 0, pointerType);
         break;
     case MouseInteraction::DoubleClick:
-        webkitWebViewBaseSynthesizeMouseEvent(viewWidget, MouseEventType::Press, gdkButton, m_currentModifiers | modifier, locationInView.x(), locationInView.y(), state, 1);
-        webkitWebViewBaseSynthesizeMouseEvent(viewWidget, MouseEventType::Release, gdkButton, m_currentModifiers, locationInView.x(), locationInView.y(), state, 0);
-        webkitWebViewBaseSynthesizeMouseEvent(viewWidget, MouseEventType::Press, gdkButton, m_currentModifiers | modifier, locationInView.x(), locationInView.y(), state, 2);
-        webkitWebViewBaseSynthesizeMouseEvent(viewWidget, MouseEventType::Release, gdkButton, m_currentModifiers, locationInView.x(), locationInView.y(), state, 0);
+        webkitWebViewBaseSynthesizeMouseEvent(viewWidget, MouseEventType::Press, gdkButton, m_currentModifiers | modifier, locationInView.x(), locationInView.y(), state, 1, pointerType);
+        webkitWebViewBaseSynthesizeMouseEvent(viewWidget, MouseEventType::Release, gdkButton, m_currentModifiers, locationInView.x(), locationInView.y(), state, 0, pointerType);
+        webkitWebViewBaseSynthesizeMouseEvent(viewWidget, MouseEventType::Press, gdkButton, m_currentModifiers | modifier, locationInView.x(), locationInView.y(), state, 2, pointerType);
+        webkitWebViewBaseSynthesizeMouseEvent(viewWidget, MouseEventType::Release, gdkButton, m_currentModifiers, locationInView.x(), locationInView.y(), state, 0, pointerType);
         break;
     }
 }

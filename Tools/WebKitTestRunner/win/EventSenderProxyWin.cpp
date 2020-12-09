@@ -61,7 +61,7 @@ EventSenderProxy::~EventSenderProxy()
 {
 }
 
-void EventSenderProxy::mouseDown(unsigned button, WKEventModifiers wkModifiers)
+void EventSenderProxy::mouseDown(unsigned button, WKEventModifiers wkModifiers, WKStringRef pointerType)
 {
     int messageType;
     switch (button) {
@@ -87,7 +87,7 @@ void EventSenderProxy::mouseDown(unsigned button, WKEventModifiers wkModifiers)
     dispatchMessage(messageType, wparam, MAKELPARAM(positionInPoint().x, positionInPoint().y));
 }
 
-void EventSenderProxy::mouseUp(unsigned button, WKEventModifiers wkModifiers)
+void EventSenderProxy::mouseUp(unsigned button, WKEventModifiers wkModifiers, WKStringRef pointerType)
 {
     int messageType;
     switch (button) {
@@ -113,7 +113,7 @@ void EventSenderProxy::mouseUp(unsigned button, WKEventModifiers wkModifiers)
     dispatchMessage(messageType, wparam, MAKELPARAM(positionInPoint().x, positionInPoint().y));
 }
 
-void EventSenderProxy::mouseMoveTo(double x, double y)
+void EventSenderProxy::mouseMoveTo(double x, double y, WKStringRef pointerType)
 {
     m_position.x = x;
     m_position.y = y;

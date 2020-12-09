@@ -48,9 +48,9 @@ public:
 
     void makeWindowObject(JSContextRef);
 
-    void mouseDown(int button, JSValueRef modifierArray);
-    void mouseUp(int button, JSValueRef modifierArray);
-    void mouseMoveTo(int x, int y);
+    void mouseDown(int button, JSValueRef modifierArray, JSStringRef pointerType);
+    void mouseUp(int button, JSValueRef modifierArray, JSStringRef pointerType);
+    void mouseMoveTo(int x, int y, JSStringRef pointerType);
     void mouseForceClick();
     void startAndCancelMouseForceClick();
     void mouseForceDown();

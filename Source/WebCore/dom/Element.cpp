@@ -357,7 +357,7 @@ static ShouldIgnoreMouseEvent dispatchPointerEventIfNeeded(Element& element, con
         if (platformEvent.syntheticClickType() != NoTap)
             return ShouldIgnoreMouseEvent::No;
 
-        if (auto pointerEvent = pointerCaptureController.pointerEventForMouseEvent(mouseEvent)) {
+        if (auto pointerEvent = pointerCaptureController.pointerEventForMouseEvent(mouseEvent, platformEvent.pointerId(), platformEvent.pointerType())) {
             pointerCaptureController.dispatchEvent(*pointerEvent, &element);
             if (isCompatibilityMouseEvent(mouseEvent) && pointerCaptureController.preventsCompatibilityMouseEventsForIdentifier(pointerEvent->pointerId()))
                 return ShouldIgnoreMouseEvent::Yes;

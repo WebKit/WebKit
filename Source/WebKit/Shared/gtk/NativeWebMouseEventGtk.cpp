@@ -48,13 +48,13 @@ NativeWebMouseEvent::NativeWebMouseEvent(const WebCore::IntPoint& position)
 {
 }
 
-NativeWebMouseEvent::NativeWebMouseEvent(Type type, Button button, unsigned short buttons, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, int clickCount, OptionSet<Modifier> modifiers, Optional<WebCore::FloatSize> delta)
-    : WebMouseEvent(type, button, buttons, position, globalPosition, delta.valueOr(WebCore::FloatSize()).width(), delta.valueOr(WebCore::FloatSize()).height(), 0, clickCount, modifiers, WallTime::now())
+NativeWebMouseEvent::NativeWebMouseEvent(Type type, Button button, unsigned short buttons, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, int clickCount, OptionSet<Modifier> modifiers, Optional<WebCore::FloatSize> delta, WebCore::PointerID pointerId, const String& pointerType)
+    : WebMouseEvent(type, button, buttons, position, globalPosition, delta.valueOr(WebCore::FloatSize()).width(), delta.valueOr(WebCore::FloatSize()).height(), 0, clickCount, modifiers, WallTime::now(), 0, NoTap, pointerId, pointerType)
 {
 }
 
 NativeWebMouseEvent::NativeWebMouseEvent(const NativeWebMouseEvent& event)
-    : WebMouseEvent(event.type(), event.button(), event.buttons(), event.position(), event.globalPosition(), event.deltaX(), event.deltaY(), event.deltaZ(), event.clickCount(), event.modifiers(), event.timestamp())
+    : WebMouseEvent(event.type(), event.button(), event.buttons(), event.position(), event.globalPosition(), event.deltaX(), event.deltaY(), event.deltaZ(), event.clickCount(), event.modifiers(), event.timestamp(), 0, NoTap, event.pointerId(), event.pointerType())
     , m_nativeEvent(event.nativeEvent() ? gdk_event_copy(const_cast<GdkEvent*>(event.nativeEvent())) : nullptr)
 {
 }

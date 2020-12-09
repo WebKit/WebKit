@@ -52,14 +52,14 @@ public:
 
     WKPoint position() const { return m_position; }
 
-    void mouseDown(unsigned button, WKEventModifiers);
-    void mouseUp(unsigned button, WKEventModifiers);
+    void mouseDown(unsigned button, WKEventModifiers, WKStringRef pointerType = nullptr);
+    void mouseUp(unsigned button, WKEventModifiers, WKStringRef pointerType = nullptr);
     void mouseForceDown();
     void mouseForceUp();
     void mouseForceChanged(float);
     void mouseForceClick();
     void startAndCancelMouseForceClick();
-    void mouseMoveTo(double x, double y);
+    void mouseMoveTo(double x, double y, WKStringRef pointerType = nullptr);
     void mouseScrollBy(int x, int y);
     void mouseScrollByWithWheelAndMomentumPhases(int x, int y, int phase, int momentum);
     void continuousMouseScrollBy(int x, int y, bool paged);

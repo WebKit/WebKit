@@ -123,6 +123,9 @@ public:
             m_modifierFlags |= static_cast<unsigned>(WebEvent::Modifier::AltKey);
         if (webEvent.metaKey())
             m_modifierFlags |= static_cast<unsigned>(WebEvent::Modifier::MetaKey);
+
+        m_pointerId = webEvent.pointerId();
+        m_pointerType = webEvent.pointerType();
     }
 };
 

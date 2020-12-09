@@ -480,6 +480,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     dom/NodeRenderStyle.h
     dom/NodeTraversal.h
     dom/OverflowEvent.h
+    dom/PointerEvent.h
     dom/Position.h
     dom/ProcessingInstruction.h
     dom/ProgressEvent.h

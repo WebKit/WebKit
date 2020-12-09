@@ -290,7 +290,8 @@
                 "Mouse",
                 "Keyboard",
                 "Touch",
-                "Wheel"
+                "Wheel",
+                "Pen"
             ]
         },
         {

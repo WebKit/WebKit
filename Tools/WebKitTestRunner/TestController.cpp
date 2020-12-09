@@ -1619,12 +1619,12 @@ void TestController::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         auto subMessageName = stringValue(dictionary, "SubMessage");
 
         if (WKStringIsEqualToUTF8CString(subMessageName, "MouseDown")) {
-            m_eventSenderProxy->mouseDown(uint64Value(dictionary, "Button"), uint64Value(dictionary, "Modifiers"));
+            m_eventSenderProxy->mouseDown(uint64Value(dictionary, "Button"), uint64Value(dictionary, "Modifiers"), stringValue(dictionary, "PointerType"));
             return;
         }
 
         if (WKStringIsEqualToUTF8CString(subMessageName, "MouseUp")) {
-            m_eventSenderProxy->mouseUp(uint64Value(dictionary, "Button"), uint64Value(dictionary, "Modifiers"));
+            m_eventSenderProxy->mouseUp(uint64Value(dictionary, "Button"), uint64Value(dictionary, "Modifiers"), stringValue(dictionary, "PointerType"));
             return;
         }
 
@@ -1675,17 +1675,17 @@ void TestController::didReceiveSynchronousMessageFromInjectedBundle(WKStringRef 
         }
 
         if (WKStringIsEqualToUTF8CString(subMessageName, "MouseDown")) {
-            m_eventSenderProxy->mouseDown(uint64Value(dictionary, "Button"), uint64Value(dictionary, "Modifiers"));
+            m_eventSenderProxy->mouseDown(uint64Value(dictionary, "Button"), uint64Value(dictionary, "Modifiers"), stringValue(dictionary, "PointerType"));
             return completionHandler(nullptr);
         }
 
         if (WKStringIsEqualToUTF8CString(subMessageName, "MouseUp")) {
-            m_eventSenderProxy->mouseUp(uint64Value(dictionary, "Button"), uint64Value(dictionary, "Modifiers"));
+            m_eventSenderProxy->mouseUp(uint64Value(dictionary, "Button"), uint64Value(dictionary, "Modifiers"), stringValue(dictionary, "PointerType"));
             return completionHandler(nullptr);
         }
 
         if (WKStringIsEqualToUTF8CString(subMessageName, "MouseMoveTo")) {
-            m_eventSenderProxy->mouseMoveTo(doubleValue(dictionary, "X"), doubleValue(dictionary, "Y"));
+            m_eventSenderProxy->mouseMoveTo(doubleValue(dictionary, "X"), doubleValue(dictionary, "Y"), stringValue(dictionary, "PointerType"));
             return completionHandler(nullptr);
         }
 

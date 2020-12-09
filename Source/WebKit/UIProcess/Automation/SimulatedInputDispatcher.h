@@ -71,6 +71,7 @@ enum class SimulatedInputSourceType {
     Mouse,
     Touch,
     Wheel,
+    Pen,
 };
 
 enum class TouchInteraction {
@@ -131,7 +132,7 @@ public:
     public:
         virtual ~Client() { }
 #if ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
-        virtual void simulateMouseInteraction(WebPageProxy&, MouseInteraction, MouseButton, const WebCore::IntPoint& locationInView, AutomationCompletionHandler&&) = 0;
+        virtual void simulateMouseInteraction(WebPageProxy&, MouseInteraction, MouseButton, const WebCore::IntPoint& locationInView, const String& pointerType, AutomationCompletionHandler&&) = 0;
 #endif
 #if ENABLE(WEBDRIVER_TOUCH_INTERACTIONS)
         virtual void simulateTouchInteraction(WebPageProxy&, TouchInteraction, const WebCore::IntPoint& locationInView, Optional<Seconds> duration, AutomationCompletionHandler&&) = 0;

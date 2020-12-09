@@ -136,8 +136,10 @@ static WebMouseEvent::Button automationMouseButtonToPlatformMouseButton(MouseBut
     }
 }
 
-void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy& page, MouseInteraction interaction, MouseButton button, const WebCore::IntPoint& locationInViewport, OptionSet<WebEvent::Modifier> keyModifiers)
+void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy& page, MouseInteraction interaction, MouseButton button, const WebCore::IntPoint& locationInViewport, OptionSet<WebEvent::Modifier> keyModifiers, const String& pointerType)
 {
+    UNUSED_PARAM(pointerType);
+
     IntRect windowRect;
 
     IntPoint locationInView = locationInViewport + IntPoint(0, page.topContentInset());

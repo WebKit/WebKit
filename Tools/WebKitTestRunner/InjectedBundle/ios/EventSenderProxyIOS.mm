@@ -58,15 +58,15 @@ void EventSenderProxy::updateClickCountForButton(int button)
     m_clickButton = button;
 }
 
-void EventSenderProxy::mouseDown(unsigned buttonNumber, WKEventModifiers modifiers)
+void EventSenderProxy::mouseDown(unsigned buttonNumber, WKEventModifiers modifiers, WKStringRef pointerType)
 {
 }
 
-void EventSenderProxy::mouseUp(unsigned buttonNumber, WKEventModifiers modifiers)
+void EventSenderProxy::mouseUp(unsigned buttonNumber, WKEventModifiers modifiers, WKStringRef pointerType)
 {
 }
 
-void EventSenderProxy::mouseMoveTo(double x, double y)
+void EventSenderProxy::mouseMoveTo(double x, double y, WKStringRef pointerType)
 {
 }
 

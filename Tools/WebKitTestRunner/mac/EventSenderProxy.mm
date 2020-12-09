@@ -296,7 +296,7 @@ static NSUInteger swizzledEventPressedMouseButtons()
     return TestController::singleton().eventSenderProxy()->mouseButtonsCurrentlyDown();
 }
 
-void EventSenderProxy::mouseDown(unsigned buttonNumber, WKEventModifiers modifiers)
+void EventSenderProxy::mouseDown(unsigned buttonNumber, WKEventModifiers modifiers, WKStringRef pointerType)
 {
     m_mouseButtonsCurrentlyDown |= (1 << buttonNumber);
 
@@ -324,7 +324,7 @@ void EventSenderProxy::mouseDown(unsigned buttonNumber, WKEventModifiers modifie
     }
 }
 
-void EventSenderProxy::mouseUp(unsigned buttonNumber, WKEventModifiers modifiers)
+void EventSenderProxy::mouseUp(unsigned buttonNumber, WKEventModifiers modifiers, WKStringRef pointerType)
 {
     m_mouseButtonsCurrentlyDown &= ~(1 << buttonNumber);
 
@@ -557,7 +557,7 @@ void EventSenderProxy::mouseForceChanged(float force)
     IGNORE_NULL_CHECK_WARNINGS_END
 }
 
-void EventSenderProxy::mouseMoveTo(double x, double y)
+void EventSenderProxy::mouseMoveTo(double x, double y, WKStringRef pointerType)
 {
     NSView *view = m_testController->mainWebView()->platformView();
     NSPoint newMousePosition = [view convertPoint:NSMakePoint(x, y) toView:nil];

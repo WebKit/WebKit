@@ -299,24 +299,24 @@ void PointerCaptureController::dispatchEventForTouchAtIndex(EventTarget& target,
 }
 #endif
 
-RefPtr<PointerEvent> PointerCaptureController::pointerEventForMouseEvent(const MouseEvent& mouseEvent)
+RefPtr<PointerEvent> PointerCaptureController::pointerEventForMouseEvent(const MouseEvent& mouseEvent, PointerID pointerId, const String& pointerType)
 {
     // If we already have known touches then we cannot dispatch a mouse event,
     // for instance in the case of a long press to initiate a system drag.
     for (auto& capturingData : m_activePointerIdsToCapturingData.values()) {
-        if (capturingData.pointerType != PointerEvent::mousePointerType())
+        if (capturingData.pointerType == PointerEvent::touchPointerType())
             return nullptr;
     }
 
     const auto& type = mouseEvent.type();
     const auto& names = eventNames();
 
-    auto iterator = m_activePointerIdsToCapturingData.find(mousePointerID);
-    ASSERT(iterator != m_activePointerIdsToCapturingData.end());
-    auto& capturingData = iterator->value;
+    auto iterator = m_activePointerIdsToCapturingData.find(pointerId);
+    bool pointerIsPressed = iterator != m_activePointerIdsToCapturingData.end() ? iterator->value.pointerIsPressed : false;
 
     short newButton = mouseEvent.button();
-    short button = (type == names.mousemoveEvent && newButton == capturingData.previousMouseButton) ? -1 : newButton;
+    short previousMouseButton = iterator != m_activePointerIdsToCapturingData.end() ? iterator->value.previousMouseButton : -1;
+    short button = (type == names.mousemoveEvent && newButton == previousMouseButton) ? -1 : newButton;
 
     // https://w3c.github.io/pointerevents/#chorded-button-interactions
     // Some pointer devices, such as mouse or pen, support multiple buttons. In the Mouse Event model, each button
@@ -327,18 +327,22 @@ RefPtr<PointerEvent> PointerCaptureController::pointerEventForMouseEvent(const M
     if (type == names.mousedownEvent || type == names.mouseupEvent) {
         // We're already active and getting another mousedown, this means that we should dispatch
         // a pointermove event and let the button state show the newly depressed button.
-        if (type == names.mousedownEvent && capturingData.pointerIsPressed)
-            return PointerEvent::create(names.pointermoveEvent, button, mouseEvent);
+        if (type == names.mousedownEvent && pointerIsPressed)
+            return PointerEvent::create(names.pointermoveEvent, button, mouseEvent, pointerId, pointerType);
 
         // We're active and the mouseup still has some pressed button, this means we should dispatch
         // a pointermove event.
-        if (type == names.mouseupEvent && capturingData.pointerIsPressed && mouseEvent.buttons() > 0)
-            return PointerEvent::create(names.pointermoveEvent, button, mouseEvent);
+        if (type == names.mouseupEvent && pointerIsPressed && mouseEvent.buttons() > 0)
+            return PointerEvent::create(names.pointermoveEvent, button, mouseEvent, pointerId, pointerType);
     }
 
-    capturingData.previousMouseButton = newButton;
+    auto pointerEvent = PointerEvent::create(button, mouseEvent, pointerId, pointerType);
+    if (iterator != m_activePointerIdsToCapturingData.end())
+        iterator->value.previousMouseButton = newButton;
+    else if (pointerEvent)
+        ensureCapturingDataForPointerEvent(*pointerEvent).previousMouseButton = newButton;
 
-    return PointerEvent::create(button, mouseEvent);
+    return pointerEvent;
 }
 
 void PointerCaptureController::dispatchEvent(PointerEvent& event, EventTarget* target)
@@ -369,7 +373,7 @@ void PointerCaptureController::pointerEventWillBeDispatched(const PointerEvent& 
 
     auto pointerId = event.pointerId();
 
-    if (event.pointerType() == PointerEvent::mousePointerType()) {
+    if (event.pointerType() != PointerEvent::touchPointerType()) {
         auto iterator = m_activePointerIdsToCapturingData.find(pointerId);
         if (iterator != m_activePointerIdsToCapturingData.end())
             iterator->value.pointerIsPressed = isPointerdown;
