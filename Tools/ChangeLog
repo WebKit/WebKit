@@ -1,3 +1,18 @@
+2020-12-09  John Wilander  <wilander@apple.com>
+
+        PCM: Make JSON key names use underscores according to the W3C conversation
+        https://bugs.webkit.org/show_bug.cgi?id=219696
+        <rdar://problem/72143642>
+
+        Reviewed by Brent Fulgham.
+
+        Further discussion in https://github.com/privacycg/private-click-measurement/issues/30
+        concluded that the JSON report should use underscores in its keys instead of dashes.
+        This patch makes that change and shortens the "report_version" key to just "version".
+
+        * TestWebKitAPI/Tests/WebCore/PrivateClickMeasurement.cpp:
+        (TestWebKitAPI::TEST):
+
 2020-12-09  Alex Christensen  <achristensen@webkit.org>
 
         Make PDFHUD.MoveIFrame API test more robust

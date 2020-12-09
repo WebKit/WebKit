@@ -160,12 +160,12 @@ Ref<JSON::Object> PrivateClickMeasurement::json() const
     if (!m_attributionTriggerData || !isValid())
         return reportDetails;
 
-    reportDetails->setString("source-engagement-type"_s, "click"_s);
-    reportDetails->setString("source-site"_s, m_sourceSite.registrableDomain.string());
-    reportDetails->setInteger("source-id"_s, m_sourceID.id);
-    reportDetails->setString("attributed-on-site"_s, m_attributeOnSite.registrableDomain.string());
-    reportDetails->setInteger("trigger-data"_s, m_attributionTriggerData->data);
-    reportDetails->setInteger("report-version"_s, 1);
+    reportDetails->setString("source_engagement_type"_s, "click"_s);
+    reportDetails->setString("source_site"_s, m_sourceSite.registrableDomain.string());
+    reportDetails->setInteger("source_id"_s, m_sourceID.id);
+    reportDetails->setString("attributed_on_site"_s, m_attributeOnSite.registrableDomain.string());
+    reportDetails->setInteger("trigger_data"_s, m_attributionTriggerData->data);
+    reportDetails->setInteger("version"_s, 1);
     return reportDetails;
 }
 

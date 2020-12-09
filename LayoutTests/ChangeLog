@@ -1,3 +1,18 @@
+2020-12-09  John Wilander  <wilander@apple.com>
+
+        PCM: Make JSON key names use underscores according to the W3C conversation
+        https://bugs.webkit.org/show_bug.cgi?id=219696
+        <rdar://problem/72143642>
+
+        Reviewed by Brent Fulgham.
+
+        Further discussion in https://github.com/privacycg/private-click-measurement/issues/30
+        concluded that the JSON report should use underscores in its keys instead of dashes.
+        This patch makes that change and shortens the "report_version" key to just "version".
+
+        * http/tests/privateClickMeasurement/expired-attribution-report-gets-sent-on-session-start-expected.txt:
+        * http/tests/privateClickMeasurement/send-attribution-conversion-request-expected.txt:
+
 2020-12-09  Antti Koivisto  <antti@apple.com>
 
         Font loads are triggered too late
