@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#if PLATFORM(IOS) && USE(UICONTEXTMENU)
+#if USE(UICONTEXTMENU)
 
 #import "TestContextMenuDriver.h"
 #import "TestWKWebView.h"
@@ -352,4 +352,4 @@ TEST(ContextMenu, DISABLED_SuggestedActions)
     EXPECT_TRUE(willPresentCalled);
 }
 
-#endif // PLATFORM(IOS) && USE(UICONTEXTMENU)
+#endif // USE(UICONTEXTMENU)

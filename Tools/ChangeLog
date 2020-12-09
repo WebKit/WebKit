@@ -1,3 +1,17 @@
+2020-12-08  Devin Rousso  <drousso@apple.com>
+
+        [macCatalyst] Enable context menus for WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=219617
+        <rdar://problem/53770300>
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ContextMenus.mm:
+        * TestWebKitAPI/cocoa/TestContextMenuDriver.h:
+        * TestWebKitAPI/cocoa/TestContextMenuDriver.mm:
+        * TestWebKitAPI/ios/UIKitSPI.h:
+        Note that none of these tests actually work right now because of <rdar://problem/59610140>.
+
 2020-12-08  Geoffrey Garen  <ggaren@apple.com>
 
         TextManipulationController sometimes fails to notify its delegate of new text (if an element has been removed)

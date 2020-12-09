@@ -29,7 +29,7 @@
 #import "UIKitSPI.h"
 #import <wtf/BlockPtr.h>
 
-#if PLATFORM(IOS) && USE(UICONTEXTMENU)
+#if USE(UICONTEXTMENU)
 
 @implementation TestContextMenuDriver
 
@@ -118,4 +118,4 @@
 
 @end
 
-#endif
+#endif // USE(UICONTEXTMENU)

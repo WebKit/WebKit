@@ -272,6 +272,8 @@ IGNORE_WARNINGS_END
 - (void)_dropInteraction:(UIDropInteraction *)interaction delayedPreviewProviderForDroppingItem:(UIDragItem *)item previewProvider:(void(^)(UITargetedDragPreview *preview))previewProvider;
 @end
 
+#endif // PLATFORM(IOS)
+
 typedef NS_ENUM(NSUInteger, _UIClickInteractionEvent) {
     _UIClickInteractionEventBegan = 0,
     _UIClickInteractionEventClickedDown,
@@ -288,8 +290,6 @@ typedef NS_ENUM(NSUInteger, _UIClickInteractionEvent) {
 - (void)clickDriver:(id<_UIClickInteractionDriving>)driver didUpdateHighlightProgress:(CGFloat)progress;
 - (BOOL)clickDriver:(id<_UIClickInteractionDriving>)driver shouldDelayGestureRecognizer:(UIGestureRecognizer *)gestureRecognizer;
 @end
-
-#endif // PLATFORM(IOS)
 
 @protocol UITextInputInternal
 - (CGRect)_selectionClipRect;

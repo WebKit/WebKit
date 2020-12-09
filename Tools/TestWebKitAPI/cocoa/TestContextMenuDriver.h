@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if PLATFORM(IOS) && USE(UICONTEXTMENU)
+#if USE(UICONTEXTMENU)
 
 #import <wtf/WeakObjCPtr.h>
 
@@ -46,4 +46,4 @@
 - (void)end;
 @end
 
-#endif
+#endif // USE(UICONTEXTMENU)
