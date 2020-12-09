@@ -531,6 +531,10 @@ void MediaPlayer::reloadAndResumePlaybackIfNeeded()
     auto previousMediaTime = currentTime();
     bool wasPaused = paused();
 
+    // FIXME: It would be even better if we could resume in full screen mode, but, for now, exiting full screen makes the video rendering work.
+    if (client().mediaPlayerFullscreenMode() != MediaPlayer::VideoFullscreenModeNone)
+        client().mediaPlayerExitFullscreen();
+
     m_currentMediaEngine = nullptr;
     loadWithNextMediaEngine(nullptr);
 
