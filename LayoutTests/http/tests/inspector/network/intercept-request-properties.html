@@ -36,11 +36,6 @@ function test()
 {
     let suite = InspectorTest.createAsyncSuite("Network.interceptWithRequest");
 
-    NetworkAgent.addInterception.invoke({
-        url: "http://127.0.0.1:8000/inspector/network/resources/intercept-echo.php",
-        stage: InspectorBackend.Enum.Network.NetworkStage.Request,
-    });
-
     function logRequest(result) {
         let request = result.value;
         if (request.error) {
@@ -82,25 +77,21 @@ function test()
         }
     }
 
-    function addTestCase({name, description, expression, overrides}) {
+    function addTestCase({name, description, expression, override}) {
         suite.addTestCase({
             name,
             description,
             async test() {
+                let localResourceOverride = WI.LocalResourceOverride.create("http://127.0.0.1:8000/inspector/network/resources/intercept-echo.php", WI.LocalResourceOverride.InterceptType.Request, override);
+                WI.networkManager.addLocalResourceOverride(localResourceOverride);
+
                 InspectorTest.log("Triggering load...");
-                let [requestInterceptedEvent, fetchResponse] = await Promise.all([
-                    WI.networkManager.awaitEvent(WI.NetworkManager.Event.RequestIntercepted),
-                    RuntimeAgent.evaluate(expression),
-                ]);
-
-                await NetworkAgent.interceptWithRequest.invoke({
-                    requestId: requestInterceptedEvent.data.requestId,
-                    ...overrides,
-                });
-
-                let response = await RuntimeAgent.awaitPromise(fetchResponse.result.objectId, true);
+                let response = await InspectorTest.evaluateInPage(expression);
+                response = await RuntimeAgent.awaitPromise(response.objectId, true);
                 InspectorTest.log("Request details:");
                 logRequest(response.result);
+
+                WI.networkManager.removeLocalResourceOverride(localResourceOverride);
             }
         });
     }
@@ -109,65 +100,69 @@ function test()
         name: "Network.interceptRequest.Method",
         description: "Tests request method interception",
         expression: "fetchData('resources/intercept-echo.php')",
-        overrides: { method: "POST" },
+        override: { requestMethod: "POST" },
     });
 
     addTestCase({
         name: "Network.interceptRequest.MethodDelete",
         description: "Tests request method interception with DELETE",
         expression: "fetchData('resources/intercept-echo.php')",
-        overrides: { method: "DELETE" },
+        override: { requestMethod: "DELETE" },
     });
 
     addTestCase({
         name: "Network.interceptRequest.MethodNonStandard",
         description: "Tests request method interception with NONSTANDARD",
         expression: "fetchData('resources/intercept-echo.php')",
-        overrides: { method: "NONSTANDARD" },
+        override: { requestMethod: "NONSTANDARD" },
     });
 
     addTestCase({
         name: "Network.interceptRequest.MethodEmpty",
         description: "Tests request method interception with empty string",
         expression: "fetchData('resources/intercept-echo.php')",
-        overrides: { method: "" },
+        override: { requestMethod: "" },
     });
 
     addTestCase({
         name: "Network.interceptRequest.URL",
         description: "Tests request method interception with different URL",
         expression: "fetchData('resources/intercept-echo.php')",
-        overrides: { url: "http://127.0.0.1:8000/inspector/network/resources/intercept-echo.php?newURL=value" },
+        override: { requestURL: "http://127.0.0.1:8000/inspector/network/resources/intercept-echo.php?newURL=value" },
     });
 
     addTestCase({
         name: "Network.interceptRequest.URLFragment",
         description: "Tests request method interception with URL with fragment",
         expression: "fetchData('resources/intercept-echo.php')",
-        overrides: { url: "http://127.0.0.1:8000/inspector/network/resources/intercept-echo.php#fragment" },
+        override: { requestURL: "http://127.0.0.1:8000/inspector/network/resources/intercept-echo.php#fragment" },
     });
 
     addTestCase({
         name: "Network.interceptRequest.URLEmpty",
         description: "Tests request method interception with empty URL",
         expression: "fetchData('resources/intercept-echo.php')",
-        overrides: { url: "" },
+        override: { requestURL: "" },
     });
 
     addTestCase({
         name: "Network.interceptRequest.Headers",
         description: "Tests request headers interception",
         expression: "fetchData('resources/intercept-echo.php')",
-        overrides: { headers: { "X-Value": "overridden" } },
+        override: { requestHeaders: { "X-Value": "overridden" } },
     });
 
     addTestCase({
         name: "Network.interceptRequest.PostData",
         description: "Tests request post data interception",
         expression: "postData('resources/intercept-echo.php')",
-        overrides: {
-            method: "POST",
-            postData: btoa("value=overridden"),
+        override: {
+            requestMethod: "POST",
+            requestHeaders: {
+                "Content-Type": "application/x-www-form-urlencoded",
+                "Content-Length": 16,
+            },
+            requestData: "value=overridden",
         },
     });
 

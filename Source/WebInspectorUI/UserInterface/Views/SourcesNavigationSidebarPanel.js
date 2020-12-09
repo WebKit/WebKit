@@ -541,7 +541,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
             return this._localOverridesTreeOutline.findTreeElement(representedObject);
 
         if (representedObject instanceof WI.LocalResource) {
-            let localResourceOverride = WI.networkManager.localResourceOverrideForURL(representedObject.url);
+            let localResourceOverride = representedObject.localResourceOverride || WI.networkManager.localResourceOverridesForURL(representedObject.url)[0];
             return this._localOverridesTreeOutline.findTreeElement(localResourceOverride);
         }
 
@@ -851,27 +851,13 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
             return;
         }
 
-        let {type, url, isCaseSensitive, isRegex, mimeType, statusCode, statusText, headers} = serializedData;
-
         // Do not conflict with an existing override.
-        let existingOverride = WI.networkManager.localResourceOverrideForURL(url);
-        if (existingOverride) {
+        if (WI.networkManager.localResourceOverrides.some((existingOverride) => existingOverride.equals(serializedData))) {
             InspectorFrontendHost.beep();
             return;
         }
 
-        let localResourceOverride = WI.LocalResourceOverride.create(type, {
-            url,
-            isCaseSensitive,
-            isRegex,
-            mimeType,
-            statusCode,
-            statusText,
-            headers,
-            content: "",
-            base64Encoded: false,
-        });
-
+        let localResourceOverride = WI.LocalResourceOverride.create(serializedData.url, serializedData.type, serializedData);
         WI.networkManager.addLocalResourceOverride(localResourceOverride);
         WI.showLocalResourceOverride(localResourceOverride);
     }
@@ -955,7 +941,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
     _closeContentViewsFilter(contentView)
     {
         // Local Resource Override content views do not need to be closed across page navigations.
-        if (contentView.representedObject instanceof WI.LocalResource && contentView.representedObject.isLocalResourceOverride)
+        if (contentView.representedObject instanceof WI.LocalResource && contentView.representedObject.localResourceOverride)
             return false;
 
         return true;
@@ -1488,7 +1474,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         if (localOverride === WI.networkManager.bootstrapScript)
             localOverrideTreeElement = new WI.BootstrapScriptTreeElement(localOverride);
         else if (localOverride instanceof WI.LocalResourceOverride)
-            localOverrideTreeElement = new WI.LocalResourceOverrideTreeElement(localOverride.localResource, localOverride);
+            localOverrideTreeElement = new WI.LocalResourceOverrideTreeElement(localOverride);
         console.assert(localOverrideTreeElement);
 
         let index = insertionIndexForObjectInListSortedByFunction(localOverrideTreeElement, parentTreeElement.children, this._boundCompareTreeElements);
@@ -1938,7 +1924,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
             return;
 
         if (treeElement instanceof WI.LocalResourceOverrideTreeElement) {
-            WI.showRepresentedObject(treeElement.representedObject.localResource);
+            WI.showRepresentedObject(treeElement.representedObject);
             return;
         }
 

@@ -197,6 +197,3 @@ Content: default override.txt content
 
 -- Running test teardown.
 
--- Running test case: LocalResourceOverride.URL.Fragment
-PASS: LocalResourceOverride creation should strip fragments.
-

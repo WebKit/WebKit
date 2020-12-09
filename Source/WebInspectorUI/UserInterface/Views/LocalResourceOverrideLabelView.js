@@ -25,13 +25,13 @@
 
 WI.LocalResourceOverrideLabelView = class LocalResourceOverrideLabelView extends WI.View
 {
-    constructor(localResource)
+    constructor(localResourceOverride)
     {
-        console.assert(localResource.isLocalResourceOverride);
+        console.assert(localResourceOverride instanceof WI.LocalResourceOverride, localResourceOverride);
 
         super();
 
-        this._localResource = localResource;
+        this._localResourceOverride = localResourceOverride;
 
         this.element.classList.add("local-resource-override-label-view");
     }
@@ -40,15 +40,18 @@ WI.LocalResourceOverrideLabelView = class LocalResourceOverrideLabelView extends
 
     initialLayout()
     {
-        this._labelElement = document.createElement("span");
-        this._labelElement.className = "label";
-        this._labelElement.textContent = WI.UIString("Override");
+        let labelElement = document.createElement("span");
+        labelElement.className = "label";
+        if (this._localResourceOverride.type === WI.LocalResourceOverride.InterceptType.Request)
+            labelElement.textContent = WI.UIString("Request Override", "Request Override @ Local Override Content View", "Label indicating that the shown content is from a request local override.");
+        else
+            labelElement.textContent = WI.UIString("Response Override", "Response Override @ Local Override Content View", "Label indicating that the shown content is from a response local override.");
 
-        this._urlElement = document.createElement("span");
-        this._urlElement.textContent = this._localResource.url;
-        this._urlElement.className = "url";
+        let urlElement = document.createElement("span");
+        urlElement.textContent = this._localResourceOverride.displayURL({full: true});
+        urlElement.className = "url";
 
         let container = this.element.appendChild(document.createElement("div"));
-        container.append(this._labelElement, " ", this._urlElement);
+        container.append(labelElement, " ", urlElement);
     }
 };

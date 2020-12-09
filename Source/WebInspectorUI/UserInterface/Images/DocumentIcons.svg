@@ -33,6 +33,16 @@
                 --circle-color: hsl(205, 91%, 47%);
             }
 
+            .generic.override.light {
+                --border: hsl(226, 70%, 75%);
+                --paper: hsl(0, 0%, 18%);
+            }
+
+            .generic.override.dark {
+                --border: hsl(226, 30%, 20%);
+                --paper: hsl(0, 0%, 90%);
+            }
+
             .markup.override.light {
                 --border: hsl(226, 70%, 75%);
                 --paper: hsl(226, 77%, 44%);
@@ -155,38 +165,38 @@
         <path fill="var(--js-color)" d="M 19.187 18.710 L 16.168 21.729 L 13.159 18.721 C 12.608 18.169 11.714 18.169 11.163 18.721 L 11.163 18.721 C 10.612 19.271 10.612 20.166 11.163 20.717 L 11.163 20.717 L 15.157 24.711 C 15.575 25.130 16.184 25.230 16.698 25.019 L 16.698 25.019 C 16.878 24.949 17.042 24.843 17.190 24.700 L 17.190 24.700 L 21.184 20.707 C 21.735 20.155 21.735 19.261 21.184 18.710 L 21.184 18.710 C 20.909 18.434 20.547 18.297 20.185 18.297 L 20.185 18.297 C 19.824 18.297 19.462 18.434 19.187 18.710 L 19.187 18.710 Z"/>
     </symbol>
 
-    <g id="generic-light" class="light"><use href="#doc"/></g>
-    <g id="generic-light-override" class="light override"><use href="#doc"/></g>
-    <g id="generic-dark" class="dark"><use href="#doc"/></g>
-    <g id="generic-dark-override" class="dark override"><use href="#doc"/></g>
-    <g id="css-light" class="light"><use href="#doc"/><use href="#css"/></g>
+    <g id="generic-light" class="generic light"><use href="#doc"/></g>
+    <g id="generic-light-override" class="generic light override"><use href="#doc"/></g>
+    <g id="generic-dark" class="generic dark"><use href="#doc"/></g>
+    <g id="generic-dark-override" class="generic dark override"><use href="#doc"/></g>
+    <g id="css-light" class="css light"><use href="#doc"/><use href="#css"/></g>
     <g id="css-light-override" class="css light override"><use href="#doc"/><use href="#css"/></g>
-    <g id="css-dark" class="dark"><use href="#doc"/><use href="#css"/></g>
+    <g id="css-dark" class="css dark"><use href="#doc"/><use href="#css"/></g>
     <g id="css-dark-override" class="css dark override"><use href="#doc"/><use href="#css"/></g>
-    <g id="font-light" class="light"><use href="#doc"/><use href="#font"/></g>
+    <g id="font-light" class="font light"><use href="#doc"/><use href="#font"/></g>
     <g id="font-light-override" class="font light override"><use href="#doc"/><use href="#font"/></g>
-    <g id="font-dark" class="dark"><use href="#doc"/><use href="#font"/></g>
+    <g id="font-dark" class="font dark"><use href="#doc"/><use href="#font"/></g>
     <g id="font-dark-override" class="font dark override"><use href="#doc"/><use href="#font"/></g>
-    <g id="image-light" class="light"><use href="#doc"/><use href="#image"/></g>
+    <g id="image-light" class="image light"><use href="#doc"/><use href="#image"/></g>
     <g id="image-light-override" class="image light override"><use href="#doc"/><use href="#image"/></g>
-    <g id="image-dark" class="dark"><use href="#doc"/><use href="#image"/></g>
+    <g id="image-dark" class="image dark"><use href="#doc"/><use href="#image"/></g>
     <g id="image-dark-override" class="image dark override"><use href="#doc"/><use href="#image"/></g>
-    <g id="gl-light" class="light"><use href="#doc"/><use href="#gl"/></g>
+    <g id="gl-light" class="gl light"><use href="#doc"/><use href="#gl"/></g>
     <g id="gl-light-override" class="gl light override"><use href="#doc"/><use href="#gl"/></g>
-    <g id="gl-dark" class="dark"><use href="#doc"/><use href="#gl"/></g>
+    <g id="gl-dark" class="gl dark"><use href="#doc"/><use href="#gl"/></g>
     <g id="gl-dark-override" class="gl dark override"><use href="#doc"/><use href="#gl"/></g>
-    <g id="js-light" class="light"><use href="#doc"/><use href="#js"/></g>
+    <g id="js-light" class="js light"><use href="#doc"/><use href="#js"/></g>
     <g id="js-light-override" class="js light override"><use href="#doc"/><use href="#js"/></g>
-    <g id="js-dark" class="dark"><use href="#doc"/><use href="#js"/></g>
+    <g id="js-dark" class="js dark"><use href="#doc"/><use href="#js"/></g>
     <g id="js-dark-override" class="js dark override"><use href="#doc"/><use href="#js"/></g>
-    <g id="markup-light" class="light"><use href="#doc"/><use href="#markup"/></g>
+    <g id="markup-light" class="markup light"><use href="#doc"/><use href="#markup"/></g>
     <g id="markup-light-override" class="markup light override"><use href="#doc"/><use href="#markup"/></g>
-    <g id="markup-dark" class="dark"><use href="#doc"/><use href="#markup"/></g>
+    <g id="markup-dark" class="markup dark"><use href="#doc"/><use href="#markup"/></g>
     <g id="markup-dark-override" class="markup dark override"><use href="#doc"/><use href="#markup"/></g>
-    <g id="websocket-light" class="light"><use href="#websocket"/></g>
-    <g id="websocket-dark" class="dark"><use href="#websocket"/></g>
-    <g id="worker-light" class="light"><use href="#doc"/><use href="#worker"/></g>
+    <g id="websocket-light" class="websocket light"><use href="#websocket"/></g>
+    <g id="websocket-dark" class="websocket dark"><use href="#websocket"/></g>
+    <g id="worker-light" class="worker light"><use href="#doc"/><use href="#worker"/></g>
     <g id="worker-light-override" class="worker light override"><use href="#doc"/><use href="#worker"/></g>
-    <g id="worker-dark" class="dark"><use href="#doc"/><use href="#worker"/></g>
+    <g id="worker-dark" class="worker dark"><use href="#doc"/><use href="#worker"/></g>
     <g id="worker-dark-override" class="worker dark override"><use href="#doc"/><use href="#worker"/></g>
 </svg>

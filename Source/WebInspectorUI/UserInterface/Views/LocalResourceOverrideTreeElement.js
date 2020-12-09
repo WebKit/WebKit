@@ -25,15 +25,13 @@
 
 WI.LocalResourceOverrideTreeElement = class LocalResourceOverrideTreeElement extends WI.ResourceTreeElement
 {
-    constructor(localResource, representedObject, options)
+    constructor(localResourceOverride, options)
     {
-        console.assert(localResource instanceof WI.LocalResource);
-        console.assert(localResource.isLocalResourceOverride);
-        console.assert(representedObject instanceof WI.LocalResourceOverride);
+        console.assert(localResourceOverride instanceof WI.LocalResourceOverride, localResourceOverride);
 
-        super(localResource, representedObject, options);
+        super(localResourceOverride.localResource, localResourceOverride, options);
 
-        this._localResourceOverride = representedObject;
+        this._localResourceOverride = localResourceOverride;
 
         this._popover = null;
     }
@@ -42,17 +40,7 @@ WI.LocalResourceOverrideTreeElement = class LocalResourceOverrideTreeElement ext
 
     get mainTitleText()
     {
-        let text;
-        if (this.representedObject.isRegex) {
-            text = "/" + this.resource.url + "/";
-            if (!this.representedObject.isCaseSensitive)
-                text += "i";
-        } else {
-            text = super.mainTitleText;
-            if (!this.representedObject.isCaseSensitive)
-                text = WI.UIString("%s (Case Insensitive)").format(text);
-        }
-        return text;
+        return this.representedObject.displayName;
     }
 
     onattach()
@@ -131,30 +119,21 @@ WI.LocalResourceOverrideTreeElement = class LocalResourceOverrideTreeElement ext
         if (!serializedData)
             return;
 
-        let {type, url, isCaseSensitive, isRegex, mimeType, statusCode, statusText, headers} = serializedData;
-
         // Do not conflict with an existing override unless we are modifying ourselves.
-        let existingOverride = WI.networkManager.localResourceOverrideForURL(url);
-        if (existingOverride && existingOverride !== this._localResourceOverride) {
+        if (WI.networkManager.localResourceOverrides.some((existingOverride) => existingOverride !== this._localResourceOverride && existingOverride.equals(this._localResourceOverride))) {
             InspectorFrontendHost.beep();
             return;
         }
 
         let wasSelected = this.selected;
 
-        let revision = this._localResourceOverride.localResource.currentRevision;
-        let newLocalResourceOverride = WI.LocalResourceOverride.create(type, {
-            url,
-            isCaseSensitive,
-            isRegex,
-            mimeType,
-            statusCode,
-            statusText,
-            headers,
-            content: revision.content,
-            base64Encoded: revision.base64Encoded,
-        });
+        if (serializedData.type !== WI.LocalResourceOverride.InterceptType.Request) {
+            let revision = this._localResourceOverride.localResource.currentRevision;
+            serializedData.responseContent = revision.content;
+            serializedData.responseBase64Encoded = revision.base64Encoded;
+        }
 
+        let newLocalResourceOverride = WI.LocalResourceOverride.create(serializedData.url, serializedData.type, serializedData);
         WI.networkManager.removeLocalResourceOverride(this._localResourceOverride);
         WI.networkManager.addLocalResourceOverride(newLocalResourceOverride);
 

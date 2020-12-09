@@ -1,3 +1,169 @@
+2020-12-09  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: add UI for request interception
+        https://bugs.webkit.org/show_bug.cgi?id=217032
+        <rdar://problem/69925768>
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Models/LocalResourceOverride.js:
+        (WI.LocalResourceOverride):
+        (WI.LocalResourceOverride.create):
+        (WI.LocalResourceOverride.displayNameForType): Added.
+        (WI.LocalResourceOverride.fromJSON):
+        (WI.LocalResourceOverride.prototype.toJSON):
+        (WI.LocalResourceOverride.prototype.get url):
+        (WI.LocalResourceOverride.prototype.get urlComponents): Added.
+        (WI.LocalResourceOverride.prototype.get displayName): Added.
+        (WI.LocalResourceOverride.prototype.displayURL): Added.
+        (WI.LocalResourceOverride.prototype.matches):
+        (WI.LocalResourceOverride.prototype.equals): Added.
+        (WI.LocalResourceOverride.prototype.saveIdentityToCookie):
+        Add a `WI.LocalResourceOverride.InterceptType.Request` and pass through request information
+        to the `WI.LocalResource`.
+
+        * UserInterface/Models/SourceCode.js:
+        (WI.SourceCode.prototype.get localResourceOverride): Added.
+        * UserInterface/Models/Resource.js:
+        (WI.Resource.classNamesForResource):
+        (WI.Resource.prototype.get supportsScriptBlackboxing):
+        (WI.Resource.prototype.async createLocalResourceOverride):
+        (WI.Resource.prototype.updateLocalResourceOverrideRequestData):
+        (WI.Resource.prototype.get isLocalResourceOverride): Deleted.
+        * UserInterface/Models/LocalResource.js:
+        (WI.LocalResource.prototype.toJSON):
+        (WI.LocalResource.prototype.get localResourceOverride): Added.
+        (WI.LocalResource.prototype.get isLocalResourceOverride): Deleted.
+        Replace `get isLocalResourceOverride` with `get localResourceOverride` (on `WI.SourceCode`
+        so that non-`WI.Resource` also can call it) by having the related `WI.LocalResourceOverride`
+        set `_localResourceOverride`.
+
+        * UserInterface/Controllers/NetworkManager.js:
+        (WI.NetworkManager.supportsOverridingRequests): Added.
+        (WI.NetworkManager.prototype.get localResourceOverrides):
+        (WI.NetworkManager.prototype.addLocalResourceOverride):
+        (WI.NetworkManager.prototype.removeLocalResourceOverride):
+        (WI.NetworkManager.prototype.localResourceOverridesForURL): Added.
+        (WI.NetworkManager.prototype.canBeOverridden):
+        (WI.NetworkManager.prototype.requestIntercepted):
+        (WI.NetworkManager.prototype.responseIntercepted):
+        (WI.NetworkManager.prototype._handleResourceContentChangedForLocalResourceOverride): Added.
+        (WI.NetworkManager.prototype.localResourceOverrideForURL): Deleted.
+        (WI.NetworkManager.prototype._handleResourceContentDidChange): Deleted.
+        Provide all `WI.LocalResourceOverride` that match the given URL sorted by how close/exact
+        the `WI.LocalResourceOverride` is to the given URL (i.e. exact < case-insensitive < regex).
+        Add logic to invoke `Network.interceptWithRequest` when the `WI.LocalResourceOverride` is
+        `WI.LocalResourceOverride.InterceptType.Request`.
+
+        * UserInterface/Views/LocalResourceOverridePopover.js:
+        (WI.LocalResourceOverridePopover):
+        (WI.LocalResourceOverridePopover.prototype.get serializedData):
+        (WI.LocalResourceOverridePopover.prototype.show):
+        * UserInterface/Views/LocalResourceOverridePopover.css:
+        (.popover .local-resource-override-popover-content.request .editor:is(.url, .redirect)): Added.
+        (.popover .local-resource-override-popover-content.response .editor.url): Added.
+        (.popover .local-resource-override-popover-content .data-grid): Added.
+        (.popover .local-resource-override-popover-content .reference-page-link-container): Added.
+        (body[dir=ltr] .popover .local-resource-override-popover-content .reference-page-link-container):
+        (body[dir=rtl] .popover .local-resource-override-popover-content .reference-page-link-container):
+        (.popover .local-resource-override-popover-content .editor.url): Deleted.
+        (.popover .local-resource-override-popover-content .add-header): Deleted.
+        (.popover .local-resource-override-popover-content .add-header + .reference-page-link-container): Deleted.
+        Replace the MIME type, status code, and status text inputs with redirect and method inputs
+        when editing a request override. For brand new overrides, show a type dropdown that allows
+        for dynamically updating what inputs are shown (only until the popover is dismissed, at
+        which point the type is set forever).
+
+        * UserInterface/Views/LocalResourceOverrideRequestContentView.js: Added.
+        (WI.LocalResourceOverrideRequestContentView):
+        (WI.LocalResourceOverrideRequestContentView.prototype.get navigationItems):
+        (WI.LocalResourceOverrideRequestContentView.prototype.get saveData):
+        (WI.LocalResourceOverrideRequestContentView.prototype.initialLayout):
+        (WI.LocalResourceOverrideRequestContentView.prototype._handleRemoveLocalResourceOverride):
+        (WI.LocalResourceOverrideRequestContentView.prototype._handleTextEditorContentDidChange):
+        * UserInterface/Views/LocalResourceOverrideRequestContentView.css: Added.
+        (.content-view.text.local-resource-override-request):
+        (.content-view.text.local-resource-override-request > .text-editor):
+        (.content-view.text.local-resource-override-request > .message-text-view):
+        * UserInterface/Views/ContentView.js:
+        (WI.ContentView.createFromRepresentedObject):
+        (WI.ContentView.resolvedRepresentedObjectForRepresentedObject):
+        Create a special `WI.TextContentView` for showing `WI.LocalResourceOverride` request data.
+        Only allow it to be edited if the current method allows for request data.
+
+        * UserInterface/Views/ResourceContentView.js:
+        (WI.ResourceContentView):
+        (WI.ResourceContentView.prototype.get resource):
+        (WI.ResourceContentView.prototype.requestLocalResourceOverrideInitialContent):
+        (WI.ResourceContentView.prototype.async _createAndShowLocalResourceOverride):
+        (WI.ResourceContentView.prototype._populateCreateLocalResourceOverrideContextMenu):
+        (WI.ResourceContentView.prototype._handleCreateLocalResourceOverride):
+        (WI.ResourceContentView.prototype._handleImportLocalResourceOverride):
+        (WI.ResourceContentView.prototype.async _handleRemoveLocalResourceOverride): Added.
+        (WI.ResourceContentView.prototype._handleLocalResourceOverrideChanged): Added.
+        (WI.ResourceContentView.prototype.get showingLocalResourceOverride): Deleted.
+        Show a contextmenu when clicking on the create override navigation item with items for
+        creating either a request override or a response override.
+
+        * UserInterface/Controllers/CSSManager.js:
+        (WI.CSSManager.prototype._resourceContentDidChange):
+        * UserInterface/Views/ContextMenuUtilities.js:
+        (WI.appendContextMenuItemsForSourceCode):
+        * UserInterface/Views/FontResourceContentView.js:
+        (WI.FontResourceContentView.prototype.contentAvailable):
+        (WI.FontResourceContentView.prototype.dropZoneShouldAppearForDragEvent):
+        (WI.FontResourceContentView.prototype.dropZoneHandleDragEnter):
+        (WI.FontResourceContentView.prototype.dropZoneHandleDrop):
+        * UserInterface/Views/ImageResourceContentView.js:
+        (WI.ImageResourceContentView.prototype.contentAvailable):
+        (WI.ImageResourceContentView.prototype.dropZoneShouldAppearForDragEvent):
+        (WI.ImageResourceContentView.prototype.dropZoneHandleDragEnter):
+        (WI.ImageResourceContentView.prototype.dropZoneHandleDrop):
+        * UserInterface/Views/LocalResourceOverrideLabelView.js:
+        (WI.LocalResourceOverrideLabelView):
+        (WI.LocalResourceOverrideLabelView.prototype.initialLayout):
+        * UserInterface/Views/LocalResourceOverrideTreeElement.js:
+        (WI.LocalResourceOverrideTreeElement):
+        (WI.LocalResourceOverrideTreeElement.prototype.get mainTitleText):
+        (WI.LocalResourceOverrideTreeElement.prototype.willDismissPopover):
+        * UserInterface/Views/LocalResourceOverrideWarningView.js:
+        (WI.LocalResourceOverrideWarningView):
+        (WI.LocalResourceOverrideWarningView.prototype.initialLayout):
+        (WI.LocalResourceOverrideWarningView.prototype._updateContent):
+        (WI.LocalResourceOverrideWarningView.prototype._handleLocalResourceOverrideAddedOrRemoved):
+        * UserInterface/Views/NavigationSidebarPanel.js:
+        (WI.NavigationSidebarPanel.prototype.pruneStaleResourceTreeElements):
+        * UserInterface/Views/OpenResourceDialog.js:
+        (WI.OpenResourceDialog.prototype._populateResourceTreeOutline):
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WI.SourceCodeTextEditor.prototype.get _supportsDebugging):
+        * UserInterface/Views/SourcesNavigationSidebarPanel.js:
+        (WI.SourcesNavigationSidebarPanel.prototype._willDismissLocalOverridePopover):
+        (WI.SourcesNavigationSidebarPanel.prototype._closeContentViewsFilter):
+        (WI.SourcesNavigationSidebarPanel.prototype._addLocalOverride):
+        (WI.SourcesNavigationSidebarPanel.prototype._handleTreeSelectionDidChange):
+        * UserInterface/Views/ResourceTreeElement.js:
+        (WI.ResourceTreeElement.prototype.get mainTitleText):
+        (WI.ResourceTreeElement.prototype._updateTitles):
+        (WI.ResourceTreeElement.prototype._updateIcon):
+        * UserInterface/Views/TextResourceContentView.js:
+        (WI.TextResourceContentView):
+        (WI.TextResourceContentView.prototype.get navigationItems):
+        (WI.TextResourceContentView.prototype.requestLocalResourceOverrideInitialContent):
+        (WI.TextResourceContentView.prototype._shouldBeEditable):
+        Replace usage of `get isLocalResourceOverride` with `get localResourceOverride`.
+
+        * UserInterface/Base/HTTPUtilities.js:
+        Add constants for known request methods.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Main.html:
+        * UserInterface/Test.html:
+        * UserInterface/Images/DocumentIcons.svg:
+
+        * UserInterface/Base/ReferencePage.js:
+        Add url for local overrides page.
+
 2020-12-04  Adam Roben  <aroben@apple.com>
 
         More FALLBACK_PLATFORM adoption

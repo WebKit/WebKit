@@ -58,13 +58,9 @@ WI.ResourceContentView = class ResourceContentView extends WI.ContentView
                 this.addIssue(issues[i]);
         }
 
-        this._showingLocalResourceOverride = false;
-
         if (WI.NetworkManager.supportsOverridingResponses()) {
-            if (resource.isLocalResourceOverride) {
-                this._showingLocalResourceOverride = true;
-
-                this._localResourceOverrideBannerView = new WI.LocalResourceOverrideLabelView(resource);
+            if (resource.localResourceOverride) {
+                this._localResourceOverrideBannerView = new WI.LocalResourceOverrideLabelView(resource.localResourceOverride);
 
                 this._importLocalResourceOverrideButtonNavigationItem = new WI.ButtonNavigationItem("import-local-resource-override", WI.UIString("Import"), "Images/Import.svg", 15, 15);
                 this._importLocalResourceOverrideButtonNavigationItem.buttonStyle = WI.ButtonNavigationItem.Style.ImageAndText;
@@ -78,9 +74,12 @@ WI.ResourceContentView = class ResourceContentView extends WI.ContentView
                 this._localResourceOverrideBannerView = new WI.LocalResourceOverrideWarningView(resource);
 
                 this._createLocalResourceOverrideButtonNavigationItem = new WI.ButtonNavigationItem("create-local-resource-override", this.createLocalResourceOverrideTooltip, "Images/NavigationItemNetworkOverride.svg", 13, 14);
-                this._createLocalResourceOverrideButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._handleCreateLocalResourceOverride, this);
                 this._createLocalResourceOverrideButtonNavigationItem.enabled = false; // Enabled when the content is available.
                 this._createLocalResourceOverrideButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
+                if (WI.NetworkManager.supportsOverridingRequests())
+                    WI.addMouseDownContextMenuHandlers(this._createLocalResourceOverrideButtonNavigationItem.element, this._populateCreateLocalResourceOverrideContextMenu.bind(this));
+                else
+                    this._createLocalResourceOverrideButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._handleCreateLocalResourceOverride, this);
             }
 
             WI.networkManager.addEventListener(WI.NetworkManager.Event.LocalResourceOverrideAdded, this._handleLocalResourceOverrideChanged, this);
@@ -91,7 +90,6 @@ WI.ResourceContentView = class ResourceContentView extends WI.ContentView
     // Public
 
     get resource() { return this._resource; }
-    get showingLocalResourceOverride() { return this._showingLocalResourceOverride; }
 
     get navigationItems()
     {
@@ -138,15 +136,17 @@ WI.ResourceContentView = class ResourceContentView extends WI.ContentView
         return WI.UIString("Click to import a file and create a Local Override\nShift-click to create a Local Override from this content");
     }
 
-    requestLocalResourceOverrideInitialContent(callback)
+    requestLocalResourceOverrideInitialContent()
     {
         // Overridden by subclasses if needed.
 
-        WI.FileUtilities.import(async (fileList) => {
-            console.assert(fileList.length === 1);
+        return new Promise((resolve, reject) => {
+            WI.FileUtilities.import(async (fileList) => {
+                console.assert(fileList.length === 1);
 
-            this._getContentForLocalResourceOverrideFromFile(fileList[0], ({mimeType, base64Encoded, content}) => {
-                callback({mimeType, base64Encoded, content});
+                this._getContentForLocalResourceOverrideFromFile(fileList[0], ({mimeType, base64Encoded, content}) => {
+                    resolve({mimeType, base64Encoded, content});
+                });
             });
         });
     }
@@ -295,53 +295,66 @@ WI.ResourceContentView = class ResourceContentView extends WI.ContentView
         }
     }
 
+    async _createAndShowLocalResourceOverride(type, {requestInitialContent} = {})
+    {
+        let initialContent = requestInitialContent ? await this.requestLocalResourceOverrideInitialContent() : {};
+        let localResourceOverride = await this._resource.createLocalResourceOverride(type, initialContent);
+        WI.networkManager.addLocalResourceOverride(localResourceOverride);
+        WI.showLocalResourceOverride(localResourceOverride);
+    }
+
+    _populateCreateLocalResourceOverrideContextMenu(contextMenu, event)
+    {
+        contextMenu.appendItem(WI.UIString("Create Request Local Override"), () => {
+            // Request overrides cannot be created from a file as files don't have network info.
+            this._createAndShowLocalResourceOverride(WI.LocalResourceOverride.InterceptType.Request);
+        });
+
+        contextMenu.appendItem(WI.UIString("Create Response Local Override"), () => {
+            this._createAndShowLocalResourceOverride(WI.LocalResourceOverride.InterceptType.Response, {
+                requestInitialContent: !event.shiftKey,
+            });
+        });
+    }
+
     _handleCreateLocalResourceOverride(event)
     {
         let {nativeEvent} = event.data;
 
-        let createLocalResourceOverride = async (initialContent) => {
-            let localResourceOverride = await this._resource.createLocalResourceOverride(initialContent);
-            WI.networkManager.addLocalResourceOverride(localResourceOverride);
-            WI.showLocalResourceOverride(localResourceOverride);
-        };
-
-        if (nativeEvent.shiftKey)
-            createLocalResourceOverride({});
-        else
-            this.requestLocalResourceOverrideInitialContent(createLocalResourceOverride);
+        this._createAndShowLocalResourceOverride(WI.LocalResourceOverride.InterceptType.Response, {
+            requestInitialContent: !nativeEvent.shiftKey,
+        });
     }
 
     _handleImportLocalResourceOverride(event)
     {
-        console.assert(this._showingLocalResourceOverride);
+        let localResourceOverride = this.resource.localResourceOverride || WI.networkManager.localResourceOverridesForURL(this.resource.url)[0];
+        console.assert(localResourceOverride);
 
         WI.FileUtilities.import(async (fileList) => {
             console.assert(fileList.length === 1);
-
-            let localResourceOverride = WI.networkManager.localResourceOverrideForURL(this.resource.url);
-            console.assert(localResourceOverride);
 
             await this._getContentForLocalResourceOverrideFromFile(fileList[0], ({mimeType, base64Encoded, content}) => {
                 let revision = localResourceOverride.localResource.editableRevision;
                 revision.updateRevisionContent(content, {base64Encoded, mimeType});
             });
 
-            if (!this.showingLocalResourceOverride)
+            if (!this._resource.localResourceOverride)
                 WI.showLocalResourceOverride(localResourceOverride);
         });
     }
 
     _handleRemoveLocalResourceOverride(event)
     {
-        console.assert(this._showingLocalResourceOverride);
-
-        let localResourceOverride = WI.networkManager.localResourceOverrideForURL(this._resource.url);
+        let localResourceOverride = this.resource.localResourceOverride || WI.networkManager.localResourceOverridesForURL(this._resource.url)[0];
+        console.assert(localResourceOverride);
         WI.networkManager.removeLocalResourceOverride(localResourceOverride);
     }
 
     _handleLocalResourceOverrideChanged(event)
     {
-        if (this._resource.url !== event.data.localResourceOverride.url)
+        let {localResourceOverride} = event.data;
+        if (!localResourceOverride.matches(this._resource.url))
             return;
 
         if (this._createLocalResourceOverrideButtonNavigationItem)

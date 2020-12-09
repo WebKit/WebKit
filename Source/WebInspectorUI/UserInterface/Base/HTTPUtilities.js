@@ -86,3 +86,22 @@ WI.HTTPUtilities = class HTTPUtilities {
         return "Internal Server Error";
     }
 };
+
+WI.HTTPUtilities.RequestMethod = {
+    CONNECT: "CONNECT",
+    DELETE: "DELETE",
+    GET: "GET",
+    HEAD: "HEAD",
+    OPTIONS: "OPTIONS",
+    PATCH: "PATCH",
+    POST: "POST",
+    PUT: "PUT",
+    TRACE: "TRACE",
+};
+
+WI.HTTPUtilities.RequestMethodsWithBody = new Set([
+    WI.HTTPUtilities.RequestMethod.DELETE,
+    WI.HTTPUtilities.RequestMethod.PATCH,
+    WI.HTTPUtilities.RequestMethod.POST,
+    WI.HTTPUtilities.RequestMethod.PUT,
+]);

@@ -1,3 +1,38 @@
+2020-12-09  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: add UI for request interception
+        https://bugs.webkit.org/show_bug.cgi?id=217032
+        <rdar://problem/69925768>
+
+        Reviewed by Brian Burg.
+
+        * inspector/network/intercept-aborted-request.html: Renamed from LayoutTests/http/tests/inspector/network/intercept-aborted-request.html.
+        * inspector/network/intercept-aborted-request-expected.txt: Renamed from LayoutTests/http/tests/inspector/network/intercept-aborted-request-expected.txt.
+        * inspector/network/interceptContinue.html: Renamed from LayoutTests/http/tests/inspector/network/intercept-request-continue.html.
+        * inspector/network/interceptContinue-expected.txt: Renamed from LayoutTests/http/tests/inspector/network/intercept-request-continue.html.
+        * inspector/network/interceptRequestWithError.html: Renamed from LayoutTests/http/tests/inspector/network/intercept-request-subresource-with-error.html.
+        * inspector/network/interceptRequestWithError-expected.txt: Renamed from LayoutTests/http/tests/inspector/network/intercept-request-subresource-with-error.html.
+        * http/tests/inspector/network/intercept-request-fragment.html:
+        * http/tests/inspector/network/intercept-request-main-resource.html:
+        * http/tests/inspector/network/intercept-request-main-resource-with-response.html:
+        * http/tests/inspector/network/intercept-request-properties.html:
+        * http/tests/inspector/network/intercept-request-properties-expected.txt:
+        * http/tests/inspector/network/intercept-request-subresource.html:
+        * http/tests/inspector/network/intercept-request-subresource-with-response.html:
+        * http/tests/inspector/network/intercept-request-with-response.html:
+        * http/tests/inspector/network/intercept-request-with-response-expected.txt:
+        * http/tests/inspector/network/local-resource-override-basic.html:
+        * http/tests/inspector/network/local-resource-override-basic-expected.txt:
+        * http/tests/inspector/network/local-resource-override-main-resource.html:
+        * http/tests/inspector/network/local-resource-override-script-tag.html:
+        * http/tests/inspector/network/resource-response-inspector-override.html:
+
+        * inspector/network/local-resource-override-continue-response.html: Removed.
+        * inspector/network/local-resource-override-continue-response-expected.txt: Removed.
+        Merged into LayoutTests/inspector/network/interceptContinue.html.
+
+        * platform/mac-wk1/TestExpectations:
+
 2020-12-09  John Wilander  <wilander@apple.com>
 
         PCM: Make JSON key names use underscores according to the W3C conversation

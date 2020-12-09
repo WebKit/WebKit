@@ -52,13 +52,16 @@ localizedStrings["%dpx"] = "%dpx";
 localizedStrings["%dpx\u00B2"] = "%dpx\u00B2";
 localizedStrings["%s (%s)"] = "%s (%s)";
 localizedStrings["%s (%s, %s)"] = "%s (%s, %s)";
-localizedStrings["%s (Case Insensitive)"] = "%s (Case Insensitive)";
+/* Label for case-insensitive URL match pattern of a local override. */
+localizedStrings["%s (Case Insensitive) @ Local Override"] = "%s (Case Insensitive)";
 localizedStrings["%s (default)"] = "%s (default)";
 localizedStrings["%s (hidden)"] = "%s (hidden)";
 localizedStrings["%s Callback"] = "%s Callback";
 localizedStrings["%s Event Dispatched"] = "%s Event Dispatched";
 localizedStrings["%s Fired"] = "%s Fired";
 localizedStrings["%s Prototype"] = "%s Prototype";
+/* Format string for the suggested filename when saving the content for a request local override. */
+localizedStrings["%s Request Data @ Local Override Request Content View"] = "%s Request Data";
 localizedStrings["%s Result"] = "%s Result";
 localizedStrings["%s \u2013 %s"] = "%s \u2013 %s";
 localizedStrings["%s \u2013 %s (%s)"] = "%s \u2013 %s (%s)";
@@ -67,6 +70,7 @@ localizedStrings["%s cannot be modified"] = "%s cannot be modified";
 localizedStrings["%s delay"] = "%s delay";
 localizedStrings["%s eval\n%s async"] = "%s eval\n%s async";
 localizedStrings["%s interval"] = "%s interval";
+localizedStrings["%s requests do not have a body"] = "%s requests do not have a body";
 localizedStrings["%s total"] = "%s total";
 localizedStrings["%s transferred"] = "%s transferred";
 localizedStrings["%s:"] = "%s:";
@@ -91,9 +95,8 @@ localizedStrings["0 Console errors"] = "0 Console errors";
 localizedStrings["0 Console warnings"] = "0 Console warnings";
 localizedStrings["1 match"] = "1 match";
 localizedStrings["1080p"] = "1080p";
-localizedStrings["720p"] = "720p";
-localizedStrings["Screen size:"] = "Screen size:";
 localizedStrings["2D"] = "2D";
+localizedStrings["720p"] = "720p";
 localizedStrings["Accessibility"] = "Accessibility";
 localizedStrings["Action"] = "Action";
 /* Tooltip for a time range bar that represents when a CSS animation/transition is running */
@@ -366,7 +369,9 @@ localizedStrings["Create %s Rule"] = "Create %s Rule";
 localizedStrings["Create @ Audit Tab Navigation Sidebar"] = "Create";
 localizedStrings["Create Breakpoint"] = "Create Breakpoint";
 localizedStrings["Create Local Override"] = "Create Local Override";
+localizedStrings["Create Request Local Override"] = "Create Request Local Override";
 localizedStrings["Create Resource"] = "Create Resource";
+localizedStrings["Create Response Local Override"] = "Create Response Local Override";
 localizedStrings["Create audit:"] = "Create audit:";
 localizedStrings["Cross-Origin Restrictions"] = "Cross-Origin Restrictions";
 localizedStrings["Current"] = "Current";
@@ -807,6 +812,8 @@ localizedStrings["Low @ Network Priority"] = "Low";
 localizedStrings["Low @ Timeline Energy Impact"] = "Low";
 localizedStrings["Lowest: %s"] = "Lowest: %s";
 localizedStrings["MIME Type"] = "MIME Type";
+/* Label for MIME type input for the local override currently being edited. */
+localizedStrings["MIME Type @ Local Override Popover"] = "MIME Type";
 localizedStrings["MIME Type:"] = "MIME Type:";
 localizedStrings["MSE Logging:"] = "MSE Logging:";
 localizedStrings["Main Thread"] = "Main Thread";
@@ -935,7 +942,6 @@ localizedStrings["Outgoing message"] = "Outgoing message";
 localizedStrings["Output: "] = "Output: ";
 localizedStrings["Over 1 ms"] = "Over 1 ms";
 localizedStrings["Over 15 ms"] = "Over 15 ms";
-localizedStrings["Override"] = "Override";
 localizedStrings["Overview"] = "Overview";
 localizedStrings["Owns"] = "Owns";
 localizedStrings["PDF"] = "PDF";
@@ -1026,6 +1032,7 @@ localizedStrings["Recording Timeline Data @ Timeline Recording Progress"] = "Rec
 localizedStrings["Recording Type Canvas Bitmap Renderer"] = "Bitmap Renderer";
 localizedStrings["Recording Warning: %s"] = "Recording Warning: %s";
 localizedStrings["Recordings"] = "Recordings";
+localizedStrings["Redirect"] = "Redirect";
 localizedStrings["Redirect Response"] = "Redirect Response";
 localizedStrings["Redirects"] = "Redirects";
 localizedStrings["Reference Issue"] = "Reference Issue";
@@ -1051,9 +1058,13 @@ localizedStrings["Request"] = "Request";
 localizedStrings["Request & Response"] = "Request & Response";
 localizedStrings["Request (DOM Tree)"] = "Request (DOM Tree)";
 localizedStrings["Request (Object Tree)"] = "Request (Object Tree)";
+/* Text indicating that the local override intercepts the request phase of network activity. */
+localizedStrings["Request @ Local Override Type"] = "Request";
 localizedStrings["Request Cookies"] = "Request Cookies";
 localizedStrings["Request Data"] = "Request Data";
 localizedStrings["Request Headers"] = "Request Headers";
+/* Label indicating that the shown content is from a request local override. */
+localizedStrings["Request Override @ Local Override Content View"] = "Request Override";
 localizedStrings["Requesting: %s"] = "Requesting: %s";
 localizedStrings["Required"] = "Required";
 /* Context menu action for resetting the breakpoint to its initial configuration. */
@@ -1074,8 +1085,14 @@ localizedStrings["Response"] = "Response";
 localizedStrings["Response (DOM Tree)"] = "Response (DOM Tree)";
 localizedStrings["Response (Object Tree)"] = "Response (Object Tree)";
 localizedStrings["Response (Text)"] = "Response (Text)";
+/* Text indicating that the local override will skip all network activity and instead immediately serve the response. */
+localizedStrings["Response (skip network) @ Local Override Type"] = "Response (skip network)";
+/* Text indicating that the local override intercepts the response phase of network activity. */
+localizedStrings["Response @ Local Override Type"] = "Response";
 localizedStrings["Response Cookies"] = "Response Cookies";
 localizedStrings["Response Headers"] = "Response Headers";
+/* Label indicating that the shown content is from a response local override. */
+localizedStrings["Response Override @ Local Override Content View"] = "Response Override";
 localizedStrings["Response:"] = "Response:";
 localizedStrings["Restart (%s)"] = "Restart (%s)";
 localizedStrings["Restart animation"] = "Restart animation";
@@ -1123,6 +1140,7 @@ localizedStrings["Scheme"] = "Scheme";
 localizedStrings["Scope"] = "Scope";
 localizedStrings["Scope Chain"] = "Scope Chain";
 localizedStrings["Screen Shot %s-%s-%s at %s.%s.%s"] = "Screen Shot %s-%s-%s at %s.%s.%s";
+localizedStrings["Screen size:"] = "Screen size:";
 localizedStrings["Script"] = "Script";
 localizedStrings["Script Element %d"] = "Script Element %d";
 localizedStrings["Script Entries:"] = "Script Entries:";
@@ -1254,6 +1272,8 @@ localizedStrings["Start to Finish"] = "Start to Finish";
 localizedStrings["State"] = "State";
 localizedStrings["Statistics"] = "Statistics";
 localizedStrings["Status"] = "Status";
+/* Label for the HTTP status code input for the local override currently being edited. */
+localizedStrings["Status @ Local Override Popover"] = "Status";
 localizedStrings["Step"] = "Step";
 localizedStrings["Step (%s or %s)"] = "Step (%s or %s)";
 localizedStrings["Step into (%s or %s)"] = "Step into (%s or %s)";

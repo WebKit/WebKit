@@ -183,9 +183,9 @@ WI.Resource = class Resource extends WI.SourceCode
     {
         let classes = [];
 
-        let isOverride = resource.isLocalResourceOverride;
+        let isOverride = !!resource.localResourceOverride;
         let wasOverridden = resource.responseSource === WI.Resource.ResponseSource.InspectorOverride;
-        let shouldBeOverridden = resource.isLoading() && WI.networkManager.localResourceOverrideForURL(resource.url);
+        let shouldBeOverridden = resource.isLoading() && WI.networkManager.localResourceOverridesForURL(resource.url).some((localResourceOverride) => !localResourceOverride.disabled);
         if (isOverride || wasOverridden || shouldBeOverridden)
             classes.push("override");
 
@@ -363,7 +363,7 @@ WI.Resource = class Resource extends WI.SourceCode
 
     get supportsScriptBlackboxing()
     {
-        if (this.isLocalResourceOverride)
+        if (this.localResourceOverride)
             return false;
         if (!this.finished || this.failed)
             return false;
@@ -427,11 +427,6 @@ WI.Resource = class Resource extends WI.SourceCode
     isMainResource()
     {
         return this._parentFrame ? this._parentFrame.mainResource === this : false;
-    }
-
-    get isLocalResourceOverride()
-    {
-        return false;
     }
 
     addInitiatedResource(resource)
@@ -1062,33 +1057,62 @@ WI.Resource = class Resource extends WI.SourceCode
         cookie[WI.Resource.MainResourceCookieKey] = this.isMainResource();
     }
 
-    async createLocalResourceOverride({mimeType, base64Encoded, content} = {})
+    async createLocalResourceOverride(type, {mimeType, base64Encoded, content} = {})
     {
-        console.assert(!this.isLocalResourceOverride);
+        console.assert(!this.localResourceOverride);
         console.assert(WI.NetworkManager.supportsOverridingResponses());
 
-        mimeType ??= this.mimeType ?? WI.mimeTypeForFileExtension(WI.fileExtensionForFilename(this.urlComponents.lastPathComponent));
+        let resourceData = {
+            requestURL: this.url,
+        };
 
-        if (base64Encoded === undefined || content === undefined) {
-            try {
-                let {rawContent, rawBase64Encoded} = await this.requestContent();
-                content ??= rawContent;
-                base64Encoded ??= rawBase64Encoded;
-            } catch {
-                content ??= "";
-                base64Encoded ??= !WI.shouldTreatMIMETypeAsText(mimeType);
+        switch (type) {
+        case WI.LocalResourceOverride.InterceptType.Request:
+            resourceData.requestMethod = this.requestMethod ?? WI.HTTPUtilities.RequestMethod.GET;
+            resourceData.requestHeaders = Object.shallowCopy(this.requestHeaders);
+            resourceData.requestData = this.requestData ?? "";
+            break;
+
+        case WI.LocalResourceOverride.InterceptType.Response:
+        case WI.LocalResourceOverride.InterceptType.ResponseSkippingNetwork:
+            resourceData.responseMIMEType = this.mimeType ?? WI.mimeTypeForFileExtension(WI.fileExtensionForFilename(this.urlComponents.lastPathComponent));
+            resourceData.responseStatusCode = this.statusCode;
+            resourceData.responseStatusText = this.statusText;
+            if (!resourceData.responseStatusCode) {
+                resourceData.responseStatusCode = 200;
+                resourceData.responseStatusText = null;
             }
+            resourceData.responseStatusText ||= WI.HTTPUtilities.statusTextForStatusCode(resourceData.responseStatusCode);
+
+            if (base64Encoded === undefined || content === undefined) {
+                try {
+                    let {rawContent, rawBase64Encoded} = await this.requestContent();
+                    content ??= rawContent;
+                    base64Encoded ??= rawBase64Encoded;
+                } catch {
+                    content ??= "";
+                    base64Encoded ??= !WI.shouldTreatMIMETypeAsText(resourceData.mimeType);
+                }
+            }
+            resourceData.responseContent = content;
+            resourceData.responseBase64Encoded = base64Encoded;
+            resourceData.responseHeaders = Object.shallowCopy(this.responseHeaders);
+            break;
         }
 
-        return WI.LocalResourceOverride.create(WI.LocalResourceOverride.InterceptType.Response, {
-            url: this.url,
-            mimeType,
-            content,
-            base64Encoded,
-            statusCode: this.statusCode,
-            statusText: this.statusText,
-            headers: this.responseHeaders,
-        });
+        return WI.LocalResourceOverride.create(WI.urlWithoutFragment(this.url), type, resourceData);
+    }
+
+    updateLocalResourceOverrideRequestData(data)
+    {
+        console.assert(this.localResourceOverride);
+
+        if (data === this._requestData)
+            return;
+
+        this._requestData = data;
+
+        this.dispatchEventToListeners(WI.Resource.Event.RequestDataDidChange);
     }
 
     generateCURLCommand()
@@ -1218,6 +1242,7 @@ WI.Resource.Event = {
     MIMETypeDidChange: "resource-mime-type-did-change",
     TypeDidChange: "resource-type-did-change",
     RequestHeadersDidChange: "resource-request-headers-did-change",
+    RequestDataDidChange: "resource-request-data-did-change",
     ResponseReceived: "resource-response-received",
     LoadingDidFinish: "resource-loading-did-finish",
     LoadingDidFail: "resource-loading-did-fail",

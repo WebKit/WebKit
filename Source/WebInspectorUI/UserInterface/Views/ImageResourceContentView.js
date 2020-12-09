@@ -92,7 +92,7 @@ WI.ImageResourceContentView = class ImageResourceContentView extends WI.Resource
             dropZoneView.targetElement = imageContainer;
             this.addSubview(dropZoneView);
 
-            if (this.showingLocalResourceOverride)
+            if (this.resource.localResourceOverride)
                 this.resource.addEventListener(WI.SourceCode.Event.ContentDidChange, this._handleLocalResourceContentDidChange, this);
         }
     }
@@ -123,15 +123,24 @@ WI.ImageResourceContentView = class ImageResourceContentView extends WI.Resource
         if (this._draggingInternalImageElement)
             return false;
 
+        let existingOverrides = WI.networkManager.localResourceOverridesForURL(this.resource.url);
+        if (existingOverrides.length > 1)
+            return false;
+
+        // Request overrides cannot be created/updated from a file as files don't have network info.
+        let localResourceOverride = this.resource.localResourceOverride || existingOverrides[0];
+        if (localResourceOverride?.type === WI.LocalResourceOverride.InterceptType.Request)
+            return false;
+
         // Appear if the drop contains a file.
         return event.dataTransfer.types.includes("Files");
     }
 
     dropZoneHandleDragEnter(dropZone, event)
     {
-        if (this.showingLocalResourceOverride)
+        if (this.resource.localResourceOverride)
             dropZone.text = WI.UIString("Update Image");
-        else if (WI.networkManager.localResourceOverrideForURL(this.resource.url))
+        else if (WI.networkManager.localResourceOverridesForURL(this.resource.url).length)
             dropZone.text = WI.UIString("Update Local Override");
         else
             dropZone.text = WI.UIString("Create Local Override");
@@ -146,18 +155,17 @@ WI.ImageResourceContentView = class ImageResourceContentView extends WI.Resource
         }
 
         WI.FileUtilities.readData(files, async ({dataURL, mimeType, base64Encoded, content}) => {
-            let localResourceOverride = WI.networkManager.localResourceOverrideForURL(this.resource.url);
-            if (!localResourceOverride && !this.showingLocalResourceOverride) {
-                localResourceOverride = await this.resource.createLocalResourceOverride();
+            let localResourceOverride = this.resource.localResourceOverride || WI.networkManager.localResourceOverridesForURL(this.resource.url)[0];
+            if (!localResourceOverride) {
+                localResourceOverride = await this.resource.createLocalResourceOverride(WI.LocalResourceOverride.InterceptType.Response);
                 WI.networkManager.addLocalResourceOverride(localResourceOverride);
             }
-
             console.assert(localResourceOverride);
 
             let revision = localResourceOverride.localResource.editableRevision;
             revision.updateRevisionContent(content, {base64Encoded, mimeType});
 
-            if (!this.showingLocalResourceOverride)
+            if (!this.resource.localResourceOverride)
                 WI.showLocalResourceOverride(localResourceOverride);
         });
     }

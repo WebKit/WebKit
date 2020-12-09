@@ -17,21 +17,16 @@ function test()
 {
     let suite = InspectorTest.createAsyncSuite("Network.interceptWithRequest");
 
-    NetworkAgent.addInterception.invoke({
-        url: "http://127.0.0.1:8000/inspector/network/resources/stylesheet.css",
-        stage: InspectorBackend.Enum.Network.NetworkStage.Request,
-    });
-
     function addBaselineTestCase({name, description, expression}) {
         suite.addTestCase({
             name,
             description,
             async test() {
                 InspectorTest.log("Triggering load...");
-                let [requestEvent, responseEvent, fetchResponse] = await Promise.all([
+                let [requestEvent, responseEvent] = await Promise.all([
                     WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded),
                     WI.Resource.awaitEvent(WI.Resource.Event.ResponseReceived),
-                    RuntimeAgent.evaluate(expression),
+                    InspectorTest.evaluateInPage(expression),
                 ]);
                 InspectorTest.log("Request URL: " + requestEvent.data.resource.url);
                 InspectorTest.log("Response URL: " + responseEvent.target.url);
@@ -43,22 +38,23 @@ function test()
             name,
             description,
             async test() {
-                InspectorTest.log("Triggering load...");
-                let [requestEvent, requestInterceptedEvent, fetchResponse] = await Promise.all([
-                    WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded),
-                    WI.networkManager.awaitEvent(WI.NetworkManager.Event.RequestIntercepted),
-                    RuntimeAgent.evaluate(expression),
-                ]);
-                InspectorTest.log("Request URL: " + requestEvent.data.resource.url);
+                let localResourceOverride = WI.LocalResourceOverride.create("http://127.0.0.1:8000/inspector/network/resources/stylesheet.css", WI.LocalResourceOverride.InterceptType.Request, {
+                    requestURL: url,
+                });
+                WI.networkManager.addLocalResourceOverride(localResourceOverride);
 
-                let [responseEvent, interceptResponse] = await Promise.all([
-                    WI.Resource.awaitEvent(WI.Resource.Event.ResponseReceived),
-                    NetworkAgent.interceptWithRequest.invoke({
-                        requestId: requestInterceptedEvent.data.requestId,
-                        url,
+                InspectorTest.log("Triggering load...");
+                await Promise.all([
+                    WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded).then((event) => {
+                        InspectorTest.log("Request URL: " + event.data.resource.url);
                     }),
+                    WI.Resource.awaitEvent(WI.Resource.Event.ResponseReceived).then((event) => {
+                        InspectorTest.log("Response URL: " + event.target.url);
+                    }),
+                    InspectorTest.evaluateInPage(expression),
                 ]);
-                InspectorTest.log("Response URL: " + responseEvent.target.url);
+
+                WI.networkManager.removeLocalResourceOverride(localResourceOverride);
             }
         });
     }

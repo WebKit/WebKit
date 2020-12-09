@@ -65,8 +65,12 @@
     height: auto;
 }
 
-.popover .local-resource-override-popover-content .editor.url {
-    width: 324px;
+.popover .local-resource-override-popover-content.request .editor:is(.url, .redirect) {
+    width: 344px;
+}
+
+.popover .local-resource-override-popover-content.response .editor.url {
+    width: 330px;
 }
 
 .popover .local-resource-override-popover-content label:matches(.is-case-sensitive, .is-regex) {
@@ -90,28 +94,22 @@
     margin-inline-start: 12px;
 }
 
+.popover .local-resource-override-popover-content .data-grid {
+    margin-bottom: 6px;
+}
+
 .popover .local-resource-override-popover-content .data-grid tr.header-content-type > :matches(.name-column, .value-column) {
     opacity: 0.5;
-}
-
-.popover .local-resource-override-popover-content .add-header {
-    margin-top: 8px;
-}
-
-.popover .local-resource-override-popover-content .add-header + .reference-page-link-container {
-    margin-top: 6px;
 }
 
 .popover .local-resource-override-popover-content .options td {
     vertical-align: bottom;
 }
 
-body[dir=ltr] .popover .local-resource-override-popover-content .reference-page-link-container {
-    float: right;
-}
-
-body[dir=rtl] .popover .local-resource-override-popover-content .reference-page-link-container {
-    float: left;
+.popover .local-resource-override-popover-content .reference-page-link-container {
+    position: absolute;
+    inset-inline-end: 1.5em;
+    bottom: 1.25em;
 }
 
 @media (prefers-color-scheme: dark) {

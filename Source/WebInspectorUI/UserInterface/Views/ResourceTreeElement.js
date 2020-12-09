@@ -163,6 +163,7 @@ WI.ResourceTreeElement = class ResourceTreeElement extends WI.SourceCodeTreeElem
 
     get mainTitleText()
     {
+        // Overridden by subclasses if needed.
         return WI.displayNameForURL(this._resource.url, this._resource.urlComponents, {
             allowDirectoryAsName: this._allowDirectoryAsName,
         });
@@ -189,12 +190,16 @@ WI.ResourceTreeElement = class ResourceTreeElement extends WI.SourceCodeTreeElem
         this.mainTitle = this.mainTitleText;
 
         if (!this._hideOrigin) {
-            if (this._resource.isLocalResourceOverride) {
-                // Show the host for a local resource override if it is different from the main frame.
-                let localResourceOverrideHost = urlComponents.host;
-                let mainFrameHost = (WI.networkManager.mainFrame && WI.networkManager.mainFrame.mainResource) ? WI.networkManager.mainFrame.mainResource.urlComponents.host : null;
-                let subtitle = localResourceOverrideHost !== mainFrameHost ? localResourceOverrideHost : null;
-                this.subtitle = this.mainTitle !== subtitle ? subtitle : null;
+            if (this._resource.localResourceOverride) {
+                if (WI.NetworkManager.supportsOverridingRequests())
+                    this.subtitle = WI.LocalResourceOverride.displayNameForType(this._resource.localResourceOverride.type);
+                else {
+                    // Show the host for a local resource override if it is different from the main frame.
+                    let localResourceOverrideHost = urlComponents.host;
+                    let mainFrameHost = (WI.networkManager.mainFrame && WI.networkManager.mainFrame.mainResource) ? WI.networkManager.mainFrame.mainResource.urlComponents.host : null;
+                    let subtitle = localResourceOverrideHost !== mainFrameHost ? localResourceOverrideHost : null;
+                    this.subtitle = this.mainTitle !== subtitle ? subtitle : null;
+                }
             } else {
                 // Show the host as the subtitle if it is different from the main resource or if this is the main frame's main resource.
                 let subtitle = (parentResourceHost !== urlComponents.host || (frame && frame.isMainFrame() && isMainResource)) ? WI.displayNameForHost(urlComponents.host) : null;
@@ -255,9 +260,8 @@ WI.ResourceTreeElement = class ResourceTreeElement extends WI.SourceCodeTreeElem
 
     _updateIcon()
     {
-        let isOverride = this._resource.isLocalResourceOverride;
+        let isOverride = !!this._resource.localResourceOverride;
         let wasOverridden = this._resource.responseSource === WI.Resource.ResponseSource.InspectorOverride;
-
         if (isOverride || wasOverridden)
             this.addClassName("override");
         else

@@ -42,14 +42,13 @@ function test()
         responseSource: WI.Resource.ResponseSource.InspectorOverride,
         statusCode: 987,
         async setup() {
-            WI.networkManager.addLocalResourceOverride(WI.LocalResourceOverride.create(WI.LocalResourceOverride.InterceptType.Response, {
-                url: "http://127.0.0.1:8000/inspector/network/resources/override.txt",
-                mimeType: "text/plain",
-                content: "Overridden Text",
-                base64Encoded: false,
-                statusCode: 987,
-                statusText: "Status Text",
-                headers: {},
+            WI.networkManager.addLocalResourceOverride(WI.LocalResourceOverride.create("http://127.0.0.1:8000/inspector/network/resources/override.txt", WI.LocalResourceOverride.InterceptType.Response, {
+                responseMIMEType: "text/plain",
+                responseContent: "Overridden Text",
+                responseBase64Encoded: false,
+                responseStatusCode: 987,
+                responseStatusText: "Status Text",
+                responseHeaders: {},
             }));
         }
     });

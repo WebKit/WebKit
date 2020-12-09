@@ -501,7 +501,7 @@ WI.NavigationSidebarPanel = class NavigationSidebarPanel extends WI.SidebarPanel
 
                 // Local Overrides are never stale resources.
                 let resource = treeElement.resource;
-                if (resource.isLocalResourceOverride)
+                if (resource.localResourceOverride)
                     continue;
 
                 if (!resource.parentFrame || resource.parentFrame.isDetached())

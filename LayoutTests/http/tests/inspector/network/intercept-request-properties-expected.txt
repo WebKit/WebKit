@@ -58,7 +58,10 @@ Request details:
 -- Running test case: Network.interceptRequest.URLEmpty
 Triggering load...
 Request details:
-  The URL can’t be shown
+  URI: /inspector/network/resources/intercept-echo.php
+  Response URL: http://127.0.0.1:8000/inspector/network/resources/intercept-echo.php
+  Method: GET
+  Request Headers:
 
 -- Running test case: Network.interceptRequest.Headers
 Triggering load...

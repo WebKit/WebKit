@@ -98,8 +98,11 @@ WI.ContentView = class ContentView extends WI.View
                 return WI.ContentView.createFromRepresentedObject(representedObject.sourceCodeLocation.displaySourceCode, extraArguments);
         }
 
-        if (representedObject instanceof WI.LocalResourceOverride)
+        if (representedObject instanceof WI.LocalResourceOverride) {
+            if (representedObject.type === WI.LocalResourceOverride.InterceptType.Request)
+                return new WI.LocalResourceOverrideRequestContentView(representedObject);
             return WI.ContentView.createFromRepresentedObject(representedObject.localResource);
+        }
 
         if (representedObject instanceof WI.DOMStorageObject)
             return new WI.DOMStorageContentView(representedObject, extraArguments);
@@ -237,16 +240,19 @@ WI.ContentView = class ContentView extends WI.View
         if (representedObject instanceof WI.JavaScriptBreakpoint || representedObject instanceof WI.IssueMessage) {
             if (representedObject.sourceCodeLocation)
                 return representedObject.sourceCodeLocation.displaySourceCode;
+            return representedObject;
         }
 
         if (representedObject instanceof WI.DOMBreakpoint) {
             if (representedObject.domNode)
                 return WI.ContentView.resolvedRepresentedObjectForRepresentedObject(representedObject.domNode);
+            return representedObject;
         }
 
         if (representedObject instanceof WI.DOMNode) {
             if (representedObject.frame)
                 return WI.ContentView.resolvedRepresentedObjectForRepresentedObject(representedObject.frame);
+            return representedObject;
         }
 
         if (representedObject instanceof WI.DOMSearchMatchObject)
@@ -255,8 +261,11 @@ WI.ContentView = class ContentView extends WI.View
         if (representedObject instanceof WI.SourceCodeSearchMatchObject)
             return representedObject.sourceCode;
 
-        if (representedObject instanceof WI.LocalResourceOverride)
-            return representedObject.localResource;
+        if (representedObject instanceof WI.LocalResourceOverride) {
+            if (representedObject.type !== WI.LocalResourceOverride.InterceptType.Request)
+                return representedObject.localResource;
+            return representedObject;
+        }
 
         return representedObject;
     }

@@ -77,16 +77,26 @@ WI.appendContextMenuItemsForSourceCode = function(contextMenu, sourceCodeOrLocat
 
         if (WI.networkManager.canBeOverridden(sourceCode)) {
             contextMenu.appendSeparator();
-            contextMenu.appendItem(WI.UIString("Create Local Override"), async () => {
-                let resource = sourceCode;
-                let localResourceOverride = await resource.createLocalResourceOverride();
+
+            if (WI.NetworkManager.supportsOverridingRequests()) {
+                contextMenu.appendItem(WI.UIString("Create Request Local Override"), async () => {
+                    let localResourceOverride = await sourceCode.createLocalResourceOverride(WI.LocalResourceOverride.InterceptType.Request);
+                    WI.networkManager.addLocalResourceOverride(localResourceOverride);
+                    WI.showLocalResourceOverride(localResourceOverride, {
+                        initiatorHint: WI.TabBrowser.TabNavigationInitiator.ContextMenu,
+                    });
+                });
+            }
+
+            contextMenu.appendItem(WI.UIString("Create Response Local Override"), async () => {
+                let localResourceOverride = await sourceCode.createLocalResourceOverride(WI.LocalResourceOverride.InterceptType.Response);
                 WI.networkManager.addLocalResourceOverride(localResourceOverride);
                 WI.showLocalResourceOverride(localResourceOverride, {
                     initiatorHint: WI.TabBrowser.TabNavigationInitiator.ContextMenu,
                 });
             });
         } else {
-            let localResourceOverride = WI.networkManager.localResourceOverrideForURL(sourceCode.url);
+            let localResourceOverride = WI.networkManager.localResourceOverridesForURL(sourceCode.url)[0];
             if (localResourceOverride) {
                 contextMenu.appendSeparator();
 
@@ -109,7 +119,7 @@ WI.appendContextMenuItemsForSourceCode = function(contextMenu, sourceCodeOrLocat
 
     contextMenu.appendSeparator();
 
-    if (location && (sourceCode instanceof WI.Script || (sourceCode instanceof WI.Resource && sourceCode.type === WI.Resource.Type.Script && !sourceCode.isLocalResourceOverride))) {
+    if (location && (sourceCode instanceof WI.Script || (sourceCode instanceof WI.Resource && sourceCode.type === WI.Resource.Type.Script && !sourceCode.localResourceOverride))) {
         let existingBreakpoint = WI.debuggerManager.breakpointForSourceCodeLocation(location);
         if (existingBreakpoint) {
             contextMenu.appendItem(WI.UIString("Delete Breakpoint"), () => {
@@ -142,7 +152,7 @@ WI.appendContextMenuItemsForSourceCode = function(contextMenu, sourceCodeOrLocat
 
     WI.appendContextMenuItemsForURL(contextMenu, sourceCode.url, {sourceCode, location});
 
-    if (sourceCode instanceof WI.Resource && !sourceCode.isLocalResourceOverride) {
+    if (sourceCode instanceof WI.Resource && !sourceCode.localResourceOverride) {
         if (sourceCode.urlComponents.scheme !== "data") {
             contextMenu.appendItem(WI.UIString("Copy as cURL"), () => {
                 InspectorFrontendHost.copyText(sourceCode.generateCURLCommand());

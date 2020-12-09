@@ -78,7 +78,7 @@ WI.TextResourceContentView = class TextResourceContentView extends WI.ResourceCo
 
         items.push(this._prettyPrintButtonNavigationItem);
 
-        if (!this.showingLocalResourceOverride)
+        if (!this.resource.localResourceOverride)
             items.push(this._showTypesButtonNavigationItem, this._codeCoverageButtonNavigationItem);
 
         return items;
@@ -135,9 +135,9 @@ WI.TextResourceContentView = class TextResourceContentView extends WI.ResourceCo
         return WI.UIString("Click to create a Local Override from this content");
     }
 
-    requestLocalResourceOverrideInitialContent(callback)
+    requestLocalResourceOverrideInitialContent()
     {
-        callback({
+        return Promise.resolve({
             mimeType: this.resource.mimeType,
             base64Encoded: this.resource.base64Encoded,
             content: this._textEditor.string,
@@ -326,7 +326,7 @@ WI.TextResourceContentView = class TextResourceContentView extends WI.ResourceCo
         if (this.resource.urlComponents.scheme === "file")
             return true;
 
-        if (this.showingLocalResourceOverride)
+        if (this.resource.localResourceOverride)
             return true;
 
         return false;

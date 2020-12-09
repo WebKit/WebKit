@@ -141,6 +141,12 @@ WI.SourceCode = class SourceCode extends WI.Object
         return contentIdentifier && !isWebKitInjectedScript(contentIdentifier);
     }
 
+    get localResourceOverride()
+    {
+        // Overridden by subclasses if needed.
+        return null;
+    }
+
     get sourceMaps()
     {
         return this._sourceMaps || [];

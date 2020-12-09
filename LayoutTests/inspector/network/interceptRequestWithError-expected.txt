@@ -1,0 +1,28 @@
+CONSOLE MESSAGE: Fetch API cannot load data.json?error=General.
+CONSOLE MESSAGE: Access denied
+CONSOLE MESSAGE: Fetch API cannot load data.json?error=AccessControl due to access control checks.
+CONSOLE MESSAGE: Fetch API cannot load data.json?error=Timeout.
+Tests for Network.interceptRequestWithError.
+
+
+== Running test suite: Network.interceptRequestWithError
+-- Running test case: Network.interceptRequestWithError.General
+Triggering load...
+Intercepting with error...
+FAILURE TEXT: Request intercepted
+
+-- Running test case: Network.interceptRequestWithError.Access
+Triggering load...
+Intercepting with error...
+FAILURE TEXT: Access denied
+
+-- Running test case: Network.interceptRequestWithError.Canceled
+Triggering load...
+Intercepting with error...
+FAILURE TEXT: Request canceled
+
+-- Running test case: Network.interceptRequestWithError.Timeout
+Triggering load...
+Intercepting with error...
+FAILURE TEXT: Request timed out
+

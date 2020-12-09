@@ -1214,7 +1214,7 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
     get _supportsDebugging()
     {
         if (this._sourceCode instanceof WI.Resource) {
-            if (this._sourceCode.isLocalResourceOverride)
+            if (this._sourceCode.localResourceOverride)
                 return false;
             return this._sourceCode.type === WI.Resource.Type.Document || this._sourceCode.type === WI.Resource.Type.Script;
         }
