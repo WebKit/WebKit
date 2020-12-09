@@ -207,7 +207,7 @@
             return;
         }
 
-        capturedBlock(nil, [[wrapper(API::InspectorExtension::create(protectedExtensionID.get())) retain] autorelease]);
+        capturedBlock(nil, [[wrapper(API::InspectorExtension::create(protectedExtensionID.get(), protectedSelf->_inspector->extensionController())) retain] autorelease]);
     });
 #else
     completionHandler([NSError errorWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:nil], nil);

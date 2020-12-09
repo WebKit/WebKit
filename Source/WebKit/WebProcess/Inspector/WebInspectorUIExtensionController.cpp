@@ -56,7 +56,7 @@ WebInspectorUIExtensionController::~WebInspectorUIExtensionController()
 
 Optional<InspectorExtensionError> WebInspectorUIExtensionController::parseInspectorExtensionErrorFromEvaluationResult(InspectorFrontendAPIDispatcher::EvaluationResult result)
 {
-    if (!result.has_value()) {
+    if (!result) {
         switch (result.error()) {
         case WebCore::InspectorFrontendAPIDispatcher::EvaluationError::ContextDestroyed:
             return InspectorExtensionError::ContextDestroyed;
@@ -146,6 +146,61 @@ void WebInspectorUIExtensionController::unregisterExtension(const InspectorExten
         }
 
         completionHandler(true);
+    });
+}
+
+JSC::JSObject* WebInspectorUIExtensionController::unwrapEvaluationResultAsObject(InspectorFrontendAPIDispatcher::EvaluationResult result)
+{
+    if (!result)
+        return nullptr;
+    
+    auto valueOrException = result.value();
+    if (!valueOrException.has_value())
+        return nullptr;
+    
+    return valueOrException.value().getObject();
+}
+
+void WebInspectorUIExtensionController::createTabForExtension(const InspectorExtensionID& extensionID, const String& tabName, const URL& tabIconURL, const URL& sourceURL, WTF::CompletionHandler<void(Expected<InspectorExtensionTabID, InspectorExtensionError>)>&& completionHandler)
+{
+    if (!m_frontendClient) {
+        completionHandler(makeUnexpected(InspectorExtensionError::InvalidRequest));
+        return;
+    }
+
+    Vector<Ref<JSON::Value>> arguments {
+        JSON::Value::create(extensionID),
+        JSON::Value::create(tabName),
+        JSON::Value::create(tabIconURL.string()),
+        JSON::Value::create(sourceURL.string()),
+    };
+    m_frontendClient->frontendAPIDispatcher().dispatchCommandWithResultAsync("createTabForExtension"_s, WTFMove(arguments), [weakThis = makeWeakPtr(this), completionHandler = WTFMove(completionHandler)](InspectorFrontendAPIDispatcher::EvaluationResult&& result) mutable {
+        if (!weakThis || !result) {
+            completionHandler(makeUnexpected(InspectorExtensionError::ContextDestroyed));
+            return;
+        }
+
+        if (auto parsedError = weakThis->parseInspectorExtensionErrorFromEvaluationResult(result.value())) {
+            completionHandler(makeUnexpected(parsedError.value()));
+            return;
+        }
+
+        // Expected result is either an ErrorString or {extensionTabID: <string>}.
+        auto objectResult = weakThis->unwrapEvaluationResultAsObject(result);
+        if (!objectResult) {
+            LOG(Inspector, "Unexpected non-object value returned from InspectorFrontendAPI.createTabForExtension().");
+            completionHandler(makeUnexpected(InspectorExtensionError::InternalError));
+            return;
+        }
+
+        auto* frontendGlobalObject = weakThis->m_frontendClient->frontendAPIDispatcher().frontendGlobalObject();
+        JSC::JSValue foundProperty = objectResult->get(frontendGlobalObject, JSC::Identifier::fromString(frontendGlobalObject->vm(), "extensionTabID"_s));
+        if (!foundProperty || !foundProperty.isString()) {
+            completionHandler(makeUnexpected(InspectorExtensionError::InternalError));
+            return;
+        }
+
+        completionHandler({ foundProperty.toWTFString(frontendGlobalObject) });
     });
 }
 

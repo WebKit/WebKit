@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "_WKRemoteWebInspectorViewControllerPrivate.h"
+#import "_WKRemoteWebInspectorViewControllerInternal.h"
 
 #if PLATFORM(MAC)
 
@@ -87,7 +87,6 @@ private:
 } // namespace WebKit
 
 @implementation _WKRemoteWebInspectorViewController {
-    RefPtr<WebKit::RemoteWebInspectorProxy> m_remoteInspectorProxy;
     std::unique_ptr<WebKit::_WKRemoteWebInspectorProxyClient> m_remoteInspectorClient;
     _WKInspectorConfiguration *_configuration;
 }
@@ -201,7 +200,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             return;
         }
 
-        capturedBlock(nil, [[wrapper(API::InspectorExtension::create(protectedExtensionID.get())) retain] autorelease]);
+        capturedBlock(nil, [[wrapper(API::InspectorExtension::create(protectedExtensionID.get(), protectedSelf->m_remoteInspectorProxy->extensionController())) retain] autorelease]);
     });
 #else
     completionHandler([NSError errorWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:nil], nil);

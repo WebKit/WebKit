@@ -4738,6 +4738,7 @@
 		99996A9D25004BCB004F7559 /* _WKInspectorPrivateForTesting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKInspectorPrivateForTesting.h; sourceTree = "<group>"; };
 		99996A9E25004BCB004F7559 /* _WKInspectorTesting.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKInspectorTesting.mm; sourceTree = "<group>"; };
 		999B7ED82550E4A800F450A4 /* InspectorExtensionTypes.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorExtensionTypes.cpp; sourceTree = "<group>"; };
+		999B7F4F2554BA3F00F450A4 /* APIInspectorExtension.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = APIInspectorExtension.cpp; sourceTree = "<group>"; };
 		99B16754252BB7E00073140E /* _WKInspectorExtension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKInspectorExtension.h; sourceTree = "<group>"; };
 		99B16755252BB7E10073140E /* _WKInspectorExtensionInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKInspectorExtensionInternal.h; sourceTree = "<group>"; };
 		99B16756252BB7E10073140E /* _WKInspectorExtension.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKInspectorExtension.mm; sourceTree = "<group>"; };
@@ -9655,6 +9656,7 @@
 				9197940923DBC4E000257892 /* APIInspectorClient.h */,
 				994C6048253F820200BDF060 /* APIInspectorConfiguration.cpp */,
 				994C6046253CACB800BDF060 /* APIInspectorConfiguration.h */,
+				999B7F4F2554BA3F00F450A4 /* APIInspectorExtension.cpp */,
 				99BE3B1225422F4100C6551C /* APIInspectorExtension.h */,
 				31B362902141EABC007BFA53 /* APIInternalDebugFeature.cpp */,
 				31B3628E2141EA4D007BFA53 /* APIInternalDebugFeature.h */,

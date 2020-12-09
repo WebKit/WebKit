@@ -23,18 +23,35 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
+#pragma once
+
 #import <WebKit/WKFoundation.h>
+
+#if TARGET_OS_OSX
+
+#import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
 WK_CLASS_AVAILABLE(macos(WK_MAC_TBA))
 @interface _WKInspectorExtension : NSObject
 
+- (instancetype)new NS_UNAVAILABLE;
 - (instancetype)init NS_UNAVAILABLE;
+
+/**
+ * @abstract Creates a new tab in the Web Inspector interface for this extension.
+ * @param tabName A localized display name for the tab.
+ * @param tabIconURL The location of an image resource to use for display in the created tab's title.
+ * @param sourceURL The location of the main resource to load in the new tab's iframe browsing context.
+ * @param completionHandler The completion handler to be called when creating a tab succeeds or fails.
+ */
+- (void)createTabWithName:(NSString *)tabName tabIconURL:(NSURL *)tabIconURL sourceURL:(NSURL *)sourceURL completionHandler:(void(^)(NSError * _Nullable, NSString * _Nullable inspectorTabID))completionHandler;
 
 @property (readonly, nonatomic) NSString *extensionID;
 
 @end
 
 NS_ASSUME_NONNULL_END
+
+#endif // TARGET_OS_OSX

@@ -353,6 +353,7 @@ UIProcess/API/APIFrameTreeNode.cpp
 UIProcess/API/APIHTTPCookieStore.cpp
 UIProcess/API/APIHitTestResult.cpp
 UIProcess/API/APIInspectorConfiguration.cpp
+UIProcess/API/APIInspectorExtension.cpp
 UIProcess/API/APIInternalDebugFeature.cpp
 UIProcess/API/APINavigation.cpp
 UIProcess/API/APINavigationData.cpp

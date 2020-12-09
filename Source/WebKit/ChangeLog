@@ -1,3 +1,68 @@
+2020-11-30  Brian Burg  <bburg@apple.com>
+
+        [Cocoa] Web Inspector: add support for creating extension tabs in WebInspectorUI via _WKInspectorExtension
+        https://bugs.webkit.org/show_bug.cgi?id=219380
+
+        Reviewed by Devin Rousso and Timothy Hatcher.
+
+        Add a new method to _WKInspectorExtension for creating an extension tab in WebInpectorUI.
+        This can be used to implement browser.devtools.panels.create() as provided by the Web Extensions API.
+
+        * Platform/Logging.h: Add Inspector channel for error logging.
+        * Shared/InspectorExtensionTypes.h: Add a missing EnumTraits case.
+        * WebKit.xcodeproj/project.pbxproj:
+        * Sources.txt: Add files.
+
+        * UIProcess/API/APIInspectorExtension.h:
+        * UIProcess/API/APIInspectorExtension.cpp:
+        (API::InspectorExtension::InspectorExtension):
+        (API::InspectorExtension::create):
+        (API::InspectorExtension::createTab):
+        Inspector extensions need to be able to invoke commands in the WebProcess-side
+        extension proxy controller, so keep a WeakRef to the extension controller that
+        created the extension object. Also, implement the new API by forwarding it on.
+
+        * UIProcess/API/Cocoa/_WKInspector.mm:
+        (-[_WKInspector registerExtensionWithID:displayName:completionHandler:]):
+        Adapt to the new constructor as explained above.
+
+        * UIProcess/API/Cocoa/_WKInspectorExtensionInternal.h:
+        Expose member m_remoteInspectorPorxy for use in the API::InspectorExtension constructor.
+
+        * UIProcess/API/Cocoa/_WKInspectorExtension.h:
+        * UIProcess/API/Cocoa/_WKInspectorExtension.mm:
+        (-[_WKInspectorExtension initWithIdentifier:]): Deleted.
+
+        (-[_WKInspectorExtension createTabWithName:tabIconURL:sourceURL:completionHandler:]):
+        Implement new API.
+
+        * UIProcess/API/Cocoa/_WKRemoteWebInspectorViewControllerInternal.h: Added.
+        Make the RefPtr<RemoteWebInspectorProxy> member variable accessible to the API object constructor.
+
+        * UIProcess/API/Cocoa/_WKRemoteWebInspectorViewController.mm:
+        (-[_WKRemoteWebInspectorViewController registerExtensionWithID:displayName:completionHandler:]):
+        Adapt to new constructor as explained above.
+
+        * UIProcess/Inspector/WebInspectorUIExtensionControllerProxy.h:
+        * UIProcess/Inspector/WebInspectorUIExtensionControllerProxy.cpp:
+        (WebKit::WebInspectorUIExtensionControllerProxy::createTabForExtension):
+        Forward the request to the inspector frontend WebProcess.
+
+        * WebProcess/Inspector/WebInspectorUIExtensionController.messages.in:
+        Add a new async IPC command for creating a new inspector extension tab.
+
+        * WebProcess/Inspector/WebInspectorUIExtensionController.h:
+        * WebProcess/Inspector/WebInspectorUIExtensionController.cpp:
+        (WebKit::WebInspectorUIExtensionController::unwrapEvaluationResultAsObject):
+        Added. Pull out the code needed for error-handling this common operation.
+
+        (WebKit::WebInspectorUIExtensionController::createTabForExtension):
+        Added. Call into InspectorFrontendAPI to request a new tab. Turn the result
+        into an InspectorExtensionError or InspectorExtensionTabID and send the IPC reply.
+
+        * UIProcess/RemoteLayerTree/mac/ScrollingTreeOverflowScrollingNodeRemoteMac.h:
+        Fix unified sources fallout.
+
 2020-12-09  Said Abou-Hallawa  <said@apple.com>
 
         [GPU Process]: Recording an in-process ImageBuffer drawing has to convert it to a NativeImage first

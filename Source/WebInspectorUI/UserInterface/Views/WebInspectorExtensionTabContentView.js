@@ -23,26 +23,54 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "_WKInspectorExtension.h"
+WI.WebInspectorExtensionTabContentView = class WebInspectorExtensionTabContentView extends WI.TabContentView
+{
+    constructor(extension, extensionTabID, tabLabel, iconURL, sourceURL)
+    {
+        let tabInfo = {
+            identifier: WI.WebInspectorExtensionTabContentView.Type,
+            image: iconURL,
+            displayName: tabLabel,
+            title: tabLabel,
+        };
+        super(tabInfo);
 
-#if ENABLE(INSPECTOR_EXTENSIONS)
+        this._extension = extension;
+        this._extensionTabID = extensionTabID;
+        this._tabInfo = tabInfo;
+        this._sourceURL = sourceURL;
+    }
 
-#import "APIInspectorExtension.h"
-#import "WKObject.h"
+    // Public
 
-namespace WebKit {
+    get extensionTabID() { return this._extensionTabID; }
 
-template<> struct WrapperTraits<API::InspectorExtension> {
-    using WrapperClass = _WKInspectorExtension;
+    get type()
+    {
+        return WI.WebInspectorExtensionTabContentView.Type;
+    }
+
+    get supportsSplitContentBrowser()
+    {
+        return true;
+    }
+
+    tabInfo()
+    {
+        return this._tabInfo;
+    }
+
+    static shouldSaveTab() { return false; }
+
+    // Protected
+
+    initialLayout()
+    {
+        super.initialLayout();
+
+        let iframeElement = this.element.appendChild(document.createElement("iframe"));
+        iframeElement.src = this._sourceURL;
+    }
 };
 
-} // namespace WebKit
-
-@interface _WKInspectorExtension () <WKObject> {
-@package
-    API::ObjectStorage<API::InspectorExtension> _extension;
-}
-
-@end
-
-#endif // ENABLE(INSPECTOR_EXTENSIONS)
+WI.WebInspectorExtensionTabContentView.Type = "web-inspector-extension";

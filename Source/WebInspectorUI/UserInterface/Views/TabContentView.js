@@ -33,7 +33,6 @@ WI.TabContentView = class TabContentView extends WI.ContentView
         super(null);
 
         this._identifier = tabInfo.identifier;
-        this._tabBarItem = this.constructor.shouldPinTab() ? WI.PinnedTabBarItem.fromTabContentView(this) : WI.GeneralTabBarItem.fromTabContentView(this);
         this._navigationSidebarPanelConstructor = navigationSidebarPanelConstructor || null;
         this._detailsSidebarPanelConstructors = detailsSidebarPanelConstructors || [];
 
@@ -82,6 +81,11 @@ WI.TabContentView = class TabContentView extends WI.ContentView
 
     get tabBarItem()
     {
+        // This is created lazily to break a dependency cycle for dynamically-created TabContentViews.
+        // TabContentViews with a non-static tabInfo() must be fully constructed before calling tabInfo().
+        if (!this._tabBarItem)
+            this._tabBarItem = this.constructor.shouldPinTab() ? WI.PinnedTabBarItem.fromTabContentView(this) : WI.GeneralTabBarItem.fromTabContentView(this);
+
         return this._tabBarItem;
     }
 
@@ -123,6 +127,12 @@ WI.TabContentView = class TabContentView extends WI.ContentView
     {
         // Can be overridden by subclasses.
         return false;
+    }
+
+    tabInfo()
+    {
+        // Can be overridden by subclasses.
+        return this.constructor.tabInfo();
     }
 
     attached()

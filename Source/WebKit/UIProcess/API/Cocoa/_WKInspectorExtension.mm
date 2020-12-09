@@ -26,21 +26,9 @@
 #import "config.h"
 #import "_WKInspectorExtensionInternal.h"
 
-NS_ASSUME_NONNULL_BEGIN
-
-@implementation _WKInspectorExtension
-
 #if ENABLE(INSPECTOR_EXTENSIONS)
 
-- (instancetype)initWithIdentifier:(NSString *)extensionID
-{
-    if (!(self = [super init]))
-        return nil;
-
-    API::Object::constructInWrapper<API::InspectorExtension>(self, extensionID);
-    
-    return self;
-}
+@implementation _WKInspectorExtension
 
 - (void)dealloc
 {
@@ -49,10 +37,23 @@ NS_ASSUME_NONNULL_BEGIN
     [super dealloc];
 }
 
-
 - (API::Object&)_apiObject
 {
     return *_extension;
+}
+
+// MARK: API
+
+- (void)createTabWithName:(NSString *)tabName tabIconURL:(NSURL *)tabIconURL sourceURL:(NSURL *)sourceURL completionHandler:(void(^)(NSError *, NSString *))completionHandler
+{
+    _extension->createTab(tabName, tabIconURL, sourceURL, [protectedSelf = retainPtr(self), capturedBlock = makeBlockPtr(completionHandler)] (Expected<WebKit::InspectorExtensionTabID, WebKit::InspectorExtensionError> result) mutable {
+        if (!result) {
+            capturedBlock([NSError errorWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSLocalizedFailureReasonErrorKey: inspectorExtensionErrorToString(result.error())}], nil);
+            return;
+        }
+
+        capturedBlock(nil, result.value());
+    });
 }
 
 // MARK: Properties.
@@ -62,8 +63,6 @@ NS_ASSUME_NONNULL_BEGIN
     return _extension->identifier();
 }
 
-#endif // ENABLE(INSPECTOR_EXTENSIONS)
-
 @end
 
-NS_ASSUME_NONNULL_END
+#endif // ENABLE(INSPECTOR_EXTENSIONS)

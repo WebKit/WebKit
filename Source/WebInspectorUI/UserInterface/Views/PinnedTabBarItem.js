@@ -38,7 +38,7 @@ WI.PinnedTabBarItem = class PinnedTabBarItem extends WI.TabBarItem
     {
         console.assert(tabContentView instanceof WI.TabContentView);
 
-        let {image, displayName, title} = tabContentView.constructor.tabInfo();
+        let {image, displayName, title} = tabContentView.tabInfo();
         return new WI.PinnedTabBarItem(tabContentView, image, displayName, title);
     }
 };

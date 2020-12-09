@@ -64,8 +64,10 @@ public:
     // WebInspectorUIExtensionController IPC messages.
     void registerExtension(const InspectorExtensionID&, const String& displayName, CompletionHandler<void(Expected<bool, InspectorExtensionError>)>&&);
     void unregisterExtension(const InspectorExtensionID&, CompletionHandler<void(Expected<bool, InspectorExtensionError>)>&&);
+    void createTabForExtension(const InspectorExtensionID&, const String& tabName, const URL& tabIconURL, const URL& sourceURL, WTF::CompletionHandler<void(Expected<InspectorExtensionTabID, InspectorExtensionError>)>&&);
 
 private:
+    JSC::JSObject* unwrapEvaluationResultAsObject(WebCore::InspectorFrontendAPIDispatcher::EvaluationResult);
     Optional<InspectorExtensionError> parseInspectorExtensionErrorFromEvaluationResult(WebCore::InspectorFrontendAPIDispatcher::EvaluationResult);
 
     WeakPtr<WebCore::InspectorFrontendClient> m_frontendClient;

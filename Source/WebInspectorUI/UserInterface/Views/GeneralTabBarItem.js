@@ -32,7 +32,7 @@ WI.GeneralTabBarItem = class GeneralTabBarItem extends WI.TabBarItem
     {
         console.assert(tabContentView instanceof WI.TabContentView);
 
-        let {image, displayName, title} = tabContentView.constructor.tabInfo();
+        let {image, displayName, title} = tabContentView.tabInfo();
         return new WI.GeneralTabBarItem(tabContentView, image, displayName, title);
     }
 

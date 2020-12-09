@@ -25,6 +25,8 @@
 messages -> WebInspectorUIExtensionController NotRefCounted {
     RegisterExtension(String extensionID, String displayName) -> (Expected<bool, WebKit::InspectorExtensionError> result) Async
     UnregisterExtension(String extensionID) -> (Expected<bool, WebKit::InspectorExtensionError> result) Async
+
+    CreateTabForExtension(String extensionID, String tabName, URL tabIconURL, URL sourceURL) -> (Expected<String, WebKit::InspectorExtensionError> result) Async
 }
 
 #endif // ENABLE(INSPECTOR_EXTENSIONS)

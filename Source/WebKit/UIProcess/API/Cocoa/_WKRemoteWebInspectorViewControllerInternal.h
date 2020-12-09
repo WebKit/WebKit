@@ -23,26 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "_WKInspectorExtension.h"
+#import "_WKRemoteWebInspectorViewControllerPrivate.h"
 
-#if ENABLE(INSPECTOR_EXTENSIONS)
-
-#import "APIInspectorExtension.h"
-#import "WKObject.h"
+#if !TARGET_OS_IPHONE
 
 namespace WebKit {
-
-template<> struct WrapperTraits<API::InspectorExtension> {
-    using WrapperClass = _WKInspectorExtension;
-};
-
-} // namespace WebKit
-
-@interface _WKInspectorExtension () <WKObject> {
-@package
-    API::ObjectStorage<API::InspectorExtension> _extension;
+class RemoteWebInspectorProxy;
 }
 
+NS_ASSUME_NONNULL_BEGIN
+
+@interface _WKRemoteWebInspectorViewController () {
+@package
+    RefPtr<WebKit::RemoteWebInspectorProxy> m_remoteInspectorProxy;
+}
 @end
 
-#endif // ENABLE(INSPECTOR_EXTENSIONS)
+NS_ASSUME_NONNULL_END
+
+#endif // !TARGET_OS_IPHONE

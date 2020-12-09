@@ -23,26 +23,37 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "_WKInspectorExtension.h"
+#include "config.h"
+#include "APIInspectorExtension.h"
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
 
-#import "APIInspectorExtension.h"
-#import "WKObject.h"
+#include "InspectorExtensionTypes.h"
+#include "WebInspectorUIExtensionControllerProxy.h"
 
-namespace WebKit {
+namespace API {
 
-template<> struct WrapperTraits<API::InspectorExtension> {
-    using WrapperClass = _WKInspectorExtension;
-};
-
-} // namespace WebKit
-
-@interface _WKInspectorExtension () <WKObject> {
-@package
-    API::ObjectStorage<API::InspectorExtension> _extension;
+InspectorExtension::InspectorExtension(const WTF::String& identifier, WebKit::WebInspectorUIExtensionControllerProxy& extensionControllerProxy)
+    : m_identifier(identifier)
+    , m_extensionControllerProxy(makeWeakPtr(extensionControllerProxy))
+{
 }
 
-@end
+Ref<InspectorExtension> InspectorExtension::create(const WTF::String& identifier, WebKit::WebInspectorUIExtensionControllerProxy& extensionControllerProxy)
+{
+    return adoptRef(*new InspectorExtension(identifier, extensionControllerProxy));
+}
+
+void InspectorExtension::createTab(const WTF::String& tabName, const WTF::URL& tabIconURL, const WTF::URL& sourceURL, WTF::CompletionHandler<void(Expected<WebKit::InspectorExtensionTabID, WebKit::InspectorExtensionError>)>&& completionHandler)
+{
+    if (!m_extensionControllerProxy) {
+        completionHandler(makeUnexpected(WebKit::InspectorExtensionError::ContextDestroyed));
+        return;
+    }
+
+    m_extensionControllerProxy->createTabForExtension(m_identifier, tabName, tabIconURL, sourceURL, WTFMove(completionHandler));
+}
+
+} // namespace API
 
 #endif // ENABLE(INSPECTOR_EXTENSIONS)

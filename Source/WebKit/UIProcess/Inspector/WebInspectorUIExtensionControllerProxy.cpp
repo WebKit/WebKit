@@ -98,6 +98,18 @@ void WebInspectorUIExtensionControllerProxy::unregisterExtension(const Inspector
     });
 }
 
+void WebInspectorUIExtensionControllerProxy::createTabForExtension(const InspectorExtensionID& extensionID, const String& tabName, const URL& tabIconURL, const URL& sourceURL, WTF::CompletionHandler<void(Expected<InspectorExtensionTabID, InspectorExtensionError>)>&& completionHandler)
+{
+    whenFrontendHasLoaded([weakThis = makeWeakPtr(this), extensionID, tabName, tabIconURL, sourceURL, completionHandler = WTFMove(completionHandler)] () mutable {
+        if (!weakThis || !weakThis->m_inspectorPage) {
+            completionHandler(makeUnexpected(InspectorExtensionError::InvalidRequest));
+            return;
+        }
+
+        weakThis->m_inspectorPage->sendWithAsyncReply(Messages::WebInspectorUIExtensionController::CreateTabForExtension { extensionID, tabName, tabIconURL, sourceURL }, WTFMove(completionHandler));
+    });
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(INSPECTOR_EXTENSIONS)

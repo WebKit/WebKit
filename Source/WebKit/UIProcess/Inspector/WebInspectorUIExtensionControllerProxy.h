@@ -49,6 +49,7 @@ public:
     // API.
     void registerExtension(const InspectorExtensionID&, const String& displayName, WTF::CompletionHandler<void(Expected<bool, InspectorExtensionError>)>&&);
     void unregisterExtension(const InspectorExtensionID&, WTF::CompletionHandler<void(Expected<bool, InspectorExtensionError>)>&&);
+    void createTabForExtension(const InspectorExtensionID&, const String& tabName, const URL& tabIconURL, const URL& sourceURL, WTF::CompletionHandler<void(Expected<InspectorExtensionTabID, InspectorExtensionError>)>&&);
 
     // Notifications.
     void inspectorFrontendLoaded();

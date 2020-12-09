@@ -50,8 +50,9 @@ namespace WTF {
 template<> struct EnumTraits<WebKit::InspectorExtensionError> {
     using values = EnumValues<
         WebKit::InspectorExtensionError,
-        WebKit::InspectorExtensionError::InvalidRequest,
         WebKit::InspectorExtensionError::ContextDestroyed,
+        WebKit::InspectorExtensionError::InternalError,
+        WebKit::InspectorExtensionError::InvalidRequest,
         WebKit::InspectorExtensionError::RegistrationFailed
     >;
 };
