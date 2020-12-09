@@ -980,6 +980,10 @@
     (global-name "com.apple.mobilegestalt.xpc")
 )
 
+(deny mach-lookup (with no-log)
+    (xpc-service-name "com.apple.audio.toolbox.reporting.service")
+)
+
 ;; FIXME: This is just for logging. Remove when the GPU process is enabled by default.
 (allow iokit-open (with report) (with telemetry-backtrace)
     (require-all
@@ -1053,7 +1057,6 @@
         (xpc-service-name
             ;;; FIXME(207716): The following should be removed when the GPU process is complete
             "com.apple.MediaPlayer.RemotePlayerService"
-            "com.apple.audio.toolbox.reporting.service"
             ;;; FIXME(207716): End services to remove.
         )
     )

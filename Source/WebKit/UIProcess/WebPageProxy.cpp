@@ -7758,7 +7758,7 @@ static const Vector<ASCIILiteral>& mediaRelatedMachServices()
     ASSERT(isMainThread());
     static const auto services = makeNeverDestroyed(Vector<ASCIILiteral> {
         "com.apple.audio.AudioComponentPrefs"_s, "com.apple.audio.AudioComponentRegistrar"_s,
-        "com.apple.audio.AudioQueueServer"_s, "com.apple.audio.toolbox.reporting.service"_s, "com.apple.coremedia.endpoint.xpc"_s,
+        "com.apple.audio.AudioQueueServer"_s, "com.apple.coremedia.endpoint.xpc"_s,
         "com.apple.coremedia.routediscoverer.xpc"_s, "com.apple.coremedia.routingcontext.xpc"_s,
         "com.apple.coremedia.volumecontroller.xpc"_s, "com.apple.accessibility.mediaaccessibilityd"_s,
         "com.apple.mediaremoted.xpc"_s,

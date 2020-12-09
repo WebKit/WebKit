@@ -107,8 +107,6 @@
 (define-once (play-audio)
     (allow mach-lookup
            (global-name "com.apple.audio.AURemoteIOServer"))
-    (allow mach-lookup (with report) (with telemetry)
-           (xpc-service-name "com.apple.audio.toolbox.reporting.service")))
 
 (define-once (play-media . filters)
     (if (not (null? filters))
@@ -887,6 +885,10 @@
 
 (allow file-read-data
     (literal "/usr/local/lib/log") ; <rdar://problem/36629495>
+)
+
+(deny mach-lookup (with no-log)
+    (xpc-service-name "com.apple.audio.toolbox.reporting.service")
 )
 
 (allow mach-lookup
