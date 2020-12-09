@@ -1,3 +1,12 @@
+2020-12-08  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GLIB] REGRESSION(r270526): Several URL related tests are failing
+        https://bugs.webkit.org/show_bug.cgi?id=219664
+
+        Reviewed by Alex Christensen.
+
+        * platform/glib/TestExpectations: Skip fast/url/data-url-mediatype.html as it depends on non-supported feature.
+
 2020-12-08  Sam Sneddon  <gsnedders@apple.com>
 
         imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/moving-between-documents/before-prepare-* and move-back-* are flaky failures

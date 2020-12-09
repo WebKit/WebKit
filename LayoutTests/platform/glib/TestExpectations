@@ -1431,6 +1431,9 @@ http/wpt/webrtc/sframe-transform.html [ Skip ]
 webrtc/audio-sframe.html [ Skip ]
 webrtc/video-sframe.html [ Skip ]
 
+# Depends on HTTP Live Streaming (non-supported in non-Apple ports).
+fast/url/data-url-mediatype.html [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of UNSUPPORTED tests.
 #////////////////////////////////////////////////////////////////////////////////////////
