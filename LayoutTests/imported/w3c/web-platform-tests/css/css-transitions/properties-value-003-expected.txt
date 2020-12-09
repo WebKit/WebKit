@@ -47,8 +47,8 @@ FAIL marker-offset length(cm) / values assert_not_equals: initial and target val
 FAIL marker-offset length(cm) / events assert_equals: Expected TransitionEnd events triggered on .transition expected "marker-offset:2s" but got ""
 FAIL marker-offset length(in) / values assert_not_equals: initial and target values may not match got disallowed value ""
 FAIL marker-offset length(in) / events assert_equals: Expected TransitionEnd events triggered on .transition expected "marker-offset:2s" but got ""
-FAIL text-decoration-color color(rgba) / values assert_not_equals: must not be target value after start got disallowed value "rgba(10, 10, 10, 0.4)"
-FAIL text-decoration-color color(rgba) / events assert_equals: Expected TransitionEnd events triggered on .transition expected "text-decoration-color:2s" but got ""
+PASS text-decoration-color color(rgba) / values
+PASS text-decoration-color color(rgba) / events
 PASS column-count integer(integer) / values
 PASS column-count integer(integer) / events
 PASS column-gap length(pt) / values

@@ -143,12 +143,12 @@ PASS text-align uses discrete animation when animating between "start" and "end"
 PASS text-align uses discrete animation when animating between "start" and "end" with effect easing
 PASS text-align uses discrete animation when animating between "start" and "end" with keyframe easing
 PASS text-decoration-color (type: color) has testInterpolation function
-FAIL text-decoration-color supports animating as color of rgb() assert_equals: The value should be rgb(128, 0, 128) at 500ms expected "rgb(128, 0, 128)" but got "rgb(0, 0, 255)"
-FAIL text-decoration-color supports animating as color of #RGB assert_equals: The value should be rgb(128, 0, 128) at 500ms expected "rgb(128, 0, 128)" but got "rgb(0, 0, 255)"
-FAIL text-decoration-color supports animating as color of hsl() assert_equals: The value should be rgb(128, 0, 128) at 500ms expected "rgb(128, 0, 128)" but got "rgb(0, 0, 255)"
-FAIL text-decoration-color supports animating as color of #RGBa assert_equals: The value should be rgba(85, 0, 170, 0.6) at 500ms expected "rgba(85, 0, 170, 0.6)" but got "rgba(0, 0, 255, 0.8)"
-FAIL text-decoration-color supports animating as color of rgba() assert_equals: The value should be rgba(85, 0, 170, 0.6) at 500ms expected "rgba(85, 0, 170, 0.6)" but got "rgba(0, 0, 255, 0.8)"
-FAIL text-decoration-color supports animating as color of hsla() assert_equals: The value should be rgba(85, 0, 170, 0.6) at 500ms expected "rgba(85, 0, 170, 0.6)" but got "rgba(0, 0, 255, 0.8)"
+PASS text-decoration-color supports animating as color of rgb()
+PASS text-decoration-color supports animating as color of #RGB
+PASS text-decoration-color supports animating as color of hsl()
+PASS text-decoration-color supports animating as color of #RGBa
+PASS text-decoration-color supports animating as color of rgba()
+PASS text-decoration-color supports animating as color of hsla()
 PASS text-decoration-line (type: discrete) has testInterpolation function
 PASS text-decoration-line uses discrete animation when animating between "underline" and "overline" with linear easing
 PASS text-decoration-line uses discrete animation when animating between "underline" and "overline" with effect easing

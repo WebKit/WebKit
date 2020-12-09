@@ -1,5 +1,16 @@
 2020-12-09  Antoine Quint  <graouts@webkit.org>
 
+        text-decoration-color animation should not be discrete
+        https://bugs.webkit.org/show_bug.cgi?id=219691
+        <rdar://problem/72138361>
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/css/css-transitions/properties-value-003-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-002-expected.txt:
+
+2020-12-09  Antoine Quint  <graouts@webkit.org>
+
         REGRESSION (r269812): Amazon Prime: thumbnail fails to expand properly
         https://bugs.webkit.org/show_bug.cgi?id=219692
         <rdar://problem/71878636>
