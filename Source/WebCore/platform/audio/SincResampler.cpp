@@ -336,7 +336,7 @@ float SincResampler::convolve(const float* inputP, const float* k1, const float*
     float32x4_t m_sums1 = vmovq_n_f32(0);
     float32x4_t m_sums2 = vmovq_n_f32(0);
 
-    const float* upper = inputP + kKernelSize;
+    const float* upper = inputP + kernelSize;
     for (; inputP < upper; ) {
         m_input = vld1q_f32(inputP);
         inputP += 4;
