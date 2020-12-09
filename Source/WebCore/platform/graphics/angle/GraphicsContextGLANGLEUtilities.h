@@ -27,23 +27,9 @@
 
 #if ENABLE(WEBGL) && USE(ANGLE)
 
+#include "ANGLEHeaders.h"
 #include "GraphicsTypesGL.h"
 #include <wtf/Noncopyable.h>
-
-#define EGL_EGL_PROTOTYPES 0
-// Skip the inclusion of ANGLE's explicit context entry points for now.
-#define GL_ANGLE_explicit_context
-#define GL_ANGLE_explicit_context_gles1
-typedef void* GLeglContext;
-#import <ANGLE/egl.h>  // NOLINT
-#import <ANGLE/eglext.h>
-#import <ANGLE/eglext_angle.h>
-#import <ANGLE/entry_points_egl.h>
-#import <ANGLE/entry_points_egl_ext.h>
-#import <ANGLE/entry_points_gles_2_0_autogen.h>
-#import <ANGLE/entry_points_gles_ext_autogen.h>
-#import <ANGLE/gl2ext.h>
-#import <ANGLE/gl2ext_angle.h>
 
 namespace WebCore {
 

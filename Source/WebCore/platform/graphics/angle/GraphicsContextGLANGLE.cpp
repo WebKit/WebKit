@@ -29,6 +29,7 @@
 #if ENABLE(WEBGL) && USE(ANGLE)
 #include "GraphicsContextGL.h"
 
+#include "ANGLEHeaders.h"
 #include "ExtensionsGLANGLE.h"
 #include "ImageBuffer.h"
 #include "ImageData.h"
@@ -52,19 +53,6 @@
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
 #include "GraphicsContextGLCVANGLE.h"
 #endif
-
-// Skip the inclusion of ANGLE's explicit context entry points for now.
-#define GL_ANGLE_explicit_context
-#define GL_ANGLE_explicit_context_gles1
-typedef void* GLeglContext;
-#include <ANGLE/entry_points_gles_2_0_autogen.h>
-#include <ANGLE/entry_points_gles_3_0_autogen.h>
-#include <ANGLE/entry_points_gles_ext_autogen.h>
-#include <ANGLE/gl2ext.h>
-#include <ANGLE/gl2ext_angle.h>
-
-// Note: this file can't be compiled in the same unified source file
-// as others which include the system's OpenGL headers.
 
 // This one definition short-circuits the need for gl2ext.h, which
 // would need more work to be included from WebCore.

@@ -28,18 +28,8 @@
 #if ENABLE(WEBGL) && USE(ANGLE)
 #include "ExtensionsGLANGLE.h"
 
+#include "ANGLEHeaders.h"
 #include "GraphicsContextGLOpenGL.h"
-
-#include <ANGLE/entry_points_gles_2_0_autogen.h>
-#include <ANGLE/entry_points_gles_3_0_autogen.h>
-// Skip the inclusion of ANGLE's explicit context entry points for now.
-#define GL_ANGLE_explicit_context
-#define GL_ANGLE_explicit_context_gles1
-typedef void* GLeglContext;
-#include <ANGLE/entry_points_gles_ext_autogen.h>
-
-// Note: this file can't be compiled in the same unified source file
-// as others which include the system's OpenGL headers.
 
 namespace WebCore {
 

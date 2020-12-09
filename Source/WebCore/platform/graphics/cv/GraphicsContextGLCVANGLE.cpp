@@ -28,6 +28,8 @@
 
 #if ENABLE(WEBGL) && ENABLE(VIDEO) && USE(AVFOUNDATION)
 
+#include "ANGLEHeaders.h"
+#include "CoreVideoSoftLink.h"
 #include "FourCC.h"
 #include "Logging.h"
 #include <pal/spi/cf/CoreVideoSPI.h>
@@ -35,19 +37,6 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdMap.h>
 #include <wtf/text/StringBuilder.h>
-
-#define EGL_EGL_PROTOTYPES 0
-#include <ANGLE/egl.h> // NOLINT
-#include <ANGLE/eglext.h>
-#include <ANGLE/eglext_angle.h>
-#include <ANGLE/entry_points_egl.h>
-#include <ANGLE/entry_points_gles_2_0_autogen.h>
-// Skip the inclusion of ANGLE's explicit context entry points for now.
-#define GL_ANGLE_explicit_context
-#include <ANGLE/gl2ext.h>
-#include <ANGLE/gl2ext_angle.h>
-
-#include "CoreVideoSoftLink.h"
 
 namespace WebCore {
 

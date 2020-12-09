@@ -29,7 +29,7 @@
 #if ENABLE(WEBGL) && USE(ANGLE)
 #include "TemporaryANGLESetting.h"
 
-#include <ANGLE/entry_points_gles_2_0_autogen.h>
+#include "ANGLEHeaders.h"
 
 namespace WebCore {
 
