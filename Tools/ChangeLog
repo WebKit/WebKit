@@ -1,3 +1,16 @@
+2020-12-08  Geoffrey Garen  <ggaren@apple.com>
+
+        TextManipulationController sometimes fails to notify its delegate of new text (if an element has been removed)
+        https://bugs.webkit.org/show_bug.cgi?id=219656
+
+        Reviewed by Wenson Hsieh.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/TextManipulation.mm:
+        (TestWebKitAPI::TEST): Added a test that removes lots of elements. The
+        bug in this case depended on finding a removed element after an inserted
+        element in set iteration order. Using lots of removed elements gives us
+        a reasonable chance to trigger the relevant order.
+
 2020-12-08  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, reverting r269983.

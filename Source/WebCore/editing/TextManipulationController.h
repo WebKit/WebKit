@@ -188,6 +188,8 @@ private:
 
     HashMap<String, bool> m_cachedFontFamilyExclusionResults;
 
+    bool m_didScheduleObservationUpdate { false };
+
     ManipulationItemCallback m_callback;
     Vector<ManipulationItem> m_pendingItemsForCallback;
 

@@ -566,17 +566,20 @@ void TextManipulationController::didCreateRendererForTextNode(Text& text)
 
 void TextManipulationController::scheduleObservationUpdate()
 {
-    // An update is already scheduled.
-    if (!m_textNodesWithNewRenderer.isEmpty() || !m_manipulatedTextsWithNewContent.isEmpty() || !m_elementsWithNewRenderer.computesEmpty())
+    if (m_didScheduleObservationUpdate)
         return;
 
     if (!m_document)
         return;
 
+    m_didScheduleObservationUpdate = true;
+
     m_document->eventLoop().queueTask(TaskSource::InternalAsyncTask, [weakThis = makeWeakPtr(*this)] {
         auto* controller = weakThis.get();
         if (!controller)
             return;
+
+        controller->m_didScheduleObservationUpdate = false;
 
         HashSet<Ref<Node>> nodesToObserve;
         for (auto& weakElement : controller->m_elementsWithNewRenderer)
@@ -600,6 +603,8 @@ void TextManipulationController::scheduleObservationUpdate()
 
         RefPtr<Node> commonAncestor;
         for (auto& node : nodesToObserve) {
+            if (!node->isConnected())
+                continue;
             if (!commonAncestor)
                 commonAncestor = is<ContainerNode>(node.get()) ? node.ptr() : node->parentNode();
             else if (!node->isDescendantOf(commonAncestor.get()))
@@ -610,7 +615,7 @@ void TextManipulationController::scheduleObservationUpdate()
         auto end = lastPositionInOrAfterNode(commonAncestor.get());
         controller->observeParagraphs(start, end);
 
-        if (controller->m_items.isEmpty()) {
+        if (controller->m_items.isEmpty() && commonAncestor) {
             controller->m_manipulatedNodes.add(commonAncestor.get());
             return;
         }
@@ -638,6 +643,9 @@ void TextManipulationController::addItem(ManipulationItemData&& itemData)
 
 void TextManipulationController::flushPendingItemsForCallback()
 {
+    if (m_pendingItemsForCallback.isEmpty())
+        return;
+
     m_callback(*m_document, m_pendingItemsForCallback);
     m_pendingItemsForCallback.clear();
 }
