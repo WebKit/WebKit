@@ -155,6 +155,8 @@ RefPtr<NativeImage> BitmapImage::nativeImageForCurrentFrame(const GraphicsContex
 RefPtr<NativeImage> BitmapImage::preTransformedNativeImageForCurrentFrame(bool respectOrientation, const GraphicsContext* targetContext)
 {
     auto image = nativeImageForCurrentFrame(targetContext);
+    if (!image)
+        return image;
 
     auto orientation = respectOrientation ? orientationForCurrentFrame() : ImageOrientation(ImageOrientation::None);
     auto correctedSize = m_source->densityCorrectedSize(orientation);
