@@ -1,3 +1,12 @@
+2020-12-09  Antti Koivisto  <antti@apple.com>
+
+        Font loads are triggered too late
+        https://bugs.webkit.org/show_bug.cgi?id=219678
+
+        Reviewed by Geoffrey Garen.
+
+        * fast/text/web-font-load-fallback-during-loading-no-multiple-expected.txt:
+
 2020-12-09  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         Implement RemoteGraphicsContextGL

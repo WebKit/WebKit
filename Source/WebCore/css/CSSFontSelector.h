@@ -89,6 +89,8 @@ public:
     void incrementIsComputingRootStyleFont() { ++m_computingRootStyleFontCount; }
     void decrementIsComputingRootStyleFont() { --m_computingRootStyleFontCount; }
 
+    void loadPendingFonts();
+
 private:
     explicit CSSFontSelector(Document&);
 
@@ -122,7 +124,7 @@ private:
     HashSet<RefPtr<StyleRuleFontFace>> m_cssConnectionsEncounteredDuringBuild;
 
     Timer m_fontLoadingTimer;
-    bool m_fontLoadingTimerIsSuspended { false };
+    bool m_isFontLoadingSuspended { false };
 
     unsigned m_uniqueId;
     unsigned m_version;

@@ -2035,6 +2035,8 @@ void Document::resolveStyle(ResolveStyleType type)
 
         m_inStyleRecalc = false;
 
+        fontSelector().loadPendingFonts();
+
         if (styleUpdate) {
             updateRenderTree(WTFMove(styleUpdate));
             frameView.styleAndRenderTreeDidChange();

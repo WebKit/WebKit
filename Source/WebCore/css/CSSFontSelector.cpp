@@ -365,7 +365,7 @@ void CSSFontSelector::beginLoadingFontSoon(CachedFont& font)
     // decrementRequestCount() in fontLoadingTimerFired() and in clearDocument().
     m_document->cachedResourceLoader().incrementRequestCount(font);
 
-    if (!m_fontLoadingTimerIsSuspended)
+    if (!m_isFontLoadingSuspended && !m_fontLoadingTimer.isActive())
         m_fontLoadingTimer.startOneShot(0_s);
 }
 
@@ -374,8 +374,11 @@ void CSSFontSelector::suspendFontLoadingTimer()
     suspend(ReasonForSuspension::PageWillBeSuspended);
 }
 
-void CSSFontSelector::fontLoadingTimerFired()
+void CSSFontSelector::loadPendingFonts()
 {
+    if (m_isFontLoadingSuspended)
+        return;
+
     Vector<CachedResourceHandle<CachedFont>> fontsToBeginLoading;
     fontsToBeginLoading.swap(m_fontsToBeginLoading);
 
@@ -388,16 +391,23 @@ void CSSFontSelector::fontLoadingTimerFired()
         // Balances incrementRequestCount() in beginLoadingFontSoon().
         cachedResourceLoader.decrementRequestCount(*fontHandle);
     }
+}
+
+void CSSFontSelector::fontLoadingTimerFired()
+{
+    Ref<CSSFontSelector> protectedThis(*this);
+
+    loadPendingFonts();
+
     // FIXME: Use SubresourceLoader instead.
     // Call FrameLoader::loadDone before FrameLoader::subresourceLoadDone to match the order in SubresourceLoader::notifyDone.
-    cachedResourceLoader.loadDone(LoadCompletionType::Finish);
+    m_document->cachedResourceLoader().loadDone(LoadCompletionType::Finish);
     // Ensure that if the request count reaches zero, the frame loader will know about it.
     // New font loads may be triggered by layout after the document load is complete but before we have dispatched
     // didFinishLoading for the frame. Make sure the delegate is always dispatched by checking explicitly.
     if (m_document && m_document->frame())
         m_document->frame()->loader().checkLoadComplete();
 }
-
 
 size_t CSSFontSelector::fallbackFontCount()
 {
@@ -431,24 +441,22 @@ void CSSFontSelector::stop()
 
 void CSSFontSelector::suspend(ReasonForSuspension)
 {
-    if (m_fontLoadingTimerIsSuspended) {
-        ASSERT(!m_fontLoadingTimer.isActive());
+    if (m_isFontLoadingSuspended)
         return;
-    }
 
-    m_fontLoadingTimerIsSuspended = m_fontLoadingTimer.isActive();
+    m_isFontLoadingSuspended = true;
     m_fontLoadingTimer.stop();
 }
 
 void CSSFontSelector::resume()
 {
-    if (!m_fontLoadingTimerIsSuspended)
+    if (!m_isFontLoadingSuspended)
         return;
 
     if (!m_fontsToBeginLoading.isEmpty())
         m_fontLoadingTimer.startOneShot(0_s);
 
-    m_fontLoadingTimerIsSuspended = false;
+    m_isFontLoadingSuspended = false;
 }
 
 }
