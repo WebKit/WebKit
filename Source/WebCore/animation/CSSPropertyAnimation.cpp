@@ -640,6 +640,8 @@ public:
     {
     }
 
+    bool canInterpolate(const RenderStyle*, const RenderStyle*) const final { return false; }
+
     void blend(const CSSPropertyBlendingClient*, RenderStyle* dst, const RenderStyle* a, const RenderStyle* b, double progress) const override
     {
         // https://drafts.csswg.org/web-animations-1/#discrete

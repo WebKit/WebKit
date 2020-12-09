@@ -1,3 +1,18 @@
+2020-12-09  Antoine Quint  <graouts@webkit.org>
+
+        REGRESSION (r269812): Amazon Prime: thumbnail fails to expand properly
+        https://bugs.webkit.org/show_bug.cgi?id=219692
+        <rdar://problem/71878636>
+
+        Reviewed by Simon Fraser.
+
+        Correctly fail tests where the "position" property is expected to start a transition
+        and correctly pass tests some other "position" tests.
+
+        * web-platform-tests/css/css-logical/animations/float-interpolation-expected.txt:
+        * web-platform-tests/css/css-position/animations/position-interpolation-expected.txt:
+        * web-platform-tests/css/css-transitions/properties-value-003-expected.txt:
+
 2020-12-09  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: add support for pen pointer events
