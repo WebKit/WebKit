@@ -1,3 +1,19 @@
+2020-12-09  Brent Fulgham  <bfulgham@apple.com>
+
+        REGRESSION(r269647) [Cocoa] Consume GPU sandbox extensions early in Web page creation flow
+        https://bugs.webkit.org/show_bug.cgi?id=219659
+        <rdar://problem/72058396>
+
+        Reviewed by Jer Noble.
+
+        We need to consume GPU sandbox extensions earlier in the Web page creation flow so that API calls to things like
+        muting video have the relevant mach connections available.
+
+        This change corrects a regression introduced in Bug 218708 (r269647).
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage): Move extension consumption earlier in the constructor.
+
 2020-12-09  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: add support for pen pointer events
