@@ -1,3 +1,13 @@
+2020-12-09  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Allow mach-lookup of com.apple.relatived.tempest in WebKit GPU process
+        https://bugs.webkit.org/show_bug.cgi?id=219701
+        <rdar://problem/71980348>
+
+        Reviewed by Darin Adler.
+
+        * GPUProcess/mac/com.apple.WebKit.GPUProcess.sb.in:
+
 2020-12-09  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Some WebGL tests crash in WebKit::RemoteRenderingBackendProxy::willAppendItem(WebCore::RenderingResourceIdentifier)

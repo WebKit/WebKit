@@ -828,3 +828,7 @@
         (iokit-user-client-class "IOUSBInterfaceUserClientV2"))
     (allow device-camera))
 #endif // PLATFORM(MAC)
+
+(allow mach-lookup
+    (global-name "com.apple.relatived.tempest")
+)
