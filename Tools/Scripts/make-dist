@@ -257,7 +257,7 @@ class Distcheck(object):
         subprocess.check_call(command, cwd=build_dir)
 
     def check_symbols(self, build_dir):
-        check_bss = os.path.join(self.source_root, 'Tools', 'Scripts', 'check-for-global-bss-symbols-in-webkigtk-libs')
+        check_bss = os.path.join(self.source_root, 'Tools', 'Scripts', 'check-for-global-bss-symbols-in-webkitgtk-libs')
         libjsc = os.path.join(build_dir, 'lib', 'libjavascriptcoregtk-4.0.so')
         libwk = os.path.join(build_dir, 'lib', 'libwebkit2gtk-4.0.so')
         subprocess.check_call([check_bss, libjsc, libwk])
