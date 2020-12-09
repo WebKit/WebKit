@@ -28,6 +28,7 @@
 
 #if ENABLE(UI_PROCESS_PDF_HUD)
 
+#import "WKWebViewInternal.h"
 #import "WebPageProxy.h"
 #import <QuartzCore/CATransaction.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
@@ -158,6 +159,15 @@ static NSArray<NSString *> *controlArray()
     [CATransaction setAnimationDuration:isVisible ? layerFadeInTimeInterval : layerFadeOutTimeInterval];
     [self _setLayerOpacity:isVisible ? layerAlpha : 0.0];
     [CATransaction commit];
+}
+
+- (NSView *)hitTest:(NSPoint)point
+{
+    if (_page)
+        return fromWebPageProxy(*_page);
+
+    ASSERT_NOT_REACHED();
+    return self;
 }
 
 - (void)mouseMoved:(NSEvent *)event

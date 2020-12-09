@@ -1,3 +1,20 @@
+2020-12-09  Alex Christensen  <achristensen@webkit.org>
+
+        Fix clicking on links in PDFs on Big Sur after r266654
+        https://bugs.webkit.org/show_bug.cgi?id=219665
+        <rdar://problem/72080683>
+
+        Reviewed by Tim Horton.
+
+        mouseUp: was being called by AppKit on the WKPDFHUDView instead of the WKWebView, causing the event to not make it to the PDFPlugin,
+        which meant PDFKit wasn't being told it was clicked on, which means it wasn't telling WebKit to change the frame's location.
+        Overriding hitTest to forward all mouse events to the WKWebView solves this problem.
+
+        Covered by the WebKit.PDFLinkReferrer API test, which was failing on Big Sur, where ENABLE(UI_PROCESS_PDF_HUD) is true.
+
+        * UIProcess/PDF/WKPDFHUDView.mm:
+        (-[WKPDFHUDView hitTest:]):
+
 2020-12-09  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Concurrent display lists] Support playback of display list items with cached resources
