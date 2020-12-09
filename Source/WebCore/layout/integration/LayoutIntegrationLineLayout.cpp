@@ -68,29 +68,21 @@ LineLayout::LineLayout(RenderBlockFlow& flow)
 
 LineLayout::~LineLayout() = default;
 
-RenderBlockFlow* LineLayout::blockContainer(RenderObject& renderer)
-{
-    // FIXME: These fake renderers have their parent set but are not actually in the tree.
-    if (renderer.isReplica() || renderer.isRenderScrollbarPart())
-        return nullptr;
-    
-    for (auto* parent = renderer.parent(); parent; parent = parent->parent()) {
-        if (!parent->childrenInline())
-            return nullptr;
-        if (is<RenderBlockFlow>(*parent))
-            return downcast<RenderBlockFlow>(parent);
-    }
-
-    return nullptr;
-}
-
 LineLayout* LineLayout::containing(RenderObject& renderer)
 {
     if (!renderer.isInline())
         return nullptr;
 
-    if (auto* container = blockContainer(renderer))
-        return container->modernLineLayout();
+    // FIXME: These fake renderers have their parent set but are not actually in the tree.
+    if (renderer.isReplica() || renderer.isRenderScrollbarPart())
+        return nullptr;
+    
+    for (auto* parent = renderer.parent(); parent; parent = parent->parent()) {
+        if (is<RenderBlockFlow>(*parent))
+            return downcast<RenderBlockFlow>(*parent).modernLineLayout();
+        if (!is<RenderInline>(*parent))
+            return nullptr;
+    }
 
     return nullptr;
 }
