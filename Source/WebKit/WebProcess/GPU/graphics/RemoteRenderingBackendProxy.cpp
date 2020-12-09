@@ -156,6 +156,9 @@ void RemoteRenderingBackendProxy::cacheNativeImage(const ShareableBitmap::Handle
 
 void RemoteRenderingBackendProxy::releaseRemoteResource(RenderingResourceIdentifier renderingResourceIdentifier)
 {
+    if (renderingResourceIdentifier == m_currentDestinationImageBufferIdentifier)
+        m_currentDestinationImageBufferIdentifier = WTF::nullopt;
+
     send(Messages::RemoteRenderingBackend::ReleaseRemoteResource(renderingResourceIdentifier), m_renderingBackendIdentifier);
 }
 

@@ -1,3 +1,20 @@
+2020-12-09  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Some WebGL tests crash in WebKit::RemoteRenderingBackendProxy::willAppendItem(WebCore::RenderingResourceIdentifier)
+        https://bugs.webkit.org/show_bug.cgi?id=219700
+
+        Reviewed by Tim Horton.
+
+        Fixes these assertions by resetting the identifier of the "most recently appended" image buffer
+        (m_currentDestinationImageBufferIdentifier) when the image buffer is released in the rendering
+        backend. We keep track of this so that we can append MetaCommandChangeDestinationImageBuffer
+        items when painting into multiple image buffers; the code to do this in willAppendItem is
+        actually robust against the case where m_currentDestinationImageBufferIdentifier is unknown,
+        but still debug asserts.
+
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp:
+        (WebKit::RemoteRenderingBackendProxy::releaseRemoteResource):
+
 2020-12-09  Alex Christensen  <achristensen@webkit.org>
 
         Fix clicking on links in PDFs on Big Sur after r266654
