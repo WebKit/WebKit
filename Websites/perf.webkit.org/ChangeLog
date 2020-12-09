@@ -1,3 +1,26 @@
+2020-12-09  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Add max age for a root to be reused.
+        https://bugs.webkit.org/show_bug.cgi?id=219628
+
+        Reviewed by Ryosuke Niwa.
+
+        In order to prevent reusing a stale root, we should set a limit on the age of a root to be reused.
+        * public/include/manifest-generator.php: Added 'maxRootReuseAgeInDays' to manifest.
+        * public/v3/models/build-request.js: Added root age check.
+        (BuildRequest.prototype.async findBuildRequestWithSameRoots):
+        * public/v3/models/commit-set.js: Extended 'areAllRootsAvailable' with root age check.
+        (CommitSet.prototype.areAllRootsAvailable):
+        * public/v3/models/manifest.js:
+        (Manifest.fetch): Made it async.
+        (Manifest.async fetchRawResponse): Extract fetching raw manifest out so that 'maxRootReuseAgeInDays'
+        can be read without resetting other data models. Also added code to only fetch from API if requesting
+        /data/manifest.json returns 404.
+        (Manifest._didFetchManifest):
+        * server-tests/api-manifest-tests.js: Updated unit tests.
+        * unit-tests/build-request-tests.js: Updated unit tests and add new tests.
+        * unit-tests/manifest-test.js: Added unit tests.
+
 2020-11-20  Dewei Zhu  <dewei_zhu@apple.com>
 
         'run-analysis' script should schedule retries for A/B tests even after chart analysis failure.

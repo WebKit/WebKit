@@ -14,7 +14,8 @@ describe('/api/manifest', function () {
     it("should generate an empty manifest when database is empty", () => {
         return TestServer.remoteAPI().getJSON('/api/manifest').then((manifest) => {
             assert.deepEqual(Object.keys(manifest).sort(), ['all', 'bugTrackers', 'builders', 'dashboard', 'dashboards',
-                'fileUploadSizeLimit', 'metrics', 'platformGroups', 'repositories', 'siteTitle', 'status', 'summaryPages', 'testAgeToleranceInHours', 'tests', 'triggerables']);
+                'fileUploadSizeLimit', 'maxRootReuseAgeInDays', 'metrics', 'platformGroups', 'repositories', 'siteTitle',
+                'status', 'summaryPages', 'testAgeToleranceInHours', 'tests', 'triggerables']);
 
             assert.deepStrictEqual(manifest, {
                 siteTitle: TestServer.testConfig().siteTitle,
@@ -24,6 +25,7 @@ describe('/api/manifest', function () {
                 dashboard: {},
                 dashboards: {},
                 fileUploadSizeLimit: 2097152, // 2MB during testing.
+                maxRootReuseAgeInDays: null,
                 metrics: {},
                 platformGroups: {},
                 repositories: {},

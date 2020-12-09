@@ -50,6 +50,7 @@ class ManifestGenerator {
             'summaryPages' => config('summaryPages'),
             'fileUploadSizeLimit' => config('uploadFileLimitInMB', 0) * 1024 * 1024,
             'testAgeToleranceInHours' => config('testAgeToleranceInHours'),
+            'maxRootReuseAgeInDays' => config('maxRootReuseAgeInDays'),
         );
 
         $this->elapsed_time = (microtime(true) - $start_time) * 1000;

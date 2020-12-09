@@ -1,6 +1,7 @@
 'use strict';
 
 const assert = require('assert');
+const crypto = require('crypto');
 
 require('../tools/js/v3-models.js');
 const MockModels = require('./resources/mock-v3-models.js').MockModels;
@@ -169,6 +170,7 @@ function threeTestGroups(secondTestGroupOverrides, thirdTestGroupOverrides)
         secondTestGroupOverrides = {};
     if (!thirdTestGroupOverrides)
         thirdTestGroupOverrides = {};
+    const yesterday = Date.now() - 24 * 3600 * 1000;
     return {
         "testGroups": [{
             "id": "2128",
@@ -369,7 +371,7 @@ function threeTestGroups(secondTestGroupOverrides, thirdTestGroupOverrides)
         }],
         "commitSets": [{
             "id": "4255",
-            "revisionItems": [{"commit": "87832"}, {"commit": "93116"}],
+            "revisionItems": [{"commit": "87832", rootFile: 101}, {"commit": "93116"}],
             "customRoots": [],
         }, {
             "id": "4256",
@@ -397,7 +399,8 @@ function threeTestGroups(secondTestGroupOverrides, thirdTestGroupOverrides)
             "revision": "192736",
             "time": 1448225325650
         }],
-        "uploadedFiles": [],
+        "uploadedFiles": [{id: 101, filename: 'root-101', extension: '.tgz', size: 1,
+            createdAt: yesterday, sha256: crypto.createHash('sha256').update('root-101').digest('hex')}],
         "status": "OK"
     };
 }
@@ -427,6 +430,12 @@ describe('BuildRequest', function () {
             assert.equal(requests[0].method, 'GET');
             requests[0].resolve(oneTestGroup());
 
+            await MockRemoteAPI.waitForRequest();
+            assert.equal(requests.length, 2);
+            assert.equal(requests[1].url, '/data/manifest.json');
+            assert.equal(requests[1].method, 'GET');
+            requests[1].resolve({maxRootReuseAgeInDays: 30});
+
             const result = await promise;
             assert.equal(result, null);
         });
@@ -448,8 +457,42 @@ describe('BuildRequest', function () {
             assert.equal(requests[0].method, 'GET');
             requests[0].resolve(threeTestGroups(overrides));
 
+            await MockRemoteAPI.waitForRequest();
+            assert.equal(requests.length, 2);
+            assert.equal(requests[1].url, '/data/manifest.json');
+            assert.equal(requests[1].method, 'GET');
+            requests[1].resolve({maxRootReuseAgeInDays: 30});
+
             const result = await promise;
             assert.equal(result, BuildRequest.findById(16989))
+        });
+
+        it('should not reuse a root that is older than "maxReuseRootAge"', async () => {
+            const overrides = {
+                task: '1376',
+                platform: '32',
+                status: ['completed', 'pending', 'pending', 'pending']
+            }
+            const data = threeTestGroups(overrides);
+
+            const platformId = data.buildRequests[0].platform;
+            Platform.ensureSingleton(platformId, {id: platformId, metrics: [], name: 'some platform'});
+            const request = BuildRequest.constructBuildRequestsFromData(data)[0];
+            const promise = request.findBuildRequestWithSameRoots();
+            assert.equal(requests.length, 1);
+
+            assert.equal(requests[0].url, '/api/test-groups?task=1376');
+            assert.equal(requests[0].method, 'GET');
+            requests[0].resolve(threeTestGroups(overrides));
+
+            await MockRemoteAPI.waitForRequest();
+            assert.equal(requests.length, 2);
+            assert.equal(requests[1].url, '/data/manifest.json');
+            assert.equal(requests[1].method, 'GET');
+            requests[1].resolve({maxRootReuseAgeInDays: 0.5});
+
+            const result = await promise;
+            assert.equal(result, null)
         });
 
         it('should not use cache while fetching test groups under analysis task', async () => {
@@ -469,6 +512,12 @@ describe('BuildRequest', function () {
             assert.equal(requests[0].method, 'GET');
             requests[0].resolve(threeTestGroups(overrides));
 
+            await MockRemoteAPI.waitForRequest();
+            assert.equal(requests.length, 2);
+            assert.equal(requests[1].url, '/data/manifest.json');
+            assert.equal(requests[1].method, 'GET');
+            requests[1].resolve({maxRootReuseAgeInDays: 30});
+
             let result = await promise;
             assert.equal(result, BuildRequest.findById(16989))
 
@@ -479,6 +528,12 @@ describe('BuildRequest', function () {
             assert.equal(requests[0].url, '/api/test-groups?task=1376');
             assert.equal(requests[0].method, 'GET');
             requests[0].resolve(threeTestGroups(overrides));
+
+            await MockRemoteAPI.waitForRequest();
+            assert.equal(requests.length, 2);
+            assert.equal(requests[1].url, '/data/manifest.json');
+            assert.equal(requests[1].method, 'GET');
+            requests[1].resolve({maxRootReuseAgeInDays: 30});
 
             result = await promise;
             assert.equal(result, BuildRequest.findById(16989))
@@ -502,6 +557,12 @@ describe('BuildRequest', function () {
             assert.equal(requests[0].method, 'GET');
             requests[0].resolve(threeTestGroups(overrides));
 
+            await MockRemoteAPI.waitForRequest();
+            assert.equal(requests.length, 2);
+            assert.equal(requests[1].url, '/data/manifest.json');
+            assert.equal(requests[1].method, 'GET');
+            requests[1].resolve({maxRootReuseAgeInDays: 30});
+
             const result = await promise;
             assert.equal(result, null);
         });
@@ -524,6 +585,12 @@ describe('BuildRequest', function () {
             assert.equal(requests[0].url, '/api/test-groups?task=1376');
             assert.equal(requests[0].method, 'GET');
             requests[0].resolve(threeTestGroups(overrides));
+
+            await MockRemoteAPI.waitForRequest();
+            assert.equal(requests.length, 2);
+            assert.equal(requests[1].url, '/data/manifest.json');
+            assert.equal(requests[1].method, 'GET');
+            requests[1].resolve({maxRootReuseAgeInDays: 30});
 
             const result = await promise;
             assert.equal(result, BuildRequest.findById(16989))
@@ -551,6 +618,12 @@ describe('BuildRequest', function () {
             assert.equal(requests[0].method, 'GET');
             requests[0].resolve(threeTestGroups(secondOverrides, thirdOverrides));
 
+            await MockRemoteAPI.waitForRequest();
+            assert.equal(requests.length, 2);
+            assert.equal(requests[1].url, '/data/manifest.json');
+            assert.equal(requests[1].method, 'GET');
+            requests[1].resolve({maxRootReuseAgeInDays: 30});
+
             const result = await promise;
             assert.equal(result, BuildRequest.findById(16993))
         });
@@ -576,6 +649,12 @@ describe('BuildRequest', function () {
             assert.equal(requests[0].url, '/api/test-groups?task=1376');
             assert.equal(requests[0].method, 'GET');
             requests[0].resolve(threeTestGroups(secondOverrides, thirdOverrides));
+
+            await MockRemoteAPI.waitForRequest();
+            assert.equal(requests.length, 2);
+            assert.equal(requests[1].url, '/data/manifest.json');
+            assert.equal(requests[1].method, 'GET');
+            requests[1].resolve({maxRootReuseAgeInDays: 30});
 
             const result = await promise;
             assert.equal(result, BuildRequest.findById(16993));

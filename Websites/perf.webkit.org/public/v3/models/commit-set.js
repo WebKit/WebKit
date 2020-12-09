@@ -74,9 +74,10 @@ class CommitSet extends DataModelObject {
     commitsWithTestability() { return this.commits().filter((commit) => !!commit.testability()); }
     commits() { return  Array.from(this._repositoryToCommitMap.values()); }
 
-    areAllRootsAvailable()
+    areAllRootsAvailable(earliestCreationTime)
     {
-        return this.allRootFiles().every(rootFile => !rootFile.deletedAt() || this.customRoots().find(rootFile));
+        return this.allRootFiles().every(rootFile => (!rootFile.deletedAt() || this.customRoots().find(rootFile))
+            && rootFile.createdAt() >= earliestCreationTime);
     }
 
     revisionForRepository(repository)

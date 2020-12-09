@@ -95,6 +95,10 @@ class BuildRequest extends DataModelObject {
         let runningBuildRequest = null;
         // Set ignoreCache = true as latest status of test groups is expected.
         const allTestGroupsInTask = await TestGroup.fetchForTask(this.analysisTaskId(), true);
+        const rawManifest = await Manifest.fetchRawResponse();
+        const earliestRootCreatingTimeForReuse = rawManifest.maxRootReuseAgeInDays ?
+            Date.now() - rawManifest.maxRootReuseAgeInDays * 24 * 3600 * 1000 : 0;
+
         for (const group of allTestGroupsInTask) {
             if (group.id() == this.testGroupId())
                 continue;
@@ -107,7 +111,7 @@ class BuildRequest extends DataModelObject {
                     continue;
                 if (!buildRequest.commitSet().equalsIgnoringRoot(this.commitSet()))
                     continue;
-                if (!buildRequest.commitSet().areAllRootsAvailable())
+                if (!buildRequest.commitSet().areAllRootsAvailable(earliestRootCreatingTimeForReuse))
                     continue;
                 if (buildRequest.hasCompleted())
                     return buildRequest;
