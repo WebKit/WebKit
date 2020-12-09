@@ -1,3 +1,10 @@
+2020-12-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        iOS build fix after r270573.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::handlePreventableTouchEvent):
+
 2020-12-09  Per Arne Vollan  <pvollan@apple.com>
 
         Remove access to com.apple.audio.toolbox.reporting.service
