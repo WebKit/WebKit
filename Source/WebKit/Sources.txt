@@ -290,6 +290,8 @@ UIProcess/ProcessAssertion.cpp
 UIProcess/ProcessThrottler.cpp
 UIProcess/ProvisionalPageProxy.cpp
 UIProcess/ResponsivenessTimer.cpp
+UIProcess/SpeechRecognitionRemoteRealtimeMediaSource.cpp
+UIProcess/SpeechRecognitionRemoteRealtimeMediaSourceManager.cpp
 UIProcess/SpeechRecognitionServer.cpp
 UIProcess/SuspendedPageProxy.cpp
 UIProcess/SystemPreviewController.cpp
@@ -635,6 +637,8 @@ WebProcess/Plugins/Netscape/NPRuntimeUtilities.cpp @no-unify
 WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp @no-unify
 WebProcess/Plugins/Netscape/NetscapePlugin.cpp @no-unify
 WebProcess/Plugins/Netscape/NetscapePluginStream.cpp @no-unify
+
+WebProcess/Speech/SpeechRecognitionRealtimeMediaSourceManager.cpp
 
 WebProcess/Storage/WebSWClientConnection.cpp
 WebProcess/Storage/WebSWContextManagerConnection.cpp

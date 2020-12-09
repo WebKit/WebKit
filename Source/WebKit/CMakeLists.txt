@@ -103,6 +103,7 @@ set(WebKit_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/WebProcess/Plugins"
     "${WEBKIT_DIR}/WebProcess/Plugins/Netscape"
     "${WEBKIT_DIR}/WebProcess/ResourceCache"
+    "${WEBKIT_DIR}/WebProcess/Speech"
     "${WEBKIT_DIR}/WebProcess/Storage"
     "${WEBKIT_DIR}/WebProcess/UserContent"
     "${WEBKIT_DIR}/WebProcess/WebCoreSupport"
@@ -187,6 +188,7 @@ set(WebKit_MESSAGES_IN_FILES
     Shared/Plugins/NPObjectMessageReceiver
 
     UIProcess/DrawingAreaProxy
+    UIProcess/SpeechRecognitionRemoteRealtimeMediaSourceManager
     UIProcess/SpeechRecognitionServer
     UIProcess/VisitedLinkStore
     UIProcess/WebCookieManagerProxy
@@ -257,6 +259,8 @@ set(WebKit_MESSAGES_IN_FILES
     WebProcess/Plugins/PluginProcessConnection
     WebProcess/Plugins/PluginProcessConnectionManager
     WebProcess/Plugins/PluginProxy
+
+    WebProcess/Speech/SpeechRecognitionRealtimeMediaSourceManager
 
     WebProcess/Storage/WebSWClientConnection
     WebProcess/Storage/WebSWContextManagerConnection

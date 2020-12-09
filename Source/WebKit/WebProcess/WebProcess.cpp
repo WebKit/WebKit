@@ -46,6 +46,7 @@
 #include "RemoteAudioSession.h"
 #include "RemoteLegacyCDMFactory.h"
 #include "RemoteMediaEngineConfigurationFactory.h"
+#include "SpeechRecognitionRealtimeMediaSourceManager.h"
 #include "StorageAreaMap.h"
 #include "UserData.h"
 #include "WebAutomationSessionProxy.h"
@@ -1977,6 +1978,16 @@ void WebProcess::enableVP9SWDecoder()
 #if PLATFORM(COCOA)
     WebCore::registerWebKitVP9Decoder();
 #endif
+}
+#endif
+
+#if ENABLE(MEDIA_STREAM)
+SpeechRecognitionRealtimeMediaSourceManager& WebProcess::ensureSpeechRecognitionRealtimeMediaSourceManager()
+{
+    if (!m_speechRecognitionRealtimeMediaSourceManager)
+        m_speechRecognitionRealtimeMediaSourceManager = makeUnique<SpeechRecognitionRealtimeMediaSourceManager>(makeRef(*parentProcessConnection()));
+
+    return *m_speechRecognitionRealtimeMediaSourceManager;
 }
 #endif
 

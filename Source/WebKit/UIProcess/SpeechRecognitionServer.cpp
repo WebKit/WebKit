@@ -36,12 +36,22 @@
 
 namespace WebKit {
 
+#if ENABLE(MEDIA_STREAM)
+SpeechRecognitionServer::SpeechRecognitionServer(Ref<IPC::Connection>&& connection, SpeechRecognitionServerIdentifier identifier, SpeechRecognitionPermissionChecker&& permissionChecker, RealtimeMediaSourceCreateFunction&& function)
+    : m_connection(WTFMove(connection))
+    , m_identifier(identifier)
+    , m_permissionChecker(WTFMove(permissionChecker))
+    , m_realtimeMediaSourceCreateFunction(WTFMove(function))
+{
+}
+#else
 SpeechRecognitionServer::SpeechRecognitionServer(Ref<IPC::Connection>&& connection, SpeechRecognitionServerIdentifier identifier, SpeechRecognitionPermissionChecker&& permissionChecker)
     : m_connection(WTFMove(connection))
     , m_identifier(identifier)
     , m_permissionChecker(WTFMove(permissionChecker))
 {
 }
+#endif
 
 void SpeechRecognitionServer::start(WebCore::SpeechRecognitionConnectionClientIdentifier clientIdentifier, String&& lang, bool continuous, bool interimResults, uint64_t maxAlternatives, WebCore::ClientOrigin&& origin)
 {
@@ -92,8 +102,21 @@ void SpeechRecognitionServer::handleRequest(WebCore::SpeechRecognitionConnection
             sendUpdate(update);
         });
     }
+    
+    m_recognizer->reset();
 
-    m_recognizer->start(clientIdentifier);
+#if ENABLE(MEDIA_STREAM)
+    auto sourceOrError = m_realtimeMediaSourceCreateFunction();
+    if (!sourceOrError) {
+        m_requests.remove(clientIdentifier);
+        sendUpdate(WebCore::SpeechRecognitionUpdate::createError(clientIdentifier, WebCore::SpeechRecognitionError { WebCore::SpeechRecognitionErrorType::AudioCapture, sourceOrError.errorMessage }));
+        return;
+    }
+    m_recognizer->start(clientIdentifier, sourceOrError.source());
+#else
+    m_requests.remove(clientIdentifier);
+    sendUpdate(clientIdentifier, WebCore::SpeechRecognitionUpdateType::Error, WebCore::SpeechRecognitionError { WebCore::SpeechRecognitionErrorType::AudioCapture, "Audio capture is not implemented"});
+#endif
 }
 
 void SpeechRecognitionServer::stop(WebCore::SpeechRecognitionConnectionClientIdentifier clientIdentifier)

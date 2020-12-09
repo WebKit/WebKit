@@ -42,10 +42,16 @@ class SpeechRecognitionUpdate;
 class SpeechRecognitionCaptureSource {
     WTF_MAKE_FAST_ALLOCATED;
 public:
+    SpeechRecognitionCaptureSource() = default;
     ~SpeechRecognitionCaptureSource() = default;
     using DataCallback = Function<void(const WTF::MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t)>;
     using StateUpdateCallback = Function<void(const SpeechRecognitionUpdate&)>;
-    SpeechRecognitionCaptureSource(SpeechRecognitionConnectionClientIdentifier, DataCallback&&, StateUpdateCallback&&);
+
+#if ENABLE(MEDIA_STREAM)
+    SpeechRecognitionCaptureSource(SpeechRecognitionConnectionClientIdentifier, DataCallback&&, StateUpdateCallback&&, Ref<RealtimeMediaSource>&&);
+    WEBCORE_EXPORT static Optional<WebCore::CaptureDevice> findCaptureDevice();
+    WEBCORE_EXPORT static CaptureSourceOrError createRealtimeMediaSource(const CaptureDevice&);
+#endif
 
 private:
 #if ENABLE(MEDIA_STREAM)

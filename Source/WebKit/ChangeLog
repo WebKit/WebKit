@@ -1,3 +1,89 @@
+2020-12-09  Sihui Liu  <sihui_liu@apple.com>
+
+        Implement audio capture for SpeechRecognition on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=219371
+        <rdar://problem/71824049>
+
+        Reviewed by Youenn Fablet.
+
+        On iOS, audio capture is done in web process. For speech recognition, recognizer is in UI process. Therefore,
+        UI process needs to ask web process to capture audio and send back data. To implement this, this patch added:
+        - SpeechRecognitionRemoteRealtimeMediaSource: subclass WebCore::RealtimeMediaSource and connect to a remote 
+        WebCore::RealtimeMediaSource (owned by SpeechRecognitionRealtimeMediaSourceManager::Source) in web process.
+        - SpeechRecognitionRemoteRealtimeMediaSourceManager: manage all RemoteRealtimeMediaSources.
+        - SpeechRecognitionRealtimeMediaSourceManager: manage all SpeechRecognitionRemoteRealtimeMediaSource.
+        - SpeechRecognitionRealtimeMediaSourceManager::Source: own and monitor a local WebCore::RealtimeMediaSource.
+
+        This structure is very similar to how we implement media capture on macOS (RemoteRealtimeMediaSource, 
+        UserMediaCaptureManager and UserMediaCaptureManagerProxy), where we send data from UI process to web process
+        instead. We should unify the architecture if possible.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Sources.txt:
+        * UIProcess/SpeechRecognitionRemoteRealtimeMediaSource.cpp: Added.
+        (WebKit::SpeechRecognitionRemoteRealtimeMediaSource::create):
+        (WebKit::SpeechRecognitionRemoteRealtimeMediaSource::SpeechRecognitionRemoteRealtimeMediaSource):
+        (WebKit::m_ringBuffer):
+        (WebKit::SpeechRecognitionRemoteRealtimeMediaSource::~SpeechRecognitionRemoteRealtimeMediaSource):
+        (WebKit::SpeechRecognitionRemoteRealtimeMediaSource::startProducingData):
+        (WebKit::SpeechRecognitionRemoteRealtimeMediaSource::stopProducingData):
+        (WebKit::SpeechRecognitionRemoteRealtimeMediaSource::setStorage):
+        (WebKit::SpeechRecognitionRemoteRealtimeMediaSource::remoteAudioSamplesAvailable):
+        (WebKit::SpeechRecognitionRemoteRealtimeMediaSource::remoteCaptureFailed):
+        (WebKit::SpeechRecognitionRemoteRealtimeMediaSource::remoteSourceStopped):
+        * UIProcess/SpeechRecognitionRemoteRealtimeMediaSource.h: Added.
+        (WebKit::SpeechRecognitionRemoteRealtimeMediaSource::identifier const):
+        * UIProcess/SpeechRecognitionRemoteRealtimeMediaSourceManager.cpp: Added.
+        (WebKit::SpeechRecognitionRemoteRealtimeMediaSourceManager::SpeechRecognitionRemoteRealtimeMediaSourceManager):
+        (WebKit::SpeechRecognitionRemoteRealtimeMediaSourceManager::addSource):
+        (WebKit::SpeechRecognitionRemoteRealtimeMediaSourceManager::removeSource):
+        (WebKit::SpeechRecognitionRemoteRealtimeMediaSourceManager::remoteAudioSamplesAvailable):
+        (WebKit::SpeechRecognitionRemoteRealtimeMediaSourceManager::remoteCaptureFailed):
+        (WebKit::SpeechRecognitionRemoteRealtimeMediaSourceManager::remoteSourceStopped):
+        (WebKit::SpeechRecognitionRemoteRealtimeMediaSourceManager::messageSenderConnection const):
+        (WebKit::SpeechRecognitionRemoteRealtimeMediaSourceManager::messageSenderDestinationID const):
+        (WebKit::SpeechRecognitionRemoteRealtimeMediaSourceManager::setStorage):
+        * UIProcess/SpeechRecognitionRemoteRealtimeMediaSourceManager.h: Added.
+        * UIProcess/SpeechRecognitionRemoteRealtimeMediaSourceManager.messages.in: Added.
+        * UIProcess/SpeechRecognitionServer.cpp:
+        (WebKit::SpeechRecognitionServer::SpeechRecognitionServer):
+        (WebKit::SpeechRecognitionServer::handleRequest):
+        * UIProcess/SpeechRecognitionServer.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::createRealtimeMediaSourceForSpeechRecognition):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::createSpeechRecognitionServer):
+        (WebKit::WebProcessProxy::ensureSpeechRecognitionRemoteRealtimeMediaSourceManager):
+        * UIProcess/WebProcessProxy.h:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/Speech/SpeechRecognitionRealtimeMediaSourceManager.cpp: Added.
+        (WebKit::SpeechRecognitionRealtimeMediaSourceManager::Source::Source):
+        (WebKit::SpeechRecognitionRealtimeMediaSourceManager::Source::~Source):
+        (WebKit::SpeechRecognitionRealtimeMediaSourceManager::Source::start):
+        (WebKit::SpeechRecognitionRealtimeMediaSourceManager::Source::stop):
+        (WebKit::SpeechRecognitionRealtimeMediaSourceManager::Source::storage):
+        (WebKit::SpeechRecognitionRealtimeMediaSourceManager::SpeechRecognitionRealtimeMediaSourceManager):
+        (WebKit::SpeechRecognitionRealtimeMediaSourceManager::~SpeechRecognitionRealtimeMediaSourceManager):
+        (WebKit::SpeechRecognitionRealtimeMediaSourceManager::grantSandboxExtensions):
+        (WebKit::SpeechRecognitionRealtimeMediaSourceManager::revokeSandboxExtensions):
+        (WebKit::SpeechRecognitionRealtimeMediaSourceManager::createSource):
+        (WebKit::SpeechRecognitionRealtimeMediaSourceManager::deleteSource):
+        (WebKit::SpeechRecognitionRealtimeMediaSourceManager::start):
+        (WebKit::SpeechRecognitionRealtimeMediaSourceManager::stop):
+        (WebKit::SpeechRecognitionRealtimeMediaSourceManager::messageSenderConnection const):
+        (WebKit::SpeechRecognitionRealtimeMediaSourceManager::messageSenderDestinationID const):
+        * WebProcess/Speech/SpeechRecognitionRealtimeMediaSourceManager.h: Added.
+        * WebProcess/Speech/SpeechRecognitionRealtimeMediaSourceManager.messages.in: Added.
+        * WebProcess/WebCoreSupport/WebSpeechRecognitionConnection.cpp:
+        (WebKit::WebSpeechRecognitionConnection::WebSpeechRecognitionConnection):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::ensureSpeechRecognitionRealtimeMediaSourceManager):
+        * WebProcess/WebProcess.h:
+
 2020-12-08  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         IPC should support non-byte aligned data references

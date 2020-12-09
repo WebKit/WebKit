@@ -1833,6 +1833,10 @@ public:
     void createAppHighlightInSelectedRange(CreateNewGroupForHighlight);
 #endif
 
+#if ENABLE(MEDIA_STREAM)
+    WebCore::CaptureSourceOrError createRealtimeMediaSourceForSpeechRecognition();
+#endif
+
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, Ref<API::PageConfiguration>&&);
     void platformInitialize();

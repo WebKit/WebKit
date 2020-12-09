@@ -50,19 +50,23 @@ void SpeechRecognizer::reset()
 
     auto error = SpeechRecognitionError { SpeechRecognitionErrorType::Aborted, "Another request is started" };
     m_delegateCallback(SpeechRecognitionUpdate::createError(*m_clientIdentifier, error));
+
+    m_clientIdentifier = WTF::nullopt;
 }
 
-void SpeechRecognizer::start(SpeechRecognitionConnectionClientIdentifier identifier)
+#if ENABLE(MEDIA_STREAM)
+
+void SpeechRecognizer::start(SpeechRecognitionConnectionClientIdentifier identifier, Ref<RealtimeMediaSource>&& source)
 {
-    reset();
+    ASSERT(!m_source);
 
     m_clientIdentifier = identifier;
     m_delegateCallback(SpeechRecognitionUpdate::create(*m_clientIdentifier, SpeechRecognitionUpdateType::Start));
 
-    startInternal();
+    setSource(WTFMove(source));
 }
 
-void SpeechRecognizer::startInternal()
+void SpeechRecognizer::setSource(Ref<RealtimeMediaSource>&& source)
 {
     auto dataCallback = [weakThis = makeWeakPtr(this)](const auto& time, const auto& data, const auto& description, auto sampleCount) {
         if (!weakThis)
@@ -90,8 +94,10 @@ void SpeechRecognizer::startInternal()
             m_source = nullptr;
     };
 
-    m_source = makeUnique<SpeechRecognitionCaptureSource>(*m_clientIdentifier, WTFMove(dataCallback), WTFMove(stateUpdateCallback));
+    m_source = makeUnique<SpeechRecognitionCaptureSource>(*m_clientIdentifier, WTFMove(dataCallback), WTFMove(stateUpdateCallback), WTFMove(source));
 }
+
+#endif
 
 void SpeechRecognizer::stop(ShouldGenerateFinalResult shouldGenerateFinalResult)
 {

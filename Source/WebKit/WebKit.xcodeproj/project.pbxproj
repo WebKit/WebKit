@@ -1447,6 +1447,11 @@
 		93A88B331BC6E9CD00ABA5C2 /* WebHitTestResultData.h in Headers */ = {isa = PBXBuildFile; fileRef = 93A88B311BC6E9C000ABA5C2 /* WebHitTestResultData.h */; };
 		93A88B3B1BC710D900ABA5C2 /* _WKHitTestResultInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 93A88B3A1BC710D900ABA5C2 /* _WKHitTestResultInternal.h */; };
 		93A88B461BC8829300ABA5C2 /* APIHitTestResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 93A88B431BC8828C00ABA5C2 /* APIHitTestResult.h */; };
+		93AB9B4C257563F30098B10E /* SpeechRecognitionRealtimeMediaSourceManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 93AB9B4A2574C61F0098B10E /* SpeechRecognitionRealtimeMediaSourceManager.h */; };
+		93AB9B4D257567DC0098B10E /* SpeechRecognitionRemoteRealtimeMediaSourceManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 93AB9B452574928D0098B10E /* SpeechRecognitionRemoteRealtimeMediaSourceManager.h */; };
+		93AB9B4E257567E20098B10E /* SpeechRecognitionRemoteRealtimeMediaSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 93AB9B422574928C0098B10E /* SpeechRecognitionRemoteRealtimeMediaSource.h */; };
+		93AB9B552575A2760098B10E /* SpeechRecognitionRealtimeMediaSourceManagerMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93AB9B4F257589110098B10E /* SpeechRecognitionRealtimeMediaSourceManagerMessageReceiver.cpp */; };
+		93AB9B562575A28B0098B10E /* SpeechRecognitionRemoteRealtimeMediaSourceManagerMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93AB9B51257589110098B10E /* SpeechRecognitionRemoteRealtimeMediaSourceManagerMessageReceiver.cpp */; };
 		93B2614D227D149E00B97A76 /* StorageManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B26149227D147200B97A76 /* StorageManager.h */; };
 		93B2614E227D14B100B97A76 /* LocalStorageDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B26145227D147000B97A76 /* LocalStorageDatabase.h */; };
 		93B2614F227D14B100B97A76 /* LocalStorageDatabaseTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B26146227D147100B97A76 /* LocalStorageDatabaseTracker.h */; };
@@ -4618,6 +4623,20 @@
 		93A88B3A1BC710D900ABA5C2 /* _WKHitTestResultInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKHitTestResultInternal.h; sourceTree = "<group>"; };
 		93A88B421BC8828C00ABA5C2 /* APIHitTestResult.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = APIHitTestResult.cpp; sourceTree = "<group>"; };
 		93A88B431BC8828C00ABA5C2 /* APIHitTestResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIHitTestResult.h; sourceTree = "<group>"; };
+		93AB9B422574928C0098B10E /* SpeechRecognitionRemoteRealtimeMediaSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpeechRecognitionRemoteRealtimeMediaSource.h; sourceTree = "<group>"; };
+		93AB9B432574928C0098B10E /* SpeechRecognitionRemoteRealtimeMediaSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpeechRecognitionRemoteRealtimeMediaSource.cpp; sourceTree = "<group>"; };
+		93AB9B442574928D0098B10E /* SpeechRecognitionRemoteRealtimeMediaSourceManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpeechRecognitionRemoteRealtimeMediaSourceManager.cpp; sourceTree = "<group>"; };
+		93AB9B452574928D0098B10E /* SpeechRecognitionRemoteRealtimeMediaSourceManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpeechRecognitionRemoteRealtimeMediaSourceManager.h; sourceTree = "<group>"; };
+		93AB9B462574928D0098B10E /* SpeechRecognitionRemoteRealtimeMediaSourceManager.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SpeechRecognitionRemoteRealtimeMediaSourceManager.messages.in; sourceTree = "<group>"; };
+		93AB9B492574C61E0098B10E /* SpeechRecognitionRealtimeMediaSourceManager.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SpeechRecognitionRealtimeMediaSourceManager.messages.in; sourceTree = "<group>"; };
+		93AB9B4A2574C61F0098B10E /* SpeechRecognitionRealtimeMediaSourceManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpeechRecognitionRealtimeMediaSourceManager.h; sourceTree = "<group>"; };
+		93AB9B4B2574C61F0098B10E /* SpeechRecognitionRealtimeMediaSourceManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpeechRecognitionRealtimeMediaSourceManager.cpp; sourceTree = "<group>"; };
+		93AB9B4F257589110098B10E /* SpeechRecognitionRealtimeMediaSourceManagerMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpeechRecognitionRealtimeMediaSourceManagerMessageReceiver.cpp; sourceTree = "<group>"; };
+		93AB9B50257589110098B10E /* SpeechRecognitionRealtimeMediaSourceManagerMessagesReplies.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpeechRecognitionRealtimeMediaSourceManagerMessagesReplies.h; sourceTree = "<group>"; };
+		93AB9B51257589110098B10E /* SpeechRecognitionRemoteRealtimeMediaSourceManagerMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpeechRecognitionRemoteRealtimeMediaSourceManagerMessageReceiver.cpp; sourceTree = "<group>"; };
+		93AB9B52257589120098B10E /* SpeechRecognitionRemoteRealtimeMediaSourceManagerMessagesReplies.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpeechRecognitionRemoteRealtimeMediaSourceManagerMessagesReplies.h; sourceTree = "<group>"; };
+		93AB9B53257589120098B10E /* SpeechRecognitionRemoteRealtimeMediaSourceManagerMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpeechRecognitionRemoteRealtimeMediaSourceManagerMessages.h; sourceTree = "<group>"; };
+		93AB9B54257589120098B10E /* SpeechRecognitionRealtimeMediaSourceManagerMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpeechRecognitionRealtimeMediaSourceManagerMessages.h; sourceTree = "<group>"; };
 		93B26145227D147000B97A76 /* LocalStorageDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocalStorageDatabase.h; sourceTree = "<group>"; };
 		93B26146227D147100B97A76 /* LocalStorageDatabaseTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocalStorageDatabaseTracker.h; sourceTree = "<group>"; };
 		93B26147227D147100B97A76 /* LocalStorageDatabaseTracker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LocalStorageDatabaseTracker.cpp; sourceTree = "<group>"; };
@@ -9014,6 +9033,16 @@
 			path = mac;
 			sourceTree = "<group>";
 		};
+		93AB9B482574C5CE0098B10E /* Speech */ = {
+			isa = PBXGroup;
+			children = (
+				93AB9B4B2574C61F0098B10E /* SpeechRecognitionRealtimeMediaSourceManager.cpp */,
+				93AB9B4A2574C61F0098B10E /* SpeechRecognitionRealtimeMediaSourceManager.h */,
+				93AB9B492574C61E0098B10E /* SpeechRecognitionRealtimeMediaSourceManager.messages.in */,
+			);
+			path = Speech;
+			sourceTree = "<group>";
+		};
 		93B26143227D143100B97A76 /* WebStorage */ = {
 			isa = PBXGroup;
 			children = (
@@ -9218,6 +9247,7 @@
 				5105B0D2162F7A5E00E27709 /* Network */,
 				31099974146C8AA80029DEB9 /* Notifications (User) */,
 				1A6FB7AA11E64B4900DB1371 /* Plugins */,
+				93AB9B482574C5CE0098B10E /* Speech */,
 				5118E9981F295259003EF9F5 /* Storage */,
 				1AAF08AA1926930B00B6390C /* UserContent */,
 				5760828A202984C900116678 /* WebAuthentication */,
@@ -9431,6 +9461,11 @@
 				93D6B7B0255268A10058DD3A /* SpeechRecognitionPermissionManager.cpp */,
 				93D6B7B2255268A20058DD3A /* SpeechRecognitionPermissionManager.h */,
 				93D6B7AF255268A10058DD3A /* SpeechRecognitionPermissionRequest.h */,
+				93AB9B432574928C0098B10E /* SpeechRecognitionRemoteRealtimeMediaSource.cpp */,
+				93AB9B422574928C0098B10E /* SpeechRecognitionRemoteRealtimeMediaSource.h */,
+				93AB9B442574928D0098B10E /* SpeechRecognitionRemoteRealtimeMediaSourceManager.cpp */,
+				93AB9B452574928D0098B10E /* SpeechRecognitionRemoteRealtimeMediaSourceManager.h */,
+				93AB9B462574928D0098B10E /* SpeechRecognitionRemoteRealtimeMediaSourceManager.messages.in */,
 				93D6B76B254B89580058DD3A /* SpeechRecognitionServer.cpp */,
 				93D6B76C254B89580058DD3A /* SpeechRecognitionServer.h */,
 				93D6B77A254C984D0058DD3A /* SpeechRecognitionServer.messages.in */,
@@ -10587,6 +10622,12 @@
 				1DD2A6722562324F00FF7B6F /* SourceBufferPrivateRemoteMessageReceiver.cpp */,
 				1DD2A6732562324F00FF7B6F /* SourceBufferPrivateRemoteMessages.h */,
 				1DD2A6712562324F00FF7B6F /* SourceBufferPrivateRemoteMessagesReplies.h */,
+				93AB9B4F257589110098B10E /* SpeechRecognitionRealtimeMediaSourceManagerMessageReceiver.cpp */,
+				93AB9B54257589120098B10E /* SpeechRecognitionRealtimeMediaSourceManagerMessages.h */,
+				93AB9B50257589110098B10E /* SpeechRecognitionRealtimeMediaSourceManagerMessagesReplies.h */,
+				93AB9B51257589110098B10E /* SpeechRecognitionRemoteRealtimeMediaSourceManagerMessageReceiver.cpp */,
+				93AB9B53257589120098B10E /* SpeechRecognitionRemoteRealtimeMediaSourceManagerMessages.h */,
+				93AB9B52257589120098B10E /* SpeechRecognitionRemoteRealtimeMediaSourceManagerMessagesReplies.h */,
 				93D6B781254CCABC0058DD3A /* SpeechRecognitionServerMessageReceiver.cpp */,
 				93D6B780254CCABC0058DD3A /* SpeechRecognitionServerMessages.h */,
 				93D6B77F254CCABB0058DD3A /* SpeechRecognitionServerMessagesReplies.h */,
@@ -11658,6 +11699,9 @@
 				57FD318522B35169008D0E8B /* SOAuthorizationSession.h in Headers */,
 				93D6B7B5255268D70058DD3A /* SpeechRecognitionPermissionManager.h in Headers */,
 				93D6B7B4255268D50058DD3A /* SpeechRecognitionPermissionRequest.h in Headers */,
+				93AB9B4C257563F30098B10E /* SpeechRecognitionRealtimeMediaSourceManager.h in Headers */,
+				93AB9B4E257567E20098B10E /* SpeechRecognitionRemoteRealtimeMediaSource.h in Headers */,
+				93AB9B4D257567DC0098B10E /* SpeechRecognitionRemoteRealtimeMediaSourceManager.h in Headers */,
 				93D6B772254BB5190058DD3A /* SpeechRecognitionServer.h in Headers */,
 				93D6B784254CCD0E0058DD3A /* SpeechRecognitionServerMessages.h in Headers */,
 				93D6B785254CCD430058DD3A /* SpeechRecognitionServerMessagesReplies.h in Headers */,
@@ -13451,6 +13495,8 @@
 				575B1BB923CE9C0B0020639A /* SimulatedInputDispatcher.cpp in Sources */,
 				2DE6943D18BD2A68005C15E5 /* SmartMagnificationControllerMessageReceiver.cpp in Sources */,
 				1DD2A674256232A100FF7B6F /* SourceBufferPrivateRemoteMessageReceiver.cpp in Sources */,
+				93AB9B552575A2760098B10E /* SpeechRecognitionRealtimeMediaSourceManagerMessageReceiver.cpp in Sources */,
+				93AB9B562575A28B0098B10E /* SpeechRecognitionRemoteRealtimeMediaSourceManagerMessageReceiver.cpp in Sources */,
 				93D6B782254CCCF40058DD3A /* SpeechRecognitionServerMessageReceiver.cpp in Sources */,
 				1A334DED16DE8F88006A8E38 /* StorageAreaMapMessageReceiver.cpp in Sources */,
 				9368EEDE2303A90200BDB11A /* StorageManagerSetMessageReceiver.cpp in Sources */,

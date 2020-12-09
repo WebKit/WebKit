@@ -36,6 +36,7 @@
 
 namespace WebCore {
 enum class SpeechRecognitionUpdateType;
+struct CaptureSourceOrError;
 struct ClientOrigin;
 }
 
@@ -50,7 +51,12 @@ using SpeechRecognitionPermissionChecker = Function<void(const WebCore::ClientOr
 class SpeechRecognitionServer : public CanMakeWeakPtr<SpeechRecognitionServer>, public IPC::MessageReceiver, private IPC::MessageSender {
     WTF_MAKE_FAST_ALLOCATED;
 public:
+#if ENABLE(MEDIA_STREAM)
+    using RealtimeMediaSourceCreateFunction = Function<WebCore::CaptureSourceOrError()>;
+    SpeechRecognitionServer(Ref<IPC::Connection>&&, SpeechRecognitionServerIdentifier, SpeechRecognitionPermissionChecker&&, RealtimeMediaSourceCreateFunction&&);
+#else
     SpeechRecognitionServer(Ref<IPC::Connection>&&, SpeechRecognitionServerIdentifier, SpeechRecognitionPermissionChecker&&);
+#endif
 
     void start(WebCore::SpeechRecognitionConnectionClientIdentifier, String&& lang, bool continuous, bool interimResults, uint64_t maxAlternatives, WebCore::ClientOrigin&&);
     void stop(WebCore::SpeechRecognitionConnectionClientIdentifier);
@@ -75,6 +81,10 @@ private:
     HashMap<WebCore::SpeechRecognitionConnectionClientIdentifier, std::unique_ptr<WebCore::SpeechRecognitionRequest>> m_requests;
     SpeechRecognitionPermissionChecker m_permissionChecker;
     std::unique_ptr<WebCore::SpeechRecognizer> m_recognizer;
+
+#if ENABLE(MEDIA_STREAM)
+    RealtimeMediaSourceCreateFunction m_realtimeMediaSourceCreateFunction;
+#endif
 };
 
 } // namespace WebKit

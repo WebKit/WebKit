@@ -103,6 +103,10 @@ struct WebPageCreationParameters;
 struct WebPreferencesStore;
 struct WebsiteData;
 
+#if ENABLE(MEDIA_STREAM)
+class SpeechRecognitionRemoteRealtimeMediaSourceManager;
+#endif
+
 enum ForegroundWebProcessCounterType { };
 typedef RefCounter<ForegroundWebProcessCounterType> ForegroundWebProcessCounter;
 typedef ForegroundWebProcessCounter::Token ForegroundWebProcessToken;
@@ -394,6 +398,10 @@ public:
 #if ENABLE(IPC_TESTING_API)
     void setIgnoreInvalidMessageForTesting();
 #endif
+    
+#if ENABLE(MEDIA_STREAM)
+    SpeechRecognitionRemoteRealtimeMediaSourceManager& ensureSpeechRecognitionRemoteRealtimeMediaSourceManager();
+#endif
 
 protected:
     WebProcessProxy(WebProcessPool&, WebsiteDataStore*, IsPrewarmed);
@@ -643,6 +651,9 @@ private:
 
     using SpeechRecognitionServerMap = HashMap<SpeechRecognitionServerIdentifier, std::unique_ptr<SpeechRecognitionServer>>;
     SpeechRecognitionServerMap m_speechRecognitionServerMap;
+#if ENABLE(MEDIA_STREAM)
+    std::unique_ptr<SpeechRecognitionRemoteRealtimeMediaSourceManager> m_speechRecognitionRemoteRealtimeMediaSourceManager;
+#endif
 };
 
 } // namespace WebKit

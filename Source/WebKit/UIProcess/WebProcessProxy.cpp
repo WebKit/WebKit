@@ -38,6 +38,8 @@
 #include "PluginProcessManager.h"
 #include "ProvisionalPageProxy.h"
 #include "SpeechRecognitionPermissionRequest.h"
+#include "SpeechRecognitionRemoteRealtimeMediaSourceManager.h"
+#include "SpeechRecognitionRemoteRealtimeMediaSourceManagerMessages.h"
 #include "SpeechRecognitionServerMessages.h"
 #include "TextChecker.h"
 #include "TextCheckerState.h"
@@ -1702,8 +1704,6 @@ PAL::SessionID WebProcessProxy::sessionID() const
 
 void WebProcessProxy::createSpeechRecognitionServer(SpeechRecognitionServerIdentifier identifier)
 {
-    auto speechRecognitionServer = m_speechRecognitionServerMap.add(identifier, nullptr);
-    ASSERT(speechRecognitionServer.isNewEntry);
     WebPageProxy* targetPage = nullptr;
     for (auto* page : pages()) {
         if (page && page->webPageID() == identifier) {
@@ -1715,15 +1715,23 @@ void WebProcessProxy::createSpeechRecognitionServer(SpeechRecognitionServerIdent
     if (!targetPage)
         return;
 
-    speechRecognitionServer.iterator->value = makeUnique<SpeechRecognitionServer>(makeRef(*connection()), identifier, [weakPage = makeWeakPtr(targetPage)](auto& origin, auto&& completionHandler) mutable {
+    ASSERT(!m_speechRecognitionServerMap.contains(identifier));
+    auto& speechRecognitionServer = m_speechRecognitionServerMap.add(identifier, nullptr).iterator->value;
+    speechRecognitionServer = makeUnique<SpeechRecognitionServer>(makeRef(*connection()), identifier, [weakPage = makeWeakPtr(targetPage)](auto& origin, auto&& completionHandler) mutable {
         if (!weakPage) {
             completionHandler(SpeechRecognitionPermissionDecision::Deny);
             return;
         }
 
         weakPage->requestSpeechRecognitionPermission(origin, WTFMove(completionHandler));
-    });
-    addMessageReceiver(Messages::SpeechRecognitionServer::messageReceiverName(), identifier, *speechRecognitionServer.iterator->value);
+    }
+#if ENABLE(MEDIA_STREAM)
+    , [weakPage = makeWeakPtr(targetPage)]() {
+        return weakPage ? weakPage->createRealtimeMediaSourceForSpeechRecognition() : CaptureSourceOrError { "Page is invalid" };
+    }
+#endif
+    );
+    addMessageReceiver(Messages::SpeechRecognitionServer::messageReceiverName(), identifier, *speechRecognitionServer);
 }
 
 void WebProcessProxy::destroySpeechRecognitionServer(SpeechRecognitionServerIdentifier identifier)
@@ -1732,6 +1740,20 @@ void WebProcessProxy::destroySpeechRecognitionServer(SpeechRecognitionServerIden
     removeMessageReceiver(Messages::SpeechRecognitionServer::messageReceiverName(), identifier);
     m_speechRecognitionServerMap.remove(identifier);
 }
+
+#if ENABLE(MEDIA_STREAM)
+
+SpeechRecognitionRemoteRealtimeMediaSourceManager& WebProcessProxy::ensureSpeechRecognitionRemoteRealtimeMediaSourceManager()
+{
+    if (!m_speechRecognitionRemoteRealtimeMediaSourceManager) {
+        m_speechRecognitionRemoteRealtimeMediaSourceManager = makeUnique<SpeechRecognitionRemoteRealtimeMediaSourceManager>(makeRef(*connection()));
+        addMessageReceiver(Messages::SpeechRecognitionRemoteRealtimeMediaSourceManager::messageReceiverName(), *m_speechRecognitionRemoteRealtimeMediaSourceManager);
+    }
+
+    return *m_speechRecognitionRemoteRealtimeMediaSourceManager;
+}
+
+#endif
 
 #if PLATFORM(WATCHOS)
 

@@ -34,9 +34,10 @@
 
 namespace WebCore {
 
-SpeechRecognitionCaptureSource::SpeechRecognitionCaptureSource(SpeechRecognitionConnectionClientIdentifier clientIdentifier, DataCallback&& dataCallback, StateUpdateCallback&& stateUpdateCallback)
-{
 #if ENABLE(MEDIA_STREAM)
+
+Optional<CaptureDevice> SpeechRecognitionCaptureSource::findCaptureDevice()
+{
     Optional<CaptureDevice> captureDevice;
     auto devices = RealtimeMediaSourceCenter::singleton().audioCaptureFactory().audioCaptureDeviceManager().captureDevices();
     for (auto device : devices) {
@@ -51,26 +52,19 @@ SpeechRecognitionCaptureSource::SpeechRecognitionCaptureSource(SpeechRecognition
             break;
         }
     }
-
-    if (!captureDevice) {
-        auto error = SpeechRecognitionError { SpeechRecognitionErrorType::AudioCapture, "No device is available for capture" };
-        stateUpdateCallback(SpeechRecognitionUpdate::createError(clientIdentifier, error));
-        return;
-    }
-
-    auto result = RealtimeMediaSourceCenter::singleton().audioCaptureFactory().createAudioCaptureSource(*captureDevice, { }, { });
-    if (!result) {
-        auto error = SpeechRecognitionError { SpeechRecognitionErrorType::AudioCapture, result.errorMessage };
-        stateUpdateCallback(SpeechRecognitionUpdate::createError(clientIdentifier, error));
-        return;
-    }
-
-    m_impl = makeUnique<SpeechRecognitionCaptureSourceImpl>(clientIdentifier, WTFMove(dataCallback), WTFMove(stateUpdateCallback), result.source());
-#else
-    UNUSED_PARAM(clientIdentifier);
-    UNUSED_PARAM(dataCallback);
-    UNUSED_PARAM(stateUpdateCallback);
-#endif
+    return captureDevice;
 }
+
+CaptureSourceOrError SpeechRecognitionCaptureSource::createRealtimeMediaSource(const CaptureDevice& captureDevice)
+{
+    return RealtimeMediaSourceCenter::singleton().audioCaptureFactory().createAudioCaptureSource(captureDevice, { }, { });
+}
+
+SpeechRecognitionCaptureSource::SpeechRecognitionCaptureSource(SpeechRecognitionConnectionClientIdentifier clientIdentifier, DataCallback&& dataCallback, StateUpdateCallback&& stateUpdateCallback, Ref<RealtimeMediaSource>&& source)
+    : m_impl(makeUnique<SpeechRecognitionCaptureSourceImpl>(clientIdentifier, WTFMove(dataCallback), WTFMove(stateUpdateCallback), WTFMove(source)))
+{
+}
+
+#endif
 
 } // namespace WebCore

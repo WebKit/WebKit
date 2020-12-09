@@ -39,16 +39,21 @@ public:
     WEBCORE_EXPORT explicit SpeechRecognizer(DelegateCallback&&);
     WEBCORE_EXPORT ~SpeechRecognizer() = default;
 
-    WEBCORE_EXPORT void start(SpeechRecognitionConnectionClientIdentifier);
+#if ENABLE(MEDIA_STREAM)
+    WEBCORE_EXPORT void start(SpeechRecognitionConnectionClientIdentifier, Ref<RealtimeMediaSource>&&);
+#endif
+    WEBCORE_EXPORT void reset();
     enum class ShouldGenerateFinalResult { No, Yes };
     WEBCORE_EXPORT void stop(ShouldGenerateFinalResult = ShouldGenerateFinalResult::Yes);
 
     Optional<SpeechRecognitionConnectionClientIdentifier> currentClientIdentifier() const { return m_clientIdentifier; }
 
 private:
-    void reset();
-    void startInternal();
     void stopInternal();
+
+#if ENABLE(MEDIA_STREAM)
+    void setSource(Ref<RealtimeMediaSource>&&);
+#endif
 
     Optional<SpeechRecognitionConnectionClientIdentifier> m_clientIdentifier;
     DelegateCallback m_delegateCallback;

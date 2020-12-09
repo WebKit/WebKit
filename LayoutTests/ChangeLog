@@ -1,3 +1,16 @@
+2020-12-09  Sihui Liu  <sihui_liu@apple.com>
+
+        Implement audio capture for SpeechRecognition on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=219371
+        <rdar://problem/71824049>
+
+        Reviewed by Youenn Fablet.
+
+        * TestExpectations:
+        * fast/speechrecognition/ios/audio-capture-expected.txt: Added.
+        * fast/speechrecognition/ios/audio-capture.html: Added.
+        * platform/ios-wk2/TestExpectations:
+
 2020-12-08  Diego Pino Garcia  <dpino@igalia.com>
 
         [GLIB] REGRESSION(r270526): Several URL related tests are failing

@@ -86,6 +86,8 @@
 #include "SafeBrowsingWarning.h"
 #include "SharedBufferDataReference.h"
 #include "SpeechRecognitionPermissionManager.h"
+#include "SpeechRecognitionRemoteRealtimeMediaSource.h"
+#include "SpeechRecognitionRemoteRealtimeMediaSourceManager.h"
 #include "SyntheticEditingCommandType.h"
 #include "TextChecker.h"
 #include "TextCheckerState.h"
@@ -10303,6 +10305,26 @@ void WebPageProxy::requestSpeechRecognitionPermissionByDefaultAction(const WebCo
 
     m_speechRecognitionPermissionManager->decideByDefaultAction(origin, WTFMove(completionHandler));
 }
+
+#if ENABLE(MEDIA_STREAM)
+
+WebCore::CaptureSourceOrError WebPageProxy::createRealtimeMediaSourceForSpeechRecognition()
+{
+    if (preferences().captureAudioInGPUProcessEnabled())
+        return CaptureSourceOrError { "Not implemented for GPU process" };
+
+    auto captureDevice = SpeechRecognitionCaptureSource::findCaptureDevice();
+    if (!captureDevice)
+        return CaptureSourceOrError { "No device is available for capture" };
+
+#if PLATFORM(IOS_FAMILY)
+    return CaptureSourceOrError { SpeechRecognitionRemoteRealtimeMediaSource::create(m_process->ensureSpeechRecognitionRemoteRealtimeMediaSourceManager(), *captureDevice) };
+#else
+    return SpeechRecognitionCaptureSource::createRealtimeMediaSource(*captureDevice);
+#endif
+}
+
+#endif
 
 } // namespace WebKit
 

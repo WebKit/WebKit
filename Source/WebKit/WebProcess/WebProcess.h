@@ -142,6 +142,10 @@ struct WebsiteDataStoreParameters;
 class LayerHostingContext;
 #endif
 
+#if ENABLE(MEDIA_STREAM)
+class SpeechRecognitionRealtimeMediaSourceManager;
+#endif
+
 class WebProcess : public AuxiliaryProcess
 {
     WTF_MAKE_FAST_ALLOCATED;
@@ -358,6 +362,10 @@ public:
     void willWriteToPasteboardAsynchronously(const String& pasteboardName);
     void waitForPendingPasteboardWritesToFinish(const String& pasteboardName);
     void didWriteToPasteboardAsynchronously(const String& pasteboardName);
+#endif
+
+#if ENABLE(MEDIA_STREAM)
+    SpeechRecognitionRealtimeMediaSourceManager& ensureSpeechRecognitionRealtimeMediaSourceManager();
 #endif
 
 private:
@@ -692,6 +700,10 @@ private:
 #if ENABLE(VP9)
     bool m_vp9DecoderEnabled { false };
     bool m_vp9SWDecoderEnabled { false };
+#endif
+
+#if ENABLE(MEDIA_STREAM)
+    std::unique_ptr<SpeechRecognitionRealtimeMediaSourceManager> m_speechRecognitionRealtimeMediaSourceManager;
 #endif
 };
 
