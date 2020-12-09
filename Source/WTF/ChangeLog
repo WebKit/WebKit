@@ -1,3 +1,15 @@
+2020-12-09  Chris Dumez  <cdumez@apple.com>
+
+        Turn on HAVE(SYSTEM_FEATURE_FLAGS) on WatchOS and TvOS
+        https://bugs.webkit.org/show_bug.cgi?id=219703
+
+        Reviewed by Darin Adler.
+
+        Turn on HAVE(SYSTEM_FEATURE_FLAGS) on WatchOS and TvOS. This should fix the build
+        after r270542.
+
+        * wtf/PlatformHave.h:
+
 2020-12-08  Devin Rousso  <drousso@apple.com>
 
         [macCatalyst] Enable context menus for WKWebView
