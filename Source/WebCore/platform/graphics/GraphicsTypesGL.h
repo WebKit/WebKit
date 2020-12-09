@@ -25,7 +25,9 @@
 
 #pragma once
 
+#include <cstdint>
 #include <limits>
+#include <type_traits>
 #include <wtf/Forward.h>
 #include <wtf/Vector.h>
 
@@ -44,15 +46,17 @@ typedef unsigned GCGLuint;
 typedef float GCGLfloat;
 typedef unsigned short GCGLhalffloat;
 typedef float GCGLclampf;
-typedef intptr_t GCGLintptr;
-typedef intptr_t GCGLsizeiptr;
 typedef char GCGLchar;
-typedef long long GCGLint64;
-typedef unsigned long long GCGLuint64;
 typedef struct __GLsync* GCGLsync;
 typedef void GCGLvoid;
-typedef intptr_t GCGLvoidptr;
 
+// These GCGL types do not strictly match the GL types as defined in OpenGL ES 2.0
+// header file for all platforms.
+typedef intptr_t GCGLintptr;
+typedef intptr_t GCGLsizeiptr;
+typedef intptr_t GCGLvoidptr;
+typedef long long GCGLint64;
+typedef unsigned long long GCGLuint64;
 
 typedef GCGLuint PlatformGLObject;
 
@@ -60,19 +64,29 @@ typedef GCGLuint PlatformGLObject;
 typedef unsigned GLuint;
 #endif
 
-template<typename T, size_t Extent = std::numeric_limits<size_t>::max()>
+inline constexpr size_t gcGLSpanDynamicExtent = std::numeric_limits<size_t>::max();
+
+template<typename T, size_t Extent = gcGLSpanDynamicExtent>
 struct GCGLSpan;
 template<typename T, size_t Extent>
 struct GCGLSpan {
-    explicit GCGLSpan(T* array)
+    explicit GCGLSpan(T* array, size_t size = Extent)
         : data(array)
-    { }
+    {
+        ASSERT_UNUSED(size, size == Extent);
+    }
     GCGLSpan(T (&array)[Extent])
         : data(array)
     { }
     template<typename U>
     GCGLSpan(const GCGLSpan<U, Extent>& other, std::enable_if_t<std::is_convertible_v<U(*)[], T(*)[]>, std::nullptr_t> = nullptr)
         : data(other.data)
+    { }
+    GCGLSpan(std::array<T, Extent>& array)
+        : data(array.data())
+    { }
+    GCGLSpan(const std::array<T, Extent>& array)
+        : data(array.data())
     { }
     T& operator[](size_t i) { RELEASE_ASSERT(data && i < bufSize); return data[i]; }
     T& operator*() { RELEASE_ASSERT(data && bufSize); return *data; }
@@ -81,7 +95,7 @@ struct GCGLSpan {
 };
 
 template<typename T>
-struct GCGLSpan<T, std::numeric_limits<size_t>::max()> {
+struct GCGLSpan<T, gcGLSpanDynamicExtent> {
     GCGLSpan(T* array, size_t bufSize_)
         : data(array)
         , bufSize(bufSize_)
@@ -123,6 +137,11 @@ struct GCGLSpan<GCGLvoid> {
         : data(other.data)
         , bufSize(other.bufSize * sizeof(U))
     { }
+    template<typename U, size_t inlineCapacity>
+    GCGLSpan(WTF::Vector<U, inlineCapacity>& array)
+        : data(array.data())
+        , bufSize(array.size() * sizeof(U))
+    { }
     GCGLvoid* data;
     const size_t bufSize;
 };
@@ -154,8 +173,11 @@ struct GCGLSpan<const GCGLvoid> {
 template<typename T, size_t N>
 GCGLSpan(T (&)[N]) -> GCGLSpan<T, N>;
 
-template<typename T>
-GCGLSpan(WTF::Vector<T>&) -> GCGLSpan<T>;
+template<typename T, size_t N>
+GCGLSpan(std::array<T, N>&) -> GCGLSpan<T, N>;
+
+template<typename T, size_t inlineCapacity>
+GCGLSpan(WTF::Vector<T, inlineCapacity>&) -> GCGLSpan<T>;
 
 template<typename T>
 GCGLSpan<T> makeGCGLSpan(T* data, size_t count)

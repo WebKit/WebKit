@@ -1832,6 +1832,9 @@ private:
     bool m_shouldRenderCanvasInGPUProcess { false };
     bool m_shouldRenderDOMInGPUProcess { false };
     bool m_shouldPlayMediaInGPUProcess { false };
+#if ENABLE(WEBGL)
+    bool m_shouldRenderWebGLInGPUProcess { false };
+#endif
 #if ENABLE(APP_BOUND_DOMAINS)
     bool m_needsInAppBrowserPrivacyQuirks { false };
 #endif
@@ -2189,4 +2192,3 @@ inline bool WebPage::platformNeedsLayoutForEditorState(const WebCore::Frame&) co
 #endif
 
 } // namespace WebKit
-

@@ -3167,4 +3167,82 @@ Optional<RefPtr<WebCore::ImageData>> ArgumentCoder<RefPtr<WebCore::ImageData>>::
     return { WTFMove(*result) };
 }
 
+#if ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
+void ArgumentCoder<WebCore::GraphicsContextGLAttributes>::encode(Encoder& encoder, const WebCore::GraphicsContextGLAttributes& attributes)
+{
+    encoder << attributes.alpha;
+    encoder << attributes.depth;
+    encoder << attributes.stencil;
+    encoder << attributes.antialias;
+    encoder << attributes.premultipliedAlpha;
+    encoder << attributes.preserveDrawingBuffer;
+    encoder << attributes.failIfMajorPerformanceCaveat;
+    encoder << attributes.powerPreference;
+    encoder << attributes.shareResources;
+    encoder << attributes.isWebGL2;
+    encoder << attributes.noExtensions;
+    encoder << attributes.devicePixelRatio;
+    encoder << attributes.initialPowerPreference;
+#if ENABLE(WEBXR)
+    encoder << attributes.xrCompatible;
+#endif
+}
+
+Optional<WebCore::GraphicsContextGLAttributes> ArgumentCoder<WebCore::GraphicsContextGLAttributes>::decode(Decoder& decoder)
+{
+    GraphicsContextGLAttributes attributes;
+    if (!decoder.decode(attributes.alpha))
+        return WTF::nullopt;
+    if (!decoder.decode(attributes.depth))
+        return WTF::nullopt;
+    if (!decoder.decode(attributes.stencil))
+        return WTF::nullopt;
+    if (!decoder.decode(attributes.antialias))
+        return WTF::nullopt;
+    if (!decoder.decode(attributes.premultipliedAlpha))
+        return WTF::nullopt;
+    if (!decoder.decode(attributes.preserveDrawingBuffer))
+        return WTF::nullopt;
+    if (!decoder.decode(attributes.failIfMajorPerformanceCaveat))
+        return WTF::nullopt;
+    if (!decoder.decode(attributes.powerPreference))
+        return WTF::nullopt;
+    if (!decoder.decode(attributes.shareResources))
+        return WTF::nullopt;
+    if (!decoder.decode(attributes.isWebGL2))
+        return WTF::nullopt;
+    if (!decoder.decode(attributes.noExtensions))
+        return WTF::nullopt;
+    if (!decoder.decode(attributes.devicePixelRatio))
+        return WTF::nullopt;
+    if (!decoder.decode(attributes.initialPowerPreference))
+        return WTF::nullopt;
+#if ENABLE(WEBXR)
+    if (!decoder.decode(attributes.xrCompatible))
+        return WTF::nullopt;
+#endif
+    return attributes;
+}
+
+void ArgumentCoder<WebCore::GraphicsContextGL::ActiveInfo>::encode(Encoder& encoder, const WebCore::GraphicsContextGL::ActiveInfo& activeInfo)
+{
+    encoder << activeInfo.name;
+    encoder << activeInfo.type;
+    encoder << activeInfo.size;
+}
+
+Optional<WebCore::GraphicsContextGL::ActiveInfo> ArgumentCoder<WebCore::GraphicsContextGL::ActiveInfo>::decode(Decoder& decoder)
+{
+    WebCore::GraphicsContextGL::ActiveInfo activeInfo;
+    if (!decoder.decode(activeInfo.name))
+        return WTF::nullopt;
+    if (!decoder.decode(activeInfo.type))
+        return WTF::nullopt;
+    if (!decoder.decode(activeInfo.size))
+        return WTF::nullopt;
+    return activeInfo;
+}
+
+#endif
+
 } // namespace IPC

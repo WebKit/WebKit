@@ -311,10 +311,11 @@ list(APPEND WebCore_SOURCES
     platform/graphics/cocoa/FontFamilySpecificationCoreText.cpp
     platform/graphics/cocoa/FontPlatformDataCocoa.mm
     platform/graphics/cocoa/GraphicsContextCocoa.mm
+    platform/graphics/cocoa/GraphicsContextGLIOSurfaceSwapChain.cpp
     platform/graphics/cocoa/GraphicsContextGLOpenGLCocoa.mm
+    platform/graphics/cocoa/IntRectCocoa.mm
     platform/graphics/cocoa/IOSurface.mm
     platform/graphics/cocoa/IOSurfacePoolCocoa.mm
-    platform/graphics/cocoa/IntRectCocoa.mm
     platform/graphics/cocoa/WebActionDisablingCALayerDelegate.mm
     platform/graphics/cocoa/WebCoreCALayerExtras.mm
     platform/graphics/cocoa/WebCoreDecompressionSession.mm

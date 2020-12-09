@@ -86,6 +86,10 @@ public:
 
     RefPtr<ImageBuffer> createImageBuffer(const FloatSize&, RenderingMode, RenderingPurpose, float resolutionScale, ColorSpace, PixelFormat) const override;
 
+#if ENABLE(WEBGL)
+    RefPtr<GraphicsContextGL> createGraphicsContextGL(const GraphicsContextGLAttributes&) const override;
+#endif
+
     PlatformDisplayID displayID() const override;
     void windowScreenDidChange(PlatformDisplayID, Optional<unsigned>) override;
 

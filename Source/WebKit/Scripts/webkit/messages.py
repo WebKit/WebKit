@@ -216,6 +216,7 @@ def types_that_cannot_be_forward_declared():
         'WebCore::DocumentOrWorkerIdentifier',
         'WebCore::FetchIdentifier',
         'WebCore::FrameIdentifier',
+        'WebCore::GraphicsContextGLAttributes',
         'WebCore::LibWebRTCSocketIdentifier',
         'WebCore::PlaybackTargetClientContextIdentifier',
         'WebCore::MediaPlayerIdentifier',
@@ -244,6 +245,7 @@ def types_that_cannot_be_forward_declared():
         'WebKit::DisplayLinkObserverID',
         'WebKit::DownloadID',
         'WebKit::GeolocationIdentifier',
+        'WebKit::GraphicsContextGLIdentifier',
         'WebKit::ImageBufferBackendHandle',
         'WebKit::LayerHostingContextID',
         'WebKit::LegacyCustomProtocolID',
@@ -531,6 +533,7 @@ def class_template_headers(template_string):
         'OptionSet': {'headers': ['<wtf/OptionSet.h>'], 'argument_coder_headers': ['"ArgumentCoders.h"']},
         'Vector': {'headers': ['<wtf/Vector.h>'], 'argument_coder_headers': ['"ArgumentCoders.h"']},
         'std::pair': {'headers': ['<utility>'], 'argument_coder_headers': ['"ArgumentCoders.h"']},
+        'IPC::ArrayReference': {'headers': ['"ArrayReference.h"'], 'argument_coder_headers': ['"ArgumentCoders.h"']},
     }
 
     match = re.match('(?P<template_name>.+?)<(?P<parameter_string>.+)>', template_string)

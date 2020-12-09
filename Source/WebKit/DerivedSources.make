@@ -173,6 +173,7 @@ MESSAGE_RECEIVERS = \
 	WebProcess/Databases/IndexedDB/WebIDBConnectionToServer \
 	WebProcess/GPU/GPUProcessConnection \
 	WebProcess/GPU/graphics/RemoteRenderingBackendProxy \
+	WebProcess/GPU/graphics/RemoteGraphicsContextGLProxy \
 	WebProcess/GPU/webrtc/LibWebRTCCodecs \
 	WebProcess/GPU/webrtc/SampleBufferDisplayLayer \
 	WebProcess/GPU/media/MediaPlayerPrivateRemote \
@@ -230,6 +231,7 @@ MESSAGE_RECEIVERS = \
 	PluginProcess/PluginProcess \
 	GPUProcess/GPUConnectionToWebProcess \
 	GPUProcess/graphics/RemoteRenderingBackend \
+	GPUProcess/graphics/RemoteGraphicsContextGL \
 	GPUProcess/webrtc/LibWebRTCCodecsProxy \
 	GPUProcess/webrtc/RemoteSampleBufferDisplayLayerManager \
 	GPUProcess/webrtc/RemoteAudioMediaStreamTrackRendererManager \

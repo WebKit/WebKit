@@ -27,11 +27,13 @@
 
 #include "config.h"
 #include "GraphicsContextGL.h"
+#include "GraphicsContextGLOpenGL.h"
 
 #if ENABLE(WEBGL)
 
 #include "ExtensionsGL.h"
 #include "FormatConverter.h"
+#include "HostWindow.h"
 #include "Image.h"
 #include "ImageData.h"
 #include "ImageObserver.h"
@@ -403,6 +405,15 @@ static bool packPixels(const uint8_t* sourceData, GraphicsContextGL::DataFormat 
     return true;
 }
 
+RefPtr<GraphicsContextGL> GraphicsContextGL::create(const GraphicsContextGLAttributes& attributes, HostWindow* hostWindow)
+{
+    RefPtr<GraphicsContextGL> result;
+    if (hostWindow)
+        result = hostWindow->createGraphicsContextGL(attributes);
+    if (!result)
+        result = GraphicsContextGLOpenGL::create(attributes, hostWindow);
+    return result;
+}
 
 GraphicsContextGL::GraphicsContextGL(GraphicsContextGLAttributes attrs, Destination destination, GraphicsContextGL*)
     : m_attrs(attrs)

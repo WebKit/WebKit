@@ -26,6 +26,7 @@ GPUProcess/GPUConnectionToWebProcess.cpp
 GPUProcess/GPUProcessCreationParameters.cpp
 GPUProcess/graphics/DisplayListReaderHandle.cpp
 GPUProcess/graphics/RemoteRenderingBackend.cpp
+GPUProcess/graphics/RemoteGraphicsContextGL.cpp
 GPUProcess/graphics/RemoteResourceCache.cpp
 GPUProcess/media/RemoteAudioSessionProxy.cpp
 GPUProcess/media/RemoteAudioSessionProxyManager.cpp
@@ -570,6 +571,8 @@ WebProcess/MediaStream/UserMediaPermissionRequestManager.cpp
 WebProcess/GPU/GPUProcessConnection.cpp
 WebProcess/GPU/graphics/DisplayListWriterHandle.cpp
 WebProcess/GPU/graphics/ImageBufferShareableBitmapBackend.cpp
+WebProcess/GPU/graphics/RemoteGraphicsContextGLProxyFunctionsGenerated.cpp
+WebProcess/GPU/graphics/RemoteGraphicsContextGLProxy.cpp
 WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp
 WebProcess/GPU/graphics/RemoteResourceCacheProxy.cpp
 WebProcess/GPU/media/AudioTrackPrivateRemote.cpp
@@ -592,10 +595,10 @@ WebProcess/GPU/media/SourceBufferPrivateRemote.cpp
 WebProcess/GPU/media/TextTrackPrivateRemote.cpp
 WebProcess/GPU/media/VideoTrackPrivateRemote.cpp
 WebProcess/GPU/media/WebMediaStrategy.cpp
+WebProcess/GPU/webrtc/AudioMediaStreamTrackRenderer.cpp
 WebProcess/GPU/webrtc/LibWebRTCCodecs.cpp
 WebProcess/GPU/webrtc/MediaRecorderPrivate.cpp
 WebProcess/GPU/webrtc/MediaRecorderProvider.cpp
-WebProcess/GPU/webrtc/AudioMediaStreamTrackRenderer.cpp
 WebProcess/GPU/webrtc/SampleBufferDisplayLayer.cpp
 WebProcess/GPU/webrtc/SampleBufferDisplayLayerManager.cpp
 
@@ -698,3 +701,6 @@ WebProcess/WebStorage/StorageAreaImpl.cpp
 WebProcess/WebStorage/StorageAreaMap.cpp
 WebProcess/WebStorage/StorageNamespaceImpl.cpp
 WebProcess/WebStorage/WebStorageNamespaceProvider.cpp
+
+RemoteGraphicsContextGLMessageReceiver.cpp
+RemoteGraphicsContextGLProxyMessageReceiver.cpp

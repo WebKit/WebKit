@@ -71,6 +71,13 @@
 #include "ArgumentCodersGtk.h"
 #endif
 
+#if ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
+#include "ArrayReference.h"
+#include <WebCore/GraphicsContextGL.h>
+#include <WebCore/GraphicsContextGLAttributes.h>
+#include <WebCore/GraphicsTypesGL.h>
+#endif
+
 #if PLATFORM(COCOA)
 namespace WTF {
 class MachSendRight;
@@ -201,6 +208,10 @@ struct SerializedAttachmentData;
 
 #if ENABLE(INDEXED_DATABASE)
 using IDBKeyPath = Variant<String, Vector<String>>;
+#endif
+
+#if ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
+struct GraphicsContextGLAttributes;
 #endif
 
 namespace DOMCacheEngine {
@@ -868,6 +879,19 @@ template<> struct ArgumentCoder<WebCore::PaymentInstallmentConfiguration> {
 };
 #endif
 
+#if ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
+
+template<> struct ArgumentCoder<WebCore::GraphicsContextGLAttributes> {
+    static void encode(Encoder&, const WebCore::GraphicsContextGLAttributes&);
+    static Optional<WebCore::GraphicsContextGLAttributes> decode(Decoder&);
+};
+
+template<> struct ArgumentCoder<WebCore::GraphicsContextGL::ActiveInfo> {
+    static void encode(Encoder&, const WebCore::GraphicsContextGL::ActiveInfo&);
+    static Optional<WebCore::GraphicsContextGL::ActiveInfo> decode(Decoder&);
+};
+#endif
+
 } // namespace IPC
 
 namespace WTF {
@@ -1034,6 +1058,18 @@ template <> struct EnumTraits<WebCore::CDMInstance::HDCPStatus> {
     >;
 };
 
+#endif
+
+#if ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
+
+template <> struct EnumTraits<WebCore::GraphicsContextGLPowerPreference> {
+    using values = EnumValues <
+    WebCore::GraphicsContextGLPowerPreference,
+    WebCore::GraphicsContextGLPowerPreference::Default,
+    WebCore::GraphicsContextGLPowerPreference::LowPower,
+    WebCore::GraphicsContextGLPowerPreference::HighPerformance
+    >;
+};
 #endif
 
 } // namespace WTF

@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "GraphicsContextGL.h"
 #include "Widget.h"
 
 namespace WebCore {
@@ -62,6 +63,10 @@ public:
     virtual IntRect rootViewToAccessibilityScreen(const IntRect&) const = 0;
 
     virtual RefPtr<ImageBuffer> createImageBuffer(const FloatSize&, RenderingMode, RenderingPurpose, float resolutionScale, ColorSpace, PixelFormat) const = 0;
+
+#if ENABLE(WEBGL)
+    virtual RefPtr<GraphicsContextGL> createGraphicsContextGL(const GraphicsContextGLAttributes&) const = 0;
+#endif
 
     // Method for retrieving the native client of the page.
     virtual PlatformPageClient platformPageClient() const = 0;

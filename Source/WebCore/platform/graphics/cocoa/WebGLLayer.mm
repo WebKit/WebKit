@@ -32,13 +32,39 @@
 #import "GraphicsLayerCA.h"
 #import "PlatformCALayer.h"
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
-#import <wtf/RetainPtr.h>
+#import <wtf/Optional.h>
+
+class WebGLLayerSwapChain final : public WebCore::GraphicsContextGLIOSurfaceSwapChain {
+public:
+    explicit WebGLLayerSwapChain(WebGLLayer* layer)  : m_layer(layer) { };
+    ~WebGLLayerSwapChain() override = default;
+    void present(Buffer) override;
+    Buffer recycleBuffer() override
+    {
+        if (m_spareBuffer.surface) {
+            if (m_spareBuffer.surface->isInUse())
+                m_spareBuffer.surface.reset();
+            return WTFMove(m_spareBuffer);
+        }
+        return { };
+    }
+    void* detachClient() override
+    {
+        ASSERT(!m_spareBuffer.surface);
+        void* result = m_displayBuffer.handle;
+        m_displayBuffer.handle = nullptr;
+        return result;
+    }
+    WebCore::IOSurface* displaySurface() { return m_displayBuffer.surface.get(); }
+private:
+    Buffer m_displayBuffer;
+    Buffer m_spareBuffer;
+    WebGLLayer* const m_layer;
+};
 
 @implementation WebGLLayer {
-    WebCore::WebGLLayerBuffer _contentsBuffer;
-    WebCore::WebGLLayerBuffer _spareBuffer;
-
     BOOL _preparedForDisplay;
+    Optional<WebGLLayerSwapChain> _swapChain;
 }
 
 - (id)initWithDevicePixelRatio:(float)devicePixelRatio contentsOpaque:(bool)contentsOpaque
@@ -47,6 +73,7 @@
     self.transform = CATransform3DIdentity;
     self.contentsOpaque = contentsOpaque;
     self.contentsScale = devicePixelRatio;
+    _swapChain.emplace(self);
     return self;
 }
 
@@ -73,30 +100,21 @@
     UNUSED_PARAM(colorSpace);
     return nullptr;
 }
-
-- (WebCore::WebGLLayerBuffer) recycleBuffer
+- (WebCore::GraphicsContextGLIOSurfaceSwapChain&) swapChain
 {
-    if (_spareBuffer.surface) {
-        if (_spareBuffer.surface->isInUse())
-            _spareBuffer.surface.reset();
-        return WTFMove(_spareBuffer);
-    }
-    return { };
+    return _swapChain.value();
 }
 
-- (void)prepareForDisplayWithContents:(WebCore::WebGLLayerBuffer) buffer
+- (void)prepareForDisplay
 {
-    ASSERT(!_spareBuffer.surface);
-    _spareBuffer = WTFMove(_contentsBuffer);
-    _contentsBuffer = WTFMove(buffer);
     [self setNeedsDisplay];
     _preparedForDisplay = YES;
 }
 
 - (void)display
 {
-    if (_contentsBuffer.surface && _preparedForDisplay) {
-        self.contents = _contentsBuffer.surface->asLayerContents();
+    if (_swapChain->displaySurface() && _preparedForDisplay) {
+        self.contents = _swapChain->displaySurface()->asLayerContents();
         [self reloadValueForKeyPath:@"contents"];
     }
     auto layer = WebCore::PlatformCALayer::platformCALayerForLayer((__bridge void*)self);
@@ -106,13 +124,14 @@
     _preparedForDisplay = NO;
 }
 
-- (void*) detachClient
-{
-    ASSERT(!_spareBuffer.surface);
-    void* result = _contentsBuffer.handle;
-    _contentsBuffer.handle = nullptr;
-    return result;
-}
 @end
+
+void WebGLLayerSwapChain::present(Buffer buffer)
+{
+    ASSERT(!m_spareBuffer.surface);
+    m_spareBuffer = WTFMove(m_displayBuffer);
+    m_displayBuffer = WTFMove(buffer);
+    [m_layer prepareForDisplay];
+}
 
 #endif // ENABLE(WEBGL)

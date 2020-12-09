@@ -229,6 +229,9 @@ struct WebPageCreationParameters {
     bool shouldRenderCanvasInGPUProcess { false };
     bool shouldRenderDOMInGPUProcess { false };
     bool shouldPlayMediaInGPUProcess { false };
+#if ENABLE(WEBGL)
+    bool shouldRenderWebGLInGPUProcess { false };
+#endif
     bool shouldEnableVP9Decoder { false };
     bool shouldEnableVP9SWDecoder { false };
 #if ENABLE(APP_BOUND_DOMAINS)

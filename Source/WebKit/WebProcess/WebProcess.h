@@ -351,6 +351,10 @@ public:
     void setUseGPUProcessForDOMRendering(bool);
     void setUseGPUProcessForMedia(bool);
     bool shouldUseRemoteRenderingFor(WebCore::RenderingPurpose);
+#if ENABLE(WEBGL)
+    void setUseGPUProcessForWebGL(bool);
+    bool shouldUseRemoteRenderingForWebGL() const;
+#endif
 #endif
 
 #if ENABLE(VP9)
@@ -695,6 +699,9 @@ private:
     bool m_useGPUProcessForCanvasRendering { false };
     bool m_useGPUProcessForDOMRendering { false };
     bool m_useGPUProcessForMedia { false };
+#if ENABLE(WEBGL)
+    bool m_useGPUProcessForWebGL { false };
+#endif
 #endif
 
 #if ENABLE(VP9)

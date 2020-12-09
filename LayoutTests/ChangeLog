@@ -1,3 +1,20 @@
+2020-12-09  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Implement RemoteGraphicsContextGL
+        https://bugs.webkit.org/show_bug.cgi?id=217216
+        <rdar://problem/69876258>
+
+        Reviewed by Simon Fraser.
+
+        Implements a beginning of a remote version of GraphicsContextGL for GPU
+        process. Current implementation is using WebKit IPC.
+
+        Adds test expectations for the missing functionality. Does not yet
+        enable the tests that actually pass but which were skipped before the
+        implementation.
+
+        * gpu-process/TestExpectations:
+
 2020-12-09  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: add support for pen pointer events

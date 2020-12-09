@@ -58,6 +58,9 @@
 #if PLATFORM(COCOA)
 OBJC_CLASS CALayer;
 OBJC_CLASS WebGLLayer;
+namespace WebCore {
+class GraphicsContextGLIOSurfaceSwapChain;
+}
 #endif // PLATFORM(COCOA)
 
 #if USE(NICOSIA)
@@ -86,7 +89,7 @@ typedef WTF::HashMap<CString, uint64_t> ShaderNameHash;
 
 class GraphicsContextGLOpenGLPrivate;
 
-class GraphicsContextGLOpenGL final : public GraphicsContextGL
+class WEBCORE_EXPORT GraphicsContextGLOpenGL final : public GraphicsContextGL
 {
 public:
     static RefPtr<GraphicsContextGLOpenGL> create(GraphicsContextGLAttributes, HostWindow*, Destination = Destination::Offscreen);
@@ -94,6 +97,8 @@ public:
 
 #if PLATFORM(COCOA)
     static Ref<GraphicsContextGLOpenGL> createShared(GraphicsContextGLOpenGL& sharedContext);
+    static Ref<GraphicsContextGLOpenGL> createForGPUProcess(const GraphicsContextGLAttributes&, GraphicsContextGLIOSurfaceSwapChain*);
+
     CALayer* platformLayer() const final { return reinterpret_cast<CALayer*>(m_webGLLayer.get()); }
     PlatformGraphicsContextGLDisplay platformDisplay() const { return m_displayObj; }
     PlatformGraphicsContextGLConfig platformConfig() const { return m_configObj; }
@@ -503,7 +508,11 @@ public:
 #endif // !USE(ANGLE)
 
 private:
+#if PLATFORM(COCOA)
+    GraphicsContextGLOpenGL(GraphicsContextGLAttributes, HostWindow*, GraphicsContextGLOpenGL* sharedContext = nullptr, GraphicsContextGLIOSurfaceSwapChain* = nullptr);
+#else
     GraphicsContextGLOpenGL(GraphicsContextGLAttributes, HostWindow*, Destination = Destination::Offscreen, GraphicsContextGLOpenGL* sharedContext = nullptr);
+#endif
 
     // Called once by all the public entry points that eventually call OpenGL.
     // Called once by all the public entry points of ExtensionsGL that eventually call OpenGL.
@@ -534,10 +543,13 @@ private:
 #if PLATFORM(COCOA)
     bool allowOfflineRenderers() const;
     bool reshapeDisplayBufferBacking();
+    bool allocateAndBindDisplayBufferBacking();
     bool bindDisplayBufferBacking(std::unique_ptr<IOSurface> backing, void* pbuffer);
 #endif
 
 #if PLATFORM(COCOA)
+    GraphicsContextGLIOSurfaceSwapChain* m_swapChain { nullptr };
+    // TODO: this should be removed once the context draws to a image buffer. See https://bugs.webkit.org/show_bug.cgi?id=218179 .
     RetainPtr<WebGLLayer> m_webGLLayer;
     PlatformGraphicsContextGL m_contextObj { nullptr };
     PlatformGraphicsContextGLDisplay m_displayObj { nullptr };

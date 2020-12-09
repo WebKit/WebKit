@@ -32,12 +32,18 @@
 #include "MessageReceiverMap.h"
 #include "RemoteAudioSessionIdentifier.h"
 #include "RenderingBackendIdentifier.h"
+
 #include <WebCore/LibWebRTCEnumTraits.h>
 #include <WebCore/NowPlayingManager.h>
 #include <WebCore/ProcessIdentifier.h>
 #include <pal/SessionID.h>
 #include <wtf/Logger.h>
 #include <wtf/RefCounted.h>
+
+#if ENABLE(WEBGL)
+#include "GraphicsContextGLIdentifier.h"
+#include <WebCore/GraphicsContextGLAttributes.h>
+#endif
 
 namespace WebKit {
 
@@ -55,6 +61,7 @@ class RemoteMediaRecorderManager;
 class RemoteMediaResourceManager;
 class RemoteMediaSessionHelperProxy;
 class RemoteRenderingBackend;
+class RemoteGraphicsContextGL;
 class RemoteSampleBufferDisplayLayerManager;
 class UserMediaCaptureManagerProxy;
 struct RemoteAudioSessionConfiguration;
@@ -120,6 +127,11 @@ private:
     void createRenderingBackend(RenderingBackendIdentifier);
     void releaseRenderingBackend(RenderingBackendIdentifier);
 
+#if ENABLE(WEBGL)
+    void createGraphicsContextGL(WebCore::GraphicsContextGLAttributes, GraphicsContextGLIdentifier);
+    void releaseGraphicsContextGL(GraphicsContextGLIdentifier);
+#endif
+
     void clearNowPlayingInfo();
     void setNowPlayingInfo(bool setAsNowPlayingApplication, WebCore::NowPlayingInfo&&);
 
@@ -181,7 +193,10 @@ private:
 
     using RemoteRenderingBackendMap = HashMap<RenderingBackendIdentifier, std::unique_ptr<RemoteRenderingBackend>>;
     RemoteRenderingBackendMap m_remoteRenderingBackendMap;
-
+#if ENABLE(WEBGL)
+    using RemoteGraphicsContextGLMap = HashMap<GraphicsContextGLIdentifier, std::unique_ptr<RemoteGraphicsContextGL>>;
+    RemoteGraphicsContextGLMap m_remoteGraphicsContextGLMap;
+#endif
 #if ENABLE(ENCRYPTED_MEDIA)
     std::unique_ptr<RemoteCDMFactoryProxy> m_cdmFactoryProxy;
 #endif

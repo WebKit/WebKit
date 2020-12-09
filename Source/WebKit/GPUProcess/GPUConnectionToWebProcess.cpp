@@ -64,6 +64,10 @@
 #include <WebCore/MediaSessionManagerIOS.h>
 #endif
 
+#if ENABLE(WEBGL)
+#include "RemoteGraphicsContextGL.h"
+#endif
+
 #if ENABLE(ENCRYPTED_MEDIA)
 #include "RemoteCDMFactoryProxy.h"
 #include "RemoteCDMFactoryProxyMessages.h"
@@ -298,6 +302,21 @@ void GPUConnectionToWebProcess::releaseRenderingBackend(RenderingBackendIdentifi
     ASSERT_UNUSED(found, found);
 }
 
+#if ENABLE(WEBGL)
+void GPUConnectionToWebProcess::createGraphicsContextGL(WebCore::GraphicsContextGLAttributes attributes, GraphicsContextGLIdentifier graphicsContextGLIdentifier)
+{
+    auto addResult = m_remoteGraphicsContextGLMap.ensure(graphicsContextGLIdentifier, [&]() {
+        return RemoteGraphicsContextGL::create(attributes, *this, graphicsContextGLIdentifier);
+    });
+    ASSERT_UNUSED(addResult, addResult.isNewEntry);
+}
+
+void GPUConnectionToWebProcess::releaseGraphicsContextGL(GraphicsContextGLIdentifier graphicsContextGLIdentifier)
+{
+    bool found = m_remoteGraphicsContextGLMap.remove(graphicsContextGLIdentifier);
+    ASSERT_UNUSED(found, found);
+}
+#endif
 void GPUConnectionToWebProcess::clearNowPlayingInfo()
 {
     gpuProcess().nowPlayingManager().clearNowPlayingInfoClient(*this);

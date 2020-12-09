@@ -34,13 +34,16 @@ WEBCORE_EXPORT int presentingApplicationPID();
 
 #if PLATFORM(WIN)
 inline bool isInWebProcess() { return false; }
+inline bool isInGPUProcess() { return false; }
 #elif !PLATFORM(COCOA)
 inline bool isInWebProcess() { return true; }
+inline bool isInGPUProcess() { return false; }
 #endif
 
 #if PLATFORM(COCOA)
 
 bool isInWebProcess();
+bool isInGPUProcess();
 bool isInNetworkProcess();
 
 WEBCORE_EXPORT void setApplicationBundleIdentifier(const String&);

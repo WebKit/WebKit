@@ -59,6 +59,8 @@ class ImageData;
 class GraphicsContextGLCV;
 #endif
 
+
+// Base class for graphics context for implementing WebGL rendering model.
 class GraphicsContextGL : public RefCounted<GraphicsContextGL> {
 public:
     // WebGL 1 constants.
@@ -909,14 +911,17 @@ public:
         GCGLint size;
     };
 
+    // Creates a GraphicsContextGL instance to render into offscreen destination in context of HostWindow.
+    // HostWindow might affect the decision which backend is to be used.
+    static RefPtr<GraphicsContextGL> create(const GraphicsContextGLAttributes&, HostWindow*);
+
     GraphicsContextGL(GraphicsContextGLAttributes, Destination = Destination::Offscreen, GraphicsContextGL* sharedContext = nullptr);
     virtual ~GraphicsContextGL() = default;
 
     void addClient(Client& client) { m_clients.add(&client); }
     void removeClient(Client& client) { m_clients.remove(&client); }
 
-    // WebGL functions in format generate-gpup-webgl understands.
-
+    // WebGL functions.
     virtual void activeTexture(GCGLenum texture) = 0;
     virtual void attachShader(PlatformGLObject program, PlatformGLObject shader) = 0;
     virtual void bindAttribLocation(PlatformGLObject, GCGLuint index, const String& name) = 0;
@@ -1394,7 +1399,6 @@ inline GCGLint GraphicsContextGL::getInternalformati(GCGLenum target, GCGLenum i
     getInternalformativ(target, internalformat, pname, value);
     return value[0];
 }
-
 
 } // namespace WebCore
 

@@ -1,3 +1,32 @@
+2020-12-09  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Implement RemoteGraphicsContextGL
+        https://bugs.webkit.org/show_bug.cgi?id=217216
+        <rdar://problem/69876258>
+
+        Reviewed by Simon Fraser.
+
+        Implements a remote version of GraphicsContextGL for GPU process.
+        Current implementation is using WebKit IPC and is incomplete.
+
+        Add the code generator to generate the implementation. Currently
+        the generator generates a WebKit IPC implementation.
+
+        The input definition to the generator is the proxy implementation
+        header files.
+        The output of the generator is
+           - WebKit IPC message definition file
+           - Message sender code
+           - Message receiver and payload invocation code
+
+        The generator converts GraphicsContextGL GCGL -prefixed types to
+        sized IPC types.
+
+        The generator is invoked during development time and the results are
+        stored in the repository.
+
+        * Scripts/generate-gpup-webgl: Added.
+
 2020-12-09  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         check-for-global-bss-symbols-in-webkigtk-libs is misspelled

@@ -732,8 +732,7 @@ std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(Can
         renderingContext->suspendIfNeeded();
         return renderingContext;
     }
-
-    auto context = GraphicsContextGLOpenGL::create(attributes, hostWindow);
+    auto context = GraphicsContextGL::create(attributes, hostWindow);
     if (!context) {
         if (canvasElement) {
             canvasElement->dispatchEvent(WebGLContextEvent::create(eventNames().webglcontextcreationerrorEvent,

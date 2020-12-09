@@ -1975,6 +1975,7 @@ platform/graphics/PathUtilities.cpp
 platform/graphics/Pattern.cpp
 platform/graphics/PlatformTimeRanges.cpp
 platform/graphics/Region.cpp
+platform/graphics/RemoteGraphicsContextGLProxyBase.cpp
 platform/graphics/RemoteVideoSample.cpp
 platform/graphics/RoundedRect.cpp
 platform/graphics/ShadowBlur.cpp

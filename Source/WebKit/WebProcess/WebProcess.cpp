@@ -1954,6 +1954,20 @@ bool WebProcess::shouldUseRemoteRenderingFor(RenderingPurpose purpose)
     }
     return false;
 }
+
+#if ENABLE(WEBGL)
+void WebProcess::setUseGPUProcessForWebGL(bool useGPUProcessForWebGL)
+{
+    m_useGPUProcessForWebGL = useGPUProcessForWebGL;
+}
+
+bool WebProcess::shouldUseRemoteRenderingForWebGL() const
+{
+    return m_useGPUProcessForWebGL;
+}
+
+#endif
+
 #endif
 
 #if ENABLE(VP9)

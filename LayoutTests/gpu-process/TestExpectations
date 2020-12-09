@@ -317,6 +317,14 @@ http/tests/security/webgl-remote-read-remote-image-allowed-with-credentials.html
 http/tests/webgl [ Skip ]
 js/shared-array-buffer-webgl.html [ Skip ]
 
+webkit.org/b/218184 fast/canvas/webgl/texImage2D-mse-flipY-false.html [ Skip ]
+webkit.org/b/218184 fast/canvas/webgl/texImage2D-mse-flipY-true.html [ Skip ]
+webkit.org/b/219349 fast/canvas/webgl/context-update-on-display-configuration.html [ Skip ]
+webkit.org/b/219349 fast/canvas/webgl/webglcontextchangedevent.html [ Skip ]
+webkit.org/b/219351 fast/canvas/webgl/gl-pixelstorei.html [ Failure ]
+webkit.org/b/219351 fast/canvas/webgl/premultiplyalpha-test.html [ Failure ]
+webkit.org/b/219352 fast/canvas/webgl/lose-context-on-status-failure.html [ Failure ]
+
 webgpu [ Skip ]
 
 accessibility/press-works-on-control-types.html [ Skip ]

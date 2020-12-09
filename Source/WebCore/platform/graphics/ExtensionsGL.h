@@ -267,7 +267,10 @@ public:
     // GL_KHR_parallel_shader_compile
     static constexpr GCGLenum COMPLETION_STATUS_KHR = 0x91B1;
 
-    // WebGL functions in format generate-gpup-webgl understands.
+    // GL_ANGLE_request_extension
+    static constexpr GCGLenum REQUESTABLE_EXTENSIONS_ANGLE = 0x93A8;
+
+    // WebGL functions.
 
     // GL_ARB_robustness
     // Note: This method's behavior differs from the GL_ARB_robustness

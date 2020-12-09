@@ -530,6 +530,13 @@ RefPtr<ImageBuffer> Chrome::createImageBuffer(const FloatSize& size, RenderingMo
     return m_client.createImageBuffer(size, renderingMode, purpose, resolutionScale, colorSpace, pixelFormat);
 }
 
+#if ENABLE(WEBGL)
+RefPtr<GraphicsContextGL> Chrome::createGraphicsContextGL(const GraphicsContextGLAttributes& attributes) const
+{
+    return m_client.createGraphicsContextGL(attributes, displayID());
+}
+#endif
+
 PlatformDisplayID Chrome::displayID() const
 {
     return m_page.displayID();

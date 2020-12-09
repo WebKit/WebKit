@@ -96,6 +96,12 @@ bool isInWebProcess()
     return mainBundleIsWebProcess;
 }
 
+bool isInGPUProcess()
+{
+    static bool mainBundleIsGPUProcess = [[[NSBundle mainBundle] bundleIdentifier] hasPrefix:@"com.apple.WebKit.GPU"];
+    return mainBundleIsGPUProcess;
+}
+
 bool isInNetworkProcess()
 {
     static bool mainBundleIsNetworkProcess = [[[NSBundle mainBundle] bundleIdentifier] hasPrefix:@"com.apple.WebKit.Networking"];

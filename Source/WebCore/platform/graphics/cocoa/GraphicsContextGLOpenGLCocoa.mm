@@ -30,6 +30,7 @@
 
 #import "ExtensionsGLANGLE.h"
 #import "GraphicsContextGLANGLEUtilities.h"
+#import "GraphicsContextGLIOSurfaceSwapChain.h"
 #import "GraphicsContextGLOpenGLManager.h"
 #import "HostWindow.h"
 #import "Logging.h"
@@ -81,7 +82,7 @@ static EGLDisplay InitializeEGLDisplay()
     EGLint majorVersion = 0;
     EGLint minorVersion = 0;
     EGLDisplay display;
-    bool shouldInitializeWithVolatileContextSupport = !isInWebProcess();
+    bool shouldInitializeWithVolatileContextSupport = !(isInWebProcess() || isInGPUProcess());
     if (shouldInitializeWithVolatileContextSupport) {
         // For WK1 type APIs we need to set "volatile platform context" for specific
         // APIs, since client code will be able to override the thread-global context
@@ -134,7 +135,7 @@ RefPtr<GraphicsContextGLOpenGL> GraphicsContextGLOpenGL::create(GraphicsContextG
     if (GraphicsContextGLOpenGLManager::sharedManager().hasTooManyContexts())
         return nullptr;
 
-    RefPtr<GraphicsContextGLOpenGL> context = adoptRef(new GraphicsContextGLOpenGL(attrs, hostWindow, destination));
+    RefPtr<GraphicsContextGLOpenGL> context = adoptRef(new GraphicsContextGLOpenGL(attrs, hostWindow, nullptr, nullptr));
 
     if (!context->m_contextObj)
         return nullptr;
@@ -147,11 +148,16 @@ RefPtr<GraphicsContextGLOpenGL> GraphicsContextGLOpenGL::create(GraphicsContextG
 Ref<GraphicsContextGLOpenGL> GraphicsContextGLOpenGL::createShared(GraphicsContextGLOpenGL& sharedContext)
 {
     auto hostWindow = GraphicsContextGLOpenGLManager::sharedManager().hostWindowForContext(&sharedContext);
-    auto context = adoptRef(*new GraphicsContextGLOpenGL(sharedContext.contextAttributes(), hostWindow, sharedContext.destination(), &sharedContext));
+    auto context = adoptRef(*new GraphicsContextGLOpenGL(sharedContext.contextAttributes(), hostWindow, &sharedContext, nullptr));
 
     GraphicsContextGLOpenGLManager::sharedManager().addContext(context.ptr(), hostWindow);
 
     return context;
+}
+
+Ref<GraphicsContextGLOpenGL> GraphicsContextGLOpenGL::createForGPUProcess(const GraphicsContextGLAttributes& attrs, GraphicsContextGLIOSurfaceSwapChain* swapChain)
+{
+    return adoptRef(*new GraphicsContextGLOpenGL(attrs, nullptr, nullptr, swapChain));
 }
 
 #if PLATFORM(MAC) // FIXME: This probably should be just enabled - see <rdar://53062794>.
@@ -204,8 +210,8 @@ static void setGPUByRegistryID(CGLContextObj contextObj, CGLPixelFormatObj pixel
 
 #endif // PLATFORM(MAC)
 
-GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes attrs, HostWindow* hostWindow, GraphicsContextGL::Destination destination, GraphicsContextGLOpenGL* sharedContext)
-    : GraphicsContextGL(attrs, destination, sharedContext)
+GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes attrs, HostWindow* hostWindow, GraphicsContextGLOpenGL* sharedContext, GraphicsContextGLIOSurfaceSwapChain* swapChain)
+    : GraphicsContextGL(attrs, Destination::Offscreen, sharedContext)
 {
     m_isForWebGL2 = attrs.isWebGL2;
 
@@ -333,13 +339,17 @@ GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes att
     validateAttributes();
     attrs = contextAttributes(); // They may have changed during validation.
 
-    // Create the WebGLLayer
+    if (swapChain)
+        m_swapChain = swapChain;
+    else {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
         m_webGLLayer = adoptNS([[WebGLLayer alloc] initWithDevicePixelRatio:attrs.devicePixelRatio contentsOpaque:!attrs.alpha]);
 #ifndef NDEBUG
         [m_webGLLayer setName:@"WebGL Layer"];
 #endif
     END_BLOCK_OBJC_EXCEPTIONS
+        m_swapChain = &[m_webGLLayer swapChain];
+    }
 
     // Create the texture that will be used for the framebuffer.
     GLenum textureTarget = drawingBufferTextureTarget();
@@ -408,13 +418,12 @@ GraphicsContextGLOpenGL::~GraphicsContextGLOpenGL()
         if (m_preserveDrawingBufferFBO)
             gl::DeleteFramebuffers(1, &m_preserveDrawingBufferFBO);
     }
-    if (m_displayBufferPbuffer)
+    if (m_displayBufferPbuffer) {
         EGL_DestroySurface(m_displayObj, m_displayBufferPbuffer);
-    if (m_webGLLayer) {
-        auto recycledBuffer = [m_webGLLayer recycleBuffer];
+        auto recycledBuffer = m_swapChain->recycleBuffer();
         if (recycledBuffer.handle)
             EGL_DestroySurface(m_displayObj, recycledBuffer.handle);
-        auto contentsHandle = [m_webGLLayer detachClient];
+        auto contentsHandle = m_swapChain->detachClient();
         if (contentsHandle)
             EGL_DestroySurface(m_displayObj, contentsHandle);
     }
@@ -577,11 +586,16 @@ bool GraphicsContextGLOpenGL::reshapeDisplayBufferBacking()
         m_displayBufferPbuffer = EGL_NO_SURFACE;
     }
     // Reset the future recycled buffer now, because it most likely will not be reusable at the time it will be reused.
-    auto recycledBuffer = [m_webGLLayer recycleBuffer];
+    auto recycledBuffer = m_swapChain->recycleBuffer();
     if (recycledBuffer.handle)
         EGL_DestroySurface(m_displayObj, recycledBuffer.handle);
     recycledBuffer.surface.reset();
+    return allocateAndBindDisplayBufferBacking();
+}
 
+bool GraphicsContextGLOpenGL::allocateAndBindDisplayBufferBacking()
+{
+    ASSERT(!getInternalFramebufferSize().isEmpty());
     auto backing = WebCore::IOSurface::create(getInternalFramebufferSize(), WebCore::sRGBColorSpaceRef());
     if (!backing)
         return false;
@@ -639,7 +653,7 @@ bool GraphicsContextGLOpenGL::allowOfflineRenderers() const
     // for OpenGL to decide which GPU is connected to a display (online/offline).
     // OpenGL will then consider all GPUs, or renderers, as offline, which means
     // all offline renderers need to be considered when finding a pixel format.
-    // In WebKit legacy, there will still be a WindowServer connection, and
+    // In WebKit legacy, there will still be a WindwServer connection, and
     // m_displayMask will not be set in this case.
     if (primaryOpenGLDisplayMask())
         return true;
@@ -685,10 +699,10 @@ void GraphicsContextGLOpenGL::prepareForDisplay()
     // The IOSurface will be used from other graphics subsystem, so flush GL commands.
     gl::Flush();
 
-    auto recycledBuffer = [m_webGLLayer recycleBuffer];
+    auto recycledBuffer = m_swapChain->recycleBuffer();
 
     EGL_ReleaseTexImage(m_displayObj, m_displayBufferPbuffer, EGL_BACK_BUFFER);
-    [m_webGLLayer prepareForDisplayWithContents: {WTFMove(m_displayBufferBacking), m_displayBufferPbuffer}];
+    m_swapChain->present({ WTFMove(m_displayBufferBacking), m_displayBufferPbuffer });
     m_displayBufferPbuffer = EGL_NO_SURFACE;
 
     bool hasNewBacking = false;
@@ -702,7 +716,7 @@ void GraphicsContextGLOpenGL::prepareForDisplay()
 
     // Error will be handled by next call to makeContextCurrent() which will notice lack of display buffer.
     if (!hasNewBacking)
-        reshapeDisplayBufferBacking();
+        allocateAndBindDisplayBufferBacking();
 
     markLayerComposited();
 }

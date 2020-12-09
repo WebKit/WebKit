@@ -30,6 +30,7 @@
 
 #include "ExceptionOr.h"
 #include "IntSize.h"
+#include <JavaScriptCore/TypedArrayInlines.h>
 #include <JavaScriptCore/Uint8ClampedArray.h>
 
 namespace WebCore {

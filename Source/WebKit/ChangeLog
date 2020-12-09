@@ -1,3 +1,742 @@
+2020-12-09  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Implement RemoteWebGLBackend
+        https://bugs.webkit.org/show_bug.cgi?id=217216
+        <rdar://problem/69876258>
+
+        Reviewed by Simon Fraser.
+
+        Implements a beginning of a remote version of GraphicsContextGL for GPU
+        process. Current implementation is using WebKit IPC.
+
+        Implemented with a generator script implementing the IPC to pass the
+        GraphicsContextGL member function calls from web process to the GPU
+        process. The script is run during development time and the results are
+        committed to the repo for ease of review.
+
+        Implement the RemoteGraphicsContextGL in WebKit side. This class will
+        forward calls received via IPC to the GraphicsContextGLOpenGL. At the
+        moment RemoteGraphicsContextGL instance is a direct child of
+        GPUConnectionToWebProcess.
+
+        Compositing is implemented only for PLATFORM(COCOA).
+
+        Missing:
+         - Simulated context loss
+         - Simulated context change
+         - Paint WebGL contents to 2D canvas
+         - Upload video to WebGL
+         - Upload canvas to WebGL
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        (WebKit::GPUConnectionToWebProcess::createGraphicsContextGL):
+        (WebKit::GPUConnectionToWebProcess::releaseGraphicsContextGL):
+        * GPUProcess/GPUConnectionToWebProcess.h:
+        * GPUProcess/GPUConnectionToWebProcess.messages.in:
+        * GPUProcess/graphics/RemoteGraphicsContextGL.cpp: Added.
+        (WebKit::RemoteGraphicsContextGL::create):
+        (WebKit::RemoteGraphicsContextGL::RemoteGraphicsContextGL):
+        (WebKit::RemoteGraphicsContextGL::~RemoteGraphicsContextGL):
+        (WebKit::RemoteGraphicsContextGL::gpuConnectionToWebProcess const):
+        (WebKit::RemoteGraphicsContextGL::messageSenderConnection const):
+        (WebKit::RemoteGraphicsContextGL::messageSenderDestinationID const):
+        (WebKit::RemoteGraphicsContextGL::didComposite):
+        (WebKit::RemoteGraphicsContextGL::forceContextLost):
+        (WebKit::RemoteGraphicsContextGL::recycleContext):
+        (WebKit::RemoteGraphicsContextGL::dispatchContextChangedNotification):
+        (WebKit::RemoteGraphicsContextGL::recycleBuffer):
+        (WebKit::RemoteGraphicsContextGL::present):
+        (WebKit::RemoteGraphicsContextGL::detachClient):
+        (WebKit::RemoteGraphicsContextGL::reshape):
+        (WebKit::RemoteGraphicsContextGL::prepareForDisplay):
+        (WebKit::RemoteGraphicsContextGL::ensureExtensionEnabled):
+        (WebKit::RemoteGraphicsContextGL::notifyMarkContextChanged):
+        * GPUProcess/graphics/RemoteGraphicsContextGL.h: Added.
+        * GPUProcess/graphics/RemoteGraphicsContextGL.messages.in: Added.
+        * GPUProcess/graphics/RemoteGraphicsContextGLFunctionsGenerated.h: Added.
+        (setFailNextGPUStatusCheck):
+        (synthesizeGLError):
+        (moveErrorsToSyntheticErrorList):
+        (activeTexture):
+        (attachShader):
+        (bindAttribLocation):
+        (bindBuffer):
+        (bindFramebuffer):
+        (bindRenderbuffer):
+        (bindTexture):
+        (blendColor):
+        (blendEquation):
+        (blendEquationSeparate):
+        (blendFunc):
+        (blendFuncSeparate):
+        (checkFramebufferStatus):
+        (clear):
+        (clearColor):
+        (clearDepth):
+        (clearStencil):
+        (colorMask):
+        (compileShader):
+        (copyTexImage2D):
+        (copyTexSubImage2D):
+        (createBuffer):
+        (createFramebuffer):
+        (createProgram):
+        (createRenderbuffer):
+        (createShader):
+        (createTexture):
+        (cullFace):
+        (deleteBuffer):
+        (deleteFramebuffer):
+        (deleteProgram):
+        (deleteRenderbuffer):
+        (deleteShader):
+        (deleteTexture):
+        (depthFunc):
+        (depthMask):
+        (depthRange):
+        (detachShader):
+        (disable):
+        (disableVertexAttribArray):
+        (drawArrays):
+        (drawElements):
+        (enable):
+        (enableVertexAttribArray):
+        (finish):
+        (flush):
+        (framebufferRenderbuffer):
+        (framebufferTexture2D):
+        (frontFace):
+        (generateMipmap):
+        (getActiveAttrib):
+        (getActiveUniform):
+        (getAttribLocation):
+        (getBufferParameteri):
+        (getString):
+        (getFloatv):
+        (getIntegerv):
+        (getInteger64):
+        (getInteger64i):
+        (getProgrami):
+        (getBooleanv):
+        (getError):
+        (getFramebufferAttachmentParameteri):
+        (getProgramInfoLog):
+        (getRenderbufferParameteri):
+        (getShaderi):
+        (getShaderInfoLog):
+        (getShaderPrecisionFormat):
+        (getShaderSource):
+        (getTexParameterf):
+        (getTexParameteri):
+        (getUniformfv):
+        (getUniformiv):
+        (getUniformuiv):
+        (getUniformLocation):
+        (getVertexAttribOffset):
+        (hint):
+        (isBuffer):
+        (isEnabled):
+        (isFramebuffer):
+        (isProgram):
+        (isRenderbuffer):
+        (isShader):
+        (isTexture):
+        (lineWidth):
+        (linkProgram):
+        (pixelStorei):
+        (polygonOffset):
+        (renderbufferStorage):
+        (sampleCoverage):
+        (scissor):
+        (shaderSource):
+        (stencilFunc):
+        (stencilFuncSeparate):
+        (stencilMask):
+        (stencilMaskSeparate):
+        (stencilOp):
+        (stencilOpSeparate):
+        (texParameterf):
+        (texParameteri):
+        (uniform1f):
+        (uniform1fv):
+        (uniform1i):
+        (uniform1iv):
+        (uniform2f):
+        (uniform2fv):
+        (uniform2i):
+        (uniform2iv):
+        (uniform3f):
+        (uniform3fv):
+        (uniform3i):
+        (uniform3iv):
+        (uniform4f):
+        (uniform4fv):
+        (uniform4i):
+        (uniform4iv):
+        (uniformMatrix2fv):
+        (uniformMatrix3fv):
+        (uniformMatrix4fv):
+        (useProgram):
+        (validateProgram):
+        (vertexAttrib1f):
+        (vertexAttrib1fv):
+        (vertexAttrib2f):
+        (vertexAttrib2fv):
+        (vertexAttrib3f):
+        (vertexAttrib3fv):
+        (vertexAttrib4f):
+        (vertexAttrib4fv):
+        (vertexAttribPointer):
+        (viewport):
+        (bufferData0):
+        (bufferData1):
+        (bufferSubData):
+        (readnPixels0):
+        (readnPixels1):
+        (texImage2D0):
+        (texImage2D1):
+        (texSubImage2D0):
+        (texSubImage2D1):
+        (compressedTexImage2D0):
+        (compressedTexImage2D1):
+        (compressedTexSubImage2D0):
+        (compressedTexSubImage2D1):
+        (drawArraysInstanced):
+        (drawElementsInstanced):
+        (vertexAttribDivisor):
+        (createVertexArray):
+        (deleteVertexArray):
+        (isVertexArray):
+        (bindVertexArray):
+        (copyBufferSubData):
+        (getBufferSubData):
+        (blitFramebuffer):
+        (framebufferTextureLayer):
+        (invalidateFramebuffer):
+        (invalidateSubFramebuffer):
+        (readBuffer):
+        (renderbufferStorageMultisample):
+        (texStorage2D):
+        (texStorage3D):
+        (texImage3D0):
+        (texImage3D1):
+        (texSubImage3D0):
+        (texSubImage3D1):
+        (copyTexSubImage3D):
+        (compressedTexImage3D0):
+        (compressedTexImage3D1):
+        (compressedTexSubImage3D0):
+        (compressedTexSubImage3D1):
+        (getFragDataLocation):
+        (uniform1ui):
+        (uniform2ui):
+        (uniform3ui):
+        (uniform4ui):
+        (uniform1uiv):
+        (uniform2uiv):
+        (uniform3uiv):
+        (uniform4uiv):
+        (uniformMatrix2x3fv):
+        (uniformMatrix3x2fv):
+        (uniformMatrix2x4fv):
+        (uniformMatrix4x2fv):
+        (uniformMatrix3x4fv):
+        (uniformMatrix4x3fv):
+        (vertexAttribI4i):
+        (vertexAttribI4iv):
+        (vertexAttribI4ui):
+        (vertexAttribI4uiv):
+        (vertexAttribIPointer):
+        (drawRangeElements):
+        (drawBuffers):
+        (clearBufferiv):
+        (clearBufferuiv):
+        (clearBufferfv):
+        (clearBufferfi):
+        (createQuery):
+        (deleteQuery):
+        (isQuery):
+        (beginQuery):
+        (endQuery):
+        (getQuery):
+        (getQueryObjectui):
+        (createSampler):
+        (deleteSampler):
+        (isSampler):
+        (bindSampler):
+        (samplerParameteri):
+        (samplerParameterf):
+        (getSamplerParameterf):
+        (getSamplerParameteri):
+        (fenceSync):
+        (isSync):
+        (deleteSync):
+        (clientWaitSync):
+        (waitSync):
+        (getSynci):
+        (createTransformFeedback):
+        (deleteTransformFeedback):
+        (isTransformFeedback):
+        (bindTransformFeedback):
+        (beginTransformFeedback):
+        (endTransformFeedback):
+        (transformFeedbackVaryings):
+        (getTransformFeedbackVarying):
+        (pauseTransformFeedback):
+        (resumeTransformFeedback):
+        (bindBufferBase):
+        (bindBufferRange):
+        (getUniformIndices):
+        (getActiveUniforms):
+        (getUniformBlockIndex):
+        (getActiveUniformBlockName):
+        (uniformBlockBinding):
+        (getActiveUniformBlockiv):
+        (getGraphicsResetStatusARB):
+        (blitFramebufferANGLE):
+        (renderbufferStorageMultisampleANGLE):
+        (createVertexArrayOES):
+        (deleteVertexArrayOES):
+        (isVertexArrayOES):
+        (bindVertexArrayOES):
+        (getTranslatedShaderSourceANGLE):
+        (insertEventMarkerEXT):
+        (pushGroupMarkerEXT):
+        (popGroupMarkerEXT):
+        (drawBuffersEXT):
+        (drawArraysInstancedANGLE):
+        (drawElementsInstancedANGLE):
+        (vertexAttribDivisorANGLE):
+        * GPUProcess/mac/GPUProcessMac.mm:
+        (WebKit::GPUProcess::initializeProcess):
+        * GPUProcess/media/RemoteLegacyCDMProxy.h:
+        * GPUProcess/media/RemoteLegacyCDMSessionProxy.cpp:
+        * GPUProcess/media/RemoteMediaResourceManager.cpp:
+        * GPUProcess/media/RemoteMediaResourceManager.h:
+        * GPUProcess/media/RemoteMediaSourceProxy.h:
+        * GPUProcess/media/RemoteSourceBufferProxy.cpp:
+        * GPUProcess/media/RemoteSourceBufferProxy.h:
+        * GPUProcess/webrtc/LibWebRTCCodecsProxy.h:
+        * GPUProcess/webrtc/LibWebRTCCodecsProxy.mm:
+        * GPUProcess/webrtc/RemoteMediaRecorder.h:
+        * NetworkProcess/CustomProtocols/Cocoa/LegacyCustomProtocolManagerCocoa.mm:
+        * NetworkProcess/CustomProtocols/LegacyCustomProtocolManager.h:
+        * NetworkProcess/Downloads/Download.cpp:
+        * NetworkProcess/Downloads/Download.h:
+        * NetworkProcess/Downloads/DownloadManager.cpp:
+        * NetworkProcess/Downloads/DownloadManager.h:
+        * NetworkProcess/NetworkSocketChannel.cpp:
+        * NetworkProcess/NetworkSocketChannel.h:
+        * NetworkProcess/NetworkSocketStream.cpp:
+        * NetworkProcess/NetworkSocketStream.h:
+        * NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.h:
+        * NetworkProcess/WebSocketTask.h:
+        * NetworkProcess/cocoa/WebSocketTaskCocoa.h:
+        * NetworkProcess/cocoa/WebSocketTaskCocoa.mm:
+        * NetworkProcess/soup/WebSocketTaskSoup.cpp:
+        * NetworkProcess/soup/WebSocketTaskSoup.h:
+        * Platform/IPC/ArgumentCoders.h:
+        * Platform/IPC/ArrayReference.h: Copied from Source/WebKit/Platform/IPC/DataReference.h.
+        (IPC::ArrayReference::ArrayReference):
+        (IPC::ArrayReference::isEmpty const):
+        (IPC::ArrayReference::size const):
+        (IPC::ArrayReference::data const):
+        (IPC::ArrayReference::vector const):
+        * Platform/IPC/Connection.h:
+        (IPC::Connection::sendSync):
+        * Platform/IPC/DataReference.h:
+        * Platform/IPC/Decoder.cpp:
+        (IPC::Decoder::decodeFixedLengthReference):
+        * Platform/IPC/Decoder.h:
+        * Platform/IPC/Encoder.cpp:
+        (IPC::Encoder::wrapForTesting):
+        * Platform/IPC/Encoder.h:
+        * Platform/IPC/HandleMessage.h:
+        * Platform/IPC/MessageSender.h:
+        (IPC::MessageSender::sendSync):
+        * Platform/IPC/SharedBufferCopy.cpp:
+        (IPC::SharedBufferCopy::decode):
+        * Platform/IPC/SharedBufferDataReference.cpp:
+        * Platform/IPC/StringReference.cpp:
+        * PluginProcess/PluginControllerProxy.cpp:
+        * PluginProcess/PluginControllerProxy.h:
+        * Scripts/webkit/messages.py:
+        * Shared/API/APIData.cpp:
+        * Shared/AuxiliaryProcess.h:
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<WebCore::GraphicsContextGLAttributes>::encode):
+        (IPC::ArgumentCoder<WebCore::GraphicsContextGLAttributes>::decode):
+        (IPC::ArgumentCoder<WebCore::GraphicsContextGL::ActiveInfo>::encode):
+        (IPC::ArgumentCoder<WebCore::GraphicsContextGL::ActiveInfo>::decode):
+        * Shared/WebCoreArgumentCoders.h:
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode const):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * Shared/cf/ArgumentCodersCF.cpp:
+        * Shared/soup/WebCoreArgumentCodersSoup.cpp:
+        (IPC::ArgumentCoder<CertificateInfo>::encode):
+        (IPC::ArgumentCoder<CertificateInfo>::decode):
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * UIProcess/API/APIIconLoadingClient.h:
+        * UIProcess/AuxiliaryProcessProxy.h:
+        (WebKit::AuxiliaryProcessProxy::sendSync):
+        * UIProcess/Cocoa/SOAuthorization/SubFrameSOAuthorizationSession.h:
+        * UIProcess/Network/CustomProtocols/LegacyCustomProtocolManagerProxy.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/UserContent/WebUserContentControllerProxy.cpp:
+        * UIProcess/UserContent/WebUserContentControllerProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::creationParameters):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebURLSchemeHandler.h:
+        * UIProcess/WebURLSchemeTask.h:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/ApplePay/WebPaymentCoordinator.h:
+        * WebProcess/GPU/GPUProcessConnection.h:
+        * WebProcess/GPU/graphics/GraphicsContextGLIdentifier.h: Renamed from Source/WebKit/Platform/IPC/DataReference.cpp.
+        * WebProcess/GPU/graphics/RemoteGraphicsContextGLProxy.cpp: Added.
+        (WebKit::RemoteGraphicsContextGLProxy::create):
+        (WebKit::RemoteGraphicsContextGLProxy::RemoteGraphicsContextGLProxy):
+        (WebKit::RemoteGraphicsContextGLProxy::~RemoteGraphicsContextGLProxy):
+        (WebKit::RemoteGraphicsContextGLProxy::messageSenderConnection const):
+        (WebKit::RemoteGraphicsContextGLProxy::messageSenderDestinationID const):
+        (WebKit::RemoteGraphicsContextGLProxy::reshape):
+        (WebKit::RemoteGraphicsContextGLProxy::prepareForDisplay):
+        (WebKit::RemoteGraphicsContextGLProxy::ensureExtensionEnabled):
+        (WebKit::RemoteGraphicsContextGLProxy::notifyMarkContextChanged):
+        (WebKit::RemoteGraphicsContextGLProxy::simulateContextChanged):
+        (WebKit::RemoteGraphicsContextGLProxy::paintRenderingResultsToCanvas):
+        (WebKit::RemoteGraphicsContextGLProxy::paintRenderingResultsToImageData):
+        (WebKit::RemoteGraphicsContextGLProxy::wasCreated):
+        (WebKit::RemoteGraphicsContextGLProxy::wasLost):
+        (WebKit::RemoteGraphicsContextGLProxy::wasChanged):
+        (WebKit::RemoteGraphicsContextGLProxy::waitUntilInitialized):
+        * WebProcess/GPU/graphics/RemoteGraphicsContextGLProxy.h: Added.
+        * WebProcess/GPU/graphics/RemoteGraphicsContextGLProxy.messages.in: Copied from Source/WebKit/GPUProcess/GPUConnectionToWebProcess.messages.in.
+        * WebProcess/GPU/graphics/RemoteGraphicsContextGLProxyFunctionsGenerated.cpp: Added.
+        (WebKit::RemoteGraphicsContextGLProxy::setFailNextGPUStatusCheck):
+        (WebKit::RemoteGraphicsContextGLProxy::synthesizeGLError):
+        (WebKit::RemoteGraphicsContextGLProxy::moveErrorsToSyntheticErrorList):
+        (WebKit::RemoteGraphicsContextGLProxy::activeTexture):
+        (WebKit::RemoteGraphicsContextGLProxy::attachShader):
+        (WebKit::RemoteGraphicsContextGLProxy::bindAttribLocation):
+        (WebKit::RemoteGraphicsContextGLProxy::bindBuffer):
+        (WebKit::RemoteGraphicsContextGLProxy::bindFramebuffer):
+        (WebKit::RemoteGraphicsContextGLProxy::bindRenderbuffer):
+        (WebKit::RemoteGraphicsContextGLProxy::bindTexture):
+        (WebKit::RemoteGraphicsContextGLProxy::blendColor):
+        (WebKit::RemoteGraphicsContextGLProxy::blendEquation):
+        (WebKit::RemoteGraphicsContextGLProxy::blendEquationSeparate):
+        (WebKit::RemoteGraphicsContextGLProxy::blendFunc):
+        (WebKit::RemoteGraphicsContextGLProxy::blendFuncSeparate):
+        (WebKit::RemoteGraphicsContextGLProxy::checkFramebufferStatus):
+        (WebKit::RemoteGraphicsContextGLProxy::clear):
+        (WebKit::RemoteGraphicsContextGLProxy::clearColor):
+        (WebKit::RemoteGraphicsContextGLProxy::clearDepth):
+        (WebKit::RemoteGraphicsContextGLProxy::clearStencil):
+        (WebKit::RemoteGraphicsContextGLProxy::colorMask):
+        (WebKit::RemoteGraphicsContextGLProxy::compileShader):
+        (WebKit::RemoteGraphicsContextGLProxy::copyTexImage2D):
+        (WebKit::RemoteGraphicsContextGLProxy::copyTexSubImage2D):
+        (WebKit::RemoteGraphicsContextGLProxy::createBuffer):
+        (WebKit::RemoteGraphicsContextGLProxy::createFramebuffer):
+        (WebKit::RemoteGraphicsContextGLProxy::createProgram):
+        (WebKit::RemoteGraphicsContextGLProxy::createRenderbuffer):
+        (WebKit::RemoteGraphicsContextGLProxy::createShader):
+        (WebKit::RemoteGraphicsContextGLProxy::createTexture):
+        (WebKit::RemoteGraphicsContextGLProxy::cullFace):
+        (WebKit::RemoteGraphicsContextGLProxy::deleteBuffer):
+        (WebKit::RemoteGraphicsContextGLProxy::deleteFramebuffer):
+        (WebKit::RemoteGraphicsContextGLProxy::deleteProgram):
+        (WebKit::RemoteGraphicsContextGLProxy::deleteRenderbuffer):
+        (WebKit::RemoteGraphicsContextGLProxy::deleteShader):
+        (WebKit::RemoteGraphicsContextGLProxy::deleteTexture):
+        (WebKit::RemoteGraphicsContextGLProxy::depthFunc):
+        (WebKit::RemoteGraphicsContextGLProxy::depthMask):
+        (WebKit::RemoteGraphicsContextGLProxy::depthRange):
+        (WebKit::RemoteGraphicsContextGLProxy::detachShader):
+        (WebKit::RemoteGraphicsContextGLProxy::disable):
+        (WebKit::RemoteGraphicsContextGLProxy::disableVertexAttribArray):
+        (WebKit::RemoteGraphicsContextGLProxy::drawArrays):
+        (WebKit::RemoteGraphicsContextGLProxy::drawElements):
+        (WebKit::RemoteGraphicsContextGLProxy::enable):
+        (WebKit::RemoteGraphicsContextGLProxy::enableVertexAttribArray):
+        (WebKit::RemoteGraphicsContextGLProxy::finish):
+        (WebKit::RemoteGraphicsContextGLProxy::flush):
+        (WebKit::RemoteGraphicsContextGLProxy::framebufferRenderbuffer):
+        (WebKit::RemoteGraphicsContextGLProxy::framebufferTexture2D):
+        (WebKit::RemoteGraphicsContextGLProxy::frontFace):
+        (WebKit::RemoteGraphicsContextGLProxy::generateMipmap):
+        (WebKit::RemoteGraphicsContextGLProxy::getActiveAttrib):
+        (WebKit::RemoteGraphicsContextGLProxy::getActiveUniform):
+        (WebKit::RemoteGraphicsContextGLProxy::getAttribLocation):
+        (WebKit::RemoteGraphicsContextGLProxy::getBufferParameteri):
+        (WebKit::RemoteGraphicsContextGLProxy::getString):
+        (WebKit::RemoteGraphicsContextGLProxy::getFloatv):
+        (WebKit::RemoteGraphicsContextGLProxy::getIntegerv):
+        (WebKit::RemoteGraphicsContextGLProxy::getInteger64):
+        (WebKit::RemoteGraphicsContextGLProxy::getInteger64i):
+        (WebKit::RemoteGraphicsContextGLProxy::getProgrami):
+        (WebKit::RemoteGraphicsContextGLProxy::getBooleanv):
+        (WebKit::RemoteGraphicsContextGLProxy::getError):
+        (WebKit::RemoteGraphicsContextGLProxy::getFramebufferAttachmentParameteri):
+        (WebKit::RemoteGraphicsContextGLProxy::getProgramInfoLog):
+        (WebKit::RemoteGraphicsContextGLProxy::getRenderbufferParameteri):
+        (WebKit::RemoteGraphicsContextGLProxy::getShaderi):
+        (WebKit::RemoteGraphicsContextGLProxy::getShaderInfoLog):
+        (WebKit::RemoteGraphicsContextGLProxy::getShaderPrecisionFormat):
+        (WebKit::RemoteGraphicsContextGLProxy::getShaderSource):
+        (WebKit::RemoteGraphicsContextGLProxy::getTexParameterf):
+        (WebKit::RemoteGraphicsContextGLProxy::getTexParameteri):
+        (WebKit::RemoteGraphicsContextGLProxy::getUniformfv):
+        (WebKit::RemoteGraphicsContextGLProxy::getUniformiv):
+        (WebKit::RemoteGraphicsContextGLProxy::getUniformuiv):
+        (WebKit::RemoteGraphicsContextGLProxy::getUniformLocation):
+        (WebKit::RemoteGraphicsContextGLProxy::getVertexAttribOffset):
+        (WebKit::RemoteGraphicsContextGLProxy::hint):
+        (WebKit::RemoteGraphicsContextGLProxy::isBuffer):
+        (WebKit::RemoteGraphicsContextGLProxy::isEnabled):
+        (WebKit::RemoteGraphicsContextGLProxy::isFramebuffer):
+        (WebKit::RemoteGraphicsContextGLProxy::isProgram):
+        (WebKit::RemoteGraphicsContextGLProxy::isRenderbuffer):
+        (WebKit::RemoteGraphicsContextGLProxy::isShader):
+        (WebKit::RemoteGraphicsContextGLProxy::isTexture):
+        (WebKit::RemoteGraphicsContextGLProxy::lineWidth):
+        (WebKit::RemoteGraphicsContextGLProxy::linkProgram):
+        (WebKit::RemoteGraphicsContextGLProxy::pixelStorei):
+        (WebKit::RemoteGraphicsContextGLProxy::polygonOffset):
+        (WebKit::RemoteGraphicsContextGLProxy::renderbufferStorage):
+        (WebKit::RemoteGraphicsContextGLProxy::sampleCoverage):
+        (WebKit::RemoteGraphicsContextGLProxy::scissor):
+        (WebKit::RemoteGraphicsContextGLProxy::shaderSource):
+        (WebKit::RemoteGraphicsContextGLProxy::stencilFunc):
+        (WebKit::RemoteGraphicsContextGLProxy::stencilFuncSeparate):
+        (WebKit::RemoteGraphicsContextGLProxy::stencilMask):
+        (WebKit::RemoteGraphicsContextGLProxy::stencilMaskSeparate):
+        (WebKit::RemoteGraphicsContextGLProxy::stencilOp):
+        (WebKit::RemoteGraphicsContextGLProxy::stencilOpSeparate):
+        (WebKit::RemoteGraphicsContextGLProxy::texParameterf):
+        (WebKit::RemoteGraphicsContextGLProxy::texParameteri):
+        (WebKit::RemoteGraphicsContextGLProxy::uniform1f):
+        (WebKit::RemoteGraphicsContextGLProxy::uniform1fv):
+        (WebKit::RemoteGraphicsContextGLProxy::uniform1i):
+        (WebKit::RemoteGraphicsContextGLProxy::uniform1iv):
+        (WebKit::RemoteGraphicsContextGLProxy::uniform2f):
+        (WebKit::RemoteGraphicsContextGLProxy::uniform2fv):
+        (WebKit::RemoteGraphicsContextGLProxy::uniform2i):
+        (WebKit::RemoteGraphicsContextGLProxy::uniform2iv):
+        (WebKit::RemoteGraphicsContextGLProxy::uniform3f):
+        (WebKit::RemoteGraphicsContextGLProxy::uniform3fv):
+        (WebKit::RemoteGraphicsContextGLProxy::uniform3i):
+        (WebKit::RemoteGraphicsContextGLProxy::uniform3iv):
+        (WebKit::RemoteGraphicsContextGLProxy::uniform4f):
+        (WebKit::RemoteGraphicsContextGLProxy::uniform4fv):
+        (WebKit::RemoteGraphicsContextGLProxy::uniform4i):
+        (WebKit::RemoteGraphicsContextGLProxy::uniform4iv):
+        (WebKit::RemoteGraphicsContextGLProxy::uniformMatrix2fv):
+        (WebKit::RemoteGraphicsContextGLProxy::uniformMatrix3fv):
+        (WebKit::RemoteGraphicsContextGLProxy::uniformMatrix4fv):
+        (WebKit::RemoteGraphicsContextGLProxy::useProgram):
+        (WebKit::RemoteGraphicsContextGLProxy::validateProgram):
+        (WebKit::RemoteGraphicsContextGLProxy::vertexAttrib1f):
+        (WebKit::RemoteGraphicsContextGLProxy::vertexAttrib1fv):
+        (WebKit::RemoteGraphicsContextGLProxy::vertexAttrib2f):
+        (WebKit::RemoteGraphicsContextGLProxy::vertexAttrib2fv):
+        (WebKit::RemoteGraphicsContextGLProxy::vertexAttrib3f):
+        (WebKit::RemoteGraphicsContextGLProxy::vertexAttrib3fv):
+        (WebKit::RemoteGraphicsContextGLProxy::vertexAttrib4f):
+        (WebKit::RemoteGraphicsContextGLProxy::vertexAttrib4fv):
+        (WebKit::RemoteGraphicsContextGLProxy::vertexAttribPointer):
+        (WebKit::RemoteGraphicsContextGLProxy::viewport):
+        (WebKit::RemoteGraphicsContextGLProxy::bufferData):
+        (WebKit::RemoteGraphicsContextGLProxy::bufferSubData):
+        (WebKit::RemoteGraphicsContextGLProxy::readnPixels):
+        (WebKit::RemoteGraphicsContextGLProxy::texImage2D):
+        (WebKit::RemoteGraphicsContextGLProxy::texSubImage2D):
+        (WebKit::RemoteGraphicsContextGLProxy::compressedTexImage2D):
+        (WebKit::RemoteGraphicsContextGLProxy::compressedTexSubImage2D):
+        (WebKit::RemoteGraphicsContextGLProxy::drawArraysInstanced):
+        (WebKit::RemoteGraphicsContextGLProxy::drawElementsInstanced):
+        (WebKit::RemoteGraphicsContextGLProxy::vertexAttribDivisor):
+        (WebKit::RemoteGraphicsContextGLProxy::createVertexArray):
+        (WebKit::RemoteGraphicsContextGLProxy::deleteVertexArray):
+        (WebKit::RemoteGraphicsContextGLProxy::isVertexArray):
+        (WebKit::RemoteGraphicsContextGLProxy::bindVertexArray):
+        (WebKit::RemoteGraphicsContextGLProxy::copyBufferSubData):
+        (WebKit::RemoteGraphicsContextGLProxy::getBufferSubData):
+        (WebKit::RemoteGraphicsContextGLProxy::blitFramebuffer):
+        (WebKit::RemoteGraphicsContextGLProxy::framebufferTextureLayer):
+        (WebKit::RemoteGraphicsContextGLProxy::invalidateFramebuffer):
+        (WebKit::RemoteGraphicsContextGLProxy::invalidateSubFramebuffer):
+        (WebKit::RemoteGraphicsContextGLProxy::readBuffer):
+        (WebKit::RemoteGraphicsContextGLProxy::renderbufferStorageMultisample):
+        (WebKit::RemoteGraphicsContextGLProxy::texStorage2D):
+        (WebKit::RemoteGraphicsContextGLProxy::texStorage3D):
+        (WebKit::RemoteGraphicsContextGLProxy::texImage3D):
+        (WebKit::RemoteGraphicsContextGLProxy::texSubImage3D):
+        (WebKit::RemoteGraphicsContextGLProxy::copyTexSubImage3D):
+        (WebKit::RemoteGraphicsContextGLProxy::compressedTexImage3D):
+        (WebKit::RemoteGraphicsContextGLProxy::compressedTexSubImage3D):
+        (WebKit::RemoteGraphicsContextGLProxy::getFragDataLocation):
+        (WebKit::RemoteGraphicsContextGLProxy::uniform1ui):
+        (WebKit::RemoteGraphicsContextGLProxy::uniform2ui):
+        (WebKit::RemoteGraphicsContextGLProxy::uniform3ui):
+        (WebKit::RemoteGraphicsContextGLProxy::uniform4ui):
+        (WebKit::RemoteGraphicsContextGLProxy::uniform1uiv):
+        (WebKit::RemoteGraphicsContextGLProxy::uniform2uiv):
+        (WebKit::RemoteGraphicsContextGLProxy::uniform3uiv):
+        (WebKit::RemoteGraphicsContextGLProxy::uniform4uiv):
+        (WebKit::RemoteGraphicsContextGLProxy::uniformMatrix2x3fv):
+        (WebKit::RemoteGraphicsContextGLProxy::uniformMatrix3x2fv):
+        (WebKit::RemoteGraphicsContextGLProxy::uniformMatrix2x4fv):
+        (WebKit::RemoteGraphicsContextGLProxy::uniformMatrix4x2fv):
+        (WebKit::RemoteGraphicsContextGLProxy::uniformMatrix3x4fv):
+        (WebKit::RemoteGraphicsContextGLProxy::uniformMatrix4x3fv):
+        (WebKit::RemoteGraphicsContextGLProxy::vertexAttribI4i):
+        (WebKit::RemoteGraphicsContextGLProxy::vertexAttribI4iv):
+        (WebKit::RemoteGraphicsContextGLProxy::vertexAttribI4ui):
+        (WebKit::RemoteGraphicsContextGLProxy::vertexAttribI4uiv):
+        (WebKit::RemoteGraphicsContextGLProxy::vertexAttribIPointer):
+        (WebKit::RemoteGraphicsContextGLProxy::drawRangeElements):
+        (WebKit::RemoteGraphicsContextGLProxy::drawBuffers):
+        (WebKit::RemoteGraphicsContextGLProxy::clearBufferiv):
+        (WebKit::RemoteGraphicsContextGLProxy::clearBufferuiv):
+        (WebKit::RemoteGraphicsContextGLProxy::clearBufferfv):
+        (WebKit::RemoteGraphicsContextGLProxy::clearBufferfi):
+        (WebKit::RemoteGraphicsContextGLProxy::createQuery):
+        (WebKit::RemoteGraphicsContextGLProxy::deleteQuery):
+        (WebKit::RemoteGraphicsContextGLProxy::isQuery):
+        (WebKit::RemoteGraphicsContextGLProxy::beginQuery):
+        (WebKit::RemoteGraphicsContextGLProxy::endQuery):
+        (WebKit::RemoteGraphicsContextGLProxy::getQuery):
+        (WebKit::RemoteGraphicsContextGLProxy::getQueryObjectui):
+        (WebKit::RemoteGraphicsContextGLProxy::createSampler):
+        (WebKit::RemoteGraphicsContextGLProxy::deleteSampler):
+        (WebKit::RemoteGraphicsContextGLProxy::isSampler):
+        (WebKit::RemoteGraphicsContextGLProxy::bindSampler):
+        (WebKit::RemoteGraphicsContextGLProxy::samplerParameteri):
+        (WebKit::RemoteGraphicsContextGLProxy::samplerParameterf):
+        (WebKit::RemoteGraphicsContextGLProxy::getSamplerParameterf):
+        (WebKit::RemoteGraphicsContextGLProxy::getSamplerParameteri):
+        (WebKit::RemoteGraphicsContextGLProxy::fenceSync):
+        (WebKit::RemoteGraphicsContextGLProxy::isSync):
+        (WebKit::RemoteGraphicsContextGLProxy::deleteSync):
+        (WebKit::RemoteGraphicsContextGLProxy::clientWaitSync):
+        (WebKit::RemoteGraphicsContextGLProxy::waitSync):
+        (WebKit::RemoteGraphicsContextGLProxy::getSynci):
+        (WebKit::RemoteGraphicsContextGLProxy::createTransformFeedback):
+        (WebKit::RemoteGraphicsContextGLProxy::deleteTransformFeedback):
+        (WebKit::RemoteGraphicsContextGLProxy::isTransformFeedback):
+        (WebKit::RemoteGraphicsContextGLProxy::bindTransformFeedback):
+        (WebKit::RemoteGraphicsContextGLProxy::beginTransformFeedback):
+        (WebKit::RemoteGraphicsContextGLProxy::endTransformFeedback):
+        (WebKit::RemoteGraphicsContextGLProxy::transformFeedbackVaryings):
+        (WebKit::RemoteGraphicsContextGLProxy::getTransformFeedbackVarying):
+        (WebKit::RemoteGraphicsContextGLProxy::pauseTransformFeedback):
+        (WebKit::RemoteGraphicsContextGLProxy::resumeTransformFeedback):
+        (WebKit::RemoteGraphicsContextGLProxy::bindBufferBase):
+        (WebKit::RemoteGraphicsContextGLProxy::bindBufferRange):
+        (WebKit::RemoteGraphicsContextGLProxy::getUniformIndices):
+        (WebKit::RemoteGraphicsContextGLProxy::getActiveUniforms):
+        (WebKit::RemoteGraphicsContextGLProxy::getUniformBlockIndex):
+        (WebKit::RemoteGraphicsContextGLProxy::getActiveUniformBlockName):
+        (WebKit::RemoteGraphicsContextGLProxy::uniformBlockBinding):
+        (WebKit::RemoteGraphicsContextGLProxy::getActiveUniformBlockiv):
+        (WebKit::RemoteGraphicsContextGLProxy::getGraphicsResetStatusARB):
+        (WebKit::RemoteGraphicsContextGLProxy::blitFramebufferANGLE):
+        (WebKit::RemoteGraphicsContextGLProxy::renderbufferStorageMultisampleANGLE):
+        (WebKit::RemoteGraphicsContextGLProxy::createVertexArrayOES):
+        (WebKit::RemoteGraphicsContextGLProxy::deleteVertexArrayOES):
+        (WebKit::RemoteGraphicsContextGLProxy::isVertexArrayOES):
+        (WebKit::RemoteGraphicsContextGLProxy::bindVertexArrayOES):
+        (WebKit::RemoteGraphicsContextGLProxy::getTranslatedShaderSourceANGLE):
+        (WebKit::RemoteGraphicsContextGLProxy::insertEventMarkerEXT):
+        (WebKit::RemoteGraphicsContextGLProxy::pushGroupMarkerEXT):
+        (WebKit::RemoteGraphicsContextGLProxy::popGroupMarkerEXT):
+        (WebKit::RemoteGraphicsContextGLProxy::drawBuffersEXT):
+        (WebKit::RemoteGraphicsContextGLProxy::drawArraysInstancedANGLE):
+        (WebKit::RemoteGraphicsContextGLProxy::drawElementsInstancedANGLE):
+        (WebKit::RemoteGraphicsContextGLProxy::vertexAttribDivisorANGLE):
+        (WebKit::RemoteGraphicsContextGLProxy::getInternalformativ):
+        (WebKit::RemoteGraphicsContextGLProxy::readPixelsRobustANGLE):
+        (WebKit::RemoteGraphicsContextGLProxy::texParameterfvRobustANGLE):
+        (WebKit::RemoteGraphicsContextGLProxy::texParameterivRobustANGLE):
+        (WebKit::RemoteGraphicsContextGLProxy::getQueryivRobustANGLE):
+        (WebKit::RemoteGraphicsContextGLProxy::getQueryObjectuivRobustANGLE):
+        (WebKit::RemoteGraphicsContextGLProxy::getBufferPointervRobustANGLE):
+        (WebKit::RemoteGraphicsContextGLProxy::getInternalformativRobustANGLE):
+        (WebKit::RemoteGraphicsContextGLProxy::getVertexAttribIivRobustANGLE):
+        (WebKit::RemoteGraphicsContextGLProxy::getVertexAttribIuivRobustANGLE):
+        (WebKit::RemoteGraphicsContextGLProxy::getUniformuivRobustANGLE):
+        (WebKit::RemoteGraphicsContextGLProxy::getBufferParameteri64vRobustANGLE):
+        (WebKit::RemoteGraphicsContextGLProxy::samplerParameterivRobustANGLE):
+        (WebKit::RemoteGraphicsContextGLProxy::samplerParameterfvRobustANGLE):
+        (WebKit::RemoteGraphicsContextGLProxy::getSamplerParameterivRobustANGLE):
+        (WebKit::RemoteGraphicsContextGLProxy::getSamplerParameterfvRobustANGLE):
+        (WebKit::RemoteGraphicsContextGLProxy::getFramebufferParameterivRobustANGLE):
+        (WebKit::RemoteGraphicsContextGLProxy::getProgramInterfaceivRobustANGLE):
+        (WebKit::RemoteGraphicsContextGLProxy::getBooleani_vRobustANGLE):
+        (WebKit::RemoteGraphicsContextGLProxy::getMultisamplefvRobustANGLE):
+        (WebKit::RemoteGraphicsContextGLProxy::getTexLevelParameterivRobustANGLE):
+        (WebKit::RemoteGraphicsContextGLProxy::getTexLevelParameterfvRobustANGLE):
+        (WebKit::RemoteGraphicsContextGLProxy::getPointervRobustANGLERobustANGLE):
+        (WebKit::RemoteGraphicsContextGLProxy::getnUniformfvRobustANGLE):
+        (WebKit::RemoteGraphicsContextGLProxy::getnUniformivRobustANGLE):
+        (WebKit::RemoteGraphicsContextGLProxy::getnUniformuivRobustANGLE):
+        (WebKit::RemoteGraphicsContextGLProxy::texParameterIivRobustANGLE):
+        (WebKit::RemoteGraphicsContextGLProxy::texParameterIuivRobustANGLE):
+        (WebKit::RemoteGraphicsContextGLProxy::getTexParameterIivRobustANGLE):
+        (WebKit::RemoteGraphicsContextGLProxy::getTexParameterIuivRobustANGLE):
+        (WebKit::RemoteGraphicsContextGLProxy::samplerParameterIivRobustANGLE):
+        (WebKit::RemoteGraphicsContextGLProxy::samplerParameterIuivRobustANGLE):
+        (WebKit::RemoteGraphicsContextGLProxy::getSamplerParameterIivRobustANGLE):
+        (WebKit::RemoteGraphicsContextGLProxy::getSamplerParameterIuivRobustANGLE):
+        (WebKit::RemoteGraphicsContextGLProxy::getQueryObjectivRobustANGLE):
+        (WebKit::RemoteGraphicsContextGLProxy::getQueryObjecti64vRobustANGLE):
+        (WebKit::RemoteGraphicsContextGLProxy::getQueryObjectui64vRobustANGLE):
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        (WebKit::MediaPlayerPrivateRemote::copyVideoTextureToPlatformTexture):
+        * WebProcess/GPU/media/RemoteAudioDestinationProxy.cpp:
+        (WebKit::RemoteAudioDestinationProxy::connectToGPUProcess):
+        * WebProcess/GPU/media/RemoteAudioSession.cpp:
+        * WebProcess/GPU/media/RemoteAudioSourceProviderManager.cpp:
+        * WebProcess/GPU/media/RemoteAudioSourceProviderManager.h:
+        * WebProcess/GPU/media/RemoteLegacyCDMSession.cpp:
+        * WebProcess/GPU/media/SourceBufferPrivateRemote.h:
+        * WebProcess/GPU/media/TextTrackPrivateRemote.h:
+        * WebProcess/GPU/webrtc/LibWebRTCCodecs.cpp:
+        * WebProcess/GPU/webrtc/LibWebRTCCodecs.h:
+        * WebProcess/InjectedBundle/InjectedBundle.h:
+        * WebProcess/Network/NetworkProcessConnection.h:
+        * WebProcess/Network/WebResourceLoader.cpp:
+        * WebProcess/Network/WebResourceLoader.h:
+        * WebProcess/Network/WebSocketChannel.cpp:
+        * WebProcess/Network/WebSocketChannel.h:
+        * WebProcess/Network/WebSocketStream.cpp:
+        * WebProcess/Network/WebSocketStream.h:
+        * WebProcess/Network/webrtc/LibWebRTCSocket.h:
+        * WebProcess/Plugins/PDF/PDFPlugin.h:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::createGraphicsContextGL const):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_limitsNavigationsToAppBoundDomains):
+        (WebKit::WebPage::updatePreferences):
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::sendSyncWithDelayedReply):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::handleEditingKeyboardEvent):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::setUseGPUProcessForWebGL):
+        (WebKit::WebProcess::shouldUseRemoteRenderingForWebGL const):
+        * WebProcess/WebProcess.h:
+
 2020-12-09  Brent Fulgham  <bfulgham@apple.com>
 
         REGRESSION(r269647) [Cocoa] Consume GPU sandbox extensions early in Web page creation flow

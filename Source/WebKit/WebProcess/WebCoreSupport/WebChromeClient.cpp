@@ -108,6 +108,10 @@
 #include <WebCore/MockWebAuthenticationConfiguration.h>
 #endif
 
+#if PLATFORM(COCOA)
+#include "RemoteGraphicsContextGLProxy.h"
+#endif
+
 namespace WebKit {
 using namespace WebCore;
 using namespace HTMLNames;
@@ -911,6 +915,22 @@ RefPtr<ImageBuffer> WebChromeClient::createImageBuffer(const FloatSize& size, Re
 
     return m_page.ensureRemoteRenderingBackendProxy().createImageBuffer(size, renderingMode, resolutionScale, colorSpace, pixelFormat);
 }
+
+#if ENABLE(WEBGL)
+
+RefPtr<GraphicsContextGL> WebChromeClient::createGraphicsContextGL(const GraphicsContextGLAttributes& attributes, PlatformDisplayID hostWindowDisplayID) const
+{
+    if (!WebProcess::singleton().shouldUseRemoteRenderingForWebGL())
+        return nullptr;
+    UNUSED_VARIABLE(hostWindowDisplayID);
+#if PLATFORM(COCOA)
+    return RemoteGraphicsContextGLProxy::create(attributes);
+#else
+    return nullptr;
+#endif
+}
+
+#endif
 
 #endif // ENABLE(GPU_PROCESS)
 
