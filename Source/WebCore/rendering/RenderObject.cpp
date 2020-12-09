@@ -1466,8 +1466,10 @@ void RenderObject::willBeDestroyed()
 
 void RenderObject::insertedIntoTree()
 {
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
     if (auto* container = LayoutIntegration::LineLayout::blockContainer(*this))
         container->invalidateLineLayoutPath();
+#endif
 
     // FIXME: We should ASSERT(isRooted()) here but generated content makes some out-of-order insertion.
     if (!isFloating() && parent()->childrenInline())
@@ -1476,8 +1478,10 @@ void RenderObject::insertedIntoTree()
 
 void RenderObject::willBeRemovedFromTree()
 {
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
     if (auto* container = LayoutIntegration::LineLayout::blockContainer(*this))
         container->invalidateLineLayoutPath();
+#endif
 
     // FIXME: We should ASSERT(isRooted()) but we have some out-of-order removals which would need to be fixed first.
     // Update cached boundaries in SVG renderers, if a child is removed.

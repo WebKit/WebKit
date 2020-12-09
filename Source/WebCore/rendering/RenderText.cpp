@@ -1461,8 +1461,10 @@ void RenderText::setText(const String& text, bool force)
     setNeedsLayoutAndPrefWidthsRecalc();
     m_knownToHaveNoOverflowAndNoFallbackFonts = false;
 
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
     if (auto* container = LayoutIntegration::LineLayout::blockContainer(*this))
         container->invalidateLineLayoutPath();
+#endif
     
     if (AXObjectCache* cache = document().existingAXObjectCache())
         cache->deferTextChangedIfNeeded(textNode());
