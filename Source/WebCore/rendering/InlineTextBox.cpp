@@ -1048,31 +1048,31 @@ Vector<MarkedText> InlineTextBox::collectMarkedTextsForDocumentMarkers(TextPaint
 
 Vector<MarkedText> InlineTextBox::collectMarkedTextsForHighlights(TextPaintPhase phase) const
 {
-    if (!RuntimeEnabledFeatures::sharedFeatures().highlightAPIEnabled())
-        return { };
     ASSERT_ARG(phase, phase == TextPaintPhase::Background || phase == TextPaintPhase::Foreground || phase == TextPaintPhase::Decoration);
     UNUSED_PARAM(phase);
     if (!renderer().textNode())
         return { };
 
     Vector<MarkedText> markedTexts;
-    auto& parentRenderer = parent()->renderer();
-    auto& parentStyle = parentRenderer.style();
     HighlightData highlightData;
-    if (auto highlightRegister = renderer().document().highlightRegisterIfExists()) {
-        for (auto& highlight : highlightRegister->map()) {
-            auto renderStyle = parentRenderer.getUncachedPseudoStyle({ PseudoId::Highlight, highlight.key }, &parentStyle);
-            if (!renderStyle)
-                continue;
-            if (renderStyle->textDecorationsInEffect().isEmpty() && phase == TextPaintPhase::Decoration)
-                continue;
-            for (auto& rangeData : highlight.value->rangesData()) {
-                if (!highlightData.setRenderRange(rangeData))
+    if (RuntimeEnabledFeatures::sharedFeatures().highlightAPIEnabled()) {
+        auto& parentRenderer = parent()->renderer();
+        auto& parentStyle = parentRenderer.style();
+        if (auto highlightRegister = renderer().document().highlightRegisterIfExists()) {
+            for (auto& highlight : highlightRegister->map()) {
+                auto renderStyle = parentRenderer.getUncachedPseudoStyle({ PseudoId::Highlight, highlight.key }, &parentStyle);
+                if (!renderStyle)
                     continue;
+                if (renderStyle->textDecorationsInEffect().isEmpty() && phase == TextPaintPhase::Decoration)
+                    continue;
+                for (auto& rangeData : highlight.value->rangesData()) {
+                    if (!highlightData.setRenderRange(rangeData))
+                        continue;
 
-                auto [highlightStart, highlightEnd] = highlightStartEnd(highlightData);
-                if (highlightStart < highlightEnd)
-                    markedTexts.append({ highlightStart, highlightEnd, MarkedText::Highlight, nullptr, highlight.key });
+                    auto [highlightStart, highlightEnd] = highlightStartEnd(highlightData);
+                    if (highlightStart < highlightEnd)
+                        markedTexts.append({ highlightStart, highlightEnd, MarkedText::Highlight, nullptr, highlight.key });
+                }
             }
         }
     }

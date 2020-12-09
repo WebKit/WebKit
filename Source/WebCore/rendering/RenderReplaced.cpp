@@ -45,6 +45,7 @@
 #include "RenderTheme.h"
 #include "RenderView.h"
 #include "RenderedDocumentMarker.h"
+#include "RuntimeEnabledFeatures.h"
 #include "Settings.h"
 #include "VisiblePosition.h"
 #include <wtf/IsoMallocInlines.h>
@@ -159,18 +160,20 @@ Color RenderReplaced::calculateHighlightColor() const
         }
     }
 #endif
-    if (auto highlightRegister = document().highlightRegisterIfExists()) {
-        for (auto& highlight : highlightRegister->map()) {
-            for (auto& rangeData : highlight.value->rangesData()) {
-                if (!highlightData.setRenderRange(rangeData))
-                    continue;
+    if (RuntimeEnabledFeatures::sharedFeatures().highlightAPIEnabled()) {
+        if (auto highlightRegister = document().highlightRegisterIfExists()) {
+            for (auto& highlight : highlightRegister->map()) {
+                for (auto& rangeData : highlight.value->rangesData()) {
+                    if (!highlightData.setRenderRange(rangeData))
+                        continue;
 
-                auto state = highlightData.highlightStateForRenderer(*this);
-                if (!isHighlighted(state, highlightData))
-                    continue;
+                    auto state = highlightData.highlightStateForRenderer(*this);
+                    if (!isHighlighted(state, highlightData))
+                        continue;
 
-                if (auto highlightStyle = getUncachedPseudoStyle({ PseudoId::Highlight, highlight.key }, &style()))
-                    return highlightStyle->backgroundColor();
+                    if (auto highlightStyle = getUncachedPseudoStyle({ PseudoId::Highlight, highlight.key }, &style()))
+                        return highlightStyle->backgroundColor();
+                }
             }
         }
     }
