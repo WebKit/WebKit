@@ -28,6 +28,7 @@
 #if USE(LIBWEBRTC) && PLATFORM(COCOA) && ENABLE(GPU_PROCESS)
 
 #include "Connection.h"
+#include "DataReference.h"
 #include "MessageReceiver.h"
 #include "RTCDecoderIdentifier.h"
 #include "RTCEncoderIdentifier.h"
@@ -43,7 +44,6 @@ using CVPixelBufferPoolRef = struct __CVPixelBufferPool*;
 
 namespace IPC {
 class Connection;
-class DataReference;
 class Decoder;
 }
 

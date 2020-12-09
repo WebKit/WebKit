@@ -33,6 +33,7 @@
 #include "RemoteLegacyCDMSessionMessages.h"
 #include "SharedBufferCopy.h"
 #include <JavaScriptCore/GenericTypedArrayViewInlines.h>
+#include <WebCore/LegacyCDM.h>
 #include <WebCore/SharedBuffer.h>
 
 namespace WebKit {

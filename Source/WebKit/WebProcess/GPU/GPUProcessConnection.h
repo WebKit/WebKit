@@ -35,10 +35,6 @@
 #include <wtf/WeakHashSet.h>
 #include <wtf/text/WTFString.h>
 
-namespace IPC {
-class DataReference;
-}
-
 namespace WebKit {
 
 class RemoteAudioSourceProviderManager;

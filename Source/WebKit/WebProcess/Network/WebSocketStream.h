@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "DataReference.h"
 #include "MessageReceiver.h"
 #include "MessageSender.h"
 #include <WebCore/SocketStreamHandle.h>
@@ -33,7 +34,6 @@
 namespace IPC {
 class Connection;
 class Decoder;
-class DataReference;
 }
 
 namespace WebCore {

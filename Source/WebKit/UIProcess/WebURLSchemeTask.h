@@ -38,10 +38,6 @@ namespace API {
 class FrameInfo;
 }
 
-namespace IPC {
-class DataReference;
-}
-
 namespace WebCore {
 class ResourceError;
 class ResourceResponse;

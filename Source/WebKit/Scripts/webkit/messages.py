@@ -203,6 +203,7 @@ def forward_declarations_for_namespace(namespace, kind_and_types):
 
 def types_that_cannot_be_forward_declared():
     return frozenset([
+        'IPC::DataReference',
         'MachSendRight',
         'MediaTime',
         'String',

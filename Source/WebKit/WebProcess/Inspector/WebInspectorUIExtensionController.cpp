@@ -43,7 +43,7 @@ namespace WebKit {
 WebInspectorUIExtensionController::WebInspectorUIExtensionController(WebCore::InspectorFrontendClient& inspectorFrontend)
     : m_frontendClient(makeWeakPtr(inspectorFrontend))
 {
-    Page* page = inspectorFrontend.frontendPage();
+    auto* page = inspectorFrontend.frontendPage();
     ASSERT(page);
 
     WebProcess::singleton().addMessageReceiver(Messages::WebInspectorUIExtensionController::messageReceiverName(), WebPage::fromCorePage(*page).identifier(), *this);
@@ -111,7 +111,7 @@ void WebInspectorUIExtensionController::registerExtension(const InspectorExtensi
         JSON::Value::create(extensionID),
         JSON::Value::create(displayName),
     };
-    m_frontendClient->frontendAPIDispatcher().dispatchCommandWithResultAsync("registerExtension"_s, WTFMove(arguments), [weakThis = makeWeakPtr(this), completionHandler = WTFMove(completionHandler)](InspectorFrontendAPIDispatcher::EvaluationResult&& result) mutable {
+    m_frontendClient->frontendAPIDispatcher().dispatchCommandWithResultAsync("registerExtension"_s, WTFMove(arguments), [weakThis = makeWeakPtr(this), completionHandler = WTFMove(completionHandler)](WebCore::InspectorFrontendAPIDispatcher::EvaluationResult&& result) mutable {
         if (!weakThis || !result) {
             completionHandler(makeUnexpected(InspectorExtensionError::ContextDestroyed));
             return;
@@ -134,7 +134,7 @@ void WebInspectorUIExtensionController::unregisterExtension(const InspectorExten
     }
 
     Vector<Ref<JSON::Value>> arguments { JSON::Value::create(extensionID) };
-    m_frontendClient->frontendAPIDispatcher().dispatchCommandWithResultAsync("unregisterExtension"_s, WTFMove(arguments), [weakThis = makeWeakPtr(this), completionHandler = WTFMove(completionHandler)](InspectorFrontendAPIDispatcher::EvaluationResult&& result) mutable {
+    m_frontendClient->frontendAPIDispatcher().dispatchCommandWithResultAsync("unregisterExtension"_s, WTFMove(arguments), [weakThis = makeWeakPtr(this), completionHandler = WTFMove(completionHandler)](WebCore::InspectorFrontendAPIDispatcher::EvaluationResult&& result) mutable {
         if (!weakThis || !result) {
             completionHandler(makeUnexpected(InspectorExtensionError::ContextDestroyed));
             return;

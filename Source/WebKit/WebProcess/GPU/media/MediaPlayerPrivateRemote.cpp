@@ -824,7 +824,7 @@ void MediaPlayerPrivateRemote::paintCurrentFrameInContext(GraphicsContext&, cons
     notImplemented();
 }
 
-bool MediaPlayerPrivateRemote::copyVideoTextureToPlatformTexture(GraphicsContextGL*, PlatformGLObject, GCGLenum, GCGLint, GCGLenum, GCGLenum, GCGLenum, bool, bool)
+bool MediaPlayerPrivateRemote::copyVideoTextureToPlatformTexture(WebCore::GraphicsContextGL*, PlatformGLObject, GCGLenum, GCGLint, GCGLenum, GCGLenum, GCGLenum, bool, bool)
 {
     notImplemented();
     return false;

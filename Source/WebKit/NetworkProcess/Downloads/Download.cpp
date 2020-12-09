@@ -29,7 +29,6 @@
 #include "AuthenticationChallengeDisposition.h"
 #include "AuthenticationManager.h"
 #include "Connection.h"
-#include "DataReference.h"
 #include "DownloadManager.h"
 #include "DownloadMonitor.h"
 #include "DownloadProxyMessages.h"

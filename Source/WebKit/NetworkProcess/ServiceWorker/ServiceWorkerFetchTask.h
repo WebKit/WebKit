@@ -27,6 +27,7 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "DataReference.h"
 #include <WebCore/FetchIdentifier.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ServiceWorkerClientIdentifier.h>
@@ -43,7 +44,6 @@ class ResourceResponse;
 
 namespace IPC {
 class Connection;
-class DataReference;
 class Decoder;
 class FormDataReference;
 }

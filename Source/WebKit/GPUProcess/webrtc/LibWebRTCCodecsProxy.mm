@@ -28,7 +28,6 @@
 
 #if USE(LIBWEBRTC) && PLATFORM(COCOA) && ENABLE(GPU_PROCESS)
 
-#import "DataReference.h"
 #import "GPUConnectionToWebProcess.h"
 #import "LibWebRTCCodecsMessages.h"
 #import "LibWebRTCCodecsProxyMessages.h"

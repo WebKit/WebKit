@@ -26,7 +26,6 @@
 #include "config.h"
 #include "WebSocketTaskSoup.h"
 
-#include "DataReference.h"
 #include "NetworkProcess.h"
 #include "NetworkSocketChannel.h"
 #include <WebCore/HTTPParsers.h>

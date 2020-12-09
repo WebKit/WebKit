@@ -35,6 +35,7 @@
 #include "CallbackID.h"
 #include "ContentAsStringIncludesChildFrames.h"
 #include "CreateNewGroupForHighlight.h"
+#include "DataReference.h"
 #include "DownloadID.h"
 #include "DrawingAreaInfo.h"
 #include "EditingRange.h"
@@ -161,7 +162,6 @@ class Array;
 
 namespace IPC {
 class Connection;
-class DataReference;
 class Decoder;
 class FormDataReference;
 }
@@ -1258,7 +1258,7 @@ public:
     void didReceiveWebPageMessage(IPC::Connection&, IPC::Decoder&);
 
     template<typename T>
-    bool sendSyncWithDelayedReply(T&& message, typename T::Reply&& reply)
+    SendSyncResult sendSyncWithDelayedReply(T&& message, typename T::Reply&& reply)
     {
         cancelGesturesBlockedOnSynchronousReplies();
         return sendSync(WTFMove(message), WTFMove(reply), Seconds::infinity(), IPC::SendSyncOption::InformPlatformProcessWillSuspend);

@@ -186,20 +186,15 @@ bool Decoder::decodeFixedLengthData(uint8_t* data, size_t size, size_t alignment
     return true;
 }
 
-bool Decoder::decodeVariableLengthByteArray(DataReference& dataReference)
+const uint8_t* Decoder::decodeFixedLengthReference(size_t size, size_t alignment)
 {
-    uint64_t size;
-    if (!decode(size))
-        return false;
-    
-    if (!alignBufferPosition(1, size))
-        return false;
+    if (!alignBufferPosition(alignment, size))
+        return nullptr;
 
     const uint8_t* data = m_bufferPos;
     m_bufferPos += size;
 
-    dataReference = DataReference(data, size);
-    return true;
+    return data;
 }
 
 bool Decoder::removeAttachment(Attachment& attachment)

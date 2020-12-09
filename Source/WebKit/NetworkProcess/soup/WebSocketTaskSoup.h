@@ -25,13 +25,10 @@
 
 #pragma once
 
+#include "DataReference.h"
 #include <libsoup/soup.h>
 #include <wtf/RunLoop.h>
 #include <wtf/glib/GRefPtr.h>
-
-namespace IPC {
-class DataReference;
-}
 
 namespace WebKit {
 class NetworkSocketChannel;

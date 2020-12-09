@@ -27,6 +27,7 @@
 
 #include "APIObject.h"
 #include "ContentWorldShared.h"
+#include "DataReference.h"
 #include "MessageReceiver.h"
 #include "UserContentControllerIdentifier.h"
 #include "WebPageProxyIdentifier.h"
@@ -46,10 +47,6 @@ class ContentRuleList;
 class ContentWorld;
 class UserScript;
 class UserStyleSheet;
-}
-
-namespace IPC {
-class DataReference;
 }
 
 namespace WebCore {

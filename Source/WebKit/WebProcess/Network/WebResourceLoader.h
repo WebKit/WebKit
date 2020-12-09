@@ -26,6 +26,7 @@
 #pragma once
 
 #include "Connection.h"
+#include "DataReference.h"
 #include "MessageSender.h"
 #include "ShareableResource.h"
 #include "WebPageProxyIdentifier.h"
@@ -36,7 +37,6 @@
 #include <wtf/RefPtr.h>
 
 namespace IPC {
-class DataReference;
 class FormDataReference;
 }
 

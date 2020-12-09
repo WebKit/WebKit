@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "DataReference.h"
 #include "LegacyCustomProtocolID.h"
 #include "MessageReceiver.h"
 #include "NetworkProcessSupplement.h"
@@ -38,10 +39,6 @@
 OBJC_CLASS NSURLSessionConfiguration;
 OBJC_CLASS WKCustomProtocol;
 #endif
-
-namespace IPC {
-class DataReference;
-} // namespace IPC
 
 namespace WebCore {
 class ResourceError;
@@ -112,4 +109,3 @@ private:
 };
 
 } // namespace WebKit
-

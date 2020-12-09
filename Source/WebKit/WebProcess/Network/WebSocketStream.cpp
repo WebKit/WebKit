@@ -26,7 +26,6 @@
 #include "config.h"
 #include "WebSocketStream.h"
 
-#include "DataReference.h"
 #include "NetworkConnectionToWebProcessMessages.h"
 #include "NetworkProcessConnection.h"
 #include "NetworkSocketStreamMessages.h"

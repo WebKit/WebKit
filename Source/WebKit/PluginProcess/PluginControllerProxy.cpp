@@ -28,7 +28,6 @@
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
 
-#include "DataReference.h"
 #include "NPObjectProxy.h"
 #include "NPRemoteObjectMap.h"
 #include "NPRuntimeUtilities.h"

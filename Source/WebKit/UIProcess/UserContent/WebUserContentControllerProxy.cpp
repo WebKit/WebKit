@@ -31,7 +31,6 @@
 #include "APISerializedScriptValue.h"
 #include "APIUserScript.h"
 #include "APIUserStyleSheet.h"
-#include "DataReference.h"
 #include "InjectUserScriptImmediately.h"
 #include "NetworkContentRuleListManagerMessages.h"
 #include "NetworkProcessProxy.h"

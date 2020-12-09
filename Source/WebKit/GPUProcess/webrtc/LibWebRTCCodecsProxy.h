@@ -28,6 +28,7 @@
 #if USE(LIBWEBRTC) && PLATFORM(COCOA) && ENABLE(GPU_PROCESS)
 
 #include "Connection.h"
+#include "DataReference.h"
 #include "RTCDecoderIdentifier.h"
 #include "RTCEncoderIdentifier.h"
 #include <WebCore/ImageTransferSessionVT.h>
@@ -35,7 +36,6 @@
 namespace IPC {
 class Connection;
 class Decoder;
-class DataReference;
 }
 
 namespace WebCore {

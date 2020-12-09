@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "DataReference.h"
 #include "MessageReceiver.h"
 #include "MessageSender.h"
 #include <WebCore/Timer.h>
@@ -40,7 +41,6 @@ class ResourceRequest;
 namespace IPC {
 class Connection;
 class Decoder;
-class DataReference;
 }
 
 namespace WebKit {

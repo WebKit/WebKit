@@ -60,10 +60,6 @@ OBJC_CLASS PDFSelection;
 OBJC_CLASS WKPDFPluginAccessibilityObject;
 OBJC_CLASS WKPDFLayerControllerDelegate;
 
-namespace IPC {
-class DataReference;
-}
-
 namespace WebCore {
 class AXObjectCache;
 class Element;

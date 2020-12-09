@@ -227,10 +227,12 @@ public:
     void markCurrentlyDispatchedMessageAsInvalid();
 
     void postConnectionDidCloseOnConnectionWorkQueue();
-
     template<typename T, typename C> void sendWithAsyncReply(T&& message, C&& completionHandler, uint64_t destinationID = 0, OptionSet<SendOption> = { }); // Thread-safe.
     template<typename T> bool send(T&& message, uint64_t destinationID, OptionSet<SendOption> sendOptions = { }); // Thread-safe.
-    template<typename T> bool sendSync(T&& message, typename T::Reply&& reply, uint64_t destinationID, Seconds timeout = Seconds::infinity(), OptionSet<SendSyncOption> sendSyncOptions = { }); // Main thread only.
+    // Sync senders should check the SendSyncResult for true/false in case they need to know if the result was really received.
+    // Sync senders should hold on to the SendSyncResult in case they reference the contents of the reply via DataRefererence / ArrayReference.
+    using SendSyncResult = std::unique_ptr<Decoder>;
+    template<typename T> SendSyncResult sendSync(T&& message, typename T::Reply&& reply, uint64_t destinationID, Seconds timeout = Seconds::infinity(), OptionSet<SendSyncOption> sendSyncOptions = { }); // Main thread only.
     template<typename T> bool waitForAndDispatchImmediately(uint64_t destinationID, Seconds timeout, OptionSet<WaitForOption> waitForOptions = { }); // Main thread only.
     
     // Thread-safe.
@@ -249,7 +251,7 @@ public:
 
     // Main thread only.
     template<typename T, typename U>
-    bool sendSync(T&& message, typename T::Reply&& reply, ObjectIdentifier<U> destinationID, Seconds timeout = Seconds::infinity(), OptionSet<SendSyncOption> sendSyncOptions = { })
+    SendSyncResult sendSync(T&& message, typename T::Reply&& reply, ObjectIdentifier<U> destinationID, Seconds timeout = Seconds::infinity(), OptionSet<SendSyncOption> sendSyncOptions = { })
     {
         return sendSync<T>(WTFMove(message), WTFMove(reply), destinationID.toUInt64(), timeout, sendSyncOptions);
     }
@@ -551,7 +553,7 @@ void moveTuple(std::tuple<A...>&& a, std::tuple<B...>& b)
     TupleMover<sizeof...(A), std::tuple<A...>, std::tuple<B...>>::move(WTFMove(a), b);
 }
 
-template<typename T> bool Connection::sendSync(T&& message, typename T::Reply&& reply, uint64_t destinationID, Seconds timeout, OptionSet<SendSyncOption> sendSyncOptions)
+template<typename T> Connection::SendSyncResult Connection::sendSync(T&& message, typename T::Reply&& reply, uint64_t destinationID, Seconds timeout, OptionSet<SendSyncOption> sendSyncOptions)
 {
     COMPILE_ASSERT(T::isSync, SyncMessageExpected);
     RELEASE_ASSERT(RunLoop::isMain());
@@ -570,15 +572,15 @@ template<typename T> bool Connection::sendSync(T&& message, typename T::Reply&& 
     // Now send the message and wait for a reply.
     std::unique_ptr<Decoder> replyDecoder = sendSyncMessage(syncRequestID, WTFMove(encoder), timeout, sendSyncOptions);
     if (!replyDecoder)
-        return false;
+        return { };
 
     // Decode the reply.
     Optional<typename T::ReplyArguments> replyArguments;
     *replyDecoder >> replyArguments;
     if (!replyArguments)
-        return false;
+        return { };
     moveTuple(WTFMove(*replyArguments), reply);
-    return true;
+    return replyDecoder;
 }
 
 template<typename T> bool Connection::waitForAndDispatchImmediately(uint64_t destinationID, Seconds timeout, OptionSet<WaitForOption> waitForOptions)

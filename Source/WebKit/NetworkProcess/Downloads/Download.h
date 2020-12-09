@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "DataReference.h"
 #include "DownloadID.h"
 #include "DownloadManager.h"
 #include "DownloadMonitor.h"
@@ -43,10 +44,6 @@
 OBJC_CLASS NSProgress;
 OBJC_CLASS NSURLSessionDownloadTask;
 #endif
-
-namespace IPC {
-class DataReference;
-}
 
 namespace WebCore {
 class AuthenticationChallenge;

@@ -36,7 +36,6 @@
 
 namespace IPC {
 
-class DataReference;
 enum class MessageFlags : uint8_t;
 enum class MessageName : uint16_t;
 enum class ShouldDispatchWhenWaitingForSyncReply : uint8_t;
@@ -62,7 +61,6 @@ public:
     void wrapForTesting(std::unique_ptr<Encoder>);
 
     void encodeFixedLengthData(const uint8_t* data, size_t, size_t alignment);
-    void encodeVariableLengthByteArray(const DataReference&);
 
     template<typename T, std::enable_if_t<!std::is_enum<typename std::remove_const_t<std::remove_reference_t<T>>>::value && !std::is_arithmetic<typename std::remove_const_t<std::remove_reference_t<T>>>::value>* = nullptr>
     void encode(T&& t)

@@ -1,3 +1,140 @@
+2020-12-08  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        IPC should support non-byte aligned data references
+        https://bugs.webkit.org/show_bug.cgi?id=219487
+
+        Reviewed by Chris Dumez.
+
+        Add a templated version of IPC::DataReference: ArrayReference<type, number of elements>.
+        The number of elements can be omitted, in which case the ArrayReference
+        size is determined at run-time.
+
+        This way pointers of typed arrays such as float arrays can be transferred directly
+        from the IPC message data store to the target. This is useful when implementing
+        IPC for WebGL in GPU process.
+
+        Changes IPC to support passing data references, i.e.
+        DataReference or ArrayReference, as a synchronous IPC call return value.
+        The caller must hold the Connection::syncSend() result (Decoder object)
+        for the duration of using the data values.
+
+        Makes DataReference an alias of uint8_t dynamic array reference.
+        Unfortunately this makes the forward declaring DataReference hard.
+        Due to this, changes use declaration sites to #include instead of
+        using forward declarations. Removes forward declarations for headers
+        where the type is not used.
+
+        Adds various #includes to fix errors hidden by the unified build.
+
+        Adds some WebCore:: namespace qualifications to fix errors hidden
+        by the unified build.
+
+        * GPUProcess/media/RemoteAudioSessionProxy.cpp:
+        * GPUProcess/media/RemoteLegacyCDMProxy.cpp:
+        * GPUProcess/media/RemoteLegacyCDMProxy.h:
+        * GPUProcess/media/RemoteLegacyCDMSessionProxy.cpp:
+        * GPUProcess/media/RemoteMediaResourceManager.cpp:
+        * GPUProcess/media/RemoteMediaResourceManager.h:
+        * GPUProcess/media/RemoteMediaSourceProxy.h:
+        * GPUProcess/media/RemoteSourceBufferProxy.cpp:
+        * GPUProcess/media/RemoteSourceBufferProxy.h:
+        * GPUProcess/webrtc/LibWebRTCCodecsProxy.h:
+        * GPUProcess/webrtc/LibWebRTCCodecsProxy.mm:
+        * GPUProcess/webrtc/RemoteMediaRecorder.h:
+        * NetworkProcess/CustomProtocols/Cocoa/LegacyCustomProtocolManagerCocoa.mm:
+        * NetworkProcess/CustomProtocols/LegacyCustomProtocolManager.h:
+        * NetworkProcess/Downloads/Download.cpp:
+        * NetworkProcess/Downloads/Download.h:
+        * NetworkProcess/Downloads/DownloadManager.cpp:
+        * NetworkProcess/Downloads/DownloadManager.h:
+        * NetworkProcess/NetworkSocketChannel.cpp:
+        * NetworkProcess/NetworkSocketChannel.h:
+        * NetworkProcess/NetworkSocketStream.cpp:
+        * NetworkProcess/NetworkSocketStream.h:
+        * NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.h:
+        * NetworkProcess/WebSocketTask.h:
+        * NetworkProcess/cocoa/WebSocketTaskCocoa.h:
+        * NetworkProcess/cocoa/WebSocketTaskCocoa.mm:
+        * NetworkProcess/soup/WebSocketTaskSoup.cpp:
+        * NetworkProcess/soup/WebSocketTaskSoup.h:
+        * Platform/IPC/ArgumentCoders.h:
+        * Platform/IPC/ArrayReference.h: Copied from Source/WebKit/Platform/IPC/DataReference.h.
+        (IPC::ArrayReference::ArrayReference):
+        (IPC::ArrayReference::isEmpty const):
+        (IPC::ArrayReference::size const):
+        (IPC::ArrayReference::data const):
+        (IPC::ArrayReference::vector const):
+        * Platform/IPC/Connection.h:
+        (IPC::Connection::sendSync):
+        * Platform/IPC/DataReference.cpp: Removed.
+        * Platform/IPC/DataReference.h:
+        * Platform/IPC/Decoder.cpp:
+        (IPC::Decoder::decodeFixedLengthReference):
+        * Platform/IPC/Decoder.h:
+        * Platform/IPC/Encoder.cpp:
+        (IPC::Encoder::wrapForTesting):
+        * Platform/IPC/Encoder.h:
+        * Platform/IPC/HandleMessage.h:
+        * Platform/IPC/MessageSender.h:
+        (IPC::MessageSender::sendSync):
+        * Platform/IPC/SharedBufferCopy.cpp:
+        (IPC::SharedBufferCopy::decode):
+        * Platform/IPC/SharedBufferDataReference.cpp:
+        * Platform/IPC/StringReference.cpp:
+        * PluginProcess/PluginControllerProxy.cpp:
+        * PluginProcess/PluginControllerProxy.h:
+        * Scripts/webkit/messages.py:
+        * Shared/API/APIData.cpp:
+        * Shared/cf/ArgumentCodersCF.cpp:
+        * Shared/soup/WebCoreArgumentCodersSoup.cpp:
+        (IPC::ArgumentCoder<CertificateInfo>::encode):
+        (IPC::ArgumentCoder<CertificateInfo>::decode):
+        * Sources.txt:
+        * UIProcess/API/APIIconLoadingClient.h:
+        * UIProcess/AuxiliaryProcessProxy.h:
+        (WebKit::AuxiliaryProcessProxy::sendSync):
+        * UIProcess/Cocoa/SOAuthorization/SubFrameSOAuthorizationSession.h:
+        * UIProcess/Network/CustomProtocols/LegacyCustomProtocolManagerProxy.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/UserContent/WebUserContentControllerProxy.cpp:
+        * UIProcess/UserContent/WebUserContentControllerProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::creationParameters):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebURLSchemeHandler.h:
+        * UIProcess/WebURLSchemeTask.h:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/ApplePay/WebPaymentCoordinator.h:
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        (WebKit::MediaPlayerPrivateRemote::copyVideoTextureToPlatformTexture):
+        * WebProcess/GPU/media/RemoteAudioDestinationProxy.cpp:
+        (WebKit::RemoteAudioDestinationProxy::connectToGPUProcess):
+        * WebProcess/GPU/media/RemoteAudioSourceProvider.cpp:
+        * WebProcess/GPU/media/RemoteAudioSourceProviderManager.cpp:
+        * WebProcess/GPU/media/RemoteAudioSourceProviderManager.h:
+        * WebProcess/GPU/media/RemoteLegacyCDMSession.cpp:
+        * WebProcess/GPU/media/TextTrackPrivateRemote.h:
+        * WebProcess/GPU/webrtc/LibWebRTCCodecs.cpp:
+        * WebProcess/GPU/webrtc/LibWebRTCCodecs.h:
+        * WebProcess/InjectedBundle/InjectedBundle.h:
+        * WebProcess/Inspector/WebInspectorUIExtensionController.cpp:
+        (WebKit::WebInspectorUIExtensionController::WebInspectorUIExtensionController):
+        (WebKit::WebInspectorUIExtensionController::registerExtension):
+        (WebKit::WebInspectorUIExtensionController::unregisterExtension):
+        * WebProcess/Network/NetworkProcessConnection.h:
+        * WebProcess/Network/WebResourceLoader.cpp:
+        * WebProcess/Network/WebResourceLoader.h:
+        * WebProcess/Network/WebSocketChannel.cpp:
+        * WebProcess/Network/WebSocketChannel.h:
+        * WebProcess/Network/WebSocketStream.cpp:
+        * WebProcess/Network/WebSocketStream.h:
+        * WebProcess/Network/webrtc/LibWebRTCSocket.h:
+        * WebProcess/Plugins/PDF/PDFPlugin.h:
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::sendSyncWithDelayedReply):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::handleEditingKeyboardEvent):
+
 2020-12-08  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Concurrent Display Lists] Add a new type to represent a set of GPU process wakeup arguments

@@ -28,7 +28,6 @@
 
 #if HAVE(NSURLSESSION_WEBSOCKET)
 
-#import "DataReference.h"
 #import "NetworkSessionCocoa.h"
 #import "NetworkSocketChannel.h"
 #import <Foundation/NSURLSession.h>

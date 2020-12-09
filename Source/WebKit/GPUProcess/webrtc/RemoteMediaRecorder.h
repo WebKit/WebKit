@@ -27,6 +27,7 @@
 
 #if PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(MEDIA_STREAM) && HAVE(AVASSETWRITERDELEGATE)
 
+#include "DataReference.h"
 #include "MediaRecorderIdentifier.h"
 #include "MessageReceiver.h"
 #include "SharedMemory.h"
@@ -36,7 +37,6 @@
 
 namespace IPC {
 class Connection;
-class DataReference;
 class Decoder;
 }
 

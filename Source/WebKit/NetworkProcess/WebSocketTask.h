@@ -31,9 +31,6 @@
 #include "WebSocketTaskSoup.h"
 #else
 
-namespace IPC {
-class DataReference;
-}
 
 namespace WebKit {
 

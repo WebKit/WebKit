@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ArgumentCoders.h"
+#include "DataReference.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/StdLibExtras.h>
 
@@ -96,7 +97,6 @@ struct CodingType {
     typedef std::remove_const_t<std::remove_reference_t<T>> Type;
 };
 
-class DataReference;
 class SharedBufferDataReference;
 template<> struct CodingType<const SharedBufferDataReference&> {
     using Type = DataReference;

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "SharedBufferDataReference.h"
 
+#include "ArgumentCoders.h"
 #include "Encoder.h"
 
 namespace IPC {

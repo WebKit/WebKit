@@ -35,7 +35,6 @@
 
 namespace IPC {
 class Connection;
-class DataReference;
 class Decoder;
 }
 

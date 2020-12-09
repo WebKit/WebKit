@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "DataReference.h"
 #include "DownloadID.h"
 #include "DownloadMap.h"
 #include "NetworkDataTask.h"
@@ -49,7 +50,6 @@ class ResourceResponse;
 
 namespace IPC {
 class Connection;
-class DataReference;
 }
 
 namespace WebKit {

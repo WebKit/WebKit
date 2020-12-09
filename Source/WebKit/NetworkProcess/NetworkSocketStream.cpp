@@ -26,7 +26,6 @@
 #include "config.h"
 #include "NetworkSocketStream.h"
 
-#include "DataReference.h"
 #include "NetworkStorageSessionProvider.h"
 #include "WebSocketStreamMessages.h"
 #include <WebCore/CookieRequestHeaderFieldProxy.h>

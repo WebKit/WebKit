@@ -26,7 +26,6 @@
 #import "config.h"
 #import "LegacyCustomProtocolManager.h"
 
-#import "DataReference.h"
 #import "LegacyCustomProtocolManagerMessages.h"
 #import "NetworkProcess.h"
 #import <Foundation/NSURLSession.h>

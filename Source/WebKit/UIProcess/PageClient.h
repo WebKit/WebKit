@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "DataReference.h"
 #include "LayerTreeContext.h"
 #include "PDFPluginIdentifier.h"
 #include "SameDocumentNavigationType.h"
@@ -78,10 +79,6 @@ class Navigation;
 class Object;
 class OpenPanelParameters;
 class SecurityOrigin;
-}
-
-namespace IPC {
-class DataReference;
 }
 
 namespace WebCore {

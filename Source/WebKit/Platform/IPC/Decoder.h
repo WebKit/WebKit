@@ -40,7 +40,6 @@
 
 namespace IPC {
 
-class DataReference;
 class ImportanceAssertion;
 enum class MessageFlags : uint8_t;
 enum class ShouldDispatchWhenWaitingForSyncReply : uint8_t;
@@ -78,8 +77,9 @@ public:
 
     WARN_UNUSED_RETURN bool decodeFixedLengthData(uint8_t* data, size_t, size_t alignment);
 
-    // The data in the data reference here will only be valid for the lifetime of the ArgumentDecoder object.
-    WARN_UNUSED_RETURN bool decodeVariableLengthByteArray(DataReference&);
+    // The data in the returned pointer here will only be valid for the lifetime of the ArgumentDecoder object.
+    // Returns nullptr on failure.
+    WARN_UNUSED_RETURN const uint8_t* decodeFixedLengthReference(size_t, size_t alignment);
 
     template<typename T, std::enable_if_t<std::is_arithmetic<T>::value>* = nullptr>
     WARN_UNUSED_RETURN bool decode(T& value)

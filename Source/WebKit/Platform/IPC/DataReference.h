@@ -25,54 +25,10 @@
 
 #pragma once
 
-#include <wtf/Vector.h>
+#include "ArrayReference.h"
 
 namespace IPC {
 
-class Decoder;
-class Encoder;
-    
-class DataReference {
-public:
-    DataReference() = default;
-
-    DataReference(const uint8_t* data, size_t size)
-        : m_data(data)
-        , m_size(size)
-    {
-    }
-
-    template<size_t inlineCapacity>
-    DataReference(const Vector<uint8_t, inlineCapacity>& vector)
-        : m_data(vector.data())
-        , m_size(vector.size())
-    {
-    }
-
-    bool isEmpty() const { return !m_size; }
-
-    size_t size() const { return m_size; }
-    const uint8_t* data() const 
-    { 
-        if (isEmpty())
-            return nullptr;
-        return m_data; 
-    }
-
-    Vector<uint8_t> vector() const
-    {
-        Vector<uint8_t> result;
-        result.append(m_data, m_size);
-
-        return result;
-    }
-
-    void encode(Encoder&) const;
-    static WARN_UNUSED_RETURN bool decode(Decoder&, DataReference&);
-
-private:
-    const uint8_t* m_data { nullptr };
-    size_t m_size { 0 };
-};
+using DataReference = ArrayReference<uint8_t, arrayReferenceDynamicExtent>;
 
 } // namespace IPC

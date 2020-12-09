@@ -58,7 +58,6 @@
 #include "AuthenticationDecisionListener.h"
 #include "AuthenticationManager.h"
 #include "AuthenticatorManager.h"
-#include "DataReference.h"
 #include "DownloadProxy.h"
 #include "DrawingAreaMessages.h"
 #include "DrawingAreaProxy.h"
@@ -7946,6 +7945,7 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     parameters.shouldRenderCanvasInGPUProcess = preferences().useGPUProcessForCanvasRenderingEnabled();
     parameters.shouldRenderDOMInGPUProcess = preferences().useGPUProcessForDOMRenderingEnabled();
     parameters.shouldPlayMediaInGPUProcess = preferences().useGPUProcessForMediaEnabled();
+
     parameters.shouldEnableVP9Decoder = preferences().vp9DecoderEnabled();
 #if ENABLE(VP9) && PLATFORM(COCOA)
     parameters.shouldEnableVP9SWDecoder = preferences().vp9DecoderEnabled() && (!WebCore::systemHasBattery() || preferences().vp9SWDecoderEnabledOnBattery());

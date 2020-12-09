@@ -27,6 +27,7 @@
 
 #include "APIInjectedBundleBundleClient.h"
 #include "APIObject.h"
+#include "DataReference.h"
 #include "SandboxExtension.h"
 #include <JavaScriptCore/JavaScript.h>
 #include <WebCore/UserContentTypes.h>
@@ -54,7 +55,6 @@ class Data;
 namespace IPC {
 class Decoder;
 class Connection;
-class DataReference;
 }
 
 namespace WebKit {
@@ -161,4 +161,3 @@ private:
 };
 
 } // namespace WebKit
-

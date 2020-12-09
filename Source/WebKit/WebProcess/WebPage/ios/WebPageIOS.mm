@@ -517,7 +517,7 @@ bool WebPage::handleEditingKeyboardEvent(KeyboardEvent& event)
 
     // FIXME: Interpret the event immediately upon receiving it in UI process, without sending to WebProcess first.
     bool eventWasHandled = false;
-    bool sendResult = WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPageProxy::InterpretKeyEvent(editorState(ShouldPerformLayout::Yes), platformEvent->type() == PlatformKeyboardEvent::Char),
+    auto sendResult = WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPageProxy::InterpretKeyEvent(editorState(ShouldPerformLayout::Yes), platformEvent->type() == PlatformKeyboardEvent::Char),
         Messages::WebPageProxy::InterpretKeyEvent::Reply(eventWasHandled), m_identifier);
     return sendResult && eventWasHandled;
 }

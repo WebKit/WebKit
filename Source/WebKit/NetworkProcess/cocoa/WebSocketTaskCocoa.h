@@ -27,14 +27,11 @@
 
 #if HAVE(NSURLSESSION_WEBSOCKET)
 
+#include "DataReference.h"
 #include <wtf/RetainPtr.h>
 #include <wtf/WeakPtr.h>
 
 OBJC_CLASS NSURLSessionWebSocketTask;
-
-namespace IPC {
-class DataReference;
-}
 
 namespace WebKit {
 class NetworkSession;

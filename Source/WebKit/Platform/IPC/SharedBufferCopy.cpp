@@ -26,6 +26,7 @@
 #include "config.h"
 #include "SharedBufferCopy.h"
 
+#include "ArgumentCoders.h"
 #include "DataReference.h"
 #include "Decoder.h"
 #include "Encoder.h"
@@ -48,7 +49,7 @@ void SharedBufferCopy::encode(Encoder& encoder) const
 Optional<SharedBufferCopy> SharedBufferCopy::decode(Decoder& decoder)
 {
     IPC::DataReference data;
-    if (!decoder.decodeVariableLengthByteArray(data))
+    if (!decoder.decode(data))
         return WTF::nullopt;
     RefPtr<SharedBuffer> buffer;
     if (data.size())

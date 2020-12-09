@@ -31,10 +31,6 @@
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
-namespace IPC {
-class DataReference;
-}
-
 namespace WebCore {
 class ResourceRequest;
 }

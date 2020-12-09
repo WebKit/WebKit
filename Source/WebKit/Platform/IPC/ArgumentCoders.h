@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "ArrayReference.h"
 #include "Decoder.h"
 #include "Encoder.h"
 #include <utility>
@@ -50,6 +51,48 @@ template<typename T> struct SimpleArgumentCoder {
     static WARN_UNUSED_RETURN bool decode(Decoder& decoder, T& t)
     {
         return decoder.decodeFixedLengthData(reinterpret_cast<uint8_t*>(&t), sizeof(T), alignof(T));
+    }
+};
+
+template<typename T, size_t Extent> struct ArgumentCoder<ArrayReference<T, Extent>> {
+    using ArrayReferenceType = ArrayReference<T, Extent>;
+    static void encode(Encoder& encoder, const ArrayReferenceType& arrayReference)
+    {
+        if (!Extent)
+            return;
+        encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(arrayReference.data()), arrayReference.size() * sizeof(T), alignof(T));
+    }
+    static Optional<ArrayReferenceType> decode(Decoder& decoder)
+    {
+        if (!Extent)
+            return ArrayReferenceType();
+        const uint8_t* data = decoder.decodeFixedLengthReference(Extent * sizeof(T), alignof(T));
+        if (!data)
+            return WTF::nullopt;
+        return ArrayReferenceType(reinterpret_cast<const T*>(data), Extent);
+    }
+};
+
+template<typename T> struct ArgumentCoder<ArrayReference<T, arrayReferenceDynamicExtent>> {
+    using ArrayReferenceType = ArrayReference<T, arrayReferenceDynamicExtent>;
+    static void encode(Encoder& encoder, const ArrayReferenceType& arrayReference)
+    {
+        encoder.encode(static_cast<uint64_t>(arrayReference.size()));
+        if (!arrayReference.size())
+            return;
+        encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(arrayReference.data()), arrayReference.size() * sizeof(T), alignof(T));
+    }
+    static Optional<ArrayReferenceType> decode(Decoder& decoder)
+    {
+        uint64_t size;
+        if (!decoder.decode(size))
+            return WTF::nullopt;
+        if (!size)
+            return ArrayReferenceType();
+        const uint8_t* data = decoder.decodeFixedLengthReference(size * sizeof(T), alignof(T));
+        if (!data)
+            return WTF::nullopt;
+        return ArrayReferenceType(reinterpret_cast<const T*>(data), static_cast<size_t>(size));
     }
 };
 

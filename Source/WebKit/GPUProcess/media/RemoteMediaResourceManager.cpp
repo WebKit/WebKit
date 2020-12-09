@@ -29,7 +29,6 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "Connection.h"
-#include "DataReference.h"
 #include "RemoteMediaResource.h"
 #include "RemoteMediaResourceIdentifier.h"
 #include "WebCoreArgumentCoders.h"

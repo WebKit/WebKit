@@ -26,6 +26,7 @@
 #include "config.h"
 #include "StringReference.h"
 
+#include "ArgumentCoders.h"
 #include "DataReference.h"
 #include "Decoder.h"
 #include "Encoder.h"

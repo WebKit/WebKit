@@ -39,7 +39,6 @@
 namespace IPC {
 class Connection;
 class Decoder;
-class DataReference;
 }
 
 namespace WebCore {

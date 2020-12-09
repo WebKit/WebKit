@@ -29,7 +29,6 @@
 #if ENABLE(GPU_PROCESS) && ENABLE(MEDIA_SOURCE)
 
 #include "Connection.h"
-#include "DataReference.h"
 #include "InitializationSegmentInfo.h"
 #include "RemoteMediaPlayerProxy.h"
 #include "RemoteSourceBufferProxyMessages.h"

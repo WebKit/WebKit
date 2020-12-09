@@ -30,10 +30,6 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/Function.h>
 
-namespace IPC {
-class DataReference;
-}
-
 namespace API {
 
 class IconLoadingClient {

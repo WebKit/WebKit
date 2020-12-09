@@ -32,10 +32,6 @@
 #include <WebCore/FrameIdentifier.h>
 #include <wtf/Deque.h>
 
-namespace IPC {
-class DataReference;
-}
-
 namespace WebKit {
 
 class SubFrameSOAuthorizationSession final : public NavigationSOAuthorizationSession, public FrameLoadState::Observer {

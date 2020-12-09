@@ -29,6 +29,7 @@
 #if ENABLE(GPU_PROCESS) && ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
 #include "GPUConnectionToWebProcess.h"
+#include "RemoteLegacyCDMSessionProxy.h"
 #include "RemoteMediaPlayerManagerProxy.h"
 #include "RemoteMediaPlayerProxy.h"
 

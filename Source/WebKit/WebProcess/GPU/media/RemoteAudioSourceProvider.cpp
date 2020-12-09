@@ -28,6 +28,7 @@
 
 #if ENABLE(GPU_PROCESS) && ENABLE(WEB_AUDIO) && PLATFORM(COCOA)
 
+#include "GPUProcessConnection.h"
 #include "RemoteAudioSourceProviderManager.h"
 #include "RemoteMediaPlayerProxyMessages.h"
 

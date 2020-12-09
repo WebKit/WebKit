@@ -82,7 +82,7 @@ void RemoteAudioDestinationProxy::connectToGPUProcess()
 
     auto& connection = WebProcess::singleton().ensureGPUProcessConnection();
     connection.addClient(*this);
-    bool didSucceed = connection.connection().sendSync(
+    auto didSucceed = connection.connection().sendSync(
         Messages::RemoteAudioDestinationManager::CreateAudioDestination(m_inputDeviceId, m_numberOfInputChannels, numberOfOutputChannels(), sampleRate(), hardwareSampleRate()),
         Messages::RemoteAudioDestinationManager::CreateAudioDestination::Reply(destinationID), 0);
 
@@ -100,7 +100,7 @@ void RemoteAudioDestinationProxy::connectToGPUProcess()
     AudioStreamBasicDescription streamFormat;
     getAudioStreamBasicDescription(streamFormat);
     m_ringBuffer->allocate(streamFormat, m_numberOfFrames);
-    m_audioBufferList = makeUnique<WebAudioBufferList>(streamFormat);
+    m_audioBufferList = makeUnique<WebCore::WebAudioBufferList>(streamFormat);
 #endif
 }
 

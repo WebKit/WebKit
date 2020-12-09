@@ -26,6 +26,7 @@
 #include "config.h"
 #include "Encoder.h"
 
+#include "ArgumentCoders.h"
 #include "DataReference.h"
 #include "MessageFlags.h"
 #include <algorithm>
@@ -141,7 +142,7 @@ void Encoder::wrapForTesting(std::unique_ptr<Encoder> original)
 
     original->setShouldDispatchMessageWhenWaitingForSyncReply(ShouldDispatchWhenWaitingForSyncReply::Yes);
 
-    encodeVariableLengthByteArray(DataReference(original->buffer(), original->bufferSize()));
+    *this << DataReference(original->buffer(), original->bufferSize());
 
     Vector<Attachment> attachments = original->releaseAttachments();
     reserve(attachments.size());
@@ -214,12 +215,6 @@ void Encoder::encodeFixedLengthData(const uint8_t* data, size_t size, size_t ali
 
     uint8_t* buffer = grow(alignment, size);
     memcpy(buffer, data, size);
-}
-
-void Encoder::encodeVariableLengthByteArray(const DataReference& dataReference)
-{
-    encode(static_cast<uint64_t>(dataReference.size()));
-    encodeFixedLengthData(dataReference.data(), dataReference.size(), 1);
 }
 
 void Encoder::addAttachment(Attachment&& attachment)

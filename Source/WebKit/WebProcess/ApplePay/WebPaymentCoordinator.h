@@ -36,10 +36,6 @@
 #include <wtf/HashSet.h>
 #include <wtf/text/StringHash.h>
 
-namespace IPC {
-class DataReference;
-}
-
 namespace WebCore {
 class PaymentCoordinator;
 class PaymentContact;

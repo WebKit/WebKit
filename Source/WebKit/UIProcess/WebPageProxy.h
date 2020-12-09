@@ -30,6 +30,7 @@
 #include "ContentAsStringIncludesChildFrames.h"
 #include "ContextMenuContextData.h"
 #include "CreateNewGroupForHighlight.h"
+#include "DataReference.h"
 #include "DownloadID.h"
 #include "DragControllerAction.h"
 #include "EditingRange.h"
@@ -204,7 +205,6 @@ enum class InspectorTargetType : uint8_t;
 }
 
 namespace IPC {
-class DataReference;
 class Decoder;
 class FormDataReference;
 class SharedBufferCopy;

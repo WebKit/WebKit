@@ -39,10 +39,6 @@ namespace WebCore {
 class SharedBuffer;
 }
 
-namespace IPC {
-class DataReference;
-}
-
 namespace WebKit {
 
 class RemoteLegacyCDMProxy
