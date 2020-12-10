@@ -295,7 +295,7 @@ void* WKAccessibilityFocusedObject(WKBundlePageRef pageRef)
 
 bool WKAccessibilityCanUseSecondaryAXThread(WKBundlePageRef pageRef)
 {
-#if ENABLE(ACCESSIBILITY)
+#if ENABLE(ACCESSIBILITY) && ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     if (!pageRef)
         return false;
 
@@ -313,7 +313,7 @@ bool WKAccessibilityCanUseSecondaryAXThread(WKBundlePageRef pageRef)
     if (!axObjectCache)
         return false;
 
-    return axObjectCache->canUseSecondaryAXThread();
+    return axObjectCache->usedOnAXThread();
 #else
     UNUSED_PARAM(pageRef);
     return false;

@@ -1,3 +1,19 @@
+2020-12-10  Andres Gonzalez  <andresg_22@apple.com>
+
+        Rework of AXObjectCache::isIsolatedTreeEnabled.
+        https://bugs.webkit.org/show_bug.cgi?id=219722
+
+        Reviewed by Chris Fleizach.
+
+        - Renamed AXObjecCache::canUseSecondaryAXThread as usedOnAXThread.
+        - No need for the additional thread check since isIsolatedTreeEnabled
+        will return true for any call off of the main thread.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKAccessibilityCanUseSecondaryAXThread):
+        * WebProcess/WebPage/mac/WKAccessibilityWebPageObjectMac.mm:
+        (-[WKAccessibilityWebPageObject accessibilityHitTest:]):
+
 2020-12-10  Sihui Liu  <sihui_liu@apple.com>
 
         REGRESSION (r270574): [iOS] ASSERTION FAILED: !m_messageReceiverMapCount under WebKit::SpeechRecognitionRemoteRealtimeMediaSourceManager::~SpeechRecognitionRemoteRealtimeMediaSourceManager

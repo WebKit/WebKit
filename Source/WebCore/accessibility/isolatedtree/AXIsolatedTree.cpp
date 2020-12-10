@@ -58,7 +58,7 @@ HashMap<AXIsolatedTreeID, Ref<AXIsolatedTree>>& AXIsolatedTree::treeIDCache()
 AXIsolatedTree::AXIsolatedTree(AXObjectCache* axObjectCache)
     : m_treeID(newTreeID())
     , m_axObjectCache(axObjectCache)
-    , m_usedOnAXThread(axObjectCache->canUseSecondaryAXThread())
+    , m_usedOnAXThread(axObjectCache->usedOnAXThread())
 {
     AXTRACE("AXIsolatedTree::AXIsolatedTree");
     ASSERT(isMainThread());

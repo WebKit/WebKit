@@ -79,7 +79,6 @@
 #import "VisibleUnits.h"
 #import "WebCoreFrameView.h"
 #import <pal/spi/cocoa/NSAccessibilitySPI.h>
-#import <pal/spi/mac/HIServicesSPI.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
 #if ENABLE(TREE_DEBUGGING)
@@ -1269,7 +1268,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         [additional addObject:NSAccessibilityExpandedTextValueAttribute];
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    if (AXObjectCache::isIsolatedTreeEnabled() && _AXUIElementRequestServicedBySecondaryAXThread())
+    if (AXObjectCache::isIsolatedTreeEnabled())
         [additional addObject:NSAccessibilityRelativeFrameAttribute];
 #endif
     

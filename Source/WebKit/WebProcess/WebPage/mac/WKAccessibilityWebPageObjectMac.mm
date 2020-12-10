@@ -28,7 +28,6 @@
 
 #if PLATFORM(MAC)
 
-#import "ApplicationServicesSPI.h"
 #import "PluginView.h"
 #import "WebFrame.h"
 #import "WebPage.h"
@@ -47,7 +46,6 @@
 #import <WebCore/Scrollbar.h>
 #import <WebCore/WebAccessibilityObjectWrapperMac.h>
 #import <pal/spi/cocoa/NSAccessibilitySPI.h>
-#import <pal/spi/mac/HIServicesSPI.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
 namespace ax = WebCore::Accessibility;
@@ -271,7 +269,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 
         // Isolated tree frames have the offset encoded into them so we don't need to undo here.
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-        applyContentOffset = !WebCore::AXObjectCache::isIsolatedTreeEnabled() || !_AXUIElementRequestServicedBySecondaryAXThread();
+        applyContentOffset = !WebCore::AXObjectCache::isIsolatedTreeEnabled();
 #endif
         if (auto pluginView = WebKit::WebPage::pluginViewForFrame(protectedSelf->m_page->mainFrame()))
             applyContentOffset = !pluginView->plugin()->pluginHandlesContentOffsetForAccessibilityHitTest();

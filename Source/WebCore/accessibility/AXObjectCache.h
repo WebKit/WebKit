@@ -195,8 +195,6 @@ public:
     void deferAttributeChangeIfNeeded(const QualifiedName&, Element*);
     void recomputeIsIgnored(RenderObject* renderer);
 
-    WEBCORE_EXPORT bool canUseSecondaryAXThread();
-
 #if ENABLE(ACCESSIBILITY)
     WEBCORE_EXPORT static void enableAccessibility();
     WEBCORE_EXPORT static void disableAccessibility();
@@ -368,6 +366,7 @@ public:
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     WEBCORE_EXPORT static bool isIsolatedTreeEnabled();
+    WEBCORE_EXPORT static bool usedOnAXThread();
 private:
     static bool clientSupportsIsolatedTree();
     AXCoreObject* isolatedTreeRootObject();

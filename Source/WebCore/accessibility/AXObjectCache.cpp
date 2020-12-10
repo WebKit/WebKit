@@ -734,27 +734,28 @@ AccessibilityObject* AXObjectCache::getOrCreate(RenderObject* renderer)
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 bool AXObjectCache::clientSupportsIsolatedTree()
 {
-    AXTRACE("AXObjectCache::clientSupportsIsolatedTree");
-
-    if (!RuntimeEnabledFeatures::sharedFeatures().isAccessibilityIsolatedTreeEnabled())
-        return false;
-
-    AXLOG(makeString("_AXGetClientForCurrentRequestUntrusted = ", static_cast<unsigned>(_AXGetClientForCurrentRequestUntrusted())));
-    return _AXGetClientForCurrentRequestUntrusted() == kAXClientTypeVoiceOver;
+    auto client = _AXGetClientForCurrentRequestUntrusted();
+    return client == kAXClientTypeVoiceOver
+        || UNLIKELY(client == kAXClientTypeWebKitTesting);
 }
 
 bool AXObjectCache::isIsolatedTreeEnabled()
 {
-    AXTRACE("AXObjectCache::isIsolatedTreeEnabled");
-
-    if (UNLIKELY(_AXGetClientForCurrentRequestUntrusted() == kAXClientTypeWebKitTesting))
+    static std::atomic<bool> enabled { false };
+    if (enabled)
         return true;
 
-    // If isolated tree mode is on, return true whether the client supports
-    // isolated tree mode or the call is off of the main thread.
-    AXLOG(makeString("_AXSIsolatedTreeMode = ", _AXSIsolatedTreeModeFunctionIsAvailable() ? _AXSIsolatedTreeMode_Soft() : 0));
-    return _AXSIsolatedTreeModeFunctionIsAvailable() && _AXSIsolatedTreeMode_Soft() != AXSIsolatedTreeModeOff
-        && (!isMainThread() || clientSupportsIsolatedTree());
+    if (!isMainThread()) {
+        ASSERT(_AXUIElementRequestServicedBySecondaryAXThread());
+        enabled = true;
+    } else {
+        enabled = RuntimeEnabledFeatures::sharedFeatures().isAccessibilityIsolatedTreeEnabled() // Used to turn off in apps other than Safari, e.g., Mail.
+            && _AXSIsolatedTreeModeFunctionIsAvailable()
+            && _AXSIsolatedTreeMode_Soft() != AXSIsolatedTreeModeOff // Used to switch via system defaults.
+            && clientSupportsIsolatedTree();
+    }
+
+    return enabled;
 }
 
 #endif
@@ -807,22 +808,14 @@ AXCoreObject* AXObjectCache::isolatedTreeRootObject()
     ASSERT_NOT_REACHED();
     return nullptr;
 }
-#endif
 
-bool AXObjectCache::canUseSecondaryAXThread()
+bool AXObjectCache::usedOnAXThread()
 {
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE) && PLATFORM(MAC)
-    if (_AXUIElementRequestServicedBySecondaryAXThread())
-        return true;
-
-    // _AXUIElementRequestServicedBySecondaryAXThread returns false for
-    // LayoutTests, but we still want to run LayoutTests using isolated tree on
-    // a secondary thread to simulate the actual execution.
-    return _AXSIsolatedTreeModeFunctionIsAvailable() && _AXSIsolatedTreeMode_Soft() == AXSIsolatedTreeModeSecondaryThread && clientSupportsIsolatedTree();
-#else
-    return false;
-#endif
+    ASSERT(isIsolatedTreeEnabled());
+    return _AXSIsolatedTreeModeFunctionIsAvailable()
+        && _AXSIsolatedTreeMode_Soft() == AXSIsolatedTreeModeSecondaryThread;
 }
+#endif
 
 AccessibilityObject* AXObjectCache::rootObjectForFrame(Frame* frame)
 {
