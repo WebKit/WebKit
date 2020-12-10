@@ -3,7 +3,7 @@
 
 #
 #  Copyright (C) 2000, 2001 Eazel, Inc.
-#  Copyright (C) 2002-2007, 2015 Apple Inc.  All rights reserved.
+#  Copyright (C) 2002-2020 Apple Inc.  All rights reserved.
 #  Copyright (C) 2009 Torch Mobile, Inc.
 #  Copyright (C) 2009 Cameron McCormack <cam@mcc.id.au>
 #
@@ -65,7 +65,7 @@ use POSIX qw(strftime);
 use VCSUtils;
 
 sub actuallyGenerateFunctionLists($$$$$$);
-sub attributeCommand($$);
+sub attributeCommand($$$);
 sub changeLogDate($);
 sub changeLogEmailAddressFromArgs($$);
 sub changeLogNameFromArgs($$);
@@ -82,7 +82,7 @@ sub fetchBugDescriptionFromBugXMLData($$$);
 sub fetchRadarURLFromBugXMLData($$);
 sub findChangeLogs($$);
 sub findOriginalFileFromSvn($);
-sub generateFileList(\%$$$);
+sub generateFileList(\%$$$\%);
 sub generateFunctionLists($$$$$);
 sub generateNewChangeLogs($$$$$$$$$$$$$$);
 sub getLatestChangeLogs($);
@@ -124,13 +124,11 @@ use constant SVN => "svn";
 use constant GIT => "git";
 use constant SupportedTestExtensions => {map { $_ => 1 } qw(html shtml svg xml xhtml pl php)};
 
-my $devNull = File::Spec->devnull();
-my %attributeCache;
-
 exit(main());
 
 sub main()
 {
+    my %attributeCache;
     my $bugDescription;
     my $bugRadarURL;
     my $bugNumber;
@@ -195,7 +193,7 @@ sub main()
     my %paths = processPaths(@ARGV);
 
     # Find the list of modified files
-    my ($changedFiles, $conflictFiles, $functionLists, $addedRegressionTests, $requiresTests) = generateFileList(%paths, $gitCommit, $gitIndex, $mergeBase);
+    my ($changedFiles, $conflictFiles, $functionLists, $addedRegressionTests, $requiresTests) = generateFileList(%paths, $gitCommit, $gitIndex, $mergeBase, %attributeCache);
 
     if (!@$changedFiles && !@$conflictFiles && !keys %$functionLists) {
         print STDERR "  No changes found.\n";
@@ -511,7 +509,7 @@ sub fetchRadarURLFromBugXMLData($$)
 {
     my ($bugNumber, $bugXMLData) = @_;
 
-    return "" if $bugXMLData !~ m|<thetext>\s*(&lt;rdar://problem/\d+&gt;)|;
+    return "" if $bugXMLData !~ m|<thetext>\s*((&lt;)?rdar://(problem/)?\d+(&gt;)?)|;
 
     my $bugRadarURL = decodeEntities($1);
     print STDERR "  Radar URL from bug $bugNumber:\n    \"$bugRadarURL\".\n";
@@ -2107,12 +2105,13 @@ sub statusCommand($$$$)
     return "$command 2>&1";
 }
 
-sub attributeCommand($$)
+sub attributeCommand($$$)
 {
-    my ($file, $attr) = @_;
+    my ($attributeCache, $file, $attr) = @_;
 
     my $result;
     if (isSVN()) {
+        my $devNull = File::Spec->devnull();
         my $foundAttribute = 0;
         my $subPath = ".";
         my (@directoryParts) = File::Spec->splitdir($file);
@@ -2122,20 +2121,20 @@ sub attributeCommand($$)
             }
             $subPath = File::Spec->join($subPath, $part);
             $subPath =~ s/^\.\///;
-            if ($foundAttribute || exists $attributeCache{$attr}{$subPath} && $attributeCache{$attr}{$subPath} eq "1") {
-                $attributeCache{$attr}{$subPath} = "1";
+            if ($foundAttribute || exists $attributeCache->{$attr}{$subPath} && $attributeCache->{$attr}{$subPath} eq "1") {
+                $attributeCache->{$attr}{$subPath} = "1";
                 $foundAttribute = 1;
                 next;
             }
             my $command = SVN . " propget $attr '$subPath'";
-            my $attrib = $attributeCache{$attr}{$subPath} || `$command 2> $devNull`;
+            my $attrib = $attributeCache->{$attr}{$subPath} || `$command 2> $devNull`;
             chomp $attrib;
             if ($attrib eq "1") {
                 $foundAttribute = 1;
             }
-            $attributeCache{$attr}{$subPath} = $attrib || "0";
+            $attributeCache->{$attr}{$subPath} = $attrib || "0";
         }
-        $result = $attributeCache{$attr}{$file};
+        $result = $attributeCache->{$attr}{$file};
     } elsif (isGit()) {
         my $command = GIT . " check-attr $attr -- '$file'";
         $result = `$command`;
@@ -2257,9 +2256,9 @@ sub pluralizeAndList($$@)
     return "$plural " . join(", ", @items[0 .. $#items - 1]) . " and " . $items[-1];
 }
 
-sub generateFileList(\%$$$)
+sub generateFileList(\%$$$\%)
 {
-    my ($paths, $gitCommit, $gitIndex, $mergeBase) = @_;
+    my ($paths, $gitCommit, $gitIndex, $mergeBase, $attributeCache) = @_;
 
     my @changedFiles;
     my @conflictFiles;
@@ -2325,9 +2324,9 @@ sub generateFileList(\%$$$)
                        && $file !~ /-expected(-mismatch)?\.html$/
                        && !scalar(grep(/^resources$/i, @components))
                        && !scalar(grep(/^script-tests$/i, @components));
-            } elsif (attributeCommand($file, "test")) {
+            } elsif (attributeCommand($attributeCache, $file, "test")) {
                 push @addedRegressionTests, $file;
-            } elsif (attributeCommand($file, "requiresTests")) {
+            } elsif (attributeCommand($attributeCache, $file, "requiresTests")) {
                 push @requiresTests, $file
             }
             push @changedFiles, $file if $components[$#components] ne "ChangeLog";

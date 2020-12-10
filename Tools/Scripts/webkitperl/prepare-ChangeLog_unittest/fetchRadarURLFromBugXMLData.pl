@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 #
-# Copyright (C) 2016 Apple Inc. All rights reserved.
+# Copyright (C) 2016-2020 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -52,9 +52,39 @@ my @testCaseHashRefs = (
     expected => "<rdar://problem/24093563>"
 },
 {
+    testName => "Radar URL comment no problem path",
+    inputText => "<thetext>&lt;rdar://24093563&gt;</thetext>",
+    expected => "<rdar://24093563>"
+},
+{
+    testName => "Radar URL comment no angle brackes",
+    inputText => "<thetext>rdar://problem/24093563</thetext>",
+    expected => "rdar://problem/24093563"
+},
+{
+    testName => "Radar URL comment no angle brackes no problem path",
+    inputText => "<thetext>rdar://24093563</thetext>",
+    expected => "rdar://24093563"
+},
+{
     testName => "Radar URL comment with leading whitespace",
     inputText => "<thetext>   &lt;rdar://problem/24093563&gt;</thetext>",
     expected => "<rdar://problem/24093563>"
+},
+{
+    testName => "Radar URL comment with leading whitespace no angle brackets",
+    inputText => "<thetext>   rdar://problem/24093563</thetext>",
+    expected => "rdar://problem/24093563"
+},
+{
+    testName => "Radar URL comment with leading whitespace no problem path",
+    inputText => "<thetext>   &lt;rdar://24093563&gt;</thetext>",
+    expected => "<rdar://24093563>"
+},
+{
+    testName => "Radar URL comment with leading whitespace no problem path no angle brackets",
+    inputText => "<thetext>   rdar://24093563</thetext>",
+    expected => "rdar://24093563"
 },
 {
     testName => "Radar URL comment with trailing title",
@@ -62,9 +92,39 @@ my @testCaseHashRefs = (
     expected => "<rdar://problem/24093563>"
 },
 {
+    testName => "Radar URL comment with trailing title no problem path",
+    inputText => "<thetext>&lt;rdar://24093563&gt; Radar Title Here</thetext>",
+    expected => "<rdar://24093563>"
+},
+{
+    testName => "Radar URL comment with trailing title no angle brackets",
+    inputText => "<thetext>rdar://problem/24093563 Radar Title Here</thetext>",
+    expected => "rdar://problem/24093563"
+},
+{
+    testName => "Radar URL comment with trailing title no angle brackets no problem path",
+    inputText => "<thetext>rdar://24093563 (Radar Title Here)</thetext>",
+    expected => "rdar://24093563"
+},
+{
     testName => "Multiple comments, detect first Radar URL comment",
     inputText => "<thetext>Comment 1</thetext>\n<thetext>&lt;rdar://problem/24093563&gt;</thetext>\n<thetext>&lt;rdar://problem/99999999&gt;</thetext>",
     expected => "<rdar://problem/24093563>"
+},
+{
+    testName => "Multiple comments, detect first Radar URL comment no problem path",
+    inputText => "<thetext>Comment 1</thetext>\n<thetext>&lt;rdar://24093563&gt;</thetext>\n<thetext>&lt;rdar://99999999&gt;</thetext>",
+    expected => "<rdar://24093563>"
+},
+{
+    testName => "Multiple comments, detect first Radar URL comment no angle brackets",
+    inputText => "<thetext>Comment 1</thetext>\n<thetext>rdar://problem/24093563</thetext>\n<thetext>rdar://problem/99999999</thetext>",
+    expected => "rdar://problem/24093563"
+},
+{
+    testName => "Multiple comments, detect first Radar URL comment no angle brackets no problem path",
+    inputText => "<thetext>Comment 1</thetext>\n<thetext>rdar://24093563</thetext>\n<thetext>rdar://99999999</thetext>",
+    expected => "rdar://24093563"
 },
 
 ###

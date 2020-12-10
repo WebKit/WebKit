@@ -1,3 +1,37 @@
+2020-12-10  David Kilzer  <ddkilzer@apple.com>
+
+        prepare-ChangeLog won't parse rdar://nnnnnnnn URLs in fetchRadarURLFromBugXMLData()
+        <https://webkit.org/b/219645>
+        <rdar://problem/72182806>
+
+        Reviewed by Darin Adler.
+
+        Relax the format for rdar:// URLs not to require angle brackets
+        (<>) or the "problem/" pseudo-path.
+
+        Include drive-by fixes for global variables in prepare-ChangeLog
+        that cause warnings when running tests:
+
+            Variable "$var" is not available
+
+        * Scripts/prepare-ChangeLog:
+        (main):
+        - Move %attributeCache from global scope into this subroutine,
+          then pass to generateFileList() to fix a variable warning.
+        (fetchRadarURLFromBugXMLData):
+        - Update regex that parses rdar:// URLs.  This fixes the bug.
+        (attributeCommand):
+        - Add argument for $attributeCache hash ref since it is no
+          longer a global variable.
+        - Move definition of $devNull here to fix a variable warning.
+        (generateFileList):
+        - Add argument for $attributeCache hash ref to pass through to
+          attributeCommand().
+        * Scripts/webkitperl/prepare-ChangeLog_unittest/fetchRadarURLFromBugXMLData.pl:
+        - Add tests for newly supported rdar:// URL formats.
+        * Scripts/webkitperl/prepare-ChangeLog_unittest/filenameWithParentheses.pl:
+        - Update to pass $attributeCache to attributeCommand().
+
 2020-12-10  Chris Dumez  <cdumez@apple.com>
 
         [iOS] TestWebKitAPI.GPUProcess.WebProcessTerminationAfterTooManyGPUProcessCrashes is a flaky failure
