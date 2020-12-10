@@ -28,7 +28,7 @@
 #import "AuthenticationServicesCoreSPI.h"
 #import <wtf/SoftLinking.h>
 
-#if PLATFORM(IOS)
+#if HAVE(ASC_AUTH_UI)
 
 SOFT_LINK_FRAMEWORK_FOR_HEADER(WebKit, AuthenticationServicesCore);
 
@@ -37,4 +37,4 @@ SOFT_LINK_CLASS_FOR_HEADER(WebKit, ASCAuthorizationPresentationContext);
 SOFT_LINK_CLASS_FOR_HEADER(WebKit, ASCPlatformPublicKeyCredentialLoginChoice);
 SOFT_LINK_CLASS_FOR_HEADER(WebKit, ASCSecurityKeyPublicKeyCredentialLoginChoice);
 
-#endif // PLATFORM(IOS)
+#endif // HAVE(ASC_AUTH_UI)

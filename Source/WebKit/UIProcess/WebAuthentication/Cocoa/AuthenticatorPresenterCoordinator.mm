@@ -41,7 +41,7 @@ using namespace WebCore;
 AuthenticatorPresenterCoordinator::AuthenticatorPresenterCoordinator(const AuthenticatorManager& manager, const String& rpId, const TransportSet& transports, ClientDataType type)
     : m_manager(makeWeakPtr(manager))
 {
-#if PLATFORM(IOS)
+#if HAVE(ASC_AUTH_UI)
     auto presentationContext = adoptNS([allocASCAuthorizationPresentationContextInstance() initWithRequestContext:nullptr appIdentifier:nullptr]);
     [presentationContext setRelyingPartyIdentifier: rpId];
 
@@ -76,9 +76,7 @@ AuthenticatorPresenterCoordinator::AuthenticatorPresenterCoordinator(const Authe
         });
     });
     [m_presenter presentAuthorizationWithContext:presentationContext.get() completionHandler:completionHandler.get()];
-#else
-    notImplemented();
-#endif // PLATFORM(IOS)
+#endif // HAVE(ASC_AUTH_UI)
 }
 
 void AuthenticatorPresenterCoordinator::updatePresenter(WebAuthenticationStatus)

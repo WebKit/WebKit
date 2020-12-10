@@ -1,3 +1,11 @@
+2020-12-10  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Unreviewed, build fix after r270616
+
+        Turns the modern WebAuthn feature off for this test.
+
+        * http/wpt/webauthn/public-key-credential-create-failure-local-silent.https.html:
+
 2020-12-10  Rob Buis  <rbuis@igalia.com>
 
         Support aspect-ratio on replaced elements

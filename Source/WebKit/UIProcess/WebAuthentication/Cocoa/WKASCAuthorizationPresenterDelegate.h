@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(WEB_AUTHN) && PLATFORM(IOS)
+#if ENABLE(WEB_AUTHN) && HAVE(ASC_AUTH_UI)
 
 #import "AuthenticationServicesCoreSPI.h"
 
@@ -43,4 +43,4 @@ NS_ASSUME_NONNULL_BEGIN
 
 NS_ASSUME_NONNULL_END
 
-#endif // ENABLE(WEB_AUTHN) && PLATFORM(IOS)
+#endif // ENABLE(WEB_AUTHN) && HAVE(ASC_AUTH_UI)

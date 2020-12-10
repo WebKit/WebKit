@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if PLATFORM(IOS)
+#if HAVE(ASC_AUTH_UI)
 
 #if USE(APPLE_INTERNAL_SDK)
 
@@ -134,4 +134,4 @@ NS_ASSUME_NONNULL_END
 
 #endif // USE(APPLE_INTERNAL_SDK)
 
-#endif // PLATFORM(IOS)
+#endif // HAVE(ASC_AUTH_UI)
