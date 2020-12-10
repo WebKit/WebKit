@@ -193,6 +193,18 @@ macro(_WEBKIT_TARGET_ANALYZE _target)
     endif ()
 endmacro()
 
+macro(_WEBKIT_EXECUTABLE_LINK_FRAMEWORK _target)
+    foreach (framework IN LISTS ${_target}_FRAMEWORKS)
+        list(APPEND ${_target}_PRIVATE_LIBRARIES WebKit::${framework})
+
+        # The WebKit:: alias targets do not propagate OBJECT libraries so the
+        # underyling library's objects are explicitly added to link properly
+        if (TARGET ${framework} AND ${framework}_LIBRARY_TYPE STREQUAL "OBJECT")
+            list(APPEND ${_target}_PRIVATE_LIBRARIES $<TARGET_OBJECTS:${framework}>)
+        endif ()
+    endforeach ()
+endmacro()
+
 macro(WEBKIT_FRAMEWORK _target)
     _WEBKIT_TARGET(${_target} ${_target})
     _WEBKIT_TARGET_ANALYZE(${_target})
@@ -226,6 +238,7 @@ macro(WEBKIT_FRAMEWORK_TARGET _target)
 endmacro()
 
 macro(WEBKIT_EXECUTABLE _target)
+    _WEBKIT_EXECUTABLE_LINK_FRAMEWORK(${_target})
     _WEBKIT_TARGET(${_target} ${_target})
     _WEBKIT_TARGET_ANALYZE(${_target})
 
@@ -257,6 +270,7 @@ macro(WEBKIT_WRAP_EXECUTABLE _target)
 
     add_library(${_wrapped_target_name} SHARED "${CMAKE_BINARY_DIR}/cmakeconfig.h")
 
+    _WEBKIT_EXECUTABLE_LINK_FRAMEWORK(${_target})
     _WEBKIT_TARGET(${_target} ${_wrapped_target_name})
     _WEBKIT_TARGET_ANALYZE(${_wrapped_target_name})
 
@@ -267,6 +281,8 @@ macro(WEBKIT_WRAP_EXECUTABLE _target)
     unset(${_target}_INCLUDE_DIRECTORIES)
     unset(${_target}_SYSTEM_INCLUDE_DIRECTORIES)
     unset(${_target}_PRIVATE_INCLUDE_DIRECTORIES)
+    unset(${_target}_PRIVATE_LIBRARIES)
+    unset(${_target}_FRAMEWORKS)
 
     # Reset the sources
     set(${_target}_SOURCES ${opt_SOURCES})

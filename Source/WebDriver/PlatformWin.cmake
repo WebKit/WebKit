@@ -15,8 +15,8 @@ list(APPEND WebDriver_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBDRIVER_DIR}/socket"
 )
 
-list(APPEND WebDriver_LIBRARIES
-    WebKit::JavaScriptCore
+list(APPEND WebDriver_FRAMEWORKS
+    JavaScriptCore
 )
 
 WEBKIT_WRAP_EXECUTABLE(WebDriver

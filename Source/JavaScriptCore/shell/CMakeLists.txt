@@ -1,15 +1,10 @@
-set(jsc_SOURCES
-    ../jsc.cpp
-)
-
 if ("${JavaScriptCore_LIBRARY_TYPE}" MATCHES "STATIC")
     set(jsc_PRIVATE_DEFINITIONS STATICALLY_LINKED_WITH_JavaScriptCore)
 endif ()
 
-set(jsc_LIBRARIES
-    ${CMAKE_DL_LIBS}
-    WebKit::JavaScriptCore
-)
+set(jsc_SOURCES ../jsc.cpp)
+set(jsc_LIBRARIES ${CMAKE_DL_LIBS})
+set(jsc_FRAMEWORKS JavaScriptCore)
 
 set(jsc_PRIVATE_INCLUDE_DIRECTORIES
     $<TARGET_PROPERTY:JavaScriptCore,INCLUDE_DIRECTORIES>
@@ -42,17 +37,17 @@ if (DEVELOPER_MODE)
     )
     set(testapi_DEFINITIONS ${jsc_PRIVATE_DEFINITIONS})
     set(testapi_PRIVATE_INCLUDE_DIRECTORIES ${jsc_PRIVATE_INCLUDE_DIRECTORIES})
-    set(testapi_LIBRARIES WebKit::JavaScriptCore)
+    set(testapi_FRAMEWORKS ${jsc_FRAMEWORKS})
 
     set(testmasm_SOURCES ../assembler/testmasm.cpp)
     set(testmasm_DEFINITIONS ${jsc_PRIVATE_DEFINITIONS})
     set(testmasm_PRIVATE_INCLUDE_DIRECTORIES ${jsc_PRIVATE_INCLUDE_DIRECTORIES})
-    set(testmasm_LIBRARIES WebKit::JavaScriptCore)
+    set(testmasm_FRAMEWORKS ${jsc_FRAMEWORKS})
 
     set(testRegExp_SOURCES ../testRegExp.cpp)
     set(testRegExp_DEFINITIONS ${jsc_PRIVATE_DEFINITIONS})
     set(testRegExp_PRIVATE_INCLUDE_DIRECTORIES ${jsc_PRIVATE_INCLUDE_DIRECTORIES})
-    set(testRegExp_LIBRARIES WebKit::JavaScriptCore)
+    set(testRegExp_FRAMEWORKS ${jsc_FRAMEWORKS})
 
     set(testb3_SOURCES
         ../b3/testb3_1.cpp
@@ -66,17 +61,17 @@ if (DEVELOPER_MODE)
     )
     set(testb3_DEFINITIONS ${jsc_PRIVATE_DEFINITIONS})
     set(testb3_PRIVATE_INCLUDE_DIRECTORIES ${jsc_PRIVATE_INCLUDE_DIRECTORIES})
-    set(testb3_LIBRARIES WebKit::JavaScriptCore)
+    set(testb3_FRAMEWORKS ${jsc_FRAMEWORKS})
 
     set(testair_SOURCES ../b3/air/testair.cpp)
     set(testair_DEFINITIONS ${jsc_PRIVATE_DEFINITIONS})
     set(testair_PRIVATE_INCLUDE_DIRECTORIES ${jsc_PRIVATE_INCLUDE_DIRECTORIES})
-    set(testair_LIBRARIES WebKit::JavaScriptCore)
+    set(testair_FRAMEWORKS ${jsc_FRAMEWORKS})
 
     set(testdfg_SOURCES ../dfg/testdfg.cpp)
     set(testdfg_DEFINITIONS ${jsc_PRIVATE_DEFINITIONS})
     set(testdfg_PRIVATE_INCLUDE_DIRECTORIES ${jsc_PRIVATE_INCLUDE_DIRECTORIES})
-    set(testdfg_LIBRARIES WebKit::JavaScriptCore)
+    set(testdfg_FRAMEWORKS ${jsc_FRAMEWORKS})
 
     WEBKIT_EXECUTABLE_DECLARE(testapi)
     WEBKIT_EXECUTABLE_DECLARE(testRegExp)

@@ -17,8 +17,8 @@ set(WebDriver_SOURCES
     WebDriverService.cpp
 )
 
-set(WebDriver_LIBRARIES
-    WebKit::WTF
+set(WebDriver_FRAMEWORKS
+    WTF
 )
 
 set(WebDriver_SCRIPTS

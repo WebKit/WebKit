@@ -323,7 +323,7 @@ set(LLIntSettingsExtractor_SOURCES
 set(LLIntSettingsExtractor_PRIVATE_INCLUDE_DIRECTORIES
     $<TARGET_PROPERTY:JavaScriptCore,INCLUDE_DIRECTORIES>
 )
-set(LLIntSettingsExtractor_PRIVATE_LIBRARIES WebKit::WTF)
+set(LLIntSettingsExtractor_FRAMEWORKS WTF)
 set(LLIntSettingsExtractor_DEPENDENCIES JavaScriptCore_CopyHeaders)
 WEBKIT_EXECUTABLE(LLIntSettingsExtractor)
 
@@ -336,7 +336,7 @@ set(LLIntOffsetsExtractor_SOURCES
 set(LLIntOffsetsExtractor_PRIVATE_INCLUDE_DIRECTORIES
     $<TARGET_PROPERTY:JavaScriptCore,INCLUDE_DIRECTORIES>
 )
-set(LLIntOffsetsExtractor_PRIVATE_LIBRARIES WebKit::WTF)
+set(LLIntOffsetsExtractor_FRAMEWORKS WTF)
 set(LLIntOffsetsExtractor_DEPENDENCIES JavaScriptCore_CopyHeaders)
 WEBKIT_EXECUTABLE(LLIntOffsetsExtractor)
 

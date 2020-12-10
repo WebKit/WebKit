@@ -13,12 +13,6 @@ list(APPEND WebDriver_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBDRIVER_DIR}/socket"
 )
 
-list(APPEND WebDriver_PRIVATE_LIBRARIES
-    WebKit::JavaScriptCore
+list(APPEND WebDriver_FRAMEWORKS
+    JavaScriptCore
 )
-
-if (ENABLE_STATIC_JSC)
-    list(APPEND WebDriver_PRIVATE_LIBRARIES
-        $<TARGET_OBJECTS:JavaScriptCore>
-    )
-endif ()

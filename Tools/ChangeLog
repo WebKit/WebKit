@@ -1,3 +1,18 @@
+2020-12-10  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Determine when to use $<TARGET_OBJECTS> for executables
+        https://bugs.webkit.org/show_bug.cgi?id=219648
+
+        Reviewed by Michael Catanzaro.
+
+        Use ${taget_name}_FRAMEWORKS to specify WebKit frameworks when linking executables.
+        Remove use of $<TARGET_OBJECTS>.
+
+        * TestWebKitAPI/CMakeLists.txt:
+        * TestWebKitAPI/PlatformPlayStation.cmake:
+        * TestWebKitAPI/PlatformWin.cmake:
+        * WebKitTestRunner/CMakeLists.txt:
+
 2020-12-10  Alex Christensen  <achristensen@webkit.org>
 
         Introduce new download SPI

@@ -21,9 +21,11 @@ set(WebKitTestRunner_SOURCES
 
 set(WebKitTestRunner_LIBRARIES
     TestRunnerShared
+)
+set(WebKitTestRunner_FRAMEWORKS
+    JavaScriptCore
     WebCoreTestSupport
-    WebKit::JavaScriptCore
-    WebKit::WebKit
+    WebKit
 )
 
 if (COMPILER_IS_GCC_OR_CLANG)

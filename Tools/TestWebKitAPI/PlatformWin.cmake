@@ -38,7 +38,6 @@ list(APPEND TestWebCore_DEFINITIONS
 )
 
 list(APPEND TestWebCore_LIBRARIES
-    $<TARGET_OBJECTS:WebCore>
     Crypt32
     D2d1
     Dwrite
