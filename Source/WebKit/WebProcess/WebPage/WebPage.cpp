@@ -589,6 +589,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     static bool hasConsumedMediaExtensionHandles = false;
     if (!hasConsumedMediaExtensionHandles && parameters.mediaExtensionHandles.size()) {
         SandboxExtension::consumePermanently(parameters.mediaExtensionHandles);
+        SandboxExtension::consumePermanently(parameters.mediaIOKitExtensionHandles);
         hasConsumedMediaExtensionHandles = true;
     }
     static bool hasConsumedGPUIOKitExtensionHandles = false;

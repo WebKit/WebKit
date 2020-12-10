@@ -924,10 +924,15 @@
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
         (with telemetry-backtrace)
 #endif
-        (iokit-user-client-class "AppleAVDUserClient")
         (iokit-user-client-class "IOMobileFramebufferUserClient")
         (iokit-user-client-class "IOSurfaceAcceleratorClient") ;; <rdar://problem/63696732>
         (iokit-user-client-class "IOSurfaceRootUserClient") ;; <rdar://problem/63696732>
+    )
+    (allow iokit-open
+        (require-all
+            (extension "com.apple.webkit.extension.iokit")
+            (iokit-user-client-class "AppleAVDUserClient")
+        )
     )
 )
 

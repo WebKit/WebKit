@@ -832,3 +832,7 @@
 (allow mach-lookup
     (global-name "com.apple.relatived.tempest")
 )
+
+(allow iokit-open
+    (iokit-user-client-class "AppleAVDUserClient")
+)

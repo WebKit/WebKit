@@ -7820,6 +7820,16 @@ static const Vector<ASCIILiteral>& mediaRelatedMachServices()
     });
     return services;
 }
+
+static const Vector<ASCIILiteral>& mediaRelatedIOKitClasses()
+{
+    static const auto services = makeNeverDestroyed(Vector<ASCIILiteral> {
+#if (PLATFORM(MAC) || PLATFORM(MACCATALYST)) && CPU(ARM64)
+        "AppleAVDUserClient"_s,
+#endif
+    });
+    return services;
+}
 #endif
 
 WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& process, DrawingAreaProxy& drawingArea, RefPtr<API::WebsitePolicies>&& websitePolicies)
@@ -7914,6 +7924,7 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     if (needWebProcessExtensions) {
         // FIXME(207716): The following should be removed when the GPU process is complete.
         parameters.mediaExtensionHandles = SandboxExtension::createHandlesForMachLookup(mediaRelatedMachServices(), WTF::nullopt);
+        parameters.mediaIOKitExtensionHandles = SandboxExtension::createHandlesForIOKitClassExtensions(mediaRelatedIOKitClasses(), WTF::nullopt);
     }
 
     if (!preferences().useGPUProcessForMediaEnabled()

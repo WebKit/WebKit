@@ -116,6 +116,7 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << additionalSupportedImageTypes;
     // FIXME(207716): The following should be removed when the GPU process is complete.
     encoder << mediaExtensionHandles;
+    encoder << mediaIOKitExtensionHandles;
     encoder << gpuIOKitExtensionHandles;
 #endif
 #if HAVE(APP_ACCENT_COLORS)
@@ -375,6 +376,12 @@ Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decod
     if (!mediaExtensionHandles)
         return WTF::nullopt;
     parameters.mediaExtensionHandles = WTFMove(*mediaExtensionHandles);
+
+    Optional<SandboxExtension::HandleArray> mediaIOKitExtensionHandles;
+    decoder >> mediaIOKitExtensionHandles;
+    if (!mediaIOKitExtensionHandles)
+        return WTF::nullopt;
+    parameters.mediaIOKitExtensionHandles = WTFMove(*mediaIOKitExtensionHandles);
     // FIXME(207716): End region to remove.
 
     Optional<SandboxExtension::HandleArray> gpuIOKitExtensionHandles;
