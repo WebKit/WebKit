@@ -59,7 +59,7 @@ private:
     using InlineItem::TextItemType;
 
     InlineTextItem(const InlineTextBox&, unsigned start, unsigned length, bool hasTrailingSoftHyphen, bool isWordSeparator, Optional<InlineLayoutUnit> width, TextItemType);
-    InlineTextItem(const InlineTextBox&);
+    explicit InlineTextItem(const InlineTextBox&);
 
     static InlineTextItem createWhitespaceItem(const InlineTextBox&, unsigned start, unsigned length, bool isWordSeparator, Optional<InlineLayoutUnit> width);
     static InlineTextItem createNonWhitespaceItem(const InlineTextBox&, unsigned start, unsigned length, bool hasTrailingSoftHyphen, Optional<InlineLayoutUnit> width);
@@ -78,7 +78,7 @@ inline InlineTextItem InlineTextItem::createNonWhitespaceItem(const InlineTextBo
 
 inline InlineTextItem InlineTextItem::createEmptyItem(const InlineTextBox& inlineTextBox)
 {
-    return { inlineTextBox };
+    return InlineTextItem { inlineTextBox };
 }
 
 inline InlineTextItem::InlineTextItem(const InlineTextBox& inlineTextBox, unsigned start, unsigned length, bool hasTrailingSoftHyphen, bool isWordSeparator, Optional<InlineLayoutUnit> width, TextItemType textItemType)

@@ -79,7 +79,7 @@ void InlineTextItem::createAndAppendTextItems(InlineItems& inlineContent, const 
     auto inlineItemWidth = [&](auto startPosition, auto length) -> Optional<InlineLayoutUnit> {
         if (!inlineTextBox.canUseSimplifiedContentMeasuring())
             return { };
-        return TextUtil::width(inlineTextBox, startPosition, startPosition + length);
+        return TextUtil::width(inlineTextBox, startPosition, startPosition + length, { });
     };
 
     while (currentPosition < text.length()) {

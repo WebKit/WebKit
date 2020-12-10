@@ -227,7 +227,7 @@ InlineContentBreaker::Result InlineContentBreaker::processOverflowingContent(con
                 auto& inlineTextItem = downcast<InlineTextItem>(continuousContent.runs()[leadingTextRunIndex].inlineItem);
                 if (inlineTextItem.length() <= 1)
                     return Result { Result::Action::Keep, IsEndOfLine::Yes };
-                auto firstCharacterWidth = TextUtil::width(inlineTextItem, inlineTextItem.start(), inlineTextItem.start() + 1);
+                auto firstCharacterWidth = TextUtil::width(inlineTextItem, inlineTextItem.start(), inlineTextItem.start() + 1, lineStatus.contentLogicalRight);
                 auto firstCharacterRun = PartialRun { 1, firstCharacterWidth };
                 return { Result::Action::Break, IsEndOfLine::Yes, Result::PartialTrailingContent { leadingTextRunIndex, firstCharacterRun } };
             }
@@ -365,10 +365,10 @@ Optional<InlineContentBreaker::PartialRun> InlineContentBreaker::tryBreakingText
             // When the run can be split at arbitrary position,
             // let's just return the entire run when it is intended to fit on the line.
             ASSERT(inlineTextItem.length());
-            auto trailingPartialRunWidth = TextUtil::width(inlineTextItem, inlineTextItem.start(), inlineTextItem.end() - 1, logicalLeft);
+            auto trailingPartialRunWidth = TextUtil::width(inlineTextItem, logicalLeft);
             return PartialRun { inlineTextItem.length() - 1, trailingPartialRunWidth };
         }
-        auto splitData = TextUtil::split(inlineTextItem.inlineTextBox(), inlineTextItem.start(), inlineTextItem.length(), overflowingRun.logicalWidth, availableWidth, logicalLeft);
+        auto splitData = TextUtil::split(inlineTextItem, overflowingRun.logicalWidth, availableWidth, logicalLeft);
         return PartialRun { splitData.length, splitData.logicalWidth };
     }
 
@@ -390,7 +390,7 @@ Optional<InlineContentBreaker::PartialRun> InlineContentBreaker::tryBreakingText
             auto availableWidthExcludingHyphen = availableWidth - hyphenWidth;
             if (availableWidthExcludingHyphen <= 0 || !enoughWidthForHyphenation(availableWidthExcludingHyphen, fontCascade.pixelSize()))
                 return { };
-            leftSideLength = TextUtil::split(inlineTextItem.inlineTextBox(), inlineTextItem.start(), runLength, overflowingRun.logicalWidth, availableWidthExcludingHyphen, logicalLeft).length;
+            leftSideLength = TextUtil::split(inlineTextItem, overflowingRun.logicalWidth, availableWidthExcludingHyphen, logicalLeft).length;
         }
         if (leftSideLength < limitBefore)
             return { };
@@ -400,7 +400,8 @@ Optional<InlineContentBreaker::PartialRun> InlineContentBreaker::tryBreakingText
         if (!hyphenLocation || hyphenLocation < limitBefore)
             return { };
         // hyphenLocation is relative to the start of this InlineItemText.
-        auto trailingPartialRunWidthWithHyphen = TextUtil::width(inlineTextItem, inlineTextItem.start(), inlineTextItem.start() + hyphenLocation); 
+        ASSERT(inlineTextItem.start() + hyphenLocation < inlineTextItem.end());
+        auto trailingPartialRunWidthWithHyphen = TextUtil::width(inlineTextItem, inlineTextItem.start(), inlineTextItem.start() + hyphenLocation, logicalLeft); 
         return PartialRun { hyphenLocation, trailingPartialRunWidthWithHyphen, hyphenWidth };
     }
 

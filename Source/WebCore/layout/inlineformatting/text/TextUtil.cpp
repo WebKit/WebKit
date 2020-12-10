@@ -38,11 +38,18 @@
 namespace WebCore {
 namespace Layout {
 
+InlineLayoutUnit TextUtil::width(const InlineTextItem& inlineTextItem, InlineLayoutUnit contentLogicalLeft)
+{
+    return TextUtil::width(inlineTextItem, inlineTextItem.start(), inlineTextItem.end() - 1, contentLogicalLeft);
+}
+
 InlineLayoutUnit TextUtil::width(const InlineTextItem& inlineTextItem, unsigned from, unsigned to, InlineLayoutUnit contentLogicalLeft)
 {
-    // Fast path for collapsed whitespace.
+    RELEASE_ASSERT(from >= inlineTextItem.start());
+    RELEASE_ASSERT(to <= inlineTextItem.end());
     if (inlineTextItem.isCollapsible()) {
-        auto font = inlineTextItem.style().fontCascade();
+        // Fast path for collapsed whitespace.
+        auto& font = inlineTextItem.style().fontCascade();
         return font.spaceWidth() + font.wordSpacing();
     }
     return TextUtil::width(inlineTextItem.inlineTextBox(), from, to, contentLogicalLeft);
@@ -100,10 +107,13 @@ InlineLayoutUnit TextUtil::fixedPitchWidth(const StringView& text, const RenderS
     return width;
 }
 
-TextUtil::SplitData TextUtil::split(const InlineTextBox& inlineTextBox, unsigned startPosition, unsigned length, InlineLayoutUnit textWidth, InlineLayoutUnit availableWidth, InlineLayoutUnit contentLogicalLeft)
+TextUtil::SplitData TextUtil::split(const InlineTextItem& inlineTextItem, InlineLayoutUnit textWidth, InlineLayoutUnit availableWidth, InlineLayoutUnit contentLogicalLeft)
 {
-    ASSERT(length);
     ASSERT(availableWidth >= 0);
+    auto startPosition = inlineTextItem.start();
+    auto length = inlineTextItem.length();
+    ASSERT(length);
+
     auto left = startPosition;
     // Pathological case of (extremely)long string and narrow lines.
     // Adjust the range so that we can pick a reasonable midpoint.
@@ -114,7 +124,7 @@ TextUtil::SplitData TextUtil::split(const InlineTextBox& inlineTextBox, unsigned
     InlineLayoutUnit leftSideWidth = 0;
     while (left < right) {
         auto middle = (left + right) / 2;
-        auto width = TextUtil::width(inlineTextBox, startPosition, middle + 1, contentLogicalLeft);
+        auto width = TextUtil::width(inlineTextItem, startPosition, middle + 1, contentLogicalLeft);
         if (width < availableWidth) {
             left = middle + 1;
             leftSideWidth = width;
