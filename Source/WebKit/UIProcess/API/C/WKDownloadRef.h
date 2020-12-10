@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,14 +23,32 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "_WKDownload.h"
+#ifndef WKDownloadRef_h
+#define WKDownloadRef_h
 
-#import <wtf/RetainPtr.h>
+#include <WebKit/WKBase.h>
+#include <WebKit/WKDownloadClient.h>
 
-@class WKDownload;
+#ifndef __cplusplus
+#include <stdbool.h>
+#endif
 
-@interface _WKDownload () <WKObject> {
-@package
-    RetainPtr<WKDownload> _download;
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+WK_EXPORT WKTypeID WKDownloadGetTypeID();
+
+WK_EXPORT WKURLRequestRef WKDownloadCopyRequest(WKDownloadRef download);
+
+typedef void (*WKDownloadCancelCallback)(WKDataRef resumeData, const void* functionContext);
+WK_EXPORT void WKDownloadCancel(WKDownloadRef download, const void* functionContext, WKDownloadCancelCallback callback);
+WK_EXPORT WKPageRef WKDownloadGetOriginatingPage(WKDownloadRef download);
+WK_EXPORT bool WKDownloadGetWasUserInitiated(WKDownloadRef download);
+WK_EXPORT void WKDownloadSetClient(WKDownloadRef download, WKDownloadClientBase* client);
+
+#ifdef __cplusplus
 }
-@end
+#endif
+
+#endif /* WKDownloadRef_h */

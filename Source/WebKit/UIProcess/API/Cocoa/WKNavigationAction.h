@@ -76,6 +76,10 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
  */
 @property (nonatomic, readonly, copy) NSURLRequest *request;
 
+/*! @abstract A value indicating whether the web content used a download attribute to indicate that this should be downloaded.
+*/
+@property (nonatomic, readonly) BOOL shouldPerformDownload WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
 #if !TARGET_OS_IPHONE
 
 /*! @abstract The modifier keys that were in effect when the navigation was requested.

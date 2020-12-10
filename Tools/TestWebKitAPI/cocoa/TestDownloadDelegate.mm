@@ -26,68 +26,113 @@
 #import "config.h"
 #import "TestDownloadDelegate.h"
 
-@implementation TestDownloadDelegate
+#import <WebKit/WKNavigationDelegatePrivate.h>
 
-- (void)_downloadDidStart:(_WKDownload *)download
-{
-    if (_downloadDidStart)
-        _downloadDidStart(download);
+@implementation TestDownloadDelegate {
+    Vector<DownloadCallback> _callbackRecord;
 }
 
-- (void)_download:(_WKDownload *)download didReceiveServerRedirectToURL:(NSURL *)url
+- (void)download:(WKDownload *)download willPerformHTTPRedirection:(NSHTTPURLResponse *)response newRequest:(NSURLRequest *)request decisionHandler:(void (^)(WKDownloadRedirectPolicy))decisionHandler
 {
-    if (_didReceiveServerRedirectToURL)
-        _didReceiveServerRedirectToURL(download, url);
+    _callbackRecord.append(DownloadCallback::WillRedirect);
+
+    ASSERT(_willPerformHTTPRedirection);
+    _willPerformHTTPRedirection(download, response, request, decisionHandler);
 }
 
-- (void)_download:(_WKDownload *)download didReceiveResponse:(NSURLResponse *)response
+- (void)download:(WKDownload *)download decideDestinationUsingResponse:(NSURLResponse *)response suggestedFilename:(NSString *)suggestedFilename completionHandler:(void (^)(NSURL *destination))completionHandler
 {
-    if (_didReceiveResponse)
-        _didReceiveResponse(download, response);
+    _callbackRecord.append(DownloadCallback::DecideDestination);
+
+    ASSERT(_decideDestinationUsingResponse);
+    _decideDestinationUsingResponse(download, response, suggestedFilename, completionHandler);
 }
 
-- (void)_download:(_WKDownload *)download didWriteData:(uint64_t)bytesWritten totalBytesWritten:(uint64_t)totalBytesWritten totalBytesExpectedToWrite:(uint64_t)totalBytesExpectedToWrite
+- (void)download:(WKDownload *)download didWriteData:(int64_t)bytesWritten totalBytesWritten:(int64_t)totalBytesWritten totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite
 {
+    // didWriteData is called a nondeterministic number of times, so only record once in a series.
+    if (_callbackRecord.isEmpty() || _callbackRecord.last() != DownloadCallback::DidWriteData)
+        _callbackRecord.append(DownloadCallback::DidWriteData);
+
     if (_didWriteData)
         _didWriteData(download, bytesWritten, totalBytesWritten, totalBytesExpectedToWrite);
 }
 
-- (void)_download:(_WKDownload *)download decideDestinationWithSuggestedFilename:(NSString *)filename completionHandler:(void (^)(BOOL allowOverwrite, NSString *destination))completionHandler
+- (void)download:(WKDownload *)download didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition, NSURLCredential*))completionHandler
 {
-    ASSERT(_decideDestinationWithSuggestedFilename);
-    _decideDestinationWithSuggestedFilename(download, filename, completionHandler);
-}
+    _callbackRecord.append(DownloadCallback::AuthenticationChallenge);
 
-- (void)_downloadDidFinish:(_WKDownload *)download
-{
-    if (_downloadDidFinish)
-        _downloadDidFinish(download);
-}
-
-- (void)_download:(_WKDownload *)download didFailWithError:(NSError *)error
-{
-    if (_didFailWithError)
-        _didFailWithError(download, error);
-}
-
-- (void)_downloadDidCancel:(_WKDownload *)download
-{
-    if (_downloadDidCancel)
-        _downloadDidCancel(download);
-}
-
-- (void)_download:(_WKDownload *)download didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition, NSURLCredential*))completionHandler
-{
     if (_didReceiveAuthenticationChallenge)
         _didReceiveAuthenticationChallenge(download, challenge, completionHandler);
     else
         completionHandler(NSURLSessionAuthChallengePerformDefaultHandling, nil);
 }
 
-- (void)_download:(_WKDownload *)download didCreateDestination:(NSString *)destination
+- (void)downloadDidFinish:(WKDownload *)download
 {
-    if (_didCreateDestination)
-        _didCreateDestination(download, destination);
+    _callbackRecord.append(DownloadCallback::DidFinish);
+
+    if (_downloadDidFinish)
+        _downloadDidFinish(download);
+}
+
+- (void)download:(WKDownload *)download didFailWithError:(NSError *)error resumeData:(NSData *)resumeData
+{
+    _callbackRecord.append(DownloadCallback::DidFailWithError);
+
+    if (_didFailWithError)
+        _didFailWithError(download, error, resumeData);
+}
+
+- (void)webView:(WKWebView *)webView navigationAction:(WKNavigationAction *)navigationAction didBecomeDownload:(WKDownload *)download
+{
+    _callbackRecord.append(DownloadCallback::NavigationActionBecameDownload);
+
+    if (_navigationActionDidBecomeDownload)
+        _navigationActionDidBecomeDownload(webView, navigationAction, download);
+}
+
+- (void)webView:(WKWebView *)webView navigationResponse:(WKNavigationResponse *)navigationResponse didBecomeDownload:(WKDownload *)download
+{
+    _callbackRecord.append(DownloadCallback::NavigationResponseBecameDownload);
+
+    if (_navigationResponseDidBecomeDownload)
+        _navigationResponseDidBecomeDownload(webView, navigationResponse, download);
+}
+
+- (void)webView:(WKWebView *)webView decidePolicyForNavigationResponse:(WKNavigationResponse *)navigationResponse decisionHandler:(void (^)(WKNavigationResponsePolicy))decisionHandler
+{
+    _callbackRecord.append(DownloadCallback::NavigationResponse);
+
+    if (_decidePolicyForNavigationResponse)
+        _decidePolicyForNavigationResponse(navigationResponse, decisionHandler);
+    else
+        decisionHandler(WKNavigationResponsePolicyDownload);
+}
+
+- (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy))decisionHandler
+{
+    _callbackRecord.append(DownloadCallback::NavigationAction);
+
+    if (_decidePolicyForNavigationAction)
+        _decidePolicyForNavigationAction(navigationAction, decisionHandler);
+    else
+        decisionHandler(WKNavigationActionPolicyAllow);
+}
+
+- (void)waitForDownloadDidFinish
+{
+    __block bool finished = false;
+    ASSERT(!_downloadDidFinish);
+    _downloadDidFinish = ^(WKDownload *) {
+        finished = true;
+    };
+    TestWebKitAPI::Util::run(&finished);
+}
+
+- (Vector<DownloadCallback>)takeCallbackRecord
+{
+    return std::exchange(_callbackRecord, { });
 }
 
 @end

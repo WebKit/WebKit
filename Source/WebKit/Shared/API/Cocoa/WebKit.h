@@ -30,6 +30,8 @@
 #import <WebKit/WKContentRuleListStore.h>
 #import <WebKit/WKContentWorld.h>
 #import <WebKit/WKContextMenuElementInfo.h>
+#import <WebKit/WKDownload.h>
+#import <WebKit/WKDownloadDelegate.h>
 #import <WebKit/WKError.h>
 #import <WebKit/WKFindConfiguration.h>
 #import <WebKit/WKFindResult.h>

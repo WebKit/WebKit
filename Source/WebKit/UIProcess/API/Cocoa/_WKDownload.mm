@@ -28,66 +28,87 @@
 
 #import "APIDownloadClient.h"
 #import "DownloadProxy.h"
+#import "WKDownloadInternal.h"
 #import "WKFrameInfoInternal.h"
 #import "WKNSData.h"
 #import "WKWebViewInternal.h"
 #import <wtf/WeakObjCPtr.h>
 
-@implementation _WKDownload {
-    API::ObjectStorage<WebKit::DownloadProxy> _download;
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+static NSMapTable<WKDownload *, _WKDownload *> *downloadWrapperMap()
+{
+    static NeverDestroyed<RetainPtr<NSMapTable>> table;
+    if (!table.get())
+        table.get() = [NSMapTable weakToWeakObjectsMapTable];
+    return table.get().get();
+}
+ALLOW_DEPRECATED_DECLARATIONS_END
+
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
+@implementation _WKDownload
+IGNORE_WARNINGS_END
+
+- (instancetype)initWithDownload2:(WKDownload *)download
+{
+    if (!(self = [super init]))
+        return nil;
+    _download = download;
+    return self;
 }
 
-- (void)dealloc
++ (instancetype)downloadWithDownload:(WKDownload *)download
 {
-    _download->~DownloadProxy();
-
-    [super dealloc];
+    if (_WKDownload *wrapper = [downloadWrapperMap() objectForKey:download])
+        return wrapper;
+    _WKDownload *wrapper = [[[_WKDownload alloc] initWithDownload2:download] autorelease];
+    [downloadWrapperMap() setObject:wrapper forKey:download];
+    return wrapper;
 }
 
 - (void)cancel
 {
-    _download->cancel([download = makeRef(*_download)] (auto*) {
+    _download->_download->cancel([download = makeRef(*_download->_download)] (auto*) {
         download->client().legacyDidCancel(download.get());
     });
 }
 
 - (void)publishProgressAtURL:(NSURL *)URL
 {
-    _download->publishProgress(URL);
+    _download->_download->publishProgress(URL);
 }
 
 - (NSURLRequest *)request
 {
-    return _download->request().nsURLRequest(WebCore::HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody);
+    return _download->_download->request().nsURLRequest(WebCore::HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody);
 }
 
 - (WKWebView *)originatingWebView
 {
-    if (auto* originatingPage = _download->originatingPage())
+    if (auto* originatingPage = _download->_download->originatingPage())
         return [[fromWebPageProxy(*originatingPage) retain] autorelease];
     return nil;
 }
 
 -(NSArray<NSURL *> *)redirectChain
 {
-    return createNSArray(_download->redirectChain(), [] (auto& url) -> NSURL * {
+    return createNSArray(_download->_download->redirectChain(), [] (auto& url) -> NSURL * {
         return url;
     }).autorelease();
 }
 
 - (BOOL)wasUserInitiated
 {
-    return _download->wasUserInitiated();
+    return _download->_download->wasUserInitiated();
 }
 
 - (NSData *)resumeData
 {
-    return WebKit::wrapper(_download->legacyResumeData());
+    return WebKit::wrapper(_download->_download->legacyResumeData());
 }
 
 - (WKFrameInfo *)originatingFrame
 {
-    return WebKit::wrapper(&_download->frameInfo());
+    return WebKit::wrapper(&_download->_download->frameInfo());
 }
 
 - (id)copyWithZone:(NSZone *)zone
@@ -99,7 +120,7 @@
 
 - (API::Object&)_apiObject
 {
-    return *_download;
+    return *_download->_download;
 }
 
 @end

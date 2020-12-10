@@ -33,6 +33,7 @@
 #import "DownloadProxy.h"
 #import "Logging.h"
 #import "SystemPreviewController.h"
+#import "WKDownloadInternal.h"
 #import "WKNSURLAuthenticationChallenge.h"
 #import "WKNSURLExtras.h"
 #import "WebCredential.h"
@@ -46,6 +47,8 @@
 #import <wtf/FileSystem.h>
 
 namespace WebKit {
+
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 
 LegacyDownloadClient::LegacyDownloadClient(id <_WKDownloadDelegate> delegate)
     : m_delegate(delegate)
@@ -76,7 +79,7 @@ static SystemPreviewController* systemPreviewController(DownloadProxy& downloadP
 }
 #endif
 
-void LegacyDownloadClient::didStart(DownloadProxy& downloadProxy)
+void LegacyDownloadClient::legacyDidStart(DownloadProxy& downloadProxy)
 {
 #if USE(SYSTEM_PREVIEW)
     if (downloadProxy.isSystemPreviewDownload()) {
@@ -90,7 +93,7 @@ void LegacyDownloadClient::didStart(DownloadProxy& downloadProxy)
 #endif
 
     if (m_delegateMethods.downloadDidStart)
-        [m_delegate _downloadDidStart:wrapper(downloadProxy)];
+        [m_delegate _downloadDidStart:[_WKDownload downloadWithDownload:wrapper(downloadProxy)]];
 }
 
 void LegacyDownloadClient::didReceiveResponse(DownloadProxy& downloadProxy, const WebCore::ResourceResponse& response)
@@ -104,7 +107,7 @@ void LegacyDownloadClient::didReceiveResponse(DownloadProxy& downloadProxy, cons
 #endif
 
     if (m_delegateMethods.downloadDidReceiveResponse)
-        [m_delegate _download:wrapper(downloadProxy) didReceiveResponse:response.nsURLResponse()];
+        [m_delegate _download:[_WKDownload downloadWithDownload:wrapper(downloadProxy)] didReceiveResponse:response.nsURLResponse()];
 }
 
 void LegacyDownloadClient::didReceiveData(DownloadProxy& downloadProxy, uint64_t bytesWritten, uint64_t totalBytesWritten, uint64_t totalBytesExpectedToWrite)
@@ -118,9 +121,9 @@ void LegacyDownloadClient::didReceiveData(DownloadProxy& downloadProxy, uint64_t
 #endif
 
     if (m_delegateMethods.downloadDidWriteDataTotalBytesWrittenTotalBytesExpectedToWrite)
-        [m_delegate _download:wrapper(downloadProxy) didWriteData:bytesWritten totalBytesWritten:totalBytesWritten totalBytesExpectedToWrite:totalBytesExpectedToWrite];
+        [m_delegate _download:[_WKDownload downloadWithDownload:wrapper(downloadProxy)] didWriteData:bytesWritten totalBytesWritten:totalBytesWritten totalBytesExpectedToWrite:totalBytesExpectedToWrite];
     else if (m_delegateMethods.downloadDidReceiveData)
-        [m_delegate _download:wrapper(downloadProxy) didReceiveData:bytesWritten];
+        [m_delegate _download:[_WKDownload downloadWithDownload:wrapper(downloadProxy)] didReceiveData:bytesWritten];
 }
 
 void LegacyDownloadClient::didReceiveAuthenticationChallenge(DownloadProxy& downloadProxy, AuthenticationChallengeProxy& authenticationChallenge)
@@ -131,7 +134,7 @@ void LegacyDownloadClient::didReceiveAuthenticationChallenge(DownloadProxy& down
         return;
     }
 
-    [m_delegate _download:wrapper(downloadProxy) didReceiveAuthenticationChallenge:wrapper(authenticationChallenge) completionHandler:makeBlockPtr([authenticationChallenge = makeRef(authenticationChallenge), checker = CompletionHandlerCallChecker::create(m_delegate.get().get(), @selector(_download:didReceiveAuthenticationChallenge:completionHandler:))] (NSURLSessionAuthChallengeDisposition disposition, NSURLCredential *credential) {
+    [m_delegate _download:[_WKDownload downloadWithDownload:wrapper(downloadProxy)] didReceiveAuthenticationChallenge:wrapper(authenticationChallenge) completionHandler:makeBlockPtr([authenticationChallenge = makeRef(authenticationChallenge), checker = CompletionHandlerCallChecker::create(m_delegate.get().get(), @selector(_download:didReceiveAuthenticationChallenge:completionHandler:))] (NSURLSessionAuthChallengeDisposition disposition, NSURLCredential *credential) {
         if (checker->completionHandlerHasBeenCalled())
             return;
         checker->didCallCompletionHandler();
@@ -167,7 +170,7 @@ void LegacyDownloadClient::didCreateDestination(DownloadProxy& downloadProxy, co
 #endif
 
     if (m_delegateMethods.downloadDidCreateDestination)
-        [m_delegate _download:wrapper(downloadProxy) didCreateDestination:destination];
+        [m_delegate _download:[_WKDownload downloadWithDownload:wrapper(downloadProxy)] didCreateDestination:destination];
 }
 
 void LegacyDownloadClient::processDidCrash(DownloadProxy& downloadProxy)
@@ -182,7 +185,7 @@ void LegacyDownloadClient::processDidCrash(DownloadProxy& downloadProxy)
 #endif
 
     if (m_delegateMethods.downloadProcessDidCrash)
-        [m_delegate _downloadProcessDidCrash:wrapper(downloadProxy)];
+        [m_delegate _downloadProcessDidCrash:[_WKDownload downloadWithDownload:wrapper(downloadProxy)]];
 }
 
 void LegacyDownloadClient::decideDestinationWithSuggestedFilename(DownloadProxy& downloadProxy, const WebCore::ResourceResponse& response, const String& filename, CompletionHandler<void(AllowOverwrite, String)>&& completionHandler)
@@ -204,11 +207,11 @@ void LegacyDownloadClient::decideDestinationWithSuggestedFilename(DownloadProxy&
     if (m_delegateMethods.downloadDecideDestinationWithSuggestedFilenameAllowOverwrite) {
         BOOL allowOverwrite = NO;
         ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        NSString *destination = [m_delegate _download:wrapper(downloadProxy) decideDestinationWithSuggestedFilename:filename allowOverwrite:&allowOverwrite];
+        NSString *destination = [m_delegate _download:[_WKDownload downloadWithDownload:wrapper(downloadProxy)] decideDestinationWithSuggestedFilename:filename allowOverwrite:&allowOverwrite];
         ALLOW_DEPRECATED_DECLARATIONS_END
         completionHandler(allowOverwrite ? AllowOverwrite::Yes : AllowOverwrite::No, destination);
     } else {
-        [m_delegate _download:wrapper(downloadProxy) decideDestinationWithSuggestedFilename:filename completionHandler:makeBlockPtr([checker = CompletionHandlerCallChecker::create(m_delegate.get().get(), @selector(_download:decideDestinationWithSuggestedFilename:completionHandler:)), completionHandler = WTFMove(completionHandler)] (BOOL allowOverwrite, NSString *destination) mutable {
+        [m_delegate _download:[_WKDownload downloadWithDownload:wrapper(downloadProxy)] decideDestinationWithSuggestedFilename:filename completionHandler:makeBlockPtr([checker = CompletionHandlerCallChecker::create(m_delegate.get().get(), @selector(_download:decideDestinationWithSuggestedFilename:completionHandler:)), completionHandler = WTFMove(completionHandler)] (BOOL allowOverwrite, NSString *destination) mutable {
             if (checker->completionHandlerHasBeenCalled())
                 return;
             checker->didCallCompletionHandler();
@@ -233,10 +236,10 @@ void LegacyDownloadClient::didFinish(DownloadProxy& downloadProxy)
 #endif
 
     if (m_delegateMethods.downloadDidFinish)
-        [m_delegate _downloadDidFinish:wrapper(downloadProxy)];
+        [m_delegate _downloadDidFinish:[_WKDownload downloadWithDownload:wrapper(downloadProxy)]];
 }
 
-void LegacyDownloadClient::didFail(DownloadProxy& downloadProxy, const WebCore::ResourceError& error)
+void LegacyDownloadClient::didFail(DownloadProxy& downloadProxy, const WebCore::ResourceError& error, API::Data*)
 {
 #if USE(SYSTEM_PREVIEW)
     if (downloadProxy.isSystemPreviewDownload()) {
@@ -248,7 +251,7 @@ void LegacyDownloadClient::didFail(DownloadProxy& downloadProxy, const WebCore::
 #endif
 
     if (m_delegateMethods.downloadDidFail)
-        [m_delegate _download:wrapper(downloadProxy) didFailWithError:error.nsError()];
+        [m_delegate _download:[_WKDownload downloadWithDownload:wrapper(downloadProxy)] didFailWithError:error.nsError()];
 }
 
 void LegacyDownloadClient::legacyDidCancel(DownloadProxy& downloadProxy)
@@ -263,13 +266,13 @@ void LegacyDownloadClient::legacyDidCancel(DownloadProxy& downloadProxy)
 #endif
 
     if (m_delegateMethods.downloadDidCancel)
-        [m_delegate _downloadDidCancel:wrapper(downloadProxy)];
+        [m_delegate _downloadDidCancel:[_WKDownload downloadWithDownload:wrapper(downloadProxy)]];
 }
 
 void LegacyDownloadClient::willSendRequest(DownloadProxy& downloadProxy, WebCore::ResourceRequest&& request, const WebCore::ResourceResponse&, CompletionHandler<void(WebCore::ResourceRequest&&)>&& completionHandler)
 {
     if (m_delegateMethods.downloadDidReceiveServerRedirectToURL)
-        [m_delegate _download:wrapper(downloadProxy) didReceiveServerRedirectToURL:[NSURL _web_URLWithWTFString:request.url().string()]];
+        [m_delegate _download:[_WKDownload downloadWithDownload:wrapper(downloadProxy)] didReceiveServerRedirectToURL:[NSURL _web_URLWithWTFString:request.url().string()]];
 
     completionHandler(WTFMove(request));
 }
@@ -300,5 +303,7 @@ void LegacyDownloadClient::releaseActivityTokenIfNecessary(DownloadProxy& downlo
 #endif
 }
 #endif
+
+ALLOW_DEPRECATED_DECLARATIONS_END
 
 } // namespace WebKit

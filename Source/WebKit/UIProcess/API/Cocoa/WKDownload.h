@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,21 +28,33 @@
 
 @class WKFrameInfo;
 @class WKWebView;
-@class WKDownload;
+@protocol NSProgressReporting;
+@protocol WKDownloadDelegate;
 
-WK_CLASS_DEPRECATED_WITH_REPLACEMENT("WKDownload", macos(10.10, WK_MAC_TBA), ios(8.0, WK_IOS_TBA))
-@interface _WKDownload : NSObject <NSCopying>
+NS_ASSUME_NONNULL_BEGIN
 
-+ (instancetype)downloadWithDownload:(WKDownload *)download WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
+@interface WKDownload : NSObject<NSProgressReporting>
 
-- (void)cancel;
-- (void)publishProgressAtURL:(NSURL *)URL WK_API_AVAILABLE(macos(10.14.4), ios(12.2));
+/* @abstract The request used to initiate this download.
+  @discussion If the original request redirected to a different URL, originalRequest
+  will be unchanged after the download follows the redirect.
+ */
+@property (nonatomic, readonly, nullable) NSURLRequest *originalRequest;
 
-@property (nonatomic, readonly) NSURLRequest *request;
-@property (nonatomic, readonly, weak) WKWebView *originatingWebView;
-@property (nonatomic, readonly, copy) NSArray<NSURL *> *redirectChain WK_API_AVAILABLE(macos(10.13.4), ios(11.3));
-@property (nonatomic, readonly) BOOL wasUserInitiated WK_API_AVAILABLE(macos(10.13.4), ios(11.3));
-@property (nonatomic, readonly) NSData *resumeData WK_API_AVAILABLE(macos(10.14.4), ios(12.2));
-@property (nonatomic, readonly) WKFrameInfo *originatingFrame WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+/* @abstract The web view that originated this download. */
+@property (nonatomic, readonly, weak) WKWebView *webView;
+
+/* @abstract The delegate that receives progress updates for this download. */
+@property (nonatomic, weak) id <WKDownloadDelegate> delegate;
+
+/* @abstract Cancel the download.
+ @param completionHandler A block to invoke when cancellation is finished.
+ @discussion To attempt to resume the download, call WKWebView resumeDownloadFromResumeData: with the data given to the completionHandler.
+ If no resume attempt is possible with this server, completionHandler will be called with nil.
+ */
+- (void)cancel:(void(^ _Nullable)(NSData * _Nullable resumeData))completionHandler;
 
 @end
+
+NS_ASSUME_NONNULL_END

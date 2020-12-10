@@ -34,7 +34,7 @@ extern "C" {
 
 WK_EXPORT WKTypeID WKNavigationActionGetTypeID();
 
-WK_EXPORT bool WKNavigationActionShouldPerformDownload(WKNavigationActionRef);
+WK_EXPORT bool WKNavigationActionShouldPerformDownload(WKNavigationActionRef action);
 
 #ifdef __cplusplus
 }

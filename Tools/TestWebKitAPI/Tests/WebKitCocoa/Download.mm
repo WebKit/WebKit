@@ -33,11 +33,15 @@
 #import "TCPServer.h"
 #import "Test.h"
 #import "TestDownloadDelegate.h"
+#import "TestLegacyDownloadDelegate.h"
 #import "TestNavigationDelegate.h"
 #import "TestProtocol.h"
 #import "TestWKWebView.h"
+#import <Foundation/NSURLResponse.h>
+#import <WebKit/WKDownload.h>
 #import <WebKit/WKErrorPrivate.h>
 #import <WebKit/WKNavigationDelegatePrivate.h>
+#import <WebKit/WKNavigationResponsePrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKUIDelegatePrivate.h>
 #import <WebKit/WKWebView.h>
@@ -174,7 +178,7 @@ TEST(_WKDownload, DownloadRequest)
 @implementation ConvertResponseToDownloadNavigationDelegate
 - (void)webView:(WKWebView *)webView decidePolicyForNavigationResponse:(WKNavigationResponse *)navigationResponse decisionHandler:(void (^)(WKNavigationResponsePolicy))decisionHandler
 {
-    decisionHandler(_WKNavigationResponsePolicyBecomeDownload);
+    decisionHandler(WKNavigationResponsePolicyDownload);
 }
 @end
 
@@ -977,7 +981,7 @@ TEST(_WKDownload, DownloadMonitorReturnToForeground)
     EXPECT_FALSE(_didFinishNavigation);
     EXPECT_WK_STREQ(_WKLegacyErrorDomain, error.domain);
     _didFailProvisionalNavigation = YES;
-    if (_responsePolicy != _WKNavigationResponsePolicyBecomeDownload || _didStartDownload)
+    if (_responsePolicy != WKNavigationResponsePolicyDownload || _didStartDownload)
         isDone = true;
 }
 
@@ -985,7 +989,7 @@ TEST(_WKDownload, DownloadMonitorReturnToForeground)
 {
     EXPECT_FALSE(_didFailProvisionalNavigation);
     _didFinishNavigation = YES;
-    if (_responsePolicy != _WKNavigationResponsePolicyBecomeDownload || _didStartDownload)
+    if (_responsePolicy != WKNavigationResponsePolicyDownload || _didStartDownload)
         isDone = true;
 }
 
@@ -1024,7 +1028,7 @@ TEST(WebKit, DownloadNavigationResponseFromMemoryCache)
     EXPECT_WK_STREQ(firstURL.absoluteString, [webView URL].absoluteString);
 
     NSURL *secondURL = [NSURL URLWithString:@"http://bundle-file/simple2.html"];
-    [delegate setResponsePolicy:_WKNavigationResponsePolicyBecomeDownload];
+    [delegate setResponsePolicy:WKNavigationResponsePolicyDownload];
     [webView loadRequest:[NSURLRequest requestWithURL:secondURL]];
     isDone = false;
     TestWebKitAPI::Util::run(&isDone);
@@ -1051,7 +1055,7 @@ TEST(WebKit, DownloadNavigationResponseFromMemoryCache)
     EXPECT_TRUE([delegate didFinishNavigation]);
     EXPECT_WK_STREQ(firstURL.absoluteString, [webView URL].absoluteString);
 
-    [delegate setResponsePolicy:_WKNavigationResponsePolicyBecomeDownload];
+    [delegate setResponsePolicy:WKNavigationResponsePolicyDownload];
     [webView loadRequest:[NSURLRequest requestWithURL:secondURL]];
     isDone = false;
     TestWebKitAPI::Util::run(&isDone);
@@ -1189,24 +1193,30 @@ String longString(LChar c)
     return String(vector.data(), length);
 }
 
-TEST(_WKDownload, Resume)
+enum class IncludeETag : bool { No, Yes };
+enum class TerminateAfterFirstReply : bool { No, Yes };
+
+static TestWebKitAPI::HTTPServer downloadTestServer(IncludeETag includeETag = IncludeETag::Yes, Function<void(TestWebKitAPI::Connection)>&& terminator = nullptr)
 {
-    using namespace TestWebKitAPI;
-    HTTPServer server([connectionCount = 0](Connection connection) mutable {
+    return { [includeETag, terminator = WTFMove(terminator), connectionCount = 0](TestWebKitAPI::Connection connection) mutable {
         switch (++connectionCount) {
         case 1:
-            connection.receiveHTTPRequest([connection](Vector<char>&&) {
-                connection.send(makeString(
-                    "HTTP/1.1 200 OK\r\n"
-                    "ETag: test\r\n"
+            connection.receiveHTTPRequest([includeETag, connection, terminator = WTFMove(terminator)] (Vector<char>&&) mutable {
+                auto response = makeString(
+                    "HTTP/1.1 200 OK\r\n",
+                    includeETag == IncludeETag::Yes ? "ETag: test\r\n" : "",
                     "Content-Length: 10000\r\n"
                     "Content-Disposition: attachment; filename=\"example.txt\"\r\n"
                     "\r\n", longString<5000>('a')
-                ));
+                );
+                connection.send(WTFMove(response), [connection, terminator = WTFMove(terminator)] () mutable {
+                    if (terminator)
+                        terminator(connection);
+                });
             });
             break;
         case 2:
-            connection.receiveHTTPRequest([connection](Vector<char>&& request) {
+            connection.receiveHTTPRequest([=](Vector<char>&& request) {
                 EXPECT_TRUE(strnstr(request.data(), "Range: bytes=5000-\r\n", request.size()));
                 connection.send(makeString(
                     "HTTP/1.1 206 Partial Content\r\n"
@@ -1220,16 +1230,64 @@ TEST(_WKDownload, Resume)
         default:
             ASSERT_NOT_REACHED();
         }
-    });
+    }};
+}
 
-    NSURL *tempDir = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:@"DownloadResumeTest"] isDirectory:YES];
+static void checkResumedDownloadContents(NSURL *file)
+{
+    NSData *fileContents = [NSData dataWithContentsOfURL:file];
+    EXPECT_EQ(fileContents.length, 10000u);
+    EXPECT_TRUE(fileContents.bytes);
+    if (fileContents.bytes && fileContents.length == 10000u) {
+        for (size_t i = 0; i < 5000; i++)
+            EXPECT_EQ(static_cast<const char*>(fileContents.bytes)[i], 'a');
+        for (size_t i = 5000; i < 10000; i++)
+            EXPECT_EQ(static_cast<const char*>(fileContents.bytes)[i], 'b');
+    }
+}
+
+static TestWebKitAPI::HTTPServer simpleDownloadTestServer()
+{
+    return { [](TestWebKitAPI::Connection connection) {
+        connection.receiveHTTPRequest([connection](Vector<char>&&) {
+            connection.send(makeString(
+                "HTTP/1.1 200 OK\r\n"
+                "ETag: test\r\n"
+                "Content-Length: 5000\r\n"
+                "Content-Disposition: attachment; filename=\"example.txt\"\r\n"
+                "\r\n", longString<5000>('a')
+            ));
+        });
+    }};
+}
+
+static void checkFileContents(NSURL *file, const String& expectedContents)
+{
+    NSData *fileContents = [NSData dataWithContentsOfURL:file];
+    EXPECT_EQ(fileContents.length, expectedContents.length());
+    for (size_t i = 0; i < fileContents.length; i++)
+        EXPECT_EQ(static_cast<const char*>(fileContents.bytes)[i], expectedContents[i]);
+}
+
+static NSURL *tempFileThatDoesNotExist()
+{
+    NSURL *tempDir = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:@"DownloadTest"] isDirectory:YES];
     [[NSFileManager defaultManager] createDirectoryAtURL:tempDir withIntermediateDirectories:YES attributes:nil error:nil];
-    NSURL *expectedDownloadFile = [tempDir URLByAppendingPathComponent:@"example.txt"];
-    [[NSFileManager defaultManager] removeItemAtURL:expectedDownloadFile error:nil];
+    NSURL *file = [tempDir URLByAppendingPathComponent:@"example.txt"];
+    [[NSFileManager defaultManager] removeItemAtURL:file error:nil];
+    return file;
+}
+
+TEST(_WKDownload, Resume)
+{
+    using namespace TestWebKitAPI;
+    auto server = downloadTestServer();
+
+    NSURL *expectedDownloadFile = tempFileThatDoesNotExist();
 
     auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
     navigationDelegate.get().decidePolicyForNavigationResponse = ^(WKNavigationResponse *, void (^completionHandler)(WKNavigationResponsePolicy)) {
-        completionHandler(_WKNavigationResponsePolicyBecomeDownload);
+        completionHandler(WKNavigationResponsePolicyDownload);
     };
 
     enum class Callback : uint8_t { Start, WriteData, DecideDestination, CreateDestination, Cancel, Finish };
@@ -1240,10 +1298,11 @@ TEST(_WKDownload, Resume)
     __block RetainPtr<_WKDownload> download;
     __block RetainPtr<NSData> resumeData;
 
-    auto downloadDelegate = adoptNS([TestDownloadDelegate new]);
+    auto downloadDelegate = adoptNS([TestLegacyDownloadDelegate new]);
     downloadDelegate.get().decideDestinationWithSuggestedFilename = ^(_WKDownload *, NSString *suggestedFilename, void (^completionHandler)(BOOL, NSString *)) {
         callbacks.append(Callback::DecideDestination);
-        completionHandler(YES, [tempDir URLByAppendingPathComponent:suggestedFilename].path);
+        EXPECT_WK_STREQ("example.txt", suggestedFilename);
+        completionHandler(YES, expectedDownloadFile.path);
     };
     downloadDelegate.get().didWriteData = ^(_WKDownload *download, uint64_t bytesWritten, uint64_t totalBytesWritten, uint64_t totalBytesExpectedToWrite) {
         callbacks.append(Callback::WriteData);
@@ -1258,7 +1317,7 @@ TEST(_WKDownload, Resume)
     };
     downloadDelegate.get().didCreateDestination = ^(_WKDownload *, NSString *destination) {
         callbacks.append(Callback::CreateDestination);
-        EXPECT_WK_STREQ(destination, [tempDir URLByAppendingPathComponent:@"example.txt"].path);
+        EXPECT_WK_STREQ(destination, expectedDownloadFile.path);
     };
     downloadDelegate.get().downloadDidCancel = ^(_WKDownload *download) {
         callbacks.append(Callback::Cancel);
@@ -1296,15 +1355,7 @@ TEST(_WKDownload, Resume)
     Util::spinRunLoop(10);
     usleep(10000);
 
-    NSData *fileContents = [NSData dataWithContentsOfURL:expectedDownloadFile];
-    EXPECT_EQ(fileContents.length, 10000u);
-    EXPECT_TRUE(fileContents.bytes);
-    if (fileContents.bytes) {
-        for (size_t i = 0; i < 5000; i++)
-            EXPECT_EQ(static_cast<const char*>(fileContents.bytes)[i], 'a');
-        for (size_t i = 5000; i < 10000; i++)
-            EXPECT_EQ(static_cast<const char*>(fileContents.bytes)[i], 'b');
-    }
+    checkResumedDownloadContents(expectedDownloadFile);
 }
 
 @interface DownloadTestSchemeDelegate : NSObject <WKNavigationDelegate>
@@ -1314,7 +1365,7 @@ TEST(_WKDownload, Resume)
 - (void)webView:(WKWebView *)webView decidePolicyForNavigationResponse:(WKNavigationResponse *)navigationResponse decisionHandler:(void (^)(WKNavigationResponsePolicy))decisionHandler
 {
     if ([navigationResponse.response.URL.absoluteString hasSuffix:@"/download"])
-        decisionHandler(_WKNavigationResponsePolicyBecomeDownload);
+        decisionHandler(WKNavigationResponsePolicyDownload);
     else
         decisionHandler(WKNavigationResponsePolicyAllow);
 }
@@ -1373,4 +1424,1202 @@ TEST(_WKDownload, SubframeSecurityOrigin)
     [webView loadHTMLString:[NSString stringWithFormat:@"<body><iframe src='http://127.0.0.1:%d/page'></iframe></body>", server.port()] baseURL:nil];
     TestWebKitAPI::Util::run(&isDone);
 }
+
+namespace TestWebKitAPI {
+
+static void checkCallbackRecord(TestDownloadDelegate *delegate, Vector<DownloadCallback> expectedCallbacks)
+{
+    auto actualCallbacks = delegate.takeCallbackRecord;
+    EXPECT_EQ(actualCallbacks.size(), expectedCallbacks.size());
+    for (size_t i = 0; i < std::min(actualCallbacks.size(), expectedCallbacks.size()); i++)
+        EXPECT_EQ(actualCallbacks[i], expectedCallbacks[i]);
+}
+
+TEST(WKDownload, FinishSuccessfully)
+{
+    auto server = simpleDownloadTestServer();
+    NSURL *expectedDownloadFile = tempFileThatDoesNotExist();
+    auto delegate = [[TestDownloadDelegate new] autorelease];
+    auto webView = [[WKWebView new] autorelease];
+    webView.navigationDelegate = delegate;
+
+    delegate.navigationResponseDidBecomeDownload = ^(WKWebView *, WKNavigationResponse *, WKDownload *download) {
+        download.delegate = delegate;
+        delegate.decideDestinationUsingResponse = ^(WKDownload *download, NSURLResponse *, NSString *, void (^completionHandler)(NSURL *)) {
+            EXPECT_NULL(download.progress.fileURL);
+            completionHandler(expectedDownloadFile);
+            EXPECT_NOT_NULL(download.progress.fileURL);
+            EXPECT_WK_STREQ(download.progress.fileURL.absoluteString, expectedDownloadFile.absoluteString);
+        };
+    };
+    [webView loadRequest:server.request()];
+    [delegate waitForDownloadDidFinish];
+
+    checkFileContents(expectedDownloadFile, longString<5000>('a'));
+
+    checkCallbackRecord(delegate, {
+        DownloadCallback::NavigationAction,
+        DownloadCallback::NavigationResponse,
+        DownloadCallback::NavigationResponseBecameDownload,
+        DownloadCallback::DecideDestination,
+        DownloadCallback::DidWriteData,
+        DownloadCallback::DidFinish
+    });
+}
+
+static void resumeAndFinishDownload(NSData *resumeData, NSURL *destination)
+{
+    __block RetainPtr<WKDownload> retainedDownload;
+    @autoreleasepool {
+        checkFileContents(destination, longString<5000>('a'));
+
+        auto *delegate = [[TestDownloadDelegate new] autorelease];
+        auto webView = adoptNS([WKWebView new]);
+
+        [webView resumeDownloadFromResumeData:resumeData completionHandler:^(WKDownload *download) {
+            retainedDownload = download;
+            EXPECT_NULL(download.delegate);
+        }];
+        while (!retainedDownload)
+            Util::spinRunLoop();
+        
+        __block bool downloadedSecond5k = false;
+        EXPECT_NULL(retainedDownload.get().delegate);
+        retainedDownload.get().delegate = delegate;
+        delegate.decideDestinationUsingResponse = ^(WKDownload *, NSURLResponse *, NSString *, void (^completionHandler)(NSURL *)) {
+            ASSERT_NOT_REACHED();
+        };
+        delegate.didWriteData = ^(WKDownload *download, int64_t bytesWritten, int64_t totalBytesWritten, int64_t totalBytesExpectedToWrite) {
+            EXPECT_EQ(download, retainedDownload.get());
+            EXPECT_EQ(bytesWritten + 5000, totalBytesWritten);
+            EXPECT_EQ(totalBytesExpectedToWrite, 10000);
+            EXPECT_EQ(download.progress.totalUnitCount, 10000);
+            EXPECT_EQ(download.progress.completedUnitCount, totalBytesWritten);
+            if (bytesWritten == 5000)
+                downloadedSecond5k = true;
+        };
+        __block bool didFinish = false;
+        delegate.downloadDidFinish = ^(WKDownload *download) {
+            EXPECT_EQ(retainedDownload.get(), download);
+            EXPECT_TRUE(downloadedSecond5k);
+            didFinish = true;
+        };
+
+        Util::run(&didFinish);
+
+        checkResumedDownloadContents(destination);
+        checkCallbackRecord(delegate, {
+            DownloadCallback::DidWriteData,
+            DownloadCallback::DidFinish
+        });
+        EXPECT_EQ(retainedDownload.get().webView, webView.get());
+        EXPECT_NOT_NULL(retainedDownload.get().webView);
+    }
+    EXPECT_NOT_NULL(retainedDownload.get());
+    EXPECT_NULL(retainedDownload.get().webView);
+}
+
+static void waitForFirst5k(TestDownloadDelegate *delegate)
+{
+    __block bool downloadedFirst5k = false;
+    ASSERT(!delegate.didWriteData);
+    delegate.didWriteData = ^(WKDownload *, int64_t bytesWritten, int64_t totalBytesWritten, int64_t totalBytesExpectedToWrite) {
+        EXPECT_EQ(bytesWritten, totalBytesWritten);
+        EXPECT_EQ(totalBytesExpectedToWrite, 10000);
+        if (bytesWritten == 5000)
+            downloadedFirst5k = true;
+    };
+    Util::run(&downloadedFirst5k);
+}
+
+TEST(WKDownload, CancelAndResume)
+{
+    auto server = downloadTestServer();
+    NSURL *expectedDownloadFile = tempFileThatDoesNotExist();
+    auto delegate = [[TestDownloadDelegate new] autorelease];
+    auto webView = [[WKWebView new] autorelease];
+    webView.navigationDelegate = delegate;
+
+    __block RetainPtr<WKDownload> retainedDownload;
+    delegate.navigationResponseDidBecomeDownload = ^(WKWebView *, WKNavigationResponse *, WKDownload *download) {
+        retainedDownload = download;
+        download.delegate = delegate;
+        delegate.decideDestinationUsingResponse = ^(WKDownload *, NSURLResponse *, NSString *, void (^completionHandler)(NSURL *)) {
+            completionHandler(expectedDownloadFile);
+        };
+    };
+
+    [webView loadRequest:server.request()];
+    waitForFirst5k(delegate);
+
+    __block RetainPtr<NSData> retainedResumeData;
+    [retainedDownload cancel:^(NSData *resumeData) {
+        retainedResumeData = resumeData;
+    }];
+
+    while (!retainedResumeData)
+        Util::spinRunLoop();
+    resumeAndFinishDownload(retainedResumeData.get(), expectedDownloadFile);
+    checkCallbackRecord(delegate, {
+        DownloadCallback::NavigationAction,
+        DownloadCallback::NavigationResponse,
+        DownloadCallback::NavigationResponseBecameDownload,
+        DownloadCallback::DecideDestination,
+        DownloadCallback::DidWriteData
+    });
+}
+
+TEST(WKDownload, FailAndResume)
+{
+    auto delegate = [[TestDownloadDelegate new] autorelease];
+    auto server = downloadTestServer(IncludeETag::Yes, [&] (TestWebKitAPI::Connection connection) {
+        waitForFirst5k(delegate);
+        connection.terminate();
+    });
+    NSURL *expectedDownloadFile = tempFileThatDoesNotExist();
+    auto webView = [[WKWebView new] autorelease];
+    webView.navigationDelegate = delegate;
+
+    __block RetainPtr<WKDownload> retainedDownload;
+    __block RetainPtr<NSData> retainedResumeData;
+    delegate.navigationResponseDidBecomeDownload = ^(WKWebView *, WKNavigationResponse *, WKDownload *download) {
+        retainedDownload = download;
+        download.delegate = delegate;
+        delegate.decideDestinationUsingResponse = ^(WKDownload *, NSURLResponse *, NSString *, void (^completionHandler)(NSURL *)) {
+            completionHandler(expectedDownloadFile);
+        };
+        delegate.didFailWithError = ^(WKDownload *download, NSError *error, NSData *resumeData) {
+            EXPECT_EQ(download, retainedDownload.get());
+            EXPECT_WK_STREQ(error.domain, NSURLErrorDomain);
+            EXPECT_EQ(error.code, NSURLErrorNetworkConnectionLost);
+            retainedResumeData = resumeData;
+        };
+    };
+
+    [webView loadRequest:server.request()];
+
+    while (!retainedResumeData)
+        Util::spinRunLoop();
+    resumeAndFinishDownload(retainedResumeData.get(), expectedDownloadFile);
+    checkCallbackRecord(delegate, {
+        DownloadCallback::NavigationAction,
+        DownloadCallback::NavigationResponse,
+        DownloadCallback::NavigationResponseBecameDownload,
+        DownloadCallback::DecideDestination,
+        DownloadCallback::DidWriteData,
+        DownloadCallback::DidFailWithError,
+    });
+}
+
+TEST(WKDownload, CancelNoResumeData)
+{
+    auto server = downloadTestServer(IncludeETag::No);
+    NSURL *expectedDownloadFile = tempFileThatDoesNotExist();
+    auto delegate = [[TestDownloadDelegate new] autorelease];
+    auto webView = [[WKWebView new] autorelease];
+    webView.navigationDelegate = delegate;
+
+    __block RetainPtr<WKDownload> retainedDownload;
+    delegate.navigationResponseDidBecomeDownload = ^(WKWebView *, WKNavigationResponse *, WKDownload *download) {
+        retainedDownload = download;
+        download.delegate = delegate;
+        delegate.decideDestinationUsingResponse = ^(WKDownload *, NSURLResponse *, NSString *, void (^completionHandler)(NSURL *)) {
+            completionHandler(expectedDownloadFile);
+        };
+    };
+    [webView loadRequest:server.request()];
+    waitForFirst5k(delegate);
+
+    __block bool done = false;
+    [retainedDownload cancel:^(NSData *resumeData) {
+        EXPECT_NULL(resumeData);
+        done = true;
+    }];
+    Util::run(&done);
+    checkFileContents(expectedDownloadFile, longString<5000>('a'));
+    checkCallbackRecord(delegate, {
+        DownloadCallback::NavigationAction,
+        DownloadCallback::NavigationResponse,
+        DownloadCallback::NavigationResponseBecameDownload,
+        DownloadCallback::DecideDestination,
+        DownloadCallback::DidWriteData
+    });
+}
+
+TEST(WKDownload, FailNoResumeData)
+{
+    auto delegate = [[TestDownloadDelegate new] autorelease];
+    auto server = downloadTestServer(IncludeETag::No, [&] (TestWebKitAPI::Connection connection) {
+        waitForFirst5k(delegate);
+        connection.terminate();
+    });
+    NSURL *expectedDownloadFile = tempFileThatDoesNotExist();
+    auto webView = [[WKWebView new] autorelease];
+    webView.navigationDelegate = delegate;
+
+    __block bool done = false;
+    delegate.navigationResponseDidBecomeDownload = ^(WKWebView *, WKNavigationResponse *, WKDownload *download) {
+        download.delegate = delegate;
+        delegate.decideDestinationUsingResponse = ^(WKDownload *, NSURLResponse *, NSString *, void (^completionHandler)(NSURL *)) {
+            completionHandler(expectedDownloadFile);
+        };
+        delegate.didFailWithError = ^(WKDownload *, NSError *error, NSData *resumeData) {
+            EXPECT_WK_STREQ(error.domain, NSURLErrorDomain);
+            EXPECT_EQ(error.code, NSURLErrorNetworkConnectionLost);
+            EXPECT_NULL(resumeData);
+            done = true;
+        };
+    };
+    [webView loadRequest:server.request()];
+    Util::run(&done);
+    checkFileContents(expectedDownloadFile, longString<5000>('a'));
+    checkCallbackRecord(delegate, {
+        DownloadCallback::NavigationAction,
+        DownloadCallback::NavigationResponse,
+        DownloadCallback::NavigationResponseBecameDownload,
+        DownloadCallback::DecideDestination,
+        DownloadCallback::DidWriteData,
+        DownloadCallback::DidFailWithError
+    });
+}
+
+// FIXME: Make this work in CFNetwork.
+#if HAVE(CFNET_RESPONSE_CALLBACK_WITH_NO_CONTENT)
+
+TEST(WKDownload, ResumeAfterZeroBytesReceived)
+{
+    Optional<TestWebKitAPI::Connection> serverConnection;
+    HTTPServer server([connectionCount = 0, &serverConnection](TestWebKitAPI::Connection connection) mutable {
+        switch (++connectionCount) {
+        case 1:
+            serverConnection = connection;
+            connection.receiveHTTPRequest([=](Vector<char>&&) {
+                connection.send(
+                    "HTTP/1.1 200 OK\r\n"
+                    "ETag: test\r\n"
+                    "Content-Disposition: attachment; filename=\"example.txt\"\r\n"
+                    "\r\n"
+                );
+            });
+            break;
+        case 2:
+            connection.receiveHTTPRequest([=](Vector<char>&& request) {
+                EXPECT_TRUE(strnstr(request.data(), "Range: bytes=5000-\r\n", request.size()));
+                connection.send(makeString(
+                    "HTTP/1.1 200 OK\r\n"
+                    "ETag: test\r\n"
+                    "Content-Length: 100\r\n"
+                    "\r\n", longString<100>('x')
+                ));
+            });
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+        }
+    });
+
+    NSURL *expectedDownloadFile = tempFileThatDoesNotExist();
+    auto delegate = [[TestDownloadDelegate new] autorelease];
+    auto webView = [[WKWebView new] autorelease];
+    webView.navigationDelegate = delegate;
+
+    delegate.navigationResponseDidBecomeDownload = ^(WKWebView *, WKNavigationResponse *, WKDownload *download) {
+        download.delegate = delegate;
+    };
+    delegate.decideDestinationUsingResponse = [&](WKDownload *, NSURLResponse *, NSString *, void (^completionHandler)(NSURL *)) {
+        completionHandler(expectedDownloadFile);
+        serverConnection->terminate();
+    };
+    __block RetainPtr<NSData> retainedResumeData;
+    delegate.didFailWithError = ^(WKDownload *, NSError *error, NSData *resumeData) {
+        EXPECT_WK_STREQ(error.domain, NSURLErrorDomain);
+        EXPECT_EQ(error.code, NSURLErrorNetworkConnectionLost);
+        retainedResumeData = resumeData;
+    };
+    __block bool downloadFinished = false;
+    delegate.downloadDidFinish = ^(WKDownload *) {
+        downloadFinished = true;
+    };
+
+    [webView loadRequest:server.request()];
+    while (!retainedResumeData)
+        Util::spinRunLoop();
+    
+    EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:expectedDownloadFile.path]);
+    EXPECT_FALSE(downloadFinished);
+    [webView resumeDownloadFromResumeData:retainedResumeData.get() completionHandler:^(WKDownload *download) {
+        download.delegate = delegate;
+    }];
+    Util::run(&downloadFinished);
+    checkFileContents(expectedDownloadFile, longString<100>('x'));
+
+    checkCallbackRecord(delegate, {
+        DownloadCallback::NavigationAction,
+        DownloadCallback::NavigationResponse,
+        DownloadCallback::NavigationResponseBecameDownload,
+        DownloadCallback::DecideDestination,
+        DownloadCallback::DidFailWithError,
+        DownloadCallback::DidWriteData,
+        DownloadCallback::DidFinish
+    });
+}
+
+#endif
+
+void testResumeAfterMutatingDisk(NSURLRequest *serverRequest, NSURL *expectedDownloadFile, void(^mutateFile)(void))
+{
+    auto delegate = [[TestDownloadDelegate new] autorelease];
+    auto webView = [[WKWebView new] autorelease];
+    webView.navigationDelegate = delegate;
+
+    __block RetainPtr<WKDownload> retainedDownload;
+    delegate.navigationResponseDidBecomeDownload = ^(WKWebView *, WKNavigationResponse *, WKDownload *download) {
+        retainedDownload = download;
+        download.delegate = delegate;
+        delegate.decideDestinationUsingResponse = ^(WKDownload *download, NSURLResponse *, NSString *, void (^completionHandler)(NSURL *)) {
+            completionHandler(expectedDownloadFile);
+        };
+    };
+
+    [webView loadRequest:serverRequest];
+    waitForFirst5k(delegate);
+    delegate.didWriteData = nil;
+
+    __block RetainPtr<NSData> retainedResumeData;
+    [retainedDownload cancel:^(NSData *resumeData) {
+        retainedResumeData = resumeData;
+    }];
+
+    while (!retainedResumeData)
+        Util::spinRunLoop();
+
+    checkFileContents(expectedDownloadFile, longString<5000>('a'));
+
+    mutateFile();
+
+    __block bool didFinish = false;
+    [webView resumeDownloadFromResumeData:retainedResumeData.get() completionHandler:^(WKDownload *download) {
+        download.delegate = delegate;
+        delegate.downloadDidFinish = ^(WKDownload *) {
+            didFinish = true;
+        };
+    }];
+    Util::run(&didFinish);
+    checkCallbackRecord(delegate, {
+        DownloadCallback::NavigationAction,
+        DownloadCallback::NavigationResponse,
+        DownloadCallback::NavigationResponseBecameDownload,
+        DownloadCallback::DecideDestination,
+        DownloadCallback::DidWriteData,
+        DownloadCallback::DidFinish
+    });
+}
+
+TEST(WKDownload, ResumeWithoutInitialDataOnDisk)
+{
+    HTTPServer server([connectionCount = 0](TestWebKitAPI::Connection connection) mutable {
+        switch (++connectionCount) {
+        case 1:
+            connection.receiveHTTPRequest([=](Vector<char>&&) {
+                connection.send(makeString(
+                    "HTTP/1.1 200 OK\r\n"
+                    "ETag: test\r\n"
+                    "Content-Length: 10000\r\n"
+                    "Content-Disposition: attachment; filename=\"example.txt\"\r\n"
+                    "\r\n",
+                    longString<5000>('a')
+                ));
+            });
+            break;
+        case 2:
+            connection.receiveHTTPRequest([=](Vector<char>&& request) {
+#if !USE(LEGACY_CFNETWORK_DOWNLOADS)
+                // Mojave CFNetwork sends a range request when resuming a download after removing already-downloaded data.
+                EXPECT_FALSE(strnstr(request.data(), "Range", request.size()));
+#endif
+                connection.send(makeString(
+                    "HTTP/1.1 200 OK\r\n"
+                    "ETag: test\r\n"
+                    "Content-Length: 10000\r\n"
+                    "\r\n",
+                    longString<10000>('x')
+                ));
+            });
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+        }
+    });
+    
+    NSURL *expectedDownloadFile = tempFileThatDoesNotExist();
+    testResumeAfterMutatingDisk(server.request(), expectedDownloadFile, ^{
+        NSError *error = nil;
+        [[NSFileManager defaultManager] removeItemAtURL:expectedDownloadFile error:&error];
+        EXPECT_NULL(error);
+    });
+
+    checkFileContents(expectedDownloadFile, longString<10000>('x'));
+}
+
+TEST(WKDownload, ResumeWithExtraInitialDataOnDisk)
+{
+    HTTPServer server([connectionCount = 0](TestWebKitAPI::Connection connection) mutable {
+        switch (++connectionCount) {
+        case 1:
+            connection.receiveHTTPRequest([=](Vector<char>&&) {
+                connection.send(makeString(
+                    "HTTP/1.1 200 OK\r\n"
+                    "ETag: test\r\n"
+                    "Content-Length: 10000\r\n"
+                    "Content-Disposition: attachment; filename=\"example.txt\"\r\n"
+                    "\r\n",
+                    longString<5000>('a')
+                ));
+            });
+            break;
+        case 2:
+            connection.receiveHTTPRequest([=](Vector<char>&& request) {
+                EXPECT_TRUE(strnstr(request.data(), "Range: bytes=5000-\r\n", request.size()));
+                connection.send(makeString(
+                    "HTTP/1.1 206 Partial Content\r\n"
+                    "ETag: test\r\n"
+                    "Content-Range: bytes 5000-9999/10000\r\n"
+                    "Content-Length: 5000\r\n"
+                    "\r\n",
+                    longString<10000>('d')
+                ));
+            });
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+        }
+    });
+    
+    NSURL *expectedDownloadFile = tempFileThatDoesNotExist();
+    testResumeAfterMutatingDisk(server.request(), expectedDownloadFile, ^{
+        NSError *error = nil;
+        [[NSFileManager defaultManager] removeItemAtURL:expectedDownloadFile error:&error];
+        EXPECT_NULL(error);
+        EXPECT_TRUE([[(NSString *)makeString(longString<3000>('b'), longString<3000>('c')) dataUsingEncoding:NSUTF8StringEncoding] writeToURL:expectedDownloadFile atomically:YES]);
+    });
+
+    checkFileContents(expectedDownloadFile, makeString(longString<3000>('b'), longString<3000>('c'), longString<5000>('d')));
+}
+
+TEST(WKDownload, ResumeWithInvalidResumeData)
+{
+    NSURL *expectedDownloadFile = tempFileThatDoesNotExist();
+    EXPECT_TRUE([[@"initial data on disk" dataUsingEncoding:NSUTF8StringEncoding] writeToURL:expectedDownloadFile atomically:YES]);
+    auto webView = [[WKWebView new] autorelease];
+    bool caughtException = false;
+    @try {
+        [webView resumeDownloadFromResumeData:[@"invalid resume data" dataUsingEncoding:NSUTF8StringEncoding] completionHandler:^(WKDownload *download) {
+            ASSERT_NOT_REACHED();
+        }];
+    } @catch (NSException *e) {
+        EXPECT_WK_STREQ(e.name, NSInvalidArgumentException);
+        caughtException = true;
+    }
+    EXPECT_TRUE(caughtException);
+}
+
+TEST(WKDownload, ResumeCantReconnect)
+{
+    auto server = downloadTestServer();
+    NSURL *expectedDownloadFile = tempFileThatDoesNotExist();
+    auto delegate = [[TestDownloadDelegate new] autorelease];
+    auto webView = [[WKWebView new] autorelease];
+    webView.navigationDelegate = delegate;
+
+    __block RetainPtr<WKDownload> retainedDownload;
+    delegate.navigationResponseDidBecomeDownload = ^(WKWebView *, WKNavigationResponse *, WKDownload *download) {
+        retainedDownload = download;
+        download.delegate = delegate;
+        delegate.decideDestinationUsingResponse = ^(WKDownload *, NSURLResponse *, NSString *, void (^completionHandler)(NSURL *)) {
+            completionHandler(expectedDownloadFile);
+        };
+    };
+    [webView loadRequest:server.request()];
+    waitForFirst5k(delegate);
+
+    checkFileContents(expectedDownloadFile, longString<5000>('a'));
+
+    __block RetainPtr<NSData> retainedResumeData;
+    [retainedDownload cancel:^(NSData *resumeData) {
+        retainedResumeData = resumeData;
+    }];
+    while (!retainedResumeData)
+        Util::spinRunLoop();
+
+    server.cancel();
+    
+    retainedDownload = nil;
+    [webView resumeDownloadFromResumeData:retainedResumeData.get() completionHandler:^(WKDownload *download) {
+        retainedDownload = download;
+        EXPECT_NULL(download.delegate);
+    }];
+    while (!retainedDownload)
+        Util::spinRunLoop();
+
+    retainedDownload.get().delegate = delegate;
+    __block bool done = false;
+    delegate.didFailWithError = ^(WKDownload *, NSError *error, NSData *resumeData) {
+        EXPECT_WK_STREQ(error.domain, NSURLErrorDomain);
+        EXPECT_EQ(error.code, NSURLErrorCannotConnectToHost);
+        EXPECT_NOT_NULL(resumeData);
+        done = true;
+    };
+    Util::run(&done);
+    checkCallbackRecord(delegate, {
+        DownloadCallback::NavigationAction,
+        DownloadCallback::NavigationResponse,
+        DownloadCallback::NavigationResponseBecameDownload,
+        DownloadCallback::DecideDestination,
+        DownloadCallback::DidWriteData,
+        DownloadCallback::DidFailWithError
+    });
+}
+
+TEST(WKDownload, UnknownContentLength)
+{
+    HTTPServer server([](Connection connection) {
+        connection.receiveHTTPRequest([=](Vector<char>&&) {
+            connection.send(makeString("HTTP/1.1 200 OK\r\n\r\n", longString<5000>('a')));
+        });
+    });
+    NSURL *expectedDownloadFile = tempFileThatDoesNotExist();
+    auto delegate = [[TestDownloadDelegate new] autorelease];
+    auto webView = [[WKWebView new] autorelease];
+    webView.navigationDelegate = delegate;
+
+    __block bool done = false;
+    delegate.navigationResponseDidBecomeDownload = ^(WKWebView *, WKNavigationResponse *, WKDownload *download) {
+        download.delegate = delegate;
+        delegate.decideDestinationUsingResponse = ^(WKDownload *, NSURLResponse *, NSString *, void (^completionHandler)(NSURL *)) {
+            completionHandler(expectedDownloadFile);
+        };
+        delegate.didWriteData = ^(WKDownload *download, int64_t bytesWritten, int64_t totalBytesWritten, int64_t totalBytesExpectedToWrite) {
+            EXPECT_EQ(download.progress.totalUnitCount, -1);
+            EXPECT_EQ(download.progress.completedUnitCount, totalBytesWritten);
+            if (bytesWritten != 5000)
+                return;
+            EXPECT_EQ(totalBytesWritten, 5000);
+            EXPECT_EQ(totalBytesExpectedToWrite, -1);
+            done = true;
+        };
+    };
+    [webView loadRequest:server.request()];
+    Util::run(&done);
+    checkFileContents(expectedDownloadFile, longString<5000>('a'));
+
+    checkCallbackRecord(delegate, {
+        DownloadCallback::NavigationAction,
+        DownloadCallback::NavigationResponse,
+        DownloadCallback::NavigationResponseBecameDownload,
+        DownloadCallback::DecideDestination,
+        DownloadCallback::DidWriteData
+    });
+}
+
+TEST(WKDownload, InvalidArguments)
+{
+    auto webView = [[WKWebView new] autorelease];
+    __block bool caughtException = false;
+    auto server = downloadTestServer();
+    auto delegate = [[TestDownloadDelegate new] autorelease];
+    [webView startDownloadUsingRequest:server.request() completionHandler:^(WKDownload *download) {
+        download.delegate = delegate;
+        delegate.decideDestinationUsingResponse = ^(WKDownload *, NSURLResponse *, NSString *, void (^completionHandler)(NSURL *)) {
+            @try {
+                completionHandler([NSURL URLWithString:@"https://webkit.org/"]);
+            } @catch (NSException *e) {
+                EXPECT_WK_STREQ(e.name, NSInvalidArgumentException);
+                caughtException = true;
+            }
+        };
+    }];
+    Util::run(&caughtException);
+    checkCallbackRecord(delegate, {
+        DownloadCallback::DecideDestination,
+    });
+}
+
+static HTTPServer redirectServer()
+{
+    return {{
+        { "/", { 301, {{ "Location", "/redirectTarget" }, { "Custom-Name", "Custom-Value" }} } },
+        { "/redirectTarget", { "hi" } },
+    }};
+}
+
+TEST(WKDownload, RedirectAllow)
+{
+    auto server = redirectServer();
+    NSURL *expectedDownloadFile = tempFileThatDoesNotExist();
+    auto delegate = [[TestDownloadDelegate new] autorelease];
+    auto webView = [[WKWebView new] autorelease];
+    webView.navigationDelegate = delegate;
+
+    NSMutableURLRequest *serverRequest = [[server.request() mutableCopy] autorelease];
+    serverRequest.HTTPBody = [@"body" dataUsingEncoding:NSUTF8StringEncoding];
+    
+    __block bool finishedDownload = false;
+    [webView startDownloadUsingRequest:serverRequest completionHandler:^(WKDownload *download) {
+        download.delegate = delegate;
+        delegate.willPerformHTTPRedirection = ^(WKDownload *, NSHTTPURLResponse *response, NSURLRequest *request, void (^completionHandler)(WKDownloadRedirectPolicy)) {
+            EXPECT_NULL(request.HTTPBody); // FIXME: We probably want to make this non-null.
+            EXPECT_WK_STREQ(response.URL.absoluteString, serverRequest.URL.absoluteString);
+            EXPECT_EQ(response.statusCode, 301);
+            EXPECT_WK_STREQ(response.allHeaderFields[@"Custom-Name"], "Custom-Value");
+            EXPECT_WK_STREQ(request.URL.absoluteString, [serverRequest.URL URLByAppendingPathComponent:@"redirectTarget"].absoluteString);
+            completionHandler(WKDownloadRedirectPolicyAllow);
+        };
+        delegate.decideDestinationUsingResponse = ^(WKDownload *download, NSURLResponse *response, NSString *suggestedFilename, void (^completionHandler)(NSURL *)) {
+            EXPECT_WK_STREQ(suggestedFilename, "redirectTarget.txt");
+            EXPECT_WK_STREQ(response.URL.path, "/redirectTarget");
+            EXPECT_WK_STREQ(download.originalRequest.URL.path, "/");
+            EXPECT_WK_STREQ(download.originalRequest.URL.absoluteString, serverRequest.URL.absoluteString);
+            completionHandler(expectedDownloadFile);
+        };
+        delegate.downloadDidFinish = ^(WKDownload *) {
+            finishedDownload = true;
+        };
+    }];
+    Util::run(&finishedDownload);
+
+    checkFileContents(expectedDownloadFile, "hi");
+    
+    EXPECT_EQ(server.totalRequests(), 2u);
+
+    checkCallbackRecord(delegate, {
+        DownloadCallback::WillRedirect,
+        DownloadCallback::DecideDestination,
+        DownloadCallback::DidWriteData,
+        DownloadCallback::DidFinish
+    });
+}
+
+TEST(WKDownload, RedirectCancel)
+{
+    auto server = redirectServer();
+    NSURLRequest *serverRequest = server.request();
+    auto delegate = [[TestDownloadDelegate new] autorelease];
+    auto webView = [[WKWebView new] autorelease];
+    webView.navigationDelegate = delegate;
+
+    __block bool cancelled = false;
+    [webView startDownloadUsingRequest:server.request() completionHandler:^(WKDownload *download) {
+        download.delegate = delegate;
+        delegate.willPerformHTTPRedirection = ^(WKDownload *, NSHTTPURLResponse *response, NSURLRequest *request, void (^completionHandler)(WKDownloadRedirectPolicy)) {
+            EXPECT_WK_STREQ(response.URL.absoluteString, serverRequest.URL.absoluteString);
+            EXPECT_EQ(response.statusCode, 301);
+            EXPECT_WK_STREQ(response.allHeaderFields[@"Custom-Name"], "Custom-Value");
+            EXPECT_WK_STREQ(request.URL.absoluteString, [serverRequest.URL URLByAppendingPathComponent:@"redirectTarget"].absoluteString);
+            completionHandler(WKDownloadRedirectPolicyCancel);
+        };
+        delegate.didFailWithError = ^(WKDownload *, NSError *error, NSData *resumeData) {
+            EXPECT_NULL(resumeData);
+            EXPECT_WK_STREQ(error.domain, NSURLErrorDomain);
+            EXPECT_EQ(error.code, NSURLErrorCancelled);
+            cancelled = true;
+        };
+    }];
+    Util::run(&cancelled);
+    checkCallbackRecord(delegate, {
+        DownloadCallback::WillRedirect,
+        DownloadCallback::DidFailWithError
+    });
+    EXPECT_EQ(server.totalRequests(), 1u);
+}
+
+TEST(WKDownload, DownloadRequestFailure)
+{
+    HTTPServer server({ });
+    NSURLRequest *serverRequest = server.request();
+    server.cancel();
+    auto delegate = [[TestDownloadDelegate new] autorelease];
+    auto webView = [[WKWebView new] autorelease];
+    webView.navigationDelegate = delegate;
+
+    __block bool failed = false;
+    [webView startDownloadUsingRequest:serverRequest completionHandler:^(WKDownload *download) {
+        download.delegate = delegate;
+        delegate.didFailWithError = ^(WKDownload *download, NSError *error, NSData *resumeData) {
+            EXPECT_WK_STREQ(error.domain, NSURLErrorDomain);
+            EXPECT_EQ(error.code, NSURLErrorCannotConnectToHost);
+            failed = true;
+        };
+    }];
+    Util::run(&failed);
+
+    checkCallbackRecord(delegate, {
+        DownloadCallback::DidFailWithError,
+    });
+}
+
+TEST(WKDownload, DownloadRequest404)
+{
+    HTTPServer server({
+        { "/", { 404, { }, "http body" } }
+    });
+    NSURL *expectedDownloadFile = tempFileThatDoesNotExist();
+    auto delegate = [[TestDownloadDelegate new] autorelease];
+    auto webView = [[WKWebView new] autorelease];
+    webView.navigationDelegate = delegate;
+
+    __block bool didFinish = false;
+    [webView startDownloadUsingRequest:server.request() completionHandler:^(WKDownload *download) {
+        download.delegate = delegate;
+        delegate.decideDestinationUsingResponse = ^(WKDownload *, NSURLResponse *, NSString *, void (^completionHandler)(NSURL *)) {
+            completionHandler(expectedDownloadFile);
+        };
+        delegate.downloadDidFinish = ^(WKDownload *download) {
+            didFinish = true;
+        };
+    }];
+    Util::run(&didFinish);
+
+    checkFileContents(expectedDownloadFile, "http body");
+
+    checkCallbackRecord(delegate, {
+        DownloadCallback::DecideDestination,
+        DownloadCallback::DidWriteData,
+        DownloadCallback::DidFinish,
+    });
+}
+
+TEST(WKDownload, NetworkProcessCrash)
+{
+    auto server = downloadTestServer();
+    NSURL *expectedDownloadFile = tempFileThatDoesNotExist();
+    auto delegate = [[TestDownloadDelegate new] autorelease];
+    auto webView = [[WKWebView new] autorelease];
+    webView.navigationDelegate = delegate;
+
+    delegate.navigationResponseDidBecomeDownload = ^(WKWebView *, WKNavigationResponse *, WKDownload *download) {
+        download.delegate = delegate;
+        delegate.decideDestinationUsingResponse = ^(WKDownload *, NSURLResponse *, NSString *, void (^completionHandler)(NSURL *)) {
+            completionHandler(expectedDownloadFile);
+        };
+    };
+    [webView loadRequest:server.request()];
+    waitForFirst5k(delegate);
+    
+    __block bool terminated = false;
+    delegate.didFailWithError = ^(WKDownload *, NSError *error, NSData *) {
+        EXPECT_WK_STREQ(error.domain, NSURLErrorDomain);
+        EXPECT_EQ(error.code, NSURLErrorNetworkConnectionLost);
+        terminated = true;
+    };
+    [webView.configuration.websiteDataStore _terminateNetworkProcess];
+    Util::run(&terminated);
+    checkCallbackRecord(delegate, {
+        DownloadCallback::NavigationAction,
+        DownloadCallback::NavigationResponse,
+        DownloadCallback::NavigationResponseBecameDownload,
+        DownloadCallback::DecideDestination,
+        DownloadCallback::DidWriteData,
+        DownloadCallback::DidFailWithError
+    });
+}
+
+TEST(WKDownload, SuggestedFilenameFromHost)
+{
+    HTTPServer server({
+        { "/", { "download content" } }
+    });
+    NSURL *expectedDownloadFile = tempFileThatDoesNotExist();
+    auto delegate = [[TestDownloadDelegate new] autorelease];
+    auto webView = [[WKWebView new] autorelease];
+    webView.navigationDelegate = delegate;
+
+    delegate.navigationResponseDidBecomeDownload = ^(WKWebView *, WKNavigationResponse *, WKDownload *download) {
+        download.delegate = delegate;
+        delegate.decideDestinationUsingResponse = ^(WKDownload *, NSURLResponse *response, NSString *suggestedFilename, void (^completionHandler)(NSURL *)) {
+            EXPECT_WK_STREQ(suggestedFilename, "127.0.0.1.txt");
+            EXPECT_WK_STREQ(response.suggestedFilename, "127.0.0.1.txt");
+            completionHandler(expectedDownloadFile);
+        };
+    };
+    [webView loadRequest:server.request()];
+    [delegate waitForDownloadDidFinish];
+
+    checkFileContents(expectedDownloadFile, "download content");
+    checkCallbackRecord(delegate, {
+        DownloadCallback::NavigationAction,
+        DownloadCallback::NavigationResponse,
+        DownloadCallback::NavigationResponseBecameDownload,
+        DownloadCallback::DecideDestination,
+        DownloadCallback::DidWriteData,
+        DownloadCallback::DidFinish
+    });
+}
+
+TEST(WKDownload, RequestHTTPBody)
+{
+    auto server = downloadTestServer();
+    auto webView = [[WKWebView new] autorelease];
+    __block bool done = false;
+    NSMutableURLRequest *request = [[server.request() mutableCopy] autorelease];
+    request.HTTPBody = [@"body" dataUsingEncoding:NSUTF8StringEncoding];
+    [webView startDownloadUsingRequest:request completionHandler:^(WKDownload *download) {
+        EXPECT_NULL(download.originalRequest.HTTPBody); // FIXME: We probably want to make this non-null.
+        done = true;
+    }];
+    Util::run(&done);
+}
+
+TEST(WKDownload, PathMustExist)
+{
+    NSURL *tempDir = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:@"DownloadTest"] isDirectory:YES];
+    [[NSFileManager defaultManager] removeItemAtURL:tempDir error:nil];
+    NSURL *expectedDownloadFile = [tempDir URLByAppendingPathComponent:@"example.txt"];
+
+    auto server = downloadTestServer();
+    auto delegate = [[TestDownloadDelegate new] autorelease];
+    auto webView = [[WKWebView new] autorelease];
+    webView.navigationDelegate = delegate;
+
+    __block bool failed = false;
+    delegate.navigationResponseDidBecomeDownload = ^(WKWebView *, WKNavigationResponse *, WKDownload *download) {
+        download.delegate = delegate;
+        delegate.decideDestinationUsingResponse = ^(WKDownload *, NSURLResponse *, NSString *, void (^completionHandler)(NSURL *)) {
+            completionHandler(expectedDownloadFile);
+        };
+        delegate.didFailWithError = ^(WKDownload *, NSError *error, NSData *) {
+            EXPECT_WK_STREQ(error.domain, NSURLErrorDomain);
+            EXPECT_EQ(error.code, NSURLErrorCannotCreateFile);
+            failed = true;
+        };
+    };
+    [webView loadRequest:server.request()];
+    Util::run(&failed);
+    checkCallbackRecord(delegate, {
+        DownloadCallback::NavigationAction,
+        DownloadCallback::NavigationResponse,
+        DownloadCallback::NavigationResponseBecameDownload,
+        DownloadCallback::DecideDestination,
+        DownloadCallback::DidFailWithError
+    });
+}
+
+TEST(WKDownload, FileMustNotExist)
+{
+    auto server = downloadTestServer();
+    NSURL *expectedDownloadFile = tempFileThatDoesNotExist();
+    __block auto retainedDelegate = adoptNS([TestDownloadDelegate new]);
+    auto webView = [[WKWebView new] autorelease];
+    webView.navigationDelegate = retainedDelegate.get();
+
+    EXPECT_TRUE([[@"initial data on disk" dataUsingEncoding:NSUTF8StringEncoding] writeToURL:expectedDownloadFile atomically:YES]);
+
+    __block bool failed = false;
+    retainedDelegate.get().navigationResponseDidBecomeDownload = ^(WKWebView *, WKNavigationResponse *, WKDownload *download) {
+        download.delegate = retainedDelegate.get();
+        retainedDelegate.get().decideDestinationUsingResponse = ^(WKDownload *download, NSURLResponse *, NSString *, void (^completionHandler)(NSURL *)) {
+
+            retainedDelegate = adoptNS([TestDownloadDelegate new]);
+            download.delegate = retainedDelegate.get();
+
+            retainedDelegate.get().didFailWithError = ^(WKDownload *, NSError *error, NSData *) {
+                EXPECT_WK_STREQ(error.domain, NSURLErrorDomain);
+                EXPECT_EQ(error.code, NSURLErrorCannotCreateFile);
+                failed = true;
+            };
+
+            completionHandler(expectedDownloadFile);
+        };
+    };
+    [webView loadRequest:server.request()];
+    Util::run(&failed);
+
+    checkCallbackRecord(retainedDelegate.get(), {
+        DownloadCallback::DidFailWithError,
+    });
+}
+
+TEST(WKDownload, DestinationNullString)
+{
+    auto server = downloadTestServer();
+    auto delegate = [[TestDownloadDelegate new] autorelease];
+    auto webView = [[WKWebView new] autorelease];
+    webView.navigationDelegate = delegate;
+
+    __block bool failed = false;
+    delegate.navigationResponseDidBecomeDownload = ^(WKWebView *, WKNavigationResponse *, WKDownload *download) {
+        download.delegate = delegate;
+        delegate.decideDestinationUsingResponse = ^(WKDownload *, NSURLResponse *, NSString *, void (^completionHandler)(NSURL *)) {
+            completionHandler(nil);
+        };
+        delegate.didFailWithError = ^(WKDownload *, NSError *error, NSData *) {
+            EXPECT_WK_STREQ(error.domain, NSURLErrorDomain);
+            EXPECT_EQ(error.code, NSURLErrorCancelled);
+            failed = true;
+        };
+    };
+    [webView loadRequest:server.request()];
+    Util::run(&failed);
+    checkCallbackRecord(delegate, {
+        DownloadCallback::NavigationAction,
+        DownloadCallback::NavigationResponse,
+        DownloadCallback::NavigationResponseBecameDownload,
+        DownloadCallback::DecideDestination,
+        DownloadCallback::DidFailWithError
+    });
+}
+
+// Mojave download tasks don't call didReceiveChallenge for server trust evaluation.
+#if !USE(LEGACY_CFNETWORK_DOWNLOADS)
+TEST(WKDownload, ChallengeSuccess)
+{
+    HTTPServer server({{ "/", { "download content" }}}, HTTPServer::Protocol::Https);
+    auto delegate = [[TestDownloadDelegate new] autorelease];
+    auto webView = [[WKWebView new] autorelease];
+    NSURL *expectedDownloadFile = tempFileThatDoesNotExist();
+    __block bool finished = false;
+    delegate.downloadDidFinish = ^(WKDownload *download) {
+        finished = true;
+    };
+    __block bool receivedChallenge = false;
+    delegate.didReceiveAuthenticationChallenge = ^(WKDownload *, NSURLAuthenticationChallenge *challenge, void (^completionHandler)(NSURLSessionAuthChallengeDisposition, NSURLCredential *)) {
+        EXPECT_WK_STREQ(challenge.protectionSpace.authenticationMethod, NSURLAuthenticationMethodServerTrust);
+        completionHandler(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]);
+        receivedChallenge = true;
+    };
+    delegate.decideDestinationUsingResponse = ^(WKDownload *, NSURLResponse *, NSString *, void (^completionHandler)(NSURL *)) {
+        completionHandler(expectedDownloadFile);
+    };
+    [webView startDownloadUsingRequest:server.request() completionHandler:^(WKDownload *download) {
+        download.delegate = delegate;
+    }];
+    Util::run(&finished);
+    EXPECT_TRUE(receivedChallenge);
+    checkFileContents(expectedDownloadFile, "download content");
+    checkCallbackRecord(delegate, {
+        DownloadCallback::AuthenticationChallenge,
+        DownloadCallback::DecideDestination,
+        DownloadCallback::DidWriteData,
+        DownloadCallback::DidFinish
+    });
+}
+#endif
+
+TEST(WKDownload, ChallengeFailure)
+{
+    HTTPServer server({ }, HTTPServer::Protocol::Https);
+    auto delegate = [[TestDownloadDelegate new] autorelease];
+    auto webView = [[WKWebView new] autorelease];
+    __block bool failed = false;
+    delegate.didFailWithError = ^(WKDownload *download, NSError *error, NSData *resumeData) {
+        EXPECT_WK_STREQ(error.domain, NSURLErrorDomain);
+#if USE(LEGACY_CFNETWORK_DOWNLOADS)
+        // Mojave download tasks don't call didReceiveChallenge for server trust evaluation.
+        EXPECT_EQ(error.code, NSURLErrorSecureConnectionFailed);
+#else
+        EXPECT_EQ(error.code, NSURLErrorCancelled);
+#endif
+        failed = true;
+    };
+    __block bool receivedChallenge = false;
+    delegate.didReceiveAuthenticationChallenge = ^(WKDownload *, NSURLAuthenticationChallenge *challenge, void (^completionHandler)(NSURLSessionAuthChallengeDisposition, NSURLCredential *)) {
+        EXPECT_WK_STREQ(challenge.protectionSpace.authenticationMethod, NSURLAuthenticationMethodServerTrust);
+        completionHandler(NSURLSessionAuthChallengeCancelAuthenticationChallenge, nil);
+        receivedChallenge = true;
+    };
+    [webView startDownloadUsingRequest:server.request() completionHandler:^(WKDownload *download) {
+        download.delegate = delegate;
+    }];
+    Util::run(&failed);
+#if !USE(LEGACY_CFNETWORK_DOWNLOADS)
+    EXPECT_TRUE(receivedChallenge);
+#endif
+    checkCallbackRecord(delegate, {
+#if !USE(LEGACY_CFNETWORK_DOWNLOADS)
+        // Mojave download tasks don't call didReceiveChallenge for server trust evaluation.
+        DownloadCallback::AuthenticationChallenge,
+#endif
+        DownloadCallback::DidFailWithError
+    });
+}
+
+void blobTest(bool downloadFromNavigationAction, std::initializer_list<DownloadCallback> expectedCallbacks)
+{
+    NSString *html = @"<script>"
+    "function downloadBlob() {"
+    "    var a = document.createElement('a');"
+    "    var b = new Blob([1,2,3]);"
+    "    a.href = URL.createObjectURL(b);"
+    "    a.download = 'downloadFilename';"
+    "    a.click();"
+    "}"
+    "</script><body onload='downloadBlob()'></body>";
+    NSURL *expectedDownloadFile = tempFileThatDoesNotExist();
+    auto webView = [[WKWebView new] autorelease];
+    [webView loadHTMLString:html baseURL:nil];
+    auto delegate = [[TestDownloadDelegate new] autorelease];
+    webView.navigationDelegate = delegate;
+    delegate.decidePolicyForNavigationAction = ^(WKNavigationAction *action, void (^completionHandler)(WKNavigationActionPolicy)) {
+        if ([action.request.URL.absoluteString isEqualToString:@"about:blank"])
+            EXPECT_FALSE(action.shouldPerformDownload);
+        else {
+            EXPECT_WK_STREQ(action.request.URL.scheme, "blob");
+            EXPECT_TRUE(action.shouldPerformDownload);
+            if (downloadFromNavigationAction) {
+                completionHandler(WKNavigationActionPolicyDownload);
+                return;
+            }
+        }
+        completionHandler(WKNavigationActionPolicyAllow);
+    };
+    delegate.navigationActionDidBecomeDownload = ^(WKWebView *, WKNavigationAction *action, WKDownload *download) {
+        EXPECT_WK_STREQ(action.request.URL.scheme, "blob");
+        EXPECT_WK_STREQ(download.originalRequest.URL.scheme, "blob");
+        download.delegate = delegate;
+    };
+    delegate.navigationResponseDidBecomeDownload = ^(WKWebView *, WKNavigationResponse *response, WKDownload *download) {
+        EXPECT_WK_STREQ(response.response.URL.scheme, "blob");
+        EXPECT_WK_STREQ(download.originalRequest.URL.scheme, "blob");
+        download.delegate = delegate;
+    };
+    delegate.decideDestinationUsingResponse = ^(WKDownload *, NSURLResponse *response, NSString *suggestedFilename, void (^completionHandler)(NSURL *)) {
+        EXPECT_WK_STREQ(response.URL.scheme, "blob");
+        EXPECT_WK_STREQ(suggestedFilename, "downloadFilename");
+        completionHandler(expectedDownloadFile);
+    };
+    __block bool done = false;
+    delegate.downloadDidFinish = ^(WKDownload *) {
+        done = true;
+    };
+    Util::run(&done);
+
+    checkFileContents(expectedDownloadFile, "123");
+    checkCallbackRecord(delegate, expectedCallbacks);
+}
+
+TEST(WKDownload, BlobResponse)
+{
+    blobTest(false, {
+        DownloadCallback::NavigationAction,
+        DownloadCallback::NavigationAction,
+        DownloadCallback::NavigationResponse,
+        DownloadCallback::NavigationResponseBecameDownload,
+        DownloadCallback::DecideDestination,
+        DownloadCallback::DidWriteData,
+        DownloadCallback::DidFinish
+    });
+
+    blobTest(true, {
+        DownloadCallback::NavigationAction,
+        DownloadCallback::NavigationAction,
+        DownloadCallback::NavigationActionBecameDownload,
+        DownloadCallback::DecideDestination,
+        DownloadCallback::DidWriteData,
+        DownloadCallback::DidFinish
+    });
+}
+
+TEST(WKDownload, BlobResponseNoFilename)
+{
+    NSString *html = @"<script>"
+    "function downloadBlob() {"
+    "    var a = document.createElement('a');"
+    "    var b = new Blob([1,2,3]);"
+    "    a.href = URL.createObjectURL(b);"
+    "    a.click();"
+    "}"
+    "</script><body onload='downloadBlob()'></body>";
+    auto webView = [[WKWebView new] autorelease];
+    [webView loadHTMLString:html baseURL:[NSURL URLWithString:@"https://webkit.org/"]];
+    auto delegate = [[TestDownloadDelegate new] autorelease];
+    webView.navigationDelegate = delegate;
+    delegate.decidePolicyForNavigationAction = ^(WKNavigationAction *action, void (^completionHandler)(WKNavigationActionPolicy)) {
+        EXPECT_FALSE(action.shouldPerformDownload);
+        completionHandler(WKNavigationActionPolicyAllow);
+    };
+    delegate.navigationResponseDidBecomeDownload = ^(WKWebView *, WKNavigationResponse *response, WKDownload *download) {
+        EXPECT_WK_STREQ(response.response.URL.scheme, "blob");
+        EXPECT_WK_STREQ(response._frame.securityOrigin.host, "webkit.org");
+        download.delegate = delegate;
+    };
+    __block bool done = false;
+    delegate.decideDestinationUsingResponse = ^(WKDownload *, NSURLResponse *response, NSString *suggestedFilename, void (^completionHandler)(NSURL *)) {
+        EXPECT_WK_STREQ(response.URL.scheme, "blob");
+        EXPECT_WK_STREQ(suggestedFilename, "Unknown");
+        completionHandler(nil);
+        done = true;
+    };
+    Util::run(&done);
+    checkCallbackRecord(delegate, {
+        DownloadCallback::NavigationAction,
+        DownloadCallback::NavigationAction,
+        DownloadCallback::NavigationResponse,
+        DownloadCallback::NavigationResponseBecameDownload,
+        DownloadCallback::DecideDestination
+    });
+}
+
+TEST(WKDownload, SubframeOriginator)
+{
+    const char* grandchildFrameHTML = "<script>"
+    "function downloadBlob() {"
+    "    var a = document.createElement('a');"
+    "    var b = new Blob([1,2,3]);"
+    "    a.href = URL.createObjectURL(b);"
+    "    a.click();"
+    "}"
+    "</script><body onload='downloadBlob()'></body>";
+    HTTPServer grandchildFrameServer({
+        { "/", { grandchildFrameHTML } }
+    });
+    HTTPServer childFrameServer({
+        { "/", { [NSString stringWithFormat:@"<iframe src='http://127.0.0.1:%d/'></iframe>", grandchildFrameServer.port()] } }
+    });
+    NSURLRequest *grandchildFrameServerRequest = grandchildFrameServer.request();
+    NSURLRequest *childFrameServerRequest = childFrameServer.request();
+    uint16_t grandchildFrameServerPort = grandchildFrameServer.port();
+
+    NSString *mainHTML = [NSString stringWithFormat:@"<iframe src='http://127.0.0.1:%d/'></iframe>", childFrameServer.port()];
+
+    auto webView = [[WKWebView new] autorelease];
+    [webView loadHTMLString:mainHTML baseURL:[NSURL URLWithString:@"http://webkit.org/"]];
+
+    auto delegate = [[TestDownloadDelegate new] autorelease];
+    webView.navigationDelegate = delegate;
+    delegate.decidePolicyForNavigationResponse = ^(WKNavigationResponse *response, void (^completionHandler)(WKNavigationResponsePolicy)) {
+        if ([response.response.URL.absoluteString isEqualToString:@"http://webkit.org/"]
+            || [response.response.URL.absoluteString isEqualToString:childFrameServerRequest.URL.absoluteString]
+            || [response.response.URL.absoluteString isEqualToString:grandchildFrameServerRequest.URL.absoluteString])
+            completionHandler(WKNavigationResponsePolicyAllow);
+        else
+            completionHandler(WKNavigationResponsePolicyDownload);
+    };
+    delegate.navigationResponseDidBecomeDownload = ^(WKWebView *, WKNavigationResponse *response, WKDownload *download) {
+        EXPECT_WK_STREQ(response.response.URL.scheme, "blob");
+        EXPECT_WK_STREQ(response._frame.securityOrigin.host, "127.0.0.1");
+        EXPECT_EQ(response._frame.securityOrigin.port, grandchildFrameServerPort);
+        download.delegate = delegate;
+    };
+    __block bool done = false;
+    delegate.decideDestinationUsingResponse = ^(WKDownload *, NSURLResponse *response, NSString *suggestedFilename, void (^completionHandler)(NSURL *)) {
+        EXPECT_WK_STREQ(response.URL.scheme, "blob");
+        EXPECT_WK_STREQ(suggestedFilename, "Unknown");
+        completionHandler(nil);
+        done = true;
+    };
+    Util::run(&done);
+    checkCallbackRecord(delegate, {
+        DownloadCallback::NavigationAction,
+        DownloadCallback::NavigationAction,
+        DownloadCallback::NavigationResponse,
+        DownloadCallback::NavigationAction,
+        DownloadCallback::NavigationResponse,
+        DownloadCallback::NavigationAction,
+        DownloadCallback::NavigationResponse,
+        DownloadCallback::NavigationResponseBecameDownload,
+        DownloadCallback::DecideDestination
+    });
+}
+
+}
+
 #endif // PLATFORM(MAC) || PLATFORM(IOS)

@@ -93,7 +93,7 @@ void DownloadManager::downloadDestinationDecided(DownloadID downloadID, Ref<Netw
     m_downloadsAfterDestinationDecided.set(downloadID, WTFMove(networkDataTask));
 }
 
-void DownloadManager::resumeDownload(PAL::SessionID sessionID, DownloadID downloadID, const IPC::DataReference& resumeData, const String& path, SandboxExtension::Handle&& sandboxExtensionHandle)
+void DownloadManager::resumeDownload(PAL::SessionID sessionID, DownloadID downloadID, const IPC::DataReference& resumeData, const String& path, SandboxExtension::Handle&& sandboxExtensionHandle, CallDownloadDidStart callDownloadDidStart)
 {
 #if !PLATFORM(COCOA)
     notImplemented();
@@ -104,6 +104,11 @@ void DownloadManager::resumeDownload(PAL::SessionID sessionID, DownloadID downlo
     auto download = makeUnique<Download>(*this, downloadID, nullptr, *networkSession);
 
     download->resume(resumeData, path, WTFMove(sandboxExtensionHandle));
+
+    // For compatibility with the legacy download API, only send DidStart if we're using the new API.
+    if (callDownloadDidStart == CallDownloadDidStart::Yes)
+        download->send(Messages::DownloadProxy::DidStart({ }, { }));
+
     ASSERT(!m_downloads.contains(downloadID));
     m_downloads.add(downloadID, WTFMove(download));
 #endif

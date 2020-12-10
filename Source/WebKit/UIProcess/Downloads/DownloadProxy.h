@@ -34,6 +34,8 @@
 #include <wtf/Ref.h>
 #include <wtf/WeakPtr.h>
 
+OBJC_CLASS NSProgress;
+
 namespace API {
 class Data;
 class DownloadClient;
@@ -87,7 +89,7 @@ public:
     void setWasUserInitiated(bool value) { m_wasUserInitiated = value; }
     bool wasUserInitiated() const { return m_wasUserInitiated; }
 
-    String destinationFilename() const { return m_destinationFilename; }
+    const String& destinationFilename() const { return m_destinationFilename; }
     void setDestinationFilename(const String& d) { m_destinationFilename = d; }
 
 #if USE(SYSTEM_PREVIEW)
@@ -97,17 +99,16 @@ public:
 
 #if PLATFORM(COCOA)
     void publishProgress(const URL&);
+    void setProgress(NSProgress *progress) { m_progress = progress; }
+    NSProgress *progress() const { return m_progress.get(); }
 #endif
 
     API::FrameInfo& frameInfo() { return m_frameInfo.get(); }
 
     API::DownloadClient& client() { return m_client.get(); }
-
-private:
-    explicit DownloadProxy(DownloadProxyMap&, WebsiteDataStore&, API::DownloadClient&, const WebCore::ResourceRequest&, const FrameInfoData&, WebPageProxy*);
-
-    // IPC::MessageReceiver
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
+    void setClient(Ref<API::DownloadClient>&&);
+    void setDidStartCallback(CompletionHandler<void(DownloadProxy*)>&& callback) { m_didStartCallback = WTFMove(callback); }
+    void setSuggestedFilename(const String& suggestedFilename) { m_suggestedFilename = suggestedFilename; }
 
     // Message handlers.
     void didStart(const WebCore::ResourceRequest&, const String& suggestedFilename);
@@ -118,7 +119,13 @@ private:
     void didFinish();
     void didFail(const WebCore::ResourceError&, const IPC::DataReference& resumeData);
     void willSendRequest(WebCore::ResourceRequest&& redirectRequest, const WebCore::ResourceResponse& redirectResponse);
-    void decideDestinationWithSuggestedFilename(const WebCore::ResourceResponse&, const String& suggestedFilename, CompletionHandler<void(String, SandboxExtension::Handle, AllowOverwrite)>&&);
+    void decideDestinationWithSuggestedFilename(const WebCore::ResourceResponse&, String&& suggestedFilename, CompletionHandler<void(String, SandboxExtension::Handle, AllowOverwrite)>&&);
+
+private:
+    explicit DownloadProxy(DownloadProxyMap&, WebsiteDataStore&, API::DownloadClient&, const WebCore::ResourceRequest&, const FrameInfoData&, WebPageProxy*);
+
+    // IPC::MessageReceiver
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     DownloadProxyMap& m_downloadProxyMap;
     RefPtr<WebsiteDataStore> m_dataStore;
@@ -134,6 +141,10 @@ private:
     Vector<URL> m_redirectChain;
     bool m_wasUserInitiated { true };
     Ref<API::FrameInfo> m_frameInfo;
+    CompletionHandler<void(DownloadProxy*)> m_didStartCallback;
+#if PLATFORM(COCOA)
+    RetainPtr<NSProgress> m_progress;
+#endif
 };
 
 } // namespace WebKit

@@ -47,7 +47,8 @@ set(WebKit_PUBLIC_FRAMEWORK_HEADERS
     UIProcess/API/C/WKCookieManager.h
     UIProcess/API/C/WKCredential.h
     UIProcess/API/C/WKCredentialTypes.h
-    UIProcess/API/C/WKDownload.h
+    UIProcess/API/C/WKDownloadClient.h
+    UIProcess/API/C/WKDownloadRef.h
     UIProcess/API/C/WKFormSubmissionListener.h
     UIProcess/API/C/WKFrame.h
     UIProcess/API/C/WKFrameHandleRef.h

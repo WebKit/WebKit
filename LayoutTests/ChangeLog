@@ -1,3 +1,18 @@
+2020-12-10  Alex Christensen  <achristensen@webkit.org>
+
+        Introduce new download API
+        https://bugs.webkit.org/show_bug.cgi?id=217747
+
+        Reviewed by Brady Eidson.
+
+        * fast/dom/HTMLAnchorElement/anchor-download-expected.txt:
+        * fast/dom/HTMLAnchorElement/anchor-download-user-triggered-synthetic-click-expected.txt:
+        * fast/dom/HTMLAnchorElement/anchor-file-blob-convert-to-download-async-delegate-expected.txt:
+        * fast/dom/HTMLAnchorElement/anchor-file-blob-convert-to-download-expected.txt:
+        * fast/dom/HTMLAnchorElement/anchor-nodownload-set-expected.txt:
+        Now that NetworkDataTaskBlob::suggestedFilename doesn't suggest "unknown"
+        the capitalization has changed to "Unknown" from NSURLResponse's suggestedFilename.
+
 2020-12-10  Patrick Angle  <pangle@apple.com>
 
         Web Inspector: Show current properties for font in new Elements sidebar Font panel

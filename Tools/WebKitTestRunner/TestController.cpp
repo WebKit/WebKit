@@ -40,6 +40,8 @@
 #include <WebKit/WKContextConfigurationRef.h>
 #include <WebKit/WKContextPrivate.h>
 #include <WebKit/WKCredential.h>
+#include <WebKit/WKDownloadClient.h>
+#include <WebKit/WKDownloadRef.h>
 #include <WebKit/WKFrameHandleRef.h>
 #include <WebKit/WKFrameInfoRef.h>
 #include <WebKit/WKHTTPCookieStoreRef.h>
@@ -80,6 +82,7 @@
 #include <wtf/AutodrainedPool.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/CryptographicallyRandomNumber.h>
+#include <wtf/FileSystem.h>
 #include <wtf/MainThread.h>
 #include <wtf/ProcessPrivilege.h>
 #include <wtf/RefCounted.h>
@@ -130,6 +133,33 @@ static WKStringRef copySignedPublicKeyAndChallengeString(WKPageRef, const void*)
 {
     // Any fake response would do, all we need for testing is to implement the callback.
     return WKStringCreateWithUTF8CString("MIHFMHEwXDANBgkqhkiG9w0BAQEFAANLADBIAkEAnX0TILJrOMUue%2BPtwBRE6XfV%0AWtKQbsshxk5ZhcUwcwyvcnIq9b82QhJdoACdD34rqfCAIND46fXKQUnb0mvKzQID%0AAQABFhFNb3ppbGxhSXNNeUZyaWVuZDANBgkqhkiG9w0BAQQFAANBAAKv2Eex2n%2FS%0Ar%2F7iJNroWlSzSMtTiQTEB%2BADWHGj9u1xrUrOilq%2Fo2cuQxIfZcNZkYAkWP4DubqW%0Ai0%2F%2FrgBvmco%3D");
+}
+
+void TestController::navigationDidBecomeDownloadShared(WKDownloadRef download, const void* clientInfo)
+{
+    static_cast<TestController*>(const_cast<void*>(clientInfo))->downloadDidStart(download);
+
+    WKDownloadClientV0 client {
+        { 0, clientInfo },
+        TestController::downloadDidReceiveServerRedirectToURL,
+        nullptr, // didReceiveAuthenticationChallenge
+        TestController::decideDestinationWithSuggestedFilename,
+        nullptr, // didWriteData
+        TestController::downloadDidFinish,
+        TestController::downloadDidFail
+    };
+
+    WKDownloadSetClient(download, &client.base);
+}
+
+void TestController::navigationActionDidBecomeDownload(WKPageRef, WKNavigationActionRef, WKDownloadRef download, const void* clientInfo)
+{
+    navigationDidBecomeDownloadShared(download, clientInfo);
+}
+
+void TestController::navigationResponseDidBecomeDownload(WKPageRef, WKNavigationResponseRef, WKDownloadRef download, const void* clientInfo)
+{
+    navigationDidBecomeDownloadShared(download, clientInfo);
 }
 
 AsyncTask* AsyncTask::m_currentTask;
@@ -336,72 +366,72 @@ WKPageRef TestController::createOtherPage(PlatformWebView* parentView, WKPageCon
 
     WKPageUIClientV8 otherPageUIClient = {
         { 8, view },
-        0, // createNewPage_deprecatedForUseWithV0
-        0, // showPage
+        nullptr, // createNewPage_deprecatedForUseWithV0
+        nullptr, // showPage
         closeOtherPage,
-        0, // takeFocus
+        nullptr, // takeFocus
         focus,
         unfocus,
-        0, // runJavaScriptAlert_deprecatedForUseWithV0
-        0, // runJavaScriptAlert_deprecatedForUseWithV0
-        0, // runJavaScriptAlert_deprecatedForUseWithV0
-        0, // setStatusText
-        0, // mouseDidMoveOverElement_deprecatedForUseWithV0
-        0, // missingPluginButtonClicked
-        0, // didNotHandleKeyEvent
-        0, // didNotHandleWheelEvent
-        0, // toolbarsAreVisible
-        0, // setToolbarsAreVisible
-        0, // menuBarIsVisible
-        0, // setMenuBarIsVisible
-        0, // statusBarIsVisible
-        0, // setStatusBarIsVisible
-        0, // isResizable
-        0, // setIsResizable
+        nullptr, // runJavaScriptAlert_deprecatedForUseWithV0
+        nullptr, // runJavaScriptAlert_deprecatedForUseWithV0
+        nullptr, // runJavaScriptAlert_deprecatedForUseWithV0
+        nullptr, // setStatusText
+        nullptr, // mouseDidMoveOverElement_deprecatedForUseWithV0
+        nullptr, // missingPluginButtonClicked
+        nullptr, // didNotHandleKeyEvent
+        nullptr, // didNotHandleWheelEvent
+        nullptr, // toolbarsAreVisible
+        nullptr, // setToolbarsAreVisible
+        nullptr, // menuBarIsVisible
+        nullptr, // setMenuBarIsVisible
+        nullptr, // statusBarIsVisible
+        nullptr, // setStatusBarIsVisible
+        nullptr, // isResizable
+        nullptr, // setIsResizable
         getWindowFrame,
         setWindowFrame,
         runBeforeUnloadConfirmPanel,
-        0, // didDraw
-        0, // pageDidScroll
-        0, // exceededDatabaseQuota
+        nullptr, // didDraw
+        nullptr, // pageDidScroll
+        nullptr, // exceededDatabaseQuota
         runOpenPanel,
         decidePolicyForGeolocationPermissionRequest,
-        0, // headerHeight
-        0, // footerHeight
-        0, // drawHeader
-        0, // drawFooter
+        nullptr, // headerHeight
+        nullptr, // footerHeight
+        nullptr, // drawHeader
+        nullptr, // drawFooter
         printFrame,
         runModal,
-        0, // didCompleteRubberBandForMainFrame
-        0, // saveDataToFileInDownloadsFolder
-        0, // shouldInterruptJavaScript
-        0, // createNewPage_deprecatedForUseWithV1
-        0, // mouseDidMoveOverElement
-        0, // decidePolicyForNotificationPermissionRequest
-        0, // unavailablePluginButtonClicked_deprecatedForUseWithV1
-        0, // showColorPicker
-        0, // hideColorPicker
-        0, // unavailablePluginButtonClicked
-        0, // pinnedStateDidChange
-        0, // didBeginTrackingPotentialLongMousePress
-        0, // didRecognizeLongMousePress
-        0, // didCancelTrackingPotentialLongMousePress
-        0, // isPlayingAudioDidChange
+        nullptr, // didCompleteRubberBandForMainFrame
+        nullptr, // saveDataToFileInDownloadsFolder
+        nullptr, // shouldInterruptJavaScript
+        nullptr, // createNewPage_deprecatedForUseWithV1
+        nullptr, // mouseDidMoveOverElement
+        nullptr, // decidePolicyForNotificationPermissionRequest
+        nullptr, // unavailablePluginButtonClicked_deprecatedForUseWithV1
+        nullptr, // showColorPicker
+        nullptr, // hideColorPicker
+        nullptr, // unavailablePluginButtonClicked
+        nullptr, // pinnedStateDidChange
+        nullptr, // didBeginTrackingPotentialLongMousePress
+        nullptr, // didRecognizeLongMousePress
+        nullptr, // didCancelTrackingPotentialLongMousePress
+        nullptr, // isPlayingAudioDidChange
         decidePolicyForUserMediaPermissionRequest,
-        0, // didClickAutofillButton
-        0, // runJavaScriptAlert
-        0, // runJavaScriptConfirm
-        0, // runJavaScriptPrompt
-        0, // unused5
+        nullptr, // didClickAutofillButton
+        nullptr, // runJavaScriptAlert
+        nullptr, // runJavaScriptConfirm
+        nullptr, // runJavaScriptPrompt
+        nullptr, // unused5
         createOtherPage,
         runJavaScriptAlert,
-        0, // runJavaScriptConfirm
-        0, // runJavaScriptPrompt
+        nullptr, // runJavaScriptConfirm
+        nullptr, // runJavaScriptPrompt
         checkUserMediaPermissionForOrigin,
-        0, // runBeforeUnloadConfirmPanel
-        0, // fullscreenMayReturnToInline
+        nullptr, // runBeforeUnloadConfirmPanel
+        nullptr, // fullscreenMayReturnToInline
         requestPointerLock,
-        0,
+        nullptr, // didLosePointerLock
     };
     WKPageSetPageUIClient(newPage, &otherPageUIClient.base);
     
@@ -410,16 +440,16 @@ WKPageRef TestController::createOtherPage(PlatformWebView* parentView, WKPageCon
         decidePolicyForNavigationAction,
         decidePolicyForNavigationResponse,
         decidePolicyForPluginLoad,
-        0, // didStartProvisionalNavigation
+        nullptr, // didStartProvisionalNavigation
         didReceiveServerRedirectForProvisionalNavigation,
-        0, // didFailProvisionalNavigation
-        0, // didCommitNavigation
-        0, // didFinishNavigation
-        0, // didFailNavigation
-        0, // didFailProvisionalLoadInSubframe
-        0, // didFinishDocumentLoad
-        0, // didSameDocumentNavigation
-        0, // renderingProgressDidChange
+        nullptr, // didFailProvisionalNavigation
+        nullptr, // didCommitNavigation
+        nullptr, // didFinishNavigation
+        nullptr, // didFailNavigation
+        nullptr, // didFailProvisionalLoadInSubframe
+        nullptr, // didFinishDocumentLoad
+        nullptr, // didSameDocumentNavigation
+        nullptr, // renderingProgressDidChange
         canAuthenticateAgainstProtectionSpace,
         didReceiveAuthenticationChallenge,
         processDidCrash,
@@ -428,9 +458,12 @@ WKPageRef TestController::createOtherPage(PlatformWebView* parentView, WKPageCon
         willEndNavigationGesture,
         didEndNavigationGesture,
         didRemoveNavigationGestureSnapshot,
-        0, // webProcessDidTerminate
-        0, // contentRuleListNotification
-        copySignedPublicKeyAndChallengeString
+        nullptr, // webProcessDidTerminate
+        nullptr, // contentRuleListNotification
+        copySignedPublicKeyAndChallengeString,
+        navigationActionDidBecomeDownload,
+        navigationResponseDidBecomeDownload,
+        nullptr // contextMenuDidCreateDownload
     };
     WKPageSetPageNavigationClient(newPage, &pageNavigationClient.base);
 
@@ -750,16 +783,16 @@ void TestController::createWebViewWithOptions(const TestOptions& options)
         decidePolicyForNavigationAction,
         decidePolicyForNavigationResponse,
         decidePolicyForPluginLoad,
-        0, // didStartProvisionalNavigation
+        nullptr, // didStartProvisionalNavigation
         didReceiveServerRedirectForProvisionalNavigation,
-        0, // didFailProvisionalNavigation
+        nullptr, // didFailProvisionalNavigation
         didCommitNavigation,
         didFinishNavigation,
-        0, // didFailNavigation
-        0, // didFailProvisionalLoadInSubframe
-        0, // didFinishDocumentLoad
-        0, // didSameDocumentNavigation
-        0, // renderingProgressDidChange
+        nullptr, // didFailNavigation
+        nullptr, // didFailProvisionalLoadInSubframe
+        nullptr, // didFinishDocumentLoad
+        nullptr, // didSameDocumentNavigation
+        nullptr, // renderingProgressDidChange
         canAuthenticateAgainstProtectionSpace,
         didReceiveAuthenticationChallenge,
         processDidCrash,
@@ -768,28 +801,14 @@ void TestController::createWebViewWithOptions(const TestOptions& options)
         willEndNavigationGesture,
         didEndNavigationGesture,
         didRemoveNavigationGestureSnapshot,
-        0, // webProcessDidTerminate
-        0, // contentRuleListNotification
-        copySignedPublicKeyAndChallengeString
+        nullptr, // webProcessDidTerminate
+        nullptr, // contentRuleListNotification
+        copySignedPublicKeyAndChallengeString,
+        navigationActionDidBecomeDownload,
+        navigationResponseDidBecomeDownload,
+        nullptr // contextMenuDidCreateDownload
     };
     WKPageSetPageNavigationClient(m_mainWebView->page(), &pageNavigationClient.base);
-
-    WKContextDownloadClientV1 downloadClient = {
-        { 1, this },
-        downloadDidStart,
-        0, // didReceiveAuthenticationChallenge
-        0, // didReceiveResponse
-        0, // didReceiveData
-        0, // shouldDecodeSourceDataOfMIMEType
-        decideDestinationWithSuggestedFilename,
-        0, // didCreateDestination
-        downloadDidFinish,
-        downloadDidFail,
-        downloadDidCancel,
-        0, // processDidCrash;
-        downloadDidReceiveServerRedirectToURL
-    };
-    WKContextSetDownloadClient(context(), &downloadClient.base);
     
     // this should just be done on the page?
     WKPageInjectedBundleClientV1 injectedBundleClient = {
@@ -2079,45 +2098,35 @@ void TestController::didReceiveAuthenticationChallenge(WKPageRef page, WKAuthent
 }
 
 
-// WKContextDownloadClient
-
-void TestController::downloadDidStart(WKContextRef context, WKDownloadRef download, const void* clientInfo)
-{
-    static_cast<TestController*>(const_cast<void*>(clientInfo))->downloadDidStart(context, download);
-}
+// WKDownloadClient
     
-WKStringRef TestController::decideDestinationWithSuggestedFilename(WKContextRef context, WKDownloadRef download, WKStringRef filename, bool* allowOverwrite, const void* clientInfo)
+WKStringRef TestController::decideDestinationWithSuggestedFilename(WKDownloadRef download, WKURLResponseRef response, WKStringRef suggestedFilename, const void* clientInfo)
 {
-    return static_cast<TestController*>(const_cast<void*>(clientInfo))->decideDestinationWithSuggestedFilename(context, download, filename, allowOverwrite);
+    return static_cast<TestController*>(const_cast<void*>(clientInfo))->decideDestinationWithSuggestedFilename(download, suggestedFilename);
 }
 
-void TestController::downloadDidFinish(WKContextRef context, WKDownloadRef download, const void* clientInfo)
+void TestController::downloadDidFinish(WKDownloadRef download, const void* clientInfo)
 {
-    static_cast<TestController*>(const_cast<void*>(clientInfo))->downloadDidFinish(context, download);
+    static_cast<TestController*>(const_cast<void*>(clientInfo))->downloadDidFinish(download);
 }
 
-void TestController::downloadDidFail(WKContextRef context, WKDownloadRef download, WKErrorRef error, const void* clientInfo)
+void TestController::downloadDidFail(WKDownloadRef download, WKErrorRef error, WKDataRef, const void* clientInfo)
 {
-    static_cast<TestController*>(const_cast<void*>(clientInfo))->downloadDidFail(context, download, error);
+    static_cast<TestController*>(const_cast<void*>(clientInfo))->downloadDidFail(download, error);
 }
 
-void TestController::downloadDidCancel(WKContextRef context, WKDownloadRef download, const void* clientInfo)
+bool TestController::downloadDidReceiveServerRedirectToURL(WKDownloadRef download, WKURLResponseRef, WKURLRequestRef newRequest, const void* clientInfo)
 {
-    static_cast<TestController*>(const_cast<void*>(clientInfo))->downloadDidCancel(context, download);
+    return static_cast<TestController*>(const_cast<void*>(clientInfo))->downloadDidReceiveServerRedirectToURL(download, newRequest);
 }
 
-void TestController::downloadDidReceiveServerRedirectToURL(WKContextRef context, WKDownloadRef download, WKURLRef url, const void* clientInfo)
-{
-    static_cast<TestController*>(const_cast<void*>(clientInfo))->downloadDidReceiveServerRedirectToURL(context, download, url);
-}
-
-void TestController::downloadDidStart(WKContextRef context, WKDownloadRef download)
+void TestController::downloadDidStart(WKDownloadRef download)
 {
     if (m_shouldLogDownloadCallbacks)
         m_currentInvocation->outputText("Download started.\n");
 }
 
-WKStringRef TestController::decideDestinationWithSuggestedFilename(WKContextRef, WKDownloadRef, WKStringRef filename, bool*& allowOverwrite)
+WKStringRef TestController::decideDestinationWithSuggestedFilename(WKDownloadRef download, WKStringRef filename)
 {
     String suggestedFilename = toWTFString(filename);
 
@@ -2133,28 +2142,33 @@ WKStringRef TestController::decideDestinationWithSuggestedFilename(WKContextRef,
     if (!dumpRenderTreeTemp)
         return nullptr;
 
-    *allowOverwrite = true;
     String temporaryFolder = String::fromUTF8(dumpRenderTreeTemp);
     if (suggestedFilename.isEmpty())
         suggestedFilename = "Unknown";
+    
+    String destination = temporaryFolder + "/" + suggestedFilename;
+    if (FileSystem::fileExists(destination))
+        FileSystem::deleteFile(destination);
 
-    return toWK(temporaryFolder + "/" + suggestedFilename).leakRef();
+    return toWK(destination).leakRef();
 }
 
-void TestController::downloadDidFinish(WKContextRef, WKDownloadRef)
+void TestController::downloadDidFinish(WKDownloadRef)
 {
     if (m_shouldLogDownloadCallbacks)
         m_currentInvocation->outputText("Download completed.\n");
     m_currentInvocation->notifyDownloadDone();
 }
 
-void TestController::downloadDidReceiveServerRedirectToURL(WKContextRef, WKDownloadRef, WKURLRef url)
+bool TestController::downloadDidReceiveServerRedirectToURL(WKDownloadRef, WKURLRequestRef request)
 {
+    auto url = adoptWK(WKURLRequestCopyURL(request));
     if (m_shouldLogDownloadCallbacks)
-        m_currentInvocation->outputText(makeString("Download was redirected to \"", toWTFString(adoptWK(WKURLCopyString(url))), "\".\n"));
+        m_currentInvocation->outputText(makeString("Download was redirected to \"", toWTFString(adoptWK(WKURLCopyString(url.get()))), "\".\n"));
+    return true;
 }
 
-void TestController::downloadDidFail(WKContextRef, WKDownloadRef, WKErrorRef error)
+void TestController::downloadDidFail(WKDownloadRef, WKErrorRef error)
 {
     if (m_shouldLogDownloadCallbacks) {
         m_currentInvocation->outputText("Download failed.\n"_s);
@@ -2165,13 +2179,6 @@ void TestController::downloadDidFail(WKContextRef, WKDownloadRef, WKErrorRef err
 
         m_currentInvocation->outputText(makeString("Failed: ", domain, ", code=", code, ", description=", description, "\n"));
     }
-    m_currentInvocation->notifyDownloadDone();
-}
-
-void TestController::downloadDidCancel(WKContextRef, WKDownloadRef)
-{
-    if (m_shouldLogDownloadCallbacks)
-        m_currentInvocation->outputText("Download cancelled.\n");
     m_currentInvocation->notifyDownloadDone();
 }
 

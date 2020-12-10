@@ -1,3 +1,95 @@
+2020-12-10  Alex Christensen  <achristensen@webkit.org>
+
+        Introduce new download SPI
+        https://bugs.webkit.org/show_bug.cgi?id=217747
+
+        Reviewed by Brady Eidson.
+
+        * TestWebKitAPI/SourcesCocoa.txt:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit/DownloadDecideDestinationCrash.cpp:
+        (TestWebKitAPI::decidePolicyForNavigationResponse):
+        (TestWebKitAPI::decideDestinationWithSuggestedFilename):
+        (TestWebKitAPI::navigationResponseDidBecomeDownload):
+        (TestWebKitAPI::setPagePolicyClient):
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::decidePolicyForNavigationAction): Deleted.
+        (TestWebKitAPI::setContextDownloadClient): Deleted.
+        * TestWebKitAPI/Tests/WebKit/mac/ContextMenuDownload.mm:
+        (TestWebKitAPI::decideDestinationWithSuggestedFilename):
+        (TestWebKitAPI::contextMenuDidCreateDownload):
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::decideDestinationWithSuggestedFilenameContainingSlashes):
+        (TestWebKitAPI::contextMenuDidCreateDownloadWithSuggestedFilenameContainingSlashes):
+        * TestWebKitAPI/Tests/WebKitCocoa/ContentFiltering.mm:
+        (-[BecomeDownloadDelegate webView:decidePolicyForNavigationResponse:decisionHandler:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/Download.mm:
+        (-[ConvertResponseToDownloadNavigationDelegate webView:decidePolicyForNavigationResponse:decisionHandler:]):
+        (-[TestDownloadNavigationResponseFromMemoryCacheDelegate webView:didFailProvisionalNavigation:withError:]):
+        (-[TestDownloadNavigationResponseFromMemoryCacheDelegate webView:didFinishNavigation:]):
+        (TEST):
+        (downloadTestServer):
+        (checkResumedDownloadContents):
+        (simpleDownloadTestServer):
+        (checkFileContents):
+        (tempFileThatDoesNotExist):
+        (-[DownloadTestSchemeDelegate webView:decidePolicyForNavigationResponse:decisionHandler:]):
+        (TestWebKitAPI::mutateFile):
+        * TestWebKitAPI/Tests/WebKitCocoa/DownloadProgress.mm:
+        (-[DownloadProgressTestRunner webView:decidePolicyForNavigationResponse:decisionHandler:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+        (-[PSONNavigationDelegate webView:decidePolicyForNavigationResponse:decisionHandler:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/QuickLook.mm:
+        (TEST):
+        * TestWebKitAPI/cocoa/TestDownloadDelegate.h:
+        * TestWebKitAPI/cocoa/TestDownloadDelegate.mm:
+        (-[TestDownloadDelegate download:willPerformHTTPRedirection:newRequest:decisionHandler:]):
+        (-[TestDownloadDelegate download:decideDestinationWithResponse:suggestedFilename:completionHandler:]):
+        (-[TestDownloadDelegate download:didWriteData:totalBytesWritten:totalBytesExpectedToWrite:]):
+        (-[TestDownloadDelegate download:didReceiveAuthenticationChallenge:completionHandler:]):
+        (-[TestDownloadDelegate downloadDidFinish:]):
+        (-[TestDownloadDelegate download:didFailWithError:resumeData:]):
+        (-[TestDownloadDelegate webView:navigationResponse:didBecomeDownload:]):
+        (-[TestDownloadDelegate webView:decidePolicyForNavigationResponse:decisionHandler:]):
+        (-[TestDownloadDelegate waitForDownloadDidFinish]):
+        (-[TestDownloadDelegate takeCallbackRecord]):
+        (-[TestDownloadDelegate _downloadDidStart:]): Deleted.
+        (-[TestDownloadDelegate _download:didReceiveServerRedirectToURL:]): Deleted.
+        (-[TestDownloadDelegate _download:didReceiveResponse:]): Deleted.
+        (-[TestDownloadDelegate _download:didWriteData:totalBytesWritten:totalBytesExpectedToWrite:]): Deleted.
+        (-[TestDownloadDelegate _download:decideDestinationWithSuggestedFilename:completionHandler:]): Deleted.
+        (-[TestDownloadDelegate _downloadDidFinish:]): Deleted.
+        (-[TestDownloadDelegate _download:didFailWithError:]): Deleted.
+        (-[TestDownloadDelegate _downloadDidCancel:]): Deleted.
+        (-[TestDownloadDelegate _download:didReceiveAuthenticationChallenge:completionHandler:]): Deleted.
+        (-[TestDownloadDelegate _download:didCreateDestination:]): Deleted.
+        * TestWebKitAPI/cocoa/TestLegacyDownloadDelegate.h: Copied from Tools/TestWebKitAPI/cocoa/TestDownloadDelegate.h.
+        * TestWebKitAPI/cocoa/TestLegacyDownloadDelegate.mm: Copied from Tools/TestWebKitAPI/cocoa/TestDownloadDelegate.mm.
+        (-[TestLegacyDownloadDelegate _downloadDidStart:]):
+        (-[TestLegacyDownloadDelegate _download:didReceiveServerRedirectToURL:]):
+        (-[TestLegacyDownloadDelegate _download:didReceiveResponse:]):
+        (-[TestLegacyDownloadDelegate _download:didWriteData:totalBytesWritten:totalBytesExpectedToWrite:]):
+        (-[TestLegacyDownloadDelegate _download:decideDestinationWithSuggestedFilename:completionHandler:]):
+        (-[TestLegacyDownloadDelegate _downloadDidFinish:]):
+        (-[TestLegacyDownloadDelegate _download:didFailWithError:]):
+        (-[TestLegacyDownloadDelegate _downloadDidCancel:]):
+        (-[TestLegacyDownloadDelegate _download:didReceiveAuthenticationChallenge:completionHandler:]):
+        (-[TestLegacyDownloadDelegate _download:didCreateDestination:]):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::navigationDidBecomeDownloadShared):
+        (WTR::TestController::navigationActionDidBecomeDownload):
+        (WTR::TestController::navigationResponseDidBecomeDownload):
+        (WTR::TestController::createOtherPage):
+        (WTR::TestController::createWebViewWithOptions):
+        (WTR::TestController::decideDestinationWithSuggestedFilename):
+        (WTR::TestController::downloadDidFinish):
+        (WTR::TestController::downloadDidFail):
+        (WTR::TestController::downloadDidReceiveServerRedirectToURL):
+        (WTR::TestController::downloadDidStart):
+        (WTR::TestController::decidePolicyForNavigationAction):
+        (WTR::TestController::downloadDidCancel): Deleted.
+        * WebKitTestRunner/TestController.h:
+
 2020-12-10  Lauro Moura  <lmoura@igalia.com>
 
         [Flapak SDK] Add envvar to enable verbose mode

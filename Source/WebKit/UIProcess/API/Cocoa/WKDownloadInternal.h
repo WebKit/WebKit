@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,14 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "_WKDownload.h"
+#import "DownloadProxy.h"
+#import "WKDownload.h"
+#import "WKObject.h"
 
-#import <wtf/RetainPtr.h>
+namespace WebKit {
 
-@class WKDownload;
+template<> struct WrapperTraits<DownloadProxy> {
+    using WrapperClass = WKDownload;
+};
 
-@interface _WKDownload () <WKObject> {
+}
+
+@interface WKDownload () <WKObject> {
 @package
-    RetainPtr<WKDownload> _download;
+    API::ObjectStorage<WebKit::DownloadProxy> _download;
+    WeakObjCPtr<id <WKDownloadDelegate> > _delegate;
 }
 @end

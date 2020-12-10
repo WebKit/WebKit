@@ -31,6 +31,8 @@
 
 @protocol _WKDownloadDelegate <NSObject>
 @optional
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 - (void)_downloadDidStart:(_WKDownload *)download;
 - (void)_download:(_WKDownload *)download didReceiveServerRedirectToURL:(NSURL *)url WK_API_AVAILABLE(macos(10.13.4), ios(11.3));
 - (void)_download:(_WKDownload *)download didReceiveResponse:(NSURLResponse *)response;
@@ -46,4 +48,5 @@
 - (BOOL)_download:(_WKDownload *)download shouldDecodeSourceDataOfMIMEType:(NSString *)MIMEType WK_API_AVAILABLE(macos(10.13.4), ios(11.3));
 
 - (NSString *)_download:(_WKDownload *)download decideDestinationWithSuggestedFilename:(NSString *)filename allowOverwrite:(BOOL *)allowOverwrite WK_API_DEPRECATED_WITH_REPLACEMENT("_download:decideDestinationWithSuggestedFilename:completionHandler:", macos(10.10, 10.13.4), ios(8.0, 11.3));
+#pragma clang diagnostic pop
 @end

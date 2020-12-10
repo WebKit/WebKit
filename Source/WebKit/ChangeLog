@@ -1,3 +1,183 @@
+2020-12-10  Alex Christensen  <achristensen@webkit.org>
+
+        Introduce new download API
+        https://bugs.webkit.org/show_bug.cgi?id=217747
+
+        Reviewed by Brady Eidson.
+
+        Safari currently uses _WKDownload, which has evolved strangely over the last decade.
+        In order to make a nicer interface, we need to learn from those lessons and take a step back.
+        I did that, and here's what I came up with: WKDownload and WKDownloadDelegate!
+
+        Notable changes include:
+        1.  The delegate now lives on the download object instead of the process pool.
+        2.  WKDownload does not conform to NSCopying because we have NSMapTable instead of NSDictionary.
+        3.  publishProgressAtURL is gone.  That will be reimplemented in the UI process of the client that used it.
+        4.  cancel has a completion handler to get the resume data instead of waiting for didCancel then getting it from the download object.
+        5.  didFailWithError also gives you the resume data, so there is no way to get it from the download object.  That's more about a fail/cancel
+            event than a property of the download.
+        6.  wasUserInitiated is gone.  Instead, WKNavigationDelegate has a callback that links a navigation action (where _isUserInitiated is exposed) to the download.
+        7.  redirectChain is also gone.  That can also be gotten from the link to the navigation and the download delegate's redirect callback.
+        8.  _downloadDidStart is gone.  Instead, we have completion handlers that expose a WKDownload once it's started.  There's no need to
+            reference the download object before then anyways.  Note: that's when the download "starts" which is before it receives the response,
+            so there will be no server delay in the difference between download object availabilities.
+        9.  didReceiveServerRedirectToURL now gives you the option of continuing or cancelling.  This reflects the amount of control the
+            WKNavigationDelegate has.
+        10. decideDestinationWithSuggestedFilename and didReceiveResponse have been merged, since they actually happen at the same time and
+            NSURLResponse has suggestedFilename API.  allowOverwrite is also gone.  It wasn't used, and not really needed.
+        11. didCreateDestination is gone.  That callback time wasn't really necessary.  If you need to know when it's created, wait until the first
+            didWriteData callback.  The destination has definitely been created by then.
+        12. shouldDecodeSourceDataOfMIMEType is gone.  It's actually not called since we adopted NSURLSession, and we should remove the related dead code.
+        13. originatingFrame is gone.  On _WKDownload it was actually a non-null WKFrameInfo that often contained no information.  When information was there,
+            the information access has been replaced by didBecomeDownload which links the WKNavigationResponse which has frame info on it.
+
+        I wrote API tests for everything I could think of.
+
+        * NetworkProcess/Downloads/DownloadManager.cpp:
+        (WebKit::DownloadManager::resumeDownload):
+        * NetworkProcess/Downloads/DownloadManager.h:
+        * NetworkProcess/Downloads/cocoa/DownloadCocoa.mm:
+        (WebKit::Download::resume):
+        (WebKit::Download::platformCancelNetworkLoad):
+        * NetworkProcess/NetworkDataTaskBlob.cpp:
+        (WebKit::NetworkDataTaskBlob::suggestedFilename const):
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::resumeDownload):
+        (WebKit::NetworkProcess::findPendingDownloadLocation):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:task:didCompleteWithError:]):
+        * Scripts/webkit/messages.py:
+        * Shared/API/Cocoa/WebKit.h:
+        * Shared/API/c/WKSharedAPICast.h:
+        (WebKit::toAPI):
+        * Shared/Cocoa/APIObject.mm:
+        (API::Object::newObject):
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * UIProcess/API/APIDownloadClient.h:
+        (API::DownloadClient::legacyDidStart):
+        (API::DownloadClient::didFail):
+        (API::DownloadClient::didStart): Deleted.
+        * UIProcess/API/APINavigationAction.h:
+        * UIProcess/API/APINavigationClient.h:
+        (API::NavigationClient::navigationResponseDidBecomeDownload):
+        (API::NavigationClient::navigationActionDidBecomeDownload):
+        (API::NavigationClient::contextMenuDidCreateDownload):
+        * UIProcess/API/APIPolicyClient.h:
+        (API::PolicyClient::decidePolicyForNavigationAction):
+        (API::PolicyClient::decidePolicyForNewWindowAction):
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextSetDownloadClient): Deleted.
+        * UIProcess/API/C/WKContext.h:
+        * UIProcess/API/C/WKContextDownloadClient.h: Removed.
+        * UIProcess/API/C/WKDownload.cpp: Removed.
+        * UIProcess/API/C/WKDownloadClient.h: Added.
+        * UIProcess/API/C/WKDownloadRef.cpp: Added.
+        (WKDownloadGetTypeID):
+        (WKDownloadCopyRequest):
+        (WKDownloadCancel):
+        (WKDownloadGetOriginatingPage):
+        (WKDownloadGetWasUserInitiated):
+        (WKDownloadSetClient):
+        * UIProcess/API/C/WKDownloadRef.h: Renamed from Source/WebKit/UIProcess/API/C/WKDownload.h.
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPagePolicyClient):
+        (WKPageSetPageNavigationClient):
+        * UIProcess/API/C/WKPageNavigationClient.h:
+        * UIProcess/API/Cocoa/WKDownload.h: Copied from Source/WebKit/UIProcess/API/Cocoa/_WKDownload.h.
+        * UIProcess/API/Cocoa/WKDownload.mm: Added.
+        (-[WKDownload cancel:]):
+        (-[WKDownload originalRequest]):
+        (-[WKDownload delegate]):
+        (-[WKDownload setDelegate:]):
+        (-[WKDownload dealloc]):
+        (-[WKDownload _apiObject]):
+        * UIProcess/API/Cocoa/WKDownloadDelegate.h: Added.
+        * UIProcess/API/Cocoa/WKDownloadInternal.h: Copied from Source/WebKit/UIProcess/API/Cocoa/_WKDownloadInternal.h.
+        * UIProcess/API/Cocoa/WKNavigationAction.h:
+        * UIProcess/API/Cocoa/WKNavigationAction.mm:
+        (-[WKNavigationAction downloadAttribute]):
+        (-[WKNavigationAction _shouldPerformDownload]):
+        * UIProcess/API/Cocoa/WKNavigationActionPrivate.h:
+        * UIProcess/API/Cocoa/WKNavigationDelegate.h:
+        * UIProcess/API/Cocoa/WKNavigationDelegatePrivate.h:
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (-[WKProcessPool _downloadURLRequest:websiteDataStore:originatingWebView:]):
+        (-[WKProcessPool _resumeDownloadFromData:websiteDataStore:path:originatingWebView:]):
+        * UIProcess/API/Cocoa/WKProcessPoolPrivate.h:
+        * UIProcess/API/Cocoa/WKWebView.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView downloadRequest:completionHandler:]):
+        (-[WKWebView resumeDownloadWithData:completionHandler:]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/API/Cocoa/_WKDownload.h:
+        * UIProcess/API/Cocoa/_WKDownload.mm:
+        (-[_WKDownload initWithDownload2:]):
+        (+[_WKDownload downloadWithDownload:]):
+        (-[_WKDownload cancel]):
+        (-[_WKDownload publishProgressAtURL:]):
+        (-[_WKDownload request]):
+        (-[_WKDownload originatingWebView]):
+        (-[_WKDownload redirectChain]):
+        (-[_WKDownload wasUserInitiated]):
+        (-[_WKDownload resumeData]):
+        (-[_WKDownload originatingFrame]):
+        (-[_WKDownload _apiObject]):
+        (-[_WKDownload dealloc]): Deleted.
+        * UIProcess/API/Cocoa/_WKDownloadDelegate.h:
+        * UIProcess/API/Cocoa/_WKDownloadInternal.h:
+        * UIProcess/API/glib/WebKitDownloadClient.cpp:
+        * UIProcess/Cocoa/LegacyDownloadClient.h:
+        * UIProcess/Cocoa/LegacyDownloadClient.mm:
+        (WebKit::LegacyDownloadClient::legacyDidStart):
+        (WebKit::LegacyDownloadClient::didReceiveResponse):
+        (WebKit::LegacyDownloadClient::didReceiveData):
+        (WebKit::LegacyDownloadClient::didReceiveAuthenticationChallenge):
+        (WebKit::LegacyDownloadClient::didCreateDestination):
+        (WebKit::LegacyDownloadClient::processDidCrash):
+        (WebKit::LegacyDownloadClient::decideDestinationWithSuggestedFilename):
+        (WebKit::LegacyDownloadClient::didFinish):
+        (WebKit::LegacyDownloadClient::didFail):
+        (WebKit::LegacyDownloadClient::legacyDidCancel):
+        (WebKit::LegacyDownloadClient::willSendRequest):
+        (WebKit::LegacyDownloadClient::didStart): Deleted.
+        * UIProcess/Cocoa/NavigationState.h:
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::setNavigationDelegate):
+        (WebKit::NavigationState::NavigationClient::decidePolicyForNavigationAction):
+        (WebKit::NavigationState::NavigationClient::decidePolicyForNavigationResponse):
+        (WebKit::NavigationState::NavigationClient::navigationActionDidBecomeDownload):
+        (WebKit::NavigationState::NavigationClient::navigationResponseDidBecomeDownload):
+        (WebKit::NavigationState::NavigationClient::contextMenuDidCreateDownload):
+        * UIProcess/Cocoa/WebProcessProxyCocoa.mm:
+        * UIProcess/Downloads/DownloadProxy.cpp:
+        (WebKit::DownloadProxy::~DownloadProxy):
+        (WebKit::DownloadProxy::didStart):
+        (WebKit::DownloadProxy::decideDestinationWithSuggestedFilename):
+        (WebKit::DownloadProxy::didFail):
+        (WebKit::DownloadProxy::setClient):
+        * UIProcess/Downloads/DownloadProxy.h:
+        (WebKit::DownloadProxy::setDidStartCallback):
+        (WebKit::DownloadProxy::setSuggestedFilename):
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::receivedNavigationPolicyDecision):
+        (WebKit::WebPageProxy::receivedPolicyDecision):
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+        (WebKit::WebPageProxy::decidePolicyForNewWindowAction):
+        (WebKit::WebPageProxy::decidePolicyForResponseShared):
+        (WebKit::WebPageProxy::resumeDownload):
+        (WebKit::WebPageProxy::downloadRequest):
+        (WebKit::WebPageProxy::contextMenuItemSelected):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::receivedPolicyDecision):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::resumeDownload):
+        * UIProcess/WebProcessPool.h:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2020-12-10  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Use TARGET_PROPERTY to set includes for executables

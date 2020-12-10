@@ -116,6 +116,11 @@ static WKSyntheticClickType toWKSyntheticClickType(WebKit::WebMouseEvent::Synthe
     return _navigationAction->request().nsURLRequest(WebCore::HTTPBodyUpdatePolicy::UpdateHTTPBody);
 }
 
+- (BOOL)shouldPerformDownload
+{
+    return _navigationAction->shouldPerformDownload();
+}
+
 #if PLATFORM(IOS_FAMILY)
 - (WKSyntheticClickType)_syntheticClickType
 {

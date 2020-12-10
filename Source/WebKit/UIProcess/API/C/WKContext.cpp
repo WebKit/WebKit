@@ -178,7 +178,7 @@ void WKContextSetDownloadClient(WKContextRef context, const WKContextDownloadCli
             initialize(client);
         }
     private:
-        void didStart(WebKit::DownloadProxy& downloadProxy) final
+        void legacyDidStart(WebKit::DownloadProxy& downloadProxy) final
         {
             if (!m_client.didStart)
                 return;
@@ -223,7 +223,7 @@ void WKContextSetDownloadClient(WKContextRef context, const WKContextDownloadCli
                 return;
             m_client.didFinish(m_context, WebKit::toAPI(&downloadProxy), m_client.base.clientInfo);
         }
-        void didFail(WebKit::DownloadProxy& downloadProxy, const WebCore::ResourceError& error) final
+        void didFail(WebKit::DownloadProxy& downloadProxy, const WebCore::ResourceError& error, API::Data*) final
         {
             if (!m_client.didFail)
                 return;

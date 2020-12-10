@@ -29,42 +29,41 @@
 
 #include "PlatformUtilities.h"
 #include "PlatformWebView.h"
-#include <WebKit/WKDownload.h>
+#include <WebKit/WKDownloadRef.h>
 
 namespace TestWebKitAPI {
 
 static bool didDecideDestination;
 
-static void decidePolicyForNavigationAction(WKPageRef, WKNavigationActionRef, WKFramePolicyListenerRef listener, WKTypeRef, const void*)
+static void decidePolicyForNavigationResponse(WKPageRef, WKNavigationResponseRef, WKFramePolicyListenerRef listener, WKTypeRef, const void*)
 {
     WKFramePolicyListenerDownload(listener);
 }
 
-static WKStringRef decideDestinationWithSuggestedFilename(WKContextRef, WKDownloadRef download, WKStringRef, bool*, const void*)
+static WKStringRef decideDestinationWithSuggestedFilename(WKDownloadRef download, WKURLResponseRef, WKStringRef, const void*)
 {
     didDecideDestination = true;
-    WKDownloadCancel(download);
+    WKDownloadCancel(download, nullptr, nullptr);
     return Util::toWK("/tmp/WebKitAPITest/DownloadDecideDestinationCrash").leakRef();
 }
 
-static void setContextDownloadClient(WKContextRef context)
+static void navigationResponseDidBecomeDownload(WKPageRef page, WKNavigationResponseRef navigationResponse, WKDownloadRef download, const void* clientInfo)
 {
-    WKContextDownloadClientV0 client;
+    WKDownloadClientV0 client;
     memset(&client, 0, sizeof(client));
-
     client.base.version = 0;
-    client.decideDestinationWithSuggestedFilename = decideDestinationWithSuggestedFilename;
-
-    WKContextSetDownloadClient(context, &client.base);
+    client.decideDestinationWithResponse = decideDestinationWithSuggestedFilename;
+    WKDownloadSetClient(download, &client.base);
 }
 
 static void setPagePolicyClient(WKPageRef page)
 {
-    WKPageNavigationClientV0 navigationClient;
+    WKPageNavigationClientV3 navigationClient;
     memset(&navigationClient, 0, sizeof(navigationClient));
 
-    navigationClient.base.version = 0;
-    navigationClient.decidePolicyForNavigationAction = decidePolicyForNavigationAction;
+    navigationClient.base.version = 3;
+    navigationClient.decidePolicyForNavigationResponse = decidePolicyForNavigationResponse;
+    navigationClient.navigationResponseDidBecomeDownload = navigationResponseDidBecomeDownload;
 
     WKPageSetPageNavigationClient(page, &navigationClient.base);
 }
@@ -72,7 +71,6 @@ static void setPagePolicyClient(WKPageRef page)
 TEST(WebKit, DownloadDecideDestinationCrash)
 {
     WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreateWithConfiguration(nullptr));
-    setContextDownloadClient(context.get());
 
     PlatformWebView webView(context.get());
     setPagePolicyClient(webView.page());

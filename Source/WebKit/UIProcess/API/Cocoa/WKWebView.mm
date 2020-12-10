@@ -58,9 +58,11 @@
 #import "WKBackForwardListItemInternal.h"
 #import "WKBrowsingContextHandleInternal.h"
 #import "WKContentWorldInternal.h"
+#import "WKDownloadInternal.h"
 #import "WKErrorInternal.h"
 #import "WKFindConfiguration.h"
 #import "WKFindResultInternal.h"
+#import "WKFrameInfoPrivate.h"
 #import "WKHistoryDelegatePrivate.h"
 #import "WKLayoutMode.h"
 #import "WKMediaPlaybackState.h"
@@ -706,6 +708,42 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
 - (WKNavigation *)loadData:(NSData *)data MIMEType:(NSString *)MIMEType characterEncodingName:(NSString *)characterEncodingName baseURL:(NSURL *)baseURL
 {
     return wrapper(_page->loadData({ static_cast<const uint8_t*>(data.bytes), data.length }, MIMEType, characterEncodingName, baseURL.absoluteString));
+}
+
+- (void)startDownloadUsingRequest:(NSURLRequest *)request completionHandler:(void(^)(WKDownload *))completionHandler
+{
+    _page->downloadRequest(request, [completionHandler = makeBlockPtr(completionHandler)] (auto* download) {
+        if (download)
+            completionHandler(wrapper(download));
+        else
+            ASSERT_NOT_REACHED();
+    });
+}
+
+- (void)resumeDownloadFromResumeData:(NSData *)resumeData completionHandler:(void(^)(WKDownload *))completionHandler
+{
+    auto unarchiver = adoptNS([[NSKeyedUnarchiver alloc] initForReadingFromData:resumeData error:nil]);
+    [unarchiver setDecodingFailurePolicy:NSDecodingFailurePolicyRaiseException];
+    NSDictionary *dictionary = [unarchiver decodeObjectOfClasses:[NSSet setWithObjects:[NSDictionary class], [NSArray class], [NSString class], [NSNumber class], [NSData class], [NSURL class], [NSURLRequest class], nil] forKey:@"NSKeyedArchiveRootObjectKey"];
+    [unarchiver finishDecoding];
+    NSString *path = [dictionary objectForKey:@"NSURLSessionResumeInfoLocalPath"];
+
+    if (!path)
+        [NSException raise:NSInvalidArgumentException format:@"Invalid resume data"];
+
+#if USE(LEGACY_CFNETWORK_DOWNLOADS)
+    // Mojave CFNetwork fails to resume a download if the destination does not exist.
+    // If someone has removed the destination file, make an empty file at that location.
+    if (![[NSFileManager defaultManager] fileExistsAtPath:path])
+        [[NSData data] writeToFile:path atomically:YES];
+#endif
+
+    _page->resumeDownload(API::Data::createWithoutCopying(resumeData), path, [completionHandler = makeBlockPtr(completionHandler)] (auto* download) {
+        if (download)
+            completionHandler(wrapper(download));
+        else
+            ASSERT_NOT_REACHED();
+    });
 }
 
 - (WKNavigation *)goToBackForwardListItem:(WKBackForwardListItem *)item
