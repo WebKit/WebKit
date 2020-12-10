@@ -1650,3 +1650,9 @@
 )
 
 #endif // HAVE(SANDBOX_MESSAGE_FILTERING)
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED > 110000
+(when (defined? 'darwin-notification-post)
+    (allow darwin-notification-post (with telemetry))
+)
+#endif

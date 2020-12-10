@@ -1,5 +1,19 @@
 2020-12-10  Per Arne Vollan  <pvollan@apple.com>
 
+        [macOS] Add telemetry for notification message filtering in sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=219684
+        <rdar://problem/69819260>
+
+        Reviewed by Brent Fulgham.
+
+        Add telemetry for notification message filtering in sandbox in the WebContent process on macOS.
+
+        No new tests, since this just adds telemetry.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
+2020-12-10  Per Arne Vollan  <pvollan@apple.com>
+
         [iOS] Add missing endpoint in sandbox message filter
         https://bugs.webkit.org/show_bug.cgi?id=219731
         <rdar://problem/71566760>
