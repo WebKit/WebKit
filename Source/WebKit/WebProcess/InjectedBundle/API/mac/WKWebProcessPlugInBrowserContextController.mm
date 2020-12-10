@@ -121,6 +121,15 @@ static void globalObjectIsAvailableForFrame(WKBundlePageRef page, WKBundleFrameR
         [loadDelegate webProcessPlugInBrowserContextController:pluginContextController globalObjectIsAvailableForFrame:wrapper(*WebKit::toImpl(frame)) inScriptWorld:wrapper(*WebKit::toImpl(scriptWorld))];
 }
 
+static void willInjectUserScriptForFrame(WKBundlePageRef page, WKBundleFrameRef frame, WKBundleScriptWorldRef scriptWorld, const void* clientInfo)
+{
+    auto pluginContextController = (__bridge WKWebProcessPlugInBrowserContextController *)clientInfo;
+    auto loadDelegate = pluginContextController->_loadDelegate.get();
+
+    if ([loadDelegate respondsToSelector:@selector(webProcessPlugInBrowserContextController:willInjectUserScriptForFrame:inScriptWorld:)])
+        [loadDelegate webProcessPlugInBrowserContextController:pluginContextController willInjectUserScriptForFrame:wrapper(*WebKit::toImpl(frame)) inScriptWorld:wrapper(*WebKit::toImpl(scriptWorld))];
+}
+
 static void didRemoveFrameFromHierarchy(WKBundlePageRef page, WKBundleFrameRef frame, WKTypeRef* userData, const void* clientInfo)
 {
     auto pluginContextController = (__bridge WKWebProcessPlugInBrowserContextController *)clientInfo;
@@ -245,6 +254,7 @@ static void setUpPageLoaderClient(WKWebProcessPlugInBrowserContextController *co
     client.didFinishLoadForFrame = didFinishLoadForFrame;
     client.didClearWindowObjectForFrame = didClearWindowObjectForFrame;
     client.globalObjectIsAvailableForFrame = globalObjectIsAvailableForFrame;
+    client.willInjectUserScriptForFrame = willInjectUserScriptForFrame;
     client.didRemoveFrameFromHierarchy = didRemoveFrameFromHierarchy;
     client.didHandleOnloadEventsForFrame = didHandleOnloadEventsForFrame;
     client.didFirstVisuallyNonEmptyLayoutForFrame = didFirstVisuallyNonEmptyLayoutForFrame;

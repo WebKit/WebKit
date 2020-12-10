@@ -1,3 +1,16 @@
+2020-12-10  Timothy Hatcher  <timothy@apple.com>
+
+        Add willInjectUserScriptForFrame to WKWebProcessPlugInLoadDelegate.
+        https://bugs.webkit.org/show_bug.cgi?id=219727
+        rdar://71987073
+
+        Reviewed by Brady Eidson.
+
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInLoadDelegate.h:
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.mm:
+        (willInjectUserScriptForFrame): Added.
+        (setUpPageLoaderClient): Set client.willInjectUserScriptForFrame.
+
 2020-12-10  Don Olmstead  <don.olmstead@sony.com>
 
         [GTK] Add even more exports to support hidden visibility
