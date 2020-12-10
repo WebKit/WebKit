@@ -53,6 +53,8 @@ public:
     bool isConsideredEmpty() const { return m_isConsideredEmpty; }
 
     InlineLayoutUnit contentLogicalWidth() const { return m_contentLogicalWidth; }
+    // FIXME: Add support for negative word-sapcing where contentLogicalRight != contentLogicalWidth.
+    InlineLayoutUnit contentLogicalRight() const { return m_contentLogicalWidth; }
 
     InlineLayoutUnit trimmableTrailingWidth() const { return m_trimmableTrailingContent.width(); }
     bool isTrailingRunFullyTrimmable() const { return m_trimmableTrailingContent.isTrailingRunFullyTrimmable(); }

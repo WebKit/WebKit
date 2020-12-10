@@ -299,7 +299,7 @@ LineBuilder::CommittedContent LineBuilder::placeInlineContent(const InlineItemRa
         // 2. Apply floats and shrink the available horizontal space e.g. <span>intru_<div style="float: left"></div>sive_float</span>.
         // 3. Check if the content fits the line and commit the content accordingly (full, partial or not commit at all).
         // 4. Return if we are at the end of the line either by not being able to fit more content or because of an explicit line break.
-        candidateContentForLine(lineCandidate, currentItemIndex, needsLayoutRange, partialLeadingContentLength, m_line.contentLogicalWidth());
+        candidateContentForLine(lineCandidate, currentItemIndex, needsLayoutRange, partialLeadingContentLength, m_line.contentLogicalRight());
         // Now check if we can put this content on the current line.
         auto result = Result { };
         if (lineCandidate.floatItem) {
@@ -348,12 +348,12 @@ LineBuilder::InlineItemRange LineBuilder::close(const InlineItemRange& needsLayo
         // Line is empty, we only managed to place float boxes.
         return lineRange;
     }
-    auto availableWidth = m_lineLogicalRect.width() - m_line.contentLogicalWidth();
+    auto availableWidth = m_lineLogicalRect.width() - m_line.contentLogicalRight();
     m_line.removeCollapsibleContent(availableWidth);
     auto horizontalAlignment = root().style().textAlign();
     auto runsExpandHorizontally = horizontalAlignment == TextAlignMode::Justify && !isLastLineWithInlineContent(lineRange, needsLayoutRange.end, committedContent.partialTrailingContentLength);
     if (runsExpandHorizontally)
-        m_line.applyRunExpansion(m_lineLogicalRect.width() - m_line.contentLogicalWidth());
+        m_line.applyRunExpansion(m_lineLogicalRect.width() - m_line.contentLogicalRight());
     auto lineEndsWithHyphen = false;
     if (!m_line.isConsideredEmpty()) {
         ASSERT(!m_line.runs().isEmpty());
@@ -621,10 +621,10 @@ LineBuilder::Result LineBuilder::handleInlineContent(InlineContentBreaker& inlin
         }
         return adjustedLineLogicalRect;
     }();
-    auto availableWidth = lineLogicalRectForCandidateContent.width() - m_line.contentLogicalWidth();
+    auto availableWidth = lineLogicalRectForCandidateContent.width() - m_line.contentLogicalRight();
     // Check if this new content fits.
     auto isLineConsideredEmpty = m_line.isConsideredEmpty() && !m_contentIsConstrainedByFloat;
-    auto lineStatus = InlineContentBreaker::LineStatus { m_line.contentLogicalWidth(), availableWidth, m_line.trimmableTrailingWidth(), m_line.trailingSoftHyphenWidth(), m_line.isTrailingRunFullyTrimmable(), isLineConsideredEmpty };
+    auto lineStatus = InlineContentBreaker::LineStatus { m_line.contentLogicalRight(), availableWidth, m_line.trimmableTrailingWidth(), m_line.trailingSoftHyphenWidth(), m_line.isTrailingRunFullyTrimmable(), isLineConsideredEmpty };
     auto result = inlineContentBreaker.processInlineContent(continuousInlineContent, lineStatus);
     if (result.lastWrapOpportunityItem)
         m_wrapOpportunityList.append(result.lastWrapOpportunityItem);
@@ -720,7 +720,7 @@ size_t LineBuilder::rebuildLine(const InlineItemRange& layoutRange, const Inline
     }
     for (; currentItemIndex < layoutRange.end; ++currentItemIndex) {
         auto& inlineItem = m_inlineItems[currentItemIndex];
-        m_line.append(inlineItem, inlineItemWidth(inlineItem, m_line.contentLogicalWidth()));
+        m_line.append(inlineItem, inlineItemWidth(inlineItem, m_line.contentLogicalRight()));
         if (&inlineItem == &lastInlineItemToAdd)
             return currentItemIndex - layoutRange.start + 1;
     }
@@ -736,7 +736,7 @@ size_t LineBuilder::rebuildLineForTrailingSoftHyphen(const InlineItemRange& layo
         // FIXME: If this turns out to be a perf issue, we could also traverse the wrap list and keep adding the items
         // while watching the available width very closely.
         auto committedCount = rebuildLine(layoutRange, softWrapOpportunityItem);
-        auto availableWidth = m_lineLogicalRect.width() - m_line.contentLogicalWidth();
+        auto availableWidth = m_lineLogicalRect.width() - m_line.contentLogicalRight();
         auto trailingSoftHyphenWidth = m_line.trailingSoftHyphenWidth();
         // Check if the trailing hyphen now fits the line (or we don't need hyhen anymore).
         if (!trailingSoftHyphenWidth || trailingSoftHyphenWidth <= availableWidth) {

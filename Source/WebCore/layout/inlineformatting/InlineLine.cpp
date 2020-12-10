@@ -226,7 +226,7 @@ void Line::appendInlineBoxStart(const InlineItem& inlineItem, InlineLayoutUnit l
 {
     // This is really just a placeholder to mark the start of the inline level container <span>.
     auto& boxGeometry = formattingContext().geometryForBox(inlineItem.layoutBox());
-    auto adjustedRunStart = contentLogicalWidth() + std::min(boxGeometry.marginStart(), 0_lu);
+    auto adjustedRunStart = contentLogicalRight() + std::min(boxGeometry.marginStart(), 0_lu);
     appendNonBreakableSpace(inlineItem, adjustedRunStart, logicalWidth);
 }
 
@@ -280,7 +280,7 @@ void Line::appendTextContent(const InlineTextItem& inlineTextItem, InlineLayoutU
             lastRun.expand(inlineTextItem, logicalWidth);
     }
     if (inlineTextItemNeedsNewRun)
-        m_runs.append({ inlineTextItem, contentLogicalWidth(), logicalWidth });
+        m_runs.append({ inlineTextItem, contentLogicalRight(), logicalWidth });
     m_contentLogicalWidth += logicalWidth;
     // Set the trailing trimmable content.
     if (inlineTextItem.isWhitespace() && !TextUtil::shouldPreserveTrailingWhitespace(style)) {
@@ -301,7 +301,7 @@ void Line::appendNonReplacedInlineBox(const InlineItem& inlineItem, InlineLayout
 {
     auto& boxGeometry = formattingContext().geometryForBox(inlineItem.layoutBox());
     // Negative margin start pulls the content to the logical left direction.
-    auto adjustedRunStart = contentLogicalWidth() + std::min(boxGeometry.marginStart(), 0_lu);
+    auto adjustedRunStart = contentLogicalRight() + std::min(boxGeometry.marginStart(), 0_lu);
     m_runs.append({ inlineItem, adjustedRunStart, logicalWidth });
     m_contentLogicalWidth += logicalWidth;
     m_trimmableTrailingContent.reset();
@@ -319,15 +319,15 @@ void Line::appendLineBreak(const InlineItem& inlineItem)
 {
     m_trailingSoftHyphenWidth = { };
     if (inlineItem.isHardLineBreak())
-        return m_runs.append({ inlineItem, contentLogicalWidth(), 0_lu });
+        return m_runs.append({ inlineItem, contentLogicalRight(), 0_lu });
     // Soft line breaks (preserved new line characters) require inline text boxes for compatibility reasons.
     ASSERT(inlineItem.isSoftLineBreak());
-    m_runs.append({ downcast<InlineSoftLineBreakItem>(inlineItem), contentLogicalWidth() });
+    m_runs.append({ downcast<InlineSoftLineBreakItem>(inlineItem), contentLogicalRight() });
 }
 
 void Line::appendWordBreakOpportunity(const InlineItem& inlineItem)
 {
-    m_runs.append({ inlineItem, contentLogicalWidth(), 0_lu });
+    m_runs.append({ inlineItem, contentLogicalRight(), 0_lu });
 }
 
 bool Line::isRunConsideredEmpty(const Run& run) const
