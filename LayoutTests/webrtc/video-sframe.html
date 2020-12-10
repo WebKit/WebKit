@@ -18,12 +18,12 @@ async function doSFrameTest(selectCodec)
     const stream = await new Promise((resolve, reject) => {
         createConnections((firstConnection) => {
             sender = firstConnection.addTrack(localStream.getTracks()[0], localStream);
-            let transform = new RTCRtpSFrameTransform({compatibilityMode: "H264"});
+            let transform = new SFrameTransform({compatibilityMode: "H264"});
             transform.setEncryptionKey(key);
             sender.transform = transform;
         }, (secondConnection) => {
             secondConnection.ontrack = (trackEvent) => {
-                let transform = new RTCRtpSFrameTransform({compatibilityMode: "H264"});
+                let transform = new SFrameTransform({compatibilityMode: "H264"});
                 transform.setEncryptionKey(key);
                 receiver = trackEvent.receiver;
                 receiver.transform = transform;

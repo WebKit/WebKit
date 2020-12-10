@@ -221,7 +221,6 @@ namespace WebCore {
     macro(RTCPeerConnectionIceEvent) \
     macro(RTCPeerConnectionIceErrorEvent) \
     macro(RTCRtpReceiver) \
-    macro(RTCRtpSFrameTransform) \
     macro(RTCRtpScriptTransform) \
     macro(RTCRtpSender) \
     macro(RTCRtpTransceiver) \
@@ -238,6 +237,7 @@ namespace WebCore {
     macro(RemotePlayback) \
     macro(Request) \
     macro(Response) \
+    macro(SFrameTransform) \
     macro(ScreenLuminance) \
     macro(ServiceWorker) \
     macro(ServiceWorkerContainer) \

@@ -16,12 +16,12 @@ promise_test(async (test) => {
     const stream = await new Promise((resolve, reject) => {
         createConnections((firstConnection) => {
             sender = firstConnection.addTrack(localStream.getAudioTracks()[0], localStream);
-            let transform = new RTCRtpSFrameTransform;
+            let transform = new SFrameTransform;
             transform.setEncryptionKey(key);
             sender.transform = transform;
         }, (secondConnection) => {
             secondConnection.ontrack = (trackEvent) => {
-                let transform = new RTCRtpSFrameTransform;
+                let transform = new SFrameTransform;
                 transform.setEncryptionKey(key);
                 receiver = trackEvent.receiver;
                 receiver.transform = transform;

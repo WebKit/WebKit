@@ -10,8 +10,8 @@
 
 promise_test(async (test) => {
     const pc = new RTCPeerConnection();
-    const senderTransform = new RTCRtpSFrameTransform();
-    const receiverTransform = new RTCRtpSFrameTransform();
+    const senderTransform = new SFrameTransform();
+    const receiverTransform = new SFrameTransform();
     const sender1 = pc.addTransceiver('audio').sender;
     const sender2 = pc.addTransceiver('video').sender;
     const receiver1 = pc.getReceivers()[0];
@@ -30,16 +30,16 @@ promise_test(async (test) => {
 }, "Cannot reuse attached transforms");
 
 test(() => {
-    const senderTransform = new RTCRtpSFrameTransform();
+    const senderTransform = new SFrameTransform();
 
     assert_true(senderTransform.readable instanceof ReadableStream);
     assert_true(senderTransform.writable instanceof WritableStream);
-}, "RTCRtpSFrameTransform exposes readable and writable");
+}, "SFrameTransform exposes readable and writable");
 
 promise_test(async (test) => {
     const pc = new RTCPeerConnection();
-    const senderTransform = new RTCRtpSFrameTransform();
-    const receiverTransform = new RTCRtpSFrameTransform();
+    const senderTransform = new SFrameTransform();
+    const receiverTransform = new SFrameTransform();
     const sender1 = pc.addTransceiver('audio').sender;
     const sender2 = pc.addTransceiver('video').sender;
     const receiver1 = pc.getReceivers()[0];
@@ -70,10 +70,10 @@ promise_test(async (test) => {
 promise_test(async (test) => {
     const key = await crypto.subtle.importKey("raw", new Uint8Array([143, 77, 43, 10, 72, 19, 37, 67, 236, 219, 24, 93, 26, 165, 91, 178]), "HKDF", false, ["deriveBits", "deriveKey"]);
 
-    const senderTransform = new RTCRtpSFrameTransform({ role : 'encrypt', authenticationSize: 10 });
+    const senderTransform = new SFrameTransform({ role : 'encrypt', authenticationSize: 10 });
     senderTransform.setEncryptionKey(key);
 
-    const receiverTransform = new RTCRtpSFrameTransform({ role : 'decrypt', authenticationSize: 10 });
+    const receiverTransform = new SFrameTransform({ role : 'decrypt', authenticationSize: 10 });
     receiverTransform.setEncryptionKey(key);
 
     const writer = senderTransform.writable.getWriter();
@@ -98,11 +98,11 @@ promise_test(async (test) => {
 promise_test(async (test) => {
     const key = await crypto.subtle.importKey("raw", new Uint8Array([143, 77, 43, 10, 72, 19, 37, 67, 236, 219, 24, 93, 26, 165, 91, 178]), "HKDF", false, ["deriveBits", "deriveKey"]);
 
-    const senderTransform = new RTCRtpSFrameTransform({ role : 'encrypt', authenticationSize: 10 });
+    const senderTransform = new SFrameTransform({ role : 'encrypt', authenticationSize: 10 });
     const senderWriter = senderTransform.writable.getWriter();
     const senderReader = senderTransform.readable.getReader();
 
-    const receiverTransform = new RTCRtpSFrameTransform({ role : 'decrypt', authenticationSize: 10 });
+    const receiverTransform = new SFrameTransform({ role : 'decrypt', authenticationSize: 10 });
     const receiverWriter = receiverTransform.writable.getWriter();
     const receiverReader = receiverTransform.readable.getReader();
 
@@ -127,7 +127,7 @@ promise_test(async (test) => {
 promise_test(async (test) => {
     const key = await crypto.subtle.importKey("raw", new Uint8Array([143, 77, 43, 10, 72, 19, 37, 67, 236, 219, 24, 93, 26, 165, 91, 178]), "HKDF", false, ["deriveBits", "deriveKey"]);
 
-    const receiverTransform = new RTCRtpSFrameTransform({ role : 'decrypt', authenticationSize: 10 });
+    const receiverTransform = new SFrameTransform({ role : 'decrypt', authenticationSize: 10 });
     const receiverWriter = receiverTransform.writable.getWriter();
     receiverTransform.setEncryptionKey(key);
 
