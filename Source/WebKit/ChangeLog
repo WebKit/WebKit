@@ -1,3 +1,15 @@
+2020-12-10  Sihui Liu  <sihui_liu@apple.com>
+
+        REGRESSION (r270574): [iOS] ASSERTION FAILED: !m_messageReceiverMapCount under WebKit::SpeechRecognitionRemoteRealtimeMediaSourceManager::~SpeechRecognitionRemoteRealtimeMediaSourceManager
+        https://bugs.webkit.org/show_bug.cgi?id=219745
+        <rdar://problem/72184764>
+
+        Reviewed by Youenn Fablet.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::~WebProcessProxy): Remove SpeechRecognitionRemoteRealtimeMediaSourceManager from
+        MessageReceiverMap before destroying it.
+
 2020-12-10  Timothy Hatcher  <timothy@apple.com>
 
         Add willInjectUserScriptForFrame to WKWebProcessPlugInLoadDelegate.

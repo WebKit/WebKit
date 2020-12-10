@@ -234,6 +234,11 @@ WebProcessProxy::~WebProcessProxy()
     for (auto identifier : m_speechRecognitionServerMap.keys())
         removeMessageReceiver(Messages::SpeechRecognitionServer::messageReceiverName(), identifier);
 
+#if ENABLE(MEDIA_STREAM)
+    if (m_speechRecognitionRemoteRealtimeMediaSourceManager)
+        removeMessageReceiver(Messages::SpeechRecognitionRemoteRealtimeMediaSourceManager::messageReceiverName());
+#endif
+
     auto result = allProcesses().remove(coreProcessIdentifier());
     ASSERT_UNUSED(result, result);
 
