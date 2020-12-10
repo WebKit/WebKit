@@ -2561,7 +2561,40 @@ AXCoreObject* AccessibilityObject::focusedUIElement() const
     auto* axObjectCache = this->axObjectCache();
     return page && axObjectCache ? axObjectCache->focusedObjectForPage(page) : nullptr;
 }
-    
+
+void AccessibilityObject::setFocused(bool focus)
+{
+    if (focus) {
+        // Ensure that the view is focused and active, otherwise, any attempt to set focus to an object inside it will fail.
+        auto* document = this->document();
+        if (!document)
+            return;
+
+        auto* frame = document->frame();
+        if (frame && frame->selection().isFocusedAndActive())
+            return; // Nothing to do, already focused and active.
+
+        auto* page = document->page();
+        if (!page)
+            return;
+
+        ChromeClient& chromeClient = page->chrome().client();
+        chromeClient.focus();
+
+#if PLATFORM(COCOA)
+        auto* frameView = documentFrameView();
+        if (!frameView)
+            return;
+
+        // Legacy WebKit1 case.
+        if (frameView->platformWidget())
+            chromeClient.makeFirstResponder((NSResponder *)frameView->platformWidget());
+        else
+            chromeClient.assistiveTechnologyMakeFirstResponder();
+#endif
+    }
+}
+
 AccessibilitySortDirection AccessibilityObject::sortDirection() const
 {
     AccessibilityRole role = roleValue();

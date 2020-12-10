@@ -2139,9 +2139,12 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
     AXTRACE(makeString("WebAccessibilityObjectWrapper accessibilityAttributeValue:", String(attributeName)));
+
     auto* backingObject = self.updateObjectBackingStore;
-    if (!backingObject)
+    if (!backingObject) {
+        AXLOG("No backingObject!!!");
         return nil;
+    }
 
     if (backingObject->isDetachedFromParent()) {
         AXLOG("backingObject is detached from parent!!!");
@@ -3360,11 +3363,15 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 #endif
 }
 
-- (void)_accessibilitySetValue:(id)value forAttribute:(NSString*)attributeName
+- (void)_accessibilitySetValue:(id)value forAttribute:(NSString *)attributeName
 {
+    AXTRACE(makeString("WebAccessibilityObjectWrapper _accessibilitySetValue: forAttribute:", String(attributeName)));
+
     auto* backingObject = self.updateObjectBackingStore;
-    if (!backingObject)
+    if (!backingObject) {
+        AXLOG("No backingObject!!!");
         return;
+    }
 
     AXTextMarkerRangeRef textMarkerRange = nil;
     NSNumber*               number = nil;
@@ -3392,7 +3399,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
                 backingObject->setSelectedVisiblePositionRange(visiblePositionRangeForTextMarkerRange(backingObject->axObjectCache(), textMarkerRange));
         });
     } else if ([attributeName isEqualToString: NSAccessibilityFocusedAttribute]) {
-        [self baseAccessibilitySetFocus:[number boolValue]];
+        backingObject->setFocused([number boolValue]);
     } else if ([attributeName isEqualToString: NSAccessibilityValueAttribute]) {
         if (number && backingObject->canSetNumericValue())
             backingObject->setValue([number floatValue]);

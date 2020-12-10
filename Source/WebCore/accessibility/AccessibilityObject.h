@@ -457,7 +457,10 @@ public:
     unsigned hierarchicalLevel() const override { return 0; }
     bool isInlineText() const override;
 
-    void setFocused(bool) override { }
+    // Ensures that the view is focused and active before attempting to set focus to an AccessibilityObject.
+    // Subclasses that override setFocused should call this base implementation first.
+    void setFocused(bool) override;
+
     void setSelectedText(const String&) override { }
     void setSelectedTextRange(const PlainTextRange&) override { }
     bool setValue(const String&) override { return false; }

@@ -1849,7 +1849,7 @@ void AccessibilityRenderObject::setFocused(bool on)
 {
     if (!canSetFocusAttribute())
         return;
-    
+
     Document* document = this->document();
     Node* node = this->node();
 
@@ -1858,11 +1858,14 @@ void AccessibilityRenderObject::setFocused(bool on)
         return;
     }
 
+    // Call the base class setFocused to ensure the view is focused and active.
+    AccessibilityObject::setFocused(on);
+
     // When a node is told to set focus, that can cause it to be deallocated, which means that doing
     // anything else inside this object will crash. To fix this, we added a RefPtr to protect this object
     // long enough for duration.
     RefPtr<AccessibilityObject> protectedThis(this);
-    
+
     // If this node is already the currently focused node, then calling focus() won't do anything.
     // That is a problem when focus is removed from the webpage to chrome, and then returns.
     // In these cases, we need to do what keyboard and mouse focus do, which is reset focus first.

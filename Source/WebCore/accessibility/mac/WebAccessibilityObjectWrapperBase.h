@@ -74,7 +74,6 @@ class VisiblePosition;
 - (NSString *)baseAccessibilityHelpText;
 - (NSArray<NSString *> *)baseAccessibilitySpeechHint;
 
-- (void)baseAccessibilitySetFocus:(BOOL)focus;
 - (NSString *)ariaLandmarkRoleDescription;
 
 - (id)attachmentView;

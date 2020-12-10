@@ -43,8 +43,6 @@
 #import "AccessibilityTableCell.h"
 #import "AccessibilityTableColumn.h"
 #import "AccessibilityTableRow.h"
-#import "Chrome.h"
-#import "ChromeClient.h"
 #import "ColorMac.h"
 #import "ContextMenuController.h"
 #import "Editing.h"
@@ -467,27 +465,6 @@ static void convertPathToScreenSpaceFunction(PathConversionInfo& conversion, con
 - (NSString *)ariaLandmarkRoleDescription
 {
     return self.axBackingObject->ariaLandmarkRoleDescription();
-}
-
-- (void)baseAccessibilitySetFocus:(BOOL)focus
-{
-    // If focus is just set without making the view the first responder, then keyboard focus won't move to the right place.
-    if (focus && !self.axBackingObject->document()->frame()->selection().isFocusedAndActive()) {
-        FrameView* frameView = self.axBackingObject->documentFrameView();
-        Page* page = self.axBackingObject->page();
-        if (page && frameView) {
-            ChromeClient& chromeClient = page->chrome().client();
-            chromeClient.focus();
-
-            // Legacy WebKit1 case.
-            if (frameView->platformWidget())
-                chromeClient.makeFirstResponder(frameView->platformWidget());
-            else
-                chromeClient.assistiveTechnologyMakeFirstResponder();
-        }
-    }
-
-    self.axBackingObject->setFocused(focus);
 }
 
 - (NSString *)accessibilityPlatformMathSubscriptKey

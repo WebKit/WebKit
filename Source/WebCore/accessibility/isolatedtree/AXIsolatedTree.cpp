@@ -388,8 +388,13 @@ void AXIsolatedTree::setFocusedNodeID(AXID axID)
     AXTRACE("AXIsolatedTree::setFocusedNodeID");
     AXLOG(makeString("axID ", axID));
     ASSERT(isMainThread());
+
     LockHolder locker { m_changeLogLock };
     m_pendingFocusedNodeID = axID;
+
+    AXPropertyMap propertyMap;
+    propertyMap.set(AXPropertyName::IsFocused, true);
+    m_pendingPropertyChanges.append({ axID, propertyMap });
 }
 
 void AXIsolatedTree::removeNode(AXID axID)
@@ -436,8 +441,17 @@ void AXIsolatedTree::applyPendingChanges()
 
     LockHolder locker { m_changeLogLock };
 
-    AXLOG(makeString("focusedNodeID ", m_focusedNodeID, " pendingFocusedNodeID ", m_pendingFocusedNodeID));
-    m_focusedNodeID = m_pendingFocusedNodeID;
+    if (m_pendingFocusedNodeID != m_focusedNodeID) {
+        AXLOG(makeString("focusedNodeID ", m_focusedNodeID, " pendingFocusedNodeID ", m_pendingFocusedNodeID));
+
+        if (m_focusedNodeID != InvalidAXID) {
+            // Set the old focused object's IsFocused property to false.
+            AXPropertyMap propertyMap;
+            propertyMap.set(AXPropertyName::IsFocused, false);
+            m_pendingPropertyChanges.append({ m_focusedNodeID, propertyMap });
+        }
+        m_focusedNodeID = m_pendingFocusedNodeID;
+    }
 
     while (m_pendingNodeRemovals.size()) {
         auto axID = m_pendingNodeRemovals.takeLast();

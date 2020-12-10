@@ -1905,24 +1905,34 @@ Widget* AXIsolatedObject::widgetForAttachmentView() const
 
 Page* AXIsolatedObject::page() const
 {
-    if (auto* object = associatedAXObject())
-        return object->page();
+    ASSERT(isMainThread());
+
+    if (auto* axObject = associatedAXObject())
+        return axObject->page();
+
     ASSERT_NOT_REACHED();
     return nullptr;
 }
 
 Document* AXIsolatedObject::document() const
 {
-    if (auto* object = associatedAXObject())
-        return object->document();
+    ASSERT(isMainThread());
+
+    if (auto* axObject = associatedAXObject())
+        return axObject->document();
+
     ASSERT_NOT_REACHED();
     return nullptr;
 }
 
 FrameView* AXIsolatedObject::documentFrameView() const
 {
-    if (auto* object = associatedAXObject())
-        return object->documentFrameView();
+    ASSERT(isMainThread());
+
+    if (auto* axObject = associatedAXObject())
+        return axObject->documentFrameView();
+
+    ASSERT_NOT_REACHED();
     return nullptr;
 }
 
