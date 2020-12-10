@@ -758,15 +758,26 @@ LayoutUnit RenderFlexibleBox::computeMainSizeFromAspectRatioUsing(const RenderBo
 {
     ASSERT(child.hasAspectRatio());
     ASSERT(child.intrinsicSize().height());
-    
+
+    auto adjustForBoxSizing = [this] (const RenderBox& box, Length length) -> LayoutUnit {
+        ASSERT(length.isFixed());
+        auto value = LayoutUnit(length.value());
+        // We need to substract the border and padding extent from the cross axis.
+        // Furthermore, the sizing calculations that floor the content box size at zero when applying box-sizing are also ignored.
+        // https://drafts.csswg.org/css-flexbox/#algo-main-item.
+        if (box.style().boxSizing() == BoxSizing::BorderBox)
+            value -= isHorizontalFlow() ? box.verticalBorderAndPaddingExtent() : box.horizontalBorderAndPaddingExtent();
+        return value;
+    };
+
     Optional<LayoutUnit> crossSize;
     if (crossSizeLength.isFixed())
-        crossSize = LayoutUnit(crossSizeLength.value());
+        crossSize = adjustForBoxSizing(child, crossSizeLength);
     else if (crossSizeLength.isAuto()) {
         auto containerCrossSizeLength = isHorizontalFlow() ? style().height() : style().width();
         // Keep this sync'ed with childCrossSizeIsDefinite().
         ASSERT(containerCrossSizeLength.isFixed());
-        crossSize = valueForLength(containerCrossSizeLength, -1_lu);
+        crossSize = adjustForBoxSizing(*this, containerCrossSizeLength);
     } else {
         ASSERT(crossSizeLength.isPercentOrCalculated());
         crossSize = mainAxisIsChildInlineAxis(child) ? child.computePercentageLogicalHeight(crossSizeLength) : adjustBorderBoxLogicalWidthForBoxSizing(valueForLength(crossSizeLength, contentWidth()));
@@ -878,8 +889,7 @@ LayoutUnit RenderFlexibleBox::computeInnerFlexBaseSizeForChild(RenderBox& child,
 
     if (useChildAspectRatio(child)) {
         const Length& crossSizeLength = isHorizontalFlow() ? child.style().height() : child.style().width();
-        auto mainSize = adjustChildSizeForAspectRatioCrossAxisMinAndMax(child, computeMainSizeFromAspectRatioUsing(child, crossSizeLength));
-        return mainSize - mainAxisBorderAndPadding;
+        return adjustChildSizeForAspectRatioCrossAxisMinAndMax(child, computeMainSizeFromAspectRatioUsing(child, crossSizeLength));
     }
 
     // The flex basis is indefinite (=auto), so we need to compute the actual
