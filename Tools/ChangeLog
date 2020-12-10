@@ -1,3 +1,19 @@
+2020-12-10  Lauro Moura  <lmoura@igalia.com>
+
+        [Flapak SDK] Add envvar to enable verbose mode
+        https://bugs.webkit.org/show_bug.cgi?id=219744
+
+        Reviewed by Adrian Perez de Castro.
+
+        While webkit-flatpak has the --verbose option, some scripts like
+        run-minibrowser, run-gtk-tests etc might not expose it to the user.
+
+        This change checks for WEBKIT_SDK_VERBOSE in order to be able to
+        control it regardless of command line options.
+
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak.load_from_args):
+
 2020-12-10  David Kilzer  <ddkilzer@apple.com>
 
         prepare-ChangeLog won't parse rdar://nnnnnnnn URLs in fetchRadarURLFromBugXMLData()

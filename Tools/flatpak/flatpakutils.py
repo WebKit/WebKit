@@ -468,6 +468,10 @@ class WebkitFlatpak:
         if os.environ.get('CCACHE_PREFIX') == 'icecc':
             self.use_icecream = True
 
+        verbose = os.environ.get('WEBKIT_SDK_VERBOSE')
+        if verbose is not None:
+            self.verbose = verbose != '0'
+
         return self
 
     def __init__(self):
