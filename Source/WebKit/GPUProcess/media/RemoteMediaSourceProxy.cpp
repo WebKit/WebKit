@@ -29,6 +29,7 @@
 #if ENABLE(GPU_PROCESS) && ENABLE(MEDIA_SOURCE)
 
 #include "GPUConnectionToWebProcess.h"
+#include "MediaSourcePrivateRemoteMessages.h"
 #include "RemoteMediaPlayerProxy.h"
 #include "RemoteMediaSourceProxyMessages.h"
 #include "RemoteSourceBufferProxy.h"
@@ -70,9 +71,9 @@ std::unique_ptr<PlatformTimeRanges> RemoteMediaSourceProxy::buffered() const
     return makeUnique<PlatformTimeRanges>();
 }
 
-void RemoteMediaSourceProxy::seekToTime(const MediaTime&)
+void RemoteMediaSourceProxy::seekToTime(const MediaTime& time)
 {
-    notImplemented();
+    m_connectionToWebProcess.connection().send(Messages::MediaSourcePrivateRemote::SeekToTime(time), m_identifier);
 }
 
 void RemoteMediaSourceProxy::monitorSourceBuffers()
@@ -125,6 +126,18 @@ void RemoteMediaSourceProxy::setReadyState(WebCore::MediaPlayerEnums::ReadyState
 {
     if (m_private)
         m_private->setReadyState(readyState);
+}
+
+void RemoteMediaSourceProxy::waitForSeekCompleted()
+{
+    if (m_private)
+        m_private->waitForSeekCompleted();
+}
+
+void RemoteMediaSourceProxy::seekCompleted()
+{
+    if (m_private)
+        m_private->seekCompleted();
 }
 
 } // namespace WebKit

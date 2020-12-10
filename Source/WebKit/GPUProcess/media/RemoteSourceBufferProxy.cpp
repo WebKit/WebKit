@@ -191,6 +191,11 @@ void RemoteSourceBufferProxy::trySignalAllSamplesInTrackEnqueued()
     m_sourceBufferPrivate->trySignalAllSamplesInTrackEnqueued();
 }
 
+void RemoteSourceBufferProxy::seekToTime(const MediaTime& mediaTime)
+{
+    m_sourceBufferPrivate->seekToTime(mediaTime);
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(GPU_PROCESS) && ENABLE(MEDIA_SOURCE)

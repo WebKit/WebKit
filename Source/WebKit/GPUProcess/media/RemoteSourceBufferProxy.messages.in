@@ -34,6 +34,7 @@ messages -> RemoteSourceBufferProxy NotRefCounted {
     AddTrackBuffer(WebKit::TrackPrivateRemoteIdentifier trackId)
     ReenqueueMediaIfNeeded(MediaTime currentMediaTime, uint64_t pendingAppendDataCapacity, uint64_t maximumBufferSize)
     TrySignalAllSamplesInTrackEnqueued()
+    SeekToTime(MediaTime mediaTime)
 }
 
 #endif

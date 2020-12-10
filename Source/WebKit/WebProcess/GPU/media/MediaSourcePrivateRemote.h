@@ -28,6 +28,7 @@
 #if ENABLE(GPU_PROCESS) && ENABLE(MEDIA_SOURCE)
 
 #include "GPUProcessConnection.h"
+#include "MessageReceiver.h"
 #include "RemoteMediaPlayerMIMETypeCache.h"
 #include "RemoteMediaSourceIdentifier.h"
 #include <WebCore/ContentType.h>
@@ -38,6 +39,11 @@
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
+namespace IPC {
+class Connection;
+class Decoder;
+}
+
 namespace WebKit {
 
 class MediaPlayerPrivateRemote;
@@ -46,6 +52,7 @@ class SourceBufferPrivateRemote;
 class MediaSourcePrivateRemote final
     : public WebCore::MediaSourcePrivate
     , public CanMakeWeakPtr<MediaSourcePrivateRemote>
+    , private IPC::MessageReceiver
 #if !RELEASE_LOG_DISABLED
     , private LoggerHelper
 #endif
@@ -72,6 +79,9 @@ public:
 
 private:
     MediaSourcePrivateRemote(GPUProcessConnection&, RemoteMediaSourceIdentifier, RemoteMediaPlayerMIMETypeCache&, const MediaPlayerPrivateRemote&, WebCore::MediaSourcePrivateClient*);
+
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
+    void seekToTime(const MediaTime&);
 
     GPUProcessConnection& m_gpuProcessConnection;
     RemoteMediaSourceIdentifier m_identifier;

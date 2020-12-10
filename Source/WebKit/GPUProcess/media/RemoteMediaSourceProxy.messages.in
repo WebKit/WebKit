@@ -29,6 +29,8 @@ messages -> RemoteMediaSourceProxy NotRefCounted {
     AddSourceBuffer(WebCore::ContentType contentType) -> (enum:uint8_t WebCore::MediaSourcePrivate::AddStatus status, Optional<WebKit::RemoteSourceBufferIdentifier> remoteSourceBufferIdentifier) Synchronous
     DurationChanged(MediaTime duration)
     SetReadyState(WebCore::MediaPlayerEnums::ReadyState readyState)
+    WaitForSeekCompleted()
+    SeekCompleted()
 }
 
 #endif

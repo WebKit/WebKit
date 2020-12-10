@@ -80,6 +80,7 @@ public:
     virtual void trySignalAllSamplesInTrackEnqueued();
     WEBCORE_EXPORT virtual void updateBufferedFromTrackBuffers(bool sourceIsEnded);
     WEBCORE_EXPORT virtual void evictCodedFrames(uint64_t newDataSize, uint64_t pendingAppendDataCapacity, uint64_t maximumBufferSize, const MediaTime& currentTime, const MediaTime& duration, bool isEnded);
+    virtual void seekToTime(const MediaTime&);
 
     void setClient(SourceBufferPrivateClient* client) { m_client = client; }
     void setIsAttached(bool flag) { m_isAttached = flag; }
@@ -96,7 +97,6 @@ public:
     MediaTime timestampOffset() const { return m_timestampOffset; }
     void setTimestampOffset(const MediaTime& timestampOffset) { m_timestampOffset = timestampOffset; }
     MediaTime highestPresentationTimestamp() const;
-    void seekToTime(const MediaTime&);
     void startChangingType() { m_pendingInitializationSegmentForChangeType = true; }
     void removeCodedFrames(const MediaTime& start, const MediaTime& end, const MediaTime& currentMediaTime, bool isEnded);
     void updateTrackIds(Vector<std::pair<AtomString, AtomString>>&& trackIdPairs);

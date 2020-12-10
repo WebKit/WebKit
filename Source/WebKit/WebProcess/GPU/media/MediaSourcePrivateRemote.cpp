@@ -30,6 +30,7 @@
 
 #include "Logging.h"
 #include "MediaPlayerPrivateRemote.h"
+#include "MediaSourcePrivateRemoteMessages.h"
 #include "RemoteMediaSourceProxyMessages.h"
 #include "RemoteSourceBufferIdentifier.h"
 #include "SourceBufferPrivateRemote.h"
@@ -65,6 +66,9 @@ MediaSourcePrivateRemote::MediaSourcePrivateRemote(GPUProcessConnection& gpuProc
 #endif
 {
     ALWAYS_LOG(LOGIDENTIFIER);
+
+    m_gpuProcessConnection.messageReceiverMap().addMessageReceiver(Messages::MediaSourcePrivateRemote::messageReceiverName(), m_identifier.toUInt64(), *this);
+
 #if !RELEASE_LOG_DISABLED
     m_client->setLogIdentifier(m_logIdentifier);
 #endif
@@ -73,6 +77,7 @@ MediaSourcePrivateRemote::MediaSourcePrivateRemote(GPUProcessConnection& gpuProc
 MediaSourcePrivateRemote::~MediaSourcePrivateRemote()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
+    m_gpuProcessConnection.messageReceiverMap().removeMessageReceiver(Messages::MediaSourcePrivateRemote::messageReceiverName(), m_identifier.toUInt64());
 
     for (auto it = m_sourceBuffers.begin(), end = m_sourceBuffers.end(); it != end; ++it)
         (*it)->clearMediaSource();
@@ -136,12 +141,17 @@ void MediaSourcePrivateRemote::setReadyState(MediaPlayer::ReadyState readyState)
 
 void MediaSourcePrivateRemote::waitForSeekCompleted()
 {
-    notImplemented();
+    m_gpuProcessConnection.connection().send(Messages::RemoteMediaSourceProxy::WaitForSeekCompleted(), m_identifier);
 }
 
 void MediaSourcePrivateRemote::seekCompleted()
 {
-    notImplemented();
+    m_gpuProcessConnection.connection().send(Messages::RemoteMediaSourceProxy::SeekCompleted(), m_identifier);
+}
+
+void MediaSourcePrivateRemote::seekToTime(const MediaTime& time)
+{
+    m_client->seekToTime(time);
 }
 
 #if !RELEASE_LOG_DISABLED

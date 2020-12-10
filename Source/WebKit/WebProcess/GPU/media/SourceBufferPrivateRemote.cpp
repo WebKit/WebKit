@@ -183,6 +183,11 @@ void SourceBufferPrivateRemote::trySignalAllSamplesInTrackEnqueued()
     m_gpuProcessConnection.connection().send(Messages::RemoteSourceBufferProxy::TrySignalAllSamplesInTrackEnqueued(), m_remoteSourceBufferIdentifier);
 }
 
+void SourceBufferPrivateRemote::seekToTime(const MediaTime& mediaTime)
+{
+    m_gpuProcessConnection.connection().send(Messages::RemoteSourceBufferProxy::SeekToTime(mediaTime), m_remoteSourceBufferIdentifier);
+}
+
 void SourceBufferPrivateRemote::sourceBufferPrivateDidReceiveInitializationSegment(InitializationSegmentInfo&& segmentInfo, CompletionHandler<void()>&& completionHandler)
 {
     if (!m_client || !m_mediaPlayerPrivate)
