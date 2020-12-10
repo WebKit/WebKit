@@ -1,6 +1,8 @@
 var localizedStrings = new Object;
 
 localizedStrings[" (Prototype)"] = " (Prototype)";
+/* A range and default value for a single variation axis of a font. */
+localizedStrings[" (Range: %d-%d, Default: %d) @ Font Details Sidebar"] = " (Range: %d-%d, Default: %d)";
 localizedStrings[" (line %s)"] = " (line %s)";
 localizedStrings["${expr} = expression"] = "${expr} = expression";
 localizedStrings["%.0f B"] = "%.0f B";
@@ -22,6 +24,8 @@ localizedStrings["%.2f\u00d7"] = "%.2f\u00d7";
 localizedStrings["%.2fms"] = "%.2fms";
 localizedStrings["%.2fs"] = "%.2fs";
 localizedStrings["%.3fms"] = "%.3fms";
+/* A value, range, and default value for a single variation axis of a font. */
+localizedStrings["%d (Range: %d-%d, Default: %d) @ Font Details Sidebar"] = "%d (Range: %d-%d, Default: %d)";
 localizedStrings["%d Error"] = "%d Error";
 localizedStrings["%d Errors"] = "%d Errors";
 localizedStrings["%d Errors, %d Warnings"] = "%d Errors, %d Warnings";
@@ -48,6 +52,7 @@ localizedStrings["%d redirect"] = "%d redirect";
 localizedStrings["%d redirects"] = "%d redirects";
 localizedStrings["%d resource"] = "%d resource";
 localizedStrings["%d resources"] = "%d resources";
+localizedStrings["%d%%"] = "%d%%";
 localizedStrings["%dpx"] = "%dpx";
 localizedStrings["%dpx\u00B2"] = "%dpx\u00B2";
 localizedStrings["%s (%s)"] = "%s (%s)";
@@ -136,8 +141,12 @@ localizedStrings["All Intervals @ Event Breakpoint"] = "All Intervals";
 localizedStrings["All Layers"] = "All Layers";
 /* Break (pause) on all microtasks */
 localizedStrings["All Microtasks @ JavaScript Breakpoint"] = "All Microtasks";
+/* Property value for `font-variant-capitals: all-petite-caps`. */
+localizedStrings["All Petite Capitals @ Font Details Sidebar Property Value"] = "All Petite Capitals";
 /* A submenu item of 'Break on' that breaks (pauses) before all network requests */
 localizedStrings["All Requests"] = "All Requests";
+/* Property value for `font-variant-capitals: all-small-caps`. */
+localizedStrings["All Small Capitals @ Font Details Sidebar Property Value"] = "All Small Capitals";
 localizedStrings["All Storage"] = "All Storage";
 /* Break (pause) on all timeouts */
 localizedStrings["All Timeouts @ Event Breakpoint"] = "All Timeouts";
@@ -200,6 +209,8 @@ localizedStrings["BMP"] = "BMP";
 localizedStrings["Back (%s)"] = "Back (%s)";
 localizedStrings["Backtrace"] = "Backtrace";
 localizedStrings["Basic"] = "Basic";
+/* Section title for basic font properties. */
+localizedStrings["Basic Properties @ Font Details Sidebar Section"] = "Basic Properties";
 localizedStrings["Beacon"] = "Beacon";
 localizedStrings["Beacons"] = "Beacons";
 localizedStrings["Binary Frame"] = "Binary Frame";
@@ -253,6 +264,8 @@ localizedStrings["Canvas %s"] = "Canvas %s";
 localizedStrings["Canvas Context Type Bitmap Renderer"] = "Bitmap Renderer";
 localizedStrings["Canvas Element"] = "Canvas Element";
 localizedStrings["Canvases"] = "Canvases";
+/* Property title for `font-variant-caps`. */
+localizedStrings["Capitals @ Font Details Sidebar Property"] = "Capitals";
 /* Capture screenshot of the selected DOM node */
 localizedStrings["Capture Screenshot"] = "Capture Screenshot";
 localizedStrings["Capturing"] = "Capturing";
@@ -311,6 +324,8 @@ localizedStrings["Collapse All"] = "Collapse All";
 localizedStrings["Collapse columns"] = "Collapse columns";
 localizedStrings["Collect garbage"] = "Collect garbage";
 localizedStrings["Comment"] = "Comment";
+/* Property value for `font-variant-ligatures: common-ligatures`. */
+localizedStrings["Common @ Font Details Sidebar Property Value"] = "Common";
 localizedStrings["Compare snapshots"] = "Compare snapshots";
 localizedStrings["Comparison of total memory size at the end of the selected time range to the maximum memory size in this recording"] = "Comparison of total memory size at the end of the selected time range to the maximum memory size in this recording";
 /* Composite phase timeline records, where graphic layers are combined */
@@ -342,6 +357,8 @@ localizedStrings["Console opened at %s"] = "Console opened at %s";
 localizedStrings["Console prompt"] = "Console prompt";
 localizedStrings["Containing"] = "Containing";
 localizedStrings["Content Security Policy violation of directive: %s"] = "Content Security Policy violation of directive: %s";
+/* Property value for `font-variant-ligatures: contextual`. */
+localizedStrings["Contextual Alternates @ Font Details Sidebar Property Value"] = "Contextual Alternates";
 localizedStrings["Continuation Frame"] = "Continuation Frame";
 localizedStrings["Continue script execution (%s or %s)"] = "Continue script execution (%s or %s)";
 localizedStrings["Continue to Here"] = "Continue to Here";
@@ -426,6 +443,8 @@ localizedStrings["Details @ Sidebar"] = "Details";
 localizedStrings["Device %d"] = "Device %d";
 localizedStrings["Device Settings"] = "Device Settings";
 localizedStrings["Diagnoses common accessibility problems affecting screen readers and other assistive technology."] = "Diagnoses common accessibility problems affecting screen readers and other assistive technology.";
+/* Property value for `font-variant-numeric: diagonal-fractions`. */
+localizedStrings["Diagonal Fractions @ Font Details Sidebar Property Value"] = "Diagonal Fractions";
 localizedStrings["Dimensions"] = "Dimensions";
 localizedStrings["Disable Audit"] = "Disable Audit";
 localizedStrings["Disable Breakpoint"] = "Disable Breakpoint";
@@ -443,6 +462,10 @@ localizedStrings["Disable all breakpoints (%s)"] = "Disable all breakpoints (%s)
 localizedStrings["Disable paint flashing"] = "Disable paint flashing";
 localizedStrings["Disable:"] = "Disable:";
 localizedStrings["Disabled"] = "Disabled";
+/* Property value for `font-variant-ligatures: no-common-ligatures`. */
+localizedStrings["Disabled Common @ Font Details Sidebar Property Value"] = "Disabled Common";
+/* Property value for `font-variant-ligatures: discretionary-ligatures`. */
+localizedStrings["Discretionary @ Font Details Sidebar Property Value"] = "Discretionary";
 localizedStrings["Disk Cache"] = "Disk Cache";
 localizedStrings["Dismiss"] = "Dismiss";
 localizedStrings["Displayed Columns"] = "Displayed Columns";
@@ -471,6 +494,8 @@ localizedStrings["Duration: Short"] = "Duration: Short";
 localizedStrings["Dynamically calculated for the parent element"] = "Dynamically calculated for the parent element";
 localizedStrings["Dynamically calculated for the selected element"] = "Dynamically calculated for the selected element";
 localizedStrings["Dynamically calculated for the selected element and did not match"] = "Dynamically calculated for the selected element and did not match";
+/* Property title for `font-variant-east-asian`. */
+localizedStrings["East Asian @ Font Details Sidebar Property"] = "East Asian";
 /* Label for a guide within the color picker */
 localizedStrings["Edge of sRGB color space"] = "Edge of sRGB color space";
 localizedStrings["Edit"] = "Edit";
@@ -596,6 +621,8 @@ localizedStrings["Fade unexecuted code"] = "Fade unexecuted code";
 localizedStrings["Fail @ Audit Tab - Test Case"] = "Fail";
 localizedStrings["Failed to upgrade"] = "Failed to upgrade";
 localizedStrings["Failure status code"] = "Failure status code";
+/* Section title for font feature properties. */
+localizedStrings["Feature Properties @ Font Details Sidebar Section"] = "Feature Properties";
 /* Resource loaded via 'fetch' method */
 localizedStrings["Fetch"] = "Fetch";
 /* Resources loaded via 'fetch' method */
@@ -611,6 +638,8 @@ localizedStrings["Flows"] = "Flows";
 localizedStrings["Focus on Subtree"] = "Focus on Subtree";
 localizedStrings["Focused"] = "Focused";
 localizedStrings["Font"] = "Font";
+/* Title for the Font details sidebar. */
+localizedStrings["Font @ Font Details Sidebar Title"] = "Font";
 localizedStrings["Fonts"] = "Fonts";
 localizedStrings["Force Dark Appearance"] = "Force Dark Appearance";
 localizedStrings["Force Light Appearance"] = "Force Light Appearance";
@@ -643,6 +672,8 @@ localizedStrings["Full Garbage Collection"] = "Full Garbage Collection";
 localizedStrings["Full URL"] = "Full URL";
 localizedStrings["Full-Screen"] = "Full-Screen";
 localizedStrings["Full-Screen from \u201C%s\u201D"] = "Full-Screen from \u201C%s\u201D";
+/* Property value for `font-variant-alternates: full-width`. */
+localizedStrings["Full-Width Variants @ Font Details Sidebar Property Value"] = "Full-Width Variants";
 localizedStrings["Function"] = "Function";
 localizedStrings["Function Name Variable"] = "Function Name Variable";
 localizedStrings["GIF"] = "GIF";
@@ -697,6 +728,12 @@ localizedStrings["High @ Network Priority"] = "High";
 /* Energy Impact: High */
 localizedStrings["High @ Timeline Energy Impact"] = "High";
 localizedStrings["Highest: %s"] = "Highest: %s";
+/* Property value for `font-variant-ligatures: historical-ligatures`. */
+localizedStrings["Historical @ Font Details Sidebar Property Value"] = "Historical";
+/* Property title for `font-variant-alternates`. */
+localizedStrings["Historical Figures @ Font Details Sidebar Property"] = "Historical Figures";
+/* Property value for `font-variant-alternates: historical-forms`. */
+localizedStrings["Historical Forms @ Font Details Sidebar Property Value"] = "Historical Forms";
 localizedStrings["Host"] = "Host";
 localizedStrings["ICO"] = "ICO";
 localizedStrings["IP"] = "IP";
@@ -705,6 +742,8 @@ localizedStrings["ITML Context"] = "ITML Context";
 localizedStrings["ITP Debug Mode"] = "ITP Debug Mode";
 localizedStrings["Identifier"] = "Identifier";
 localizedStrings["Identity"] = "Identity";
+/* Section title for font identity information. */
+localizedStrings["Identity @ Font Details Sidebar Section"] = "Identity";
 localizedStrings["Idle"] = "Idle";
 localizedStrings["If the URL of any script matches one of the regular expression patterns below, any pauses that would have happened in that script will be deferred until execution has continued to outside of that script."] = "If the URL of any script matches one of the regular expression patterns below, any pauses that would have happened in that script will be deferred until execution has continued to outside of that script.";
 localizedStrings["Ignore"] = "Ignore";
@@ -748,8 +787,18 @@ localizedStrings["Inverted"] = "Inverted";
 localizedStrings["Invisible characters"] = "Invisible characters";
 localizedStrings["Invoke getter"] = "Invoke getter";
 localizedStrings["It is evaluated immediately after the global object is created, before any other content has loaded."] = "It is evaluated immediately after the global object is created, before any other content has loaded.";
+/* Property value for oblique text. */
+localizedStrings["Italic @ Font Details Sidebar Property Value"] = "Italic";
 /* Tooltip for a timestamp marker that represents when a CSS animation/transition iterates */
 localizedStrings["Iteration"] = "Iteration";
+/* Property value for `font-variant-alternates: jis04`. */
+localizedStrings["JIS2004 Forms @ Font Details Sidebar Property Value"] = "JIS2004 Forms";
+/* Property value for `font-variant-alternates: jis78`. */
+localizedStrings["JIS78 Forms @ Font Details Sidebar Property Value"] = "JIS78 Forms";
+/* Property value for `font-variant-alternates: jis83`. */
+localizedStrings["JIS83 Forms @ Font Details Sidebar Property Value"] = "JIS83 Forms";
+/* Property value for `font-variant-alternates: jis90`. */
+localizedStrings["JIS90 Forms @ Font Details Sidebar Property Value"] = "JIS90 Forms";
 localizedStrings["JP2"] = "JP2";
 localizedStrings["JPEG"] = "JPEG";
 localizedStrings["JavaScript"] = "JavaScript";
@@ -770,6 +819,8 @@ localizedStrings["Layout & Rendering"] = "Layout & Rendering";
 /* Layout phase timeline records */
 localizedStrings["Layout @ Timeline record"] = "Layout";
 localizedStrings["Layout Invalidated"] = "Layout Invalidated";
+/* Property title for `font-variant-ligatures`. */
+localizedStrings["Ligatures @ Font Details Sidebar Property"] = "Ligatures";
 /* Label of dropdown item used for forcing Web Inspector to be shown using a light theme */
 localizedStrings["Light @ Settings General Appearance"] = "Light";
 localizedStrings["Line %d"] = "Line %d";
@@ -777,6 +828,8 @@ localizedStrings["Line %d:%d"] = "Line %d:%d";
 localizedStrings["Line Number"] = "Line Number";
 localizedStrings["Line wrapping:"] = "Line wrapping:";
 localizedStrings["Linear Gradient"] = "Linear Gradient";
+/* Property value for `font-variant-numeric: lining-nums`. */
+localizedStrings["Lining Numerals @ Font Details Sidebar Property Value"] = "Lining Numerals";
 localizedStrings["Live"] = "Live";
 localizedStrings["Live Activity"] = "Live Activity";
 localizedStrings["Live Size"] = "Live Size";
@@ -851,6 +904,8 @@ localizedStrings["Module Code"] = "Module Code";
 localizedStrings["More information is available at <https://webkit.org/web-inspector/inspector-bootstrap-script/>."] = "More information is available at <https://webkit.org/web-inspector/inspector-bootstrap-script/>.";
 localizedStrings["Multi-Entry"] = "Multi-Entry";
 localizedStrings["Name"] = "Name";
+/* Property title for the family name of the font. */
+localizedStrings["Name @ Font Details Sidebar Property"] = "Name";
 /* Label for the navigation sidebar. */
 localizedStrings["Navigation @ Sidebar"] = "Navigation";
 localizedStrings["Network"] = "Network";
@@ -891,6 +946,8 @@ localizedStrings["No Results Found"] = "No Results Found";
 localizedStrings["No Search Results"] = "No Search Results";
 localizedStrings["No Styles"] = "No Styles";
 localizedStrings["No Watch Expressions"] = "No Watch Expressions";
+/* Message shown when there are no additional variation axes to show. */
+localizedStrings["No additional variation axes. @ Font Details Sidebar"] = "No additional variation axes.";
 localizedStrings["No audit selected"] = "No audit selected";
 localizedStrings["No certificate security information."] = "No certificate security information.";
 localizedStrings["No connection security information."] = "No connection security information.";
@@ -909,11 +966,17 @@ localizedStrings["Node"] = "Node";
 localizedStrings["Node Removed @ DOM Breakpoint"] = "Node Removed";
 localizedStrings["Nodes"] = "Nodes";
 localizedStrings["None"] = "None";
+/* Property value for any `normal` CSS value. */
+localizedStrings["Normal @ Font Details Sidebar Property Value"] = "Normal";
 localizedStrings["Not found"] = "Not found";
 /* Title of icon indicating that the selected audit has not been run yet. */
 localizedStrings["Not yet run @ Audit Tab - Test Case"] = "Not yet run";
+/* Property title for `font-variant-numeric`. */
+localizedStrings["Numeric @ Font Details Sidebar Property"] = "Numeric";
 localizedStrings["Object Graph"] = "Object Graph";
 localizedStrings["Object Store"] = "Object Store";
+/* Property value for oblique text. */
+localizedStrings["Oblique %ddeg @ Font Details Sidebar Property Value"] = "Oblique %ddeg";
 localizedStrings["Observer Callback"] = "Observer Callback";
 localizedStrings["Observer Handlers:"] = "Observer Handlers:";
 localizedStrings["Observers:"] = "Observers:";
@@ -922,6 +985,8 @@ localizedStrings["Off"] = "Off";
 localizedStrings["Offset X @ Box Shadow Editor"] = "Offset X";
 /* Input label for the y-axis of the offset of a CSS box shadow */
 localizedStrings["Offset Y @ Box Shadow Editor"] = "Offset Y";
+/* Property value for `font-variant-numeric: oldstyle-nums`. */
+localizedStrings["Old-Style Numerals @ Font Details Sidebar Property Value"] = "Old-Style Numerals";
 localizedStrings["Once"] = "Once";
 localizedStrings["Online"] = "Online";
 localizedStrings["Only show resources with issues"] = "Only show resources with issues";
@@ -930,6 +995,8 @@ localizedStrings["Open"] = "Open";
 localizedStrings["Open in New Tab"] = "Open in New Tab";
 localizedStrings["Option-click to show source"] = "Option-click to show source";
 localizedStrings["Options"] = "Options";
+/* Property value for `font-variant-numeric: ordinal`. */
+localizedStrings["Ordinal Letter Forms @ Font Details Sidebar Property Value"] = "Ordinal Letter Forms";
 localizedStrings["Original formatting"] = "Original formatting";
 localizedStrings["Originally %s"] = "Originally %s";
 localizedStrings["Originator"] = "Originator";
@@ -969,6 +1036,8 @@ localizedStrings["Paused"] = "Paused";
 /* The number of tests that passed expressed as a percentage, followed by a literal %. */
 localizedStrings["Percentage (of audits)"] = "%s%%";
 localizedStrings["Periods of high CPU utilization will rapidly drain battery. Strive to keep idle pages under %s average CPU utilization."] = "Periods of high CPU utilization will rapidly drain battery. Strive to keep idle pages under %s average CPU utilization.";
+/* Property value for `font-variant-capitals: petite-caps`. */
+localizedStrings["Petite Capitals @ Font Details Sidebar Property Value"] = "Petite Capitals";
 localizedStrings["Ping"] = "Ping";
 localizedStrings["Ping Frame"] = "Ping Frame";
 localizedStrings["Pings"] = "Pings";
@@ -978,6 +1047,8 @@ localizedStrings["Playing"] = "Playing";
 localizedStrings["Polite"] = "Polite";
 localizedStrings["Pong Frame"] = "Pong Frame";
 localizedStrings["Port"] = "Port";
+/* Property title for `font-variant-position`. */
+localizedStrings["Position @ Font Details Sidebar Property"] = "Position";
 localizedStrings["Power Efficient Playback"] = "Power Efficient Playback";
 localizedStrings["Prefer Shorthands"] = "Prefer Shorthands";
 localizedStrings["Prefer indent using:"] = "Prefer indent using:";
@@ -1007,6 +1078,10 @@ localizedStrings["Processing Instruction"] = "Processing Instruction";
 localizedStrings["Program %d"] = "Program %d";
 localizedStrings["Properties"] = "Properties";
 localizedStrings["Property"] = "Property";
+/* Property value for `font-variant-numeric: proportional-nums`. */
+localizedStrings["Proportional Numerals @ Font Details Sidebar Property Value"] = "Proportional Numerals";
+/* Property value for `font-variant-alternates: proportional-width`. */
+localizedStrings["Proportional-Width Variants @ Font Details Sidebar Property Value"] = "Proportional-Width Variants";
 localizedStrings["Protocol"] = "Protocol";
 localizedStrings["Pseudo-Element"] = "Pseudo-Element";
 localizedStrings["Query Parameters"] = "Query Parameters";
@@ -1122,6 +1197,8 @@ localizedStrings["Reveal in Original Resource"] = "Reveal in Original Resource";
 localizedStrings["Reveal in Sources Tab"] = "Reveal in Sources Tab";
 localizedStrings["Reveal in Style Sheet"] = "Reveal in Style Sheet";
 localizedStrings["Role"] = "Role";
+/* Property value for `font-variant-alternates: ruby`. */
+localizedStrings["Ruby Glyphs @ Font Details Sidebar Property Value"] = "Ruby Glyphs";
 localizedStrings["Run %d"] = "Run %d";
 localizedStrings["Run console commands as if inside a user gesture"] = "Run console commands as if inside a user gesture";
 localizedStrings["Running the \u201C%s\u201D audit"] = "Running the \u201C%s\u201D audit";
@@ -1210,6 +1287,7 @@ localizedStrings["Show All Nodes (%d More)"] = "Show All Nodes (%d More)";
 localizedStrings["Show Console"] = "Show Console";
 localizedStrings["Show Console tab"] = "Show Console tab";
 localizedStrings["Show Elements"] = "Show Elements";
+localizedStrings["Show Font details sidebar panel"] = "Show Font details sidebar panel";
 localizedStrings["Show Path"] = "Show Path";
 localizedStrings["Show Remaining (%d)"] = "Show Remaining (%d)";
 localizedStrings["Show Scope Chain on pause"] = "Show Scope Chain on pause";
@@ -1232,12 +1310,20 @@ localizedStrings["Show transparency grid (settings label)"] = "Show transparency
 localizedStrings["Show transparency grid (tooltip)"] = "Show transparency grid";
 localizedStrings["Show type information"] = "Show type information";
 localizedStrings["Show:"] = "Show:";
+/* Property value for `font-variant-alternates: simplified`. */
+localizedStrings["Simplified Forms @ Font Details Sidebar Property Value"] = "Simplified Forms";
 localizedStrings["Site-specific Hacks"] = "Site-specific Hacks";
 localizedStrings["Size"] = "Size";
+/* Property title for `font-size`. */
+localizedStrings["Size @ Font Details Sidebar Property"] = "Size";
 localizedStrings["Size of current object plus all objects it keeps alive"] = "Size of current object plus all objects it keeps alive";
 localizedStrings["Sizes"] = "Sizes";
 /* Label for checkbox that controls whether the local override will actually perform a network request or skip it to immediately serve the response. */
 localizedStrings["Skip Network @ Local Override Popover Options"] = "Skip Network";
+/* Property value for `font-variant-numeric: slashed-zero`. */
+localizedStrings["Slashed Zeros @ Font Details Sidebar Property Value"] = "Slashed Zeros";
+/* Property value for `font-variant-capitals: small-caps`. */
+localizedStrings["Small Capitals @ Font Details Sidebar Property Value"] = "Small Capitals";
 localizedStrings["Snapshot %d"] = "Snapshot %d";
 localizedStrings["Snapshot %d \u2014 %s"] = "Snapshot %d \u2014 %s";
 localizedStrings["Snapshot Comparison (%d and %d)"] = "Snapshot Comparison (%d and %d)";
@@ -1260,6 +1346,8 @@ localizedStrings["Specificity: No value for selected element"] = "Specificity: N
 localizedStrings["Spelling"] = "Spelling";
 /* Input label for the spread radius of a CSS box shadow */
 localizedStrings["Spread @ Box Shadow Editor"] = "Spread";
+/* Property value for `font-variant-numeric: stacked-fractions`. */
+localizedStrings["Stacked Fractions @ Font Details Sidebar Property Value"] = "Stacked Fractions";
 localizedStrings["Staging:"] = "Staging:";
 localizedStrings["Stalled"] = "Stalled";
 localizedStrings["Start"] = "Start";
@@ -1295,6 +1383,10 @@ localizedStrings["Stopping the \u201C%s\u201D audit"] = "Stopping the \u201C%s\u
 localizedStrings["Storage"] = "Storage";
 /* Name of Storage Tab */
 localizedStrings["Storage Tab Name"] = "Storage";
+/* Property title for `font-stretch`. */
+localizedStrings["Stretch @ Font Details Sidebar Property"] = "Stretch";
+/* Property title for `font-style`. */
+localizedStrings["Style @ Font Details Sidebar Property"] = "Style";
 /* CSS properties defined via HTML style attribute */
 localizedStrings["Style Attribute"] = "Style Attribute";
 localizedStrings["Style Sheet"] = "Style Sheet";
@@ -1307,15 +1399,21 @@ localizedStrings["Styles \u2014 Computed"] = "Styles \u2014 Computed";
 localizedStrings["Styles \u2014 Rules"] = "Styles \u2014 Rules";
 localizedStrings["Styles:"] = "Styles:";
 localizedStrings["Subject"] = "Subject";
+/* Property value for `font-variant-position: sub`. */
+localizedStrings["Subscript @ Font Details Sidebar Property Value"] = "Subscript";
 /* A submenu item of 'Break On' that breaks (pauses) before child DOM node is modified */
 localizedStrings["Subtree Modified @ DOM Breakpoint"] = "Subtree Modified";
 localizedStrings["Summary"] = "Summary";
+/* Property value for `font-variant-position: super`. */
+localizedStrings["Superscript @ Font Details Sidebar Property Value"] = "Superscript";
 /* Label of dropdown item used for forcing Web Inspector to be shown using the system's theme */
 localizedStrings["System @ Settings General Appearance"] = "System";
 localizedStrings["TCP"] = "TCP";
 localizedStrings["TIFF"] = "TIFF";
 localizedStrings["Tab width:"] = "Tab width:";
 localizedStrings["Tabs"] = "Tabs";
+/* Property value for `font-variant-numeric: tabular-nums`. */
+localizedStrings["Tabular Numerals @ Font Details Sidebar Property Value"] = "Tabular Numerals";
 /* A submenu item of 'Edit' to change DOM element's tag name */
 localizedStrings["Tag"] = "Tag";
 localizedStrings["Take snapshot"] = "Take snapshot";
@@ -1400,6 +1498,8 @@ localizedStrings["Timer Removed"] = "Timer Removed";
 localizedStrings["Timers:"] = "Timers:";
 localizedStrings["Timestamp \u2014 %s"] = "Timestamp \u2014 %s";
 localizedStrings["Timing"] = "Timing";
+/* Property value for `font-variant-capitals: titling-caps`. */
+localizedStrings["Titling Capitals @ Font Details Sidebar Property Value"] = "Titling Capitals";
 localizedStrings["To improve CPU utilization reduce or batch workloads when the page is not visible or during times when the page is not being interacted with."] = "To improve CPU utilization reduce or batch workloads when the page is not visible or during times when the page is not being interacted with.";
 localizedStrings["Toggle Classes"] = "Toggle Classes";
 localizedStrings["Toggle Visibility"] = "Toggle Visibility";
@@ -1413,6 +1513,8 @@ localizedStrings["Totals:"] = "Totals:";
 localizedStrings["Trace"] = "Trace";
 localizedStrings["Trace: %s"] = "Trace: %s";
 localizedStrings["Traces:"] = "Traces:";
+/* Property value for `font-variant-alternates: traditional`. */
+localizedStrings["Traditional Forms @ Font Details Sidebar Property Value"] = "Traditional Forms";
 /* Amount of data sent over the network for a single resource */
 localizedStrings["Transfer Size"] = "Transfer Size";
 localizedStrings["Transferred"] = "Transferred";
@@ -1432,6 +1534,8 @@ localizedStrings["Unblackbox script to include it when debugging"] = "Unblackbox
 /* Break (pause) on uncaught (unhandled) exceptions */
 localizedStrings["Uncaught Exceptions @ JavaScript Breakpoint"] = "Uncaught Exceptions";
 localizedStrings["Undefined custom element"] = "Undefined custom element";
+/* Property value for `font-variant-capitals: unicase`. */
+localizedStrings["Unicase @ Font Details Sidebar Property Value"] = "Unicase";
 localizedStrings["Unique"] = "Unique";
 localizedStrings["Unknown Location"] = "Unknown Location";
 localizedStrings["Unknown error"] = "Unknown error";
@@ -1457,6 +1561,8 @@ localizedStrings["Valid From"] = "Valid From";
 localizedStrings["Valid Until"] = "Valid Until";
 localizedStrings["Value"] = "Value";
 localizedStrings["Variables"] = "Variables";
+/* Section title for font variation properties. */
+localizedStrings["Variation Properties @ Font Details Sidebar Section"] = "Variation Properties";
 localizedStrings["Verbose"] = "Verbose";
 localizedStrings["Version"] = "Version";
 localizedStrings["Vertex"] = "Vertex";
@@ -1539,6 +1645,8 @@ localizedStrings["WebP"] = "WebP";
 localizedStrings["WebRTC"] = "WebRTC";
 localizedStrings["WebRTC Logging:"] = "WebRTC Logging:";
 localizedStrings["WebSocket Connection Established"] = "WebSocket Connection Established";
+/* Property title for `font-weight`. */
+localizedStrings["Weight @ Font Details Sidebar Property"] = "Weight";
 localizedStrings["Whitespace characters"] = "Whitespace characters";
 localizedStrings["Width"] = "Width";
 localizedStrings["With Object Properties"] = "With Object Properties";

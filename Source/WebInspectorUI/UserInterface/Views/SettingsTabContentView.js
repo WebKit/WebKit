@@ -399,7 +399,9 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
             experimentalSettingsView.addSeparator();
         }
 
-        experimentalSettingsView.addSetting(WI.UIString("Elements Tab:", "Elements Tab: @ Experimental Settings", "Category label for experimental settings pertaining to the Elements tab"), WI.settings.experimentalEnableIndependentStylesPanel, WI.UIString("Show independent Styles sidebar"));
+        let elementsGroup = experimentalSettingsView.addGroup(WI.UIString("Elements Tab:", "Elements Tab: @ Experimental Settings", "Category label for experimental settings pertaining to the Elements tab"));
+        elementsGroup.addSetting(WI.settings.experimentalEnableIndependentStylesPanel, WI.UIString("Show independent Styles sidebar"));
+        elementsGroup.addSetting(WI.settings.experimentalEnableFontDetailsPanel, WI.UIString("Show Font details sidebar panel"));
         experimentalSettingsView.addSeparator();
 
         let reloadInspectorButton = document.createElement("button");
@@ -426,6 +428,7 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
         }
 
         listenForChange(WI.settings.experimentalEnableIndependentStylesPanel);
+        listenForChange(WI.settings.experimentalEnableFontDetailsPanel);
 
         this._createReferenceLink(experimentalSettingsView);
 

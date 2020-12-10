@@ -40,7 +40,10 @@
 #include "ContentSecurityPolicy.h"
 #include "DOMWindow.h"
 #include "ElementAncestorIterator.h"
+#include "Font.h"
 #include "FontCache.h"
+#include "FontCascade.h"
+#include "FontPlatformData.h"
 #include "Frame.h"
 #include "HTMLHeadElement.h"
 #include "HTMLStyleElement.h"
@@ -557,6 +560,43 @@ Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::CSS::CSSComputedStylePropert
     return inspectorStyle->buildArrayForComputedStyle();
 }
 
+static Ref<Protocol::CSS::Font> buildObjectForFont(const Font& font)
+{
+    auto resultVariationAxes = JSON::ArrayOf<Protocol::CSS::FontVariationAxis>::create();
+    for (auto& variationAxis : font.platformData().variationAxes()) {
+        auto axis = Protocol::CSS::FontVariationAxis::create()
+            .setTag(variationAxis.tag())
+            .setMinimumValue(variationAxis.minimumValue())
+            .setMaximumValue(variationAxis.maximumValue())
+            .setDefaultValue(variationAxis.defaultValue())
+            .release();
+        
+        if (variationAxis.name().length() && variationAxis.name() != variationAxis.tag())
+            axis->setName(variationAxis.name());
+        
+        resultVariationAxes->addItem(WTFMove(axis));
+    }
+    
+    return Protocol::CSS::Font::create()
+        .setDisplayName(font.platformData().familyName())
+        .setVariationAxes(WTFMove(resultVariationAxes))
+        .release();
+}
+
+Protocol::ErrorStringOr<Ref<Protocol::CSS::Font>> InspectorCSSAgent::getFontDataForNode(Protocol::DOM::NodeId nodeId)
+{
+    Protocol::ErrorString errorString;
+    auto* node = nodeForId(errorString, nodeId);
+    if (!node)
+        return makeUnexpected(errorString);
+    
+    auto* computedStyle = node->computedStyle();
+    if (!computedStyle)
+        return makeUnexpected("No computed style for node.");
+    
+    return buildObjectForFont(computedStyle->fontCascade().primaryFont());
+}
+
 Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::CSS::CSSStyleSheetHeader>>> InspectorCSSAgent::getAllStyleSheets()
 {
     auto headers = JSON::ArrayOf<Protocol::CSS::CSSStyleSheetHeader>::create();
@@ -903,6 +943,17 @@ Element* InspectorCSSAgent::elementForId(Protocol::ErrorString& errorString, Pro
     }
 
     return domAgent->assertElement(errorString, nodeId);
+}
+
+Node* InspectorCSSAgent::nodeForId(Protocol::ErrorString& errorString, Protocol::DOM::NodeId nodeId)
+{
+    auto* domAgent = m_instrumentingAgents.persistentDOMAgent();
+    if (!domAgent) {
+        errorString = "DOM domain must be enabled"_s;
+        return nullptr;
+    }
+
+    return domAgent->assertNode(errorString, nodeId);
 }
 
 String InspectorCSSAgent::unbindStyleSheet(InspectorStyleSheet* inspectorStyleSheet)

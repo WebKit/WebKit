@@ -134,7 +134,9 @@
 }
 
 .sidebar > .panel.details.css-style > .content:not(.supports-new-rule) ~ .options-container > .new-rule,
-.sidebar > .panel.details.css-style > .content:not(.has-filter-bar) ~ .options-container > .filter-bar {
+.sidebar > .panel.details.css-style > .content:not(.supports-toggle-css-class) ~ .options-container > .toggle-class-toggle,
+.sidebar > .panel.details.css-style > .content:not(.has-filter-bar) ~ .options-container > .filter-bar,
+.sidebar > .panel.details.css-style > .content:not(.supports-new-rule):not(.supports-toggle-class):not(.has-filter-bar) ~ .options-container {
     display: none;
 }
 
@@ -229,4 +231,10 @@
     bottom:0;
     overflow-x: hidden;
     overflow-y: auto;
+}
+
+.multi-sidebar.showing-multiple > .sidebar > .panel.details:not(.style-rules) > .content > .pseudo-classes,
+.multi-sidebar.showing-multiple > .sidebar > .panel.details:not(.style-rules) > .options-container,
+.multi-sidebar.showing-multiple > .sidebar > .panel.details:not(.style-rules) > .class-list-container {
+    display: none;
 }

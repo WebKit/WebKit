@@ -56,6 +56,12 @@ WI.StyleDetailsPanel = class StyleDetailsPanel extends WI.View
         return false;
     }
 
+    get supportsToggleCSSClass()
+    {
+        // Overriden by subclasses if needed.
+        return true;
+    }
+
     attached()
     {
         super.attached();
@@ -104,11 +110,6 @@ WI.StyleDetailsPanel = class StyleDetailsPanel extends WI.View
     {
         if (this.isAttached)
             this._refreshPreservingScrollPosition(event.data.significantChange);
-    }
-
-    filterDidChange(filterBar)
-    {
-        // Implemented by subclasses.
     }
 
     // Private

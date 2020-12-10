@@ -231,6 +231,27 @@
                 { "name": "type", "type": "string", "enum": ["media-rule", "media-import-rule", "media-link-node", "media-style-node", "supports-rule"], "description": "Source of the media query: \"media-rule\" if specified by a @media rule, \"media-import-rule\" if specified by an @import rule, \"media-link-node\" if specified by a \"media\" attribute in a linked style sheet's LINK tag, \"media-style-node\" if specified by a \"media\" attribute in an inline style sheet's STYLE tag, \"supports-rule\" if specified by an @supports rule, ." },
                 { "name": "sourceURL", "type": "string", "optional": true, "description": "URL of the document containing the CSS grouping." }
             ]
+        },
+        {
+            "id": "Font",
+            "type": "object",
+            "description": "A representation of WebCore::Font. Conceptually this is backed by either a font file on disk or from the network.",
+            "properties": [
+                { "name": "displayName", "type": "string", "description": "The display name defined by the font." },
+                { "name": "variationAxes", "type": "array", "items": { "$ref": "FontVariationAxis" }, "description": "The variation axes defined by the font." }
+            ]
+        },
+        {
+            "id": "FontVariationAxis",
+            "type": "object",
+            "description": "A single variation axis associated with a Font.",
+            "properties": [
+                { "name": "name", "type": "string", "optional": true, "description": "The name, generally human-readable, of the variation axis. Some axes may not provide a human-readable name distiguishable from the tag. This field is ommited when there is no name, or the name matches the tag exactly." },
+                { "name": "tag", "type": "string", "description": "The four character tag for the variation axis." },
+                { "name": "minimumValue", "type": "number", "description": "The minimum value that will affect the axis." },
+                { "name": "maximumValue", "type": "number", "description": "The maximum value that will affect the axis." },
+                { "name": "defaultValue", "type": "number", "description": "The value that is used for the axis when it is not otherwise controlled." }
+            ]
         }
     ],
     "commands": [
@@ -275,6 +296,16 @@
             ],
             "returns": [
                 { "name": "computedStyle", "type": "array", "items": { "$ref": "CSSComputedStyleProperty" }, "description": "Computed style for the specified DOM node." }
+            ]
+        },
+        {
+            "name": "getFontDataForNode",
+            "description": "Returns the primary font of the computed font cascade for a DOM node identified by <code>nodeId</code>.",
+            "parameters": [
+                { "name": "nodeId", "$ref": "DOM.NodeId" }
+            ],
+            "returns": [
+                { "name": "primaryFont", "$ref": "Font", "description": "Computed primary font for the specified DOM node." }
             ]
         },
         {

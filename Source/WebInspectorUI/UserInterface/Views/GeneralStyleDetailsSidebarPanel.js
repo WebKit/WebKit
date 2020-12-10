@@ -84,7 +84,8 @@ WI.GeneralStyleDetailsSidebarPanel = class GeneralStyleDetailsSidebarPanel exten
 
     styleDetailsPanelFocusFilterBar(styleDetailsPanel)
     {
-        this._filterBar.inputField.focus();
+        if (this._filterBar)
+            this._filterBar.inputField.focus();
     }
 
     // Protected
@@ -184,10 +185,12 @@ WI.GeneralStyleDetailsSidebarPanel = class GeneralStyleDetailsSidebarPanel exten
         newRuleButton.addEventListener("click", this._newRuleButtonClicked.bind(this));
         newRuleButton.addEventListener("contextmenu", this._newRuleButtonContextMenu.bind(this));
 
-        this._filterBar = new WI.FilterBar;
-        this._filterBar.addEventListener(WI.FilterBar.Event.FilterDidChange, this._filterDidChange, this);
-        this._filterBar.inputField.addEventListener("keydown", this._handleFilterBarInputFieldKeyDown.bind(this));
-        optionsContainer.appendChild(this._filterBar.element);
+        if (typeof this._panel.filterDidChange === "function") {
+            this._filterBar = new WI.FilterBar;
+            this._filterBar.addEventListener(WI.FilterBar.Event.FilterDidChange, this._filterDidChange, this);
+            this._filterBar.inputField.addEventListener("keydown", this._handleFilterBarInputFieldKeyDown.bind(this));
+            optionsContainer.appendChild(this._filterBar.element);
+        }
 
         if (this._classListContainer) {
             this._classToggleButton = optionsContainer.createChild("button", "toggle-class-toggle");
@@ -201,7 +204,6 @@ WI.GeneralStyleDetailsSidebarPanel = class GeneralStyleDetailsSidebarPanel exten
 
         WI.cssManager.addEventListener(WI.CSSManager.Event.StyleSheetAdded, this._styleSheetAddedOrRemoved, this);
         WI.cssManager.addEventListener(WI.CSSManager.Event.StyleSheetRemoved, this._styleSheetAddedOrRemoved, this);
-
     }
 
     sizeDidChange()
@@ -232,16 +234,15 @@ WI.GeneralStyleDetailsSidebarPanel = class GeneralStyleDetailsSidebarPanel exten
     _showPanel()
     {
         this.contentView.addSubview(this._panel);
-
-        let hasFilter = typeof this._panel.filterDidChange === "function";
-        this.contentView.element.classList.toggle("has-filter-bar", hasFilter);
+        this.contentView.element.classList.toggle("has-filter-bar", this._filterBar);
         if (this._filterBar)
-            this.contentView.element.classList.toggle(WI.GeneralStyleDetailsSidebarPanel.FilterInProgressClassName, hasFilter && this._filterBar.hasActiveFilters());
+            this.contentView.element.classList.toggle(WI.GeneralStyleDetailsSidebarPanel.FilterInProgressClassName, this._filterBar.hasActiveFilters());
     }
 
     _handleNodeChanged(event)
     {
         this.contentView.element.classList.toggle("supports-new-rule", this._panel.supportsNewRule);
+        this.contentView.element.classList.toggle("supports-toggle-css-class", this._panel.supportsToggleCSSClass);
     }
 
     _handleForcedPseudoClassCheckboxKeydown(pseudoClass, event)
@@ -422,6 +423,9 @@ WI.GeneralStyleDetailsSidebarPanel = class GeneralStyleDetailsSidebarPanel exten
 
     _filterDidChange()
     {
+        if (!this._filterBar)
+            return;
+
         this.contentView.element.classList.toggle(WI.GeneralStyleDetailsSidebarPanel.FilterInProgressClassName, this._filterBar.hasActiveFilters());
 
         this._panel.filterDidChange(this._filterBar);

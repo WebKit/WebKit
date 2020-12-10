@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+
+async function loadFontFace(fontDeclaration, text, eventName)
+{
+    try {
+        await document.fonts.load(fontDeclaration, text);
+        TestPage.log("PASS: Font should be loaded.");
+    } catch {
+        TestPage.log("FAIL: Font should be loaded.");
+    }
+    TestPage.dispatchEventToFrontend(eventName);
+}
+
+function test()
+{
+    let documentNode;
+
+    let suite = InspectorTest.createAsyncSuite("CSS.getComputedPrimaryFontForNode");
+
+    function addTestCase({name, description, setup, selector, computedFontHandler})
+    {
+        suite.addTestCase({
+            name,
+            description,
+            setup,
+            async test() {
+                let nodeId = await documentNode.querySelector(selector);
+                let domNode = await WI.domManager.nodeForId(nodeId);
+                InspectorTest.assert(domNode, `Should find DOM Node for selector '${selector}'.`);
+
+                let cssStyles = WI.cssManager.stylesForNode(domNode);
+                InspectorTest.assert(cssStyles, `Should find CSS Styles for DOM Node.`);
+
+                await cssStyles.refreshIfNeeded();
+
+                await computedFontHandler(cssStyles.computedPrimaryFont);
+            },
+        });
+    }
+
+    function loadFontFace(fontDeclaration, text, eventName)
+    {
+        return Promise.all([
+        	InspectorTest.awaitEvent(eventName),
+	        InspectorTest.evaluateInPage(`loadFontFace("${fontDeclaration}", "${text}", "${eventName}")`),
+        ]);
+    }
+
+    addTestCase({
+        name: "CSS.getComputedPrimaryFontForNode.Fallback1",
+        description: "Get the primary font 'Helvetica Neue' for the node '#fallback-test-1'.",
+        selector: "#fallback-test-1",
+        computedFontHandler(font) {
+            InspectorTest.expectEqual(font.name, "Helvetica Neue", "Name should be 'Helvetica Neue'.");
+        }
+    });
+
+    addTestCase({
+        name: "CSS.getComputedPrimaryFontForNode.Fallback2",
+        description: "Get the primary font 'Times' for the node '#fallback-test-2'.",
+        selector: "#fallback-test-2",
+        computedFontHandler(font) {
+            InspectorTest.expectEqual(font.name, "Times", "Name should be 'Times'.");
+        }
+    });
+
+    addTestCase({
+        name: "CSS.getComputedPrimaryFontForNode.Fallback3",
+        description: "Get the primary font 'Times' for the node '#fallback-test-3'.",
+        selector: "#fallback-test-3",
+        computedFontHandler(font) {
+            InspectorTest.expectEqual(font.name, "Times", "Name should be 'Times'.");
+        }
+    });
+
+    addTestCase({
+        name: "CSS.getComputedPrimaryFontForNode.Webfont1",
+        description: "Get the primary font 'Times' for the node '#webfont-test-1'.",
+        async setup() {
+        	return loadFontFace("normal 300 12px WebFont", " ", "TestPage-Webfont1Loaded");
+        },
+        selector: "#webfont-test-1",
+        computedFontHandler(font) {
+            InspectorTest.expectEqual(font.name, "Times", "Name should be 'Times'.");
+        }
+    });
+
+    addTestCase({
+        name: "CSS.getComputedPrimaryFontForNode.Webfont2",
+        description: "Get the primary font 'Ahem' for the node '#webfont-test-2'.",
+        async setup() {
+            return loadFontFace("normal 100 12px WebFont", " ", "TestPage-Webfont2Loaded");
+        },
+        selector: "#webfont-test-2",
+        computedFontHandler(font) {
+            InspectorTest.expectEqual(font.name, "Ahem", "Name should be 'Ahem'.");
+        }
+    });
+
+    addTestCase({
+        name: "CSS.getComputedPrimaryFontForNode.WebfontCJK1",
+        description: "Get the primary font 'Ahem' for the node '#webfont-cjk-test-1'.",
+        async setup() {
+            return loadFontFace("normal normal 12px WebFontWithCJK", "\u00A5Yen", "TestPage-WebfontCJK1Loaded");
+        },
+        selector: "#webfont-cjk-test-1",
+        computedFontHandler(font) {
+            InspectorTest.expectEqual(font.name, "Ahem", "Name should be 'Ahem'.");
+        }
+    });
+
+    addTestCase({
+        name: "CSS.getComputedPrimaryFontForNode.WebfontCJK2",
+        description: "Get the primary font 'Times' for the node '#webfont-cjk-test-2'.",
+        async setup() {
+            return loadFontFace("normal normal 12px WebFontWithCJK", "\u00A5Yen", "TestPage-WebfontCJK2Loaded");
+        },
+        selector: "#webfont-cjk-test-2",
+        computedFontHandler(font) {
+            InspectorTest.expectEqual(font.name, "Times", "Name should be 'Times'.");
+        }
+    });
+
+    addTestCase({
+        name: "CSS.getComputedPrimaryFontForNode.VariableFont1",
+        description: "Get the primary font 'Times' for the node '#variable-font-test-1'.",
+        async setup() {
+            return loadFontFace("normal normal 12px VariableFont", " ", "TestPage-VariableFont1Loaded");
+        },
+        selector: "#variable-font-test-1",
+        computedFontHandler(font) {
+            InspectorTest.expectEqual(font.name, "Boxis", "Name should be 'Boxis'.");
+
+            InspectorTest.expectEqual(font.variationAxes.length, 4, "Expect exactly 4 available variation axes.");
+
+            let descentAxis = font.variationAxis("desc");
+            InspectorTest.expectEqual(descentAxis.name, "Descent", "Descent axis name should be 'Descent'.");
+            InspectorTest.expectEqual(descentAxis.minimumValue, 0, "Descent axis minimum should be '0'.");
+            InspectorTest.expectEqual(descentAxis.maximumValue, 250, "Descent axis maximum should be '250'.");
+            InspectorTest.expectEqual(descentAxis.defaultValue, 0, "Descent axis default should be '0'.");
+
+            let heightAxis = font.variationAxis("hght");
+            InspectorTest.expectEqual(heightAxis.name, "Height", "Height axis name should be 'Height'.");
+            InspectorTest.expectEqual(heightAxis.minimumValue, 0, "Height axis minimum should be '0'.");
+            InspectorTest.expectEqual(heightAxis.maximumValue, 1000, "Height axis maximum should be '1000'.");
+            InspectorTest.expectEqual(heightAxis.defaultValue, 750, "Height axis default should be '750'.");
+
+            let trackingAxis = font.variationAxis("trac");
+            InspectorTest.expectEqual(trackingAxis.name, "Tracking", "Tracking axis name should be 'Tracking'.");
+            InspectorTest.expectEqual(trackingAxis.minimumValue, 0, "Tracking axis minimum should be '0'.");
+            InspectorTest.expectEqual(trackingAxis.maximumValue, 1000, "Tracking axis maximum should be '1000'.");
+            InspectorTest.expectEqual(trackingAxis.defaultValue, 0, "Tracking axis default should be '0'.");
+
+            let widthAxis = font.variationAxis("wdth");
+            InspectorTest.expectEqual(widthAxis.name, "Width", "Width axis name should be 'Width'.");
+            InspectorTest.expectEqual(widthAxis.minimumValue, 0, "Width axis minimum should be '0'.");
+            InspectorTest.expectEqual(widthAxis.maximumValue, 1000, "Width axis maximum should be '1000'.");
+            InspectorTest.expectEqual(widthAxis.defaultValue, 750, "Width axis default should be '750'.");
+        }
+    });
+
+    WI.domManager.requestDocument((node) => {
+        documentNode = node;
+        suite.runTestCasesAndFinish();
+    });
+}
+</script>
+<style>
+@font-face {
+    font-family: "WebFont";
+    font-weight: bold;
+    src: local(Times);
+}
+
+@font-face {
+    font-family: "WebFont";
+    font-weight: normal;
+    src: url("../../resources/Ahem.otf") format("opentype");
+}
+
+@font-face {
+    font-family: "WebFontWithCJK";
+    unicode-range: U+A5;
+    src: url("../../resources/Ahem_CJK.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "WebFontWithCJKAndLatin";
+    src: local(Times);
+}
+
+@font-face {
+    font-family: "WebFontWithCJKAndLatin";
+    unicode-range: U+A5;
+    src: url("../../resources/Ahem_CJK.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "VariableFont";
+    src: url("../../animations/font-variations/resources/Boxis-VF.ttf");
+}
+
+</style>
+</head>
+<body onload="runTest();">
+<p>Test for CSS.getComputedPrimaryFontForNode.</p>
+<div>
+    <div id="fallback-test-1" style="font-family: 'Totally Not A Font', AlsoNotAFont, Helvetica Neue, serif;">Fallback Test 1</div>
+    <div id="fallback-test-2" style="font-family: Timez, serif;">Fallback Test 2</div>
+    <div id="fallback-test-3" style="font-family: Timez;">Fallback Test 3</div>
+
+    <div id="webfont-test-1" style="font-family: SomethingElse, WebFont, cursive; font-weight: bold;">Webfont Test 1</div>
+    <div id="webfont-test-2" style="font-family: SomethingElse, WebFont, cursive; font-weight: normal;">Webfont Test 2</div>
+
+    <div id="webfont-cjk-test-1" style="font-family: SomethingElse, WebFontWithCJK, sans-serif;">&#x00A5Yen</div>
+    <div id="webfont-cjk-test-2" style="font-family: SomethingElse, WebFontWithCJKAndLatin, sans-serif;">&#x00A5Yen</div>
+
+    <div id="variable-font-test-1" style="font-family: VariableFont;">Variable Font Test 1</div>
+</div>
+</body>
+</html>

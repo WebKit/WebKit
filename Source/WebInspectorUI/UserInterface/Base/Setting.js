@@ -223,6 +223,7 @@ WI.settings = {
     experimentalEnableStylesJumpToEffective: new WI.Setting("experimental-styles-jump-to-effective", false),
     experimentalEnableStylesJumpToVariableDeclaration: new WI.Setting("experimental-styles-jump-to-variable-declaration", false),
     experimentalEnableIndependentStylesPanel: new WI.Setting("experimental-independent-styles-panel", false),
+    experimentalEnableFontDetailsPanel: new WI.Setting("experimental-font-details-panel", false),
 
     // Protocol
     protocolLogAsText: new WI.Setting("protocol-log-as-text", false),

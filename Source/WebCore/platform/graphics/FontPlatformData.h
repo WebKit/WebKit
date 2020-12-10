@@ -28,6 +28,7 @@
 #include "TextFlags.h"
 #include <wtf/Forward.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/Vector.h>
 
 #if PLATFORM(WIN)
 #include "COMPtr.h"
@@ -78,6 +79,30 @@ class FontPlatformData {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     struct CreationData;
+    
+    struct FontVariationAxis {
+        FontVariationAxis(const String& name, const String& tag, int defaultValue, int minimumValue, int maximumValue)
+            : m_name(name)
+            , m_tag(tag)
+            , m_defaultValue(defaultValue)
+            , m_minimumValue(minimumValue)
+            , m_maximumValue(maximumValue)
+        {
+        }
+        
+        const String& name() const { return m_name; }
+        const String& tag() const { return m_tag; }
+        int defaultValue() const { return m_defaultValue; }
+        int minimumValue() const { return m_minimumValue; }
+        int maximumValue() const { return m_maximumValue; }
+
+    private:
+        const String m_name;
+        const String m_tag;
+        int m_defaultValue;
+        int m_minimumValue;
+        int m_maximumValue;
+    };
 
     FontPlatformData(WTF::HashTableDeletedValueType);
     FontPlatformData();
@@ -153,6 +178,7 @@ public:
     bool isForTextCombine() const { return widthVariant() != FontWidthVariant::RegularWidth; } // Keep in sync with callers of FontDescription::setWidthVariant().
 
     String familyName() const;
+    Vector<FontVariationAxis> variationAxes() const;
 
 #if USE(CAIRO)
     cairo_scaled_font_t* scaledFont() const { return m_scaledFont.get(); }

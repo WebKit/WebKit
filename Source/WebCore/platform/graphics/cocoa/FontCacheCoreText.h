@@ -50,6 +50,15 @@ struct SynthesisPair {
     bool needsSyntheticOblique;
 };
 
+struct VariationDefaults {
+    String axisName;
+    float defaultValue;
+    float minimumValue;
+    float maximumValue;
+};
+
+typedef HashMap<FontTag, VariationDefaults, FourCharacterTagHash, FourCharacterTagHashTraits> VariationDefaultsMap;
+
 RetainPtr<CTFontRef> preparePlatformFont(CTFontRef, const FontDescription&, const FontFeatureSettings* fontFaceFeatures, FontSelectionSpecifiedCapabilities fontFaceCapabilities, bool applyWeightWidthSlopeVariations = true);
 enum class ShouldComputePhysicalTraits : bool { No, Yes };
 SynthesisPair computeNecessarySynthesis(CTFontRef, const FontDescription&, ShouldComputePhysicalTraits = ShouldComputePhysicalTraits::No, bool isPlatformFont = false);
@@ -61,4 +70,5 @@ RetainPtr<CTFontRef> createFontForInstalledFonts(CTFontRef, AllowUserInstalledFo
 void addAttributesForWebFonts(CFMutableDictionaryRef attributes, AllowUserInstalledFonts);
 RetainPtr<CFSetRef> installedFontMandatoryAttributes(AllowUserInstalledFonts);
 
+VariationDefaultsMap defaultVariationValues(CTFontRef);
 }

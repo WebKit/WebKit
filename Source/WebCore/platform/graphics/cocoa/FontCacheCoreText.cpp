@@ -296,15 +296,7 @@ static inline bool fontNameIsSystemFont(CFStringRef fontName)
     return CFStringGetLength(fontName) > 0 && CFStringGetCharacterAtIndex(fontName, 0) == '.';
 }
 
-struct VariationDefaults {
-    float defaultValue;
-    float minimumValue;
-    float maximumValue;
-};
-
-typedef HashMap<FontTag, VariationDefaults, FourCharacterTagHash, FourCharacterTagHashTraits> VariationDefaultsMap;
-
-static VariationDefaultsMap defaultVariationValues(CTFontRef font)
+VariationDefaultsMap defaultVariationValues(CTFontRef font)
 {
     VariationDefaultsMap result;
     auto axes = adoptCF(CTFontCopyVariationAxes(font));
@@ -314,6 +306,7 @@ static VariationDefaultsMap defaultVariationValues(CTFontRef font)
     for (CFIndex i = 0; i < size; ++i) {
         CFDictionaryRef axis = static_cast<CFDictionaryRef>(CFArrayGetValueAtIndex(axes.get(), i));
         CFNumberRef axisIdentifier = static_cast<CFNumberRef>(CFDictionaryGetValue(axis, kCTFontVariationAxisIdentifierKey));
+        String axisName = static_cast<CFStringRef>(CFDictionaryGetValue(axis, kCTFontVariationAxisNameKey));
         CFNumberRef defaultValue = static_cast<CFNumberRef>(CFDictionaryGetValue(axis, kCTFontVariationAxisDefaultValueKey));
         CFNumberRef minimumValue = static_cast<CFNumberRef>(CFDictionaryGetValue(axis, kCTFontVariationAxisMinimumValueKey));
         CFNumberRef maximumValue = static_cast<CFNumberRef>(CFDictionaryGetValue(axis, kCTFontVariationAxisMaximumValueKey));
@@ -335,7 +328,7 @@ static VariationDefaultsMap defaultVariationValues(CTFontRef font)
         auto b3 = (rawAxisIdentifier & 0xFF00) >> 8;
         auto b4 = rawAxisIdentifier & 0xFF;
         FontTag resultKey = {{ static_cast<char>(b1), static_cast<char>(b2), static_cast<char>(b3), static_cast<char>(b4) }};
-        VariationDefaults resultValues = { rawDefaultValue, rawMinimumValue, rawMaximumValue };
+        VariationDefaults resultValues = { axisName, rawDefaultValue, rawMinimumValue, rawMaximumValue };
         result.set(resultKey, resultValues);
     }
     return result;

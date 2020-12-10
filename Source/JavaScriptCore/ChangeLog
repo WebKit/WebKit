@@ -1,3 +1,19 @@
+2020-12-10  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: Show current properties for font in new Elements sidebar Font panel
+        https://bugs.webkit.org/show_bug.cgi?id=218964
+
+        Reviewed by Devin Rousso.
+
+        Adds objects and method for getting font data for a node to the `CSS` domain. A `CSS.Font` is meant to represent
+        a `WebCore::Font` and contain information about the underlying font as the system sees it. The source for this
+        information can be a system font or a web font. Each `CSS.Font` in turn can have some number of
+        `CSS.FontVariationAxis` for its available open-type variation axes. Fonts that don't support these features will
+        have an empty set of axes.
+
+        * inspector/protocol/CSS.json:
+        - Added objects and method for getting font data for a node.
+
 2020-12-10  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Use TARGET_PROPERTY to set includes for executables

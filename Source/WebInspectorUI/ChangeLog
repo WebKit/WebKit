@@ -1,3 +1,93 @@
+2020-12-10  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: Show current properties for font in new Elements sidebar Font panel
+        https://bugs.webkit.org/show_bug.cgi?id=218964
+
+        Reviewed by Devin Rousso.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Base/Setting.js:
+        - Added experimental setting for Font panel.
+        * UserInterface/Main.html:
+        * UserInterface/Models/DOMNodeStyles.js:
+        (WI.DOMNodeStyles):
+        (WI.DOMNodeStyles.prototype.get computedPrimaryFont):
+        (WI.DOMNodeStyles.prototype.refresh.fetchedComputedStyle):
+        (WI.DOMNodeStyles.prototype.refresh.fetchedFontData):
+        (WI.DOMNodeStyles.prototype.refresh):
+        - Support getting the computed primary font.
+        * UserInterface/Models/Font.js: Added.
+        (WI.Font):
+        (WI.Font.fromPayload):
+        (WI.Font.prototype.get name):
+        (WI.Font.prototype.get variationAxes):
+        (WI.Font.prototype.variationAxis):
+        - Model object for `CSS.Font`.
+        (WI.Font.prototype.calculateFontProperties):
+        - Build maps of font properties from the `DOMNodeStyle` and this Font.
+        (WI.Font.prototype._calculateProperties):
+        (WI.Font.prototype._calculateFontFeatureAxes):
+        (WI.Font.prototype._calculateFontVariationAxes):
+        (WI.Font.prototype._parseFontFeatureOrVariationSettings):
+        * UserInterface/Models/FontVariationAxis.js: Added.
+        (WI.FontVariationAxis):
+        (WI.FontVariationAxis.fromPayload):
+        (WI.FontVariationAxis.prototype.get name):
+        (WI.FontVariationAxis.prototype.get tag):
+        (WI.FontVariationAxis.prototype.get minimumValue):
+        (WI.FontVariationAxis.prototype.get maximumValue):
+        (WI.FontVariationAxis.prototype.get defaultValue):
+        - Model object for `CSS.FontVariationAxis`.
+        * UserInterface/Test.html:
+        * UserInterface/Views/ComputedStyleDetailsPanel.css:
+        (.sidebar > .panel.details.css-style > .content > .computed .property:not(:hover) .go-to-arrow):
+        (.multi-sidebar.showing-multiple > .sidebar > .panel.details.style-computed > .content > .pseudo-classes,): Deleted.
+        - Move multi-sidebar support to GeneralStyleDetailsSidebarPanel.css
+        * UserInterface/Views/ElementsTabContentView.js:
+        (WI.ElementsTabContentView):
+        - Add Font panel to detail panel set if enabled and supported.
+        * UserInterface/Views/FontDetailsPanel.js: Added.
+        (WI.FontDetailsPanel):
+        (WI.FontDetailsPanel.prototype.get supportsToggleCSSClass):
+        (WI.FontDetailsPanel.prototype.refresh):
+        (WI.FontDetailsPanel.prototype.initialLayout):
+        (WI.FontDetailsPanel.prototype._formatSizeValue):
+        (WI.FontDetailsPanel.prototype._formatStyleValue):
+        (WI.FontDetailsPanel.prototype._formatSimpleSingleValue):
+        - Format basic font properties.
+        (WI.FontDetailsPanel.prototype._formatVariationValue):
+        - Format non-standard variation axes.
+        (WI.FontDetailsPanel.prototype._formatSimpleFeatureValues):
+        - Common formatting for `font-variant-xxx` properties that map to font feature values.
+        (WI.FontDetailsPanel.prototype._formatLigatureValue):
+        (WI.FontDetailsPanel.prototype._formatPositionValue):
+        (WI.FontDetailsPanel.prototype._formatCapitalsValue):
+        (WI.FontDetailsPanel.prototype._formatNumericValue):
+        (WI.FontDetailsPanel.prototype._formatAlternatesValue):
+        (WI.FontDetailsPanel.prototype._formatEastAsianValue):
+        (WI.FontDetailsPanel.prototype._featureIsEnabled):
+        (WI.FontDetailsPanel.prototype._hasVariationValue):
+        * UserInterface/Views/FontDetailsSidebarPanel.js: Added.
+        (WI.FontDetailsSidebarPanel):
+        * UserInterface/Views/GeneralStyleDetailsSidebarPanel.css:
+        (.sidebar > .panel.details.css-style > .content:not(.supports-new-rule) ~ .options-container > .new-rule,):
+        (.multi-sidebar.showing-multiple > .sidebar > .panel.details:not(.style-rules) > .content > .pseudo-classes,):
+        - When showing the Styles panel alongside another style-based panel, hide the pseudo-class and filter options.
+        * UserInterface/Views/GeneralStyleDetailsSidebarPanel.js:
+        (WI.GeneralStyleDetailsSidebarPanel.prototype.styleDetailsPanelFocusFilterBar):
+        (WI.GeneralStyleDetailsSidebarPanel.prototype.initialLayout):
+        (WI.GeneralStyleDetailsSidebarPanel.prototype._showPanel):
+        (WI.GeneralStyleDetailsSidebarPanel.prototype._handleNodeChanged):
+        (WI.GeneralStyleDetailsSidebarPanel.prototype._filterDidChange):
+        - Support not showing the filter bar for style panels where filtering is not applicable.
+        * UserInterface/Views/SettingsTabContentView.js:
+        (WI.SettingsTabContentView.prototype._createExperimentalSettingsView):
+        * UserInterface/Views/StyleDetailsPanel.js:
+        (WI.StyleDetailsPanel.prototype.get supportsToggleCSSClass):
+        (WI.StyleDetailsPanel.prototype.filterDidChange): Deleted.
+        - Remove empty implementation of `filterDidChange` as `WI.GeneralStyleDetailsSidebarPanel.prototype.initialLayout`
+        checks for an implmentation of this function to determine if a filter bar should be shown.
+
 2020-11-30  Brian Burg  <bburg@apple.com>
 
         [Cocoa] Web Inspector: add support for creating extension tabs in WebInspectorUI via _WKInspectorExtension

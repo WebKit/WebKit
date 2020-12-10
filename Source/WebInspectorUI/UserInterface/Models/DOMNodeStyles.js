@@ -43,6 +43,8 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
         this._computedStyle = null;
         this._orderedStyles = [];
 
+        this._computedPrimaryFont = null;
+
         this._propertyNameToEffectivePropertyMap = {};
 
         this._pendingRefreshTask = null;
@@ -126,6 +128,7 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
     get pseudoElements() { return this._pseudoElements; }
     get computedStyle() { return this._computedStyle; }
     get orderedStyles() { return this._orderedStyles; }
+    get computedPrimaryFont() { return this._computedPrimaryFont; }
 
     get needsRefresh()
     {
@@ -156,6 +159,7 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
         let fetchedMatchedStylesPromise = new WI.WrappedPromise;
         let fetchedInlineStylesPromise = new WI.WrappedPromise;
         let fetchedComputedStylesPromise = new WI.WrappedPromise;
+        let fetchedFontDataPromise = new WI.WrappedPromise;
 
         // Ensure we resolve these promises even in the case of an error.
         function wrap(func, promise) {
@@ -310,9 +314,17 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
             this._previousStylesMap = null;
             this._includeUserAgentRulesOnNextRefresh = false;
 
-            this.dispatchEventToListeners(WI.DOMNodeStyles.Event.Refreshed, {significantChange});
+            fetchedComputedStylesPromise.resolve({significantChange});
+        }
 
-            fetchedComputedStylesPromise.resolve();
+        function fetchedFontData(error, fontDataPayload)
+        {
+            if (fontDataPayload)
+                this._computedPrimaryFont = WI.Font.fromPayload(fontDataPayload);
+            else
+                this._computedPrimaryFont = null;
+
+            fetchedFontDataPromise.resolve();
         }
 
         let target = WI.assumingMainTarget();
@@ -320,9 +332,18 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
         target.CSSAgent.getInlineStylesForNode.invoke({nodeId: this._node.id}, wrap.call(this, fetchedInlineStyles, fetchedInlineStylesPromise));
         target.CSSAgent.getComputedStyleForNode.invoke({nodeId: this._node.id}, wrap.call(this, fetchedComputedStyle, fetchedComputedStylesPromise));
 
-        this._pendingRefreshTask = Promise.all([fetchedMatchedStylesPromise.promise, fetchedInlineStylesPromise.promise, fetchedComputedStylesPromise.promise])
-        .then(() => {
+        // COMPATIBILITY (iOS 14.0): `CSS.getFontDataForNode` did not exist yet.
+        if (InspectorBackend.hasCommand("CSS.getFontDataForNode"))
+            target.CSSAgent.getFontDataForNode.invoke({nodeId: this._node.id}, wrap.call(this, fetchedFontData, fetchedFontDataPromise));
+        else
+            fetchedFontDataPromise.resolve();
+
+        this._pendingRefreshTask = Promise.all([fetchedComputedStylesPromise.promise, fetchedMatchedStylesPromise.promise, fetchedInlineStylesPromise.promise, fetchedFontDataPromise.promise])
+        .then(([fetchComputedStylesResult]) => {
             this._pendingRefreshTask = null;
+            this.dispatchEventToListeners(WI.DOMNodeStyles.Event.Refreshed, {
+                significantChange: fetchComputedStylesResult.significantChange,
+            });
             return this;
         });
 
