@@ -392,6 +392,9 @@ void RenderReplaced::computeAspectRatioInformationForRenderBox(RenderBox* conten
     if (contentRenderer) {
         contentRenderer->computeIntrinsicRatioInformation(intrinsicSize, intrinsicRatio);
 
+        if (style().aspectRatioType() == AspectRatioType::Ratio || (style().aspectRatioType() == AspectRatioType::AutoAndRatio && !intrinsicRatio))
+            intrinsicRatio = style().aspectRatioWidth() / style().aspectRatioHeight();
+
         // Handle zoom & vertical writing modes here, as the embedded document doesn't know about them.
         intrinsicSize.scale(style().effectiveZoom());
 
@@ -477,6 +480,11 @@ void RenderReplaced::computeIntrinsicRatioInformation(FloatSize& intrinsicSize, 
     ASSERT(!embeddedContentBox());
     intrinsicSize = FloatSize(intrinsicLogicalWidth(), intrinsicLogicalHeight());
 
+    if (style().hasAspectRatio()) {
+        intrinsicRatio = style().logicalAspectRatio();
+        if (style().aspectRatioType() == AspectRatioType::Ratio)
+            return;
+    }
     // Figure out if we need to compute an intrinsic ratio.
     if (!hasAspectRatio())
         return;

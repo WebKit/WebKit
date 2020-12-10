@@ -83,9 +83,14 @@ void RenderSVGRoot::computeIntrinsicRatioInformation(FloatSize& intrinsicSize, d
     intrinsicSize.setWidth(floatValueForLength(svgSVGElement().intrinsicWidth(), 0));
     intrinsicSize.setHeight(floatValueForLength(svgSVGElement().intrinsicHeight(), 0));
 
+    if (style().aspectRatioType() == AspectRatioType::Ratio) {
+        intrinsicRatio = style().logicalAspectRatio();
+        return;
+    }
 
+    Optional<double> intrinsicRatioValue;
     if (!intrinsicSize.isEmpty())
-        intrinsicRatio = intrinsicSize.width() / static_cast<double>(intrinsicSize.height());
+        intrinsicRatioValue = intrinsicSize.width() / static_cast<double>(intrinsicSize.height());
     else {
         // - If either/both of the ‘width’ and ‘height’ of the rootmost ‘svg’ element are in percentage units (or omitted), the
         //   aspect ratio is calculated from the width and height values of the ‘viewBox’ specified for the current SVG document
@@ -94,9 +99,14 @@ void RenderSVGRoot::computeIntrinsicRatioInformation(FloatSize& intrinsicSize, d
         FloatSize viewBoxSize = svgSVGElement().viewBox().size();
         if (!viewBoxSize.isEmpty()) {
             // The viewBox can only yield an intrinsic ratio, not an intrinsic size.
-            intrinsicRatio = viewBoxSize.width() / static_cast<double>(viewBoxSize.height());
+            intrinsicRatioValue = viewBoxSize.width() / static_cast<double>(viewBoxSize.height());
         }
     }
+
+    if (intrinsicRatioValue)
+        intrinsicRatio = *intrinsicRatioValue;
+    else if (style().aspectRatioType() == AspectRatioType::AutoAndRatio)
+        intrinsicRatio = style().logicalAspectRatio();
 }
 
 bool RenderSVGRoot::isEmbeddedThroughSVGImage() const
