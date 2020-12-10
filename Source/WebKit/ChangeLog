@@ -1,3 +1,15 @@
+2020-12-10  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] The development WebContent XPC service is missing a required entitlement
+        https://bugs.webkit.org/show_bug.cgi?id=219730
+        <rdar://problem/72145560>
+
+        Reviewed by Brent Fulgham.
+
+        The message filtering entitlement is missing in com.apple.WebKit.WebContent.Development.xpc on macOS.
+
+        * Scripts/process-entitlements.sh:
+
 2020-12-10  Andres Gonzalez  <andresg_22@apple.com>
 
         Rework of AXObjectCache::isIsolatedTreeEnabled.

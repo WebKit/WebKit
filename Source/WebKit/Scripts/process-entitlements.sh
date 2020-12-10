@@ -12,6 +12,10 @@ function plistbuddy()
 function mac_process_webcontent_entitlements()
 {
     plistbuddy Add :com.apple.security.cs.allow-jit bool YES
+    if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 110000 ))
+    then
+        plistbuddy Add :com.apple.private.security.message-filter bool YES
+    fi
 
     if [[ "${WK_USE_RESTRICTED_ENTITLEMENTS}" == YES ]]
     then
@@ -23,7 +27,6 @@ function mac_process_webcontent_entitlements()
             plistbuddy Add :com.apple.developer.videotoolbox.client-sandboxed-decoder bool YES
             plistbuddy Add :com.apple.pac.shared_region_id string WebContent
             plistbuddy Add :com.apple.private.pac.exception bool YES
-            plistbuddy Add :com.apple.private.security.message-filter bool YES
             plistbuddy Add :com.apple.avfoundation.allow-system-wide-context bool YES
         fi
     fi
