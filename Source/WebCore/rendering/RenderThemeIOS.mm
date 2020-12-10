@@ -65,6 +65,7 @@
 #import "RenderMeter.h"
 #import "RenderObject.h"
 #import "RenderProgress.h"
+#import "RenderSlider.h"
 #import "RenderStyle.h"
 #import "RenderView.h"
 #import "RuntimeEnabledFeatures.h"
@@ -814,6 +815,11 @@ void RenderThemeIOS::adjustSliderTrackStyle(RenderStyle& style, const Element* e
 
 bool RenderThemeIOS::paintSliderTrack(const RenderObject& box, const PaintInfo& paintInfo, const IntRect& rect)
 {
+#if ENABLE(IOS_FORM_CONTROL_REFRESH)
+    if (box.settings().iOSFormControlRefreshEnabled())
+        return paintSliderTrackWithFormControlRefresh(box, paintInfo, rect);
+#endif
+
     IntRect trackClip = rect;
     auto& style = box.style();
 
@@ -907,6 +913,11 @@ void RenderThemeIOS::adjustSliderThumbSize(RenderStyle& style, const Element*) c
 
 void RenderThemeIOS::paintSliderThumbDecorations(const RenderObject& box, const PaintInfo& paintInfo, const IntRect& rect)
 {
+#if ENABLE(IOS_FORM_CONTROL_REFRESH)
+    if (box.settings().iOSFormControlRefreshEnabled())
+        return;
+#endif
+
     GraphicsContextStateSaver stateSaver(paintInfo.context());
     FloatRect clip = addRoundedBorderClip(box, paintInfo.context(), rect);
 
@@ -924,7 +935,7 @@ bool RenderThemeIOS::paintProgressBar(const RenderObject& renderer, const PaintI
 {
 #if ENABLE(IOS_FORM_CONTROL_REFRESH)
     if (renderer.settings().iOSFormControlRefreshEnabled())
-        return paintProgressBarFCR(renderer, paintInfo, rect);
+        return paintProgressBarWithFormControlRefresh(renderer, paintInfo, rect);
 #endif
 
     if (!is<RenderProgress>(renderer))
@@ -1200,6 +1211,18 @@ bool RenderThemeIOS::shouldHaveSpinButton(const HTMLInputElement&) const
 bool RenderThemeIOS::supportsFocusRing(const RenderStyle&) const
 {
     return false;
+}
+
+bool RenderThemeIOS::supportsBoxShadow(const RenderStyle& style) const
+{
+    // FIXME: See if additional native controls can support box shadows.
+    switch (style.appearance()) {
+    case SliderThumbHorizontalPart:
+    case SliderThumbVerticalPart:
+        return true;
+    default:
+        return false;
+    }
 }
 
 String RenderThemeIOS::mediaControlsStyleSheet()
@@ -2110,7 +2133,7 @@ Seconds RenderThemeIOS::animationRepeatIntervalForProgressBar(const RenderProgre
     return progressAnimationRepeatInterval;
 }
 
-bool RenderThemeIOS::paintProgressBarFCR(const RenderObject& renderer, const PaintInfo& paintInfo, const IntRect& rect)
+bool RenderThemeIOS::paintProgressBarWithFormControlRefresh(const RenderObject& renderer, const PaintInfo& paintInfo, const IntRect& rect)
 {
     if (!is<RenderProgress>(renderer))
         return true;
@@ -2206,6 +2229,68 @@ bool RenderThemeIOS::paintMeter(const RenderObject& renderer, const PaintInfo& p
         context.fillRoundedRect(roundedFillRect, meterEvenLessGoodColor);
         break;
     }
+
+    return false;
+}
+
+bool RenderThemeIOS::paintSliderTrackWithFormControlRefresh(const RenderObject& box, const PaintInfo& paintInfo, const IntRect& rect)
+{
+    if (!is<RenderSlider>(box))
+        return true;
+    auto& renderSlider = downcast<RenderSlider>(box);
+
+    auto& context = paintInfo.context();
+    GraphicsContextStateSaver stateSaver(context);
+
+    bool isHorizontal = true;
+    IntRect trackClip = rect;
+
+    switch (box.style().appearance()) {
+    case SliderHorizontalPart:
+        // Inset slightly so the thumb covers the edge.
+        if (trackClip.width() > 2) {
+            trackClip.setWidth(trackClip.width() - 2);
+            trackClip.setX(trackClip.x() + 1);
+        }
+        trackClip.setHeight(kTrackThickness);
+        trackClip.setY(rect.y() + rect.height() / 2 - kTrackThickness / 2);
+        break;
+    case SliderVerticalPart:
+        isHorizontal = false;
+        // Inset slightly so the thumb covers the edge.
+        if (trackClip.height() > 2) {
+            trackClip.setHeight(trackClip.height() - 2);
+            trackClip.setY(trackClip.y() + 1);
+        }
+        trackClip.setWidth(kTrackThickness);
+        trackClip.setX(rect.x() + rect.width() / 2 - kTrackThickness / 2);
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+    }
+
+#if ENABLE(DATALIST_ELEMENT)
+    paintSliderTicks(box, paintInfo, trackClip);
+#endif
+
+    auto cornerWidth = trackClip.width() < kTrackThickness ? trackClip.width() / 2.0f : kTrackRadius;
+    auto cornerHeight = trackClip.height() < kTrackThickness ? trackClip.height() / 2.0f : kTrackRadius;
+
+    FloatRoundedRect::Radii cornerRadii(cornerWidth, cornerHeight);
+    FloatRoundedRect innerBorder(trackClip, cornerRadii);
+    context.fillRoundedRect(innerBorder, controlBackgroundColor);
+
+    double valueRatio = renderSlider.valueRatio();
+    if (isHorizontal)
+        trackClip.setWidth(trackClip.width() * valueRatio);
+    else {
+        float height = trackClip.height();
+        trackClip.setHeight(height * valueRatio);
+        trackClip.setY(trackClip.y() + height - trackClip.height());
+    }
+
+    FloatRoundedRect fillRect(trackClip, cornerRadii);
+    context.fillRoundedRect(fillRect, controlColor);
 
     return false;
 }

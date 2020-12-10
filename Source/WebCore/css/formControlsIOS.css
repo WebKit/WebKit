@@ -77,4 +77,10 @@ input[type="submit"] {
     color: white;
 }
 
+input[type="range"]::-webkit-slider-thumb, input[type="range"]::-webkit-slider-thumb:active {
+    background-color: white;
+    border: initial;
+    box-shadow: 0px 6px 13px rgba(0, 0, 0, 0.2), 0px 0.5px 4px rgba(0, 0, 0, 0.2);
+}
+
 #endif

@@ -116,13 +116,14 @@ private:
     bool paintRadio(const RenderObject&, const PaintInfo&, const IntRect&) override;
 
     Seconds animationRepeatIntervalForProgressBar(const RenderProgress&) const final;
-    bool paintProgressBarFCR(const RenderObject&, const PaintInfo&, const IntRect&);
 
     bool supportsMeter(ControlPart, const HTMLMeterElement&) const final;
     bool paintMeter(const RenderObject&, const PaintInfo&, const IntRect&) final;
 #endif
 
     bool supportsFocusRing(const RenderStyle&) const final;
+
+    bool supportsBoxShadow(const RenderStyle&) const final;
 
     Color platformActiveSelectionBackgroundColor(OptionSet<StyleColor::Options>) const override;
     Color platformInactiveSelectionBackgroundColor(OptionSet<StyleColor::Options>) const override;
@@ -163,6 +164,11 @@ private:
 
 #if PLATFORM(WATCHOS)
     String extraDefaultStyleSheet() final;
+#endif
+
+#if ENABLE(IOS_FORM_CONTROL_REFRESH)
+    bool paintProgressBarWithFormControlRefresh(const RenderObject&, const PaintInfo&, const IntRect&);
+    bool paintSliderTrackWithFormControlRefresh(const RenderObject&, const PaintInfo&, const IntRect&);
 #endif
 
     FloatRect addRoundedBorderClip(const RenderObject& box, GraphicsContext&, const IntRect&);

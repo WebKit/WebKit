@@ -1,3 +1,26 @@
+2020-12-10  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS][FCR] Add new look for input type=range
+        https://bugs.webkit.org/show_bug.cgi?id=219698
+        <rdar://problem/72144727>
+
+        Reviewed by Wenson Hsieh.
+
+        Added tests to verify the stylability of inputs with the new appearance.
+
+        * fast/forms/ios/form-control-refresh/range/background-color-expected.html: Added.
+        * fast/forms/ios/form-control-refresh/range/background-color.html: Added.
+        * fast/forms/ios/form-control-refresh/range/border-expected.html: Added.
+        * fast/forms/ios/form-control-refresh/range/border.html: Added.
+        * fast/forms/ios/form-control-refresh/range/datalist-expected-mismatch.html: Added.
+        * fast/forms/ios/form-control-refresh/range/datalist.html: Added.
+        * fast/forms/ios/form-control-refresh/range/style-height-expected.html: Added.
+        * fast/forms/ios/form-control-refresh/range/style-height.html: Added.
+        * fast/forms/ios/form-control-refresh/range/style-width-expected-mismatch.html: Added.
+        * fast/forms/ios/form-control-refresh/range/style-width.html: Added.
+        * fast/forms/ios/form-control-refresh/range/value-expected-mismatch.html: Added.
+        * fast/forms/ios/form-control-refresh/range/value.html: Added.
+
 2020-12-10  Youenn Fablet  <youenn@apple.com>
 
         Expose RTCRtpSFrameTransform as SFrameTransform

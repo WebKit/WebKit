@@ -105,8 +105,8 @@ void RenderTheme::adjustStyle(RenderStyle& style, const Element* element, const 
     if (!style.hasAppearance())
         return;
 
-    // Never support box-shadow on native controls.
-    style.setBoxShadow(nullptr);
+    if (!supportsBoxShadow(style))
+        style.setBoxShadow(nullptr);
     
 #if USE(NEW_THEME)
     switch (part) {

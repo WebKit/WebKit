@@ -118,4 +118,17 @@ bool RenderSlider::inDragMode() const
     return element().sliderThumbElement()->active();
 }
 
+double RenderSlider::valueRatio() const
+{
+    auto& element = this->element();
+
+    auto min = element.minimum();
+    auto max = element.maximum();
+    auto value = element.valueAsNumber();
+
+    if (max <= min)
+        return 0;
+    return (value - min) / (max - min);
+}
+
 } // namespace WebCore

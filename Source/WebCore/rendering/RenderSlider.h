@@ -39,6 +39,8 @@ public:
 
     bool inDragMode() const;
 
+    double valueRatio() const;
+
 private:
     const char* renderName() const override { return "RenderSlider"; }
     bool isSlider() const override { return true; }

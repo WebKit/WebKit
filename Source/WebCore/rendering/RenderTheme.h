@@ -143,6 +143,8 @@ public:
     // A method asking if the platform is able to show datalist suggestions for a given input type.
     virtual bool supportsDataListUI(const AtomString&) const { return false; }
 
+    virtual bool supportsBoxShadow(const RenderStyle&) const { return false; }
+
     // Text selection colors.
     Color activeSelectionBackgroundColor(OptionSet<StyleColor::Options>) const;
     Color inactiveSelectionBackgroundColor(OptionSet<StyleColor::Options>) const;
