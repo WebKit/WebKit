@@ -98,7 +98,17 @@ void InlineTextItem::createAndAppendTextItems(InlineItems& inlineContent, const 
             auto appendWhitespaceItem = [&] (auto startPosition, auto itemLength) {
                 auto simpleSingleWhitespaceContent = inlineTextBox.canUseSimplifiedContentMeasuring() && (itemLength == 1 || style.collapseWhiteSpace());
                 auto width = simpleSingleWhitespaceContent ? makeOptional(InlineLayoutUnit { font.spaceWidth() }) : inlineItemWidth(startPosition, itemLength);
-                inlineContent.append(InlineTextItem::createWhitespaceItem(inlineTextBox, startPosition, itemLength, width));
+                auto isWordSeparator = true;
+                if (itemLength == 1) {
+                    // FIXME: Check if the collapsible content (multiple whitespace) is not always a word separator.
+                    isWordSeparator = text[startPosition] == space
+                        || text[startPosition] == noBreakSpace
+                        || text[startPosition] == ethiopicWordspace
+                        || text[startPosition] == aegeanWordSeparatorLine
+                        || text[startPosition] == aegeanWordSeparatorDot
+                        || text[startPosition] == ugariticWordDivider;
+                }
+                inlineContent.append(InlineTextItem::createWhitespaceItem(inlineTextBox, startPosition, itemLength, isWordSeparator, width));
             };
 
             auto length = moveToNextNonWhitespacePosition(text, currentPosition, style.preserveNewline());
