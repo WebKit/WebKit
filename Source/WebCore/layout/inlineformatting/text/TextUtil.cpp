@@ -78,7 +78,7 @@ InlineLayoutUnit TextUtil::width(const InlineTextBox& inlineTextBox, unsigned fr
     if (measureWithEndSpace)
         width -= (font.spaceWidth() + font.wordSpacing());
 
-    return std::max<InlineLayoutUnit>(0 , InlineLayoutUnit(width));
+    return width;
 }
 
 InlineLayoutUnit TextUtil::fixedPitchWidth(const StringView& text, const RenderStyle& style, unsigned from, unsigned to, InlineLayoutUnit contentLogicalLeft)
@@ -97,7 +97,7 @@ InlineLayoutUnit TextUtil::fixedPitchWidth(const StringView& text, const RenderS
         if (i > from && (character == ' ' || character == '\t' || character == '\n'))
             width += font.wordSpacing();
     }
-    return std::max<InlineLayoutUnit>(0, InlineLayoutUnit(width));
+    return width;
 }
 
 TextUtil::SplitData TextUtil::split(const InlineTextBox& inlineTextBox, unsigned startPosition, unsigned length, InlineLayoutUnit textWidth, InlineLayoutUnit availableWidth, InlineLayoutUnit contentLogicalLeft)
