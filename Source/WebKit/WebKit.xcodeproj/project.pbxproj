@@ -1144,6 +1144,8 @@
 		575B1BBA23CE9C130020639A /* WebAutomationSession.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9955A6EA1C7980BB00EB6A93 /* WebAutomationSession.cpp */; };
 		576CA9D722B862180030143C /* SOAuthorizationNSURLExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 57FD317322B35148008D0E8B /* SOAuthorizationNSURLExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5772F206217DBD6A0056BF2C /* HidService.h in Headers */ = {isa = PBXBuildFile; fileRef = 5772F204217DBD6A0056BF2C /* HidService.h */; };
+		57773991258037430059348B /* AuthenticatorPresenterCoordinator.h in Headers */ = {isa = PBXBuildFile; fileRef = 5777398F258037430059348B /* AuthenticatorPresenterCoordinator.h */; };
+		577739952580388F0059348B /* WKASCAuthorizationPresenterDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 577739932580388F0059348B /* WKASCAuthorizationPresenterDelegate.h */; };
 		577FF7822346E81C004EDFB9 /* APIWebAuthenticationPanelClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 577FF7812346E81C004EDFB9 /* APIWebAuthenticationPanelClient.h */; };
 		577FF7852346ECAA004EDFB9 /* WebAuthenticationPanelClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 577FF7832346ECAA004EDFB9 /* WebAuthenticationPanelClient.h */; };
 		578DC2982155A0020074E815 /* LocalAuthenticationSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 578DC2972155A0010074E815 /* LocalAuthenticationSoftLink.h */; };
@@ -1207,6 +1209,10 @@
 		57EB2E3A21E1983E00B89CDF /* U2fAuthenticator.h in Headers */ = {isa = PBXBuildFile; fileRef = 57EB2E3821E1983E00B89CDF /* U2fAuthenticator.h */; };
 		57EBE26A234676C5008D8AF9 /* APIWebAuthenticationPanel.h in Headers */ = {isa = PBXBuildFile; fileRef = 57EBE268234676C5008D8AF9 /* APIWebAuthenticationPanel.h */; };
 		57EFC77E2550EB8600F9477D /* com.apple.WebKit.WebAuthn.sb in CopyFiles */ = {isa = PBXBuildFile; fileRef = 57EFC77D2550EB8500F9477D /* com.apple.WebKit.WebAuthn.sb */; };
+		57FABB0F25817CF00059DC95 /* AuthenticationServicesCoreSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 57FABB0E25817CF00059DC95 /* AuthenticationServicesCoreSPI.h */; };
+		57FABB122581827C0059DC95 /* AuthenticationServicesCoreSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 57FABB102581827C0059DC95 /* AuthenticationServicesCoreSoftLink.h */; };
+		57FABB132581827C0059DC95 /* AuthenticationServicesCoreSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 57FABB112581827C0059DC95 /* AuthenticationServicesCoreSoftLink.mm */; };
+		57FABB14258188230059DC95 /* SourcesCocoa.txt in Resources */ = {isa = PBXBuildFile; fileRef = 2D7DEBE121269D5F00B9F73C /* SourcesCocoa.txt */; };
 		57FD318022B35158008D0E8B /* NavigationSOAuthorizationSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 57FD317822B35149008D0E8B /* NavigationSOAuthorizationSession.h */; };
 		57FD318122B3515B008D0E8B /* PopUpSOAuthorizationSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 57FD317022B35148008D0E8B /* PopUpSOAuthorizationSession.h */; };
 		57FD318222B3515E008D0E8B /* RedirectSOAuthorizationSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 57FD317422B35149008D0E8B /* RedirectSOAuthorizationSession.h */; };
@@ -4082,6 +4088,10 @@
 		57608299202BDAE200116678 /* WebAuthenticatorCoordinatorProxy.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebAuthenticatorCoordinatorProxy.messages.in; sourceTree = "<group>"; };
 		5772F204217DBD6A0056BF2C /* HidService.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HidService.h; sourceTree = "<group>"; };
 		5772F205217DBD6A0056BF2C /* HidService.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = HidService.mm; sourceTree = "<group>"; };
+		5777398F258037430059348B /* AuthenticatorPresenterCoordinator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AuthenticatorPresenterCoordinator.h; sourceTree = "<group>"; };
+		57773990258037430059348B /* AuthenticatorPresenterCoordinator.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AuthenticatorPresenterCoordinator.mm; sourceTree = "<group>"; };
+		577739932580388F0059348B /* WKASCAuthorizationPresenterDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKASCAuthorizationPresenterDelegate.h; sourceTree = "<group>"; };
+		577739942580388F0059348B /* WKASCAuthorizationPresenterDelegate.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKASCAuthorizationPresenterDelegate.mm; sourceTree = "<group>"; };
 		577FF7812346E81C004EDFB9 /* APIWebAuthenticationPanelClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = APIWebAuthenticationPanelClient.h; sourceTree = "<group>"; };
 		577FF7832346ECAA004EDFB9 /* WebAuthenticationPanelClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebAuthenticationPanelClient.h; sourceTree = "<group>"; };
 		577FF7842346ECAA004EDFB9 /* WebAuthenticationPanelClient.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebAuthenticationPanelClient.mm; sourceTree = "<group>"; };
@@ -4167,6 +4177,9 @@
 		57EBE268234676C5008D8AF9 /* APIWebAuthenticationPanel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = APIWebAuthenticationPanel.h; sourceTree = "<group>"; };
 		57EBE269234676C5008D8AF9 /* APIWebAuthenticationPanel.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = APIWebAuthenticationPanel.cpp; sourceTree = "<group>"; };
 		57EFC77D2550EB8500F9477D /* com.apple.WebKit.WebAuthn.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = com.apple.WebKit.WebAuthn.sb; sourceTree = "<group>"; };
+		57FABB0E25817CF00059DC95 /* AuthenticationServicesCoreSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AuthenticationServicesCoreSPI.h; sourceTree = "<group>"; };
+		57FABB102581827C0059DC95 /* AuthenticationServicesCoreSoftLink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AuthenticationServicesCoreSoftLink.h; sourceTree = "<group>"; };
+		57FABB112581827C0059DC95 /* AuthenticationServicesCoreSoftLink.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AuthenticationServicesCoreSoftLink.mm; sourceTree = "<group>"; };
 		57FD317022B35148008D0E8B /* PopUpSOAuthorizationSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PopUpSOAuthorizationSession.h; sourceTree = "<group>"; };
 		57FD317122B35148008D0E8B /* WKSOAuthorizationDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKSOAuthorizationDelegate.h; sourceTree = "<group>"; };
 		57FD317222B35148008D0E8B /* SOAuthorizationCoordinator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SOAuthorizationCoordinator.h; sourceTree = "<group>"; };
@@ -7505,6 +7518,7 @@
 			children = (
 				E3CAAA432413278A00CED2E2 /* AccessibilitySupportSPI.h */,
 				572EBBDC25392181000552B3 /* AppAttestSPI.h */,
+				57FABB0E25817CF00059DC95 /* AuthenticationServicesCoreSPI.h */,
 				1A5705101BE410E500874AF1 /* BlockSPI.h */,
 				E50620912542102000C43091 /* ContactsUISPI.h */,
 				37C21CAD1E994C0C0029D5F9 /* CorePredictionSPI.h */,
@@ -8631,6 +8645,10 @@
 			children = (
 				572EBBD92538F6A1000552B3 /* AppAttestInternalSoftLink.h */,
 				572EBBD82538F6A1000552B3 /* AppAttestInternalSoftLink.mm */,
+				57FABB102581827C0059DC95 /* AuthenticationServicesCoreSoftLink.h */,
+				57FABB112581827C0059DC95 /* AuthenticationServicesCoreSoftLink.mm */,
+				5777398F258037430059348B /* AuthenticatorPresenterCoordinator.h */,
+				57773990258037430059348B /* AuthenticatorPresenterCoordinator.mm */,
 				57AC8F4E217FEED90055438C /* HidConnection.h */,
 				57AC8F4F217FEED90055438C /* HidConnection.mm */,
 				5772F204217DBD6A0056BF2C /* HidService.h */,
@@ -8651,6 +8669,8 @@
 				570DAAAD23026F5C00E8FC04 /* NfcService.mm */,
 				577FF7832346ECAA004EDFB9 /* WebAuthenticationPanelClient.h */,
 				577FF7842346ECAA004EDFB9 /* WebAuthenticationPanelClient.mm */,
+				577739932580388F0059348B /* WKASCAuthorizationPresenterDelegate.h */,
+				577739942580388F0059348B /* WKASCAuthorizationPresenterDelegate.mm */,
 				570DAAC423037F7E00E8FC04 /* WKNFReaderSessionDelegate.h */,
 				570DAAC523037F7E00E8FC04 /* WKNFReaderSessionDelegate.mm */,
 			);
@@ -11310,8 +11330,11 @@
 				512F589912A8838800629530 /* AuthenticationDecisionListener.h in Headers */,
 				518E8EF916B2091C00E91429 /* AuthenticationManager.h in Headers */,
 				512F58A312A883AD00629530 /* AuthenticationManagerMessages.h in Headers */,
+				57FABB122581827C0059DC95 /* AuthenticationServicesCoreSoftLink.h in Headers */,
+				57FABB0F25817CF00059DC95 /* AuthenticationServicesCoreSPI.h in Headers */,
 				57DCEDB1214C60480016B847 /* Authenticator.h in Headers */,
 				57DCEDAF214C603B0016B847 /* AuthenticatorManager.h in Headers */,
+				57773991258037430059348B /* AuthenticatorPresenterCoordinator.h in Headers */,
 				57DCEDB0214C60420016B847 /* AuthenticatorTransportService.h in Headers */,
 				9955A6EF1C79810800EB6A93 /* Automation.json in Headers */,
 				9955A6F51C7986E000EB6A93 /* AutomationBackendDispatchers.h in Headers */,
@@ -12034,6 +12057,7 @@
 				512E34E5130B4D0500ABD19A /* WKApplicationCacheManager.h in Headers */,
 				A13DC682207AA6B20066EF72 /* WKApplicationStateTrackingView.h in Headers */,
 				BC4075F4124FF0270068F20A /* WKArray.h in Headers */,
+				577739952580388F0059348B /* WKASCAuthorizationPresenterDelegate.h in Headers */,
 				512F58F612A88A5400629530 /* WKAuthenticationChallenge.h in Headers */,
 				512F58F812A88A5400629530 /* WKAuthenticationDecisionListener.h in Headers */,
 				37C4C08D1814AC5C003688B9 /* WKBackForwardList.h in Headers */,
@@ -12743,6 +12767,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				57FABB14258188230059DC95 /* SourcesCocoa.txt in Resources */,
 				E1D26A53175964D90095BFD1 /* WebContentProcess.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -13391,6 +13416,7 @@
 				CD4570D424411D0F00A3DCEB /* AudioSessionRoutingArbitrator.cpp in Sources */,
 				CD4570D3244113B500A3DCEB /* AudioSessionRoutingArbitratorProxyMessageReceiver.cpp in Sources */,
 				512F58A212A883AD00629530 /* AuthenticationManagerMessageReceiver.cpp in Sources */,
+				57FABB132581827C0059DC95 /* AuthenticationServicesCoreSoftLink.mm in Sources */,
 				9955A6F41C7986DC00EB6A93 /* AutomationBackendDispatchers.cpp in Sources */,
 				99249AD51F1F1E5600B62FBB /* AutomationFrontendDispatchers.cpp in Sources */,
 				9955A6F61C7986E300EB6A93 /* AutomationProtocolObjects.cpp in Sources */,

@@ -390,7 +390,8 @@ void cleanUpKeychain(const String& rpId)
 
 } // namesapce;
 
-TEST(WebAuthenticationPanel, NoPanelTimeout)
+#if HAVE(NEAR_FIELD)
+TEST(WebAuthenticationPanel, NoPanelNfcSucceed)
 {
     RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-get-assertion-nfc" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
 
@@ -400,8 +401,9 @@ TEST(WebAuthenticationPanel, NoPanelTimeout)
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSZeroRect configuration:configuration]);
 
     [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
-    [webView waitForMessage:@"Operation timed out."];
+    [webView waitForMessage:@"Succeeded!"];
 }
+#endif
 
 TEST(WebAuthenticationPanel, NoPanelHidSuccess)
 {

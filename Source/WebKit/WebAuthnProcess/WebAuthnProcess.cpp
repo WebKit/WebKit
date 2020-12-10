@@ -42,6 +42,7 @@ WebAuthnProcess::WebAuthnProcess(AuxiliaryProcessInitializationParameters&& para
     : m_authenticatorManager(makeUniqueRef<AuthenticatorManager>())
 {
     initialize(WTFMove(parameters));
+    m_authenticatorManager->enableModernWebAuthentication();
 }
 
 WebAuthnProcess::~WebAuthnProcess()
@@ -129,6 +130,7 @@ void WebAuthnProcess::setMockWebAuthenticationConfiguration(WebCore::MockWebAuth
 {
     if (!m_authenticatorManager->isMock()) {
         m_authenticatorManager = makeUniqueRef<MockAuthenticatorManager>(WTFMove(configuration));
+        m_authenticatorManager->enableModernWebAuthentication();
         return;
     }
     static_cast<MockAuthenticatorManager*>(&m_authenticatorManager)->setTestConfiguration(WTFMove(configuration));

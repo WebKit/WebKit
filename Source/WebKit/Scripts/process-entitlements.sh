@@ -260,6 +260,9 @@ function ios_family_process_webauthn_entitlements()
     plistbuddy Add :com.apple.appattest.spi bool YES
     plistbuddy Add :com.apple.mobileactivationd.spi bool YES
 
+    plistbuddy Add :com.apple.springboard.remote-alert bool YES
+    plistbuddy Add :com.apple.frontboard.launchapplications bool YES
+
     plistbuddy Add :seatbelt-profiles array
     plistbuddy Add :seatbelt-profiles:0 string com.apple.WebKit.WebAuthn
 }

@@ -28,6 +28,7 @@
 #if ENABLE(WEB_AUTHN)
 
 #include "Authenticator.h"
+#include "AuthenticatorPresenterCoordinator.h"
 #include "AuthenticatorTransportService.h"
 #include "WebAuthenticationRequestData.h"
 #include <WebCore/AuthenticatorResponse.h>
@@ -63,8 +64,11 @@ public:
     void handleRequest(WebAuthenticationRequestData&&, Callback&&);
     void cancelRequest(const WebCore::PageIdentifier&, const Optional<WebCore::FrameIdentifier>&); // Called from WebPageProxy/WebProcessProxy.
     void cancelRequest(const API::WebAuthenticationPanel&); // Called from panel clients.
+    void cancel(); // Called from the presenter.
 
     virtual bool isMock() const { return false; }
+
+    void enableModernWebAuthentication();
 
 protected:
     RunLoop::Timer<AuthenticatorManager>& requestTimeOutTimer() { return m_requestTimeOutTimer; }
@@ -96,6 +100,7 @@ private:
     void initTimeOutTimer();
     void timeOutTimerFired();
     void runPanel();
+    void runPresenter();
     void restartDiscovery();
     TransportSet getTransports() const;
     void dispatchPanelClientCall(Function<void(const API::WebAuthenticationPanel&)>&&) const;
@@ -104,9 +109,12 @@ private:
     WebAuthenticationRequestData m_pendingRequestData;
     Callback m_pendingCompletionHandler; // Should not be invoked directly, use invokePendingCompletionHandler.
     RunLoop::Timer<AuthenticatorManager> m_requestTimeOutTimer;
+    std::unique_ptr<AuthenticatorPresenterCoordinator> m_presenter;
 
     Vector<UniqueRef<AuthenticatorTransportService>> m_services;
     HashSet<Ref<Authenticator>> m_authenticators;
+
+    bool m_isWebAuthenticationModernEnabled { false };
 };
 
 } // namespace WebKit

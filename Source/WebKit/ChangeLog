@@ -1,3 +1,67 @@
+2020-12-10  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Adopt new UI for the Security Key makeCredential flow
+        https://bugs.webkit.org/show_bug.cgi?id=219708
+        <rdar://problem/72154735>
+
+        Reviewed by Brent Fulgham.
+
+        This patch adopts the new AuthenticationServices' UI. The idea is to use AuthenticatorPresenterCoordinator
+        as the middle layer to connect to the new UI while keeping the existing interfaces the same in the AuthenticatorManager
+        to handle the interactions between UI and authenticators.
+
+        Covered by manual tests.
+
+        * Platform/spi/Cocoa/AuthenticationServicesCoreSPI.h: Added.
+        SPI for the new UI.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebAuthn.sb:
+        * Scripts/process-entitlements.sh:
+        Added new sandbox rules for Remote SpringBoard services which are used by the new UI.
+
+        * SourcesCocoa.txt:
+        Paperwork.
+
+        * UIProcess/WebAuthentication/AuthenticatorManager.cpp:
+        (WebKit::AuthenticatorManager::handleRequest):
+        (WebKit::AuthenticatorManager::cancel):
+        (WebKit::AuthenticatorManager::enableModernWebAuthentication):
+        (WebKit::AuthenticatorManager::clearState):
+        (WebKit::AuthenticatorManager::serviceStatusUpdated):
+        (WebKit::AuthenticatorManager::authenticatorStatusUpdated):
+        (WebKit::AuthenticatorManager::requestPin):
+        (WebKit::AuthenticatorManager::selectAssertionResponse):
+        (WebKit::AuthenticatorManager::startDiscovery):
+        (WebKit::AuthenticatorManager::runPanel):
+        (WebKit::AuthenticatorManager::runPresenter):
+        (WebKit::AuthenticatorManager::invokePendingCompletionHandler):
+        * UIProcess/WebAuthentication/AuthenticatorManager.h:
+        Teached AuthenticatorManager to use the new UI's presenter when it is available. Otherwise, it falls back to the old UI.
+
+        * UIProcess/WebAuthentication/Cocoa/AuthenticationServicesCoreSoftLink.h: Added.
+        * UIProcess/WebAuthentication/Cocoa/AuthenticationServicesCoreSoftLink.mm: Added.
+        * UIProcess/WebAuthentication/Cocoa/AuthenticatorPresenterCoordinator.h: Added.
+        * UIProcess/WebAuthentication/Cocoa/AuthenticatorPresenterCoordinator.mm: Added.
+        (WebKit::AuthenticatorPresenterCoordinator::AuthenticatorPresenterCoordinator):
+        (WebKit::AuthenticatorPresenterCoordinator::updatePresenter):
+        (WebKit::AuthenticatorPresenterCoordinator::requestPin):
+        (WebKit::AuthenticatorPresenterCoordinator::selectAssertionResponse):
+        (WebKit::AuthenticatorPresenterCoordinator::dimissPresenter):
+        * UIProcess/WebAuthentication/Cocoa/WKASCAuthorizationPresenterDelegate.h: Added.
+        * UIProcess/WebAuthentication/Cocoa/WKASCAuthorizationPresenterDelegate.mm: Added.
+        (-[WKASCAuthorizationPresenterDelegate initWithCoordinator:]):
+        (-[WKASCAuthorizationPresenterDelegate authorizationPresenter:credentialRequestedForLoginChoice:authenticatedContext:completionHandler:]):
+        (-[WKASCAuthorizationPresenterDelegate authorizationPresenter:validateUserEnteredPIN:completionHandler:]):
+        Introduced the AuthenticatorPresenterCoordinator to handle the new UI.
+
+        * WebAuthnProcess/WebAuthnProcess.cpp:
+        (WebKit::WebAuthnProcess::WebAuthnProcess):
+        (WebKit::WebAuthnProcess::setMockWebAuthenticationConfiguration):
+        Teached WebAuthnProcess to inform AuthenticatorManager about its existence.
+
+        * WebKit.xcodeproj/project.pbxproj:
+        Paperwork.
+
 2020-12-09  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Remove com.apple.PowerManagement.control from WebContent sandbox
