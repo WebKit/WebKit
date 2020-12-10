@@ -313,27 +313,32 @@ add_custom_command(
 # Additionally, setting the OBJECT_DEPENDS property will make the .h files a Makefile
 # dependency of both LLIntOffsetsExtractor and LLIntOffsetsExtractor.cpp, so the command will
 # actually be run multiple times!
-add_executable(LLIntSettingsExtractor
+
+WEBKIT_EXECUTABLE_DECLARE(LLIntSettingsExtractor)
+set(LLIntSettingsExtractor_SOURCES
     ${JAVASCRIPTCORE_DIR}/llint/LLIntSettingsExtractor.cpp
     ${JavaScriptCore_DERIVED_SOURCES_DIR}/LLIntDesiredSettings.h ${JavaScriptCore_DERIVED_SOURCES_DIR}/Bytecodes.h ${JavaScriptCore_DERIVED_SOURCES_DIR}/BytecodeStructs.h
 )
 
-target_include_directories(LLIntSettingsExtractor PRIVATE
+set(LLIntSettingsExtractor_PRIVATE_INCLUDE_DIRECTORIES
     $<TARGET_PROPERTY:JavaScriptCore,INCLUDE_DIRECTORIES>
 )
-target_link_libraries(LLIntSettingsExtractor WebKit::WTF)
-add_dependencies(LLIntSettingsExtractor JavaScriptCore_CopyHeaders)
+set(LLIntSettingsExtractor_PRIVATE_LIBRARIES WebKit::WTF)
+set(LLIntSettingsExtractor_DEPENDENCIES JavaScriptCore_CopyHeaders)
+WEBKIT_EXECUTABLE(LLIntSettingsExtractor)
 
-add_executable(LLIntOffsetsExtractor
+WEBKIT_EXECUTABLE_DECLARE(LLIntOffsetsExtractor)
+set(LLIntOffsetsExtractor_SOURCES
     ${JAVASCRIPTCORE_DIR}/llint/LLIntOffsetsExtractor.cpp
     ${JavaScriptCore_DERIVED_SOURCES_DIR}/LLIntDesiredOffsets.h ${JavaScriptCore_DERIVED_SOURCES_DIR}/Bytecodes.h ${JavaScriptCore_DERIVED_SOURCES_DIR}/BytecodeStructs.h
 )
 
-target_include_directories(LLIntOffsetsExtractor PRIVATE
+set(LLIntOffsetsExtractor_PRIVATE_INCLUDE_DIRECTORIES
     $<TARGET_PROPERTY:JavaScriptCore,INCLUDE_DIRECTORIES>
 )
-target_link_libraries(LLIntOffsetsExtractor WebKit::WTF)
-add_dependencies(LLIntOffsetsExtractor JavaScriptCore_CopyHeaders)
+set(LLIntOffsetsExtractor_PRIVATE_LIBRARIES WebKit::WTF)
+set(LLIntOffsetsExtractor_DEPENDENCIES JavaScriptCore_CopyHeaders)
+WEBKIT_EXECUTABLE(LLIntOffsetsExtractor)
 
 # The build system will execute asm.rb every time LLIntOffsetsExtractor's mtime is newer than
 # LLIntAssembly.h's mtime. The problem we have here is: asm.rb has some built-in optimization
