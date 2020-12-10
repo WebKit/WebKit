@@ -174,7 +174,7 @@ void Recorder::drawGlyphs(const Font& font, const GlyphBuffer& glyphBuffer, unsi
 
 void Recorder::drawImageBuffer(WebCore::ImageBuffer& imageBuffer, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
 {
-    // FIXME: Call imageBuffer.flushDrawingContext() when <https://webkit.org/b/218773> is fixed.
+    imageBuffer.flushDrawingContext();
     m_displayList.cacheImageBuffer(imageBuffer);
     append<DrawImageBuffer>(imageBuffer.renderingResourceIdentifier(), destRect, srcRect, options);
 }
