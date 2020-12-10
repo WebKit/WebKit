@@ -1364,6 +1364,7 @@
                 (when (defined? 'mach_make_memory_entry) mach_make_memory_entry)
                 (when (defined? 'mach_make_memory_entry_64) mach_make_memory_entry_64)
                 mach_port_get_context_from_user
+                mach_port_is_connection_for_service
                 mach_port_request_notification
                 mach_port_set_attributes
                 mach_vm_copy

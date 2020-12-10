@@ -1,5 +1,17 @@
 2020-12-10  Per Arne Vollan  <pvollan@apple.com>
 
+        [iOS] Add missing endpoint in sandbox message filter
+        https://bugs.webkit.org/show_bug.cgi?id=219731
+        <rdar://problem/71566760>
+
+        Reviewed by Brent Fulgham.
+
+        Add missing endpoint in the WebContent process' sandbox message filter on iOS.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
+2020-12-10  Per Arne Vollan  <pvollan@apple.com>
+
         [macOS] The development WebContent XPC service is missing a required entitlement
         https://bugs.webkit.org/show_bug.cgi?id=219730
         <rdar://problem/72145560>
