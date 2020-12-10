@@ -1,3 +1,15 @@
+2020-12-10  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Use TARGET_PROPERTY to set includes for executables
+        https://bugs.webkit.org/show_bug.cgi?id=219743
+
+        Reviewed by Michael Catanzaro.
+
+        Use $<TARGET_PROPERTY:WebKit,INCLUDE_DIRECTORIES> for all executables being
+        built alongside WebKit. This simplifies the includes for those targets.
+
+        * CMakeLists.txt:
+
 2020-12-10  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, reverting r270542.

@@ -1,3 +1,19 @@
+2020-12-10  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Use TARGET_PROPERTY to set includes for executables
+        https://bugs.webkit.org/show_bug.cgi?id=219743
+
+        Reviewed by Michael Catanzaro.
+
+        Use $<TARGET_PROPERTY:JavaScriptCore,INCLUDE_DIRECTORIES> for all executables being
+        built alongside JavaScriptCore. This simplifies the includes for those targets.
+
+        Additionally relocate the setting of include directories for LLInt executables
+        so they're next to the rest of their definitions.
+
+        * CMakeLists.txt:
+        * shell/CMakeLists.txt:
+
 2020-12-09  Dmitry Bezhetskov  <dbezhetskov@igalia.com>
 
         Fix redundant assert

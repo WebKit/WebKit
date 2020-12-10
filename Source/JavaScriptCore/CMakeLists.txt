@@ -318,13 +318,20 @@ add_executable(LLIntSettingsExtractor
     ${JavaScriptCore_DERIVED_SOURCES_DIR}/LLIntDesiredSettings.h ${JavaScriptCore_DERIVED_SOURCES_DIR}/Bytecodes.h ${JavaScriptCore_DERIVED_SOURCES_DIR}/BytecodeStructs.h
 )
 
+target_include_directories(LLIntSettingsExtractor PRIVATE
+    $<TARGET_PROPERTY:JavaScriptCore,INCLUDE_DIRECTORIES>
+)
+target_link_libraries(LLIntSettingsExtractor WebKit::WTF)
+add_dependencies(LLIntSettingsExtractor JavaScriptCore_CopyHeaders)
+
 add_executable(LLIntOffsetsExtractor
     ${JAVASCRIPTCORE_DIR}/llint/LLIntOffsetsExtractor.cpp
     ${JavaScriptCore_DERIVED_SOURCES_DIR}/LLIntDesiredOffsets.h ${JavaScriptCore_DERIVED_SOURCES_DIR}/Bytecodes.h ${JavaScriptCore_DERIVED_SOURCES_DIR}/BytecodeStructs.h
 )
 
-target_link_libraries(LLIntSettingsExtractor WebKit::WTF)
-add_dependencies(LLIntSettingsExtractor JavaScriptCore_CopyHeaders)
+target_include_directories(LLIntOffsetsExtractor PRIVATE
+    $<TARGET_PROPERTY:JavaScriptCore,INCLUDE_DIRECTORIES>
+)
 target_link_libraries(LLIntOffsetsExtractor WebKit::WTF)
 add_dependencies(LLIntOffsetsExtractor JavaScriptCore_CopyHeaders)
 
@@ -1374,17 +1381,6 @@ if (NOT INTERNAL_BUILD)
     add_dependencies(JavaScriptCore_CopyPrivateHeaders JavaScriptCore)
 endif ()
 
-target_include_directories(LLIntSettingsExtractor PRIVATE
-    ${JavaScriptCore_INCLUDE_DIRECTORIES}
-    ${JavaScriptCore_PRIVATE_INCLUDE_DIRECTORIES}
-)
-target_include_directories(LLIntSettingsExtractor SYSTEM PRIVATE ${JavaScriptCore_SYSTEM_INCLUDE_DIRECTORIES})
-
-target_include_directories(LLIntOffsetsExtractor PRIVATE
-    ${JavaScriptCore_INCLUDE_DIRECTORIES}
-    ${JavaScriptCore_PRIVATE_INCLUDE_DIRECTORIES}
-)
-target_include_directories(LLIntOffsetsExtractor SYSTEM PRIVATE ${JavaScriptCore_SYSTEM_INCLUDE_DIRECTORIES})
 
 add_subdirectory(shell)
 
