@@ -280,6 +280,11 @@ RenderTheme& RenderTheme::singleton()
     return theme;
 }
 
+bool RenderThemeMac::canPaint(const PaintInfo& paintInfo, const Settings&) const
+{
+    return paintInfo.context().hasPlatformContext();
+}
+
 CFStringRef RenderThemeMac::contentSizeCategory() const
 {
     return kCTFontContentSizeCategoryL;

@@ -55,11 +55,6 @@ RenderThemeCocoa& RenderThemeCocoa::singleton()
     return static_cast<RenderThemeCocoa&>(RenderTheme::singleton());
 }
 
-bool RenderThemeCocoa::canPaint(const PaintInfo& paintInfo) const
-{
-    return paintInfo.context().hasPlatformContext();
-}
-
 bool RenderThemeCocoa::shouldHaveCapsLockIndicator(const HTMLInputElement& element) const
 {
     return element.isPasswordField();

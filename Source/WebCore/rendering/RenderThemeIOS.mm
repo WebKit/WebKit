@@ -375,6 +375,17 @@ static void drawJoinedLines(CGContextRef context, const Vector<CGPoint>& points,
     CGContextStrokePath(context);
 }
 
+bool RenderThemeIOS::canPaint(const PaintInfo& paintInfo, const Settings& settings) const
+{
+#if ENABLE(IOS_FORM_CONTROL_REFRESH)
+    if (settings.iOSFormControlRefreshEnabled())
+        return true;
+#else
+    UNUSED_PARAM(settings);
+#endif
+    return paintInfo.context().hasPlatformContext();
+}
+
 void RenderThemeIOS::paintCheckboxDecorations(const RenderObject& box, const PaintInfo& paintInfo, const IntRect& rect)
 {
 #if ENABLE(IOS_FORM_CONTROL_REFRESH)

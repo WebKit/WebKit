@@ -102,6 +102,8 @@ public:
 private:
     RenderThemeMac();
 
+    bool canPaint(const PaintInfo&, const Settings&) const final;
+
 #if ENABLE(VIDEO)
     // Media controls
     String mediaControlsStyleSheet() final;

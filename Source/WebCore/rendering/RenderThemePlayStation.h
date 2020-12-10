@@ -34,8 +34,6 @@ public:
     friend NeverDestroyed<RenderThemePlayStation>;
 
 private:
-    bool canPaint(const PaintInfo&) const final { return true; }
-
     void updateCachedSystemFontDescription(CSSValueID systemFontID, FontCascadeDescription&) const final;
 };
 

@@ -39,7 +39,6 @@ public:
     virtual CFStringRef contentSizeCategory() const = 0;
 
 private:
-    bool canPaint(const PaintInfo&) const final;
     bool shouldHaveCapsLockIndicator(const HTMLInputElement&) const final;
 
 #if ENABLE(APPLE_PAY)

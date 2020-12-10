@@ -46,6 +46,7 @@ class RenderMeter;
 class RenderObject;
 class RenderProgress;
 class RenderStyle;
+class Settings;
 
 class RenderTheme {
 protected:
@@ -263,7 +264,7 @@ public:
 #endif
 
 protected:
-    virtual bool canPaint(const PaintInfo&) const = 0;
+    virtual bool canPaint(const PaintInfo&, const Settings&) const { return true; }
     virtual FontCascadeDescription& cachedSystemFontDescription(CSSValueID systemFontID) const;
     virtual void updateCachedSystemFontDescription(CSSValueID systemFontID, FontCascadeDescription&) const = 0;
 

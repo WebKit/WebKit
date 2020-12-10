@@ -68,6 +68,8 @@ public:
     WEBCORE_EXPORT static Color systemFocusRingColor();
 
 private:
+    bool canPaint(const PaintInfo&, const Settings&) const final;
+
     LengthBox popupInternalPaddingBox(const RenderStyle&) const override;
 
     int baselinePosition(const RenderBox&) const override;
