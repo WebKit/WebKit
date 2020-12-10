@@ -1,3 +1,14 @@
+2020-12-10  Adam Roben  <aroben@apple.com>
+
+        macOS Production WebKitLegacy build is broken on Xcode 10
+        https://bugs.webkit.org/show_bug.cgi?id=219753
+
+        Reviewed by Tim Horton.
+
+        * Configurations/WebKitLegacy.xcconfig: Replaced :default= syntax that
+        is only supported in Xcode 11.4 and newer with the equivalent
+        WK_DEFAULT_PLATFORM_NAME variable.
+
 2020-12-09  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Change Universal Access zoom in the UI process
