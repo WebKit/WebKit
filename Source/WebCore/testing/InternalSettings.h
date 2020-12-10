@@ -94,6 +94,8 @@ public:
     ExceptionOr<void> setCustomPasteboardDataEnabled(bool);
     ExceptionOr<void> setWebRTCPlatformCodecsInGPUProcessEnabled(bool);
 
+    bool vp9DecoderEnabled() const;
+
     // DeprecatedGlobalSettings.
     ExceptionOr<void> setShouldManageAudioSessionCategory(bool);
 

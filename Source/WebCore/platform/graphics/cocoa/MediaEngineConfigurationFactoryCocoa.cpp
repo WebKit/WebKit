@@ -100,6 +100,10 @@ void createMediaPlayerDecodingConfigurationCocoa(MediaDecodingConfiguration&& co
             }
 #if ENABLE(VP9)
         } else if (videoCodecType == kCMVideoCodecType_VP9) {
+            if (!configuration.canExposeVP9) {
+                callback({{ }, WTFMove(configuration)});
+                return;
+            }
             auto codecConfiguration = parseVPCodecParameters(codec);
             if (!codecConfiguration || !validateVPParameters(*codecConfiguration, info, videoConfiguration)) {
                 callback({{ }, WTFMove(configuration)});

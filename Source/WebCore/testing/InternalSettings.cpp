@@ -459,6 +459,15 @@ ExceptionOr<void> InternalSettings::setWebRTCPlatformCodecsInGPUProcessEnabled(b
     return { };
 }
 
+bool InternalSettings::vp9DecoderEnabled() const
+{
+#if ENABLE(VP9)
+    return m_page ? m_page->settings().vp9DecoderEnabled() : false;
+#else
+    return false;
+#endif
+}
+
 ExceptionOr<void> InternalSettings::setCustomPasteboardDataEnabled(bool enabled)
 {
     if (!m_page)

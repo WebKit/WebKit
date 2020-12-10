@@ -70,6 +70,8 @@ enum UserInterfaceDirectionPolicy { "Content", "System" };
     [MayThrowException] undefined setCustomPasteboardDataEnabled(boolean enabled);
     [MayThrowException] undefined setWebRTCPlatformCodecsInGPUProcessEnabled(boolean enabled);
 
+    readonly attribute boolean vp9DecoderEnabled;
+
     // DeprecatedGlobalSettings.
     [MayThrowException] undefined setShouldManageAudioSessionCategory(boolean should);
 

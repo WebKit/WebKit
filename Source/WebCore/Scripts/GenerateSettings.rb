@@ -179,6 +179,8 @@ class Setting
       "set" + @name[0..3].upcase + @name[4..@name.length]
     elsif @name.start_with?("css", "xss", "ftp", "dom", "dns", "ice", "hdr")
       "set" + @name[0..2].upcase + @name[3..@name.length]
+    elsif @name.start_with?("vp")
+      "set" + @name[0..1].upcase + @name[2..@name.length]
     else
       "set" + @name[0].upcase + @name[1..@name.length]
     end

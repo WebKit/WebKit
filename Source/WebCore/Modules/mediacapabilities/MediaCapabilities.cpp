@@ -187,6 +187,10 @@ void MediaCapabilities::decodingInfo(Document& document, MediaDecodingConfigurat
     if (!document.settings().mediaCapabilitiesExtensionsEnabled() && configuration.video)
         configuration.video.value().alphaChannel.reset();
 
+#if ENABLE(VP9)
+    configuration.canExposeVP9 = document.settings().vp9DecoderEnabled();
+#endif
+
     // 4. Let p be a new promise.
     // 5. In parallel, run the create a MediaCapabilitiesInfo algorithm with configuration and resolve p with its result.
     // 6. Return p.

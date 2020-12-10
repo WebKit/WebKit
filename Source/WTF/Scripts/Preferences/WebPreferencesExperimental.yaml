@@ -869,9 +869,10 @@ VP9DecoderEnabled:
   type: bool
   humanReadableName: "VP9 decoder"
   humanReadableDescription: "Enable VP9 decoder"
-  webcoreBinding: none
   condition: ENABLE(VP9)
   defaultValue:
+    WebCore:
+      default: false
     WebKitLegacy:
       default: false
     WebKit:
