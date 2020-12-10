@@ -1,7 +1,12 @@
-//@ skip if ["arm", "mips"].include?($architecture) # Due to ICU version.
 function shouldBe(actual, expected) {
+    // Tolerate different space characters used by different ICU versions.
+    // Older ICU uses U+2009 Thin Space in ranges, whereas newer ICU uses
+    // regular old U+0020. Let's ignore these differences.
+    if (typeof actual === 'string')
+        actual = actual.replaceAll(' ', ' ');
+
     if (actual !== expected)
-        throw new Error('bad value: ' + actual);
+        throw new Error('bad value: ' + actual + ' expected value: ' + expected);
 }
 
 function compareParts(actual, expected) {
@@ -29,10 +34,6 @@ function shouldThrow(func, errorMessage) {
 }
 
 function test() {
-    let range = " – "; // This is not usual space unfortuantely in ICU 66.
-    if ($vm.icuVersion() >= 67)
-        range = " – ";
-
     let date1 = new Date(Date.UTC(2007, 0, 10, 10, 0, 0));
     let date2 = new Date(Date.UTC(2007, 0, 10, 11, 0, 0));
     let date3 = new Date(Date.UTC(2007, 0, 20, 10, 0, 0));
@@ -90,7 +91,7 @@ function test() {
             {"type":"hour","value":"2","source":"startRange"},
             {"type":"literal","value":":","source":"startRange"},
             {"type":"minute","value":"00","source":"startRange"},
-            {"type":"literal","value":range,"source":"shared"},
+            {"type":"literal","value":" – ","source":"shared"},
             {"type":"hour","value":"3","source":"endRange"},
             {"type":"literal","value":":","source":"endRange"},
             {"type":"minute","value":"00","source":"endRange"},
@@ -109,7 +110,7 @@ function test() {
             {"type":"minute","value":"00","source":"startRange"},
             {"type":"literal","value":" ","source":"startRange"},
             {"type":"dayPeriod","value":"AM","source":"startRange"},
-            {"type":"literal","value":range,"source":"shared"},
+            {"type":"literal","value":" – ","source":"shared"},
             {"type":"month","value":"1","source":"endRange"},
             {"type":"literal","value":"/","source":"endRange"},
             {"type":"day","value":"20","source":"endRange"},
@@ -152,7 +153,7 @@ function test() {
             {"type":"day","value":"10","source":"startRange"},
             {"type":"literal","value":"/","source":"startRange"},
             {"type":"year","value":"07","source":"startRange"},
-            {"type":"literal","value":range,"source":"shared"},
+            {"type":"literal","value":" – ","source":"shared"},
             {"type":"month","value":"1","source":"endRange"},
             {"type":"literal","value":"/","source":"endRange"},
             {"type":"day","value":"20","source":"endRange"},
@@ -176,7 +177,7 @@ function test() {
         ]);
         compareParts(fmt1.formatRangeToParts(date1, date4), [
             {"type":"year","value":"2007","source":"startRange"},
-            {"type":"literal","value":range,"source":"shared"},
+            {"type":"literal","value":" – ","source":"shared"},
             {"type":"year","value":"2008","source":"endRange"},
         ]);
     }
@@ -214,7 +215,7 @@ function test() {
             {"type":"hour","value":"10","source":"startRange"},
             {"type":"literal","value":":","source":"startRange"},
             {"type":"minute","value":"00","source":"startRange"},
-            {"type":"literal","value":range,"source":"shared"},
+            {"type":"literal","value":" – ","source":"shared"},
             {"type":"hour","value":"11","source":"endRange"},
             {"type":"literal","value":":","source":"endRange"},
             {"type":"minute","value":"00","source":"endRange"},
@@ -233,7 +234,7 @@ function test() {
             {"type":"minute","value":"00","source":"startRange"},
             {"type":"literal","value":" ","source":"startRange"},
             {"type":"dayPeriod","value":"AM","source":"startRange"},
-            {"type":"literal","value":range,"source":"shared"},
+            {"type":"literal","value":" – ","source":"shared"},
             {"type":"month","value":"1","source":"endRange"},
             {"type":"literal","value":"/","source":"endRange"},
             {"type":"day","value":"20","source":"endRange"},
@@ -274,7 +275,7 @@ function test() {
             {"type":"month","value":"Jan","source":"shared"},
             {"type":"literal","value":" ","source":"shared"},
             {"type":"day","value":"10","source":"startRange"},
-            {"type":"literal","value":range,"source":"shared"},
+            {"type":"literal","value":" – ","source":"shared"},
             {"type":"day","value":"20","source":"endRange"},
             {"type":"literal","value":", ","source":"shared"},
             {"type":"year","value":"2007","source":"shared"},
@@ -300,7 +301,7 @@ function test() {
             {"type":"day","value":"3","source":"startRange"},
             {"type":"literal","value":"/","source":"startRange"},
             {"type":"year","value":"2019","source":"startRange"},
-            {"type":"literal","value":range,"source":"shared"},
+            {"type":"literal","value":" – ","source":"shared"},
             {"type":"month","value":"1","source":"endRange"},
             {"type":"literal","value":"/","source":"endRange"},
             {"type":"day","value":"5","source":"endRange"},
@@ -313,7 +314,7 @@ function test() {
             {"type":"day","value":"3","source":"startRange"},
             {"type":"literal","value":"/","source":"startRange"},
             {"type":"year","value":"2019","source":"startRange"},
-            {"type":"literal","value":range,"source":"shared"},
+            {"type":"literal","value":" – ","source":"shared"},
             {"type":"month","value":"3","source":"endRange"},
             {"type":"literal","value":"/","source":"endRange"},
             {"type":"day","value":"4","source":"endRange"},
@@ -326,7 +327,7 @@ function test() {
             {"type":"day","value":"3","source":"startRange"},
             {"type":"literal","value":"/","source":"startRange"},
             {"type":"year","value":"2019","source":"startRange"},
-            {"type":"literal","value":range,"source":"shared"},
+            {"type":"literal","value":" – ","source":"shared"},
             {"type":"month","value":"3","source":"endRange"},
             {"type":"literal","value":"/","source":"endRange"},
             {"type":"day","value":"4","source":"endRange"},
@@ -339,7 +340,7 @@ function test() {
             {"type":"day","value":"5","source":"startRange"},
             {"type":"literal","value":"/","source":"startRange"},
             {"type":"year","value":"2019","source":"startRange"},
-            {"type":"literal","value":range,"source":"shared"},
+            {"type":"literal","value":" – ","source":"shared"},
             {"type":"month","value":"3","source":"endRange"},
             {"type":"literal","value":"/","source":"endRange"},
             {"type":"day","value":"4","source":"endRange"},
@@ -352,7 +353,7 @@ function test() {
             {"type":"day","value":"5","source":"startRange"},
             {"type":"literal","value":"/","source":"startRange"},
             {"type":"year","value":"2019","source":"startRange"},
-            {"type":"literal","value":range,"source":"shared"},
+            {"type":"literal","value":" – ","source":"shared"},
             {"type":"month","value":"3","source":"endRange"},
             {"type":"literal","value":"/","source":"endRange"},
             {"type":"day","value":"4","source":"endRange"},
@@ -365,7 +366,7 @@ function test() {
             {"type":"day","value":"4","source":"startRange"},
             {"type":"literal","value":"/","source":"startRange"},
             {"type":"year","value":"2019","source":"startRange"},
-            {"type":"literal","value":range,"source":"shared"},
+            {"type":"literal","value":" – ","source":"shared"},
             {"type":"month","value":"3","source":"endRange"},
             {"type":"literal","value":"/","source":"endRange"},
             {"type":"day","value":"4","source":"endRange"},
@@ -385,7 +386,7 @@ function test() {
             {"type":"month","value":"Jan","source":"shared"},
             {"type":"literal","value":" ","source":"shared"},
             {"type":"day","value":"3","source":"startRange"},
-            {"type":"literal","value":range,"source":"shared"},
+            {"type":"literal","value":" – ","source":"shared"},
             {"type":"day","value":"5","source":"endRange"},
             {"type":"literal","value":", ","source":"shared"},
             {"type":"year","value":"2019","source":"shared"},
@@ -394,7 +395,7 @@ function test() {
             {"type":"month","value":"Jan","source":"startRange"},
             {"type":"literal","value":" ","source":"startRange"},
             {"type":"day","value":"3","source":"startRange"},
-            {"type":"literal","value":range,"source":"shared"},
+            {"type":"literal","value":" – ","source":"shared"},
             {"type":"month","value":"Mar","source":"endRange"},
             {"type":"literal","value":" ","source":"endRange"},
             {"type":"day","value":"4","source":"endRange"},
@@ -407,7 +408,7 @@ function test() {
             {"type":"day","value":"3","source":"startRange"},
             {"type":"literal","value":", ","source":"startRange"},
             {"type":"year","value":"2019","source":"startRange"},
-            {"type":"literal","value":range,"source":"shared"},
+            {"type":"literal","value":" – ","source":"shared"},
             {"type":"month","value":"Mar","source":"endRange"},
             {"type":"literal","value":" ","source":"endRange"},
             {"type":"day","value":"4","source":"endRange"},
@@ -418,7 +419,7 @@ function test() {
             {"type":"month","value":"Jan","source":"startRange"},
             {"type":"literal","value":" ","source":"startRange"},
             {"type":"day","value":"5","source":"startRange"},
-            {"type":"literal","value":range,"source":"shared"},
+            {"type":"literal","value":" – ","source":"shared"},
             {"type":"month","value":"Mar","source":"endRange"},
             {"type":"literal","value":" ","source":"endRange"},
             {"type":"day","value":"4","source":"endRange"},
@@ -431,7 +432,7 @@ function test() {
             {"type":"day","value":"5","source":"startRange"},
             {"type":"literal","value":", ","source":"startRange"},
             {"type":"year","value":"2019","source":"startRange"},
-            {"type":"literal","value":range,"source":"shared"},
+            {"type":"literal","value":" – ","source":"shared"},
             {"type":"month","value":"Mar","source":"endRange"},
             {"type":"literal","value":" ","source":"endRange"},
             {"type":"day","value":"4","source":"endRange"},
@@ -444,7 +445,7 @@ function test() {
             {"type":"day","value":"4","source":"startRange"},
             {"type":"literal","value":", ","source":"startRange"},
             {"type":"year","value":"2019","source":"startRange"},
-            {"type":"literal","value":range,"source":"shared"},
+            {"type":"literal","value":" – ","source":"shared"},
             {"type":"month","value":"Mar","source":"endRange"},
             {"type":"literal","value":" ","source":"endRange"},
             {"type":"day","value":"4","source":"endRange"},

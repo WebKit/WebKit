@@ -1,8 +1,12 @@
-//@ skip if ["arm", "mips"].include?($architecture) # Due to ICU version.
-
 function shouldBe(actual, expected) {
+    // Tolerate different space characters used by different ICU versions.
+    // Older ICU uses U+2009 Thin Space in ranges, whereas newer ICU uses
+    // regular old U+0020. Let's ignore these differences.
+    if (typeof actual === 'string')
+        actual = actual.replaceAll(' ', ' ');
+
     if (actual !== expected)
-        throw new Error('bad value: ' + actual);
+        throw new Error('bad value: ' + actual + ' expected value: ' + expected);
 }
 
 function shouldThrow(func, errorMessage) {
@@ -21,10 +25,6 @@ function shouldThrow(func, errorMessage) {
 }
 
 function test() {
-    let range = " – "; // This is not usual space unfortuantely in older ICU versions.
-    if ($vm.icuVersion() >= 67 || $vm.icuVersion() === 65)
-        range = " – ";
-
     let date1 = new Date(Date.UTC(2007, 0, 10, 10, 0, 0));
     let date2 = new Date(Date.UTC(2007, 0, 10, 11, 0, 0));
     let date3 = new Date(Date.UTC(2007, 0, 20, 10, 0, 0));
@@ -47,8 +47,8 @@ function test() {
         numberingSystem: 'hanidec',
     });
     shouldBe(fmt1.format(date1), `一/一〇/〇七, 二:〇〇 AM`);
-    shouldBe(fmt1.formatRange(date1, date2), `一/一〇/〇七, 二:〇〇${range}三:〇〇 AM`);
-    shouldBe(fmt1.formatRange(date1, date3), `一/一〇/〇七, 二:〇〇 AM${range}一/二〇/〇七, 二:〇〇 AM`);
+    shouldBe(fmt1.formatRange(date1, date2), `一/一〇/〇七, 二:〇〇 – 三:〇〇 AM`);
+    shouldBe(fmt1.formatRange(date1, date3), `一/一〇/〇七, 二:〇〇 AM – 一/二〇/〇七, 二:〇〇 AM`);
 
     // "ca" Calendar
     let fmt2 = new Intl.DateTimeFormat("en", {
@@ -61,8 +61,8 @@ function test() {
         calendar: 'chinese'
     });
     shouldBe(fmt2.format(date1), `11/22/2006, 2:00 AM`);
-    shouldBe(fmt2.formatRange(date1, date2), `11/22/2006, 2:00${range}3:00 AM`);
-    shouldBe(fmt2.formatRange(date1, date3), `11/22/2006, 2:00 AM${range}12/2/2006, 2:00 AM`);
+    shouldBe(fmt2.formatRange(date1, date2), `11/22/2006, 2:00 – 3:00 AM`);
+    shouldBe(fmt2.formatRange(date1, date3), `11/22/2006, 2:00 AM – 12/2/2006, 2:00 AM`);
 
     let fmt3 = new Intl.DateTimeFormat("en", {
         year: 'numeric',
@@ -72,7 +72,7 @@ function test() {
     shouldBe(fmt3.format(date1), `2006(bing-xu)`);
     shouldBe(fmt3.formatRange(date1, date2), `2006(bing-xu)`);
     shouldBe(fmt3.formatRange(date1, date3), `2006(bing-xu)`);
-    shouldBe(fmt3.formatRange(date1, date4), `2006(bing-xu)${range}2009(ji-chou)`);
+    shouldBe(fmt3.formatRange(date1, date4), `2006(bing-xu) – 2009(ji-chou)`);
 
     // Calendar-sensitive format
     let fmt4 = new Intl.DateTimeFormat('en-u-ca-buddhist', {
@@ -82,7 +82,7 @@ function test() {
     shouldBe(fmt4.format(date1), `2550 BE`);
     shouldBe(fmt4.formatRange(date1, date2), `2550 BE`);
     shouldBe(fmt4.formatRange(date1, date3), `2550 BE`);
-    shouldBe(fmt4.formatRange(date1, date4), `2550${range}2553 BE`);
+    shouldBe(fmt4.formatRange(date1, date4), `2550 – 2553 BE`);
 
     // "hc" HourCycle
     let fmt5 = new Intl.DateTimeFormat("en", {
@@ -96,13 +96,13 @@ function test() {
     });
     shouldBe(fmt5.format(date1), `1/10/07, 10:00`);
     shouldBe(fmt5.format(date8), `1/11/07, 24:00`);
-    shouldBe(fmt5.formatRange(date1, date2), `1/10/07, 10:00${range}11:00`);
-    shouldBe(fmt5.formatRange(date1, date3), `1/10/07, 10:00${range}1/20/07, 10:00`);
-    shouldBe(fmt5.formatRange(date1, date5), `1/10/07, 10:00${range}12:00`);
-    shouldBe(fmt5.formatRange(date1, date6), `1/10/07, 10:00${range}14:00`);
-    shouldBe(fmt5.formatRange(date1, date7), `1/10/07, 10:00${range}23:00`);
+    shouldBe(fmt5.formatRange(date1, date2), `1/10/07, 10:00 – 11:00`);
+    shouldBe(fmt5.formatRange(date1, date3), `1/10/07, 10:00 – 1/20/07, 10:00`);
+    shouldBe(fmt5.formatRange(date1, date5), `1/10/07, 10:00 – 12:00`);
+    shouldBe(fmt5.formatRange(date1, date6), `1/10/07, 10:00 – 14:00`);
+    shouldBe(fmt5.formatRange(date1, date7), `1/10/07, 10:00 – 23:00`);
     if ($vm.icuVersion() > 66)
-        shouldBe(fmt5.formatRange(date1, date8), `1/10/07, 10:00${range}1/11/07, 24:00`);
+        shouldBe(fmt5.formatRange(date1, date8), `1/10/07, 10:00 – 1/11/07, 24:00`);
 
     let fmt6 = new Intl.DateTimeFormat("en", {
         year: '2-digit',
@@ -115,12 +115,12 @@ function test() {
     });
     shouldBe(fmt6.format(date1), `1/10/07, 10:00`);
     shouldBe(fmt6.format(date8), `1/11/07, 00:00`);
-    shouldBe(fmt6.formatRange(date1, date2), `1/10/07, 10:00${range}11:00`);
-    shouldBe(fmt6.formatRange(date1, date3), `1/10/07, 10:00${range}1/20/07, 10:00`);
-    shouldBe(fmt6.formatRange(date1, date5), `1/10/07, 10:00${range}12:00`);
-    shouldBe(fmt6.formatRange(date1, date6), `1/10/07, 10:00${range}14:00`);
-    shouldBe(fmt6.formatRange(date1, date7), `1/10/07, 10:00${range}23:00`);
-    shouldBe(fmt6.formatRange(date1, date8), `1/10/07, 10:00${range}1/11/07, 00:00`);
+    shouldBe(fmt6.formatRange(date1, date2), `1/10/07, 10:00 – 11:00`);
+    shouldBe(fmt6.formatRange(date1, date3), `1/10/07, 10:00 – 1/20/07, 10:00`);
+    shouldBe(fmt6.formatRange(date1, date5), `1/10/07, 10:00 – 12:00`);
+    shouldBe(fmt6.formatRange(date1, date6), `1/10/07, 10:00 – 14:00`);
+    shouldBe(fmt6.formatRange(date1, date7), `1/10/07, 10:00 – 23:00`);
+    shouldBe(fmt6.formatRange(date1, date8), `1/10/07, 10:00 – 1/11/07, 00:00`);
 
     let fmt7 = new Intl.DateTimeFormat("en", {
         year: '2-digit',
@@ -133,14 +133,14 @@ function test() {
     });
     shouldBe(fmt7.format(date1), `1/10/07, 10:00 AM`);
     shouldBe(fmt7.format(date8), `1/11/07, 0:00 AM`);
-    shouldBe(fmt7.formatRange(date1, date2), `1/10/07, 10:00 AM${range}11:00 AM`);
-    shouldBe(fmt7.formatRange(date1, date3), `1/10/07, 10:00 AM${range}1/20/07, 10:00 AM`);
+    shouldBe(fmt7.formatRange(date1, date2), `1/10/07, 10:00 AM – 11:00 AM`);
+    shouldBe(fmt7.formatRange(date1, date3), `1/10/07, 10:00 AM – 1/20/07, 10:00 AM`);
     if ($vm.icuVersion() > 66)
-        shouldBe(fmt7.formatRange(date1, date5), `1/10/07, 10:00 AM${range}0:00 PM`);
-    shouldBe(fmt7.formatRange(date1, date6), `1/10/07, 10:00 AM${range}2:00 PM`);
-    shouldBe(fmt7.formatRange(date1, date7), `1/10/07, 10:00 AM${range}11:00 PM`);
+        shouldBe(fmt7.formatRange(date1, date5), `1/10/07, 10:00 AM – 0:00 PM`);
+    shouldBe(fmt7.formatRange(date1, date6), `1/10/07, 10:00 AM – 2:00 PM`);
+    shouldBe(fmt7.formatRange(date1, date7), `1/10/07, 10:00 AM – 11:00 PM`);
     if ($vm.icuVersion() > 66)
-        shouldBe(fmt7.formatRange(date1, date8), `1/10/07, 10:00 AM${range}1/11/07, 0:00 AM`);
+        shouldBe(fmt7.formatRange(date1, date8), `1/10/07, 10:00 AM – 1/11/07, 0:00 AM`);
 
     let fmt8 = new Intl.DateTimeFormat("en", {
         year: '2-digit',
@@ -153,12 +153,12 @@ function test() {
     });
     shouldBe(fmt8.format(date1), `1/10/07, 10:00 AM`);
     shouldBe(fmt8.format(date8), `1/11/07, 12:00 AM`);
-    shouldBe(fmt8.formatRange(date1, date2), `1/10/07, 10:00${range}11:00 AM`);
-    shouldBe(fmt8.formatRange(date1, date3), `1/10/07, 10:00 AM${range}1/20/07, 10:00 AM`);
-    shouldBe(fmt8.formatRange(date1, date5), `1/10/07, 10:00 AM${range}12:00 PM`);
-    shouldBe(fmt8.formatRange(date1, date6), `1/10/07, 10:00 AM${range}2:00 PM`);
-    shouldBe(fmt8.formatRange(date1, date7), `1/10/07, 10:00 AM${range}11:00 PM`);
-    shouldBe(fmt8.formatRange(date1, date8), `1/10/07, 10:00 AM${range}1/11/07, 12:00 AM`);
+    shouldBe(fmt8.formatRange(date1, date2), `1/10/07, 10:00 – 11:00 AM`);
+    shouldBe(fmt8.formatRange(date1, date3), `1/10/07, 10:00 AM – 1/20/07, 10:00 AM`);
+    shouldBe(fmt8.formatRange(date1, date5), `1/10/07, 10:00 AM – 12:00 PM`);
+    shouldBe(fmt8.formatRange(date1, date6), `1/10/07, 10:00 AM – 2:00 PM`);
+    shouldBe(fmt8.formatRange(date1, date7), `1/10/07, 10:00 AM – 11:00 PM`);
+    shouldBe(fmt8.formatRange(date1, date8), `1/10/07, 10:00 AM – 1/11/07, 12:00 AM`);
 
     // "hc" + hour 2-digit
     let fmt9 = new Intl.DateTimeFormat("en", {
@@ -172,13 +172,13 @@ function test() {
     });
     shouldBe(fmt9.format(date1), `1/10/07, 10:00`);
     shouldBe(fmt9.format(date8), `1/11/07, 24:00`);
-    shouldBe(fmt9.formatRange(date1, date2), `1/10/07, 10:00${range}11:00`);
-    shouldBe(fmt9.formatRange(date1, date3), `1/10/07, 10:00${range}1/20/07, 10:00`);
-    shouldBe(fmt9.formatRange(date1, date5), `1/10/07, 10:00${range}12:00`);
-    shouldBe(fmt9.formatRange(date1, date6), `1/10/07, 10:00${range}14:00`);
-    shouldBe(fmt9.formatRange(date1, date7), `1/10/07, 10:00${range}23:00`);
+    shouldBe(fmt9.formatRange(date1, date2), `1/10/07, 10:00 – 11:00`);
+    shouldBe(fmt9.formatRange(date1, date3), `1/10/07, 10:00 – 1/20/07, 10:00`);
+    shouldBe(fmt9.formatRange(date1, date5), `1/10/07, 10:00 – 12:00`);
+    shouldBe(fmt9.formatRange(date1, date6), `1/10/07, 10:00 – 14:00`);
+    shouldBe(fmt9.formatRange(date1, date7), `1/10/07, 10:00 – 23:00`);
     if ($vm.icuVersion() > 66)
-        shouldBe(fmt9.formatRange(date1, date8), `1/10/07, 10:00${range}1/11/07, 24:00`);
+        shouldBe(fmt9.formatRange(date1, date8), `1/10/07, 10:00 – 1/11/07, 24:00`);
 
     let fmt10 = new Intl.DateTimeFormat("en", {
         year: '2-digit',
@@ -191,12 +191,12 @@ function test() {
     });
     shouldBe(fmt10.format(date1), `1/10/07, 10:00`);
     shouldBe(fmt10.format(date8), `1/11/07, 00:00`);
-    shouldBe(fmt10.formatRange(date1, date2), `1/10/07, 10:00${range}11:00`);
-    shouldBe(fmt10.formatRange(date1, date3), `1/10/07, 10:00${range}1/20/07, 10:00`);
-    shouldBe(fmt10.formatRange(date1, date5), `1/10/07, 10:00${range}12:00`);
-    shouldBe(fmt10.formatRange(date1, date6), `1/10/07, 10:00${range}14:00`);
-    shouldBe(fmt10.formatRange(date1, date7), `1/10/07, 10:00${range}23:00`);
-    shouldBe(fmt10.formatRange(date1, date8), `1/10/07, 10:00${range}1/11/07, 00:00`);
+    shouldBe(fmt10.formatRange(date1, date2), `1/10/07, 10:00 – 11:00`);
+    shouldBe(fmt10.formatRange(date1, date3), `1/10/07, 10:00 – 1/20/07, 10:00`);
+    shouldBe(fmt10.formatRange(date1, date5), `1/10/07, 10:00 – 12:00`);
+    shouldBe(fmt10.formatRange(date1, date6), `1/10/07, 10:00 – 14:00`);
+    shouldBe(fmt10.formatRange(date1, date7), `1/10/07, 10:00 – 23:00`);
+    shouldBe(fmt10.formatRange(date1, date8), `1/10/07, 10:00 – 1/11/07, 00:00`);
 
     let fmt11 = new Intl.DateTimeFormat("en", {
         year: '2-digit',
@@ -209,14 +209,14 @@ function test() {
     });
     shouldBe(fmt11.format(date1), `1/10/07, 10:00 AM`);
     shouldBe(fmt11.format(date8), `1/11/07, 00:00 AM`);
-    shouldBe(fmt11.formatRange(date1, date2), `1/10/07, 10:00 AM${range}11:00 AM`);
-    shouldBe(fmt11.formatRange(date1, date3), `1/10/07, 10:00 AM${range}1/20/07, 10:00 AM`);
+    shouldBe(fmt11.formatRange(date1, date2), `1/10/07, 10:00 AM – 11:00 AM`);
+    shouldBe(fmt11.formatRange(date1, date3), `1/10/07, 10:00 AM – 1/20/07, 10:00 AM`);
     if ($vm.icuVersion() > 66)
-        shouldBe(fmt11.formatRange(date1, date5), `1/10/07, 10:00 AM${range}0:00 PM`);
-    shouldBe(fmt11.formatRange(date1, date6), `1/10/07, 10:00 AM${range}2:00 PM`);
-    shouldBe(fmt11.formatRange(date1, date7), `1/10/07, 10:00 AM${range}11:00 PM`);
+        shouldBe(fmt11.formatRange(date1, date5), `1/10/07, 10:00 AM – 0:00 PM`);
+    shouldBe(fmt11.formatRange(date1, date6), `1/10/07, 10:00 AM – 2:00 PM`);
+    shouldBe(fmt11.formatRange(date1, date7), `1/10/07, 10:00 AM – 11:00 PM`);
     if ($vm.icuVersion() > 66)
-        shouldBe(fmt11.formatRange(date1, date8), `1/10/07, 10:00 AM${range}1/11/07, 0:00 AM`);
+        shouldBe(fmt11.formatRange(date1, date8), `1/10/07, 10:00 AM – 1/11/07, 0:00 AM`);
 
     let fmt12 = new Intl.DateTimeFormat("en", {
         year: '2-digit',
@@ -229,12 +229,12 @@ function test() {
     });
     shouldBe(fmt12.format(date1), `1/10/07, 10:00 AM`);
     shouldBe(fmt12.format(date8), `1/11/07, 12:00 AM`);
-    shouldBe(fmt12.formatRange(date1, date2), `1/10/07, 10:00${range}11:00 AM`);
-    shouldBe(fmt12.formatRange(date1, date3), `1/10/07, 10:00 AM${range}1/20/07, 10:00 AM`);
-    shouldBe(fmt12.formatRange(date1, date5), `1/10/07, 10:00 AM${range}12:00 PM`);
-    shouldBe(fmt12.formatRange(date1, date6), `1/10/07, 10:00 AM${range}2:00 PM`);
-    shouldBe(fmt12.formatRange(date1, date7), `1/10/07, 10:00 AM${range}11:00 PM`);
-    shouldBe(fmt12.formatRange(date1, date8), `1/10/07, 10:00 AM${range}1/11/07, 12:00 AM`);
+    shouldBe(fmt12.formatRange(date1, date2), `1/10/07, 10:00 – 11:00 AM`);
+    shouldBe(fmt12.formatRange(date1, date3), `1/10/07, 10:00 AM – 1/20/07, 10:00 AM`);
+    shouldBe(fmt12.formatRange(date1, date5), `1/10/07, 10:00 AM – 12:00 PM`);
+    shouldBe(fmt12.formatRange(date1, date6), `1/10/07, 10:00 AM – 2:00 PM`);
+    shouldBe(fmt12.formatRange(date1, date7), `1/10/07, 10:00 AM – 11:00 PM`);
+    shouldBe(fmt12.formatRange(date1, date8), `1/10/07, 10:00 AM – 1/11/07, 12:00 AM`);
 
     // "hc" + hour12.
     let fmt13 = new Intl.DateTimeFormat("en", {
@@ -249,12 +249,12 @@ function test() {
     });
     shouldBe(fmt13.format(date1), `1/10/07, 10:00 AM`);
     shouldBe(fmt13.format(date8), `1/11/07, 12:00 AM`);
-    shouldBe(fmt13.formatRange(date1, date2), `1/10/07, 10:00${range}11:00 AM`);
-    shouldBe(fmt13.formatRange(date1, date3), `1/10/07, 10:00 AM${range}1/20/07, 10:00 AM`);
-    shouldBe(fmt13.formatRange(date1, date5), `1/10/07, 10:00 AM${range}12:00 PM`);
-    shouldBe(fmt13.formatRange(date1, date6), `1/10/07, 10:00 AM${range}2:00 PM`);
-    shouldBe(fmt13.formatRange(date1, date7), `1/10/07, 10:00 AM${range}11:00 PM`);
-    shouldBe(fmt13.formatRange(date1, date8), `1/10/07, 10:00 AM${range}1/11/07, 12:00 AM`);
+    shouldBe(fmt13.formatRange(date1, date2), `1/10/07, 10:00 – 11:00 AM`);
+    shouldBe(fmt13.formatRange(date1, date3), `1/10/07, 10:00 AM – 1/20/07, 10:00 AM`);
+    shouldBe(fmt13.formatRange(date1, date5), `1/10/07, 10:00 AM – 12:00 PM`);
+    shouldBe(fmt13.formatRange(date1, date6), `1/10/07, 10:00 AM – 2:00 PM`);
+    shouldBe(fmt13.formatRange(date1, date7), `1/10/07, 10:00 AM – 11:00 PM`);
+    shouldBe(fmt13.formatRange(date1, date8), `1/10/07, 10:00 AM – 1/11/07, 12:00 AM`);
 
     let fmt14 = new Intl.DateTimeFormat("en", {
         year: '2-digit',
@@ -268,12 +268,12 @@ function test() {
     });
     shouldBe(fmt14.format(date1), `1/10/07, 10:00 AM`);
     shouldBe(fmt14.format(date8), `1/11/07, 12:00 AM`);
-    shouldBe(fmt14.formatRange(date1, date2), `1/10/07, 10:00${range}11:00 AM`);
-    shouldBe(fmt14.formatRange(date1, date3), `1/10/07, 10:00 AM${range}1/20/07, 10:00 AM`);
-    shouldBe(fmt14.formatRange(date1, date5), `1/10/07, 10:00 AM${range}12:00 PM`);
-    shouldBe(fmt14.formatRange(date1, date6), `1/10/07, 10:00 AM${range}2:00 PM`);
-    shouldBe(fmt14.formatRange(date1, date7), `1/10/07, 10:00 AM${range}11:00 PM`);
-    shouldBe(fmt14.formatRange(date1, date8), `1/10/07, 10:00 AM${range}1/11/07, 12:00 AM`);
+    shouldBe(fmt14.formatRange(date1, date2), `1/10/07, 10:00 – 11:00 AM`);
+    shouldBe(fmt14.formatRange(date1, date3), `1/10/07, 10:00 AM – 1/20/07, 10:00 AM`);
+    shouldBe(fmt14.formatRange(date1, date5), `1/10/07, 10:00 AM – 12:00 PM`);
+    shouldBe(fmt14.formatRange(date1, date6), `1/10/07, 10:00 AM – 2:00 PM`);
+    shouldBe(fmt14.formatRange(date1, date7), `1/10/07, 10:00 AM – 11:00 PM`);
+    shouldBe(fmt14.formatRange(date1, date8), `1/10/07, 10:00 AM – 1/11/07, 12:00 AM`);
 
     let fmt15 = new Intl.DateTimeFormat("en", {
         year: '2-digit',
@@ -287,12 +287,12 @@ function test() {
     });
     shouldBe(fmt15.format(date1), `1/10/07, 10:00 AM`);
     shouldBe(fmt15.format(date8), `1/11/07, 12:00 AM`);
-    shouldBe(fmt15.formatRange(date1, date2), `1/10/07, 10:00${range}11:00 AM`);
-    shouldBe(fmt15.formatRange(date1, date3), `1/10/07, 10:00 AM${range}1/20/07, 10:00 AM`);
-    shouldBe(fmt15.formatRange(date1, date5), `1/10/07, 10:00 AM${range}12:00 PM`);
-    shouldBe(fmt15.formatRange(date1, date6), `1/10/07, 10:00 AM${range}2:00 PM`);
-    shouldBe(fmt15.formatRange(date1, date7), `1/10/07, 10:00 AM${range}11:00 PM`);
-    shouldBe(fmt15.formatRange(date1, date8), `1/10/07, 10:00 AM${range}1/11/07, 12:00 AM`);
+    shouldBe(fmt15.formatRange(date1, date2), `1/10/07, 10:00 – 11:00 AM`);
+    shouldBe(fmt15.formatRange(date1, date3), `1/10/07, 10:00 AM – 1/20/07, 10:00 AM`);
+    shouldBe(fmt15.formatRange(date1, date5), `1/10/07, 10:00 AM – 12:00 PM`);
+    shouldBe(fmt15.formatRange(date1, date6), `1/10/07, 10:00 AM – 2:00 PM`);
+    shouldBe(fmt15.formatRange(date1, date7), `1/10/07, 10:00 AM – 11:00 PM`);
+    shouldBe(fmt15.formatRange(date1, date8), `1/10/07, 10:00 AM – 1/11/07, 12:00 AM`);
 
     let fmt16 = new Intl.DateTimeFormat("en", {
         year: '2-digit',
@@ -306,12 +306,12 @@ function test() {
     });
     shouldBe(fmt16.format(date1), `1/10/07, 10:00 AM`);
     shouldBe(fmt16.format(date8), `1/11/07, 12:00 AM`);
-    shouldBe(fmt16.formatRange(date1, date2), `1/10/07, 10:00${range}11:00 AM`);
-    shouldBe(fmt16.formatRange(date1, date3), `1/10/07, 10:00 AM${range}1/20/07, 10:00 AM`);
-    shouldBe(fmt16.formatRange(date1, date5), `1/10/07, 10:00 AM${range}12:00 PM`);
-    shouldBe(fmt16.formatRange(date1, date6), `1/10/07, 10:00 AM${range}2:00 PM`);
-    shouldBe(fmt16.formatRange(date1, date7), `1/10/07, 10:00 AM${range}11:00 PM`);
-    shouldBe(fmt16.formatRange(date1, date8), `1/10/07, 10:00 AM${range}1/11/07, 12:00 AM`);
+    shouldBe(fmt16.formatRange(date1, date2), `1/10/07, 10:00 – 11:00 AM`);
+    shouldBe(fmt16.formatRange(date1, date3), `1/10/07, 10:00 AM – 1/20/07, 10:00 AM`);
+    shouldBe(fmt16.formatRange(date1, date5), `1/10/07, 10:00 AM – 12:00 PM`);
+    shouldBe(fmt16.formatRange(date1, date6), `1/10/07, 10:00 AM – 2:00 PM`);
+    shouldBe(fmt16.formatRange(date1, date7), `1/10/07, 10:00 AM – 11:00 PM`);
+    shouldBe(fmt16.formatRange(date1, date8), `1/10/07, 10:00 AM – 1/11/07, 12:00 AM`);
 }
 
 if ($vm.icuVersion() >= 64)

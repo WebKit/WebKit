@@ -1,5 +1,10 @@
-//@ skip if ["arm", "mips"].include?($architecture) # Due to ICU version.
 function shouldBe(actual, expected) {
+    // Tolerate different space characters used by different ICU versions.
+    // Older ICU uses U+2009 Thin Space in ranges, whereas newer ICU uses
+    // regular old U+0020. Let's ignore these differences.
+    if (typeof actual === 'string')
+        actual = actual.replaceAll(' ', ' ');
+
     if (actual !== expected)
         throw new Error('bad value: ' + actual + ' expected value: ' + expected);
 }
