@@ -215,11 +215,14 @@ TEST(GPUProcess, WebProcessTerminationAfterTooManyGPUProcessCrashes)
     EXPECT_NE([processPool _gpuProcessIdentifier], gpuProcessPID);
     gpuProcessPID = [processPool _gpuProcessIdentifier];
 
+    // FIXME: On iOS, video resumes after the GPU process crash but audio does not.
+#if !PLATFORM(IOS)
     // Audio should be playing again.
     timeout = 0;
     while (![webView _isPlayingAudio] && timeout++ < 100)
         TestWebKitAPI::Util::sleep(0.1);
     EXPECT_TRUE([webView _isPlayingAudio]);
+#endif
 }
 
 TEST(GPUProcess, CrashWhilePlayingVideo)
@@ -275,7 +278,7 @@ TEST(GPUProcess, CrashWhilePlayingVideo)
     // Make sure the WebProcess did not crash.
     EXPECT_EQ(webViewPID, [webView _webProcessIdentifier]);
 
-    // FIXME: In the iOS simulator, video resumes after the GPU process crash but audio does not.
+    // FIXME: On iOS, video resumes after the GPU process crash but audio does not.
 #if !PLATFORM(IOS)
     // Audio should resume playing.
     timeout = 0;

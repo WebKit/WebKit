@@ -1,3 +1,22 @@
+2020-12-10  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] TestWebKitAPI.GPUProcess.WebProcessTerminationAfterTooManyGPUProcessCrashes is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=219719
+        <rdar://problem/72158303>
+
+        Reviewed by Darin Adler.
+
+        We currently have an issue where the audio track gets removed after the GPUProcess
+        crashes. This is what is causing GPUProcess.WebProcessTerminationAfterTooManyGPUProcessCrashes
+        to be flaky on iOS. For the same reason, GPUProcess.CrashWhilePlayingVideo was flaky on
+        iOS until we temporarily disabled the checks in r270328. For now, do the same thing as in r270328
+        for WebProcessTerminationAfterTooManyGPUProcessCrashes since I have not found the reason why
+        we lose audio on iOS after a GPU process crash yet and we don't want to keep a flaky test on
+        the bots.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/GPUProcess.mm:
+        (TEST):
+
 2020-12-10  Lauro Moura  <lmoura@igalia.com>
 
         [GTK] Fix EventSender wheel phase names
