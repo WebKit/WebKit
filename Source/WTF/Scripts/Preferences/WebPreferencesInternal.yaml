@@ -773,6 +773,18 @@ WebAPIStatisticsEnabled:
     WebKit:
       default: false
 
+WebGLUsingMetal:
+  type: bool
+  humanReadableName: "WebGL via Metal"
+  humanReadableDescription: "Use the Metal backend for ANGLE"
+  webcoreBinding: RuntimeEnabledFeatures
+  condition: ENABLE(WEBGL)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+
 # FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely.
 WebRTCDTMFEnabled:
   type: bool

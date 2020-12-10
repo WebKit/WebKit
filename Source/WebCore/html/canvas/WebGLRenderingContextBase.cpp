@@ -648,14 +648,9 @@ static bool isHighPerformanceContext(const RefPtr<GraphicsContextGL>& context)
 std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(CanvasBase& canvas, WebGLContextAttributes& attributes, const String& type)
 {
 #if ENABLE(WEBGL2)
-    // WebGL 2.0 is only supported with the ANGLE backend.
-#if USE(ANGLE)
+    // Note: WebGL 2.0 is only supported with the ANGLE backend.
     if (type == "webgl2" && !RuntimeEnabledFeatures::sharedFeatures().webGL2Enabled())
         return nullptr;
-#else
-    if (type == "webgl2")
-        return nullptr;
-#endif
 #else
     UNUSED_PARAM(type);
 #endif
@@ -714,10 +709,14 @@ std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(Can
 
     attributes.initialPowerPreference = attributes.powerPreference;
 
-
 #if ENABLE(WEBGL2)
     if (type == "webgl2")
         attributes.isWebGL2 = true;
+#endif
+
+#if PLATFORM(COCOA)
+    if (RuntimeEnabledFeatures::sharedFeatures().webGLUsingMetal())
+        attributes.useMetal = true;
 #endif
 
     if (isPendingPolicyResolution) {

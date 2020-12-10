@@ -77,24 +77,33 @@ static bool checkVolatileContextSupportIfDeviceExists(EGLDisplay display, const 
 }
 #endif
 
-static EGLDisplay InitializeEGLDisplay()
+static EGLDisplay InitializeEGLDisplay(const GraphicsContextGLAttributes& attrs)
 {
     EGLint majorVersion = 0;
     EGLint minorVersion = 0;
     EGLDisplay display;
+
+    Vector<EGLint> displayAttributes;
+
+    // FIXME: This should come in from the GraphicsContextGLAttributes.
     bool shouldInitializeWithVolatileContextSupport = !(isInWebProcess() || isInGPUProcess());
     if (shouldInitializeWithVolatileContextSupport) {
         // For WK1 type APIs we need to set "volatile platform context" for specific
         // APIs, since client code will be able to override the thread-global context
         // that ANGLE expects.
-        EGLint displayAttributes[] = {
-            EGL_PLATFORM_ANGLE_DEVICE_CONTEXT_VOLATILE_EAGL_ANGLE, EGL_TRUE,
-            EGL_PLATFORM_ANGLE_DEVICE_CONTEXT_VOLATILE_CGL_ANGLE, EGL_TRUE,
-            EGL_NONE
-        };
-        display = EGL_GetPlatformDisplayEXT(EGL_PLATFORM_ANGLE_ANGLE, reinterpret_cast<void *>(EGL_DEFAULT_DISPLAY), displayAttributes);
-    } else
-        display = EGL_GetDisplay(EGL_DEFAULT_DISPLAY);
+        displayAttributes.append(EGL_PLATFORM_ANGLE_DEVICE_CONTEXT_VOLATILE_EAGL_ANGLE);
+        displayAttributes.append(EGL_TRUE);
+        displayAttributes.append(EGL_PLATFORM_ANGLE_DEVICE_CONTEXT_VOLATILE_CGL_ANGLE);
+        displayAttributes.append(EGL_TRUE);
+    }
+
+    if (attrs.useMetal) {
+        displayAttributes.append(EGL_PLATFORM_ANGLE_TYPE_ANGLE);
+        displayAttributes.append(0x3489); // Will be EGL_PLATFORM_ANGLE_TYPE_METAL_ANGLE.
+    }
+
+    displayAttributes.append(EGL_NONE);
+    display = EGL_GetPlatformDisplayEXT(EGL_PLATFORM_ANGLE_ANGLE, reinterpret_cast<void*>(EGL_DEFAULT_DISPLAY), displayAttributes.data());
 
     if (EGL_Initialize(display, &majorVersion, &minorVersion) == EGL_FALSE) {
         LOG(WebGL, "EGLDisplay Initialization failed.");
@@ -221,7 +230,7 @@ GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes att
     m_powerPreferenceUsedForCreation = GraphicsContextGLPowerPreference::Default;
 #endif
 
-    m_displayObj = InitializeEGLDisplay();
+    m_displayObj = InitializeEGLDisplay(attrs);
     if (m_displayObj == EGL_NO_DISPLAY)
         return;
     const char *displayExtensions = EGL_QueryString(m_displayObj, EGL_EXTENSIONS);

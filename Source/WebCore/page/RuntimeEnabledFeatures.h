@@ -174,6 +174,11 @@ public:
     void setDataListElementEnabled(bool isEnabled) { m_isDataListElementEnabled = isEnabled; }
 #endif
 
+#if ENABLE(WEBGL)
+    void setWebGLUsingMetal(bool usingMetal) { m_webGLUsingMetal = usingMetal; }
+    bool webGLUsingMetal() const { return m_webGLUsingMetal; }
+#endif
+
 #if ENABLE(WEBGL2)
     void setWebGL2Enabled(bool isEnabled) { m_isWebGL2Enabled = isEnabled; }
     bool webGL2Enabled() const { return m_isWebGL2Enabled; }
@@ -329,6 +334,10 @@ private:
     bool m_isReadableByteStreamAPIEnabled { false };
     bool m_isWritableStreamAPIEnabled { false };
     bool m_isTransformStreamAPIEnabled { false };
+
+#if ENABLE(WEBGL)
+    bool m_webGLUsingMetal { false };
+#endif
 
 #if ENABLE(WEBGL2)
     bool m_isWebGL2Enabled { true };

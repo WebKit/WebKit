@@ -53,6 +53,9 @@ struct GraphicsContextGLAttributes {
     bool noExtensions { false };
     float devicePixelRatio { 1 };
     PowerPreference initialPowerPreference { PowerPreference::Default };
+#if PLATFORM(COCOA)
+    bool useMetal { false };
+#endif
 #if ENABLE(WEBXR)
     bool xrCompatible { false };
 #endif
