@@ -327,16 +327,16 @@ void EventSenderProxy::mouseScrollByWithWheelAndMomentumPhases(int horizontal, i
     WheelEventPhase eventMomentumPhase = WheelEventPhase::NoPhase;
     switch (momentum) {
     case 0:
-        eventPhase = WheelEventPhase::NoPhase;
+        eventMomentumPhase = WheelEventPhase::NoPhase;
         break;
     case 1:
-        eventPhase = WheelEventPhase::Began;
+        eventMomentumPhase = WheelEventPhase::Began;
         break;
     case 2:
-        eventPhase = WheelEventPhase::Changed;
+        eventMomentumPhase = WheelEventPhase::Changed;
         break;
     case 3:
-        eventPhase = WheelEventPhase::Ended;
+        eventMomentumPhase = WheelEventPhase::Ended;
         break;
     }
 

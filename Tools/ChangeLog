@@ -1,3 +1,16 @@
+2020-12-10  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK] Fix EventSender wheel phase names
+        https://bugs.webkit.org/show_bug.cgi?id=219726
+
+        Reviewed by Carlos Garcia Campos.
+
+        It was causing the events to be sent with 0 phase as the momentum
+        phase switch overwrote it.
+
+        * WebKitTestRunner/gtk/EventSenderProxyGtk.cpp:
+        (WTR::EventSenderProxy::mouseScrollByWithWheelAndMomentumPhases):
+
 2020-12-10  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Adopt new UI for the Security Key makeCredential flow
