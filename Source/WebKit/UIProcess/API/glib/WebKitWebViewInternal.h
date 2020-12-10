@@ -19,10 +19,11 @@
 
 #pragma once
 
+#include <WebKit/WKBase.h>
 #include <gio/gio.h>
 
 // Private API required by the unit tests.
 
 typedef struct _WebKitWebView WebKitWebView;
 
-void webkitWebViewRunJavascriptWithoutForcedUserGestures(WebKitWebView*, const gchar*, GCancellable*, GAsyncReadyCallback, gpointer);
+WK_EXPORT void webkitWebViewRunJavascriptWithoutForcedUserGestures(WebKitWebView*, const gchar*, GCancellable*, GAsyncReadyCallback, gpointer);

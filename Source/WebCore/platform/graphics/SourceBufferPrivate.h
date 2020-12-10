@@ -135,7 +135,7 @@ public:
     Vector<String> bufferedSamplesForTrackID(const AtomString&);
     virtual MediaTime minimumUpcomingPresentationTimeForTrackID(const AtomString&) { return MediaTime::invalidTime(); }
     virtual void setMaximumQueueDepthForTrackID(const AtomString&, uint64_t) { }
-    MediaTime fastSeekTimeForMediaTime(const MediaTime& targetTime, const MediaTime& negativeThreshold, const MediaTime& positiveThreshold);
+    WEBCORE_EXPORT MediaTime fastSeekTimeForMediaTime(const MediaTime& targetTime, const MediaTime& negativeThreshold, const MediaTime& positiveThreshold);
 
 #if !RELEASE_LOG_DISABLED
     virtual const Logger& sourceBufferLogger() const = 0;
@@ -160,8 +160,8 @@ protected:
 
     void appendCompleted(bool parsingSucceeded, bool isEnded);
     void reenqueSamples(const AtomString& trackID);
-    void didReceiveInitializationSegment(SourceBufferPrivateClient::InitializationSegment&&, CompletionHandler<void()>&&);
-    void didReceiveSample(MediaSample&);
+    WEBCORE_EXPORT void didReceiveInitializationSegment(SourceBufferPrivateClient::InitializationSegment&&, CompletionHandler<void()>&&);
+    WEBCORE_EXPORT void didReceiveSample(MediaSample&);
     void provideMediaData(const AtomString& trackID);
 
     SourceBufferPrivateClient* m_client { nullptr };

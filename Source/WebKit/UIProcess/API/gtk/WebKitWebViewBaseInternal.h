@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <WebKit/WKBase.h>
 #include <wtf/text/WTFString.h>
 
 typedef struct _WebKitWebViewBase WebKitWebViewBase;
@@ -36,11 +37,11 @@ struct KeyEvent {
 };
 
 enum class MouseEventType { Press, Release, Motion };
-void webkitWebViewBaseSynthesizeMouseEvent(WebKitWebViewBase*, MouseEventType type, unsigned button, unsigned short buttons, int x, int y, unsigned modifiers, int clickCount, const String& pointerType = "mouse"_s);
+WK_EXPORT void webkitWebViewBaseSynthesizeMouseEvent(WebKitWebViewBase*, MouseEventType type, unsigned button, unsigned short buttons, int x, int y, unsigned modifiers, int clickCount, const String& pointerType = "mouse"_s);
 
 enum class KeyEventType { Press, Release, Insert };
 enum class ShouldTranslateKeyboardState { No, Yes };
-void webkitWebViewBaseSynthesizeKeyEvent(WebKitWebViewBase*, KeyEventType, unsigned keyVal, unsigned modifiers, ShouldTranslateKeyboardState);
+WK_EXPORT void webkitWebViewBaseSynthesizeKeyEvent(WebKitWebViewBase*, KeyEventType, unsigned keyVal, unsigned modifiers, ShouldTranslateKeyboardState);
 
 enum class WheelEventPhase { NoPhase, Began, Changed, Ended, Cancelled, MayBegin };
-void webkitWebViewBaseSynthesizeWheelEvent(WebKitWebViewBase*, double deltaX, double deltaY, int x, int y, WheelEventPhase, WheelEventPhase momentumPhase);
+WK_EXPORT void webkitWebViewBaseSynthesizeWheelEvent(WebKitWebViewBase*, double deltaX, double deltaY, int x, int y, WheelEventPhase, WheelEventPhase momentumPhase);

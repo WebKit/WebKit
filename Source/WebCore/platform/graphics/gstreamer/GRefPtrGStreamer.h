@@ -73,7 +73,7 @@ template<> void derefGPtr<GstElementFactory>(GstElementFactory* ptr);
 
 template<> GRefPtr<GstBuffer> adoptGRef(GstBuffer* ptr);
 template<> GstBuffer* refGPtr<GstBuffer>(GstBuffer* ptr);
-template<> void derefGPtr<GstBuffer>(GstBuffer* ptr);
+template<> WEBCORE_EXPORT void derefGPtr<GstBuffer>(GstBuffer* ptr);
 
 template<> GRefPtr<GstBufferList> adoptGRef(GstBufferList*);
 template<> GstBufferList* refGPtr<GstBufferList>(GstBufferList*);
