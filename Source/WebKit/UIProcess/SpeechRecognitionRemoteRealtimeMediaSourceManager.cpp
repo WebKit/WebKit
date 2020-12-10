@@ -29,6 +29,7 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include "SpeechRecognitionRealtimeMediaSourceManagerMessages.h"
+#include "SpeechRecognitionRemoteRealtimeMediaSource.h"
 
 namespace WebKit {
 

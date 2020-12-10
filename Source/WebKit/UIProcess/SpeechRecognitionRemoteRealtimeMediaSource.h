@@ -30,8 +30,16 @@
 #include <WebCore/RealtimeMediaSource.h>
 #include <WebCore/RealtimeMediaSourceIdentifier.h>
 
+#if PLATFORM(COCOA)
+#include <WebCore/CAAudioStreamDescription.h>
+#endif
+
 namespace WebCore {
 class CaptureDevice;
+#if PLATFORM(COCOA)
+class CARingBuffer;
+class WebAudioBufferList;
+#endif
 }
 
 namespace WebKit {
