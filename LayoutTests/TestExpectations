@@ -4576,6 +4576,9 @@ fast/shadow-dom/ios/ [ Skip ]
 fullscreen/full-screen-enter-while-exiting.html [ Skip ]
 
 # These tests are all flaky
+imported/w3c/web-platform-tests/worklets/animation-worklet-csp.https.html [ Pass Failure ]
+imported/w3c/web-platform-tests/worklets/animation-worklet-referrer.https.html [ Pass Failure ]
+imported/w3c/web-platform-tests/worklets/layout-worklet-referrer.https.html [ Pass Failure ]
 webkit.org/b/217931 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/moving-between-documents/before-prepare-createHTMLDocument-fetch-error-external-classic.html [ Pass Failure ]
 webkit.org/b/217931 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/moving-between-documents/before-prepare-createHTMLDocument-fetch-error-external-module.html [ Pass Failure ]
 webkit.org/b/217931 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/moving-between-documents/before-prepare-createHTMLDocument-parse-error-external-classic.html [ Pass Failure ]
