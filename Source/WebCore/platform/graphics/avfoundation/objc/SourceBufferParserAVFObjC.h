@@ -28,8 +28,11 @@
 #if ENABLE(MEDIA_SOURCE)
 
 #include "SourceBufferParser.h"
+#include <wtf/Box.h>
 #include <wtf/TypeCasts.h>
+#include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
+#include <wtf/threads/BinarySemaphore.h>
 
 OBJC_CLASS AVAsset;
 OBJC_CLASS AVStreamDataParser;
@@ -78,12 +81,13 @@ private:
     bool m_discardSamplesUntilNextInitializationSegment { false };
     bool m_parserStateWasReset { false };
 
+    Box<BinarySemaphore> m_initializationSegmentIsHandledSemaphore;
+
 #if !RELEASE_LOG_DISABLED
     RefPtr<const WTF::Logger> m_logger;
     const void* m_logIdentifier { nullptr };
 #endif
 };
-
 }
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SourceBufferParserAVFObjC)

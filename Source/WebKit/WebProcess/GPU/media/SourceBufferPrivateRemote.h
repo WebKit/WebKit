@@ -30,6 +30,7 @@
 #include "GPUProcessConnection.h"
 #include "MessageReceiver.h"
 #include "RemoteSourceBufferIdentifier.h"
+#include "TrackPrivateRemoteIdentifier.h"
 #include <WebCore/ContentType.h>
 #include <WebCore/MediaSample.h>
 #include <WebCore/SourceBufferPrivate.h>
@@ -44,6 +45,10 @@
 namespace IPC {
 class Connection;
 class Decoder;
+}
+
+namespace WebCore {
+class PlatformTimeRanges;
 }
 
 namespace WebKit {
@@ -74,25 +79,40 @@ private:
     WebCore::MediaPlayer::ReadyState readyState() const final;
     void setReadyState(WebCore::MediaPlayer::ReadyState) final;
     void flush(const AtomString& trackID) final;
-    void enqueueSample(Ref<WebCore::MediaSample>&&, const AtomString& trackID) final;
     bool isReadyForMoreSamples(const AtomString& trackID) final;
     void setActive(bool) final;
+    bool isActive() const final { return m_isActive; }
     void notifyClientWhenReadyForMoreSamples(const AtomString& trackID) final;
     bool canSetMinimumUpcomingPresentationTime(const AtomString&) const final;
     void setMinimumUpcomingPresentationTime(const AtomString&, const MediaTime&) final;
     void clearMinimumUpcomingPresentationTime(const AtomString&) final;
     bool canSwitchToType(const WebCore::ContentType&) final;
+    void updateBufferedFromTrackBuffers(bool sourceIsEnded) final;
+    void evictCodedFrames(uint64_t newDataSize, uint64_t pendingAppendDataCapacity, uint64_t maximumBufferSize, const MediaTime& currentTime, const MediaTime& duration, bool isEnded) final;
+    void addTrackBuffer(const AtomString& trackId, RefPtr<WebCore::MediaDescription>&&) final;
+    void reenqueueMediaIfNeeded(const MediaTime& currentMediaTime, uint64_t pendingAppendDataCapacity, uint64_t maximumBufferSize) final;
+    void trySignalAllSamplesInTrackEnqueued() final;
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
-
-    void sourceBufferPrivateDidReceiveInitializationSegment(InitializationSegmentInfo&&);
+    void sourceBufferPrivateDidReceiveInitializationSegment(InitializationSegmentInfo&&, CompletionHandler<void()>&&);
+    void sourceBufferPrivateStreamEndedWithDecodeError();
+    void sourceBufferPrivateAppendError(bool decodeError);
     void sourceBufferPrivateAppendComplete(WebCore::SourceBufferPrivateClient::AppendResult);
+    void sourceBufferPrivateDurationChanged(const MediaTime&);
+    void sourceBufferPrivateDidParseSample(double sampleDuration);
+    void sourceBufferPrivateDidDropSample();
+    void sourceBufferPrivateDidReceiveRenderingError(int errorCode);
+    void sourceBufferPrivateBufferedDirtyChanged(bool dirty);
+    void sourceBufferPrivateBufferedRangesChanged(const WebCore::PlatformTimeRanges&);
 
     GPUProcessConnection& m_gpuProcessConnection;
     RemoteSourceBufferIdentifier m_remoteSourceBufferIdentifier;
     WeakPtr<MediaSourcePrivateRemote> m_mediaSourcePrivate;
     WeakPtr<MediaPlayerPrivateRemote> m_mediaPlayerPrivate;
-    WebCore::SourceBufferPrivateClient* m_client { nullptr };
+
+    HashMap<AtomString, TrackPrivateRemoteIdentifier> m_trackIdentifierMap;
+
+    bool m_isActive { false };
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger.get(); }

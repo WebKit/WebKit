@@ -492,12 +492,16 @@ MediaPlayerEnums::SupportsType SourceBufferParserWebM::isContentTypeSupported(co
 
 SourceBufferParserWebM::SourceBufferParserWebM()
     : m_reader(WTF::makeUniqueRef<StreamingVectorReader>())
+    , m_initializationSegmentIsHandledSemaphore(Box<BinarySemaphore>::create())
 {
     if (isWebmParserAvailable())
         m_parser = WTF::makeUniqueWithoutFastMallocCheck<WebmParser>();
 }
 
-SourceBufferParserWebM::~SourceBufferParserWebM() = default;
+SourceBufferParserWebM::~SourceBufferParserWebM()
+{
+    m_initializationSegmentIsHandledSemaphore->signal();
+}
 
 void SourceBufferParserWebM::appendData(Vector<unsigned char>&& buffer, AppendFlags appendFlags)
 {
@@ -550,7 +554,7 @@ void SourceBufferParserWebM::appendData(Vector<unsigned char>&& buffer, AppendFl
 
 void SourceBufferParserWebM::flushPendingMediaData()
 {
-    notImplemented();
+    m_initializationSegmentIsHandledSemaphore->signal();
 }
 
 void SourceBufferParserWebM::setShouldProvideMediaDataForTrackID(bool, uint64_t)
@@ -573,11 +577,16 @@ void SourceBufferParserWebM::resetParserState()
     m_initializationSegment = nullptr;
     m_initializationSegmentEncountered = false;
     m_currentBlock.reset();
+
+    m_initializationSegmentIsHandledSemaphore->signal();
 }
 
 void SourceBufferParserWebM::invalidate()
 {
     INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER);
+
+    m_initializationSegmentIsHandledSemaphore->signal();
+
     m_parser = nullptr;
     m_tracks.clear();
     m_initializationSegment = nullptr;
@@ -716,9 +725,14 @@ Status SourceBufferParserWebM::OnClusterBegin(const ElementMetadata& metadata, c
         return Status(Status::kNotEnoughMemory);
 
     if (m_initializationSegmentEncountered && m_didParseInitializationDataCallback) {
-        callOnMainThread([this, protectedThis = makeRef(*this), initializationSegment = WTFMove(*m_initializationSegment)] () mutable {
-            m_didParseInitializationDataCallback(WTFMove(initializationSegment));
+        callOnMainThread([this, protectedThis = makeRef(*this), initializationSegment = WTFMove(*m_initializationSegment)]() mutable {
+            m_didParseInitializationDataCallback(WTFMove(initializationSegment), [this, protectedThis = makeRef(*this)] {
+                m_initializationSegmentIsHandledSemaphore->signal();
+            });
         });
+
+        // Wait until the initialization segment is handled
+        m_initializationSegmentIsHandledSemaphore->wait();
     }
     m_initializationSegmentEncountered = false;
     m_initializationSegment = nullptr;

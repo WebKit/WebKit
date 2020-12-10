@@ -31,6 +31,7 @@
 #include <common/vp9_header_parser.h>
 #include <webm/callback.h>
 #include <webm/status.h>
+#include <wtf/Box.h>
 #include <wtf/Function.h>
 #include <wtf/MediaTime.h>
 #include <wtf/UniqueRef.h>
@@ -38,6 +39,7 @@
 #include <wtf/Vector.h>
 #include <wtf/text/AtomString.h>
 #include <wtf/text/WTFString.h>
+#include <wtf/threads/BinarySemaphore.h>
 
 typedef struct opaqueCMSampleBuffer *CMSampleBufferRef;
 typedef const struct opaqueCMFormatDescription* CMFormatDescriptionRef;
@@ -140,6 +142,8 @@ private:
     using BlockVariant = Variant<webm::Block, webm::SimpleBlock>;
     Optional<BlockVariant> m_currentBlock;
     Optional<uint64_t> m_rewindToPosition;
+
+    Box<BinarySemaphore> m_initializationSegmentIsHandledSemaphore;
 
 #if !RELEASE_LOG_DISABLED
     RefPtr<const WTF::Logger> m_logger;

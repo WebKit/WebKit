@@ -103,9 +103,9 @@ MediaSourcePrivate::AddStatus MediaSourcePrivateRemote::addSourceBuffer(const Co
     return status;
 }
 
-void MediaSourcePrivateRemote::durationChanged()
+void MediaSourcePrivateRemote::durationChanged(const MediaTime& duration)
 {
-    notImplemented();
+    m_gpuProcessConnection.connection().send(Messages::RemoteMediaSourceProxy::DurationChanged(duration), m_identifier);
 }
 
 void MediaSourcePrivateRemote::markEndOfStream(EndOfStreamStatus)
@@ -118,14 +118,20 @@ void MediaSourcePrivateRemote::unmarkEndOfStream()
     notImplemented();
 }
 
+bool MediaSourcePrivateRemote::isEnded() const
+{
+    notImplemented();
+    return false;
+}
+
 MediaPlayer::ReadyState MediaSourcePrivateRemote::readyState() const
 {
     return m_mediaPlayerPrivate ? m_mediaPlayerPrivate->readyState() : MediaPlayer::ReadyState::HaveNothing;
 }
 
-void MediaSourcePrivateRemote::setReadyState(MediaPlayer::ReadyState)
+void MediaSourcePrivateRemote::setReadyState(MediaPlayer::ReadyState readyState)
 {
-    notImplemented();
+    m_gpuProcessConnection.connection().send(Messages::RemoteMediaSourceProxy::SetReadyState(readyState), m_identifier);
 }
 
 void MediaSourcePrivateRemote::waitForSeekCompleted()

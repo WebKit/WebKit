@@ -1,3 +1,104 @@
+2020-12-09  Peng Liu  <peng.liu6@apple.com>
+
+        [Media in GPU Process][MSE] Implement basic video playback
+        https://bugs.webkit.org/show_bug.cgi?id=219402
+
+        Reviewed by Jer Noble.
+
+        Implement the necessary functions with IPC to support media playback.
+
+        * GPUProcess/media/RemoteAudioTrackProxy.cpp:
+        (WebKit::RemoteAudioTrackProxy::configuration): Rename `identifier` to `trackId`
+        because it is easy to confuse with `TrackPrivateRemoteIdentifier`.
+
+        * GPUProcess/media/RemoteMediaPlayerProxy.cpp:
+        (WebKit::RemoteMediaPlayerProxy::loadMediaSource):
+        (WebKit::RemoteMediaPlayerProxy::updateCachedState): For MSE media player, `SourceBuffer`
+        provides the buffered ranges, so `RemoteMediaPlayerProxy` does not need to report this
+        information to the `MediaPlayer` object in the Web process.
+        * GPUProcess/media/RemoteMediaPlayerProxy.h:
+        * GPUProcess/media/RemoteMediaPlayerProxy.messages.in:
+
+        * GPUProcess/media/RemoteMediaSourceProxy.cpp:
+        (WebKit::RemoteMediaSourceProxy::duration const):
+        (WebKit::RemoteMediaSourceProxy::buffered const):
+        (WebKit::RemoteMediaSourceProxy::durationChanged):
+        (WebKit::RemoteMediaSourceProxy::setReadyState):
+        * GPUProcess/media/RemoteMediaSourceProxy.h:
+        * GPUProcess/media/RemoteMediaSourceProxy.messages.in:
+
+        * GPUProcess/media/RemoteSourceBufferProxy.cpp:
+        (WebKit::RemoteSourceBufferProxy::RemoteSourceBufferProxy):
+        (WebKit::RemoteSourceBufferProxy::~RemoteSourceBufferProxy):
+        (WebKit::RemoteSourceBufferProxy::sourceBufferPrivateDidReceiveInitializationSegment):
+        (WebKit::RemoteSourceBufferProxy::sourceBufferPrivateDurationChanged):
+        (WebKit::RemoteSourceBufferProxy::sourceBufferPrivateDidParseSample):
+        (WebKit::RemoteSourceBufferProxy::sourceBufferPrivateAppendComplete):
+        (WebKit::RemoteSourceBufferProxy::sourceBufferPrivateDidReceiveRenderingError):
+        (WebKit::RemoteSourceBufferProxy::sourceBufferPrivateBufferedDirtyChanged):
+        (WebKit::RemoteSourceBufferProxy::sourceBufferPrivateBufferedRangesChanged):
+        (WebKit::RemoteSourceBufferProxy::setActive):
+        (WebKit::RemoteSourceBufferProxy::setReadyState):
+        (WebKit::RemoteSourceBufferProxy::updateBufferedFromTrackBuffers):
+        (WebKit::RemoteSourceBufferProxy::evictCodedFrames):
+        (WebKit::RemoteSourceBufferProxy::addTrackBuffer):
+        (WebKit::RemoteSourceBufferProxy::reenqueueMediaIfNeeded):
+        (WebKit::RemoteSourceBufferProxy::trySignalAllSamplesInTrackEnqueued):
+        (WebKit::RemoteSourceBufferProxy::sourceBufferPrivateHasAudio const): Deleted.
+        (WebKit::RemoteSourceBufferProxy::sourceBufferPrivateHasVideo const): Deleted.
+        * GPUProcess/media/RemoteSourceBufferProxy.h:
+        * GPUProcess/media/RemoteSourceBufferProxy.messages.in:
+
+        * GPUProcess/media/RemoteTextTrackProxy.cpp:
+        (WebKit::RemoteTextTrackProxy::configuration):
+        * GPUProcess/media/RemoteVideoTrackProxy.cpp:
+        (WebKit::RemoteVideoTrackProxy::configuration):
+
+        * GPUProcess/media/TextTrackPrivateRemoteConfiguration.h:
+        (WebKit::TextTrackPrivateRemoteConfiguration::encode const):
+        (WebKit::TextTrackPrivateRemoteConfiguration::decode):
+
+        * GPUProcess/media/TrackPrivateRemoteConfiguration.h:
+        (WebKit::TrackPrivateRemoteConfiguration::encode const):
+        (WebKit::TrackPrivateRemoteConfiguration::decode):
+
+        * WebProcess/GPU/media/AudioTrackPrivateRemote.cpp:
+        (WebKit::AudioTrackPrivateRemote::updateConfiguration):
+        * WebProcess/GPU/media/AudioTrackPrivateRemote.h:
+
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        (WebKit::MediaPlayerPrivateRemote::load):
+
+        * WebProcess/GPU/media/MediaSourcePrivateRemote.cpp:
+        (WebKit::MediaSourcePrivateRemote::durationChanged):
+        (WebKit::MediaSourcePrivateRemote::isEnded const):
+        (WebKit::MediaSourcePrivateRemote::setReadyState):
+        * WebProcess/GPU/media/MediaSourcePrivateRemote.h:
+
+        * WebProcess/GPU/media/SourceBufferPrivateRemote.cpp:
+        (WebKit::SourceBufferPrivateRemote::setReadyState):
+        (WebKit::SourceBufferPrivateRemote::flush):
+        (WebKit::SourceBufferPrivateRemote::setActive):
+        (WebKit::SourceBufferPrivateRemote::updateBufferedFromTrackBuffers):
+        (WebKit::SourceBufferPrivateRemote::evictCodedFrames):
+        (WebKit::SourceBufferPrivateRemote::addTrackBuffer):
+        (WebKit::SourceBufferPrivateRemote::reenqueueMediaIfNeeded):
+        (WebKit::SourceBufferPrivateRemote::trySignalAllSamplesInTrackEnqueued):
+        (WebKit::SourceBufferPrivateRemote::sourceBufferPrivateDidReceiveInitializationSegment):
+        (WebKit::SourceBufferPrivateRemote::sourceBufferPrivateDurationChanged):
+        (WebKit::SourceBufferPrivateRemote::sourceBufferPrivateDidParseSample):
+        (WebKit::SourceBufferPrivateRemote::sourceBufferPrivateBufferedDirtyChanged):
+        (WebKit::SourceBufferPrivateRemote::sourceBufferPrivateBufferedRangesChanged):
+        (WebKit::SourceBufferPrivateRemote::enqueueSample): Deleted.
+        * WebProcess/GPU/media/SourceBufferPrivateRemote.h:
+        * WebProcess/GPU/media/SourceBufferPrivateRemote.messages.in:
+
+        * WebProcess/GPU/media/TextTrackPrivateRemote.cpp:
+        (WebKit::TextTrackPrivateRemote::updateConfiguration):
+
+        * WebProcess/GPU/media/VideoTrackPrivateRemote.cpp:
+        (WebKit::VideoTrackPrivateRemote::updateConfiguration):
+
 2020-11-30  Brian Burg  <bburg@apple.com>
 
         [Cocoa] Web Inspector: add support for creating extension tabs in WebInspectorUI via _WKInspectorExtension

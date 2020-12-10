@@ -55,10 +55,11 @@ public:
         ReachedIdLimit
     };
     virtual AddStatus addSourceBuffer(const ContentType&, RefPtr<SourceBufferPrivate>&) = 0;
-    virtual void durationChanged() = 0;
+    virtual void durationChanged(const MediaTime&) = 0;
     enum EndOfStreamStatus { EosNoError, EosNetworkError, EosDecodeError };
     virtual void markEndOfStream(EndOfStreamStatus) = 0;
     virtual void unmarkEndOfStream() = 0;
+    virtual bool isEnded() const = 0;
 
     virtual MediaPlayer::ReadyState readyState() const = 0;
     virtual void setReadyState(MediaPlayer::ReadyState) = 0;
@@ -66,10 +67,13 @@ public:
     virtual void waitForSeekCompleted() = 0;
     virtual void seekCompleted() = 0;
 
+    void setTimeFudgeFactor(const MediaTime& fudgeFactor) { m_timeFudgeFactor = fudgeFactor; }
+    MediaTime timeFudgeFactor() const { return m_timeFudgeFactor; }
     void setIsSeeking(bool flag) { m_isSeeking = flag; }
     bool isSeeking() const { return m_isSeeking; }
 
 private:
+    MediaTime m_timeFudgeFactor;
     bool m_isSeeking { false };
 };
 

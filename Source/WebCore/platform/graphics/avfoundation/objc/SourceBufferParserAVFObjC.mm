@@ -200,11 +200,13 @@ MediaPlayerEnums::SupportsType SourceBufferParserAVFObjC::isContentTypeSupported
 SourceBufferParserAVFObjC::SourceBufferParserAVFObjC()
     : m_parser(adoptNS([PAL::allocAVStreamDataParserInstance() init]))
     , m_delegate(adoptNS([[WebAVStreamDataParserListener alloc] initWithParser:m_parser.get() parent:this]))
+    , m_initializationSegmentIsHandledSemaphore(Box<BinarySemaphore>::create())
 {
 }
 
 SourceBufferParserAVFObjC::~SourceBufferParserAVFObjC()
 {
+    m_initializationSegmentIsHandledSemaphore->signal();
     m_delegate.get().parent = nullptr;
     [m_delegate invalidate];
 }
@@ -222,6 +224,7 @@ void SourceBufferParserAVFObjC::appendData(Vector<unsigned char>&& data, AppendF
 
 void SourceBufferParserAVFObjC::flushPendingMediaData()
 {
+    m_initializationSegmentIsHandledSemaphore->signal();
     [m_parser providePendingMediaData];
 }
 
@@ -239,10 +242,14 @@ void SourceBufferParserAVFObjC::resetParserState()
 {
     m_parserStateWasReset = true;
     m_discardSamplesUntilNextInitializationSegment = true;
+
+    m_initializationSegmentIsHandledSemaphore->signal();
 }
 
 void SourceBufferParserAVFObjC::invalidate()
 {
+    m_initializationSegmentIsHandledSemaphore->signal();
+
     [m_delegate invalidate];
     m_delegate = nullptr;
     m_parser = nullptr;
@@ -295,8 +302,13 @@ void SourceBufferParserAVFObjC::didParseStreamDataAsAsset(AVAsset* asset)
             // FIXME(125161)    : Add TextTrack support
         }
 
-        m_didParseInitializationDataCallback(WTFMove(segment));
+        m_didParseInitializationDataCallback(WTFMove(segment), [this, strongThis = makeRef(*this)] {
+            m_initializationSegmentIsHandledSemaphore->signal();
+        });
     });
+
+    // Wait until the initialization segment is handled
+    m_initializationSegmentIsHandledSemaphore->wait();
 }
 
 void SourceBufferParserAVFObjC::didFailToParseStreamDataWithError(NSError* error)

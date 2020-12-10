@@ -61,9 +61,10 @@ public:
     AddStatus addSourceBuffer(const ContentType&, RefPtr<SourceBufferPrivate>&) override;
     void removeSourceBuffer(SourceBufferPrivate*);
 
-    void durationChanged() override;
+    void durationChanged(const MediaTime&) override;
     void markEndOfStream(EndOfStreamStatus) override;
     void unmarkEndOfStream() override;
+    bool isEnded() const override { return m_isEnded; }
 
     MediaPlayer::ReadyState readyState() const override;
     void setReadyState(MediaPlayer::ReadyState) override;
@@ -94,6 +95,7 @@ private:
     HashSet<SourceBufferPrivateGStreamer*> m_activeSourceBuffers;
     Ref<MediaSourcePrivateClient> m_mediaSource;
     MediaPlayerPrivateGStreamerMSE& m_playerPrivate;
+    bool m_isEnded { false };
 #if !RELEASE_LOG_DISABLED
     Ref<const Logger> m_logger;
     const void* m_logIdentifier;

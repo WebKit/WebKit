@@ -639,7 +639,10 @@ void MediaPlayerPrivateRemote::load(const URL& url, const ContentType& contentTy
 {
     if (m_remoteEngineIdentifier == MediaPlayerEnums::MediaEngineIdentifier::AVFoundationMSE) {
         auto identifier = RemoteMediaSourceIdentifier::generate();
-        connection().send(Messages::RemoteMediaPlayerProxy::LoadMediaSource(url, contentType, identifier), m_id);
+        connection().sendWithAsyncReply(Messages::RemoteMediaPlayerProxy::LoadMediaSource(url, contentType, identifier), [weakThis = makeWeakPtr(*this)](auto&& configuration) {
+            if (weakThis)
+                weakThis->m_configuration = WTFMove(configuration);
+        }, m_id);
         m_mediaSourcePrivate = MediaSourcePrivateRemote::create(m_manager.gpuProcessConnection(), identifier, m_manager.typeCache(m_remoteEngineIdentifier), *this, client);
 
         return;

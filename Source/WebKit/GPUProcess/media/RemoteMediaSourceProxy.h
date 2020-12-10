@@ -75,16 +75,20 @@ public:
 
 private:
     // IPC::MessageReceiver
-    // void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
     void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&) final;
 
-    using AddSourceBufferCallback = CompletionHandler<void(WebCore::MediaSourcePrivate::AddStatus, Optional<RemoteSourceBufferIdentifier> remoteSourceBufferIdentifier)>;
+    using AddSourceBufferCallback = CompletionHandler<void(WebCore::MediaSourcePrivate::AddStatus, Optional<RemoteSourceBufferIdentifier>)>;
     void addSourceBuffer(const WebCore::ContentType&, AddSourceBufferCallback&&);
+    void durationChanged(const MediaTime&);
+    void setReadyState(WebCore::MediaPlayerEnums::ReadyState);
 
     GPUConnectionToWebProcess& m_connectionToWebProcess;
     RemoteMediaSourceIdentifier m_identifier;
     RefPtr<WebCore::MediaSourcePrivate> m_private;
     WeakPtr<RemoteMediaPlayerProxy> m_remoteMediaPlayerProxy;
+
+    MediaTime m_duration;
 
     Vector<RefPtr<RemoteSourceBufferProxy>> m_sourceBuffers;
 };

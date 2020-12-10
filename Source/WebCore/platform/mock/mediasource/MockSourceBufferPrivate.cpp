@@ -142,7 +142,7 @@ void MockSourceBufferPrivate::append(Vector<unsigned char>&& data)
 
     while (m_inputBuffer.size() && result == SourceBufferPrivateClient::AppendResult::AppendSucceeded) {
         auto buffer = ArrayBuffer::create(m_inputBuffer.data(), m_inputBuffer.size());
-        size_t boxLength = MockBox::peekLength(buffer.ptr());
+        uint64_t boxLength = MockBox::peekLength(buffer.ptr());
         if (boxLength > buffer->byteLength())
             break;
 
@@ -158,6 +158,10 @@ void MockSourceBufferPrivate::append(Vector<unsigned char>&& data)
 
         m_inputBuffer.remove(0, boxLength);
     }
+
+    // Resolve the changes in TrackBuffers' buffered ranges
+    // into the SourceBuffer's buffered ranges
+    updateBufferedFromTrackBuffers(m_mediaSource->isEnded());
 
     if (m_client)
         m_client->sourceBufferPrivateAppendComplete(result);
@@ -191,7 +195,7 @@ void MockSourceBufferPrivate::didReceiveInitializationSegment(const MockInitiali
         }
     }
 
-    SourceBufferPrivate::didReceiveInitializationSegment(segment);
+    SourceBufferPrivate::didReceiveInitializationSegment(WTFMove(segment), []() { });
 }
 
 void MockSourceBufferPrivate::didReceiveSample(const MockSampleBox& sampleBox)
@@ -249,7 +253,7 @@ MediaTime MockSourceBufferPrivate::minimumUpcomingPresentationTimeForTrackID(con
     return m_minimumUpcomingPresentationTime;
 }
 
-void MockSourceBufferPrivate::setMaximumQueueDepthForTrackID(const AtomString&, size_t maxQueueDepth)
+void MockSourceBufferPrivate::setMaximumQueueDepthForTrackID(const AtomString&, uint64_t maxQueueDepth)
 {
     m_maxQueueDepth = maxQueueDepth;
 }
@@ -320,16 +324,6 @@ void MockSourceBufferPrivate::enqueueSample(Ref<MediaSample>&& sample, const Ato
         m_mediaSource->incrementTotalFrameDelayBy(MediaTime(1, 1));
 
     m_enqueuedSamples.append(toString(sample.get()));
-}
-
-bool MockSourceBufferPrivate::hasVideo() const
-{
-    return m_client && m_client->sourceBufferPrivateHasVideo();
-}
-
-bool MockSourceBufferPrivate::hasAudio() const
-{
-    return m_client && m_client->sourceBufferPrivateHasAudio();
 }
 
 #if !RELEASE_LOG_DISABLED

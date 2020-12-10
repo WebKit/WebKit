@@ -64,7 +64,6 @@ public:
     using SelectedChangedCallback = Function<void(VideoTrackPrivate&, bool selected)>;
     void setSelectedChangedCallback(SelectedChangedCallback&& callback) { m_selectedChangedCallback = WTFMove(callback); }
 
-
 protected:
     VideoTrackPrivate() = default;
 

@@ -61,13 +61,12 @@ void RemoteMediaSourceProxy::setPrivateAndOpen(Ref<MediaSourcePrivate>&& mediaSo
 
 MediaTime RemoteMediaSourceProxy::duration() const
 {
-    notImplemented();
-    return { };
+    return m_duration;
 }
 
 std::unique_ptr<PlatformTimeRanges> RemoteMediaSourceProxy::buffered() const
 {
-    notImplemented();
+    ASSERT_NOT_REACHED();
     return makeUnique<PlatformTimeRanges>();
 }
 
@@ -110,6 +109,22 @@ void RemoteMediaSourceProxy::addSourceBuffer(const WebCore::ContentType& content
     }
 
     callback(status, remoteSourceIdentifier);
+}
+
+void RemoteMediaSourceProxy::durationChanged(const MediaTime& duration)
+{
+    if (m_duration == duration)
+        return;
+
+    m_duration = duration;
+    if (m_private)
+        m_private->durationChanged(duration);
+}
+
+void RemoteMediaSourceProxy::setReadyState(WebCore::MediaPlayerEnums::ReadyState readyState)
+{
+    if (m_private)
+        m_private->setReadyState(readyState);
 }
 
 } // namespace WebKit

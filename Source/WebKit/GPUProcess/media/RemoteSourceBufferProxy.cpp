@@ -33,7 +33,9 @@
 #include "RemoteMediaPlayerProxy.h"
 #include "RemoteSourceBufferProxyMessages.h"
 #include "SourceBufferPrivateRemoteMessages.h"
+#include <WebCore/MediaDescription.h>
 #include <WebCore/NotImplemented.h>
+#include <WebCore/PlatformTimeRanges.h>
 
 namespace WebKit {
 
@@ -53,14 +55,16 @@ RemoteSourceBufferProxy::RemoteSourceBufferProxy(GPUConnectionToWebProcess& conn
 {
     m_connectionToWebProcess.messageReceiverMap().addMessageReceiver(Messages::RemoteSourceBufferProxy::messageReceiverName(), m_identifier.toUInt64(), *this);
     m_sourceBufferPrivate->setClient(this);
+    m_sourceBufferPrivate->setIsAttached(true);
 }
 
 RemoteSourceBufferProxy::~RemoteSourceBufferProxy()
 {
+    m_sourceBufferPrivate->setIsAttached(false);
     m_connectionToWebProcess.messageReceiverMap().removeMessageReceiver(Messages::RemoteSourceBufferProxy::messageReceiverName(), m_identifier.toUInt64());
 }
 
-void RemoteSourceBufferProxy::sourceBufferPrivateDidReceiveInitializationSegment(const InitializationSegment& segment)
+void RemoteSourceBufferProxy::sourceBufferPrivateDidReceiveInitializationSegment(InitializationSegment&& segment, CompletionHandler<void()>&& completionHandler)
 {
     if (!m_remoteMediaPlayerProxy)
         return;
@@ -70,19 +74,34 @@ void RemoteSourceBufferProxy::sourceBufferPrivateDidReceiveInitializationSegment
     for (auto& audioTrackInfo : segment.audioTracks) {
         auto identifier = m_remoteMediaPlayerProxy->addRemoteAudioTrackProxy(*audioTrackInfo.track);
         segmentInfo.audioTracks.append({ MediaDescriptionInfo(*audioTrackInfo.description), identifier });
+
+        ASSERT(!m_trackIds.contains(identifier));
+        ASSERT(!m_mediaDescriptions.contains(identifier));
+        m_trackIds.add(identifier, audioTrackInfo.track->id());
+        m_mediaDescriptions.add(identifier, *audioTrackInfo.description);
     }
 
     for (auto& videoTrackInfo : segment.videoTracks) {
         auto identifier = m_remoteMediaPlayerProxy->addRemoteVideoTrackProxy(*videoTrackInfo.track);
         segmentInfo.videoTracks.append({ MediaDescriptionInfo(*videoTrackInfo.description), identifier });
+
+        ASSERT(!m_trackIds.contains(identifier));
+        ASSERT(!m_mediaDescriptions.contains(identifier));
+        m_trackIds.add(identifier, videoTrackInfo.track->id());
+        m_mediaDescriptions.add(identifier, *videoTrackInfo.description);
     }
 
     for (auto& textTrackInfo : segment.textTracks) {
         auto identifier = m_remoteMediaPlayerProxy->addRemoteTextTrackProxy(*textTrackInfo.track);
         segmentInfo.textTracks.append({ MediaDescriptionInfo(*textTrackInfo.description), identifier });
+
+        ASSERT(!m_trackIds.contains(identifier));
+        ASSERT(!m_mediaDescriptions.contains(identifier));
+        m_trackIds.add(identifier, textTrackInfo.track->id());
+        m_mediaDescriptions.add(identifier, *textTrackInfo.description);
     }
 
-    m_connectionToWebProcess.connection().send(Messages::SourceBufferPrivateRemote::SourceBufferPrivateDidReceiveInitializationSegment(segmentInfo), m_identifier);
+    m_connectionToWebProcess.connection().sendWithAsyncReply(Messages::SourceBufferPrivateRemote::SourceBufferPrivateDidReceiveInitializationSegment(segmentInfo), WTFMove(completionHandler), m_identifier);
 }
 
 void RemoteSourceBufferProxy::sourceBufferPrivateAppendError(bool)
@@ -90,14 +109,14 @@ void RemoteSourceBufferProxy::sourceBufferPrivateAppendError(bool)
     notImplemented();
 }
 
-void RemoteSourceBufferProxy::sourceBufferPrivateDurationChanged(const MediaTime&)
+void RemoteSourceBufferProxy::sourceBufferPrivateDurationChanged(const MediaTime& duration)
 {
-    notImplemented();
+    m_connectionToWebProcess.connection().send(Messages::SourceBufferPrivateRemote::SourceBufferPrivateDurationChanged(duration), m_identifier);
 }
 
-void RemoteSourceBufferProxy::sourceBufferPrivateDidParseSample(double)
+void RemoteSourceBufferProxy::sourceBufferPrivateDidParseSample(double sampleDuration)
 {
-    notImplemented();
+    m_connectionToWebProcess.connection().send(Messages::SourceBufferPrivateRemote::SourceBufferPrivateDidParseSample(sampleDuration), m_identifier);
 }
 
 void RemoteSourceBufferProxy::sourceBufferPrivateDidDropSample()
@@ -110,18 +129,6 @@ void RemoteSourceBufferProxy::sourceBufferPrivateStreamEndedWithDecodeError()
     notImplemented();
 }
 
-bool RemoteSourceBufferProxy::sourceBufferPrivateHasAudio() const
-{
-    notImplemented();
-    return false;
-}
-
-bool RemoteSourceBufferProxy::sourceBufferPrivateHasVideo() const
-{
-    notImplemented();
-    return false;
-}
-
 void RemoteSourceBufferProxy::sourceBufferPrivateAppendComplete(SourceBufferPrivateClient::AppendResult appendResult)
 {
     m_connectionToWebProcess.connection().send(Messages::SourceBufferPrivateRemote::SourceBufferPrivateAppendComplete(appendResult), m_identifier);
@@ -132,9 +139,56 @@ void RemoteSourceBufferProxy::sourceBufferPrivateDidReceiveRenderingError(int er
     notImplemented();
 }
 
+void RemoteSourceBufferProxy::sourceBufferPrivateBufferedDirtyChanged(bool flag)
+{
+    m_connectionToWebProcess.connection().send(Messages::SourceBufferPrivateRemote::SourceBufferPrivateBufferedDirtyChanged(flag), m_identifier);
+}
+
+void RemoteSourceBufferProxy::sourceBufferPrivateBufferedRangesChanged(const PlatformTimeRanges& timeRanges)
+{
+    m_connectionToWebProcess.connection().send(Messages::SourceBufferPrivateRemote::SourceBufferPrivateBufferedRangesChanged(timeRanges), m_identifier);
+}
+
 void RemoteSourceBufferProxy::append(const IPC::DataReference& data)
 {
     m_sourceBufferPrivate->append(data.vector());
+}
+
+void RemoteSourceBufferProxy::setActive(bool active)
+{
+    m_sourceBufferPrivate->setActive(active);
+}
+
+void RemoteSourceBufferProxy::setReadyState(WebCore::MediaPlayer::ReadyState state)
+{
+    m_sourceBufferPrivate->setReadyState(state);
+}
+
+void RemoteSourceBufferProxy::updateBufferedFromTrackBuffers(bool sourceIsEnded)
+{
+    m_sourceBufferPrivate->updateBufferedFromTrackBuffers(sourceIsEnded);
+}
+
+void RemoteSourceBufferProxy::evictCodedFrames(uint64_t newDataSize, uint64_t pendingAppendDataCapacity, uint64_t maximumBufferSize, const MediaTime& currentTime, const MediaTime& duration, bool isEnded)
+{
+    m_sourceBufferPrivate->evictCodedFrames(newDataSize, pendingAppendDataCapacity, maximumBufferSize, currentTime, duration, isEnded);
+}
+
+void RemoteSourceBufferProxy::addTrackBuffer(TrackPrivateRemoteIdentifier trackPrivateRemoteIdentifier)
+{
+    ASSERT(m_trackIds.contains(trackPrivateRemoteIdentifier));
+    ASSERT(m_mediaDescriptions.contains(trackPrivateRemoteIdentifier));
+    m_sourceBufferPrivate->addTrackBuffer(m_trackIds.get(trackPrivateRemoteIdentifier), m_mediaDescriptions.get(trackPrivateRemoteIdentifier));
+}
+
+void RemoteSourceBufferProxy::reenqueueMediaIfNeeded(const MediaTime& currentMediaTime, uint64_t pendingAppendDataCapacity, uint64_t maximumBufferSize)
+{
+    m_sourceBufferPrivate->reenqueueMediaIfNeeded(currentMediaTime, pendingAppendDataCapacity, maximumBufferSize);
+}
+
+void RemoteSourceBufferProxy::trySignalAllSamplesInTrackEnqueued()
+{
+    m_sourceBufferPrivate->trySignalAllSamplesInTrackEnqueued();
 }
 
 } // namespace WebKit

@@ -54,7 +54,7 @@ Ref<MediaSourcePrivateAVFObjC> MediaSourcePrivateAVFObjC::create(MediaPlayerPriv
 }
 
 MediaSourcePrivateAVFObjC::MediaSourcePrivateAVFObjC(MediaPlayerPrivateMediaSourceAVFObjC* parent, MediaSourcePrivateClient* client)
-    : m_player(parent)
+    : m_player(makeWeakPtr(parent))
     , m_client(client)
     , m_isEnded(false)
 #if !RELEASE_LOG_DISABLED
@@ -128,7 +128,7 @@ std::unique_ptr<PlatformTimeRanges> MediaSourcePrivateAVFObjC::buffered()
     return m_client->buffered();
 }
 
-void MediaSourcePrivateAVFObjC::durationChanged()
+void MediaSourcePrivateAVFObjC::durationChanged(const MediaTime&)
 {
     m_player->durationChanged();
 }

@@ -63,8 +63,9 @@ class SourceBufferPrivate
 {
 public:
     WEBCORE_EXPORT SourceBufferPrivate();
-    virtual ~SourceBufferPrivate() = default;
+    WEBCORE_EXPORT virtual ~SourceBufferPrivate();
 
+    virtual void setActive(bool) = 0;
     virtual void append(Vector<unsigned char>&&) = 0;
     virtual void abort() = 0;
     virtual void resetParserState() = 0;
@@ -72,40 +73,39 @@ public:
     virtual MediaPlayer::ReadyState readyState() const = 0;
     virtual void setReadyState(MediaPlayer::ReadyState) = 0;
 
-    virtual void setActive(bool) { }
     virtual bool canSwitchToType(const ContentType&) { return false; }
+
+    virtual void reenqueueMediaIfNeeded(const MediaTime& currentMediaTime, uint64_t pendingAppendDataCapacity, uint64_t maximumBufferSize);
+    virtual void addTrackBuffer(const AtomString& trackId, RefPtr<MediaDescription>&&);
+    virtual void trySignalAllSamplesInTrackEnqueued();
+    WEBCORE_EXPORT virtual void updateBufferedFromTrackBuffers(bool sourceIsEnded);
+    WEBCORE_EXPORT virtual void evictCodedFrames(uint64_t newDataSize, uint64_t pendingAppendDataCapacity, uint64_t maximumBufferSize, const MediaTime& currentTime, const MediaTime& duration, bool isEnded);
 
     void setClient(SourceBufferPrivateClient* client) { m_client = client; }
     void setIsAttached(bool flag) { m_isAttached = flag; }
-    void setCurrentTimeFudgeFactor(const MediaTime& time) { m_currentTimeFudgeFactor = time; }
+    bool hasAudio() const { return m_hasAudio; }
+    bool hasVideo() const { return m_hasVideo; }
     void setAppendWindowStart(const MediaTime& appendWindowStart) { m_appendWindowStart = appendWindowStart;}
     void setAppendWindowEnd(const MediaTime& appendWindowEnd) { m_appendWindowEnd = appendWindowEnd; }
     bool bufferFull() const { return m_bufferFull; }
-    TimeRanges* buffered() const { return m_buffered.get(); }
-    bool isBufferedDirty() const { return m_bufferedDirty; }
-    void setBufferedDirty(bool flag) { m_bufferedDirty = flag; }
+
+    void setBufferedDirty(bool);
     void resetTrackBuffers();
     void clearTrackBuffers();
     void resetTimestampOffsetInTrackBuffers();
     MediaTime timestampOffset() const { return m_timestampOffset; }
     void setTimestampOffset(const MediaTime& timestampOffset) { m_timestampOffset = timestampOffset; }
     MediaTime highestPresentationTimestamp() const;
-    void updateBufferedFromTrackBuffers(bool sourceIsEnded);
     void seekToTime(const MediaTime&);
-    void trySignalAllSamplesInTrackEnqueued();
     void startChangingType() { m_pendingInitializationSegmentForChangeType = true; }
-
-    void reenqueueMediaIfNeeded(const MediaTime& currentMediaTime, size_t pendingAppendDataCapacity, size_t maximumBufferSize);
     void removeCodedFrames(const MediaTime& start, const MediaTime& end, const MediaTime& currentMediaTime, bool isEnded);
-    void evictCodedFrames(size_t newDataSize, size_t pendingAppendDataCapacity, size_t maximumBufferSize, const MediaTime& currentTime, const MediaTime& duration, bool isEnded);
-    void addTrackBuffer(const AtomString& trackId, RefPtr<MediaDescription>);
     void updateTrackIds(Vector<std::pair<AtomString, AtomString>>&& trackIdPairs);
     void setAllTrackBuffersNeedRandomAccess();
     void setShouldGenerateTimestamps(bool flag) { m_shouldGenerateTimestamps = flag; }
     void setMode(SourceBufferAppendMode mode) { m_appendMode = mode; }
     void setGroupStartTimestamp(const MediaTime& mediaTime) { m_groupStartTimestamp = mediaTime; }
     void setGroupStartTimestampToEndTimestamp() { m_groupStartTimestamp = m_groupEndTimestamp; }
-    size_t totalTrackBufferSizeInBytes() const;
+    uint64_t totalTrackBufferSizeInBytes() const;
 
     struct TrackBuffer {
         MediaTime lastDecodeTimestamp;
@@ -134,7 +134,7 @@ public:
     virtual Vector<String> enqueuedSamplesForTrackID(const AtomString&) { return { }; }
     Vector<String> bufferedSamplesForTrackID(const AtomString&);
     virtual MediaTime minimumUpcomingPresentationTimeForTrackID(const AtomString&) { return MediaTime::invalidTime(); }
-    virtual void setMaximumQueueDepthForTrackID(const AtomString&, size_t) { }
+    virtual void setMaximumQueueDepthForTrackID(const AtomString&, uint64_t) { }
     MediaTime fastSeekTimeForMediaTime(const MediaTime& targetTime, const MediaTime& negativeThreshold, const MediaTime& positiveThreshold);
 
 #if !RELEASE_LOG_DISABLED
@@ -143,6 +143,7 @@ public:
 #endif
 
 protected:
+    virtual MediaTime timeFudgeFactor() const { return {2002, 24000}; }
     virtual bool isActive() const { return false; }
     virtual bool isSeeking() const { return false; }
     virtual MediaTime currentMediaTime() const { return { }; }
@@ -157,8 +158,9 @@ protected:
     virtual void setMinimumUpcomingPresentationTime(const AtomString&, const MediaTime&) { }
     virtual void clearMinimumUpcomingPresentationTime(const AtomString&) { }
 
+    void appendCompleted(bool parsingSucceeded, bool isEnded);
     void reenqueSamples(const AtomString& trackID);
-    void didReceiveInitializationSegment(const SourceBufferPrivateClient::InitializationSegment&);
+    void didReceiveInitializationSegment(SourceBufferPrivateClient::InitializationSegment&&, CompletionHandler<void()>&&);
     void didReceiveSample(MediaSample&);
     void provideMediaData(const AtomString& trackID);
 
@@ -169,11 +171,13 @@ private:
     void reenqueueMediaForTime(TrackBuffer&, const AtomString& trackID, const MediaTime&);
     bool validateInitializationSegment(const SourceBufferPrivateClient::InitializationSegment&);
     void provideMediaData(TrackBuffer&, const AtomString& trackID);
+    void setBufferedRanges(const PlatformTimeRanges&);
 
     bool m_isAttached { false };
+    bool m_hasAudio { false };
+    bool m_hasVideo { false };
 
     HashMap<AtomString, TrackBuffer> m_trackBufferMap;
-    MediaTime m_currentTimeFudgeFactor;
 
     SourceBufferAppendMode m_appendMode { SourceBufferAppendMode::Segments };
 
@@ -190,7 +194,6 @@ private:
 
     bool m_bufferFull { false };
     RefPtr<TimeRanges> m_buffered;
-    bool m_bufferedDirty { true };
 };
 
 } // namespace WebCore

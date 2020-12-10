@@ -30,6 +30,7 @@
 #include "MediaPlayerEnums.h"
 #include "SourceBufferPrivateClient.h"
 #include <JavaScriptCore/Uint8Array.h>
+#include <wtf/CompletionHandler.h>
 #include <wtf/RefCounted.h>
 
 namespace WTF {
@@ -69,7 +70,7 @@ public:
 
     // Will be called on the main thread.
     using InitializationSegment = SourceBufferPrivateClient::InitializationSegment;
-    using DidParseInitializationDataCallback = WTF::Function<void(InitializationSegment&&)>;
+    using DidParseInitializationDataCallback = WTF::Function<void(InitializationSegment&&, CompletionHandler<void()>&&)>;
     void setDidParseInitializationDataCallback(DidParseInitializationDataCallback&& callback)
     {
         m_didParseInitializationDataCallback = WTFMove(callback);

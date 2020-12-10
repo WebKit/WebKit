@@ -96,7 +96,7 @@ public:
     ExceptionOr<void> remove(const MediaTime&, const MediaTime&);
     ExceptionOr<void> changeType(const String&);
 
-    const TimeRanges& bufferedInternal() const { ASSERT(m_private->buffered()); return *m_private->buffered(); }
+    const TimeRanges& bufferedInternal() const { ASSERT(m_buffered); return *m_buffered; }
 
     void abortIfUpdating();
     void removedFromMediaSource();
@@ -148,15 +148,15 @@ private:
     bool virtualHasPendingActivity() const final;
 
     // SourceBufferPrivateClient
-    void sourceBufferPrivateDidReceiveInitializationSegment(const InitializationSegment&) final;
+    void sourceBufferPrivateDidReceiveInitializationSegment(InitializationSegment&&, CompletionHandler<void()>&&) final;
+    void sourceBufferPrivateStreamEndedWithDecodeError() final;
     void sourceBufferPrivateAppendError(bool decodeError) final;
+    void sourceBufferPrivateAppendComplete(AppendResult) final;
     void sourceBufferPrivateDurationChanged(const MediaTime& duration) final;
     void sourceBufferPrivateDidParseSample(double sampleDuration) final;
     void sourceBufferPrivateDidDropSample() final;
-    void sourceBufferPrivateStreamEndedWithDecodeError() final;
-    bool sourceBufferPrivateHasAudio() const final;
-    bool sourceBufferPrivateHasVideo() const final;
-    void sourceBufferPrivateAppendComplete(AppendResult) final;
+    void sourceBufferPrivateBufferedDirtyChanged(bool) final;
+    void sourceBufferPrivateBufferedRangesChanged(const PlatformTimeRanges&) final;
     void sourceBufferPrivateDidReceiveRenderingError(int errorCode) final;
 
     // AudioTrackClient
@@ -185,13 +185,13 @@ private:
 
     bool validateInitializationSegment(const InitializationSegment&);
 
-    size_t maximumBufferSize() const;
+    uint64_t maximumBufferSize() const;
 
     void monitorBufferingRate();
 
     void removeTimerFired();
 
-    size_t extraMemoryCost() const;
+    uint64_t extraMemoryCost() const;
     void reportExtraMemoryAllocated();
 
     void appendError(bool);
@@ -204,7 +204,7 @@ private:
     WEBCORE_EXPORT Vector<String> bufferedSamplesForTrackID(const AtomString&);
     WEBCORE_EXPORT Vector<String> enqueuedSamplesForTrackID(const AtomString&);
     WEBCORE_EXPORT MediaTime minimumUpcomingPresentationTimeForTrackID(const AtomString&);
-    WEBCORE_EXPORT void setMaximumQueueDepthForTrackID(const AtomString&, size_t);
+    WEBCORE_EXPORT void setMaximumQueueDepthForTrackID(const AtomString&, uint64_t);
 
     Ref<SourceBufferPrivate> m_private;
     MediaSource* m_source;
@@ -231,8 +231,10 @@ private:
     MonotonicTime m_timeOfBufferingMonitor;
     double m_bufferedSinceLastMonitor { 0 };
     double m_averageBufferRate { 0 };
+    bool m_bufferedDirty { true };
+    RefPtr<TimeRanges> m_buffered;
 
-    size_t m_reportedExtraMemoryCost { 0 };
+    uint64_t m_reportedExtraMemoryCost { 0 };
 
     MediaTime m_pendingRemoveStart;
     MediaTime m_pendingRemoveEnd;

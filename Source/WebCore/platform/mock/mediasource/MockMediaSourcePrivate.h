@@ -80,8 +80,9 @@ private:
 
     // MediaSourcePrivate Overrides
     AddStatus addSourceBuffer(const ContentType&, RefPtr<SourceBufferPrivate>&) override;
-    void durationChanged() override;
+    void durationChanged(const MediaTime&) override;
     void markEndOfStream(EndOfStreamStatus) override;
+    bool isEnded() const override { return m_isEnded; }
     void unmarkEndOfStream() override;
     MediaPlayer::ReadyState readyState() const override;
     void setReadyState(MediaPlayer::ReadyState) override;

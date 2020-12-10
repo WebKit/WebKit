@@ -56,9 +56,10 @@ public:
 
     // MediaSourcePrivate overrides
     AddStatus addSourceBuffer(const WebCore::ContentType&, RefPtr<WebCore::SourceBufferPrivate>&) final;
-    void durationChanged() final;
+    void durationChanged(const MediaTime&) final;
     void markEndOfStream(EndOfStreamStatus) final;
     void unmarkEndOfStream() final;
+    bool isEnded() const final;
     WebCore::MediaPlayer::ReadyState readyState() const final;
     void setReadyState(WebCore::MediaPlayer::ReadyState) final;
     void waitForSeekCompleted() final;
@@ -78,6 +79,8 @@ private:
     WeakPtr<MediaPlayerPrivateRemote> m_mediaPlayerPrivate;
     RefPtr<WebCore::MediaSourcePrivateClient> m_client;
     Vector<RefPtr<SourceBufferPrivateRemote>> m_sourceBuffers;
+
+    MediaTime m_duration;
 
 #if !RELEASE_LOG_DISABLED
     const char* logClassName() const override { return "MediaSourcePrivateRemote"; }

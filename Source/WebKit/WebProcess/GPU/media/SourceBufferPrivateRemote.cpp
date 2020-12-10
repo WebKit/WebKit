@@ -35,6 +35,7 @@
 #include "RemoteSourceBufferProxyMessages.h"
 #include "SourceBufferPrivateRemoteMessages.h"
 #include <WebCore/NotImplemented.h>
+#include <WebCore/PlatformTimeRanges.h>
 #include <WebCore/SourceBufferPrivateClient.h>
 #include <wtf/Ref.h>
 
@@ -100,17 +101,15 @@ MediaPlayer::ReadyState SourceBufferPrivateRemote::readyState() const
     return m_mediaPlayerPrivate ? m_mediaPlayerPrivate->readyState() : MediaPlayer::ReadyState::HaveNothing;
 }
 
-void SourceBufferPrivateRemote::setReadyState(MediaPlayer::ReadyState)
+void SourceBufferPrivateRemote::setReadyState(MediaPlayer::ReadyState state)
 {
-    notImplemented();
+    if (!m_mediaSourcePrivate)
+        return;
+
+    m_gpuProcessConnection.connection().send(Messages::RemoteSourceBufferProxy::SetReadyState(state), m_remoteSourceBufferIdentifier);
 }
 
 void SourceBufferPrivateRemote::flush(const AtomString& trackID)
-{
-    notImplemented();
-}
-
-void SourceBufferPrivateRemote::enqueueSample(Ref<MediaSample>&&, const AtomString& trackID)
 {
     notImplemented();
 }
@@ -120,9 +119,13 @@ bool SourceBufferPrivateRemote::isReadyForMoreSamples(const AtomString& trackID)
     return false;
 }
 
-void SourceBufferPrivateRemote::setActive(bool)
+void SourceBufferPrivateRemote::setActive(bool active)
 {
-    notImplemented();
+    if (!m_mediaSourcePrivate)
+        return;
+
+    m_isActive = active;
+    m_gpuProcessConnection.connection().send(Messages::RemoteSourceBufferProxy::SetActive(active), m_remoteSourceBufferIdentifier);
 }
 
 void SourceBufferPrivateRemote::notifyClientWhenReadyForMoreSamples(const AtomString& trackID)
@@ -151,7 +154,36 @@ bool SourceBufferPrivateRemote::canSwitchToType(const ContentType&)
     return false;
 }
 
-void SourceBufferPrivateRemote::sourceBufferPrivateDidReceiveInitializationSegment(InitializationSegmentInfo&& segmentInfo)
+void SourceBufferPrivateRemote::updateBufferedFromTrackBuffers(bool sourceIsEnded)
+{
+    if (!m_mediaSourcePrivate)
+        return;
+
+    m_gpuProcessConnection.connection().send(Messages::RemoteSourceBufferProxy::UpdateBufferedFromTrackBuffers(sourceIsEnded), m_remoteSourceBufferIdentifier);
+}
+
+void SourceBufferPrivateRemote::evictCodedFrames(uint64_t newDataSize, uint64_t pendingAppendDataCapacity, uint64_t maximumBufferSize, const MediaTime& currentTime, const MediaTime& duration, bool isEnded)
+{
+    m_gpuProcessConnection.connection().send(Messages::RemoteSourceBufferProxy::EvictCodedFrames(newDataSize, pendingAppendDataCapacity, maximumBufferSize, currentTime, duration, isEnded), m_remoteSourceBufferIdentifier);
+}
+
+void SourceBufferPrivateRemote::addTrackBuffer(const AtomString& trackId, RefPtr<MediaDescription>&&)
+{
+    ASSERT(m_trackIdentifierMap.contains(trackId));
+    m_gpuProcessConnection.connection().send(Messages::RemoteSourceBufferProxy::AddTrackBuffer(m_trackIdentifierMap.get(trackId)), m_remoteSourceBufferIdentifier);
+}
+
+void SourceBufferPrivateRemote::reenqueueMediaIfNeeded(const MediaTime& currentMediaTime, uint64_t pendingAppendDataCapacity, uint64_t maximumBufferSize)
+{
+    m_gpuProcessConnection.connection().send(Messages::RemoteSourceBufferProxy::ReenqueueMediaIfNeeded(currentMediaTime, pendingAppendDataCapacity, maximumBufferSize), m_remoteSourceBufferIdentifier);
+}
+
+void SourceBufferPrivateRemote::trySignalAllSamplesInTrackEnqueued()
+{
+    m_gpuProcessConnection.connection().send(Messages::RemoteSourceBufferProxy::TrySignalAllSamplesInTrackEnqueued(), m_remoteSourceBufferIdentifier);
+}
+
+void SourceBufferPrivateRemote::sourceBufferPrivateDidReceiveInitializationSegment(InitializationSegmentInfo&& segmentInfo, CompletionHandler<void()>&& completionHandler)
 {
     if (!m_client || !m_mediaPlayerPrivate)
         return;
@@ -164,6 +196,7 @@ void SourceBufferPrivateRemote::sourceBufferPrivateDidReceiveInitializationSegme
         info.track = m_mediaPlayerPrivate->audioTrackPrivateRemote(audioTrack.identifier);
         info.description = RemoteMediaDescription::create(audioTrack.description);
         segment.audioTracks.append(info);
+        m_trackIdentifierMap.add(info.track->id(), audioTrack.identifier);
     }
 
     for (auto& videoTrack : segmentInfo.videoTracks) {
@@ -171,6 +204,7 @@ void SourceBufferPrivateRemote::sourceBufferPrivateDidReceiveInitializationSegme
         info.track = m_mediaPlayerPrivate->videoTrackPrivateRemote(videoTrack.identifier);
         info.description = RemoteMediaDescription::create(videoTrack.description);
         segment.videoTracks.append(info);
+        m_trackIdentifierMap.add(info.track->id(), videoTrack.identifier);
     }
 
     for (auto& textTrack : segmentInfo.textTracks) {
@@ -178,15 +212,40 @@ void SourceBufferPrivateRemote::sourceBufferPrivateDidReceiveInitializationSegme
         info.track = m_mediaPlayerPrivate->textTrackPrivateRemote(textTrack.identifier);
         info.description = RemoteMediaDescription::create(textTrack.description);
         segment.textTracks.append(info);
+        m_trackIdentifierMap.add(info.track->id(), textTrack.identifier);
     }
 
-    m_client->sourceBufferPrivateDidReceiveInitializationSegment(WTFMove(segment));
+    m_client->sourceBufferPrivateDidReceiveInitializationSegment(WTFMove(segment), WTFMove(completionHandler));
 }
 
 void SourceBufferPrivateRemote::sourceBufferPrivateAppendComplete(SourceBufferPrivateClient::AppendResult appendResult)
 {
     if (m_client)
         m_client->sourceBufferPrivateAppendComplete(appendResult);
+}
+
+void SourceBufferPrivateRemote::sourceBufferPrivateDurationChanged(const MediaTime& duration)
+{
+    if (m_client)
+        m_client->sourceBufferPrivateDurationChanged(duration);
+}
+
+void SourceBufferPrivateRemote::sourceBufferPrivateDidParseSample(double sampleDuration)
+{
+    if (m_client)
+        m_client->sourceBufferPrivateDidParseSample(sampleDuration);
+}
+
+void SourceBufferPrivateRemote::sourceBufferPrivateBufferedDirtyChanged(bool dirty)
+{
+    if (m_client)
+        m_client->sourceBufferPrivateBufferedDirtyChanged(dirty);
+}
+
+void SourceBufferPrivateRemote::sourceBufferPrivateBufferedRangesChanged(const WebCore::PlatformTimeRanges& timeRanges)
+{
+    if (m_client)
+        m_client->sourceBufferPrivateBufferedRangesChanged(timeRanges);
 }
 
 #if !RELEASE_LOG_DISABLED

@@ -124,6 +124,7 @@ void MediaSource::setPrivateAndOpen(Ref<MediaSourcePrivate>&& mediaSourcePrivate
     ASSERT(!m_private);
     ASSERT(m_mediaElement);
     m_private = WTFMove(mediaSourcePrivate);
+    m_private->setTimeFudgeFactor(currentTimeFudgeFactor());
 
     // 2.4.1 Attaching to a media element
     // https://rawgit.com/w3c/media-source/45627646344eea0170dd1cbc5a3d508ca751abb8/media-source-respec.html#mediasource-attach
@@ -556,7 +557,7 @@ ExceptionOr<void> MediaSource::setDurationInternal(const MediaTime& duration)
     ALWAYS_LOG(LOGIDENTIFIER, duration);
 
     // 6. Update the media duration to new duration and run the HTMLMediaElement duration change algorithm.
-    m_private->durationChanged();
+    m_private->durationChanged(duration);
 
     return { };
 }
@@ -628,6 +629,7 @@ void MediaSource::streamEndedWithError(Optional<EndOfStreamError> error)
             sourceBuffer->trySignalAllSamplesEnqueued();
         m_private->markEndOfStream(MediaSourcePrivate::EosNoError);
     } else if (error == EndOfStreamError::Network) {
+        m_private->markEndOfStream(MediaSourcePrivate::EosNetworkError);
         // ↳ If error is set to "network"
         ASSERT(m_mediaElement);
         if (m_mediaElement->readyState() == HTMLMediaElement::HAVE_NOTHING) {
@@ -646,6 +648,8 @@ void MediaSource::streamEndedWithError(Optional<EndOfStreamError> error)
     } else {
         // ↳ If error is set to "decode"
         ASSERT(error == EndOfStreamError::Decode);
+        m_private->markEndOfStream(MediaSourcePrivate::EosDecodeError);
+
         ASSERT(m_mediaElement);
         if (m_mediaElement->readyState() == HTMLMediaElement::HAVE_NOTHING) {
             //  ↳ If the HTMLMediaElement.readyState attribute equals HAVE_NOTHING

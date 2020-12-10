@@ -26,7 +26,14 @@
 #if ENABLE(GPU_PROCESS) && ENABLE(MEDIA_SOURCE)
 
 messages -> RemoteSourceBufferProxy NotRefCounted {
+    SetActive(bool active)
     Append(IPC::DataReference data)
+    SetReadyState(WebCore::MediaPlayer::ReadyState state)
+    UpdateBufferedFromTrackBuffers(bool sourceIsEnded)
+    EvictCodedFrames(uint64_t newDataSize, uint64_t pendingAppendDataCapacity, uint64_t maximumBufferSize, MediaTime currentTime, MediaTime duration, bool isEnded)
+    AddTrackBuffer(WebKit::TrackPrivateRemoteIdentifier trackId)
+    ReenqueueMediaIfNeeded(MediaTime currentMediaTime, uint64_t pendingAppendDataCapacity, uint64_t maximumBufferSize)
+    TrySignalAllSamplesInTrackEnqueued()
 }
 
 #endif

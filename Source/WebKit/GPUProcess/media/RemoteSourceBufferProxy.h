@@ -31,6 +31,8 @@
 #include "GPUConnectionToWebProcess.h"
 #include "MessageReceiver.h"
 #include "RemoteSourceBufferIdentifier.h"
+#include "TrackPrivateRemoteIdentifier.h"
+#include <WebCore/MediaDescription.h>
 #include <WebCore/SourceBufferPrivate.h>
 #include <WebCore/SourceBufferPrivateClient.h>
 #include <wtf/Ref.h>
@@ -43,10 +45,12 @@ class Decoder;
 
 namespace WebCore {
 class MediaSample;
+class PlatformTimeRanges;
 }
 
 namespace WebKit {
 
+struct MediaDescriptionInfo;
 class RemoteMediaPlayerProxy;
 
 class RemoteSourceBufferProxy final
@@ -58,16 +62,16 @@ public:
     static Ref<RemoteSourceBufferProxy> create(GPUConnectionToWebProcess&, RemoteSourceBufferIdentifier, Ref<WebCore::SourceBufferPrivate>&&, RemoteMediaPlayerProxy&);
     virtual ~RemoteSourceBufferProxy();
 
-    void sourceBufferPrivateDidReceiveInitializationSegment(const InitializationSegment&) final;
+    void sourceBufferPrivateDidReceiveInitializationSegment(InitializationSegment&&, CompletionHandler<void()>&&) final;
+    void sourceBufferPrivateStreamEndedWithDecodeError() final;
     void sourceBufferPrivateAppendError(bool decodeError) final;
+    void sourceBufferPrivateAppendComplete(WebCore::SourceBufferPrivateClient::AppendResult) final;
     void sourceBufferPrivateDurationChanged(const MediaTime&) final;
     void sourceBufferPrivateDidParseSample(double sampleDuration) final;
     void sourceBufferPrivateDidDropSample() final;
-    void sourceBufferPrivateStreamEndedWithDecodeError() final;
-    bool sourceBufferPrivateHasAudio() const final;
-    bool sourceBufferPrivateHasVideo() const final;
+    void sourceBufferPrivateBufferedDirtyChanged(bool) final;
+    void sourceBufferPrivateBufferedRangesChanged(const WebCore::PlatformTimeRanges&) final;
 
-    void sourceBufferPrivateAppendComplete(WebCore::SourceBufferPrivateClient::AppendResult) final;
     void sourceBufferPrivateDidReceiveRenderingError(int errorCode) final;
 
 private:
@@ -77,12 +81,22 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
     // void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&) final;
 
+    void setActive(bool);
     void append(const IPC::DataReference&);
+    void setReadyState(WebCore::MediaPlayer::ReadyState);
+    void updateBufferedFromTrackBuffers(bool sourceIsEnded);
+    void evictCodedFrames(uint64_t newDataSize, uint64_t pendingAppendDataCapacity, uint64_t maximumBufferSize, const MediaTime& currentTime, const MediaTime& duration, bool isEnded);
+    void addTrackBuffer(TrackPrivateRemoteIdentifier);
+    void reenqueueMediaIfNeeded(const MediaTime& currentMediaTime, uint64_t pendingAppendDataCapacity, uint64_t maximumBufferSize);
+    void trySignalAllSamplesInTrackEnqueued();
 
     GPUConnectionToWebProcess& m_connectionToWebProcess;
     RemoteSourceBufferIdentifier m_identifier;
     Ref<WebCore::SourceBufferPrivate> m_sourceBufferPrivate;
     WeakPtr<RemoteMediaPlayerProxy> m_remoteMediaPlayerProxy;
+
+    HashMap<TrackPrivateRemoteIdentifier, AtomString> m_trackIds;
+    HashMap<TrackPrivateRemoteIdentifier, Ref<WebCore::MediaDescription>> m_mediaDescriptions;
 };
 
 } // namespace WebKit

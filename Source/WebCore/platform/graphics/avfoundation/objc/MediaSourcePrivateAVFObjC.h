@@ -62,14 +62,15 @@ public:
     static Ref<MediaSourcePrivateAVFObjC> create(MediaPlayerPrivateMediaSourceAVFObjC*, MediaSourcePrivateClient*);
     virtual ~MediaSourcePrivateAVFObjC();
 
-    MediaPlayerPrivateMediaSourceAVFObjC* player() const { return m_player; }
+    MediaPlayerPrivateMediaSourceAVFObjC* player() const { return m_player.get(); }
     const Vector<RefPtr<SourceBufferPrivateAVFObjC>>& sourceBuffers() const { return m_sourceBuffers; }
     const Vector<SourceBufferPrivateAVFObjC*>& activeSourceBuffers() const { return m_activeSourceBuffers; }
 
     AddStatus addSourceBuffer(const ContentType&, RefPtr<SourceBufferPrivate>&) override;
-    void durationChanged() override;
+    void durationChanged(const MediaTime&) override;
     void markEndOfStream(EndOfStreamStatus) override;
     void unmarkEndOfStream() override;
+    bool isEnded() const override { return m_isEnded; }
     MediaPlayer::ReadyState readyState() const override;
     void setReadyState(MediaPlayer::ReadyState) override;
     void waitForSeekCompleted() override;
@@ -129,7 +130,7 @@ private:
 
     friend class SourceBufferPrivateAVFObjC;
 
-    MediaPlayerPrivateMediaSourceAVFObjC* m_player;
+    WeakPtr<MediaPlayerPrivateMediaSourceAVFObjC> m_player;
     RefPtr<MediaSourcePrivateClient> m_client;
     Vector<RefPtr<SourceBufferPrivateAVFObjC>> m_sourceBuffers;
     Vector<SourceBufferPrivateAVFObjC*> m_activeSourceBuffers;

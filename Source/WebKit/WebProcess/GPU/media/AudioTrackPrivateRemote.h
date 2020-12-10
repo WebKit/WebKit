@@ -48,6 +48,7 @@ public:
         return adoptRef(*new AudioTrackPrivateRemote(connection, idendifier, WTFMove(configuration)));
     }
 
+    AtomString id() const final { return m_id; }
     void updateConfiguration(TrackPrivateRemoteConfiguration&&);
 
 private:
@@ -55,7 +56,6 @@ private:
 
     using AudioTrackKind = WebCore::AudioTrackPrivate::Kind;
     AudioTrackKind kind() const final { return m_kind; }
-    AtomString id() const final { return m_id; }
     AtomString label() const final { return m_label; }
     AtomString language() const final { return m_language; }
     int trackIndex() const final { return m_trackIndex; }

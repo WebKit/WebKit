@@ -93,7 +93,7 @@ void MediaSourcePrivateGStreamer::removeSourceBuffer(SourceBufferPrivate* source
     m_activeSourceBuffers.remove(sourceBufferPrivateGStreamer.get());
 }
 
-void MediaSourcePrivateGStreamer::durationChanged()
+void MediaSourcePrivateGStreamer::durationChanged(const MediaTime&)
 {
     ASSERT(isMainThread());
 
@@ -109,11 +109,13 @@ void MediaSourcePrivateGStreamer::markEndOfStream(EndOfStreamStatus status)
 {
     ASSERT(isMainThread());
     m_playerPrivate.markEndOfStream(status);
+    m_isEnded = true;
 }
 
 void MediaSourcePrivateGStreamer::unmarkEndOfStream()
 {
     notImplemented();
+    m_isEnded = false;
 }
 
 MediaPlayer::ReadyState MediaSourcePrivateGStreamer::readyState() const

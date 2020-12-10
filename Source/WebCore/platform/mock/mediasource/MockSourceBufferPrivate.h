@@ -46,9 +46,6 @@ public:
 
     void clearMediaSource() { m_mediaSource = nullptr; }
 
-    bool hasVideo() const;
-    bool hasAudio() const;
-
 private:
     explicit MockSourceBufferPrivate(MockMediaSourcePrivate*);
 
@@ -75,7 +72,7 @@ private:
 
     Vector<String> enqueuedSamplesForTrackID(const AtomString&) final;
     MediaTime minimumUpcomingPresentationTimeForTrackID(const AtomString&) final;
-    void setMaximumQueueDepthForTrackID(const AtomString&, size_t) final;
+    void setMaximumQueueDepthForTrackID(const AtomString&, uint64_t) final;
 
     void didReceiveInitializationSegment(const MockInitializationBox&);
     void didReceiveSample(const MockSampleBox&);
@@ -94,7 +91,7 @@ private:
     bool m_isActive { false };
     MediaTime m_minimumUpcomingPresentationTime;
     Vector<String> m_enqueuedSamples;
-    Optional<size_t> m_maxQueueDepth;
+    Optional<uint64_t> m_maxQueueDepth;
     Vector<char> m_inputBuffer;
 
 #if !RELEASE_LOG_DISABLED

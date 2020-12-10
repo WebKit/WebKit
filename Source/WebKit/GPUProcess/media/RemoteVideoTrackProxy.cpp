@@ -60,7 +60,7 @@ TrackPrivateRemoteConfiguration& RemoteVideoTrackProxy::configuration()
 {
     static NeverDestroyed<TrackPrivateRemoteConfiguration> configuration;
 
-    configuration->identifier = m_trackPrivate->id();
+    configuration->trackId = m_trackPrivate->id();
     configuration->label = m_trackPrivate->label();
     configuration->language = m_trackPrivate->language();
     configuration->trackIndex = m_trackPrivate->trackIndex();

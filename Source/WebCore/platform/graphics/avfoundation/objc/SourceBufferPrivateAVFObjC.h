@@ -91,9 +91,7 @@ public:
     void willProvideContentKeyRequestInitializationDataForTrackID(uint64_t trackID);
     void didProvideContentKeyRequestInitializationDataForTrackID(Ref<Uint8Array>&&, uint64_t trackID, Box<BinarySemaphore>);
 
-    bool hasVideo() const;
     bool hasSelectedVideo() const;
-    bool hasAudio() const;
 
     void trackDidChangeSelected(VideoTrackPrivate&, bool selected);
     void trackDidChangeEnabled(AudioTrackPrivate&, bool enabled);
@@ -140,7 +138,7 @@ private:
     explicit SourceBufferPrivateAVFObjC(MediaSourcePrivateAVFObjC*, Ref<SourceBufferParser>&&);
 
     using InitializationSegment = SourceBufferPrivateClient::InitializationSegment;
-    void didParseInitializationData(InitializationSegment&&);
+    void didParseInitializationData(InitializationSegment&&, CompletionHandler<void()>&&);
     void didEncounterErrorDuringParsing(int32_t);
     void didProvideMediaDataForTrackID(Ref<MediaSample>&&, uint64_t trackID, const String& mediaType);
 
@@ -154,6 +152,7 @@ private:
     void flush(const AtomString& trackID) final;
     void enqueueSample(Ref<MediaSample>&&, const AtomString& trackID) final;
     bool isReadyForMoreSamples(const AtomString& trackID) final;
+    MediaTime timeFudgeFactor() const final;
     void setActive(bool) final;
     bool isActive() const final;
     void notifyClientWhenReadyForMoreSamples(const AtomString& trackID) final;
