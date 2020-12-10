@@ -36,6 +36,7 @@ BUILD_DIRECTORIES=()
 REFERENCES=("X")
 CURRENT_API=()
 UPCOMING_API=()
+ARCHS=${ARCHS:-$(uname -m)}
 
 shouldBuild=true
 runReferences=true
@@ -146,11 +147,12 @@ buildBenchmark() {
         return
     fi
 
-    log "Building $BENCHMARK_NAME..."
-    xcodebuild -project "$project" -target "$BENCHMARK_NAME" -configuration Release build
+    log "Building $BENCHMARK_NAME... (FRAMEWORK_SEARCH_PATHS='$BUILD_DIRECTORY')"
+    xcodebuild -project "$project" -target "$BENCHMARK_NAME" -configuration Release build "FRAMEWORK_SEARCH_PATHS='$BUILD_DIRECTORY'" "ARCHS='$ARCHS'"
 }
 
 build() {
+    BUILD_DIRECTORY=$1
     forEachBenchmark "buildBenchmark"
 }
 
@@ -223,7 +225,7 @@ printResults() {
     fi
 
     local score count
-    score=1
+    score=0
     count=0
     
     printCategory() {
@@ -237,12 +239,12 @@ printResults() {
             avg=$(computeAverage "$benchmarkID")
             printAverage "$benchmarkID" "$avg"
             count=$((count + 1))
-            score=$((score * avg))
+            score=$(echo "$score" "$avg" | awk '{print ($1 + log($2)) }')
         done
     }
     printCategory "CURRENT_API"
     printCategory "UPCOMING_API"
-    score=$(echo "$score" "$count" | awk '{ print(5000.0 / ($1.0 ^ (1.0 / $2))) }')
+    score=$(echo "$score" "$count" | awk '{ print(5000.0 / exp($1 / $2)) }')
 
     echo ""
     echo "Score: $score"
@@ -265,11 +267,11 @@ run() {
 main() {
     collectFlags "$@"
     collectBenchmarks
-    if [ "$shouldBuild" == true ]; then
-        build
-    fi
-
     for buildDirectory in "${BUILD_DIRECTORIES[@]}"; do
+        if [ "$shouldBuild" == true ]; then
+            build "$buildDirectory"
+        fi
+
         run "$buildDirectory"
     done
 }

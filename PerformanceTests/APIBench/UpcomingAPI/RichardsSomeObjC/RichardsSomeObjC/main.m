@@ -24,6 +24,7 @@
 */
 
 #import <Foundation/Foundation.h>
+#import <JavaScriptCore/JSLockRefPrivate.h>
 #import <JavaScriptCore/JavaScriptCore.h>
 #import <QuartzCore/QuartzCore.h>
 
@@ -93,7 +94,7 @@ int main()
     JSContext *context = [[JSContext alloc] init];
     if (!context)
         exit(1);
-
+    JSLock(context.JSGlobalContextRef);
     [context setObject:WorkerTask.self forKeyedSubscript:@"WorkerTask"];
     [context setExceptionHandler:^(JSContext *context, JSValue *exception) {
         NSLog(@"%@", exception.toString);

@@ -23,40 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-import JavaScriptCore
+#pragma once
 
-class WorkerTask : Task {
-    private var js : JSValue
-
-    private static let context : JSContext = {
-        let context = JSContext()!
-        let source = try! String(contentsOfFile: "richards.js")
-        JSLock(context.jsGlobalContextRef)
-        context.evaluateScript(source)
-        context.exceptionHandler = { context, exception in
-            print(exception!.toString()!)
-            exit(2)
-        }
-        return context
-    }()
-    private static let constructor : JSValue = {
-        return context.objectForKeyedSubscript("createWorkerTask").call(withArguments: [Device.A.rawValue, Device.B.rawValue, WorkPacket.SIZE])
-    }()
-
-    static func create(scheduler: Scheduler, priority: Priority, queue: Packet)
-    {
-        let task = WorkerTask(scheduler: scheduler, priority: priority, queue: queue)
-        scheduler.add(task: task)
-    }
-
-    override func run(packet: Packet?) -> Task?
-    {
-        return self.js.invokeMethod("run", withArguments: [packet]).toObject() as! Task?
-    }
-
-    private init(scheduler: Scheduler, priority: Priority, queue: Packet)
-    {
-        self.js = WorkerTask.constructor.construct(withArguments: [scheduler])
-        super.init(scheduler: scheduler, priority: priority, queue: queue)
-    }
-}
+#include <JavaScriptCore/JSLockRefPrivate.h>

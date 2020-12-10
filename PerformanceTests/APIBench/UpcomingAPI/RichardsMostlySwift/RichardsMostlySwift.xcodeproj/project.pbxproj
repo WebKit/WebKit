@@ -44,6 +44,7 @@
 		140AAC3F249B01D10001F11E /* DeviceTask.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeviceTask.swift; sourceTree = "<group>"; };
 		1415AD222499BC5C005BB2E4 /* RichardsMostlySwift */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = RichardsMostlySwift; sourceTree = BUILT_PRODUCTS_DIR; };
 		1415AD252499BC5C005BB2E4 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		145087E92580581900D94197 /* BridgingHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BridgingHeader.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -76,6 +77,7 @@
 		1415AD242499BC5C005BB2E4 /* RichardsMostlySwift */ = {
 			isa = PBXGroup;
 			children = (
+				145087E92580581900D94197 /* BridgingHeader.h */,
 				140AAC3F249B01D10001F11E /* DeviceTask.swift */,
 				140AAC3D249B01D10001F11E /* HandlerTask.swift */,
 				140AAC3C249B01D10001F11E /* IdleTask.swift */,
@@ -282,6 +284,7 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = RichardsMostlySwift/BridgingHeader.h;
 				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
@@ -291,6 +294,7 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = RichardsMostlySwift/BridgingHeader.h;
 				SWIFT_VERSION = 5.0;
 			};
 			name = Release;

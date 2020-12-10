@@ -31,6 +31,7 @@ API/JSCallbackObject.cpp
 API/JSClassRef.cpp
 API/JSContextRef.cpp
 API/JSHeapFinalizerPrivate.cpp
+API/JSLockRef.cpp
 API/JSMarkingConstraintPrivate.cpp
 API/JSObjectRef.cpp
 API/JSTypedArray.cpp

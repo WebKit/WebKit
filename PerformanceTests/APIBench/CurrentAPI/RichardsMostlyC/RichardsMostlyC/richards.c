@@ -10,9 +10,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-
 #include <JavaScriptCore/JavaScriptCore.h>
-#import <QuartzCore/QuartzCore.h>
+#include <QuartzCore/QuartzCore.h>
 
 #if 1
 #define                Count           1000

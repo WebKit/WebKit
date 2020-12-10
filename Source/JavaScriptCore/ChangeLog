@@ -1,3 +1,22 @@
+2020-12-10  Tadeu Zagallo  <tzagallo@apple.com>
+
+        Add a JSC API to allow acquiring the JSLock
+        https://bugs.webkit.org/show_bug.cgi?id=219663
+
+        Reviewed by Filip Pizlo.
+
+        Introduce two new functions to the C API: JSLock and JSUnlock. These
+        functions allow users to take control of the JSContext's lock, which
+        can greatly reduce the overhead of bridging between JS and native.
+
+        * API/JSLockRef.cpp: Added.
+        (JSLock):
+        (JSUnlock):
+        * API/JSLockRefPrivate.h: Added.
+        * API/JSValueRef.cpp:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+
 2020-12-10  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Determine when to use $<TARGET_OBJECTS> for executables

@@ -1,3 +1,45 @@
+2020-12-10  Tadeu Zagallo  <tzagallo@apple.com>
+
+        Add a JSC API to allow acquiring the JSLock
+        https://bugs.webkit.org/show_bug.cgi?id=219663
+
+        Reviewed by Filip Pizlo.
+
+        This patch does 3 things:
+        - Change how the geomean is calculated in api-bench to avoid overflowing
+        - Allow linking against the local build we're benchmarking
+        - Adopt the new JSLock API in the UpcomingAPI subtests
+
+        Using the new API the score improves by ~13.5%. Here are the results for each
+        of the "UpcomingAPI" subtests plus the total score:
+
+                                Before       After
+        RichardsMostlyC:          77ms        23ms
+        RichardsMostlyObjC:      309ms       282ms
+        RichardsMostlySwift      305ms       280ms
+        RichardsSomeC:           101ms        95ms
+        RichardsSomeObjC:        160ms       157ms
+        RichardsSomeSwift:       201ms       202ms
+        ------------------------------------------
+        Score:                 29.5974     33.6404
+
+        * APIBench/UpcomingAPI/RichardsMostlyC/RichardsMostlyC/richards.c:
+        (workfn):
+        * APIBench/UpcomingAPI/RichardsMostlyObjC/RichardsMostlyObjC.xcodeproj/xcshareddata/xcschemes/RichardsMostlyObjC.xcscheme: Renamed from PerformanceTests/APIBench/UpcomingAPI/RichardsMostlyObjC/RichardsMostlyObjC.xcodeproj/xcshareddata/xcschemes/RichardsMostlySwift.xcscheme.
+        * APIBench/UpcomingAPI/RichardsMostlyObjC/RichardsMostlyObjC/WorkerTask.m:
+        (+[WorkerTask context]):
+        * APIBench/UpcomingAPI/RichardsMostlySwift/RichardsMostlySwift.xcodeproj/project.pbxproj:
+        * APIBench/UpcomingAPI/RichardsMostlySwift/RichardsMostlySwift/BridgingHeader.h: Copied from PerformanceTests/APIBench/UpcomingAPI/RichardsMostlySwift/RichardsMostlySwift/WorkerTask.swift.
+        * APIBench/UpcomingAPI/RichardsMostlySwift/RichardsMostlySwift/WorkerTask.swift:
+        * APIBench/UpcomingAPI/RichardsSomeC/RichardsSomeC/main.m:
+        (main):
+        * APIBench/UpcomingAPI/RichardsSomeObjC/RichardsSomeObjC/main.m:
+        (main):
+        * APIBench/UpcomingAPI/RichardsSomeSwift/RichardsSomeSwift.xcodeproj/project.pbxproj:
+        * APIBench/UpcomingAPI/RichardsSomeSwift/RichardsSomeSwift/BridgingHeader.h: Copied from PerformanceTests/APIBench/UpcomingAPI/RichardsMostlySwift/RichardsMostlySwift/WorkerTask.swift.
+        * APIBench/UpcomingAPI/RichardsSomeSwift/RichardsSomeSwift/main.swift:
+        * APIBench/api-bench:
+
 2020-12-07  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Remove WEBKIT_WRAP_SOURCELIST

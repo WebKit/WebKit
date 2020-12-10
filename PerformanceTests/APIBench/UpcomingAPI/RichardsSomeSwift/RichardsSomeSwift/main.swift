@@ -83,6 +83,8 @@ guard let context = JSContext() else {
     exit(1)
 }
 
+JSLock(context.jsGlobalContextRef)
+
 context.setObject(WorkerTask.self, forKeyedSubscript: "WorkerTask" as NSString)
 context.exceptionHandler = { context, exception in
     print(exception?.toString() as Any)

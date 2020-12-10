@@ -28,6 +28,7 @@
 		1401181824998517003987A9 /* RichardsSomeSwift */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = RichardsSomeSwift; sourceTree = BUILT_PRODUCTS_DIR; };
 		1401181B24998517003987A9 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		1415AD1624998605005BB2E4 /* richards.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = richards.js; sourceTree = "<group>"; };
+		145087EC258058B800D94197 /* BridgingHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BridgingHeader.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,6 +61,7 @@
 		1401181A24998517003987A9 /* RichardsSomeSwift */ = {
 			isa = PBXGroup;
 			children = (
+				145087EC258058B800D94197 /* BridgingHeader.h */,
 				1401181B24998517003987A9 /* main.swift */,
 				1415AD1624998605005BB2E4 /* richards.js */,
 			);
@@ -250,6 +252,7 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = RichardsSomeSwift/BridgingHeader.h;
 				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
@@ -259,6 +262,7 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = RichardsSomeSwift/BridgingHeader.h;
 				SWIFT_VERSION = 5.0;
 			};
 			name = Release;

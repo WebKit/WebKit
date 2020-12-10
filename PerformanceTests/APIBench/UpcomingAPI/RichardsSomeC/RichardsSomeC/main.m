@@ -24,6 +24,7 @@
 */
 
 #import <Foundation/Foundation.h>
+#import <JavaScriptCore/JSLockRefPrivate.h>
 #import <JavaScriptCore/JavaScriptCore.h>
 #import <QuartzCore/QuartzCore.h>
 
@@ -132,7 +133,7 @@ int main()
     JSGlobalContextRef context = JSGlobalContextCreate(NULL);
     if (!context)
         exit(1);
-    
+    JSLock(context);
     JSValueRef exception = NULL;
     JSObjectRef globalObject = JSContextGetGlobalObject(context);
     

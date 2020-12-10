@@ -25,6 +25,7 @@
 
 #import "WorkerTask.h"
 
+#import <JavaScriptCore/JSLockRefPrivate.h>
 #import <JavaScriptCore/JavaScriptCore.h>
 
 @implementation WorkerTask {
@@ -44,6 +45,7 @@
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         context = [[JSContext alloc] init];
+        JSLock(context.JSGlobalContextRef);
         [context setExceptionHandler:^(JSContext *context, JSValue *exception) {
             NSLog(@"%@", exception.toString);
             exit(2);

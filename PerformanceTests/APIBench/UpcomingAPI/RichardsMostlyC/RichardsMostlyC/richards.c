@@ -10,9 +10,9 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-
+#include <JavaScriptCore/JSLockRefPrivate.h>
 #include <JavaScriptCore/JavaScriptCore.h>
-#import <QuartzCore/QuartzCore.h>
+#include <QuartzCore/QuartzCore.h>
 
 #if 1
 #define                Count           1000
@@ -322,6 +322,7 @@ struct task *workfn(struct packet *pkt)
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         ctx = JSGlobalContextCreate(NULL);
+        JSLock(ctx);
         JSObjectRef globalObject = JSContextGetGlobalObject(ctx);
         
         JSStringRef source = readFile("richards.js");

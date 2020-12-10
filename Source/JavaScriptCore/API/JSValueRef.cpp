@@ -29,6 +29,7 @@
 #include "APICast.h"
 #include "APIUtils.h"
 #include "DateInstance.h"
+#include "JSAPIWrapperObject.h"
 #include "JSCInlines.h"
 #include "JSCallbackObject.h"
 #include "JSONObject.h"
