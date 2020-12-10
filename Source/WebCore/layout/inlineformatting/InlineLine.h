@@ -60,8 +60,6 @@ public:
     Optional<InlineLayoutUnit> trailingSoftHyphenWidth() const { return m_trailingSoftHyphenWidth; }
     void addTrailingHyphen(InlineLayoutUnit hyphenLogicalWidth);
 
-    void moveLogicalLeft(InlineLayoutUnit);
-
     void removeCollapsibleContent(InlineLayoutUnit extraHorizontalSpace);
     void applyRunExpansion(InlineLayoutUnit extraHorizontalSpace);
 
@@ -135,8 +133,6 @@ public:
     const RunList& runs() const { return m_runs; }
 
 private:
-    InlineLayoutUnit contentLogicalRight() const { return m_lineLogicalLeft + m_contentLogicalWidth; }
-
     void appendNonBreakableSpace(const InlineItem&, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth);
     void appendTextContent(const InlineTextItem&, InlineLayoutUnit logicalWidth);
     void appendNonReplacedInlineBox(const InlineItem&, InlineLayoutUnit logicalWidth);
@@ -178,7 +174,6 @@ private:
     const InlineFormattingContext& m_inlineFormattingContext;
     RunList m_runs;
     TrimmableTrailingContent m_trimmableTrailingContent;
-    InlineLayoutUnit m_lineLogicalLeft { 0 };
     InlineLayoutUnit m_contentLogicalWidth { 0 };
     Optional<InlineLayoutUnit> m_trailingSoftHyphenWidth { 0 };
     bool m_isConsideredEmpty { true };

@@ -192,14 +192,6 @@ void Line::visuallyCollapsePreWrapOverflowContent(InlineLayoutUnit extraHorizont
     m_contentLogicalWidth -= trimmedContentWidth;
 }
 
-void Line::moveLogicalLeft(InlineLayoutUnit delta)
-{
-    if (!delta)
-        return;
-    ASSERT(delta > 0);
-    m_lineLogicalLeft += delta;
-}
-
 void Line::append(const InlineItem& inlineItem, InlineLayoutUnit logicalWidth)
 {
     if (inlineItem.isText())
@@ -249,7 +241,7 @@ void Line::appendInlineBoxEnd(const InlineItem& inlineItem, InlineLayoutUnit log
     // Prevent trailing letter-spacing from spilling out of the inline container.
     // https://drafts.csswg.org/css-text-3/#letter-spacing-property See example 21.
     removeTrailingLetterSpacing();
-    appendNonBreakableSpace(inlineItem, contentLogicalRight(), logicalWidth);
+    appendNonBreakableSpace(inlineItem, contentLogicalWidth(), logicalWidth);
 }
 
 void Line::appendTextContent(const InlineTextItem& inlineTextItem, InlineLayoutUnit logicalWidth)

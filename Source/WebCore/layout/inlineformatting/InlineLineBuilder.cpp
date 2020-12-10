@@ -580,10 +580,8 @@ void LineBuilder::handleFloatContent(const InlineItem& floatItem)
 
     m_contentIsConstrainedByFloat = true;
     auto floatBoxWidth = inlineItemWidth(floatItem, { });
-    if (floatBox.isLeftFloatingPositioned()) {
-        m_line.moveLogicalLeft(floatBoxWidth);
+    if (floatBox.isLeftFloatingPositioned())
         m_lineLogicalRect.setLeft(m_lineLogicalRect.left() + floatBoxWidth);    
-    }
     m_lineLogicalRect.expandHorizontally(-floatBoxWidth);
 }
 
