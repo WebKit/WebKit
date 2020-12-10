@@ -2258,6 +2258,11 @@ Ref<MutableStyleProperties> CSSComputedStyleDeclaration::copyProperties() const
     return ComputedStyleExtractor(m_element.ptr(), m_allowVisitedStyle, m_pseudoElementSpecifier).copyProperties();
 }
 
+const Settings* CSSComputedStyleDeclaration::settings() const
+{
+    return &m_element->document().settings();
+}
+
 static inline bool hasValidStyleForProperty(Element& element, CSSPropertyID propertyID)
 {
     if (element.styleValidity() != Style::Validity::Valid)
@@ -3138,6 +3143,18 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             return cssValuePool.createValue(style.overflowX());
         case CSSPropertyOverflowY:
             return cssValuePool.createValue(style.overflowY());
+        case CSSPropertyOverscrollBehavior:
+            if (renderer && !renderer->settings().overscrollBehaviorEnabled())
+                return nullptr;
+            return cssValuePool.createValue(std::max(style.overscrollBehaviorX(), style.overscrollBehaviorY()));
+        case CSSPropertyOverscrollBehaviorX:
+            if (renderer && !renderer->settings().overscrollBehaviorEnabled())
+                return nullptr;
+            return cssValuePool.createValue(style.overscrollBehaviorX());
+        case CSSPropertyOverscrollBehaviorY:
+            if (renderer && !renderer->settings().overscrollBehaviorEnabled())
+                return nullptr;
+            return cssValuePool.createValue(style.overscrollBehaviorY());
         case CSSPropertyPaddingTop:
             return zoomAdjustedPaddingOrMarginPixelValue<&RenderStyle::paddingTop, &RenderBoxModelObject::computedCSSPaddingTop>(style, renderer);
         case CSSPropertyPaddingRight:

@@ -68,6 +68,8 @@ public:
     bool scrollBehaviorEnabled { false };
     bool individualTransformPropertiesEnabled { false };
 
+    bool overscrollBehaviorEnabled { false };
+    
     // This is only needed to support getMatchedCSSRules.
     bool hasDocumentSecurityOrigin { false };
     
@@ -113,7 +115,8 @@ struct CSSParserContextHash {
 #endif
             & key.scrollBehaviorEnabled                     << 12
             & key.individualTransformPropertiesEnabled      << 13
-            & key.mode                                      << 14; // Keep this last.
+            & key.overscrollBehaviorEnabled                 << 14
+            & key.mode                                      << 15; // Keep this last.
         hash ^= WTF::intHash(bits);
         return hash;
     }

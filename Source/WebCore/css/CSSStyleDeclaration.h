@@ -72,6 +72,8 @@ public:
 
     virtual CSSStyleSheet* parentStyleSheet() const { return nullptr; }
 
+    virtual const Settings* settings() const;
+
     // Bindings support.
     Optional<Variant<String, double>> namedItem(const AtomString&);
     ExceptionOr<void> setNamedItem(const AtomString& name, String value, bool& propertySupported);

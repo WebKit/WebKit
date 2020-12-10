@@ -275,4 +275,6 @@ interface IWebPreferencesPrivate8 : IWebPreferencesPrivate7
     HRESULT setStringPreferenceForTesting([in] BSTR key, [in] BSTR value);
     HRESULT speechRecognitionEnabled([out, retval] BOOL* enabled);
     HRESULT setSpeechRecognitionEnabled([in] BOOL enabled);
+    HRESULT overscrollBehaviorEnabled([ out, retval ] BOOL*);
+    HRESULT setOverscrollBehaviorEnabled([in] BOOL enabled);
 }

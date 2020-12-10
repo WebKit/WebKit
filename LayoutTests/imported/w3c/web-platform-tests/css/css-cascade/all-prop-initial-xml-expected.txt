@@ -195,6 +195,8 @@ PASS outline-width
 PASS overflow-wrap
 PASS overflow-x
 PASS overflow-y
+PASS overscroll-behavior-x
+PASS overscroll-behavior-y
 PASS padding-block-end
 PASS padding-block-start
 PASS padding-bottom

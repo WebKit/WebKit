@@ -1,3 +1,21 @@
+2020-12-09  Cathie Chen  <cathiechen@igalia.com>
+
+        Support overscroll-behavior parsing
+        https://bugs.webkit.org/show_bug.cgi?id=219305
+
+        Reviewed by Simon Fraser.
+
+        Based on Frédéric Wang's patch.
+
+        Update expectations for overscroll-behavior parsing tests.
+
+        * web-platform-tests/css/css-cascade/all-prop-initial-xml-expected.txt:
+        * web-platform-tests/css/css-overscroll-behavior/inheritance-expected.txt:
+        * web-platform-tests/css/css-overscroll-behavior/overscroll-behavior-logical-expected.txt:
+        * web-platform-tests/css/css-overscroll-behavior/parsing/overscroll-behavior-computed-expected.txt:
+        * web-platform-tests/css/css-overscroll-behavior/parsing/overscroll-behavior-valid-expected.txt:
+        * web-platform-tests/css/cssom/cssstyledeclaration-csstext-expected.txt:
+
 2020-12-09  Antoine Quint  <graouts@webkit.org>
 
         text-decoration-color animation should not be discrete

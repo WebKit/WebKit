@@ -2531,6 +2531,14 @@ static RefPtr<CSSPrimitiveValue> consumeScrollBehavior(CSSParserTokenRange& rang
     return consumeIdent(range);
 }
 
+static RefPtr<CSSValue> consumeOverscrollBehavior(CSSParserTokenRange& range)
+{
+    auto valueID = range.peek().id();
+    if (valueID != CSSValueAuto && valueID != CSSValueNone && valueID != CSSValueContain)
+        return nullptr;
+    return consumeIdent(range);
+}
+
 static RefPtr<CSSValue> consumeBorderRadiusCorner(CSSParserTokenRange& range, CSSParserMode cssParserMode)
 {
     RefPtr<CSSPrimitiveValue> parsedValue1 = consumeLengthOrPercent(range, cssParserMode, ValueRangeNonNegative);
@@ -4146,6 +4154,11 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
         if (!m_context.scrollBehaviorEnabled)
             return nullptr;
         return consumeScrollBehavior(m_range);
+    case CSSPropertyOverscrollBehaviorX:
+    case CSSPropertyOverscrollBehaviorY:
+        if (!m_context.overscrollBehaviorEnabled)
+            return nullptr;
+        return consumeOverscrollBehavior(m_range);
     case CSSPropertyClip:
         return consumeClip(m_range, m_context.mode);
     case CSSPropertyTouchAction:
@@ -5752,6 +5765,35 @@ bool CSSPropertyParser::consumePlaceSelfShorthand(bool important)
     return true;
 }
 
+bool CSSPropertyParser::consumeOverscrollBehaviorShorthand(bool important)
+{
+    ASSERT(shorthandForProperty(CSSPropertyOverscrollBehavior).length() == 2);
+    if (!m_context.overscrollBehaviorEnabled)
+        return false;
+
+    if (m_range.atEnd())
+        return false;
+
+    RefPtr<CSSValue> overscrollBehaviorX = consumeOverscrollBehavior(m_range);
+    if (!overscrollBehaviorX)
+        return false;
+
+    RefPtr<CSSValue> overscrollBehaviorY;
+    m_range.consumeWhitespace();
+    if (m_range.atEnd())
+        overscrollBehaviorY = overscrollBehaviorX;
+    else {
+        overscrollBehaviorY = consumeOverscrollBehavior(m_range);
+        m_range.consumeWhitespace();
+        if (!m_range.atEnd())
+            return false;
+    }
+
+    addProperty(CSSPropertyOverscrollBehaviorX, CSSPropertyOverscrollBehavior, *overscrollBehaviorX, important);
+    addProperty(CSSPropertyOverscrollBehaviorY, CSSPropertyOverscrollBehavior, *overscrollBehaviorY, important);
+    return true;
+}
+
 bool CSSPropertyParser::parseShorthand(CSSPropertyID property, bool important)
 {
     switch (property) {
@@ -5772,6 +5814,8 @@ bool CSSPropertyParser::parseShorthand(CSSPropertyID property, bool important)
     }
     case CSSPropertyOverflow:
         return consumeOverflowShorthand(important);
+    case CSSPropertyOverscrollBehavior:
+        return consumeOverscrollBehaviorShorthand(important);
     case CSSPropertyFont: {
         const CSSParserToken& token = m_range.peek();
         if (token.id() >= CSSValueCaption && token.id() <= CSSValueStatusBar)

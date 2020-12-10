@@ -138,6 +138,9 @@ public:
     ScrollSnapAlign scrollSnapAlign;
 #endif
 
+    unsigned overscrollBehaviorX : 2; // OverscrollBehavior
+    unsigned overscrollBehaviorY : 2; // OverscrollBehavior
+
     std::unique_ptr<ContentData> content;
     std::unique_ptr<CounterDirectiveMap> counterDirectives;
     String altText;

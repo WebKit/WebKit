@@ -59,6 +59,8 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
 #endif
     , grid(StyleGridData::create())
     , gridItem(StyleGridItemData::create())
+    , overscrollBehaviorX(static_cast<unsigned>(RenderStyle::initialOverscrollBehaviorX()))
+    , overscrollBehaviorY(static_cast<unsigned>(RenderStyle::initialOverscrollBehaviorY()))
     , willChange(RenderStyle::initialWillChange())
     , mask(FillLayer::create(FillLayerType::Mask))
     , maskBoxImage(NinePieceImage::Type::Mask)
@@ -140,6 +142,8 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
     , scrollSnapType(o.scrollSnapType)
     , scrollSnapAlign(o.scrollSnapAlign)
 #endif
+    , overscrollBehaviorX(o.overscrollBehaviorX)
+    , overscrollBehaviorY(o.overscrollBehaviorY)
     , content(o.content ? o.content->clone() : nullptr)
     , counterDirectives(o.counterDirectives ? makeUnique<CounterDirectiveMap>(*o.counterDirectives) : nullptr)
     , altText(o.altText)
@@ -244,6 +248,8 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && scrollSnapType == o.scrollSnapType
         && scrollSnapAlign == o.scrollSnapAlign
 #endif
+        && overscrollBehaviorX == o.overscrollBehaviorX
+        && overscrollBehaviorY == o.overscrollBehaviorY
         && contentDataEquivalent(o)
         && arePointingToEqualData(counterDirectives, o.counterDirectives)
         && altText == o.altText

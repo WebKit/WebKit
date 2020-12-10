@@ -46,6 +46,12 @@ enum class ScrollType : bool {
     Programmatic
 };
 
+enum class OverscrollBehavior : uint8_t {
+    Auto,
+    Contain,
+    None
+};
+
 enum ScrollDirection : uint8_t {
     ScrollUp,
     ScrollDown,

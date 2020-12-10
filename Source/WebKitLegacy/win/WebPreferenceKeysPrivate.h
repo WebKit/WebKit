@@ -233,3 +233,5 @@
 #define WebKitCSSIndividualTransformPropertiesEnabledPreferenceKey "WebKitCSSIndividualTransformPropertiesEnabled"
 
 #define WebKitSpeechRecognitionEnabledPreferenceKey "WebKitSpeechRecognitionEnabled"
+
+#define WebKitOverscrollBehaviorEnabledPreferenceKey "WebKitOverscrollBehaviorEnabled"

@@ -39,6 +39,7 @@
 #include "LineClampValue.h"
 #include "RenderStyleConstants.h"
 #include "SVGRenderStyleDefs.h"
+#include "ScrollTypes.h"
 #include "TextFlags.h"
 #include "ThemeTypes.h"
 #include "TouchAction.h"
@@ -2204,6 +2205,42 @@ template<> inline CSSPrimitiveValue::operator Overflow() const
 
     ASSERT_NOT_REACHED();
     return Overflow::Visible;
+}
+
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(OverscrollBehavior behavior)
+    : CSSValue(PrimitiveClass)
+{
+    setPrimitiveUnitType(CSSUnitType::CSS_VALUE_ID);
+    switch (behavior) {
+    case OverscrollBehavior::Contain:
+        m_value.valueID = CSSValueContain;
+        break;
+    case OverscrollBehavior::None:
+        m_value.valueID = CSSValueNone;
+        break;
+    case OverscrollBehavior::Auto:
+        m_value.valueID = CSSValueAuto;
+        break;
+    }
+}
+
+template<> inline CSSPrimitiveValue::operator OverscrollBehavior() const
+{
+    ASSERT(isValueID());
+
+    switch (m_value.valueID) {
+    case CSSValueContain:
+        return OverscrollBehavior::Contain;
+    case CSSValueNone:
+        return OverscrollBehavior::None;
+    case CSSValueAuto:
+        return OverscrollBehavior::Auto;
+    default:
+        break;
+    }
+
+    ASSERT_NOT_REACHED();
+    return OverscrollBehavior::Auto;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(BreakBetween e)

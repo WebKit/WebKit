@@ -94,6 +94,7 @@ const TestFeatures& TestOptions::defaults()
             { "MenuItemElementEnabled", false },
             { "ModernMediaControlsEnabled", true },
             { "NeedsStorageAccessFromFileURLsQuirk", false },
+            { "OverscrollBehaviorEnabled", true },
             { "PluginsEnabled", true },
             { "PrivateClickMeasurementEnabled", false },
             { "RequestIdleCallbackEnabled", false },

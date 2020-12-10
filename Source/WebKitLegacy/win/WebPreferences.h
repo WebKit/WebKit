@@ -313,6 +313,8 @@ public:
     virtual HRESULT STDMETHODCALLTYPE setStringPreferenceForTesting(_In_ BSTR key, _In_ BSTR);
     virtual HRESULT STDMETHODCALLTYPE speechRecognitionEnabled(_Out_ BOOL*);
     virtual HRESULT STDMETHODCALLTYPE setSpeechRecognitionEnabled(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE overscrollBehaviorEnabled(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setOverscrollBehaviorEnabled(BOOL);
 
     // WebPreferences
 

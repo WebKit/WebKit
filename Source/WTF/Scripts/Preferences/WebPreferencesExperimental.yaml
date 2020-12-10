@@ -591,6 +591,18 @@ ModernUnprefixedWebAudioEnabled:
     WebCore:
       default: false
 
+OverscrollBehaviorEnabled:
+  type: bool
+  humanReadableName: "CSS Overscroll Behavior"
+  humanReadableDescription: "Enable CSS overscroll-behavior"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 PageAtRuleSupportEnabled:
   type: bool
   humanReadableName: "@page CSS at-rule support"

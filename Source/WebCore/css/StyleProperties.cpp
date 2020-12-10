@@ -253,6 +253,8 @@ String StyleProperties::getPropertyValue(CSSPropertyID propertyID) const
         return getShorthandValue(webkitMarginCollapseShorthand());
     case CSSPropertyOverflow:
         return get2Values(overflowShorthand());
+    case CSSPropertyOverscrollBehavior:
+        return get2Values(overscrollBehaviorShorthand());
     case CSSPropertyPadding:
         return get4Values(paddingShorthand());
     case CSSPropertyPaddingBlock:
@@ -1151,6 +1153,10 @@ String StyleProperties::asText() const
             case CSSPropertyOverflowX:
             case CSSPropertyOverflowY:
                 shorthandPropertyID = CSSPropertyOverflow;
+                break;
+            case CSSPropertyOverscrollBehaviorX:
+            case CSSPropertyOverscrollBehaviorY:
+                shorthandPropertyID = CSSPropertyOverscrollBehavior;
                 break;
             case CSSPropertyPaddingTop:
             case CSSPropertyPaddingRight:

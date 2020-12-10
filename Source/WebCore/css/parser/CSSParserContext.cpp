@@ -76,6 +76,7 @@ CSSParserContext::CSSParserContext(const Document& document, const URL& sheetBas
 #endif
     deferredCSSParserEnabled = document.settings().deferredCSSParserEnabled();
     scrollBehaviorEnabled = document.settings().CSSOMViewSmoothScrollingEnabled();
+    overscrollBehaviorEnabled = document.settings().overscrollBehaviorEnabled();
     useSystemAppearance = document.page() ? document.page()->useSystemAppearance() : false;
     individualTransformPropertiesEnabled = document.settings().cssIndividualTransformPropertiesEnabled();
     aspectRatioEnabled = document.settings().aspectRatioEnabled();
@@ -106,7 +107,8 @@ bool operator==(const CSSParserContext& a, const CSSParserContext& b)
         && a.individualTransformPropertiesEnabled == b.individualTransformPropertiesEnabled
         && a.hasDocumentSecurityOrigin == b.hasDocumentSecurityOrigin
         && a.useSystemAppearance == b.useSystemAppearance
-        && a.aspectRatioEnabled == b.aspectRatioEnabled;
+        && a.aspectRatioEnabled == b.aspectRatioEnabled
+        && a.overscrollBehaviorEnabled == b.overscrollBehaviorEnabled;
 }
 
 URL CSSParserContext::completeURL(const String& url) const

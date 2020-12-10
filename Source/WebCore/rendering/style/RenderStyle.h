@@ -48,6 +48,7 @@
 #include "RoundedRect.h"
 #include "SVGRenderStyle.h"
 #include "ScaleTransformOperation.h"
+#include "ScrollTypes.h"
 #include "ShadowData.h"
 #include "ShapeValue.h"
 #include "StyleBackgroundData.h"
@@ -330,6 +331,9 @@ public:
     Overflow overflowInlineDirection() const { return isHorizontalWritingMode() ? overflowX() : overflowY(); }
     Overflow overflowBlockDirection() const { return isHorizontalWritingMode() ? overflowY() : overflowX(); }
     bool isOverflowVisible() const { return overflowX() == Overflow::Visible || overflowY() == Overflow::Visible; }
+
+    OverscrollBehavior overscrollBehaviorX() const { return static_cast<OverscrollBehavior>(m_rareNonInheritedData->overscrollBehaviorX); }
+    OverscrollBehavior overscrollBehaviorY() const { return static_cast<OverscrollBehavior>(m_rareNonInheritedData->overscrollBehaviorY); }
     
     Visibility visibility() const { return static_cast<Visibility>(m_inheritedFlags.visibility); }
     VerticalAlign verticalAlign() const { return static_cast<VerticalAlign>(m_nonInheritedFlags.verticalAlign); }
@@ -913,6 +917,8 @@ public:
 
     void setOverflowX(Overflow v) { m_nonInheritedFlags.overflowX =  static_cast<unsigned>(v); }
     void setOverflowY(Overflow v) { m_nonInheritedFlags.overflowY = static_cast<unsigned>(v); }
+    void setOverscrollBehaviorX(OverscrollBehavior v) { SET_VAR(m_rareNonInheritedData, overscrollBehaviorX, static_cast<unsigned>(v)); }
+    void setOverscrollBehaviorY(OverscrollBehavior v) { SET_VAR(m_rareNonInheritedData, overscrollBehaviorY, static_cast<unsigned>(v)); }
     void setVisibility(Visibility v) { m_inheritedFlags.visibility = static_cast<unsigned>(v); }
     void setVerticalAlign(VerticalAlign v) { m_nonInheritedFlags.verticalAlign = static_cast<unsigned>(v); }
     void setVerticalAlignLength(Length&& length) { setVerticalAlign(VerticalAlign::Length); SET_VAR(m_boxData, m_verticalAlign, WTFMove(length)); }
@@ -1501,6 +1507,9 @@ public:
     // Initial values for all the properties
     static Overflow initialOverflowX() { return Overflow::Visible; }
     static Overflow initialOverflowY() { return Overflow::Visible; }
+    static OverscrollBehavior initialOverscrollBehaviorX() { return OverscrollBehavior::Auto; }
+    static OverscrollBehavior initialOverscrollBehaviorY() { return OverscrollBehavior::Auto; }
+
     static Clear initialClear() { return Clear::None; }
     static DisplayType initialDisplay() { return DisplayType::Inline; }
     static EUnicodeBidi initialUnicodeBidi() { return UBNormal; }

@@ -113,6 +113,8 @@ private:
     bool consumeTransformOrigin(bool important);
     bool consumePerspectiveOrigin(bool important);
 
+    bool consumeOverscrollBehaviorShorthand(bool important);
+
 private:
     // Inputs:
     CSSParserTokenRange m_range;

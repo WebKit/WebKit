@@ -3294,6 +3294,53 @@
                 "url": "https://www.w3.org/TR/css-overflow-3/#propdef-overflow-y"
             }
         },
+        "overscroll-behavior": {
+            "codegen-properties": {
+                "longhands": [
+                    "overscroll-behavior-x",
+                    "overscroll-behavior-y"
+                ],
+                "settings-flag": "overscrollBehavior"
+            },
+            "status": {
+                "status": "in development"
+            },
+            "specification": {
+                "url": "https://drafts.csswg.org/css-overscroll-1/#propdef-overscroll-behavior"
+            }
+        },
+        "overscroll-behavior-x": {
+            "values": [
+                "contain",
+                "none",
+                "auto"
+            ],
+            "codegen-properties": {
+                "settings-flag": "overscrollBehavior"
+            },
+            "status": {
+                "status": "in development"
+            },
+            "specification": {
+                "url": "https://drafts.csswg.org/css-overscroll-1/#propdef-overscroll-behavior-x"
+            }
+        },
+        "overscroll-behavior-y": {
+            "values": [
+                "contain",
+                "none",
+                "auto"
+            ],
+            "codegen-properties": {
+                "settings-flag": "overscrollBehavior"
+            },
+            "status": {
+                "status": "in development"
+            },
+            "specification": {
+                "url": "https://drafts.csswg.org/css-overscroll-1/#propdef-overscroll-behavior-y"
+            }
+        },
         "padding": {
             "codegen-properties": {
                 "longhands": [

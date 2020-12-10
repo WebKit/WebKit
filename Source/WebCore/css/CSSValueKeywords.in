@@ -1389,6 +1389,9 @@ pinch-zoom
 // auto
 smooth
 
+// overscroll-behavior
+// contain
+
 // hanging-punctuation
 allow-end
 first

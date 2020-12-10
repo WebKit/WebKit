@@ -1,3 +1,22 @@
+2020-12-09  Cathie Chen  <cathiechen@igalia.com>
+
+        Support overscroll-behavior parsing
+        https://bugs.webkit.org/show_bug.cgi?id=219305
+
+        Reviewed by Simon Fraser.
+
+        Based on Frédéric Wang's patch.
+
+        Test overscrollBehavior's validation when enable or disable OverscrollBehaviorEnabled.
+
+        * fast/css/overscroll-behavior-invalidate-if-disabled-expected.txt: Added.
+        * fast/css/overscroll-behavior-invalidate-if-disabled.html: Added.
+        * fast/css/overscroll-behavior-validate-if-enable-expected.txt: Added.
+        * fast/css/overscroll-behavior-validate-if-enable.html: Added.
+        * platform/ios-13/imported/w3c/web-platform-tests/css/css-cascade/all-prop-initial-xml-expected.txt:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-csstext-expected.txt:
+        * platform/ios/imported/w3c/web-platform-tests/css/css-cascade/all-prop-initial-xml-expected.txt:
+
 2020-12-09  Geoffrey Garen  <ggaren@apple.com>
 
         Marked some WPT worklet tests as flaky

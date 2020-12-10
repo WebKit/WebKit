@@ -352,6 +352,8 @@ void WebPreferences::initializeDefaultSettings()
 
     CFDictionaryAddValue(defaults, CFSTR(WebKitSpeechRecognitionEnabledPreferenceKey), kCFBooleanFalse);
 
+    CFDictionaryAddValue(defaults, CFSTR(WebKitOverscrollBehaviorEnabledPreferenceKey), kCFBooleanFalse);
+
     defaultSettings = defaults;
 #endif
 }
@@ -2575,5 +2577,19 @@ HRESULT WebPreferences::speechRecognitionEnabled(_Out_ BOOL* enabled)
 HRESULT WebPreferences::setSpeechRecognitionEnabled(BOOL enabled)
 {
     setBoolValue(WebKitSpeechRecognitionEnabledPreferenceKey, enabled);
+    return S_OK;
+}
+
+HRESULT WebPreferences::overscrollBehaviorEnabled(_Out_ BOOL* enabled)
+{
+    if (!enabled)
+        return E_POINTER;
+    *enabled = boolValueForKey(WebKitOverscrollBehaviorEnabledPreferenceKey);
+    return S_OK;
+}
+
+HRESULT WebPreferences::setOverscrollBehaviorEnabled(BOOL enabled)
+{
+    setBoolValue(WebKitOverscrollBehaviorEnabledPreferenceKey, enabled);
     return S_OK;
 }

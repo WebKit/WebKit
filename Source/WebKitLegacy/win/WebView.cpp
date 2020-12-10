@@ -5658,6 +5658,11 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
         return hr;
     settings.setSpeechRecognitionEnabled(!!enabled);
 
+    hr = prefsPrivate->overscrollBehaviorEnabled(&enabled);
+    if (FAILED(hr))
+        return hr;
+    settings.setOverscrollBehaviorEnabled(!!enabled);
+
     return S_OK;
 }
 

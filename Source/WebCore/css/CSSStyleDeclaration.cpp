@@ -254,10 +254,14 @@ CSSPropertyID CSSStyleDeclaration::getCSSPropertyIDFromJavaScriptPropertyName(co
     return propertyInfoFromJavaScriptCSSPropertyName(propertyName, nullptr).propertyID;
 }
 
+const Settings* CSSStyleDeclaration::settings() const
+{
+    return parentElement() ? &parentElement()->document().settings() : nullptr;
+}
+
 Optional<Variant<String, double>> CSSStyleDeclaration::namedItem(const AtomString& propertyName)
 {
-    auto* settings = parentElement() ? &parentElement()->document().settings() : nullptr;
-    auto propertyInfo = propertyInfoFromJavaScriptCSSPropertyName(propertyName, settings);
+    auto propertyInfo = propertyInfoFromJavaScriptCSSPropertyName(propertyName, settings());
     if (!propertyInfo.propertyID)
         return WTF::nullopt;
 
@@ -279,8 +283,7 @@ Optional<Variant<String, double>> CSSStyleDeclaration::namedItem(const AtomStrin
 
 ExceptionOr<void> CSSStyleDeclaration::setNamedItem(const AtomString& propertyName, String value, bool& propertySupported)
 {
-    auto* settings = parentElement() ? &parentElement()->document().settings() : nullptr;
-    auto propertyInfo = propertyInfoFromJavaScriptCSSPropertyName(propertyName, settings);
+    auto propertyInfo = propertyInfoFromJavaScriptCSSPropertyName(propertyName, settings());
     if (!propertyInfo.propertyID) {
         propertySupported = false;
         return { };
@@ -310,12 +313,11 @@ ExceptionOr<void> CSSStyleDeclaration::setNamedItem(const AtomString& propertyNa
 Vector<AtomString> CSSStyleDeclaration::supportedPropertyNames() const
 {
     static unsigned numNames = 0;
-    static const AtomString* const cssPropertyNames = [] {
+    static const AtomString* const cssPropertyNames = [this] {
         String names[numCSSProperties];
         for (int i = 0; i < numCSSProperties; ++i) {
             CSSPropertyID id = static_cast<CSSPropertyID>(firstCSSProperty + i);
-            // FIXME: Should take account for flags in settings().
-            if (isEnabledCSSProperty(id))
+            if (isEnabledCSSProperty(id) && isCSSPropertyEnabledBySettings(id, settings()))
                 names[numNames++] = getJSPropertyName(id);
         }
         std::sort(&names[0], &names[numNames], WTF::codePointCompareLessThan);
