@@ -38,7 +38,7 @@ class CryptoKey;
 
 class RTCRtpSFrameTransformer : public ThreadSafeRefCounted<RTCRtpSFrameTransformer, WTF::DestructionThread::Main> {
 public:
-    enum class CompatibilityMode { None, H264 };
+    enum class CompatibilityMode { None, H264, VP8 };
 
     WEBCORE_EXPORT static Ref<RTCRtpSFrameTransformer> create(CompatibilityMode = CompatibilityMode::None);
     WEBCORE_EXPORT ~RTCRtpSFrameTransformer();

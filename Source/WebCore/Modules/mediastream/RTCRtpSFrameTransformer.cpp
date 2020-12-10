@@ -28,7 +28,7 @@
 
 #if ENABLE(WEB_RTC)
 
-#include "H264Utils.h"
+#include "SFrameUtils.h"
 
 namespace WebCore {
 
@@ -196,8 +196,9 @@ ExceptionOr<void> RTCRtpSFrameTransformer::updateEncryptionKey(const Vector<uint
 ExceptionOr<Vector<uint8_t>> RTCRtpSFrameTransformer::decryptFrame(const uint8_t* frameData, size_t frameSize)
 {
     Vector<uint8_t> buffer;
-    if (m_compatibilityMode == CompatibilityMode::H264) {
-        auto offset = computePrefixOffset(frameData, frameSize);
+    switch (m_compatibilityMode) {
+    case CompatibilityMode::H264: {
+        auto offset = computeH264PrefixOffset(frameData, frameSize);
         frameData += offset;
         frameSize -= offset;
         if (needsRbspUnescaping(frameData, frameSize)) {
@@ -205,6 +206,16 @@ ExceptionOr<Vector<uint8_t>> RTCRtpSFrameTransformer::decryptFrame(const uint8_t
             frameData = buffer.data();
             frameSize = buffer.size();
         }
+        break;
+    }
+    case CompatibilityMode::VP8: {
+        auto offset = computeVP8PrefixOffset(frameData, frameSize);
+        frameData += offset;
+        frameSize -= offset;
+        break;
+    }
+    case CompatibilityMode::None:
+        break;
     }
 
     auto locker = holdLock(m_keyLock);
@@ -259,9 +270,17 @@ ExceptionOr<Vector<uint8_t>> RTCRtpSFrameTransformer::encryptFrame(const uint8_t
     static const unsigned MaxHeaderSize = 17;
 
     Vector<uint8_t> transformedData;
-    H264PrefixBuffer prefixBuffer;
-    if (m_compatibilityMode == CompatibilityMode::H264)
-        prefixBuffer = computePrefixBuffer(frameData, frameSize);
+    SFrameCompatibilityPrefixBuffer prefixBuffer;
+    switch (m_compatibilityMode) {
+    case CompatibilityMode::H264:
+        prefixBuffer = computeH264PrefixBuffer(frameData, frameSize);
+        break;
+    case CompatibilityMode::VP8:
+        prefixBuffer = computeVP8PrefixBuffer(frameData, frameSize);
+        break;
+    case CompatibilityMode::None:
+        break;
+    }
 
     auto locker = holdLock(m_keyLock);
 

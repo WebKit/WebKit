@@ -143,7 +143,6 @@ Modules/mediasource/SourceBuffer.cpp
 Modules/mediasource/SourceBufferList.cpp
 Modules/mediasource/VideoPlaybackQuality.cpp
 Modules/mediastream/CanvasCaptureMediaStreamTrack.cpp
-Modules/mediastream/H264Utils.cpp
 Modules/mediastream/MediaDeviceInfo.cpp
 Modules/mediastream/MediaDevices.cpp
 Modules/mediastream/MediaStream.cpp
@@ -177,6 +176,7 @@ Modules/mediastream/RTCRtpTransform.cpp
 Modules/mediastream/RTCRtpTransceiver.cpp
 Modules/mediastream/RTCSessionDescription.cpp
 Modules/mediastream/RTCTrackEvent.cpp
+Modules/mediastream/SFrameUtils.cpp
 Modules/mediastream/UserMediaController.cpp
 Modules/mediastream/UserMediaRequest.cpp
 Modules/mediastream/libwebrtc/LibWebRTCCertificateGenerator.cpp

@@ -31,18 +31,21 @@
 
 namespace WebCore {
 
-struct H264PrefixBuffer {
+struct SFrameCompatibilityPrefixBuffer {
     const uint8_t* data { nullptr };
     size_t size { 0 };
     Vector<uint8_t> buffer;
 };
 
-size_t computePrefixOffset(const uint8_t*, size_t);
-H264PrefixBuffer computePrefixBuffer(const uint8_t*, size_t);
+size_t computeH264PrefixOffset(const uint8_t*, size_t);
+SFrameCompatibilityPrefixBuffer computeH264PrefixBuffer(const uint8_t*, size_t);
 
 WEBCORE_EXPORT bool needsRbspUnescaping(const uint8_t*, size_t);
 WEBCORE_EXPORT Vector<uint8_t> fromRbsp(const uint8_t*, size_t);
 WEBCORE_EXPORT void toRbsp(Vector<uint8_t>&, size_t);
+
+size_t computeVP8PrefixOffset(const uint8_t*, size_t);
+SFrameCompatibilityPrefixBuffer computeVP8PrefixBuffer(const uint8_t*, size_t);
 
 } // namespace WebCore
 

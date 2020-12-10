@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "H264Utils.h"
+#include "SFrameUtils.h"
 
 #if ENABLE(WEB_RTC)
 
@@ -60,7 +60,7 @@ static inline void findNalus(const uint8_t* frameData, size_t frameSize, size_t 
     }
 }
 
-size_t computePrefixOffset(const uint8_t* frameData, size_t frameSize)
+size_t computeH264PrefixOffset(const uint8_t* frameData, size_t frameSize)
 {
     size_t offset = 0;
     findNalus(frameData, frameSize, 0, [&offset, &frameData](auto position) {
@@ -104,7 +104,7 @@ Vector<uint8_t> fromRbsp(const uint8_t* frameData, size_t frameSize)
     return buffer;
 }
 
-H264PrefixBuffer computePrefixBuffer(const uint8_t* frameData, size_t frameSize)
+SFrameCompatibilityPrefixBuffer computeH264PrefixBuffer(const uint8_t* frameData, size_t frameSize)
 {
     // Delta and key prefixes assume SPS/PPS with IDs equal to 0 have been transmitted.
     static const uint8_t prefixDeltaFrame[6] = { 0x00, 0x00, 0x00, 0x01, 0x21, 0xe0 };
@@ -114,7 +114,7 @@ H264PrefixBuffer computePrefixBuffer(const uint8_t* frameData, size_t frameSize)
 
     // We assume a key frame starts with SPS, then PPS. Otherwise we wrap it as a delta frame.
     if (!isSPSNALU(frameData[4]))
-        return H264PrefixBuffer { prefixDeltaFrame, sizeof(prefixDeltaFrame), { } };
+        return SFrameCompatibilityPrefixBuffer { prefixDeltaFrame, sizeof(prefixDeltaFrame), { } };
 
     // Search for PPS
     size_t spsPpsLength = 0;
@@ -124,7 +124,7 @@ H264PrefixBuffer computePrefixBuffer(const uint8_t* frameData, size_t frameSize)
         return true;
     });
     if (!spsPpsLength)
-        return H264PrefixBuffer { prefixDeltaFrame, sizeof(prefixDeltaFrame), { } };
+        return SFrameCompatibilityPrefixBuffer { prefixDeltaFrame, sizeof(prefixDeltaFrame), { } };
 
     // Search for next NALU to compute the real spsPpsLength, including the next 00 00 00 01.
     findNalus(frameData, frameSize, spsPpsLength + 1, [&spsPpsLength](auto position) {
@@ -179,6 +179,24 @@ void toRbsp(Vector<uint8_t>& frame, size_t offset)
     });
 
     frame = WTFMove(newFrame);
+}
+
+static inline bool isVP8KeyFrame(const uint8_t* frame, size_t size)
+{
+    ASSERT_UNUSED(size, size);
+    return !(*frame & 0x01);
+}
+
+size_t computeVP8PrefixOffset(const uint8_t* frame, size_t size)
+{
+    return isVP8KeyFrame(frame, size) ? 10 : 3;
+}
+
+SFrameCompatibilityPrefixBuffer computeVP8PrefixBuffer(const uint8_t* frame, size_t size)
+{
+    Vector<uint8_t> prefix;
+    prefix.append(frame, isVP8KeyFrame(frame, size) ? 10 : 3);
+    return { prefix.data(), prefix.size(), WTFMove(prefix) };
 }
 
 } // namespace WebCore

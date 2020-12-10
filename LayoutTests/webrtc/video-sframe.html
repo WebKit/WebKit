@@ -10,18 +10,22 @@
         <video id="remote" autoplay playsInline></video>
         <script src ="routines.js"></script>
         <script>
-async function doSFrameTest(selectCodec)
+async function doSFrameTest(codec, shouldClose)
 {
+    let pc1, pc2;
     let sender, receiver;
     const localStream = await navigator.mediaDevices.getUserMedia({video: true});
     const key = await crypto.subtle.importKey("raw", new Uint8Array([143, 77, 43, 10, 72, 19, 37, 67, 236, 219, 24, 93, 26, 165, 91, 178]), "HKDF", false, ["deriveBits", "deriveKey"]);
     const stream = await new Promise((resolve, reject) => {
         createConnections((firstConnection) => {
+            pc1 = firstConnection;
             sender = firstConnection.addTrack(localStream.getTracks()[0], localStream);
+            firstConnection.getTransceivers()[0].setCodecPreferences([codec]);
             let transform = new SFrameTransform({compatibilityMode: "H264"});
             transform.setEncryptionKey(key);
             sender.transform = transform;
         }, (secondConnection) => {
+            pc2 = secondConnection;
             secondConnection.ontrack = (trackEvent) => {
                 let transform = new SFrameTransform({compatibilityMode: "H264"});
                 transform.setEncryptionKey(key);
@@ -29,10 +33,6 @@ async function doSFrameTest(selectCodec)
                 receiver.transform = transform;
                 resolve(trackEvent.streams[0]);
             };
-        }, { observeOffer : (offer) => {
-            offer.sdp = selectCodec(offer.sdp);
-            return offer;
-        }
         });
         setTimeout(() => reject("Test timed out"), 5000);
     });
@@ -50,15 +50,23 @@ async function doSFrameTest(selectCodec)
         assert_not_equals(internals.sframeCounter(receiver.transform), receiverCounter, "receiver");
         assert_not_equals(internals.sframeCounter(sender.transform), senderCounter, "sender");
     }
+    if (shouldClose) {
+        pc1.close();
+        pc2.close();
+    }
 }
 
 promise_test((test) => {
-    return doSFrameTest(setH264BaselineCodec);
+    return doSFrameTest({clockRate: 90000, mimeType: "video/H264", sdpFmtpLine: "level-asymmetry-allowed=1;packetization-mode=1;profile-level-id=42e01f"}, "H264", true);
 }, "Video exchange with SFrame - H264 baseline");
 
 promise_test((test) => {
-    return doSFrameTest(setH264HighCodec);
+    return doSFrameTest({clockRate: 90000, mimeType: "video/H264", sdpFmtpLine: "level-asymmetry-allowed=1;packetization-mode=1;profile-level-id=640c1f"}, "H264", true);
 }, "Video exchange with SFrame - H264 high");
+
+promise_test((test) => {
+    return doSFrameTest({mimeType: "video/VP8", clockRate: 90000}, "VP8", false);
+}, "Video exchange with SFrame - VP8");
         </script>
     </body>
 </html>

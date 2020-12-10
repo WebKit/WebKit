@@ -30,7 +30,8 @@ enum RTCRtpSFrameTransformRole {
 
 enum RTCRtpSFrameTransformCompatibilityMode {
     "none",
-    "H264"
+    "H264",
+    "VP8"
 };
 
 dictionary RTCRtpSFrameTransformOptions {
