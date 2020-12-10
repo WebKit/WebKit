@@ -87,7 +87,6 @@ public:
     void close();
 
     void callOnRTCNetworkThread(Function<void()>&&);
-    void sendFromMainThread(Function<void(IPC::Connection&)>&&);
 
     void newConnection(Socket&, std::unique_ptr<rtc::AsyncPacketSocket>&&);
 
@@ -108,6 +107,7 @@ private:
     void sendToSocket(WebCore::LibWebRTCSocketIdentifier, const IPC::DataReference&, RTCNetwork::SocketAddress&&, RTCPacketOptions&&);
     void closeSocket(WebCore::LibWebRTCSocketIdentifier);
     void setSocketOption(WebCore::LibWebRTCSocketIdentifier, int option, int value);
+    void setPlatformSocketsEnabled(bool enabled) { m_platformSocketsEnabled = enabled; }
 
     void createResolver(LibWebRTCResolverIdentifier, String&&);
     void stopResolver(LibWebRTCResolverIdentifier);
@@ -137,6 +137,7 @@ private:
     HashMap<WebCore::LibWebRTCSocketIdentifier, std::unique_ptr<rtc::AsyncPacketSocket>> m_pendingIncomingSockets;
     bool m_isListeningSocketAuthorized { true };
     bool m_canLog { false };
+    bool m_platformSocketsEnabled { false };
 };
 
 } // namespace WebKit

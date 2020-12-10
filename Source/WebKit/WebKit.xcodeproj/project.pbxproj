@@ -3531,6 +3531,8 @@
 		4103FBA22061BDB800C2EAF8 /* NetworkLoadChecker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkLoadChecker.cpp; sourceTree = "<group>"; };
 		410482CB1DDD2FB500F006D0 /* RTCNetwork.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RTCNetwork.cpp; sourceTree = "<group>"; };
 		410482CC1DDD2FB500F006D0 /* RTCNetwork.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCNetwork.h; sourceTree = "<group>"; };
+		410BA139257135F2002E2F8A /* NetworkRTCSocketCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = NetworkRTCSocketCocoa.mm; sourceTree = "<group>"; };
+		410BA13A257135F2002E2F8A /* NetworkRTCSocketCocoa.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NetworkRTCSocketCocoa.h; sourceTree = "<group>"; };
 		4111436320F677B10026F912 /* InjectUserScriptImmediately.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectUserScriptImmediately.h; sourceTree = "<group>"; };
 		411286EF21C8A90C003A8550 /* MediaUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaUtilities.h; sourceTree = "<group>"; };
 		411286F021C8A90D003A8550 /* MediaUtilities.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MediaUtilities.mm; sourceTree = "<group>"; };
@@ -7989,6 +7991,8 @@
 				4112B5481F9FD3AC00E67875 /* NetworkRTCResolver.h */,
 				4112B5471F9FD3AB00E67986 /* NetworkRTCResolverCocoa.cpp */,
 				4112B5481F9FD3AC00E67986 /* NetworkRTCResolverCocoa.h */,
+				410BA13A257135F2002E2F8A /* NetworkRTCSocketCocoa.h */,
+				410BA139257135F2002E2F8A /* NetworkRTCSocketCocoa.mm */,
 			);
 			path = webrtc;
 			sourceTree = "<group>";

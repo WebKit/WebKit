@@ -1,3 +1,14 @@
+2020-12-10  Youenn Fablet  <youenn@apple.com>
+
+        ICE does not resolve for `turns` relay candidates rooted in LetsEncrypt CA
+        https://bugs.webkit.org/show_bug.cgi?id=219274
+
+        Reviewed by Eric Carlson.
+
+        * Configurations/libwebrtc.iOS.exp:
+        * Configurations/libwebrtc.iOSsim.exp:
+        * Configurations/libwebrtc.mac.exp:
+
 2020-12-04  Adam Roben  <aroben@apple.com>
 
         More FALLBACK_PLATFORM adoption

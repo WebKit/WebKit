@@ -1049,6 +1049,16 @@ WebRTCPlatformCodecsInGPUProcessEnabled:
     WebKit:
       default: WebKit::defaultWebRTCCodecsInGPUProcess()
 
+WebRTCPlatformSocketsEnabled:
+  type: bool
+  humanReadableName: "WebRTC Platform Sockets"
+  humanReadableDescription: "Enable WebRTC Platform Sockets"
+  webcoreBinding: RuntimeEnabledFeatures
+  condition: ENABLE(WEB_RTC)
+  defaultValue:
+    WebKit:
+      default: false
+
 WebRTCVP9Profile0CodecEnabled:
   type: bool
   humanReadableName: "WebRTC VP9 profile 0 codec"

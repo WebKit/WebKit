@@ -165,6 +165,8 @@ public:
     void setWebRTCH264SimulcastEnabled(bool isEnabled) { m_isWebRTCH264SimulcastEnabled = isEnabled; }
     bool webRTCPlatformCodecsInGPUProcessEnabled() const { return m_isWebRTCPlatformCodecsInGPUProcessEnabled; }
     void setWebRTCPlatformCodecsInGPUProcessEnabled(bool isEnabled) { m_isWebRTCPlatformCodecsInGPUProcessEnabled = isEnabled; }
+    bool webRTCPlatformSocketsEnabled() const { return m_isWebRTCPlatformSocketsEnabled; }
+    void setWebRTCPlatformSocketsEnabled(bool isEnabled) { m_isWebRTCPlatformSocketsEnabled = isEnabled; }
 #endif
 
 #if ENABLE(DATALIST_ELEMENT)
@@ -317,6 +319,7 @@ private:
     bool m_isWebRTCVP9Profile0CodecEnabled { false };
     bool m_isWebRTCVP9Profile2CodecEnabled { false };
     bool m_isWebRTCH264LowLatencyEncoderEnabled { false };
+    bool m_isWebRTCPlatformSocketsEnabled { false };
 #endif
 
 #if ENABLE(DATALIST_ELEMENT)

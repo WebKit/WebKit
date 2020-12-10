@@ -1,3 +1,45 @@
+2020-12-10  Youenn Fablet  <youenn@apple.com>
+
+        ICE does not resolve for `turns` relay candidates rooted in LetsEncrypt CA
+        https://bugs.webkit.org/show_bug.cgi?id=219274
+
+        Reviewed by Eric Carlson.
+
+        Use NWConnection for client TCP sockets.
+        This allows piggy-backing on this API for things such as proxies or certificate validation.
+        Implementation does opening a TCP socket with TLS using NWConnection:
+        - If the socket is created for STUN/TURN, it is sending packets as is. For receiving data, the socket
+        will make sure to split received data in meaningful messages that WebProcess will process.
+        - If the socket is TCP for data, sent data is prefixed with the size of the data. For received data,
+        the length of the message is read and we wait to receive the whole message data to send it to WebProcess.
+
+        We enable that new code path based on an experimental feature.
+        Tested manually with TURNS servers and TCP-only connections.
+
+        * NetworkProcess/webrtc/NetworkRTCProvider.cpp:
+        (WebKit::NetworkRTCProvider::createClientTCPSocket):
+        * NetworkProcess/webrtc/NetworkRTCProvider.h:
+        (WebKit::NetworkRTCProvider::setPlatformSocketsEnabled):
+        * NetworkProcess/webrtc/NetworkRTCProvider.messages.in:
+        * NetworkProcess/webrtc/NetworkRTCSocketSocketCocoa.h: Added.
+        * NetworkProcess/webrtc/NetworkRTCSocketSocketCocoa.mm: Added.
+        (WebKit::socketQueue):
+        (WebKit::NetworkRTCSocketSocketCocoa::createClientTCPSocket):
+        (WebKit::isStunMessage):
+        (WebKit::getSTUNOrTURNMessageLength):
+        (WebKit::extractSTUNOrTURNMessages):
+        (WebKit::extractMessages):
+        (WebKit::processMessage):
+        (WebKit::NetworkRTCSocketSocketCocoa::NetworkRTCSocketSocketCocoa):
+        (WebKit::NetworkRTCSocketSocketCocoa::close):
+        (WebKit::NetworkRTCSocketSocketCocoa::setOption):
+        (WebKit::dataFromVector):
+        (WebKit::NetworkRTCSocketSocketCocoa::sendTo):
+        * SourcesCocoa.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/Network/webrtc/LibWebRTCSocketFactory.cpp:
+        (WebKit::LibWebRTCSocketFactory::setConnection):
+
 2020-12-10  Antoine Quint  <graouts@webkit.org>
 
         Unified WebKit build fails
