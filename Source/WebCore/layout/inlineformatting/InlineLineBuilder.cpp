@@ -208,8 +208,9 @@ InlineLayoutUnit LineBuilder::inlineItemWidth(const InlineItem& inlineItem, Inli
         auto& inlineTextItem = downcast<InlineTextItem>(inlineItem);
         if (auto contentWidth = inlineTextItem.width())
             return *contentWidth;
-        auto end = inlineTextItem.isCollapsible() ? inlineTextItem.start() + 1 : inlineTextItem.end();
-        return TextUtil::width(inlineTextItem, inlineTextItem.start(), end, contentLogicalLeft);
+        if (!inlineTextItem.isWhitespace() || InlineTextItem::shouldPreserveSpacesAndTabs(inlineTextItem))
+            return TextUtil::width(inlineTextItem, contentLogicalLeft);
+        return TextUtil::width(inlineTextItem, inlineTextItem.start(), inlineTextItem.start() + 1, contentLogicalLeft);
     }
 
     if (inlineItem.isLineBreak() || inlineItem.isWordBreakOpportunity())

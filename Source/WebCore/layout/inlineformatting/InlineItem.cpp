@@ -39,7 +39,6 @@ struct SameSizeAsInlineItem {
     uint8_t enum2;
     bool widthBool;
     bool softHyphenBool;
-    bool isCollapsible;
     bool isWordSeparator;
     InlineLayoutUnit width;
     unsigned start;

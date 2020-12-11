@@ -193,7 +193,7 @@ inline Line::Run::TrailingWhitespace Line::Run::trailingWhitespaceType(const Inl
 {
     if (!inlineTextItem.isWhitespace())
         return TrailingWhitespace::None;
-    if (!inlineTextItem.isCollapsible())
+    if (InlineTextItem::shouldPreserveSpacesAndTabs(inlineTextItem))
         return TrailingWhitespace::NotCollapsible;
     if (inlineTextItem.length() == 1)
         return TrailingWhitespace::Collapsible;

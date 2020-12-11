@@ -62,7 +62,6 @@ protected:
     TextItemType m_textItemType { TextItemType::Undefined };
     bool m_hasWidth { false };
     bool m_hasTrailingSoftHyphen { false };
-    bool m_isCollapsible { false };
     bool m_isWordSeparator { false };
     InlineLayoutUnit m_width { };
     unsigned m_length { 0 };

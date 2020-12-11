@@ -250,7 +250,9 @@ void Line::appendTextContent(const InlineTextItem& inlineTextItem, InlineLayoutU
     auto willCollapseCompletely = [&] {
         if (inlineTextItem.isEmptyContent())
             return true;
-        if (!inlineTextItem.isCollapsible())
+        if (!inlineTextItem.isWhitespace())
+            return false;
+        if (InlineTextItem::shouldPreserveSpacesAndTabs(inlineTextItem))
             return false;
         // Check if the last item is collapsed as well.
         for (auto& run : WTF::makeReversedRange(m_runs)) {
@@ -266,7 +268,7 @@ void Line::appendTextContent(const InlineTextItem& inlineTextItem, InlineLayoutU
             ASSERT(run.isInlineBoxStart() || run.isInlineBoxEnd() || run.isWordBreakOpportunity());
         }
         // Leading whitespace.
-        return !isWhitespacePreserved(style);
+        return true;
     };
 
     if (willCollapseCompletely())

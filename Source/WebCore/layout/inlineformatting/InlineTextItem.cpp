@@ -157,6 +157,13 @@ bool InlineTextItem::isEmptyContent() const
     return !m_length || (m_length == 1 && inlineTextBox().content()[start()] == zeroWidthSpace); 
 }
 
+bool InlineTextItem::shouldPreserveSpacesAndTabs(const InlineTextItem& inlineTextItem)
+{
+    ASSERT(inlineTextItem.isWhitespace());
+    auto whitespace = inlineTextItem.style().whiteSpace();
+    return whitespace == WhiteSpace::Pre || whitespace == WhiteSpace::PreWrap || whitespace == WhiteSpace::BreakSpaces;
+}
+
 }
 }
 #endif

@@ -40,15 +40,15 @@ namespace Layout {
 
 InlineLayoutUnit TextUtil::width(const InlineTextItem& inlineTextItem, InlineLayoutUnit contentLogicalLeft)
 {
-    return TextUtil::width(inlineTextItem, inlineTextItem.start(), inlineTextItem.end() - 1, contentLogicalLeft);
+    return TextUtil::width(inlineTextItem, inlineTextItem.start(), inlineTextItem.end(), contentLogicalLeft);
 }
 
 InlineLayoutUnit TextUtil::width(const InlineTextItem& inlineTextItem, unsigned from, unsigned to, InlineLayoutUnit contentLogicalLeft)
 {
     RELEASE_ASSERT(from >= inlineTextItem.start());
     RELEASE_ASSERT(to <= inlineTextItem.end());
-    if (inlineTextItem.isCollapsible()) {
-        // Fast path for collapsed whitespace.
+    if (inlineTextItem.isWhitespace() && !InlineTextItem::shouldPreserveSpacesAndTabs(inlineTextItem)) {
+        // Fast path for non-preserved whitespace.
         auto& font = inlineTextItem.style().fontCascade();
         return font.spaceWidth() + font.wordSpacing();
     }

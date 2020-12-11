@@ -44,7 +44,6 @@ public:
     unsigned length() const { return m_length; }
 
     bool isWhitespace() const { return m_textItemType == TextItemType::Whitespace; }
-    bool isCollapsible() const { return m_isCollapsible; }
     bool isWordSeparator() const { return m_isWordSeparator; }
     bool hasTrailingSoftHyphen() const { return m_hasTrailingSoftHyphen; }
     Optional<InlineLayoutUnit> width() const { return m_hasWidth ? makeOptional(m_width) : Optional<InlineLayoutUnit> { }; }
@@ -54,6 +53,8 @@ public:
 
     InlineTextItem left(unsigned length) const;
     InlineTextItem right(unsigned length) const;
+
+    static bool shouldPreserveSpacesAndTabs(const InlineTextItem&);
 
 private:
     using InlineItem::TextItemType;
@@ -88,7 +89,6 @@ inline InlineTextItem::InlineTextItem(const InlineTextBox& inlineTextBox, unsign
     m_length = length;
     m_hasWidth = !!width;
     m_hasTrailingSoftHyphen = hasTrailingSoftHyphen;
-    m_isCollapsible = textItemType == TextItemType::Whitespace && inlineTextBox.style().collapseWhiteSpace();
     m_isWordSeparator = isWordSeparator;
     m_width = width.valueOr(0);
     m_textItemType = textItemType;
