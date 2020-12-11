@@ -845,10 +845,14 @@ void SourceBufferPrivateAVFObjC::attemptToDecrypt()
 
 void SourceBufferPrivateAVFObjC::flush()
 {
-    flushVideo();
+    if (m_videoTracks.size())
+        flushVideo();
+
+    if (!m_audioTracks.size())
+        return;
 
     for (auto& renderer : m_audioRenderers.values())
-        flush(renderer.get());
+        flushAudio(renderer.get());
 }
 
 void SourceBufferPrivateAVFObjC::registerForErrorNotifications(SourceBufferPrivateAVFObjCErrorClient* client)
@@ -928,7 +932,7 @@ void SourceBufferPrivateAVFObjC::flush(const AtomString& trackIDString)
     if (trackID == m_enabledVideoTrackID) {
         flushVideo();
     } else if (m_audioRenderers.contains(trackID))
-        flush(m_audioRenderers.get(trackID).get());
+        flushAudio(m_audioRenderers.get(trackID).get());
 }
 
 void SourceBufferPrivateAVFObjC::flushVideo()
@@ -953,7 +957,7 @@ void SourceBufferPrivateAVFObjC::flushVideo()
 }
 
 ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
-void SourceBufferPrivateAVFObjC::flush(AVSampleBufferAudioRenderer *renderer)
+void SourceBufferPrivateAVFObjC::flushAudio(AVSampleBufferAudioRenderer *renderer)
 ALLOW_NEW_API_WITHOUT_GUARDS_END
 {
     [renderer flush];

@@ -28,6 +28,9 @@
 messages -> RemoteSourceBufferProxy NotRefCounted {
     SetActive(bool active)
     Append(IPC::DataReference data)
+    Abort()
+    ResetParserState()
+    RemovedFromMediaSource()
     SetReadyState(WebCore::MediaPlayer::ReadyState state)
     UpdateBufferedFromTrackBuffers(bool sourceIsEnded)
     EvictCodedFrames(uint64_t newDataSize, uint64_t pendingAppendDataCapacity, uint64_t maximumBufferSize, MediaTime currentTime, MediaTime duration, bool isEnded)

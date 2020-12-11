@@ -154,6 +154,21 @@ void RemoteSourceBufferProxy::append(const IPC::DataReference& data)
     m_sourceBufferPrivate->append(data.vector());
 }
 
+void RemoteSourceBufferProxy::abort()
+{
+    m_sourceBufferPrivate->abort();
+}
+
+void RemoteSourceBufferProxy::resetParserState()
+{
+    m_sourceBufferPrivate->resetParserState();
+}
+
+void RemoteSourceBufferProxy::removedFromMediaSource()
+{
+    m_sourceBufferPrivate->removedFromMediaSource();
+}
+
 void RemoteSourceBufferProxy::setActive(bool active)
 {
     m_sourceBufferPrivate->setActive(active);

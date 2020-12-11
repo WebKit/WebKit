@@ -83,17 +83,17 @@ void SourceBufferPrivateRemote::append(Vector<unsigned char>&& data)
 
 void SourceBufferPrivateRemote::abort()
 {
-    notImplemented();
+    m_gpuProcessConnection.connection().send(Messages::RemoteSourceBufferProxy::Abort(), m_remoteSourceBufferIdentifier);
 }
 
 void SourceBufferPrivateRemote::resetParserState()
 {
-    notImplemented();
+    m_gpuProcessConnection.connection().send(Messages::RemoteSourceBufferProxy::ResetParserState(), m_remoteSourceBufferIdentifier);
 }
 
 void SourceBufferPrivateRemote::removedFromMediaSource()
 {
-    notImplemented();
+    m_gpuProcessConnection.connection().send(Messages::RemoteSourceBufferProxy::RemovedFromMediaSource(), m_remoteSourceBufferIdentifier);
 }
 
 MediaPlayer::ReadyState SourceBufferPrivateRemote::readyState() const

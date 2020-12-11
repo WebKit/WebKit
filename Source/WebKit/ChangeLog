@@ -1,3 +1,23 @@
+2020-12-10  Peng Liu  <peng.liu6@apple.com>
+
+        [Media in GPU Process][MSE] Implement several methods in SourceBufferPrivateRemote to make seeking more reliable
+        https://bugs.webkit.org/show_bug.cgi?id=219757
+
+        Reviewed by Eric Carlson.
+
+        Add the required IPC messages and implement three functions of `SourceBufferPrivateRemote`.
+
+        * GPUProcess/media/RemoteSourceBufferProxy.cpp:
+        (WebKit::RemoteSourceBufferProxy::abort):
+        (WebKit::RemoteSourceBufferProxy::resetParserState):
+        (WebKit::RemoteSourceBufferProxy::removedFromMediaSource):
+        * GPUProcess/media/RemoteSourceBufferProxy.h:
+        * GPUProcess/media/RemoteSourceBufferProxy.messages.in:
+        * WebProcess/GPU/media/SourceBufferPrivateRemote.cpp:
+        (WebKit::SourceBufferPrivateRemote::abort):
+        (WebKit::SourceBufferPrivateRemote::resetParserState):
+        (WebKit::SourceBufferPrivateRemote::removedFromMediaSource):
+
 2020-12-10  Andy Estes  <aestes@apple.com>
 
         [Mac] Create a format reader plug-in for WebM

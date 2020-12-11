@@ -83,6 +83,9 @@ private:
 
     void setActive(bool);
     void append(const IPC::DataReference&);
+    void abort();
+    void resetParserState();
+    void removedFromMediaSource();
     void setReadyState(WebCore::MediaPlayer::ReadyState);
     void updateBufferedFromTrackBuffers(bool sourceIsEnded);
     void evictCodedFrames(uint64_t newDataSize, uint64_t pendingAppendDataCapacity, uint64_t maximumBufferSize, const MediaTime& currentTime, const MediaTime& duration, bool isEnded);

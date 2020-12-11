@@ -172,7 +172,7 @@ private:
 
     void flushVideo();
     ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
-    void flush(AVSampleBufferAudioRenderer *);
+    void flushAudio(AVSampleBufferAudioRenderer *);
     ALLOW_NEW_API_WITHOUT_GUARDS_END
 
     Vector<RefPtr<VideoTrackPrivate>> m_videoTracks;
