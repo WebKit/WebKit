@@ -157,10 +157,11 @@ template<typename Metadata>
 ALWAYS_INLINE MacroAssembler::Call JIT::appendCallWithExceptionCheckSetJSValueResultWithProfile(Metadata& metadata, const FunctionPtr<CFunctionPtrTag> function, VirtualRegister dst)
 {
     MacroAssembler::Call call = appendCallWithExceptionCheck(function);
-    emitValueProfilingSite(metadata);
 #if USE(JSVALUE64)
+    emitValueProfilingSite(metadata, returnValueGPR);
     emitPutVirtualRegister(dst, returnValueGPR);
 #else
+    emitValueProfilingSite(metadata, JSValueRegs(returnValueGPR2, returnValueGPR));
     emitStore(dst, returnValueGPR2, returnValueGPR);
 #endif
     return call;
@@ -327,7 +328,11 @@ inline void JIT::emitValueProfilingSite(ValueProfile& valueProfile, JSValueRegs 
 template<typename Op>
 inline std::enable_if_t<std::is_same<decltype(Op::Metadata::m_profile), ValueProfile>::value, void> JIT::emitValueProfilingSiteIfProfiledOpcode(Op bytecode)
 {
-    emitValueProfilingSite(bytecode.metadata(m_codeBlock));
+#if USE(JSVALUE64)
+    emitValueProfilingSite(bytecode.metadata(m_codeBlock), regT0);
+#else
+    emitValueProfilingSite(bytecode.metadata(m_codeBlock), JSValueRegs(regT1, regT0));
+#endif
 }
 
 inline void JIT::emitValueProfilingSiteIfProfiledOpcode(...) { }
@@ -339,6 +344,19 @@ inline void JIT::emitValueProfilingSite(Metadata& metadata, JSValueRegs value)
         return;
     emitValueProfilingSite(valueProfileFor(metadata, m_bytecodeIndex.checkpoint()), value);
 }
+
+#if USE(JSVALUE64)
+inline void JIT::emitValueProfilingSite(ValueProfile& valueProfile, GPRReg resultReg)
+{
+    emitValueProfilingSite(valueProfile, JSValueRegs(resultReg));
+}
+
+template<typename Metadata>
+inline void JIT::emitValueProfilingSite(Metadata& metadata, GPRReg resultReg)
+{
+    emitValueProfilingSite(metadata, JSValueRegs(resultReg));
+}
+#endif
 
 inline void JIT::emitArrayProfilingSiteWithCell(RegisterID cell, RegisterID indexingType, ArrayProfile* arrayProfile)
 {

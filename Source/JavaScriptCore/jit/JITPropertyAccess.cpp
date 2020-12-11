@@ -64,16 +64,18 @@ void JIT::emit_op_get_by_val(const Instruction* currentInstruction)
         emitJumpSlowCaseIfNotJSCell(regT0, base);
         emitArrayProfilingSiteWithCell(regT0, regT2, profile);
 
+        JSValueRegs resultRegs = JSValueRegs(regT0);
+
         JITGetByValGenerator gen(
             m_codeBlock, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), AccessType::GetByVal, RegisterSet::stubUnavailableRegisters(),
-            JSValueRegs(regT0), JSValueRegs(regT1), JSValueRegs(regT0));
+            JSValueRegs(regT0), JSValueRegs(regT1), resultRegs);
         if (isOperandConstantInt(property))
             gen.stubInfo()->propertyIsInt32 = true;
         gen.generateFastPath(*this);
         addSlowCase(gen.slowPathJump());
         m_getByVals.append(gen);
 
-        emitValueProfilingSite(bytecode.metadata(m_codeBlock));
+        emitValueProfilingSite(bytecode.metadata(m_codeBlock), resultRegs);
         emitPutVirtualRegister(dst);
     }
 
@@ -110,14 +112,16 @@ void JIT::emit_op_get_private_name(const Instruction* currentInstruction)
 
     emitJumpSlowCaseIfNotJSCell(regT0, base);
 
+    JSValueRegs resultRegs = JSValueRegs(regT0);
+
     JITGetByValGenerator gen(
         m_codeBlock, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), AccessType::GetPrivateName,
-        RegisterSet::stubUnavailableRegisters(), JSValueRegs(baseGPR), JSValueRegs(propertyGPR), JSValueRegs(regT0));
+        RegisterSet::stubUnavailableRegisters(), JSValueRegs(baseGPR), JSValueRegs(propertyGPR), resultRegs);
     gen.generateFastPath(*this);
     addSlowCase(gen.slowPathJump());
     m_getByVals.append(gen);
 
-    emitValueProfilingSite(bytecode.metadata(m_codeBlock));
+    emitValueProfilingSite(bytecode.metadata(m_codeBlock), resultRegs);
     emitPutVirtualRegister(dst);
 }
 
@@ -570,14 +574,16 @@ void JIT::emit_op_try_get_by_id(const Instruction* currentInstruction)
 
     emitJumpSlowCaseIfNotJSCell(regT0, baseVReg);
 
+    JSValueRegs resultRegs = JSValueRegs(regT0);
+
     JITGetByIdGenerator gen(
         m_codeBlock, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSet::stubUnavailableRegisters(),
-        CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_codeBlock, *ident), JSValueRegs(regT0), JSValueRegs(regT0), AccessType::TryGetById);
+        CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_codeBlock, *ident), JSValueRegs(regT0), resultRegs, AccessType::TryGetById);
     gen.generateFastPath(*this);
     addSlowCase(gen.slowPathJump());
     m_getByIds.append(gen);
     
-    emitValueProfilingSite(bytecode.metadata(m_codeBlock));
+    emitValueProfilingSite(bytecode.metadata(m_codeBlock), resultRegs);
     emitPutVirtualRegister(resultVReg);
 }
 
@@ -609,14 +615,16 @@ void JIT::emit_op_get_by_id_direct(const Instruction* currentInstruction)
 
     emitJumpSlowCaseIfNotJSCell(regT0, baseVReg);
 
+    JSValueRegs resultRegs = JSValueRegs(regT0);
+
     JITGetByIdGenerator gen(
         m_codeBlock, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSet::stubUnavailableRegisters(),
-        CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_codeBlock, *ident), JSValueRegs(regT0), JSValueRegs(regT0), AccessType::GetByIdDirect);
+        CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_codeBlock, *ident), JSValueRegs(regT0), resultRegs, AccessType::GetByIdDirect);
     gen.generateFastPath(*this);
     addSlowCase(gen.slowPathJump());
     m_getByIds.append(gen);
 
-    emitValueProfilingSite(bytecode.metadata(m_codeBlock));
+    emitValueProfilingSite(bytecode.metadata(m_codeBlock), resultRegs);
     emitPutVirtualRegister(resultVReg);
 }
 
@@ -655,14 +663,16 @@ void JIT::emit_op_get_by_id(const Instruction* currentInstruction)
         notArrayLengthMode.link(this);
     }
 
+    JSValueRegs resultRegs = JSValueRegs(regT0);
+
     JITGetByIdGenerator gen(
         m_codeBlock, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSet::stubUnavailableRegisters(),
-        CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_codeBlock, *ident), JSValueRegs(regT0), JSValueRegs(regT0), AccessType::GetById);
+        CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_codeBlock, *ident), JSValueRegs(regT0), resultRegs, AccessType::GetById);
     gen.generateFastPath(*this);
     addSlowCase(gen.slowPathJump());
     m_getByIds.append(gen);
 
-    emitValueProfilingSite(bytecode.metadata(m_codeBlock));
+    emitValueProfilingSite(bytecode.metadata(m_codeBlock), resultRegs);
     emitPutVirtualRegister(resultVReg);
 }
 
@@ -679,14 +689,16 @@ void JIT::emit_op_get_by_id_with_this(const Instruction* currentInstruction)
     emitJumpSlowCaseIfNotJSCell(regT0, baseVReg);
     emitJumpSlowCaseIfNotJSCell(regT1, thisVReg);
 
+    JSValueRegs resultRegs = JSValueRegs(regT0);
+
     JITGetByIdWithThisGenerator gen(
         m_codeBlock, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSet::stubUnavailableRegisters(),
-        CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_codeBlock, *ident), JSValueRegs(regT0), JSValueRegs(regT0), JSValueRegs(regT1));
+        CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_codeBlock, *ident), resultRegs, JSValueRegs(regT0), JSValueRegs(regT1));
     gen.generateFastPath(*this);
     addSlowCase(gen.slowPathJump());
     m_getByIdsWithThis.append(gen);
 
-    emitValueProfilingSite(bytecode.metadata(m_codeBlock));
+    emitValueProfilingSite(bytecode.metadata(m_codeBlock), resultRegs);
     emitPutVirtualRegister(resultVReg);
 }
 
@@ -1071,7 +1083,7 @@ void JIT::emit_op_get_from_scope(const Instruction* currentInstruction)
         break;
     }
     emitPutVirtualRegister(dst);
-    emitValueProfilingSite(metadata);
+    emitValueProfilingSite(metadata, regT0);
 }
 
 void JIT::emitSlow_op_get_from_scope(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
@@ -1252,7 +1264,7 @@ void JIT::emit_op_get_from_arguments(const Instruction* currentInstruction)
     
     emitGetVirtualRegister(arguments, regT0);
     load64(Address(regT0, DirectArguments::storageOffset() + index * sizeof(WriteBarrier<Unknown>)), regT0);
-    emitValueProfilingSite(bytecode.metadata(m_codeBlock));
+    emitValueProfilingSite(bytecode.metadata(m_codeBlock), regT0);
     emitPutVirtualRegister(dst);
 }
 
@@ -1318,7 +1330,7 @@ void JIT::emit_op_get_internal_field(const Instruction* currentInstruction)
     emitGetVirtualRegister(base, regT1);
     loadPtr(Address(regT1, JSInternalFieldObjectImpl<>::offsetOfInternalField(index)), regT0);
 
-    emitValueProfilingSite(metadata);
+    emitValueProfilingSite(metadata, regT0);
     emitPutVirtualRegister(dst);
 }
 

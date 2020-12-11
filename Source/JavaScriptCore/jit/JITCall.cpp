@@ -44,7 +44,7 @@ namespace JSC {
 template<typename Op>
 void JIT::emitPutCallResult(const Op& bytecode)
 {
-    emitValueProfilingSite(bytecode.metadata(m_codeBlock));
+    emitValueProfilingSite(bytecode.metadata(m_codeBlock), regT0);
     emitPutVirtualRegister(destinationFor(bytecode, m_bytecodeIndex.checkpoint()).virtualRegister(), regT0);
 }
 
@@ -405,7 +405,7 @@ void JIT::emit_op_iterator_open(const Instruction* instruction)
     addSlowCase(gen.slowPathJump());
     m_getByIds.append(gen);
 
-    emitValueProfilingSite(bytecode.metadata(m_codeBlock));
+    emitValueProfilingSite(bytecode.metadata(m_codeBlock), regT0);
     emitPutVirtualRegister(bytecode.m_next);
 
     fastCase.link(this);

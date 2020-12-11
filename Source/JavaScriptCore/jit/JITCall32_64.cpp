@@ -52,7 +52,7 @@ namespace JSC {
 template<typename Op>
 void JIT::emitPutCallResult(const Op& bytecode)
 {
-    emitValueProfilingSite(bytecode.metadata(m_codeBlock));
+    emitValueProfilingSite(bytecode.metadata(m_codeBlock), JSValueRegs(regT1, regT0));
     emitStore(destinationFor(bytecode, m_bytecodeIndex.checkpoint()).virtualRegister(), regT1, regT0);
 }
 
@@ -402,6 +402,8 @@ void JIT::emit_op_iterator_open(const Instruction* instruction)
     GPRReg tagNextGPR = tagIteratorGPR;
     GPRReg payloadNextGPR = payloadIteratorGPR;
 
+    JSValueRegs nextRegs = JSValueRegs(tagNextGPR, payloadNextGPR);
+
     JITGetByIdGenerator gen(
         m_codeBlock,
         CodeOrigin(m_bytecodeIndex),
@@ -409,15 +411,15 @@ void JIT::emit_op_iterator_open(const Instruction* instruction)
         RegisterSet::stubUnavailableRegisters(),
         CacheableIdentifier::createFromImmortalIdentifier(ident->impl()),
         JSValueRegs(tagIteratorGPR, payloadIteratorGPR),
-        JSValueRegs(tagNextGPR, payloadNextGPR),
+        nextRegs,
         AccessType::GetById);
     
     gen.generateFastPath(*this);
     addSlowCase(gen.slowPathJump());
     m_getByIds.append(gen);
 
-    emitValueProfilingSite(bytecode.metadata(m_codeBlock));
-    emitPutVirtualRegister(bytecode.m_next, JSValueRegs(tagNextGPR, payloadNextGPR));
+    emitValueProfilingSite(bytecode.metadata(m_codeBlock), nextRegs);
+    emitPutVirtualRegister(bytecode.m_next, nextRegs);
 
     fastCase.link(this);
 }

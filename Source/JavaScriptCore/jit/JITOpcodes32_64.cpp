@@ -860,7 +860,7 @@ void JIT::emit_op_to_number(const Instruction* currentInstruction)
     addSlowCase(branch32(AboveOrEqual, regT1, TrustedImm32(JSValue::LowestTag)));
     isInt32.link(this);
 
-    emitValueProfilingSite(bytecode.metadata(m_codeBlock));
+    emitValueProfilingSite(bytecode.metadata(m_codeBlock), JSValueRegs(regT1, regT0));
     if (src != dst)
         emitStore(dst, regT1, regT0);
 }
@@ -882,7 +882,7 @@ void JIT::emit_op_to_numeric(const Instruction* currentInstruction)
     addSlowCase(branchIfNotNumber(argumentValueRegs, regT2));
     isBigInt.link(this);
 
-    emitValueProfilingSite(bytecode.metadata(m_codeBlock));
+    emitValueProfilingSite(bytecode.metadata(m_codeBlock), JSValueRegs(regT1, regT0));
     if (src != dst)
         emitStore(dst, regT1, regT0);
 }
@@ -913,7 +913,7 @@ void JIT::emit_op_to_object(const Instruction* currentInstruction)
     addSlowCase(branchIfNotCell(regT1));
     addSlowCase(branchIfNotObject(regT0));
 
-    emitValueProfilingSite(bytecode.metadata(m_codeBlock));
+    emitValueProfilingSite(bytecode.metadata(m_codeBlock), JSValueRegs(regT1, regT0));
     if (src != dst)
         emitStore(dst, regT1, regT0);
 }
@@ -970,7 +970,7 @@ void JIT::emit_op_catch(const Instruction* currentInstruction)
         buffer->forEach([&] (ValueProfileAndVirtualRegister& profile) {
             JSValueRegs regs(regT1, regT0);
             emitGetVirtualRegister(profile.m_operand, regs);
-            emitValueProfilingSite(static_cast<ValueProfile&>(profile));
+            emitValueProfilingSite(static_cast<ValueProfile&>(profile), regs);
         });
     }
 #endif // ENABLE(DFG_JIT)
@@ -1298,7 +1298,7 @@ void JIT::emit_op_get_direct_pname(const Instruction* currentInstruction)
     load32(BaseIndex(regT0, regT2, TimesEight, offsetOfFirstProperty + OBJECT_OFFSETOF(JSValue, u.asBits.payload)), regT0);
     
     done.link(this);
-    emitValueProfilingSite(bytecode.metadata(m_codeBlock));
+    emitValueProfilingSite(bytecode.metadata(m_codeBlock), JSValueRegs(regT1, regT0));
     emitStore(dst, regT1, regT0);
 }
 

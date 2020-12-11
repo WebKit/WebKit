@@ -756,12 +756,14 @@ void JIT::compileWithoutLinking(JITCompilationEffort effort)
                     continue;
                 int offset = CallFrame::argumentOffsetIncludingThis(argument) * static_cast<int>(sizeof(Register));
 #if USE(JSVALUE64)
-                load64(Address(callFrameRegister, offset), regT0);
+                JSValueRegs resultRegs = JSValueRegs(regT0);
+                load64(Address(callFrameRegister, offset), resultRegs.payloadGPR());
 #elif USE(JSVALUE32_64)
-                load32(Address(callFrameRegister, offset + OBJECT_OFFSETOF(JSValue, u.asBits.payload)), regT0);
-                load32(Address(callFrameRegister, offset + OBJECT_OFFSETOF(JSValue, u.asBits.tag)), regT1);
+                JSValueRegs resultRegs = JSValueRegs(regT1, regT0);
+                load32(Address(callFrameRegister, offset + OBJECT_OFFSETOF(JSValue, u.asBits.payload)), resultRegs.payloadGPR());
+                load32(Address(callFrameRegister, offset + OBJECT_OFFSETOF(JSValue, u.asBits.tag)), resultRegs.tagGPR());
 #endif
-                emitValueProfilingSite(m_codeBlock->valueProfileForArgument(argument));
+                emitValueProfilingSite(m_codeBlock->valueProfileForArgument(argument), resultRegs);
             }
         }
     }
