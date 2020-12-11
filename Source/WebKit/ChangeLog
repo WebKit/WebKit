@@ -1,3 +1,17 @@
+2020-12-11  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Protect the WebProcessPool earlier in WebProcessCache::addProcessIfPossible
+        https://bugs.webkit.org/show_bug.cgi?id=219777
+
+        Reviewed by Adrian Perez de Castro.
+
+        We are taking a reference of the WebProcessPool in the isResponsive() completion handler lambda, but the
+        WebProcessPool can be destroyed earlier when CachedProcess is created if the WebProcessProxy contains the last
+        strong reference.
+
+        * UIProcess/WebProcessCache.cpp:
+        (WebKit::WebProcessCache::addProcessIfPossible):
+
 2020-12-11  Brent Fulgham  <bfulgham@apple.com>
 
         [macOS] Only extend access to the RootDomainUserClient IOKit class if the GPU Process is not used
