@@ -1,3 +1,14 @@
+2020-12-11  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [TextureMapper] REGRESION(r269570): mask layer doesn't clip descendent layers
+        https://bugs.webkit.org/show_bug.cgi?id=219136
+        <rdar://problem/71742605>
+
+        Reviewed by Carlos Garcia Campos.
+
+        * compositing/masks/clip-path-composited-descendent-2-expected.html: Added.
+        * compositing/masks/clip-path-composited-descendent-2.html: Added.
+
 2020-12-11  Rini Patel  <rini_patel@apple.com>
 
         [GPU process] Update TestExpectations to skip Layout tests crashes

@@ -123,7 +123,8 @@ private:
 
     enum class ComputeOverlapRegionMode : uint8_t {
         Intersection,
-        Union
+        Union,
+        Mask
     };
     struct ComputeOverlapRegionData {
         ComputeOverlapRegionMode mode;
