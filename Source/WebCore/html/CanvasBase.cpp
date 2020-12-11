@@ -191,8 +191,8 @@ RefPtr<ImageBuffer> CanvasBase::setImageBuffer(RefPtr<ImageBuffer>&& buffer) con
         returnBuffer = std::exchange(m_imageBuffer, WTFMove(buffer));
     }
 
-    if (m_imageBuffer && m_size != m_imageBuffer->backendSize())
-        m_size = m_imageBuffer->backendSize();
+    if (m_imageBuffer && m_size != m_imageBuffer->logicalSize())
+        m_size = m_imageBuffer->logicalSize();
 
     size_t previousMemoryCost = m_imageBufferCost;
     m_imageBufferCost = memoryCost();
