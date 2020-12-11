@@ -33,8 +33,6 @@
   cmd: runWebAssemblySuite unless parseRunCommands
 - path: wasm/references
   cmd: runWebAssemblySuite unless parseRunCommands
-- path: wasm/references-spec-tests
-  cmd: runWebAssemblySuite unless parseRunCommands
 - path: wasm/fuzz
   cmd: runWebAssemblySuite unless parseRunCommands
 - path: wasm/lowExecutableMemory
@@ -45,6 +43,17 @@
   cmd: runWebAssembly unless parseRunCommands
 - path: wasm/self-test/
   cmd: runWebAssemblySuite unless parseRunCommands
+
+- path: wasm/references-spec-tests/elem.wast.js
+  cmd: runWebAssemblyReferenceSpecTest :normal
+- path: wasm/references-spec-tests/ref_null.wast.js
+  cmd: runWebAssemblyReferenceSpecTest :normal
+- path: wasm/references-spec-tests/ref_is_null.wast.js
+  cmd: runWebAssemblyReferenceSpecTest :normal
+- path: wasm/references-spec-tests/table_copy.wast.js
+  cmd: runWebAssemblyReferenceSpecTest :normal
+- path: wasm/references-spec-tests/table_init.wast.js
+  cmd: runWebAssemblyReferenceSpecTest :normal
 
 - path: wasm/multi-value-spec-tests/block.wast.js
   cmd: runWebAssemblySpecTest :normal

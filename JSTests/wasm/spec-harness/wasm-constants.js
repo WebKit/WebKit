@@ -4,6 +4,13 @@
 
 // Flags: --expose-wasm
 
+let hostrefs = {};
+let hostsym = Symbol("hostref");
+function hostref(s) {
+  if (! (s in hostrefs)) hostrefs[s] = {[hostsym]: s};
+  return hostrefs[s];
+}
+
 function bytes() {
   var buffer = new ArrayBuffer(arguments.length);
   var view = new Uint8Array(buffer);

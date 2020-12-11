@@ -76,8 +76,20 @@ public:
     Memory* memory() { return m_memory.get(); }
     Table* table(unsigned);
     void setTable(unsigned, Ref<Table>&&);
+    const Element* elementAt(unsigned) const;
+
+    void initElementSegment(uint32_t tableIndex, const Element& segment, uint32_t dstOffset, uint32_t srcOffset, uint32_t length);
+
+    bool isImportFunction(uint32_t functionIndex) const
+    {
+        return functionIndex < m_codeBlock->functionImportCount();
+    }
+
+    void tableInit(uint32_t dstOffset, uint32_t srcOffset, uint32_t length, uint32_t elementIndex, uint32_t tableIndex);
 
     void tableCopy(uint32_t dstOffset, uint32_t srcOffset, uint32_t length, uint32_t dstTableIndex, uint32_t srcTableIndex);
+
+    void elemDrop(uint32_t elementIndex);
 
     void* cachedMemory() const { return m_cachedMemory.getMayBeNull(cachedBoundsCheckingSize()); }
     size_t cachedBoundsCheckingSize() const { return m_cachedBoundsCheckingSize; }
@@ -218,6 +230,7 @@ private:
     StoreTopCallFrameCallback m_storeTopCallFrame;
     unsigned m_numImportFunctions { 0 };
     HashMap<uint32_t, Ref<Global>, IntHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_linkedGlobals;
+    BitVector m_passiveElements;
 };
 
 } } // namespace JSC::Wasm

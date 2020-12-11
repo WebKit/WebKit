@@ -316,6 +316,26 @@ WASM_SLOW_PATH_DECL(table_set)
     WASM_END();
 }
 
+WASM_SLOW_PATH_DECL(table_init)
+{
+    auto instruction = pc->as<WasmTableInit, WasmOpcodeTraits>();
+    int32_t dstOffset = READ(instruction.m_dstOffset).unboxedInt32();
+    int32_t srcOffset = READ(instruction.m_srcOffset).unboxedInt32();
+    int32_t length = READ(instruction.m_length).unboxedInt32();
+    if (!Wasm::operationWasmTableInit(instance, instruction.m_elementIndex, instruction.m_tableIndex, dstOffset, srcOffset, length))
+        WASM_THROW(Wasm::ExceptionType::OutOfBoundsTableAccess);
+    WASM_END();
+}
+
+WASM_SLOW_PATH_DECL(elem_drop)
+{
+    UNUSED_PARAM(callFrame);
+
+    auto instruction = pc->as<WasmElemDrop, WasmOpcodeTraits>();
+    Wasm::operationWasmElemDrop(instance, instruction.m_elementIndex);
+    WASM_END();
+}
+
 WASM_SLOW_PATH_DECL(table_size)
 {
     auto instruction = pc->as<WasmTableSize, WasmOpcodeTraits>();

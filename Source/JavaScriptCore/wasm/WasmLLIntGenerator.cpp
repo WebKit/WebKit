@@ -191,6 +191,8 @@ public:
     // Tables
     PartialResult WARN_UNUSED_RETURN addTableGet(unsigned, ExpressionType index, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addTableSet(unsigned, ExpressionType index, ExpressionType value);
+    PartialResult WARN_UNUSED_RETURN addTableInit(unsigned, unsigned, ExpressionType dstOffset, ExpressionType srcOffset, ExpressionType length);
+    PartialResult WARN_UNUSED_RETURN addElemDrop(unsigned);
     PartialResult WARN_UNUSED_RETURN addTableSize(unsigned, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addTableGrow(unsigned, ExpressionType fill, ExpressionType delta, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addTableFill(unsigned, ExpressionType offset, ExpressionType fill, ExpressionType count);
@@ -1115,6 +1117,20 @@ auto LLIntGenerator::addTableGet(unsigned tableIndex, ExpressionType index, Expr
 auto LLIntGenerator::addTableSet(unsigned tableIndex, ExpressionType index, ExpressionType value) -> PartialResult
 {
     WasmTableSet::emit(this, index, value, tableIndex);
+
+    return { };
+}
+
+auto LLIntGenerator::addTableInit(unsigned elementIndex, unsigned tableIndex, ExpressionType dstOffset, ExpressionType srcOffset, ExpressionType length) -> PartialResult
+{
+    WasmTableInit::emit(this, dstOffset, srcOffset, length, elementIndex, tableIndex);
+
+    return { };
+}
+
+auto LLIntGenerator::addElemDrop(unsigned elementIndex) -> PartialResult
+{
+    WasmElemDrop::emit(this, elementIndex);
 
     return { };
 }

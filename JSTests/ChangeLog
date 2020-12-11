@@ -1,3 +1,28 @@
+2020-12-11  Dmitry Bezhetskov  <dbezhetskov@igalia.com>
+
+        [WASM-References] Add table.init
+        https://bugs.webkit.org/show_bug.cgi?id=219297
+
+        Reviewed by Yusuke Suzuki.
+
+        Added reference types spec tests for element section, table.init
+        and elem.drop:
+        https://github.com/WebAssembly/reference-types/blob/master/test/core/elem.wast,
+        https://github.com/WebAssembly/reference-types/blob/master/test/core/table_init.wast.
+        Added tests for checking table instructions immediates when they are unreachable.
+
+        * wasm.yaml:
+        * wasm/references-spec-tests/elem.wast.js: Added.
+        * wasm/references-spec-tests/ref_is_null.js: Removed.
+        * wasm/references-spec-tests/ref_is_null.wast.js: Added.
+        * wasm/references-spec-tests/ref_null.js: Removed.
+        * wasm/references-spec-tests/ref_null.wast.js: Added.
+        * wasm/references-spec-tests/table_copy.wast.js: Renamed from JSTests/wasm/references-spec-tests/table_copy.js.
+        * wasm/references-spec-tests/table_init.wast.js: Added.
+        * wasm/spec-harness/wasm-constants.js:
+        (hostref):
+        * wasm/wasm.json:
+
 2020-12-10  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Align [[DefineOwnProperty]] method of mapped arguments object with the spec

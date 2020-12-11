@@ -135,6 +135,21 @@ private:
     PartialResult WARN_UNUSED_RETURN atomicNotify(ExtAtomicOpType);
     PartialResult WARN_UNUSED_RETURN atomicFence(ExtAtomicOpType);
 
+    PartialResult WARN_UNUSED_RETURN parseTableIndex(unsigned&);
+    PartialResult WARN_UNUSED_RETURN parseElementIndex(unsigned&);
+
+    struct TableInitImmediates {
+        unsigned elementIndex;
+        unsigned tableIndex;
+    };
+    PartialResult WARN_UNUSED_RETURN parseTableInitImmediates(TableInitImmediates&);
+
+    struct TableCopyImmediates {
+        unsigned srcTableIndex;
+        unsigned dstTableIndex;
+    };
+    PartialResult WARN_UNUSED_RETURN parseTableCopyImmediates(TableCopyImmediates&);
+
 #define WASM_TRY_ADD_TO_CONTEXT(add_expression) WASM_FAIL_IF_HELPER_FAILS(m_context.add_expression)
 
     template <typename ...Args>
@@ -480,6 +495,58 @@ auto FunctionParser<Context>::atomicFence(ExtAtomicOpType op) -> PartialResult
 }
 
 template<typename Context>
+auto FunctionParser<Context>::parseTableIndex(unsigned& result) -> PartialResult
+{
+    unsigned tableIndex;
+    WASM_PARSER_FAIL_IF(!parseVarUInt32(tableIndex), "can't parse table index");
+    WASM_VALIDATOR_FAIL_IF(tableIndex >= m_info.tableCount(), "table index ", tableIndex, " is invalid, limit is ", m_info.tableCount());
+    result = tableIndex;
+    return { };
+}
+
+template<typename Context>
+auto FunctionParser<Context>::parseElementIndex(unsigned& result) -> PartialResult
+{
+    unsigned elementIndex;
+    WASM_PARSER_FAIL_IF(!parseVarUInt32(elementIndex), "can't parse element index");
+    WASM_VALIDATOR_FAIL_IF(elementIndex >= m_info.elementCount(), "element index ", elementIndex, " is invalid, limit is ", m_info.elementCount());
+    result = elementIndex;
+    return { };
+}
+
+template<typename Context>
+auto FunctionParser<Context>::parseTableInitImmediates(TableInitImmediates& result) -> PartialResult
+{
+    unsigned elementIndex;
+    WASM_FAIL_IF_HELPER_FAILS(parseElementIndex(elementIndex));
+
+    unsigned tableIndex;
+    WASM_FAIL_IF_HELPER_FAILS(parseTableIndex(tableIndex));
+
+    result.elementIndex = elementIndex;
+    result.tableIndex = tableIndex;
+
+    return { };
+}
+
+template<typename Context>
+auto FunctionParser<Context>::parseTableCopyImmediates(TableCopyImmediates& result) -> PartialResult
+{
+    unsigned dstTableIndex;
+    WASM_PARSER_FAIL_IF(!parseVarUInt32(dstTableIndex), "can't parse destination table index");
+    WASM_VALIDATOR_FAIL_IF(dstTableIndex >= m_info.tableCount(), "table index ", dstTableIndex, " is invalid, limit is ", m_info.tableCount());
+
+    unsigned srcTableIndex;
+    WASM_PARSER_FAIL_IF(!parseVarUInt32(srcTableIndex), "can't parse source table index");
+    WASM_VALIDATOR_FAIL_IF(srcTableIndex >= m_info.tableCount(), "table index ", srcTableIndex, " is invalid, limit is ", m_info.tableCount());
+
+    result.dstTableIndex = dstTableIndex;
+    result.srcTableIndex = srcTableIndex;
+
+    return { };
+}
+
+template<typename Context>
 auto FunctionParser<Context>::checkBranchTarget(const ControlType& target) -> PartialResult
 {
     if (!target.branchTargetArity())
@@ -611,10 +678,34 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         WASM_PARSER_FAIL_IF(!parseUInt8(extOp), "can't parse table extended opcode");
 
         switch (static_cast<ExtTableOpType>(extOp)) {
+        case ExtTableOpType::TableInit: {
+            TableInitImmediates immediates;
+            WASM_FAIL_IF_HELPER_FAILS(parseTableInitImmediates(immediates));
+
+            TypedExpression dstOffset;
+            TypedExpression srcOffset;
+            TypedExpression lenght;
+            WASM_TRY_POP_EXPRESSION_STACK_INTO(lenght, "table.init");
+            WASM_TRY_POP_EXPRESSION_STACK_INTO(srcOffset, "table.init");
+            WASM_TRY_POP_EXPRESSION_STACK_INTO(dstOffset, "table.init");
+
+            WASM_VALIDATOR_FAIL_IF(I32 != dstOffset.type(), "table.init dst_offset to type ", dstOffset.type(), " expected ", I32);
+            WASM_VALIDATOR_FAIL_IF(I32 != srcOffset.type(), "table.init src_offset to type ", srcOffset.type(), " expected ", I32);
+            WASM_VALIDATOR_FAIL_IF(I32 != lenght.type(), "table.init length to type ", lenght.type(), " expected ", I32);
+
+            WASM_TRY_ADD_TO_CONTEXT(addTableInit(immediates.elementIndex, immediates.tableIndex, dstOffset, srcOffset, lenght));
+            break;
+        }
+        case ExtTableOpType::ElemDrop: {
+            unsigned elementIndex;
+            WASM_FAIL_IF_HELPER_FAILS(parseElementIndex(elementIndex));
+
+            WASM_TRY_ADD_TO_CONTEXT(addElemDrop(elementIndex));
+            break;
+        }
         case ExtTableOpType::TableSize: {
             unsigned tableIndex;
-            WASM_PARSER_FAIL_IF(!parseVarUInt32(tableIndex), "can't parse table index");
-            WASM_VALIDATOR_FAIL_IF(tableIndex >= m_info.tableCount(), "table index ", tableIndex, " is invalid, limit is ", m_info.tableCount());
+            WASM_FAIL_IF_HELPER_FAILS(parseTableIndex(tableIndex));
 
             ExpressionType result;
             WASM_TRY_ADD_TO_CONTEXT(addTableSize(tableIndex, result));
@@ -623,8 +714,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         }
         case ExtTableOpType::TableGrow: {
             unsigned tableIndex;
-            WASM_PARSER_FAIL_IF(!parseVarUInt32(tableIndex), "can't parse table index");
-            WASM_VALIDATOR_FAIL_IF(tableIndex >= m_info.tableCount(), "table index ", tableIndex, " is invalid, limit is ", m_info.tableCount());
+            WASM_FAIL_IF_HELPER_FAILS(parseTableIndex(tableIndex));
 
             TypedExpression fill;
             TypedExpression delta;
@@ -641,8 +731,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         }
         case ExtTableOpType::TableFill: {
             unsigned tableIndex;
-            WASM_PARSER_FAIL_IF(!parseVarUInt32(tableIndex), "can't parse table index");
-            WASM_VALIDATOR_FAIL_IF(tableIndex >= m_info.tableCount(), "table index ", tableIndex, " is invalid, limit is ", m_info.tableCount());
+            WASM_FAIL_IF_HELPER_FAILS(parseTableIndex(tableIndex));
 
             TypedExpression offset, fill, count;
             WASM_TRY_POP_EXPRESSION_STACK_INTO(count, "table.fill");
@@ -657,16 +746,11 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             break;
         }
         case ExtTableOpType::TableCopy: {
-            unsigned dstTableIndex;
-            WASM_PARSER_FAIL_IF(!parseVarUInt32(dstTableIndex), "can't parse destination table index");
-            WASM_VALIDATOR_FAIL_IF(dstTableIndex >= m_info.tableCount(), "table index ", dstTableIndex, " is invalid, limit is ", m_info.tableCount());
+            TableCopyImmediates immediates;
+            WASM_FAIL_IF_HELPER_FAILS(parseTableCopyImmediates(immediates));
 
-            unsigned srcTableIndex;
-            WASM_PARSER_FAIL_IF(!parseVarUInt32(srcTableIndex), "can't parse source table index");
-            WASM_VALIDATOR_FAIL_IF(srcTableIndex >= m_info.tableCount(), "table index ", srcTableIndex, " is invalid, limit is ", m_info.tableCount());
-
-            const auto srcType = m_info.table(srcTableIndex).wasmType();
-            const auto dstType = m_info.table(dstTableIndex).wasmType();
+            const auto srcType = m_info.table(immediates.srcTableIndex).wasmType();
+            const auto dstType = m_info.table(immediates.dstTableIndex).wasmType();
             WASM_VALIDATOR_FAIL_IF(srcType != dstType, "type mismatch at table.copy. got ", srcType, " and ", dstType);
 
             TypedExpression dstOffset;
@@ -680,7 +764,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             WASM_VALIDATOR_FAIL_IF(I32 != srcOffset.type(), "table.copy src_offset to type ", srcOffset.type(), " expected ", I32);
             WASM_VALIDATOR_FAIL_IF(I32 != length.type(), "table.copy length to type ", length.type(), " expected ", I32);
 
-            WASM_TRY_ADD_TO_CONTEXT(addTableCopy(dstTableIndex, srcTableIndex, dstOffset, srcOffset, length));
+            WASM_TRY_ADD_TO_CONTEXT(addTableCopy(immediates.dstTableIndex, immediates.srcTableIndex, dstOffset, srcOffset, length));
             break;
         }
         default:
@@ -1223,7 +1307,42 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
         return { };
     }
 
-    case ExtTable:
+    case ExtTable: {
+        WASM_PARSER_FAIL_IF(!Options::useWebAssemblyReferences(), "references are not enabled");
+        uint8_t extOp;
+        WASM_PARSER_FAIL_IF(!parseUInt8(extOp), "can't parse table extended opcode");
+
+        switch (static_cast<ExtTableOpType>(extOp)) {
+        case ExtTableOpType::TableInit: {
+            TableInitImmediates immediates;
+            WASM_FAIL_IF_HELPER_FAILS(parseTableInitImmediates(immediates));
+            return { };
+        }
+        case ExtTableOpType::ElemDrop: {
+            unsigned elementIndex;
+            WASM_FAIL_IF_HELPER_FAILS(parseElementIndex(elementIndex));
+            return { };
+        }
+        case ExtTableOpType::TableSize:
+        case ExtTableOpType::TableGrow:
+        case ExtTableOpType::TableFill: {
+            unsigned tableIndex;
+            WASM_FAIL_IF_HELPER_FAILS(parseTableIndex(tableIndex));
+            return { };
+        }
+        case ExtTableOpType::TableCopy: {
+            TableCopyImmediates immediates;
+            WASM_FAIL_IF_HELPER_FAILS(parseTableCopyImmediates(immediates));
+            return { };
+        }
+        default:
+            WASM_PARSER_FAIL_IF(true, "invalid extended table op ", extOp);
+            break;
+        }
+
+        return { };
+    }
+
     case TableGet:
     case TableSet: {
         unsigned tableIndex;

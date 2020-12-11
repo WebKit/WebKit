@@ -238,20 +238,27 @@ struct Element {
         Declared,
     };
 
-    Element(Element::Kind kind, TableElementType elementType, uint32_t tableIndex, Optional<I32InitExpr> initExpr)
+    Element(Element::Kind kind, TableElementType elementType, Optional<uint32_t> tableIndex, Optional<I32InitExpr> initExpr)
         : kind(kind)
         , elementType(elementType)
-        , tableIndex(tableIndex)
-        , offsetIfActive(initExpr)
+        , tableIndexIfActive(WTFMove(tableIndex))
+        , offsetIfActive(WTFMove(initExpr))
     { }
 
+    Element(Element::Kind kind, TableElementType elemType)
+        : Element(kind, elemType, WTF::nullopt, WTF::nullopt)
+    { }
+
+    uint32_t length() const { return functionIndices.size(); }
+
     bool isActive() const { return kind == Kind::Active; }
+    bool isPassive() const { return kind == Kind::Passive; }
 
     static bool isNullFuncIndex(uint32_t idx) { return idx == nullFuncIndex; }
 
     Kind kind;
     TableElementType elementType;
-    uint32_t tableIndex;
+    Optional<uint32_t> tableIndexIfActive;
     Optional<I32InitExpr> offsetIfActive;
 
     // Index may be nullFuncIndex.

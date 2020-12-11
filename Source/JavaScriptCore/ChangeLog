@@ -1,3 +1,62 @@
+2020-12-11  Dmitry Bezhetskov  <dbezhetskov@igalia.com>
+
+        [WASM-References] Add table.init
+        https://bugs.webkit.org/show_bug.cgi?id=219297
+
+        Reviewed by Yusuke Suzuki.
+
+        Add support for table.init, elem.drop and new element section
+        from reference-type proposal: 
+        https://webassembly.github.io/reference-types/core/syntax/instructions.html#table-instructions,
+        https://webassembly.github.io/reference-types/core/syntax/modules.html#element-segments.
+        All in one patch because all this stuff are very coupled and ref-types
+        spec tests require each other to run the its tests, so not to write
+        hand-crafted tests this is in one PR.
+
+        * bytecode/BytecodeList.rb:
+        * llint/WebAssembly.asm:
+        * wasm/WasmAirIRGenerator.cpp:
+        (JSC::Wasm::AirIRGenerator::addTableInit):
+        (JSC::Wasm::AirIRGenerator::addElemDrop):
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::addTableInit):
+        (JSC::Wasm::B3IRGenerator::addElemDrop):
+        * wasm/WasmFormat.h:
+        (JSC::Wasm::Element::Element):
+        (JSC::Wasm::Element::length const):
+        (JSC::Wasm::Element::isPassive const):
+        * wasm/WasmFunctionParser.h:
+        (JSC::Wasm::FunctionParser<Context>::parseExpression):
+        * wasm/WasmInstance.cpp:
+        (JSC::Wasm::Instance::Instance):
+        (JSC::Wasm::Instance::elemDrop):
+        (JSC::Wasm::Instance::elem const):
+        (JSC::Wasm::Instance::initElementSegment):
+        (JSC::Wasm::Instance::tableInit):
+        * wasm/WasmInstance.h:
+        (JSC::Wasm::Instance::isImportFunction const):
+        * wasm/WasmLLIntGenerator.cpp:
+        (JSC::Wasm::LLIntGenerator::addTableInit):
+        (JSC::Wasm::LLIntGenerator::addElemDrop):
+        * wasm/WasmModuleInformation.h:
+        (JSC::Wasm::ModuleInformation::elementCount const):
+        * wasm/WasmOperations.cpp:
+        (JSC::Wasm::JSC_DEFINE_JIT_OPERATION):
+        * wasm/WasmOperations.h:
+        * wasm/WasmSectionParser.cpp:
+        (JSC::Wasm::SectionParser::parseElement):
+        (JSC::Wasm::SectionParser::parseElementSegmentVectorOfExpressions):
+        (JSC::Wasm::SectionParser::parseElementSegmentVectorOfIndexes):
+        (JSC::Wasm::SectionParser::parseFuncIndexFromRefExpForElementSection): Deleted.
+        (JSC::Wasm::SectionParser::parseFuncIndexForElementSection): Deleted.
+        * wasm/WasmSectionParser.h:
+        * wasm/WasmSlowPaths.cpp:
+        (JSC::LLInt::WASM_SLOW_PATH_DECL):
+        * wasm/WasmSlowPaths.h:
+        * wasm/js/WebAssemblyModuleRecord.cpp:
+        (JSC::WebAssemblyModuleRecord::evaluate):
+        * wasm/wasm.json:
+
 2020-12-11  Mark Lam  <mark.lam@apple.com>
 
         Add extra validation after untagging code pointers.

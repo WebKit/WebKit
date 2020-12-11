@@ -215,6 +215,8 @@ public:
     // Tables
     PartialResult WARN_UNUSED_RETURN addTableGet(unsigned, ExpressionType index, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addTableSet(unsigned, ExpressionType index, ExpressionType value);
+    PartialResult WARN_UNUSED_RETURN addTableInit(unsigned, unsigned, ExpressionType dstOffset, ExpressionType srcOffset, ExpressionType length);
+    PartialResult WARN_UNUSED_RETURN addElemDrop(unsigned);
     PartialResult WARN_UNUSED_RETURN addTableSize(unsigned, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addTableGrow(unsigned, ExpressionType fill, ExpressionType delta, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addTableFill(unsigned, ExpressionType offset, ExpressionType fill, ExpressionType count);
@@ -740,6 +742,39 @@ auto B3IRGenerator::addRefFunc(uint32_t index, ExpressionType& result) -> Partia
     result = m_currentBlock->appendNew<CCallValue>(m_proc, B3::Int64, origin(),
         m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), tagCFunction<OperationPtrTag>(operationWasmRefFunc)),
         instanceValue(), addConstant(Type::I32, index));
+
+    return { };
+}
+
+auto B3IRGenerator::addTableInit(unsigned elementIndex, unsigned tableIndex, ExpressionType dstOffset, ExpressionType srcOffset, ExpressionType length) -> PartialResult
+{
+    auto result = m_currentBlock->appendNew<CCallValue>(
+        m_proc, toB3Type(I32), origin(),
+        m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), tagCFunction<OperationPtrTag>(operationWasmTableInit)),
+        instanceValue(),
+        m_currentBlock->appendNew<Const32Value>(m_proc, origin(), elementIndex),
+        m_currentBlock->appendNew<Const32Value>(m_proc, origin(), tableIndex),
+        dstOffset, srcOffset, length);
+
+    {
+        CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
+            m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), result, m_currentBlock->appendNew<Const32Value>(m_proc, origin(), 0)));
+
+        check->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+            this->emitExceptionCheck(jit, ExceptionType::OutOfBoundsTableAccess);
+        });
+    }
+
+    return { };
+}
+
+auto B3IRGenerator::addElemDrop(unsigned elementIndex) -> PartialResult
+{
+    m_currentBlock->appendNew<CCallValue>(
+        m_proc, B3::Void, origin(),
+        m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), tagCFunction<OperationPtrTag>(operationWasmElemDrop)),
+        instanceValue(),
+        m_currentBlock->appendNew<Const32Value>(m_proc, origin(), elementIndex));
 
     return { };
 }

@@ -1587,6 +1587,20 @@ op :table_set,
         tableIndex: unsigned,
     }
 
+op :table_init,
+    args: {
+        dstOffset: VirtualRegister,
+        srcOffset: VirtualRegister,
+        length: VirtualRegister,
+        elementIndex: unsigned,
+        tableIndex: unsigned,
+    }
+
+op :elem_drop,
+    args: {
+        elementIndex: unsigned,
+    }
+
 op :table_size,
     args: {
         dst: VirtualRegister,

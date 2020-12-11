@@ -260,6 +260,8 @@ public:
     // Tables
     PartialResult WARN_UNUSED_RETURN addTableGet(unsigned, ExpressionType index, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addTableSet(unsigned, ExpressionType index, ExpressionType value);
+    PartialResult WARN_UNUSED_RETURN addTableInit(unsigned, unsigned, ExpressionType dstOffset, ExpressionType srcOffset, ExpressionType length);
+    PartialResult WARN_UNUSED_RETURN addElemDrop(unsigned);
     PartialResult WARN_UNUSED_RETURN addTableSize(unsigned, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addTableGrow(unsigned, ExpressionType fill, ExpressionType delta, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addTableFill(unsigned, ExpressionType offset, ExpressionType fill, ExpressionType count);
@@ -1115,6 +1117,39 @@ auto AirIRGenerator::addTableSet(unsigned tableIndex, ExpressionType index, Expr
         this->emitThrowException(jit, ExceptionType::OutOfBoundsTableAccess);
     });
 
+    return { };
+}
+
+auto AirIRGenerator::addTableInit(unsigned elementIndex, unsigned tableIndex, ExpressionType dstOffset, ExpressionType srcOffset, ExpressionType length) -> PartialResult
+{
+    ASSERT(dstOffset.tmp());
+    ASSERT(dstOffset.type() == Type::I32);
+
+    ASSERT(srcOffset.tmp());
+    ASSERT(srcOffset.type() == Type::I32);
+
+    ASSERT(length.tmp());
+    ASSERT(length.type() == Type::I32);
+
+    auto result = tmpForType(Type::I32);
+    emitCCall(
+        &operationWasmTableInit, result, instanceValue(),
+        addConstant(Type::I32, elementIndex),
+        addConstant(Type::I32, tableIndex),
+        dstOffset, srcOffset, length);
+
+    emitCheck([&] {
+        return Inst(BranchTest32, nullptr, Arg::resCond(MacroAssembler::Zero), result, result);
+    }, [=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+        this->emitThrowException(jit, ExceptionType::OutOfBoundsTableAccess);
+    });
+
+    return { };
+}
+
+auto AirIRGenerator::addElemDrop(unsigned elementIndex) -> PartialResult
+{
+    emitCCall(&operationWasmElemDrop, TypedTmp(), instanceValue(), addConstant(Type::I32, elementIndex));
     return { };
 }
 

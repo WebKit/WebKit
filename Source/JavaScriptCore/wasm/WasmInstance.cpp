@@ -32,6 +32,7 @@
 #include "JSWebAssemblyInstance.h"
 #include "Register.h"
 #include "WasmModuleInformation.h"
+#include "WasmSignatureInlines.h"
 #include <wtf/CheckedArithmetic.h>
 
 namespace JSC { namespace Wasm {
@@ -53,6 +54,7 @@ Instance::Instance(Context* context, Ref<Module>&& module, EntryFrame** pointerT
     , m_pointerToActualStackLimit(pointerToActualStackLimit)
     , m_storeTopCallFrame(WTFMove(storeTopCallFrame))
     , m_numImportFunctions(m_module->moduleInformation().importFunctionCount())
+    , m_passiveElements(m_module->moduleInformation().elementCount())
 {
     for (unsigned i = 0; i < m_numImportFunctions; ++i)
         new (importFunctionInfo(i)) ImportFunctionInfo();
@@ -68,6 +70,11 @@ Instance::Instance(Context* context, Ref<Module>&& module, EntryFrame** pointerT
         }
     }
     memset(bitwise_cast<char*>(this) + offsetOfTablePtr(m_numImportFunctions, 0), 0, m_module->moduleInformation().tableCount() * sizeof(Table*));
+    for (unsigned elementIndex = 0; elementIndex < m_module->moduleInformation().elementCount(); ++elementIndex) {
+        const auto& element = m_module->moduleInformation().elements[elementIndex];
+        if (element.isPassive())
+            m_passiveElements.quickSet(elementIndex);
+    }
 }
 
 Ref<Instance> Instance::create(Context* context, Ref<Module>&& module, EntryFrame** pointerToTopEntryFrame, void** pointerToActualStackLimit, StoreTopCallFrameCallback&& storeTopCallFrame)
@@ -151,6 +158,99 @@ void Instance::tableCopy(uint32_t dstOffset, uint32_t srcOffset, uint32_t length
     forEachTableElement([](Table* dstTable, Table* srcTable, uint32_t dstIndex, uint32_t srcIndex) {
         dstTable->asFuncrefTable()->copyFunction(srcTable->asFuncrefTable(), dstIndex, srcIndex);
     });
+}
+
+void Instance::elemDrop(uint32_t elementIndex)
+{
+    m_passiveElements.quickClear(elementIndex);
+}
+
+const Element* Instance::elementAt(unsigned index) const
+{
+    RELEASE_ASSERT(index < m_module->moduleInformation().elementCount());
+
+    if (m_passiveElements.quickGet(index))
+        return &m_module->moduleInformation().elements[index];
+    return nullptr;
+}
+
+void Instance::initElementSegment(uint32_t tableIndex, const Element& segment, uint32_t dstOffset, uint32_t srcOffset, uint32_t length)
+{
+    RELEASE_ASSERT(length <= segment.length());
+
+    JSWebAssemblyInstance* jsInstance = owner<JSWebAssemblyInstance>();
+    JSWebAssemblyTable* jsTable = jsInstance->table(tableIndex);
+    JSGlobalObject* globalObject = jsInstance->globalObject();
+    VM& vm = globalObject->vm();
+
+    for (uint32_t index = 0; index < length; ++index) {
+        const auto srcIndex = srcOffset + index;
+        const auto dstIndex = dstOffset + index;
+
+        if (Element::isNullFuncIndex(segment.functionIndices[srcIndex])) {
+            jsTable->clear(dstIndex);
+            continue;
+        }
+
+        // FIXME: This essentially means we're exporting an import.
+        // We need a story here. We need to create a WebAssemblyFunction
+        // for the import.
+        // https://bugs.webkit.org/show_bug.cgi?id=165510
+        uint32_t functionIndex = segment.functionIndices[srcIndex];
+        SignatureIndex signatureIndex = m_module->signatureIndexFromFunctionIndexSpace(functionIndex);
+        if (isImportFunction(functionIndex)) {
+            JSObject* functionImport = importFunction<WriteBarrier<JSObject>>(functionIndex)->get();
+            if (isWebAssemblyHostFunction(vm, functionImport)) {
+                WebAssemblyFunction* wasmFunction = jsDynamicCast<WebAssemblyFunction*>(vm, functionImport);
+                // If we ever import a WebAssemblyWrapperFunction, we set the import as the unwrapped value.
+                // Because a WebAssemblyWrapperFunction can never wrap another WebAssemblyWrapperFunction,
+                // the only type this could be is WebAssemblyFunction.
+                RELEASE_ASSERT(wasmFunction);
+                jsTable->set(dstIndex, wasmFunction);
+                continue;
+            }
+            auto* wrapperFunction = WebAssemblyWrapperFunction::create(
+                vm,
+                globalObject,
+                globalObject->webAssemblyWrapperFunctionStructure(),
+                functionImport,
+                functionIndex,
+                jsInstance,
+                signatureIndex);
+            jsTable->set(dstIndex, wrapperFunction);
+            continue;
+        }
+
+        Callee& embedderEntrypointCallee = codeBlock()->embedderEntrypointCalleeFromFunctionIndexSpace(functionIndex);
+        WasmToWasmImportableFunction::LoadLocation entrypointLoadLocation = codeBlock()->entrypointLoadLocationFromFunctionIndexSpace(functionIndex);
+        const Signature& signature = SignatureInformation::get(signatureIndex);
+        // FIXME: Say we export local function "foo" at function index 0.
+        // What if we also set it to the table an Element w/ index 0.
+        // Does (new Instance(...)).exports.foo === table.get(0)?
+        // https://bugs.webkit.org/show_bug.cgi?id=165825
+        WebAssemblyFunction* function = WebAssemblyFunction::create(
+            vm,
+            globalObject,
+            globalObject->webAssemblyFunctionStructure(),
+            signature.argumentCount(),
+            String(),
+            jsInstance,
+            embedderEntrypointCallee,
+            entrypointLoadLocation,
+            signatureIndex);
+        jsTable->set(dstIndex, function);
+    }
+}
+
+void Instance::tableInit(uint32_t dstOffset, uint32_t srcOffset, uint32_t length, uint32_t elementIndex, uint32_t tableIndex)
+{
+    RELEASE_ASSERT(elementIndex < m_module->moduleInformation().elementCount());
+    RELEASE_ASSERT(tableIndex < m_module->moduleInformation().tableCount());
+
+    const Element* elementSegment = elementAt(elementIndex);
+    RELEASE_ASSERT(elementSegment);
+    RELEASE_ASSERT(elementSegment->isPassive());
+    initElementSegment(tableIndex, *elementSegment, dstOffset, srcOffset, length);
 }
 
 void Instance::setTable(unsigned i, Ref<Table>&& table)

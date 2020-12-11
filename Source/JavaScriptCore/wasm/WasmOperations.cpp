@@ -689,6 +689,44 @@ JSC_DEFINE_JIT_OPERATION(operationSetWasmTableElement, bool, (Instance* instance
     return setWasmTableElement(instance, tableIndex, signedIndex, encValue);
 }
 
+JSC_DEFINE_JIT_OPERATION(operationWasmTableInit, bool, (Instance* instance, unsigned elementIndex, unsigned tableIndex, int32_t dstOffset, int32_t srcOffset, int32_t length))
+{
+    ASSERT(elementIndex < instance->module().moduleInformation().elementCount());
+    ASSERT(tableIndex < instance->module().moduleInformation().tableCount());
+
+    if ((srcOffset < 0) || (dstOffset < 0) || (length < 0))
+        return false;
+
+    Checked<uint32_t, RecordOverflow> lastSrcElementIndexChecked = static_cast<uint32_t>(srcOffset);
+    lastSrcElementIndexChecked += static_cast<uint32_t>(length);
+
+    uint32_t lastSrcElementIndex;
+    if (lastSrcElementIndexChecked.safeGet(lastSrcElementIndex) == CheckedState::DidOverflow)
+        return false;
+
+    if (!instance->elementAt(elementIndex) || lastSrcElementIndex > instance->elementAt(elementIndex)->length())
+        return false;
+
+    Checked<uint32_t, RecordOverflow> lastDstElementIndexChecked = static_cast<uint32_t>(dstOffset);
+    lastDstElementIndexChecked += static_cast<uint32_t>(length);
+
+    uint32_t lastDstElementIndex;
+    if (lastDstElementIndexChecked.safeGet(lastDstElementIndex) == CheckedState::DidOverflow)
+        return false;
+
+    if (lastDstElementIndex > instance->table(tableIndex)->length())
+        return false;
+
+    instance->tableInit(dstOffset, srcOffset, length, elementIndex, tableIndex);
+    return true;
+}
+
+JSC_DEFINE_JIT_OPERATION(operationWasmElemDrop, void, (Instance* instance, unsigned elementIndex))
+{
+    ASSERT(elementIndex < instance->module().moduleInformation().elementCount());
+    instance->elemDrop(elementIndex);
+}
+
 JSC_DEFINE_JIT_OPERATION(operationWasmTableGrow, int32_t, (Instance* instance, unsigned tableIndex, EncodedJSValue fill, int32_t delta))
 {
     ASSERT(tableIndex < instance->module().moduleInformation().tableCount());

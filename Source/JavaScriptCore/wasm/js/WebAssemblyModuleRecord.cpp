@@ -544,26 +544,23 @@ JSValue WebAssemblyModuleRecord::evaluate(JSGlobalObject* globalObject)
     
     Optional<JSValue> exception;
 
-    auto forEachElement = [&] (auto fn) {
+    auto forEachActiveElement = [&] (auto fn) {
         for (const Wasm::Element& element : moduleInformation.elements) {
+            if (!element.isActive())
+                continue;
+
             // It should be a validation error to have any elements without a table.
             // Also, it could be that a table wasn't imported, or that the table
             // imported wasn't compatible. However, those should error out before
             // getting here.
-            ASSERT(!!m_instance->table(element.tableIndex));
-
-            if (!element.functionIndices.size())
-                continue;
-
-            if (!element.isActive())
-                continue;
+            ASSERT(!!m_instance->table(*element.tableIndexIfActive));
 
             const auto& offset = *element.offsetIfActive;
             const uint32_t elementIndex = offset.isGlobalImport()
                 ? static_cast<uint32_t>(m_instance->instance().loadI32Global(offset.globalImportIndex()))
                 : offset.constValue();
 
-            fn(element, element.tableIndex, elementIndex);
+            fn(element, *element.tableIndexIfActive, elementIndex);
 
             if (exception)
                 break;
@@ -588,8 +585,8 @@ JSValue WebAssemblyModuleRecord::evaluate(JSGlobalObject* globalObject)
     };
 
     // Validation of all element ranges comes before all Table and Memory initialization.
-    forEachElement([&] (const Wasm::Element& element, uint32_t tableIndex, uint32_t elementIndex) {
-        uint64_t lastWrittenIndex = static_cast<uint64_t>(elementIndex) + static_cast<uint64_t>(element.functionIndices.size()) - 1;
+    forEachActiveElement([&] (const Wasm::Element& element, uint32_t tableIndex, uint32_t elementIndex) {
+        int64_t lastWrittenIndex = static_cast<int64_t>(elementIndex) + static_cast<int64_t>(element.functionIndices.size()) - 1;
         if (UNLIKELY(lastWrittenIndex >= m_instance->table(tableIndex)->length()))
             exception = JSValue(throwException(globalObject, scope, createJSWebAssemblyLinkError(globalObject, vm, "Element is trying to set an out of bounds table index"_s)));
     });
@@ -608,8 +605,9 @@ JSValue WebAssemblyModuleRecord::evaluate(JSGlobalObject* globalObject)
     if (UNLIKELY(exception))
         return exception.value();
 
-    forEachElement([&] (const Wasm::Element& element, uint32_t tableIndex, uint32_t startElementIndex) {
+    forEachActiveElement([&] (const Wasm::Element& element, uint32_t tableIndex, uint32_t startElementIndex) {
         for (uint32_t i = 0; i < element.functionIndices.size(); ++i) {
+
             const uint32_t elementIndex = startElementIndex + i;
             const uint32_t functionIndex = element.functionIndices[i];
             if (Wasm::Element::isNullFuncIndex(functionIndex)) {
