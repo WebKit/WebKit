@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -117,6 +117,7 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> genericGenerationThunkGenerator(
 
 #if CPU(ARM64E)
     jit.untagPtr(resultTag, AssemblyHelpers::linkRegister);
+    jit.validateUntaggedPtr(AssemblyHelpers::linkRegister);
     jit.tagReturnAddress();
 #else
     UNUSED_PARAM(resultTag);

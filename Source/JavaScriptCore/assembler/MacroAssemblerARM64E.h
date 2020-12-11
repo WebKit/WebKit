@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -50,9 +50,10 @@ public:
         tagPtr(ARM64Registers::sp, ARM64Registers::lr);
     }
 
-    ALWAYS_INLINE void untagReturnAddress()
+    ALWAYS_INLINE void untagReturnAddress(RegisterID scratch = InvalidGPR)
     {
         untagPtr(ARM64Registers::sp, ARM64Registers::lr);
+        validateUntaggedPtr(ARM64Registers::lr, scratch);
     }
 
     ALWAYS_INLINE void tagPtr(PtrTag tag, RegisterID target)
@@ -76,6 +77,13 @@ public:
         auto tagGPR = getCachedDataTempRegisterIDAndInvalidate();
         move(TrustedImm64(tag), tagGPR);
         m_assembler.autib(target, tagGPR);
+    }
+
+    ALWAYS_INLINE void validateUntaggedPtr(RegisterID target, RegisterID scratch = InvalidGPR)
+    {
+        if (scratch == InvalidGPR)
+            scratch = getCachedDataTempRegisterIDAndInvalidate();
+        load8(Address(target), scratch);
     }
 
     ALWAYS_INLINE void untagPtr(RegisterID tag, RegisterID target)

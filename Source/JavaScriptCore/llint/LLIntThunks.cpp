@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -373,6 +373,7 @@ MacroAssemblerCodeRef<NativeToJITGatePtrTag> createTailCallGate(PtrTag tag)
     CCallHelpers jit;
 
     jit.untagPtr(GPRInfo::argumentGPR2, ARM64Registers::lr);
+    jit.validateUntaggedPtr(ARM64Registers::lr, GPRInfo::argumentGPR2);
     jit.farJump(GPRInfo::regT0, tag);
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID);
@@ -477,6 +478,7 @@ MacroAssemblerCodeRef<NativeToJITGatePtrTag> untagGateThunk(void* pointer)
     jit.loadPtr(CCallHelpers::Address(GPRInfo::callFrameRegister, 8), ARM64Registers::lr);
     jit.addPtr(CCallHelpers::TrustedImm32(16), GPRInfo::callFrameRegister, GPRInfo::regT3);
     jit.untagPtr(GPRInfo::regT3, ARM64Registers::lr);
+    jit.validateUntaggedPtr(ARM64Registers::lr, GPRInfo::regT3);
     jit.move(CCallHelpers::TrustedImmPtr(pointer), GPRInfo::regT3);
     jit.farJump(GPRInfo::regT3, OperationPtrTag);
 
