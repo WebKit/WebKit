@@ -38,7 +38,7 @@ void run(bool* done)
 void spinRunLoop(uint64_t count)
 {
     for (uint64_t i = 0; i < count; ++i)
-        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantPast]];
+        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, true) == kCFRunLoopRunHandledSource) { }
 }
 
 void sleep(double seconds)
