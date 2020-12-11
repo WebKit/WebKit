@@ -7,13 +7,26 @@ set(WebKit_USE_PREFIX_HEADER ON)
 list(APPEND WebProcess_SOURCES
     WebProcess/EntryPoint/playstation/WebProcessMain.cpp
 )
+list(APPEND WebProcess_PRIVATE_LIBRARIES
+    ${EGL_LIBRARIES}
+    OpenSSL::Crypto
+    WebKitRequirements::ProcessLauncher
+)
 
 list(APPEND NetworkProcess_SOURCES
     NetworkProcess/EntryPoint/playstation/NetworkProcessMain.cpp
 )
+list(APPEND NetworkProcess_PRIVATE_LIBRARIES
+    OpenSSL::Crypto
+    WebKitRequirements::ProcessLauncher
+)
 
 list(APPEND GPUProcess_SOURCES
     GPUProcess/EntryPoint/unix/GPUProcessMain.cpp
+)
+list(APPEND GPUProcess_PRIVATE_LIBRARIES
+    ${EGL_LIBRARIES}
+    WebKitRequirements::ProcessLauncher
 )
 
 list(APPEND WebKit_SOURCES
