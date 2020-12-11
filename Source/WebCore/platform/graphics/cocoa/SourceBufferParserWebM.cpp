@@ -39,11 +39,13 @@
 #include "SharedBuffer.h"
 #include "VP9UtilitiesCocoa.h"
 #include "VideoTrackPrivateWebM.h"
+#include "WebMAudioUtilitiesCocoa.h"
 #include <JavaScriptCore/DataView.h>
 #include <webm/webm_parser.h>
 #include <wtf/Algorithms.h>
 #include <wtf/LoggerHelper.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/StdList.h>
 #include <wtf/cf/TypeCastsCF.h>
 #include <wtf/darwin/WeakLinking.h>
@@ -235,7 +237,6 @@ template<> struct LogArgument<WebCore::SourceBufferParserWebM::State> {
 };
 
 } // namespace WTF
-
 
 namespace WebCore {
 
@@ -456,6 +457,7 @@ private:
 
 MediaPlayerEnums::SupportsType SourceBufferParserWebM::isContentTypeSupported(const ContentType& type)
 {
+#if ENABLE(VP9) || ENABLE(VORBIS) || ENABLE(OPUS)
     if (!isWebmParserAvailable())
         return MediaPlayerEnums::SupportsType::IsNotSupported;
 
@@ -467,10 +469,14 @@ MediaPlayerEnums::SupportsType SourceBufferParserWebM::isContentTypeSupported(co
     if (!codecsParameter)
         return MediaPlayerEnums::SupportsType::MayBeSupported;
 
-#if ENABLE(VP9)
     auto splitResults = StringView(codecsParameter).split(',');
     for (auto split : splitResults) {
+#if ENABLE(VP9)
         if (split.startsWith("vp09")) {
+
+            if (!isVP9DecoderAvailable())
+                return MediaPlayerEnums::SupportsType::IsNotSupported;
+
             auto codecParameters = parseVPCodecParameters(split);
             if (!codecParameters)
                 return MediaPlayerEnums::SupportsType::IsNotSupported;
@@ -480,14 +486,43 @@ MediaPlayerEnums::SupportsType SourceBufferParserWebM::isContentTypeSupported(co
 
             continue;
         }
-        // FIXME: Add Opus Support
-        // FIXME: Add Vorbis Support
+#endif // ENABLE(VP9)
+
+#if ENABLE(VORBIS)
+        if (split == "vorbis") {
+            if (!isVorbisDecoderAvailable())
+                return MediaPlayerEnums::SupportsType::IsNotSupported;
+
+            continue;
+        }
+#endif // ENABLE(VORBIS)
+
+#if ENABLE(OPUS)
+        if (split == "opus") {
+            if (!isOpusDecoderAvailable())
+                return MediaPlayerEnums::SupportsType::IsNotSupported;
+
+            continue;
+        }
+#endif // ENABLE(OPUS)
+
         return MediaPlayerEnums::SupportsType::IsNotSupported;
     }
+
     return MediaPlayerEnums::SupportsType::IsSupported;
+
 #else
+    UNUSED_PARAM(type);
+
     return MediaPlayerEnums::SupportsType::IsNotSupported;
-#endif
+#endif // ENABLE(VP9) || ENABLE(VORBIS) || ENABLE(OPUS)
+}
+
+RefPtr<SourceBufferParserWebM> SourceBufferParserWebM::create(const ContentType& type)
+{
+    if (isContentTypeSupported(type) != MediaPlayerEnums::SupportsType::IsNotSupported)
+        return adoptRef(new SourceBufferParserWebM());
+    return nullptr;
 }
 
 SourceBufferParserWebM::SourceBufferParserWebM()
@@ -571,7 +606,9 @@ bool SourceBufferParserWebM::shouldProvideMediadataForTrackID(uint64_t)
 void SourceBufferParserWebM::resetParserState()
 {
     INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER);
-    m_parser->DidSeek();
+    flushPendingAudioBuffers();
+    if (m_parser)
+        m_parser->DidSeek();
     m_state = State::None;
     m_tracks.clear();
     m_initializationSegment = nullptr;
@@ -604,7 +641,7 @@ void SourceBufferParserWebM::setLogger(const Logger& logger, const void* logIden
 auto SourceBufferParserWebM::trackDataForTrackNumber(uint64_t trackNumber) -> TrackData*
 {
     for (auto& track : m_tracks) {
-        if (track.track.track_number.is_present() && track.track.track_number.value() == trackNumber)
+        if (track->track().track_number.is_present() && track->track().track_number.value() == trackNumber)
             return &track;
     }
     return nullptr;
@@ -748,7 +785,7 @@ Status SourceBufferParserWebM::OnClusterBegin(const ElementMetadata& metadata, c
 Status SourceBufferParserWebM::OnTrackEntry(const ElementMetadata& metadata, const TrackEntry& trackEntry)
 {
     UNUSED_PARAM(metadata);
-    if (!trackEntry.track_type.is_present())
+    if (!trackEntry.track_type.is_present() || !trackEntry.codec_id.is_present())
         return Status(Status::kOkCompleted);
 
     auto trackType = trackEntry.track_type.value();
@@ -756,8 +793,30 @@ Status SourceBufferParserWebM::OnTrackEntry(const ElementMetadata& metadata, con
         m_initializationSegment->videoTracks.append({ MediaDescriptionWebM::create(TrackEntry(trackEntry)), VideoTrackPrivateWebM::create(TrackEntry(trackEntry)) });
     else if (trackType == TrackType::kAudio)
         m_initializationSegment->audioTracks.append({ MediaDescriptionWebM::create(TrackEntry(trackEntry)), AudioTrackPrivateWebM::create(TrackEntry(trackEntry)) });
-    m_tracks.append({ TrackEntry(trackEntry), { }, nullptr, nullptr, 0 });
 
+    StringView codecString { trackEntry.codec_id.value().data(), (unsigned)trackEntry.codec_id.value().length() };
+#if ENABLE(VP9)
+    if (codecString == "V_VP9" && isVP9DecoderAvailable()) {
+        m_tracks.append(VideoTrackData::create(CodecType::VP9, trackEntry, *this));
+        return Status(Status::kOkCompleted);
+    }
+#endif
+
+#if ENABLE(VORBIS)
+    if (codecString == "A_VORBIS" && isVorbisDecoderAvailable()) {
+        m_tracks.append(AudioTrackData::create(CodecType::Vorbis, trackEntry, *this, m_minimumAudioSampleDuration));
+        return Status(Status::kOkCompleted);
+    }
+#endif
+
+#if ENABLE(OPUS)
+    if (codecString == "A_OPUS" && isOpusDecoderAvailable()) {
+        m_tracks.append(AudioTrackData::create(CodecType::Opus, trackEntry, *this, m_minimumAudioSampleDuration));
+        return Status(Status::kOkCompleted);
+    }
+#endif
+
+    m_tracks.append(TrackData::create(CodecType::Unsupported, trackEntry, *this));
     return Status(Status::kOkCompleted);
 }
 
@@ -827,296 +886,9 @@ webm::Status SourceBufferParserWebM::OnBlockGroupEnd(const webm::ElementMetadata
     return Status(Status::kOkCompleted);
 }
 
-#if ENABLE(VP9)
-
-static uint8_t convertToColorPrimaries(const Primaries& coefficients)
-{
-    switch (coefficients) {
-    case Primaries::kBt709:
-        return VPConfigurationColorPrimaries::BT_709_6;
-    case Primaries::kUnspecified:
-        return VPConfigurationColorPrimaries::Unspecified;
-    case Primaries::kBt470M:
-        return VPConfigurationColorPrimaries::BT_470_6_M;
-    case Primaries::kBt470Bg:
-        return VPConfigurationColorPrimaries::BT_470_7_BG;
-    case Primaries::kSmpte170M:
-        return VPConfigurationColorPrimaries::BT_601_7;
-    case Primaries::kSmpte240M:
-        return VPConfigurationColorPrimaries::SMPTE_ST_240;
-    case Primaries::kFilm:
-        return VPConfigurationColorPrimaries::Film;
-    case Primaries::kBt2020:
-        return VPConfigurationColorPrimaries::BT_2020_Nonconstant_Luminance;
-    case Primaries::kSmpteSt4281:
-        return VPConfigurationColorPrimaries::SMPTE_ST_428_1;
-    case Primaries::kSmpteRp431:
-        return VPConfigurationColorPrimaries::SMPTE_RP_431_2;
-    case Primaries::kSmpteEg432:
-        return VPConfigurationColorPrimaries::SMPTE_EG_432_1;
-    case Primaries::kJedecP22Phosphors:
-        return VPConfigurationColorPrimaries::EBU_Tech_3213_E;
-    }
-}
-
-static CFStringRef convertToCMColorPrimaries(uint8_t primaries)
-{
-    switch (primaries) {
-    case VPConfigurationColorPrimaries::BT_709_6:
-        return kCVImageBufferColorPrimaries_ITU_R_709_2;
-    case VPConfigurationColorPrimaries::EBU_Tech_3213_E:
-        return kCVImageBufferColorPrimaries_EBU_3213;
-    case VPConfigurationColorPrimaries::BT_601_7:
-    case VPConfigurationColorPrimaries::SMPTE_ST_240:
-        return kCVImageBufferColorPrimaries_SMPTE_C;
-    case VPConfigurationColorPrimaries::SMPTE_RP_431_2:
-        return kCMFormatDescriptionColorPrimaries_DCI_P3;
-    case VPConfigurationColorPrimaries::SMPTE_EG_432_1:
-        return kCMFormatDescriptionColorPrimaries_P3_D65;
-    case VPConfigurationColorPrimaries::BT_2020_Nonconstant_Luminance:
-        return kCMFormatDescriptionColorPrimaries_ITU_R_2020;
-    }
-
-    return nullptr;
-}
-
-static uint8_t convertToTransferCharacteristics(const TransferCharacteristics& characteristics)
-{
-    switch (characteristics) {
-    case TransferCharacteristics::kBt709:
-        return VPConfigurationTransferCharacteristics::BT_709_6;
-    case TransferCharacteristics::kUnspecified:
-        return VPConfigurationTransferCharacteristics::Unspecified;
-    case TransferCharacteristics::kGamma22curve:
-        return VPConfigurationTransferCharacteristics::BT_470_6_M;
-    case TransferCharacteristics::kGamma28curve:
-        return VPConfigurationTransferCharacteristics::BT_470_7_BG;
-    case TransferCharacteristics::kSmpte170M:
-        return VPConfigurationTransferCharacteristics::BT_601_7;
-    case TransferCharacteristics::kSmpte240M:
-        return VPConfigurationTransferCharacteristics::SMPTE_ST_240;
-    case TransferCharacteristics::kLinear:
-        return VPConfigurationTransferCharacteristics::Linear;
-    case TransferCharacteristics::kLog:
-        return VPConfigurationTransferCharacteristics::Logrithmic;
-    case TransferCharacteristics::kLogSqrt:
-        return VPConfigurationTransferCharacteristics::Logrithmic_Sqrt;
-    case TransferCharacteristics::kIec6196624:
-        return VPConfigurationTransferCharacteristics::IEC_61966_2_4;
-    case TransferCharacteristics::kBt1361ExtendedColourGamut:
-        return VPConfigurationTransferCharacteristics::BT_1361_0;
-    case TransferCharacteristics::kIec6196621:
-        return VPConfigurationTransferCharacteristics::IEC_61966_2_1;
-    case TransferCharacteristics::k10BitBt2020:
-        return VPConfigurationTransferCharacteristics::BT_2020_10bit;
-    case TransferCharacteristics::k12BitBt2020:
-        return VPConfigurationTransferCharacteristics::BT_2020_12bit;
-    case TransferCharacteristics::kSmpteSt2084:
-        return VPConfigurationTransferCharacteristics::SMPTE_ST_2084;
-    case TransferCharacteristics::kSmpteSt4281:
-        return VPConfigurationTransferCharacteristics::SMPTE_ST_428_1;
-    case TransferCharacteristics::kAribStdB67Hlg:
-        return VPConfigurationTransferCharacteristics::BT_2100_HLG;
-    }
-}
-
-static CFStringRef convertToCMTransferFunction(uint8_t characteristics)
-{
-    switch (characteristics) {
-    case VPConfigurationTransferCharacteristics::BT_709_6:
-        return kCVImageBufferTransferFunction_ITU_R_709_2;
-    case VPConfigurationTransferCharacteristics::SMPTE_ST_240:
-        return kCVImageBufferTransferFunction_SMPTE_240M_1995;
-    case VPConfigurationTransferCharacteristics::SMPTE_ST_2084:
-        return kCMFormatDescriptionTransferFunction_SMPTE_ST_2084_PQ;
-    case VPConfigurationTransferCharacteristics::BT_2020_10bit:
-    case VPConfigurationTransferCharacteristics::BT_2020_12bit:
-        return kCMFormatDescriptionTransferFunction_ITU_R_2020;
-    case VPConfigurationTransferCharacteristics::SMPTE_ST_428_1:
-        return kCMFormatDescriptionTransferFunction_SMPTE_ST_428_1;
-    case VPConfigurationTransferCharacteristics::BT_2100_HLG:
-        return kCMFormatDescriptionTransferFunction_ITU_R_2100_HLG;
-    case VPConfigurationTransferCharacteristics::IEC_61966_2_1:
-        return PAL::canLoad_CoreMedia_kCMFormatDescriptionTransferFunction_sRGB() ? get_CoreMedia_kCMFormatDescriptionTransferFunction_sRGB() : nullptr;
-    case VPConfigurationTransferCharacteristics::Linear:
-        return kCMFormatDescriptionTransferFunction_Linear;
-    }
-
-    return nullptr;
-}
-
-static uint8_t convertToMatrixCoefficients(const MatrixCoefficients& coefficients)
-{
-    switch (coefficients) {
-    case MatrixCoefficients::kRgb:
-        return VPConfigurationMatrixCoefficients::Identity;
-    case MatrixCoefficients::kBt709:
-        return VPConfigurationMatrixCoefficients::BT_709_6;
-    case MatrixCoefficients::kUnspecified:
-        return VPConfigurationMatrixCoefficients::Unspecified;
-    case MatrixCoefficients::kFcc:
-        return VPConfigurationMatrixCoefficients::FCC;
-    case MatrixCoefficients::kBt470Bg:
-        return VPConfigurationMatrixCoefficients::BT_470_7_BG;
-    case MatrixCoefficients::kSmpte170M:
-        return VPConfigurationMatrixCoefficients::BT_601_7;
-    case MatrixCoefficients::kSmpte240M:
-        return VPConfigurationMatrixCoefficients::SMPTE_ST_240;
-    case MatrixCoefficients::kYCgCo:
-        return VPConfigurationMatrixCoefficients::YCgCo;
-    case MatrixCoefficients::kBt2020NonconstantLuminance:
-        return VPConfigurationMatrixCoefficients::BT_2020_Nonconstant_Luminance;
-    case MatrixCoefficients::kBt2020ConstantLuminance:
-        return VPConfigurationMatrixCoefficients::BT_2020_Constant_Luminance;
-    }
-}
-
-static CFStringRef convertToCMYCbCRMatrix(uint8_t coefficients)
-{
-    switch (coefficients) {
-    case VPConfigurationMatrixCoefficients::BT_2020_Nonconstant_Luminance:
-        return kCMFormatDescriptionYCbCrMatrix_ITU_R_2020;
-    case VPConfigurationMatrixCoefficients::BT_470_7_BG:
-    case VPConfigurationMatrixCoefficients::BT_601_7:
-        return kCVImageBufferYCbCrMatrix_ITU_R_601_4;
-    case VPConfigurationMatrixCoefficients::BT_709_6:
-        return kCVImageBufferYCbCrMatrix_ITU_R_709_2;
-    case VPConfigurationMatrixCoefficients::SMPTE_ST_240:
-        return kCVImageBufferYCbCrMatrix_SMPTE_240M_1995;
-    }
-
-    return nullptr;
-}
-
-static uint8_t convertSubsamplingXYToChromaSubsampling(uint64_t x, uint64_t y)
-{
-    if (x & y)
-        return VPConfigurationChromaSubsampling::Subsampling_420_Colocated;
-    if (x & !y)
-        return VPConfigurationChromaSubsampling::Subsampling_422;
-    if (!x & !y)
-        return VPConfigurationChromaSubsampling::Subsampling_444;
-    // This indicates 4:4:0 subsampling, which is not expressable in the 'vpcC' box. Default to 4:2:0.
-    return VPConfigurationChromaSubsampling::Subsampling_420_Colocated;
-}
-
-static RetainPtr<CMFormatDescriptionRef> createFormatDescriptionFromVP9HeaderParser(const vp9_parser::Vp9HeaderParser& parser, const webm::Element<Colour>& color)
-{
-    // Ref: "VP Codec ISO Media File Format Binding, v1.0, 2017-03-31"
-    // <https://www.webmproject.org/vp9/mp4/>
-    //
-    // class VPCodecConfigurationBox extends FullBox('vpcC', version = 1, 0)
-    // {
-    //     VPCodecConfigurationRecord() vpcConfig;
-    // }
-    //
-    // aligned (8) class VPCodecConfigurationRecord {
-    //     unsigned int (8)     profile;
-    //     unsigned int (8)     level;
-    //     unsigned int (4)     bitDepth;
-    //     unsigned int (3)     chromaSubsampling;
-    //     unsigned int (1)     videoFullRangeFlag;
-    //     unsigned int (8)     colourPrimaries;
-    //     unsigned int (8)     transferCharacteristics;
-    //     unsigned int (8)     matrixCoefficients;
-    //     unsigned int (16)    codecIntializationDataSize;
-    //     unsigned int (8)[]   codecIntializationData;
-    // }
-    //
-    // codecIntializationDataSize​For VP8 and VP9 this field must be 0.
-    // codecIntializationData​binary codec initialization data. Not used for VP8 and VP9.
-    //
-    // FIXME: Convert existing struct to an ISOBox and replace the writing code below
-    // with a subclass of ISOFullBox.
-
-    VPCodecConfigurationRecord record;
-
-    record.profile = parser.profile();
-    // CoreMedia does nat care about the VP9 codec level; hard-code to Level 1.0 here:
-    record.level = 10;
-    record.bitDepth = parser.bit_depth();
-    record.videoFullRangeFlag = parser.color_range() ? VPConfigurationRange::FullRange : VPConfigurationRange::VideoRange;
-    record.chromaSubsampling = convertSubsamplingXYToChromaSubsampling(parser.subsampling_x(), parser.subsampling_y());
-    record.colorPrimaries = VPConfigurationColorPrimaries::Unspecified;
-    record.transferCharacteristics = VPConfigurationTransferCharacteristics::Unspecified;
-    record.matrixCoefficients = VPConfigurationMatrixCoefficients::Unspecified;
-
-    // Container color values can override per-sample ones:
-    if (color.is_present()) {
-        auto& colorValue = color.value();
-        if (colorValue.chroma_subsampling_x.is_present() && colorValue.chroma_subsampling_y.is_present())
-            record.chromaSubsampling = convertSubsamplingXYToChromaSubsampling(colorValue.chroma_subsampling_x.value(), colorValue.chroma_subsampling_y.value());
-        if (colorValue.range.is_present() && colorValue.range.value() != Range::kUnspecified)
-            record.videoFullRangeFlag = colorValue.range.value() == Range::kFull ? VPConfigurationRange::FullRange : VPConfigurationRange::VideoRange;
-        if (colorValue.bits_per_channel.is_present())
-            record.bitDepth = colorValue.bits_per_channel.value();
-        if (colorValue.transfer_characteristics.is_present())
-            record.transferCharacteristics = convertToTransferCharacteristics(colorValue.transfer_characteristics.value());
-        if (colorValue.matrix_coefficients.is_present())
-            record.matrixCoefficients = convertToMatrixCoefficients(colorValue.matrix_coefficients.value());
-        if (colorValue.primaries.is_present())
-            record.colorPrimaries = convertToColorPrimaries(colorValue.primaries.value());
-    }
-
-    constexpr size_t VPCodecConfigurationContentsSize = 12;
-
-    uint32_t versionAndFlags = 1 << 24;
-    uint8_t bitDepthChromaAndRange = (0xF & record.bitDepth) << 4 | (0x7 & record.chromaSubsampling) << 1 | (0x1 & record.videoFullRangeFlag);
-    uint16_t codecIntializationDataSize = 0;
-
-    auto view = JSC::DataView::create(ArrayBuffer::create(VPCodecConfigurationContentsSize, 1), 0, VPCodecConfigurationContentsSize);
-    view->set(0, versionAndFlags, false);
-    view->set(4, record.profile, false);
-    view->set(5, record.level, false);
-    view->set(6, bitDepthChromaAndRange, false);
-    view->set(7, record.colorPrimaries, false);
-    view->set(8, record.transferCharacteristics, false);
-    view->set(9, record.matrixCoefficients, false);
-    view->set(10, codecIntializationDataSize, false);
-
-    auto data = adoptCF(CFDataCreate(kCFAllocatorDefault, (const UInt8 *)view->data(), view->byteLength()));
-
-    CFTypeRef configurationKeys[] = { CFSTR("vpcC") };
-    CFTypeRef configurationValues[] = { data.get() };
-    auto configurationDict = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, configurationKeys, configurationValues, WTF_ARRAY_LENGTH(configurationKeys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
-
-    Vector<CFTypeRef> extensionsKeys { kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms };
-    Vector<CFTypeRef> extensionsValues = { configurationDict.get() };
-
-    if (record.videoFullRangeFlag == VPConfigurationRange::FullRange) {
-        extensionsKeys.append(kCMFormatDescriptionExtension_FullRangeVideo);
-        extensionsValues.append(kCFBooleanTrue);
-    }
-
-    if (auto cmColorPrimaries = convertToCMColorPrimaries(record.colorPrimaries)) {
-        extensionsKeys.append(kCVImageBufferColorPrimariesKey);
-        extensionsValues.append(cmColorPrimaries);
-    }
-
-    if (auto cmTransferFunction = convertToCMTransferFunction(record.transferCharacteristics)) {
-        extensionsKeys.append(kCVImageBufferTransferFunctionKey);
-        extensionsValues.append(cmTransferFunction);
-    }
-
-    if (auto cmMatrix = convertToCMYCbCRMatrix(record.matrixCoefficients)) {
-        extensionsKeys.append(kCVImageBufferYCbCrMatrixKey);
-        extensionsValues.append(cmMatrix);
-    }
-
-    auto extensions = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, extensionsKeys.data(), extensionsValues.data(), extensionsKeys.size(), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
-
-    CMVideoFormatDescriptionRef formatDescription = nullptr;
-    if (noErr != CMVideoFormatDescriptionCreate(kCFAllocatorDefault, kCMVideoCodecType_VP9, parser.width(), parser.height(), extensions.get(), &formatDescription))
-        return nullptr;
-    return adoptCF(formatDescription);
-}
-#endif
 
 webm::Status SourceBufferParserWebM::OnFrame(const FrameMetadata& metadata, Reader* reader, uint64_t* bytesRemaining)
 {
-    UNUSED_PARAM(metadata);
-    UNUSED_PARAM(bytesRemaining);
-
     ASSERT(reader);
     if (!reader)
         return Status(Status::kNotEnoughMemory);
@@ -1133,100 +905,272 @@ webm::Status SourceBufferParserWebM::OnFrame(const FrameMetadata& metadata, Read
         return Status(Status::kInvalidElementId);
 
     auto trackNumber = block->track_number;
-
     auto* trackData = trackDataForTrackNumber(trackNumber);
-    if (!trackData)
+    if (!trackData) {
+        ERROR_LOG_IF_POSSIBLE(LOGIDENTIFIER, "Ignoring unknown track number ", trackNumber);
         return Status(Status::kInvalidElementId);
-    auto& track = trackData->track;
+    }
+
+    switch (trackData->codec()) {
+    case CodecType::VP9:
+    case CodecType::Vorbis:
+    case CodecType::Opus:
+        break;
+
+    case CodecType::Unsupported:
+        return Skip(reader, bytesRemaining);
+    }
+
+    return trackData->consumeFrameData(*reader, metadata, bytesRemaining, CMTimeMake(block->timecode + m_currentTimecode, m_timescale), block->num_frames);
+}
+
+void SourceBufferParserWebM::provideMediaData(RetainPtr<CMSampleBufferRef> sampleBuffer, uint64_t trackID)
+{
+    callOnMainThread([this, protectedThis = makeRef(*this), sampleBuffer = WTFMove(sampleBuffer), trackID] () mutable {
+        if (!m_didProvideMediaDataCallback)
+            return;
+
+        auto mediaSample = MediaSampleAVFObjC::create(sampleBuffer.get(), trackID);
+        m_didProvideMediaDataCallback(WTFMove(mediaSample), trackID, emptyString());
+    });
+}
+
+#define PARSER_LOG_ERROR_IF_POSSIBLE(...) if (parser().loggerPtr()) parser().loggerPtr()->error(logChannel(), WTF::Logger::LogSiteIdentifier(logClassName(), __func__, parser().logIdentifier()), __VA_ARGS__)
+
+webm::Status SourceBufferParserWebM::VideoTrackData::consumeFrameData(webm::Reader& reader, const FrameMetadata& metadata, uint64_t* bytesRemaining, const CMTime& presentationTime, int sampleCount)
+{
+#if ENABLE(VP9)
+    CMBlockBufferRef rawBlockBuffer = nullptr;
+
+    if (!m_currentBlockBuffer) {
+        auto err = CMBlockBufferCreateWithMemoryBlock(kCFAllocatorDefault, nullptr, metadata.size, kCFAllocatorDefault, nullptr, 0, metadata.size, 0, &rawBlockBuffer);
+        if (err) {
+            PARSER_LOG_ERROR_IF_POSSIBLE("CMBlockBufferCreateWithMemoryBlock failed with error", err);
+            return Skip(&reader, bytesRemaining);
+        }
+
+        m_currentBlockBuffer = adoptCF(rawBlockBuffer);
+        m_currentBlockBufferPosition = 0;
+
+        err = CMBlockBufferAssureBlockMemory(m_currentBlockBuffer.get());
+        if (err) {
+            PARSER_LOG_ERROR_IF_POSSIBLE("CMAudioSampleBufferCreateWithPacketDescriptions failed with error", err);
+            return Skip(&reader, bytesRemaining);
+        }
+    }
+
+    size_t bytesToRead = metadata.size - m_currentBlockBufferPosition;
+    while (bytesToRead) {
+        size_t segmentSizeAtPosition = 0;
+        uint8_t* blockBufferData = nullptr;
+        auto err = CMBlockBufferGetDataPointer(m_currentBlockBuffer.get(), m_currentBlockBufferPosition, &segmentSizeAtPosition, nullptr, (char**)&blockBufferData);
+        if (err) {
+            PARSER_LOG_ERROR_IF_POSSIBLE("CMBlockBufferGetDataPointer failed with error", err);
+            return Skip(&reader, bytesRemaining);
+        }
+
+        size_t bytesToReadFromThisSegment = std::min(bytesToRead, segmentSizeAtPosition);
+        uint64_t bytesRead;
+
+        auto status = reader.Read(bytesToReadFromThisSegment, (uint8_t*)blockBufferData, &bytesRead);
+        bytesToRead -= bytesRead;
+        *bytesRemaining -= bytesRead;
+        m_currentBlockBufferPosition += bytesRead;
+
+        // FIXME: We can't yet handle parsing a Frame that doesn't have all its memory available.
+        if (status.code == webm::Status::kOkPartial || status.code == webm::Status::kWouldBlock)
+            return status;
+    }
+
+    createSampleBuffer(presentationTime, sampleCount);
+#else
+    UNUSED_PARAM(metadata);
+    UNUSED_PARAM(presentationTime);
+    UNUSED_PARAM(sampleCount);
+#endif
+
+    return Skip(&reader, bytesRemaining);
+}
+
+void SourceBufferParserWebM::VideoTrackData::createSampleBuffer(const CMTime& presentationTime, int sampleCount)
+{
+#if ENABLE(VP9)
+    uint8_t* blockBufferData = nullptr;
+    size_t segmentSizeAtPosition = 0;
+    auto err = CMBlockBufferGetDataPointer(m_currentBlockBuffer.get(), 0, &segmentSizeAtPosition, nullptr, (char**)&blockBufferData);
+    if (err) {
+        PARSER_LOG_ERROR_IF_POSSIBLE("CMBlockBufferGetDataPointer failed with error", err);
+        return;
+    }
+
+    if (!m_headerParser.ParseUncompressedHeader(blockBufferData, segmentSizeAtPosition)) {
+        PARSER_LOG_ERROR_IF_POSSIBLE("ParseUncompressedHeader failed");
+        return;
+    }
+
+    // Only update the format description when the header indicates that the sample is
+    // a key-frame, otherwise color information will not be parsed.
+    auto track = this->track();
+    if (m_headerParser.key()) {
+        auto formatDescription = createFormatDescriptionFromVP9HeaderParser(m_headerParser, track.video.value().colour);
+        if (!formatDescription) {
+            PARSER_LOG_ERROR_IF_POSSIBLE("failed to create format description from VP9 header");
+            return;
+        }
+        setFormatDescription(WTFMove(formatDescription));
+    }
+
+    // FIXME: A block might contain more than one frame, but only this frame has been read into `currentBlockBuffer`.
+    // Below we create sample buffers for each frame, each with the block's timecode and `num_frames` value.
+    // Shouldn't we create just one sample buffer once all the block's frames have been read into `currentBlockBuffer`?
 
     uint64_t duration = 0;
     if (track.default_duration.is_present())
-        duration = track.default_duration.value() * m_timescale / 1000000000;
+        duration = track.default_duration.value() * presentationTime.timescale / 1000000000;
 
-#if ENABLE(VP9)
-    if (track.codec_id.is_present() && track.codec_id.value() == "V_VP9") {
-        if (!trackData->currentBlockBuffer) {
-            CMBlockBufferRef rawBlockBuffer = nullptr;
-            if (noErr != CMBlockBufferCreateWithMemoryBlock(kCFAllocatorDefault, nullptr, metadata.size, kCFAllocatorDefault, nullptr, 0, metadata.size, 0, &rawBlockBuffer))
-                return Skip(reader, bytesRemaining);
-            trackData->currentBlockBuffer = adoptCF(rawBlockBuffer);
-            trackData->currentBlockBufferPosition = 0;
-
-            if (noErr != CMBlockBufferAssureBlockMemory(trackData->currentBlockBuffer.get()))
-                return Skip(reader, bytesRemaining);
-        }
-
-        size_t numToRead = metadata.size - trackData->currentBlockBufferPosition;
-        size_t segmentSizeAtPosition = 0;
-        uint8_t* blockBufferData = nullptr;
-
-        while (numToRead) {
-            if (noErr != CMBlockBufferGetDataPointer(trackData->currentBlockBuffer.get(), trackData->currentBlockBufferPosition, &segmentSizeAtPosition, nullptr, (char**)&blockBufferData))
-                return Skip(reader, bytesRemaining);
-
-            size_t numToReadFromThisSegment = std::min(numToRead, segmentSizeAtPosition);
-            uint64_t numActuallyWrittenToThisSegment;
-
-            auto status = m_reader->Read(numToReadFromThisSegment, (uint8_t*)blockBufferData, &numActuallyWrittenToThisSegment);
-            numToRead -= numActuallyWrittenToThisSegment;
-            *bytesRemaining -= numActuallyWrittenToThisSegment;
-            trackData->currentBlockBufferPosition += numActuallyWrittenToThisSegment;
-
-            // FIXME: We can't yet handle parsing a Frame that doesn't have all its memory available.
-            if (status.code == webm::Status::kOkPartial || status.code == webm::Status::kWouldBlock)
-                return status;
-        }
-
-        if (noErr != CMBlockBufferGetDataPointer(trackData->currentBlockBuffer.get(), 0, &segmentSizeAtPosition, nullptr, (char**)&blockBufferData))
-            return Skip(reader, bytesRemaining);
-
-        auto& headerParser = trackData->headerParser;
-        if (!headerParser.ParseUncompressedHeader(blockBufferData, segmentSizeAtPosition))
-            return Skip(reader, bytesRemaining);
-
-        // Only update the format description when the header indicates that the sample is
-        // a key-frame, otherwise color information will not be parsed.
-        if (headerParser.key())
-            trackData->formatDescription = createFormatDescriptionFromVP9HeaderParser(headerParser, track.video.value().colour);
-        if (!trackData->formatDescription)
-            return Skip(reader, bytesRemaining);
-
-        auto pts = CMTimeMake(block->timecode + m_currentTimecode, m_timescale);
-        CMSampleTimingInfo timing = { CMTimeMake(duration, m_timescale), pts, pts };
-        size_t size = metadata.size;
-
-        auto sampleCount = block->num_frames;
-        CMSampleBufferRef rawSampleBuffer = nullptr;
-        if (noErr != CMSampleBufferCreateReady(kCFAllocatorDefault, trackData->currentBlockBuffer.get(), trackData->formatDescription.get(), sampleCount, 1, &timing, 1, &size, &rawSampleBuffer))
-            return Skip(reader, bytesRemaining);
-        auto sampleBuffer = adoptCF(rawSampleBuffer);
-
-        trackData->currentBlockBuffer = nullptr;
-        trackData->currentBlockBufferPosition = 0;
-
-        if (!headerParser.key()) {
-            auto attachmentsArray = CMSampleBufferGetSampleAttachmentsArray(sampleBuffer.get(), true);
-            ASSERT(attachmentsArray);
-            if (!attachmentsArray)
-                return Skip(reader, bytesRemaining);
-            for (CFIndex i = 0, count = CFArrayGetCount(attachmentsArray); i < count; ++i) {
-                CFMutableDictionaryRef attachments = checked_cf_cast<CFMutableDictionaryRef>(CFArrayGetValueAtIndex(attachmentsArray, i));
-                CFDictionarySetValue(attachments, kCMSampleAttachmentKey_NotSync, kCFBooleanTrue);
-            }
-        }
-
-        auto trackID = track.track_uid.value();
-
-        callOnMainThread([this, protectedThis = makeRef(*this), sampleBuffer = WTFMove(sampleBuffer), trackID] () mutable {
-            if (!m_didProvideMediaDataCallback)
-                return;
-            auto mediaSample = MediaSampleAVFObjC::create(sampleBuffer.get(), trackID);
-            m_didProvideMediaDataCallback(WTFMove(mediaSample), trackID, emptyString());
-        });
+    CMSampleBufferRef rawSampleBuffer = nullptr;
+    size_t frameSize = CMBlockBufferGetDataLength(m_currentBlockBuffer.get());
+    CMSampleTimingInfo timing = { CMTimeMake(duration, presentationTime.timescale), presentationTime, presentationTime };
+    err = CMSampleBufferCreateReady(kCFAllocatorDefault, m_currentBlockBuffer.get(), formatDescription().get(), sampleCount, 1, &timing, 1, &frameSize, &rawSampleBuffer);
+    if (err) {
+        PARSER_LOG_ERROR_IF_POSSIBLE("CMSampleBufferCreateReady failed with error", err);
+        return;
     }
-#endif
+    auto sampleBuffer = adoptCF(rawSampleBuffer);
 
-    return Skip(reader, bytesRemaining);
+    m_currentBlockBuffer = nullptr;
+    m_currentBlockBufferPosition = 0;
+
+    if (!m_headerParser.key()) {
+        auto attachmentsArray = CMSampleBufferGetSampleAttachmentsArray(sampleBuffer.get(), true);
+        ASSERT(attachmentsArray);
+        if (!attachmentsArray) {
+            PARSER_LOG_ERROR_IF_POSSIBLE("CMSampleBufferGetSampleAttachmentsArray returned NULL");
+            return;
+        }
+
+        for (CFIndex i = 0, count = CFArrayGetCount(attachmentsArray); i < count; ++i) {
+            CFMutableDictionaryRef attachments = checked_cf_cast<CFMutableDictionaryRef>(CFArrayGetValueAtIndex(attachmentsArray, i));
+            CFDictionarySetValue(attachments, kCMSampleAttachmentKey_NotSync, kCFBooleanTrue);
+        }
+    }
+
+    auto trackID = track.track_uid.value();
+    parser().provideMediaData(sampleBuffer.leakRef(), trackID);
+#else
+    UNUSED_PARAM(presentationTime);
+    UNUSED_PARAM(sampleCount);
+#endif // ENABLE(VP9)
+}
+
+webm::Status SourceBufferParserWebM::AudioTrackData::consumeFrameData(webm::Reader& reader, const FrameMetadata& metadata, uint64_t* bytesRemaining, const CMTime& presentationTime, int sampleCount)
+{
+    ASSERT_UNUSED(sampleCount, sampleCount == 1);
+
+    if (!formatDescription()) {
+        if (!track().codec_private.is_present()) {
+            PARSER_LOG_ERROR_IF_POSSIBLE("Audio track missing magic cookie");
+            return Skip(&reader, bytesRemaining);
+        }
+
+        RetainPtr<CMFormatDescriptionRef> formatDescription;
+        auto& privateData = track().codec_private.value();
+        if (codec() == CodecType::Vorbis)
+            formatDescription = createVorbisAudioFormatDescription(privateData.size(), privateData.data());
+        else if (codec() == CodecType::Opus)
+            formatDescription = createOpusAudioFormatDescription(privateData.size(), privateData.data());
+
+        if (!formatDescription) {
+            PARSER_LOG_ERROR_IF_POSSIBLE("Failed to create format description from audio track header");
+            return Skip(&reader, bytesRemaining);
+        }
+
+        auto streamDescription = CMAudioFormatDescriptionGetStreamBasicDescription(formatDescription.get());
+        if (!streamDescription) {
+            PARSER_LOG_ERROR_IF_POSSIBLE("CMAudioFormatDescriptionGetStreamBasicDescription failed");
+            return Skip(&reader, bytesRemaining);
+        }
+        m_packetDuration = CMTimeMake(streamDescription->mFramesPerPacket, streamDescription->mSampleRate);
+
+        setFormatDescription(WTFMove(formatDescription));
+    }
+
+    if (m_packetData.isEmpty()) {
+        m_packetData.resize(metadata.size);
+        m_packetBytesRead = 0;
+        m_byteOffset = metadata.position;
+        m_samplePresentationTime = presentationTime;
+    }
+
+    size_t packetDataOffset = m_packetBytesRead;
+    size_t bytesToRead = metadata.size;
+    while (bytesToRead) {
+        uint64_t bytesRead;
+        auto status = reader.Read(bytesToRead, m_packetData.data() + m_packetBytesRead, &bytesRead);
+        bytesToRead -= bytesRead;
+        *bytesRemaining -= bytesRead;
+        m_packetBytesRead += bytesRead;
+
+        // FIXME: We can't yet handle parsing a Frame that doesn't have all its memory available.
+        if (status.code == webm::Status::kOkPartial || status.code == webm::Status::kWouldBlock)
+            return status;
+    }
+
+    m_packetDescriptions.append({ static_cast<int64_t>(packetDataOffset), 0, static_cast<UInt32>(metadata.size) });
+    auto sampleDuration = CMTimeGetSeconds(CMTimeSubtract(presentationTime, m_samplePresentationTime)) + CMTimeGetSeconds(m_packetDuration);
+    if (sampleDuration >= m_minimumSampleDuration)
+        createSampleBuffer();
+
+    return Skip(&reader, bytesRemaining);
+}
+
+void SourceBufferParserWebM::AudioTrackData::createSampleBuffer()
+{
+    if (m_packetDescriptions.isEmpty())
+        return;
+
+    ASSERT(!m_packetData.isEmpty());
+
+    CMBlockBufferRef blockBuffer = nullptr;
+    auto err = CMBlockBufferCreateWithMemoryBlock(kCFAllocatorDefault, nullptr, m_packetData.sizeInBytes(), kCFAllocatorDefault, nullptr, 0, m_packetData.sizeInBytes(), kCMBlockBufferAssureMemoryNowFlag, &blockBuffer);
+    if (err) {
+        PARSER_LOG_ERROR_IF_POSSIBLE("CMBlockBufferCreateWithMemoryBlock failed with %d", err);
+        return;
+    }
+    auto buffer = adoptCF(blockBuffer);
+
+    err = CMBlockBufferReplaceDataBytes(m_packetData.data(), buffer.get(), 0, m_packetData.sizeInBytes());
+    if (err) {
+        PARSER_LOG_ERROR_IF_POSSIBLE("CMBlockBufferReplaceDataBytes failed with %d", err);
+        return;
+    }
+
+    CMSampleBufferRef rawSampleBuffer = nullptr;
+    err = CMAudioSampleBufferCreateReadyWithPacketDescriptions(kCFAllocatorDefault, buffer.get(), formatDescription().get(), m_packetDescriptions.size(), m_samplePresentationTime, m_packetDescriptions.data(), &rawSampleBuffer);
+    if (err) {
+        PARSER_LOG_ERROR_IF_POSSIBLE("CMAudioSampleBufferCreateWithPacketDescriptions failed with %d", err);
+        return;
+    }
+    auto sampleBuffer = adoptCF(rawSampleBuffer);
+
+    m_packetData.clear();
+    m_packetDescriptions.clear();
+
+    auto trackID = track().track_uid.value();
+    parser().provideMediaData(sampleBuffer.leakRef(), trackID);
+}
+
+void SourceBufferParserWebM::flushPendingAudioBuffers()
+{
+    for (auto& track : m_tracks) {
+        if (track->trackType() == SourceBufferParserWebM::TrackData::Type::Audio)
+            downcast<AudioTrackData>(track.get()).createSampleBuffer();
+    }
+}
+
+void SourceBufferParserWebM::setMinimumAudioSampleDuration(float duration)
+{
+    m_minimumAudioSampleDuration = duration;
 }
 
 }

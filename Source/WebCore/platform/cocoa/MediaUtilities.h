@@ -36,7 +36,7 @@ namespace WebCore {
 class AudioStreamDescription;
 class PlatformAudioData;
 
-RetainPtr<CMFormatDescriptionRef> createAudioFormatDescription(const AudioStreamDescription&);
+RetainPtr<CMFormatDescriptionRef> createAudioFormatDescription(const AudioStreamDescription&, size_t magicCookieSize = 0, const void* magicCookie = nullptr);
 RetainPtr<CMSampleBufferRef> createAudioSampleBuffer(const PlatformAudioData&, const AudioStreamDescription&, CMTime, size_t sampleCount);
 
 } // namespace WebCore

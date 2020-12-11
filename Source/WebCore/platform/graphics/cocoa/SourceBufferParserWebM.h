@@ -28,6 +28,8 @@
 #if ENABLE(MEDIA_SOURCE)
 
 #include "SourceBufferParser.h"
+#include <CoreAudio/CoreAudioTypes.h>
+#include <CoreMedia/CMTime.h>
 #include <common/vp9_header_parser.h>
 #include <webm/callback.h>
 #include <webm/status.h>
@@ -41,7 +43,6 @@
 #include <wtf/text/WTFString.h>
 #include <wtf/threads/BinarySemaphore.h>
 
-typedef struct opaqueCMSampleBuffer *CMSampleBufferRef;
 typedef const struct opaqueCMFormatDescription* CMFormatDescriptionRef;
 typedef struct OpaqueCMBlockBuffer *CMBlockBufferRef;
 
@@ -51,10 +52,15 @@ class WebmParser;
 
 namespace WebCore {
 
+class MediaSampleAVFObjC;
+
 class WEBCORE_EXPORT SourceBufferParserWebM : public SourceBufferParser, private webm::Callback {
     WTF_MAKE_FAST_ALLOCATED;
 public:
+    class StreamingVectorReader;
+
     static MediaPlayerEnums::SupportsType isContentTypeSupported(const ContentType&);
+    static RefPtr<SourceBufferParserWebM> create(const ContentType&);
 
     SourceBufferParserWebM();
     ~SourceBufferParserWebM();
@@ -71,9 +77,12 @@ public:
     void resetParserState() final;
     void invalidate() final;
 
-#if !RELEASE_LOG_DISABLED
+    void flushPendingAudioBuffers();
+    void setMinimumAudioSampleDuration(float);
+
     void setLogger(const WTF::Logger&, const void* identifier) final;
-#endif
+
+    void provideMediaData(RetainPtr<CMSampleBufferRef>, uint64_t);
 
     enum class ErrorCode : int32_t {
         SourceBufferParserWebMErrorCodeStart = 2000,
@@ -95,20 +104,121 @@ public:
         ReadingCluster,
     };
 
-private:
-    struct TrackData {
-        webm::TrackEntry track;
-        vp9_parser::Vp9HeaderParser headerParser;
-        RetainPtr<CMFormatDescriptionRef> formatDescription;
-        RetainPtr<CMBlockBufferRef> currentBlockBuffer;
-        uint64_t currentBlockBufferPosition { 0 };
+    enum class CodecType : uint8_t {
+        Unsupported,
+        VP9,
+        Vorbis,
+        Opus,
     };
-    TrackData* trackDataForTrackNumber(uint64_t);
 
-#if !RELEASE_LOG_DISABLED
+    class TrackData {
+        WTF_MAKE_FAST_ALLOCATED;
+    public:
+        static auto create(CodecType codecType, const webm::TrackEntry& trackEntry, SourceBufferParserWebM& parser) -> UniqueRef<TrackData>
+        {
+            return makeUniqueRef<TrackData>(codecType, trackEntry, Type::Unknown, parser);
+        }
+
+        enum class Type {
+            Unknown,
+            Audio,
+            Video,
+        };
+
+        TrackData(CodecType codecType, const webm::TrackEntry& trackEntry, Type trackType, SourceBufferParserWebM& parser)
+            : m_codec { codecType }
+            , m_track { webm::TrackEntry { trackEntry } }
+            , m_trackType { trackType }
+            , m_parser { parser }
+        {
+        }
+        virtual ~TrackData() = default;
+
+        CodecType codec() const { return m_codec; }
+        webm::TrackEntry& track() { return m_track; }
+        Type trackType() const { return m_trackType; }
+
+        RetainPtr<CMFormatDescriptionRef> formatDescription() { return m_formatDescription; }
+        void setFormatDescription(RetainPtr<CMFormatDescriptionRef>&& description) { m_formatDescription = WTFMove(description); }
+
+        SourceBufferParserWebM& parser() const { return m_parser; }
+        
+        virtual webm::Status consumeFrameData(webm::Reader&, const webm::FrameMetadata&, uint64_t*, const CMTime&, int)
+        {
+            ASSERT_NOT_REACHED();
+            return webm::Status(webm::Status::kInvalidElementId);
+        }
+
+    private:
+        CodecType m_codec;
+        webm::TrackEntry m_track;
+        Type m_trackType;
+        RetainPtr<CMFormatDescriptionRef> m_formatDescription;
+        SourceBufferParserWebM& m_parser;
+    };
+
+    class VideoTrackData : public TrackData {
+    public:
+        static auto create(CodecType codecType, const webm::TrackEntry& trackEntry, SourceBufferParserWebM& parser) -> UniqueRef<VideoTrackData>
+        {
+            return makeUniqueRef<VideoTrackData>(codecType, trackEntry, parser);
+        }
+
+        VideoTrackData(CodecType codecType, const webm::TrackEntry& trackEntry, SourceBufferParserWebM& parser)
+            : TrackData(codecType, trackEntry, Type::Video, parser)
+        {
+        }
+
+        webm::Status consumeFrameData(webm::Reader&, const webm::FrameMetadata&, uint64_t*, const CMTime&, int) final;
+        
+    private:
+        void createSampleBuffer(const CMTime&, int);
+        const char* logClassName() const { return "VideoTrackData"; }
+
+#if ENABLE(VP9)
+        vp9_parser::Vp9HeaderParser m_headerParser;
+        RetainPtr<CMBlockBufferRef> m_currentBlockBuffer;
+        uint64_t m_currentBlockBufferPosition { 0 };
+#endif
+    };
+
+    class AudioTrackData : public TrackData {
+    public:
+        static auto create(CodecType codecType, const webm::TrackEntry& trackEntry, SourceBufferParserWebM& parser, float minimumSampleDuration) -> UniqueRef<AudioTrackData>
+        {
+            return makeUniqueRef<AudioTrackData>(codecType, trackEntry, parser, minimumSampleDuration);
+        }
+
+        AudioTrackData(CodecType codecType, const webm::TrackEntry& trackEntry, SourceBufferParserWebM& parser, float minimumSampleDuration)
+            : TrackData { codecType, trackEntry, Type::Audio, parser }
+            , m_minimumSampleDuration { minimumSampleDuration }
+        {
+        }
+
+        webm::Status consumeFrameData(webm::Reader&, const webm::FrameMetadata&, uint64_t*, const CMTime&, int) final;
+        void createSampleBuffer();
+
+    private:
+        const char* logClassName() const { return "AudioTrackData"; }
+
+        CMTime m_samplePresentationTime;
+        CMTime m_packetDuration;
+        Vector<uint8_t> m_packetData;
+        size_t m_packetBytesRead { 0 };
+        size_t m_byteOffset { 0 };
+        Vector<AudioStreamPacketDescription> m_packetDescriptions;
+
+        // FIXME: 0.5 - 1.0 seconds is a better duration per sample buffer, but use 2 seconds so at least the first
+        // sample buffer will play until we fix SampleCursor::createSampleBuffer to deal with `endCursor`.
+        float m_minimumSampleDuration { 2 };
+    };
+
     const WTF::Logger* loggerPtr() const { return m_logger.get(); }
     const void* logIdentifier() const { return m_logIdentifier; }
-#endif
+
+private:
+
+    TrackData* trackDataForTrackNumber(uint64_t);
 
     // webm::Callback
     webm::Status OnElementBegin(const webm::ElementMetadata&, webm::Action*) final;
@@ -135,26 +245,32 @@ private:
 
     State m_state { State::None };
 
-    class StreamingVectorReader;
     UniqueRef<StreamingVectorReader> m_reader;
 
-    Vector<TrackData> m_tracks;
+    Vector<UniqueRef<TrackData>> m_tracks;
     using BlockVariant = Variant<webm::Block, webm::SimpleBlock>;
     Optional<BlockVariant> m_currentBlock;
     Optional<uint64_t> m_rewindToPosition;
+    float m_minimumAudioSampleDuration { 2 };
 
     Box<BinarySemaphore> m_initializationSegmentIsHandledSemaphore;
 
-#if !RELEASE_LOG_DISABLED
     RefPtr<const WTF::Logger> m_logger;
     const void* m_logIdentifier { nullptr };
-#endif
 };
 
 }
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SourceBufferParserWebM)
     static bool isType(const WebCore::SourceBufferParser& parser) { return parser.type() == WebCore::SourceBufferParser::Type::WebM; }
+SPECIALIZE_TYPE_TRAITS_END()
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SourceBufferParserWebM::VideoTrackData)
+    static bool isType(const WebCore::SourceBufferParserWebM::TrackData& trackData) { return trackData.trackType() == WebCore::SourceBufferParserWebM::TrackData::Type::Video; }
+SPECIALIZE_TYPE_TRAITS_END()
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SourceBufferParserWebM::AudioTrackData)
+    static bool isType(const WebCore::SourceBufferParserWebM::TrackData& trackData) { return trackData.trackType() == WebCore::SourceBufferParserWebM::TrackData::Type::Audio; }
 SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // ENABLE(MEDIA_SOURCE)

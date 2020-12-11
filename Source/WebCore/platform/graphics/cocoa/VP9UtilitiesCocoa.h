@@ -28,6 +28,13 @@
 #if ENABLE(VP9) && PLATFORM(COCOA)
 
 #include "VP9Utilities.h"
+#include <webm/dom_types.h>
+
+typedef const struct opaqueCMFormatDescription* CMFormatDescriptionRef;
+
+namespace vp9_parser {
+class Vp9HeaderParser;
+}
 
 namespace WebCore {
 
@@ -43,6 +50,8 @@ WEBCORE_EXPORT extern void registerSupplementalVP9Decoder();
 extern bool isVP9DecoderAvailable();
 extern bool isVPCodecConfigurationRecordSupported(VPCodecConfigurationRecord&);
 extern bool validateVPParameters(VPCodecConfigurationRecord&, MediaCapabilitiesInfo&, const VideoConfiguration&);
+
+RetainPtr<CMFormatDescriptionRef> createFormatDescriptionFromVP9HeaderParser(const vp9_parser::Vp9HeaderParser&, const webm::Element<webm::Colour>&);
 
 }
 

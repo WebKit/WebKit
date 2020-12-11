@@ -35,11 +35,11 @@ namespace WebCore {
 
 using namespace PAL;
 
-RetainPtr<CMFormatDescriptionRef> createAudioFormatDescription(const AudioStreamDescription& description)
+RetainPtr<CMFormatDescriptionRef> createAudioFormatDescription(const AudioStreamDescription& description, size_t magicCookieSize, const void* magicCookie)
 {
     auto basicDescription = WTF::get<const AudioStreamBasicDescription*>(description.platformDescription().description);
     CMFormatDescriptionRef format = nullptr;
-    auto error = CMAudioFormatDescriptionCreate(kCFAllocatorDefault, basicDescription, 0, nullptr, 0, nullptr, nullptr, &format);
+    auto error = CMAudioFormatDescriptionCreate(kCFAllocatorDefault, basicDescription, 0, nullptr, magicCookieSize, magicCookie, nullptr, &format);
     if (error) {
         LOG_ERROR("createAudioFormatDescription failed with %d", error);
         return nullptr;

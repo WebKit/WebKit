@@ -376,6 +376,7 @@ platform/graphics/cocoa/WebCoreCALayerExtras.mm
 platform/graphics/cocoa/WebCoreDecompressionSession.mm
 platform/graphics/cocoa/WebGLLayer.mm
 platform/graphics/cocoa/WebGPULayer.mm
+platform/graphics/cocoa/WebMUtilitiesCocoa.mm @no-unify
 platform/graphics/cocoa/VideoTrackPrivateWebM.cpp
 platform/graphics/coretext/FontCascadeCoreText.cpp
 platform/graphics/coretext/FontCoreText.cpp
