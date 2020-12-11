@@ -80,7 +80,7 @@ FloatPoint ScrollingTreeOverflowScrollingNodeNicosia::adjustedScrollPosition(con
 
 void ScrollingTreeOverflowScrollingNodeNicosia::repositionScrollingLayers()
 {
-    auto* scrollLayer = static_cast<Nicosia::PlatformLayer*>(scrolledContentsLayer());
+    auto* scrollLayer = static_cast<Nicosia::PlatformLayer*>(scrollContainerLayer());
     ASSERT(scrollLayer);
     auto& compositionLayer = downcast<Nicosia::CompositionLayer>(*scrollLayer);
 

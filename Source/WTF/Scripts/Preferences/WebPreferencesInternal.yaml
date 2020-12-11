@@ -115,7 +115,7 @@ AsyncOverflowScrollingEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      "USE(NICOSIA)": false
+      "USE(NICOSIA)": true
       "PLATFORM(IOS_FAMILY)": true
       default: WebKit::defaultAsyncFrameScrollingEnabled()
     WebCore:

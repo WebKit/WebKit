@@ -263,7 +263,8 @@ void TextureMapperLayer::paintSelfAndChildren(TextureMapperPaintOptions& options
     bool shouldClip = m_state.masksToBounds && !m_state.preserves3D;
     if (shouldClip) {
         TransformationMatrix clipTransform;
-        clipTransform.translate(options.offset.width(), options.offset.height());
+        clipTransform.translate(options.offset.width() + m_state.boundsOrigin.x(),
+            options.offset.height() + m_state.boundsOrigin.y());
         clipTransform.multiply(options.transform);
         clipTransform.multiply(m_layerTransforms.combined);
         options.textureMapper.beginClip(clipTransform, FloatRoundedRect(layerRect()));

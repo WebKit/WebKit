@@ -917,6 +917,8 @@ void CoordinatedGraphicsLayer::flushCompositingStateForThisLayerOnly()
                     state.anchorPoint = m_adjustedAnchorPoint;
                 if (localDelta.sizeChanged)
                     state.size = m_adjustedSize;
+                if (localDelta.boundsOriginChanged)
+                    state.boundsOrigin = boundsOrigin();
 
                 if (localDelta.transformChanged)
                     state.transform = transform();
@@ -1325,7 +1327,7 @@ void CoordinatedGraphicsLayer::computeTransformedVisibleRect()
     m_layerTransform.setLocalTransform(currentTransform);
 
     m_layerTransform.setAnchorPoint(m_adjustedAnchorPoint);
-    m_layerTransform.setPosition(m_adjustedPosition);
+    m_layerTransform.setPosition(FloatPoint(m_adjustedPosition.x() - boundsOrigin().x(), m_adjustedPosition.y() - boundsOrigin().y()));
     m_layerTransform.setSize(m_adjustedSize);
 
     m_layerTransform.setFlattening(!preserves3D());
