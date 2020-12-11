@@ -101,7 +101,7 @@ public:
     String dataListStyleSheet() const;
 #endif
 #if ENABLE(INPUT_TYPE_COLOR)
-    String colorInputStyleSheet() const;
+    virtual String colorInputStyleSheet(const Settings&) const;
 #endif
 
     // A method to obtain the baseline position for a "leaf" control.  This will only be used if a baseline
@@ -303,11 +303,19 @@ protected:
 
     virtual void adjustInnerSpinButtonStyle(RenderStyle&, const Element*) const;
     virtual bool paintInnerSpinButton(const RenderObject&, const PaintInfo&, const IntRect&) { return true; }
+
+#if ENABLE(INPUT_TYPE_COLOR)
+    virtual void adjustColorWellStyle(RenderStyle&, const Element*) const;
+    virtual bool paintColorWell(const RenderObject&, const PaintInfo&, const IntRect&);
+#endif
 #endif
 
     virtual void paintCheckboxDecorations(const RenderObject&, const PaintInfo&, const IntRect&) { }
     virtual void paintRadioDecorations(const RenderObject&, const PaintInfo&, const IntRect&) { }
     virtual void paintButtonDecorations(const RenderObject&, const PaintInfo&, const IntRect&) { }
+#if ENABLE(INPUT_TYPE_COLOR)
+    virtual void paintColorWellDecorations(const RenderObject&, const PaintInfo&, const IntRect&);
+#endif
 
     virtual void adjustTextFieldStyle(RenderStyle&, const Element*) const;
     virtual bool paintTextField(const RenderObject&, const PaintInfo&, const FloatRect&) { return true; }

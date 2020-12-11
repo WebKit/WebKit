@@ -266,7 +266,7 @@ void UserAgentStyle::ensureDefaultStyleSheetsForElement(const Element& element)
 #endif // ENABLE(DATALIST_ELEMENT)
 #if ENABLE(INPUT_TYPE_COLOR)
         else if (!colorInputStyleSheet && is<HTMLInputElement>(element) && downcast<HTMLInputElement>(element).isColorControl()) {
-            colorInputStyleSheet = parseUASheet(RenderTheme::singleton().colorInputStyleSheet());
+            colorInputStyleSheet = parseUASheet(RenderTheme::singleton().colorInputStyleSheet(element.document().settings()));
             addToDefaultStyle(*colorInputStyleSheet);
         }
 #endif // ENABLE(INPUT_TYPE_COLOR)

@@ -1,3 +1,22 @@
+2020-12-11  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS][FCR] Add new look for color inputs
+        https://bugs.webkit.org/show_bug.cgi?id=219654
+        <rdar://problem/72107493>
+
+        Reviewed by Wenson Hsieh.
+
+        Added tests to verify the stylability of color inputs with the new appearance.
+
+        * fast/forms/ios/form-control-refresh/color/background-color-expected-mismatch.html: Added.
+        * fast/forms/ios/form-control-refresh/color/background-color.html: Added.
+        * fast/forms/ios/form-control-refresh/color/border-expected-mismatch.html: Added.
+        * fast/forms/ios/form-control-refresh/color/border-radius-expected-mismatch.html: Added.
+        * fast/forms/ios/form-control-refresh/color/border-radius.html: Added.
+        * fast/forms/ios/form-control-refresh/color/border.html: Added.
+        * fast/forms/ios/form-control-refresh/color/width-height-expected-mismatch.html: Added.
+        * fast/forms/ios/form-control-refresh/color/width-height.html: Added.
+
 2020-12-10  John Wilander  <wilander@apple.com>
 
         PCM: Turn feature on by default

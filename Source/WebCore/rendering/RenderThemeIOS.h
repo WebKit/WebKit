@@ -119,6 +119,14 @@ private:
 
     bool supportsMeter(ControlPart, const HTMLMeterElement&) const final;
     bool paintMeter(const RenderObject&, const PaintInfo&, const IntRect&) final;
+
+#if ENABLE(INPUT_TYPE_COLOR)
+    String colorInputStyleSheet(const Settings&) const final;
+
+    void adjustColorWellStyle(RenderStyle&, const Element*) const final;
+    bool paintColorWell(const RenderObject&, const PaintInfo&, const IntRect&) final;
+    void paintColorWellDecorations(const RenderObject&, const PaintInfo&, const IntRect&) final;
+#endif
 #endif
 
     bool supportsFocusRing(const RenderStyle&) const final;

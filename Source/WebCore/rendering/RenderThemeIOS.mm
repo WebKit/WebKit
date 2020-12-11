@@ -2295,6 +2295,68 @@ bool RenderThemeIOS::paintSliderTrackWithFormControlRefresh(const RenderObject& 
     return false;
 }
 
+#if ENABLE(INPUT_TYPE_COLOR)
+
+String RenderThemeIOS::colorInputStyleSheet(const Settings& settings) const
+{
+    if (!settings.iOSFormControlRefreshEnabled())
+        return RenderTheme::colorInputStyleSheet(settings);
+
+    return "input[type=\"color\"] { -webkit-appearance: color-well; width: 23px; height: 23px; outline: none; border: initial; border-radius: 50%; } "_s;
+}
+
+void RenderThemeIOS::adjustColorWellStyle(RenderStyle& style, const Element* element) const
+{
+    if (!element || element->document().settings().iOSFormControlRefreshEnabled())
+        return;
+
+    RenderTheme::adjustColorWellStyle(style, element);
+}
+
+bool RenderThemeIOS::paintColorWell(const RenderObject& box, const PaintInfo& paintInfo, const IntRect& rect)
+{
+    if (!box.settings().iOSFormControlRefreshEnabled())
+        return RenderTheme::paintColorWell(box, paintInfo, rect);
+
+    return true;
+}
+
+void RenderThemeIOS::paintColorWellDecorations(const RenderObject& box, const PaintInfo& paintInfo, const IntRect& rect)
+{
+    if (!box.settings().iOSFormControlRefreshEnabled()) {
+        RenderTheme::paintColorWellDecorations(box, paintInfo, rect);
+        return;
+    }
+
+    constexpr int strokeThickness = 2;
+    constexpr int numColorStops = 9;
+    constexpr DisplayP3<float> colorStops[] = {
+        { 1, 1, 0, 1 },
+        { 1, 0.5, 0, 1 },
+        { 1, 0, 0, 1 },
+        { 1, 0, 1, 1},
+        { 0, 0, 1, 1 },
+        { 0, 1, 1, 1 },
+        { 0, 1, 0, 1},
+        { 0.63, 0.88, 0.03, 1 },
+        { 1, 1, 0, 1 }
+    };
+
+    auto gradient = Gradient::create(Gradient::ConicData { rect.center(), 0 });
+    for (int i = 0; i < numColorStops; ++i)
+        gradient->addColorStop({ i * 1.0f / (numColorStops - 1), colorStops[i] });
+
+    auto& context = paintInfo.context();
+    GraphicsContextStateSaver stateSaver(context);
+
+    context.setStrokeThickness(strokeThickness);
+    context.setStrokeStyle(SolidStroke);
+    context.setStrokeGradient(WTFMove(gradient));
+    context.strokeEllipse(rect);
+}
+
+#endif // ENABLE(INPUT_TYPE_COLOR)
+
 #endif // ENABLE(IOS_FORM_CONTROL_REFRESH)
 
 } // namespace WebCore

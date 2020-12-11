@@ -200,11 +200,12 @@ void RenderTheme::adjustStyle(RenderStyle& style, const Element* element, const 
         return adjustCheckboxStyle(style, element);
     case RadioPart:
         return adjustRadioStyle(style, element);
-    case PushButtonPart:
-    case SquareButtonPart:
 #if ENABLE(INPUT_TYPE_COLOR)
     case ColorWellPart:
+        return adjustColorWellStyle(style, element);
 #endif
+    case PushButtonPart:
+    case SquareButtonPart:
     case DefaultButtonPart:
     case ButtonPart:
         return adjustButtonStyle(style, element);
@@ -330,11 +331,12 @@ bool RenderTheme::paint(const RenderBox& box, ControlStates& controlStates, cons
         return paintCheckbox(box, paintInfo, integralSnappedRect);
     case RadioPart:
         return paintRadio(box, paintInfo, integralSnappedRect);
-    case PushButtonPart:
-    case SquareButtonPart:
 #if ENABLE(INPUT_TYPE_COLOR)
     case ColorWellPart:
+        return paintColorWell(box, paintInfo, integralSnappedRect);
 #endif
+    case PushButtonPart:
+    case SquareButtonPart:
     case DefaultButtonPart:
     case ButtonPart:
         return paintButton(box, paintInfo, integralSnappedRect);
@@ -523,6 +525,8 @@ void RenderTheme::paintDecorations(const RenderBox& box, const PaintInfo& paintI
         break;
 #if ENABLE(INPUT_TYPE_COLOR)
     case ColorWellPart:
+        paintColorWellDecorations(box, paintInfo, integralSnappedRect);
+        break;
 #endif
     case ButtonPart:
         paintButtonDecorations(box, paintInfo, integralSnappedRect);
@@ -963,6 +967,21 @@ void RenderTheme::adjustButtonStyle(RenderStyle&, const Element*) const
 void RenderTheme::adjustInnerSpinButtonStyle(RenderStyle&, const Element*) const
 {
 }
+
+#if ENABLE(INPUT_TYPE_COLOR)
+
+void RenderTheme::adjustColorWellStyle(RenderStyle& style, const Element* element) const
+{
+    adjustButtonStyle(style, element);
+}
+
+bool RenderTheme::paintColorWell(const RenderObject& box, const PaintInfo& paintInfo, const IntRect& rect)
+{
+    return paintButton(box, paintInfo, rect);
+}
+
+#endif
+
 #endif
 
 void RenderTheme::adjustTextFieldStyle(RenderStyle&, const Element*) const
@@ -997,6 +1016,13 @@ bool RenderTheme::paintMeter(const RenderObject&, const PaintInfo&, const IntRec
     return true;
 }
 
+#if ENABLE(INPUT_TYPE_COLOR)
+void RenderTheme::paintColorWellDecorations(const RenderObject& box, const PaintInfo& paintInfo, const IntRect& rect)
+{
+    paintButtonDecorations(box, paintInfo, rect);
+}
+#endif
+
 void RenderTheme::adjustCapsLockIndicatorStyle(RenderStyle&, const Element*) const
 {
 }
@@ -1021,7 +1047,7 @@ bool RenderTheme::paintAttachment(const RenderObject&, const PaintInfo&, const I
 
 #if ENABLE(INPUT_TYPE_COLOR)
 
-String RenderTheme::colorInputStyleSheet() const
+String RenderTheme::colorInputStyleSheet(const Settings&) const
 {
     return "input[type=\"color\"] { -webkit-appearance: color-well; width: 44px; height: 23px; outline: none; } "_s;
 }
