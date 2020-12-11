@@ -1,3 +1,16 @@
+2020-12-11  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r270655.
+        https://bugs.webkit.org/show_bug.cgi?id=219772
+
+        Introduced sandbox compile error
+
+        Reverted changeset:
+
+        "[iOS] Add missing endpoint in sandbox message filter"
+        https://bugs.webkit.org/show_bug.cgi?id=219731
+        https://trac.webkit.org/changeset/270655
+
 2020-12-10  Alex Christensen  <achristensen@webkit.org>
 
         Accept click measurement data from hosting application
