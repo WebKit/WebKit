@@ -1,3 +1,17 @@
+2020-12-11  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Reflect.preventExtensions should not throw if called on WindowProxy or Location
+        https://bugs.webkit.org/show_bug.cgi?id=219270
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/html/browsers/history/the-location-interface/location-prevent-extensions-expected.txt: Added.
+        * web-platform-tests/html/browsers/history/the-location-interface/location-prevent-extensions.html: Added.
+        * web-platform-tests/html/browsers/origin/cross-origin-objects/cross-origin-objects-expected.txt:
+        * web-platform-tests/html/browsers/origin/cross-origin-objects/cross-origin-objects.html:
+        * web-platform-tests/html/browsers/the-windowproxy-exotic-object/windowproxy-prevent-extensions-expected.txt: Added.
+        * web-platform-tests/html/browsers/the-windowproxy-exotic-object/windowproxy-prevent-extensions.html: Added.
+
 2020-12-09  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-flex] RenderFlexibleBox::computeMainSizeFromAspectRatioUsing() must obbey box-sizing

@@ -495,11 +495,8 @@ JSValue JSDOMWindow::getPrototype(JSObject* object, JSGlobalObject* lexicalGloba
     return Base::getPrototype(object, lexicalGlobalObject);
 }
 
-bool JSDOMWindow::preventExtensions(JSObject*, JSGlobalObject* lexicalGlobalObject)
+bool JSDOMWindow::preventExtensions(JSObject*, JSGlobalObject*)
 {
-    auto scope = DECLARE_THROW_SCOPE(lexicalGlobalObject->vm());
-
-    throwTypeError(lexicalGlobalObject, scope, "Cannot prevent extensions on this object"_s);
     return false;
 }
 

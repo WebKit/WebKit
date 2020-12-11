@@ -122,10 +122,8 @@ JSValue JSRemoteDOMWindow::getPrototype(JSObject*, JSGlobalObject*)
     return jsNull();
 }
 
-bool JSRemoteDOMWindow::preventExtensions(JSObject*, JSGlobalObject* lexicalGlobalObject)
+bool JSRemoteDOMWindow::preventExtensions(JSObject*, JSGlobalObject*)
 {
-    auto scope = DECLARE_THROW_SCOPE(lexicalGlobalObject->vm());
-    throwTypeError(lexicalGlobalObject, scope, "Cannot prevent extensions on this object"_s);
     return false;
 }
 

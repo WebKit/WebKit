@@ -220,11 +220,8 @@ JSValue JSLocation::getPrototype(JSObject* object, JSGlobalObject* lexicalGlobal
     return Base::getPrototype(object, lexicalGlobalObject);
 }
 
-bool JSLocation::preventExtensions(JSObject*, JSGlobalObject* lexicalGlobalObject)
+bool JSLocation::preventExtensions(JSObject*, JSGlobalObject*)
 {
-    auto scope = DECLARE_THROW_SCOPE(lexicalGlobalObject->vm());
-
-    throwTypeError(lexicalGlobalObject, scope, "Cannot prevent extensions on this object"_s);
     return false;
 }
 
