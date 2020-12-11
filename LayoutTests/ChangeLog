@@ -1,3 +1,12 @@
+2020-12-11  Rini Patel  <rini_patel@apple.com>
+
+        [GPU process] Update TestExpectations to skip Layout tests crashes
+        https://bugs.webkit.org/show_bug.cgi?id=219792
+
+        Reviewed by Simon Fraser.
+
+        * gpu-process/TestExpectations:
+
 2020-12-11  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS][FCR] Add new look for color inputs
