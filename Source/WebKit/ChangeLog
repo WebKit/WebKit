@@ -1,3 +1,33 @@
+2020-12-11  Peng Liu  <peng.liu6@apple.com>
+
+        [Media in GPU Process][MSE] Implement some required functions with new IPC messages and remove some unneeded functions
+        https://bugs.webkit.org/show_bug.cgi?id=219788
+
+        Reviewed by Eric Carlson.
+
+        Implement unimplemented functions and remove unneeded ones.
+        This patch also cleans up `RemoteSourceBufferProxy`.
+
+        * GPUProcess/media/RemoteSourceBufferProxy.cpp:
+        (WebKit::RemoteSourceBufferProxy::sourceBufferPrivateStreamEndedWithDecodeError):
+        (WebKit::RemoteSourceBufferProxy::sourceBufferPrivateAppendError):
+        (WebKit::RemoteSourceBufferProxy::sourceBufferPrivateDidDropSample):
+        (WebKit::RemoteSourceBufferProxy::sourceBufferPrivateDidReceiveRenderingError):
+        * GPUProcess/media/RemoteSourceBufferProxy.h:
+        * WebProcess/GPU/media/SourceBufferPrivateRemote.cpp:
+        (WebKit::SourceBufferPrivateRemote::sourceBufferPrivateStreamEndedWithDecodeError):
+        (WebKit::SourceBufferPrivateRemote::sourceBufferPrivateAppendError):
+        (WebKit::SourceBufferPrivateRemote::sourceBufferPrivateDidDropSample):
+        (WebKit::SourceBufferPrivateRemote::sourceBufferPrivateDidReceiveRenderingError):
+        (WebKit::SourceBufferPrivateRemote::flush): Deleted.
+        (WebKit::SourceBufferPrivateRemote::isReadyForMoreSamples): Deleted.
+        (WebKit::SourceBufferPrivateRemote::notifyClientWhenReadyForMoreSamples): Deleted.
+        (WebKit::SourceBufferPrivateRemote::canSetMinimumUpcomingPresentationTime const): Deleted.
+        (WebKit::SourceBufferPrivateRemote::setMinimumUpcomingPresentationTime): Deleted.
+        (WebKit::SourceBufferPrivateRemote::clearMinimumUpcomingPresentationTime): Deleted.
+        * WebProcess/GPU/media/SourceBufferPrivateRemote.h:
+        * WebProcess/GPU/media/SourceBufferPrivateRemote.messages.in:
+
 2020-12-11  Chris Dumez  <cdumez@apple.com>
 
         [GPUProcess] WebAudio rendering quantum is 15 instead of 128 when the GPU Process is enabled

@@ -72,27 +72,22 @@ private:
     SourceBufferPrivateRemote(GPUProcessConnection&, RemoteSourceBufferIdentifier, const MediaSourcePrivateRemote&, const MediaPlayerPrivateRemote&);
 
     // SourceBufferPrivate overrides
+    void setActive(bool) final;
     void append(Vector<unsigned char>&&) final;
     void abort() final;
     void resetParserState() final;
     void removedFromMediaSource() final;
     WebCore::MediaPlayer::ReadyState readyState() const final;
     void setReadyState(WebCore::MediaPlayer::ReadyState) final;
-    void flush(const AtomString& trackID) final;
-    bool isReadyForMoreSamples(const AtomString& trackID) final;
-    void setActive(bool) final;
-    bool isActive() const final { return m_isActive; }
-    void notifyClientWhenReadyForMoreSamples(const AtomString& trackID) final;
-    bool canSetMinimumUpcomingPresentationTime(const AtomString&) const final;
-    void setMinimumUpcomingPresentationTime(const AtomString&, const MediaTime&) final;
-    void clearMinimumUpcomingPresentationTime(const AtomString&) final;
     bool canSwitchToType(const WebCore::ContentType&) final;
+    void reenqueueMediaIfNeeded(const MediaTime& currentMediaTime, uint64_t pendingAppendDataCapacity, uint64_t maximumBufferSize) final;
+    void addTrackBuffer(const AtomString& trackId, RefPtr<WebCore::MediaDescription>&&) final;
+    void trySignalAllSamplesInTrackEnqueued() final;
     void updateBufferedFromTrackBuffers(bool sourceIsEnded) final;
     void evictCodedFrames(uint64_t newDataSize, uint64_t pendingAppendDataCapacity, uint64_t maximumBufferSize, const MediaTime& currentTime, const MediaTime& duration, bool isEnded) final;
-    void addTrackBuffer(const AtomString& trackId, RefPtr<WebCore::MediaDescription>&&) final;
-    void reenqueueMediaIfNeeded(const MediaTime& currentMediaTime, uint64_t pendingAppendDataCapacity, uint64_t maximumBufferSize) final;
-    void trySignalAllSamplesInTrackEnqueued() final;
     void seekToTime(const MediaTime&) final;
+
+    bool isActive() const final { return m_isActive; }
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
     void sourceBufferPrivateDidReceiveInitializationSegment(InitializationSegmentInfo&&, CompletionHandler<void()>&&);
@@ -102,7 +97,7 @@ private:
     void sourceBufferPrivateDurationChanged(const MediaTime&);
     void sourceBufferPrivateDidParseSample(double sampleDuration);
     void sourceBufferPrivateDidDropSample();
-    void sourceBufferPrivateDidReceiveRenderingError(int errorCode);
+    void sourceBufferPrivateDidReceiveRenderingError(int64_t errorCode);
     void sourceBufferPrivateBufferedDirtyChanged(bool dirty);
     void sourceBufferPrivateBufferedRangesChanged(const WebCore::PlatformTimeRanges&);
 

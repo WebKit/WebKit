@@ -590,7 +590,7 @@ void SourceBuffer::sourceBufferPrivateAppendComplete(AppendResult result)
     DEBUG_LOG(LOGIDENTIFIER);
 }
 
-void SourceBuffer::sourceBufferPrivateDidReceiveRenderingError(int error)
+void SourceBuffer::sourceBufferPrivateDidReceiveRenderingError(int64_t error)
 {
 #if RELEASE_LOG_DISABLED
     UNUSED_PARAM(error);

@@ -157,7 +157,7 @@ private:
     void sourceBufferPrivateDidDropSample() final;
     void sourceBufferPrivateBufferedDirtyChanged(bool) final;
     void sourceBufferPrivateBufferedRangesChanged(const PlatformTimeRanges&) final;
-    void sourceBufferPrivateDidReceiveRenderingError(int errorCode) final;
+    void sourceBufferPrivateDidReceiveRenderingError(int64_t errorCode) final;
 
     // AudioTrackClient
     void audioTrackEnabledChanged(AudioTrack&) final;

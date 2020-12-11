@@ -34,7 +34,6 @@
 #include "RemoteSourceBufferProxyMessages.h"
 #include "SourceBufferPrivateRemoteMessages.h"
 #include <WebCore/MediaDescription.h>
-#include <WebCore/NotImplemented.h>
 #include <WebCore/PlatformTimeRanges.h>
 
 namespace WebKit {
@@ -104,9 +103,14 @@ void RemoteSourceBufferProxy::sourceBufferPrivateDidReceiveInitializationSegment
     m_connectionToWebProcess.connection().sendWithAsyncReply(Messages::SourceBufferPrivateRemote::SourceBufferPrivateDidReceiveInitializationSegment(segmentInfo), WTFMove(completionHandler), m_identifier);
 }
 
-void RemoteSourceBufferProxy::sourceBufferPrivateAppendError(bool)
+void RemoteSourceBufferProxy::sourceBufferPrivateStreamEndedWithDecodeError()
 {
-    notImplemented();
+    m_connectionToWebProcess.connection().send(Messages::SourceBufferPrivateRemote::SourceBufferPrivateStreamEndedWithDecodeError(), m_identifier);
+}
+
+void RemoteSourceBufferProxy::sourceBufferPrivateAppendError(bool decodeError)
+{
+    m_connectionToWebProcess.connection().send(Messages::SourceBufferPrivateRemote::SourceBufferPrivateAppendError(decodeError), m_identifier);
 }
 
 void RemoteSourceBufferProxy::sourceBufferPrivateDurationChanged(const MediaTime& duration)
@@ -121,12 +125,7 @@ void RemoteSourceBufferProxy::sourceBufferPrivateDidParseSample(double sampleDur
 
 void RemoteSourceBufferProxy::sourceBufferPrivateDidDropSample()
 {
-    notImplemented();
-}
-
-void RemoteSourceBufferProxy::sourceBufferPrivateStreamEndedWithDecodeError()
-{
-    notImplemented();
+    m_connectionToWebProcess.connection().send(Messages::SourceBufferPrivateRemote::SourceBufferPrivateDidDropSample(), m_identifier);
 }
 
 void RemoteSourceBufferProxy::sourceBufferPrivateAppendComplete(SourceBufferPrivateClient::AppendResult appendResult)
@@ -134,9 +133,9 @@ void RemoteSourceBufferProxy::sourceBufferPrivateAppendComplete(SourceBufferPriv
     m_connectionToWebProcess.connection().send(Messages::SourceBufferPrivateRemote::SourceBufferPrivateAppendComplete(appendResult), m_identifier);
 }
 
-void RemoteSourceBufferProxy::sourceBufferPrivateDidReceiveRenderingError(int errorCode)
+void RemoteSourceBufferProxy::sourceBufferPrivateDidReceiveRenderingError(int64_t errorCode)
 {
-    notImplemented();
+    m_connectionToWebProcess.connection().send(Messages::SourceBufferPrivateRemote::SourceBufferPrivateDidReceiveRenderingError(errorCode), m_identifier);
 }
 
 void RemoteSourceBufferProxy::sourceBufferPrivateBufferedDirtyChanged(bool flag)

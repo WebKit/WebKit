@@ -62,6 +62,10 @@ public:
     static Ref<RemoteSourceBufferProxy> create(GPUConnectionToWebProcess&, RemoteSourceBufferIdentifier, Ref<WebCore::SourceBufferPrivate>&&, RemoteMediaPlayerProxy&);
     virtual ~RemoteSourceBufferProxy();
 
+private:
+    RemoteSourceBufferProxy(GPUConnectionToWebProcess&, RemoteSourceBufferIdentifier, Ref<WebCore::SourceBufferPrivate>&&, RemoteMediaPlayerProxy&);
+
+    // SourceBufferPrivateClient
     void sourceBufferPrivateDidReceiveInitializationSegment(InitializationSegment&&, CompletionHandler<void()>&&) final;
     void sourceBufferPrivateStreamEndedWithDecodeError() final;
     void sourceBufferPrivateAppendError(bool decodeError) final;
@@ -72,10 +76,7 @@ public:
     void sourceBufferPrivateBufferedDirtyChanged(bool) final;
     void sourceBufferPrivateBufferedRangesChanged(const WebCore::PlatformTimeRanges&) final;
 
-    void sourceBufferPrivateDidReceiveRenderingError(int errorCode) final;
-
-private:
-    RemoteSourceBufferProxy(GPUConnectionToWebProcess&, RemoteSourceBufferIdentifier, Ref<WebCore::SourceBufferPrivate>&&, RemoteMediaPlayerProxy&);
+    void sourceBufferPrivateDidReceiveRenderingError(int64_t errorCode) final;
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;

@@ -80,7 +80,7 @@ public:
     virtual void sourceBufferPrivateBufferedDirtyChanged(bool) = 0;
     virtual void sourceBufferPrivateBufferedRangesChanged(const PlatformTimeRanges&) = 0;
 
-    virtual void sourceBufferPrivateDidReceiveRenderingError(int errorCode) = 0;
+    virtual void sourceBufferPrivateDidReceiveRenderingError(int64_t errorCode) = 0;
 };
 
 } // namespace WebCore

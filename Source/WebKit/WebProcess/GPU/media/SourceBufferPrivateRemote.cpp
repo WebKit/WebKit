@@ -109,16 +109,6 @@ void SourceBufferPrivateRemote::setReadyState(MediaPlayer::ReadyState state)
     m_gpuProcessConnection.connection().send(Messages::RemoteSourceBufferProxy::SetReadyState(state), m_remoteSourceBufferIdentifier);
 }
 
-void SourceBufferPrivateRemote::flush(const AtomString& trackID)
-{
-    notImplemented();
-}
-
-bool SourceBufferPrivateRemote::isReadyForMoreSamples(const AtomString& trackID)
-{
-    return false;
-}
-
 void SourceBufferPrivateRemote::setActive(bool active)
 {
     if (!m_mediaSourcePrivate)
@@ -126,26 +116,6 @@ void SourceBufferPrivateRemote::setActive(bool active)
 
     m_isActive = active;
     m_gpuProcessConnection.connection().send(Messages::RemoteSourceBufferProxy::SetActive(active), m_remoteSourceBufferIdentifier);
-}
-
-void SourceBufferPrivateRemote::notifyClientWhenReadyForMoreSamples(const AtomString& trackID)
-{
-    notImplemented();
-}
-
-bool SourceBufferPrivateRemote::canSetMinimumUpcomingPresentationTime(const AtomString&) const
-{
-    return false;
-}
-
-void SourceBufferPrivateRemote::setMinimumUpcomingPresentationTime(const AtomString&, const MediaTime&)
-{
-    notImplemented();
-}
-
-void SourceBufferPrivateRemote::clearMinimumUpcomingPresentationTime(const AtomString&)
-{
-    notImplemented();
 }
 
 bool SourceBufferPrivateRemote::canSwitchToType(const ContentType&)
@@ -223,6 +193,18 @@ void SourceBufferPrivateRemote::sourceBufferPrivateDidReceiveInitializationSegme
     m_client->sourceBufferPrivateDidReceiveInitializationSegment(WTFMove(segment), WTFMove(completionHandler));
 }
 
+void SourceBufferPrivateRemote::sourceBufferPrivateStreamEndedWithDecodeError()
+{
+    if (m_client)
+        m_client->sourceBufferPrivateStreamEndedWithDecodeError();
+}
+
+void SourceBufferPrivateRemote::sourceBufferPrivateAppendError(bool decodeError)
+{
+    if (m_client)
+        m_client->sourceBufferPrivateAppendError(decodeError);
+}
+
 void SourceBufferPrivateRemote::sourceBufferPrivateAppendComplete(SourceBufferPrivateClient::AppendResult appendResult)
 {
     if (m_client)
@@ -241,6 +223,12 @@ void SourceBufferPrivateRemote::sourceBufferPrivateDidParseSample(double sampleD
         m_client->sourceBufferPrivateDidParseSample(sampleDuration);
 }
 
+void SourceBufferPrivateRemote::sourceBufferPrivateDidDropSample()
+{
+    if (m_client)
+        m_client->sourceBufferPrivateDidDropSample();
+}
+
 void SourceBufferPrivateRemote::sourceBufferPrivateBufferedDirtyChanged(bool dirty)
 {
     if (m_client)
@@ -251,6 +239,12 @@ void SourceBufferPrivateRemote::sourceBufferPrivateBufferedRangesChanged(const W
 {
     if (m_client)
         m_client->sourceBufferPrivateBufferedRangesChanged(timeRanges);
+}
+
+void SourceBufferPrivateRemote::sourceBufferPrivateDidReceiveRenderingError(int64_t errorCode)
+{
+    if (m_client)
+        m_client->sourceBufferPrivateDidReceiveRenderingError(errorCode);
 }
 
 #if !RELEASE_LOG_DISABLED
