@@ -28,6 +28,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 
+#import "UIKitSPI.h"
 #import <WebCore/KeyEventCodesIOS.h>
 #import <WebCore/PlatformEventFactoryIOS.h>
 
@@ -128,6 +129,51 @@ WebKit::WebMouseEvent WebIOSEventFactory::createWebMouseEvent(::WebEvent *event)
     double timestamp = event.timestamp;
 
     return WebKit::WebMouseEvent(type, button, buttons, position, position, deltaX, deltaY, deltaZ, clickCount, OptionSet<WebKit::WebEvent::Modifier> { }, WallTime::fromRawSeconds(timestamp));
+}
+
+static WebKit::WebWheelEvent::Phase toWebPhase(UIScrollPhase phase)
+{
+    switch (phase) {
+    case UIScrollPhaseNone:
+        return WebKit::WebWheelEvent::PhaseNone;
+    case UIScrollPhaseMayBegin:
+        return WebKit::WebWheelEvent::PhaseMayBegin;
+    case UIScrollPhaseBegan:
+        return WebKit::WebWheelEvent::PhaseBegan;
+    case UIScrollPhaseChanged:
+        return WebKit::WebWheelEvent::PhaseChanged;
+    case UIScrollPhaseEnded:
+        return WebKit::WebWheelEvent::PhaseEnded;
+    case UIScrollPhaseCancelled:
+        return WebKit::WebWheelEvent::PhaseCancelled;
+    default:
+        ASSERT_NOT_REACHED();
+        return WebKit::WebWheelEvent::PhaseNone;
+    }
+}
+
+WebKit::WebWheelEvent WebIOSEventFactory::createWebWheelEvent(UIScrollEvent *event, UIView *contentView)
+{
+    WebCore::IntPoint scrollLocation = WebCore::roundedIntPoint([event locationInView:contentView]);
+    CGVector deltaVector = [event _adjustedAcceleratedDeltaInView:contentView];
+    WebCore::FloatSize delta(deltaVector.dx, deltaVector.dy);
+
+    return {
+        WebKit::WebEvent::Wheel,
+        scrollLocation,
+        scrollLocation,
+        delta,
+        { } /* wheelTicks */,
+        WebKit::WebWheelEvent::Granularity::ScrollByPixelWheelEvent,
+        false,
+        toWebPhase(event.phase),
+        WebKit::WebWheelEvent::PhaseNone,
+        true,
+        1,
+        delta,
+        { },
+        MonotonicTime::fromRawSeconds(event.timestamp).approximateWallTime()
+    };
 }
 
 #endif // PLATFORM(IOS_FAMILY)

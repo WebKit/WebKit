@@ -346,6 +346,10 @@ public:
 
     WEBCORE_EXPORT Optional<Cursor> selectCursor(const HitTestResult&, bool shiftKey);
 
+#if ENABLE(KINETIC_SCROLLING)
+    Optional<WheelScrollGestureState> wheelScrollGestureState() const { return m_wheelScrollGestureState; }
+#endif
+
 #if ENABLE(DRAG_SUPPORT)
     Element* draggingElement() const;
 #endif

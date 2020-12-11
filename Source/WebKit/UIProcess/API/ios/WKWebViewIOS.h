@@ -25,6 +25,8 @@
 
 #import "WKWebViewInternal.h"
 
+@class UIScrollEvent;
+
 #if PLATFORM(IOS_FAMILY)
 
 @interface WKWebView (WKViewInternalIOS)
@@ -125,6 +127,13 @@
 - (WebCore::FloatSize)activeViewLayoutSize:(const CGRect&)bounds;
 - (void)_updateScrollViewInsetAdjustmentBehavior;
 
+- (BOOL)_effectiveAppearanceIsDark;
+- (BOOL)_effectiveUserInterfaceLevelIsElevated;
+
+#if HAVE(UISCROLLVIEW_ASYNCHRONOUS_SCROLL_EVENT_HANDLING)
+- (void)_scrollView:(UIScrollView *)scrollView asynchronouslyHandleScrollEvent:(UIScrollEvent *)scrollEvent completion:(void (^)(BOOL handled))completion;
+#endif
+
 @property (nonatomic, readonly) WKPasswordView *_passwordView;
 @property (nonatomic, readonly) WKWebViewContentProviderRegistry *_contentProviderRegistry;
 @property (nonatomic, readonly) WKSelectionGranularity _selectionGranularity;
@@ -136,9 +145,6 @@
 @property (nonatomic, readonly) UIEdgeInsets _computedUnobscuredSafeAreaInset;
 @property (nonatomic, readonly, getter=_isRetainingActiveFocusedState) BOOL _retainingActiveFocusedState;
 @property (nonatomic, readonly) int32_t _deviceOrientation;
-
-- (BOOL)_effectiveAppearanceIsDark;
-- (BOOL)_effectiveUserInterfaceLevelIsElevated;
 
 @end
 

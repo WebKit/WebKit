@@ -1013,7 +1013,7 @@ public:
     void contextMenuShowing() { m_isShowingContextMenu = true; }
 #endif
 
-    void wheelEvent(const WebWheelEvent&, OptionSet<WebCore::WheelEventProcessingSteps>);
+    bool wheelEvent(const WebWheelEvent&, OptionSet<WebCore::WheelEventProcessingSteps>);
 
     void wheelEventHandlersChanged(bool);
     void recomputeShortCircuitHorizontalWheelEventsState();
@@ -1370,6 +1370,8 @@ public:
 #if ENABLE(APP_HIGHLIGHTS)
     bool createAppHighlightInSelectedRange(CreateNewGroupForHighlight);
 #endif
+
+    void dispatchWheelEventWithoutScrolling(const WebWheelEvent&, CompletionHandler<void(bool)>&&);
 
 private:
     WebPage(WebCore::PageIdentifier, WebPageCreationParameters&&);

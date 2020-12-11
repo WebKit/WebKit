@@ -961,6 +961,13 @@ void PageClientImpl::setMouseEventPolicy(WebCore::MouseEventPolicy policy)
 #endif
 }
 
+#if HAVE(UISCROLLVIEW_ASYNCHRONOUS_SCROLL_EVENT_HANDLING)
+void PageClientImpl::handleAsynchronousCancelableScrollEvent(UIScrollView *scrollView, UIScrollEvent *scrollEvent, void (^completion)(BOOL handled))
+{
+    [m_webView _scrollView:scrollView asynchronouslyHandleScrollEvent:scrollEvent completion:completion];
+}
+#endif
+
 } // namespace WebKit
 
 #endif // PLATFORM(IOS_FAMILY)

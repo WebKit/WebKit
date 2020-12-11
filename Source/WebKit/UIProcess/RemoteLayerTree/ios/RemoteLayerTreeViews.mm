@@ -205,6 +205,36 @@ OptionSet<WebCore::TouchAction> touchActionsForPoint(UIView *rootView, const Web
     return node->eventRegion().touchActionsForPoint(WebCore::IntPoint(hitViewPoint));
 }
 
+#if ENABLE(WHEEL_EVENT_REGIONS)
+OptionSet<WebCore::EventListenerRegionType> eventListenerTypesAtPoint(UIView *rootView, const WebCore::IntPoint& point)
+{
+    Vector<UIView *, 16> viewsAtPoint;
+    collectDescendantViewsAtPoint(viewsAtPoint, rootView, point, nil);
+
+    if (viewsAtPoint.isEmpty())
+        return { };
+
+    UIView *hitView = nil;
+    for (auto *view : WTF::makeReversedRange(viewsAtPoint)) {
+        if ([view isKindOfClass:[WKCompositingView class]]) {
+            hitView = view;
+            break;
+        }
+    }
+
+    if (!hitView)
+        return { };
+
+    CGPoint hitViewPoint = [hitView convertPoint:point fromView:rootView];
+
+    auto* node = RemoteLayerTreeNode::forCALayer(hitView.layer);
+    if (!node)
+        return { };
+
+    return node->eventRegion().eventListenerRegionTypesForPoint(WebCore::IntPoint(hitViewPoint));
+}
+#endif
+
 UIScrollView *findActingScrollParent(UIScrollView *scrollView, const RemoteLayerTreeHost& host)
 {
     HashSet<WebCore::GraphicsLayer::PlatformLayerID> scrollersToSkip;
@@ -402,6 +432,10 @@ static Class scrollViewScrollIndicatorClass()
 // FIXME: Likely we can remove this special case for watchOS and tvOS.
 #if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
     self.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+#endif
+
+#if HAVE(UISCROLLVIEW_ASYNCHRONOUS_SCROLL_EVENT_HANDLING)
+    [self _setAllowsAsyncScrollEvent:YES];
 #endif
 
     return self;

@@ -2638,6 +2638,11 @@ void WebPageProxy::flushPendingMouseEventCallbacks()
     m_callbackHandlersAfterProcessingPendingMouseEvents.clear();
 }
 
+void WebPageProxy::dispatchWheelEventWithoutScrolling(const WebWheelEvent& event, CompletionHandler<void(bool)>&& completionHandler)
+{
+    sendWithAsyncReply(Messages::WebPage::DispatchWheelEventWithoutScrolling(event), WTFMove(completionHandler));
+}
+
 void WebPageProxy::handleWheelEvent(const NativeWebWheelEvent& event)
 {
 #if ENABLE(ASYNC_SCROLLING) && PLATFORM(COCOA)

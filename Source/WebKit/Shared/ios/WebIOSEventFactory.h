@@ -29,13 +29,17 @@
 
 #import "WebKeyboardEvent.h"
 #import "WebMouseEvent.h"
+#import "WebWheelEvent.h"
 #import <UIKit/UIKit.h>
 #import <WebCore/WebEvent.h>
+
+OBJC_CLASS UIScrollEvent;
 
 class WebIOSEventFactory {
 public:
     static WebKit::WebKeyboardEvent createWebKeyboardEvent(::WebEvent *, bool handledByInputMethod);
     static WebKit::WebMouseEvent createWebMouseEvent(::WebEvent *);
+    static WebKit::WebWheelEvent createWebWheelEvent(UIScrollEvent *, UIView *contentView);
 
     static UIKeyModifierFlags toUIKeyModifierFlags(OptionSet<WebKit::WebEvent::Modifier>);
 };

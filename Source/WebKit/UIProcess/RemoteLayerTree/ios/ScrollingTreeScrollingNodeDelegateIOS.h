@@ -65,6 +65,10 @@ public:
 
     void repositionScrollingLayers();
 
+#if HAVE(UISCROLLVIEW_ASYNCHRONOUS_SCROLL_EVENT_HANDLING)
+    void handleAsynchronousCancelableScrollEvent(UIScrollView *, UIScrollEvent *, void (^completion)(BOOL handled));
+#endif
+
     OptionSet<WebCore::TouchAction> activeTouchActions() const { return m_activeTouchActions; }
     void computeActiveTouchActionsForGestureRecognizer(UIGestureRecognizer*);
     void clearActiveTouchActions() { m_activeTouchActions = { }; }

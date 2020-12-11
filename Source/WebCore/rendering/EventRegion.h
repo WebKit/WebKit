@@ -82,7 +82,7 @@ public:
 #endif
 
 #if ENABLE(WHEEL_EVENT_REGIONS)
-    OptionSet<EventListenerRegionType> eventListenerRegionTypesForPoint(const IntPoint&) const;
+    WEBCORE_EXPORT OptionSet<EventListenerRegionType> eventListenerRegionTypesForPoint(const IntPoint&) const;
     const Region& eventListenerRegionForType(EventListenerRegionType) const;
 #endif
 
@@ -125,6 +125,10 @@ template<class Encoder>
 void EventRegion::encode(Encoder& encoder) const
 {
     encoder << m_region;
+#if ENABLE(WHEEL_EVENT_REGIONS)
+    encoder << m_wheelEventListenerRegion;
+    encoder << m_nonPassiveWheelEventListenerRegion;
+#endif
 #if ENABLE(TOUCH_ACTION_REGIONS)
     encoder << m_touchActionRegions;
 #endif
@@ -143,6 +147,22 @@ Optional<EventRegion> EventRegion::decode(Decoder& decoder)
 
     EventRegion eventRegion;
     eventRegion.m_region = WTFMove(*region);
+
+#if ENABLE(WHEEL_EVENT_REGIONS)
+    Optional<Region> wheelEventListenerRegion;
+    decoder >> wheelEventListenerRegion;
+    if (!wheelEventListenerRegion)
+        return WTF::nullopt;
+
+    eventRegion.m_wheelEventListenerRegion = WTFMove(*wheelEventListenerRegion);
+
+    Optional<Region> nonPassiveWheelEventListenerRegion;
+    decoder >> nonPassiveWheelEventListenerRegion;
+    if (!nonPassiveWheelEventListenerRegion)
+        return WTF::nullopt;
+
+    eventRegion.m_nonPassiveWheelEventListenerRegion = WTFMove(*nonPassiveWheelEventListenerRegion);
+#endif
 
 #if ENABLE(TOUCH_ACTION_REGIONS)
     Optional<Vector<Region>> touchActionRegions;

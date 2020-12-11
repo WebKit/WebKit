@@ -621,4 +621,5 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     CreateAppHighlightInSelectedRange(enum:bool WebKit::CreateNewGroupForHighlight createNewGroup)
 #endif
 
+    DispatchWheelEventWithoutScrolling(WebKit::WebWheelEvent event) -> (bool handled) Async
 }

@@ -2870,7 +2870,7 @@ static bool handleWheelEvent(const WebWheelEvent& wheelEvent, Page* page, Option
     return page->userInputBridge().handleWheelEvent(platformWheelEvent, processingSteps);
 }
 
-void WebPage::wheelEvent(const WebWheelEvent& wheelEvent, OptionSet<WheelEventProcessingSteps> processingSteps)
+bool WebPage::wheelEvent(const WebWheelEvent& wheelEvent, OptionSet<WheelEventProcessingSteps> processingSteps)
 {
     m_userActivity.impulse();
 
@@ -2880,6 +2880,20 @@ void WebPage::wheelEvent(const WebWheelEvent& wheelEvent, OptionSet<WheelEventPr
 
     if (processingSteps.contains(WheelEventProcessingSteps::MainThreadForScrolling))
         send(Messages::WebPageProxy::DidReceiveEvent(static_cast<uint32_t>(wheelEvent.type()), handled));
+
+    return handled;
+}
+
+void WebPage::dispatchWheelEventWithoutScrolling(const WebWheelEvent& wheelEvent, CompletionHandler<void(bool)>&& completionHandler)
+{
+#if ENABLE(KINETIC_SCROLLING)
+    auto gestureState = m_page->mainFrame().eventHandler().wheelScrollGestureState();
+    bool isCancelable = !gestureState || gestureState == WheelScrollGestureState::Blocking;
+#else
+    bool isCancelable = true;
+#endif
+    bool handled = this->wheelEvent(wheelEvent, { isCancelable ? WheelEventProcessingSteps::MainThreadForBlockingDOMEventDispatch : WheelEventProcessingSteps::MainThreadForNonBlockingDOMEventDispatch });
+    completionHandler(handled);
 }
 
 static bool handleKeyEvent(const WebKeyboardEvent& keyboardEvent, Page* page)

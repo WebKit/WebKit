@@ -37,6 +37,8 @@
 #import <UIKit/UIKeyboard_Private.h>
 #import <UIKit/UIResponder_Private.h>
 #import <UIKit/UIScreen_Private.h>
+#import <UIKit/UIScrollEvent_Private.h>
+#import <UIKit/UIScrollView_ForWebKitOnly.h>
 #import <UIKit/UIScrollView_Private.h>
 #import <UIKit/UITextAutofillSuggestion.h>
 #import <UIKit/UITextInputMultiDocument.h>
@@ -238,6 +240,13 @@ IGNORE_WARNINGS_END
 
 @interface UIScrollView (SPI)
 @property (nonatomic, getter=_isAutomaticContentOffsetAdjustmentEnabled, setter=_setAutomaticContentOffsetAdjustmentEnabled:) BOOL isAutomaticContentOffsetAdjustmentEnabled;
+@end
+
+@interface UIScrollEvent : UIEvent
+@end
+
+@interface NSObject (UIScrollViewDelegate_ForWebKitOnly)
+- (void)_scrollView:(UIScrollView *)scrollView asynchronouslyHandleScrollEvent:(UIScrollEvent *)scrollEvent completion:(void (^)(BOOL handled))completion;
 @end
 
 #endif // USE(APPLE_INTERNAL_SDK)

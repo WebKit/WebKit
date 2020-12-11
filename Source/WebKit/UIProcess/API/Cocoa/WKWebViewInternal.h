@@ -65,6 +65,10 @@ namespace API {
 class Attachment;
 }
 
+namespace WebCore {
+enum class WheelScrollGestureState : uint8_t;
+}
+
 namespace WebKit {
 enum class ContinueUnsafeLoad : bool;
 class IconLoadingDelegate;
@@ -228,6 +232,8 @@ class ViewGestureController;
 
     BOOL _hasScheduledVisibleRectUpdate;
     BOOL _visibleContentRectUpdateScheduledFromScrollViewInStableState;
+
+    Optional<WebCore::WheelScrollGestureState> _currentScrollGestureState;
 
     _WKDragInteractionPolicy _dragInteractionPolicy;
 

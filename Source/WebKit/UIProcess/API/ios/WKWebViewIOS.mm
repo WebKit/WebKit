@@ -29,9 +29,11 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import "FrontBoardServicesSPI.h"
+#import "NativeWebWheelEvent.h"
 #import "NavigationState.h"
 #import "RemoteLayerTreeDrawingAreaProxy.h"
 #import "RemoteLayerTreeScrollingPerformanceData.h"
+#import "RemoteLayerTreeViews.h"
 #import "RemoteScrollingCoordinatorProxy.h"
 #import "VideoFullscreenManagerProxy.h"
 #import "ViewGestureController.h"
@@ -47,6 +49,7 @@
 #import "WKWebViewPrivate.h"
 #import "WKWebViewPrivateForTestingIOS.h"
 #import "WebBackForwardList.h"
+#import "WebIOSEventFactory.h"
 #import "WebPageProxy.h"
 #import "_WKActivatedElementInfoInternal.h"
 #import <WebCore/GraphicsContextCG.h>
@@ -140,6 +143,10 @@ static int32_t deviceOrientationForUIInterfaceOrientation(UIInterfaceOrientation
     _scrollView = adoptNS([[WKScrollView alloc] initWithFrame:bounds]);
     [_scrollView setInternalDelegate:self];
     [_scrollView setBouncesZoom:YES];
+
+#if HAVE(UISCROLLVIEW_ASYNCHRONOUS_SCROLL_EVENT_HANDLING)
+    [_scrollView _setAllowsAsyncScrollEvent:YES];
+#endif
 
     if ([_scrollView respondsToSelector:@selector(_setAvoidsJumpOnInterruptedBounce:)]) {
         [_scrollView setTracksImmediatelyWhileDecelerating:NO];
@@ -1591,6 +1598,49 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
     return adjustedContentOffset;
 }
+
+#if HAVE(UISCROLLVIEW_ASYNCHRONOUS_SCROLL_EVENT_HANDLING)
+- (void)_scrollView:(UIScrollView *)scrollView asynchronouslyHandleScrollEvent:(UIScrollEvent *)scrollEvent completion:(void (^)(BOOL handled))completion
+{
+    if (scrollEvent.phase == UIScrollPhaseMayBegin) {
+        completion(NO);
+        return;
+    }
+
+    WebCore::IntPoint scrollLocation = WebCore::roundedIntPoint([scrollEvent locationInView:_contentView.get()]);
+    auto eventListeners = WebKit::eventListenerTypesAtPoint(_contentView.get(), scrollLocation);
+    bool hasWheelHandlers = eventListeners.contains(WebCore::EventListenerRegionType::Wheel);
+    if (!hasWheelHandlers) {
+        completion(NO);
+        return;
+    }
+
+    bool isFirstEventInGesture = scrollEvent.phase == UIScrollPhaseBegan;
+    if (isFirstEventInGesture)
+        _currentScrollGestureState = WTF::nullopt;
+
+    bool hasActiveWheelHandlers = eventListeners.contains(WebCore::EventListenerRegionType::NonPassiveWheel);
+    bool isCancelable = hasActiveWheelHandlers && (!_currentScrollGestureState || _currentScrollGestureState == WebCore::WheelScrollGestureState::Blocking);
+    auto event = WebIOSEventFactory::createWebWheelEvent(scrollEvent, _contentView.get());
+
+    _page->dispatchWheelEventWithoutScrolling(event, [weakSelf = WeakObjCPtr<WKWebView>(self), strongCompletion = makeBlockPtr(completion), isCancelable, isFirstEventInGesture](bool handled) {
+        auto strongSelf = weakSelf.get();
+        if (!strongSelf) {
+            strongCompletion(NO);
+            return;
+        }
+
+        if (isCancelable) {
+            if (isFirstEventInGesture)
+                strongSelf->_currentScrollGestureState = handled ? WebCore::WheelScrollGestureState::Blocking : WebCore::WheelScrollGestureState::NonBlocking;
+            strongCompletion(handled);
+        }
+    });
+
+    if (!isCancelable)
+        completion(NO);
+}
+#endif // HAVE(UISCROLLVIEW_ASYNCHRONOUS_SCROLL_EVENT_HANDLING)
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {

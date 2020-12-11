@@ -62,6 +62,8 @@
 #import <UIKit/UIPresentationController_Private.h>
 #import <UIKit/UIResponder_Private.h>
 #import <UIKit/UIScene_Private.h>
+#import <UIKit/UIScrollEvent_Private.h>
+#import <UIKit/UIScrollView_ForWebKitOnly.h>
 #import <UIKit/UIScrollView_Private.h>
 #import <UIKit/UIStringDrawing_Private.h>
 #import <UIKit/UITableViewCell_Private.h>
@@ -416,7 +418,26 @@ typedef enum {
 @property (nonatomic, getter=_indicatorInsetAdjustmentBehavior, setter=_setIndicatorInsetAdjustmentBehavior:) UIScrollViewIndicatorInsetAdjustmentBehavior indicatorInsetAdjustmentBehavior;
 @property (nonatomic, readonly) UIEdgeInsets _systemContentInset;
 @property (nonatomic, readonly) UIEdgeInsets _effectiveContentInset;
+@property (nonatomic, getter=_allowsAsyncScrollEvent, setter=_setAllowsAsyncScrollEvent:) BOOL _allowsAsyncScrollEvent;
 @end
+
+typedef NS_ENUM(NSUInteger, UIScrollPhase) {
+    UIScrollPhaseNone,
+    UIScrollPhaseMayBegin,
+    UIScrollPhaseBegan,
+    UIScrollPhaseChanged,
+    UIScrollPhaseEnded,
+    UIScrollPhaseCancelled
+};
+
+@interface UIScrollEvent : UIEvent
+
+@property (assign, readonly) UIScrollPhase phase;
+- (CGPoint)locationInView:(UIView *)view;
+- (CGVector)_adjustedAcceleratedDeltaInView:(UIView *)view;
+
+@end
+
 
 @interface NSString (UIKitDetails)
 - (CGSize)_legacy_sizeWithFont:(UIFont *)font forWidth:(CGFloat)width lineBreakMode:(NSLineBreakMode)lineBreakMode;

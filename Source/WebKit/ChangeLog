@@ -1,3 +1,67 @@
+2020-12-11  Tim Horton  <timothy_horton@apple.com>
+
+        Trackpad and Mouse scroll events on iPad only fire "pointermove" -- not "wheel"
+        https://bugs.webkit.org/show_bug.cgi?id=210071
+        <rdar://problem/54616853>
+
+        Reviewed by Simon Fraser.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        Add some SPI.
+
+        * Shared/ios/WebIOSEventFactory.h:
+        * Shared/ios/WebIOSEventFactory.mm:
+        (toWebPhase):
+        (WebIOSEventFactory::createWebWheelEvent):
+        Add a UIScrollEvent->WebWheelEvent conversion helper.
+
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/API/ios/WKWebViewIOS.h:
+        * UIProcess/API/ios/WKWebViewIOS.mm:
+        (-[WKWebView _setupScrollAndContentViews]):
+        Enable async UIScrollEvent handling for WKScrollView.
+
+        (-[WKWebView _scrollView:asynchronouslyHandleScrollEvent:completion:]):
+        Adopt new UIKit SPI to asynchronously defer UIScrollEvents.
+        We pass them to the Web Content process, where they are processed 
+        *only* for event handling, not for scrolling.
+
+        If the event is not cancelable, we will synchronously reply that it was
+        not handled; if it is cancelable, or we don't yet know if it will be,
+        we'll wait to hear back from the Web Content process before replying.
+
+        UIKit will wait until our reply to apply the UIScrollEvent to the UIScrollView.
+
+        * UIProcess/PageClient.h:
+        * UIProcess/RemoteLayerTree/ios/RemoteLayerTreeViews.h:
+        * UIProcess/RemoteLayerTree/ios/RemoteLayerTreeViews.mm:
+        (WebKit::eventListenerTypesAtPoint):
+        Expose a mechanism for retrieving the event listener types at a given point,
+        similar to the existing mechanism for touch event listeners.
+
+        (-[WKChildScrollView initWithFrame:]):
+        Enable async UIScrollEvent handling for WKChildScrollView.
+
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeScrollingNodeDelegateIOS.h:
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeScrollingNodeDelegateIOS.mm:
+        (-[WKScrollingNodeScrollViewDelegate _scrollView:asynchronouslyHandleScrollEvent:completion:]):
+        (WebKit::ScrollingTreeScrollingNodeDelegateIOS::handleAsynchronousCancelableScrollEvent):
+        Plumb async scroll events for sub-scrollable regions through PageClient
+        to WKWebView; we don't actually care which UIScrollView they're handed to,
+        since we re-hit-test ourselves.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::dispatchWheelEventWithoutScrolling):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::handleAsynchronousCancelableScrollEvent):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::wheelEvent):
+        (WebKit::WebPage::dispatchWheelEventWithoutScrolling):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2020-12-11  Brent Fulgham  <bfulgham@apple.com>
 
         Expose API for enabling/disabling Private Click Measurement
