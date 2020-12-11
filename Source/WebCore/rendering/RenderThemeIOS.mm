@@ -2329,7 +2329,6 @@ void RenderThemeIOS::paintColorWellDecorations(const RenderObject& box, const Pa
     }
 
     constexpr int strokeThickness = 2;
-    constexpr int numColorStops = 9;
     constexpr DisplayP3<float> colorStops[] = {
         { 1, 1, 0, 1 },
         { 1, 0.5, 0, 1 },
@@ -2341,6 +2340,7 @@ void RenderThemeIOS::paintColorWellDecorations(const RenderObject& box, const Pa
         { 0.63, 0.88, 0.03, 1 },
         { 1, 1, 0, 1 }
     };
+    constexpr int numColorStops = std::size(colorStops);
 
     auto gradient = Gradient::create(Gradient::ConicData { rect.center(), 0 });
     for (int i = 0; i < numColorStops; ++i)
