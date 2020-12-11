@@ -10,10 +10,6 @@ set_property(DIRECTORY . PROPERTY FOLDER "WebCore")
 
 add_subdirectory(PAL/pal)
 
-if (PAL_LIBRARY_TYPE MATCHES STATIC)
-    add_definitions(-DSTATICALLY_LINKED_WITH_PAL=1)
-endif ()
-
 list(APPEND WebCore_UNIFIED_SOURCE_LIST_FILES
     "Sources.txt"
 )
@@ -1446,19 +1442,22 @@ set(WebCore_PLUG_INS_RESOURCES
 set(WebCore_LIBRARIES
     LibXml2::LibXml2
     SQLite::SQLite3
-    WebKit::JavaScriptCore
-    WebKit::PAL
     ZLIB::ZLIB
 )
+set(WebCore_FRAMEWORKS
+    JavaScriptCore
+    PAL
+    WTF
+)
+if (NOT USE_SYSTEM_MALLOC)
+    list(APPEND WebCore_FRAMEWORKS bmalloc)
+endif ()
 
 if (ENABLE_XSLT)
     list(APPEND WebCore_LIBRARIES LibXslt::LibXslt)
 endif ()
 
-set(WebCoreTestSupport_LIBRARIES
-    WebKit::JavaScriptCore
-    WebKit::PAL
-)
+set(WebCoreTestSupport_FRAMEWORKS ${WebCore_FRAMEWORKS})
 set(WebCoreTestSupport_DEPENDENCIES WebCoreTestSupportBindings)
 
 if (ENABLE_LEGACY_ENCRYPTED_MEDIA)

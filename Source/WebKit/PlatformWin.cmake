@@ -173,7 +173,6 @@ if (${WTF_PLATFORM_WIN_CAIRO})
     )
 
     list(APPEND WebKit_PRIVATE_LIBRARIES
-        $<TARGET_OBJECTS:WebCore>
         MediaFoundation
         OpenSSL::SSL
         mfuuid.lib
@@ -211,8 +210,3 @@ if (${WTF_PLATFORM_WIN_CAIRO})
         UIProcess/API/C/curl/WKWebsiteDataStoreRefCurl.h
     )
 endif ()
-
-list(APPEND WebKit_PRIVATE_DEFINITIONS
-    STATICALLY_LINKED_WITH_PAL
-    STATICALLY_LINKED_WITH_WebCore
-)

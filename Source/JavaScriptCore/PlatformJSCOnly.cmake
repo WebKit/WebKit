@@ -1,5 +1,3 @@
-add_definitions(-DSTATICALLY_LINKED_WITH_WTF)
-
 if (ENABLE_REMOTE_INSPECTOR)
     if (USE_GLIB)
         include(inspector/remote/GLib.cmake)

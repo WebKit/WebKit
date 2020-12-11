@@ -398,6 +398,8 @@ if (ENABLE_WPE_QT_API)
     set(qtwpe_LIBRARIES
         Qt5::Core Qt5::Quick
         WebKit
+        ${GLIB_GOBJECT_LIBRARIES}
+        ${GLIB_LIBRARIES}
         ${LIBEPOXY_LIBRARIES}
         ${WPEBACKEND_FDO_LIBRARIES}
     )

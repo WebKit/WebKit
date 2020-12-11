@@ -32,10 +32,6 @@ list(APPEND TestWebCore_SOURCES
 
     win/TestWebCoreStubs.cpp
 )
-list(APPEND TestWebCore_DEFINITIONS
-    STATICALLY_LINKED_WITH_PAL=1
-    STATICALLY_LINKED_WITH_WebCore=1
-)
 
 list(APPEND TestWebCore_LIBRARIES
     Crypt32

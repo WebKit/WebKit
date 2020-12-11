@@ -127,9 +127,12 @@ set(JavaScriptCore_OBJECT_LUT_SOURCES
     wasm/js/WebAssemblyTablePrototype.cpp
 )
 
-set(JavaScriptCore_LIBRARIES
-    WebKit::WTF
+set(JavaScriptCore_FRAMEWORKS
+    WTF
 )
+if (NOT USE_SYSTEM_MALLOC)
+    list(APPEND JavaScriptCore_FRAMEWORKS bmalloc)
+endif ()
 
 if (USE_CAPSTONE)
     list(APPEND JavaScriptCore_LIBRARIES capstone)
@@ -323,7 +326,7 @@ set(LLIntSettingsExtractor_SOURCES
 set(LLIntSettingsExtractor_PRIVATE_INCLUDE_DIRECTORIES
     $<TARGET_PROPERTY:JavaScriptCore,INCLUDE_DIRECTORIES>
 )
-set(LLIntSettingsExtractor_FRAMEWORKS WTF)
+set(LLIntSettingsExtractor_FRAMEWORKS ${JavaScriptCore_FRAMEWORKS})
 set(LLIntSettingsExtractor_DEPENDENCIES JavaScriptCore_CopyHeaders)
 WEBKIT_EXECUTABLE(LLIntSettingsExtractor)
 
@@ -336,7 +339,7 @@ set(LLIntOffsetsExtractor_SOURCES
 set(LLIntOffsetsExtractor_PRIVATE_INCLUDE_DIRECTORIES
     $<TARGET_PROPERTY:JavaScriptCore,INCLUDE_DIRECTORIES>
 )
-set(LLIntOffsetsExtractor_FRAMEWORKS WTF)
+set(LLIntOffsetsExtractor_FRAMEWORKS ${JavaScriptCore_FRAMEWORKS})
 set(LLIntOffsetsExtractor_DEPENDENCIES JavaScriptCore_CopyHeaders)
 WEBKIT_EXECUTABLE(LLIntOffsetsExtractor)
 
@@ -1386,9 +1389,6 @@ if (NOT INTERNAL_BUILD)
     add_dependencies(JavaScriptCore_CopyPrivateHeaders JavaScriptCore)
 endif ()
 
-
-add_subdirectory(shell)
-
 target_include_directories(LowLevelInterpreterLib
     PRIVATE "$<TARGET_PROPERTY:JavaScriptCore,INCLUDE_DIRECTORIES>")
 add_dependencies(LowLevelInterpreterLib Bytecodes JSCBuiltins)
@@ -1452,3 +1452,5 @@ if (USE_VERSION_STAMPER)
         COMMAND ${PERL_EXECUTABLE} ${WEBKIT_LIBRARIES_DIR}/tools/scripts/version-stamp.pl ${JavaScriptCore_DERIVED_SOURCES_DIR} $<TARGET_FILE:JavaScriptCore>
         VERBATIM)
 endif ()
+
+add_subdirectory(shell)

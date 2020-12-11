@@ -1,3 +1,15 @@
+2020-12-11  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Determine correct visibility for linked frameworks
+        https://bugs.webkit.org/show_bug.cgi?id=210366
+
+        Reviewed by Michael Catanzaro.
+
+        Remove explicit setting of STATICALLY_LINKED_WITH_${framework}.
+
+        * PlatformFTW.cmake:
+        * PlatformWin.cmake:
+
 2020-12-03  Adam Roben  <aroben@apple.com>
 
         Adopt FALLBACK_PLATFORM

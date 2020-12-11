@@ -26,6 +26,3 @@ PLAYSTATION_COPY_SHARED_LIBRARIES(WTF_CopySharedLibs
     FILES
         ${ICU_LIBRARIES}
 )
-
-# bmalloc is compiled as an OBJECT library so it is statically linked
-list(APPEND WTF_PRIVATE_DEFINITIONS STATICALLY_LINKED_WITH_bmalloc)

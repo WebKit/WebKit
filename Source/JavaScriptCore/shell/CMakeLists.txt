@@ -1,10 +1,12 @@
-if ("${JavaScriptCore_LIBRARY_TYPE}" MATCHES "STATIC")
-    set(jsc_PRIVATE_DEFINITIONS STATICALLY_LINKED_WITH_JavaScriptCore)
-endif ()
-
 set(jsc_SOURCES ../jsc.cpp)
 set(jsc_LIBRARIES ${CMAKE_DL_LIBS})
-set(jsc_FRAMEWORKS JavaScriptCore)
+set(jsc_FRAMEWORKS
+    JavaScriptCore
+    WTF
+)
+if (NOT USE_SYSTEM_MALLOC)
+    list(APPEND jsc_FRAMEWORKS bmalloc)
+endif ()
 
 set(jsc_PRIVATE_INCLUDE_DIRECTORIES
     $<TARGET_PROPERTY:JavaScriptCore,INCLUDE_DIRECTORIES>

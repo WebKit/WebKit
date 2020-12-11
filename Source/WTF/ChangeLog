@@ -1,3 +1,16 @@
+2020-12-11  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Determine correct visibility for linked frameworks
+        https://bugs.webkit.org/show_bug.cgi?id=210366
+
+        Reviewed by Michael Catanzaro.
+
+        Set WTF_FRAMEWORKS to determine correct linkage for the library. Remove
+        explicit setting of STATICALLY_LINKED_WITH_${framework} by ports.
+
+        * wtf/CMakeLists.txt:
+        * wtf/PlatformPlayStation.cmake:
+
 2020-12-11  Chris Lord  <clord@igalia.com>
 
         [GTK][WPE] Async overflow scrolling is disabled by default due to brokenness

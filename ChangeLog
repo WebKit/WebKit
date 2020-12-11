@@ -1,3 +1,34 @@
+2020-12-11  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Determine correct visibility for linked frameworks
+        https://bugs.webkit.org/show_bug.cgi?id=210366
+
+        Reviewed by Michael Catanzaro.
+
+        WebKit has some frameworks that are compiled statically into a larger shared library. For
+        example Apple compiles bmalloc and WTF into JavaScriptCore. This means the JavaScriptCore
+        framework also exposes the symbols for those two libraries and that targets depending
+        on WTF or bmalloc should link to JavaScriptCore and never to WTF or bmalloc directly.
+
+        The CMake code allows each port to decide the type of library for a WEBKIT_FRAMEWORK.
+        This means there are many different combinations that it needs to support. To ensure that
+        everything links properly some bookkeeping is required.
+
+        WEBKIT_FRAMEWORK now uses ${target}_FRAMEWORKS to determine how to link the frameworks
+        it depends on. First the macro determines if the framework is a SHARED library or is linked
+        into a shared library, and if so it is linked as PUBLIC. If the framework itself is not a
+        SHARED library, then it links other STATIC/OBJECT framework as PUBLIC. If the framework
+        itself is SHARED then any framework that is a STATIC/OBJECT library is linked as PRIVATE
+        to stop propagation. The linked framework's header directories are added to the
+        WebKit::${framework} target to allow the framework to present as that framework. A global
+        property is set to inform consumers that they should link to this different framework
+        to get the requested framework.
+
+        This ensures that all ports can ship with hidden visibility turned on which is a precursor
+        to a port turning on link time optimization (LTO).
+
+        * Source/cmake/WebKitMacros.cmake:
+
 2020-12-10  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Determine when to use $<TARGET_OBJECTS> for executables

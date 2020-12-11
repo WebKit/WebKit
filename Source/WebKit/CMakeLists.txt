@@ -2,10 +2,6 @@ include(WebKitCommon)
 
 set_property(DIRECTORY . PROPERTY FOLDER "WebKit")
 
-if (PAL_LIBRARY_TYPE MATCHES STATIC)
-    add_definitions(-DSTATICALLY_LINKED_WITH_PAL=1)
-endif ()
-
 set(WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${CMAKE_BINARY_DIR}"
 )
@@ -280,24 +276,20 @@ set(WebKit_MESSAGES_IN_FILES
     WebProcess/WebStorage/StorageAreaMap
 )
 
-# FIXME: https://bugs.webkit.org/show_bug.cgi?id=210366
-set(WebKit_LIBRARIES WebKit::WebCore)
-
-set(WebProcess_LIBRARIES
-    WebKit
+set(WebKit_FRAMEWORKS
+    JavaScriptCore
+    PAL
+    WTF
+    WebCore
 )
+if (NOT USE_SYSTEM_MALLOC)
+    list(APPEND WebKit_FRAMEWORKS bmalloc)
+endif ()
 
-set(NetworkProcess_LIBRARIES
-    WebKit
-)
-
-set(GPUProcess_LIBRARIES
-    WebKit
-)
-
-set(PluginProcess_LIBRARIES
-    WebKit
-)
+set(WebProcess_LIBRARIES WebKit)
+set(NetworkProcess_LIBRARIES WebKit)
+set(GPUProcess_LIBRARIES WebKit)
+set(PluginProcess_LIBRARIES WebKit)
 
 if (ENABLE_ENCRYPTED_MEDIA AND ENABLE_OPENCDM)
   list(APPEND WebKit_SYSTEM_INCLUDE_DIRECTORIES

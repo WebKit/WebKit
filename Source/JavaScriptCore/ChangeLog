@@ -1,3 +1,25 @@
+2020-12-11  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Determine correct visibility for linked frameworks
+        https://bugs.webkit.org/show_bug.cgi?id=210366
+
+        Reviewed by Michael Catanzaro.
+
+        Set JavaScriptCore_FRAMEWORKS to determine correct linkage for the library. Remove
+        explicit setting of STATICALLY_LINKED_WITH_${framework} and $<TARGET_OBJECTS:${framework}>
+        by ports.
+
+        Move the add_subdirectory of shell to the end of the CMakeLists.txt so its after the
+        WEBKIT_FRAMEWORK call. This ensures that the frameworks linked into JavaScriptCore are
+        known when creating the executables in that directory.
+
+        * CMakeLists.txt:
+        * PlatformGTK.cmake:
+        * PlatformJSCOnly.cmake:
+        * PlatformMac.cmake:
+        * PlatformPlayStation.cmake:
+        * shell/CMakeLists.txt:
+
 2020-12-11  Dmitry Bezhetskov  <dbezhetskov@igalia.com>
 
         [WASM-References] Add table.init

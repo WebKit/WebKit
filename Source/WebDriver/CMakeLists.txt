@@ -20,6 +20,10 @@ set(WebDriver_SOURCES
 set(WebDriver_FRAMEWORKS
     WTF
 )
+if (NOT USE_SYSTEM_MALLOC)
+    list(APPEND WebDriver_FRAMEWORKS bmalloc)
+endif ()
+
 
 set(WebDriver_SCRIPTS
     ${WEBKIT_DIR}/UIProcess/Automation/atoms/ElementAttribute.js

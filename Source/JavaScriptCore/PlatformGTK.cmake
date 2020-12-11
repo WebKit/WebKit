@@ -30,7 +30,6 @@ if (ENABLE_INTROSPECTION)
     )
 endif ()
 
-add_definitions(-DSTATICALLY_LINKED_WITH_WTF)
 add_definitions(-DJSC_COMPILATION)
 
 list(APPEND JavaScriptCore_LIBRARIES
