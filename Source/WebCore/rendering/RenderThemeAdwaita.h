@@ -64,7 +64,7 @@ private:
     bool popsMenuBySpaceOrReturn() const final { return true; }
     void adjustMenuListStyle(RenderStyle&, const Element*) const override;
     void adjustMenuListButtonStyle(RenderStyle&, const Element*) const override;
-    LengthBox popupInternalPaddingBox(const RenderStyle&) const final;
+    LengthBox popupInternalPaddingBox(const RenderStyle&, const Settings&) const final;
     bool paintMenuList(const RenderObject&, const PaintInfo&, const FloatRect&) final;
     void paintMenuListButtonDecorations(const RenderBox&, const PaintInfo&, const FloatRect&) final;
 

@@ -88,4 +88,13 @@ input[type="color"]::-webkit-color-swatch {
     border-radius: inherit;
 }
 
+select {
+    color: rgb(0, 122, 255);
+    font-weight: bold;
+    font-family: system-ui;
+    border: initial;
+    border-radius: initial;
+    background-color: rgb(235, 245, 255);
+}
+
 #endif

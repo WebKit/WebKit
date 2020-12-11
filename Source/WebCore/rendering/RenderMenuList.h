@@ -59,6 +59,10 @@ public:
 
     String text() const;
 
+#if PLATFORM(IOS_FAMILY)
+    void layout() override;
+#endif
+
     RenderBlock* innerRenderer() const { return m_innerBlock.get(); }
     void setInnerRenderer(RenderBlock&);
 

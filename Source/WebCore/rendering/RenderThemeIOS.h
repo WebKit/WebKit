@@ -70,7 +70,7 @@ public:
 private:
     bool canPaint(const PaintInfo&, const Settings&) const final;
 
-    LengthBox popupInternalPaddingBox(const RenderStyle&) const override;
+    LengthBox popupInternalPaddingBox(const RenderStyle&, const Settings&) const override;
 
     int baselinePosition(const RenderBox&) const override;
 
@@ -177,6 +177,7 @@ private:
 #if ENABLE(IOS_FORM_CONTROL_REFRESH)
     bool paintProgressBarWithFormControlRefresh(const RenderObject&, const PaintInfo&, const IntRect&);
     bool paintSliderTrackWithFormControlRefresh(const RenderObject&, const PaintInfo&, const IntRect&);
+    void paintMenuListButtonDecorationsWithFormControlRefresh(const RenderBox&, const PaintInfo&, const FloatRect&);
 #endif
 
     FloatRect addRoundedBorderClip(const RenderObject& box, GraphicsContext&, const IntRect&);

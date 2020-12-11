@@ -562,12 +562,18 @@ const float MenuListArrowWidth = 7;
 const float MenuListArrowHeight = 6;
 const float MenuListButtonPaddingAfter = 19;
 
-LengthBox RenderThemeIOS::popupInternalPaddingBox(const RenderStyle& style) const
+LengthBox RenderThemeIOS::popupInternalPaddingBox(const RenderStyle& style, const Settings& settings) const
 {
+    float padding = MenuListButtonPaddingAfter;
+    if (settings.iOSFormControlRefreshEnabled()) {
+        auto emSize = CSSPrimitiveValue::create(1.0, CSSUnitType::CSS_EMS);
+        padding = emSize->computeLength<float>(CSSToLengthConversionData(&style, nullptr, nullptr, nullptr, 1.0, WTF::nullopt));
+    }
+
     if (style.appearance() == MenulistButtonPart) {
         if (style.direction() == TextDirection::RTL)
-            return { 0, 0, 0, static_cast<int>(MenuListButtonPaddingAfter + style.borderTopWidth()) };
-        return { 0, static_cast<int>(MenuListButtonPaddingAfter + style.borderTopWidth()), 0, 0 };
+            return { 0, 0, 0, static_cast<int>(padding + style.borderTopWidth()) };
+        return { 0, static_cast<int>(padding + style.borderTopWidth()), 0, 0 };
     }
     return { 0, 0, 0, 0 };
 }
@@ -583,6 +589,8 @@ static inline bool canAdjustBorderRadiusForAppearance(ControlPart appearance, co
 #if ENABLE(IOS_FORM_CONTROL_REFRESH)
     case SearchFieldPart:
         return !box.settings().iOSFormControlRefreshEnabled();
+    case MenulistButtonPart:
+        return !box.style().hasExplicitlySetBorderRadius() && box.settings().iOSFormControlRefreshEnabled();
 #endif
     default:
         return true;
@@ -683,6 +691,13 @@ void RenderThemeIOS::adjustMenuListButtonStyle(RenderStyle& style, const Element
 
 void RenderThemeIOS::paintMenuListButtonDecorations(const RenderBox& box, const PaintInfo& paintInfo, const FloatRect& rect)
 {
+#if ENABLE(IOS_FORM_CONTROL_REFRESH)
+    if (box.settings().iOSFormControlRefreshEnabled()) {
+        paintMenuListButtonDecorationsWithFormControlRefresh(box, paintInfo, rect);
+        return;
+    }
+#endif
+
     auto& style = box.style();
     bool isRTL = style.direction() == TextDirection::RTL;
     float borderTopWidth = style.borderTopWidth();
@@ -2032,6 +2047,8 @@ constexpr auto meterOptimalColor = SRGBA<uint8_t> { 52, 199, 89 };
 constexpr auto meterSuboptimalColor = SRGBA<uint8_t> { 247, 206, 70 };
 constexpr auto meterEvenLessGoodColor = SRGBA<uint8_t> { 255, 59, 48 };
 
+constexpr auto menulistButtonColor = SRGBA<uint8_t> { 97, 172, 255 };
+
 bool RenderThemeIOS::paintCheckbox(const RenderObject& box, const PaintInfo& paintInfo, const IntRect& rect)
 {
     if (!box.settings().iOSFormControlRefreshEnabled())
@@ -2356,6 +2373,79 @@ void RenderThemeIOS::paintColorWellDecorations(const RenderObject& box, const Pa
 }
 
 #endif // ENABLE(INPUT_TYPE_COLOR)
+
+void RenderThemeIOS::paintMenuListButtonDecorationsWithFormControlRefresh(const RenderBox& box, const PaintInfo& paintInfo, const FloatRect& rect)
+{
+    auto& context = paintInfo.context();
+    GraphicsContextStateSaver stateSaver(context);
+
+    auto& style = box.style();
+
+    Path glyphPath;
+    FloatSize glyphSize;
+
+    if (box.isMenuList() && downcast<HTMLSelectElement>(box.element())->multiple()) {
+        constexpr int length = 18;
+        constexpr int count = 3;
+        constexpr int padding = 12;
+
+        FloatRect ellipse(0, 0, length, length);
+
+        for (int i = 0; i < count; ++i) {
+            glyphPath.addEllipse(ellipse);
+            ellipse.move(length + padding, 0);
+        }
+
+        glyphSize = { length * count + padding * (count - 1), length };
+    } else {
+        constexpr int glyphWidth = 63;
+        constexpr int glyphHeight = 73;
+        glyphSize = { glyphWidth, glyphHeight };
+
+        glyphPath.moveTo({ 31.8593f, 1.0f });
+        glyphPath.addBezierCurveTo({ 30.541f, 1.0f }, { 29.418f, 1.586f }, { 28.0507f, 2.66f });
+        glyphPath.addLineTo({ 2.5625f, 23.168f });
+        glyphPath.addBezierCurveTo({ 1.5859f, 23.998f }, { 1.0f, 25.2188f }, { 1.0f, 26.7325f });
+        glyphPath.addBezierCurveTo({ 1.0f, 29.6133f }, { 3.246f, 31.7129f }, { 5.9316f, 31.7129f });
+        glyphPath.addBezierCurveTo({ 7.1523f, 31.7129f }, { 8.3242f, 31.2246f }, { 9.5449f, 30.248f });
+        glyphPath.addLineTo({ 31.8593f, 12.377f });
+        glyphPath.addLineTo({ 54.2226f, 30.248f });
+        glyphPath.addBezierCurveTo({ 55.3945f, 31.2246f }, { 56.6152f, 31.7129f }, { 57.7871f, 31.7129 });
+        glyphPath.addBezierCurveTo({ 60.4726f, 31.7129f }, { 62.7187f, 29.6133f }, { 62.7187f, 26.7325 });
+        glyphPath.addBezierCurveTo({ 62.7187f, 25.2188f }, { 62.1327f, 23.9981f }, { 61.1562f, 23.168 });
+        glyphPath.addLineTo({ 35.6679f, 2.6602f });
+        glyphPath.addBezierCurveTo({ 34.3496f, 1.586f }, { 33.1777f, 1.0f }, { 31.8593f, 1.0f });
+        glyphPath.moveTo({ 31.8593f, 72.3867f });
+        glyphPath.addBezierCurveTo({ 33.1777f, 72.3867f }, { 34.3496f, 71.8007f }, { 35.6679f, 70.7266f });
+        glyphPath.addLineTo({ 61.1562f, 50.2188f });
+        glyphPath.addBezierCurveTo({ 62.1328f, 49.3888f }, { 62.7187f, 48.168f }, { 62.7187f, 46.6543f });
+        glyphPath.addBezierCurveTo({ 62.7187f, 43.7735f }, { 60.4726f, 41.6739f }, { 57.7871f, 41.6739f });
+        glyphPath.addBezierCurveTo({ 56.6151f, 41.6739f }, { 55.3945f, 42.162f }, { 54.2226f, 43.09f });
+        glyphPath.addLineTo({ 31.8593f, 61.01f });
+        glyphPath.addLineTo({ 9.545f, 43.0898f });
+        glyphPath.addBezierCurveTo({ 8.3243f, 42.1619f }, { 7.1524f, 41.6738f }, { 5.9317f, 41.6738f });
+        glyphPath.addBezierCurveTo({ 3.246f, 41.6739f }, { 1.0f, 43.7735f }, { 1.0f, 46.6543f });
+        glyphPath.addBezierCurveTo({ 1.0f, 48.168f }, { 1.5859, 49.3887 }, { 2.5625, 50.2188f });
+        glyphPath.addLineTo({ 28.0507f, 70.7266f });
+        glyphPath.addBezierCurveTo({ 29.4179f, 71.8f }, { 30.541f, 72.3867f }, { 31.8593f, 72.3867 });
+    }
+
+    auto emSize = CSSPrimitiveValue::create(1.0, CSSUnitType::CSS_EMS);
+    auto emPixels = emSize->computeLength<float>(CSSToLengthConversionData(&style, nullptr, nullptr, nullptr, 1.0, WTF::nullopt));
+    auto glyphScale = 0.65f * emPixels / glyphSize.width();
+    glyphSize = glyphScale * glyphSize;
+
+    AffineTransform transform;
+    if (style.isLeftToRightDirection())
+        transform.translate(rect.maxX() - glyphSize.width() - box.style().borderEndWidth() - valueForLength(box.style().paddingEnd(), rect.width()), rect.center().y() - glyphSize.height() / 2.0f);
+    else
+        transform.translate(rect.x() + box.style().borderEndWidth() + valueForLength(box.style().paddingEnd(), rect.width()), rect.center().y() - glyphSize.height() / 2.0f);
+    transform.scale(glyphScale);
+    glyphPath.transform(transform);
+
+    context.setFillColor(menulistButtonColor);
+    context.fillPath(glyphPath);
+}
 
 #endif // ENABLE(IOS_FORM_CONTROL_REFRESH)
 
