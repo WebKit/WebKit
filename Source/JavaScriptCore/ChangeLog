@@ -1,3 +1,61 @@
+2020-12-10  Tadeu Zagallo  <tzagallo@apple.com>
+
+        Removing unnecessary locking from JSValue API functions
+        https://bugs.webkit.org/show_bug.cgi?id=219723
+
+        Reviewed by Filip Pizlo.
+
+        Remove the unnecessary locking from the JSValueIs* and JSValueMake* API functions
+        that only work on primitives. Also remove the unnecessary method dispatching and
+        call from the -[JSValue is*] methods.
+
+        This improves the APIBench score by another ~8% since these are such common operations.
+        Here are the results: (Baseline includes https://bugs.webkit.org/show_bug.cgi?id=219663)
+
+        CURRENT_API:        Baseline   Change
+        ----------------------------------------
+        RichardsMostlyC:      74ms      60ms
+        RichardsMostlyObjC:  304ms     300ms
+        RichardsMostlySwift: 305ms     293ms
+        RichardsSomeC:        97ms      77ms
+        RichardsSomeObjC:    158ms     159ms
+        RichardsSomeSwift:   202ms     198ms
+
+        UPCOMING_API:       Baseline   Change
+        ----------------------------------------
+        RichardsMostlyC:      23ms      19ms
+        RichardsMostlyObjC:  282ms     282ms
+        RichardsMostlySwift: 280ms     282ms
+        RichardsSomeC:        95ms      76ms
+        RichardsSomeObjC:    157ms     156ms
+        RichardsSomeSwift:   202ms     197ms
+        ----------------------------------------
+        Score:             33.6404   36.4006
+
+        * API/APICast.h:
+        (toRef):
+        * API/JSValue.mm:
+        (-[JSValue isUndefined]):
+        (-[JSValue isNull]):
+        (-[JSValue isBoolean]):
+        (-[JSValue isNumber]):
+        (-[JSValue isString]):
+        (-[JSValue isObject]):
+        (-[JSValue isSymbol]):
+        * API/JSValueRef.cpp:
+        (JSValueGetType):
+        (JSValueIsUndefined):
+        (JSValueIsNull):
+        (JSValueIsBoolean):
+        (JSValueIsNumber):
+        (JSValueIsString):
+        (JSValueIsObject):
+        (JSValueIsSymbol):
+        (JSValueMakeUndefined):
+        (JSValueMakeNull):
+        (JSValueMakeBoolean):
+        (JSValueMakeNumber):
+
 2020-12-10  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Align [[DefineOwnProperty]] method of mapped arguments object with the spec
