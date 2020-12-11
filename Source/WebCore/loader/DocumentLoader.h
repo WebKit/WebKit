@@ -514,6 +514,8 @@ private:
     bool disallowWebArchive() const;
     bool disallowDataRequest() const;
 
+    void updateAdditionalSettingsIfNeeded();
+
     Ref<CachedResourceLoader> m_cachedResourceLoader;
 
     CachedResourceHandle<CachedRawResource> m_mainResource;
