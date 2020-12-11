@@ -59,7 +59,7 @@ class TestFind(unittest.TestCase):
     def test_basic_svn_remote(self):
         with mocks.remote.Svn(), OutputCapture() as captured:
             self.assertEqual(0, program.main(
-                args=('-C', 'https://svn.webkit.org/repository/webkit', 'find', 'HEAD', '-q'),
+                args=('-C', 'https://svn.example.org/repository/webkit', 'find', 'HEAD', '-q'),
                 path=self.path,
             ))
         self.assertEqual(captured.stdout.getvalue(), '4@trunk | r6 | 6th commit\n')
@@ -152,7 +152,7 @@ Date: {}
 Revision: 4
 Hash: 1abe25b443e9
     4th commit
-    svn-id: https://svn.webkit.orgrepository/repository/trunk@4 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+    svn-id: https://svn.example.org/repository/repository/trunk@4 268f45cc-cd09-0410-ab3c-d52691b4dbfc
 '''.format(datetime.fromtimestamp(1601663000).strftime('%a %b %d %H:%M:%S %Y')),
         )
 
@@ -174,7 +174,7 @@ Hash: 1abe25b443e9
                     emails=['jbedard@apple.com'],
                 ), timestamp=1601663000,
                 branch='main',
-                message='4th commit\nsvn-id: https://svn.webkit.orgrepository/repository/trunk@4 268f45cc-cd09-0410-ab3c-d52691b4dbfc',
+                message='4th commit\nsvn-id: https://svn.example.org/repository/repository/trunk@4 268f45cc-cd09-0410-ab3c-d52691b4dbfc',
             ))
 
     def test_tag_svn(self):

@@ -91,8 +91,8 @@ class TestGit(unittest.TestCase):
             self.assertDictEqual(
                 {
                     'Path': '.',
-                    'Repository Root': 'git@webkit.org:/mock/repository',
-                    'URL': 'git@webkit.org:/mock/repository/main',
+                    'Repository Root': 'git@example.org:/mock/repository',
+                    'URL': 'git@example.org:/mock/repository/main',
                     'Revision': '6',
                     'Node Kind': 'directory',
                     'Schedule': 'normal',

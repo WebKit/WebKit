@@ -34,7 +34,7 @@ class Svn(mocks.Requests):
     top = None
     REVISION_REQUEST_RE = re.compile(r'svn/rvr/(?P<revision>\d+)(/(?P<category>\S+))?$')
 
-    def __init__(self, remote='svn.webkit.org/repository/webkit'):
+    def __init__(self, remote='svn.example.org/repository/webkit'):
         if not scmremote.Svn.is_webserver('https://{}'.format(remote)):
             raise ValueError('"{}" is not a valid Svn remote'.format(remote))
 

@@ -224,12 +224,12 @@ class TestLocalSvn(unittest.TestCase):
 
 
 class TestRemoteSvn(unittest.TestCase):
-    remote = 'https://svn.webkit.org/repository/webkit'
+    remote = 'https://svn.example.org/repository/webkit'
 
     def test_detection(self):
-        self.assertEqual(remote.Svn.is_webserver('https://svn.webkit.org/repository/webkit'), True)
-        self.assertEqual(remote.Svn.is_webserver('http://svn.webkit.org/repository/webkit'), True)
-        self.assertEqual(remote.Svn.is_webserver('https://github.com/WebKit/webkit'), False)
+        self.assertEqual(remote.Svn.is_webserver('https://svn.example.org/repository/webkit'), True)
+        self.assertEqual(remote.Svn.is_webserver('http://svn.example.org/repository/webkit'), True)
+        self.assertEqual(remote.Svn.is_webserver('https://github.example.org/WebKit/webkit'), False)
 
     def test_branches(self):
         with mocks.remote.Svn():

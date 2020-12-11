@@ -38,7 +38,7 @@ class Git(mocks.Subprocess):
     ):
         self.path = path
         self.default_branch = default_branch
-        self.remote = remote or 'git@webkit.org:/mock/{}'.format(os.path.basename(path))
+        self.remote = remote or 'git@example.org:/mock/{}'.format(os.path.basename(path))
         self.detached = detached or False
 
         self.branches = branches or []
@@ -258,7 +258,7 @@ nothing to commit, working tree clean
                             date=datetime.fromtimestamp(self.find(args[2]).timestamp).strftime('%a %b %d %H:%M:%S %Y'),
                             log='\n'.join([
                                     ('    ' + line) if line else '' for line in self.find(args[2]).message.splitlines()
-                                ] + ['git-svn-id: https://svn.{}repository/{}/trunk@{} 268f45cc-cd09-0410-ab3c-d52691b4dbfc'.format(
+                                ] + ['git-svn-id: https://svn.{}/repository/{}/trunk@{} 268f45cc-cd09-0410-ab3c-d52691b4dbfc'.format(
                                     self.remote.split('@')[-1].split(':')[0],
                                     os.path.basename(path),
                                     self.find(args[2]).revision,

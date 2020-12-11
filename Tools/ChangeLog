@@ -1,3 +1,24 @@
+2020-12-11  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitscmpy] Do not use actual URLs in testing
+        https://bugs.webkit.org/show_bug.cgi?id=219790
+        <rdar://problem/72228983>
+
+        Reviewed by Stephanie Lewis.
+
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/mocks/local/git.py:
+        (Git): Use example.org instead of webkit.org.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/mocks/remote/svn.py:
+        (Svn.__init__): Use example.org instead of webkit.org.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/find_unittest.py:
+        (TestFind.test_basic_svn_remote): Use example.org instead of webkit.org.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/git_unittest.py:
+        (TestGit.test_info): Use example.org instead of webkit.org.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/svn_unittest.py:
+        (TestRemoteSvn): Use example.org instead of webkit.org.
+        (TestRemoteSvn.test_detection):
+
 2020-12-11  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Determine correct visibility for linked frameworks
