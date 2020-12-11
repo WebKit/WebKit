@@ -1,3 +1,17 @@
+2020-12-11  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Remove Mobile Asset access from the WebContent process
+        https://bugs.webkit.org/show_bug.cgi?id=219738
+        <rdar://problem/60650074>
+
+        Reviewed by Brent Fulgham.
+
+        Remove Mobile Asset access from the WebContent process on macOS, since there are no reports of this being used.
+
+        No new tests, since the result will depend on macOS version.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2020-12-11  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Determine correct visibility for linked frameworks

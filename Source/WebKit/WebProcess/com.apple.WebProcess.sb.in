@@ -964,12 +964,12 @@
     (global-name "com.apple.trustd.agent")
 )
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 110000
 (allow mach-lookup
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
-    (with report) (with telemetry-backtrace)
-#endif
+    (with report)
     (global-name "com.apple.mobileassetd")
 )
+#endif
 
 ;; Various services required by AppKit and other frameworks
 (allow mach-lookup
