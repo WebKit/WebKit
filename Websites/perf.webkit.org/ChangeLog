@@ -1,5 +1,18 @@
 2020-12-09  Dewei Zhu  <dewei_zhu@apple.com>
 
+        'AnalysisTask._commitSetsInSamePlatformGroup' should not fetch an invalid platform and metric config for a MeasurementSet.
+        https://bugs.webkit.org/show_bug.cgi?id=219721
+
+        Reviewed by Ryosuke Niwa.
+
+        Selected test group on analysis task page may not highlight when 'AnalysisTask._commitSetsInSamePlatformGroup' fetches
+        an invalid platform and metric config for a MeasurementSet.
+
+        * public/v3/models/analysis-task.js: Added a logic to avoid fetching MeasurementSet with an invalid config.
+        (AnalysisTask.prototype._commitSetsInSamePlatformGroup):
+
+2020-12-09  Dewei Zhu  <dewei_zhu@apple.com>
+
         Add max age for a root to be reused.
         https://bugs.webkit.org/show_bug.cgi?id=219628
 

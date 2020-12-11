@@ -202,6 +202,8 @@ class AnalysisTask extends LabeledObject {
             return [];
         const otherPlatforms = this.platform().group().platforms().filter((platform) => platform != this.platform());
         return otherPlatforms.map(async (platform) => {
+            if (!platform.hasMetric(metric))
+                return [];
             const lastModified = platform.lastModified(metric);
             const measurementSet = MeasurementSet.findSet(platform.id(), metric.id(), lastModified);
             await measurementSet.fetchBetween(this.startTime(), this.endTime());
