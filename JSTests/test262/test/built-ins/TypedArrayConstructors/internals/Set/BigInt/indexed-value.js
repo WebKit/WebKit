@@ -11,14 +11,10 @@ info: |
   2. If Type(P) is String, then
     a. Let numericIndex be ! CanonicalNumericIndexString(P).
     b. If numericIndex is not undefined, then
-      i. Return ? IntegerIndexedElementSet(O, numericIndex, V).
+      i. Perform ? IntegerIndexedElementSet(O, numericIndex, V).
+      ii. Return true.
   ...
 
-  9.4.5.9 IntegerIndexedElementSet ( O, index, value )
-
-  ...
-  15. Perform SetValueInBuffer(buffer, indexedPosition, elementType, numValue).
-  16. Return true.
 includes: [testBigIntTypedArray.js]
 features: [align-detached-buffer-semantics-with-web-reality, BigInt, Reflect, TypedArray]
 ---*/

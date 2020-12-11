@@ -25,15 +25,24 @@ info: |
   2. If Type(P) is String and if SameValue(O, Receiver) is true, then
     a. Let numericIndex be ! CanonicalNumericIndexString(P).
     b. If numericIndex is not undefined, then
-      i. Return ? IntegerIndexedElementSet(O, numericIndex, V).
+      i. Perform ? IntegerIndexedElementSet(O, numericIndex, V).
+      ii. Return true.
   ...
 
-  9.4.5.9 IntegerIndexedElementSet ( O, index, value )
+  IntegerIndexedElementSet ( O, index, value )
 
-  ...
-  5. If arrayTypeName is "BigUint64Array" or "BigInt64Array",
-     let numValue be ? ToBigInt(value).
-  ...
+  Assert: O is an Integer-Indexed exotic object.
+  If O.[[ContentType]] is BigInt, let numValue be ? ToBigInt(value).
+  Otherwise, let numValue be ? ToNumber(value).
+  Let buffer be O.[[ViewedArrayBuffer]].
+  If IsDetachedBuffer(buffer) is false and ! IsValidIntegerIndex(O, index) is true, then
+    Let offset be O.[[ByteOffset]].
+    Let arrayTypeName be the String value of O.[[TypedArrayName]].
+    Let elementSize be the Element Size value specified in Table 62 for arrayTypeName.
+    Let indexedPosition be (ℝ(index) × elementSize) + offset.
+    Let elementType be the Element Type value in Table 62 for arrayTypeName.
+    Perform SetValueInBuffer(buffer, indexedPosition, elementType, numValue, true, Unordered).
+  Return NormalCompletion(undefined).
 
   ToBigInt ( argument )
 

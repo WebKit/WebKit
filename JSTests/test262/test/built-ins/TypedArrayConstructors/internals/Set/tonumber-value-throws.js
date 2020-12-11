@@ -11,7 +11,8 @@ info: |
   2. If Type(P) is String, then
     a. Let numericIndex be ! CanonicalNumericIndexString(P).
     b. If numericIndex is not undefined, then
-      i. Return ? IntegerIndexedElementSet(O, numericIndex, V).
+      i. Perform ? IntegerIndexedElementSet(O, numericIndex, V).
+      ii. Return true.
   ...
 
   IntegerIndexedElementSet ( O, index, value )

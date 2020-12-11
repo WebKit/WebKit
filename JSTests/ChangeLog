@@ -1,3 +1,172 @@
+2020-12-11  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Update test262
+        https://bugs.webkit.org/show_bug.cgi?id=219794
+
+        Reviewed by Mark Lam.
+
+        * test262/expectations.yaml:
+        * test262/latest-changes-summary.txt:
+        * test262/test/built-ins/Array/prototype/reverse/array-has-one-entry.js: Added.
+        * test262/test/built-ins/Array/prototype/sort/bug_596_1.js:
+        * test262/test/built-ins/Math/max/Math.max_each-element-coerced.js: Added.
+        (const.n.valueOf):
+        * test262/test/built-ins/Math/min/Math.min_each-element-coerced.js: Added.
+        (const.n.valueOf):
+        * test262/test/built-ins/String/prototype/at/prop-desc.js:
+        * test262/test/built-ins/TypedArray/prototype/at/prop-desc.js:
+        * test262/test/built-ins/TypedArray/prototype/fill/BigInt/fill-values-non-numeric-throw.js:
+        * test262/test/built-ins/TypedArray/prototype/fill/BigInt/fill-values-non-numeric.js:
+        * test262/test/built-ins/TypedArray/prototype/fill/BigInt/fill-values-symbol-throws.js:
+        * test262/test/built-ins/TypedArray/prototype/fill/BigInt/return-abrupt-from-set-value.js:
+        * test262/test/built-ins/TypedArray/prototype/fill/fill-values-non-numeric.js:
+        * test262/test/built-ins/TypedArray/prototype/fill/fill-values-symbol-throws.js:
+        * test262/test/built-ins/TypedArray/prototype/fill/return-abrupt-from-set-value.js:
+        * test262/test/built-ins/TypedArray/prototype/includes/detached-buffer-tointeger.js:
+        (testWithTypedArrayConstructors.valueOf):
+        (testWithTypedArrayConstructors):
+        (testWithTypedArrayConstructors.detachAndReturnIndex): Deleted.
+        * test262/test/built-ins/TypedArray/prototype/map/return-new-typedarray-conversion-operation-consistent-nan.js:
+        * test262/test/built-ins/TypedArray/prototype/map/return-new-typedarray-conversion-operation.js:
+        * test262/test/built-ins/TypedArrayConstructors/ctors-bigint/object-arg/bigint-tobigint64.js:
+        * test262/test/built-ins/TypedArrayConstructors/ctors-bigint/object-arg/bigint-tobiguint64.js:
+        * test262/test/built-ins/TypedArrayConstructors/ctors-bigint/object-arg/boolean-tobigint.js:
+        * test262/test/built-ins/TypedArrayConstructors/ctors-bigint/object-arg/null-tobigint.js:
+        * test262/test/built-ins/TypedArrayConstructors/ctors-bigint/object-arg/number-tobigint.js:
+        * test262/test/built-ins/TypedArrayConstructors/ctors-bigint/object-arg/string-nan-tobigint.js:
+        * test262/test/built-ins/TypedArrayConstructors/ctors-bigint/object-arg/string-tobigint.js:
+        * test262/test/built-ins/TypedArrayConstructors/ctors-bigint/object-arg/symbol-tobigint.js:
+        * test262/test/built-ins/TypedArrayConstructors/ctors-bigint/object-arg/throws-setting-obj-to-primitive-typeerror.js:
+        * test262/test/built-ins/TypedArrayConstructors/ctors-bigint/object-arg/throws-setting-obj-to-primitive.js:
+        * test262/test/built-ins/TypedArrayConstructors/ctors-bigint/object-arg/throws-setting-obj-tostring.js:
+        * test262/test/built-ins/TypedArrayConstructors/ctors-bigint/object-arg/throws-setting-obj-valueof-typeerror.js:
+        * test262/test/built-ins/TypedArrayConstructors/ctors-bigint/object-arg/throws-setting-obj-valueof.js:
+        * test262/test/built-ins/TypedArrayConstructors/ctors-bigint/object-arg/undefined-tobigint.js:
+        * test262/test/built-ins/TypedArrayConstructors/ctors/object-arg/conversion-operation-consistent-nan.js:
+        * test262/test/built-ins/TypedArrayConstructors/ctors/object-arg/conversion-operation.js:
+        * test262/test/built-ins/TypedArrayConstructors/ctors/object-arg/throws-setting-obj-to-primitive-typeerror.js:
+        * test262/test/built-ins/TypedArrayConstructors/ctors/object-arg/throws-setting-obj-to-primitive.js:
+        * test262/test/built-ins/TypedArrayConstructors/ctors/object-arg/throws-setting-obj-tostring.js:
+        * test262/test/built-ins/TypedArrayConstructors/ctors/object-arg/throws-setting-obj-valueof-typeerror.js:
+        * test262/test/built-ins/TypedArrayConstructors/ctors/object-arg/throws-setting-obj-valueof.js:
+        * test262/test/built-ins/TypedArrayConstructors/from/BigInt/source-value-is-symbol-throws.js:
+        * test262/test/built-ins/TypedArrayConstructors/from/nan-conversion.js:
+        * test262/test/built-ins/TypedArrayConstructors/from/source-value-is-symbol-throws.js:
+        * test262/test/built-ins/TypedArrayConstructors/internals/DefineOwnProperty/BigInt/desc-value-throws.js:
+        * test262/test/built-ins/TypedArrayConstructors/internals/DefineOwnProperty/BigInt/detached-buffer-realm.js:
+        * test262/test/built-ins/TypedArrayConstructors/internals/DefineOwnProperty/BigInt/detached-buffer.js:
+        * test262/test/built-ins/TypedArrayConstructors/internals/DefineOwnProperty/BigInt/set-value.js:
+        * test262/test/built-ins/TypedArrayConstructors/internals/DefineOwnProperty/BigInt/tonumber-value-detached-buffer.js:
+        * test262/test/built-ins/TypedArrayConstructors/internals/DefineOwnProperty/conversion-operation.js:
+        * test262/test/built-ins/TypedArrayConstructors/internals/DefineOwnProperty/desc-value-throws.js:
+        * test262/test/built-ins/TypedArrayConstructors/internals/DefineOwnProperty/detached-buffer-realm.js:
+        * test262/test/built-ins/TypedArrayConstructors/internals/DefineOwnProperty/detached-buffer.js:
+        * test262/test/built-ins/TypedArrayConstructors/internals/DefineOwnProperty/set-value.js:
+        * test262/test/built-ins/TypedArrayConstructors/internals/DefineOwnProperty/tonumber-value-detached-buffer.js:
+        * test262/test/built-ins/TypedArrayConstructors/internals/Set/BigInt/detached-buffer-realm.js:
+        * test262/test/built-ins/TypedArrayConstructors/internals/Set/BigInt/indexed-value.js:
+        * test262/test/built-ins/TypedArrayConstructors/internals/Set/BigInt/key-is-minus-zero.js:
+        (testWithBigIntTypedArrayConstructors):
+        * test262/test/built-ins/TypedArrayConstructors/internals/Set/BigInt/key-is-not-integer.js:
+        (testWithBigIntTypedArrayConstructors):
+        * test262/test/built-ins/TypedArrayConstructors/internals/Set/BigInt/key-is-out-of-bounds.js:
+        (testWithBigIntTypedArrayConstructors):
+        * test262/test/built-ins/TypedArrayConstructors/internals/Set/BigInt/tonumber-value-detached-buffer.js:
+        (testWithBigIntTypedArrayConstructors):
+        * test262/test/built-ins/TypedArrayConstructors/internals/Set/BigInt/tonumber-value-throws.js:
+        * test262/test/built-ins/TypedArrayConstructors/internals/Set/conversion-operation-consistent-nan.js:
+        * test262/test/built-ins/TypedArrayConstructors/internals/Set/conversion-operation.js:
+        * test262/test/built-ins/TypedArrayConstructors/internals/Set/detached-buffer-realm.js:
+        * test262/test/built-ins/TypedArrayConstructors/internals/Set/indexed-value.js:
+        * test262/test/built-ins/TypedArrayConstructors/internals/Set/key-is-minus-zero.js:
+        (testWithTypedArrayConstructors):
+        * test262/test/built-ins/TypedArrayConstructors/internals/Set/key-is-not-integer.js:
+        (testWithTypedArrayConstructors):
+        * test262/test/built-ins/TypedArrayConstructors/internals/Set/key-is-out-of-bounds.js:
+        (testWithTypedArrayConstructors):
+        * test262/test/built-ins/TypedArrayConstructors/internals/Set/tonumber-value-detached-buffer.js:
+        (testWithTypedArrayConstructors):
+        * test262/test/built-ins/TypedArrayConstructors/internals/Set/tonumber-value-throws.js:
+        * test262/test/built-ins/TypedArrayConstructors/of/BigInt/argument-is-symbol-throws.js:
+        * test262/test/built-ins/TypedArrayConstructors/of/BigInt/new-instance.js:
+        * test262/test/built-ins/TypedArrayConstructors/of/argument-is-symbol-throws.js:
+        * test262/test/built-ins/TypedArrayConstructors/of/nan-conversion.js:
+        * test262/test/built-ins/TypedArrayConstructors/of/new-instance.js:
+        * test262/test/built-ins/parseInt/S15.1.2.2_A2_T2.js:
+        * test262/test/intl402/DateTimeFormat/prototype/formatRange/date-x-greater-than-y-throws.js:
+        * test262/test/intl402/DateTimeFormat/prototype/formatRangeToParts/date-x-greater-than-y-throws.js:
+        * test262/test/language/arguments-object/mapped/enumerable-configurable-accessor-descriptor.js: Added.
+        (set _v):
+        * test262/test/language/arguments-object/mapped/nonconfigurable-descriptors-define-failure.js: Added.
+        (get 3):
+        * test262/test/language/arguments-object/mapped/writable-enumerable-configurable-descriptor.js: Added.
+        * test262/test/language/destructuring/binding/syntax/destructuring-array-parameters-function-arguments-length.js: Added.
+        (assert.sameValue):
+        (assert.sameValue.async a):
+        * test262/test/language/destructuring/binding/syntax/destructuring-object-parameters-function-arguments-length.js: Added.
+        (assert.sameValue):
+        * test262/test/language/expressions/async-function/named-reassign-fn-name-in-body-in-arrow.js: Added.
+        (let.ref.async BindingIdentifier):
+        (let.ref):
+        * test262/test/language/expressions/async-function/named-reassign-fn-name-in-body-in-eval.js: Added.
+        (let.ref.async BindingIdentifier):
+        (let.ref):
+        * test262/test/language/expressions/async-function/named-reassign-fn-name-in-body.js: Added.
+        (let.ref.async BindingIdentifier):
+        (let.ref):
+        * test262/test/language/expressions/async-function/named-strict-error-reassign-fn-name-in-body-in-arrow.js: Added.
+        (let.ref.async BindingIdentifier):
+        (let.ref):
+        * test262/test/language/expressions/async-function/named-strict-error-reassign-fn-name-in-body-in-eval.js: Added.
+        (let.ref.async BindingIdentifier):
+        (let.ref):
+        * test262/test/language/expressions/async-function/named-strict-error-reassign-fn-name-in-body.js: Added.
+        (let.ref.async BindingIdentifier):
+        (let.ref):
+        * test262/test/language/expressions/async-generator/named-no-strict-reassign-fn-name-in-body-in-arrow.js: Added.
+        (let.ref.async BindingIdentifier):
+        (let.ref):
+        * test262/test/language/expressions/async-generator/named-no-strict-reassign-fn-name-in-body-in-eval.js: Added.
+        (let.ref.async BindingIdentifier):
+        (let.ref):
+        * test262/test/language/expressions/async-generator/named-no-strict-reassign-fn-name-in-body.js: Added.
+        (let.ref.async BindingIdentifier):
+        (let.ref):
+        * test262/test/language/expressions/async-generator/named-strict-error-reassign-fn-name-in-body-in-arrow.js: Added.
+        (let.ref.async BindingIdentifier):
+        (let.ref):
+        * test262/test/language/expressions/async-generator/named-strict-error-reassign-fn-name-in-body-in-eval.js: Added.
+        (let.ref.async BindingIdentifier):
+        (let.ref):
+        * test262/test/language/expressions/async-generator/named-strict-error-reassign-fn-name-in-body.js: Added.
+        (let.ref.async BindingIdentifier):
+        (let.ref):
+        * test262/test/language/expressions/function/named-no-strict-reassign-fn-name-in-body-in-arrow.js: Added.
+        (let.ref):
+        * test262/test/language/expressions/function/named-no-strict-reassign-fn-name-in-body-in-eval.js: Added.
+        (let.ref):
+        * test262/test/language/expressions/function/named-no-strict-reassign-fn-name-in-body.js: Added.
+        (let.ref):
+        * test262/test/language/expressions/function/named-strict-error-reassign-fn-name-in-body-in-arrow.js: Added.
+        (let.ref):
+        * test262/test/language/expressions/function/named-strict-error-reassign-fn-name-in-body-in-eval.js: Added.
+        (let.ref):
+        * test262/test/language/expressions/function/named-strict-error-reassign-fn-name-in-body.js: Added.
+        (let.ref):
+        * test262/test/language/expressions/generators/named-no-strict-reassign-fn-name-in-body-in-arrow.js: Added.
+        (let.ref):
+        * test262/test/language/expressions/generators/named-no-strict-reassign-fn-name-in-body-in-eval.js: Added.
+        (let.ref):
+        * test262/test/language/expressions/generators/named-no-strict-reassign-fn-name-in-body.js: Added.
+        (let.ref):
+        * test262/test/language/expressions/generators/named-strict-error-reassign-fn-name-in-body-in-arrow.js: Added.
+        (let.ref):
+        * test262/test/language/expressions/generators/named-strict-error-reassign-fn-name-in-body-in-eval.js: Added.
+        (let.ref):
+        * test262/test/language/expressions/generators/named-strict-error-reassign-fn-name-in-body.js: Added.
+        (let.ref):
+        * test262/test262-Revision.txt:
+
 2020-12-11  Dmitry Bezhetskov  <dbezhetskov@igalia.com>
 
         [WASM-References] Add table.init

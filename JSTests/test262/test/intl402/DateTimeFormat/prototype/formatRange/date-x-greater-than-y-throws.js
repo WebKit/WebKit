@@ -6,13 +6,18 @@ description: >
   Throws a RangeError if date x is greater than y.
 info: |
   Intl.DateTimeFormat.prototype.formatRange ( startDate , endDate )
+  
+  4. Let x be ? ToNumber(startDate).
+  5. Let y be ? ToNumber(endDate).
+  6. Return ? FormatDateTimeRange(dtf, x, y).
 
-  1. Let dtf be this value.
-  2. If Type(dtf) is not Object, throw a TypeError exception.
-  3. If dtf does not have an [[InitializedDateTimeFormat]] internal slot, throw a TypeError exception.
-  5. Let x be ? ToNumber(startDate).
-  6. Let y be ? ToNumber(endDate).
-  7. If x is greater than y, throw a RangeError exception.
+  PartitionDateTimeRangePattern ( dateTimeFormat, x, y )
+
+  1. Let x be TimeClip(x).
+  2. If x is NaN, throw a RangeError exception.
+  3. Let y be TimeClip(y).
+  4. If y is NaN, throw a RangeError exception.
+  5. If x is greater than y, throw a RangeError exception.
 
 features: [Intl.DateTimeFormat-formatRange]
 ---*/

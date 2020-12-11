@@ -2,30 +2,36 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 esid: sec-%typedarray%.prototype.includes
-description: Throws a TypeError if this has a detached buffer after index coercion
+description: >
+  Does not throw a TypeError if this has a detached buffer after index coercion,
+  because ValidateTypedArray has already successfully completed.
+
 info: |
   22.2.3.14 %TypedArray%.prototype.includes ( searchElement [ , fromIndex ] )
 
-  This function is not generic. ValidateTypedArray is applied to the this value
-  prior to evaluating the algorithm. If its result is an abrupt completion that
-  exception is thrown instead of evaluating the algorithm.
+  The interpretation and use of the arguments of %TypedArray%.prototype.includes are the same as for Array.prototype.includes as defined in 22.1.3.13.
 
-  22.2.3.5.1 Runtime Semantics: ValidateTypedArray ( O )
+  When the includes method is called with one or two arguments, the following steps are taken:
 
+  Let O be the this value.
+  Perform ? ValidateTypedArray(O).
+  Let len be O.[[ArrayLength]].
+  If len is 0, return false.
+  Let n be ? ToIntegerOrInfinity(fromIndex).
   ...
-  5. If IsDetachedBuffer(buffer) is true, throw a TypeError exception.
-  ...
+
 includes: [testTypedArray.js, detachArrayBuffer.js]
-features: [TypedArray]
+features: [align-detached-buffer-semantics-with-web-reality, TypedArray]
 ---*/
 
 testWithTypedArrayConstructors(function(TA) {
-  var sample = new TA(10);
-  function detachAndReturnIndex(){
+  const sample = new TA(10);
+  let isDetached = false;
+  function valueOf(){
     $DETACHBUFFER(sample.buffer);
+    isDetached = true;
     return 0;
   }
-  assert.throws(TypeError, function() {
-    sample.includes(0, {valueOf :detachAndReturnIndex});
-  });
+  assert.sameValue(sample.includes(0, {valueOf}), false);
+  assert.sameValue(isDetached, true);
 });

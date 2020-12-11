@@ -19,7 +19,7 @@ assert.sameValue(
   'The value of `typeof String.prototype.at` is "function"'
 );
 
-verifyProperty(String.prototype.at, 'name', {
+verifyProperty(String.prototype, 'at', {
   enumerable: false,
   writable: true,
   configurable: true

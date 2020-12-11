@@ -5,32 +5,43 @@ esid: sec-%typedarray%.prototype.fill
 description: >
   Returns abrupt from value set
 info: |
-  22.2.3.8 %TypedArray%.prototype.fill (value [ , start [ , end ] ] )
+  %TypedArray%.prototype.fill ( value [ , start [ , end ] ] )
 
-  %TypedArray%.prototype.fill is a distinct function that implements the same
-  algorithm as Array.prototype.fill as defined in 22.1.3.6 except that the this
-  object's [[ArrayLength]] internal slot is accessed in place of performing a
-  [[Get]] of "length". The implementation of the algorithm may be optimized with
-  the knowledge that the this value is an object that has a fixed length and
-  whose integer indexed properties are not sparse. However, such optimization
-  must not introduce any observable changes in the specified behaviour of the
-  algorithm.
+  Let O be the this value.
+  Perform ? ValidateTypedArray(O).
+  Let len be O.[[ArrayLength]].
+  If O.[[ContentType]] is BigInt, set value to ? ToBigInt(value).
+  Otherwise, set value to ? ToNumber(value).
+  Let relativeStart be ? ToIntegerOrInfinity(start).
+  If relativeStart is -Infinity, let k be 0.
+  Else if relativeStart < 0, let k be max(len + relativeStart, 0).
+  Else, let k be min(relativeStart, len).
+  If end is undefined, let relativeEnd be len; else let relativeEnd be ? ToIntegerOrInfinity(end).
+  If relativeEnd is -Infinity, let final be 0.
+  Else if relativeEnd < 0, let final be max(len + relativeEnd, 0).
+  Else, let final be min(relativeEnd, len).
+  If IsDetachedBuffer(O.[[ViewedArrayBuffer]]) is true, throw a TypeError exception.
+  Repeat, while k < final,
+    Let Pk be ! ToString(F(k)).
+    Perform ! Set(O, Pk, value, true).
+    Set k to k + 1.
+  Return O.
 
-  ...
+  IntegerIndexedElementSet ( O, index, value )
 
-  22.1.3.6 Array.prototype.fill (value [ , start [ , end ] ] )
+  Assert: O is an Integer-Indexed exotic object.
+  If O.[[ContentType]] is BigInt, let numValue be ? ToBigInt(value).
+  Otherwise, let numValue be ? ToNumber(value).
+  Let buffer be O.[[ViewedArrayBuffer]].
+  If IsDetachedBuffer(buffer) is false and ! IsValidIntegerIndex(O, index) is true, then
+    Let offset be O.[[ByteOffset]].
+    Let arrayTypeName be the String value of O.[[TypedArrayName]].
+    Let elementSize be the Element Size value specified in Table 62 for arrayTypeName.
+    Let indexedPosition be (ℝ(index) × elementSize) + offset.
+    Let elementType be the Element Type value in Table 62 for arrayTypeName.
+    Perform SetValueInBuffer(buffer, indexedPosition, elementType, numValue, true, Unordered).
+  Return NormalCompletion(undefined).
 
-  ...
-  7. Repeat, while k < final
-    a. Let Pk be ! ToString(k).
-    b. Perform ? Set(O, Pk, value, true).
-  ...
-
-  9.4.5.9 IntegerIndexedElementSet ( O, index, value )
-
-  ...
-  3. Let numValue be ? ToNumber(value).
-  ...
 
 includes: [testBigIntTypedArray.js]
 features: [BigInt, TypedArray]
