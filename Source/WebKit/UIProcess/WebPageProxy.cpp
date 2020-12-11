@@ -7769,7 +7769,6 @@ static const Vector<ASCIILiteral>& gpuIOKitClasses()
     ASSERT(isMainThread());
     static const auto services = makeNeverDestroyed(Vector<ASCIILiteral> {
 #if PLATFORM(IOS_FAMILY)
-        "AGXDeviceUserClient"_s,
         "AppleJPEGDriverUserClient"_s,
         "IOGPU"_s,
         "IOMobileFramebufferUserClient"_s,

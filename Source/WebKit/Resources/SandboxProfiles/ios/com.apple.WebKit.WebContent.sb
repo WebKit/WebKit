@@ -238,10 +238,6 @@
             (extension "com.apple.webkit.extension.iokit")
             (iokit-connection "IOGPU")
         )
-        (require-all
-            (extension "com.apple.webkit.extension.iokit")
-            (iokit-user-client-class "AGXDeviceUserClient") ;; Used by WebGL
-        )
         (when (defined? 'iokit-external-method)
             (apply-message-filter
                 (deny (with telemetry)
@@ -990,7 +986,6 @@
         (require-not (extension "com.apple.webkit.extension.iokit"))
         (iokit-user-client-class
             "IOMobileFramebufferUserClient"
-            "AGXDeviceUserClient"
             "AppleJPEGDriverUserClient"
             "IOSurfaceAcceleratorClient"
             "IOSurfaceRootUserClient"
