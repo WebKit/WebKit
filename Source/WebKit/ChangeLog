@@ -1,3 +1,18 @@
+2020-12-11  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] Enable accelerated WebGL canvas
+        https://bugs.webkit.org/show_bug.cgi?id=219768
+
+        Reviewed by Don Olmstead.
+
+        prepareForRendering should be called before calling
+        flushPendingLayerChanges to make the GL context current because it
+        uses OpenGL API.
+
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeHostTextureMapper.cpp:
+        (WebKit::LayerTreeHost::compositeLayersToContext):
+        (WebKit::LayerTreeHost::flushAndRenderLayers):
+
 2020-12-10  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Adopt new UI for the Platform Authenticator makeCredential flow

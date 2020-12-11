@@ -41,7 +41,7 @@ public:
 
     bool isAccelerated() const override
     {
-#if PLATFORM(WIN)
+#if PLATFORM(WIN) && USE(CA)
         // FIXME: Implement accelerated canvas on Windows.
         return false;
 #else

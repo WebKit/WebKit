@@ -60,9 +60,6 @@ bool LayerTreeHost::prepareForRendering()
 
 void LayerTreeHost::compositeLayersToContext()
 {
-    if (!prepareForRendering())
-        return;
-
     IntSize windowSize = expandedIntSize(m_rootLayer->size());
     glViewport(0, 0, windowSize.width(), windowSize.height());
 
@@ -196,6 +193,9 @@ void LayerTreeHost::flushAndRenderLayers()
         return;
 
     m_webPage.corePage()->isolatedUpdateRendering();
+
+    if (!prepareForRendering())
+        return;
 
     if (!flushPendingLayerChanges())
         return;
