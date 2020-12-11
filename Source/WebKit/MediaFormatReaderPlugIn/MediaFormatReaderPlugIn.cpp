@@ -23,29 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
-#if USE(MEDIATOOLBOX)
+#include "config.h"
 
 #if HAVE(MT_PLUGIN_FORMAT_READER)
-#if USE(APPLE_INTERNAL_SDK)
-#include <MediaToolbox/MTPluginFormatReader.h>
-#else
 
-#include <CoreMedia/CMBase.h>
+#include <pal/spi/cocoa/MediaToolboxSPI.h>
 
-enum {
-    kMTPluginFormatReaderError_InternalFailure = -16504,
-};
+extern "C" WTF_EXPORT_DECLARATION OSStatus CreateMediaFormatReaderInstance(MTPluginByteSourceRef, CFAllocatorRef, CFDictionaryRef, MTPluginFormatReaderRef*);
 
-typedef struct OpaqueMTPluginByteSource* MTPluginByteSourceRef;
-typedef struct OpaqueMTPluginFormatReader* MTPluginFormatReaderRef;
+OSStatus CreateMediaFormatReaderInstance(MTPluginByteSourceRef, CFAllocatorRef, CFDictionaryRef, MTPluginFormatReaderRef* formatReader)
+{
+    *formatReader = nullptr;
+    return kMTPluginFormatReaderError_InternalFailure;
+}
 
-#endif
 #endif // HAVE(MT_PLUGIN_FORMAT_READER)
-
-// FIXME (68673547): Use actual <MediaToolbox/FigPhoto.h> and FigPhotoContainerFormat enum when we weak-link instead of soft-link MediaToolbox and CoreMedia.
-#define kPALFigPhotoContainerFormat_HEIF 0
-#define kPALFigPhotoContainerFormat_JFIF 1
-
-#endif // USE(MEDIATOOLBOX)

@@ -796,3 +796,9 @@
 #if __has_include(<AuthenticationServicesCore/ASCAuthorizationPresenter.h>)
 #define HAVE_ASC_AUTH_UI 1
 #endif
+
+#if PLATFORM(MAC)
+#if !defined(HAVE_MT_PLUGIN_FORMAT_READER)
+#define HAVE_MT_PLUGIN_FORMAT_READER 1
+#endif
+#endif

@@ -1,3 +1,22 @@
+2020-12-10  Andy Estes  <aestes@apple.com>
+
+        [Mac] Create a format reader plug-in for WebM
+        https://bugs.webkit.org/show_bug.cgi?id=218908
+        <rdar://problem/71373264>
+
+        Reviewed by Eric Carlson.
+
+        Added a new bundle target that builds a MediaToolbox format reader
+        plug-in and installs it in the WebContent and GPU XPC service bundles.
+        The plug-in does nothing for now, but in follow-up patches will learn
+        how to read WebM containers.
+
+        * Configurations/MediaFormatReader.xcconfig: Added.
+        * MediaFormatReaderPlugIn/Info.plist: Added. Defines a CMClassImplementations array
+        specifying the plug-in factory function and the supported media types / extensions.
+        * MediaFormatReaderPlugIn/MediaFormatReaderPlugIn.cpp: Added.
+        * WebKit.xcodeproj/project.pbxproj:
+
 2020-12-10  Chris Dumez  <cdumez@apple.com>
 
         [GPUProcess] Cut in half amount of IPC needed to do WebAudio
