@@ -863,7 +863,10 @@
 )
 
 (allow iokit-open
-    (iokit-user-client-class "RootDomainUserClient") ;; Needed by WebCore::PerformanceMonitor
+    (require-all
+        (extension "com.apple.webkit.extension.iokit")
+        (iokit-user-client-class "RootDomainUserClient") ;; Needed by Media playback
+    )
 #if HAVE(SANDBOX_MESSAGE_FILTERING)
     (with telemetry-backtrace)
     (apply-message-filter
@@ -1650,6 +1653,17 @@
         (iokit-registry-entry-class
             "AppleIntelMEUserClient"
             "AppleSNBFBUserClient"
+        )
+    )
+)
+
+;; FIXME: Data indicates this is only needed on ARM64. This logging will confirm.
+;; Remove when the GPU process is enabled by default
+(allow iokit-open (with report) (with telemetry-backtrace)
+    (require-all
+        (require-not (extension "com.apple.webkit.extension.iokit"))
+        (iokit-user-client-class
+            "RootDomainUserClient"
         )
     )
 )

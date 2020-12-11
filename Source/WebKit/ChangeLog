@@ -1,3 +1,21 @@
+2020-12-11  Brent Fulgham  <bfulgham@apple.com>
+
+        [macOS] Only extend access to the RootDomainUserClient IOKit class if the GPU Process is not used
+        https://bugs.webkit.org/show_bug.cgi?id=219758
+        <rdar://problem/70464431>
+
+        Reviewed by Per Arne Vollan.
+
+        The RootDomainUserClient IOKit class appears to only be used by media on Apple Silicon. Dynamically extend access to this
+        class for Apple Silicon builds if the GPU process is not being used.
+
+        This patch also includes telemetry to confirm that it is not needed on Intel, or for any other purposes. It does not
+        block access to the IOKit class yet.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::mediaRelatedIOKitClasses):
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2020-12-11  Don Olmstead  <don.olmstead@sony.com>
 
         [GLib] Move GCrypt initialization to platformInitialize

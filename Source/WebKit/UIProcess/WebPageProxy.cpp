@@ -7825,6 +7825,7 @@ static const Vector<ASCIILiteral>& mediaRelatedIOKitClasses()
     static const auto services = makeNeverDestroyed(Vector<ASCIILiteral> {
 #if (PLATFORM(MAC) || PLATFORM(MACCATALYST)) && CPU(ARM64)
         "AppleAVDUserClient"_s,
+        "RootDomainUserClient"_s,
 #endif
     });
     return services;
