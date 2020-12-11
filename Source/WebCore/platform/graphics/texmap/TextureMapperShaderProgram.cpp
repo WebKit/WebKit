@@ -426,17 +426,10 @@ static const char* fragmentTemplateCommon =
             return clamp(0.5 - d, 0.0, 1.0);
         }
 
-        float roundedRectCoverage(vec2 p, int index)
+        float roundedRectCoverage(vec2 p, vec4 bounds, vec2 topLeftRadii, vec2 topRightRadii, vec2 bottomLeftRadii, vec2 bottomRightRadii)
         {
-            vec4 bounds = vec4(u_roundedRect[index].xy, u_roundedRect[index].xy + u_roundedRect[index].zw);
-
             if (p.x < bounds.x || p.y < bounds.y || p.x >= bounds.z || p.y >= bounds.w)
                 return 0.0;
-
-            vec2 topLeftRadii = u_roundedRect[index + 1].xy;
-            vec2 topRightRadii = u_roundedRect[index + 1].zw;
-            vec2 bottomLeftRadii = u_roundedRect[index + 2].xy;
-            vec2 bottomRightRadii = u_roundedRect[index + 2].zw;
 
             vec2 topLeftCenter = bounds.xy + topLeftRadii;
             vec2 topRightCenter = bounds.zy + (topRightRadii * vec2(-1, 1));
@@ -466,13 +459,21 @@ static const char* fragmentTemplateCommon =
             // We can't use gl_fragCoord for the fragment position because thats the projected point
             // and the projection screws the Z component. We need the real 3D position that comes from
             // the nonProjectedPosition variable.
-            int nRects = u_roundedRectNumber;
-            if (nRects > ROUNDED_RECT_MAX_RECTS)
-                nRects = ROUNDED_RECT_MAX_RECTS;
+            //
+            // This implementation is not optimal, but it's done this way in order to overcome rpi3's
+            // proprietary video driver limitations (see https://bugs.webkit.org/show_bug.cgi?id=219739).
 
-            for (int rectIndex = 0; rectIndex < nRects; rectIndex++) {
+            for (int rectIndex = 0; rectIndex < ROUNDED_RECT_MAX_RECTS; rectIndex++) {
+                if (rectIndex >= u_roundedRectNumber)
+                    break;
+
                 vec4 fragCoord = u_roundedRectInverseTransformMatrix[rectIndex] * v_nonProjectedPosition;
-                color *= roundedRectCoverage(fragCoord.xy, rectIndex * 3);
+                vec4 bounds = vec4(u_roundedRect[rectIndex * 3].xy, u_roundedRect[rectIndex * 3].xy + u_roundedRect[rectIndex * 3].zw);
+                vec2 topLeftRadii = u_roundedRect[(rectIndex * 3) + 1].xy;
+                vec2 topRightRadii = u_roundedRect[(rectIndex * 3) + 1].zw;
+                vec2 bottomLeftRadii = u_roundedRect[(rectIndex * 3) + 2].xy;
+                vec2 bottomRightRadii = u_roundedRect[(rectIndex * 3) + 2].zw;
+                color *= roundedRectCoverage(fragCoord.xy, bounds, topLeftRadii, topRightRadii, bottomLeftRadii, bottomRightRadii);
             }
         }
 
