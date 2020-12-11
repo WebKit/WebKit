@@ -763,7 +763,8 @@ static void activate(GApplication *application, WebKitSettings *webkitSettings)
                 browser_window_load_session(mainWindow, sessionFile);
             else if (!automationMode) {
                 webkit_web_view_load_uri(webView, BROWSER_DEFAULT_URL);
-                exitAfterWebViewLoadFinishes(webView, application);
+                if (exitAfterLoad)
+                    exitAfterWebViewLoadFinishes(webView, application);
             }
         }
     }
