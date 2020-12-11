@@ -95,10 +95,7 @@ void AudioMediaStreamTrackRenderer::pushSamples(const MediaTime& time, const Web
 
     ASSERT(is<WebCore::WebAudioBufferList>(audioData));
     m_ringBuffer->store(downcast<WebCore::WebAudioBufferList>(audioData).list(), numberOfFrames, time.timeValue());
-    uint64_t startFrame;
-    uint64_t endFrame;
-    m_ringBuffer->getCurrentFrameBounds(startFrame, endFrame);
-    m_connection->send(Messages::RemoteAudioMediaStreamTrackRenderer::AudioSamplesAvailable { time, numberOfFrames, startFrame, endFrame }, m_identifier);
+    m_connection->send(Messages::RemoteAudioMediaStreamTrackRenderer::AudioSamplesAvailable { time, numberOfFrames }, m_identifier);
 }
 
 void AudioMediaStreamTrackRenderer::storageChanged(SharedMemory* storage)

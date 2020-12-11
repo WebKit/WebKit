@@ -142,20 +142,12 @@ private:
         if (m_protectThisDuringGracefulShutdown || !m_isPlaying)
             return status;
 
-        uint64_t start;
-        uint64_t end;
-        m_ringBuffer->getCurrentFrameBounds(start, end);
-        if (m_startFrame >= start && m_startFrame + numberOfFrames <= end) {
-            m_ringBuffer->fetch(ioData, numberOfFrames, m_startFrame);
+        if (m_ringBuffer->fetchIfHasEnoughData(ioData, numberOfFrames, m_startFrame)) {
             m_startFrame += numberOfFrames;
             status = noErr;
         }
 
-        m_connection.connection().sendWithAsyncReply(Messages::RemoteAudioDestinationProxy::RequestBuffer(sampleTime, hostTime, numberOfFrames), CompletionHandler<void(uint64_t, uint64_t)>([this, protectedThis = makeRef(*this)](auto boundsStartFrame, auto boundsEndFrame) mutable {
-            ASSERT(isMainThread());
-            if (boundsEndFrame)
-                m_ringBuffer->setCurrentFrameBounds(boundsStartFrame, boundsEndFrame);
-        }, CompletionHandlerCallThread::MainThread), m_id.toUInt64());
+        m_connection.connection().send(Messages::RemoteAudioDestinationProxy::RequestBuffer(sampleTime, hostTime, numberOfFrames), m_id.toUInt64());
 
         return status;
     }

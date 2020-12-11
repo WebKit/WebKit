@@ -1,3 +1,77 @@
+2020-12-10  Chris Dumez  <cdumez@apple.com>
+
+        [GPUProcess] Cut in half amount of IPC needed to do WebAudio
+        https://bugs.webkit.org/show_bug.cgi?id=219715
+
+        Reviewed by Geoff Garen.
+
+        Cut in half amount of IPC needed to do WebAudio. Previously, we would send 2
+        IPCs per rendering quantum:
+        1. RemoteAudioDestinationProxy::RequestBuffer from GPUProcess to WebProcess
+        2. The response to RemoteAudioDestinationProxy::RequestBuffer which contained
+           the frame bounds for the RingBuffer.
+
+        This patch gets rid of IPC 2 by having the CARingBuffer class store its bounds
+        in its memory backing. As a result, when the CARingBuffer is using a shared
+        memory backing, the bounds get shared between processes, without any need for
+        IPC to sync them.
+
+        This is still too much IPC but this is a step in the right direction. We
+        can hopefully get rid of (or greatly reduce) IPC 1 in a follow-up patch.
+
+        * GPUProcess/media/RemoteAudioDestinationManager.cpp:
+        (WebKit::RemoteAudioDestination::audioSamplesStorageChanged):
+        (WebKit::RemoteAudioDestination::render):
+        * GPUProcess/media/RemoteAudioSourceProviderProxy.cpp:
+        (WebKit::RemoteAudioSourceProviderProxy::storageChanged):
+        * GPUProcess/webrtc/RemoteAudioMediaStreamTrackRenderer.cpp:
+        (WebKit::RemoteAudioMediaStreamTrackRenderer::audioSamplesStorageChanged):
+        (WebKit::RemoteAudioMediaStreamTrackRenderer::audioSamplesAvailable):
+        * GPUProcess/webrtc/RemoteAudioMediaStreamTrackRenderer.h:
+        * GPUProcess/webrtc/RemoteAudioMediaStreamTrackRenderer.messages.in:
+        * GPUProcess/webrtc/RemoteMediaRecorder.cpp:
+        (WebKit::RemoteMediaRecorder::audioSamplesStorageChanged):
+        (WebKit::RemoteMediaRecorder::audioSamplesAvailable):
+        * GPUProcess/webrtc/RemoteMediaRecorder.h:
+        * GPUProcess/webrtc/RemoteMediaRecorder.messages.in:
+        * Shared/Cocoa/SharedRingBufferStorage.cpp:
+        (WebKit::SharedRingBufferStorage::allocate):
+        (WebKit::SharedRingBufferStorage::sharedFrameBounds):
+        (WebKit::SharedRingBufferStorage::data):
+        (WebKit::SharedRingBufferStorage::getCurrentFrameBounds):
+        (WebKit::SharedRingBufferStorage::setCurrentFrameBounds):
+        (WebKit::SharedRingBufferStorage::updateFrameBounds):
+        (WebKit::SharedRingBufferStorage::flush):
+        * Shared/Cocoa/SharedRingBufferStorage.h:
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.cpp:
+        * UIProcess/SpeechRecognitionRemoteRealtimeMediaSource.cpp:
+        (WebKit::SpeechRecognitionRemoteRealtimeMediaSource::remoteAudioSamplesAvailable):
+        * UIProcess/SpeechRecognitionRemoteRealtimeMediaSource.h:
+        * UIProcess/SpeechRecognitionRemoteRealtimeMediaSourceManager.cpp:
+        (WebKit::SpeechRecognitionRemoteRealtimeMediaSourceManager::remoteAudioSamplesAvailable):
+        * UIProcess/SpeechRecognitionRemoteRealtimeMediaSourceManager.h:
+        * UIProcess/SpeechRecognitionRemoteRealtimeMediaSourceManager.messages.in:
+        * WebProcess/GPU/media/RemoteAudioDestinationProxy.cpp:
+        (WebKit::RemoteAudioDestinationProxy::requestBuffer):
+        (WebKit::RemoteAudioDestinationProxy::storageChanged):
+        * WebProcess/GPU/media/RemoteAudioDestinationProxy.h:
+        * WebProcess/GPU/media/RemoteAudioDestinationProxy.messages.in:
+        * WebProcess/GPU/media/RemoteAudioSourceProviderManager.cpp:
+        (WebKit::RemoteAudioSourceProviderManager::RemoteAudio::setStorage):
+        (WebKit::RemoteAudioSourceProviderManager::RemoteAudio::audioSamplesAvailable):
+        * WebProcess/GPU/webrtc/AudioMediaStreamTrackRenderer.cpp:
+        (WebKit::AudioMediaStreamTrackRenderer::pushSamples):
+        (WebKit::AudioMediaStreamTrackRenderer::storageChanged):
+        * WebProcess/GPU/webrtc/MediaRecorderPrivate.cpp:
+        (WebKit::MediaRecorderPrivate::audioSamplesAvailable):
+        (WebKit::MediaRecorderPrivate::storageChanged):
+        * WebProcess/Speech/SpeechRecognitionRealtimeMediaSourceManager.cpp:
+        * WebProcess/cocoa/RemoteCaptureSampleManager.cpp:
+        (WebKit::RemoteCaptureSampleManager::audioSamplesAvailable):
+        (WebKit::RemoteCaptureSampleManager::RemoteAudio::audioSamplesAvailable):
+        * WebProcess/cocoa/RemoteCaptureSampleManager.h:
+        * WebProcess/cocoa/RemoteCaptureSampleManager.messages.in:
+
 2020-12-10  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Deny mach-lookup to the service 'com.apple.SystemConfiguration.configd' in the WebContent process

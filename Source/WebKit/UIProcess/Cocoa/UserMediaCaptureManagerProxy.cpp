@@ -156,10 +156,7 @@ private:
 
         ASSERT(is<WebAudioBufferList>(audioData));
         m_ringBuffer.store(downcast<WebAudioBufferList>(audioData).list(), numberOfFrames, time.timeValue());
-        uint64_t startFrame;
-        uint64_t endFrame;
-        m_ringBuffer.getCurrentFrameBounds(startFrame, endFrame);
-        m_connection->send(Messages::RemoteCaptureSampleManager::AudioSamplesAvailable(m_id, time, numberOfFrames, startFrame, endFrame), 0);
+        m_connection->send(Messages::RemoteCaptureSampleManager::AudioSamplesAvailable(m_id, time, numberOfFrames), 0);
     }
 
     void videoSampleAvailable(MediaSample& sample) final

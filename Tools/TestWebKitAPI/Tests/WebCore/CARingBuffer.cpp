@@ -109,8 +109,7 @@ TEST_F(CARingBufferTest, Basics)
     float scratchBuffer[capacity];
     setListDataBuffer(reinterpret_cast<uint8_t*>(scratchBuffer), capacity);
 
-    err = ringBuffer().fetch(&bufferList(), sampleCount, 0);
-    EXPECT_EQ(err, CARingBuffer::Error::Ok);
+    ringBuffer().fetch(&bufferList(), sampleCount, 0);
     EXPECT_TRUE(!memcmp(sourceBuffer, scratchBuffer, sampleCount * description().sampleWordSize()));
 
     // ... and the second half.
@@ -122,8 +121,7 @@ TEST_F(CARingBufferTest, Basics)
     EXPECT_EQ(capacity, (int)endTime);
 
     memset(scratchBuffer, 0, sampleCount * description().sampleWordSize());
-    err = ringBuffer().fetch(&bufferList(), sampleCount, 0);
-    EXPECT_EQ(err, CARingBuffer::Error::Ok);
+    ringBuffer().fetch(&bufferList(), sampleCount, 0);
     EXPECT_TRUE(!memcmp(sourceBuffer, scratchBuffer, sampleCount * description().sampleWordSize()));
 
     // Force the buffer to wrap around
@@ -185,18 +183,14 @@ public:
 
         memset(readBuffer, 0, sampleCount * test.description().sampleWordSize());
         test.setListDataBuffer(reinterpret_cast<uint8_t*>(readBuffer), sampleCount);
-        err = test.ringBuffer().fetch(&test.bufferList(), sampleCount, 0, CARingBuffer::FetchMode::Mix);
-        EXPECT_EQ(err, CARingBuffer::Error::Ok);
+        test.ringBuffer().fetch(&test.bufferList(), sampleCount, 0, CARingBuffer::FetchMode::Mix);
 
         for (int i = 0; i < sampleCount; i++)
             EXPECT_EQ(readBuffer[i], referenceBuffer[i]) << "Ring buffer value differs at index " << i;
 
-        err = test.ringBuffer().fetch(&test.bufferList(), sampleCount, 0, CARingBuffer::FetchMode::Mix);
-        EXPECT_EQ(err, CARingBuffer::Error::Ok);
-        err = test.ringBuffer().fetch(&test.bufferList(), sampleCount, 0, CARingBuffer::FetchMode::Mix);
-        EXPECT_EQ(err, CARingBuffer::Error::Ok);
-        err = test.ringBuffer().fetch(&test.bufferList(), sampleCount, 0, CARingBuffer::FetchMode::Mix);
-        EXPECT_EQ(err, CARingBuffer::Error::Ok);
+        test.ringBuffer().fetch(&test.bufferList(), sampleCount, 0, CARingBuffer::FetchMode::Mix);
+        test.ringBuffer().fetch(&test.bufferList(), sampleCount, 0, CARingBuffer::FetchMode::Mix);
+        test.ringBuffer().fetch(&test.bufferList(), sampleCount, 0, CARingBuffer::FetchMode::Mix);
 
         for (int i = 0; i < sampleCount; i++)
             referenceBuffer[i] += sourceBuffer[i] * 3;

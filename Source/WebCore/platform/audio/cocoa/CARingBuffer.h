@@ -45,17 +45,45 @@ public:
     virtual void allocate(size_t) = 0;
     virtual void deallocate() = 0;
     virtual void* data() = 0;
+    virtual void getCurrentFrameBounds(uint64_t& startTime, uint64_t& endTime) = 0;
+    virtual void setCurrentFrameBounds(uint64_t startFrame, uint64_t endFrame) = 0;
+    virtual void updateFrameBounds() { }
+    virtual uint64_t currentStartFrame() const = 0;
+    virtual uint64_t currentEndFrame() const = 0;
+    virtual void flush() = 0;
 };
 
 class CARingBufferStorageVector final : public CARingBufferStorage {
 public:
+    CARingBufferStorageVector();
     ~CARingBufferStorageVector() = default;
 
 private:
     void allocate(size_t byteCount) final { m_buffer.grow(byteCount); }
     void deallocate() final { m_buffer.clear(); }
     void* data() final { return m_buffer.data(); }
+    void getCurrentFrameBounds(uint64_t& startTime, uint64_t& endTime) final;
+    void setCurrentFrameBounds(uint64_t startFrame, uint64_t endFrame) final;
+    uint64_t currentStartFrame() const;
+    uint64_t currentEndFrame() const;
+    void flush() final;
+
+    struct TimeBounds {
+        TimeBounds()
+            : m_startFrame(0)
+            , m_endFrame(0)
+            , m_updateCounter(0)
+        {
+        }
+        volatile uint64_t m_startFrame;
+        volatile uint64_t m_endFrame;
+        volatile uint32_t m_updateCounter;
+    };
+
     Vector<uint8_t> m_buffer;
+    Vector<TimeBounds> m_timeBoundsQueue;
+    Lock m_currentFrameBoundsLock;
+    std::atomic<int32_t> m_timeBoundsQueuePtr { 0 };
 };
 
 class CARingBuffer {
@@ -76,20 +104,27 @@ public:
     WEBCORE_EXPORT Error store(const AudioBufferList*, size_t frameCount, uint64_t startFrame);
 
     enum FetchMode { Copy, Mix };
-    WEBCORE_EXPORT Error fetch(AudioBufferList*, size_t frameCount, uint64_t startFrame, FetchMode = Copy);
+    WEBCORE_EXPORT bool fetchIfHasEnoughData(AudioBufferList*, size_t frameCount, uint64_t startFrame, FetchMode = Copy);
+
+    // Fills buffer with silence if there is not enough data.
+    WEBCORE_EXPORT void fetch(AudioBufferList*, size_t frameCount, uint64_t startFrame, FetchMode = Copy);
 
     WEBCORE_EXPORT void flush();
 
-    WEBCORE_EXPORT void getCurrentFrameBounds(uint64_t &startTime, uint64_t &endTime);
-    WEBCORE_EXPORT void setCurrentFrameBounds(uint64_t startFrame, uint64_t endFrame);
+    WEBCORE_EXPORT void getCurrentFrameBounds(uint64_t& startFrame, uint64_t& endFrame);
 
     uint32_t channelCount() const { return m_channelCount; }
     CARingBufferStorage& storage() { return m_buffers; }
 
 private:
+    void updateFrameBounds();
     size_t frameOffset(uint64_t frameNumber) { return (frameNumber & m_frameCountMask) * m_bytesPerFrame; }
 
     void clipTimeBounds(uint64_t& startRead, uint64_t& endRead);
+    void setCurrentFrameBounds(uint64_t startFrame, uint64_t endFrame);
+
+    void getCurrentFrameBoundsWithoutUpdate(uint64_t& startFrame, uint64_t& endFrame);
+    void fetchInternal(AudioBufferList*, size_t frameCount, uint64_t startFrame, FetchMode);
 
     uint64_t currentStartFrame() const;
     uint64_t currentEndFrame() const;
@@ -102,22 +137,7 @@ private:
     uint32_t m_frameCountMask { 0 };
     size_t m_capacityBytes { 0 };
 
-    struct TimeBounds {
-        TimeBounds()
-            : m_startFrame(0)
-            , m_endFrame(0)
-            , m_updateCounter(0)
-        {
-        }
-        volatile uint64_t m_startFrame;
-        volatile uint64_t m_endFrame;
-        volatile uint32_t m_updateCounter;
-    };
-
     CAAudioStreamDescription m_description;
-    Vector<TimeBounds> m_timeBoundsQueue;
-    Lock m_currentFrameBoundsLock;
-    std::atomic<int32_t> m_timeBoundsQueuePtr { 0 };
 };
 
 }

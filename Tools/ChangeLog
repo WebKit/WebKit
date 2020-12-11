@@ -1,3 +1,17 @@
+2020-12-10  Chris Dumez  <cdumez@apple.com>
+
+        [GPUProcess] Cut in half amount of IPC needed to do WebAudio
+        https://bugs.webkit.org/show_bug.cgi?id=219715
+
+        Reviewed by Geoff Garen.
+
+        Minor API test changes due to CARingBuffer API change. fetch() always returned Ok
+        so I dropped the return value.
+
+        * TestWebKitAPI/Tests/WebCore/CARingBuffer.cpp:
+        (TestWebKitAPI::TEST_F):
+        (TestWebKitAPI::MixingTest::run):
+
 2020-12-10  Geoffrey Garen  <ggaren@apple.com>
 
         Unreviewed, re-landing r270132.

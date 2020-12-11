@@ -156,10 +156,8 @@ void RemoteAudioSourceProviderManager::RemoteAudio::audioSamplesAvailable(uint64
         return;
     }
 
-    auto endFrame = startFrame + numberOfFrames;
     m_buffer->setSampleCount(numberOfFrames);
 
-    m_ringBuffer->setCurrentFrameBounds(startFrame, endFrame);
     m_ringBuffer->fetch(m_buffer->list(), numberOfFrames, startFrame);
 
     m_provider->audioSamplesAvailable(*m_buffer, m_description, numberOfFrames);

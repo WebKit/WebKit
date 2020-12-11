@@ -310,8 +310,7 @@ OSStatus AudioSampleBufferList::copyFrom(AudioSampleBufferList& source, size_t f
 OSStatus AudioSampleBufferList::copyFrom(CARingBuffer& ringBuffer, size_t sampleCount, uint64_t startFrame, CARingBuffer::FetchMode mode)
 {
     reset();
-    if (ringBuffer.fetch(bufferList().list(), sampleCount, startFrame, mode) != CARingBuffer::Ok)
-        return kAudio_ParamError;
+    ringBuffer.fetch(bufferList().list(), sampleCount, startFrame, mode);
 
     m_sampleCount = sampleCount;
     return 0;

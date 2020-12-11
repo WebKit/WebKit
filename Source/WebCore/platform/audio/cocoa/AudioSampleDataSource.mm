@@ -324,8 +324,7 @@ bool AudioSampleDataSource::pullAvalaibleSamplesAsChunks(AudioBufferList& buffer
     }
 
     while (endFrame - startFrame >= sampleCountPerChunk) {
-        if (m_ringBuffer->fetch(&buffer, sampleCountPerChunk, startFrame, CARingBuffer::Copy))
-            return false;
+        m_ringBuffer->fetch(&buffer, sampleCountPerChunk, startFrame, CARingBuffer::Copy);
         consumeFilledBuffer();
         startFrame += sampleCountPerChunk;
     }

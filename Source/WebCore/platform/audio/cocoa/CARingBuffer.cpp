@@ -38,9 +38,13 @@ const uint32_t kGeneralRingTimeBoundsQueueMask = kGeneralRingTimeBoundsQueueSize
 
 namespace WebCore {
 
+CARingBufferStorageVector::CARingBufferStorageVector()
+    : m_timeBoundsQueue(kGeneralRingTimeBoundsQueueSize)
+{
+}
+
 CARingBuffer::CARingBuffer()
     : m_buffers(makeUniqueRef<CARingBufferStorageVector>())
-    , m_timeBoundsQueue(kGeneralRingTimeBoundsQueueSize)
 {
 }
 
@@ -51,7 +55,6 @@ CARingBuffer::~CARingBuffer()
 
 CARingBuffer::CARingBuffer(UniqueRef<CARingBufferStorage>&& storage)
     : m_buffers(WTFMove(storage))
-    , m_timeBoundsQueue(kGeneralRingTimeBoundsQueueSize)
 {
 }
 
@@ -166,6 +169,11 @@ inline void ZeroABL(AudioBufferList* list, size_t destOffset, size_t nbytes)
 
 void CARingBuffer::flush()
 {
+    m_buffers->flush();
+}
+
+void CARingBufferStorageVector::flush()
+{
     LockHolder locker(m_currentFrameBoundsLock);
     for (auto& timeBounds : m_timeBoundsQueue) {
         timeBounds.m_startFrame = 0;
@@ -235,6 +243,11 @@ CARingBuffer::Error CARingBuffer::store(const AudioBufferList* list, size_t fram
 
 void CARingBuffer::setCurrentFrameBounds(uint64_t startTime, uint64_t endTime)
 {
+    m_buffers->setCurrentFrameBounds(startTime, endTime);
+}
+
+void CARingBufferStorageVector::setCurrentFrameBounds(uint64_t startTime, uint64_t endTime)
+{
     LockHolder locker(m_currentFrameBoundsLock);
     uint32_t nextPtr = m_timeBoundsQueuePtr.load() + 1;
     uint32_t index = nextPtr & kGeneralRingTimeBoundsQueueMask;
@@ -245,14 +258,25 @@ void CARingBuffer::setCurrentFrameBounds(uint64_t startTime, uint64_t endTime)
     m_timeBoundsQueuePtr++;
 }
 
-void CARingBuffer::getCurrentFrameBounds(uint64_t &startTime, uint64_t &endTime)
+void CARingBuffer::getCurrentFrameBounds(uint64_t& startFrame, uint64_t& endFrame)
+{
+    updateFrameBounds();
+    getCurrentFrameBoundsWithoutUpdate(startFrame, endFrame);
+}
+
+void CARingBuffer::getCurrentFrameBoundsWithoutUpdate(uint64_t& startFrame, uint64_t& endFrame)
+{
+    m_buffers->getCurrentFrameBounds(startFrame, endFrame);
+}
+
+void CARingBufferStorageVector::getCurrentFrameBounds(uint64_t& startFrame, uint64_t& endFrame)
 {
     uint32_t curPtr = m_timeBoundsQueuePtr.load();
     uint32_t index = curPtr & kGeneralRingTimeBoundsQueueMask;
-    CARingBuffer::TimeBounds& bounds = m_timeBoundsQueue[index];
+    auto& bounds = m_timeBoundsQueue[index];
 
-    startTime = bounds.m_startFrame;
-    endTime = bounds.m_endFrame;
+    startFrame = bounds.m_startFrame;
+    endFrame = bounds.m_endFrame;
 }
 
 void CARingBuffer::clipTimeBounds(uint64_t& startRead, uint64_t& endRead)
@@ -260,7 +284,7 @@ void CARingBuffer::clipTimeBounds(uint64_t& startRead, uint64_t& endRead)
     uint64_t startTime;
     uint64_t endTime;
 
-    getCurrentFrameBounds(startTime, endTime);
+    getCurrentFrameBoundsWithoutUpdate(startTime, endTime);
 
     if (startRead > endTime || endRead < startTime) {
         endRead = startRead;
@@ -274,20 +298,54 @@ void CARingBuffer::clipTimeBounds(uint64_t& startRead, uint64_t& endRead)
 
 uint64_t CARingBuffer::currentStartFrame() const
 {
+    return m_buffers->currentStartFrame();
+}
+
+uint64_t CARingBufferStorageVector::currentStartFrame() const
+{
     uint32_t index = m_timeBoundsQueuePtr.load() & kGeneralRingTimeBoundsQueueMask;
     return m_timeBoundsQueue[index].m_startFrame;
 }
 
 uint64_t CARingBuffer::currentEndFrame() const
 {
+    return m_buffers->currentEndFrame();
+}
+
+uint64_t CARingBufferStorageVector::currentEndFrame() const
+{
     uint32_t index = m_timeBoundsQueuePtr.load() & kGeneralRingTimeBoundsQueueMask;
     return m_timeBoundsQueue[index].m_endFrame;
 }
 
-CARingBuffer::Error CARingBuffer::fetch(AudioBufferList* list, size_t nFrames, uint64_t startRead, FetchMode mode)
+void CARingBuffer::updateFrameBounds()
+{
+    m_buffers->updateFrameBounds();
+}
+
+bool CARingBuffer::fetchIfHasEnoughData(AudioBufferList* list, size_t frameCount, uint64_t startFrame, FetchMode mode)
+{
+    // When the RingBuffer is backed by shared memory, getCurrentFrameBounds() makes sure we pull frame bounds from shared memory before fetching.
+    uint64_t start, end;
+    getCurrentFrameBounds(start, end);
+    if (startFrame < start || startFrame + frameCount > end)
+        return false;
+
+    fetchInternal(list, frameCount, startFrame, mode);
+    return true;
+}
+
+void CARingBuffer::fetch(AudioBufferList* list, size_t frameCount, uint64_t startRead, FetchMode mode)
+{
+    // When the RingBuffer is backed by shared memory, make sure we pull frame bounds from shared memory before fetching.
+    updateFrameBounds();
+    fetchInternal(list, frameCount, startRead, mode);
+}
+
+void CARingBuffer::fetchInternal(AudioBufferList* list, size_t nFrames, uint64_t startRead, FetchMode mode)
 {
     if (!nFrames)
-        return Ok;
+        return;
     
     startRead = std::max<uint64_t>(0, startRead);
     
@@ -300,7 +358,7 @@ CARingBuffer::Error CARingBuffer::fetch(AudioBufferList* list, size_t nFrames, u
 
     if (startRead == endRead) {
         ZeroABL(list, 0, nFrames * m_bytesPerFrame);
-        return Ok;
+        return;
     }
     
     size_t byteSize = static_cast<size_t>((endRead - startRead) * m_bytesPerFrame);
@@ -335,8 +393,6 @@ CARingBuffer::Error CARingBuffer::fetch(AudioBufferList* list, size_t nFrames, u
         dest->mDataByteSize = nbytes;
         dest++;
     }
-    
-    return Ok;
 }
 
 }

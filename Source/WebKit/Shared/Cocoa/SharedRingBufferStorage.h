@@ -27,6 +27,7 @@
 
 #if USE(MEDIATOOLBOX)
 
+#include <wtf/Atomics.h>
 #include "SharedMemory.h"
 #include <WebCore/CARingBuffer.h>
 
@@ -57,11 +58,27 @@ public:
     void allocate(size_t) final;
     void deallocate() final;
     void* data() final;
+    void getCurrentFrameBounds(uint64_t& startTime, uint64_t& endTime) final;
+    void setCurrentFrameBounds(uint64_t startFrame, uint64_t endFrame) final;
+    uint64_t currentStartFrame() const final { return m_startFrame; }
+    uint64_t currentEndFrame() const final { return m_endFrame; }
+    void updateFrameBounds() final;
+    void flush() final;
 
 private:
+    static constexpr unsigned boundsBufferSize { 32 };
+    struct FrameBounds {
+        std::pair<uint64_t, uint64_t> boundsBuffer[boundsBufferSize];
+        Atomic<unsigned> boundsBufferIndex { 0 };
+    };
+
+    FrameBounds* sharedFrameBounds();
+
     Client* m_client;
     RefPtr<SharedMemory> m_storage;
     bool m_readOnly { false };
+    uint64_t m_startFrame { 0 };
+    uint64_t m_endFrame { 0 };
 };
 
 }

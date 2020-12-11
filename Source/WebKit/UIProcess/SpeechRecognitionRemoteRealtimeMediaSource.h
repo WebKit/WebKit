@@ -55,7 +55,7 @@ public:
     void setStorage(const SharedMemory::Handle&, const WebCore::CAAudioStreamDescription&, uint64_t numberOfFrames);
 #endif
 
-    void remoteAudioSamplesAvailable(MediaTime, uint64_t numberOfFrames, uint64_t startFrame, uint64_t endFrame);
+    void remoteAudioSamplesAvailable(MediaTime, uint64_t numberOfFrames);
     void remoteCaptureFailed();
     void remoteSourceStopped();
 

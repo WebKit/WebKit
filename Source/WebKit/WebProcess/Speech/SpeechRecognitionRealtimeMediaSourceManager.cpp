@@ -121,10 +121,7 @@ private:
 
         ASSERT(is<WebAudioBufferList>(audioData));
         m_ringBuffer.store(downcast<WebAudioBufferList>(audioData).list(), numberOfFrames, time.timeValue());
-        uint64_t startFrame;
-        uint64_t endFrame;
-        m_ringBuffer.getCurrentFrameBounds(startFrame, endFrame);
-        m_connection->send(Messages::SpeechRecognitionRemoteRealtimeMediaSourceManager::RemoteAudioSamplesAvailable(m_identifier, time, numberOfFrames, startFrame, endFrame), 0);
+        m_connection->send(Messages::SpeechRecognitionRemoteRealtimeMediaSourceManager::RemoteAudioSamplesAvailable(m_identifier, time, numberOfFrames), 0);
 #else
         UNUSED_PARAM(time);
         UNUSED_PARAM(audioData);

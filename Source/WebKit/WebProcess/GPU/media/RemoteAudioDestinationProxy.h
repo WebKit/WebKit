@@ -49,6 +49,8 @@ class WebAudioBufferList;
 
 namespace WebKit {
 
+class SharedRingBufferFrameBounds;
+
 class RemoteAudioDestinationProxy
 #if PLATFORM(COCOA)
     : public WebCore::AudioDestinationCocoa
@@ -72,7 +74,7 @@ public:
     void didReceiveMessageFromGPUProcess(IPC::Connection& connection, IPC::Decoder& decoder) { didReceiveMessage(connection, decoder); }
 
 #if PLATFORM(COCOA)
-    void requestBuffer(double sampleTime, uint64_t hostTime, uint64_t numberOfFrames, CompletionHandler<void(uint64_t boundsStartFrame, uint64_t boundsEndFrame)>&&);
+    void requestBuffer(double sampleTime, uint64_t hostTime, uint64_t numberOfFrames);
 #endif
 
 private:

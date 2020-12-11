@@ -70,7 +70,7 @@ private:
 
     // IPC::MessageReceiver
     void audioSamplesStorageChanged(const SharedMemory::IPCHandle&, const WebCore::CAAudioStreamDescription&, uint64_t numberOfFrames);
-    void audioSamplesAvailable(MediaTime, uint64_t numberOfFrames, uint64_t startFrame, uint64_t endFrame);
+    void audioSamplesAvailable(MediaTime, uint64_t numberOfFrames);
     void videoSampleAvailable(WebCore::RemoteVideoSample&&);
     void fetchData(CompletionHandler<void(IPC::DataReference&&, double)>&&);
     void stopRecording();

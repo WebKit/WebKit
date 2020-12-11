@@ -121,12 +121,10 @@ void RemoteAudioMediaStreamTrackRenderer::audioSamplesStorageChanged(const Share
     m_audioBufferList = makeUnique<WebAudioBufferList>(m_description);
 }
 
-void RemoteAudioMediaStreamTrackRenderer::audioSamplesAvailable(MediaTime time, uint64_t numberOfFrames, uint64_t startFrame, uint64_t endFrame)
+void RemoteAudioMediaStreamTrackRenderer::audioSamplesAvailable(MediaTime time, uint64_t numberOfFrames)
 {
     MESSAGE_CHECK(m_audioBufferList);
     MESSAGE_CHECK(WebAudioBufferList::isSupportedDescription(m_description, numberOfFrames));
-
-    m_ringBuffer->setCurrentFrameBounds(startFrame, endFrame);
 
     m_audioBufferList->setSampleCount(numberOfFrames);
     m_ringBuffer->fetch(m_audioBufferList->list(), numberOfFrames, time.timeValue());

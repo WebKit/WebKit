@@ -104,10 +104,7 @@ void MediaRecorderPrivate::audioSamplesAvailable(const MediaTime& time, const Pl
 
     ASSERT(is<WebAudioBufferList>(audioData));
     m_ringBuffer->store(downcast<WebAudioBufferList>(audioData).list(), numberOfFrames, time.timeValue());
-    uint64_t startFrame;
-    uint64_t endFrame;
-    m_ringBuffer->getCurrentFrameBounds(startFrame, endFrame);
-    m_connection->send(Messages::RemoteMediaRecorder::AudioSamplesAvailable { time, numberOfFrames, startFrame, endFrame }, m_identifier);
+    m_connection->send(Messages::RemoteMediaRecorder::AudioSamplesAvailable { time, numberOfFrames }, m_identifier);
 }
 
 void MediaRecorderPrivate::storageChanged(SharedMemory* storage)

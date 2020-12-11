@@ -99,7 +99,7 @@ void SpeechRecognitionRemoteRealtimeMediaSource::setStorage(const SharedMemory::
 
 #endif
 
-void SpeechRecognitionRemoteRealtimeMediaSource::remoteAudioSamplesAvailable(MediaTime time, uint64_t numberOfFrames, uint64_t startFrame, uint64_t endFrame)
+void SpeechRecognitionRemoteRealtimeMediaSource::remoteAudioSamplesAvailable(MediaTime time, uint64_t numberOfFrames)
 {
 #if PLATFORM(COCOA)
     if (!m_buffer) {
@@ -109,14 +109,11 @@ void SpeechRecognitionRemoteRealtimeMediaSource::remoteAudioSamplesAvailable(Med
     }
 
     m_buffer->setSampleCount(numberOfFrames);
-    m_ringBuffer->setCurrentFrameBounds(startFrame, endFrame);
     m_ringBuffer->fetch(m_buffer->list(), numberOfFrames, time.timeValue());
     audioSamplesAvailable(time, *m_buffer, m_description, numberOfFrames);
 #else
     UNUSED_PARAM(time);
     UNUSED_PARAM(numberOfFrames);
-    UNUSED_PARAM(startFrame);
-    UNUSED_PARAM(endFrame);
 #endif
 }
 

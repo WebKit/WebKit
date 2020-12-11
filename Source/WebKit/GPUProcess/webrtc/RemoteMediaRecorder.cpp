@@ -89,13 +89,11 @@ void RemoteMediaRecorder::audioSamplesStorageChanged(const SharedMemory::IPCHand
     m_audioBufferList = makeUnique<WebAudioBufferList>(m_description);
 }
 
-void RemoteMediaRecorder::audioSamplesAvailable(MediaTime time, uint64_t numberOfFrames, uint64_t startFrame, uint64_t endFrame)
+void RemoteMediaRecorder::audioSamplesAvailable(MediaTime time, uint64_t numberOfFrames)
 {
     MESSAGE_CHECK(m_ringBuffer);
     MESSAGE_CHECK(m_audioBufferList);
     MESSAGE_CHECK(WebAudioBufferList::isSupportedDescription(m_description, numberOfFrames));
-
-    m_ringBuffer->setCurrentFrameBounds(startFrame, endFrame);
 
     m_audioBufferList->setSampleCount(numberOfFrames);
     m_ringBuffer->fetch(m_audioBufferList->list(), numberOfFrames, time.timeValue());

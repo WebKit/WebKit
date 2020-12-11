@@ -99,7 +99,7 @@ void RemoteCaptureSampleManager::audioStorageChanged(WebCore::RealtimeMediaSourc
     iterator->value->setStorage(ipcHandle.handle, description, numberOfFrames);
 }
 
-void RemoteCaptureSampleManager::audioSamplesAvailable(WebCore::RealtimeMediaSourceIdentifier identifier, MediaTime time, uint64_t numberOfFrames, uint64_t startFrame, uint64_t endFrame)
+void RemoteCaptureSampleManager::audioSamplesAvailable(WebCore::RealtimeMediaSourceIdentifier identifier, MediaTime time, uint64_t numberOfFrames)
 {
     ASSERT(!WTF::isMainRunLoop());
 
@@ -108,7 +108,7 @@ void RemoteCaptureSampleManager::audioSamplesAvailable(WebCore::RealtimeMediaSou
         RELEASE_LOG_ERROR(WebRTC, "Unable to find source %llu for audioSamplesAvailable", identifier.toUInt64());
         return;
     }
-    iterator->value->audioSamplesAvailable(time, numberOfFrames, startFrame, endFrame);
+    iterator->value->audioSamplesAvailable(time, numberOfFrames);
 }
 
 RemoteCaptureSampleManager::RemoteAudio::RemoteAudio(Ref<RemoteRealtimeMediaSource>&& source)
@@ -141,7 +141,7 @@ void RemoteCaptureSampleManager::RemoteAudio::setStorage(const SharedMemory::Han
     m_buffer = makeUnique<WebAudioBufferList>(description, numberOfFrames);
 }
 
-void RemoteCaptureSampleManager::RemoteAudio::audioSamplesAvailable(MediaTime time, uint64_t numberOfFrames, uint64_t startFrame, uint64_t endFrame)
+void RemoteCaptureSampleManager::RemoteAudio::audioSamplesAvailable(MediaTime time, uint64_t numberOfFrames)
 {
     if (!m_buffer) {
         RELEASE_LOG_ERROR(WebRTC, "buffer for audio source %llu is null", m_source->identifier().toUInt64());
@@ -155,7 +155,6 @@ void RemoteCaptureSampleManager::RemoteAudio::audioSamplesAvailable(MediaTime ti
 
     m_buffer->setSampleCount(numberOfFrames);
 
-    m_ringBuffer->setCurrentFrameBounds(startFrame, endFrame);
     m_ringBuffer->fetch(m_buffer->list(), numberOfFrames, time.timeValue());
 
     m_source->remoteAudioSamplesAvailable(time, *m_buffer, m_description, numberOfFrames);

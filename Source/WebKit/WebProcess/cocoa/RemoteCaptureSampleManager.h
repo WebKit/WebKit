@@ -56,7 +56,7 @@ private:
 
     // Messages
     void audioStorageChanged(WebCore::RealtimeMediaSourceIdentifier, const SharedMemory::IPCHandle&, const WebCore::CAAudioStreamDescription&, uint64_t numberOfFrames);
-    void audioSamplesAvailable(WebCore::RealtimeMediaSourceIdentifier, MediaTime, uint64_t numberOfFrames, uint64_t startFrame, uint64_t endFrame);
+    void audioSamplesAvailable(WebCore::RealtimeMediaSourceIdentifier, MediaTime, uint64_t numberOfFrames);
 
     void setConnection(IPC::Connection*);
 
@@ -66,7 +66,7 @@ private:
         explicit RemoteAudio(Ref<RemoteRealtimeMediaSource>&&);
 
         void setStorage(const SharedMemory::Handle&, const WebCore::CAAudioStreamDescription&, uint64_t numberOfFrames);
-        void audioSamplesAvailable(MediaTime, uint64_t numberOfFrames, uint64_t startFrame, uint64_t endFrame);
+        void audioSamplesAvailable(MediaTime, uint64_t numberOfFrames);
 
     private:
         Ref<RemoteRealtimeMediaSource> m_source;

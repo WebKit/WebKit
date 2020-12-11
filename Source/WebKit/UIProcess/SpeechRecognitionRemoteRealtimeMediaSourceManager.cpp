@@ -74,10 +74,10 @@ void SpeechRecognitionRemoteRealtimeMediaSourceManager::removeSource(SpeechRecog
     send(Messages::SpeechRecognitionRealtimeMediaSourceManager::DeleteSource(identifier));
 }
 
-void SpeechRecognitionRemoteRealtimeMediaSourceManager::remoteAudioSamplesAvailable(WebCore::RealtimeMediaSourceIdentifier identifier, const WTF::MediaTime& time, uint64_t numberOfFrames, uint64_t startFrame, uint64_t endFrame)
+void SpeechRecognitionRemoteRealtimeMediaSourceManager::remoteAudioSamplesAvailable(WebCore::RealtimeMediaSourceIdentifier identifier, const WTF::MediaTime& time, uint64_t numberOfFrames)
 {
     if (auto source = m_sources.get(identifier))
-        source->remoteAudioSamplesAvailable(time, numberOfFrames, startFrame, endFrame);
+        source->remoteAudioSamplesAvailable(time, numberOfFrames);
 }
 
 void SpeechRecognitionRemoteRealtimeMediaSourceManager::remoteCaptureFailed(WebCore::RealtimeMediaSourceIdentifier identifier)

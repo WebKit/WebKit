@@ -46,8 +46,11 @@ void SharedRingBufferStorage::setReadOnly(bool readOnly)
 
 void SharedRingBufferStorage::allocate(size_t byteCount)
 {
-    if (!m_readOnly)
-        setStorage(SharedMemory::allocate(byteCount));
+    if (!m_readOnly) {
+        auto sharedMemory = SharedMemory::allocate(byteCount + sizeof(FrameBounds));
+        new (NotNull, sharedMemory->data()) FrameBounds;
+        setStorage(WTFMove(sharedMemory));
+    }
 }
 
 void SharedRingBufferStorage::deallocate()
@@ -56,11 +59,58 @@ void SharedRingBufferStorage::deallocate()
         setStorage(nullptr);
 }
 
-void* SharedRingBufferStorage::data()
+auto SharedRingBufferStorage::sharedFrameBounds() -> FrameBounds*
 {
-    return m_storage ? m_storage->data() : nullptr;
+    return m_storage ? reinterpret_cast<FrameBounds*>(m_storage->data()) : nullptr;
 }
 
+void* SharedRingBufferStorage::data()
+{
+    return m_storage ? static_cast<Byte*>(m_storage->data()) + sizeof(FrameBounds) : nullptr;
 }
+
+void SharedRingBufferStorage::getCurrentFrameBounds(uint64_t& startFrame, uint64_t& endFrame)
+{
+    startFrame = m_startFrame;
+    endFrame = m_endFrame;
+}
+
+void SharedRingBufferStorage::setCurrentFrameBounds(uint64_t startFrame, uint64_t endFrame)
+{
+    m_startFrame = startFrame;
+    m_endFrame = endFrame;
+
+    ASSERT(!m_readOnly);
+    if (m_readOnly)
+        return;
+
+    auto* sharedBounds = sharedFrameBounds();
+    if (!sharedBounds)
+        return;
+
+    unsigned indexToWrite = (sharedBounds->boundsBufferIndex.load(std::memory_order_acquire) + 1) % boundsBufferSize;
+    sharedBounds->boundsBuffer[indexToWrite] = std::make_pair(startFrame, endFrame);
+    sharedBounds->boundsBufferIndex.store(indexToWrite, std::memory_order_release);
+}
+
+void SharedRingBufferStorage::updateFrameBounds()
+{
+    auto* sharedBounds = sharedFrameBounds();
+    if (!sharedBounds) {
+        m_startFrame = m_endFrame = 0;
+        return;
+    }
+
+    auto pair = sharedBounds->boundsBuffer[sharedBounds->boundsBufferIndex.load(std::memory_order_acquire)];
+    m_startFrame = pair.first;
+    m_endFrame = pair.second;
+}
+
+void SharedRingBufferStorage::flush()
+{
+    m_startFrame = m_endFrame = 0;
+}
+
+} // namespace WebKit
 
 #endif
