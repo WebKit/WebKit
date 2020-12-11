@@ -1,3 +1,15 @@
+2020-12-11  Darin Adler  <darin@apple.com>
+
+        [Cocoa] REGRESSION (r270315): WebKitLegacy builds fail with "unifdef" error message
+        https://bugs.webkit.org/show_bug.cgi?id=219756
+
+        Reviewed by Sam Weinig.
+
+        Was seeing this error: Unifdef: can't open Debug/WebKitLegacy.framework/Versions/A/Headers/*.h.tmp: No such file or directory.
+        Keith figured out it was because there are no public headers in the WebKitLegacy framework.
+
+        * postprocess-headers.sh: Remove the line that post-processes public headers.
+
 2020-12-10  Adam Roben  <aroben@apple.com>
 
         macOS Production WebKitLegacy build is broken on Xcode 10

@@ -37,5 +37,4 @@ function rewrite_headers ()
     done
 }
 
-rewrite_headers "${TARGET_BUILD_DIR}/${PUBLIC_HEADERS_FOLDER_PATH}" Public
 rewrite_headers "${TARGET_BUILD_DIR}/${PRIVATE_HEADERS_FOLDER_PATH}" Private
