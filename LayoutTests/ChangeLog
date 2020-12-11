@@ -1,3 +1,71 @@
+2020-12-11  Truitt Savell  <tsavell@apple.com>
+
+        Remove LayoutTests/platform/big-sur
+        https://bugs.webkit.org/show_bug.cgi?id=218359
+
+        Unreviewed test gardening.
+
+        * platform/mac-bigsur/http/tests/navigation/javascriptlink-frames-expected.txt: Removed.
+        * platform/mac-bigsur/media/controls-after-reload-expected.txt: Removed.
+        * platform/mac-bigsur/media/video-no-audio-expected.txt: Removed.
+        * platform/mac-bigsur/svg/W3C-I18N/tspan-direction-rtl-expected.txt: Removed.
+        * platform/mac-bigsur/svg/custom/svg-fonts-without-missing-glyph-expected.txt: Removed.
+        * platform/mac-bigsur/svg/text/bidi-tspans-expected.txt: Removed.
+        * platform/mac-bigsur/tables/mozilla/bugs/bug18359-expected.txt: Removed.
+        * platform/mac-bigsur/tables/mozilla/bugs/bug60749-expected.txt: Removed.
+        * platform/mac-bigsur/tables/mozilla/bugs/bug7342-expected.txt: Removed.
+        * platform/mac-bigsur/transforms/2d/zoom-menulist-expected.txt: Removed.
+        * platform/mac-catalina/http/tests/navigation/javascriptlink-frames-expected.txt: Copied from LayoutTests/platform/mac/http/tests/navigation/javascriptlink-frames-expected.txt.
+        * platform/mac-catalina/http/tests/xmlhttprequest/methods-async-expected.txt: Copied from LayoutTests/platform/mac-bigsur/http/tests/xmlhttprequest/methods-async-expected.txt.
+        * platform/mac-catalina/http/tests/xmlhttprequest/methods-expected.txt: Copied from LayoutTests/platform/mac-bigsur/http/tests/xmlhttprequest/methods-expected.txt.
+        * platform/mac-catalina/http/tests/xmlhttprequest/workers/methods-async-expected.txt: Copied from LayoutTests/platform/mac-bigsur/http/tests/xmlhttprequest/workers/methods-async-expected.txt.
+        * platform/mac-catalina/http/tests/xmlhttprequest/workers/methods-expected.txt: Copied from LayoutTests/platform/mac-bigsur/http/tests/xmlhttprequest/workers/methods-expected.txt.
+        * platform/mac-catalina/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-method.any-expected.txt: Added.
+        * platform/mac-catalina/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-method.any.worker-expected.txt: Added.
+        * platform/mac-catalina/imported/w3c/web-platform-tests/fetch/redirect-navigate/preserve-fragment-expected.txt: Copied from LayoutTests/platform/mac-bigsur/imported/w3c/web-platform-tests/fetch/redirect-navigate/preserve-fragment-expected.txt.
+        * platform/mac-catalina/imported/w3c/web-platform-tests/mathml/relations/css-styling/ignored-properties-001-expected.txt: Copied from LayoutTests/platform/mac-bigsur/imported/w3c/web-platform-tests/mathml/relations/css-styling/ignored-properties-001-expected.txt.
+        * platform/mac-catalina/imported/w3c/web-platform-tests/mathml/relations/css-styling/padding-border-margin/border-002-expected.txt: Copied from LayoutTests/platform/mac-bigsur/imported/w3c/web-platform-tests/mathml/relations/css-styling/padding-border-margin/border-002-expected.txt.
+        * platform/mac-catalina/imported/w3c/web-platform-tests/mathml/relations/css-styling/padding-border-margin/padding-002-expected.txt: Copied from LayoutTests/platform/mac-bigsur/imported/w3c/web-platform-tests/mathml/relations/css-styling/padding-border-margin/padding-002-expected.txt.
+        * platform/mac-catalina/imported/w3c/web-platform-tests/xhr/send-entity-body-empty-expected.txt: Copied from LayoutTests/platform/mac-bigsur/imported/w3c/web-platform-tests/xhr/send-entity-body-empty-expected.txt.
+        * platform/mac-catalina/imported/w3c/web-platform-tests/xhr/send-entity-body-get-head-async-expected.txt: Added.
+        * platform/mac-catalina/imported/w3c/web-platform-tests/xhr/send-entity-body-get-head-expected.txt: Added.
+        * platform/mac-catalina/imported/w3c/web-platform-tests/xhr/send-entity-body-none-expected.txt: Added.
+        * platform/mac-catalina/media/controls-after-reload-expected.txt: Copied from LayoutTests/platform/mac/media/controls-after-reload-expected.txt.
+        * platform/mac-catalina/media/video-no-audio-expected.txt: Copied from LayoutTests/platform/mac/media/video-no-audio-expected.txt.
+        * platform/mac-catalina/platform/mac/fast/text/bidi-fallback-font-weight-expected.txt: Copied from LayoutTests/platform/mac-bigsur/platform/mac/fast/text/international/bidi-fallback-font-weight-expected.txt.
+        * platform/mac-catalina/svg/W3C-I18N/tspan-direction-rtl-expected.txt: Copied from LayoutTests/platform/mac/svg/W3C-I18N/tspan-direction-rtl-expected.txt.
+        * platform/mac-catalina/svg/custom/svg-fonts-without-missing-glyph-expected.txt: Copied from LayoutTests/platform/mac/svg/custom/svg-fonts-without-missing-glyph-expected.txt.
+        * platform/mac-catalina/svg/text/bidi-tspans-expected.txt: Copied from LayoutTests/platform/mac/svg/text/bidi-tspans-expected.txt.
+        * platform/mac-catalina/tables/mozilla/bugs/bug18359-expected.txt: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug18359-expected.txt.
+        * platform/mac-catalina/tables/mozilla/bugs/bug60749-expected.txt: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug60749-expected.txt.
+        * platform/mac-catalina/tables/mozilla/bugs/bug7342-expected.txt: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug7342-expected.txt.
+        * platform/mac-catalina/transforms/2d/zoom-menulist-expected.txt: Copied from LayoutTests/platform/mac/transforms/2d/zoom-menulist-expected.txt.
+        * platform/mac/http/tests/navigation/javascriptlink-frames-expected.txt:
+        * platform/mac/http/tests/xmlhttprequest/methods-async-expected.txt: Renamed from LayoutTests/platform/mac-bigsur/http/tests/xmlhttprequest/methods-async-expected.txt.
+        * platform/mac/http/tests/xmlhttprequest/methods-expected.txt: Renamed from LayoutTests/platform/mac-bigsur/http/tests/xmlhttprequest/methods-expected.txt.
+        * platform/mac/http/tests/xmlhttprequest/workers/methods-async-expected.txt: Renamed from LayoutTests/platform/mac-bigsur/http/tests/xmlhttprequest/workers/methods-async-expected.txt.
+        * platform/mac/http/tests/xmlhttprequest/workers/methods-expected.txt: Renamed from LayoutTests/platform/mac-bigsur/http/tests/xmlhttprequest/workers/methods-expected.txt.
+        * platform/mac/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-method.any-expected.txt: Renamed from LayoutTests/platform/mac-bigsur/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-method.any-expected.txt.
+        * platform/mac/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-method.any.worker-expected.txt: Renamed from LayoutTests/platform/mac-bigsur/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-method.any.worker-expected.txt.
+        * platform/mac/imported/w3c/web-platform-tests/fetch/redirect-navigate/preserve-fragment-expected.txt: Renamed from LayoutTests/platform/mac-bigsur/imported/w3c/web-platform-tests/fetch/redirect-navigate/preserve-fragment-expected.txt.
+        * platform/mac/imported/w3c/web-platform-tests/mathml/relations/css-styling/ignored-properties-001-expected.txt: Renamed from LayoutTests/platform/mac-bigsur/imported/w3c/web-platform-tests/mathml/relations/css-styling/ignored-properties-001-expected.txt.
+        * platform/mac/imported/w3c/web-platform-tests/mathml/relations/css-styling/padding-border-margin/border-002-expected.txt: Renamed from LayoutTests/platform/mac-bigsur/imported/w3c/web-platform-tests/mathml/relations/css-styling/padding-border-margin/border-002-expected.txt.
+        * platform/mac/imported/w3c/web-platform-tests/mathml/relations/css-styling/padding-border-margin/padding-002-expected.txt: Renamed from LayoutTests/platform/mac-bigsur/imported/w3c/web-platform-tests/mathml/relations/css-styling/padding-border-margin/padding-002-expected.txt.
+        * platform/mac/imported/w3c/web-platform-tests/xhr/send-entity-body-empty-expected.txt: Renamed from LayoutTests/platform/mac-bigsur/imported/w3c/web-platform-tests/xhr/send-entity-body-empty-expected.txt.
+        * platform/mac/imported/w3c/web-platform-tests/xhr/send-entity-body-get-head-async-expected.txt: Renamed from LayoutTests/platform/mac-bigsur/imported/w3c/web-platform-tests/xhr/send-entity-body-get-head-async-expected.txt.
+        * platform/mac/imported/w3c/web-platform-tests/xhr/send-entity-body-get-head-expected.txt: Renamed from LayoutTests/platform/mac-bigsur/imported/w3c/web-platform-tests/xhr/send-entity-body-get-head-expected.txt.
+        * platform/mac/imported/w3c/web-platform-tests/xhr/send-entity-body-none-expected.txt: Renamed from LayoutTests/platform/mac-bigsur/imported/w3c/web-platform-tests/xhr/send-entity-body-none-expected.txt.
+        * platform/mac/media/controls-after-reload-expected.txt:
+        * platform/mac/media/video-no-audio-expected.txt:
+        * platform/mac/platform/mac/fast/loader/international/bidi-fallback-font-weight-expected.txt: Renamed from LayoutTests/platform/mac-bigsur/platform/mac/fast/text/international/bidi-fallback-font-weight-expected.txt.
+        * platform/mac/svg/W3C-I18N/tspan-direction-rtl-expected.txt:
+        * platform/mac/svg/custom/svg-fonts-without-missing-glyph-expected.txt:
+        * platform/mac/svg/text/bidi-tspans-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug18359-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug60749-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug7342-expected.txt:
+        * platform/mac/transforms/2d/zoom-menulist-expected.txt:
+
 2020-12-11  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed test gardening for Windows.
