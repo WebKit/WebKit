@@ -234,6 +234,21 @@ void LocalAuthenticator::makeCredential()
 
     // Step 6.
     // Get user consent.
+    if (webAuthenticationModernEnabled()) {
+        if (auto* observer = this->observer()) {
+            auto callback = [weakThis = makeWeakPtr(*this)] (LAContext *context) {
+                ASSERT(RunLoop::isMain());
+                if (!weakThis)
+                    return;
+
+                weakThis->continueMakeCredentialAfterReceivingLAContext(context);
+            };
+            observer->requestLAContextForUserVerification(WTFMove(callback));
+        }
+
+        return;
+    }
+
     if (auto* observer = this->observer()) {
         auto callback = [weakThis = makeWeakPtr(*this)] (LocalAuthenticatorPolicy policy) {
             ASSERT(RunLoop::isMain());
@@ -278,6 +293,33 @@ void LocalAuthenticator::continueMakeCredentialAfterDecidePolicy(LocalAuthentica
         weakThis->continueMakeCredentialAfterUserVerification(accessControl.get(), verification, context);
     };
     m_connection->verifyUser(creationOptions.rp.id, getClientDataType(requestData().options), accessControlRef, WTFMove(callback));
+}
+
+void LocalAuthenticator::continueMakeCredentialAfterReceivingLAContext(LAContext *context)
+{
+    ASSERT(m_state == State::RequestReceived);
+    m_state = State::PolicyDecided;
+
+    RetainPtr<SecAccessControlRef> accessControl;
+    {
+        CFErrorRef errorRef = nullptr;
+        accessControl = adoptCF(SecAccessControlCreateWithFlags(NULL, kSecAttrAccessibleWhenPasscodeSetThisDeviceOnly, kSecAccessControlPrivateKeyUsage | kSecAccessControlUserPresence, &errorRef));
+        auto retainError = adoptCF(errorRef);
+        if (errorRef) {
+            receiveException({ UnknownError, makeString("Couldn't create access control: ", String(((NSError*)errorRef).localizedDescription)) });
+            return;
+        }
+    }
+
+    SecAccessControlRef accessControlRef = accessControl.get();
+    auto callback = [accessControl = WTFMove(accessControl), context = retainPtr(context), weakThis = makeWeakPtr(*this)] (LocalConnection::UserVerification verification) {
+        ASSERT(RunLoop::isMain());
+        if (!weakThis)
+            return;
+
+        weakThis->continueMakeCredentialAfterUserVerification(accessControl.get(), verification, context.get());
+    };
+    m_connection->verifyUser(accessControlRef, context, WTFMove(callback));
 }
 
 void LocalAuthenticator::continueMakeCredentialAfterUserVerification(SecAccessControlRef accessControlRef, LocalConnection::UserVerification verification, LAContext *context)

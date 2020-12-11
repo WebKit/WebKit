@@ -39,6 +39,8 @@
 #include <wtf/RunLoop.h>
 #include <wtf/Vector.h>
 
+OBJC_CLASS LAContext;
+
 namespace API {
 class WebAuthenticationPanel;
 }
@@ -88,6 +90,7 @@ private:
     void requestPin(uint64_t retries, CompletionHandler<void(const WTF::String&)>&&) final;
     void selectAssertionResponse(Vector<Ref<WebCore::AuthenticatorAssertionResponse>>&&, WebAuthenticationSource, CompletionHandler<void(WebCore::AuthenticatorAssertionResponse*)>&&) final;
     void decidePolicyForLocalAuthenticator(CompletionHandler<void(LocalAuthenticatorPolicy)>&&) final;
+    void requestLAContextForUserVerification(CompletionHandler<void(LAContext *)>&&) final;
     void cancelRequest() final;
 
     // Overriden by MockAuthenticatorManager.
@@ -114,7 +117,7 @@ private:
     Vector<UniqueRef<AuthenticatorTransportService>> m_services;
     HashSet<Ref<Authenticator>> m_authenticators;
 
-    bool m_isWebAuthenticationModernEnabled { false };
+    bool m_webAuthenticationModernEnabled { false };
 };
 
 } // namespace WebKit

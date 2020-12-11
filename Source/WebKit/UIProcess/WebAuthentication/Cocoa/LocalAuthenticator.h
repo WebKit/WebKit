@@ -61,6 +61,7 @@ private:
 
     void makeCredential() final;
     void continueMakeCredentialAfterDecidePolicy(LocalAuthenticatorPolicy);
+    void continueMakeCredentialAfterReceivingLAContext(LAContext *);
     void continueMakeCredentialAfterUserVerification(SecAccessControlRef, LocalConnection::UserVerification, LAContext *);
     void continueMakeCredentialAfterAttested(Vector<uint8_t>&& credentialId, Vector<uint8_t>&& authData, NSArray *certificates, NSError *);
 

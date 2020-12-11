@@ -96,6 +96,29 @@ void LocalConnection::verifyUser(const String& rpId, ClientDataType type, SecAcc
     [m_context evaluateAccessControl:accessControl operation:LAAccessControlOperationUseKeySign options:options.get() reply:reply.get()];
 }
 
+void LocalConnection::verifyUser(SecAccessControlRef accessControl, LAContext *context, CompletionHandler<void(UserVerification)>&& completionHandler)
+{
+    auto options = adoptNS([[NSMutableDictionary alloc] init]);
+    [options setObject:@YES forKey:@(LAOptionNotInteractive)];
+
+    auto reply = makeBlockPtr([completionHandler = WTFMove(completionHandler)] (NSDictionary *, NSError *error) mutable {
+        UserVerification verification = UserVerification::Yes;
+        if (error) {
+            LOG_ERROR("Couldn't authenticate with biometrics: %@", error);
+            verification = UserVerification::No;
+            if (error.code == LAErrorUserCancel)
+                verification = UserVerification::Cancel;
+        }
+
+        // This block can be executed in another thread.
+        RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler), verification] () mutable {
+            completionHandler(verification);
+        });
+    });
+
+    [context evaluateAccessControl:accessControl operation:LAAccessControlOperationUseKeySign options:options.get() reply:reply.get()];
+}
+
 RetainPtr<SecKeyRef> LocalConnection::createCredentialPrivateKey(LAContext *context, SecAccessControlRef accessControlRef, const String& secAttrLabel, NSData *secAttrApplicationTag) const
 {
     NSDictionary *attributes = @{

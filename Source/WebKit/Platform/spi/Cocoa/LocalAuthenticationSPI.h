@@ -32,6 +32,7 @@
 #else
 
 typedef NS_ENUM(NSInteger, LAOption) {
+    LAOptionNotInteractive,
     LAOptionAuthenticationTitle,
     LAOptionPasscodeTitle,
     LAOptionFallbackVisible,

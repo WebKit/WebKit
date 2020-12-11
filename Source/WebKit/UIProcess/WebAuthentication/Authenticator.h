@@ -57,6 +57,7 @@ public:
         virtual void requestPin(uint64_t retries, CompletionHandler<void(const WTF::String&)>&&) = 0;
         virtual void selectAssertionResponse(Vector<Ref<WebCore::AuthenticatorAssertionResponse>>&&, WebAuthenticationSource, CompletionHandler<void(WebCore::AuthenticatorAssertionResponse*)>&&) = 0;
         virtual void decidePolicyForLocalAuthenticator(CompletionHandler<void(LocalAuthenticatorPolicy)>&&) = 0;
+        virtual void requestLAContextForUserVerification(CompletionHandler<void(LAContext *)>&&) = 0;
         virtual void cancelRequest() = 0;
     };
 
@@ -67,11 +68,14 @@ public:
     // This operation is guaranteed to execute asynchronously.
     void handleRequest(const WebAuthenticationRequestData&);
 
+    void setWebAuthenticationModernEnabled(bool webAuthenticationModernEnabled) { m_webAuthenticationModernEnabled = webAuthenticationModernEnabled; }
+
 protected:
     Authenticator() = default;
 
     Observer* observer() const { return m_observer.get(); }
     const WebAuthenticationRequestData& requestData() const { return m_pendingRequestData; }
+    bool webAuthenticationModernEnabled() const { return m_webAuthenticationModernEnabled; }
 
     void receiveRespond(Respond&&) const;
 
@@ -81,6 +85,7 @@ private:
 
     WeakPtr<Observer> m_observer;
     WebAuthenticationRequestData m_pendingRequestData;
+    bool m_webAuthenticationModernEnabled { false };
 };
 
 } // namespace WebKit

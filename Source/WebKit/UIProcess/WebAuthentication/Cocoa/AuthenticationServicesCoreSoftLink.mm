@@ -36,5 +36,6 @@ SOFT_LINK_CLASS_FOR_SOURCE(WebKit, AuthenticationServicesCore, ASCAuthorizationP
 SOFT_LINK_CLASS_FOR_SOURCE(WebKit, AuthenticationServicesCore, ASCAuthorizationPresentationContext);
 SOFT_LINK_CLASS_FOR_SOURCE(WebKit, AuthenticationServicesCore, ASCPlatformPublicKeyCredentialLoginChoice);
 SOFT_LINK_CLASS_FOR_SOURCE(WebKit, AuthenticationServicesCore, ASCSecurityKeyPublicKeyCredentialLoginChoice);
+SOFT_LINK_CLASS_FOR_SOURCE(WebKit, AuthenticationServicesCore, ASCAppleIDCredential);
 
 #endif // HAVE(ASC_AUTH_UI)

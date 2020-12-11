@@ -64,8 +64,9 @@ AuthenticatorPresenterCoordinator::AuthenticatorPresenterCoordinator(const Authe
     m_presenter = [allocASCAuthorizationPresenterInstance() init];
     [m_presenter setDelegate:m_presenterDelegate.get()];
 
-    auto completionHandler = makeBlockPtr([manager = m_manager] (id<ASCCredentialProtocol>, NSError *error) mutable {
-        if (!error)
+    auto completionHandler = makeBlockPtr([manager = m_manager] (id<ASCCredentialProtocol> credential, NSError *error) mutable {
+        ASSERT(!RunLoop::isMain());
+        if (credential || !error)
             return;
 
         LOG_ERROR("Couldn't complete the authenticator presentation context: %@", error);
@@ -95,9 +96,33 @@ void AuthenticatorPresenterCoordinator::selectAssertionResponse(Vector<Ref<Authe
     // FIXME(219711): Adopt new UI for the Security Key getAssertion flow.
 }
 
-void AuthenticatorPresenterCoordinator::dimissPresenter()
+void AuthenticatorPresenterCoordinator::requestLAContextForUserVerification(CompletionHandler<void(LAContext *)>&& completionHandler)
 {
+    if (m_laContext) {
+        completionHandler(m_laContext.get());
+        return;
+    }
+
+    m_laContextHandler = WTFMove(completionHandler);
+}
+
+void AuthenticatorPresenterCoordinator::dimissPresenter(WebAuthenticationResult result)
+{
+    if (result == WebAuthenticationResult::Succeeded && m_credentialRequestHandler) {
+        m_credentialRequestHandler();
+        return;
+    }
     // FIXME(219716): Adopt new UI for the dismiss flow.
+}
+
+void AuthenticatorPresenterCoordinator::setLAContext(LAContext *context)
+{
+    if (m_laContextHandler) {
+        m_laContextHandler(context);
+        return;
+    }
+
+    m_laContext = context;
 }
 
 } // namespace WebKit

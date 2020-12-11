@@ -29,6 +29,8 @@
 
 #if USE(APPLE_INTERNAL_SDK)
 
+// FIXME(219767): Remove ASCAppleIDCredential.h.
+#import <AuthenticationServicesCore/ASCAppleIDCredential.h>
 #import <AuthenticationServicesCore/ASCAuthorizationPresentationContext.h>
 #import <AuthenticationServicesCore/ASCAuthorizationPresenter.h>
 #import <AuthenticationServicesCore/ASCPlatformPublicKeyCredentialLoginChoice.h>
@@ -127,6 +129,23 @@ extern NSString * const ASCAuthorizationPresentationContextDataKey;
 
 + (instancetype)new NS_UNAVAILABLE;
 - (instancetype)init NS_UNAVAILABLE;
+
+@end
+
+@protocol ASCCredentialProtocol <NSObject, NSSecureCoding>
+
+@end
+
+// FIXME(219767): Remove ASCAppleIDCredential.
+@interface ASCAppleIDCredential : NSObject <ASCCredentialProtocol>
+
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)new NS_UNAVAILABLE;
+
+- (instancetype)initWithUser:(NSString *)user identityToken:(NSData *)identityToken;
+
+@property (nonatomic, readonly, copy) NSString *user;
+@property (nonatomic, readonly, copy, nullable) NSData *identityToken;
 
 @end
 

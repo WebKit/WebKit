@@ -645,3 +645,17 @@
 ;; Allow accesses to the Springboard view services.
 (allow mach-lookup
     (global-name "com.apple.frontboard.systemappservices"))
+
+;; Allow accesses to the Keychain service
+(allow mach-lookup
+    (global-name "com.apple.securityd"))
+
+(allow file-read* file-write* (home-subpath "/Library/Keychains")) ;; FIXME: This should be removed when <rdar://problem/10479685> is fixed.
+
+(allow file-read*
+       (subpath "/Library/Keychains")
+       (home-literal "/Library/Application Support/SyncServices/Local/ClientsWithChanges/com.apple.Keychain"))
+
+;; Allow accesses to the SEP
+(allow mach-lookup
+    (global-name "com.apple.ctkd.token-client"))

@@ -36,5 +36,6 @@ SOFT_LINK_CLASS_FOR_HEADER(WebKit, ASCAuthorizationPresenter);
 SOFT_LINK_CLASS_FOR_HEADER(WebKit, ASCAuthorizationPresentationContext);
 SOFT_LINK_CLASS_FOR_HEADER(WebKit, ASCPlatformPublicKeyCredentialLoginChoice);
 SOFT_LINK_CLASS_FOR_HEADER(WebKit, ASCSecurityKeyPublicKeyCredentialLoginChoice);
+SOFT_LINK_CLASS_FOR_HEADER(WebKit, ASCAppleIDCredential);
 
 #endif // HAVE(ASC_AUTH_UI)

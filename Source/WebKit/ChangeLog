@@ -1,3 +1,62 @@
+2020-12-10  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Adopt new UI for the Platform Authenticator makeCredential flow
+        https://bugs.webkit.org/show_bug.cgi?id=219709
+        <rdar://problem/72154774>
+
+        Reviewed by Brent Fulgham.
+
+        This patch adopts the new UI for the platform authenticator makeCredential flow. In this new design,
+        the UI will be responsible for creating the LAContext and get it verified by the user. Therefore, WebKit
+        just needs to reverify the LAContext in non-UI mode against the SecAccessControlRef without handling any
+        LA UI anymore.
+
+        Covered by manual tests.
+
+        * Platform/spi/Cocoa/AuthenticationServicesCoreSPI.h:
+        Adds a new class which represents a successful operation.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebAuthn.sb:
+        Adds rule to allow the WebAuthn process to access Keychain and SEP.
+
+        * UIProcess/WebAuthentication/Authenticator.h:
+        (WebKit::Authenticator::setWebAuthenticationModernEnabled):
+        (WebKit::Authenticator::webAuthenticationModernEnabled const):
+        Adds a flag to know which UI to call.
+
+        * UIProcess/WebAuthentication/AuthenticatorManager.cpp:
+        (WebKit::AuthenticatorManager::handleRequest):
+        (WebKit::AuthenticatorManager::enableModernWebAuthentication):
+        (WebKit::AuthenticatorManager::authenticatorAdded):
+        (WebKit::AuthenticatorManager::requestLAContextForUserVerification):
+        (WebKit::AuthenticatorManager::invokePendingCompletionHandler):
+        * UIProcess/WebAuthentication/AuthenticatorManager.h:
+        Adds plumbing to the new UI method.
+
+        * UIProcess/WebAuthentication/Cocoa/AuthenticationServicesCoreSoftLink.h:
+        * UIProcess/WebAuthentication/Cocoa/AuthenticationServicesCoreSoftLink.mm:
+        Paperwork.
+
+        * UIProcess/WebAuthentication/Cocoa/AuthenticatorPresenterCoordinator.h:
+        (WebKit::AuthenticatorPresenterCoordinator::setCredentialRequestHandler):
+        This handler is from the UI delegate which is supposed to call if the operation succeeds.
+        * UIProcess/WebAuthentication/Cocoa/AuthenticatorPresenterCoordinator.mm:
+        (WebKit::AuthenticatorPresenterCoordinator::AuthenticatorPresenterCoordinator):
+        (WebKit::AuthenticatorPresenterCoordinator::requestLAContextForUserVerification):
+        (WebKit::AuthenticatorPresenterCoordinator::dimissPresenter):
+        (WebKit::AuthenticatorPresenterCoordinator::setLAContext):
+        * UIProcess/WebAuthentication/Cocoa/LocalAuthenticator.h:
+        * UIProcess/WebAuthentication/Cocoa/LocalAuthenticator.mm:
+        (WebKit::LocalAuthenticator::makeCredential):
+        (WebKit::LocalAuthenticator::continueMakeCredentialAfterReceivingLAContext):
+        * UIProcess/WebAuthentication/Cocoa/LocalConnection.h:
+        * UIProcess/WebAuthentication/Cocoa/LocalConnection.mm:
+        (WebKit::LocalConnection::verifyUser):
+        * UIProcess/WebAuthentication/Cocoa/WKASCAuthorizationPresenterDelegate.mm:
+        (-[WKASCAuthorizationPresenterDelegate authorizationPresenter:credentialRequestedForLoginChoice:authenticatedContext:completionHandler:]):
+        (-[WKASCAuthorizationPresenterDelegate dispatchCoordinatorCallback:]):
+        Implements the new UI logic.
+
 2020-12-11  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Remove access to com.apple.MTLCompilerService in the WebContent process

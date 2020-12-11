@@ -165,10 +165,10 @@ void AuthenticatorManager::handleRequest(WebAuthenticationRequestData&& data, Ca
     // 2. Ask clients to show appropriate UI if any and then start the request.
     initTimeOutTimer();
 
-    // FIXME<rdar://problem/70822834>: The m_isWebAuthenticationModernEnabled is used to determine
+    // FIXME<rdar://problem/70822834>: The m_webAuthenticationModernEnabled is used to determine
     // whether or not we are in the UIProcess.
     // If so, continue to the old route. Otherwise, use the modern WebAuthn process way.
-    if (!m_isWebAuthenticationModernEnabled) {
+    if (!m_webAuthenticationModernEnabled) {
         runPanel();
         return;
     }
@@ -209,7 +209,7 @@ void AuthenticatorManager::cancel()
 
 void AuthenticatorManager::enableModernWebAuthentication()
 {
-    m_isWebAuthenticationModernEnabled = true;
+    m_webAuthenticationModernEnabled = true;
 }
 
 void AuthenticatorManager::clearStateAsync()
@@ -236,6 +236,7 @@ void AuthenticatorManager::authenticatorAdded(Ref<Authenticator>&& authenticator
     ASSERT(RunLoop::isMain());
     authenticator->setObserver(*this);
     authenticator->handleRequest(m_pendingRequestData);
+    authenticator->setWebAuthenticationModernEnabled(m_webAuthenticationModernEnabled);
     auto addResult = m_authenticators.add(WTFMove(authenticator));
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
 }
@@ -351,6 +352,16 @@ void AuthenticatorManager::decidePolicyForLocalAuthenticator(CompletionHandler<v
     });
 }
 
+void AuthenticatorManager::requestLAContextForUserVerification(CompletionHandler<void(LAContext *)>&& completionHandler)
+{
+    if (!m_presenter) {
+        completionHandler(nullptr);
+        return;
+    }
+
+    m_presenter->requestLAContextForUserVerification(WTFMove(completionHandler));
+}
+
 void AuthenticatorManager::cancelRequest()
 {
     invokePendingCompletionHandler(ExceptionData { NotAllowedError, "This request has been cancelled by the user."_s });
@@ -442,11 +453,13 @@ void AuthenticatorManager::runPresenter()
 
 void AuthenticatorManager::invokePendingCompletionHandler(Respond&& respond)
 {
+    auto result = WTF::holds_alternative<Ref<AuthenticatorResponse>>(respond) ? WebAuthenticationResult::Succeeded : WebAuthenticationResult::Failed;
+
     // This is for the new UI.
     if (m_presenter)
-        m_presenter->dimissPresenter();
+        m_presenter->dimissPresenter(result);
     else {
-        dispatchPanelClientCall([result = WTF::holds_alternative<Ref<AuthenticatorResponse>>(respond) ? WebAuthenticationResult::Succeeded : WebAuthenticationResult::Failed] (const API::WebAuthenticationPanel& panel) {
+        dispatchPanelClientCall([result] (const API::WebAuthenticationPanel& panel) {
             panel.client().dismissPanel(result);
         });
     }

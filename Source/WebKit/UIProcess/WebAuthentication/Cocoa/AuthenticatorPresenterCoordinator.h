@@ -35,6 +35,7 @@
 #include <wtf/WeakPtr.h>
 
 OBJC_CLASS ASCAuthorizationPresenter;
+OBJC_CLASS LAContext;
 OBJC_CLASS WKASCAuthorizationPresenterDelegate;
 
 namespace WebCore {
@@ -50,18 +51,28 @@ class AuthenticatorPresenterCoordinator : public CanMakeWeakPtr<AuthenticatorPre
     WTF_MAKE_NONCOPYABLE(AuthenticatorPresenterCoordinator);
 public:
     using TransportSet = HashSet<WebCore::AuthenticatorTransport, WTF::IntHash<WebCore::AuthenticatorTransport>, WTF::StrongEnumHashTraits<WebCore::AuthenticatorTransport>>;
+    using CredentialRequestHandler = Function<void()>;
 
     AuthenticatorPresenterCoordinator(const AuthenticatorManager&, const String& rpId, const TransportSet&, WebCore::ClientDataType);
 
     void updatePresenter(WebAuthenticationStatus);
     void requestPin(uint64_t retries, CompletionHandler<void(const String&)>&&);
     void selectAssertionResponse(Vector<Ref<WebCore::AuthenticatorAssertionResponse>>&&, WebAuthenticationSource, CompletionHandler<void(WebCore::AuthenticatorAssertionResponse*)>&&);
-    void dimissPresenter();
+    void requestLAContextForUserVerification(CompletionHandler<void(LAContext *)>&&);
+    void dimissPresenter(WebAuthenticationResult);
+
+    void setCredentialRequestHandler(CredentialRequestHandler&& handler) { m_credentialRequestHandler = WTFMove(handler); }
+    void setLAContext(LAContext *);
 
 private:
     WeakPtr<AuthenticatorManager> m_manager;
     RetainPtr<ASCAuthorizationPresenter> m_presenter;
     RetainPtr<WKASCAuthorizationPresenterDelegate> m_presenterDelegate;
+
+    CredentialRequestHandler m_credentialRequestHandler;
+
+    CompletionHandler<void(LAContext *)> m_laContextHandler;
+    RetainPtr<LAContext> m_laContext;
 };
 
 } // namespace WebKit

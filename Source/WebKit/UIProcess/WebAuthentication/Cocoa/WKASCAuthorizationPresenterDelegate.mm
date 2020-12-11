@@ -30,6 +30,8 @@
 
 #import "AuthenticatorPresenterCoordinator.h"
 
+#import "AuthenticationServicesCoreSoftLink.h"
+
 NS_ASSUME_NONNULL_BEGIN
 
 @implementation WKASCAuthorizationPresenterDelegate {
@@ -45,12 +47,39 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)authorizationPresenter:(ASCAuthorizationPresenter *)presenter credentialRequestedForLoginChoice:(id <ASCLoginChoiceProtocol>)loginChoice authenticatedContext:(nullable LAContext *)context completionHandler:(void (^)(id <ASCCredentialProtocol> _Nullable credential, NSError * _Nullable error))completionHandler
 {
-    // FIXME(219709): Adopt new UI for the Platform Authenticator makeCredential flow.
+    auto requestHandler = [completionHandler = makeBlockPtr(completionHandler)] {
+        // FIXME(219767): Replace the ASCAppleIDCredential with the upcoming WebAuthn credentials one.
+        // This is just a place holder to tell the UI that the ceremony succeeds.
+        completionHandler(adoptNS([WebKit::allocASCAppleIDCredentialInstance() initWithUser:@"" identityToken:adoptNS([[NSData alloc] init]).get()]).get(), nil);
+    };
+    [self dispatchCoordinatorCallback:[requestHandler = WTFMove(requestHandler)] (WebKit::AuthenticatorPresenterCoordinator& coordinator) mutable {
+        coordinator.setCredentialRequestHandler(WTFMove(requestHandler));
+    }];
+
+    if ([loginChoice isKindOfClass:WebKit::getASCPlatformPublicKeyCredentialLoginChoiceClass()]) {
+        if ([(ASCPlatformPublicKeyCredentialLoginChoice *)loginChoice isRegistrationRequest]) {
+            [self dispatchCoordinatorCallback:[context = retainPtr(context)] (WebKit::AuthenticatorPresenterCoordinator& coordinator) mutable {
+                coordinator.setLAContext(context.get());
+            }];
+
+            return;
+        }
+    }
 }
 
 - (void)authorizationPresenter:(ASCAuthorizationPresenter *)presenter validateUserEnteredPIN:(NSString *)pin completionHandler:(void (^)(id <ASCCredentialProtocol> credential, NSError *error))completionHandler
 {
     // FIXME(219712): Adopt new UI for the Client PIN flow.
+}
+
+- (void)dispatchCoordinatorCallback:(Function<void(WebKit::AuthenticatorPresenterCoordinator&)>&&)callback
+{
+    ASSERT(!RunLoop::isMain());
+    RunLoop::main().dispatch([coordinator = _coordinator, callback = WTFMove(callback)] {
+        if (!coordinator)
+            return;
+        callback(*coordinator);
+    });
 }
 
 @end
