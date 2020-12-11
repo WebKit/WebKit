@@ -1,3 +1,9 @@
+2020-12-11  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed test gardening for Windows.
+
+        * platform/win/fast/url/data-url-mediatype-expected.txt: Correct the baseline.
+
 2020-12-11  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Reflect.preventExtensions should not throw if called on WindowProxy or Location
