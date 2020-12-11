@@ -36,6 +36,10 @@
 #include <X11/Xlib.h>
 #endif
 
+#if USE(GCRYPT)
+#include <pal/crypto/gcrypt/Initialization.h>
+#endif
+
 namespace WebKit {
 using namespace WebCore;
 
@@ -43,6 +47,10 @@ class WebProcessMainGtk final: public AuxiliaryProcessMainBase {
 public:
     bool platformInitialize() override
     {
+#if USE(GCRYPT)
+        PAL::GCrypt::initialize();
+#endif
+
 #if ENABLE(DEVELOPER_MODE)
         if (g_getenv("WEBKIT2_PAUSE_WEB_PROCESS_ON_LAUNCH"))
             g_usleep(30 * G_USEC_PER_SEC);
@@ -63,6 +71,10 @@ public:
 
 int WebProcessMain(int argc, char** argv)
 {
+    // Ignore the GTK_THEME environment variable, the theme is always set by the UI process now.
+    // This call needs to happen before any threads begin execution
+    unsetenv("GTK_THEME");
+
     return AuxiliaryProcessMain<WebProcess, WebProcessMainGtk>(argc, argv);
 }
 

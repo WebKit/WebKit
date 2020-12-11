@@ -31,12 +31,24 @@
 #include "NetworkProcess.h"
 #include <WebCore/NetworkStorageSession.h>
 
+#if USE(GCRYPT)
+#include <pal/crypto/gcrypt/Initialization.h>
+#endif
+
 namespace WebKit {
 
 static RefPtr<NetworkProcess> globalNetworkProcess;
 
 class NetworkProcessMainSoup final: public AuxiliaryProcessMainBase {
 public:
+    bool platformInitialize() override
+    {
+#if USE(GCRYPT)
+        PAL::GCrypt::initialize();
+#endif
+        return true;
+    }
+
     void platformFinalize() override
     {
         // FIXME: Is this still needed? We should probably destroy all existing sessions at this point instead.

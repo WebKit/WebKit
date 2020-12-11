@@ -23,21 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "config.h"
 #include "NetworkProcessMain.h"
-
-#include <cstdlib>
-
-#if USE(GCRYPT)
-#include <pal/crypto/gcrypt/Initialization.h>
-#endif
-
-using namespace WebKit;
 
 int main(int argc, char** argv)
 {
-#if USE(GCRYPT)
-    PAL::GCrypt::initialize();
-#endif
-
-    return NetworkProcessMain(argc, argv);
+    return WebKit::NetworkProcessMain(argc, argv);
 }

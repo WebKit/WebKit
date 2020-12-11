@@ -23,24 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "config.h"
 #include "WebProcessMain.h"
-
-#include <cstdlib>
-
-#if USE(GCRYPT)
-#include <pal/crypto/gcrypt/Initialization.h>
-#endif
-
-using namespace WebKit;
 
 int main(int argc, char** argv)
 {
-    // Ignore the GTK_THEME environment variable, the theme is always set by the UI process now.
-    unsetenv("GTK_THEME");
-
-#if USE(GCRYPT)
-    PAL::GCrypt::initialize();
-#endif
-
-    return WebProcessMain(argc, argv);
+    return WebKit::WebProcessMain(argc, argv);
 }

@@ -1,3 +1,23 @@
+2020-12-11  Don Olmstead  <don.olmstead@sony.com>
+
+        [GLib] Move GCrypt initialization to platformInitialize
+        https://bugs.webkit.org/show_bug.cgi?id=219749
+
+        Reviewed by Adrian Perez de Castro.
+
+        It makes more sense for initialization of GCrypt to occur in platformInitialize
+        than in the main method of the process. This means that the process does not have
+        to link gcrypt libraries and can just link WebKit only.
+
+        * NetworkProcess/EntryPoint/unix/NetworkProcessMain.cpp:
+        (main):
+        * NetworkProcess/soup/NetworkProcessMainSoup.cpp:
+        * WebProcess/EntryPoint/unix/WebProcessMain.cpp:
+        (main):
+        * WebProcess/gtk/WebProcessMainGtk.cpp:
+        (WebKit::WebProcessMain):
+        * WebProcess/wpe/WebProcessMainWPE.cpp:
+
 2020-12-11  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Remove access to the IOKIt class AGXDeviceUserClient in the WebContent process

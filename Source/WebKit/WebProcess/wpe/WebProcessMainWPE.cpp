@@ -36,6 +36,10 @@
 #include <atk/atk.h>
 #endif
 
+#if USE(GCRYPT)
+#include <pal/crypto/gcrypt/Initialization.h>
+#endif
+
 namespace WebKit {
 using namespace WebCore;
 
@@ -76,6 +80,10 @@ class WebProcessMainWPE final : public AuxiliaryProcessMainBase {
 public:
     bool platformInitialize() override
     {
+#if USE(GCRYPT)
+        PAL::GCrypt::initialize();
+#endif
+
 #if ENABLE(DEVELOPER_MODE)
         if (g_getenv("WEBKIT2_PAUSE_WEB_PROCESS_ON_LAUNCH"))
             WTF::sleep(30_s);
