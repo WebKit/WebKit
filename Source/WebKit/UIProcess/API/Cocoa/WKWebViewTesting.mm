@@ -296,6 +296,20 @@
     return @(_page->suspendMediaPlaybackCounter());
 }
 
+- (void)_setPrivateClickMeasurementOverrideTimerForTesting:(BOOL)overrideTimer completionHandler:(void(^)(void))completionHandler
+{
+    _page->setPrivateClickMeasurementOverrideTimerForTesting(overrideTimer, [completionHandler = makeBlockPtr(completionHandler)] {
+        completionHandler();
+    });
+}
+
+- (void)_setPrivateClickMeasurementConversionURLForTesting:(NSURL *)url completionHandler:(void(^)(void))completionHandler
+{
+    _page->setPrivateClickMeasurementConversionURLForTesting(url, [completionHandler = makeBlockPtr(completionHandler)] {
+        completionHandler();
+    });
+}
+
 - (void)_didPresentContactPicker
 {
     // For subclasses to override.

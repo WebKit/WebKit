@@ -235,10 +235,12 @@ public:
     };
 
     PrivateClickMeasurement() = default;
-    PrivateClickMeasurement(SourceID sourceID, const SourceSite& sourceSite, const AttributeOnSite& attributeOnSite, WallTime timeOfAdClick = WallTime::now())
+    PrivateClickMeasurement(SourceID sourceID, const SourceSite& sourceSite, const AttributeOnSite& attributeOnSite, String&& sourceDescription = { }, String&& purchaser = { }, WallTime timeOfAdClick = WallTime::now())
         : m_sourceID { sourceID }
         , m_sourceSite { sourceSite }
         , m_attributeOnSite { attributeOnSite }
+        , m_sourceDescription { WTFMove(sourceDescription) }
+        , m_purchaser { WTFMove(purchaser) }
         , m_timeOfAdClick { timeOfAdClick }
     {
     }
@@ -254,9 +256,12 @@ public:
     WallTime timeOfAdClick() const { return m_timeOfAdClick; }
     Optional<WallTime> earliestTimeToSend() const { return m_earliestTimeToSend; };
     void setEarliestTimeToSend(WallTime time) { m_earliestTimeToSend = time; }
-    SourceID sourceID() { return m_sourceID; }
+    const SourceID& sourceID() const { return m_sourceID; }
     Optional<AttributionTriggerData> attributionTriggerData() { return m_attributionTriggerData; }
     void setAttribution(AttributionTriggerData&& attributionTriggerData) { m_attributionTriggerData = WTFMove(attributionTriggerData); }
+
+    const String& sourceDescription() const { return m_sourceDescription; }
+    const String& purchaser() const { return m_purchaser; }
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static Optional<PrivateClickMeasurement> decode(Decoder&);
@@ -268,6 +273,8 @@ private:
     SourceID m_sourceID;
     SourceSite m_sourceSite;
     AttributeOnSite m_attributeOnSite;
+    String m_sourceDescription;
+    String m_purchaser;
     WallTime m_timeOfAdClick;
 
     Optional<AttributionTriggerData> m_attributionTriggerData;
@@ -277,7 +284,14 @@ private:
 template<class Encoder>
 void PrivateClickMeasurement::encode(Encoder& encoder) const
 {
-    encoder << m_sourceID.id << m_sourceSite.registrableDomain << m_attributeOnSite.registrableDomain << m_timeOfAdClick << m_attributionTriggerData << m_earliestTimeToSend;
+    encoder << m_sourceID.id
+        << m_sourceSite.registrableDomain
+        << m_attributeOnSite.registrableDomain
+        << m_sourceDescription
+        << m_purchaser
+        << m_timeOfAdClick
+        << m_attributionTriggerData
+        << m_earliestTimeToSend;
 }
 
 template<class Decoder>
@@ -298,6 +312,16 @@ Optional<PrivateClickMeasurement> PrivateClickMeasurement::decode(Decoder& decod
     if (!attributeOnRegistrableDomain)
         return WTF::nullopt;
     
+    Optional<String> sourceDescription;
+    decoder >> sourceDescription;
+    if (!sourceDescription)
+        return WTF::nullopt;
+    
+    Optional<String> purchaser;
+    decoder >> purchaser;
+    if (!purchaser)
+        return WTF::nullopt;
+    
     Optional<WallTime> timeOfAdClick;
     decoder >> timeOfAdClick;
     if (!timeOfAdClick)
@@ -313,7 +337,14 @@ Optional<PrivateClickMeasurement> PrivateClickMeasurement::decode(Decoder& decod
     if (!earliestTimeToSend)
         return WTF::nullopt;
     
-    PrivateClickMeasurement attribution { SourceID { WTFMove(*sourceID) }, SourceSite { WTFMove(*sourceRegistrableDomain) }, AttributeOnSite { WTFMove(*attributeOnRegistrableDomain) } };
+    PrivateClickMeasurement attribution {
+        SourceID { WTFMove(*sourceID) },
+        SourceSite { WTFMove(*sourceRegistrableDomain) },
+        AttributeOnSite { WTFMove(*attributeOnRegistrableDomain) },
+        WTFMove(*sourceDescription),
+        WTFMove(*purchaser),
+        WTFMove(*timeOfAdClick)
+    };
     attribution.m_attributionTriggerData = WTFMove(*attributionTriggerData);
     attribution.m_earliestTimeToSend = WTFMove(*earliestTimeToSend);
     

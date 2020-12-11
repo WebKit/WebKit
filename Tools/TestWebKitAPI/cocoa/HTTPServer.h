@@ -165,5 +165,6 @@ private:
 
 } // namespace TestWebKitAPI
 
+RetainPtr<SecCertificateRef> testCertificate();
 RetainPtr<SecIdentityRef> testIdentity();
 RetainPtr<SecIdentityRef> testIdentity2();

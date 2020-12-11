@@ -5637,6 +5637,8 @@
 		DF74275C24F4955000F8ABE9 /* PDFPluginIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PDFPluginIdentifier.h; sourceTree = "<group>"; };
 		DF84CEE2249AA21F009096F6 /* WKPDFHUDView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKPDFHUDView.mm; path = PDF/WKPDFHUDView.mm; sourceTree = "<group>"; };
 		DF84CEE3249AA21F009096F6 /* WKPDFHUDView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKPDFHUDView.h; path = PDF/WKPDFHUDView.h; sourceTree = "<group>"; };
+		DF8523BA2583176F00AEADD0 /* UIKitSoftLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIKitSoftLink.h; sourceTree = "<group>"; };
+		DF8523BB258317A900AEADD0 /* UIKitSoftLink.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = UIKitSoftLink.mm; sourceTree = "<group>"; };
 		E105FE5318D7B9DE008F57A8 /* EditingRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditingRange.h; sourceTree = "<group>"; };
 		E133FD891423DD7F00FC7BFB /* WebKit.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = WebKit.icns; path = Resources/WebKit.icns; sourceTree = "<group>"; };
 		E14A954716E016A40068DE82 /* NetworkProcessPlatformStrategies.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkProcessPlatformStrategies.cpp; sourceTree = "<group>"; };
@@ -9304,6 +9306,8 @@
 				A182D5B21BE6BD250087A7CC /* AccessibilityIOS.mm */,
 				A1798B4F2230A0FE000764BD /* PaymentAuthorizationController.h */,
 				A1798B502230A0FE000764BD /* PaymentAuthorizationController.mm */,
+				DF8523BA2583176F00AEADD0 /* UIKitSoftLink.h */,
+				DF8523BB258317A900AEADD0 /* UIKitSoftLink.mm */,
 			);
 			path = ios;
 			sourceTree = "<group>";

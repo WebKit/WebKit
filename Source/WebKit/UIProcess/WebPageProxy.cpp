@@ -4679,8 +4679,8 @@ void WebPageProxy::didCommitLoadForFrame(FrameIdentifier frameID, FrameInfoData&
 
     if (frame->isMainFrame()) {
         Optional<WebCore::PrivateClickMeasurement> privateClickMeasurement;
-        if (m_newPageNavigationPrivateClickMeasurement)
-            privateClickMeasurement = m_newPageNavigationPrivateClickMeasurement;
+        if (m_privateClickMeasurement)
+            privateClickMeasurement = m_privateClickMeasurement;
         else if (navigation && navigation->privateClickMeasurement())
             privateClickMeasurement = navigation->privateClickMeasurement();
         if (privateClickMeasurement) {
@@ -4688,7 +4688,7 @@ void WebPageProxy::didCommitLoadForFrame(FrameIdentifier frameID, FrameInfoData&
                 websiteDataStore().networkProcess().send(Messages::NetworkProcess::StorePrivateClickMeasurement(m_websiteDataStore->sessionID(), *privateClickMeasurement), 0);
         }
     }
-    m_newPageNavigationPrivateClickMeasurement.reset();
+    m_privateClickMeasurement.reset();
 
     if (frame->isMainFrame()) {
         m_mainFrameHasCustomContentProvider = frameHasCustomContentProvider;
@@ -5561,7 +5561,7 @@ void WebPageProxy::createNewPage(FrameInfoData&& originatingFrameInfoData, WebPa
 
         newPage->m_shouldSuppressAppLinksInNextNavigationPolicyDecision = mainFrameURL.host() == request.url().host();
 
-        newPage->m_newPageNavigationPrivateClickMeasurement = privateClickMeasurement;
+        newPage->m_privateClickMeasurement = privateClickMeasurement;
 #if HAVE(APP_SSO)
         newPage->m_shouldSuppressSOAuthorizationInNextNavigationPolicyDecision = true;
 #endif

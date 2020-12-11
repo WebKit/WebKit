@@ -2939,7 +2939,7 @@ PrivateClickMeasurement ResourceLoadStatisticsDatabaseStore::buildPrivateClickMe
     auto sourceID = statement->getColumnInt(2);
     auto timeOfAdClick = attributionType == PrivateClickMeasurementAttributionType::Attributed ? statement->getColumnDouble(5) : statement->getColumnDouble(3);
 
-    PrivateClickMeasurement attribution(WebCore::PrivateClickMeasurement::SourceID(sourceID), WebCore::PrivateClickMeasurement::SourceSite(RegistrableDomain::uncheckedCreateFromRegistrableDomainString(sourceSiteDomain)), WebCore::PrivateClickMeasurement::AttributeOnSite(RegistrableDomain::uncheckedCreateFromRegistrableDomainString(attributeOnSiteDomain)), WallTime::fromRawSeconds(timeOfAdClick));
+    PrivateClickMeasurement attribution(WebCore::PrivateClickMeasurement::SourceID(sourceID), WebCore::PrivateClickMeasurement::SourceSite(RegistrableDomain::uncheckedCreateFromRegistrableDomainString(sourceSiteDomain)), WebCore::PrivateClickMeasurement::AttributeOnSite(RegistrableDomain::uncheckedCreateFromRegistrableDomainString(attributeOnSiteDomain)), { }, { }, WallTime::fromRawSeconds(timeOfAdClick));
     
     if (attributionType == PrivateClickMeasurementAttributionType::Attributed) {
         auto attributionTriggerData = statement->getColumnInt(3);

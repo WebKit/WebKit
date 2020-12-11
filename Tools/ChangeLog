@@ -1,3 +1,19 @@
+2020-12-10  Alex Christensen  <achristensen@webkit.org>
+
+        Accept click measurement data from hosting application
+        https://bugs.webkit.org/show_bug.cgi?id=219763
+        <rdar://problem/72121094>
+
+        Reviewed by John Wilander.
+
+        * TestWebKitAPI/SourcesCocoa.txt:
+        * TestWebKitAPI/Tests/WebKitCocoa/Challenge.mm:
+        (testCertificate):
+        * TestWebKitAPI/Tests/WebKitCocoa/EventAttribution.mm: Added.
+        (-[MockEventAttribution initWithReportEndpoint:attributeOn:]):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/cocoa/HTTPServer.h:
+
 2020-12-10  Chris Dumez  <cdumez@apple.com>
 
         [GPUProcess] Cut in half amount of IPC needed to do WebAudio

@@ -1,3 +1,33 @@
+2020-12-10  Alex Christensen  <achristensen@webkit.org>
+
+        Accept click measurement data from hosting application
+        https://bugs.webkit.org/show_bug.cgi?id=219763
+        <rdar://problem/72121094>
+
+        Reviewed by John Wilander.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        (WebKit::ResourceLoadStatisticsDatabaseStore::buildPrivateClickMeasurementFromDatabase):
+        * Platform/ios/UIKitSoftLink.h: Added.
+        * Platform/ios/UIKitSoftLink.mm: Added.
+        * Platform/spi/ios/UIKitSPI.h:
+        * SourcesCocoa.txt:
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/API/Cocoa/WKWebViewPrivateForTesting.h:
+        * UIProcess/API/Cocoa/WKWebViewTesting.mm:
+        (-[WKWebView _setPrivateClickMeasurementOverrideTimerForTesting:completionHandler:]):
+        (-[WKWebView _setPrivateClickMeasurementConversionURLForTesting:completionHandler:]):
+        * UIProcess/API/ios/WKWebViewIOS.mm:
+        (-[WKWebView _setEventAttribution:]):
+        (-[WKWebView _eventAttribution]):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didCommitLoadForFrame):
+        (WebKit::WebPageProxy::createNewPage):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::setPrivateClickMeasurement):
+        (WebKit::WebPageProxy::privateClickMeasurement const):
+        * WebKit.xcodeproj/project.pbxproj:
+
 2020-12-10  Peng Liu  <peng.liu6@apple.com>
 
         [Media in GPU Process][MSE] Implement several methods in SourceBufferPrivateRemote to make seeking more reliable

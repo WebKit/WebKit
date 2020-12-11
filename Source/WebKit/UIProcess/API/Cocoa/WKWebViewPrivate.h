@@ -112,6 +112,7 @@ typedef NS_OPTIONS(NSUInteger, _WKRectEdge) {
 @class WKDownload;
 @class WKFrameInfo;
 @class WKWebpagePreferences;
+@class _UIEventAttribution;
 @class _WKApplicationManifest;
 @class _WKFrameHandle;
 @class _WKFrameTreeNode;
@@ -363,6 +364,8 @@ for this property.
 #if TARGET_OS_IPHONE
 
 @interface WKWebView (WKPrivateIOS)
+
+@property (nonatomic, copy, setter=_setEventAttribution:) _UIEventAttribution *_eventAttribution WK_API_AVAILABLE(ios(WK_IOS_TBA));
 
 @property (nonatomic, readonly) CGRect _contentVisibleRect WK_API_AVAILABLE(ios(10.0));
 

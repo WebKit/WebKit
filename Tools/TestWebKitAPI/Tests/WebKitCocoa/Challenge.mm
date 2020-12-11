@@ -47,7 +47,7 @@
 
 static bool navigationFinished;
 
-static RetainPtr<SecCertificateRef> testCertificate()
+RetainPtr<SecCertificateRef> testCertificate()
 {
     auto certificateBytes = TestWebKitAPI::TCPServer::testCertificate();
     return adoptCF(SecCertificateCreateWithData(nullptr, (__bridge CFDataRef)[NSData dataWithBytes:certificateBytes.data() length:certificateBytes.size()]));

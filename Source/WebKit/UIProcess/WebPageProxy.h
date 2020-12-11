@@ -672,6 +672,9 @@ public:
     void setDelegatesScrolling(bool delegatesScrolling) { m_delegatesScrolling = delegatesScrolling; }
     bool delegatesScrolling() const { return m_delegatesScrolling; }
 
+    void setPrivateClickMeasurement(Optional<WebCore::PrivateClickMeasurement>&& measurement) { m_privateClickMeasurement = WTFMove(measurement); }
+    const Optional<WebCore::PrivateClickMeasurement>& privateClickMeasurement() const { return m_privateClickMeasurement; }
+
     enum class ActivityStateChangeDispatchMode : bool { Deferrable, Immediate };
     enum class ActivityStateChangeReplyMode : bool { Asynchronous, Synchronous };
     void activityStateDidChange(OptionSet<WebCore::ActivityState::Flag> mayHaveChanged, ActivityStateChangeDispatchMode = ActivityStateChangeDispatchMode::Deferrable, ActivityStateChangeReplyMode = ActivityStateChangeReplyMode::Asynchronous);
@@ -2905,7 +2908,7 @@ private:
 
     size_t m_suspendMediaPlaybackCounter { 0 };
 
-    Optional<WebCore::PrivateClickMeasurement> m_newPageNavigationPrivateClickMeasurement;
+    Optional<WebCore::PrivateClickMeasurement> m_privateClickMeasurement;
 };
 
 } // namespace WebKit
