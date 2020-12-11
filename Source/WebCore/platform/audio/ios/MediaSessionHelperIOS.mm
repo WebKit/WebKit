@@ -57,6 +57,7 @@ SOFT_LINK_CONSTANT_MAY_FAIL(Celestial, AVSystemController_CarPlayIsConnectedAttr
 SOFT_LINK_CONSTANT_MAY_FAIL(Celestial, AVSystemController_CarPlayIsConnectedDidChangeNotification, NSString *)
 SOFT_LINK_CONSTANT_MAY_FAIL(Celestial, AVSystemController_CarPlayIsConnectedNotificationParameter, NSString *)
 SOFT_LINK_CONSTANT_MAY_FAIL(Celestial, AVSystemController_ServerConnectionDiedNotification, NSString *)
+SOFT_LINK_CONSTANT_MAY_FAIL(Celestial, AVSystemController_SubscribeToNotificationsAttribute, NSString *)
 #endif
 
 using namespace WebCore;
@@ -239,6 +240,10 @@ void MediaSessionHelperiOS::mediaServerConnectionDied()
 {
     updateCarPlayIsConnected(WTF::nullopt);
 
+    // FIXME: Remove these once rdar://27662716 lands
+    if (canLoadAVSystemController_CarPlayIsConnectedDidChangeNotification() && canLoadAVSystemController_SubscribeToNotificationsAttribute())
+        [[getAVSystemControllerClass() sharedAVSystemController] setAttribute:@[getAVSystemController_CarPlayIsConnectedDidChangeNotification()] forKey:getAVSystemController_SubscribeToNotificationsAttribute() error:nil];
+
     if (!m_havePresentedApplicationPID)
         return;
 
@@ -352,6 +357,8 @@ void MediaSessionHelperiOS::externalOutputDeviceAvailableDidChange()
         [center addObserver:self selector:@selector(mediaServerConnectionDied:) name:getAVSystemController_ServerConnectionDiedNotification() object:nil];
     if (canLoadAVSystemController_CarPlayIsConnectedDidChangeNotification())
         [center addObserver:self selector:@selector(carPlayIsConnectedDidChange:) name:getAVSystemController_CarPlayIsConnectedDidChangeNotification() object:nil];
+    if (canLoadAVSystemController_CarPlayIsConnectedDidChangeNotification() && canLoadAVSystemController_SubscribeToNotificationsAttribute())
+        [[getAVSystemControllerClass() sharedAVSystemController] setAttribute:@[getAVSystemController_CarPlayIsConnectedDidChangeNotification()] forKey:getAVSystemController_SubscribeToNotificationsAttribute() error:nil];
 #endif
 
     // Now playing won't work unless we turn on the delivery of remote control events.
