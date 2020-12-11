@@ -665,18 +665,6 @@ PrivateClickMeasurementDebugModeEnabled:
     WebKit:
       default: false
 
-PrivateClickMeasurementEnabled:
-  type: bool
-  humanReadableName: "Private Click Measurement"
-  humanReadableDescription: "Enable Private Click Measurement for Cross-Site Link Navigations"
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: true
-    WebCore:
-      default: true
-
 ProcessSwapOnCrossSiteNavigationEnabled:
   type: bool
   humanReadableName: "Swap Processes on Cross-Site Navigation"

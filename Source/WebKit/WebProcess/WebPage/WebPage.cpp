@@ -3788,6 +3788,8 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     m_needsInAppBrowserPrivacyQuirks = store.getBoolValueForKey(WebPreferencesKey::needsInAppBrowserPrivacyQuirksKey());
 #endif
 
+    settings.setPrivateClickMeasurementEnabled(store.getBoolValueForKey(WebPreferencesKey::privateClickMeasurementEnabledKey()));
+
     if (m_drawingArea)
         m_drawingArea->updatePreferences(store);
 

@@ -1,3 +1,24 @@
+2020-12-11  Brent Fulgham  <bfulgham@apple.com>
+
+        Expose API for enabling/disabling Private Click Measurement
+        https://bugs.webkit.org/show_bug.cgi?id=219791
+        <rdar://problem/70502198>
+
+        Reviewed by Alex Christensen.
+
+        Tested by existing PCM test cases.
+
+        This patch moves the flag for enabling and disabling PCM support from the Experimental
+        features settings to standard settings in preparation for exposing the option in more
+        permanent UI. This patch does not make any changes in behavior.
+
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (-[WKPreferences _privateClickMeasurementEnabled]):
+        (-[WKPreferences _setPrivateClickMeasurementEnabled:]):
+        * UIProcess/API/Cocoa/WKPreferencesPrivate.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
 2020-12-11  Peng Liu  <peng.liu6@apple.com>
 
         [Media in GPU Process][MSE] Implement some required functions with new IPC messages and remove some unneeded functions

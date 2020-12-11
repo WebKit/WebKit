@@ -1458,6 +1458,16 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
     _preferences->setSpeechRecognitionEnabled(speechRecognitionEnabled);
 }
 
+- (BOOL)_privateClickMeasurementEnabled
+{
+    return _preferences->privateClickMeasurementEnabled();
+}
+
+- (void)_setPrivateClickMeasurementEnabled:(BOOL)privateClickMeasurementEnabled
+{
+    _preferences->setPrivateClickMeasurementEnabled(privateClickMeasurementEnabled);
+}
+
 @end
 
 
