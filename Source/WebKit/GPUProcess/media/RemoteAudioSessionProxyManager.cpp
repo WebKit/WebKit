@@ -105,7 +105,7 @@ void RemoteAudioSessionProxyManager::setCategoryForProcess(RemoteAudioSessionPro
 void RemoteAudioSessionProxyManager::setPreferredBufferSizeForProcess(RemoteAudioSessionProxy& proxy, size_t preferredBufferSize)
 {
     for (auto& otherProxy : m_proxies) {
-        if (otherProxy.preferredBufferSize() < preferredBufferSize)
+        if (otherProxy.preferredBufferSize() && otherProxy.preferredBufferSize() < preferredBufferSize)
             preferredBufferSize = otherProxy.preferredBufferSize();
     }
 

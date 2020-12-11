@@ -1,3 +1,22 @@
+2020-12-11  Chris Dumez  <cdumez@apple.com>
+
+        [GPUProcess] WebAudio rendering quantum is 15 instead of 128 when the GPU Process is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=219797
+
+        Reviewed by Eric Carlson.
+
+        WebAudio rendering quantum is 15 instead of 128 when the GPU Process is enabled. This generates a lot more
+        IPC unnecessarily, not to mention how WebAudio code expects a rendering quantum of 128 and could potentially
+        do bad things with a lower value.
+
+        The issue was that RemoteAudioSessionProxyManager::setPreferredBufferSizeForProcess() was iterating over
+        all RemoteAudioSessionProxy objects to find out the lowest rendering quantum. If there is a proxy with
+        a preferred buffer size that is not set, the value ends up being 0. When then ask core audio for a rendering
+        quantum of 0, and they end up using 15 (likely the minimum).
+
+        * GPUProcess/media/RemoteAudioSessionProxyManager.cpp:
+        (WebKit::RemoteAudioSessionProxyManager::setPreferredBufferSizeForProcess):
+
 2020-12-11  Don Olmstead  <don.olmstead@sony.com>
 
         [PlayStation] Link additional libraries into processes after r270690
