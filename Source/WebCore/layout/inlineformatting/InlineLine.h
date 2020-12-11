@@ -124,6 +124,7 @@ public:
         const Box* m_layoutBox { nullptr };
         InlineLayoutUnit m_logicalLeft { 0 };
         InlineLayoutUnit m_logicalWidth { 0 };
+        bool m_shouldPreserveWhitespace { false };
         TrailingWhitespace m_trailingWhitespaceType { TrailingWhitespace::None };
         InlineLayoutUnit m_trailingWhitespaceWidth { 0 };
         Optional<LineRun::Text> m_textContent;

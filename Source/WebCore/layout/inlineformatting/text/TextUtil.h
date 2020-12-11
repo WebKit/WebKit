@@ -52,18 +52,11 @@ public:
         InlineLayoutUnit logicalWidth { 0 };
     };
     static SplitData split(const InlineTextItem&, InlineLayoutUnit textWidth, InlineLayoutUnit availableWidth, InlineLayoutUnit contentLogicalLeft);
-    static bool shouldPreserveTrailingWhitespace(const RenderStyle&);
     static unsigned findNextBreakablePosition(LazyLineBreakIterator&, unsigned startPosition, const RenderStyle&);
 
 private:
     static InlineLayoutUnit fixedPitchWidth(const StringView&, const RenderStyle&, unsigned from, unsigned to, InlineLayoutUnit contentLogicalLeft);
 };
-
-inline bool TextUtil::shouldPreserveTrailingWhitespace(const RenderStyle& style)
-{
-    auto whitespace = style.whiteSpace();
-    return whitespace == WhiteSpace::Pre || whitespace == WhiteSpace::PreWrap || whitespace == WhiteSpace::BreakSpaces;
-}
 
 }
 }

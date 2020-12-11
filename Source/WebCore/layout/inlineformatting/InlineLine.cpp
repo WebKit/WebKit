@@ -40,12 +40,6 @@
 namespace WebCore {
 namespace Layout {
 
-static inline bool isWhitespacePreserved(const RenderStyle& style)
-{
-    auto whitespace = style.whiteSpace();
-    return whitespace == WhiteSpace::Pre || whitespace == WhiteSpace::PreWrap || whitespace == WhiteSpace::BreakSpaces;
-}
-
 Line::Line(const InlineFormattingContext& inlineFormattingContext)
     : m_inlineFormattingContext(inlineFormattingContext)
     , m_trimmableTrailingContent(m_runs)
@@ -285,7 +279,7 @@ void Line::appendTextContent(const InlineTextItem& inlineTextItem, InlineLayoutU
         m_runs.append({ inlineTextItem, contentLogicalRight(), logicalWidth });
     m_contentLogicalWidth += logicalWidth;
     // Set the trailing trimmable content.
-    if (inlineTextItem.isWhitespace() && !TextUtil::shouldPreserveTrailingWhitespace(style)) {
+    if (inlineTextItem.isWhitespace() && !InlineTextItem::shouldPreserveSpacesAndTabs(inlineTextItem)) {
         m_trimmableTrailingContent.addFullyTrimmableContent(m_runs.size() - 1, logicalWidth);
         // If we ever trim this content, we need to know if the line visibility state needs to be recomputed.
         if (m_trimmableTrailingContent.isEmpty())
@@ -478,12 +472,13 @@ Line::Run::Run(const InlineTextItem& inlineTextItem, InlineLayoutUnit logicalLef
     , m_layoutBox(&inlineTextItem.layoutBox())
     , m_logicalLeft(logicalLeft)
     , m_logicalWidth(logicalWidth)
+    , m_shouldPreserveWhitespace(inlineTextItem.isWhitespace() && InlineTextItem::shouldPreserveSpacesAndTabs(inlineTextItem))
     , m_trailingWhitespaceType(trailingWhitespaceType(inlineTextItem))
     , m_textContent({ inlineTextItem.start(), m_trailingWhitespaceType == TrailingWhitespace::Collapsed ? 1 : inlineTextItem.length(), inlineTextItem.inlineTextBox().content() })
 {
     if (m_trailingWhitespaceType != TrailingWhitespace::None) {
         m_trailingWhitespaceWidth = logicalWidth;
-        if (!isWhitespacePreserved(inlineTextItem.style()))
+        if (!m_shouldPreserveWhitespace)
             m_expansionOpportunityCount = 1;
     }
 }
@@ -505,7 +500,7 @@ void Line::Run::expand(const InlineTextItem& inlineTextItem, InlineLayoutUnit lo
         return;
     }
     m_trailingWhitespaceWidth += logicalWidth;
-    if (!isWhitespacePreserved(inlineTextItem.style()))
+    if (!InlineTextItem::shouldPreserveSpacesAndTabs(inlineTextItem))
         ++m_expansionOpportunityCount;
     setExpansionBehavior(DefaultExpansion);
     m_textContent->expand(m_trailingWhitespaceType == TrailingWhitespace::Collapsed ? 1 : inlineTextItem.length());
@@ -547,7 +542,7 @@ void Line::Run::visuallyCollapseTrailingWhitespace()
     m_trailingWhitespaceWidth = { };
     m_trailingWhitespaceType = TrailingWhitespace::None;
 
-    if (!isWhitespacePreserved(style())) {
+    if (!m_shouldPreserveWhitespace) {
         ASSERT(m_expansionOpportunityCount);
         m_expansionOpportunityCount--;
     }

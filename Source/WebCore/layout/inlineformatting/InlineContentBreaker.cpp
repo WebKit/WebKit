@@ -103,12 +103,6 @@ static inline bool isWrappingAllowed(const RenderStyle& style)
     return style.whiteSpace() != WhiteSpace::Pre && style.whiteSpace() != WhiteSpace::NoWrap;
 }
 
-static inline bool shouldKeepBeginningOfLineWhitespace(const RenderStyle& style)
-{
-    auto whitespace = style.whiteSpace();
-    return whitespace == WhiteSpace::Pre || whitespace == WhiteSpace::PreWrap || whitespace == WhiteSpace::BreakSpaces;
-}
-
 static inline Optional<size_t> lastWrapOpportunityIndex(const InlineContentBreaker::ContinuousContent::RunList& runList)
 {
     // <span style="white-space: pre">no_wrap</span><span>yes wrap</span><span style="white-space: pre">no_wrap</span>.
@@ -158,10 +152,11 @@ InlineContentBreaker::Result InlineContentBreaker::processInlineContent(const Co
         // to this position if no other line breaking opportunity exists in this content.
         if (auto lastLineWrapOpportunityIndex = lastWrapOpportunityIndex(candidateContent.runs())) {
             auto isEligibleLineWrapOpportunity = [&] (auto& candidateItem) {
-                // Just check for leading collapsible whitespace for now.
-                if (!lineStatus.isEmpty || !candidateItem.isText() || !downcast<InlineTextItem>(candidateItem).isWhitespace())
+                // Just check for leading preserved whitespace for now.
+                if (!lineStatus.isEmpty || !is<InlineTextItem>(candidateItem))
                     return true;
-                return shouldKeepBeginningOfLineWhitespace(candidateItem.style());
+                auto inlineTextItem = downcast<InlineTextItem>(candidateItem);
+                return !inlineTextItem.isWhitespace() || InlineTextItem::shouldPreserveSpacesAndTabs(inlineTextItem);
             };
             auto& lastWrapOpportunityCandidateItem = candidateContent.runs()[*lastLineWrapOpportunityIndex].inlineItem;
             if (isEligibleLineWrapOpportunity(lastWrapOpportunityCandidateItem)) {

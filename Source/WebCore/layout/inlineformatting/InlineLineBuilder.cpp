@@ -171,7 +171,7 @@ inline void LineCandidate::InlineContent::appendInlineItem(const InlineItem& inl
         if (!inlineItem.isText())
             return { };
         auto& inlineTextItem = downcast<InlineTextItem>(inlineItem);
-        if (inlineTextItem.isWhitespace() && !TextUtil::shouldPreserveTrailingWhitespace(inlineTextItem.style())) {
+        if (inlineTextItem.isWhitespace() && !InlineTextItem::shouldPreserveSpacesAndTabs(inlineTextItem)) {
             // Fully collapsible trailing content.
             return logicalWidth;
         }
