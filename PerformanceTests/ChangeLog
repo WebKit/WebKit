@@ -1,3 +1,60 @@
+2020-12-11  Geoffrey Garen  <ggaren@apple.com>
+
+        Eliminate 'async time' in StyleBench
+        https://bugs.webkit.org/show_bug.cgi?id=219785
+
+        Reviewed by Antti Koivisto.
+
+        r270132 (a RunLoop change) measured as a 13% regression on the
+        StyleBench bot. But I don't think the measured regression was user-real.
+        Instead, I think the baseline score was artificially high because 'async
+        time' sometimes did not measure painting.
+
+        I decided just to eliminate 'async time' (and force style resolution +
+        layout during 'sync time') because this benchmark intends to measure
+        style resolution + layout, and not painting or frame rate.
+
+        With this change, there is no measured regression anymore.
+
+        Explanation of 'did not measure painting':
+
+                StyleBench synchronously modifies DOM + style, and then sets a
+                zero-delay timer to measure 'async time'. If layout has not
+                happened by the time the timer fires, StyleBench forces layout
+                and then computes 'async time'. The flaw here is painting.
+                StyleBench accepts both of these orders of operations as valid:
+                
+                (A) { modify DOM + style }, { measure 'sync time' }, { style resolution + layout }, { paint }, { measure 'async time' }
+
+                (B) { modify DOM + style }, { measure 'sync time' }, { style resolution + layout }, { measure 'async time' }, { paint }
+
+                ^ (B) includes more stuff than (A). Not cool!
+
+        Evidence for the theory that the baseline was sometimes doing (B):
+
+                * Forcing style resolution + layout during sync time reduces the
+                baseline score and eliminates the difference in async time
+                between baseline and patch.
+
+                * Starting the benchmark from a requestAnimationFrame() instead
+                of a timer reduces the baseline score and eliminates the
+                difference in async time between baseline and patch.
+
+                * The regression only reproduced on machines with fewer cores.
+
+                * The new benchmark method reduces sttdev by ~3X - ~5X.
+
+        * StyleBench/resources/benchmark-runner.js:
+        (BenchmarkRunner.prototype._runTest): Call getBoundingClientRect()
+        during sync time to force style resolution + layout consistently.
+
+        Always report async time as 1, since this benchmark doesn't have an
+        async time component anymore. (The harness doesn't like zeroes.)
+
+        Just store height in a global because that is sufficient to prevent
+        dead code elimination (which was probably impossible anyway, since
+        getBoundingClientRect() has side effects).
+
 2020-12-10  Tadeu Zagallo  <tzagallo@apple.com>
 
         Removing unnecessary locking from JSValue API functions
