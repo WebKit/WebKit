@@ -53,8 +53,7 @@ public:
     bool isConsideredEmpty() const { return m_isConsideredEmpty; }
 
     InlineLayoutUnit contentLogicalWidth() const { return m_contentLogicalWidth; }
-    // FIXME: Add support for negative word-sapcing where contentLogicalRight != contentLogicalWidth.
-    InlineLayoutUnit contentLogicalRight() const { return m_contentLogicalWidth; }
+    InlineLayoutUnit contentLogicalRight() const { return m_runs.isEmpty() ? 0.0f : m_runs.last().logicalRight(); }
 
     InlineLayoutUnit trimmableTrailingWidth() const { return m_trimmableTrailingContent.width(); }
     bool isTrailingRunFullyTrimmable() const { return m_trimmableTrailingContent.isTrailingRunFullyTrimmable(); }
@@ -137,8 +136,8 @@ public:
 private:
     void appendNonBreakableSpace(const InlineItem&, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth);
     void appendTextContent(const InlineTextItem&, InlineLayoutUnit logicalWidth);
-    void appendNonReplacedInlineBox(const InlineItem&, InlineLayoutUnit logicalWidth);
-    void appendReplacedInlineBox(const InlineItem&, InlineLayoutUnit logicalWidth);
+    void appendNonReplacedInlineBox(const InlineItem&, InlineLayoutUnit marginBoxLogicalWidth);
+    void appendReplacedInlineBox(const InlineItem&, InlineLayoutUnit marginBoxLogicalWidth);
     void appendInlineBoxStart(const InlineItem&, InlineLayoutUnit logicalWidth);
     void appendInlineBoxEnd(const InlineItem&, InlineLayoutUnit logicalWidth);
     void appendLineBreak(const InlineItem&);

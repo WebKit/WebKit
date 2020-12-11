@@ -297,22 +297,28 @@ void Line::appendTextContent(const InlineTextItem& inlineTextItem, InlineLayoutU
     m_trailingSoftHyphenWidth = inlineTextItem.hasTrailingSoftHyphen() ? makeOptional(style.fontCascade().width(TextRun { StringView { style.hyphenString() } })) : WTF::nullopt;
 }
 
-void Line::appendNonReplacedInlineBox(const InlineItem& inlineItem, InlineLayoutUnit logicalWidth)
+void Line::appendNonReplacedInlineBox(const InlineItem& inlineItem, InlineLayoutUnit marginBoxLogicalWidth)
 {
-    auto& boxGeometry = formattingContext().geometryForBox(inlineItem.layoutBox());
-    // Negative margin start pulls the content to the logical left direction.
-    auto adjustedRunStart = contentLogicalRight() + std::min(boxGeometry.marginStart(), 0_lu);
-    m_runs.append({ inlineItem, adjustedRunStart, logicalWidth });
-    m_contentLogicalWidth += logicalWidth;
     m_trimmableTrailingContent.reset();
     m_trailingSoftHyphenWidth = { };
+    m_contentLogicalWidth += marginBoxLogicalWidth;
+    auto marginStart = formattingContext().geometryForBox(inlineItem.layoutBox()).marginStart();
+    if (marginStart >= 0) {
+        m_runs.append({ inlineItem, contentLogicalRight(), marginBoxLogicalWidth });
+        return;
+    }
+    // Negative margin-start pulls the content to the logical left direction.
+    // Negative margin also squeezes the margin box, we need to stretch it to make sure the subsequent content won't overlap.
+    // e.g. <img style="width: 100px; margin-left: -100px;"> pulls the replaced box to -100px with the margin box width of 0px.
+    // Instead we need to position it at -100px and size it to 100px so the subsequent content starts at 0px. 
+    m_runs.append({ inlineItem, contentLogicalRight() + marginStart, marginBoxLogicalWidth - marginStart });
 }
 
-void Line::appendReplacedInlineBox(const InlineItem& inlineItem, InlineLayoutUnit logicalWidth)
+void Line::appendReplacedInlineBox(const InlineItem& inlineItem, InlineLayoutUnit marginBoxLogicalWidth)
 {
     ASSERT(inlineItem.layoutBox().isReplacedBox());
     // FIXME: Surely replaced boxes behave differently.
-    appendNonReplacedInlineBox(inlineItem, logicalWidth);
+    appendNonReplacedInlineBox(inlineItem, marginBoxLogicalWidth);
 }
 
 void Line::appendLineBreak(const InlineItem& inlineItem)
