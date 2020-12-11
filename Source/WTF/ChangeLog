@@ -1,3 +1,12 @@
+2020-12-11  Youenn Fablet  <youenn@apple.com>
+
+        Enable WebRTCPlatformSocketsEnabled by default
+        https://bugs.webkit.org/show_bug.cgi?id=219778
+
+        Reviewed by Eric Carlson.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
 2020-12-10  John Wilander  <wilander@apple.com>
 
         PCM: Turn feature on by default

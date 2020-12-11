@@ -1058,7 +1058,7 @@ WebRTCPlatformSocketsEnabled:
   condition: ENABLE(WEB_RTC)
   defaultValue:
     WebKit:
-      default: false
+      default: true
 
 WebRTCVP9Profile0CodecEnabled:
   type: bool
