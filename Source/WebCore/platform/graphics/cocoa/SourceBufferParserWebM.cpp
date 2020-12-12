@@ -1061,7 +1061,7 @@ void SourceBufferParserWebM::VideoTrackData::createSampleBuffer(const CMTime& pr
     m_currentBlockBuffer = nullptr;
     m_currentBlockBufferPosition = 0;
 
-    if (!m_headerParser.key()) {
+    if (!isKey) {
         auto attachmentsArray = CMSampleBufferGetSampleAttachmentsArray(sampleBuffer.get(), true);
         ASSERT(attachmentsArray);
         if (!attachmentsArray) {
