@@ -136,10 +136,9 @@ void ItemHandle::apply(GraphicsContext& context)
         get<ClipToDrawingCommands>().apply(context);
         return;
     }
-    case ItemType::DrawGlyphs: {
-        get<DrawGlyphs>().apply(context);
+    case ItemType::DrawGlyphs:
+        ASSERT_NOT_REACHED();
         return;
-    }
     case ItemType::DrawImageBuffer: {
         get<DrawImageBuffer>().apply(context);
         return;

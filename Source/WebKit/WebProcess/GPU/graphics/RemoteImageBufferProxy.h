@@ -229,6 +229,12 @@ protected:
             flushDrawingContext();
     }
 
+    void cacheFont(WebCore::Font& font) override
+    {
+        if (m_remoteRenderingBackendProxy)
+            m_remoteRenderingBackendProxy->remoteResourceCacheProxy().cacheFont(font);
+    }
+
     WebCore::DisplayList::ItemBufferHandle createItemBuffer(size_t capacity) override
     {
         if (LIKELY(m_remoteRenderingBackendProxy))

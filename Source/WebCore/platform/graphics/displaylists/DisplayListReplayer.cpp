@@ -34,11 +34,12 @@
 namespace WebCore {
 namespace DisplayList {
 
-Replayer::Replayer(GraphicsContext& context, const DisplayList& displayList, const ImageBufferHashMap* imageBuffers, const NativeImageHashMap* nativeImages, Delegate* delegate)
+Replayer::Replayer(GraphicsContext& context, const DisplayList& displayList, const ImageBufferHashMap* imageBuffers, const NativeImageHashMap* nativeImages, const FontRenderingResourceMap* fonts, Delegate* delegate)
     : m_context(context)
     , m_displayList(displayList)
     , m_imageBuffers(imageBuffers ? *imageBuffers : m_displayList.imageBuffers())
     , m_nativeImages(nativeImages ? *nativeImages : m_displayList.nativeImages())
+    , m_fonts(fonts ? *fonts : m_displayList.fonts())
     , m_delegate(delegate)
 {
 }
@@ -69,6 +70,18 @@ inline static Optional<RenderingResourceIdentifier> applyNativeImageItem(Graphic
     return resourceIdentifier;
 }
 
+template<class T>
+inline static Optional<RenderingResourceIdentifier> applyFontItem(GraphicsContext& context, const FontRenderingResourceMap& fonts, ItemHandle item)
+{
+    auto& fontItem = item.get<T>();
+    auto resourceIdentifier = fontItem.fontIdentifier();
+    if (auto* font = fonts.get(resourceIdentifier)) {
+        fontItem.apply(context, *font);
+        return WTF::nullopt;
+    }
+    return resourceIdentifier;
+}
+
 std::pair<Optional<StopReplayReason>, Optional<RenderingResourceIdentifier>> Replayer::applyItem(ItemHandle item)
 {
     if (m_delegate && m_delegate->apply(item, m_context))
@@ -88,6 +101,12 @@ std::pair<Optional<StopReplayReason>, Optional<RenderingResourceIdentifier>> Rep
 
     if (item.is<DrawNativeImage>()) {
         if (auto missingCachedResourceIdentifier = applyNativeImageItem<DrawNativeImage>(m_context, m_nativeImages, item))
+            return { StopReplayReason::MissingCachedResource, WTFMove(missingCachedResourceIdentifier) };
+        return { WTF::nullopt, WTF::nullopt };
+    }
+
+    if (item.is<DrawGlyphs>()) {
+        if (auto missingCachedResourceIdentifier = applyFontItem<DrawGlyphs>(m_context, m_fonts, item))
             return { StopReplayReason::MissingCachedResource, WTFMove(missingCachedResourceIdentifier) };
         return { WTF::nullopt, WTF::nullopt };
     }

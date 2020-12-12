@@ -156,6 +156,10 @@ OBJC_CLASS WKAccessibilityWebPageObject;
 
 #define ENABLE_VIEWPORT_RESIZING PLATFORM(IOS_FAMILY)
 
+namespace WTF {
+enum class Critical : uint8_t;
+}
+
 namespace API {
 class Array;
 }
@@ -369,6 +373,8 @@ public:
     void layoutIfNeeded();
     void updateRendering();
     void finalizeRenderingUpdate(OptionSet<WebCore::FinalizeRenderingUpdateFlags>);
+
+    void releaseMemory(WTF::Critical);
 
     enum class LazyCreationPolicy { UseExistingOnly, CreateIfNeeded };
 

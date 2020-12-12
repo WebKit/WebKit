@@ -110,6 +110,8 @@ private:
     void wakeUpAndApplyDisplayList(const GPUProcessWakeupMessageArguments&);
     void getImageData(WebCore::AlphaPremultiplication outputFormat, WebCore::IntRect srcRect, WebCore::RenderingResourceIdentifier, CompletionHandler<void(IPC::ImageDataReference&&)>&&);
     void cacheNativeImage(const ShareableBitmap::Handle&, WebCore::RenderingResourceIdentifier);
+    void cacheFont(Ref<WebCore::Font>&&);
+    void deleteAllFonts();
     void releaseRemoteResource(WebCore::RenderingResourceIdentifier);
     void didCreateSharedDisplayListHandle(WebCore::DisplayList::ItemBufferIdentifier, const SharedMemory::IPCHandle&, WebCore::RenderingResourceIdentifier destinationBufferIdentifier);
 

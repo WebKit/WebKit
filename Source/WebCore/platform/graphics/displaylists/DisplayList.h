@@ -28,6 +28,7 @@
 #include "DisplayListItemBuffer.h"
 #include "DisplayListItemType.h"
 #include "FloatRect.h"
+#include "Font.h"
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
 #include <wtf/FastMalloc.h>
@@ -74,6 +75,7 @@ public:
 
     const ImageBufferHashMap& imageBuffers() const { return m_imageBuffers; }
     const NativeImageHashMap& nativeImages() const { return m_nativeImages; }
+    const FontRenderingResourceMap& fonts() const { return m_fonts; }
 
     WEBCORE_EXPORT void setItemBufferClient(ItemBufferReadingClient*);
     WEBCORE_EXPORT void setItemBufferClient(ItemBufferWritingClient*);
@@ -177,11 +179,19 @@ private:
             return makeRef(image);
         });
     }
-    
+
+    void cacheFont(Font& font)
+    {
+        m_fonts.ensure(font.renderingResourceIdentifier(), [&]() {
+            return makeRef(font);
+        });
+    }
+
     static bool shouldDumpForFlags(AsTextFlags, ItemHandle);
 
     ImageBufferHashMap m_imageBuffers;
     NativeImageHashMap m_nativeImages;
+    FontRenderingResourceMap m_fonts;
     std::unique_ptr<ItemBuffer> m_items;
     Vector<Optional<FloatRect>> m_drawingItemExtents;
     bool m_tracksDrawingItemExtents { true };

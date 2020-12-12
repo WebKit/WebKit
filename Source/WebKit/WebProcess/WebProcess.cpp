@@ -377,6 +377,8 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
             auto maintainBackForwardCache = m_isSuspending ? WebCore::MaintainBackForwardCache::Yes : WebCore::MaintainBackForwardCache::No;
             auto maintainMemoryCache = m_isSuspending && m_hasSuspendedPageProxy ? WebCore::MaintainMemoryCache::Yes : WebCore::MaintainMemoryCache::No;
             WebCore::releaseMemory(critical, synchronous, maintainBackForwardCache, maintainMemoryCache);
+            for (auto& page : m_pageMap.values())
+                page->releaseMemory(critical);
         });
 #if ENABLE(PERIODIC_MEMORY_MONITOR)
         memoryPressureHandler.setShouldUsePeriodicMemoryMonitor(true);
@@ -1384,8 +1386,11 @@ void WebProcess::prepareToSuspend(bool isSuspensionImminent, CompletionHandler<v
         platformMediaSessionManager->processWillSuspend();
 #endif
 
-    if (!m_suppressMemoryPressureHandler)
+    if (!m_suppressMemoryPressureHandler) {
         MemoryPressureHandler::singleton().releaseMemory(Critical::Yes, Synchronous::Yes);
+        for (auto& page : m_pageMap.values())
+            page->releaseMemory(Critical::Yes);
+    }
 
     freezeAllLayerTrees();
 

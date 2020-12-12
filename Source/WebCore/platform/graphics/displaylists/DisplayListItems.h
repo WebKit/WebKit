@@ -937,28 +937,28 @@ public:
     static constexpr bool isInlineItem = false;
     static constexpr bool isDrawingItem = true;
 
+    RenderingResourceIdentifier fontIdentifier() { return m_fontIdentifier; }
     const FloatPoint& localAnchor() const { return m_localAnchor; }
-
     FloatPoint anchorPoint() const { return m_localAnchor; }
-
     const Vector<GlyphBufferGlyph, 128>& glyphs() const { return m_glyphs; }
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static Optional<DrawGlyphs> decode(Decoder&);
 
     DrawGlyphs(const Font&, const GlyphBufferGlyph*, const GlyphBufferAdvance*, unsigned count, const FloatPoint& localAnchor, FontSmoothingMode);
-    WEBCORE_EXPORT DrawGlyphs(const Font&, Vector<GlyphBufferGlyph, 128>&&, Vector<GlyphBufferAdvance, 128>&&, const FloatPoint& localAnchor, FontSmoothingMode);
+    WEBCORE_EXPORT DrawGlyphs(RenderingResourceIdentifier, Vector<GlyphBufferGlyph, 128>&&, Vector<GlyphBufferAdvance, 128>&&, const FloatRect&, const FloatPoint& localAnchor, FontSmoothingMode);
 
-    void apply(GraphicsContext&) const;
+    void apply(GraphicsContext&, const Font&) const;
 
     Optional<FloatRect> globalBounds() const { return WTF::nullopt; }
     Optional<FloatRect> localBounds(const GraphicsContext&) const { return m_bounds; }
 
 private:
-    void computeBounds();
-    GlyphBuffer generateGlyphBuffer() const;
+    void computeBounds(const Font&);
 
-    RefPtr<Font> m_font;
+    GlyphBuffer generateGlyphBuffer(const Font&) const;
+
+    RenderingResourceIdentifier m_fontIdentifier;
     Vector<GlyphBufferGlyph, 128> m_glyphs;
     Vector<GlyphBufferAdvance, 128> m_advances;
     FloatRect m_bounds;
@@ -969,9 +969,10 @@ private:
 template<class Encoder>
 void DrawGlyphs::encode(Encoder& encoder) const
 {
-    encoder << makeRef(*m_font);
+    encoder << m_fontIdentifier;
     encoder << m_glyphs;
     encoder << m_advances;
+    encoder << m_bounds;
     encoder << m_localAnchor;
     encoder << m_smoothingMode;
 }
@@ -979,9 +980,9 @@ void DrawGlyphs::encode(Encoder& encoder) const
 template<class Decoder>
 Optional<DrawGlyphs> DrawGlyphs::decode(Decoder& decoder)
 {
-    Optional<Ref<Font>> font;
-    decoder >> font;
-    if (!font)
+    Optional<RenderingResourceIdentifier> fontIdentifier;
+    decoder >> fontIdentifier;
+    if (!fontIdentifier)
         return WTF::nullopt;
 
     Optional<Vector<GlyphBufferGlyph, 128>> glyphs;
@@ -997,6 +998,11 @@ Optional<DrawGlyphs> DrawGlyphs::decode(Decoder& decoder)
     if (glyphs->size() != advances->size())
         return WTF::nullopt;
 
+    Optional<FloatRect> bounds;
+    decoder >> bounds;
+    if (!bounds)
+        return WTF::nullopt;
+
     Optional<FloatPoint> localAnchor;
     decoder >> localAnchor;
     if (!localAnchor)
@@ -1007,7 +1013,7 @@ Optional<DrawGlyphs> DrawGlyphs::decode(Decoder& decoder)
     if (!smoothingMode)
         return WTF::nullopt;
 
-    return {{ font->get(), WTFMove(*glyphs), WTFMove(*advances), *localAnchor, *smoothingMode }};
+    return {{ *fontIdentifier, WTFMove(*glyphs), WTFMove(*advances), *bounds, *localAnchor, *smoothingMode }};
 }
 
 class DrawImageBuffer {

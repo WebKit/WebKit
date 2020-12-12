@@ -66,8 +66,9 @@ Ref<Font> Font::create(Ref<SharedBuffer>&& fontFaceData, Font::Origin origin, fl
     return Font::create(CachedFont::platformDataFromCustomData(*customFontData, description, syntheticBold, syntheticItalic, { }, { }), origin);
 }
 
-Font::Font(const FontPlatformData& platformData, Origin origin, Interstitial interstitial, Visibility visibility, OrientationFallback orientationFallback)
+Font::Font(const FontPlatformData& platformData, Origin origin, Interstitial interstitial, Visibility visibility, OrientationFallback orientationFallback, Optional<RenderingResourceIdentifier> renderingResourceIdentifier)
     : m_platformData(platformData)
+    , m_renderingResourceIdentifier(renderingResourceIdentifier)
     , m_origin(origin)
     , m_visibility(visibility)
     , m_treatAsFixedPitch(false)
@@ -156,6 +157,13 @@ void Font::platformGlyphInit()
 Font::~Font()
 {
     removeFromSystemFallbackCache();
+}
+
+RenderingResourceIdentifier Font::renderingResourceIdentifier() const
+{
+    if (!m_renderingResourceIdentifier)
+        m_renderingResourceIdentifier = RenderingResourceIdentifier::generate();
+    return *m_renderingResourceIdentifier;
 }
 
 static bool fillGlyphPage(GlyphPage& pageToFill, UChar* buffer, unsigned bufferLength, const Font& font)

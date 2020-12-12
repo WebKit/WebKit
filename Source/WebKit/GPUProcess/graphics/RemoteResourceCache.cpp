@@ -48,11 +48,24 @@ void RemoteResourceCache::cacheNativeImage(Ref<NativeImage>&& image)
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
 }
 
+void RemoteResourceCache::cacheFont(Ref<Font>&& font)
+{
+    auto addResult = m_fonts.add(font->renderingResourceIdentifier(), WTFMove(font));
+    ASSERT_UNUSED(addResult, addResult.isNewEntry);
+}
+
+void RemoteResourceCache::deleteAllFonts()
+{
+    m_fonts.clear();
+}
+
 void RemoteResourceCache::releaseRemoteResource(RenderingResourceIdentifier renderingResourceIdentifier)
 {
     if (m_imageBuffers.remove(renderingResourceIdentifier))
         return;
     if (m_nativeImages.remove(renderingResourceIdentifier))
+        return;
+    if (m_fonts.remove(renderingResourceIdentifier))
         return;
     // Caching the remote resource should have happened before releasing it.
     ASSERT_NOT_REACHED();

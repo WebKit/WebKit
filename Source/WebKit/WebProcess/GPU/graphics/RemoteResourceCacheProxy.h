@@ -32,6 +32,7 @@
 #include <wtf/HashMap.h>
 
 namespace WebCore {
+class Font;
 class ImageBuffer;
 }
 
@@ -53,6 +54,10 @@ public:
     using ImageBufferHashMap = HashMap<WebCore::RenderingResourceIdentifier, WeakPtr<WebCore::ImageBuffer>>;
     const ImageBufferHashMap& imageBuffers() const { return m_imageBuffers; }
 
+    void cacheFont(WebCore::Font&);
+    void didFinalizeRenderingUpdate();
+    void releaseMemory();
+
 private:
     using NativeImageHashMap = HashMap<WebCore::RenderingResourceIdentifier, WeakPtr<WebCore::NativeImage>>;
     
@@ -60,6 +65,11 @@ private:
 
     ImageBufferHashMap m_imageBuffers;
     NativeImageHashMap m_nativeImages;
+
+    HashMap<WebCore::RenderingResourceIdentifier, uint64_t> m_fontIdentifierToLastRenderingUpdateVersionMap;
+    unsigned m_numberOfFontsUsedInCurrentRenderingUpdate { 0 };
+    uint64_t m_currentRenderingUpdateVersion { 1 };
+
     RemoteRenderingBackendProxy& m_remoteRenderingBackendProxy;
 };
 

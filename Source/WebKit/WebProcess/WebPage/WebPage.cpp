@@ -3825,9 +3825,6 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     WebProcess::singleton().setUseGPUProcessForCanvasRendering(m_shouldRenderCanvasInGPUProcess);
     WebProcess::singleton().setUseGPUProcessForDOMRendering(m_shouldRenderDOMInGPUProcess && DrawingArea::supportsGPUProcessRendering(m_drawingAreaType));
     WebProcess::singleton().setUseGPUProcessForMedia(m_shouldPlayMediaInGPUProcess);
-    // FIXME: We should support web fonts in the GPU process.
-    if (m_shouldRenderDOMInGPUProcess)
-        settings.setDownloadableBinaryFontsEnabled(false);
 #if ENABLE(WEBGL)
     WebProcess::singleton().setUseGPUProcessForWebGL(m_shouldRenderWebGLInGPUProcess);
 #endif
@@ -3950,6 +3947,18 @@ void WebPage::updateRendering()
 void WebPage::finalizeRenderingUpdate(OptionSet<FinalizeRenderingUpdateFlags> flags)
 {
     m_page->finalizeRenderingUpdate(flags);
+#if ENABLE(GPU_PROCESS)
+    if (m_remoteRenderingBackendProxy)
+        m_remoteRenderingBackendProxy->remoteResourceCacheProxy().didFinalizeRenderingUpdate();
+#endif
+}
+
+void WebPage::releaseMemory(Critical)
+{
+#if ENABLE(GPU_PROCESS)
+    if (m_remoteRenderingBackendProxy)
+        m_remoteRenderingBackendProxy->remoteResourceCacheProxy().releaseMemory();
+#endif
 }
 
 WebInspector* WebPage::inspector(LazyCreationPolicy behavior)

@@ -357,18 +357,18 @@ static TextStream& operator<<(TextStream& ts, const ClipToDrawingCommands& item)
     return ts;
 }
 
-DrawGlyphs::DrawGlyphs(const Font& font, Vector<GlyphBufferGlyph, 128>&& glyphs, Vector<GlyphBufferAdvance, 128>&& advances, const FloatPoint& localAnchor, FontSmoothingMode smoothingMode)
-    : m_font(makeRefPtr(const_cast<Font&>(font)))
+DrawGlyphs::DrawGlyphs(RenderingResourceIdentifier fontIdentifier, Vector<GlyphBufferGlyph, 128>&& glyphs, Vector<GlyphBufferAdvance, 128>&& advances, const FloatRect& bounds, const FloatPoint& localAnchor, FontSmoothingMode smoothingMode)
+    : m_fontIdentifier(fontIdentifier)
     , m_glyphs(WTFMove(glyphs))
     , m_advances(WTFMove(advances))
+    , m_bounds(bounds)
     , m_localAnchor(localAnchor)
     , m_smoothingMode(smoothingMode)
 {
-    computeBounds();
 }
 
 DrawGlyphs::DrawGlyphs(const Font& font, const GlyphBufferGlyph* glyphs, const GlyphBufferAdvance* advances, unsigned count, const FloatPoint& localAnchor, FontSmoothingMode smoothingMode)
-    : m_font(makeRefPtr(const_cast<Font&>(font)))
+    : m_fontIdentifier(font.renderingResourceIdentifier())
     , m_localAnchor(localAnchor)
     , m_smoothingMode(smoothingMode)
 {
@@ -378,28 +378,28 @@ DrawGlyphs::DrawGlyphs(const Font& font, const GlyphBufferGlyph* glyphs, const G
         m_glyphs.uncheckedAppend(glyphs[i]);
         m_advances.uncheckedAppend(advances[i]);
     }
-    computeBounds();
+    computeBounds(font);
 }
 
-inline GlyphBuffer DrawGlyphs::generateGlyphBuffer() const
+inline GlyphBuffer DrawGlyphs::generateGlyphBuffer(const Font& font) const
 {
     GlyphBuffer result;
     for (size_t i = 0; i < m_glyphs.size(); ++i)
-        result.add(m_glyphs[i], *m_font, m_advances[i], GlyphBuffer::noOffset);
+        result.add(m_glyphs[i], font, m_advances[i], GlyphBuffer::noOffset);
     return result;
 }
 
-void DrawGlyphs::apply(GraphicsContext& context) const
+void DrawGlyphs::apply(GraphicsContext& context, const Font& font) const
 {
-    context.drawGlyphs(*m_font, generateGlyphBuffer(), 0, m_glyphs.size(), anchorPoint(), m_smoothingMode);
+    context.drawGlyphs(font, generateGlyphBuffer(font), 0, m_glyphs.size(), anchorPoint(), m_smoothingMode);
 }
 
-void DrawGlyphs::computeBounds()
+void DrawGlyphs::computeBounds(const Font& font)
 {
     // FIXME: This code doesn't actually take the extents of the glyphs into consideration. It assumes that
     // the glyph lies entirely within its [(ascent + descent), advance] rect.
-    float ascent = m_font->fontMetrics().floatAscent();
-    float descent = m_font->fontMetrics().floatDescent();
+    float ascent = font.fontMetrics().floatAscent();
+    float descent = font.fontMetrics().floatDescent();
     FloatPoint current = localAnchor();
     size_t numGlyphs = m_glyphs.size();
     for (size_t i = 0; i < numGlyphs; ++i) {

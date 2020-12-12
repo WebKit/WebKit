@@ -101,6 +101,20 @@ void RemoteResourceCacheProxy::cacheNativeImage(NativeImage& image)
     m_remoteRenderingBackendProxy.cacheNativeImage(handle, image.renderingResourceIdentifier());
 }
 
+void RemoteResourceCacheProxy::cacheFont(Font& font)
+{
+    auto result = m_fontIdentifierToLastRenderingUpdateVersionMap.ensure(font.renderingResourceIdentifier(), [&] {
+        return 0;
+    });
+    auto& lastVersion = result.iterator->value;
+    if (lastVersion != m_currentRenderingUpdateVersion) {
+        lastVersion = m_currentRenderingUpdateVersion;
+        ++m_numberOfFontsUsedInCurrentRenderingUpdate;
+    }
+    if (result.isNewEntry)
+        m_remoteRenderingBackendProxy.cacheFont(makeRef(font));
+}
+
 void RemoteResourceCacheProxy::releaseNativeImage(RenderingResourceIdentifier renderingResourceIdentifier)
 {
     if (!m_nativeImages.remove(renderingResourceIdentifier))
@@ -108,6 +122,34 @@ void RemoteResourceCacheProxy::releaseNativeImage(RenderingResourceIdentifier re
 
     // Tell the GPU process to remove this resource.
     m_remoteRenderingBackendProxy.releaseRemoteResource(renderingResourceIdentifier);
+}
+
+void RemoteResourceCacheProxy::didFinalizeRenderingUpdate()
+{
+    static constexpr unsigned minimumRenderingUpdateCountToKeepFontAlive = 4;
+    static constexpr double minimumFractionOfUnusedFontCountToTriggerRemoval = 0.25;
+    static constexpr unsigned maximumUnusedFontCountToSkipRemoval = 0;
+
+    unsigned totalFontCount = m_fontIdentifierToLastRenderingUpdateVersionMap.size();
+    RELEASE_ASSERT(m_numberOfFontsUsedInCurrentRenderingUpdate <= totalFontCount);
+    unsigned unusedFontCount = totalFontCount - m_numberOfFontsUsedInCurrentRenderingUpdate;
+    if (unusedFontCount < minimumFractionOfUnusedFontCountToTriggerRemoval * totalFontCount && unusedFontCount <= maximumUnusedFontCountToSkipRemoval)
+        return;
+
+    for (auto& item : m_fontIdentifierToLastRenderingUpdateVersionMap) {
+        if (m_currentRenderingUpdateVersion - item.value >= minimumRenderingUpdateCountToKeepFontAlive)
+            m_remoteRenderingBackendProxy.releaseRemoteResource(item.key);
+    }
+
+    ++m_currentRenderingUpdateVersion;
+    m_numberOfFontsUsedInCurrentRenderingUpdate = 0;
+}
+
+void RemoteResourceCacheProxy::releaseMemory()
+{
+    m_fontIdentifierToLastRenderingUpdateVersionMap.clear();
+    m_numberOfFontsUsedInCurrentRenderingUpdate = 0;
+    m_remoteRenderingBackendProxy.deleteAllFonts();
 }
 
 } // namespace WebKit

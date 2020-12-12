@@ -27,6 +27,8 @@ messages -> RemoteRenderingBackend NotRefCounted {
     WakeUpAndApplyDisplayList(struct WebKit::GPUProcessWakeupMessageArguments arguments)
     GetImageData(enum:uint8_t WebCore::AlphaPremultiplication outputFormat, WebCore::IntRect srcRect, WebCore::RenderingResourceIdentifier renderingResourceIdentifier) -> (IPC::ImageDataReference imageData) Synchronous
     CacheNativeImage(WebKit::ShareableBitmap::Handle handle, WebCore::RenderingResourceIdentifier renderingResourceIdentifier)
+    CacheFont(IPC::FontReference font)
+    DeleteAllFonts()
     DidCreateSharedDisplayListHandle(WebCore::DisplayList::ItemBufferIdentifier identifier, WebKit::SharedMemory::IPCHandle handle, WebCore::RenderingResourceIdentifier destinationBufferIdentifier)
     ReleaseRemoteResource(WebCore::RenderingResourceIdentifier renderingResourceIdentifier)
 }

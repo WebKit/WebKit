@@ -68,6 +68,7 @@ public:
         virtual void didAppendItemOfType(ItemType) { }
         virtual void cacheNativeImage(NativeImage&) { }
         virtual bool isCachedImageBuffer(const ImageBuffer&) const { return false; }
+        virtual void cacheFont(Font&) { }
     };
 
     void flushContext(FlushIdentifier identifier) { append<FlushContext>(identifier); }
@@ -105,6 +106,8 @@ private:
 #endif
 
     void drawGlyphs(const Font&, const GlyphBuffer&, unsigned from, unsigned numGlyphs, const FloatPoint& anchorPoint, FontSmoothingMode) override;
+
+    void appendDrawGraphsItemWithCachedFont(const Font&, const GlyphBufferGlyph*, const GlyphBufferAdvance*, unsigned count, const FloatPoint& localAnchor, FontSmoothingMode);
 
     void drawImageBuffer(WebCore::ImageBuffer&, const FloatRect& destination, const FloatRect& source, const ImagePaintingOptions&) override;
     void drawNativeImage(NativeImage&, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions&) override;

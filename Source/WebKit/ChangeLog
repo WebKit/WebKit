@@ -1,3 +1,67 @@
+2020-12-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        [GPU Process] Cache Font objects
+        https://bugs.webkit.org/show_bug.cgi?id=219672
+
+        Reviewed by Wenson Hsieh.
+
+        Partially based on the patch made by Said Abou-Hallawa.
+
+        This patch introduces a mechanism to cache Font objects in the GPU process much the same way
+        NativeImage objects are cached in the GPU process, and re-enables Web Fonts.
+
+        Fonts are removed from the GPU process when either they hadn't been used for 4 rendering updates
+        or a memory warning has been issued.
+
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::submit): Added the font cache.
+        (WebKit::RemoteRenderingBackend::cacheFont): Added.
+        (WebKit::RemoteRenderingBackend::deleteAllFonts): Added.
+        * GPUProcess/graphics/RemoteRenderingBackend.h:
+        * GPUProcess/graphics/RemoteRenderingBackend.messages.in: Added CacheFont and DeleteAllFonts
+        as new IPC messages.
+        * GPUProcess/graphics/RemoteResourceCache.cpp:
+        (WebKit::RemoteResourceCache::cacheFont): Added.
+        (WebKit::RemoteResourceCache::deleteAllFonts): Added. Used when a memory warning is issued.
+        * GPUProcess/graphics/RemoteResourceCache.h:
+        (WebKit::RemoteResourceCache::fonts const): Added.
+        * Platform/IPC/FontReference.h: Added.
+        (IPC::FontReference): Added.
+        * Scripts/webkit/messages.py:
+        (types_that_cannot_be_forward_declared): Added FontReference.
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<Ref<Font>>::encode): Encode the rendering resource identifier of Font.
+        (IPC::ArgumentCoder<Ref<Font>>::decode): Ditto for decoding.
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/GPU/graphics/RemoteImageBufferProxy.h:
+        (WebKit::RemoteImageBufferProxy::cacheFont): Added.
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp:
+        (WebKit::RemoteRenderingBackendProxy::cacheFont): Added.
+        (WebKit::RemoteRenderingBackendProxy::deleteAllFonts): Added.
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.h:
+        * WebProcess/GPU/graphics/RemoteResourceCacheProxy.cpp:
+        (WebKit::RemoteResourceCacheProxy::cacheFont): Added. It updates the total number of fonts
+        being used since the last rendering update and records the self assigned identifier for
+        the next rendering update. 
+        (WebKit::RemoteResourceCacheProxy::didFinalizeRenderingUpdate): Added. Called at the end of
+        each rendering update. It removes all fonts unused in the lsat 4 rendering updates if at least
+        1/4 of the fonts in the GPU process were not used in this rendering update.
+        (WebKit::RemoteResourceCacheProxy::releaseMemory): Added. Removes all the fonts to free up
+        memory when a memory warning is issued.
+        * WebProcess/GPU/graphics/RemoteResourceCacheProxy.h:
+        (WebKit::RemoteResourceCacheProxy): Added m_fontLastRenderingUpdateMap which keeps track of
+        the rendering resource identifiers of the fonts cached in the GPU process.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences): Re-enables the Web Fonts.
+        (WebKit::WebPage::finalizeRenderingUpdate): Added the call to RemoteRenderingBackendProxy's
+        didFinalizeRenderingUpdate.
+        (WebKit::WebPage::releaseMemory): Added. Calls RemoteRenderingBackendProxy's function.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess): Added the call to WebPage::releaseMemory in
+        the memory pressure handler.
+        (WebKit::WebProcess::prepareToSuspend): Ditto for the process suspension.
+
 2020-12-11  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Adopt new UI for the Security Key getAssertion flow

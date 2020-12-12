@@ -1105,6 +1105,7 @@ void ArgumentCoder<Ref<Font>>::encode(Encoder& encoder, const Ref<WebCore::Font>
     encoder << (font->isInterstitial() ? Font::Interstitial::Yes : Font::Interstitial::No);
     encoder << font->visibility();
     encoder << (font->isTextOrientationFallback() ? Font::OrientationFallback::Yes : Font::OrientationFallback::No);
+    encoder << font->renderingResourceIdentifier();
     // Intentionally don't encode m_isBrokenIdeographFallback because it doesn't affect drawGlyphs().
 
     encodePlatformData(encoder, font);
@@ -1132,11 +1133,16 @@ Optional<Ref<Font>> ArgumentCoder<Ref<Font>>::decode(Decoder& decoder)
     if (!isTextOrientationFallback.hasValue())
         return WTF::nullopt;
 
+    Optional<RenderingResourceIdentifier> renderingRersouceIdentifier;
+    decoder >> renderingRersouceIdentifier;
+    if (!renderingRersouceIdentifier.hasValue())
+        return WTF::nullopt;
+
     auto platformData = decodePlatformData(decoder);
     if (!platformData.hasValue())
         return WTF::nullopt;
 
-    return Font::create(platformData.value(), origin.value(), isInterstitial.value(), visibility.value(), isTextOrientationFallback.value());
+    return Font::create(platformData.value(), origin.value(), isInterstitial.value(), visibility.value(), isTextOrientationFallback.value(), renderingRersouceIdentifier);
 }
 
 void ArgumentCoder<Cursor>::encode(Encoder& encoder, const Cursor& cursor)

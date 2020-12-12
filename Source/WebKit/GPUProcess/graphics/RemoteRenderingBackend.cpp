@@ -148,6 +148,7 @@ DisplayList::ReplayResult RemoteRenderingBackend::submit(const DisplayList::Disp
         displayList,
         &remoteResourceCache().imageBuffers(),
         &remoteResourceCache().nativeImages(),
+        &remoteResourceCache().fonts(),
         replayerDelegate
     }.replay();
 }
@@ -291,6 +292,19 @@ void RemoteRenderingBackend::cacheNativeImage(const ShareableBitmap::Handle& han
 
     if (m_pendingWakeupInfo && m_pendingWakeupInfo->shouldPerformWakeup(renderingResourceIdentifier))
         wakeUpAndApplyDisplayList(std::exchange(m_pendingWakeupInfo, WTF::nullopt)->arguments);
+}
+
+void RemoteRenderingBackend::cacheFont(Ref<Font>&& font)
+{
+    auto identifier = font->renderingResourceIdentifier();
+    m_remoteResourceCache.cacheFont(WTFMove(font));
+    if (m_pendingWakeupInfo && m_pendingWakeupInfo->shouldPerformWakeup(identifier))
+        wakeUpAndApplyDisplayList(std::exchange(m_pendingWakeupInfo, WTF::nullopt)->arguments);
+}
+
+void RemoteRenderingBackend::deleteAllFonts()
+{
+    m_remoteResourceCache.deleteAllFonts();
 }
 
 void RemoteRenderingBackend::releaseRemoteResource(RenderingResourceIdentifier renderingResourceIdentifier)

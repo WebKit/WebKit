@@ -34,6 +34,7 @@
 #if ENABLE(OPENTYPE_VERTICAL)
 #include "OpenTypeVerticalData.h"
 #endif
+#include "RenderingResourceIdentifier.h"
 #include <wtf/BitVector.h>
 #include <wtf/Hasher.h>
 #include <wtf/Optional.h>
@@ -90,9 +91,10 @@ public:
         Yes,
         No
     };
-    static Ref<Font> create(const FontPlatformData& platformData, Origin origin = Origin::Local, Interstitial interstitial = Interstitial::No, Visibility visibility = Visibility::Visible, OrientationFallback orientationFallback = OrientationFallback::No)
+    static Ref<Font> create(const FontPlatformData& platformData, Origin origin = Origin::Local, Interstitial interstitial = Interstitial::No,
+        Visibility visibility = Visibility::Visible, OrientationFallback orientationFallback = OrientationFallback::No, Optional<RenderingResourceIdentifier> identifier = WTF::nullopt)
     {
-        return adoptRef(*new Font(platformData, origin, interstitial, visibility, orientationFallback));
+        return adoptRef(*new Font(platformData, origin, interstitial, visibility, orientationFallback, identifier));
     }
     WEBCORE_EXPORT static Ref<Font> create(Ref<SharedBuffer>&& fontFaceData, Font::Origin, float fontSize, bool syntheticBold, bool syntheticItalic);
 
@@ -105,6 +107,8 @@ public:
 #if ENABLE(OPENTYPE_VERTICAL)
     const OpenTypeVerticalData* verticalData() const { return m_verticalData.get(); }
 #endif
+
+    WEBCORE_EXPORT RenderingResourceIdentifier renderingResourceIdentifier() const;
 
     const Font* smallCapsFont(const FontDescription&) const;
     const Font& noSynthesizableFeaturesFont() const;
@@ -224,7 +228,7 @@ public:
 #endif
 
 private:
-    WEBCORE_EXPORT Font(const FontPlatformData&, Origin, Interstitial, Visibility, OrientationFallback);
+    WEBCORE_EXPORT Font(const FontPlatformData&, Origin, Interstitial, Visibility, OrientationFallback, Optional<RenderingResourceIdentifier>);
 
     void platformInit();
     void platformGlyphInit();
@@ -266,6 +270,8 @@ private:
 #if ENABLE(OPENTYPE_VERTICAL)
     RefPtr<OpenTypeVerticalData> m_verticalData;
 #endif
+
+    mutable Optional<RenderingResourceIdentifier> m_renderingResourceIdentifier;
 
     struct DerivedFonts {
         WTF_MAKE_STRUCT_FAST_ALLOCATED;
@@ -376,6 +382,8 @@ ALWAYS_INLINE float Font::widthForGlyph(Glyph glyph) const
     m_glyphToWidthMap.setMetricsForGlyph(glyph, width);
     return width;
 }
+
+using FontRenderingResourceMap = HashMap<RenderingResourceIdentifier, Ref<Font>>;
 
 } // namespace WebCore
 

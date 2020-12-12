@@ -27,6 +27,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include <WebCore/Font.h>
 #include <WebCore/ImageBuffer.h>
 #include <WebCore/NativeImage.h>
 #include <WebCore/RenderingResourceIdentifier.h>
@@ -43,14 +44,18 @@ public:
     void cacheImageBuffer(Ref<WebCore::ImageBuffer>&&);
     WebCore::ImageBuffer* cachedImageBuffer(WebCore::RenderingResourceIdentifier);
     void cacheNativeImage(Ref<WebCore::NativeImage>&&);
+    void cacheFont(Ref<WebCore::Font>&&);
+    void deleteAllFonts();
     void releaseRemoteResource(WebCore::RenderingResourceIdentifier);
-    
+
     const WebCore::ImageBufferHashMap& imageBuffers() const { return m_imageBuffers; }
     const WebCore::NativeImageHashMap& nativeImages() const { return m_nativeImages; }
+    const WebCore::FontRenderingResourceMap& fonts() const { return m_fonts; }
 
 private:
     WebCore::ImageBufferHashMap m_imageBuffers;
     WebCore::NativeImageHashMap m_nativeImages;
+    WebCore::FontRenderingResourceMap m_fonts;
 };
 
 } // namespace WebKit

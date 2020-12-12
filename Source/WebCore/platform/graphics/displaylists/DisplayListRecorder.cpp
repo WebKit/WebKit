@@ -172,6 +172,14 @@ void Recorder::drawGlyphs(const Font& font, const GlyphBuffer& glyphBuffer, unsi
     m_drawGlyphsRecorder.drawGlyphs(font, glyphBuffer, from, numGlyphs, startPoint, smoothingMode);
 }
 
+void Recorder::appendDrawGraphsItemWithCachedFont(const Font& font, const GlyphBufferGlyph* glyphs, const GlyphBufferAdvance* advances, unsigned count, const FloatPoint& localAnchor, FontSmoothingMode smoothingMode)
+{
+    if (m_delegate)
+        m_delegate->cacheFont(const_cast<Font&>(font));
+    m_displayList.cacheFont(const_cast<Font&>(font));
+    append<DrawGlyphs>(font, glyphs, advances, count, localAnchor, smoothingMode);
+}
+
 void Recorder::drawImageBuffer(WebCore::ImageBuffer& imageBuffer, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
 {
     imageBuffer.flushDrawingContext();

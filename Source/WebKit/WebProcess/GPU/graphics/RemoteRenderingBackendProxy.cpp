@@ -154,6 +154,16 @@ void RemoteRenderingBackendProxy::cacheNativeImage(const ShareableBitmap::Handle
     send(Messages::RemoteRenderingBackend::CacheNativeImage(handle, renderingResourceIdentifier), m_renderingBackendIdentifier);
 }
 
+void RemoteRenderingBackendProxy::cacheFont(Ref<WebCore::Font>&& font)
+{
+    send(Messages::RemoteRenderingBackend::CacheFont(WTFMove(font)), m_renderingBackendIdentifier);
+}
+
+void RemoteRenderingBackendProxy::deleteAllFonts()
+{
+    send(Messages::RemoteRenderingBackend::DeleteAllFonts(), m_renderingBackendIdentifier);
+}
+
 void RemoteRenderingBackendProxy::releaseRemoteResource(RenderingResourceIdentifier renderingResourceIdentifier)
 {
     if (renderingResourceIdentifier == m_currentDestinationImageBufferIdentifier)
