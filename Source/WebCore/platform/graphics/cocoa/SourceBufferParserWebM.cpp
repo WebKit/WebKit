@@ -1085,7 +1085,7 @@ void SourceBufferParserWebM::VideoTrackData::createSampleBuffer(const CMTime& pr
 
 webm::Status SourceBufferParserWebM::AudioTrackData::consumeFrameData(webm::Reader& reader, const FrameMetadata& metadata, uint64_t* bytesRemaining, const CMTime& presentationTime, int sampleCount)
 {
-    ASSERT_UNUSED(sampleCount, sampleCount == 1);
+    ASSERT(sampleCount);
 
     if (!formatDescription()) {
         if (!track().codec_private.is_present()) {
@@ -1115,13 +1115,13 @@ webm::Status SourceBufferParserWebM::AudioTrackData::consumeFrameData(webm::Read
         setFormatDescription(WTFMove(formatDescription));
     }
 
-    if (m_packetData.isEmpty()) {
-        m_packetData.resize(metadata.size);
+    if (m_packetDescriptions.isEmpty()) {
         m_packetBytesRead = 0;
         m_byteOffset = metadata.position;
         m_samplePresentationTime = presentationTime;
     }
 
+    m_packetData.resize(m_packetBytesRead + metadata.size);
     size_t packetDataOffset = m_packetBytesRead;
     size_t bytesToRead = metadata.size;
     while (bytesToRead) {
@@ -1137,7 +1137,7 @@ webm::Status SourceBufferParserWebM::AudioTrackData::consumeFrameData(webm::Read
     }
 
     m_packetDescriptions.append({ static_cast<int64_t>(packetDataOffset), 0, static_cast<UInt32>(metadata.size) });
-    auto sampleDuration = CMTimeGetSeconds(CMTimeSubtract(presentationTime, m_samplePresentationTime)) + CMTimeGetSeconds(m_packetDuration);
+    auto sampleDuration = CMTimeGetSeconds(CMTimeSubtract(presentationTime, m_samplePresentationTime)) + CMTimeGetSeconds(m_packetDuration) * sampleCount;
     if (sampleDuration >= m_minimumSampleDuration)
         createSampleBuffer();
 

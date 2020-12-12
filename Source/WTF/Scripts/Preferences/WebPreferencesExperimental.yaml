@@ -902,6 +902,18 @@ VisualViewportAPIEnabled:
     WebCore:
       default: false
 
+VorbisDecoderEnabled:
+  type: bool
+  humanReadableName: "Vorbis audio decoder"
+  humanReadableDescription: "Enable Vorbis audio decoder"
+  condition: ENABLE(VORBIS)
+  webcoreBinding: RuntimeEnabledFeatures
+  defaultValue:
+    WebKitLegacy:
+      default: true
+    WebKit:
+      default: true
+
 # FIXME: This is enabled when ENABLE(EXPERIMENTAL_FEATURES) is true in WebKit2. Perhaps we should consider using that for WebKitLegacy as well.
 WebAnimationsCompositeOperationsEnabled:
   type: bool

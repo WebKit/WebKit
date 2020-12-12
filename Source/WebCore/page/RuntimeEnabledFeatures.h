@@ -255,6 +255,11 @@ public:
     bool disableMediaExperiencePIDInheritance() const { return m_disableMediaExperiencePIDInheritance; }
 #endif
 
+#if ENABLE(VORBIS)
+    void setVorbisDecoderEnabled(bool isEnabled) { m_vorbisDecoderEnabled = isEnabled; }
+    bool vorbisDecoderEnabled() const { return m_vorbisDecoderEnabled; }
+#endif
+
 #if ENABLE(WEB_AUTHN)
     void setWebAuthenticationModernEnabled(bool areEnabled) { m_areWebAuthenticationModernEnabled = areEnabled; }
     bool webAuthenticationModernEnabled() const { return m_areWebAuthenticationModernEnabled; }
@@ -388,6 +393,10 @@ private:
 
 #if HAVE(CELESTIAL)
     bool m_disableMediaExperiencePIDInheritance { false };
+#endif
+
+#if ENABLE(VORBIS)
+    bool m_vorbisDecoderEnabled { false };
 #endif
 
 #if ENABLE(WEB_AUTHN)
