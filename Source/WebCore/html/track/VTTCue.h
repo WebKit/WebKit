@@ -35,6 +35,7 @@
 
 #include "HTMLElement.h"
 #include "TextTrackCue.h"
+#include "VTTRegion.h"
 #include <wtf/TypeCasts.h>
 
 namespace WebCore {
@@ -83,17 +84,25 @@ public:
     enum AutoKeyword { Auto };
     using LineAndPositionSetting = Variant<double, AutoKeyword>;
 
+    void setTrack(TextTrack*);
+
     const String& vertical() const;
     ExceptionOr<void> setVertical(const String&);
 
     bool snapToLines() const { return m_snapToLines; }
     void setSnapToLines(bool);
 
-    double line() const { return m_linePosition; }
-    virtual ExceptionOr<void> setLine(double);
+    LineAndPositionSetting line() const;
+    virtual ExceptionOr<void> setLine(const LineAndPositionSetting&);
+
+    const String& lineAlign() const;
+    ExceptionOr<void> setLineAlign(const String&);
 
     LineAndPositionSetting position() const;
     virtual ExceptionOr<void> setPosition(const LineAndPositionSetting&);
+
+    const String& positionAlign() const;
+    ExceptionOr<void> setPositionAlign(const String&);
 
     int size() const { return m_cueSize; }
     ExceptionOr<void> setSize(int);
@@ -110,9 +119,12 @@ public:
     RefPtr<DocumentFragment> getCueAsHTML() final;
     RefPtr<DocumentFragment> createCueRenderingTree();
 
-    const String& regionId() const { return m_regionId; }
-    void setRegionId(const String&);
     void notifyRegionWhenRemovingDisplayTree(bool);
+
+    VTTRegion* region();
+    void setRegion(VTTRegion*);
+
+    const String& regionId();
 
     void setIsActive(bool) override;
 
@@ -152,6 +164,21 @@ public:
     };
     CueAlignment getAlignment() const { return m_cueAlignment; }
 
+    enum CueLignAlignment {
+        LignAlignmentStart,
+        LignAlignmentCenter,
+        LignAlignmentEnd,
+        NumberOfCueLineAlignments
+    };
+
+    enum CuePositionAlignment {
+        PositionAlignmentLignLeft,
+        PositionAlignmentLignCenter,
+        PositionAlignmentLignRight,
+        PositionAlignmentLignAuto,
+        NumberOfCuePositionAlignments
+    };
+
     void recalculateStyles() final { m_displayTreeShouldChange = true; }
     void setFontSize(int, const IntSize&, bool important) override;
 
@@ -181,7 +208,7 @@ private:
     void parseSettings(const String&);
 
     bool textPositionIsAuto() const;
-    
+
     void determineTextDirection();
     void calculateDisplayParameters();
 
@@ -192,7 +219,7 @@ private:
         Position,
         Size,
         Align,
-        RegionId
+        Region
     };
     CueSetting settingName(VTTScanner&);
 
@@ -200,14 +227,16 @@ private:
 
     String m_content;
     String m_settings;
-    double m_linePosition { undefinedPosition };
-    double m_computedLinePosition { undefinedPosition };
+    double m_linePosition { std::numeric_limits<double>::quiet_NaN() };
+    double m_computedLinePosition { std::numeric_limits<double>::quiet_NaN() };
     double m_textPosition { std::numeric_limits<double>::quiet_NaN() };
     int m_cueSize { 100 };
 
     WritingDirection m_writingDirection { Horizontal };
     CueAlignment m_cueAlignment { Center };
-    String m_regionId;
+
+    RefPtr<VTTRegion> m_region;
+    String m_parsedRegionId;
 
     RefPtr<DocumentFragment> m_webVTTNodeTree;
     RefPtr<HTMLSpanElement> m_cueHighlightBox;
@@ -226,6 +255,9 @@ private:
     bool m_snapToLines : 1;
     bool m_displayTreeShouldChange : 1;
     bool m_notifyRegion : 1;
+
+    CuePositionAlignment m_positionAlignment { PositionAlignmentLignAuto };
+    CueLignAlignment m_lineAlignment { LignAlignmentStart };
 };
 
 } // namespace WebCore

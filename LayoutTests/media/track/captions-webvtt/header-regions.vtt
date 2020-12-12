@@ -28,6 +28,9 @@ REGION
 invalid_settings values but region still created
 : Invalid Header
 
+REGION
+id:someregionattributeid
+
 1
 00:00:00.000 --> 00:00:02.500 region:someregionattributeid
 We are in New York City

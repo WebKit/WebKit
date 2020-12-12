@@ -1,18 +1,18 @@
-Tests the regionId attribute of a cue.
+Tests the region attribute of a cue.
 
 
+EXPECTED (!!window.VTTRegion == 'true') OK
 
 ** Test the setter and getter through the JS API **
-EXPECTED (cue.regionId == '') OK
-EXPECTED (cue.regionId == 'someId') OK
+EXPECTED (cue.region == 'null') OK
 
 ** Test parsing a region attribute of a cue **
-EXPECTED (cue.regionId == 'someregionattributeid') OK
+EXPECTED (typeof cue.region == 'object') OK
 
 ** Test that region attribute is ignored if either line position or cue size are specified or writing direction is not horizontal **
-EXPECTED (cue.regionId == '') OK
-EXPECTED (cue.regionId == '') OK
-EXPECTED (cue.regionId == '') OK
+EXPECTED (cue.region == 'null') OK
+EXPECTED (cue.region == 'null') OK
+EXPECTED (cue.region == 'null') OK
 
 END OF TEST
 

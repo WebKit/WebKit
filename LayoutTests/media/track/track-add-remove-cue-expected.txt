@@ -19,7 +19,7 @@ EXPECTED (textCue.endTime == '3.4') OK
 EXPECTED (textCue.pauseOnExit == 'false') OK
 EXPECTED (textCue.vertical == '') OK
 EXPECTED (textCue.snapToLines == 'true') OK
-EXPECTED (textCue.line == '-1') OK
+EXPECTED (textCue.line == 'auto') OK
 EXPECTED (textCue.position == 'auto') OK
 EXPECTED (textCue.size == '100') OK
 EXPECTED (textCue.align == 'center') OK
@@ -42,7 +42,7 @@ EXPECTED (newCue.endTime == '1') OK
 EXPECTED (newCue.pauseOnExit == 'false') OK
 EXPECTED (newCue.vertical == '') OK
 EXPECTED (newCue.snapToLines == 'true') OK
-EXPECTED (newCue.line == '-1') OK
+EXPECTED (newCue.line == 'auto') OK
 EXPECTED (newCue.position == 'auto') OK
 EXPECTED (newCue.size == '100') OK
 EXPECTED (newCue.align == 'center') OK

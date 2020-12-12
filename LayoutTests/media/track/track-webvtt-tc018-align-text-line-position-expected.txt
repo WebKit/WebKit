@@ -29,11 +29,11 @@ EXPECTED (cues[4].snapToLines == 'true') OK
 EXPECTED (cues.length == '3') OK
 EXPECTED (cues[0].align == 'center') OK
 EXPECTED (cues[0].position == 'auto') OK
-EXPECTED (cues[0].line == '-1') OK
+EXPECTED (cues[0].line == 'auto') OK
 EXPECTED (cues[0].snapToLines == 'true') OK
 EXPECTED (cues[1].align == 'end') OK
 EXPECTED (cues[1].position == '0') OK
-EXPECTED (cues[1].line == '-1') OK
+EXPECTED (cues[1].line == 'auto') OK
 EXPECTED (cues[1].snapToLines == 'true') OK
 EXPECTED (cues[2].align == 'center') OK
 EXPECTED (cues[2].position == '60') OK

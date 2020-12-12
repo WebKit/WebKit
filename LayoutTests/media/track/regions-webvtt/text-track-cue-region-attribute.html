@@ -10,28 +10,23 @@
 
             function startTest()
             {
-                if (!window.VTTRegion) {
-                    failTest();
-                    return;
-                }
+                testExpected("!!window.VTTRegion", true);
 
                 consoleWrite("<br>** Test the setter and getter through the JS API **");
                 cue = new VTTCue(0.0, 1.0, "sample");
 
-                testExpected("cue.regionId", "");
-                cue.regionId = "someId";
-                testExpected("cue.regionId", "someId");
+                testExpected("cue.region", null);
 
                 consoleWrite("<br>** Test parsing a region attribute of a cue **");
                 findMediaElement();
 
                 cue = video.textTracks[0].cues[0];
-                testExpected("cue.regionId", "someregionattributeid");
+                testExpected("typeof cue.region", "object");
 
                 consoleWrite("<br>** Test that region attribute is ignored if either line position or cue size are specified or writing direction is not horizontal **");
                 for (i = 1; i < 4; ++i) {
                   cue = video.textTracks[0].cues[i];
-                  testExpected("cue.regionId", "");
+                  testExpected("cue.region", null);
                 }
 
                 consoleWrite("");
@@ -42,7 +37,7 @@
         </script>
     </head>
     <body>
-        <p>Tests the regionId attribute of a cue.</p>
+        <p>Tests the region attribute of a cue.</p>
         <video controls>
             <track src="../captions-webvtt/header-regions.vtt" kind="captions" default onload="startTest()">
         </video>

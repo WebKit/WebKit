@@ -38,7 +38,7 @@ class TextTrackCueGeneric final : public VTTCue {
 public:
     WEBCORE_EXPORT static Ref<TextTrackCueGeneric> create(ScriptExecutionContext&, const MediaTime& start, const MediaTime& end, const String& content);
 
-    ExceptionOr<void> setLine(double) final;
+    ExceptionOr<void> setLine(const LineAndPositionSetting&) final;
     ExceptionOr<void> setPosition(const LineAndPositionSetting&) final;
 
     bool useDefaultPosition() const { return m_useDefaultPosition; }

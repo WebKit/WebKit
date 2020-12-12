@@ -36,12 +36,14 @@ typedef (double or AutoKeyword) LineAndPositionSetting;
 
     attribute DOMString vertical;
     attribute boolean snapToLines;
-    attribute double line;
+    attribute LineAndPositionSetting line;
+    attribute DOMString lineAlign;
     attribute LineAndPositionSetting position;
+    attribute DOMString positionAlign;
     attribute double size;
     attribute DOMString align;
     attribute DOMString text;
     DocumentFragment getCueAsHTML();
 
-    attribute DOMString regionId;
+    attribute VTTRegion? region;
 };

@@ -1,3 +1,31 @@
+2020-12-12  Frank Olivier  <frankolivier@apple.com>
+
+        Implement WebVTT VTTCue region attribute
+        https://bugs.webkit.org/show_bug.cgi?id=168716
+
+        Updated VTTCue to current IDL
+
+        Reviewed by Eric Carlson.
+
+        * media/track/captions-webvtt/header-regions.vtt:
+        * media/track/regions-webvtt/text-track-cue-region-attribute-expected.txt:
+        * media/track/regions-webvtt/text-track-cue-region-attribute.html:
+        * media/track/regions-webvtt/vtt-region-parser-expected.txt:
+        * media/track/regions-webvtt/vtt-region-parser.html:
+        * media/track/track-add-remove-cue-expected.txt:
+        * media/track/track-add-remove-cue.html:
+        * media/track/track-cue-container-rendering-position.html:
+        * media/track/track-cue-mutable-expected.txt:
+        * media/track/track-cue-mutable.html:
+        * media/track/track-vttcue-expected.txt:
+        * media/track/track-vttcue.html:
+        * media/track/track-webvtt-tc013-settings-expected.txt:
+        * media/track/track-webvtt-tc013-settings.html:
+        * media/track/track-webvtt-tc017-line-position-expected.txt:
+        * media/track/track-webvtt-tc017-line-position.html:
+        * media/track/track-webvtt-tc018-align-text-line-position-expected.txt:
+        * media/track/track-webvtt-tc018-align-text-line-position.html:
+
 2020-12-12  Diego Pino Garcia  <dpino@igalia.com>
 
         [GLIB][GTK] Unreviewed test gardening. Remove tests passing after r270734.

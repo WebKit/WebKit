@@ -123,6 +123,24 @@ static const String& verticalGrowingRightKeyword()
     return verticallr;
 }
 
+static const String& lineLeftKeyword()
+{
+    static NeverDestroyed<const String> lineLeft(MAKE_STATIC_STRING_IMPL("line-left"));
+    return lineLeft;
+}
+
+static const String& lineRightKeyword()
+{
+    static NeverDestroyed<const String> lineRight(MAKE_STATIC_STRING_IMPL("line-right"));
+    return lineRight;
+}
+
+static const String& autoKeyword()
+{
+    static NeverDestroyed<const String> autoX(MAKE_STATIC_STRING_IMPL("auto"));
+    return autoX;
+}
+
 // ----------------------------
 
 Ref<VTTCueBox> VTTCueBox::create(Document& document, VTTCue& cue)
@@ -336,8 +354,8 @@ ExceptionOr<void> VTTCue::setVertical(const String& value)
     else if (value == verticalGrowingRightKeyword())
         direction = VerticalGrowingRight;
     else
-        return Exception { SyntaxError };
-    
+        return { };
+
     if (direction == m_writingDirection)
         return { };
 
@@ -358,25 +376,74 @@ void VTTCue::setSnapToLines(bool value)
     didChange();
 }
 
-ExceptionOr<void> VTTCue::setLine(double position)
+VTTCue::LineAndPositionSetting VTTCue::line() const
 {
-    // http://www.whatwg.org/specs/web-apps/current-work/multipage/the-video-element.html#dom-texttrackcue-line
-    // On setting, if the text track cue snap-to-lines flag is not set, and the new
-    // value is negative or greater than 100, then throw an IndexSizeError exception.
-    if (!m_snapToLines && !(position >= 0 && position <= 100))
-        return Exception { IndexSizeError };
+    if (std::isnan(m_linePosition))
+        return Auto;
 
-    // Otherwise, set the text track cue line position to the new value.
-    if (m_linePosition == position)
-        return { };
+    return m_linePosition;
+}
+
+ExceptionOr<void> VTTCue::setLine(const LineAndPositionSetting& position)
+{
+    double linePosition = 0;
+
+    if (WTF::holds_alternative<AutoKeyword>(position)) {
+        if (std::isnan(m_linePosition))
+            return { };
+        linePosition = std::numeric_limits<double>::quiet_NaN();
+    } else {
+        linePosition = WTF::get<double>(position);
+
+        if (m_linePosition == linePosition)
+            return { };
+    }
 
     willChange();
-    m_linePosition = position;
+    m_linePosition = linePosition;
     m_computedLinePosition = calculateComputedLinePosition();
     didChange();
 
     return { };
 }
+
+const String& VTTCue::lineAlign() const
+{
+    switch (m_lineAlignment) {
+    case LignAlignmentStart:
+        return startKeyword();
+    case LignAlignmentCenter:
+        return centerKeyword();
+    case LignAlignmentEnd:
+        return endKeyword();
+    default:
+        ASSERT_NOT_REACHED();
+        return emptyString();
+    }
+}
+
+ExceptionOr<void> VTTCue::setLineAlign(const String& value)
+{
+    CueLignAlignment lineAlignment;
+    if (value == startKeyword())
+        lineAlignment = LignAlignmentStart;
+    else if (value == centerKeyword())
+        lineAlignment = LignAlignmentCenter;
+    else if (value == endKeyword())
+        lineAlignment = LignAlignmentEnd;
+    else
+        return { };
+
+    if (lineAlignment == m_lineAlignment)
+        return { };
+
+    willChange();
+    m_lineAlignment = lineAlignment;
+    didChange();
+
+    return { };
+}
+
 
 VTTCue::LineAndPositionSetting VTTCue::position() const
 {
@@ -409,6 +476,47 @@ ExceptionOr<void> VTTCue::setPosition(const LineAndPositionSetting& position)
 
     willChange();
     m_textPosition = textPosition;
+    didChange();
+
+    return { };
+}
+
+const String& VTTCue::positionAlign() const
+{
+    switch (m_positionAlignment) {
+    case PositionAlignmentLignLeft:
+        return lineLeftKeyword();
+    case PositionAlignmentLignCenter:
+        return centerKeyword();
+    case PositionAlignmentLignRight:
+        return lineRightKeyword();
+    case PositionAlignmentLignAuto:
+        return autoKeyword();
+    default:
+        ASSERT_NOT_REACHED();
+        return emptyString();
+    }
+}
+
+ExceptionOr<void> VTTCue::setPositionAlign(const String& value)
+{
+    CuePositionAlignment positionAlignment;
+    if (value == lineLeftKeyword())
+        positionAlignment = PositionAlignmentLignLeft;
+    else if (value == centerKeyword())
+        positionAlignment = PositionAlignmentLignCenter;
+    else if (value == lineRightKeyword())
+        positionAlignment = PositionAlignmentLignRight;
+    else if (value == autoKeyword())
+        positionAlignment = PositionAlignmentLignAuto;
+    else
+        return { };
+
+    if (positionAlignment == m_positionAlignment)
+        return { };
+
+    willChange();
+    m_positionAlignment = positionAlignment;
     didChange();
 
     return { };
@@ -472,8 +580,8 @@ ExceptionOr<void> VTTCue::setAlign(const String& value)
     else if (value == rightKeyword())
         alignment = Right;
     else
-        return Exception { SyntaxError };
-    
+        return { };
+
     if (alignment == m_cueAlignment)
         return { };
 
@@ -543,16 +651,6 @@ RefPtr<DocumentFragment> VTTCue::createCueRenderingTree()
     return clonedFragment;
 }
 
-void VTTCue::setRegionId(const String& regionId)
-{
-    if (m_regionId == regionId)
-        return;
-
-    willChange();
-    m_regionId = regionId;
-    didChange();
-}
-
 void VTTCue::notifyRegionWhenRemovingDisplayTree(bool notifyRegion)
 {
     m_notifyRegion = notifyRegion;
@@ -571,13 +669,52 @@ void VTTCue::setIsActive(bool active)
     }
 }
 
+void VTTCue::setTrack(TextTrack* track)
+{
+    LOG(Media, "VTTCue::setTrack");
+    TextTrackCue::setTrack(track);
+    if (!m_parsedRegionId.isEmpty()) {
+        if (track != nullptr) {
+            if (auto* regions = track->regions()) {
+                if (auto region = regions->getRegionById(m_parsedRegionId))
+                    m_region = RefPtr<VTTRegion>(region);
+            }
+        }
+    }
+}
+
+void VTTCue::setRegion(VTTRegion* region)
+{
+    if (m_region != region) {
+        willChange();
+        m_region = region;
+        didChange();
+    }
+}
+
+VTTRegion* VTTCue::region()
+{
+    if (!m_region)
+        return nullptr;
+
+    return &*m_region;
+}
+
+const String& VTTCue::regionId()
+{
+    if (!m_region)
+        return emptyString();
+
+    return m_region->id();
+}
+
 int VTTCue::calculateComputedLinePosition()
 {
     // http://www.whatwg.org/specs/web-apps/current-work/multipage/the-video-element.html#text-track-cue-computed-line-position
 
     // If the text track cue line position is numeric, then that is the text
     // track cue computed line position.
-    if (m_linePosition != undefinedPosition)
+    if (!std::isnan(m_linePosition))
         return m_linePosition;
 
     // If the text track cue snap-to-lines flag of the text track cue is not
@@ -902,10 +1039,8 @@ RefPtr<TextTrackCueBox> VTTCue::getDisplayTree(const IntSize& videoSize, int fon
     m_displayTreeShouldChange = false;
 
     if (track()) {
-        if (auto* regions = track()->regions()) {
-            if (auto region = regions->getRegionById(m_regionId))
-                region->cueStyleChanged();
-        }
+        if (m_region)
+            m_region->cueStyleChanged();
     }
 
     // 10.15. Let cue's text track cue display state have the CSS boxes in
@@ -920,12 +1055,8 @@ void VTTCue::removeDisplayTree()
 
     // The region needs to be informed about the cue removal.
     if (m_notifyRegion && track()) {
-        if (VTTRegionList* regions = track()->regions()) {
-            if (RefPtr<VTTRegion> region = regions->getRegionById(m_regionId)) {
-                if (m_displayTree)
-                    region->willRemoveTextTrackCueBox(m_displayTree.get());
-            }
-        }
+        if (m_region && m_displayTree)
+            m_region->willRemoveTextTrackCueBox(m_displayTree.get());
     }
 
     // The display tree is never exposed to author scripts so it's safe to dispatch events here.
@@ -987,7 +1118,7 @@ VTTCue::CueSetting VTTCue::settingName(VTTScanner& input)
     else if (input.scan("align"))
         parsedSetting = Align;
     else if (input.scan("region"))
-        parsedSetting = RegionId;
+        parsedSetting = Region;
 
     // Verify that a ':' follows.
     if (parsedSetting != None && input.scan(':'))
@@ -1148,9 +1279,10 @@ void VTTCue::setCueSettings(const String& inputString)
 
             break;
         }
-        case RegionId:
-            m_regionId = input.extractString(valueRun);
+        case Region: {
+            m_parsedRegionId = input.extractString(valueRun);
             break;
+        }
         case None:
             break;
         }
@@ -1159,11 +1291,6 @@ void VTTCue::setCueSettings(const String& inputString)
         input.skipRun(valueRun);
     }
 
-    // If cue's line position is not auto or cue's size is not 100 or cue's
-    // writing direction is not horizontal, but cue's region identifier is not
-    // the empty string, let cue's region identifier be the empty string.
-    if (!m_regionId.isEmpty() && (m_linePosition != undefinedPosition || m_cueSize != 100 || m_writingDirection != Horizontal))
-        m_regionId = emptyString();
 }
 
 CSSValueID VTTCue::getCSSAlignment() const
@@ -1234,7 +1361,6 @@ void VTTCue::toJSON(JSON::Object& object) const
         object.setDouble("position"_s, m_textPosition);
     object.setInteger("size"_s, m_cueSize);
     object.setString("align"_s, align());
-    object.setString("regionId"_s, regionId());
 }
 
 } // namespace WebCore

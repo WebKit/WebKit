@@ -200,7 +200,7 @@ void MediaControlTextTrackContainerElement::updateTextTrackRepresentationImageIf
 
 void MediaControlTextTrackContainerElement::processActiveVTTCue(VTTCue& cue)
 {
-    DEBUG_LOG(LOGIDENTIFIER, "adding and positioning cue: \"", cue.text(), "\", start=", cue.startTime(), ", end=", cue.endTime(), ", line=", cue.line());
+    DEBUG_LOG(LOGIDENTIFIER, "adding and positioning cue: \"", cue.text(), "\", start=", cue.startTime(), ", end=", cue.endTime());
     Ref<TextTrackCueBox> displayBox = *cue.getDisplayTree(m_videoDisplaySize.size(), m_fontSize);
 
     if (auto region = cue.track()->regions()->getRegionById(cue.regionId())) {

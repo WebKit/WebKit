@@ -1,3 +1,13 @@
+2020-12-12  Frank Olivier  <frankolivier@apple.com>
+
+        Implement WebVTT VTTCue region attribute
+        https://bugs.webkit.org/show_bug.cgi?id=168716
+
+        Reviewed by Eric Carlson.
+
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-align-text-line-position-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-line-position-expected.txt:
+
 2020-12-11  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Reflect.preventExtensions should not throw if called on WindowProxy or Location
