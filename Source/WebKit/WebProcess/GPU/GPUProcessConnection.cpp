@@ -185,12 +185,13 @@ void GPUProcessConnection::didReceiveRemoteCommand(PlatformMediaSession::RemoteC
 void GPUProcessConnection::updateParameters(const WebPageCreationParameters& parameters)
 {
 #if ENABLE(VP9)
-    if (m_enableVP9Decoder == parameters.shouldEnableVP9Decoder && m_enableVP9SWDecoder == parameters.shouldEnableVP9SWDecoder)
+    if (m_enableVP8Decoder == parameters.shouldEnableVP8Decoder && m_enableVP9Decoder == parameters.shouldEnableVP9Decoder && m_enableVP9SWDecoder == parameters.shouldEnableVP9SWDecoder)
         return;
 
+    m_enableVP9Decoder = parameters.shouldEnableVP8Decoder;
     m_enableVP9Decoder = parameters.shouldEnableVP9Decoder;
     m_enableVP9SWDecoder = parameters.shouldEnableVP9SWDecoder;
-    connection().send(Messages::GPUConnectionToWebProcess::EnableVP9Decoders(parameters.shouldEnableVP9Decoder, parameters.shouldEnableVP9SWDecoder), { });
+    connection().send(Messages::GPUConnectionToWebProcess::EnableVP9Decoders(parameters.shouldEnableVP8Decoder, parameters.shouldEnableVP9Decoder, parameters.shouldEnableVP9SWDecoder), { });
 #endif
 }
 

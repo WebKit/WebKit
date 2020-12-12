@@ -278,6 +278,15 @@ bool defaultWebXREnabled()
 
 #if ENABLE(VP9)
 
+bool defaultVP8DecoderEnabled()
+{
+#if HAVE(SYSTEM_FEATURE_FLAGS)
+    return isFeatureFlagEnabled("vp8_decoder");
+#endif
+
+    return false;
+}
+
 bool defaultVP9DecoderEnabled()
 {
 #if HAVE(SYSTEM_FEATURE_FLAGS)

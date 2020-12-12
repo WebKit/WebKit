@@ -89,6 +89,8 @@ public:
         InvalidDocType,
         InvalidInitSegment,
         ReceivedEbmlInsideSegment,
+        UnsupportedVideoCodec,
+        UnsupportedAudioCodec,
     };
 
     enum class State : uint8_t {
@@ -106,6 +108,7 @@ public:
 
     enum class CodecType : uint8_t {
         Unsupported,
+        VP8,
         VP9,
         Vorbis,
         Opus,
@@ -219,6 +222,9 @@ public:
 private:
 
     TrackData* trackDataForTrackNumber(uint64_t);
+
+    static const HashSet<String>& supportedVideoCodecs();
+    static const HashSet<String>& supportedAudioCodecs();
 
     // webm::Callback
     webm::Status OnElementBegin(const webm::ElementMetadata&, webm::Action*) final;

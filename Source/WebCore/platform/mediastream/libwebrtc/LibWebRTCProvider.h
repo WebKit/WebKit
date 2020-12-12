@@ -75,6 +75,7 @@ public:
 
     static bool webRTCAvailable();
     static void registerWebKitVP9Decoder();
+    static void registerWebKitVP8Decoder();
     static void setH264HardwareEncoderAllowed(bool);
 
     virtual void setActive(bool);

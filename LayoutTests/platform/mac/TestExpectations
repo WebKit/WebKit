@@ -858,8 +858,8 @@ webkit.org/b/161725 imported/w3c/web-platform-tests/media-source/mediasource-err
 webkit.org/b/161725 imported/w3c/web-platform-tests/media-source/mediasource-is-type-supported.html [ Skip ]
 webkit.org/b/161725 imported/w3c/web-platform-tests/media-source/mediasource-removesourcebuffer.html [ Skip ]
 webkit.org/b/161725 imported/w3c/web-platform-tests/media-source/mediasource-seek-beyond-duration.html [ Skip ]
-webkit.org/b/161725 imported/w3c/web-platform-tests/media-source/mediasource-seek-during-pending-seek.html [ Skip ]
-webkit.org/b/161725 imported/w3c/web-platform-tests/media-source/mediasource-seekable.html [ Skip ]
+webkit.org/b/161725 [ Mojave Catalina ] imported/w3c/web-platform-tests/media-source/mediasource-seek-during-pending-seek.html [ Skip ]
+webkit.org/b/161725 [ Mojave Catalina ] imported/w3c/web-platform-tests/media-source/mediasource-seekable.html [ Skip ]
 webkit.org/b/161725 imported/w3c/web-platform-tests/media-source/mediasource-sequencemode-append-buffer.html [ Skip ]
 webkit.org/b/161725 imported/w3c/web-platform-tests/media-source/mediasource-sourcebuffer-mode-timestamps.html [ Skip ]
 webkit.org/b/161725 imported/w3c/web-platform-tests/media-source/mediasource-sourcebuffer-mode.html [ Skip ]
@@ -870,9 +870,9 @@ imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-a-bi
 imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-av-audio-bitrate.html [ Skip ]
 imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-av-framesize.html [ Skip ]
 imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-av-video-bitrate.html [ Skip ]
-imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-v-bitrate.html [ Skip ]
-imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-v-framerate.html [ Skip ]
-imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-v-framesize.html [ Skip ]
+[ Mojave Catalina ] imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-v-bitrate.html [ Skip ]
+[ Mojave Catalina ] imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-v-framerate.html [ Skip ]
+[ Mojave Catalina ] imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-v-framesize.html [ Skip ]
 
 # Skipped in W3C Web Platform Test manifest
 imported/w3c/web-platform-tests/media-source/mediasource-getvideoplaybackquality.html [ Skip ]

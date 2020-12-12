@@ -162,6 +162,7 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
 #if ENABLE(WEBGL)
     encoder << shouldRenderWebGLInGPUProcess;
 #endif
+    encoder << shouldEnableVP8Decoder;
     encoder << shouldEnableVP9Decoder;
     encoder << shouldEnableVP9SWDecoder;
 #if ENABLE(APP_BOUND_DOMAINS)
@@ -526,6 +527,9 @@ Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decod
     if (!decoder.decode(parameters.shouldRenderWebGLInGPUProcess))
         return WTF::nullopt;
 #endif
+
+    if (!decoder.decode(parameters.shouldEnableVP8Decoder))
+        return WTF::nullopt;
 
     if (!decoder.decode(parameters.shouldEnableVP9Decoder))
         return WTF::nullopt;

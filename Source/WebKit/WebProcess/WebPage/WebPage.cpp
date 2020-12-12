@@ -819,6 +819,9 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     if (parameters.shouldEnableVP9Decoder)
         WebProcess::singleton().enableVP9Decoder();
 
+    if (parameters.shouldEnableVP8Decoder)
+        WebProcess::singleton().enableVP8SWDecoder();
+
     if (parameters.shouldEnableVP9SWDecoder)
         WebProcess::singleton().enableVP9SWDecoder();
 #endif

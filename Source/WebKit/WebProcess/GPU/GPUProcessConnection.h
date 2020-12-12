@@ -82,6 +82,7 @@ public:
     void updateParameters(const WebPageCreationParameters&);
 
 #if ENABLE(VP9)
+    bool isVP8DecoderEnabled() const { return m_enableVP8Decoder; }
     bool isVP9DecoderEnabled() const { return m_enableVP9Decoder; }
     bool isVPSWDecoderEnabled() const { return m_enableVP9SWDecoder; }
 #endif
@@ -123,6 +124,7 @@ private:
     RefPtr<RemoteAudioSourceProviderManager> m_audioSourceProviderManager;
 #endif
 #if ENABLE(VP9)
+    bool m_enableVP8Decoder { false };
     bool m_enableVP9Decoder { false };
     bool m_enableVP9SWDecoder { false };
 #endif

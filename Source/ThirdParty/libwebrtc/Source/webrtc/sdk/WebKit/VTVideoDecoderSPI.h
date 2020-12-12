@@ -25,6 +25,9 @@
 
 #pragma once
 
+#include <VideoToolbox/VideoToolbox.h>
+#include "CMBaseObjectSPI.h"
+
 #if defined __has_include && __has_include(<CoreFoundation/CFPriv.h>)
 #include <VideoToolbox/VTVideoDecoder.h>
 #include <VideoToolbox/VTVideoDecoderRegistration.h>

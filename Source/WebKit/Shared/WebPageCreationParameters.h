@@ -233,6 +233,7 @@ struct WebPageCreationParameters {
 #if ENABLE(WEBGL)
     bool shouldRenderWebGLInGPUProcess { false };
 #endif
+    bool shouldEnableVP8Decoder { false };
     bool shouldEnableVP9Decoder { false };
     bool shouldEnableVP9SWDecoder { false };
 #if ENABLE(APP_BOUND_DOMAINS)

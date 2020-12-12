@@ -292,12 +292,18 @@ WorkQueue& GPUProcess::libWebRTCCodecsQueue()
 #endif
 
 #if ENABLE(VP9)
-void GPUProcess::enableVP9Decoders(bool shouldEnableVP9Decoder, bool shouldEnableVP9SWDecoder)
+void GPUProcess::enableVP9Decoders(bool shouldEnableVP8Decoder, bool shouldEnableVP9Decoder, bool shouldEnableVP9SWDecoder)
 {
     if (shouldEnableVP9Decoder && !m_enableVP9Decoder) {
         m_enableVP9Decoder = true;
 #if PLATFORM(COCOA)
         WebCore::registerSupplementalVP9Decoder();
+#endif
+    }
+    if (shouldEnableVP8Decoder && !m_enableVP8Decoder) {
+        m_enableVP8Decoder = true;
+#if PLATFORM(COCOA)
+        WebCore::registerWebKitVP8Decoder();
 #endif
     }
     if (shouldEnableVP9SWDecoder && !m_enableVP9SWDecoder) {

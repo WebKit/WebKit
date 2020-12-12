@@ -461,7 +461,7 @@ MediaPlayerEnums::SupportsType SourceBufferParserWebM::isContentTypeSupported(co
     auto splitResults = StringView(codecsParameter).split(',');
     for (auto split : splitResults) {
 #if ENABLE(VP9)
-        if (split.startsWith("vp09")) {
+        if (split.startsWith("vp09") || split.startsWith("vp08") || equal(split, "vp8") || equal(split, "vp9")) {
 
             if (!isVP9DecoderAvailable())
                 return MediaPlayerEnums::SupportsType::IsNotSupported;
@@ -778,6 +778,18 @@ Status SourceBufferParserWebM::OnTrackEntry(const ElementMetadata& metadata, con
         return Status(Status::kOkCompleted);
 
     auto trackType = trackEntry.track_type.value();
+    String codecId { trackEntry.codec_id.value().data(), (unsigned)trackEntry.codec_id.value().length() };
+
+    if (trackType == TrackType::kVideo && !supportedVideoCodecs().contains(codecId)) {
+        ERROR_LOG_IF_POSSIBLE(LOGIDENTIFIER, "Encountered unsupported video codec ID \"", codecId, "\", bailing");
+        return Status(Status::Code(ErrorCode::UnsupportedVideoCodec));
+    }
+
+    if (trackType == TrackType::kAudio && !supportedAudioCodecs().contains(codecId)) {
+        ERROR_LOG_IF_POSSIBLE(LOGIDENTIFIER, "Encountered unsupported audio codec ID \"", codecId, "\", bailing");
+        return Status(Status::Code(ErrorCode::UnsupportedAudioCodec));
+    }
+
     if (trackType == TrackType::kVideo)
         m_initializationSegment->videoTracks.append({ MediaDescriptionWebM::create(TrackEntry(trackEntry)), VideoTrackPrivateWebM::create(TrackEntry(trackEntry)) });
     else if (trackType == TrackType::kAudio)
@@ -787,6 +799,10 @@ Status SourceBufferParserWebM::OnTrackEntry(const ElementMetadata& metadata, con
 #if ENABLE(VP9)
     if (codecString == "V_VP9" && isVP9DecoderAvailable()) {
         m_tracks.append(VideoTrackData::create(CodecType::VP9, trackEntry, *this));
+        return Status(Status::kOkCompleted);
+    }
+    if (codecString == "V_VP8" && isVP8DecoderAvailable()) {
+        m_tracks.append(VideoTrackData::create(CodecType::VP8, trackEntry, *this));
         return Status(Status::kOkCompleted);
     }
 #endif
@@ -875,7 +891,6 @@ webm::Status SourceBufferParserWebM::OnBlockGroupEnd(const webm::ElementMetadata
     return Status(Status::kOkCompleted);
 }
 
-
 webm::Status SourceBufferParserWebM::OnFrame(const FrameMetadata& metadata, Reader* reader, uint64_t* bytesRemaining)
 {
     ASSERT(reader);
@@ -901,6 +916,7 @@ webm::Status SourceBufferParserWebM::OnFrame(const FrameMetadata& metadata, Read
     }
 
     switch (trackData->codec()) {
+    case CodecType::VP8:
     case CodecType::VP9:
     case CodecType::Vorbis:
     case CodecType::Opus:
@@ -992,23 +1008,38 @@ void SourceBufferParserWebM::VideoTrackData::createSampleBuffer(const CMTime& pr
         return;
     }
 
-    if (!m_headerParser.ParseUncompressedHeader(blockBufferData, segmentSizeAtPosition)) {
-        PARSER_LOG_ERROR_IF_POSSIBLE("ParseUncompressedHeader failed");
-        return;
-    }
-
-    // Only update the format description when the header indicates that the sample is
-    // a key-frame, otherwise color information will not be parsed.
-    auto track = this->track();
-    if (m_headerParser.key()) {
-        auto formatDescription = createFormatDescriptionFromVP9HeaderParser(m_headerParser, track.video.value().colour);
-        if (!formatDescription) {
-            PARSER_LOG_ERROR_IF_POSSIBLE("failed to create format description from VP9 header");
+    bool isKey = false;
+    RetainPtr<CMFormatDescriptionRef> formatDescription;
+    if (codec() == CodecType::VP9) {
+        if (!m_headerParser.ParseUncompressedHeader(blockBufferData, segmentSizeAtPosition))
             return;
+
+        if (m_headerParser.key()) {
+            isKey = true;
+            auto formatDescription = createFormatDescriptionFromVP9HeaderParser(m_headerParser, track().video.value().colour);
+            if (!formatDescription) {
+                PARSER_LOG_ERROR_IF_POSSIBLE("failed to create format description from VPX header");
+                return;
+            }
+            setFormatDescription(WTFMove(formatDescription));
         }
-        setFormatDescription(WTFMove(formatDescription));
+    } else if (codec() == CodecType::VP8) {
+        auto header = parseVP8FrameHeader(blockBufferData, segmentSizeAtPosition);
+        if (!header)
+            return;
+
+        if (header->keyframe) {
+            isKey = true;
+            auto formatDescription = createFormatDescriptionFromVP8Header(*header, track().video.value().colour);
+            if (!formatDescription) {
+                PARSER_LOG_ERROR_IF_POSSIBLE("failed to create format description from VPX header");
+                return;
+            }
+            setFormatDescription(WTFMove(formatDescription));
+        }
     }
 
+    auto track = this->track();
     // FIXME: A block might contain more than one frame, but only this frame has been read into `currentBlockBuffer`.
     // Below we create sample buffers for each frame, each with the block's timecode and `num_frames` value.
     // Shouldn't we create just one sample buffer once all the block's frames have been read into `currentBlockBuffer`?
@@ -1020,7 +1051,7 @@ void SourceBufferParserWebM::VideoTrackData::createSampleBuffer(const CMTime& pr
     CMSampleBufferRef rawSampleBuffer = nullptr;
     size_t frameSize = CMBlockBufferGetDataLength(m_currentBlockBuffer.get());
     CMSampleTimingInfo timing = { CMTimeMake(duration, presentationTime.timescale), presentationTime, presentationTime };
-    err = CMSampleBufferCreateReady(kCFAllocatorDefault, m_currentBlockBuffer.get(), formatDescription().get(), sampleCount, 1, &timing, 1, &frameSize, &rawSampleBuffer);
+    err = CMSampleBufferCreateReady(kCFAllocatorDefault, m_currentBlockBuffer.get(), this->formatDescription().get(), sampleCount, 1, &timing, 1, &frameSize, &rawSampleBuffer);
     if (err) {
         PARSER_LOG_ERROR_IF_POSSIBLE("CMSampleBufferCreateReady failed with error", err);
         return;
@@ -1160,6 +1191,18 @@ void SourceBufferParserWebM::flushPendingAudioBuffers()
 void SourceBufferParserWebM::setMinimumAudioSampleDuration(float duration)
 {
     m_minimumAudioSampleDuration = duration;
+}
+
+const HashSet<String>& SourceBufferParserWebM::supportedVideoCodecs()
+{
+    static auto codecs = makeNeverDestroyed<HashSet<String>>({ "V_VP8", "V_VP9" });
+    return codecs;
+}
+
+const HashSet<String>& SourceBufferParserWebM::supportedAudioCodecs()
+{
+    static auto codecs = makeNeverDestroyed<HashSet<String>>({ });
+    return codecs;
 }
 
 }

@@ -84,7 +84,7 @@ public:
 #endif
 
 #if ENABLE(VP9)
-    void enableVP9Decoders(bool shouldEnableVP9Decoder, bool shouldEnableVP9SWDecoder);
+    void enableVP9Decoders(bool shouldEnableVP8Decoder, bool shouldEnableVP9Decoder, bool shouldEnableVP9SWDecoder);
 #endif
 
 private:
@@ -148,6 +148,7 @@ private:
     mutable std::unique_ptr<RemoteAudioSessionProxyManager> m_audioSessionManager;
 #endif
 #if ENABLE(VP9)
+    bool m_enableVP8Decoder { false };
     bool m_enableVP9Decoder { false };
     bool m_enableVP9SWDecoder { false };
 #endif

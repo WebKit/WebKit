@@ -538,9 +538,9 @@ void GPUConnectionToWebProcess::updateCaptureAccess(bool allowAudioCapture, bool
 #endif
 
 #if ENABLE(VP9)
-void GPUConnectionToWebProcess::enableVP9Decoders(bool shouldEnableVP9Decoder, bool shouldEnableVP9SWDecoder)
+void GPUConnectionToWebProcess::enableVP9Decoders(bool shouldEnableVP8Decoder, bool shouldEnableVP9Decoder, bool shouldEnableVP9SWDecoder)
 {
-    m_gpuProcess->enableVP9Decoders(shouldEnableVP9Decoder, shouldEnableVP9SWDecoder);
+    m_gpuProcess->enableVP9Decoders(shouldEnableVP8Decoder, shouldEnableVP9Decoder, shouldEnableVP9SWDecoder);
 }
 #endif
 

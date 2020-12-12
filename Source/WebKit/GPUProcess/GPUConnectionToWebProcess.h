@@ -136,7 +136,7 @@ private:
     void setNowPlayingInfo(bool setAsNowPlayingApplication, WebCore::NowPlayingInfo&&);
 
 #if ENABLE(VP9)
-    void enableVP9Decoders(bool shouldEnableVP9Decoder, bool shouldEnableVP9SWDecoder);
+    void enableVP9Decoders(bool shouldEnableVP8Decoder, bool shouldEnableVP9Decoder, bool shouldEnableVP9SWDecoder);
 #endif
 
 #if USE(AUDIO_SESSION)

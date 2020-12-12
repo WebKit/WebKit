@@ -359,6 +359,7 @@ public:
 
 #if ENABLE(VP9)
     void enableVP9Decoder();
+    void enableVP8SWDecoder();
     void enableVP9SWDecoder();
 #endif
 
@@ -706,6 +707,7 @@ private:
 
 #if ENABLE(VP9)
     bool m_vp9DecoderEnabled { false };
+    bool m_vp8SWDecoderEnabled { false };
     bool m_vp9SWDecoderEnabled { false };
 #endif
 

@@ -852,6 +852,16 @@ UserGesturePromisePropagationEnabled:
     WebKit:
       default: true
 
+VP8DecoderEnabled:
+  type: bool
+  humanReadableName: "VP8 decoder"
+  humanReadableDescription: "Enable VP8 decoder"
+  webcoreBinding: none
+  condition: ENABLE(VP9)
+  defaultValue:
+    WebKit:
+      default: WebKit::defaultVP8DecoderEnabled()
+
 # FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely.
 VP9DecoderEnabled:
   type: bool

@@ -1,3 +1,46 @@
+2020-12-11  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Add Experimental VP8 support
+        https://bugs.webkit.org/show_bug.cgi?id=219732
+
+        Reviewed by Eric Carlson.
+
+        Add a new decoder for VP8 video using the decoder exposed by libwebrtc. Refactor
+        WebKitDecoderReceiver into its own file, to be used by both the VP8 and VP9 decoders.
+
+        * Configurations/libwebrtc.iOS.exp:
+        * Configurations/libwebrtc.iOSsim.exp:
+        * Configurations/libwebrtc.mac.exp:
+        * Source/webrtc/sdk/WebKit/WebKitDecoderReceiver.cpp: Added.
+        (webrtc::WebKitDecoderReceiver::WebKitDecoderReceiver):
+        (webrtc::WebKitDecoderReceiver::~WebKitDecoderReceiver):
+        (webrtc::WebKitDecoderReceiver::initializeFromFormatDescription):
+        (webrtc::WebKitDecoderReceiver::pixelBufferPool):
+        (webrtc::WebKitDecoderReceiver::decoderFailed):
+        (webrtc::WebKitDecoderReceiver::Decoded):
+        * Source/webrtc/sdk/WebKit/WebKitDecoderReceiver.h: Added
+        * Source/webrtc/sdk/WebKit/WebKitVP8Decoder.cpp: Added.
+        (webrtc::registerWebKitVP8Decoder):
+        (webrtc::createWebKitVP8Decoder):
+        (webrtc::invalidateVP8Decoder):
+        (webrtc::finalizeVP8Decoder):
+        (webrtc::copyVP8DecoderDebugDescription):
+        (webrtc::webKitVP8DecoderFromVTDecoder):
+        (webrtc::startVP8DecoderSession):
+        (webrtc::decodeVP8DecoderFrameFromContiguousBlock):
+        (webrtc::decodeVP8DecoderFrame):
+        * Source/webrtc/sdk/WebKit/WebKitVP8Decoder.h: Copied from Source/WebCore/platform/graphics/cocoa/VP9UtilitiesCocoa.h.
+        * Source/webrtc/sdk/WebKit/WebKitVP9Decoder.cpp:
+        (webrtc::createWebKitVP9Decoder):
+        (webrtc::startVP9DecoderSession):
+        (webrtc::WebKitVP9DecoderReceiver::WebKitVP9DecoderReceiver): Deleted.
+        (webrtc::WebKitVP9DecoderReceiver::~WebKitVP9DecoderReceiver): Deleted.
+        (webrtc::WebKitVP9DecoderReceiver::initializeFromFormatDescription): Deleted.
+        (webrtc::WebKitVP9DecoderReceiver::pixelBufferPool): Deleted.
+        (webrtc::WebKitVP9DecoderReceiver::decoderFailed): Deleted.
+        (webrtc::WebKitVP9DecoderReceiver::Decoded): Deleted.
+        * libwebrtc.xcodeproj/project.pbxproj:
+
 2020-12-10  Youenn Fablet  <youenn@apple.com>
 
         ICE does not resolve for `turns` relay candidates rooted in LetsEncrypt CA

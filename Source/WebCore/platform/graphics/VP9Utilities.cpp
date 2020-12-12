@@ -124,12 +124,6 @@ static bool isValidVPMatrixCoefficients(uint8_t matrixCoefficients)
 
 Optional<VPCodecConfigurationRecord> parseVPCodecParameters(StringView codecView)
 {
-    // The format of the 'vp09' codec string is specified in the webm GitHub repo:
-    // <https://github.com/webmproject/vp9-dash/blob/master/VPCodecISOMediaFileFormatBinding.md#codecs-parameter-string>
-
-    // "sample entry 4CC, profile, level, and bitDepth are all mandatory fields. If any of these fields are empty, or not
-    // within their allowed range, the processing device SHALL treat it as an error."
-
     auto codecSplit = codecView.split('.');
     auto nextElement = codecSplit.begin();
     if (nextElement == codecSplit.end())
@@ -137,12 +131,24 @@ Optional<VPCodecConfigurationRecord> parseVPCodecParameters(StringView codecView
 
     VPCodecConfigurationRecord configuration;
 
-    // Codec identifier: legal values are 'vp08' or 'vp09'.
     configuration.codecName = (*nextElement).toString();
+    ++nextElement;
+
+    // Support the legacy identifiers (with no parameters) for VP8 and VP9.
+    if ((configuration.codecName == "vp8" || configuration.codecName == "vp9") && nextElement == codecSplit.end())
+        return configuration;
+
+    // The format of the 'vp09' codec string is specified in the webm GitHub repo:
+    // <https://github.com/webmproject/vp9-dash/blob/master/VPCodecISOMediaFileFormatBinding.md#codecs-parameter-string>
+
+    // "sample entry 4CC, profile, level, and bitDepth are all mandatory fields. If any of these fields are empty, or not
+    // within their allowed range, the processing device SHALL treat it as an error."
+
+    // Codec identifier: legal values are 'vp08' or 'vp09'.
     if (configuration.codecName != "vp08" && configuration.codecName != "vp09")
         return WTF::nullopt;
 
-    if (++nextElement == codecSplit.end())
+    if (nextElement == codecSplit.end())
         return WTF::nullopt;
 
     // First element: profile. Legal values are 0-3.

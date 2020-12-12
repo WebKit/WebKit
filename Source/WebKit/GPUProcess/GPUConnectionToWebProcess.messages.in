@@ -38,7 +38,7 @@ messages -> GPUConnectionToWebProcess WantsDispatchMessage {
     EnsureMediaSessionHelper()
 #endif
 #if ENABLE(VP9)
-    EnableVP9Decoders(bool shouldEnableVP9Decoder, bool shouldEnableVP9SWDecoder)
+    EnableVP9Decoders(bool shouldEnableVP8Decoder, bool shouldEnableVP9Decoder, bool shouldEnableVP9SWDecoder)
 #endif
 }
 

@@ -3909,6 +3909,10 @@
 		5CFD53921E4BD3A300482908 /* row_neon64.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5CFD538A1E4BD3A300482908 /* row_neon64.cc */; };
 		5CFD53931E4BD3A300482908 /* scale_neon.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5CFD538B1E4BD3A300482908 /* scale_neon.cc */; };
 		5CFD53941E4BD3A300482908 /* scale_neon64.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5CFD538C1E4BD3A300482908 /* scale_neon64.cc */; };
+		CD381F272581591F0077DEC8 /* WebKitVP8Decoder.h in Headers */ = {isa = PBXBuildFile; fileRef = CD381F252581591F0077DEC8 /* WebKitVP8Decoder.h */; };
+		CD381F292581591F0077DEC8 /* WebKitVP8Decoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD381F282581591F0077DEC8 /* WebKitVP8Decoder.cpp */; };
+		CD381F2B2581FEBA0077DEC8 /* WebKitDecoderReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD381F2A2581FEBA0077DEC8 /* WebKitDecoderReceiver.cpp */; };
+		CD381F2D2581FF0B0077DEC8 /* WebKitDecoderReceiver.h in Headers */ = {isa = PBXBuildFile; fileRef = CD381F2C2581FF0B0077DEC8 /* WebKitDecoderReceiver.h */; };
 		CDEBB4B624C019C400ADBD44 /* unknown_parser.cc in Sources */ = {isa = PBXBuildFile; fileRef = CDEBB46424C0191A00ADBD44 /* unknown_parser.cc */; };
 		CDEBB4B724C019C400ADBD44 /* master_parser.cc in Sources */ = {isa = PBXBuildFile; fileRef = CDEBB46F24C0191A00ADBD44 /* master_parser.cc */; };
 		CDEBB4B824C019C400ADBD44 /* block_parser.cc in Sources */ = {isa = PBXBuildFile; fileRef = CDEBB47624C0191A00ADBD44 /* block_parser.cc */; };
@@ -8432,6 +8436,10 @@
 		5D7C59C61208C68B001C873E /* Base.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
 		5D7C59C71208C68B001C873E /* DebugRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DebugRelease.xcconfig; sourceTree = "<group>"; };
 		A1B89B8A221E004C00EB4CEA /* SDKVariant.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = SDKVariant.xcconfig; sourceTree = "<group>"; };
+		CD381F252581591F0077DEC8 /* WebKitVP8Decoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitVP8Decoder.h; sourceTree = "<group>"; };
+		CD381F282581591F0077DEC8 /* WebKitVP8Decoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebKitVP8Decoder.cpp; sourceTree = "<group>"; };
+		CD381F2A2581FEBA0077DEC8 /* WebKitDecoderReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebKitDecoderReceiver.cpp; sourceTree = "<group>"; };
+		CD381F2C2581FF0B0077DEC8 /* WebKitDecoderReceiver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebKitDecoderReceiver.h; sourceTree = "<group>"; };
 		CDEBB11924C0187400ADBD44 /* libwebm.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libwebm.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		CDEBB11E24C0189600ADBD44 /* libwebm.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = libwebm.xcconfig; sourceTree = "<group>"; };
 		CDEBB40524C0191A00ADBD44 /* reader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = reader.h; sourceTree = "<group>"; };
@@ -10962,10 +10970,14 @@
 				412FF935253D8F0A001DF036 /* VTVideoDecoderSPI.h */,
 				41E84BC92434C4A200D34E41 /* WebKitDecoder.h */,
 				41E84BCA2434C4A300D34E41 /* WebKitDecoder.mm */,
+				CD381F2A2581FEBA0077DEC8 /* WebKitDecoderReceiver.cpp */,
+				CD381F2C2581FF0B0077DEC8 /* WebKitDecoderReceiver.h */,
 				4158649623BE05E800A0A61E /* WebKitEncoder.h */,
 				4158649723BE05E900A0A61E /* WebKitEncoder.mm */,
 				41ECEABB206403C1009D5141 /* WebKitUtilities.h */,
 				41ECEABD20640498009D5141 /* WebKitUtilities.mm */,
+				CD381F282581591F0077DEC8 /* WebKitVP8Decoder.cpp */,
+				CD381F252581591F0077DEC8 /* WebKitVP8Decoder.h */,
 				414037BA24AC76E900BCE9B2 /* WebKitVP9Decoder.cpp */,
 				414037B924AC76E900BCE9B2 /* WebKitVP9Decoder.h */,
 			);
@@ -17496,8 +17508,10 @@
 				5C4B4C811E431F9C002651C8 /* wav_file.h in Headers */,
 				5C4B4C841E431F9C002651C8 /* wav_header.h in Headers */,
 				4131C163234B89E20028A615 /* weak_ptr.h in Headers */,
+				CD381F2D2581FF0B0077DEC8 /* WebKitDecoderReceiver.h in Headers */,
 				4158649823BE05E900A0A61E /* WebKitEncoder.h in Headers */,
 				41ECEABC206403C2009D5141 /* WebKitUtilities.h in Headers */,
+				CD381F272581591F0077DEC8 /* WebKitVP8Decoder.h in Headers */,
 				414037BB24AC76EA00BCE9B2 /* WebKitVP9Decoder.h in Headers */,
 				5CDD8CAB1E43C6F700621E92 /* webrtc_cng.h in Headers */,
 				4145E4911EF88EF700FCF6E6 /* webrtc_libyuv.h in Headers */,
@@ -20039,8 +20053,10 @@
 				5C4B4C831E431F9C002651C8 /* wav_header.cc in Sources */,
 				4131C0F9234B89E20028A615 /* weak_ptr.cc in Sources */,
 				41E84BD524373F7200D34E41 /* WebKitDecoder.mm in Sources */,
+				CD381F2B2581FEBA0077DEC8 /* WebKitDecoderReceiver.cpp in Sources */,
 				4158649923BE05E900A0A61E /* WebKitEncoder.mm in Sources */,
 				41ECEABE20640498009D5141 /* WebKitUtilities.mm in Sources */,
+				CD381F292581591F0077DEC8 /* WebKitVP8Decoder.cpp in Sources */,
 				414037BC24AC76EA00BCE9B2 /* WebKitVP9Decoder.cpp in Sources */,
 				5CDD8CAA1E43C6F700621E92 /* webrtc_cng.cc in Sources */,
 				5CDD83671E4325D500621E92 /* webrtc_libyuv.cc in Sources */,

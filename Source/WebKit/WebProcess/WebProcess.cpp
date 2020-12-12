@@ -1983,6 +1983,17 @@ void WebProcess::enableVP9Decoder()
 #endif
 }
 
+void WebProcess::enableVP8SWDecoder()
+{
+    if (m_vp9SWDecoderEnabled)
+        return;
+
+    m_vp8SWDecoderEnabled = true;
+#if PLATFORM(COCOA)
+    WebCore::registerWebKitVP8Decoder();
+#endif
+}
+
 void WebProcess::enableVP9SWDecoder()
 {
     if (m_vp9SWDecoderEnabled)

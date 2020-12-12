@@ -1,3 +1,38 @@
+2020-12-11  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Add Experimental VP8 support
+        https://bugs.webkit.org/show_bug.cgi?id=219732
+
+        Reviewed by Eric Carlson.
+
+        Add new WebPageCreationParameter flags to enable VP8 decoders in the WebContent and GPU
+        processes when the experimental feature is enabled.
+
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        (WebKit::GPUConnectionToWebProcess::enableVP9Decoders):
+        * GPUProcess/GPUConnectionToWebProcess.h:
+        * GPUProcess/GPUConnectionToWebProcess.messages.in:
+        * GPUProcess/GPUProcess.cpp:
+        (WebKit::GPUProcess::enableVP9Decoders):
+        * GPUProcess/GPUProcess.h:
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode const):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * Shared/WebPreferencesDefaultValues.cpp:
+        (WebKit::defaultVP8DecoderEnabled):
+        * Shared/WebPreferencesDefaultValues.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::creationParameters):
+        * WebProcess/GPU/GPUProcessConnection.cpp:
+        (WebKit::GPUProcessConnection::updateParameters):
+        * WebProcess/GPU/GPUProcessConnection.h:
+        (WebKit::GPUProcessConnection::isVP8DecoderEnabled const):
+        * WebProcess/WebPage/WebPage.cpp:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::enableVP8SWDecoder):
+        * WebProcess/WebProcess.h:
+
 2020-12-11  Chris Dumez  <cdumez@apple.com>
 
         Potential null dereference of m_frame under DocumentLoader::stopLoading()
