@@ -512,8 +512,6 @@ ExceptionOr<void> SourceBuffer::appendBufferInternal(const unsigned char* data, 
     // 6. Asynchronously run the buffer append algorithm.
     m_appendBufferTimer.startOneShot(0_s);
 
-    reportExtraMemoryAllocated();
-
     return { };
 }
 
@@ -584,8 +582,6 @@ void SourceBuffer::sourceBufferPrivateAppendComplete(AppendResult result)
 
     m_source->monitorSourceBuffers();
     m_private->reenqueueMediaIfNeeded(m_source->currentTime(), m_pendingAppendData.capacity(), maximumBufferSize());
-
-    reportExtraMemoryAllocated();
 
     DEBUG_LOG(LOGIDENTIFIER);
 }
@@ -1195,17 +1191,14 @@ bool SourceBuffer::canPlayThroughRange(PlatformTimeRanges& ranges)
     return unbufferedTime.toDouble() / m_averageBufferRate < timeRemaining.toDouble();
 }
 
-uint64_t SourceBuffer::extraMemoryCost() const
+void SourceBuffer::sourceBufferPrivateReportExtraMemoryCost(uint64_t extraMemory)
 {
-    uint64_t extraMemoryCost = m_pendingAppendData.capacity();
-    extraMemoryCost += m_private->totalTrackBufferSizeInBytes();
-
-    return extraMemoryCost;
+    reportExtraMemoryAllocated(extraMemory);
 }
 
-void SourceBuffer::reportExtraMemoryAllocated()
+void SourceBuffer::reportExtraMemoryAllocated(uint64_t extraMemory)
 {
-    uint64_t extraMemoryCost = this->extraMemoryCost();
+    uint64_t extraMemoryCost = m_pendingAppendData.capacity() + extraMemory;
     if (extraMemoryCost <= m_reportedExtraMemoryCost)
         return;
 

@@ -162,8 +162,10 @@ void SourceBufferPrivate::appendCompleted(bool parsingSucceeded, bool isEnded)
     // into the SourceBuffer's buffered ranges
     updateBufferedFromTrackBuffers(isEnded);
 
-    if (m_client)
+    if (m_client) {
         m_client->sourceBufferPrivateAppendComplete(parsingSucceeded ? SourceBufferPrivateClient::AppendResult::AppendSucceeded : SourceBufferPrivateClient::AppendResult::ParsingFailed);
+        m_client->sourceBufferPrivateReportExtraMemoryCost(totalTrackBufferSizeInBytes());
+    }
 }
 
 void SourceBufferPrivate::reenqueSamples(const AtomString& trackID)
@@ -617,9 +619,9 @@ void SourceBufferPrivate::evictCodedFrames(uint64_t newDataSize, uint64_t pendin
     MediaTime thirtySeconds = MediaTime(30, 1);
     MediaTime maximumRangeEnd = currentTime - thirtySeconds;
 
-#if !RELEASE_LOG_DISABLED && false
-    DEBUG_LOG(LOGIDENTIFIER, "currentTime = ", currentTime, ", require ", extraMemoryCost() + newDataSize, " bytes, maximum buffer size is ", maximumBufferSize);
-    uint64_t initialBufferedSize = extraMemoryCost();
+#if !RELEASE_LOG_DISABLED
+    uint64_t initialBufferedSize = totalTrackBufferSizeInBytes();
+    DEBUG_LOG(LOGIDENTIFIER, "currentTime = ", currentTime, ", require ", initialBufferedSize + newDataSize, " bytes, maximum buffer size is ", maximumBufferSize);
 #endif
 
     MediaTime rangeStart = MediaTime::zeroTime();
@@ -638,8 +640,8 @@ void SourceBufferPrivate::evictCodedFrames(uint64_t newDataSize, uint64_t pendin
     }
 
     if (!m_bufferFull) {
-#if !RELEASE_LOG_DISABLED && false
-        DEBUG_LOG(LOGIDENTIFIER, "evicted ", initialBufferedSize - extraMemoryCost());
+#if !RELEASE_LOG_DISABLED
+        DEBUG_LOG(LOGIDENTIFIER, "evicted ", initialBufferedSize - totalTrackBufferSizeInBytes());
 #endif
         return;
     }
@@ -650,8 +652,8 @@ void SourceBufferPrivate::evictCodedFrames(uint64_t newDataSize, uint64_t pendin
     auto buffered = m_buffered->ranges();
     uint64_t currentTimeRange = buffered.find(currentTime);
     if (currentTimeRange == buffered.length() - 1) {
-#if !RELEASE_LOG_DISABLED && false
-        ERROR_LOG(LOGIDENTIFIER, "FAILED to free enough after evicting ", initialBufferedSize - extraMemoryCost());
+#if !RELEASE_LOG_DISABLED
+        ERROR_LOG(LOGIDENTIFIER, "FAILED to free enough after evicting ", initialBufferedSize - totalTrackBufferSizeInBytes());
 #endif
         return;
     }
@@ -691,11 +693,11 @@ void SourceBufferPrivate::evictCodedFrames(uint64_t newDataSize, uint64_t pendin
         rangeEnd -= thirtySeconds;
     }
 
-#if !RELEASE_LOG_DISABLED && false
+#if !RELEASE_LOG_DISABLED
     if (m_bufferFull)
-        ERROR_LOG(LOGIDENTIFIER, "FAILED to free enough after evicting ", initialBufferedSize - extraMemoryCost());
+        ERROR_LOG(LOGIDENTIFIER, "FAILED to free enough after evicting ", initialBufferedSize - totalTrackBufferSizeInBytes());
     else
-        DEBUG_LOG(LOGIDENTIFIER, "evicted ", initialBufferedSize - extraMemoryCost());
+        DEBUG_LOG(LOGIDENTIFIER, "evicted ", initialBufferedSize - totalTrackBufferSizeInBytes());
 #endif
 }
 

@@ -515,6 +515,9 @@ void SourceBufferPrivateAVFObjC::append(Vector<unsigned char>&& data)
     ASSERT(!m_hasSessionSemaphore);
     ASSERT(!m_abortSemaphore);
 
+    if (m_client)
+        m_client->sourceBufferPrivateReportExtraMemoryCost(totalTrackBufferSizeInBytes());
+
     m_abortSemaphore = Box<Semaphore>::create(0);
     m_parser->setWillProvideContentKeyRequestInitializationDataForTrackIDCallback([weakThis = makeWeakPtr(this), abortSemaphore = m_abortSemaphore] (uint64_t trackID) mutable {
         // We must call synchronously to the main thread, as the AVStreamSession must be associated

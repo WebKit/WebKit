@@ -158,6 +158,7 @@ private:
     void sourceBufferPrivateBufferedDirtyChanged(bool) final;
     void sourceBufferPrivateBufferedRangesChanged(const PlatformTimeRanges&) final;
     void sourceBufferPrivateDidReceiveRenderingError(int64_t errorCode) final;
+    void sourceBufferPrivateReportExtraMemoryCost(uint64_t) final;
 
     // AudioTrackClient
     void audioTrackEnabledChanged(AudioTrack&) final;
@@ -191,8 +192,7 @@ private:
 
     void removeTimerFired();
 
-    uint64_t extraMemoryCost() const;
-    void reportExtraMemoryAllocated();
+    void reportExtraMemoryAllocated(uint64_t extraMemory);
 
     void appendError(bool);
 

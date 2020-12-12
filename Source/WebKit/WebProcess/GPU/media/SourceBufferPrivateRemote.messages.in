@@ -36,6 +36,7 @@ messages -> SourceBufferPrivateRemote NotRefCounted {
     SourceBufferPrivateBufferedDirtyChanged(bool dirty)
     SourceBufferPrivateBufferedRangesChanged(WebCore::PlatformTimeRanges timeRanges)
     SourceBufferPrivateDidReceiveRenderingError(int64_t errorCode)
+    SourceBufferPrivateReportExtraMemoryCost(uint64_t extraMemory)
 }
 
 #endif

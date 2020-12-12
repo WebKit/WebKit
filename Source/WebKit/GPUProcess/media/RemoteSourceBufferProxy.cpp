@@ -138,6 +138,11 @@ void RemoteSourceBufferProxy::sourceBufferPrivateDidReceiveRenderingError(int64_
     m_connectionToWebProcess.connection().send(Messages::SourceBufferPrivateRemote::SourceBufferPrivateDidReceiveRenderingError(errorCode), m_identifier);
 }
 
+void RemoteSourceBufferProxy::sourceBufferPrivateReportExtraMemoryCost(uint64_t extraMemory)
+{
+    m_connectionToWebProcess.connection().send(Messages::SourceBufferPrivateRemote::SourceBufferPrivateReportExtraMemoryCost(extraMemory), m_identifier);
+}
+
 void RemoteSourceBufferProxy::sourceBufferPrivateBufferedDirtyChanged(bool flag)
 {
     m_connectionToWebProcess.connection().send(Messages::SourceBufferPrivateRemote::SourceBufferPrivateBufferedDirtyChanged(flag), m_identifier);

@@ -247,6 +247,12 @@ void SourceBufferPrivateRemote::sourceBufferPrivateDidReceiveRenderingError(int6
         m_client->sourceBufferPrivateDidReceiveRenderingError(errorCode);
 }
 
+void SourceBufferPrivateRemote::sourceBufferPrivateReportExtraMemoryCost(uint64_t extraMemory)
+{
+    if (m_client)
+        m_client->sourceBufferPrivateReportExtraMemoryCost(extraMemory);
+}
+
 #if !RELEASE_LOG_DISABLED
 WTFLogChannel& SourceBufferPrivateRemote::logChannel() const
 {

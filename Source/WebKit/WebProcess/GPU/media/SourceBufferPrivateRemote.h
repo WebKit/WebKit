@@ -100,6 +100,7 @@ private:
     void sourceBufferPrivateDidReceiveRenderingError(int64_t errorCode);
     void sourceBufferPrivateBufferedDirtyChanged(bool dirty);
     void sourceBufferPrivateBufferedRangesChanged(const WebCore::PlatformTimeRanges&);
+    void sourceBufferPrivateReportExtraMemoryCost(uint64_t extraMemory);
 
     GPUProcessConnection& m_gpuProcessConnection;
     RemoteSourceBufferIdentifier m_remoteSourceBufferIdentifier;

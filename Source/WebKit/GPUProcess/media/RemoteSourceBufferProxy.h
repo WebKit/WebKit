@@ -75,8 +75,8 @@ private:
     void sourceBufferPrivateDidDropSample() final;
     void sourceBufferPrivateBufferedDirtyChanged(bool) final;
     void sourceBufferPrivateBufferedRangesChanged(const WebCore::PlatformTimeRanges&) final;
-
     void sourceBufferPrivateDidReceiveRenderingError(int64_t errorCode) final;
+    void sourceBufferPrivateReportExtraMemoryCost(uint64_t extraMemory) final;
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;

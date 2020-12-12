@@ -66,7 +66,6 @@ public:
     };
     virtual void sourceBufferPrivateDidReceiveInitializationSegment(InitializationSegment&&, CompletionHandler<void()>&&) = 0;
     virtual void sourceBufferPrivateStreamEndedWithDecodeError() = 0;
-
     virtual void sourceBufferPrivateAppendError(bool decodeError) = 0;
     enum class AppendResult : uint8_t {
         AppendSucceeded,
@@ -79,8 +78,8 @@ public:
     virtual void sourceBufferPrivateDidDropSample() = 0;
     virtual void sourceBufferPrivateBufferedDirtyChanged(bool) = 0;
     virtual void sourceBufferPrivateBufferedRangesChanged(const PlatformTimeRanges&) = 0;
-
     virtual void sourceBufferPrivateDidReceiveRenderingError(int64_t errorCode) = 0;
+    virtual void sourceBufferPrivateReportExtraMemoryCost(uint64_t) = 0;
 };
 
 } // namespace WebCore
