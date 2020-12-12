@@ -53,7 +53,8 @@ void GetDeferredInitializers(TIntermDeclaration *declaration,
         ASSERT(symbolNode);
         TIntermTyped *expression = init->getRight();
 
-        if (expression->getQualifier() != EvqConst || !expression->hasConstantValue())
+        if (expression->getQualifier() != EvqConst || !expression->hasConstantValue() ||
+            symbolNode->getQualifier() == EvqGlobal)
         {
             // For variables which are not constant, defer their real initialization until
             // after we initialize uniforms.

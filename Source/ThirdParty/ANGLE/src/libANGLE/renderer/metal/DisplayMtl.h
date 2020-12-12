@@ -52,6 +52,10 @@ class DisplayMtl : public DisplayImpl
 
     egl::Error waitClient(const gl::Context *context) override;
     egl::Error waitNative(const gl::Context *context, EGLint engine) override;
+    egl::Error validateClientBuffer(const egl::Config *configuration,
+                                    EGLenum buftype,
+                                    EGLClientBuffer clientBuffer,
+                                    const egl::AttributeMap &attribs) const override;
 
     SurfaceImpl *createWindowSurface(const egl::SurfaceState &state,
                                      EGLNativeWindowType window,
@@ -95,11 +99,6 @@ class DisplayMtl : public DisplayImpl
     void populateFeatureList(angle::FeatureList *features) override;
 
     bool isValidNativeWindow(EGLNativeWindowType window) const override;
-
-    egl::Error validateClientBuffer(const egl::Config *configuration,
-                                    EGLenum buftype,
-                                    EGLClientBuffer clientBuffer,
-                                    const egl::AttributeMap &attribs) const override;
 
     egl::ConfigSet generateConfigs() override;
 
@@ -165,6 +164,8 @@ class DisplayMtl : public DisplayImpl
     void initializeExtensions() const;
     void initializeTextureCaps() const;
     void initializeFeatures();
+    void initializeLimitations();
+
     angle::Result initializeShaderLibrary();
 
     mtl::AutoObjCPtr<id<MTLDevice>> mMetalDevice = nil;

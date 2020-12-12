@@ -674,6 +674,7 @@ class TIntermBlock : public TIntermNode, public TIntermAggregateBase
 {
   public:
     TIntermBlock() : TIntermNode() {}
+    TIntermBlock(std::initializer_list<TIntermNode *> stmts);
     ~TIntermBlock() override {}
 
     TIntermBlock *getAsBlock() override { return this; }
@@ -776,6 +777,9 @@ class TIntermDeclaration : public TIntermNode, public TIntermAggregateBase
 {
   public:
     TIntermDeclaration() : TIntermNode() {}
+    TIntermDeclaration(const TVariable *var, TIntermTyped *initExpr);
+    TIntermDeclaration(std::initializer_list<const TVariable *> declarators);
+    TIntermDeclaration(std::initializer_list<TIntermTyped *> declarators);
     ~TIntermDeclaration() override {}
 
     TIntermDeclaration *getAsDeclarationNode() override { return this; }

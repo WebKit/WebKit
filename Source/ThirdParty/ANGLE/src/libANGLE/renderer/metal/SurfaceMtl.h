@@ -24,7 +24,27 @@ namespace rx
 
 class DisplayMtl;
 
-class SurfaceMtl : public SurfaceImpl
+class SurfaceMtlProtocol : public SurfaceImpl
+{
+  public:
+    SurfaceMtlProtocol(const egl::SurfaceState &state) : SurfaceImpl(state) {}
+    virtual int getSamples() const      = 0;
+    virtual bool preserveBuffer() const = 0;
+
+    virtual angle::Result getAttachmentRenderTarget(const gl::Context *context,
+                                                    GLenum binding,
+                                                    const gl::ImageIndex &imageIndex,
+                                                    GLsizei samples,
+                                                    FramebufferAttachmentRenderTarget **rtOut) override = 0;
+
+    virtual bool hasRobustResourceInit() const = 0;
+    virtual angle::Result ensureCurrentDrawableObtained(const gl::Context *context) = 0;
+    virtual angle::Result ensureCurrentDrawableObtained(const gl::Context *context, bool *newDrawableOut) = 0;
+    virtual angle::Result ensureColorTextureReadyForReadPixels(const gl::Context *context) = 0;
+    virtual const mtl::TextureRef & getColorTexture() = 0;
+};
+
+class SurfaceMtl : public SurfaceMtlProtocol
 {
   public:
     SurfaceMtl(DisplayMtl *display,
@@ -67,11 +87,11 @@ class SurfaceMtl : public SurfaceImpl
     angle::Result initializeContents(const gl::Context *context,
                                      const gl::ImageIndex &imageIndex) override;
 
-    const mtl::TextureRef &getColorTexture() { return mColorTexture; }
+    const mtl::TextureRef &getColorTexture() override { return mColorTexture; }
     const mtl::Format &getColorFormat() const { return mColorFormat; }
-    int getSamples() const { return mSamples; }
+    int getSamples() const override { return mSamples; }
 
-    bool hasRobustResourceInit() const { return mRobustResourceInit; }
+    bool hasRobustResourceInit() const override { return mRobustResourceInit; }
 
     angle::Result getAttachmentRenderTarget(const gl::Context *context,
                                             GLenum binding,
@@ -144,13 +164,14 @@ class WindowSurfaceMtl : public SurfaceMtl
                                             GLsizei samples,
                                             FramebufferAttachmentRenderTarget **rtOut) override;
 
+    angle::Result ensureCurrentDrawableObtained(const gl::Context *context) override;
     angle::Result ensureCurrentDrawableObtained(const gl::Context *context,
-                                                bool *newDrawableOut /** nullable */);
+                                                bool *newDrawableOut /** nullable */) override;
 
     // Ensure the the texture returned from getColorTexture() is ready for glReadPixels(). This
     // implicitly calls ensureCurrentDrawableObtained().
-    angle::Result ensureColorTextureReadyForReadPixels(const gl::Context *context);
-
+    angle::Result ensureColorTextureReadyForReadPixels(const gl::Context *context) override;
+    bool preserveBuffer() const override { return mRetainBuffer; }
   private:
     angle::Result swapImpl(const gl::Context *context);
     angle::Result obtainNextDrawable(const gl::Context *context);
@@ -168,6 +189,8 @@ class WindowSurfaceMtl : public SurfaceMtl
     // event. We don't use mMetalLayer.drawableSize directly since it might be changed internally by
     // metal runtime.
     CGSize mCurrentKnownDrawableSize;
+
+    bool mRetainBuffer = false;
 };
 
 // Offscreen surface, base class of PBuffer, IOSurface.
@@ -212,37 +235,5 @@ class PBufferSurfaceMtl : public OffscreenSurfaceMtl
     void setFixedHeight(EGLint height) override;
 };
 
-// Offscreen created from IOSurface
-class IOSurfaceSurfaceMtl : public OffscreenSurfaceMtl
-{
-  public:
-    IOSurfaceSurfaceMtl(DisplayMtl *display,
-                        const egl::SurfaceState &state,
-                        EGLClientBuffer buffer,
-                        const egl::AttributeMap &attribs);
-    ~IOSurfaceSurfaceMtl() override;
-
-    egl::Error bindTexImage(const gl::Context *context,
-                            gl::Texture *texture,
-                            EGLint buffer) override;
-    egl::Error releaseTexImage(const gl::Context *context, EGLint buffer) override;
-
-    angle::Result getAttachmentRenderTarget(const gl::Context *context,
-                                            GLenum binding,
-                                            const gl::ImageIndex &imageIndex,
-                                            GLsizei samples,
-                                            FramebufferAttachmentRenderTarget **rtOut) override;
-
-    static bool ValidateAttributes(EGLClientBuffer buffer, const egl::AttributeMap &attribs);
-
-  private:
-    angle::Result ensureColorTextureCreated(const gl::Context *context);
-
-    IOSurfaceRef mIOSurface;
-    NSUInteger mIOSurfacePlane;
-    int mIOSurfaceFormatIdx;
-};
-
 }  // namespace rx
-
 #endif /* LIBANGLE_RENDERER_METAL_SURFACEMTL_H_ */

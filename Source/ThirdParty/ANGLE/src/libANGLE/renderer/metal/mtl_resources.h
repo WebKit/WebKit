@@ -63,7 +63,6 @@ class Resource : angle::NonCopyable
     bool isCPUReadMemNeedSync() const { return mUsageRef->cpuReadMemNeedSync; }
     void resetCPUReadMemNeedSync() { mUsageRef->cpuReadMemNeedSync = false; }
 
-    // These functions are useful for BufferMtl to know whether it should update the shadow copy
     bool isCPUReadMemDirty() const { return mUsageRef->cpuReadMemDirty; }
     void resetCPUReadMemDirty() { mUsageRef->cpuReadMemDirty = false; }
 
@@ -81,7 +80,7 @@ class Resource : angle::NonCopyable
         uint64_t cmdBufferQueueSerial = 0;
 
         // This flag means the resource was issued to be modified by GPU, if CPU wants to read
-        // its content, explicit synchronization call must be invoked.
+        // its content, explicit synchornization call must be invoked.
         bool cpuReadMemNeedSync = false;
 
         // This flag is useful for BufferMtl to know whether it should update the shadow copy
@@ -109,6 +108,13 @@ class Texture final : public Resource,
                                        bool renderTargetOnly,
                                        bool allowFormatView,
                                        TextureRef *refOut);
+
+    // On macOS, memory will still be allocated for this texture.
+    static angle::Result MakeMemoryLess2DTexture(ContextMtl *context,
+                                                 const Format &format,
+                                                 uint32_t width,
+                                                 uint32_t height,
+                                                 TextureRef *refOut);
 
     static angle::Result MakeCubeTexture(ContextMtl *context,
                                          const Format &format,
@@ -147,10 +153,21 @@ class Texture final : public Resource,
                                        bool allowFormatView,
                                        TextureRef *refOut);
 
+    static angle::Result MakeIOSurfaceTexture(ContextMtl *context,
+                                              const Format &format,
+                                              uint32_t width,
+                                              uint32_t height,
+                                              IOSurfaceRef ref,
+                                              uint32_t plane,
+                                              TextureRef *refOut);
+
     static TextureRef MakeFromMetal(id<MTLTexture> metalTexture);
 
     // Allow CPU to read & write data directly to this texture?
     bool isCPUAccessible() const;
+    // Allow shaders to read/sample this texture?
+    // Texture created with renderTargetOnly flag won't be readable
+    bool isShaderReadable() const;
 
     bool supportFormatView() const;
 
@@ -218,16 +235,29 @@ class Texture final : public Resource,
     MTLColorWriteMask getColorWritableMask() const { return *mColorWritableMask; }
     void setColorWritableMask(MTLColorWriteMask mask) { *mColorWritableMask = mask; }
 
-    // Get linear color space view. Only usable for sRGB textures.
-    TextureRef getLinearColorView();
+    // Get reading copy. Used for reading non-readable texture or reading stencil value from
+    // packed depth & stencil texture.
+    // NOTE: this only copies 1 depth slice of the 3D texture.
+    // The texels will be copied to region(0, 0, 0, areaToCopy.size) of the returned texture.
+    // The returned pointer will be retained by the original texture object.
+    // Calling getReadableCopy() will overwrite previously returned texture.
+    TextureRef getReadableCopy(ContextMtl *context,
+                               mtl::BlitCommandEncoder *encoder,
+                               const uint32_t levelToCopy,
+                               const uint32_t sliceToCopy,
+                               const MTLRegion &areaToCopy);
+
+    void releaseReadableCopy();
 
     // Get stencil view
     TextureRef getStencilView();
+    //Get linear color
+    TextureRef getLinearColorView();
 
     // Change the wrapped metal object. Special case for swapchain image
     void set(id<MTLTexture> metalTexture);
 
-    // sync content between CPU and GPU
+    // Explicitly sync content between CPU and GPU
     void syncContent(ContextMtl *context, mtl::BlitCommandEncoder *encoder);
 
   private:
@@ -241,12 +271,41 @@ class Texture final : public Resource,
                                      bool allowFormatView,
                                      TextureRef *refOut);
 
+    static angle::Result MakeTexture(ContextMtl *context,
+                                     const Format &mtlFormat,
+                                     MTLTextureDescriptor *desc,
+                                     uint32_t mips,
+                                     bool renderTargetOnly,
+                                     bool allowFormatView,
+                                     bool memoryLess,
+                                     TextureRef *refOut);
+
+    static angle::Result MakeTexture(ContextMtl *context,
+                                     const Format &mtlFormat,
+                                     MTLTextureDescriptor *desc,
+                                     IOSurfaceRef surfaceRef,
+                                     NSUInteger slice,
+                                     bool renderTargetOnly,
+                                     TextureRef *refOut);
+
     Texture(id<MTLTexture> metalTexture);
     Texture(ContextMtl *context,
             MTLTextureDescriptor *desc,
             uint32_t mips,
             bool renderTargetOnly,
             bool allowFormatView);
+    Texture(ContextMtl *context,
+            MTLTextureDescriptor *desc,
+            uint32_t mips,
+            bool renderTargetOnly,
+            bool allowFormatView,
+            bool memoryLess);
+
+    Texture(ContextMtl *context,
+            MTLTextureDescriptor *desc,
+            IOSurfaceRef iosurface,
+            NSUInteger plane,
+            bool renderTargetOnly);
 
     // Create a texture view
     Texture(Texture *original, MTLPixelFormat format);
@@ -264,9 +323,14 @@ class Texture final : public Resource,
     TextureRef mLinearColorView;
 
     TextureRef mStencilView;
+    //Readable copy of texture
+    TextureRef mReadCopy;
+
 };
 
-class Buffer final : public Resource, public WrappedObject<id<MTLBuffer>>
+class Buffer final : public Resource,
+                     public WrappedObject<id<MTLBuffer>>,
+                     public std::enable_shared_from_this<Buffer>
 {
   public:
     static angle::Result MakeBuffer(ContextMtl *context,

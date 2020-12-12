@@ -22,6 +22,11 @@
 
 static inline bool operator==(const MTLClearColor &lhs, const MTLClearColor &rhs);
 
+namespace angle
+{
+struct FeaturesMtl;
+}
+
 namespace rx
 {
 class ContextMtl;
@@ -223,7 +228,8 @@ struct RenderPipelineOutputDesc
 };
 
 // Some SDK levels don't declare MTLPrimitiveTopologyClass. Needs to do compile time check here:
-#if !(TARGET_OS_OSX || TARGET_OS_MACCATALYST) && ANGLE_IOS_DEPLOY_TARGET < __IPHONE_12_0
+#if !(TARGET_OS_OSX || TARGET_OS_MACCATALYST) && \
+    (!defined(__IPHONE_12_0) || ANGLE_IOS_DEPLOY_TARGET < __IPHONE_12_0)
 #    define ANGLE_MTL_PRIMITIVE_TOPOLOGY_CLASS_AVAILABLE 0
 using PrimitiveTopologyClass                                     = uint32_t;
 constexpr PrimitiveTopologyClass kPrimitiveTopologyClassTriangle = 0;
@@ -267,9 +273,7 @@ struct alignas(4) RenderPipelineDesc
     RenderPipelineDesc &operator=(const RenderPipelineDesc &src);
 
     bool operator==(const RenderPipelineDesc &rhs) const;
-
     size_t hash() const;
-
     bool rasterizationEnabled() const;
 
     VertexDesc vertexDescriptor;
@@ -288,6 +292,27 @@ struct alignas(4) RenderPipelineDesc
     bool emulateCoverageMask : 1;
 };
 
+struct RenderPassAttachmentTextureTargetDesc
+{
+    TextureRef getTextureRef() const { return texture.lock(); }
+    TextureRef getImplicitMSTextureRef() const { return implicitMSTexture.lock(); }
+    bool hasImplicitMSTexture() const { return !implicitMSTexture.expired(); }
+    uint32_t getRenderSamples() const
+    {
+        TextureRef tex   = getTextureRef();
+        TextureRef msTex = getImplicitMSTextureRef();
+        return msTex ? msTex->samples() : (tex ? tex->samples() : 1);
+    }
+
+    TextureWeakRef texture;
+    // Implicit multisample texture that will be rendered into and discarded at the end of
+    // a render pass. Its result will be resolved into normal texture above.
+    TextureWeakRef implicitMSTexture;
+    MipmapNativeLevel level = kZeroNativeMipLevel;
+    uint32_t sliceOrDepth   = 0;
+    bool blendable          = true;
+};
+
 struct RenderPassAttachmentDesc
 {
     RenderPassAttachmentDesc();
@@ -297,18 +322,34 @@ struct RenderPassAttachmentDesc
     bool equalIgnoreLoadStoreOptions(const RenderPassAttachmentDesc &other) const;
     bool operator==(const RenderPassAttachmentDesc &other) const;
 
-    ANGLE_INLINE bool hasImplicitMSTexture() const { return implicitMSTexture.get(); }
+    ANGLE_INLINE TextureRef texture() const
+    {
+        return renderTarget ? renderTarget->getTextureRef() : nullptr;
+    }
+    ANGLE_INLINE TextureRef implicitMSTexture() const
+    {
+        return renderTarget ? renderTarget->getImplicitMSTextureRef() : nullptr;
+    }
+    ANGLE_INLINE bool hasImplicitMSTexture() const
+    {
+        return renderTarget ? renderTarget->hasImplicitMSTexture() : false;
+    }
+    ANGLE_INLINE uint32_t renderSamples() const
+    {
+        return renderTarget ? renderTarget->getRenderSamples() : 1;
+    }
+    ANGLE_INLINE MipmapNativeLevel level() const
+    {
+        return renderTarget ? renderTarget->level : kZeroNativeMipLevel;
+    }
+    ANGLE_INLINE uint32_t sliceOrDepth() const
+    {
+        return renderTarget ? renderTarget->sliceOrDepth : 0;
+    }
+    ANGLE_INLINE bool blendable() const { return renderTarget ? renderTarget->blendable : false; }
 
-    TextureRef texture;
-    // Implicit multisample texture that will be rendered into and discarded at the end of
-    // a render pass. Its result will be resolved into normal texture above.
-    TextureRef implicitMSTexture;
-    MipmapNativeLevel level;
-    uint32_t sliceOrDepth;
-
-    // This attachment is blendable or not.
-    bool blendable;
-
+    // This is shared pointer to avoid crashing when texture deleted after bound to a frame buffer.
+    std::shared_ptr<RenderPassAttachmentTextureTargetDesc> renderTarget;
     MTLLoadAction loadAction;
     MTLStoreAction storeAction;
     MTLStoreActionOptions storeActionOptions;
@@ -354,6 +395,11 @@ struct RenderPassStencilAttachmentDesc : public RenderPassAttachmentDesc
     uint32_t clearStencil = 0;
 };
 
+//
+// This is C++ equivalent of Objective-C MTLRenderPassDescriptor.
+// We could use MTLRenderPassDescriptor directly, however, using C++ struct has benefits of fast
+// copy, stack allocation, inlined comparing function, etc.
+//
 struct RenderPassDesc
 {
     RenderPassColorAttachmentDesc colorAttachments[kMaxRenderTargets];
@@ -417,7 +463,6 @@ class RenderPipelineCacheSpecializeShaderFactory
 {
   public:
     virtual ~RenderPipelineCacheSpecializeShaderFactory() = default;
-
     // Get specialized shader for the render pipeline cache.
     virtual angle::Result getSpecializedShader(Context *context,
                                                gl::ShaderType shaderType,
@@ -429,7 +474,7 @@ class RenderPipelineCacheSpecializeShaderFactory
                                       const RenderPipelineDesc &renderPipelineDesc) = 0;
 };
 
-// Render pipeline state cache per shader program.
+// render pipeline state cache per shader program
 class RenderPipelineCache final : angle::NonCopyable
 {
   public:
@@ -459,6 +504,7 @@ class RenderPipelineCache final : angle::NonCopyable
     AutoObjCPtr<id<MTLFunction>> mVertexShader;
     // Non-specialized fragment shader
     AutoObjCPtr<id<MTLFunction>> mFragmentShader;
+    // On shader with emulated rasterization discard, one without
 
   private:
     void clearPipelineStates();
@@ -477,14 +523,13 @@ class RenderPipelineCache final : angle::NonCopyable
     // One table with default attrib and one table without.
     std::unordered_map<RenderPipelineDesc, AutoObjCPtr<id<MTLRenderPipelineState>>>
         mRenderPipelineStates[2];
-
     RenderPipelineCacheSpecializeShaderFactory *mSpecializedShaderFactory;
 };
 
 class StateCache final : angle::NonCopyable
 {
   public:
-    StateCache();
+    StateCache(const angle::FeaturesMtl &features);
     ~StateCache();
 
     // Null depth stencil state has depth/stecil read & write disabled.
@@ -502,6 +547,8 @@ class StateCache final : angle::NonCopyable
     void clear();
 
   private:
+    const angle::FeaturesMtl &mFeatures;
+
     AutoObjCPtr<id<MTLDepthStencilState>> mNullDepthStencilState = nil;
     std::unordered_map<DepthStencilDesc, AutoObjCPtr<id<MTLDepthStencilState>>> mDepthStencilStates;
     std::unordered_map<SamplerDesc, AutoObjCPtr<id<MTLSamplerState>>> mSamplerStates;

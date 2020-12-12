@@ -23,12 +23,14 @@ namespace mtl
 class RenderCommandEncoder;
 }  // namespace mtl
 class ContextMtl;
-class WindowSurfaceMtl;
+class SurfaceMtl;
 
 class FramebufferMtl : public FramebufferImpl
 {
   public:
-    FramebufferMtl(const gl::FramebufferState &state, bool flipY, WindowSurfaceMtl *backbuffer);
+    explicit FramebufferMtl(const gl::FramebufferState &state,
+                            bool flipY,
+                            SurfaceMtlProtocol *backbuffer);
     ~FramebufferMtl() override;
     void destroy(const gl::Context *context) override;
 
@@ -97,7 +99,7 @@ class FramebufferMtl : public FramebufferImpl
 
     gl::Rectangle getCompleteRenderArea() const;
     int getSamples() const;
-    WindowSurfaceMtl *getAttachedBackbuffer() const { return mBackbuffer; }
+    SurfaceMtlProtocol *getAttachedBackbuffer() const { return mBackbuffer; }
 
     bool renderPassHasStarted(ContextMtl *contextMtl) const;
     mtl::RenderCommandEncoder *ensureRenderPassStarted(const gl::Context *context);
@@ -162,6 +164,10 @@ class FramebufferMtl : public FramebufferImpl
     mtl::RenderCommandEncoder *ensureRenderPassStarted(const gl::Context *context,
                                                        const mtl::RenderPassDesc &desc);
 
+    void overrideClearColor(const mtl::TextureRef &texture,
+                            MTLClearColor clearColor,
+                            MTLClearColor *colorOut);
+
     angle::Result updateColorRenderTarget(const gl::Context *context, size_t colorIndexGL);
     angle::Result updateDepthRenderTarget(const gl::Context *context);
     angle::Result updateStencilRenderTarget(const gl::Context *context);
@@ -169,10 +175,36 @@ class FramebufferMtl : public FramebufferImpl
                                            const gl::FramebufferAttachment *attachment,
                                            RenderTargetMtl **cachedRenderTarget);
 
+    // This function either returns the render target's texture itself if the texture is readable
+    // or create a copy of that texture that is readable if not. This function is typically used
+    // for packed depth stencil where reading stencil requires a stencil view. However if a texture
+    // has both render target, pixel format view & shader readable usage flags, there will be
+    // some glitches happen in Metal framework.
+    // So the solution is creating a depth stencil texture without pixel format view flag but has
+    // render target flag, then during blitting process, this texture is copied to another
+    // intermidiate texture having pixel format view flag, but not render target flag.
+    angle::Result getReadableViewForRenderTarget(const gl::Context *context,
+                                                 const RenderTargetMtl &rtt,
+                                                 const gl::Rectangle &readArea,
+                                                 mtl::TextureRef *readableDepthView,
+                                                 mtl::TextureRef *readableStencilView,
+                                                 uint32_t *readableViewLevel,
+                                                 uint32_t *readableViewLayer,
+                                                 gl::Rectangle *readableViewArea);
+
     angle::Result readPixelsToPBO(const gl::Context *context,
                                   const gl::Rectangle &area,
                                   const PackPixelsParams &packPixelsParams,
                                   const RenderTargetMtl *renderTarget) const;
+
+    angle::Result readPixelsToBuffer(const gl::Context *context,
+                                     const gl::Rectangle &area,
+                                     const RenderTargetMtl *renderTarget,
+                                     bool reverseRowOrder,
+                                     const angle::Format &dstAngleFormat,
+                                     uint32_t dstBufferOffset,
+                                     uint32_t dstBufferRowPitch,
+                                     const mtl::BufferRef *dstBuffer) const;
 
     // NOTE: we cannot use RenderTargetCache here because it doesn't support separate
     // depth & stencil attachments as of now. Separate depth & stencil could be useful to
@@ -189,8 +221,10 @@ class FramebufferMtl : public FramebufferImpl
     // as by a compute pass.
     bool mRenderPassCleanStart = false;
 
-    WindowSurfaceMtl *mBackbuffer = nullptr;
-    const bool mFlipY             = false;
+    SurfaceMtlProtocol *mBackbuffer = nullptr;
+    const bool mFlipY               = false;
+
+    mtl::BufferRef mReadPixelBuffer;
 };
 }  // namespace rx
 

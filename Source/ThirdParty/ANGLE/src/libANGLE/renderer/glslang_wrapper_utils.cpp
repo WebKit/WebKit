@@ -281,10 +281,12 @@ std::string SubstituteTransformFeedbackMarkers(const std::string &originalSource
                                                const std::string &xfbOut)
 {
     const size_t xfbDeclMarkerStart = originalSource.find(kXfbDeclMarker);
-    const size_t xfbDeclMarkerEnd   = xfbDeclMarkerStart + ConstStrLen(kXfbDeclMarker);
+    ASSERT(xfbDeclMarkerStart != std::string::npos);
+    const size_t xfbDeclMarkerEnd = xfbDeclMarkerStart + ConstStrLen(kXfbDeclMarker);
 
     const size_t xfbOutMarkerStart = originalSource.find(kXfbOutMarker, xfbDeclMarkerStart);
-    const size_t xfbOutMarkerEnd   = xfbOutMarkerStart + ConstStrLen(kXfbOutMarker);
+    ASSERT(xfbOutMarkerStart != std::string::npos);
+    const size_t xfbOutMarkerEnd = xfbOutMarkerStart + ConstStrLen(kXfbOutMarker);
 
     // The shader is the following form:
     //
@@ -362,7 +364,8 @@ void GenerateTransformFeedbackEmulationOutputs(const GlslangSourceOptions &optio
                                                const gl::ProgramState &programState,
                                                GlslangProgramInterfaceInfo *programInterfaceInfo,
                                                std::string *vertexShader,
-                                               ShaderInterfaceVariableInfoMap *variableInfoMapOut)
+                                               ShaderInterfaceVariableInfoMap *variableInfoMapOut,
+                                               bool earlyReturn)
 {
     const std::vector<gl::TransformFeedbackVarying> &varyings =
         programState.getLinkedTransformFeedbackVaryings();
@@ -412,6 +415,10 @@ void GenerateTransformFeedbackEmulationOutputs(const GlslangSourceOptions &optio
         {
             outputOffset += info.columnCount * info.rowCount * varying.size();
         }
+    }
+    if (earlyReturn)
+    {
+        xfbOut += "return;";
     }
     xfbOut += "}\n";
 
@@ -3368,11 +3375,6 @@ std::string GlslangGetMappedSamplerName(const std::string &originalName)
     return samplerName;
 }
 
-std::string GetXfbBufferName(const uint32_t bufferIndex)
-{
-    return "xfbBuffer" + Str(bufferIndex);
-}
-
 void GlslangGenTransformFeedbackEmulationOutputs(const GlslangSourceOptions &options,
                                                  const gl::ProgramState &programState,
                                                  GlslangProgramInterfaceInfo *programInterfaceInfo,
@@ -3380,10 +3382,61 @@ void GlslangGenTransformFeedbackEmulationOutputs(const GlslangSourceOptions &opt
                                                  ShaderInterfaceVariableInfoMap *variableInfoMapOut)
 {
     GenerateTransformFeedbackEmulationOutputs(options, programState, programInterfaceInfo,
-                                              vertexShader, variableInfoMapOut);
+                                              vertexShader, variableInfoMapOut, false);
 }
 
 void GlslangAssignLocations(const GlslangSourceOptions &options,
+                            const gl::ProgramExecutable &programExecutable,
+                            const gl::ShaderType shaderType,
+                            GlslangProgramInterfaceInfo *programInterfaceInfo,
+                            ShaderMapInterfaceVariableInfoMap *variableInfoMapOut)
+{
+    // Assign outputs to the fragment shader, if any.
+    if ((shaderType == gl::ShaderType::Fragment) &&
+        programExecutable.hasLinkedShaderStage(gl::ShaderType::Fragment))
+    {
+        AssignOutputLocations(programExecutable, gl::ShaderType::Fragment,
+                              &(*variableInfoMapOut)[gl::ShaderType::Fragment]);
+    }
+
+    // Assign attributes to the vertex shader, if any.
+    if ((shaderType == gl::ShaderType::Vertex) &&
+        programExecutable.hasLinkedShaderStage(gl::ShaderType::Vertex))
+    {
+        AssignAttributeLocations(programExecutable, gl::ShaderType::Vertex,
+                                 &(*variableInfoMapOut)[gl::ShaderType::Vertex]);
+    }
+
+    if (!programExecutable.hasLinkedShaderStage(gl::ShaderType::Compute))
+    {
+        // Assign varying locations.
+        AssignVaryingLocations(options, programExecutable, shaderType, programInterfaceInfo,
+                               variableInfoMapOut);
+
+        if (!programExecutable.getLinkedTransformFeedbackVaryings().empty() &&
+            options.supportsTransformFeedbackExtension && (shaderType == gl::ShaderType::Vertex))
+        {
+            AssignTransformFeedbackExtensionQualifiers(
+                programExecutable, programInterfaceInfo->locationsUsedForXfbExtension,
+                gl::ShaderType::Vertex, &(*variableInfoMapOut)[gl::ShaderType::Vertex]);
+        }
+    }
+
+    AssignUniformBindings(options, programExecutable, shaderType, programInterfaceInfo,
+                          variableInfoMapOut);
+    AssignTextureBindings(options, programExecutable, shaderType, programInterfaceInfo,
+                          variableInfoMapOut);
+    AssignNonTextureBindings(options, programExecutable, shaderType, programInterfaceInfo,
+                             variableInfoMapOut);
+}
+
+std::string GetXfbBufferName(const uint32_t bufferIndex)
+{
+    return "xfbBuffer" + Str(bufferIndex);
+}
+
+
+void GlslangAssignLocations(GlslangSourceOptions &options,
                             const gl::ProgramExecutable &programExecutable,
                             const gl::ShaderType shaderType,
                             GlslangProgramInterfaceInfo *programInterfaceInfo,
@@ -3462,7 +3515,8 @@ void GlslangGetShaderSource(const GlslangSourceOptions &options,
             {
                 GenerateTransformFeedbackEmulationOutputs(
                     options, programState, programInterfaceInfo, vertexSource,
-                    &(*variableInfoMapOut)[gl::ShaderType::Vertex]);
+                    &(*variableInfoMapOut)[gl::ShaderType::Vertex],
+                    options.transformFeedbackEarlyReturn);
             }
             else
             {

@@ -1,3 +1,23 @@
+2020-12-12  Kyle Piddington  <kpiddington@apple.com>
+
+        Improved Metal backend for ANGLE, with direct GLSL to Metal compiler translation
+        https://bugs.webkit.org/show_bug.cgi?id=219759
+        <rdar://problem/72200222>
+
+        Reviewed by Dean Jackson.
+
+        Reviewer's note: While this patch is landing in WebKit now, it will
+        be submitted to the main ANGLE project for official review, then re-merged
+        back into WebKit. The feature provided here is not enabled by default.
+
+        Provide a WebGL1 compliant transpiler for GLSL content. With this
+        change, we can leverage the already present open source work in the
+        ANGLE project to enable webgl to run on top of Metal. In addition,
+        this patch contains a number of fixes to the existing ANGLE Metal backend.
+
+        Test: Tests were validated with the dEQP test suite with ANGLE, in
+        addition to running standard layout tests.
+
 2020-12-04  Adam Roben  <aroben@apple.com>
 
         More FALLBACK_PLATFORM adoption

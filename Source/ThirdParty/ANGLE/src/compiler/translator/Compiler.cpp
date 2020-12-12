@@ -722,9 +722,9 @@ bool TCompiler::checkAndSimplifyAST(TIntermBlock *root,
         }
     }
 
-    int simplifyScalarized = (compileOptions & SH_SCALARIZE_VEC_AND_MAT_CONSTRUCTOR_ARGS)
-                                 ? IntermNodePatternMatcher::kScalarizedVecOrMatConstructor
-                                 : 0;
+    unsigned int simplifyScalarized = (compileOptions & SH_SCALARIZE_VEC_AND_MAT_CONSTRUCTOR_ARGS)
+                                          ? IntermNodePatternMatcher::kScalarizedVecOrMatConstructor
+                                          : 0;
 
     // Split multi declarations and remove calls to array length().
     // Note that SimplifyLoopConditions needs to be run before any other AST transformations

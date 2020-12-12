@@ -35,6 +35,9 @@ class TParseContext;
 #ifdef ANGLE_ENABLE_HLSL
 class TranslatorHLSL;
 #endif  // ANGLE_ENABLE_HLSL
+#ifdef ANGLE_ENABLE_METAL
+class TranslatorMetalDirect;
+#endif  // ANGLE_ENABLE_METAL
 
 //
 // Helper function to check if the shader type is GLSL.
@@ -63,6 +66,9 @@ class TShHandleBase
 #ifdef ANGLE_ENABLE_HLSL
     virtual TranslatorHLSL *getAsTranslatorHLSL() { return 0; }
 #endif  // ANGLE_ENABLE_HLSL
+#ifdef ANGLE_ENABLE_METAL
+    virtual TranslatorMetalDirect *getAsTranslatorMetalDirect() { return nullptr; }
+#endif  // ANGLE_ENABLE_METAL
 
   protected:
     // Memory allocator. Allocates and tracks memory required by the compiler.

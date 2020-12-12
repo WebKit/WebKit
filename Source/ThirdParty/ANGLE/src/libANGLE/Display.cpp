@@ -181,7 +181,13 @@ EGLAttrib GetDisplayTypeFromEnvironment()
         return EGL_PLATFORM_ANGLE_TYPE_NULL_ANGLE;
     }
 #endif
+#if defined(ANGLE_ENABLE_METAL)
+    if (angleDefaultEnv == "metal")
+    {
+        return EGL_PLATFORM_ANGLE_TYPE_METAL_ANGLE;
+    }
 
+#endif
 #if defined(ANGLE_ENABLE_D3D11)
     return EGL_PLATFORM_ANGLE_TYPE_D3D11_ANGLE;
 #elif defined(ANGLE_ENABLE_D3D9)
@@ -1305,6 +1311,47 @@ Error Display::makeCurrent(gl::Context *previousContext,
         {
             context->addRef();
         }
+    }
+
+    // Tick all the scratch buffers to make sure they get cleaned up eventually if they stop being
+    // used.
+    {
+        std::lock_guard<std::mutex> lock(mScratchBufferMutex);
+
+        for (angle::ScratchBuffer &scatchBuffer : mScratchBuffers)
+        {
+            scatchBuffer.tick();
+        }
+        for (angle::ScratchBuffer &zeroFilledBuffer : mZeroFilledBuffers)
+        {
+            zeroFilledBuffer.tick();
+        }
+    }
+
+    return NoError();
+}
+
+Error Display::makeCurrent(const Thread *thread,
+                           egl::Surface *drawSurface,
+                           egl::Surface *readSurface,
+                           gl::Context *context)
+{
+    if (!mInitialized)
+    {
+        return NoError();
+    }
+
+    gl::Context *previousContext = thread->getContext();
+    if (previousContext)
+    {
+        ANGLE_TRY(previousContext->unMakeCurrent(this));
+    }
+
+    ANGLE_TRY(mImplementation->makeCurrent(this, drawSurface, readSurface, context));
+
+    if (context != nullptr)
+    {
+        ANGLE_TRY(context->makeCurrent(this, drawSurface, readSurface));
     }
 
     // Tick all the scratch buffers to make sure they get cleaned up eventually if they stop being

@@ -222,7 +222,7 @@ class TFunction : public TSymbol
     TOperator getBuiltInOp() const { return mOp; }
 
     void setDefined() { defined = true; }
-    bool isDefined() { return defined; }
+    bool isDefined() const { return defined; }
     void setHasPrototypeDeclaration() { mHasPrototypeDeclaration = true; }
     bool hasPrototypeDeclaration() const { return mHasPrototypeDeclaration; }
 

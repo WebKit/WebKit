@@ -15,9 +15,9 @@
 #include "common/PackedEnums.h"
 #include "libANGLE/renderer/TextureImpl.h"
 #include "libANGLE/renderer/metal/RenderTargetMtl.h"
+#include "libANGLE/renderer/metal/SurfaceMtl.h"
 #include "libANGLE/renderer/metal/mtl_command_buffer.h"
 #include "libANGLE/renderer/metal/mtl_resources.h"
-
 namespace rx
 {
 
@@ -32,6 +32,8 @@ class TextureMtl : public TextureImpl
 {
   public:
     TextureMtl(const gl::TextureState &state);
+    // Texture  view
+    TextureMtl(const TextureMtl &mtl, GLenum format);
     ~TextureMtl() override;
     void onDestroy(const gl::Context *context) override;
 
@@ -193,6 +195,7 @@ class TextureMtl : public TextureImpl
     ImageDefinitionMtl &getImageDefinition(const gl::ImageIndex &imageIndex);
     RenderTargetMtl &getRenderTarget(const gl::ImageIndex &imageIndex);
     bool isIndexWithinMinMaxLevels(const gl::ImageIndex &imageIndex) const;
+    mtl::TextureRef &getImplicitMSTexture(const gl::ImageIndex &imageIndex);
 
     // If levels = 0, this function will create full mipmaps texture.
     angle::Result setStorageImpl(const gl::Context *context,
@@ -312,8 +315,9 @@ class TextureMtl : public TextureImpl
     angle::Result generateMipmapCPU(const gl::Context *context);
 
     mtl::Format mFormat;
+    SurfaceMtlProtocol *mBoundSurface = nil;
     // The real texture used by Metal draw calls.
-    mtl::TextureRef mNativeTexture;
+    mtl::TextureRef mNativeTexture         = nil;
     id<MTLSamplerState> mMetalSamplerState = nil;
 
     // Number of slices
@@ -323,18 +327,14 @@ class TextureMtl : public TextureImpl
     // Once the images array is complete, they will be transferred to real texture object.
     // NOTE:
     //  - The second dimension is indexed by configured base level + actual native level
-    //  - For Cube map, there will be at most 6 entries in the mTexImageDefs table, one for each
-    //  face. This is because the Cube map's image is defined per face & per level.
+    //  - For Cube map, there will be at most 6 entries in the map table, one for each face. This is
+    //  because the Cube map's image is defined per face & per level.
     //  - For other texture types, there will be only one entry in the map table. All other textures
     //  except Cube map has texture image defined per level (all slices included).
+    //  - These three variables' second dimension are indexed by image index (base level included).
     std::map<int, gl::TexLevelArray<ImageDefinitionMtl>> mTexImageDefs;
-
-    // Render Target per slice/depth/cube face.
-    // - For 2D texture: There will be one key entry in the map.
-    // - For Cube map: There will be at most 6 key entries.
-    // - For array/3D texture: There will be at most slices/depths number of key entries.
-    // - The second dimension is indexed by configured base level + actual native level
     std::map<int, gl::TexLevelArray<RenderTargetMtl>> mPerLayerRenderTargets;
+    std::map<int, gl::TexLevelArray<mtl::TextureRef>> mImplicitMSTextures;
 
     // Mipmap views are indexed by native level (ignored base level):
     mtl::NativeTexLevelArray mNativeLevelViews;

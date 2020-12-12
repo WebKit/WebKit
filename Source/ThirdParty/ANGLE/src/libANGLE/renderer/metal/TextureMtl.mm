@@ -20,8 +20,8 @@
 #include "libANGLE/renderer/metal/ContextMtl.h"
 #include "libANGLE/renderer/metal/DisplayMtl.h"
 #include "libANGLE/renderer/metal/FrameBufferMtl.h"
+#include "libANGLE/renderer/metal/IOSurfaceSurfaceMtl.h"
 #include "libANGLE/renderer/metal/SamplerMtl.h"
-#include "libANGLE/renderer/metal/SurfaceMtl.h"
 #include "libANGLE/renderer/metal/mtl_common.h"
 #include "libANGLE/renderer/metal/mtl_format_utils.h"
 #include "libANGLE/renderer/metal/mtl_utils.h"
@@ -534,6 +534,10 @@ void TextureMtl::releaseTexture(bool releaseImages, bool releaseTextureObjectsOn
 
 angle::Result TextureMtl::ensureTextureCreated(const gl::Context *context)
 {
+    if (mBoundSurface)
+    {
+        return angle::Result::Continue;
+    }
     if (mNativeTexture)
     {
         return angle::Result::Continue;
@@ -1207,25 +1211,15 @@ angle::Result TextureMtl::setBaseLevel(const gl::Context *context, GLuint baseLe
 
 angle::Result TextureMtl::bindTexImage(const gl::Context *context, egl::Surface *surface)
 {
-    releaseTexture(true);
-
-    auto pBuffer     = GetImplAs<OffscreenSurfaceMtl>(surface);
-    mNativeTexture   = pBuffer->getColorTexture();
-    mFormat          = pBuffer->getColorFormat();
-    gl::Extents size = mNativeTexture->sizeAt0();
-    mIsPow2          = gl::isPow2(size.width) && gl::isPow2(size.height) && gl::isPow2(size.depth);
-    ANGLE_TRY(ensureSamplerStateCreated(context));
-
-    // Tell context to rebind textures
-    ContextMtl *contextMtl = mtl::GetImpl(context);
-    contextMtl->invalidateCurrentTextures();
-
+    IOSurfaceSurfaceMtl *surfaceMtl = (IOSurfaceSurfaceMtl *)mtl::GetImpl(surface);
+    mBoundSurface                   = surfaceMtl;
     return angle::Result::Continue;
 }
 
 angle::Result TextureMtl::releaseTexImage(const gl::Context *context)
 {
-    releaseTexture(true);
+    mBoundSurface = nil;
+
     return angle::Result::Continue;
 }
 
@@ -1235,6 +1229,12 @@ angle::Result TextureMtl::getAttachmentRenderTarget(const gl::Context *context,
                                                     GLsizei samples,
                                                     FramebufferAttachmentRenderTarget **rtOut)
 {
+    if (mBoundSurface)
+    {
+        ANGLE_TRY(
+            mBoundSurface->getAttachmentRenderTarget(context, binding, imageIndex, samples, rtOut));
+        return angle::Result::Continue;
+    }
     ANGLE_TRY(ensureTextureCreated(context));
 
     ContextMtl *contextMtl = mtl::GetImpl(context);

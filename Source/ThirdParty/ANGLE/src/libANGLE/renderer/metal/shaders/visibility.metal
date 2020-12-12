@@ -6,7 +6,7 @@
 
 #include "common.h"
 
-constant bool kCombineWithExistingResult [[function_constant(1000)]];
+constant bool kCombineWithExistingResult [[function_constant(1)]];
 
 // Combine the visibility result of current render pass with previous value from previous render
 // pass

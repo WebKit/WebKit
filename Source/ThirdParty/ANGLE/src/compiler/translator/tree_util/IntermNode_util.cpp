@@ -224,6 +224,50 @@ TVariable *DeclareTempVariable(TSymbolTable *symbolTable,
     return variable;
 }
 
+std::pair<const TVariable *, const TVariable *> DeclareStructure(
+    TIntermBlock *root,
+    TSymbolTable *symbolTable,
+    TFieldList *fieldList,
+    TQualifier qualifier,
+    const TMemoryQualifier &memoryQualifier,
+    uint32_t arraySize,
+    const ImmutableString &structTypeName,
+    const ImmutableString *structInstanceName)
+{
+    TStructure *structure =
+        new TStructure(symbolTable, structTypeName, fieldList, SymbolType::AngleInternal);
+
+    auto makeStructureType = [&](bool isStructSpecifier) {
+        TType *structureType = new TType(structure, isStructSpecifier);
+        structureType->setQualifier(qualifier);
+        structureType->setMemoryQualifier(memoryQualifier);
+        if (arraySize > 0)
+        {
+            structureType->makeArray(arraySize);
+        }
+        return structureType;
+    };
+
+    TIntermSequence insertSequence;
+
+    TVariable *typeVar = new TVariable(symbolTable, kEmptyImmutableString, makeStructureType(true),
+                                       SymbolType::Empty);
+    insertSequence.push_back(new TIntermDeclaration{typeVar});
+
+    TVariable *instanceVar = nullptr;
+    if (structInstanceName)
+    {
+        instanceVar = new TVariable(symbolTable, *structInstanceName, makeStructureType(false),
+                                    SymbolType::AngleInternal);
+        insertSequence.push_back(new TIntermDeclaration{instanceVar});
+    }
+
+    size_t firstFunctionIndex = FindFirstFunctionDefinitionIndex(root);
+    root->insertChildNodes(firstFunctionIndex, insertSequence);
+
+    return {typeVar, instanceVar};
+}
+
 const TVariable *DeclareInterfaceBlock(TIntermBlock *root,
                                        TSymbolTable *symbolTable,
                                        TFieldList *fieldList,

@@ -672,6 +672,9 @@
     "D32_FLOAT_S8X24_UINT": {
       "GL_UNSIGNED_INT_24_8": "LoadD24S8ToD32FS8X24",
       "GL_UNSIGNED_INT": "LoadD32ToD32FX32"
+    },
+    "D32_FLOAT": {
+      "GL_UNSIGNED_INT": "LoadD24S8ToD32F"
     }
   },
   "GL_R32I": {

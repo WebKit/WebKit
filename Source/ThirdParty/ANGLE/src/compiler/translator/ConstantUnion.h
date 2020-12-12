@@ -20,6 +20,10 @@ class TConstantUnion
   public:
     POOL_ALLOCATOR_NEW_DELETE
     TConstantUnion();
+    TConstantUnion(int i);
+    TConstantUnion(unsigned int u);
+    TConstantUnion(float f);
+    TConstantUnion(bool b);
 
     bool cast(TBasicType newType, const TConstantUnion &constant);
 

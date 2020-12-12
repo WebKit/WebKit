@@ -65,7 +65,7 @@ class Allocation
 #endif
     }
 
-    void check() const
+    void checkAlloc() const
     {
         checkGuardBlock(preGuard(), kGuardBlockBeginVal, "before");
         checkGuardBlock(postGuard(), kGuardBlockEndVal, "after");

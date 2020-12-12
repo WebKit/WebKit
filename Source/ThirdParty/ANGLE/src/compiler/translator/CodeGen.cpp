@@ -21,8 +21,11 @@
 #endif  // ANGLE_ENABLE_VULKAN
 
 #ifdef ANGLE_ENABLE_METAL
-#    include "compiler/translator/TranslatorMetal.h"
+#    include "compiler/translator/TranslatorMetalDirect.h"
 #endif  // ANGLE_ENABLE_METAL
+#ifdef ANGLE_ENABLE_METAL_SPIRV
+#    include "compiler/translator/TranslatorMetal.h"
+#endif  // ANGLE_ENABLE_METAL_SPIRV
 
 #include "compiler/translator/util.h"
 
@@ -64,10 +67,16 @@ TCompiler *ConstructCompiler(sh::GLenum type, ShShaderSpec spec, ShShaderOutput 
     }
 #endif  // ANGLE_ENABLE_VULKAN
 
-#ifdef ANGLE_ENABLE_METAL
+#ifdef ANGLE_ENABLE_METAL_SPIRV
     if (IsOutputMetal(output))
     {
         return new TranslatorMetal(type, spec);
+    }
+#endif
+#ifdef ANGLE_ENABLE_METAL
+    if (IsOutputMetalDirect(output))
+    {
+        return new TranslatorMetalDirect(type, spec, output);
     }
 #endif  // ANGLE_ENABLE_METAL
 

@@ -56,10 +56,10 @@ inline uint getIndexUnalignedU32(constant uchar *input, uint offset, uint idx)
     return input0 | (input1 << 8) | (input2 << 16) | (input3 << 24);
 }
 
-kernel void convertIndexU8ToU16(uint idx[[thread_position_in_grid]],
-                                constant IndexConversionParams &options[[buffer(0)]],
-                                constant uchar *input[[buffer(1)]],
-                                device ushort *output[[buffer(2)]])
+kernel void convertIndexU8ToU16(uint idx [[thread_position_in_grid]],
+                                constant IndexConversionParams &options [[buffer(0)]],
+                                constant uchar *input [[buffer(1)]],
+                                device ushort *output [[buffer(2)]])
 {
     ANGLE_IDX_CONVERSION_GUARD(idx, options);
 
@@ -75,12 +75,13 @@ kernel void convertIndexU8ToU16(uint idx[[thread_position_in_grid]],
     }
 }
 
-kernel void convertIndexU16(
-    uint idx[[thread_position_in_grid]],
-    constant IndexConversionParams &options[[buffer(0)]],
-    constant uchar *input[[ buffer(1), function_constant(kSourceBufferUnaligned) ]],
-    constant ushort *inputAligned[[ buffer(1), function_constant(kSourceBufferAligned) ]],
-    device ushort *output[[buffer(2)]])
+kernel void convertIndexU16(uint idx [[thread_position_in_grid]],
+                            constant IndexConversionParams &options [[buffer(0)]],
+                            constant uchar *input
+                            [[buffer(1), function_constant(kSourceBufferUnaligned)]],
+                            constant ushort *inputAligned
+                            [[buffer(1), function_constant(kSourceBufferAligned)]],
+                            device ushort *output [[buffer(2)]])
 {
     ANGLE_IDX_CONVERSION_GUARD(idx, options);
 
@@ -96,12 +97,13 @@ kernel void convertIndexU16(
     output[idx] = value;
 }
 
-kernel void convertIndexU32(
-    uint idx[[thread_position_in_grid]],
-    constant IndexConversionParams &options[[buffer(0)]],
-    constant uchar *input[[ buffer(1), function_constant(kSourceBufferUnaligned) ]],
-    constant uint *inputAligned[[ buffer(1), function_constant(kSourceBufferAligned) ]],
-    device uint *output[[buffer(2)]])
+kernel void convertIndexU32(uint idx [[thread_position_in_grid]],
+                            constant IndexConversionParams &options [[buffer(0)]],
+                            constant uchar *input
+                            [[buffer(1), function_constant(kSourceBufferUnaligned)]],
+                            constant uint *inputAligned
+                            [[buffer(1), function_constant(kSourceBufferAligned)]],
+                            device uint *output [[buffer(2)]])
 {
     ANGLE_IDX_CONVERSION_GUARD(idx, options);
 
@@ -140,9 +142,9 @@ kernel void genTriFanIndicesFromArray(uint idx [[thread_position_in_grid]],
 
 inline uint getIndexU32(uint offset,
                         uint idx,
-                        constant uchar *inputU8[[function_constant(kUseSourceBufferU8)]],
-                        constant ushort *inputU16[[function_constant(kUseSourceBufferU16)]],
-                        constant uint *inputU32[[function_constant(kUseSourceBufferU32)]])
+                        constant uchar *inputU8 [[function_constant(kUseSourceBufferU8)]],
+                        constant ushort *inputU16 [[function_constant(kUseSourceBufferU16)]],
+                        constant uint *inputU32 [[function_constant(kUseSourceBufferU32)]])
 {
     if (kUseSourceBufferU8)
     {
@@ -170,13 +172,15 @@ inline uint getIndexU32(uint offset,
 // NOTE(hqle): triangle fan indices generation doesn't support primitive restart.
 // Generate triangle fan indices from an indices buffer. indexCount options indicates number
 // of indices starting from the 3rd.
-kernel void genTriFanIndicesFromElements(
-    uint idx[[thread_position_in_grid]],
-    constant IndexConversionParams &options[[buffer(0)]],
-    constant uchar *inputU8[[ buffer(1), function_constant(kUseSourceBufferU8) ]],
-    constant ushort *inputU16[[ buffer(1), function_constant(kUseSourceBufferU16) ]],
-    constant uint *inputU32[[ buffer(1), function_constant(kUseSourceBufferU32) ]],
-    device uint *output[[buffer(2)]])
+kernel void genTriFanIndicesFromElements(uint idx [[thread_position_in_grid]],
+                                         constant IndexConversionParams &options [[buffer(0)]],
+                                         constant uchar *inputU8
+                                         [[buffer(1), function_constant(kUseSourceBufferU8)]],
+                                         constant ushort *inputU16
+                                         [[buffer(1), function_constant(kUseSourceBufferU16)]],
+                                         constant uint *inputU32
+                                         [[buffer(1), function_constant(kUseSourceBufferU32)]],
+                                         device uint *output [[buffer(2)]])
 {
     ANGLE_IDX_CONVERSION_GUARD(idx, options);
 

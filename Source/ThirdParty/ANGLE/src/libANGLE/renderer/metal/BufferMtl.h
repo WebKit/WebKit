@@ -152,10 +152,15 @@ class BufferMtl : public BufferImpl, public BufferHolderMtl
 
     ConversionBufferMtl *getUniformConversionBuffer(ContextMtl *context, size_t offset);
 
+    // NOTE(hqle): If the buffer is modifed by GPU, this function must be explicitly
+    // called.
+    void markConversionBuffersDirty();
+
     size_t size() const { return static_cast<size_t>(mState.getSize()); }
 
   private:
     angle::Result setDataImpl(const gl::Context *context,
+                              gl::BufferBinding target,
                               const void *data,
                               size_t size,
                               gl::BufferUsage usage);
@@ -167,20 +172,24 @@ class BufferMtl : public BufferImpl, public BufferHolderMtl
     angle::Result commitShadowCopy(const gl::Context *context);
     angle::Result commitShadowCopy(const gl::Context *context, size_t size);
 
-    void markConversionBuffersDirty();
-
     void clearConversionBuffers();
+
     bool clientShadowCopyDataNeedSync(ContextMtl *contextMtl);
     void ensureShadowCopySyncedFromGPU(ContextMtl *contextMtl);
     uint8_t *syncAndObtainShadowCopy(ContextMtl *contextMtl);
 
+    // Convenient method
+    const uint8_t *getClientShadowCopyData(const gl::Context *context)
+    {
+        return getClientShadowCopyData(mtl::GetImpl(context));
+    }
     // Client side shadow buffer
     angle::MemoryBuffer mShadowCopy;
 
     // GPU side buffers pool
     mtl::BufferPool mBufferPool;
 
-    // A cache of converted buffer data.
+    // A cache of converted vertex data.
     std::vector<VertexConversionBufferMtl> mVertexConversionBuffers;
 
     std::vector<IndexConversionBufferMtl> mIndexConversionBuffers;

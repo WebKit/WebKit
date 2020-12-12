@@ -250,11 +250,18 @@ angle::Result BufferPool::allocate(ContextMtl *contextMtl,
     return angle::Result::Continue;
 }
 
-angle::Result BufferPool::commit(ContextMtl *contextMtl)
+angle::Result BufferPool::commit(ContextMtl *contextMtl, bool flushEntireBuffer)
 {
     if (mBuffer && mNextAllocationOffset > mLastFlushOffset)
     {
-        mBuffer->flush(contextMtl, mLastFlushOffset, mNextAllocationOffset - mLastFlushOffset);
+        if (flushEntireBuffer)
+        {
+            mBuffer->flush(contextMtl, 0, mLastFlushOffset);
+        }
+        else
+        {
+            mBuffer->flush(contextMtl, mLastFlushOffset, mNextAllocationOffset - mLastFlushOffset);
+        }
         mLastFlushOffset = mNextAllocationOffset;
     }
     return angle::Result::Continue;

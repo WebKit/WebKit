@@ -335,7 +335,7 @@ void PoolAllocator::unlock()
 void Allocation::checkAllocList() const
 {
     for (const Allocation *alloc = this; alloc != 0; alloc = alloc->mPrevAlloc)
-        alloc->check();
+        alloc->checkAlloc();
 }
 
 }  // namespace angle

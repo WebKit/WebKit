@@ -41,7 +41,7 @@ TPrecision GetHigherPrecision(TPrecision left, TPrecision right)
 TConstantUnion *Vectorize(const TConstantUnion &constant, size_t size)
 {
     TConstantUnion *constUnion = new TConstantUnion[size];
-    for (unsigned int i = 0; i < size; ++i)
+    for (size_t i = 0; i < size; ++i)
         constUnion[i] = constant;
 
     return constUnion;
@@ -415,6 +415,14 @@ TIntermBlock::TIntermBlock(const TIntermBlock &node)
     }
 }
 
+TIntermBlock::TIntermBlock(std::initializer_list<TIntermNode *> stmts)
+{
+    for (TIntermNode *stmt : stmts)
+    {
+        appendStatement(stmt);
+    }
+}
+
 size_t TIntermBlock::getChildCount() const
 {
     return mStatements.size();
@@ -446,6 +454,37 @@ bool TIntermFunctionPrototype::replaceChildNode(TIntermNode *original, TIntermNo
     return false;
 }
 
+TIntermDeclaration::TIntermDeclaration(const TVariable *var, TIntermTyped *initExpr)
+{
+    if (initExpr)
+    {
+        appendDeclarator(
+            new TIntermBinary(TOperator::EOpInitialize, new TIntermSymbol(var), initExpr));
+    }
+    else
+    {
+        appendDeclarator(new TIntermSymbol(var));
+    }
+}
+
+TIntermDeclaration::TIntermDeclaration(std::initializer_list<const TVariable *> declarators)
+    : TIntermDeclaration()
+{
+    for (auto *d : declarators)
+    {
+        appendDeclarator(new TIntermSymbol(d));
+    }
+}
+
+TIntermDeclaration::TIntermDeclaration(std::initializer_list<TIntermTyped *> declarators)
+    : TIntermDeclaration()
+{
+    for (auto *d : declarators)
+    {
+        appendDeclarator(d);
+    }
+}
+
 size_t TIntermDeclaration::getChildCount() const
 {
     return mDeclarators.size();
@@ -463,9 +502,10 @@ bool TIntermDeclaration::replaceChildNode(TIntermNode *original, TIntermNode *re
 
 bool TIntermAggregateBase::replaceChildNodeInternal(TIntermNode *original, TIntermNode *replacement)
 {
-    for (size_t ii = 0; ii < getSequence()->size(); ++ii)
+    auto &seq = *getSequence();
+    for (auto *&node : seq)
     {
-        REPLACE_IF_IS((*getSequence())[ii], TIntermNode, original, replacement);
+        REPLACE_IF_IS(node, TIntermNode, original, replacement);
     }
     return false;
 }
@@ -473,12 +513,13 @@ bool TIntermAggregateBase::replaceChildNodeInternal(TIntermNode *original, TInte
 bool TIntermAggregateBase::replaceChildNodeWithMultiple(TIntermNode *original,
                                                         const TIntermSequence &replacements)
 {
-    for (auto it = getSequence()->begin(); it < getSequence()->end(); ++it)
+    auto &seq = *getSequence();
+    for (auto it = seq.begin(); it < seq.end(); ++it)
     {
         if (*it == original)
         {
-            it = getSequence()->erase(it);
-            getSequence()->insert(it, replacements.begin(), replacements.end());
+            it = seq.erase(it);
+            seq.insert(it, replacements.begin(), replacements.end());
             return true;
         }
     }
@@ -488,12 +529,13 @@ bool TIntermAggregateBase::replaceChildNodeWithMultiple(TIntermNode *original,
 bool TIntermAggregateBase::insertChildNodes(TIntermSequence::size_type position,
                                             const TIntermSequence &insertions)
 {
-    if (position > getSequence()->size())
+    auto &seq = *getSequence();
+    if (position > seq.size())
     {
         return false;
     }
-    auto it = getSequence()->begin() + position;
-    getSequence()->insert(it, insertions.begin(), insertions.end());
+    auto it = seq.begin() + position;
+    seq.insert(it, insertions.begin(), insertions.end());
     return true;
 }
 
@@ -1040,8 +1082,8 @@ TIntermAggregate::TIntermAggregate(const TIntermAggregate &node)
 
 TIntermAggregate *TIntermAggregate::shallowCopy() const
 {
-    TIntermSequence *copySeq = new TIntermSequence();
-    copySeq->insert(copySeq->begin(), getSequence()->begin(), getSequence()->end());
+    auto &seq                  = *getSequence();
+    TIntermSequence *copySeq   = new TIntermSequence(seq.begin(), seq.end());
     TIntermAggregate *copyNode = new TIntermAggregate(mFunction, mType, mOp, copySeq);
     copyNode->setLine(mLine);
     return copyNode;

@@ -73,6 +73,9 @@ enum ShShaderOutput
     // Output specialized GLSL to be fed to glslang for Vulkan SPIR to be cross compiled to Metal
     // later.
     SH_GLSL_METAL_OUTPUT = 0x8B4C,
+
+    // Output for MSL
+    SH_MSL_METAL_OUTPUT = 0x8B4D,
 };
 
 // Compile options.

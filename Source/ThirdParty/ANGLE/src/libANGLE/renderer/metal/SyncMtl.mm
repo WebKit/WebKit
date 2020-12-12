@@ -1,5 +1,5 @@
 //
-// Copyright 2020 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2020 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -22,7 +22,7 @@ namespace rx
 namespace mtl
 {
 // SharedEvent is only available on iOS 12.0+ or mac 10.14+
-#if ANGLE_MTL_EVENT_AVAILABLE
+#if defined(__IPHONE_12_0) || defined(__MAC_10_14)
 Sync::Sync() {}
 Sync::~Sync() {}
 
@@ -87,7 +87,7 @@ angle::Result Sync::clientWait(ContextMtl *contextMtl,
     // onDestroy(), but the callback might still not be fired yet.
     std::shared_ptr<std::condition_variable> cvRef = mCv;
     std::shared_ptr<std::mutex> lockRef            = mLock;
-
+#if ANGLE_MTL_EVENT_AVAILABLE
     AutoObjCObj<MTLSharedEventListener> eventListener =
         contextMtl->getDisplay()->getOrCreateSharedEventListener();
     [mMetalSharedEvent.get() notifyListener:eventListener
@@ -106,6 +106,7 @@ angle::Result Sync::clientWait(ContextMtl *contextMtl,
 
     ASSERT(mMetalSharedEvent.get().signaledValue >= mSetCounter);
     *outResult = GL_CONDITION_SATISFIED;
+#endif
 
     return angle::Result::Continue;
 }
@@ -118,7 +119,7 @@ angle::Result Sync::getStatus(bool *signaled)
     *signaled = mMetalSharedEvent.get().signaledValue >= mSetCounter;
     return angle::Result::Continue;
 }
-#endif  // #if ANGLE_MTL_EVENT_AVAILABLE
+#endif  // #if defined(__IPHONE_12_0) || defined(__MAC_10_14)
 }  // namespace mtl
 
 // FenceNVMtl implementation
@@ -128,7 +129,8 @@ FenceNVMtl::~FenceNVMtl() {}
 
 void FenceNVMtl::onDestroy(const gl::Context *context)
 {
-    mSync.onDestroy();
+    UNIMPLEMENTED();
+    return;
 }
 
 angle::Result FenceNVMtl::set(const gl::Context *context, GLenum condition)
@@ -305,6 +307,12 @@ egl::Error EGLSyncMtl::getStatus(const egl::Display *display, EGLint *outStatus)
 
     *outStatus = signaled ? EGL_SIGNALED_KHR : EGL_UNSIGNALED_KHR;
     return egl::NoError();
+}
+
+egl::Error EGLSyncMtl::dupNativeFenceFD(const egl::Display *display, EGLint *result) const
+{
+    UNREACHABLE();
+    return egl::EglBadDisplay();
 }
 
 }

@@ -166,6 +166,11 @@ class Display final : public LabeledObject,
                         const AttributeMap &attribs,
                         gl::Context **outContext);
 
+    Error makeCurrent(const Thread *thread,
+                      Surface *drawSurface,
+                      Surface *readSurface,
+                      gl::Context *context);
+
     Error createSync(const gl::Context *currentContext,
                      EGLenum type,
                      const AttributeMap &attribs,

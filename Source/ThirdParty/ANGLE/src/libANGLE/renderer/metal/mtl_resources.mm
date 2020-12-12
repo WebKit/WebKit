@@ -34,20 +34,22 @@ inline NSUInteger GetMipSize(NSUInteger baseSize, const MipmapNativeLevel level)
 // Asynchronously synchronize the content of a resource between GPU memory and its CPU cache.
 // NOTE: This operation doesn't finish immediately upon function's return.
 template <class T>
-void InvokeCPUMemSync(ContextMtl *context, mtl::BlitCommandEncoder *blitEncoder, T *resource)
+void SyncContent(ContextMtl *context,
+                 mtl::BlitCommandEncoder *blitEncoder,
+                 const std::shared_ptr<T> &resource)
 {
 #if TARGET_OS_OSX || TARGET_OS_MACCATALYST
     if (blitEncoder)
     {
         blitEncoder->synchronizeResource(resource);
+
         resource->resetCPUReadMemNeedSync();
     }
 #endif
 }
-// Ensure that a resource's CPU cache will be synchronized after GPU finishes its modifications on
-// the resource.
+
 template <class T>
-void EnsureCPUMemWillBeSynced(ContextMtl *context, T *resource)
+void EnsureContentSynced(ContextMtl *context, const std::shared_ptr<T> &resource)
 {
 #if TARGET_OS_OSX || TARGET_OS_MACCATALYST
     // Make sure GPU & CPU contents are synchronized.
@@ -56,7 +58,7 @@ void EnsureCPUMemWillBeSynced(ContextMtl *context, T *resource)
     if (resource->get().storageMode == MTLStorageModeManaged && resource->isCPUReadMemNeedSync())
     {
         mtl::BlitCommandEncoder *blitEncoder = context->getBlitCommandEncoder();
-        InvokeCPUMemSync(context, blitEncoder, resource);
+        SyncContent(context, blitEncoder, resource);
     }
 #endif
 }
@@ -122,6 +124,24 @@ angle::Result Texture::Make2DTexture(ContextMtl *context,
     }  // ANGLE_MTL_OBJC_SCOPE
 }
 
+/** static */
+angle::Result Texture::MakeMemoryLess2DTexture(ContextMtl *context,
+                                               const Format &format,
+                                               uint32_t width,
+                                               uint32_t height,
+                                               TextureRef *refOut)
+{
+    ANGLE_MTL_OBJC_SCOPE
+    {
+        MTLTextureDescriptor *desc =
+            [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:format.metalFormat
+                                                               width:width
+                                                              height:height
+                                                           mipmapped:NO];
+
+        return MakeTexture(context, format, desc, 1, true, false, true, refOut);
+    }  // ANGLE_MTL_OBJC_SCOPE
+}
 /** static */
 angle::Result Texture::MakeCubeTexture(ContextMtl *context,
                                        const Format &format,
@@ -223,6 +243,23 @@ angle::Result Texture::Make3DTexture(ContextMtl *context,
         return MakeTexture(context, format, desc, mips, renderTargetOnly, allowFormatView, refOut);
     }  // ANGLE_MTL_OBJC_SCOPE
 }
+angle::Result Texture::MakeIOSurfaceTexture(ContextMtl *context,
+                                            const Format &format,
+                                            uint32_t width,
+                                            uint32_t height,
+                                            IOSurfaceRef ref,
+                                            uint32_t plane,
+                                            TextureRef *refOut)
+{
+    MTLTextureDescriptor *desc = [[MTLTextureDescriptor new] ANGLE_MTL_AUTORELEASE];
+    desc.textureType           = MTLTextureType2D;
+    desc.pixelFormat           = format.metalFormat;
+    desc.width                 = width;
+    desc.height                = height;
+    desc.mipmapLevelCount      = 1;
+    desc.sampleCount           = 1;
+    return MakeTexture(context, format, desc, ref, plane, NO, refOut);
+}
 
 /** static */
 angle::Result Texture::MakeTexture(ContextMtl *context,
@@ -233,7 +270,42 @@ angle::Result Texture::MakeTexture(ContextMtl *context,
                                    bool allowFormatView,
                                    TextureRef *refOut)
 {
-    refOut->reset(new Texture(context, desc, mips, renderTargetOnly, allowFormatView));
+    return MakeTexture(context, mtlFormat, desc, mips, renderTargetOnly, allowFormatView, false,
+                       refOut);
+}
+
+angle::Result Texture::MakeTexture(ContextMtl *context,
+                                   const Format &mtlFormat,
+                                   MTLTextureDescriptor *desc,
+                                   uint32_t mips,
+                                   bool renderTargetOnly,
+                                   bool allowFormatView,
+                                   bool memoryLess,
+                                   TextureRef *refOut)
+{
+    refOut->reset(new Texture(context, desc, mips, renderTargetOnly, allowFormatView, memoryLess));
+
+    if (!refOut || !refOut->get())
+    {
+        ANGLE_MTL_CHECK(context, false, GL_OUT_OF_MEMORY);
+    }
+    if (!mtlFormat.hasDepthAndStencilBits())
+    {
+        refOut->get()->setColorWritableMask(GetEmulatedColorWriteMask(mtlFormat));
+    }
+
+    return angle::Result::Continue;
+}
+
+angle::Result Texture::MakeTexture(ContextMtl *context,
+                                   const Format &mtlFormat,
+                                   MTLTextureDescriptor *desc,
+                                   IOSurfaceRef surfaceRef,
+                                   NSUInteger slice,
+                                   bool renderTargetOnly,
+                                   TextureRef *refOut)
+{
+    refOut->reset(new Texture(context, desc, surfaceRef, slice, renderTargetOnly));
 
     if (!(*refOut) || !(*refOut)->get())
     {
@@ -264,6 +336,15 @@ Texture::Texture(ContextMtl *context,
                  uint32_t mips,
                  bool renderTargetOnly,
                  bool allowFormatView)
+    : Texture(context, desc, mips, renderTargetOnly, allowFormatView, false)
+{}
+
+Texture::Texture(ContextMtl *context,
+                 MTLTextureDescriptor *desc,
+                 uint32_t mips,
+                 bool renderTargetOnly,
+                 bool allowFormatView,
+                 bool memoryLess)
     : mColorWritableMask(std::make_shared<MTLColorWriteMask>(MTLColorWriteMaskAll))
 {
     ANGLE_MTL_OBJC_SCOPE
@@ -283,8 +364,16 @@ Texture::Texture(ContextMtl *context,
             desc.usage |= MTLTextureUsageRenderTarget;
         }
 
-        if (context->getNativeFormatCaps(desc.pixelFormat).depthRenderable ||
-            desc.textureType == MTLTextureType2DMultisample)
+        if (memoryLess)
+        {
+#if (TARGET_OS_IOS || TARGET_OS_TV) && !TARGET_OS_MACCATALYST
+            desc.resourceOptions = MTLResourceStorageModeMemoryless;
+#else
+            desc.resourceOptions = MTLResourceStorageModePrivate;
+#endif
+        }
+        else if (context->getNativeFormatCaps(desc.pixelFormat).depthRenderable ||
+                 desc.textureType == MTLTextureType2DMultisample)
         {
             // Metal doesn't support host access to depth stencil texture's data
             desc.resourceOptions = MTLResourceStorageModePrivate;
@@ -307,6 +396,46 @@ Texture::Texture(ContextMtl *context,
         set([[metalDevice newTextureWithDescriptor:desc] ANGLE_MTL_AUTORELEASE]);
 
         mCreationDesc.retainAssign(desc);
+    }
+}
+
+Texture::Texture(ContextMtl *context,
+                 MTLTextureDescriptor *desc,
+                 IOSurfaceRef iosurface,
+                 NSUInteger plane,
+                 bool renderTargetOnly)
+    : mColorWritableMask(std::make_shared<MTLColorWriteMask>(MTLColorWriteMaskAll))
+{
+    ANGLE_MTL_OBJC_SCOPE
+    {
+        id<MTLDevice> metalDevice = context->getMetalDevice();
+
+        // Every texture will support being rendered for now
+        desc.usage = MTLTextureUsagePixelFormatView;
+
+        if (context->getNativeFormatCaps(desc.pixelFormat).isRenderable())
+        {
+            desc.usage |= MTLTextureUsageRenderTarget;
+        }
+
+#if (TARGET_OS_IOS || TARGET_OS_TV || TARGET_OS_WATCH) && !TARGET_OS_MACCATALYST
+        desc.resourceOptions = MTLResourceStorageModeShared;
+#else
+        desc.resourceOptions = MTLResourceStorageModeManaged;
+#endif
+
+        if (!renderTargetOnly)
+        {
+            desc.usage = desc.usage | MTLTextureUsageShaderRead;
+            if (context->getNativeFormatCaps(desc.pixelFormat).writable)
+            {
+                desc.usage = desc.usage | MTLTextureUsageShaderWrite;
+            }
+        }
+        id<MTLTexture> iosurfTexture = [metalDevice newTextureWithDescriptor:desc
+                                                                   iosurface:iosurface
+                                                                       plane:plane];
+        set([iosurfTexture ANGLE_MTL_AUTORELEASE]);
     }
 }
 
@@ -341,7 +470,7 @@ Texture::Texture(Texture *original, const TextureSwizzleChannels &swizzle)
     : Resource(original),
       mColorWritableMask(original->mColorWritableMask)  // Share color write mask property
 {
-#if ANGLE_MTL_SWIZZLE_AVAILABLE
+#if defined(__IPHONE_13_0) || defined(__MAC_10_15)
     ANGLE_MTL_OBJC_SCOPE
     {
         auto view = [original->get()
@@ -360,12 +489,12 @@ Texture::Texture(Texture *original, const TextureSwizzleChannels &swizzle)
 
 void Texture::syncContent(ContextMtl *context, mtl::BlitCommandEncoder *blitEncoder)
 {
-    InvokeCPUMemSync(context, blitEncoder, this);
+    SyncContent(context, blitEncoder, shared_from_this());
 }
 
 void Texture::syncContentIfNeeded(ContextMtl *context)
 {
-    EnsureCPUMemWillBeSynced(context, this);
+    EnsureContentSynced(context, shared_from_this());
 }
 
 bool Texture::isCPUAccessible() const
@@ -377,6 +506,11 @@ bool Texture::isCPUAccessible() const
     }
 #endif
     return get().storageMode == MTLStorageModeShared;
+}
+
+bool Texture::isShaderReadable() const
+{
+    return get().usage & MTLTextureUsageShaderRead;
 }
 
 bool Texture::supportFormatView() const
@@ -514,11 +648,13 @@ TextureRef Texture::createViewWithDifferentFormat(MTLPixelFormat format)
     ASSERT(supportFormatView());
     return TextureRef(new Texture(this, format));
 }
+
 TextureRef Texture::createViewWithCompatibleFormat(MTLPixelFormat format)
 {
-    // No need for ASSERT(supportFormatView());
     return TextureRef(new Texture(this, format));
 }
+
+
 
 TextureRef Texture::createSwizzleView(const TextureSwizzleChannels &swizzle)
 {
@@ -650,6 +786,48 @@ TextureRef Texture::getLinearColorView()
     }
 
     return mLinearColorView;
+}
+
+TextureRef Texture::getReadableCopy(ContextMtl *context,
+                                    mtl::BlitCommandEncoder *encoder,
+                                    const uint32_t levelToCopy,
+                                    const uint32_t sliceToCopy,
+                                    const MTLRegion &areaToCopy)
+{
+    gl::Extents firstLevelSize = size(kZeroNativeMipLevel);
+    if (!mReadCopy || mReadCopy->get().width < static_cast<size_t>(firstLevelSize.width) ||
+        mReadCopy->get().height < static_cast<size_t>(firstLevelSize.height))
+    {
+        // Create a texture that big enough to store the first level data and any smaller level
+        ANGLE_MTL_OBJC_SCOPE
+        {
+            auto desc            = [[MTLTextureDescriptor new] ANGLE_MTL_AUTORELEASE];
+            desc.textureType     = get().textureType;
+            desc.pixelFormat     = get().pixelFormat;
+            desc.width           = firstLevelSize.width;
+            desc.height          = firstLevelSize.height;
+            desc.depth           = 1;
+            desc.arrayLength     = 1;
+            desc.resourceOptions = MTLResourceStorageModePrivate;
+            desc.sampleCount     = get().sampleCount;
+            desc.usage           = MTLTextureUsageShaderRead | MTLTextureUsagePixelFormatView;
+
+            id<MTLTexture> mtlTexture = [context->getMetalDevice() newTextureWithDescriptor:desc];
+            mReadCopy.reset(new Texture(mtlTexture));
+        }  // ANGLE_MTL_OBJC_SCOPE
+    }
+
+    ASSERT(encoder);
+
+    encoder->copyTexture(shared_from_this(), sliceToCopy, levelToCopy, mReadCopy, 0,
+                         0, 1, 1);
+
+    return mReadCopy;
+}
+
+void Texture::releaseReadableCopy()
+{
+    mReadCopy = nullptr;
 }
 
 TextureRef Texture::getStencilView()
@@ -799,7 +977,7 @@ angle::Result Buffer::resetWithResOpt(ContextMtl *context,
 
 void Buffer::syncContent(ContextMtl *context, mtl::BlitCommandEncoder *blitEncoder)
 {
-    InvokeCPUMemSync(context, blitEncoder, this);
+    SyncContent(context, blitEncoder, shared_from_this());
 }
 
 const uint8_t *Buffer::mapReadOnly(ContextMtl *context)
@@ -820,7 +998,7 @@ uint8_t *Buffer::mapWithOpt(ContextMtl *context, bool readonly, bool noSync)
     {
         CommandQueue &cmdQueue = context->cmdQueue();
 
-        EnsureCPUMemWillBeSynced(context, this);
+        EnsureContentSynced(context, shared_from_this());
 
         if (this->isBeingUsedByGPU(context))
         {

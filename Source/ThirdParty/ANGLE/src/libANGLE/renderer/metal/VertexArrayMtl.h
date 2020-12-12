@@ -43,8 +43,9 @@ class VertexArrayMtl : public VertexArrayImpl
                                       const void *indices);
 
     // vertexDescChanged is both input and output, the input value if is true, will force new
-    // mtl::VertexDesc to be returned via vertexDescOut. Otherwise, it is only returned when the
-    // vertex array is dirty
+    // mtl::VertexDesc to be returned via vertexDescOut. This typically happens when active shader
+    // program is changed.
+    // Otherwise, it is only returned when the vertex array is dirty.
     angle::Result setupDraw(const gl::Context *glContext,
                             mtl::RenderCommandEncoder *cmdEncoder,
                             bool *vertexDescChanged,
@@ -52,11 +53,24 @@ class VertexArrayMtl : public VertexArrayImpl
 
     angle::Result getIndexBuffer(const gl::Context *glContext,
                                  gl::DrawElementsType indexType,
+                                 gl::PrimitiveMode primitiveMode,
                                  size_t indexCount,
                                  const void *sourcePointer,
                                  mtl::BufferRef *idxBufferOut,
                                  size_t *idxBufferOffsetOut,
-                                 gl::DrawElementsType *indexTypeOut);
+                                 gl::DrawElementsType *indexTypeOut,
+                                 size_t *indexBufferCountOut);
+
+    // Use to emulate instanced draw for instance <instanceId>.
+    // The typical call sequence for emulated instance draw is:
+    // - setupDraw()
+    // - draw.
+    // - emulateInstanceDrawStep(1)
+    // - draw.
+    // - emulateInstanceDrawStep(n)
+    // - draw.
+    // - emulateInstanceDrawStep(0)
+    void emulateInstanceDrawStep(mtl::RenderCommandEncoder *cmdEncoder, uint32_t instanceId);
 
   private:
     void reset(ContextMtl *context);
@@ -72,15 +86,19 @@ class VertexArrayMtl : public VertexArrayImpl
 
     angle::Result convertIndexBuffer(const gl::Context *glContext,
                                      gl::DrawElementsType indexType,
+                                     gl::PrimitiveMode mode,
                                      size_t offset,
                                      mtl::BufferRef *idxBufferOut,
-                                     size_t *idxBufferOffsetOut);
+                                     size_t *idxBufferOffsetOut,
+                                     size_t *indexBufferCountOut);
     angle::Result streamIndexBufferFromClient(const gl::Context *glContext,
                                               gl::DrawElementsType indexType,
+                                              gl::PrimitiveMode primitiveType,
                                               size_t indexCount,
                                               const void *sourcePointer,
                                               mtl::BufferRef *idxBufferOut,
-                                              size_t *idxBufferOffsetOut);
+                                              size_t *idxBufferOffsetOut,
+                                              size_t *idxBufferCountOut);
 
     angle::Result convertIndexBufferGPU(const gl::Context *glContext,
                                         gl::DrawElementsType indexType,
@@ -117,7 +135,20 @@ class VertexArrayMtl : public VertexArrayImpl
     gl::AttribArray<BufferHolderMtl *> mCurrentArrayBuffers;
     gl::AttribArray<SimpleWeakBufferHolderMtl> mConvertedArrayBufferHolders;
     gl::AttribArray<size_t> mCurrentArrayBufferOffsets;
+
+    // Size to be uploaded as inline constant data. Used for client vertex attribute's data that
+    // is small enough that we can send directly as inline constant data instead of streaming
+    // through a buffer.
+    gl::AttribArray<size_t> mCurrentArrayInlineDataSizes;
+    // Array of host buffers storing converted data for client attributes that are small enough.
+    gl::AttribArray<angle::MemoryBuffer> mConvertedClientSmallArrays;
+    gl::AttribArray<const uint8_t *> mCurrentArrayInlineDataPointers;
+    // Max size of inline constant data that can be used for client vertex attribute.
+    size_t mInlineDataMaxSize;
+
+    // Stride per vertex attribute
     gl::AttribArray<GLuint> mCurrentArrayBufferStrides;
+    // Format per vertex attribute
     gl::AttribArray<const mtl::VertexFormat *> mCurrentArrayBufferFormats;
 
     const mtl::VertexFormat &mDefaultFloatVertexFormat;
@@ -126,6 +157,8 @@ class VertexArrayMtl : public VertexArrayImpl
 
     mtl::BufferPool mDynamicVertexData;
     mtl::BufferPool mDynamicIndexData;
+
+    std::vector<uint32_t> mEmulatedInstanceAttribs;
 
     bool mVertexArrayDirty = true;
 };

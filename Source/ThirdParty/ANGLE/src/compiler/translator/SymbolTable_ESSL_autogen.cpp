@@ -3568,7 +3568,7 @@ constexpr const TVariable *p10F10F10F[3] = {&BuiltInVariable::kpt10F, &BuiltInVa
                                             &BuiltInVariable::kpt10F};
 constexpr const TVariable *p20B00B00B[3] = {&BuiltInVariable::kpt20B, &BuiltInVariable::kpt00B,
                                             &BuiltInVariable::kpt00B};
-constexpr const TVariable *p20B00D[2]    = {&BuiltInVariable::kpt20B, &BuiltInVariable::kpt00D};
+constexpr const TVariable *p20B00D[2]       = {&BuiltInVariable::kpt20B, &BuiltInVariable::kpt00D};
 constexpr const TVariable *p20B00H[2]    = {&BuiltInVariable::kpt20B, &BuiltInVariable::kpt00H};
 constexpr const TVariable *p20B10B[2]    = {&BuiltInVariable::kpt20B, &BuiltInVariable::kpt10B};
 constexpr const TVariable *p20B20B00B[3] = {&BuiltInVariable::kpt20B, &BuiltInVariable::kpt20B,
@@ -3609,7 +3609,7 @@ constexpr const TVariable *p20F20F20F[3] = {&BuiltInVariable::kpt20F, &BuiltInVa
                                             &BuiltInVariable::kpt20F};
 constexpr const TVariable *p30B00B00B[3] = {&BuiltInVariable::kpt30B, &BuiltInVariable::kpt00B,
                                             &BuiltInVariable::kpt00B};
-constexpr const TVariable *p30B00D[2]    = {&BuiltInVariable::kpt30B, &BuiltInVariable::kpt00D};
+constexpr const TVariable *p30B00D[2]       = {&BuiltInVariable::kpt30B, &BuiltInVariable::kpt00D};
 constexpr const TVariable *p30B10B[2]    = {&BuiltInVariable::kpt30B, &BuiltInVariable::kpt10B};
 constexpr const TVariable *p30B20B[2]    = {&BuiltInVariable::kpt30B, &BuiltInVariable::kpt20B};
 constexpr const TVariable *p30B30B00B[3] = {&BuiltInVariable::kpt30B, &BuiltInVariable::kpt30B,

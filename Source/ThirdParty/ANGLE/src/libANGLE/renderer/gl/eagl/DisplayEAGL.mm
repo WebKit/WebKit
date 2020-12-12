@@ -27,6 +27,8 @@
 #    import <QuartzCore/QuartzCore.h>
 #    import <dlfcn.h>
 
+#    import "libANGLE/renderer/gl/eagl/EAGLFunctions.h"
+
 namespace
 {
 
@@ -64,9 +66,10 @@ egl::Error DisplayEAGL::initialize(egl::Display *display)
     mEGLDisplay = display;
 
     angle::SystemInfo info;
-    // It's legal for GetSystemInfo to return false and thereby
-    // contain incomplete information.
-    (void)angle::GetSystemInfo(&info);
+    if (!angle::GetSystemInfo(&info))
+    {
+        return egl::EglNotInitialized() << "Unable to query ANGLE's SystemInfo.";
+    }
 
     mContext = [allocEAGLContextInstance() initWithAPI:kEAGLRenderingAPIOpenGLES3];
     if (mContext == nullptr)
@@ -113,6 +116,7 @@ void DisplayEAGL::terminate()
     if (mContext != nullptr)
     {
         [getEAGLContextClass() setCurrentContext:nil];
+        [mContext release];
         mContext = nullptr;
         mThreadsWithContextCurrent.clear();
     }
@@ -275,7 +279,7 @@ egl::Error DisplayEAGL::restoreLostDevice(const egl::Display *display)
 
 bool DisplayEAGL::isValidNativeWindow(EGLNativeWindowType window) const
 {
-    NSObject *layer = (__bridge NSObject *)window;
+    NSObject *layer = reinterpret_cast<NSObject *>(window);
     return [layer isKindOfClass:[CALayer class]];
 }
 
@@ -311,9 +315,8 @@ void DisplayEAGL::generateExtensions(egl::DisplayExtensions *outExtensions) cons
     outExtensions->surfacelessContext    = true;
     outExtensions->deviceQuery           = true;
 
-    // Contexts are virtualized so textures ans semaphores can be shared globally
-    outExtensions->displayTextureShareGroup   = true;
-    outExtensions->displaySemaphoreShareGroup = true;
+    // Contexts are virtualized so textures can be shared globally
+    outExtensions->displayTextureShareGroup = true;
 
     outExtensions->powerPreference = false;
 

@@ -31,6 +31,8 @@ struct TSourceLoc
     int last_line;
 };
 
+constexpr TSourceLoc kNoSourceLoc{-1, -1, -1, -1};
+
 //
 // Put POOL_ALLOCATOR_NEW_DELETE in base classes to make them use this scheme.
 //

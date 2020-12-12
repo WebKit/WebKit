@@ -44,7 +44,7 @@ class RemoveSwitchFallThroughTraverser : public TIntermTraverser
     bool visitLoop(Visit, TIntermLoop *node) override;
     bool visitBranch(Visit, TIntermBranch *node) override;
 
-    void outputSequence(TIntermSequence *sequence, size_t startIndex);
+    void outputSequence(const TIntermSequence *sequence, size_t startIndex);
     void handlePreviousCase();
 
     TIntermBlock *mStatementList;
@@ -153,11 +153,13 @@ bool RemoveSwitchFallThroughTraverser::visitSwitch(Visit, TIntermSwitch *node)
     return false;
 }
 
-void RemoveSwitchFallThroughTraverser::outputSequence(TIntermSequence *sequence, size_t startIndex)
+void RemoveSwitchFallThroughTraverser::outputSequence(const TIntermSequence *sequence,
+                                                      size_t startIndex)
 {
+    auto &outSeq = *mStatementListOut->getSequence();
     for (size_t i = startIndex; i < sequence->size(); ++i)
     {
-        mStatementListOut->getSequence()->push_back(sequence->at(i));
+        outSeq.push_back(sequence->at(i));
     }
 }
 

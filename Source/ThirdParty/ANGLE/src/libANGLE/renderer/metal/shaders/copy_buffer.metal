@@ -4,22 +4,22 @@
 // found in the LICENSE file.
 //
 // copy_buffer.metal: implements compute shader that copy formatted data from buffer to texture,
-// and from texture to buffer.
+// from texture to buffer and from buffer to buffer.
 // NOTE(hqle): This file is a bit hard to read but there are a lot of repeated works, and it would
 // be a pain to implement without the use of macros.
 //
 
-@@#include <metal_pack>
+#include <metal_pack>
 
 #include "common.h"
 #include "format_autogen.h"
 
 using namespace rx::mtl_shader;
 
-constant int kCopyFormatType [[function_constant(10)]];
+constant int kCopyFormatType [[function_constant(1)]];
 
 /* -------- copy pixel data between buffer and texture ---------*/
-constant int kCopyTextureType [[function_constant(20)]];
+constant int kCopyTextureType [[function_constant(2)]];
 constant bool kCopyTextureType2D      = kCopyTextureType == kTextureType2D;
 constant bool kCopyTextureType2DArray = kCopyTextureType == kTextureType2DArray;
 constant bool kCopyTextureType2DMS    = kCopyTextureType == kTextureType2DMultisample;

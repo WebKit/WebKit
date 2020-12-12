@@ -21,10 +21,17 @@ namespace sh
 namespace
 {
 
+struct LoopInfo
+{
+    const TVariable *conditionVariable = nullptr;
+    TIntermTyped *condition            = nullptr;
+    TIntermTyped *expression           = nullptr;
+};
+
 class SimplifyLoopConditionsTraverser : public TLValueTrackingTraverser
 {
   public:
-    SimplifyLoopConditionsTraverser(unsigned int conditionsToSimplifyMask,
+    SimplifyLoopConditionsTraverser(const IntermNodePatternMatcher *conditionsToSimplify,
                                     TSymbolTable *symbolTable);
 
     void traverseLoop(TIntermLoop *node) override;
@@ -34,6 +41,7 @@ class SimplifyLoopConditionsTraverser : public TLValueTrackingTraverser
     bool visitAggregate(Visit visit, TIntermAggregate *node) override;
     bool visitTernary(Visit visit, TIntermTernary *node) override;
     bool visitDeclaration(Visit visit, TIntermDeclaration *node) override;
+    bool visitBranch(Visit visit, TIntermBranch *node) override;
 
     bool foundLoopToChange() const { return mFoundLoopToChange; }
 
@@ -42,16 +50,19 @@ class SimplifyLoopConditionsTraverser : public TLValueTrackingTraverser
     // found.
     bool mFoundLoopToChange;
     bool mInsideLoopInitConditionOrExpression;
-    IntermNodePatternMatcher mConditionsToSimplify;
+    const IntermNodePatternMatcher *mConditionsToSimplify;
+
+  private:
+    LoopInfo mLoop;
 };
 
 SimplifyLoopConditionsTraverser::SimplifyLoopConditionsTraverser(
-    unsigned int conditionsToSimplifyMask,
+    const IntermNodePatternMatcher *conditionsToSimplify,
     TSymbolTable *symbolTable)
     : TLValueTrackingTraverser(true, false, false, symbolTable),
       mFoundLoopToChange(false),
       mInsideLoopInitConditionOrExpression(false),
-      mConditionsToSimplify(conditionsToSimplifyMask)
+      mConditionsToSimplify(conditionsToSimplify)
 {}
 
 // If we're inside a loop initialization, condition, or expression, we check for expressions that
@@ -68,7 +79,8 @@ bool SimplifyLoopConditionsTraverser::visitUnary(Visit visit, TIntermUnary *node
     if (mFoundLoopToChange)
         return false;  // Already decided to change this loop.
 
-    mFoundLoopToChange = mConditionsToSimplify.match(node);
+    ASSERT(mConditionsToSimplify);
+    mFoundLoopToChange = mConditionsToSimplify->match(node);
     return !mFoundLoopToChange;
 }
 
@@ -80,7 +92,9 @@ bool SimplifyLoopConditionsTraverser::visitBinary(Visit visit, TIntermBinary *no
     if (mFoundLoopToChange)
         return false;  // Already decided to change this loop.
 
-    mFoundLoopToChange = mConditionsToSimplify.match(node, getParentNode(), isLValueRequiredHere());
+    ASSERT(mConditionsToSimplify);
+    mFoundLoopToChange =
+        mConditionsToSimplify->match(node, getParentNode(), isLValueRequiredHere());
     return !mFoundLoopToChange;
 }
 
@@ -92,7 +106,8 @@ bool SimplifyLoopConditionsTraverser::visitAggregate(Visit visit, TIntermAggrega
     if (mFoundLoopToChange)
         return false;  // Already decided to change this loop.
 
-    mFoundLoopToChange = mConditionsToSimplify.match(node, getParentNode());
+    ASSERT(mConditionsToSimplify);
+    mFoundLoopToChange = mConditionsToSimplify->match(node, getParentNode());
     return !mFoundLoopToChange;
 }
 
@@ -104,7 +119,8 @@ bool SimplifyLoopConditionsTraverser::visitTernary(Visit visit, TIntermTernary *
     if (mFoundLoopToChange)
         return false;  // Already decided to change this loop.
 
-    mFoundLoopToChange = mConditionsToSimplify.match(node);
+    ASSERT(mConditionsToSimplify);
+    mFoundLoopToChange = mConditionsToSimplify->match(node);
     return !mFoundLoopToChange;
 }
 
@@ -116,8 +132,33 @@ bool SimplifyLoopConditionsTraverser::visitDeclaration(Visit visit, TIntermDecla
     if (mFoundLoopToChange)
         return false;  // Already decided to change this loop.
 
-    mFoundLoopToChange = mConditionsToSimplify.match(node);
+    ASSERT(mConditionsToSimplify);
+    mFoundLoopToChange = mConditionsToSimplify->match(node);
     return !mFoundLoopToChange;
+}
+
+bool SimplifyLoopConditionsTraverser::visitBranch(Visit visit, TIntermBranch *node)
+{
+    if (node->getFlowOp() == EOpContinue && (mLoop.condition || mLoop.expression))
+    {
+        TIntermBlock *parent = getParentNode()->getAsBlock();
+        ASSERT(parent);
+        TIntermSequence seq;
+        if (mLoop.expression)
+        {
+            seq.push_back(mLoop.expression->deepCopy());
+        }
+        if (mLoop.condition)
+        {
+            ASSERT(mLoop.conditionVariable);
+            seq.push_back(
+                CreateTempAssignmentNode(mLoop.conditionVariable, mLoop.condition->deepCopy()));
+        }
+        seq.push_back(node);
+        mMultiReplacements.push_back(NodeReplaceWithMultipleEntry(parent, node, std::move(seq)));
+    }
+
+    return true;
 }
 
 void SimplifyLoopConditionsTraverser::traverseLoop(TIntermLoop *node)
@@ -128,7 +169,7 @@ void SimplifyLoopConditionsTraverser::traverseLoop(TIntermLoop *node)
     ScopedNodeInTraversalPath addToPath(this, node);
 
     mInsideLoopInitConditionOrExpression = true;
-    mFoundLoopToChange                   = false;
+    mFoundLoopToChange                   = !mConditionsToSimplify;
 
     if (!mFoundLoopToChange && node->getInit())
     {
@@ -147,83 +188,141 @@ void SimplifyLoopConditionsTraverser::traverseLoop(TIntermLoop *node)
 
     mInsideLoopInitConditionOrExpression = false;
 
+    const LoopInfo prevLoop = mLoop;
+
     if (mFoundLoopToChange)
     {
-        const TType *boolType        = StaticType::Get<EbtBool, EbpUndefined, EvqTemporary, 1, 1>();
-        TVariable *conditionVariable = CreateTempVariable(mSymbolTable, boolType);
+        const TType *boolType   = StaticType::Get<EbtBool, EbpUndefined, EvqTemporary, 1, 1>();
+        mLoop.conditionVariable = CreateTempVariable(mSymbolTable, boolType);
+        mLoop.condition         = node->getCondition();
+        mLoop.expression        = node->getExpression();
 
         // Replace the loop condition with a boolean variable that's updated on each iteration.
         TLoopType loopType = node->getType();
         if (loopType == ELoopWhile)
         {
-            // Transform:
-            //   while (expr) { body; }
-            // into
-            //   bool s0 = expr;
-            //   while (s0) { { body; } s0 = expr; }
-            TIntermDeclaration *tempInitDeclaration =
-                CreateTempInitDeclarationNode(conditionVariable, node->getCondition()->deepCopy());
-            insertStatementInParentBlock(tempInitDeclaration);
+            ASSERT(!mLoop.expression);
 
-            TIntermBlock *newBody = new TIntermBlock();
-            if (node->getBody())
+            if (mLoop.condition->getAsSymbolNode())
             {
-                newBody->getSequence()->push_back(node->getBody());
+                // Mask continue statement condition variable update.
+                mLoop.condition = nullptr;
             }
-            newBody->getSequence()->push_back(
-                CreateTempAssignmentNode(conditionVariable, node->getCondition()->deepCopy()));
+            else if (mLoop.condition->getAsConstantUnion())
+            {
+                // Transform:
+                //   while (expr) { body; }
+                // into
+                //   bool s0 = expr;
+                //   while (s0) { body; }
+                TIntermDeclaration *tempInitDeclaration =
+                    CreateTempInitDeclarationNode(mLoop.conditionVariable, mLoop.condition);
+                insertStatementInParentBlock(tempInitDeclaration);
 
-            // Can't use queueReplacement to replace old body, since it may have been nullptr.
-            // It's safe to do the replacements in place here - the new body will still be
-            // traversed, but that won't create any problems.
-            node->setBody(newBody);
-            node->setCondition(CreateTempSymbolNode(conditionVariable));
+                node->setCondition(CreateTempSymbolNode(mLoop.conditionVariable));
+
+                // Mask continue statement condition variable update.
+                mLoop.condition = nullptr;
+            }
+            else
+            {
+                // Transform:
+                //   while (expr) { body; }
+                // into
+                //   bool s0 = expr;
+                //   while (s0) { { body; } s0 = expr; }
+                //
+                // Local case statements are transformed into:
+                //   s0 = expr; continue;
+                TIntermDeclaration *tempInitDeclaration =
+                    CreateTempInitDeclarationNode(mLoop.conditionVariable, mLoop.condition);
+                insertStatementInParentBlock(tempInitDeclaration);
+
+                TIntermBlock *newBody = new TIntermBlock();
+                if (node->getBody())
+                {
+                    newBody->getSequence()->push_back(node->getBody());
+                }
+                newBody->getSequence()->push_back(
+                    CreateTempAssignmentNode(mLoop.conditionVariable, mLoop.condition->deepCopy()));
+
+                // Can't use queueReplacement to replace old body, since it may have been nullptr.
+                // It's safe to do the replacements in place here - the new body will still be
+                // traversed, but that won't create any problems.
+                node->setBody(newBody);
+                node->setCondition(CreateTempSymbolNode(mLoop.conditionVariable));
+            }
         }
         else if (loopType == ELoopDoWhile)
         {
-            // Transform:
-            //   do {
-            //     body;
-            //   } while (expr);
-            // into
-            //   bool s0 = true;
-            //   do {
-            //     { body; }
-            //     s0 = expr;
-            //   } while (s0);
-            TIntermDeclaration *tempInitDeclaration =
-                CreateTempInitDeclarationNode(conditionVariable, CreateBoolNode(true));
-            insertStatementInParentBlock(tempInitDeclaration);
+            ASSERT(!mLoop.expression);
 
-            TIntermBlock *newBody = new TIntermBlock();
-            if (node->getBody())
+            if (mLoop.condition->getAsSymbolNode())
             {
-                newBody->getSequence()->push_back(node->getBody());
+                // Mask continue statement condition variable update.
+                mLoop.condition = nullptr;
             }
-            newBody->getSequence()->push_back(
-                CreateTempAssignmentNode(conditionVariable, node->getCondition()->deepCopy()));
+            else if (mLoop.condition->getAsConstantUnion())
+            {
+                // Transform:
+                //   do {
+                //     body;
+                //   } while (expr);
+                // into
+                //   bool s0 = expr;
+                //   do {
+                //     body;
+                //   } while (s0);
+                TIntermDeclaration *tempInitDeclaration =
+                    CreateTempInitDeclarationNode(mLoop.conditionVariable, mLoop.condition);
+                insertStatementInParentBlock(tempInitDeclaration);
 
-            // Can't use queueReplacement to replace old body, since it may have been nullptr.
-            // It's safe to do the replacements in place here - the new body will still be
-            // traversed, but that won't create any problems.
-            node->setBody(newBody);
-            node->setCondition(CreateTempSymbolNode(conditionVariable));
+                node->setCondition(CreateTempSymbolNode(mLoop.conditionVariable));
+
+                // Mask continue statement condition variable update.
+                mLoop.condition = nullptr;
+            }
+            else
+            {
+                // Transform:
+                //   do {
+                //     body;
+                //   } while (expr);
+                // into
+                //   bool s0;
+                //   do {
+                //     { body; }
+                //     s0 = expr;
+                //   } while (s0);
+                // Local case statements are transformed into:
+                //   s0 = expr; continue;
+                TIntermDeclaration *tempInitDeclaration =
+                    CreateTempDeclarationNode(mLoop.conditionVariable);
+                insertStatementInParentBlock(tempInitDeclaration);
+
+                TIntermBlock *newBody = new TIntermBlock();
+                if (node->getBody())
+                {
+                    newBody->getSequence()->push_back(node->getBody());
+                }
+                newBody->getSequence()->push_back(
+                    CreateTempAssignmentNode(mLoop.conditionVariable, mLoop.condition));
+
+                // Can't use queueReplacement to replace old body, since it may have been nullptr.
+                // It's safe to do the replacements in place here - the new body will still be
+                // traversed, but that won't create any problems.
+                node->setBody(newBody);
+                node->setCondition(CreateTempSymbolNode(mLoop.conditionVariable));
+            }
         }
         else if (loopType == ELoopFor)
         {
-            // Move the loop condition inside the loop.
-            // Transform:
-            //   for (init; expr; exprB) { body; }
-            // into
-            //   {
-            //     init;
-            //     bool s0 = expr;
-            //     while (s0) {
-            //       { body; }
-            //       exprB;
-            //       s0 = expr;
-            //     }
-            //   }
+            if (!mLoop.condition)
+            {
+                mLoop.condition = CreateBoolNode(true);
+            }
+
+            TIntermLoop *whileLoop;
             TIntermBlock *loopScope            = new TIntermBlock();
             TIntermSequence *loopScopeSequence = loopScope->getSequence();
 
@@ -233,48 +332,130 @@ void SimplifyLoopConditionsTraverser::traverseLoop(TIntermLoop *node)
                 loopScopeSequence->push_back(node->getInit());
             }
 
-            // Insert "bool s0 = expr;" if applicable, "bool s0 = true;" otherwise
-            TIntermTyped *conditionInitializer = nullptr;
-            if (node->getCondition())
+            if (mLoop.condition->getAsSymbolNode())
             {
-                conditionInitializer = node->getCondition()->deepCopy();
+                // Move the loop condition inside the loop.
+                // Transform:
+                //   for (init; expr; exprB) { body; }
+                // into
+                //   {
+                //     init;
+                //     while (expr) {
+                //       { body; }
+                //       exprB;
+                //     }
+                //   }
+                //
+                // Local case statements are transformed into:
+                //   exprB; continue;
+
+                // Insert "{ body; }" in the while loop
+                TIntermBlock *whileLoopBody = new TIntermBlock();
+                if (node->getBody())
+                {
+                    whileLoopBody->getSequence()->push_back(node->getBody());
+                }
+                // Insert "exprB;" in the while loop
+                if (node->getExpression())
+                {
+                    whileLoopBody->getSequence()->push_back(node->getExpression());
+                }
+                // Create "while(expr) { whileLoopBody }"
+                whileLoop =
+                    new TIntermLoop(ELoopWhile, nullptr, mLoop.condition, nullptr, whileLoopBody);
+
+                // Mask continue statement condition variable update.
+                mLoop.condition = nullptr;
+            }
+            else if (mLoop.condition->getAsConstantUnion())
+            {
+                // Move the loop condition inside the loop.
+                // Transform:
+                //   for (init; expr; exprB) { body; }
+                // into
+                //   {
+                //     init;
+                //     bool s0 = expr;
+                //     while (s0) {
+                //       { body; }
+                //       exprB;
+                //     }
+                //   }
+                //
+                // Local case statements are transformed into:
+                //   exprB; continue;
+
+                // Insert "bool s0 = expr;"
+                loopScopeSequence->push_back(
+                    CreateTempInitDeclarationNode(mLoop.conditionVariable, mLoop.condition));
+                // Insert "{ body; }" in the while loop
+                TIntermBlock *whileLoopBody = new TIntermBlock();
+                if (node->getBody())
+                {
+                    whileLoopBody->getSequence()->push_back(node->getBody());
+                }
+                // Insert "exprB;" in the while loop
+                if (node->getExpression())
+                {
+                    whileLoopBody->getSequence()->push_back(node->getExpression());
+                }
+                // Create "while(s0) { whileLoopBody }"
+                whileLoop = new TIntermLoop(ELoopWhile, nullptr,
+                                            CreateTempSymbolNode(mLoop.conditionVariable), nullptr,
+                                            whileLoopBody);
+
+                // Mask continue statement condition variable update.
+                mLoop.condition = nullptr;
             }
             else
             {
-                conditionInitializer = CreateBoolNode(true);
-            }
-            loopScopeSequence->push_back(
-                CreateTempInitDeclarationNode(conditionVariable, conditionInitializer));
+                // Move the loop condition inside the loop.
+                // Transform:
+                //   for (init; expr; exprB) { body; }
+                // into
+                //   {
+                //     init;
+                //     bool s0 = expr;
+                //     while (s0) {
+                //       { body; }
+                //       exprB;
+                //       s0 = expr;
+                //     }
+                //   }
+                //
+                // Local case statements are transformed into:
+                //   exprB; s0 = expr; continue;
 
-            // Insert "{ body; }" in the while loop
-            TIntermBlock *whileLoopBody = new TIntermBlock();
-            if (node->getBody())
-            {
-                whileLoopBody->getSequence()->push_back(node->getBody());
-            }
-            // Insert "exprB;" in the while loop
-            if (node->getExpression())
-            {
-                whileLoopBody->getSequence()->push_back(node->getExpression());
-            }
-            // Insert "s0 = expr;" in the while loop
-            if (node->getCondition())
-            {
+                // Insert "bool s0 = expr;"
+                loopScopeSequence->push_back(
+                    CreateTempInitDeclarationNode(mLoop.conditionVariable, mLoop.condition));
+                // Insert "{ body; }" in the while loop
+                TIntermBlock *whileLoopBody = new TIntermBlock();
+                if (node->getBody())
+                {
+                    whileLoopBody->getSequence()->push_back(node->getBody());
+                }
+                // Insert "exprB;" in the while loop
+                if (node->getExpression())
+                {
+                    whileLoopBody->getSequence()->push_back(node->getExpression());
+                }
+                // Insert "s0 = expr;" in the while loop
                 whileLoopBody->getSequence()->push_back(
-                    CreateTempAssignmentNode(conditionVariable, node->getCondition()->deepCopy()));
+                    CreateTempAssignmentNode(mLoop.conditionVariable, mLoop.condition->deepCopy()));
+                // Create "while(s0) { whileLoopBody }"
+                whileLoop = new TIntermLoop(ELoopWhile, nullptr,
+                                            CreateTempSymbolNode(mLoop.conditionVariable), nullptr,
+                                            whileLoopBody);
             }
 
-            // Create "while(s0) { whileLoopBody }"
-            TIntermLoop *whileLoop =
-                new TIntermLoop(ELoopWhile, nullptr, CreateTempSymbolNode(conditionVariable),
-                                nullptr, whileLoopBody);
             loopScope->getSequence()->push_back(whileLoop);
             queueReplacement(loopScope, OriginalNode::IS_DROPPED);
 
             // After this the old body node will be traversed and loops inside it may be
-            // transformed. This is fine, since the old body node will still be in the AST after the
-            // transformation that's queued here, and transforming loops inside it doesn't need to
-            // know the exact post-transform path to it.
+            // transformed. This is fine, since the old body node will still be in the AST after
+            // the transformation that's queued here, and transforming loops inside it doesn't
+            // need to know the exact post-transform path to it.
         }
     }
 
@@ -283,16 +464,26 @@ void SimplifyLoopConditionsTraverser::traverseLoop(TIntermLoop *node)
     // We traverse the body of the loop even if the loop is transformed.
     if (node->getBody())
         node->getBody()->traverse(this);
+
+    mLoop = prevLoop;
 }
 
 }  // namespace
+
+bool SimplifyLoopConditions(TCompiler *compiler, TIntermNode *root, TSymbolTable *symbolTable)
+{
+    SimplifyLoopConditionsTraverser traverser(nullptr, symbolTable);
+    root->traverse(&traverser);
+    return traverser.updateTree(compiler, root);
+}
 
 bool SimplifyLoopConditions(TCompiler *compiler,
                             TIntermNode *root,
                             unsigned int conditionsToSimplifyMask,
                             TSymbolTable *symbolTable)
 {
-    SimplifyLoopConditionsTraverser traverser(conditionsToSimplifyMask, symbolTable);
+    IntermNodePatternMatcher conditionsToSimplify(conditionsToSimplifyMask);
+    SimplifyLoopConditionsTraverser traverser(&conditionsToSimplify, symbolTable);
     root->traverse(&traverser);
     return traverser.updateTree(compiler, root);
 }

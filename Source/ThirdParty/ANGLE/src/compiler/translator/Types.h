@@ -232,6 +232,7 @@ class TType
 
     bool isVector() const { return primarySize > 1 && secondarySize == 1; }
     bool isVectorArray() const { return primarySize > 1 && secondarySize == 1 && isArray(); }
+    bool isRank0() const { return primarySize == 1 && secondarySize == 1; }
     bool isScalar() const
     {
         return primarySize == 1 && secondarySize == 1 && !mStructure && !isArray();

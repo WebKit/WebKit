@@ -81,7 +81,7 @@ class BufferPool
                            bool *newBufferAllocatedOut = nullptr);
 
     // After a sequence of CPU writes, call commit to ensure the data is visible to the device.
-    angle::Result commit(ContextMtl *contextMtl);
+    angle::Result commit(ContextMtl *contextMtl, bool flushEntireBuffer = false);
 
     // This releases all the buffers that have been allocated since this was last called.
     void releaseInFlightBuffers(ContextMtl *contextMtl);
@@ -114,7 +114,6 @@ class BufferPool
     angle::Result allocateNewBuffer(ContextMtl *contextMtl);
     void destroyBufferList(ContextMtl *contextMtl, std::deque<BufferRef> *buffers);
     angle::Result finalizePendingBuffer(ContextMtl *contextMtl);
-
     size_t mInitialSize;
     BufferRef mBuffer;
     uint32_t mNextAllocationOffset;
@@ -127,7 +126,7 @@ class BufferPool
 
     size_t mBuffersAllocated;
     size_t mMaxBuffers;
-    BufferPoolMemPolicy mMemPolicy;
+    BufferPoolMemPolicy mMemPolicy = BufferPoolMemPolicy::Auto;
     bool mAlwaysAllocateNewBuffer;
 };
 

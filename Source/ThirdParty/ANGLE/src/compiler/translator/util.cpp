@@ -804,6 +804,10 @@ bool IsOutputMetal(ShShaderOutput output)
 {
     return output == SH_GLSL_METAL_OUTPUT;
 }
+bool IsOutputMetalDirect(ShShaderOutput output)
+{
+    return output == SH_MSL_METAL_OUTPUT;
+}
 
 bool IsInShaderStorageBlock(TIntermTyped *node)
 {

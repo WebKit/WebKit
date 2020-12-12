@@ -37,6 +37,7 @@ template_autogen_inl = """// GENERATED FILE - DO NOT EDIT.
 #include "libANGLE/renderer/Format.h"
 #include "libANGLE/renderer/metal/DisplayMtl.h"
 #include "libANGLE/renderer/metal/mtl_format_utils.h"
+#include "libANGLE/renderer/metal/mtl_utils.h"
 
 using namespace angle;
 
@@ -48,7 +49,6 @@ namespace mtl
 void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
 {{
     this->intendedFormatId = intendedFormatId_;
-
     id<MTLDevice> metalDevice = display->getMetalDevice();
 
     // Actual conversion
@@ -97,6 +97,23 @@ image_format_assign_template1 = """
 image_format_assign_template2 = """
             if (metalDevice.depth24Stencil8PixelFormatSupported &&
                !display->getFeatures().forceD24S8AsUnsupported.enabled)
+            {{
+                this->metalFormat = {mtl_format};
+                this->actualFormatId = angle::FormatID::{actual_angle_format};
+                this->initFunction = {init_function};
+            }}
+            else
+            {{
+                this->metalFormat = {mtl_format_fallback};
+                this->actualFormatId = angle::FormatID::{actual_angle_format_fallback};
+                this->initFunction = {init_function_fallback};
+            }}
+"""
+#D16 is fully supported on  Apple3+. However, on
+#previous  versions of Apple hardware, some operations can cause
+#undefined behavior.
+image_format_assign_template3 = """
+            if (mtl::SupportsIOSGPUFamily(metalDevice, 3))
             {{
                 this->metalFormat = {mtl_format};
                 this->actualFormatId = angle::FormatID::{actual_angle_format};
@@ -213,6 +230,8 @@ def get_vertex_copy_function_and_default_alpha(src_format, dst_format):
 
 
 # Generate format conversion switch case (generic case)
+
+
 def gen_image_map_switch_case(angle_format, actual_angle_format_info, angle_to_mtl_map,
                               assign_gen_func):
     if isinstance(actual_angle_format_info, dict):
@@ -255,6 +274,8 @@ def gen_image_map_switch_case(angle_format, actual_angle_format_info, angle_to_m
 
 
 # Generate format conversion switch case (simple case)
+
+
 def gen_image_map_switch_simple_case(angle_format, actual_angle_format_info, angle_to_gl,
                                      angle_to_mtl_map):
 
@@ -270,6 +291,8 @@ def gen_image_map_switch_simple_case(angle_format, actual_angle_format_info, ang
 
 
 # Generate format conversion switch case (Mac case)
+
+
 def gen_image_map_switch_mac_case(angle_format, actual_angle_format_info, angle_to_gl,
                                   angle_to_mtl_map, mac_fallbacks):
     gl_format = angle_to_gl[angle_format]
@@ -301,11 +324,43 @@ def gen_image_map_switch_mac_case(angle_format, actual_angle_format_info, angle_
                                      gen_format_assign_code)
 
 
+def gen_image_map_switch_ios_case(angle_format, actual_angle_format_info, angle_to_gl,
+                                  angle_to_mtl_map, ios_fallbacks):
+    gl_format = angle_to_gl[angle_format]
+
+    def gen_format_assign_code(actual_angle_format, angle_to_mtl_map):
+        if actual_angle_format in ios_fallbacks:
+            # This format (Depth16Uniform) requires fallback when iOS hardware does not fully support depth16.
+            # Fallback format:
+            actual_angle_format_fallback = ios_fallbacks[actual_angle_format]
+            # return if else block:
+            return image_format_assign_template3.format(
+                actual_angle_format=actual_angle_format,
+                mtl_format=angle_to_mtl_map[actual_angle_format],
+                init_function=angle_format_utils.get_internal_format_initializer(
+                    gl_format, actual_angle_format),
+                actual_angle_format_fallback=actual_angle_format_fallback,
+                mtl_format_fallback=angle_to_mtl_map[actual_angle_format_fallback],
+                init_function_fallback=angle_format_utils.get_internal_format_initializer(
+                    gl_format, actual_angle_format_fallback))
+        else:
+            # return ordinary block:
+            return image_format_assign_template1.format(
+                actual_angle_format=actual_angle_format,
+                mtl_format=angle_to_mtl_map[actual_angle_format],
+                init_function=angle_format_utils.get_internal_format_initializer(
+                    gl_format, actual_angle_format))
+
+    return gen_image_map_switch_case(angle_format, actual_angle_format_info, angle_to_mtl_map,
+                                     gen_format_assign_code)
+
+
 def gen_image_map_switch_string(image_table, angle_to_gl):
     angle_override = image_table["override"]
     mac_override = image_table["override_mac"]
     ios_override = image_table["override_ios"]
-    mac_fallbacks = image_table["d24s8_fallbacks_mac"]
+    mac_fallbacks = image_table["fallbacks_mac"]
+    ios_fallbacks = image_table["fallbacks_ios"]
     angle_to_mtl = image_table["map"]
     mac_specific_map = image_table["map_mac"]
     ios_specific_map = image_table["map_ios"]
@@ -322,8 +377,8 @@ def gen_image_map_switch_string(image_table, angle_to_gl):
     def gen_image_map_switch_common_case(angle_format, actual_angle_format):
         mac_case = gen_image_map_switch_mac_case(angle_format, actual_angle_format, angle_to_gl,
                                                  mac_angle_to_mtl, mac_fallbacks)
-        non_mac_case = gen_image_map_switch_simple_case(angle_format, actual_angle_format,
-                                                        angle_to_gl, angle_to_mtl)
+        non_mac_case = gen_image_map_switch_ios_case(angle_format, actual_angle_format,
+                                                     angle_to_gl, angle_to_mtl, ios_fallbacks)
         if mac_case == non_mac_case:
             return mac_case
 

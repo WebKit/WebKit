@@ -76,12 +76,7 @@ ValidateAST::ValidateAST(TIntermNode *root,
                          TDiagnostics *diagnostics,
                          const ValidateASTOptions &options)
     : TIntermTraverser(true, false, true, nullptr), mOptions(options), mDiagnostics(diagnostics)
-{
-    if (mOptions.validateSingleParent)
-    {
-        mParent[root] = nullptr;
-    }
-}
+{}
 
 void ValidateAST::visitNode(Visit visit, TIntermNode *node)
 {
@@ -90,12 +85,13 @@ void ValidateAST::visitNode(Visit visit, TIntermNode *node)
         size_t childCount = node->getChildCount();
         for (size_t i = 0; i < childCount; ++i)
         {
-            TIntermNode *child = node->getChildNode(i);
-            if (mParent.find(child) != mParent.end())
+            TIntermNode *child   = node->getChildNode(i);
+            TIntermNode *&parent = mParent[child];
+            if (parent)
             {
                 // If child is visited twice but through the same parent, the problem is in one of
                 // the ancestors.
-                if (mParent[child] != node)
+                if (parent != node)
                 {
                     mDiagnostics->error(node->getLine(), "Found child with two parents",
                                         "<validateSingleParent>");
@@ -103,17 +99,17 @@ void ValidateAST::visitNode(Visit visit, TIntermNode *node)
                 }
             }
 
-            mParent[child] = node;
+            parent = node;
         }
     }
 }
 
-void ValidateAST::expectNonNullChildren(Visit visit, TIntermNode *node, size_t least_count)
+void ValidateAST::expectNonNullChildren(Visit visit, TIntermNode *node, size_t leastCount)
 {
     if (visit == PreVisit && mOptions.validateNullNodes)
     {
         size_t childCount = node->getChildCount();
-        if (childCount < least_count)
+        if (childCount < leastCount)
         {
             mDiagnostics->error(node->getLine(), "Too few children", "<validateNullNodes>");
             mNullNodesFailed = true;

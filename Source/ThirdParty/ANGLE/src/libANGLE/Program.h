@@ -276,6 +276,11 @@ class ProgramState final : angle::NonCopyable
     {
         return mExecutable->getLinkedTransformFeedbackVaryings();
     }
+    void setLinkedTransformFeedbackVaryings(
+        const std::vector<TransformFeedbackVarying> _mLinkedTransformFeedbackVaryings) const
+    {
+        return mExecutable->setLinkedTransformFeedbackVaryings(_mLinkedTransformFeedbackVaryings);
+    }
     const std::vector<GLsizei> &getTransformFeedbackStrides() const
     {
         return mExecutable->getTransformFeedbackStrides();

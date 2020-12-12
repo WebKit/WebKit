@@ -17,7 +17,7 @@ namespace sh
 namespace
 {
 
-bool AreEmptyBlocks(TIntermSequence *statements);
+bool AreEmptyBlocks(const TIntermSequence *statements);
 
 bool IsEmptyBlock(TIntermNode *node)
 {
@@ -37,7 +37,7 @@ bool IsEmptyBlock(TIntermNode *node)
 
 // Return true if all statements in "statements" consist only of empty blocks and no-op statements.
 // Returns true also if there are no statements.
-bool AreEmptyBlocks(TIntermSequence *statements)
+bool AreEmptyBlocks(const TIntermSequence *statements)
 {
     for (size_t i = 0u; i < statements->size(); ++i)
     {

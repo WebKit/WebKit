@@ -229,6 +229,11 @@ class ProgramExecutable final : public angle::Subject
     {
         return mLinkedTransformFeedbackVaryings;
     }
+    void setLinkedTransformFeedbackVaryings(
+        const std::vector<TransformFeedbackVarying> _mLinkedTransformFeedbackVaryings)
+    {
+        mLinkedTransformFeedbackVaryings = _mLinkedTransformFeedbackVaryings;
+    }
     GLint getTransformFeedbackBufferMode() const { return mTransformFeedbackBufferMode; }
     GLuint getUniformBlockBinding(GLuint uniformBlockIndex) const
     {

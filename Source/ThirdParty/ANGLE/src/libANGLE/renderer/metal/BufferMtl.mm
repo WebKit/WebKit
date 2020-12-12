@@ -23,6 +23,10 @@ namespace
 // Start with a fairly small buffer size. We can increase this dynamically as we convert more data.
 constexpr size_t kConvertedElementArrayBufferInitialSize = 1024 * 8;
 
+// The max size that we will use buffer pool for dynamic update.
+// If the buffer size exceeds this limit, we will use only one buffer instead of using the pool.
+constexpr size_t kDynamicBufferPoolMaxBufSize = 128 * 1024;
+
 template <typename IndexType>
 angle::Result GetFirstLastIndices(const IndexType *indices,
                                   size_t count,
@@ -105,7 +109,7 @@ angle::Result BufferMtl::setData(const gl::Context *context,
                                  size_t intendedSize,
                                  gl::BufferUsage usage)
 {
-    return setDataImpl(context, data, intendedSize, usage);
+    return setDataImpl(context, target, data, intendedSize, usage);
 }
 
 angle::Result BufferMtl::setSubData(const gl::Context *context,
@@ -164,7 +168,8 @@ angle::Result BufferMtl::mapRange(const gl::Context *context,
 {
     if (access & GL_MAP_INVALIDATE_BUFFER_BIT)
     {
-        ANGLE_TRY(setDataImpl(context, nullptr, size(), mState.getUsage()));
+        ANGLE_TRY(setDataImpl(context, gl::BufferBinding::InvalidEnum, nullptr, size(),
+                              mState.getUsage()));
     }
 
     if (mapPtr)
@@ -173,7 +178,7 @@ angle::Result BufferMtl::mapRange(const gl::Context *context,
         if (mBufferPool.getMaxBuffers() == 1)
         {
             *mapPtr = mBuffer->mapWithOpt(contextMtl, (access & GL_MAP_WRITE_BIT) == 0,
-                                          access & GL_MAP_UNSYNCHRONIZED_BIT) +
+                                   access & GL_MAP_UNSYNCHRONIZED_BIT) +
                       offset;
         }
         else
@@ -395,6 +400,7 @@ void BufferMtl::clearConversionBuffers()
 }
 
 angle::Result BufferMtl::setDataImpl(const gl::Context *context,
+                                     gl::BufferBinding target,
                                      const void *data,
                                      size_t intendedSize,
                                      gl::BufferUsage usage)
@@ -413,6 +419,13 @@ angle::Result BufferMtl::setDataImpl(const gl::Context *context,
 
     size_t adjustedSize = std::max<size_t>(1, intendedSize);
 
+    // Ensures no validation layer issues in std140 with data types like vec3 being 12 bytes vs 16
+    // in MSL.
+    if (target == gl::BufferBinding::Uniform)
+    {
+        adjustedSize = roundUpPow2(adjustedSize, (size_t)16);
+    }
+
     size_t maxBuffers;
     switch (usage)
     {
@@ -427,7 +440,7 @@ angle::Result BufferMtl::setDataImpl(const gl::Context *context,
         default:
             // dynamic buffer, allow up to 10 update per frame/encoding without
             // waiting for GPU.
-            if (adjustedSize <= mtl::kSharedMemBufferMaxBufSizeHint)
+            if (adjustedSize <= kDynamicBufferPoolMaxBufSize)
             {
                 maxBuffers = 10;
                 mBufferPool.setAlwaysUseSharedMem();

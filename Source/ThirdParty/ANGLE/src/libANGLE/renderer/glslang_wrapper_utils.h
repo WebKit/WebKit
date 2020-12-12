@@ -51,6 +51,7 @@ struct GlslangSourceOptions
     bool supportsTransformFeedbackExtension = false;
     bool emulateTransformFeedback           = false;
     bool emulateBresenhamLines              = false;
+    bool transformFeedbackEarlyReturn       = false;
 };
 
 using SpirvBlob = std::vector<uint32_t>;

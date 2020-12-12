@@ -65,7 +65,7 @@ bool IntermNodePatternMatcher::IsDynamicIndexingOfSwizzledVector(TIntermBinary *
     return IsDynamicIndexingOfVectorOrMatrix(node) && node->getLeft()->getAsSwizzleNode();
 }
 
-bool IntermNodePatternMatcher::matchInternal(TIntermBinary *node, TIntermNode *parentNode)
+bool IntermNodePatternMatcher::matchInternal(TIntermBinary *node, TIntermNode *parentNode) const
 {
     if ((mMask & kExpressionReturningArray) != 0)
     {
@@ -87,7 +87,7 @@ bool IntermNodePatternMatcher::matchInternal(TIntermBinary *node, TIntermNode *p
     return false;
 }
 
-bool IntermNodePatternMatcher::match(TIntermUnary *node)
+bool IntermNodePatternMatcher::match(TIntermUnary *node) const
 {
     if ((mMask & kArrayLengthMethod) != 0)
     {
@@ -99,7 +99,7 @@ bool IntermNodePatternMatcher::match(TIntermUnary *node)
     return false;
 }
 
-bool IntermNodePatternMatcher::match(TIntermBinary *node, TIntermNode *parentNode)
+bool IntermNodePatternMatcher::match(TIntermBinary *node, TIntermNode *parentNode) const
 {
     // L-value tracking information is needed to check for dynamic indexing in L-value.
     // Traversers that don't track l-values can still use this class and match binary nodes with
@@ -110,7 +110,7 @@ bool IntermNodePatternMatcher::match(TIntermBinary *node, TIntermNode *parentNod
 
 bool IntermNodePatternMatcher::match(TIntermBinary *node,
                                      TIntermNode *parentNode,
-                                     bool isLValueRequiredHere)
+                                     bool isLValueRequiredHere) const
 {
     if (matchInternal(node, parentNode))
     {
@@ -126,7 +126,7 @@ bool IntermNodePatternMatcher::match(TIntermBinary *node,
     return false;
 }
 
-bool IntermNodePatternMatcher::match(TIntermAggregate *node, TIntermNode *parentNode)
+bool IntermNodePatternMatcher::match(TIntermAggregate *node, TIntermNode *parentNode) const
 {
     if ((mMask & kExpressionReturningArray) != 0)
     {
@@ -161,7 +161,7 @@ bool IntermNodePatternMatcher::match(TIntermAggregate *node, TIntermNode *parent
     return false;
 }
 
-bool IntermNodePatternMatcher::match(TIntermTernary *node)
+bool IntermNodePatternMatcher::match(TIntermTernary *node) const
 {
     if ((mMask & kUnfoldedShortCircuitExpression) != 0)
     {
@@ -170,7 +170,7 @@ bool IntermNodePatternMatcher::match(TIntermTernary *node)
     return false;
 }
 
-bool IntermNodePatternMatcher::match(TIntermDeclaration *node)
+bool IntermNodePatternMatcher::match(TIntermDeclaration *node) const
 {
     if ((mMask & kMultiDeclaration) != 0)
     {

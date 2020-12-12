@@ -205,8 +205,16 @@ bool operator>=(const OSVersion &a, const OSVersion &b)
            std::tie(b.majorVersion, b.minorVersion, b.patchVersion);
 }
 
-#if !defined(ANGLE_PLATFORM_APPLE)
+#if !defined(ANGLE_PLATFORM_MACOS)
 OSVersion GetMacOSVersion()
+{
+    // Return a default version
+    return OSVersion(0, 0, 0);
+}
+#endif
+
+#if !defined(ANGLE_PLATFORM_IOS)
+OSVersion GetiOSVersion()
 {
     // Return a default version
     return OSVersion(0, 0, 0);

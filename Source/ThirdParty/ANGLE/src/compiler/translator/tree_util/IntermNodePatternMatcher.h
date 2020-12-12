@@ -28,52 +28,52 @@ class IntermNodePatternMatcher
     static bool IsDynamicIndexingOfVectorOrMatrix(TIntermBinary *node);
     static bool IsDynamicIndexingOfSwizzledVector(TIntermBinary *node);
 
-    enum PatternType
+    enum PatternType : unsigned int
     {
         // Matches expressions that are unfolded to if statements by UnfoldShortCircuitToIf
-        kUnfoldedShortCircuitExpression = 0x0001,
+        kUnfoldedShortCircuitExpression = 1u << 0u,
 
         // Matches expressions that return arrays with the exception of simple statements where a
         // constructor or function call result is assigned.
-        kExpressionReturningArray = 0x0001 << 1,
+        kExpressionReturningArray = 1u << 1u,
 
         // Matches dynamic indexing of vectors or matrices in l-values.
-        kDynamicIndexingOfVectorOrMatrixInLValue = 0x0001 << 2,
+        kDynamicIndexingOfVectorOrMatrixInLValue = 1u << 2u,
 
         // Matches declarations with more than one declared variables.
-        kMultiDeclaration = 0x0001 << 3,
+        kMultiDeclaration = 1u << 3u,
 
         // Matches declarations of arrays.
-        kArrayDeclaration = 0x0001 << 4,
+        kArrayDeclaration = 1u << 4u,
 
         // Matches declarations of structs where the struct type does not have a name.
-        kNamelessStructDeclaration = 0x0001 << 5,
+        kNamelessStructDeclaration = 1u << 5u,
 
         // Matches array length() method.
-        kArrayLengthMethod = 0x0001 << 6,
+        kArrayLengthMethod = 1u << 6u,
 
         // Matches a vector or matrix constructor whose arguments are scalarized by the
         // SH_SCALARIZE_VEC_OR_MAT_CONSTRUCTOR_ARGUMENTS workaround.
-        kScalarizedVecOrMatConstructor = 0x0001 << 7
+        kScalarizedVecOrMatConstructor = 1u << 7u,
     };
     IntermNodePatternMatcher(const unsigned int mask);
 
-    bool match(TIntermUnary *node);
+    bool match(TIntermUnary *node) const;
 
-    bool match(TIntermBinary *node, TIntermNode *parentNode);
+    bool match(TIntermBinary *node, TIntermNode *parentNode) const;
 
     // Use this version for checking binary node matches in case you're using flag
     // kDynamicIndexingOfVectorOrMatrixInLValue.
-    bool match(TIntermBinary *node, TIntermNode *parentNode, bool isLValueRequiredHere);
+    bool match(TIntermBinary *node, TIntermNode *parentNode, bool isLValueRequiredHere) const;
 
-    bool match(TIntermAggregate *node, TIntermNode *parentNode);
-    bool match(TIntermTernary *node);
-    bool match(TIntermDeclaration *node);
+    bool match(TIntermAggregate *node, TIntermNode *parentNode) const;
+    bool match(TIntermTernary *node) const;
+    bool match(TIntermDeclaration *node) const;
 
   private:
     const unsigned int mMask;
 
-    bool matchInternal(TIntermBinary *node, TIntermNode *parentNode);
+    bool matchInternal(TIntermBinary *node, TIntermNode *parentNode) const;
 };
 
 }  // namespace sh

@@ -21,6 +21,10 @@ class TSymbolTable;
 
 ANGLE_NO_DISCARD bool SimplifyLoopConditions(TCompiler *compiler,
                                              TIntermNode *root,
+                                             TSymbolTable *symbolTable);
+
+ANGLE_NO_DISCARD bool SimplifyLoopConditions(TCompiler *compiler,
+                                             TIntermNode *root,
                                              unsigned int conditionsToSimplify,
                                              TSymbolTable *symbolTable);
 }  // namespace sh

@@ -171,7 +171,6 @@ static bool GetFormatSupportBase(const TextureCapsMap &textureCaps,
     for (size_t i = 0; i < requiredFormatsSize; i++)
     {
         const TextureCaps &cap = textureCaps.get(requiredFormats[i]);
-
         if (requiresTexturing && !cap.texturable)
         {
             return false;

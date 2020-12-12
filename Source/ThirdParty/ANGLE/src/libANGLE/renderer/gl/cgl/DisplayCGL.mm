@@ -29,6 +29,8 @@
 #    include "libANGLE/renderer/gl/cgl/WindowSurfaceCGL.h"
 #    include "platform/PlatformMethods.h"
 
+#    include "libANGLE/renderer/gl/cgl/CGLFunctions.h"
+
 namespace
 {
 
@@ -163,9 +165,10 @@ egl::Error DisplayCGL::initialize(egl::Display *display)
     mEGLDisplay = display;
 
     angle::SystemInfo info;
-    // It's legal for GetSystemInfo to return false and thereby
-    // contain incomplete information.
-    (void)angle::GetSystemInfo(&info);
+    if (!angle::GetSystemInfo(&info))
+    {
+        return egl::EglNotInitialized() << "Unable to query ANGLE's SystemInfo.";
+    }
 
     // This code implements the effect of the
     // disableGPUSwitchingSupport workaround in FeaturesGL.
@@ -440,7 +443,7 @@ egl::Error DisplayCGL::restoreLostDevice(const egl::Display *display)
 
 bool DisplayCGL::isValidNativeWindow(EGLNativeWindowType window) const
 {
-    NSObject *layer = (__bridge NSObject *)window;
+    NSObject *layer = reinterpret_cast<NSObject *>(window);
     return [layer isKindOfClass:[CALayer class]];
 }
 

@@ -13,6 +13,7 @@
 namespace rx
 {
 
+#if defined(ANGLE_PLATFORM_MACOS)
 OSVersion GetMacOSVersion()
 {
     OSVersion result;
@@ -24,5 +25,5 @@ OSVersion GetMacOSVersion()
 
     return result;
 }
-
+#endif
 }
