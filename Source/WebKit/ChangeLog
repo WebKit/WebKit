@@ -1,3 +1,29 @@
+2020-12-11  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Adopt new UI for the Security Key getAssertion flow
+        https://bugs.webkit.org/show_bug.cgi?id=219711
+        <rdar://problem/72154840>
+
+        Reviewed by Brent Fulgham.
+
+        This patch adopts the new UI for the security key getAssertion flow which contains two part:
+        1. showing a informative UI to ask the user to connect their security keys,
+        2. showing an account picker for users to select a credential to use.
+
+        Covered by manual tests.
+
+        * Platform/spi/Cocoa/AuthenticationServicesCoreSPI.h:
+        Paperwork.
+
+        * UIProcess/WebAuthentication/Cocoa/AuthenticatorPresenterCoordinator.h:
+        * UIProcess/WebAuthentication/Cocoa/AuthenticatorPresenterCoordinator.mm:
+        (WebKit::AuthenticatorPresenterCoordinator::AuthenticatorPresenterCoordinator):
+        (WebKit::AuthenticatorPresenterCoordinator::selectAssertionResponse):
+        (WebKit::AuthenticatorPresenterCoordinator::didSelectAssertionResponse):
+        * UIProcess/WebAuthentication/Cocoa/WKASCAuthorizationPresenterDelegate.mm:
+        (-[WKASCAuthorizationPresenterDelegate authorizationPresenter:credentialRequestedForLoginChoice:authenticatedContext:completionHandler:]):
+        Implements the two flows.
+
 2020-12-11  John Wilander  <wilander@apple.com>
 
         PCM: Add feature flag support in the network process

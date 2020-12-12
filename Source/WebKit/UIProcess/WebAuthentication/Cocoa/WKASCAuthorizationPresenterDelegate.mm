@@ -65,6 +65,16 @@ NS_ASSUME_NONNULL_BEGIN
             return;
         }
     }
+
+    if ([loginChoice isKindOfClass:WebKit::getASCSecurityKeyPublicKeyCredentialLoginChoiceClass()]) {
+        if ([(ASCSecurityKeyPublicKeyCredentialLoginChoice *)loginChoice loginChoiceKind] == ASCSecurityKeyPublicKeyCredentialLoginChoiceKindAssertion) {
+            [self dispatchCoordinatorCallback:[loginChoice] (WebKit::AuthenticatorPresenterCoordinator& coordinator) mutable {
+                coordinator.didSelectAssertionResponse((ASCLoginChoiceProtocol *)loginChoice);
+            }];
+
+            return;
+        }
+    }
 }
 
 - (void)authorizationPresenter:(ASCAuthorizationPresenter *)presenter validateUserEnteredPIN:(NSString *)pin completionHandler:(void (^)(id <ASCCredentialProtocol> credential, NSError *error))completionHandler

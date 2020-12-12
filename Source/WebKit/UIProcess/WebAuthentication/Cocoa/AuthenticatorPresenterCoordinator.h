@@ -28,6 +28,7 @@
 #if ENABLE(WEB_AUTHN)
 
 #include "WebAuthenticationFlags.h"
+#include <WebCore/AuthenticatorAssertionResponse.h>
 #include <WebCore/AuthenticatorTransport.h>
 #include <WebCore/WebAuthenticationConstants.h>
 #include <wtf/Forward.h>
@@ -35,6 +36,7 @@
 #include <wtf/WeakPtr.h>
 
 OBJC_CLASS ASCAuthorizationPresenter;
+OBJC_CLASS ASCLoginChoiceProtocol;
 OBJC_CLASS LAContext;
 OBJC_CLASS WKASCAuthorizationPresenterDelegate;
 
@@ -64,6 +66,8 @@ public:
     void setCredentialRequestHandler(CredentialRequestHandler&& handler) { m_credentialRequestHandler = WTFMove(handler); }
     void setLAContext(LAContext *);
 
+    void didSelectAssertionResponse(ASCLoginChoiceProtocol *);
+
 private:
     WeakPtr<AuthenticatorManager> m_manager;
     RetainPtr<ASCAuthorizationPresenter> m_presenter;
@@ -73,6 +77,9 @@ private:
 
     CompletionHandler<void(LAContext *)> m_laContextHandler;
     RetainPtr<LAContext> m_laContext;
+
+    CompletionHandler<void(WebCore::AuthenticatorAssertionResponse*)> m_responseHandler;
+    HashMap<ASCLoginChoiceProtocol *, RefPtr<WebCore::AuthenticatorAssertionResponse>> m_credentials;
 };
 
 } // namespace WebKit

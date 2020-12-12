@@ -30,7 +30,6 @@
 
 #import "AuthenticatorManager.h"
 #import "WKASCAuthorizationPresenterDelegate.h"
-#import <WebCore/NotImplemented.h>
 #import <wtf/BlockPtr.h>
 
 #import "AuthenticationServicesCoreSoftLink.h"
@@ -54,8 +53,8 @@ AuthenticatorPresenterCoordinator::AuthenticatorPresenterCoordinator(const Authe
             [presentationContext addLoginChoice:adoptNS([allocASCSecurityKeyPublicKeyCredentialLoginChoiceInstance() initRegistrationChoice]).get()];
         break;
     case ClientDataType::Get:
-        // FIXME(219710): Adopt new UI for the Platform Authenticator getAssertion flow.
-        // FIXME(219711): Adopt new UI for the Security Key getAssertion flow.
+        if (transports.contains(AuthenticatorTransport::Usb) || transports.contains(AuthenticatorTransport::Nfc))
+            [presentationContext addLoginChoice:adoptNS([allocASCSecurityKeyPublicKeyCredentialLoginChoiceInstance() initAssertionPlaceholderChoice]).get()];
         break;
     default:
         ASSERT_NOT_REACHED();
@@ -91,10 +90,32 @@ void AuthenticatorPresenterCoordinator::requestPin(uint64_t, CompletionHandler<v
     // FIXME(219712): Adopt new UI for the Client PIN flow.
 }
 
-void AuthenticatorPresenterCoordinator::selectAssertionResponse(Vector<Ref<AuthenticatorAssertionResponse>>&&, WebAuthenticationSource, CompletionHandler<void(AuthenticatorAssertionResponse*)>&&)
+void AuthenticatorPresenterCoordinator::selectAssertionResponse(Vector<Ref<AuthenticatorAssertionResponse>>&& responses, WebAuthenticationSource source, CompletionHandler<void(AuthenticatorAssertionResponse*)>&& completionHandler)
 {
+#if HAVE(ASC_AUTH_UI)
+    if (m_responseHandler)
+        m_responseHandler(nullptr);
+    m_responseHandler = WTFMove(completionHandler);
+
+    if (source == WebAuthenticationSource::External) {
+        auto loginChoices = adoptNS([[NSMutableArray alloc] init]);
+
+        for (auto& response : responses) {
+            RetainPtr<NSData> userHandle;
+            if (response->userHandle())
+                userHandle = adoptNS([[NSData alloc] initWithBytes:response->userHandle()->data() length:response->userHandle()->byteLength()]);
+
+            auto loginChoice = adoptNS([allocASCSecurityKeyPublicKeyCredentialLoginChoiceInstance() initWithName:response->name() displayName:response->displayName() userHandle:userHandle.get()]);
+            [loginChoices addObject:loginChoice.get()];
+
+            m_credentials.add((ASCLoginChoiceProtocol *)loginChoice.get(), WTFMove(response));
+        }
+
+        [m_presenter updateInterfaceWithLoginChoices:loginChoices.get()];
+        return;
+    }
     // FIXME(219710): Adopt new UI for the Platform Authenticator getAssertion flow.
-    // FIXME(219711): Adopt new UI for the Security Key getAssertion flow.
+#endif // HAVE(ASC_AUTH_UI)
 }
 
 void AuthenticatorPresenterCoordinator::requestLAContextForUserVerification(CompletionHandler<void(LAContext *)>&& completionHandler)
@@ -124,6 +145,15 @@ void AuthenticatorPresenterCoordinator::setLAContext(LAContext *context)
     }
 
     m_laContext = context;
+}
+
+void AuthenticatorPresenterCoordinator::didSelectAssertionResponse(ASCLoginChoiceProtocol *loginChoice)
+{
+    auto response = m_credentials.take(loginChoice);
+    if (!response)
+        return;
+
+    m_responseHandler(response.get());
 }
 
 } // namespace WebKit

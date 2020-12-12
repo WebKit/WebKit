@@ -69,6 +69,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface ASCAuthorizationPresenter : NSObject <ASCAuthorizationPresenterHostProtocol>
 
 - (void)presentAuthorizationWithContext:(ASCAuthorizationPresentationContext *)context completionHandler:(void (^)(id<ASCCredentialProtocol> _Nullable, NSError * _Nullable))completionHandler;
+- (void)updateInterfaceWithLoginChoices:(NSArray<id <ASCLoginChoiceProtocol>> *)loginChoices;
 
 @property (nonatomic, weak) id <ASCAuthorizationPresenterDelegate> delegate;
 
@@ -89,7 +90,7 @@ extern NSString * const ASCAuthorizationPresentationContextDataKey;
 
 @property (nonatomic, readonly, copy) NSString *appIdentifier;
 @property (nonatomic, readonly, copy) NSArray<id<ASCLoginChoiceProtocol>> *loginChoices;
-@property (nonatomic, nullable, copy) NSString *relyingPartyIdentifier;
+@property (nonatomic, nullable, copy) NSString *serviceName;
 
 @property (nonatomic, copy) NSString *proxiedAppName;
 @property (nonatomic, copy) NSArray<NSString *> *proxiedAssociatedDomains;
@@ -102,15 +103,22 @@ extern NSString * const ASCAuthorizationPresentationContextDataKey;
 
 @end
 
+typedef NS_ENUM(NSInteger, ASCSecurityKeyPublicKeyCredentialLoginChoiceKind) {
+    ASCSecurityKeyPublicKeyCredentialLoginChoiceKindRegistration,
+    ASCSecurityKeyPublicKeyCredentialLoginChoiceKindAssertion,
+    ASCSecurityKeyPublicKeyCredentialLoginChoiceKindAssertionPlaceholder,
+};
+
 @interface ASCSecurityKeyPublicKeyCredentialLoginChoice : NSObject <ASCLoginChoiceProtocol>
 
 - (instancetype)initRegistrationChoice;
 - (instancetype)initWithName:(NSString *)name displayName:(NSString *)displayName userHandle:(NSData *)userHandle;
+- (instancetype)initAssertionPlaceholderChoice;
 
-@property (nonatomic, readonly, copy) NSString *name;
-@property (nonatomic, readonly, copy) NSString *displayName;
-@property (nonatomic, readonly, copy) NSData *userHandle;
-@property (nonatomic, readonly) BOOL isRegistrationRequest;
+@property (nonatomic, nullable, readonly, copy) NSString *name;
+@property (nonatomic, nullable, readonly, copy) NSString *displayName;
+@property (nonatomic, nullable, readonly, copy) NSData *userHandle;
+@property (nonatomic, readonly) ASCSecurityKeyPublicKeyCredentialLoginChoiceKind loginChoiceKind;
 
 + (instancetype)new NS_UNAVAILABLE;
 - (instancetype)init NS_UNAVAILABLE;
