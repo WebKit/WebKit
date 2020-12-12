@@ -519,7 +519,9 @@ void AcceleratedBackingStoreWayland::snapshot(GtkSnapshot* gtkSnapshot)
         if (!tryEnsureTexture(texture, textureSize))
             return;
 
-        graphene_rect_t bounds = GRAPHENE_RECT_INIT(0, 0, static_cast<float>(textureSize.width()), static_cast<float>(textureSize.height()));
+        float deviceScaleFactor = m_webPage.deviceScaleFactor();
+
+        graphene_rect_t bounds = GRAPHENE_RECT_INIT(0, 0, static_cast<float>(textureSize.width() / deviceScaleFactor), static_cast<float>(textureSize.height() / deviceScaleFactor));
         if (m_gdkGLContext) {
             GRefPtr<GdkTexture> gdkTexture = adoptGRef(gdk_gl_texture_new(m_gdkGLContext.get(), texture, textureSize.width(), textureSize.height(), nullptr, nullptr));
             gtk_snapshot_append_texture(gtkSnapshot, gdkTexture.get(), &bounds);

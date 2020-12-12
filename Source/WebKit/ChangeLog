@@ -1,3 +1,13 @@
+2020-12-12  Alexander Mikhaylenko  <alexm@gnome.org>
+
+        [GTK4] Web view is incorrectly scaled on hidpi
+        https://bugs.webkit.org/show_bug.cgi?id=218353
+
+        Reviewed by Adrian Perez de Castro.
+
+        * UIProcess/gtk/AcceleratedBackingStoreWayland.cpp:
+        (WebKit::AcceleratedBackingStoreWayland::snapshot): Account for the scale factor.
+
 2020-12-12  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r270692.
