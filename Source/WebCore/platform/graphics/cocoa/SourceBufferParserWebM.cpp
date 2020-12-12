@@ -1201,7 +1201,14 @@ const HashSet<String>& SourceBufferParserWebM::supportedVideoCodecs()
 
 const HashSet<String>& SourceBufferParserWebM::supportedAudioCodecs()
 {
-    static auto codecs = makeNeverDestroyed<HashSet<String>>({ });
+    static auto codecs = makeNeverDestroyed<HashSet<String>>({
+#if ENABLE(VORBIS)
+        "A_VORBIS",
+#endif
+#if ENABLE(OPUS)
+        "A_OPUS",
+#endif
+    });
     return codecs;
 }
 
