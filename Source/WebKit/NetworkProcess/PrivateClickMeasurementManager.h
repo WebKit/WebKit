@@ -72,6 +72,7 @@ private:
     void fireConversionRequest(const PrivateClickMeasurement&);
     void firePendingAttributionRequests();
     void clearExpired();
+    bool featureEnabled() const;
     bool debugModeEnabled() const;
     void updateTimerLastFired();
 

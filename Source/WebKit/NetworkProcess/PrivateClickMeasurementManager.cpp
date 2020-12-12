@@ -67,6 +67,9 @@ PrivateClickMeasurementManager::PrivateClickMeasurementManager(NetworkSession& n
 
 void PrivateClickMeasurementManager::storeUnattributed(PrivateClickMeasurement&& attribution)
 {
+    if (!featureEnabled())
+        return;
+
     clearExpired();
 
     if (UNLIKELY(debugModeEnabled())) {
@@ -82,7 +85,7 @@ void PrivateClickMeasurementManager::storeUnattributed(PrivateClickMeasurement&&
 
 void PrivateClickMeasurementManager::handleAttribution(AttributionTriggerData&& attributionTriggerData, const URL& requestURL, const WebCore::ResourceRequest& redirectRequest)
 {
-    if (m_sessionID.isEphemeral())
+    if (!featureEnabled())
         return;
 
     RegistrableDomain redirectDomain { redirectRequest.url() };
@@ -136,6 +139,9 @@ void PrivateClickMeasurementManager::attribute(const SourceSite& sourceSite, con
 
 void PrivateClickMeasurementManager::fireConversionRequest(const PrivateClickMeasurement& attribution)
 {
+    if (!featureEnabled())
+        return;
+
     auto attributionURL = m_attributionBaseURLForTesting ? *m_attributionBaseURLForTesting : attribution.reportURL();
     if (attributionURL.isEmpty() || !attributionURL.isValid())
         return;
@@ -287,6 +293,11 @@ void PrivateClickMeasurementManager::markAllUnattributedAsExpiredForTesting()
     if (auto* resourceLoadStatistics = m_networkSession->resourceLoadStatistics())
         resourceLoadStatistics->markAllUnattributedPrivateClickMeasurementAsExpiredForTesting();
 #endif
+}
+
+bool PrivateClickMeasurementManager::featureEnabled() const
+{
+    return m_networkProcess->privateClickMeasurementEnabled() && !m_sessionID.isEphemeral();
 }
 
 bool PrivateClickMeasurementManager::debugModeEnabled() const

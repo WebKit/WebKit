@@ -1,3 +1,40 @@
+2020-12-11  John Wilander  <wilander@apple.com>
+
+        PCM: Add feature flag support in the network process
+        https://bugs.webkit.org/show_bug.cgi?id=219811
+        <rdar://problem/72242633>
+
+        Reviewed by Alex Christensen.
+
+        No new tests. This just forwards a preference to the network process.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::initializeNetworkProcess):
+            Stores the incoming enablePrivateClickMeasurement from
+            WebKit::NetworkProcessCreationParameters.
+        (WebKit::NetworkProcess::setPrivateClickMeasurementEnabled):
+        (WebKit::NetworkProcess::privateClickMeasurementEnabled const):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcessCreationParameters.cpp:
+            New field enablePrivateClickMeasurement.
+        (WebKit::NetworkProcessCreationParameters::encode const):
+        (WebKit::NetworkProcessCreationParameters::decode):
+        * NetworkProcess/NetworkProcessCreationParameters.h:
+        * NetworkProcess/PrivateClickMeasurementManager.cpp:
+        (WebKit::PrivateClickMeasurementManager::storeUnattributed):
+            Early return if the feature is not enabled.
+        (WebKit::PrivateClickMeasurementManager::handleAttribution):
+            Early return if the feature is not enabled.
+        (WebKit::PrivateClickMeasurementManager::fireConversionRequest):
+            Early return if the feature is not enabled.
+        (WebKit::PrivateClickMeasurementManager::featureEnabled const):
+            New convenience function.
+        * NetworkProcess/PrivateClickMeasurementManager.h:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeNetworkProcess):
+            Sets the new enablePrivateClickMeasurement in
+            WebKit::NetworkProcessCreationParameters.
+
 2020-12-11  Jiewen Tan  <jiewen_tan@apple.com>
 
         Unreviewed, build fix after r270694

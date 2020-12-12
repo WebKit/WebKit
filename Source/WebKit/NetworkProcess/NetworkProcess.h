@@ -276,6 +276,8 @@ public:
     void setThirdPartyCNAMEDomainForTesting(PAL::SessionID, WebCore::RegistrableDomain&&, CompletionHandler<void()>&&);
 #endif
 
+    void setPrivateClickMeasurementEnabled(bool);
+    bool privateClickMeasurementEnabled() const;
     void setPrivateClickMeasurementDebugMode(bool);
 
     using CacheStorageRootPathCallback = CompletionHandler<void(String&&)>;
@@ -590,6 +592,8 @@ private:
     Seconds m_serviceWorkerFetchTimeout { defaultServiceWorkerFetchTimeout };
 
     HashMap<WebCore::PageIdentifier, Vector<WebCore::UserContentURLPattern>> m_extensionCORSDisablingPatterns;
+
+    bool m_privateClickMeasurementEnabled { true };
 };
 
 } // namespace WebKit

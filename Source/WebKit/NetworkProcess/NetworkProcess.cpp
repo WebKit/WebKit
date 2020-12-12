@@ -330,6 +330,7 @@ void NetworkProcess::initializeNetworkProcess(NetworkProcessCreationParameters&&
 
     setCacheModel(parameters.cacheModel);
 
+    setPrivateClickMeasurementEnabled(parameters.enablePrivateClickMeasurement);
     setPrivateClickMeasurementDebugMode(parameters.enablePrivateClickMeasurementDebugMode);
 
     for (auto& supplement : m_supplements.values())
@@ -1312,6 +1313,16 @@ void NetworkProcess::setThirdPartyCNAMEDomainForTesting(PAL::SessionID sessionID
     completionHandler();
 }
 #endif // ENABLE(RESOURCE_LOAD_STATISTICS)
+
+void NetworkProcess::setPrivateClickMeasurementEnabled(bool enabled)
+{
+    m_privateClickMeasurementEnabled = enabled;
+}
+
+bool NetworkProcess::privateClickMeasurementEnabled() const
+{
+    return m_privateClickMeasurementEnabled;
+}
 
 void NetworkProcess::setPrivateClickMeasurementDebugMode(bool debugMode)
 {

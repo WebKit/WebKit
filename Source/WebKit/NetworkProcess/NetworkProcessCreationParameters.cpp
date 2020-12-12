@@ -65,6 +65,7 @@ void NetworkProcessCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << urlSchemesRegisteredAsLocal;
     encoder << urlSchemesRegisteredAsNoAccess;
 
+    encoder << enablePrivateClickMeasurement;
     encoder << enablePrivateClickMeasurementDebugMode;
 }
 
@@ -125,6 +126,8 @@ bool NetworkProcessCreationParameters::decode(IPC::Decoder& decoder, NetworkProc
     if (!decoder.decode(result.urlSchemesRegisteredAsNoAccess))
         return false;
 
+    if (!decoder.decode(result.enablePrivateClickMeasurement))
+        return false;
     if (!decoder.decode(result.enablePrivateClickMeasurementDebugMode))
         return false;
 
