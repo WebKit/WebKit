@@ -43,7 +43,8 @@ AuthenticatorPresenterCoordinator::AuthenticatorPresenterCoordinator(const Authe
 {
 #if HAVE(ASC_AUTH_UI)
     auto presentationContext = adoptNS([allocASCAuthorizationPresentationContextInstance() initWithRequestContext:nullptr appIdentifier:nullptr]);
-    [presentationContext setRelyingPartyIdentifier: rpId];
+    if ([getASCAuthorizationPresentationContextClass() instancesRespondToSelector:@selector(setServiceName:)])
+        [presentationContext setServiceName:rpId];
 
     switch (type) {
     case ClientDataType::Create:
