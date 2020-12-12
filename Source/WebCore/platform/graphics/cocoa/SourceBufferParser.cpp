@@ -54,6 +54,28 @@ RefPtr<SourceBufferParser> SourceBufferParser::create(const ContentType& type)
     return nullptr;
 }
 
+SourceBufferParser::Segment::Segment(Vector<uint8_t>&& segment)
+    : m_segment(WTFMove(segment))
+{
 }
+
+size_t SourceBufferParser::Segment::size() const
+{
+    return m_segment.size();
+}
+
+size_t SourceBufferParser::Segment::read(size_t position, size_t sizeToRead, uint8_t* destination) const
+{
+    sizeToRead = std::min(sizeToRead, size() - std::min(position, size()));
+    memcpy(destination, m_segment.data() + position, sizeToRead);
+    return sizeToRead;
+}
+
+Vector<uint8_t> SourceBufferParser::Segment::takeVector()
+{
+    return std::exchange(m_segment, { });
+}
+
+} // namespace WebCore
 
 #endif // ENABLE(MEDIA_SOURCE)

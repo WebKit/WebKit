@@ -211,9 +211,9 @@ SourceBufferParserAVFObjC::~SourceBufferParserAVFObjC()
     [m_delegate invalidate];
 }
 
-void SourceBufferParserAVFObjC::appendData(Vector<unsigned char>&& data, AppendFlags flags)
+void SourceBufferParserAVFObjC::appendData(Segment&& segment, AppendFlags flags)
 {
-    auto sharedData = SharedBuffer::create(WTFMove(data));
+    auto sharedData = SharedBuffer::create(segment.takeVector());
     auto nsData = sharedData->createNSData();
     if (m_parserStateWasReset || flags == AppendFlags::Discontinuity)
         [m_parser appendStreamData:nsData.get() withFlags:AVStreamDataParserStreamDataDiscontinuity];

@@ -58,7 +58,21 @@ public:
         None,
         Discontinuity,
     };
-    virtual void appendData(Vector<unsigned char>&&, AppendFlags = AppendFlags::None) = 0;
+
+    class Segment {
+    public:
+        Segment(Vector<uint8_t>&&);
+        Segment(Segment&&) = default;
+        Vector<uint8_t> takeVector();
+
+        size_t size() const;
+        size_t read(size_t position, size_t, uint8_t* destination) const;
+
+    private:
+        Vector<unsigned char> m_segment;
+    };
+
+    virtual void appendData(Segment&&, AppendFlags = AppendFlags::None) = 0;
     virtual void flushPendingMediaData() = 0;
     virtual void setShouldProvideMediaDataForTrackID(bool, uint64_t) = 0;
     virtual bool shouldProvideMediadataForTrackID(uint64_t) = 0;

@@ -260,7 +260,6 @@ using namespace webm;
 class SourceBufferParserWebM::StreamingVectorReader final : public webm::Reader {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    using Segment = Vector<unsigned char>;
     void appendSegment(Segment&& segment)
     {
         m_data.push_back(WTFMove(segment));
@@ -275,7 +274,7 @@ public:
             return Status(Status::kNotEnoughMemory);
 
         *numActuallyRead = 0;
-        while (m_currentSegment != m_data.end()) {
+        while (numToRead && m_currentSegment != m_data.end()) {
             auto& currentSegment = *m_currentSegment;
 
             if (m_positionWithinSegment >= currentSegment.size()) {
@@ -283,22 +282,12 @@ public:
                 continue;
             }
 
-            size_t numAvailable = currentSegment.size() - m_positionWithinSegment;
-            if (numToRead < numAvailable) {
-                memcpy(outputBuffer, currentSegment.data() + m_positionWithinSegment, numToRead);
-                *numActuallyRead += numToRead;
-                m_position += numToRead;
-                m_positionWithinSegment += numToRead;
-                return Status(Status::kOkCompleted);
-            }
-
-            memcpy(outputBuffer, currentSegment.data() + m_positionWithinSegment, numAvailable);
-            *numActuallyRead += numAvailable;
-            m_position += numAvailable;
-            m_positionWithinSegment += numAvailable;
-            numToRead -= numAvailable;
-            advanceToNextSegment();
-            continue;
+            *numActuallyRead = currentSegment.read(m_positionWithinSegment, numToRead, outputBuffer);
+            m_position += *numActuallyRead;
+            m_positionWithinSegment += *numActuallyRead;
+            numToRead -= *numActuallyRead;
+            if (m_positionWithinSegment == currentSegment.size())
+                advanceToNextSegment();
         }
         if (!numToRead)
             return Status(Status::kOkCompleted);
@@ -538,18 +527,18 @@ SourceBufferParserWebM::~SourceBufferParserWebM()
     m_initializationSegmentIsHandledSemaphore->signal();
 }
 
-void SourceBufferParserWebM::appendData(Vector<unsigned char>&& buffer, AppendFlags appendFlags)
+void SourceBufferParserWebM::appendData(Segment&& segment, AppendFlags appendFlags)
 {
     if (!m_parser)
         return;
 
-    INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER, "flags(", appendFlags == AppendFlags::Discontinuity ? "Discontinuity" : "", "), size(", buffer.size(), ")");
+    INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER, "flags(", appendFlags == AppendFlags::Discontinuity ? "Discontinuity" : "", "), size(", segment.size(), ")");
 
     if (appendFlags == AppendFlags::Discontinuity) {
         m_reader->reset();
         m_parser->DidSeek();
     }
-    m_reader->appendSegment(WTFMove(buffer));
+    m_reader->appendSegment(WTFMove(segment));
 
     while (true) {
         m_status = m_parser->Feed(this, &m_reader);

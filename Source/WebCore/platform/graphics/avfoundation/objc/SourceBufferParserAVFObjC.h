@@ -54,7 +54,7 @@ public:
     AVStreamDataParser* parser() const { return m_parser.get(); }
 
     Type type() const { return Type::AVFObjC; }
-    void appendData(Vector<unsigned char>&&, AppendFlags = AppendFlags::None) final;
+    void appendData(Segment&&, AppendFlags = AppendFlags::None) final;
     void flushPendingMediaData() final;
     void setShouldProvideMediaDataForTrackID(bool, uint64_t) final;
     bool shouldProvideMediadataForTrackID(uint64_t) final;

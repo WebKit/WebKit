@@ -70,7 +70,7 @@ public:
     const webm::Status& status() const { return m_status; }
 
     Type type() const { return Type::WebM; }
-    void appendData(Vector<unsigned char>&&, AppendFlags = AppendFlags::None) final;
+    void appendData(Segment&&, AppendFlags = AppendFlags::None) final;
     void flushPendingMediaData() final;
     void setShouldProvideMediaDataForTrackID(bool, uint64_t) final;
     bool shouldProvideMediadataForTrackID(uint64_t) final;
