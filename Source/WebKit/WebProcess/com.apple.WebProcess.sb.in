@@ -1005,9 +1005,12 @@
     (global-name "com.apple.lsd.mapdb")
 )
 
-#if (__MAC_OS_X_VERSION_MIN_REQUIRED >= 101400 && __MAC_OS_X_VERSION_MIN_REQUIRED <= 110000) || PLATFORM(MACCATALYST)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400 || PLATFORM(MACCATALYST)
 ;; <rdar://problem/47268166>
 (allow mach-lookup
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
+    (with telemetry-backtrace)
+#endif
     (xpc-service-name "com.apple.MTLCompilerService"))
 #endif
 
