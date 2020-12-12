@@ -1,3 +1,12 @@
+2020-12-12  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK][WPE] Unreviewed test gardening. Update baseline after r270613.
+
+        Test results now include overscroll-behavior-x and overscroll-behavior-y properties.
+
+        * platform/gtk/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-csstext-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-csstext-expected.txt:
+
 2020-12-11  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa] Add Experimental VP8 support
