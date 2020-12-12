@@ -1,5 +1,15 @@
 2020-12-12  Diego Pino Garcia  <dpino@igalia.com>
 
+        [GLIB][GTK] Unreviewed test gardening. Update test expectations.
+
+        Added two failures related with font-size visualization in
+        WebInspector and another one related with WebRTC.
+
+        * platform/glib/TestExpectations:
+        * platform/gtk/TestExpectations:
+
+2020-12-12  Diego Pino Garcia  <dpino@igalia.com>
+
         [GTK][WPE] Unreviewed test gardening. Update baseline after r270613.
 
         Test results now include overscroll-behavior-x and overscroll-behavior-y properties.

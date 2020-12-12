@@ -1168,6 +1168,9 @@ webkit.org/b/215799 imported/w3c/web-platform-tests/css/css-content/quotes-018.h
 webkit.org/b/215799 imported/w3c/web-platform-tests/css/css-content/quotes-025.html [ ImageOnlyFailure ]
 webkit.org/b/215799 imported/w3c/web-platform-tests/css/css-content/quotes-027.html [ ImageOnlyFailure ]
 
+webkit.org/b/219614 inspector/css/getComputedPrimaryFontForNode.html [ Failure ]
+webkit.org/b/219614 inspector/model/font-calculate-properties.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures.
 #
