@@ -287,12 +287,24 @@ void DocumentLoader::mainReceivedError(const ResourceError& error)
     frameLoader()->receivedMainResourceError(error);
 }
 
+void DocumentLoader::frameDestroyed()
+{
+    RELEASE_LOG_IF_ALLOWED("DocumentLoader::frameDestroyed: m_frame=%p", m_frame.get());
+    FrameDestructionObserver::frameDestroyed();
+}
+
 // Cancels the data source's pending loads.  Conceptually, a data source only loads
 // one document at a time, but one document may have many related resources. 
 // stopLoading will stop all loads initiated by the data source, 
 // but not loads initiated by child frames' data sources -- that's the WebFrame's job.
 void DocumentLoader::stopLoading()
 {
+    RELEASE_LOG_IF_ALLOWED("DocumentLoader::stopLoading: m_frame=%p", m_frame.get());
+
+    ASSERT(m_frame);
+    if (!m_frame)
+        return;
+
     RefPtr<Frame> protectedFrame(m_frame.get());
     Ref<DocumentLoader> protectedThis(*this);
 
@@ -1329,10 +1341,13 @@ void DocumentLoader::attachToFrame(Frame& frame)
 void DocumentLoader::attachToFrame()
 {
     ASSERT(m_frame);
+    RELEASE_LOG_IF_ALLOWED("DocumentLoader::attachToFrame: m_frame=%p", m_frame.get());
 }
 
 void DocumentLoader::detachFromFrame()
 {
+    RELEASE_LOG_IF_ALLOWED("DocumentLoader::detachFromFrame: m_frame=%p", m_frame.get());
+
 #if ASSERT_ENABLED
     if (m_hasEverBeenAttached)
         ASSERT_WITH_MESSAGE(m_frame, "detachFromFrame() is being called on a DocumentLoader twice without an attachToFrame() inbetween");

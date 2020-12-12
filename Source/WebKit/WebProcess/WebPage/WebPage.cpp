@@ -1403,6 +1403,8 @@ void WebPage::close()
     if (m_isClosed)
         return;
 
+    RELEASE_LOG_IF_ALLOWED(Loading, "close:");
+
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::ClearPageSpecificDataForResourceLoadStatistics(m_identifier), 0);
 #endif

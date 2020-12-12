@@ -233,6 +233,9 @@ public:
     void scheduleSubstituteResourceLoad(ResourceLoader&, SubstituteResource&);
     void scheduleCannotShowURLError(ResourceLoader&);
 
+    // FrameDestructionObserver.
+    WEBCORE_EXPORT void frameDestroyed() final;
+
     // Return the ArchiveResource for the URL only when loading an Archive
     WEBCORE_EXPORT ArchiveResource* archiveResourceForURL(const URL&) const;
 

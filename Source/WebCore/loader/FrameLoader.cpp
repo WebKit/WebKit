@@ -1818,6 +1818,9 @@ void FrameLoader::stopAllLoaders(ClearProvisionalItemPolicy clearProvisionalItem
 
     for (RefPtr<Frame> child = m_frame.tree().firstChild(); child; child = child->tree().nextSibling())
         child->loader().stopAllLoaders(clearProvisionalItemPolicy);
+
+    FRAMELOADER_RELEASE_LOG_IF_ALLOWED(ResourceLoading, "stopAllLoaders: m_provisionalDocumentLoader=%p, m_documentLoader=%p", m_provisionalDocumentLoader.get(), m_documentLoader.get());
+
     if (m_provisionalDocumentLoader)
         m_provisionalDocumentLoader->stopLoading();
     if (m_documentLoader)
@@ -1910,14 +1913,12 @@ bool FrameLoader::frameHasLoaded() const
 
 void FrameLoader::setDocumentLoader(DocumentLoader* loader)
 {
-    if (!loader && !m_documentLoader)
-        return;
-
     if (loader == m_documentLoader)
         return;
+
+    FRAMELOADER_RELEASE_LOG_IF_ALLOWED(ResourceLoading, "setDocumentLoader: Setting document loader to %p (was %p)", loader, m_documentLoader.get());
     
-    ASSERT(loader != m_documentLoader);
-    ASSERT(!loader || loader->frameLoader() == this);
+    RELEASE_ASSERT(!loader || loader->frameLoader() == this);
 
     m_client->prepareForDataSourceReplacement();
     detachChildren();
@@ -1943,6 +1944,8 @@ void FrameLoader::setPolicyDocumentLoader(DocumentLoader* loader)
     if (m_policyDocumentLoader == loader)
         return;
 
+    FRAMELOADER_RELEASE_LOG_IF_ALLOWED(ResourceLoading, "setPolicyDocumentLoader: Setting policy document loader to %p (was %p)", loader, m_policyDocumentLoader.get());
+
     if (loader)
         loader->attachToFrame(m_frame);
     if (m_policyDocumentLoader
@@ -1955,10 +1958,13 @@ void FrameLoader::setPolicyDocumentLoader(DocumentLoader* loader)
 
 void FrameLoader::setProvisionalDocumentLoader(DocumentLoader* loader)
 {
-    FRAMELOADER_RELEASE_LOG_IF_ALLOWED(ResourceLoading, "setProvisionalDocumentLoader: Setting provisional document loader (m_provisionalDocumentLoader=%p)", loader);
+    if (m_provisionalDocumentLoader == loader)
+        return;
+
+    FRAMELOADER_RELEASE_LOG_IF_ALLOWED(ResourceLoading, "setProvisionalDocumentLoader: Setting provisional document loader to %p (was %p)", loader, m_provisionalDocumentLoader.get());
 
     ASSERT(!loader || !m_provisionalDocumentLoader);
-    ASSERT(!loader || loader->frameLoader() == this);
+    RELEASE_ASSERT(!loader || loader->frameLoader() == this);
 
     if (m_provisionalDocumentLoader && m_provisionalDocumentLoader != m_documentLoader)
         m_provisionalDocumentLoader->detachFromFrame();
