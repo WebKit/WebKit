@@ -155,8 +155,12 @@ static WebKit::WebWheelEvent::Phase toWebPhase(UIScrollPhase phase)
 WebKit::WebWheelEvent WebIOSEventFactory::createWebWheelEvent(UIScrollEvent *event, UIView *contentView)
 {
     WebCore::IntPoint scrollLocation = WebCore::roundedIntPoint([event locationInView:contentView]);
+#if HAVE(UISCROLLVIEW_ASYNCHRONOUS_SCROLL_EVENT_HANDLING)
     CGVector deltaVector = [event _adjustedAcceleratedDeltaInView:contentView];
     WebCore::FloatSize delta(deltaVector.dx, deltaVector.dy);
+#else
+    WebCore::FloatSize delta;
+#endif
 
     return {
         WebKit::WebEvent::Wheel,

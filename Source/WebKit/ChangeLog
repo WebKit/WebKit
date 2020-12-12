@@ -1,5 +1,12 @@
 2020-12-11  Tim Horton  <timothy_horton@apple.com>
 
+        Fix the iOS !UISCROLLVIEW_ASYNCHRONOUS_SCROLL_EVENT_HANDLING build.
+
+        * Shared/ios/WebIOSEventFactory.mm:
+        (WebIOSEventFactory::createWebWheelEvent):
+
+2020-12-11  Tim Horton  <timothy_horton@apple.com>
+
         Trackpad and Mouse scroll events on iPad only fire "pointermove" -- not "wheel"
         https://bugs.webkit.org/show_bug.cgi?id=210071
         <rdar://problem/54616853>
