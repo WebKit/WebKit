@@ -252,6 +252,7 @@
            (iokit-user-client-class
                 "AGXCommandQueue"
                 "AGXDevice"
+                "AGXDeviceUserClient"
                 "AGXSharedUserClient"
                 "IOAccelContext"
                 "IOAccelDevice"
