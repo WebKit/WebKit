@@ -31,6 +31,8 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/spi/cocoa/SecuritySPI.h>
 
+OBJC_CLASS LAContext;
+
 namespace WebCore {
 
 class AuthenticatorAssertionResponse : public AuthenticatorResponse {
@@ -47,12 +49,14 @@ public:
     const String& displayName() const { return m_displayName; }
     size_t numberOfCredentials() const { return m_numberOfCredentials; }
     SecAccessControlRef accessControl() const { return m_accessControl.get(); }
+    LAContext * laContext() const { return m_laContext.get(); }
 
     WEBCORE_EXPORT void setAuthenticatorData(Vector<uint8_t>&&);
     void setSignature(Ref<ArrayBuffer>&& signature) { m_signature = WTFMove(signature); }
     void setName(const String& name) { m_name = name; }
     void setDisplayName(const String& displayName) { m_displayName = displayName; }
     void setNumberOfCredentials(size_t numberOfCredentials) { m_numberOfCredentials = numberOfCredentials; }
+    void setLAContext(LAContext *context) { m_laContext = context; }
 
 private:
     AuthenticatorAssertionResponse(Ref<ArrayBuffer>&&, Ref<ArrayBuffer>&&, Ref<ArrayBuffer>&&, RefPtr<ArrayBuffer>&&);
@@ -69,6 +73,7 @@ private:
     String m_displayName;
     size_t m_numberOfCredentials { 0 };
     RetainPtr<SecAccessControlRef> m_accessControl;
+    RetainPtr<LAContext> m_laContext;
 };
 
 } // namespace WebCore

@@ -41,20 +41,20 @@ AuthenticatorPresenterCoordinator::AuthenticatorPresenterCoordinator(const Authe
     : m_manager(makeWeakPtr(manager))
 {
 #if HAVE(ASC_AUTH_UI)
-    auto presentationContext = adoptNS([allocASCAuthorizationPresentationContextInstance() initWithRequestContext:nullptr appIdentifier:nullptr]);
+    m_context = adoptNS([allocASCAuthorizationPresentationContextInstance() initWithRequestContext:nullptr appIdentifier:nullptr]);
     if ([getASCAuthorizationPresentationContextClass() instancesRespondToSelector:@selector(setServiceName:)])
-        [presentationContext setServiceName:rpId];
+        [m_context setServiceName:rpId];
 
     switch (type) {
     case ClientDataType::Create:
         if (transports.contains(AuthenticatorTransport::Internal))
-            [presentationContext addLoginChoice:adoptNS([allocASCPlatformPublicKeyCredentialLoginChoiceInstance() initRegistrationChoice]).get()];
+            [m_context addLoginChoice:adoptNS([allocASCPlatformPublicKeyCredentialLoginChoiceInstance() initRegistrationChoice]).get()];
         if (transports.contains(AuthenticatorTransport::Usb) || transports.contains(AuthenticatorTransport::Nfc))
-            [presentationContext addLoginChoice:adoptNS([allocASCSecurityKeyPublicKeyCredentialLoginChoiceInstance() initRegistrationChoice]).get()];
+            [m_context addLoginChoice:adoptNS([allocASCSecurityKeyPublicKeyCredentialLoginChoiceInstance() initRegistrationChoice]).get()];
         break;
     case ClientDataType::Get:
         if (transports.contains(AuthenticatorTransport::Usb) || transports.contains(AuthenticatorTransport::Nfc))
-            [presentationContext addLoginChoice:adoptNS([allocASCSecurityKeyPublicKeyCredentialLoginChoiceInstance() initAssertionPlaceholderChoice]).get()];
+            [m_context addLoginChoice:adoptNS([allocASCSecurityKeyPublicKeyCredentialLoginChoiceInstance() initAssertionPlaceholderChoice]).get()];
         break;
     default:
         ASSERT_NOT_REACHED();
@@ -76,8 +76,16 @@ AuthenticatorPresenterCoordinator::AuthenticatorPresenterCoordinator(const Authe
                 manager->cancel();
         });
     });
-    [m_presenter presentAuthorizationWithContext:presentationContext.get() completionHandler:completionHandler.get()];
+    [m_presenter presentAuthorizationWithContext:m_context.get() completionHandler:completionHandler.get()];
 #endif // HAVE(ASC_AUTH_UI)
+}
+
+AuthenticatorPresenterCoordinator::~AuthenticatorPresenterCoordinator()
+{
+    if (m_laContextHandler)
+        m_laContextHandler(nullptr);
+    if (m_responseHandler)
+        m_responseHandler(nullptr);
 }
 
 void AuthenticatorPresenterCoordinator::updatePresenter(WebAuthenticationStatus)
@@ -114,7 +122,25 @@ void AuthenticatorPresenterCoordinator::selectAssertionResponse(Vector<Ref<Authe
         [m_presenter updateInterfaceWithLoginChoices:loginChoices.get()];
         return;
     }
-    // FIXME(219710): Adopt new UI for the Platform Authenticator getAssertion flow.
+
+    if (source == WebAuthenticationSource::Local) {
+        auto loginChoices = adoptNS([[NSMutableArray alloc] init]);
+
+        for (auto& response : responses) {
+            RetainPtr<NSData> userHandle;
+            if (response->userHandle())
+                userHandle = adoptNS([[NSData alloc] initWithBytes:response->userHandle()->data() length:response->userHandle()->byteLength()]);
+
+            auto loginChoice = adoptNS([allocASCPlatformPublicKeyCredentialLoginChoiceInstance() initWithName:response->name() displayName:response->displayName() userHandle:userHandle.get()]);
+            [loginChoices addObject:loginChoice.get()];
+
+            m_credentials.add((ASCLoginChoiceProtocol *)loginChoice.get(), WTFMove(response));
+        }
+
+        [loginChoices addObjectsFromArray:[m_context loginChoices]]; // Adds the security key option if exists.
+        [m_presenter updateInterfaceWithLoginChoices:loginChoices.get()];
+        return;
+    }
 #endif // HAVE(ASC_AUTH_UI)
 }
 
@@ -147,11 +173,14 @@ void AuthenticatorPresenterCoordinator::setLAContext(LAContext *context)
     m_laContext = context;
 }
 
-void AuthenticatorPresenterCoordinator::didSelectAssertionResponse(ASCLoginChoiceProtocol *loginChoice)
+void AuthenticatorPresenterCoordinator::didSelectAssertionResponse(ASCLoginChoiceProtocol *loginChoice, LAContext *context)
 {
     auto response = m_credentials.take(loginChoice);
     if (!response)
         return;
+
+    if (context)
+        response->setLAContext(context);
 
     m_responseHandler(response.get());
 }

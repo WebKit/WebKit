@@ -64,12 +64,20 @@ NS_ASSUME_NONNULL_BEGIN
 
             return;
         }
+
+        if (![(ASCPlatformPublicKeyCredentialLoginChoice *)loginChoice isRegistrationRequest]) {
+            [self dispatchCoordinatorCallback:[loginChoice, context = retainPtr(context)] (WebKit::AuthenticatorPresenterCoordinator& coordinator) mutable {
+                coordinator.didSelectAssertionResponse((ASCLoginChoiceProtocol *)loginChoice, context.get());
+            }];
+
+            return;
+        }
     }
 
     if ([loginChoice isKindOfClass:WebKit::getASCSecurityKeyPublicKeyCredentialLoginChoiceClass()]) {
         if ([(ASCSecurityKeyPublicKeyCredentialLoginChoice *)loginChoice loginChoiceKind] == ASCSecurityKeyPublicKeyCredentialLoginChoiceKindAssertion) {
             [self dispatchCoordinatorCallback:[loginChoice] (WebKit::AuthenticatorPresenterCoordinator& coordinator) mutable {
-                coordinator.didSelectAssertionResponse((ASCLoginChoiceProtocol *)loginChoice);
+                coordinator.didSelectAssertionResponse((ASCLoginChoiceProtocol *)loginChoice, nil);
             }];
 
             return;

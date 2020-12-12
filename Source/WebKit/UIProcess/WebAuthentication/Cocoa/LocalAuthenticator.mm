@@ -531,6 +531,24 @@ void LocalAuthenticator::continueGetAssertionAfterResponseSelected(Ref<WebCore::
     ASSERT(m_state == State::RequestReceived);
     m_state = State::ResponseSelected;
 
+    if (webAuthenticationModernEnabled()) {
+        auto accessControlRef = response->accessControl();
+        LAContext *context = response->laContext();
+        auto callback = [
+            weakThis = makeWeakPtr(*this),
+            response = WTFMove(response)
+        ] (LocalConnection::UserVerification verification) mutable {
+            ASSERT(RunLoop::isMain());
+            if (!weakThis)
+                return;
+
+            weakThis->continueGetAssertionAfterUserVerification(WTFMove(response), verification, response->laContext());
+        };
+
+        m_connection->verifyUser(accessControlRef, context, WTFMove(callback));
+        return;
+    }
+
     auto& requestOptions = WTF::get<PublicKeyCredentialRequestOptions>(requestData().options);
 
     auto accessControlRef = response->accessControl();

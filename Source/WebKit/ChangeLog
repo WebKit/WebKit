@@ -1,3 +1,26 @@
+2020-12-11  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Adopt new UI for the Platform Authenticator getAssertion flow
+        https://bugs.webkit.org/show_bug.cgi?id=219710
+        <rdar://problem/72154800>
+
+        Reviewed by Brent Fulgham.
+
+        This patch adopts the new UI for the platform authenticator getAssertion flow. It's more or less
+        the same as the security key one except an LAContext will be passed in from the UI. Now LocalAuthenticator
+        will just utilize the LAContext from the UI.
+
+        * UIProcess/WebAuthentication/Cocoa/AuthenticatorPresenterCoordinator.h:
+        * UIProcess/WebAuthentication/Cocoa/AuthenticatorPresenterCoordinator.mm:
+        (WebKit::AuthenticatorPresenterCoordinator::AuthenticatorPresenterCoordinator):
+        (WebKit::AuthenticatorPresenterCoordinator::~AuthenticatorPresenterCoordinator):
+        (WebKit::AuthenticatorPresenterCoordinator::selectAssertionResponse):
+        (WebKit::AuthenticatorPresenterCoordinator::didSelectAssertionResponse):
+        * UIProcess/WebAuthentication/Cocoa/LocalAuthenticator.mm:
+        (WebKit::LocalAuthenticator::continueGetAssertionAfterResponseSelected):
+        * UIProcess/WebAuthentication/Cocoa/WKASCAuthorizationPresenterDelegate.mm:
+        (-[WKASCAuthorizationPresenterDelegate authorizationPresenter:credentialRequestedForLoginChoice:authenticatedContext:completionHandler:]):
+
 2020-12-11  John Wilander  <wilander@apple.com>
 
         PCM: Change debugModeSecondsUntilSend from 60 seconds to 10 seconds

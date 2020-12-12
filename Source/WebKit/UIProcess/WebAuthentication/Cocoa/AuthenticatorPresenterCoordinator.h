@@ -35,14 +35,11 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/WeakPtr.h>
 
+OBJC_CLASS ASCAuthorizationPresentationContext;
 OBJC_CLASS ASCAuthorizationPresenter;
 OBJC_CLASS ASCLoginChoiceProtocol;
 OBJC_CLASS LAContext;
 OBJC_CLASS WKASCAuthorizationPresenterDelegate;
-
-namespace WebCore {
-class AuthenticatorAssertionResponse;
-}
 
 namespace WebKit {
 
@@ -56,6 +53,7 @@ public:
     using CredentialRequestHandler = Function<void()>;
 
     AuthenticatorPresenterCoordinator(const AuthenticatorManager&, const String& rpId, const TransportSet&, WebCore::ClientDataType);
+    ~AuthenticatorPresenterCoordinator();
 
     void updatePresenter(WebAuthenticationStatus);
     void requestPin(uint64_t retries, CompletionHandler<void(const String&)>&&);
@@ -66,10 +64,11 @@ public:
     void setCredentialRequestHandler(CredentialRequestHandler&& handler) { m_credentialRequestHandler = WTFMove(handler); }
     void setLAContext(LAContext *);
 
-    void didSelectAssertionResponse(ASCLoginChoiceProtocol *);
+    void didSelectAssertionResponse(ASCLoginChoiceProtocol *, LAContext *);
 
 private:
     WeakPtr<AuthenticatorManager> m_manager;
+    RetainPtr<ASCAuthorizationPresentationContext> m_context;
     RetainPtr<ASCAuthorizationPresenter> m_presenter;
     RetainPtr<WKASCAuthorizationPresenterDelegate> m_presenterDelegate;
 
