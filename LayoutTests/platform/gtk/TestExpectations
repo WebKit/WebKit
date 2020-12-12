@@ -144,9 +144,6 @@ webkit.org/b/215405 accessibility/gtk/combobox-descendants-orientation-crash.htm
 webkit.org/b/215405 accessibility/gtk/text-for-range-combo-box.html [ Failure ]
 webkit.org/b/215405 inspector/dom/getAccessibilityPropertiesForNode.html [ Failure ]
 
-# Compositing
-webkit.org/b/218942 imported/w3c/web-platform-tests/css/css-color/composited-filters-under-opacity.html [ ImageOnlyFailure ]
-
 # CSS
 webkit.org/b/216161 imported/w3c/web-platform-tests/css/css-pseudo/text-selection.html [ Failure Pass ]
 
@@ -568,7 +565,6 @@ webkit.org/b/169918 compositing/patterns/direct-pattern-compositing-position.htm
 webkit.org/b/169918 compositing/patterns/direct-pattern-compositing-size.html [ ImageOnlyFailure ]
 webkit.org/b/169918 compositing/text-on-scaled-layer.html [ ImageOnlyFailure ]
 webkit.org/b/169918 compositing/text-on-scaled-surface.html [ ImageOnlyFailure ]
-webkit.org/b/169918 compositing/video/video-clip-change-src.html [ Crash ImageOnlyFailure Timeout ]
 webkit.org/b/169918 compositing/tiling/rotated-tiled-clamped.html [ Missing Failure ]
 webkit.org/b/169918 compositing/tiling/rotated-tiled-preserve3d-clamped.html [ Missing Failure ]
 webkit.org/b/169918 compositing/transitions/scale-transition-no-start.html [ Missing Failure ]
@@ -1138,8 +1134,6 @@ webkit.org/b/211501 compositing/iframes/border-uneven-radius-composited-frame.ht
 
 webkit.org/b/211693 editing/input/caret-at-the-edge-of-contenteditable.html [ Failure Pass ]
 
-# The test is failing since r261576 and crashing occasionally
-webkit.org/b/211833 compositing/video/video-poster.html [ Failure Crash ]
 webkit.org/b/211833 compositing/video/video-reflection.html [ Crash Pass ]
 
 # The first one is also crashing for both GTK and WPE debug
@@ -1623,8 +1617,6 @@ webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/tabledata-transfor
 webkit.org/b/209044 http/tests/media/hls/video-controls-live-stream.html [ Failure Pass ]
 
 webkit.org/b/210370 [ Release ] media/track/text-track-cue-is-reachable.html [ Pass Crash ]
-
-webkit.org/b/210390 storage/domstorage/sessionstorage/blocked-file-access.html [ Failure ]
 
 webkit.org/b/211764 http/wpt/webrtc/generateCertificate.html [ Failure Pass ]
 

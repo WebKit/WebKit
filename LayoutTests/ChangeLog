@@ -1,5 +1,12 @@
 2020-12-12  Diego Pino Garcia  <dpino@igalia.com>
 
+        [GLIB][GTK] Unreviewed test gardening. Remove tests passing after r270734.
+
+        * platform/glib/TestExpectations:
+        * platform/gtk/TestExpectations:
+
+2020-12-12  Diego Pino Garcia  <dpino@igalia.com>
+
         [GLIB][GTK] Unreviewed test gardening. Update test expectations.
 
         Added two failures related with font-size visualization in
