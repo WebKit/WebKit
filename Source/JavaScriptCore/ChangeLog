@@ -1,3 +1,15 @@
+2020-12-11  Tadeu Zagallo  <tzagallo@apple.com>
+
+        REGRESSION (r270665): testapi failing on JSC bots
+        https://bugs.webkit.org/show_bug.cgi?id=219787
+
+        Reviewed by Saam Barati.
+
+        * API/JSValueRef.cpp:
+        (JSValueIsString):
+        (JSValueIsObject):
+        (JSValueIsSymbol):
+
 2020-12-11  Caio Lima  <ticaiolima@gmail.com>
 
         [JIT] Require value registers explicitly on emitValueProfilingSite
