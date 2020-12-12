@@ -258,9 +258,9 @@ unsigned ScrollingTreeFrameScrollingNodeMac::exposedUnfilledArea() const
         [sublayers release];
     }
 
-    FloatPoint scrollPosition = currentScrollPosition();
-    FloatRect viewPortRect({ }, scrollableAreaSize());
-    return TileController::blankPixelCountForTiles(tiles, viewPortRect, IntPoint(-scrollPosition.x(), -scrollPosition.y()));
+    FloatPoint clampedScrollPosition = clampScrollPosition(currentScrollPosition());
+    FloatRect viewportRect({ }, scrollableAreaSize());
+    return TileController::blankPixelCountForTiles(tiles, viewportRect, IntPoint(-clampedScrollPosition.x(), -clampedScrollPosition.y()));
 }
 
 } // namespace WebCore
