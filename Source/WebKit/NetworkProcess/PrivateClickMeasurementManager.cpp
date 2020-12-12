@@ -47,7 +47,7 @@ using SourceSite = PrivateClickMeasurement::SourceSite;
 using AttributeOnSite = PrivateClickMeasurement::AttributeOnSite;
 using AttributionTriggerData = PrivateClickMeasurement::AttributionTriggerData;
 
-constexpr Seconds debugModeSecondsUntilSend { 60_s };
+constexpr Seconds debugModeSecondsUntilSend { 10_s };
 
 PrivateClickMeasurementManager::PrivateClickMeasurementManager(NetworkSession& networkSession, NetworkProcess& networkProcess, PAL::SessionID sessionID)
     : m_firePendingAttributionRequestsTimer(*this, &PrivateClickMeasurementManager::firePendingAttributionRequests)
@@ -128,7 +128,7 @@ void PrivateClickMeasurementManager::attribute(const SourceSite& sourceSite, con
                 if (UNLIKELY(debugModeEnabled())) {
                     RELEASE_LOG_INFO(PrivateClickMeasurement, "Setting timer for firing attribution request to the debug mode timeout of %{public}f seconds where the regular timeout would have been %{public}f seconds.", debugModeSecondsUntilSend.seconds(), secondsUntilSend.seconds());
                     m_networkProcess->broadcastConsoleMessage(m_sessionID, MessageSource::PrivateClickMeasurement, MessageLevel::Log, makeString("[Private Click Measurement] Setting timer for firing attribution request to the debug mode timeout of "_s, debugModeSecondsUntilSend.seconds(), " seconds where the regular timeout would have been "_s, secondsUntilSend.seconds(), " seconds."_s));
-                        secondsUntilSend = debugModeSecondsUntilSend;
+                    secondsUntilSend = debugModeSecondsUntilSend;
                 }
                 startTimer(secondsUntilSend);
             }
